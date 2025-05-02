@@ -17,12 +17,11 @@ const agentApi = (request?: Request, token?: string) => {
   };
 
   return {
-    createAgent: async (
-      agent: BodyCreateAgentV1ConvaiAgentsCreatePost,
-      apiUrl: string = DEFAULT_API_URL
-    ) => {
+    createAgent: async (agent: BodyCreateAgentV1ConvaiAgentsCreatePost) => {
       const headers = await getAuthHeaders();
-      const response = await axios.post(`${apiUrl}/agents`, agent, { headers });
+      const response = await axios.post(`${DEFAULT_API_URL}/agents`, agent, {
+        headers,
+      });
       return response.data;
     },
 
@@ -50,10 +49,10 @@ const agentApi = (request?: Request, token?: string) => {
     },
 
     // FIND ONE agent
-    findAgent: async (agentId: string, apiUrl: string = DEFAULT_API_URL) => {
+    findAgent: async (agentId: string) => {
       const headers = await getAuthHeaders();
       const response = await axios.get<GetAgentResponseModel>(
-        `${apiUrl}/agents/${agentId}`,
+        `${DEFAULT_API_URL}/agents/${agentId}`,
         { headers }
       );
       return response.data;
@@ -62,13 +61,28 @@ const agentApi = (request?: Request, token?: string) => {
     // UPDATE agent
     updateAgent: async (
       agentId: string,
-      data: BodyPatchesAnAgentSettingsV1ConvaiAgentsAgentIdPatch,
-      apiUrl: string = DEFAULT_API_URL
+      data: BodyPatchesAnAgentSettingsV1ConvaiAgentsAgentIdPatch
     ) => {
       const headers = await getAuthHeaders();
-      const response = await axios.patch(`${apiUrl}/agents/${agentId}`, data, {
-        headers,
-      });
+      const response = await axios.patch(
+        `${DEFAULT_API_URL}/agents/${agentId}`,
+        data,
+        {
+          headers,
+        }
+      );
+      return response.data;
+    },
+
+    // DELETE agent
+    deleteAgent: async (agentId: string) => {
+      const headers = await getAuthHeaders();
+      const response = await axios.delete(
+        `${DEFAULT_API_URL}/agents/${agentId}`,
+        {
+          headers,
+        }
+      );
       return response.data;
     },
   };

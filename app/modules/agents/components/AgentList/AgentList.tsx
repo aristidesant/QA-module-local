@@ -18,7 +18,7 @@ import {
   Avatar,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useNavigate } from "react-router";
+import { useFetcher, useNavigate } from "react-router";
 import classes from "./AgentList.module.css";
 import type AgentListObject from "~/models/AgentListObject";
 
@@ -30,7 +30,7 @@ interface AgentListProps {
 const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const navigate = useNavigate();
-
+  const fetcher = useFetcher();
   const handleAgentClick = (agent: AgentListObject) => {
     navigate(`/agent/${agent.config?.getAgentConfig?.agent_id}`, {
       replace: true,
@@ -40,6 +40,16 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
   const handleCreateSuccessCallback = (agent: any) => {
     onCreateNew();
     close();
+  };
+
+  const handleRemove = (agent: AgentListObject) => {
+    fetcher.submit(
+      {},
+      {
+        method: "delete",
+        action: `/agent/${agent.config?.getAgentConfig?.agent_id}`,
+      }
+    );
   };
 
   return (
@@ -96,11 +106,14 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
           {agents.map((agent) => (
             <UnstyledButton
               key={agent.agent_id}
-              onClick={() => handleAgentClick(agent)}
               className={classes.agentButton}
               style={{ transition: "box-shadow 0.2s, border 0.2s", padding: 0 }}
             >
-              <AgentCard agent={agent} />
+              <AgentCard
+                onRemove={handleRemove}
+                onClick={handleAgentClick}
+                agent={agent}
+              />
             </UnstyledButton>
           ))}
         </SimpleGrid>

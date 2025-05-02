@@ -40,15 +40,17 @@ export default function AgentRoute() {
 
 // Optional action export if using Remix-style actions; otherwise handle in your server/api route
 export async function action({ request }: ActionFunctionArgs) {
-  const formData = await request.formData();
-  const agentData = JSON.parse(formData.get("data")?.toString() || "");
-  const agentApiClient = agentApi(request);
+  if (request.method === "POST") {
+    const formData = await request.formData();
+    const agentData = JSON.parse(formData.get("data")?.toString() || "");
+    const agentApiClient = agentApi(request);
 
-  try {
-    await agentApiClient.createAgent(agentData);
-    return { success: true };
-  } catch (err: any) {
-    console.error("Error creating agent:", err);
-    return { error: err.message };
+    try {
+      await agentApiClient.createAgent(agentData);
+      return { success: true };
+    } catch (err: any) {
+      console.error("Error creating agent:", err);
+      return { error: err.message };
+    }
   }
 }

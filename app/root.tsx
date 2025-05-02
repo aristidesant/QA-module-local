@@ -14,7 +14,7 @@ import { Box, MantineProvider } from "@mantine/core";
 
 import { useEffect, useState } from "react";
 import { Loader } from "./components/ui/Loader";
-
+import { ModalsProvider } from "@mantine/modals";
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
@@ -43,7 +43,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body style={{ background: "#f8f9fa" }}>
         <MantineProvider>
-          {isLoading ? <Loader text="Loading application..." /> : children}
+          <ModalsProvider>
+            {isLoading ? <Loader text="Loading application..." /> : children}
+          </ModalsProvider>
         </MantineProvider>
         <ScrollRestoration />
         <Scripts />
