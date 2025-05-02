@@ -5,10 +5,15 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useNavigation,
 } from "react-router";
-
+import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
 import type { Route } from "./+types/root";
-import "./app.css";
+import { Box, MantineProvider } from "@mantine/core";
+
+import { useEffect, useState } from "react";
+import { Loader } from "./components/ui/Loader";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -24,6 +29,10 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    setIsLoading(false);
+  }, []);
   return (
     <html lang="en">
       <head>
@@ -32,8 +41,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
-        {children}
+      <body style={{ background: "#f8f9fa" }}>
+        <MantineProvider>
+          {isLoading ? <Loader text="Loading application..." /> : children}
+        </MantineProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -62,7 +73,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto">
+    <Box component="main" p="xs">
       <h1>{message}</h1>
       <p>{details}</p>
       {stack && (
@@ -70,6 +81,6 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
           <code>{stack}</code>
         </pre>
       )}
-    </main>
+    </Box>
   );
 }

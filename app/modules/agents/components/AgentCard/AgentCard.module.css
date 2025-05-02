@@ -1,0 +1,38 @@
+.agentCard {
+  min-width: 200px;
+  max-width: 260px;
+  margin: 0 auto;
+  box-shadow: 0 2px 8px var(--mantine-color-blue-1);
+  border-radius: 14px;
+  border: 1px solid var(--mantine-color-gray-2);
+  transition: box-shadow 0.18s, border 0.18s;
+}
+
+.agentCard:hover {
+  box-shadow: 0 4px 16px var(--mantine-color-blue-2);
+  border-color: var(--mantine-color-blue-3);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.agentName {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--mantine-color-dark-8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.agentId {
+  color: var(--mantine-color-gray-6);
+  font-family: monospace;
+}
+
+.agentCreatedAt {
+  color: var(--mantine-color-gray-5);
+}

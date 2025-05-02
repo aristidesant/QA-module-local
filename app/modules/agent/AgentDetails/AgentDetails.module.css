@@ -1,0 +1,196 @@
+.container {
+  padding: 2rem;
+  background-color: var(--mantine-color-white);
+  border-radius: var(--mantine-radius-md);
+  max-width: 48rem;
+  margin: 0 auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--mantine-color-gray-1);
+  transition: all 0.2s ease;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.avatar {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background-color: var(--mantine-color-blue-0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 2px solid var(--mantine-color-blue-2);
+  transition: transform 0.2s ease;
+}
+
+.avatar:hover {
+  transform: scale(1.05);
+}
+
+.avatarIcon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--mantine-color-blue-6);
+}
+
+.agentName {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--mantine-color-dark-9);
+  margin: 0;
+}
+
+.editableName {
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.editableName:hover {
+  color: var(--mantine-color-blue-6);
+}
+
+.editableName:hover::after {
+  content: "✏️";
+  font-size: 0.75rem;
+  position: absolute;
+  margin-left: 0.5rem;
+  opacity: 0.5;
+}
+
+.nameInput {
+  font-size: 1.5rem;
+  font-weight: 700;
+  width: 100%;
+}
+
+.nameInput input {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--mantine-color-dark-9);
+  border-bottom: 2px solid var(--mantine-color-blue-5);
+  padding: 0;
+  height: auto;
+}
+
+.agentIdBadge {
+  font-size: 0.75rem;
+  background-color: var(--mantine-color-blue-0);
+  color: var(--mantine-color-blue-7);
+}
+
+.tabs {
+  margin-top: 1rem;
+}
+
+.tabsList {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  width: 100%;
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+  margin-bottom: 1.5rem;
+  gap: 0.5rem;
+}
+
+.tabItem {
+  padding: 0.75rem 1.25rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.tabItem:hover {
+  background-color: var(--mantine-color-gray-0);
+}
+
+.tabPanel {
+  padding: 0.5rem 0;
+}
+
+.saveButton {
+  margin-top: 1.5rem;
+  background-color: var(--mantine-color-blue-6);
+  color: white;
+  font-weight: 600;
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  float: right;
+}
+
+.saveButton:hover {
+  background-color: var(--mantine-color-blue-7);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+  }
+}
+
+/* Dark mode overrides */
+:global(.dark) .container {
+  background-color: var(--mantine-color-dark-7);
+  border-color: var(--mantine-color-dark-4);
+}
+
+:global(.dark) .header {
+  border-color: var(--mantine-color-dark-4);
+}
+
+:global(.dark) .avatar {
+  background-color: var(--mantine-color-dark-5);
+  border-color: var(--mantine-color-blue-8);
+}
+
+:global(.dark) .avatarIcon {
+  color: var(--mantine-color-blue-4);
+}
+
+:global(.dark) .agentName {
+  color: var(--mantine-color-white);
+}
+
+:global(.dark) .nameInput input {
+  color: var(--mantine-color-white);
+  background-color: transparent;
+  border-color: var(--mantine-color-blue-4);
+}
+
+:global(.dark) .agentIdBadge {
+  background-color: var(--mantine-color-blue-9);
+  color: var(--mantine-color-blue-0);
+}
+
+:global(.dark) .tabsList {
+  border-color: var(--mantine-color-dark-4);
+}
+
+:global(.dark) .tabItem:hover {
+  background-color: var(--mantine-color-dark-6);
+}
+
+:global(.dark) .saveButton {
+  background-color: var(--mantine-color-blue-7);
+}
+
+:global(.dark) .saveButton:hover {
+  background-color: var(--mantine-color-blue-8);
+}

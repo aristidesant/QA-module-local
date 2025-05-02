@@ -1,0 +1,24 @@
+/* app/modules/auth/LoginForm/LoginForm.module.css */
+.wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--mantine-color-gray-0);
+}
+
+.form {
+  max-width: 400px;
+  width: 100%;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: var(--mantine-spacing-xl);
+}
+
+.error {
+  color: var(--mantine-color-red-6);
+  margin-top: var(--mantine-spacing-md);
+  text-align: center;
+}

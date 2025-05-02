@@ -1,0 +1,54 @@
+.appError {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  border-radius: 8px;
+  background-color: var(--mantine-color-white);
+  box-shadow: var(--mantine-shadow-sm);
+  text-align: center;
+  max-width: 450px;
+  margin: 0 auto;
+  border: 1px solid var(--mantine-color-gray-3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.appError:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px var(--mantine-color-dark-1);
+}
+
+.icon {
+  margin-bottom: 1rem;
+  color: var(--mantine-color-red-6);
+}
+
+.headline {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--mantine-color-dark-7);
+}
+
+.message {
+  color: var(--mantine-color-gray-7);
+  line-height: 1.5;
+  font-size: 1rem;
+}
+
+/* Animation for the error component */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.appError {
+  animation: fadeIn 0.3s ease-in-out forwards;
+}

@@ -1,0 +1,58 @@
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.title {
+  color: var(--mantine-color-dark-9);
+  font-weight: 700;
+  font-size: 2rem;
+  letter-spacing: 0.5px;
+}
+
+.agentCount {
+  color: var(--mantine-color-gray-6);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.newAgentBtn {
+  font-weight: 600;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 8px 0 var(--mantine-color-blue-2);
+}
+
+.agentButton {
+  display: block;
+  border-radius: 1.5rem;
+  transition: all 0.2s;
+  outline: none;
+  background: transparent;
+}
+
+.emptyState {
+  padding: 4rem 0;
+  text-align: center;
+  border: 2px dashed var(--mantine-color-gray-3);
+  border-radius: 1rem;
+  color: var(--mantine-color-gray-6);
+  background: linear-gradient(
+    90deg,
+    var(--mantine-color-blue-0) 0%,
+    var(--mantine-color-gray-0) 100%
+  );
+  margin-top: 2rem;
+}
+
+.emptyTitle {
+  color: var(--mantine-color-dark-6);
+  font-weight: 600;
+  font-size: 1.3rem;
+}
+
+.emptyText {
+  color: var(--mantine-color-gray-5);
+  font-size: 1.05rem;
+}
