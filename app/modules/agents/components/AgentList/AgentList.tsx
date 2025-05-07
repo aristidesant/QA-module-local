@@ -32,7 +32,8 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
   const navigate = useNavigate();
   const fetcher = useFetcher();
   const handleAgentClick = (agent: AgentListObject) => {
-    navigate(`/agent/${agent.config?.getAgentConfig?.agent_id}`, {
+    console.log("Agent clicked:", agent);
+    navigate(`/agent/${agent.id}`, {
       replace: true,
     });
   };
@@ -47,7 +48,7 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
       {},
       {
         method: "delete",
-        action: `/agent/${agent.config?.getAgentConfig?.agent_id}`,
+        action: `/agent/${agent.id}`,
       }
     );
   };
@@ -104,7 +105,7 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
       {agents.length > 0 && (
         <SimpleGrid cols={{ base: 1, sm: 2, lg: 3, xl: 4 }} spacing="md">
           {agents.map((agent) => (
-            <UnstyledButton
+            <div
               key={agent.agent_id}
               className={classes.agentButton}
               style={{ transition: "box-shadow 0.2s, border 0.2s", padding: 0 }}
@@ -114,7 +115,7 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
                 onClick={handleAgentClick}
                 agent={agent}
               />
-            </UnstyledButton>
+            </div>
           ))}
         </SimpleGrid>
       )}

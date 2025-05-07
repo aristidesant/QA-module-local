@@ -30,9 +30,7 @@ export type AgentDetailsProps = {
 };
 
 const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
-  const [editableAgent, setEditableAgent] = useState(
-    agent?.config?.getAgentConfig
-  );
+  const [editableAgent, setEditableAgent] = useState(agent?.config);
   const [isEditingName, setIsEditingName] = useState(false);
   const nameInputRef = useRef<HTMLInputElement>(null);
   const fetcher = useFetcher();
@@ -45,7 +43,7 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
   };
 
   const { name } = editableAgent;
-  const agentId = agent.config?.getAgentConfig.agent_id as string;
+  const agentId = agent.id as string;
   // Focus the input when edit mode is activated
   useEffect(() => {
     if (isEditingName && nameInputRef.current) {

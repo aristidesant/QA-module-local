@@ -62,7 +62,7 @@ const AgentVoiceSettings: React.FC<AgentVoiceSettingsProps> = ({
           Stability ({stability.toFixed(2)})
         </Text>
         <Slider
-          min={0}
+          min={0.0}
           max={1.0}
           step={0.01}
           precision={2}
@@ -85,9 +85,9 @@ const AgentVoiceSettings: React.FC<AgentVoiceSettingsProps> = ({
           Speed ({speed.toFixed(2)})
         </Text>
         <Slider
-          min={0.5} // Assuming a reasonable range
-          max={2.0} // Assuming a reasonable range
-          step={0.05}
+          min={0.7} // Assuming a reasonable range
+          max={1.2} // Assuming a reasonable range
+          step={0.01}
           precision={2}
           value={speed}
           onChange={(value: number) =>
@@ -108,7 +108,7 @@ const AgentVoiceSettings: React.FC<AgentVoiceSettingsProps> = ({
           Similarity Boost ({similarityBoost.toFixed(2)})
         </Text>
         <Slider
-          min={0}
+          min={0.0}
           max={1.0}
           step={0.01}
           precision={2}
