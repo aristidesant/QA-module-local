@@ -1,0 +1,91 @@
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh; /* Ensure it takes full viewport height */
+  padding: var(--mantine-spacing-xl);
+}
+
+.container {
+  width: 100%;
+  max-width: 1400px; /* Increased max-width for a wider layout */
+  background-color: var(--mantine-color-white);
+  border-radius: var(--mantine-radius-lg); /* Match Paper prop */
+  /* box-shadow is handled by Paper shadow prop, but can be augmented here if needed */
+}
+
+.title {
+  font-size: 2.5rem; /* Larger title */
+  font-weight: 700;
+  color: var(--mantine-color-blue-7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--mantine-spacing-sm);
+}
+
+.outputColumn {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Try to make column take full available height */
+}
+
+.outputPaper {
+  background-color: var(--mantine-color-white); /* Changed from gray-0 to white */
+  border: 1px solid var(--mantine-color-gray-2); /* Softened border to a lighter gray */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.outputTitle {
+  color: var(--mantine-color-gray-7);
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Styles for the Textarea wrapper */
+.outputPromptWrapper {
+  flex-grow: 1; /* Allow the wrapper to grow */
+  display: flex; /* Enable flex for the child input to potentially grow */
+  height: 100%; /* Ensure wrapper takes available height */
+}
+
+/* Styles for the actual <textarea> input element */
+.outputPromptInput {
+  flex-grow: 1; /* Allow textarea to grow and fill space in its wrapper */
+  font-family: var(--mantine-font-family-monospace);
+  font-size: var(--mantine-font-size-sm);
+  background-color: var(--mantine-color-gray-0) !important; /* Changed from dark-8 to a light gray */
+  color: var(--mantine-color-dark-7) !important; /* Changed text color to dark for light background */
+  border: 1px solid var(--mantine-color-gray-3) !important; /* Added a subtle light border */
+  border-radius: var(--mantine-radius-md) !important; /* Adjusted border-radius for consistency */
+  padding: var(--mantine-spacing-md); /* Increased padding for better text spacing */
+  resize: vertical;
+  line-height: 1.6;
+  width: 100%; /* Ensure input takes full width of its wrapper */
+  min-height: 150px; /* Ensure a minimum height for the textarea itself */
+}
+
+/* These are examples if not using MantineProvider or global theme:
+:root {
+  --mantine-spacing-xl: 2rem;
+  --mantine-spacing-md: 1rem;
+  --mantine-spacing-sm: 0.5rem;
+  --mantine-color-gray-0: #f8f9fa;
+  --mantine-color-gray-1: #f1f3f5;
+  --mantine-color-gray-2: #e9ecef;
+  --mantine-color-gray-3: #dee2e6;
+  --mantine-color-gray-7: #495057;
+  --mantine-color-white: #ffffff;
+  --mantine-color-blue-0: #e7f5ff;
+  --mantine-color-blue-6: #228be6;
+  --mantine-color-blue-7: #1c7ed6;
+  --mantine-color-cyan-0: #e3fafc;
+  --mantine-font-family-monospace: monospace;
+  --mantine-font-size-sm: 0.875rem;
+  --mantine-radius-lg: 8px;
+  --mantine-radius-md: 6px;
+  --mantine-radius-sm: 4px;
+}
+*/

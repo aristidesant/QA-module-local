@@ -11,7 +11,7 @@ import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import type { Route } from "./+types/root";
 import { Box, MantineProvider } from "@mantine/core";
-
+import { Notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
 import { Loader } from "./components/ui/Loader";
 import { ModalsProvider } from "@mantine/modals";
@@ -46,6 +46,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <ModalsProvider>
             {isLoading ? <Loader text="Loading application..." /> : children}
           </ModalsProvider>
+          <Notifications position="top-right" />
         </MantineProvider>
         <ScrollRestoration />
         <Scripts />

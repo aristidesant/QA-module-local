@@ -29,11 +29,12 @@ export async function action({ request, params }: Route.ActionArgs) {
 
     // Use formDataToJson to parse the form data including nested objects
     const parsedData = JSON.parse(formData.get("data") as string);
-    console.log({ parsedData: parsedData.conversation_config });
+    console.log({ parsedData: parsedData });
     if (!agent_id) {
       console.error("Agent ID is missing from form data");
       return { error: "Agent ID is required." };
     }
+
     try {
       const updatedAgent = await agentApiClient.updateAgent(
         agent_id,

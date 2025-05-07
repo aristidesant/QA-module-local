@@ -51,7 +51,7 @@ const agentApi = (request?: Request, token?: string) => {
     // FIND ONE agent
     findAgent: async (agentId: string) => {
       const headers = await getAuthHeaders();
-      const response = await axios.get<GetAgentResponseModel>(
+      const response = await axios.get<AgentListObject>(
         `${DEFAULT_API_URL}/agents/${agentId}`,
         { headers }
       );

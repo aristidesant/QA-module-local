@@ -20,6 +20,11 @@ const menuItems = [
     icon: <IconFolder size={20} className={styles.menuIcon} />,
     to: "/agent",
   },
+  {
+    label: "Prompt Generator",
+    icon: <IconSettings size={20} className={styles.menuIcon} />,
+    to: "/prompt-generator",
+  },
 ];
 
 export const Sidebar: React.FC = () => {

@@ -1,7 +1,6 @@
 import React from "react";
-import { IconX } from "@tabler/icons-react";
 import AgentForm from "../AgentForm";
-import { Modal, Group, Title, ActionIcon, Box } from "@mantine/core";
+import { Modal, Group, Title, ActionIcon, Box, Text } from "@mantine/core";
 
 interface AgentCreateProps {
   opened: boolean;
@@ -27,18 +26,13 @@ const AgentCreate: React.FC<AgentCreateProps> = ({
   };
 
   return (
-    <Modal opened={opened} onClose={onClose} centered size="md" title={null}>
-      <Group justify="space-between" align="center" mb="md">
-        <Title order={3}>Create New Agent</Title>
-        <ActionIcon
-          variant="subtle"
-          color="gray"
-          onClick={onClose}
-          aria-label="Close"
-        >
-          <IconX size={20} />
-        </ActionIcon>
-      </Group>
+    <Modal
+      opened={opened}
+      onClose={onClose}
+      centered
+      size="md"
+      title={<Text fw="bold">Create New Agent</Text>}
+    >
       <Box>
         <AgentForm
           agent={null}
