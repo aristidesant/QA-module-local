@@ -1,4 +1,4 @@
-// PromptOutputDisplay.tsx
+// PromptOutputDisplayMantineTextarea.tsx
 import React from "react";
 import { Textarea, Paper, Title } from "@mantine/core";
 import styles from "./PromptOutputDisplay.module.css";

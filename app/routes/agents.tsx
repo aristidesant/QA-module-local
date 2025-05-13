@@ -6,7 +6,7 @@ import {
 } from "react-router";
 import AgentList from "~/modules/agents/components/AgentList";
 import agentApi from "~/api/agentApi";
-import { getSession } from "~/session.server";
+import { getSession } from "~/server-session";
 
 export async function loader({ request }: ActionFunctionArgs) {
   const agentApiClient = agentApi(request);

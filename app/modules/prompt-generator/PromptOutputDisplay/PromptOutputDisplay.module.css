@@ -32,6 +32,11 @@
   color: #2c3e50;
   resize: vertical;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 0;
 }
 
 .outputPromptInput:focus {

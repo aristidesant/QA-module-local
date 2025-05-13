@@ -1,19 +1,173 @@
+/* Wizard container styles */
+.wizardPaper {
+  background: var(--mantine-color-gray-0, #f8fafc);
+  border-radius: 18px;
+  box-shadow: 0 2px 16px 0 rgba(60, 60, 60, 0.07);
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2.5rem 2rem;
+}
+
+.wizardTitle {
+  font-weight: 800;
+  color: var(--mantine-color-blue-7, #1864ab);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.01em;
+  text-align: center;
+}
+
+.wizardStepper {
+  background: none;
+  padding: 0;
+}
+
+.formStepWrapper {
+  margin-top: 1.5rem;
+}
+
+.typeSelectorWrapper {
+  margin: 2rem 0 1.5rem 0;
+  text-align: center;
+}
+.typeSelectorTitle {
+  color: var(--mantine-color-blue-7, #1864ab);
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  font-size: 1.2rem;
+}
+.typeCard {
+  border: 1.5px solid var(--mantine-color-gray-2, #e9ecef);
+  background: var(--mantine-color-white, #fff);
+  transition: box-shadow 0.2s, border 0.2s;
+}
+.typeCardSelected {
+  border: 2px solid var(--mantine-color-blue-6, #228be6);
+  box-shadow: 0 2px 12px 0 rgba(34, 139, 230, 0.08);
+  background: var(--mantine-color-blue-0, #e7f5ff);
+}
+/* PromptList styles */
+.promptListPaper {
+  margin-top: var(--mantine-spacing-lg);
+  padding: var(--mantine-spacing-md);
+  background: var(--mantine-color-gray-0);
+  border-radius: var(--mantine-radius-md);
+}
+.promptListUl {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.promptListItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5em 0;
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+.promptListItem:last-child {
+  border-bottom: none;
+}
+.promptListContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1em;
+}
+.copyRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--mantine-spacing-md);
+}
+
+.copyButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  background: var(--mantine-color-blue-0);
+  color: var(--mantine-color-blue-7);
+  border: 1px solid var(--mantine-color-blue-2);
+  border-radius: var(--mantine-radius-md);
+  padding: 0.5em 1.1em;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border 0.15s;
+}
+.copyButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.copyButton:hover:not(:disabled) {
+  background: var(--mantine-color-blue-1);
+  color: var(--mantine-color-blue-8);
+  border-color: var(--mantine-color-blue-3);
+}
+.copyIcon {
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .wrapper {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh; /* Ensure it takes full viewport height */
-  padding: var(--mantine-spacing-xl);
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-height: 100%;
+  padding: 0 0 var(--mantine-spacing-xl) 0;
+  background: none;
 }
 
 .container {
   width: 100%;
-  max-width: 1400px; /* Increased max-width for a wider layout */
+  max-width: 900px;
   background-color: var(--mantine-color-white);
-  border-radius: var(--mantine-radius-lg); /* Match Paper prop */
-  /* box-shadow is handled by Paper shadow prop, but can be augmented here if needed */
+  border-radius: var(--mantine-radius-lg);
+  box-shadow: 0 4px 24px 0 rgba(31, 38, 135, 0.07);
+  overflow: visible;
+  border: 1px solid var(--mantine-color-gray-2);
+  display: flex;
+  flex-direction: column;
+  margin: var(--mantine-spacing-xl) auto 0 auto;
+  padding: 0;
 }
 
+.headerSection {
+  padding: var(--mantine-spacing-xl) var(--mantine-spacing-xl) var(--mantine-spacing-md) var(--mantine-spacing-xl);
+  background: none;
+  border-bottom: none;
+  text-align: center;
+}
+
+.title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--mantine-color-blue-7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--mantine-spacing-sm);
+  margin-bottom: 0.1em;
+  letter-spacing: -0.5px;
+}
+
+.sparkleIcon {
+  color: var(--mantine-color-blue-5);
+  filter: drop-shadow(0 2px 8px var(--mantine-color-blue-0));
+}
+
+.subtitle {
+  font-size: 1.08rem;
+  color: var(--mantine-color-gray-6);
+  margin: 0 auto 0.5em auto;
+  max-width: 520px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+.gridSection {
+  padding: var(--mantine-spacing-lg) var(--mantine-spacing-xl);
+}
 .title {
   font-size: 2.5rem; /* Larger title */
   font-weight: 700;
@@ -27,7 +181,9 @@
 .outputColumn {
   display: flex;
   flex-direction: column;
-  height: 100%; /* Try to make column take full available height */
+  height: 100%;
+  min-height: 400px;
+  justify-content: flex-start;
 }
 
 .outputPaper {

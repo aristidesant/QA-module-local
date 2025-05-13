@@ -1,12 +1,12 @@
 import { AppShell, Burger, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { Outlet } from "react-router";
+import { Outlet, useOutletContext } from "react-router";
 import Logo from "../Logo";
 import Sidebar from "../Sidebar";
 
 export default function Layout() {
   const [opened, { toggle }] = useDisclosure();
-
+  const { token } = useOutletContext<{ token: string }>();
   return (
     <AppShell
       header={{ height: 60 }}
@@ -25,7 +25,7 @@ export default function Layout() {
         <Sidebar />
       </AppShell.Navbar>
       <AppShell.Main>
-        <Outlet />
+        <Outlet context={{ token }} />
       </AppShell.Main>
     </AppShell>
   );

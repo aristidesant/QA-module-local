@@ -78,7 +78,16 @@ export default function AgentForm({
 
   return (
     <Paper className={styles.formContainer} p="md">
-      <form key={form.key("")} onSubmit={form.onSubmit(handleSubmit)}>
+      <form
+        key={form.key("")}
+        onSubmit={(event) => {
+          event.preventDefault();
+          form.validate();
+          if (form.isValid()) {
+            handleSubmit(form.values);
+          }
+        }}
+      >
         <Stack gap="md">
           <TextInput
             key={form.key("name")}

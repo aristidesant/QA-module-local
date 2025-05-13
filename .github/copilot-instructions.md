@@ -4,11 +4,39 @@
 - Name React component files using PascalCase (e.g., `UserCard.tsx`, not `user-card.tsx`).
 - Use named exports for all components.
 - Each component must be isolated in its own folder. The folder and the main component file should both use the component name. Include an `index.ts` file in the folder to export the component as the default export.
+- No matter the prompt language used by the user, the code should be written in English.
 
 # Project Structure & Architecture
 
 - The project uses React Router v7.
-  We MUST use them over anything else of custom compoennts. If a core component does not exist, they need to be created in a file inside that folder.
+  We MUST use them over anything else of custom components. If a core component does not exist, they need to be created in a file inside that folder.
+
+- This project is using Tanstack Query for data fetching and caching.
+- We need this structure:
+  ```
+  src
+  ├── components
+  │   ├── ComponentName
+  │   │   ├── ComponentName.tsx
+  │   │   ├── ComponentName.module.css
+  │   │   └── index.ts
+  ├── hooks
+  ├── pages
+  ├── modules
+  │   ├── module_name
+  │   │   ├── ModulePage
+  │   │   │   ├── ModulePage.module.css
+  │   │   │   ├── ModulePage.tsx
+  │   │   │   └── index.ts
+  │   │   ├── queries
+  │   │   │   └── moduleNameQueries.ts
+  ├── routes
+  │   ├── route_name.tsx // This route will have loader/actions and could have a component that will inject the module.
+  ├── api
+  │   ├── moduleApi.ts // This file will contain the base API client and the API functions.
+  ├── models // contains all the types and interfaces
+  └── utils
+  ```
 
 # Styling & UI
 
@@ -25,3 +53,5 @@
 # State Management & Logic
 
 - Use Zustand for state management.
+- Use Tanstack React Query for data fetching and caching.
+- Use Action/Loader and Fetcher for data fetching in some cases.

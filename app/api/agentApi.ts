@@ -3,8 +3,6 @@ import { getToken } from "../utils/tokenUtils";
 import type {
   BodyCreateAgentV1ConvaiAgentsCreatePost,
   BodyPatchesAnAgentSettingsV1ConvaiAgentsAgentIdPatch,
-  GetAgentResponseModel,
-  GetAgentsPageResponseModel,
 } from "elevenlabs/api";
 import type AgentListObject from "~/models/AgentListObject";
 
@@ -12,7 +10,7 @@ const DEFAULT_API_URL = process.env.API_URL as string;
 
 const agentApi = (request?: Request, token?: string) => {
   const getAuthHeaders = async () => {
-    const authToken = await getToken(request, token);
+    const authToken = await getToken(request);
     return authToken ? { Authorization: `Bearer ${authToken}` } : {};
   };
 

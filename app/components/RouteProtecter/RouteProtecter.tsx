@@ -1,6 +1,16 @@
 import type { Route } from "./+types/RouteProtecter";
-import { getSession } from "~/session.server";
-import { Outlet, useLoaderData, Navigate, useLocation } from "react-router";
+import { getSession } from "~/server-session";
+import {
+  Outlet,
+  useLoaderData,
+  Navigate,
+  useLocation,
+  useOutletContext,
+} from "react-router";
+
+type TokenType = {
+  token: string;
+};
 
 // Server loader to check session
 export async function loader({ request }: Route.LoaderArgs) {
@@ -19,7 +29,13 @@ export const RouteProtecter = () => {
   if (token && path === "/login") {
     return <Navigate to="/" replace />;
   }
-  return <Outlet />;
+  return <Outlet context={{ token }} />;
+};
+
+export const useToken = () => {
+  const token = useOutletContext<TokenType>();
+  console.log("Outlet context:", token);
+  return token;
 };
 
 export default RouteProtecter;

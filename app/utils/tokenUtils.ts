@@ -1,5 +1,3 @@
-import { getSession } from "../session.server";
-
 /**
  * Utility function to determine the token from a request or a provided token.
  *
@@ -7,18 +5,28 @@ import { getSession } from "../session.server";
  * @param token - Optional token string that takes priority over the request.
  * @returns The token string if available, otherwise null.
  */
-export async function getToken(request?: Request, token?: string): Promise<string | null> {
-  if (token) {
-    // If token is provided, prioritize it.
-    return token;
+export async function getToken(request?: Request): Promise<string | null> {
+  const isBrowser = typeof window !== "undefined";
+  if (!isBrowser && request) {
+    const { getTokenFromServer } = await import("~/server-session");
+    return getTokenFromServer(request);
   }
-
-  if (request) {
-    // If request is provided, extract the token from the session.
-    const session = await getSession(request.headers.get("Cookie"));
-    return session.get("accessToken") || null;
+  if (isBrowser) {
+    const { getTokenFromClient } = await import("~/client-session");
+    return getTokenFromClient();
   }
-
-  // If neither token nor request is provided, return null.
   return null;
+}
+
+export async function getAuthorizationHeader(
+  request?: Request
+): Promise<Record<string, string>> {
+  const token = await getToken(request);
+  return token
+    ? {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      }
+    : {};
 }

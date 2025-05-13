@@ -1,4 +1,15 @@
-import { Card, Center, Group, Image, List, Paper, Stack, Text, ThemeIcon, useMantineColorScheme } from "@mantine/core";
+import {
+  Card,
+  Center,
+  Group,
+  Image,
+  List,
+  Paper,
+  Stack,
+  Text,
+  ThemeIcon,
+  useMantineColorScheme,
+} from "@mantine/core";
 import logoDark from "./logo-dark.svg";
 import logoLight from "./logo-light.svg";
 
@@ -9,31 +20,66 @@ export function Welcome() {
   return (
     <Center style={{ minHeight: "80vh" }}>
       <Stack align="center" gap={40} w="100%" maw={500}>
-        <Paper withBorder p="lg" radius="lg" w="100%">
-          <Center>
-            <Image src={logo} alt="React Router" w={300} fit="contain" />
-          </Center>
-        </Paper>
-        <Card shadow="sm" padding="lg" radius="xl" withBorder w="100%" maw={340}>
+        <Card
+          shadow="sm"
+          padding="lg"
+          radius="xl"
+          withBorder
+          w="100%"
+          maw={340}
+        >
           <Stack gap="md">
             <Text ta="center" size="lg" fw={500}>
-              What&apos;s next?
+              Welcome to your AI Customer Service Agent!
+            </Text>
+            <Text ta="center" size="sm">
+              This platform empowers you to create, configure, and test AI
+              agents that assist users with real-time customer service. Below
+              are some actions to get started:
             </Text>
             <List spacing="sm" size="md" center>
-              {resources.map(({ href, text, icon }) => (
-                <List.Item
-                  key={href}
-                  icon={
-                    <ThemeIcon variant="light" color="blue" size={32} radius="xl">
-                      {icon}
-                    </ThemeIcon>
-                  }
+              <List.Item
+                icon={
+                  <ThemeIcon variant="light" color="blue" size={32} radius="xl">
+                    🤖
+                  </ThemeIcon>
+                }
+              >
+                <a
+                  href="/agents/create"
+                  style={{ color: "inherit", textDecoration: "underline" }}
                 >
-                  <a href={href} target="_blank" rel="noreferrer" style={{ color: "inherit", textDecoration: "underline" }}>
-                    {text}
-                  </a>
-                </List.Item>
-              ))}
+                  Create a new AI Agent
+                </a>
+              </List.Item>
+              <List.Item
+                icon={
+                  <ThemeIcon variant="light" color="blue" size={32} radius="xl">
+                    ⚙️
+                  </ThemeIcon>
+                }
+              >
+                <a
+                  href="/agents/manage"
+                  style={{ color: "inherit", textDecoration: "underline" }}
+                >
+                  Manage existing Agents
+                </a>
+              </List.Item>
+              <List.Item
+                icon={
+                  <ThemeIcon variant="light" color="blue" size={32} radius="xl">
+                    🗣️
+                  </ThemeIcon>
+                }
+              >
+                <a
+                  href="/agents/test"
+                  style={{ color: "inherit", textDecoration: "underline" }}
+                >
+                  Test your Agent in a conversation
+                </a>
+              </List.Item>
             </List>
           </Stack>
         </Card>

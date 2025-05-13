@@ -5,6 +5,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
   useNavigation,
 } from "react-router";
 import "@mantine/core/styles.css";
@@ -14,6 +15,7 @@ import { Box, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
 import { Loader } from "./components/ui/Loader";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ModalsProvider } from "@mantine/modals";
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -28,8 +30,17 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+export const loader = async () => {
+  return {
+    ENV: {
+      API_URL: process.env.API_URL,
+    },
+  };
+};
+
 export function Layout({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
+  const { ENV } = useLoaderData<typeof loader>();
   useEffect(() => {
     setIsLoading(false);
   }, []);
@@ -38,17 +49,25 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+
         <Meta />
         <Links />
       </head>
       <body style={{ background: "#f8f9fa" }}>
-        <MantineProvider>
-          <ModalsProvider>
-            {isLoading ? <Loader text="Loading application..." /> : children}
-          </ModalsProvider>
-          <Notifications position="top-right" />
-        </MantineProvider>
+        <QueryClientProvider client={new QueryClient()}>
+          <MantineProvider>
+            <ModalsProvider>
+              {isLoading ? <Loader text="Loading application..." /> : children}
+            </ModalsProvider>
+            <Notifications position="top-right" />
+          </MantineProvider>
+        </QueryClientProvider>
         <ScrollRestoration />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.ENV = ${JSON.stringify(ENV)}`,
+          }}
+        />
         <Scripts />
       </body>
     </html>
