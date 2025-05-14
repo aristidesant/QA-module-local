@@ -7,7 +7,6 @@ import {
 } from "@tabler/icons-react";
 import {
   Tabs,
-  Paper,
   Avatar,
   Title,
   Group,
@@ -24,6 +23,7 @@ import type { GetAgentResponseModel } from "elevenlabs/api";
 import AgentWidget from "~/components/AgentWidget";
 import type AgentListObject from "~/models/AgentListObject";
 import { notifications } from "@mantine/notifications";
+import ContainerCard from "~/components/ui/ContainerCard/ContainerCard";
 
 export type AgentDetailsProps = {
   agent: AgentListObject;
@@ -140,40 +140,32 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
 
   return (
     <>
-      <Paper className={styles.container} withBorder>
-        <Group className={styles.header}>
-          <Avatar size="xl" radius="xl">
-            <IconUser className={styles.avatarIcon} />
-          </Avatar>
-          <Stack gap="xs">
-            {isEditingName ? (
-              <TextInput
-                ref={nameInputRef}
-                value={name}
-                onChange={handleNameChange}
-                onBlur={handleNameBlur}
-                onKeyDown={handleNameKeyDown}
-                className={styles.nameInput}
-                variant="unstyled"
-                size="lg"
-                autoComplete="off"
-              />
-            ) : (
-              <Title
-                order={3}
-                className={`${styles.agentName} ${styles.editableName}`}
-                onClick={handleNameClick}
-              >
-                {name}
-              </Title>
-            )}
-            <Badge className={styles.agentIdBadge} variant="light">
-              ID: {agentId}
-            </Badge>
-          </Stack>
-        </Group>
-
-        <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
+        <ContainerCard
+          title={
+            <>
+              {isEditingName ? (
+                <TextInput
+                  ref={nameInputRef}
+                  value={name}
+                  onChange={handleNameChange}
+                  onBlur={handleNameBlur}
+                  onKeyDown={handleNameKeyDown}
+                  className={styles.nameInput}
+                  variant="unstyled"
+                  size="lg"
+                  autoComplete="off"
+                />
+              ) : (
+                <Title order={3} c="blue" onClick={handleNameClick}>
+                  {name}
+                </Title>
+              )}
+            </>
+          }
+          subtitle={`ID: ${agentId}`}
+          icon={IconUser}
+        >
           <input type="hidden" name="agent_id" value={agentId} />
 
           <Tabs defaultValue={tabs[0].value} className={styles.tabs}>
@@ -200,7 +192,7 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
               </Tabs.Panel>
             ))}
           </Tabs>
-          <Group justify="flex-end" mt="xl">
+          <Group justify="flex-start" mt="xl">
             <Button
               type="submit"
               loading={isSubmitting}
@@ -210,9 +202,9 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
               Save Changes
             </Button>
           </Group>
-        </form>
-        <AgentWidget agentId={agentId} />
-      </Paper>
+        </ContainerCard>
+      </form>
+      <AgentWidget agentId={agentId} />
     </>
   );
 };

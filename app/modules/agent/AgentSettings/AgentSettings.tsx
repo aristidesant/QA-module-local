@@ -1,6 +1,8 @@
 import React from "react";
-import { Select, Textarea, Slider, Text } from "@mantine/core";
+import { Select, Textarea, Slider, Text, Stack } from "@mantine/core";
 import type { GetAgentResponseModel } from "elevenlabs/api";
+import { useGetAllPrompts } from "~/modules/prompt-generator/queries/promptGeneratorQueries";
+import dayjs from "dayjs";
 
 // Define the props for AgentSettings
 interface AgentSettingsProps {
@@ -14,7 +16,7 @@ const AgentSettings: React.FC<AgentSettingsProps> = ({
 }) => {
   // Find the language setting.
   const currentLanguage = agentData?.conversation_config?.agent?.language || "";
-
+  const { data: prompts } = useGetAllPrompts();
   const languageOptions = [
     { value: "en", label: "English" },
     { value: "es", label: "Spanish" },
@@ -35,7 +37,7 @@ const AgentSettings: React.FC<AgentSettingsProps> = ({
   };
 
   return (
-    <div className="p-6 flex flex-col gap-6">
+    <Stack>
       <Select
         label="Language"
         placeholder="Select language"
@@ -67,12 +69,41 @@ const AgentSettings: React.FC<AgentSettingsProps> = ({
         description="This is the initial message the agent will send to the user."
         className="resize-none"
       />
+      <Select
+        label="Predefined Prompt"
+        description="Use an existing prompt to set the agent's identity."
+        placeholder="Select a prompt"
+        clearable
+        searchable
+        onChange={(value) => {
+          onUpdateAgentData({
+            conversation_config: {
+              ...(agentData?.conversation_config || {}),
+              agent: {
+                ...(agentData?.conversation_config?.agent || {}),
+                prompt: {
+                  ...(agentData?.conversation_config?.agent?.prompt || {}),
+                  prompt: value,
+                },
+              },
+            },
+          });
+        }}
+        data={
+          prompts?.map((prompt) => ({
+            value: prompt.generatedPrompt,
+            label: `${prompt.identifier} - ${dayjs(prompt.createdAt).format(
+              "YYYY-MM-DD HH:mm:ss"
+            )}`,
+          })) || []
+        }
+      />
 
       <Textarea
         label="Prompt"
         id="prompt"
         placeholder="Define the agent's identity..."
-        rows={4}
+        rows={12}
         value={agentData?.conversation_config?.agent?.prompt?.prompt || ""}
         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
           onUpdateAgentData({
@@ -146,7 +177,7 @@ const AgentSettings: React.FC<AgentSettingsProps> = ({
         name="model_id"
         data={["eleven_flash_v2_5"]}
       />
-    </div>
+    </Stack>
   );
 };
 

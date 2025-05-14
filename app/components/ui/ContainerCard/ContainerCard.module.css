@@ -1,0 +1,118 @@
+
+
+.containerCard {
+  padding: 32px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e7f0fd 100%);
+  border-radius: 20px;
+  box-shadow: 0 4px 32px 0 rgba(34, 139, 230, 0.07), 0 1.5px 6px 0 rgba(34, 139, 230, 0.04);
+  border: 1.5px solid #b6d0ee;
+  /* Softer, less visible border for card limits */
+}
+
+/* Removed hover effect for the card */
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 1.25rem;
+  box-shadow: 0 2px 12px 0 rgba(34, 139, 230, 0.06);
+  padding: 1rem 1.25rem;
+  position: relative;
+}
+
+.headerMain {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 0.15rem;
+}
+
+.rightSection {
+  margin-left: auto;
+  display: flex;
+  align-items: flex-start;
+  min-width: 0;
+  padding-left: 1.5rem;
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #228be6 0%, #a5d8ff 100%);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  box-shadow: 0 2px 8px 0 rgba(34, 139, 230, 0.13);
+  flex-shrink: 0;
+}
+
+.animatedIcon {
+  animation: iconPop 1.2s cubic-bezier(0.23, 1, 0.32, 1) 1;
+}
+
+@keyframes iconPop {
+  0% {
+    transform: scale(0.7) rotate(-10deg);
+    opacity: 0.2;
+  }
+  60% {
+    transform: scale(1.15) rotate(6deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: #228be6;
+  position: relative;
+  line-height: 1.2;
+  background: linear-gradient(90deg, #228be6 60%, #339af0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  padding-bottom: 0.15em;
+}
+
+.titleAccent {
+  display: block;
+  position: absolute;
+  left: 0;
+  bottom: -0.18em;
+  width: 2.5em;
+  height: 0.22em;
+  background: linear-gradient(90deg, #a5d8ff 0%, #228be6 100%);
+  border-radius: 1em;
+  opacity: 0.7;
+  z-index: 1;
+  content: '';
+}
+
+.subtitle {
+  font-size: 1.05rem;
+  color: #5c5f66;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  margin-top: 0.1em;
+}
+
+.content {
+  margin-top: 0.5rem;
+}

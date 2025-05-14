@@ -19,6 +19,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useFetcher, useNavigate } from "react-router";
+import ContainerCard from "../../../../components/ui/ContainerCard/ContainerCard";
 import classes from "./AgentList.module.css";
 import type AgentListObject from "~/models/AgentListObject";
 
@@ -54,30 +55,12 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
   };
 
   return (
-    <Box className={classes.container}>
-      <Group justify="space-between" mb="xl" align="center">
-        <Group gap="sm" align="center">
-          <ThemeIcon
-            variant="gradient"
-            gradient={{ from: "blue", to: "cyan", deg: 90 }}
-            size={48}
-            radius="xl"
-          >
-            <IconUsersGroup size={28} />
-          </ThemeIcon>
-          <Stack gap={0} justify="center" align="flex-start">
-            <Title
-              order={2}
-              className={classes.title}
-              style={{ letterSpacing: 0.5 }}
-            >
-              Agent Gallery
-            </Title>
-            <Text size="sm" className={classes.agentCount}>
-              {agents.length} agents available
-            </Text>
-          </Stack>
-        </Group>
+    <ContainerCard
+      title="Agent Gallery"
+      subtitle={`${agents.length} agents available`}
+      icon={IconUsersGroup}
+      className={classes.container}
+      rightSection={
         <Tooltip label="Create a new agent" withArrow position="left">
           <Button
             onClick={open}
@@ -92,8 +75,8 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
             New Agent
           </Button>
         </Tooltip>
-      </Group>
-
+      }
+    >
       <Modal opened={opened} onClose={close} title="Create New Agent" centered>
         <AgentCreate
           opened={opened}
@@ -149,7 +132,7 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
           </Stack>
         </Center>
       )}
-    </Box>
+    </ContainerCard>
   );
 };
 

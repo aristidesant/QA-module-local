@@ -1,3 +1,56 @@
+.notification {
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+/* Overlay loader styles for loading state */
+.loaderOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.loaderBackdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(2px);
+  z-index: 1;
+}
+
+.loaderContainer {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.loaderText {
+  color: #1c1c1c;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-top: 8px;
+}
+
+.stepperWrapper {
+  position: relative;
+}
+
+.stackWrapper {
+  position: relative;
+}
 /* Wizard container styles */
 .wizardPaper {
   background: var(--mantine-color-gray-0, #f8fafc);

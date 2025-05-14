@@ -17,7 +17,6 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
 export default function AgentRoute() {
   const { agent } = useLoaderData<typeof loader>();
-  console.log({ agent });
   return <AgentDetails agent={agent} />;
 }
 

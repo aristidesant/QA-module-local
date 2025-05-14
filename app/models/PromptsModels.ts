@@ -25,5 +25,7 @@ export type Prompt = {
   id: number;
   generationInput: Record<string, string>;
   generatedPrompt: string;
+  identifier: string;
+  createdAt: string;
   type: PromptInstructionType;
 };
