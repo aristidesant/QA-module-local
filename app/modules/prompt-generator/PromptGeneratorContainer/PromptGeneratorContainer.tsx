@@ -1,13 +1,6 @@
 import React from "react";
 import { useForm } from "@mantine/form";
-import {
-  Stepper,
-  Group,
-  Button,
-  Title,
-  Stack,
-  Loader,
-} from "@mantine/core";
+import { Stepper, Group, Button, Title, Stack, Loader } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconCheck, IconAlertTriangle } from "@tabler/icons-react";
 import { PromptInputForm } from "../PromptInputForm";
@@ -85,10 +78,7 @@ export const PromptGeneratorContainer: React.FC = () => {
   };
 
   return (
-    <ContainerCard
-      title="Prompt Generator Wizard"
-      className={styles.wizardPaper}
-    >
+    <ContainerCard title="Prompt Generator Wizard">
       <Stack gap="xl" className={styles.stackWrapper}>
         <div className={styles.stepperWrapper}>
           <Stepper active={activeStep} className={styles.wizardStepper}>
