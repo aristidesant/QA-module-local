@@ -92,7 +92,7 @@ const AgentSettings: React.FC<AgentSettingsProps> = ({
         data={
           prompts?.map((prompt) => ({
             value: prompt.generatedPrompt,
-            label: `${prompt.identifier} - ${dayjs(prompt.createdAt).format(
+            label: `${prompt.name} - ${dayjs(prompt.createdAt).format(
               "YYYY-MM-DD HH:mm:ss"
             )}`,
           })) || []
