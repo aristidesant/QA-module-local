@@ -1,24 +1,30 @@
 import axios from "axios";
-import { getToken } from "../utils/tokenUtils";
-import type {
-  BodyCreateAgentV1ConvaiAgentsCreatePost,
-  BodyPatchesAnAgentSettingsV1ConvaiAgentsAgentIdPatch,
-} from "elevenlabs/api";
+import type { BodyCreateAgentV1ConvaiAgentsCreatePost } from "elevenlabs/api";
 import type AgentListObject from "~/models/AgentListObject";
+import type { AgentUpdateModel } from "~/models/AgentListObject";
 
-const DEFAULT_API_URL = process.env.API_URL as string;
+const getDefaultApiUrl = () => {
+  if (typeof window !== "undefined") {
+    return (window as any).ENV?.API_URL || process.env.API_URL;
+  }
+  if (typeof process !== "undefined") {
+    return process.env.API_URL;
+  }
+  return undefined;
+};
 
-const agentApi = (request?: Request, token?: string) => {
-  const getAuthHeaders = async () => {
-    const authToken = await getToken(request);
-    return authToken ? { Authorization: `Bearer ${authToken}` } : {};
-  };
+const DEFAULT_API_URL = getDefaultApiUrl() as string;
 
+/**
+ * Generic Agent API client
+ * @param authHeader - Authorization header object, e.g. { Authorization: 'Bearer ...' }
+ */
+const agentApi = (authHeader: Record<string, string> = {}) => {
   return {
+    // CREATE agent
     createAgent: async (agent: BodyCreateAgentV1ConvaiAgentsCreatePost) => {
-      const headers = await getAuthHeaders();
       const response = await axios.post(`${DEFAULT_API_URL}/agents`, agent, {
-        headers,
+        headers: authHeader,
       });
       return response.data;
     },
@@ -33,40 +39,33 @@ const agentApi = (request?: Request, token?: string) => {
       },
       extraHeaders?: Record<string, string>
     ) => {
-      const headers = await getAuthHeaders();
       const response = await axios.get<AgentListObject[]>(
         `${DEFAULT_API_URL}/agents`,
         {
           params,
-          headers: { ...headers, ...(extraHeaders || {}) },
+          headers: { ...authHeader, ...(extraHeaders || {}) },
           timeout: 5000,
         }
       );
-      console.log("Response from findAllAgents:", response.data);
       return response.data;
     },
 
     // FIND ONE agent
     findAgent: async (agentId: string) => {
-      const headers = await getAuthHeaders();
       const response = await axios.get<AgentListObject>(
         `${DEFAULT_API_URL}/agents/${agentId}`,
-        { headers }
+        { headers: authHeader }
       );
       return response.data;
     },
 
-    // UPDATE agent
-    updateAgent: async (
-      agentId: string,
-      data: BodyPatchesAnAgentSettingsV1ConvaiAgentsAgentIdPatch
-    ) => {
-      const headers = await getAuthHeaders();
+    // UPDATE agent (PATCH)
+    updateAgent: async (agentId: string, data: Partial<AgentUpdateModel>) => {
       const response = await axios.patch(
         `${DEFAULT_API_URL}/agents/${agentId}`,
         data,
         {
-          headers,
+          headers: authHeader,
         }
       );
       return response.data;
@@ -74,11 +73,10 @@ const agentApi = (request?: Request, token?: string) => {
 
     // DELETE agent
     deleteAgent: async (agentId: string) => {
-      const headers = await getAuthHeaders();
       const response = await axios.delete(
         `${DEFAULT_API_URL}/agents/${agentId}`,
         {
-          headers,
+          headers: authHeader,
         }
       );
       return response.data;

@@ -34,11 +34,7 @@ const promptTypesApi = (authHeader: Record<string, string>) => {
 
     // FIND ALL prompt types
     findAllPromptTypes: async (
-      params?: {
-        status?: "ACTIVE" | "INACTIVE";
-        cursor?: string;
-        limit?: number;
-      },
+      params?: Record<string, string>,
       extraHeaders?: Record<string, string>
     ) => {
       const response = await axios.get<PromptType[]>(

@@ -28,11 +28,7 @@ export const useCreatePromptType = () => {
 };
 
 // Get all prompt types
-export const useGetAllPromptTypes = (params?: {
-  status?: "ACTIVE" | "INACTIVE";
-  cursor?: string;
-  limit?: number;
-}) => {
+export const useGetAllPromptTypes = (params?: Record<string, string>) => {
   const { token } = useToken();
   const header = getClientAuthorizationHeader();
   return useQuery({

@@ -3,9 +3,12 @@ import { Flex } from "@mantine/core";
 import * as icons from "@tabler/icons-react";
 import type { JSX } from "react";
 
-export default function getIcon(iconName?: string): JSX.Element {
+export default function getIcon(
+  iconName?: string,
+  props?: icons.IconProps
+): JSX.Element {
   if (!iconName) {
-    return <icons.IconHelpCircle />;
+    return <icons.IconHelpCircle {...props} />;
   }
 
   const names = iconName.split(",").map((name) => name.trim());
@@ -13,7 +16,7 @@ export default function getIcon(iconName?: string): JSX.Element {
     return (
       <Flex align="center" gap={1}>
         {names.map((name) => (
-          <React.Fragment key={name}>{getIcon(name)}</React.Fragment>
+          <React.Fragment key={name}>{getIcon(name, props)}</React.Fragment>
         ))}
       </Flex>
     );
@@ -26,8 +29,8 @@ export default function getIcon(iconName?: string): JSX.Element {
   const DefaultIconComponent = icons.IconHelpCircle;
 
   return IconComponent ? (
-    <IconComponent key={`${name}-${Date.now()}`} />
+    <IconComponent key={`${name}-${Date.now()}`} {...props} />
   ) : (
-    <DefaultIconComponent key={`default-${Date.now()}`} />
+    <DefaultIconComponent key={`default-${Date.now()}`} {...props} />
   );
 }

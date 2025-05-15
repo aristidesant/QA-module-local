@@ -5,25 +5,18 @@ import {
   IconMicrophone,
   IconDeviceFloppy,
 } from "@tabler/icons-react";
-import {
-  Tabs,
-  Avatar,
-  Title,
-  Group,
-  Stack,
-  Badge,
-  Button,
-  TextInput,
-} from "@mantine/core";
+import { Tabs, Title, Group, Button, TextInput } from "@mantine/core";
 import AgentSettings from "../AgentSettings";
 import AgentVoiceSettings from "../AgentVoiceSettings/AgentVoiceSettings";
 import styles from "./AgentDetails.module.css";
-import { useFetcher } from "react-router";
+// import { useFetcher } from "react-router";
 import type { GetAgentResponseModel } from "elevenlabs/api";
 import AgentWidget from "~/components/AgentWidget";
 import type AgentListObject from "~/models/AgentListObject";
 import { notifications } from "@mantine/notifications";
 import ContainerCard from "~/components/ui/ContainerCard/ContainerCard";
+import { useUpdateAgent } from "~/queries/agentQueries";
+import type { AgentUpdateModel } from "~/models/AgentListObject";
 
 export type AgentDetailsProps = {
   agent: AgentListObject;
@@ -31,9 +24,17 @@ export type AgentDetailsProps = {
 
 const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
   const [editableAgent, setEditableAgent] = useState(agent?.config);
+  const [name, setName] = useState(agent.name);
   const [isEditingName, setIsEditingName] = useState(false);
   const nameInputRef = useRef<HTMLInputElement>(null);
-  const fetcher = useFetcher();
+  const {
+    mutateAsync: updateAgent,
+    isPending,
+    isSuccess,
+    isError,
+    error,
+    reset,
+  } = useUpdateAgent();
 
   const handleAgentUpdate = (updatedFields: any) => {
     setEditableAgent((prev: any) => ({
@@ -42,7 +43,6 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
     }));
   };
 
-  const { name } = editableAgent;
   const agentId = agent.id as string;
   // Focus the input when edit mode is activated
   useEffect(() => {
@@ -52,31 +52,30 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
     }
   }, [isEditingName]);
 
-  // Notify user on submission result
+  // Notify user on mutation result
   useEffect(() => {
-    if (fetcher.state === "idle" && fetcher.data) {
-      const response = fetcher.data as any;
-      if (response.error) {
-        notifications.show({
-          title: "Error",
-          message: response.error,
-          color: "red",
-        });
-      } else {
-        notifications.show({
-          title: "Success",
-          message: "Agent updated successfully.",
-        });
-      }
+    if (isSuccess) {
+      notifications.show({
+        title: "Success",
+        message: "Agent updated successfully.",
+      });
+      reset();
+    } else if (isError && error) {
+      notifications.show({
+        title: "Error",
+        message: (error as any)?.message || "Failed to update agent.",
+        color: "red",
+      });
+      reset();
     }
-  }, [fetcher.state, fetcher.data]);
+  }, [isSuccess, isError, error, reset]);
 
   const handleNameClick = () => {
     setIsEditingName(true);
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleAgentUpdate({ name: e.target.value });
+    setName(e.target.value);
   };
 
   const handleNameBlur = () => {
@@ -88,7 +87,7 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
       setIsEditingName(false);
     } else if (e.key === "Escape") {
       // Revert to original value and exit edit mode
-      handleAgentUpdate({ name: agent.name });
+      setName(agent.name);
       setIsEditingName(false);
     }
   };
@@ -118,25 +117,30 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
     },
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const data = JSON.stringify(editableAgent);
-    // Create a plain object with the editable fields
-    const formData = {
-      data,
-      agent_id: agentId, // Ensure the agent_id is included
+    const data: Partial<AgentUpdateModel> = {
+      name,
+      conversation_config: editableAgent.conversation_config,
+      platform_settings: editableAgent.platform_settings,
     };
-
-    console.log(data);
-    // Submit using the fetcher
-    fetcher.submit(formData, {
-      method: "post",
-      action: `/agent/${agentId}`,
-    });
+    try {
+      await updateAgent({
+        id: agentId,
+        data,
+      });
+    } catch (err) {
+      console.error("Error updating agent:", err);
+      notifications.show({
+        title: "Error",
+        message: "Failed to update agent.",
+        color: "red",
+      });
+    }
   };
 
   console.log({ agent });
-  const isSubmitting = fetcher.state === "submitting";
+  const isSubmitting = isPending;
 
   return (
     <>

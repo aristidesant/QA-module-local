@@ -9,9 +9,13 @@ import agentApi from "~/api/agentApi";
 import { getSession } from "~/server-session";
 
 export async function loader({ request }: ActionFunctionArgs) {
-  const agentApiClient = agentApi(request);
   const session = await getSession(request.headers.get("Cookie"));
+  const token = session.get("accessToken");
   const clientId = session.get("clientId");
+  const agentApiClient = agentApi({
+    Authorization: `Bearer ${token}`,
+    "x-client-id": clientId ?? "",
+  });
   return {
     agents: agentApiClient
       .findAllAgents(
@@ -40,21 +44,4 @@ export default function AgentRoute() {
       )}
     </Await>
   );
-}
-
-// Optional action export if using Remix-style actions; otherwise handle in your server/api route
-export async function action({ request }: ActionFunctionArgs) {
-  if (request.method === "POST") {
-    const formData = await request.formData();
-    const agentData = JSON.parse(formData.get("data")?.toString() || "");
-    const agentApiClient = agentApi(request);
-
-    try {
-      await agentApiClient.createAgent(agentData);
-      return { success: true };
-    } catch (err: any) {
-      console.error("Error creating agent:", err);
-      return { error: err.message };
-    }
-  }
 }

@@ -1,23 +1,19 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Text,
-  TextInput,
-  Stack,
-  Paper,
-  Notification,
-} from "@mantine/core";
+import { Button, Text, TextInput, Stack, Paper } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import type { BodyCreateAgentV1ConvaiAgentsCreatePost } from "elevenlabs/api";
 import { IconDeviceFloppy, IconCheck } from "@tabler/icons-react";
 import styles from "./AgentForm.module.css";
-import { useFetcher } from "react-router";
+import { useCreateAgent, useUpdateAgent } from "~/queries/agentQueries";
+import { notifications } from "@mantine/notifications";
+import { useRevalidator } from "react-router";
 
 interface AgentFormProps {
   agent?: BodyCreateAgentV1ConvaiAgentsCreatePost | null;
   onSave: (agent: Partial<BodyCreateAgentV1ConvaiAgentsCreatePost>) => void;
   loading?: boolean;
   error?: string | null;
+  type?: "INBOUND" | "OUTBOUND";
 }
 
 const DEFAULT_VALUES: BodyCreateAgentV1ConvaiAgentsCreatePost = {
@@ -39,9 +35,11 @@ export default function AgentForm({
   onSave,
   loading = false,
   error = null,
+  type,
 }: AgentFormProps) {
-  const fetcher = useFetcher();
+  const { revalidate } = useRevalidator();
   const [formError, setFormError] = useState<string | null>(null);
+  const createAgentMutation = useCreateAgent();
 
   const form = useForm({
     initialValues: agent || DEFAULT_VALUES,
@@ -54,26 +52,29 @@ export default function AgentForm({
     }
   }, [agent]);
 
-  // Handle fetcher responses
-  useEffect(() => {
-    if (fetcher.data?.success) {
-      onSave(fetcher.data.agent || {});
-    } else if (fetcher.data?.error) {
-      setFormError(fetcher.data.error);
-    }
-  }, [fetcher.data]);
+  // No useEffect needed for mutation state; handle everything in handleSubmit
 
-  const handleSubmit = (values: typeof form.values) => {
+  const handleSubmit = async (values: typeof form.values) => {
     setFormError(null);
-    fetcher.submit(
-      {
-        data: JSON.stringify(values),
-      },
-      {
-        method: "post",
-        action: "/agent",
-      }
-    );
+    const agentType =
+      type && (type === "INBOUND" || type === "OUTBOUND") ? type : "INBOUND";
+    const payload = {
+      ...values,
+      type: agentType,
+    };
+    try {
+      const data = await createAgentMutation.mutateAsync(payload);
+      notifications.show({
+        title: "Success",
+        message: "Agent saved successfully!",
+        color: "green",
+        icon: <IconCheck size={18} />,
+        autoClose: 3000,
+      });
+      revalidate();
+    } catch (error: any) {
+      setFormError(error?.message || "Failed to create agent.");
+    }
   };
 
   return (
@@ -99,24 +100,15 @@ export default function AgentForm({
 
           {error && <Text c="red">{error}</Text>}
           {formError && <Text c="red">{formError}</Text>}
-          {fetcher.data?.success && (
-            <Notification
-              icon={<IconCheck size={18} />}
-              color="green"
-              withCloseButton={false}
-            >
-              Agent saved successfully!
-            </Notification>
-          )}
 
           <Button
             type="submit"
-            loading={loading || fetcher.state === "submitting"}
+            loading={loading || createAgentMutation.isPending}
             leftSection={<IconDeviceFloppy size={18} />}
             fullWidth
             mt={10}
           >
-            {agent ? "Update Agent" : "Create Agent"}
+            Create Agent
           </Button>
         </Stack>
       </form>

@@ -16,6 +16,8 @@ import {
   IconUserCircle,
   IconEye,
   IconTrash,
+  IconPhoneIncoming,
+  IconPhoneOutgoing,
 } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import styles from "./AgentCard.module.css";
@@ -88,6 +90,23 @@ export const AgentCard: React.FC<AgentCardProps> = ({
               {agent.name}
             </Title>
           </Tooltip>
+          <Group gap="xs" mt={"xs"} className={styles.typeBadgeContainer}>
+            <Badge
+              className={styles.agentTypeBadge}
+              color={agent.type === "INBOUND" ? "green" : "orange"}
+              leftSection={
+                agent.type === "INBOUND" ? (
+                  <IconPhoneIncoming size={14} stroke={1.5} />
+                ) : (
+                  <IconPhoneOutgoing size={14} stroke={1.5} />
+                )
+              }
+              variant="light"
+              size="md"
+            >
+              {agent.type === "INBOUND" ? "Inbound" : "Outbound"}
+            </Badge>
+          </Group>
         </Box>
       </Group>
 

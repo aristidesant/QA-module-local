@@ -27,36 +27,6 @@ export interface PromptTypeSelectorProps {
   onSelect: (type: number | null) => void;
 }
 
-const typeIcons: Record<string, React.ReactNode> = {
-  finance: (
-    <IconCurrencyDollar
-      size={38}
-      color="#228be6"
-      className={classes.typeIcon}
-    />
-  ),
-  general: (
-    <IconAdjustments size={38} color="#228be6" className={classes.typeIcon} />
-  ),
-  education: (
-    <IconBook size={38} color="#228be6" className={classes.typeIcon} />
-  ),
-  creative: <IconBulb size={38} color="#228be6" className={classes.typeIcon} />,
-  ai: <IconRobot size={38} color="#228be6" className={classes.typeIcon} />,
-  personal: <IconUser size={38} color="#228be6" className={classes.typeIcon} />,
-};
-
-const typeDescriptions: Record<string, string> = {
-  finance: "Generate financial prompts for budgeting, analysis, and reporting.",
-  general: "Versatile prompts for everyday productivity and communication.",
-  education:
-    "Create educational prompts for learning, teaching, and study aids.",
-  creative:
-    "Unleash creativity with prompts for writing, art, and brainstorming.",
-  ai: "AI-focused prompts for automation, chatbots, and smart solutions.",
-  personal: "Personal prompts for self-improvement, journaling, and planning.",
-};
-
 export const PromptTypeSelector: React.FC<PromptTypeSelectorProps> = ({
   types,
   selectedType,
@@ -91,7 +61,7 @@ export const PromptTypeSelector: React.FC<PromptTypeSelectorProps> = ({
               >
                 <Stack align="center" gap={8}>
                   <ThemeIcon variant="light" size={100}>
-                    {getIcon(type.icon || undefined)}
+                    {getIcon(type.icon || undefined, { size: 70 })}
                   </ThemeIcon>
                   <Text className={classes.typeTitle} tt="capitalize">
                     {type.name}

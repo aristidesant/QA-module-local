@@ -10,3 +10,12 @@ export default interface AgentListObject {
   updatedAt: string;
   deletedAt: string | null;
 }
+
+export type AgentUpdateModel = {
+  use_tool_ids: boolean;
+  conversation_config: Record<string, any>;
+  platform_settings: Record<string, any>;
+  name: string;
+  promptId: number;
+  agentType: "INBOUND" | "OUTBOUND";
+};
