@@ -22,6 +22,10 @@ export async function loader({ request }: ActionFunctionArgs) {
       )
       .then((res) => {
         return res;
+      })
+      .catch((err) => {
+        console.error("Error fetching agents:", err?.response?.data);
+        throw new Response("Error fetching agents", { status: 500 });
       }),
   };
 }
@@ -30,7 +34,7 @@ export default function AgentRoute() {
   const agents = useLoaderData<typeof loader>();
 
   return (
-    <Await resolve={agents.agents}>
+    <Await resolve={agents.agents} errorElement={<>Something is not wokring</>}>
       {(resolvedAgents) => (
         <AgentList agents={resolvedAgents ?? []} onCreateNew={() => {}} />
       )}
