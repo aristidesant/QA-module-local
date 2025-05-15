@@ -12,6 +12,7 @@ import styles from "./PromptGeneratorContainer.module.css";
 import ContainerCard from "../../../components/ui/ContainerCard";
 import type { PromptInstructionType } from "~/config/prompt-generator/useForm";
 import { useNavigate } from "react-router";
+import type { PromptType } from "~/models/PromptTypeModel";
 
 const PROMPT_TYPES = Object.values({
   FINANCE: "FINANCE",
@@ -23,14 +24,13 @@ const PROMPT_TYPES = Object.values({
 export const PromptGeneratorContainer: React.FC = () => {
   const navigate = useNavigate();
   const [activeStep, setActiveStep] = React.useState(0);
-  const [selectedType, setSelectedType] =
-    React.useState<PromptInstructionType | null>(null);
+  const [selectedType, setSelectedType] = React.useState<number | null>(null);
   const [createdPrompt, setCreatedPrompt] = React.useState<Prompt>();
   const { mutateAsync: createPrompt, isPending } = useCreatePrompt();
   const form = useForm<Record<string, string>>({});
 
-  const handleTypeSelect = (type: string) => {
-    setSelectedType(type as PromptInstructionType);
+  const handleTypeSelect = (type: number | null) => {
+    setSelectedType(type);
     setActiveStep(1);
     form.reset();
     setCreatedPrompt(undefined);
@@ -40,7 +40,7 @@ export const PromptGeneratorContainer: React.FC = () => {
     try {
       const newPrompt = await createPrompt({
         generationInput: values,
-        type: selectedType ?? "CLIENT SUPPORT",
+        typeId: selectedType || undefined,
       });
       setCreatedPrompt(newPrompt);
       setActiveStep(2);
@@ -85,7 +85,7 @@ export const PromptGeneratorContainer: React.FC = () => {
             <Stepper.Step label="Type" description="Select type">
               <PromptTypeSelector
                 types={PROMPT_TYPES}
-                selectedType={selectedType || ""}
+                selectedType={selectedType}
                 onSelect={handleTypeSelect}
               />
             </Stepper.Step>

@@ -27,5 +27,5 @@ export type Prompt = {
   generatedPrompt: string;
   name: string;
   createdAt: string;
-  type: PromptInstructionType;
+  typeId: number;
 };
