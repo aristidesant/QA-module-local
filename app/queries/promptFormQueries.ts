@@ -2,18 +2,18 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import promptFormsApi from "~/api/promptFormsApi";
 import { getClientAuthorizationHeader } from "~/client-session";
 import { useToken } from "~/components/RouteProtecter/RouteProtecter";
-import type { PromptFormType } from "~/models/PromptFormMOdel";
+import type { PromptForm } from "~/models/PromptFormMOdel";
 
 // Crear formulario de prompt
 export const useCreatePromptForm = () => {
-  const { token } = useToken();
+  const token = useToken();
   const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (promptForm: Partial<PromptFormType>) => {
+    mutationFn: async (promptForm: Partial<PromptForm>) => {
       const api = promptFormsApi({
         ...header,
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token?.token}`,
       });
       return api.createPromptForm(promptForm);
     },
@@ -29,14 +29,14 @@ export const useCreatePromptForm = () => {
 
 // Obtener todos los formularios de prompt
 export const useGetAllPromptForms = (params?: Record<string, any>) => {
-  const { token } = useToken();
+  const token = useToken();
   const header = getClientAuthorizationHeader();
   return useQuery({
     queryKey: ["promptForms", params],
     queryFn: async () => {
       const api = promptFormsApi({
         ...header,
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token?.token}`,
       });
       return api.findAllPromptForms(params);
     },
@@ -45,14 +45,14 @@ export const useGetAllPromptForms = (params?: Record<string, any>) => {
 
 // Obtener un formulario de prompt por id
 export const useGetPromptForm = (id: string) => {
-  const { token } = useToken();
+  const token = useToken();
   const header = getClientAuthorizationHeader();
   return useQuery({
     queryKey: ["promptForm", id],
     queryFn: async () => {
       const api = promptFormsApi({
         ...header,
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token?.token}`,
       });
       return api.findPromptForm(id);
     },
@@ -62,7 +62,7 @@ export const useGetPromptForm = (id: string) => {
 
 // Actualizar formulario de prompt
 export const useUpdatePromptForm = () => {
-  const { token } = useToken();
+  const token = useToken();
   const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
@@ -71,11 +71,11 @@ export const useUpdatePromptForm = () => {
       data,
     }: {
       id: string;
-      data: Partial<PromptFormType>;
+      data: Partial<PromptForm>;
     }) => {
       const api = promptFormsApi({
         ...header,
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token?.token}`,
       });
       return api.updatePromptForm(id, data);
     },
@@ -94,14 +94,14 @@ export const useUpdatePromptForm = () => {
 
 // Eliminar formulario de prompt
 export const useDeletePromptForm = () => {
-  const { token } = useToken();
+  const token = useToken();
   const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
       const api = promptFormsApi({
         ...header,
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token?.token}`,
       });
       return api.deletePromptForm(id);
     },

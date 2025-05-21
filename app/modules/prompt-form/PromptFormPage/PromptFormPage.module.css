@@ -1,0 +1,42 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 2rem 1rem;
+  background: var(--mantine-color-body);
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--mantine-color-dark-7);
+}
+
+.formWrapper {
+  width: 100%;
+  background: var(--mantine-color-white);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  padding: 2rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex: 1 1 auto;
+}
+
+@media (max-width: 600px) {
+  .formWrapper {
+    padding: 1rem;
+  }
+  .title {
+    font-size: 1.5rem;
+  }
+}

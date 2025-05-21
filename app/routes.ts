@@ -13,6 +13,7 @@ export default [
       route("/agent/:agent_id", "routes/agent_id.tsx"),
       route("/agent", "routes/agents.tsx"),
       route("/prompt-generator", "routes/prompt_generator.tsx"),
+      route("/prompt-form", "routes/prompt_form.tsx"),
     ]),
   ]),
 ] satisfies RouteConfig;

@@ -4,7 +4,7 @@ export type PromptGeneratorForm = {
   type: PromptInstructionType;
   fields: PromptGeneratorFormField[];
 };
-type PromptGeneratorFormField = {
+export type PromptGeneratorFormField = {
   label: string;
   name: string;
   placeholder: string;

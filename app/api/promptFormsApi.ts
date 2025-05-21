@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { PromptFormType } from "~/models/PromptFormMOdel";
+import type { PromptForm } from "~/models/PromptFormMOdel";
 // import { getAuthorizationHeader } from "../utils/tokenUtils";
 
 const getDefaultApiUrl = () => {
@@ -21,7 +21,7 @@ const DEFAULT_API_URL = getDefaultApiUrl() as string;
 const promptFormsApi = (authHeader: Record<string, string>) => {
   return {
     // CREATE prompt form
-    createPromptForm: async (promptForm: Partial<PromptFormType>) => {
+    createPromptForm: async (promptForm: Partial<PromptForm>) => {
       const response = await axios.post(
         `${DEFAULT_API_URL}/prompt-forms`,
         promptForm,
@@ -37,7 +37,7 @@ const promptFormsApi = (authHeader: Record<string, string>) => {
       params?: Record<string, any>,
       extraHeaders?: Record<string, string>
     ) => {
-      const response = await axios.get<PromptFormType[]>(
+      const response = await axios.get<PromptForm[]>(
         `${DEFAULT_API_URL}/prompt-forms`,
         {
           params,
@@ -50,7 +50,7 @@ const promptFormsApi = (authHeader: Record<string, string>) => {
 
     // FIND ONE prompt form
     findPromptForm: async (promptFormId: string) => {
-      const response = await axios.get<PromptFormType>(
+      const response = await axios.get<PromptForm>(
         `${DEFAULT_API_URL}/prompt-forms/${promptFormId}`,
         { headers: authHeader }
       );
@@ -60,9 +60,9 @@ const promptFormsApi = (authHeader: Record<string, string>) => {
     // UPDATE prompt form (PATCH)
     updatePromptForm: async (
       promptFormId: string,
-      data: Partial<PromptFormType>
+      data: Partial<PromptForm>
     ) => {
-      const response = await axios.patch<PromptFormType>(
+      const response = await axios.patch<PromptForm>(
         `${DEFAULT_API_URL}/prompt-forms/${promptFormId}`,
         data,
         {

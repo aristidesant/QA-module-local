@@ -8,6 +8,7 @@ import {
   Badge,
   Group,
   Tooltip,
+  LoadingOverlay,
 } from "@mantine/core";
 import { openConfirmModal } from "@mantine/modals";
 import {
@@ -22,18 +23,18 @@ import {
 import dayjs from "dayjs";
 import styles from "./AgentCard.module.css";
 import type AgentListObject from "~/models/AgentListObject";
+import { useDeleteAgent } from "~/queries/agentQueries";
+import { useRevalidator } from "react-router";
+import { notifications } from "@mantine/notifications";
 
 export interface AgentCardProps {
   agent: AgentListObject;
   onClick?: (agent: AgentListObject) => void;
-  onRemove?: (agent: AgentListObject) => void;
 }
 
-export const AgentCard: React.FC<AgentCardProps> = ({
-  agent,
-  onClick,
-  onRemove,
-}) => {
+export const AgentCard: React.FC<AgentCardProps> = ({ agent, onClick }) => {
+  const { revalidate } = useRevalidator();
+  const { mutateAsync: deleteAgent, isPending: isDeleting } = useDeleteAgent();
   const handleRemove = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
@@ -49,10 +50,24 @@ export const AgentCard: React.FC<AgentCardProps> = ({
         labels: { confirm: "Remove Agent", cancel: "Cancel" },
         confirmProps: { color: "red" },
         onCancel: () => {},
-        onConfirm: () => onRemove?.(agent),
+        onConfirm: async () => {
+          try {
+            await deleteAgent(agent.id);
+            revalidate();
+          } catch (error) {
+            console.error("Error deleting agent:", error);
+          }
+          notifications.show({
+            title: "Agent Removed",
+            message: `${agent.name} has been removed successfully.`,
+            color: "green",
+            autoClose: 3000,
+            icon: <IconTrash size={16} />,
+          });
+        },
       });
     },
-    [agent, onRemove]
+    [agent, deleteAgent]
   );
 
   const handleView = useCallback(
@@ -76,6 +91,7 @@ export const AgentCard: React.FC<AgentCardProps> = ({
       data-testid="agent-card"
       tabIndex={0}
     >
+      <LoadingOverlay visible={isDeleting} />
       <Group className={styles.header} gap="md">
         <Avatar color="blue" radius="xl" size={48} className={styles.avatar}>
           <IconRobot size={28} stroke={1.5} />

@@ -31,7 +31,6 @@ interface AgentListProps {
 const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const navigate = useNavigate();
-  const fetcher = useFetcher();
   const handleAgentClick = (agent: AgentListObject) => {
     console.log("Agent clicked:", agent);
     navigate(`/agent/${agent.id}`, {
@@ -44,19 +43,9 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
     close();
   };
 
-  const handleRemove = (agent: AgentListObject) => {
-    fetcher.submit(
-      {},
-      {
-        method: "delete",
-        action: `/agent/${agent.id}`,
-      }
-    );
-  };
-
   return (
     <ContainerCard
-      title="Agent Gallery"
+      title="Agents"
       subtitle={`${agents.length} agents available`}
       icon={IconUsersGroup}
       className={classes.container}
@@ -93,11 +82,7 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
               className={classes.agentButton}
               style={{ transition: "box-shadow 0.2s, border 0.2s", padding: 0 }}
             >
-              <AgentCard
-                onRemove={handleRemove}
-                onClick={handleAgentClick}
-                agent={agent}
-              />
+              <AgentCard onClick={handleAgentClick} agent={agent} />
             </div>
           ))}
         </SimpleGrid>

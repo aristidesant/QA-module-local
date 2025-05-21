@@ -6,14 +6,14 @@ import type { PromptType } from "~/models/PromptTypeModel";
 
 // Create prompt type
 export const useCreatePromptType = () => {
-  const { token } = useToken();
+  const token = useToken();
   const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (promptType: Partial<PromptType>) => {
       const api = promptTypesApi({
         ...header,
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token.token}`,
       });
       return api.createPromptType(promptType);
     },
@@ -29,14 +29,14 @@ export const useCreatePromptType = () => {
 
 // Get all prompt types
 export const useGetAllPromptTypes = (params?: Record<string, string>) => {
-  const { token } = useToken();
+  const token = useToken();
   const header = getClientAuthorizationHeader();
   return useQuery({
     queryKey: ["promptTypes", params],
     queryFn: async () => {
       const api = promptTypesApi({
         ...header,
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token?.token}`,
       });
       return api.findAllPromptTypes(params);
     },
@@ -45,14 +45,14 @@ export const useGetAllPromptTypes = (params?: Record<string, string>) => {
 
 // Get one prompt type by id
 export const useGetPromptType = (id: string) => {
-  const { token } = useToken();
+  const token = useToken();
   const header = getClientAuthorizationHeader();
   return useQuery({
     queryKey: ["promptType", id],
     queryFn: async () => {
       const api = promptTypesApi({
         ...header,
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token?.token}`,
       });
       return api.findPromptType(id);
     },
@@ -62,7 +62,7 @@ export const useGetPromptType = (id: string) => {
 
 // Update prompt type
 export const useUpdatePromptType = () => {
-  const { token } = useToken();
+  const token = useToken();
   const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
@@ -75,7 +75,7 @@ export const useUpdatePromptType = () => {
     }) => {
       const api = promptTypesApi({
         ...header,
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token.token}`,
       });
       return api.updatePromptType(id, data);
     },
@@ -94,14 +94,14 @@ export const useUpdatePromptType = () => {
 
 // Delete prompt type
 export const useDeletePromptType = () => {
-  const { token } = useToken();
+  const token = useToken();
   const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
       const api = promptTypesApi({
         ...header,
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token.token}`,
       });
       return api.deletePromptType(id);
     },

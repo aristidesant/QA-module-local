@@ -1,5 +1,5 @@
 import React from "react";
-import { Paper, Stack } from "@mantine/core";
+import { Divider, Paper, Stack } from "@mantine/core";
 import {
   IconLayoutDashboard,
   IconFolder,
@@ -8,7 +8,7 @@ import {
 import { NavLink, useLocation } from "react-router";
 import styles from "./Sidebar.module.css";
 
-const menuItems = [
+const menuItems: MenuItem[] = [
   {
     label: "Overview",
     icon: <IconLayoutDashboard size={20} className={styles.menuIcon} />,
@@ -27,36 +27,52 @@ const menuItems = [
   },
 ];
 
-export const Sidebar: React.FC = () => {
-  const location = useLocation();
+const maintenanceItems: MenuItem[] = [
+  {
+    label: "Prompt Form",
+    icon: <IconSettings size={20} className={styles.menuIcon} />,
+    to: "/prompt-form",
+  },
+];
 
+export const Sidebar: React.FC = () => {
   return (
     <Paper className={styles.sidebar} radius={0} shadow="sm" withBorder>
       <nav>
         <Stack className={styles.menuList} gap="md">
-          {menuItems.map(({ label, icon, to, exact }) => {
-            const isSelected = exact
-              ? location.pathname === to
-              : location.pathname.startsWith(to) && to !== "/";
-            return (
-              <NavLink
-                key={label}
-                to={to}
-                className={({ isActive }) =>
-                  [
-                    styles.menuItem,
-                    isSelected ? styles.menuItemSelected : "",
-                  ].join(" ")
-                }
-                end={!!exact}
-              >
-                {icon}
-                <span className={styles.menuText}>{label}</span>
-              </NavLink>
-            );
-          })}
+          {menuItems.map(renderMenuItem)}
+          <Divider label="Maintenance" labelPosition="left" />
+          {maintenanceItems.map(renderMenuItem)}
         </Stack>
       </nav>
     </Paper>
+  );
+};
+
+type MenuItem = {
+  label: string;
+  icon: React.ReactNode;
+  to: string;
+  exact?: boolean;
+};
+
+export const renderMenuItem = ({ label, icon, to, exact }: MenuItem) => {
+  const location = useLocation();
+
+  const isSelected = exact
+    ? location.pathname === to
+    : location.pathname.startsWith(to) && to !== "/";
+  return (
+    <NavLink
+      key={label}
+      to={to}
+      className={({ isActive }) =>
+        [styles.menuItem, isSelected ? styles.menuItemSelected : ""].join(" ")
+      }
+      end={!!exact}
+    >
+      {icon}
+      <span className={styles.menuText}>{label}</span>
+    </NavLink>
   );
 };

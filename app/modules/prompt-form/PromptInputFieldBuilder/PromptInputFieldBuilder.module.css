@@ -1,0 +1,46 @@
+
+.fieldBuilderRow {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  background: var(--mantine-color-gray-0, #f8fafc);
+  border: 1.5px solid var(--mantine-color-gray-3, #e9ecef);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px 0 rgba(60, 60, 60, 0.06);
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  margin-bottom: 2rem;
+  position: relative;
+  transition: box-shadow 0.2s;
+}
+
+.fieldBuilderRow:hover {
+  box-shadow: 0 4px 16px 0 rgba(60, 60, 60, 0.10);
+}
+
+.inputFlex {
+  flex: 1 1 0;
+  min-width: 0;
+  margin-bottom: 0.5rem;
+}
+
+.saveButton {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  font-weight: 600;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px 0 rgba(60, 60, 60, 0.08);
+  transition: background 0.15s;
+  background: var(--mantine-color-blue-1, #e7f5ff);
+}
+
+.sectionTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--mantine-color-gray-8, #212529);
+  margin-bottom: 1.25rem;
+  letter-spacing: 0.01em;
+}
