@@ -78,7 +78,10 @@ export const PromptGeneratorContainer: React.FC = () => {
   };
 
   return (
-    <ContainerCard title="Prompt Generator Wizard">
+    <ContainerCard
+      subtitle="Create and manage prompts"
+      title="Prompt Generator Wizard"
+    >
       <Stack gap="xl" className={styles.stackWrapper}>
         <div className={styles.stepperWrapper}>
           <Stepper active={activeStep} className={styles.wizardStepper}>

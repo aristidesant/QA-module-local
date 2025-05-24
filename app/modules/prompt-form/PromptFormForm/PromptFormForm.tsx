@@ -16,10 +16,11 @@ import type { PromptType } from "~/models/PromptTypeModel";
 import PromptFormInput from "../PromptFormInput";
 import { IconDeviceFloppy } from "@tabler/icons-react";
 import type { PromptInstructionType } from "~/config/prompt-generator/useForm";
+import type { PromptCategory } from "~/models/PromptCategoryModel";
+import { useGetAllPromptCategories } from "~/queries/promptCategoryQueries";
 
 export type PromptFormFormProps = {
   initialValues?: Partial<PromptForm>;
-  promptTypes?: PromptType[];
   onSubmit?: (values: PromptForm) => void;
   submitLabel?: string;
 };
@@ -27,11 +28,16 @@ export type PromptFormFormProps = {
 export const PromptFormForm: React.FC<PromptFormFormProps> = ({
   initialValues,
   onSubmit,
-  promptTypes,
   submitLabel = "Save",
 }) => {
   const form = useForm<Partial<PromptForm>>({
     initialValues: initialValues || {},
+  });
+  const [categoryId, setCategoryId] = React.useState<string | undefined>();
+
+  const { data: promptCategories } = useGetAllPromptCategories();
+  const { data: promptTypes } = useGetAllPromptTypes({
+    ...(categoryId ? { categoryId } : {}),
   });
 
   React.useEffect(() => {
@@ -51,6 +57,22 @@ export const PromptFormForm: React.FC<PromptFormFormProps> = ({
         onSubmit={form.onSubmit((values) => onSubmit?.(values as PromptForm))}
       >
         <Group grow mb={"xs"}>
+          <Select
+            placeholder="Select a category"
+            label="Select Category"
+            value={categoryId}
+            onChange={(value) => {
+              if (value) {
+                setCategoryId(value);
+              }
+            }}
+            data={
+              promptCategories?.map((category) => ({
+                value: `${category.id}`,
+                label: category.name,
+              })) ?? []
+            }
+          />
           <Select
             placeholder="Select a prompt type"
             label="Select Prompt Type"

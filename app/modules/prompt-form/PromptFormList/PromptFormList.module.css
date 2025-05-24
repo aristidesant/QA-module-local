@@ -1,0 +1,102 @@
+
+.container {
+  background: var(--mantine-color-white);
+  border: 1px solid var(--mantine-color-gray-2);
+  border-radius: var(--mantine-radius-lg);
+  box-shadow: var(--mantine-shadow-sm);
+  margin-top: var(--mantine-spacing-xl);
+  transition: box-shadow 0.2s ease;
+}
+
+.container:hover {
+  box-shadow: var(--mantine-shadow-md);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--mantine-spacing-md) var(--mantine-spacing-xl);
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+  background-color: var(--mantine-color-gray-0);
+  border-radius: var(--mantine-radius-lg) var(--mantine-radius-lg) 0 0;
+}
+
+.title {
+  font-size: var(--mantine-font-size-xl);
+  font-weight: 600;
+  color: var(--mantine-color-dark-7);
+  letter-spacing: -0.5px;
+}
+
+.addButton {
+  background: var(--mantine-primary-color-filled);
+  transition: all 0.2s ease;
+}
+
+.addButton:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+.table {
+  margin: var(--mantine-spacing-xs);
+}
+
+.tableHeader {
+  background-color: var(--mantine-color-gray-0);
+}
+
+.tableHeader th {
+  color: var(--mantine-color-dark-6);
+  font-weight: 600;
+  font-size: var(--mantine-font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.row {
+  transition: background-color 0.15s ease;
+}
+
+.row:hover {
+  background-color: var(--mantine-color-gray-0);
+}
+
+.nameCell {
+  font-weight: 500;
+  color: var(--mantine-color-dark-7);
+}
+
+.typeCell {
+  color: var(--mantine-color-dimmed);
+  font-size: var(--mantine-font-size-sm);
+}
+
+.dateCell {
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-dark-5);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--mantine-spacing-xs);
+}
+
+.actionButton {
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.actionButton:hover {
+  transform: translateY(-1px);
+}
+
+.emptyState {
+  padding: var(--mantine-spacing-xl) 0;
+  text-align: center;
+  color: var(--mantine-color-dimmed);
+  background-color: var(--mantine-color-gray-0);
+  border-radius: var(--mantine-radius-md);
+  margin: var(--mantine-spacing-md);
+}

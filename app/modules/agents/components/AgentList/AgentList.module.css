@@ -20,39 +20,73 @@
 
 .newAgentBtn {
   font-weight: 600;
-  font-size: 1.1rem;
-  box-shadow: 0 2px 8px 0 var(--mantine-color-blue-2);
+  font-size: 0.95rem;
+  box-shadow: 0 4px 12px rgba(0, 118, 255, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.newAgentBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 118, 255, 0.25);
 }
 
 .agentButton {
   display: block;
-  border-radius: 1.5rem;
-  transition: all 0.2s;
+  border-radius: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
   background: transparent;
 }
 
+.agentButton:hover {
+  transform: translateY(-4px);
+}
+
 .emptyState {
-  padding: 4rem 0;
+  padding: 5rem 2rem;
   text-align: center;
   border: 2px dashed var(--mantine-color-gray-3);
-  border-radius: 1rem;
+  border-radius: 1.5rem;
   color: var(--mantine-color-gray-6);
-  background: linear-gradient(
-    90deg,
+  background: linear-gradient(135deg,
     var(--mantine-color-blue-0) 0%,
-    var(--mantine-color-gray-0) 100%
-  );
+    var(--mantine-color-gray-0) 50%,
+    var(--mantine-color-blue-0) 100%);
   margin-top: 2rem;
+  transition: all 0.3s ease;
+}
+
+.emptyState:hover {
+  border-color: var(--mantine-color-blue-4);
+  background: linear-gradient(135deg,
+    var(--mantine-color-blue-0) 0%,
+    var(--mantine-color-white) 50%,
+    var(--mantine-color-blue-0) 100%);
 }
 
 .emptyTitle {
-  color: var(--mantine-color-dark-6);
+  color: var(--mantine-color-dark-7);
   font-weight: 600;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
 }
 
 .emptyText {
-  color: var(--mantine-color-gray-5);
+  color: var(--mantine-color-gray-6);
   font-size: 1.05rem;
+  max-width: 400px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.avatarContainer {
+  background: linear-gradient(135deg, var(--mantine-color-blue-1) 0%, var(--mantine-color-cyan-1) 100%);
+  padding: 1rem;
+  border-radius: 50%;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 118, 255, 0.1);
+}
+
+.gridContainer {
+  margin-top: 1.5rem;
 }

@@ -7,6 +7,7 @@ import {
   useLocation,
   useOutletContext,
 } from "react-router";
+import { ModalsProvider } from "@mantine/modals";
 
 type TokenType = {
   token: string;
@@ -29,13 +30,17 @@ export const RouteProtecter = () => {
   if (token && path === "/login") {
     return <Navigate to="/" replace />;
   }
-  return <Outlet context={{ token }} />;
+  return (
+    <ModalsProvider modalProps={{ withinPortal: false }}>
+      <Outlet context={{ token }} />
+    </ModalsProvider>
+  );
 };
 
 export const useToken = () => {
-  const token = useOutletContext<TokenType>();
-  console.log("Outlet context:", token);
-  return token;
+  const token = useLoaderData<typeof loader>();
+  const tokenContext = useOutletContext<TokenType>();
+  return { token: tokenContext?.token || token.token };
 };
 
 export default RouteProtecter;

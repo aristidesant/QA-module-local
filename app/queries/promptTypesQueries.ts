@@ -31,7 +31,9 @@ export const useCreatePromptType = () => {
 export const useGetAllPromptTypes = (params?: Record<string, string>) => {
   const token = useToken();
   const header = getClientAuthorizationHeader();
+
   return useQuery({
+    enabled: !!params?.categoryId,
     queryKey: ["promptTypes", params],
     queryFn: async () => {
       const api = promptTypesApi({

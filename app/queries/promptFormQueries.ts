@@ -31,6 +31,7 @@ export const useCreatePromptForm = () => {
 export const useGetAllPromptForms = (params?: Record<string, any>) => {
   const token = useToken();
   const header = getClientAuthorizationHeader();
+  console.log("params", header, token);
   return useQuery({
     queryKey: ["promptForms", params],
     queryFn: async () => {

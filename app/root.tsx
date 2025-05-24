@@ -6,17 +6,15 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
-  useNavigation,
 } from "react-router";
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
+import "./styles/global.css";
 import type { Route } from "./+types/root";
-import { Box, MantineProvider } from "@mantine/core";
-import { Notifications } from "@mantine/notifications";
+import { Box, MantineProvider, Modal } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Loader } from "./components/ui/Loader";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ModalsProvider } from "@mantine/modals";
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
@@ -55,11 +53,35 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body style={{ background: "#f8f9fa" }}>
         <QueryClientProvider client={new QueryClient()}>
-          <MantineProvider>
-            <ModalsProvider>
-              {isLoading ? <Loader text="Loading application..." /> : children}
-            </ModalsProvider>
-            <Notifications position="top-right" />
+          <MantineProvider
+            theme={{
+              primaryColor: "blue",
+              defaultRadius: "md",
+              fontFamily:
+                "Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
+              fontFamilyMonospace: "Monaco, Courier, monospace",
+              headings: {
+                fontFamily:
+                  "Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
+                fontWeight: "600",
+              },
+              components: {
+                Button: {
+                  defaultProps: {
+                    radius: "md",
+                  },
+                },
+                Card: {
+                  defaultProps: {
+                    shadow: "sm",
+                    radius: "md",
+                    p: "lg",
+                  },
+                },
+              },
+            }}
+          >
+            {isLoading ? <Loader text="Loading application..." /> : children}
           </MantineProvider>
         </QueryClientProvider>
         <ScrollRestoration />

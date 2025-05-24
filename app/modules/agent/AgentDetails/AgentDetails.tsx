@@ -5,7 +5,7 @@ import {
   IconMicrophone,
   IconDeviceFloppy,
 } from "@tabler/icons-react";
-import { Tabs, Title, Group, Button, TextInput } from "@mantine/core";
+import { Title, Group, Button, TextInput, Stack, Divider } from "@mantine/core";
 import AgentSettings from "../AgentSettings";
 import AgentVoiceSettings from "../AgentVoiceSettings/AgentVoiceSettings";
 import styles from "./AgentDetails.module.css";
@@ -17,6 +17,7 @@ import { notifications } from "@mantine/notifications";
 import ContainerCard from "~/components/ui/ContainerCard/ContainerCard";
 import { useUpdateAgent } from "~/queries/agentQueries";
 import type { AgentUpdateModel } from "~/models/AgentListObject";
+import AgentVoices from "../AgentVoices";
 
 export type AgentDetailsProps = {
   agent: AgentListObject;
@@ -37,6 +38,7 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
   } = useUpdateAgent();
 
   const handleAgentUpdate = (updatedFields: any) => {
+    console.log("Editable agent", editableAgent, updatedFields);
     setEditableAgent((prev: any) => ({
       ...prev,
       ...updatedFields,
@@ -91,31 +93,6 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
       setIsEditingName(false);
     }
   };
-
-  const tabs = [
-    {
-      label: "Agent",
-      value: "agent",
-      icon: <IconSettings size={16} />,
-      content: (
-        <AgentSettings
-          agentData={editableAgent as GetAgentResponseModel}
-          onUpdateAgentData={handleAgentUpdate}
-        />
-      ),
-    },
-    {
-      label: "Voice",
-      value: "voice",
-      icon: <IconMicrophone size={16} />,
-      content: (
-        <AgentVoiceSettings
-          agentData={editableAgent}
-          onUpdateAgentData={handleAgentUpdate}
-        />
-      ),
-    },
-  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -172,30 +149,57 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
         >
           <input type="hidden" name="agent_id" value={agentId} />
 
-          <Tabs defaultValue={tabs[0].value} className={styles.tabs}>
-            <Tabs.List className={styles.tabsList}>
-              {tabs.map((tab) => (
-                <Tabs.Tab
-                  key={tab.value}
-                  value={tab.value}
-                  leftSection={tab.icon}
-                  className={styles.tabItem}
-                >
-                  {tab.label}
-                </Tabs.Tab>
-              ))}
-            </Tabs.List>
-
-            {tabs.map((tab) => (
-              <Tabs.Panel
-                key={tab.value}
-                value={tab.value}
-                className={styles.tabPanel}
-              >
-                {tab.content}
-              </Tabs.Panel>
-            ))}
-          </Tabs>
+          <Stack gap="xl">
+            <Divider
+              labelPosition="center"
+              label={
+                <Group gap={6}>
+                  <IconSettings size={18} color="#228be6" />
+                  <span style={{ color: "#228be6", fontWeight: 500 }}>
+                    Agent Settings
+                  </span>
+                </Group>
+              }
+            />
+            <div>
+              <AgentSettings
+                agentData={editableAgent as GetAgentResponseModel}
+                onUpdateAgentData={handleAgentUpdate}
+              />
+            </div>
+            <Divider
+              labelPosition="center"
+              label={
+                <Group gap={6}>
+                  <IconMicrophone size={18} color="#228be6" />
+                  <span style={{ color: "#228be6", fontWeight: 500 }}>
+                    Voice Settings
+                  </span>
+                </Group>
+              }
+            />
+            <div>
+              <AgentVoices
+                onSelectVoice={(voiceId: string) => {
+                  handleAgentUpdate({
+                    conversation_config: {
+                      tts: {
+                        ...editableAgent?.conversation_config?.tts,
+                        voice_id: voiceId,
+                      },
+                    },
+                  });
+                }}
+                selectedVoiceId={
+                  editableAgent?.conversation_config?.tts?.voice_id
+                }
+              />
+              <AgentVoiceSettings
+                agentData={editableAgent}
+                onUpdateAgentData={handleAgentUpdate}
+              />
+            </div>
+          </Stack>
           <Group justify="flex-start" mt="xl">
             <Button
               type="submit"

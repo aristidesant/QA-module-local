@@ -1,0 +1,118 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.section {
+  background: var(--mantine-color-white);
+  border: 1px solid var(--mantine-color-gray-2);
+  border-radius: var(--mantine-radius-md);
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease;
+}
+
+.section:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.sliderWrapper {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: var(--mantine-color-gray-0);
+  border-radius: var(--mantine-radius-sm);
+  border: 1px solid var(--mantine-color-gray-2);
+}
+
+.sliderWrapper:last-child {
+  margin-bottom: 0;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.sectionIcon {
+  color: var(--mantine-color-blue-6);
+  width: 20px;
+  height: 20px;
+}
+
+.sectionTitle {
+  color: var(--mantine-color-gray-9);
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.sectionDescription {
+  color: var(--mantine-color-gray-6);
+  font-size: 0.9rem;
+  margin: 0;
+  margin-top: 0.25rem;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.fieldLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fieldIcon {
+  color: var(--mantine-color-gray-6);
+  width: 16px;
+  height: 16px;
+}
+
+.temperatureContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.temperatureSlider {
+  margin: 0.5rem 0;
+}
+
+.temperatureValue {
+  display: inline-flex;
+  align-items: center;
+  background: var(--mantine-color-blue-0);
+  color: var(--mantine-color-blue-7);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--mantine-radius-sm);
+  font-weight: 500;
+  font-size: 0.875rem;
+  min-width: 3rem;
+  justify-content: center;
+}
+
+.temperatureHelper {
+  color: var(--mantine-color-gray-6);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  margin-top: 0.25rem;
+}
+
+/* Add styles for slider marks */
+:global(.mantine-Slider-markLabel) {
+  font-size: 0.75rem;
+  color: var(--mantine-color-gray-6);
+  transform: translateX(-50%) translateY(5px);
+  white-space: nowrap;
+}

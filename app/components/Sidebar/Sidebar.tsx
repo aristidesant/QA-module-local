@@ -37,15 +37,13 @@ const maintenanceItems: MenuItem[] = [
 
 export const Sidebar: React.FC = () => {
   return (
-    <Paper className={styles.sidebar} radius={0} shadow="sm" withBorder>
-      <nav>
-        <Stack className={styles.menuList} gap="md">
-          {menuItems.map(renderMenuItem)}
-          <Divider label="Maintenance" labelPosition="left" />
-          {maintenanceItems.map(renderMenuItem)}
-        </Stack>
-      </nav>
-    </Paper>
+    <nav className={styles.sidebar}>
+      <Stack className={styles.menuList} gap="md">
+        {menuItems.map(renderMenuItem)}
+        <Divider label="Maintenance" labelPosition="left" />
+        {maintenanceItems.map(renderMenuItem)}
+      </Stack>
+    </nav>
   );
 };
 

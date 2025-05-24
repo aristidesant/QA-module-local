@@ -87,17 +87,21 @@
   color: var(--mantine-color-blue-7);
 }
 
-.tabs {
-  margin-top: 1rem;
+/* Remove tabs styles, add section separation and stack improvements */
+.section {
+  background: var(--mantine-color-gray-0);
+  border-radius: var(--mantine-radius-md);
+  padding: 1.5rem 1rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 2px rgba(34, 139, 230, 0.04);
+  border: 1px solid var(--mantine-color-gray-2);
 }
 
-.tabsList {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  width: 100%;
-  border-bottom: 1px solid var(--mantine-color-gray-2);
-  margin-bottom: 1.5rem;
-  gap: 0.5rem;
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .tabItem {

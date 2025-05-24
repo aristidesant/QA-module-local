@@ -1,0 +1,235 @@
+.layout {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Style the fixed navbar */
+:global(.mantine-AppShell-navbar) {
+  position: fixed !important;
+  top: 70px !important;
+  left: 0 !important;
+  bottom: 0 !important;
+  width: 280px !important;
+  overflow: hidden !important;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-right: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 4px 0 16px rgba(0, 0, 0, 0.03);
+  z-index: 100;
+}
+
+/* Style the main content area */
+:global(.mantine-AppShell-main) {
+  margin-left: 280px !important;
+  margin-top: 70px !important;
+  width: calc(100% - 280px) !important;
+  height: calc(100vh - 70px) !important;
+  overflow-y: auto !important;
+  padding: 2rem !important;
+}
+
+/* Remove any default positioning from the header */
+:global(.mantine-AppShell-header) {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 200 !important;
+}
+
+.main {
+  background: transparent;
+  width: 100%;
+  position: relative;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Add subtle background shapes */
+.main::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 30%;
+  height: 40%;
+  background-image: radial-gradient(circle, rgba(59, 130, 246, 0.05) 10%, transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.main::after {
+  content: '';
+  position: absolute;
+  left: 20%;
+  bottom: 10%;
+  width: 40%;
+  height: 50%;
+  background-image: radial-gradient(circle, rgba(59, 130, 246, 0.03) 20%, transparent 80%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Ensure the content inside main is centered */
+.main > div {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.notifications {
+  z-index: 1000;
+}
+
+.contentContainer {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .main {
+    padding: 1.5rem;
+  }
+  
+  :global(.mantine-AppShell-main) {
+    padding: 1rem !important;
+  }
+}
+
+/* Scrollbar styling */
+.navbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.navbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.navbar::-webkit-scrollbar-thumb {
+  background-color: var(--mantine-color-gray-3);
+  border-radius: 2px;
+}
+
+/* Smooth transitions for layout changes */
+.navbar,
+.main {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced focus states for accessibility */
+.burger:focus-visible {
+  outline: 2px solid var(--mantine-color-blue-6);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Additional UI enhancements */
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.notificationIcon {
+  position: relative;
+  cursor: pointer;
+  padding: 7px;
+  border-radius: 50%;
+  color: var(--mantine-color-gray-7);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notificationIcon:hover {
+  background-color: rgba(241, 245, 249, 0.9);
+  color: var(--mantine-color-blue-6);
+  transform: translateY(-2px);
+}
+
+.notificationBadge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: var(--mantine-color-red-6);
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 700;
+  height: 16px;
+  min-width: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  padding: 0 4px;
+  border: 2px solid white;
+  transform: translate(30%, -30%);
+}
+
+.userMenu {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 6px 12px 6px 6px;
+  border-radius: 50px;
+  transition: all 0.2s ease;
+  background: rgba(241, 245, 249, 0.8);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  cursor: pointer;
+}
+
+.userMenu:hover {
+  background: rgba(241, 245, 249, 1);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.userAvatar {
+  border-radius: 50%;
+  background: linear-gradient(45deg, #60a5fa, #3b82f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 100px;
+}
+
+/* Breadcrumb styles */
+.breadcrumbContainer {
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.breadcrumb {
+  font-size: 0.875rem;
+  color: var(--mantine-color-gray-6);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.breadcrumbActive {
+  color: var(--mantine-color-gray-8);
+  font-weight: 500;
+}

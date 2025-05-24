@@ -1,0 +1,96 @@
+import { AppShell, Bu      <AppShell
+        header={{ height: 70 }}
+        navbar={{
+          width: 280,
+          breakpoint: "sm",
+          collapsed: { mobile: !opened },
+        }}
+        padding="0"
+        styles={{
+          main: {
+            paddingLeft: { base: 0, sm: '280px' },
+            transition: 'padding-left 0.3s ease',
+            backgroundColor: 'transparent',
+          }
+        }}
+      >t } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { Outlet, useOutletContext } from "react-router";
+import Logo from "../Logo";
+import Sidebar from "../Sidebar";
+import { Notifications } from "@mantine/notifications";
+import { IconChevronDown, IconUser } from "@tabler/icons-react";
+import styles from "./Layout.module.css";
+
+export default function Layout() {
+  const [opened, { toggle }] = useDisclosure();
+  const { token } = useOutletContext<{ token: string }>();
+
+  return (
+    <div className={styles.layout}>
+      <Notifications
+        position="top-right"
+        className={styles.notifications}
+        autoClose={4000}
+      />
+
+      <AppShell
+        header={{ height: 70 }}
+        navbar={{
+          width: 280,
+          breakpoint: "sm",
+          collapsed: { mobile: !opened },
+        }}
+        padding="0"
+        styles={{
+          main: {
+            paddingLeft: opened || window.innerWidth >= 768 ? "280px" : "0",
+            transition: "padding-left 0.3s ease",
+            backgroundColor: "transparent",
+          },
+        }}
+      >
+        <AppShell.Header className={styles.header}>
+          <div className={styles.headerContent}>
+            <div className={styles.headerLeft}>
+              <Burger
+                opened={opened}
+                onClick={toggle}
+                hiddenFrom="sm"
+                size="sm"
+                className={styles.burger}
+                aria-label="Toggle navigation"
+              />
+              <Logo />
+            </div>
+
+            <div className={styles.headerRight}>
+              <Group className={styles.userMenu}>
+                <div
+                  className={styles.userAvatar}
+                  style={{ width: 28, height: 28 }}
+                >
+                  <IconUser size={16} />
+                </div>
+                <Text size="sm" fw={500}>
+                  Admin
+                </Text>
+                <IconChevronDown size={14} color="gray" stroke={1.5} />
+              </Group>
+            </div>
+          </div>
+        </AppShell.Header>
+
+        <AppShell.Navbar p="xs" className={styles.navbar}>
+          <Sidebar />
+        </AppShell.Navbar>
+
+        <AppShell.Main className={styles.main}>
+          <div style={{ width: "100%" }}>
+            <Outlet context={{ token }} />
+          </div>
+        </AppShell.Main>
+      </AppShell>
+    </div>
+  );
+}

@@ -16,6 +16,8 @@ import {
   ThemeIcon,
   Text,
   Avatar,
+  Paper,
+  Transition,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useFetcher, useNavigate } from "react-router";
@@ -31,8 +33,8 @@ interface AgentListProps {
 const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const navigate = useNavigate();
+
   const handleAgentClick = (agent: AgentListObject) => {
-    console.log("Agent clicked:", agent);
     navigate(`/agent/${agent.id}`, {
       replace: true,
     });
@@ -48,25 +50,38 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
       title="Agents"
       subtitle={`${agents.length} agents available`}
       icon={IconUsersGroup}
-      className={classes.container}
       rightSection={
-        <Tooltip label="Create a new agent" withArrow position="left">
+        <Tooltip
+          label="Create a new agent"
+          withArrow
+          position="left"
+          transitionProps={{ transition: "slide-left", duration: 200 }}
+        >
           <Button
             onClick={open}
             size="md"
-            leftSection={<IconPlus size={18} />}
+            leftSection={<IconPlus size={18} stroke={1.5} />}
             className={classes.newAgentBtn}
             radius="xl"
             variant="gradient"
-            gradient={{ from: "blue", to: "cyan", deg: 90 }}
-            style={{ fontWeight: 600, letterSpacing: 0.2 }}
+            gradient={{ from: "blue", to: "cyan", deg: 135 }}
           >
             New Agent
           </Button>
         </Tooltip>
       }
     >
-      <Modal opened={opened} onClose={close} title="Create New Agent" centered>
+      <Modal
+        opened={opened}
+        onClose={close}
+        title="Create New Agent"
+        centered
+        size="lg"
+        overlayProps={{
+          blur: 3,
+          opacity: 0.55,
+        }}
+      >
         <AgentCreate
           opened={opened}
           onClose={close}
@@ -74,48 +89,45 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
         />
       </Modal>
 
-      {agents.length > 0 && (
-        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3, xl: 4 }} spacing="md">
-          {agents.map((agent) => (
-            <div
-              key={agent.agent_id}
-              className={classes.agentButton}
-              style={{ transition: "box-shadow 0.2s, border 0.2s", padding: 0 }}
-            >
-              <AgentCard onClick={handleAgentClick} agent={agent} />
-            </div>
-          ))}
-        </SimpleGrid>
-      )}
+      <Transition
+        mounted={agents.length > 0}
+        transition="fade"
+        duration={400}
+        timingFunction="ease"
+      >
+        {(styles) => (
+          <SimpleGrid
+            cols={{ base: 1, sm: 2, lg: 3, xl: 4 }}
+            spacing="lg"
+            className={classes.gridContainer}
+            style={styles}
+          >
+            {agents.map((agent) => (
+              <div key={agent.agent_id} className={classes.agentButton}>
+                <AgentCard onClick={handleAgentClick} agent={agent} />
+              </div>
+            ))}
+          </SimpleGrid>
+        )}
+      </Transition>
 
       {agents.length === 0 && (
-        <Center className={classes.emptyState}>
+        <Paper className={classes.emptyState} shadow="none">
           <Stack align="center" gap="xs">
-            <Avatar size={72} radius="xl" color="gray">
-              <IconUsersGroup size={36} />
-            </Avatar>
-            <Title
-              order={3}
-              className={classes.emptyTitle}
-              style={{ marginTop: 8 }}
-            >
-              No agents found
+            <div className={classes.avatarContainer}>
+              <Avatar size={80} radius="xl" color="blue">
+                <IconUsersGroup size={40} stroke={1.5} />
+              </Avatar>
+            </div>
+            <Title order={3} className={classes.emptyTitle}>
+              No Agents Yet
             </Title>
-            <Text size="md" className={classes.emptyText} mt={-5}>
-              Create a new agent to get started
+            <Text className={classes.emptyText}>
+              Create your first agent to start building amazing conversations
+              and automations
             </Text>
-            <Button
-              onClick={open}
-              size="md"
-              mt="md"
-              variant="gradient"
-              gradient={{ from: "blue", to: "cyan", deg: 90 }}
-              radius="xl"
-            >
-              Create Agent
-            </Button>
           </Stack>
-        </Center>
+        </Paper>
       )}
     </ContainerCard>
   );

@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Paper, Group, Text, ThemeIcon } from "@mantine/core";
+import { Card, Text, ThemeIcon, Badge } from "@mantine/core"; // Removed Divider
 import { IconBox, type TablerIcon } from "@tabler/icons-react";
 import classes from "./ContainerCard.module.css";
 
@@ -11,6 +11,8 @@ export interface ContainerCardProps {
   children: React.ReactNode;
   withBorder?: boolean;
   className?: string;
+  variant?: "default" | "gradient" | "glass" | "minimal";
+  size?: "sm" | "md" | "lg";
 }
 
 const ContainerCard: React.FC<ContainerCardProps> = ({
@@ -21,30 +23,58 @@ const ContainerCard: React.FC<ContainerCardProps> = ({
   children,
   withBorder = true,
   className = "",
+  variant = "default",
+  size = "md",
 }) => {
+  const cardClasses = [
+    classes.containerCard,
+    classes[variant],
+    classes[size],
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <Card
-      className={`${classes.containerCard} ${className}`}
-      shadow="lg"
+      className={cardClasses}
+      shadow="none"
       radius="xl"
-      withBorder={withBorder}
-      padding="xl"
+      withBorder={false}
+      padding={0}
     >
-      {(title || subtitle || rightSection) && (
-        <div className={classes.header}>
-          <ThemeIcon size={60} radius="xl" color="blue" variant="light">
-            <Icon className={classes.icon} stroke={1.5} />
-          </ThemeIcon>
-          <div className={classes.headerMain}>
-            {title && <span className={classes.title}>{title}</span>}
-            {subtitle && <Text className={classes.subtitle}>{subtitle}</Text>}
+      <div className={classes.cardInner}>
+        {(title || subtitle || rightSection) && (
+          <div className={classes.header}>
+            <div className={classes.iconContainer}>
+              <ThemeIcon
+                size={size === "sm" ? 48 : size === "lg" ? 72 : 60}
+                radius="xl"
+                className={classes.iconWrapper}
+                variant="light"
+              >
+                <Icon className={classes.icon} stroke={1.5} />
+              </ThemeIcon>
+            </div>
+            <div className={classes.headerContent}>
+              {title && (
+                <div className={classes.titleContainer}>
+                  <h3 className={classes.title}>{title}</h3>
+                </div>
+              )}
+              {subtitle && (
+                <Text className={classes.subtitle} size="sm">
+                  {subtitle}
+                </Text>
+              )}
+            </div>
+            {rightSection && (
+              <div className={classes.rightSection}>{rightSection}</div>
+            )}
           </div>
-          {rightSection && (
-            <div className={classes.rightSection}>{rightSection}</div>
-          )}
-        </div>
-      )}
-      <div className={classes.content}>{children}</div>
+        )}
+        <div>{children}</div>
+      </div>
     </Card>
   );
 };

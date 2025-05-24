@@ -8,4 +8,5 @@ export interface PromptType {
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
+  categoryId?: number;
 }
