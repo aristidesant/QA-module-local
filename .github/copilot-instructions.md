@@ -40,7 +40,7 @@
 
 # Styling & UI
 
-- Use Mantine UI, V7. Search on internet whenever is required to get the latest implementation without breaking changes. component.
+- Use Mantine UI, V8. Search on internet whenever is required to get the latest implementation without breaking changes. component.
 - Every style should be place within a .module.css with the name of the component.
 - Prefer light mode for anything.
 - Css Style MUST be preferred vs inline styling or component props.

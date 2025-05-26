@@ -84,18 +84,16 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
         timingFunction="ease"
       >
         {(styles) => (
-          <SimpleGrid
-            cols={{ base: 1, sm: 2, lg: 3, xl: 4 }}
-            spacing="lg"
-            className={classes.gridContainer}
+          <div
+            className={`${classes.agentsGrid} ${classes.gridContainer}`}
             style={styles}
           >
             {agents.map((agent) => (
-              <div key={agent.agent_id} className={classes.agentButton}>
+              <SimpleGrid key={agent.agent_id}>
                 <AgentCard onClick={handleAgentClick} agent={agent} />
-              </div>
+              </SimpleGrid>
             ))}
-          </SimpleGrid>
+          </div>
         )}
       </Transition>
 

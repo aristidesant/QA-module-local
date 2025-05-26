@@ -83,80 +83,86 @@ export const AgentCard: React.FC<AgentCardProps> = ({ agent, onClick }) => {
 
   return (
     <Card
-      shadow="sm"
-      padding="lg"
-      radius="md"
+      shadow="xs"
+      padding="md"
+      radius="lg"
       withBorder
       className={styles.agentCard}
       data-testid="agent-card"
       tabIndex={0}
     >
       <LoadingOverlay visible={isDeleting} />
-      <Group className={styles.header} gap="md">
-        <Avatar color="blue" radius="xl" size={48} className={styles.avatar}>
-          <IconRobot size={28} stroke={1.5} />
+
+      {/* Header with avatar and name */}
+      <div className={styles.header}>
+        <Avatar
+          color="blue"
+          radius="md"
+          size={40}
+          className={styles.avatar}
+          gradient={{ from: "blue", to: "cyan", deg: 45 }}
+        >
+          <IconRobot color="white" size={22} stroke={1.5} />
         </Avatar>
-        <Box className={styles.nameContainer}>
+        <div className={styles.nameContainer}>
           <Tooltip
             label={agent.name}
             withArrow
-            disabled={agent.name.length < 18}
+            disabled={agent.name.length < 20}
           >
-            <Title order={4} className={styles.agentName}>
+            <Title order={5} className={styles.agentName}>
               {agent.name}
             </Title>
           </Tooltip>
-          <Group gap="xs" mt={"xs"} className={styles.typeBadgeContainer}>
-            <Badge
-              className={styles.agentTypeBadge}
-              color={agent.type === "INBOUND" ? "green" : "orange"}
-              leftSection={
-                agent.type === "INBOUND" ? (
-                  <IconPhoneIncoming size={14} stroke={1.5} />
-                ) : (
-                  <IconPhoneOutgoing size={14} stroke={1.5} />
-                )
-              }
-              variant="light"
-              size="md"
-            >
-              {agent.type === "INBOUND" ? "Inbound" : "Outbound"}
-            </Badge>
-          </Group>
-        </Box>
-      </Group>
-
-      <Box className={styles.meta}>
-        <Group gap="xs">
           <Badge
-            className={styles.agentIdBadge}
-            variant="dot"
-            size="md"
-            leftSection={<IconUserCircle size={14} stroke={1.5} />}
+            className={styles.agentTypeBadge}
+            color={agent.type === "INBOUND" ? "teal" : "orange"}
+            leftSection={
+              agent.type === "INBOUND" ? (
+                <IconPhoneIncoming size={12} stroke={1.5} />
+              ) : (
+                <IconPhoneOutgoing size={12} stroke={1.5} />
+              )
+            }
+            variant="light"
+            size="sm"
           >
-            {agent.clientId}
+            {agent.type === "INBOUND" ? "Inbound" : "Outbound"}
           </Badge>
-          {isValidDate && (
-            <Badge
-              className={styles.agentCreatedAtBadge}
-              variant="light"
-              size="md"
-              leftSection={<IconCalendarEvent size={14} stroke={1.5} />}
-            >
-              {createdAt.format("MMM D, YYYY")}
-            </Badge>
-          )}
-        </Group>
-      </Box>
+        </div>
+      </div>
 
-      <Group className={styles.actions} grow>
+      {/* Meta information */}
+      <div className={styles.meta}>
+        <div className={styles.metaRow}>
+          <Text size="xs" className={styles.metaLabel}>
+            ID
+          </Text>
+          <Text size="xs" className={styles.metaValue} c="dimmed">
+            {agent.clientId}
+          </Text>
+        </div>
+        {isValidDate && (
+          <div className={styles.metaRow}>
+            <Text size="xs" className={styles.metaLabel}>
+              Created
+            </Text>
+            <Text size="xs" className={styles.metaValue} c="dimmed">
+              {createdAt.format("MMM D, YYYY")}
+            </Text>
+          </div>
+        )}
+      </div>
+
+      {/* Actions */}
+      <div className={styles.actions}>
         <button
           type="button"
           className={`${styles.actionBtn} ${styles.viewBtn}`}
           onClick={handleView}
           aria-label="View agent details"
         >
-          <IconEye size={16} stroke={1.5} />
+          <IconEye size={14} stroke={1.5} />
           <span>View</span>
         </button>
         <button
@@ -165,10 +171,10 @@ export const AgentCard: React.FC<AgentCardProps> = ({ agent, onClick }) => {
           onClick={handleRemove}
           aria-label="Remove agent"
         >
-          <IconTrash size={16} stroke={1.5} />
+          <IconTrash size={14} stroke={1.5} />
           <span>Remove</span>
         </button>
-      </Group>
+      </div>
     </Card>
   );
 };
