@@ -71,23 +71,11 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
         </Tooltip>
       }
     >
-      <Modal
+      <AgentCreate
         opened={opened}
         onClose={close}
-        title="Create New Agent"
-        centered
-        size="lg"
-        overlayProps={{
-          blur: 3,
-          opacity: 0.55,
-        }}
-      >
-        <AgentCreate
-          opened={opened}
-          onClose={close}
-          onSave={handleCreateSuccessCallback}
-        />
-      </Modal>
+        onSave={handleCreateSuccessCallback}
+      />
 
       <Transition
         mounted={agents.length > 0}

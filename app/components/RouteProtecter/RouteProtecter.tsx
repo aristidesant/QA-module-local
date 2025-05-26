@@ -24,6 +24,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 export const RouteProtecter = () => {
   const { token } = useLoaderData<typeof loader>();
   const path = useLocation().pathname;
+  console.log({ token, path });
   if (!token && path !== "/login") {
     return <Navigate to="/login" replace />;
   }

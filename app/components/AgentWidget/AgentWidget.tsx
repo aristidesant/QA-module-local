@@ -3,15 +3,18 @@ import React, { useEffect, useRef } from "react";
 
 interface AgentWidgetProps {
   agentId: string;
+  language?: string; // Optional language prop
 }
 
-const AgentWidget: React.FC<AgentWidgetProps> = ({ agentId }) => {
+const AgentWidget: React.FC<AgentWidgetProps> = ({ agentId, language }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (containerRef.current) {
       // Inject only the custom element
-      containerRef.current.innerHTML = `<elevenlabs-convai agent-id="${agentId}"></elevenlabs-convai>`;
+      containerRef.current.innerHTML = `<elevenlabs-convai ${
+        language ? `override-language="${language}"` : ""
+      } agent-id="${agentId}"></elevenlabs-convai>`;
     }
 
     // Dynamically add the script once

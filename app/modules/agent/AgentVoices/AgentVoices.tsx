@@ -18,6 +18,7 @@ import {
   IconVolumeOff,
 } from "@tabler/icons-react";
 import { useHover } from "@mantine/hooks";
+import SectionCard from "~/components/SectionCard";
 import classes from "./AgentVoices.module.css";
 
 type AgentVoicesProps = {
@@ -72,15 +73,23 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
 
   if (isLoading) {
     return (
-      <div className={classes.loadingContainer}>
-        <IconMicrophone className={classes.loadingIcon} size={64} />
-        <Text size="xl" fw={600}>
-          Loading voices...
-        </Text>
-        <Text size="sm" c="dimmed">
-          Fetching available voice options
-        </Text>
-      </div>
+      <SectionCard
+        icon={IconMicrophone}
+        title="Agent Voices"
+        description="Select a voice for your agent. Preview and choose from available options."
+        contentSpacing="md"
+        id="agent-voices-section"
+      >
+        <div className={classes.loadingContainer}>
+          <IconMicrophone className={classes.loadingIcon} size={64} />
+          <Text size="xl" fw={600}>
+            Loading voices...
+          </Text>
+          <Text size="sm" c="dimmed">
+            Fetching available voice options
+          </Text>
+        </div>
+      </SectionCard>
     );
   }
 
@@ -150,6 +159,9 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
                   >
                     {voice.name}
                   </Text>
+                  <Text size="xs" c="dimmed" className={classes.voiceName}>
+                    {voice?.fine_tuning?.language || voice?.labels?.language}
+                  </Text>
                 </Box>
 
                 <ActionIcon
@@ -192,22 +204,30 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
   };
 
   return (
-    <div className={classes.container}>
-      <audio
-        ref={audioRef}
-        onEnded={handleAudioEnded}
-        onTimeUpdate={handleTimeUpdate}
-        className={classes.hiddenAudio}
-      />
+    <SectionCard
+      icon={IconMicrophone}
+      title="List of voices"
+      description="Select a voice for your agent. Preview and choose from available options."
+      contentSpacing="md"
+      id="agent-voices-section"
+    >
+      <div className={classes.container}>
+        <audio
+          ref={audioRef}
+          onEnded={handleAudioEnded}
+          onTimeUpdate={handleTimeUpdate}
+          className={classes.hiddenAudio}
+        />
 
-      <ScrollArea className={classes.scrollArea}>
-        <div className={classes.voiceGrid}>
-          {voices.map((voice) => (
-            <VoiceCard key={voice.voice_id} voice={voice} />
-          ))}
-        </div>
-      </ScrollArea>
-    </div>
+        <ScrollArea className={classes.scrollArea}>
+          <div className={classes.voiceGrid}>
+            {voices.map((voice) => (
+              <VoiceCard key={voice.voice_id} voice={voice} />
+            ))}
+          </div>
+        </ScrollArea>
+      </div>
+    </SectionCard>
   );
 };
 

@@ -7,19 +7,6 @@
   padding: 1rem;
 }
 
-.section {
-  background: var(--mantine-color-white);
-  border: 1px solid var(--mantine-color-gray-2);
-  border-radius: var(--mantine-radius-md);
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  transition: box-shadow 0.2s ease;
-}
-
-.section:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
 .sliderWrapper {
   padding: 1rem;
   margin-bottom: 1rem;
@@ -30,35 +17,6 @@
 
 .sliderWrapper:last-child {
   margin-bottom: 0;
-}
-
-.sectionHeader {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--mantine-color-gray-2);
-}
-
-.sectionIcon {
-  color: var(--mantine-color-blue-6);
-  width: 20px;
-  height: 20px;
-}
-
-.sectionTitle {
-  color: var(--mantine-color-gray-9);
-  font-weight: 600;
-  font-size: 1.1rem;
-  margin: 0;
-}
-
-.sectionDescription {
-  color: var(--mantine-color-gray-6);
-  font-size: 0.9rem;
-  margin: 0;
-  margin-top: 0.25rem;
 }
 
 .fieldGroup {

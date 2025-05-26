@@ -6,7 +6,7 @@ import {
   Text,
   Group,
   Badge,
-  Title,
+  Stack,
 } from "@mantine/core";
 import {
   IconLanguage,
@@ -19,6 +19,7 @@ import type { GetAgentResponseModel } from "elevenlabs/api";
 import { useGetAllPrompts } from "~/modules/prompt-generator/queries/promptGeneratorQueries";
 import dayjs from "dayjs";
 import styles from "./AgentSettings.module.css";
+import SectionCard from "../../../components/SectionCard";
 
 // Define the props for AgentSettings
 interface AgentSettingsProps {
@@ -53,21 +54,15 @@ const AgentSettings: React.FC<AgentSettingsProps> = ({
   };
 
   return (
-    <div className={styles.container}>
+    <Stack>
       {/* Basic Configuration Section */}
-      <div className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <IconSettings className={styles.sectionIcon} />
-          <div>
-            <Title order={3} className={styles.sectionTitle}>
-              Basic Configuration
-            </Title>
-            <Text className={styles.sectionDescription}>
-              Configure the fundamental settings for your agent
-            </Text>
-          </div>
-        </div>
-
+      <SectionCard
+        icon={IconSettings}
+        title="Basic Configuration"
+        description="Configure the fundamental settings for your agent"
+        className={styles.sectionCard}
+        contentSpacing="lg"
+      >
         <div className={styles.configRow}>
           <div className={styles.modelContainer}>
             <Select
@@ -82,7 +77,6 @@ const AgentSettings: React.FC<AgentSettingsProps> = ({
               leftSection={<IconLanguage size={16} />}
             />
           </div>
-
           <div className={styles.modelContainer}>
             <Select
               value={agentData?.conversation_config?.tts?.model_id}
@@ -104,22 +98,16 @@ const AgentSettings: React.FC<AgentSettingsProps> = ({
             />
           </div>
         </div>
-      </div>
+      </SectionCard>
 
       {/* First Message Section */}
-      <div className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <IconMessageCircle className={styles.sectionIcon} />
-          <div>
-            <Title order={3} className={styles.sectionTitle}>
-              First Message
-            </Title>
-            <Text className={styles.sectionDescription}>
-              Set the initial message your agent will send to users
-            </Text>
-          </div>
-        </div>
-
+      <SectionCard
+        icon={IconMessageCircle}
+        title="First Message"
+        description="Set the initial message your agent will send to users"
+        className={styles.sectionCard}
+        contentSpacing="lg"
+      >
         <Textarea
           placeholder="Enter the first message your agent will send..."
           rows={4}
@@ -137,22 +125,16 @@ const AgentSettings: React.FC<AgentSettingsProps> = ({
           }
           description="This greeting message will be the first thing users see when they interact with your agent"
         />
-      </div>
+      </SectionCard>
 
       {/* AI Personality Section */}
-      <div className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <IconBrain className={styles.sectionIcon} />
-          <div>
-            <Title order={3} className={styles.sectionTitle}>
-              AI Personality & Behavior
-            </Title>
-            <Text className={styles.sectionDescription}>
-              Define your agent's identity, knowledge, and response style
-            </Text>
-          </div>
-        </div>
-
+      <SectionCard
+        icon={IconBrain}
+        title="AI Personality & Behavior"
+        description="Define your agent's identity, knowledge, and response style"
+        className={styles.sectionCard}
+        contentSpacing="lg"
+      >
         <div className={styles.fieldGroup}>
           <Select
             label="Predefined Prompt Template"
@@ -276,8 +258,8 @@ const AgentSettings: React.FC<AgentSettingsProps> = ({
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </SectionCard>
+    </Stack>
   );
 };
 

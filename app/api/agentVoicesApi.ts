@@ -87,7 +87,9 @@ const agentVoicesApi = (authHeader: Record<string, string>) => {
       const response = await axios.get<AgentVoiceResponse>(
         `${DEFAULT_API_URL}/voices/elevenlabs`,
         {
-          params,
+          params: {
+            ...params,
+          },
           headers: { ...authHeader, ...(extraHeaders || {}) },
           timeout: 5000,
         }

@@ -178,27 +178,26 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
                 </Group>
               }
             />
-            <div>
-              <AgentVoices
-                onSelectVoice={(voiceId: string) => {
-                  handleAgentUpdate({
-                    conversation_config: {
-                      tts: {
-                        ...editableAgent?.conversation_config?.tts,
-                        voice_id: voiceId,
-                      },
+            <AgentVoices
+              onSelectVoice={(voiceId: string) => {
+                handleAgentUpdate({
+                  conversation_config: {
+                    ...(editableAgent?.conversation_config || {}),
+                    tts: {
+                      ...(editableAgent?.conversation_config?.tts || {}),
+                      voice_id: voiceId,
                     },
-                  });
-                }}
-                selectedVoiceId={
-                  editableAgent?.conversation_config?.tts?.voice_id
-                }
-              />
-              <AgentVoiceSettings
-                agentData={editableAgent}
-                onUpdateAgentData={handleAgentUpdate}
-              />
-            </div>
+                  },
+                });
+              }}
+              selectedVoiceId={
+                editableAgent?.conversation_config?.tts?.voice_id
+              }
+            />
+            <AgentVoiceSettings
+              agentData={editableAgent}
+              onUpdateAgentData={handleAgentUpdate}
+            />
           </Stack>
           <Group justify="flex-start" mt="xl">
             <Button
@@ -212,7 +211,10 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
           </Group>
         </ContainerCard>
       </form>
-      <AgentWidget agentId={agentId} />
+      <AgentWidget
+        agentId={agentId}
+        language={editableAgent?.conversation_config?.agent?.language}
+      />
     </>
   );
 };
