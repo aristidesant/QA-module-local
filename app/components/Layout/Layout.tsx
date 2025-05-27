@@ -24,10 +24,10 @@ export default function Layout() {
 
       <AppShell
         header={{ height: 70 }}
-        navbar={{ 
+        navbar={{
           width: 280,
           breakpoint: "sm",
-          collapsed: { mobile: !opened }
+          collapsed: { mobile: !opened },
         }}
         layout="alt"
         padding="0"
@@ -40,8 +40,8 @@ export default function Layout() {
           <Sidebar />
         </AppShell.Navbar>
 
-        <AppShell.Main className={styles.main}>
-          <div style={{ width: "100%" }}>
+        <AppShell.Main>
+          <div className={styles.main}>
             <Outlet context={{ token }} />
           </div>
         </AppShell.Main>

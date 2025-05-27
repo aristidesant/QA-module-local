@@ -25,12 +25,19 @@
 
 /* Style the main content area */
 :global(.mantine-AppShell-main) {
-  margin-left: 280px !important;
   margin-top: 70px !important;
-  width: calc(100% - 280px) !important;
   height: calc(100vh - 70px) !important;
   overflow-y: auto !important;
   padding: 2rem !important;
+  width: 100% !important;
+}
+
+/* Desktop view - adjust main content when navbar is visible */
+@media (min-width: 768px) {
+  :global(.mantine-AppShell-main) {
+    margin-left: 280px !important;
+    width: calc(100% - 280px) !important;
+  }
 }
 
 /* Remove any default positioning from the header */
@@ -48,6 +55,8 @@
   position: relative;
   max-width: 1400px;
   margin: 0 auto;
+  padding: 0 1rem;
+  box-sizing: border-box;
 }
 
 /* Add subtle background shapes */
@@ -99,11 +108,25 @@
 /* Mobile responsive adjustments */
 @media (max-width: 768px) {
   .main {
-    padding: 1.5rem;
+    padding: 1rem;
+    max-width: 100%;
+    width: 100%;
   }
   
   :global(.mantine-AppShell-main) {
     padding: 1rem !important;
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+  
+  /* Ensure content containers use full width on mobile */
+  .main > div {
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .contentContainer {
+    padding: 1.5rem;
   }
 }
 
