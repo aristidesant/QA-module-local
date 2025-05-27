@@ -17,7 +17,11 @@ import {
   Box,
 } from "@mantine/core";
 import { type UseFormReturnType } from "@mantine/form";
-import { IconCheck, IconCircleCheck, IconCirclePlus } from "@tabler/icons-react";
+import {
+  IconCheck,
+  IconCircleCheck,
+  IconCirclePlus,
+} from "@tabler/icons-react";
 import styles from "./PromptInputForm.module.css";
 import { useGetAllPromptForms } from "~/queries/promptFormQueries";
 import type { PromptForm } from "~/models/PromptFormMOdel";
@@ -32,7 +36,7 @@ export const PromptInputForm: React.FC<PromptInputFormProps> = ({
   type,
 }) => {
   const [selectedForm, setSelectedForm] = useState<PromptForm | null>(null);
-  
+
   const {
     data: forms,
     isLoading,
@@ -112,7 +116,7 @@ export const PromptInputForm: React.FC<PromptInputFormProps> = ({
       </Center>
     );
   }
-  
+
   const selectForm = (form: PromptForm) => {
     if (selectedForm?.id === form.id) {
       // If clicking on the already selected form, deselect it
@@ -125,7 +129,7 @@ export const PromptInputForm: React.FC<PromptInputFormProps> = ({
 
   const renderFormFields = (formDef: PromptForm) => {
     const fields = formDef?.form?.fields ?? [];
-    
+
     if (!Array.isArray(fields) || fields.length === 0) {
       return (
         <Text size="md" c="gray.6" ta="center" py="md">
@@ -133,7 +137,7 @@ export const PromptInputForm: React.FC<PromptInputFormProps> = ({
         </Text>
       );
     }
-    
+
     return (
       <SimpleGrid cols={{ base: 1 }} spacing="lg">
         {fields.map((item: any) => (
@@ -187,35 +191,39 @@ export const PromptInputForm: React.FC<PromptInputFormProps> = ({
       <Title order={3} className={styles.sectionTitle} c="indigo.7" fw={700}>
         Form Selection
       </Title>
-      
+
       <Text size="md" c="gray.6" mb="md">
         Select a form to generate a personalized prompt for your agent.
         {forms.length === 1 ? " One form has been automatically selected." : ""}
       </Text>
-      
+
       <div className={styles.formSelectionArea}>
         <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="md">
           {forms.map((formDef) => (
-            <Card 
-              key={formDef.id} 
-              className={`${styles.formCard} ${selectedForm?.id === formDef.id ? styles.selectedFormCard : ''}`}
+            <Card
+              key={formDef.id}
+              className={`${styles.formCard} ${
+                selectedForm?.id === formDef.id ? styles.selectedFormCard : ""
+              }`}
               onClick={() => selectForm(formDef)}
               padding="md"
             >
               <div className={styles.formCardTitle}>
-                <Text fw={600} size="md">{formDef.name}</Text>
+                <Text fw={600} size="md">
+                  {formDef.name}
+                </Text>
                 {selectedForm?.id === formDef.id && (
                   <IconCheck size={20} color="var(--mantine-color-indigo-6)" />
                 )}
               </div>
               <Text size="sm" c="gray.6" lineClamp={2}>
-                {`Form Type: ${formDef.type?.name || 'Custom'}`}
+                {`Form Type: ${formDef.type?.name || "Custom"}`}
               </Text>
             </Card>
           ))}
         </SimpleGrid>
       </div>
-      
+
       {!selectedForm ? (
         <Box className={styles.noFormsSelected}>
           <Text size="md" fw={500} c="gray.6">
@@ -224,12 +232,18 @@ export const PromptInputForm: React.FC<PromptInputFormProps> = ({
         </Box>
       ) : (
         <>
-          <Title order={4} className={styles.sectionTitle} c="indigo.7" fw={600}>
+          <Title
+            order={4}
+            className={styles.sectionTitle}
+            c="indigo.7"
+            fw={600}
+          >
             Form Inputs
           </Title>
-          
+
           <Text size="md" c="gray.6" mb="md">
-            Please fill in the required fields to generate a personalized prompt.
+            Please fill in the required fields to generate a personalized
+            prompt.
           </Text>
           {renderFormFields(selectedForm)}
         </>
