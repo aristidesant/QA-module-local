@@ -35,13 +35,13 @@ const maintenanceItems: MenuItem[] = [
   },
 ];
 
-export const Sidebar: React.FC = () => {
+export const Sidebar: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   return (
     <nav className={styles.sidebar}>
       <Stack className={styles.menuList} gap="md">
-        {menuItems.map(renderMenuItem)}
+        {menuItems.map((item) => renderMenuItem({ ...item, onClose }))}
         <Divider label="Maintenance" labelPosition="left" />
-        {maintenanceItems.map(renderMenuItem)}
+        {maintenanceItems.map((item) => renderMenuItem({ ...item, onClose }))}
       </Stack>
     </nav>
   );
@@ -52,9 +52,16 @@ type MenuItem = {
   icon: React.ReactNode;
   to: string;
   exact?: boolean;
+  onClose?: () => void;
 };
 
-export const renderMenuItem = ({ label, icon, to, exact }: MenuItem) => {
+export const renderMenuItem = ({
+  label,
+  icon,
+  to,
+  exact,
+  onClose,
+}: MenuItem) => {
   const location = useLocation();
 
   const isSelected = exact
@@ -68,6 +75,7 @@ export const renderMenuItem = ({ label, icon, to, exact }: MenuItem) => {
         [styles.menuItem, isSelected ? styles.menuItemSelected : ""].join(" ")
       }
       end={!!exact}
+      onClick={onClose}
     >
       {icon}
       <span className={styles.menuText}>{label}</span>

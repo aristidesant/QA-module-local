@@ -37,7 +37,7 @@ export default function Layout() {
         </AppShell.Header>
 
         <AppShell.Navbar p="xs" className={styles.navbar}>
-          <Sidebar />
+          <Sidebar onClose={toggle} />
         </AppShell.Navbar>
 
         <AppShell.Main>
