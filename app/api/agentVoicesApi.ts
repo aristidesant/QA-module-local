@@ -1,9 +1,5 @@
 import axios from "axios";
-import type {
-  AgentVoice,
-  AgentVoiceDBModel,
-  AgentVoiceResponse,
-} from "~/models/AgentVoiceModel";
+import type { AgentVoiceModel } from "~/models/AgentVoiceModel";
 
 const getDefaultApiUrl = () => {
   if (typeof window !== "undefined") {
@@ -24,7 +20,7 @@ const DEFAULT_API_URL = getDefaultApiUrl() as string;
 const agentVoicesApi = (authHeader: Record<string, string>) => {
   return {
     // CREATE voice
-    createVoice: async (voice: Partial<AgentVoiceDBModel>) => {
+    createVoice: async (voice: Partial<AgentVoiceModel>) => {
       const response = await axios.post(`${DEFAULT_API_URL}/voices`, voice, {
         headers: authHeader,
       });
@@ -36,7 +32,7 @@ const agentVoicesApi = (authHeader: Record<string, string>) => {
       params?: Record<string, string>,
       extraHeaders?: Record<string, string>
     ) => {
-      const response = await axios.get<AgentVoiceDBModel[]>(
+      const response = await axios.get<AgentVoiceModel[]>(
         `${DEFAULT_API_URL}/voices`,
         {
           params,
@@ -49,7 +45,7 @@ const agentVoicesApi = (authHeader: Record<string, string>) => {
 
     // FIND ONE voice
     findVoice: async (voiceId: string) => {
-      const response = await axios.get<AgentVoiceDBModel>(
+      const response = await axios.get<AgentVoiceModel>(
         `${DEFAULT_API_URL}/voices/${voiceId}`,
         { headers: authHeader }
       );
@@ -57,8 +53,8 @@ const agentVoicesApi = (authHeader: Record<string, string>) => {
     },
 
     // UPDATE voice (PATCH)
-    updateVoice: async (voiceId: string, data: Partial<AgentVoiceDBModel>) => {
-      const response = await axios.patch<AgentVoiceDBModel>(
+    updateVoice: async (voiceId: string, data: Partial<AgentVoiceModel>) => {
+      const response = await axios.patch<AgentVoiceModel>(
         `${DEFAULT_API_URL}/voices/${voiceId}`,
         data,
         {
@@ -84,7 +80,7 @@ const agentVoicesApi = (authHeader: Record<string, string>) => {
       params?: Record<string, string>,
       extraHeaders?: Record<string, string>
     ) => {
-      const response = await axios.get<AgentVoiceResponse>(
+      const response = await axios.get<AgentVoiceModel>(
         `${DEFAULT_API_URL}/voices/elevenlabs`,
         {
           params: {

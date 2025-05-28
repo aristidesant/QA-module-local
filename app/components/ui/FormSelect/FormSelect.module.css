@@ -1,19 +1,19 @@
-.textInput {
+.select {
   margin-bottom: 1rem;
 }
 
-.textInput .mantine-TextInput-input {
+.select .mantine-Select-input {
   border-radius: 8px;
   border: 1px solid #e9ecef;
   transition: border-color 0.2s ease;
 }
 
-.textInput .mantine-TextInput-input:focus {
+.select .mantine-Select-input:focus {
   border-color: #339af0;
   box-shadow: 0 0 0 1px rgba(51, 154, 240, 0.3);
 }
 
-.textInput .mantine-TextInput-label {
+.select .mantine-Select-label {
   font-weight: 500;
   color: #495057;
   margin-bottom: 0.5rem;

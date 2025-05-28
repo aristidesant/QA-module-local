@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import agentVoicesApi from "~/api/agentVoicesApi";
 import { getClientAuthorizationHeader } from "~/client-session";
 import { useToken } from "~/components/RouteProtecter/RouteProtecter";
-import type { AgentVoice, AgentVoiceDBModel } from "~/models/AgentVoiceModel";
+import type { AgentVoiceModel } from "~/models/AgentVoiceModel";
 
 // Create agent voice
 export const useCreateAgentVoice = () => {
@@ -10,7 +10,7 @@ export const useCreateAgentVoice = () => {
   const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (voice: Partial<AgentVoice>) => {
+    mutationFn: async (voice: Partial<AgentVoiceModel>) => {
       const api = agentVoicesApi({
         ...header,
         Authorization: `Bearer ${token.token}`,
@@ -71,7 +71,7 @@ export const useUpdateAgentVoice = () => {
       data,
     }: {
       id: string;
-      data: Partial<AgentVoiceDBModel>;
+      data: Partial<AgentVoiceModel>;
     }) => {
       const api = agentVoicesApi({
         ...header,

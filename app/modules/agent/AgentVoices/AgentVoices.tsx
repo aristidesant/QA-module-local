@@ -1,25 +1,19 @@
 import { useRef, useState } from "react";
-import { useGetElevenlabsVoices } from "~/queries/agentVoiceQueries";
+import { useDebouncedFilters } from "./AgentVoicesFilter/useDebouncedFilters";
+import { useGetAllAgentVoices } from "~/queries/agentVoiceQueries";
+import { ScrollArea, Text, Button, Collapse } from "@mantine/core";
 import {
-  ScrollArea,
-  Avatar,
-  Text,
-  Box,
-  ActionIcon,
-  Transition,
-  Paper,
-  Progress,
-  Tooltip,
-} from "@mantine/core";
-import {
-  IconPlayerPlay,
-  IconPlayerStop,
   IconMicrophone,
-  IconVolumeOff,
+  IconFilter,
+  IconChevronDown,
+  IconChevronUp,
 } from "@tabler/icons-react";
-import { useHover } from "@mantine/hooks";
+
 import SectionCard from "~/components/SectionCard";
 import classes from "./AgentVoices.module.css";
+import { VoiceCard } from "./VoiceCard";
+import { AgentVoicesFilter } from "./AgentVoicesFilter";
+import type { AgentVoicesFilterValues } from "./AgentVoicesFilter/AgentVoicesFilter";
 
 type AgentVoicesProps = {
   onSelectVoice: (voiceId: string) => void;
@@ -30,10 +24,34 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
   onSelectVoice,
   selectedVoiceId,
 }) => {
-  const { data: elevenLabsVoices, isLoading } = useGetElevenlabsVoices();
+  const [filters, setFilters] = useState<AgentVoicesFilterValues>({
+    name: "",
+    gender: "",
+    language: "",
+    status: "",
+    age: "",
+    accent: "",
+  });
+  const debouncedFilters = useDebouncedFilters(filters, 400);
+
+  const [filtersVisible, setFiltersVisible] = useState(false);
+
+  const {
+    data: elevenLabsVoices,
+    isLoading,
+    isError,
+  } = useGetAllAgentVoices(
+    Object.fromEntries(
+      Object.entries(debouncedFilters).filter(([_, value]) => value !== "")
+    ) as Record<string, string>
+  );
   const [playingVoiceId, setPlayingVoiceId] = useState<string | null>(null);
   const [playProgress, setPlayProgress] = useState<number>(0);
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  const handleFiltersChange = (newFilters: AgentVoicesFilterValues) => {
+    setFilters(newFilters);
+  };
 
   const handlePlayVoice = (voiceId: string, previewUrl: string) => {
     if (!previewUrl) return;
@@ -71,137 +89,73 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
     }
   };
 
+  const voices = elevenLabsVoices || [];
+
+  let content: React.ReactNode = null;
+
   if (isLoading) {
-    return (
-      <SectionCard
-        icon={IconMicrophone}
-        title="Agent Voices"
-        description="Select a voice for your agent. Preview and choose from available options."
-        contentSpacing="md"
-        id="agent-voices-section"
-      >
-        <div className={classes.loadingContainer}>
-          <IconMicrophone className={classes.loadingIcon} size={64} />
-          <Text size="xl" fw={600}>
-            Loading voices...
-          </Text>
-          <Text size="sm" c="dimmed">
-            Fetching available voice options
-          </Text>
-        </div>
-      </SectionCard>
+    content = (
+      <div className={classes.loadingContainer}>
+        <IconMicrophone className={classes.loadingIcon} size={64} />
+        <Text size="xl" fw={600}>
+          Loading voices...
+        </Text>
+        <Text size="sm" c="dimmed">
+          Fetching available voice options
+        </Text>
+      </div>
+    );
+  } else if (isError) {
+    content = (
+      <div className={classes.errorContainer}>
+        <IconMicrophone className={classes.errorIcon} size={64} />
+        <Text size="xl" fw={600} c="red">
+          Failed to load voices
+        </Text>
+        <Text size="sm" c="dimmed">
+          There was an error fetching the voice options. Please try again.
+        </Text>
+      </div>
+    );
+  } else if (voices.length === 0) {
+    content = (
+      <div className={classes.errorContainer}>
+        <IconMicrophone className={classes.errorIcon} size={64} />
+        <Text size="xl" fw={600}>
+          No voices found
+        </Text>
+        <Text size="sm" c="dimmed">
+          Try adjusting your filters or try again later.
+        </Text>
+      </div>
+    );
+  } else {
+    content = (
+      <div className={classes.container}>
+        <audio
+          ref={audioRef}
+          onEnded={handleAudioEnded}
+          onTimeUpdate={handleTimeUpdate}
+          className={classes.hiddenAudio}
+        />
+        <ScrollArea className={classes.scrollArea}>
+          <div className={classes.voiceGrid}>
+            {voices.map((voice) => (
+              <VoiceCard
+                key={voice.id}
+                voice={voice.voice}
+                isPlaying={playingVoiceId === voice.voice.id}
+                isSelected={voice.voice.id === selectedVoiceId}
+                playProgress={playProgress}
+                onSelectVoice={onSelectVoice}
+                onPlayVoice={handlePlayVoice}
+              />
+            ))}
+          </div>
+        </ScrollArea>
+      </div>
     );
   }
-
-  const voices = elevenLabsVoices?.voices || [];
-
-  const isVoiceFemale = (voice: any) =>
-    voice.labels?.gender === "female" ||
-    voice.name.toLowerCase().includes("female");
-
-  const isVoiceMale = (voice: any) =>
-    voice.labels?.gender === "male" ||
-    voice.name.toLowerCase().includes("male");
-
-  const VoiceCard = ({ voice }: { voice: any }) => {
-    const { hovered, ref } = useHover();
-    const isFemale = isVoiceFemale(voice);
-    const isMale = isVoiceMale(voice);
-    const genderColor = isFemale ? "pink" : isMale ? "blue" : "gray";
-    const isPlaying = playingVoiceId === voice.voice_id;
-    const isSelected = voice.voice_id === selectedVoiceId;
-
-    return (
-      <Transition mounted={true} transition="fade" duration={400}>
-        {(styles) => (
-          <Tooltip
-            label={`${voice.name} - ${
-              isFemale ? "Female" : isMale ? "Male" : "Unknown"
-            } voice`}
-            position="top"
-            withArrow
-            disabled={isPlaying}
-          >
-            <Paper
-              ref={ref}
-              className={classes.voiceCard}
-              style={styles}
-              onClick={() => {
-                onSelectVoice(voice.voice_id);
-              }}
-              data-selected={isSelected}
-              data-playing={isPlaying}
-              data-gender={isFemale ? "female" : "male"}
-              data-hovered={hovered && !isPlaying}
-            >
-              <div className={classes.cardContent}>
-                <div className={classes.avatarWrapper}>
-                  <Avatar
-                    size={"lg"}
-                    radius={"xl"}
-                    src={
-                      isFemale
-                        ? "/images/avatar-f-do.png"
-                        : "/images/avatar-m-do.png"
-                    }
-                    color={genderColor}
-                    variant="filled"
-                  >
-                    {voice.name.charAt(0).toUpperCase()}
-                  </Avatar>
-                </div>
-
-                <Box className={classes.voiceInfo}>
-                  <Text
-                    className={classes.voiceName}
-                    fw={isSelected ? 700 : 600}
-                    size="sm"
-                  >
-                    {voice.name}
-                  </Text>
-                  <Text size="xs" c="dimmed" className={classes.voiceName}>
-                    {voice?.fine_tuning?.language || voice?.labels?.language}
-                  </Text>
-                </Box>
-
-                <ActionIcon
-                  className={classes.playButton}
-                  variant="filled"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    if (voice.preview_url) {
-                      handlePlayVoice(voice.voice_id, voice.preview_url);
-                    }
-                  }}
-                  color={genderColor}
-                  size="lg"
-                  radius="xl"
-                >
-                  {!voice.preview_url ? (
-                    <IconVolumeOff size={18} />
-                  ) : isPlaying ? (
-                    <IconPlayerStop size={18} />
-                  ) : (
-                    <IconPlayerPlay size={18} style={{ marginLeft: 1 }} />
-                  )}
-                </ActionIcon>
-              </div>
-
-              {isPlaying && (
-                <Progress
-                  value={playProgress}
-                  color={genderColor}
-                  size="xs"
-                  className={classes.progressBar}
-                  animated
-                />
-              )}
-            </Paper>
-          </Tooltip>
-        )}
-      </Transition>
-    );
-  };
 
   return (
     <SectionCard
@@ -211,22 +165,8 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
       contentSpacing="md"
       id="agent-voices-section"
     >
-      <div className={classes.container}>
-        <audio
-          ref={audioRef}
-          onEnded={handleAudioEnded}
-          onTimeUpdate={handleTimeUpdate}
-          className={classes.hiddenAudio}
-        />
-
-        <ScrollArea className={classes.scrollArea}>
-          <div className={classes.voiceGrid}>
-            {voices.map((voice) => (
-              <VoiceCard key={voice.voice_id} voice={voice} />
-            ))}
-          </div>
-        </ScrollArea>
-      </div>
+      <AgentVoicesFilter filters={filters} onChange={handleFiltersChange} />
+      {content}
     </SectionCard>
   );
 };
