@@ -24,6 +24,7 @@ import { useFetcher, useNavigate } from "react-router";
 import ContainerCard from "../../../../components/ui/ContainerCard/ContainerCard";
 import classes from "./AgentList.module.css";
 import type AgentListObject from "~/models/AgentListObject";
+import SectionCard from "~/components/SectionCard";
 
 interface AgentListProps {
   agents: any[];
@@ -46,11 +47,11 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
   };
 
   return (
-    <ContainerCard
+    <SectionCard
       title="Agents"
-      subtitle={`${agents.length} agents available`}
+      description={`${agents.length} agents available`}
       icon={IconUsersGroup}
-      rightSection={
+      headerActions={
         <Tooltip
           label="Create a new agent"
           withArrow
@@ -115,7 +116,7 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
           </Stack>
         </Paper>
       )}
-    </ContainerCard>
+    </SectionCard>
   );
 };
 

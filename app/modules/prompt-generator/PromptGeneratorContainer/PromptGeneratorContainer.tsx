@@ -2,7 +2,7 @@ import React from "react";
 import { useForm } from "@mantine/form";
 import { Stepper, Group, Button, Title, Stack, Loader } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconCheck, IconAlertTriangle } from "@tabler/icons-react";
+import { IconCheck, IconAlertTriangle, IconInputAi } from "@tabler/icons-react";
 import { PromptInputForm } from "../PromptInputForm";
 import { PromptOutputDisplay } from "../PromptOutputDisplay";
 import { useCreatePrompt } from "../queries/promptGeneratorQueries";
@@ -13,6 +13,7 @@ import ContainerCard from "../../../components/ui/ContainerCard";
 import type { PromptInstructionType } from "~/config/prompt-generator/useForm";
 import { useNavigate } from "react-router";
 import type { PromptType } from "~/models/PromptTypeModel";
+import SectionCard from "~/components/SectionCard";
 
 const PROMPT_TYPES = Object.values({
   FINANCE: "FINANCE",
@@ -78,8 +79,9 @@ export const PromptGeneratorContainer: React.FC = () => {
   };
 
   return (
-    <ContainerCard
-      subtitle="Create and manage prompts"
+    <SectionCard
+      description="Create and manage prompts"
+      icon={IconInputAi}
       title="Prompt Generator Wizard"
     >
       <Stack gap="xl" className={styles.stackWrapper}>
@@ -155,6 +157,6 @@ export const PromptGeneratorContainer: React.FC = () => {
           )}
         </div>
       </Stack>
-    </ContainerCard>
+    </SectionCard>
   );
 };

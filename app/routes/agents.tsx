@@ -7,6 +7,9 @@ import {
 import AgentList from "~/modules/agents/components/AgentList";
 import agentApi from "~/api/agentApi";
 import { getSession } from "~/server-session";
+import { Stack } from "@mantine/core";
+import Breadcrumb from "~/components/ui/Breadcrumb";
+import PageHeader from "~/components/ui/PageHeader";
 
 export async function loader({ request }: ActionFunctionArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -40,7 +43,15 @@ export default function AgentRoute() {
   return (
     <Await resolve={agents.agents} errorElement={<>Something is not wokring</>}>
       {(resolvedAgents) => (
-        <AgentList agents={resolvedAgents ?? []} onCreateNew={() => {}} />
+        <Stack>
+          <PageHeader
+            breadcrumbs={[
+              { label: "Home", path: "/" },
+              { label: "Agents", path: "/agents" },
+            ]}
+          />
+          <AgentList agents={resolvedAgents ?? []} onCreateNew={() => {}} />
+        </Stack>
       )}
     </Await>
   );

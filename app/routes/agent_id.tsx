@@ -3,6 +3,8 @@ import { useLoaderData } from "react-router";
 import AgentDetails from "~/modules/agent/AgentDetails";
 import agentApi from "~/api/agentApi";
 import { getSession } from "~/server-session";
+import { Stack } from "@mantine/core";
+import PageHeader from "~/components/ui/PageHeader";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const { agent_id } = params;
@@ -25,5 +27,16 @@ export default function AgentRoute() {
   if (!agent) {
     return <div>{error}</div>;
   }
-  return <AgentDetails agent={agent} />;
+  return (
+    <Stack>
+      <PageHeader
+        breadcrumbs={[
+          { label: "Home", path: "/" },
+          { label: "Agents", path: "/agent" },
+          { label: agent.name, path: `/agents/${agent.id}` },
+        ]}
+      />
+      <AgentDetails agent={agent} />
+    </Stack>
+  );
 }

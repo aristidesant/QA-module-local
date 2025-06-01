@@ -1,6 +1,8 @@
 import { useState } from "react";
 import AgentList from "./components/AgentList";
 import type { AgentSummaryResponseModel } from "elevenlabs/api";
+import { Stack } from "@mantine/core";
+import Breadcrumb from "~/components/ui/Breadcrumb";
 
 interface AgentsModuleProps {
   initialAgents: AgentSummaryResponseModel[];
@@ -12,8 +14,15 @@ export default function AgentsModule({ initialAgents }: AgentsModuleProps) {
   }
 
   return (
-    <>
+    <Stack>
+      <Breadcrumb
+        items={[
+          { label: "Home", path: "/" },
+          { label: "Agents", path: "/agents" },
+        ]}
+      />
+
       <AgentList agents={initialAgents} onCreateNew={handleCreateNewSuccess} />
-    </>
+    </Stack>
   );
 }

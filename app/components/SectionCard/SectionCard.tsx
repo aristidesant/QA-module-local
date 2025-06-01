@@ -5,7 +5,7 @@ import type { TablerIcon } from "@tabler/icons-react";
 
 interface SectionCardProps {
   icon: TablerIcon;
-  title: string;
+  title: string | ReactNode;
   description?: string;
   children?: ReactNode;
   className?: string;

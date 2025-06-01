@@ -18,6 +18,7 @@ import ContainerCard from "~/components/ui/ContainerCard/ContainerCard";
 import { useUpdateAgent } from "~/queries/agentQueries";
 import type { AgentUpdateModel } from "~/models/AgentListObject";
 import AgentVoices from "../AgentVoices";
+import SectionCard from "~/components/SectionCard";
 
 export type AgentDetailsProps = {
   agent: AgentListObject;
@@ -122,7 +123,7 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <ContainerCard
+        <SectionCard
           title={
             <>
               {isEditingName ? (
@@ -144,7 +145,7 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
               )}
             </>
           }
-          subtitle={`ID: ${agentId}`}
+          description={`ID: ${agentId}`}
           icon={IconUser}
         >
           <input type="hidden" name="agent_id" value={agentId} />
@@ -209,7 +210,7 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
               Save Changes
             </Button>
           </Group>
-        </ContainerCard>
+        </SectionCard>
       </form>
       <AgentWidget
         agentId={agentId}
