@@ -1,9 +1,7 @@
 .container {
-  margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.5rem;
 }
 
 .item {
@@ -11,8 +9,10 @@
   align-items: center;
   gap: 0.5rem;
   color: var(--mantine-color-gray-6);
-  font-size: 0.875rem;
+  font-size: 1rem;
+  font-weight: 500;
   transition: color 0.2s ease;
+  border-radius: 6px;
 }
 
 .item:hover {

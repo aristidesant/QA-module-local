@@ -7,7 +7,7 @@ interface SectionCardProps {
   icon: TablerIcon;
   title: string;
   description?: string;
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
   footer?: ReactNode;
   headerActions?: ReactNode;

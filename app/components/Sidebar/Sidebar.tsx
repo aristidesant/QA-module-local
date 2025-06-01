@@ -4,6 +4,7 @@ import {
   IconLayoutDashboard,
   IconFolder,
   IconSettings,
+  IconListDetails,
 } from "@tabler/icons-react";
 import { NavLink, useLocation } from "react-router";
 import styles from "./Sidebar.module.css";
@@ -24,6 +25,11 @@ const menuItems: MenuItem[] = [
     label: "Prompt Generator",
     icon: <IconSettings size={20} className={styles.menuIcon} />,
     to: "/prompt-generator",
+  },
+  {
+    label: "Campaigns",
+    icon: <IconListDetails size={20} className={styles.menuIcon} />,
+    to: "/campaigns",
   },
 ];
 

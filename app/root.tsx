@@ -81,7 +81,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               },
             }}
           >
-            {isLoading ? <Loader text="Loading application..." /> : children}
+            {isLoading ? <Loader /> : children}
           </MantineProvider>
         </QueryClientProvider>
         <ScrollRestoration />

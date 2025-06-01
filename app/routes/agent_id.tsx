@@ -11,15 +11,19 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     Authorization: `Bearer ${session.get("accessToken")}`,
     "x-client-id": session.get("clientId") ?? "",
   });
+
   try {
     const agent = await agentApiClient.findAgent(agent_id!);
     return { agent };
   } catch (error) {
-    throw new Response("Agent not found", { status: 404 });
+    return { agent: null, error: "Agent not found" };
   }
 }
 
 export default function AgentRoute() {
-  const { agent } = useLoaderData<typeof loader>();
+  const { agent, error } = useLoaderData<typeof loader>();
+  if (!agent) {
+    return <div>{error}</div>;
+  }
   return <AgentDetails agent={agent} />;
 }

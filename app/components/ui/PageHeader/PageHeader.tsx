@@ -1,11 +1,13 @@
 import React from "react";
 import type { ReactNode } from "react";
 import styles from "./PageHeader.module.css";
+import { Card, Paper, ThemeIcon } from "@mantine/core";
 import { Breadcrumb } from "../Breadcrumb";
 import type { BreadcrumbItem } from "../Breadcrumb";
+import { IconHome } from "@tabler/icons-react";
 
 interface PageHeaderProps {
-  title: string;
+  title?: string;
   description?: string;
   breadcrumbs?: BreadcrumbItem[];
   actions?: ReactNode;
@@ -13,26 +15,21 @@ interface PageHeaderProps {
 }
 
 export const PageHeader: React.FC<PageHeaderProps> = ({
-  title,
   description,
   breadcrumbs,
   actions,
   className,
 }) => {
-  const containerClasses = `${styles.container} ${className || ""}`;
-
   return (
-    <div className={containerClasses}>
+    <Paper p={"xs"} shadow="xs" className={className}>
       {breadcrumbs && breadcrumbs.length > 0 && (
-        <Breadcrumb items={breadcrumbs} />
+        <nav className={styles.breadcrumbBar} aria-label="Breadcrumb">
+          <ThemeIcon color="teal" variant="white">
+            <IconHome size={16} stroke={1.7} />
+          </ThemeIcon>
+          <Breadcrumb items={breadcrumbs} />
+        </nav>
       )}
-
-      <div className={styles.titleRow}>
-        <h1 className={styles.title}>{title}</h1>
-        {actions && <div className={styles.actions}>{actions}</div>}
-      </div>
-
-      {description && <p className={styles.description}>{description}</p>}
-    </div>
+    </Paper>
   );
 };
