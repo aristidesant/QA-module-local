@@ -17,7 +17,7 @@ const { getSession, commitSession, destroySession } =
     cookie: {
       name: "__session",
       httpOnly: true,
-      maxAge: 60 * 30, // 30 minutes in seconds
+      maxAge: 60 * 120, // 120 minutes in seconds
       path: "/",
       sameSite: "lax",
       secrets: ["your-secret-here"],
