@@ -10,7 +10,6 @@ import {
   Button,
   Group,
   Stack,
-  FileInput,
   Divider,
   LoadingOverlay,
 } from "@mantine/core";
@@ -57,16 +56,11 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
       description: campaign?.description || "",
       budget: campaign?.budget ?? 0,
       spent: campaign?.spent ?? 0,
-      roi: campaign?.roi ?? 0,
-      leads: campaign?.leads ?? 0,
       type: campaign?.type || "OUTBOUND",
       status: campaign?.status || "ACTIVE",
       userId: campaign?.userId ?? 0,
       clientId: campaign?.clientId ?? 0,
-      startDate: campaign?.startDate || "",
-      endDate: campaign?.endDate || "",
       tags: campaign?.tags || [],
-      avatarUrl: campaign?.avatarUrl || "",
     },
     validate: {
       name: (value) => (value ? null : "Name is required"),
@@ -74,9 +68,6 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
       status: (value) => (value ? null : "Status is required"),
       budget: (value) => (value >= 0 ? null : "Budget must be 0 or more"),
       spent: (value) => (value >= 0 ? null : "Spent must be 0 or more"),
-      roi: (value) =>
-        value >= 0 && value <= 100 ? null : "ROI must be between 0 and 100",
-      leads: (value) => (value >= 0 ? null : "Leads must be 0 or more"),
       userId: (value) => (value >= 0 ? null : "User ID must be 0 or more"),
       clientId: (value) => (value >= 0 ? null : "Client ID must be 0 or more"),
     },
@@ -139,12 +130,14 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
             required
             {...form.getInputProps("type")}
           />
-          <Select
-            label="Status"
-            data={statusOptions}
-            required
-            {...form.getInputProps("status")}
-          />
+          {campaign?.id && (
+            <Select
+              label="Status"
+              data={statusOptions}
+              required
+              {...form.getInputProps("status")}
+            />
+          )}
         </Group>
         <Textarea
           label="Description"
@@ -159,57 +152,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
             required
             {...form.getInputProps("budget")}
           />
-          <NumberInput
-            label="Spent"
-            min={0}
-            step={100}
-            required
-            {...form.getInputProps("spent")}
-          />
-          <NumberInput
-            label="ROI (%)"
-            min={0}
-            max={100}
-            step={1}
-            required
-            {...form.getInputProps("roi")}
-          />
-          <NumberInput
-            label="Leads"
-            min={0}
-            step={1}
-            required
-            {...form.getInputProps("leads")}
-          />
         </Group>
-        <Group grow>
-          <NumberInput
-            label="User ID"
-            min={0}
-            step={1}
-            required
-            {...form.getInputProps("userId")}
-          />
-          <NumberInput
-            label="Client ID"
-            min={0}
-            step={1}
-            required
-            {...form.getInputProps("clientId")}
-          />
-        </Group>
-        <Group grow>
-          <TextInput
-            label="Start Date"
-            type="date"
-            {...form.getInputProps("startDate")}
-          />
-          <TextInput
-            label="End Date"
-            type="date"
-            {...form.getInputProps("endDate")}
-          />
-        </Group>
+
         <MultiSelect
           label="Tags"
           data={
@@ -220,13 +164,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
           searchable
           {...form.getInputProps("tags")}
         />
-        <FileInput
-          label="Avatar Image"
-          value={avatarFile}
-          onChange={setAvatarFile}
-          accept="image/*"
-          placeholder="Upload campaign avatar"
-        />
+
         <Divider />
         <Group justify="flex-end">
           <Button type="submit" loading={loading}>

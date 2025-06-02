@@ -96,16 +96,6 @@ export const CampaignsDetails: React.FC<CampaignsDetailsProps> = ({
           value={formatCurrency(campaign.spent)}
         />
         <InformationDetails
-          label="ROI"
-          icon={IconTrendingUp}
-          value={formatPercent(campaign.roi)}
-        />
-        <InformationDetails
-          label="Leads"
-          icon={IconUsers}
-          value={formatValue(campaign.leads)}
-        />
-        <InformationDetails
           label="User ID"
           icon={IconUser}
           value={formatValue(campaign.userId)}
@@ -125,16 +115,7 @@ export const CampaignsDetails: React.FC<CampaignsDetailsProps> = ({
           icon={IconCalendar}
           value={formatDate(campaign.updatedAt)}
         />
-        <InformationDetails
-          label="Start Date"
-          icon={IconCalendar}
-          value={formatDate(campaign.startDate)}
-        />
-        <InformationDetails
-          label="End Date"
-          icon={IconCalendar}
-          value={formatDate(campaign.endDate)}
-        />
+
         {campaign.tags && campaign.tags.length > 0 && (
           <div className={styles.tags}>
             {campaign.tags.map((tag) => (
