@@ -20,7 +20,7 @@ const { getSession, commitSession, destroySession } =
       maxAge: 60 * 120, // 120 minutes in seconds
       path: "/",
       sameSite: "lax",
-      secrets: ["your-secret-here"],
+      secrets: ["b7f8c2e1-4a3d-4e2b-9c6f-2d1a7e8f5b9c"],
       secure: true,
     },
   });
