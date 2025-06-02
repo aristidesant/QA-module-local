@@ -1,0 +1,77 @@
+import { useState } from "react";
+import { Stack, TextInput, Button, Group } from "@mantine/core";
+import { IconSearch, IconPlus } from "@tabler/icons-react";
+import { modals } from "@mantine/modals";
+import PageHeader from "~/components/ui/PageHeader";
+import ContentContainer from "~/components/ui/ContentContainer";
+import ContactsList from "../ContactsList";
+import ContactsForm from "../ContactsForm";
+import classes from "./ContactsPage.module.css";
+
+export default function ContactsPage() {
+  const [search, setSearch] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0); // for refreshing list after modal close
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  };
+
+  const openContactModal = (
+    mode: "create" | "edit",
+    contactId: number | null = null
+  ) => {
+    modals.open({
+      title: mode === "edit" ? "Edit Contact" : "New Contact",
+      children: (
+        <ContactsForm
+          mode={mode}
+          contactId={contactId}
+          onSuccess={() => {
+            modals.closeAll();
+            setRefreshKey((k) => k + 1); // trigger list refresh
+          }}
+        />
+      ),
+      centered: true,
+      size: "lg",
+      withCloseButton: true,
+      closeOnClickOutside: false,
+    });
+  };
+
+  return (
+    <Stack className={classes.root}>
+      <PageHeader
+        breadcrumbs={[
+          { label: "Home", path: "/" },
+          { label: "Contacts", path: "/contacts" },
+        ]}
+      />
+      <ContentContainer>
+        <Group justify="space-between" mb="md">
+          <TextInput
+            placeholder="Search contacts"
+            leftSection={<IconSearch size={18} />}
+            value={search}
+            onChange={handleSearchChange}
+            className={classes.searchInput}
+          />
+          <Button
+            leftSection={<IconPlus size={18} />}
+            onClick={() => openContactModal("create", null)}
+            variant="light"
+          >
+            New Contact
+          </Button>
+        </Group>
+        <ContactsList
+          key={refreshKey}
+          search={search}
+          onEdit={(id) => openContactModal("edit", id)}
+          selectedContactId={null}
+        />
+        {/* ContactsForm is now shown in a modal only */}
+      </ContentContainer>
+    </Stack>
+  );
+}

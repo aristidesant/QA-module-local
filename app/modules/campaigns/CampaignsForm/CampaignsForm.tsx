@@ -12,6 +12,8 @@ import {
   Stack,
   Divider,
   LoadingOverlay,
+  Card,
+  Text,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import type { Campaign } from "../../../models/CampaignsModel";
@@ -20,6 +22,7 @@ import {
   useUpdateCampaign,
 } from "~/queries/campaignsQueries";
 import { notifications } from "@mantine/notifications";
+import PromptTemplateSelect from "~/components/PromptTemplateSelect";
 
 interface CampaignsFormProps {
   campaign?: Partial<Campaign>;
@@ -59,6 +62,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
       type: campaign?.type || "OUTBOUND",
       status: campaign?.status || "ACTIVE",
       userId: campaign?.userId ?? 0,
+      promptId: campaign?.promptId ?? undefined,
       clientId: campaign?.clientId ?? 0,
       tags: campaign?.tags || [],
     },
@@ -73,16 +77,18 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
     },
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (
+    value: Omit<Campaign, "id" | "createdAt" | "updatedAt">
+  ) => {
     if (form.validate().hasErrors) {
       return;
     }
+    console.log("Submitting campaign:", value);
     if (campaign?.id) {
       // Up date existing campaign
       try {
         await updateCampaign({
-          data: form.values,
+          data: value,
           id: `${campaign.id}`,
         });
         notifications.show({
@@ -90,7 +96,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
           message: "Your campaign has been successfully updated.",
           color: "green",
         });
-        onSubmit(form.values);
+        onSubmit(value);
       } catch (error) {
         notifications.show({
           title: "Error",
@@ -101,13 +107,13 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
     } else {
       // Create new campaign
       try {
-        await createCampaign(form.values);
+        await createCampaign(value);
         notifications.show({
           title: "Campaign Created",
           message: "Your campaign has been successfully created.",
           color: "green",
         });
-        onSubmit(form.values);
+        onSubmit(value);
       } catch (error) {
         notifications.show({
           title: "Error",
@@ -119,32 +125,38 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <LoadingOverlay visible={isCreating || isUpdating} />
-      <Stack gap="md">
-        <Group grow>
-          <TextInput label="Name" required {...form.getInputProps("name")} />
-          <Select
-            label="Type"
-            data={typeOptions}
-            required
-            {...form.getInputProps("type")}
-          />
-          {campaign?.id && (
-            <Select
-              label="Status"
-              data={statusOptions}
+    <Card shadow="xs" padding="md" radius="md" withBorder>
+      <form onSubmit={form.onSubmit(handleSubmit)}>
+        <LoadingOverlay visible={isCreating || isUpdating} />
+        <Stack gap="md">
+          <Group gap="sm" grow align="flex-end">
+            <TextInput
+              label="Name"
               required
-              {...form.getInputProps("status")}
+              {...form.getInputProps("name")}
+              autoFocus
             />
-          )}
-        </Group>
-        <Textarea
-          label="Description"
-          minRows={2}
-          {...form.getInputProps("description")}
-        />
-        <Group grow>
+            <Select
+              label="Type"
+              data={typeOptions}
+              required
+              {...form.getInputProps("type")}
+            />
+            {campaign?.id && (
+              <Select
+                label="Status"
+                data={statusOptions}
+                required
+                {...form.getInputProps("status")}
+              />
+            )}
+          </Group>
+          <Textarea
+            label="Description"
+            minRows={2}
+            autosize
+            {...form.getInputProps("description")}
+          />
           <NumberInput
             label="Budget"
             min={0}
@@ -152,26 +164,30 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
             required
             {...form.getInputProps("budget")}
           />
-        </Group>
-
-        <MultiSelect
-          label="Tags"
-          data={
-            Array.isArray(form.values.tags)
-              ? form.values.tags.map((tag) => ({ value: tag, label: tag }))
-              : []
-          }
-          searchable
-          {...form.getInputProps("tags")}
-        />
-
-        <Divider />
-        <Group justify="flex-end">
-          <Button type="submit" loading={loading}>
-            {campaign ? "Update Campaign" : "Create Campaign"}
-          </Button>
-        </Group>
-      </Stack>
-    </form>
+          <MultiSelect
+            label="Tags"
+            data={
+              Array.isArray(form.values.tags)
+                ? form.values.tags.map((tag) => ({ value: tag, label: tag }))
+                : []
+            }
+            searchable
+            {...form.getInputProps("tags")}
+          />
+          <PromptTemplateSelect
+            onChange={(value) => {
+              console.log("Selected prompt ID:", value);
+              form.setFieldValue("promptId", Number(value));
+            }}
+            value={`${form.values?.promptId || ""}`}
+          />
+          <Group justify="flex-end" mt="xs">
+            <Button type="submit" loading={loading}>
+              {campaign ? "Update Campaign" : "Create Campaign"}
+            </Button>
+          </Group>
+        </Stack>
+      </form>
+    </Card>
   );
 };

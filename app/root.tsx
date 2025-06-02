@@ -9,6 +9,7 @@ import {
 } from "react-router";
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
+import "@mantine/dates/styles.css";
 import "./styles/global.css";
 import type { Route } from "./+types/root";
 import { Box, MantineProvider, Modal } from "@mantine/core";

@@ -1,0 +1,165 @@
+import { useMemo } from "react";
+import { modals } from "@mantine/modals";
+import {
+  Table,
+  Button,
+  Group,
+  Loader,
+  Text,
+  Stack,
+  LoadingOverlay,
+} from "@mantine/core";
+import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { useGetAllContacts, useDeleteContact } from "~/queries/contactsQueries";
+import type { Contact } from "~/models/ContactsModel";
+import classes from "./ContactsList.module.css";
+import { notifications } from "@mantine/notifications";
+
+interface ContactsListProps {
+  search: string;
+  onEdit: (id: number) => void;
+  selectedContactId: number | null;
+}
+
+export default function ContactsList({
+  search,
+  onEdit,
+  selectedContactId,
+}: ContactsListProps) {
+  const {
+    data,
+    isLoading,
+    isFetching,
+    isError,
+    refetch: reloadList,
+  } = useGetAllContacts(search ? { search } : undefined);
+  const deleteContact = useDeleteContact();
+
+  const filteredContacts = useMemo(() => {
+    if (!data) return [];
+    if (!search) return data;
+    const lower = search.toLowerCase();
+    return data.filter(
+      (c: Contact) =>
+        c.firstName.toLowerCase().includes(lower) ||
+        c.lastName.toLowerCase().includes(lower) ||
+        c.email.toLowerCase().includes(lower) ||
+        c.phone.toLowerCase().includes(lower)
+    );
+  }, [data, search]);
+
+  if (isLoading) {
+    return (
+      <Group justify="center" py="xl">
+        <Loader />
+      </Group>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Group justify="center" py="xl">
+        <Text c="red">Failed to load contacts.</Text>
+      </Group>
+    );
+  }
+
+  if (!filteredContacts.length) {
+    return (
+      <Group justify="center" py="xl">
+        <Text>No contacts found.</Text>
+      </Group>
+    );
+  }
+
+  return (
+    <>
+      <LoadingOverlay
+        visible={deleteContact.isPending || isLoading || isFetching}
+      />
+      <Table striped highlightOnHover withTableBorder className={classes.table}>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>First Name</Table.Th>
+            <Table.Th>Last Name</Table.Th>
+            <Table.Th>Email</Table.Th>
+            <Table.Th>Phone</Table.Th>
+            <Table.Th>Actions</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {filteredContacts.map((contact: Contact) => (
+            <Table.Tr
+              key={contact.id}
+              className={
+                selectedContactId === contact.id
+                  ? classes.selectedRow
+                  : undefined
+              }
+            >
+              <Table.Td>{contact.firstName}</Table.Td>
+              <Table.Td>{contact.lastName}</Table.Td>
+              <Table.Td>{contact.email}</Table.Td>
+              <Table.Td>{contact.phone}</Table.Td>
+              <Table.Td>
+                <Group gap="xs">
+                  <Button
+                    size="xs"
+                    variant="subtle"
+                    leftSection={<IconEdit size={16} />}
+                    onClick={() => onEdit(contact.id)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    size="xs"
+                    variant="subtle"
+                    color="red"
+                    leftSection={<IconTrash size={16} />}
+                    onClick={() =>
+                      modals.openConfirmModal({
+                        title: "Confirm Deletion",
+                        centered: true,
+                        children: (
+                          <Text className={classes.confirmDelete}>
+                            Are you sure you want to delete this contact? This
+                            action cannot be undone.
+                          </Text>
+                        ),
+                        labels: { confirm: "Delete", cancel: "Cancel" },
+                        confirmProps: { color: "red" },
+                        onConfirm: async () => {
+                          try {
+                            await deleteContact.mutateAsync(
+                              contact.id.toString()
+                            );
+                            reloadList();
+                            notifications.show({
+                              title: "Contact Deleted",
+                              message: `${contact.firstName} ${contact.lastName} has been deleted.`,
+                              color: "green",
+                            });
+                          } catch (error) {
+                            notifications.show({
+                              title: "Error",
+                              message:
+                                "Failed to delete contact. Please try again.",
+                              color: "red",
+                            });
+                            console.error("Failed to delete contact:", error);
+                          }
+                        },
+                      })
+                    }
+                  >
+                    Delete
+                  </Button>
+                </Group>
+              </Table.Td>
+            </Table.Tr>
+          ))}
+        </Table.Tbody>
+      </Table>
+    </>
+  );
+}

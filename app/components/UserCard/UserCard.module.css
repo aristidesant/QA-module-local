@@ -1,0 +1,22 @@
+.userCard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+  background: var(--mantine-color-body);
+  border: 1px solid var(--mantine-color-gray-2);
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  border: 2px solid var(--mantine-color-gray-3);
+}
+
+.logoutButton {
+  margin-top: 12px;
+}

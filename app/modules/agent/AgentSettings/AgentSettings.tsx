@@ -20,6 +20,7 @@ import { useGetAllPrompts } from "~/modules/prompt-generator/queries/promptGener
 import dayjs from "dayjs";
 import styles from "./AgentSettings.module.css";
 import SectionCard from "../../../components/SectionCard";
+import PromptTemplateSelect from "../../../components/PromptTemplateSelect";
 
 // Define the props for AgentSettings
 interface AgentSettingsProps {
@@ -136,12 +137,8 @@ const AgentSettings: React.FC<AgentSettingsProps> = ({
         contentSpacing="lg"
       >
         <div className={styles.fieldGroup}>
-          <Select
-            label="Predefined Prompt Template"
-            description="Choose from existing prompt templates to quickly configure your agent"
-            placeholder="Select a prompt template"
-            clearable
-            searchable
+          <PromptTemplateSelect
+            value={agentData?.conversation_config?.agent?.prompt?.prompt || ""}
             onChange={(value) => {
               onUpdateAgentData({
                 conversation_config: {
@@ -156,14 +153,10 @@ const AgentSettings: React.FC<AgentSettingsProps> = ({
                 },
               });
             }}
-            data={
-              prompts?.map((prompt) => ({
-                value: prompt.generatedPrompt,
-                label: `${prompt.name} - ${dayjs(prompt.createdAt).format(
-                  "MMM DD, YYYY"
-                )}`,
-              })) || []
-            }
+            description="Choose from existing prompt templates to quickly configure your agent"
+            placeholder="Select a prompt template"
+            clearable
+            searchable
           />
 
           <div className={styles.promptContainer}>

@@ -1,0 +1,6 @@
+/* Styles for ContactsList */
+
+.confirmDelete {
+  color: var(--mantine-color-red-7);
+  font-weight: 500;
+}

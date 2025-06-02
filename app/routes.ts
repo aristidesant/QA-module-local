@@ -15,6 +15,8 @@ export default [
       route("/prompt-generator", "routes/prompt_generator.tsx"),
       route("/prompt-form", "routes/prompt_form.tsx"),
       route("/campaigns", "routes/campaigns.tsx"),
+      route("/logout", "routes/logout.tsx"),
+      route("/contacts", "routes/contacts.tsx"),
     ]),
   ]),
 ] satisfies RouteConfig;

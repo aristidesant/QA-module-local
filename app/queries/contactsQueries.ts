@@ -1,69 +1,69 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import campaignsApi from "~/api/campaignsApi";
+import contactsApi from "~/api/contactsApi";
 import { getClientAuthorizationHeader } from "~/client-session";
 import { useToken } from "~/components/RouteProtecter/RouteProtecter";
-import type { Campaign } from "~/models/CampaignsModel";
+import type { Contact } from "~/models/ContactsModel";
 
-// Create campaign
-export const useCreateCampaign = () => {
+// Create contact
+export const useCreateContact = () => {
   const token = useToken();
   const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (campaign: Partial<Campaign>) => {
-      const api = campaignsApi({
+    mutationFn: async (contact: Partial<Contact>) => {
+      const api = contactsApi({
         ...header,
         Authorization: `Bearer ${token?.token}`,
       });
-      return api.createCampaign(campaign);
+      return api.createContact(contact);
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["campaigns"] });
+      queryClient.invalidateQueries({ queryKey: ["contacts"] });
       // eslint-disable-next-line no-console
-      console.log("Campaign created successfully:", data);
+      console.log("Contact created successfully:", data);
     },
     onError: (error) => {
       // eslint-disable-next-line no-console
-      console.error("Error creating campaign:", error);
+      console.error("Error creating contact:", error);
     },
   });
 };
 
-// Get all campaigns
-export const useGetAllCampaigns = (params?: Record<string, any>) => {
+// Get all contacts
+export const useGetAllContacts = (params?: Record<string, any>) => {
   const token = useToken();
   const header = getClientAuthorizationHeader();
   return useQuery({
-    queryKey: ["campaigns", params],
+    queryKey: ["contacts", params],
     queryFn: async () => {
-      const api = campaignsApi({
+      const api = contactsApi({
         ...header,
         Authorization: `Bearer ${token?.token}`,
       });
-      return api.findAllCampaigns(params);
+      return api.findAllContacts(params);
     },
   });
 };
 
-// Get campaign by id
-export const useGetCampaign = (id: string) => {
+// Get contact by id
+export const useGetContact = (id: string) => {
   const token = useToken();
   const header = getClientAuthorizationHeader();
   return useQuery({
-    queryKey: ["campaign", id],
+    queryKey: ["contact", id],
     queryFn: async () => {
-      const api = campaignsApi({
+      const api = contactsApi({
         ...header,
         Authorization: `Bearer ${token?.token}`,
       });
-      return api.findCampaign(id);
+      return api.findContact(id);
     },
     enabled: !!id,
   });
 };
 
-// Update campaign
-export const useUpdateCampaign = () => {
+// Update contact
+export const useUpdateContact = () => {
   const token = useToken();
   const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
@@ -73,52 +73,51 @@ export const useUpdateCampaign = () => {
       data,
     }: {
       id: string;
-      data: Partial<Campaign>;
+      data: Partial<Contact>;
     }) => {
-      const api = campaignsApi({
+      const api = contactsApi({
         ...header,
         Authorization: `Bearer ${token?.token}`,
       });
-      console.log("Updating campaign with ID:", id, "Data:", data);
-      return api.updateCampaign(id, data);
+      return api.updateContact(id, data);
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["campaigns"] });
+      queryClient.invalidateQueries({ queryKey: ["contacts"] });
       if (data?.id) {
-        queryClient.invalidateQueries({ queryKey: ["campaign", data.id] });
+        queryClient.invalidateQueries({ queryKey: ["contact", data.id] });
       }
       // eslint-disable-next-line no-console
-      console.log("Campaign updated successfully:", data);
+      console.log("Contact updated successfully:", data);
     },
     onError: (error) => {
       // eslint-disable-next-line no-console
-      console.error("Error updating campaign:", error);
+      console.error("Error updating contact:", error);
     },
   });
 };
 
-// Delete campaign
-export const useDeleteCampaign = () => {
+// Delete contact
+export const useDeleteContact = () => {
   const token = useToken();
   const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const api = campaignsApi({
+      const api = contactsApi({
         ...header,
         Authorization: `Bearer ${token?.token}`,
       });
-      return api.deleteCampaign(id);
+      return api.deleteContact(id);
     },
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: ["campaigns"] });
-      queryClient.invalidateQueries({ queryKey: ["campaign", id] });
+      queryClient.invalidateQueries({ queryKey: ["contacts"] });
+      queryClient.invalidateQueries({ queryKey: ["contact", id] });
       // eslint-disable-next-line no-console
-      console.log("Campaign deleted successfully:", id);
+      console.log("Contact deleted successfully:", id);
     },
     onError: (error) => {
       // eslint-disable-next-line no-console
-      console.error("Error deleting campaign:", error);
+      console.error("Error deleting contact:", error);
     },
   });
 };

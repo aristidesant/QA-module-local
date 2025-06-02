@@ -5,9 +5,11 @@ import {
   IconFolder,
   IconSettings,
   IconListDetails,
+  IconUsersGroup,
 } from "@tabler/icons-react";
 import { NavLink, useLocation } from "react-router";
 import styles from "./Sidebar.module.css";
+import UserCard from "../UserCard";
 
 const menuItems: MenuItem[] = [
   {
@@ -31,6 +33,11 @@ const menuItems: MenuItem[] = [
     icon: <IconListDetails size={20} className={styles.menuIcon} />,
     to: "/campaigns",
   },
+  {
+    label: "Contacts",
+    icon: <IconUsersGroup size={20} className={styles.menuIcon} />,
+    to: "/contacts",
+  },
 ];
 
 const maintenanceItems: MenuItem[] = [
@@ -48,6 +55,7 @@ export const Sidebar: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
         {menuItems.map((item) => renderMenuItem({ ...item, onClose }))}
         <Divider label="Maintenance" labelPosition="left" />
         {maintenanceItems.map((item) => renderMenuItem({ ...item, onClose }))}
+        <UserCard />
       </Stack>
     </nav>
   );
