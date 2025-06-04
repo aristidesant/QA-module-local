@@ -65,12 +65,22 @@ export const PromptTypeSelector: React.FC<PromptTypeSelectorProps> = ({
                         : classes.typeCard
                     }
                     onClick={() => onSelect(type.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        onSelect(type.id);
+                      }
+                    }}
                     tabIndex={0}
                     role="button"
                     aria-pressed={selectedType === type?.id}
+                    aria-label={`Select prompt type: ${type.name}`}
                   >
                     <Stack align="center" gap={8}>
-                      <ThemeIcon variant="light" size={100}>
+                      <ThemeIcon
+                        variant="light"
+                        size={100}
+                        className={classes.typeIcon}
+                      >
                         {getIcon(type.icon || undefined, { size: 70 })}
                       </ThemeIcon>
                       <Text className={classes.typeTitle} tt="capitalize">
@@ -96,12 +106,22 @@ export const PromptTypeSelector: React.FC<PromptTypeSelectorProps> = ({
                     onClick={() => {
                       setSelectedCategory(category.id);
                     }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        setSelectedCategory(category.id);
+                      }
+                    }}
                     tabIndex={0}
                     role="button"
                     aria-pressed={selectedCategory === category?.id}
+                    aria-label={`Select prompt category: ${category.name}`}
                   >
                     <Stack align="center" gap={8}>
-                      <ThemeIcon variant="light" size={100}>
+                      <ThemeIcon
+                        variant="light"
+                        size={100}
+                        className={classes.typeIcon}
+                      >
                         {getIcon(category.icon || undefined, { size: 70 })}
                       </ThemeIcon>
                       <Text className={classes.typeTitle} tt="capitalize">

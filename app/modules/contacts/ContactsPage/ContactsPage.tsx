@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Stack, TextInput, Button, Group } from "@mantine/core";
-import { IconSearch, IconPlus } from "@tabler/icons-react";
+import { IconSearch, IconPlus, IconUser } from "@tabler/icons-react";
 import { modals } from "@mantine/modals";
 import PageHeader from "~/components/ui/PageHeader";
-import ContentContainer from "~/components/ui/ContentContainer";
 import ContactsList from "../ContactsList";
 import ContactsForm from "../ContactsForm";
 import classes from "./ContactsPage.module.css";
+import SectionCard from "~/components/SectionCard";
 
 export default function ContactsPage() {
   const [search, setSearch] = useState("");
@@ -47,7 +47,11 @@ export default function ContactsPage() {
           { label: "Contacts", path: "/contacts" },
         ]}
       />
-      <ContentContainer>
+      <SectionCard
+        title="Contacts"
+        icon={IconUser}
+        description="Manage your contacts"
+      >
         <Group justify="space-between" mb="md">
           <TextInput
             placeholder="Search contacts"
@@ -70,8 +74,7 @@ export default function ContactsPage() {
           onEdit={(id) => openContactModal("edit", id)}
           selectedContactId={null}
         />
-        {/* ContactsForm is now shown in a modal only */}
-      </ContentContainer>
+      </SectionCard>
     </Stack>
   );
 }

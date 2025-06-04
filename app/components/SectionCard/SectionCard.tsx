@@ -1,5 +1,5 @@
 import React, { type ReactNode } from "react";
-import { Text, Title } from "@mantine/core";
+import { Card, Text, Title } from "@mantine/core";
 import styles from "./SectionCard.module.css";
 import type { TablerIcon } from "@tabler/icons-react";
 
@@ -54,10 +54,12 @@ export const SectionCard: React.FC<SectionCardProps> = ({
   };
 
   return (
-    <div
+    <Card
       id={id}
-      className={`${styles.section} ${className || ""}`}
       style={backgroundColor ? { backgroundColor } : undefined}
+      withBorder
+      padding="xl"
+      data-testid="section-card"
     >
       <div className={styles.sectionHeader}>
         <div className={styles.sectionHeaderContent}>
@@ -79,7 +81,7 @@ export const SectionCard: React.FC<SectionCardProps> = ({
         {children}
       </div>
       {footer && <div className={styles.footer}>{footer}</div>}
-    </div>
+    </Card>
   );
 };
 

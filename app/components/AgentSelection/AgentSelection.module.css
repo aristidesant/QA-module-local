@@ -1,0 +1,221 @@
+.container {
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  max-width: 100%;
+}
+
+.title {
+  color: #2c2e33;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.titleIcon {
+  color: #339af0;
+}
+
+.scrollArea {
+  border-radius: 8px;
+  background: #f8f9fa;
+  padding: 0.75rem;
+}
+
+.agentsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    width: 100%;
+}
+
+.agentCard {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #fff;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  padding: 1rem;
+  position: relative;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+}
+
+.agentCard:hover {
+  border-color: #339af0;
+  box-shadow: 0 4px 12px rgba(51, 154, 240, 0.12);
+  transform: translateY(-1px);
+}
+
+.agentCard:focus {
+  outline: none;
+  border-color: #339af0;
+  box-shadow: 0 0 0 3px rgba(51, 154, 240, 0.1);
+}
+
+.agentCard.selected {
+  border-color: #339af0;
+  background: #f0f7ff;
+  box-shadow: 0 4px 12px rgba(51, 154, 240, 0.15);
+}
+
+.agentCard.selected::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 16px;
+  height: 16px;
+  background: #339af0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.agentCard.selected::after {
+  content: '✓';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 16px;
+  height: 16px;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.agentAvatar {
+  background: linear-gradient(135deg, #339af0, #228be6);
+  border: 3px solid #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.agentInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.agentName {
+  color: #2c2e33;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.agentType {
+  background: #e7f5ff;
+  color: #1864ab;
+  padding: 0.125rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  display: inline-block;
+  margin-bottom: 0.25rem;
+}
+
+.agentType.outbound {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.agentStatus {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: #868e96;
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #51cf66;
+}
+
+.statusDot.inactive {
+  background: #ff6b6b;
+}
+
+.loaderContainer {
+  min-height: 320px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 2px dashed #dee2e6;
+}
+
+.errorContainer {
+  padding: 2rem;
+  text-align: center;
+  background: #fff5f5;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  color: #dc2626;
+}
+
+.emptyState {
+  grid-column: 1 / -1;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  background: #fff;
+  border: 2px dashed #dee2e6;
+  border-radius: 12px;
+}
+
+.emptyStateIcon {
+  background: linear-gradient(135deg, #e9ecef, #dee2e6);
+  margin-bottom: 1rem;
+}
+
+.emptyStateText {
+  color: #868e96;
+  font-weight: 500;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.agentCount {
+  color: #868e96;
+  font-size: 0.875rem;
+  background: #f8f9fa;
+  padding: 0.375rem 0.75rem;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .agentsGrid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .agentCard {
+    padding: 0.875rem;
+  }
+  
+  .title {
+    font-size: 1.125rem;
+  }
+}

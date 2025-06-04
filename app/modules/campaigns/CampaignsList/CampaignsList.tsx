@@ -34,6 +34,7 @@ import SectionCard from "~/components/SectionCard";
 import { modals } from "@mantine/modals";
 import { CampaignsForm } from "../CampaignsForm/CampaignsForm";
 import { notifications } from "@mantine/notifications";
+import CampaignAgentList from "../CampaignAgentList";
 
 export const CampaignsList: React.FC = () => {
   const [selectedCampaign, setSelectedCampaign] =
@@ -275,7 +276,10 @@ export const CampaignsList: React.FC = () => {
         </Table>
       </SectionCard>
       {selectedCampaign?.id && (
-        <CampaignsDetails campaignId={`${selectedCampaign?.id}`} />
+        <>
+          <CampaignsDetails campaignId={`${selectedCampaign?.id}`} />
+          <CampaignAgentList campaignId={`${selectedCampaign?.id}`} />
+        </>
       )}
     </Stack>
   );

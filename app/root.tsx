@@ -16,6 +16,7 @@ import { Box, MantineProvider, Modal } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Loader } from "./components/ui/Loader";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { mantineTheme } from "./theme";
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
@@ -54,34 +55,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body style={{ background: "#f8f9fa" }}>
         <QueryClientProvider client={new QueryClient()}>
-          <MantineProvider
-            theme={{
-              primaryColor: "blue",
-              defaultRadius: "md",
-              fontFamily:
-                "Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
-              fontFamilyMonospace: "Monaco, Courier, monospace",
-              headings: {
-                fontFamily:
-                  "Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
-                fontWeight: "600",
-              },
-              components: {
-                Button: {
-                  defaultProps: {
-                    radius: "md",
-                  },
-                },
-                Card: {
-                  defaultProps: {
-                    shadow: "sm",
-                    radius: "md",
-                    p: "lg",
-                  },
-                },
-              },
-            }}
-          >
+          <MantineProvider theme={mantineTheme}>
             {isLoading ? <Loader /> : children}
           </MantineProvider>
         </QueryClientProvider>

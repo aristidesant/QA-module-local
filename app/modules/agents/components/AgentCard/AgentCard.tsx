@@ -2,24 +2,15 @@ import React, { useCallback } from "react";
 import {
   Card,
   Avatar,
-  Title,
   Text,
-  Box,
-  Badge,
-  Group,
-  Tooltip,
+  Menu,
   LoadingOverlay,
+  ActionIcon,
+  Divider,
 } from "@mantine/core";
 import { openConfirmModal } from "@mantine/modals";
-import {
-  IconRobot,
-  IconCalendarEvent,
-  IconUserCircle,
-  IconEye,
-  IconTrash,
-  IconPhoneIncoming,
-  IconPhoneOutgoing,
-} from "@tabler/icons-react";
+import { IconDots, IconEye, IconTools, IconTrash } from "@tabler/icons-react";
+
 import dayjs from "dayjs";
 import styles from "./AgentCard.module.css";
 import type AgentListObject from "~/models/AgentListObject";
@@ -30,11 +21,19 @@ import { notifications } from "@mantine/notifications";
 export interface AgentCardProps {
   agent: AgentListObject;
   onClick?: (agent: AgentListObject) => void;
+  onNavigate?: (agent: AgentListObject) => void;
+  showDelete?: boolean;
 }
 
-export const AgentCard: React.FC<AgentCardProps> = ({ agent, onClick }) => {
+export const AgentCard: React.FC<AgentCardProps> = ({
+  agent,
+  onClick,
+  onNavigate,
+  showDelete = true,
+}) => {
   const { revalidate } = useRevalidator();
   const { mutateAsync: deleteAgent, isPending: isDeleting } = useDeleteAgent();
+
   const handleRemove = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
@@ -55,6 +54,7 @@ export const AgentCard: React.FC<AgentCardProps> = ({ agent, onClick }) => {
             await deleteAgent(agent.id);
             revalidate();
           } catch (error) {
+            // eslint-disable-next-line no-console
             console.error("Error deleting agent:", error);
           }
           notifications.show({
@@ -67,113 +67,106 @@ export const AgentCard: React.FC<AgentCardProps> = ({ agent, onClick }) => {
         },
       });
     },
-    [agent, deleteAgent]
+    [agent, deleteAgent, revalidate]
   );
 
   const handleView = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      onClick?.(agent);
+      onNavigate?.(agent);
     },
-    [onClick]
+    [onClick, agent]
   );
 
   const createdAt = dayjs(agent.createdAt);
   const isValidDate = createdAt.isValid();
+  // Determine if the agent is female based on the agent data
+  // This assumes agent.config.gender or agent.config.sex may contain gender info
+  const isFemale =
+    typeof agent.config?.gender === "string"
+      ? agent.config.gender.toLowerCase() === "female"
+      : typeof agent.config?.sex === "string"
+      ? agent.config.sex.toLowerCase() === "female"
+      : false;
 
+  const language = agent.config?.language || "English"; // Default to English if not specified
+  // Determine flag based on language
+  let flagEmoji = null;
+  if (language.toLowerCase() === "spanish" || language.toLowerCase() === "español") {
+    flagEmoji = "🇩🇴"; // Dominican Republic
+  } else {
+    flagEmoji = "🇺🇸"; // USA
+  }
   return (
     <Card
-      shadow="xs"
-      padding="md"
-      radius="lg"
-      withBorder
       className={styles.agentCard}
+      shadow="none"
+      padding="md"
+      radius="xl"
+      onClick={onClick ? () => onClick(agent) : undefined}
+      withBorder={false}
+      style={{ background: "#fff" }}
       data-testid="agent-card"
       tabIndex={0}
     >
       <LoadingOverlay visible={isDeleting} />
-
-      {/* Header with avatar and name */}
-      <div className={styles.header}>
+      <div className={styles.cardContent}>
         <Avatar
+          src={isFemale ? "/images/avatar-f-do.png" : "/images/avatar-m-do.png"}
           color="blue"
-          radius="md"
-          size={40}
-          className={styles.avatar}
-          gradient={{ from: "blue", to: "cyan", deg: 45 }}
+          variant="outline"
+          size={48}
+          radius="xl"
         >
-          <IconRobot color="white" size={22} stroke={1.5} />
+          {agent.name?.[0] || "?"}
         </Avatar>
-        <div className={styles.nameContainer}>
-          <Tooltip
-            label={agent.name}
-            withArrow
-            disabled={agent.name.length < 20}
-          >
-            <Title order={5} className={styles.agentName}>
-              {agent.name}
-            </Title>
-          </Tooltip>
-          <Badge
-            className={styles.agentTypeBadge}
-            color={agent.type === "INBOUND" ? "teal" : "orange"}
-            leftSection={
-              agent.type === "INBOUND" ? (
-                <IconPhoneIncoming size={12} stroke={1.5} />
-              ) : (
-                <IconPhoneOutgoing size={12} stroke={1.5} />
-              )
-            }
-            variant="light"
-            size="sm"
-          >
-            {agent.type === "INBOUND" ? "Inbound" : "Outbound"}
-          </Badge>
-        </div>
-      </div>
-
-      {/* Meta information */}
-      <div className={styles.meta}>
-        <div className={styles.metaRow}>
-          <Text size="xs" className={styles.metaLabel}>
-            ID
+        <Divider variant="dashed" orientation="vertical" />
+        <div className={styles.info}>
+          <Text className={styles.name} size="sm" fw={700}>
+            {agent.name}
           </Text>
-          <Text size="xs" className={styles.metaValue} c="dimmed">
-            {agent.clientId}
+          <Text className={styles.location} size="xs" c="dimmed">
+            {isValidDate ? createdAt.format("MMM D, YYYY") : ""}
           </Text>
-        </div>
-        {isValidDate && (
-          <div className={styles.metaRow}>
-            <Text size="xs" className={styles.metaLabel}>
-              Created
-            </Text>
-            <Text size="xs" className={styles.metaValue} c="dimmed">
-              {createdAt.format("MMM D, YYYY")}
+          <div className={styles.languageRow}>
+            <span className={styles.flagIcon}>
+              {flagEmoji}
+            </span>
+            <Text component="span" size="xs" ml={6}>
+              {language}
             </Text>
           </div>
-        )}
-      </div>
-
-      {/* Actions */}
-      <div className={styles.actions}>
-        <button
-          type="button"
-          className={`${styles.actionBtn} ${styles.viewBtn}`}
-          onClick={handleView}
-          aria-label="View agent details"
-        >
-          <IconEye size={14} stroke={1.5} />
-          <span>View</span>
-        </button>
-        <button
-          type="button"
-          className={`${styles.actionBtn} ${styles.removeBtn}`}
-          onClick={handleRemove}
-          aria-label="Remove agent"
-        >
-          <IconTrash size={14} stroke={1.5} />
-          <span>Remove</span>
-        </button>
+        </div>
+        <Menu width={200} withinPortal position="bottom-end" shadow="md">
+          <Menu.Target>
+            <ActionIcon
+              type="button"
+              className={styles.menuBtn}
+              aria-label="Agent actions"
+              tabIndex={-1}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <IconDots size={20} />
+            </ActionIcon>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Item
+              leftSection={<IconTools size={16} />}
+              onClick={handleView}
+            >
+              Setup Agent
+            </Menu.Item>
+            {showDelete && (
+              <Menu.Item
+                color="red"
+                leftSection={<IconTrash size={16} />}
+                onClick={handleRemove}
+              >
+                Remove
+              </Menu.Item>
+            )}
+          </Menu.Dropdown>
+        </Menu>
       </div>
     </Card>
   );
