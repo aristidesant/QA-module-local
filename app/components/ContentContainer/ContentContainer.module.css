@@ -1,0 +1,26 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--mantine-color-body, #fff);
+}
+
+.main {
+  flex: 1 1 0;
+  background: var(--mantine-color-body, #fff);
+  padding: 32px 24px;
+  min-width: 0;
+}
+
+.rightSection {
+  width: 380px;
+  background: var(--mantine-color-gray-1, #f8f9fa);
+  border-left: 1px solid var(--mantine-color-gray-3, #e9ecef);
+  padding: 32px 24px;
+  min-height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}

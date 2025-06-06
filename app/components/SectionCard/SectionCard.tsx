@@ -57,19 +57,24 @@ export const SectionCard: React.FC<SectionCardProps> = ({
     <Card
       id={id}
       style={backgroundColor ? { backgroundColor } : undefined}
-      withBorder
       padding="xl"
       data-testid="section-card"
     >
       <div className={styles.sectionHeader}>
         <div className={styles.sectionHeaderContent}>
-          <Icon className={styles.sectionIcon} />
+          <div className={styles.sectionLine} />
           <div>
-            <Title order={3} className={styles.sectionTitle}>
+            <Title order={6} className={styles.sectionTitle}>
               {title}
             </Title>
             {description && (
-              <Text className={styles.sectionDescription}>{description}</Text>
+              <Text
+                lineClamp={1}
+                fz={"sm"}
+                className={styles.sectionDescription}
+              >
+                {description}
+              </Text>
             )}
           </div>
         </div>

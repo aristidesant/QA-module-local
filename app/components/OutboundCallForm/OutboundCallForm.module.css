@@ -1,0 +1,101 @@
+:root {
+  /* Mantine variables are used for colors, spacing, etc. */
+}
+
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-lg);
+  padding: 0;
+}
+
+
+.label {
+  font-weight: 600;
+  color: var(--mantine-color-text);
+  margin-bottom: 0;
+  margin-right: 6px;
+  white-space: nowrap;
+  font-size: 15px;
+}
+
+
+.select {
+  min-width: 80px;
+  max-width: 90px;
+  flex: 0 0 90px;
+  background: var(--mantine-color-gray-0);
+  border-radius: var(--mantine-radius-xl);
+  border: 1px solid var(--mantine-color-gray-3);
+}
+
+.input {
+  min-width: 180px;
+  max-width: 220px;
+  flex: 1 1 180px;
+  background: var(--mantine-color-gray-0);
+  border-radius: var(--mantine-radius-xl);
+  border: 1px solid var(--mantine-color-gray-3);
+}
+
+
+.phoneRow {
+  display: flex;
+  gap: var(--mantine-spacing-xs);
+  align-items: flex-end;
+  margin-bottom: 8px;
+  background: var(--mantine-color-gray-1);
+  border-radius: var(--mantine-radius-xl);
+  padding: 10px 14px;
+  box-shadow: 0 1px 4px 0 var(--mantine-color-gray-2);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--mantine-spacing-sm);
+  margin-top: var(--mantine-spacing-lg);
+}
+
+
+.agentRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 0;
+}
+
+.agentAvatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--mantine-color-blue-1), var(--mantine-color-blue-3));
+  color: var(--mantine-color-blue-7);
+  box-shadow: 0 2px 8px 0 var(--mantine-color-blue-0);
+}
+
+.agentInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.agentName {
+  font-weight: 600;
+  color: var(--mantine-color-blue-8);
+}
+
+.agentRole {
+  color: var(--mantine-color-gray-6);
+  font-size: 12px;
+}
+
+.disabledButton {
+  background: var(--mantine-color-gray-3);
+  color: var(--mantine-color-gray-6);
+  cursor: not-allowed;
+}

@@ -1,11 +1,11 @@
 /* Base logo container */
 .logo {
-  position: relative;
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  gap: 12px;
   cursor: pointer;
   user-select: none;
-  padding: 2px;
   transition: transform 0.2s ease;
 }
 
@@ -13,159 +13,27 @@
   transform: translateY(-1px);
 }
 
-.logo:active {
-  transform: translateY(0);
-}
-
-/* Logo icon container */
-.logoIcon {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Logo image styling */
+.logoImage {
+  width: 160px;
+  height: 60px;
+  object-fit: contain;
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--mantine-color-blue-5) 0%, var(--mantine-color-indigo-6) 100%);
-  color: white;
-  transition: all 0.3s ease;
-  flex-shrink: 0;
-  overflow: hidden;
 }
 
-.iconWrapper {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.3s ease;
-}
-
-.logo:hover .iconWrapper {
-  transform: scale(1.1);
-}
-
-.logoIcon::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, var(--mantine-color-blue-6) 0%, var(--mantine-color-indigo-7) 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.logo:hover .logoIcon::before {
-  opacity: 1;
-}
-
-/* Logo text container */
+/* Logo text styling */
 .logoText {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  transition: transform 0.2s ease;
-}
-
-/* Main logo text */
-.logoMain {
   font-family: var(--mantine-font-family-headings);
-  font-weight: 800;
-  color: var(--mantine-color-dark-8);
-  line-height: 1;
-  letter-spacing: -0.02em;
-  transition: color 0.2s ease;
-}
-
-/* Logo tagline */
-.logoTagline {
-  font-weight: 500;
-  color: var(--mantine-color-dark-5);
-  line-height: 1;
-  letter-spacing: 0.01em;
-  transition: color 0.2s ease;
-  margin-top: 4px;
-}
-
-/* Size variations */
-.logo.sm .logoMain {
-  font-size: 1rem;
-}
-
-.logo.sm .logoTagline {
-  font-size: 0.65rem;
-  margin-top: 3px;
-}
-
-.logo.md .logoMain {
-  font-size: 1.25rem;
-}
-
-.logo.md .logoTagline {
-  font-size: 0.75rem;
-}
-
-.logo.lg .logoMain {
   font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--mantine-color-dark-8);
+  text-align: center;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
 }
 
-.logo.lg .logoTagline {
-  font-size: 0.85rem;
-  margin-top: 5px;
+.logoAccent {
+  color: var(--mantine-primary-color-filled);
+  font-weight: 800;
 }
 
-/* Compact variant */
-.logo.compact .logoIcon {
-  margin-right: 0;
-}
-
-/* Animations */
-.logoIconAnimated::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(45deg, 
-    rgba(255,255,255,0) 0%,
-    rgba(255,255,255,0.1) 50%,
-    rgba(255,255,255,0) 100%
-  );
-  transform: translateX(-100%);
-  animation: shimmer 3s infinite;
-}
-
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  20%, 100% {
-    transform: translateX(100%);
-  }
-}
-
-/* Hover effects */
-.logo:hover .logoMain {
-  color: var(--mantine-color-dark-9);
-}
-
-.logo:hover .logoTagline {
-  color: var(--mantine-color-dark-6);
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .logoMain {
-    color: var(--mantine-color-gray-0);
-  }
-  
-  .logoTagline {
-    color: var(--mantine-color-gray-5);
-  }
-  
-  .logo:hover .logoMain {
-    color: white;
-  }
-  
-  .logo:hover .logoTagline {
-    color: var(--mantine-color-gray-4);
-  }
-}

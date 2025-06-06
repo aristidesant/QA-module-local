@@ -7,8 +7,9 @@ import {
   LoadingOverlay,
   ActionIcon,
   Divider,
+  Button,
 } from "@mantine/core";
-import { openConfirmModal } from "@mantine/modals";
+import { modals, openConfirmModal } from "@mantine/modals";
 import { IconDots, IconEye, IconTools, IconTrash } from "@tabler/icons-react";
 
 import dayjs from "dayjs";
@@ -17,6 +18,7 @@ import type AgentListObject from "~/models/AgentListObject";
 import { useDeleteAgent } from "~/queries/agentQueries";
 import { useRevalidator } from "react-router";
 import { notifications } from "@mantine/notifications";
+import { OutboundCallForm } from "~/components/OutboundCallForm";
 
 export interface AgentCardProps {
   agent: AgentListObject;
@@ -91,59 +93,60 @@ export const AgentCard: React.FC<AgentCardProps> = ({
 
   const language = agent.config?.language || "English"; // Default to English if not specified
   // Determine flag based on language
-  let flagEmoji = null;
-  if (language.toLowerCase() === "spanish" || language.toLowerCase() === "español") {
+  let flagEmoji = "🇺🇸";
+  if (
+    language.toLowerCase() === "spanish" ||
+    language.toLowerCase() === "español"
+  ) {
     flagEmoji = "🇩🇴"; // Dominican Republic
-  } else {
-    flagEmoji = "🇺🇸"; // USA
   }
+
+  const handleDemoCall = (agent: AgentListObject) => {
+    modals.open({
+      modalId: "demo-call-modal",
+      title: `Demo Call with ${agent.name}`,
+      children: (
+        <OutboundCallForm
+          agent={agent}
+          onSuccess={() => {
+            modals.close("demo-call-modal");
+            notifications.show({
+              title: "Demo Call Started",
+              message: `A demo call with ${agent.name} has been initiated.`,
+              color: "green",
+              autoClose: 3000,
+              icon: <IconEye size={16} />,
+            });
+          }}
+          onClose={() => modals.close("demo-call-modal")}
+        />
+      ),
+    });
+  };
+
   return (
     <Card
-      className={styles.agentCard}
-      shadow="none"
-      padding="md"
-      radius="xl"
+      withBorder
       onClick={onClick ? () => onClick(agent) : undefined}
-      withBorder={false}
-      style={{ background: "#fff" }}
       data-testid="agent-card"
-      tabIndex={0}
+      className={styles.agentCard}
     >
       <LoadingOverlay visible={isDeleting} />
-      <div className={styles.cardContent}>
-        <Avatar
-          src={isFemale ? "/images/avatar-f-do.png" : "/images/avatar-m-do.png"}
-          color="blue"
-          variant="outline"
-          size={48}
-          radius="xl"
+
+      {/* Three-dot menu */}
+      <div className={styles.menuContainer}>
+        <Menu
+          withArrow
+          width={200}
+          withinPortal
+          position="bottom-end"
+          shadow="md"
         >
-          {agent.name?.[0] || "?"}
-        </Avatar>
-        <Divider variant="dashed" orientation="vertical" />
-        <div className={styles.info}>
-          <Text className={styles.name} size="sm" fw={700}>
-            {agent.name}
-          </Text>
-          <Text className={styles.location} size="xs" c="dimmed">
-            {isValidDate ? createdAt.format("MMM D, YYYY") : ""}
-          </Text>
-          <div className={styles.languageRow}>
-            <span className={styles.flagIcon}>
-              {flagEmoji}
-            </span>
-            <Text component="span" size="xs" ml={6}>
-              {language}
-            </Text>
-          </div>
-        </div>
-        <Menu width={200} withinPortal position="bottom-end" shadow="md">
           <Menu.Target>
             <ActionIcon
               type="button"
-              className={styles.menuBtn}
+              variant="transparent"
               aria-label="Agent actions"
-              tabIndex={-1}
               onClick={(e) => e.stopPropagation()}
             >
               <IconDots size={20} />
@@ -167,6 +170,64 @@ export const AgentCard: React.FC<AgentCardProps> = ({
             )}
           </Menu.Dropdown>
         </Menu>
+      </div>
+
+      <div className={styles.cardContent}>
+        {/* Avatar with status indicator */}
+        <div className={styles.avatarContainer}>
+          <Avatar
+            src={
+              isFemale ? "/images/avatar-f-do.png" : "/images/avatar-m-do.png"
+            }
+            size={80}
+            radius="xl"
+            className={styles.avatar}
+          >
+            {agent.name?.[0] || "?"}
+          </Avatar>
+          <div className={styles.statusIndicator}></div>
+        </div>
+
+        {/* Name */}
+        <Text className={styles.name} size="xl" fw={600} ta="center">
+          {agent.name}
+        </Text>
+
+        {/* Flag and Language */}
+        <div className={styles.languageRow}>
+          <span className={styles.flagIcon}>{flagEmoji}</span>
+          <Text className={styles.languageText} size="md" c="dimmed">
+            {language}
+          </Text>
+        </div>
+
+        {/* Personality traits */}
+        <div className={styles.traitsRow}>
+          <Text className={styles.trait} size="sm" c="dimmed">
+            Empathic
+          </Text>
+          <Text className={styles.trait} size="sm" c="dimmed">
+            Jovial
+          </Text>
+        </div>
+
+        {/* Divider */}
+        <div className={styles.divider}></div>
+
+        {/* Bottom content area */}
+        <div className={styles.bottomContent}>
+          <Button
+            fullWidth
+            color="dark"
+            variant="light"
+            onClick={(event) => {
+              event.stopPropagation();
+              handleDemoCall(agent);
+            }}
+          >
+            Test Call
+          </Button>
+        </div>
       </div>
     </Card>
   );

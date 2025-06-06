@@ -1,248 +1,107 @@
-/* Card Content Layout for new design */
-.cardContent {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  min-height: 64px;
-  padding: 0 4px;
+.agentCard {
+  transition: box-shadow 0.2s;
+  cursor: pointer;
 }
 
-.name {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--mantine-color-dark-8);
-  margin-bottom: 2px;
-  line-height: 1.2;
+.agentCard:hover {
+  box-shadow: 0 4px 24px rgba(60, 60, 60, 0.12);
 }
 
-.location {
-  font-size: 0.85rem;
-  color: var(--mantine-color-gray-6);
-  line-height: 1.1;
-}
-
-.info {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 2px;
+.menuContainer {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 2;
 }
 
 .menuBtn {
-  background: none;
+  background: transparent;
   border: none;
-  padding: 0 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: var(--mantine-color-gray-6);
-  border-radius: 50%;
-  transition: background 0.15s;
+  color: var(--mantine-color-gray-6, #868e96);
+  transition: color 0.15s;
 }
+
 .menuBtn:hover {
-  background: var(--mantine-color-gray-0);
-  color: var(--mantine-color-gray-8);
+  color: var(--mantine-color-blue-6, #228be6);
 }
-/* Agent Card Container */
-.agentCard {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
-  border: 1px solid var(--mantine-color-gray-2);
-  background: var(--mantine-color-white);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: default;
-  outline: none;
-  position: relative;
-  overflow: hidden;
+
+.cardContent {
   display: flex;
   flex-direction: column;
-}
-
-/* Left accent bar, always visible, wider on hover */
-.agentCard::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 4px;
-  background: linear-gradient(180deg, var(--mantine-color-blue-5), var(--mantine-color-cyan-5));
-  border-radius: 6px 0 0 6px;
-  transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  opacity: 1;
-  z-index: 1;
-}
-
-.agentCard:hover::before,
-.agentCard:focus::before {
-  width: 8px;
-}
-
-.agentCard:hover,
-.agentCard:focus {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.06);
-  border-color: var(--mantine-color-blue-2);
-}
-
-/* Header Section */
-.header {
-  display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
-  margin-bottom: 12px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--mantine-color-gray-1);
+}
+
+.avatarContainer {
+  position: relative;
+  margin-bottom: 8px;
 }
 
 .avatar {
-  background: linear-gradient(45deg, var(--mantine-color-blue-5), var(--mantine-color-cyan-5));
-  border: 2px solid var(--mantine-color-white);
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
-  transition: all 0.2s ease;
-  flex-shrink: 0;
+  border: 3px solid var(--mantine-color-blue-0);
+  background: var(--mantine-color-gray-9);
 }
 
-.agentCard:hover .avatar {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
-}
-
-.nameContainer {
-  flex: 1;
-  min-width: 0; /* Allows text truncation to work */
-}
-
-.agentName {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--mantine-color-dark-8);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  letter-spacing: -0.01em;
-  line-height: 1.3;
-  margin: 0 0 4px 0;
-  max-width: 100%;
-}
-
-.agentTypeBadge {
-  font-size: 0.7rem;
-  font-weight: 500;
-  height: 20px;
-  padding: 0 6px;
-  border-radius: 6px;
-}
-
-/* Meta Information */
-.meta {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 16px 0;
-}
-
-.metaRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-}
-
-.metaLabel {
-  font-weight: 500;
-  color: var(--mantine-color-gray-7);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.metaValue {
-  font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-}
-
-/* Actions */
-.actions {
-  display: flex;
-  gap: 8px;
-  margin-top: auto;
-}
-
-.actionBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  flex: 1;
-  font-weight: 500;
-  font-size: 0.8rem;
-  border-radius: 8px;
-  padding: 8px 12px;
-  height: 32px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border: none;
-  cursor: pointer;
-  white-space: nowrap;
-  position: relative;
-  overflow: hidden;
-}
-
-.actionBtn::before {
-  content: '';
+.statusIndicator {
   position: absolute;
-  top: 0;
-  left: -100%;
+  bottom: 10px;
+  right: 10px;
+  width: 16px;
+  height: 16px;
+  background: #51cf66;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #e7f5ff;
+}
+
+.name {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--mantine-color-dark-7, #212529);
+  margin-bottom: 2px;
+}
+
+.languageRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.flagIcon {
+  font-size: 1.25rem;
+  margin-right: 2px;
+}
+
+.languageText {
+  color: var(--mantine-color-gray-6, #868e96);
+  font-weight: 500;
+}
+
+.traitsRow {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.trait {
+  background: var(--mantine-color-gray-1, #f1f3f5);
+  border-radius: 8px;
+  padding: 2px 10px;
+  font-size: 0.85rem;
+  color: var(--mantine-color-gray-7, #495057);
+}
+
+.divider {
+  width: 80%;
+  height: 1px;
+  background: var(--mantine-color-gray-2, #e9ecef);
+  margin: 10px 0 0 0;
+}
+
+.bottomContent {
+  margin-top: 8px;
   width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
-
-.actionBtn:hover::before {
-  left: 100%;
-}
-
-.actionBtn svg {
-  transition: transform 0.2s ease;
-  flex-shrink: 0;
-}
-
-.actionBtn:hover svg {
-  transform: scale(1.1);
-}
-
-.actionBtn:active {
-  transform: scale(0.98);
-}
-
-.viewBtn {
-  background: var(--mantine-color-blue-6);
-  color: white;
-  border: 1px solid var(--mantine-color-blue-6);
-}
-
-.viewBtn:hover {
-  background: var(--mantine-color-blue-7);
-  border-color: var(--mantine-color-blue-7);
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
-}
-
-.removeBtn {
-  background: var(--mantine-color-white);
-  color: var(--mantine-color-red-6);
-  border: 1px solid var(--mantine-color-red-2);
-}
-
-.removeBtn:hover {
-  background: var(--mantine-color-red-0);
-  border-color: var(--mantine-color-red-3);
-  color: var(--mantine-color-red-7);
+  text-align: center;
 }

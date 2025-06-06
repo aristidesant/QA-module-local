@@ -15,6 +15,7 @@ import {
 import { IconAt, IconLock, IconAlertCircle } from "@tabler/icons-react";
 import { useFetcher } from "react-router";
 import classes from "./LoginForm.module.css";
+import Logo from "~/components/Logo";
 
 interface ActionData {
   error?: string;
@@ -36,10 +37,8 @@ export function LoginForm() {
           radius="lg"
         >
           <Box className={classes.header}>
-            <Title order={1} className={classes.title}>
-              Welcome back
-            </Title>
-            <Text className={classes.subtitle}>
+            <Logo />
+            <Text mt="md" className={classes.subtitle}>
               Sign in to your account to continue
             </Text>
           </Box>

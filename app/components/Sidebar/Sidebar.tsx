@@ -1,5 +1,5 @@
 import React from "react";
-import { Divider, Paper, Stack } from "@mantine/core";
+import { Text, Stack, Divider } from "@mantine/core";
 import {
   IconLayoutDashboard,
   IconFolder,
@@ -10,6 +10,7 @@ import {
 import { NavLink, useLocation } from "react-router";
 import styles from "./Sidebar.module.css";
 import UserCard from "../UserCard";
+import Logo from "../Logo";
 
 const menuItems: MenuItem[] = [
   {
@@ -51,10 +52,23 @@ const maintenanceItems: MenuItem[] = [
 export const Sidebar: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   return (
     <nav className={styles.sidebar}>
-      <Stack className={styles.menuList} gap="md">
-        {menuItems.map((item) => renderMenuItem({ ...item, onClose }))}
-        <Divider label="Maintenance" labelPosition="left" />
-        {maintenanceItems.map((item) => renderMenuItem({ ...item, onClose }))}
+      <Stack className={styles.menuList} gap="lg">
+        <Logo />
+        <Divider />
+        <Stack gap="xs">
+          <Text size="xs" fw={600} c="dimmed" px="md" mb="xs">
+            MENU
+          </Text>
+          {menuItems.map((item) => renderMenuItem({ ...item, onClose }))}
+        </Stack>
+
+        <Stack gap="xs">
+          <Text size="xs" fw={600} c="dimmed" px="md" mb="xs">
+            MAINTENANCE
+          </Text>
+          {maintenanceItems.map((item) => renderMenuItem({ ...item, onClose }))}
+        </Stack>
+
         <UserCard />
       </Stack>
     </nav>

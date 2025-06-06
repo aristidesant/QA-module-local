@@ -1,0 +1,64 @@
+.slidersSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.sliderRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sliderBarRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.sliderBar {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.sliderPercent {
+  min-width: 38px;
+  text-align: right;
+  font-size: 13px;
+  color: var(--mantine-color-gray-7);
+  font-variant-numeric: tabular-nums;
+  margin-left: 8px;
+}
+
+.sliderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 2px;
+}
+
+.sliderLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 140px;
+  font-size: 14px;
+  color: var(--mantine-color-gray-7);
+}
+
+.sliderBar {
+  flex: 1;
+  min-width: 120px;
+}
+
+.sliderValue {
+  min-width: 60px;
+  text-align: right;
+  font-size: 13px;
+  color: var(--mantine-color-gray-6);
+}

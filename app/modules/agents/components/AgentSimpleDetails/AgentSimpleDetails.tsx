@@ -1,33 +1,10 @@
-import {
-  Card,
-  Text,
-  Button,
-  Group,
-  Avatar,
-  Badge,
-  Stack,
-  Progress,
-  Divider,
-  Tooltip,
-  ActionIcon,
-} from "@mantine/core";
-import {
-  IconMapPin,
-  IconCircleCheckFilled,
-  IconWaveSine,
-  IconSpeedboat,
-  IconAdjustments,
-  IconPhone,
-  IconPhoneIncoming,
-  IconPhoneOutgoing,
-  IconCalendarTime,
-  IconUser,
-  IconPlayerPlay,
-  IconPlayerPause,
-} from "@tabler/icons-react";
+import { Avatar, ActionIcon, Card, Box, Text } from "@mantine/core";
+import { IconWaveSine, IconPlayerPlay } from "@tabler/icons-react";
 import type AgentListObject from "~/models/AgentListObject";
 import styles from "./AgentSimpleDetails.module.css";
 import React from "react";
+import AgentVoiceProgress from "./AgentVoiceProgress";
+import AgentVoicePlayer from "./AgentVoicePlayer";
 
 type AgentSimpleDetailsProps = {
   agent: AgentListObject;
@@ -88,215 +65,59 @@ export const AgentSimpleDetails: React.FC<AgentSimpleDetailsProps> = ({
     : "";
   const clientId = agent.clientId;
   const userId = agent.userId;
-
-  let cardClass = styles.card;
-  if (isVisible) cardClass += ` ${styles.cardVisible}`;
-
+  console.log({ agent });
   return (
-    <Card className={cardClass} shadow="md" radius="lg" padding="lg" withBorder>
-      {/* Header Section */}
-      <Stack justify="center" gap="xs" align="center">
-        <div className={styles.avatarContainer}>
-          <Avatar
-            src={avatarUrl}
-            size={100}
-            radius="xl"
-            className={styles.avatar}
-          />
-          <div className={styles.playButton}>
-            <Tooltip label="Preview Voice">
-              <ActionIcon size="sm" radius="xl" color="blue" variant="filled">
-                <IconPlayerPlay size={12} />
-              </ActionIcon>
-            </Tooltip>
-          </div>
-        </div>
-
-        <div className={styles.agentHeader}>
-          <Text fw={700} fz="lg" ta="center" className={styles.agentName}>
-            {voiceName}
-          </Text>
-          <Group gap={6} justify="center" mb="xs">
-            <Badge
-              size="sm"
-              variant="light"
-              color={agentType === "INBOUND" ? "blue" : "green"}
-              leftSection={
-                agentType === "INBOUND" ? (
-                  <IconPhoneIncoming size={12} />
-                ) : (
-                  <IconPhoneOutgoing size={12} />
-                )
+    <Card withBorder p="xl">
+      <div className={styles.agentSimpleDetails}>
+        {/* Avatar and status */}
+        <div className={styles.avatarSection}>
+          <div className={styles.avatarWrapper}>
+            <Avatar src={avatarUrl} size={120} className={styles.avatar} />
+            <span
+              className={
+                isOnline ? styles.statusDotOnline : styles.statusDotOffline
               }
-            >
-              {agentType}
-            </Badge>
-            {voiceCategory && (
-              <Badge size="sm" variant="outline" color="gray">
-                {voiceCategory}
-              </Badge>
-            )}
-          </Group>
+            />
+          </div>
+          <div className={styles.agentName}>{agent.name}</div>
+          <div className={styles.agentLanguage}>
+            <span className={styles.flagIcon}>🇪🇸</span> {voiceLanguage}
+          </div>
+          <div className={styles.traitsRow}>
+            <span className={styles.trait}>Empathic</span>
+            <span className={styles.trait}>Jovial</span>
+          </div>
         </div>
 
-        {voiceLabels &&
-          Array.isArray(voiceLabels) &&
-          voiceLabels.length > 0 && (
-            <Group gap={4} justify="center">
-              {voiceLabels.slice(0, 3).map((label: string) => (
-                <Badge key={label} size="xs" color="blue" variant="dot">
-                  {label}
-                </Badge>
-              ))}
-              {voiceLabels.length > 3 && (
-                <Badge size="xs" color="gray" variant="light">
-                  +{voiceLabels.length - 3}
-                </Badge>
-              )}
-            </Group>
-          )}
-      </Stack>
-
-      <Divider my="md" />
-
-      {/* Agent Info Section */}
-      <div className={styles.infoSection}>
-        <Group justify="space-between" mb="sm">
-          <Group gap={6}>
-            <IconUser size={14} />
-            <Text fw={600} fz="sm">
-              {agent.name}
-            </Text>
-          </Group>
-          <Badge
-            color={isOnline ? "green" : "red"}
-            size="sm"
-            variant="light"
-            leftSection={<IconCircleCheckFilled size={10} />}
-          >
-            {isOnline ? "Active" : "Inactive"}
-          </Badge>
-        </Group>
-
-        <Group gap={4} mb="sm">
-          <IconMapPin size={14} color="gray" />
-          <Text fz="sm" c="dimmed">
-            {voiceLanguage || "Unknown Language"}
-            {voiceGender && ` • ${voiceGender}`}
-            {voiceAge && ` • ${voiceAge}`}
-          </Text>
-        </Group>
-
-        {voiceDescription && (
-          <Text fz="xs" c="dimmed" mb="md" className={styles.description}>
-            {voiceDescription}
-          </Text>
+        {/* Voice selection button */}
+        {agent?.voice ? (
+          <AgentVoicePlayer voice={agent?.voice} />
+        ) : (
+          <Text>Voice not available</Text>
         )}
-      </div>
 
-      <Divider my="md" />
-      {/* Voice Parameters Section */}
-      <div className={styles.voiceParams}>
-        <Text fw={600} fz="sm" mb="sm" className={styles.sectionTitle}>
-          Voice Configuration
-        </Text>
-
-        <div className={styles.parameterGrid}>
-          <div className={styles.parameter}>
-            <Group gap="xs" justify="space-between" mb={4}>
-              <Group gap={4}>
-                <IconWaveSine size={14} color="blue" />
-                <Text fz="xs" fw={500}>
-                  Stability
-                </Text>
-              </Group>
-              <Text fz="xs" fw={600} color="blue">
-                {(stability * 100).toFixed(0)}%
-              </Text>
-            </Group>
-            <Progress
-              value={stability * 100}
-              size="sm"
-              color="blue"
-              className={styles.progressBar}
-            />
+        {/* Campaign section */}
+        <div className={styles.campaignRow}>
+          <ActionIcon size="sm" variant="subtle" className={styles.arrowBtn}>
+            <span>&lt;</span>
+          </ActionIcon>
+          <div className={styles.campaignText}>
+            <div className={styles.campaignLabel}>Campaign</div>
+            <div className={styles.campaignName}>Personal Loan Promotion</div>
           </div>
-
-          <div className={styles.parameter}>
-            <Group gap="xs" justify="space-between" mb={4}>
-              <Group gap={4}>
-                <IconSpeedboat size={14} color="green" />
-                <Text fz="xs" fw={500}>
-                  Speed
-                </Text>
-              </Group>
-              <Text fz="xs" fw={600} color="green">
-                {speed.toFixed(1)}x
-              </Text>
-            </Group>
-            <Progress
-              value={((speed - 0.7) / (1.2 - 0.7)) * 100}
-              size="sm"
-              color="green"
-              className={styles.progressBar}
-            />
-          </div>
-
-          <div className={styles.parameter}>
-            <Group gap="xs" justify="space-between" mb={4}>
-              <Group gap={4}>
-                <IconAdjustments size={14} color="orange" />
-                <Text fz="xs" fw={500}>
-                  Similarity
-                </Text>
-              </Group>
-              <Text fz="xs" fw={600} color="orange">
-                {(similarityBoost * 100).toFixed(0)}%
-              </Text>
-            </Group>
-            <Progress
-              value={similarityBoost * 100}
-              size="sm"
-              color="orange"
-              className={styles.progressBar}
-            />
-          </div>
+          <ActionIcon size="sm" variant="subtle" className={styles.arrowBtn}>
+            <span>&gt;</span>
+          </ActionIcon>
         </div>
       </div>
-
-      <Divider my="md" />
-
-      {/* Footer Section */}
-      <div className={styles.footer}>
-        <Group justify="space-between" mb="sm">
-          <Group gap={4}>
-            <IconCalendarTime size={12} />
-            <Text fz="xs" c="dimmed">
-              Created: {createdAt}
-            </Text>
-          </Group>
-          {lastUpdated && (
-            <Text fz="xs" c="dimmed">
-              Updated: {lastUpdated}
-            </Text>
-          )}
-        </Group>
-
-        <Group justify="center" gap="xs">
-          <Button
-            variant="light"
-            size="xs"
-            radius="md"
-            color="blue"
-            leftSection={<IconPhone size={12} />}
-          >
-            Test Call
-          </Button>
-          <Button variant="outline" size="xs" radius="md" color="gray">
-            View Details
-          </Button>
-        </Group>
-      </div>
+      <Box px="xs">
+        <AgentVoiceProgress
+          stability={stability}
+          speed={speed}
+          similarityBoost={similarityBoost}
+          optimizeLatency={optimizeLatency}
+        />
+      </Box>
     </Card>
   );
 };

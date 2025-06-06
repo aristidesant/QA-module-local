@@ -1,37 +1,185 @@
-.card {
-  background: #fff;
-  border-radius: 18px;
-  box-shadow: var(--mantine-shadow-xs);
-  padding: 1.5rem;
+
+.agentSimpleDetails {
+  background: transparent;
+  width: 100%;
   max-width: 100%;
-  width: 100%;
-  margin: 0;
-  opacity: 0;
-  transform: translateY(30px) scale(0.95);
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid #e9ecef;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 0 24px 0;
+}
+
+.avatarSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+
+.avatarWrapper {
   position: relative;
-  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.card::before {
-  content: '';
+.avatar {
+  border: 3px solid var(--mantine-color-blue-7);
+  box-shadow: none;
+  width: 120px;
+  height: 120px;
+}
+
+.statusDotOnline {
   position: absolute;
-  top: 0;
-  left: -100%;
+  bottom: 6px;
+  right: 6px;
+  width: 16px;
+  height: 16px;
+  background: var(--mantine-color-green-6);
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--mantine-color-green-2);
+}
+.statusDotOffline {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  width: 16px;
+  height: 16px;
+  background: var(--mantine-color-gray-4);
+  border: 2px solid #fff;
+  border-radius: 50%;
+}
+
+.agentName {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-top: 10px;
+  margin-bottom: 2px;
+  text-align: center;
+}
+.agentLanguage {
+  color: var(--mantine-color-gray-7);
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.flagIcon {
+  margin-right: 4px;
+}
+.traitsRow {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.trait {
+  background: var(--mantine-color-gray-1);
+  color: var(--mantine-color-gray-7);
+  border-radius: 16px;
+  padding: 2px 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.voiceButtonRow {
   width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  transition: left 0.6s ease;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+.voiceButton {
+  display: flex;
+  align-items: center;
+  background: var(--mantine-color-blue-6);
+  border-radius: 32px;
+  padding: 10px 24px 10px 16px;
+  min-width: 260px;
+  box-shadow: var(--mantine-shadow-xs);
+  position: relative;
+}
+.voiceIcon {
+  margin-right: 12px;
+  color: #fff;
+}
+.voiceText {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+}
+.voiceLabel {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+.voiceName {
+  font-weight: 600;
+  font-size: 1rem;
+}
+.playIcon {
+  background: var(--mantine-color-blue-7) !important;
+  margin-left: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-.cardVisible {
-  opacity: 1;
-  transform: translateY(0) scale(1);
+.campaignRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: var(--mantine-spacing-md);
+  gap: 12px;
 }
-
-.cardVisible::before {
-  left: 100%;
+.arrowBtn {
+  color: var(--mantine-color-gray-6);
+  background: transparent !important;
+  border: none;
+  box-shadow: none;
+}
+.campaignText {
+  text-align: center;
+}
+.campaignLabel {
+  font-size: 0.8rem;
+  color: var(--mantine-color-gray-6);
+}
+.campaignName {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--mantine-color-gray-8);
+}
+.slidersSection {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+.sliderRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sliderLabel {
+  min-width: 120px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.95rem;
+  color: var(--mantine-color-gray-7);
+}
+.sliderBar {
+  flex: 1;
+  margin: 0 8px;
+  background: var(--mantine-color-gray-2);
+  border-radius: 8px;
+}
+.sliderValue {
+  min-width: 60px;
+  text-align: right;
+  font-size: 0.95rem;
+  color: var(--mantine-color-gray-7);
 }
 
 .avatarContainer {

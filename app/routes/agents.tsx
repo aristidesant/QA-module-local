@@ -43,15 +43,7 @@ export default function AgentRoute() {
   return (
     <Await resolve={agents.agents} errorElement={<>Something is not wokring</>}>
       {(resolvedAgents) => (
-        <Stack>
-          <PageHeader
-            breadcrumbs={[
-              { label: "Home", path: "/" },
-              { label: "Agents", path: "/agents" },
-            ]}
-          />
-          <AgentList agents={resolvedAgents ?? []} onCreateNew={() => {}} />
-        </Stack>
+        <AgentList agents={resolvedAgents ?? []} onCreateNew={() => {}} />
       )}
     </Await>
   );

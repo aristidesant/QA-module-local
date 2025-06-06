@@ -1,3 +1,5 @@
+import type { Voice } from "./AgentVoiceModel";
+
 export default interface AgentListObject {
   id: string;
   name: string;
@@ -9,6 +11,8 @@ export default interface AgentListObject {
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
+  voiceId: string | null;
+  voice: Voice | null;
 }
 
 export type AgentUpdateModel = {

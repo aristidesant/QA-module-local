@@ -1,4 +1,4 @@
-import { AppShell } from "@mantine/core";
+import { AppShell, Card } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Outlet, useOutletContext } from "react-router";
 import Sidebar from "../Sidebar";
@@ -21,31 +21,23 @@ export default function Layout() {
         className={styles.notifications}
         autoClose={4000}
       />
-
-      <AppShell
-        header={{ height: 70 }}
-        navbar={{
-          width: 280,
-          breakpoint: "sm",
-          collapsed: { mobile: !opened },
-        }}
-        layout="alt"
-        padding="0"
-      >
-        <AppShell.Header>
-          <Header opened={opened} toggle={toggle} />
-        </AppShell.Header>
-
-        <AppShell.Navbar p="xs" className={styles.navbar}>
+      <div className={styles.container}>
+        <aside className={styles.navbar}>
           <Sidebar onClose={toggle} />
-        </AppShell.Navbar>
-
-        <AppShell.Main>
-          <div className={styles.main}>
-            <Outlet context={{ token }} />
-          </div>
-        </AppShell.Main>
-      </AppShell>
+        </aside>
+        <div className={styles.content}>
+          <header className={styles.header}>
+            <Card withBorder className={styles.headerCard}>
+              <Header opened={opened} toggle={toggle} />
+            </Card>
+          </header>
+          <main className={styles.mainWrapper}>
+            <div className={styles.main}>
+              <Outlet context={{ token }} />
+            </div>
+          </main>
+        </div>
+      </div>
     </div>
   );
 }

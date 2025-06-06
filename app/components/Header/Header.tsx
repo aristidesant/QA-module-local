@@ -1,7 +1,5 @@
-import { Burger, Group, Text, Tooltip, Box } from "@mantine/core";
-import { NavLink } from "react-router";
-import Logo from "../Logo";
-import { IconBell, IconChevronDown, IconUser } from "@tabler/icons-react";
+import { IconMenu2 } from "@tabler/icons-react";
+import UserMenu from "../UserMenu";
 import styles from "./Header.module.css";
 
 interface HeaderProps {
@@ -14,17 +12,20 @@ export const Header: React.FC<HeaderProps> = ({ opened, toggle }) => {
     <header className={styles.header}>
       <div className={styles.headerContent}>
         <div className={styles.headerLeft}>
-          <Burger
-            opened={opened}
-            onClick={toggle}
-            hiddenFrom="sm"
-            size="sm"
+          <button
             className={styles.burger}
-            aria-label="Toggle navigation"
-          />
-          <Logo animated={true} />
+            onClick={toggle}
+            aria-label="Open menu"
+            type="button"
+          >
+            <IconMenu2 size={24} />
+          </button>
+        </div>
+        <div className={styles.headerRight}>
+          <UserMenu />
         </div>
       </div>
     </header>
   );
 };
+// ...existing code...

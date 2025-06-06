@@ -18,13 +18,19 @@ export const mantineTheme: MantineThemeOverride = {
     },
     Card: {
       defaultProps: {
-        shadow: "sm",
+        shadow: "0",
         radius: "lg",
         p: "lg",
       },
     },
+    Divider: {
+      defaultProps: {
+        variant: "dashed",
+      },
+    },
     Paper: {
       defaultProps: {
+        shadow: "0",
         radius: "lg",
         p: "lg",
       },

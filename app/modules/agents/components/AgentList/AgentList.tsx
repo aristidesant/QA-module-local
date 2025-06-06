@@ -24,6 +24,8 @@ import classes from "./AgentList.module.css";
 import type AgentListObject from "~/models/AgentListObject";
 import SectionCard from "~/components/SectionCard";
 import AgentSimpleDetails from "../AgentSimpleDetails/AgentSimpleDetails";
+import { ContentContainer } from "~/components/ContentContainer/ContentContainer";
+import AgentNotSelected from "../AgentNotSelected";
 
 interface AgentListProps {
   agents: any[];
@@ -62,97 +64,107 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
   };
 
   return (
-    <div className={classes.containerLayout}>
-      <div className={`${classes.agentListContainer}`}>
-        <SectionCard
-          title="Agents"
-          description={`${agents.length} agents available`}
-          icon={IconUsersGroup}
-          headerActions={
-            <Tooltip
-              label="Create a new agent"
-              withArrow
-              position="left"
-              transitionProps={{ transition: "slide-left", duration: 200 }}
-            >
-              <Button
-                onClick={open}
-                size="md"
-                leftSection={<IconPlus size={18} stroke={1.5} />}
-                className={classes.newAgentBtn}
-                radius="xl"
-                variant="gradient"
-                gradient={{ from: "blue", to: "cyan", deg: 135 }}
-              >
-                New Agent
-              </Button>
-            </Tooltip>
-          }
-        >
-          <AgentCreate
-            opened={opened}
-            onClose={close}
-            onSave={handleCreateSuccessCallback}
-          />
-
+    <ContentContainer
+      rightSection={
+        <>
           <Transition
-            mounted={agents.length > 0}
-            transition="fade"
-            duration={400}
-            timingFunction="ease"
+            mounted={!!selectedAgent}
+            transition={isMobile ? "slide-up" : "slide-left"}
+            duration={200}
+            timingFunction="cubic-bezier(0.4, 0, 0.2, 1)"
           >
             {(styles) => (
-              <div
-                className={`${classes.agentsGrid} ${classes.gridContainer}`}
-                style={styles}
-              >
-                {agents.map((agent) => (
-                  <SimpleGrid key={agent.agent_id}>
-                    <AgentCard
-                      onNavigate={handleAgentClick}
-                      onClick={handleAgentCardClick}
-                      agent={agent}
-                    />
-                  </SimpleGrid>
-                ))}
+              <div style={styles}>
+                {selectedAgent && <AgentSimpleDetails agent={selectedAgent} />}
               </div>
             )}
           </Transition>
 
-          {agents.length === 0 && (
-            <Paper className={classes.emptyState} shadow="none">
-              <Stack align="center" gap="xs">
-                <div className={classes.avatarContainer}>
-                  <Avatar size={80} radius="xl" color="blue">
-                    <IconUsersGroup size={40} stroke={1.5} />
-                  </Avatar>
-                </div>
-                <Title order={3} className={classes.emptyTitle}>
-                  No Agents Yet
-                </Title>
-                <Text className={classes.emptyText}>
-                  Create your first agent to start building amazing
-                  conversations and automations
-                </Text>
-              </Stack>
-            </Paper>
-          )}
-        </SectionCard>
-      </div>
-
-      <Transition
-        mounted={!!selectedAgent}
-        transition={isMobile ? "slide-up" : "slide-left"}
-        duration={500}
-        timingFunction="cubic-bezier(0.4, 0, 0.2, 1)"
+          <Transition
+            mounted={!selectedAgent}
+            transition={isMobile ? "slide-up" : "slide-left"}
+            duration={100}
+            timingFunction="cubic-bezier(0.4, 0, 0.2, 1)"
+          >
+            {(styles) => (
+              <div style={styles}>{!selectedAgent && <AgentNotSelected />}</div>
+            )}
+          </Transition>
+        </>
+      }
+    >
+      <SectionCard
+        title="Agent Directory"
+        description="Manage and monitor all your AI agents in one place."
+        icon={IconUsersGroup}
+        headerActions={
+          <Tooltip
+            label="Create a new agent"
+            withArrow
+            position="left"
+            transitionProps={{ transition: "slide-left", duration: 200 }}
+          >
+            <Button
+              onClick={open}
+              size="md"
+              leftSection={<IconPlus size={18} stroke={1.5} />}
+              className={classes.newAgentBtn}
+              variant="blue"
+            >
+              New Agent
+            </Button>
+          </Tooltip>
+        }
       >
-        {(styles) => (
-          <div style={styles}>
-            {selectedAgent && <AgentSimpleDetails agent={selectedAgent} />}
-          </div>
+        <AgentCreate
+          opened={opened}
+          onClose={close}
+          onSave={handleCreateSuccessCallback}
+        />
+
+        <Transition
+          mounted={agents.length > 0}
+          transition="fade"
+          duration={400}
+          timingFunction="ease"
+        >
+          {(styles) => (
+            <SimpleGrid
+              cols={{ base: 1, sm: 2, md: 2, lg: 2, xl: 3 }}
+              style={styles}
+            >
+              {agents.map((agent) => (
+                <AgentCard
+                  key={agent.agent_id}
+                  onNavigate={handleAgentClick}
+                  onClick={handleAgentCardClick}
+                  agent={agent}
+                />
+              ))}
+            </SimpleGrid>
+          )}
+        </Transition>
+
+        {agents.length === 0 && (
+          <Paper className={classes.emptyState} shadow="none">
+            <Stack align="center" gap="xs">
+              <div className={classes.avatarContainer}>
+                <Avatar size={80} radius="xl" color="blue">
+                  <IconUsersGroup size={40} stroke={1.5} />
+                </Avatar>
+              </div>
+              <Title order={3} className={classes.emptyTitle}>
+                No Agents Yet
+              </Title>
+              <Text className={classes.emptyText}>
+                Create your first agent to start building amazing conversations
+                and automations
+              </Text>
+            </Stack>
+          </Paper>
         )}
-      </Transition>
-    </div>
+      </SectionCard>
+    </ContentContainer>
   );
 };
 
