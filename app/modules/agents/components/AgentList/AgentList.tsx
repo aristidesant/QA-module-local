@@ -26,6 +26,7 @@ import SectionCard from "~/components/SectionCard";
 import AgentSimpleDetails from "../AgentSimpleDetails/AgentSimpleDetails";
 import { ContentContainer } from "~/components/ContentContainer/ContentContainer";
 import AgentNotSelected from "../AgentNotSelected";
+import ContainerHeader from "~/components/ContainerHeader/ContainerHeader";
 
 interface AgentListProps {
   agents: any[];
@@ -93,6 +94,10 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
         </>
       }
     >
+      {/* <ContainerHeader
+        title="Agent Directory"
+        description="Manage and monitor all your AI agents in one place."
+      /> */}
       <SectionCard
         title="Agent Directory"
         description="Manage and monitor all your AI agents in one place."

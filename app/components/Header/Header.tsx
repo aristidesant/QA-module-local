@@ -1,6 +1,7 @@
-import { IconMenu2 } from "@tabler/icons-react";
+import { IconBell, IconMenu2 } from "@tabler/icons-react";
 import UserMenu from "../UserMenu";
 import styles from "./Header.module.css";
+import { ActionIcon, Divider } from "@mantine/core";
 
 interface HeaderProps {
   opened: boolean;
@@ -22,6 +23,10 @@ export const Header: React.FC<HeaderProps> = ({ opened, toggle }) => {
           </button>
         </div>
         <div className={styles.headerRight}>
+          <ActionIcon radius={"xl"} size={"lg"} variant="subtle">
+            <IconBell />
+          </ActionIcon>
+          <Divider orientation="vertical" />
           <UserMenu />
         </div>
       </div>

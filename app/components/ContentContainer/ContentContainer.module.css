@@ -11,6 +11,19 @@
   background: var(--mantine-color-body, #fff);
   padding: 32px 24px;
   min-width: 0;
+  overflow-y: auto;
+}
+
+.title{
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+}
+.description {
+  font-size: 16px;
+  color: var(--mantine-color-gray-6, #6c757d);
+  margin-bottom: 24px;
+  text-align: center;
 }
 
 .rightSection {

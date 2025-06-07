@@ -3,6 +3,17 @@
   max-width: 100%;
 }
 
+.carouselViewport {
+  overflow: visible !important;
+}
+
+.carouselSlide {
+  overflow: visible !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 
 
 .filterToggle {

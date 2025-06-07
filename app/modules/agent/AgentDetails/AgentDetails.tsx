@@ -1,24 +1,20 @@
 import React, { useState, useRef, useEffect } from "react";
-import {
-  IconUser,
-  IconSettings,
-  IconMicrophone,
-  IconDeviceFloppy,
-} from "@tabler/icons-react";
-import { Title, Group, Button, TextInput, Stack, Divider } from "@mantine/core";
+import { IconMicrophone, IconDeviceFloppy } from "@tabler/icons-react";
+import { Group, Button, TextInput, Stack, Divider } from "@mantine/core";
 import AgentSettings from "../AgentSettings";
-import AgentVoiceSettings from "../AgentVoiceSettings/AgentVoiceSettings";
 import styles from "./AgentDetails.module.css";
 // import { useFetcher } from "react-router";
 import type { GetAgentResponseModel } from "elevenlabs/api";
-import AgentWidget from "~/components/AgentWidget";
 import type AgentListObject from "~/models/AgentListObject";
 import { notifications } from "@mantine/notifications";
-import ContainerCard from "~/components/ui/ContainerCard/ContainerCard";
 import { useUpdateAgent } from "~/queries/agentQueries";
 import type { AgentUpdateModel } from "~/models/AgentListObject";
 import AgentVoices from "../AgentVoices";
 import SectionCard from "~/components/SectionCard";
+import { ContentContainer } from "~/components/ContentContainer/ContentContainer";
+import AgentNotSelected from "~/modules/agents/components/AgentNotSelected";
+import { useAgentStore } from "~/store/agentStore";
+import AgentConfigurationTypeSelector from "../AgentConfigurationTypeSelector";
 
 export type AgentDetailsProps = {
   agent: AgentListObject;
@@ -28,6 +24,9 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
   const [editableAgent, setEditableAgent] = useState(agent?.config);
   const [name, setName] = useState(agent.name);
   const [isEditingName, setIsEditingName] = useState(false);
+  const { selectedElement, agentConfigurationType } = useAgentStore(
+    (state) => state
+  );
   const nameInputRef = useRef<HTMLInputElement>(null);
   const {
     mutateAsync: updateAgent,
@@ -97,9 +96,21 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Ensure we have a default voice model before saving
+    const updatedConfig = {
+      ...editableAgent.conversation_config,
+      tts: {
+        ...editableAgent.conversation_config?.tts,
+        model_id:
+          editableAgent.conversation_config?.tts?.model_id ||
+          "eleven_flash_v2_5",
+      },
+    };
+
     const data: Partial<AgentUpdateModel> = {
       name,
-      conversation_config: editableAgent.conversation_config,
+      conversation_config: updatedConfig,
       platform_settings: editableAgent.platform_settings,
     };
     try {
@@ -121,64 +132,14 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
   const isSubmitting = isPending;
 
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <SectionCard
-          title={
-            <>
-              {isEditingName ? (
-                <TextInput
-                  ref={nameInputRef}
-                  value={name}
-                  onChange={handleNameChange}
-                  onBlur={handleNameBlur}
-                  onKeyDown={handleNameKeyDown}
-                  className={styles.nameInput}
-                  variant="unstyled"
-                  size="lg"
-                  autoComplete="off"
-                />
-              ) : (
-                <Title order={3} c="blue" onClick={handleNameClick}>
-                  {name}
-                </Title>
-              )}
-            </>
-          }
-          description={`ID: ${agentId}`}
-          icon={IconUser}
-        >
-          <input type="hidden" name="agent_id" value={agentId} />
-
+    <ContentContainer
+      title="Agent Creation"
+      description="Start by setting up the key parameters required for a fully operational AI-driven campaign."
+      rightSection={selectedElement ?? <AgentNotSelected />}
+    >
+      <Stack>
+        <form onSubmit={handleSubmit}>
           <Stack gap="xl">
-            <Divider
-              labelPosition="center"
-              label={
-                <Group gap={6}>
-                  <IconSettings size={18} color="#228be6" />
-                  <span style={{ color: "#228be6", fontWeight: 500 }}>
-                    Agent Settings
-                  </span>
-                </Group>
-              }
-            />
-            <div>
-              <AgentSettings
-                agentData={editableAgent as GetAgentResponseModel}
-                onUpdateAgentData={handleAgentUpdate}
-              />
-            </div>
-            <Divider
-              labelPosition="center"
-              label={
-                <Group gap={6}>
-                  <IconMicrophone size={18} color="#228be6" />
-                  <span style={{ color: "#228be6", fontWeight: 500 }}>
-                    Voice Settings
-                  </span>
-                </Group>
-              }
-            />
             <AgentVoices
               onSelectVoice={(voiceId: string) => {
                 handleAgentUpdate({
@@ -194,11 +155,26 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
               selectedVoiceId={
                 editableAgent?.conversation_config?.tts?.voice_id
               }
-            />
-            <AgentVoiceSettings
               agentData={editableAgent}
               onUpdateAgentData={handleAgentUpdate}
             />
+            <SectionCard>
+              <TextInput
+                label="Agent Name"
+                value={name}
+                onChange={handleNameChange}
+                onBlur={handleNameBlur}
+              />
+            </SectionCard>
+            <AgentConfigurationTypeSelector />
+            {agentConfigurationType === "custom" && (
+              <>
+                <AgentSettings
+                  agentData={editableAgent as GetAgentResponseModel}
+                  onUpdateAgentData={handleAgentUpdate}
+                />
+              </>
+            )}
           </Stack>
           <Group justify="flex-start" mt="xl">
             <Button
@@ -210,13 +186,9 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
               Save Changes
             </Button>
           </Group>
-        </SectionCard>
-      </form>
-      <AgentWidget
-        agentId={agentId}
-        language={editableAgent?.conversation_config?.agent?.language}
-      />
-    </>
+        </form>
+      </Stack>
+    </ContentContainer>
   );
 };
 

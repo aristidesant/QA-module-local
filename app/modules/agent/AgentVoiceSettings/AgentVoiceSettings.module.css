@@ -10,9 +10,6 @@
 .sliderWrapper {
   padding: 1rem;
   margin-bottom: 1rem;
-  background: var(--mantine-color-gray-0);
-  border-radius: var(--mantine-radius-sm);
-  border: 1px solid var(--mantine-color-gray-2);
 }
 
 .sliderWrapper:last-child {
@@ -22,7 +19,7 @@
 .fieldGroup {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--mantine-spacing-xs);
 }
 
 .fieldLabel {
@@ -67,10 +64,60 @@
   margin-top: 0.25rem;
 }
 
+/* Mantine Slider Styles API selectors */
+:global(.mantine-Slider-root) {}
+:global(.mantine-Slider-label) {}
+:global(.mantine-Slider-thumb) {}
+:global(.mantine-Slider-trackContainer) {}
+:global(.mantine-Slider-track) {}
+:global(.mantine-Slider-bar) {}
+:global(.mantine-Slider-markWrapper) {}
+:global(.mantine-Slider-mark) {}
+
 /* Add styles for slider marks */
 :global(.mantine-Slider-markLabel) {
   font-size: 0.75rem;
   color: var(--mantine-color-gray-6);
   transform: translateX(-50%) translateY(5px);
   white-space: nowrap;
+  min-width: 40px;
+  text-align: center;
+}
+
+/* Align first and last markLabel with slider edges */
+:global(.mantine-Slider-markWrapper:first-child) .mantine-Slider-markLabel {
+  text-align: left;
+  transform: translateX(0) translateY(5px);
+}
+:global(.mantine-Slider-markWrapper:last-child) .mantine-Slider-markLabel {
+  text-align: right;
+  transform: translateX(0) translateY(5px);
+}
+/* Mantine Slider Styles API selectors for classNames prop */
+.sliderRoot {
+  
+}
+.sliderLabel {
+  color: red
+}
+.sliderThumb {}
+.sliderTrackContainer {}
+.sliderTrack {}
+.sliderBar {}
+.sliderMarkWrapper {
+  position: relative;
+}
+.sliderMark {}
+.sliderMarkLabel {
+ 
+}
+
+/* Align first and last markLabel with slider edges using only classNames */
+.sliderMarkWrapper:first-child .sliderMarkLabel {
+  /* text-align: left; */
+  /* text-align: left; */
+  /* transform: translateX(-47%) translateY(5px); */
+}
+.sliderMarkWrapper:last-child .sliderMarkLabel {
+  /* transform: translateX(calc(50% - 100%)) translateY(5px); */
 }

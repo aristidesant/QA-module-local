@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { useDebouncedFilters } from "./AgentVoicesFilter/useDebouncedFilters";
 import { useGetAllAgentVoices } from "~/queries/agentVoiceQueries";
 import { ScrollArea, Text, Button, Collapse } from "@mantine/core";
+import { Carousel } from "@mantine/carousel";
 import {
   IconMicrophone,
   IconFilter,
@@ -14,15 +15,23 @@ import classes from "./AgentVoices.module.css";
 import { VoiceCard } from "./VoiceCard";
 import { AgentVoicesFilter } from "./AgentVoicesFilter";
 import type { AgentVoicesFilterValues } from "./AgentVoicesFilter/AgentVoicesFilter";
+import AgentVoiceSettings from "../AgentVoiceSettings";
+import { useAgentStore } from "~/store/agentStore";
+import VoiceDetails from "../VoiceDetails";
+import type AgentListObject from "~/models/AgentListObject";
 
 type AgentVoicesProps = {
   onSelectVoice: (voiceId: string) => void;
   selectedVoiceId: string | null;
+  agentData?: Record<string, any>;
+  onUpdateAgentData: (updatedFields: any) => void; // TODO: Define a more specific type for updatedFields
 };
 
 const AgentVoices: React.FC<AgentVoicesProps> = ({
   onSelectVoice,
   selectedVoiceId,
+  agentData,
+  onUpdateAgentData,
 }) => {
   const [filters, setFilters] = useState<AgentVoicesFilterValues>({
     name: "",
@@ -48,6 +57,18 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
   const [playingVoiceId, setPlayingVoiceId] = useState<string | null>(null);
   const [playProgress, setPlayProgress] = useState<number>(0);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const { setSelectedElement } = useAgentStore((state) => state);
+  // Track the current first visible index of the carousel
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // For 5 visible slides, the center is at currentIndex + 2
+  // With loop: true, handle circular distance
+  const getScale = (idx: number, currentIndex: number) => {
+    if (idx === currentIndex) {
+      return 1.25;
+    }
+    return 0.9;
+  };
 
   const handleFiltersChange = (newFilters: AgentVoicesFilterValues) => {
     setFilters(newFilters);
@@ -89,7 +110,9 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
     }
   };
 
-  const voices = elevenLabsVoices || [];
+  const voices = Array(8)
+    .fill(null)
+    .flatMap(() => elevenLabsVoices || []);
 
   let content: React.ReactNode = null;
 
@@ -138,21 +161,47 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
           onTimeUpdate={handleTimeUpdate}
           className={classes.hiddenAudio}
         />
-        <ScrollArea className={classes.scrollArea}>
-          <div className={classes.voiceGrid}>
-            {voices.map((voice) => (
-              <VoiceCard
-                key={voice.id}
-                voice={voice.voice}
-                isPlaying={playingVoiceId === voice.voice.id}
-                isSelected={voice.voice.id === selectedVoiceId}
-                playProgress={playProgress}
-                onSelectVoice={onSelectVoice}
-                onPlayVoice={handlePlayVoice}
-              />
-            ))}
-          </div>
-        </ScrollArea>
+        <Carousel
+          withControls
+          slideSize="20%"
+          slideGap="md"
+          emblaOptions={{
+            align: "center",
+            loop: true,
+          }}
+          onSlideChange={(i) => {
+            setCurrentIndex(i);
+            setSelectedElement(<VoiceDetails agentVoice={voices[i]} />);
+          }}
+          initialSlide={0}
+          classNames={{
+            viewport: classes.carouselViewport,
+            slide: classes.carouselSlide,
+          }}
+        >
+          {voices.map((voice, idx) => {
+            const scale = getScale(idx, currentIndex);
+            return (
+              <Carousel.Slide key={voice.id}>
+                <div
+                  style={{
+                    transform: `scale(${scale})`,
+                    transition: "transform 0.3s cubic-bezier(0.4,0,0.2,1)",
+                  }}
+                >
+                  <VoiceCard
+                    voice={voice.voice}
+                    isPlaying={playingVoiceId === voice.voice.id}
+                    isSelected={currentIndex === idx}
+                    playProgress={playProgress}
+                    onSelectVoice={onSelectVoice}
+                    onPlayVoice={handlePlayVoice}
+                  />
+                </div>
+              </Carousel.Slide>
+            );
+          })}
+        </Carousel>
       </div>
     );
   }
@@ -160,13 +209,17 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
   return (
     <SectionCard
       icon={IconMicrophone}
-      title="List of voices"
-      description="Select a voice for your agent. Preview and choose from available options."
+      title="Choose AI voice"
+      description="Select the voice that will represent during customer interactions.."
       contentSpacing="md"
       id="agent-voices-section"
     >
-      <AgentVoicesFilter filters={filters} onChange={handleFiltersChange} />
+      {/* <AgentVoicesFilter filters={filters} onChange={handleFiltersChange} /> */}
       {content}
+      <AgentVoiceSettings
+        agentData={agentData}
+        onUpdateAgentData={onUpdateAgentData}
+      />
     </SectionCard>
   );
 };

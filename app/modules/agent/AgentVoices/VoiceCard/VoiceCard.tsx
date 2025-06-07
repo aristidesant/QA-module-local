@@ -1,211 +1,169 @@
 import React from "react";
-import {
-  Avatar,
-  Box,
-  Text,
-  ActionIcon,
-  Paper,
-  Progress,
-  Tooltip,
-  Transition,
-  Badge,
-} from "@mantine/core";
-import {
-  IconPlayerPlay,
-  IconPlayerStop,
-  IconVolumeOff,
-} from "@tabler/icons-react";
-import { useHover } from "@mantine/hooks";
 import type { Voice } from "~/models/AgentVoiceModel";
 import classes from "./VoiceCard.module.css";
+import { Avatar, Indicator, Stack, Text, Image } from "@mantine/core";
 
 export type VoiceCardProps = {
   voice: Voice;
-  isPlaying: boolean;
-  isSelected: boolean;
-  playProgress: number;
-  onSelectVoice: (voiceId: string) => void;
-  onPlayVoice: (voiceId: string, previewUrl: string) => void;
+  isPlaying?: boolean;
+  isSelected?: boolean;
+  playProgress?: number;
+  onSelectVoice?: (voiceId: string) => void;
+  onPlayVoice?: (voiceId: string, previewUrl: string) => void;
 };
+
+import { useState } from "react";
+import {
+  IconPlayerPlayFilled,
+  IconPlayerPauseFilled,
+} from "@tabler/icons-react";
 
 export const VoiceCard: React.FC<VoiceCardProps> = ({
   voice,
-  isPlaying,
-  isSelected,
+  isPlaying = false,
+  isSelected = false,
   playProgress,
   onSelectVoice,
   onPlayVoice,
 }) => {
-  const { hovered, ref } = useHover();
-  const isFemale =
-    voice.gender === "female" || voice.name.toLowerCase().includes("female");
-  const isMale =
-    voice.gender === "male" || voice.name.toLowerCase().includes("male");
-  const genderColor = isFemale ? "pink" : isMale ? "blue" : "gray";
+  const [hovered, setHovered] = useState(false);
 
-  const getCardStyles = () => {
-    if (isSelected) {
-      return {
-        background:
-          "linear-gradient(145deg, rgba(59, 130, 246, 0.08), rgba(147, 197, 253, 0.05))",
-        borderColor: "rgba(59, 130, 246, 0.5)",
-      };
+  const flagUrl =
+    voice.language === "Spanish"
+      ? "/images/es-flag.svg"
+      : "/images/us-flag.svg";
+
+  // Placeholder for previewUrl, replace with actual property if available
+  const previewUrl = voice.previewUrl || "";
+
+  const handleAvatarClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onPlayVoice) {
+      onPlayVoice(voice.id, previewUrl);
     }
-    return {};
+    if (onSelectVoice) {
+      onSelectVoice(voice.id);
+    }
   };
 
   return (
-    <Transition mounted={true} transition="fade" duration={400}>
-      {(styles) => (
-        <Tooltip
-          label={`${voice.name} - ${
-            isFemale ? "Female" : isMale ? "Male" : "Unknown"
-          } voice`}
-          position="top"
-          withArrow
-          disabled={isPlaying}
-        >
-          <Paper
-            ref={ref}
-            className={classes.voiceCard}
+    <div
+      className={classes.container}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
+      }}
+    >
+      <div
+        className={classes.avatarWrapper}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onClick={handleAvatarClick}
+        style={{
+          cursor: "pointer",
+          border: isSelected ? "2px solid var(--mantine-color-blue-6)" : "none",
+          borderRadius: "50%",
+          margin: "0 auto",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          position: "relative",
+        }}
+      >
+        <Avatar
+          src={"/images/avatar-m-do.png"}
+          alt={voice.name}
+          className={classes.avatarImage}
+        />
+        {/* Circular progress overlay */}
+        {isPlaying && typeof playProgress === "number" && (
+          <svg
             style={{
-              ...styles,
-              ...getCardStyles(),
-              boxShadow:
-                hovered || isSelected
-                  ? "0 4px 24px 0 rgba(34, 139, 230, 0.10)"
-                  : "0 1.5px 6px 0 rgba(0,0,0,0.04)",
-              transform: hovered ? "translateY(-2px) scale(1.02)" : "none",
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              pointerEvents: "none",
+              zIndex: 3,
             }}
-            onClick={() => onSelectVoice(voice.id)}
-            data-selected={isSelected}
-            data-playing={isPlaying}
-            data-gender={isFemale ? "female" : "male"}
-            data-hovered={hovered && !isPlaying}
+            width="72"
+            height="72"
+            viewBox="0 0 72 72"
           >
-            <div className={classes.cardContent}>
-              <div className={classes.avatarWrapper}>
-                <Avatar
-                  size={56}
-                  radius={"xl"}
-                  src={
-                    isFemale
-                      ? "/images/avatar-f-do.png"
-                      : "/images/avatar-m-do.png"
-                  }
-                  color={genderColor}
-                  variant="filled"
-                  className={classes.avatar}
-                >
-                  {voice.name.charAt(0).toUpperCase()}
-                </Avatar>
-              </div>
-              <Box className={classes.voiceInfo}>
-                <Text
-                  className={classes.voiceName}
-                  fw={isSelected ? 700 : 600}
-                  size="md"
-                  style={{
-                    color: isSelected
-                      ? "var(--mantine-color-blue-7)"
-                      : undefined,
-                    transition: "color 0.3s ease",
-                  }}
-                >
-                  {voice.name}
-                </Text>
-                <Box
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 8,
-                    marginTop: 6,
-                  }}
-                >
-                  <Badge
-                    color={genderColor}
-                    size="xs"
-                    variant={isSelected ? "filled" : "light"}
-                    radius="md"
-                    style={{
-                      boxShadow: isSelected
-                        ? "0 2px 8px rgba(0,0,0,0.1)"
-                        : undefined,
-                      transition: "all 0.3s ease",
-                    }}
-                  >
-                    {isFemale ? "Female" : isMale ? "Male" : "Other"}
-                  </Badge>
-                  <Text
-                    size="xs"
-                    c="dimmed"
-                    style={{
-                      fontWeight: 500,
-                      opacity: 0.8,
-                    }}
-                  >
-                    🌍 {voice?.language || "Unknown Language"}
-                  </Text>
-                </Box>
-              </Box>
-              <ActionIcon
-                className={classes.playButton}
-                variant={isPlaying ? "light" : "filled"}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  if (voice.previewUrl) {
-                    onPlayVoice(voice.id, voice.previewUrl);
-                  }
-                }}
-                color={genderColor}
-                size={48}
-                radius="xl"
-                style={{
-                  boxShadow: isPlaying
-                    ? `0 0 0 3px var(--mantine-color-${genderColor}-3)`
-                    : undefined,
-                  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                  background: isPlaying
-                    ? `var(--mantine-color-${genderColor}-1)`
-                    : undefined,
-                  animation: isPlaying ? "pulse 2s infinite" : undefined,
-                }}
-                disabled={!voice.previewUrl}
-                aria-label={
-                  !voice.previewUrl
-                    ? "No preview available"
-                    : isPlaying
-                    ? "Stop preview"
-                    : "Play preview"
-                }
-              >
-                {!voice.previewUrl ? (
-                  <IconVolumeOff size={24} style={{ opacity: 0.6 }} />
-                ) : isPlaying ? (
-                  <IconPlayerStop size={24} />
-                ) : (
-                  <IconPlayerPlay size={24} style={{ marginLeft: 2 }} />
-                )}
-              </ActionIcon>
-            </div>
-            {isPlaying && (
-              <Progress
-                value={playProgress}
-                color={genderColor}
-                size="sm"
-                className={classes.progressBar}
-                animated
-                style={{
-                  marginTop: 16,
-                  borderRadius: 8,
-                  background: "rgba(229, 231, 235, 0.3)",
-                  backdropFilter: "blur(10px)",
-                }}
-              />
-            )}
-          </Paper>
-        </Tooltip>
-      )}
-    </Transition>
+            <circle
+              cx="36"
+              cy="36"
+              r="34"
+              fill="none"
+              stroke="#e0e0e0"
+              strokeWidth="4"
+            />
+            <circle
+              cx="36"
+              cy="36"
+              r="34"
+              fill="none"
+              stroke="var(--mantine-color-blue-6)"
+              strokeWidth="4"
+              strokeDasharray={2 * Math.PI * 34}
+              strokeDashoffset={
+                2 * Math.PI * 34 * (1 - (playProgress ?? 0) / 100)
+              }
+              strokeLinecap="round"
+              style={{
+                transition: "stroke-dashoffset 0.2s",
+                filter: "drop-shadow(0 0 2px var(--mantine-color-blue-6))",
+              }}
+            />
+          </svg>
+        )}
+        {/* Overlay logic */}
+        {(isPlaying || hovered) && (
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              background: isPlaying
+                ? "rgba(0, 0, 0, 0.25)"
+                : "rgba(0, 0, 0, 0.10)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "50%",
+              transition: "background 0.2s",
+              zIndex: 4,
+            }}
+          >
+            {isPlaying ? (
+              <IconPlayerPauseFilled size={36} color="#fff" />
+            ) : hovered ? (
+              <IconPlayerPlayFilled size={36} color="#fff" />
+            ) : null}
+          </div>
+        )}
+        {/* Flag */}
+        <img src={flagUrl} alt="Language Flag" className={classes.flag} />
+      </div>
+      <Text
+        fz={"md"}
+        fw="bold"
+        className={classes.name}
+        style={{
+          width: "100%",
+          textAlign: "center",
+          display: "block",
+          marginTop: 12,
+        }}
+      >
+        {voice.name}
+      </Text>
+    </div>
   );
 };

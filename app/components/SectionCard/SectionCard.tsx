@@ -4,8 +4,8 @@ import styles from "./SectionCard.module.css";
 import type { TablerIcon } from "@tabler/icons-react";
 
 interface SectionCardProps {
-  icon: TablerIcon;
-  title: string | ReactNode;
+  icon?: TablerIcon;
+  title?: string | ReactNode;
   description?: string;
   children?: ReactNode;
   className?: string;
@@ -60,28 +60,30 @@ export const SectionCard: React.FC<SectionCardProps> = ({
       padding="xl"
       data-testid="section-card"
     >
-      <div className={styles.sectionHeader}>
-        <div className={styles.sectionHeaderContent}>
-          <div className={styles.sectionLine} />
-          <div>
-            <Title order={6} className={styles.sectionTitle}>
-              {title}
-            </Title>
-            {description && (
-              <Text
-                lineClamp={1}
-                fz={"sm"}
-                className={styles.sectionDescription}
-              >
-                {description}
-              </Text>
-            )}
+      {title && (
+        <div className={styles.sectionHeader}>
+          <div className={styles.sectionHeaderContent}>
+            <div className={styles.sectionLine} />
+            <div>
+              <Title order={6} className={styles.sectionTitle}>
+                {title}
+              </Title>
+              {description && (
+                <Text
+                  lineClamp={1}
+                  fz={"sm"}
+                  className={styles.sectionDescription}
+                >
+                  {description}
+                </Text>
+              )}
+            </div>
           </div>
+          {headerActions && (
+            <div className={styles.headerActions}>{headerActions}</div>
+          )}
         </div>
-        {headerActions && (
-          <div className={styles.headerActions}>{headerActions}</div>
-        )}
-      </div>
+      )}
       <div className={styles.content} style={contentStyle}>
         {children}
       </div>

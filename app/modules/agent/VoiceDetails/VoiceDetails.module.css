@@ -1,0 +1,14 @@
+.voiceCard {
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--mantine-color-body);
+}
+
+.detailsStack {
+  flex: 1;
+}
+
+.audioPreview {
+  margin-top: 8px;
+  width: 100%;
+}

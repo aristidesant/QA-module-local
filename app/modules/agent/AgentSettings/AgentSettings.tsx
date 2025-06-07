@@ -64,54 +64,21 @@ const AgentSettings: React.FC<AgentSettingsProps> = ({
         className={styles.sectionCard}
         contentSpacing="lg"
       >
-        <div className={styles.configRow}>
-          <div className={styles.modelContainer}>
-            <Select
-              label="Language"
-              placeholder="Select language"
-              value={currentLanguage}
-              onChange={handleLanguageChange}
-              data={languageOptions}
-              description="Choose the language for the agent's responses"
-              searchable
-              nothingFoundMessage="No language found"
-              leftSection={<IconLanguage size={16} />}
-            />
-          </div>
-          <div className={styles.modelContainer}>
-            <Select
-              value={agentData?.conversation_config?.tts?.model_id}
-              onChange={(value) => {
-                onUpdateAgentData({
-                  conversation_config: {
-                    ...(agentData?.conversation_config || {}),
-                    tts: {
-                      ...(agentData?.conversation_config?.tts || {}),
-                      model_id: value,
-                    },
-                  },
-                });
-              }}
-              label="Voice Model"
-              description="Select the TTS model for voice responses"
-              data={["eleven_flash_v2_5"]}
-              leftSection={<IconRobot size={16} />}
-            />
-          </div>
-        </div>
-      </SectionCard>
-
-      {/* First Message Section */}
-      <SectionCard
-        icon={IconMessageCircle}
-        title="First Message"
-        description="Set the initial message your agent will send to users"
-        className={styles.sectionCard}
-        contentSpacing="lg"
-      >
+        <Select
+          label="Language"
+          placeholder="Select language"
+          value={currentLanguage}
+          onChange={handleLanguageChange}
+          data={languageOptions}
+          description="Choose the language for the agent's responses"
+          searchable
+          nothingFoundMessage="No language found"
+          leftSection={<IconLanguage size={16} />}
+        />
         <Textarea
           placeholder="Enter the first message your agent will send..."
           rows={4}
+          label="Agent First Message"
           value={agentData?.conversation_config?.agent?.first_message || ""}
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
             onUpdateAgentData({
@@ -191,63 +158,6 @@ const AgentSettings: React.FC<AgentSettingsProps> = ({
                   .length
               }{" "}
               characters
-            </div>
-          </div>
-
-          <div className={styles.sliderWrapper}>
-            <div className={styles.temperatureContainer}>
-              <Group justify="space-between" align="center">
-                <div className={styles.fieldLabel}>
-                  <IconBrain size={16} className={styles.fieldIcon} />
-                  <Text size="sm" fw={500}>
-                    Response Creativity (Temperature)
-                  </Text>
-                </div>
-                <Badge
-                  variant="light"
-                  color="blue"
-                  className={styles.temperatureValue}
-                >
-                  {(
-                    agentData?.conversation_config?.agent?.prompt
-                      ?.temperature ?? 0.7
-                  ).toFixed(2)}
-                </Badge>
-              </Group>
-              <Slider
-                min={0}
-                max={1.0}
-                step={0.05}
-                precision={2}
-                value={
-                  agentData?.conversation_config?.agent?.prompt?.temperature ??
-                  0.7
-                }
-                onChange={(value: number) =>
-                  onUpdateAgentData({
-                    conversation_config: {
-                      ...(agentData?.conversation_config || {}),
-                      agent: {
-                        ...(agentData?.conversation_config?.agent || {}),
-                        prompt: {
-                          ...(agentData?.conversation_config?.agent?.prompt ||
-                            {}),
-                          temperature: value,
-                        },
-                      },
-                    },
-                  })
-                }
-                marks={[
-                  { value: 0, label: "Focused" },
-                  { value: 0.5, label: "Balanced" },
-                  { value: 1, label: "Creative" },
-                ]}
-                className={styles.temperatureSlider}
-              />
-              <Text size="xs" c="dimmed" className={styles.temperatureHelper}>
-                Controls how creative and varied the responses are
-              </Text>
             </div>
           </div>
         </div>

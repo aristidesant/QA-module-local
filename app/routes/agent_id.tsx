@@ -27,16 +27,5 @@ export default function AgentRoute() {
   if (!agent) {
     return <div>{error}</div>;
   }
-  return (
-    <Stack>
-      <PageHeader
-        breadcrumbs={[
-          { label: "Home", path: "/" },
-          { label: "Agents", path: "/agent" },
-          { label: agent.name, path: `/agents/${agent.id}` },
-        ]}
-      />
-      <AgentDetails agent={agent} />
-    </Stack>
-  );
+  return <AgentDetails agent={agent} />;
 }
