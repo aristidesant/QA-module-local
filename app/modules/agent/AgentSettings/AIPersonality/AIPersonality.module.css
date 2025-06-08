@@ -1,0 +1,60 @@
+.sectionCard {
+  transition: all 0.2s ease;
+  border: 1px solid var(--mantine-color-gray-2);
+}
+.sectionCard:hover {
+  border-color: var(--mantine-color-blue-3);
+  transform: translateY(-1px);
+}
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.promptContainer {
+  position: relative;
+}
+.promptRow {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  align-items: flex-start;
+}
+.promptCol {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.iconStack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+  min-width: 48px;
+  max-width: 56px;
+  justify-content: flex-start;
+}
+.actionIcon {
+  margin-bottom: 0.25rem;
+}
+.promptTextarea {
+  font-family: var(--mantine-font-family-monospace);
+  line-height: 1.5;
+}
+.promptCounter {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--mantine-color-gray-5);
+  background: var(--mantine-color-white);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--mantine-radius-xs);
+  border: 1px solid var(--mantine-color-gray-2);
+}
+
+.removeButton {
+  border: 1px solid var(--mantine-color-red-2);
+}
+.editButton {
+  border: 1px solid var(--mantine-color-gray-4);
+}
