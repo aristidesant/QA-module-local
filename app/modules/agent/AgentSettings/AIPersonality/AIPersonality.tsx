@@ -25,7 +25,6 @@ const AIPersonality: React.FC<AIPersonalityProps> = ({
       modalId,
       children: (
         <AIPersonalityEditModal
-          opened={true}
           initialPrompt={prompt}
           onClose={() => modals.close(modalId)}
           onSave={(newPrompt) => {

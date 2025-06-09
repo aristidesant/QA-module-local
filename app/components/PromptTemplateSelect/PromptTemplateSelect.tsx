@@ -11,6 +11,7 @@ interface PromptTemplateSelectProps
   onChange: (value: string | null) => void;
   description?: string;
   placeholder?: string;
+  withPreview?: boolean;
   clearable?: boolean;
   searchable?: boolean;
 }
@@ -22,6 +23,7 @@ export const PromptTemplateSelect: React.FC<PromptTemplateSelectProps> = ({
   placeholder = "Select a prompt template",
   clearable = true,
   searchable = true,
+  withPreview = true,
   ...rest
 }) => {
   const { data: prompts, isLoading, isError } = useGetAllPrompts();
@@ -78,28 +80,30 @@ export const PromptTemplateSelect: React.FC<PromptTemplateSelectProps> = ({
         className={styles.promptTemplateSelect}
         {...rest}
       />
-      <Textarea
-        label="Prompt Preview"
-        value={
-          prompts?.find((item) => item.id == Number(value))?.generatedPrompt ||
-          ""
-        }
-        readOnly
-        className={styles.customPromptTextarea}
-        autosize
-        minRows={8}
-        maxRows={16}
-        styles={{
-          input: {
-            backgroundColor: "#f8f9fa",
-            fontFamily: "monospace",
-            fontSize: 14,
-            color: "#222",
-            opacity: 1,
-            cursor: "default",
-          },
-        }}
-      />
+      {withPreview && (
+        <Textarea
+          label="Prompt Preview"
+          value={
+            prompts?.find((item) => item.id == Number(value))
+              ?.generatedPrompt || ""
+          }
+          readOnly
+          className={styles.customPromptTextarea}
+          autosize
+          minRows={8}
+          maxRows={16}
+          styles={{
+            input: {
+              backgroundColor: "#f8f9fa",
+              fontFamily: "monospace",
+              fontSize: 14,
+              color: "#222",
+              opacity: 1,
+              cursor: "default",
+            },
+          }}
+        />
+      )}
     </Stack>
   );
 };

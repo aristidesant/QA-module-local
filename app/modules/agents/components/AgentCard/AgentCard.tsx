@@ -104,7 +104,7 @@ export const AgentCard: React.FC<AgentCardProps> = ({
   const handleDemoCall = (agent: AgentListObject) => {
     modals.open({
       modalId: "demo-call-modal",
-      title: `Demo Call with ${agent.name}`,
+      withCloseButton: false,
       children: (
         <OutboundCallForm
           agent={agent}
