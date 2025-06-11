@@ -1,4 +1,4 @@
-import { IconBell, IconMenu2 } from "@tabler/icons-react";
+import { IconBell, IconMenu2, IconX } from "@tabler/icons-react";
 import UserMenu from "../UserMenu";
 import styles from "./Header.module.css";
 import { ActionIcon, Divider } from "@mantine/core";
@@ -16,11 +16,14 @@ export const Header: React.FC<HeaderProps> = ({ opened, toggle }) => {
           <button
             className={styles.burger}
             onClick={toggle}
-            aria-label="Open menu"
+            aria-label={opened ? "Close menu" : "Open menu"}
+            aria-pressed={opened}
             type="button"
           >
-            <IconMenu2 size={24} />
+            {opened ? <IconX size={24} /> : <IconMenu2 size={24} />}
           </button>
+          {/* Add space between burger and any future navigation items */}
+          <div style={{ width: '2rem' }} />
         </div>
         <div className={styles.headerRight}>
           <ActionIcon radius={"xl"} size={"lg"} variant="subtle">
@@ -33,4 +36,3 @@ export const Header: React.FC<HeaderProps> = ({ opened, toggle }) => {
     </header>
   );
 };
-// ...existing code...

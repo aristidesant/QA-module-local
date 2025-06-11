@@ -17,7 +17,7 @@ import { Box, MantineProvider, Modal } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Loader } from "./components/ui/Loader";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { mantineTheme } from "./theme";
+import mantineTheme from "./theme";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },

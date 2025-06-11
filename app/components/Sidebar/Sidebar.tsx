@@ -49,27 +49,62 @@ const maintenanceItems: MenuItem[] = [
   },
 ];
 
-export const Sidebar: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
+type SidebarProps = {
+  onClose?: () => void;
+  opened: boolean;
+};
+
+export const Sidebar: React.FC<SidebarProps> = ({ onClose, opened }) => {
   return (
-    <nav className={styles.sidebar}>
+    <nav
+      className={`${styles.sidebar} ${
+        opened ? styles.sidebarExpanded : styles.sidebarCollapsed
+      }`}
+      aria-label="Main navigation"
+      aria-expanded={opened}
+    >
       <Stack className={styles.menuList} gap="lg">
-        <Logo />
-        <Divider />
+        <div className={styles.logoWrapper}>
+          <Logo compact={!opened} />
+        </div>
+        <Divider className={styles.divider} />
         <Stack gap="xs">
-          <Text size="xs" fw={600} c="dimmed" px="md" mb="xs">
-            MENU
-          </Text>
-          {menuItems.map((item) => renderMenuItem({ ...item, onClose }))}
+          {opened && (
+            <Text
+              size="xs"
+              fw={600}
+              c="dimmed"
+              px="md"
+              mb="xs"
+              className={styles.sectionHeader}
+            >
+              MENU
+            </Text>
+          )}
+          {menuItems.map((item) =>
+            renderMenuItem({ ...item, onClose, opened })
+          )}
         </Stack>
-
         <Stack gap="xs">
-          <Text size="xs" fw={600} c="dimmed" px="md" mb="xs">
-            MAINTENANCE
-          </Text>
-          {maintenanceItems.map((item) => renderMenuItem({ ...item, onClose }))}
+          {opened && (
+            <Text
+              size="xs"
+              fw={600}
+              c="dimmed"
+              px="md"
+              mb="xs"
+              className={styles.sectionHeader}
+            >
+              MAINTENANCE
+            </Text>
+          )}
+          {maintenanceItems.map((item) =>
+            renderMenuItem({ ...item, onClose, opened })
+          )}
         </Stack>
-
-        <UserCard />
+        <div className={styles.userCardWrapper}>
+          <UserCard />
+        </div>
       </Stack>
     </nav>
   );
@@ -81,6 +116,7 @@ type MenuItem = {
   to: string;
   exact?: boolean;
   onClose?: () => void;
+  opened?: boolean;
 };
 
 export const renderMenuItem = ({
@@ -89,6 +125,7 @@ export const renderMenuItem = ({
   to,
   exact,
   onClose,
+  opened = true,
 }: MenuItem) => {
   const location = useLocation();
 
@@ -100,13 +137,19 @@ export const renderMenuItem = ({
       key={label}
       to={to}
       className={({ isActive }) =>
-        [styles.menuItem, isSelected ? styles.menuItemSelected : ""].join(" ")
+        [
+          styles.menuItem,
+          isSelected ? styles.menuItemSelected : "",
+          !opened ? styles.menuItemCollapsed : "",
+        ].join(" ")
       }
       end={!!exact}
       onClick={onClose}
+      aria-current={isSelected ? "page" : undefined}
+      tabIndex={0}
     >
       {icon}
-      <span className={styles.menuText}>{label}</span>
+      {opened && <span className={styles.menuText}>{label}</span>}
     </NavLink>
   );
 };

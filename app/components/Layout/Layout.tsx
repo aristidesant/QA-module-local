@@ -1,4 +1,4 @@
-import { AppShell, Card } from "@mantine/core";
+import { Card } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Outlet, useOutletContext } from "react-router";
 import Sidebar from "../Sidebar";
@@ -22,8 +22,12 @@ export default function Layout() {
         autoClose={4000}
       />
       <div className={styles.container}>
-        <aside className={styles.navbar}>
-          <Sidebar onClose={toggle} />
+        <aside
+          className={`${styles.navbar} ${
+            opened ? styles.navbarExpanded : styles.navbarCollapsed
+          }`}
+        >
+          <Sidebar onClose={toggle} opened={opened} />
         </aside>
         <div className={styles.content}>
           <header className={styles.header}>

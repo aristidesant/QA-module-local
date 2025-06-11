@@ -1,11 +1,25 @@
+/* Uses --sidebar-width from Layout.module.css */
+
 .header {
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
   display: flex;
-  width: 100% ;
+  width: 100%;
   justify-content: space-between;
   align-items: center;
   height: 100%;
+}
+
+.headerCollapsed {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+}
+
+@media (max-width: 768px) {
+  .headerCollapsed {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+  }
 }
 
 /* Responsive styles */
@@ -48,7 +62,7 @@
 
 .headerContent {
   height: 100%;
-  padding: 0;
+  padding: 0 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -176,7 +190,6 @@
   border-radius: 8px;
   padding: 8px;
   background: transparent;
-  margin-right: 0.5rem;
   border: none;
   cursor: pointer;
   display: flex;
