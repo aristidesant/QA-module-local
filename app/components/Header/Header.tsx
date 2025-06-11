@@ -23,7 +23,7 @@ export const Header: React.FC<HeaderProps> = ({ opened, toggle }) => {
             {opened ? <IconX size={24} /> : <IconMenu2 size={24} />}
           </button>
           {/* Add space between burger and any future navigation items */}
-          <div style={{ width: '2rem' }} />
+          <div style={{ width: "2rem" }} />
         </div>
         <div className={styles.headerRight}>
           <ActionIcon radius={"xl"} size={"lg"} variant="subtle">

@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, Stack, Divider } from "@mantine/core";
+import { Text, Stack, Divider, Tooltip } from "@mantine/core";
 import {
   IconLayoutDashboard,
   IconFolder,
@@ -124,7 +124,6 @@ export const renderMenuItem = ({
   icon,
   to,
   exact,
-  onClose,
   opened = true,
 }: MenuItem) => {
   const location = useLocation();
@@ -144,11 +143,16 @@ export const renderMenuItem = ({
         ].join(" ")
       }
       end={!!exact}
-      onClick={onClose}
       aria-current={isSelected ? "page" : undefined}
       tabIndex={0}
     >
-      {icon}
+      {opened ? (
+        icon
+      ) : (
+        <Tooltip label={label} position="right" withArrow>
+          <span>{icon}</span>
+        </Tooltip>
+      )}
       {opened && <span className={styles.menuText}>{label}</span>}
     </NavLink>
   );
