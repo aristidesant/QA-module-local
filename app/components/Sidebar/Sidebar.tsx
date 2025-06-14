@@ -81,9 +81,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onClose, opened }) => {
               MENU
             </Text>
           )}
-          {menuItems.map((item) =>
-            renderMenuItem({ ...item, onClose, opened })
-          )}
+          {menuItems.map((item) => renderMenuItem({ ...item, opened }))}
         </Stack>
         <Stack gap="xs">
           {opened && (
@@ -98,9 +96,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onClose, opened }) => {
               MAINTENANCE
             </Text>
           )}
-          {maintenanceItems.map((item) =>
-            renderMenuItem({ ...item, onClose, opened })
-          )}
+          {maintenanceItems.map((item) => renderMenuItem({ ...item, opened }))}
         </Stack>
         <div className={styles.userCardWrapper}>
           <UserCard />
@@ -115,7 +111,6 @@ type MenuItem = {
   icon: React.ReactNode;
   to: string;
   exact?: boolean;
-  onClose?: () => void;
   opened?: boolean;
 };
 

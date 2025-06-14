@@ -1,0 +1,68 @@
+.card {
+  background: var(--mantine-color-white);
+  border: 1px solid var(--mantine-color-gray-3);
+  border-radius: var(--mantine-radius-md);
+  padding: var(--mantine-spacing-lg);
+}
+
+.title {
+  font-size: var(--mantine-font-size-md);
+  font-weight: 600;
+  color: var(--mantine-color-gray-9);
+}
+
+.subtitle {
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-gray-6);
+  line-height: 1.4;
+  margin-top: var(--mantine-spacing-xs);
+}
+
+.searchInput {
+  width: 200px;
+}
+
+.table {
+  border: 1px solid var(--mantine-color-gray-3);
+  border-radius: var(--mantine-radius-md);
+}
+
+.table thead tr {
+  background-color: var(--mantine-color-gray-0);
+}
+
+.table th {
+  font-weight: 600;
+  color: var(--mantine-color-gray-7);
+  font-size: var(--mantine-font-size-sm);
+  padding: var(--mantine-spacing-md);
+}
+
+.table td {
+  padding: var(--mantine-spacing-md);
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: var(--mantine-color-gray-0);
+}
+
+.flagIcon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+@media (max-width: 768px) {
+  .searchInput {
+    width: 150px;
+  }
+}

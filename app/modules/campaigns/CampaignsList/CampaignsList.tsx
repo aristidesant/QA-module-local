@@ -6,10 +6,8 @@ import {
   Badge,
   ActionIcon,
   Menu,
-  Tooltip,
   NumberFormatter,
   Stack,
-  LoadingOverlay,
 } from "@mantine/core";
 import {
   IconAlertCircle,
@@ -22,23 +20,22 @@ import {
   IconPlus,
 } from "@tabler/icons-react";
 import {
-  useCreateCampaign,
   useDeleteCampaign,
   useGetAllCampaigns,
-  useUpdateCampaign,
 } from "~/queries/campaignsQueries";
 import styles from "./CampaignsList.module.css";
-import type { Campaign } from "~/models/CampaignsModel";
 import { CampaignsDetails } from "../CampaignsDetails";
 import SectionCard from "~/components/SectionCard";
 import { modals } from "@mantine/modals";
 import { CampaignsForm } from "../CampaignsForm/CampaignsForm";
 import { notifications } from "@mantine/notifications";
 import CampaignAgentList from "../CampaignAgentList";
+import { useCampaignsStore } from "~/store/campaignsStore";
 
 export const CampaignsList: React.FC = () => {
-  const [selectedCampaign, setSelectedCampaign] =
-    React.useState<Campaign | null>(null);
+  const { selectCampaign, selectedCampaign } = useCampaignsStore(
+    (state) => state
+  );
   const {
     data,
     isLoading,
@@ -97,15 +94,7 @@ export const CampaignsList: React.FC = () => {
               modals.open({
                 modalId: "create-campaign",
                 title: "Create New Campaign",
-                children: (
-                  <CampaignsForm
-                    onSubmit={async (values) => {
-                      reloadCampaigns();
-                      modals.close("create-campaign");
-                      setSelectedCampaign(null);
-                    }}
-                  />
-                ),
+                children: <CampaignsForm />,
                 size: "lg",
                 centered: true,
               });
@@ -193,9 +182,9 @@ export const CampaignsList: React.FC = () => {
                       <Menu.Item
                         onClick={() => {
                           if (campaign.id === selectedCampaign?.id) {
-                            setSelectedCampaign(null);
+                            selectCampaign(null);
                           } else {
-                            setSelectedCampaign(campaign);
+                            selectCampaign(campaign);
                           }
                         }}
                         leftSection={<IconEye size={14} />}
@@ -209,17 +198,7 @@ export const CampaignsList: React.FC = () => {
                           modals.open({
                             modalId: "edit-campaign",
                             title: `Edit Campaign: ${campaign.name}`,
-                            children: (
-                              <CampaignsForm
-                                campaign={campaign}
-                                onSubmit={async (values) => {
-                                  modals.close("edit-campaign");
-
-                                  reloadCampaigns();
-                                  setSelectedCampaign(null);
-                                }}
-                              />
-                            ),
+                            children: <CampaignsForm campaign={campaign} />,
                             size: "lg",
                             centered: true,
                           });
@@ -245,7 +224,7 @@ export const CampaignsList: React.FC = () => {
                               try {
                                 await deleteCampaign(`${campaign.id}`);
                                 reloadCampaigns();
-                                setSelectedCampaign(null);
+                                selectCampaign(null);
                                 notifications.show({
                                   title: "Campaign Deleted",
                                   message:

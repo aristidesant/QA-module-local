@@ -1,0 +1,138 @@
+.container {
+  max-width: 400px;
+  height: fit-content;
+}
+
+.profileSection {
+  padding: var(--mantine-spacing-md) 0;
+}
+
+.infoCard {
+  padding: var(--mantine-spacing-xs);
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-white);
+}
+
+.metricCard {
+  padding: var(--mantine-spacing-xl);
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-white);
+}
+
+.card {
+  padding: var(--mantine-spacing-xl);
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-white);
+  max-width: 400px;
+  height: fit-content;
+}
+
+.avatarContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.avatar {
+  background: var(--mantine-color-blue-1);
+  color: var(--mantine-color-blue-7);
+  font-weight: 600;
+}
+
+.statusIndicator {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 16px;
+  height: 16px;
+  background: var(--mantine-color-green-6);
+  border-radius: 50%;
+  border: 2px solid var(--mantine-color-white);
+}
+
+.name {
+  color: var(--mantine-color-dark-8);
+}
+
+.flagIcon {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.engagementCircle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+}
+
+.qualificationCircle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+}
+
+.progressRoot {
+  transform: rotate(-90deg);
+  width: 100%;
+  height: 100%;
+}
+
+.progressSection {
+  border-radius: var(--mantine-radius-xl);
+  transition: all 0.3s ease;
+}
+
+.progressSvg {
+  transform: rotate(-90deg);
+}
+
+.progressCircle {
+  transition: stroke-dasharray 0.3s ease;
+}
+
+.engagementValue {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: var(--mantine-color-dark-8);
+}
+
+.qualificationValue {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: var(--mantine-color-dark-8);
+}
+
+.description {
+  max-width: 200px;
+  line-height: 1.4;
+}
+
+.sentimentItem {
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+}
+
+.negativeIcon {
+  color: var(--mantine-color-red-6);
+}
+
+.neutralIcon {
+  color: var(--mantine-color-yellow-6);
+}
+
+.positiveIcon {
+  color: var(--mantine-color-green-6);
+}

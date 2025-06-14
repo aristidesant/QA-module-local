@@ -1,0 +1,19 @@
+.content {
+  width: 100%;
+}
+
+.label {
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-gray-6);
+  margin-bottom: var(--mantine-spacing-xs);
+}
+
+.select {
+  font-weight: 500;
+  font-size: var(--mantine-font-size-md);
+}
+
+.changeButton {
+  color: var(--mantine-color-blue-6);
+  font-weight: 500;
+}

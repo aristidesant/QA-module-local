@@ -17,6 +17,8 @@ interface SectionCardProps {
   backgroundColor?: string;
   /** Optional ID for the section card */
   id?: string;
+
+  padding?: "xs" | "sm" | "md" | "lg" | "xl" | number;
 }
 
 export const SectionCard: React.FC<SectionCardProps> = ({
@@ -30,6 +32,7 @@ export const SectionCard: React.FC<SectionCardProps> = ({
   contentSpacing = "md",
   backgroundColor,
   id,
+  padding = "xs",
 }) => {
   // Convert spacing to pixel value if it's a string preset
   const getSpacingValue = (): string => {
@@ -57,7 +60,6 @@ export const SectionCard: React.FC<SectionCardProps> = ({
     <Card
       id={id}
       style={backgroundColor ? { backgroundColor } : undefined}
-      padding="xl"
       data-testid="section-card"
     >
       {title && (

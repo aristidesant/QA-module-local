@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { IconMicrophone, IconDeviceFloppy } from "@tabler/icons-react";
-import { Group, Button, TextInput, Stack, Divider } from "@mantine/core";
+import { IconDeviceFloppy } from "@tabler/icons-react";
+import { Group, Button, TextInput, Stack } from "@mantine/core";
 import AgentSettings from "../AgentSettings";
 import styles from "./AgentDetails.module.css";
 // import { useFetcher } from "react-router";
@@ -9,12 +9,12 @@ import type AgentListObject from "~/models/AgentListObject";
 import { notifications } from "@mantine/notifications";
 import { useUpdateAgent } from "~/queries/agentQueries";
 import type { AgentUpdateModel } from "~/models/AgentListObject";
-import AgentVoices from "../AgentVoices";
 import SectionCard from "~/components/SectionCard";
 import { ContentContainer } from "~/components/ContentContainer/ContentContainer";
 import AgentNotSelected from "~/modules/agents/components/AgentNotSelected";
 import { useAgentStore } from "~/store/agentStore";
 import AgentConfigurationTypeSelector from "../AgentConfigurationTypeSelector";
+import AgentConfiguration from "../AgentConfiguration/AgentConfiguration";
 
 export type AgentDetailsProps = {
   agent: AgentListObject;
@@ -38,7 +38,6 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
   } = useUpdateAgent();
 
   const handleAgentUpdate = (updatedFields: any) => {
-    console.log("Editable agent", editableAgent, updatedFields);
     setEditableAgent((prev: any) => ({
       ...prev,
       ...updatedFields,
@@ -102,9 +101,6 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
       ...editableAgent.conversation_config,
       tts: {
         ...editableAgent.conversation_config?.tts,
-        model_id:
-          editableAgent.conversation_config?.tts?.model_id ||
-          "eleven_flash_v2_5",
       },
     };
 
@@ -128,9 +124,7 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
     }
   };
 
-  console.log({ agent });
   const isSubmitting = isPending;
-
   return (
     <ContentContainer
       title="Agent Creation"
@@ -139,25 +133,7 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
     >
       <Stack>
         <form onSubmit={handleSubmit}>
-          <Stack gap="xl">
-            <AgentVoices
-              onSelectVoice={(voiceId: string) => {
-                handleAgentUpdate({
-                  conversation_config: {
-                    ...(editableAgent?.conversation_config || {}),
-                    tts: {
-                      ...(editableAgent?.conversation_config?.tts || {}),
-                      voice_id: voiceId,
-                    },
-                  },
-                });
-              }}
-              selectedVoiceId={
-                editableAgent?.conversation_config?.tts?.voice_id
-              }
-              agentData={editableAgent}
-              onUpdateAgentData={handleAgentUpdate}
-            />
+          <Stack gap="xs">
             <SectionCard>
               <TextInput
                 label="Agent Name"
@@ -166,15 +142,12 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
                 onBlur={handleNameBlur}
               />
             </SectionCard>
-            <AgentConfigurationTypeSelector />
-            {agentConfigurationType === "custom" && (
-              <>
-                <AgentSettings
-                  agentData={editableAgent as GetAgentResponseModel}
-                  onUpdateAgentData={handleAgentUpdate}
-                />
-              </>
-            )}
+
+            <AgentConfiguration
+              editableAgent={editableAgent}
+              agentMode
+              setEditableAgent={setEditableAgent}
+            />
           </Stack>
           <Group justify="flex-start" mt="xl">
             <Button

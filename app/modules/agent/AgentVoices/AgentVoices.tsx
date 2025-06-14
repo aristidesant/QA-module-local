@@ -172,6 +172,7 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
           onSlideChange={(i) => {
             setCurrentIndex(i);
             setSelectedElement(<VoiceDetails agentVoice={voices[i]} />);
+            onSelectVoice(voices[i].voice.id);
           }}
           initialSlide={0}
           classNames={{
@@ -182,7 +183,7 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
           {voices.map((voice, idx) => {
             const scale = getScale(idx, currentIndex);
             return (
-              <Carousel.Slide key={voice.id}>
+              <Carousel.Slide key={idx}>
                 <div
                   style={{
                     transform: `scale(${scale})`,
