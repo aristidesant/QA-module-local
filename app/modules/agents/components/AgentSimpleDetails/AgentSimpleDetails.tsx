@@ -1,5 +1,4 @@
-import { Avatar, ActionIcon, Card, Box, Text } from "@mantine/core";
-import { IconWaveSine, IconPlayerPlay } from "@tabler/icons-react";
+import { Avatar, ActionIcon, Text } from "@mantine/core";
 import type AgentListObject from "~/models/AgentListObject";
 import styles from "./AgentSimpleDetails.module.css";
 import React from "react";
@@ -37,15 +36,32 @@ export const AgentSimpleDetails: React.FC<AgentSimpleDetailsProps> = ({
     agent.config?.description ||
     "No description available.";
   const voiceLanguage =
-    agent.config?.voice?.language || agent.config?.language || "";
+    agent.config?.voice?.language || agent.config?.language || "Spanish ES";
   const voiceGender =
     agent.config?.voice?.labels?.gender || agent.config?.gender || "";
   const voiceAge = agent.config?.voice?.labels?.age || agent.config?.age || "";
   const avatarUrl =
     agent.config?.voice?.preview_url ||
     agent.config?.avatarUrl ||
-    "/images/avatar-m-do.png";
+    "/images/avatar-f-do.png";
   const isOnline = agent.status === "ACTIVE";
+
+  // Get flag emoji based on language
+  const getFlagEmoji = (language: string) => {
+    if (
+      language.toLowerCase().includes("spanish") ||
+      language.toLowerCase().includes("es")
+    ) {
+      return "🇪🇸";
+    }
+    if (
+      language.toLowerCase().includes("english") ||
+      language.toLowerCase().includes("en")
+    ) {
+      return "🇺🇸";
+    }
+    return "🌐";
+  };
   const createdAt = agent.createdAt
     ? new Date(agent.createdAt).toLocaleDateString()
     : "";
@@ -65,9 +81,9 @@ export const AgentSimpleDetails: React.FC<AgentSimpleDetailsProps> = ({
     : "";
   const clientId = agent.clientId;
   const userId = agent.userId;
-  console.log({ agent });
+
   return (
-    <Card withBorder p="xl">
+    <>
       <div className={styles.agentSimpleDetails}>
         {/* Avatar and status */}
         <div className={styles.avatarSection}>
@@ -81,7 +97,10 @@ export const AgentSimpleDetails: React.FC<AgentSimpleDetailsProps> = ({
           </div>
           <div className={styles.agentName}>{agent.name}</div>
           <div className={styles.agentLanguage}>
-            <span className={styles.flagIcon}>🇪🇸</span> {voiceLanguage}
+            <span className={styles.flagIcon}>
+              {getFlagEmoji(voiceLanguage)}
+            </span>
+            {voiceLanguage}
           </div>
           <div className={styles.traitsRow}>
             <span className={styles.trait}>Empathic</span>
@@ -90,35 +109,51 @@ export const AgentSimpleDetails: React.FC<AgentSimpleDetailsProps> = ({
         </div>
 
         {/* Voice selection button */}
-        {agent?.voice ? (
-          <AgentVoicePlayer voice={agent?.voice} />
-        ) : (
-          <Text>Voice not available</Text>
-        )}
+        <div className={styles.voiceButtonWrapper}>
+          {agent?.voice ? (
+            <AgentVoicePlayer voice={agent.voice} />
+          ) : (
+            <Text>Voice not available</Text>
+          )}
+        </div>
 
         {/* Campaign section */}
         <div className={styles.campaignRow}>
           <ActionIcon size="sm" variant="subtle" className={styles.arrowBtn}>
-            <span>&lt;</span>
+            <svg width="8" height="12" viewBox="0 0 8 12" fill="none">
+              <path
+                d="M7 1L2 6L7 11"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </ActionIcon>
           <div className={styles.campaignText}>
             <div className={styles.campaignLabel}>Campaign</div>
             <div className={styles.campaignName}>Personal Loan Promotion</div>
           </div>
           <ActionIcon size="sm" variant="subtle" className={styles.arrowBtn}>
-            <span>&gt;</span>
+            <svg width="8" height="12" viewBox="0 0 8 12" fill="none">
+              <path
+                d="M1 11L6 6L1 1"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </ActionIcon>
         </div>
       </div>
-      <Box px="xs">
-        <AgentVoiceProgress
-          stability={stability}
-          speed={speed}
-          similarityBoost={similarityBoost}
-          optimizeLatency={optimizeLatency}
-        />
-      </Box>
-    </Card>
+      <AgentVoiceProgress
+        stability={stability}
+        speed={speed}
+        similarityBoost={similarityBoost}
+        optimizeLatency={optimizeLatency}
+      />
+    </>
   );
 };
 

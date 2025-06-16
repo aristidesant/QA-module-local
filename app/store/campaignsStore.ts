@@ -8,6 +8,7 @@ interface CampaignsStoreState {
   selectCampaign: (campaign: Campaign | null) => void;
   rightComponent?: React.ReactNode;
   setRightComponent?: (component: React.ReactNode) => void;
+  resetView: () => void;
 }
 
 export const useCampaignsStore = create<CampaignsStoreState>((set) => ({
@@ -17,4 +18,10 @@ export const useCampaignsStore = create<CampaignsStoreState>((set) => ({
   rightComponent: null,
   setSelectedTab: (tab) => set({ selectedTab: tab }),
   setRightComponent: (component) => set({ rightComponent: component }),
+  resetView: () =>
+    set({
+      selectedCampaign: null,
+      rightComponent: null,
+      selectedTab: "general",
+    }),
 }));

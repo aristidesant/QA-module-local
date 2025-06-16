@@ -33,6 +33,7 @@ import GeneralSection from "./GeneralSection/GeneralSection";
 import SectionCard from "~/components/SectionCard";
 import AgentConfiguration from "~/modules/agent/AgentConfiguration/AgentConfiguration";
 import { ContactSection } from "./ContactSection/ContactSection";
+import ParametersSection from "./ParametersSection";
 
 interface CampaignsFormProps {
   campaign?: Partial<Campaign>;
@@ -57,10 +58,19 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 }) => {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const { selectedTab } = useCampaignsStore((state) => state);
-  const { mutateAsync: createCampaign, isPending: isCreating } =
-    useCreateCampaign();
-  const { mutateAsync: updateCampaign, isPending: isUpdating } =
-    useUpdateCampaign();
+  const { mutateAsync: createCampaign, isPending: isCreating } = useCreateCampaign();
+  const { mutateAsync: updateCampaign, isPending: isUpdating } = useUpdateCampaign();
+
+  const defaultWorkingHours = {
+    monday: { enabled: true, from: '09:00', to: '17:30' },
+    tuesday: { enabled: true, from: '09:00', to: '17:30' },
+    wednesday: { enabled: true, from: '09:00', to: '17:30' },
+    thursday: { enabled: true, from: '09:00', to: '17:30' },
+    friday: { enabled: true, from: '09:00', to: '17:30' },
+    saturday: { enabled: false, from: '09:00', to: '17:30' },
+    sunday: { enabled: false, from: '09:00', to: '17:30' },
+  };
+
   const form = useCampaignForm({
     initialValues: {
       name: campaign?.name || "",
@@ -73,6 +83,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
       promptId: campaign?.promptId ?? undefined,
       clientId: campaign?.clientId ?? 0,
       tags: campaign?.tags || [],
+      workingHours: campaign?.workingHours || defaultWorkingHours,
     },
     validate: {
       name: (value) => (value ? null : "Name is required"),
@@ -149,6 +160,31 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
             // selectedContactList={form.values.promptId}
             // onContactListChange={(value) => form.setFieldValue("promptId", value)}
             />
+          )}
+          {selectedTab === "params" && (
+            <SectionCard
+              title="Working Hours"
+              description="Define the days and time ranges during which your agents are allowed to make calls."
+            >
+              <ParametersSection
+                workingHours={form.values.workingHours || {}}
+                onChange={(day, field, value) => {
+                  const updatedHours = { ...form.values.workingHours };
+                  updatedHours[day] = { ...updatedHours[day], [field]: value };
+                  form.setFieldValue('workingHours', updatedHours);
+                }}
+                onCopyToAll={(sourceDay) => {
+                  const sourceHours = form.values.workingHours?.[sourceDay];
+                  if (!sourceHours) return;
+                  
+                  const updatedHours = { ...form.values.workingHours };
+                  Object.keys(updatedHours).forEach(day => {
+                    updatedHours[day] = { ...sourceHours };
+                  });
+                  form.setFieldValue('workingHours', updatedHours);
+                }}
+              />
+            </SectionCard>
           )}
           <Group justify="flex-end" mt="xs">
             <Button type="submit" loading={loading}>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Group,
   Text,
@@ -159,6 +159,13 @@ export const ContactListOverview = ({
       setRightComponent(<ContactDetails contact={contactDetails} />);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      // Cleanup function to reset the right component when this component unmounts
+      setRightComponent?.(null);
+    };
+  }, []);
 
   return (
     <Card className={styles.card}>

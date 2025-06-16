@@ -5,14 +5,19 @@ import { useCampaignsStore } from "~/store/campaignsStore";
 import { CampaignsForm } from "../CampaignsForm/CampaignsForm";
 
 export default function CampaignsPage() {
-  const { rightComponent, selectedCampaign } = useCampaignsStore(
+  const { rightComponent, selectedCampaign, resetView } = useCampaignsStore(
     (state) => state
   );
+
   return (
     <ContentContainer
       title="Campaigns creation"
+      showBackButton={!!selectedCampaign}
+      onBackClick={() => {
+        resetView();
+      }}
       description="Create and manage your campaigns"
-      rightSection={rightComponent || <>Ok</>}
+      rightSection={rightComponent || <></>}
     >
       {selectedCampaign ? (
         <Stack>

@@ -1,5 +1,13 @@
 // src/models/CampaignsModel.ts
 
+export interface WorkingHours {
+  [key: string]: {
+    enabled: boolean;
+    from: string;
+    to: string;
+  };
+}
+
 export interface Campaign {
   id: number;
   name: string;
@@ -14,4 +22,5 @@ export interface Campaign {
   createdAt: string; // ISO date string
   updatedAt: string; // ISO date string
   tags?: string[]; // Optional tags for campaign categorization
+  workingHours?: WorkingHours; // Working hours configuration for the campaign
 }

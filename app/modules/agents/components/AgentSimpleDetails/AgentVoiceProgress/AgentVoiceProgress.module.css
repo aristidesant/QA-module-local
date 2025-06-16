@@ -1,14 +1,15 @@
 .slidersSection {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-top: 8px;
+  gap: 20px;
+  width: 100%;
+  padding: 0 4px;
 }
 
 .sliderRow {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
 .sliderBarRow {
@@ -45,20 +46,14 @@
 .sliderLabel {
   display: flex;
   align-items: center;
-  gap: 6px;
-  min-width: 140px;
-  font-size: 14px;
+  gap: 8px;
+  font-size: 0.875rem;
   color: var(--mantine-color-gray-7);
-}
-
-.sliderBar {
-  flex: 1;
-  min-width: 120px;
+  font-weight: 500;
 }
 
 .sliderValue {
-  min-width: 60px;
-  text-align: right;
-  font-size: 13px;
+  font-size: 0.875rem;
   color: var(--mantine-color-gray-6);
+  font-weight: 500;
 }

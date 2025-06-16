@@ -1,4 +1,12 @@
-import { Stack, Text, Group, Avatar, Card, Badge, SemiCircleProgress } from "@mantine/core";
+import {
+  Stack,
+  Text,
+  Group,
+  Avatar,
+  Card,
+  Badge,
+  SemiCircleProgress,
+} from "@mantine/core";
 import {
   IconMoodHappy,
   IconMoodNeutral,
@@ -131,7 +139,9 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
               thickness={8}
               fillDirection="left-to-right"
               orientation="up"
-              filledSegmentColor={`var(--mantine-color-${getEngagementColor(engagementLevel)}-6)`}
+              filledSegmentColor={`var(--mantine-color-${getEngagementColor(
+                engagementLevel
+              )}-6)`}
               emptySegmentColor="var(--mantine-color-gray-2)"
               labelPosition="center"
               label={
@@ -169,7 +179,9 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
               thickness={6}
               fillDirection="left-to-right"
               orientation="up"
-              filledSegmentColor={`var(--mantine-color-${getQualificationColor(qualificationScore)}-6)`}
+              filledSegmentColor={`var(--mantine-color-${getQualificationColor(
+                qualificationScore
+              )}-6)`}
               emptySegmentColor="var(--mantine-color-gray-2)"
               labelPosition="center"
               label={

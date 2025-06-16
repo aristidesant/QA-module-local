@@ -1,21 +1,14 @@
-
 .agentSimpleDetails {
-  background: transparent;
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 0 24px 0;
 }
 
 .avatarSection {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 24px;
-  margin-bottom: 12px;
+  margin-bottom: 24px;
 }
 
 .avatarWrapper {
@@ -26,22 +19,22 @@
 }
 
 .avatar {
-  border: 3px solid var(--mantine-color-blue-7);
-  box-shadow: none;
+  border: 4px solid var(--mantine-color-white);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   width: 120px;
   height: 120px;
 }
 
 .statusDotOnline {
   position: absolute;
-  bottom: 6px;
-  right: 6px;
-  width: 16px;
-  height: 16px;
-  background: var(--mantine-color-green-6);
-  border: 2px solid #fff;
+  bottom: 8px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  background: var(--mantine-color-green-5);
+  border: 3px solid var(--mantine-color-white);
   border-radius: 50%;
-  box-shadow: 0 0 0 2px var(--mantine-color-green-2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 .statusDotOffline {
   position: absolute;
@@ -56,16 +49,20 @@
 
 .agentName {
   font-weight: 700;
-  font-size: 1.1rem;
-  margin-top: 10px;
-  margin-bottom: 2px;
+  font-size: 1.25rem;
+  margin-top: 16px;
+  margin-bottom: 4px;
   text-align: center;
+  color: var(--mantine-color-gray-9);
 }
 .agentLanguage {
-  color: var(--mantine-color-gray-7);
+  color: var(--mantine-color-gray-6);
   font-size: 0.95rem;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 .flagIcon {
   margin-right: 4px;
@@ -73,18 +70,19 @@
 .traitsRow {
   display: flex;
   gap: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 20px;
 }
 .trait {
-  background: var(--mantine-color-gray-1);
-  color: var(--mantine-color-gray-7);
-  border-radius: 16px;
-  padding: 2px 16px;
-  font-size: 0.85rem;
+  background: var(--mantine-color-gray-0);
+  color: var(--mantine-color-gray-6);
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 0.875rem;
   font-weight: 500;
+  border: 1px solid var(--mantine-color-gray-2);
 }
 
-.voiceButtonRow {
+.voiceButtonWrapper {
   width: 100%;
   display: flex;
   justify-content: center;
@@ -128,21 +126,32 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: var(--mantine-spacing-md);
-  gap: 12px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  gap: 16px;
 }
 .arrowBtn {
-  color: var(--mantine-color-gray-6);
+  color: var(--mantine-color-gray-5);
   background: transparent !important;
   border: none;
   box-shadow: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.arrowBtn:hover {
+  color: var(--mantine-color-gray-7);
+  background: var(--mantine-color-gray-0) !important;
 }
 .campaignText {
   text-align: center;
 }
 .campaignLabel {
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   color: var(--mantine-color-gray-6);
+  margin-bottom: 2px;
 }
 .campaignName {
   font-weight: 600;
@@ -180,159 +189,4 @@
   text-align: right;
   font-size: 0.95rem;
   color: var(--mantine-color-gray-7);
-}
-
-.avatarContainer {
-  position: relative;
-  display: inline-block;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.avatarContainer:hover {
-  transform: scale(1.02);
-}
-
-.avatar {
-  border: 3px solid #f1f3f4;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.avatar:hover {
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
-}
-
-.playButton {
-  position: absolute;
-  bottom: -2px;
-  right: -2px;
-  background: white;
-  border-radius: 50%;
-  padding: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.playButton:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 20px rgba(0, 118, 255, 0.25);
-}
-
-.agentHeader {
-  width: 100%;
-  text-align: center;
-}
-
-.agentName {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 0.5rem;
-}
-
-.infoSection {
-  margin: 0;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.1s forwards;
-}
-
-.description {
-  line-height: 1.4;
-  text-align: center;
-  max-height: 3em;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.voiceParams {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-radius: 12px;
-  padding: 1rem;
-  border: 1px solid #e2e8f0;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
-}
-
-.sectionTitle {
-  color: #334155;
-  margin-bottom: 0.75rem;
-}
-
-.parameterGrid {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.parameter {
-  background: white;
-  padding: 0.875rem;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.parameter:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transform: translateY(-1px);
-}
-
-.parameter::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--mantine-color-blue-4), transparent);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.parameter:hover::before {
-  opacity: 1;
-}
-
-.progressBar {
-  border-radius: 8px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.progressBar:hover {
-  transform: scaleY(1.1);
-}
-
-.footer {
-  background: #f8fafc;
-  border-radius: 8px;
-  padding: 0.75rem;
-  margin: 0 -0.25rem;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
-}
-
-@keyframes slideInUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.statusBadge {
-  font-size: 0.85rem;
-  font-weight: 500;
-  background: #f8fafc;
-  border-radius: 8px;
-  padding: 0.2rem 0.7rem;
 }
