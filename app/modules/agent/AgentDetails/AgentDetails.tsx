@@ -1,10 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { IconDeviceFloppy } from "@tabler/icons-react";
 import { Group, Button, TextInput, Stack } from "@mantine/core";
-import AgentSettings from "../AgentSettings";
 import styles from "./AgentDetails.module.css";
-// import { useFetcher } from "react-router";
-import type { GetAgentResponseModel } from "elevenlabs/api";
 import type AgentListObject from "~/models/AgentListObject";
 import { notifications } from "@mantine/notifications";
 import { useUpdateAgent } from "~/queries/agentQueries";
@@ -13,8 +10,8 @@ import SectionCard from "~/components/SectionCard";
 import { ContentContainer } from "~/components/ContentContainer/ContentContainer";
 import AgentNotSelected from "~/modules/agents/components/AgentNotSelected";
 import { useAgentStore } from "~/store/agentStore";
-import AgentConfigurationTypeSelector from "../AgentConfigurationTypeSelector";
 import AgentConfiguration from "../AgentConfiguration/AgentConfiguration";
+import { useNavigate } from "react-router";
 
 export type AgentDetailsProps = {
   agent: AgentListObject;
@@ -22,6 +19,7 @@ export type AgentDetailsProps = {
 
 const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
   const [editableAgent, setEditableAgent] = useState(agent?.config);
+  const navigate = useNavigate();
   const [name, setName] = useState(agent.name);
   const [isEditingName, setIsEditingName] = useState(false);
   const { selectedElement, agentConfigurationType } = useAgentStore(
@@ -128,6 +126,10 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
   return (
     <ContentContainer
       title="Agent Creation"
+      showBackButton
+      onBackClick={() => {
+        navigate("/agent");
+      }}
       description="Start by setting up the key parameters required for a fully operational AI-driven campaign."
       rightSection={selectedElement ?? <AgentNotSelected />}
     >

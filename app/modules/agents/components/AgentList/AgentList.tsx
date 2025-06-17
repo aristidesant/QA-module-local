@@ -1,32 +1,23 @@
 import React from "react";
-import { IconUsersGroup, IconPlus, IconX } from "@tabler/icons-react";
+import { IconUsersGroup } from "@tabler/icons-react";
 import AgentCreate from "../AgentCreate";
 import AgentCard from "../AgentCard";
 import {
-  Button,
   Title,
   Stack,
   SimpleGrid,
-  Tooltip,
   Text,
   Avatar,
   Paper,
   Transition,
-  Card,
-  Flex,
-  Box,
-  ActionIcon,
-  CloseButton,
 } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { useNavigate } from "react-router";
 import classes from "./AgentList.module.css";
 import type AgentListObject from "~/models/AgentListObject";
-import SectionCard from "~/components/SectionCard";
 import AgentSimpleDetails from "../AgentSimpleDetails/AgentSimpleDetails";
 import { ContentContainer } from "~/components/ContentContainer/ContentContainer";
 import AgentNotSelected from "../AgentNotSelected";
-import ContainerHeader from "~/components/ContainerHeader/ContainerHeader";
 
 interface AgentListProps {
   agents: any[];
@@ -66,6 +57,8 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
 
   return (
     <ContentContainer
+      title="Agent Directory"
+      description="Manage and monitor all your AI agents in one place."
       rightSection={
         <>
           <Transition
@@ -94,33 +87,7 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
         </>
       }
     >
-      {/* <ContainerHeader
-        title="Agent Directory"
-        description="Manage and monitor all your AI agents in one place."
-      /> */}
-      <SectionCard
-        title="Agent Directory"
-        description="Manage and monitor all your AI agents in one place."
-        icon={IconUsersGroup}
-        headerActions={
-          <Tooltip
-            label="Create a new agent"
-            withArrow
-            position="left"
-            transitionProps={{ transition: "slide-left", duration: 200 }}
-          >
-            <Button
-              onClick={open}
-              size="md"
-              leftSection={<IconPlus size={18} stroke={1.5} />}
-              className={classes.newAgentBtn}
-              variant="blue"
-            >
-              New Agent
-            </Button>
-          </Tooltip>
-        }
-      >
+      <Stack>
         <AgentCreate
           opened={opened}
           onClose={close}
@@ -168,7 +135,7 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
             </Stack>
           </Paper>
         )}
-      </SectionCard>
+      </Stack>
     </ContentContainer>
   );
 };
