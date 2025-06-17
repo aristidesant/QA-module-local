@@ -10,12 +10,8 @@ import {
   Loader,
   Center,
   Text,
-  Paper,
   Group,
   ActionIcon,
-  Button,
-  Tooltip,
-  Title,
   Badge,
   Stack,
 } from "@mantine/core";
@@ -30,6 +26,7 @@ import styles from "./PromptFormList.module.css";
 import { modals } from "@mantine/modals";
 import { PromptFormForm } from "../PromptFormForm";
 import type { PromptForm } from "~/models/PromptFormMOdel";
+import SectionCard from "~/components/SectionCard";
 
 export const PromptFormList: React.FC = () => {
   const { data, isLoading, isError } = useGetAllPromptForms();
@@ -117,10 +114,11 @@ export const PromptFormList: React.FC = () => {
   }
 
   return (
-    <Paper className={styles.container} withBorder>
-      <div className={styles.header}>
-        <Title className={styles.title}>Prompt Forms</Title>
-        <Button
+    <SectionCard
+      title="List of forms"
+      description="Thi is a list of all the forms created by the user."
+      headerActions={
+        <ActionIcon
           onClick={() => {
             modals.open({
               modalId: "create-prompt-form",
@@ -134,132 +132,102 @@ export const PromptFormList: React.FC = () => {
               },
             });
           }}
-          leftSection={<IconPlus size={16} />}
-          radius="md"
-          fullWidth
-          hiddenFrom="sm"
         >
-          Create Form
-        </Button>
-        <Button
-          onClick={() => {
-            modals.open({
-              modalId: "create-prompt-form",
-              size: "90%",
-              title: "Create New Prompt Form",
-              children: (
-                <PromptFormForm onSubmit={handleOnCreate} initialValues={{}} />
-              ),
-              onClose: () => {
-                modals.close("create-prompt-form");
-              },
-            });
-          }}
-          leftSection={<IconPlus size={16} />}
-          radius="md"
-          visibleFrom="sm"
-        >
-          Create Form
-        </Button>
-      </div>
-
-      <div className={styles.tableContainer}>
-        <Table className={styles.table} highlightOnHover withTableBorder>
-          <Table.Thead className={styles.tableHeader}>
-            <Table.Tr>
-              <Table.Th>Name</Table.Th>
-              <Table.Th className={styles.typeHeader}>Type</Table.Th>
-              <Table.Th className={styles.dateHeader}>Created</Table.Th>
-              <Table.Th style={{ width: "180px" }}>Actions</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {data && data.length > 0 ? (
-              data.map((form: PromptForm) => (
-                <Table.Tr key={form.id} className={styles.row}>
-                  <Table.Td className={styles.nameCell}>{form.name}</Table.Td>
-                  <Table.Td className={styles.typeCell}>
-                    <Badge variant="light" color="blue" radius="sm">
-                      {form.type?.name || "N/A"}
-                    </Badge>
-                  </Table.Td>
-                  <Table.Td className={styles.dateCell}>
-                    {new Date(form.createdAt).toLocaleDateString(undefined, {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </Table.Td>
-                  <Table.Td>
-                    <Group
-                      gap="xs"
-                      justify="flex-end"
-                      className={styles.actions}
+          <IconPlus />
+        </ActionIcon>
+      }
+    >
+      <Table className={styles.table} highlightOnHover withTableBorder>
+        <Table.Thead className={styles.tableHeader}>
+          <Table.Tr>
+            <Table.Th>Name</Table.Th>
+            <Table.Th className={styles.typeHeader}>Type</Table.Th>
+            <Table.Th className={styles.dateHeader}>Created</Table.Th>
+            <Table.Th style={{ width: "180px" }}>Actions</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {data && data.length > 0 ? (
+            data.map((form: PromptForm) => (
+              <Table.Tr key={form.id} className={styles.row}>
+                <Table.Td className={styles.nameCell}>{form.name}</Table.Td>
+                <Table.Td className={styles.typeCell}>
+                  <Badge variant="light" color="blue" radius="sm">
+                    {form.type?.name || "N/A"}
+                  </Badge>
+                </Table.Td>
+                <Table.Td className={styles.dateCell}>
+                  {new Date(form.createdAt).toLocaleDateString(undefined, {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </Table.Td>
+                <Table.Td>
+                  <Group gap="xs" justify="flex-end" className={styles.actions}>
+                    <ActionIcon
+                      variant="light"
+                      color="gray"
+                      size="md"
+                      className={styles.actionButton}
+                      aria-label="View form"
                     >
-                      <ActionIcon
-                        variant="light"
-                        color="gray"
-                        size="md"
-                        className={styles.actionButton}
-                        aria-label="View form"
-                      >
-                        <IconEye size={16} />
-                      </ActionIcon>
-                      <ActionIcon
-                        onClick={() => {
-                          modals.open({
-                            modalId: "create-prompt-form",
-                            size: "90%",
-                            title: "Edit Prompt Form",
-                            children: (
-                              <PromptFormForm
-                                onSubmit={handleOnUpdate}
-                                initialValues={form}
-                              />
-                            ),
-                            onClose: () => {
-                              modals.close("create-prompt-form");
-                            },
-                          });
-                        }}
-                        variant="light"
-                        color="blue"
-                        size="md"
-                        className={styles.actionButton}
-                        aria-label="Edit form"
-                      >
-                        <IconEdit size={16} />
-                      </ActionIcon>
-                      <ActionIcon
-                        onClick={() => handleOnDelete(`${form.id}`)}
-                        variant="light"
-                        color="red"
-                        size="md"
-                        className={styles.actionButton}
-                        aria-label="Delete form"
-                      >
-                        <IconTrash size={16} />
-                      </ActionIcon>
-                    </Group>
-                  </Table.Td>
-                </Table.Tr>
-              ))
-            ) : (
-              <Table.Tr>
-                <Table.Td colSpan={4}>
-                  <div className={styles.emptyState}>
-                    <IconAlertCircle size={24} style={{ marginBottom: 12 }} />
-                    <Text size="sm">No prompt forms found</Text>
-                    <Text size="xs" c="dimmed" mt={4}>
-                      Create your first prompt form to get started
-                    </Text>
-                  </div>
+                      <IconEye size={16} />
+                    </ActionIcon>
+                    <ActionIcon
+                      onClick={() => {
+                        modals.open({
+                          modalId: "create-prompt-form",
+                          size: "90%",
+                          title: "Edit Prompt Form",
+                          children: (
+                            <PromptFormForm
+                              onSubmit={handleOnUpdate}
+                              initialValues={form}
+                            />
+                          ),
+                          onClose: () => {
+                            modals.close("create-prompt-form");
+                          },
+                        });
+                      }}
+                      variant="light"
+                      color="blue"
+                      size="md"
+                      className={styles.actionButton}
+                      aria-label="Edit form"
+                    >
+                      <IconEdit size={16} />
+                    </ActionIcon>
+                    <ActionIcon
+                      onClick={() => handleOnDelete(`${form.id}`)}
+                      variant="light"
+                      color="red"
+                      size="md"
+                      className={styles.actionButton}
+                      aria-label="Delete form"
+                    >
+                      <IconTrash size={16} />
+                    </ActionIcon>
+                  </Group>
                 </Table.Td>
               </Table.Tr>
-            )}
-          </Table.Tbody>
-        </Table>
-      </div>
-    </Paper>
+            ))
+          ) : (
+            <Table.Tr>
+              <Table.Td colSpan={4}>
+                <div className={styles.emptyState}>
+                  <IconAlertCircle size={24} style={{ marginBottom: 12 }} />
+                  <Text size="sm">No prompt forms found</Text>
+                  <Text size="xs" c="dimmed" mt={4}>
+                    Create your first prompt form to get started
+                  </Text>
+                </div>
+              </Table.Td>
+            </Table.Tr>
+          )}
+        </Table.Tbody>
+      </Table>
+    </SectionCard>
   );
 };
