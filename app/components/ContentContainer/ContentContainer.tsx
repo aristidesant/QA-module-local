@@ -1,7 +1,15 @@
 import type { ReactNode } from "react";
 import { IconArrowLeft } from "@tabler/icons-react";
 import styles from "./ContentContainer.module.css";
-import { Divider, Text, Title, ActionIcon, Tooltip, Flex } from "@mantine/core";
+import {
+  Divider,
+  Text,
+  Title,
+  ActionIcon,
+  Tooltip,
+  Flex,
+  Box,
+} from "@mantine/core";
 
 export interface ContentContainerProps {
   children: ReactNode;

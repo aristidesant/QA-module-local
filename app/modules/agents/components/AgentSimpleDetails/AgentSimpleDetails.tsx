@@ -4,6 +4,11 @@ import styles from "./AgentSimpleDetails.module.css";
 import React from "react";
 import AgentVoiceProgress from "./AgentVoiceProgress";
 import AgentVoicePlayer from "./AgentVoicePlayer";
+import {
+  IconArrowRight,
+  IconChevronLeft,
+  IconChevronRight,
+} from "@tabler/icons-react";
 
 type AgentSimpleDetailsProps = {
   agent: AgentListObject;
@@ -110,40 +115,20 @@ export const AgentSimpleDetails: React.FC<AgentSimpleDetailsProps> = ({
 
         {/* Voice selection button */}
         <div className={styles.voiceButtonWrapper}>
-          {agent?.voice ? (
-            <AgentVoicePlayer voice={agent.voice} />
-          ) : (
-            <Text>Voice not available</Text>
-          )}
+          <AgentVoicePlayer voice={agent.voice ?? undefined} />
         </div>
 
         {/* Campaign section */}
         <div className={styles.campaignRow}>
-          <ActionIcon size="sm" variant="subtle" className={styles.arrowBtn}>
-            <svg width="8" height="12" viewBox="0 0 8 12" fill="none">
-              <path
-                d="M7 1L2 6L7 11"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+          <ActionIcon size="sm" variant="outline" color="gray">
+            <IconChevronLeft />
           </ActionIcon>
           <div className={styles.campaignText}>
             <div className={styles.campaignLabel}>Campaign</div>
             <div className={styles.campaignName}>Personal Loan Promotion</div>
           </div>
-          <ActionIcon size="sm" variant="subtle" className={styles.arrowBtn}>
-            <svg width="8" height="12" viewBox="0 0 8 12" fill="none">
-              <path
-                d="M1 11L6 6L1 1"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+          <ActionIcon size="sm" variant="outline" color="gray">
+            <IconChevronRight />
           </ActionIcon>
         </div>
       </div>

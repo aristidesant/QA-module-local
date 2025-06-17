@@ -9,12 +9,13 @@ import styles from "./AgentVoicePlayer.module.css";
 import type { Voice } from "~/models/AgentVoiceModel";
 
 type AgentVoicePlayerProps = {
-  voice: Voice;
+  voice?: Voice;
 };
 
 export const AgentVoicePlayer: React.FC<AgentVoicePlayerProps> = ({
   voice,
 }) => {
+  const isDisabled = !voice;
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -48,21 +49,40 @@ export const AgentVoicePlayer: React.FC<AgentVoicePlayerProps> = ({
   }, []);
 
   return (
-    <div className={styles.voicePlayerContainer}>
+    <div
+      className={`${styles.voicePlayerContainer} ${
+        isDisabled ? styles.disabled : ""
+      }`}
+    >
       <div className={styles.voiceIcon}>
         <IconWaveSine size={24} />
       </div>
       <div className={styles.voiceText}>
         <div className={styles.voiceLabel}>Agent voice</div>
-        <div className={styles.voiceName}>{voice.name}</div>
+        <div className={styles.voiceName}>
+          {isDisabled ? "No voice selected" : voice.name}
+        </div>
       </div>
-      <Tooltip label={isPlaying ? "Pause" : "Play"}>
+      <Tooltip
+        label={
+          isDisabled ? "Voice not available" : isPlaying ? "Pause" : "Play"
+        }
+      >
         <ActionIcon
           size="lg"
           radius="xl"
-          className={styles.playIcon}
-          onClick={handlePlayPause}
-          aria-label={isPlaying ? "Pause voice preview" : "Play voice preview"}
+          className={`${styles.playIcon} ${
+            isDisabled ? styles.disabledButton : ""
+          }`}
+          onClick={!isDisabled ? handlePlayPause : undefined}
+          disabled={isDisabled}
+          aria-label={
+            isDisabled
+              ? "Voice not available"
+              : isPlaying
+              ? "Pause voice preview"
+              : "Play voice preview"
+          }
         >
           {isPlaying ? (
             <IconPlayerPause size={20} />
@@ -71,7 +91,9 @@ export const AgentVoicePlayer: React.FC<AgentVoicePlayerProps> = ({
           )}
         </ActionIcon>
       </Tooltip>
-      <audio ref={audioRef} src={voice.previewUrl} preload="auto" />
+      {!isDisabled && (
+        <audio ref={audioRef} src={voice.previewUrl} preload="auto" />
+      )}
     </div>
   );
 };

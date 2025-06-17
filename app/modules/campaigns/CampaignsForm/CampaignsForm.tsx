@@ -14,6 +14,7 @@ import {
   LoadingOverlay,
   Card,
   Text,
+  Box,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import type { Campaign } from "../../../models/CampaignsModel";
@@ -58,17 +59,19 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 }) => {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const { selectedTab } = useCampaignsStore((state) => state);
-  const { mutateAsync: createCampaign, isPending: isCreating } = useCreateCampaign();
-  const { mutateAsync: updateCampaign, isPending: isUpdating } = useUpdateCampaign();
+  const { mutateAsync: createCampaign, isPending: isCreating } =
+    useCreateCampaign();
+  const { mutateAsync: updateCampaign, isPending: isUpdating } =
+    useUpdateCampaign();
 
   const defaultWorkingHours = {
-    monday: { enabled: true, from: '09:00', to: '17:30' },
-    tuesday: { enabled: true, from: '09:00', to: '17:30' },
-    wednesday: { enabled: true, from: '09:00', to: '17:30' },
-    thursday: { enabled: true, from: '09:00', to: '17:30' },
-    friday: { enabled: true, from: '09:00', to: '17:30' },
-    saturday: { enabled: false, from: '09:00', to: '17:30' },
-    sunday: { enabled: false, from: '09:00', to: '17:30' },
+    monday: { enabled: true, from: "09:00", to: "17:30" },
+    tuesday: { enabled: true, from: "09:00", to: "17:30" },
+    wednesday: { enabled: true, from: "09:00", to: "17:30" },
+    thursday: { enabled: true, from: "09:00", to: "17:30" },
+    friday: { enabled: true, from: "09:00", to: "17:30" },
+    saturday: { enabled: false, from: "09:00", to: "17:30" },
+    sunday: { enabled: false, from: "09:00", to: "17:30" },
   };
 
   const form = useCampaignForm({
@@ -144,10 +147,10 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
     <CampaignFormProvider form={form}>
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <LoadingOverlay visible={isCreating || isUpdating} />
-        <Stack gap="md">
-          <SectionCard>
+        <Stack gap="xs">
+          <Box px="xs">
             <CampaignTabs />
-          </SectionCard>
+          </Box>
           {selectedTab === "general" && <GeneralSection />}
           {selectedTab === "agents" && (
             <AgentConfiguration
@@ -171,22 +174,22 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
                 onChange={(day, field, value) => {
                   const updatedHours = { ...form.values.workingHours };
                   updatedHours[day] = { ...updatedHours[day], [field]: value };
-                  form.setFieldValue('workingHours', updatedHours);
+                  form.setFieldValue("workingHours", updatedHours);
                 }}
                 onCopyToAll={(sourceDay) => {
                   const sourceHours = form.values.workingHours?.[sourceDay];
                   if (!sourceHours) return;
-                  
+
                   const updatedHours = { ...form.values.workingHours };
-                  Object.keys(updatedHours).forEach(day => {
+                  Object.keys(updatedHours).forEach((day) => {
                     updatedHours[day] = { ...sourceHours };
                   });
-                  form.setFieldValue('workingHours', updatedHours);
+                  form.setFieldValue("workingHours", updatedHours);
                 }}
               />
             </SectionCard>
           )}
-          <Group justify="flex-end" mt="xs">
+          <Group justify="flex-end" mt="xs" px="xs">
             <Button type="submit" loading={loading}>
               {campaign ? "Update Campaign" : "Create Campaign"}
             </Button>

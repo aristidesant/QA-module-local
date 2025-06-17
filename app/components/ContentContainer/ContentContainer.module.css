@@ -2,36 +2,33 @@
   display: flex;
   flex-direction: row;
   width: 100%;
-  min-height: 100vh;
-  background: var(--mantine-color-body, #fff);
-}
-
-.container {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  min-height: 100vh;
+  height: 100vh;
   background: var(--mantine-color-body);
+  overflow: hidden;
 }
 
 .main {
   flex: 1 1 0;
   background: var(--mantine-color-body);
-  padding: 32px 24px;
+  padding: var(--antine-spacing-xs) var(--mantine-spacing-lg);
   min-width: 0;
-  overflow-y: auto;
-}
-
-
-.header {
-  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
 }
 
 .headerRow {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 16px;
+  padding: var(--mantine-spacing-xs);
+}
+
+.header {
+  padding: var(--mantine-spacing-md);
+  padding-bottom: 0;
 }
 
 .backButton {
@@ -41,7 +38,8 @@
   background: none;
   border: none;
   color: var(--mantine-color-blue-6);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, sans-serif;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -55,7 +53,8 @@
 }
 
 .title {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, sans-serif;
   font-size: 36px;
   font-weight: 800;
   color: var(--mantine-color-dark-9);
@@ -68,7 +67,8 @@
 }
 
 .description {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, sans-serif;
   font-size: 16px;
   font-weight: 400;
   color: var(--mantine-color-gray-6);
@@ -78,7 +78,28 @@
 }
 
 .content {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  min-height: 0;
+  height: 100%;
+  padding-left: var(--mantine-spacing-xs);
+  padding-right: var(--mantine-spacing-xs);
+}
+
+.content > * {
+  flex-shrink: 0;
+}
+.content > form,
+.content > div {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.content > form > :last-child,
+.content > div > :last-child {
+  margin-top: auto;
+  padding-top: 20px;
 }
 
 .rightSection {

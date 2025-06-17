@@ -73,17 +73,6 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
               </div>
             )}
           </Transition>
-
-          <Transition
-            mounted={!selectedAgent}
-            transition={isMobile ? "slide-up" : "slide-left"}
-            duration={100}
-            timingFunction="cubic-bezier(0.4, 0, 0.2, 1)"
-          >
-            {(styles) => (
-              <div style={styles}>{!selectedAgent && <AgentNotSelected />}</div>
-            )}
-          </Transition>
         </>
       }
     >

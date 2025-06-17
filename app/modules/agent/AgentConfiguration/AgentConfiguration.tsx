@@ -5,6 +5,7 @@ import AgentConfigurationTypeSelector from "../AgentConfigurationTypeSelector";
 import AgentSettings from "../AgentSettings";
 import type { GetAgentResponseModel } from "elevenlabs/api";
 import { useAgentStore } from "~/store/agentStore";
+import { AgentKnowledgeBase } from "../AgentKnowledgeBase";
 
 type AgentConfigurationProps = {
   agentMode?: boolean;
@@ -49,10 +50,13 @@ const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
       />
       {agentMode && <AgentConfigurationTypeSelector />}
       {shouldDisplayAgentSettings && (
-        <AgentSettings
-          agentData={editableAgent as GetAgentResponseModel}
-          onUpdateAgentData={handleAgentUpdate}
-        />
+        <>
+          <AgentSettings
+            agentData={editableAgent as GetAgentResponseModel}
+            onUpdateAgentData={handleAgentUpdate}
+          />
+          <AgentKnowledgeBase />
+        </>
       )}
     </Stack>
   );

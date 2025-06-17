@@ -20,9 +20,7 @@ export default function CampaignsPage() {
       rightSection={rightComponent || <></>}
     >
       {selectedCampaign ? (
-        <Stack>
-          <CampaignsForm campaign={selectedCampaign} />
-        </Stack>
+        <CampaignsForm campaign={selectedCampaign} />
       ) : (
         <CampaignsList />
       )}
