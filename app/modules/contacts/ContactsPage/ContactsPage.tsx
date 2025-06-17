@@ -7,6 +7,7 @@ import ContactsList from "../ContactsList";
 import ContactsForm from "../ContactsForm";
 import classes from "./ContactsPage.module.css";
 import SectionCard from "~/components/SectionCard";
+import { ContentContainer } from "~/components/ContentContainer/ContentContainer";
 
 export default function ContactsPage() {
   const [search, setSearch] = useState("");
@@ -40,41 +41,29 @@ export default function ContactsPage() {
   };
 
   return (
-    <Stack className={classes.root}>
-      <PageHeader
-        breadcrumbs={[
-          { label: "Home", path: "/" },
-          { label: "Contacts", path: "/contacts" },
-        ]}
-      />
-      <SectionCard
-        title="Contacts"
-        icon={IconUser}
-        description="Manage your contacts"
-      >
-        <Group justify="space-between" mb="md">
-          <TextInput
-            placeholder="Search contacts"
-            leftSection={<IconSearch size={18} />}
-            value={search}
-            onChange={handleSearchChange}
-            className={classes.searchInput}
-          />
-          <Button
-            leftSection={<IconPlus size={18} />}
-            onClick={() => openContactModal("create", null)}
-            variant="light"
-          >
-            New Contact
-          </Button>
-        </Group>
-        <ContactsList
-          key={refreshKey}
-          search={search}
-          onEdit={(id) => openContactModal("edit", id)}
-          selectedContactId={null}
+    <ContentContainer title="Contacts" description="Manage your contacts">
+      <Group justify="space-between" mb="md">
+        <TextInput
+          placeholder="Search contacts"
+          leftSection={<IconSearch size={18} />}
+          value={search}
+          onChange={handleSearchChange}
+          className={classes.searchInput}
         />
-      </SectionCard>
-    </Stack>
+        <Button
+          leftSection={<IconPlus size={18} />}
+          onClick={() => openContactModal("create", null)}
+          variant="light"
+        >
+          New Contact
+        </Button>
+      </Group>
+      <ContactsList
+        key={refreshKey}
+        search={search}
+        onEdit={(id) => openContactModal("edit", id)}
+        selectedContactId={null}
+      />
+    </ContentContainer>
   );
 }

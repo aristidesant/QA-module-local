@@ -1,19 +1,18 @@
 import React from "react";
 import { useForm } from "@mantine/form";
-import { Stepper, Group, Button, Title, Stack, Loader } from "@mantine/core";
+import { Stepper, Group, Button, Stack, Loader } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconCheck, IconAlertTriangle, IconInputAi } from "@tabler/icons-react";
+import { IconCheck, IconAlertTriangle } from "@tabler/icons-react";
 import { PromptInputForm } from "../PromptInputForm";
 import { PromptOutputDisplay } from "../PromptOutputDisplay";
 import { useCreatePrompt } from "../queries/promptGeneratorQueries";
 import { type Prompt } from "~/models/PromptsModels";
 import { PromptTypeSelector } from "./PromptTypeSelector";
 import styles from "./PromptGeneratorContainer.module.css";
-import ContainerCard from "../../../components/ui/ContainerCard";
 import type { PromptInstructionType } from "~/config/prompt-generator/useForm";
 import { useNavigate } from "react-router";
-import type { PromptType } from "~/models/PromptTypeModel";
-import SectionCard from "~/components/SectionCard";
+import { ContentContainer } from "~/components/ContentContainer/ContentContainer";
+import { usePromptGeneratorStore } from "../usePromptGeneratorStore";
 
 const PROMPT_TYPES = Object.values({
   FINANCE: "FINANCE",
@@ -29,7 +28,7 @@ export const PromptGeneratorContainer: React.FC = () => {
   const [createdPrompt, setCreatedPrompt] = React.useState<Prompt>();
   const { mutateAsync: createPrompt, isPending } = useCreatePrompt();
   const form = useForm<Record<string, string>>({});
-
+  const { rightComponent } = usePromptGeneratorStore();
   const handleTypeSelect = (type: number | null) => {
     setSelectedType(type);
     setActiveStep(1);
@@ -79,10 +78,10 @@ export const PromptGeneratorContainer: React.FC = () => {
   };
 
   return (
-    <SectionCard
+    <ContentContainer
       description="Create and manage prompts"
-      icon={IconInputAi}
       title="Prompt Generator Wizard"
+      rightSection={rightComponent}
     >
       <Stack gap="xl" className={styles.stackWrapper}>
         <div className={styles.stepperWrapper}>
@@ -157,6 +156,6 @@ export const PromptGeneratorContainer: React.FC = () => {
           )}
         </div>
       </Stack>
-    </SectionCard>
+    </ContentContainer>
   );
 };
