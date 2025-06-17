@@ -1,58 +1,74 @@
-# General Code Style & Formatting
+# Windsurf Project Rules
 
-- Follow the Airbnb Style Guide for all code formatting.
-- Name React component files using PascalCase (e.g., `UserCard.tsx`, not `user-card.tsx`).
-- Use named exports for all components.
-- Each component must be isolated in its own folder. The folder and the main component file should both use the component name. Include an `index.ts` file in the folder to export the component as the default export.
-- No matter the prompt language used by the user, the code should be written in English.
+## 📐 Code Style & Formatting
 
-# Project Structure & Architecture
+- Use the **Airbnb Style Guide** for all code formatting.
+- All **React component files** must use **PascalCase** (e.g., `UserCard.tsx`, not `user-card.tsx`).
+- Use **named exports** for all components.
+- Each component must live in its **own folder**, named using PascalCase.
+  - The folder must include:
+    - `ComponentName.tsx` (main file)
+    - `ComponentName.module.css` (styles)
+    - `index.ts` (to re-export the component)
+- Always write code in **English**, regardless of the user's prompt language.
 
-- The project uses React Router v7.
-  We MUST use them over anything else of custom components. If a core component does not exist, they need to be created in a file inside that folder.
+---
 
-- This project is using Tanstack Query for data fetching and caching.
-- We need this structure:
-  ```
-  src
-  ├── components
-  │   ├── ComponentName
-  │   │   ├── ComponentName.tsx
-  │   │   ├── ComponentName.module.css
-  │   │   └── index.ts
-  ├── hooks
-  ├── pages
-  ├── modules
-  │   ├── module_name
-  │   │   ├── ModulePage
-  │   │   │   ├── ModulePage.module.css
-  │   │   │   ├── ModulePage.tsx
-  │   │   │   └── index.ts
-  │   │   ├── queries
-  │   │   │   └── moduleNameQueries.ts
-  ├── routes
-  │   ├── route_name.tsx // This route will have loader/actions and could have a component that will inject the module.
-  ├── api
-  │   ├── moduleApi.ts // This file will contain the base API client and the API functions.
-  ├── models // contains all the types and interfaces
-  └── utils
-  ```
+## 🧱 Project Structure
 
-# Styling & UI
+Use the following folder structure under `src/`:
 
-- Use Mantine UI, V8. Search on internet whenever is required to get the latest implementation without breaking changes. component.
-- Every style should be place within a .module.css with the name of the component.
-- Prefer light mode for anything.
-- Css Style MUST be preferred vs inline styling or component props.
-- Use `@tabler/icons-react` for all icons.
-- Use var(--mantine-xxx) to apply all the mantine properties in CSS files instead of defining your own styles/colors, etc..
+```
+src
+├── api                  # API clients and requests
+│   └── moduleApi.ts
+├── components           # Shared UI components
+│   └── ComponentName
+│       ├── ComponentName.tsx
+│       ├── ComponentName.module.css
+│       └── index.ts
+├── hooks                # Custom React hooks
+├── models               # TypeScript types and interfaces
+├── modules              # Feature modules
+│   └── module_name
+│       ├── ModulePage
+│       │   ├── ModulePage.tsx
+│       │   ├── ModulePage.module.css
+│       │   └── index.ts
+│       └── queries
+│           └── moduleNameQueries.ts
+├── pages                # Top-level pages
+├── routes               # Route config files using React Router v7
+│   └── route_name.tsx   # Includes loader/actions, and mounts module
+└── utils                # Utility/helper functions
+```
 
-# Data Fetching & Forms
+- Use **React Router v7** for all routing. Do not use custom routing solutions.
+- If a core component doesn’t exist, create it following the folder/component structure above.
 
-- Use React Hook Form for form handling.
+---
 
-# State Management & Logic
+## 🎨 Styling
 
-- Use Zustand for state management.
-- Use Tanstack React Query for data fetching and caching.
-- Use Action/Loader and Fetcher for data fetching in some cases.
+- Use **Mantine UI v8** for all UI components.
+- Prefer **CSS modules** over inline styles or Mantine `style`/`sx` props.
+- All styles must live in `.module.css` files using the component's name.
+- Use **light mode** styling by default.
+- Use `@tabler/icons-react` for icons.
+- Use Mantine’s `var(--mantine-xxx)` variables in CSS, avoid custom colors/values.
+
+---
+
+## 📦 Data Fetching & Forms
+
+- Use **Tanstack React Query** for all data fetching and caching.
+- Use **Mantine Form** for form handling.
+- Use **loader**, **action**, and **fetcher** (from React Router v7) as needed.
+
+---
+
+## 🧠 State Management
+
+- Use **Zustand** for global state management.
+- Avoid other state libraries unless explicitly required.
+
