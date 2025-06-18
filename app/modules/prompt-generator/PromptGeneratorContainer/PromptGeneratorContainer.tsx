@@ -103,7 +103,7 @@ export const PromptGeneratorContainer: React.FC = () => {
 
   useEffect(() => {
     return () => {
-      // setRightComponent(null);
+      setRightComponent(null);
     };
   }, []);
 
@@ -226,6 +226,7 @@ export const PromptGeneratorContainer: React.FC = () => {
                 type="submit"
                 loading={isPending}
                 size="md"
+                disabled={!form.values}
                 style={{ minWidth: rem(180) }}
               >
                 Generate Prompt

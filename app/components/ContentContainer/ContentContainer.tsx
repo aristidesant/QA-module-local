@@ -17,6 +17,7 @@ export interface ContentContainerProps {
   title?: string;
   description?: string;
   showBackButton?: boolean;
+  rightSectionTitle?: ReactNode;
   onBackClick?: () => void;
 }
 
@@ -26,40 +27,44 @@ export const ContentContainer = ({
   title,
   description,
   showBackButton = false,
+  rightSectionTitle,
   onBackClick,
 }: ContentContainerProps) => (
   <div className={styles.container}>
     <div className={styles.main}>
       {(title || description || showBackButton) && (
         <div className={styles.header}>
-          <Flex gap={"xs"} align={"center"}>
-            {showBackButton && (
-              <Tooltip label="Back" position="bottom" withArrow>
-                <ActionIcon
-                  variant="light"
-                  color="gray"
-                  aria-label="Back"
-                  onClick={onBackClick}
-                  size="lg"
-                >
-                  <IconArrowLeft size={20} />
-                </ActionIcon>
-              </Tooltip>
-            )}
-            {(title || description) && (
-              <Flex direction={"column"}>
-                {title && (
-                  <Title c="dark" order={5}>
-                    {title}
-                  </Title>
-                )}
-                {description && (
-                  <Text fz="xs" c="dimmed">
-                    {description}
-                  </Text>
-                )}
-              </Flex>
-            )}
+          <Flex gap={"xs"} align={"center"} justify={"space-between"}>
+            <Flex gap={"xs"} align={"center"}>
+              {showBackButton && (
+                <Tooltip label="Back" position="bottom" withArrow>
+                  <ActionIcon
+                    variant="light"
+                    color="gray"
+                    aria-label="Back"
+                    onClick={onBackClick}
+                    size="lg"
+                  >
+                    <IconArrowLeft size={20} />
+                  </ActionIcon>
+                </Tooltip>
+              )}
+              {(title || description) && (
+                <Flex direction={"column"}>
+                  {title && (
+                    <Title c="dark" order={5}>
+                      {title}
+                    </Title>
+                  )}
+                  {description && (
+                    <Text fz="xs" c="dimmed">
+                      {description}
+                    </Text>
+                  )}
+                </Flex>
+              )}
+            </Flex>
+            {rightSectionTitle && rightSectionTitle}
           </Flex>
           <Divider className={styles.divider} />
         </div>

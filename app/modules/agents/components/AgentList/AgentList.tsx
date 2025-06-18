@@ -1,5 +1,5 @@
 import React from "react";
-import { IconUsersGroup } from "@tabler/icons-react";
+import { IconPlus, IconUsersGroup } from "@tabler/icons-react";
 import AgentCreate from "../AgentCreate";
 import AgentCard from "../AgentCard";
 import {
@@ -10,6 +10,7 @@ import {
   Avatar,
   Paper,
   Transition,
+  ActionIcon,
 } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { useNavigate } from "react-router";
@@ -74,6 +75,11 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
             )}
           </Transition>
         </>
+      }
+      rightSectionTitle={
+        <ActionIcon onClick={open}>
+          <IconPlus />
+        </ActionIcon>
       }
     >
       <Stack>
