@@ -1,0 +1,69 @@
+.agentCard {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-sm);
+  padding: var(--mantine-spacing-xs);
+  border-radius: var(--mantine-radius-sm);
+  background: var(--mantine-color-gray-0);
+  transition: background-color 0.2s ease;
+}
+
+.agentCard:hover {
+  background: var(--mantine-color-gray-1);
+}
+
+.agentAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mantine-color-blue-0);
+  color: var(--mantine-color-blue-7);
+  font-weight: 600;
+}
+
+.agentInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.agentName {
+  font-weight: 500;
+  font-size: var(--mantine-font-size-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.agentMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+  font-size: var(--mantine-font-size-xs);
+  color: var(--mantine-color-gray-6);
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.statusOnline {
+  background-color: var(--mantine-color-green-5);
+}
+
+.statusOffline {
+  background-color: var(--mantine-color-gray-5);
+}
+
+.statusBusy {
+  background-color: var(--mantine-color-red-5);
+}
+
+.statusAway {
+  background-color: var(--mantine-color-yellow-5);
+}

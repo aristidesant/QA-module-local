@@ -1,0 +1,14 @@
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--mantine-spacing-md);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Remove any hover effects since they're now handled by the StatCard component */

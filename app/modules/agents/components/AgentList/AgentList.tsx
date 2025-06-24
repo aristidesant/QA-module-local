@@ -18,7 +18,6 @@ import classes from "./AgentList.module.css";
 import type AgentListObject from "~/models/AgentListObject";
 import AgentSimpleDetails from "../AgentSimpleDetails/AgentSimpleDetails";
 import { ContentContainer } from "~/components/ContentContainer/ContentContainer";
-import AgentNotSelected from "../AgentNotSelected";
 
 interface AgentListProps {
   agents: any[];
@@ -52,10 +51,6 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
     close();
   };
 
-  const closeSidebar = () => {
-    setSelectedAgent(null);
-  };
-
   return (
     <ContentContainer
       title="Agent Directory"
@@ -75,11 +70,6 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
             )}
           </Transition>
         </>
-      }
-      rightSectionTitle={
-        <ActionIcon onClick={open}>
-          <IconPlus />
-        </ActionIcon>
       }
     >
       <Stack>

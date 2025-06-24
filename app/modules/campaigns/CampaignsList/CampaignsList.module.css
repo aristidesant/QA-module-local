@@ -102,7 +102,6 @@
   border-bottom: 1px solid #edf0f2;
 }
 
-
 .thType {
   width: 90px;
   padding: 12px 16px;
@@ -162,6 +161,10 @@
   border-bottom: 1px solid #f1f3f5;
 }
 
+.rowSelected {
+  background: #f9fafb;
+}
+
 .row:hover {
   background: #f9fafb;
 }
@@ -191,7 +194,6 @@
   padding: 2px 10px;
   font-size: 14px;
 }
-
 
 .loaderContainer,
 .errorContainer,

@@ -1,0 +1,31 @@
+.card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid var(--mantine-color-gray-2);
+  background: var(--mantine-color-white);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--mantine-shadow-md);
+}
+
+.label {
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: var(--mantine-spacing-xs);
+}
+
+.value {
+  margin: var(--mantine-spacing-xs) 0;
+  line-height: 1.2;
+}
+
+.description {
+  line-height: 1.4;
+  margin-top: var(--mantine-spacing-xs);
+}

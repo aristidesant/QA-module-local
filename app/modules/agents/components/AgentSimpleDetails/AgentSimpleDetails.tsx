@@ -31,20 +31,8 @@ export const AgentSimpleDetails: React.FC<AgentSimpleDetailsProps> = ({
     };
   }, [agent.id]); // Re-trigger animation when agent changes
   // ElevenLabs/agent config fields
-  const voiceName =
-    agent.config?.voice?.name || agent.config?.voice_name || agent.name;
-  const voiceCategory =
-    agent.config?.voice?.category || agent.config?.category || agent.type;
-  const voiceLabels = agent.config?.voice?.labels || agent.config?.labels || [];
-  const voiceDescription =
-    agent.config?.voice?.description ||
-    agent.config?.description ||
-    "No description available.";
   const voiceLanguage =
     agent.config?.voice?.language || agent.config?.language || "Spanish ES";
-  const voiceGender =
-    agent.config?.voice?.labels?.gender || agent.config?.gender || "";
-  const voiceAge = agent.config?.voice?.labels?.age || agent.config?.age || "";
   const avatarUrl =
     agent.config?.voice?.preview_url ||
     agent.config?.avatarUrl ||
@@ -67,9 +55,6 @@ export const AgentSimpleDetails: React.FC<AgentSimpleDetailsProps> = ({
     }
     return "🌐";
   };
-  const createdAt = agent.createdAt
-    ? new Date(agent.createdAt).toLocaleDateString()
-    : "";
 
   // Voice settings from conversation_config
   const stability = agent.config?.conversation_config?.tts?.stability ?? 0.5;
@@ -80,12 +65,6 @@ export const AgentSimpleDetails: React.FC<AgentSimpleDetailsProps> = ({
     agent.config?.conversation_config?.tts?.optimize_streaming_latency ?? 3;
 
   // Additional agent info
-  const agentType = agent.type;
-  const lastUpdated = agent.updatedAt
-    ? new Date(agent.updatedAt).toLocaleDateString()
-    : "";
-  const clientId = agent.clientId;
-  const userId = agent.userId;
 
   return (
     <>

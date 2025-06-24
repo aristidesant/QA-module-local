@@ -180,7 +180,6 @@ export const AgentCard: React.FC<AgentCardProps> = ({
               isFemale ? "/images/avatar-f-do.png" : "/images/avatar-m-do.png"
             }
             size={80}
-            radius="xl"
             className={styles.avatar}
           >
             {agent.name?.[0] || "?"}

@@ -1,15 +1,7 @@
-import {
-  Await,
-  useFetcher,
-  useLoaderData,
-  type ActionFunctionArgs,
-} from "react-router";
+import { Await, useLoaderData, type ActionFunctionArgs } from "react-router";
 import AgentList from "~/modules/agents/components/AgentList";
 import agentApi from "~/api/agentApi";
 import { getSession } from "~/server-session";
-import { Stack } from "@mantine/core";
-import Breadcrumb from "~/components/ui/Breadcrumb";
-import PageHeader from "~/components/ui/PageHeader";
 
 export async function loader({ request }: ActionFunctionArgs) {
   const session = await getSession(request.headers.get("Cookie"));

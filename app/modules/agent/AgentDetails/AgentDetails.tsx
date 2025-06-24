@@ -69,28 +69,6 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
     }
   }, [isSuccess, isError, error, reset]);
 
-  const handleNameClick = () => {
-    setIsEditingName(true);
-  };
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-  };
-
-  const handleNameBlur = () => {
-    setIsEditingName(false);
-  };
-
-  const handleNameKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      setIsEditingName(false);
-    } else if (e.key === "Escape") {
-      // Revert to original value and exit edit mode
-      setName(agent.name);
-      setIsEditingName(false);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -140,8 +118,7 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
               <TextInput
                 label="Agent Name"
                 value={name}
-                onChange={handleNameChange}
-                onBlur={handleNameBlur}
+                onChange={(e) => setName(e.target.value)}
               />
             </SectionCard>
 

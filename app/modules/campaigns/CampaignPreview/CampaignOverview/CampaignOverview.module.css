@@ -1,0 +1,82 @@
+.card {
+  background-color: var(--mantine-color-white);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--mantine-shadow-md);
+}
+
+.headerSection {
+  padding: 1.5rem 0;
+}
+
+.campaignName {
+  margin-bottom: 0.5rem;
+  color: var(--mantine-color-dark-8);
+}
+
+.descriptionSection {
+  padding: 0 1rem;
+  margin-bottom: 1rem;
+}
+
+.description {
+  text-align: center;
+  color: var(--mantine-color-dark-6);
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.budgetBar {
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  background-color: var(--mantine-color-gray-1);
+}
+
+.budgetContainer {
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  background-color: var(--mantine-color-gray-1);
+  margin: 1rem 0;
+  position: relative;
+}
+
+.budgetProgress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.budgetProgress::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(90deg, 
+    rgba(255,255,255,0) 0%, 
+    rgba(255,255,255,0.2) 50%, 
+    rgba(255,255,255,0.1) 100%);
+  border-radius: 3px;
+}
+
+.tagGroup {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 48em) {
+  .budgetContainer {
+    margin: 0.75rem 0;
+  }
+}

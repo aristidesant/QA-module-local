@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Group, Text, Select, Button, Card } from "@mantine/core";
-import { IconChevronRight } from "@tabler/icons-react";
+import { Group, Text, Select, ActionIcon, Card } from "@mantine/core";
+import { IconSwitchHorizontal, IconSettings } from "@tabler/icons-react";
 import styles from "./ActiveContactList.module.css";
 
 interface ActiveContactListProps {
@@ -40,14 +40,24 @@ export const ActiveContactList = ({
             size="sm"
           />
         </div>
-        <Button
-          variant="subtle"
-          size="xs"
-          rightSection={<IconChevronRight size={14} />}
-          className={styles.changeButton}
-        >
-          Change
-        </Button>
+        <Group gap="xs">
+          <ActionIcon
+            color="gray"
+            variant="outline"
+            size="lg"
+            className={styles.actionIcon}
+          >
+            <IconSwitchHorizontal size={18} />
+          </ActionIcon>
+          <ActionIcon
+            color="gray"
+            variant="outline"
+            size="lg"
+            className={styles.actionIcon}
+          >
+            <IconSettings size={18} />
+          </ActionIcon>
+        </Group>
       </Group>
     </Card>
   );

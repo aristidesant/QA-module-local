@@ -1,7 +1,7 @@
 import React from "react";
-import { Stack, Text, Switch, Group, Button, Box } from "@mantine/core";
+import { Stack, Text, Switch, Group, Button, Box, Grid, rem } from "@mantine/core";
 import { TimeInput } from "@mantine/dates";
-import { IconCopy, IconMoon } from "@tabler/icons-react";
+import { IconCopy, IconClockOff } from "@tabler/icons-react";
 import styles from "./ParametersSection.module.css";
 
 interface DaySchedule {
@@ -36,21 +36,28 @@ export const ParametersSection: React.FC<ParametersSectionProps> = ({
   onCopyToAll,
 }) => {
   return (
-    <Stack gap="md">
-      <div className={styles.workingHoursContainer}>
-        {DAYS.map((day) => (
-          <div key={day} className={styles.dayRow}>
+    <Stack gap="md" className={styles.workingHoursContainer}>
+      {DAYS.map((day) => (
+        <div key={day} className={styles.dayRow}>
+          {/* Column 1: Day switch and name */}
+          <div className={styles.dayColumn}>
             <Switch
               checked={workingHours[day]?.enabled ?? false}
               onChange={(e) =>
                 onChange(day, "enabled", e.currentTarget.checked)
               }
-              label={formatDayName(day)}
+              aria-label={`Toggle ${formatDayName(day)} schedule`}
               className={styles.daySwitch}
             />
+            <Text fw={500} className={styles.dayText}>
+              {formatDayName(day)}
+            </Text>
+          </div>
 
+          {/* Column 2: Time inputs or closed state */}
+          <div className={styles.timeColumn}>
             {workingHours[day]?.enabled ? (
-              <Group gap="xs">
+              <Group gap="sm" className={styles.timeInputsContainer}>
                 <TimeInput
                   value={workingHours[day]?.from || ""}
                   onChange={(e) =>
@@ -59,35 +66,46 @@ export const ParametersSection: React.FC<ParametersSectionProps> = ({
                   className={styles.timeInput}
                   size="sm"
                   variant="filled"
+                  label="From"
+                  labelProps={{ className: styles.timeLabel }}
                 />
-                <Text>to</Text>
+                <Text className={styles.timeSeparator}>to</Text>
                 <TimeInput
                   value={workingHours[day]?.to || ""}
-                  onChange={(e) => onChange(day, "to", e.currentTarget.value)}
+                  onChange={(e) =>
+                    onChange(day, "to", e.currentTarget.value)
+                  }
                   className={styles.timeInput}
                   size="sm"
                   variant="filled"
+                  label="To"
+                  labelProps={{ className: styles.timeLabel }}
                 />
-                {day === "monday" && (
-                  <Button
-                    variant="subtle"
-                    size="xs"
-                    leftSection={<IconCopy size={14} />}
-                    onClick={() => onCopyToAll(day)}
-                  >
-                    Copy to all days
-                  </Button>
-                )}
               </Group>
             ) : (
               <Box className={styles.closedBadge}>
-                <IconMoon size={16} />
+                <IconClockOff size={16} />
                 <Text size="sm">Closed</Text>
               </Box>
             )}
           </div>
-        ))}
-      </div>
+
+          {/* Column 3: Copy button (only for Monday) */}
+          <div className={styles.actionColumn}>
+            {day === "monday" && (
+              <Button
+                variant="subtle"
+                size="xs"
+                leftSection={<IconCopy size={14} />}
+                onClick={() => onCopyToAll(day)}
+                className={styles.copyButton}
+              >
+                Copy to all days
+              </Button>
+            )}
+          </div>
+        </div>
+      ))}
     </Stack>
   );
 };

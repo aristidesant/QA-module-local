@@ -15,11 +15,12 @@
   width: var(--sidebar-width);
   min-width: var(--sidebar-width);
   max-width: var(--sidebar-width);
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: var(--mantine-color-body, rgba(255,255,255,0.95));
+  background: var(--mantine-color-body, rgba(255, 255, 255, 0.95));
   border-right: 1px solid var(--mantine-color-gray-2);
   z-index: 100;
 }
@@ -54,6 +55,7 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  height: 100vh; /* Full viewport height */
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -66,6 +68,8 @@
   justify-content: stretch;
   padding: 0;
   width: 100%;
+  position: sticky;
+  top: 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -88,12 +92,13 @@
 .mainWrapper {
   flex: 1;
   height: calc(100vh - 70px);
-  overflow-y: auto;
+  overflow-y: hidden; /* Remove scroll, will be handled by inner components */
 }
 .layout {
   min-height: 100vh;
   background: white;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -113,29 +118,39 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
+  height: 100%; /* Ensure it takes full height */
+  overflow: hidden; /* Prevent scrolling at this level */
 }
 
 /* Add subtle background shapes */
 .main::before {
-  content: '';
+  content: "";
   position: absolute;
   right: 0;
   top: 0;
   width: 30%;
   height: 40%;
-  background-image: radial-gradient(circle, rgba(59, 130, 246, 0.05) 10%, transparent 70%);
+  background-image: radial-gradient(
+    circle,
+    rgba(59, 130, 246, 0.05) 10%,
+    transparent 70%
+  );
   pointer-events: none;
   z-index: -1;
 }
 
 .main::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 20%;
   bottom: 10%;
   width: 40%;
   height: 50%;
-  background-image: radial-gradient(circle, rgba(59, 130, 246, 0.03) 20%, transparent 80%);
+  background-image: radial-gradient(
+    circle,
+    rgba(59, 130, 246, 0.03) 20%,
+    transparent 80%
+  );
   pointer-events: none;
   z-index: -1;
 }

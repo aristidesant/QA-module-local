@@ -8,19 +8,78 @@ export interface WorkingHours {
   };
 }
 
+export interface Agent {
+  id: number;
+  name: string;
+  avatarUrl?: string;
+  language: string;
+  countryCode: string; // ISO 3166-1 alpha-2 country code
+  status: 'online' | 'offline' | 'busy' | 'away';
+}
+
+export interface ContactList {
+  id: number;
+  name: string;
+  description?: string;
+  totalContacts: number;
+  lastUpdated?: string; // ISO date string
+  status?: 'active' | 'inactive' | 'processing' | 'error';
+  source?: 'csv' | 'api' | 'manual' | string;
+  tags?: string[];
+  metadata?: {
+    headers?: string[];
+    importedAt?: string;
+    importedBy?: string;
+  };
+}
+
+export interface CampaignParameters {
+  callingHours: {
+    days: string[]; // e.g. ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
+    startTime: string; // e.g. '09:00'
+    endTime: string;   // e.g. '18:00'
+    timezone: string;  // e.g. 'America/New_York'
+  };
+  voicemailDetection: boolean;
+  callRetries: number;
+  maxConcurrentCalls?: number;
+  answerMachineDetection?: boolean;
+}
+
 export interface Campaign {
   id: number;
   name: string;
   description: string;
   budget: number;
   spent: number;
-  type: "OUTBOUND" | "INBOUND";
-  status: "ACTIVE" | "INACTIVE" | "PAUSED" | "COMPLETED";
+  type: 'OUTBOUND' | 'INBOUND';
+  status: 'ACTIVE' | 'INACTIVE' | 'PAUSED' | 'COMPLETED';
   userId: number;
   clientId: number;
-  promptId?: number; // Optional prompt ID for associated prompt template
+  promptId?: number;
   createdAt: string; // ISO date string
   updatedAt: string; // ISO date string
-  tags?: string[]; // Optional tags for campaign categorization
-  workingHours?: WorkingHours; // Working hours configuration for the campaign
+  tags?: string[];
+  workingHours?: WorkingHours;
+  
+  // Stats and performance
+  stats?: {
+    callsMade: number;
+    callsAnswered: number;
+    conversionRate: number;
+    avgCallDuration: string;
+    lastUpdated: string;
+  };
+  agentPerformance?: Array<{
+    id: number;
+    name: string;
+    callsHandled: number;
+    successRate: number;
+    avgRating: number;
+  }>;
+  
+  // New fields for enhanced preview
+  assignedAgents?: Agent[];
+  contactList?: ContactList;
+  parameters?: CampaignParameters;
 }

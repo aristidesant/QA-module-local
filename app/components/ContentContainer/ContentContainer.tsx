@@ -1,15 +1,7 @@
 import type { ReactNode } from "react";
 import { IconArrowLeft } from "@tabler/icons-react";
 import styles from "./ContentContainer.module.css";
-import {
-  Divider,
-  Text,
-  Title,
-  ActionIcon,
-  Tooltip,
-  Flex,
-  Box,
-} from "@mantine/core";
+import { Divider, Text, Title, ActionIcon, Tooltip, Flex } from "@mantine/core";
 
 export interface ContentContainerProps {
   children: ReactNode;
@@ -72,7 +64,10 @@ export const ContentContainer = ({
       <div className={styles.content}>{children}</div>
     </div>
     {rightSection && (
-      <aside className={styles.rightSection}>{rightSection}</aside>
+      <aside className={styles.rightSection}>
+        {rightSectionTitle && <div>{rightSectionTitle}</div>}
+        <div>{rightSection}</div>
+      </aside>
     )}
   </div>
 );

@@ -4,7 +4,6 @@
   width: 100%;
   height: 100vh;
   background: var(--mantine-color-body);
-  overflow: hidden;
 }
 
 .main {
@@ -14,8 +13,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow: hidden;
+  height: calc(100vh - 70px);
   position: relative;
 }
 
@@ -106,10 +104,26 @@
   width: 380px;
   background: var(--mantine-color-gray-1);
   border-left: 1px solid var(--mantine-color-gray-3);
-  padding: 32px 24px;
-  min-height: 100vh;
+  padding: 0;
+  height: calc(100vh - 70px);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  overflow: hidden;
+}
+
+.rightSection > :first-child {
+  padding: 32px 24px;
+  flex-shrink: 0;
+  background: var(--mantine-color-gray-1);
+  border-bottom: 1px solid var(--mantine-color-gray-3);
+}
+
+.rightSection > :last-child {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 0 24px 32px;
+  margin-top: 24px;
 }
