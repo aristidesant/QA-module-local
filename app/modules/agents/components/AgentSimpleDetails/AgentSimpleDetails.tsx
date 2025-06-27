@@ -1,4 +1,4 @@
-import { Avatar, ActionIcon, Text } from "@mantine/core";
+import { Avatar, ActionIcon, Text, Button, Stack } from "@mantine/core";
 import type AgentListObject from "~/models/AgentListObject";
 import styles from "./AgentSimpleDetails.module.css";
 import React from "react";
@@ -8,7 +8,9 @@ import {
   IconArrowRight,
   IconChevronLeft,
   IconChevronRight,
+  IconSettings,
 } from "@tabler/icons-react";
+import { useNavigate } from "react-router";
 
 type AgentSimpleDetailsProps = {
   agent: AgentListObject;
@@ -17,6 +19,7 @@ type AgentSimpleDetailsProps = {
 export const AgentSimpleDetails: React.FC<AgentSimpleDetailsProps> = ({
   agent,
 }) => {
+  const navigate = useNavigate();
   const [isVisible, setIsVisible] = React.useState(false);
 
   React.useEffect(() => {
@@ -67,7 +70,7 @@ export const AgentSimpleDetails: React.FC<AgentSimpleDetailsProps> = ({
   // Additional agent info
 
   return (
-    <>
+    <Stack gap="md">
       <div className={styles.agentSimpleDetails}>
         {/* Avatar and status */}
         <div className={styles.avatarSection}>
@@ -117,7 +120,18 @@ export const AgentSimpleDetails: React.FC<AgentSimpleDetailsProps> = ({
         similarityBoost={similarityBoost}
         optimizeLatency={optimizeLatency}
       />
-    </>
+      <Button
+        rightSection={<IconSettings />}
+        variant="light"
+        onClick={() => {
+          navigate(`/agent/${agent.id}`);
+        }}
+        color="teal"
+        className={styles.setupButton}
+      >
+        Agent Profile Setup
+      </Button>
+    </Stack>
   );
 };
 

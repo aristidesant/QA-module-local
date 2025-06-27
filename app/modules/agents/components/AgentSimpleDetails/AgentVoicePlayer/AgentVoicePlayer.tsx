@@ -22,14 +22,17 @@ export const AgentVoicePlayer: React.FC<AgentVoicePlayerProps> = ({
   const handlePlayPause = useCallback(() => {
     if (!audioRef.current) return;
 
-    if (isPlaying) {
-      audioRef.current.pause();
-    } else {
+    if (audioRef.current.paused) {
       audioRef.current.play();
+    } else {
+      audioRef.current.pause();
     }
-  }, [isPlaying]);
+  }, []);
 
   useEffect(() => {
+    // When the voice URL changes, we need to reset the playing state because the audio element is reset.
+    setIsPlaying(false);
+
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -42,11 +45,13 @@ export const AgentVoicePlayer: React.FC<AgentVoicePlayerProps> = ({
     audio.addEventListener("ended", onEnded);
 
     return () => {
+      // On cleanup (unmount or voice change), pause the audio and remove listeners.
+      audio.pause();
       audio.removeEventListener("play", onPlay);
       audio.removeEventListener("pause", onPause);
       audio.removeEventListener("ended", onEnded);
     };
-  }, []);
+  }, [voice?.previewUrl]);
 
   return (
     <div
