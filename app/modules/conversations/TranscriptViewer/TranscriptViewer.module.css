@@ -1,0 +1,32 @@
+.transcriptContainer {
+  width: 100%;
+}
+
+.messageContainer {
+  width: 100%;
+  padding: var(--mantine-spacing-sm);
+  border-radius: var(--mantine-radius-md);
+  transition: background-color 0.2s ease;
+}
+
+.messageContent {
+  flex: 1;
+}
+
+.message {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.agentMessage {
+  background-color: var(--mantine-color-blue-0);
+}
+
+.userMessage {
+  background-color: var(--mantine-color-gray-0);
+}
+
+.systemMessage {
+  background-color: var(--mantine-color-gray-0);
+  opacity: 0.8;
+}

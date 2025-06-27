@@ -6,6 +6,7 @@ import {
   IconSettings,
   IconListDetails,
   IconUsersGroup,
+  IconPhoneCall,
 } from "@tabler/icons-react";
 import { NavLink, useLocation } from "react-router";
 import styles from "./Sidebar.module.css";
@@ -38,6 +39,11 @@ const menuItems: MenuItem[] = [
     label: "Contacts",
     icon: <IconUsersGroup size={20} className={styles.menuIcon} />,
     to: "/contacts",
+  },
+  {
+    label: "Call log",
+    icon: <IconPhoneCall size={20} className={styles.menuIcon} />,
+    to: "/call-log",
   },
 ];
 

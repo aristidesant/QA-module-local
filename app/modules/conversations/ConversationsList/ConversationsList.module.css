@@ -1,0 +1,12 @@
+.emptyState {
+  padding: var(--mantine-spacing-xl);
+  text-align: center;
+  color: var(--mantine-color-gray-6);
+}
+
+.loadingContainer {
+  padding: var(--mantine-spacing-xl);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

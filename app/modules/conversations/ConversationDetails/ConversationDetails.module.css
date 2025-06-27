@@ -1,0 +1,12 @@
+.container {
+  width: 100%;
+}
+
+.paper {
+  background-color: var(--mantine-color-white);
+  transition: box-shadow 0.2s ease;
+}
+
+.paper:hover {
+  box-shadow: var(--mantine-shadow-sm);
+}

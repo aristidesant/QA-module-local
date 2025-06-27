@@ -17,6 +17,7 @@ export default [
       route("/campaigns", "routes/campaigns.tsx"),
       route("/logout", "routes/logout.tsx"),
       route("/contacts", "routes/contacts.tsx"),
+      route("/call-log", "routes/conversations.tsx"),
     ]),
   ]),
 ] satisfies RouteConfig;

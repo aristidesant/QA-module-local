@@ -14,9 +14,25 @@ const getDefaultApiUrl = () => {
 
 const DEFAULT_API_URL = getDefaultApiUrl() as string;
 
-type StartDemoParams = {
+export type StartDemoParams = {
   agentId: string;
   phoneNumber: string;
+};
+
+export type Conversation = {
+  id: string;
+  // Add other conversation fields as needed
+  [key: string]: unknown;
+};
+
+export type UpdateConversationParams = {
+  // Add fields that can be updated in a conversation
+  [key: string]: unknown;
+};
+
+export type PostCallDataParams = {
+  // Add fields for post-call data
+  [key: string]: unknown;
 };
 
 /**
@@ -24,15 +40,85 @@ type StartDemoParams = {
  * @param authHeader - Authorization header object, e.g. { Authorization: 'Bearer ...' }
  */
 const conversationsApi = (authHeader: Record<string, string>) => {
+  const headers = {
+    'Content-Type': 'application/json',
+    ...authHeader,
+  };
+
   return {
-    // START DEMO conversation
+    // Create a new conversation
+    createConversation: async (data: Record<string, unknown>) => {
+      const response = await axios.post<Conversation>(
+        `${DEFAULT_API_URL}/conversations`,
+        data,
+        { headers }
+      );
+      return response.data;
+    },
+
+    // Get all conversations for current client
+    getConversations: async () => {
+      const response = await axios.get<Conversation[]>(
+        `${DEFAULT_API_URL}/conversations`,
+        { headers }
+      );
+      return response.data;
+    },
+
+    // Start a new conversation
+    startConversation: async (data: Record<string, unknown>) => {
+      const response = await axios.post<Conversation>(
+        `${DEFAULT_API_URL}/conversations/start`,
+        data,
+        { headers }
+      );
+      return response.data;
+    },
+
+    // Start demo conversation
     startDemoConversation: async (params: StartDemoParams) => {
-      const response = await axios.post<Record<string, unknown>>(
+      const response = await axios.post<Conversation>(
         `${DEFAULT_API_URL}/conversations/start-demo`,
         params,
-        {
-          headers: authHeader,
-        }
+        { headers }
+      );
+      return response.data;
+    },
+
+    // Webhook to receive post-call data
+    postCallData: async (data: PostCallDataParams) => {
+      const response = await axios.post<void>(
+        `${DEFAULT_API_URL}/conversations/webhook/post-call-data`,
+        data,
+        { headers }
+      );
+      return response.data;
+    },
+
+    // Get conversation by ID
+    getConversationById: async (id: string) => {
+      const response = await axios.get<Conversation>(
+        `${DEFAULT_API_URL}/conversations/${id}`,
+        { headers }
+      );
+      return response.data;
+    },
+
+    // Update a conversation
+    updateConversation: async (id: string, data: UpdateConversationParams) => {
+      const response = await axios.patch<Conversation>(
+        `${DEFAULT_API_URL}/conversations/${id}`,
+        data,
+        { headers }
+      );
+      return response.data;
+    },
+
+    // Delete a conversation
+    deleteConversation: async (id: string) => {
+      const response = await axios.delete<void>(
+        `${DEFAULT_API_URL}/conversations/${id}`,
+        { headers }
       );
       return response.data;
     },
