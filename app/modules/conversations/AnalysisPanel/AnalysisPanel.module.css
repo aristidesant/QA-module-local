@@ -1,8 +1,25 @@
 .paper {
   background-color: var(--mantine-color-white);
   transition: box-shadow 0.2s ease;
+  border: 1px solid var(--mantine-color-gray-2);
+  margin-bottom: 1rem;
 }
 
 .paper:hover {
   box-shadow: var(--mantine-shadow-sm);
+}
+
+.header {
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.darkText {
+  color: var(--mantine-color-gray-9);
+}
+
+.lightText {
+  color: var(--mantine-color-gray-6);
+  font-size: 0.85rem;
 }
