@@ -8,7 +8,6 @@ import {
   Text,
 } from "@mantine/core";
 import { IconRobot, IconUser } from "@tabler/icons-react";
-import { format } from "date-fns";
 import type { TranscriptEntry } from "~/models/ConversationsModels";
 import styles from "./TranscriptViewer.module.css";
 

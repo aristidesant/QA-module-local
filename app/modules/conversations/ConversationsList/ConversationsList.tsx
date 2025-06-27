@@ -12,16 +12,16 @@ import {
 } from "@mantine/core";
 import { useGetConversations } from "~/queries/conversationsQueries";
 import { useConversationStore } from "~/stores/useConversationStore";
-import {
-  format,
-  parseISO,
-  differenceInSeconds,
-  intervalToDuration,
-} from "date-fns";
-import { IconPhoneCall, IconCheck, IconX, IconUser } from "@tabler/icons-react";
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(duration);
+dayjs.extend(relativeTime);
+
+import { IconPhoneCall, IconCheck, IconX } from "@tabler/icons-react";
 import { ConversationDetails } from "../ConversationDetails/ConversationDetails";
 import type { ConversationsModel } from "~/models/ConversationsModels";
-import styles from "./ConversationsList.module.css";
 import SectionCard from "~/components/SectionCard";
 
 // Define the styles as MantineStyleProp objects
@@ -91,28 +91,31 @@ const formatDuration = (seconds: number): string => {
     return "--";
   }
 
-  const duration = intervalToDuration({ start: 0, end: seconds * 1000 });
+  const duration = dayjs.duration(seconds, 'seconds');
   const parts: string[] = [];
 
-  if (duration.hours && duration.hours > 0) {
-    parts.push(`${duration.hours}h`);
+  const hours = Math.floor(duration.asHours());
+  if (hours > 0) {
+    parts.push(`${hours}h`);
   }
 
-  if (duration.minutes || parts.length > 0) {
-    parts.push(`${duration.minutes || 0}m`);
+  const minutes = duration.minutes();
+  if (minutes > 0 || hours > 0) { 
+    parts.push(`${minutes}m`);
   }
+  
+  const remainingSeconds = duration.seconds();
+  parts.push(`${remainingSeconds}s`);
 
-  parts.push(`${duration.seconds || 0}s`);
-
-  return parts.join(" ");
+  return parts.join(" ") || "0s";
 };
 
 const isValidDuration = (startDate: string, endDate: string): boolean => {
   try {
-    const start = parseISO(startDate);
-    const end = parseISO(endDate);
-    return start <= end;
-  } catch {
+    const start = dayjs(startDate);
+    const end = dayjs(endDate);
+    return end.isAfter(start);
+  } catch (error) {
     return false;
   }
 };
@@ -180,7 +183,7 @@ export function ConversationsList() {
           <Table.Td>
             <Text style={textStyles}>
               {conversation.startDate
-                ? format(parseISO(conversation.startDate), "MM-dd-yy h:mm a")
+                ? dayjs(conversation.startDate).format("MM-DD-YY h:mm a")
                 : "N/A"}
             </Text>
           </Table.Td>
@@ -190,10 +193,7 @@ export function ConversationsList() {
             isValidDuration(conversation.startDate, conversation.endDate) ? (
               <Text style={textStyles}>
                 {formatDuration(
-                  differenceInSeconds(
-                    parseISO(conversation.endDate),
-                    parseISO(conversation.startDate)
-                  )
+                  dayjs(conversation.endDate).diff(dayjs(conversation.startDate), 'seconds')
                 )}
               </Text>
             ) : (

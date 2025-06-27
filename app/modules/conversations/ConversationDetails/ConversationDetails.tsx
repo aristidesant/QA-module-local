@@ -1,7 +1,10 @@
 import { Box, Tabs, Tooltip, Divider } from "@mantine/core";
 import { IconInfoCircle, IconAnalyze, IconFileText } from "@tabler/icons-react";
 import { useMemo } from "react";
-import { format } from "date-fns";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 import type {
   TranscriptContent,
   ConversationsModel,
@@ -32,12 +35,12 @@ export function ConversationDetails({
   const formatDate = (dateString?: string | null): string => {
     if (!dateString) return "N/A";
     try {
-      const date = new Date(dateString);
+      const date = dayjs(dateString);
       // Check if the date is valid
-      if (isNaN(date.getTime())) {
+      if (!date.isValid()) {
         return "Invalid date";
       }
-      return format(date, "MMM d, yyyy h:mm a");
+      return date.format("MMM D, YYYY h:mm A");
     } catch (error) {
       console.error("Error formatting date:", error);
       return "Invalid date";
