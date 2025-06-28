@@ -7,9 +7,11 @@ export interface ContentContainerProps {
   children: ReactNode;
   rightSection?: ReactNode;
   title?: string;
+  titleRight?: ReactNode;
   description?: string;
   showBackButton?: boolean;
   rightSectionTitle?: ReactNode;
+
   onBackClick?: () => void;
 }
 
@@ -20,6 +22,7 @@ export const ContentContainer = ({
   description,
   showBackButton = false,
   rightSectionTitle,
+  titleRight,
   onBackClick,
 }: ContentContainerProps) => (
   <div className={styles.container}>
@@ -56,7 +59,7 @@ export const ContentContainer = ({
                 </Flex>
               )}
             </Flex>
-            {rightSectionTitle && rightSectionTitle}
+            {titleRight && titleRight}
           </Flex>
           <Divider className={styles.divider} />
         </div>

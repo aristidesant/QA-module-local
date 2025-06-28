@@ -35,11 +35,8 @@ export const AgentSimpleDetails: React.FC<AgentSimpleDetailsProps> = ({
   }, [agent.id]); // Re-trigger animation when agent changes
   // ElevenLabs/agent config fields
   const voiceLanguage =
-    agent.config?.voice?.language || agent.config?.language || "Spanish ES";
-  const avatarUrl =
-    agent.config?.voice?.preview_url ||
-    agent.config?.avatarUrl ||
-    "/images/avatar-f-do.png";
+    agent.config?.conversationConfig?.agent?.language || "Spanish ES";
+  const avatarUrl = agent.voice?.previewUrl || "/images/avatar-f-do.png";
   const isOnline = agent.status === "ACTIVE";
 
   // Get flag emoji based on language
@@ -59,13 +56,13 @@ export const AgentSimpleDetails: React.FC<AgentSimpleDetailsProps> = ({
     return "🌐";
   };
 
-  // Voice settings from conversation_config
-  const stability = agent.config?.conversation_config?.tts?.stability ?? 0.5;
-  const speed = agent.config?.conversation_config?.tts?.speed ?? 1.0;
+  // Voice settings from conversationConfig
+  const stability = agent.config?.conversationConfig?.tts?.stability ?? 0.5;
+  const speed = agent.config?.conversationConfig?.tts?.speed ?? 1.0;
   const similarityBoost =
-    agent.config?.conversation_config?.tts?.similarity_boost ?? 0.8;
+    agent.config?.conversationConfig?.tts?.similarityBoost ?? 0.8;
   const optimizeLatency =
-    agent.config?.conversation_config?.tts?.optimize_streaming_latency ?? 3;
+    agent.config?.conversationConfig?.tts?.optimizeStreamingLatency ?? 3;
 
   // Additional agent info
 

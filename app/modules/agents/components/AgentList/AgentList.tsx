@@ -71,6 +71,11 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
           </Transition>
         </>
       }
+      titleRight={
+        <ActionIcon onClick={open} variant="default" size="lg">
+          <IconPlus size={20} stroke={1.5} />
+        </ActionIcon>
+      }
     >
       <Stack>
         <AgentCreate

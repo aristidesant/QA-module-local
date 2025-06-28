@@ -6,22 +6,25 @@ import AgentSettings from "../AgentSettings";
 import type { GetAgentResponseModel } from "elevenlabs/api";
 import { useAgentStore } from "~/store/agentStore";
 import { AgentKnowledgeBase } from "../AgentKnowledgeBase";
+import type { AgentConfigModel } from "~/models/AgentListObject";
 
 type AgentConfigurationProps = {
   agentMode?: boolean;
-  editableAgent?: Record<string, any>;
-  setEditableAgent: React.Dispatch<React.SetStateAction<Record<string, any>>>;
+  editableAgent?: AgentConfigModel;
+  onVoiceSelect?: (voiceId: string) => void;
+  setEditableAgent: React.Dispatch<React.SetStateAction<AgentConfigModel>>;
 };
 const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
   editableAgent,
   agentMode,
   setEditableAgent,
+  onVoiceSelect = () => {}, // Default no-op function
 }) => {
   const agentConfigurationType = useAgentStore(
     (state) => state.agentConfigurationType
   );
   const handleAgentUpdate = (updatedFields: any) => {
-    setEditableAgent((prev: Record<string, any>) => ({
+    setEditableAgent((prev: AgentConfigModel) => ({
       ...prev,
       ...updatedFields,
     }));
@@ -30,21 +33,22 @@ const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
   const shouldDisplayAgentSettings =
     (agentMode && agentConfigurationType === "custom") || !agentMode;
 
+  console.log(JSON.stringify(editableAgent));
   return (
     <Stack>
       <AgentVoices
         onSelectVoice={(voiceId: string) => {
           handleAgentUpdate({
-            conversation_config: {
-              ...(editableAgent?.conversation_config || {}),
+            conversationConfig: {
+              ...(editableAgent?.conversationConfig || {}),
               tts: {
-                ...(editableAgent?.conversation_config?.tts || {}),
-                voice_id: voiceId,
+                ...(editableAgent?.conversationConfig?.tts || {}),
+                voiceId: voiceId,
               },
             },
           });
+          onVoiceSelect(voiceId);
         }}
-        selectedVoiceId={editableAgent?.conversation_config?.tts?.voice_id}
         agentData={editableAgent}
         onUpdateAgentData={handleAgentUpdate}
       />
@@ -52,7 +56,7 @@ const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
       {shouldDisplayAgentSettings && (
         <>
           <AgentSettings
-            agentData={editableAgent as GetAgentResponseModel}
+            agentData={editableAgent}
             onUpdateAgentData={handleAgentUpdate}
           />
           <AgentKnowledgeBase />

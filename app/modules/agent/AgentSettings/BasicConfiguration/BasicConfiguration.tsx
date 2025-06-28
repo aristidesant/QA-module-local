@@ -2,12 +2,12 @@
 import React from "react";
 import { Select, Textarea } from "@mantine/core";
 import { IconLanguage, IconSettings } from "@tabler/icons-react";
-import type { GetAgentResponseModel } from "elevenlabs/api";
+import type { AgentConfigModel } from "~/models/AgentListObject";
 import styles from "./BasicConfiguration.module.css";
 import SectionCard from "../../../../components/SectionCard";
 
 interface BasicConfigurationProps {
-  agentData: GetAgentResponseModel;
+  agentData: AgentConfigModel;
   onUpdateAgentData: (updatedFields: any) => void;
 }
 
@@ -15,7 +15,7 @@ const BasicConfiguration: React.FC<BasicConfigurationProps> = ({
   agentData,
   onUpdateAgentData,
 }) => {
-  const currentLanguage = agentData?.conversation_config?.agent?.language || "";
+  const currentLanguage = agentData?.conversationConfig?.agent?.language || "";
   const languageOptions = [
     { value: "en", label: "English" },
     { value: "es", label: "Spanish" },
@@ -24,10 +24,10 @@ const BasicConfiguration: React.FC<BasicConfigurationProps> = ({
   const handleLanguageChange = (value: string | null) => {
     if (value) {
       onUpdateAgentData({
-        conversation_config: {
-          ...(agentData?.conversation_config || {}),
+        conversationConfig: {
+          ...(agentData?.conversationConfig || {}),
           agent: {
-            ...(agentData?.conversation_config?.agent || {}),
+            ...(agentData?.conversationConfig?.agent || {}),
             language: value,
           },
         },
@@ -58,14 +58,14 @@ const BasicConfiguration: React.FC<BasicConfigurationProps> = ({
         placeholder="Enter the first message your agent will send..."
         rows={4}
         label="Agent First Message"
-        value={agentData?.conversation_config?.agent?.first_message || ""}
+        value={agentData?.conversationConfig?.agent?.firstMessage || ""}
         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
           onUpdateAgentData({
-            conversation_config: {
-              ...(agentData?.conversation_config || {}),
+            conversationConfig: {
+              ...(agentData?.conversationConfig || {}),
               agent: {
-                ...(agentData?.conversation_config?.agent || {}),
-                first_message: e.target.value,
+                ...(agentData?.conversationConfig?.agent || {}),
+                firstMessage: e.target.value,
               },
             },
           })

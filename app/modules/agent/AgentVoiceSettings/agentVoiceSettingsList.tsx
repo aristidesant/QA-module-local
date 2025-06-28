@@ -20,7 +20,7 @@ export const sliderConfigs: VoiceSliderConfig[] = [
     ],
     helper:
       "Configure latency optimizations for the speech generation. Latency can be optimized at the cost of quality. (0=Normal, 4=Max optimization)",
-    ttsField: "optimize_streaming_latency",
+    ttsField: "optimizeStreamingLatency",
   },
   {
     key: "stability",
@@ -71,6 +71,6 @@ export const sliderConfigs: VoiceSliderConfig[] = [
     ],
     helper:
       "Higher values boost clarity and consistency. Very high values may lead to artifacts. Recommended to find a balance.",
-    ttsField: "similarity_boost",
+    ttsField: "similarityBoost",
   },
 ];

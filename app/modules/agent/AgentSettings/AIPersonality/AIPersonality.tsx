@@ -3,13 +3,13 @@ import React from "react";
 import { Textarea, ActionIcon, rem, Box, Flex } from "@mantine/core";
 import { IconBrain, IconPencil, IconTrash } from "@tabler/icons-react";
 import { modals } from "@mantine/modals";
-import type { GetAgentResponseModel } from "elevenlabs/api";
+import type { AgentConfigModel } from "~/models/AgentListObject";
 import SectionCard from "../../../../components/SectionCard";
 import styles from "./AIPersonality.module.css";
 import { AIPersonalityEditModal } from "./index";
 
 interface AIPersonalityProps {
-  agentData: GetAgentResponseModel;
+  agentData: AgentConfigModel;
   onUpdateAgentData: (updatedFields: any) => void;
 }
 
@@ -17,7 +17,7 @@ const AIPersonality: React.FC<AIPersonalityProps> = ({
   agentData,
   onUpdateAgentData,
 }) => {
-  const prompt = agentData?.conversation_config?.agent?.prompt?.prompt || "";
+  const prompt = agentData?.conversationConfig?.agent?.prompt?.prompt || "";
 
   const handleEdit = () => {
     const modalId = "ai-personality-edit-modal";
@@ -29,12 +29,12 @@ const AIPersonality: React.FC<AIPersonalityProps> = ({
           onClose={() => modals.close(modalId)}
           onSave={(newPrompt) => {
             onUpdateAgentData({
-              conversation_config: {
-                ...(agentData?.conversation_config || {}),
+              conversationConfig: {
+                ...(agentData?.conversationConfig || {}),
                 agent: {
-                  ...(agentData?.conversation_config?.agent || {}),
+                  ...(agentData?.conversationConfig?.agent || {}),
                   prompt: {
-                    ...(agentData?.conversation_config?.agent?.prompt || {}),
+                    ...(agentData?.conversationConfig?.agent?.prompt || {}),
                     prompt: newPrompt,
                   },
                 },
@@ -52,12 +52,12 @@ const AIPersonality: React.FC<AIPersonalityProps> = ({
 
   const handleRemove = () => {
     onUpdateAgentData({
-      conversation_config: {
-        ...(agentData?.conversation_config || {}),
+      conversationConfig: {
+        ...(agentData?.conversationConfig || {}),
         agent: {
-          ...(agentData?.conversation_config?.agent || {}),
+          ...(agentData?.conversationConfig?.agent || {}),
           prompt: {
-            ...(agentData?.conversation_config?.agent?.prompt || {}),
+            ...(agentData?.conversationConfig?.agent?.prompt || {}),
             prompt: "",
           },
         },

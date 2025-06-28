@@ -1,35 +1,27 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDebouncedFilters } from "./AgentVoicesFilter/useDebouncedFilters";
 import { useGetAllAgentVoices } from "~/queries/agentVoiceQueries";
-import { ScrollArea, Text, Button, Collapse } from "@mantine/core";
+import { Text } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
-import {
-  IconMicrophone,
-  IconFilter,
-  IconChevronDown,
-  IconChevronUp,
-} from "@tabler/icons-react";
+import { IconMicrophone } from "@tabler/icons-react";
 
 import SectionCard from "~/components/SectionCard";
 import classes from "./AgentVoices.module.css";
 import { VoiceCard } from "./VoiceCard";
-import { AgentVoicesFilter } from "./AgentVoicesFilter";
 import type { AgentVoicesFilterValues } from "./AgentVoicesFilter/AgentVoicesFilter";
 import AgentVoiceSettings from "../AgentVoiceSettings";
 import { useAgentStore } from "~/store/agentStore";
 import VoiceDetails from "../VoiceDetails";
-import type AgentListObject from "~/models/AgentListObject";
+import type { AgentConfigModel } from "~/models/AgentListObject";
 
 type AgentVoicesProps = {
   onSelectVoice: (voiceId: string) => void;
-  selectedVoiceId: string | null;
-  agentData?: Record<string, any>;
+  agentData?: AgentConfigModel;
   onUpdateAgentData: (updatedFields: any) => void; // TODO: Define a more specific type for updatedFields
 };
 
 const AgentVoices: React.FC<AgentVoicesProps> = ({
   onSelectVoice,
-  selectedVoiceId,
   agentData,
   onUpdateAgentData,
 }) => {
@@ -42,8 +34,6 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
     accent: "",
   });
   const debouncedFilters = useDebouncedFilters(filters, 400);
-
-  const [filtersVisible, setFiltersVisible] = useState(false);
 
   const {
     data: elevenLabsVoices,
@@ -70,6 +60,22 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
     return 0.9;
   };
 
+  useEffect(() => {
+    if (elevenLabsVoices && agentData?.conversationConfig?.tts?.voiceId) {
+      const selectedVoiceIndex = elevenLabsVoices.findIndex((voice) => {
+        return voice?.voiceId === agentData?.conversationConfig?.tts?.voiceId;
+      });
+      
+      if (selectedVoiceIndex !== -1) {
+        setCurrentIndex(selectedVoiceIndex);
+        setSelectedElement(<VoiceDetails agentVoice={elevenLabsVoices[selectedVoiceIndex]} />);
+      }
+    } else if (elevenLabsVoices && elevenLabsVoices.length > 0) {
+      // If no specific voice is selected, default to the first one
+      setCurrentIndex(0);
+      setSelectedElement(<VoiceDetails agentVoice={elevenLabsVoices[0]} />);
+    }
+  }, [elevenLabsVoices, agentData?.conversationConfig?.tts?.voiceId, setSelectedElement]);
   const handleFiltersChange = (newFilters: AgentVoicesFilterValues) => {
     setFilters(newFilters);
   };
@@ -174,7 +180,7 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
             setSelectedElement(<VoiceDetails agentVoice={voices[i]} />);
             onSelectVoice(voices[i].voice.id);
           }}
-          initialSlide={0}
+          initialSlide={currentIndex}
           classNames={{
             viewport: classes.carouselViewport,
             slide: classes.carouselSlide,

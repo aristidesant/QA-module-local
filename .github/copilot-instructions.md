@@ -1,3 +1,10 @@
+# Core Commands
+
+- `npm run dev` - Start development server with React Router v7 dev mode (port 8080)
+- `npm run build` - Create production build with SSR support
+- `npm run start` - Serve production build with React Router serve
+- `npm run typecheck` - Generate type definitions and run TypeScript checks
+
 # General Code Style & Formatting
 
 - Follow the Airbnb Style Guide for all code formatting.
@@ -8,34 +15,40 @@
 
 # Project Structure & Architecture
 
+- **Frontend Framework**: React Router v7 with SSR enabled by default
+- **Build Tool**: Vite with React Router dev plugin and TypeScript paths
+- **Major Dependencies**:
+
+  - Mantine v8 for UI components and theming
+  - Tanstack Query for data fetching and caching
+  - Zustand for state management
+  - Axios for HTTP requests
+  - ElevenLabs SDK for voice integration
+  - JWT for authentication
+
+- **External Services**:
+
+  - Backend API (configured via `API_URL` env var)
+  - ElevenLabs API for voice synthesis and conversational AI
+  - Session management with secure cookies
+
 - The project uses React Router v7.
   We MUST use them over anything else of custom components. If a core component does not exist, they need to be created in a file inside that folder.
 
 - This project is using Tanstack Query for data fetching and caching.
-- We need this structure:
+- Current structure follows `app/` directory (actual structure) vs documented `src/` structure:
   ```
-  src
-  ├── components
-  │   ├── ComponentName
-  │   │   ├── ComponentName.tsx
-  │   │   ├── ComponentName.module.css
-  │   │   └── index.ts
-  ├── hooks
-  ├── pages
-  ├── modules
-  │   ├── module_name
-  │   │   ├── ModulePage
-  │   │   │   ├── ModulePage.module.css
-  │   │   │   ├── ModulePage.tsx
-  │   │   │   └── index.ts
-  │   │   ├── queries
-  │   │   │   └── moduleNameQueries.ts
-  ├── routes
-  │   ├── route_name.tsx // This route will have loader/actions and could have a component that will inject the module.
-  ├── api
-  │   ├── moduleApi.ts // This file will contain the base API client and the API functions.
-  ├── models // contains all the types and interfaces
-  └── utils
+  app/
+  ├── api/          # HTTP client functions for backend services
+  ├── components/   # Reusable UI components
+  ├── modules/      # Feature-specific modules (agent, campaigns, etc.)
+  ├── queries/      # Tanstack Query hooks
+  ├── routes/       # React Router v7 route components
+  ├── store/        # Zustand stores
+  ├── models/       # TypeScript types and interfaces
+  ├── hooks/        # Custom React hooks
+  ├── utils/        # Utility functions
+  └── styles/       # Global CSS styles
   ```
 
 # Styling & UI
@@ -56,3 +69,26 @@
 - Use Zustand for state management.
 - Use Tanstack React Query for data fetching and caching.
 - Use Action/Loader and Fetcher for data fetching in some cases.
+
+# TypeScript & Imports
+
+- Use strict TypeScript configuration with `verbatimModuleSyntax` enabled
+- Path mapping configured: use `~/` for `./app/` imports
+- All TypeScript types should be properly defined in `models/` directory
+- Use proper type exports/imports and avoid `any` types
+
+# Environment & Configuration
+
+- Required environment variables:
+  - `API_URL` - Backend API endpoint
+  - `SESSION_SECRET_KEY` - Session management secret
+- Development server runs on port 8080
+- SSR enabled by default in React Router config
+- Authentication uses JWT tokens with secure session cookies
+
+# Error Handling & API Integration
+
+- Use Axios for HTTP requests with consistent error handling
+- API functions should be organized by feature in `api/` directory
+- Follow established patterns for API client initialization
+- Handle authentication state consistently across the application

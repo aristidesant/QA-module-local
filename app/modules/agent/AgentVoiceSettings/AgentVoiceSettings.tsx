@@ -16,29 +16,28 @@ const AgentVoiceSettings: React.FC<AgentVoiceSettingsProps> = ({
 }) => {
   const [localValues, setLocalValues] = useState({
     optimizeStreamingLatency:
-      agentData?.conversation_config?.tts?.optimize_streaming_latency ?? 3,
-    stability: agentData?.conversation_config?.tts?.stability ?? 0.5,
-    speed: agentData?.conversation_config?.tts?.speed ?? 1.0,
-    similarityBoost:
-      agentData?.conversation_config?.tts?.similarity_boost ?? 0.8,
+      agentData?.conversationConfig?.tts?.optimizeStreamingLatency ?? 3,
+    stability: agentData?.conversationConfig?.tts?.stability ?? 0.5,
+    speed: agentData?.conversationConfig?.tts?.speed ?? 1.0,
+    similarityBoost: agentData?.conversationConfig?.tts?.similarityBoost ?? 0.8,
   });
 
   useEffect(() => {
     setLocalValues({
       optimizeStreamingLatency:
-        agentData?.conversation_config?.tts?.optimize_streaming_latency ?? 3,
-      stability: agentData?.conversation_config?.tts?.stability ?? 0.5,
-      speed: agentData?.conversation_config?.tts?.speed ?? 1.0,
+        agentData?.conversationConfig?.tts?.optimizeStreamingLatency ?? 3,
+      stability: agentData?.conversationConfig?.tts?.stability ?? 0.5,
+      speed: agentData?.conversationConfig?.tts?.speed ?? 1.0,
       similarityBoost:
-        agentData?.conversation_config?.tts?.similarity_boost ?? 0.8,
+        agentData?.conversationConfig?.tts?.similarityBoost ?? 0.8,
     });
   }, [agentData]);
 
   const createUpdatePayload = (ttsField: string, value: number) => ({
-    conversation_config: {
-      ...(agentData?.conversation_config || {}),
+    conversationConfig: {
+      ...(agentData?.conversationConfig || {}),
       tts: {
-        ...(agentData?.conversation_config?.tts || {}),
+        ...(agentData?.conversationConfig?.tts || {}),
         [ttsField]: value,
       },
     },

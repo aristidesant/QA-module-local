@@ -1,7 +1,6 @@
 import axios from "axios";
 import type { BodyCreateAgentV1ConvaiAgentsCreatePost } from "elevenlabs/api";
 import type AgentListObject from "~/models/AgentListObject";
-import type { AgentUpdateModel } from "~/models/AgentListObject";
 
 const getDefaultApiUrl = () => {
   if (typeof window !== "undefined") {
@@ -60,7 +59,8 @@ const agentApi = (authHeader: Record<string, string> = {}) => {
     },
 
     // UPDATE agent (PATCH)
-    updateAgent: async (agentId: string, data: Partial<AgentUpdateModel>) => {
+    updateAgent: async (agentId: string, data: Partial<AgentListObject>) => {
+      // Convert camelCase to snake_case for API
       const response = await axios.patch(
         `${DEFAULT_API_URL}/agents/${agentId}`,
         data,
@@ -68,6 +68,7 @@ const agentApi = (authHeader: Record<string, string> = {}) => {
           headers: authHeader,
         }
       );
+      // Convert response back to camelCase
       return response.data;
     },
 

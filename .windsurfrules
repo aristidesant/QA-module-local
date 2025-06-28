@@ -1,74 +1,94 @@
-# Windsurf Project Rules
+# Core Commands
 
-## 📐 Code Style & Formatting
+- `npm run dev` - Start development server with React Router v7 dev mode (port 8080)
+- `npm run build` - Create production build with SSR support
+- `npm run start` - Serve production build with React Router serve
+- `npm run typecheck` - Generate type definitions and run TypeScript checks
 
-- Use the **Airbnb Style Guide** for all code formatting.
-- All **React component files** must use **PascalCase** (e.g., `UserCard.tsx`, not `user-card.tsx`).
-- Use **named exports** for all components.
-- Each component must live in its **own folder**, named using PascalCase.
-  - The folder must include:
-    - `ComponentName.tsx` (main file)
-    - `ComponentName.module.css` (styles)
-    - `index.ts` (to re-export the component)
-- Always write code in **English**, regardless of the user's prompt language.
+# General Code Style & Formatting
 
----
+- Follow the Airbnb Style Guide for all code formatting.
+- Name React component files using PascalCase (e.g., `UserCard.tsx`, not `user-card.tsx`).
+- Use named exports for all components.
+- Each component must be isolated in its own folder. The folder and the main component file should both use the component name. Include an `index.ts` file in the folder to export the component as the default export.
+- No matter the prompt language used by the user, the code should be written in English.
 
-## 🧱 Project Structure
+# Project Structure & Architecture
 
-Use the following folder structure under `src/`:
+- **Frontend Framework**: React Router v7 with SSR enabled by default
+- **Build Tool**: Vite with React Router dev plugin and TypeScript paths
+- **Major Dependencies**:
 
-```
-src
-├── api                  # API clients and requests
-│   └── moduleApi.ts
-├── components           # Shared UI components
-│   └── ComponentName
-│       ├── ComponentName.tsx
-│       ├── ComponentName.module.css
-│       └── index.ts
-├── hooks                # Custom React hooks
-├── models               # TypeScript types and interfaces
-├── modules              # Feature modules
-│   └── module_name
-│       ├── ModulePage
-│       │   ├── ModulePage.tsx
-│       │   ├── ModulePage.module.css
-│       │   └── index.ts
-│       └── queries
-│           └── moduleNameQueries.ts
-├── pages                # Top-level pages
-├── routes               # Route config files using React Router v7
-│   └── route_name.tsx   # Includes loader/actions, and mounts module
-└── utils                # Utility/helper functions
-```
+  - Mantine v8 for UI components and theming
+  - Tanstack Query for data fetching and caching
+  - Zustand for state management
+  - Axios for HTTP requests
+  - ElevenLabs SDK for voice integration
+  - JWT for authentication
 
-- Use **React Router v7** for all routing. Do not use custom routing solutions.
-- If a core component doesn’t exist, create it following the folder/component structure above.
+- **External Services**:
 
----
+  - Backend API (configured via `API_URL` env var)
+  - ElevenLabs API for voice synthesis and conversational AI
+  - Session management with secure cookies
 
-## 🎨 Styling
+- The project uses React Router v7.
+  We MUST use them over anything else of custom components. If a core component does not exist, they need to be created in a file inside that folder.
 
-- Use **Mantine UI v8** for all UI components.
-- Prefer **CSS modules** over inline styles or Mantine `style`/`sx` props.
-- All styles must live in `.module.css` files using the component's name.
-- Use **light mode** styling by default.
-- Use `@tabler/icons-react` for icons.
-- Use Mantine’s `var(--mantine-xxx)` variables in CSS, avoid custom colors/values.
+- This project is using Tanstack Query for data fetching and caching.
+- Current structure follows `app/` directory (actual structure) vs documented `src/` structure:
+  ```
+  app/
+  ├── api/          # HTTP client functions for backend services
+  ├── components/   # Reusable UI components
+  ├── modules/      # Feature-specific modules (agent, campaigns, etc.)
+  ├── queries/      # Tanstack Query hooks
+  ├── routes/       # React Router v7 route components
+  ├── store/        # Zustand stores
+  ├── models/       # TypeScript types and interfaces
+  ├── hooks/        # Custom React hooks
+  ├── utils/        # Utility functions
+  └── styles/       # Global CSS styles
+  ```
 
----
+# Styling & UI
 
-## 📦 Data Fetching & Forms
+- Use Mantine UI, V8. Search on internet whenever is required to get the latest implementation without breaking changes. component.
+- Every style should be place within a .module.css with the name of the component.
+- Prefer light mode for anything.
+- Css Style MUST be preferred vs inline styling or component props.
+- Use `@tabler/icons-react` for all icons.
+- Use var(--mantine-xxx) to apply all the mantine properties in CSS files instead of defining your own styles/colors, etc..
 
-- Use **Tanstack React Query** for all data fetching and caching.
-- Use **Mantine Form** for form handling.
-- Use **loader**, **action**, and **fetcher** (from React Router v7) as needed.
+# Data Fetching & Forms
 
----
+- Use React Hook Form for form handling.
 
-## 🧠 State Management
+# State Management & Logic
 
-- Use **Zustand** for global state management.
-- Avoid other state libraries unless explicitly required.
+- Use Zustand for state management.
+- Use Tanstack React Query for data fetching and caching.
+- Use Action/Loader and Fetcher for data fetching in some cases.
 
+# TypeScript & Imports
+
+- Use strict TypeScript configuration with `verbatimModuleSyntax` enabled
+- Path mapping configured: use `~/` for `./app/` imports
+- All TypeScript types should be properly defined in `models/` directory
+- Use proper type exports/imports and avoid `any` types
+
+# Environment & Configuration
+
+- Required environment variables:
+  - `API_URL` - Backend API endpoint
+  - `SESSION_SECRET_KEY` - Session management secret
+- Development server runs on port 8080
+- SSR enabled by default in React Router config
+- Authentication uses JWT tokens with secure session cookies
+
+# Error Handling & API Integration
+
+- Use Axios for HTTP requests with consistent error handling
+- API functions should be organized by feature in `api/` directory
+- Follow established patterns for API client initialization
+- Handle authentication state consistently across the application

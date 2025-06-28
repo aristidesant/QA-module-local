@@ -21,6 +21,7 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
   const [editableAgent, setEditableAgent] = useState(agent?.config);
   const navigate = useNavigate();
   const [name, setName] = useState(agent.name);
+  const [voiceId, setVoiceId] = useState<string>();
   const [isEditingName, setIsEditingName] = useState(false);
   const { selectedElement, agentConfigurationType } = useAgentStore(
     (state) => state
@@ -74,16 +75,17 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
 
     // Ensure we have a default voice model before saving
     const updatedConfig = {
-      ...editableAgent.conversation_config,
+      ...editableAgent.conversationConfig,
       tts: {
-        ...editableAgent.conversation_config?.tts,
+        ...editableAgent.conversationConfig?.tts,
       },
     };
 
     const data: Partial<AgentUpdateModel> = {
       name,
-      conversation_config: updatedConfig,
-      platform_settings: editableAgent.platform_settings,
+      voiceId: voiceId || updatedConfig?.tts?.voiceId,
+      conversationConfig: updatedConfig,
+      platformSettings: editableAgent.platformSettings,
     };
     try {
       await updateAgent({
@@ -125,6 +127,9 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
             <AgentConfiguration
               editableAgent={editableAgent}
               agentMode
+              onVoiceSelect={(voiceId: string) => {
+                setVoiceId(voiceId);
+              }}
               setEditableAgent={setEditableAgent}
             />
           </Stack>
