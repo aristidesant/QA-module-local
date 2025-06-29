@@ -3,7 +3,6 @@ import {
   PasswordInput,
   Button,
   Paper,
-  Title,
   Text,
   Stack,
   Container,
@@ -11,20 +10,45 @@ import {
   Alert,
   Checkbox,
   Anchor,
+  Loader,
+  useMantineTheme,
 } from "@mantine/core";
+import { useForm } from "@mantine/form";
 import { IconAt, IconLock, IconAlertCircle } from "@tabler/icons-react";
-import { useFetcher } from "react-router";
+import { useEffect } from "react";
+import { useActionData, useFetcher, useNavigation } from "react-router";
 import classes from "./LoginForm.module.css";
 import Logo from "~/components/Logo";
 
 interface ActionData {
   error?: string;
+  success?: string;
 }
 
 export function LoginForm() {
   const fetcher = useFetcher();
-  const actionData = fetcher.data as ActionData;
-  const isSubmitting = fetcher.state === "submitting";
+  const actionData = useActionData() as ActionData | undefined;
+  const navigation = useNavigation();
+  const theme = useMantineTheme();
+  const isSubmitting = navigation.state === "submitting";
+
+  const form = useForm({
+    initialValues: {
+      username: "",
+      password: "",
+    },
+    validate: {
+      username: (value: string) =>
+        !value.trim() ? "Username is required" : null,
+      password: (value: string) => (!value ? "Password is required" : null),
+    },
+  });
+
+  useEffect(() => {
+    if (actionData?.error) {
+      form.setFieldError("password", actionData.error);
+    }
+  }, [actionData, form]);
 
   return (
     <div className={classes.wrapper}>
@@ -45,60 +69,39 @@ export function LoginForm() {
 
           <fetcher.Form
             method="post"
-            action="/login"
             className={classes.formContainer}
+            onSubmit={form.onSubmit(() => {})}
           >
             <Stack gap="lg">
               <TextInput
                 required
                 label="Username"
                 placeholder="Enter your username"
-                name="username"
                 leftSection={<IconAt size={18} />}
                 radius="md"
                 size="md"
-                className={classes.input}
                 styles={{
                   label: { fontWeight: 500, marginBottom: 8 },
                   input: { fontSize: 16 },
                 }}
+                {...form.getInputProps("username")}
+                name="username"
               />
 
               <PasswordInput
                 required
                 label="Password"
                 placeholder="Enter your password"
-                name="password"
                 leftSection={<IconLock size={18} />}
                 radius="md"
                 size="md"
-                className={classes.input}
                 styles={{
                   label: { fontWeight: 500, marginBottom: 8 },
                   input: { fontSize: 16 },
                 }}
+                {...form.getInputProps("password")}
+                name="password"
               />
-
-              <Box className={classes.formActions}>
-                <Checkbox
-                  label="Remember me"
-                  name="rememberMe"
-                  className={classes.checkbox}
-                  styles={{
-                    label: {
-                      fontSize: 14,
-                      color: "var(--mantine-color-gray-6)",
-                    },
-                  }}
-                />
-                <Anchor
-                  href="/forgot-password"
-                  size="sm"
-                  className={classes.forgotPassword}
-                >
-                  Forgot password?
-                </Anchor>
-              </Box>
 
               {actionData?.error && (
                 <Alert
@@ -122,18 +125,14 @@ export function LoginForm() {
                 styles={{
                   root: { height: 48, fontSize: 16, fontWeight: 600 },
                 }}
+                rightSection={
+                  isSubmitting ? <Loader size="xs" color="white" /> : null
+                }
               >
                 {isSubmitting ? "Signing in..." : "Sign in"}
               </Button>
             </Stack>
           </fetcher.Form>
-
-          <Text className={classes.footer}>
-            Don't have an account?{" "}
-            <Text component="a" href="/register" className={classes.link}>
-              Sign up
-            </Text>
-          </Text>
         </Paper>
       </Container>
     </div>

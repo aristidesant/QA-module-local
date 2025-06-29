@@ -60,9 +60,5 @@ export async function action({ request }: { request: Request }) {
 }
 
 export default function LoginPage() {
-  return (
-    <div>
-      <LoginForm />
-    </div>
-  );
+  return <LoginForm />;
 }

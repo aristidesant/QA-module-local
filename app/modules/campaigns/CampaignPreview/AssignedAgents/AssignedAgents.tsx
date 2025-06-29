@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  Text,
-  Stack,
-  Avatar,
-  Group,
-} from "@mantine/core";
+import { Text, Stack, Avatar, Group, Paper } from "@mantine/core";
 import { Section } from "../Section";
 import classes from "./AssignedAgents.module.css";
 import type { Agent } from "../../../../models/CampaignsModel";
@@ -46,7 +41,7 @@ export const AssignedAgents: React.FC<AssignedAgentsProps> = ({ agents }) => {
     >
       <Stack gap="xs">
         {agents.map((agent) => (
-          <div key={agent.id} className={classes.agentCard}>
+          <Paper>
             <Avatar
               src={agent.avatarUrl}
               alt={agent.name}
@@ -72,12 +67,11 @@ export const AssignedAgents: React.FC<AssignedAgentsProps> = ({ agents }) => {
                   )}`}
                 />
                 <Text size="xs" c="dimmed">
-                  {agent.status.charAt(0).toUpperCase() +
-                    agent.status.slice(1)}
+                  {agent.status.charAt(0).toUpperCase() + agent.status.slice(1)}
                 </Text>
               </Group>
             </div>
-          </div>
+          </Paper>
         ))}
       </Stack>
     </Section>
