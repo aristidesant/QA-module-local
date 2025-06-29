@@ -5,10 +5,10 @@ import {
   Text,
   Stack,
   Badge,
-  Slider,
   Button,
   Box,
   Card,
+  Progress,
 } from "@mantine/core";
 import {
   IconUser,
@@ -124,7 +124,7 @@ const VoiceDetails: React.FC<VoiceDetailsProps> = ({ agentVoice }) => {
           <Avatar
             src={avatarSrc}
             size={120}
-            radius="xl"
+            radius="50%"
             alt={voice.name}
             color="blue"
             className={styles.profileAvatar}
@@ -173,7 +173,9 @@ const VoiceDetails: React.FC<VoiceDetailsProps> = ({ agentVoice }) => {
               Balanced
             </Text>
           </Group>
-          <Slider value={50} color="blue" size="sm" className={styles.slider} />
+          <Progress.Root size={6} radius="sm" className={styles.progressRoot}>
+            <Progress.Section value={50} color="blue" animated />
+          </Progress.Root>
         </Card>
 
         <Card className={styles.metricCard}>
@@ -186,7 +188,9 @@ const VoiceDetails: React.FC<VoiceDetailsProps> = ({ agentVoice }) => {
               Balanced
             </Text>
           </Group>
-          <Slider value={60} color="blue" size="sm" className={styles.slider} />
+          <Progress.Root size={6} radius="sm" className={styles.progressRoot}>
+            <Progress.Section value={60} color="blue" animated />
+          </Progress.Root>
         </Card>
 
         <Card className={styles.metricCard}>
@@ -199,7 +203,9 @@ const VoiceDetails: React.FC<VoiceDetailsProps> = ({ agentVoice }) => {
               Fast
             </Text>
           </Group>
-          <Slider value={85} color="blue" size="sm" className={styles.slider} />
+          <Progress.Root size={6} radius="sm" className={styles.progressRoot}>
+            <Progress.Section value={75} color="blue" animated />
+          </Progress.Root>
         </Card>
 
         <Card className={styles.metricCard}>
@@ -212,7 +218,9 @@ const VoiceDetails: React.FC<VoiceDetailsProps> = ({ agentVoice }) => {
               Normal
             </Text>
           </Group>
-          <Slider value={40} color="blue" size="sm" className={styles.slider} />
+          <Progress.Root size={6} radius="sm" className={styles.progressRoot}>
+            <Progress.Section value={40} color="blue" animated />
+          </Progress.Root>
         </Card>
         {/* Animated Play Button */}
         <Box className={styles.playButtonContainer}>

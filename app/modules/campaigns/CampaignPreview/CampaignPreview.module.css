@@ -12,8 +12,11 @@
 }
 
 .sectionTitle {
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 2px;
+  color: var(--mantine-color-dark-9);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
 }
 
 .sectionCard {
@@ -33,6 +36,14 @@
   color: var(--mantine-color-dimmed);
   font-size: var(--mantine-font-size-xs);
   line-height: 1.4;
+  margin-top: 2px;
+}
+
+/* Ensure consistent hover effects on all cards */
+[class$='Card']:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--mantine-shadow-md);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 /* Overview Card */

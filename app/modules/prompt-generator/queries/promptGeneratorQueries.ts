@@ -15,13 +15,11 @@ export const useCreatePrompt = () => {
         ...header,
         Authorization: `Bearer ${token}`,
       });
-      console.log("Creating prompt with data:", prompt);
 
       return api.createPrompt(prompt);
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["prompts"] });
-      console.log("Prompt created successfully:", data);
     },
     onError: (error) => {
       console.error("Error creating prompt:", error);
@@ -80,7 +78,6 @@ export const useUpdatePrompt = () => {
       if (data?.id) {
         queryClient.invalidateQueries({ queryKey: ["prompt", data.id] });
       }
-      console.log("Prompt updated successfully:", data);
     },
     onError: (error) => {
       console.error("Error updating prompt:", error);
@@ -104,7 +101,6 @@ export const useDeletePrompt = () => {
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ["prompts"] });
       queryClient.invalidateQueries({ queryKey: ["prompt", id] });
-      console.log("Prompt deleted successfully:", id);
     },
     onError: (error) => {
       console.error("Error deleting prompt:", error);

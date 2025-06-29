@@ -65,17 +65,23 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
       const selectedVoiceIndex = elevenLabsVoices.findIndex((voice) => {
         return voice?.voiceId === agentData?.conversationConfig?.tts?.voiceId;
       });
-      
+
       if (selectedVoiceIndex !== -1) {
         setCurrentIndex(selectedVoiceIndex);
-        setSelectedElement(<VoiceDetails agentVoice={elevenLabsVoices[selectedVoiceIndex]} />);
+        setSelectedElement(
+          <VoiceDetails agentVoice={elevenLabsVoices[selectedVoiceIndex]} />
+        );
       }
     } else if (elevenLabsVoices && elevenLabsVoices.length > 0) {
       // If no specific voice is selected, default to the first one
       setCurrentIndex(0);
       setSelectedElement(<VoiceDetails agentVoice={elevenLabsVoices[0]} />);
     }
-  }, [elevenLabsVoices, agentData?.conversationConfig?.tts?.voiceId, setSelectedElement]);
+  }, [
+    elevenLabsVoices,
+    agentData?.conversationConfig?.tts?.voiceId,
+    setSelectedElement,
+  ]);
   const handleFiltersChange = (newFilters: AgentVoicesFilterValues) => {
     setFilters(newFilters);
   };

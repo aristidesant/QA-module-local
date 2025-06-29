@@ -14,7 +14,8 @@
 
 .campaignName {
   margin-bottom: 0.5rem;
-  color: var(--mantine-color-dark-8);
+  color: var(--mantine-color-dark-9);
+  font-weight: 600;
 }
 
 .descriptionSection {
@@ -24,10 +25,11 @@
 
 .description {
   text-align: center;
-  color: var(--mantine-color-dark-6);
+  color: var(--mantine-color-dimmed);
   line-height: 1.6;
   max-width: 800px;
   margin: 0 auto;
+  font-size: var(--mantine-font-size-sm);
 }
 
 .budgetBar {

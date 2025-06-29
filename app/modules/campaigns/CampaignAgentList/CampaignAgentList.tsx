@@ -2,19 +2,25 @@ import { ActionIcon, SimpleGrid, Text } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { IconPlus, IconUserSearch } from "@tabler/icons-react";
+import { useCallback } from "react";
 import { AgentSelection } from "~/components/AgentSelection/AgentSelection";
 import SectionCard from "~/components/SectionCard";
+import type AgentListObject from "~/models/AgentListObject";
 import AgentCard from "~/modules/agents/components/AgentCard";
-
 import {
   useCreateCampaignAgent,
   useGetCampaignAgents,
 } from "~/queries/campaignAgentsQueries";
 
-type CampaignAgentListProps = {
-  // Define any props if needed
-  campaignId: string; // Optional campaign ID to filter agents
-};
+interface CampaignAgentListProps {
+  campaignId: string;
+}
+
+interface CampaignAgent {
+  id: string;
+  agent: AgentListObject;
+  // Add other fields if they exist in the API response
+}
 
 const CampaignAgentList: React.FC<CampaignAgentListProps> = ({
   campaignId,
@@ -25,54 +31,72 @@ const CampaignAgentList: React.FC<CampaignAgentListProps> = ({
 
   const { mutateAsync: assignAgentToCampaign } = useCreateCampaignAgent();
 
-  const handleAddAgent = () => {
+  const handleAgentSelect = useCallback(
+    async (agent: AgentListObject) => {
+      try {
+        modals.close("add-agent-to-campaign");
+        const campaignIdNum = parseInt(campaignId, 10);
+
+        if (isNaN(campaignIdNum) || !agent.id) {
+          throw new Error("Invalid campaign ID or agent ID");
+        }
+
+        await assignAgentToCampaign({
+          campaignId: campaignIdNum,
+          agentId: agent.id,
+        });
+
+        notifications.show({
+          title: "Success",
+          message: `Agent ${agent.name} added to campaign successfully!`,
+          color: "green",
+        });
+      } catch (error) {
+        console.error("Error adding agent to campaign:", error);
+        notifications.show({
+          title: "Error",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to add agent to campaign",
+          color: "red",
+        });
+      }
+    },
+    [campaignId, assignAgentToCampaign]
+  );
+
+  const handleAddAgent = useCallback(() => {
     modals.open({
       modalId: "add-agent-to-campaign",
       title: "Add Agent to Campaign",
       size: "lg",
-      children: (
-        <AgentSelection
-          onSelect={async (agent) => {
-            try {
-              modals.close("add-agent-to-campaign");
-              console.log("Selected agent:", agent, agent.config["agent_id"]);
-              // Call the mutation to assign the agent to the campaign
-              await assignAgentToCampaign({
-                campaignId: campaignId ? parseInt(campaignId) : 0,
-                agentId: agent.config["agent_id"],
-              });
-              notifications.show({
-                title: "Success",
-                message: `Agent ${agent.config["agent_id"]} added to campaign successfully!`,
-                color: "green",
-              });
-            } catch (error) {
-              notifications.show({
-                title: "Error",
-                message: "Failed to add agent to campaign",
-                color: "red",
-              });
-            }
-          }}
-        />
-      ),
+      children: <AgentSelection onSelect={handleAgentSelect} />,
     });
-  };
+  }, [handleAgentSelect]);
   return (
     <SectionCard
       title="Campaign Agents"
       description="List of agents assigned to campaigns"
       headerActions={
-        <ActionIcon onClick={handleAddAgent}>
-          <IconPlus />
+        <ActionIcon
+          onClick={handleAddAgent}
+          aria-label="Add agent to campaign"
+          variant="filled"
+          color="blue"
+        >
+          <IconPlus size={20} />
         </ActionIcon>
       }
       icon={IconUserSearch}
     >
       {agents && agents.length > 0 ? (
-        <SimpleGrid cols={{ base: 2, sm: 3 }}>
-          {agents.map((agent) => (
-            <AgentCard key={agent.id} agent={agent.agent} />
+        <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="md">
+          {agents.map((campaignAgent) => (
+            <AgentCard
+              key={`${campaignAgent.id}-${campaignAgent.agent.id}`}
+              agent={campaignAgent.agent}
+            />
           ))}
         </SimpleGrid>
       ) : (

@@ -22,13 +22,17 @@
 }
 
 .contactListCount {
-  font-weight: 600;
+  font-weight: 700;
   font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-dark-9);
+  line-height: 1.3;
 }
 
 .contactListName {
   font-size: var(--mantine-font-size-xs);
-  color: var(--mantine-color-gray-6);
+  color: var(--mantine-color-dimmed);
+  line-height: 1.3;
+  margin-top: 2px;
 }
 
 /* Contact List Card Styles */

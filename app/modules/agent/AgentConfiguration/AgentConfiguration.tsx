@@ -33,7 +33,6 @@ const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
   const shouldDisplayAgentSettings =
     (agentMode && agentConfigurationType === "custom") || !agentMode;
 
-  console.log(JSON.stringify(editableAgent));
   return (
     <Stack>
       <AgentVoices

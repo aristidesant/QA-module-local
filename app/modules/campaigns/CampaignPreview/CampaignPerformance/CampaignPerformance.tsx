@@ -36,13 +36,15 @@ export const CampaignPerformance: React.FC<CampaignPerformanceProps> = ({
   createdAt,
 }) => {
   // Calculate metrics
-  const callAnswerRate = stats.callsMade > 0
-    ? Math.round((stats.callsAnswered / stats.callsMade) * 100)
-    : 0;
+  const callAnswerRate =
+    stats.callsMade > 0
+      ? Math.round((stats.callsAnswered / stats.callsMade) * 100)
+      : 0;
 
   const daysRunning = createdAt
     ? Math.ceil(
-        (new Date().getTime() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24)
+        (new Date().getTime() - new Date(createdAt).getTime()) /
+          (1000 * 60 * 60 * 24)
       )
     : 0;
 
@@ -51,7 +53,7 @@ export const CampaignPerformance: React.FC<CampaignPerformanceProps> = ({
       title="Campaign Performance"
       description="Key metrics and statistics"
     >
-      <Stack gap="md" className={classes.statsGrid}>
+      <Stack gap="xs" className={classes.statsGrid}>
         <StatCard
           label="Calls Made"
           value={stats.callsMade.toLocaleString()}
@@ -63,7 +65,7 @@ export const CampaignPerformance: React.FC<CampaignPerformanceProps> = ({
         <StatCard
           label="Answer Rate"
           value={`${callAnswerRate}%`}
-          description="of calls were answered"
+          description="of calls answered"
           icon={<IconUserCheck size={24} />}
           color="green"
         />

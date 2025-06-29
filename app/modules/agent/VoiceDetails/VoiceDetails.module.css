@@ -132,17 +132,9 @@
   gap: var(--mantine-spacing-xs);
 }
 
-.slider {
+.progressRoot {
   width: 100%;
-}
-
-.slider .mantine-Slider-track {
-  height: 6px;
-}
-
-.slider .mantine-Slider-thumb {
-  border: 2px solid var(--mantine-color-white);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
 }
 
 .metricCard {
