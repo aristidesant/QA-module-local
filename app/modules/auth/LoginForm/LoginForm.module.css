@@ -1,55 +1,225 @@
-/* app/modules/auth/LoginForm/LoginForm.module.css */
 .wrapper {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, 
-    var(--mantine-color-blue-0) 0%, 
-    var(--mantine-color-grape-0) 50%, 
-    var(--mantine-color-indigo-0) 100%);
+  background: linear-gradient(135deg, #f0f4ff 0%, #f5f7ff 50%, #edf4ff 100%);
+  padding: 20px;
+  width: 100%;
   position: relative;
   overflow: hidden;
 }
 
-.wrapper::before {
-  content: '';
+.wrapper::before,
+.wrapper::after {
+  content: "";
   position: absolute;
+  /* width: 300px; */
+  /* height: 300px; */
+  border-radius: 50%;
+  background: rgba(79, 70, 229, 0.1);
+  filter: blur(40px);
+  z-index: 0;
+}
+
+.wrapper::before {
+  top: -100px;
+  left: -100px;
+}
+
+.wrapper::after {
+  bottom: -100px;
+  right: -100px;
+  background: rgba(14, 165, 233, 0.1);
+  width: 250px;
+  height: 250px;
+}
+
+/* Additional bubble elements */
+.wrapper::before,
+.wrapper::after {
+  animation: float 15s infinite ease-in-out;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-20px) scale(1.05);
+  }
+}
+
+.form {
+  width: 100%;
+  max-width: 360px;
+  position: relative;
+  z-index: 1;
+  margin: 0 auto;
+}
+
+.paper {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05),
+    0 8px 10px -6px rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(234, 236, 239, 0.7);
+  padding: 36px 32px;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 32px;
+  width: 100%;
+}
+
+.logo {
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.subtitle {
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 0;
+  font-weight: 400;
+}
+
+.formContainer {
+  margin-top: 24px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.inputLabel {
+  font-weight: 500;
+  color: #334155;
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.input {
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-size: 14px;
+  padding-left: 40px;
+  height: 42px;
+  color: #334155;
+  background-color: #f8fafc;
+}
+
+.input:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+  background-color: white;
+}
+
+.inputRoot {
+  margin-bottom: 16px;
+}
+
+.visibilityToggle {
+  color: #94a3b8;
+}
+
+.inputIcon {
+  color: #94a3b8;
+  width: 18px;
+  height: 18px;
+}
+
+.submitButton {
+  height: 42px;
+  font-weight: 500;
+  font-size: 14px;
+  border-radius: 6px;
+  background: #4f46e5;
+  transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+  margin-top: 24px;
+  box-shadow: 0 2px 5px rgba(79, 70, 229, 0.2);
+}
+
+.submitButton:hover {
+  background: #4338ca;
+  box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
+}
+
+.submitButton:active {
+  transform: translateY(1px);
+}
+
+.rememberMe {
+  color: #475569;
+  font-size: 14px;
+}
+
+.checkboxRoot {
+  display: none;
+}
+
+.checkboxInput {
+  display: none;
+}
+
+.forgotPassword {
+  color: #0ea5e9;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.forgotPassword:hover {
+  color: #0284c7;
+  text-decoration: underline;
+}
+
+.signUpLink {
+  color: #0ea5e9;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.signUpLink:hover {
+  color: #0284c7;
+  text-decoration: underline;
+}
+
+.errorMessage {
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.loadingOverlay {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: 
-    radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.1) 0%, transparent 70%),
-    radial-gradient(circle at 75% 75%, rgba(147, 51, 234, 0.1) 0%, transparent 70%);
-  z-index: 0;
-}
-
-.form {
-  max-width: 420px;
-  width: 100%;
-  position: relative;
-  z-index: 1;
-}
-
-.paper {
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 
-    0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  transition: none;
-}
-
-.paper:hover,
-.paper:focus,
-.paper:focus-visible,
-.paper:focus-within {
-  transform: none;
-  outline: none;
-  box-shadow: 
-    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: 16px;
+  backdrop-filter: blur(2px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
     0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
 }
 
@@ -59,14 +229,7 @@
 }
 
 .title {
-  font-size: 28px;
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--mantine-color-gray-9), var(--mantine-color-blue-7));
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 8px;
-  letter-spacing: -0.025em;
+  display: none;
 }
 
 .subtitle {
@@ -114,7 +277,11 @@
 }
 
 .signInButton {
-  background: linear-gradient(135deg, var(--mantine-color-blue-6), var(--mantine-color-blue-7));
+  background: linear-gradient(
+    135deg,
+    var(--mantine-color-blue-6),
+    var(--mantine-color-blue-7)
+  );
   border: none;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
   transition: all 0.2s ease;
@@ -122,7 +289,11 @@
 }
 
 .signInButton:hover {
-  background: linear-gradient(135deg, var(--mantine-color-blue-7), var(--mantine-color-blue-8));
+  background: linear-gradient(
+    135deg,
+    var(--mantine-color-blue-7),
+    var(--mantine-color-blue-8)
+  );
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(59, 130, 246, 0.5);
 }
@@ -162,15 +333,15 @@
   .wrapper {
     padding: 16px;
   }
-  
+
   .paper {
     padding: 24px !important;
   }
-  
+
   .title {
     font-size: 24px;
   }
-  
+
   .subtitle {
     font-size: 14px;
   }

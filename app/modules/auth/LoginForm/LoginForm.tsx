@@ -11,130 +11,201 @@ import {
   Checkbox,
   Anchor,
   Loader,
-  useMantineTheme,
+  Group,
+  Divider,
+  Center,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconAt, IconLock, IconAlertCircle } from "@tabler/icons-react";
-import { useEffect } from "react";
-import { useActionData, useFetcher, useNavigation } from "react-router";
+import {
+  IconAt,
+  IconLock,
+  IconAlertCircle,
+  IconEye,
+  IconEyeOff,
+} from "@tabler/icons-react";
+import { useEffect, useState } from "react";
+import { useActionData, useSubmit, useNavigation } from "react-router";
 import classes from "./LoginForm.module.css";
 import Logo from "~/components/Logo";
 
+interface FormValues {
+  username: string;
+  password: string;
+  rememberMe: boolean;
+}
+
 interface ActionData {
   error?: string;
-  success?: string;
+  formError?: string;
+  fieldErrors?: {
+    username?: string;
+    password?: string;
+  };
 }
 
 export function LoginForm() {
-  const fetcher = useFetcher();
+  const submit = useSubmit();
   const actionData = useActionData() as ActionData | undefined;
   const navigation = useNavigation();
-  const theme = useMantineTheme();
-  const isSubmitting = navigation.state === "submitting";
+  const [formError, setFormError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const form = useForm({
+  const isSubmitting = navigation.state === "submitting";
+  const isRedirecting = navigation.state === "loading";
+  const isLoading = isSubmitting || isRedirecting;
+
+  const form = useForm<FormValues>({
     initialValues: {
       username: "",
       password: "",
+      rememberMe: false,
     },
     validate: {
-      username: (value: string) =>
-        !value.trim() ? "Username is required" : null,
-      password: (value: string) => (!value ? "Password is required" : null),
+      username: (value) => (!value.trim() ? "Username is required" : null),
+      password: (value) => (!value ? "Password is required" : null),
     },
   });
 
   useEffect(() => {
-    if (actionData?.error) {
-      form.setFieldError("password", actionData.error);
+    // Handle server-side validation errors
+    if (actionData?.fieldErrors) {
+      Object.entries(actionData.fieldErrors).forEach(([field, error]) => {
+        if (error) {
+          form.setFieldError(field, error);
+        }
+      });
+    }
+
+    // Handle form-level errors
+    if (actionData?.formError) {
+      setFormError(actionData.formError);
+    } else if (actionData?.error) {
+      // Fallback for backward compatibility
+      setFormError(actionData.error);
+    } else {
+      setFormError(null);
     }
   }, [actionData, form]);
 
+  const togglePasswordVisibility = () => setShowPassword((show) => !show);
+
   return (
     <div className={classes.wrapper}>
-      <Container size="xs" className={classes.form}>
-        <Paper
-          className={classes.paper}
-          withBorder
-          shadow="xl"
-          p={40}
-          radius="lg"
-        >
-          <Box className={classes.header}>
-            <Logo />
-            <Text mt="md" className={classes.subtitle}>
+      <div className={classes.form}>
+        <Paper className={classes.paper} radius="md" withBorder>
+          <div className={classes.header}>
+            <div className={classes.logo}>
+              <Logo />
+            </div>
+            <Text className={classes.subtitle} size="sm" c="dimmed">
               Sign in to your account to continue
             </Text>
-          </Box>
+          </div>
 
-          <fetcher.Form
+          <form
             method="post"
             className={classes.formContainer}
-            onSubmit={form.onSubmit(() => {})}
+            onSubmit={form.onSubmit((values) => {
+              const formData = new FormData();
+              formData.append("username", values.username);
+              formData.append("password", values.password);
+              submit(formData, { method: "post" });
+            })}
           >
-            <Stack gap="lg">
-              <TextInput
-                required
-                label="Username"
-                placeholder="Enter your username"
-                leftSection={<IconAt size={18} />}
+            {/* Form error alert */}
+            {formError && (
+              <Alert
+                variant="light"
+                color="red"
+                title="Login failed"
+                icon={<IconAlertCircle size={18} />}
+                mb="md"
                 radius="md"
-                size="md"
-                styles={{
-                  label: { fontWeight: 500, marginBottom: 8 },
-                  input: { fontSize: 16 },
-                }}
-                {...form.getInputProps("username")}
-                name="username"
-              />
+                p="sm"
+                className={classes.errorMessage}
+              >
+                {formError}
+              </Alert>
+            )}
 
-              <PasswordInput
-                required
-                label="Password"
-                placeholder="Enter your password"
-                leftSection={<IconLock size={18} />}
-                radius="md"
-                size="md"
-                styles={{
-                  label: { fontWeight: 500, marginBottom: 8 },
-                  input: { fontSize: 16 },
-                }}
-                {...form.getInputProps("password")}
-                name="password"
-              />
+            {/* Loading overlay */}
+            {(isSubmitting || isRedirecting) && (
+              <div className={classes.loadingOverlay}>
+                <Group gap="sm">
+                  <Loader size="sm" />
+                  <Text size="sm" c="dimmed">
+                    Signing in...
+                  </Text>
+                </Group>
+              </div>
+            )}
+            <Stack gap="xs">
+              <div>
+                <Text className={classes.inputLabel} mb={4}>
+                  Username <span style={{ color: "red" }}>*</span>
+                </Text>
+                <TextInput
+                  required
+                  placeholder="Enter your username"
+                  leftSection={
+                    <IconAt className={classes.inputIcon} stroke={1.5} />
+                  }
+                  leftSectionPointerEvents="none"
+                  classNames={{
+                    input: classes.input,
+                    root: classes.inputRoot,
+                  }}
+                  {...form.getInputProps("username")}
+                  name="username"
+                  autoComplete="username"
+                />
+              </div>
 
-              {actionData?.error && (
-                <Alert
-                  icon={<IconAlertCircle size={16} />}
-                  color="red"
-                  variant="light"
-                  radius="md"
-                  className={classes.errorAlert}
-                >
-                  {actionData.error}
-                </Alert>
-              )}
+              <div>
+                <Text className={classes.inputLabel} mb={4}>
+                  Password <span style={{ color: "red" }}>*</span>
+                </Text>
+                <PasswordInput
+                  required
+                  placeholder="Enter your password"
+                  leftSection={
+                    <IconLock className={classes.inputIcon} stroke={1.5} />
+                  }
+                  leftSectionPointerEvents="none"
+                  visibilityToggleIcon={({ reveal }) =>
+                    reveal ? (
+                      <IconEyeOff size={18} stroke={1.5} />
+                    ) : (
+                      <IconEye size={18} stroke={1.5} />
+                    )
+                  }
+                  classNames={{
+                    input: classes.input,
+                    root: classes.inputRoot,
+                    visibilityToggle: classes.visibilityToggle,
+                  }}
+                  {...form.getInputProps("password")}
+                  name="password"
+                  autoComplete="current-password"
+                />
+              </div>
 
               <Button
                 type="submit"
                 fullWidth
-                size="md"
-                radius="md"
-                loading={isSubmitting}
-                className={classes.signInButton}
-                styles={{
-                  root: { height: 48, fontSize: 16, fontWeight: 600 },
-                }}
-                rightSection={
-                  isSubmitting ? <Loader size="xs" color="white" /> : null
-                }
+                mt="md"
+                className={classes.submitButton}
+                loading={isLoading}
+                loaderProps={{ type: "dots" }}
+                leftSection={!isLoading && <IconLock size={18} stroke={1.5} />}
+                disabled={isLoading}
               >
-                {isSubmitting ? "Signing in..." : "Sign in"}
+                Sign in
               </Button>
             </Stack>
-          </fetcher.Form>
+          </form>
         </Paper>
-      </Container>
+      </div>
     </div>
   );
 }

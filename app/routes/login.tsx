@@ -16,11 +16,32 @@ export function loader() {
 
 export async function action({ request }: { request: Request }) {
   const formData = await request.formData();
-
   const session = await getSession(request.headers.get("Cookie"));
-
   const username = formData.get("username") as string;
   const password = formData.get("password") as string;
+  const rememberMe = formData.get("rememberMe") === "on";
+
+  // Basic validation
+  const fieldErrors: Record<string, string> = {};
+  if (!username?.trim()) fieldErrors.username = "Username is required";
+  if (!password) fieldErrors.password = "Password is required";
+
+  // If there are validation errors, return them
+  if (Object.keys(fieldErrors).length > 0) {
+    return new Response(
+      JSON.stringify({
+        fieldErrors,
+        formError: "Please fix the errors below",
+      }),
+      {
+        status: 400,
+        headers: {
+          "Content-Type": "application/json",
+          "Set-Cookie": await commitSession(session),
+        },
+      }
+    );
+  }
 
   try {
     const result = await authenticate({ username, password });
@@ -32,33 +53,54 @@ export async function action({ request }: { request: Request }) {
       session.set("clientId", userData.clientId.toString());
       session.set("email", userData.email);
       session.set("accessToken", result.accessToken);
-      session.flash("success", "Login successful");
+      
+      // Set session expiration based on remember me
+      const sessionOptions = rememberMe 
+        ? { expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) } // 7 days
+        : {};
 
       return redirect("/", {
         headers: {
-          "Set-Cookie": await commitSession(session),
+          "Set-Cookie": await commitSession(session, sessionOptions),
         },
       });
     } else {
-      session.flash("error", "Invalid credentials");
-      return redirect("/login", {
-        headers: {
-          "Set-Cookie": await commitSession(session),
-        },
-      });
+      return new Response(
+        JSON.stringify({
+          formError: "Invalid username or password",
+        }),
+        {
+          status: 401,
+          headers: {
+            "Content-Type": "application/json",
+            "Set-Cookie": await commitSession(session),
+          },
+        }
+      );
     }
   } catch (error: any) {
     console.error("Login error:", error);
-    session.flash("error", error?.response?.data?.message || "Login failed");
-
-    return redirect("/login", {
-      headers: {
-        "Set-Cookie": await commitSession(session),
-      },
-    });
+    const errorMessage = error?.response?.data?.message || "An unexpected error occurred";
+    
+    return new Response(
+      JSON.stringify({
+        formError: errorMessage,
+      }),
+      {
+        status: error?.response?.status || 500,
+        headers: {
+          "Content-Type": "application/json",
+          "Set-Cookie": await commitSession(session),
+        },
+      }
+    );
   }
 }
 
 export default function LoginPage() {
-  return <LoginForm />;
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+      <LoginForm />
+    </div>
+  );
 }
