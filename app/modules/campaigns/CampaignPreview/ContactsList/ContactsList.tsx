@@ -8,7 +8,7 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { IconListCheck, IconRefresh } from "@tabler/icons-react";
-import { Section } from "../Section";
+import { RightSection as Section } from "~/components/RightSection";
 import classes from "./ContactsList.module.css";
 import type { ContactList as ContactListType } from "../../../../models/CampaignsModel";
 

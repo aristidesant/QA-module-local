@@ -6,7 +6,7 @@ import {
   IconClockHour4,
   IconCalendarEvent,
 } from "@tabler/icons-react";
-import { Section } from "../Section";
+import { RightSection as Section } from "~/components/RightSection";
 import { StatCard } from "../../../../components/StatCard";
 import classes from "./CampaignPerformance.module.css";
 

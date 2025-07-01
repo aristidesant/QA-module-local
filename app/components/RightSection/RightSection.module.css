@@ -1,0 +1,8 @@
+.sectionTitle {
+  margin-bottom: 0.25rem;
+  color: var(--mantine-color-dark-9);
+}
+
+.sectionDescription {
+  margin-bottom: 0.5rem;
+}

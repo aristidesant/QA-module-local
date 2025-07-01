@@ -1,50 +1,36 @@
 .agentCard {
-  display: flex;
-  align-items: center;
-  gap: var(--mantine-spacing-sm);
-  padding: var(--mantine-spacing-xs);
-  border-radius: var(--mantine-radius-sm);
-  background: var(--mantine-color-gray-0);
-  transition: background-color 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: var(--mantine-color-body);
+  border: 1px solid var(--mantine-color-gray-3);
 }
 
 .agentCard:hover {
-  background: var(--mantine-color-gray-1);
+  transform: translateY(-1px);
+  box-shadow: var(--mantine-shadow-sm);
+  border-color: var(--mantine-color-gray-4);
 }
 
 .agentAvatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--mantine-color-blue-0);
+  background: var(--mantine-color-blue-1);
   color: var(--mantine-color-blue-7);
   font-weight: 600;
-}
-
-.agentInfo {
-  flex: 1;
-  min-width: 0;
+  border: 2px solid var(--mantine-color-white);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .agentName {
   font-weight: 600;
   font-size: var(--mantine-font-size-sm);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.2;
   color: var(--mantine-color-dark-9);
+  margin-bottom: 2px;
 }
 
-.agentMeta {
+.statusContainer {
   display: flex;
   align-items: center;
-  gap: var(--mantine-spacing-xs);
-  font-size: var(--mantine-font-size-xs);
-  color: var(--mantine-color-dimmed);
-  margin-top: 2px;
+  gap: 4px;
+  white-space: nowrap;
 }
 
 .statusDot {
@@ -52,20 +38,32 @@
   height: 8px;
   border-radius: 50%;
   display: inline-block;
+  flex-shrink: 0;
 }
 
 .statusOnline {
-  background-color: var(--mantine-color-green-5);
+  background-color: var(--mantine-color-green-6);
+  box-shadow: 0 0 0 2px var(--mantine-color-green-1);
 }
 
 .statusOffline {
   background-color: var(--mantine-color-gray-5);
+  box-shadow: 0 0 0 2px var(--mantine-color-gray-1);
 }
 
 .statusBusy {
-  background-color: var(--mantine-color-red-5);
+  background-color: var(--mantine-color-red-6);
+  box-shadow: 0 0 0 2px var(--mantine-color-red-1);
 }
 
 .statusAway {
-  background-color: var(--mantine-color-yellow-5);
+  background-color: var(--mantine-color-yellow-6);
+  box-shadow: 0 0 0 2px var(--mantine-color-yellow-1);
+}
+
+/* Ensure text doesn't overflow */
+.textTruncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

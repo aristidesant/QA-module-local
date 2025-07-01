@@ -10,7 +10,7 @@ import {
   Tooltip,
   Box,
 } from "@mantine/core";
-import { Section } from "./Section";
+import { RightSection as Section } from "~/components/RightSection";
 import CampaignOverview from "./CampaignOverview";
 import { CampaignPerformance } from "./CampaignPerformance";
 import { AssignedAgents } from "./AssignedAgents";

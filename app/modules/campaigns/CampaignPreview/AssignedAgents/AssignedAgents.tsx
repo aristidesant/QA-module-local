@@ -1,6 +1,6 @@
 import React from "react";
-import { Text, Stack, Avatar, Group, Paper } from "@mantine/core";
-import { Section } from "../Section";
+import { Text, Stack, Avatar, Group, Paper, Box } from "@mantine/core";
+import { RightSection as Section } from "~/components/RightSection";
 import classes from "./AssignedAgents.module.css";
 import type { Agent } from "../../../../models/CampaignsModel";
 
@@ -40,37 +40,44 @@ export const AssignedAgents: React.FC<AssignedAgentsProps> = ({ agents }) => {
       description={`${agents.length} agents assigned`}
     >
       <Stack gap="xs">
-        {agents.map((agent) => (
-          <Paper>
-            <Avatar
-              src={agent.avatarUrl}
-              alt={agent.name}
-              radius="xl"
-              size={36}
-              className={classes.agentAvatar}
-            >
-              {agent.name
-                .split(" ")
-                .map((n: string) => n[0])
-                .join("")
-                .toUpperCase()}
-            </Avatar>
-            <div className={classes.agentInfo}>
-              <div className={classes.agentName}>{agent.name}</div>
-              <Group gap="xs" align="center">
-                <Text size="xs" c="dimmed">
-                  {formatAgentLocation(agent.language, agent.countryCode)}
+        {agents.map((agent, index) => (
+          <Paper key={index} withBorder p="sm" radius="md" className={classes.agentCard}>
+            <Group align="center" wrap="nowrap">
+              <Avatar
+                src={agent.avatarUrl}
+                alt={agent.name}
+                radius="xl"
+                size={42}
+                className={classes.agentAvatar}
+              >
+                {agent.name
+                  .split(" ")
+                  .map((n: string) => n[0])
+                  .join("")
+                  .toUpperCase()}
+              </Avatar>
+              
+              <Box style={{ flex: 1, minWidth: 0 }}>
+                <Text fw={500} size="sm" className={classes.agentName}>
+                  {agent.name}
                 </Text>
-                <span
-                  className={`${classes.statusDot} ${getStatusDotClass(
-                    agent.status
-                  )}`}
-                />
-                <Text size="xs" c="dimmed">
-                  {agent.status.charAt(0).toUpperCase() + agent.status.slice(1)}
-                </Text>
-              </Group>
-            </div>
+                <Group gap="xs" align="center" wrap="nowrap">
+                  <Text size="xs" c="dimmed" truncate>
+                    {formatAgentLocation(agent.language, agent.countryCode)}
+                  </Text>
+                  <Box className={classes.statusContainer}>
+                    <span
+                      className={`${classes.statusDot} ${getStatusDotClass(
+                        agent.status
+                      )}`}
+                    />
+                    <Text size="xs" c="dimmed" span>
+                      {agent.status.charAt(0).toUpperCase() + agent.status.slice(1)}
+                    </Text>
+                  </Box>
+                </Group>
+              </Box>
+            </Group>
           </Paper>
         ))}
       </Stack>

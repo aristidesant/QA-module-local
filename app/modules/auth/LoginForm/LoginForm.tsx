@@ -5,15 +5,9 @@ import {
   Paper,
   Text,
   Stack,
-  Container,
-  Box,
   Alert,
-  Checkbox,
-  Anchor,
   Loader,
   Group,
-  Divider,
-  Center,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {

@@ -1,19 +1,19 @@
-import React from 'react';
-import { Stack, Text, Title } from '@mantine/core';
-import classes from './CampaignPreview.module.css';
+import React from "react";
+import { Stack, Text, Title } from "@mantine/core";
+import classes from "./RightSection.module.css";
 
-interface SectionProps {
+interface RightSectionProps {
   title: string;
   description?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
 }
 
-export const Section: React.FC<SectionProps> = ({
+export const RightSection: React.FC<RightSectionProps> = ({
   title,
   description,
   children,
-  className = '',
+  className = "",
 }) => {
   return (
     <div className={className}>
@@ -24,7 +24,7 @@ export const Section: React.FC<SectionProps> = ({
           </Title>
           {description && (
             <div className={classes.sectionDescription}>
-              {typeof description === 'string' ? (
+              {typeof description === "string" ? (
                 <Text size="xs" c="dimmed">
                   {description}
                 </Text>
@@ -40,4 +40,4 @@ export const Section: React.FC<SectionProps> = ({
   );
 };
 
-export default Section;
+export default RightSection;
