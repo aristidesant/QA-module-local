@@ -9,7 +9,7 @@ import styles from "./AIPersonality.module.css";
 import { AIPersonalityEditModal } from "./index";
 
 interface AIPersonalityProps {
-  agentData: AgentConfigModel;
+  agentData: Partial<AgentConfigModel>;
   onUpdateAgentData: (updatedFields: any) => void;
 }
 

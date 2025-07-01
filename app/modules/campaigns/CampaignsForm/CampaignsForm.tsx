@@ -87,6 +87,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
       clientId: campaign?.clientId ?? 0,
       tags: campaign?.tags || [],
       workingHours: campaign?.workingHours || defaultWorkingHours,
+      agentConfig: campaign?.agentConfig || {},
     },
     validate: {
       name: (value) => (value ? null : "Name is required"),
@@ -105,6 +106,11 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
     if (form.validate().hasErrors) {
       return;
     }
+
+    // Log the campaign data to verify agentConfig is included
+    console.log("Campaign data being submitted:", value);
+    console.log("AgentConfig data:", value.agentConfig);
+
     if (campaign?.id) {
       // Up date existing campaign
       try {
@@ -154,8 +160,17 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
           {selectedTab === "general" && <GeneralSection />}
           {selectedTab === "agents" && (
             <AgentConfiguration
-              editableAgent={{}}
-              setEditableAgent={(e) => {}}
+              editableAgent={form.values.agentConfig || {}}
+              setEditableAgent={(updatedAgent) => {
+                // Handle both direct object and function updates
+                if (typeof updatedAgent === "function") {
+                  const currentAgent = form.values.agentConfig || {};
+                  const newAgent = updatedAgent(currentAgent);
+                  form.setFieldValue("agentConfig", newAgent);
+                } else {
+                  form.setFieldValue("agentConfig", updatedAgent);
+                }
+              }}
             />
           )}
           {selectedTab === "contacts" && (

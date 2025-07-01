@@ -5,7 +5,7 @@ import AIPersonality from "../AgentSettings/AIPersonality/AIPersonality";
 
 // Define the props for AgentSettings
 interface AgentSettingsProps {
-  agentData?: AgentConfigModel; // TODO: Define a more specific type for agentData
+  agentData?: Partial<AgentConfigModel>; // TODO: Define a more specific type for agentData
   onUpdateAgentData: (updatedFields: any) => void; // TODO: Define a more specific type for updatedFields
 }
 

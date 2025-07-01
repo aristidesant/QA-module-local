@@ -11,6 +11,11 @@ import {
   IconSettings,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router";
+import {
+  getAgentAvatarUrl,
+  getAgentLanguage,
+  getLanguageFlagEmoji,
+} from "~/utils/agentUtils";
 
 type AgentSimpleDetailsProps = {
   agent: AgentListObject;
@@ -33,27 +38,15 @@ export const AgentSimpleDetails: React.FC<AgentSimpleDetailsProps> = ({
       setIsVisible(false);
     };
   }, [agent.id]); // Re-trigger animation when agent changes
-  // ElevenLabs/agent config fields
-  const voiceLanguage =
-    agent.config?.conversationConfig?.agent?.language || "Spanish ES";
-  const avatarUrl = agent.voice?.previewUrl || "/images/avatar-f-do.png";
+
+  // Use utility functions for consistent agent data extraction
+  const voiceLanguage = getAgentLanguage(agent);
+  const avatarUrl = getAgentAvatarUrl(agent);
   const isOnline = agent.status === "ACTIVE";
 
-  // Get flag emoji based on language
+  // Get flag emoji based on language - use utility function
   const getFlagEmoji = (language: string) => {
-    if (
-      language.toLowerCase().includes("spanish") ||
-      language.toLowerCase().includes("es")
-    ) {
-      return "🇪🇸";
-    }
-    if (
-      language.toLowerCase().includes("english") ||
-      language.toLowerCase().includes("en")
-    ) {
-      return "🇺🇸";
-    }
-    return "🌐";
+    return getLanguageFlagEmoji(language);
   };
 
   // Voice settings from conversationConfig
@@ -63,8 +56,6 @@ export const AgentSimpleDetails: React.FC<AgentSimpleDetailsProps> = ({
     agent.config?.conversationConfig?.tts?.similarityBoost ?? 0.8;
   const optimizeLatency =
     agent.config?.conversationConfig?.tts?.optimizeStreamingLatency ?? 3;
-
-  // Additional agent info
 
   return (
     <Stack gap="md">

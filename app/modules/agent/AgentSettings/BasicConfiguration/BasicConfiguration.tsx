@@ -7,7 +7,7 @@ import styles from "./BasicConfiguration.module.css";
 import SectionCard from "../../../../components/SectionCard";
 
 interface BasicConfigurationProps {
-  agentData: AgentConfigModel;
+  agentData: Partial<AgentConfigModel>;
   onUpdateAgentData: (updatedFields: any) => void;
 }
 

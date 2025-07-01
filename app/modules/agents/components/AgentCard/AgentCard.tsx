@@ -19,6 +19,13 @@ import { useDeleteAgent } from "~/queries/agentQueries";
 import { useRevalidator } from "react-router";
 import { notifications } from "@mantine/notifications";
 import { OutboundCallForm } from "~/components/OutboundCallForm";
+import {
+  getAgentGender,
+  getAgentAvatarUrl,
+  getAgentLanguage,
+  getAgentLanguageCode,
+  getLanguageFlagEmoji,
+} from "~/utils/agentUtils";
 
 export interface AgentCardProps {
   agent: AgentListObject;
@@ -82,24 +89,12 @@ export const AgentCard: React.FC<AgentCardProps> = ({
 
   const createdAt = dayjs(agent.createdAt);
   const isValidDate = createdAt.isValid();
-  // Determine if the agent is female based on the agent data
-  // This assumes agent.config.gender or agent.config.sex may contain gender info
-  const isFemale =
-    typeof agent.config?.gender === "string"
-      ? agent.config.gender.toLowerCase() === "female"
-      : typeof agent.config?.sex === "string"
-      ? agent.config.sex.toLowerCase() === "female"
-      : false;
 
-  const language = agent.config?.language || "English"; // Default to English if not specified
-  // Determine flag based on language
-  let flagEmoji = "🇺🇸";
-  if (
-    language.toLowerCase() === "spanish" ||
-    language.toLowerCase() === "español"
-  ) {
-    flagEmoji = "🇩🇴"; // Dominican Republic
-  }
+  // Use utility functions for consistent agent data extraction
+  const { isFemale } = getAgentGender(agent);
+  const language = getAgentLanguage(agent);
+  const languageCode = getAgentLanguageCode(agent);
+  const flagEmoji = getLanguageFlagEmoji(languageCode);
 
   const handleDemoCall = (agent: AgentListObject) => {
     modals.open({

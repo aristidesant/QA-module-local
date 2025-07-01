@@ -16,7 +16,7 @@ import type { AgentConfigModel } from "~/models/AgentListObject";
 
 type AgentVoicesProps = {
   onSelectVoice: (voiceId: string) => void;
-  agentData?: AgentConfigModel;
+  agentData?: Partial<AgentConfigModel>;
   onUpdateAgentData: (updatedFields: any) => void; // TODO: Define a more specific type for updatedFields
 };
 

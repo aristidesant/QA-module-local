@@ -1,5 +1,8 @@
 // src/models/CampaignsModel.ts
 
+import type { AgentConfigModel } from "./AgentListObject";
+import type AgentListObject from "./AgentListObject";
+
 export interface WorkingHours {
   [key: string]: {
     enabled: boolean;
@@ -14,7 +17,7 @@ export interface Agent {
   avatarUrl?: string;
   language: string;
   countryCode: string; // ISO 3166-1 alpha-2 country code
-  status: 'online' | 'offline' | 'busy' | 'away';
+  status: "online" | "offline" | "busy" | "away";
 }
 
 export interface ContactList {
@@ -23,8 +26,8 @@ export interface ContactList {
   description?: string;
   totalContacts: number;
   lastUpdated?: string; // ISO date string
-  status?: 'active' | 'inactive' | 'processing' | 'error';
-  source?: 'csv' | 'api' | 'manual' | string;
+  status?: "active" | "inactive" | "processing" | "error";
+  source?: "csv" | "api" | "manual" | string;
   tags?: string[];
   metadata?: {
     headers?: string[];
@@ -37,8 +40,8 @@ export interface CampaignParameters {
   callingHours: {
     days: string[]; // e.g. ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
     startTime: string; // e.g. '09:00'
-    endTime: string;   // e.g. '18:00'
-    timezone: string;  // e.g. 'America/New_York'
+    endTime: string; // e.g. '18:00'
+    timezone: string; // e.g. 'America/New_York'
   };
   voicemailDetection: boolean;
   callRetries: number;
@@ -52,8 +55,8 @@ export interface Campaign {
   description: string;
   budget: number;
   spent: number;
-  type: 'OUTBOUND' | 'INBOUND';
-  status: 'ACTIVE' | 'INACTIVE' | 'PAUSED' | 'COMPLETED';
+  type: "OUTBOUND" | "INBOUND";
+  status: "ACTIVE" | "INACTIVE" | "PAUSED" | "COMPLETED";
   userId: number;
   clientId: number;
   promptId?: number;
@@ -61,7 +64,8 @@ export interface Campaign {
   updatedAt: string; // ISO date string
   tags?: string[];
   workingHours?: WorkingHours;
-  
+
+  agentConfig?: Partial<AgentConfigModel>;
   // Stats and performance
   stats?: {
     callsMade: number;
@@ -77,7 +81,7 @@ export interface Campaign {
     successRate: number;
     avgRating: number;
   }>;
-  
+
   // New fields for enhanced preview
   assignedAgents?: Agent[];
   contactList?: ContactList;

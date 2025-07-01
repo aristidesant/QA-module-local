@@ -10,9 +10,11 @@ import type { AgentConfigModel } from "~/models/AgentListObject";
 
 type AgentConfigurationProps = {
   agentMode?: boolean;
-  editableAgent?: AgentConfigModel;
+  editableAgent?: Partial<AgentConfigModel>;
   onVoiceSelect?: (voiceId: string) => void;
-  setEditableAgent: React.Dispatch<React.SetStateAction<AgentConfigModel>>;
+  setEditableAgent: React.Dispatch<
+    React.SetStateAction<Partial<AgentConfigModel>>
+  >;
 };
 const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
   editableAgent,
@@ -24,7 +26,7 @@ const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
     (state) => state.agentConfigurationType
   );
   const handleAgentUpdate = (updatedFields: any) => {
-    setEditableAgent((prev: AgentConfigModel) => ({
+    setEditableAgent((prev: Partial<AgentConfigModel>) => ({
       ...prev,
       ...updatedFields,
     }));
