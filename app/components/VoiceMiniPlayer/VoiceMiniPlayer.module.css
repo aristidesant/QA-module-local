@@ -1,0 +1,121 @@
+.voiceMiniPlayer {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, var(--mantine-color-blue-6), var(--mantine-color-blue-7));
+  box-shadow: 
+    0 4px 16px rgba(37, 117, 252, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.voiceMiniPlayer:hover:not(.disabled) {
+  transform: scale(1.05);
+  box-shadow: 
+    0 6px 20px rgba(37, 117, 252, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.voiceMiniPlayer:active:not(.disabled) {
+  transform: scale(0.95);
+}
+
+.voiceMiniPlayer.disabled {
+  background: linear-gradient(135deg, var(--mantine-color-gray-4), var(--mantine-color-gray-5));
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.playIcon {
+  color: white;
+  font-size: 24px;
+  margin-left: 2px; /* Slight offset to center the play triangle visually */
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+.pauseIcon {
+  color: white;
+  font-size: 20px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+.disabled .playIcon,
+.disabled .pauseIcon {
+  color: var(--mantine-color-gray-6);
+  filter: none;
+}
+
+.waveIndicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  border: 2px solid var(--mantine-color-blue-3);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  animation: none; /* No animation by default */
+}
+
+.waveIndicator.playing {
+  opacity: 1;
+  animation: wave 2s infinite; /* Only animate when playing */
+}
+
+.waveIndicator.playing:nth-child(2) {
+  animation-delay: 0.5s;
+  width: 96px;
+  height: 96px;
+}
+
+.waveIndicator.playing:nth-child(3) {
+  animation-delay: 1s;
+  width: 112px;
+  height: 112px;
+  border-color: var(--mantine-color-blue-2);
+}
+
+@keyframes wave {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0;
+  }
+}
+
+.loadingSpinner {
+  color: white;
+  font-size: 20px;
+  animation: spin 1s linear infinite;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+.disabled .loadingSpinner {
+  color: var(--mantine-color-gray-6);
+  filter: none;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

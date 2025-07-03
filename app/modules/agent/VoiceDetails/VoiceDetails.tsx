@@ -1,20 +1,10 @@
 import type { AgentVoiceModel } from "~/models/AgentVoiceModel";
-import {
-  Avatar,
-  Group,
-  Text,
-  Stack,
-  Badge,
-  Button,
-  Box,
-  Card,
-  Progress,
-} from "@mantine/core";
+import { Avatar, Group, Text, Stack, Badge, Box } from "@mantine/core";
 import {
   IconUser,
-  IconWaveSquare,
-  IconPlayerPlay,
-  IconPlayerPause,
+  IconGenderFemale,
+  IconWorld,
+  IconCalendar,
 } from "@tabler/icons-react";
 import { useState, useRef, useEffect } from "react";
 import styles from "./VoiceDetails.module.css";
@@ -115,11 +105,15 @@ const VoiceDetails: React.FC<VoiceDetailsProps> = ({ agentVoice }) => {
   };
 
   const flagSrc = getLanguageFlag(voice.language);
+  const displayGender =
+    voice.gender?.charAt(0) + voice.gender?.slice(1).toLowerCase();
+  const displayAccent = voice.accent || "Dominican";
+  const displayAgeRange = voice.age || "24-32";
 
   return (
     <Box className={styles.voiceContainer}>
-      {/* Profile Section */}
       <Stack align="center" gap="xs" className={styles.profileSection}>
+        {/* Avatar */}
         <Box className={styles.avatarContainer}>
           <Avatar
             src={avatarSrc}
@@ -131,13 +125,14 @@ const VoiceDetails: React.FC<VoiceDetailsProps> = ({ agentVoice }) => {
           >
             {!avatarSrc && <IconUser size={60} />}
           </Avatar>
-          <Box className={styles.onlineIndicator} />
         </Box>
 
+        {/* Voice Name */}
         <Text size="xl" fw={600} className={styles.voiceName}>
           {voice.name}
         </Text>
 
+        {/* Language */}
         {flagSrc && (
           <Group gap="xs" align="center">
             <img
@@ -157,104 +152,42 @@ const VoiceDetails: React.FC<VoiceDetailsProps> = ({ agentVoice }) => {
             Warm
           </Badge>
           <Badge variant="light" color="gray" radius="md">
-            Playful
+            Youthful
           </Badge>
         </Group>
-      </Stack>
 
-      <Stack className={styles.settingsSection}>
-        <Card className={styles.metricCard}>
-          <Group justify="space-between" mb="xs">
+        {/* Voice Details */}
+        <Stack gap="xs" w="100%" mt="md">
+          <Group justify="space-between" className={styles.detailRow}>
             <Group gap="xs">
-              <IconWaveSquare size={16} color="var(--mantine-color-gray-6)" />
-              <Text size="sm">Streaming Latency</Text>
+              <IconGenderFemale size={18} className={styles.detailIcon} />
+              <Text size="sm">Gender</Text>
             </Group>
             <Text size="sm" fw={500}>
-              Balanced
+              {displayGender}
             </Text>
           </Group>
-          <Progress.Root size={6} radius="sm" className={styles.progressRoot}>
-            <Progress.Section value={50} color="blue" animated />
-          </Progress.Root>
-        </Card>
 
-        <Card className={styles.metricCard}>
-          <Group justify="space-between" mb="xs">
+          <Group justify="space-between" className={styles.detailRow}>
             <Group gap="xs">
-              <IconWaveSquare size={16} color="var(--mantine-color-gray-6)" />
-              <Text size="sm">Stability</Text>
+              <IconWorld size={18} className={styles.detailIcon} />
+              <Text size="sm">Accent</Text>
             </Group>
             <Text size="sm" fw={500}>
-              Balanced
+              {displayAccent}
             </Text>
           </Group>
-          <Progress.Root size={6} radius="sm" className={styles.progressRoot}>
-            <Progress.Section value={60} color="blue" animated />
-          </Progress.Root>
-        </Card>
 
-        <Card className={styles.metricCard}>
-          <Group justify="space-between" mb="xs">
+          <Group justify="space-between" className={styles.detailRow}>
             <Group gap="xs">
-              <IconWaveSquare size={16} color="var(--mantine-color-gray-6)" />
-              <Text size="sm">Speed</Text>
+              <IconCalendar size={18} className={styles.detailIcon} />
+              <Text size="sm">Age Range</Text>
             </Group>
             <Text size="sm" fw={500}>
-              Fast
+              {displayAgeRange}
             </Text>
           </Group>
-          <Progress.Root size={6} radius="sm" className={styles.progressRoot}>
-            <Progress.Section value={75} color="blue" animated />
-          </Progress.Root>
-        </Card>
-
-        <Card className={styles.metricCard}>
-          <Group justify="space-between" mb="xs">
-            <Group gap="xs">
-              <IconWaveSquare size={16} color="var(--mantine-color-gray-6)" />
-              <Text size="sm">Similarity Boost</Text>
-            </Group>
-            <Text size="sm" fw={500}>
-              Normal
-            </Text>
-          </Group>
-          <Progress.Root size={6} radius="sm" className={styles.progressRoot}>
-            <Progress.Section value={40} color="blue" animated />
-          </Progress.Root>
-        </Card>
-        {/* Animated Play Button */}
-        <Box className={styles.playButtonContainer}>
-          <div className={styles.animatedPlayButton}>
-            <div
-              className={`${styles.pulseRing} ${
-                isPlaying ? styles.pulseRingActive : ""
-              }`}
-            />
-            <div
-              className={`${styles.outerRing} ${
-                isPlaying ? styles.outerRingActive : ""
-              }`}
-            />
-            <Button
-              className={`${styles.playButton} ${
-                isPlaying ? styles.playButtonActive : ""
-              }`}
-              variant="filled"
-              size="lg"
-              radius="xl"
-              color="blue"
-              onClick={handlePlayPause}
-              disabled={isLoading}
-              loading={isLoading}
-            >
-              {isPlaying ? (
-                <IconPlayerPause size={24} />
-              ) : (
-                <IconPlayerPlay size={24} />
-              )}
-            </Button>
-          </div>
-        </Box>
+        </Stack>
       </Stack>
     </Box>
   );

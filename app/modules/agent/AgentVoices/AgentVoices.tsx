@@ -17,6 +17,7 @@ import type { AgentConfigModel } from "~/models/AgentListObject";
 type AgentVoicesProps = {
   onSelectVoice: (voiceId: string) => void;
   agentData?: Partial<AgentConfigModel>;
+  onSetRightSection?: (rightSection: React.ReactNode) => void;
   onUpdateAgentData: (updatedFields: any) => void; // TODO: Define a more specific type for updatedFields
 };
 
@@ -24,6 +25,7 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
   onSelectVoice,
   agentData,
   onUpdateAgentData,
+  onSetRightSection,
 }) => {
   const [filters, setFilters] = useState<AgentVoicesFilterValues>({
     name: "",
@@ -47,7 +49,6 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
   const [playingVoiceId, setPlayingVoiceId] = useState<string | null>(null);
   const [playProgress, setPlayProgress] = useState<number>(0);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const { setSelectedElement } = useAgentStore((state) => state);
   // Track the current first visible index of the carousel
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -68,20 +69,17 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
 
       if (selectedVoiceIndex !== -1) {
         setCurrentIndex(selectedVoiceIndex);
-        setSelectedElement(
+        onSetRightSection?.(
           <VoiceDetails agentVoice={elevenLabsVoices[selectedVoiceIndex]} />
         );
+      } else {
       }
     } else if (elevenLabsVoices && elevenLabsVoices.length > 0) {
       // If no specific voice is selected, default to the first one
       setCurrentIndex(0);
-      setSelectedElement(<VoiceDetails agentVoice={elevenLabsVoices[0]} />);
+      onSetRightSection?.(<VoiceDetails agentVoice={elevenLabsVoices[0]} />);
     }
-  }, [
-    elevenLabsVoices,
-    agentData?.conversationConfig?.tts?.voiceId,
-    setSelectedElement,
-  ]);
+  }, [elevenLabsVoices, agentData?.conversationConfig?.tts?.voiceId]);
   const handleFiltersChange = (newFilters: AgentVoicesFilterValues) => {
     setFilters(newFilters);
   };
@@ -183,7 +181,7 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
           }}
           onSlideChange={(i) => {
             setCurrentIndex(i);
-            setSelectedElement(<VoiceDetails agentVoice={voices[i]} />);
+            onSetRightSection?.(<VoiceDetails agentVoice={voices[i]} />);
             onSelectVoice(voices[i].voice.id);
           }}
           initialSlide={currentIndex}

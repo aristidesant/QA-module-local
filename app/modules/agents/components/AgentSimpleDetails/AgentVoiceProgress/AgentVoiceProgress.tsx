@@ -1,10 +1,10 @@
-// AgentVoiceProgress.tsx
 import React from "react";
-import { Progress } from "@mantine/core";
+import { Progress, Stack, Group, Text } from "@mantine/core";
 import {
   IconWaveSine,
   IconAdjustments,
   IconSpeedboat,
+  IconVectorTriangle,
 } from "@tabler/icons-react";
 import styles from "./AgentVoiceProgress.module.css";
 
@@ -21,73 +21,123 @@ export const AgentVoiceProgress: React.FC<AgentVoiceProgressProps> = ({
   similarityBoost,
   optimizeLatency,
 }) => {
+  // Calculate progress values
+  const streamingLatencyProgress = (optimizeLatency / 4) * 100;
+  const stabilityProgress = stability * 100;
+  const speedProgress = ((speed - 0.5) / 1.5) * 100; // Normalize speed from 0.5-2.0 range
+  const similarityBoostProgress = similarityBoost * 100;
+
+  // Get status labels
+  const getStreamingLatencyLabel = (value: number) => {
+    if (value >= 3) return "Balanced";
+    if (value >= 2) return "Medium";
+    return "Low";
+  };
+
+  const getStabilityLabel = (value: number) => {
+    if (value >= 0.7) return "Balanced";
+    if (value >= 0.4) return "Medium";
+    return "Low";
+  };
+
+  const getSpeedLabel = (value: number) => {
+    if (value >= 1.1) return "Fast";
+    if (value >= 0.9) return "Normal";
+    return "Slow";
+  };
+
+  const getSimilarityBoostLabel = (value: number) => {
+    if (value >= 0.8) return "Normal";
+    if (value >= 0.5) return "Medium";
+    return "Low";
+  };
+
   return (
-    <div className={styles.slidersSection}>
-      <div className={styles.sliderRow}>
-        <div className={styles.sliderHeader}>
-          <div className={styles.sliderLabel}>
-            <IconWaveSine size={16} /> Streaming Latency
-          </div>
-          <div className={styles.sliderValue}>Balanced</div>
-        </div>
-        <div className={styles.sliderBarRow}>
-          <Progress
-            value={optimizeLatency * 20}
-            size="sm"
-            className={styles.sliderBar}
-            color="var(--mantine-color-blue-6)"
-          />
-        </div>
+    <Stack gap="xs" className={styles.progressContainer}>
+      {/* Streaming Latency */}
+      <div className={styles.progressCard}>
+        <Group justify="space-between" align="center" mb={6}>
+          <Group gap="xs" align="center">
+            <IconWaveSine size={18} className={styles.progressIcon} />
+            <Text size="sm" fw={500} className={styles.progressLabel}>
+              Streaming Latency
+            </Text>
+          </Group>
+          <Text size="sm" c="dimmed" fw={500} className={styles.progressValue}>
+            {getStreamingLatencyLabel(optimizeLatency)}
+          </Text>
+        </Group>
+        <Progress
+          value={streamingLatencyProgress}
+          size="md"
+          radius="sm"
+          className={styles.progressBar}
+        />
       </div>
-      <div className={styles.sliderRow}>
-        <div className={styles.sliderHeader}>
-          <div className={styles.sliderLabel}>
-            <IconAdjustments size={16} /> Stability
-          </div>
-          <div className={styles.sliderValue}>Balanced</div>
-        </div>
-        <div className={styles.sliderBarRow}>
-          <Progress
-            value={stability * 100}
-            size="sm"
-            className={styles.sliderBar}
-            color="var(--mantine-color-blue-6)"
-          />
-        </div>
+
+      {/* Stability */}
+      <div className={styles.progressCard}>
+        <Group justify="space-between" align="center" mb={6}>
+          <Group gap="xs" align="center">
+            <IconVectorTriangle size={18} className={styles.progressIcon} />
+            <Text size="sm" fw={500} className={styles.progressLabel}>
+              Stability
+            </Text>
+          </Group>
+          <Text size="sm" c="dimmed" fw={500} className={styles.progressValue}>
+            {getStabilityLabel(stability)}
+          </Text>
+        </Group>
+        <Progress
+          value={stabilityProgress}
+          size="md"
+          radius="sm"
+          className={styles.progressBar}
+        />
       </div>
-      <div className={styles.sliderRow}>
-        <div className={styles.sliderHeader}>
-          <div className={styles.sliderLabel}>
-            <IconSpeedboat size={16} /> Speed
-          </div>
-          <div className={styles.sliderValue}>Fast</div>
-        </div>
-        <div className={styles.sliderBarRow}>
-          <Progress
-            value={speed * 100}
-            size="sm"
-            className={styles.sliderBar}
-            color="var(--mantine-color-blue-6)"
-          />
-        </div>
+
+      {/* Speed */}
+      <div className={styles.progressCard}>
+        <Group justify="space-between" align="center" mb={6}>
+          <Group gap="xs" align="center">
+            <IconSpeedboat size={18} className={styles.progressIcon} />
+            <Text size="sm" fw={500} className={styles.progressLabel}>
+              Speed
+            </Text>
+          </Group>
+          <Text size="sm" c="dimmed" fw={500} className={styles.progressValue}>
+            {getSpeedLabel(speed)}
+          </Text>
+        </Group>
+        <Progress
+          value={speedProgress}
+          size="md"
+          radius="sm"
+          className={styles.progressBar}
+        />
       </div>
-      <div className={styles.sliderRow}>
-        <div className={styles.sliderHeader}>
-          <div className={styles.sliderLabel}>
-            <IconAdjustments size={16} /> Similarity Boost
-          </div>
-          <div className={styles.sliderValue}>Normal</div>
-        </div>
-        <div className={styles.sliderBarRow}>
-          <Progress
-            value={similarityBoost * 100}
-            size="sm"
-            className={styles.sliderBar}
-            color="var(--mantine-color-blue-6)"
-          />
-        </div>
+
+      {/* Similarity Boost */}
+      <div className={styles.progressCard}>
+        <Group justify="space-between" align="center" mb={6}>
+          <Group gap="xs" align="center">
+            <IconAdjustments size={18} className={styles.progressIcon} />
+            <Text size="sm" fw={500} className={styles.progressLabel}>
+              Similarity Boost
+            </Text>
+          </Group>
+          <Text size="sm" c="dimmed" fw={500} className={styles.progressValue}>
+            {getSimilarityBoostLabel(similarityBoost)}
+          </Text>
+        </Group>
+        <Progress
+          value={similarityBoostProgress}
+          size="md"
+          radius="sm"
+          className={styles.progressBar}
+        />
       </div>
-    </div>
+    </Stack>
   );
 };
 

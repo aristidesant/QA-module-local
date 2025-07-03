@@ -9,16 +9,25 @@ import { notifications } from "@mantine/notifications";
 import { useRevalidator } from "react-router";
 
 interface AgentFormProps {
-  agent?: BodyCreateAgentV1ConvaiAgentsCreatePost | null;
-  onSave: (agent: Partial<BodyCreateAgentV1ConvaiAgentsCreatePost>) => void;
+  agent?:
+    | (Omit<BodyCreateAgentV1ConvaiAgentsCreatePost, "conversation_config"> & {
+        conversationConfig?: any;
+        conversation_config?: any;
+      })
+    | null;
+  onSave: (
+    agent: Partial<BodyCreateAgentV1ConvaiAgentsCreatePost> & {
+      conversationConfig?: any;
+    }
+  ) => void;
   loading?: boolean;
   error?: string | null;
   type?: "INBOUND" | "OUTBOUND";
 }
 
-const DEFAULT_VALUES: BodyCreateAgentV1ConvaiAgentsCreatePost = {
+const DEFAULT_VALUES = {
   name: "",
-  conversation_config: {
+  conversationConfig: {
     agent: {
       language: "en",
       first_message: "",
@@ -42,13 +51,23 @@ export default function AgentForm({
   const createAgentMutation = useCreateAgent();
 
   const form = useForm({
-    initialValues: agent || DEFAULT_VALUES,
+    initialValues: agent
+      ? {
+          ...agent,
+          conversationConfig:
+            agent.conversationConfig || agent.conversation_config,
+        }
+      : DEFAULT_VALUES,
   });
 
   // Reset when agent prop changes
   useEffect(() => {
     if (agent) {
-      form.setValues(agent);
+      form.setValues({
+        ...agent,
+        conversationConfig:
+          agent.conversationConfig || agent.conversation_config,
+      });
     }
   }, [agent]);
 
@@ -58,9 +77,12 @@ export default function AgentForm({
     setFormError(null);
     const agentType =
       type && (type === "INBOUND" || type === "OUTBOUND") ? type : "INBOUND";
+    // Remove conversation_config if present, ensure only conversationConfig is sent
+    const { conversation_config, ...rest } = values as any;
     const payload = {
-      ...values,
+      ...rest,
       type: agentType,
+      conversationConfig: values.conversationConfig,
     };
     try {
       const data = await createAgentMutation.mutateAsync(payload);

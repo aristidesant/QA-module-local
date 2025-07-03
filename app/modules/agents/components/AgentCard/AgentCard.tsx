@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import {
   Card,
-  Avatar,
   Text,
   Menu,
   LoadingOverlay,
@@ -11,6 +10,7 @@ import {
 } from "@mantine/core";
 import { modals, openConfirmModal } from "@mantine/modals";
 import { IconDots, IconEye, IconTools, IconTrash } from "@tabler/icons-react";
+import AgentProfile from "~/components/AgentProfile/AgentProfile";
 
 import dayjs from "dayjs";
 import styles from "./AgentCard.module.css";
@@ -168,31 +168,13 @@ export const AgentCard: React.FC<AgentCardProps> = ({
       </div>
 
       <div className={styles.cardContent}>
-        {/* Avatar with status indicator */}
-        <div className={styles.avatarContainer}>
-          <Avatar
-            src={
-              isFemale ? "/images/avatar-f-do.png" : "/images/avatar-m-do.png"
-            }
-            size={80}
-            className={styles.avatar}
-          >
-            {agent.name?.[0] || "?"}
-          </Avatar>
-          <div className={styles.statusIndicator}></div>
-        </div>
-
-        {/* Name */}
-        <Text className={styles.name} size="xl" fw={600} ta="center">
-          {agent.name}
-        </Text>
-
-        {/* Flag and Language */}
-        <div className={styles.languageRow}>
-          <span className={styles.flagIcon}>{flagEmoji}</span>
-          <Text className={styles.languageText} size="md" c="dimmed">
-            {language}
-          </Text>
+        {/* Agent Profile */}
+        <div className={styles.agentProfileWrapper}>
+          <AgentProfile
+            agent={agent}
+            size="md"
+            onClick={onClick ? () => onClick(agent) : undefined}
+          />
         </div>
 
         {/* Personality traits */}

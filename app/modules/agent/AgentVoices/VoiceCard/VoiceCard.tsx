@@ -1,7 +1,13 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import type { Voice } from "~/models/AgentVoiceModel";
+import type AgentListObject from "~/models/AgentListObject";
 import classes from "./VoiceCard.module.css";
-import { Avatar, Indicator, Stack, Text, Image } from "@mantine/core";
+import { Avatar, Text } from "@mantine/core";
+import { getAgentAvatarUrl, getLanguageFlagEmoji } from "~/utils/agentUtils";
+import {
+  IconPlayerPlayFilled,
+  IconPlayerPauseFilled,
+} from "@tabler/icons-react";
 
 export type VoiceCardProps = {
   voice: Voice;
@@ -11,12 +17,6 @@ export type VoiceCardProps = {
   onSelectVoice?: (voiceId: string) => void;
   onPlayVoice?: (voiceId: string, previewUrl: string) => void;
 };
-
-import { useState } from "react";
-import {
-  IconPlayerPlayFilled,
-  IconPlayerPauseFilled,
-} from "@tabler/icons-react";
 
 export const VoiceCard: React.FC<VoiceCardProps> = ({
   voice,
@@ -28,10 +28,18 @@ export const VoiceCard: React.FC<VoiceCardProps> = ({
 }) => {
   const [hovered, setHovered] = useState(false);
 
-  const flagUrl =
-    voice.language === "Spanish"
-      ? "/images/es-flag.svg"
-      : "/images/us-flag.svg";
+  // Create a simple avatar URL based on gender directly
+  const avatarUrl = useMemo(() => {
+    // The getAgentGender function checks voice.gender first
+    return voice.gender?.toLowerCase() === "female"
+      ? "/images/avatar-f-do.png"
+      : "/images/avatar-m-do.png";
+  }, [voice.gender]);
+
+  // Get flag emoji based on language
+  const flagEmoji = useMemo(() => {
+    return getLanguageFlagEmoji(voice.language);
+  }, [voice.language]);
 
   // Placeholder for previewUrl, replace with actual property if available
   const previewUrl = voice.previewUrl || "";
@@ -74,7 +82,7 @@ export const VoiceCard: React.FC<VoiceCardProps> = ({
         }}
       >
         <Avatar
-          src={"/images/avatar-m-do.png"}
+          src={avatarUrl}
           alt={voice.name}
           className={classes.avatarImage}
         />
@@ -148,8 +156,8 @@ export const VoiceCard: React.FC<VoiceCardProps> = ({
             ) : null}
           </div>
         )}
-        {/* Flag */}
-        <img src={flagUrl} alt="Language Flag" className={classes.flag} />
+        {/* Language Flag */}
+        <div className={classes.flag}>{flagEmoji}</div>
       </div>
       <Text
         fz={"md"}

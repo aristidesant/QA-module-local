@@ -58,7 +58,9 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
   loading,
 }) => {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const { selectedTab } = useCampaignsStore((state) => state);
+  const { selectedTab, setRightComponent } = useCampaignsStore(
+    (state) => state
+  );
   const { mutateAsync: createCampaign, isPending: isCreating } =
     useCreateCampaign();
   const { mutateAsync: updateCampaign, isPending: isUpdating } =
@@ -161,6 +163,9 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
           {selectedTab === "agents" && (
             <AgentConfiguration
               editableAgent={form.values.agentConfig || {}}
+              onSetRightSection={(rightSection) => {
+                setRightComponent?.(rightSection);
+              }}
               setEditableAgent={(updatedAgent) => {
                 // Handle both direct object and function updates
                 if (typeof updatedAgent === "function") {

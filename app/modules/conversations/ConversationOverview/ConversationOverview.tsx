@@ -8,6 +8,7 @@ import {
 } from "@tabler/icons-react";
 import type { ConversationsModel } from "~/models/ConversationsModels";
 import styles from "./ConversationOverview.module.css";
+import ConversationPlayer from "../ConversationPlayer";
 
 interface ConversationOverviewProps {
   conversation: ConversationsModel;
@@ -146,6 +147,7 @@ export function ConversationOverview({
           </div>
         </Group>
       </Paper>
+      <ConversationPlayer voiceFile={conversation?.voiceFile} />
     </Stack>
   );
 }

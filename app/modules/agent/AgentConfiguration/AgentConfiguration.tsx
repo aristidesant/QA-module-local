@@ -1,5 +1,5 @@
 import { Stack } from "@mantine/core";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import AgentVoices from "../AgentVoices";
 import AgentConfigurationTypeSelector from "../AgentConfigurationTypeSelector";
 import AgentSettings from "../AgentSettings";
@@ -7,19 +7,24 @@ import type { GetAgentResponseModel } from "elevenlabs/api";
 import { useAgentStore } from "~/store/agentStore";
 import { AgentKnowledgeBase } from "../AgentKnowledgeBase";
 import type { AgentConfigModel } from "~/models/AgentListObject";
+import type AgentListObject from "~/models/AgentListObject";
 
 type AgentConfigurationProps = {
   agentMode?: boolean;
+  agent?: AgentListObject;
   editableAgent?: Partial<AgentConfigModel>;
   onVoiceSelect?: (voiceId: string) => void;
+  onSetRightSection?: (rightSection: ReactNode) => void;
   setEditableAgent: React.Dispatch<
     React.SetStateAction<Partial<AgentConfigModel>>
   >;
 };
 const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
+  agent,
   editableAgent,
   agentMode,
   setEditableAgent,
+  onSetRightSection,
   onVoiceSelect = () => {}, // Default no-op function
 }) => {
   const agentConfigurationType = useAgentStore(
@@ -51,6 +56,7 @@ const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
           onVoiceSelect(voiceId);
         }}
         agentData={editableAgent}
+        onSetRightSection={onSetRightSection}
         onUpdateAgentData={handleAgentUpdate}
       />
       {agentMode && <AgentConfigurationTypeSelector />}
@@ -58,7 +64,9 @@ const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
         <>
           <AgentSettings
             agentData={editableAgent}
+            agent={agent}
             onUpdateAgentData={handleAgentUpdate}
+            onSetRightSection={onSetRightSection}
           />
           <AgentKnowledgeBase />
         </>

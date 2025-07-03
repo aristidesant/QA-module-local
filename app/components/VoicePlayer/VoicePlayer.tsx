@@ -101,9 +101,9 @@ const VoicePlayer: React.FC<VoicePlayerProps> = ({ voiceName, previewUrl }) => {
   };
 
   return (
-    <Box className={styles.voicePlayer}>
-      <Group justify="space-between" align="center">
-        <Group gap="sm" align="center">
+    <Box className={styles.voicePlayer} w="100%">
+      <Group justify="space-between" align="center" wrap="nowrap" style={{ width: '100%' }}>
+        <Group gap="sm" align="center" style={{ flex: 1, minWidth: 0 }}>
           <Box className={styles.iconWrapper}>
             <IconWaveSquare
               size={16}
@@ -111,8 +111,8 @@ const VoicePlayer: React.FC<VoicePlayerProps> = ({ voiceName, previewUrl }) => {
               className={styles.waveIcon}
             />
           </Box>
-          <Stack gap={1}>
-            <Text size="xs" fw={500} c="white" className={styles.voiceLabel}>
+          <Stack gap={1} style={{ minWidth: 0 }}>
+            <Text size="xs" fw={500} c="white" className={styles.voiceLabel} truncate>
               Agent voice
             </Text>
             <Text
@@ -120,6 +120,7 @@ const VoicePlayer: React.FC<VoicePlayerProps> = ({ voiceName, previewUrl }) => {
               c="white"
               opacity={0.9}
               className={styles.voiceName}
+              truncate
             >
               {voiceName}
             </Text>

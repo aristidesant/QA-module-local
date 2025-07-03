@@ -26,6 +26,7 @@ export interface ConversationsModel {
   agent: AgentListObject;
   campaign: Campaign;
   contact: Contact | null;
+  voiceFile: VoiceFileModel | null;
 }
 
 export interface TranscriptContent {
@@ -103,4 +104,19 @@ export interface ClientData {
 export interface Contact {
   // Define contact fields as needed
   [key: string]: unknown;
+}
+export interface VoiceFileModel {
+  id: number;
+  name: string;
+  mime: string;
+  repositoryKey: string;
+  repositoryRoute: string;
+  extension: string;
+  description: string | null;
+  typeId: number;
+  userId: number;
+  clientId: number;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
 }

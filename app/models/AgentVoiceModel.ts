@@ -5,7 +5,8 @@ export interface Voice {
   description: string;
   language: string;
   age: string;
-  accent: string;
+  ageRange?: string;
+  accent?: string;
   previewUrl: string;
   status: string;
   userId: number;

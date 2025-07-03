@@ -4,10 +4,10 @@ import type AgentListObject from "~/models/AgentListObject";
  * Determines if an agent is female based on voice gender or voice name patterns
  */
 export const getAgentGender = (
-  agent: AgentListObject
+  agent?: AgentListObject
 ): { isFemale: boolean; source: "gender" | "name" | "default" } => {
   // Check explicit gender field first
-  if (agent.voice?.gender) {
+  if (agent?.voice?.gender) {
     return {
       isFemale: agent.voice.gender.toLowerCase() === "female",
       source: "gender",
@@ -15,7 +15,7 @@ export const getAgentGender = (
   }
 
   // Fallback: try to determine from voice name if gender field is missing
-  if (agent.voice?.name) {
+  if (agent?.voice?.name) {
     const voiceName = agent.voice.name.toLowerCase();
     // Common female voice names patterns
     const femaleNames = [
@@ -45,7 +45,7 @@ export const getAgentGender = (
 /**
  * Gets the appropriate avatar URL based on agent gender
  */
-export const getAgentAvatarUrl = (agent: AgentListObject): string => {
+export const getAgentAvatarUrl = (agent?: AgentListObject): string => {
   const { isFemale } = getAgentGender(agent);
   return isFemale ? "/images/avatar-f-do.png" : "/images/avatar-m-do.png";
 };
@@ -71,9 +71,9 @@ export const getLanguageDisplayName = (code: string): string => {
 /**
  * Gets the agent's language from the correct configuration path
  */
-export const getAgentLanguage = (agent: AgentListObject): string => {
+export const getAgentLanguage = (agent?: AgentListObject): string => {
   const languageCode =
-    agent.config?.conversationConfig?.agent?.language || "en";
+    agent?.config?.conversationConfig?.agent?.language || "en";
   return getLanguageDisplayName(languageCode);
 };
 
@@ -101,6 +101,6 @@ export const getLanguageFlagEmoji = (language: string): string => {
 /**
  * Gets the raw language code from agent configuration
  */
-export const getAgentLanguageCode = (agent: AgentListObject): string => {
-  return agent.config?.conversationConfig?.agent?.language || "en";
+export const getAgentLanguageCode = (agent?: AgentListObject): string => {
+  return agent?.config?.conversationConfig?.agent?.language || "en";
 };

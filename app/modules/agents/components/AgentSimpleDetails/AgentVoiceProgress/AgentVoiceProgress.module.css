@@ -1,59 +1,63 @@
-.slidersSection {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-  padding: 0 4px;
-}
-
-.sliderRow {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.sliderBarRow {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 12px;
+.progressContainer {
   width: 100%;
 }
 
-.sliderBar {
-  flex: 1 1 auto;
-  min-width: 0;
-  max-width: 100%;
-}
-
-.sliderPercent {
-  min-width: 38px;
-  text-align: right;
-  font-size: 13px;
-  color: var(--mantine-color-gray-7);
-  font-variant-numeric: tabular-nums;
-  margin-left: 8px;
-}
-
-.sliderHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.progressCard {
+  background: var(--mantine-color-white);
+  border-radius: var(--mantine-radius-md);
+  padding: var(--mantine-spacing-sm);
   width: 100%;
-  margin-bottom: 2px;
+  transition: box-shadow 0.2s ease;
 }
 
-.sliderLabel {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.875rem;
-  color: var(--mantine-color-gray-7);
-  font-weight: 500;
+.progressCard:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-.sliderValue {
-  font-size: 0.875rem;
+.progressIcon {
   color: var(--mantine-color-gray-6);
-  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.progressLabel {
+  color: var(--mantine-color-gray-8);
+  font-size: var(--mantine-font-size-sm);
+}
+
+.progressValue {
+  color: var(--mantine-color-gray-6);
+  font-size: var(--mantine-font-size-sm);
+  min-width: 60px;
+  text-align: right;
+}
+
+.progressBar {
+  width: 100%;
+}
+
+/* Override Mantine progress bar styles to match the design */
+.progressBar .mantine-Progress-section {
+  background: var(--mantine-color-blue-6);
+}
+
+.progressBar .mantine-Progress-root {
+  background-color: var(--mantine-color-gray-2);
+  height: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .progressCard {
+    padding: var(--mantine-spacing-xs);
+  }
+
+  .progressLabel,
+  .progressValue {
+    font-size: var(--mantine-font-size-xs);
+  }
+
+  .progressIcon {
+    width: 16px;
+    height: 16px;
+  }
 }

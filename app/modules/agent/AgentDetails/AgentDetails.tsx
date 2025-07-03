@@ -1,11 +1,14 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, type ReactNode } from "react";
 import { IconDeviceFloppy } from "@tabler/icons-react";
 import { Group, Button, TextInput, Stack } from "@mantine/core";
 import styles from "./AgentDetails.module.css";
 import type AgentListObject from "~/models/AgentListObject";
 import { notifications } from "@mantine/notifications";
 import { useUpdateAgent } from "~/queries/agentQueries";
-import type { AgentUpdateModel } from "~/models/AgentListObject";
+import type {
+  AgentConfigModel,
+  AgentUpdateModel,
+} from "~/models/AgentListObject";
 import SectionCard from "~/components/SectionCard";
 import { ContentContainer } from "~/components/ContentContainer/ContentContainer";
 import AgentNotSelected from "~/modules/agents/components/AgentNotSelected";
@@ -15,17 +18,19 @@ import { useNavigate } from "react-router";
 
 export type AgentDetailsProps = {
   agent: AgentListObject;
+  onAgentUpdated?: () => void;
 };
 
 const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
-  const [editableAgent, setEditableAgent] = useState(agent?.config);
+  const [editableAgent, setEditableAgent] = useState<Partial<AgentConfigModel>>(
+    agent?.config
+  );
   const navigate = useNavigate();
   const [name, setName] = useState(agent.name);
   const [voiceId, setVoiceId] = useState<string>();
   const [isEditingName, setIsEditingName] = useState(false);
-  const { selectedElement, agentConfigurationType } = useAgentStore(
-    (state) => state
-  );
+  const { selectedElement, agentConfigurationType, setSelectedElement } =
+    useAgentStore((state) => state);
   const nameInputRef = useRef<HTMLInputElement>(null);
   const {
     mutateAsync: updateAgent,
@@ -127,8 +132,12 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
             <AgentConfiguration
               editableAgent={editableAgent}
               agentMode
+              agent={agent}
               onVoiceSelect={(voiceId: string) => {
                 setVoiceId(voiceId);
+              }}
+              onSetRightSection={(rightSection: ReactNode) => {
+                setSelectedElement(rightSection);
               }}
               setEditableAgent={setEditableAgent}
             />
