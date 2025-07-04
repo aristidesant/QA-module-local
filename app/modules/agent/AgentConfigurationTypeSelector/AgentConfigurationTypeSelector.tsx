@@ -1,7 +1,7 @@
 import React from "react";
 import { Checkbox, Group, Text } from "@mantine/core";
 import { IconSettings, IconLink } from "@tabler/icons-react";
-import { useAgentStore } from "../../../store/agentStore";
+import { useAgentStore } from "../../../stores/agentStore";
 import SectionCard from "../../../components/SectionCard";
 
 import styles from "./AgentConfigurationTypeSelector.module.css";

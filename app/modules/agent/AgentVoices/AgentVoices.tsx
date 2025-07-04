@@ -10,7 +10,7 @@ import classes from "./AgentVoices.module.css";
 import { VoiceCard } from "./VoiceCard";
 import type { AgentVoicesFilterValues } from "./AgentVoicesFilter/AgentVoicesFilter";
 import AgentVoiceSettings from "../AgentVoiceSettings";
-import { useAgentStore } from "~/store/agentStore";
+import { useAgentStore } from "~/stores/agentStore";
 import VoiceDetails from "../VoiceDetails";
 import type { AgentConfigModel } from "~/models/AgentListObject";
 

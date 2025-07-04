@@ -12,7 +12,7 @@ import type {
 import SectionCard from "~/components/SectionCard";
 import { ContentContainer } from "~/components/ContentContainer/ContentContainer";
 import AgentNotSelected from "~/modules/agents/components/AgentNotSelected";
-import { useAgentStore } from "~/store/agentStore";
+import { useAgentStore } from "~/stores/agentStore";
 import AgentConfiguration from "../AgentConfiguration/AgentConfiguration";
 import { useNavigate } from "react-router";
 

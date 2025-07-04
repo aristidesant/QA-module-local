@@ -32,6 +32,7 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
   loading = false,
 }) => {
   const startDemoConversation = useStartDemoConversation();
+  const isSubmitting = startDemoConversation.isPending || loading;
   const form = useForm<OutboundCallFormValues>({
     initialValues: {
       agentId: agent?.id,
@@ -104,11 +105,13 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
         <Button
           type="submit"
           size="lg"
-          leftSection={<IconPhone size={18} />}
-          disabled={!isValid}
-          loading={loading}
+          radius="md"
+          leftSection={<IconPhone size={20} />}
+          fullWidth
+          disabled={!isValid || isSubmitting}
+          loading={isSubmitting}
         >
-          Call me
+          {isSubmitting ? 'Calling...' : 'Request Demo Call'}
         </Button>
         <Button
           variant="transparent"

@@ -29,7 +29,7 @@ import {
   useCampaignForm,
 } from "../campaignFormFunctions";
 import CampaignTabs from "../CampaignTabs";
-import { useCampaignsStore } from "~/store/campaignsStore";
+import { useCampaignsStore } from "~/stores/campaignsStore";
 import GeneralSection from "./GeneralSection/GeneralSection";
 import SectionCard from "~/components/SectionCard";
 import AgentConfiguration from "~/modules/agent/AgentConfiguration/AgentConfiguration";

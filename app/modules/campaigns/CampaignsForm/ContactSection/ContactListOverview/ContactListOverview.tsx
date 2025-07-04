@@ -15,7 +15,7 @@ import {
 import { IconSearch, IconAdjustments } from "@tabler/icons-react";
 import styles from "./ContactListOverview.module.css";
 import { useCampaignForm } from "~/modules/campaigns/campaignFormFunctions";
-import { useCampaignsStore } from "~/store/campaignsStore";
+import { useCampaignsStore } from "~/stores/campaignsStore";
 import { ContactDetails } from "~/modules/campaigns/CampaignsForm/ContactSection/ContactDetails";
 
 interface Contact {

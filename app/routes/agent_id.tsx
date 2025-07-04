@@ -4,8 +4,6 @@ import { useEffect } from "react";
 import AgentDetails from "~/modules/agent/AgentDetails";
 import agentApi from "~/api/agentApi";
 import { getSession } from "~/server-session";
-import { Stack } from "@mantine/core";
-import PageHeader from "~/components/ui/PageHeader";
 import type AgentListObject from "~/models/AgentListObject";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
@@ -27,12 +25,12 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 export default function AgentRoute() {
   const { agent, error } = useLoaderData<typeof loader>();
   const fetcher = useFetcher<typeof loader>();
-  
+
   // Reload agent data when fetcher state changes
   useEffect(() => {
     if (fetcher.data?.agent) {
       // Handle the case when data is reloaded
-      console.log('Agent data reloaded');
+      console.log("Agent data reloaded");
     }
   }, [fetcher.data]);
 
@@ -46,9 +44,9 @@ export default function AgentRoute() {
   if (!agent) {
     return <div>{error}</div>;
   }
-  
+
   // Use the most recent data from fetcher if available
   const currentAgent = (fetcher.data?.agent || agent) as AgentListObject;
-  
+
   return <AgentDetails agent={currentAgent} onAgentUpdated={reloadAgent} />;
 }

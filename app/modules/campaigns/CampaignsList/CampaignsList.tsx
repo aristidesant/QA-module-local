@@ -30,7 +30,7 @@ import { modals } from "@mantine/modals";
 import { CampaignsForm } from "../CampaignsForm/CampaignsForm";
 import { notifications } from "@mantine/notifications";
 import CampaignAgentList from "../CampaignAgentList";
-import { useCampaignsStore } from "~/store/campaignsStore";
+import { useCampaignsStore } from "~/stores/campaignsStore";
 import CampaignPreview from "../CampaignPreview";
 import type { Campaign } from "~/models/CampaignsModel";
 
@@ -86,7 +86,7 @@ export const CampaignsList: React.FC = () => {
 
   const handleCampaignClick = (campaign: Campaign) => {
     setCurrentCampaign(campaign);
-    
+
     // Enhanced campaign data for the preview
     const enhancedCampaign: Campaign = {
       ...campaign,
@@ -95,77 +95,97 @@ export const CampaignsList: React.FC = () => {
         callsMade: 1245,
         callsAnswered: 856,
         conversionRate: 12.5,
-        avgCallDuration: '2:45',
+        avgCallDuration: "2:45",
         lastUpdated: new Date().toISOString(),
       },
       // Add mock agent performance
       agentPerformance: [
-        { id: 1, name: 'John Doe', callsHandled: 245, successRate: 78, avgRating: 4.5 },
-        { id: 2, name: 'Jane Smith', callsHandled: 198, successRate: 82, avgRating: 4.7 },
-        { id: 3, name: 'Robert Johnson', callsHandled: 176, successRate: 71, avgRating: 4.2 },
+        {
+          id: 1,
+          name: "John Doe",
+          callsHandled: 245,
+          successRate: 78,
+          avgRating: 4.5,
+        },
+        {
+          id: 2,
+          name: "Jane Smith",
+          callsHandled: 198,
+          successRate: 82,
+          avgRating: 4.7,
+        },
+        {
+          id: 3,
+          name: "Robert Johnson",
+          callsHandled: 176,
+          successRate: 71,
+          avgRating: 4.2,
+        },
       ],
       // Add mock assigned agents
       assignedAgents: [
-        { 
-          id: 1, 
-          name: 'John Doe', 
-          language: 'English', 
-          countryCode: 'us', 
-          status: 'online',
-          avatarUrl: 'https://i.pravatar.cc/150?img=1'
+        {
+          id: 1,
+          name: "John Doe",
+          language: "English",
+          countryCode: "us",
+          status: "online",
+          avatarUrl: "https://i.pravatar.cc/150?img=1",
         },
-        { 
-          id: 2, 
-          name: 'Jane Smith', 
-          language: 'Spanish', 
-          countryCode: 'es', 
-          status: 'busy',
-          avatarUrl: 'https://i.pravatar.cc/150?img=2'
+        {
+          id: 2,
+          name: "Jane Smith",
+          language: "Spanish",
+          countryCode: "es",
+          status: "busy",
+          avatarUrl: "https://i.pravatar.cc/150?img=2",
         },
       ],
       // Add mock contact list
       contactList: {
         id: 1,
-        name: 'Q2 Leads',
-        description: 'High priority leads for Q2 campaign',
+        name: "Q2 Leads",
+        description: "High priority leads for Q2 campaign",
         totalContacts: 1245,
-        lastUpdated: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-        status: 'active',
-        source: 'csv',
-        tags: ['high-priority', 'q2'],
+        lastUpdated: new Date(
+          Date.now() - 2 * 24 * 60 * 60 * 1000
+        ).toISOString(),
+        status: "active",
+        source: "csv",
+        tags: ["high-priority", "q2"],
         metadata: {
-          headers: ['name', 'phone', 'email', 'company'],
+          headers: ["name", "phone", "email", "company"],
           importedAt: new Date().toISOString(),
-          importedBy: 'admin@example.com'
-        }
+          importedBy: "admin@example.com",
+        },
       },
       // Add mock parameters
       parameters: {
         callingHours: {
-          days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-          startTime: '09:00',
-          endTime: '18:00',
-          timezone: 'America/New_York'
+          days: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+          startTime: "09:00",
+          endTime: "18:00",
+          timezone: "America/New_York",
         },
         voicemailDetection: true,
         callRetries: 2,
         maxConcurrentCalls: 5,
-        answerMachineDetection: true
+        answerMachineDetection: true,
       },
       // Add mock working hours
       workingHours: {
-        monday: { enabled: true, from: '09:00', to: '17:00' },
-        tuesday: { enabled: true, from: '09:00', to: '17:00' },
-        wednesday: { enabled: true, from: '09:00', to: '17:00' },
-        thursday: { enabled: true, from: '09:00', to: '17:00' },
-        friday: { enabled: true, from: '09:00', to: '17:00' },
-        saturday: { enabled: false, from: '09:00', to: '13:00' },
-        sunday: { enabled: false, from: '09:00', to: '13:00' },
+        monday: { enabled: true, from: "09:00", to: "17:00" },
+        tuesday: { enabled: true, from: "09:00", to: "17:00" },
+        wednesday: { enabled: true, from: "09:00", to: "17:00" },
+        thursday: { enabled: true, from: "09:00", to: "17:00" },
+        friday: { enabled: true, from: "09:00", to: "17:00" },
+        saturday: { enabled: false, from: "09:00", to: "13:00" },
+        sunday: { enabled: false, from: "09:00", to: "13:00" },
       },
       // Add mock tags if not present
-      tags: campaign.tags || ['outbound', 'sales', 'q2-2023']
+      tags: campaign.tags || ["outbound", "sales", "q2-2023"],
     };
-    
+
     setRightComponent?.(<CampaignPreview campaign={enhancedCampaign} />);
   };
 

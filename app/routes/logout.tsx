@@ -18,6 +18,6 @@ export async function loader({ request }: { request: Request }) {
 }
 
 export default function LogoutPage() {
-  // Optionally, could show a message, but redirect is preferred UX.
+  // This component is just a fallback in case someone navigates to /logout directly
   return redirect("/login");
 }

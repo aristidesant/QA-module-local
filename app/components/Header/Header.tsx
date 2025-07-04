@@ -2,6 +2,7 @@ import { IconBell, IconMenu2, IconX } from "@tabler/icons-react";
 import UserMenu from "../UserMenu";
 import styles from "./Header.module.css";
 import { ActionIcon, Divider } from "@mantine/core";
+import { useSessionStore } from "~/stores/sessionStore";
 
 interface HeaderProps {
   opened: boolean;

@@ -1,6 +1,6 @@
 import { Card } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { Outlet, useOutletContext } from "react-router";
+import { Outlet } from "react-router";
 import Sidebar from "../Sidebar";
 import { Header } from "../Header";
 import { Notifications } from "@mantine/notifications";
@@ -9,7 +9,6 @@ import styles from "./Layout.module.css";
 
 export default function Layout() {
   const [opened, { toggle }] = useDisclosure();
-  const { token } = useOutletContext<{ token: string }>();
 
   // Enable scroll-based UI effects
   useScrollEffect();
@@ -37,7 +36,7 @@ export default function Layout() {
           </header>
           <main className={styles.mainWrapper}>
             <div className={styles.main}>
-              <Outlet context={{ token }} />
+              <Outlet />
             </div>
           </main>
         </div>

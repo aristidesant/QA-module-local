@@ -1,7 +1,7 @@
 import { Stack } from "@mantine/core";
 import CampaignsList from "../CampaignsList";
 import { ContentContainer } from "~/components/ContentContainer/ContentContainer";
-import { useCampaignsStore } from "~/store/campaignsStore";
+import { useCampaignsStore } from "~/stores/campaignsStore";
 import { CampaignsForm } from "../CampaignsForm/CampaignsForm";
 
 export default function CampaignsPage() {

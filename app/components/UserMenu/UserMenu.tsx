@@ -1,12 +1,21 @@
 import { Menu } from "@mantine/core";
-import { IconChevronDown } from "@tabler/icons-react";
+import { IconChevronDown, IconLogout } from "@tabler/icons-react";
+import { useFetcher } from "react-router-dom";
 import styles from "./UserMenu.module.css";
+import { useNavigate } from "react-router";
+import { useSessionStore } from "~/stores/sessionStore";
 
-export const UserMenu = () => {
-  // Hardcoded prototype values
-  const name = "Robert Salazar";
-  const role = "Admin";
-  const initials = "RS";
+export const UserMenu: React.FC = () => {
+  const { user } = useSessionStore();
+  const initials = user?.username?.slice(0, 2).toUpperCase();
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    navigate("/logout");
+  };
+
+  const fetcher = useFetcher();
 
   return (
     <Menu shadow="md" width={180} position="bottom-end">
@@ -19,8 +28,8 @@ export const UserMenu = () => {
         >
           <div className={styles.avatar}>{initials}</div>
           <div className={styles.userInfo}>
-            <span className={styles.name}>{name}</span>
-            <span className={styles.role}>{role}</span>
+            <span className={styles.name}>{user?.username}</span>
+            <span className={styles.role}>{user?.email}</span>
           </div>
           <span className={styles.chevron}>
             <IconChevronDown size={18} />
@@ -31,7 +40,14 @@ export const UserMenu = () => {
         <Menu.Item>Profile</Menu.Item>
         <Menu.Item>Settings</Menu.Item>
         <Menu.Divider />
-        <Menu.Item color="red">Logout</Menu.Item>
+        <Menu.Item
+          color="red"
+          onClick={handleLogout}
+          disabled={fetcher.state !== "idle"}
+          leftSection={<IconLogout size={14} />}
+        >
+          {fetcher.state === "idle" ? "Logout" : "Logging out..."}
+        </Menu.Item>
       </Menu.Dropdown>
     </Menu>
   );

@@ -5,7 +5,7 @@ import {
   IconUser,
   IconUsersGroup,
 } from "@tabler/icons-react";
-import { useCampaignsStore } from "~/store/campaignsStore";
+import { useCampaignsStore } from "~/stores/campaignsStore";
 
 const CampaignTabs = () => {
   const { selectedTab, setSelectedTab, setRightComponent } = useCampaignsStore(

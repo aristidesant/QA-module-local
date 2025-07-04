@@ -53,9 +53,9 @@ export async function action({ request }: { request: Request }) {
       session.set("clientId", userData.clientId.toString());
       session.set("email", userData.email);
       session.set("accessToken", result.accessToken);
-      
+      console.log(result, userData);
       // Set session expiration based on remember me
-      const sessionOptions = rememberMe 
+      const sessionOptions = rememberMe
         ? { expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) } // 7 days
         : {};
 
@@ -79,9 +79,9 @@ export async function action({ request }: { request: Request }) {
       );
     }
   } catch (error: any) {
-    console.error("Login error:", error);
-    const errorMessage = error?.response?.data?.message || "An unexpected error occurred";
-    
+    const errorMessage =
+      error?.response?.data?.message || "An unexpected error occurred";
+
     return new Response(
       JSON.stringify({
         formError: errorMessage,
@@ -99,7 +99,7 @@ export async function action({ request }: { request: Request }) {
 
 export default function LoginPage() {
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center" }}>
       <LoginForm />
     </div>
   );

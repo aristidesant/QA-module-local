@@ -4,7 +4,7 @@ import AgentVoices from "../AgentVoices";
 import AgentConfigurationTypeSelector from "../AgentConfigurationTypeSelector";
 import AgentSettings from "../AgentSettings";
 import type { GetAgentResponseModel } from "elevenlabs/api";
-import { useAgentStore } from "~/store/agentStore";
+import { useAgentStore } from "~/stores/agentStore";
 import { AgentKnowledgeBase } from "../AgentKnowledgeBase";
 import type { AgentConfigModel } from "~/models/AgentListObject";
 import type AgentListObject from "~/models/AgentListObject";
