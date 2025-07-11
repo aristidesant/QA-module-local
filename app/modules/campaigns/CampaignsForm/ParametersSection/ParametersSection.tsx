@@ -1,8 +1,13 @@
 import React from "react";
-import { Stack, Text, Switch, Group, Button, Box, Grid, rem } from "@mantine/core";
-import { TimeInput } from "@mantine/dates";
-import { IconCopy, IconClockOff } from "@tabler/icons-react";
+import { Stack, Text, Divider } from "@mantine/core";
+import { DayScheduleCard } from "./DayScheduleCard";
+import { WorkingHoursHeader } from "./WorkingHoursHeader";
+import { WorkingHoursSummary } from "./WorkingHoursSummary";
+import { SchedulerCard } from "./SchedulerCard";
 import styles from "./ParametersSection.module.css";
+import { useCampaignsStore } from "~/stores/campaignsStore";
+import { useCampaignSchedules } from "~/queries/schedulerQueries";
+import type { Scheduler } from "~/models/SchedulerModel";
 
 interface DaySchedule {
   enabled: boolean;
@@ -14,98 +19,56 @@ interface ParametersSectionProps {
   workingHours: Record<string, DaySchedule>;
   onChange: (day: string, field: keyof DaySchedule, value: any) => void;
   onCopyToAll: (day: string) => void;
+  onSchedulerUpdate?: (scheduler: Scheduler) => void;
 }
-
-const DAYS = [
-  "monday",
-  "tuesday",
-  "wednesday",
-  "thursday",
-  "friday",
-  "saturday",
-  "sunday",
-] as const;
-
-const formatDayName = (day: string) => {
-  return day.charAt(0).toUpperCase() + day.slice(1);
-};
 
 export const ParametersSection: React.FC<ParametersSectionProps> = ({
   workingHours,
   onChange,
   onCopyToAll,
+  onSchedulerUpdate,
 }) => {
+  const { selectedCampaign } = useCampaignsStore((state) => state);
+  const { data: campaignSchedule, refetch: reloadCampaignSchedule } =
+    useCampaignSchedules(selectedCampaign?.id);
+
+  const handleSchedulerUpdate = (updatedScheduler: Scheduler) => {
+    onSchedulerUpdate?.(updatedScheduler);
+    reloadCampaignSchedule();
+  };
+
+  const handleSchedulerDelete = (schedulerId: number) => {
+    reloadCampaignSchedule();
+  };
+
+  const handleSchedulerActivate = (schedulerId: number) => {
+    reloadCampaignSchedule();
+  };
+
+  const handleSchedulerDeactivate = (schedulerId: number) => {
+    reloadCampaignSchedule();
+  };
+
   return (
     <Stack gap="md" className={styles.workingHoursContainer}>
-      {DAYS.map((day) => (
-        <div key={day} className={styles.dayRow}>
-          {/* Column 1: Day switch and name */}
-          <div className={styles.dayColumn}>
-            <Switch
-              checked={workingHours[day]?.enabled ?? false}
-              onChange={(e) =>
-                onChange(day, "enabled", e.currentTarget.checked)
-              }
-              aria-label={`Toggle ${formatDayName(day)} schedule`}
-              className={styles.daySwitch}
-            />
-            <Text fw={500} className={styles.dayText}>
-              {formatDayName(day)}
-            </Text>
-          </div>
-
-          {/* Column 2: Time inputs or closed state */}
-          <div className={styles.timeColumn}>
-            {workingHours[day]?.enabled ? (
-              <Group gap="sm" className={styles.timeInputsContainer}>
-                <TimeInput
-                  value={workingHours[day]?.from || ""}
-                  onChange={(e) =>
-                    onChange(day, "from", e.currentTarget.value)
-                  }
-                  className={styles.timeInput}
-                  size="sm"
-                  variant="filled"
-                  label="From"
-                  labelProps={{ className: styles.timeLabel }}
-                />
-                <Text className={styles.timeSeparator}>to</Text>
-                <TimeInput
-                  value={workingHours[day]?.to || ""}
-                  onChange={(e) =>
-                    onChange(day, "to", e.currentTarget.value)
-                  }
-                  className={styles.timeInput}
-                  size="sm"
-                  variant="filled"
-                  label="To"
-                  labelProps={{ className: styles.timeLabel }}
-                />
-              </Group>
-            ) : (
-              <Box className={styles.closedBadge}>
-                <IconClockOff size={16} />
-                <Text size="sm">Closed</Text>
-              </Box>
-            )}
-          </div>
-
-          {/* Column 3: Copy button (only for Monday) */}
-          <div className={styles.actionColumn}>
-            {day === "monday" && (
-              <Button
-                variant="subtle"
-                size="xs"
-                leftSection={<IconCopy size={14} />}
-                onClick={() => onCopyToAll(day)}
-                className={styles.copyButton}
-              >
-                Copy to all days
-              </Button>
-            )}
-          </div>
-        </div>
-      ))}
+      {/* Schedulers Section */}
+      {campaignSchedule && campaignSchedule.length > 0 && (
+        <>
+          <Stack gap="sm">
+            {campaignSchedule.map((scheduler) => (
+              <SchedulerCard
+                key={scheduler.id}
+                scheduler={scheduler}
+                campaignId={selectedCampaign?.id!}
+                onUpdate={handleSchedulerUpdate}
+                onDelete={handleSchedulerDelete}
+                onActivate={handleSchedulerActivate}
+                onDeactivate={handleSchedulerDeactivate}
+              />
+            ))}
+          </Stack>
+        </>
+      )}
     </Stack>
   );
 };

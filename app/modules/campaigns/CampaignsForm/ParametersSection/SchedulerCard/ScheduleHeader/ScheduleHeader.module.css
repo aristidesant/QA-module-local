@@ -1,0 +1,34 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.titleContainer {
+  display: flex;
+  gap: 8px;
+}
+
+.title {
+  font-weight: 500;
+}
+
+.subtitle {
+  color: var(--mantine-color-dimmed);
+  font-size: var(--mantine-font-size-xs);
+}
+
+.timeInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.timeText {
+  color: var(--mantine-color-dimmed);
+  font-size: var(--mantine-font-size-sm);
+}
+
+.actionsMenu {
+  position: relative;
+}

@@ -19,7 +19,6 @@ export const useCreateAgent = () => {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["agents"] });
-      console.log("Agent created successfully:", data);
     },
     onError: (error) => {
       console.error("Error creating agent:", error);
@@ -84,7 +83,6 @@ export const useUpdateAgent = () => {
       if (data?.id) {
         queryClient.invalidateQueries({ queryKey: ["agent", data.id] });
       }
-      console.log("Agent updated successfully:", data);
     },
     onError: (error) => {
       console.error("Error updating agent:", error);
@@ -108,7 +106,6 @@ export const useDeleteAgent = () => {
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ["agents"] });
       queryClient.invalidateQueries({ queryKey: ["agent", id] });
-      console.log("Agent deleted successfully:", id);
     },
     onError: (error) => {
       console.error("Error deleting agent:", error);

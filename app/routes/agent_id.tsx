@@ -30,7 +30,6 @@ export default function AgentRoute() {
   useEffect(() => {
     if (fetcher.data?.agent) {
       // Handle the case when data is reloaded
-      console.log("Agent data reloaded");
     }
   }, [fetcher.data]);
 

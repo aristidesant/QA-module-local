@@ -1,28 +1,55 @@
-.card {
-  background: var(--mantine-color-white);
-  border: 1px solid var(--mantine-color-gray-3);
-  border-radius: var(--mantine-radius-md);
-  padding: var(--mantine-spacing-sm);
-  height: fit-content;
+.container {
+  width: 100%;
 }
 
-.content {
-  width: 100%;
+.cardsContainer {
+  display: grid;
+  gap: 12px;
+}
+
+.contactCard {
+  background: var(--mantine-color-white);
+  border: 1px solid var(--mantine-color-gray-2);
+  border-radius: 8px;
+  padding: 0 16px;
+  transition: all 200ms ease;
+  cursor: pointer;
+  height: 64px;
+  display: flex;
   align-items: center;
 }
 
-.label {
-  font-size: var(--mantine-font-size-xs);
+.contactCard:hover {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border-color: var(--mantine-color-blue-3);
+}
+
+.cardLabel {
+  margin: 0 0 2px 0;
+  font-size: 12px;
   color: var(--mantine-color-gray-6);
-  margin-bottom: 2px;
+  line-height: 1.2;
 }
 
-.select {
+.contactName {
+  color: var(--mantine-color-dark-8);
+  font-size: 14px;
   font-weight: 500;
-  font-size: var(--mantine-font-size-sm);
+  line-height: 1.2;
+  margin: 0;
+  padding: 0;
 }
 
-.changeButton {
-  color: var(--mantine-color-blue-6);
+.expiry {
+  display: flex;
+  align-items: center;
+  color: var(--mantine-color-gray-6);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.addButton {
+  padding: 0;
+  height: auto;
   font-weight: 500;
 }

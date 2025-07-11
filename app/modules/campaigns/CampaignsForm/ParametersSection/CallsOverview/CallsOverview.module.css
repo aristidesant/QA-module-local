@@ -1,0 +1,48 @@
+.container {
+  display: flex;
+  gap: 16px;
+}
+
+.card {
+  flex: 1;
+  padding: 16px;
+  border-radius: var(--mantine-radius-md);
+  border: 1px solid var(--mantine-color-gray-2);
+  background-color: var(--mantine-color-white);
+}
+
+.iconWrapper {
+  color: var(--mantine-color-blue-6);
+}
+
+.title {
+  font-weight: 500;
+  font-size: var(--mantine-font-size-sm);
+}
+
+.subtitle {
+  color: var(--mantine-color-dimmed);
+  font-size: var(--mantine-font-size-xs);
+}
+
+.value {
+  font-weight: 700;
+  font-size: 2rem;
+}
+
+.badge {
+  background-color: transparent;
+  border: 1px solid var(--mantine-color-blue-6);
+  color: var(--mantine-color-blue-6);
+}
+
+.daysLabel {
+  color: var(--mantine-color-dimmed);
+  font-size: var(--mantine-font-size-sm);
+}
+
+.iconContainer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}

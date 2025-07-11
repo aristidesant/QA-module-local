@@ -1,1 +1,0 @@
-export { ContactListConfiguration } from "./ContactListConfiguration";

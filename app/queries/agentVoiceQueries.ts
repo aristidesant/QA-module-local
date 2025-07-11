@@ -19,7 +19,6 @@ export const useCreateAgentVoice = () => {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["agentVoices"] });
-      console.log("Agent voice created successfully:", data);
     },
     onError: (error) => {
       console.error("Error creating agent voice:", error);
@@ -84,7 +83,6 @@ export const useUpdateAgentVoice = () => {
       if (data?.id) {
         queryClient.invalidateQueries({ queryKey: ["agentVoice", data.id] });
       }
-      console.log("Agent voice updated successfully:", data);
     },
     onError: (error) => {
       console.error("Error updating agent voice:", error);
@@ -108,7 +106,6 @@ export const useDeleteAgentVoice = () => {
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ["agentVoices"] });
       queryClient.invalidateQueries({ queryKey: ["agentVoice", id] });
-      console.log("Agent voice deleted successfully:", id);
     },
     onError: (error) => {
       console.error("Error deleting agent voice:", error);

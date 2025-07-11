@@ -51,8 +51,6 @@ export const RouteProtecter = () => {
   const { token, user } = useLoaderData<typeof loader>();
   const { setUser, setToken } = useSessionStore();
   const path = useLocation().pathname;
-  console.log("token", token);
-  console.log("user", user);
   useEffect(() => {
     if (token) {
       setToken(token);

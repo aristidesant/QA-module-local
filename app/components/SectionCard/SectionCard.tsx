@@ -1,7 +1,8 @@
 import React, { type ReactNode } from "react";
-import { Card, Text, Title } from "@mantine/core";
+import { Card } from "@mantine/core";
 import styles from "./SectionCard.module.css";
 import type { TablerIcon } from "@tabler/icons-react";
+import { SectionTitle } from "../SectionTitle";
 
 interface SectionCardProps {
   icon?: TablerIcon;
@@ -64,23 +65,14 @@ export const SectionCard: React.FC<SectionCardProps> = ({
     >
       {title && (
         <div className={styles.sectionHeader}>
-          <div className={styles.sectionHeaderContent}>
-            <div className={styles.sectionLine} />
-            <div>
-              <Title order={6} className={styles.sectionTitle}>
-                {title}
-              </Title>
-              {description && (
-                <Text
-                  lineClamp={1}
-                  fz={"sm"}
-                  className={styles.sectionDescription}
-                >
-                  {description}
-                </Text>
-              )}
-            </div>
-          </div>
+          <SectionTitle
+            title={title}
+            description={description}
+            icon={Icon && <Icon size={20} />}
+            order={6}
+            withLine={true}
+            className={styles.sectionTitleWrapper}
+          />
           {headerActions && (
             <div className={styles.headerActions}>{headerActions}</div>
           )}

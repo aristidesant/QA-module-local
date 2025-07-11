@@ -1,0 +1,16 @@
+.header {
+  margin-bottom: var(--mantine-spacing-md);
+}
+
+.icon {
+  color: var(--mantine-color-blue-6);
+}
+
+.title {
+  color: var(--mantine-color-text);
+}
+
+.description {
+  line-height: 1.5;
+  max-width: 600px;
+}

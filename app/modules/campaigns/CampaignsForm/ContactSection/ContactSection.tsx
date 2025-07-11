@@ -1,5 +1,4 @@
-import { Flex, Group, Stack } from "@mantine/core";
-import { ContactListConfiguration } from "./ContactListConfiguration";
+import { Group, Stack } from "@mantine/core";
 import { ActiveContactList } from "./ActiveContactList";
 import { StatusBreakdown } from "./StatusBreakdown";
 import { ContactQualityScore } from "./ContactQualityScore";
@@ -22,10 +21,7 @@ export const ContactSection = ({
       title="Contact List Configuration"
       description="Define who your campaign will reach. Upload, import, or select contacts to engage with through your AI agents."
     >
-      <ActiveContactList
-        selectedContactList={selectedContactList}
-        onContactListChange={onContactListChange}
-      />
+      <ActiveContactList />
 
       <Group gap="md" className={styles.statsContainer}>
         {/*  Status Breakdown */}

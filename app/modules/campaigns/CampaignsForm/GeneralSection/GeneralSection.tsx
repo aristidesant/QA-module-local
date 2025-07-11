@@ -1,5 +1,6 @@
 import { useCampaignFormContext } from "../../campaignFormFunctions";
-import { Flex, Switch, Textarea, TextInput } from "@mantine/core";
+import { Button, Flex, Switch, Textarea, TextInput } from "@mantine/core";
+import { IconDeviceFloppy } from "@tabler/icons-react";
 import SectionCard from "~/components/SectionCard";
 
 const GeneralSection: React.FC = () => {
@@ -19,9 +20,12 @@ const GeneralSection: React.FC = () => {
         />
         <Switch
           label="Active"
-          // checked={form.values.active}
+          checked={form.values.status === "ACTIVE"}
           onChange={(event) =>
-            form.setFieldValue("active", event.currentTarget.checked)
+            form.setFieldValue(
+              "status",
+              event.currentTarget.checked ? "ACTIVE" : "INACTIVE"
+            )
           }
         />
       </Flex>
@@ -32,6 +36,11 @@ const GeneralSection: React.FC = () => {
         autosize
         minRows={5}
       />
+      <Flex justify={"end"}>
+        <Button leftSection={<IconDeviceFloppy />} type="submit">
+          Save
+        </Button>
+      </Flex>
     </SectionCard>
   );
 };

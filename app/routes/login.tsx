@@ -53,7 +53,6 @@ export async function action({ request }: { request: Request }) {
       session.set("clientId", userData.clientId.toString());
       session.set("email", userData.email);
       session.set("accessToken", result.accessToken);
-      console.log(result, userData);
       // Set session expiration based on remember me
       const sessionOptions = rememberMe
         ? { expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) } // 7 days

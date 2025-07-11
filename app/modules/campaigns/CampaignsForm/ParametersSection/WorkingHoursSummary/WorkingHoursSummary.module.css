@@ -1,0 +1,6 @@
+.summary {
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  background-color: var(--mantine-color-gray-0);
+  border-radius: var(--mantine-radius-md);
+  border: 1px solid var(--mantine-color-gray-2);
+}

@@ -19,7 +19,6 @@ export const useCreatePromptForm = () => {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["promptForms"] });
-      console.log("Formulario de prompt creado exitosamente:", data);
     },
     onError: (error) => {
       console.error("Error al crear el formulario de prompt:", error);
@@ -31,7 +30,6 @@ export const useCreatePromptForm = () => {
 export const useGetAllPromptForms = (params?: Record<string, any>) => {
   const token = useToken();
   const header = getClientAuthorizationHeader();
-  console.log("params", header, token);
   return useQuery({
     queryKey: ["promptForms", params],
     queryFn: async () => {
@@ -85,7 +83,6 @@ export const useUpdatePromptForm = () => {
       if (data?.id) {
         queryClient.invalidateQueries({ queryKey: ["promptForm", data.id] });
       }
-      console.log("Formulario de prompt actualizado exitosamente:", data);
     },
     onError: (error) => {
       console.error("Error al actualizar el formulario de prompt:", error);
@@ -109,7 +106,6 @@ export const useDeletePromptForm = () => {
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ["promptForms"] });
       queryClient.invalidateQueries({ queryKey: ["promptForm", id] });
-      console.log("Formulario de prompt eliminado exitosamente:", id);
     },
     onError: (error) => {
       console.error("Error al eliminar el formulario de prompt:", error);

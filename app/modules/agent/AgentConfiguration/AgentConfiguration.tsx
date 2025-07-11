@@ -1,4 +1,4 @@
-import { Stack } from "@mantine/core";
+import { Button, Group, Stack } from "@mantine/core";
 import { useState, type ReactNode } from "react";
 import AgentVoices from "../AgentVoices";
 import AgentConfigurationTypeSelector from "../AgentConfigurationTypeSelector";
@@ -71,6 +71,9 @@ const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
           <AgentKnowledgeBase />
         </>
       )}
+      <Group>
+        <Button type="submit">Save</Button>
+      </Group>
     </Stack>
   );
 };
