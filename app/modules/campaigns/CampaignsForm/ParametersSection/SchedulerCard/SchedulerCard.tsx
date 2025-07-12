@@ -7,6 +7,7 @@ import {
   useUpdateSchedule,
   useActivateSchedule,
   useDeactivateSchedule,
+  useDeleteSchedule,
 } from "~/queries/schedulerQueries";
 import styles from "./SchedulerCard.module.css";
 import { DayScheduleCard } from "../DayScheduleCard";
@@ -18,23 +19,18 @@ import {
   SchedulerFormProvider,
   useSchedulerFormInit,
 } from "./schedulerFormProvider";
+import { modals } from "@mantine/modals";
 
 export interface SchedulerCardProps {
   scheduler: Scheduler;
   campaignId: string | number;
-  onUpdate?: (updatedScheduler: Scheduler) => void;
-  onDelete?: (schedulerId: number) => void;
-  onActivate?: (schedulerId: number) => void;
-  onDeactivate?: (schedulerId: number) => void;
+  handleReload?: () => void;
 }
 
 export const SchedulerCard: React.FC<SchedulerCardProps> = ({
   scheduler,
   campaignId,
-  onUpdate,
-  onDelete,
-  onActivate,
-  onDeactivate,
+  handleReload,
 }) => {
   const [opened, { toggle, open, close }] = useDisclosure(false);
   const isActive = scheduler?.status === "active" || true;
@@ -43,10 +39,9 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
   const activateScheduleMutation = useActivateSchedule();
   const deactivateScheduleMutation = useDeactivateSchedule();
   const updateScheduleMutation = useUpdateSchedule();
-
+  const deleteScheduleMutation = useDeleteSchedule();
   // Initialize form
   const form = useSchedulerFormInit(scheduler);
-
   // Handle toggle status
   const handleToggleStatus = async () => {
     try {
@@ -55,13 +50,13 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
           campaignId,
           scheduleId: scheduler.id,
         });
-        onDeactivate?.(scheduler.id);
+        handleReload?.();
       } else {
         await activateScheduleMutation.mutateAsync({
           campaignId,
           scheduleId: scheduler.id,
         });
-        onActivate?.(scheduler.id);
+        handleReload?.();
       }
     } catch (error) {
       console.error("Failed to toggle scheduler status:", error);
@@ -85,10 +80,7 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
       });
 
       // Call onUpdate callback with updated scheduler
-      onUpdate?.({
-        ...scheduler,
-        ...values,
-      } as Scheduler);
+      handleReload?.();
 
       // Close the form
       close();
@@ -97,21 +89,34 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
     }
   };
 
-  // Format time range for display
-  const formatTimeRange = () => {
-    return "L - V 9:00 am to 5:30 pm";
+  const handleDelete = () => {
+    modals.openConfirmModal({
+      title: "Delete Schedule",
+      children: "Are you sure you want to delete this schedule?",
+      labels: { confirm: "Delete", cancel: "Cancel" },
+      onConfirm: async () => {
+        try {
+          await deleteScheduleMutation.mutateAsync({
+            campaignId,
+            scheduleId: scheduler.id,
+          });
+          handleReload?.();
+        } catch (error) {
+          console.error("Failed to delete scheduler:", error);
+        }
+      },
+    });
   };
 
   return (
-    <Card withBorder p="xl" radius="md">
+    <Card withBorder p="md" radius="md">
       <Stack gap="lg">
         {/* Schedule Header */}
         <ScheduleHeader
-          isActive={isActive}
-          timeRangeText={formatTimeRange()}
+          schedule={scheduler}
           onChange={handleToggleStatus}
           onEdit={() => toggle()}
-          onDelete={() => onDelete?.(scheduler.id)}
+          onDelete={() => handleDelete()}
         />
         {opened && (
           <SchedulerFormProvider form={form}>
@@ -131,7 +136,7 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 
                 {/* Active Contact List */}
                 <ActiveContactListView
-                  scheduleContactGroups={scheduler.scheduleContactGroups}
+                  scheduleContactGroups={scheduler.scheduleContactGroups || []}
                   onUpdateComplete={() => {}}
                   campaignId={campaignId}
                 />

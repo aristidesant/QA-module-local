@@ -10,18 +10,17 @@ import {
 } from "@mantine/core";
 import { IconDots, IconPencil, IconTrash } from "@tabler/icons-react";
 import styles from "./ScheduleHeader.module.css";
+import type { Scheduler } from "~/models/SchedulerModel";
 
 export interface ScheduleHeaderProps {
-  isActive: boolean;
-  timeRangeText: string;
+  schedule?: Scheduler;
   onChange: (isActive: boolean) => void;
   onEdit: () => void;
   onDelete: () => void;
 }
 
 export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
-  isActive,
-  timeRangeText,
+  schedule,
   onChange,
   onEdit,
   onDelete,
@@ -31,20 +30,20 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
       <Flex align={"center"} className={styles.titleContainer}>
         <Switch
           size="md"
-          checked={isActive}
+          checked={schedule?.status === "active"}
           onChange={(event) => onChange(event.currentTarget.checked)}
         />
         <Box>
           <Text fz="sm" fw={500}>
-            Schedule
+            {schedule?.name}
           </Text>
           <Text fz="xs" c="dimmed">
-            Normal working hours
+            {schedule?.description}
           </Text>
         </Box>
       </Flex>
       <div className={styles.timeInfo}>
-        <Text className={styles.timeText}>{timeRangeText}</Text>
+        {/* <Text className={styles.timeText}>{"ss"}</Text> */}
         <Menu position="bottom-end" withinPortal>
           <Menu.Target>
             <ActionIcon variant="subtle" color="gray">

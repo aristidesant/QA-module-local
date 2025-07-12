@@ -13,7 +13,7 @@ export const useSchedulerFormInit = (scheduler: Scheduler) => {
   // Initialize form with scheduler data
   const form = useSchedulerForm({
     initialValues: {
-      id: scheduler.id,
+      ...scheduler,
       name: scheduler.name || "",
       description: scheduler.description || "",
       campaignId:

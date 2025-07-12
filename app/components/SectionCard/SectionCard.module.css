@@ -34,9 +34,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--mantine-color-gray-2);
+  /* border-bottom: 1px solid var(--mantine-color-gray-2); */
   width: 100%;
 }
 

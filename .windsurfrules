@@ -10,7 +10,7 @@
 - Follow the Airbnb Style Guide for all code formatting.
 - Name React component files using PascalCase (e.g., `UserCard.tsx`, not `user-card.tsx`).
 - Use named exports for all components.
-- Each component must be isolated in its own folder. The folder and the main component file should both use the component name. Include an `index.ts` file in the folder to export the component as the default export.
+- Each component must be isolated in its own folder. The folder and the main component file should both use the component name. Include an `index.ts` file in the folder to export the component as the default export. This is a MUST all the time.
 - No matter the prompt language used by the user, the code should be written in English.
 - When asked to split a component, unless we explicitly provide a path, create the component in the same folder as the main component file.
 - When you consider a new component is needed, create it in the same folder as the main component file.

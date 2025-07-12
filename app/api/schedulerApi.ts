@@ -30,6 +30,24 @@ const schedulerApi = (authHeader: Record<string, string>) => {
       return response.data;
     },
 
+    // POST create a predefined schedule for a campaign
+    createPredefinedSchedule: async (
+      campaignId: string | number,
+      predefinedScheduleData: { name: string; description: string; campaignId: number }
+    ) => {
+      const response = await axios.post<Scheduler>(
+        `${DEFAULT_API_URL}/campaigns/${campaignId}/schedules/predefined`,
+        predefinedScheduleData,
+        {
+          headers: {
+            ...authHeader,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    },
+
     // GET active scheduler for a campaign
     getCampaignActiveScheduler: async (campaignId: string | number) => {
       const response = await axios.get<Scheduler>(

@@ -36,11 +36,6 @@ const menuItems: MenuItem[] = [
     to: "/campaigns",
   },
   {
-    label: "Contacts",
-    icon: <IconUsersGroup size={20} className={styles.menuIcon} />,
-    to: "/contacts",
-  },
-  {
     label: "Call log",
     icon: <IconPhoneCall size={20} className={styles.menuIcon} />,
     to: "/call-log",

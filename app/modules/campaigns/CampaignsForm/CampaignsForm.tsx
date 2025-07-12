@@ -161,6 +161,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
         {selectedTab === "general" && (
           <form onSubmit={form.onSubmit(handleSubmit)}>
             <GeneralSection />
+            <div />
           </form>
         )}
         {selectedTab === "agents" && (

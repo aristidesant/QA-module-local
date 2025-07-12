@@ -8,6 +8,7 @@ import styles from "./ParametersSection.module.css";
 import { useCampaignsStore } from "~/stores/campaignsStore";
 import { useCampaignSchedules } from "~/queries/schedulerQueries";
 import type { Scheduler } from "~/models/SchedulerModel";
+import AddScheduler from "./AddScheduler";
 
 interface DaySchedule {
   enabled: boolean;
@@ -32,40 +33,24 @@ export const ParametersSection: React.FC<ParametersSectionProps> = ({
   const { data: campaignSchedule, refetch: reloadCampaignSchedule } =
     useCampaignSchedules(selectedCampaign?.id);
 
-  const handleSchedulerUpdate = (updatedScheduler: Scheduler) => {
-    onSchedulerUpdate?.(updatedScheduler);
-    reloadCampaignSchedule();
-  };
-
-  const handleSchedulerDelete = (schedulerId: number) => {
-    reloadCampaignSchedule();
-  };
-
-  const handleSchedulerActivate = (schedulerId: number) => {
-    reloadCampaignSchedule();
-  };
-
-  const handleSchedulerDeactivate = (schedulerId: number) => {
+  const handleReloading = () => {
     reloadCampaignSchedule();
   };
 
   return (
-    <Stack gap="md" className={styles.workingHoursContainer}>
+    <Stack gap="md">
       {/* Schedulers Section */}
       {campaignSchedule && campaignSchedule.length > 0 && (
         <>
           <Stack gap="sm">
             {campaignSchedule.map((scheduler) => (
               <SchedulerCard
-                key={scheduler.id}
                 scheduler={scheduler}
                 campaignId={selectedCampaign?.id!}
-                onUpdate={handleSchedulerUpdate}
-                onDelete={handleSchedulerDelete}
-                onActivate={handleSchedulerActivate}
-                onDeactivate={handleSchedulerDeactivate}
+                handleReload={handleReloading}
               />
             ))}
+            <AddScheduler />
           </Stack>
         </>
       )}

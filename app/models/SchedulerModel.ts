@@ -39,16 +39,18 @@ export interface Scheduler {
   description: string | null;
   campaignId: number;
   status: "active" | "paused" | "completed" | "draft" | string;
+  humanEquivalent: number;
   callsPerHour: number | null;
   estimatedCompletionDays: number | null;
   totalWeekVolumes: number | null;
+  totalWeeklyHours: number; // Added to match the provided object
   userId: number;
   clientId: number;
   createdAt: string;
   updatedAt: string;
-  deletedAt: string | null;
-  dayConfigs: DayConfig[];
-  scheduleContactGroups: SchedulerContactGroupModel[];
+  deletedAt?: string | null; // Made optional with ?
+  dayConfigs?: DayConfig[]; // Made optional with ?
+  scheduleContactGroups?: SchedulerContactGroupModel[]; // Made optional with ?
 }
 
 // Create a const to allow default export

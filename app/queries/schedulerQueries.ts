@@ -49,6 +49,15 @@ interface DeactivateScheduleParams {
   scheduleId: string | number;
 }
 
+interface CreatePredefinedScheduleParams {
+  campaignId: string | number;
+  predefinedScheduleData: {
+    name: string;
+    description: string;
+    campaignId: number;
+  };
+}
+
 /**
  * Hook to fetch schedules for a specific campaign
  * @param campaignId - The ID of the campaign to fetch schedules for
@@ -343,6 +352,35 @@ export function useDeactivateSchedule() {
       });
       queryClient.invalidateQueries({
         queryKey: ["schedule", variables.campaignId, variables.scheduleId],
+      });
+    },
+  });
+}
+
+/**
+ * Mutation hook to create a predefined schedule for a campaign
+ * @returns Mutation object with methods to create a predefined schedule
+ */
+export function useCreatePredefinedSchedule() {
+  const token = useToken();
+  const queryClient = useQueryClient();
+  const header = getClientAuthorizationHeader();
+
+  return useMutation({
+    mutationFn: async ({
+      campaignId,
+      predefinedScheduleData,
+    }: CreatePredefinedScheduleParams) => {
+      const api = schedulerApi({
+        ...header,
+        Authorization: `Bearer ${token?.token}`,
+      });
+      return api.createPredefinedSchedule(campaignId, predefinedScheduleData);
+    },
+    onSuccess: (data, variables) => {
+      // Invalidate relevant queries to refetch fresh data
+      queryClient.invalidateQueries({
+        queryKey: ["campaignSchedules", variables.campaignId],
       });
     },
   });
