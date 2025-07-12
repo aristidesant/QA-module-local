@@ -26,6 +26,7 @@ import {
 import styles from "./CampaignsList.module.css";
 import { CampaignsDetails } from "../CampaignsDetails";
 import SectionCard from "~/components/SectionCard";
+import CampaignsListItem from "./CampaignsListItem";
 import { modals } from "@mantine/modals";
 import { CampaignsForm } from "../CampaignsForm/CampaignsForm";
 import { notifications } from "@mantine/notifications";
@@ -211,162 +212,62 @@ export const CampaignsList: React.FC = () => {
         }
         icon={IconDetails}
       >
-        <Table
-          highlightOnHover
-          verticalSpacing="sm"
-          horizontalSpacing="sm"
-          className={styles.table}
-        >
-          <Table.Thead className={styles.thead}>
-            <Table.Tr>
-              <Table.Th className={styles.thName}>Campaign</Table.Th>
-              <Table.Th className={styles.thType}>Type</Table.Th>
-              <Table.Th className={styles.thStatus}>Status</Table.Th>
-              <Table.Th className={styles.thBudget}>Budget</Table.Th>
-              <Table.Th className={styles.thActions}>Actions</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {data.map((campaign) => (
-              <Table.Tr
-                key={campaign.id}
-                className={
-                  currentCampaign?.id === campaign.id
-                    ? styles.rowSelected
-                    : styles.row
+        <Stack gap={"xs"}>
+          {data.map((campaign) => (
+            <CampaignsListItem
+              key={campaign.id}
+              campaign={campaign}
+              selected={currentCampaign?.id === campaign.id}
+              onClick={() => handleCampaignClick(campaign)}
+              onViewDetails={() => {
+                if (campaign.id === selectedCampaign?.id) {
+                  selectCampaign(null);
+                } else {
+                  selectCampaign(campaign);
                 }
-                onClick={() => handleCampaignClick(campaign)}
-              >
-                <Table.Td className={styles.campaignInfo}>
-                  <div className={styles.campaignName}>{campaign.name}</div>
-                  <div className={styles.campaignDescription}>
-                    {campaign.description}
-                  </div>
-                </Table.Td>
-
-                <Table.Td className={styles.typeCell}>
-                  <Badge
-                    variant="outline"
-                    color={campaign.type === "OUTBOUND" ? "blue" : "violet"}
-                    radius="sm"
-                    size="sm"
-                  >
-                    {campaign.type.charAt(0) +
-                      campaign.type.slice(1).toLowerCase()}
-                  </Badge>
-                </Table.Td>
-
-                <Table.Td>
-                  <Badge
-                    variant="light"
-                    color={
-                      campaign.status === "ACTIVE"
-                        ? "green"
-                        : campaign.status === "PAUSED"
-                        ? "yellow"
-                        : "gray"
+              }}
+              onEdit={() => {
+                modals.open({
+                  modalId: "edit-campaign",
+                  title: `Edit Campaign: ${campaign.name}`,
+                  children: <CampaignsForm campaign={campaign} />,
+                  size: "lg",
+                  centered: true,
+                });
+              }}
+              onDelete={async () => {
+                modals.openConfirmModal({
+                  title: "Delete Campaign",
+                  children: (
+                    <Text size="sm">
+                      Are you sure you want to delete this campaign?
+                    </Text>
+                  ),
+                  labels: { confirm: "Delete", cancel: "Cancel" },
+                  confirmProps: { color: "red" },
+                  onConfirm: async () => {
+                    try {
+                      await deleteCampaign(`${campaign.id}`);
+                      reloadCampaigns();
+                      selectCampaign(null);
+                      notifications.show({
+                        title: "Campaign Deleted",
+                        message: "The campaign has been successfully deleted.",
+                        color: "green",
+                      });
+                    } catch (error) {
+                      notifications.show({
+                        title: "Error",
+                        message: "Failed to delete campaign. Please try again.",
+                        color: "red",
+                      });
                     }
-                    radius="md"
-                    className={styles.statusBadge}
-                  >
-                    {campaign.status.charAt(0) +
-                      campaign.status.slice(1).toLowerCase()}
-                  </Badge>
-                </Table.Td>
-
-                <Table.Td className={styles.budgetCell}>
-                  <NumberFormatter
-                    value={campaign.budget}
-                    decimalScale={2}
-                    prefix="$"
-                    className={styles.budgetValue}
-                    fixedDecimalScale
-                    decimalSeparator="."
-                  />
-                </Table.Td>
-
-                <Table.Td>
-                  <Menu shadow="md" width={160}>
-                    <Menu.Target>
-                      <ActionIcon variant="subtle" color="gray" radius="md">
-                        <IconDotsVertical size={16} />
-                      </ActionIcon>
-                    </Menu.Target>
-                    <Menu.Dropdown>
-                      <Menu.Item
-                        onClick={() => {
-                          if (campaign.id === selectedCampaign?.id) {
-                            selectCampaign(null);
-                          } else {
-                            selectCampaign(campaign);
-                          }
-                        }}
-                        leftSection={<IconEye size={14} />}
-                      >
-                        {campaign?.id === selectedCampaign?.id
-                          ? "Hide Details"
-                          : "View Details"}
-                      </Menu.Item>
-                      <Menu.Item
-                        onClick={() => {
-                          modals.open({
-                            modalId: "edit-campaign",
-                            title: `Edit Campaign: ${campaign.name}`,
-                            children: <CampaignsForm campaign={campaign} />,
-                            size: "lg",
-                            centered: true,
-                          });
-                        }}
-                        leftSection={<IconEdit size={14} />}
-                      >
-                        Edit Campaign
-                      </Menu.Item>
-                      <Menu.Divider />
-                      <Menu.Item
-                        leftSection={<IconTrash size={14} />}
-                        onClick={async () => {
-                          modals.openConfirmModal({
-                            title: "Delete Campaign",
-                            children: (
-                              <Text size="sm">
-                                Are you sure you want to delete this campaign?
-                              </Text>
-                            ),
-                            labels: { confirm: "Delete", cancel: "Cancel" },
-                            confirmProps: { color: "red" },
-                            onConfirm: async () => {
-                              try {
-                                await deleteCampaign(`${campaign.id}`);
-                                reloadCampaigns();
-                                selectCampaign(null);
-                                notifications.show({
-                                  title: "Campaign Deleted",
-                                  message:
-                                    "The campaign has been successfully deleted.",
-                                  color: "green",
-                                });
-                              } catch (error) {
-                                notifications.show({
-                                  title: "Error",
-                                  message:
-                                    "Failed to delete campaign. Please try again.",
-                                  color: "red",
-                                });
-                              }
-                            },
-                          });
-                        }}
-                        color="red"
-                      >
-                        Delete
-                      </Menu.Item>
-                    </Menu.Dropdown>
-                  </Menu>
-                </Table.Td>
-              </Table.Tr>
-            ))}
-          </Table.Tbody>
-        </Table>
+                  },
+                });
+              }}
+            />
+          ))}
+        </Stack>
       </SectionCard>
       {selectedCampaign?.id && (
         <>

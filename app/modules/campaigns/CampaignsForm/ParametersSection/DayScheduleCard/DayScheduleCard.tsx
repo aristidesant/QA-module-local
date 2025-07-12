@@ -1,27 +1,22 @@
-import React from "react";
-import {
-  Box,
-  Group,
-  Switch,
-  Text,
-  Flex,
-  Stack,
-} from "@mantine/core";
+import React, { useState } from "react";
+import { Box, Group, Switch, Text, Flex, Stack } from "@mantine/core";
 import { TimePicker } from "@mantine/dates";
 import { IconClockOff } from "@tabler/icons-react";
 import styles from "./DayScheduleCard.module.css";
 import { useSchedulerFormContext } from "../SchedulerCard/schedulerFormProvider";
 import type { DayConfig } from "~/models/SchedulerModel";
-
+import { useCampaignsStore } from "~/stores/campaignsStore";
+import DayTimeDistribution from "./DayTimeDistribution";
 
 const formatDayName = (day: string) => {
   return day.charAt(0).toUpperCase() + day.slice(1);
 };
 
 export const DayScheduleCard: React.FC = () => {
+  const { setRightComponent } = useCampaignsStore((state) => state);
   const form = useSchedulerFormContext();
-  const displayDays: DayConfig[] = form.values.dayConfigs || []; // fetched from form context
-
+  const displayDays: DayConfig[] = form.values.dayConfigs || [];
+  const [selectedDay, setSelectedDay] = useState<string | null>(null);
 
   // Handle day toggle
   const handleDayToggle = (index: number) => {
@@ -61,23 +56,32 @@ export const DayScheduleCard: React.FC = () => {
     <Stack gap="xs">
       {displayDays.map((day, index) => {
         const isActive = day.isActive;
-        const isHighlighted = day.dayOfWeek === "wednesday"; // Example for highlighted day
+        const isSelected = selectedDay === day.dayOfWeek;
 
         return (
           <Box
             key={index}
             className={`${styles.dayRow} ${
-              isHighlighted ? styles.highlighted : ""
-            }`}
+              isSelected ? styles.highlighted : ""
+            } ${styles.selectable}`}
+            onClick={() => {
+              setSelectedDay(day.dayOfWeek);
+              setRightComponent?.(<DayTimeDistribution dayConfig={day} />);
+            }}
           >
             <Flex justify="space-between" align="center">
               <Group gap="xs" align="center" flex={1}>
-                <Switch
-                  className={styles.daySwitch}
-                  size="md"
-                  checked={isActive}
-                  onChange={() => handleDayToggle(index)}
-                />
+                <div onClick={(e) => e.stopPropagation()}>
+                  <Switch
+                    className={styles.daySwitch}
+                    size="md"
+                    checked={isActive}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      handleDayToggle(index);
+                    }}
+                  />
+                </div>
                 <Text className={styles.dayName}>
                   {formatDayName(day.dayOfWeek)}
                 </Text>

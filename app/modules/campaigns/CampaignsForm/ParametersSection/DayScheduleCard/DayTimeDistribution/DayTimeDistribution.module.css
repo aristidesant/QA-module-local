@@ -1,0 +1,112 @@
+
+.container {
+  width: 100%;
+  padding: 0;
+  background: none;
+}
+
+.header {
+  margin-bottom: var(--mantine-spacing-md);
+}
+
+.dayLabel {
+  font-size: var(--mantine-font-size-md);
+  font-weight: 700;
+  color: var(--mantine-color-gray-9);
+  margin-bottom: 2px;
+}
+
+.subtitle {
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-gray-6);
+  margin-bottom: 0;
+}
+
+.cardsStack {
+  margin-bottom: var(--mantine-spacing-md);
+  gap: 4px !important;
+}
+
+.title {
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 500;
+  color: var(--mantine-color-gray-7);
+  margin-bottom: var(--mantine-spacing-xs);
+}
+
+.timeCard {
+  background: var(--mantine-color-white);
+  border-radius: var(--mantine-radius-md);
+  border: 1px solid var(--mantine-color-gray-2);
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  width: 100%;
+  margin-bottom: 0;
+  box-shadow: none;
+}
+
+.timeLabel {
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 500;
+  color: var(--mantine-color-gray-7);
+  width: 70px;
+}
+
+.sliderGroup {
+  flex: 1;
+  align-items: center;
+}
+
+.slider {
+  flex: 1;
+  min-width: 150px;
+}
+
+.callsLabel {
+  font-size: var(--mantine-font-size-xs);
+  text-align: center;
+  color: var(--mantine-color-gray-6);
+  width: 40px;
+  line-height: 1.2;
+}
+
+
+.totalCard {
+  background: var(--mantine-color-gray-0);
+  border-radius: var(--mantine-radius-md);
+  border: 1px solid var(--mantine-color-gray-2);
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  margin-top: var(--mantine-spacing-md);
+  box-shadow: none;
+}
+
+.totalLabel {
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 600;
+  color: var(--mantine-color-gray-8);
+}
+
+.totalCalls {
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 600;
+  color: var(--mantine-color-gray-8);
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .timeCard {
+    flex-direction: column;
+    gap: var(--mantine-spacing-xs);
+    padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  }
+  .timeLabel {
+    width: 100%;
+    margin-bottom: var(--mantine-spacing-xs);
+  }
+  .sliderGroup {
+    width: 100%;
+  }
+  .totalCard {
+    padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  }
+}

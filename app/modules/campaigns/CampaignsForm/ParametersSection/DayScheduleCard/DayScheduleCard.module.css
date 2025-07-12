@@ -6,6 +6,7 @@
 
 .highlighted {
   background-color: var(--mantine-color-blue-0);
+  border: 1px solid var(--mantine-color-blue-3);
 }
 
 .daySwitch {
@@ -67,6 +68,15 @@
   color: var(--mantine-color-dimmed);
   min-height: 36px;
   min-width: 200px;
+}
+
+.selectable {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.selectable:hover {
+  background-color: var(--mantine-color-gray-0);
 }
 
 /* Responsive adjustments */
