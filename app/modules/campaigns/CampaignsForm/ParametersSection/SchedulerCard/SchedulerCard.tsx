@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Group, Stack, Button } from "@mantine/core";
+import { Card, Group, Stack, Button, LoadingOverlay } from "@mantine/core";
 import { IconEdit, IconDeviceFloppy } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import type { Scheduler } from "~/models/SchedulerModel";
@@ -33,7 +33,6 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
   handleReload,
 }) => {
   const [opened, { toggle, open, close }] = useDisclosure(false);
-  const isActive = scheduler?.status === "active" || true;
 
   // Initialize API mutations
   const activateScheduleMutation = useActivateSchedule();
@@ -45,7 +44,7 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
   // Handle toggle status
   const handleToggleStatus = async () => {
     try {
-      if (isActive) {
+      if (scheduler.status === "active") {
         await deactivateScheduleMutation.mutateAsync({
           campaignId,
           scheduleId: scheduler.id,
@@ -110,6 +109,14 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 
   return (
     <Card withBorder p="md" radius="md">
+      <LoadingOverlay
+        visible={
+          updateScheduleMutation.isPending ||
+          deleteScheduleMutation.isPending ||
+          activateScheduleMutation.isPending ||
+          deactivateScheduleMutation.isPending
+        }
+      />
       <Stack gap="lg">
         {/* Schedule Header */}
         <ScheduleHeader

@@ -1,5 +1,5 @@
 import React from "react";
-import { Stack, Text, Divider } from "@mantine/core";
+import { Stack, Text, Divider, LoadingOverlay } from "@mantine/core";
 import { DayScheduleCard } from "./DayScheduleCard";
 import { WorkingHoursHeader } from "./WorkingHoursHeader";
 import { WorkingHoursSummary } from "./WorkingHoursSummary";
@@ -30,8 +30,12 @@ export const ParametersSection: React.FC<ParametersSectionProps> = ({
   onSchedulerUpdate,
 }) => {
   const { selectedCampaign } = useCampaignsStore((state) => state);
-  const { data: campaignSchedule, refetch: reloadCampaignSchedule } =
-    useCampaignSchedules(selectedCampaign?.id);
+  const {
+    data: campaignSchedule,
+    refetch: reloadCampaignSchedule,
+    isLoading: campaignScheduleLoading,
+    isFetching: campaignScheduleFetching,
+  } = useCampaignSchedules(selectedCampaign?.id);
 
   const handleReloading = () => {
     reloadCampaignSchedule();
@@ -39,6 +43,9 @@ export const ParametersSection: React.FC<ParametersSectionProps> = ({
 
   return (
     <Stack gap="md">
+      <LoadingOverlay
+        visible={campaignScheduleLoading || campaignScheduleFetching}
+      />
       {/* Schedulers Section */}
       {campaignSchedule && campaignSchedule.length > 0 && (
         <>
