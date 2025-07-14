@@ -13,6 +13,8 @@ import {
   rem,
   Divider,
   SemiCircleProgress,
+  Flex,
+  Button,
 } from "@mantine/core";
 import {
   IconDotsVertical,
@@ -78,10 +80,14 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
           >
             <IconCheck />
           </Avatar>
-          <Text fw={700} size="md" className={styles.campaignName}>
-            Campaign/
-            <span className={styles.campaignNameText}>{campaign.name}</span>
-          </Text>
+          <Flex direction="column">
+            <Text fz={"xs"} c="dimmed">
+              Campaign
+            </Text>
+            <Text fz="xs" fw={500} className={styles.campaignName}>
+              {campaign?.name}
+            </Text>
+          </Flex>
         </Group>
 
         <Group gap={8} align="center">
@@ -111,11 +117,9 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
                 onClick={onViewDetails}
                 leftSection={<IconEye size={14} />}
               >
-                View Details
-              </Menu.Item>
-              <Menu.Item onClick={onEdit} leftSection={<IconEdit size={14} />}>
                 Edit Campaign
               </Menu.Item>
+
               <Menu.Divider />
               <Menu.Item
                 onClick={onDelete}
@@ -177,26 +181,20 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
             thickness={12}
             fillDirection="left-to-right"
             orientation="up"
+            label={score}
+            labelPosition="bottom"
+            styles={{
+              label: {
+                fontSize: rem(34),
+                fontWeight: 700,
+                color: "var(--mantine-color-dark-6)",
+              },
+            }}
             filledSegmentColor="#40c057"
             emptySegmentColor="#e9ecef"
             style={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
           />
 
-          {/* Score value */}
-          <div
-            style={{
-              position: "absolute",
-              top: 18,
-              left: 0,
-              width: "100%",
-              textAlign: "center",
-              zIndex: 3,
-            }}
-          >
-            <Text size="32px" fw={900} c="#1a2540" style={{ lineHeight: 1 }}>
-              {score}
-            </Text>
-          </div>
           {/* Label below gauge */}
           <div
             style={{
@@ -216,12 +214,7 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
       </Group>
 
       {/* Footer: Agent and contact methods */}
-      <Group
-        justify="space-between"
-        align="center"
-        mt="lg"
-        className={styles.footer}
-      >
+      <Group align="center" mt="lg" className={styles.footer}>
         <Group gap={8} align="center">
           <Avatar src={agent.avatar} radius="xl" size={32} />
           <Stack gap={0}>
@@ -233,11 +226,37 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
             </Text>
           </Stack>
         </Group>
-        <Group gap={12} align="center" className={styles.contactIcons}>
-          <IconPhone size={18} color="var(--mantine-color-blue-6)" />
-          <IconBrandWhatsapp size={18} color="var(--mantine-color-green-6)" />
-          <IconMail size={18} color="var(--mantine-color-red-6)" />
-        </Group>
+        <Flex gap={"xs"}>
+          <Button
+            variant="subtle"
+            leftSection={
+              <IconPhone size={18} color="var(--mantine-color-blue-6)" />
+            }
+          >
+            Call
+          </Button>
+          <Divider orientation="vertical" />
+          <Button
+            variant="subtle"
+            leftSection={
+              <IconBrandWhatsapp
+                size={18}
+                color="var(--mantine-color-green-6)"
+              />
+            }
+          >
+            WhatsApp
+          </Button>
+          <Divider orientation="vertical" />
+          <Button
+            variant="subtle"
+            leftSection={
+              <IconMail size={18} color="var(--mantine-color-red-6)" />
+            }
+          >
+            Email
+          </Button>
+        </Flex>
       </Group>
     </Card>
   );
