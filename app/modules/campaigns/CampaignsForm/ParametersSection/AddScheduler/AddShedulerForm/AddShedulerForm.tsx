@@ -1,4 +1,11 @@
-import { Button, Group, Stack, TextInput, Textarea } from "@mantine/core";
+import {
+  Button,
+  Group,
+  Stack,
+  TextInput,
+  Textarea,
+  Slider,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { IconCheck } from "@tabler/icons-react";
@@ -16,6 +23,7 @@ interface AddShedulerFormProps {
 interface PredefinedScheduleFormValues {
   name: string;
   description: string;
+  humanEquivalent: number | "";
 }
 
 const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
@@ -29,9 +37,28 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
     initialValues: {
       name: "",
       description: "",
+      humanEquivalent: 10,
     },
     validate: {
       name: (value) => (value.trim() ? null : "Name is required"),
+      humanEquivalent: (value) => {
+        if (value === undefined || value === null) {
+          return "Human Equivalent is required";
+        }
+        if (typeof value !== "number" || isNaN(value)) {
+          return "Human Equivalent must be a number";
+        }
+        if (value < 10) {
+          return "Human Equivalent must not be less than 10";
+        }
+        if (value > 500) {
+          return "Human Equivalent must not be greater than 500";
+        }
+        if (value % 10 !== 0) {
+          return "Human Equivalent must be in increments of 10";
+        }
+        return null;
+      },
     },
   });
 
@@ -50,6 +77,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
         campaignId,
         predefinedScheduleData: {
           ...values,
+          humanEquivalent: Number(values.humanEquivalent),
           campaignId: Number(campaignId),
         },
       });
@@ -89,6 +117,26 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
           minRows={3}
           {...form.getInputProps("description")}
         />
+        <Stack gap={4}>
+          <label htmlFor="humanEquivalent">Human Equivalent</label>
+          <Slider
+            id="humanEquivalent"
+            min={10}
+            max={500}
+            step={10}
+            value={form.values.humanEquivalent as number}
+            onChange={(value) => form.setFieldValue("humanEquivalent", value)}
+            marks={Array.from({ length: 6 }, (_, i) => ({
+              value: 10 + i * 100,
+              label: String(10 + i * 100),
+            }))}
+          />
+          {form.errors.humanEquivalent && (
+            <div style={{ color: "red", fontSize: 12 }}>
+              {form.errors.humanEquivalent}
+            </div>
+          )}
+        </Stack>
         <Group justify="flex-end" mt="md">
           {onCancel && (
             <Button variant="outline" onClick={onCancel}>

@@ -1,12 +1,13 @@
 import type SchedulerContactGroupModel from "./SchedulerContactGroupModel";
-import type ContactGroup from "./SchedulerContactGroupModel";
 
-export interface TimeRange {
+export interface HourConfig {
   id: number;
+  clientId: number;
   dayConfigId: number;
-  startTime: string; // Format: 'HH:mm:ss'
-  endTime: string; // Format: 'HH:mm:ss'
-  callsPerHourOverride: number | null;
+  hour: string; // Format: 'HH:mm:ss'
+  hourOrder: number;
+  capacity: string;
+  isActive: boolean;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
@@ -24,13 +25,16 @@ export type DayOfWeek =
 export interface DayConfig {
   id: number;
   scheduleId: number;
+  clientId: number;
   dayOfWeek: DayOfWeek;
+  dayOrder: number;
   isActive: boolean;
-  dailyCallLimit: number;
-  timeRanges: TimeRange[];
+  dailyCallLimit: number | null;
+  dayCapacity: string;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
+  hourConfigs: HourConfig[];
 }
 
 export interface Scheduler {
@@ -39,20 +43,16 @@ export interface Scheduler {
   description: string | null;
   campaignId: number;
   status: "active" | "paused" | "completed" | "draft" | string;
-  humanEquivalent: number;
-  callsPerHour: number | null;
+  humanEquivalent: string | null;
+  callsPerHour: string | null;
   estimatedCompletionDays: number | null;
   totalWeekVolumes: number | null;
-  totalWeeklyHours: number; // Added to match the provided object
+  totalWeeklyHours: string | null;
   userId: number;
   clientId: number;
   createdAt: string;
   updatedAt: string;
-  deletedAt?: string | null; // Made optional with ?
-  dayConfigs?: DayConfig[]; // Made optional with ?
-  scheduleContactGroups?: SchedulerContactGroupModel[]; // Made optional with ?
+  deletedAt: string | null;
+  dayConfigs: DayConfig[];
+  scheduleContactGroups: SchedulerContactGroupModel[];
 }
-
-// Create a const to allow default export
-const SchedulerExport = {};
-export default SchedulerExport;

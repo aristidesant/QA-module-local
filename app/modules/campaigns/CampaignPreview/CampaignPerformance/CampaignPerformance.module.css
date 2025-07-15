@@ -1,14 +1,178 @@
-.statsGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--mantine-spacing-md);
+
+/* Card container */
+.statsSection {
+  background: #fff;
+  border-radius: 18px;
+  box-sizing: border-box;
+  padding: 1.5rem 1.25rem 1.25rem 1.25rem;
+  box-shadow: none;
+  border: 1px solid var(--mantine-color-gray-2);
+  min-width: 320px;
+  max-width: 350px;
 }
 
-/* Responsive styles */
-@media (max-width: 768px) {
-  .statsGrid {
-    grid-template-columns: 1fr;
+.statsTitle {
+  color: var(--mantine-color-dark-4);
+  font-size: 0.92rem;
+  font-weight: 500;
+  margin-bottom: 0.1rem;
+}
+
+.statsSubtitle {
+  color: var(--mantine-color-dark-7);
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+/* Bar rows */
+.barRow {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.barLabel {
+  color: var(--mantine-color-dark-5);
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 0.18rem;
+}
+
+.barValueBubble {
+  background: var(--mantine-color-dark-7);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.12rem 0.6rem;
+  position: absolute;
+  left: 50%;
+  top: -2.1rem;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  z-index: 2;
+  box-shadow: none;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+.barRow:hover .barValueBubble {
+  opacity: 1;
+  pointer-events: auto;
+}
+/* Tooltip arrow */
+.barValueBubble::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translateX(-50%);
+  border-width: 6px 6px 0 6px;
+  border-style: solid;
+  border-color: var(--mantine-color-dark-7) transparent transparent transparent;
+  display: block;
+}
+
+.barTrack {
+  width: 100%;
+  background: var(--mantine-color-gray-2);
+  border-radius: 8px;
+  height: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 8px;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.barFillSuccess {
+  background: var(--mantine-color-green-3);
+}
+.barFillVoicemail {
+  background: var(--mantine-color-blue-4);
+}
+.barFillFailed {
+  background: var(--mantine-color-red-4);
+}
+
+.percentLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--mantine-color-dark-4);
+  margin-bottom: 1.1rem;
+  margin-left: 0.1rem;
+  margin-right: 0.1rem;
+}
+
+/* Total calls card */
+.totalCallsCard {
+  background: var(--mantine-color-gray-1);
+  border-radius: 12px;
+  padding: 0.7rem 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 1.1rem;
+  border: none;
+}
+.totalCallsValue {
+  color: var(--mantine-color-dark-7);
+  font-size: 1.13rem;
+  font-weight: 700;
+}
+
+/* Divider */
+.divider {
+  border: none;
+  border-top: 1px solid var(--mantine-color-gray-2);
+  margin: 1.2rem 0 1.1rem 0;
+}
+
+/* Time left section */
+.timeLeftSection {
+  margin-top: 0.5rem;
+}
+.timeLeftLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  color: var(--mantine-color-dark-5);
+  margin-bottom: 0.4rem;
+}
+.timeLeftBarTrack {
+  background: var(--mantine-color-blue-1);
+  border-radius: 8px;
+  height: 10px;
+  width: 100%;
+  position: relative;
+}
+.timeLeftBarFill {
+  background: var(--mantine-color-blue-6);
+  border-radius: 8px;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+@media (max-width: 480px) {
+  .statsSection {
+    min-width: 0;
+    max-width: 100%;
+    padding: 1rem 0.5rem;
+  }
+  .totalCallsCard {
+    padding: 0.75rem 0.5rem;
   }
 }
-
-/* Remove any hover effects since they're now handled by the StatCard component */

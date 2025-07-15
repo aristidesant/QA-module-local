@@ -1,91 +1,102 @@
 import React from "react";
-import { Stack } from "@mantine/core";
-import {
-  IconPhone,
-  IconUserCheck,
-  IconClockHour4,
-  IconCalendarEvent,
-} from "@tabler/icons-react";
-import { RightSection as Section } from "~/components/RightSection";
-import { StatCard } from "../../../../components/StatCard";
 import classes from "./CampaignPerformance.module.css";
 
 interface CampaignPerformanceProps {
-  stats: {
-    callsMade: number;
-    callsAnswered: number;
-    conversionRate: number;
-    avgCallDuration: string;
-    lastUpdated: string;
+  stats?: {
+    successful: number;
+    voicemails: number;
+    failed: number;
+    total: number;
   };
-  createdAt?: string;
+  timeLeft?: string;
+  timeLeftPercent?: number;
 }
 
-// Format date string
-const formatDate = (dateString?: string) => {
-  if (!dateString) return "N/A";
-  return new Date(dateString).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+// Mock values if not provided
+const MOCK_STATS = {
+  successful: 432,
+  voicemails: 143,
+  failed: 79,
+  total: 654,
 };
+const MOCK_TIME_LEFT = "3h:12min";
+const MOCK_TIME_LEFT_PERCENT = 0.68;
 
 export const CampaignPerformance: React.FC<CampaignPerformanceProps> = ({
-  stats,
-  createdAt,
+  stats = MOCK_STATS,
+  timeLeft = MOCK_TIME_LEFT,
+  timeLeftPercent = MOCK_TIME_LEFT_PERCENT,
 }) => {
-  // Calculate metrics
-  const callAnswerRate =
-    stats.callsMade > 0
-      ? Math.round((stats.callsAnswered / stats.callsMade) * 100)
-      : 0;
-
-  const daysRunning = createdAt
-    ? Math.ceil(
-        (new Date().getTime() - new Date(createdAt).getTime()) /
-          (1000 * 60 * 60 * 24)
-      )
-    : 0;
+  // Calculate bar widths
+  const total = stats.successful + stats.voicemails + stats.failed;
+  const getPercent = (val: number) => (total > 0 ? (val / total) * 100 : 0);
 
   return (
-    <Section
-      title="Campaign Performance"
-      description="Key metrics and statistics"
-    >
-      <Stack gap="xs" className={classes.statsGrid}>
-        <StatCard
-          label="Calls Made"
-          value={stats.callsMade.toLocaleString()}
-          description={`${stats.callsAnswered.toLocaleString()} answered`}
-          icon={<IconPhone size={24} />}
-          color="blue"
-        />
+    <div className={classes.statsSection}>
+      <div className={classes.statsTitle}>Statistics</div>
+      <div className={classes.statsSubtitle}>Today's Performance</div>
 
-        <StatCard
-          label="Answer Rate"
-          value={`${callAnswerRate}%`}
-          description="of calls answered"
-          icon={<IconUserCheck size={24} />}
-          color="green"
-        />
+      {/* Bars */}
+      <div>
+        <div className={classes.barRow}>
+          <span className={classes.barValueBubble}>{stats.successful}</span>
+          <span className={classes.barLabel}>Successful</span>
+          <div className={classes.barTrack}>
+            <div
+              className={`${classes.barFill} ${classes.barFillSuccess}`}
+              style={{ width: `${getPercent(stats.successful)}%` }}
+            />
+          </div>
+        </div>
+        <div className={classes.barRow}>
+          <span className={classes.barValueBubble}>{stats.voicemails}</span>
+          <span className={classes.barLabel}>Voicemails</span>
+          <div className={classes.barTrack}>
+            <div
+              className={`${classes.barFill} ${classes.barFillVoicemail}`}
+              style={{ width: `${getPercent(stats.voicemails)}%` }}
+            />
+          </div>
+        </div>
+        <div className={classes.barRow}>
+          <span className={classes.barValueBubble}>{stats.failed}</span>
+          <span className={classes.barLabel}>Failed</span>
+          <div className={classes.barTrack}>
+            <div
+              className={`${classes.barFill} ${classes.barFillFailed}`}
+              style={{ width: `${getPercent(stats.failed)}%` }}
+            />
+          </div>
+        </div>
+        <div className={classes.percentLabels}>
+          <span>0%</span>
+          <span>50%</span>
+          <span>100%</span>
+        </div>
+      </div>
 
-        <StatCard
-          label="Avg. Call Duration"
-          value={stats.avgCallDuration}
-          description="minutes per call"
-          icon={<IconClockHour4 size={24} />}
-          color="violet"
-        />
+      {/* Total calls today */}
+      <div className={classes.totalCallsCard}>
+        <span>Total calls today</span>
+        <span className={classes.totalCallsValue}>{stats.total}</span>
+      </div>
 
-        <StatCard
-          label="Days Running"
-          value={daysRunning.toString()}
-          description={`since ${formatDate(createdAt)}`}
-          icon={<IconCalendarEvent size={24} />}
-          color="orange"
-        />
-      </Stack>
-    </Section>
+      {/* Divider */}
+      <hr className={classes.divider} />
+
+      {/* Time left */}
+      <div className={classes.timeLeftSection}>
+        <div className={classes.timeLeftLabel}>
+          <span>Today's time left</span>
+          <span>{timeLeft}</span>
+        </div>
+        <div className={classes.timeLeftBarTrack}>
+          <div
+            className={classes.timeLeftBarFill}
+            style={{ width: `${Math.round(timeLeftPercent * 100)}%` }}
+          />
+        </div>
+      </div>
+    </div>
   );
 };

@@ -36,21 +36,19 @@ export const DayScheduleCard: React.FC = () => {
     value: string
   ) => {
     // Add seconds to the time value if they're not already present
-    const formattedValue =
-      value && !value.includes(":00") ? `${value}:00` : value;
-
-    const updatedDays = [...displayDays];
-    if (
-      updatedDays[index].timeRanges &&
-      updatedDays[index].timeRanges.length > 0
-    ) {
-      updatedDays[index].timeRanges[0] = {
-        ...updatedDays[index].timeRanges[0],
-        [timeType]: formattedValue,
-      };
-    }
-
-    form.setFieldValue("dayConfigs", updatedDays);
+    // const formattedValue =
+    //   value && !value.includes(":00") ? `${value}:00` : value;
+    // const updatedDays = [...displayDays];
+    // if (
+    //   updatedDays[index].timeRanges &&
+    //   updatedDays[index].timeRanges.length > 0
+    // ) {
+    //   updatedDays[index].timeRanges[0] = {
+    //     ...updatedDays[index].timeRanges[0],
+    //     [timeType]: formattedValue,
+    //   };
+    // }
+    // form.setFieldValue("dayConfigs", updatedDays);
   };
   return (
     <Stack gap="xs">
@@ -95,10 +93,7 @@ export const DayScheduleCard: React.FC = () => {
                     format="12h"
                     variant="filled"
                     leftSection="From"
-                    value={
-                      day.timeRanges[0]?.startTime?.replace(":00", "") ||
-                      "09:00"
-                    }
+                    value={"09:00"}
                     onChange={(value) =>
                       handleTimeChange(index, "startTime", value || "")
                     }
@@ -109,9 +104,7 @@ export const DayScheduleCard: React.FC = () => {
                     withDropdown
                     variant="filled"
                     leftSection="To"
-                    value={
-                      day.timeRanges[0]?.endTime?.replace(":00", "") || "17:30"
-                    }
+                    value={"17:30"}
                     onChange={(value) =>
                       handleTimeChange(index, "endTime", value || "")
                     }

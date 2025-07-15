@@ -34,6 +34,7 @@ import CampaignAgentList from "../CampaignAgentList";
 import { useCampaignsStore } from "~/stores/campaignsStore";
 import CampaignPreview from "../CampaignPreview";
 import type { Campaign } from "~/models/CampaignsModel";
+import { AddNewCampaignForm } from "../AddNewCampaignForm";
 
 export const CampaignsList: React.FC = () => {
   const { selectCampaign, selectedCampaign, setRightComponent } =
@@ -201,7 +202,14 @@ export const CampaignsList: React.FC = () => {
               modals.open({
                 modalId: "create-campaign",
                 title: "Create New Campaign",
-                children: <CampaignsForm />,
+                children: (
+                  <AddNewCampaignForm
+                    onComplete={() => {
+                      reloadCampaigns();
+                      selectCampaign(null);
+                    }}
+                  />
+                ),
                 size: "lg",
                 centered: true,
               });

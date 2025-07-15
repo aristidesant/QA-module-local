@@ -68,9 +68,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
         <CampaignOverview campaign={campaign} />
 
         {/* Campaign Performance */}
-        {campaign.stats && (
-          <CampaignPerformance stats={stats} createdAt={campaign.createdAt} />
-        )}
+        {campaign.stats && <CampaignPerformance />}
 
         {/* Assigned Agents */}
         {campaign.assignedAgents && campaign.assignedAgents.length > 0 && (

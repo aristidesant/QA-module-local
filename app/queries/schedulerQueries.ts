@@ -55,6 +55,7 @@ interface CreatePredefinedScheduleParams {
     name: string;
     description: string;
     campaignId: number;
+    humanEquivalent: number;
   };
 }
 

@@ -134,8 +134,10 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 
                 {/* Calls per hour section and Estimated completion time */}
                 <CallsOverview
-                  callsPerHour={form.values.callsPerHour || 40}
-                  daysToComplete={form.values.estimatedCompletionDays || 4}
+                  callsPerHour={Number(form.values.callsPerHour) || 40}
+                  daysToComplete={
+                    Number(form.values.estimatedCompletionDays) || 4
+                  }
                 />
 
                 {/* Day Schedule Card */}
