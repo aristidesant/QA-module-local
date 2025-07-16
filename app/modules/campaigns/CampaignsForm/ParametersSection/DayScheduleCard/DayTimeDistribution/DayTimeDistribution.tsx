@@ -93,11 +93,11 @@ const DayTimeDistribution: React.FC<DayTimeDistributionProps> = ({
         bulkUpdateMutation.mutate({ campaignId, hourConfigs });
       })}
     >
-      <LoadingOverlay
-        visible={bulkUpdateMutation.isPending || isFetching || isLoading}
-        zIndex={1000}
-      />
       <Stack className={styles.container}>
+        <LoadingOverlay
+          visible={bulkUpdateMutation.isPending || isFetching || isLoading}
+          zIndex={1000}
+        />
         <Box className={styles.header}>
           <Text className={styles.dayLabel}>
             {capitalize(dayConfig?.dayOfWeek)}

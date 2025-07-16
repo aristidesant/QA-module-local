@@ -72,88 +72,88 @@ export const DayScheduleCard: React.FC = () => {
               </Group>
 
               {isActive ? (
-                  <Group flex={2} gap="xs" grow>
-                    <div onClick={e => e.stopPropagation()}>
-                      <TimePicker
-                        size="md"
-                        withDropdown
-                        format="12h"
-                        variant="filled"
-                        leftSection="From"
-                        value={form.values.dayConfigs?.[index].startHour}
-                        minutesStep={60}
-                        onChange={(value) => {
-                          let dateObj: Date | null = null;
-                          if (typeof value === "string") {
-                            const parsed = new Date(value);
-                            dateObj = !isNaN(parsed.getTime()) ? parsed : null;
-                          } else if (
-                            value &&
-                            typeof value === "object" &&
-                            "getHours" in value
-                          ) {
-                            dateObj = value as Date;
-                          }
-                          if (dateObj) {
-                            dateObj.setMinutes(0, 0, 0);
-                            const hourStr = `${dateObj
-                              .getHours()
-                              .toString()
-                              .padStart(2, "0")}:00:00`;
-                            form.setFieldValue(
-                              `dayConfigs.${index}.startHour`,
-                              hourStr
-                            );
-                          } else {
-                            form.setFieldValue(
-                              `dayConfigs.${index}.startHour`,
-                              value
-                            );
-                          }
-                        }}
-                      />
-                    </div>
-                    <div onClick={e => e.stopPropagation()}>
-                      <TimePicker
-                        size="md"
-                        format="12h"
-                        withDropdown
-                        variant="filled"
-                        leftSection="To"
-                        value={form.values.dayConfigs?.[index].endHour}
-                        minutesStep={60}
-                        onChange={(value) => {
-                          let dateObj: Date | null = null;
-                          if (typeof value === "string") {
-                            const parsed = new Date(value);
-                            dateObj = !isNaN(parsed.getTime()) ? parsed : null;
-                          } else if (
-                            value &&
-                            typeof value === "object" &&
-                            "getHours" in value
-                          ) {
-                            dateObj = value as Date;
-                          }
-                          if (dateObj) {
-                            dateObj.setMinutes(0, 0, 0);
-                            const hourStr = `${dateObj
-                              .getHours()
-                              .toString()
-                              .padStart(2, "0")}:00:00`;
-                            form.setFieldValue(
-                              `dayConfigs.${index}.endHour`,
-                              hourStr
-                            );
-                          } else {
-                            form.setFieldValue(
-                              `dayConfigs.${index}.endHour`,
-                              value
-                            );
-                          }
-                        }}
-                      />
-                    </div>
-                  </Group>
+                <Group flex={2} gap="xs" grow>
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <TimePicker
+                      size="md"
+                      withDropdown
+                      format="12h"
+                      variant="filled"
+                      leftSection="From"
+                      value={form.values.dayConfigs?.[index].startHour}
+                      minutesStep={60}
+                      onChange={(value) => {
+                        let dateObj: Date | null = null;
+                        if (typeof value === "string") {
+                          const parsed = new Date(value);
+                          dateObj = !isNaN(parsed.getTime()) ? parsed : null;
+                        } else if (
+                          value &&
+                          typeof value === "object" &&
+                          "getHours" in value
+                        ) {
+                          dateObj = value as Date;
+                        }
+                        if (dateObj) {
+                          dateObj.setMinutes(0, 0, 0);
+                          const hourStr = `${dateObj
+                            .getHours()
+                            .toString()
+                            .padStart(2, "0")}:00:00`;
+                          form.setFieldValue(
+                            `dayConfigs.${index}.startHour`,
+                            hourStr
+                          );
+                        } else {
+                          form.setFieldValue(
+                            `dayConfigs.${index}.startHour`,
+                            value
+                          );
+                        }
+                      }}
+                    />
+                  </div>
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <TimePicker
+                      size="md"
+                      format="12h"
+                      withDropdown
+                      variant="filled"
+                      leftSection="To"
+                      value={form.values.dayConfigs?.[index].endHour}
+                      minutesStep={60}
+                      onChange={(value) => {
+                        let dateObj: Date | null = null;
+                        if (typeof value === "string") {
+                          const parsed = new Date(value);
+                          dateObj = !isNaN(parsed.getTime()) ? parsed : null;
+                        } else if (
+                          value &&
+                          typeof value === "object" &&
+                          "getHours" in value
+                        ) {
+                          dateObj = value as Date;
+                        }
+                        if (dateObj) {
+                          dateObj.setMinutes(0, 0, 0);
+                          const hourStr = `${dateObj
+                            .getHours()
+                            .toString()
+                            .padStart(2, "0")}:00:00`;
+                          form.setFieldValue(
+                            `dayConfigs.${index}.endHour`,
+                            hourStr
+                          );
+                        } else {
+                          form.setFieldValue(
+                            `dayConfigs.${index}.endHour`,
+                            value
+                          );
+                        }
+                      }}
+                    />
+                  </div>
+                </Group>
               ) : (
                 <Box flex={2} className={styles.closedBadge}>
                   <IconClockOff size={16} />

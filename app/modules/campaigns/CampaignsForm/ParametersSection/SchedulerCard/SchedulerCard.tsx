@@ -20,6 +20,7 @@ import {
   useSchedulerForm,
 } from "./schedulerFormProvider";
 import { modals } from "@mantine/modals";
+import { useCampaignsStore } from "~/stores/campaignsStore";
 
 export interface SchedulerCardProps {
   scheduler: Scheduler;
@@ -32,6 +33,7 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
   campaignId,
   handleReload,
 }) => {
+  const { setRightComponent } = useCampaignsStore((state) => state);
   const [opened, { open, close }] = useDisclosure(false);
 
   // Initialize API mutations
@@ -88,6 +90,8 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 
       // Call onUpdate callback with updated scheduler
       handleReload?.();
+
+      setRightComponent?.(null); // Clear right component after update
 
       // Close the form
       close();
