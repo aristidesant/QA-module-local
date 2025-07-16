@@ -11,10 +11,8 @@ const CapacityCall: React.FC<CapacityCallProps> = ({ agentsAssigned = 10 }) => {
   // Get value and onChange handler from form context
   const currentValue = form.values.humanEquivalent || 1;
 
-  console.log(form.values);
-
   const handleChange = (val: number) =>
-    form.setFieldValue("humanEquivalent", val);
+    form.setFieldValue("humanEquivalent", Number(val));
   return (
     <Card withBorder p="md" radius="md" bg="gray.0">
       <Stack gap="xs">
@@ -34,7 +32,7 @@ const CapacityCall: React.FC<CapacityCallProps> = ({ agentsAssigned = 10 }) => {
         </Group>
         <Slider
           color="blue"
-          value={currentValue}
+          value={Number(currentValue || 0)}
           onChange={handleChange}
           min={1}
           max={100}

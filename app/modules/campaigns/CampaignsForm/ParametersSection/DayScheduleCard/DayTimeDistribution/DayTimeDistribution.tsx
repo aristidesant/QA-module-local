@@ -1,4 +1,4 @@
-import React, { use } from "react";
+import React from "react";
 import {
   Box,
   Text,
@@ -10,6 +10,7 @@ import {
   Card,
   Button,
   LoadingOverlay,
+  Tooltip,
 } from "@mantine/core";
 import styles from "./DayTimeDistribution.module.css";
 import type { DayConfig, HourConfig } from "~/models/SchedulerModel";
@@ -30,11 +31,9 @@ const DayTimeDistribution: React.FC<DayTimeDistributionProps> = ({
 }) => {
   const bulkUpdateMutation = useBulkUpdateHourConfigs();
   const { selectedCampaign } = useCampaignsStore((state) => state);
-  // Extract campaignId and dayConfigId from dayConfig
   const campaignId = selectedCampaign?.id;
   const dayConfigId = dayConfig?.id;
 
-  // Fetch hour configs for this day config
   const {
     data: hourConfigs,
     isLoading,
@@ -45,33 +44,41 @@ const DayTimeDistribution: React.FC<DayTimeDistributionProps> = ({
     enabled: !!campaignId && !!dayConfigId,
   });
 
-  // Form initialization
   const form = useForm<{ time: HourConfig[] }>({
     initialValues: {
       time: hourConfigs || [],
     },
   });
 
-  // Update form values when hourConfigs change
   React.useEffect(() => {
     if (hourConfigs) {
       form.setValues({ time: hourConfigs });
     }
   }, [hourConfigs]);
 
-  // Handler to update slot capacity
   const onTimeSlotChange = (index: number, value: number) => {
     const updatedTime = form.values.time.map((slot, i) =>
-      i === index ? { ...slot, capacity: String(value) } : slot
+      i === index ? { ...slot, capacity: String(Math.round(value)) } : slot
     );
     form.setValues({ time: updatedTime });
   };
 
-  // Calculate total calls
   const totalCalls = form.values.time.reduce(
-    (acc, slot) => acc + (slot.capacity ? Number(slot.capacity) : 0),
+    (acc, slot) =>
+      acc + (slot.capacity ? Math.round(Number(slot.capacity)) : 0),
     0
   );
+
+  const formatHour12 = (hour: number | string) => {
+    let h = typeof hour === "string" ? parseInt(hour, 10) : hour;
+    if (isNaN(h)) return "";
+    const suffix = h === 0 ? "AM" : h < 12 ? "AM" : "PM";
+    const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+    return `${hour12} ${suffix}`;
+  };
+
+  const capitalize = (str?: string) =>
+    str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
 
   return (
     <form
@@ -92,33 +99,48 @@ const DayTimeDistribution: React.FC<DayTimeDistributionProps> = ({
       />
       <Stack className={styles.container}>
         <Box className={styles.header}>
-          <Text className={styles.dayLabel}>{dayConfig?.dayOfWeek}</Text>
+          <Text className={styles.dayLabel}>
+            {capitalize(dayConfig?.dayOfWeek)}
+          </Text>
           <Text className={styles.subtitle}>
             Distribute your daily call capacity by hour
           </Text>
         </Box>
 
-        <Stack gap={"sm"} className={styles.cardsStack}>
+        <Stack gap={32} className={styles.cardsStack}>
           {form.values?.time.map((slot, index) => (
             <Card key={index} radius="md" shadow={undefined}>
               <Flex justify="space-between" align="center">
-                <Text className={styles.timeLabel}>{slot.hour}</Text>
+                <Text className={styles.timeLabel}>
+                  {formatHour12(slot.hour)}
+                </Text>
                 <Group gap="xs" className={styles.sliderGroup}>
-                  <Slider
-                    value={Number(form.values.time[index]?.capacity) || 0}
-                    className={styles.slider}
-                    thumbSize={14}
-                    size="md"
-                    color="blue"
-                    min={0}
-                    max={120}
-                    label={`${form.values.time[index]?.capacity}`}
-                    onChange={(val) => onTimeSlotChange(index, val)}
-                  />
+                  <Tooltip
+                    label={Math.round(Number(slot.capacity) || 0)}
+                    withArrow
+                    position="top"
+                    withinPortal
+                  >
+                    <Slider
+                      value={Number(slot.capacity) || 0}
+                      className={styles.slider}
+                      thumbSize={14}
+                      styles={{
+                        markLabel: {
+                          display: "none",
+                        },
+                      }}
+                      size="md"
+                      color="blue"
+                      min={0}
+                      max={120}
+                      onChange={(val: number) => onTimeSlotChange(index, val)}
+                    />
+                  </Tooltip>
                   <Text className={styles.callsLabel}>
                     Calls
                     <br />
-                    {form.values.time[index]?.capacity}
+                    {Math.round(Number(slot.capacity) || 0)}
                   </Text>
                 </Group>
               </Flex>

@@ -24,7 +24,7 @@
 
 .cardsStack {
   margin-bottom: var(--mantine-spacing-md);
-  gap: 4px !important;
+  gap: 16px !important;
 }
 
 .title {
@@ -45,9 +45,9 @@
 }
 
 .timeLabel {
-  font-size: var(--mantine-font-size-sm);
+  font-size: var(--mantine-font-size-xs);
   font-weight: 500;
-  color: var(--mantine-color-gray-7);
+  color: var(--mantine-color-gray-6);
   width: 70px;
 }
 
@@ -63,8 +63,9 @@
 
 .callsLabel {
   font-size: var(--mantine-font-size-xs);
-  text-align: center;
+  font-weight: 500;
   color: var(--mantine-color-gray-6);
+  text-align: center;
   width: 40px;
   line-height: 1.2;
 }

@@ -52,6 +52,7 @@ export const ParametersSection: React.FC<ParametersSectionProps> = ({
           <Stack gap="sm">
             {campaignSchedule.map((scheduler) => (
               <SchedulerCard
+                key={JSON.stringify(scheduler)}
                 scheduler={scheduler}
                 campaignId={selectedCampaign?.id!}
                 handleReload={handleReloading}

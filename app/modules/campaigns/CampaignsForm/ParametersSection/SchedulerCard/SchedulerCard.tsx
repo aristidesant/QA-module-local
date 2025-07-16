@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Card, Group, Stack, Button, LoadingOverlay } from "@mantine/core";
 import { IconEdit, IconDeviceFloppy } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
@@ -17,7 +17,7 @@ import { ActiveContactListView } from "../../ContactSection/ActiveContactList/Ac
 import CapacityCall from "../CapacityCall/CapacityCall";
 import {
   SchedulerFormProvider,
-  useSchedulerFormInit,
+  useSchedulerForm,
 } from "./schedulerFormProvider";
 import { modals } from "@mantine/modals";
 
@@ -32,7 +32,7 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
   campaignId,
   handleReload,
 }) => {
-  const [opened, { toggle, open, close }] = useDisclosure(false);
+  const [opened, { open, close }] = useDisclosure(false);
 
   // Initialize API mutations
   const activateScheduleMutation = useActivateSchedule();
@@ -40,7 +40,13 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
   const updateScheduleMutation = useUpdateSchedule();
   const deleteScheduleMutation = useDeleteSchedule();
   // Initialize form
-  const form = useSchedulerFormInit(scheduler);
+  const form = useSchedulerForm({
+    initialValues: {
+      ...scheduler,
+      humanEquivalent: Number(scheduler.humanEquivalent || 1),
+    },
+  });
+
   // Handle toggle status
   const handleToggleStatus = async () => {
     try {
@@ -70,12 +76,14 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
       if (validation.hasErrors) {
         return; // Stop submission if validation fails
       }
-
-      // Execute the mutation
+      console.log(values?.dayConfigs);
+      // Execute the mutation with transformed dayConfigs
       await updateScheduleMutation.mutateAsync({
         campaignId,
         scheduleId: scheduler.id,
-        scheduleData: values,
+        scheduleData: {
+          ...values,
+        },
       });
 
       // Call onUpdate callback with updated scheduler
@@ -107,6 +115,25 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
     });
   };
 
+  const handleOnEditMode = () => {
+    if (opened) {
+      close();
+    } else {
+      // Only set initial values when first opening the form
+      if (!form.values.humanEquivalent) {
+        form.setFieldValue(
+          "humanEquivalent",
+          Number(scheduler.humanEquivalent || 1)
+        );
+      }
+      // Only set dayConfigs if it's empty or undefined
+      if (!form.values.dayConfigs || form.values.dayConfigs.length === 0) {
+        form.setFieldValue("dayConfigs", scheduler.dayConfigs || []);
+      }
+      open();
+    }
+  };
+
   return (
     <Card withBorder p="md" radius="md">
       <LoadingOverlay
@@ -122,7 +149,7 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
         <ScheduleHeader
           schedule={scheduler}
           onChange={handleToggleStatus}
-          onEdit={() => toggle()}
+          onEdit={handleOnEditMode}
           onDelete={() => handleDelete()}
         />
         {opened && (

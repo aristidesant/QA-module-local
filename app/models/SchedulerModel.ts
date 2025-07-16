@@ -26,11 +26,14 @@ export interface DayConfig {
   id: number;
   scheduleId: number;
   clientId: number;
+  userId: number;
   dayOfWeek: DayOfWeek;
   dayOrder: number;
   isActive: boolean;
   dailyCallLimit: number | null;
   dayCapacity: string;
+  startHour: string; // Format: 'HH:mm:ss'
+  endHour: string; // Format: 'HH:mm:ss'
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
@@ -43,8 +46,8 @@ export interface Scheduler {
   description: string | null;
   campaignId: number;
   status: "active" | "paused" | "completed" | "draft" | string;
-  humanEquivalent: string | null;
-  callsPerHour: string | null;
+  humanEquivalent: number | null;
+  callsPerHour: string | null | number;
   estimatedCompletionDays: number | null;
   totalWeekVolumes: number | null;
   totalWeeklyHours: string | null;

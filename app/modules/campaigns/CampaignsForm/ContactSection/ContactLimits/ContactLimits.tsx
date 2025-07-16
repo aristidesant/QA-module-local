@@ -108,26 +108,6 @@ export const ContactLimits = ({
 
   // Validate form data
   const validateForm = (): boolean => {
-    // For new contact groups, validate column mappings
-    if (!schedulerContactGroup.id && fileSummary) {
-      // Check if all required fields are mapped
-      const mappedFields = Object.keys(data.columnMappings || {});
-      const missingRequiredFields = REQUIRED_FIELDS.filter(
-        (field) => !mappedFields.includes(field)
-      );
-
-      if (missingRequiredFields.length > 0) {
-        notifications.show({
-          title: "Missing Required Fields",
-          message: `Please map the following required fields: ${missingRequiredFields.join(
-            ", "
-          )}.`,
-          color: "red",
-        });
-        return false;
-      }
-    }
-
     // Validate max calls
     if ((data.maxCallsPerContact || 0) <= 0) {
       notifications.show({

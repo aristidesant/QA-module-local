@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Group, Switch, Text, Flex, Stack } from "@mantine/core";
 import { TimePicker } from "@mantine/dates";
 import { IconClockOff } from "@tabler/icons-react";
 import styles from "./DayScheduleCard.module.css";
 import { useSchedulerFormContext } from "../SchedulerCard/schedulerFormProvider";
-import type { DayConfig } from "~/models/SchedulerModel";
 import { useCampaignsStore } from "~/stores/campaignsStore";
 import DayTimeDistribution from "./DayTimeDistribution";
 
@@ -15,44 +14,22 @@ const formatDayName = (day: string) => {
 export const DayScheduleCard: React.FC = () => {
   const { setRightComponent } = useCampaignsStore((state) => state);
   const form = useSchedulerFormContext();
-  const displayDays: DayConfig[] = form.values.dayConfigs || [];
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
 
-  // Handle day toggle
-  const handleDayToggle = (index: number) => {
-    const updatedDays = [...displayDays];
-    updatedDays[index] = {
-      ...updatedDays[index],
-      isActive: !updatedDays[index].isActive,
-    };
+  useEffect(() => {
+    console.log("[DayScheduleCard] Mounted. Initial form values:", form.values);
+  }, []);
 
-    form.setFieldValue("dayConfigs", updatedDays);
-  };
+  useEffect(() => {
+    console.log(
+      "[DayScheduleCard] form.values.dayConfigs changed:",
+      form.values.dayConfigs
+    );
+  }, [form.values.dayConfigs]);
 
-  // Handle time change
-  const handleTimeChange = (
-    index: number,
-    timeType: "startTime" | "endTime",
-    value: string
-  ) => {
-    // Add seconds to the time value if they're not already present
-    // const formattedValue =
-    //   value && !value.includes(":00") ? `${value}:00` : value;
-    // const updatedDays = [...displayDays];
-    // if (
-    //   updatedDays[index].timeRanges &&
-    //   updatedDays[index].timeRanges.length > 0
-    // ) {
-    //   updatedDays[index].timeRanges[0] = {
-    //     ...updatedDays[index].timeRanges[0],
-    //     [timeType]: formattedValue,
-    //   };
-    // }
-    // form.setFieldValue("dayConfigs", updatedDays);
-  };
   return (
     <Stack gap="xs">
-      {displayDays.map((day, index) => {
+      {form.values.dayConfigs?.map((day, index) => {
         const isActive = day.isActive;
         const isSelected = selectedDay === day.dayOfWeek;
 
@@ -63,20 +40,29 @@ export const DayScheduleCard: React.FC = () => {
               isSelected ? styles.highlighted : ""
             } ${styles.selectable}`}
             onClick={() => {
+              console.log(`[DayScheduleCard] Clicked day row:`, day.dayOfWeek);
               setSelectedDay(day.dayOfWeek);
               setRightComponent?.(<DayTimeDistribution dayConfig={day} />);
             }}
           >
             <Flex justify="space-between" align="center">
               <Group gap="xs" align="center" flex={1}>
-                <div onClick={(e) => e.stopPropagation()}>
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
                   <Switch
                     className={styles.daySwitch}
                     size="md"
                     checked={isActive}
                     onChange={(e) => {
                       e.stopPropagation();
-                      handleDayToggle(index);
+
+                      form.setFieldValue(
+                        `dayConfigs.${index}.isActive`,
+                        !isActive
+                      );
                     }}
                   />
                 </div>
@@ -93,10 +79,13 @@ export const DayScheduleCard: React.FC = () => {
                     format="12h"
                     variant="filled"
                     leftSection="From"
-                    value={"09:00"}
-                    onChange={(value) =>
-                      handleTimeChange(index, "startTime", value || "")
-                    }
+                    value={form.values.dayConfigs?.[index].startHour}
+                    onChange={(value) => {
+                      form.setFieldValue(
+                        `dayConfigs.${index}.startHour`,
+                        value
+                      );
+                    }}
                   />
                   <TimePicker
                     size="md"
@@ -104,10 +93,10 @@ export const DayScheduleCard: React.FC = () => {
                     withDropdown
                     variant="filled"
                     leftSection="To"
-                    value={"17:30"}
-                    onChange={(value) =>
-                      handleTimeChange(index, "endTime", value || "")
-                    }
+                    value={form.values.dayConfigs?.[index].endHour}
+                    onChange={(value) => {
+                      form.setFieldValue(`dayConfigs.${index}.endHour`, value);
+                    }}
                   />
                 </Group>
               ) : (
