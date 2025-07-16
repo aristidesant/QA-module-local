@@ -33,7 +33,11 @@ const schedulerApi = (authHeader: Record<string, string>) => {
     // POST create a predefined schedule for a campaign
     createPredefinedSchedule: async (
       campaignId: string | number,
-      predefinedScheduleData: { name: string; description: string; campaignId: number }
+      predefinedScheduleData: {
+        name: string;
+        description: string;
+        campaignId: number;
+      }
     ) => {
       const response = await axios.post<Scheduler>(
         `${DEFAULT_API_URL}/campaigns/${campaignId}/schedules/predefined`,
@@ -134,7 +138,7 @@ const schedulerApi = (authHeader: Record<string, string>) => {
       scheduleData: Partial<Scheduler>
     ) => {
       const response = await axios.patch<Scheduler>(
-        `${DEFAULT_API_URL}/campaigns/${campaignId}/schedules/${scheduleId}`,
+        `${DEFAULT_API_URL}/campaigns/${campaignId}/schedules/${scheduleId}/with-day-configs`,
         scheduleData,
         {
           headers: {
