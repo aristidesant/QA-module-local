@@ -10,7 +10,13 @@ import {
   ActionIcon,
   Tooltip,
 } from "@mantine/core";
-import { IconCalendar, IconX, IconEdit, IconCheck, IconX as IconXCircle } from "@tabler/icons-react";
+import {
+  IconCalendar,
+  IconX,
+  IconEdit,
+  IconCheck,
+  IconX as IconXCircle,
+} from "@tabler/icons-react";
 import { isBefore, startOfToday } from "date-fns";
 import { DatePicker } from "@mantine/dates";
 import { useState, useEffect, useRef } from "react";
@@ -20,20 +26,23 @@ import { formatExpirationDate, isValidDate } from "~/utils/dateUtils";
 
 interface ContactListInfoProps {
   /** Name of the contact list */
-  listName: string;
+  listName?: string;
+
+  placeholder?: string;
 
   /** Expiration date of the list (YYYY-MM-DD string or null) */
   expirationDate?: string | null;
 
   /** Callback when expiration date is changed */
   onExpirationChange: (date: string | null) => void;
-  
+
   /** Callback when list name is changed */
   onNameChange?: (name: string) => void;
 }
 
 export function ContactListInfo({
   listName,
+  placeholder = "Enter contact list name",
   expirationDate,
   onExpirationChange,
   onNameChange,
@@ -42,14 +51,16 @@ export function ContactListInfo({
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(listName);
   // Store the selected date as a YYYY-MM-DD string to avoid timezone issues
-  const [selectedDate, setSelectedDate] = useState<string | null>(expirationDate || null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(
+    expirationDate || null
+  );
 
   useEffect(() => {
     setEditedName(listName);
   }, [listName]);
 
   const handleNameSave = () => {
-    if (editedName.trim() && editedName !== listName) {
+    if (editedName?.trim() && editedName !== listName) {
       onNameChange?.(editedName.trim());
     }
     setIsEditing(false);
@@ -61,9 +72,9 @@ export function ContactListInfo({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleNameSave();
-    } else if (e.key === 'Escape') {
+    } else if (e.key === "Escape") {
       handleCancelEdit();
     }
   };
@@ -100,24 +111,24 @@ export function ContactListInfo({
                   value={editedName}
                   onChange={(e) => setEditedName(e.currentTarget.value)}
                   onKeyDown={handleKeyDown}
+                  placeholder={placeholder}
                   autoFocus
                   size="sm"
                   style={{ flex: 1 }}
                 />
                 <Tooltip label="Save">
-                  <ActionIcon 
-                    variant="subtle" 
-                    color="green" 
+                  <ActionIcon
+                    variant="subtle"
+                    color="green"
                     onClick={handleNameSave}
-                    disabled={!editedName.trim()}
                   >
                     <IconCheck size={16} />
                   </ActionIcon>
                 </Tooltip>
                 <Tooltip label="Cancel">
-                  <ActionIcon 
-                    variant="subtle" 
-                    color="red" 
+                  <ActionIcon
+                    variant="subtle"
+                    color="red"
                     onClick={handleCancelEdit}
                   >
                     <IconXCircle size={16} />
@@ -127,13 +138,13 @@ export function ContactListInfo({
             ) : (
               <Group gap="xs" align="center">
                 <Text fw={500} size="sm" style={{ flex: 1 }}>
-                  {listName}
+                  {listName || placeholder}
                 </Text>
                 {onNameChange && (
                   <Tooltip label="Edit name">
-                    <ActionIcon 
-                      variant="subtle" 
-                      size="sm" 
+                    <ActionIcon
+                      variant="subtle"
+                      size="sm"
                       onClick={() => setIsEditing(true)}
                     >
                       <IconEdit size={14} />
@@ -174,7 +185,7 @@ export function ContactListInfo({
               onClick={() => setOpened((o) => !o)}
             >
               {expirationDate
-                ? `Expires: ${formatExpirationDate(expirationDate)}` 
+                ? `Expires: ${formatExpirationDate(expirationDate)}`
                 : "Add expiration date"}
             </Button>
           </Popover.Target>

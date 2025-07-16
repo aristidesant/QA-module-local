@@ -31,7 +31,7 @@ export interface DayConfig {
   dayOrder: number;
   isActive: boolean;
   dailyCallLimit: number | null;
-  dayCapacity: string;
+  dayCapacity: number | null;
   startHour: string; // Format: 'HH:mm:ss'
   endHour: string; // Format: 'HH:mm:ss'
   createdAt: string;

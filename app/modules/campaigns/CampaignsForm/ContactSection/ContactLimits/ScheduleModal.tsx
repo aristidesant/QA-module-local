@@ -45,19 +45,16 @@ function ScheduleModalContent({
       return "No schedule configured";
     }
 
-    const activeDays = scheduler.dayConfigs.filter((config) => config.isActive);
-    if (activeDays.length === 0) {
-      return "No active days";
-    }
+    const activeDays = scheduler.dayConfigs
+      .filter((config) => config.isActive)
+      .map((day) => {
+        return `${day.dayOfWeek?.substring(0, 1).toUpperCase()}${
+          day.startHour
+        }-${day.endHour}`;
+      })
+      .join(" | ");
 
-    // Get the time range from the first active day (assuming consistent hours)
-    const firstDay = activeDays[0];
-    if (!firstDay.timeRanges || firstDay.timeRanges.length === 0) {
-      return "No time ranges configured";
-    }
-
-    const timeRange = firstDay.timeRanges[0];
-    return `${timeRange.startTime} - ${timeRange.endTime}`;
+    return activeDays;
   };
 
   // Get active days count for display

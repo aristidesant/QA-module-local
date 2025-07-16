@@ -206,7 +206,8 @@ export const ContactLimits = ({
       <Stack gap="md">
         {/* Contact list information */}
         <ContactListInfo
-          listName={data?.name || "Add a name for this list"}
+          listName={data?.name}
+          placeholder="Enter contact list name"
           expirationDate={data?.expirationDate || null}
           onExpirationChange={(expirationDate) => {
             handleChange("expirationDate", expirationDate);
