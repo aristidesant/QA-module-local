@@ -18,7 +18,7 @@ export type OutboundCallFormValues = {
   phoneNumber: string;
   dynamicVariables: {
     customerName: string;
-    customerIdentifier: string;
+    customerId: string;
   };
 };
 
@@ -43,7 +43,7 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
       phoneNumber: "",
       dynamicVariables: {
         customerName: "",
-        customerIdentifier: "",
+        customerId: "",
       },
     },
     validate: {
@@ -58,7 +58,7 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
       dynamicVariables: {
         customerName: (value: string) =>
           !value ? "Customer name is required" : null,
-        customerIdentifier: (value: string) =>
+        customerId: (value: string) =>
           !value ? "Customer identifier is required" : null,
       },
     },
@@ -73,7 +73,7 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
         phoneNumber: `${values.phoneNumber}`,
         dynamicVariables: {
           customerName: values.dynamicVariables.customerName,
-          customerIdentifier: values.dynamicVariables.customerIdentifier,
+          customerId: values.dynamicVariables.customerId,
         },
       });
       notifications.show({
@@ -129,12 +129,12 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
           {...form.getInputProps("dynamicVariables.customerName")}
         />
         <TextInput
-          label="Customer Identifier"
+          label="Customer ID"
           placeholder="1234"
           size="lg"
           variant="filled"
           radius={"md"}
-          {...form.getInputProps("dynamicVariables.customerIdentifier")}
+          {...form.getInputProps("dynamicVariables.customerId")}
         />
         <Button
           type="submit"

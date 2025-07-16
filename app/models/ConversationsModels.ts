@@ -6,7 +6,7 @@ export type ConversationDemoModel = {
   phoneNumber: string;
   dynamicVariables?: {
     customerName: string;
-    customerIdentifier: string;
+    customerId: string;
   };
 };
 export interface ConversationsModel {

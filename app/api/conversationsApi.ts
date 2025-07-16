@@ -19,7 +19,7 @@ export type StartDemoParams = {
   phoneNumber: string;
   dynamicVariables?: {
     customerName: string;
-    customerIdentifier: string;
+    customerId: string;
   };
 };
 
