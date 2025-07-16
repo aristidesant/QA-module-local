@@ -17,7 +17,7 @@ import {
   IconCheck,
   IconX as IconXCircle,
 } from "@tabler/icons-react";
-import { isBefore, startOfToday } from "date-fns";
+// Removed date-fns, using dayjs instead
 import { DatePicker } from "@mantine/dates";
 import { useState, useEffect, useRef } from "react";
 import classes from "./ContactListInfo.module.css";
@@ -54,6 +54,9 @@ export function ContactListInfo({
   const [selectedDate, setSelectedDate] = useState<string | null>(
     expirationDate || null
   );
+
+  // Helper to get start of today in YYYY-MM-DD
+  const getStartOfToday = () => dayjs().startOf("day").format("YYYY-MM-DD");
 
   useEffect(() => {
     setEditedName(listName);
@@ -197,7 +200,7 @@ export function ContactListInfo({
                 // Pass it directly to avoid any timezone conversion issues
                 handleDateChange(dateString);
               }}
-              minDate={dayjs(startOfToday()).format("YYYY-MM-DD")}
+              minDate={getStartOfToday()}
               firstDayOfWeek={0}
               allowDeselect
               size="sm"
@@ -215,7 +218,7 @@ export function ContactListInfo({
             <Group justify="space-between" mt="md">
               <Text size="xs" c="dimmed">
                 {expirationDate &&
-                isBefore(new Date(expirationDate), startOfToday())
+                dayjs(expirationDate).isBefore(dayjs().startOf("day"), "day")
                   ? "Selected date is in the past"
                   : "Select an expiration date"}
               </Text>

@@ -16,6 +16,10 @@ import { notifications } from "@mantine/notifications";
 export type OutboundCallFormValues = {
   agentId: string;
   phoneNumber: string;
+  dynamicVariables: {
+    customerName: string;
+    customerIdentifier: string;
+  };
 };
 
 export type OutboundCallFormProps = {
@@ -37,6 +41,10 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
     initialValues: {
       agentId: agent?.id,
       phoneNumber: "",
+      dynamicVariables: {
+        customerName: "",
+        customerIdentifier: "",
+      },
     },
     validate: {
       agentId: (value) => (!value ? "Agent is required" : null),
@@ -46,6 +54,12 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
           return "Enter a valid number: +1 followed by 809, 829, or 849 and 7 digits (e.g., +18093336600)";
         }
         return null;
+      },
+      dynamicVariables: {
+        customerName: (value: string) =>
+          !value ? "Customer name is required" : null,
+        customerIdentifier: (value: string) =>
+          !value ? "Customer identifier is required" : null,
       },
     },
   });
@@ -57,6 +71,10 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
       await startDemoConversation.mutateAsync({
         agentId: agent.id,
         phoneNumber: `${values.phoneNumber}`,
+        dynamicVariables: {
+          customerName: values.dynamicVariables.customerName,
+          customerIdentifier: values.dynamicVariables.customerIdentifier,
+        },
       });
       notifications.show({
         title: "Test Call Sent",
@@ -102,6 +120,22 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
           autoComplete="off"
           {...form.getInputProps("phoneNumber")}
         />
+        <TextInput
+          label="Customer Name"
+          placeholder="Lucas"
+          size="lg"
+          variant="filled"
+          radius={"md"}
+          {...form.getInputProps("dynamicVariables.customerName")}
+        />
+        <TextInput
+          label="Customer Identifier"
+          placeholder="1234"
+          size="lg"
+          variant="filled"
+          radius={"md"}
+          {...form.getInputProps("dynamicVariables.customerIdentifier")}
+        />
         <Button
           type="submit"
           size="lg"
@@ -111,7 +145,7 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
           disabled={!isValid || isSubmitting}
           loading={isSubmitting}
         >
-          {isSubmitting ? 'Calling...' : 'Request Demo Call'}
+          {isSubmitting ? "Calling..." : "Request Demo Call"}
         </Button>
         <Button
           variant="transparent"

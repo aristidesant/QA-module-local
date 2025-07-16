@@ -4,6 +4,10 @@ import type { Campaign } from "./CampaignsModel";
 export type ConversationDemoModel = {
   agentId: string;
   phoneNumber: string;
+  dynamicVariables?: {
+    customerName: string;
+    customerIdentifier: string;
+  };
 };
 export interface ConversationsModel {
   id: number;

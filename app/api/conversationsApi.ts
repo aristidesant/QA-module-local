@@ -17,6 +17,10 @@ const DEFAULT_API_URL = getDefaultApiUrl() as string;
 export type StartDemoParams = {
   agentId: string;
   phoneNumber: string;
+  dynamicVariables?: {
+    customerName: string;
+    customerIdentifier: string;
+  };
 };
 
 export type Conversation = {
@@ -41,7 +45,7 @@ export type PostCallDataParams = {
  */
 const conversationsApi = (authHeader: Record<string, string>) => {
   const headers = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
     ...authHeader,
   };
 
