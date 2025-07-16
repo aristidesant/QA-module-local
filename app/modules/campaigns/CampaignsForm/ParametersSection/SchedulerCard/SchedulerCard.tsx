@@ -79,12 +79,18 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
         return; // Stop submission if validation fails
       }
       console.log(values?.dayConfigs);
+      const cleanedDayConfigs =
+        values.dayConfigs?.map((dayConfig) => ({
+          ...dayConfig,
+          dayCapacity: undefined,
+        })) || [];
       // Execute the mutation with transformed dayConfigs
       await updateScheduleMutation.mutateAsync({
         campaignId,
         scheduleId: scheduler.id,
         scheduleData: {
           ...values,
+          dayConfigs: cleanedDayConfigs,
         },
       });
 
@@ -186,7 +192,10 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
                   <Button
                     variant="outline"
                     leftSection={<IconEdit size={16} />}
-                    onClick={close}
+                    onClick={() => {
+                      close();
+                      setRightComponent?.(null);
+                    }}
                   >
                     Cancel
                   </Button>
