@@ -1,29 +1,13 @@
 // Refactored to use Mantine's useForm for all form state and validation
 
 import React, { useState } from "react";
-import {
-  TextInput,
-  Textarea,
-  NumberInput,
-  Select,
-  MultiSelect,
-  Button,
-  Group,
-  Stack,
-  Divider,
-  LoadingOverlay,
-  Card,
-  Text,
-  Box,
-} from "@mantine/core";
-import { useForm } from "@mantine/form";
+import { Stack, LoadingOverlay, Box } from "@mantine/core";
 import type { Campaign } from "../../../models/CampaignsModel";
 import {
   useCreateCampaign,
   useUpdateCampaign,
 } from "~/queries/campaignsQueries";
 import { notifications } from "@mantine/notifications";
-import PromptTemplateSelect from "~/components/PromptTemplateSelect";
 import {
   CampaignFormProvider,
   useCampaignForm,
@@ -35,6 +19,7 @@ import SectionCard from "~/components/SectionCard";
 import AgentConfiguration from "~/modules/agent/AgentConfiguration/AgentConfiguration";
 import { ContactSection } from "./ContactSection/ContactSection";
 import ParametersSection from "./ParametersSection";
+import AgentSection from "./AgentSection";
 
 interface CampaignsFormProps {
   campaign?: Partial<Campaign>;
@@ -166,22 +151,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
         )}
         {selectedTab === "agents" && (
           <form onSubmit={form.onSubmit(handleSubmit)}>
-            <AgentConfiguration
-              editableAgent={form.values.agentConfig || {}}
-              onSetRightSection={(rightSection) => {
-                setRightComponent?.(rightSection);
-              }}
-              setEditableAgent={(updatedAgent) => {
-                // Handle both direct object and function updates
-                if (typeof updatedAgent === "function") {
-                  const currentAgent = form.values.agentConfig || {};
-                  const newAgent = updatedAgent(currentAgent);
-                  form.setFieldValue("agentConfig", newAgent);
-                } else {
-                  form.setFieldValue("agentConfig", updatedAgent);
-                }
-              }}
-            />
+            <AgentSection />
           </form>
         )}
         {selectedTab === "contacts" && <ContactSection />}

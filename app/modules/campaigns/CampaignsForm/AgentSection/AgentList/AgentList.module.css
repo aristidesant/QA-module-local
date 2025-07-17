@@ -1,0 +1,83 @@
+.container {
+  background: var(--mantine-color-body);
+  border-radius: var(--mantine-radius-md);
+  padding: var(--mantine-spacing-md);
+  border: 1px solid var(--mantine-color-gray-2);
+}
+
+.header {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 2px;
+  color: var(--mantine-color-text);
+}
+
+.subheader {
+  color: var(--mantine-color-dimmed);
+  font-size: 0.9rem;
+  margin-bottom: var(--mantine-spacing-md);
+}
+
+.agentCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--mantine-color-body);
+  border: 1px solid var(--mantine-color-gray-2);
+  border-radius: var(--mantine-radius-md);
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+  margin-bottom: var(--mantine-spacing-xs);
+}
+
+.agentInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-sm);
+}
+
+.avatarStatus {
+  position: relative;
+  display: inline-block;
+}
+
+.statusDot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--mantine-color-body);
+  background: var(--mantine-color-green-6);
+}
+
+.statusDot.inactive {
+  background: var(--mantine-color-gray-4);
+}
+
+.agentName {
+  font-weight: 500;
+  color: var(--mantine-color-text);
+  font-size: 1rem;
+}
+
+.agentLang {
+  color: var(--mantine-color-dimmed);
+  font-size: 0.9rem;
+}
+
+.addAgentBtn {
+  width: 100%;
+  margin-top: var(--mantine-spacing-md);
+  border: 2px dashed var(--mantine-color-blue-4);
+  border-radius: var(--mantine-radius-md);
+  font-weight: 500;
+}
+
+.addAgentBtn:hover {
+  background: var(--mantine-color-blue-0);
+}
+
+.menuIcon {
+  color: var(--mantine-color-gray-6);
+}

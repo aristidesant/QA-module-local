@@ -11,6 +11,7 @@ import type AgentListObject from "~/models/AgentListObject";
 
 type AgentConfigurationProps = {
   agentMode?: boolean;
+  withVoiceSelection?: boolean;
   agent?: AgentListObject;
   editableAgent?: Partial<AgentConfigModel>;
   onVoiceSelect?: (voiceId: string) => void;
@@ -23,6 +24,7 @@ const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
   agent,
   editableAgent,
   agentMode,
+  withVoiceSelection = true,
   setEditableAgent,
   onSetRightSection,
   onVoiceSelect = () => {}, // Default no-op function
@@ -42,23 +44,25 @@ const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
 
   return (
     <Stack>
-      <AgentVoices
-        onSelectVoice={(voiceId: string) => {
-          handleAgentUpdate({
-            conversationConfig: {
-              ...(editableAgent?.conversationConfig || {}),
-              tts: {
-                ...(editableAgent?.conversationConfig?.tts || {}),
-                voiceId: voiceId,
+      {withVoiceSelection && (
+        <AgentVoices
+          onSelectVoice={(voiceId: string) => {
+            handleAgentUpdate({
+              conversationConfig: {
+                ...(editableAgent?.conversationConfig || {}),
+                tts: {
+                  ...(editableAgent?.conversationConfig?.tts || {}),
+                  voiceId: voiceId,
+                },
               },
-            },
-          });
-          onVoiceSelect(voiceId);
-        }}
-        agentData={editableAgent}
-        onSetRightSection={onSetRightSection}
-        onUpdateAgentData={handleAgentUpdate}
-      />
+            });
+            onVoiceSelect(voiceId);
+          }}
+          agentData={editableAgent}
+          onSetRightSection={onSetRightSection}
+          onUpdateAgentData={handleAgentUpdate}
+        />
+      )}
       {agentMode && <AgentConfigurationTypeSelector />}
       {shouldDisplayAgentSettings && (
         <>
