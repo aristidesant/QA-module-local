@@ -8,7 +8,12 @@ import {
   Menu,
   Flex,
 } from "@mantine/core";
-import { IconDots, IconPencil, IconTrash } from "@tabler/icons-react";
+import {
+  IconChevronUp,
+  IconDots,
+  IconPencil,
+  IconTrash,
+} from "@tabler/icons-react";
 import styles from "./ScheduleHeader.module.css";
 import type { Scheduler } from "~/models/SchedulerModel";
 
@@ -17,6 +22,7 @@ export interface ScheduleHeaderProps {
   onChange: (isActive: boolean) => void;
   onEdit: () => void;
   onDelete: () => void;
+  isOpened?: boolean;
 }
 
 export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
@@ -24,6 +30,7 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
   onChange,
   onEdit,
   onDelete,
+  isOpened = false,
 }) => {
   return (
     <div className={styles.container}>
@@ -51,8 +58,17 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
             </ActionIcon>
           </Menu.Target>
           <Menu.Dropdown>
-            <Menu.Item leftSection={<IconPencil size={14} />} onClick={onEdit}>
-              Edit
+            <Menu.Item
+              leftSection={
+                isOpened ? (
+                  <IconChevronUp size={14} />
+                ) : (
+                  <IconPencil size={14} />
+                )
+              }
+              onClick={onEdit}
+            >
+              {isOpened ? "Close" : "Edit"}
             </Menu.Item>
             <Menu.Item
               leftSection={<IconTrash size={14} />}

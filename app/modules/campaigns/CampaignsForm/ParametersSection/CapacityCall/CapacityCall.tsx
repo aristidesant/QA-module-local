@@ -1,11 +1,7 @@
 import { Card, Group, Slider, Stack, Text, Box } from "@mantine/core";
 import { useSchedulerFormContext } from "../SchedulerCard/schedulerFormProvider";
 
-type CapacityCallProps = {
-  agentsAssigned?: number;
-};
-
-const CapacityCall: React.FC<CapacityCallProps> = ({ agentsAssigned = 10 }) => {
+const CapacityCall: React.FC = () => {
   const form = useSchedulerFormContext();
 
   // Get value and onChange handler from form context
@@ -24,7 +20,7 @@ const CapacityCall: React.FC<CapacityCallProps> = ({ agentsAssigned = 10 }) => {
             </Text>
           </Box>
           <Group gap="xs" justify="flex-end">
-            <Text fw={500}>{agentsAssigned}</Text>
+            <Text fw={500}>{currentValue}</Text>
             <Text size="xs" c="dimmed">
               Agents assigned
             </Text>

@@ -1,64 +1,50 @@
-import React from 'react';
-import { Box, Group, Text, Badge } from '@mantine/core';
-import { IconClock, IconCalendarTime } from '@tabler/icons-react';
-import styles from './CallsOverview.module.css';
+import React from "react";
+import { Box, Group, Text, Badge } from "@mantine/core";
+import { IconClock, IconCalendarTime } from "@tabler/icons-react";
+import styles from "./CallsOverview.module.css";
+import { useSchedulerFormContext } from "../SchedulerCard/schedulerFormProvider";
 
-export interface CallsOverviewProps {
-  callsPerHour: number;
-  daysToComplete?: number;
-}
-
-export const CallsOverview: React.FC<CallsOverviewProps> = ({
-  callsPerHour = 235,
-  daysToComplete = 4,
-}) => {
+export const CallsOverview: React.FC = () => {
+  const form = useSchedulerFormContext();
   return (
     <div className={styles.container}>
       {/* Calls per hour card */}
       <div className={styles.card}>
-        <Group justify="space-between" align="flex-start">
+        <Group justify="space-between" align="center">
           <Box>
-            <Group gap="xs">
+            <Group gap={8} align="center">
               <span className={styles.iconWrapper}>
-                <IconClock size={16} />
+                <IconClock size={18} />
               </span>
-              <Text className={styles.title}>
-                Calls per hour
-              </Text>
+              <Text className={styles.title}>Calls per hour</Text>
             </Group>
-            <Text className={styles.subtitle} ml={24}>
+            <Text className={styles.subtitle} ml={26}>
               Hourly distribution of daily call capacity
             </Text>
           </Box>
-          <Box>
-            <Text className={styles.value}>
-              {callsPerHour}
-            </Text>
-            <Text className={styles.subtitle} ta="right">
-              Calls per hour
-            </Text>
+          <Box style={{ textAlign: "right" }}>
+            <Text className={styles.value}>{form.values?.callsPerHour}</Text>
+            <Text className={styles.subtitle}>Calls per hour</Text>
           </Box>
         </Group>
       </div>
 
       {/* Estimated completion time card */}
       <div className={styles.card}>
-        <Group justify="space-between" align="flex-start">
+        <Group justify="space-between" align="center">
           <Box>
-            <Text className={styles.title}>
-              Estimated completion time
-            </Text>
+            <Text className={styles.title}>Estimated completion time</Text>
             <Text className={styles.subtitle}>
               Projected timeline based on current capacity
             </Text>
           </Box>
           <div className={styles.iconContainer}>
-            <IconCalendarTime size={20} stroke={1.5} />
+            <IconCalendarTime size={22} stroke={1.5} />
           </div>
         </Group>
-        <Group align="flex-end" gap={5} mt="md">
+        <Group align="flex-end" gap={6} mt={12}>
           <Text className={styles.value}>
-            {daysToComplete}
+            {form.values?.estimatedCompletionDays}
           </Text>
           <Text className={styles.daysLabel} mb={4}>
             days

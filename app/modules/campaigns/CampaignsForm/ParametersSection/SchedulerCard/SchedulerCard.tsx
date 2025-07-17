@@ -41,6 +41,14 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
   const deactivateScheduleMutation = useDeactivateSchedule();
   const updateScheduleMutation = useUpdateSchedule();
   const deleteScheduleMutation = useDeleteSchedule();
+
+  useEffect(() => {
+    return () => {
+      setRightComponent?.(null); // Clear right component on unmount
+      close(); // Close the form if it's open
+    };
+  }, []);
+
   // Initialize form
   const form = useSchedulerForm({
     initialValues: {
@@ -157,6 +165,7 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
       <Stack gap="lg">
         {/* Schedule Header */}
         <ScheduleHeader
+          isOpened={opened}
           schedule={scheduler}
           onChange={handleToggleStatus}
           onEdit={handleOnEditMode}
@@ -167,15 +176,10 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
             <form onSubmit={form.onSubmit(handleSubmit)}>
               <Stack gap="lg">
                 {/* Capacity Call Section */}
-                <CapacityCall agentsAssigned={10} />
+                <CapacityCall />
 
                 {/* Calls per hour section and Estimated completion time */}
-                <CallsOverview
-                  callsPerHour={Number(form.values.callsPerHour) || 40}
-                  daysToComplete={
-                    Number(form.values.estimatedCompletionDays) || 4
-                  }
-                />
+                <CallsOverview />
 
                 {/* Day Schedule Card */}
                 <DayScheduleCard />
