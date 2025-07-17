@@ -1,4 +1,3 @@
-import { Stack } from "@mantine/core";
 import CampaignsList from "../CampaignsList";
 import { ContentContainer } from "~/components/ContentContainer/ContentContainer";
 import { useCampaignsStore } from "~/stores/campaignsStore";

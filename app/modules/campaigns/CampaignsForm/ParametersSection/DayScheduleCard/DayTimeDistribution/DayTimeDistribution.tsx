@@ -21,13 +21,16 @@ import {
 } from "~/queries/hourConfigQueries";
 import { useCampaignsStore } from "~/stores/campaignsStore";
 import { IconDeviceFloppy } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
 
 interface DayTimeDistributionProps {
   dayConfig?: DayConfig;
+  onComplete?: () => void;
 }
 
 const DayTimeDistribution: React.FC<DayTimeDistributionProps> = ({
   dayConfig,
+  onComplete,
 }) => {
   const bulkUpdateMutation = useBulkUpdateHourConfigs();
   const { selectedCampaign } = useCampaignsStore((state) => state);
@@ -80,18 +83,37 @@ const DayTimeDistribution: React.FC<DayTimeDistributionProps> = ({
   const capitalize = (str?: string) =>
     str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
 
+  const handleSubmit = async (data: { time: HourConfig[] }) => {
+    if (!campaignId || !dayConfigId) return;
+    const hourConfigs = data.time.map((slot) => ({
+      id: slot.id,
+      capacity: Number(slot.capacity),
+      isActive: slot.isActive ?? true,
+    }));
+    try {
+      await bulkUpdateMutation.mutateAsync({ campaignId, hourConfigs });
+      notifications.show({
+        title: "Success",
+        message: `Hour configurations updated successfully for ${capitalize(
+          dayConfig?.dayOfWeek
+        )}`,
+        color: "green",
+      });
+      onComplete?.();
+    } catch (error) {
+      console.error("Error updating hour configs:", error);
+      notifications.show({
+        title: "Error",
+        message: "Failed to update hour configurations. Please try again.",
+        color: "red",
+      });
+    }
+  };
+
   return (
     <form
       style={{ position: "relative" }}
-      onSubmit={form.onSubmit((values) => {
-        if (!campaignId) return;
-        const hourConfigs = values.time.map((slot) => ({
-          id: slot.id,
-          capacity: Number(slot.capacity),
-          isActive: slot.isActive ?? true,
-        }));
-        bulkUpdateMutation.mutate({ campaignId, hourConfigs });
-      })}
+      onSubmit={form.onSubmit(handleSubmit)}
     >
       <Stack className={styles.container}>
         <LoadingOverlay

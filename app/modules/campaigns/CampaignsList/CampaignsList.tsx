@@ -8,6 +8,9 @@ import {
   Menu,
   NumberFormatter,
   Stack,
+  Card,
+  Center,
+  Button,
 } from "@mantine/core";
 import {
   IconAlertCircle,
@@ -70,19 +73,45 @@ export const CampaignsList: React.FC = () => {
     );
   }
 
+  const handleShowAddNewCampaignModal = () => {
+    modals.open({
+      modalId: "create-campaign",
+      title: "Create New Campaign",
+      children: (
+        <AddNewCampaignForm
+          onComplete={() => {
+            reloadCampaigns();
+            selectCampaign(null);
+            modals.close("create-campaign");
+          }}
+        />
+      ),
+      size: "lg",
+      centered: true,
+    });
+  };
+
   if (!data || data.length === 0) {
     return (
-      <div className={styles.emptyContainer}>
-        <div className={styles.emptyIcon}>
-          <IconRocket size={64} stroke={1.2} />
-        </div>
-        <Text size="xl" fw={600} mt="xl" className={styles.emptyTitle}>
-          No campaigns yet
-        </Text>
-        <Text size="md" c="dimmed" mt={8} className={styles.emptySubtitle}>
-          Launch your first campaign to reach your audience
-        </Text>
-      </div>
+      <Card mt="xs" withBorder>
+        <Stack align="center" justify="center">
+          <div className={styles.emptyIcon}>
+            <IconRocket size={64} stroke={1.2} />
+          </div>
+          <Text size="xl" fw={600} mt="xl" className={styles.emptyTitle}>
+            No campaigns yet
+          </Text>
+          <Text size="md" c="dimmed" mt={8} className={styles.emptySubtitle}>
+            Launch your first campaign to reach your audience
+          </Text>
+          <Button
+            leftSection={<IconPlus size={18} />}
+            onClick={handleShowAddNewCampaignModal}
+          >
+            Create Campaign
+          </Button>
+        </Stack>
+      </Card>
     );
   }
 
@@ -197,24 +226,7 @@ export const CampaignsList: React.FC = () => {
         title="Campaigns"
         description="Manage your marketing campaigns"
         headerActions={
-          <ActionIcon
-            onClick={() => {
-              modals.open({
-                modalId: "create-campaign",
-                title: "Create New Campaign",
-                children: (
-                  <AddNewCampaignForm
-                    onComplete={() => {
-                      reloadCampaigns();
-                      selectCampaign(null);
-                    }}
-                  />
-                ),
-                size: "lg",
-                centered: true,
-              });
-            }}
-          >
+          <ActionIcon onClick={handleShowAddNewCampaignModal}>
             <IconPlus size={20} />
           </ActionIcon>
         }

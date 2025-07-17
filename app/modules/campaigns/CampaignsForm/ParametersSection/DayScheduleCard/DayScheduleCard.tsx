@@ -27,6 +27,12 @@ export const DayScheduleCard: React.FC = () => {
     );
   }, [form.values.dayConfigs]);
 
+  const handleTimeDistributionUpdateComplete = () => {
+    console.log("[DayScheduleCard] Time distribution update complete.");
+    setRightComponent?.(null);
+    setSelectedDay(null);
+  };
+
   return (
     <Stack gap="xs">
       {form.values.dayConfigs?.map((day, index) => {
@@ -42,7 +48,12 @@ export const DayScheduleCard: React.FC = () => {
             onClick={() => {
               console.log(`[DayScheduleCard] Clicked day row:`, day.dayOfWeek);
               setSelectedDay(day.dayOfWeek);
-              setRightComponent?.(<DayTimeDistribution dayConfig={day} />);
+              setRightComponent?.(
+                <DayTimeDistribution
+                  dayConfig={day}
+                  onComplete={handleTimeDistributionUpdateComplete}
+                />
+              );
             }}
           >
             <Flex justify="space-between" align="center">
