@@ -1,0 +1,63 @@
+/* AgentCampaignAdd.module.css */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.agentList {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+.agentCard {
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  background: none;
+  transition: background 0.12s;
+  box-shadow: none;
+  padding: 0.5rem 0.75rem;
+}
+.cardContent {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.avatar {
+  flex-shrink: 0;
+  margin-right: 1rem;
+}
+.infoBlock {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.agentName {
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.language {
+  margin-top: 2px;
+  font-size: 0.85rem;
+  color: var(--mantine-color-gray-6);
+}
+.checkIcon {
+  margin-left: auto;
+}
+.agentCard:hover,
+.agentCard:focus {
+  background: var(--mantine-color-blue-0);
+}
+.selected {
+  background: var(--mantine-color-blue-light);
+}
+.agentName {
+  font-weight: 500;
+}
+.addBtn {
+  margin-top: 1rem;
+}
