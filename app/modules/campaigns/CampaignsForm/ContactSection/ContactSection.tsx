@@ -7,15 +7,7 @@ import { ContactListOverview } from "./ContactListOverview";
 import styles from "./ContactSection.module.css";
 import SectionCard from "~/components/SectionCard";
 
-interface ContactSectionProps {
-  selectedContactList?: string;
-  onContactListChange?: (value: string | null) => void;
-}
-
-export const ContactSection = ({
-  selectedContactList = "bancopopular_contactos",
-  onContactListChange,
-}: ContactSectionProps) => {
+export const ContactSection = () => {
   return (
     <SectionCard
       title="Contact List Configuration"

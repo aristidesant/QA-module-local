@@ -250,7 +250,10 @@ export function useCreateSchedule() {
         ...header,
         Authorization: `Bearer ${token?.token}`,
       });
-      return api.createSchedule(campaignId, scheduleData);
+      return api.createSchedule(campaignId, {
+        ...scheduleData,
+        status: "active",
+      });
     },
     onSuccess: (data, variables) => {
       // Invalidate relevant queries to refetch fresh data
