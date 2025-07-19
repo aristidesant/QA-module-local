@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, Badge, Stack, Center, Group } from "@mantine/core";
+import { Text, Badge, Stack, Center, Group, ThemeIcon } from "@mantine/core";
 import { IconArrowUpRight } from "@tabler/icons-react";
 import classes from "./CampaignOverview.module.css";
 import type { Campaign } from "../../../../models/CampaignsModel";
@@ -25,11 +25,22 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
         className={classes.outboundBadge}
         leftSection={null}
         rightSection={
-          <IconArrowUpRight size={16} color="var(--mantine-color-green-6)" />
+          <>
+            {campaign.type === "OUTBOUND" && (
+              <ThemeIcon variant="transparent" color="green" size={"xs"}>
+                <IconArrowUpRight />
+              </ThemeIcon>
+            )}
+            {campaign.type === "INBOUND" && (
+              <ThemeIcon variant="transparent" color="blue" size={"xs"}>
+                <IconArrowUpRight />
+              </ThemeIcon>
+            )}
+          </>
         }
         style={{ gap: 4, fontWeight: 500 }}
       >
-        Outbound
+        {campaign.type.charAt(0) + campaign.type.slice(1).toLowerCase()}
       </Badge>
     </Stack>
   );

@@ -1,22 +1,9 @@
 import React from "react";
-import {
-  Text,
-  Badge,
-  Group,
-  Stack,
-  Paper,
-  Avatar,
-  ThemeIcon,
-  Tooltip,
-  Box,
-} from "@mantine/core";
-import { RightSection as Section } from "~/components/RightSection";
+import { Stack, Box } from "@mantine/core";
 import CampaignOverview from "./CampaignOverview";
-import { CampaignPerformance } from "./CampaignPerformance";
-import { AssignedAgents } from "./AssignedAgents";
-import { ContactsList } from "./ContactsList";
-import classes from "./CampaignPreview.module.css";
 import type { Campaign } from "../../../models/CampaignsModel";
+import CampaignStatus from "./CampaignStatus";
+import CampaignContactOutcomeSummary from "./CampaignContactOutcomeSummary";
 
 interface CampaignPreviewProps {
   campaign: Campaign & {
@@ -67,18 +54,9 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
         {/* Campaign Overview */}
         <CampaignOverview campaign={campaign} />
 
-        {/* Campaign Performance */}
-        {campaign.stats && <CampaignPerformance />}
+        <CampaignStatus />
 
-        {/* Assigned Agents */}
-        {campaign.assignedAgents && campaign.assignedAgents.length > 0 && (
-          <AssignedAgents agents={campaign.assignedAgents} />
-        )}
-
-        {/* Contacts List */}
-        {campaign.contactList && (
-          <ContactsList contactList={campaign.contactList} />
-        )}
+        <CampaignContactOutcomeSummary />
       </Stack>
     </Box>
   );

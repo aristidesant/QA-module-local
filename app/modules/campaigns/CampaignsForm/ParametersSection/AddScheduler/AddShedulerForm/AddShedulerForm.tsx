@@ -10,9 +10,7 @@ import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { IconCheck } from "@tabler/icons-react";
 import React from "react";
-import { useParams } from "react-router-dom";
 import { useCreatePredefinedSchedule } from "~/queries/schedulerQueries";
-import styles from "./AddShedulerForm.module.css";
 
 interface AddShedulerFormProps {
   onSuccess?: () => void;

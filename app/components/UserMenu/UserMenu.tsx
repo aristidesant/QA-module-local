@@ -1,8 +1,7 @@
 import { Menu } from "@mantine/core";
 import { IconChevronDown, IconLogout } from "@tabler/icons-react";
-import { useFetcher } from "react-router-dom";
 import styles from "./UserMenu.module.css";
-import { useNavigate } from "react-router";
+import { useFetcher, useNavigate } from "react-router";
 import { useSessionStore } from "~/stores/sessionStore";
 
 export const UserMenu: React.FC = () => {
