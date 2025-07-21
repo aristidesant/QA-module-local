@@ -5,10 +5,11 @@ import {
   IconSelector,
 } from "@tabler/icons-react";
 import type { Header } from "@tanstack/react-table";
-import type { ConversationsModel } from "~/models/ConversationsModels";
+import type { ConversationTableModel } from "~/models/ConversationsModels";
+import styles from "./TableHeader.module.css";
 
 interface TableHeaderProps {
-  headers: Header<ConversationsModel, unknown>[];
+  headers: Header<ConversationTableModel, unknown>[];
 }
 
 export function TableHeader({ headers }: TableHeaderProps) {
@@ -18,35 +19,35 @@ export function TableHeader({ headers }: TableHeaderProps) {
         {headers.map((header) => {
           const canSort = header.column.getCanSort();
           const sortDirection = header.column.getIsSorted();
+          const columnClassName =
+            (header.column.columnDef.meta as any)?.className || "";
 
           return (
             <Table.Th
               key={header.id}
-              style={{
-                backgroundColor: "var(--mantine-color-gray-0)",
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-                fontWeight: 600,
-                fontSize: "var(--mantine-font-size-xs)",
-                color: "var(--mantine-color-gray-6)",
-                padding: "var(--mantine-spacing-sm) var(--mantine-spacing-md)",
-                height: "40px",
-                cursor: canSort ? "pointer" : "default",
-                userSelect: "none",
-              }}
+              className={`${styles.headerCell} ${columnClassName}`}
+              data-cansort={canSort}
               onClick={
                 canSort ? header.column.getToggleSortingHandler() : undefined
               }
             >
-              <Group gap="xs" justify="space-between">
-                <Text size="xs" fw={600} tt="uppercase">
+              <Group
+                className={styles.headerGroup}
+                gap="xs"
+                justify="space-between"
+              >
+                <Text
+                  className={styles.headerText}
+                  size="xs"
+                  fw={600}
+                  tt="uppercase"
+                >
                   {header.isPlaceholder
                     ? null
                     : typeof header.column.columnDef.header === "string"
                     ? header.column.columnDef.header
                     : "Column"}
                 </Text>
-
                 {canSort && (
                   <Tooltip
                     label={

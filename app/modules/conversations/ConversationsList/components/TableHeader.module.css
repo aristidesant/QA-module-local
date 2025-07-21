@@ -1,0 +1,40 @@
+.headerCell {
+  background-color: var(--mantine-color-gray-0);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  font-size: var(--mantine-font-size-xs);
+  color: var(--mantine-color-gray-6);
+  padding: 6px 10px;
+  height: 32px;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.headerCell:not([data-cansort="true"]) {
+  cursor: default;
+}
+
+.headerGroup {
+  gap: var(--mantine-spacing-xs);
+  justify-content: space-between;
+}
+
+.headerText {
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+@media (max-width: 600px) {
+  .headerCell {
+    font-size: 11px;
+    padding: 4px 6px;
+    height: 28px;
+  }
+  .headerText {
+    font-size: 10px;
+  }
+}

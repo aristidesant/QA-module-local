@@ -1,11 +1,14 @@
 import { Table, Center, Text } from "@mantine/core";
 import type { Row } from "@tanstack/react-table";
-import type { ConversationsModel } from "~/models/ConversationsModels";
+import type {
+  ConversationsModel,
+  ConversationTableModel,
+} from "~/models/ConversationsModels";
 import { TableRow } from "./TableRow";
 
 interface TableBodyProps {
-  rows: Row<ConversationsModel>[];
-  getRowProps: (row: Row<ConversationsModel>) => {
+  rows: Row<ConversationTableModel>[];
+  getRowProps: (row: Row<ConversationTableModel>) => {
     key: string;
     style: React.CSSProperties;
     onClick: () => void;

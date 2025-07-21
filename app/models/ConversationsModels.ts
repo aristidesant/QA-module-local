@@ -1,3 +1,15 @@
+// Lightweight model for table display
+export type ConversationTableModel = {
+  id: number;
+  agentName: string;
+  agentVoiceLanguage: string;
+  status: string;
+  startDate: string;
+  endDate: string;
+  createdAt: string;
+  updatedAt: string;
+  externalPhoneNumber: string;
+};
 import type AgentListObject from "./AgentListObject";
 import type { Campaign } from "./CampaignsModel";
 

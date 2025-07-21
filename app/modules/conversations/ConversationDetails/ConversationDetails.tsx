@@ -4,79 +4,41 @@ import { useMemo } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
-dayjs.extend(relativeTime);
 import type {
   TranscriptContent,
   ConversationsModel,
 } from "~/models/ConversationsModels";
-import type AgentListObject from "~/models/AgentListObject";
-import type { Campaign } from "~/models/CampaignsModel";
-
-// Simplified types for the component props
-type AgentInfo = Pick<AgentListObject, "id" | "name"> | null;
-type CampaignInfo = Pick<
-  Campaign,
-  "id" | "name" | "description" | "status"
-> | null;
 
 import { TranscriptViewer } from "~/modules/conversations/TranscriptViewer";
 import { AnalysisPanel } from "~/modules/conversations/AnalysisPanel";
 import { MetadataPanel } from "~/modules/conversations/MetadataPanel";
 import styles from "./ConversationDetails.module.css";
 import ConversationOverview from "../ConversationOverview";
+import { useGetConversation } from "~/queries/conversationsQueries";
+dayjs.extend(relativeTime);
 
 interface ConversationDetailsProps {
   conversation: ConversationsModel;
 }
 
 export function ConversationDetails({
-  conversation,
+  conversation: conversationElement,
 }: ConversationDetailsProps) {
-  const formatDate = (dateString?: string | null): string => {
-    if (!dateString) return "N/A";
-    try {
-      const date = dayjs(dateString);
-      // Check if the date is valid
-      if (!date.isValid()) {
-        return "Invalid date";
-      }
-      return date.format("MMM D, YYYY h:mm A");
-    } catch (error) {
-      console.error("Error formatting date:", error);
-      return "Invalid date";
-    }
-  };
-
-  const formatDuration = (seconds?: number): string => {
-    if (typeof seconds !== "number" || isNaN(seconds) || seconds < 0) {
-      return "N/A";
-    }
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = Math.floor(seconds % 60);
-    return `${minutes}m ${remainingSeconds.toString().padStart(2, "0")}s`;
-  };
+  const { data: conversation } = useGetConversation(
+    `${conversationElement.id}`
+  );
 
   const duration = useMemo(() => {
     const duration =
-      conversation.transcriptContent?.metadata?.call_duration_secs;
+      conversation?.transcriptContent?.metadata?.call_duration_secs;
     return typeof duration === "number" && !isNaN(duration) && duration > 0
       ? duration
       : undefined;
-  }, [conversation.transcriptContent]);
+  }, [conversation?.transcriptContent]);
 
-  // Extract and safely handle conversation data
-  const contact = conversation.contact;
-  const agent = conversation.agent;
-  const campaign = conversation.campaign;
-  const startDate = formatDate(conversation.startDate);
-  const status = conversation.status;
-  const transcriptContent = conversation.transcriptContent;
+  const status = conversation?.status;
+  const transcriptContent = conversation?.transcriptContent;
 
-  // Create safe versions with null checks and defaults
-  const safeContact = contact ?? null;
-  const safeAgent = agent ?? null;
-  const safeCampaign = campaign ?? null;
-  const safeStartDate = startDate || "";
   const safeStatus = status || "";
   const safeTranscriptContent: TranscriptContent = transcriptContent || {
     transcript: [],
@@ -132,11 +94,13 @@ export function ConversationDetails({
         </Tabs.List>
 
         <Tabs.Panel value="overview" pt="md">
-          <ConversationOverview
-            conversation={conversation}
-            status={safeStatus}
-            duration={duration}
-          />
+          {conversation && (
+            <ConversationOverview
+              conversation={conversation as ConversationsModel}
+              status={safeStatus}
+              duration={duration}
+            />
+          )}
         </Tabs.Panel>
 
         <Tabs.Panel value="transcript" pt="md">

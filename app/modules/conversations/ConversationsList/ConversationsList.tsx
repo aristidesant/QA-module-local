@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { Table, Loader, Center, Text, Box, Stack } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { useGetConversations } from "~/queries/conversationsQueries";
 import { useConversationStore } from "~/stores/useConversationStore";
 import { ConversationDetails } from "../ConversationDetails/ConversationDetails";
@@ -15,6 +16,7 @@ import styles from "./ConversationsList.module.css";
 export function ConversationsList() {
   const { data: conversations, isLoading, refetch } = useGetConversations();
   const { selectedId, setSelection } = useConversationStore();
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   // Memoize the typed conversations to prevent unnecessary re-renders
   const typedConversations = useMemo(
@@ -65,6 +67,12 @@ export function ConversationsList() {
     );
   }
 
+  // Dynamic minWidth based on screen size
+  const getMinWidth = () => {
+    if (isMobile) return 500;
+    return 700;
+  };
+
   return (
     <SectionCard
       title="Conversations"
@@ -79,21 +87,30 @@ export function ConversationsList() {
             onRefresh={handleRefresh}
           />
 
-          <Table
-            highlightOnHover
-            withTableBorder
-            verticalSpacing="xs"
-            horizontalSpacing="md"
-            className={styles.table}
+          {/* Responsive scroll container for the table */}
+          <Table.ScrollContainer
+            minWidth={getMinWidth()}
+            className={styles.scrollContainer}
+            type="native"
           >
-            <TableHeader headers={table.getHeaderGroups()[0]?.headers || []} />
-            <TableBody
-              rows={currentPageRows || []}
-              getRowProps={getRowProps}
-              isLoading={isLoading}
-              isEmpty={(currentPageRows?.length || 0) === 0}
-            />
-          </Table>
+            <Table
+              highlightOnHover
+              withTableBorder
+              verticalSpacing={isMobile ? "xs" : "sm"}
+              horizontalSpacing={isMobile ? "xs" : "md"}
+              className={styles.table}
+            >
+              <TableHeader
+                headers={table.getHeaderGroups()[0]?.headers || []}
+              />
+              <TableBody
+                rows={currentPageRows || []}
+                getRowProps={getRowProps}
+                isLoading={isLoading}
+                isEmpty={(currentPageRows?.length || 0) === 0}
+              />
+            </Table>
+          </Table.ScrollContainer>
 
           <TablePagination
             table={table}

@@ -1,4 +1,8 @@
 import axios from "axios";
+import type {
+  ConversationsModel,
+  ConversationTableModel,
+} from "~/models/ConversationsModels";
 
 // filepath: /Users/ramonmena/Projects/n-ai/app/api/conversationsApi.ts
 
@@ -62,7 +66,7 @@ const conversationsApi = (authHeader: Record<string, string>) => {
 
     // Get all conversations for current client
     getConversations: async () => {
-      const response = await axios.get<Conversation[]>(
+      const response = await axios.get<ConversationTableModel[]>(
         `${DEFAULT_API_URL}/conversations`,
         { headers }
       );
@@ -101,7 +105,7 @@ const conversationsApi = (authHeader: Record<string, string>) => {
 
     // Get conversation by ID
     getConversationById: async (id: string) => {
-      const response = await axios.get<Conversation>(
+      const response = await axios.get<ConversationsModel>(
         `${DEFAULT_API_URL}/conversations/${id}`,
         { headers }
       );

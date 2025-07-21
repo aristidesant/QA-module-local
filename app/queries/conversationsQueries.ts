@@ -9,6 +9,7 @@ import { useToken } from "~/components/RouteProtecter/RouteProtecter";
 import type {
   ConversationDemoModel,
   ConversationsModel,
+  ConversationTableModel,
 } from "~/models/ConversationsModels";
 
 const getApiWithAuth = (token: string | undefined) => {
@@ -43,7 +44,7 @@ export const useCreateConversation = () => {
 // Get all conversations for current client
 export const useGetConversations = () => {
   const { token } = useToken();
-  return useQuery<import("~/api/conversationsApi").Conversation[]>({
+  return useQuery<ConversationTableModel[]>({
     queryKey: ["conversations"],
     queryFn: async () => {
       const api = getApiWithAuth(token ?? undefined);
@@ -108,7 +109,7 @@ export const usePostCallDataWebhook = () => {
 // Get conversation by ID
 export const useGetConversation = (id: string) => {
   const { token } = useToken();
-  return useQuery<import("~/api/conversationsApi").Conversation>({
+  return useQuery<ConversationsModel>({
     queryKey: ["conversation", id],
     queryFn: async () => {
       const api = getApiWithAuth(token ?? undefined);

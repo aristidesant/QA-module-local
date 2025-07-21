@@ -3,12 +3,15 @@ import { Box, Text, rem } from "@mantine/core";
 import { IconPhoneCall } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
-import type { ConversationsModel } from "~/models/ConversationsModels";
+import type {
+  ConversationsModel,
+  ConversationTableModel,
+} from "~/models/ConversationsModels";
 import styles from "./ConversationsList.module.css";
 
 dayjs.extend(duration);
 
-const columnHelper = createColumnHelper<ConversationsModel>();
+const columnHelper = createColumnHelper<ConversationTableModel>();
 
 // Status sorting function - extracted to prevent re-renders
 const statusSortingFn = (rowA: any, rowB: any) => {
@@ -126,7 +129,7 @@ const statusBadgeStyles = {
 };
 
 export const conversationColumns = [
-  columnHelper.accessor((row) => row.contact?.name || "Unknown", {
+  columnHelper.accessor((row) => "Unknown", {
     id: "contact",
     header: "Contact",
     cell: (info) => (
@@ -138,9 +141,12 @@ export const conversationColumns = [
     enableSorting: true,
     enableColumnFilter: true,
     filterFn: "includesString",
+    meta: {
+      className: "",
+    },
   }),
 
-  columnHelper.accessor((row) => row.contact?.phoneNumber || "N/A", {
+  columnHelper.accessor((row) => row.externalPhoneNumber || "N/A", {
     id: "phoneNumber",
     header: "Phone",
     cell: (info) => {
@@ -163,6 +169,9 @@ export const conversationColumns = [
     enableColumnFilter: true,
     filterFn: "includesString",
     size: 150,
+    meta: {
+      className: styles.columnHideSmall,
+    },
   }),
 
   columnHelper.accessor("status", {
@@ -206,9 +215,12 @@ export const conversationColumns = [
     enableColumnFilter: true,
     filterFn: statusFilterFn,
     size: 120,
+    meta: {
+      className: "",
+    },
   }),
 
-  columnHelper.accessor((row) => row.agent?.name || "N/A", {
+  columnHelper.accessor((row) => row.agentName || "N/A", {
     id: "agent",
     header: "Agent",
     cell: (info) => (
@@ -220,6 +232,9 @@ export const conversationColumns = [
     enableSorting: true,
     enableColumnFilter: true,
     filterFn: "includesString",
+    meta: {
+      className: styles.columnHideTablet,
+    },
   }),
 
   columnHelper.accessor("startDate", {
@@ -227,9 +242,32 @@ export const conversationColumns = [
     header: "Date",
     cell: (info) => {
       const startDate = info.getValue();
+      if (!startDate)
+        return (
+          <Text size="xs" className={styles.textEllipsis}>
+            --
+          </Text>
+        );
+
+      const date = dayjs(startDate);
+      // Use shorter format on smaller screens
+      const isMobile = window.matchMedia("(max-width: 768px)").matches;
+      const isTablet = window.matchMedia("(max-width: 992px)").matches;
+
+      let format = "MMM D, YYYY h:mm A";
+      if (isMobile) {
+        format = "MM/DD h:mm A";
+      } else if (isTablet) {
+        format = "MMM D h:mm A";
+      }
+
       return (
-        <Text size="xs" className={styles.textEllipsis}>
-          {startDate ? dayjs(startDate).format("MMM D, YYYY h:mm A") : "--"}
+        <Text
+          size="xs"
+          className={styles.textEllipsis}
+          title={date.format("MMM D, YYYY h:mm A")}
+        >
+          {date.format(format)}
         </Text>
       );
     },
@@ -238,6 +276,9 @@ export const conversationColumns = [
     enableColumnFilter: true,
     filterFn: "includesString",
     size: 180,
+    meta: {
+      className: "",
+    },
   }),
 
   columnHelper.accessor(
@@ -262,6 +303,9 @@ export const conversationColumns = [
       enableSorting: true,
       enableColumnFilter: false,
       size: 100,
+      meta: {
+        className: styles.columnHideMobile,
+      },
     }
   ),
 ];

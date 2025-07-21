@@ -1,9 +1,38 @@
-/* Table container styles */
+/* Base styles */
 .tableContainer {
   background-color: var(--mantine-color-white);
   border-radius: var(--mantine-radius-md);
   overflow: hidden;
-  padding: 0.5rem;
+  padding: 0;
+  position: relative;
+}
+
+/* Responsive scroll container for table */
+.scrollContainer {
+  width: 100%;
+  overflow-x: auto;
+  background: var(--mantine-color-white);
+  border-radius: var(--mantine-radius-md);
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  scrollbar-width: thin;
+  scrollbar-color: var(--mantine-color-gray-4) transparent;
+}
+
+.scrollContainer::-webkit-scrollbar {
+  height: 6px;
+}
+
+.scrollContainer::-webkit-scrollbar-track {
+  background: var(--mantine-color-gray-1);
+}
+
+.scrollContainer::-webkit-scrollbar-thumb {
+  background-color: var(--mantine-color-gray-4);
+  border-radius: 3px;
+}
+
+.scrollContainer::-webkit-scrollbar-thumb:hover {
+  background-color: var(--mantine-color-gray-5);
 }
 
 /* Table styles */
@@ -58,26 +87,35 @@
 
 /* Status badge styles */
 .statusBadge {
-  text-transform: capitalize;
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-size: var(--mantine-font-size-xs);
+  padding: 0 var(--mantine-spacing-xs);
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: var(--mantine-radius-sm);
+  font-weight: 500;
+  white-space: nowrap;
 }
 
 .statusFailed {
   background-color: var(--mantine-color-red-1);
   color: var(--mantine-color-red-7);
+  border: 1px solid var(--mantine-color-red-3);
 }
 
 .statusInitiated {
   background-color: var(--mantine-color-yellow-1);
   color: var(--mantine-color-yellow-7);
+  border: 1px solid var(--mantine-color-yellow-3);
 }
 
 .statusCompleted {
   background-color: var(--mantine-color-green-1);
   color: var(--mantine-color-green-7);
+  border: 1px solid var(--mantine-color-green-3);
 }
 
 /* Compact layout adjustments */
@@ -93,18 +131,6 @@
   text-overflow: ellipsis;
   max-width: 100%;
   display: inline-block;
-}
-
-/* Status badge styles */
-.statusBadge {
-  text-transform: none;
-  letter-spacing: 0.02em;
-  font-size: var(--mantine-font-size-xs);
-  padding: 0 var(--mantine-spacing-xs);
-  height: 24px;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
 }
 
 /* Phone number styles */
@@ -174,24 +200,240 @@
   color: var(--mantine-color-blue-7);
 }
 
-/* Responsive design */
+/* Responsive column visibility */
+.columnHideMobile {
+  display: table-cell;
+}
+
+.columnHideTablet {
+  display: table-cell;
+}
+
+.columnHideSmall {
+  display: table-cell;
+}
+
 @media (max-width: 768px) {
+  .columnHideMobile {
+    display: none !important;
+  }
+}
+
+@media (max-width: 992px) {
+  .columnHideTablet {
+    display: none !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .columnHideSmall {
+    display: none !important;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+  .tableContainer {
+    font-size: var(--mantine-font-size-sm);
+  }
+  
+  .header {
+    font-size: 0.65rem;
+    padding: 0.4rem 0.6rem;
+  }
+  
+  .cell {
+    padding: 0.4rem 0.6rem;
+    max-width: 150px;
+  }
+}
+
+@media (max-width: 992px) {
+  .tableContainer {
+    border-radius: var(--mantine-radius-sm);
+  }
+  
+  .scrollContainer {
+    border-radius: var(--mantine-radius-sm);
+  }
+  
   .table {
-    font-size: var(--mantine-font-size-xs);
+    font-size: var(--mantine-font-size-sm);
+    border-radius: var(--mantine-radius-sm);
+  }
+
+  .header {
+    font-size: 0.6rem;
+    padding: 0.35rem 0.5rem;
+    height: 32px;
   }
 
   .cell {
-    padding: var(--mantine-spacing-xs);
+    padding: 0.35rem 0.5rem;
+    max-width: 120px;
+    font-size: var(--mantine-font-size-sm);
+  }
+
+  .row {
+    height: 36px;
+    font-size: var(--mantine-font-size-sm);
+  }
+
+  .statusBadge {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.4rem;
+    height: 20px;
+  }
+  
+  .textEllipsis {
+    max-width: 100px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tableContainer {
+    margin: 0;
+    border-radius: var(--mantine-radius-xs);
+  }
+  
+  .scrollContainer {
+    border-radius: var(--mantine-radius-xs);
+  }
+
+  .table {
+    font-size: var(--mantine-font-size-xs);
+    border-radius: var(--mantine-radius-xs);
+  }
+
+  .header {
+    font-size: 0.55rem;
+    padding: 0.3rem 0.4rem;
+    height: 28px;
+    letter-spacing: 0.03em;
+  }
+
+  .cell {
+    padding: 0.3rem 0.4rem;
+    max-width: 100px;
+    font-size: var(--mantine-font-size-xs);
+  }
+
+  .row {
+    height: 32px;
+    font-size: var(--mantine-font-size-xs);
+  }
+
+  .statusBadge {
+    font-size: 0.6rem;
+    padding: 0.05rem 0.3rem;
+    height: 18px;
+    min-width: 50px;
+    justify-content: center;
+  }
+
+  .phoneNumber {
+    gap: 4px;
+    font-size: var(--mantine-font-size-xs);
+  }
+  
+  .textEllipsis {
+    max-width: 80px;
   }
 
   .filtersContainer {
     flex-direction: column;
     gap: var(--mantine-spacing-sm);
+    padding: var(--mantine-spacing-sm);
   }
 
   .paginationContainer {
     flex-direction: column;
     gap: var(--mantine-spacing-sm);
     text-align: center;
+    padding: var(--mantine-spacing-sm);
+  }
+}
+
+@media (max-width: 576px) {
+  .tableContainer {
+    font-size: 0.75rem;
+  }
+
+  .header {
+    font-size: 0.5rem;
+    padding: 0.25rem 0.3rem;
+    height: 24px;
+    font-weight: 700;
+  }
+
+  .cell {
+    padding: 0.25rem 0.3rem;
+    max-width: 70px;
+    font-size: 0.75rem;
+  }
+
+  .row {
+    height: 28px;
+    font-size: 0.75rem;
+  }
+
+  .statusBadge {
+    font-size: 0.55rem;
+    padding: 0.05rem 0.25rem;
+    height: 16px;
+    min-width: 45px;
+    border-radius: 8px;
+  }
+
+  .phoneNumber {
+    gap: 2px;
+    font-size: 0.7rem;
+  }
+  
+  .textEllipsis {
+    max-width: 60px;
+  }
+
+  .text {
+    font-size: 0.75rem;
+  }
+
+  /* Stack pagination elements on very small screens */
+  .paginationContainer {
+    gap: var(--mantine-spacing-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    font-size: 0.45rem;
+    padding: 0.2rem 0.25rem;
+    height: 20px;
+  }
+
+  .cell {
+    padding: 0.2rem 0.25rem;
+    max-width: 50px;
+    font-size: 0.7rem;
+  }
+
+  .row {
+    height: 24px;
+    font-size: 0.7rem;
+  }
+
+  .statusBadge {
+    font-size: 0.5rem;
+    padding: 0.05rem 0.2rem;
+    height: 14px;
+    min-width: 40px;
+  }
+  
+  .textEllipsis {
+    max-width: 45px;
+  }
+
+  .phoneNumber {
+    font-size: 0.65rem;
   }
 }
