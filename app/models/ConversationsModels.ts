@@ -3,6 +3,8 @@ export type ConversationTableModel = {
   id: number;
   agentName: string;
   agentVoiceLanguage: string;
+  contactName?: string;
+  contactPhoneNumber?: string;
   status: string;
   startDate: string;
   endDate: string;
@@ -32,6 +34,7 @@ export interface ConversationsModel {
   endDate: string;
   userId: number;
   clientId: number;
+  externalPhoneNumber?: string;
   transcriptContent: TranscriptContent;
   transcriptUrl: string | null;
   transcriptVoiceUrl: string | null;

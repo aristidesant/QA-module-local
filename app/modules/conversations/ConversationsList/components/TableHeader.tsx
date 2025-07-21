@@ -36,12 +36,7 @@ export function TableHeader({ headers }: TableHeaderProps) {
                 gap="xs"
                 justify="space-between"
               >
-                <Text
-                  className={styles.headerText}
-                  size="xs"
-                  fw={600}
-                  tt="uppercase"
-                >
+                <Text className={styles.headerText}>
                   {header.isPlaceholder
                     ? null
                     : typeof header.column.columnDef.header === "string"

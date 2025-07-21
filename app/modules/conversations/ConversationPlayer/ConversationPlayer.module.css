@@ -1,29 +1,99 @@
 .container {
   width: 100%;
-  max-width: 600px;
+  max-width: 480px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 1.5rem;
   background-color: var(--mantine-color-white);
+  border: 1px solid var(--mantine-color-gray-2);
 }
 
-.sliderRoot {
-  flex: 1;
-  margin: 0 0.5rem;
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.emptyIcon {
+  color: var(--mantine-color-gray-4);
+}
+
+.progressSection {
+  width: 100%;
+}
+
+.progressSlider {
+  width: 100%;
+}
+
+.sliderTrack {
+  height: 6px;
+  background-color: var(--mantine-color-gray-2);
+  border-radius: 3px;
+}
+
+.sliderBar {
+  background-color: var(--mantine-color-blue-5);
+  height: 6px;
+  border-radius: 3px;
 }
 
 .sliderThumb {
-  width: 1rem;
-  height: 1rem;
+  width: 18px;
+  height: 18px;
   background-color: var(--mantine-color-blue-6);
-  border-color: var(--mantine-color-blue-6);
+  border: 2px solid var(--mantine-color-white);
+  border-radius: 50%;
+  transition: transform 0.2s ease;
 }
 
-/* Ensure the slider track is visible */
-.sliderRoot :global(.mantine-Slider-bar) {
-  background-color: var(--mantine-color-blue-3);
+.sliderThumb:hover {
+  transform: scale(1.1);
 }
 
-.sliderRoot :global(.mantine-Slider-track) {
-  height: 0.5rem;
-  background-color: var(--mantine-color-gray-2);
+.timeText {
+  font-family: var(--mantine-font-family-monospace);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.controlsGroup {
+  padding: 0.5rem 0;
+}
+
+.playButton {
+  transition: transform 0.2s ease;
+}
+
+.playButton:active {
+  transform: scale(0.95);
+}
+
+.controlButton {
+  color: var(--mantine-color-gray-6);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.controlButton:hover {
+  color: var(--mantine-color-gray-8);
+}
+
+.controlButton:active {
+  transform: scale(0.9);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    max-width: 100%;
+    padding: 1rem;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+  
+  .controlsGroup {
+    gap: 0.75rem;
+  }
 }

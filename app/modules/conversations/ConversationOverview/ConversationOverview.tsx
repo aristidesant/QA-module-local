@@ -51,10 +51,14 @@ export function ConversationOverview({
   };
 
   const statusDisplay = displayStatus.toLowerCase();
-  const contactName = contact?.name ? String(contact.name) : "Unknown Contact";
+  const contactName = conversation?.externalPhoneNumber
+    ? "Demo"
+    : contact?.name
+    ? String(contact.name)
+    : "Unknown Contact";
   const contactPhone = contact?.phoneNumber
     ? String(contact.phoneNumber)
-    : "No phone number";
+    : conversation?.externalPhoneNumber ?? "No phone number";
   const agentName = agent?.name ? String(agent.name) : "Unassigned";
   const campaignName = campaign?.name ? String(campaign.name) : "N/A";
 
@@ -138,10 +142,10 @@ export function ConversationOverview({
             <IconUser size={16} />
           </Avatar>
           <div>
-            <Text fw={600} className={styles.darkText}>
+            <Text fz="xs" fw={600} className={styles.darkText}>
               {agentName}
             </Text>
-            <Text size="sm" className={styles.lightText}>
+            <Text fz="xs" c="dimmed">
               {campaignName}
             </Text>
           </div>

@@ -129,22 +129,27 @@ const statusBadgeStyles = {
 };
 
 export const conversationColumns = [
-  columnHelper.accessor((row) => "Unknown", {
-    id: "contact",
-    header: "Contact",
-    cell: (info) => (
-      <Text style={textStyles} fw={500}>
-        {String(info.getValue() || "Unknown")}
-      </Text>
-    ),
-    sortingFn: "alphanumeric",
-    enableSorting: true,
-    enableColumnFilter: true,
-    filterFn: "includesString",
-    meta: {
-      className: "",
+  columnHelper.accessor(
+    (row) => {
+      return row.externalPhoneNumber ? "Demo" : row.contactName || "Unknown";
     },
-  }),
+    {
+      id: "contact",
+      header: "Contact",
+      cell: (info) => (
+        <Text style={textStyles} fw={500}>
+          {String(info.getValue())}
+        </Text>
+      ),
+      sortingFn: "alphanumeric",
+      enableSorting: true,
+      enableColumnFilter: true,
+      filterFn: "includesString",
+      meta: {
+        className: "",
+      },
+    }
+  ),
 
   columnHelper.accessor((row) => row.externalPhoneNumber || "N/A", {
     id: "phoneNumber",

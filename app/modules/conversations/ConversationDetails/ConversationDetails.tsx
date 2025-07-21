@@ -1,4 +1,4 @@
-import { Box, Tabs, Tooltip, Divider } from "@mantine/core";
+import { Box, Tabs, Tooltip, Divider, Loader, Center } from "@mantine/core";
 import { IconInfoCircle, IconAnalyze, IconFileText } from "@tabler/icons-react";
 import { useMemo } from "react";
 import dayjs from "dayjs";
@@ -24,9 +24,11 @@ interface ConversationDetailsProps {
 export function ConversationDetails({
   conversation: conversationElement,
 }: ConversationDetailsProps) {
-  const { data: conversation } = useGetConversation(
-    `${conversationElement.id}`
-  );
+  const {
+    data: conversation,
+    isLoading,
+    isFetching,
+  } = useGetConversation(`${conversationElement.id}`);
 
   const duration = useMemo(() => {
     const duration =
@@ -65,6 +67,14 @@ export function ConversationDetails({
       conversation_config_override: {},
     },
   };
+
+  if (isLoading || isFetching) {
+    return (
+      <Center p="md" className={styles.container}>
+        <Loader size="lg" color="var(--mantine-primary-color-filled)" />
+      </Center>
+    );
+  }
 
   return (
     <Box p="md" className={styles.container}>

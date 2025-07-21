@@ -1,10 +1,19 @@
 import { useState, useRef, useEffect } from "react";
-import { ActionIcon, Group, Slider, Stack, Text } from "@mantine/core";
+import {
+  ActionIcon,
+  Group,
+  Slider,
+  Stack,
+  Text,
+  Box,
+  Paper,
+} from "@mantine/core";
 import {
   IconPlayerPlay,
   IconPlayerPause,
-  IconPlayerTrackPrev,
-  IconPlayerTrackNext,
+  IconRotateClockwise2,
+  IconRotate2,
+  IconVolume,
 } from "@tabler/icons-react";
 import type { VoiceFileModel } from "~/models/ConversationsModels";
 import classes from "./ConversationPlayer.module.css";
@@ -85,16 +94,19 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
   // No valid voice file
   if (!voiceFile?.repositoryRoute) {
     return (
-      <div className={classes.container}>
-        <Text c="dimmed" ta="center" p="md">
-          Conversation not available
-        </Text>
-      </div>
+      <Paper className={classes.container} radius="md">
+        <Box className={classes.emptyState}>
+          <IconVolume size={32} className={classes.emptyIcon} />
+          <Text c="dimmed" ta="center" size="sm" mt="xs">
+            Conversation not available
+          </Text>
+        </Box>
+      </Paper>
     );
   }
 
   return (
-    <div className={classes.container}>
+    <Paper className={classes.container} radius="md">
       <audio
         ref={audioRef}
         src={voiceFile.repositoryRoute}
@@ -104,64 +116,72 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
         hidden
       />
 
-      <Stack gap="xs">
-        <Slider
-          value={currentTime}
-          onChange={handleSeek}
-          max={duration || 100}
-          label={formatTime}
-          classNames={{
-            root: classes.sliderRoot,
-            thumb: classes.sliderThumb,
-          }}
-        />
-
-        <Group justify="space-between" px="sm">
-          <Text size="sm" c="dimmed">
-            {formatTime(currentTime)}
-          </Text>
-
-          <Group gap="xs">
-            <ActionIcon
-              variant="subtle"
-              color="blue"
-              onClick={() => seek(-10)}
-              aria-label="Rewind 10 seconds"
-            >
-              <IconPlayerTrackPrev size={20} />
-            </ActionIcon>
-
-            <ActionIcon
-              variant="filled"
-              color="blue"
-              radius="xl"
-              size="lg"
-              onClick={togglePlayPause}
-              aria-label={isPlaying ? "Pause" : "Play"}
-            >
-              {isPlaying ? (
-                <IconPlayerPause size={24} />
-              ) : (
-                <IconPlayerPlay size={24} />
-              )}
-            </ActionIcon>
-
-            <ActionIcon
-              variant="subtle"
-              color="blue"
-              onClick={() => seek(10)}
-              aria-label="Forward 10 seconds"
-            >
-              <IconPlayerTrackNext size={20} />
-            </ActionIcon>
+      <Stack gap="md">
+        {/* Progress Bar */}
+        <Box className={classes.progressSection}>
+          <Slider
+            value={currentTime}
+            onChange={handleSeek}
+            max={duration || 100}
+            className={classes.progressSlider}
+            classNames={{
+              track: classes.sliderTrack,
+              bar: classes.sliderBar,
+              thumb: classes.sliderThumb,
+            }}
+          />
+          <Group justify="space-between" mt="xs">
+            <Text size="xs" c="dimmed" className={classes.timeText}>
+              {formatTime(currentTime)}
+            </Text>
+            <Text size="xs" c="dimmed" className={classes.timeText}>
+              {formatTime(duration)}
+            </Text>
           </Group>
+        </Box>
 
-          <Text size="sm" c="dimmed">
-            {formatTime(duration)}
-          </Text>
+        {/* Controls */}
+        <Group justify="center" gap="md" className={classes.controlsGroup}>
+          <ActionIcon
+            variant="subtle"
+            color="gray"
+            size="lg"
+            onClick={() => seek(-10)}
+            aria-label="Rewind 10 seconds"
+            className={classes.controlButton}
+          >
+            <IconRotate2 size={20} style={{ transform: "scaleX(-1)" }} />
+          </ActionIcon>
+
+          <ActionIcon
+            variant="filled"
+            color="blue"
+            radius="xl"
+            size="xl"
+            onClick={togglePlayPause}
+            aria-label={isPlaying ? "Pause" : "Play"}
+            className={classes.playButton}
+          >
+            {isPlaying ? (
+              <IconPlayerPause size={28} />
+            ) : (
+              <IconPlayerPlay size={28} style={{ marginLeft: "2px" }} />
+            )}
+          </ActionIcon>
+
+          <ActionIcon
+            variant="subtle"
+            color="gray"
+            size="lg"
+            onClick={() => seek(10)}
+            aria-label="Forward 10 seconds"
+            className={classes.controlButton}
+          >
+            <IconRotateClockwise2 size={20} />
+          </ActionIcon>
         </Group>
       </Stack>
-    </div>
+    </Paper>
   );
 };
 
