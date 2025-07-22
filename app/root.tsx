@@ -17,7 +17,8 @@ import type { Route } from "./+types/root";
 import { Box, MantineProvider, Modal } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Loader } from "./components/ui/Loader";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "./queryClient";
 import mantineTheme from "./theme";
 
 export const links: Route.LinksFunction = () => [
@@ -57,7 +58,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body style={{ background: "#f8f9fa" }}>
-        <QueryClientProvider client={new QueryClient()}>
+        <QueryClientProvider client={queryClient}>
           <MantineProvider theme={mantineTheme}>
             {isLoading ? <Loader /> : children}
           </MantineProvider>

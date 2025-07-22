@@ -1,0 +1,118 @@
+.formContainer {
+}
+
+.formSection {
+  margin-bottom: var(--mantine-spacing-lg);
+  padding: var(--mantine-spacing-md);
+  border: 1px solid var(--mantine-color-gray-3);
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-white);
+}
+
+.sectionTitle {
+  color: var(--mantine-color-dark);
+  font-weight: 600;
+  margin-bottom: var(--mantine-spacing-xs);
+}
+
+.sectionDescription {
+  color: var(--mantine-color-gray-6);
+  font-size: var(--mantine-font-size-sm);
+  margin-bottom: var(--mantine-spacing-md);
+}
+
+.headerField {
+  background: var(--mantine-color-gray-0);
+  padding: var(--mantine-spacing-sm);
+  border-radius: var(--mantine-radius-sm);
+  border: 1px solid var(--mantine-color-gray-3);
+}
+
+.headerItem {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-sm);
+  margin-bottom: var(--mantine-spacing-xs);
+}
+
+.parameterField {
+  background: var(--mantine-color-gray-0);
+  padding: var(--mantine-spacing-sm);
+  border-radius: var(--mantine-radius-sm);
+  border: 1px solid var(--mantine-color-gray-2);
+}
+
+.parameterItem {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-sm);
+  margin-bottom: var(--mantine-spacing-xs);
+}
+
+.removeButton {
+  color: var(--mantine-color-red-6);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: var(--mantine-spacing-xs);
+  border-radius: var(--mantine-radius-sm);
+}
+
+.removeButton:hover {
+  background: var(--mantine-color-red-1);
+}
+
+.addButton {
+  background: var(--mantine-color-gray-1);
+  border: 1px dashed var(--mantine-color-gray-4);
+  color: var(--mantine-color-gray-7);
+  padding: var(--mantine-spacing-sm);
+  border-radius: var(--mantine-radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.addButton:hover {
+  background: var(--mantine-color-gray-2);
+  border-color: var(--mantine-color-gray-5);
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--mantine-spacing-sm);
+  margin-top: var(--mantine-spacing-lg);
+  padding-top: var(--mantine-spacing-md);
+  border-top: 1px solid var(--mantine-color-gray-3);
+}
+
+.loadingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--mantine-spacing-xl);
+}
+
+.errorState {
+  color: var(--mantine-color-red-6);
+  text-align: center;
+  padding: var(--mantine-spacing-lg);
+}
+
+.dynamicVariableSection {
+  background: var(--mantine-color-yellow-0);
+  border: 1px solid var(--mantine-color-yellow-3);
+  border-radius: var(--mantine-radius-sm);
+  padding: var(--mantine-spacing-md);
+  margin-top: var(--mantine-spacing-md);
+}
+
+.timeoutSlider {
+  margin-top: var(--mantine-spacing-sm);
+}
+
+.jsonEditor {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: var(--mantine-font-size-sm);
+}

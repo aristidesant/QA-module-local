@@ -18,6 +18,7 @@ export default [
       route("/logout", "routes/logout.tsx"),
       route("/contacts", "routes/contacts.tsx"),
       route("/call-log", "routes/conversations.tsx"),
+      route("/tools", "routes/tools.tsx"),
     ]),
   ]),
 ] satisfies RouteConfig;

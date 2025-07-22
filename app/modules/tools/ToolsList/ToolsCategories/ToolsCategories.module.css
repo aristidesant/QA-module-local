@@ -1,0 +1,26 @@
+/* ToolsCategories.module.css - flat, light, Mantine vars only */
+.segmentedControl {
+  background: var(--mantine-color-body);
+  border-radius: var(--mantine-radius-md);
+  padding: var(--mantine-spacing-xs);
+  display: flex;
+  gap: var(--mantine-spacing-xs);
+}
+
+.segment {
+  color: var(--mantine-color-text);
+  background: var(--mantine-color-gray-0);
+  border: 1px solid var(--mantine-color-gray-3);
+  border-radius: var(--mantine-radius-sm);
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+  cursor: pointer;
+  transition: background 0.1s;
+  text-transform: uppercase;
+}
+
+
+.segment[data-active="true"] {
+  background: var(--mantine-color-blue-0);
+  color: var(--mantine-color-blue-6);
+  border-color: var(--mantine-color-blue-6);
+}

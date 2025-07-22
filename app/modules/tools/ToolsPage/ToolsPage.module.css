@@ -1,0 +1,6 @@
+.container {
+  padding: 24px;
+  background: var(--mantine-color-body);
+  color: var(--mantine-color-text);
+  min-height: 100vh;
+}
