@@ -8,7 +8,7 @@ import { useScrollEffect } from "../../hooks/useScrollEffect";
 import styles from "./Layout.module.css";
 
 export default function Layout() {
-  const [opened, { toggle }] = useDisclosure();
+  const [opened, { toggle }] = useDisclosure(true);
 
   // Enable scroll-based UI effects
   useScrollEffect();

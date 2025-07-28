@@ -108,6 +108,7 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
   };
 
   const isSubmitting = isPending;
+  console.log(editableAgent);
   return (
     <ContentContainer
       title="Agent Creation"
@@ -133,6 +134,7 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
               editableAgent={editableAgent}
               agentMode
               agent={agent}
+              isLoading={isSubmitting}
               onVoiceSelect={(voiceId: string) => {
                 setVoiceId(voiceId);
               }}
@@ -142,16 +144,6 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
               setEditableAgent={setEditableAgent}
             />
           </Stack>
-          <Group justify="flex-start" mt="xl">
-            <Button
-              type="submit"
-              loading={isSubmitting}
-              className={styles.saveButton}
-              leftSection={!isSubmitting && <IconDeviceFloppy size={18} />}
-            >
-              Save Changes
-            </Button>
-          </Group>
         </form>
       </Stack>
     </ContentContainer>

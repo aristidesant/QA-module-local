@@ -1,16 +1,18 @@
-import { Button, Group, Stack } from "@mantine/core";
-import { useState, type ReactNode } from "react";
+import { Button, Group, Loader, Stack } from "@mantine/core";
+import { type ReactNode } from "react";
 import AgentVoices from "../AgentVoices";
 import AgentConfigurationTypeSelector from "../AgentConfigurationTypeSelector";
 import AgentSettings from "../AgentSettings";
-import type { GetAgentResponseModel } from "elevenlabs/api";
 import { useAgentStore } from "~/stores/agentStore";
 import { AgentKnowledgeBase } from "../AgentKnowledgeBase";
 import type { AgentConfigModel } from "~/models/AgentListObject";
 import type AgentListObject from "~/models/AgentListObject";
+import { IconDeviceFloppy } from "@tabler/icons-react";
+import AgentTools from "../AgentTools";
 
 type AgentConfigurationProps = {
   agentMode?: boolean;
+  isLoading?: boolean;
   withVoiceSelection?: boolean;
   agent?: AgentListObject;
   editableAgent?: Partial<AgentConfigModel>;
@@ -25,6 +27,7 @@ const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
   editableAgent,
   agentMode,
   withVoiceSelection = true,
+  isLoading = false,
   setEditableAgent,
   onSetRightSection,
   onVoiceSelect = () => {}, // Default no-op function
@@ -72,11 +75,20 @@ const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
             onUpdateAgentData={handleAgentUpdate}
             onSetRightSection={onSetRightSection}
           />
+          <AgentTools onAgentUpdated={handleAgentUpdate} />
           <AgentKnowledgeBase />
         </>
       )}
-      <Group>
-        <Button type="submit">Save</Button>
+      <Group mb="xs">
+        <Button
+          disabled={isLoading}
+          leftSection={
+            isLoading ? <Loader size={18} /> : <IconDeviceFloppy size={18} />
+          }
+          type="submit"
+        >
+          {isLoading ? "Saving..." : "Save Changes"}
+        </Button>
       </Group>
     </Stack>
   );
