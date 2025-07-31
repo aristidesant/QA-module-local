@@ -1,0 +1,72 @@
+.container {
+  background: var(--mantine-color-white);
+  border-radius: var(--mantine-radius-md);
+  border: 1px solid var(--mantine-color-gray-2);
+  padding: var(--mantine-spacing-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header {
+  padding-bottom: var(--mantine-spacing-xs);
+}
+
+.scrollArea {
+  border-radius: var(--mantine-radius-sm);
+  padding-right: var(--mantine-spacing-xs);
+}
+
+.nodeContainer {
+  margin-bottom: 2px;
+}
+
+.treeNode {
+  width: 100%;
+  padding: var(--mantine-spacing-sm);
+  border-radius: var(--mantine-radius-md);
+  transition: background-color 0.2s ease;
+  border: none;
+  background: transparent;
+  text-align: left;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-bottom: 2px;
+}
+
+.levelNode {
+  background: var(--mantine-color-gray-0);
+  border: 1px solid var(--mantine-color-gray-2);
+}
+
+.levelNode:hover {
+  background-color: var(--mantine-color-blue-0);
+  border-color: var(--mantine-color-blue-3);
+}
+
+.treeNode:disabled {
+  background-color: var(--mantine-color-gray-0);
+  border: 1px solid var(--mantine-color-gray-2);
+  cursor: default;
+}
+
+.treeNode:disabled:hover {
+  background-color: var(--mantine-color-gray-0);
+  border-color: var(--mantine-color-gray-2);
+}
+
+.childrenContainer {
+  margin-top: 4px;
+  padding-left: var(--mantine-spacing-sm);
+  border-left: 2px solid var(--mantine-color-gray-2);
+  margin-left: 44px; /* Align with content, not icon */
+}
+
+.emptyState {
+  background: var(--mantine-color-gray-0);
+  border: 1px dashed var(--mantine-color-gray-3);
+  border-radius: var(--mantine-radius-md);
+  margin: var(--mantine-spacing-xl) 0;
+}

@@ -20,6 +20,7 @@ import AgentConfiguration from "~/modules/agent/AgentConfiguration/AgentConfigur
 import { ContactSection } from "./ContactSection/ContactSection";
 import ParametersSection from "./ParametersSection";
 import AgentSection from "./AgentSection";
+import DispositionSection from "./DispositionSection";
 
 interface CampaignsFormProps {
   campaign?: Partial<Campaign>;
@@ -155,6 +156,15 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
           </form>
         )}
         {selectedTab === "contacts" && <ContactSection />}
+        {selectedTab === "dispositions" && (
+          <DispositionSection
+            campaignId={campaign?.id}
+            onDispositionChange={(disposition) => {
+              // Handle disposition changes if needed
+              console.log("Disposition updated:", disposition);
+            }}
+          />
+        )}
         {selectedTab === "params" && (
           <SectionCard
             title="Working Hours"

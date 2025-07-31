@@ -4,6 +4,7 @@ import {
   IconGalaxy,
   IconUser,
   IconUsersGroup,
+  IconList,
 } from "@tabler/icons-react";
 import { useCampaignsStore } from "~/stores/campaignsStore";
 
@@ -32,6 +33,9 @@ const CampaignTabs = () => {
         </Tabs.Tab>
         <Tabs.Tab leftSection={<IconUsersGroup />} value="contacts">
           Contacts
+        </Tabs.Tab>
+        <Tabs.Tab leftSection={<IconList />} value="dispositions">
+          Dispositions
         </Tabs.Tab>
         <Tabs.Tab leftSection={<IconChecklist />} value="params">
           Params
