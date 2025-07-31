@@ -208,28 +208,31 @@ const DispositionSection: React.FC<DispositionSectionProps> = () => {
   return (
     <SectionCard
       title="Disposition Configuration"
+      headerActions={
+        !activeDispositionFlow ? (
+          <Flex>
+            <Button onClick={() => handleOpenDispositions()}>
+              Add disposition
+            </Button>
+          </Flex>
+        ) : (
+          <Flex justify="end" align="center" mb="md">
+            <Button
+              onClick={() => handleOpenDispositions(activeDispositionFlow)}
+            >
+              Edit
+            </Button>
+          </Flex>
+        )
+      }
       description="Set up call dispositions for this campaign. Drag items from the catalog to build your disposition structure."
     >
-      {!activeDispositionFlow && (
-        <Flex>
-          <Button onClick={() => handleOpenDispositions()}>
-            Add disposition
-          </Button>
-        </Flex>
-      )}
-      {activeDispositionFlow && (
-        <Flex justify="space-between" align="center" mb="md">
-          <Text>Disposition structure configured</Text>
-          <Button onClick={() => handleOpenDispositions(activeDispositionFlow)}>
-            Edit
-          </Button>
-        </Flex>
-      )}
-      <DispositionViewer
-        dispositionData={activeDispositionFlow?.flowJson}
-        title="Active dispositions"
-        height={600}
-      />
+      <div style={{ padding: "16px", maxWidth: "100%", overflow: "hidden" }}>
+        <DispositionViewer
+          dispositionData={activeDispositionFlow?.flowJson}
+          title="Active dispositions"
+        />
+      </div>
     </SectionCard>
   );
 };

@@ -6,6 +6,9 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-height: 400px;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .header {
@@ -15,10 +18,14 @@
 .scrollArea {
   border-radius: var(--mantine-radius-sm);
   padding-right: var(--mantine-spacing-xs);
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 .nodeContainer {
   margin-bottom: 2px;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .treeNode {
@@ -34,6 +41,9 @@
   align-items: center;
   position: relative;
   margin-bottom: 2px;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .levelNode {
@@ -61,7 +71,9 @@
   margin-top: 4px;
   padding-left: var(--mantine-spacing-sm);
   border-left: 2px solid var(--mantine-color-gray-2);
-  margin-left: 44px; /* Align with content, not icon */
+  margin-left: 32px; /* Reduced from 44px to prevent overflow */
+  max-width: calc(100% - 32px);
+  box-sizing: border-box;
 }
 
 .emptyState {
@@ -69,4 +81,18 @@
   border: 1px dashed var(--mantine-color-gray-3);
   border-radius: var(--mantine-radius-md);
   margin: var(--mantine-spacing-xl) 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ensure all text content wraps properly */
+.container * {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Prevent any child elements from causing horizontal overflow */
+.container > * {
+  max-width: 100%;
+  box-sizing: border-box;
 }

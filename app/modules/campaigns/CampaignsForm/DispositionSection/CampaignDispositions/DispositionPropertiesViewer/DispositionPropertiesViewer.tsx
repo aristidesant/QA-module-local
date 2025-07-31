@@ -16,6 +16,8 @@ import {
   IconCalendarEvent,
   IconHash,
   IconInfoCircle,
+  IconSettings,
+  IconClipboardData,
 } from "@tabler/icons-react";
 import classes from "./DispositionPropertiesViewer.module.css";
 import type { DispositionStatusModel } from "~/models/DispositionCatalogModels";
@@ -79,27 +81,27 @@ const DispositionPropertiesViewer: React.FC<
   };
 
   return (
-    <div>
+    <div className={classes.container}>
       <Stack gap="md">
         {/* Header */}
         <Box className={classes.header}>
-          <Group align="center" gap="sm">
+          <Stack align="center" gap="sm">
             <ThemeIcon
               variant="light"
-              size="lg"
+              size="xl"
               color={status.isActive ? "blue" : "gray"}
             >
-              <IconCircle size={24} />
+              <IconClipboardData size={32} />
             </ThemeIcon>
-            <Stack gap={2}>
-              <Text size="lg" fw={600}>
+            <Stack gap={2} align="center">
+              <Text size="xl" fw={700} ta="center">
                 {status.name}
               </Text>
-              <Text size="sm" c="dimmed">
-                Status Properties
+              <Text size="sm" c="dimmed" ta="center">
+                Disposition Properties
               </Text>
             </Stack>
-          </Group>
+          </Stack>
         </Box>
 
         {/* Description Card */}
@@ -108,7 +110,7 @@ const DispositionPropertiesViewer: React.FC<
             <Stack gap="sm">
               <Group gap="sm" align="center">
                 <ThemeIcon variant="light" size="sm" color="blue">
-                  <IconInfoCircle size={16} />
+                  <IconSettings size={16} />
                 </ThemeIcon>
                 <Text size="sm" fw={600} c="dimmed" tt="uppercase">
                   Description
@@ -145,19 +147,6 @@ const DispositionPropertiesViewer: React.FC<
                 label="Invalidates Number"
                 value={status.isInvalidatesNumber}
               />
-
-              <PropertyItem
-                icon={<IconHash size={16} />}
-                label="Order"
-                value={status.order}
-                color="orange"
-              />
-
-              <PropertyItem
-                icon={<IconCircle size={16} />}
-                label="Active"
-                value={status.isActive}
-              />
             </Stack>
           </Stack>
         </Paper>
@@ -187,13 +176,6 @@ const DispositionPropertiesViewer: React.FC<
                 label="Updated At"
                 value={formatDate(status.updatedAt)}
                 color="blue"
-              />
-
-              <PropertyItem
-                icon={<IconHash size={16} />}
-                label="ID"
-                value={status.id}
-                color="gray"
               />
             </Stack>
           </Stack>

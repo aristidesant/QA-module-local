@@ -159,7 +159,10 @@ const TreeNode: React.FC<{
   onClick,
 }) => {
   const hasChildren = Boolean(children);
-  const paddingLeft = level * 24 + 12;
+  // Limit the maximum padding to prevent overflow
+  const maxPaddingLevel = 3;
+  const effectiveLevel = Math.min(level, maxPaddingLevel);
+  const paddingLeft = effectiveLevel * 16 + 12; // Reduced from 24px to 16px per level
 
   // Get color based on level instead of node type
   const getNodeColor = () => {
@@ -193,9 +196,10 @@ const TreeNode: React.FC<{
         className={`${classes.treeNode} ${classes.levelNode}`}
         style={{
           paddingLeft,
-          marginLeft: level > 0 ? 8 : 0,
+          marginLeft: level > 0 ? 4 : 0, // Reduced margin
           opacity: !isActive ? 0.6 : 1,
           cursor: onClick || hasChildren ? "pointer" : "default",
+          maxWidth: "100%",
         }}
       >
         <Group gap="sm" align="center" flex={1}>
@@ -219,18 +223,19 @@ const TreeNode: React.FC<{
             {isExpanded && expandedIcon ? expandedIcon : icon}
           </ThemeIcon>
 
-          <Stack gap={4} flex={1}>
+          <Stack gap={4} flex={1} style={{ minWidth: 0 }}>
             <Group gap="sm" align="center">
               <Text
                 size="sm"
                 fw={level === 0 ? 500 : 400}
                 c={!isActive ? "dimmed" : undefined}
+                truncate
               >
                 {label}
               </Text>
             </Group>
             {description && (
-              <Text size="xs" c="dimmed" lineClamp={2}>
+              <Text size="xs" c="dimmed" lineClamp={2} style={{ wordBreak: "break-word" }}>
                 {description}
               </Text>
             )}
@@ -355,7 +360,7 @@ const CategoryNode: React.FC<{
 const DispositionViewer: React.FC<DispositionViewerProps> = ({
   dispositionData,
   title,
-  height = 500,
+  height = "auto",
 }) => {
   const [expandedCategories, setExpandedCategories] = useState<Set<number>>(
     new Set()

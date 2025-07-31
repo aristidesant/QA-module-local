@@ -1,14 +1,14 @@
 .catalogPanel {
-  height: 600px;
+  min-height: 400px;
   overflow: hidden;
 }
 
 .builderPanel {
-  height: 600px;
+  min-height: 400px;
   overflow: hidden;
 }
 
 .viewerPanel {
-  height: 600px;
+  min-height: 400px;
   overflow: hidden;
 }
