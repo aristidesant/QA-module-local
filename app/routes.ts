@@ -19,7 +19,6 @@ export default [
       route("/contacts", "routes/contacts.tsx"),
       route("/call-log", "routes/conversations.tsx"),
       route("/tools", "routes/tools.tsx"),
-      route("/test-tree", "routes/test-tree.tsx"),
     ]),
   ]),
 ] satisfies RouteConfig;
