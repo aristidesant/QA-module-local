@@ -129,7 +129,8 @@ const NodeDetailPanel: React.FC<NodeDetailPanelProps> = ({
               </Text>
             </Group>
             <Text size="xs" c="dimmed">
-              This disposition requires the contact to be rescheduled for a future attempt.
+              This disposition requires the contact to be rescheduled for a
+              future attempt.
             </Text>
           </Card>
         )}
@@ -144,7 +145,8 @@ const NodeDetailPanel: React.FC<NodeDetailPanelProps> = ({
               </Text>
             </Group>
             <Text size="xs" c="dimmed">
-              This disposition marks the contact number as invalid and prevents future attempts.
+              This disposition marks the contact number as invalid and prevents
+              future attempts.
             </Text>
           </Card>
         )}
