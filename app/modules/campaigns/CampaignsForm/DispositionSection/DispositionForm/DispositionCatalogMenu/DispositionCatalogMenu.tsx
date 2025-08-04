@@ -27,10 +27,8 @@ const DispositionCatalogMenu: React.FC = () => {
       ) {
         setSelectedCatalog(catalogs[0]);
       }
-    } else {
-      setSelectedCatalog(null);
     }
-  }, [catalogs, selectedCatalog, setSelectedCatalog]);
+  }, [catalogs]);
 
   // Helper functions
   const getAllChildIds = (node: DispositionNode): number[] => {
