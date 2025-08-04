@@ -1,0 +1,71 @@
+/* NodeDetailPanel.module.css */
+.panel {
+  height: 100%;
+  overflow-y: auto;
+  background: var(--mantine-color-white);
+  border: 1px solid var(--mantine-color-gray-3);
+}
+
+.header {
+  margin-bottom: var(--mantine-spacing-md);
+  padding-bottom: var(--mantine-spacing-sm);
+}
+
+.title {
+  color: var(--mantine-color-gray-8);
+}
+
+.nodeName {
+  color: var(--mantine-color-gray-9);
+  background: var(--mantine-color-gray-0);
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  border-radius: var(--mantine-radius-sm);
+  border: 1px solid var(--mantine-color-gray-3);
+}
+
+.typeBadge {
+  font-weight: 500;
+}
+
+.nodeId {
+  color: var(--mantine-color-gray-7);
+  background: var(--mantine-color-gray-0);
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  border-radius: var(--mantine-radius-sm);
+  border: 1px solid var(--mantine-color-gray-3);
+}
+
+.parentCard {
+  background: var(--mantine-color-blue-0);
+  border-color: var(--mantine-color-blue-3);
+  padding: var(--mantine-spacing-sm);
+}
+
+.childCard {
+  background: var(--mantine-color-gray-0);
+  border-color: var(--mantine-color-gray-3);
+  padding: var(--mantine-spacing-sm);
+  transition: all 0.2s ease;
+}
+
+.childCard:hover {
+  background: var(--mantine-color-gray-1);
+  border-color: var(--mantine-color-gray-4);
+}
+
+.propertiesCard {
+  background: var(--mantine-color-gray-0);
+  border-color: var(--mantine-color-gray-3);
+  padding: var(--mantine-spacing-sm);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .panel {
+    padding: var(--mantine-spacing-sm);
+  }
+  
+  .nodeName {
+    font-size: var(--mantine-font-size-sm);
+  }
+}

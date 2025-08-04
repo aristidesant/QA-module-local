@@ -1,0 +1,134 @@
+/* DispositionViewer.module.css */
+.viewer {
+  padding: 16px;
+}
+
+.title {
+  margin-bottom: var(--mantine-spacing-md);
+  font-weight: 600;
+  color: var(--mantine-color-gray-8);
+}
+
+.nodesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-xs);
+}
+
+.nodeViewer {
+  position: relative;
+  margin-bottom: var(--mantine-spacing-xs);
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  border-radius: var(--mantine-radius-md);
+  transition: all 0.2s ease;
+  background: var(--mantine-color-white);
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  width: 100%;
+  max-width: 100%;
+  border: 1px solid var(--mantine-color-gray-3);
+  box-sizing: border-box;
+}
+
+.parentNode {
+  font-weight: 600;
+}
+
+/* Node type specific full border colors */
+.effective {
+  border: 1px solid var(--mantine-color-green-6) !important;
+}
+
+.noEffective {
+  border: 1px solid var(--mantine-color-orange-6) !important;
+}
+
+.noContact {
+  border: 1px solid var(--mantine-color-red-6) !important;
+}
+
+.default {
+  border: 1px solid var(--mantine-color-gray-4) !important;
+}
+
+/* Status dots */
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: var(--mantine-spacing-sm);
+  flex-shrink: 0;
+}
+
+.effectiveDot {
+  background-color: var(--mantine-color-green-6);
+}
+
+.noEffectiveDot {
+  background-color: var(--mantine-color-orange-6);
+}
+
+.noContactDot {
+  background-color: var(--mantine-color-red-6);
+}
+
+.defaultDot {
+  background-color: var(--mantine-color-gray-4);
+}
+
+/* Connection lines */
+.connectionLine {
+  position: absolute;
+  left: -9px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: var(--mantine-color-gray-3);
+}
+
+.connectionDot {
+  position: absolute;
+  left: -13px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--mantine-color-gray-4);
+  border: 2px solid var(--mantine-color-white);
+}
+
+/* Node text */
+.nodeText {
+  color: var(--mantine-color-gray-8);
+  line-height: 1.4;
+}
+
+/* Interactive states */
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  background-color: var(--mantine-color-gray-0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.clickable:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .nodeViewer {
+    padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+    min-height: 44px;
+  }
+  
+  .nodeText {
+    font-size: var(--mantine-font-size-sm);
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "servers": {
+    "confirm": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "mcp-confirm"]
+    }
+  },
+  "inputs": []
+}

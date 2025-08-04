@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import promptFormsApi from "~/api/promptFormsApi";
 import { getClientAuthorizationHeader } from "~/client-session";
 import { useToken } from "~/components/RouteProtecter/RouteProtecter";
-import type { PromptForm } from "~/models/PromptFormMOdel";
+import type { PromptForm } from "~/models/PromptFormModel";
 
 // Crear formulario de prompt
 export const useCreatePromptForm = () => {

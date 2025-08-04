@@ -9,7 +9,6 @@ import {
   Group,
 } from "@mantine/core";
 import styles from "./PromptFormForm.module.css";
-import type { PromptForm } from "~/models/PromptFormMOdel";
 import { useForm } from "@mantine/form";
 import { useGetAllPromptTypes } from "~/queries/promptTypesQueries";
 import type { PromptType } from "~/models/PromptTypeModel";
@@ -18,6 +17,7 @@ import { IconDeviceFloppy } from "@tabler/icons-react";
 import type { PromptInstructionType } from "~/config/prompt-generator/useForm";
 import type { PromptCategory } from "~/models/PromptCategoryModel";
 import { useGetAllPromptCategories } from "~/queries/promptCategoryQueries";
+import type { PromptForm } from "~/models/PromptFormModel";
 
 export type PromptFormFormProps = {
   initialValues?: Partial<PromptForm>;

@@ -13,10 +13,10 @@ import {
 import { IconPlus, IconInfoCircle } from "@tabler/icons-react";
 import type { UseFormReturnType } from "@mantine/form";
 import type { PromptGeneratorFormField } from "~/config/prompt-generator/generatorForm";
-import type { PromptForm } from "~/models/PromptFormMOdel";
 import PromptInputFieldBuilder from "../PromptInputFieldBuilder/PromptInputFieldBuilder";
 import styles from "./PromptFormInput.module.css";
 import type { PromptInstructionType } from "~/config/prompt-generator/useForm";
+import type { PromptForm } from "~/models/PromptFormModel";
 
 type PromptFormInputProps = {
   form: UseFormReturnType<Partial<PromptForm>>;

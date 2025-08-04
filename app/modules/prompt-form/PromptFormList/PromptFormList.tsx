@@ -25,8 +25,8 @@ import {
 import styles from "./PromptFormList.module.css";
 import { modals } from "@mantine/modals";
 import { PromptFormForm } from "../PromptFormForm";
-import type { PromptForm } from "~/models/PromptFormMOdel";
 import SectionCard from "~/components/SectionCard";
+import type { PromptForm } from "~/models/PromptFormModel";
 
 export const PromptFormList: React.FC = () => {
   const { data, isLoading, isError } = useGetAllPromptForms();

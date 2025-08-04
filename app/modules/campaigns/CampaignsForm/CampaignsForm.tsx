@@ -156,15 +156,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
           </form>
         )}
         {selectedTab === "contacts" && <ContactSection />}
-        {selectedTab === "dispositions" && (
-          <DispositionSection
-            campaignId={campaign?.id}
-            onDispositionChange={(disposition) => {
-              // Handle disposition changes if needed
-              console.log("Disposition updated:", disposition);
-            }}
-          />
-        )}
+        {selectedTab === "dispositions" && <DispositionSection />}
         {selectedTab === "params" && (
           <SectionCard
             title="Working Hours"

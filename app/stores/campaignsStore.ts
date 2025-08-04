@@ -6,8 +6,8 @@ interface CampaignsStoreState {
   selectedTab: string;
   setSelectedTab: (tab: string) => void;
   selectCampaign: (campaign: Campaign | null) => void;
-  rightComponent?: React.ReactNode;
-  setRightComponent?: (component: React.ReactNode) => void;
+  rightComponent: React.ReactNode;
+  setRightComponent: (component: React.ReactNode) => void;
   resetView: () => void;
 }
 

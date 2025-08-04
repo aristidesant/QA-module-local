@@ -1,9 +1,7 @@
 import { useCampaignFormContext } from "../../campaignFormFunctions";
 import { Button, Flex, Switch, Textarea, TextInput } from "@mantine/core";
-import { modals } from "@mantine/modals";
 import { IconDeviceFloppy } from "@tabler/icons-react";
 import SectionCard from "~/components/SectionCard";
-import CampaignDispositions from "../DispositionSection/CampaignDispositions";
 import { useCampaignsStore } from "~/stores/campaignsStore";
 
 const GeneralSection: React.FC = () => {

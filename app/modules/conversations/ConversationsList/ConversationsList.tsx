@@ -4,7 +4,10 @@ import { useMediaQuery } from "@mantine/hooks";
 import { useGetConversations } from "~/queries/conversationsQueries";
 import { useConversationStore } from "~/stores/useConversationStore";
 import { ConversationDetails } from "../ConversationDetails/ConversationDetails";
-import type { ConversationsModel } from "~/models/ConversationsModels";
+import type {
+  ConversationsModel,
+  ConversationTableModel,
+} from "~/models/ConversationsModels";
 import SectionCard from "~/components/SectionCard";
 import { useConversationsTable } from "./useConversationsTable";
 import { TableHeader } from "./components/TableHeader";
@@ -20,7 +23,7 @@ export function ConversationsList() {
 
   // Memoize the typed conversations to prevent unnecessary re-renders
   const typedConversations = useMemo(
-    () => conversations as ConversationsModel[] | undefined,
+    () => conversations as ConversationTableModel[] | undefined,
     [conversations]
   );
 

@@ -1,0 +1,95 @@
+.formContainer {
+  padding: var(--mantine-spacing-lg);
+  background: var(--mantine-color-body);
+  min-width: 320px;
+  max-width: 400px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-lg);
+}
+
+.sectionTitle {
+  font-size: var(--mantine-font-size-xl);
+  font-weight: 600;
+  color: var(--mantine-color-dark-8);
+  margin-bottom: var(--mantine-spacing-md);
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-xs);
+}
+
+.fieldLabel {
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 600;
+  color: var(--mantine-color-dark-8);
+}
+
+.fieldSubtext {
+  font-size: var(--mantine-font-size-xs);
+  color: var(--mantine-color-gray-6);
+  margin-bottom: 0;
+}
+.subSwitchRow {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-sm);
+}
+
+.readOnlyInput {
+  background-color: var(--mantine-color-gray-0);
+  border: 1px solid var(--mantine-color-gray-3);
+}
+
+.readOnlyInput input,
+.readOnlyInput textarea {
+  background-color: var(--mantine-color-gray-0);
+  color: var(--mantine-color-gray-7);
+  cursor: default;
+}
+
+.statusBadge {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  background-color: var(--mantine-color-gray-1);
+  border-radius: var(--mantine-radius-md);
+  width: fit-content;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--mantine-color-orange-6);
+}
+
+.statusText {
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-gray-7);
+}
+
+.switchContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-sm);
+  margin-top: var(--mantine-spacing-xs);
+}
+
+.switchLabel {
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-dark-6);
+}
+
+.deleteButton {
+  margin-top: auto;
+  justify-self: flex-end;
+}
+
+.deleteButton:hover {
+  background-color: var(--mantine-color-red-0);
+}

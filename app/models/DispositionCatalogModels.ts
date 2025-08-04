@@ -1,5 +1,7 @@
 // Frontend TypeScript definitions for Disposition entities
 
+import type { DispositionNode } from "./DispositionNodeModel";
+
 // Create DTOs
 export interface CreateDispositionCatalog {
   name: string;
@@ -106,7 +108,7 @@ export interface DispositionCatalogModel {
   campaignId?: number;
   isActive: boolean;
   isDefault: boolean;
-  categories?: DispositionCategoryModel[];
+  dispositionNodes?: DispositionNode[];
   createdAt: string;
   updatedAt: string;
 }

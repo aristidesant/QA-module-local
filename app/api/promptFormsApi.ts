@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { PromptForm } from "~/models/PromptFormMOdel";
+import type { PromptForm } from "~/models/PromptFormModel";
 // import { getAuthorizationHeader } from "../utils/tokenUtils";
 
 const getDefaultApiUrl = () => {

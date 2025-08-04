@@ -8,5 +8,4 @@ export { WorkingHoursSummary } from "./WorkingHoursSummary";
 export { SchedulerCard } from "./SchedulerCard";
 
 // Re-export types
-export type { DayScheduleCardProps } from "./DayScheduleCard";
 export type { SchedulerCardProps } from "./SchedulerCard";

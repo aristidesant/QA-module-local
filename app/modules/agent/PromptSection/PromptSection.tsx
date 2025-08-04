@@ -1,6 +1,5 @@
+import { Select, Textarea } from "@mantine/core";
 import React from "react";
-import TextArea from "../../../components/core/TextArea";
-import Select from "../../../components/core/Select";
 
 interface PromptSectionProps {
   prompt: string;
@@ -19,20 +18,20 @@ const PromptSection: React.FC<PromptSectionProps> = ({
 }) => {
   return (
     <div className="bg-gray-100 rounded-xl p-6 flex flex-col gap-6 border border-gray-200">
-      <TextArea
+      <Textarea
         label="Prompt"
         value={prompt}
+        minRows={10}
         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
           onPromptChange(e.target.value)
         }
-        textareaClassName="min-h-[80px]"
         placeholder="Enter your prompt here..."
       />
       <Select
         label="LLM Model"
         value={llm}
-        onChange={onLlmChange}
-        options={llmOptions}
+        onChange={(value) => onLlmChange(value || "")}
+        data={llmOptions}
       />
     </div>
   );

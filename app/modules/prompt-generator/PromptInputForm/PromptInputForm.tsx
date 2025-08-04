@@ -17,8 +17,8 @@ import { type UseFormReturnType } from "@mantine/form";
 import { IconCircleCheck } from "@tabler/icons-react";
 import styles from "./PromptInputForm.module.css";
 import { useGetAllPromptForms } from "~/queries/promptFormQueries";
-import type { PromptForm } from "~/models/PromptFormMOdel";
 import type { PromptType } from "~/models/PromptTypeModel";
+import type { PromptForm } from "~/models/PromptFormModel";
 
 interface FormWithType extends Omit<PromptForm, "type"> {
   type: PromptType;

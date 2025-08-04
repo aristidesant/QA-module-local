@@ -1,70 +1,45 @@
-import type {
-  DispositionCatalogModel,
-  DispositionCategoryModel,
-  DispositionTypeModel,
-  DispositionStatusModel,
-} from "~/models/DispositionCatalogModels";
+import type { DispositionNode } from "~/models/DispositionNodeModel";
 
 /**
- * Sorts items by their order property in ascending order
+ * Sorts disposition nodes by their order property in ascending order
  */
-const sortByOrder = <T extends { order?: number }>(items: T[]): T[] => {
-  return [...items].sort((a, b) => {
-    const orderA = a.order ?? 0;
-    const orderB = b.order ?? 0;
-    return orderA - orderB;
-  });
+export const sortDispositionNodes = (
+  nodes: DispositionNode[]
+): DispositionNode[] => {
+  return [...nodes]
+    .sort((a, b) => {
+      const orderA = a.order ?? 0;
+      const orderB = b.order ?? 0;
+      return orderA - orderB;
+    })
+    .map((node) => ({
+      ...node,
+      children: node.children ? sortDispositionNodes(node.children) : undefined,
+    }));
 };
 
 /**
- * Recursively sorts a disposition catalog by order at all levels:
- * - Categories are sorted by order
- * - Types within each category are sorted by order
- * - Statuses within each type are sorted by order
+ * Recursively sorts a disposition node tree by order at all levels
+ * Returns a new array of sorted nodes
  */
-export const sortDispositionCatalog = (
-  catalog: DispositionCatalogModel
-): DispositionCatalogModel => {
-  if (!catalog.categories?.length) {
-    return catalog;
-  }
-
-  const sortedCategories: DispositionCategoryModel[] = catalog.categories.map(
-    (category) => {
-      const sortedTypes: DispositionTypeModel[] =
-        category.types?.map((type) => {
-          const sortedStatuses: DispositionStatusModel[] = sortByOrder(
-            type.statuses || []
-          );
-
-          return {
-            ...type,
-            statuses: sortedStatuses,
-          };
-        }) || [];
-
-      return {
-        ...category,
-        types: sortByOrder(sortedTypes),
-      };
-    }
-  );
-
-  return {
-    ...catalog,
-    categories: sortByOrder(sortedCategories),
-  };
+export const sortDispositionTree = (
+  nodes: DispositionNode[]
+): DispositionNode[] => {
+  return sortDispositionNodes(nodes);
 };
 
 /**
- * Assigns sequential order values to items that don't have an order
- * This ensures consistent ordering when items are added without explicit order
+ * Assigns sequential order values to disposition nodes that don't have an order
+ * Recursively normalizes order for all children
  */
-export const normalizeOrder = <T extends { order?: number }>(
-  items: T[]
-): T[] => {
-  return items.map((item, index) => ({
-    ...item,
-    order: item.order ?? index + 1,
+export const normalizeDispositionNodeOrder = (
+  nodes: DispositionNode[]
+): DispositionNode[] => {
+  return nodes.map((node, index) => ({
+    ...node,
+    order: node.order ?? index + 1,
+    children: node.children
+      ? normalizeDispositionNodeOrder(node.children)
+      : undefined,
   }));
 };

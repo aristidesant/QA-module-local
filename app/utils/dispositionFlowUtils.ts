@@ -52,18 +52,21 @@ export function validateAndNormalizeDispositionFlow(
     );
   }
 
-  if (!("categories" in normalizedCatalog)) {
-    console.warn("No categories found in catalog, creating empty array");
+  // Check for dispositionNodes (new structure)
+  if (!("dispositionNodes" in normalizedCatalog)) {
+    console.warn("No dispositionNodes found in catalog, creating empty array");
     normalizedCatalog = {
       ...normalizedCatalog,
-      categories: [],
+      dispositionNodes: [],
     };
   }
 
-  // Validate categories structure
+  // Validate structure
   const catalog = normalizedCatalog as DispositionCatalogModel;
-  if (catalog.categories && !Array.isArray(catalog.categories)) {
-    throw new Error("Invalid flowJson structure: categories must be an array");
+  if (catalog.dispositionNodes && !Array.isArray(catalog.dispositionNodes)) {
+    throw new Error(
+      "Invalid flowJson structure: dispositionNodes must be an array"
+    );
   }
 
   // Ensure all required properties exist
@@ -73,18 +76,16 @@ export function validateAndNormalizeDispositionFlow(
     campaignId: catalog.campaignId,
     name: catalog.name || "Disposition Catalog",
     description: catalog.description || "",
-    categories: catalog.categories || [],
+    dispositionNodes: catalog.dispositionNodes || [],
     isActive: catalog.isActive ?? true,
     isDefault: catalog.isDefault ?? false,
     createdAt: catalog.createdAt || new Date().toISOString(),
     updatedAt: catalog.updatedAt || new Date().toISOString(),
   };
 
-  console.log("Validated catalog structure:", {
-    id: validatedCatalog.id,
-    clientId: validatedCatalog.clientId,
-    campaignId: validatedCatalog.campaignId,
-    categoriesCount: validatedCatalog.categories?.length || 0,
+  console.log("Validated disposition catalog:", {
+    name: validatedCatalog.name,
+    nodesCount: validatedCatalog.dispositionNodes?.length || 0,
   });
 
   return {

@@ -6,11 +6,14 @@ import {
   getFilteredRowModel,
   type PaginationState,
 } from "@tanstack/react-table";
-import type { ConversationsModel } from "~/models/ConversationsModels";
+import type {
+  ConversationsModel,
+  ConversationTableModel,
+} from "~/models/ConversationsModels";
 import { useConversationColumns } from "./useConversationColumns";
 
 interface UseConversationsTableOptions {
-  data: ConversationsModel[] | undefined;
+  data: ConversationTableModel[] | undefined;
   onRowClick?: (conversation: ConversationsModel) => void;
   selectedRowId?: number | null;
   globalFilter?: string;
@@ -59,9 +62,12 @@ export function useConversationsTable({
   });
 
   // Helper function for row click handling
-  const handleRowClick = useCallback((conversation: ConversationsModel) => {
-    onRowClick?.(conversation);
-  }, [onRowClick]);
+  const handleRowClick = useCallback(
+    (conversation: ConversationsModel) => {
+      onRowClick?.(conversation);
+    },
+    [onRowClick]
+  );
 
   // Row properties for the table
   const getRowProps = useCallback(
