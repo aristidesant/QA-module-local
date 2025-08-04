@@ -15,6 +15,7 @@ import {
   IconClock,
   IconCheck,
   IconAlertTriangle,
+  IconPhoneOff,
 } from "@tabler/icons-react";
 import type { DispositionNode } from "~/models/DispositionNodeModel";
 import { getNodeStyle, isLeafNode } from "~/utils/dispositionNodeStyles";
@@ -72,13 +73,14 @@ const NodeDetailPanel: React.FC<NodeDetailPanelProps> = ({
   };
 
   const nodeTypeInfo = getNodeTypeInfo(nodeStyle);
+  // Extract description if present
+  const description = node.description || nodeTypeInfo.description;
 
   return (
-    <Card className={styles.panel} withBorder shadow="sm">
-      {/* Header */}
+    <Box className={styles.panel}>
       <Group justify="space-between" className={styles.header}>
         <Text size="lg" fw={600} className={styles.title}>
-          Node Details
+          Disposition Details
         </Text>
         <ActionIcon
           variant="subtle"
@@ -89,158 +91,65 @@ const NodeDetailPanel: React.FC<NodeDetailPanelProps> = ({
           <IconX size={16} />
         </ActionIcon>
       </Group>
-
       <Divider mb="md" />
-
-      {/* Main Content */}
       <Stack gap="md">
-        {/* Node Name */}
+        {/* Name and Description */}
         <Box>
-          <Text size="sm" c="dimmed" mb={4}>
-            Node Name
-          </Text>
           <Text size="md" fw={500} className={styles.nodeName}>
             {node.name}
           </Text>
+          {description && (
+            <Text size="sm" c="dimmed" mt={4}>
+              {description}
+            </Text>
+          )}
         </Box>
 
-        {/* Node Type */}
-        <Box>
-          <Text size="sm" c="dimmed" mb={8}>
-            Node Type
-          </Text>
-          <Badge
-            variant="light"
-            color={nodeTypeInfo.color}
-            size="md"
-            leftSection={nodeTypeInfo.icon}
-            className={styles.typeBadge}
-          >
-            {nodeTypeInfo.label}
-          </Badge>
-          <Text size="sm" c="dimmed" mt={8}>
-            {nodeTypeInfo.description}
-          </Text>
-        </Box>
-
-        {/* Node Status */}
-        <Box>
-          <Text size="sm" c="dimmed" mb={8}>
-            Status
-          </Text>
-          <Group gap="xs">
-            <Badge variant="outline" color={isLeaf ? "blue" : "gray"} size="sm">
-              {isLeaf ? "Leaf Node" : "Parent Node"}
-            </Badge>
-            {node.requiresReschedule && (
-              <Badge
-                variant="light"
-                color="orange"
-                size="sm"
-                leftSection={<IconClock size={12} />}
-              >
-                Requires Reschedule
-              </Badge>
-            )}
-          </Group>
-        </Box>
-
-        {/* Node ID */}
-        <Box>
-          <Text size="sm" c="dimmed" mb={4}>
-            Node ID
-          </Text>
-          <Text size="sm" ff="monospace" className={styles.nodeId}>
-            {node.id}
-          </Text>
-        </Box>
-
-        {/* Parent Information */}
+        {/* Parent Disposition Badge (centered) */}
         {parentNode && (
-          <Box>
-            <Text size="sm" c="dimmed" mb={4}>
-              Parent Node
-            </Text>
-            <Card className={styles.parentCard} withBorder>
-              <Text size="sm" fw={500}>
-                {parentNode.name}
-              </Text>
-              <Text size="xs" c="dimmed" mt={2}>
-                ID: {parentNode.id}
-              </Text>
-            </Card>
-          </Box>
+          <Group justify="center">
+            <Badge
+              variant="outline"
+              color="gray"
+              size="sm"
+              className={styles.parentBadge}
+            >
+              Parent: {parentNode.name}
+            </Badge>
+          </Group>
         )}
 
-        {/* Children Information */}
-        {node.children && node.children.length > 0 && (
-          <Box>
-            <Text size="sm" c="dimmed" mb={8}>
-              Child Nodes ({node.children.length})
+        {/* Requires Reschedule Card */}
+        {node.requiresReschedule && (
+          <Card withBorder className={styles.rescheduleCard}>
+            <Group align="center" gap={8} mb={4}>
+              <IconClock size={18} color="var(--mantine-color-orange-6)" />
+              <Text size="sm" fw={600}>
+                Requires Reschedule
+              </Text>
+            </Group>
+            <Text size="xs" c="dimmed">
+              This disposition requires the contact to be rescheduled for a future attempt.
             </Text>
-            <Stack gap="xs">
-              {node.children.map((child) => (
-                <Card key={child.id} className={styles.childCard} withBorder>
-                  <Group justify="space-between">
-                    <Box style={{ flex: 1 }}>
-                      <Text size="sm" fw={500}>
-                        {child.name}
-                      </Text>
-                      <Text size="xs" c="dimmed" mt={2}>
-                        ID: {child.id}
-                      </Text>
-                    </Box>
-                    {child.requiresReschedule && (
-                      <Tooltip label="Requires reschedule">
-                        <IconClock
-                          size={14}
-                          color="var(--mantine-color-orange-6)"
-                        />
-                      </Tooltip>
-                    )}
-                  </Group>
-                </Card>
-              ))}
-            </Stack>
-          </Box>
+          </Card>
         )}
 
-        {/* Additional Properties */}
-        {Object.keys(node).length > 0 && (
-          <Box>
-            <Text size="sm" c="dimmed" mb={8}>
-              Additional Properties
+        {/* Invalidates Number Card */}
+        {node.isInvalidatesNumber && (
+          <Card withBorder className={styles.invalidatesCard}>
+            <Group align="center" gap={8} mb={4}>
+              <IconPhoneOff size={18} color="var(--mantine-color-red-6)" />
+              <Text size="sm" fw={600}>
+                Invalidates Number
+              </Text>
+            </Group>
+            <Text size="xs" c="dimmed">
+              This disposition marks the contact number as invalid and prevents future attempts.
             </Text>
-            <Card className={styles.propertiesCard} withBorder>
-              <Stack gap="xs">
-                {Object.entries(node)
-                  .filter(
-                    ([key]) =>
-                      ![
-                        "id",
-                        "name",
-                        "children",
-                        "requiresReschedule",
-                      ].includes(key)
-                  )
-                  .map(([key, value]) => (
-                    <Group key={key} justify="space-between">
-                      <Text size="xs" c="dimmed" tt="capitalize">
-                        {key.replace(/([A-Z])/g, " $1").trim()}:
-                      </Text>
-                      <Text size="xs" ff="monospace">
-                        {typeof value === "object"
-                          ? JSON.stringify(value)
-                          : String(value)}
-                      </Text>
-                    </Group>
-                  ))}
-              </Stack>
-            </Card>
-          </Box>
+          </Card>
         )}
       </Stack>
-    </Card>
+    </Box>
   );
 };
 

@@ -1,8 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Flex, Text } from "@mantine/core";
 import { modals } from "@mantine/modals";
-import { useQueryClient } from "@tanstack/react-query";
-import { useDispositionCatalogs } from "~/queries/dispositionCatalogQueries";
 import SectionCard from "~/components/SectionCard";
 import DispositionForm from "./DispositionForm";
 import { useCampaignsStore } from "~/stores/campaignsStore";
@@ -11,7 +9,7 @@ import { notifications } from "@mantine/notifications";
 import DispositionViewer from "./DispositionViewer";
 
 const DispositionSection: React.FC = () => {
-  const { selectedCampaign } = useCampaignsStore();
+  const { selectedCampaign, setRightComponent } = useCampaignsStore();
 
   const {
     data: currentDispositionFlow,
@@ -19,6 +17,11 @@ const DispositionSection: React.FC = () => {
     refetch: refetchCurrentFlow,
   } = useDispositionFlowsByCampaignPath(selectedCampaign?.id);
 
+  useEffect(() => {
+    return () => {
+      setRightComponent(null);
+    };
+  }, []);
   const handleOpenModal = (isEdit: boolean) => {
     modals.open({
       modalId: "disposition-form",

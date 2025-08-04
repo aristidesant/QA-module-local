@@ -2,8 +2,8 @@
 .panel {
   height: 100%;
   overflow-y: auto;
-  background: var(--mantine-color-white);
-  border: 1px solid var(--mantine-color-gray-3);
+  /* background: var(--mantine-color-white); */
+  /* border: 1px solid var(--mantine-color-gray-3); */
 }
 
 .header {

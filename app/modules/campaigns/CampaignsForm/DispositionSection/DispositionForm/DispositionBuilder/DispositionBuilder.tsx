@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Box, Stack, ScrollArea, Divider } from "@mantine/core";
+import { Button, Box, Stack, ScrollArea, Divider, Paper } from "@mantine/core";
 import styles from "./DispositionBuilder.module.css";
 import { Droppable } from "@hello-pangea/dnd";
 import {
@@ -218,7 +218,7 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
       </Box>
 
       {/* Footer */}
-      <Box className={styles.footer}>
+      <Paper withBorder className={styles.footer}>
         <Button
           onClick={handleSave}
           loading={createMutation.isPending || updateMutation.isPending}
@@ -227,7 +227,7 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
         >
           {dispositionFlow?.id ? "Update Flow" : "Create Flow"}
         </Button>
-      </Box>
+      </Paper>
     </Box>
   );
 };

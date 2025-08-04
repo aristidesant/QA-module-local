@@ -8,7 +8,7 @@ import {
   Text,
   Tooltip,
 } from "@mantine/core";
-import { IconTrash, IconClock } from "@tabler/icons-react";
+import { IconTrash, IconClock, IconPhoneX } from "@tabler/icons-react";
 import type { DispositionNode } from "~/models/DispositionNodeModel";
 import { getNodeStyle, isLeafNode } from "~/utils/dispositionNodeStyles";
 import styles from "./NodeEditor.module.css";
@@ -104,10 +104,16 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
             </Text>
           </Box>
 
+          {node.isInvalidatesNumber && (
+            <Tooltip withArrow label="No more call">
+              <IconPhoneX size={16} color="var(--mantine-color-red-6)" />
+            </Tooltip>
+          )}
+
           {/* Clock icon for certain nodes */}
           {node?.requiresReschedule && (
             <Tooltip withArrow label="Requires reschedule">
-              <IconClock size={16} color="var(--mantine-color-gray-6)" />
+              <IconClock size={16} color="var(--mantine-color-orange-4)" />
             </Tooltip>
           )}
 
