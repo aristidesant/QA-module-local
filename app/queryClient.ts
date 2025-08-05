@@ -7,11 +7,10 @@ import { QueryClient, QueryCache } from "@tanstack/react-query";
 function handleUnauthorizedError(): void {
   // Only handle redirect on client side
   if (typeof window !== "undefined") {
-    console.warn("Authentication expired, redirecting to logout...");
-
+    // console.warn("Authentication expired, redirecting to logout...");
     // Use window.location to ensure we navigate away from the current app state
     // This is more reliable than using React Router navigation for auth errors
-    window.location.href = "/logout";
+    // window.location.href = "/logout";
   }
 }
 
