@@ -1,18 +1,23 @@
 /* DispositionViewer.module.css */
 .viewer {
-  padding: 16px;
+  padding: var(--mantine-spacing-md);
+  background: var(--mantine-color-gray-0);
+  border-radius: var(--mantine-radius-lg);
 }
 
 .title {
-  margin-bottom: var(--mantine-spacing-md);
-  font-weight: 600;
-  color: var(--mantine-color-gray-8);
+  font-weight: 700;
+  color: var(--mantine-color-gray-9);
 }
 
 .nodesContainer {
   display: flex;
   flex-direction: column;
   gap: var(--mantine-spacing-xs);
+  align-items: stretch;
+  max-height: calc(100vh - 400px);
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .nodeViewer {
@@ -20,37 +25,38 @@
   margin-bottom: var(--mantine-spacing-xs);
   padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
   border-radius: var(--mantine-radius-md);
-  transition: all 0.2s ease;
+  transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
   background: var(--mantine-color-white);
   display: flex;
   align-items: center;
-  min-height: 48px;
+  min-height: 44px;
   width: 100%;
-  max-width: 100%;
+  max-width: 720px; /* Standard width */
   border: 1px solid var(--mantine-color-gray-3);
   box-sizing: border-box;
 }
 
+/* Center nodes by default; indentation left margin still applies inline */
+.viewer :global(.nodesContainer) .nodeViewer {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Visual hierarchy for parents */
 .parentNode {
   font-weight: 600;
+  background-color: var(--mantine-color-gray-0);
 }
 
-/* Node type specific full border colors */
-.effective {
-  border: 1px solid var(--mantine-color-green-6) !important;
+.leafNode {
+  font-weight: 500;
 }
 
-.noEffective {
-  border: 1px solid var(--mantine-color-orange-6) !important;
-}
-
-.noContact {
-  border: 1px solid var(--mantine-color-red-6) !important;
-}
-
-.default {
-  border: 1px solid var(--mantine-color-gray-4) !important;
-}
+/* Node type specific border accents */
+.effective { border-color: var(--mantine-color-green-6) !important; }
+.noEffective { border-color: var(--mantine-color-orange-6) !important; }
+.noContact { border-color: var(--mantine-color-red-6) !important; }
+.default { border-color: var(--mantine-color-gray-4) !important; }
 
 /* Status dots */
 .statusDot {
@@ -61,71 +67,69 @@
   flex-shrink: 0;
 }
 
-.effectiveDot {
-  background-color: var(--mantine-color-green-6);
-}
-
-.noEffectiveDot {
-  background-color: var(--mantine-color-orange-6);
-}
-
-.noContactDot {
-  background-color: var(--mantine-color-red-6);
-}
-
-.defaultDot {
-  background-color: var(--mantine-color-gray-4);
-}
+.effectiveDot { background-color: var(--mantine-color-green-6); }
+.noEffectiveDot { background-color: var(--mantine-color-orange-6); }
+.noContactDot { background-color: var(--mantine-color-red-6); }
+.defaultDot { background-color: var(--mantine-color-gray-5); }
 
 /* Connection lines */
 .connectionLine {
   position: absolute;
-  left: -9px;
+  left: -10px;
   top: 0;
   bottom: 0;
-  width: 1px;
+  width: 2px;
   background-color: var(--mantine-color-gray-3);
 }
 
 .connectionDot {
   position: absolute;
-  left: -13px;
+  left: -14px;
   top: 50%;
   transform: translateY(-50%);
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: var(--mantine-color-gray-4);
+  background-color: var(--mantine-color-gray-5);
   border: 2px solid var(--mantine-color-white);
 }
 
 /* Node text */
 .nodeText {
-  color: var(--mantine-color-gray-8);
-  line-height: 1.4;
+  color: var(--mantine-color-gray-9);
+  line-height: 1.35;
 }
 
-/* Interactive states */
-.clickable {
-  cursor: pointer;
+/* Interactions (flat design: no shadows) */
+.clickable { cursor: pointer; }
+.clickable:hover { background-color: var(--mantine-color-gray-0); }
+.clickable:active { background-color: var(--mantine-color-gray-1); }
+
+/* Keyboard focus */
+.nodeViewer:focus-visible {
+  outline: 2px solid var(--mantine-color-blue-5);
+  outline-offset: 2px;
 }
 
-.clickable:hover {
+/* Disabled look for parents (non-clickable) */
+.nonClickable { cursor: default; }
+
+/* Disabled look for leaf nodes (no children) */
+.disabledNode {
   background-color: var(--mantine-color-gray-0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transform: translateY(-1px);
+  border-color: var(--mantine-color-gray-3);
+  opacity: 0.8;
 }
 
-.clickable:active {
-  transform: translateY(0);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+.disabledText {
+  color: var(--mantine-color-gray-6);
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .nodeViewer {
     padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
-    min-height: 44px;
+    min-height: 40px;
   }
   
   .nodeText {
