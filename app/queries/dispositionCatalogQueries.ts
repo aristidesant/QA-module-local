@@ -1,3 +1,28 @@
+/**
+ * Mutation hook to update an existing disposition catalog
+ * @returns Mutation object with methods to update a disposition catalog
+ */
+export function useUpdateDispositionCatalog() {
+  const token = useToken();
+  const queryClient = useQueryClient();
+  const header = getClientAuthorizationHeader();
+  return useMutation<
+    DispositionCatalogModel,
+    Error,
+    { id: number; data: CreateDispositionCatalog }
+  >({
+    mutationFn: async ({ id, data }) => {
+      const api = dispositionCatalogApi({
+        ...header,
+        Authorization: `Bearer ${token?.token}`,
+      });
+      return api.updateDispositionCatalog(id, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["dispositionCatalogs"] });
+    },
+  });
+}
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import dispositionCatalogApi from "~/api/dispositionCatalogApi";
 import { getClientAuthorizationHeader } from "~/client-session";

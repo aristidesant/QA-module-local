@@ -8,6 +8,7 @@ import {
   IconUsersGroup,
   IconPhoneCall,
   IconTools,
+  IconCheckupList,
 } from "@tabler/icons-react";
 import { NavLink, useLocation } from "react-router";
 import styles from "./Sidebar.module.css";
@@ -53,6 +54,11 @@ const maintenanceItems: MenuItem[] = [
     label: "Prompt Form",
     icon: <IconSettings size={20} className={styles.menuIcon} />,
     to: "/prompt-form",
+  },
+  {
+    label: "Dispositions",
+    icon: <IconCheckupList size={20} className={styles.menuIcon} />,
+    to: "/dispositions",
   },
 ];
 

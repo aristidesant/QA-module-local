@@ -63,7 +63,7 @@ export function createQueryClient(): QueryClient {
         staleTime: 5 * 60 * 1000, // 5 minutes
 
         // Garbage collection time - how long inactive data stays in cache (10 minutes)
-        gcTime: 10 * 60 * 1000, // 10 minutes
+        gcTime: 0,
 
         // Refetch settings - automatically refetch when conditions are met
         refetchOnWindowFocus: true,

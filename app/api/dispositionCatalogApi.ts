@@ -47,6 +47,24 @@ const dispositionCatalogApi = (authHeader: Record<string, string>) => {
       return response.data;
     },
 
+    // PUT update disposition catalog
+    updateDispositionCatalog: async (
+      id: number,
+      data: CreateDispositionCatalog
+    ) => {
+      const response = await axios.patch<DispositionCatalogModel>(
+        `${DEFAULT_API_URL}/disposition-catalogs/${id}`,
+        data,
+        {
+          headers: {
+            ...authHeader,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    },
+
     // GET current disposition flow for a campaign
     getCurrentDispositionFlow: async (campaignId: string | number) => {
       const response = await axios.get<DispositionFlowModel>(

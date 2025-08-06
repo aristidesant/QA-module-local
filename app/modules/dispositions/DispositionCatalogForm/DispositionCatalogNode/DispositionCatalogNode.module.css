@@ -1,0 +1,79 @@
+/* Add Node Card styling */
+.addNodeCard {
+  transition: border-color 0.15s, background 0.15s;
+  border: 1px solid var(--mantine-color-gray-3);
+  background: var(--mantine-color-body);
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  margin-top: 8px;
+}
+.addNodeCard:hover, .addNodeCard:focus {
+  border-color: var(--mantine-color-blue-5);
+  background: var(--mantine-color-blue-0);
+}
+
+.nodeContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: var(--mantine-color-gray-0);
+  transition: background 0.15s;
+}
+
+.nodeContainer:hover {
+  background: var(--mantine-color-gray-1);
+}
+
+.nodeLabel {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--mantine-color-dark-7);
+  flex: 1 1 auto;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.iconGroup {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.expandIcon {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  margin-right: 2px;
+  color: var(--mantine-color-gray-6);
+  transition: color 0.15s;
+}
+.expandIcon:hover {
+  color: var(--mantine-color-blue-6);
+}
+
+.actionIcon {
+  color: var(--mantine-color-gray-6);
+  transition: color 0.15s;
+}
+.actionIcon:hover {
+  color: var(--mantine-color-blue-6);
+}
+.actionIcon[aria-label="Remove node"] {
+  color: var(--mantine-color-red-6);
+}
+.actionIcon[aria-label="Remove node"]:hover {
+  color: var(--mantine-color-red-7);
+}
