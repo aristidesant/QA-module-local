@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Button, Box, Stack, ScrollArea, Divider, Paper } from "@mantine/core";
+import {
+  Button,
+  Box,
+  Stack,
+  ScrollArea,
+  Divider,
+  Paper,
+  TextInput,
+  Flex,
+} from "@mantine/core";
 import styles from "./DispositionBuilder.module.css";
 import { Droppable } from "@hello-pangea/dnd";
 import {
@@ -98,6 +107,14 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
   return (
     <Box className={styles.builderContainer}>
       {/* Main content area with two panels */}
+      <Flex mb={"xs"}>
+        <TextInput
+          label="Disposition Name"
+          placeholder="Disposition Name"
+          description="Enter the name of the disposition"
+          value={flowJson.name || ""}
+        />
+      </Flex>
       <Box className={styles.panelsContainer}>
         {/* Left panel: Disposition nodes */}
         <Box className={styles.leftPanel}>

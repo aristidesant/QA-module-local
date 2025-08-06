@@ -95,10 +95,6 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
       return;
     }
 
-    // Log the campaign data to verify agentConfig is included
-    console.log("Campaign data being submitted:", value);
-    console.log("AgentConfig data:", value.agentConfig);
-
     if (campaign?.id) {
       // Up date existing campaign
       try {
@@ -141,7 +137,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
     <CampaignFormProvider form={form}>
       <LoadingOverlay visible={isCreating || isUpdating} />
       <Stack gap="xs">
-        <Box px="xs">
+        <Box p="xs">
           <CampaignTabs />
         </Box>
         {selectedTab === "general" && (

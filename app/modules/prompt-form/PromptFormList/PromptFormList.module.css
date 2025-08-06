@@ -1,3 +1,24 @@
+.nameDateWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.formName {
+  font-weight: 600;
+  color: var(--mantine-color-dark-7);
+  font-size: var(--mantine-font-size-md);
+}
+
+.formDate {
+  font-size: var(--mantine-font-size-xs);
+  color: var(--mantine-color-dark-4);
+  background: var(--mantine-color-gray-1);
+  border-radius: var(--mantine-radius-sm);
+  padding: 2px 8px;
+  margin-left: 2px;
+}
 
 .container {
   background: var(--mantine-color-white);

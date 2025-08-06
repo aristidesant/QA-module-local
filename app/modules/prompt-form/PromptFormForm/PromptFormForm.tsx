@@ -7,6 +7,8 @@ import {
   Button,
   Flex,
   Group,
+  Stack,
+  Box,
 } from "@mantine/core";
 import styles from "./PromptFormForm.module.css";
 import { useForm } from "@mantine/form";
@@ -49,49 +51,57 @@ export const PromptFormForm: React.FC<PromptFormFormProps> = ({
 
   return (
     <div className={styles.container}>
-      <Paper
-        className={styles.formWrapper}
-        shadow="0"
-        radius="md"
+      <Box
         component="form"
-        onSubmit={form.onSubmit((values) => onSubmit?.(values as PromptForm))}
+        onSubmit={form.onSubmit((values) => {
+          onSubmit?.(values as PromptForm);
+          setCategoryId(undefined);
+        })}
       >
-        <Group grow mb={"xs"}>
-          <Select
-            placeholder="Select a category"
-            label="Select Category"
-            value={categoryId}
-            onChange={(value) => {
-              if (value) {
-                setCategoryId(value);
+        <Paper
+          p="md"
+          mb="md"
+          radius="md"
+          withBorder
+          bg="var(--mantine-color-body)"
+        >
+          <Stack gap="md">
+            <Select
+              placeholder="Select a category"
+              label="Select Category"
+              value={categoryId}
+              onChange={(value) => {
+                if (value) {
+                  setCategoryId(value);
+                }
+              }}
+              data={
+                promptCategories?.map((category) => ({
+                  value: `${category.id}`,
+                  label: category.name,
+                })) ?? []
               }
-            }}
-            data={
-              promptCategories?.map((category) => ({
-                value: `${category.id}`,
-                label: category.name,
-              })) ?? []
-            }
-          />
-          <Select
-            placeholder="Select a prompt type"
-            label="Select Prompt Type"
-            {...form.getInputProps("typeId")}
-            data={
-              promptTypes?.map((type) => ({
-                value: `${type.id}`,
-                label: type.name,
-              })) ?? []
-            }
-            value={form.values.typeId?.toString()}
-            onChange={(value) => {
-              if (value) {
-                form.setFieldValue("typeId", Number(value));
+            />
+            <Select
+              placeholder="Select a prompt type"
+              label="Select Prompt Type"
+              {...form.getInputProps("typeId")}
+              data={
+                promptTypes?.map((type) => ({
+                  value: `${type.id}`,
+                  label: type.name,
+                })) ?? []
               }
-            }}
-          />
-          <TextInput {...form.getInputProps("name")} label="Prompt Name" />
-        </Group>
+              value={form.values.typeId?.toString()}
+              onChange={(value) => {
+                if (value) {
+                  form.setFieldValue("typeId", Number(value));
+                }
+              }}
+            />
+            <TextInput {...form.getInputProps("name")} label="Prompt Name" />
+          </Stack>
+        </Paper>
         <PromptFormInput
           type={
             promptTypes?.find((type) => type.id === form.values?.typeId)
@@ -106,7 +116,7 @@ export const PromptFormForm: React.FC<PromptFormFormProps> = ({
         >
           {submitLabel}
         </Button>
-      </Paper>
+      </Box>
     </div>
   );
 };

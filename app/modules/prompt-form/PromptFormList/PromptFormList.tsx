@@ -14,6 +14,8 @@ import {
   ActionIcon,
   Badge,
   Stack,
+  Button,
+  Flex,
 } from "@mantine/core";
 import {
   IconEye,
@@ -27,10 +29,11 @@ import { modals } from "@mantine/modals";
 import { PromptFormForm } from "../PromptFormForm";
 import SectionCard from "~/components/SectionCard";
 import type { PromptForm } from "~/models/PromptFormModel";
+import usePromptFormStore from "../usePromptFormStore";
 
 export const PromptFormList: React.FC = () => {
   const { data, isLoading, isError } = useGetAllPromptForms();
-
+  const { setRightComponent } = usePromptFormStore((state) => state);
   const { mutateAsync: createPromptForm } = useCreatePromptForm();
   const { mutateAsync: updatePromptForm } = useUpdatePromptForm();
   const { mutateAsync: deletePromptForm } = useDeletePromptForm();
@@ -54,7 +57,7 @@ export const PromptFormList: React.FC = () => {
   const handleOnCreate = async (values: PromptForm) => {
     try {
       await createPromptForm(values);
-      modals.close("create-prompt-form");
+      setRightComponent(null);
     } catch (error) {
       console.error("Error creating prompt form:", error);
     }
@@ -65,7 +68,7 @@ export const PromptFormList: React.FC = () => {
         id: `${values.id}`,
         data: values,
       });
-      modals.close("create-prompt-form");
+      setRightComponent(null);
     } catch (error) {
       console.error("Error updating prompt form:", error);
     }
@@ -120,17 +123,9 @@ export const PromptFormList: React.FC = () => {
       headerActions={
         <ActionIcon
           onClick={() => {
-            modals.open({
-              modalId: "create-prompt-form",
-              size: "90%",
-              title: "Create New Prompt Form",
-              children: (
-                <PromptFormForm onSubmit={handleOnCreate} initialValues={{}} />
-              ),
-              onClose: () => {
-                modals.close("create-prompt-form");
-              },
-            });
+            setRightComponent(
+              <PromptFormForm onSubmit={handleOnCreate} initialValues={{}} />
+            );
           }}
         >
           <IconPlus />
@@ -140,9 +135,8 @@ export const PromptFormList: React.FC = () => {
       <Table className={styles.table} highlightOnHover withTableBorder>
         <Table.Thead className={styles.tableHeader}>
           <Table.Tr>
-            <Table.Th>Name</Table.Th>
+            <Table.Th>Name / Created</Table.Th>
             <Table.Th className={styles.typeHeader}>Type</Table.Th>
-            <Table.Th className={styles.dateHeader}>Created</Table.Th>
             <Table.Th style={{ width: "180px" }}>Actions</Table.Th>
           </Table.Tr>
         </Table.Thead>
@@ -150,72 +144,57 @@ export const PromptFormList: React.FC = () => {
           {data && data.length > 0 ? (
             data.map((form: PromptForm) => (
               <Table.Tr key={form.id} className={styles.row}>
-                <Table.Td className={styles.nameCell}>{form.name}</Table.Td>
+                <Table.Td className={styles.nameCell}>
+                  <Flex direction={"column"}>
+                    <span className={styles.formName}>{form.name}</span>
+                    <Text c={"dimmed"} fz="xs">
+                      {new Date(form.createdAt).toLocaleDateString(undefined, {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </Text>
+                  </Flex>
+                </Table.Td>
                 <Table.Td className={styles.typeCell}>
                   <Badge variant="light" color="blue" radius="sm">
                     {form.type?.name || "N/A"}
                   </Badge>
                 </Table.Td>
-                <Table.Td className={styles.dateCell}>
-                  {new Date(form.createdAt).toLocaleDateString(undefined, {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </Table.Td>
                 <Table.Td>
                   <Group gap="xs" justify="flex-end" className={styles.actions}>
-                    <ActionIcon
-                      variant="light"
-                      color="gray"
-                      size="md"
-                      className={styles.actionButton}
-                      aria-label="View form"
-                    >
-                      <IconEye size={16} />
-                    </ActionIcon>
-                    <ActionIcon
+                    <Button
                       onClick={() => {
-                        modals.open({
-                          modalId: "create-prompt-form",
-                          size: "90%",
-                          title: "Edit Prompt Form",
-                          children: (
-                            <PromptFormForm
-                              onSubmit={handleOnUpdate}
-                              initialValues={form}
-                            />
-                          ),
-                          onClose: () => {
-                            modals.close("create-prompt-form");
-                          },
-                        });
+                        setRightComponent(
+                          <PromptFormForm
+                            onSubmit={handleOnUpdate}
+                            initialValues={form}
+                          />
+                        );
                       }}
                       variant="light"
                       color="blue"
-                      size="md"
+                      size="xs"
                       className={styles.actionButton}
-                      aria-label="Edit form"
                     >
-                      <IconEdit size={16} />
-                    </ActionIcon>
-                    <ActionIcon
+                      Edit
+                    </Button>
+                    <Button
                       onClick={() => handleOnDelete(`${form.id}`)}
                       variant="light"
                       color="red"
-                      size="md"
+                      size="xs"
                       className={styles.actionButton}
-                      aria-label="Delete form"
                     >
-                      <IconTrash size={16} />
-                    </ActionIcon>
+                      Delete
+                    </Button>
                   </Group>
                 </Table.Td>
               </Table.Tr>
             ))
           ) : (
             <Table.Tr>
-              <Table.Td colSpan={4}>
+              <Table.Td colSpan={3}>
                 <div className={styles.emptyState}>
                   <IconAlertCircle size={24} style={{ marginBottom: 12 }} />
                   <Text size="sm">No prompt forms found</Text>

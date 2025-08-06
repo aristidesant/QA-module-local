@@ -5,15 +5,16 @@ import {
   Paper,
   Tooltip,
   Collapse,
-  Badge,
   Text,
   Divider,
   Flex,
+  Stack,
 } from "@mantine/core";
 import { IconPlus, IconInfoCircle } from "@tabler/icons-react";
 import type { UseFormReturnType } from "@mantine/form";
 import type { PromptGeneratorFormField } from "~/config/prompt-generator/generatorForm";
-import PromptInputFieldBuilder from "../PromptInputFieldBuilder/PromptInputFieldBuilder";
+import PromptInputFieldModal from "../PromptInputFieldBuilder";
+import FieldCard from "./FieldCard";
 import styles from "./PromptFormInput.module.css";
 import type { PromptInstructionType } from "~/config/prompt-generator/useForm";
 import type { PromptForm } from "~/models/PromptFormModel";
@@ -24,7 +25,7 @@ type PromptFormInputProps = {
 };
 
 export default function PromptFormInput({ form, type }: PromptFormInputProps) {
-  const [showFieldBuilder, setShowFieldBuilder] = React.useState(false);
+  const [modalOpen, setModalOpen] = React.useState(false);
   const [editingFieldIndex, setEditingFieldIndex] = React.useState<
     number | null
   >(null);
@@ -33,12 +34,12 @@ export default function PromptFormInput({ form, type }: PromptFormInputProps) {
 
   const handleAddField = () => {
     setEditingFieldIndex(null);
-    setShowFieldBuilder((prev) => !prev);
+    setModalOpen(true);
   };
 
   const handleEditField = (index: number) => {
     setEditingFieldIndex(index);
-    setShowFieldBuilder(true);
+    setModalOpen(true);
   };
 
   const handleSaveField = (field: PromptGeneratorFormField) => {
@@ -56,62 +57,53 @@ export default function PromptFormInput({ form, type }: PromptFormInputProps) {
       // Add new field
       form.setFieldValue("form.fields", [...(fields ?? []), field]);
     }
-    setShowFieldBuilder(false);
+    setModalOpen(false);
     setEditingFieldIndex(null);
   };
 
+  const handleDeleteField = (index: number) => {
+    if (!form.values.form) return;
+    const updatedFields = fields.filter((_, i) => i !== index);
+    form.setFieldValue("form.fields", updatedFields);
+    // If editing the deleted field, close modal
+    if (editingFieldIndex === index) {
+      setModalOpen(false);
+      setEditingFieldIndex(null);
+    }
+  };
+
   return (
-    <div className={styles.fieldsContainer}>
-      <Divider label="Fields" mt="xl" />
+    <Stack gap={"xs"}>
+      <Divider label="Fields" />
       <div className={styles.addButtonGroup}>
-        <Tooltip
-          label={
-            showFieldBuilder
-              ? editingFieldIndex !== null
-                ? "Hide field editor"
-                : "Hide field builder"
-              : "Add new field"
-          }
-          withArrow
-          position="left"
-        >
+        <Tooltip label="Add new field" withArrow position="left">
           <Button
             leftSection={<IconPlus size={16} />}
-            variant={
-              showFieldBuilder && editingFieldIndex === null
-                ? "light"
-                : "filled"
-            }
-            color="blue"
-            size="compact-md"
-            radius="md"
-            className={styles.addButton}
+            size="xs"
             onClick={handleAddField}
           >
-            {showFieldBuilder && editingFieldIndex === null
-              ? "Cancel"
-              : "Add field"}
+            New
           </Button>
         </Tooltip>
       </div>
-      <Collapse
-        in={showFieldBuilder}
-        transitionDuration={180}
-        transitionTimingFunction="ease"
-      >
-        <PromptInputFieldBuilder
-          onSave={handleSaveField}
-          field={
-            editingFieldIndex !== null ? fields[editingFieldIndex] : undefined
-          }
-        />
-      </Collapse>
+      <PromptInputFieldModal
+        opened={modalOpen}
+        onClose={() => {
+          setModalOpen(false);
+          setEditingFieldIndex(null);
+        }}
+        onSave={handleSaveField}
+        field={
+          editingFieldIndex !== null ? fields[editingFieldIndex] : undefined
+        }
+      />
       {fields.length === 0 && (
         <Paper
           className={styles.noFieldsPaper}
           radius="md"
-          shadow="xs"
           withBorder
+          p="md"
+          mb="md"
         >
           <Group gap="xs" align="center" justify="center">
             <IconInfoCircle size={18} color="#228be6" />
@@ -123,38 +115,14 @@ export default function PromptFormInput({ form, type }: PromptFormInputProps) {
       )}
       <div className={styles.fieldsListGrid}>
         {fields.map((field: PromptGeneratorFormField, index: number) => (
-          <Paper
+          <FieldCard
             key={index}
-            className={styles.fieldPaper}
-            radius="md"
-            shadow="xs"
-            withBorder
-            onClick={() => handleEditField(index)}
-            style={{ cursor: "pointer" }}
-          >
-            <Flex
-              direction={"column"}
-              align="start"
-              className={styles.fieldHeader}
-            >
-              <Text className={styles.fieldName}>{field.label}</Text>
-              <Text fz={"xs"} c="dimmed">
-                {field.name}
-              </Text>
-            </Flex>
-            {field.description && (
-              <Text size="xs" c="dimmed" className={styles.fieldDescription}>
-                {field.description}
-              </Text>
-            )}
-            {field.placeholder && (
-              <Text size="xs" c="gray.6" className={styles.fieldPlaceholder}>
-                Placeholder: {field.placeholder}
-              </Text>
-            )}
-          </Paper>
+            field={field}
+            onEdit={() => handleEditField(index)}
+            onDelete={() => handleDeleteField(index)}
+          />
         ))}
       </div>
-    </div>
+    </Stack>
   );
 }

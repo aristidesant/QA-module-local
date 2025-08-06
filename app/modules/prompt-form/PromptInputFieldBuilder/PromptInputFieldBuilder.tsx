@@ -1,23 +1,23 @@
-import { ActionIcon, Button, TextInput } from "@mantine/core";
+import { Stack, TextInput } from "@mantine/core";
 import styles from "./PromptInputFieldBuilder.module.css";
 import React from "react";
 import type { PromptGeneratorFormField } from "~/config/prompt-generator/generatorForm";
-import { IconPlus } from "@tabler/icons-react";
 
-type PromptInputFieldBuilderProps = {
+interface PromptInputFieldBuilderProps {
   onSave: (field: PromptGeneratorFormField) => void;
+  onCancel?: () => void;
   field?: PromptGeneratorFormField; // Optional, for editing
-};
+}
 
 export default function PromptInputFieldBuilder({
   onSave,
+  onCancel,
   field,
 }: PromptInputFieldBuilderProps) {
   const [activeField, setActiveField] = React.useState<
     Partial<PromptGeneratorFormField>
   >({});
 
-  // Update state when editing a new field
   React.useEffect(() => {
     if (field) {
       setActiveField(field);
@@ -34,8 +34,17 @@ export default function PromptInputFieldBuilder({
     }));
   };
 
+  // Expose save via custom event for modal button
+  React.useEffect(() => {
+    const handler = () => {
+      handleSave();
+    };
+    window.addEventListener("submit-prompt-field", handler);
+    return () => window.removeEventListener("submit-prompt-field", handler);
+    // eslint-disable-next-line
+  }, [activeField, field]);
+
   const handleSave = () => {
-    // If editing, preserve the original name; otherwise, generate from label
     const name =
       field?.name || activeField.label?.toLowerCase().replace(/\s+/g, "_");
     const fieldToSave: Partial<PromptGeneratorFormField> = {
@@ -44,55 +53,55 @@ export default function PromptInputFieldBuilder({
     };
     if (activeField) {
       onSave(fieldToSave as PromptGeneratorFormField);
-      setActiveField({}); // Reset after saving
+      setActiveField({});
     }
   };
 
   return (
-    <div className={styles.fieldBuilderRow}>
-      <div className={styles.sectionTitle}>
-        {field ? "Edit Field" : "Add New Field"}
-      </div>
-      <div
-        style={{
-          display: "flex",
-          gap: "1.25rem",
-          alignItems: "flex-end",
-          width: "100%",
+    <Stack gap={8} className={styles.inputsStack} style={{ width: "100%" }}>
+      <TextInput
+        className={styles.inputFlex}
+        label="Label"
+        name="label"
+        value={activeField?.label ?? ""}
+        onChange={handleInputChange}
+        size="md"
+        radius="md"
+        required
+        autoComplete="off"
+        styles={{
+          input: { fontSize: 16, padding: "0.75rem 1rem" },
+          label: { fontWeight: 600, fontSize: 15 },
         }}
-      >
-        <TextInput
-          className={styles.inputFlex}
-          label="Label"
-          name="label"
-          value={activeField?.label ?? ""}
-          onChange={handleInputChange}
-        />
-        <TextInput
-          className={styles.inputFlex}
-          label="Description"
-          name="description"
-          value={activeField?.description ?? ""}
-          onChange={handleInputChange}
-        />
-        <TextInput
-          className={styles.inputFlex}
-          label="Placeholder"
-          name="placeholder"
-          value={activeField?.placeholder ?? ""}
-          onChange={handleInputChange}
-        />
-      </div>
-      <ActionIcon
-        className={styles.saveButton}
-        variant="filled"
-        size="lg"
-        color="blue"
-        onClick={handleSave}
-        aria-label={field ? "Save changes" : "Add field"}
-      >
-        <IconPlus />
-      </ActionIcon>
-    </div>
+      />
+      <TextInput
+        className={styles.inputFlex}
+        label="Description"
+        name="description"
+        value={activeField?.description ?? ""}
+        onChange={handleInputChange}
+        size="md"
+        radius="md"
+        autoComplete="off"
+        styles={{
+          input: { fontSize: 15, padding: "0.7rem 1rem" },
+          label: { fontWeight: 500, fontSize: 14 },
+        }}
+      />
+      <TextInput
+        className={styles.inputFlex}
+        label="Placeholder"
+        name="placeholder"
+        value={activeField?.placeholder ?? ""}
+        onChange={handleInputChange}
+        size="md"
+        radius="md"
+        autoComplete="off"
+        styles={{
+          input: { fontSize: 15, padding: "0.7rem 1rem" },
+          label: { fontWeight: 500, fontSize: 14 },
+        }}
+      />
+    </Stack>
   );
 }
