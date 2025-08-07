@@ -2,22 +2,17 @@ import { useUpdateDispositionNode } from "~/queries/dispositionNodesQueries";
 import { useDeleteDispositionNode } from "~/queries/dispositionNodesQueries";
 import { useCreateDispositionNode } from "~/queries/dispositionNodesQueries";
 
-import {
-  Tree,
-  ActionIcon,
-  useTree,
-  getTreeExpandedState,
-  Box,
-  Flex,
-  Button,
-} from "@mantine/core";
+import { Box, Flex, Button, ActionIcon, Text } from "@mantine/core";
+import { Tree } from "react-arborist";
 import {
   IconPlus,
   IconTrash,
   IconPencil,
-  IconChevronRight,
   IconFolder,
   IconFileDescription,
+  IconChevronDown,
+  IconChevronUp,
+  IconChevronRight,
 } from "@tabler/icons-react";
 import { useState } from "react";
 import styles from "./DispositionCatalogNode.module.css";
@@ -28,29 +23,36 @@ type ModalState = {
   parentId?: number;
   editNode?: DispositionNode;
 };
-import type { TreeNodeData } from "@mantine/core";
 import type { DispositionNode } from "~/models/DispositionNodeModel";
 import { useDispositionTreeByCatalog } from "~/queries/dispositionNodesQueries";
+import { modals } from "@mantine/modals";
 
 type DispositionCatalogFormProps = {
   catalogId: number;
 };
 
-// Utility to map DispositionNode[] to Mantine TreeNodeData[]
-function mapDispositionNodesToTreeData(
+// Utility to map DispositionNode[] to Arborist tree data
+function mapDispositionNodesToArborist(
   nodes: DispositionNode[]
-): TreeNodeData[] {
-  return nodes.map((node) => {
-    const mappedNode: TreeNodeData = {
-      value: node.id.toString(),
-      label: node.name,
-    };
-    if (node.children && node.children.length > 0) {
-      mappedNode.children = mapDispositionNodesToTreeData(node.children);
-    }
-    return mappedNode;
-  });
+): ArboristNode[] {
+  return nodes.map((node) => ({
+    id: node.id.toString(),
+    name: node.name,
+    description: node.description,
+    isLeaf: !node.children || node.children.length === 0,
+    children: node.children ? mapDispositionNodesToArborist(node.children) : [],
+    original: node,
+  }));
 }
+
+type ArboristNode = {
+  id: string;
+  name: string;
+  description?: string;
+  isLeaf: boolean;
+  children: ArboristNode[];
+  original: DispositionNode;
+};
 
 const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
   catalogId,
@@ -63,140 +65,144 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
   const deleteNode = useDeleteDispositionNode();
 
   if (!catalogId) return null;
-  const treeData = data ? mapDispositionNodesToTreeData(data) : [];
+  const treeData = data ? mapDispositionNodesToArborist(data) : [];
 
-  // Initialize tree with all nodes expanded by default
-  const tree = useTree({
-    initialExpandedState: getTreeExpandedState(treeData, "*"),
-  });
+  // React Arborist custom node renderer
+  function Node({ node, style, dragHandle, tree }: any) {
+    const nodeData: DispositionNode = node.data.original;
+    const isOpen = node.isOpen;
+    const hasChildren = node.children && node.children.length > 0;
 
-  // Custom node renderer
-  // Mantine's Tree renderNode provides level, expanded, hasChildren, tree, elementProps, etc.
-  const renderNode = ({
-    node,
-    level,
-    expanded,
-    hasChildren,
-    tree,
-    elementProps,
-  }: any) => {
-    // Find the original DispositionNode by id
-    const nodeId = Number(node.value);
-    const findNodeById = (
-      nodes: DispositionNode[],
-      id: number
-    ): DispositionNode | undefined => {
-      for (const n of nodes) {
-        if (n.id === id) return n;
-        if (n.children) {
-          const found = findNodeById(n.children, id);
-          if (found) return found;
-        }
-      }
-      return undefined;
-    };
-    const nodeData = data ? findNodeById(data, nodeId) : undefined;
     return (
-      <Flex style={{ marginLeft: level * 18 }} {...elementProps}>
-        {hasChildren && (
-          <span
-            className={styles.expandIcon}
-            onClick={(e) => {
-              e.stopPropagation();
-              tree.toggleExpanded(node.value);
-            }}
-            aria-label={expanded ? "Collapse" : "Expand"}
-          >
-            <IconChevronRight
-              size={16}
-              style={{
-                transform: expanded ? "rotate(90deg)" : "rotate(0deg)",
-                transition: "transform 0.1s",
-              }}
-            />
-          </span>
-        )}
-        {/* Folder or file icon */}
-        <span style={{ marginRight: 6, display: "flex", alignItems: "center" }}>
-          {hasChildren ? (
-            <IconFolder size={18} color="#8c8c8c" />
-          ) : (
-            <IconFileDescription size={18} color="#b0b0b0" />
-          )}
-        </span>
-        <span
-          className={styles.nodeLabel}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (hasChildren) tree.toggleExpanded(node.value);
-          }}
-        >
-          {node.label}
-        </span>
-        <div className={styles.iconGroup}>
+      <div
+        style={style}
+        className={styles.nodeContainer}
+        ref={dragHandle}
+        tabIndex={0}
+        aria-label={node.data.name}
+        data-has-children={hasChildren}
+        data-expanded={isOpen}
+      >
+        <div className={styles.nodeContent}>
+          <div className={styles.nodeLeftSection}>
+            {hasChildren ? (
+              <ActionIcon
+                size="xs"
+                variant="transparent"
+                className={styles.chevronIcon}
+                aria-label={isOpen ? "Collapse" : "Expand"}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  node.toggle();
+                }}
+              >
+                {isOpen ? (
+                  <IconChevronUp size={16} />
+                ) : (
+                  <IconChevronRight size={16} />
+                )}
+              </ActionIcon>
+            ) : (
+              <span className={styles.chevronPlaceholder} />
+            )}
+            <span className={styles.nodeIcon} aria-hidden="true">
+              {node.isLeaf ? (
+                <IconFileDescription
+                  size={16}
+                  color="var(--mantine-color-gray-6)"
+                />
+              ) : (
+                <IconFolder size={16} color="var(--mantine-color-yellow-7)" />
+              )}
+            </span>
+          </div>
+          <span className={styles.nodeLabel}>{node.data.name}</span>
+        </div>
+        <div className={styles.nodeActions}>
           <ActionIcon
-            size="sm"
-            variant="subtle"
+            size="xs"
+            variant="transparent"
             aria-label="Edit node"
             className={styles.actionIcon}
             onClick={(e) => {
               e.stopPropagation();
-              if (nodeData) setModal({ open: true, editNode: nodeData });
+              setModal({ open: true, editNode: nodeData });
             }}
           >
-            <IconPencil size={16} />
+            <IconPencil size={14} />
           </ActionIcon>
           <ActionIcon
-            size="sm"
-            variant="subtle"
+            size="xs"
+            variant="transparent"
             aria-label="Add child"
             className={styles.actionIcon}
             onClick={(e) => {
               e.stopPropagation();
-              if (nodeData) setModal({ open: true, parentId: nodeData.id });
+              setModal({ open: true, parentId: nodeData.id });
             }}
           >
-            <IconPlus size={16} />
+            <IconPlus size={14} />
           </ActionIcon>
           <ActionIcon
-            size="sm"
-            variant="subtle"
+            size="xs"
+            variant="transparent"
             aria-label="Remove node"
-            className={styles.actionIcon}
+            className={styles.deleteActionIcon}
             onClick={async (e) => {
               e.stopPropagation();
-              if (nodeData) await deleteNode.mutateAsync(nodeData.id);
+              modals.openConfirmModal({
+                title: "Confirm Delete",
+                labels: {
+                  confirm: "Delete",
+                  cancel: "Cancel",
+                },
+                children: (
+                  <Text>Are you sure you want to delete this node?</Text>
+                ),
+                onConfirm: async () => {
+                  await deleteNode.mutateAsync(nodeData.id);
+                  await reloadCatalogs();
+                },
+              });
             }}
           >
-            <IconTrash size={16} />
+            <IconTrash size={14} />
           </ActionIcon>
         </div>
-      </Flex>
+      </div>
     );
-  };
+  }
 
   return (
     <>
       <Box>
         {treeData.length > 0 && (
-          <Tree data={treeData} tree={tree} renderNode={renderNode} />
+          <div className={styles.treeWrapper}>
+            <Tree
+              data={treeData}
+              openByDefault={true}
+              childrenAccessor="children"
+              idAccessor="id"
+              rowHeight={48}
+              width="100%"
+              className={styles.treeRoot}
+            >
+              {Node}
+            </Tree>
+          </div>
         )}
-        <Flex
-          justify="center"
-          align="center"
-          style={{ marginTop: 24, minHeight: treeData.length === 0 ? 120 : 0 }}
-        >
+        <Flex justify="end" align="center" className={styles.addButtonRow}>
           <Button
             fullWidth
             variant="light"
             color="blue"
             leftSection={<IconPlus size={18} />}
-            size="sm"
-            style={{ maxWidth: 340 }}
+            size="md"
+            className={styles.addButton}
             onClick={() => setModal({ open: true })}
             aria-label="Add disposition to catalog"
           >
-            Add Disposition
+            Add root disposition
           </Button>
         </Flex>
       </Box>

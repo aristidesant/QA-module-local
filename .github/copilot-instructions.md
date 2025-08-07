@@ -65,7 +65,7 @@
 
 # Data Fetching & Forms
 
-- Use React Hook Form for form handling.
+- Use Mantine Form for form handling.
 
 # State Management & Logic
 

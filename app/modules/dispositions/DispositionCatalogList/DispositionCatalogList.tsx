@@ -1,12 +1,23 @@
 import type { FC } from "react";
 import { useMemo, useState } from "react";
-import { Loader, Center, Text, Button, Group } from "@mantine/core";
+import {
+  Loader,
+  Center,
+  Text,
+  Button,
+  Group,
+  ActionIcon,
+  Tooltip,
+  Pagination,
+} from "@mantine/core";
+import { IconTrash } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
 import {
   useDispositionCatalogs,
   useCreateDispositionCatalog,
   useUpdateDispositionCatalog,
+  useDeleteDispositionCatalog,
 } from "~/queries/dispositionCatalogQueries";
-import { useDispositionRightComponentStore } from "../dispositionRightComponentStore";
 import DispositionCatalogForm from "../DispositionCatalogForm";
 import {
   useReactTable,
@@ -18,14 +29,16 @@ import {
 } from "@tanstack/react-table";
 import type { DispositionCatalogModel } from "~/models/DispositionCatalogModels";
 import styles from "./DispositionCatalogList.module.css";
+import { useDispositionStore } from "../dispositionRightComponentStore";
 
 const DispositionCatalogList: FC = () => {
   const { data, isLoading, isError } = useDispositionCatalogs();
-  const setRightComponent = useDispositionRightComponentStore(
-    (s) => s.setRightComponent
+  const { setRightComponent, setCatalog, clearCatalog } = useDispositionStore(
+    (s) => s
   );
   const createMutation = useCreateDispositionCatalog();
   const updateMutation = useUpdateDispositionCatalog();
+  const deleteMutation = useDeleteDispositionCatalog();
 
   // Table columns definition
   const columns = useMemo<ColumnDef<DispositionCatalogModel>[]>(
@@ -37,18 +50,10 @@ const DispositionCatalogList: FC = () => {
           const name = row.original.name;
           const description = row.original.description;
           return (
-            <div>
-              <div style={{ fontWeight: 600 }}>{name}</div>
+            <div className={styles.nameCell}>
+              <div className={styles.nameText}>{name}</div>
               {description && (
-                <div
-                  style={{
-                    color: "var(--mantine-color-gray-6)",
-                    fontSize: "13px",
-                    marginTop: 2,
-                  }}
-                >
-                  {description}
-                </div>
+                <div className={styles.descriptionText}>{description}</div>
               )}
             </div>
           );
@@ -62,16 +67,76 @@ const DispositionCatalogList: FC = () => {
             ? new Date(info.getValue() as string).toLocaleString()
             : "-",
       },
+      {
+        id: "actions",
+        header: "Actions",
+        cell: ({ row }) => (
+          <Group gap={4}>
+            <Tooltip label="Delete" withArrow>
+              <ActionIcon
+                color="red"
+                variant="subtle"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete(row.original);
+                }}
+                loading={
+                  deleteMutation.isPending &&
+                  deleteMutation.variables?.id === row.original.id
+                }
+                aria-label="Delete"
+              >
+                <IconTrash size={16} />
+              </ActionIcon>
+            </Tooltip>
+          </Group>
+        ),
+        enableSorting: false,
+      },
     ],
-    []
+    [deleteMutation.isPending, deleteMutation.variables]
   );
+  // Handler for delete
+  const handleDelete = (catalog: DispositionCatalogModel) => {
+    deleteMutation.mutate(
+      { id: catalog.id },
+      {
+        onSuccess: () => {
+          notifications.show({
+            title: "Catalog deleted",
+            message: "Disposition catalog was deleted successfully.",
+            color: "teal",
+          });
+        },
+        onError: (error: any) => {
+          notifications.show({
+            title: "Delete failed",
+            message: error?.message || "Failed to delete disposition catalog.",
+            color: "red",
+          });
+        },
+      }
+    );
+  };
 
   // Sorting state
   const [sorting, setSorting] = useState<SortingState>([]);
 
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+
+  // Paginated data
+  const paginatedData = useMemo(() => {
+    if (!data) return [];
+    const start = (page - 1) * pageSize;
+    return data.slice(start, start + pageSize);
+  }, [data, page]);
+
   // Table instance
   const table = useReactTable({
-    data: data ?? [],
+    data: paginatedData,
     columns,
     state: { sorting },
     onSortingChange: setSorting,
@@ -98,13 +163,28 @@ const DispositionCatalogList: FC = () => {
 
   // Handler for create
   const handleCreate = () => {
+    clearCatalog();
     setRightComponent(
       <DispositionCatalogForm
         mode="create"
         loading={createMutation.isPending}
         onSubmit={async (values) => {
-          await createMutation.mutateAsync(values);
-          setRightComponent(null);
+          try {
+            await createMutation.mutateAsync(values);
+            notifications.show({
+              title: "Catalog created",
+              message: "Disposition catalog was created successfully.",
+              color: "teal",
+            });
+            setRightComponent(null);
+          } catch (error: any) {
+            notifications.show({
+              title: "Create failed",
+              message:
+                error?.message || "Failed to create disposition catalog.",
+              color: "red",
+            });
+          }
         }}
       />
     );
@@ -112,6 +192,7 @@ const DispositionCatalogList: FC = () => {
 
   // Handler for edit
   const handleEdit = (catalog: DispositionCatalogModel) => {
+    setCatalog(catalog);
     setRightComponent(
       <DispositionCatalogForm
         key={catalog.id}
@@ -119,11 +200,25 @@ const DispositionCatalogList: FC = () => {
         initialValues={catalog}
         loading={updateMutation.isPending}
         onSubmit={async (values) => {
-          await updateMutation.mutateAsync({
-            id: catalog.id,
-            data: { ...values, isDefault: !!values.isDefault },
-          });
-          setRightComponent(null);
+          try {
+            await updateMutation.mutateAsync({
+              id: catalog.id,
+              data: { ...values, isDefault: !!values.isDefault },
+            });
+            notifications.show({
+              title: "Catalog updated",
+              message: "Disposition catalog was updated successfully.",
+              color: "teal",
+            });
+            setRightComponent(null);
+          } catch (error: any) {
+            notifications.show({
+              title: "Update failed",
+              message:
+                error?.message || "Failed to update disposition catalog.",
+              color: "red",
+            });
+          }
         }}
       />
     );
@@ -144,71 +239,69 @@ const DispositionCatalogList: FC = () => {
           <Text>No disposition catalogs found.</Text>
         </Center>
       ) : (
-        <div className={styles.table}>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th
-                      key={header.id}
-                      colSpan={header.colSpan}
-                      style={{
-                        cursor: header.column.getCanSort()
-                          ? "pointer"
-                          : undefined,
-                        userSelect: "none",
-                        padding: "8px",
-                        borderBottom: "1px solid var(--mantine-color-gray-3)",
-                        background: "var(--mantine-color-gray-0)",
-                        fontWeight: 600,
-                        fontSize: "14px",
-                        textAlign: "left",
-                      }}
-                      onClick={header.column.getToggleSortingHandler?.()}
-                    >
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                      {header.column.getIsSorted()
-                        ? header.column.getIsSorted() === "asc"
-                          ? " ▲"
-                          : " ▼"
-                        : null}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              {table.getRowModel().rows.map((row) => (
-                <tr
-                  key={row.id}
-                  style={{ cursor: "pointer" }}
-                  onClick={() => handleEdit(row.original)}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <td
-                      key={cell.id}
-                      style={{
-                        padding: "8px",
-                        borderBottom: "1px solid var(--mantine-color-gray-2)",
-                        fontSize: "14px",
-                        background: "var(--mantine-color-white)",
-                      }}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <>
+          <div className={styles.table}>
+            <table className={styles.tableEl}>
+              <thead className={styles.thead}>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr key={headerGroup.id} className={styles.trHead}>
+                    {headerGroup.headers.map((header) => (
+                      <th
+                        key={header.id}
+                        colSpan={header.colSpan}
+                        className={styles.th}
+                        onClick={header.column.getToggleSortingHandler?.()}
+                      >
+                        <div className={styles.thContent}>
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                          {header.column.getIsSorted() ? (
+                            <span className={styles.sortIcon}>
+                              {header.column.getIsSorted() === "asc"
+                                ? "▲"
+                                : "▼"}
+                            </span>
+                          ) : null}
+                        </div>
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <tbody className={styles.tbody}>
+                {table.getRowModel().rows.map((row) => (
+                  <tr
+                    key={row.id}
+                    className={styles.tr}
+                    onClick={() => handleEdit(row.original)}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id} className={styles.td}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {data.length > pageSize && (
+            <Center mt="md">
+              <Pagination
+                total={Math.ceil(data.length / pageSize)}
+                value={page}
+                onChange={setPage}
+                size="sm"
+                withEdges
+              />
+            </Center>
+          )}
+        </>
       )}
     </div>
   );

@@ -1,4 +1,25 @@
 /**
+ * Mutation hook to delete a disposition catalog
+ * @returns Mutation object with methods to delete a disposition catalog
+ */
+export function useDeleteDispositionCatalog() {
+  const token = useToken();
+  const queryClient = useQueryClient();
+  const header = getClientAuthorizationHeader();
+  return useMutation<void, Error, { id: number }>({
+    mutationFn: async ({ id }) => {
+      const api = dispositionCatalogApi({
+        ...header,
+        Authorization: `Bearer ${token?.token}`,
+      });
+      return api.deleteDispositionCatalog(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["dispositionCatalogs"] });
+    },
+  });
+}
+/**
  * Mutation hook to update an existing disposition catalog
  * @returns Mutation object with methods to update a disposition catalog
  */

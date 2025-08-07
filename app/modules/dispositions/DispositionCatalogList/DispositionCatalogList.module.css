@@ -6,3 +6,71 @@
 .table {
   width: 100%;
 }
+
+.tableEl {
+  width: 100%;
+  border-collapse: separate; /* allows for better row separators */
+  border-spacing: 0;
+  table-layout: fixed;
+}
+
+.th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--mantine-color-gray-8);
+  background: var(--mantine-color-gray-0);
+  border-bottom: 1px solid var(--mantine-color-gray-3);
+  padding: 10px 12px;
+  user-select: none;
+  cursor: default;
+}
+
+.thContent {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sortIcon {
+  font-size: 10px;
+  color: var(--mantine-color-gray-6);
+}
+
+
+.tr {
+  transition: background 120ms ease;
+  
+}
+
+.tr:hover {
+  background: var(--mantine-color-gray-0);
+}
+
+.td {
+  padding: 10px 12px;
+  font-size: 13.5px;
+  color: var(--mantine-color-dark-6);
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+  vertical-align: middle;
+}
+
+/* Name cell with stacked description */
+.nameCell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nameText {
+  font-weight: 600;
+  color: var(--mantine-color-dark-7);
+  line-height: 1.35;
+}
+
+.descriptionText {
+  font-weight: 400;
+  color: var(--mantine-color-gray-7);
+  font-size: 12.5px;
+  line-height: 1.3;
+}

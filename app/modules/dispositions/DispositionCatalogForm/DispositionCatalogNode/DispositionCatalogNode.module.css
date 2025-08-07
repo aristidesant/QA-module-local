@@ -1,79 +1,225 @@
-/* Add Node Card styling */
-.addNodeCard {
-  transition: border-color 0.15s, background 0.15s;
-  border: 1px solid var(--mantine-color-gray-3);
+
+/* Container and Wrapper Styles */
+.catalogBox {
+  width: 100%;
+  padding: 0;
   background: var(--mantine-color-body);
-  box-shadow: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 56px;
-  margin-top: 8px;
-}
-.addNodeCard:hover, .addNodeCard:focus {
-  border-color: var(--mantine-color-blue-5);
-  background: var(--mantine-color-blue-0);
 }
 
+.treeWrapper {
+  width: 100%;
+  min-width: 0;
+  min-height: 200px;
+  background: var(--mantine-color-white);
+  border-radius: var(--mantine-radius-md);
+  border: 1px solid var(--mantine-color-gray-3);
+  margin-bottom: var(--mantine-spacing-md);
+  overflow: hidden;
+  box-shadow: var(--mantine-shadow-xs);
+  padding: var(--mantine-spacing-md);
+}
+
+.treeRoot {
+  width: 100%;
+  height: 100%;
+  padding: var(--mantine-spacing-xs);
+}
+
+/* Node Container */
 .nodeContainer {
+  position: relative;
   display: flex;
-  flex-direction: row;
   align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  border-radius: 6px;
-  background: var(--mantine-color-gray-0);
-  transition: background 0.15s;
+  justify-content: space-between;
+  padding: 0 var(--mantine-spacing-md);
+  height: 48px;
+  background: var(--mantine-color-white);
+  border-bottom: 1px solid var(--mantine-color-gray-1);
+  transition: all 150ms ease;
+  outline: none;
+  cursor: pointer;
+}
+
+.nodeContainer:last-child {
+  border-bottom: none;
 }
 
 .nodeContainer:hover {
-  background: var(--mantine-color-gray-1);
+  background: var(--mantine-color-gray-0);
 }
 
-.nodeLabel {
-  font-weight: 600;
-  font-size: 15px;
-  color: var(--mantine-color-dark-7);
-  flex: 1 1 auto;
-  cursor: pointer;
+.nodeContainer:focus {
+  background: var(--mantine-color-blue-0);
+  border-color: var(--mantine-color-blue-2);
+}
+
+.nodeContainer[data-has-children="true"] {
+  font-weight: 500;
+}
+
+/* Node Content Structure */
+.nodeContent {
   display: flex;
   align-items: center;
+  gap: var(--mantine-spacing-xs);
   min-width: 0;
+  flex: 1;
+}
+
+.nodeLeftSection {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+  flex-shrink: 0;
+}
+
+/* Chevron and Icons */
+.chevronIcon {
+  color: var(--mantine-color-gray-5);
+  transition: all 150ms ease;
+  border-radius: var(--mantine-radius-sm);
+}
+
+.chevronIcon:hover {
+  background: var(--mantine-color-gray-1);
+  color: var(--mantine-color-gray-7);
+}
+
+.chevronIcon:focus {
+  background: var(--mantine-color-blue-1);
+  color: var(--mantine-color-blue-7);
+}
+
+.chevronPlaceholder {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.nodeIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* Node Label */
+.nodeLabel {
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 500;
+  color: var(--mantine-color-gray-8);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+  line-height: 1.4;
 }
 
-.iconGroup {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 4px;
+.nodeContainer:hover .nodeLabel {
+  color: var(--mantine-color-gray-9);
 }
 
-.expandIcon {
-  cursor: pointer;
+/* Action Icons */
+.nodeActions {
   display: flex;
   align-items: center;
-  user-select: none;
-  margin-right: 2px;
-  color: var(--mantine-color-gray-6);
-  transition: color 0.15s;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 150ms ease;
+  flex-shrink: 0;
 }
-.expandIcon:hover {
-  color: var(--mantine-color-blue-6);
+
+.nodeContainer:hover .nodeActions,
+.nodeContainer:focus .nodeActions {
+  opacity: 1;
 }
 
 .actionIcon {
   color: var(--mantine-color-gray-6);
-  transition: color 0.15s;
+  transition: all 150ms ease;
+  border-radius: var(--mantine-radius-sm);
 }
+
 .actionIcon:hover {
-  color: var(--mantine-color-blue-6);
+  background: var(--mantine-color-blue-1);
+  color: var(--mantine-color-blue-7);
 }
-.actionIcon[aria-label="Remove node"] {
-  color: var(--mantine-color-red-6);
+
+.actionIcon:focus {
+  background: var(--mantine-color-blue-1);
+  color: var(--mantine-color-blue-7);
 }
-.actionIcon[aria-label="Remove node"]:hover {
+
+.deleteActionIcon {
+  color: var(--mantine-color-gray-6);
+  transition: all 150ms ease;
+  border-radius: var(--mantine-radius-sm);
+}
+
+.deleteActionIcon:hover {
+  background: var(--mantine-color-red-1);
   color: var(--mantine-color-red-7);
+}
+
+.deleteActionIcon:focus {
+  background: var(--mantine-color-red-1);
+  color: var(--mantine-color-red-7);
+}
+
+/* Add Button Section */
+.addButtonRow {
+  margin-top: var(--mantine-spacing-md);
+  min-height: 80px;
+}
+
+.addButton {
+  max-width: 400px;
+  font-weight: 500;
+  font-size: var(--mantine-font-size-sm);
+  height: 44px;
+  border-radius: var(--mantine-radius-md);
+  border: 1px solid var(--mantine-color-blue-4);
+  transition: all 150ms ease;
+}
+
+.addButton:hover {
+  background: var(--mantine-color-blue-6);
+  border-color: var(--mantine-color-blue-6);
+  color: var(--mantine-color-white);
+  transform: translateY(-1px);
+  box-shadow: var(--mantine-shadow-md);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .nodeContainer {
+    padding: 0 var(--mantine-spacing-sm);
+    height: 44px;
+  }
+  
+  .nodeLabel {
+    font-size: var(--mantine-font-size-xs);
+  }
+  
+  .addButton {
+    font-size: var(--mantine-font-size-xs);
+    height: 40px;
+  }
+}
+
+/* Focus and Accessibility */
+.nodeContainer:focus-visible {
+  outline: 2px solid var(--mantine-color-blue-5);
+  outline-offset: -2px;
+}
+
+.actionIcon:focus-visible,
+.chevronIcon:focus-visible,
+.deleteActionIcon:focus-visible {
+  outline: 1px solid var(--mantine-color-blue-5);
+  outline-offset: 1px;
 }

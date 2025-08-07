@@ -1,12 +1,11 @@
 import { ContentContainer } from "~/components/ContentContainer/ContentContainer";
 import DispositionCatalogList from "../DispositionCatalogList";
-import { useDispositionRightComponentStore } from "../dispositionRightComponentStore";
 import styles from "./DispositionPage.module.css";
+import { useDispositionStore } from "../dispositionRightComponentStore";
+import DispositionCatalogNode from "../DispositionCatalogForm/DispositionCatalogNode";
 
 const DispositionPage: React.FC = () => {
-  const rightComponent = useDispositionRightComponentStore(
-    (s) => s.rightComponent
-  );
+  const { rightComponent, catalog } = useDispositionStore((s) => s);
   return (
     <ContentContainer
       title="Dispositions"
@@ -15,6 +14,7 @@ const DispositionPage: React.FC = () => {
     >
       <div className={styles.root}>
         <DispositionCatalogList />
+        {catalog && <DispositionCatalogNode catalogId={catalog.id} />}
       </div>
     </ContentContainer>
   );

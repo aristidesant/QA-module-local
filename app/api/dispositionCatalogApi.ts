@@ -65,6 +65,13 @@ const dispositionCatalogApi = (authHeader: Record<string, string>) => {
       return response.data;
     },
 
+    // DELETE a disposition catalog by ID
+    deleteDispositionCatalog: async (id: number) => {
+      await axios.delete(`${DEFAULT_API_URL}/disposition-catalogs/${id}`, {
+        headers: authHeader,
+      });
+    },
+
     // GET current disposition flow for a campaign
     getCurrentDispositionFlow: async (campaignId: string | number) => {
       const response = await axios.get<DispositionFlowModel>(

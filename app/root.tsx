@@ -15,6 +15,7 @@ import "@mantine/charts/styles.css";
 import "./styles/global.css";
 import type { Route } from "./+types/root";
 import { Box, MantineProvider, Modal } from "@mantine/core";
+import Notifications from "./components/ui/Notifications";
 import { useEffect, useState } from "react";
 import { Loader } from "./components/ui/Loader";
 import { QueryClientProvider } from "@tanstack/react-query";

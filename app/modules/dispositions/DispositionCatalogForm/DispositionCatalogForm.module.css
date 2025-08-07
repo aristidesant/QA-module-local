@@ -1,10 +1,18 @@
 .formContainer {
   width: 100%;
-  max-width: 400px;
+  max-width: 720px;
   margin: 0 auto;
   padding: var(--mantine-spacing-md);
   background: var(--mantine-color-body);
   border-radius: var(--mantine-radius-md);
+}
+
+.sectionHeader {
+  margin-bottom: var(--mantine-spacing-xs);
+}
+
+.card {
+  box-shadow: none;
 }
 
 @media (max-width: 600px) {

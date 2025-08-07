@@ -7,6 +7,8 @@ import {
   Button,
   Stack,
   Card,
+  Group,
+  Divider,
 } from "@mantine/core";
 import classes from "./DispositionCatalogForm.module.css";
 import type {
@@ -54,13 +56,13 @@ const DispositionCatalogForm: FC<DispositionCatalogFormProps> = ({
 
   return (
     <>
-      <Stack gap={"sm"}>
+      <Stack gap="sm">
         <form onSubmit={form.onSubmit((values) => onSubmit(values))}>
           <RightSection
             title="Catalog Details"
             description="Basic information about the catalog"
           >
-            <Card>
+            <Card padding="md" withBorder>
               <Stack gap="sm">
                 <TextInput
                   label="Name"
@@ -75,26 +77,20 @@ const DispositionCatalogForm: FC<DispositionCatalogFormProps> = ({
                   minRows={2}
                   {...form.getInputProps("description")}
                 />
-
-                <Switch
-                  label="Default catalog"
-                  {...form.getInputProps("isDefault", { type: "checkbox" })}
-                />
-                <Button type="submit" loading={loading} fullWidth>
-                  {mode === "edit" ? "Update Catalog" : "Create Catalog"}
-                </Button>
+                <Divider my="xs" />
+                <Group justify="space-between" align="center">
+                  <Switch
+                    label="Default catalog"
+                    {...form.getInputProps("isDefault", { type: "checkbox" })}
+                  />
+                  <Button type="submit" loading={loading}>
+                    {mode === "edit" ? "Update Catalog" : "Create Catalog"}
+                  </Button>
+                </Group>
               </Stack>
             </Card>
           </RightSection>
         </form>
-        {mode === "edit" && (
-          <RightSection
-            title="Catalog Dispositions"
-            description="Manage the dispositions associated with this catalog"
-          >
-            <DispositionCatalogNode catalogId={initialValues?.id} />
-          </RightSection>
-        )}
       </Stack>
     </>
   );
