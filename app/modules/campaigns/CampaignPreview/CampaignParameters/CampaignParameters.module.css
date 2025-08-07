@@ -1,0 +1,17 @@
+.title {
+    color: var(--mantine-color-dark-7);
+}
+
+.subtitle {
+    color: var(--mantine-color-gray-6);
+    /* margin-top: var(--mantine-spacing-xs); */
+}
+
+.parameterCard {
+    background: var(--mantine-color-body);
+    border: 1px solid var(--mantine-color-gray-2);
+}
+
+.parameterItem {
+    margin: 0;
+}

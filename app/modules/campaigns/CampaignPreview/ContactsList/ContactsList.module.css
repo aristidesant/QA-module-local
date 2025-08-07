@@ -1,0 +1,55 @@
+.title {
+    color: var(--mantine-color-dark-7);
+}
+
+.subtitle {
+    color: var(--mantine-color-gray-6);
+
+}
+
+.contactCard {
+    background: var(--mantine-color-body);
+    border: 1px solid var(--mantine-color-gray-2);
+}
+
+.contactItem {
+    margin: 0;
+}
+
+.contactIcon {
+    flex-shrink: 0;
+}
+
+.contactInfo {
+    flex: 1;
+}
+
+.contactCount {
+    color: var(--mantine-color-dark-7);
+
+}
+
+.contactName {
+    color: var(--mantine-color-gray-6);
+}
+
+
+.metricCard {
+    background: var(--mantine-color-body);
+    border: 1px solid var(--mantine-color-gray-2);
+    flex: 1;
+}
+
+.metric {
+    text-align: center;
+}
+
+.metricValue {
+    color: var(--mantine-color-green-6);
+    line-height: 1.2;
+}
+
+.metricLabel {
+    color: var(--mantine-color-dark-7);
+    margin-top: var(--mantine-spacing-xs);
+}

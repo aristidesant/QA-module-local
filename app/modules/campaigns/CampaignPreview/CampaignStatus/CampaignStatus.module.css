@@ -77,3 +77,17 @@
   border-radius: 4px;
   transition: width 0.3s;
 }
+
+.toggleButton {
+  min-width: 100px;
+  border-radius: var(--mantine-radius-sm);
+  font-weight: 500;
+  font-size: var(--mantine-font-size-sm);
+  height: 36px;
+  padding: 0 var(--mantine-spacing-md);
+}
+
+.toggleButton:hover {
+  transform: none;
+  box-shadow: none;
+}

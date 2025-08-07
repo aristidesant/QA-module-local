@@ -1,0 +1,45 @@
+.filtersContainer {
+    padding: var(--mantine-spacing-xs);
+    /* background: var(--mantine-color-gray-0); */
+    /* border-radius: var(--mantine-radius-md); */
+    /* border: 1px solid var(--mantine-color-gray-2); */
+    /* margin-bottom: var(--mantine-spacing-xs); */
+}
+
+.searchInput {
+    width: 300px;
+    max-width: 100%;
+}
+
+.searchInput input {
+    background-color: var(--mantine-color-gray-1) !important;
+    /* border: none !important; */
+}
+
+.searchIcon {
+    color: var(--mantine-color-gray-6);
+}
+
+
+
+.sortLabel {
+    font-size: var(--mantine-font-size-sm);
+    color: var(--mantine-color-gray-7);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.sortSelect {
+    min-width: 150px;
+}
+
+
+
+.filtersButton {
+    border-radius: var(--mantine-radius-sm);
+    transition: all 0.15s ease;
+}
+
+.filtersButton:hover {
+    background-color: var(--mantine-color-gray-1);
+}
