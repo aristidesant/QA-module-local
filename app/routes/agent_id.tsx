@@ -1,18 +1,28 @@
-import type { LoaderFunctionArgs } from "react-router";
 import { useLoaderData, useFetcher } from "react-router";
 import { useEffect } from "react";
 import AgentDetails from "~/modules/agent/AgentDetails";
 import agentApi from "~/api/agentApi";
-import { getSession } from "~/server-session";
 import type AgentListObject from "~/models/AgentListObject";
 
-export async function loader({ params, request }: LoaderFunctionArgs) {
+export async function clientLoader({
+  params,
+}: {
+  params: Record<string, string | undefined>;
+}) {
   const { agent_id } = params;
-  const session = await getSession(request.headers.get("Cookie"));
-  const agentApiClient = agentApi({
-    Authorization: `Bearer ${session.get("accessToken")}`,
-    "x-client-id": session.get("clientId") ?? "",
-  });
+  const token =
+    typeof window !== "undefined"
+      ? window.localStorage.getItem("accessToken")
+      : null;
+  const clientId =
+    typeof window !== "undefined"
+      ? window.localStorage.getItem("clientId")
+      : null;
+  const agentApiClient = agentApi(
+    token
+      ? { Authorization: `Bearer ${token}`, "x-client-id": clientId ?? "" }
+      : {}
+  );
 
   try {
     const agent = await agentApiClient.findAgent(agent_id!);
@@ -23,8 +33,8 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 }
 
 export default function AgentRoute() {
-  const { agent, error } = useLoaderData<typeof loader>();
-  const fetcher = useFetcher<typeof loader>();
+  const { agent, error } = useLoaderData<typeof clientLoader>();
+  const fetcher = useFetcher<typeof clientLoader>();
 
   // Reload agent data when fetcher state changes
   useEffect(() => {

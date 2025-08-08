@@ -15,28 +15,22 @@ const DEFAULT_API_URL = getDefaultApiUrl() as string;
 
 /**
  * Agent Voices API client
- * @param authHeader - Authorization header object, e.g. { Authorization: 'Bearer ...' }
+ * Note: Authorization is handled by a global Axios interceptor.
  */
-const agentVoicesApi = (authHeader: Record<string, string>) => {
+const agentVoicesApi = (_authHeader?: Record<string, string>) => {
   return {
     // CREATE voice
     createVoice: async (voice: Partial<AgentVoiceModel>) => {
-      const response = await axios.post(`${DEFAULT_API_URL}/voices`, voice, {
-        headers: authHeader,
-      });
+      const response = await axios.post(`${DEFAULT_API_URL}/voices`, voice);
       return response.data;
     },
 
     // FIND ALL voices
-    findAllVoices: async (
-      params?: Record<string, string>,
-      extraHeaders?: Record<string, string>
-    ) => {
+    findAllVoices: async (params?: Record<string, string>) => {
       const response = await axios.get<AgentVoiceModel[]>(
         `${DEFAULT_API_URL}/voices`,
         {
           params,
-          headers: { ...authHeader, ...(extraHeaders || {}) },
           timeout: 5000,
         }
       );
@@ -46,8 +40,7 @@ const agentVoicesApi = (authHeader: Record<string, string>) => {
     // FIND ONE voice
     findVoice: async (voiceId: string) => {
       const response = await axios.get<AgentVoiceModel>(
-        `${DEFAULT_API_URL}/voices/${voiceId}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/voices/${voiceId}`
       );
       return response.data;
     },
@@ -56,10 +49,7 @@ const agentVoicesApi = (authHeader: Record<string, string>) => {
     updateVoice: async (voiceId: string, data: Partial<AgentVoiceModel>) => {
       const response = await axios.patch<AgentVoiceModel>(
         `${DEFAULT_API_URL}/voices/${voiceId}`,
-        data,
-        {
-          headers: authHeader,
-        }
+        data
       );
       return response.data;
     },
@@ -67,26 +57,19 @@ const agentVoicesApi = (authHeader: Record<string, string>) => {
     // DELETE voice
     deleteVoice: async (voiceId: string) => {
       const response = await axios.delete(
-        `${DEFAULT_API_URL}/voices/${voiceId}`,
-        {
-          headers: authHeader,
-        }
+        `${DEFAULT_API_URL}/voices/${voiceId}`
       );
       return response.data;
     },
 
     // GET voices from /voices/elevenlabs (returns AgentVoiceResponse)
-    getElevenlabsVoices: async (
-      params?: Record<string, string>,
-      extraHeaders?: Record<string, string>
-    ) => {
+    getElevenlabsVoices: async (params?: Record<string, string>) => {
       const response = await axios.get<AgentVoiceModel>(
         `${DEFAULT_API_URL}/voices/elevenlabs`,
         {
           params: {
             ...params,
           },
-          headers: { ...authHeader, ...(extraHeaders || {}) },
           timeout: 5000,
         }
       );

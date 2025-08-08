@@ -1,20 +1,13 @@
 import { useMutation } from "@tanstack/react-query";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import promptGeneratorApi from "~/api/promptGeneratorApi";
-import { getClientAuthorizationHeader } from "~/client-session";
-import { useToken } from "~/components/RouteProtecter/RouteProtecter";
 import type { Prompt } from "~/models/PromptsModels";
 
 export const useCreatePrompt = () => {
-  const { token } = useToken();
-  const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (prompt: Partial<Prompt>) => {
-      const api = promptGeneratorApi({
-        ...header,
-        Authorization: `Bearer ${token}`,
-      });
+      const api = promptGeneratorApi();
 
       return api.createPrompt(prompt);
     },
@@ -29,15 +22,10 @@ export const useCreatePrompt = () => {
 
 // Get all prompts
 export const useGetAllPrompts = () => {
-  const { token } = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery({
     queryKey: ["prompts"],
     queryFn: async () => {
-      const api = promptGeneratorApi({
-        ...header,
-        Authorization: `Bearer ${token}`,
-      });
+      const api = promptGeneratorApi();
       return api.findAllPrompts();
     },
   });
@@ -45,15 +33,10 @@ export const useGetAllPrompts = () => {
 
 // Get one prompt by id
 export const useGetPrompt = (id: string) => {
-  const { token } = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery({
     queryKey: ["prompt", id],
     queryFn: async () => {
-      const api = promptGeneratorApi({
-        ...header,
-        Authorization: `Bearer ${token}`,
-      });
+      const api = promptGeneratorApi();
       return api.findPrompt(id);
     },
     enabled: !!id,
@@ -62,15 +45,10 @@ export const useGetPrompt = (id: string) => {
 
 // Update prompt
 export const useUpdatePrompt = () => {
-  const { token } = useToken();
-  const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<Prompt> }) => {
-      const api = promptGeneratorApi({
-        ...header,
-        Authorization: `Bearer ${token}`,
-      });
+      const api = promptGeneratorApi();
       return api.updatePrompt(id, data);
     },
     onSuccess: (data) => {
@@ -87,15 +65,10 @@ export const useUpdatePrompt = () => {
 
 // Delete prompt
 export const useDeletePrompt = () => {
-  const { token } = useToken();
-  const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const api = promptGeneratorApi({
-        ...header,
-        Authorization: `Bearer ${token}`,
-      });
+      const api = promptGeneratorApi();
       return api.deletePrompt(id);
     },
     onSuccess: (_, id) => {

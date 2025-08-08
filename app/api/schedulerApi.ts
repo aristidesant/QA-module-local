@@ -15,17 +15,14 @@ const DEFAULT_API_URL = getDefaultApiUrl() as string;
 
 /**
  * Scheduler API client
- * @param authHeader - Authorization header object, e.g. { Authorization: 'Bearer ...' }
+ * Note: Authorization handled by global Axios interceptor.
  */
-const schedulerApi = (authHeader: Record<string, string>) => {
+const schedulerApi = (_authHeader?: Record<string, string>) => {
   return {
     // GET all schedules for a campaign
     getCampaignSchedules: async (campaignId: string | number) => {
       const response = await axios.get<Scheduler[]>(
-        `${DEFAULT_API_URL}/campaigns/${campaignId}/schedules`,
-        {
-          headers: authHeader,
-        }
+        `${DEFAULT_API_URL}/campaigns/${campaignId}/schedules`
       );
       return response.data;
     },
@@ -41,13 +38,7 @@ const schedulerApi = (authHeader: Record<string, string>) => {
     ) => {
       const response = await axios.post<Scheduler>(
         `${DEFAULT_API_URL}/campaigns/${campaignId}/schedules/predefined`,
-        predefinedScheduleData,
-        {
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
-        }
+        predefinedScheduleData
       );
       return response.data;
     },
@@ -55,10 +46,7 @@ const schedulerApi = (authHeader: Record<string, string>) => {
     // GET active scheduler for a campaign
     getCampaignActiveScheduler: async (campaignId: string | number) => {
       const response = await axios.get<Scheduler>(
-        `${DEFAULT_API_URL}/campaigns/${campaignId}/schedules/active`,
-        {
-          headers: authHeader,
-        }
+        `${DEFAULT_API_URL}/campaigns/${campaignId}/schedules/active`
       );
       return response.data;
     },
@@ -70,13 +58,7 @@ const schedulerApi = (authHeader: Record<string, string>) => {
     ) => {
       const response = await axios.patch(
         `${DEFAULT_API_URL}/schedule-contact-groups/${groupId}/status`,
-        { status },
-        {
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
-        }
+        { status }
       );
       return response.data;
     },
@@ -88,13 +70,7 @@ const schedulerApi = (authHeader: Record<string, string>) => {
     ) => {
       const response = await axios.patch(
         `${DEFAULT_API_URL}/campaigns/${campaignId}/schedules/${scheduleId}/activate`,
-        {},
-        {
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
-        }
+        {}
       );
       return response.data;
     },
@@ -106,13 +82,7 @@ const schedulerApi = (authHeader: Record<string, string>) => {
     ) => {
       const response = await axios.post<Scheduler>(
         `${DEFAULT_API_URL}/campaigns/${campaignId}/schedules`,
-        scheduleData,
-        {
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
-        }
+        scheduleData
       );
       return response.data;
     },
@@ -123,10 +93,7 @@ const schedulerApi = (authHeader: Record<string, string>) => {
       scheduleId: string | number
     ) => {
       const response = await axios.get<Scheduler>(
-        `${DEFAULT_API_URL}/campaigns/${campaignId}/schedules/${scheduleId}`,
-        {
-          headers: authHeader,
-        }
+        `${DEFAULT_API_URL}/campaigns/${campaignId}/schedules/${scheduleId}`
       );
       return response.data;
     },
@@ -139,13 +106,7 @@ const schedulerApi = (authHeader: Record<string, string>) => {
     ) => {
       const response = await axios.patch<Scheduler>(
         `${DEFAULT_API_URL}/campaigns/${campaignId}/schedules/${scheduleId}/with-day-configs`,
-        scheduleData,
-        {
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
-        }
+        scheduleData
       );
       return response.data;
     },
@@ -156,10 +117,7 @@ const schedulerApi = (authHeader: Record<string, string>) => {
       scheduleId: string | number
     ) => {
       const response = await axios.delete(
-        `${DEFAULT_API_URL}/campaigns/${campaignId}/schedules/${scheduleId}`,
-        {
-          headers: authHeader,
-        }
+        `${DEFAULT_API_URL}/campaigns/${campaignId}/schedules/${scheduleId}`
       );
       return response.data;
     },
@@ -173,7 +131,6 @@ const schedulerApi = (authHeader: Record<string, string>) => {
       const response = await axios.get(
         `${DEFAULT_API_URL}/campaigns/${campaignId}/schedules/${scheduleId}/capacity`,
         {
-          headers: authHeader,
           params: {
             contactListSize,
           },
@@ -189,13 +146,7 @@ const schedulerApi = (authHeader: Record<string, string>) => {
     ) => {
       const response = await axios.patch(
         `${DEFAULT_API_URL}/campaigns/${campaignId}/schedules/${scheduleId}/deactivate`,
-        {},
-        {
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
-        }
+        {}
       );
       return response.data;
     },

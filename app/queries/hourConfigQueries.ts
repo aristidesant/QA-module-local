@@ -1,7 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import hourConfigApi from "~/api/hourConfigApi";
-import { getClientAuthorizationHeader } from "~/client-session";
-import { useToken } from "~/components/RouteProtecter/RouteProtecter";
 import type { HourConfig } from "~/models/SchedulerModel";
 
 interface GetDayConfigHourConfigsParams {
@@ -23,19 +21,13 @@ export function useDayConfigHourConfigs({
   dayConfigId,
   enabled = true,
 }: GetDayConfigHourConfigsParams) {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
-
   return useQuery<HourConfig[], Error>({
     queryKey: ["dayConfigHourConfigs", campaignId, dayConfigId],
     queryFn: async () => {
       if (!campaignId || !dayConfigId) {
         return [];
       }
-      const api = hourConfigApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = hourConfigApi();
       return api.getDayConfigHourConfigs(campaignId, dayConfigId);
     },
     enabled: !!campaignId && !!dayConfigId && enabled,
@@ -46,19 +38,14 @@ export function useDayConfigHourConfigs({
  * Mutation hook for bulk updating hour configs
  */
 export function useBulkUpdateHourConfigs() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
 
   return useMutation({
     mutationFn: async ({
       campaignId,
       hourConfigs,
     }: BulkUpdateHourConfigsParams) => {
-      const api = hourConfigApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = hourConfigApi();
       return api.bulkUpdateHourConfigs(campaignId, hourConfigs);
     },
     onSuccess: (data, variables) => {

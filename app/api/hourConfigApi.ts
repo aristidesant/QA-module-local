@@ -15,9 +15,9 @@ const DEFAULT_API_URL = getDefaultApiUrl() as string;
 
 /**
  * HourConfig API client
- * @param authHeader - Authorization header object, e.g. { Authorization: 'Bearer ...' }
+ * Note: Authorization handled by global Axios interceptor.
  */
-const hourConfigApi = (authHeader: Record<string, string>) => {
+const hourConfigApi = (_authHeader?: Record<string, string>) => {
   return {
     // GET all hour configs for a day config
     getDayConfigHourConfigs: async (
@@ -25,10 +25,7 @@ const hourConfigApi = (authHeader: Record<string, string>) => {
       dayConfigId: string | number
     ) => {
       const response = await axios.get<HourConfig[]>(
-        `${DEFAULT_API_URL}/campaigns/${campaignId}/schedules/day-configs/${dayConfigId}/hour-configs`,
-        {
-          headers: authHeader,
-        }
+        `${DEFAULT_API_URL}/campaigns/${campaignId}/schedules/day-configs/${dayConfigId}/hour-configs`
       );
       return response.data;
     },
@@ -40,13 +37,7 @@ const hourConfigApi = (authHeader: Record<string, string>) => {
     ) => {
       const response = await axios.patch<HourConfig[]>(
         `${DEFAULT_API_URL}/campaigns/${campaignId}/schedules/hour-configs/bulk-update`,
-        { hourConfigs },
-        {
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
-        }
+        { hourConfigs }
       );
       return response.data;
     },

@@ -16,32 +16,25 @@ const DEFAULT_API_URL = getDefaultApiUrl() as string;
 
 /**
  * Generic Prompt Types API client
- * @param authHeader - Authorization header object, e.g. { Authorization: 'Bearer ...' }
+ * Note: Authorization handled by global Axios interceptor.
  */
-const promptTypesApi = (authHeader: Record<string, string>) => {
+const promptTypesApi = (_authHeader?: Record<string, string>) => {
   return {
     // CREATE prompt type
     createPromptType: async (promptType: Partial<PromptType>) => {
       const response = await axios.post(
         `${DEFAULT_API_URL}/prompt-types`,
-        promptType,
-        {
-          headers: authHeader,
-        }
+        promptType
       );
       return response.data;
     },
 
     // FIND ALL prompt types
-    findAllPromptTypes: async (
-      params?: Record<string, string>,
-      extraHeaders?: Record<string, string>
-    ) => {
+    findAllPromptTypes: async (params?: Record<string, string>) => {
       const response = await axios.get<PromptType[]>(
         `${DEFAULT_API_URL}/prompt-types`,
         {
           params,
-          headers: { ...authHeader, ...(extraHeaders || {}) },
           timeout: 5000,
         }
       );
@@ -51,8 +44,7 @@ const promptTypesApi = (authHeader: Record<string, string>) => {
     // FIND ONE prompt type
     findPromptType: async (promptTypeId: string) => {
       const response = await axios.get<PromptType>(
-        `${DEFAULT_API_URL}/prompt-types/${promptTypeId}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/prompt-types/${promptTypeId}`
       );
       return response.data;
     },
@@ -64,10 +56,7 @@ const promptTypesApi = (authHeader: Record<string, string>) => {
     ) => {
       const response = await axios.patch<PromptType>(
         `${DEFAULT_API_URL}/prompt-types/${promptTypeId}`,
-        data,
-        {
-          headers: authHeader,
-        }
+        data
       );
       return response.data;
     },
@@ -75,10 +64,7 @@ const promptTypesApi = (authHeader: Record<string, string>) => {
     // DELETE prompt type
     deletePromptType: async (promptTypeId: string) => {
       const response = await axios.delete(
-        `${DEFAULT_API_URL}/prompt-types/${promptTypeId}`,
-        {
-          headers: authHeader,
-        }
+        `${DEFAULT_API_URL}/prompt-types/${promptTypeId}`
       );
       return response.data;
     },

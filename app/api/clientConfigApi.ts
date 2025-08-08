@@ -13,17 +13,15 @@ const getDefaultApiUrl = () => {
 const DEFAULT_API_URL = getDefaultApiUrl() as string;
 
 /**
- * Client Config API client
- * @param authHeader - Authorization header object, e.g. { Authorization: 'Bearer ...' }
+ * Client Config API client (relies on global axios interceptor for auth)
  */
-const clientConfigApi = (authHeader: Record<string, string>) => {
+const clientConfigApi = () => {
   return {
     // Get client config by name
     getClientConfig: async (name: string) => {
       const response = await axios.get(
         `${DEFAULT_API_URL}/client-configs/${name}`,
         {
-          headers: authHeader,
           timeout: 5000,
         }
       );

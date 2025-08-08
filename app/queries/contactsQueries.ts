@@ -1,20 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import contactsApi from "~/api/contactsApi";
-import { getClientAuthorizationHeader } from "~/client-session";
-import { useToken } from "~/components/RouteProtecter/RouteProtecter";
 import type { Contact } from "~/models/ContactsModel";
 
 // Create contact
 export const useCreateContact = () => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (contact: Partial<Contact>) => {
-      const api = contactsApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = contactsApi();
       return api.createContact(contact);
     },
     onSuccess: (data) => {
@@ -31,15 +24,10 @@ export const useCreateContact = () => {
 
 // Get all contacts
 export const useGetAllContacts = (params?: Record<string, any>) => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery({
     queryKey: ["contacts", params],
     queryFn: async () => {
-      const api = contactsApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = contactsApi();
       return api.findAllContacts(params);
     },
   });
@@ -47,15 +35,10 @@ export const useGetAllContacts = (params?: Record<string, any>) => {
 
 // Get contact by id
 export const useGetContact = (id: string) => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery({
     queryKey: ["contact", id],
     queryFn: async () => {
-      const api = contactsApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = contactsApi();
       return api.findContact(id);
     },
     enabled: !!id,
@@ -64,8 +47,6 @@ export const useGetContact = (id: string) => {
 
 // Update contact
 export const useUpdateContact = () => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
@@ -75,10 +56,7 @@ export const useUpdateContact = () => {
       id: string;
       data: Partial<Contact>;
     }) => {
-      const api = contactsApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = contactsApi();
       return api.updateContact(id, data);
     },
     onSuccess: (data) => {
@@ -98,15 +76,10 @@ export const useUpdateContact = () => {
 
 // Delete contact
 export const useDeleteContact = () => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const api = contactsApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = contactsApi();
       return api.deleteContact(id);
     },
     onSuccess: (_, id) => {

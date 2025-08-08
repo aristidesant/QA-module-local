@@ -1,9 +1,8 @@
 import axios from "axios";
-import type { AxiosResponse } from "axios";
-import type { 
-  ContactFileSummary, 
-  ProcessContactGroupFileRequest, 
-  ProcessContactGroupFileResponse 
+import type {
+  ContactFileSummary,
+  ProcessContactGroupFileRequest,
+  ProcessContactGroupFileResponse,
 } from "~/models/ContactFileSummary";
 
 const getDefaultApiUrl = () => {
@@ -20,9 +19,9 @@ const DEFAULT_API_URL = getDefaultApiUrl() as string;
 
 /**
  * Contact Group Files API client
- * @param authHeader - Authorization header object, e.g. { Authorization: 'Bearer ...' }
+ * Note: Authorization handled by global Axios interceptor.
  */
-const contactGroupFilesApi = (authHeader: Record<string, string>) => {
+const contactGroupFilesApi = (_authHeader?: Record<string, string>) => {
   return {
     /**
      * Uploads a contact group file
@@ -32,18 +31,12 @@ const contactGroupFilesApi = (authHeader: Record<string, string>) => {
      */
     uploadContactGroupFile: async (file: File, campaignId: number) => {
       const formData = new FormData();
-      formData.append('file', file);
-      formData.append('campaignId', campaignId.toString());
+      formData.append("file", file);
+      formData.append("campaignId", campaignId.toString());
 
       const response = await axios.post<ContactFileSummary>(
         `${DEFAULT_API_URL}/contact-group-files/upload`,
-        formData,
-        {
-          headers: {
-            ...authHeader,
-            'Content-Type': 'multipart/form-data',
-          },
-        }
+        formData
       );
       return response.data;
     },
@@ -53,16 +46,12 @@ const contactGroupFilesApi = (authHeader: Record<string, string>) => {
      * @param data - The processing configuration including field mappings
      * @returns The processing result with status and statistics
      */
-    processContactGroupFile: async (data: ProcessContactGroupFileRequest): Promise<ProcessContactGroupFileResponse> => {
+    processContactGroupFile: async (
+      data: ProcessContactGroupFileRequest
+    ): Promise<ProcessContactGroupFileResponse> => {
       const response = await axios.post<ProcessContactGroupFileResponse>(
         `${DEFAULT_API_URL}/contact-group-files/process`,
-        data,
-        {
-          headers: {
-            ...authHeader,
-            'Content-Type': 'application/json',
-          },
-        }
+        data
       );
       return response.data;
     },

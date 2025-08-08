@@ -19,15 +19,14 @@ const DEFAULT_API_URL = getDefaultApiUrl() as string;
 
 /**
  * Disposition Catalog API client
- * @param authHeader - Authorization header object, e.g. { Authorization: 'Bearer ...' }
+ * Note: Authorization handled by global Axios interceptor.
  */
-const dispositionCatalogApi = (authHeader: Record<string, string>) => {
+const dispositionCatalogApi = (_authHeader?: Record<string, string>) => {
   return {
     // GET all disposition catalogs
     getAllDispositionCatalogs: async () => {
       const response = await axios.get<DispositionCatalogModel[]>(
-        `${DEFAULT_API_URL}/disposition-catalogs`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/disposition-catalogs`
       );
       return response.data;
     },
@@ -36,13 +35,7 @@ const dispositionCatalogApi = (authHeader: Record<string, string>) => {
     createDispositionCatalog: async (data: CreateDispositionCatalog) => {
       const response = await axios.post<DispositionCatalogModel>(
         `${DEFAULT_API_URL}/disposition-catalogs`,
-        data,
-        {
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
-        }
+        data
       );
       return response.data;
     },
@@ -54,29 +47,20 @@ const dispositionCatalogApi = (authHeader: Record<string, string>) => {
     ) => {
       const response = await axios.patch<DispositionCatalogModel>(
         `${DEFAULT_API_URL}/disposition-catalogs/${id}`,
-        data,
-        {
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
-        }
+        data
       );
       return response.data;
     },
 
     // DELETE a disposition catalog by ID
     deleteDispositionCatalog: async (id: number) => {
-      await axios.delete(`${DEFAULT_API_URL}/disposition-catalogs/${id}`, {
-        headers: authHeader,
-      });
+      await axios.delete(`${DEFAULT_API_URL}/disposition-catalogs/${id}`);
     },
 
     // GET current disposition flow for a campaign
     getCurrentDispositionFlow: async (campaignId: string | number) => {
       const response = await axios.get<DispositionFlowModel>(
-        `${DEFAULT_API_URL}/disposition-catalogs/flow/current?campaignId=${campaignId}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/disposition-catalogs/flow/current?campaignId=${campaignId}`
       );
       return response.data;
     },
@@ -88,13 +72,7 @@ const dispositionCatalogApi = (authHeader: Record<string, string>) => {
     ) => {
       const response = await axios.post(
         `${DEFAULT_API_URL}/campaigns/${campaignId}/disposition-configuration`,
-        dispositionData,
-        {
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
-        }
+        dispositionData
       );
       return response.data;
     },
@@ -108,13 +86,7 @@ const dispositionCatalogApi = (authHeader: Record<string, string>) => {
     ) => {
       const response = await axios.post<DispositionFlowModel>(
         `${DEFAULT_API_URL}/disposition-catalogs/flow`,
-        data,
-        {
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
-        }
+        data
       );
       return response.data;
     },

@@ -14,7 +14,17 @@ export type AuthErrorResponse = {
   statusCode: number;
 };
 
-const DEFAULT_API_URL = process.env.API_URL as string;
+const getDefaultApiUrl = () => {
+  if (typeof window !== "undefined") {
+    return (window as any).ENV?.API_URL || process.env.API_URL;
+  }
+  if (typeof process !== "undefined") {
+    return process.env.API_URL;
+  }
+  return undefined;
+};
+
+const DEFAULT_API_URL = getDefaultApiUrl() as string;
 
 export async function authenticate(
   credentials: AuthRequest,

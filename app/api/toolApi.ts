@@ -15,24 +15,20 @@ const DEFAULT_API_URL = getDefaultApiUrl() as string;
 
 /**
  * Tool API client
- * @param authHeader - Authorization header object, e.g. { Authorization: 'Bearer ...' }
+ * Note: Authorization handled by global Axios interceptor.
  */
-const toolApi = (authHeader: Record<string, string>) => {
+const toolApi = (_authHeader?: Record<string, string>) => {
   return {
     // GET all tools
     getAllTools: async () => {
-      const response = await axios.get<ToolModel[]>(
-        `${DEFAULT_API_URL}/tools`,
-        { headers: authHeader }
-      );
+      const response = await axios.get<ToolModel[]>(`${DEFAULT_API_URL}/tools`);
       return response.data;
     },
 
     // GET tool by ID
     getToolById: async (id: string | number) => {
       const response = await axios.get<ToolModel>(
-        `${DEFAULT_API_URL}/tools/${id}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/tools/${id}`
       );
       return response.data;
     },
@@ -41,13 +37,7 @@ const toolApi = (authHeader: Record<string, string>) => {
     createTool: async (data: Partial<ToolModel>) => {
       const response = await axios.post<ToolModel>(
         `${DEFAULT_API_URL}/tools`,
-        data,
-        {
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
-        }
+        data
       );
       return response.data;
     },
@@ -56,22 +46,14 @@ const toolApi = (authHeader: Record<string, string>) => {
     updateTool: async (id: string | number, data: Partial<ToolModel>) => {
       const response = await axios.put<ToolModel>(
         `${DEFAULT_API_URL}/tools/${id}`,
-        data,
-        {
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
-        }
+        data
       );
       return response.data;
     },
 
     // DELETE tool
     deleteTool: async (id: string | number) => {
-      const response = await axios.delete(`${DEFAULT_API_URL}/tools/${id}`, {
-        headers: authHeader,
-      });
+      const response = await axios.delete(`${DEFAULT_API_URL}/tools/${id}`);
       return response.data;
     },
 
@@ -79,13 +61,7 @@ const toolApi = (authHeader: Record<string, string>) => {
     createToolBulk: async (data: Partial<ToolModel>[]) => {
       const response = await axios.post<ToolModel[]>(
         `${DEFAULT_API_URL}/tools/bulk`,
-        data,
-        {
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
-        }
+        data
       );
       return response.data;
     },
@@ -93,8 +69,7 @@ const toolApi = (authHeader: Record<string, string>) => {
     // GET tools by category
     getToolsByCategory: async (categoryId: string | number) => {
       const response = await axios.get<ToolModel[]>(
-        `${DEFAULT_API_URL}/tools/categories/${categoryId}/tools`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/tools/categories/${categoryId}/tools`
       );
       return response.data;
     },

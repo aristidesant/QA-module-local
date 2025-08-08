@@ -1,15 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import campaignAgentsApi from "~/api/campaignAgentsApi";
-import { getClientAuthorizationHeader } from "~/client-session";
-import { useToken } from "~/components/RouteProtecter/RouteProtecter";
 import type { CampaignAgent } from "~/models/CampaignAgentModel";
 
 // filepath: src/modules/campaign_agents/queries/campaignAgentsQueries.ts
 
 // Create campaign agent (assign agent to campaign)
 export const useCreateCampaignAgent = () => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
     // Expects: { campaignId, agentData }
@@ -20,10 +16,7 @@ export const useCreateCampaignAgent = () => {
       campaignId: number;
       agentId: string;
     }) => {
-      const api = campaignAgentsApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = campaignAgentsApi();
       return api.assignAgentToCampaign(campaignId, agentId);
     },
     onSuccess: (data) => {
@@ -40,15 +33,10 @@ export const useCreateCampaignAgent = () => {
 
 // Get all agents for a campaign
 export const useGetCampaignAgents = (campaignId: number) => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery({
     queryKey: ["campaignAgents", campaignId],
     queryFn: async () => {
-      const api = campaignAgentsApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = campaignAgentsApi();
       return api.getCampaignAgents(campaignId);
     },
     enabled: !!campaignId,
@@ -57,15 +45,10 @@ export const useGetCampaignAgents = (campaignId: number) => {
 
 // Get a single agent by id for a campaign
 export const useGetCampaignAgent = (campaignId: number, id: number) => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery({
     queryKey: ["campaignAgent", campaignId, id],
     queryFn: async () => {
-      const api = campaignAgentsApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = campaignAgentsApi();
       return api.getCampaignAgentById(campaignId, id);
     },
     enabled: !!campaignId && !!id,
@@ -74,8 +57,6 @@ export const useGetCampaignAgent = (campaignId: number, id: number) => {
 
 // Update campaign agent in a campaign
 export const useUpdateCampaignAgent = () => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
     // Expects: { campaignId, id, updateData }
@@ -90,10 +71,7 @@ export const useUpdateCampaignAgent = () => {
         Omit<CampaignAgent, "id" | "createdAt" | "updatedAt" | "campaignId">
       >;
     }) => {
-      const api = campaignAgentsApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = campaignAgentsApi();
       return api.updateCampaignAgent(campaignId, id, updateData);
     },
     onSuccess: (data) => {
@@ -117,8 +95,6 @@ export const useUpdateCampaignAgent = () => {
 
 // Remove agent from campaign
 export const useDeleteCampaignAgent = () => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
     // Expects: { campaignId, id }
@@ -129,10 +105,7 @@ export const useDeleteCampaignAgent = () => {
       campaignId: number;
       id: number;
     }) => {
-      const api = campaignAgentsApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = campaignAgentsApi();
       return api.removeAgentFromCampaign(campaignId, id);
     },
     onSuccess: (_, variables) => {

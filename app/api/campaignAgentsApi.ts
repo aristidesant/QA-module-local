@@ -15,9 +15,9 @@ const DEFAULT_API_URL = getDefaultApiUrl() as string;
 
 /**
  * Generic Campaign Agents API client
- * @param authHeader - Authorization header object, e.g. { Authorization: 'Bearer ...' }
+ * Note: Authorization handled by global Axios interceptor.
  */
-const campaignAgentsApi = (authHeader: Record<string, string>) => {
+const campaignAgentsApi = (_authHeader?: Record<string, string>) => {
   return {
     // ASSIGN agent to campaign
     assignAgentToCampaign: async (
@@ -26,20 +26,15 @@ const campaignAgentsApi = (authHeader: Record<string, string>) => {
     ): Promise<CampaignAgent> => {
       const { data } = await axios.post<CampaignAgent>(
         `${DEFAULT_API_URL}/campaigns/${campaignId}/agents`,
-        { agentId, campaignId },
-        { headers: authHeader }
+        { agentId, campaignId }
       );
       return data;
     },
 
     // GET all agents for a campaign
-    getCampaignAgents: async (
-      campaignId: number,
-      extraHeaders?: Record<string, string>
-    ): Promise<CampaignAgent[]> => {
+    getCampaignAgents: async (campaignId: number): Promise<CampaignAgent[]> => {
       const { data } = await axios.get<CampaignAgent[]>(
-        `${DEFAULT_API_URL}/campaigns/${campaignId}/agents`,
-        { headers: { ...authHeader, ...(extraHeaders || {}) } }
+        `${DEFAULT_API_URL}/campaigns/${campaignId}/agents`
       );
       return data;
     },
@@ -50,8 +45,7 @@ const campaignAgentsApi = (authHeader: Record<string, string>) => {
       id: number
     ): Promise<CampaignAgent> => {
       const { data } = await axios.get<CampaignAgent>(
-        `${DEFAULT_API_URL}/campaigns/${campaignId}/agents/${id}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/campaigns/${campaignId}/agents/${id}`
       );
       return data;
     },
@@ -66,8 +60,7 @@ const campaignAgentsApi = (authHeader: Record<string, string>) => {
     ): Promise<CampaignAgent> => {
       const { data } = await axios.patch<CampaignAgent>(
         `${DEFAULT_API_URL}/campaigns/${campaignId}/agents/${id}`,
-        updateData,
-        { headers: authHeader }
+        updateData
       );
       return data;
     },
@@ -78,8 +71,7 @@ const campaignAgentsApi = (authHeader: Record<string, string>) => {
       id: number
     ): Promise<void> => {
       await axios.delete(
-        `${DEFAULT_API_URL}/campaigns/${campaignId}/agents/${id}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/campaigns/${campaignId}/agents/${id}`
       );
     },
   };

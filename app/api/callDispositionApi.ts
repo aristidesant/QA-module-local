@@ -15,30 +15,25 @@ const DEFAULT_API_URL = getDefaultApiUrl() as string;
 
 /**
  * Call Disposition API client
- * @param authHeader - Authorization header object, e.g. { Authorization: 'Bearer ...' }
+ * Note: Authorization is set by a global Axios interceptor.
  */
-const callDispositionApi = (authHeader: Record<string, string> = {}) => {
+const callDispositionApi = (_authHeader?: Record<string, string>) => {
   return {
     // CREATE call disposition
     createCallDisposition: async (data: Partial<CallDispositionModel>) => {
       const response = await axios.post(
         `${DEFAULT_API_URL}/call-dispositions`,
-        data,
-        { headers: authHeader }
+        data
       );
       return response.data;
     },
 
     // FIND ALL call dispositions (by conversationId)
-    findAllCallDispositions: async (
-      params: { conversationId: string },
-      extraHeaders?: Record<string, string>
-    ) => {
+    findAllCallDispositions: async (params: { conversationId: string }) => {
       const response = await axios.get<CallDispositionModel>(
         `${DEFAULT_API_URL}/call-dispositions/details`,
         {
           params,
-          headers: { ...authHeader, ...(extraHeaders || {}) },
           timeout: 5000,
         }
       );
@@ -48,8 +43,7 @@ const callDispositionApi = (authHeader: Record<string, string> = {}) => {
     // FIND call disposition by conversationId
     findCallDispositionByConversationId: async (conversationId: number) => {
       const response = await axios.get(
-        `${DEFAULT_API_URL}/call-dispositions/conversation/${conversationId}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/call-dispositions/conversation/${conversationId}`
       );
       return response.data;
     },
@@ -57,8 +51,7 @@ const callDispositionApi = (authHeader: Record<string, string> = {}) => {
     // FIND ONE call disposition
     findCallDisposition: async (id: string) => {
       const response = await axios.get<CallDispositionModel>(
-        `${DEFAULT_API_URL}/call-dispositions/${id}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/call-dispositions/${id}`
       );
       return response.data;
     },
@@ -70,8 +63,7 @@ const callDispositionApi = (authHeader: Record<string, string> = {}) => {
     ) => {
       const response = await axios.patch(
         `${DEFAULT_API_URL}/call-dispositions/${id}`,
-        data,
-        { headers: authHeader }
+        data
       );
       return response.data;
     },
@@ -79,8 +71,7 @@ const callDispositionApi = (authHeader: Record<string, string> = {}) => {
     // DELETE call disposition
     deleteCallDisposition: async (id: string) => {
       const response = await axios.delete(
-        `${DEFAULT_API_URL}/call-dispositions/${id}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/call-dispositions/${id}`
       );
       return response.data;
     },

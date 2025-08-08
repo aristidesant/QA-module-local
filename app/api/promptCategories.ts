@@ -16,32 +16,25 @@ const DEFAULT_API_URL = getDefaultApiUrl() as string;
 
 /**
  * Generic Prompt Categories API client
- * @param authHeader - Authorization header object, e.g. { Authorization: 'Bearer ...' }
+ * Note: Authorization handled by global Axios interceptor.
  */
-const promptCategoriesApi = (authHeader: Record<string, string>) => {
+const promptCategoriesApi = (_authHeader?: Record<string, string>) => {
   return {
     // CREATE prompt category
     createPromptCategory: async (promptCategory: Partial<PromptCategory>) => {
       const response = await axios.post(
         `${DEFAULT_API_URL}/prompt-categories`,
-        promptCategory,
-        {
-          headers: authHeader,
-        }
+        promptCategory
       );
       return response.data;
     },
 
     // FIND ALL prompt categories
-    findAllPromptCategories: async (
-      params?: Record<string, string>,
-      extraHeaders?: Record<string, string>
-    ) => {
+    findAllPromptCategories: async (params?: Record<string, string>) => {
       const response = await axios.get<PromptCategory[]>(
         `${DEFAULT_API_URL}/prompt-categories`,
         {
           params,
-          headers: { ...authHeader, ...(extraHeaders || {}) },
           timeout: 5000,
         }
       );
@@ -51,8 +44,7 @@ const promptCategoriesApi = (authHeader: Record<string, string>) => {
     // FIND ONE prompt category
     findPromptCategory: async (promptCategoryId: string) => {
       const response = await axios.get<PromptCategory>(
-        `${DEFAULT_API_URL}/prompt-categories/${promptCategoryId}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/prompt-categories/${promptCategoryId}`
       );
       return response.data;
     },
@@ -64,10 +56,7 @@ const promptCategoriesApi = (authHeader: Record<string, string>) => {
     ) => {
       const response = await axios.patch<PromptCategory>(
         `${DEFAULT_API_URL}/prompt-categories/${promptCategoryId}`,
-        data,
-        {
-          headers: authHeader,
-        }
+        data
       );
       return response.data;
     },
@@ -75,10 +64,7 @@ const promptCategoriesApi = (authHeader: Record<string, string>) => {
     // DELETE prompt category
     deletePromptCategory: async (promptCategoryId: string) => {
       const response = await axios.delete(
-        `${DEFAULT_API_URL}/prompt-categories/${promptCategoryId}`,
-        {
-          headers: authHeader,
-        }
+        `${DEFAULT_API_URL}/prompt-categories/${promptCategoryId}`
       );
       return response.data;
     },

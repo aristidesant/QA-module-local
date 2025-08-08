@@ -16,32 +16,25 @@ const DEFAULT_API_URL = getDefaultApiUrl() as string;
 
 /**
  * Generic Prompt Forms API client
- * @param authHeader - Authorization header object, e.g. { Authorization: 'Bearer ...' }
+ * Note: Authorization handled by global Axios interceptor.
  */
-const promptFormsApi = (authHeader: Record<string, string>) => {
+const promptFormsApi = (_authHeader?: Record<string, string>) => {
   return {
     // CREATE prompt form
     createPromptForm: async (promptForm: Partial<PromptForm>) => {
       const response = await axios.post(
         `${DEFAULT_API_URL}/prompt-forms`,
-        promptForm,
-        {
-          headers: authHeader,
-        }
+        promptForm
       );
       return response.data;
     },
 
     // FIND ALL prompt forms
-    findAllPromptForms: async (
-      params?: Record<string, any>,
-      extraHeaders?: Record<string, string>
-    ) => {
+    findAllPromptForms: async (params?: Record<string, any>) => {
       const response = await axios.get<PromptForm[]>(
         `${DEFAULT_API_URL}/prompt-forms`,
         {
           params,
-          headers: { ...authHeader, ...(extraHeaders || {}) },
           timeout: 5000,
         }
       );
@@ -51,8 +44,7 @@ const promptFormsApi = (authHeader: Record<string, string>) => {
     // FIND ONE prompt form
     findPromptForm: async (promptFormId: string) => {
       const response = await axios.get<PromptForm>(
-        `${DEFAULT_API_URL}/prompt-forms/${promptFormId}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/prompt-forms/${promptFormId}`
       );
       return response.data;
     },
@@ -64,10 +56,7 @@ const promptFormsApi = (authHeader: Record<string, string>) => {
     ) => {
       const response = await axios.patch<PromptForm>(
         `${DEFAULT_API_URL}/prompt-forms/${promptFormId}`,
-        data,
-        {
-          headers: authHeader,
-        }
+        data
       );
       return response.data;
     },
@@ -75,10 +64,7 @@ const promptFormsApi = (authHeader: Record<string, string>) => {
     // DELETE prompt form
     deletePromptForm: async (promptFormId: string) => {
       const response = await axios.delete(
-        `${DEFAULT_API_URL}/prompt-forms/${promptFormId}`,
-        {
-          headers: authHeader,
-        }
+        `${DEFAULT_API_URL}/prompt-forms/${promptFormId}`
       );
       return response.data;
     },

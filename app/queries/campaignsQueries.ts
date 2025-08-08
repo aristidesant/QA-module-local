@@ -1,20 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import campaignsApi from "~/api/campaignsApi";
-import { getClientAuthorizationHeader } from "~/client-session";
 import { useToken } from "~/components/RouteProtecter/RouteProtecter";
 import type { Campaign } from "~/models/CampaignsModel";
 
 // Create campaign
 export const useCreateCampaign = () => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (campaign: Partial<Campaign>) => {
-      const api = campaignsApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = campaignsApi();
       return api.createCampaign(campaign);
     },
     onSuccess: (data) => {
@@ -31,15 +25,10 @@ export const useCreateCampaign = () => {
 
 // Get all campaigns
 export const useGetAllCampaigns = (params?: Record<string, any>) => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery({
     queryKey: ["campaigns", params],
     queryFn: async () => {
-      const api = campaignsApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = campaignsApi();
       return api.findAllCampaigns(params);
     },
   });
@@ -47,15 +36,10 @@ export const useGetAllCampaigns = (params?: Record<string, any>) => {
 
 // Get campaign by id
 export const useGetCampaign = (id: string) => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery({
     queryKey: ["campaign", id],
     queryFn: async () => {
-      const api = campaignsApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = campaignsApi();
       return api.findCampaign(id);
     },
     enabled: !!id,
@@ -64,8 +48,6 @@ export const useGetCampaign = (id: string) => {
 
 // Update campaign
 export const useUpdateCampaign = () => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
@@ -75,10 +57,7 @@ export const useUpdateCampaign = () => {
       id: string;
       data: Partial<Campaign>;
     }) => {
-      const api = campaignsApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = campaignsApi();
       console.log("Updating campaign with ID:", id, "Data:", data);
       return api.updateCampaign(id, data);
     },
@@ -99,15 +78,10 @@ export const useUpdateCampaign = () => {
 
 // Delete campaign
 export const useDeleteCampaign = () => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const api = campaignsApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = campaignsApi();
       return api.deleteCampaign(id);
     },
     onSuccess: (_, id) => {

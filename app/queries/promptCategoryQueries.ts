@@ -1,23 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import promptCategoriesApi from "~/api/promptCategories";
-import { getClientAuthorizationHeader } from "~/client-session";
-import { useToken } from "~/components/RouteProtecter/RouteProtecter";
 import type { PromptCategory } from "~/models/PromptCategoryModel";
 
 // filepath: /Users/ramonmena/Projects/n-ai/app/queries/promptCategoryQueries.ts
 
 // Create prompt category
 export const useCreatePromptCategory = () => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (promptCategory: Partial<PromptCategory>) => {
-      const api = promptCategoriesApi({
-        ...header,
-        Authorization: `Bearer ${token.token}`,
-      });
+      const api = promptCategoriesApi();
       return api.createPromptCategory(promptCategory);
     },
     onSuccess: (data) => {
@@ -37,34 +30,21 @@ export const useGetAllPromptCategories = (
   params?: Record<string, string>,
   extraHeaders?: Record<string, string>
 ) => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
-
   return useQuery({
     queryKey: ["promptCategories", params],
     queryFn: async () => {
-      const api = promptCategoriesApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-        ...(extraHeaders || {}),
-      });
-      return api.findAllPromptCategories(params, extraHeaders);
+      const api = promptCategoriesApi();
+      return api.findAllPromptCategories(params);
     },
   });
 };
 
 // Get one prompt category by id
 export const useGetPromptCategory = (id: string) => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
-
   return useQuery({
     queryKey: ["promptCategory", id],
     queryFn: async () => {
-      const api = promptCategoriesApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = promptCategoriesApi();
       return api.findPromptCategory(id);
     },
     enabled: !!id,
@@ -73,8 +53,6 @@ export const useGetPromptCategory = (id: string) => {
 
 // Update prompt category
 export const useUpdatePromptCategory = () => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -85,10 +63,7 @@ export const useUpdatePromptCategory = () => {
       id: string;
       data: Partial<PromptCategory>;
     }) => {
-      const api = promptCategoriesApi({
-        ...header,
-        Authorization: `Bearer ${token.token}`,
-      });
+      const api = promptCategoriesApi();
       return api.updatePromptCategory(id, data);
     },
     onSuccess: (data) => {
@@ -110,16 +85,11 @@ export const useUpdatePromptCategory = () => {
 
 // Delete prompt category
 export const useDeletePromptCategory = () => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (id: string) => {
-      const api = promptCategoriesApi({
-        ...header,
-        Authorization: `Bearer ${token.token}`,
-      });
+      const api = promptCategoriesApi();
       return api.deletePromptCategory(id);
     },
     onSuccess: (_, id) => {

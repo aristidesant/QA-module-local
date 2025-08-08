@@ -23,9 +23,9 @@ export type UpdateSchedulerContactGroupPayload = Partial<
 
 /**
  * Scheduler Contact Group API client
- * @param authHeader - Authorization header object, e.g. { Authorization: 'Bearer ...' }
+ * Note: Authorization handled by global Axios interceptor.
  */
-const schedulerContactGroupApi = (authHeader: Record<string, string>) => {
+const schedulerContactGroupApi = (_authHeader?: Record<string, string>) => {
   return {
     // GET scheduler contact groups by campaign ID and schedule status
     getSchedulerContactGroupsByCampaignAndStatus: async (
@@ -33,17 +33,11 @@ const schedulerContactGroupApi = (authHeader: Record<string, string>) => {
       scheduleStatus: string
     ): Promise<SchedulerContactGroupModel[]> => {
       const response = await axios.get<SchedulerContactGroupModel[]>(
-        `${DEFAULT_API_URL}/schedule-contact-groups/by-campaign/${campaignId}/schedule-status/${scheduleStatus}`,
-        {
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
-        }
+        `${DEFAULT_API_URL}/schedule-contact-groups/by-campaign/${campaignId}/schedule-status/${scheduleStatus}`
       );
       return response.data;
     },
-    
+
     // PATCH update scheduler contact group
     updateSchedulerContactGroup: async (
       id: string | number,
@@ -51,13 +45,7 @@ const schedulerContactGroupApi = (authHeader: Record<string, string>) => {
     ) => {
       const response = await axios.patch(
         `${DEFAULT_API_URL}/schedule-contact-groups/${id}`,
-        payload,
-        {
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
-        }
+        payload
       );
       return response.data;
     },

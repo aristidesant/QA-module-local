@@ -4,26 +4,17 @@ import conversationsApi, {
   type StartDemoParams,
   type UpdateConversationParams,
 } from "~/api/conversationsApi";
-import { getClientAuthorizationHeader } from "~/client-session";
-import { useToken } from "~/components/RouteProtecter/RouteProtecter";
 import type {
   ConversationDemoModel,
   ConversationsModel,
   ConversationTableModel,
 } from "~/models/ConversationsModels";
 
-const getApiWithAuth = (token: string | undefined) => {
-  const header = getClientAuthorizationHeader();
-  return conversationsApi({
-    ...header,
-    Authorization: `Bearer ${token}`,
-  });
-};
+const getApi = () => conversationsApi();
 
 // Create a new conversation
 // TODO: Replace 'any' with a specific CreateConversationParams type if available
 export const useCreateConversation = () => {
-  const { token } = useToken();
   const queryClient = useQueryClient();
 
   return useMutation<
@@ -32,7 +23,7 @@ export const useCreateConversation = () => {
     Record<string, unknown>
   >({
     mutationFn: async (data) => {
-      const api = getApiWithAuth(token ?? undefined);
+      const api = getApi();
       return api.createConversation(data);
     },
     onSuccess: () => {
@@ -43,11 +34,10 @@ export const useCreateConversation = () => {
 
 // Get all conversations for current client
 export const useGetConversations = () => {
-  const { token } = useToken();
   return useQuery<ConversationTableModel[]>({
     queryKey: ["conversations"],
     queryFn: async () => {
-      const api = getApiWithAuth(token ?? undefined);
+      const api = getApi();
       return api.getConversations();
     },
   });
@@ -56,7 +46,6 @@ export const useGetConversations = () => {
 // Start a new conversation
 // TODO: Replace 'Record<string, unknown>' with a specific StartConversationParams type if available
 export const useStartConversation = () => {
-  const { token } = useToken();
   const queryClient = useQueryClient();
 
   return useMutation<
@@ -65,7 +54,7 @@ export const useStartConversation = () => {
     Record<string, unknown>
   >({
     mutationFn: async (data) => {
-      const api = getApiWithAuth(token ?? undefined);
+      const api = getApi();
       return api.startConversation(data);
     },
     onSuccess: () => {
@@ -76,7 +65,6 @@ export const useStartConversation = () => {
 
 // Start demo conversation
 export const useStartDemoConversation = () => {
-  const { token } = useToken();
   const queryClient = useQueryClient();
 
   return useMutation<
@@ -85,7 +73,7 @@ export const useStartDemoConversation = () => {
     StartDemoParams | ConversationDemoModel
   >({
     mutationFn: async (params) => {
-      const api = getApiWithAuth(token ?? undefined);
+      const api = getApi();
       return api.startDemoConversation(params as StartDemoParams);
     },
     onSuccess: () => {
@@ -96,11 +84,9 @@ export const useStartDemoConversation = () => {
 
 // Webhook to receive post-call data
 export const usePostCallDataWebhook = () => {
-  const { token } = useToken();
-
   return useMutation<void, unknown, PostCallDataParams>({
     mutationFn: async (data) => {
-      const api = getApiWithAuth(token ?? undefined);
+      const api = getApi();
       return api.postCallData(data);
     },
   });
@@ -108,11 +94,10 @@ export const usePostCallDataWebhook = () => {
 
 // Get conversation by ID
 export const useGetConversation = (id: string) => {
-  const { token } = useToken();
   return useQuery<ConversationsModel>({
     queryKey: ["conversation", id],
     queryFn: async () => {
-      const api = getApiWithAuth(token ?? undefined);
+      const api = getApi();
       return api.getConversationById(id);
     },
     enabled: !!id,
@@ -121,7 +106,6 @@ export const useGetConversation = (id: string) => {
 
 // Update a conversation
 export const useUpdateConversation = () => {
-  const { token } = useToken();
   const queryClient = useQueryClient();
 
   return useMutation<
@@ -130,7 +114,7 @@ export const useUpdateConversation = () => {
     { id: string; data: UpdateConversationParams }
   >({
     mutationFn: async ({ id, data }) => {
-      const api = getApiWithAuth(token ?? undefined);
+      const api = getApi();
       return api.updateConversation(id, data);
     },
     onSuccess: (_, { id }) => {
@@ -142,12 +126,11 @@ export const useUpdateConversation = () => {
 
 // Delete a conversation
 export const useDeleteConversation = () => {
-  const { token } = useToken();
   const queryClient = useQueryClient();
 
   return useMutation<void, unknown, string>({
     mutationFn: async (id) => {
-      const api = getApiWithAuth(token ?? undefined);
+      const api = getApi();
       return api.deleteConversation(id);
     },
     onSuccess: () => {

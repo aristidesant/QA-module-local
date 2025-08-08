@@ -1,8 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import schedulerApi from "~/api/schedulerApi";
-import { getClientAuthorizationHeader } from "~/client-session";
-import { useToken } from "~/components/RouteProtecter/RouteProtecter";
 import type { Scheduler } from "~/models/SchedulerModel";
 
 interface GetCampaignActiveSchedulerParams {
@@ -65,19 +63,13 @@ interface CreatePredefinedScheduleParams {
  * @returns Query result containing an array of Scheduler objects
  */
 export function useCampaignSchedules(campaignId: string | number | undefined) {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
-
   return useQuery<Scheduler[], Error>({
     queryKey: ["campaignSchedules", campaignId],
     queryFn: async () => {
       if (!campaignId) {
         return [];
       }
-      const api = schedulerApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = schedulerApi();
       return api.getCampaignSchedules(campaignId);
     },
     enabled: !!campaignId, // Only run the query if campaignId exists
@@ -93,19 +85,13 @@ export function useCampaignActiveScheduler({
   campaignId,
   enabled = true,
 }: GetCampaignActiveSchedulerParams) {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
-
   return useQuery<Scheduler | null, Error>({
     queryKey: ["campaignActiveScheduler", campaignId],
     queryFn: async () => {
       if (!campaignId) {
         return null;
       }
-      const api = schedulerApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = schedulerApi();
       try {
         return await api.getCampaignActiveScheduler(campaignId);
       } catch (error: unknown) {
@@ -125,16 +111,10 @@ export function useCampaignActiveScheduler({
  * @returns Mutation object with methods to update contact group status
  */
 export function useUpdateContactGroupStatus() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
-
   return useMutation({
     mutationFn: async ({ groupId, status }: UpdateContactGroupStatusParams) => {
-      const api = schedulerApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = schedulerApi();
       return api.updateContactGroupStatus(groupId, status);
     },
     onSuccess: () => {
@@ -149,16 +129,10 @@ export function useUpdateContactGroupStatus() {
  * @returns Mutation object with methods to activate a schedule
  */
 export function useActivateSchedule() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
-
   return useMutation({
     mutationFn: async ({ campaignId, scheduleId }: ActivateScheduleParams) => {
-      const api = schedulerApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = schedulerApi();
       return api.activateSchedule(campaignId, scheduleId);
     },
     onSuccess: (data, variables) => {
@@ -183,19 +157,13 @@ export function useScheduleById(
   campaignId: string | number | undefined,
   scheduleId: string | number | undefined
 ) {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
-
   return useQuery<Scheduler, Error>({
     queryKey: ["schedule", campaignId, scheduleId],
     queryFn: async () => {
       if (!campaignId || !scheduleId) {
         throw new Error("Campaign ID and Schedule ID are required");
       }
-      const api = schedulerApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = schedulerApi();
       return api.getScheduleById(campaignId, scheduleId);
     },
     enabled: !!campaignId && !!scheduleId,
@@ -214,9 +182,6 @@ export function useScheduleCapacity(
   scheduleId: string | number | undefined,
   contactListSize: number | undefined
 ) {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
-
   return useQuery({
     queryKey: ["scheduleCapacity", campaignId, scheduleId, contactListSize],
     queryFn: async () => {
@@ -225,10 +190,7 @@ export function useScheduleCapacity(
           "Campaign ID, Schedule ID, and contact list size are required"
         );
       }
-      const api = schedulerApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = schedulerApi();
       return api.getScheduleCapacity(campaignId, scheduleId, contactListSize);
     },
     enabled: !!campaignId && !!scheduleId && contactListSize !== undefined,
@@ -240,16 +202,10 @@ export function useScheduleCapacity(
  * @returns Mutation object with methods to create a schedule
  */
 export function useCreateSchedule() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
-
   return useMutation({
     mutationFn: async ({ campaignId, scheduleData }: CreateScheduleParams) => {
-      const api = schedulerApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = schedulerApi();
       return api.createSchedule(campaignId, {
         ...scheduleData,
         status: "active",
@@ -269,20 +225,14 @@ export function useCreateSchedule() {
  * @returns Mutation object with methods to update a schedule
  */
 export function useUpdateSchedule() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
-
   return useMutation({
     mutationFn: async ({
       campaignId,
       scheduleId,
       scheduleData,
     }: UpdateScheduleParams) => {
-      const api = schedulerApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = schedulerApi();
       return api.updateSchedule(campaignId, scheduleId, scheduleData);
     },
     onSuccess: (data, variables) => {
@@ -302,16 +252,10 @@ export function useUpdateSchedule() {
  * @returns Mutation object with methods to delete a schedule
  */
 export function useDeleteSchedule() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
-
   return useMutation({
     mutationFn: async ({ campaignId, scheduleId }: DeleteScheduleParams) => {
-      const api = schedulerApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = schedulerApi();
       return api.deleteSchedule(campaignId, scheduleId);
     },
     onSuccess: (data, variables) => {
@@ -331,19 +275,13 @@ export function useDeleteSchedule() {
  * @returns Mutation object with methods to deactivate a schedule
  */
 export function useDeactivateSchedule() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
-
   return useMutation({
     mutationFn: async ({
       campaignId,
       scheduleId,
     }: DeactivateScheduleParams) => {
-      const api = schedulerApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = schedulerApi();
       return api.deactivateSchedule(campaignId, scheduleId);
     },
     onSuccess: (data, variables) => {
@@ -366,19 +304,13 @@ export function useDeactivateSchedule() {
  * @returns Mutation object with methods to create a predefined schedule
  */
 export function useCreatePredefinedSchedule() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
-
   return useMutation({
     mutationFn: async ({
       campaignId,
       predefinedScheduleData,
     }: CreatePredefinedScheduleParams) => {
-      const api = schedulerApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = schedulerApi();
       return api.createPredefinedSchedule(campaignId, predefinedScheduleData);
     },
     onSuccess: (data, variables) => {

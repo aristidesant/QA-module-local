@@ -15,16 +15,15 @@ const DEFAULT_API_URL = getDefaultApiUrl() as string;
 
 /**
  * Disposition Nodes API client
- * @param authHeader - Authorization header object, e.g. { Authorization: 'Bearer ...' }
+ * Note: Authorization handled by global Axios interceptor.
  */
-const dispositionNodesApi = (authHeader: Record<string, string>) => {
+const dispositionNodesApi = (_authHeader?: Record<string, string>) => {
   return {
     // Create new node
     createNode: async (data: Partial<DispositionNode>) => {
       const response = await axios.post<DispositionNode>(
         `${DEFAULT_API_URL}/disposition-nodes`,
-        data,
-        { headers: { ...authHeader, "Content-Type": "application/json" } }
+        data
       );
       return response.data;
     },
@@ -33,7 +32,7 @@ const dispositionNodesApi = (authHeader: Record<string, string>) => {
     getNodes: async (params?: Record<string, any>) => {
       const response = await axios.get<DispositionNode[]>(
         `${DEFAULT_API_URL}/disposition-nodes`,
-        { headers: authHeader, params }
+        { params }
       );
       return response.data;
     },
@@ -41,8 +40,7 @@ const dispositionNodesApi = (authHeader: Record<string, string>) => {
     // Get specific node
     getNodeById: async (id: number | string) => {
       const response = await axios.get<DispositionNode>(
-        `${DEFAULT_API_URL}/disposition-nodes/${id}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/disposition-nodes/${id}`
       );
       return response.data;
     },
@@ -51,8 +49,7 @@ const dispositionNodesApi = (authHeader: Record<string, string>) => {
     updateNode: async (id: number | string, data: Partial<DispositionNode>) => {
       const response = await axios.patch<DispositionNode>(
         `${DEFAULT_API_URL}/disposition-nodes/${id}`,
-        data,
-        { headers: { ...authHeader, "Content-Type": "application/json" } }
+        data
       );
       return response.data;
     },
@@ -60,8 +57,7 @@ const dispositionNodesApi = (authHeader: Record<string, string>) => {
     // Soft delete node
     deleteNode: async (id: number | string) => {
       const response = await axios.delete(
-        `${DEFAULT_API_URL}/disposition-nodes/${id}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/disposition-nodes/${id}`
       );
       return response.data;
     },
@@ -70,8 +66,7 @@ const dispositionNodesApi = (authHeader: Record<string, string>) => {
     restoreNode: async (id: number | string) => {
       const response = await axios.put<DispositionNode>(
         `${DEFAULT_API_URL}/disposition-nodes/${id}/restore`,
-        {},
-        { headers: authHeader }
+        {}
       );
       return response.data;
     },
@@ -79,8 +74,7 @@ const dispositionNodesApi = (authHeader: Record<string, string>) => {
     // Get complete tree structure for catalog
     getTreeByCatalog: async (catalogId: number | string) => {
       const response = await axios.get<DispositionNode[]>(
-        `${DEFAULT_API_URL}/disposition-nodes/tree/catalog/${catalogId}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/disposition-nodes/tree/catalog/${catalogId}`
       );
       return response.data;
     },
@@ -88,8 +82,7 @@ const dispositionNodesApi = (authHeader: Record<string, string>) => {
     // Get root nodes for catalog
     getRootsByCatalog: async (catalogId: number | string) => {
       const response = await axios.get<DispositionNode[]>(
-        `${DEFAULT_API_URL}/disposition-nodes/roots/catalog/${catalogId}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/disposition-nodes/roots/catalog/${catalogId}`
       );
       return response.data;
     },
@@ -97,8 +90,7 @@ const dispositionNodesApi = (authHeader: Record<string, string>) => {
     // Get direct children
     getChildren: async (id: number | string) => {
       const response = await axios.get<DispositionNode[]>(
-        `${DEFAULT_API_URL}/disposition-nodes/${id}/children`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/disposition-nodes/${id}/children`
       );
       return response.data;
     },
@@ -106,8 +98,7 @@ const dispositionNodesApi = (authHeader: Record<string, string>) => {
     // Get all ancestors
     getAncestors: async (id: number | string) => {
       const response = await axios.get<DispositionNode[]>(
-        `${DEFAULT_API_URL}/disposition-nodes/${id}/ancestors`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/disposition-nodes/${id}/ancestors`
       );
       return response.data;
     },
@@ -115,8 +106,7 @@ const dispositionNodesApi = (authHeader: Record<string, string>) => {
     // Get all descendants
     getDescendants: async (id: number | string) => {
       const response = await axios.get<DispositionNode[]>(
-        `${DEFAULT_API_URL}/disposition-nodes/${id}/descendants`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/disposition-nodes/${id}/descendants`
       );
       return response.data;
     },
@@ -125,8 +115,7 @@ const dispositionNodesApi = (authHeader: Record<string, string>) => {
     moveNode: async (id: number | string, parentId: number | null) => {
       const response = await axios.put<DispositionNode>(
         `${DEFAULT_API_URL}/disposition-nodes/${id}/move`,
-        { parentId },
-        { headers: { ...authHeader, "Content-Type": "application/json" } }
+        { parentId }
       );
       return response.data;
     },
@@ -135,8 +124,7 @@ const dispositionNodesApi = (authHeader: Record<string, string>) => {
     bulkUpdateOrder: async (orders: Array<{ id: number; order: number }>) => {
       const response = await axios.put(
         `${DEFAULT_API_URL}/disposition-nodes/bulk-order`,
-        orders,
-        { headers: { ...authHeader, "Content-Type": "application/json" } }
+        orders
       );
       return response.data;
     },

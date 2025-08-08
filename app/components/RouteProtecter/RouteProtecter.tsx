@@ -1,18 +1,10 @@
-import type { Route } from "./+types/RouteProtecter";
-import { getSession } from "~/server-session";
-import {
-  Outlet,
-  useLoaderData,
-  Navigate,
-  useLocation,
-  useOutletContext,
-  useNavigate,
-} from "react-router";
+import { Outlet, useLoaderData, Navigate, useLocation } from "react-router";
 import { ModalsProvider } from "@mantine/modals";
 import userApi from "~/api/userApi";
 import { useEffect } from "react";
 import { useSessionStore } from "~/stores/sessionStore";
 import type { UserModel } from "~/models/UserModels";
+import { jwtDecode } from "jwt-decode";
 
 type LoaderData = {
   token: string | null;
@@ -24,19 +16,24 @@ type TokenType = {
   user: UserModel | null;
 };
 
-// Server loader to check session and get user data
-export async function loader({
-  request,
-}: Route.LoaderArgs): Promise<LoaderData> {
-  const session = await getSession(request.headers.get("Cookie"));
-  const token = session.get("accessToken");
-  const userId = session.get("userId");
-
-  if (!token) {
-    return { token: null, user: null };
-  }
-
+// Client loader to check session from localStorage and get user data
+export async function clientLoader(): Promise<LoaderData> {
+  const token =
+    typeof window !== "undefined"
+      ? window.localStorage.getItem("accessToken")
+      : null;
+  if (!token) return { token: null, user: null };
   try {
+    // Decode token to extract user id, then fetch the user by id
+    const decoded: any = jwtDecode(token);
+    const userId: number | undefined =
+      decoded?.userId ?? decoded?.sub ?? decoded?.id;
+
+    if (!userId || Number.isNaN(Number(userId))) {
+      // If we cannot obtain a valid user id, treat as unauthenticated
+      return { token, user: null };
+    }
+
     const user = await userApi({
       Authorization: `Bearer ${token}`,
     }).getUserById(Number(userId));
@@ -48,7 +45,7 @@ export async function loader({
 }
 
 export const RouteProtecter = () => {
-  const { token, user } = useLoaderData<typeof loader>();
+  const { token, user } = useLoaderData<typeof clientLoader>();
   const { setUser, setToken } = useSessionStore();
   const path = useLocation().pathname;
   useEffect(() => {

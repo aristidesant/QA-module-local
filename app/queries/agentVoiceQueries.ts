@@ -1,20 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import agentVoicesApi from "~/api/agentVoicesApi";
-import { getClientAuthorizationHeader } from "~/client-session";
-import { useToken } from "~/components/RouteProtecter/RouteProtecter";
 import type { AgentVoiceModel } from "~/models/AgentVoiceModel";
 
 // Create agent voice
 export const useCreateAgentVoice = () => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (voice: Partial<AgentVoiceModel>) => {
-      const api = agentVoicesApi({
-        ...header,
-        Authorization: `Bearer ${token.token}`,
-      });
+      const api = agentVoicesApi();
       return api.createVoice(voice);
     },
     onSuccess: (data) => {
@@ -28,15 +21,10 @@ export const useCreateAgentVoice = () => {
 
 // Get all agent voices
 export const useGetAllAgentVoices = (params?: Record<string, string>) => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery({
     queryKey: ["agentVoices", params],
     queryFn: async () => {
-      const api = agentVoicesApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = agentVoicesApi();
       return api.findAllVoices(params);
     },
   });
@@ -44,15 +32,10 @@ export const useGetAllAgentVoices = (params?: Record<string, string>) => {
 
 // Get one agent voice by id
 export const useGetAgentVoice = (id: string) => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery({
     queryKey: ["agentVoice", id],
     queryFn: async () => {
-      const api = agentVoicesApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = agentVoicesApi();
       return api.findVoice(id);
     },
     enabled: !!id,
@@ -61,8 +44,6 @@ export const useGetAgentVoice = (id: string) => {
 
 // Update agent voice
 export const useUpdateAgentVoice = () => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
@@ -72,10 +53,7 @@ export const useUpdateAgentVoice = () => {
       id: string;
       data: Partial<AgentVoiceModel>;
     }) => {
-      const api = agentVoicesApi({
-        ...header,
-        Authorization: `Bearer ${token.token}`,
-      });
+      const api = agentVoicesApi();
       return api.updateVoice(id, data);
     },
     onSuccess: (data) => {
@@ -92,15 +70,10 @@ export const useUpdateAgentVoice = () => {
 
 // Delete agent voice
 export const useDeleteAgentVoice = () => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const api = agentVoicesApi({
-        ...header,
-        Authorization: `Bearer ${token.token}`,
-      });
+      const api = agentVoicesApi();
       return api.deleteVoice(id);
     },
     onSuccess: (_, id) => {
@@ -115,15 +88,10 @@ export const useDeleteAgentVoice = () => {
 
 // Get Elevenlabs voices
 export const useGetElevenlabsVoices = (params?: Record<string, string>) => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery({
     queryKey: ["elevenlabsVoices", params],
     queryFn: async () => {
-      const api = agentVoicesApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = agentVoicesApi();
       return api.getElevenlabsVoices(params);
     },
   });

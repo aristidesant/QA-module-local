@@ -1,7 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import dispositionFlowApi from "~/api/dispositionFlowApi";
-import { getClientAuthorizationHeader } from "~/client-session";
-import { useToken } from "~/components/RouteProtecter/RouteProtecter";
 import type { DispositionFlowModel } from "~/models/DispositionFlowModel";
 
 /**
@@ -9,18 +7,13 @@ import type { DispositionFlowModel } from "~/models/DispositionFlowModel";
  * @returns Query result containing an array of DispositionFlowModel objects
  */
 export function useDispositionFlows() {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery<DispositionFlowModel[], Error>({
     queryKey: ["dispositionFlows"],
     queryFn: async () => {
-      const api = dispositionFlowApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = dispositionFlowApi();
       return api.getAllDispositionFlows();
     },
-    enabled: !!token?.token,
+    enabled: true,
   });
 }
 
@@ -30,21 +23,16 @@ export function useDispositionFlows() {
  * @returns Query result containing a DispositionFlowModel object
  */
 export function useDispositionFlow(id?: string | number) {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery<DispositionFlowModel, Error>({
     queryKey: ["dispositionFlow", id],
     queryFn: async () => {
       if (!id) {
         throw new Error("Disposition flow ID is required");
       }
-      const api = dispositionFlowApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = dispositionFlowApi();
       return api.getDispositionFlowById(id);
     },
-    enabled: !!id && !!token?.token,
+    enabled: !!id,
   });
 }
 
@@ -54,21 +42,16 @@ export function useDispositionFlow(id?: string | number) {
  * @returns Query result containing an array of DispositionFlowModel objects
  */
 export function useDispositionFlowsByCampaign(campaignId?: string | number) {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery<DispositionFlowModel[], Error>({
     queryKey: ["dispositionFlows", "campaign", campaignId],
     queryFn: async () => {
       if (!campaignId) {
         throw new Error("Campaign ID is required");
       }
-      const api = dispositionFlowApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = dispositionFlowApi();
       return api.getDispositionFlowsByCampaign(campaignId);
     },
-    enabled: !!campaignId && !!token?.token,
+    enabled: !!campaignId,
   });
 }
 
@@ -80,21 +63,16 @@ export function useDispositionFlowsByCampaign(campaignId?: string | number) {
 export function useDispositionFlowsByCampaignPath(
   campaignId?: string | number
 ) {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery<DispositionFlowModel, Error>({
     queryKey: ["dispositionFlows", "campaignPath", campaignId],
     queryFn: async () => {
       if (!campaignId) {
         throw new Error("Campaign ID is required");
       }
-      const api = dispositionFlowApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = dispositionFlowApi();
       return api.getDispositionFlowsByCampaignPath(campaignId);
     },
-    enabled: !!campaignId && !!token?.token,
+    enabled: !!campaignId,
   });
 }
 
@@ -104,21 +82,16 @@ export function useDispositionFlowsByCampaignPath(
  * @returns Query result containing an array of DispositionFlowModel objects
  */
 export function useDispositionFlowsByUser(userId?: string | number) {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery<DispositionFlowModel[], Error>({
     queryKey: ["dispositionFlows", "user", userId],
     queryFn: async () => {
       if (!userId) {
         throw new Error("User ID is required");
       }
-      const api = dispositionFlowApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = dispositionFlowApi();
       return api.getDispositionFlowsByUser(userId);
     },
-    enabled: !!userId && !!token?.token,
+    enabled: !!userId,
   });
 }
 
@@ -127,19 +100,14 @@ export function useDispositionFlowsByUser(userId?: string | number) {
  * @returns Mutation object with methods to create a disposition flow
  */
 export function useCreateDispositionFlow() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
   return useMutation<
     DispositionFlowModel,
     Error,
     Partial<DispositionFlowModel>
   >({
     mutationFn: async (data) => {
-      const api = dispositionFlowApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = dispositionFlowApi();
       return api.createDispositionFlow(data);
     },
     onSuccess: (data) => {
@@ -169,19 +137,14 @@ export function useCreateDispositionFlow() {
  * @returns Mutation object with methods to update a disposition flow
  */
 export function useUpdateDispositionFlow() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
   return useMutation<
     DispositionFlowModel,
     Error,
     { id: string | number; data: Partial<DispositionFlowModel> }
   >({
     mutationFn: async ({ id, data }) => {
-      const api = dispositionFlowApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = dispositionFlowApi();
       return api.updateDispositionFlow(id, data);
     },
     onSuccess: (data, variables) => {
@@ -215,15 +178,10 @@ export function useUpdateDispositionFlow() {
  * @returns Mutation object with methods to delete a disposition flow
  */
 export function useDeleteDispositionFlow() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
   return useMutation<void, Error, string | number>({
     mutationFn: async (id) => {
-      const api = dispositionFlowApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = dispositionFlowApi();
       return api.deleteDispositionFlow(id);
     },
     onSuccess: (_, variables) => {

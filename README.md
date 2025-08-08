@@ -14,7 +14,7 @@ The application serves as the user interface for creating, configuring, and depl
 
 ## Tech Stack
 
-- **Framework**: [React Router v7](https://reactrouter.com/) — Used for routing and server-side rendering (SSR) capabilities.
+- **Framework**: [React Router v7](https://reactrouter.com/) — Used for routing; configured for SPA mode (ssr: false).
 - **UI Components**: [Mantine v8](https://mantine.dev/) — A modern React UI component library used for layout, forms, modals, notifications, and theming.
 - **HTTP Client**: [Axios](https://axios-http.com/) — Used for making REST API requests throughout the application.
 - **Date Management**: [Day.js](https://day.js.org/) — Lightweight library for parsing, validating, and formatting dates, used mainly in API request handling.
@@ -26,7 +26,7 @@ The application serves as the user interface for creating, configuring, and depl
 
 - `npm run dev` – Start development server using React Router Dev mode.
 - `npm run build` – Create a production-ready build.
-- `npm run start` – Serve the production build with SSR capabilities.
+- `npm run start` – Serve the production client build with SPA fallback.
 - `npm run typecheck` – Generate type definitions and run TypeScript checks.
 
 ## Environment Variables
@@ -62,7 +62,17 @@ The frontend uses JWT (JSON Web Tokens) for authenticating users and securing ro
 
 ## Deployment
 
-This application is deployed via DigitalOcean App Platform. Make sure environment variables are properly set in the deployment settings.
+This app runs as a Single Page Application (SPA). You can host the `build/client` directory on any static file host. Ensure deep-links route to the SPA entry:
+
+For hosts that support Netlify-style redirects, add a `_redirects` file with:
+
+```
+/*    /index.html   200
+```
+
+If you pre-render `/`, React Router may emit `__spa-fallback.html`; point your host to that instead.
+
+DigitalOcean App Platform: serve `build/client` and enable SPA fallback to `index.html`.
 
 ## License
 

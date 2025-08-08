@@ -15,19 +15,15 @@ const getDefaultApiUrl = () => {
 const DEFAULT_API_URL = getDefaultApiUrl() as string;
 
 /**
- * Generic Campaigns API client
- * @param authHeader - Authorization header object, e.g. { Authorization: 'Bearer ...' }
+ * Generic Campaigns API client (uses global axios interceptors for auth)
  */
-const campaignsApi = (authHeader: Record<string, string>) => {
+const campaignsApi = (_authHeader: Record<string, string> = {}) => {
   return {
     // CREATE campaign
     createCampaign: async (campaign: Partial<Campaign>) => {
       const response = await axios.post(
         `${DEFAULT_API_URL}/campaigns`,
-        campaign,
-        {
-          headers: authHeader,
-        }
+        campaign
       );
       return response.data;
     },
@@ -41,7 +37,7 @@ const campaignsApi = (authHeader: Record<string, string>) => {
         `${DEFAULT_API_URL}/campaigns`,
         {
           params,
-          headers: { ...authHeader, ...(extraHeaders || {}) },
+          ...(extraHeaders ? { headers: extraHeaders } : {}),
           timeout: 5000,
         }
       );
@@ -51,8 +47,7 @@ const campaignsApi = (authHeader: Record<string, string>) => {
     // FIND ONE campaign
     findCampaign: async (campaignId: string) => {
       const response = await axios.get<Campaign>(
-        `${DEFAULT_API_URL}/campaigns/${campaignId}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/campaigns/${campaignId}`
       );
       return response.data;
     },
@@ -66,10 +61,7 @@ const campaignsApi = (authHeader: Record<string, string>) => {
       );
       const response = await axios.patch<Campaign>(
         `${DEFAULT_API_URL}/campaigns/${campaignId}`,
-        data,
-        {
-          headers: authHeader,
-        }
+        data
       );
       return response.data;
     },
@@ -77,10 +69,7 @@ const campaignsApi = (authHeader: Record<string, string>) => {
     // DELETE campaign
     deleteCampaign: async (campaignId: string) => {
       const response = await axios.delete(
-        `${DEFAULT_API_URL}/campaigns/${campaignId}`,
-        {
-          headers: authHeader,
-        }
+        `${DEFAULT_API_URL}/campaigns/${campaignId}`
       );
       return response.data;
     },

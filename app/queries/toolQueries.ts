@@ -1,7 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toolApi from "~/api/toolApi";
-import { getClientAuthorizationHeader } from "~/client-session";
-import { useToken } from "~/components/RouteProtecter/RouteProtecter";
 import type { ToolModel } from "~/models/ToolModel";
 
 /**
@@ -9,16 +7,10 @@ import type { ToolModel } from "~/models/ToolModel";
  * @returns Query result containing an array of ToolModel objects
  */
 export function useTools() {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
-
   return useQuery<ToolModel[], Error>({
     queryKey: ["tools"],
     queryFn: async () => {
-      const api = toolApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = toolApi();
       return api.getAllTools();
     },
   });
@@ -30,17 +22,11 @@ export function useTools() {
  * @returns Query result containing a ToolModel object
  */
 export function useToolById(id: string | number | undefined) {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
-
   return useQuery<ToolModel, Error>({
     queryKey: ["tool", id],
     queryFn: async () => {
       if (!id) throw new Error("Tool ID is required");
-      const api = toolApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = toolApi();
       return api.getToolById(id);
     },
     enabled: !!id,
@@ -52,16 +38,11 @@ export function useToolById(id: string | number | undefined) {
  * @returns Mutation object with methods to create a tool
  */
 export function useCreateTool() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
 
   return useMutation({
     mutationFn: async (data: Partial<ToolModel>) => {
-      const api = toolApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = toolApi();
       return api.createTool(data);
     },
     onSuccess: () => {
@@ -75,9 +56,7 @@ export function useCreateTool() {
  * @returns Mutation object with methods to update a tool
  */
 export function useUpdateTool() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
 
   return useMutation({
     mutationFn: async ({
@@ -87,10 +66,7 @@ export function useUpdateTool() {
       id: string | number;
       data: Partial<ToolModel>;
     }) => {
-      const api = toolApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = toolApi();
       return api.updateTool(id, data);
     },
     onSuccess: (data, variables) => {
@@ -105,16 +81,11 @@ export function useUpdateTool() {
  * @returns Mutation object with methods to delete a tool
  */
 export function useDeleteTool() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
 
   return useMutation({
     mutationFn: async (id: string | number) => {
-      const api = toolApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = toolApi();
       return api.deleteTool(id);
     },
     onSuccess: (data, id) => {
@@ -129,16 +100,11 @@ export function useDeleteTool() {
  * @returns Mutation object with methods to create tools in bulk
  */
 export function useCreateToolBulk() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
 
   return useMutation({
     mutationFn: async (data: Partial<ToolModel>[]) => {
-      const api = toolApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = toolApi();
       return api.createToolBulk(data);
     },
     onSuccess: () => {
@@ -153,17 +119,11 @@ export function useCreateToolBulk() {
  * @returns Query result containing an array of ToolModel objects
  */
 export function useToolsByCategory(categoryId: string | number | undefined) {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
-
   return useQuery<ToolModel[], Error>({
     queryKey: ["toolsByCategory", categoryId],
     queryFn: async () => {
       if (!categoryId) return [];
-      const api = toolApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = toolApi();
       return api.getToolsByCategory(categoryId);
     },
     enabled: !!categoryId,

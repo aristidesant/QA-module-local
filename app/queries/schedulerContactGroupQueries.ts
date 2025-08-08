@@ -1,8 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import schedulerContactGroupApi from "~/api/schedulerContactGroupApi";
 import type { UpdateSchedulerContactGroupPayload } from "~/api/schedulerContactGroupApi";
-import { getClientAuthorizationHeader } from "~/client-session";
-import { useToken } from "~/components/RouteProtecter/RouteProtecter";
 
 interface UpdateSchedulerContactGroupParams {
   id: string | number;
@@ -24,36 +22,27 @@ export function useSchedulerContactGroupsByCampaignAndStatus(
   scheduleStatus: string | undefined,
   options = {}
 ) {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
-
   return useQuery({
     queryKey: ["schedulerContactGroups", campaignId, scheduleStatus],
     queryFn: async () => {
       if (!campaignId || !scheduleStatus) return null;
-      
-      const api = schedulerContactGroupApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
-      return api.getSchedulerContactGroupsByCampaignAndStatus(campaignId, scheduleStatus);
+      const api = schedulerContactGroupApi();
+      return api.getSchedulerContactGroupsByCampaignAndStatus(
+        campaignId,
+        scheduleStatus
+      );
     },
-    enabled: !!campaignId && !!scheduleStatus && !!token?.token,
+    enabled: !!campaignId && !!scheduleStatus,
     ...options,
   });
 }
 
 export function useUpdateSchedulerContactGroup() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
 
   return useMutation({
     mutationFn: async ({ id, payload }: UpdateSchedulerContactGroupParams) => {
-      const api = schedulerContactGroupApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = schedulerContactGroupApi();
       return api.updateSchedulerContactGroup(id, payload);
     },
     onSuccess: () => {

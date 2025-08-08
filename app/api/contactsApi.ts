@@ -15,32 +15,22 @@ const DEFAULT_API_URL = getDefaultApiUrl() as string;
 
 /**
  * Generic Contacts API client
- * @param authHeader - Authorization header object, e.g. { Authorization: 'Bearer ...' }
+ * Note: Authorization handled by global Axios interceptor.
  */
-const contactsApi = (authHeader: Record<string, string>) => {
+const contactsApi = (_authHeader?: Record<string, string>) => {
   return {
     // CREATE contact
     createContact: async (contact: Partial<Contact>) => {
-      const response = await axios.post(
-        `${DEFAULT_API_URL}/contacts`,
-        contact,
-        {
-          headers: authHeader,
-        }
-      );
+      const response = await axios.post(`${DEFAULT_API_URL}/contacts`, contact);
       return response.data;
     },
 
     // FIND ALL contacts
-    findAllContacts: async (
-      params?: Record<string, any>,
-      extraHeaders?: Record<string, string>
-    ) => {
+    findAllContacts: async (params?: Record<string, any>) => {
       const response = await axios.get<Contact[]>(
         `${DEFAULT_API_URL}/contacts`,
         {
           params,
-          headers: { ...authHeader, ...(extraHeaders || {}) },
           timeout: 5000,
         }
       );
@@ -50,8 +40,7 @@ const contactsApi = (authHeader: Record<string, string>) => {
     // FIND ONE contact
     findContact: async (contactId: string) => {
       const response = await axios.get<Contact>(
-        `${DEFAULT_API_URL}/contacts/${contactId}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/contacts/${contactId}`
       );
       return response.data;
     },
@@ -60,10 +49,7 @@ const contactsApi = (authHeader: Record<string, string>) => {
     updateContact: async (contactId: string, data: Partial<Contact>) => {
       const response = await axios.patch<Contact>(
         `${DEFAULT_API_URL}/contacts/${contactId}`,
-        data,
-        {
-          headers: authHeader,
-        }
+        data
       );
       return response.data;
     },
@@ -71,10 +57,7 @@ const contactsApi = (authHeader: Record<string, string>) => {
     // DELETE contact
     deleteContact: async (contactId: string) => {
       const response = await axios.delete(
-        `${DEFAULT_API_URL}/contacts/${contactId}`,
-        {
-          headers: authHeader,
-        }
+        `${DEFAULT_API_URL}/contacts/${contactId}`
       );
       return response.data;
     },

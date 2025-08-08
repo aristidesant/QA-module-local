@@ -15,15 +15,14 @@ const DEFAULT_API_URL = getDefaultApiUrl() as string;
 
 /**
  * Disposition Flow API client
- * @param authHeader - Authorization header object, e.g. { Authorization: 'Bearer ...' }
+ * Note: Authorization handled by global Axios interceptor.
  */
-const dispositionFlowApi = (authHeader: Record<string, string>) => {
+const dispositionFlowApi = (_authHeader?: Record<string, string>) => {
   return {
     // GET all disposition flows
     getAllDispositionFlows: async () => {
       const response = await axios.get<DispositionFlowModel[]>(
-        `${DEFAULT_API_URL}/disposition-flows`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/disposition-flows`
       );
       return response.data;
     },
@@ -31,8 +30,7 @@ const dispositionFlowApi = (authHeader: Record<string, string>) => {
     // GET disposition flow by ID
     getDispositionFlowById: async (id: string | number) => {
       const response = await axios.get<DispositionFlowModel>(
-        `${DEFAULT_API_URL}/disposition-flows/${id}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/disposition-flows/${id}`
       );
       return response.data;
     },
@@ -41,13 +39,7 @@ const dispositionFlowApi = (authHeader: Record<string, string>) => {
     createDispositionFlow: async (data: Partial<DispositionFlowModel>) => {
       const response = await axios.post<DispositionFlowModel>(
         `${DEFAULT_API_URL}/disposition-flows`,
-        data,
-        {
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
-        }
+        data
       );
       return response.data;
     },
@@ -59,13 +51,7 @@ const dispositionFlowApi = (authHeader: Record<string, string>) => {
     ) => {
       const response = await axios.patch<DispositionFlowModel>(
         `${DEFAULT_API_URL}/disposition-flows/${id}`,
-        data,
-        {
-          headers: {
-            ...authHeader,
-            "Content-Type": "application/json",
-          },
-        }
+        data
       );
       return response.data;
     },
@@ -73,8 +59,7 @@ const dispositionFlowApi = (authHeader: Record<string, string>) => {
     // DELETE disposition flow
     deleteDispositionFlow: async (id: string | number) => {
       const response = await axios.delete(
-        `${DEFAULT_API_URL}/disposition-flows/${id}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/disposition-flows/${id}`
       );
       return response.data;
     },
@@ -82,8 +67,7 @@ const dispositionFlowApi = (authHeader: Record<string, string>) => {
     // GET disposition flows by campaign ID (query parameter)
     getDispositionFlowsByCampaign: async (campaignId: string | number) => {
       const response = await axios.get<DispositionFlowModel[]>(
-        `${DEFAULT_API_URL}/disposition-flows?campaignId=${campaignId}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/disposition-flows?campaignId=${campaignId}`
       );
       return response.data;
     },
@@ -91,8 +75,7 @@ const dispositionFlowApi = (authHeader: Record<string, string>) => {
     // GET disposition flows by campaign ID (path parameter)
     getDispositionFlowsByCampaignPath: async (campaignId: string | number) => {
       const response = await axios.get<DispositionFlowModel>(
-        `${DEFAULT_API_URL}/disposition-flows/campaign/${campaignId}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/disposition-flows/campaign/${campaignId}`
       );
       return response.data;
     },
@@ -100,8 +83,7 @@ const dispositionFlowApi = (authHeader: Record<string, string>) => {
     // GET disposition flows by user ID
     getDispositionFlowsByUser: async (userId: string | number) => {
       const response = await axios.get<DispositionFlowModel[]>(
-        `${DEFAULT_API_URL}/disposition-flows?userId=${userId}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/disposition-flows?userId=${userId}`
       );
       return response.data;
     },

@@ -15,16 +15,13 @@ const getDefaultApiUrl = () => {
 const DEFAULT_API_URL = getDefaultApiUrl() as string;
 
 /**
- * Generic Agent API client
- * @param authHeader - Authorization header object, e.g. { Authorization: 'Bearer ...' }
+ * Generic Agent API client (uses global axios interceptors for auth)
  */
-const agentApi = (authHeader: Record<string, string> = {}) => {
+const agentApi = (_authHeader: Record<string, string> = {}) => {
   return {
     // CREATE agent
     createAgent: async (agent: BodyCreateAgentV1ConvaiAgentsCreatePost) => {
-      const response = await axios.post(`${DEFAULT_API_URL}/agents`, agent, {
-        headers: authHeader,
-      });
+      const response = await axios.post(`${DEFAULT_API_URL}/agents`, agent);
       return response.data;
     },
 
@@ -42,7 +39,7 @@ const agentApi = (authHeader: Record<string, string> = {}) => {
         `${DEFAULT_API_URL}/agents`,
         {
           params,
-          headers: { ...authHeader, ...(extraHeaders || {}) },
+          ...(extraHeaders ? { headers: extraHeaders } : {}),
           timeout: 5000,
         }
       );
@@ -52,8 +49,7 @@ const agentApi = (authHeader: Record<string, string> = {}) => {
     // FIND ONE agent
     findAgent: async (agentId: string) => {
       const response = await axios.get<AgentListObject>(
-        `${DEFAULT_API_URL}/agents/${agentId}`,
-        { headers: authHeader }
+        `${DEFAULT_API_URL}/agents/${agentId}`
       );
       return response.data;
     },
@@ -63,10 +59,7 @@ const agentApi = (authHeader: Record<string, string> = {}) => {
       // Convert camelCase to snake_case for API
       const response = await axios.patch(
         `${DEFAULT_API_URL}/agents/${agentId}`,
-        data,
-        {
-          headers: authHeader,
-        }
+        data
       );
       // Convert response back to camelCase
       return response.data;
@@ -75,10 +68,7 @@ const agentApi = (authHeader: Record<string, string> = {}) => {
     // DELETE agent
     deleteAgent: async (agentId: string) => {
       const response = await axios.delete(
-        `${DEFAULT_API_URL}/agents/${agentId}`,
-        {
-          headers: authHeader,
-        }
+        `${DEFAULT_API_URL}/agents/${agentId}`
       );
       return response.data;
     },

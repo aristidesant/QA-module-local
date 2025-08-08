@@ -1,20 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import agentApi from "~/api/agentApi";
-import { getClientAuthorizationHeader } from "~/client-session";
-import { useToken } from "~/components/RouteProtecter/RouteProtecter";
 import type { AgentUpdateModel } from "~/models/AgentListObject";
 
 // Create agent
 export const useCreateAgent = () => {
-  const { token } = useToken();
-  const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (agent: any) => {
-      const api = agentApi({
-        ...header,
-        Authorization: `Bearer ${token}`,
-      });
+      const api = agentApi();
       return api.createAgent(agent);
     },
     onSuccess: (data) => {
@@ -28,15 +21,10 @@ export const useCreateAgent = () => {
 
 // Get all agents
 export const useGetAllAgents = (params?: Record<string, unknown>) => {
-  const { token } = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery({
     queryKey: ["agents", params],
     queryFn: async () => {
-      const api = agentApi({
-        ...header,
-        Authorization: `Bearer ${token}`,
-      });
+      const api = agentApi();
       return api.findAllAgents(params);
     },
   });
@@ -44,15 +32,10 @@ export const useGetAllAgents = (params?: Record<string, unknown>) => {
 
 // Get one agent by id
 export const useGetAgent = (id: string) => {
-  const { token } = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery({
     queryKey: ["agent", id],
     queryFn: async () => {
-      const api = agentApi({
-        ...header,
-        Authorization: `Bearer ${token}`,
-      });
+      const api = agentApi();
       return api.findAgent(id);
     },
     enabled: !!id,
@@ -61,8 +44,6 @@ export const useGetAgent = (id: string) => {
 
 // Update agent
 export const useUpdateAgent = () => {
-  const { token } = useToken();
-  const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
@@ -72,10 +53,7 @@ export const useUpdateAgent = () => {
       id: string;
       data: Partial<AgentUpdateModel>;
     }) => {
-      const api = agentApi({
-        ...header,
-        Authorization: `Bearer ${token}`,
-      });
+      const api = agentApi();
       return api.updateAgent(id, data);
     },
     onSuccess: (data) => {
@@ -92,15 +70,10 @@ export const useUpdateAgent = () => {
 
 // Delete agent
 export const useDeleteAgent = () => {
-  const { token } = useToken();
-  const header = getClientAuthorizationHeader();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const api = agentApi({
-        ...header,
-        Authorization: `Bearer ${token}`,
-      });
+      const api = agentApi();
       return api.deleteAgent(id);
     },
     onSuccess: (_, id) => {

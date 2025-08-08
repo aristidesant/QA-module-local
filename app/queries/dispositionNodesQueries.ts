@@ -1,8 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import dispositionNodesApi from "~/api/dispositionNodesApi";
-import { getClientAuthorizationHeader } from "~/client-session";
-import { useToken } from "~/components/RouteProtecter/RouteProtecter";
 import type { DispositionNode } from "~/models/DispositionNodeModel";
 
 // --- Types ---
@@ -26,31 +23,21 @@ export interface BulkOrderParams {
 
 // --- Queries ---
 export function useDispositionNodes(filters?: Record<string, any>) {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery<DispositionNode[], Error>({
     queryKey: ["dispositionNodes", filters],
     queryFn: async () => {
-      const api = dispositionNodesApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = dispositionNodesApi();
       return api.getNodes(filters);
     },
   });
 }
 
 export function useDispositionNode(id: number | string | undefined) {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery<DispositionNode, Error>({
     queryKey: ["dispositionNode", id],
     queryFn: async () => {
       if (!id) throw new Error("Node ID required");
-      const api = dispositionNodesApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = dispositionNodesApi();
       return api.getNodeById(id);
     },
     enabled: !!id,
@@ -60,16 +47,11 @@ export function useDispositionNode(id: number | string | undefined) {
 export function useDispositionTreeByCatalog(
   catalogId: number | string | undefined
 ) {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery<DispositionNode[], Error>({
     queryKey: ["dispositionTree", catalogId],
     queryFn: async () => {
       if (!catalogId) throw new Error("Catalog ID required");
-      const api = dispositionNodesApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = dispositionNodesApi();
       return api.getTreeByCatalog(catalogId);
     },
     enabled: !!catalogId,
@@ -79,16 +61,11 @@ export function useDispositionTreeByCatalog(
 export function useDispositionRootsByCatalog(
   catalogId: number | string | undefined
 ) {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery<DispositionNode[], Error>({
     queryKey: ["dispositionRoots", catalogId],
     queryFn: async () => {
       if (!catalogId) throw new Error("Catalog ID required");
-      const api = dispositionNodesApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = dispositionNodesApi();
       return api.getRootsByCatalog(catalogId);
     },
     enabled: !!catalogId,
@@ -96,16 +73,11 @@ export function useDispositionRootsByCatalog(
 }
 
 export function useDispositionChildren(id: number | string | undefined) {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery<DispositionNode[], Error>({
     queryKey: ["dispositionChildren", id],
     queryFn: async () => {
       if (!id) throw new Error("Node ID required");
-      const api = dispositionNodesApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = dispositionNodesApi();
       return api.getChildren(id);
     },
     enabled: !!id,
@@ -113,16 +85,11 @@ export function useDispositionChildren(id: number | string | undefined) {
 }
 
 export function useDispositionAncestors(id: number | string | undefined) {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery<DispositionNode[], Error>({
     queryKey: ["dispositionAncestors", id],
     queryFn: async () => {
       if (!id) throw new Error("Node ID required");
-      const api = dispositionNodesApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = dispositionNodesApi();
       return api.getAncestors(id);
     },
     enabled: !!id,
@@ -130,16 +97,11 @@ export function useDispositionAncestors(id: number | string | undefined) {
 }
 
 export function useDispositionDescendants(id: number | string | undefined) {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
   return useQuery<DispositionNode[], Error>({
     queryKey: ["dispositionDescendants", id],
     queryFn: async () => {
       if (!id) throw new Error("Node ID required");
-      const api = dispositionNodesApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = dispositionNodesApi();
       return api.getDescendants(id);
     },
     enabled: !!id,
@@ -148,15 +110,10 @@ export function useDispositionDescendants(id: number | string | undefined) {
 
 // --- Mutations ---
 export function useCreateDispositionNode() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
   return useMutation({
     mutationFn: async ({ data }: CreateNodeParams) => {
-      const api = dispositionNodesApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = dispositionNodesApi();
       return api.createNode(data);
     },
     onSuccess: () => {
@@ -166,15 +123,10 @@ export function useCreateDispositionNode() {
 }
 
 export function useUpdateDispositionNode() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
   return useMutation({
     mutationFn: async ({ id, data }: UpdateNodeParams) => {
-      const api = dispositionNodesApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = dispositionNodesApi();
       return api.updateNode(id, data);
     },
     onSuccess: (data, variables) => {
@@ -187,15 +139,10 @@ export function useUpdateDispositionNode() {
 }
 
 export function useDeleteDispositionNode() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
   return useMutation({
     mutationFn: async (id: number | string) => {
-      const api = dispositionNodesApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = dispositionNodesApi();
       return api.deleteNode(id);
     },
     onSuccess: (data, id) => {
@@ -206,15 +153,10 @@ export function useDeleteDispositionNode() {
 }
 
 export function useRestoreDispositionNode() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
   return useMutation({
     mutationFn: async (id: number | string) => {
-      const api = dispositionNodesApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = dispositionNodesApi();
       return api.restoreNode(id);
     },
     onSuccess: (data, id) => {
@@ -225,15 +167,10 @@ export function useRestoreDispositionNode() {
 }
 
 export function useMoveDispositionNode() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
   return useMutation({
     mutationFn: async ({ id, parentId }: MoveNodeParams) => {
-      const api = dispositionNodesApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = dispositionNodesApi();
       return api.moveNode(id, parentId);
     },
     onSuccess: (data, variables) => {
@@ -246,15 +183,10 @@ export function useMoveDispositionNode() {
 }
 
 export function useBulkUpdateDispositionOrder() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
   return useMutation({
     mutationFn: async ({ orders }: BulkOrderParams) => {
-      const api = dispositionNodesApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = dispositionNodesApi();
       return api.bulkUpdateOrder(orders);
     },
     onSuccess: () => {

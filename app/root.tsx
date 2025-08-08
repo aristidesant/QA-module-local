@@ -21,6 +21,8 @@ import { Loader } from "./components/ui/Loader";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./queryClient";
 import mantineTheme from "./theme";
+// Initialize global axios interceptors once
+import "./utils/axiosInterceptor";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },

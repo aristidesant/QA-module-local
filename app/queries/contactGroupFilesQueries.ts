@@ -1,11 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import contactGroupFilesApi from "~/api/contactGroupFilesApi";
-import { getClientAuthorizationHeader } from "~/client-session";
-import { useToken } from "~/components/RouteProtecter/RouteProtecter";
-import type { 
-  ContactFileSummary, 
-  ProcessContactGroupFileRequest, 
-  ProcessContactGroupFileResponse 
+import type {
+  ContactFileSummary,
+  ProcessContactGroupFileRequest,
+  ProcessContactGroupFileResponse,
 } from "~/models/ContactFileSummary";
 
 export interface ContactList {
@@ -20,17 +18,16 @@ interface UploadContactGroupFileOptions {
   onError?: (error: unknown) => void;
 }
 
-export const useUploadContactGroupFile = (options?: UploadContactGroupFileOptions) => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
-
+export const useUploadContactGroupFile = (
+  options?: UploadContactGroupFileOptions
+) => {
   return useMutation({
-    mutationFn: async (params: { file: File; campaignId: string | number }): Promise<ContactFileSummary> => {
+    mutationFn: async (params: {
+      file: File;
+      campaignId: string | number;
+    }): Promise<ContactFileSummary> => {
       if (!params.campaignId) throw new Error("Campaign ID is required");
-      const api = contactGroupFilesApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = contactGroupFilesApi();
       return api.uploadContactGroupFile(params.file, Number(params.campaignId));
     },
     onSuccess: (data) => {
@@ -47,16 +44,14 @@ interface ProcessContactGroupFileOptions {
   onError?: (error: unknown) => void;
 }
 
-export const useProcessContactGroupFile = (options?: ProcessContactGroupFileOptions) => {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
-
+export const useProcessContactGroupFile = (
+  options?: ProcessContactGroupFileOptions
+) => {
   return useMutation({
-    mutationFn: async (data: ProcessContactGroupFileRequest): Promise<ProcessContactGroupFileResponse> => {
-      const api = contactGroupFilesApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+    mutationFn: async (
+      data: ProcessContactGroupFileRequest
+    ): Promise<ProcessContactGroupFileResponse> => {
+      const api = contactGroupFilesApi();
       return api.processContactGroupFile(data);
     },
     onSuccess: (data) => {

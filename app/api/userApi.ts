@@ -1,5 +1,4 @@
 import axios from "axios";
-import type { AxiosInstance } from "axios";
 import type { UserModel } from "~/models/UserModels";
 
 const getDefaultApiUrl = (): string => {
@@ -20,27 +19,22 @@ interface UserApiClient {
   getAllUsers: () => Promise<UserModel[]>;
 }
 
-// User API client
-// @param authHeader - Authorization header object, e.g. { Authorization: 'Bearer ...' }
-const userApi = (authHeader: Record<string, string>): UserApiClient => {
-  const client: AxiosInstance = axios.create({
-    baseURL: `${DEFAULT_API_URL}`,
-    headers: {
-      "Content-Type": "application/json",
-      ...authHeader,
-    },
-  });
-
+// User API client (uses global axios interceptors for auth)
+const userApi = (_authHeader: Record<string, string> = {}): UserApiClient => {
   return {
     // Get user by ID
     getUserById: async (id: number): Promise<UserModel> => {
-      const response = await client.get<UserModel>(`/users/${id}`);
+      const response = await axios.get<UserModel>(
+        `${DEFAULT_API_URL}/users/${id}`
+      );
       return response.data;
     },
 
     // Get current authenticated user
     getCurrentUser: async (): Promise<UserModel> => {
-      const response = await client.get<UserModel>("/users/me");
+      const response = await axios.get<UserModel>(
+        `${DEFAULT_API_URL}/users/me`
+      );
       return response.data;
     },
 
@@ -49,24 +43,30 @@ const userApi = (authHeader: Record<string, string>): UserApiClient => {
       id: number,
       userData: Partial<UserModel>
     ): Promise<UserModel> => {
-      const response = await client.patch<UserModel>(`/users/${id}`, userData);
+      const response = await axios.patch<UserModel>(
+        `${DEFAULT_API_URL}/users/${id}`,
+        userData
+      );
       return response.data;
     },
 
     // Delete user
     deleteUser: async (id: number): Promise<void> => {
-      await client.delete(`/users/${id}`);
+      await axios.delete(`${DEFAULT_API_URL}/users/${id}`);
     },
 
     // Create user
     createUser: async (userData: UserModel): Promise<UserModel> => {
-      const response = await client.post<UserModel>("/users", userData);
+      const response = await axios.post<UserModel>(
+        `${DEFAULT_API_URL}/users`,
+        userData
+      );
       return response.data;
     },
 
     // Get all users
     getAllUsers: async (): Promise<UserModel[]> => {
-      const { data } = await client.get<UserModel[]>("/users");
+      const { data } = await axios.get<UserModel[]>(`${DEFAULT_API_URL}/users`);
       return data;
     },
   };

@@ -1,7 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toolCategoryApi from "~/api/toolCategoryApi";
-import { getClientAuthorizationHeader } from "~/client-session";
-import { useToken } from "~/components/RouteProtecter/RouteProtecter";
 import type { ToolCategoryModel } from "~/models/ToolCategoryModel";
 import type { ToolModel } from "~/models/ToolModel";
 
@@ -11,19 +9,13 @@ import type { ToolModel } from "~/models/ToolModel";
  * @returns Query result containing an array of ToolModel objects
  */
 export function useToolsByCategory(categoryId: string | number | undefined) {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
-
   return useQuery<ToolModel[], Error>({
     queryKey: ["toolsByCategory", categoryId],
     queryFn: async () => {
       if (!categoryId) {
         return [];
       }
-      const api = toolCategoryApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = toolCategoryApi();
       return api.getToolsByCategory(categoryId);
     },
     enabled: !!categoryId,
@@ -34,16 +26,11 @@ export function useToolsByCategory(categoryId: string | number | undefined) {
  * @returns Mutation object with methods to create a tool category
  */
 export function useCreateToolCategory() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
 
   return useMutation({
     mutationFn: async (data: Partial<ToolCategoryModel>) => {
-      const api = toolCategoryApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = toolCategoryApi();
       return api.createToolCategory(data);
     },
     onSuccess: () => {
@@ -57,9 +44,7 @@ export function useCreateToolCategory() {
  * @returns Mutation object with methods to update a tool category
  */
 export function useUpdateToolCategory() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
 
   return useMutation({
     mutationFn: async ({
@@ -69,10 +54,7 @@ export function useUpdateToolCategory() {
       id: string | number;
       data: Partial<ToolCategoryModel>;
     }) => {
-      const api = toolCategoryApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = toolCategoryApi();
       return api.updateToolCategory(id, data);
     },
     onSuccess: (data, variables) => {
@@ -89,16 +71,11 @@ export function useUpdateToolCategory() {
  * @returns Mutation object with methods to delete a tool category
  */
 export function useDeleteToolCategory() {
-  const token = useToken();
   const queryClient = useQueryClient();
-  const header = getClientAuthorizationHeader();
 
   return useMutation({
     mutationFn: async (id: string | number) => {
-      const api = toolCategoryApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = toolCategoryApi();
       return api.deleteToolCategory(id);
     },
     onSuccess: (data, id) => {
@@ -113,19 +90,13 @@ export function useDeleteToolCategory() {
  * @returns Query result containing a ToolCategoryModel object
  */
 export function useToolCategoryById(id: string | number | undefined) {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
-
   return useQuery<ToolCategoryModel, Error>({
     queryKey: ["toolCategory", id],
     queryFn: async () => {
       if (!id) {
         throw new Error("Tool category ID is required");
       }
-      const api = toolCategoryApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = toolCategoryApi();
       return api.getToolCategoryById(id);
     },
     enabled: !!id,
@@ -137,16 +108,10 @@ export function useToolCategoryById(id: string | number | undefined) {
  * @returns Query result containing an array of ToolCategoryModel objects
  */
 export function useToolCategories() {
-  const token = useToken();
-  const header = getClientAuthorizationHeader();
-
   return useQuery<ToolCategoryModel[], Error>({
     queryKey: ["toolCategories"],
     queryFn: async () => {
-      const api = toolCategoryApi({
-        ...header,
-        Authorization: `Bearer ${token?.token}`,
-      });
+      const api = toolCategoryApi();
       return api.getAllToolCategories();
     },
   });

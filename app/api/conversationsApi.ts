@@ -44,22 +44,15 @@ export type PostCallDataParams = {
 };
 
 /**
- * Generic Conversations API client
- * @param authHeader - Authorization header object, e.g. { Authorization: 'Bearer ...' }
+ * Generic Conversations API client (uses global axios interceptors for auth)
  */
-const conversationsApi = (authHeader: Record<string, string>) => {
-  const headers = {
-    "Content-Type": "application/json",
-    ...authHeader,
-  };
-
+const conversationsApi = (_authHeader: Record<string, string> = {}) => {
   return {
     // Create a new conversation
     createConversation: async (data: Record<string, unknown>) => {
       const response = await axios.post<Conversation>(
         `${DEFAULT_API_URL}/conversations`,
-        data,
-        { headers }
+        data
       );
       return response.data;
     },
@@ -67,8 +60,7 @@ const conversationsApi = (authHeader: Record<string, string>) => {
     // Get all conversations for current client
     getConversations: async () => {
       const response = await axios.get<ConversationTableModel[]>(
-        `${DEFAULT_API_URL}/conversations`,
-        { headers }
+        `${DEFAULT_API_URL}/conversations`
       );
       return response.data;
     },
@@ -77,8 +69,7 @@ const conversationsApi = (authHeader: Record<string, string>) => {
     startConversation: async (data: Record<string, unknown>) => {
       const response = await axios.post<Conversation>(
         `${DEFAULT_API_URL}/conversations/start`,
-        data,
-        { headers }
+        data
       );
       return response.data;
     },
@@ -87,8 +78,7 @@ const conversationsApi = (authHeader: Record<string, string>) => {
     startDemoConversation: async (params: StartDemoParams) => {
       const response = await axios.post<Conversation>(
         `${DEFAULT_API_URL}/conversations/start-demo`,
-        params,
-        { headers }
+        params
       );
       return response.data;
     },
@@ -97,8 +87,7 @@ const conversationsApi = (authHeader: Record<string, string>) => {
     postCallData: async (data: PostCallDataParams) => {
       const response = await axios.post<void>(
         `${DEFAULT_API_URL}/conversations/webhook/post-call-data`,
-        data,
-        { headers }
+        data
       );
       return response.data;
     },
@@ -106,8 +95,7 @@ const conversationsApi = (authHeader: Record<string, string>) => {
     // Get conversation by ID
     getConversationById: async (id: string) => {
       const response = await axios.get<ConversationsModel>(
-        `${DEFAULT_API_URL}/conversations/${id}`,
-        { headers }
+        `${DEFAULT_API_URL}/conversations/${id}`
       );
       return response.data;
     },
@@ -116,8 +104,7 @@ const conversationsApi = (authHeader: Record<string, string>) => {
     updateConversation: async (id: string, data: UpdateConversationParams) => {
       const response = await axios.patch<Conversation>(
         `${DEFAULT_API_URL}/conversations/${id}`,
-        data,
-        { headers }
+        data
       );
       return response.data;
     },
@@ -125,8 +112,7 @@ const conversationsApi = (authHeader: Record<string, string>) => {
     // Delete a conversation
     deleteConversation: async (id: string) => {
       const response = await axios.delete<void>(
-        `${DEFAULT_API_URL}/conversations/${id}`,
-        { headers }
+        `${DEFAULT_API_URL}/conversations/${id}`
       );
       return response.data;
     },
