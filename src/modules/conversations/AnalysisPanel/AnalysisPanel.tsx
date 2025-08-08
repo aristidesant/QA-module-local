@@ -1,4 +1,4 @@
-import { Accordion, Box, Group, Paper, Stack, Text } from "@mantine/core";
+import { Accordion, Group, Paper, Stack, Text } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import type { Analysis } from "~/models/ConversationsModels";
 import styles from "./AnalysisPanel.module.css";
@@ -10,7 +10,6 @@ interface AnalysisPanelProps {
 export function AnalysisPanel({ analysis }: AnalysisPanelProps) {
   const {
     call_successful,
-    transcript_summary,
     data_collection_results,
     evaluation_criteria_results,
   } = analysis;
@@ -42,16 +41,7 @@ export function AnalysisPanel({ analysis }: AnalysisPanelProps) {
           </Group>
         </Group>
 
-        {transcript_summary && (
-          <Box mt="md">
-            <Text size="xs" className={styles.lightText} mb="xs">
-              Summary
-            </Text>
-            <Text size="sm" className={styles.darkText}>
-              {transcript_summary}
-            </Text>
-          </Box>
-        )}
+        {/* Transcript summary moved to ConversationOverview */}
       </Paper>
 
       {/* Data Collection Results */}

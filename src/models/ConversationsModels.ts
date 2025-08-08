@@ -35,6 +35,7 @@ export interface ConversationsModel {
   userId: number;
   clientId: number;
   externalPhoneNumber?: string;
+  contactPhoneNumber?: string;
   transcriptContent: TranscriptContent;
   transcriptUrl: string | null;
   transcriptVoiceUrl: string | null;

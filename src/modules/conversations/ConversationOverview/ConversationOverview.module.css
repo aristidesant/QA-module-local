@@ -1,12 +1,17 @@
+.container {
+  max-width: 360px;
+}
 .paper {
   background-color: var(--mantine-color-white);
-  transition: box-shadow 0.2s ease;
+  transition: border-color 0.15s ease, transform 0.15s ease;
   position: relative;
   border: 1px solid var(--mantine-color-gray-2);
+  border-radius: var(--mantine-radius-md);
+  padding-top: calc(var(--mantine-spacing-md) - 2px);
 }
 
 .paper:hover {
-  box-shadow: var(--mantine-shadow-sm);
+  border-color: var(--mantine-color-gray-3);
 }
 
 /* Status indicator dot */
@@ -42,6 +47,34 @@
   border-bottom: 1px solid var(--mantine-color-gray-2);
 }
 
+.cardHeader {
+  margin-bottom: 0.25rem;
+}
+
+.accent {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.accent.completed {
+  background-color: var(--mantine-color-green-6);
+}
+
+.accent.in_progress {
+  background-color: var(--mantine-color-blue-6);
+}
+
+.accent.failed,
+.accent.error {
+  background-color: var(--mantine-color-red-6);
+}
+
+.accent.pending {
+  background-color: var(--mantine-color-yellow-6);
+}
+
 /* Text styles */
 .darkText {
   color: var(--mantine-color-gray-9);
@@ -50,6 +83,11 @@
 .lightText {
   color: var(--mantine-color-gray-6);
   font-size: 0.85rem;
+}
+
+.sectionTitle {
+  color: var(--mantine-color-gray-8);
+  letter-spacing: 0.2px;
 }
 
 /* Status badge */
@@ -78,4 +116,72 @@
 .statusBadge.pending {
   color: var(--mantine-color-yellow-8);
   background-color: var(--mantine-color-yellow-0);
+}
+
+.topRow {
+  margin-top: 0.25rem;
+}
+
+.avatar {
+  border: 1px solid var(--mantine-color-blue-2);
+  background: var(--mantine-color-blue-0);
+  color: var(--mantine-color-blue-8);
+}
+
+.identity {
+  min-width: 0;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  display: block;
+}
+
+.phone {
+  color: var(--mantine-color-gray-7);
+}
+
+.copyBtn {
+  color: var(--mantine-color-gray-6);
+}
+
+.icon {
+  color: var(--mantine-color-gray-6);
+}
+
+.statGrid {
+  margin-top: 0.25rem;
+}
+
+.statItem {
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.statLabel {
+  color: var(--mantine-color-gray-6);
+}
+
+.campaignBadge {
+  background: var(--mantine-color-gray-0);
+  color: var(--mantine-color-gray-8);
+  border: 1px solid var(--mantine-color-gray-2);
+}
+
+/* Subtle colored top border per status for visual flair */
+.paper.completed {
+  border-top: 3px solid var(--mantine-color-green-5);
+}
+.paper.in_progress {
+  border-top: 3px solid var(--mantine-color-blue-5);
+}
+.paper.failed,
+.paper.error {
+  border-top: 3px solid var(--mantine-color-red-5);
+}
+.paper.pending {
+  border-top: 3px solid var(--mantine-color-yellow-5);
 }

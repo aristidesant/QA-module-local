@@ -17,13 +17,18 @@ import {
 } from "@tabler/icons-react";
 import type { VoiceFileModel } from "~/models/ConversationsModels";
 import classes from "./ConversationPlayer.module.css";
+import RightSection from "~/components/RightSection";
 
 interface ConversationPlayerProps {
   voiceFile?: VoiceFileModel | null;
+  title?: string;
+  description?: string;
 }
 
 const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
   voiceFile,
+  title = "Recording",
+  description,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -95,92 +100,96 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
   if (!voiceFile?.repositoryRoute) {
     return (
       <Paper className={classes.container} radius="md">
-        <Box className={classes.emptyState}>
-          <IconVolume size={32} className={classes.emptyIcon} />
-          <Text c="dimmed" ta="center" size="sm" mt="xs">
-            Conversation not available
-          </Text>
-        </Box>
+        <RightSection title={title} description={description}>
+          <Box className={classes.emptyState}>
+            <IconVolume size={32} className={classes.emptyIcon} />
+            <Text c="dimmed" ta="center" size="sm" mt="xs">
+              Conversation not available
+            </Text>
+          </Box>
+        </RightSection>
       </Paper>
     );
   }
 
   return (
     <Paper className={classes.container} radius="md">
-      <audio
-        ref={audioRef}
-        src={voiceFile.repositoryRoute}
-        onTimeUpdate={handleTimeUpdate}
-        onLoadedMetadata={handleLoadedMetadata}
-        onEnded={() => setIsPlaying(false)}
-        hidden
-      />
+      <RightSection title={title} description={description}>
+        <audio
+          ref={audioRef}
+          src={voiceFile.repositoryRoute}
+          onTimeUpdate={handleTimeUpdate}
+          onLoadedMetadata={handleLoadedMetadata}
+          onEnded={() => setIsPlaying(false)}
+          hidden
+        />
 
-      <Stack gap="md">
-        {/* Progress Bar */}
-        <Box className={classes.progressSection}>
-          <Slider
-            value={currentTime}
-            onChange={handleSeek}
-            max={duration || 100}
-            className={classes.progressSlider}
-            classNames={{
-              track: classes.sliderTrack,
-              bar: classes.sliderBar,
-              thumb: classes.sliderThumb,
-            }}
-          />
-          <Group justify="space-between" mt="xs">
-            <Text size="xs" c="dimmed" className={classes.timeText}>
-              {formatTime(currentTime)}
-            </Text>
-            <Text size="xs" c="dimmed" className={classes.timeText}>
-              {formatTime(duration)}
-            </Text>
+        <Stack gap="md">
+          {/* Progress Bar */}
+          <Box className={classes.progressSection}>
+            <Slider
+              value={currentTime}
+              onChange={handleSeek}
+              max={duration || 100}
+              className={classes.progressSlider}
+              classNames={{
+                track: classes.sliderTrack,
+                bar: classes.sliderBar,
+                thumb: classes.sliderThumb,
+              }}
+            />
+            <Group justify="space-between" mt="xs">
+              <Text size="xs" c="dimmed" className={classes.timeText}>
+                {formatTime(currentTime)}
+              </Text>
+              <Text size="xs" c="dimmed" className={classes.timeText}>
+                {formatTime(duration)}
+              </Text>
+            </Group>
+          </Box>
+
+          {/* Controls */}
+          <Group justify="center" gap="md" className={classes.controlsGroup}>
+            <ActionIcon
+              variant="subtle"
+              color="gray"
+              size="lg"
+              onClick={() => seek(-10)}
+              aria-label="Rewind 10 seconds"
+              className={classes.controlButton}
+            >
+              <IconRotate2 size={20} style={{ transform: "scaleX(-1)" }} />
+            </ActionIcon>
+
+            <ActionIcon
+              variant="filled"
+              color="blue"
+              radius="xl"
+              size="xl"
+              onClick={togglePlayPause}
+              aria-label={isPlaying ? "Pause" : "Play"}
+              className={classes.playButton}
+            >
+              {isPlaying ? (
+                <IconPlayerPause size={28} />
+              ) : (
+                <IconPlayerPlay size={28} style={{ marginLeft: "2px" }} />
+              )}
+            </ActionIcon>
+
+            <ActionIcon
+              variant="subtle"
+              color="gray"
+              size="lg"
+              onClick={() => seek(10)}
+              aria-label="Forward 10 seconds"
+              className={classes.controlButton}
+            >
+              <IconRotateClockwise2 size={20} />
+            </ActionIcon>
           </Group>
-        </Box>
-
-        {/* Controls */}
-        <Group justify="center" gap="md" className={classes.controlsGroup}>
-          <ActionIcon
-            variant="subtle"
-            color="gray"
-            size="lg"
-            onClick={() => seek(-10)}
-            aria-label="Rewind 10 seconds"
-            className={classes.controlButton}
-          >
-            <IconRotate2 size={20} style={{ transform: "scaleX(-1)" }} />
-          </ActionIcon>
-
-          <ActionIcon
-            variant="filled"
-            color="blue"
-            radius="xl"
-            size="xl"
-            onClick={togglePlayPause}
-            aria-label={isPlaying ? "Pause" : "Play"}
-            className={classes.playButton}
-          >
-            {isPlaying ? (
-              <IconPlayerPause size={28} />
-            ) : (
-              <IconPlayerPlay size={28} style={{ marginLeft: "2px" }} />
-            )}
-          </ActionIcon>
-
-          <ActionIcon
-            variant="subtle"
-            color="gray"
-            size="lg"
-            onClick={() => seek(10)}
-            aria-label="Forward 10 seconds"
-            className={classes.controlButton}
-          >
-            <IconRotateClockwise2 size={20} />
-          </ActionIcon>
-        </Group>
-      </Stack>
+        </Stack>
+      </RightSection>
     </Paper>
   );
 };

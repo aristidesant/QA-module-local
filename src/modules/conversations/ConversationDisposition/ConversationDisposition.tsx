@@ -12,6 +12,7 @@ import { IconInfoCircle } from "@tabler/icons-react";
 import { useCallDispositionByConversationId } from "~/queries/callDispositionQueries";
 import type { CallDispositionModel } from "~/models/CallDispositionModel";
 import styles from "./ConversationDisposition.module.css";
+import RightSection from "~/components/RightSection";
 
 type ConversationDispositionProps = {
   conversationId: string | number;
@@ -22,20 +23,23 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
   conversationId,
   compact,
 }) => {
-  const { data, isLoading, isError, error, refetch } =
+  const { data, isLoading, isError, refetch } =
     useCallDispositionByConversationId(conversationId);
 
   if (isLoading) {
     return (
       <Paper p={compact ? "sm" : "md"} className={styles.paper}>
-        <Group className={styles.header} justify="space-between">
-          <Text size="sm" fw={600} className={styles.darkText}>
-            Disposition
-          </Text>
-          <IconInfoCircle size={16} className={styles.lightText} />
-        </Group>
-        <Skeleton height={12} mt={6} radius="sm" />
-        <Skeleton height={12} mt={6} width="60%" radius="sm" />
+        <RightSection
+          title="Disposition"
+          description={
+            <Text size="xs" c="dimmed">
+              Fetching latest status…
+            </Text>
+          }
+        >
+          <Skeleton height={12} mt={6} radius="sm" />
+          <Skeleton height={12} mt={6} width="60%" radius="sm" />
+        </RightSection>
       </Paper>
     );
   }
@@ -43,25 +47,31 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
   if (isError) {
     return (
       <Paper p={compact ? "sm" : "md"} className={styles.paper}>
-        <Group className={styles.header} justify="space-between">
-          <Text size="sm" fw={600} className={styles.darkText}>
-            Disposition
-          </Text>
-          <IconInfoCircle size={16} className={styles.lightText} />
-        </Group>
-        <Stack gap={4}>
-          <Text size="sm" className={styles.darkText}>
-            Could not load disposition
-          </Text>
-          <Text size="xs" className={styles.lightText}>
-            {error instanceof Error ? error.message : "Unknown error"}
-          </Text>
-          {refetch && (
-            <Anchor component="button" size="xs" onClick={() => refetch()}>
-              Retry
-            </Anchor>
-          )}
-        </Stack>
+        <RightSection
+          title="Disposition"
+          description={
+            <Group gap="xs" align="center">
+              <IconInfoCircle size={14} className={styles.lightText} />
+              <Text size="xs" c="dimmed">
+                Trouble loading disposition
+              </Text>
+            </Group>
+          }
+        >
+          <Stack gap={4}>
+            <Text size="sm" className={styles.darkText}>
+              We couldn’t display the disposition right now.
+            </Text>
+            <Text size="xs" className={styles.lightText}>
+              Please try again in a moment.
+            </Text>
+            {refetch && (
+              <Anchor component="button" size="xs" onClick={() => refetch()}>
+                Try again
+              </Anchor>
+            )}
+          </Stack>
+        </RightSection>
       </Paper>
     );
   }
@@ -73,35 +83,45 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 
   return (
     <Paper p={compact ? "sm" : "md"} className={styles.paper}>
-      <Group className={styles.header} justify="space-between">
-        <Text size="sm" fw={600} className={styles.darkText}>
-          Disposition
-        </Text>
-        {updatedAt ? (
-          <Badge variant="light" radius="sm" size="sm" className={styles.badge}>
-            Updated {new Date(updatedAt).toLocaleString()}
-          </Badge>
-        ) : (
-          <Badge variant="light" radius="sm" size="sm" className={styles.badge}>
-            Not updated
-          </Badge>
-        )}
-      </Group>
-
-      <Stack gap="xs">
-        <Text fw={700} className={styles.darkText}>
-          {name}
-        </Text>
-        {notes ? (
-          <Text size="sm" className={styles.lightText}>
-            {notes}
+      <RightSection
+        title="Disposition"
+        description={
+          updatedAt ? (
+            <Badge
+              variant="light"
+              radius="sm"
+              size="sm"
+              className={styles.badge}
+            >
+              Updated {new Date(updatedAt).toLocaleString()}
+            </Badge>
+          ) : (
+            <Badge
+              variant="light"
+              radius="sm"
+              size="sm"
+              className={styles.badge}
+            >
+              Not updated
+            </Badge>
+          )
+        }
+      >
+        <Stack gap="xs">
+          <Text fw={700} className={styles.darkText}>
+            {name}
           </Text>
-        ) : (
-          <Text size="sm" className={styles.lightText}>
-            No notes provided
-          </Text>
-        )}
-      </Stack>
+          {notes ? (
+            <Text size="sm" className={styles.lightText}>
+              {notes}
+            </Text>
+          ) : (
+            <Text size="sm" className={styles.lightText}>
+              No notes provided
+            </Text>
+          )}
+        </Stack>
+      </RightSection>
     </Paper>
   );
 };

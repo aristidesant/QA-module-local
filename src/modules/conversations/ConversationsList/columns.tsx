@@ -116,33 +116,42 @@ export const conversationColumns = [
     }
   ),
 
-  columnHelper.accessor((row) => row.externalPhoneNumber || "N/A", {
-    id: "phoneNumber",
-    header: "Phone",
-    cell: (info) => {
-      const value = info.getValue() as string;
-      return (
-        <Box style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
-          <IconPhoneCall size={14} color="var(--mantine-color-gray-6)" />
-          <Text
-            size="xs"
-            className={styles.textEllipsis}
-            style={{ maxWidth: "120px" }}
+  columnHelper.accessor(
+    (row) => {
+      if (!!row?.contactPhoneNumber) return row.contactPhoneNumber;
+      if (!!row?.externalPhoneNumber) return row.externalPhoneNumber;
+      return "N/A";
+    },
+    {
+      id: "phoneNumber",
+      header: "Phone",
+      cell: (info) => {
+        const value = info.getValue() as string;
+        return (
+          <Box
+            style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}
           >
-            {value || "--"}
-          </Text>
-        </Box>
-      );
-    },
-    sortingFn: "alphanumeric",
-    enableSorting: true,
-    enableColumnFilter: true,
-    filterFn: "includesString",
-    size: 150,
-    meta: {
-      className: styles.columnHideSmall,
-    },
-  }),
+            <IconPhoneCall size={14} color="var(--mantine-color-gray-6)" />
+            <Text
+              size="xs"
+              className={styles.textEllipsis}
+              style={{ maxWidth: "120px" }}
+            >
+              {value || "--"}
+            </Text>
+          </Box>
+        );
+      },
+      sortingFn: "alphanumeric",
+      enableSorting: true,
+      enableColumnFilter: true,
+      filterFn: "includesString",
+      size: 150,
+      meta: {
+        className: styles.columnHideSmall,
+      },
+    }
+  ),
 
   columnHelper.accessor("status", {
     header: "Status",

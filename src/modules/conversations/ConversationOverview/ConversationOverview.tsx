@@ -1,15 +1,28 @@
-import { Group, Paper, Text, Avatar, Stack, Badge } from "@mantine/core";
+import {
+  Group,
+  Paper,
+  Text,
+  Avatar,
+  Stack,
+  ActionIcon,
+  Tooltip,
+  Divider,
+  CopyButton,
+  SimpleGrid,
+} from "@mantine/core";
 import {
   IconPhoneCall,
   IconUser,
   IconInfoCircle,
-  IconClock,
   IconCalendar,
+  IconCopy,
+  IconCheck,
 } from "@tabler/icons-react";
 import type { ConversationsModel } from "~/models/ConversationsModels";
 import styles from "./ConversationOverview.module.css";
 import ConversationPlayer from "../ConversationPlayer";
 import ConversationDisposition from "../ConversationDisposition";
+import RightSection from "~/components/RightSection";
 
 interface ConversationOverviewProps {
   conversation: ConversationsModel;
@@ -43,6 +56,20 @@ export function ConversationOverview({
     }
   };
 
+  const formatDateShort = (dateString: string) => {
+    try {
+      const d = new Date(dateString);
+      return d.toLocaleString(undefined, {
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      });
+    } catch (error) {
+      return "Invalid date";
+    }
+  };
+
   const formatDuration = (seconds?: number) => {
     if (!seconds) return "N/A";
     const minutes = Math.floor(seconds / 60);
@@ -55,9 +82,12 @@ export function ConversationOverview({
     : contact?.name
     ? String(contact.name)
     : "Unknown Contact";
-  const contactPhone = contact?.phoneNumber
-    ? String(contact.phoneNumber)
-    : conversation?.externalPhoneNumber ?? "No phone number";
+  const contactPhone = String(
+    contact?.phoneNumber ||
+      conversation?.contactPhoneNumber ||
+      conversation?.externalPhoneNumber ||
+      "No phone number"
+  );
   const agentName = agent?.name ? String(agent.name) : "Unassigned";
   const campaignName = campaign?.name ? String(campaign.name) : "N/A";
 
@@ -71,90 +101,164 @@ export function ConversationOverview({
   };
 
   const statusClass = getStatusClass(displayStatus);
+  const transcriptSummary =
+    transcriptContent?.analysis?.transcript_summary || "";
 
   return (
-    <Stack gap="md">
-      {/* Contact & Agent Info */}
-      <Paper p="md" className={styles.paper}>
-        <Group className={styles.header} justify="space-between">
-          <Text size="sm" fw={600} className={styles.darkText}>
-            Contact Information
-          </Text>
-          <IconInfoCircle size={16} className={styles.lightText} />
-        </Group>
-
-        <Group gap="sm" mb="md">
-          <Avatar color="blue" radius="xl">
-            <IconUser size={16} />
-          </Avatar>
-          <div>
-            <Text fw={600} className={styles.darkText}>
-              {contactName}
-            </Text>
-            <Group gap={4} mt={2}>
-              <IconPhoneCall size={14} className={styles.lightText} />
-              <Text size="sm" className={styles.lightText}>
-                {contactPhone}
-              </Text>
-            </Group>
-          </div>
-        </Group>
-
-        <Group gap="md" mt="xs">
-          <Group gap={4}>
-            <IconCalendar size={14} className={styles.lightText} />
-            <Text size="xs" className={styles.lightText}>
-              {formatDate(startDate)}
-            </Text>
-          </Group>
-          <Group gap={4}>
-            <IconClock size={14} className={styles.lightText} />
-            <Text size="xs" className={styles.lightText}>
-              {formatDuration(displayDuration as number)}
-            </Text>
-          </Group>
-        </Group>
-      </Paper>
-
-      {/* Agent & Campaign Info */}
-      <Paper p="md" className={styles.paper}>
-        <Group className={styles.header} justify="space-between">
-          <Text size="sm" fw={600} className={styles.darkText}>
-            Agent & Campaign
-          </Text>
-          <Group gap="xs" align="center">
-            <span className={`${styles.statusDot} ${styles[statusClass]}`} />
-            <Badge
-              variant="light"
-              className={`${styles.statusBadge} ${styles[statusClass]}`}
-              size="sm"
-              radius="sm"
+    <Stack gap="md" className={styles.container}>
+      {/* Contact & Quick Overview */}
+      <Paper p="md" className={`${styles.paper} ${styles[statusClass]}`}>
+        <RightSection
+          title="Conversation Overview"
+          description="Define the conversation key details."
+        >
+          <Group gap="md" wrap="wrap" className={styles.topRow}>
+            <Avatar
+              radius="xl"
+              size={42}
+              className={styles.avatar}
+              color="blue"
             >
-              {displayStatus.replace(/_/g, " ")}
-            </Badge>
+              <IconUser size={20} />
+            </Avatar>
+            <Stack gap={2} className={styles.identity}>
+              <Text
+                fw={800}
+                size="sm"
+                className={`${styles.darkText} ${styles.truncate}`}
+                title={contactName}
+              >
+                {contactName}
+              </Text>
+              <Group gap={6} align="center" wrap="nowrap">
+                <IconPhoneCall size={14} className={styles.lightText} />
+                <Text
+                  size="sm"
+                  className={`${styles.phone} ${styles.truncate}`}
+                  title={contactPhone}
+                >
+                  {contactPhone}
+                </Text>
+                <CopyButton value={String(contactPhone)} timeout={1200}>
+                  {({ copied, copy }) => (
+                    <Tooltip label={copied ? "Copied" : "Copy"}>
+                      <ActionIcon
+                        size="sm"
+                        variant="subtle"
+                        aria-label="Copy phone number"
+                        onClick={copy}
+                        className={styles.copyBtn}
+                      >
+                        {copied ? (
+                          <IconCheck size={14} />
+                        ) : (
+                          <IconCopy size={14} />
+                        )}
+                      </ActionIcon>
+                    </Tooltip>
+                  )}
+                </CopyButton>
+              </Group>
+            </Stack>
+            <div className={styles.metaRight} />
           </Group>
-        </Group>
 
-        <Group gap="sm">
-          <Avatar color="blue" radius="xl">
-            <IconUser size={16} />
-          </Avatar>
-          <div>
-            <Text fz="xs" fw={600} className={styles.darkText}>
-              {agentName}
-            </Text>
-            <Text fz="xs" c="dimmed">
-              {campaignName}
-            </Text>
-          </div>
-        </Group>
+          <Divider my="sm" />
+
+          <SimpleGrid
+            cols={{ base: 1 }}
+            spacing="md"
+            className={styles.statGrid}
+          >
+            <Group gap={8} className={styles.statItem} wrap="nowrap">
+              <IconCalendar size={18} className={styles.icon} />
+              <div>
+                <Text size="xs" className={styles.statLabel}>
+                  Conversation date
+                </Text>
+                <Group align="center" gap={"xs"}>
+                  <Text
+                    size="sm"
+                    fw={700}
+                    className={`${styles.darkText} ${styles.truncate}`}
+                    title={formatDate(startDate)}
+                  >
+                    {formatDateShort(startDate)}
+                  </Text>
+                  <Text
+                    size="xs"
+                    c="dimmed"
+                    className={`${styles.darkText} ${styles.truncate}`}
+                  >
+                    ({formatDuration(displayDuration as number)})
+                  </Text>
+                </Group>
+              </div>
+            </Group>
+
+            <Group gap={8} className={styles.statItem} wrap="nowrap">
+              <IconUser size={18} className={styles.icon} />
+              <div>
+                <Text size="xs" className={styles.statLabel}>
+                  Agent
+                </Text>
+                <Text
+                  size="sm"
+                  fw={700}
+                  className={`${styles.darkText} ${styles.truncate}`}
+                  title={agentName}
+                >
+                  {agentName}
+                </Text>
+              </div>
+            </Group>
+            <Group gap={8} className={styles.statItem} wrap="nowrap">
+              <IconInfoCircle size={18} className={styles.icon} />
+              <div>
+                <Text size="xs" className={styles.statLabel}>
+                  Campaign
+                </Text>
+                <Text
+                  size="sm"
+                  fw={700}
+                  className={`${styles.darkText} ${styles.truncate}`}
+                  title={campaignName}
+                >
+                  {campaignName}
+                </Text>
+              </div>
+            </Group>
+          </SimpleGrid>
+        </RightSection>
       </Paper>
+
+      {/* Conversation Summary */}
+      {transcriptSummary && (
+        <Paper p="md" className={styles.paper}>
+          <RightSection
+            title="Conversation Summary"
+            description={
+              <Text size="xs" c="dimmed">
+                Auto-generated from the call transcript
+              </Text>
+            }
+          >
+            <Text size="sm" className={styles.darkText} lineClamp={5}>
+              {transcriptSummary}
+            </Text>
+          </RightSection>
+        </Paper>
+      )}
 
       <ConversationDisposition
         key={conversation?.id}
         conversationId={String(conversation?.id)}
       />
-      <ConversationPlayer voiceFile={conversation?.voiceFile} />
+      <ConversationPlayer
+        voiceFile={conversation?.voiceFile}
+        title="Recording"
+        description="Listen to the call recording"
+      />
     </Stack>
   );
 }
