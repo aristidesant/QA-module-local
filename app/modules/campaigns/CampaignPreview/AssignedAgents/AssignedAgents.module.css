@@ -1,0 +1,64 @@
+.title {
+    color: var(--mantine-color-dark-7);
+}
+
+.subtitle {
+    color: var(--mantine-color-gray-6);
+}
+
+
+.agentCard {
+    background: var(--mantine-color-body);
+    border: 1px solid var(--mantine-color-gray-2);
+}
+
+.agentItem {
+    margin: 0;
+}
+
+.avatarContainer {
+    position: relative;
+}
+
+.avatar {
+    border: 2px solid var(--mantine-color-white);
+}
+
+.statusIndicator {
+    position: absolute;
+    bottom: 1px;
+    right: 1px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--mantine-color-white);
+}
+
+.statusIndicator.online {
+    background-color: var(--mantine-color-green-6);
+}
+
+.statusIndicator.busy {
+    background-color: var(--mantine-color-yellow-6);
+}
+
+.statusIndicator.away {
+    background-color: var(--mantine-color-orange-6);
+}
+
+.statusIndicator.offline {
+    background-color: var(--mantine-color-gray-6);
+}
+
+.agentInfo {
+    flex: 1;
+}
+
+.agentName {
+    color: var(--mantine-color-dark-7);
+    margin-bottom: 2px;
+}
+
+.flag {
+    font-size: 14px;
+}

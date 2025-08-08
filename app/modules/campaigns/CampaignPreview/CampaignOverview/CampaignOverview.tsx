@@ -1,49 +1,126 @@
-import React from "react";
-import { Text, Badge, Stack, Center, Group, ThemeIcon } from "@mantine/core";
-import { IconArrowUpRight } from "@tabler/icons-react";
+import React, { useState } from "react";
+import {
+	Text,
+	Badge,
+	Stack,
+	Center,
+	Group,
+	ThemeIcon,
+	Button,
+} from "@mantine/core";
+import {
+	IconArrowUpRight,
+	IconBolt,
+	IconPlayerPause,
+	IconPlayerPlay,
+} from "@tabler/icons-react";
 import classes from "./CampaignOverview.module.css";
 import type { Campaign } from "../../../../models/CampaignsModel";
 
 interface CampaignOverviewProps {
-  campaign: Campaign;
+	campaign: Campaign;
+	onPause?: () => void;
+	onResume?: () => void;
 }
 
-const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
-  return (
-    <Stack gap={4} align="center" className={classes.simpleCard}>
-      <Text size="xs" c="dimmed" mb={2}>
-        Campaign
-      </Text>
-      <Text fw={700} size="lg" className={classes.campaignName}>
-        {campaign.name}
-      </Text>
-      <Badge
-        variant="light"
-        color="gray"
-        size="md"
-        radius="xl"
-        className={classes.outboundBadge}
-        leftSection={null}
-        rightSection={
-          <>
-            {campaign.type === "OUTBOUND" && (
-              <ThemeIcon variant="transparent" color="green" size={"xs"}>
-                <IconArrowUpRight />
-              </ThemeIcon>
-            )}
-            {campaign.type === "INBOUND" && (
-              <ThemeIcon variant="transparent" color="blue" size={"xs"}>
-                <IconArrowUpRight />
-              </ThemeIcon>
-            )}
-          </>
-        }
-        style={{ gap: 4, fontWeight: 500 }}
-      >
-        {campaign.type.charAt(0) + campaign.type.slice(1).toLowerCase()}
-      </Badge>
-    </Stack>
-  );
+const CampaignOverview: React.FC<CampaignOverviewProps> = ({
+	campaign,
+	onPause,
+	onResume,
+}) => {
+	const [isRunning, setIsRunning] = useState(
+		campaign.status?.toLowerCase() !== "paused"
+	);
+
+	// Function to get campaign status icon and color (running/paused only)
+	const getCampaignStatusIcon = () => {
+		const size = 20;
+
+		if (isRunning) {
+			return {
+				icon: <IconBolt size={size} />,
+				color: "green",
+				label: "Running",
+			};
+		} else {
+			return {
+				icon: <IconPlayerPause size={size} />,
+				color: "yellow",
+				label: "Paused",
+			};
+		}
+	};
+
+	const handleToggle = () => {
+		if (isRunning) {
+			setIsRunning(false);
+			onPause?.();
+		} else {
+			setIsRunning(true);
+			onResume?.();
+		}
+	};
+
+	const statusInfo = getCampaignStatusIcon();
+	return (
+		<Stack gap={4} align="center" className={classes.simpleCard}>
+			<Text size="xs" c="dimmed" mb={2}>
+				Campaign
+			</Text>
+
+			<Group gap={8} align="center">
+				<Text fw={700} size="lg" className={classes.campaignName}>
+					{campaign.name}
+				</Text>
+			</Group>
+
+			<Group gap="sm" align="center">
+				<Badge
+					variant="light"
+					color="gray"
+					size="md"
+					radius="xl"
+					p="md"
+					className={classes.outboundBadge}
+					leftSection={null}
+					rightSection={
+						<>
+							{campaign.type === "OUTBOUND" && (
+								<ThemeIcon variant="transparent" color="green" size={"xs"}>
+									<IconArrowUpRight />
+								</ThemeIcon>
+							)}
+							{campaign.type === "INBOUND" && (
+								<ThemeIcon variant="transparent" color="blue" size={"xs"}>
+									<IconArrowUpRight />
+								</ThemeIcon>
+							)}
+						</>
+					}
+					style={{ gap: 4, fontWeight: 500, alignContent: "center" }}
+				>
+					{campaign.type.charAt(0) + campaign.type.slice(1).toLowerCase()}
+				</Badge>
+
+				<Button
+					variant={isRunning ? "light" : "filled"}
+					color={isRunning ? "red" : "green"}
+					size="sm"
+					leftSection={
+						isRunning ? (
+							<IconPlayerPause size={14} />
+						) : (
+							<IconPlayerPlay size={14} />
+						)
+					}
+					onClick={handleToggle}
+					className={classes.toggleButton}
+				>
+					{isRunning ? "Pause" : "Resume"}
+				</Button>
+			</Group>
+		</Stack>
+	);
 };
 
 export default CampaignOverview;
