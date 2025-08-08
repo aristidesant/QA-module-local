@@ -8,7 +8,7 @@ import styles from "./AgentCampaignPreview.module.css";
 import { VoiceMiniPlayer } from "~/components/VoiceMiniPlayer";
 import { openConfirmModal } from "@mantine/modals";
 import AgentProfile from "~/components/AgentProfile";
-import AgentVoiceProgress from "~/modules/agents/components/AgentSimpleDetails/AgentVoiceProgress";
+import AgentVoiceProgress from "~/modules/agents/AgentSimpleDetails/AgentVoiceProgress";
 import { useDeleteCampaignAgent } from "~/queries/campaignAgentsQueries";
 
 interface AgentCampaignPreviewProps {

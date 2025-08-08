@@ -50,8 +50,8 @@ export function createHttpClient(
 
         // Only handle redirect on client side
         if (typeof window !== "undefined") {
-          // Clear any stored tokens/session data here if needed
-          window.location.href = "/logout";
+          // Use centralized logout utility
+          import("~/utils/logout").then(({ logout }) => logout());
         }
       }
 

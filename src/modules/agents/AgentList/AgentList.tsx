@@ -17,18 +17,17 @@ import classes from "./AgentList.module.css";
 import type AgentListObject from "~/models/AgentListObject";
 import AgentSimpleDetails from "../AgentSimpleDetails/AgentSimpleDetails";
 import { ContentContainer } from "~/components/ContentContainer/ContentContainer";
+import { useGetAllAgents } from "~/queries/agentQueries";
+import { Loader, Center } from "@mantine/core";
 
-interface AgentListProps {
-  agents: any[];
-  onCreateNew: () => void;
-}
-
-const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
+const AgentList: React.FC = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
   const [selectedAgent, setSelectedAgent] =
     React.useState<AgentListObject | null>(null);
+
+  const { data: agents = [], isLoading, isError, error } = useGetAllAgents();
 
   const handleAgentCardClick = (agent: AgentListObject) => {
     if (selectedAgent?.id === agent.id) {
@@ -36,11 +35,6 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
     } else {
       setSelectedAgent(agent);
     }
-  };
-
-  const handleCreateSuccessCallback = (_: any) => {
-    onCreateNew();
-    close();
   };
 
   return (
@@ -70,11 +64,26 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
       }
     >
       <Stack>
-        <AgentCreate
-          opened={opened}
-          onClose={close}
-          onSave={handleCreateSuccessCallback}
-        />
+        <AgentCreate opened={opened} onClose={close} />
+
+        {isLoading && (
+          <Center p="xl">
+            <Loader size="md" />
+          </Center>
+        )}
+
+        {isError && (
+          <Paper className={classes.emptyState} shadow="none">
+            <Stack align="center" gap="xs">
+              <Title order={3} className={classes.emptyTitle}>
+                Failed to load agents
+              </Title>
+              <Text className={classes.emptyText} c="red">
+                {(error as any)?.message || "Please try again."}
+              </Text>
+            </Stack>
+          </Paper>
+        )}
 
         <Transition
           mounted={agents.length > 0}
@@ -89,7 +98,7 @@ const AgentList: React.FC<AgentListProps> = ({ agents, onCreateNew }) => {
             >
               {agents.map((agent) => (
                 <AgentCard
-                  key={agent.agent_id}
+                  key={agent.id}
                   onClick={handleAgentCardClick}
                   agent={agent}
                 />

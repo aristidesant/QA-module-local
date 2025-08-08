@@ -1,17 +1,19 @@
 import { Menu } from "@mantine/core";
 import { IconChevronDown, IconLogout } from "@tabler/icons-react";
 import styles from "./UserMenu.module.css";
-import { useNavigate } from "react-router";
+// import { useNavigate } from "react-router";
+import logout from "~/utils/logout";
 import { useSessionStore } from "~/stores/sessionStore";
 
 export const UserMenu: React.FC = () => {
   const { user } = useSessionStore();
   const initials = user?.username?.slice(0, 2).toUpperCase();
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleLogout = () => {
-    navigate("/logout");
+    // Use centralized logout utility
+    logout();
   };
 
   const fetcher = { state: "idle" } as const;

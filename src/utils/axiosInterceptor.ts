@@ -40,11 +40,8 @@ axios.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error?.response?.status === 401 && typeof window !== "undefined") {
-      // Optionally clear token
-      try {
-        window.localStorage.removeItem("accessToken");
-      } catch {}
-      window.location.href = "/logout";
+      // Use centralized logout utility
+      import("~/utils/logout").then(({ logout }) => logout());
     }
     return Promise.reject(error);
   }

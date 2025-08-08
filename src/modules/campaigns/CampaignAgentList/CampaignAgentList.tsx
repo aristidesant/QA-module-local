@@ -6,7 +6,7 @@ import { useCallback } from "react";
 import { AgentSelection } from "~/components/AgentSelection/AgentSelection";
 import SectionCard from "~/components/SectionCard";
 import type AgentListObject from "~/models/AgentListObject";
-import AgentCard from "~/modules/agents/components/AgentCard";
+import AgentCard from "~/modules/agents/AgentCard";
 import {
   useCreateCampaignAgent,
   useGetCampaignAgents,

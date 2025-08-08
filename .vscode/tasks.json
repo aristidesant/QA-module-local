@@ -18,6 +18,12 @@
 				"$tsc"
 			],
 			"group": "build"
+		},
+		{
+			"label": "Build SPA",
+			"type": "shell",
+			"command": "npm run build",
+			"group": "build"
 		}
 	]
 }

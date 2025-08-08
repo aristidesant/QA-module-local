@@ -33,39 +33,40 @@ export default function WelcomeCard({
   subheading = "This platform empowers you to create, configure, and test AI agents that assist users with real‑time customer service. Below are some actions to get started:",
 }: WelcomeCardProps) {
   return (
-    <Card padding="lg" radius="xl" withBorder className={classes.root}>
-      <Stack gap="lg">
-        <Stack gap={4} className={classes.header}>
-          <Title order={2} className={classes.title}>
-            {heading}
-          </Title>
-          <Text size="sm" className={classes.subtitle}>
-            {subheading}
-          </Text>
-        </Stack>
+    <div className={classes.centerWrapper}>
+      <Card padding="lg" radius="xl" withBorder className={classes.root}>
+        <Stack gap="lg">
+          <Stack gap={4} className={classes.header}>
+            <Title order={2} className={classes.title}>
+              {heading}
+            </Title>
+            <Text size="sm" className={classes.subtitle}>
+              {subheading}
+            </Text>
+          </Stack>
 
-        <Stack className={classes.items} gap="md">
-          {items.map((it, idx) => (
-            <Group
-              key={idx}
-              align="flex-start"
-              gap="md"
-              className={classes.item}
-            >
-              <ThemeIcon size={36} variant="light" color="blue">
-                <it.icon size={20} />
-              </ThemeIcon>
-              <Stack gap={2}>
-                <Text className={classes.itemLabel}>{it.label}</Text>
-                <Text size="sm" className={classes.itemDesc}>
-                  {/* Random filler text instead of links as requested */}
-                  {it.description}
-                </Text>
-              </Stack>
-            </Group>
-          ))}
+          <Stack className={classes.items} gap="md">
+            {items.map((it, idx) => (
+              <Group
+                key={idx}
+                align="flex-start"
+                gap="md"
+                className={classes.item}
+              >
+                <ThemeIcon size={36} variant="light" color="blue">
+                  <it.icon size={20} />
+                </ThemeIcon>
+                <Stack gap={2}>
+                  <Text className={classes.itemLabel}>{it.label}</Text>
+                  <Text size="sm" className={classes.itemDesc}>
+                    {it.description}
+                  </Text>
+                </Stack>
+              </Group>
+            ))}
+          </Stack>
         </Stack>
-      </Stack>
-    </Card>
+      </Card>
+    </div>
   );
 }

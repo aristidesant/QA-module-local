@@ -2,7 +2,7 @@ import React from "react";
 import type { AgentConfigModel } from "~/models/AgentListObject";
 import BasicConfiguration from "./BasicConfiguration/BasicConfiguration";
 import AIPersonality from "./AIPersonality/AIPersonality";
-import { AgentBasicDetails } from "~/modules/agents/components/AgentBasicDetails";
+import { AgentBasicDetails } from "~/modules/agents/AgentBasicDetails";
 import type AgentListObject from "~/models/AgentListObject";
 
 // Define the props for AgentSettings

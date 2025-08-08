@@ -15,6 +15,7 @@ import styles from "./AgentCard.module.css";
 import type AgentListObject from "~/models/AgentListObject";
 import { useDeleteAgent } from "~/queries/agentQueries";
 import { useRevalidator } from "react-router";
+import { useNavigate } from "react-router";
 import { notifications } from "@mantine/notifications";
 import { OutboundCallForm } from "~/components/OutboundCallForm";
 import { modals } from "@mantine/modals";
@@ -32,6 +33,7 @@ export const AgentCard: React.FC<AgentCardProps> = ({
 }) => {
   const { revalidate } = useRevalidator();
   const { mutateAsync: deleteAgent, isPending: isDeleting } = useDeleteAgent();
+  const navigate = useNavigate();
 
   const handleRemove = useCallback(
     (e: React.MouseEvent) => {
@@ -72,8 +74,9 @@ export const AgentCard: React.FC<AgentCardProps> = ({
   const handleView = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
+      navigate(`/agent/${agent.id}`);
     },
-    [onClick, agent]
+    [navigate, agent.id]
   );
 
   // createdAt and isValidDate are not used

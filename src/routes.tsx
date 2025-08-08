@@ -1,27 +1,25 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
 
 // Route components
-import Overview from "./routes/overview";
-import AgentsRoute, { clientLoader as agentsLoader } from "./routes/agents";
+import AgentList from "./modules/agents/AgentList";
 import AgentPage from "./modules/agent/AgentPage";
-import CampaignsRoute from "./routes/campaigns";
-import ContactsRoute from "./routes/contacts";
-import ConversationRoute from "./routes/conversations";
-import DispositionsRoute from "./routes/dispositions";
-import LoginPage from "./routes/login";
-import LogoutPage, { clientLoader as logoutLoader } from "./routes/logout";
-import PromptForm from "./routes/prompt_form";
-import PromptGenerator from "./routes/prompt_generator";
-import ToolsRoute from "./routes/tools";
 import RouteProtecter, {
   clientLoader as routeProtecterLoader,
 } from "./components/RouteProtecter/RouteProtecter";
 import Layout from "./components/Layout/Layout";
+import CampaignsPage from "./modules/campaigns/CampaignsPage/CampaignsPage";
+import ToolsPage from "./modules/tools/ToolsPage";
+import { PromptGeneratorContainer } from "./modules/prompt-generator/PromptGeneratorContainer";
+import { PromptFormPage } from "./modules/prompt-form/PromptFormPage";
+import { DispositionPage } from "./modules/dispositions";
+import ConversationPage from "./modules/conversations/ConversationsPage/ConversationPage";
+import ContactsPage from "./modules/contacts/ContactsPage";
+import WelcomeCard from "./modules/overview/WelcomeCard";
+import { LoginForm } from "./modules/auth/LoginForm";
 
 const router = createBrowserRouter([
   // Public routes
-  { path: "/login", element: <LoginPage /> },
-  { path: "/logout", element: <LogoutPage />, loader: logoutLoader },
+  { path: "/login", element: <LoginForm /> },
 
   // Protected routes
   {
@@ -31,16 +29,16 @@ const router = createBrowserRouter([
       {
         element: <Layout />,
         children: [
-          { index: true, element: <Overview /> },
-          { path: "agents", element: <AgentsRoute />, loader: agentsLoader },
+          { index: true, element: <WelcomeCard /> },
+          { path: "agents", element: <AgentList /> },
           { path: "agent/:agent_id", element: <AgentPage /> },
-          { path: "campaigns", element: <CampaignsRoute /> },
-          { path: "contacts", element: <ContactsRoute /> },
-          { path: "conversations", element: <ConversationRoute /> },
-          { path: "dispositions", element: <DispositionsRoute /> },
-          { path: "prompt-form", element: <PromptForm /> },
-          { path: "prompt-generator", element: <PromptGenerator /> },
-          { path: "tools", element: <ToolsRoute /> },
+          { path: "campaigns", element: <CampaignsPage /> },
+          { path: "contacts", element: <ContactsPage /> },
+          { path: "conversations", element: <ConversationPage /> },
+          { path: "dispositions", element: <DispositionPage /> },
+          { path: "prompt-form", element: <PromptFormPage /> },
+          { path: "prompt-generator", element: <PromptGeneratorContainer /> },
+          { path: "tools", element: <ToolsPage /> },
         ],
       },
     ],
