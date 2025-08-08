@@ -11,7 +11,6 @@ import {
 } from "@tabler/icons-react";
 import { Link, useLocation } from "react-router";
 import styles from "./Sidebar.module.css";
-import UserCard from "../UserCard";
 import Logo from "../Logo";
 
 const menuItems: MenuItem[] = [
@@ -110,9 +109,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ onClose: _, opened }) => {
           )}
           {maintenanceItems.map((item) => renderMenuItem({ ...item, opened }))}
         </Stack>
-        <div className={styles.userCardWrapper}>
-          <UserCard />
-        </div>
       </Stack>
     </nav>
   );
