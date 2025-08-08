@@ -231,7 +231,10 @@ export function ConversationOverview({
           </SimpleGrid>
         </RightSection>
       </Paper>
-
+      <ConversationDisposition
+        key={conversation?.id}
+        conversationId={String(conversation?.id)}
+      />
       {/* Conversation Summary */}
       {transcriptSummary && (
         <Paper p="md" className={styles.paper}>
@@ -243,17 +246,13 @@ export function ConversationOverview({
               </Text>
             }
           >
-            <Text size="sm" className={styles.darkText} lineClamp={5}>
+            <Text size="sm" className={styles.darkText}>
               {transcriptSummary}
             </Text>
           </RightSection>
         </Paper>
       )}
 
-      <ConversationDisposition
-        key={conversation?.id}
-        conversationId={String(conversation?.id)}
-      />
       <ConversationPlayer
         voiceFile={conversation?.voiceFile}
         title="Recording"

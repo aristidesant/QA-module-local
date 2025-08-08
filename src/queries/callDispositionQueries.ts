@@ -29,6 +29,7 @@ export function useCallDispositionByConversationId(
       return api.findCallDispositionByConversationId(Number(conversationId));
     },
     enabled: !!conversationId,
+    retry: 0,
   });
 }
 

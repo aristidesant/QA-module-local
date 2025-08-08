@@ -10,66 +10,96 @@ interface TranscriptViewerProps {
 export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
   if (!transcript || transcript.length === 0) {
     return (
-      <Paper p="md" withBorder>
+      <Paper
+        p="md"
+        withBorder
+        radius="md"
+        className={styles.transcriptContainer}
+      >
         <Text>No transcript entries available</Text>
       </Paper>
     );
   }
 
   return (
-    <Stack gap="md">
+    <Stack gap="sm" className={styles.transcriptContainer}>
       {transcript.map((entry, index) => {
         const isAgent = entry.role.toLowerCase() === "agent";
         const isUser =
           entry.role.toLowerCase() === "user" ||
           entry.role.toLowerCase() === "human";
+        const isSystem = !isAgent && !isUser;
 
         return (
           <Box
             key={`transcript-${index}`}
-            className={`${styles.messageContainer} ${
-              isAgent
-                ? styles.agentMessage
-                : isUser
-                ? styles.userMessage
-                : styles.systemMessage
-            }`}
+            className={
+              `${styles.messageRow} ` +
+              (isSystem
+                ? styles.centerAligned
+                : isAgent
+                ? styles.rightAligned
+                : styles.leftAligned)
+            }
           >
-            <Group align="flex-start" gap="sm">
-              <Avatar
-                color={isAgent ? "blue" : isUser ? "green" : "gray"}
+            {isSystem ? (
+              <Paper
+                withBorder
                 radius="xl"
+                p="xs"
+                className={styles.systemBanner}
               >
-                {isAgent ? (
-                  <IconRobot size={20} />
-                ) : isUser ? (
-                  <IconUser size={20} />
-                ) : null}
-              </Avatar>
-
-              <Box className={styles.messageContent}>
-                <Group justify="space-between" mb={4}>
-                  <Text size="sm" fw={500}>
-                    {isAgent ? "Agent" : isUser ? "User" : entry.role}
-                  </Text>
+                <Text size="xs" c="dimmed">
+                  {entry.message}
                   {entry.time_in_call_secs !== undefined && (
-                    <Text size="xs" c="dimmed">
-                      {formatTime(entry.time_in_call_secs)}
+                    <> • {formatTime(entry.time_in_call_secs)}</>
+                  )}
+                </Text>
+              </Paper>
+            ) : (
+              <Box className={styles.messageGroup}>
+                {/* Bubble with embedded avatar and meta */}
+                <Box
+                  className={`${styles.messageBubble} ${
+                    isAgent ? styles.agentBubble : styles.userBubble
+                  }`}
+                >
+                  <Group justify="space-between" className={styles.meta}>
+                    <Group gap={6} align="center">
+                      <Avatar
+                        size={18}
+                        radius="xl"
+                        color={isAgent ? "blue" : "green"}
+                      >
+                        {isAgent ? (
+                          <IconRobot size={14} />
+                        ) : (
+                          <IconUser size={14} />
+                        )}
+                      </Avatar>
+                      <Text size="xs" fw={600} c="dimmed">
+                        {isAgent ? "Agent" : "User"}
+                      </Text>
+                    </Group>
+                    {entry.time_in_call_secs !== undefined && (
+                      <Text size="xs" c="dimmed">
+                        {formatTime(entry.time_in_call_secs)}
+                      </Text>
+                    )}
+                  </Group>
+
+                  <Text size="sm" className={styles.message}>
+                    {entry.message}
+                  </Text>
+
+                  {entry.interrupted && (
+                    <Text size="xs" c="dimmed" className={styles.interrupted}>
+                      Interrupted
                     </Text>
                   )}
-                </Group>
-
-                <Text size="sm" className={styles.message}>
-                  {entry.message}
-                </Text>
-
-                {entry.interrupted && (
-                  <Text size="xs" c="dimmed" mt={4}>
-                    (Interrupted)
-                  </Text>
-                )}
+                </Box>
               </Box>
-            </Group>
+            )}
           </Box>
         );
       })}
