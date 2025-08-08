@@ -1,0 +1,23 @@
+/* Flat, light card styling aligned with ConversationOverview */
+.paper {
+	background-color: var(--mantine-color-body);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+}
+
+.header {
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
+.darkText {
+	color: var(--mantine-color-dark-9);
+}
+
+.lightText {
+	color: var(--mantine-color-dimmed);
+}
+
+.badge {
+	background-color: var(--mantine-color-gray-1);
+	color: var(--mantine-color-dark-7);
+}

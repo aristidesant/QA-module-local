@@ -9,6 +9,7 @@ import {
 import type { ConversationsModel } from "~/models/ConversationsModels";
 import styles from "./ConversationOverview.module.css";
 import ConversationPlayer from "../ConversationPlayer";
+import ConversationDisposition from "../ConversationDisposition";
 
 interface ConversationOverviewProps {
   conversation: ConversationsModel;
@@ -151,6 +152,11 @@ export function ConversationOverview({
           </div>
         </Group>
       </Paper>
+
+      <ConversationDisposition
+        key={conversation?.id}
+        conversationId={String(conversation?.id)}
+      />
       <ConversationPlayer voiceFile={conversation?.voiceFile} />
     </Stack>
   );
