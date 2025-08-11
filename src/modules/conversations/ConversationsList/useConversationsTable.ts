@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useMemo } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -36,24 +36,23 @@ export function useConversationsTable({
   // Get columns
   const columns = useConversationColumns();
 
-  // Create the table instance
-  const [filtering, setFiltering] = useState(globalFilter);
-
-  // Update local filter state when globalFilter prop changes
-  useEffect(() => {
-    setFiltering(globalFilter);
-  }, [globalFilter]);
+  // Memoize data to avoid creating a new array each render when undefined
+  const memoData = useMemo(() => data ?? [], [data]);
 
   const table = useReactTable({
-    data: data || [], // Ensure data is always an array
+    data: memoData, // Ensure data is always an array, memoized
     columns,
     state: {
       pagination,
-      globalFilter: filtering,
+      globalFilter,
     },
+    // Forward table-originated global filter changes to the parent, avoiding redundant updates
     onGlobalFilterChange: (value) => {
-      setFiltering(value);
-      onGlobalFilterChange(value);
+      // Some table versions pass the resolved value directly
+      const nextValue = value as unknown as string;
+      if (nextValue !== globalFilter) {
+        onGlobalFilterChange(nextValue);
+      }
     },
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),

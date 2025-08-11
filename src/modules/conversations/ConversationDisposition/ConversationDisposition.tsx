@@ -37,7 +37,9 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
     return "NEUTRAL" as const; // default safe
   };
 
-  const getStatusPresentation = (status: ReturnType<typeof normalizeStatus>) => {
+  const getStatusPresentation = (
+    status: ReturnType<typeof normalizeStatus>
+  ) => {
     switch (status) {
       case "POSITIVE":
         return {
@@ -70,7 +72,8 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
     const parts: string[] = [];
     if (days) parts.push(`${days} ${days === 1 ? "day" : "days"}`);
     if (hours) parts.push(`${hours} ${hours === 1 ? "hour" : "hours"}`);
-    if (minutes) parts.push(`${minutes} ${minutes === 1 ? "minute" : "minutes"}`);
+    if (minutes)
+      parts.push(`${minutes} ${minutes === 1 ? "minute" : "minutes"}`);
     if (!parts.length) return "less than a minute";
     if (parts.length === 1) return parts[0];
     if (parts.length === 2) return `${parts[0]} and ${parts[1]}`;
@@ -131,7 +134,9 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
   const name = disposition?.dispositionName || "No disposition";
   const description = disposition?.dispositionDescription;
   const notes = disposition?.notes;
-  const status = normalizeStatus(disposition?.callStatus || disposition?.dispositionName);
+  const status = normalizeStatus(
+    disposition?.callStatus || disposition?.dispositionName
+  );
   const statusView = getStatusPresentation(status);
   const updatedAt = disposition?.updatedAt || disposition?.createdAt;
   const requiresReschedule = Boolean(disposition?.requiresReschedule);
@@ -200,7 +205,9 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
             </Text>
           )}
 
-          {(requiresReschedule || isInvalidatesNumber) && <Divider my={compact ? 6 : 8} />}
+          {(requiresReschedule || isInvalidatesNumber) && (
+            <Divider my={compact ? 6 : 8} />
+          )}
 
           {requiresReschedule && (
             <Group gap="xs" align="flex-start">
@@ -228,7 +235,8 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
                   Number invalidated
                 </Text>
                 <Text size="sm" c="dimmed">
-                  This phone number has been marked invalid and will no longer be dialed.
+                  This phone number has been marked invalid and will no longer
+                  be dialed.
                 </Text>
               </Stack>
             </Group>

@@ -1,13 +1,10 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { Table, Loader, Center, Text, Box, Stack } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { useGetConversations } from "~/queries/conversationsQueries";
 import { useConversationStore } from "~/stores/useConversationStore";
 import { ConversationDetails } from "../ConversationDetails/ConversationDetails";
-import type {
-  ConversationsModel,
-  ConversationTableModel,
-} from "~/models/ConversationsModels";
+import type { ConversationsModel } from "~/models/ConversationsModels";
 import SectionCard from "~/components/SectionCard";
 import { useConversationsTable } from "./useConversationsTable";
 import { TableHeader } from "./components/TableHeader";
@@ -17,15 +14,14 @@ import { TableToolbar } from "./components/TableToolbar";
 import styles from "./ConversationsList.module.css";
 
 export function ConversationsList() {
-  const { data: conversations, isLoading, refetch } = useGetConversations();
+  const {
+    data: typedConversations,
+    isLoading,
+    isError,
+    refetch: handleRefresh,
+  } = useGetConversations();
   const { selectedId, setSelection } = useConversationStore();
   const isMobile = useMediaQuery("(max-width: 768px)");
-
-  // Memoize the typed conversations to prevent unnecessary re-renders
-  const typedConversations = useMemo(
-    () => conversations as ConversationTableModel[] | undefined,
-    [conversations]
-  );
 
   // Stable callback for row clicks
   const handleRowClick = useCallback(
@@ -38,26 +34,29 @@ export function ConversationsList() {
     [setSelection]
   );
 
-  // Stable callback for refetch
-  const handleRefresh = useCallback(() => {
-    refetch();
-  }, [refetch]);
-
   const [globalFilter, setGlobalFilter] = useState("");
 
   const { table, getRowProps, pageSizeOptions, totalRows, currentPageRows } =
     useConversationsTable({
-      data: typedConversations,
+  data: typedConversations,
       onRowClick: handleRowClick,
       selectedRowId: selectedId,
       globalFilter,
       onGlobalFilterChange: setGlobalFilter,
     });
-
+  console.log("Elements");
   if (isLoading) {
     return (
       <Center p="xl">
         <Loader size="md" />
+      </Center>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Center p="xl">
+        <Text c="red">Error loading conversations</Text>
       </Center>
     );
   }

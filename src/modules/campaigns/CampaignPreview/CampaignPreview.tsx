@@ -30,6 +30,7 @@ interface CampaignPreviewProps {
 // Helper functions moved to AssignedAgents component
 
 const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
+  
   // Safely get campaign stats with defaults
 
   // No additional metrics needed - moved to CampaignPerformance component

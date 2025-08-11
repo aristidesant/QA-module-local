@@ -40,6 +40,8 @@ export const useGetConversations = () => {
       const api = getApi();
       return api.getConversations();
     },
+    refetchOnWindowFocus: false,
+    retry: false,
   });
 };
 
