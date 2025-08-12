@@ -38,7 +38,7 @@ export function ConversationsList() {
 
   const { table, getRowProps, pageSizeOptions, totalRows, currentPageRows } =
     useConversationsTable({
-  data: typedConversations,
+      data: typedConversations,
       onRowClick: handleRowClick,
       selectedRowId: selectedId,
       globalFilter,

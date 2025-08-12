@@ -8,6 +8,7 @@ import AppRoutes from "./routes";
 import { theme } from "./theme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "~/utils/axiosInterceptor";
+import { Notifications } from "@mantine/notifications";
 
 const queryClient = new QueryClient({});
 
@@ -16,6 +17,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <MantineProvider theme={theme}>
         <AppRoutes />
+        <Notifications position="top-right" autoClose={4000} />
       </MantineProvider>
     </QueryClientProvider>
   );

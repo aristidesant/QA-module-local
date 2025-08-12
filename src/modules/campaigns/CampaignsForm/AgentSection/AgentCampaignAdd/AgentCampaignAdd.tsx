@@ -5,6 +5,8 @@ import { useGetAllAgents } from "~/queries/agentQueries";
 import { useCreateCampaignAgent } from "~/queries/campaignAgentsQueries";
 import type AgentListObject from "~/models/AgentListObject";
 import classes from "./AgentCampaignAdd.module.css";
+import { isAxiosError } from "axios";
+import { notifications } from "@mantine/notifications";
 
 interface AgentCampaignAddProps {
   campaignId: number;
@@ -32,13 +34,24 @@ export const AgentCampaignAdd: React.FC<AgentCampaignAddProps> = ({
       { campaignId, agentId: selectedAgent },
       {
         onSuccess: onComplete,
+        onError: (error) => {
+          let apiMessage = "Failed to add agent to campaign";
+          if (isAxiosError(error)) {
+            apiMessage = error.response?.data?.message || apiMessage;
+          }
+          notifications.show({
+            title: "Error",
+            message: apiMessage,
+            color: "red",
+          });
+        },
       }
     );
   };
 
   return (
     <div className={classes.container}>
-      <Text size="sm" color="dimmed">
+      <Text size="sm" c="dimmed">
         Choose an agent to assign to this campaign.
       </Text>
       <div className={classes.agentList}>

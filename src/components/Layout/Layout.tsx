@@ -3,7 +3,6 @@ import { useDisclosure } from "@mantine/hooks";
 import { Outlet } from "react-router";
 import Sidebar from "../Sidebar";
 import { Header } from "../Header";
-import { Notifications } from "@mantine/notifications";
 import { useScrollEffect } from "../../hooks/useScrollEffect";
 import styles from "./Layout.module.css";
 
@@ -15,11 +14,6 @@ export default function Layout() {
 
   return (
     <div className={styles.layout}>
-      <Notifications
-        position="top-right"
-        className={styles.notifications}
-        autoClose={4000}
-      />
       <div className={styles.container}>
         <aside
           className={`${styles.navbar} ${

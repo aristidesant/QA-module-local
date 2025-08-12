@@ -192,7 +192,10 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
             </Menu.Target>
             <Menu.Dropdown>
               <Menu.Item
-                onClick={onViewDetails}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onViewDetails();
+                }}
                 leftSection={<IconEye size={14} />}
               >
                 Edit Campaign

@@ -3,6 +3,7 @@ import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { IconPlus, IconUserSearch } from "@tabler/icons-react";
 import { useCallback } from "react";
+import { isAxiosError } from "axios";
 import { AgentSelection } from "~/components/AgentSelection/AgentSelection";
 import SectionCard from "~/components/SectionCard";
 import type AgentListObject from "~/models/AgentListObject";
@@ -47,12 +48,23 @@ const CampaignAgentList: React.FC<CampaignAgentListProps> = ({
         });
       } catch (error) {
         console.error("Error adding agent to campaign:", error);
+        let message = "Failed to add agent to campaign";
+
+        if (isAxiosError(error)) {
+          console.log("Axios error detected:", error);
+          const apiMessage = (
+            error.response?.data as { message?: string } | undefined
+          )?.message;
+          message = apiMessage || error.message || message;
+        } else if (error instanceof Error) {
+          message = error.message || message;
+        }
+
+        console.log("About to show notification with message:", message);
+
         notifications.show({
           title: "Error",
-          message:
-            error instanceof Error
-              ? error.message
-              : "Failed to add agent to campaign",
+          message,
           color: "red",
         });
       }
