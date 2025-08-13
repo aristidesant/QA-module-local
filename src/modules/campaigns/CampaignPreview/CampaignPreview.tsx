@@ -33,7 +33,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
 			<Stack gap="xs" p="xs">
 				<CampaignOverview campaign={campaign} />
 
-				<CampaignStatus status={campaign.status} />
+				<CampaignStatus campaign={campaign} />
 
 				<CampaignContactOutcomeSummary />
 

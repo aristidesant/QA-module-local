@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import {
 	Card,
 	Group,
@@ -10,10 +10,11 @@ import {
 } from "@mantine/core";
 import styles from "./CampaignStatus.module.css";
 import { getCampaignStatusIcon } from "../../CampaignsList/CampaignsListItem/CampaignsListItem";
+import type { Campaign } from "../../../../models/CampaignsModel";
+import { useGetCampaign } from "~/queries/campaignsQueries";
 
 interface CampaignStatusProps {
-	status?: string;
-	description?: string;
+	campaign: Campaign;
 	timeLeft?: string;
 	progress?: number; // 0-100
 }
@@ -23,10 +24,15 @@ const getStatusDescription = (status: string): string => {
 
 	switch (campaignStatus) {
 		case "active":
+			return "The campaign is ready to start.";
 		case "running":
 			return "The campaign is currently active and executing calls.";
 		case "paused":
 			return "The campaign has been temporarily paused and is not making calls.";
+		case "completed":
+			return "The campaign has successfully completed all scheduled calls.";
+		case "inactive":
+			return "The campaign is currently inactive and not running.";
 		case "incomplete":
 		case "error":
 			return "The campaign encountered an error and needs attention.";
@@ -39,13 +45,24 @@ const getStatusDescription = (status: string): string => {
 };
 
 const CampaignStatus: React.FC<CampaignStatusProps> = ({
-	status = "Running",
-	description,
+	campaign,
 	timeLeft = "3h:12min",
 	progress = 70,
 }) => {
-	const statusInfo = getCampaignStatusIcon(status.toLowerCase());
-	const finalDescription = description || getStatusDescription(status);
+	const { data: campaignData, refetch } = useGetCampaign(`${campaign?.id}`);
+
+	useEffect(() => {
+		refetch();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [campaign, campaign.status]);
+	const statusInfo = useMemo(
+		() => getCampaignStatusIcon(campaignData?.status ?? ""),
+		[campaignData?.status]
+	);
+	const description = useMemo(
+		() => getStatusDescription(campaignData?.status ?? ""),
+		[campaignData?.status]
+	);
 
 	return (
 		<Stack gap="xs">
@@ -65,7 +82,7 @@ const CampaignStatus: React.FC<CampaignStatusProps> = ({
 							{statusInfo.label}
 						</Text>
 						<Text fz="sm" c="gray.6" className={styles.statusDesc}>
-							{finalDescription}
+							{description}
 						</Text>
 					</Box>
 				</Group>

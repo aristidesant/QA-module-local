@@ -56,8 +56,21 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 			return response.data;
 		},
 
-		pauseOutboundCampaign: async (campaignId: string) => {
+		startOutboundCampaign: async (campaignId: number) => {
+			const response = await axios.post(`${DEFAULT_API_URL}/outbound/start`, {
+				campaignId,
+			});
+			return response.data;
+		},
+
+		pauseOutboundCampaign: async (campaignId: number) => {
 			const response = await axios.patch(`${DEFAULT_API_URL}/outbound/pause`, {
+				campaignId,
+			});
+			return response.data;
+		},
+		resumeOutboundCampaign: async (campaignId: number) => {
+			const response = await axios.patch(`${DEFAULT_API_URL}/outbound/resume`, {
 				campaignId,
 			});
 			return response.data;
