@@ -103,6 +103,37 @@ const conversationsApi = (_authHeader: Record<string, string> = {}) => {
       );
       return response.data;
     },
+
+    // Export conversations as CSV file
+    exportConversationsCsv: async (params: {
+      startDate: string; // ISO string e.g., 2025-08-01T00:00:00Z
+      endDate: string; // ISO string e.g., 2025-08-13T23:59:59Z
+      // NOTE: Backend expects the misspelled key "campaingType" per API docs screenshot
+      campaingType: "inbound" | "outbound";
+    }) => {
+      const response = await axios.get<Blob>(
+        `${DEFAULT_API_URL}/conversations/export/csv`,
+        {
+          params,
+          responseType: "blob",
+        }
+      );
+
+      // Try to extract filename from Content-Disposition; fall back to default
+      const contentDisposition = response.headers?.["content-disposition"] as
+        | string
+        | undefined;
+      let filename = "conversations.csv";
+      if (contentDisposition) {
+        const match = /filename\*=UTF-8''([^;]+)|filename="?([^";]+)"?/i.exec(
+          contentDisposition
+        );
+        const raw = decodeURIComponent(match?.[1] || match?.[2] || "");
+        if (raw) filename = raw;
+      }
+
+      return { blob: response.data, filename };
+    },
   };
 };
 
