@@ -1,6 +1,8 @@
 import { Modal, Group, Button, Title, Text, Select } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
+import { useState } from "react";
+import conversationsApi from "~/api/conversationsApi";
 import classes from "./ExportToExcelModal.module.css";
 
 export type Direction = "inbound" | "outbound";
@@ -16,6 +18,7 @@ export default function ExportToExcelModal({
   onClose,
   onSubmit,
 }: ExportToExcelModalProps) {
+  const [loading, setLoading] = useState(false);
   const form = useForm<{
     from: Date | null;
     to: Date | null;
@@ -38,8 +41,60 @@ export default function ExportToExcelModal({
     const { from, to, direction } = form.values;
     console.log("Form values", { from, to, direction });
     if (!from || !to || !direction) return;
-    onSubmit?.({ from, to, direction });
-    handleClose();
+    // If parent provided a handler, delegate to it
+    if (onSubmit) {
+      onSubmit({ from, to, direction });
+      handleClose();
+      return;
+    }
+
+    // Otherwise, handle export here: build UTC day range and download file
+    // Normalize any input into a valid Date instance (defensive against strings/dayjs)
+    const toValidDate = (input: unknown): Date => {
+      if (input instanceof Date) return input;
+      const dt = new Date(input as string);
+      if (Number.isNaN(dt.getTime())) {
+        throw new Error("Invalid date");
+      }
+      return dt;
+    };
+
+    const buildUtcIso = (input: unknown, h: number, m: number, s: number) => {
+      const d = toValidDate(input);
+      const y = d.getFullYear();
+      const mon = d.getMonth();
+      const day = d.getDate();
+      return new Date(Date.UTC(y, mon, day, h, m, s)).toISOString();
+    };
+
+    const startDate = buildUtcIso(from, 0, 0, 0); // 00:00:00Z
+    const endDate = buildUtcIso(to, 23, 59, 59); // 23:59:59Z
+
+    setLoading(true);
+    conversationsApi()
+      .exportConversationsCsv({
+        startDate,
+        endDate,
+        campaingType: direction,
+      })
+      .then(({ blob, filename }) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename || `conversations-${startDate}-${endDate}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error("Failed to export conversations CSV", err);
+      })
+      .finally(() => {
+        setLoading(false);
+        handleClose();
+      });
   };
 
   return (
@@ -106,6 +161,7 @@ export default function ExportToExcelModal({
         </Button>
         <Button
           onClick={handleSubmit}
+          loading={loading}
           disabled={
             !form.values.direction || !form.values.from || !form.values.to
           }

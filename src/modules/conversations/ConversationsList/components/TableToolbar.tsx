@@ -49,7 +49,12 @@ export function TableToolbar({
       <Group gap="xs">
         {isLoading && (
           <Tooltip label="Loading data">
-            <ActionIcon variant="subtle" size="lg" color="gray" aria-label="loading">
+            <ActionIcon
+              variant="subtle"
+              size="lg"
+              color="gray"
+              aria-label="loading"
+            >
               <Loader size={18} color="gray" />
             </ActionIcon>
           </Tooltip>
