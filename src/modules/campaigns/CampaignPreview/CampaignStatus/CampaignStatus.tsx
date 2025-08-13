@@ -8,8 +8,8 @@ import {
 	Progress,
 	ThemeIcon,
 } from "@mantine/core";
-import { IconBolt } from "@tabler/icons-react";
 import styles from "./CampaignStatus.module.css";
+import { getCampaignStatusIcon } from "../../CampaignsList/CampaignsListItem/CampaignsListItem";
 
 interface CampaignStatusProps {
 	status?: string;
@@ -18,12 +18,35 @@ interface CampaignStatusProps {
 	progress?: number; // 0-100
 }
 
+const getStatusDescription = (status: string): string => {
+	const campaignStatus = status?.toLowerCase();
+
+	switch (campaignStatus) {
+		case "active":
+		case "running":
+			return "The campaign is currently active and executing calls.";
+		case "paused":
+			return "The campaign has been temporarily paused and is not making calls.";
+		case "incomplete":
+		case "error":
+			return "The campaign encountered an error and needs attention.";
+		case "ready":
+		case "scheduled":
+			return "The campaign is ready to start and waiting for scheduled time.";
+		default:
+			return "Campaign status information is not available.";
+	}
+};
+
 const CampaignStatus: React.FC<CampaignStatusProps> = ({
-	status = "Campaign Running",
-	description = "The campaign is currently active and executing calls.",
+	status = "Running",
+	description,
 	timeLeft = "3h:12min",
 	progress = 70,
 }) => {
+	const statusInfo = getCampaignStatusIcon(status.toLowerCase());
+	const finalDescription = description || getStatusDescription(status);
+
 	return (
 		<Stack gap="xs">
 			<Card radius="md" padding="md" withBorder className={styles.card}>
@@ -31,18 +54,18 @@ const CampaignStatus: React.FC<CampaignStatusProps> = ({
 					<ThemeIcon
 						radius="xl"
 						size={40}
-						color="green"
+						color={statusInfo.color}
 						variant="light"
 						className={styles.icon}
 					>
-						<IconBolt size={24} />
+						{statusInfo.icon}
 					</ThemeIcon>
 					<Box>
 						<Text fw={600} fz="md" className={styles.statusTitle}>
-							{status}
+							{statusInfo.label}
 						</Text>
 						<Text fz="sm" c="gray.6" className={styles.statusDesc}>
-							{description}
+							{finalDescription}
 						</Text>
 					</Box>
 				</Group>
