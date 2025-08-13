@@ -1,64 +1,40 @@
-import { Group, ActionIcon, Tooltip, TextInput, Stack } from "@mantine/core";
-import { IconRefresh, IconSearch } from "@tabler/icons-react";
-import { useMediaQuery } from "@mantine/hooks";
+import { Group, ActionIcon, Tooltip, TextInput, Loader } from "@mantine/core";
+import {
+  IconRefresh,
+  IconSearch,
+  IconFileSpreadsheet,
+} from "@tabler/icons-react";
 import type { Table } from "@tanstack/react-table";
 import type { ConversationTableModel } from "~/models/ConversationsModels";
+import { useState } from "react";
+import ExportToExcelModal from "./ExportToExcelModal";
 
 interface TableToolbarProps {
   table: Table<ConversationTableModel>;
   globalFilter: string;
   onGlobalFilterChange: (value: string) => void;
   onRefresh?: () => void;
+  isLoading?: boolean;
 }
 
 export function TableToolbar({
   globalFilter,
   onGlobalFilterChange,
   onRefresh,
+  isLoading = false,
 }: TableToolbarProps) {
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const [exportOpen, setExportOpen] = useState(false);
 
   const toolbarStyle = {
     borderBottom: "1px solid var(--mantine-color-gray-3)",
     backgroundColor: "var(--mantine-color-gray-0)",
-    padding: isMobile
-      ? "var(--mantine-spacing-sm)"
-      : "var(--mantine-spacing-md)",
+    padding: "var(--mantine-spacing-md)",
   };
 
   const searchInputStyle = {
-    width: isMobile ? "100%" : "300px",
-    minWidth: isMobile ? "auto" : "250px",
-  };
-
-  if (isMobile) {
-    return (
-      <Stack gap="sm" style={toolbarStyle}>
-        <TextInput
-          placeholder="Search conversations..."
-          value={globalFilter ?? ""}
-          onChange={(e) => onGlobalFilterChange(e.target.value)}
-          leftSection={<IconSearch size={16} />}
-          style={searchInputStyle}
-        />
-
-        {onRefresh && (
-          <Group justify="center">
-            <Tooltip label="Refresh data">
-              <ActionIcon
-                variant="subtle"
-                size="lg"
-                color="gray"
-                onClick={onRefresh}
-              >
-                <IconRefresh size={18} />
-              </ActionIcon>
-            </Tooltip>
-          </Group>
-        )}
-      </Stack>
-    );
-  }
+    width: "300px",
+    minWidth: "250px",
+  } as const;
 
   return (
     <Group justify="space-between" style={toolbarStyle}>
@@ -71,6 +47,13 @@ export function TableToolbar({
       />
 
       <Group gap="xs">
+        {isLoading && (
+          <Tooltip label="Loading data">
+            <ActionIcon variant="subtle" size="lg" color="gray" aria-label="loading">
+              <Loader size={18} color="gray" />
+            </ActionIcon>
+          </Tooltip>
+        )}
         {onRefresh && (
           <Tooltip label="Refresh data">
             <ActionIcon
@@ -83,7 +66,23 @@ export function TableToolbar({
             </ActionIcon>
           </Tooltip>
         )}
+
+        <Tooltip label="Export to Excel">
+          <ActionIcon
+            variant="subtle"
+            size="lg"
+            color="gray"
+            onClick={() => setExportOpen(true)}
+          >
+            <IconFileSpreadsheet size={18} />
+          </ActionIcon>
+        </Tooltip>
       </Group>
+
+      <ExportToExcelModal
+        opened={exportOpen}
+        onClose={() => setExportOpen(false)}
+      />
     </Group>
   );
 }
