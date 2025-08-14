@@ -18,7 +18,7 @@
 }
 
 .icon {
-  background: var(--mantine-color-green-0);
+  /* ThemeIcon handles background color dynamically based on the color prop */
   border-radius: 50%;
   width: 40px;
   height: 40px;
