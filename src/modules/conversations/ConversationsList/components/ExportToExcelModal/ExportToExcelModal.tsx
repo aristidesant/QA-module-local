@@ -143,8 +143,8 @@ export default function ExportToExcelModal({
           label="Type"
           placeholder="Select type"
           data={[
-            { value: "inbound", label: "Inbound" },
-            { value: "outbound", label: "Outbound" },
+            { value: "INBOUND", label: "Inbound" },
+            { value: "OUTBOUND", label: "Outbound" },
           ]}
           value={form.values.direction}
           onChange={(val) =>
