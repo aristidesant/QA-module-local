@@ -44,3 +44,4 @@ pnpm-debug.log*
 *.seed
 *.pid.lock
 .env
+package-lock.json
