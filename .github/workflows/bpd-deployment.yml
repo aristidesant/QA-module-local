@@ -47,7 +47,7 @@ jobs:
       # 6. Upload static assets (cache for 1 year)
       - name: Upload static assets
         run: |
-          aws s3 sync ./dist s3://${{ secrets.S3_BUCKET_NAME }}/${{ secrets.FOLDER }} \
+          aws s3 sync ./dist s3://${{ secrets.S3_FRONTEND_BUCKET_NAME }}/${{ secrets.FOLDER }} \
             --delete \
             --cache-control "max-age=31536000" \
             --exclude "index.html"
@@ -55,16 +55,16 @@ jobs:
       # 7. Upload index.html without cache
       - name: Upload index.html
         run: |
-          aws s3 cp ./dist/index.html s3://${{ secrets.S3_BUCKET_NAME }}/${{ secrets.FOLDER }}/index.html \
+          aws s3 cp ./dist/index.html s3://${{ secrets.S3_FRONTEND_BUCKET_NAME }}/${{ secrets.FOLDER }}/index.html \
             --cache-control "no-cache"
 
       # 8. Upload extra folders (upload assets and images)
       - name: Upload extra folders
         run: |
-          aws s3 sync ./assets s3://${{ secrets.S3_BUCKET_NAME }}/${{ secrets.FOLDER }}/assets \
+          aws s3 sync ./assets s3://${{ secrets.S3_FRONTEND_BUCKET_NAME }}/${{ secrets.FOLDER }}/assets \
             --delete \
             --cache-control "max-age=31536000"
-          aws s3 sync ./images s3://${{ secrets.S3_BUCKET_NAME }}/${{ secrets.FOLDER }}/images \
+          aws s3 sync ./images s3://${{ secrets.S3_FRONTEND_BUCKET_NAME }}/${{ secrets.FOLDER }}/images \
             --delete \
             --cache-control "max-age=31536000"
 
