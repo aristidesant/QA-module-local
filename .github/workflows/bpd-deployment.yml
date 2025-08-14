@@ -61,10 +61,10 @@ jobs:
       # 8. Upload extra folders (upload assets and images)
       - name: Upload extra folders
         run: |
-          aws s3 sync ./assets s3://${{ secrets.S3_FRONTEND_BUCKET_NAME }}/${{ secrets.FOLDER }}/assets \
+          aws s3 sync ./dist/assets s3://${{ secrets.S3_FRONTEND_BUCKET_NAME }}/${{ secrets.FOLDER }}/assets \
             --delete \
             --cache-control "max-age=31536000"
-          aws s3 sync ./images s3://${{ secrets.S3_FRONTEND_BUCKET_NAME }}/${{ secrets.FOLDER }}/images \
+          aws s3 sync ./dist/images s3://${{ secrets.S3_FRONTEND_BUCKET_NAME }}/${{ secrets.FOLDER }}/images \
             --delete \
             --cache-control "max-age=31536000"
 
