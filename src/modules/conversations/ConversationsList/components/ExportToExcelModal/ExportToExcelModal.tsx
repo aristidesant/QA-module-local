@@ -2,6 +2,12 @@ import { Modal, Group, Button, Title, Text, Select } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useState } from "react";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+
+dayjs.extend(utc);
+dayjs.extend(localizedFormat);
 import conversationsApi from "~/api/conversationsApi";
 import classes from "./ExportToExcelModal.module.css";
 
@@ -49,26 +55,13 @@ export default function ExportToExcelModal({
     }
 
     // Otherwise, handle export here: build UTC day range and download file
-    // Normalize any input into a valid Date instance (defensive against strings/dayjs)
-    const toValidDate = (input: unknown): Date => {
-      if (input instanceof Date) return input;
-      const dt = new Date(input as string);
-      if (Number.isNaN(dt.getTime())) {
-        throw new Error("Invalid date");
-      }
-      return dt;
-    };
-
-    const buildUtcIso = (input: unknown, h: number, m: number, s: number) => {
-      const d = toValidDate(input);
-      const y = d.getFullYear();
-      const mon = d.getMonth();
-      const day = d.getDate();
-      return new Date(Date.UTC(y, mon, day, h, m, s)).toISOString();
-    };
-
-    const startDate = buildUtcIso(from, 0, 0, 0); // 00:00:00Z
-    const endDate = buildUtcIso(to, 23, 59, 59); // 23:59:59Z
+    // Use dayjs to reliably compute local start/end of day and convert to ISO
+    // Instants. This avoids timezone parsing pitfalls and keeps the selected
+    // calendar day for the user.
+    const startDate = dayjs(from).startOf("day").toISOString();
+    // Use UTC endOf('day') so the resulting ISO is the day's 23:59:59Z and
+    // doesn't roll into the next day in UTC for negative timezones.
+    const endDate = dayjs(to).utc().endOf("day").toISOString();
 
     setLoading(true);
     conversationsApi()

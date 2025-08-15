@@ -61,7 +61,7 @@ export const ContentContainer = ({
             </Flex>
             {titleRight && titleRight}
           </Flex>
-          <Divider className={styles.divider} />
+          <Divider mt="xs" className={styles.divider} />
         </div>
       )}
       <div className={styles.content}>{children}</div>

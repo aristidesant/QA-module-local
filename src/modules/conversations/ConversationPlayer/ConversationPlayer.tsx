@@ -11,8 +11,8 @@ import {
 import {
   IconPlayerPlay,
   IconPlayerPause,
-  IconRotateClockwise2,
-  IconRotate2,
+  IconPlayerSkipBack,
+  IconPlayerSkipForward,
   IconVolume,
 } from "@tabler/icons-react";
 import type { VoiceFileModel } from "~/models/ConversationsModels";
@@ -131,6 +131,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
               value={currentTime}
               onChange={handleSeek}
               max={duration || 100}
+              label={(val) => formatTime(Number(val))}
               className={classes.progressSlider}
               classNames={{
                 track: classes.sliderTrack,
@@ -156,9 +157,10 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
               size="lg"
               onClick={() => seek(-10)}
               aria-label="Rewind 10 seconds"
+              title="Rewind 10s"
               className={classes.controlButton}
             >
-              <IconRotate2 size={20} style={{ transform: "scaleX(-1)" }} />
+              <IconPlayerSkipBack size={20} />
             </ActionIcon>
 
             <ActionIcon
@@ -183,9 +185,10 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
               size="lg"
               onClick={() => seek(10)}
               aria-label="Forward 10 seconds"
+              title="Forward 10s"
               className={classes.controlButton}
             >
-              <IconRotateClockwise2 size={20} />
+              <IconPlayerSkipForward size={20} />
             </ActionIcon>
           </Group>
         </Stack>

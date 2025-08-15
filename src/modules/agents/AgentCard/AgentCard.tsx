@@ -111,6 +111,7 @@ export const AgentCard: React.FC<AgentCardProps> = ({
   return (
     <Card
       withBorder
+      radius={"lg"}
       onClick={onClick ? () => onClick(agent) : undefined}
       data-testid="agent-card"
       className={styles.agentCard}
