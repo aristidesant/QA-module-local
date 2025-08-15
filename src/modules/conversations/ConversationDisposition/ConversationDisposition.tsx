@@ -28,13 +28,12 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
   const { data, isLoading, isError, refetch } =
     useCallDispositionByConversationId(conversationId);
 
-  // Helpers
   const normalizeStatus = (raw?: string) => {
     const v = (raw || "").toString().trim().toUpperCase();
     if (v.includes("POS")) return "POSITIVE" as const;
     if (v.includes("NEG")) return "NEGATIVE" as const;
     if (v.includes("NEU")) return "NEUTRAL" as const;
-    return "NEUTRAL" as const; // default safe
+    return "NEUTRAL" as const;
   };
 
   const getStatusPresentation = (
@@ -82,7 +81,7 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 
   if (isLoading) {
     return (
-      <Paper p={compact ? "sm" : "md"} className={styles.paper}>
+      <Paper p={compact ? "xs" : "sm"} className={styles.paper}>
         <RightSection
           title="Disposition"
           description={
@@ -91,8 +90,10 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
             </Text>
           }
         >
-          <Skeleton height={12} mt={6} radius="sm" />
-          <Skeleton height={12} mt={6} width="60%" radius="sm" />
+          <Stack gap={6} className={styles.skeletonStack}>
+            <Skeleton height={10} mt={2} radius="sm" />
+            <Skeleton height={10} mt={2} width="70%" radius="sm" />
+          </Stack>
         </RightSection>
       </Paper>
     );
@@ -100,7 +101,7 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 
   if (isError) {
     return (
-      <Paper p={compact ? "sm" : "md"} className={styles.paper}>
+      <Paper p={compact ? "xs" : "sm"} className={styles.paper}>
         <RightSection
           title="Disposition"
           description={
@@ -112,7 +113,7 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
             </Group>
           }
         >
-          <Stack gap={4}>
+          <Stack gap={6} className={styles.errorStack}>
             <Text size="sm" className={styles.darkText}>
               We couldn’t display the disposition right now.
             </Text>
@@ -147,8 +148,8 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 
   return (
     <Paper
-      p={compact ? "sm" : "md"}
-      className={styles.paper}
+      p={compact ? "xs" : "sm"}
+      className={`${styles.paper} ${compact ? styles.compact : ""}`}
       style={{ borderColor: statusView.borderColorVar }}
     >
       <RightSection
@@ -158,7 +159,7 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
             <Badge
               variant="light"
               radius="sm"
-              size="sm"
+              size="xs"
               className={styles.badge}
             >
               Updated {new Date(updatedAt).toLocaleString()}
@@ -167,7 +168,7 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
             <Badge
               variant="light"
               radius="sm"
-              size="sm"
+              size="xs"
               className={styles.badge}
             >
               Not updated
@@ -175,39 +176,53 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
           )
         }
       >
-        <Stack gap={compact ? 6 : "sm"}>
-          <Group justify="space-between" align="center" wrap="nowrap">
-            <Group gap="xs" align="center">
-              <Badge color={statusView.color} variant="filled" radius="sm">
+        <Stack gap={6} className={styles.contentStack}>
+          <Group
+            className={styles.headerRow}
+            align="center"
+            gap={8}
+            wrap="nowrap"
+          >
+            <Group
+              gap={8}
+              align="center"
+              className={styles.titleGroup}
+              wrap="nowrap"
+            >
+              <Badge
+                color={statusView.color}
+                variant="filled"
+                radius="sm"
+                className={styles.statusBadge}
+              >
                 {statusView.label}
               </Badge>
-              <Text fw={700} className={styles.darkText}>
-                {name}
-              </Text>
             </Group>
-            <Group gap={6} visibleFrom="sm">
+
+            <Group gap={6} className={styles.rightFlags}>
               {isFinal && (
-                <Badge size="sm" variant="outline" color="gray" radius="sm">
+                <Badge size="xs" variant="outline" color="gray" radius="sm">
                   Final
                 </Badge>
               )}
               {isVoiceMail && (
-                <Badge size="sm" variant="outline" color="gray" radius="sm">
+                <Badge size="xs" variant="outline" color="gray" radius="sm">
                   Voicemail
                 </Badge>
               )}
             </Group>
           </Group>
+          <Text fw={700} className={styles.name} title={name}>
+            {name}
+          </Text>
 
           {description && (
-            <Text size="sm" c="dimmed">
+            <Text size="xs" c="dimmed" className={styles.description}>
               {description}
             </Text>
           )}
 
-          {(requiresReschedule || isInvalidatesNumber) && (
-            <Divider my={compact ? 6 : 8} />
-          )}
+          {(requiresReschedule || isInvalidatesNumber) && <Divider my={6} />}
 
           {requiresReschedule && (
             <Group gap="xs" align="flex-start">
@@ -215,10 +230,10 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
                 <IconClock size={16} />
               </ThemeIcon>
               <Stack gap={2}>
-                <Text size="sm" fw={600}>
+                <Text size="xs" fw={600}>
                   Follow-up required
                 </Text>
-                <Text size="sm" c="dimmed">
+                <Text size="xs" c="dimmed">
                   Call the contact back in {formatDuration(rescheduleTimeSec)}.
                 </Text>
               </Stack>
@@ -231,10 +246,10 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
                 <IconPhoneOff size={16} />
               </ThemeIcon>
               <Stack gap={2}>
-                <Text size="sm" fw={600}>
+                <Text size="xs" fw={600}>
                   Number invalidated
                 </Text>
-                <Text size="sm" c="dimmed">
+                <Text size="xs" c="dimmed">
                   This phone number has been marked invalid and will no longer
                   be dialed.
                 </Text>
@@ -242,17 +257,19 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
             </Group>
           )}
 
-          <Divider my={compact ? 6 : 8} />
+          <Divider my={6} />
 
-          {notes ? (
-            <Text size="sm" className={styles.lightText}>
-              {notes}
-            </Text>
-          ) : (
-            <Text size="sm" className={styles.lightText}>
-              No notes provided
-            </Text>
-          )}
+          <div className={styles.notes}>
+            {notes ? (
+              <Text size="xs" className={styles.lightText} title={notes}>
+                {notes}
+              </Text>
+            ) : (
+              <Text size="xs" className={styles.lightText}>
+                No notes provided
+              </Text>
+            )}
+          </div>
         </Stack>
       </RightSection>
     </Paper>
