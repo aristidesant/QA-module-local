@@ -140,6 +140,13 @@
   display: block;
 }
 
+.statContent {
+  /* allow content to wrap to multiple lines while keeping layout aligned with icon */
+  min-width: 0;
+  display: block;
+  word-break: break-word;
+}
+
 .phone {
   color: var(--mantine-color-gray-7);
 }

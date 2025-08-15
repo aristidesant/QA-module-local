@@ -1,7 +1,22 @@
 import React, { useState } from "react";
 import AgentForm from "../AgentForm";
-import { Modal, Box, Text, Stack, Card, Group } from "@mantine/core";
-import { IconArrowDown, IconArrowUp } from "@tabler/icons-react";
+import {
+  Modal,
+  Box,
+  Text,
+  Stack,
+  Group,
+  Button,
+  Paper,
+  Center,
+  ActionIcon,
+} from "@mantine/core";
+import {
+  IconPhoneIncoming,
+  IconPhoneOutgoing,
+  IconChevronLeft,
+} from "@tabler/icons-react";
+import styles from "./AgentCreate.module.css";
 
 interface AgentCreateProps {
   opened: boolean;
@@ -37,68 +52,113 @@ const AgentCreate: React.FC<AgentCreateProps> = ({
       opened={opened}
       onClose={onClose}
       centered
-      size="md"
+      size="xl"
       title={<Text fw="bold">Create New Agent</Text>}
     >
       <Box>
         {!agentType ? (
-          <Stack align="center" gap="md">
-            <Text fw={500} mb="xs">
-              Select Agent Type
-            </Text>
-            <Group grow>
-              <Card
+          <Stack gap="lg" className={styles.container}>
+            <Stack gap={4}>
+              <Text fw={700} size="lg">
+                Select Agent Type
+              </Text>
+              <Text size="sm" c="dimmed">
+                Choose whether the agent will handle incoming requests or
+                initiate outbound communications.
+              </Text>
+            </Stack>
+
+            <Group grow className={styles.optionsGroup}>
+              <Paper
                 withBorder
-                shadow="sm"
                 radius="md"
+                className={`${styles.optionCard} ${styles.inbound}`}
                 onClick={() => handleTypeSelect("INBOUND")}
-                style={{
-                  cursor: "pointer",
-                  borderColor: "#228be6",
-                  borderWidth: 1,
-                }}
                 data-testid="inbound-card"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) =>
+                  (e.key === "Enter" || e.key === " ") &&
+                  handleTypeSelect("INBOUND")
+                }
               >
-                <Stack align="center" gap={4}>
-                  <IconArrowDown size={32} color="#228be6" />
-                  <Text fw={600}>INBOUND</Text>
+                <Center className={styles.iconWrap}>
+                  <IconPhoneIncoming size={224} />
+                </Center>
+                <Stack align="center" gap={6} className={styles.cardContent}>
+                  <Text fw={700} className={styles.optionLabel}>
+                    Inbound
+                  </Text>
                   <Text size="sm" c="dimmed" ta="center">
-                    Agents that handle incoming requests or communications
-                    initiated by users or customers.
+                    Handles incoming requests or communications initiated by
+                    customers.
                   </Text>
                 </Stack>
-              </Card>
-              <Card
+              </Paper>
+
+              <Paper
                 withBorder
-                shadow="sm"
                 radius="md"
+                className={`${styles.optionCard} ${styles.outbound}`}
                 onClick={() => handleTypeSelect("OUTBOUND")}
-                style={{
-                  cursor: "pointer",
-                  borderColor: "#fa5252",
-                  borderWidth: 1,
-                }}
                 data-testid="outbound-card"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) =>
+                  (e.key === "Enter" || e.key === " ") &&
+                  handleTypeSelect("OUTBOUND")
+                }
               >
-                <Stack align="center" gap={4}>
-                  <IconArrowUp size={32} color="#fa5252" />
-                  <Text fw={600}>OUTBOUND</Text>
+                <Center className={styles.iconWrap}>
+                  <IconPhoneOutgoing size={224} />
+                </Center>
+                <Stack align="center" gap={6} className={styles.cardContent}>
+                  <Text fw={700} className={styles.optionLabel}>
+                    Outbound
+                  </Text>
                   <Text size="sm" c="dimmed" ta="center">
-                    Agents that initiate contact or actions towards users, such
-                    as follow-ups or outreach.
+                    Initiates contact such as follow-ups, outreach, or
+                    notifications.
                   </Text>
                 </Stack>
-              </Card>
+              </Paper>
+            </Group>
+
+            <Group className={styles.rightAlign}>
+              <Button variant="subtle" onClick={onClose} size="sm">
+                Cancel
+              </Button>
             </Group>
           </Stack>
         ) : (
-          <AgentForm
-            agent={null}
-            type={agentType}
-            onSave={handleSave}
-            loading={loading}
-            error={error}
-          />
+          <Box>
+            <Group className={styles.headerRow}>
+              <Group gap="xs">
+                <ActionIcon
+                  variant="light"
+                  size="sm"
+                  onClick={() => setAgentType(undefined)}
+                  aria-label="Back"
+                >
+                  <IconChevronLeft size={18} />
+                </ActionIcon>
+                <Text fw={700}>
+                  {agentType === "INBOUND" ? "Inbound Agent" : "Outbound Agent"}
+                </Text>
+              </Group>
+              <Button variant="subtle" size="sm" onClick={onClose}>
+                Close
+              </Button>
+            </Group>
+
+            <AgentForm
+              agent={null}
+              type={agentType}
+              onSave={handleSave}
+              loading={loading}
+              error={error}
+            />
+          </Box>
         )}
       </Box>
     </Modal>
