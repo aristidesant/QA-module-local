@@ -17,9 +17,9 @@ export interface FallbackRightComponentProps {
 
 export const FallbackRightComponent: React.FC<FallbackRightComponentProps> = ({
   Icon = IconInfoCircle,
-  title = "No details to display",
-  description = "There is currently no selected item. Choose an entry from the list or create a new record to view detailed information and actions.",
-  actionText = "Use the controls on the left to get started",
+  title = "Nothing selected",
+  description = "No item selected. Pick an entry from the list or create a new one to see details and actions.",
+  actionText = "Choose or create an item to get started",
   className = "",
 }) => {
   const IconComponent = Icon;
@@ -27,13 +27,15 @@ export const FallbackRightComponent: React.FC<FallbackRightComponentProps> = ({
   return (
     <div className={`${classes.root} ${className}`.trim()}>
       <Stack align="center">
-        <div className={classes.iconWrapper} aria-hidden>
-          <IconComponent size={34} stroke={1.5} />
+        <div className={classes.iconWrapper} aria-hidden role="img">
+          <IconComponent size={56} stroke={1.5} />
         </div>
+
         <div className={classes.textGroup}>
-          <Title order={5} className={classes.title}>
+          <Title order={4} className={classes.title}>
             {title}
           </Title>
+
           <div className={classes.description}>
             {typeof description === "string" ? (
               <Text size="sm" c="dimmed">
@@ -43,7 +45,12 @@ export const FallbackRightComponent: React.FC<FallbackRightComponentProps> = ({
               description
             )}
           </div>
-          {actionText && <div className={classes.action}>{actionText}</div>}
+
+          {actionText && (
+            <div className={classes.action} aria-hidden>
+              {actionText}
+            </div>
+          )}
         </div>
       </Stack>
     </div>

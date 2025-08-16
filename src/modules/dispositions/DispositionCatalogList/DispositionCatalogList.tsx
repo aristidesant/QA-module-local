@@ -19,17 +19,11 @@ import {
   useDeleteDispositionCatalog,
 } from "~/queries/dispositionCatalogQueries";
 import DispositionCatalogForm from "../DispositionCatalogForm";
-import {
-  useReactTable,
-  getCoreRowModel,
-  getSortedRowModel,
-  flexRender,
-  type ColumnDef,
-  type SortingState,
-} from "@tanstack/react-table";
+import { type ColumnDef } from "@tanstack/react-table";
 import type { DispositionCatalogModel } from "~/models/DispositionCatalogModels";
 import styles from "./DispositionCatalogList.module.css";
 import { useDispositionStore } from "../dispositionRightComponentStore";
+import BaseTable from "~/components/BaseTable";
 
 const DispositionCatalogList: FC = () => {
   const { data, isLoading, isError } = useDispositionCatalogs();
@@ -120,30 +114,16 @@ const DispositionCatalogList: FC = () => {
     );
   };
 
-  // Sorting state
-  const [sorting, setSorting] = useState<SortingState>([]);
-
   // Pagination state
   const [page, setPage] = useState(1);
   const pageSize = 10;
 
   // Paginated data
-  const paginatedData = useMemo(() => {
+  const paginatedData = useMemo<DispositionCatalogModel[]>(() => {
     if (!data) return [];
     const start = (page - 1) * pageSize;
     return data.slice(start, start + pageSize);
   }, [data, page]);
-
-  // Table instance
-  const table = useReactTable({
-    data: paginatedData,
-    columns,
-    state: { sorting },
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    debugTable: false,
-  });
 
   if (isLoading) {
     return (
@@ -241,54 +221,12 @@ const DispositionCatalogList: FC = () => {
       ) : (
         <>
           <div className={styles.table}>
-            <table className={styles.tableEl}>
-              <thead className={styles.thead}>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr key={headerGroup.id} className={styles.trHead}>
-                    {headerGroup.headers.map((header) => (
-                      <th
-                        key={header.id}
-                        colSpan={header.colSpan}
-                        className={styles.th}
-                        onClick={header.column.getToggleSortingHandler?.()}
-                      >
-                        <div className={styles.thContent}>
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          {header.column.getIsSorted() ? (
-                            <span className={styles.sortIcon}>
-                              {header.column.getIsSorted() === "asc"
-                                ? "▲"
-                                : "▼"}
-                            </span>
-                          ) : null}
-                        </div>
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody className={styles.tbody}>
-                {table.getRowModel().rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    className={styles.tr}
-                    onClick={() => handleEdit(row.original)}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className={styles.td}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <BaseTable
+              data={paginatedData}
+              columns={columns}
+              onRowClick={(row) => handleEdit(row)}
+              className={styles.table}
+            />
           </div>
           {data.length > pageSize && (
             <Center mt="md">

@@ -1,0 +1,21 @@
+.root {
+  width: 100%;
+  overflow: auto;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.thead {
+  background: var(--mantine-color-gray-0);
+}
+.th,
+.td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+  font-size: 14px;
+}
+.sortable {
+  cursor: pointer;
+}

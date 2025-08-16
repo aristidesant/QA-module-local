@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   useCreatePromptForm,
   useDeletePromptForm,
@@ -6,7 +6,6 @@ import {
   useUpdatePromptForm,
 } from "../../../queries/promptFormQueries";
 import {
-  Table,
   Loader,
   Center,
   Text,
@@ -15,7 +14,6 @@ import {
   Badge,
   Stack,
   Button,
-  Flex,
 } from "@mantine/core";
 import { IconPlus, IconAlertCircle } from "@tabler/icons-react";
 import styles from "./PromptFormList.module.css";
@@ -24,6 +22,8 @@ import { PromptFormForm } from "../PromptFormForm";
 import SectionCard from "~/components/SectionCard";
 import type { PromptForm } from "~/models/PromptFormModel";
 import usePromptFormStore from "../usePromptFormStore";
+import BaseTable from "~/components/BaseTable";
+import type { ColumnDef } from "@tanstack/react-table";
 
 export const PromptFormList: React.FC = () => {
   const { data, isLoading, isError } = useGetAllPromptForms();
@@ -126,43 +126,51 @@ export const PromptFormList: React.FC = () => {
         </ActionIcon>
       }
     >
-      <Table className={styles.table} highlightOnHover withTableBorder>
-        <Table.Thead className={styles.tableHeader}>
-          <Table.Tr>
-            <Table.Th>Name / Created</Table.Th>
-            <Table.Th className={styles.typeHeader}>Type</Table.Th>
-            <Table.Th style={{ width: "180px" }}>Actions</Table.Th>
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>
-          {data && data.length > 0 ? (
-            data.map((form: PromptForm) => (
-              <Table.Tr key={form.id} className={styles.row}>
-                <Table.Td className={styles.nameCell}>
-                  <Flex direction={"column"}>
-                    <span className={styles.formName}>{form.name}</span>
-                    <Text c={"dimmed"} fz="xs">
-                      {new Date(form.createdAt).toLocaleDateString(undefined, {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
+      {data && data.length > 0 ? (
+        <BaseTable<PromptForm>
+          data={data}
+          columns={useMemo<ColumnDef<PromptForm>[]>(
+            () => [
+              {
+                id: "nameCreated",
+                header: "Name / Created",
+                cell: ({ row }) => (
+                  <div className={styles.nameCell}>
+                    <span className={styles.formName}>{row.original.name}</span>
+                    <Text c="dimmed" fz="xs">
+                      {new Date(row.original.createdAt).toLocaleDateString(
+                        undefined,
+                        {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        }
+                      )}
                     </Text>
-                  </Flex>
-                </Table.Td>
-                <Table.Td className={styles.typeCell}>
+                  </div>
+                ),
+              },
+              {
+                id: "type",
+                header: () => <span className={styles.typeHeader}>Type</span>,
+                cell: ({ row }) => (
                   <Badge variant="light" color="blue" radius="sm">
-                    {form.type?.name || "N/A"}
+                    {row.original.type?.name || "N/A"}
                   </Badge>
-                </Table.Td>
-                <Table.Td>
+                ),
+              },
+              {
+                id: "actions",
+                header: () => <div style={{ width: 180 }}>Actions</div>,
+                cell: ({ row }) => (
                   <Group gap="xs" justify="flex-end" className={styles.actions}>
                     <Button
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setRightComponent(
                           <PromptFormForm
                             onSubmit={handleOnUpdate}
-                            initialValues={form}
+                            initialValues={row.original}
                           />
                         );
                       }}
@@ -174,7 +182,10 @@ export const PromptFormList: React.FC = () => {
                       Edit
                     </Button>
                     <Button
-                      onClick={() => handleOnDelete(`${form.id}`)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOnDelete(`${row.original.id}`);
+                      }}
                       variant="light"
                       color="red"
                       size="xs"
@@ -183,24 +194,28 @@ export const PromptFormList: React.FC = () => {
                       Delete
                     </Button>
                   </Group>
-                </Table.Td>
-              </Table.Tr>
-            ))
-          ) : (
-            <Table.Tr>
-              <Table.Td colSpan={3}>
-                <div className={styles.emptyState}>
-                  <IconAlertCircle size={24} style={{ marginBottom: 12 }} />
-                  <Text size="sm">No prompt forms found</Text>
-                  <Text size="xs" c="dimmed" mt={4}>
-                    Create your first prompt form to get started
-                  </Text>
-                </div>
-              </Table.Td>
-            </Table.Tr>
+                ),
+                enableSorting: false,
+              },
+            ],
+            []
           )}
-        </Table.Tbody>
-      </Table>
+          onRowClick={(row) =>
+            setRightComponent(
+              <PromptFormForm onSubmit={handleOnUpdate} initialValues={row} />
+            )
+          }
+          className={styles.table}
+        />
+      ) : (
+        <div className={styles.emptyState}>
+          <IconAlertCircle size={24} style={{ marginBottom: 12 }} />
+          <Text size="sm">No prompt forms found</Text>
+          <Text size="xs" c="dimmed" mt={4}>
+            Create your first prompt form to get started
+          </Text>
+        </div>
+      )}
     </SectionCard>
   );
 };
