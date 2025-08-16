@@ -1,53 +1,37 @@
-import React, { useMemo } from "react";
+import React, { useEffect } from "react";
 import {
   useCreatePromptForm,
-  useDeletePromptForm,
   useGetAllPromptForms,
-  useUpdatePromptForm,
 } from "../../../queries/promptFormQueries";
 import {
   Loader,
   Center,
   Text,
-  Group,
   ActionIcon,
-  Badge,
   Stack,
-  Button,
+  // UI components used inside hook file
 } from "@mantine/core";
 import { IconPlus, IconAlertCircle } from "@tabler/icons-react";
 import styles from "./PromptFormList.module.css";
-import { modals } from "@mantine/modals";
 import { PromptFormForm } from "../PromptFormForm";
 import SectionCard from "~/components/SectionCard";
 import type { PromptForm } from "~/models/PromptFormModel";
 import usePromptFormStore from "../usePromptFormStore";
 import BaseTable from "~/components/BaseTable";
-import type { ColumnDef } from "@tanstack/react-table";
+// Column types are defined in the hook file
+import usePromptFormListColumn from "./usePromptFormListColumn";
 
 export const PromptFormList: React.FC = () => {
   const { data, isLoading, isError } = useGetAllPromptForms();
   const { setRightComponent } = usePromptFormStore((state) => state);
   const { mutateAsync: createPromptForm } = useCreatePromptForm();
-  const { mutateAsync: updatePromptForm } = useUpdatePromptForm();
-  const { mutateAsync: deletePromptForm } = useDeletePromptForm();
 
-  if (isLoading) {
-    return (
-      <Center>
-        <Loader />
-      </Center>
-    );
-  }
-
-  if (isError) {
-    return (
-      <Center>
-        <Text c="red">Failed to load prompt forms.</Text>
-      </Center>
-    );
-  }
-
+  useEffect(() => {
+    return () => {
+      setRightComponent(null);
+    };
+  }, []);
+  // Loading and error states are handled after all hooks are called to respect Rules of Hooks
   const handleOnCreate = async (values: PromptForm) => {
     try {
       await createPromptForm(values);
@@ -56,38 +40,7 @@ export const PromptFormList: React.FC = () => {
       console.error("Error creating prompt form:", error);
     }
   };
-  const handleOnUpdate = async (values: PromptForm) => {
-    try {
-      await updatePromptForm({
-        id: `${values.id}`,
-        data: values,
-      });
-      setRightComponent(null);
-    } catch (error) {
-      console.error("Error updating prompt form:", error);
-    }
-  };
-
-  const handleOnDelete = async (id: string) => {
-    try {
-      modals.openConfirmModal({
-        title: "Delete Prompt Form",
-        children: (
-          <Text>
-            Are you sure you want to delete this prompt form? This action is
-            irreversible.
-          </Text>
-        ),
-        labels: { confirm: "Delete", cancel: "Cancel" },
-        confirmProps: { color: "red" },
-        onConfirm: async () => {
-          await deletePromptForm(id);
-        },
-      });
-    } catch (error) {
-      console.error("Error deleting prompt form:", error);
-    }
-  };
+  const { columns, openEditForm } = usePromptFormListColumn();
 
   if (isLoading) {
     return (
@@ -113,12 +66,16 @@ export const PromptFormList: React.FC = () => {
   return (
     <SectionCard
       title="List of forms"
-      description="Thi is a list of all the forms created by the user."
+      description="This is a list of all the forms created by the user."
       headerActions={
         <ActionIcon
           onClick={() => {
             setRightComponent(
-              <PromptFormForm onSubmit={handleOnCreate} initialValues={{}} />
+              <PromptFormForm
+                key={new Date().getTime()}
+                onSubmit={handleOnCreate}
+                initialValues={{}}
+              />
             );
           }}
         >
@@ -129,83 +86,10 @@ export const PromptFormList: React.FC = () => {
       {data && data.length > 0 ? (
         <BaseTable<PromptForm>
           data={data}
-          columns={useMemo<ColumnDef<PromptForm>[]>(
-            () => [
-              {
-                id: "nameCreated",
-                header: "Name / Created",
-                cell: ({ row }) => (
-                  <div className={styles.nameCell}>
-                    <span className={styles.formName}>{row.original.name}</span>
-                    <Text c="dimmed" fz="xs">
-                      {new Date(row.original.createdAt).toLocaleDateString(
-                        undefined,
-                        {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        }
-                      )}
-                    </Text>
-                  </div>
-                ),
-              },
-              {
-                id: "type",
-                header: () => <span className={styles.typeHeader}>Type</span>,
-                cell: ({ row }) => (
-                  <Badge variant="light" color="blue" radius="sm">
-                    {row.original.type?.name || "N/A"}
-                  </Badge>
-                ),
-              },
-              {
-                id: "actions",
-                header: () => <div style={{ width: 180 }}>Actions</div>,
-                cell: ({ row }) => (
-                  <Group gap="xs" justify="flex-end" className={styles.actions}>
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setRightComponent(
-                          <PromptFormForm
-                            onSubmit={handleOnUpdate}
-                            initialValues={row.original}
-                          />
-                        );
-                      }}
-                      variant="light"
-                      color="blue"
-                      size="xs"
-                      className={styles.actionButton}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleOnDelete(`${row.original.id}`);
-                      }}
-                      variant="light"
-                      color="red"
-                      size="xs"
-                      className={styles.actionButton}
-                    >
-                      Delete
-                    </Button>
-                  </Group>
-                ),
-                enableSorting: false,
-              },
-            ],
-            []
-          )}
-          onRowClick={(row) =>
-            setRightComponent(
-              <PromptFormForm onSubmit={handleOnUpdate} initialValues={row} />
-            )
-          }
+          columns={columns}
+          onRowClick={(row) => openEditForm(row)}
           className={styles.table}
+          density="compact"
         />
       ) : (
         <div className={styles.emptyState}>

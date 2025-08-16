@@ -1,14 +1,6 @@
 import React from "react";
-import {
-  Button,
-  Group,
-  Paper,
-  Tooltip,
-  Text,
-  Divider,
-  Stack,
-} from "@mantine/core";
-import { IconPlus, IconInfoCircle } from "@tabler/icons-react";
+import { Group, Paper, Text, Stack } from "@mantine/core";
+import { IconInfoCircle } from "@tabler/icons-react";
 import type { UseFormReturnType } from "@mantine/form";
 import type { PromptGeneratorFormField } from "~/config/prompt-generator/generatorForm";
 import PromptInputFieldModal from "../PromptInputFieldBuilder";
@@ -70,20 +62,18 @@ export default function PromptFormInput({ form, type }: PromptFormInputProps) {
     }
   };
 
+  // Listen to a global event so the parent New button can open the add-field modal
+  React.useEffect(() => {
+    const onAdd = () => handleAddField();
+    window.addEventListener("promptform:add-field", onAdd);
+    return () => window.removeEventListener("promptform:add-field", onAdd);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fields]);
+
   return (
     <Stack gap={"xs"}>
-      <Divider label="Fields" />
-      <div className={styles.addButtonGroup}>
-        <Tooltip label="Add new field" withArrow position="left">
-          <Button
-            leftSection={<IconPlus size={16} />}
-            size="xs"
-            onClick={handleAddField}
-          >
-            New
-          </Button>
-        </Tooltip>
-      </div>
+      {/* Parent component renders the Fields header and New button. This component
+          listens for the global `promptform:add-field` event to open the modal. */}
       <PromptInputFieldModal
         opened={modalOpen}
         onClose={() => {

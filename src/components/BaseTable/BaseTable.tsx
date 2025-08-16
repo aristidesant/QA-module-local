@@ -16,6 +16,7 @@ export type BaseTableProps<TData> = {
   initialSort?: SortingState;
   onRowClick?: (row: TData) => void;
   className?: string;
+  density?: "default" | "compact";
 };
 
 function BaseTable<TData>({
@@ -24,6 +25,7 @@ function BaseTable<TData>({
   initialSort = [],
   onRowClick,
   className,
+  density = "default",
 }: BaseTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>(initialSort);
 
@@ -45,10 +47,16 @@ function BaseTable<TData>({
               {headerGroup.headers.map((header) => (
                 <th
                   key={header.id}
-                  className={
-                    styles.th +
-                    (header.column.getCanSort() ? ` ${styles.sortable}` : "")
-                  }
+                  className={[
+                    styles.th,
+                    density === "compact" ? styles.compactTh : "",
+                    header.column.getCanSort() ? styles.sortable : "",
+                    // Allow column-level header className via meta
+                    (header.column.columnDef.meta as any)?.headerClassName ||
+                      "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
                   onClick={header.column.getToggleSortingHandler()}
                 >
                   {header.isPlaceholder ? null : (
@@ -73,7 +81,16 @@ function BaseTable<TData>({
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id} onClick={() => onRowClick?.(row.original)}>
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className={styles.td}>
+                <td
+                  key={cell.id}
+                  className={[
+                    styles.td,
+                    density === "compact" ? styles.compactTd : "",
+                    (cell.column.columnDef.meta as any)?.cellClassName || "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}

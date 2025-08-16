@@ -16,6 +16,11 @@
   border-bottom: 1px solid var(--mantine-color-gray-2);
   font-size: 14px;
 }
+.compactTh,
+.compactTd {
+  font-size: var(--mantine-font-size-xs);
+  padding: 6px 8px;
+}
 .sortable {
   cursor: pointer;
 }

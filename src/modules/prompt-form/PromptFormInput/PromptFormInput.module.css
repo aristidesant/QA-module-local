@@ -1,73 +1,43 @@
-
-.fieldsListGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-  margin-bottom: 0.5rem;
+:root{
+  --muted: #6b7280;
+  --accent: #2563eb;
+  --border: #e6e9ee;
+  --card-bg: #ffffff;
 }
 
-
-
-.fieldsContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+.fieldsContainer{
   width: 100%;
-}
-
-.fieldsContainer {
-  width: 100%;
-  max-width: 700px;
+  max-width: 760px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 8px;
+  box-sizing: border-box;
 }
 
-.addButtonGroup {
+.addButtonGroup{
   display: flex;
   justify-content: flex-end;
-  margin: 1rem 0 0.5rem 0;
+  margin: 8px 0 4px 0;
 }
 
-.noFieldsPaper {
-  background: var(--mantine-color-gray-0);
-  border: 1px dashed var(--mantine-color-blue-2);
+.noFieldsPaper{
+  background: transparent;
+  border: 1px solid transparent;
 }
 
-.fieldsListGrid {
+.fieldsListGrid{
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
 }
 
-@media (max-width: 600px) {
-  .fieldsContainer {
-    padding: 0 0.25rem;
-  }
-  .fieldsListGrid {
-    grid-template-columns: 1fr;
-    gap: 0.5rem;
-  }
-  .addButtonGroup {
-    margin: 0.5rem 0 0.25rem 0;
-  }
-}
-
-.fieldPlaceholder {
-  color: var(--mantine-color-gray-5);
+.fieldPlaceholder{
+  color: var(--muted);
   font-size: 0.95rem;
   font-style: italic;
 }
 
-.noFields {
-  text-align: center;
-  color: var(--mantine-color-gray-6);
-  font-size: 1.05rem;
-  margin: 2rem 0;
-}
-
-.addButton {
-  min-width: 140px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
+@media (max-width: 640px){
+  .fieldsListGrid{ grid-template-columns: 1fr; }
+  .addButtonGroup{ justify-content: center; margin-top: 6px; }
 }

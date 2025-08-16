@@ -83,7 +83,7 @@ export function ConversationDetails({
           list: styles.tabList,
         }}
       >
-        <Tabs.List>
+        <Tabs.List grow>
           <Tabs.Tab value="overview">
             <Box style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <IconInfoCircle size={18} />

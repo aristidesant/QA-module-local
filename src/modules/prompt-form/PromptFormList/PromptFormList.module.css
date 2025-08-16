@@ -121,6 +121,10 @@
 .nameCell {
   font-weight: 500;
   color: var(--mantine-color-dark-7);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .typeCell {
@@ -230,4 +234,17 @@
 
 .tableContainer::-webkit-scrollbar-thumb:hover {
   background: var(--mantine-color-gray-5);
+}
+
+/* Smaller font utilities for compact columns */
+.smallColumn {
+  font-size: var(--mantine-font-size-xs);
+}
+
+.smallText {
+  font-size: var(--mantine-font-size-xs);
+}
+
+.inlineTypeBadge {
+  line-height: 1;
 }
