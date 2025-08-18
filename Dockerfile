@@ -1,6 +1,8 @@
 # Stage 1: Build the SPA
 FROM node:20-alpine AS build
 WORKDIR /app
+ARG VITE_APP_API_URL
+ENV VITE_APP_API_URL=$VITE_APP_API_URL
 COPY package.json pnpm-lock.yaml ./
 RUN corepack enable && pnpm install --frozen-lockfile
 COPY . .

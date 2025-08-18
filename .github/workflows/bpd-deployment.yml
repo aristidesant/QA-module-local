@@ -27,12 +27,10 @@ jobs:
         with:
           version: latest
 
-      - name: Install dependencies and build SPA
+      - name: Install dependencies
         run: |
           echo "Using API_URL=${API_URL:-<not set>}"
-          export VITE_APP_API_URL=${{ secrets.API_URL }}
           pnpm install
-          pnpm build
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -67,7 +65,7 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           IMAGE_URI=$ECR_REGISTRY/$ECR_REPO
-          docker build -t $IMAGE_URI:latest -t $IMAGE_URI:$IMAGE_TAG .
+          docker build --build-arg VITE_APP_API_URL=${{ secrets.API_URL }} -t $IMAGE_URI:latest -t $IMAGE_URI:$IMAGE_TAG .
           docker push $IMAGE_URI:latest
           docker push $IMAGE_URI:$IMAGE_TAG
           echo "image_uri=$IMAGE_URI:latest" >> $GITHUB_OUTPUT
