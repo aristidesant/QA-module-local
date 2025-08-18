@@ -1,76 +1,72 @@
-name: Deploy Frontend to S3 + CloudFront
+name: Build & Push SPA to ECR
 
 on:
   push:
-    branches: ["stable"]
+    branches:
+      - stable
+  workflow_dispatch:
 
 jobs:
-  deploy:
+  build-and-push:
     runs-on: ubuntu-latest
     environment: BPD
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
 
     steps:
-      # 1. Checkout repo
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      # 2. Setup Node.js
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Node.js 22 and enable pnpm
+        uses: actions/setup-node@v3
         with:
-          node-version: "22"
+          node-version: 22
+          cache: "pnpm"
+      - run: corepack enable && corepack prepare pnpm@latest --activate
 
-      # 2.1 Setup pnpm
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
-      # 3. Install dependencies
-      - name: Install dependencies
-        run: pnpm install
-
-      # 4. Build app
-      - name: Build React App
+      - name: Install dependencies and build SPA
         run: |
-          export VITE_APP_API_URL=${{ secrets.API_URL }}
-          pnpm run build # outputs dist/
+          pnpm install
+          pnpm build
 
-      # 5. Configure AWS
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # 6. Upload static assets (cache for 1 year)
-      - name: Upload static assets
+      - name: Set ECR repository name
+        id: ecr_repo
         run: |
-          aws s3 sync ./dist s3://${{ secrets.S3_FRONTEND_BUCKET_NAME }}/${{ secrets.FOLDER }} \
-            --delete \
-            --cache-control "max-age=31536000" \
-            --exclude "index.html"
+          if [ -z "${{ secrets.ECR_REPO }}" ]; then
+            echo "repo=spa-frontend" >> $GITHUB_OUTPUT
+          else
+            echo "repo=${{ secrets.ECR_REPO }}" >> $GITHUB_OUTPUT
+          fi
 
-      # 7. Upload index.html without cache
-      - name: Upload index.html
+      - name: Ensure ECR repository exists
         run: |
-          aws s3 cp ./dist/index.html s3://${{ secrets.S3_FRONTEND_BUCKET_NAME }}/${{ secrets.FOLDER }}/index.html \
-            --cache-control "no-cache"
+          aws ecr describe-repositories --repository-names ${{ steps.ecr_repo.outputs.repo }} || \
+          aws ecr create-repository --repository-name ${{ steps.ecr_repo.outputs.repo }}
 
-      # 8. Upload extra folders (upload assets and images)
-      - name: Upload extra folders
-        run: |
-          aws s3 sync ./dist/assets s3://${{ secrets.S3_FRONTEND_BUCKET_NAME }}/${{ secrets.FOLDER }}/assets \
-            --delete \
-            --cache-control "max-age=31536000"
-          aws s3 sync ./dist/images s3://${{ secrets.S3_FRONTEND_BUCKET_NAME }}/${{ secrets.FOLDER }}/images \
-            --delete \
-            --cache-control "max-age=31536000"
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
-      # 9. Invalidate CloudFront cache
-      - name: Invalidate CloudFront cache
+      - name: Build, tag, and push Docker image to ECR
+        id: build_image
+        env:
+          ECR_REPO: ${{ steps.ecr_repo.outputs.repo }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          aws cloudfront create-invalidation \
-            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
-            --paths "/bpd-prod/*"
+          IMAGE_URI=$ECR_REGISTRY/$ECR_REPO
+          docker build -t $IMAGE_URI:latest -t $IMAGE_URI:$IMAGE_TAG .
+          docker push $IMAGE_URI:latest
+          docker push $IMAGE_URI:$IMAGE_TAG
+          echo "image_uri=$IMAGE_URI:latest" >> $GITHUB_OUTPUT
+
+      - name: Output image URI
+        run: |
+          echo "Image pushed: ${{ steps.build_image.outputs.image_uri }}"
