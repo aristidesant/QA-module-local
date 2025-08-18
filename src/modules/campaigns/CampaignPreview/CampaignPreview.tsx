@@ -38,7 +38,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
 
 				<CampaignParameters parameters={campaign.parameters} />
 
-				<AssignedAgents agents={campaign.assignedAgents} />
+				<AssignedAgents />
 			</Stack>
 		</ScrollArea>
 	);
