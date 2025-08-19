@@ -8,6 +8,8 @@ import {
   Alert,
   Loader,
   Group,
+  SegmentedControl,
+  Divider,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
@@ -17,8 +19,10 @@ import {
   IconEye,
   IconEyeOff,
 } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router";
 import { useLogin } from "~/queries/authQueries";
+import { getErrorMessage } from "~/utils/httpClient";
 import classes from "./LoginForm.module.css";
 import Logo from "~/components/Logo";
 
@@ -26,20 +30,12 @@ interface FormValues {
   username: string;
   password: string;
   rememberMe: boolean;
-}
-
-interface ActionData {
-  error?: string;
-  formError?: string;
-  fieldErrors?: {
-    username?: string;
-    password?: string;
-  };
+  loginType: "USER_PASS" | "LDAP";
 }
 
 export function LoginForm() {
-  const actionData = undefined as ActionData | undefined;
   const loginMutation = useLogin();
+  const navigate = useNavigate();
   const [formError, setFormError] = useState<string | null>(null);
 
   const isSubmitting = loginMutation.isPending;
@@ -51,33 +47,18 @@ export function LoginForm() {
       username: "",
       password: "",
       rememberMe: false,
+      // default to USER_PASS so existing users keep normal behavior
+      loginType: "USER_PASS",
     },
+    // Ensure the form never performs native submission
+    onSubmitPreventDefault: "always",
     validate: {
       username: (value) => (!value.trim() ? "Username is required" : null),
       password: (value) => (!value ? "Password is required" : null),
     },
   });
 
-  useEffect(() => {
-    // Handle server-side validation errors
-    if (actionData?.fieldErrors) {
-      Object.entries(actionData.fieldErrors).forEach(([field, error]) => {
-        if (error) {
-          form.setFieldError(field, error);
-        }
-      });
-    }
-
-    // Handle form-level errors
-    if (actionData?.formError) {
-      setFormError(actionData.formError);
-    } else if (actionData?.error) {
-      // Fallback for backward compatibility
-      setFormError(actionData.error);
-    } else {
-      setFormError(null);
-    }
-  }, [actionData, form]);
+  // We'll set form-level errors from the submit handler directly
 
   return (
     <div className={classes.wrapper}>
@@ -93,39 +74,26 @@ export function LoginForm() {
           </div>
 
           <form
-            method="post"
             className={classes.formContainer}
-            onSubmit={form.onSubmit(async (values) => {
-              setFormError(null);
-              try {
-                // basic client validation already handled by form.validate
-                await loginMutation.mutateAsync({
-                  username: values.username,
-                  password: values.password,
-                });
-                window.location.href = "/";
-              } catch (err: any) {
-                const message = err?.message || "Invalid username or password";
-                setFormError(message);
-              }
-            })}
+            onSubmit={(e) => {
+              // Extra safety: prevent native submit even if Mantine config changes
+              e.preventDefault();
+              return form.onSubmit(async (values) => {
+                setFormError(null);
+                try {
+                  const result = await loginMutation.mutateAsync({
+                    username: values.username,
+                    password: values.password,
+                    loginType: values.loginType,
+                  });
+                  console.log(result);
+                  navigate("/");
+                } catch (err: any) {
+                  setFormError(getErrorMessage(err));
+                }
+              })(e);
+            }}
           >
-            {/* Form error alert */}
-            {formError && (
-              <Alert
-                variant="light"
-                color="red"
-                title="Login failed"
-                icon={<IconAlertCircle size={18} />}
-                mb="md"
-                radius="md"
-                p="sm"
-                className={classes.errorMessage}
-              >
-                {formError}
-              </Alert>
-            )}
-
             {/* Loading overlay */}
             {(isSubmitting || isRedirecting) && (
               <div className={classes.loadingOverlay}>
@@ -138,13 +106,27 @@ export function LoginForm() {
               </div>
             )}
             <Stack gap="xs">
+              <SegmentedControl
+                fullWidth
+                value={form.values.loginType}
+                onChange={(v) => form.setFieldValue("loginType", v as any)}
+                data={[
+                  { label: "Credentials", value: "USER_PASS" },
+                  { label: "LDAP", value: "LDAP" },
+                ]}
+              />
+              <Divider />
               <div>
                 <Text className={classes.inputLabel} mb={4}>
                   Username <span style={{ color: "red" }}>*</span>
                 </Text>
                 <TextInput
                   required
-                  placeholder="Enter your username"
+                  placeholder={
+                    form.values.loginType === "USER_PASS"
+                      ? "Enter your username"
+                      : "Enter your LDAP username"
+                  }
                   leftSection={
                     <IconAt className={classes.inputIcon} stroke={1.5} />
                   }
@@ -187,6 +169,23 @@ export function LoginForm() {
                   autoComplete="current-password"
                 />
               </div>
+
+              {/* loginType is selected at the top of the form */}
+              {/* Form error alert */}
+              {formError && (
+                <Alert
+                  variant="light"
+                  color="red"
+                  title="Login failed"
+                  icon={<IconAlertCircle size={18} />}
+                  mb="md"
+                  radius="md"
+                  p="sm"
+                  className={classes.errorMessage}
+                >
+                  {formError}
+                </Alert>
+              )}
 
               <Button
                 type="submit"

@@ -4,6 +4,7 @@ import { DEFAULT_API_URL } from "./config";
 export type AuthRequest = {
   username: string;
   password: string;
+  loginType?: "USER_PASS" | "LDAP";
 };
 
 export type AuthSuccessResponse = {
