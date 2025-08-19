@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
 	Paper,
 	Select,
@@ -45,20 +45,40 @@ export const PromptFormForm: React.FC<PromptFormFormProps> = ({
 	const [categoryId, setCategoryId] = React.useState<string | undefined>();
 	const [submitError, setSubmitError] = React.useState<string | null>(null);
 
+	// Create a key for forcing re-render when switching between create/edit modes
+	const formKey = React.useMemo(() => {
+		return initialValues?.id ? `edit-${initialValues.id}` : "create";
+	}, [initialValues?.id]);
+
 	const { data: promptCategories } = useGetAllPromptCategories();
 	const { data: promptTypes } = useGetAllPromptTypes({
 		...(categoryId ? { categoryId } : {}),
 	});
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (promptTypes && promptTypes.length > 0 && !form.values.typeId) {
 			const typeId = promptTypes[0].id;
 			form.setFieldValue("typeId", typeId);
 		}
 	}, [promptTypes, form]);
 
+	// Reset form when initialValues change (switching between create/edit modes)
+	useEffect(() => {
+		const newValues = initialValues || {};
+		form.setInitialValues(newValues);
+		form.reset();
+		setSubmitError(null);
+
+		// Set categoryId based on initial values for edit mode
+		if (initialValues?.type?.categoryId) {
+			setCategoryId(initialValues.type.categoryId.toString());
+		} else {
+			setCategoryId(undefined);
+		}
+	}, [initialValues]);
+
 	// Clear submit error when form fields are added/modified
-	React.useEffect(() => {
+	useEffect(() => {
 		if (
 			submitError &&
 			form.values.form?.fields &&
@@ -69,7 +89,7 @@ export const PromptFormForm: React.FC<PromptFormFormProps> = ({
 	}, [form.values.form?.fields, submitError]);
 
 	return (
-		<div className={styles.container}>
+		<div className={styles.container} key={formKey}>
 			<Box
 				component="form"
 				onSubmit={form.onSubmit(
