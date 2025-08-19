@@ -1,6 +1,7 @@
 // src/models/CampaignsModel.ts
 
 import type { AgentConfigModel } from "./AgentListObject";
+import { CampaignAgent } from "./CampaignAgentModel";
 
 export interface WorkingHours {
 	[key: string]: {
@@ -8,15 +9,6 @@ export interface WorkingHours {
 		from: string;
 		to: string;
 	};
-}
-
-export interface Agent {
-	id: number;
-	name: string;
-	avatarUrl?: string;
-	language: string;
-	countryCode: string; // ISO 3166-1 alpha-2 country code
-	status: "online" | "offline" | "busy" | "away";
 }
 
 export interface ContactList {
@@ -82,7 +74,7 @@ export interface Campaign {
 	}>;
 
 	// New fields for enhanced preview
-	assignedAgents?: Agent[];
+	assignedAgents?: CampaignAgent[];
 	contactList?: ContactList;
 	parameters?: CampaignParameters;
 }

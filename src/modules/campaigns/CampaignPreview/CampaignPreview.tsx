@@ -6,7 +6,6 @@ import CampaignStatus from "./CampaignStatus";
 import CampaignContactOutcomeSummary from "./CampaignContactOutcomeSummary";
 import CampaignParameters from "./CampaignParameters";
 import AssignedAgents from "./AssignedAgents";
-import ContactsList from "./ContactsList";
 
 interface CampaignPreviewProps {
 	campaign: Campaign & {
@@ -31,17 +30,15 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
 	return (
 		<ScrollArea h="100%" type="scroll" offsetScrollbars>
 			<Stack gap="xs" p="xs">
-				<CampaignOverview campaign={campaign} />
+				<CampaignOverview {...{ campaign }} />
 
-				<CampaignStatus campaign={campaign} />
+				<CampaignStatus {...{ campaign }} />
 
-				<CampaignContactOutcomeSummary />
+				<CampaignContactOutcomeSummary {...{ campaign }} />
 
 				<CampaignParameters parameters={campaign.parameters} />
 
-				<AssignedAgents agents={campaign.assignedAgents} />
-
-				<ContactsList contactList={campaign.contactList} />
+				<AssignedAgents />
 			</Stack>
 		</ScrollArea>
 	);
