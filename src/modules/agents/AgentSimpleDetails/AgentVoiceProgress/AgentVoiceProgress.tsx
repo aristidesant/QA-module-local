@@ -1,5 +1,5 @@
 import React from "react";
-import { Progress, Stack, Group, Text } from "@mantine/core";
+import { Progress, Stack, Group, Text, Tooltip } from "@mantine/core";
 import {
   IconWaveSine,
   IconAdjustments,
@@ -55,88 +55,116 @@ export const AgentVoiceProgress: React.FC<AgentVoiceProgressProps> = ({
   return (
     <Stack gap="xs" className={styles.progressContainer}>
       {/* Streaming Latency */}
-      <div className={styles.progressCard}>
-        <Group justify="space-between" align="center" mb={6}>
-          <Group gap="xs" align="center">
-            <IconWaveSine size={18} className={styles.progressIcon} />
-            <Text size="sm" fw={500} className={styles.progressLabel}>
-              Streaming Latency
+      <Tooltip label={`${optimizeLatency}`} withArrow position="left">
+        <div className={styles.progressCard}>
+          <Group justify="space-between" align="center" mb={6}>
+            <Group gap="xs" align="center">
+              <IconWaveSine size={18} className={styles.progressIcon} />
+              <Text size="sm" fw={500} className={styles.progressLabel}>
+                Streaming Latency
+              </Text>
+            </Group>
+            <Text
+              size="sm"
+              c="dimmed"
+              fw={500}
+              className={styles.progressValue}
+            >
+              {getStreamingLatencyLabel(optimizeLatency)}
             </Text>
           </Group>
-          <Text size="sm" c="dimmed" fw={500} className={styles.progressValue}>
-            {getStreamingLatencyLabel(optimizeLatency)}
-          </Text>
-        </Group>
-        <Progress
-          value={streamingLatencyProgress}
-          size="md"
-          radius="sm"
-          className={styles.progressBar}
-        />
-      </div>
+          <Progress
+            value={streamingLatencyProgress}
+            size="md"
+            radius="sm"
+            className={styles.progressBar}
+          />
+        </div>
+      </Tooltip>
 
       {/* Stability */}
-      <div className={styles.progressCard}>
-        <Group justify="space-between" align="center" mb={6}>
-          <Group gap="xs" align="center">
-            <IconVectorTriangle size={18} className={styles.progressIcon} />
-            <Text size="sm" fw={500} className={styles.progressLabel}>
-              Stability
+      <Tooltip label={`${stability}`} withArrow position="left">
+        <div className={styles.progressCard}>
+          <Group justify="space-between" align="center" mb={6}>
+            <Group gap="xs" align="center">
+              <IconVectorTriangle size={18} className={styles.progressIcon} />
+              <Text size="sm" fw={500} className={styles.progressLabel}>
+                Stability
+              </Text>
+            </Group>
+            <Text
+              size="sm"
+              c="dimmed"
+              fw={500}
+              className={styles.progressValue}
+            >
+              {getStabilityLabel(stability)}
             </Text>
           </Group>
-          <Text size="sm" c="dimmed" fw={500} className={styles.progressValue}>
-            {getStabilityLabel(stability)}
-          </Text>
-        </Group>
-        <Progress
-          value={stabilityProgress}
-          size="md"
-          radius="sm"
-          className={styles.progressBar}
-        />
-      </div>
+          <Progress
+            value={stabilityProgress}
+            size="md"
+            radius="sm"
+            className={styles.progressBar}
+          />
+        </div>
+      </Tooltip>
 
       {/* Speed */}
-      <div className={styles.progressCard}>
-        <Group justify="space-between" align="center" mb={6}>
-          <Group gap="xs" align="center">
-            <IconSpeedboat size={18} className={styles.progressIcon} />
-            <Text size="sm" fw={500} className={styles.progressLabel}>
-              Speed
+      <Tooltip label={`${speed}`} withArrow position="left">
+        <div className={styles.progressCard}>
+          <Group justify="space-between" align="center" mb={6}>
+            <Group gap="xs" align="center">
+              <IconSpeedboat size={18} className={styles.progressIcon} />
+              <Text size="sm" fw={500} className={styles.progressLabel}>
+                Speed
+              </Text>
+            </Group>
+            <Text
+              size="sm"
+              c="dimmed"
+              fw={500}
+              className={styles.progressValue}
+            >
+              {getSpeedLabel(speed)}
             </Text>
           </Group>
-          <Text size="sm" c="dimmed" fw={500} className={styles.progressValue}>
-            {getSpeedLabel(speed)}
-          </Text>
-        </Group>
-        <Progress
-          value={speedProgress}
-          size="md"
-          radius="sm"
-          className={styles.progressBar}
-        />
-      </div>
+          <Progress
+            value={speedProgress}
+            size="md"
+            radius="sm"
+            className={styles.progressBar}
+          />
+        </div>
+      </Tooltip>
 
       {/* Similarity Boost */}
-      <div className={styles.progressCard}>
-        <Group justify="space-between" align="center" mb={6}>
-          <Group gap="xs" align="center">
-            <IconAdjustments size={18} className={styles.progressIcon} />
-            <Text size="sm" fw={500} className={styles.progressLabel}>
-              Similarity Boost
+      <Tooltip label={`${similarityBoost}`} withArrow position="left">
+        <div className={styles.progressCard}>
+          <Group justify="space-between" align="center" mb={6}>
+            <Group gap="xs" align="center">
+              <IconAdjustments size={18} className={styles.progressIcon} />
+              <Text size="sm" fw={500} className={styles.progressLabel}>
+                Similarity Boost
+              </Text>
+            </Group>
+            <Text
+              size="sm"
+              c="dimmed"
+              fw={500}
+              className={styles.progressValue}
+            >
+              {getSimilarityBoostLabel(similarityBoost)}
             </Text>
           </Group>
-          <Text size="sm" c="dimmed" fw={500} className={styles.progressValue}>
-            {getSimilarityBoostLabel(similarityBoost)}
-          </Text>
-        </Group>
-        <Progress
-          value={similarityBoostProgress}
-          size="md"
-          radius="sm"
-          className={styles.progressBar}
-        />
-      </div>
+          <Progress
+            value={similarityBoostProgress}
+            size="md"
+            radius="sm"
+            className={styles.progressBar}
+          />
+        </div>
+      </Tooltip>
     </Stack>
   );
 };

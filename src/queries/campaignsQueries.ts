@@ -75,22 +75,128 @@ export const useUpdateCampaign = () => {
 	});
 };
 
+export const useStartOutboundCampaign = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async (campaignId: number) => {
+			const api = campaignsApi();
+			return api.startOutboundCampaign(campaignId);
+		},
+		onSuccess: (_, campaignId) => {
+			// Update the campaigns list cache directly
+			queryClient.setQueryData(
+				["campaigns"],
+				(oldData: Campaign[] | undefined) => {
+					if (!oldData) return oldData;
+					return oldData.map((campaign) =>
+						campaign.id === campaignId
+							? { ...campaign, status: "RUNNING" as const }
+							: campaign
+					);
+				}
+			);
+
+			// Force immediate refetch as backup
+			queryClient.refetchQueries({ queryKey: ["campaigns"] });
+			queryClient.refetchQueries({
+				queryKey: ["campaign", campaignId],
+			});
+
+			// Also invalidate all campaign-related queries as backup
+			queryClient.invalidateQueries({
+				predicate: (query) =>
+					query.queryKey[0] === "campaigns" || query.queryKey[0] === "campaign",
+			});
+			// eslint-disable-next-line no-console
+			console.log("Campaign started successfully:", campaignId);
+		},
+		onError: (error) => {
+			// eslint-disable-next-line no-console
+			console.error("Error starting campaign:", error);
+		},
+	});
+};
+
 export const usePauseOutboundCampaign = () => {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: async (campaignId: string) => {
+		mutationFn: async (campaignId: number) => {
 			const api = campaignsApi();
 			return api.pauseOutboundCampaign(campaignId);
 		},
-		onSuccess: (_, id) => {
-			queryClient.invalidateQueries({ queryKey: ["campaigns"] });
-			queryClient.invalidateQueries({ queryKey: ["campaign", id] });
+		onSuccess: (_, campaignId) => {
+			// Update the campaigns list cache directly
+			queryClient.setQueryData(
+				["campaigns"],
+				(oldData: Campaign[] | undefined) => {
+					if (!oldData) return oldData;
+					return oldData.map((campaign) =>
+						campaign.id === campaignId
+							? { ...campaign, status: "PAUSED" as const }
+							: campaign
+					);
+				}
+			);
+
+			// Force immediate refetch as backup
+			queryClient.refetchQueries({ queryKey: ["campaigns"] });
+			queryClient.refetchQueries({
+				queryKey: ["campaign", campaignId],
+			});
+
+			// Also invalidate all campaign-related queries as backup
+			queryClient.invalidateQueries({
+				predicate: (query) =>
+					query.queryKey[0] === "campaigns" || query.queryKey[0] === "campaign",
+			});
 			// eslint-disable-next-line no-console
-			console.log("Campaign paused successfully:", id);
+			console.log("Campaign paused successfully:", campaignId);
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console
 			console.error("Error pausing campaign:", error);
+		},
+	});
+};
+
+export const useResumeOutboundCampaign = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async (campaignId: number) => {
+			const api = campaignsApi();
+			return api.resumeOutboundCampaign(campaignId);
+		},
+		onSuccess: (_, campaignId) => {
+			// Update the campaigns list cache directly
+			queryClient.setQueryData(
+				["campaigns"],
+				(oldData: Campaign[] | undefined) => {
+					if (!oldData) return oldData;
+					return oldData.map((campaign) =>
+						campaign.id === campaignId
+							? { ...campaign, status: "RUNNING" as const }
+							: campaign
+					);
+				}
+			);
+
+			// Force immediate refetch as backup
+			queryClient.refetchQueries({ queryKey: ["campaigns"] });
+			queryClient.refetchQueries({
+				queryKey: ["campaign", campaignId],
+			});
+
+			// Also invalidate all campaign-related queries as backup
+			queryClient.invalidateQueries({
+				predicate: (query) =>
+					query.queryKey[0] === "campaigns" || query.queryKey[0] === "campaign",
+			});
+			// eslint-disable-next-line no-console
+			console.log("Campaign resumed successfully:", campaignId);
+		},
+		onError: (error) => {
+			// eslint-disable-next-line no-console
+			console.error("Error resuming campaign:", error);
 		},
 	});
 };

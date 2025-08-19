@@ -28,6 +28,8 @@ import {
 	IconArrowDownLeft,
 	IconBolt,
 	IconExclamationMark,
+	IconCircleCheck,
+	IconPlayerPlayFilled,
 } from "@tabler/icons-react";
 import styles from "./CampaignsListItem.module.css";
 import type { Campaign } from "~/models/CampaignsModel";
@@ -323,6 +325,11 @@ export const getCampaignStatusIcon = (status: string) => {
 
 	switch (campaignStatus) {
 		case "active":
+			return {
+				icon: <IconPlayerPlayFilled size={size} />,
+				color: "green",
+				label: "Active",
+			};
 		case "running":
 			return {
 				icon: <IconBolt size={size} />,
@@ -335,18 +342,25 @@ export const getCampaignStatusIcon = (status: string) => {
 				color: "yellow",
 				label: "Paused",
 			};
+		case "completed":
+			return {
+				icon: <IconCircleCheck size={size} />,
+				color: "green",
+				label: "Completed",
+			};
+		case "inactive":
 		case "incomplete":
 		case "error":
 			return {
 				icon: <IconExclamationMark size={size} />,
 				color: "red",
-				label: "Incomplete",
+				label: "Inactive",
 			};
 		case "ready":
 		case "scheduled":
 			return {
 				icon: <IconCheck size={size} />,
-				color: "green",
+				color: "blue",
 				label: "Ready",
 			};
 		default:
