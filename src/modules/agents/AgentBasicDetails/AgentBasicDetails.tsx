@@ -8,49 +8,48 @@ import type { AgentConfigModel } from "~/models/AgentListObject";
 import { VoiceMiniPlayer } from "~/components/VoiceMiniPlayer";
 
 export interface AgentBasicDetailsProps {
-  /** The agent data to display */
-  agent?: AgentListObject;
-  agentData?: AgentConfigModel;
+	/** The agent data to display */
+	agent?: AgentListObject;
+	agentData?: AgentConfigModel;
 }
 
 const AgentBasicDetails: React.FC<AgentBasicDetailsProps> = ({
-  agent,
-  agentData,
+	agent,
+	agentData,
 }) => {
-  console.log("AgentBasicDetails", { agent });
-  return (
-    <div>
-      <Stack gap="xs">
-        {/* Agent Profile Section */}
-        <Box className={styles.agentSection}>
-          <AgentProfile
-            agent={agent}
-            traits={["Empathic", "Jovial"]}
-            size="lg"
-          />
-        </Box>
+	return (
+		<div>
+			<Stack gap="xs">
+				{/* Agent Profile Section */}
+				<Box className={styles.agentSection}>
+					<AgentProfile
+						agent={agent}
+						traits={["Empathic", "Jovial"]}
+						size="lg"
+					/>
+				</Box>
 
-        {/* Voice Settings Section */}
+				{/* Voice Settings Section */}
 
-        <AgentVoiceProgress
-          optimizeLatency={
-            agentData?.conversationConfig?.tts?.optimizeStreamingLatency ?? 3
-          }
-          stability={agentData?.conversationConfig?.tts?.stability ?? 0.5}
-          speed={agentData?.conversationConfig?.tts?.speed ?? 1.0}
-          similarityBoost={
-            agentData?.conversationConfig?.tts?.similarityBoost ?? 0.8
-          }
-        />
-        <Center mt="lg">
-          <VoiceMiniPlayer
-            disabled={!agent?.voice?.previewUrl}
-            voiceUrl={agent?.voice?.previewUrl}
-          />
-        </Center>
-      </Stack>
-    </div>
-  );
+				<AgentVoiceProgress
+					optimizeLatency={
+						agentData?.conversationConfig?.tts?.optimizeStreamingLatency ?? 3
+					}
+					stability={agentData?.conversationConfig?.tts?.stability ?? 0.5}
+					speed={agentData?.conversationConfig?.tts?.speed ?? 1.0}
+					similarityBoost={
+						agentData?.conversationConfig?.tts?.similarityBoost ?? 0.8
+					}
+				/>
+				<Center mt="lg">
+					<VoiceMiniPlayer
+						disabled={!agent?.voice?.previewUrl}
+						voiceUrl={agent?.voice?.previewUrl}
+					/>
+				</Center>
+			</Stack>
+		</div>
+	);
 };
 
 export default AgentBasicDetails;
