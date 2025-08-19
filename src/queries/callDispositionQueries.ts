@@ -64,6 +64,25 @@ export function useCallDispositionReport(params?: {
 		enabled: true,
 	});
 }
+export function useGetCallDispositionReportParents(params?: {
+	campaignId?: number;
+}) {
+	return useQuery<{
+		dispositions: {
+			dispositionName: string;
+			count: number;
+			percentage: string;
+		}[];
+		totalCalls: number;
+	}>({
+		queryKey: ["callDispositionReportParents", params],
+		queryFn: async () => {
+			const api = callDispositionApi();
+			return api.getCallDispositionReportParents(params || {});
+		},
+		enabled: true,
+	});
+}
 
 // --- Mutations ---
 export function useCreateCallDisposition() {

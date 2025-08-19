@@ -81,6 +81,17 @@ const callDispositionApi = (_authHeader?: Record<string, string>) => {
 			);
 			return response.data;
 		},
+		getCallDispositionReportParents: async (params: {
+			campaignId?: number;
+		}) => {
+			const response = await axios.get(
+				`${DEFAULT_API_URL}/call-dispositions/report/parent-nodes`,
+				{
+					params,
+				}
+			);
+			return response.data;
+		},
 	};
 };
 
