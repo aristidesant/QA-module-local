@@ -145,7 +145,7 @@ export interface ConversationConfigModel {
 			ignoreDefaultPersonality: boolean;
 		};
 		language: string;
-		firstMessage: string;
+		first_message: string;
 		dynamicVariables: {
 			dynamicVariablePlaceholders: Record<string, any>;
 		};
