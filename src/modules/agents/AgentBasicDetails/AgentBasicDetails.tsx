@@ -22,11 +22,7 @@ const AgentBasicDetails: React.FC<AgentBasicDetailsProps> = ({
 			<Stack gap="xs">
 				{/* Agent Profile Section */}
 				<Box className={styles.agentSection}>
-					<AgentProfile
-						agent={agent}
-						traits={["Empathic", "Jovial"]}
-						size="lg"
-					/>
+					<AgentProfile agent={agent} size="lg" />
 				</Box>
 
 				{/* Voice Settings Section */}
