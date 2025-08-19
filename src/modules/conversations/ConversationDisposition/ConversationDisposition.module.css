@@ -21,3 +21,92 @@
 	background-color: var(--mantine-color-gray-1);
 	color: var(--mantine-color-dark-7);
 }
+
+/* Compact mode tweaks */
+.compact {
+	padding: 6px !important;
+}
+
+.contentStack {
+	width: 100%;
+}
+
+.headerRow {
+	width: 100%;
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+}
+
+.titleGroup {
+	min-width: 0; /* allow truncation */
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.name {
+	color: var(--mantine-color-dark-9);
+	font-size: 0.9rem;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.description {
+	display: block;
+	color: var(--mantine-color-dimmed);
+	max-width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.statusBadge {
+	flex: 0 0 auto;
+}
+
+.rightFlags {
+	display: flex;
+	gap: 6px;
+	align-items: center;
+}
+
+.notes {
+	color: var(--mantine-color-dimmed);
+	font-size: 0.85rem;
+	max-height: 3.6rem; /* ~3 lines */
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* Skeleton and error stacks spacing */
+.skeletonStack,
+.errorStack {
+	width: 100%;
+}
+
+/* Responsive: make layout friendlier on very small widths */
+@media (max-width: 420px) {
+	.name {
+		max-width: 95px;
+		font-size: 0.85rem;
+	}
+	.description {
+		white-space: normal;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+	.notes {
+		-webkit-line-clamp: 3;
+		line-clamp: 3;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+	}
+	.rightFlags {
+		/* hide secondary badges on tiny screens to save space */
+		gap: 4px;
+	}
+}

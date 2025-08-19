@@ -1,53 +1,37 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
 	useCreatePromptForm,
-	useDeletePromptForm,
 	useGetAllPromptForms,
-	useUpdatePromptForm,
 } from "../../../queries/promptFormQueries";
 import {
-	Table,
 	Loader,
 	Center,
 	Text,
-	Group,
 	ActionIcon,
-	Badge,
 	Stack,
-	Button,
-	Flex,
+	// UI components used inside hook file
 } from "@mantine/core";
 import { IconPlus, IconAlertCircle } from "@tabler/icons-react";
 import styles from "./PromptFormList.module.css";
-import { modals } from "@mantine/modals";
 import { PromptFormForm } from "../PromptFormForm";
 import SectionCard from "~/components/SectionCard";
 import type { PromptForm } from "~/models/PromptFormModel";
 import usePromptFormStore from "../usePromptFormStore";
+import BaseTable from "~/components/BaseTable";
+// Column types are defined in the hook file
+import usePromptFormListColumn from "./usePromptFormListColumn";
 
 export const PromptFormList: React.FC = () => {
 	const { data, isLoading, isError } = useGetAllPromptForms();
 	const { setRightComponent } = usePromptFormStore((state) => state);
 	const { mutateAsync: createPromptForm } = useCreatePromptForm();
-	const { mutateAsync: updatePromptForm } = useUpdatePromptForm();
-	const { mutateAsync: deletePromptForm } = useDeletePromptForm();
 
-	if (isLoading) {
-		return (
-			<Center>
-				<Loader />
-			</Center>
-		);
-	}
-
-	if (isError) {
-		return (
-			<Center>
-				<Text c="red">Failed to load prompt forms.</Text>
-			</Center>
-		);
-	}
-
+	useEffect(() => {
+		return () => {
+			setRightComponent(null);
+		};
+	}, []);
+	// Loading and error states are handled after all hooks are called to respect Rules of Hooks
 	const handleOnCreate = async (values: PromptForm) => {
 		try {
 			await createPromptForm(values);
@@ -56,38 +40,7 @@ export const PromptFormList: React.FC = () => {
 			console.error("Error creating prompt form:", error);
 		}
 	};
-	const handleOnUpdate = async (values: PromptForm) => {
-		try {
-			await updatePromptForm({
-				id: `${values.id}`,
-				data: values,
-			});
-			setRightComponent(null);
-		} catch (error) {
-			console.error("Error updating prompt form:", error);
-		}
-	};
-
-	const handleOnDelete = async (id: string) => {
-		try {
-			modals.openConfirmModal({
-				title: "Delete Prompt Form",
-				children: (
-					<Text>
-						Are you sure you want to delete this prompt form? This action is
-						irreversible.
-					</Text>
-				),
-				labels: { confirm: "Delete", cancel: "Cancel" },
-				confirmProps: { color: "red" },
-				onConfirm: async () => {
-					await deletePromptForm(id);
-				},
-			});
-		} catch (error) {
-			console.error("Error deleting prompt form:", error);
-		}
-	};
+	const { columns, openEditForm } = usePromptFormListColumn();
 
 	if (isLoading) {
 		return (
@@ -113,12 +66,16 @@ export const PromptFormList: React.FC = () => {
 	return (
 		<SectionCard
 			title="List of forms"
-			description="Thi is a list of all the forms created by the user."
+			description="This is a list of all the forms created by the user."
 			headerActions={
 				<ActionIcon
 					onClick={() => {
 						setRightComponent(
-							<PromptFormForm onSubmit={handleOnCreate} initialValues={{}} />
+							<PromptFormForm
+								key={new Date().getTime()}
+								onSubmit={handleOnCreate}
+								initialValues={{}}
+							/>
 						);
 					}}
 				>
@@ -126,81 +83,23 @@ export const PromptFormList: React.FC = () => {
 				</ActionIcon>
 			}
 		>
-			<Table className={styles.table} highlightOnHover withTableBorder>
-				<Table.Thead className={styles.tableHeader}>
-					<Table.Tr>
-						<Table.Th>Name / Created</Table.Th>
-						<Table.Th className={styles.typeHeader}>Type</Table.Th>
-						<Table.Th style={{ width: "180px" }}>Actions</Table.Th>
-					</Table.Tr>
-				</Table.Thead>
-				<Table.Tbody>
-					{data && data.length > 0 ? (
-						data.map((form: PromptForm) => (
-							<Table.Tr key={form.id} className={styles.row}>
-								<Table.Td className={styles.nameCell}>
-									<Flex direction={"column"}>
-										<span className={styles.formName}>{form.name}</span>
-										<Text c={"dimmed"} fz="xs">
-											{new Date(form.createdAt).toLocaleDateString(undefined, {
-												year: "numeric",
-												month: "short",
-												day: "numeric",
-											})}
-										</Text>
-									</Flex>
-								</Table.Td>
-								<Table.Td className={styles.typeCell}>
-									<Badge variant="light" color="blue" radius="sm">
-										{form.type?.name || "N/A"}
-									</Badge>
-								</Table.Td>
-								<Table.Td>
-									<Group gap="xs" justify="flex-end" className={styles.actions}>
-										<Button
-											onClick={() => {
-												setRightComponent(
-													<PromptFormForm
-														onSubmit={handleOnUpdate}
-														initialValues={form}
-													/>
-												);
-											}}
-											variant="light"
-											color="blue"
-											size="xs"
-											className={styles.actionButton}
-										>
-											Edit
-										</Button>
-										<Button
-											onClick={() => handleOnDelete(`${form.id}`)}
-											variant="light"
-											color="red"
-											size="xs"
-											className={styles.actionButton}
-										>
-											Delete
-										</Button>
-									</Group>
-								</Table.Td>
-							</Table.Tr>
-						))
-					) : (
-						<Table.Tr>
-							<Table.Td colSpan={3}>
-								<div className={styles.emptyState}>
-									<IconAlertCircle size={24} style={{ marginBottom: 12 }} />
-									<Text size="sm">No prompt forms found</Text>
-									<Text size="xs" c="dimmed" mt={4}>
-										Create your first prompt form to get started
-									</Text>
-								</div>
-							</Table.Td>
-						</Table.Tr>
-					)}
-				</Table.Tbody>
-			</Table>
+			{data && data.length > 0 ? (
+				<BaseTable<PromptForm>
+					data={data}
+					columns={columns}
+					onRowClick={(row) => openEditForm(row)}
+					className={styles.table}
+					density="compact"
+				/>
+			) : (
+				<div className={styles.emptyState}>
+					<IconAlertCircle size={24} style={{ marginBottom: 12 }} />
+					<Text size="sm">No prompt forms found</Text>
+					<Text size="xs" c="dimmed" mt={4}>
+						Create your first prompt form to get started
+					</Text>
+				</div>
+			)}
 		</SectionCard>
 	);
 };

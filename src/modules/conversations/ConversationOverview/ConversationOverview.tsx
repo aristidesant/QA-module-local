@@ -17,6 +17,8 @@ import {
   IconCalendar,
   IconCopy,
   IconCheck,
+  IconCoin,
+  IconAlertCircle,
 } from "@tabler/icons-react";
 import type { ConversationsModel } from "~/models/ConversationsModels";
 import styles from "./ConversationOverview.module.css";
@@ -29,6 +31,11 @@ interface ConversationOverviewProps {
   status?: string; // Optional override for status
   duration?: number; // Optional override for duration
 }
+
+// get value or empty
+const getValueOrEmpty = (value: string | undefined | unknown) => {
+  return value || "";
+};
 
 export function ConversationOverview({
   conversation,
@@ -79,9 +86,9 @@ export function ConversationOverview({
 
   const contactName = conversation?.externalPhoneNumber
     ? "Demo"
-    : contact?.name
-    ? String(contact.name)
-    : "Unknown Contact";
+    : `${getValueOrEmpty(contact?.firstName)} ${getValueOrEmpty(
+        contact?.lastName
+      )}`;
   const contactPhone = String(
     contact?.phoneNumber ||
       conversation?.contactPhoneNumber ||
@@ -90,6 +97,25 @@ export function ConversationOverview({
   );
   const agentName = agent?.name ? String(agent.name) : "Unassigned";
   const campaignName = campaign?.name ? String(campaign.name) : "N/A";
+
+  // Extract metadata values
+  const metadata = transcriptContent?.metadata;
+  const cost = metadata?.cost;
+  const terminationReason = metadata?.termination_reason;
+
+  const formatTermination = (reason?: string | null) => {
+    if (!reason) return "Unknown";
+    const r = reason.toLowerCase();
+    if (r.includes("terminated_by") || r.includes("terminated"))
+      return "Terminated";
+    if (r.includes("client") && r.includes("disconnect"))
+      return "Client Disconnected";
+    if (r.includes("hangup")) return "Hangup";
+    if (r.includes("timeout")) return "Timeout";
+    if (r.includes("error")) return "Error";
+    // Fallback: capitalize first letter
+    return reason.charAt(0).toUpperCase() + reason.slice(1);
+  };
 
   // Helper function to safely render text content
 
@@ -214,20 +240,55 @@ export function ConversationOverview({
             </Group>
             <Group gap={8} className={styles.statItem} wrap="nowrap">
               <IconInfoCircle size={18} className={styles.icon} />
-              <div>
+              <div className={styles.statContent}>
                 <Text size="xs" className={styles.statLabel}>
                   Campaign
                 </Text>
                 <Text
                   size="sm"
                   fw={700}
-                  className={`${styles.darkText} ${styles.truncate}`}
+                  className={styles.darkText}
                   title={campaignName}
                 >
                   {campaignName}
                 </Text>
               </div>
             </Group>
+
+            {/* Cost */}
+            {typeof cost === "number" && (
+              <Group gap={8} className={styles.statItem} wrap="nowrap">
+                <IconCoin size={18} className={styles.icon} />
+                <div>
+                  <Text size="xs" className={styles.statLabel}>
+                    Cost
+                  </Text>
+                  <Text size="sm" fw={700} className={styles.darkText}>
+                    {`$${cost.toFixed(4)}`}
+                  </Text>
+                </div>
+              </Group>
+            )}
+
+            {/* Termination Reason */}
+            {terminationReason !== undefined && (
+              <Group gap={8} className={styles.statItem} wrap="nowrap">
+                <IconAlertCircle size={18} className={styles.icon} />
+                <div>
+                  <Text size="xs" className={styles.statLabel}>
+                    Termination Reason
+                  </Text>
+                  <Text
+                    size="sm"
+                    fw={700}
+                    className={styles.darkText}
+                    title={terminationReason}
+                  >
+                    {formatTermination(terminationReason)}
+                  </Text>
+                </div>
+              </Group>
+            )}
           </SimpleGrid>
         </RightSection>
       </Paper>

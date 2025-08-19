@@ -1,5 +1,5 @@
 import React from "react";
-import { IconPlus, IconUsersGroup } from "@tabler/icons-react";
+import { IconUsersGroup } from "@tabler/icons-react";
 import AgentCreate from "../AgentCreate";
 import AgentCard from "../AgentCard";
 import {
@@ -10,7 +10,7 @@ import {
   Avatar,
   Paper,
   Transition,
-  ActionIcon,
+  Button,
 } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import classes from "./AgentList.module.css";
@@ -58,9 +58,9 @@ const AgentList: React.FC = () => {
         </>
       }
       titleRight={
-        <ActionIcon onClick={open} variant="default" size="lg">
-          <IconPlus size={20} stroke={1.5} />
-        </ActionIcon>
+        <Button onClick={open} size="sm">
+          New agent
+        </Button>
       }
     >
       <Stack>

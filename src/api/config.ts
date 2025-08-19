@@ -5,8 +5,8 @@
  */
 export function getDefaultApiUrl(): string | undefined {
   // Vite exposes env vars as import.meta.env
-  // Use VITE_API_URL for client and server
-  return import.meta.env.VITE_API_URL as string | undefined;
+  // Use VITE_APP_API_URL for client and server
+  return import.meta.env.VITE_APP_API_URL as string | undefined;
 }
 
 const DEFAULT_API_URL = getDefaultApiUrl() as string;

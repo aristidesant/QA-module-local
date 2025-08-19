@@ -1,5 +1,5 @@
-import { Box, Tabs, Tooltip, Divider, Loader, Center } from "@mantine/core";
-import { IconInfoCircle, IconAnalyze, IconFileText } from "@tabler/icons-react";
+import { Box, Tabs, Loader, Center } from "@mantine/core";
+import { IconInfoCircle, IconFileText } from "@tabler/icons-react";
 import { useMemo } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -9,8 +9,7 @@ import type {
 } from "~/models/ConversationsModels";
 
 import { TranscriptViewer } from "~/modules/conversations/TranscriptViewer";
-import { AnalysisPanel } from "~/modules/conversations/AnalysisPanel";
-import { MetadataPanel } from "~/modules/conversations/MetadataPanel";
+// Analysis and Metadata panels removed from tabs — components may be deleted if unused elsewhere.
 import styles from "./ConversationDetails.module.css";
 import ConversationOverview from "../ConversationOverview";
 import { useGetConversation } from "~/queries/conversationsQueries";
@@ -84,22 +83,19 @@ export function ConversationDetails({
           list: styles.tabList,
         }}
       >
-        <Tabs.List>
-          <Tooltip label="Overview" position="bottom">
-            <Tabs.Tab value="overview">
-              <IconInfoCircle size={20} />
-            </Tabs.Tab>
-          </Tooltip>
-          <Tooltip label="Transcript" position="bottom">
-            <Tabs.Tab value="transcript">
-              <IconFileText size={20} />
-            </Tabs.Tab>
-          </Tooltip>
-          <Tooltip label="Analysis" position="bottom">
-            <Tabs.Tab value="analysis">
-              <IconAnalyze size={20} />
-            </Tabs.Tab>
-          </Tooltip>
+        <Tabs.List grow>
+          <Tabs.Tab value="overview">
+            <Box style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <IconInfoCircle size={18} />
+              <span>Overview</span>
+            </Box>
+          </Tabs.Tab>
+          <Tabs.Tab value="transcript">
+            <Box style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <IconFileText size={18} />
+              <span>Transcript</span>
+            </Box>
+          </Tabs.Tab>
         </Tabs.List>
 
         <Tabs.Panel value="overview" pt="md">
@@ -114,12 +110,6 @@ export function ConversationDetails({
 
         <Tabs.Panel value="transcript" pt="md">
           <TranscriptViewer transcript={safeTranscriptContent.transcript} />
-        </Tabs.Panel>
-
-        <Tabs.Panel value="analysis" pt="md">
-          <AnalysisPanel analysis={safeTranscriptContent.analysis} />
-          <Divider my="md" />
-          <MetadataPanel metadata={safeTranscriptContent.metadata} />
         </Tabs.Panel>
       </Tabs>
     </Box>

@@ -8,6 +8,7 @@ import {
   IconSettings,
 } from "@tabler/icons-react";
 import AgentProfile from "~/components/AgentProfile";
+import { useGetAgent } from "~/queries/agentQueries";
 import { useNavigate } from "react-router";
 import AgentVoiceProgress from "./AgentVoiceProgress/AgentVoiceProgress";
 import { VoicePlayer } from "~/components/VoicePlayer";
@@ -25,13 +26,22 @@ export const AgentSimpleDetails: React.FC<AgentSimpleDetailsProps> = ({
   // Agent traits to display
   const agentTraits = ["Empathic", "Jovial"];
 
-  // Voice settings from conversationConfig
-  const stability = agent.config?.conversationConfig?.tts?.stability ?? 0.5;
-  const speed = agent.config?.conversationConfig?.tts?.speed ?? 1.0;
+  // Fetch full agent if the passed `agent` is incomplete. We prefer values
+  // coming from the API (useGetAgent) but fall back to the passed object.
+  const { data: fetchedAgent } = useGetAgent(agent.id);
+
+  // Merge fetched agent (when available) with the provided `agent` prop.
+  const mergedAgent = fetchedAgent ?? agent;
+
+  // Voice settings from conversationConfig - default to 0 when missing
+  // (per request: do not invent defaults, show 0 instead).
+  const stability =
+    mergedAgent?.config?.conversationConfig?.tts?.stability ?? 0;
+  const speed = mergedAgent?.config?.conversationConfig?.tts?.speed ?? 0;
   const similarityBoost =
-    agent.config?.conversationConfig?.tts?.similarityBoost ?? 0.8;
+    mergedAgent?.config?.conversationConfig?.tts?.similarityBoost ?? 0;
   const optimizeLatency =
-    agent.config?.conversationConfig?.tts?.optimizeStreamingLatency ?? 3;
+    mergedAgent?.config?.conversationConfig?.tts?.optimizeStreamingLatency ?? 0;
 
   useEffect(() => {
     // Small delay to ensure smooth mounting animation
@@ -49,11 +59,11 @@ export const AgentSimpleDetails: React.FC<AgentSimpleDetailsProps> = ({
     <Stack gap="md" className={isVisible ? styles.visible : ""}>
       <div className={styles.agentSimpleDetails}>
         {/* Avatar and status */}
-        <AgentProfile agent={agent} traits={agentTraits} size="lg" />
+        <AgentProfile agent={mergedAgent} traits={agentTraits} size="lg" />
 
         <VoicePlayer
-          voiceName={agent.voice?.name || "No voice selected"}
-          previewUrl={agent.voice?.previewUrl}
+          voiceName={mergedAgent.voice?.name || "No voice selected"}
+          previewUrl={mergedAgent.voice?.previewUrl}
         />
         {/* Campaign section */}
         <div className={styles.campaignRow}>

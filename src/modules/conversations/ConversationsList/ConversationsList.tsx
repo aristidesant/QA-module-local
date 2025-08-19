@@ -17,6 +17,7 @@ export function ConversationsList() {
   const {
     data: typedConversations,
     isLoading,
+    isFetching,
     isError,
     refetch: handleRefresh,
   } = useGetConversations();
@@ -87,6 +88,7 @@ export function ConversationsList() {
             globalFilter={globalFilter}
             onGlobalFilterChange={setGlobalFilter}
             onRefresh={handleRefresh}
+            isLoading={isLoading || isFetching}
           />
 
           {/* Responsive scroll container for the table */}
@@ -105,6 +107,7 @@ export function ConversationsList() {
               <TableHeader
                 headers={table.getHeaderGroups()[0]?.headers || []}
               />
+
               <TableBody
                 rows={currentPageRows || []}
                 getRowProps={getRowProps}

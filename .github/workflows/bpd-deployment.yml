@@ -1,0 +1,75 @@
+name: Build & Push SPA to ECR
+
+on:
+  push:
+    branches:
+      - stable
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    environment: BPD
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Install dependencies
+        run: |
+          echo "Using API_URL=${API_URL:-<not set>}"
+          pnpm install
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Set ECR repository name
+        id: ecr_repo
+        run: |
+          if [ -z "${{ secrets.ECR_REPO }}" ]; then
+            echo "repo=spa-frontend" >> $GITHUB_OUTPUT
+          else
+            echo "repo=${{ secrets.ECR_REPO }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Ensure ECR repository exists
+        run: |
+          aws ecr describe-repositories --repository-names ${{ steps.ecr_repo.outputs.repo }} || \
+          aws ecr create-repository --repository-name ${{ steps.ecr_repo.outputs.repo }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push Docker image to ECR
+        id: build_image
+        env:
+          ECR_REPO: ${{ steps.ecr_repo.outputs.repo }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          IMAGE_URI=$ECR_REGISTRY/$ECR_REPO
+          docker build --build-arg VITE_APP_API_URL=${{ secrets.API_URL }} -t $IMAGE_URI:latest -t $IMAGE_URI:$IMAGE_TAG .
+          docker push $IMAGE_URI:latest
+          docker push $IMAGE_URI:$IMAGE_TAG
+          echo "image_uri=$IMAGE_URI:latest" >> $GITHUB_OUTPUT
+
+      - name: Output image URI
+        run: |
+          echo "Image pushed: ${{ steps.build_image.outputs.image_uri }}"
