@@ -13,16 +13,12 @@ import {
 	Divider,
 	SemiCircleProgress,
 	Flex,
-	Button,
 } from "@mantine/core";
 import {
 	IconDotsVertical,
 	IconTrash,
 	IconEye,
 	IconPlayerPause,
-	IconPhone,
-	IconBrandWhatsapp,
-	IconMail,
 	IconCheck,
 	IconArrowUpRight,
 	IconArrowDownLeft,
@@ -56,7 +52,7 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 		language: "Spanish ES",
 		avatar: "https://randomuser.me/api/portraits/women/44.jpg",
 	};
-	const score = 64;
+	const score = 75;
 
 	// Calculate actual progress based on contact list processed
 	const totalContacts = campaign.contactList?.totalContacts || 0;
@@ -70,6 +66,20 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 		if (percentage >= 50) return "blue";
 		if (percentage >= 25) return "yellow";
 		return "red";
+	};
+
+	// Get score color based on value (1-100)
+	const getScoreColor = (score: number): string => {
+		// Clamp score between 0 and 100
+		const clampedScore = Math.max(0, Math.min(100, score));
+
+		if (clampedScore >= 80) return "#40c057"; // Green (excellent)
+		if (clampedScore >= 70) return "#51cf66"; // Light green (good)
+		if (clampedScore >= 60) return "#82c91e"; // Yellow-green (above average)
+		if (clampedScore >= 50) return "#fab005"; // Yellow (average)
+		if (clampedScore >= 40) return "#fd7e14"; // Orange (below average)
+		if (clampedScore >= 30) return "#ff6b6b"; // Light red (poor)
+		return "#e03131"; // Red (very poor)
 	};
 
 	const statusInfo = useMemo(
@@ -240,7 +250,7 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 								color: "var(--mantine-color-dark-6)",
 							},
 						}}
-						filledSegmentColor="#40c057"
+						filledSegmentColor={getScoreColor(score)}
 						emptySegmentColor="#e9ecef"
 						style={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
 					/>
@@ -276,7 +286,7 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 						</Text>
 					</Stack>
 				</Group>
-				<Flex gap={"xs"}>
+				{/* <Flex gap={"xs"}>
 					<Button
 						variant="subtle"
 						leftSection={
@@ -306,7 +316,7 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 					>
 						Email
 					</Button>
-				</Flex>
+				</Flex> */}
 			</Group>
 		</Card>
 	);

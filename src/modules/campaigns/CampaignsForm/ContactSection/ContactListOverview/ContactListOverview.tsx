@@ -1,256 +1,219 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
-  Group,
-  Text,
-  TextInput,
-  ActionIcon,
-  Table,
-  Badge,
-  Pagination,
-  Avatar,
-  Stack,
-  Card,
-  Title,
+	Group,
+	Text,
+	Table,
+	Badge,
+	Avatar,
+	Stack,
+	Card,
+	Loader,
 } from "@mantine/core";
-import { IconSearch, IconAdjustments } from "@tabler/icons-react";
 import styles from "./ContactListOverview.module.css";
 import { useCampaignsStore } from "~/stores/campaignsStore";
 import { ContactDetails } from "~/modules/campaigns/CampaignsForm/ContactSection/ContactDetails";
+import { useGetCampaignContacts } from "~/queries/contactsQueries";
+import { usePagination } from "~/hooks/usePagination";
+import PaginationControls from "~/components/PaginationControls";
+import SearchHeader from "./SearchHeader";
+import type { Contact } from "~/models/ContactsModel";
 
-interface Contact {
-  id: string;
-  name: string;
-  phone: string;
-  language: string;
-  status: "Active" | "Inactive";
-  avatar?: string;
-  initials: string;
-}
+interface ContactListOverviewProps {}
 
-interface ContactListOverviewProps {
-  contacts?: Contact[];
-}
+export const ContactListOverview: React.FC<ContactListOverviewProps> = () => {
+	const { selectedCampaign, setRightComponent } = useCampaignsStore();
 
-export const ContactListOverview = ({
-  contacts = [
-    {
-      id: "1",
-      name: "Veronica Martinez",
-      phone: "(555) 123-4567",
-      language: "Spanish ES",
-      status: "Active",
-      initials: "VM",
-    },
-    {
-      id: "2",
-      name: "Juan Pérez",
-      phone: "(555) 234-5678",
-      language: "Spanish ES",
-      status: "Inactive",
-      initials: "JP",
-    },
-    {
-      id: "3",
-      name: "Lucía Fernández",
-      phone: "(809) 345-6789",
-      language: "Spanish ES",
-      status: "Active",
-      initials: "LF",
-    },
-    {
-      id: "4",
-      name: "Carlos Gómez",
-      phone: "(555) 456-7890",
-      language: "Spanish ES",
-      status: "Inactive",
-      initials: "CG",
-    },
-    {
-      id: "5",
-      name: "Ana López",
-      phone: "(555) 567-8901",
-      language: "Spanish ES",
-      status: "Inactive",
-      initials: "AL",
-    },
-    {
-      id: "6",
-      name: "Miguel Torres",
-      phone: "(555) 678-9012",
-      language: "Spanish ES",
-      status: "Inactive",
-      initials: "MT",
-    },
-    {
-      id: "7",
-      name: "Sofía Ramírez",
-      phone: "(555) 789-0123",
-      language: "Spanish ES",
-      status: "Active",
-      initials: "SR",
-    },
-    {
-      id: "8",
-      name: "Luis Herrera",
-      phone: "(555) 890-1234",
-      language: "Spanish ES",
-      status: "Active",
-      initials: "LH",
-    },
-    {
-      id: "9",
-      name: "Claudia Ruiz",
-      phone: "(555) 901-2345",
-      language: "Spanish ES",
-      status: "Active",
-      initials: "CR",
-    },
-    {
-      id: "10",
-      name: "Andrés Castro",
-      phone: "(555) 012-3456",
-      language: "Spanish ES",
-      status: "Active",
-      initials: "AC",
-    },
-  ],
-}: ContactListOverviewProps) => {
-  const [searchValue, setSearchValue] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-  const { setRightComponent } = useCampaignsStore();
-  const filteredContacts = contacts.filter(
-    (contact) =>
-      contact.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-      contact.phone.includes(searchValue)
-  );
+	// Use the pagination hook for all pagination logic
+	const pagination = usePagination({
+		initialItemsPerPage: 10,
+		searchDebounceMs: 500,
+	});
 
-  const paginatedContacts = filteredContacts.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+	// Fetch data with server-side pagination
+	const { data: campaignContacts, isLoading } = useGetCampaignContacts(
+		selectedCampaign?.id as number,
+		pagination.getApiParams()
+	);
 
-  const totalPages = Math.ceil(filteredContacts.length / itemsPerPage);
+	// Calculate total pages from server response
+	const totalPages = campaignContacts?.total
+		? pagination.calculateTotalPages(campaignContacts.total)
+		: 0;
 
-  const getStatusColor = (status: string) => {
-    return status === "Active" ? "green" : "gray";
-  };
+	// Helper functions for contact status and display
+	const getStatusColor = (contact: Contact) => {
+		const hasEmail = contact.emails && contact.emails.length > 0;
+		const hasPhone = contact.phones && contact.phones.length > 0;
+		return hasEmail && hasPhone ? "green" : "gray";
+	};
 
-  const handleContactClick = (contact: Contact) => {
-    const firstName = contact.name.split(" ")[0].toLowerCase();
-    const lastName = contact.name.split(" ")[1]?.toLowerCase() || "";
-    const emailBase = lastName ? `${firstName}.${lastName}` : firstName;
+	const getContactStatus = (contact: Contact) => {
+		const hasEmail = contact.emails && contact.emails.length > 0;
+		const hasPhone = contact.phones && contact.phones.length > 0;
+		return hasEmail && hasPhone ? "Active" : "Inactive";
+	};
 
-    const contactDetails = {
-      id: contact.id,
-      name: contact.name,
-      phone: contact.phone,
-      email: `${emailBase}@email.com`,
-      location: "Santo Domingo, RD",
-      language: contact.language,
-      initials: contact.initials,
-      engagementLevel: 87,
-      qualificationScore: 75,
-      sentiment: { positive: 2113, neutral: 45, negative: 16 },
-    };
+	const getInitials = (firstName: string, lastName: string) => {
+		const firstInitial = firstName?.charAt(0) || "";
+		const lastInitial = lastName?.charAt(0) || "";
+		return `${firstInitial}${lastInitial}`.toUpperCase() || "??";
+	};
 
-    if (setRightComponent) {
-      setRightComponent(<ContactDetails contact={contactDetails} />);
-    }
-  };
+	// Handle contact click for details view
+	const handleContactClick = (contact: Contact) => {
+		const primaryPhone = contact.phones?.[0] || "";
+		const primaryEmail = contact.emails?.[0] || "";
 
-  useEffect(() => {
-    return () => {
-      // Cleanup function to reset the right component when this component unmounts
-      setRightComponent?.(null);
-    };
-  }, []);
+		const contactDetails = {
+			id: contact.id.toString(),
+			name: `${contact.firstName || ""} ${contact.lastName || ""}`.trim(),
+			phone: primaryPhone,
+			email: primaryEmail,
+			location: contact.address || "N/A",
+			language: "Spanish",
+			initials: getInitials(contact.firstName || "", contact.lastName || ""),
+			engagementLevel: 87,
+			qualificationScore: 75,
+			sentiment: { positive: 2113, neutral: 45, negative: 16 },
+		};
 
-  return (
-    <Card className={styles.card}>
-      <Group justify="space-between" mb="md">
-        <div>
-          <Title order={4} className={styles.title}>
-            Contact List Overview
-          </Title>
-          <Text size="sm" c="dimmed" className={styles.subtitle}>
-            View and filter campaign contacts to tailor your outreach.
-          </Text>
-        </div>
-        <Group gap="sm">
-          <TextInput
-            placeholder="Search client"
-            value={searchValue}
-            onChange={(event) => setSearchValue(event.currentTarget.value)}
-            leftSection={<IconSearch size={16} />}
-            className={styles.searchInput}
-          />
-          <ActionIcon variant="light" size="lg">
-            <IconAdjustments size={16} />
-          </ActionIcon>
-        </Group>
-      </Group>
+		if (setRightComponent) {
+			setRightComponent(<ContactDetails contact={contactDetails} />);
+		}
+	};
 
-      <Stack gap="md">
-        <Table className={styles.table}>
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>Name</Table.Th>
-              <Table.Th>Primary number</Table.Th>
-              <Table.Th>Language</Table.Th>
-              <Table.Th>Status</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {paginatedContacts.map((contact) => (
-              <Table.Tr
-                key={contact.id}
-                onClick={() => handleContactClick(contact)}
-              >
-                <Table.Td>
-                  <Group gap="sm">
-                    <Avatar size="sm" color="blue" radius="sm">
-                      {contact.initials}
-                    </Avatar>
-                    <Text size="sm" fw={500}>
-                      {contact.name}
-                    </Text>
-                  </Group>
-                </Table.Td>
-                <Table.Td>
-                  <Text size="sm">{contact.phone}</Text>
-                </Table.Td>
-                <Table.Td>
-                  <Group gap="xs">
-                    <div className={styles.flagIcon}>🇪🇸</div>
-                    <Text size="sm">{contact.language}</Text>
-                  </Group>
-                </Table.Td>
-                <Table.Td>
-                  <Badge
-                    variant="light"
-                    color={getStatusColor(contact.status)}
-                    size="sm"
-                  >
-                    {contact.status}
-                  </Badge>
-                </Table.Td>
-              </Table.Tr>
-            ))}
-          </Table.Tbody>
-        </Table>
+	// Handle items per page change
+	const handleItemsPerPageChange = (value: string | null) => {
+		if (value) {
+			pagination.setItemsPerPage(parseInt(value, 10));
+		}
+	};
 
-        {totalPages > 1 && (
-          <Group justify="center">
-            <Pagination
-              total={totalPages}
-              value={currentPage}
-              onChange={setCurrentPage}
-              size="sm"
-            />
-          </Group>
-        )}
-      </Stack>
-    </Card>
-  );
+	// Clear search function
+	const handleClearSearch = () => {
+		pagination.setSearchValue("");
+	};
+
+	// Cleanup effect
+	useEffect(() => {
+		return () => {
+			setRightComponent?.(null);
+		};
+	}, [setRightComponent]);
+
+	return (
+		<Card className={styles.card}>
+			{/* Search Header */}
+			<SearchHeader
+				title="Contact List Overview"
+				subtitle="View and filter campaign contacts to tailor your outreach."
+				searchValue={pagination.searchValue}
+				onSearchChange={pagination.setSearchValue}
+				onClearSearch={handleClearSearch}
+				onFiltersClick={() => {
+					// TODO: Implement filters modal
+				}}
+			/>
+
+			{/* Data Table */}
+			<Stack gap="md">
+				<div className={styles.tableContainer}>
+					<Table className={styles.table}>
+						<Table.Thead>
+							<Table.Tr>
+								<Table.Th>Name</Table.Th>
+								<Table.Th>Primary number</Table.Th>
+								<Table.Th>Email</Table.Th>
+								<Table.Th>Status</Table.Th>
+							</Table.Tr>
+						</Table.Thead>
+						<Table.Tbody>
+							{isLoading ? (
+								<Table.Tr>
+									<Table.Td colSpan={4}>
+										<Group justify="center" p="lg">
+											<Loader size="sm" />
+											<Text size="sm" c="dimmed">
+												Loading contacts...
+											</Text>
+										</Group>
+									</Table.Td>
+								</Table.Tr>
+							) : !campaignContacts?.contacts ||
+							  campaignContacts.contacts.length === 0 ? (
+								<Table.Tr>
+									<Table.Td colSpan={4}>
+										<Text ta="center" c="dimmed" p="lg">
+											{pagination.debouncedSearch
+												? `No contacts found matching "${pagination.debouncedSearch}".`
+												: "No contacts available."}
+										</Text>
+									</Table.Td>
+								</Table.Tr>
+							) : (
+								campaignContacts.contacts.map((contact: Contact) => (
+									<Table.Tr
+										key={contact.id}
+										onClick={() => handleContactClick(contact)}
+										className={styles.contactRow}
+									>
+										<Table.Td>
+											<Group gap="sm">
+												<Avatar size="sm" color="blue" radius="sm">
+													{getInitials(
+														contact.firstName || "",
+														contact.lastName || ""
+													)}
+												</Avatar>
+
+												<Text size="sm" fw={500}>
+													{`${contact.firstName || ""} ${
+														contact.lastName || ""
+													}`.trim()}
+												</Text>
+											</Group>
+										</Table.Td>
+										<Table.Td>
+											<Text size="sm" className={styles.phoneText}>
+												{contact.phones?.[0] || "N/A"}
+											</Text>
+										</Table.Td>
+										<Table.Td>
+											<Text size="sm" className={styles.emailText}>
+												{contact.emails?.[0] || "N/A"}
+											</Text>
+										</Table.Td>
+										<Table.Td>
+											<Badge
+												variant="light"
+												color={getStatusColor(contact)}
+												size="sm"
+												className={styles.statusBadge}
+											>
+												{getContactStatus(contact)}
+											</Badge>
+										</Table.Td>
+									</Table.Tr>
+								))
+							)}
+						</Table.Tbody>
+					</Table>
+				</div>
+
+				{/* Pagination Controls */}
+				<PaginationControls
+					currentPage={pagination.currentPage}
+					totalPages={totalPages}
+					itemsPerPage={pagination.itemsPerPage}
+					totalItems={campaignContacts?.total || 0}
+					onPageChange={pagination.setCurrentPage}
+					onItemsPerPageChange={handleItemsPerPageChange}
+					searchTerm={pagination.debouncedSearch}
+					isLoading={isLoading}
+				/>
+			</Stack>
+		</Card>
+	);
 };
+
+export default ContactListOverview;

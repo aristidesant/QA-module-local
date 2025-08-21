@@ -82,8 +82,6 @@ const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 				h={150}
 				mb="lg"
 				strokeColor="#ffffff"
-				withTooltip
-				tooltipDataSource="segment"
 			/>
 			<div className={classes.legend}>
 				{LEGEND.map((item) => (
