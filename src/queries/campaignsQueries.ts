@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import campaignsApi from "~/api/campaignsApi";
-import type { Campaign } from "~/models/CampaignsModel";
+import type { Campaign, PaginatedResponse } from "~/models/CampaignsModel";
 
 // Create campaign
 export const useCreateCampaign = () => {
@@ -12,6 +12,7 @@ export const useCreateCampaign = () => {
 		},
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({ queryKey: ["campaigns"] });
+			queryClient.invalidateQueries({ queryKey: ["campaigns-paginated"] });
 			// eslint-disable-next-line no-console
 			console.log("Campaign created successfully:", data);
 		},
@@ -29,6 +30,17 @@ export const useGetAllCampaigns = (params?: Record<string, any>) => {
 		queryFn: async () => {
 			const api = campaignsApi();
 			return api.findAllCampaigns(params);
+		},
+	});
+};
+
+// Get all campaigns with pagination
+export const useGetAllCampaignsPaginated = (params?: Record<string, any>) => {
+	return useQuery({
+		queryKey: ["campaigns-paginated", params],
+		queryFn: async () => {
+			const api = campaignsApi();
+			return api.findAllCampaignsPaginated(params);
 		},
 	});
 };
@@ -62,6 +74,7 @@ export const useUpdateCampaign = () => {
 		},
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({ queryKey: ["campaigns"] });
+			queryClient.invalidateQueries({ queryKey: ["campaigns-paginated"] });
 			if (data?.id) {
 				queryClient.invalidateQueries({ queryKey: ["campaign", data.id] });
 			}
@@ -85,19 +98,23 @@ export const useStartOutboundCampaign = () => {
 		onSuccess: (_, campaignId) => {
 			// Update the campaigns list cache directly
 			queryClient.setQueryData(
-				["campaigns"],
-				(oldData: Campaign[] | undefined) => {
+				["campaigns-paginated"],
+				(oldData: PaginatedResponse<Campaign> | undefined) => {
 					if (!oldData) return oldData;
-					return oldData.map((campaign) =>
-						campaign.id === campaignId
-							? { ...campaign, status: "RUNNING" as const }
-							: campaign
-					);
+					return {
+						...oldData,
+						data: oldData.data.map((campaign) =>
+							campaign.id === campaignId
+								? { ...campaign, status: "RUNNING" as const }
+								: campaign
+						),
+					};
 				}
 			);
 
 			// Force immediate refetch as backup
 			queryClient.refetchQueries({ queryKey: ["campaigns"] });
+			queryClient.refetchQueries({ queryKey: ["campaigns-paginated"] });
 			queryClient.refetchQueries({
 				queryKey: ["campaign", campaignId],
 			});
@@ -105,7 +122,9 @@ export const useStartOutboundCampaign = () => {
 			// Also invalidate all campaign-related queries as backup
 			queryClient.invalidateQueries({
 				predicate: (query) =>
-					query.queryKey[0] === "campaigns" || query.queryKey[0] === "campaign",
+					query.queryKey[0] === "campaigns" ||
+					query.queryKey[0] === "campaigns-paginated" ||
+					query.queryKey[0] === "campaign",
 			});
 			// eslint-disable-next-line no-console
 			console.log("Campaign started successfully:", campaignId);
@@ -127,19 +146,23 @@ export const usePauseOutboundCampaign = () => {
 		onSuccess: (_, campaignId) => {
 			// Update the campaigns list cache directly
 			queryClient.setQueryData(
-				["campaigns"],
-				(oldData: Campaign[] | undefined) => {
+				["campaigns-paginated"],
+				(oldData: PaginatedResponse<Campaign> | undefined) => {
 					if (!oldData) return oldData;
-					return oldData.map((campaign) =>
-						campaign.id === campaignId
-							? { ...campaign, status: "PAUSED" as const }
-							: campaign
-					);
+					return {
+						...oldData,
+						data: oldData.data.map((campaign) =>
+							campaign.id === campaignId
+								? { ...campaign, status: "PAUSED" as const }
+								: campaign
+						),
+					};
 				}
 			);
 
 			// Force immediate refetch as backup
 			queryClient.refetchQueries({ queryKey: ["campaigns"] });
+			queryClient.refetchQueries({ queryKey: ["campaigns-paginated"] });
 			queryClient.refetchQueries({
 				queryKey: ["campaign", campaignId],
 			});
@@ -147,7 +170,9 @@ export const usePauseOutboundCampaign = () => {
 			// Also invalidate all campaign-related queries as backup
 			queryClient.invalidateQueries({
 				predicate: (query) =>
-					query.queryKey[0] === "campaigns" || query.queryKey[0] === "campaign",
+					query.queryKey[0] === "campaigns" ||
+					query.queryKey[0] === "campaigns-paginated" ||
+					query.queryKey[0] === "campaign",
 			});
 			// eslint-disable-next-line no-console
 			console.log("Campaign paused successfully:", campaignId);
@@ -169,19 +194,23 @@ export const useResumeOutboundCampaign = () => {
 		onSuccess: (_, campaignId) => {
 			// Update the campaigns list cache directly
 			queryClient.setQueryData(
-				["campaigns"],
-				(oldData: Campaign[] | undefined) => {
+				["campaigns-paginated"],
+				(oldData: PaginatedResponse<Campaign> | undefined) => {
 					if (!oldData) return oldData;
-					return oldData.map((campaign) =>
-						campaign.id === campaignId
-							? { ...campaign, status: "RUNNING" as const }
-							: campaign
-					);
+					return {
+						...oldData,
+						data: oldData.data.map((campaign) =>
+							campaign.id === campaignId
+								? { ...campaign, status: "RUNNING" as const }
+								: campaign
+						),
+					};
 				}
 			);
 
 			// Force immediate refetch as backup
 			queryClient.refetchQueries({ queryKey: ["campaigns"] });
+			queryClient.refetchQueries({ queryKey: ["campaigns-paginated"] });
 			queryClient.refetchQueries({
 				queryKey: ["campaign", campaignId],
 			});
@@ -189,7 +218,9 @@ export const useResumeOutboundCampaign = () => {
 			// Also invalidate all campaign-related queries as backup
 			queryClient.invalidateQueries({
 				predicate: (query) =>
-					query.queryKey[0] === "campaigns" || query.queryKey[0] === "campaign",
+					query.queryKey[0] === "campaigns" ||
+					query.queryKey[0] === "campaigns-paginated" ||
+					query.queryKey[0] === "campaign",
 			});
 			// eslint-disable-next-line no-console
 			console.log("Campaign resumed successfully:", campaignId);
@@ -211,6 +242,7 @@ export const useDeleteCampaign = () => {
 		},
 		onSuccess: (_, id) => {
 			queryClient.invalidateQueries({ queryKey: ["campaigns"] });
+			queryClient.invalidateQueries({ queryKey: ["campaigns-paginated"] });
 			queryClient.invalidateQueries({ queryKey: ["campaign", id] });
 			// eslint-disable-next-line no-console
 			console.log("Campaign deleted successfully:", id);

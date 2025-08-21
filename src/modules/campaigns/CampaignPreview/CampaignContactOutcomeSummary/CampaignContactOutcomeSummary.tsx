@@ -26,12 +26,12 @@ const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 		{
 			name: data?.dispositions[1]?.dispositionName || "No Effective Contact",
 			value: data?.dispositions[1]?.count || 0,
-			color: "#f0994f", // Orange matching the image
+			color: "#d97570", // Red matching the image
 		},
 		{
 			name: data?.dispositions[2]?.dispositionName || "No Contact",
 			value: data?.dispositions[2]?.count || 0,
-			color: "#d97570", // Red matching the image
+			color: "#f0994f", // Orange matching the image
 		},
 	];
 

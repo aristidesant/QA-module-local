@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Campaign } from "~/models/CampaignsModel";
+import type { Campaign, PaginatedResponse } from "~/models/CampaignsModel";
 import { DEFAULT_API_URL } from "./config";
 
 // import { getAuthorizationHeader } from "../utils/tokenUtils";
@@ -25,6 +25,22 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 		) => {
 			const response = await axios.get<Campaign[]>(
 				`${DEFAULT_API_URL}/campaigns`,
+				{
+					params,
+					...(extraHeaders ? { headers: extraHeaders } : {}),
+					timeout: 5000,
+				}
+			);
+			return response.data;
+		},
+
+		// FIND ALL campaigns with pagination
+		findAllCampaignsPaginated: async (
+			params?: Record<string, any>,
+			extraHeaders?: Record<string, string>
+		) => {
+			const response = await axios.get<PaginatedResponse<Campaign>>(
+				`${DEFAULT_API_URL}/campaigns/paginated`,
 				{
 					params,
 					...(extraHeaders ? { headers: extraHeaders } : {}),
