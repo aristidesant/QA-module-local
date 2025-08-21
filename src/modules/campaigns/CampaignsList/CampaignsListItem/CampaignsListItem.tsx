@@ -52,7 +52,7 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 		language: "Spanish ES",
 		avatar: "https://randomuser.me/api/portraits/women/44.jpg",
 	};
-	const score = (campaign?.overAllScore).toFixed(0);
+	const score = (campaign?.overAllScore as number).toFixed(0);
 	const progressPercentage = campaign?.progress || 0;
 
 	// Determine progress bar color based on completion percentage

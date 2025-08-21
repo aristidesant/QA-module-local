@@ -53,7 +53,7 @@ export interface Campaign {
 	promptId?: number;
 	createdAt: string; // ISO date string
 	updatedAt: string; // ISO date string
-	overAllScore: number;
+	overAllScore?: number;
 	tags?: string[];
 	workingHours?: WorkingHours;
 	progress?: number; // Campaign progress percentage
