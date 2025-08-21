@@ -45,12 +45,6 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 	onViewDetails,
 	onDelete,
 }) => {
-	// Placeholder values for agent and score
-	const agent = {
-		name: "Clara Lucia",
-		language: "Spanish ES",
-		avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-	};
 	const score = (campaign?.overAllScore as number).toFixed(0);
 	const progressPercentage = campaign?.progress || 0;
 
@@ -196,51 +190,76 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 				<ScoreGauge score={+score} />
 			</Group>
 
-			{/* Footer: Agent and contact methods */}
-			<Group align="center" mt="lg" className={styles.footer}>
-				<Group gap={8} align="center">
-					<Avatar src={agent.avatar} radius="xl" size={32} />
-					<Stack gap={0}>
-						<Text size="sm" fw={500} className={styles.agentName}>
-							{agent.name}
-						</Text>
-						<Text size="xs" c="dimmed" className={styles.agentLanguage}>
-							{agent.language}
-						</Text>
-					</Stack>
-				</Group>
-				{/* <Flex gap={"xs"}>
-					<Button
-						variant="subtle"
-						leftSection={
-							<IconPhone size={18} color="var(--mantine-color-blue-6)" />
-						}
-					>
-						Call
-					</Button>
-					<Divider orientation="vertical" />
-					<Button
-						variant="subtle"
-						leftSection={
-							<IconBrandWhatsapp
-								size={18}
-								color="var(--mantine-color-green-6)"
-							/>
-						}
-					>
-						WhatsApp
-					</Button>
-					<Divider orientation="vertical" />
-					<Button
-						variant="subtle"
-						leftSection={
-							<IconMail size={18} color="var(--mantine-color-red-6)" />
-						}
-					>
-						Email
-					</Button>
-				</Flex> */}
-			</Group>
+			{/* Footer: Agents */}
+			<div className={styles.footer}>
+				<div className={styles.agentsSection}>
+					{campaign.agents && campaign.agents.length > 0 ? (
+						<div className={styles.agentsContainer}>
+							<div className={styles.agentsList}>
+								{campaign.agents.slice(0, 4).map((campaignAgent) => (
+									<div key={campaignAgent.id} className={styles.agentItem}>
+										<Avatar
+											radius="xl"
+											size={28}
+											color="blue"
+											className={styles.agentAvatar}
+											title={`${campaignAgent.agent.name} - ${campaignAgent.agent.language}`}
+										>
+											{campaignAgent.agent.name.charAt(0).toUpperCase()}
+										</Avatar>
+										<div className={styles.agentInfo}>
+											<Text size="xs" fw={500} className={styles.agentName}>
+												{campaignAgent.agent.name}
+											</Text>
+											<Text
+												size="xs"
+												c="dimmed"
+												className={styles.agentLanguage}
+											>
+												{campaignAgent.agent.language}
+											</Text>
+										</div>
+									</div>
+								))}
+								{campaign.agents.length > 4 && (
+									<div className={styles.moreAgents}>
+										<Avatar
+											radius="xl"
+											size={28}
+											color="gray"
+											className={styles.moreAgentsAvatar}
+										>
+											<Text size="xs" fw={600}>
+												+{campaign.agents.length - 4}
+											</Text>
+										</Avatar>
+									</div>
+								)}
+							</div>
+						</div>
+					) : (
+						<div className={styles.noAgentsContainer}>
+							<Avatar
+								radius="xl"
+								size={28}
+								color="gray"
+								variant="light"
+								className={styles.noAgentsAvatar}
+							>
+								<IconExclamationMark size={16} />
+							</Avatar>
+							<div className={styles.noAgentsText}>
+								<Text size="xs" c="dimmed" className={styles.noAgentsMessage}>
+									No agents assigned
+								</Text>
+								<Text size="xs" c="dimmed" className={styles.noAgentsSubtext}>
+									Assign agents to start this campaign
+								</Text>
+							</div>
+						</div>
+					)}
+				</div>
+			</div>
 		</Card>
 	);
 };
