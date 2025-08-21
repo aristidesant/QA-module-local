@@ -9,11 +9,6 @@ export const StatusBreakdown = () => {
 	const { data, isLoading } = useCallDispositionReport({
 		campaignId: selectedCampaign?.id,
 	});
-	console.log({
-		data,
-		string: "data from status breakdown",
-		selectedCampaignId: selectedCampaign?.id,
-	});
 
 	const generateChartColors = (index: number): string => {
 		const colors = [
@@ -70,7 +65,6 @@ export const StatusBreakdown = () => {
 						<>
 							{/* Pie chart */}
 							<PieChart
-								style={{ height: 160, width: 160 }}
 								data={
 									(data?.dispositions?.map((dp, index) => ({
 										name: dp.dispositionName,
@@ -78,6 +72,11 @@ export const StatusBreakdown = () => {
 										color: generateChartColors(index),
 									})) as any) ?? []
 								}
+								size={160}
+								h={160}
+								strokeWidth={3}
+								mb="lg"
+								strokeColor="#ffffff"
 							/>
 
 							<div className={styles.statusList}>

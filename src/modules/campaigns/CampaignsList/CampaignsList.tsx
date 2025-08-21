@@ -3,7 +3,7 @@ import { Loader, Text, Stack, Card, Button } from "@mantine/core";
 import { IconAlertCircle, IconRocket, IconPlus } from "@tabler/icons-react";
 import {
 	useDeleteCampaign,
-	useGetAllCampaigns,
+	useGetAllCampaignsPaginated,
 } from "~/queries/campaignsQueries";
 import styles from "./CampaignsList.module.css";
 import { CampaignsDetails } from "../CampaignsDetails";
@@ -18,6 +18,8 @@ import CampaignPreview from "../CampaignPreview";
 import type { Campaign } from "~/models/CampaignsModel";
 import { AddNewCampaignForm } from "../AddNewCampaignForm";
 import CampaignFilters from "./CampaignFilters";
+import { usePagination } from "~/hooks/usePagination";
+import PaginationControls from "~/components/PaginationControls";
 
 export const CampaignsList: React.FC = () => {
 	const {
@@ -27,37 +29,52 @@ export const CampaignsList: React.FC = () => {
 		setEditCampaign,
 		editCampaign,
 	} = useCampaignsStore((state) => state);
+
+	// Use the pagination hook for all pagination logic
+	const pagination = usePagination({
+		initialItemsPerPage: 10,
+		searchDebounceMs: 500,
+	});
+
+	// Fetch data with server-side pagination
 	const {
-		data,
+		data: campaignsResponse,
 		isLoading,
 		isFetching,
 		isError,
 		error,
 		refetch: reloadCampaigns,
-	} = useGetAllCampaigns();
+	} = useGetAllCampaignsPaginated(pagination.getApiParams());
+
 	const [currentCampaign, setCurrentCampaign] = useState<Campaign | null>(null);
-	const [searchValue, setSearchValue] = useState("");
 	const [sortBy, setSortBy] = useState("createdAt");
 	const { mutateAsync: deleteCampaign } = useDeleteCampaign();
 
-	// Filter and sort campaigns
-	const filteredAndSortedCampaigns = useMemo(() => {
-		if (!data) return [];
+	// Calculate total pages from server response
+	const totalPages = campaignsResponse?.total
+		? pagination.calculateTotalPages(campaignsResponse.total)
+		: 0;
 
-		let filtered = data?.filter?.((campaign) => {
-			const searchLower = searchValue.toLowerCase().trim();
+	// Filter and sort campaigns (now working on the data array from the response)
+	const filteredAndSortedCampaigns = useMemo(() => {
+		if (!campaignsResponse?.data) return [];
+
+		let filtered = campaignsResponse.data.filter((campaign: Campaign) => {
+			const searchLower = pagination.debouncedSearch.toLowerCase().trim();
 			if (!searchLower) return true;
 
 			return (
 				campaign.name.toLowerCase().includes(searchLower) ||
 				campaign.description?.toLowerCase().includes(searchLower) ||
 				campaign.status?.toLowerCase().includes(searchLower) ||
-				campaign.tags?.some((tag) => tag.toLowerCase().includes(searchLower))
+				campaign.tags?.some((tag: string) =>
+					tag.toLowerCase().includes(searchLower)
+				)
 			);
 		});
 
 		// Sort campaigns
-		filtered?.sort?.((a, b) => {
+		filtered.sort((a: Campaign, b: Campaign) => {
 			switch (sortBy) {
 				case "name":
 					return a.name.localeCompare(b.name);
@@ -78,7 +95,14 @@ export const CampaignsList: React.FC = () => {
 		});
 
 		return filtered;
-	}, [data, searchValue, sortBy]);
+	}, [campaignsResponse?.data, pagination.debouncedSearch, sortBy]);
+
+	// Helper functions
+	const handleItemsPerPageChange = (value: string | null) => {
+		if (value) {
+			pagination.setItemsPerPage(parseInt(value, 10));
+		}
+	};
 
 	if (isLoading || isFetching) {
 		return (
@@ -117,7 +141,7 @@ export const CampaignsList: React.FC = () => {
 		});
 	};
 
-	if (!data || data?.length === 0) {
+	if (!campaignsResponse?.data || campaignsResponse.data.length === 0) {
 		return (
 			<Stack className={styles.tableWrapper}>
 				<SectionCard
@@ -130,8 +154,8 @@ export const CampaignsList: React.FC = () => {
 					}
 				>
 					<CampaignFilters
-						searchValue={searchValue}
-						onSearchChange={setSearchValue}
+						searchValue={pagination.searchValue}
+						onSearchChange={pagination.setSearchValue}
 						sortBy={sortBy}
 						onSortChange={setSortBy}
 					/>
@@ -164,7 +188,7 @@ export const CampaignsList: React.FC = () => {
 		);
 	}
 
-	if (filteredAndSortedCampaigns?.length === 0 && searchValue) {
+	if (filteredAndSortedCampaigns?.length === 0 && pagination.searchValue) {
 		return (
 			<Stack className={styles.tableWrapper}>
 				<SectionCard
@@ -177,8 +201,8 @@ export const CampaignsList: React.FC = () => {
 					}
 				>
 					<CampaignFilters
-						searchValue={searchValue}
-						onSearchChange={setSearchValue}
+						searchValue={pagination.searchValue}
+						onSearchChange={pagination.setSearchValue}
 						sortBy={sortBy}
 						onSortChange={setSortBy}
 					/>
@@ -303,14 +327,14 @@ export const CampaignsList: React.FC = () => {
 				// icon={IconDetails}
 			>
 				<CampaignFilters
-					searchValue={searchValue}
-					onSearchChange={setSearchValue}
+					searchValue={pagination.searchValue}
+					onSearchChange={pagination.setSearchValue}
 					sortBy={sortBy}
 					onSortChange={setSortBy}
 				/>
 
 				<Stack gap={"xs"}>
-					{filteredAndSortedCampaigns?.map((campaign) => (
+					{filteredAndSortedCampaigns?.map((campaign: Campaign) => (
 						<CampaignsListItem
 							key={campaign.id}
 							campaign={campaign}
@@ -364,6 +388,18 @@ export const CampaignsList: React.FC = () => {
 						/>
 					))}
 				</Stack>
+
+				{/* Pagination Controls */}
+				<PaginationControls
+					currentPage={pagination.currentPage}
+					totalPages={totalPages}
+					itemsPerPage={pagination.itemsPerPage}
+					totalItems={campaignsResponse?.total || 0}
+					onPageChange={pagination.setCurrentPage}
+					onItemsPerPageChange={handleItemsPerPageChange}
+					searchTerm={pagination.debouncedSearch}
+					isLoading={isLoading}
+				/>
 			</SectionCard>
 			{selectedCampaign?.id && editCampaign && (
 				<>

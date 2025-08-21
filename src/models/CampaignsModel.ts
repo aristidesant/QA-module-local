@@ -53,8 +53,39 @@ export interface Campaign {
 	promptId?: number;
 	createdAt: string; // ISO date string
 	updatedAt: string; // ISO date string
+	overAllScore?: number;
 	tags?: string[];
 	workingHours?: WorkingHours;
+	progress?: number; // Campaign progress percentage
+
+	// User information
+	user?: {
+		id: number;
+		username: string;
+		email: string;
+	};
+
+	// Prompt information
+	prompt?: {
+		id: number;
+		name: string;
+	};
+
+	// Agents assigned to campaign
+	agents?: Array<{
+		id: number;
+		campaignId: number;
+		agentId: string;
+		agent: {
+			name: string;
+			status: string;
+			language: string;
+		};
+		userId: number;
+		clientId: number;
+		createdAt: string;
+		updatedAt: string;
+	}>;
 
 	agentConfig?: Partial<AgentConfigModel>;
 	// Stats and performance
@@ -77,4 +108,11 @@ export interface Campaign {
 	assignedAgents?: CampaignAgent[];
 	contactList?: ContactList;
 	parameters?: CampaignParameters;
+}
+
+export interface PaginatedResponse<T> {
+	total: number;
+	limit: number;
+	offset: number;
+	data: T[];
 }

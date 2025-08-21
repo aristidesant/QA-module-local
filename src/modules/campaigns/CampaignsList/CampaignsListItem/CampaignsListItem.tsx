@@ -13,16 +13,12 @@ import {
 	Divider,
 	SemiCircleProgress,
 	Flex,
-	Button,
 } from "@mantine/core";
 import {
 	IconDotsVertical,
 	IconTrash,
 	IconEye,
 	IconPlayerPause,
-	IconPhone,
-	IconBrandWhatsapp,
-	IconMail,
 	IconCheck,
 	IconArrowUpRight,
 	IconArrowDownLeft,
@@ -56,13 +52,8 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 		language: "Spanish ES",
 		avatar: "https://randomuser.me/api/portraits/women/44.jpg",
 	};
-	const score = 64;
-
-	// Calculate actual progress based on contact list processed
-	const totalContacts = campaign.contactList?.totalContacts || 0;
-	const callsMade = campaign.stats?.callsMade || 0;
-	const progressPercentage =
-		totalContacts > 0 ? Math.round((callsMade / totalContacts) * 100) : 0;
+	const score = (campaign?.overAllScore as number).toFixed(0);
+	const progressPercentage = campaign?.progress || 0;
 
 	// Determine progress bar color based on completion percentage
 	const getProgressColor = (percentage: number): string => {
@@ -70,6 +61,20 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 		if (percentage >= 50) return "blue";
 		if (percentage >= 25) return "yellow";
 		return "red";
+	};
+
+	// Get score color based on value (1-100)
+	const getScoreColor = (score: number): string => {
+		// Clamp score between 0 and 100
+		const clampedScore = Math.max(0, Math.min(100, score));
+
+		if (clampedScore >= 80) return "#40c057"; // Green (excellent)
+		if (clampedScore >= 70) return "#51cf66"; // Light green (good)
+		if (clampedScore >= 60) return "#82c91e"; // Yellow-green (above average)
+		if (clampedScore >= 50) return "#fab005"; // Yellow (average)
+		if (clampedScore >= 40) return "#fd7e14"; // Orange (below average)
+		if (clampedScore >= 30) return "#ff6b6b"; // Light red (poor)
+		return "#e03131"; // Red (very poor)
 	};
 
 	const statusInfo = useMemo(
@@ -190,9 +195,9 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 						<Text size="sm" fw={500} className={styles.progressLabel}>
 							Contact List Progress
 						</Text>
-						<Text size="xs" c="dimmed" fw={500}>
+						{/* <Text size="xs" c="dimmed" fw={500}>
 							{callsMade}/{totalContacts} ({progressPercentage}%)
-						</Text>
+						</Text> */}
 					</Group>
 					<Progress
 						value={progressPercentage}
@@ -201,11 +206,6 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 						radius="xl"
 						className={styles.progressBar}
 					/>
-					{totalContacts > 0 && (
-						<Text size="xs" c="dimmed" mt={4}>
-							{callsMade} out of {totalContacts} contacts processed
-						</Text>
-					)}
 					<Text size="sm" c="dimmed" className={styles.campaignDescription}>
 						{campaign.description ||
 							"Automated calls to existing customers to inform them of their eligibility for a credit limit increase and collect confirmation to proceed."}
@@ -226,7 +226,7 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 				>
 					{/* Single semicircle gauge */}
 					<SemiCircleProgress
-						value={score}
+						value={+score}
 						size={120}
 						thickness={12}
 						fillDirection="left-to-right"
@@ -240,7 +240,7 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 								color: "var(--mantine-color-dark-6)",
 							},
 						}}
-						filledSegmentColor="#40c057"
+						filledSegmentColor={getScoreColor(+score)}
 						emptySegmentColor="#e9ecef"
 						style={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
 					/>
@@ -276,7 +276,7 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 						</Text>
 					</Stack>
 				</Group>
-				<Flex gap={"xs"}>
+				{/* <Flex gap={"xs"}>
 					<Button
 						variant="subtle"
 						leftSection={
@@ -306,7 +306,7 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 					>
 						Email
 					</Button>
-				</Flex>
+				</Flex> */}
 			</Group>
 		</Card>
 	);
