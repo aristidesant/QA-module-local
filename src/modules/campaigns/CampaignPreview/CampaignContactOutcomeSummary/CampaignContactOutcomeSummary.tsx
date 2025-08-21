@@ -17,44 +17,40 @@ const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 		campaignId: campaign?.id,
 	});
 
-	const PIE_DATA = [
-		{
-			name: data?.dispositions[0]?.dispositionName || "Effective Contact",
-			value: data?.dispositions[0]?.count || 0,
-			color: "#86d686", // Light green matching the image
-		},
-		{
-			name: data?.dispositions[1]?.dispositionName || "No Effective Contact",
-			value: data?.dispositions[1]?.count || 0,
-			color: "#d97570", // Red matching the image
-		},
-		{
-			name: data?.dispositions[2]?.dispositionName || "No Contact",
-			value: data?.dispositions[2]?.count || 0,
-			color: "#f0994f", // Orange matching the image
-		},
-	];
+	const greenColor = "#66d266ff";
+	const orangeColor = "#ec8022ff";
+	const redColor = "#d8463eff";
 
-	const LEGEND = [
-		{
-			label: data?.dispositions[0]?.dispositionName || "Effective Contact",
-			value: data?.dispositions[0]?.count || 0,
-			percent: data?.dispositions[0]?.percentage || 0,
-			color: "#86d686",
-		},
-		{
-			label: data?.dispositions[1]?.dispositionName || "No Effective Contact",
-			value: data?.dispositions[1]?.count || 0,
-			percent: data?.dispositions[1]?.percentage || 0,
-			color: "#f0994f",
-		},
-		{
-			label: data?.dispositions[2]?.dispositionName || "No Contact",
-			value: data?.dispositions[2]?.count || 0,
-			percent: data?.dispositions[2]?.percentage || 0,
-			color: "#d97570",
-		},
-	];
+	// Function to get color based on disposition name
+	const getColorForDisposition = (dispositionName: string) => {
+		const name = dispositionName.toLowerCase();
+		if (name.includes("effective contact") && !name.includes("no effective")) {
+			return greenColor;
+		}
+		if (name.includes("no effective") || name.includes("not effective")) {
+			return orangeColor;
+		}
+		if (name.includes("no contact") || name.includes("not contacted")) {
+			return redColor;
+		}
+		// Default fallback colors
+		return name.includes("contact") ? greenColor : orangeColor;
+	};
+
+	const PIE_DATA =
+		data?.dispositions?.map((disposition) => ({
+			name: disposition.dispositionName,
+			value: disposition.count,
+			color: getColorForDisposition(disposition.dispositionName),
+		})) || [];
+
+	const LEGEND =
+		data?.dispositions?.map((disposition) => ({
+			label: disposition.dispositionName,
+			value: disposition.count,
+			percent: disposition.percentage,
+			color: getColorForDisposition(disposition.dispositionName),
+		})) || [];
 	return (
 		<Card className={classes.root} radius="lg" withBorder={false}>
 			<div className={classes.headerContainer}>
@@ -84,8 +80,8 @@ const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 				strokeColor="#ffffff"
 			/>
 			<div className={classes.legend}>
-				{LEGEND.map((item) => (
-					<div className={classes.legendItem} key={item.label}>
+				{LEGEND.map((item, index) => (
+					<div className={classes.legendItem} key={`${item.label}-${index}`}>
 						<span
 							className={classes.legendDot}
 							style={{ background: item.color }}

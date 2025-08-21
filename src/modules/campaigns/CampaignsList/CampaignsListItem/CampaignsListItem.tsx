@@ -9,9 +9,7 @@ import {
 	Stack,
 	Progress,
 	Avatar,
-	rem,
 	Divider,
-	SemiCircleProgress,
 	Flex,
 } from "@mantine/core";
 import {
@@ -29,6 +27,7 @@ import {
 } from "@tabler/icons-react";
 import styles from "./CampaignsListItem.module.css";
 import type { Campaign } from "~/models/CampaignsModel";
+import ScoreGauge from "./ScoreGauge";
 
 export type CampaignsListItemProps = {
 	campaign: Campaign;
@@ -61,20 +60,6 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 		if (percentage >= 50) return "blue";
 		if (percentage >= 25) return "yellow";
 		return "red";
-	};
-
-	// Get score color based on value (1-100)
-	const getScoreColor = (score: number): string => {
-		// Clamp score between 0 and 100
-		const clampedScore = Math.max(0, Math.min(100, score));
-
-		if (clampedScore >= 80) return "#40c057"; // Green (excellent)
-		if (clampedScore >= 70) return "#51cf66"; // Light green (good)
-		if (clampedScore >= 60) return "#82c91e"; // Yellow-green (above average)
-		if (clampedScore >= 50) return "#fab005"; // Yellow (average)
-		if (clampedScore >= 40) return "#fd7e14"; // Orange (below average)
-		if (clampedScore >= 30) return "#ff6b6b"; // Light red (poor)
-		return "#e03131"; // Red (very poor)
 	};
 
 	const statusInfo = useMemo(
@@ -184,20 +169,16 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 			<Divider />
 			{/* Main Content */}
 			<Group
-				align="flex-start"
+				align="center"
 				justify="space-between"
 				mt="md"
 				className={styles.mainContent}
 			>
-				{/* Left: Progress and description */}
 				<Stack gap={8} className={styles.progressSection}>
 					<Group gap={8} align="center">
 						<Text size="sm" fw={500} className={styles.progressLabel}>
 							Contact List Progress
 						</Text>
-						{/* <Text size="xs" c="dimmed" fw={500}>
-							{callsMade}/{totalContacts} ({progressPercentage}%)
-						</Text> */}
 					</Group>
 					<Progress
 						value={progressPercentage}
@@ -212,55 +193,7 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 					</Text>
 				</Stack>
 
-				{/* Right: Score gauge with multi-segment semicircle and pointer */}
-				<div
-					className={styles.scoreSection}
-					style={{
-						position: "relative",
-						width: 120,
-						height: 80,
-						display: "flex",
-						flexDirection: "column",
-						alignItems: "center",
-					}}
-				>
-					{/* Single semicircle gauge */}
-					<SemiCircleProgress
-						value={+score}
-						size={120}
-						thickness={12}
-						fillDirection="left-to-right"
-						orientation="up"
-						label={score}
-						labelPosition="bottom"
-						styles={{
-							label: {
-								fontSize: rem(34),
-								fontWeight: 700,
-								color: "var(--mantine-color-dark-6)",
-							},
-						}}
-						filledSegmentColor={getScoreColor(+score)}
-						emptySegmentColor="#e9ecef"
-						style={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
-					/>
-
-					{/* Label below gauge */}
-					<div
-						style={{
-							position: "absolute",
-							top: 60,
-							left: 0,
-							width: "100%",
-							textAlign: "center",
-							zIndex: 3,
-						}}
-					>
-						<Text size="sm" fw={700} c="#1a2540">
-							Overall Score
-						</Text>
-					</div>
-				</div>
+				<ScoreGauge score={+score} />
 			</Group>
 
 			{/* Footer: Agent and contact methods */}
