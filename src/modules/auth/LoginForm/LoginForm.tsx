@@ -25,6 +25,8 @@ import { useLogin } from "~/queries/authQueries";
 import { getErrorMessage } from "~/utils/httpClient";
 import classes from "./LoginForm.module.css";
 import Logo from "~/components/Logo";
+import { MFALoginResponse } from "~/api/authApi";
+import OTPVerificationModal from "./OTPVerificationModal";
 
 interface FormValues {
 	username: string;
@@ -37,6 +39,9 @@ export function LoginForm() {
 	const loginMutation = useLogin();
 	const navigate = useNavigate();
 	const [formError, setFormError] = useState<string | null>(null);
+	const [otpModalOpened, setOtpModalOpened] = useState(false);
+	const [pendingLoginData, setPendingLoginData] =
+		useState<MFALoginResponse | null>(null);
 
 	const isSubmitting = loginMutation.isPending;
 	const isRedirecting = false;
@@ -60,6 +65,17 @@ export function LoginForm() {
 
 	// We'll set form-level errors from the submit handler directly
 
+	const handleOTPSuccess = () => {
+		setOtpModalOpened(false);
+		setPendingLoginData(null);
+		navigate("/");
+	};
+
+	const handleOTPModalClose = () => {
+		setOtpModalOpened(false);
+		setPendingLoginData(null);
+	};
+
 	return (
 		<div className={classes.wrapper}>
 			<div className={classes.form}>
@@ -81,12 +97,21 @@ export function LoginForm() {
 							return form.onSubmit(async (values) => {
 								setFormError(null);
 								try {
-									await loginMutation.mutateAsync({
-										username: values.username,
-										password: values.password,
-										loginType: values.loginType,
-									});
-									navigate("/");
+									const result: MFALoginResponse =
+										await loginMutation.mutateAsync({
+											username: values.username,
+											password: values.password,
+											loginType: values.loginType,
+										});
+
+									if (result?.otpEnabled) {
+										// Show OTP modal
+										setPendingLoginData(result);
+										setOtpModalOpened(true);
+									} else {
+										// Direct login success, navigate to dashboard
+										navigate("/");
+									}
 								} catch (err: any) {
 									setFormError(getErrorMessage(err));
 								}
@@ -202,6 +227,14 @@ export function LoginForm() {
 					</form>
 				</Paper>
 			</div>
+
+			{/* OTP Verification Modal */}
+			<OTPVerificationModal
+				opened={otpModalOpened}
+				onClose={handleOTPModalClose}
+				userId={pendingLoginData?.userId || 0}
+				onSuccess={handleOTPSuccess}
+			/>
 		</div>
 	);
 }

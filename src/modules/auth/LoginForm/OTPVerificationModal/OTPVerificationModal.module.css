@@ -1,0 +1,11 @@
+.otpInput input {
+    text-align: center;
+    font-size: var(--mantine-font-size-lg);
+    font-weight: 600;
+    letter-spacing: 0.2rem;
+}
+
+.otpInput input:focus {
+    border-color: var(--mantine-color-blue-6);
+    box-shadow: 0 0 0 1px var(--mantine-color-blue-6);
+}
