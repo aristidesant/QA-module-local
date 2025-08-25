@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   ActionIcon,
   Group,
@@ -16,17 +17,20 @@ import {
   IconVolume,
 } from "@tabler/icons-react";
 import type { VoiceFileModel } from "~/models/ConversationsModels";
+import fileApi from "~/api/fileApi";
 import classes from "./ConversationPlayer.module.css";
 import RightSection from "~/components/RightSection";
 
 interface ConversationPlayerProps {
   voiceFile?: VoiceFileModel | null;
+  voiceFileId?: number | string | null;
   title?: string;
   description?: string;
 }
 
 const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
   voiceFile,
+  voiceFileId,
   title = "Recording",
   description,
 }) => {
@@ -34,6 +38,24 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  // Determine the file id to use (prefer explicit prop, fallback to voiceFile.id)
+  const fileId = voiceFileId ?? voiceFile?.id ?? null;
+
+  // Fetch presigned URL when we have a file id
+  const {
+    data: presignedUrl,
+    isLoading: isPresignedLoading,
+    isError: isPresignedError,
+  } = useQuery({
+    queryKey: ["file-presigned-url", fileId],
+    queryFn: () => fileApi().getPresignedFileUrl(fileId as number | string),
+    enabled: Boolean(fileId),
+    staleTime: 0,
+  });
+
+  // Decide which source to use: presigned URL if available, else repositoryRoute
+  const audioSrc = presignedUrl ?? voiceFile?.repositoryRoute ?? "";
 
   // Handle play/pause toggle
   const togglePlayPause = () => {
@@ -90,14 +112,20 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  // Reset player when voiceFile changes
+  // Reset and (re)load audio when source changes
   useEffect(() => {
     setIsPlaying(false);
     setCurrentTime(0);
-  }, [voiceFile]);
+    setDuration(0);
+    if (audioRef.current && audioSrc) {
+      // Ensure the new source is applied and loaded
+      audioRef.current.src = audioSrc;
+      audioRef.current.load();
+    }
+  }, [audioSrc]);
 
   // No valid voice file
-  if (!voiceFile?.repositoryRoute) {
+  if (!fileId && !voiceFile?.repositoryRoute) {
     return (
       <Paper className={classes.container} radius="md">
         <RightSection title={title} description={description}>
@@ -117,7 +145,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
       <RightSection title={title} description={description}>
         <audio
           ref={audioRef}
-          src={voiceFile.repositoryRoute}
+          src={audioSrc}
           onTimeUpdate={handleTimeUpdate}
           onLoadedMetadata={handleLoadedMetadata}
           onEnded={() => setIsPlaying(false)}
@@ -125,6 +153,11 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
         />
 
         <Stack gap="md">
+          {Boolean(fileId) && (isPresignedLoading || isPresignedError) && (
+            <Text size="xs" c="dimmed">
+              {isPresignedLoading ? "Loading audio…" : "Could not load audio."}
+            </Text>
+          )}
           {/* Progress Bar */}
           <Box className={classes.progressSection}>
             <Slider
