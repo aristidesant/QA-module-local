@@ -7,6 +7,7 @@ import {
   Paper,
   TextInput,
   Flex,
+  Text,
 } from "@mantine/core";
 import styles from "./DispositionBuilder.module.css";
 import { Droppable } from "@hello-pangea/dnd";
@@ -68,6 +69,28 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
   };
 
   const handleSave = async () => {
+    if (
+      !flowJson?.dispositionNodes ||
+      flowJson?.dispositionNodes?.length === 0
+    ) {
+      notifications.show({
+        title: "Error",
+        message: "Please add at least one disposition node.",
+        color: "red",
+      });
+      return;
+    }
+
+    // Ensure required fields are filled
+    if (!flowJson.name || flowJson.name.trim() === "") {
+      notifications.show({
+        title: "Error",
+        message: "Disposition name is required.",
+        color: "red",
+      });
+      return;
+    }
+
     const filledFlowJson: DispositionCatalogModel = {
       id: flowJson.id ?? 0,
       name: flowJson.name ?? "Untitled Catalog",
@@ -88,6 +111,7 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
         });
         onComplete?.();
       } else {
+        console.log("Creating new disposition flow", campaignId);
         await createMutation.mutateAsync({
           flowJson: filledFlowJson,
           campaignId,
@@ -109,9 +133,16 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
       <Flex mb={"xs"}>
         <TextInput
           label="Disposition Name"
+          labelProps={{
+            title: `Campaign ID: ${campaignId || "N/A"}`,
+          }}
           placeholder="Disposition Name"
           description="Enter the name of the disposition"
           value={flowJson.name || ""}
+          onChange={(event) =>
+            setFlowJson({ ...flowJson, name: event.currentTarget.value })
+          }
+          required
         />
       </Flex>
       <Box className={styles.panelsContainer}>
