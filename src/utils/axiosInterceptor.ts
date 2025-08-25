@@ -5,13 +5,28 @@ import { DEFAULT_API_URL } from "~/api/config";
 axios.defaults.baseURL = DEFAULT_API_URL;
 axios.defaults.headers.common["Accept"] = "application/json";
 
-// Attach a request interceptor to inject the Bearer token and content-type
+// Attach a request interceptor to inject the Bearer token and appropriate content-type
 axios.interceptors.request.use(
   (config) => {
     try {
-      // Ensure JSON content-type by default if not set
-      if (!config.headers["Content-Type"] && !config.headers["content-type"]) {
-        config.headers["Content-Type"] = "application/json";
+      // If payload is FormData, let the browser/axios set the correct multipart boundary
+      const isFormData =
+        typeof FormData !== "undefined" && config.data instanceof FormData;
+
+      if (isFormData) {
+        // Remove any preset content-type so axios can set it with the boundary
+        if (config.headers["Content-Type"])
+          delete config.headers["Content-Type"];
+        if (config.headers["content-type"])
+          delete config.headers["content-type"];
+      } else {
+        // Ensure JSON content-type by default for non-FormData requests
+        if (
+          !config.headers["Content-Type"] &&
+          !config.headers["content-type"]
+        ) {
+          config.headers["Content-Type"] = "application/json";
+        }
       }
 
       // Add Authorization if not explicitly provided per-request

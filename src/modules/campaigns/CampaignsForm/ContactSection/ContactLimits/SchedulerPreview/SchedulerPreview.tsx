@@ -1,5 +1,9 @@
 import { Box, Flex, Group, Text, Badge } from "@mantine/core";
-import { IconCalendarEvent, IconClock } from "@tabler/icons-react";
+import {
+  IconCalendarEvent,
+  IconClock,
+  IconAlertTriangle,
+} from "@tabler/icons-react";
 import type { Scheduler } from "~/models/SchedulerModel";
 import styles from "./SchedulerPreview.module.css";
 
@@ -83,9 +87,15 @@ export function SchedulerPreview({
   if (!scheduler) {
     return (
       <Box className={styles.schedulerPreview} p="md">
-        <Flex justify="center" align="center">
-          <Text size="sm" c="dimmed">
-            Unable to display scheduler information
+        <Flex justify="flex-start" align="center" gap={8}>
+          <IconAlertTriangle
+            size={18}
+            stroke={1.8}
+            color="var(--mantine-color-yellow-7)"
+          />
+          <Text size="sm" c="var(--mantine-color-dark-6)">
+            No active schedule found. Please create a schedule and set it as
+            active to proceed.
           </Text>
         </Flex>
       </Box>

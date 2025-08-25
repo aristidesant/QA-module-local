@@ -24,6 +24,23 @@
 			"type": "shell",
 			"command": "npm run build",
 			"group": "build"
+		},
+		{
+			"label": "Typecheck",
+			"type": "shell",
+			"command": "npm run typecheck",
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Typecheck",
+			"type": "shell",
+			"command": "npm run typecheck",
+			"isBackground": false,
+			"group": "build"
 		}
 	]
 }
