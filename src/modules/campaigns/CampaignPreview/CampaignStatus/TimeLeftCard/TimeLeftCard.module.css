@@ -26,3 +26,18 @@
 	background: var(--mantine-color-gray-2);
 	overflow: hidden;
 }
+
+.refetchButton {
+	opacity: 0.6;
+	transition: opacity 0.2s ease;
+}
+
+.refetchButton:hover:not(:disabled) {
+	opacity: 1;
+	background: var(--mantine-color-gray-1);
+}
+
+.refetchButton:disabled {
+	opacity: 0.3;
+	cursor: not-allowed;
+}

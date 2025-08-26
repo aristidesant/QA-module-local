@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { Card, Group, Text, Progress } from '@mantine/core';
+import { Card, Group, Text, Progress, Badge, ActionIcon } from '@mantine/core';
+import { IconRefresh } from '@tabler/icons-react';
 import styles from './TimeLeftCard.module.css';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import { useGetCampaignsTimeEnd } from '~/queries/campaignsQueries';
@@ -13,7 +14,11 @@ interface TimeLeftCardProps {}
 
 const TimeLeftCard: React.FC<TimeLeftCardProps> = () => {
 	const { selectedCampaign } = useCampaignsStore();
-	const { data: timeData } = useGetCampaignsTimeEnd(`${selectedCampaign?.id}`);
+	const { data: timeData, refetch } = useGetCampaignsTimeEnd(
+		`${selectedCampaign?.id}`
+	);
+
+	const isCompleted = selectedCampaign?.status?.toLowerCase() === 'completed';
 
 	const { timeLeft, progress } = useMemo(() => {
 		if (!timeData?.timeEnd) {
@@ -50,26 +55,43 @@ const TimeLeftCard: React.FC<TimeLeftCardProps> = () => {
 		};
 	}, [timeData?.timeEnd]);
 
-	// Placeholder values for demonstration
-	// const timeLeft = '3h:12min';
-	// const progress = 70;
 	return (
 		<Card radius='md' padding='md' withBorder className={styles.timeCard}>
 			<Group justify='space-between' className={styles.timeHeader}>
-				<Text fw={500} fz='sm'>
-					Today's time left
-				</Text>
-				<Text fw={500} fz='sm'>
-					{timeLeft}
-				</Text>
+				<Group gap='xs'>
+					<Text fw={500} fz='sm'>
+						{isCompleted ? 'Campaign Status' : "Today's time left"}
+					</Text>
+					<ActionIcon
+						size='xs'
+						variant='subtle'
+						color='gray'
+						onClick={() => refetch()}
+						disabled={isCompleted}
+						className={styles.refetchButton}
+					>
+						<IconRefresh size={12} />
+					</ActionIcon>
+				</Group>
+				{isCompleted ? (
+					<Badge size='sm' color='green' variant='light'>
+						Completed
+					</Badge>
+				) : (
+					<Text fw={500} fz='sm'>
+						{timeLeft}
+					</Text>
+				)}
 			</Group>
-			<Progress
-				value={progress}
-				size='md'
-				radius='xl'
-				color='blue'
-				className={styles.progressBar}
-			/>
+			{!isCompleted && (
+				<Progress
+					value={progress}
+					size='md'
+					radius='xl'
+					color='blue'
+					className={styles.progressBar}
+				/>
+			)}
 		</Card>
 	);
 };
