@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useSessionStore } from "~/stores/sessionStore";
 import type { UserModel } from "~/models/UserModels";
 import { jwtDecode } from "jwt-decode";
+import dayjs from "dayjs";
 
 type LoaderData = {
   token: string | null;
@@ -21,6 +22,33 @@ export async function clientLoader(): Promise<LoaderData> {
   try {
     // Decode token to extract user id, then fetch the user by id
     const decoded: any = jwtDecode(token);
+
+    // Enhance visibility of standard JWT times (issued-at and expiration)
+    const toLocalDateTime = (sec: unknown) => {
+      const n = typeof sec === "number" ? sec : Number(sec);
+      return Number.isFinite(n)
+        ? new Date(n * 1000).toLocaleString()
+        : undefined;
+    };
+
+    const expReadable = toLocalDateTime(decoded?.exp);
+
+    // If the token is expired or exp is missing/invalid, treat as unauthenticated
+    // Use dayjs for millisecond-precision comparison
+    const now = dayjs();
+    const expMillis =
+      typeof decoded?.exp === "number"
+        ? decoded.exp * 1000
+        : Number(decoded?.exp) * 1000;
+    if (
+      !Number.isFinite(expMillis) ||
+      dayjs(expMillis).isBefore(now) ||
+      dayjs(expMillis).isSame(now)
+    ) {
+      console.debug("JWT token expired at", expReadable ?? decoded?.exp);
+      return { token: null, user: null };
+    }
+
     const userId: number | undefined =
       decoded?.userId ?? decoded?.sub ?? decoded?.id;
 
@@ -34,7 +62,6 @@ export async function clientLoader(): Promise<LoaderData> {
     }).getUserById(Number(userId));
     return { token, user };
   } catch (error) {
-    console.error("Failed to fetch user:", error);
     return { token, user: null };
   }
 }
