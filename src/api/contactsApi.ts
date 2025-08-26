@@ -1,6 +1,6 @@
-import axios from "axios";
-import type { Contact, ContactStatus } from "~/models/ContactsModel";
-import { DEFAULT_API_URL } from "./config";
+import axios from 'axios';
+import type { Contact, ContactStatus } from '~/models/ContactsModel';
+import { DEFAULT_API_URL } from './config';
 
 /**
  * Generic Contacts API client

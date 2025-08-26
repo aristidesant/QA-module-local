@@ -1,12 +1,12 @@
-# Ignore markdown files
-*.md
-
 # Build directories
 build/
 dist/
+.output/
 
 # Dependencies
 node_modules/
+pnpm-lock.yaml
+package-lock.json
 
 # Environment files
 .env
@@ -15,3 +15,17 @@ node_modules/
 
 # Generated files
 *.tsbuildinfo
+
+# Config files that shouldn't be formatted
+*.config.js
+*.config.cjs
+*.config.mjs
+
+# Static assets
+public/
+
+# Logs
+*.log
+
+# Coverage
+coverage/

@@ -12,7 +12,6 @@
 /.cache/
 /.env
 /.env.*
-/.vscode/
 /.idea/
 /.parcel-cache/
 /.eslintcache
