@@ -263,7 +263,8 @@ export const ContactLimits = ({
             }
             disabled={
               processFileMutation.isPending ||
-              updateSchedulerContactGroupMutation.isPending
+              updateSchedulerContactGroupMutation.isPending ||
+              (!schedulerContactGroup.id && !activeScheduler)
             }
           >
             {schedulerContactGroup.id

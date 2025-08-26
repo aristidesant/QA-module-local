@@ -4,6 +4,7 @@ import { modals } from "@mantine/modals";
 import SectionCard from "~/components/SectionCard";
 import DispositionForm from "./DispositionForm";
 import { useCampaignsStore } from "~/stores/campaignsStore";
+import { useDispositionBuilderStore } from "./dispositionStore";
 import { useDispositionFlowsByCampaignPath } from "~/queries/dispositionFlowQueries";
 import { notifications } from "@mantine/notifications";
 import DispositionViewer from "./DispositionViewer";
@@ -17,19 +18,40 @@ const DispositionSection: React.FC = () => {
     refetch: refetchCurrentFlow,
   } = useDispositionFlowsByCampaignPath(selectedCampaign?.id);
 
+  const { setDispositionFlow, setFlowJson, setCampaignId } =
+    useDispositionBuilderStore((s) => s);
+
   useEffect(() => {
     return () => {
       setRightComponent(null);
     };
   }, []);
+
   const handleOpenModal = (isEdit: boolean) => {
+    if (isEdit) {
+      if (currentDispositionFlow?.id) {
+        setDispositionFlow(currentDispositionFlow);
+        setFlowJson(currentDispositionFlow.flowJson || {});
+      }
+      setCampaignId(selectedCampaign?.id);
+    } else {
+      console.log("Initializing new disposition flow", selectedCampaign?.id);
+      setDispositionFlow({});
+      setFlowJson({});
+      setCampaignId(selectedCampaign?.id);
+    }
+
     modals.open({
       modalId: "disposition-form",
       size: "100vw",
       fullScreen: true,
+      onClose: () => {
+        setCampaignId(undefined);
+        setDispositionFlow({});
+        setFlowJson({});
+      },
       children: (
         <DispositionForm
-          catalog={isEdit ? currentDispositionFlow ?? {} : {}}
           onComplete={() => {
             refetchCurrentFlow();
             modals.close("disposition-form");
@@ -44,7 +66,9 @@ const DispositionSection: React.FC = () => {
     });
   };
 
-  const hasFlow = Boolean(currentDispositionFlow?.flowJson?.id);
+  const hasFlow = Boolean(
+    (currentDispositionFlow?.flowJson?.dispositionNodes?.length || 0) > 0
+  );
 
   return (
     <SectionCard

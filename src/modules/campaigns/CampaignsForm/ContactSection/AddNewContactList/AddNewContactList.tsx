@@ -31,7 +31,27 @@ export const AddNewContactList = ({
   } = useCampaignSchedules(campaignId);
 
   const uploadFile = async (file: File | null) => {
-    if (!file || !campaignId) return;
+    if (!file) {
+      notifications.show({
+        title: "No file selected",
+        message: "Please choose a CSV file to upload.",
+        color: "yellow",
+      });
+      return;
+    }
+
+    // Enforce CSV files as backend requires CSV
+    const isCsv = file.name.toLowerCase().endsWith(".csv");
+    if (!isCsv) {
+      notifications.show({
+        title: "Invalid file type",
+        message: "Only CSV files (.csv) are supported for upload.",
+        color: "red",
+      });
+      return;
+    }
+
+    if (!campaignId) return;
 
     try {
       const summary = await uploadContactGroupFileMutation.mutateAsync({
@@ -145,7 +165,7 @@ export const AddNewContactList = ({
               <input
                 type="file"
                 id="contact-list-upload"
-                accept=".xlsx,.xls,.csv"
+                accept=".csv"
                 onChange={handleFileUpload}
                 style={{ display: "none" }}
               />

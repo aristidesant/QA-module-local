@@ -10,36 +10,19 @@ import {
   parseDroppableId,
 } from "~/utils/dragDropUtils";
 import styles from "./DispositionForm.module.css";
-import type { DispositionFlowModel } from "~/models/DispositionFlowModel";
 
 interface DispositionFormProps {
-  catalog: Partial<DispositionFlowModel>;
   onComplete?: () => void;
 }
 
-const DispositionForm: React.FC<DispositionFormProps> = ({
-  catalog,
-  onComplete,
-}) => {
+const DispositionForm: React.FC<DispositionFormProps> = ({ onComplete }) => {
   const {
-    setDispositionFlow,
-    setFlowJson,
-    setCampaignId,
     isParentInFlow,
     addNodeToParent,
     selectedCatalog,
     addNode,
     flowJson,
   } = useDispositionBuilderStore((state) => state);
-
-  React.useEffect(() => {
-    setDispositionFlow(catalog);
-
-    setFlowJson(catalog.flowJson || {});
-    setCampaignId(catalog?.campaignId);
-  }, [catalog]);
-
-  // Drag-and-drop handler for builder
 
   const onDragEnd = (result: any) => {
     if (!result.destination) return;
