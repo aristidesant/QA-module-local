@@ -2,14 +2,18 @@ import { Group, Text, Box, Card, Title, Skeleton } from "@mantine/core";
 import styles from "./StatusBreakdown.module.css";
 import { PieChart } from "@mantine/charts";
 import { useCampaignsStore } from "~/stores/campaignsStore";
-import { useCallDispositionReport } from "~/queries/callDispositionQueries";
+import { useGetContactSummaryGroups } from "~/queries/contactsQueries";
+import { ContactStatus } from "~/models/ContactsModel";
+import { useMemo } from "react";
 
 export const StatusBreakdown = () => {
 	const selectedCampaign = useCampaignsStore((state) => state.selectedCampaign);
-	const { data, isLoading } = useCallDispositionReport({
-		campaignId: selectedCampaign?.id,
-	});
 
+	const { data: summaryData, isLoading } = useGetContactSummaryGroups(
+		selectedCampaign?.id || 0
+	);
+
+	// Function to generate consistent colors for the chart segments
 	const generateChartColors = (index: number): string => {
 		const colors = [
 			"#51cf66", // green
@@ -25,6 +29,58 @@ export const StatusBreakdown = () => {
 		];
 		return colors[index % colors.length];
 	};
+
+	// Function to format status names for display
+	const formatStatusName = (status: string): string => {
+		return status
+			.toLowerCase()
+			.split("_")
+			.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+			.join(" ");
+	};
+
+	// Get all possible statuses from the enum
+	const allStatuses = Object.values(ContactStatus);
+
+	// Create a map of status counts from API data
+	const statusCountMap = useMemo(() => {
+		const map = new Map<string, number>();
+		summaryData?.statusBreakdown?.forEach((item) => {
+			map.set(item.status, item.count);
+		});
+		return map;
+	}, [summaryData]);
+
+	// Prepare chart data (only statuses with data > 0 for the pie chart)
+	const chartData = useMemo(
+		() =>
+			summaryData?.statusBreakdown
+				?.filter((dp) => dp.count > 0)
+				?.map((dp) => {
+					// Find the index of this status in the allStatuses array to get consistent color
+					const statusIndex = allStatuses.indexOf(dp.status as ContactStatus);
+					return {
+						name: dp.status,
+						value: dp.count,
+						color: generateChartColors(statusIndex),
+					};
+				}) || [],
+		[summaryData, allStatuses]
+	);
+
+	// Prepare complete legend data (all statuses)
+	const legendData = useMemo(() => {
+		return allStatuses.map((status, index) => ({
+			status,
+			count: statusCountMap.get(status) || 0,
+			color: generateChartColors(index),
+			hasData:
+				statusCountMap.has(status) && (statusCountMap.get(status) || 0) > 0,
+		}));
+	}, [statusCountMap]);
+
+	// Check if there is data to display
+	const hasData = useMemo(() => chartData.length > 0, [chartData]);
 
 	return (
 		<Card className={styles.card}>
@@ -61,55 +117,63 @@ export const StatusBreakdown = () => {
 								</Box>
 							</div>
 						</>
-					) : (
-						<>
-							{/* Pie chart */}
-							<PieChart
-								data={
-									(data?.dispositions?.map((dp, index) => ({
-										name: dp.dispositionName,
-										value: dp.count,
-										color: generateChartColors(index),
-									})) as any) ?? []
-								}
-								size={160}
-								h={160}
-								strokeWidth={3}
-								mb="lg"
-								strokeColor="#ffffff"
-							/>
-
-							<div className={styles.statusList}>
-								{data?.dispositions?.map((item, index) => (
-									<Group
-										key={`${item?.dispositionName}-${index}`}
-										justify="space-between"
-										mb="xs"
-									>
-										<Group gap="xs">
+					) : hasData ? (
+						<div className={styles.contentContainer}>
+							{/* Chart and Legend Section - Side by Side */}
+							<div className={styles.chartSection}>
+								<div className={styles.pieChartWrapper}>
+									<PieChart
+										data={chartData}
+										size={160}
+										mt="sm"
+										withTooltip
+										tooltipDataSource="segment"
+										strokeWidth={0}
+									/>
+								</div>
+								<div className={styles.legendList}>
+									{legendData.map((item, index) => (
+										<div
+											key={`${item.status}-${index}`}
+											className={`${styles.legendItem} ${
+												!item.hasData ? styles.legendItemEmpty : ""
+											}`}
+										>
 											<Box
 												className={styles.colorDot}
-												style={{ backgroundColor: generateChartColors(index) }}
+												style={{
+													backgroundColor: item.hasData
+														? item.color
+														: "var(--mantine-color-gray-3)",
+												}}
 											/>
-											<Text size="xs">{item.dispositionName}</Text>
-										</Group>
-										<Text size="xs" fw={500}>
-											{item.count.toLocaleString()}
-										</Text>
-									</Group>
-								))}
-								<Box className={styles.totalContainer} mt="sm" p="xs">
-									<Group justify="space-between">
-										<Text size="xs" fw={600}>
-											Total
-										</Text>
-										<Text size="xs" fw={600}>
-											{data?.totalCalls?.toLocaleString()}
-										</Text>
-									</Group>
-								</Box>
+											<Text size="xs" className={styles.legendText}>
+												{formatStatusName(item.status)}
+											</Text>
+											<Text size="xs" fw={600} className={styles.legendCount}>
+												{item.count}
+											</Text>
+										</div>
+									))}
+								</div>
 							</div>
-						</>
+
+							{/* Total Section - Bottom */}
+							<div className={styles.totalSection}>
+								<Text size="sm" fw={600}>
+									Total
+								</Text>
+								<Text size="xl" fw={700}>
+									{summaryData?.totalContacts?.toLocaleString()}
+								</Text>
+							</div>
+						</div>
+					) : (
+						<div className={styles.noDataContainer}>
+							<Text size="sm" c="dimmed" ta="center">
+								No status data available
+							</Text>
+						</div>
 					)}
 				</div>
 			</div>

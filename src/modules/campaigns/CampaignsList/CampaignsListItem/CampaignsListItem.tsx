@@ -9,9 +9,7 @@ import {
 	Stack,
 	Progress,
 	Avatar,
-	rem,
 	Divider,
-	SemiCircleProgress,
 	Flex,
 } from "@mantine/core";
 import {
@@ -29,6 +27,7 @@ import {
 } from "@tabler/icons-react";
 import styles from "./CampaignsListItem.module.css";
 import type { Campaign } from "~/models/CampaignsModel";
+import ScoreGauge from "./ScoreGauge";
 
 export type CampaignsListItemProps = {
 	campaign: Campaign;
@@ -46,12 +45,6 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 	onViewDetails,
 	onDelete,
 }) => {
-	// Placeholder values for agent and score
-	const agent = {
-		name: "Clara Lucia",
-		language: "Spanish ES",
-		avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-	};
 	const score = (campaign?.overAllScore as number).toFixed(0);
 	const progressPercentage = campaign?.progress || 0;
 
@@ -61,20 +54,6 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 		if (percentage >= 50) return "blue";
 		if (percentage >= 25) return "yellow";
 		return "red";
-	};
-
-	// Get score color based on value (1-100)
-	const getScoreColor = (score: number): string => {
-		// Clamp score between 0 and 100
-		const clampedScore = Math.max(0, Math.min(100, score));
-
-		if (clampedScore >= 80) return "#40c057"; // Green (excellent)
-		if (clampedScore >= 70) return "#51cf66"; // Light green (good)
-		if (clampedScore >= 60) return "#82c91e"; // Yellow-green (above average)
-		if (clampedScore >= 50) return "#fab005"; // Yellow (average)
-		if (clampedScore >= 40) return "#fd7e14"; // Orange (below average)
-		if (clampedScore >= 30) return "#ff6b6b"; // Light red (poor)
-		return "#e03131"; // Red (very poor)
 	};
 
 	const statusInfo = useMemo(
@@ -184,20 +163,16 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 			<Divider />
 			{/* Main Content */}
 			<Group
-				align="flex-start"
+				align="center"
 				justify="space-between"
 				mt="md"
 				className={styles.mainContent}
 			>
-				{/* Left: Progress and description */}
 				<Stack gap={8} className={styles.progressSection}>
 					<Group gap={8} align="center">
 						<Text size="sm" fw={500} className={styles.progressLabel}>
 							Contact List Progress
 						</Text>
-						{/* <Text size="xs" c="dimmed" fw={500}>
-							{callsMade}/{totalContacts} ({progressPercentage}%)
-						</Text> */}
 					</Group>
 					<Progress
 						value={progressPercentage}
@@ -212,102 +187,79 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 					</Text>
 				</Stack>
 
-				{/* Right: Score gauge with multi-segment semicircle and pointer */}
-				<div
-					className={styles.scoreSection}
-					style={{
-						position: "relative",
-						width: 120,
-						height: 80,
-						display: "flex",
-						flexDirection: "column",
-						alignItems: "center",
-					}}
-				>
-					{/* Single semicircle gauge */}
-					<SemiCircleProgress
-						value={+score}
-						size={120}
-						thickness={12}
-						fillDirection="left-to-right"
-						orientation="up"
-						label={score}
-						labelPosition="bottom"
-						styles={{
-							label: {
-								fontSize: rem(34),
-								fontWeight: 700,
-								color: "var(--mantine-color-dark-6)",
-							},
-						}}
-						filledSegmentColor={getScoreColor(+score)}
-						emptySegmentColor="#e9ecef"
-						style={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
-					/>
+				<ScoreGauge score={+score} />
+			</Group>
 
-					{/* Label below gauge */}
-					<div
-						style={{
-							position: "absolute",
-							top: 60,
-							left: 0,
-							width: "100%",
-							textAlign: "center",
-							zIndex: 3,
-						}}
-					>
-						<Text size="sm" fw={700} c="#1a2540">
-							Overall Score
-						</Text>
-					</div>
+			{/* Footer: Agents */}
+			<div className={styles.footer}>
+				<div className={styles.agentsSection}>
+					{campaign.agents && campaign.agents.length > 0 ? (
+						<div className={styles.agentsContainer}>
+							<div className={styles.agentsList}>
+								{campaign.agents.slice(0, 4).map((campaignAgent) => (
+									<div key={campaignAgent.id} className={styles.agentItem}>
+										<Avatar
+											radius="xl"
+											size={28}
+											color="blue"
+											className={styles.agentAvatar}
+											title={`${campaignAgent.agent.name} - ${campaignAgent.agent.language}`}
+										>
+											{campaignAgent.agent.name.charAt(0).toUpperCase()}
+										</Avatar>
+										<div className={styles.agentInfo}>
+											<Text size="xs" fw={500} className={styles.agentName}>
+												{campaignAgent.agent.name}
+											</Text>
+											<Text
+												size="xs"
+												c="dimmed"
+												className={styles.agentLanguage}
+											>
+												{campaignAgent.agent.language}
+											</Text>
+										</div>
+									</div>
+								))}
+								{campaign.agents.length > 4 && (
+									<div className={styles.moreAgents}>
+										<Avatar
+											radius="xl"
+											size={28}
+											color="gray"
+											className={styles.moreAgentsAvatar}
+										>
+											<Text size="xs" fw={600}>
+												+{campaign.agents.length - 4}
+											</Text>
+										</Avatar>
+									</div>
+								)}
+							</div>
+						</div>
+					) : (
+						<div className={styles.noAgentsContainer}>
+							<Avatar
+								radius="xl"
+								size={28}
+								color="gray"
+								variant="light"
+								className={styles.noAgentsAvatar}
+							>
+								<IconExclamationMark size={16} />
+							</Avatar>
+							<div className={styles.noAgentsText}>
+								<Text size="xs" c="dimmed" className={styles.noAgentsMessage}>
+									No agents assigned
+								</Text>
+								<Text size="xs" c="dimmed" className={styles.noAgentsSubtext}>
+									Assign agents to start this campaign
+								</Text>
+							</div>
+						</div>
+					)}
 				</div>
-			</Group>
-
-			{/* Footer: Agent and contact methods */}
-			<Group align="center" mt="lg" className={styles.footer}>
-				<Group gap={8} align="center">
-					<Avatar src={agent.avatar} radius="xl" size={32} />
-					<Stack gap={0}>
-						<Text size="sm" fw={500} className={styles.agentName}>
-							{agent.name}
-						</Text>
-						<Text size="xs" c="dimmed" className={styles.agentLanguage}>
-							{agent.language}
-						</Text>
-					</Stack>
-				</Group>
-				{/* <Flex gap={"xs"}>
-					<Button
-						variant="subtle"
-						leftSection={
-							<IconPhone size={18} color="var(--mantine-color-blue-6)" />
-						}
-					>
-						Call
-					</Button>
-					<Divider orientation="vertical" />
-					<Button
-						variant="subtle"
-						leftSection={
-							<IconBrandWhatsapp
-								size={18}
-								color="var(--mantine-color-green-6)"
-							/>
-						}
-					>
-						WhatsApp
-					</Button>
-					<Divider orientation="vertical" />
-					<Button
-						variant="subtle"
-						leftSection={
-							<IconMail size={18} color="var(--mantine-color-red-6)" />
-						}
-					>
-						Email
-					</Button>
-				</Flex> */}
-			</Group>
+			</div>
 		</Card>
 	);
 };

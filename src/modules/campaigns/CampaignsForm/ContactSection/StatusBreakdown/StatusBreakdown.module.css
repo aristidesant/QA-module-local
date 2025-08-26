@@ -7,45 +7,55 @@
 }
 
 .title {
-  font-size: var(--mantine-font-size-sm);
+  font-size: var(--mantine-font-size-md);
   font-weight: 600;
   color: var(--mantine-color-gray-9);
+  margin: 0;
 }
 
 .subtitle {
-  font-size: var(--mantine-font-size-xs);
+  font-size: var(--mantine-font-size-sm);
   color: var(--mantine-color-gray-6);
-  line-height: 1.3;
+  line-height: 1.4;
+  margin: 0;
 }
 
 .container {
   width: 100%;
 }
 
-.chartContainer {
+.contentContainer {
   display: flex;
-  gap: var(--mantine-spacing-md);
-  align-items: center;
+  flex-direction: column;
+  gap: var(--mantine-spacing-lg);
 }
 
-.pieChart {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  position: relative;
+.chartSection {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--mantine-spacing-md);
+}
+
+.pieChartWrapper {
   flex-shrink: 0;
 }
 
-.pieSlice {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  position: relative;
+.legendList {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-.statusList {
-  flex: 1;
-  min-width: 160px;
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+  padding: 2px 0;
+}
+
+.legendItemEmpty {
+  opacity: 0.4;
 }
 
 .colorDot {
@@ -55,20 +65,67 @@
   flex-shrink: 0;
 }
 
+.legendText {
+  flex: 1;
+  color: var(--mantine-color-gray-9);
+  font-weight: 400;
+  min-width: 0;
+}
+
+.legendCount {
+  color: var(--mantine-color-gray-9);
+  font-variant-numeric: tabular-nums;
+  min-width: 2ch;
+  text-align: right;
+}
+
+.totalSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-top: 1px solid var(--mantine-color-gray-2);
+  padding-top: var(--mantine-spacing-sm);
+}
 
 .totalContainer {
   background: var(--mantine-color-gray-0);
+  border: 1px solid var(--mantine-color-gray-2);
   border-radius: var(--mantine-radius-sm);
+  padding: var(--mantine-spacing-md);
+  width: 100%;
 }
 
+.noDataContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  color: var(--mantine-color-gray-5);
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-  .chartContainer {
+  .chartSection {
     flex-direction: column;
-    gap: var(--mantine-spacing-sm);
+    gap: var(--mantine-spacing-md);
+    text-align: center;
   }
-  
-  .pieChart {
-    width: 80px;
-    height: 80px;
+
+  .pieChartWrapper {
+    align-self: center;
+  }
+
+  .legendList {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: var(--mantine-spacing-sm);
+  }
+
+  .contentContainer {
+    gap: var(--mantine-spacing-sm);
   }
 }
