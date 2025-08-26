@@ -51,6 +51,9 @@ const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 			percent: disposition.percentage,
 			color: getColorForDisposition(disposition.dispositionName),
 		})) || [];
+
+	const hasData = data?.dispositions && data.dispositions.length > 0;
+
 	return (
 		<Card className={classes.root} radius="lg" withBorder={false}>
 			<div className={classes.headerContainer}>
@@ -71,36 +74,54 @@ const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 					<IconRefresh size={16} />
 				</ActionIcon>
 			</div>
-			<PieChart
-				data={PIE_DATA}
-				size={150}
-				strokeWidth={3}
-				h={150}
-				mb="lg"
-				strokeColor="#ffffff"
-			/>
-			<div className={classes.legend}>
-				{LEGEND.map((item, index) => (
-					<div className={classes.legendItem} key={`${item.label}-${index}`}>
-						<span
-							className={classes.legendDot}
-							style={{ background: item.color }}
-						/>
-						<Text span className={classes.legendLabel}>
-							{item.label}
-						</Text>
-						<Text span className={classes.legendValue}>
-							{item.value} ({item.percent})
-						</Text>
+
+			{hasData ? (
+				<>
+					<PieChart
+						data={PIE_DATA}
+						size={150}
+						strokeWidth={3}
+						h={150}
+						mb="lg"
+						strokeColor="#ffffff"
+					/>
+					<div className={classes.legend}>
+						{LEGEND.map((item, index) => (
+							<div
+								className={classes.legendItem}
+								key={`${item.label}-${index}`}
+							>
+								<span
+									className={classes.legendDot}
+									style={{ background: item.color }}
+								/>
+								<Text span className={classes.legendLabel}>
+									{item.label}
+								</Text>
+								<Text span className={classes.legendValue}>
+									{item.value} ({item.percent})
+								</Text>
+							</div>
+						))}
 					</div>
-				))}
-			</div>
+				</>
+			) : (
+				<div className={classes.emptyState}>
+					<Text className={classes.emptyStateText}>
+						No outcome data available
+					</Text>
+					<Text className={classes.emptyStateSubtext}>
+						Data will appear here once calls are made
+					</Text>
+				</div>
+			)}
+
 			<div className={classes.calls}>
 				<Text span className={classes.callsLabel}>
 					Today's calls
 				</Text>
 				<Text span className={classes.callsValue}>
-					{data?.totalCalls.toLocaleString()}
+					{data?.totalCalls?.toLocaleString() || "0"}
 				</Text>
 			</div>
 		</Card>

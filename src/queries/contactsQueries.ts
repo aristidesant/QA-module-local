@@ -59,6 +59,16 @@ export const useGetCampaignContacts = (
 	});
 };
 
+export const useGetContactSummaryGroups = (campaignId: number) => {
+	return useQuery({
+		queryKey: ["contactSummaryGroups", campaignId],
+		queryFn: async () => {
+			const api = contactsApi();
+			return api.findContactSummaryGroups(campaignId);
+		},
+		enabled: !!campaignId,
+	});
+};
 // Update contact
 export const useUpdateContact = () => {
 	const queryClient = useQueryClient();

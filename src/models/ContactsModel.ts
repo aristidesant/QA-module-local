@@ -16,3 +16,14 @@ export interface Contact {
 	phones: string[];
 	status: "ACTIVE" | "INACTIVE" | string;
 }
+
+export enum ContactStatus {
+	DO_NOT_RESPOND = "DO_NOT_RESPOND",
+	CONTACTED = "CONTACTED",
+	VOICE_MAIL = "VOICE_MAIL",
+	ON_CALL = "ON_CALL",
+	INICATIVE = "INICATIVE", // Added per requirement (note: spelled as provided)
+	DECEASED = "DECEASED",
+	INACTIVE = "INACTIVE",
+	ACTIVE = "ACTIVE",
+}

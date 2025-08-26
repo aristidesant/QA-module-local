@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Contact } from "~/models/ContactsModel";
+import type { Contact, ContactStatus } from "~/models/ContactsModel";
 import { DEFAULT_API_URL } from "./config";
 
 /**
@@ -45,6 +45,14 @@ const contactsApi = (_authHeader?: Record<string, string>) => {
 			}>(`${DEFAULT_API_URL}/contacts/campaign/${campaignId}`, {
 				params,
 			});
+			return response.data;
+		},
+
+		findContactSummaryGroups: async (campaignId: number) => {
+			const response = await axios.get<{
+				statusBreakdown: { status: `${ContactStatus}`; count: number }[];
+				totalContacts: number;
+			}>(`${DEFAULT_API_URL}/contacts/summary/status/${campaignId}`);
 			return response.data;
 		},
 
