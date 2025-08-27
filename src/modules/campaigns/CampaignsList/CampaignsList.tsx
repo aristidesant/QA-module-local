@@ -46,7 +46,6 @@ export const CampaignsList: React.FC = () => {
 		refetch: reloadCampaigns,
 	} = useGetAllCampaignsPaginated(pagination.getApiParams());
 
-	const [currentCampaign, setCurrentCampaign] = useState<Campaign | null>(null);
 	const [sortBy, setSortBy] = useState('createdAt');
 	const { mutateAsync: deleteCampaign } = useDeleteCampaign();
 
@@ -222,12 +221,7 @@ export const CampaignsList: React.FC = () => {
 	}
 
 	const handleCampaignClick = (campaign: Campaign) => {
-		setCurrentCampaign(campaign);
-		if (campaign.id === selectedCampaign?.id) {
-			selectCampaign(null);
-		} else {
-			selectCampaign(campaign);
-		}
+		selectCampaign(campaign);
 
 		setRightComponent?.(<CampaignPreview {...{ campaign }} />);
 	};
@@ -256,7 +250,7 @@ export const CampaignsList: React.FC = () => {
 						<CampaignsListItem
 							key={campaign.id}
 							campaign={campaign}
-							selected={currentCampaign?.id === campaign.id}
+							selected={selectedCampaign?.id === campaign.id}
 							onClick={() => handleCampaignClick(campaign)}
 							onViewDetails={() => {
 								selectCampaign(campaign);
