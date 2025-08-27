@@ -1,25 +1,25 @@
-import React, { useState, useMemo } from "react";
-import { Loader, Text, Stack, Card, Button } from "@mantine/core";
-import { IconAlertCircle, IconRocket, IconPlus } from "@tabler/icons-react";
+import React, { useState, useMemo } from 'react';
+import { Loader, Text, Stack, Card, Button } from '@mantine/core';
+import { IconAlertCircle, IconRocket, IconPlus } from '@tabler/icons-react';
 import {
 	useDeleteCampaign,
 	useGetAllCampaignsPaginated,
-} from "~/queries/campaignsQueries";
-import styles from "./CampaignsList.module.css";
-import { CampaignsDetails } from "../CampaignsDetails";
-import SectionCard from "~/components/SectionCard";
-import CampaignsListItem from "./CampaignsListItem";
-import { modals } from "@mantine/modals";
-import { CampaignsForm } from "../CampaignsForm/CampaignsForm";
-import { notifications } from "@mantine/notifications";
-import CampaignAgentList from "../CampaignAgentList";
-import { useCampaignsStore } from "~/stores/campaignsStore";
-import CampaignPreview from "../CampaignPreview";
-import type { Campaign } from "~/models/CampaignsModel";
-import { AddNewCampaignForm } from "../AddNewCampaignForm";
-import CampaignFilters from "./CampaignFilters";
-import { usePagination } from "~/hooks/usePagination";
-import PaginationControls from "~/components/PaginationControls";
+} from '~/queries/campaignsQueries';
+import styles from './CampaignsList.module.css';
+import { CampaignsDetails } from '../CampaignsDetails';
+import SectionCard from '~/components/SectionCard';
+import CampaignsListItem from './CampaignsListItem';
+import { modals } from '@mantine/modals';
+import { CampaignsForm } from '../CampaignsForm/CampaignsForm';
+import { notifications } from '@mantine/notifications';
+import CampaignAgentList from '../CampaignAgentList';
+import { useCampaignsStore } from '~/stores/campaignsStore';
+import CampaignPreview from '../CampaignPreview';
+import type { Campaign } from '~/models/CampaignsModel';
+import { AddNewCampaignForm } from '../AddNewCampaignForm';
+import CampaignFilters from './CampaignFilters';
+import { usePagination } from '~/hooks/usePagination';
+import PaginationControls from '~/components/PaginationControls';
 
 export const CampaignsList: React.FC = () => {
 	const {
@@ -47,7 +47,7 @@ export const CampaignsList: React.FC = () => {
 	} = useGetAllCampaignsPaginated(pagination.getApiParams());
 
 	const [currentCampaign, setCurrentCampaign] = useState<Campaign | null>(null);
-	const [sortBy, setSortBy] = useState("createdAt");
+	const [sortBy, setSortBy] = useState('createdAt');
 	const { mutateAsync: deleteCampaign } = useDeleteCampaign();
 
 	// Calculate total pages from server response
@@ -76,16 +76,16 @@ export const CampaignsList: React.FC = () => {
 		// Sort campaigns
 		filtered.sort((a: Campaign, b: Campaign) => {
 			switch (sortBy) {
-				case "name":
+				case 'name':
 					return a.name.localeCompare(b.name);
-				case "status":
-					return (a.status || "").localeCompare(b.status || "");
-				case "lastActivity":
+				case 'status':
+					return (a.status || '').localeCompare(b.status || '');
+				case 'lastActivity':
 					return (
 						new Date(b.updatedAt || 0).getTime() -
 						new Date(a.updatedAt || 0).getTime()
 					);
-				case "createdAt":
+				case 'createdAt':
 				default:
 					return (
 						new Date(b.createdAt || 0).getTime() -
@@ -107,7 +107,7 @@ export const CampaignsList: React.FC = () => {
 	if (isLoading || isFetching) {
 		return (
 			<div className={styles.loaderContainer}>
-				<Loader size="lg" />
+				<Loader size='lg' />
 			</div>
 		);
 	}
@@ -115,9 +115,9 @@ export const CampaignsList: React.FC = () => {
 	if (isError) {
 		return (
 			<div className={styles.errorContainer}>
-				<IconAlertCircle size={32} color="red" />
-				<Text c="red" mt="sm">
-					{error instanceof Error ? error.message : "Failed to load campaigns."}
+				<IconAlertCircle size={32} color='red' />
+				<Text c='red' mt='sm'>
+					{error instanceof Error ? error.message : 'Failed to load campaigns.'}
 				</Text>
 			</div>
 		);
@@ -125,18 +125,18 @@ export const CampaignsList: React.FC = () => {
 
 	const handleShowAddNewCampaignModal = () => {
 		modals.open({
-			modalId: "create-campaign",
-			title: "Create New Campaign",
+			modalId: 'create-campaign',
+			title: 'Create New Campaign',
 			children: (
 				<AddNewCampaignForm
 					onComplete={() => {
 						reloadCampaigns();
 						selectCampaign(null);
-						modals.close("create-campaign");
+						modals.close('create-campaign');
 					}}
 				/>
 			),
-			size: "lg",
+			size: 'lg',
 			centered: true,
 		});
 	};
@@ -145,10 +145,10 @@ export const CampaignsList: React.FC = () => {
 		return (
 			<Stack className={styles.tableWrapper}>
 				<SectionCard
-					title="Campaign list"
-					description="Manage and monitor all your campaigns in one place."
+					title='Campaign list'
+					description='Manage and monitor all your campaigns in one place.'
 					headerActions={
-						<Button fz="xs" onClick={handleShowAddNewCampaignModal}>
+						<Button fz='xs' onClick={handleShowAddNewCampaignModal}>
 							New Campaign
 						</Button>
 					}
@@ -159,17 +159,17 @@ export const CampaignsList: React.FC = () => {
 						sortBy={sortBy}
 						onSortChange={setSortBy}
 					/>
-					<Card mt="xs" withBorder>
-						<Stack align="center" justify="center">
+					<Card mt='xs' withBorder>
+						<Stack align='center' justify='center'>
 							<div className={styles.emptyIcon}>
 								<IconRocket size={64} stroke={1.2} />
 							</div>
-							<Text size="xl" fw={600} mt="xl" className={styles.emptyTitle}>
+							<Text size='xl' fw={600} mt='xl' className={styles.emptyTitle}>
 								No campaigns yet
 							</Text>
 							<Text
-								size="md"
-								c="dimmed"
+								size='md'
+								c='dimmed'
 								mt={8}
 								className={styles.emptySubtitle}
 							>
@@ -192,10 +192,10 @@ export const CampaignsList: React.FC = () => {
 		return (
 			<Stack className={styles.tableWrapper}>
 				<SectionCard
-					title="Campaign list"
-					description="Manage and monitor all your campaigns in one place."
+					title='Campaign list'
+					description='Manage and monitor all your campaigns in one place.'
 					headerActions={
-						<Button fz="xs" onClick={handleShowAddNewCampaignModal}>
+						<Button fz='xs' onClick={handleShowAddNewCampaignModal}>
 							New Campaign
 						</Button>
 					}
@@ -206,12 +206,12 @@ export const CampaignsList: React.FC = () => {
 						sortBy={sortBy}
 						onSortChange={setSortBy}
 					/>
-					<Card mt="xs" withBorder>
-						<Stack align="center" justify="center" py="xl">
-							<Text size="lg" fw={500}>
+					<Card mt='xs' withBorder>
+						<Stack align='center' justify='center' py='xl'>
+							<Text size='lg' fw={500}>
 								No campaigns found
 							</Text>
-							<Text size="sm" c="dimmed">
+							<Text size='sm' c='dimmed'>
 								Try adjusting your search terms or create a new campaign
 							</Text>
 						</Stack>
@@ -229,98 +229,16 @@ export const CampaignsList: React.FC = () => {
 			selectCampaign(campaign);
 		}
 
-		// Enhanced campaign data for the preview
-		const enhancedCampaign: Campaign = {
-			...campaign,
-			// Add mock stats
-			stats: {
-				callsMade: 1245,
-				callsAnswered: 856,
-				conversionRate: 12.5,
-				avgCallDuration: "2:45",
-				lastUpdated: new Date().toISOString(),
-			},
-			// Add mock agent performance
-			agentPerformance: [
-				{
-					id: 1,
-					name: "John Doe",
-					callsHandled: 245,
-					successRate: 78,
-					avgRating: 4.5,
-				},
-				{
-					id: 2,
-					name: "Jane Smith",
-					callsHandled: 198,
-					successRate: 82,
-					avgRating: 4.7,
-				},
-				{
-					id: 3,
-					name: "Robert Johnson",
-					callsHandled: 176,
-					successRate: 71,
-					avgRating: 4.2,
-				},
-			],
-			// Add mock assigned agents
-
-			// Add mock contact list
-			contactList: {
-				id: 1,
-				name: "Q2 Leads",
-				description: "High priority leads for Q2 campaign",
-				totalContacts: 1245,
-				lastUpdated: new Date(
-					Date.now() - 2 * 24 * 60 * 60 * 1000
-				).toISOString(),
-				status: "active",
-				source: "csv",
-				tags: ["high-priority", "q2"],
-				metadata: {
-					headers: ["name", "phone", "email", "company"],
-					importedAt: new Date().toISOString(),
-					importedBy: "admin@example.com",
-				},
-			},
-			// Add mock parameters
-			parameters: {
-				callingHours: {
-					days: ["Mon", "Tue", "Wed", "Thu", "Fri"],
-					startTime: "09:00",
-					endTime: "18:00",
-					timezone: "America/New_York",
-				},
-				voicemailDetection: true,
-				callRetries: 2,
-				maxConcurrentCalls: 5,
-				answerMachineDetection: true,
-			},
-			// Add mock working hours
-			workingHours: {
-				monday: { enabled: true, from: "09:00", to: "17:00" },
-				tuesday: { enabled: true, from: "09:00", to: "17:00" },
-				wednesday: { enabled: true, from: "09:00", to: "17:00" },
-				thursday: { enabled: true, from: "09:00", to: "17:00" },
-				friday: { enabled: true, from: "09:00", to: "17:00" },
-				saturday: { enabled: false, from: "09:00", to: "13:00" },
-				sunday: { enabled: false, from: "09:00", to: "13:00" },
-			},
-			// Add mock tags if not present
-			tags: campaign.tags || ["outbound", "sales", "q2-2023"],
-		};
-
-		setRightComponent?.(<CampaignPreview campaign={enhancedCampaign} />);
+		setRightComponent?.(<CampaignPreview {...{ campaign }} />);
 	};
 
 	return (
 		<Stack className={styles.tableWrapper}>
 			<SectionCard
-				title="Campaign list"
-				description="Manage and monitor all your campaigns in one place."
+				title='Campaign list'
+				description='Manage and monitor all your campaigns in one place.'
 				headerActions={
-					<Button fz="xs" onClick={handleShowAddNewCampaignModal}>
+					<Button fz='xs' onClick={handleShowAddNewCampaignModal}>
 						New Campaign
 					</Button>
 				}
@@ -333,7 +251,7 @@ export const CampaignsList: React.FC = () => {
 					onSortChange={setSortBy}
 				/>
 
-				<Stack gap={"xs"}>
+				<Stack gap={'xs'}>
 					{filteredAndSortedCampaigns?.map((campaign: Campaign) => (
 						<CampaignsListItem
 							key={campaign.id}
@@ -348,38 +266,38 @@ export const CampaignsList: React.FC = () => {
 							}}
 							onEdit={() => {
 								modals.open({
-									modalId: "edit-campaign",
+									modalId: 'edit-campaign',
 									title: `Edit Campaign: ${campaign.name}`,
 									children: <CampaignsForm campaign={campaign} />,
-									size: "lg",
+									size: 'lg',
 									centered: true,
 								});
 							}}
 							onDelete={async () => {
 								modals.openConfirmModal({
-									title: "Delete Campaign",
+									title: 'Delete Campaign',
 									children: (
-										<Text size="sm">
+										<Text size='sm'>
 											Are you sure you want to delete this campaign?
 										</Text>
 									),
-									labels: { confirm: "Delete", cancel: "Cancel" },
-									confirmProps: { color: "red" },
+									labels: { confirm: 'Delete', cancel: 'Cancel' },
+									confirmProps: { color: 'red' },
 									onConfirm: async () => {
 										try {
 											await deleteCampaign(`${campaign.id}`);
 											reloadCampaigns();
 											selectCampaign(null);
 											notifications.show({
-												title: "Campaign Deleted",
-												message: "The campaign has been successfully deleted.",
-												color: "green",
+												title: 'Campaign Deleted',
+												message: 'The campaign has been successfully deleted.',
+												color: 'green',
 											});
 										} catch (error) {
 											notifications.show({
-												title: "Error",
-												message: "Failed to delete campaign. Please try again.",
-												color: "red",
+												title: 'Error',
+												message: 'Failed to delete campaign. Please try again.',
+												color: 'red',
 											});
 										}
 									},

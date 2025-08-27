@@ -1,5 +1,9 @@
 import axios from 'axios';
-import type { Campaign, PaginatedResponse } from '~/models/CampaignsModel';
+import type {
+	Campaign,
+	PaginatedResponse,
+	SchedulerSummary,
+} from '~/models/CampaignsModel';
 import { DEFAULT_API_URL } from './config';
 
 // import { getAuthorizationHeader } from "../utils/tokenUtils";
@@ -61,6 +65,13 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 		findCampaignsTimeEnd: async (campaignId: string) => {
 			const response = await axios.get<{ timeEnd: string }>(
 				`${DEFAULT_API_URL}/campaigns/timeEnd/${campaignId}`
+			);
+			return response.data;
+		},
+
+		findCampaignScheduleSummary: async (campaignId: string) => {
+			const response = await axios.get<SchedulerSummary[]>(
+				`${DEFAULT_API_URL}/campaigns/${campaignId}/schedules/day-configs/summary`
 			);
 			return response.data;
 		},

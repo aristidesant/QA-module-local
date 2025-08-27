@@ -1,7 +1,7 @@
 // src/models/CampaignsModel.ts
 
-import type { AgentConfigModel } from "./AgentListObject";
-import { CampaignAgent } from "./CampaignAgentModel";
+import type { AgentConfigModel } from './AgentListObject';
+import { CampaignAgent } from './CampaignAgentModel';
 
 export interface WorkingHours {
 	[key: string]: {
@@ -17,8 +17,8 @@ export interface ContactList {
 	description?: string;
 	totalContacts: number;
 	lastUpdated?: string; // ISO date string
-	status?: "active" | "inactive" | "processing" | "error";
-	source?: "csv" | "api" | "manual" | string;
+	status?: 'active' | 'inactive' | 'processing' | 'error';
+	source?: 'csv' | 'api' | 'manual' | string;
 	tags?: string[];
 	metadata?: {
 		headers?: string[];
@@ -46,8 +46,8 @@ export interface Campaign {
 	description: string;
 	budget: number;
 	spent: number;
-	type: "OUTBOUND" | "INBOUND";
-	status: "ACTIVE" | "INACTIVE" | "PAUSED" | "COMPLETED" | "RUNNING";
+	type: 'OUTBOUND' | 'INBOUND';
+	status: 'ACTIVE' | 'INACTIVE' | 'PAUSED' | 'COMPLETED' | 'RUNNING';
 	userId: number;
 	clientId: number;
 	promptId?: number;
@@ -115,4 +115,14 @@ export interface PaginatedResponse<T> {
 	limit: number;
 	offset: number;
 	data: T[];
+}
+
+export interface SchedulerSummary {
+	id: number;
+	scheduleId: number;
+	dayOfWeek: string;
+	dayOrder: number;
+	isActive: boolean;
+	startHour: string;
+	endHour: string;
 }

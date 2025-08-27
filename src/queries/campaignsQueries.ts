@@ -65,6 +65,19 @@ export const useGetCampaignsTimeEnd = (campaignId: string) => {
 			return api.findCampaignsTimeEnd(campaignId);
 		},
 		enabled: !!campaignId,
+		retry: false,
+	});
+};
+
+export const useGetCampaignScheduleSummary = (campaignId: string) => {
+	return useQuery({
+		queryKey: ['campaign-schedule-summary', campaignId],
+		queryFn: async () => {
+			const api = campaignsApi();
+			return api.findCampaignScheduleSummary(campaignId);
+		},
+		enabled: !!campaignId,
+		retry: false,
 	});
 };
 

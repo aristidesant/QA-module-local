@@ -81,6 +81,7 @@ export function useGetCallDispositionReportParents(params?: {
 			return api.getCallDispositionReportParents(params || {});
 		},
 		enabled: !!params?.campaignId,
+		retry: false,
 	});
 }
 
