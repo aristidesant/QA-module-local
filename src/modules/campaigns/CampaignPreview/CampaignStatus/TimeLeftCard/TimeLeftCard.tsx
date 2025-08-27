@@ -1,5 +1,13 @@
 import React, { useMemo } from 'react';
-import { Card, Group, Text, Progress, Badge, ActionIcon } from '@mantine/core';
+import {
+	Card,
+	Group,
+	Text,
+	Progress,
+	Badge,
+	ActionIcon,
+	Skeleton,
+} from '@mantine/core';
 import { IconRefresh } from '@tabler/icons-react';
 import styles from './TimeLeftCard.module.css';
 import { useCampaignsStore } from '~/stores/campaignsStore';
@@ -14,9 +22,11 @@ interface TimeLeftCardProps {}
 
 const TimeLeftCard: React.FC<TimeLeftCardProps> = () => {
 	const { selectedCampaign } = useCampaignsStore();
-	const { data: timeData, refetch } = useGetCampaignsTimeEnd(
-		`${selectedCampaign?.id}`
-	);
+	const {
+		data: timeData,
+		refetch,
+		isLoading,
+	} = useGetCampaignsTimeEnd(`${selectedCampaign?.id}`);
 
 	const isCompleted = selectedCampaign?.status?.toLowerCase() === 'completed';
 
@@ -57,40 +67,56 @@ const TimeLeftCard: React.FC<TimeLeftCardProps> = () => {
 
 	return (
 		<Card radius='md' padding='md' withBorder className={styles.timeCard}>
-			<Group justify='space-between' className={styles.timeHeader}>
-				<Group gap='xs'>
-					<Text fw={500} fz='sm'>
-						{isCompleted ? 'Campaign Status' : "Today's time left"}
-					</Text>
-					<ActionIcon
-						size='xs'
-						variant='subtle'
-						color='gray'
-						onClick={() => refetch()}
-						disabled={isCompleted}
-						className={styles.refetchButton}
-					>
-						<IconRefresh size={12} />
-					</ActionIcon>
-				</Group>
-				{isCompleted ? (
-					<Badge size='sm' color='green' variant='light'>
-						Completed
-					</Badge>
-				) : (
-					<Text fw={500} fz='sm'>
-						{timeLeft}
-					</Text>
-				)}
-			</Group>
-			{!isCompleted && (
-				<Progress
-					value={progress}
-					size='md'
-					radius='xl'
-					color='blue'
-					className={styles.progressBar}
-				/>
+			{isLoading ? (
+				// Loading skeleton
+				<>
+					<Group justify='space-between' className={styles.timeHeader}>
+						<Group gap='xs'>
+							<Skeleton height={16} width={120} />
+							<Skeleton circle height={16} width={16} />
+						</Group>
+						<Skeleton height={16} width={80} />
+					</Group>
+					<Skeleton height={8} radius='xl' mt='sm' />
+				</>
+			) : (
+				<>
+					<Group justify='space-between' className={styles.timeHeader}>
+						<Group gap='xs'>
+							<Text fw={500} fz='sm'>
+								{isCompleted ? 'Campaign Status' : "Today's time left"}
+							</Text>
+							<ActionIcon
+								size='xs'
+								variant='subtle'
+								color='gray'
+								onClick={() => refetch()}
+								disabled={isCompleted}
+								className={styles.refetchButton}
+							>
+								<IconRefresh size={12} />
+							</ActionIcon>
+						</Group>
+						{isCompleted ? (
+							<Badge size='sm' color='green' variant='light'>
+								Completed
+							</Badge>
+						) : (
+							<Text fw={500} fz='sm'>
+								{timeLeft}
+							</Text>
+						)}
+					</Group>
+					{!isCompleted && (
+						<Progress
+							value={progress}
+							size='md'
+							radius='xl'
+							color='blue'
+							className={styles.progressBar}
+						/>
+					)}
+				</>
 			)}
 		</Card>
 	);

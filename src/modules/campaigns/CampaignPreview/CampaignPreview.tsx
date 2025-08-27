@@ -1,11 +1,11 @@
-import React from "react";
-import { Stack, ScrollArea } from "@mantine/core";
-import CampaignOverview from "./CampaignOverview";
-import type { Campaign } from "../../../models/CampaignsModel";
-import CampaignStatus from "./CampaignStatus";
-import CampaignContactOutcomeSummary from "./CampaignContactOutcomeSummary";
-import CampaignParameters from "./CampaignParameters";
-import AssignedAgents from "./AssignedAgents";
+import React from 'react';
+import { Stack, ScrollArea } from '@mantine/core';
+import CampaignOverview from './CampaignOverview';
+import type { Campaign } from '../../../models/CampaignsModel';
+import CampaignStatus from './CampaignStatus';
+import CampaignContactOutcomeSummary from './CampaignContactOutcomeSummary';
+import CampaignParameters from './CampaignParameters';
+import AssignedAgents from './AssignedAgents';
 
 interface CampaignPreviewProps {
 	campaign: Campaign & {
@@ -28,15 +28,15 @@ interface CampaignPreviewProps {
 
 const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
 	return (
-		<ScrollArea h="100%" type="scroll" offsetScrollbars>
-			<Stack gap="xs" p="xs">
+		<ScrollArea h='100%' type='scroll' offsetScrollbars>
+			<Stack gap='xs' p='xs'>
 				<CampaignOverview {...{ campaign }} />
 
 				<CampaignStatus {...{ campaign }} />
 
 				<CampaignContactOutcomeSummary {...{ campaign }} />
 
-				<CampaignParameters parameters={campaign.parameters} />
+				<CampaignParameters />
 
 				<AssignedAgents />
 			</Stack>

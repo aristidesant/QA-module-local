@@ -1,14 +1,14 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import callDispositionApi from "~/api/callDispositionApi";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import callDispositionApi from '~/api/callDispositionApi';
 // Authorization is handled by a global Axios interceptor
-import type { CallDispositionModel } from "~/models/CallDispositionModel";
+import type { CallDispositionModel } from '~/models/CallDispositionModel';
 
 // --- Queries ---
 export function useCallDispositions(conversationId?: number | string) {
 	return useQuery<CallDispositionModel, Error>({
-		queryKey: ["callDispositions", conversationId],
+		queryKey: ['callDispositions', conversationId],
 		queryFn: async () => {
-			if (!conversationId) throw new Error("conversationId required");
+			if (!conversationId) throw new Error('conversationId required');
 			const api = callDispositionApi();
 			return api.findAllCallDispositions({
 				conversationId: String(conversationId),
@@ -22,9 +22,9 @@ export function useCallDispositionByConversationId(
 	conversationId?: number | string
 ) {
 	return useQuery<CallDispositionModel, Error>({
-		queryKey: ["callDispositionByConversationId", conversationId],
+		queryKey: ['callDispositionByConversationId', conversationId],
 		queryFn: async () => {
-			if (!conversationId) throw new Error("conversationId required");
+			if (!conversationId) throw new Error('conversationId required');
 			const api = callDispositionApi();
 			return api.findCallDispositionByConversationId(Number(conversationId));
 		},
@@ -35,9 +35,9 @@ export function useCallDispositionByConversationId(
 
 export function useCallDisposition(id?: number | string) {
 	return useQuery<CallDispositionModel, Error>({
-		queryKey: ["callDisposition", id],
+		queryKey: ['callDisposition', id],
 		queryFn: async () => {
-			if (!id) throw new Error("CallDisposition id required");
+			if (!id) throw new Error('CallDisposition id required');
 			const api = callDispositionApi();
 			return api.findCallDisposition(String(id));
 		},
@@ -56,7 +56,7 @@ export function useCallDispositionReport(params?: {
 		dispositions: { dispositionName: string; count: number }[];
 		totalCalls: number;
 	}>({
-		queryKey: ["callDispositionReport", params],
+		queryKey: ['callDispositionReport', params],
 		queryFn: async () => {
 			const api = callDispositionApi();
 			return api.getCallDispositionReport(params || {});
@@ -75,12 +75,13 @@ export function useGetCallDispositionReportParents(params?: {
 		}[];
 		totalCalls: number;
 	}>({
-		queryKey: ["callDispositionReportParents", params],
+		queryKey: ['callDispositionReportParents', params],
 		queryFn: async () => {
 			const api = callDispositionApi();
 			return api.getCallDispositionReportParents(params || {});
 		},
-		enabled: true,
+		enabled: !!params?.campaignId,
+		retry: false,
 	});
 }
 
@@ -93,7 +94,7 @@ export function useCreateCallDisposition() {
 			return api.createCallDisposition(data);
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["callDispositions"] });
+			queryClient.invalidateQueries({ queryKey: ['callDispositions'] });
 		},
 	});
 }
@@ -113,9 +114,9 @@ export function useUpdateCallDisposition() {
 		},
 		onSuccess: (_, variables) => {
 			queryClient.invalidateQueries({
-				queryKey: ["callDisposition", variables.id],
+				queryKey: ['callDisposition', variables.id],
 			});
-			queryClient.invalidateQueries({ queryKey: ["callDispositions"] });
+			queryClient.invalidateQueries({ queryKey: ['callDispositions'] });
 		},
 	});
 }
@@ -128,8 +129,8 @@ export function useDeleteCallDisposition() {
 			return api.deleteCallDisposition(String(id));
 		},
 		onSuccess: (_, id) => {
-			queryClient.invalidateQueries({ queryKey: ["callDisposition", id] });
-			queryClient.invalidateQueries({ queryKey: ["callDispositions"] });
+			queryClient.invalidateQueries({ queryKey: ['callDisposition', id] });
+			queryClient.invalidateQueries({ queryKey: ['callDispositions'] });
 		},
 	});
 }

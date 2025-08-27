@@ -1,5 +1,5 @@
 import { PieChart } from '@mantine/charts';
-import { Card, Text, ActionIcon } from '@mantine/core';
+import { Card, Text, ActionIcon, Skeleton } from '@mantine/core';
 import { IconRefresh } from '@tabler/icons-react';
 import React from 'react';
 import { Campaign } from '~/models/CampaignsModel';
@@ -13,7 +13,7 @@ interface CCOSummaryProps {
 const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 	campaign,
 }) => {
-	const { data, refetch } = useGetCallDispositionReportParents({
+	const { data, refetch, isLoading } = useGetCallDispositionReportParents({
 		campaignId: campaign?.id,
 	});
 
@@ -78,7 +78,32 @@ const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 				</ActionIcon>
 			</div>
 
-			{hasData ? (
+			{isLoading && campaign?.id ? (
+				// Loading skeleton
+				<>
+					<div
+						style={{
+							display: 'flex',
+							justifyContent: 'center',
+							marginBottom: '1rem',
+						}}
+					>
+						<Skeleton circle height={150} />
+					</div>
+					<div className={classes.legend}>
+						{Array.from({ length: 3 }).map((_, index) => (
+							<div
+								className={classes.legendItem}
+								key={`skeleton-legend-${index}`}
+							>
+								<Skeleton circle height={12} width={12} />
+								<Skeleton height={16} width='60%' />
+								<Skeleton height={16} width='40%' />
+							</div>
+						))}
+					</div>
+				</>
+			) : hasData ? (
 				<>
 					<PieChart
 						data={PIE_DATA}
@@ -120,12 +145,21 @@ const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 			)}
 
 			<div className={classes.calls}>
-				<Text span className={classes.callsLabel}>
-					Today's calls
-				</Text>
-				<Text span className={classes.callsValue}>
-					{data?.totalCalls?.toLocaleString() || '0'}
-				</Text>
+				{isLoading && campaign?.id ? (
+					<>
+						<Skeleton height={14} width='40%' />
+						<Skeleton height={16} width='30%' />
+					</>
+				) : (
+					<>
+						<Text span className={classes.callsLabel}>
+							Today's calls
+						</Text>
+						<Text span className={classes.callsValue}>
+							{data?.totalCalls?.toLocaleString() || '0'}
+						</Text>
+					</>
+				)}
 			</div>
 		</Card>
 	);
