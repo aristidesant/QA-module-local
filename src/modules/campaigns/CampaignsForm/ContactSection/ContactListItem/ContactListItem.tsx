@@ -7,11 +7,14 @@ import {
   rem,
   Overlay,
   Loader,
+  ActionIcon,
+  Divider,
 } from "@mantine/core";
-import { IconClock } from "@tabler/icons-react";
+import { IconClock, IconTrash } from "@tabler/icons-react";
 import type SchedulerContactGroupModel from "~/models/SchedulerContactGroupModel";
 import styles from "./ContactListItem.module.css";
 import { useUpdateContactGroupStatus } from "~/queries/schedulerQueries";
+import { useDeleteSchedulerContactGroup } from "~/queries/schedulerContactGroupQueries";
 import { useState } from "react";
 import { modals } from "@mantine/modals";
 import SectionTitle from "~/components/SectionTitle";
@@ -36,6 +39,7 @@ export function ContactListItem({
   campaignId,
 }: ContactListItemProps) {
   const updateContactGroupStatus = useUpdateContactGroupStatus();
+  const deleteSchedulerContactGroup = useDeleteSchedulerContactGroup();
   const [isUpdating, setIsUpdating] = useState(false);
 
   const handleToggle = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,6 +56,33 @@ export function ContactListItem({
     } finally {
       setIsUpdating(false);
     }
+  };
+
+  const handleDelete = () => {
+    modals.openConfirmModal({
+      title: "Delete Contact List",
+      children: (
+        <Text size="sm">
+          Are you sure you want to delete the contact list "{scheduleContactGroup?.contactGroup.name}"? 
+          This action cannot be undone.
+        </Text>
+      ),
+      labels: { confirm: "Delete", cancel: "Cancel" },
+      confirmProps: { color: "red" },
+      onConfirm: async () => {
+        try {
+          setIsUpdating(true);
+          await deleteSchedulerContactGroup.mutateAsync({
+            id: scheduleContactGroup.id,
+          });
+          onUpdateComplete();
+        } catch (error) {
+          console.error("Failed to delete contact group:", error);
+        } finally {
+          setIsUpdating(false);
+        }
+      },
+    });
   };
 
   const handleOpenModal = () => {
@@ -122,7 +153,20 @@ export function ContactListItem({
         </Flex>
         {scheduleContactGroup?.expirationDate && (
           <div>
-            <Flex align="center" gap={4} c="dimmed">
+            <Flex align="center" gap={"xs"} c="dimmed">
+              <ActionIcon 
+                title="Delete this contact list" 
+                variant="subtle" 
+                size="xs" 
+                c="red"
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent triggering the modal open
+                  handleDelete();
+                }}
+              >
+                <IconTrash size={16} />
+              </ActionIcon>
+              <Divider orientation="vertical"/>
               <ThemeIcon variant="transparent" size="xs" c="dimmed">
                 <IconClock style={{ width: rem(14), height: rem(14) }} />
               </ThemeIcon>

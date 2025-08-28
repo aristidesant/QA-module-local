@@ -7,6 +7,10 @@ interface UpdateSchedulerContactGroupParams {
   payload: UpdateSchedulerContactGroupPayload;
 }
 
+interface DeleteSchedulerContactGroupParams {
+  id: string | number;
+}
+
 /**
  * Mutation hook to update a scheduler contact group
  * @returns Mutation object with methods to update scheduler contact group
@@ -44,6 +48,27 @@ export function useUpdateSchedulerContactGroup() {
     mutationFn: async ({ id, payload }: UpdateSchedulerContactGroupParams) => {
       const api = schedulerContactGroupApi();
       return api.updateSchedulerContactGroup(id, payload);
+    },
+    onSuccess: () => {
+      // Invalidate relevant queries to refetch fresh data
+      queryClient.invalidateQueries({ queryKey: ["campaignSchedules"] });
+      queryClient.invalidateQueries({ queryKey: ["campaignActiveScheduler"] });
+      queryClient.invalidateQueries({ queryKey: ["schedulerContactGroups"] });
+    },
+  });
+}
+
+/**
+ * Mutation hook to delete a scheduler contact group
+ * @returns Mutation object with methods to delete scheduler contact group
+ */
+export function useDeleteSchedulerContactGroup() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id }: DeleteSchedulerContactGroupParams) => {
+      const api = schedulerContactGroupApi();
+      return api.deleteSchedulerContactGroup(id);
     },
     onSuccess: () => {
       // Invalidate relevant queries to refetch fresh data

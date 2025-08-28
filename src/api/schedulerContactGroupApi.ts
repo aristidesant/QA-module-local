@@ -38,6 +38,14 @@ const schedulerContactGroupApi = (_authHeader?: Record<string, string>) => {
       );
       return response.data;
     },
+
+    // DELETE scheduler contact group
+    deleteSchedulerContactGroup: async (id: string | number) => {
+      const response = await axios.delete(
+        `${DEFAULT_API_URL}/schedule-contact-groups/${id}`
+      );
+      return response.data;
+    },
   };
 };
 
