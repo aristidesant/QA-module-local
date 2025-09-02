@@ -3,9 +3,13 @@ import axios from "axios";
 import type AgentListObject from "~/models/AgentListObject";
 import { DEFAULT_API_URL } from "./config";
 
-/**
- * Generic Agent API client (uses global axios interceptors for auth)
- */
+export interface FindAllAgentsResponse {
+	data: AgentListObject[];
+	total: number;
+	page: number;
+	limit: number;
+	totalPages: number;
+}
 const agentApi = (_authHeader: Record<string, string> = {}) => {
 	return {
 		// CREATE agent
@@ -19,12 +23,12 @@ const agentApi = (_authHeader: Record<string, string> = {}) => {
 			params?: {
 				agentName?: string;
 				agentId?: string;
-				cursor?: string;
+				page?: number;
 				limit?: number;
 			},
 			extraHeaders?: Record<string, string>
 		) => {
-			const response = await axios.get<AgentListObject[]>(
+			const response = await axios.get<FindAllAgentsResponse>(
 				`${DEFAULT_API_URL}/agents`,
 				{
 					params,

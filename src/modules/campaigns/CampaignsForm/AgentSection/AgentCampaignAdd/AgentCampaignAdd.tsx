@@ -20,11 +20,12 @@ export const AgentCampaignAdd: React.FC<AgentCampaignAddProps> = ({
   onComplete,
 }) => {
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
-  const { data: agents, isLoading } = useGetAllAgents();
+  const { data: agents, isLoading } = useGetAllAgents({ limit: 100, page: 1 });
   const createMutation = useCreateCampaignAgent();
 
   // Only show agents not already in the campaign
-  const availableAgents = (agents || []).filter(
+  const agentsData: AgentListObject[] = (agents?.data ?? []) as AgentListObject[];
+  const availableAgents: AgentListObject[] = agentsData.filter(
     (agent: AgentListObject) => !excludedAgents.includes(agent.id)
   );
 

@@ -26,7 +26,7 @@ interface AgentSelectionProps {
 }
 
 export const AgentSelection: React.FC<AgentSelectionProps> = ({ onSelect }) => {
-  const { data, isLoading, isError } = useGetAllAgents();
+  const { data, isLoading, isError } = useGetAllAgents({ limit: 100, page: 1 });
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
 
@@ -41,7 +41,7 @@ export const AgentSelection: React.FC<AgentSelectionProps> = ({ onSelect }) => {
   // Filter agents by name (case-insensitive)
   const filteredAgents = useMemo(() => {
     if (!data) return [];
-    return data.filter((agent: AgentListObject) =>
+    return (data.data || []).filter((agent: AgentListObject) =>
       agent.name.toLowerCase().includes(search.toLowerCase())
     );
   }, [data, search]);

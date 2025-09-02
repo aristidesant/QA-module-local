@@ -11,6 +11,8 @@ import {
   Paper,
   Transition,
   Button,
+  Pagination,
+  Center as MantineCenter,
 } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import classes from "./AgentList.module.css";
@@ -27,7 +29,18 @@ const AgentList: React.FC = () => {
   const [selectedAgent, setSelectedAgent] =
     React.useState<AgentListObject | null>(null);
 
-  const { data: agents = [], isLoading, isError, error } = useGetAllAgents();
+  const LIMIT = 6;
+  const [page, setPage] = React.useState<number>(1);
+
+  const { data: agents, isLoading, isError, error } = useGetAllAgents({
+    page,
+    limit: LIMIT,
+  });
+
+  React.useEffect(() => {
+    // Clear selection when changing pages to avoid referencing agents not visible
+    setSelectedAgent(null);
+  }, [page]);
 
   const handleAgentCardClick = (agent: AgentListObject) => {
     if (selectedAgent?.id === agent.id) {
@@ -63,7 +76,7 @@ const AgentList: React.FC = () => {
         </Button>
       }
     >
-      <Stack>
+      <Stack >
         <AgentCreate opened={opened} onClose={close} />
 
         {isLoading && (
@@ -86,7 +99,7 @@ const AgentList: React.FC = () => {
         )}
 
         <Transition
-          mounted={agents.length > 0}
+          mounted={(agents?.total || 0) > 0}
           transition="fade"
           duration={400}
           timingFunction="ease"
@@ -96,7 +109,7 @@ const AgentList: React.FC = () => {
               cols={{ base: 1, sm: 2, md: 2, lg: 2, xl: 3 }}
               style={styles}
             >
-              {agents.map((agent) => (
+              {(agents?.data || []).map((agent: AgentListObject) => (
                 <AgentCard
                   key={agent.id}
                   onClick={handleAgentCardClick}
@@ -107,7 +120,20 @@ const AgentList: React.FC = () => {
           )}
         </Transition>
 
-        {agents.length === 0 && (
+        {/* Pagination controls */}
+        {(agents?.total || 0) > 0 && (agents?.totalPages || 1) > 1 && (
+          <MantineCenter mt="md">
+            <Pagination
+              total={Math.max(agents?.totalPages || Math.ceil((agents?.total || 0) / LIMIT) || 1, 1)}
+              value={page}
+              onChange={setPage}
+              withEdges
+              size="sm"
+            />
+          </MantineCenter>
+        )}
+
+        {agents && (agents.data?.length || 0) === 0 && (
           <Paper className={classes.emptyState} shadow="none">
             <Stack align="center" gap="xs">
               <div className={classes.avatarContainer}>

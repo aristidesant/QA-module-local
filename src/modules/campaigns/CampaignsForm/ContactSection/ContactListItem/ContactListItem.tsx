@@ -63,7 +63,7 @@ export function ContactListItem({
       title: "Delete Contact List",
       children: (
         <Text size="sm">
-          Are you sure you want to delete the contact list "{scheduleContactGroup?.contactGroup.name}"? 
+          Are you sure you want to delete the contact list "{scheduleContactGroup?.contactGroup.name}"?
           This action cannot be undone.
         </Text>
       ),
@@ -154,10 +154,10 @@ export function ContactListItem({
         {scheduleContactGroup?.expirationDate && (
           <div>
             <Flex align="center" gap={"xs"} c="dimmed">
-              <ActionIcon 
-                title="Delete this contact list" 
-                variant="subtle" 
-                size="xs" 
+              <ActionIcon
+                title="Delete this contact list"
+                variant="subtle"
+                size="xs"
                 c="red"
                 onClick={(e) => {
                   e.stopPropagation(); // Prevent triggering the modal open

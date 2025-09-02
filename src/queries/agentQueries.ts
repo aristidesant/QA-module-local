@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import agentApi from "~/api/agentApi";
+import agentApi, { FindAllAgentsResponse } from "~/api/agentApi";
 import type { AgentUpdateModel } from "~/models/AgentListObject";
 import type { Campaign } from "~/models/CampaignsModel";
 
@@ -22,7 +22,7 @@ export const useCreateAgent = () => {
 
 // Get all agents
 export const useGetAllAgents = (params?: Record<string, unknown>) => {
-	return useQuery({
+	return useQuery<FindAllAgentsResponse>({
 		queryKey: ["agents", params],
 		queryFn: async () => {
 			const api = agentApi();
