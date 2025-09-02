@@ -1,14 +1,15 @@
-import { Button, Group, Loader, Stack } from "@mantine/core";
-import { type ReactNode } from "react";
-import AgentVoices from "../AgentVoices";
-import AgentConfigurationTypeSelector from "../AgentConfigurationTypeSelector";
-import AgentSettings from "../AgentSettings";
-import { useAgentStore } from "~/stores/agentStore";
-import { AgentKnowledgeBase } from "../AgentKnowledgeBase";
-import type { AgentConfigModel } from "~/models/AgentListObject";
-import type AgentListObject from "~/models/AgentListObject";
-import { IconDeviceFloppy } from "@tabler/icons-react";
-import AgentTools from "../AgentTools";
+import { Button, Group, Loader, Stack } from '@mantine/core';
+import { type ReactNode } from 'react';
+import AgentVoices from '../AgentVoices';
+import AgentConfigurationTypeSelector from '../AgentConfigurationTypeSelector';
+import AgentSettings from '../AgentSettings';
+import { useAgentStore } from '~/stores/agentStore';
+import { AgentKnowledgeBase } from '../AgentKnowledgeBase';
+import type { AgentConfigModel } from '~/models/AgentListObject';
+import type AgentListObject from '~/models/AgentListObject';
+import { IconDeviceFloppy } from '@tabler/icons-react';
+import AgentTools from '../AgentTools';
+import AgentTemperatureControl from '../AgentTemperatureControl';
 
 type AgentConfigurationProps = {
 	agentMode?: boolean;
@@ -43,7 +44,7 @@ const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
 	};
 
 	const shouldDisplayAgentSettings =
-		(agentMode && agentConfigurationType === "custom") || !agentMode;
+		(agentMode && agentConfigurationType === 'custom') || !agentMode;
 
 	return (
 		<Stack>
@@ -76,19 +77,23 @@ const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
 						onUpdateAgentData={handleAgentUpdate}
 						onSetRightSection={onSetRightSection}
 					/>
+					<AgentTemperatureControl
+						agentData={editableAgent}
+						onUpdateAgentData={handleAgentUpdate}
+					/>
 					<AgentTools onAgentUpdated={handleAgentUpdate} />
 					<AgentKnowledgeBase />
 				</>
 			)}
-			<Group mb="xs">
+			<Group mb='xs'>
 				<Button
 					disabled={isLoading}
 					leftSection={
 						isLoading ? <Loader size={18} /> : <IconDeviceFloppy size={18} />
 					}
-					type="submit"
+					type='submit'
 				>
-					{isLoading ? "Saving..." : "Save Changes"}
+					{isLoading ? 'Saving...' : 'Save Changes'}
 				</Button>
 			</Group>
 		</Stack>
