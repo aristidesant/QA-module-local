@@ -1,24 +1,39 @@
-import React, { useState, useRef, useEffect, type ReactNode } from "react";
-import { TextInput, Stack } from "@mantine/core";
-import type AgentListObject from "~/models/AgentListObject";
-import { notifications } from "@mantine/notifications";
-import { useUpdateAgent } from "~/queries/agentQueries";
+import React, { useState, useRef, useEffect, type ReactNode } from 'react';
+import { TextInput, Stack } from '@mantine/core';
+import type AgentListObject from '~/models/AgentListObject';
+import { notifications } from '@mantine/notifications';
+import { useUpdateAgent } from '~/queries/agentQueries';
+import { useAssignedTools, useUpdateAgentTools } from '~/queries/toolQueries';
 import type {
 	AgentConfigModel,
 	AgentUpdateModel,
-} from "~/models/AgentListObject";
-import SectionCard from "~/components/SectionCard";
-import { ContentContainer } from "~/components/ContentContainer/ContentContainer";
-import AgentNotSelected from "~/modules/agents/AgentNotSelected";
-import { useAgentStore } from "~/stores/agentStore";
-import AgentConfiguration from "../AgentConfiguration/AgentConfiguration";
-import { useNavigate } from "react-router";
+} from '~/models/AgentListObject';
+import SectionCard from '~/components/SectionCard';
+import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
+import AgentNotSelected from '~/modules/agents/AgentNotSelected';
+import { useAgentStore } from '~/stores/agentStore';
+import AgentConfiguration from '../AgentConfiguration/AgentConfiguration';
+import { useNavigate } from 'react-router';
 
 export type AgentDetailsProps = {
 	agent: AgentListObject;
 	onAgentUpdated?: () => void;
 };
 
+/**
+ * AgentDetails Component
+ *
+ * This component handles the complete agent editing flow including:
+ * 1. Basic agent information (name, voice, etc.)
+ * 2. Agent configuration settings
+ * 3. Tool assignments (collected locally and applied on save)
+ *
+ * The tool assignment workflow:
+ * - AgentTools component manages local selection state
+ * - Tool changes are passed up via handleAgentUpdate
+ * - When form is submitted, both agent and tool updates are processed
+ * - Tool assignments are only applied when the entire form is saved
+ */
 const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
 	const [editableAgent, setEditableAgent] = useState<Partial<AgentConfigModel>>(
 		agent?.config
@@ -28,6 +43,7 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
 	const [name, setName] = useState(agent.name);
 	const [voiceId, setVoiceId] = useState<string>();
 	const [isEditingName] = useState(false);
+	const [selectedToolIds, setSelectedToolIds] = useState<string[]>([]);
 	const { selectedElement, setSelectedElement } = useAgentStore(
 		(state) => state
 	);
@@ -40,8 +56,24 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
 		error,
 		reset,
 	} = useUpdateAgent();
+	const { data: assignedTools } = useAssignedTools(agent?.id);
+	const updateAgentTools = useUpdateAgentTools();
 
 	const agentId = agent.id as string;
+
+	// Handle both regular agent updates and tool IDs
+	const handleAgentUpdate = (updatedFields: any) => {
+		if (updatedFields.toolIds) {
+			// Handle tool IDs separately
+			setSelectedToolIds(updatedFields.toolIds);
+		} else {
+			// Handle other agent config updates
+			setEditableAgent((prev: Partial<AgentConfigModel>) => ({
+				...prev,
+				...updatedFields,
+			}));
+		}
+	};
 	// Focus the input when edit mode is activated
 	useEffect(() => {
 		if (isEditingName && nameInputRef.current) {
@@ -54,15 +86,15 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
 	useEffect(() => {
 		if (isSuccess) {
 			notifications.show({
-				title: "Success",
-				message: "Agent updated successfully.",
+				title: 'Success',
+				message: 'Agent updated successfully.',
 			});
 			reset();
 		} else if (isError && error) {
 			notifications.show({
-				title: "Error",
-				message: (error as any)?.message || "Failed to update agent.",
-				color: "red",
+				title: 'Error',
+				message: (error as any)?.message || 'Failed to update agent.',
+				color: 'red',
 			});
 			reset();
 		}
@@ -88,37 +120,65 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
 			platformSettings: editableAgent.platformSettings,
 		};
 		try {
+			// First, update the agent
 			await updateAgent({
 				id: agentId,
 				data,
 			});
+
+			// Then, handle tool assignments if there are changes
+			if (selectedToolIds.length >= 0 && assignedTools) {
+				try {
+					const result = await updateAgentTools.mutateAsync({
+						agentId,
+						newToolIds: selectedToolIds,
+						currentAssignedTools: assignedTools,
+					});
+
+					if (result.hasChanges) {
+						notifications.show({
+							title: 'Tools Updated',
+							message: `Tools updated successfully.`,
+							// message: `Assigned ${result.assigned} tools, unassigned ${result.unassigned} ÷tools.`,
+							color: 'blue',
+						});
+					}
+				} catch (toolError) {
+					console.error('Error updating agent tools:', toolError);
+					notifications.show({
+						title: 'Warning',
+						message: 'Agent saved but tool assignments failed.',
+						color: 'yellow',
+					});
+				}
+			}
 		} catch (err) {
-			console.error("Error updating agent:", err);
+			console.error('Error updating agent:', err);
 			notifications.show({
-				title: "Error",
-				message: "Failed to update agent.",
-				color: "red",
+				title: 'Error',
+				message: 'Failed to update agent.',
+				color: 'red',
 			});
 		}
 	};
 
-	const isSubmitting = isPending;
+	const isSubmitting = isPending || updateAgentTools.isPending;
 	return (
 		<ContentContainer
-			title="Agent Creation"
+			title='Agent Creation'
 			showBackButton
 			onBackClick={() => {
-				navigate("/agents");
+				navigate('/agents');
 			}}
-			description="Start by setting up the key parameters required for a fully operational AI-driven campaign."
+			description='Start by setting up the key parameters required for a fully operational AI-driven campaign.'
 			rightSection={selectedElement ?? <AgentNotSelected />}
 		>
 			<Stack>
 				<form onSubmit={handleSubmit}>
-					<Stack gap="xs">
+					<Stack gap='xs'>
 						<SectionCard>
 							<TextInput
-								label="Agent Name"
+								label='Agent Name'
 								value={name}
 								onChange={(e) => setName(e.target.value)}
 							/>
@@ -135,7 +195,7 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
 							onSetRightSection={(rightSection: ReactNode) => {
 								setSelectedElement(rightSection);
 							}}
-							setEditableAgent={setEditableAgent}
+							setEditableAgent={handleAgentUpdate}
 						/>
 					</Stack>
 				</form>

@@ -1,4 +1,4 @@
-import { Button, Group, Loader, Stack } from '@mantine/core';
+import { Button, Group, Loader, Stack, Text } from '@mantine/core';
 import { type ReactNode } from 'react';
 import AgentVoices from '../AgentVoices';
 import AgentConfigurationTypeSelector from '../AgentConfigurationTypeSelector';
@@ -10,6 +10,7 @@ import type AgentListObject from '~/models/AgentListObject';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 import AgentTools from '../AgentTools';
 import AgentTemperatureControl from '../AgentTemperatureControl';
+import styles from './AgentConfiguration.module.css';
 
 type AgentConfigurationProps = {
 	agentMode?: boolean;
@@ -37,17 +38,24 @@ const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
 		(state) => state.agentConfigurationType
 	);
 	const handleAgentUpdate = (updatedFields: any) => {
-		setEditableAgent((prev: Partial<AgentConfigModel>) => ({
-			...prev,
-			...updatedFields,
-		}));
+		if (updatedFields.toolIds) {
+			// Pass toolIds directly to parent (AgentDetails)
+			setEditableAgent(updatedFields);
+		} else {
+			// Handle regular agent config updates
+			setEditableAgent((prev: Partial<AgentConfigModel>) => ({
+				...prev,
+				...updatedFields,
+			}));
+		}
 	};
 
 	const shouldDisplayAgentSettings =
 		(agentMode && agentConfigurationType === 'custom') || !agentMode;
 
 	return (
-		<Stack>
+		<Stack className={styles.configurationContainer} data-loading={isLoading}>
+			{isLoading && <div className={styles.loadingOverlay} />}
 			{withVoiceSelection && (
 				<AgentVoices
 					onSelectVoice={(voiceId: string) => {
@@ -81,21 +89,34 @@ const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
 						agentData={editableAgent}
 						onUpdateAgentData={handleAgentUpdate}
 					/>
-					<AgentTools onAgentUpdated={handleAgentUpdate} />
+					<AgentTools agentId={agent?.id} onAgentUpdated={handleAgentUpdate} />
 					<AgentKnowledgeBase />
 				</>
 			)}
-			<Group mb='xs'>
-				<Button
-					disabled={isLoading}
-					leftSection={
-						isLoading ? <Loader size={18} /> : <IconDeviceFloppy size={18} />
-					}
-					type='submit'
-				>
-					{isLoading ? 'Saving...' : 'Save Changes'}
-				</Button>
-			</Group>
+			<div className={styles.saveButtonContainer}>
+				{isLoading && (
+					<div className={`${styles.savingNotification} ${styles.visible}`}>
+						<div className={styles.savingContent}>
+							<div className={styles.savingSpinner} />
+							<Text className={styles.savingText}>
+								Saving agent configuration...
+							</Text>
+						</div>
+					</div>
+				)}
+				<Group mb='xs'>
+					<Button
+						className={styles.saveButton}
+						// data-loading={isLoading}
+						leftSection={
+							isLoading ? <Loader size={18} /> : <IconDeviceFloppy size={18} />
+						}
+						type='submit'
+					>
+						{isLoading ? 'Saving...' : 'Save Changes'}
+					</Button>
+				</Group>
+			</div>
 		</Stack>
 	);
 };
