@@ -6,7 +6,6 @@ import {
   Paper,
   Stack,
   Group,
-  Divider,
   Text,
   Badge,
   Title,
@@ -140,8 +139,8 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
       </Stack>
 
       {/* 2) Card with the Form inputs */}
-      <Paper withBorder radius="sm" p="md">
-        <Stack gap="sm">
+  <Paper withBorder radius="sm" p="xs">
+  <Stack gap="sm">
           <TextInput
             label="Name"
             placeholder="e.g., Product FAQs"
@@ -205,7 +204,8 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
             disabled={isLoading}
           />
 
-          {(type === KnowledgeBaseType.FILE || type === KnowledgeBaseType.TEXT) && (
+          {/* Only show upload inputs when creating a new knowledge base (no `id`) */}
+          {!id && (type === KnowledgeBaseType.FILE || type === KnowledgeBaseType.TEXT) && (
             <div className={styles.fileBlock}>
               <FileInput
                 label={type === KnowledgeBaseType.FILE ? 'Upload file' : 'Optional: Upload text file'}
@@ -235,24 +235,19 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
       </Paper>
 
       {/* 3) Card with informational stuff (not editable, visible for update only) */}
-      {id && (
-        <Paper withBorder radius="sm" p="md">
+      {id && kb?.type === KnowledgeBaseType.FILE && (
+        <Paper withBorder radius="sm" p="xs">
           <Stack gap="xs">
             <Group justify="space-between">
               <Text size="sm" c="dimmed">File name</Text>
               <Text size="sm">{file ? file.name : (kb?.file?.name ?? 'No file')}</Text>
-            </Group>
-            <Divider />
-            <Group justify="space-between">
-              <Text size="sm" c="dimmed">Status</Text>
-              <Badge color={headerStatus.color} size="sm">{headerStatus.label}</Badge>
             </Group>
           </Stack>
         </Paper>
       )}
 
       {/* 4) Card with the button actions */}
-      <Paper withBorder radius="sm" p="md" className={styles.footerCard}>
+  <Paper withBorder radius="sm" p="xs" className={styles.footerCard}>
         <Group justify="space-between" className={styles.footer}>
           <Text size="sm" c="dimmed">
             Changes are saved to your workspace.
@@ -272,4 +267,4 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 };
 
 export default KnowledgeBaseForm;
- 
+

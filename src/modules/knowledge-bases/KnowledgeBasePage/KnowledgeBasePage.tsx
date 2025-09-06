@@ -10,7 +10,6 @@ const KnowledgeBasePage = () => {
       title="Knowledge Bases"
       description="Manage collections of documents used by your agents"
       rightSection={right ?? <></>}
-      rightSectionTitle={right ? 'Actions' : undefined}
     >
       <KnowledgeBaseList />
     </ContentContainer>
