@@ -279,7 +279,7 @@ const KnowledgeBaseList = () => {
         </div>
       </div>
 
-      <Card radius="lg" className={styles.contentCard}>
+      <Card radius="xs" className={styles.contentCard}>
         <div className={styles.toolbar}>
           <div className={styles.filtersGroup}>
             <TextInput
