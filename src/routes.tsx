@@ -16,6 +16,7 @@ import ConversationPage from "./modules/conversations/ConversationsPage/Conversa
 import ContactsPage from "./modules/contacts/ContactsPage";
 import WelcomeCard from "./modules/overview/WelcomeCard";
 import { LoginForm } from "./modules/auth/LoginForm";
+import KnowledgeBasePage from "./modules/knowledge-bases/KnowledgeBasePage";
 
 const router = createBrowserRouter([
   // Public routes
@@ -39,6 +40,7 @@ const router = createBrowserRouter([
           { path: "prompt-form", element: <PromptFormPage /> },
           { path: "prompt-generator", element: <PromptGeneratorContainer /> },
           { path: "tools", element: <ToolsPage /> },
+          { path: "knowledge-bases", element: <KnowledgeBasePage /> },
         ],
       },
     ],

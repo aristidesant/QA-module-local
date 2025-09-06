@@ -5,8 +5,8 @@ import {
 	IconPhoneCall,
 	IconTools,
 	IconRobot,
-	IconMoodCog,
 	IconLibrary,
+  IconCheckupList,
 } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 import styles from './Sidebar.module.css';
@@ -54,14 +54,19 @@ export const menuItems: MenuItem[] = [
 ];
 
 export const maintenanceItems: MenuItem[] = [
-	{
-		label: 'Prompt Form',
-		icon: <IconSettings size={20} className={styles.menuIcon} />,
-		to: '/prompt-form',
-	},
-	{
-		label: 'Dispositions',
-		icon: <IconMoodCog size={22} className={styles.menuIcon} />,
-		to: '/dispositions',
-	},
+  {
+    label: "Prompt Form",
+    icon: <IconSettings size={20} className={styles.menuIcon} />,
+    to: "/prompt-form",
+  },
+  {
+    label: "Dispositions",
+    icon: <IconCheckupList size={20} className={styles.menuIcon} />,
+    to: "/dispositions",
+  },
+  {
+    label: "Knowledge Bases",
+    icon: <IconLibrary size={20} className={styles.menuIcon} />,
+    to: "/knowledge-bases",
+  }
 ];
