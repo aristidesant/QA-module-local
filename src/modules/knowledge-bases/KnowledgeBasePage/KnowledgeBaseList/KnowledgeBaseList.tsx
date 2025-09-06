@@ -4,7 +4,6 @@ import {
   Button,
   Text,
   ActionIcon,
-  Group,
   Badge,
   TextInput,
   Card,
@@ -87,73 +86,68 @@ const KnowledgeBaseList = () => {
 
           return (
             <div className={styles.knowledgeBaseCell}>
-              <div className={styles.mainContent}>
-                <div className={styles.titleRow}>
-                  <div className={styles.typeIcon}>
-                    {item.type === KnowledgeBaseType.FILE ? (
-                      <IconFileText size={20} className={styles.typeIconSvg} />
-                    ) : item.type === KnowledgeBaseType.URL ? (
-                      <IconExternalLink size={20} className={styles.typeIconSvg} />
-                    ) : (
-                      <IconArticle size={20} className={styles.typeIconSvg} />
-                    )}
-                  </div>
-                  <div className={styles.titleContent}>
-                    <Text fw={600} className={styles.knowledgeBaseName} title={item.name}>
-                      {item.name}
-                    </Text>
-                    <div className={styles.statusRow}>
-                      <Badge
-                        variant="light"
-                        color={config.color}
-                        size="sm"
-                        className={styles.statusBadge}
-                        leftSection={<StatusIcon size={12} />}
-                      >
-                        {item.status}
-                      </Badge>
-                      {item.uploadError && (
-                        <Tooltip
-                          label={<pre className={styles.errorTooltip}>{item.uploadError}</pre>}
-                          multiline
-                          maw={400}
-                        >
-                          <ActionIcon
-                            variant="subtle"
-                            color="red"
-                            size="sm"
-                            className={styles.errorIcon}
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <IconAlertTriangle size={14} />
-                          </ActionIcon>
-                        </Tooltip>
+              <div className={styles.cellContent}>
+                <div className={styles.leftSection}>
+                  <div className={styles.titleRow}>
+                    <div className={styles.typeIcon}>
+                      {item.type === KnowledgeBaseType.FILE ? (
+                        <IconFileText size={20} className={styles.typeIconSvg} />
+                      ) : item.type === KnowledgeBaseType.URL ? (
+                        <IconExternalLink size={20} className={styles.typeIconSvg} />
+                      ) : (
+                        <IconArticle size={20} className={styles.typeIconSvg} />
+                      )}
+                    </div>
+                    <div className={styles.titleContent}>
+                      <Text fw={600} className={styles.knowledgeBaseName} title={item.name}>
+                        {item.name}
+                      </Text>
+                      {item.description && (
+                        <Text size="sm" className={styles.description} title={item.description}>
+                          {truncate(item.description, 120)}
+                        </Text>
                       )}
                     </div>
                   </div>
                 </div>
-
-                {item.description && (
-                  <Text size="sm" className={styles.description} title={item.description}>
-                    {truncate(item.description, 120)}
+                <div className={styles.rightSection}>
+                  <div className={styles.statusSection}>
+                    <Badge
+                      variant="light"
+                      color={config.color}
+                      size="sm"
+                      className={styles.statusBadge}
+                      leftSection={<StatusIcon size={12} />}
+                    >
+                      {item.status}
+                    </Badge>
+                    {item.uploadError && (
+                      <Tooltip
+                        label={<pre className={styles.errorTooltip}>{item.uploadError}</pre>}
+                        multiline
+                        maw={400}
+                      >
+                        <ActionIcon
+                          variant="subtle"
+                          color="red"
+                          size="sm"
+                          className={styles.errorIcon}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <IconAlertTriangle size={14} />
+                        </ActionIcon>
+                      </Tooltip>
+                    )}
+                  </div>
+                  <Text size="xs" c="dimmed" className={styles.metadata}>
+                    Created {formatDate(item.createdAt)}
                   </Text>
-                )}
-
-                <Text size="xs" c="dimmed" className={styles.metadata}>
-                  Created {formatDate(item.createdAt)}
-                </Text>
+                </div>
               </div>
             </div>
           );
         },
-      }),
-      columnHelper.accessor('updatedAt', {
-        id: 'updatedAt',
-        header: 'Updated',
-        cell: ({ getValue }) => (
-          <Text size="sm">{formatDate(getValue() as string)}</Text>
-        ),
-        meta: { headerClassName: styles.nowrap, cellClassName: styles.nowrap },
+        size: 600,
       }),
       columnHelper.display({
         id: 'actions',
@@ -241,6 +235,7 @@ const KnowledgeBaseList = () => {
             </div>
           );
         },
+        size: 120,
         meta: { headerClassName: styles.actionsTh, cellClassName: styles.actionsTd },
       }),
     ],
@@ -359,7 +354,7 @@ const KnowledgeBaseList = () => {
             <BaseTable<KnowledgeBaseModel>
               data={filtered}
               columns={columns}
-              initialSort={[{ id: 'updatedAt', desc: true }]}
+              initialSort={[{ id: 'name', desc: false }]}
               onRowClick={(row) =>
                 setRight(
                   <KnowledgeBaseForm initialData={{ ...row, description: row.description ?? undefined }} />
