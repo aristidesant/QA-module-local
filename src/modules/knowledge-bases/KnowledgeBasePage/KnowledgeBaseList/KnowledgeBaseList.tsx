@@ -22,15 +22,12 @@ import {
   IconRefresh,
   IconAlertTriangle,
   IconFileText,
-  IconExternalLink,
   IconArticle,
+  IconLink,
+  IconExternalLink,
 } from '@tabler/icons-react';
 import { KnowledgeBaseType, KnowledgeBaseStatus } from '~/models/KnowledgeBaseModel';
-import {
-  useKnowledgeBases,
-  useDeleteKnowledgeBase,
-  useRetryKnowledgeBase,
-} from '~/queries/knowledgeBaseQueries';
+import { useKnowledgeBases, useDeleteKnowledgeBase, useRetryKnowledgeBase } from '~/queries/knowledgeBaseQueries';
 import useKnowledgeBaseStore from '../store/knowledgeBaseStore';
 import KnowledgeBaseForm from '../KnowledgeBaseForm/KnowledgeBaseForm';
 import { createColumnHelper, type ColumnDef } from '@tanstack/react-table';
@@ -78,7 +75,7 @@ const KnowledgeBaseList = () => {
     () => [
       columnHelper.accessor('name', {
         id: 'name',
-        header: 'Knowledge base',
+        header: 'Knowledge Base',
         cell: ({ row }) => {
           const item = row.original;
           const config = statusConfig[item.status as keyof typeof statusConfig] || statusConfig.INACTIVE;
@@ -89,19 +86,33 @@ const KnowledgeBaseList = () => {
               <div className={styles.cellContent}>
                 <div className={styles.leftSection}>
                   <div className={styles.titleRow}>
-                    <div className={styles.typeIcon}>
-                      {item.type === KnowledgeBaseType.FILE ? (
-                        <IconFileText size={20} className={styles.typeIconSvg} />
-                      ) : item.type === KnowledgeBaseType.URL ? (
-                        <IconExternalLink size={20} className={styles.typeIconSvg} />
-                      ) : (
-                        <IconArticle size={20} className={styles.typeIconSvg} />
-                      )}
-                    </div>
                     <div className={styles.titleContent}>
-                      <Text fw={600} className={styles.knowledgeBaseName} title={item.name}>
-                        {item.name}
-                      </Text>
+                      <div className={styles.titleWithBadge}>
+                        <Text fw={600} className={styles.knowledgeBaseName} title={item.name}>
+                          {item.name}
+                        </Text>
+                        <Badge
+                          variant="light"
+                          size="md"
+                          color={
+                            item.type === KnowledgeBaseType.FILE ? "blue" :
+                            item.type === KnowledgeBaseType.URL ? "green" :
+                            "orange"
+                          }
+                          className={styles.typeBadge}
+                          leftSection={
+                            item.type === KnowledgeBaseType.FILE ? (
+                              <IconFileText size={10} />
+                            ) : item.type === KnowledgeBaseType.URL ? (
+                              <IconLink size={10} />
+                            ) : (
+                              <IconArticle size={10} />
+                            )
+                          }
+                        >
+                          {item.type}
+                        </Badge>
+                      </div>
                       {item.description && (
                         <Text size="sm" className={styles.description} title={item.description}>
                           {truncate(item.description, 120)}
@@ -151,14 +162,17 @@ const KnowledgeBaseList = () => {
       }),
       columnHelper.display({
         id: 'actions',
-        header: '',
+        header: 'Actions',
         cell: ({ row }) => {
           const item = row.original;
           return (
             <div className={styles.actionsCell} onClick={(e) => e.stopPropagation()}>
               <Flex gap={"xs"}>
                 {item.file?.repositoryRoute || item.sourceUrl ? (
-                  <Tooltip label="Download file" position="top">
+                  <Tooltip
+                    label={item.type === KnowledgeBaseType.URL ? "Open URL" : "Download file"}
+                    position="top"
+                  >
                     <ActionIcon
                       component="a"
                       href={(item.file?.repositoryRoute as string) || (item.sourceUrl as string)}
@@ -168,7 +182,11 @@ const KnowledgeBaseList = () => {
                       variant="subtle"
                       className={styles.actionButton}
                     >
-                      <IconDownload size={16} />
+                      {item.type === KnowledgeBaseType.URL ? (
+                        <IconExternalLink size={16} />
+                      ) : (
+                        <IconDownload size={16} />
+                      )}
                     </ActionIcon>
                   </Tooltip>
                 ) : null}
@@ -199,9 +217,7 @@ const KnowledgeBaseList = () => {
                   <ActionIcon
                     onClick={() =>
                       setRight(
-                        <KnowledgeBaseForm
-                          initialData={{ ...item, description: item.description ?? undefined }}
-                        />
+                        <KnowledgeBaseForm id={Number(item.id)} />
                       )
                     }
                     size="sm"
@@ -249,10 +265,7 @@ const KnowledgeBaseList = () => {
     <div className={styles.pageContainer}>
       <div className={styles.pageHeader}>
         <div className={styles.titleSection}>
-          <h1 className={styles.pageTitle}>Knowledge Base</h1>
-          <Text className={styles.pageDescription}>
-            Manage collections of documents used by your agents
-          </Text>
+
         </div>
         <div className={styles.actionsSection}>
           <Button
@@ -355,11 +368,7 @@ const KnowledgeBaseList = () => {
               data={filtered}
               columns={columns}
               initialSort={[{ id: 'name', desc: false }]}
-              onRowClick={(row) =>
-                setRight(
-                  <KnowledgeBaseForm initialData={{ ...row, description: row.description ?? undefined }} />
-                )
-              }
+              onRowClick={(row) => setRight(<KnowledgeBaseForm id={Number(row.id)} />)}
               className={styles.baseTable}
               density="default"
             />

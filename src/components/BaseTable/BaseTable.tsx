@@ -8,6 +8,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { Table } from "@mantine/core";
+import { IconChevronUp, IconChevronDown, IconArrowsUpDown } from "@tabler/icons-react";
 import styles from "./BaseTable.module.css";
 
 export type BaseTableProps<TData> = {
@@ -57,19 +58,26 @@ function BaseTable<TData>({
                   ]
                     .filter(Boolean)
                     .join(" ")}
+                  data-sorted={header.column.getIsSorted() ? "true" : undefined}
                   onClick={header.column.getToggleSortingHandler()}
                 >
                   {header.isPlaceholder ? null : (
-                    <div>
+                    <div className={styles.headerContent}>
                       {flexRender(
                         header.column.columnDef.header,
                         header.getContext()
                       )}
-                      {header.column.getIsSorted() === "asc"
-                        ? " 🔼"
-                        : header.column.getIsSorted() === "desc"
-                        ? " 🔽"
-                        : ""}
+                      {header.column.getCanSort() && (
+                        <div className={styles.sortIcon}>
+                          {header.column.getIsSorted() === "asc" ? (
+                            <IconChevronUp size={16} />
+                          ) : header.column.getIsSorted() === "desc" ? (
+                            <IconChevronDown size={16} />
+                          ) : (
+                            <IconArrowsUpDown size={16} />
+                          )}
+                        </div>
+                      )}
                     </div>
                   )}
                 </th>

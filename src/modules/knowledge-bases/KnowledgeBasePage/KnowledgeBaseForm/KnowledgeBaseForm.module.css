@@ -1,12 +1,39 @@
 .container {
-  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--mantine-spacing-md);
+  padding: var(--mantine-spacing-lg);
 }
-.actions {
+
+.header {
   display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 8px;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+}
+
+.title {
+  margin: 0;
+}
+
+.fileBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-xs);
+}
+
+.fileName {
+  color: var(--mantine-color-dimmed);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.footerCard {
+  margin-top: var(--mantine-spacing-sm);
+}
+
+.footer {
+  margin-top: 0;
 }

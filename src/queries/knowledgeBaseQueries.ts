@@ -37,14 +37,17 @@ export const useKnowledgeBases = (params?: FindKnowledgeBasesParams) => {
   return useQuery<KnowledgeBaseModel[], Error>(options);
 };
 
-export const useKnowledgeBase = (id: number) => {
+export const useKnowledgeBase = (id?: number) => {
   const options: UseQueryOptions<KnowledgeBaseModel, Error> = {
-    queryKey: ["knowledgeBase", id] as const as readonly unknown[],
+    // keep stable key shape; when id is undefined, the query will be disabled
+    queryKey: ["knowledgeBase", id ?? null] as const as readonly unknown[],
     queryFn: async () => {
       const api = knowledgeBaseApi();
+      if (id == null) throw new Error("KnowledgeBase id is required");
       const data = await api.getKnowledgeBase(id);
       return data as KnowledgeBaseModel;
     },
+    enabled: id != null,
   };
 
   return useQuery<KnowledgeBaseModel, Error>(options);
