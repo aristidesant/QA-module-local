@@ -1,5 +1,5 @@
 import { Stack, Switch } from '@mantine/core';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import SectionCard from '~/components/SectionCard';
 import { useToolCategories } from '~/queries/toolCategoryQueries';
 import { useToolsByCategory, useAssignedTools } from '~/queries/toolQueries';
@@ -26,6 +26,9 @@ const AgentTools: React.FC<AgentToolsProps> = ({ agentId, onAgentUpdated }) => {
 	// Local state to track selected tool identifiers
 	const [selectedToolIds, setSelectedToolIds] = useState<string[]>([]);
 
+	// Track if this is the initial load to avoid calling callback on first render
+	const isInitialLoad = useRef(true);
+
 	// Initialize selected tools from assigned tools when data loads
 	useEffect(() => {
 		if (assignedTools) {
@@ -36,14 +39,19 @@ const AgentTools: React.FC<AgentToolsProps> = ({ agentId, onAgentUpdated }) => {
 		}
 	}, [assignedTools]);
 
-	// Notify parent whenever selectedToolIds changes
+	// Notify parent whenever selectedToolIds changes (but not on initial load)
 	useEffect(() => {
+		if (isInitialLoad.current) {
+			isInitialLoad.current = false;
+			return;
+		}
+
 		if (onAgentUpdated && selectedToolIds.length >= 0) {
 			onAgentUpdated({
 				toolIds: selectedToolIds,
 			});
 		}
-	}, [selectedToolIds, onAgentUpdated]);
+	}, [selectedToolIds]); // Remove onAgentUpdated from dependencies
 
 	const handleToolToggle = useCallback(
 		(toolIdentifier: string, isCurrentlySelected: boolean) => {

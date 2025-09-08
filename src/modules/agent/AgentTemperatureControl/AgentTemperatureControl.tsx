@@ -32,7 +32,7 @@ const AgentTemperatureControl: React.FC<AgentTemperatureControlProps> = ({
 				},
 			});
 		},
-		[agentData, onUpdateAgentData]
+		[agentData?.conversationConfig] // Remove onUpdateAgentData from dependencies
 	);
 
 	const handlePresetClick = useCallback(

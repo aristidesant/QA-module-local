@@ -195,7 +195,7 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
 							onSetRightSection={(rightSection: ReactNode) => {
 								setSelectedElement(rightSection);
 							}}
-							setEditableAgent={handleAgentUpdate}
+							onUpdateAgent={handleAgentUpdate}
 						/>
 					</Stack>
 				</form>
