@@ -1,11 +1,11 @@
-import type { Voice } from "./AgentVoiceModel";
+import type { Voice } from './AgentVoiceModel';
 
 export default interface AgentListObject {
 	id: string;
 	name: string;
 	config: AgentConfigModel;
-	type: "INBOUND" | "OUTBOUND";
-	status: "ACTIVE" | "INACTIVE";
+	type: 'INBOUND' | 'OUTBOUND';
+	status: 'ACTIVE' | 'INACTIVE';
 	clientId: number;
 	userId: number;
 	language: string;
@@ -22,7 +22,7 @@ export type AgentUpdateModel = {
 	platformSettings: Record<string, any>;
 	name: string;
 	promptId: number;
-	agentType: "INBOUND" | "OUTBOUND";
+	agentType: 'INBOUND' | 'OUTBOUND';
 	voiceId?: string;
 };
 

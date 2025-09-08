@@ -113,9 +113,8 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent }) => {
 
 		const data: Partial<AgentUpdateModel> = {
 			name,
-			//! THIS WAS THE OLD APPROACH, TO BE STUDIED
-			// voiceId: voiceId || updatedConfig?.tts?.voiceId,
-			voiceId: agent.voice?.id || voiceId,
+			voiceId: voiceId || updatedConfig?.tts?.voiceId || agent.voice?.id,
+			// voiceId: agent.voice?.id || voiceId,
 			conversationConfig: updatedConfig,
 			platformSettings: editableAgent.platformSettings,
 		};
