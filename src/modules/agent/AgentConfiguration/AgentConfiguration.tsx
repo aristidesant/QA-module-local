@@ -1,5 +1,5 @@
 import { Button, Group, Loader, Stack, Text } from '@mantine/core';
-import { type ReactNode } from 'react';
+import { type ReactNode, useCallback } from 'react';
 import AgentVoices from '../AgentVoices';
 import AgentConfigurationTypeSelector from '../AgentConfigurationTypeSelector';
 import AgentSettings from '../AgentSettings';
@@ -20,9 +20,7 @@ type AgentConfigurationProps = {
 	editableAgent?: Partial<AgentConfigModel>;
 	onVoiceSelect?: (voiceId: string) => void;
 	onSetRightSection?: (rightSection: ReactNode) => void;
-	setEditableAgent: React.Dispatch<
-		React.SetStateAction<Partial<AgentConfigModel>>
-	>;
+	onUpdateAgent: (updatedFields: Partial<AgentConfigModel>) => void;
 };
 const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
 	agent,
@@ -30,25 +28,20 @@ const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
 	agentMode,
 	withVoiceSelection = true,
 	isLoading = false,
-	setEditableAgent,
+	onUpdateAgent,
 	onSetRightSection,
 	onVoiceSelect = () => {}, // Default no-op function
 }) => {
 	const agentConfigurationType = useAgentStore(
 		(state) => state.agentConfigurationType
 	);
-	const handleAgentUpdate = (updatedFields: any) => {
-		if (updatedFields.toolIds) {
-			// Pass toolIds directly to parent (AgentDetails)
-			setEditableAgent(updatedFields);
-		} else {
-			// Handle regular agent config updates
-			setEditableAgent((prev: Partial<AgentConfigModel>) => ({
-				...prev,
-				...updatedFields,
-			}));
-		}
-	};
+	const handleAgentUpdate = useCallback(
+		(updatedFields: any) => {
+			// Pass the updated fields directly to the parent handler
+			onUpdateAgent(updatedFields);
+		},
+		[onUpdateAgent]
+	);
 
 	const shouldDisplayAgentSettings =
 		(agentMode && agentConfigurationType === 'custom') || !agentMode;
