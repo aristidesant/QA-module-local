@@ -24,3 +24,30 @@
 .sortable {
   cursor: pointer;
 }
+
+/* Header Content and Sort Icons */
+.headerContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.sortIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--mantine-color-gray-5);
+  transition: color 0.2s ease;
+  opacity: 0.6;
+}
+
+.sortable:hover .sortIcon {
+  color: var(--mantine-color-blue-6);
+  opacity: 1;
+}
+
+.th[data-sorted] .sortIcon {
+  color: var(--mantine-color-blue-6);
+  opacity: 1;
+}
