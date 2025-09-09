@@ -9,6 +9,7 @@ import {
 	ActionIcon,
 	Tooltip,
 	Pagination,
+	Badge,
 } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
@@ -45,9 +46,23 @@ const DispositionCatalogList: FC = () => {
 				cell: ({ row }) => {
 					const name = row.original.name;
 					const description = row.original.description;
+					const type = row.original.type;
 					return (
 						<div className={styles.nameCell}>
-							<div className={styles.nameText}>{name}</div>
+							<div className={styles.nameRow}>
+								<div className={styles.nameText}>{name}</div>
+								{type && (
+									<div className={styles.typeBadge}>
+										<Badge
+											size='xs'
+											variant='light'
+											color={type === 'INBOUND' ? 'blue' : 'green'}
+										>
+											{type}
+										</Badge>
+									</div>
+								)}
+							</div>
 							{description && (
 								<div className={styles.descriptionText}>{description}</div>
 							)}
@@ -102,7 +117,7 @@ const DispositionCatalogList: FC = () => {
 					notifications.show({
 						title: 'Catalog deleted',
 						message: dispositionLabel(
-							'Disposition catalog was deleted successfully.'
+							'Outcome catalog was deleted successfully.'
 						),
 						color: 'teal',
 					});
@@ -111,7 +126,7 @@ const DispositionCatalogList: FC = () => {
 					notifications.show({
 						title: 'Delete failed',
 						message: dispositionLabel(
-							error?.message || 'Failed to delete disposition catalog.'
+							error?.message || 'Failed to delete outcome catalog.'
 						),
 						color: 'red',
 					});
@@ -160,7 +175,7 @@ const DispositionCatalogList: FC = () => {
 						notifications.show({
 							title: 'Catalog created',
 							message: dispositionLabel(
-								'Disposition catalog was created successfully.'
+								'Outcome catalog was created successfully.'
 							),
 							color: 'teal',
 						});
@@ -169,7 +184,7 @@ const DispositionCatalogList: FC = () => {
 						notifications.show({
 							title: 'Create failed',
 							message: dispositionLabel(
-								error?.message || 'Failed to create disposition catalog.'
+								error?.message || 'Failed to create outcome catalog.'
 							),
 							color: 'red',
 						});
@@ -197,7 +212,7 @@ const DispositionCatalogList: FC = () => {
 						notifications.show({
 							title: 'Catalog updated',
 							message: dispositionLabel(
-								'Disposition catalog was updated successfully.'
+								'Outcome catalog was updated successfully.'
 							),
 							color: 'teal',
 						});
@@ -206,7 +221,7 @@ const DispositionCatalogList: FC = () => {
 						notifications.show({
 							title: 'Update failed',
 							message: dispositionLabel(
-								error?.message || 'Failed to update disposition catalog.'
+								error?.message || 'Failed to update outcome catalog.'
 							),
 							color: 'red',
 						});
@@ -220,7 +235,7 @@ const DispositionCatalogList: FC = () => {
 		<div className={styles.root}>
 			<Group justify='space-between' mb='md'>
 				<Text fw={700} size='lg'>
-					Disposition Catalogs
+					Outcome Catalogs
 				</Text>
 				<Button onClick={handleCreate} size='sm'>
 					Add New Catalog
@@ -228,7 +243,7 @@ const DispositionCatalogList: FC = () => {
 			</Group>
 			{!data || data.length === 0 ? (
 				<Center>
-					<Text>No disposition catalogs found.</Text>
+					<Text>No outcome catalogs found.</Text>
 				</Center>
 			) : (
 				<>

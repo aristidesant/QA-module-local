@@ -28,12 +28,12 @@ export function useDispositionLabel() {
 		if (!label || typeof label !== 'string') return label;
 		if (selectedCampaign?.type !== 'INBOUND') return label;
 
-		// Regex captures 'disposition' or 'dispositions' with word boundaries, any casing.
-		const pattern = /\b(disposition)(s)?\b/gi;
+		// Regex captures either 'disposition(s)' or 'outcome(s)' with word boundaries, any casing.
+		const pattern = /\b(disposition|outcome)(s)?\b/gi;
 
 		return label.replace(
 			pattern,
-			(match, _singular: string, pluralPart: string) => {
+			(match: string, _singular: string, pluralPart: string) => {
 				const isPlural = Boolean(pluralPart);
 
 				// Determine casing style of the original match
@@ -43,6 +43,7 @@ export function useDispositionLabel() {
 					match[0] === match[0].toUpperCase() &&
 					match.slice(1) === match.slice(1).toLowerCase();
 
+				// Map to Contact Driver(s) respecting casing
 				if (isAllUpper) {
 					return isPlural ? 'CONTACT DRIVERS' : 'CONTACT DRIVER';
 				}

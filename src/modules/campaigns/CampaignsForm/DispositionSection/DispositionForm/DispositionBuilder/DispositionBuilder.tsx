@@ -15,7 +15,7 @@ import {
 	useCreateDispositionFlow,
 	useUpdateDispositionFlow,
 } from '~/queries/dispositionFlowQueries';
-import type { DispositionCatalogModel } from '~/models/DispositionCatalogModels';
+// import type { DispositionCatalogModel } from '~/models/DispositionCatalogModels';
 import type { DispositionNode } from '~/models/DispositionNodeModel';
 import { useDispositionBuilderStore } from '../../dispositionStore';
 import NodeEditor from './NodeEditor';
@@ -92,10 +92,11 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 			return;
 		}
 
-		const filledFlowJson: DispositionCatalogModel = {
+		const filledFlowJson = {
 			id: flowJson.id ?? 0,
 			name: flowJson.name ?? 'Untitled Catalog',
 			clientId: flowJson.clientId ?? 0,
+			type: flowJson.type ?? 'OUTBOUND',
 			isActive: flowJson.isActive ?? true,
 			isDefault: flowJson.isDefault ?? false,
 			createdAt: flowJson.createdAt ?? new Date().toISOString(),
@@ -108,13 +109,13 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 			if (dispositionFlow?.id) {
 				await updateMutation.mutateAsync({
 					id: dispositionFlow?.id,
-					data: { ...dispositionFlow, flowJson: filledFlowJson },
+					data: { ...dispositionFlow, flowJson: filledFlowJson as any },
 				});
 				onComplete?.();
 			} else {
 				console.log('Creating new disposition flow', campaignId);
 				await createMutation.mutateAsync({
-					flowJson: filledFlowJson,
+					flowJson: filledFlowJson as any,
 					campaignId,
 				});
 				onComplete?.();
