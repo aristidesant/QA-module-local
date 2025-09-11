@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback } from 'react';
 import {
 	Card,
 	Text,
@@ -6,19 +6,20 @@ import {
 	LoadingOverlay,
 	ActionIcon,
 	Button,
-} from "@mantine/core";
-import { openConfirmModal } from "@mantine/modals";
-import { IconDots, IconEye, IconTools, IconTrash } from "@tabler/icons-react";
-import AgentProfile from "~/components/AgentProfile/AgentProfile";
+} from '@mantine/core';
+import { openConfirmModal } from '@mantine/modals';
+import { IconDots, IconEye, IconTools, IconTrash } from '@tabler/icons-react';
+import AgentProfile from '~/components/AgentProfile/AgentProfile';
 
-import styles from "./AgentCard.module.css";
-import type AgentListObject from "~/models/AgentListObject";
-import { useDeleteAgent } from "~/queries/agentQueries";
-import { useRevalidator } from "react-router";
-import { useNavigate } from "react-router";
-import { notifications } from "@mantine/notifications";
-import { OutboundCallForm } from "~/components/OutboundCallForm";
-import { modals } from "@mantine/modals";
+import styles from './AgentCard.module.css';
+import type AgentListObject from '~/models/AgentListObject';
+import { useDeleteAgent } from '~/queries/agentQueries';
+import { useRevalidator } from 'react-router';
+import { useNavigate } from 'react-router';
+import { notifications } from '@mantine/notifications';
+import { OutboundCallForm } from '~/components/OutboundCallForm';
+import { modals } from '@mantine/modals';
+import { useAgentStore } from '~/stores/agentStore';
 
 export interface AgentCardProps {
 	agent: AgentListObject;
@@ -32,6 +33,7 @@ export const AgentCard: React.FC<AgentCardProps> = ({
 	showDelete = true,
 }) => {
 	const { revalidate } = useRevalidator();
+	const { setSelectedAgent } = useAgentStore();
 	const { mutateAsync: deleteAgent, isPending: isDeleting } = useDeleteAgent();
 	const navigate = useNavigate();
 
@@ -42,13 +44,13 @@ export const AgentCard: React.FC<AgentCardProps> = ({
 				title: `Remove Agent`,
 				centered: true,
 				children: (
-					<Text size="sm">
+					<Text size='sm'>
 						Are you sure you want to remove <b>{agent.name}</b>? This action
 						cannot be undone.
 					</Text>
 				),
-				labels: { confirm: "Remove Agent", cancel: "Cancel" },
-				confirmProps: { color: "red" },
+				labels: { confirm: 'Remove Agent', cancel: 'Cancel' },
+				confirmProps: { color: 'red' },
 				onCancel: () => {},
 				onConfirm: async () => {
 					try {
@@ -56,12 +58,12 @@ export const AgentCard: React.FC<AgentCardProps> = ({
 						revalidate();
 					} catch (error) {
 						// eslint-disable-next-line no-console
-						console.error("Error deleting agent:", error);
+						console.error('Error deleting agent:', error);
 					}
 					notifications.show({
-						title: "Agent Removed",
+						title: 'Agent Removed',
 						message: `${agent.name} has been removed successfully.`,
-						color: "green",
+						color: 'green',
 						autoClose: 3000,
 						icon: <IconTrash size={16} />,
 					});
@@ -74,6 +76,7 @@ export const AgentCard: React.FC<AgentCardProps> = ({
 	const handleView = useCallback(
 		(e: React.MouseEvent) => {
 			e.stopPropagation();
+			setSelectedAgent(agent);
 			navigate(`/agent/${agent.id}`);
 		},
 		[navigate, agent.id]
@@ -87,22 +90,22 @@ export const AgentCard: React.FC<AgentCardProps> = ({
 
 	const handleDemoCall = (agent: AgentListObject) => {
 		modals.open({
-			modalId: "demo-call-modal",
+			modalId: 'demo-call-modal',
 			withCloseButton: false,
 			children: (
 				<OutboundCallForm
 					agent={agent}
 					onSuccess={() => {
-						modals.close("demo-call-modal");
+						modals.close('demo-call-modal');
 						notifications.show({
-							title: "Demo Call Started",
+							title: 'Demo Call Started',
 							message: `A demo call with ${agent.name} has been initiated.`,
-							color: "green",
+							color: 'green',
 							autoClose: 3000,
 							icon: <IconEye size={16} />,
 						});
 					}}
-					onClose={() => modals.close("demo-call-modal")}
+					onClose={() => modals.close('demo-call-modal')}
 				/>
 			),
 		});
@@ -111,9 +114,9 @@ export const AgentCard: React.FC<AgentCardProps> = ({
 	return (
 		<Card
 			withBorder
-			radius={"lg"}
+			radius={'lg'}
 			onClick={onClick ? () => onClick(agent) : undefined}
-			data-testid="agent-card"
+			data-testid='agent-card'
 			className={styles.agentCard}
 		>
 			<LoadingOverlay visible={isDeleting} />
@@ -124,14 +127,14 @@ export const AgentCard: React.FC<AgentCardProps> = ({
 					withArrow
 					width={200}
 					withinPortal
-					position="bottom-end"
-					shadow="md"
+					position='bottom-end'
+					shadow='md'
 				>
 					<Menu.Target>
 						<ActionIcon
-							type="button"
-							variant="transparent"
-							aria-label="Agent actions"
+							type='button'
+							variant='transparent'
+							aria-label='Agent actions'
 							onClick={(e) => e.stopPropagation()}
 						>
 							<IconDots size={20} />
@@ -146,7 +149,7 @@ export const AgentCard: React.FC<AgentCardProps> = ({
 						</Menu.Item>
 						{showDelete && (
 							<Menu.Item
-								color="red"
+								color='red'
 								leftSection={<IconTrash size={16} />}
 								onClick={handleRemove}
 							>
@@ -162,7 +165,7 @@ export const AgentCard: React.FC<AgentCardProps> = ({
 				<div className={styles.agentProfileWrapper}>
 					<AgentProfile
 						agent={agent}
-						size="md"
+						size='md'
 						onClick={onClick ? () => onClick(agent) : undefined}
 					/>
 				</div>
@@ -174,8 +177,8 @@ export const AgentCard: React.FC<AgentCardProps> = ({
 				<div className={styles.bottomContent}>
 					<Button
 						fullWidth
-						color="dark"
-						variant="light"
+						color='dark'
+						variant='light'
 						onClick={(event) => {
 							event.stopPropagation();
 							handleDemoCall(agent);
