@@ -1,20 +1,33 @@
 import React, { useState } from 'react';
-import { IconFileText, IconPlus } from '@tabler/icons-react';
+import { IconFileText, IconFileXFilled, IconPlus } from '@tabler/icons-react';
 import styles from './AgentKnowledgeBase.module.css';
 import SectionCard from '~/components/SectionCard';
-import { ThemeIcon, Loader, Text, Badge } from '@mantine/core';
+import {
+	ThemeIcon,
+	Loader,
+	Text,
+	Badge,
+	ActionIcon,
+	Tooltip,
+} from '@mantine/core';
 import { useAgentStore } from '~/stores/agentStore';
-import { useGetAgentKnowledgeBases } from '~/queries/agentKnowledgeBaseQueries';
+import {
+	useGetAgentKnowledgeBases,
+	useUnassignKnowledgeBase,
+} from '~/queries/agentKnowledgeBaseQueries';
 import AddKnowledgeBaseModal from './AddKnowledgeBaseModal';
+import { modals } from '@mantine/modals';
 
 export const AgentKnowledgeBase: React.FC = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [unassigningKbId, setUnassigningKbId] = useState<number | null>(null);
 	const agent = useAgentStore((state) => state.selectedAgent);
 	const {
 		data: knowledgeBases,
 		isLoading,
 		error,
 	} = useGetAgentKnowledgeBases(agent?.id || '');
+	const unassignMutation = useUnassignKnowledgeBase();
 
 	const getIconForKnowledgeBase = () => {
 		// Since AgentKnowledgeBase doesn't have type info, use a generic icon
@@ -40,6 +53,39 @@ export const AgentKnowledgeBase: React.FC = () => {
 
 	const handleCloseModal = () => {
 		setIsModalOpen(false);
+	};
+
+	const handleUnassignKnowledgeBase = (
+		knowledgeBaseId: number,
+		knowledgeBaseName: string
+	) => {
+		modals.openConfirmModal({
+			title: 'Unassign Knowledge Base',
+			children: (
+				<Text size='sm'>
+					Are you sure you want to unassign <strong>{knowledgeBaseName}</strong>{' '}
+					from this agent? This action cannot be undone.
+				</Text>
+			),
+			labels: { confirm: 'Unassign', cancel: 'Cancel' },
+			confirmProps: { color: 'red' },
+			onConfirm: async () => {
+				if (!agent?.id) return;
+
+				setUnassigningKbId(knowledgeBaseId);
+				try {
+					await unassignMutation.mutateAsync({
+						agentId: agent.id,
+						knowledgeBaseId,
+					});
+					// The mutation's onSuccess callback will automatically invalidate and refetch the queries
+				} catch (error) {
+					console.error('Error unassigning knowledge base:', error);
+				} finally {
+					setUnassigningKbId(null);
+				}
+			},
+		});
 	};
 
 	return (
@@ -69,14 +115,33 @@ export const AgentKnowledgeBase: React.FC = () => {
 								<div className={styles.itemInfo}>
 									<div className={styles.itemHeader}>
 										<div className={styles.label}>{item.knowledgeBaseName}</div>
-										<Badge
-											size='sm'
-											color={getStatusColor(item.knowledgeBaseStatus)}
-											variant='light'
-											className={styles.statusBadge}
-										>
-											{item.knowledgeBaseStatus}
-										</Badge>
+										<div className={styles.itemActions}>
+											<Badge
+												size='sm'
+												color={getStatusColor(item.knowledgeBaseStatus)}
+												variant='light'
+												className={styles.statusBadge}
+											>
+												{item.knowledgeBaseStatus}
+											</Badge>
+											<Tooltip label='Unassign knowledge base' position='left'>
+												<ActionIcon
+													variant='subtle'
+													color='red'
+													size='md'
+													onClick={() =>
+														handleUnassignKnowledgeBase(
+															item.knowledgeBaseId,
+															item.knowledgeBaseName
+														)
+													}
+													loading={unassigningKbId === item.knowledgeBaseId}
+													aria-label={`Remove ${item.knowledgeBaseName}`}
+												>
+													<IconFileXFilled size={18} />
+												</ActionIcon>
+											</Tooltip>
+										</div>
 									</div>
 									{item.assignedAt && (
 										<div className={styles.assignedDate}>

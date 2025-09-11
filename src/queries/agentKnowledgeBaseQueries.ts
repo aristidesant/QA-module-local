@@ -45,3 +45,23 @@ export const useAssignKnowledgeBase = () => {
 		},
 	});
 };
+
+export const useUnassignKnowledgeBase = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async (data: Partial<AgentKnowledgeBaseQueryParams>) => {
+			const api = agentKnowledgeBaseApi();
+			return api.unassignKnowledgeBase(data);
+		},
+		onSuccess: (_data, variables) => {
+			// Invalidate agent-specific knowledge bases
+			if (variables.agentId) {
+				queryClient.invalidateQueries({
+					queryKey: ['agent', variables.agentId, 'knowledge-bases'],
+				});
+			}
+			// Invalidate all agent knowledge bases
+			queryClient.invalidateQueries({ queryKey: ['agent-knowledge-bases'] });
+		},
+	});
+};
