@@ -1,7 +1,7 @@
-import { Modal, TextInput, Checkbox, Button, Group } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import type { DispositionNode } from "~/models/DispositionNodeModel";
-import { useEffect } from "react";
+import { Modal, TextInput, Checkbox, Button, Group } from '@mantine/core';
+import { useForm } from '@mantine/form';
+import type { DispositionNode } from '~/models/DispositionNodeModel';
+import { useEffect } from 'react';
 
 export type DispositionNodeFormValues = {
 	name: string;
@@ -26,12 +26,12 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 	onClose,
 	onSubmit,
 	initialValues,
-	title = "Disposition Node",
+	title = 'Outcome Node',
 }) => {
 	const form = useForm<DispositionNodeFormValues>({
 		initialValues: {
-			name: "",
-			description: "",
+			name: '',
+			description: '',
 			isInvalidatesNumber: false,
 			requiresReschedule: false,
 			isFinal: false,
@@ -43,8 +43,8 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 
 	useEffect(() => {
 		form.setValues({
-			name: initialValues?.name || "",
-			description: initialValues?.description || "",
+			name: initialValues?.name || '',
+			description: initialValues?.description || '',
 			isInvalidatesNumber: initialValues?.isInvalidatesNumber || false,
 			requiresReschedule: initialValues?.requiresReschedule || false,
 			isFinal: initialValues?.isFinal || false,
@@ -61,46 +61,46 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 		<Modal opened={opened} onClose={onClose} title={title} centered>
 			<form onSubmit={form.onSubmit(onSubmit)}>
 				<TextInput
-					label="Name"
+					label='Name'
 					required
-					{...form.getInputProps("name")}
-					mb="sm"
+					{...form.getInputProps('name')}
+					mb='sm'
 				/>
 				<TextInput
-					label="Description"
-					{...form.getInputProps("description")}
-					mb="sm"
+					label='Description'
+					{...form.getInputProps('description')}
+					mb='sm'
 				/>
 				<Checkbox
-					label="Invalidates Number"
-					{...form.getInputProps("isInvalidatesNumber", { type: "checkbox" })}
-					mb="xs"
+					label='Invalidates Number'
+					{...form.getInputProps('isInvalidatesNumber', { type: 'checkbox' })}
+					mb='xs'
 				/>
 				<Checkbox
-					label="Requires Reschedule"
-					{...form.getInputProps("requiresReschedule", { type: "checkbox" })}
-					mb="xs"
+					label='Requires Reschedule'
+					{...form.getInputProps('requiresReschedule', { type: 'checkbox' })}
+					mb='xs'
 				/>
 				<Checkbox
-					label="Is Final"
-					{...form.getInputProps("isFinal", { type: "checkbox" })}
-					mb="xs"
+					label='Is Final'
+					{...form.getInputProps('isFinal', { type: 'checkbox' })}
+					mb='xs'
 				/>
 				<Checkbox
-					label="Is Voice Mail"
-					{...form.getInputProps("isVoiceMail", { type: "checkbox" })}
-					mb="xs"
+					label='Is Voice Mail'
+					{...form.getInputProps('isVoiceMail', { type: 'checkbox' })}
+					mb='xs'
 				/>
 				<Checkbox
-					label="Active"
-					{...form.getInputProps("isActive", { type: "checkbox" })}
-					mb="md"
+					label='Active'
+					{...form.getInputProps('isActive', { type: 'checkbox' })}
+					mb='md'
 				/>
-				<Group justify="flex-end">
-					<Button variant="default" onClick={onClose} type="button">
+				<Group justify='flex-end'>
+					<Button variant='default' onClick={onClose} type='button'>
 						Cancel
 					</Button>
-					<Button type="submit">Save</Button>
+					<Button type='submit'>Save</Button>
 				</Group>
 			</form>
 		</Modal>
