@@ -15,7 +15,6 @@ import { notifications } from '@mantine/notifications';
 import { IconDeviceFloppy, IconX } from '@tabler/icons-react';
 import { usePromptHistoryStore } from '../usePromptHistoryStore';
 import { useUpdatePrompt } from '~/modules/prompt-generator/queries/promptGeneratorQueries';
-import type { Prompt } from '~/models/PromptModel';
 import styles from './EditPromptModal.module.css';
 
 interface EditPromptFormValues {
@@ -74,9 +73,7 @@ export const EditPromptModal: React.FC = () => {
 		if (!selectedPrompt) return;
 
 		try {
-			const updateData: Partial<Prompt> = {
-				name: values.name,
-				status: values.status,
+			const updateData = {
 				generationInput: {
 					agent_goal: values.agent_goal,
 					agent_role: values.agent_role,
@@ -85,6 +82,8 @@ export const EditPromptModal: React.FC = () => {
 					communication_tone: values.communication_tone,
 					financial_product_type: values.financial_product_type,
 				},
+				typeId: selectedPrompt.typeId,
+				status: values.status,
 			};
 
 			await updatePrompt({
