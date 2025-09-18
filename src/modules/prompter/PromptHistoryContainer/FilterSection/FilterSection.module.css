@@ -1,0 +1,21 @@
+.filtersSection {
+	background-color: var(--mantine-color-gray-0);
+	border-radius: var(--mantine-radius-md);
+}
+
+@media (max-width: 768px) {
+	.filtersSection {
+		padding: var(--mantine-spacing-sm);
+	}
+
+	.filtersSection [data-mantine-component='Group'] {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.filtersSection [data-mantine-component='TextInput'],
+	.filtersSection [data-mantine-component='Select'] {
+		min-width: auto;
+		width: 100%;
+	}
+}

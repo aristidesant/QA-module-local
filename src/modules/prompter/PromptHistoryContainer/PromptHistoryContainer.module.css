@@ -1,0 +1,18 @@
+.container {
+	width: 100%;
+}
+
+.tableContainer {
+	border-radius: var(--mantine-radius-md);
+	overflow: hidden;
+}
+
+.table {
+	background-color: var(--mantine-color-white);
+}
+
+.emptyState {
+	padding: var(--mantine-spacing-xl);
+	background-color: var(--mantine-color-gray-0);
+	border-radius: var(--mantine-radius-md);
+}
