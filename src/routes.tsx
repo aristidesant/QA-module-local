@@ -9,8 +9,7 @@ import RouteProtecter, {
 import Layout from './components/Layout/Layout';
 import CampaignsPage from './modules/campaigns/CampaignsPage/CampaignsPage';
 import ToolsPage from './modules/tools/ToolsPage';
-import { PromptGeneratorContainer } from './modules/prompt-generator/PromptGeneratorContainer';
-import { PromptFormPage } from './modules/prompt-form/PromptFormPage';
+import { PrompterPage } from './modules/prompter/PrompterPage';
 import { DispositionPage } from './modules/dispositions';
 import ConversationPage from './modules/conversations/ConversationsPage/ConversationPage';
 import ContactsPage from './modules/contacts/ContactsPage';
@@ -37,8 +36,7 @@ const router = createBrowserRouter([
 					{ path: 'contacts', element: <ContactsPage /> },
 					{ path: 'conversations', element: <ConversationPage /> },
 					{ path: 'outcomes', element: <DispositionPage /> },
-					{ path: 'prompt-form', element: <PromptFormPage /> },
-					{ path: 'prompt-generator', element: <PromptGeneratorContainer /> },
+					{ path: 'prompter', element: <PrompterPage /> },
 					{ path: 'tools', element: <ToolsPage /> },
 					{ path: 'knowledge-bases', element: <KnowledgeBasePage /> },
 				],

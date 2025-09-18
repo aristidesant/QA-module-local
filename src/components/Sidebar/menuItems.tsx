@@ -1,6 +1,5 @@
 import {
 	IconLayoutDashboard,
-	IconSettings,
 	IconListDetails,
 	IconPhoneCall,
 	IconTools,
@@ -32,9 +31,9 @@ export const menuItems: MenuItem[] = [
 		to: '/agents',
 	},
 	{
-		label: 'Prompt Generator',
+		label: 'Prompter',
 		icon: <IconLibrary size={20} className={styles.menuIcon} />,
-		to: '/prompt-generator',
+		to: '/prompter',
 	},
 	{
 		label: 'Campaigns',
@@ -54,11 +53,6 @@ export const menuItems: MenuItem[] = [
 ];
 
 export const maintenanceItems: MenuItem[] = [
-	{
-		label: 'Prompt Form',
-		icon: <IconSettings size={20} className={styles.menuIcon} />,
-		to: '/prompt-form',
-	},
 	{
 		label: 'Outcomes',
 		icon: <IconCheckupList size={20} className={styles.menuIcon} />,
