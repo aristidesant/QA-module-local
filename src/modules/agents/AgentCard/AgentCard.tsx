@@ -8,10 +8,19 @@ import {
 	Button,
 } from '@mantine/core';
 import { openConfirmModal } from '@mantine/modals';
-import { IconDots, IconEye, IconTools, IconTrash } from '@tabler/icons-react';
+import {
+	IconDots,
+	IconEye,
+	IconTools,
+	IconTrash,
+	IconPhoneCall,
+	IconPhoneIncoming,
+	IconPhoneOutgoing,
+} from '@tabler/icons-react';
 import AgentProfile from '~/components/AgentProfile/AgentProfile';
 
 import styles from './AgentCard.module.css';
+import badgeStyles from './AgentTypeBadge.module.css';
 import type AgentListObject from '~/models/AgentListObject';
 import { useDeleteAgent } from '~/queries/agentQueries';
 import { useRevalidator } from 'react-router';
@@ -114,10 +123,11 @@ export const AgentCard: React.FC<AgentCardProps> = ({
 	return (
 		<Card
 			withBorder
-			radius={'lg'}
+			radius='md'
 			onClick={onClick ? () => onClick(agent) : undefined}
 			data-testid='agent-card'
 			className={styles.agentCard}
+			padding='lg'
 		>
 			<LoadingOverlay visible={isDeleting} />
 
@@ -137,7 +147,7 @@ export const AgentCard: React.FC<AgentCardProps> = ({
 							aria-label='Agent actions'
 							onClick={(e) => e.stopPropagation()}
 						>
-							<IconDots size={20} />
+							<IconDots size={18} />
 						</ActionIcon>
 					</Menu.Target>
 					<Menu.Dropdown>
@@ -145,7 +155,7 @@ export const AgentCard: React.FC<AgentCardProps> = ({
 							leftSection={<IconTools size={16} />}
 							onClick={handleView}
 						>
-							Setup Agent
+							Open Setup
 						</Menu.Item>
 						{showDelete && (
 							<Menu.Item
@@ -162,30 +172,53 @@ export const AgentCard: React.FC<AgentCardProps> = ({
 
 			<div className={styles.cardContent}>
 				{/* Agent Profile */}
-				<div className={styles.agentProfileWrapper}>
-					<AgentProfile
-						agent={agent}
-						size='md'
-						onClick={onClick ? () => onClick(agent) : undefined}
-					/>
+				<div className={styles.infoSection}>
+					{agent.type && (
+						<span
+							className={
+								`${badgeStyles.agentTypeBadge} ` +
+								(agent.type === 'INBOUND'
+									? badgeStyles.agentTypeInbound
+									: badgeStyles.agentTypeOutbound)
+							}
+							data-testid='agent-type-badge'
+						>
+							{agent.type === 'INBOUND' ? (
+								<>
+									<IconPhoneIncoming size={14} /> Inbound
+								</>
+							) : (
+								<>
+									<IconPhoneOutgoing size={14} /> Outbound
+								</>
+							)}
+						</span>
+					)}
+					<div className={styles.agentProfileWrapper}>
+						<AgentProfile
+							agent={agent}
+							size='md'
+							onClick={onClick ? () => onClick(agent) : undefined}
+						/>
+					</div>
 				</div>
-
-				{/* Divider */}
-				<div className={styles.divider}></div>
 
 				{/* Bottom content area */}
 				<div className={styles.bottomContent}>
-					<Button
-						fullWidth
-						color='dark'
-						variant='light'
-						onClick={(event) => {
-							event.stopPropagation();
-							handleDemoCall(agent);
-						}}
-					>
-						Test Call
-					</Button>
+					<div className={styles.actionsRow}>
+						<Button
+							fullWidth
+							color='dark'
+							variant='light'
+							leftSection={<IconPhoneCall size={16} />}
+							onClick={(event) => {
+								event.stopPropagation();
+								handleDemoCall(agent);
+							}}
+						>
+							Test Call
+						</Button>
+					</div>
 				</div>
 			</div>
 		</Card>
