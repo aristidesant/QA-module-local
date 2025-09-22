@@ -1,15 +1,15 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	authenticate,
 	MFALoginResponse,
 	OTPVerifyRequest,
 	verifyOTP,
 	type AuthRequest,
-} from "~/api/authApi";
-import userApi from "~/api/userApi";
-import { jwtDecode } from "jwt-decode";
-import { useSessionStore } from "~/stores/sessionStore";
-import { getErrorMessage } from "~/utils/httpClient";
+} from '~/api/authApi';
+import userApi from '~/api/userApi';
+import { jwtDecode } from 'jwt-decode';
+import { useSessionStore } from '~/stores/sessionStore';
+import { getErrorMessage } from '~/utils/httpClient';
 
 /**
  * Helper function to complete the login flow after token is received
@@ -22,7 +22,7 @@ async function completeLoginFlow(
 ) {
 	// Persist token
 	try {
-		window.localStorage.setItem("accessToken", accessToken);
+		window.localStorage.setItem('accessToken', accessToken);
 	} catch {}
 
 	// Put token in store
@@ -32,7 +32,7 @@ async function completeLoginFlow(
 	let userId: number | undefined;
 	try {
 		const decoded: any = jwtDecode(accessToken);
-		userId = decoded?.userId ?? decoded?.sub ?? decoded?.id;
+		userId = decoded?.userId ?? decoded?.id;
 	} catch {
 		// If decoding fails, we won't fetch user by id; try /users/me instead
 	}
@@ -40,14 +40,12 @@ async function completeLoginFlow(
 	// Fetch current user (prefer users/me, but keep fallback by id if present)
 	try {
 		const api = userApi({ Authorization: `Bearer ${accessToken}` });
-		const user = userId
-			? await api.getUserById(Number(userId))
-			: await api.getCurrentUser();
+		const user = await api.getUserById(Number(userId));
 		setUser(user);
-		queryClient.setQueryData(["currentUser"], user);
+		queryClient.setQueryData(['currentUser'], user);
 	} catch (err) {
 		// eslint-disable-next-line no-console
-		console.warn("Failed to fetch user after login:", getErrorMessage(err));
+		console.warn('Failed to fetch user after login:', getErrorMessage(err));
 	}
 }
 
@@ -79,7 +77,7 @@ export function useLogin() {
 		},
 		onError: (error: Error) => {
 			// Handle error if needed, e.g., show notification
-			console.log("Login mutation failed:", error.message);
+			console.log('Login mutation failed:', error.message);
 		},
 	});
 }
@@ -91,7 +89,7 @@ export function useVerifyOTP() {
 	return useMutation<{ accessToken: string }, Error, OTPVerifyRequest>({
 		mutationFn: async (payload: OTPVerifyRequest) => {
 			const res = await verifyOTP(payload);
-			if (!res?.accessToken) throw new Error("No access token returned");
+			if (!res?.accessToken) throw new Error('No access token returned');
 			return { accessToken: res.accessToken };
 		},
 		onSuccess: async ({ accessToken }) => {
@@ -102,7 +100,7 @@ export function useVerifyOTP() {
 
 export function logoutClientSide() {
 	try {
-		window.localStorage.removeItem("accessToken");
+		window.localStorage.removeItem('accessToken');
 	} catch {}
 	const { setToken, setUser } = useSessionStore.getState();
 	setToken(null);
