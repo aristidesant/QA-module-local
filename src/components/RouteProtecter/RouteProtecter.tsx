@@ -1,136 +1,101 @@
 import { Outlet, useLoaderData, Navigate, useLocation } from 'react-router';
 import { ModalsProvider } from '@mantine/modals';
-import userApi from '~/api/userApi';
 import { useEffect } from 'react';
 import { useSessionStore } from '~/stores/sessionStore';
-import type { ImpersonatedClient, UserModel } from '~/models/UserModels';
+import type { UserModel } from '~/models/UserModels';
 import { jwtDecode } from 'jwt-decode';
 import dayjs from 'dayjs';
+import ImpersonationLoadingOverlay from '~/components/ImpersonationLoadingOverlay';
 
 type LoaderData = {
 	token: string | null;
 	user: UserModel | null;
 };
 
-// Client loader to check session from localStorage and get user data
+// Client loader to check session from localStorage - simplified to only validate token
 export async function clientLoader(): Promise<LoaderData> {
-	const token =
-		typeof window !== 'undefined'
-			? window.localStorage.getItem('accessToken')
-			: null;
+	// Try to get token from the persisted store first, fallback to legacy accessToken
+	let token: string | null = null;
+
+	if (typeof window !== 'undefined') {
+		try {
+			// Try to get from persisted store
+			const sessionStorage = window.localStorage.getItem('session-storage');
+			if (sessionStorage) {
+				const parsed = JSON.parse(sessionStorage);
+				token = parsed?.state?.token || null;
+			}
+
+			// Fallback to legacy accessToken for backward compatibility
+			if (!token) {
+				token = window.localStorage.getItem('accessToken');
+			}
+		} catch {
+			// If parsing fails, try legacy accessToken
+			token = window.localStorage.getItem('accessToken');
+		}
+	}
+
 	if (!token) return { token: null, user: null };
+
 	try {
-		// Decode token to extract user id, then fetch the user by id
+		// Just validate token expiration
 		const decoded: any = jwtDecode(token);
-
-		// Enhance visibility of standard JWT times (issued-at and expiration)
-		const toLocalDateTime = (sec: unknown) => {
-			const n = typeof sec === 'number' ? sec : Number(sec);
-			return Number.isFinite(n)
-				? new Date(n * 1000).toLocaleString()
-				: undefined;
-		};
-
-		const expReadable = toLocalDateTime(decoded?.exp);
-
-		// If the token is expired or exp is missing/invalid, treat as unauthenticated
-		// Use dayjs for millisecond-precision comparison
 		const now = dayjs();
 		const expMillis =
 			typeof decoded?.exp === 'number'
 				? decoded.exp * 1000
 				: Number(decoded?.exp) * 1000;
+
 		if (
 			!Number.isFinite(expMillis) ||
 			dayjs(expMillis).isBefore(now) ||
 			dayjs(expMillis).isSame(now)
 		) {
-			console.debug('JWT token expired at', expReadable ?? decoded?.exp);
+			console.debug('JWT token expired');
 			return { token: null, user: null };
 		}
 
-		const userId: number | undefined =
-			decoded?.userId ?? decoded?.sub ?? decoded?.id;
-
-		if (!userId || Number.isNaN(Number(userId))) {
-			// If we cannot obtain a valid user id, treat as unauthenticated
-			return { token, user: null };
-		}
-
-		const user = await userApi({
-			Authorization: `Bearer ${token}`,
-		}).getUserById(Number(userId));
-
-		console.log({
-			token,
-			...((decoded as unknown as ImpersonatedClient).impersonatedAt && {
-				user: {
-					id: decoded?.userId ?? decoded?.sub ?? decoded?.id,
-					employeeId: decoded?.employeeId,
-					email: decoded?.email,
-					username: decoded?.username,
-					clientId: decoded?.clientId,
-					status: user.status,
-					createdAt: user.createdAt,
-					updatedAt: user.updatedAt,
-					deletedAt: user.deletedAt,
-				} as UserModel,
-				...(!(decoded as unknown as ImpersonatedClient).impersonatedAt && {
-					user: user as UserModel,
-				}),
-			}),
-		});
-		// @ts-ignore
-		return {
-			token,
-			...((decoded as unknown as ImpersonatedClient).impersonatedAt && {
-				user: {
-					id: decoded?.userId ?? decoded?.sub ?? decoded?.id,
-					employeeId: decoded?.employeeId,
-					email: decoded?.email,
-					username: decoded?.username,
-					clientId: decoded?.clientId,
-					status: user.status,
-					createdAt: user.createdAt,
-					updatedAt: user.updatedAt,
-					deletedAt: user.deletedAt,
-				} as UserModel,
-				...(!(decoded as unknown as ImpersonatedClient).impersonatedAt && {
-					user: user as UserModel,
-				}),
-			}),
-		};
-	} catch (error) {
+		// Return token only - let the store handle user data
 		return { token, user: null };
+	} catch (error) {
+		return { token: null, user: null };
 	}
 }
 
 export const RouteProtecter = () => {
-	const { token, user } = useLoaderData<typeof clientLoader>();
-	const { setUser, setToken } = useSessionStore();
-	console.log({ user });
+	const { token } = useLoaderData<typeof clientLoader>();
+	const { setToken, token: storeToken, _hasHydrated } = useSessionStore();
 	const path = useLocation().pathname;
+
 	useEffect(() => {
-		if (token) {
+		// Only update store after hydration is complete
+		if (!_hasHydrated) return;
+
+		// Only set token if it's different from what's already in store
+		if (token && token !== storeToken) {
 			setToken(token);
 		}
-		if (user) {
-			setUser(user);
-		}
-	}, [token, user]);
 
-	// Handle authentication redirects
-	if (!token && path !== '/login') {
+		// The loader no longer fetches user data, so we don't need to sync user from loader
+		// User data is now managed entirely by the auth mutations and persist store
+	}, [token, setToken, storeToken, _hasHydrated]);
+
+	// Handle authentication redirects - use store token if hydrated, otherwise use loader token
+	const authToken = _hasHydrated ? storeToken : token;
+
+	if (!authToken && path !== '/login') {
 		return <Navigate to='/login' replace />;
 	}
 
-	if (token && path === '/login') {
+	if (authToken && path === '/login') {
 		return <Navigate to='/' replace />;
 	}
 
 	return (
 		<ModalsProvider modalProps={{ withinPortal: false }}>
 			<Outlet />
+			<ImpersonationLoadingOverlay />
 		</ModalsProvider>
 	);
 };

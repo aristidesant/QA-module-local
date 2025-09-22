@@ -1,0 +1,60 @@
+.card {
+	background: white;
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-md);
+	height: 180px;
+	display: flex;
+	flex-direction: column;
+}
+
+.header {
+	margin-bottom: var(--mantine-spacing-sm);
+}
+
+.label {
+	font-size: 11px;
+	color: var(--mantine-color-gray-6);
+	margin-bottom: 4px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.title {
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-dark-7);
+	font-weight: 600;
+	margin: 0;
+}
+
+.content {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: var(--mantine-spacing-md);
+}
+
+.number {
+	font-size: 32px;
+	font-weight: 700;
+	color: var(--mantine-color-dark-7);
+	line-height: 1;
+}
+
+.change {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.changeText {
+	font-size: 12px;
+	color: #51cf66;
+	font-weight: 600;
+}
+
+.chart {
+	flex: 1;
+	display: flex;
+	align-items: flex-end;
+}

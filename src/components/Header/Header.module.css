@@ -1,203 +1,222 @@
 /* Uses --sidebar-width from Layout.module.css */
 
 .header {
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-  height: 100%;
+	backdrop-filter: blur(10px);
+	transition: all 0.3s ease;
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+	align-items: center;
+	height: 100%;
 }
 
 .headerCollapsed {
-  width: var(--sidebar-width);
-  min-width: var(--sidebar-width);
+	width: var(--sidebar-width);
+	min-width: var(--sidebar-width);
 }
 
 @media (max-width: 768px) {
-  .headerCollapsed {
-    width: var(--sidebar-width);
-    min-width: var(--sidebar-width);
-  }
+	.headerCollapsed {
+		width: var(--sidebar-width);
+		min-width: var(--sidebar-width);
+	}
 }
 
 /* Responsive styles */
 @media (max-width: 900px) {
-  .headerContent {
-    max-width: 100vw;
-  }
-  .headerLeft {
-    gap: 0.75rem;
-  }
-  .headerRight {
-    gap: 0.75rem;
-  }
-  .userInfo {
-    min-width: 80px;
-  }
+	.headerContent {
+		max-width: 100vw;
+	}
+
+	.headerLeft {
+		gap: 0.75rem;
+	}
+
+	.headerRight {
+		gap: 0.75rem;
+	}
+
+	.userInfo {
+		min-width: 80px;
+	}
 }
 
 @media (max-width: 600px) {
-  .header {
-    height: 56px;
-  }
-  .headerContent {
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 0.5rem;
-    width: 100%;
-    padding: 0.5rem 0.5rem;
-  }
-  .headerLeft {
-    gap: 0.5rem;
-    align-items: center;
-  }
-  .burger {
-    padding: 6px;
-    margin-right: 0.5rem;
-  }
+	.header {
+		height: 56px;
+	}
+
+	.headerContent {
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: center;
+		gap: 0.5rem;
+		width: 100%;
+		padding: 0.5rem 0.5rem;
+	}
+
+	.headerLeft {
+		gap: 0.5rem;
+		align-items: center;
+	}
+
+	.burger {
+		padding: 6px;
+		margin-right: 0.5rem;
+	}
 }
 
 .headerContent {
-  height: 100%;
-  padding: 0 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
+	height: 100%;
+	padding: 0 1.5rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
 }
 
 .headerLeft {
-  display: flex;
-  align-items: center;
-  height: 100%;
-  gap: 1.25rem;
+	display: flex;
+	align-items: center;
+	height: 100%;
+	gap: 1.25rem;
 }
 
 .navigationButtons {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-left: 2rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin-left: 2rem;
 }
 
 .navButton {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--mantine-color-gray-7);
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: var(--mantine-color-gray-7);
+	padding: 0.5rem 0.75rem;
+	border-radius: 6px;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	transition: all 0.2s ease;
 }
 
 .navButton:hover {
-  background-color: rgba(241, 245, 249, 0.9);
-  color: var(--mantine-color-blue-6);
+	background-color: rgba(241, 245, 249, 0.9);
+	color: var(--mantine-color-blue-6);
 }
 
 .navButtonActive {
-  color: var(--mantine-color-blue-6);
-  background-color: var(--mantine-color-blue-0);
-  font-weight: 600;
+	color: var(--mantine-color-blue-6);
+	background-color: var(--mantine-color-blue-0);
+	font-weight: 600;
 }
 
 .headerRight {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  margin-left: auto;
+	display: flex;
+	align-items: center;
+	gap: 1.25rem;
+	margin-left: auto;
 }
 
 .notificationIcon {
-  position: relative;
-  cursor: pointer;
-  padding: 7px;
-  border-radius: 50%;
-  color: var(--mantine-color-gray-7);
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+	position: relative;
+	cursor: pointer;
+	padding: 7px;
+	border-radius: 50%;
+	color: var(--mantine-color-gray-7);
+	transition: all 0.2s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .notificationIcon:hover {
-  background-color: rgba(241, 245, 249, 0.9);
-  color: var(--mantine-color-blue-6);
-  transform: translateY(-2px);
+	background-color: rgba(241, 245, 249, 0.9);
+	color: var(--mantine-color-blue-6);
+	transform: translateY(-2px);
 }
 
 .notificationBadge {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background-color: var(--mantine-color-red-6);
-  color: white;
-  font-size: 0.6rem;
-  font-weight: 700;
-  height: 16px;
-  min-width: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  padding: 0 4px;
-  border: 2px solid white;
-  transform: translate(30%, -30%);
+	position: absolute;
+	top: 0;
+	right: 0;
+	background-color: var(--mantine-color-red-6);
+	color: white;
+	font-size: 0.6rem;
+	font-weight: 700;
+	height: 16px;
+	min-width: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	padding: 0 4px;
+	border: 2px solid white;
+	transform: translate(30%, -30%);
 }
 
 .userMenu {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 6px 12px 6px 6px;
-  border-radius: 50px;
-  transition: all 0.2s ease;
-  background: rgba(241, 245, 249, 0.8);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 6px 12px 6px 6px;
+	border-radius: 50px;
+	transition: all 0.2s ease;
+	background: rgba(241, 245, 249, 0.8);
+	border: 1px solid rgba(226, 232, 240, 0.8);
+	cursor: pointer;
 }
 
 .userMenu:hover {
-  background: rgba(241, 245, 249, 1);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+	background: rgba(241, 245, 249, 1);
+	transform: translateY(-1px);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .userAvatar {
-  border-radius: 50%;
-  background: linear-gradient(45deg, #60a5fa, #3b82f6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 600;
+	border-radius: 50%;
+	background: linear-gradient(45deg, #60a5fa, #3b82f6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	font-weight: 600;
 }
 
 .userInfo {
-  display: flex;
-  flex-direction: column;
-  min-width: 100px;
+	display: flex;
+	flex-direction: column;
+	min-width: 100px;
 }
 
 .burger {
-  color: var(--mantine-color-dark-7);
-  transition: all 0.2s ease;
-  border-radius: 8px;
-  padding: 8px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
+	color: var(--mantine-color-dark-7);
+	transition: all 0.2s ease;
+	border-radius: 8px;
+	padding: 8px;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
 }
 
 .burger:hover {
-  color: var(--mantine-color-blue-6);
-  background: var(--mantine-color-blue-0);
-  transform: scale(1.05);
+	color: var(--mantine-color-blue-6);
+	background: var(--mantine-color-blue-0);
+	transform: scale(1.05);
+}
+
+.returnButton {
+	font-size: 12px;
+	height: 32px;
+	padding: 0 12px;
+	border-color: var(--mantine-color-orange-5);
+	color: var(--mantine-color-orange-6);
+}
+
+.returnButton:hover {
+	background-color: var(--mantine-color-orange-0);
+	border-color: var(--mantine-color-orange-6);
 }

@@ -1,52 +1,64 @@
-
 .userMenu {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  background: transparent;
-  border-radius: 0;
-  padding: 0;
-  box-shadow: none;
-  cursor: pointer;
-  transition: none;
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	background: transparent;
+	border-radius: 0;
+	padding: 0;
+	box-shadow: none;
+	cursor: pointer;
+	transition: none;
 }
 
 .avatar {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
-  background: var(--mantine-color-gray-1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  color: var(--mantine-color-dark-6);
-  font-size: 1rem;
+	width: 2.5rem;
+	height: 2.5rem;
+	border-radius: 50%;
+	background: var(--mantine-color-gray-1);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 600;
+	color: var(--mantine-color-dark-6);
+	font-size: 1rem;
 }
 
 .userInfo {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }
 
 .name {
-  font-weight: 600;
-  color: var(--mantine-color-dark-8);
-  font-size: 1rem;
-  line-height: 1.2;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+	font-weight: 600;
+	color: var(--mantine-color-dark-8);
+	font-size: 1rem;
+	line-height: 1.2;
 }
 
 .role {
-  color: var(--mantine-color-gray-6);
-  font-size: 0.85rem;
-  line-height: 1.2;
+	color: var(--mantine-color-gray-6);
+	font-size: 0.85rem;
+	line-height: 1.2;
 }
 
 .chevron {
-  color: var(--mantine-color-gray-6);
-  margin-left: 0.5rem;
-  font-size: 1.2rem;
-  display: flex;
-  align-items: center;
+	color: var(--mantine-color-gray-6);
+	margin-left: 0.5rem;
+	font-size: 1.2rem;
+	display: flex;
+	align-items: center;
+}
+
+.impersonationBadge {
+	font-size: 10px;
+	height: 18px;
+	padding: 0 6px;
+	display: flex;
+	align-items: center;
+	gap: 2px;
 }
