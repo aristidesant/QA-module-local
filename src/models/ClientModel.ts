@@ -23,6 +23,7 @@ export interface CreateClientRequest {
 	rnc?: string;
 	userId?: number | null;
 	countryId?: number | null;
+	apiKey?: string;
 }
 
 export interface UpdateClientRequest {

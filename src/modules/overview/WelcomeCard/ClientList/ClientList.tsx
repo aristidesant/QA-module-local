@@ -111,7 +111,7 @@ export default function ClientList() {
 							onClick={() => handleImpersonateClient(client.id, client.name)}
 							disabled={!!client.deletedAt}
 						>
-							Gestionar
+							Manage
 						</Button>
 					</Group>
 				</div>

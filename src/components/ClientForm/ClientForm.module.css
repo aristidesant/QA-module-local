@@ -1,0 +1,14 @@
+.form {
+	width: 100%;
+}
+
+.form input,
+.form textarea {
+	border-radius: var(--mantine-radius-md);
+}
+
+.form label {
+	font-weight: 500;
+	color: var(--mantine-color-dark-7);
+	margin-bottom: var(--mantine-spacing-xs);
+}
