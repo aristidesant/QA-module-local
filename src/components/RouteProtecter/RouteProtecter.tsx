@@ -1,107 +1,112 @@
-import { Outlet, useLoaderData, Navigate, useLocation } from "react-router";
-import { ModalsProvider } from "@mantine/modals";
-import userApi from "~/api/userApi";
-import { useEffect } from "react";
-import { useSessionStore } from "~/stores/sessionStore";
-import type { UserModel } from "~/models/UserModels";
-import { jwtDecode } from "jwt-decode";
-import dayjs from "dayjs";
+import { Outlet, useLoaderData, Navigate, useLocation } from 'react-router';
+import { ModalsProvider } from '@mantine/modals';
+import { useEffect } from 'react';
+import { useSessionStore } from '~/stores/sessionStore';
+import type { UserModel } from '~/models/UserModels';
+import { jwtDecode } from 'jwt-decode';
+import dayjs from 'dayjs';
+import ImpersonationLoadingOverlay from '~/components/ImpersonationLoadingOverlay';
 
 type LoaderData = {
-  token: string | null;
-  user: UserModel | null;
+	token: string | null;
+	user: UserModel | null;
 };
 
-// Client loader to check session from localStorage and get user data
+// Client loader to check session from localStorage - simplified to only validate token
 export async function clientLoader(): Promise<LoaderData> {
-  const token =
-    typeof window !== "undefined"
-      ? window.localStorage.getItem("accessToken")
-      : null;
-  if (!token) return { token: null, user: null };
-  try {
-    // Decode token to extract user id, then fetch the user by id
-    const decoded: any = jwtDecode(token);
+	// Try to get token from the persisted store first, fallback to legacy accessToken
+	let token: string | null = null;
 
-    // Enhance visibility of standard JWT times (issued-at and expiration)
-    const toLocalDateTime = (sec: unknown) => {
-      const n = typeof sec === "number" ? sec : Number(sec);
-      return Number.isFinite(n)
-        ? new Date(n * 1000).toLocaleString()
-        : undefined;
-    };
+	if (typeof window !== 'undefined') {
+		try {
+			// Try to get from persisted store
+			const sessionStorage = window.localStorage.getItem('session-storage');
+			if (sessionStorage) {
+				const parsed = JSON.parse(sessionStorage);
+				token = parsed?.state?.token || null;
+			}
 
-    const expReadable = toLocalDateTime(decoded?.exp);
+			// Fallback to legacy accessToken for backward compatibility
+			if (!token) {
+				token = window.localStorage.getItem('accessToken');
+			}
+		} catch {
+			// If parsing fails, try legacy accessToken
+			token = window.localStorage.getItem('accessToken');
+		}
+	}
 
-    // If the token is expired or exp is missing/invalid, treat as unauthenticated
-    // Use dayjs for millisecond-precision comparison
-    const now = dayjs();
-    const expMillis =
-      typeof decoded?.exp === "number"
-        ? decoded.exp * 1000
-        : Number(decoded?.exp) * 1000;
-    if (
-      !Number.isFinite(expMillis) ||
-      dayjs(expMillis).isBefore(now) ||
-      dayjs(expMillis).isSame(now)
-    ) {
-      console.debug("JWT token expired at", expReadable ?? decoded?.exp);
-      return { token: null, user: null };
-    }
+	if (!token) return { token: null, user: null };
 
-    const userId: number | undefined =
-      decoded?.userId ?? decoded?.sub ?? decoded?.id;
+	try {
+		// Just validate token expiration
+		const decoded: any = jwtDecode(token);
+		const now = dayjs();
+		const expMillis =
+			typeof decoded?.exp === 'number'
+				? decoded.exp * 1000
+				: Number(decoded?.exp) * 1000;
 
-    if (!userId || Number.isNaN(Number(userId))) {
-      // If we cannot obtain a valid user id, treat as unauthenticated
-      return { token, user: null };
-    }
+		if (
+			!Number.isFinite(expMillis) ||
+			dayjs(expMillis).isBefore(now) ||
+			dayjs(expMillis).isSame(now)
+		) {
+			console.debug('JWT token expired');
+			return { token: null, user: null };
+		}
 
-    const user = await userApi({
-      Authorization: `Bearer ${token}`,
-    }).getUserById(Number(userId));
-    return { token, user };
-  } catch (error) {
-    return { token, user: null };
-  }
+		// Return token only - let the store handle user data
+		return { token, user: null };
+	} catch (error) {
+		return { token: null, user: null };
+	}
 }
 
 export const RouteProtecter = () => {
-  const { token, user } = useLoaderData<typeof clientLoader>();
-  const { setUser, setToken } = useSessionStore();
-  const path = useLocation().pathname;
-  useEffect(() => {
-    if (token) {
-      setToken(token);
-    }
-    if (user) {
-      setUser(user);
-    }
-  }, [token, user]);
+	const { token } = useLoaderData<typeof clientLoader>();
+	const { setToken, token: storeToken, _hasHydrated } = useSessionStore();
+	const path = useLocation().pathname;
 
-  // Handle authentication redirects
-  if (!token && path !== "/login") {
-    return <Navigate to="/login" replace />;
-  }
+	useEffect(() => {
+		// Only update store after hydration is complete
+		if (!_hasHydrated) return;
 
-  if (token && path === "/login") {
-    return <Navigate to="/" replace />;
-  }
+		// Only set token if it's different from what's already in store
+		if (token && token !== storeToken) {
+			setToken(token);
+		}
 
-  return (
-    <ModalsProvider modalProps={{ withinPortal: false }}>
-      <Outlet />
-    </ModalsProvider>
-  );
+		// The loader no longer fetches user data, so we don't need to sync user from loader
+		// User data is now managed entirely by the auth mutations and persist store
+	}, [token, setToken, storeToken, _hasHydrated]);
+
+	// Handle authentication redirects - use store token if hydrated, otherwise use loader token
+	const authToken = _hasHydrated ? storeToken : token;
+
+	if (!authToken && path !== '/login') {
+		return <Navigate to='/login' replace />;
+	}
+
+	if (authToken && path === '/login') {
+		return <Navigate to='/' replace />;
+	}
+
+	return (
+		<ModalsProvider modalProps={{ withinPortal: false }}>
+			<Outlet />
+			<ImpersonationLoadingOverlay />
+		</ModalsProvider>
+	);
 };
 
 export const useToken = () => {
-  const { token, user } = useSessionStore();
+	const { token, user } = useSessionStore();
 
-  return {
-    token,
-    user,
-  };
+	return {
+		token,
+		user,
+	};
 };
 
 export default RouteProtecter;

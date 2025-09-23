@@ -1,0 +1,56 @@
+.detailsPanel {
+	background-color: var(--mantine-color-white);
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid var(--mantine-color-gray-2);
+	padding: var(--mantine-spacing-md);
+	height: 100%;
+}
+
+.header {
+	margin-bottom: var(--mantine-spacing-md);
+}
+
+.clientsList {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	max-height: 500px;
+	overflow-y: auto;
+}
+
+.clientRow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: var(--mantine-spacing-sm);
+	border-radius: var(--mantine-radius-sm);
+	border: 1px solid var(--mantine-color-gray-1);
+	background-color: var(--mantine-color-white);
+	transition: border-color 0.15s ease;
+}
+
+.clientRow:hover {
+	border-color: var(--mantine-color-gray-3);
+}
+
+.clientInfo {
+	flex: 1;
+	min-width: 0;
+}
+
+.clientAvatar {
+	background-color: var(--mantine-color-blue-6);
+	color: white;
+	flex-shrink: 0;
+}
+
+.clientText {
+	flex: 1;
+	min-width: 0;
+}
+
+.clientText > * {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

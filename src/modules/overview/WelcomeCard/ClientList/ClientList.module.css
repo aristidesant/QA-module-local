@@ -1,0 +1,74 @@
+.clientList {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	max-height: 700px;
+	overflow-y: auto;
+	flex: 1;
+	border: 1px solid var(--mantine-color-gray-1);
+	border-radius: var(--mantine-radius-md);
+	padding: 12px;
+}
+
+.clientItem {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 16px;
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid var(--mantine-color-gray-2);
+	background-color: white;
+}
+
+.clientInfo {
+	display: flex;
+	align-items: center;
+	flex: 1;
+}
+
+.clientLogo {
+	background-color: var(--mantine-color-blue-1);
+	color: var(--mantine-color-blue-7);
+	font-weight: 600;
+	font-size: 12px;
+}
+
+.clientDetails {
+	flex: 1;
+}
+
+.clientName {
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 600;
+	color: var(--mantine-color-dark-7);
+	margin: 0;
+	line-height: 1.3;
+}
+
+.clientType {
+	font-size: 12px;
+	color: var(--mantine-color-gray-6);
+	margin: 0;
+	line-height: 1.2;
+}
+
+.clientActions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.statusBadge {
+	font-size: 11px;
+}
+
+.loadingContainer {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	padding: 40px 20px;
+	text-align: center;
+	height: 200px;
+}

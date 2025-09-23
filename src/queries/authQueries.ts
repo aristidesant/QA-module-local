@@ -1,15 +1,21 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	authenticate,
 	MFALoginResponse,
 	OTPVerifyRequest,
 	verifyOTP,
+	impersonateClient,
+	endImpersonation,
+	ImpersonateClientRequest,
+	ImpersonateClientResponse,
+	EndImpersonationResponse,
 	type AuthRequest,
-} from "~/api/authApi";
-import userApi from "~/api/userApi";
-import { jwtDecode } from "jwt-decode";
-import { useSessionStore } from "~/stores/sessionStore";
-import { getErrorMessage } from "~/utils/httpClient";
+} from '~/api/authApi';
+import userApi from '~/api/userApi';
+import { jwtDecode } from 'jwt-decode';
+import { useSessionStore } from '~/stores/sessionStore';
+import { useImpersonationLoadingStore } from '~/stores/impersonationLoadingStore';
+import { getErrorMessage } from '~/utils/httpClient';
 
 /**
  * Helper function to complete the login flow after token is received
@@ -18,21 +24,29 @@ async function completeLoginFlow(
 	accessToken: string,
 	queryClient: any,
 	setToken: (token: string | null) => void,
-	setUser: (user: any) => void
+	setUser: (user: any) => void,
+	userFromResponse?: any // Optional user data from API response
 ) {
-	// Persist token
+	// Persist token (keep legacy storage for backward compatibility)
 	try {
-		window.localStorage.setItem("accessToken", accessToken);
+		window.localStorage.setItem('accessToken', accessToken);
 	} catch {}
 
-	// Put token in store
+	// Put token in store (this will also persist via Zustand persist middleware)
 	setToken(accessToken);
 
-	// Decode token for user id
+	// If user data is provided from API response, use it directly
+	if (userFromResponse) {
+		setUser(userFromResponse);
+		queryClient.setQueryData(['currentUser'], userFromResponse);
+		return;
+	}
+
+	// Otherwise, decode token for user id and fetch user data
 	let userId: number | undefined;
 	try {
 		const decoded: any = jwtDecode(accessToken);
-		userId = decoded?.userId ?? decoded?.sub ?? decoded?.id;
+		userId = decoded?.userId ?? decoded?.id;
 	} catch {
 		// If decoding fails, we won't fetch user by id; try /users/me instead
 	}
@@ -40,14 +54,12 @@ async function completeLoginFlow(
 	// Fetch current user (prefer users/me, but keep fallback by id if present)
 	try {
 		const api = userApi({ Authorization: `Bearer ${accessToken}` });
-		const user = userId
-			? await api.getUserById(Number(userId))
-			: await api.getCurrentUser();
+		const user = await api.getUserById(Number(userId));
 		setUser(user);
-		queryClient.setQueryData(["currentUser"], user);
+		queryClient.setQueryData(['currentUser'], user);
 	} catch (err) {
 		// eslint-disable-next-line no-console
-		console.warn("Failed to fetch user after login:", getErrorMessage(err));
+		console.warn('Failed to fetch user after login:', getErrorMessage(err));
 	}
 }
 
@@ -57,7 +69,7 @@ async function completeLoginFlow(
  */
 export function useLogin() {
 	const queryClient = useQueryClient();
-	const { setToken, setUser } = useSessionStore.getState();
+	const { setToken, setUser } = useSessionStore();
 
 	return useMutation<MFALoginResponse, Error, AuthRequest>({
 		mutationFn: async (payload: AuthRequest) => {
@@ -79,19 +91,19 @@ export function useLogin() {
 		},
 		onError: (error: Error) => {
 			// Handle error if needed, e.g., show notification
-			console.log("Login mutation failed:", error.message);
+			console.log('Login mutation failed:', error.message);
 		},
 	});
 }
 
 export function useVerifyOTP() {
 	const queryClient = useQueryClient();
-	const { setToken, setUser } = useSessionStore.getState();
+	const { setToken, setUser } = useSessionStore();
 
 	return useMutation<{ accessToken: string }, Error, OTPVerifyRequest>({
 		mutationFn: async (payload: OTPVerifyRequest) => {
 			const res = await verifyOTP(payload);
-			if (!res?.accessToken) throw new Error("No access token returned");
+			if (!res?.accessToken) throw new Error('No access token returned');
 			return { accessToken: res.accessToken };
 		},
 		onSuccess: async ({ accessToken }) => {
@@ -100,11 +112,95 @@ export function useVerifyOTP() {
 	});
 }
 
+export function useImpersonateClient() {
+	const queryClient = useQueryClient();
+	const { setToken, setUser, setTargetClient } = useSessionStore();
+	const { setLoading } = useImpersonationLoadingStore.getState();
+
+	return useMutation<
+		ImpersonateClientResponse,
+		Error,
+		ImpersonateClientRequest
+	>({
+		mutationFn: async (payload: ImpersonateClientRequest) => {
+			setLoading(true, 'Switching to client...');
+			const res = await impersonateClient(payload);
+			if (!res?.accessToken) throw new Error('No access token returned');
+			return res;
+		},
+		onSuccess: async (data: ImpersonateClientResponse) => {
+			// Store target client information
+			setTargetClient(data.targetClient);
+
+			// Complete login flow with the new impersonated token and user data
+			await completeLoginFlow(
+				data.accessToken,
+				queryClient,
+				setToken,
+				setUser,
+				data.user // Use user data from API response
+			);
+
+			// Invalidate all queries to refresh data for the new client context
+			queryClient.invalidateQueries();
+
+			// Clear loading state
+			setLoading(false);
+		},
+		onError: (error: Error) => {
+			// eslint-disable-next-line no-console
+			console.error('Client impersonation failed:', error.message);
+			setLoading(false);
+		},
+	});
+}
+
+export function useEndImpersonation() {
+	const queryClient = useQueryClient();
+	const { setToken, setUser, setTargetClient } = useSessionStore();
+	const { setLoading } = useImpersonationLoadingStore.getState();
+
+	return useMutation<EndImpersonationResponse, Error, void>({
+		mutationFn: async () => {
+			setLoading(true, 'Returning to master client...');
+			const res = await endImpersonation();
+			if (!res?.accessToken) throw new Error('No access token returned');
+			return res;
+		},
+		onSuccess: async (data: EndImpersonationResponse) => {
+			// Clear target client information
+			setTargetClient(null);
+
+			// Complete login flow with the original user token and user data
+			await completeLoginFlow(
+				data.accessToken,
+				queryClient,
+				setToken,
+				setUser,
+				data.user // Use user data from API response
+			);
+
+			// Invalidate all queries to refresh data for the original client context
+			queryClient.invalidateQueries();
+
+			// Clear loading state
+			setLoading(false);
+		},
+		onError: (error: Error) => {
+			// eslint-disable-next-line no-console
+			console.error('End impersonation failed:', error.message);
+			setLoading(false);
+		},
+	});
+}
+
 export function logoutClientSide() {
 	try {
-		window.localStorage.removeItem("accessToken");
+		window.localStorage.removeItem('accessToken');
+		window.localStorage.removeItem('session-storage');
 	} catch {}
-	const { setToken, setUser } = useSessionStore.getState();
+	const { setToken, setUser, setTargetClient } = useSessionStore.getState();
 	setToken(null);
 	setUser(null);
+	setTargetClient(null);
 }
