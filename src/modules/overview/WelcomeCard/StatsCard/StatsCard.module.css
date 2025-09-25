@@ -4,18 +4,21 @@
 	border-radius: var(--mantine-radius-md);
 	padding: var(--mantine-spacing-md);
 	height: 180px;
+	position: relative;
+	/* allow absolute positioning of accents */
 	display: flex;
 	flex-direction: column;
+	overflow: hidden;
 }
 
 .header {
-	margin-bottom: var(--mantine-spacing-sm);
+	margin-bottom: var(--mantine-spacing-xs);
 }
 
 .label {
 	font-size: 11px;
 	color: var(--mantine-color-gray-6);
-	margin-bottom: 4px;
+	margin-bottom: 2px;
 	text-transform: uppercase;
 	letter-spacing: 0.5px;
 }
@@ -25,36 +28,61 @@
 	color: var(--mantine-color-dark-7);
 	font-weight: 600;
 	margin: 0;
+	line-height: 1.1;
 }
 
 .content {
 	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	margin-bottom: var(--mantine-spacing-md);
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: flex-start;
+	gap: 4px;
+	margin-bottom: var(--mantine-spacing-sm);
 }
 
 .number {
-	font-size: 32px;
+	font-size: 36px;
 	font-weight: 700;
 	color: var(--mantine-color-dark-7);
-	line-height: 1;
+	line-height: 1.05;
+	margin-top: 2px;
 }
 
+/* Change indicator directly under number */
 .change {
+	position: static;
 	display: flex;
 	align-items: center;
 	gap: 4px;
+	color: var(--mantine-color-green-6);
+}
+
+.change svg {
+	color: var(--mantine-color-green-6);
 }
 
 .changeText {
 	font-size: 12px;
-	color: #51cf66;
+	color: var(--mantine-color-green-6);
 	font-weight: 600;
 }
 
+/* Keep text above the chart */
+.header,
+.content,
+.change {
+	position: relative;
+	z-index: 1;
+}
+
+/* Chart fills the bottom-right corner */
 .chart {
-	flex: 1;
+	position: absolute;
+	inset: auto 0 0 40%;
 	display: flex;
 	align-items: flex-end;
+	min-height: 64px;
+	margin-right: -8px;
+	z-index: 0;
+	pointer-events: none;
 }
