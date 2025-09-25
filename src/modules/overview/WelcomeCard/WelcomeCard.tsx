@@ -1,4 +1,12 @@
-import { Text, Title, Card, SimpleGrid, Button, Stack } from '@mantine/core';
+import {
+	Text,
+	Title,
+	Card,
+	SimpleGrid,
+	Button,
+	Stack,
+	Group,
+} from '@mantine/core';
 import {
 	IconRobot,
 	IconListDetails,
@@ -87,102 +95,114 @@ export default function WelcomeCard({
 										component={Link}
 										to='/campaigns'
 										variant='subtle'
-										leftSection={<IconListDetails size={20} />}
 										className={classes.navButton}
 									>
-										<Stack gap={4} align='flex-start'>
-											<Text fw={600} size='md'>
-												Campaigns
-											</Text>
-											<Text size='sm' c='dimmed'>
-												Create and manage targeted call campaigns
-											</Text>
-										</Stack>
+										<Group wrap='nowrap' align='flex-start'>
+											<IconListDetails size={20} />
+											<Stack gap={4} align='flex-start'>
+												<Text fw={600} size='md'>
+													Campaigns
+												</Text>
+												<Text size='sm' c='dimmed'>
+													Create and manage targeted call campaigns
+												</Text>
+											</Stack>
+										</Group>
 									</Button>
 
 									<Button
 										component={Link}
 										to='/agents'
 										variant='subtle'
-										leftSection={<IconRobot size={20} />}
 										className={classes.navButton}
 									>
-										<Stack gap={4} align='flex-start'>
-											<Text fw={600} size='md'>
-												AI Agents
-											</Text>
-											<Text size='sm' c='dimmed'>
-												Configure intelligent virtual agents
-											</Text>
-										</Stack>
+										<Group wrap='nowrap' align='flex-start'>
+											<IconRobot size={20} />
+											<Stack gap={4} align='flex-start'>
+												<Text fw={600} size='md'>
+													Agents
+												</Text>
+												<Text size='sm' c='dimmed'>
+													Manage and create new agents
+												</Text>
+											</Stack>
+										</Group>
 									</Button>
 
 									<Button
 										component={Link}
 										to='/contacts'
 										variant='subtle'
-										leftSection={<IconUsers size={20} />}
 										className={classes.navButton}
 									>
-										<Stack gap={4} align='flex-start'>
-											<Text fw={600} size='md'>
-												Contacts
-											</Text>
-											<Text size='sm' c='dimmed'>
-												Organize your customer database
-											</Text>
-										</Stack>
+										<Group wrap='nowrap' align='flex-start'>
+											<IconUsers size={20} />
+											<Stack gap={4} align='flex-start'>
+												<Text fw={600} size='md'>
+													Contacts
+												</Text>
+												<Text size='sm' c='dimmed'>
+													Manage and upload contact lists
+												</Text>
+											</Stack>
+										</Group>
 									</Button>
 
 									<Button
 										component={Link}
 										to='/conversations'
 										variant='subtle'
-										leftSection={<IconPhoneCall size={20} />}
 										className={classes.navButton}
 									>
-										<Stack gap={4} align='flex-start'>
-											<Text fw={600} size='md'>
-												Conversations
-											</Text>
-											<Text size='sm' c='dimmed'>
-												Monitor live calls and analyze insights
-											</Text>
-										</Stack>
+										<Group wrap='nowrap' align='flex-start'>
+											<IconPhoneCall size={20} />
+											<Stack gap={4} align='flex-start'>
+												<Text fw={600} size='md'>
+													Conversations
+												</Text>
+												<Text size='sm' c='dimmed'>
+													Review and analyze call transcripts
+												</Text>
+											</Stack>
+										</Group>
 									</Button>
 
 									<Button
 										component={Link}
 										to='/outcomes'
 										variant='subtle'
-										leftSection={<IconCheckupList size={20} />}
 										className={classes.navButton}
 									>
-										<Stack gap={4} align='flex-start'>
-											<Text fw={600} size='md'>
-												Outcomes
-											</Text>
-											<Text size='sm' c='dimmed'>
-												Track and categorize call results
-											</Text>
-										</Stack>
+										<Group wrap='nowrap' align='flex-start'>
+											<IconCheckupList size={20} />
+											<Stack gap={4} align='flex-start'>
+												<Text fw={600} size='md'>
+													Outcomes
+												</Text>
+												<Text size='sm' c='dimmed'>
+													Track and categorize call results
+												</Text>
+											</Stack>
+										</Group>
 									</Button>
 
 									<Button
 										component={Link}
 										to='/tools'
 										variant='subtle'
-										leftSection={<IconTools size={20} />}
 										className={classes.navButton}
 									>
-										<Stack gap={4} align='flex-start'>
-											<Text fw={600} size='md'>
-												Tools
-											</Text>
-											<Text size='sm' c='dimmed'>
-												Advanced configuration options
-											</Text>
-										</Stack>
+										<Group wrap='nowrap' align='flex-start'>
+											<IconTools size={20} />
+											<Stack gap={4} align='flex-start'>
+												<Text fw={600} size='md'>
+													Tools
+												</Text>
+												<Text size='sm' c='dimmed'>
+													Advanced configuration options
+												</Text>
+											</Stack>
+										</Group>
 									</Button>
 								</SimpleGrid>
 							</Stack>

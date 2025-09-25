@@ -29,8 +29,10 @@
 	border-radius: var(--mantine-radius-lg);
 	padding: var(--mantine-spacing-xl);
 	color: var(--mantine-color-dark-7);
-	overflow: hidden;
-	height: calc(99vh - 200px);
+	/* Allow content to grow and avoid clipping */
+	overflow: visible;
+	/* Use min-height so container can expand beyond viewport if needed */
+	min-height: calc(99vh - 200px);
 	display: flex;
 	flex-direction: column;
 	gap: var(--mantine-spacing-xl);
@@ -76,18 +78,7 @@
 	}
 
 	.navButton {
-		min-height: 120px;
-	}
-}
-
-@media (max-width: 992px) {
-	.navButton {
-		min-height: 120px;
-	}
-
-	.navButton .mantine-Stack-root .mantine-Text-root:last-child {
-		font-size: 0.8rem;
-		line-height: 1.4;
+		min-height: 100px;
 	}
 }
 
@@ -99,7 +90,9 @@
 
 	.mainCard {
 		padding: var(--mantine-spacing-md);
-		height: calc(99vh - 140px);
+		/* Allow growth on small screens as well */
+		min-height: calc(99vh - 140px);
+		overflow: visible;
 	}
 
 	.title {
@@ -114,158 +107,127 @@
 	justify-content: center;
 	align-items: center;
 	padding: var(--mantine-spacing-xl);
-	background-color: var(--mantine-color-gray-0);
 }
 
 .welcomeCard {
-	padding: var(--mantine-spacing-xl);
-	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: var(--mantine-radius-xl);
-	background-color: white;
+	padding: 0;
+	border: none;
+	border-radius: 0;
+	background-color: transparent;
 	max-width: 1200px;
 	width: 100%;
 	position: relative;
-	overflow: hidden;
 }
 
 .welcomeHeader {
 	text-align: center;
-	margin-bottom: var(--mantine-spacing-xxl);
+	margin-bottom: var(--mantine-spacing-xl);
 	position: relative;
-	padding-bottom: var(--mantine-spacing-lg);
-}
-
-.welcomeHeader::after {
-	content: '';
-	position: absolute;
-	bottom: 0;
-	left: 50%;
-	transform: translateX(-50%);
-	width: 80px;
-	height: 3px;
-	background-color: var(--mantine-color-blue-5);
-	border-radius: 2px;
+	padding-bottom: var(--mantine-spacing-md);
 }
 
 .welcomeTitle {
 	color: var(--mantine-color-dark-8);
 	margin-bottom: var(--mantine-spacing-md);
-	font-size: 2.5rem;
-	font-weight: 700;
-	letter-spacing: -0.5px;
-	line-height: 1.2;
+	font-size: clamp(1.8rem, 4vw, 2.2rem);
+	font-weight: 600;
+	letter-spacing: -0.2px;
+	line-height: 1.3;
 	position: relative;
 }
 
-.welcomeTitle::after {
-	content: '🚀';
-	position: absolute;
-	top: -8px;
-	right: -50px;
-	font-size: 1.8rem;
-	opacity: 0.8;
-}
-
 .welcomeDescription {
-	max-width: 700px;
+	max-width: 600px;
 	margin: 0 auto var(--mantine-spacing-xl) auto;
-	line-height: 1.7;
-	font-size: 1.1rem;
-	color: var(--mantine-color-gray-7);
+	line-height: 1.6;
+	font-size: clamp(0.9rem, 2.5vw, 1rem);
+	color: var(--mantine-color-gray-6);
 	font-weight: 400;
-	background-color: var(--mantine-color-gray-0);
-	padding: var(--mantine-spacing-lg);
-	border-radius: var(--mantine-radius-md);
-	border-left: 4px solid var(--mantine-color-blue-5);
 }
 
 .navigationGrid {
 	margin-top: var(--mantine-spacing-xl);
-	gap: var(--mantine-spacing-xl);
+	gap: var(--mantine-spacing-md);
 }
 
 .navButton {
-	height: auto;
-	padding: var(--mantine-spacing-md);
-	border: 2px solid var(--mantine-color-gray-2);
-	border-radius: var(--mantine-radius-lg);
+	height: auto !important;
+	/* override Mantine fixed height */
+	padding: var(--mantine-spacing-md) var(--mantine-spacing-lg);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
 	background-color: white;
 	color: var(--mantine-color-dark-7);
 	display: flex;
 	flex-direction: row;
-	align-items: flex-start;
+	align-items: stretch !important;
+	/* allow inner to define its own height */
 	text-align: left;
-	min-height: 120px;
+	min-height: auto;
 	gap: var(--mantine-spacing-md);
-	transition: all 0.3s ease;
 	position: relative;
-	overflow: hidden;
+	cursor: pointer;
+	white-space: normal !important;
+	/* allow wrapping at root */
+	overflow: visible !important;
+	/* never clip */
 }
 
-.navButton::before {
-	content: '';
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 6px;
-	height: 100%;
-	background-color: var(--mantine-color-blue-5);
-	transform: scaleY(0);
-	transform-origin: center;
-	transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+/* Ensure Mantine Button inner and label allow wrapping */
+.navButton :global(.mantine-Button-inner) {
+	width: 100%;
+	align-items: stretch !important;
+	overflow: visible !important;
 }
 
-.navButton::after {
-	content: '';
-	position: absolute;
-	top: var(--mantine-spacing-md);
-	right: var(--mantine-spacing-md);
-	width: 30px;
-	height: 30px;
-	border-radius: 50%;
-	background-color: var(--mantine-color-gray-1);
-	opacity: 0;
-	transform: scale(0);
-	transition: all 0.3s ease;
+.navButton :global(.mantine-Button-label) {
+	display: block;
+	white-space: normal !important;
+	/* override default nowrap */
+	text-overflow: clip !important;
+	/* remove ellipsis */
+	overflow: visible !important;
+	width: 100%;
+	min-width: 0;
 }
 
-.navButton:hover {
-	background-color: var(--mantine-color-gray-0);
-	border-color: var(--mantine-color-blue-4);
-	transform: translateY(-2px);
-	color: var(--mantine-color-dark-8);
+/* Children respect container width */
+.navButton :global(.mantine-Button-label > *) {
+	max-width: 100%;
 }
 
-.navButton:hover::before {
-	transform: scaleY(1);
+/* Make Group and Stack fill available width, enabling inner text wrapping */
+.navButton :global(.mantine-Group-root) {
+	width: 100%;
+	align-items: flex-start !important;
+	min-width: 0;
+	/* critical for text wrap in flex children */
+	overflow: visible;
 }
 
-.navButton:hover::after {
-	opacity: 1;
-	transform: scale(1);
+.navButton :global(.mantine-Stack-root) {
+	flex: 1;
+	min-width: 0;
+	width: 100%;
 }
 
-.navButton:active {
-	transform: translateY(0px);
+/* Ensure text wraps */
+.navButton :global(.mantine-Text-root) {
+	white-space: normal !important;
+	word-break: break-word;
 }
 
 /* Icon styling */
 .navButton [data-button-icon] {
 	color: white;
-	transition: all 0.3s ease;
-	padding: var(--mantine-spacing-xs);
-	border-radius: var(--mantine-radius-md);
-	background-color: var(--mantine-color-gray-4);
-	width: 40px;
-	height: 40px;
+	padding: var(--mantine-spacing-sm);
+	border-radius: var(--mantine-radius-sm);
+	width: 44px;
+	height: 44px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
-}
-
-.navButton:hover [data-button-icon] {
-	transform: scale(1.05);
 }
 
 /* Text styling within buttons */
@@ -273,74 +235,31 @@
 	flex: 1;
 	width: 100%;
 	min-width: 0;
-	overflow: hidden;
 }
 
 .navButton .mantine-Stack-root .mantine-Text-root:first-child {
 	color: var(--mantine-color-dark-8);
 	font-weight: 600;
-	font-size: 1rem;
-	letter-spacing: -0.2px;
-	margin-bottom: var(--mantine-spacing-xs);
-	line-height: 1.3;
-	flex-shrink: 0;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	font-size: clamp(0.75rem, 1.8vw, 0.9rem);
+	letter-spacing: -0.05px;
+	margin-bottom: 6px;
+	line-height: 1.4;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	hyphens: auto;
 }
 
 .navButton .mantine-Stack-root .mantine-Text-root:last-child {
 	color: var(--mantine-color-gray-6);
-	font-size: 0.85rem;
-	line-height: 1.4;
+	font-size: clamp(0.65rem, 1.5vw, 0.78rem);
+	line-height: 1.5;
 	font-weight: 400;
-	white-space: normal;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 	hyphens: auto;
-	max-width: 100%;
-	flex: 1;
-	display: -webkit-box;
-	-webkit-line-clamp: 3;
-	line-clamp: 3;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-	word-break: break-word;
 }
 
-.navButton:hover .mantine-Stack-root .mantine-Text-root:first-child {
-	color: var(--mantine-color-dark-9);
-}
-
-.navButton:hover .mantine-Stack-root .mantine-Text-root:last-child {
-	color: var(--mantine-color-gray-7);
-}
-
-/* Individual button colors */
-.navButton:nth-child(1)::before {
-	background-color: var(--mantine-color-blue-5);
-}
-
-.navButton:nth-child(2)::before {
-	background-color: var(--mantine-color-cyan-5);
-}
-
-.navButton:nth-child(3)::before {
-	background-color: var(--mantine-color-teal-5);
-}
-
-.navButton:nth-child(4)::before {
-	background-color: var(--mantine-color-green-5);
-}
-
-.navButton:nth-child(5)::before {
-	background-color: var(--mantine-color-orange-5);
-}
-
-.navButton:nth-child(6)::before {
-	background-color: var(--mantine-color-violet-5);
-}
-
+/* Individual button icon colors */
 .navButton:nth-child(1) [data-button-icon] {
 	background-color: var(--mantine-color-blue-5);
 }
@@ -365,118 +284,113 @@
 	background-color: var(--mantine-color-violet-5);
 }
 
-.navButton:nth-child(1):hover [data-button-icon] {
-	background-color: var(--mantine-color-blue-6);
-}
-
-.navButton:nth-child(2):hover [data-button-icon] {
-	background-color: var(--mantine-color-cyan-6);
-}
-
-.navButton:nth-child(3):hover [data-button-icon] {
-	background-color: var(--mantine-color-teal-6);
-}
-
-.navButton:nth-child(4):hover [data-button-icon] {
-	background-color: var(--mantine-color-green-6);
-}
-
-.navButton:nth-child(5):hover [data-button-icon] {
-	background-color: var(--mantine-color-orange-6);
-}
-
-.navButton:nth-child(6):hover [data-button-icon] {
-	background-color: var(--mantine-color-violet-6);
-}
-
-.navButton:nth-child(1):hover::after {
-	background-color: var(--mantine-color-blue-1);
-}
-
-.navButton:nth-child(2):hover::after {
-	background-color: var(--mantine-color-cyan-1);
-}
-
-.navButton:nth-child(3):hover::after {
-	background-color: var(--mantine-color-teal-1);
-}
-
-.navButton:nth-child(4):hover::after {
-	background-color: var(--mantine-color-green-1);
-}
-
-.navButton:nth-child(5):hover::after {
-	background-color: var(--mantine-color-orange-1);
-}
-
-.navButton:nth-child(6):hover::after {
-	background-color: var(--mantine-color-violet-1);
-}
-
 /* Responsive adjustments */
-@media (max-width: 768px) {
-	.welcomeCard {
-		padding: var(--mantine-spacing-lg);
-		margin: var(--mantine-spacing-md);
-	}
-
-	.welcomeTitle {
-		font-size: 2rem;
-	}
-
-	.welcomeDescription {
-		font-size: 1rem;
-		padding: var(--mantine-spacing-md);
+@media (max-width: 992px) {
+	.navigationGrid {
+		gap: var(--mantine-spacing-sm);
 	}
 
 	.navButton {
-		min-height: 100px;
-		padding: var(--mantine-spacing-md);
+		padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
 		gap: var(--mantine-spacing-sm);
-		align-items: center;
-		flex-direction: column;
-		text-align: center;
-	}
-
-	.navButton [data-button-icon] {
-		width: 36px;
-		height: 36px;
-		padding: var(--mantine-spacing-xs);
-		margin-top: 0;
-		margin-bottom: var(--mantine-spacing-xs);
-	}
-
-	.navigationGrid {
-		gap: var(--mantine-spacing-lg);
-	}
-
-	.navButton::after {
-		display: none;
-	}
-
-	.welcomeTitle::after {
-		right: -35px;
-		font-size: 1.4rem;
-	}
-
-	.welcomeHeader::after {
-		width: 60px;
 	}
 
 	.navButton .mantine-Stack-root .mantine-Text-root:first-child {
-		font-size: 0.9rem;
+		font-size: 0.82rem;
+		line-height: 1.3;
 	}
 
 	.navButton .mantine-Stack-root .mantine-Text-root:last-child {
-		font-size: 0.8rem;
-		-webkit-line-clamp: 2;
-		line-clamp: 2;
-		word-break: break-word;
-		hyphens: auto;
+		font-size: 0.72rem;
+		line-height: 1.4;
+	}
+}
+
+@media (max-width: 768px) {
+	.welcomeCard {
+		padding: 0;
+	}
+
+	.navButton {
+		padding: var(--mantine-spacing-sm);
+		gap: var(--mantine-spacing-xs);
+		align-items: flex-start;
+		flex-direction: row;
+	}
+
+	.navButton [data-button-icon] {
+		width: 32px;
+		height: 32px;
+		padding: 6px;
+		flex-shrink: 0;
+	}
+
+	.navigationGrid {
+		gap: var(--mantine-spacing-sm);
+	}
+
+	.navButton .mantine-Stack-root {
+		align-items: flex-start;
+		text-align: left;
+		flex: 1;
+		min-width: 0;
+	}
+
+	.navButton .mantine-Stack-root .mantine-Text-root:first-child {
+		font-size: 0.78rem;
+		line-height: 1.2;
+		margin-bottom: 2px;
+	}
+
+	.navButton .mantine-Stack-root .mantine-Text-root:last-child {
+		font-size: 0.68rem;
+		line-height: 1.3;
+	}
+}
+
+@media (max-width: 600px) {
+	.navigationGrid {
+		grid-template-columns: 1fr;
+		gap: var(--mantine-spacing-xs);
+	}
+
+	.navButton {
+		padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	}
+
+	.navButton .mantine-Stack-root .mantine-Text-root:first-child {
+		font-size: 0.76rem;
+	}
+
+	.navButton .mantine-Stack-root .mantine-Text-root:last-child {
+		font-size: 0.66rem;
+	}
+}
+
+@media (max-width: 480px) {
+	.navButton {
+		flex-direction: column;
+		text-align: center;
+		align-items: center;
+		gap: 8px;
+		padding: var(--mantine-spacing-sm);
 	}
 
 	.navButton .mantine-Stack-root {
 		align-items: center;
 		text-align: center;
+		width: 100%;
+	}
+
+	.navButton [data-button-icon] {
+		margin-bottom: 4px;
+	}
+
+	.navButton .mantine-Stack-root .mantine-Text-root:first-child {
+		font-size: 0.82rem;
+	}
+
+	.navButton .mantine-Stack-root .mantine-Text-root:last-child {
+		font-size: 0.72rem;
 	}
 }
