@@ -3,7 +3,7 @@ name: Build & Push SPA to ECR (GLOBAL-DEV)
 on:
   push:
     branches:
-      - dev
+      - main
   workflow_dispatch:
 
 jobs:
