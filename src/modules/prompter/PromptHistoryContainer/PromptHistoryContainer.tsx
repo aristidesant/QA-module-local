@@ -1,12 +1,10 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Stack, Text, Paper, Center, Loader } from '@mantine/core';
 import BaseTable from '~/components/BaseTable';
 import { useGetAllPrompts } from '~/modules/prompt-generator/queries/promptGeneratorQueries';
 import type { Prompt } from '~/models/PromptModel';
-import type { ColumnDef } from '@tanstack/react-table';
 import { usePromptHistoryStore } from './usePromptHistoryStore';
-import { StatusBadge } from './StatusBadge';
-import { ActionsMenu } from './ActionsMenu';
+import usePromptHistoryColumns from './usePromptHistoryColumns';
 import { ViewPromptModal } from './ViewPromptModal';
 import { EditPromptModal } from './EditPromptModal';
 import { FilterSection } from './FilterSection';
@@ -16,38 +14,7 @@ export const PromptHistoryContainer: React.FC = () => {
 	const { searchTerm, statusFilter } = usePromptHistoryStore();
 	const { data: prompts, isLoading, isError, refetch } = useGetAllPrompts();
 
-	const columns: ColumnDef<Prompt>[] = [
-		{
-			accessorKey: 'name',
-			header: 'Name',
-			cell: ({ row }) => (
-				<Text fw={500} size='sm'>
-					{row.original.name}
-				</Text>
-			),
-		},
-		{
-			accessorKey: 'status',
-			header: 'Status',
-			cell: ({ row }) => <StatusBadge status={row.original.status} />,
-		},
-		{
-			accessorKey: 'createdAt',
-			header: 'Created',
-			cell: ({ row }) => (
-				<Text size='xs' c='dimmed'>
-					{row.original.createdAt
-						? new Date(row.original.createdAt).toLocaleDateString()
-						: 'Unknown'}
-				</Text>
-			),
-		},
-		{
-			id: 'actions',
-			header: 'Actions',
-			cell: ({ row }) => <ActionsMenu prompt={row.original} />,
-		},
-	];
+	const columns = usePromptHistoryColumns();
 
 	// Filter prompts based on search and status
 	const filteredPrompts = useMemo(() => {

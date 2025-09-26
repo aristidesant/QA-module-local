@@ -3,15 +3,23 @@ import {
 	useCreatePromptForm,
 	useGetAllPromptForms,
 } from '~/queries/promptFormQueries';
-import { Loader, Center, Text, ActionIcon, Stack } from '@mantine/core';
+import {
+	Loader,
+	Center,
+	Text,
+	Stack,
+	Paper,
+	Group,
+	Button,
+	Title,
+} from '@mantine/core';
 import { IconPlus, IconAlertCircle } from '@tabler/icons-react';
 import styles from './PromptFormContent.module.css';
 import { PromptFormForm } from '~/modules/prompt-form/PromptFormForm';
-import SectionCard from '~/components/SectionCard';
 import type { PromptForm } from '~/models/PromptFormModel';
 import usePromptFormStore from '~/modules/prompt-form/usePromptFormStore';
 import BaseTable from '~/components/BaseTable';
-import usePromptFormListColumn from '~/modules/prompt-form/PromptFormList/usePromptFormListColumn';
+import usePromptFormListColumn from './usePromptFormListColumn';
 
 export const PromptFormContent: React.FC = () => {
 	const { data, isLoading, isError } = useGetAllPromptForms();
@@ -59,11 +67,20 @@ export const PromptFormContent: React.FC = () => {
 	}
 
 	return (
-		<SectionCard
-			title='List of forms'
-			description='This is a list of all the forms created by the user.'
-			headerActions={
-				<ActionIcon
+		<Stack gap='md' className={styles.container}>
+			<Group
+				justify='space-between'
+				align='flex-start'
+				className={styles.header}
+			>
+				<div>
+					<Title order={4}>List of forms</Title>
+					<Text size='sm' c='dimmed'>
+						This is a list of all the forms created by the user.
+					</Text>
+				</div>
+				<Button
+					leftSection={<IconPlus size={18} />}
 					onClick={() => {
 						setRightComponent(
 							<PromptFormForm
@@ -73,28 +90,35 @@ export const PromptFormContent: React.FC = () => {
 							/>
 						);
 					}}
+					size='sm'
 				>
-					<IconPlus />
-				</ActionIcon>
-			}
-		>
-			{data && data.length > 0 ? (
-				<BaseTable<PromptForm>
-					data={data}
-					columns={columns}
-					onRowClick={(row) => openEditForm(row)}
-					className={styles.table}
-					density='compact'
-				/>
-			) : (
-				<div className={styles.emptyState}>
-					<IconAlertCircle size={24} style={{ marginBottom: 12 }} />
-					<Text size='sm'>No prompt forms found</Text>
-					<Text size='xs' c='dimmed' mt={4}>
-						Create your first prompt form to get started
-					</Text>
-				</div>
-			)}
-		</SectionCard>
+					New form
+				</Button>
+			</Group>
+
+			<Paper withBorder className={styles.tableContainer}>
+				{data && data.length > 0 ? (
+					<BaseTable<PromptForm>
+						data={data}
+						columns={columns}
+						onRowClick={(row) => openEditForm(row)}
+						className={styles.table}
+						density='compact'
+					/>
+				) : (
+					<Center h={300} className={styles.emptyState}>
+						<Stack align='center' gap='xs'>
+							<IconAlertCircle size={32} />
+							<Text size='sm' fw={500}>
+								No prompt forms found
+							</Text>
+							<Text size='xs' c='dimmed' ta='center'>
+								Create your first prompt form to get started
+							</Text>
+						</Stack>
+					</Center>
+				)}
+			</Paper>
+		</Stack>
 	);
 };

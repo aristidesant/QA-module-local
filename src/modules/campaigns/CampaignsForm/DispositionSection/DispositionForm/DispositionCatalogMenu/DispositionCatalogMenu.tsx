@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import styles from './DispositionCatalogMenu.module.css';
 import { useDispositionBuilderStore } from '../../dispositionStore';
 import { Select, Divider } from '@mantine/core';
@@ -24,7 +24,7 @@ const DispositionCatalogMenu: React.FC = () => {
 		type: campaign?.type ?? 'OUTBOUND',
 	});
 	// Set default catalog if not set or if selectedCatalog is not in the list
-	React.useEffect(() => {
+	useEffect(() => {
 		if (catalogs.length > 0) {
 			if (
 				!selectedCatalog ||
