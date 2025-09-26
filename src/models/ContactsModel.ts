@@ -3,7 +3,7 @@ export interface Contact {
 	firstName: string;
 	lastName: string;
 	identifier: string;
-	identifierType: "PERSONAL_ID" | string;
+	identifierType: 'PERSONAL_ID' | string;
 	birthDate: string; // ISO date string: YYYY-MM-DD
 	address: string;
 	phone: string;
@@ -14,16 +14,17 @@ export interface Contact {
 	contactGroupId: number;
 	emails: string[] | null;
 	phones: string[];
-	status: "ACTIVE" | "INACTIVE" | string;
+	phoneNumbers: { phoneNumber: string }[];
+	status: 'ACTIVE' | 'INACTIVE' | string;
 }
 
 export enum ContactStatus {
-	DO_NOT_RESPOND = "DO_NOT_RESPOND",
-	CONTACTED = "CONTACTED",
-	VOICE_MAIL = "VOICE_MAIL",
-	ON_CALL = "ON_CALL",
-	INICATIVE = "INICATIVE", // Added per requirement (note: spelled as provided)
-	DECEASED = "DECEASED",
-	INACTIVE = "INACTIVE",
-	ACTIVE = "ACTIVE",
+	DO_NOT_RESPOND = 'DO_NOT_RESPOND',
+	CONTACTED = 'CONTACTED',
+	VOICE_MAIL = 'VOICE_MAIL',
+	ON_CALL = 'ON_CALL',
+	INICATIVE = 'INICATIVE', // Added per requirement (note: spelled as provided)
+	DECEASED = 'DECEASED',
+	INACTIVE = 'INACTIVE',
+	ACTIVE = 'ACTIVE',
 }
