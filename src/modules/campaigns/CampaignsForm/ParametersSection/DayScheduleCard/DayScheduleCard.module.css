@@ -1,103 +1,167 @@
 .dayRow {
-  padding: var(--mantine-spacing-xs);
-  border-radius: var(--mantine-radius-sm);
-  transition: background-color 150ms ease;
+	padding: var(--mantine-spacing-sm);
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--mantine-color-white);
+	transition:
+		background-color 150ms ease,
+		border-color 150ms ease;
 }
 
 .highlighted {
-  background-color: var(--mantine-color-blue-0);
-  border: 1px solid var(--mantine-color-blue-3);
+	background-color: var(--mantine-color-blue-0);
+	border-color: var(--mantine-color-blue-4);
 }
 
 .daySwitch {
-  margin: 0;
+	margin: 0;
+}
+
+.dayContent {
+	width: 100%;
+	gap: var(--mantine-spacing-md);
+}
+
+.dayHeader {
+	min-width: 160px;
+}
+
+.dayInfo {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
 }
 
 .dayName {
-  font-size: var(--mantine-font-size-sm);
-  font-weight: 500;
-  color: var(--mantine-color-text);
-  min-width: 90px;
+	font-size: var(--mantine-font-size-md);
+	font-weight: 600;
+	color: var(--mantine-color-text);
+	min-width: 90px;
 }
 
-.copyButton {
-  white-space: nowrap;
-  font-size: var(--mantine-font-size-xs);
+.dayStatus {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.timeSection {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	width: 100%;
 }
 
 .timeInputsContainer {
-  display: flex;
-  align-items: flex-end;
-  gap: var(--mantine-spacing-sm);
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--mantine-spacing-md);
 }
 
 .timeInputWrapper {
-  flex: 1;
-  min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+	min-width: 0;
 }
 
 .timeLabel {
-  margin-bottom: 4px;
-  font-weight: 400;
-  font-size: 12px;
-  color: var(--mantine-color-gray-6);
-  text-align: left;
+	font-weight: 600;
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
 }
 
 .timeInput {
-  width: 100%;
-  min-width: 100px;
+	width: 100%;
 }
 
-.timeSeparator {
-  align-self: flex-end;
-  padding: 0;
-  margin-bottom: 8px;
-  font-size: var(--mantine-font-size-sm);
-  color: var(--mantine-color-gray-6);
-  font-weight: 400;
+.metricsContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	align-items: flex-end;
+}
+
+.metricsTitle {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.metricsRow {
+	display: flex;
+	gap: var(--mantine-spacing-lg);
+	align-items: baseline;
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-7);
+}
+
+.metricsLabel {
+	display: inline-flex;
+	flex-direction: column;
+	gap: 2px;
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+}
+
+.metricsValue {
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 600;
+	color: var(--mantine-color-blue-7);
 }
 
 .closedBadge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--mantine-spacing-xs);
-  background-color: var(--mantine-color-gray-1);
-  border-radius: var(--mantine-radius-sm);
-  color: var(--mantine-color-dimmed);
-  min-height: 36px;
-  min-width: 200px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--mantine-spacing-xs);
+	background-color: var(--mantine-color-gray-1);
+	border-radius: var(--mantine-radius-sm);
+	color: var(--mantine-color-dimmed);
+	min-height: 48px;
+	min-width: 220px;
 }
 
 .selectable {
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+	cursor: pointer;
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease;
 }
 
 .selectable:hover {
-  background-color: var(--mantine-color-gray-0);
+	background-color: var(--mantine-color-gray-0);
+	border-color: var(--mantine-color-gray-3);
+}
+
+.estimationNote {
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	background-color: var(--mantine-color-gray-0);
+}
+
+.estimationIcon {
+	color: var(--mantine-color-blue-6);
+	margin-top: 2px;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .timeInputsContainer {
-    flex-direction: column;
-    gap: var(--mantine-spacing-xs);
-  }
+	.dayHeader {
+		min-width: unset;
+	}
 
-  .timeInputWrapper {
-    width: 100%;
-  }
+	.timeInputsContainer {
+		grid-template-columns: 1fr;
+		gap: var(--mantine-spacing-sm);
+	}
 
-  .timeSeparator {
-    align-self: center;
-    margin: 0;
-    padding: var(--mantine-spacing-xs) 0;
-  }
-
-  .copyButton {
-    width: 100%;
-    margin-top: var(--mantine-spacing-xs);
-  }
+	.metricsContainer {
+		align-items: flex-start;
+	}
 }

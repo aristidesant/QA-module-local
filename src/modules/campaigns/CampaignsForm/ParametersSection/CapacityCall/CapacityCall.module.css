@@ -1,0 +1,172 @@
+.card {
+	background-color: var(--mantine-color-gray-0);
+	padding: var(--mantine-spacing-md);
+}
+
+.header {
+	flex-wrap: wrap;
+	gap: var(--mantine-spacing-md);
+}
+
+.headerText {
+	max-width: 420px;
+}
+
+.title {
+	font-size: var(--mantine-font-size-lg);
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+}
+
+.subtitle {
+	margin-top: calc(var(--mantine-spacing-xs) / 2);
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-6);
+}
+
+.valueChip {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	justify-content: center;
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	min-width: 120px;
+	background-color: var(--mantine-color-white);
+}
+
+.valueNumber {
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: var(--mantine-color-blue-6);
+	line-height: 1.1;
+}
+
+.valueLabel {
+	margin-top: calc(var(--mantine-spacing-xs) / 2);
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+}
+
+.sliderSection {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.sliderLabel {
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 500;
+	color: var(--mantine-color-gray-8);
+}
+
+.sliderHelper {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+}
+
+.sliderRoot {
+	margin-top: var(--mantine-spacing-xs);
+}
+
+.sliderTrack {
+	height: 8px;
+	border-radius: 4px;
+	background-color: var(--mantine-color-gray-3);
+}
+
+.sliderBar {
+	background-color: var(--mantine-color-blue-5);
+}
+
+.sliderThumb {
+	height: 16px;
+	width: 16px;
+	border: none;
+	background-color: var(--mantine-color-blue-6);
+}
+
+.divider {
+	margin: var(--mantine-spacing-md) 0;
+}
+
+.summarySection {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--mantine-spacing-xs) / 1.5);
+}
+
+.summaryTitle {
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 600;
+	color: var(--mantine-color-gray-8);
+}
+
+.summaryDescription {
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-6);
+	max-width: 560px;
+}
+
+.metricsGrid {
+	margin-top: var(--mantine-spacing-xs);
+}
+
+.metricCard {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-md);
+	background-color: var(--mantine-color-white);
+}
+
+.metricIcon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--mantine-color-blue-6);
+}
+
+.metricLabel {
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 500;
+	color: var(--mantine-color-gray-7);
+}
+
+.metricValue {
+	margin-top: var(--mantine-spacing-sm);
+	font-size: var(--mantine-font-size-xl);
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+}
+
+.metricDescription {
+	margin-top: calc(var(--mantine-spacing-xs) / 2);
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+}
+
+.scheduleBlock {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-md);
+	background-color: var(--mantine-color-white);
+}
+
+.scheduleTitle {
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 600;
+	color: var(--mantine-color-gray-8);
+}
+
+.scheduleBadge {
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 500;
+	color: var(--mantine-color-blue-6);
+}
+
+@media (max-width: 40em) {
+	.valueChip {
+		align-items: flex-start;
+	}
+}

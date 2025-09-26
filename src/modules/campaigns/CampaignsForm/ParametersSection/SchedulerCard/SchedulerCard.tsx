@@ -10,11 +10,10 @@ import {
 	useDeleteSchedule,
 } from '~/queries/schedulerQueries';
 import styles from './SchedulerCard.module.css';
-import { DayScheduleCard } from '../DayScheduleCard';
-import CallsOverview from '../CallsOverview';
 import ScheduleHeader from './ScheduleHeader';
 import { ActiveContactListView } from '../../ContactSection/ActiveContactList/ActiveContactListView';
 import CapacityCall from '../CapacityCall/CapacityCall';
+import CallsOverview from '../CallsOverview';
 import {
 	SchedulerFormProvider,
 	useSchedulerForm,
@@ -177,12 +176,6 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 							<Stack gap='lg'>
 								{/* Capacity Call Section */}
 								<CapacityCall />
-
-								{/* Calls per hour section and Estimated completion time */}
-								<CallsOverview />
-
-								{/* Day Schedule Card */}
-								<DayScheduleCard />
 
 								{/* Active Contact List */}
 								<ActiveContactListView
