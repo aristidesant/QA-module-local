@@ -13,7 +13,6 @@ import styles from './SchedulerCard.module.css';
 import ScheduleHeader from './ScheduleHeader';
 import { ActiveContactListView } from '../../ContactSection/ActiveContactList/ActiveContactListView';
 import CapacityCall from '../CapacityCall/CapacityCall';
-import CallsOverview from '../CallsOverview';
 import {
 	SchedulerFormProvider,
 	useSchedulerForm,
