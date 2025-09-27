@@ -1,15 +1,5 @@
-import React, { useState } from 'react';
-import {
-	Modal,
-	Button,
-	Text,
-	Loader,
-	Group,
-	Stack,
-	Badge,
-	ThemeIcon,
-} from '@mantine/core';
-import { IconFileText, IconWorld, IconApi } from '@tabler/icons-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Modal, Button, Text, Loader, Group, Stack } from '@mantine/core';
 import { useKnowledgeBases } from '~/queries/knowledgeBaseQueries';
 import { useAssignKnowledgeBase } from '~/queries/agentKnowledgeBaseQueries';
 import {
@@ -18,11 +8,34 @@ import {
 } from '~/models/KnowledgeBaseModel';
 import styles from './AddKnowledgeBaseModal.module.css';
 import { useAgentStore } from '~/stores/agentStore';
+import BaseTable from '~/components/BaseTable';
+import useKnowledgeBaseColumns from './useKnowledgeBaseColumns';
+import type KnowledgeBaseModel from '~/models/KnowledgeBaseModel';
 
 interface AddKnowledgeBaseModalProps {
 	opened: boolean;
 	onClose: () => void;
 }
+
+const getSourceDetail = (knowledgeBase: KnowledgeBaseModel) => {
+	if (knowledgeBase.sourceUrl) {
+		return knowledgeBase.sourceUrl;
+	}
+
+	if (knowledgeBase.type === KnowledgeBaseType.FILE && knowledgeBase.file) {
+		return knowledgeBase.file.name;
+	}
+
+	if (knowledgeBase.textContent) {
+		return knowledgeBase.textContent;
+	}
+
+	if (knowledgeBase.identifier) {
+		return knowledgeBase.identifier;
+	}
+
+	return 'No source information available.';
+};
 
 export const AddKnowledgeBaseModal: React.FC<AddKnowledgeBaseModalProps> = ({
 	opened,
@@ -35,31 +48,48 @@ export const AddKnowledgeBaseModal: React.FC<AddKnowledgeBaseModalProps> = ({
 
 	const { data: knowledgeBases, isLoading, error } = useKnowledgeBases();
 	const assignMutation = useAssignKnowledgeBase();
+	const columns = useKnowledgeBaseColumns();
 
-	const getIconForType = (type: KnowledgeBaseType) => {
-		switch (type) {
-			case KnowledgeBaseType.FILE:
-				return <IconFileText size={16} />;
-			case KnowledgeBaseType.URL:
-				return <IconWorld size={16} />;
-			default:
-				return <IconApi size={16} />;
+	const activeKnowledgeBases = useMemo(
+		() =>
+			(knowledgeBases ?? []).filter(
+				(kb) => kb.status === KnowledgeBaseStatus.ACTIVE
+			),
+		[knowledgeBases]
+	);
+
+	const selectedKnowledgeBase = useMemo(
+		() =>
+			activeKnowledgeBases.find((kb) => kb.id === selectedKnowledgeBaseId) ??
+			null,
+		[activeKnowledgeBases, selectedKnowledgeBaseId]
+	);
+
+	useEffect(() => {
+		if (selectedKnowledgeBaseId && !selectedKnowledgeBase) {
+			setSelectedKnowledgeBaseId(null);
 		}
+	}, [selectedKnowledgeBase, selectedKnowledgeBaseId]);
+
+	const handleRowSelect = (knowledgeBase: KnowledgeBaseModel) => {
+		setSelectedKnowledgeBaseId(knowledgeBase.id);
 	};
 
 	const handleSubmit = async () => {
-		if (!selectedKnowledgeBaseId || !selectedAgent?.id) return;
+		if (!selectedKnowledgeBase || !selectedAgent?.id) {
+			return;
+		}
 
 		try {
 			await assignMutation.mutateAsync({
 				agentId: selectedAgent.id,
-				knowledgeBaseId: selectedKnowledgeBaseId,
+				knowledgeBaseId: selectedKnowledgeBase.id,
 				isActive: true,
 			});
 			onClose();
 			setSelectedKnowledgeBaseId(null);
-		} catch (error) {
-			console.error('Error assigning knowledge base:', error);
+		} catch (submitError) {
+			console.error('Error assigning knowledge base:', submitError);
 		}
 	};
 
@@ -68,86 +98,99 @@ export const AddKnowledgeBaseModal: React.FC<AddKnowledgeBaseModalProps> = ({
 		onClose();
 	};
 
-	// Filter out only active knowledge bases
-	const activeKnowledgeBases =
-		knowledgeBases?.filter((kb) => kb.status === KnowledgeBaseStatus.ACTIVE) ||
-		[];
+	const errorMessage =
+		error instanceof Error
+			? error.message
+			: 'Error loading knowledge bases. Please try again later.';
 
 	return (
 		<Modal
 			opened={opened}
 			onClose={handleClose}
 			title='Add Knowledge Base'
-			size='md'
+			size='xl'
 		>
-			<Stack gap='md'>
+			<Stack gap='lg' className={styles.content}>
 				{isLoading ? (
-					<div className={styles.loadingContainer}>
+					<div className={styles.feedback}>
 						<Loader size='sm' />
 						<Text size='sm' c='dimmed'>
 							Loading knowledge bases...
 						</Text>
 					</div>
 				) : error ? (
-					<Text size='sm' c='red'>
-						Error loading knowledge bases
+					<Text size='sm' c='red' className={styles.feedbackText}>
+						{errorMessage}
 					</Text>
 				) : activeKnowledgeBases.length === 0 ? (
-					<Text size='sm' c='dimmed'>
-						No active knowledge bases available
-					</Text>
-				) : (
-					<div>
-						<Text size='sm' fw={500} mb='sm'>
-							Select a knowledge base to assign:
+					<div className={styles.feedback}>
+						<Text size='sm' c='dimmed'>
+							No active knowledge bases available
 						</Text>
-						<Stack gap='xs'>
-							{activeKnowledgeBases.map((kb) => (
-								<div
-									key={kb.id}
-									className={`${styles.knowledgeBaseItem} ${
-										selectedKnowledgeBaseId === kb.id ? styles.selected : ''
-									}`}
-									onClick={() => setSelectedKnowledgeBaseId(kb.id)}
-								>
-									<div className={styles.itemContent}>
-										<ThemeIcon variant='subtle' color='gray' size='sm'>
-											{getIconForType(kb.type)}
-										</ThemeIcon>
-										<div className={styles.itemInfo}>
-											<div className={styles.itemHeader}>
-												<div className={styles.itemTitle}>{kb.name}</div>
-												<Badge
-													size='xs'
-													variant='light'
-													className={styles.typeBadge}
-												>
-													{kb.type}
-												</Badge>
-											</div>
-											{kb.description && (
-												<div className={styles.description}>
-													{kb.description}
-												</div>
-											)}
-											{kb.sourceUrl && (
-												<div className={styles.sourceUrl}>{kb.sourceUrl}</div>
-											)}
-										</div>
-									</div>
-								</div>
-							))}
-						</Stack>
 					</div>
+				) : (
+					<>
+						<div className={styles.instructions}>
+							<Text size='sm' fw={600}>
+								Select a knowledge base to assign
+							</Text>
+							<Text size='xs' c='dimmed'>
+								Only active knowledge bases are listed below.
+							</Text>
+						</div>
+						<div className={styles.tableContainer}>
+							<BaseTable
+								data={activeKnowledgeBases}
+								columns={columns}
+								initialSort={[{ id: 'name', desc: false }]}
+								onRowClick={handleRowSelect}
+								className={styles.table}
+								density='compact'
+								getRowClassName={(row) => {
+									const classNames = [styles.tableRow];
+									if (row.original.id === selectedKnowledgeBaseId) {
+										classNames.push(styles.tableRowSelected);
+									}
+									return classNames.join(' ');
+								}}
+							/>
+						</div>
+						<div className={styles.selectionPanel}>
+							{selectedKnowledgeBase ? (
+								<Stack gap={6}>
+									<Text size='sm' fw={600} className={styles.selectionTitle}>
+										{selectedKnowledgeBase.name}
+									</Text>
+									<Text size='xs' className={styles.selectionDescription}>
+										{selectedKnowledgeBase.description ??
+											'No description provided.'}
+									</Text>
+									<Text size='xs' c='dimmed' className={styles.selectionLabel}>
+										Source
+									</Text>
+									<Text size='xs' className={styles.selectionSource}>
+										{getSourceDetail(selectedKnowledgeBase)}
+									</Text>
+								</Stack>
+							) : (
+								<Text
+									size='xs'
+									c='dimmed'
+									className={styles.selectionPlaceholder}
+								>
+									Select a row above to preview its details.
+								</Text>
+							)}
+						</div>
+					</>
 				)}
-
 				<Group justify='flex-end' mt='md'>
 					<Button variant='subtle' onClick={handleClose}>
 						Cancel
 					</Button>
 					<Button
 						onClick={handleSubmit}
-						disabled={!selectedKnowledgeBaseId}
+						disabled={!selectedKnowledgeBase}
 						loading={assignMutation.isPending}
 					>
 						Add Knowledge Base

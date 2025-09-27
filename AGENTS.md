@@ -57,10 +57,12 @@
 - Use Mantine UI, V8. Search on internet whenever is required to get the latest implementation without breaking changes. component.
 - Every style should be place within a .module.css with the name of the component.
 - Prefer light mode for anything.
+- When asked in anyways to improve a component, always go with flat design, no shadows and no animnations that moves the component. Color highlights are preferred for animations.
 - Css Style MUST be preferred vs inline styling or component props.
 - Use `@tabler/icons-react` for all icons.
 - Use var(--mantine-xxx) to apply all the mantine properties in CSS files instead of defining your own styles/colors, etc..
 - Use the shared `BaseTable` component for list and table UIs by default. When creating new list or table views, prefer `src/components/BaseTable/BaseTable` (a generic TanStack Table wrapper using Mantine styling). Only deviate from `BaseTable` when there is a clear, documented reason (for example: very custom markup or performance-critical virtualization). Ensure new list components accept the same column/data shapes and use the generic `ColumnDef<T>` typing from `@tanstack/react-table`.
+- Make sure the columns are in a separated files and we create a hook for that particular columns of that list.
 
 # Data Fetching & Forms
 
