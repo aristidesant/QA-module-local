@@ -7,6 +7,7 @@ export interface UserModel {
 	createdAt: string | Date;
 	updatedAt: string | Date;
 	deletedAt: string | Date | null;
+	mfaEnabled?: boolean;
 }
 
 export interface ImpersonatedClient {

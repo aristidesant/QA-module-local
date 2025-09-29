@@ -31,6 +31,7 @@ import { LoginForm } from './modules/auth/LoginForm';
 const KnowledgeBasePage = React.lazy(
 	() => import('./modules/knowledge-bases/KnowledgeBasePage')
 );
+const ProfilePage = React.lazy(() => import('./modules/profile'));
 
 const router = createBrowserRouter([
 	// Public routes
@@ -125,6 +126,14 @@ const router = createBrowserRouter([
 						element: (
 							<Suspense fallback={<div>Loading knowledge bases...</div>}>
 								<KnowledgeBasePage />
+							</Suspense>
+						),
+					},
+					{
+						path: 'profile',
+						element: (
+							<Suspense fallback={<div>Loading profile...</div>}>
+								<ProfilePage />
 							</Suspense>
 						),
 					},

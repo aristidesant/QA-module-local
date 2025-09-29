@@ -107,3 +107,62 @@ export async function endImpersonation(
 	);
 	return response.data;
 }
+
+// Password Change
+export interface ChangePasswordPayload {
+	currentPassword: string;
+	newPassword: string;
+}
+
+export async function changePassword(
+	payload: ChangePasswordPayload,
+	apiUrl: string = DEFAULT_API_URL
+): Promise<{ message: string }> {
+	const response = await axios.post<{ message: string }>(
+		`${apiUrl}/auth/change-password`,
+		payload
+	);
+	return response.data;
+}
+
+// MFA Management
+export interface EnableMFAResponse {
+	qrCodeUrl: string;
+	secret: string;
+}
+
+export interface VerifyMFAPayload {
+	code: string;
+}
+
+export async function enableMFA(
+	apiUrl: string = DEFAULT_API_URL
+): Promise<EnableMFAResponse> {
+	const response = await axios.post<EnableMFAResponse>(
+		`${apiUrl}/auth/mfa/enable`,
+		{}
+	);
+	return response.data;
+}
+
+export async function verifyAndEnableMFA(
+	payload: VerifyMFAPayload,
+	apiUrl: string = DEFAULT_API_URL
+): Promise<{ message: string }> {
+	const response = await axios.post<{ message: string }>(
+		`${apiUrl}/auth/mfa/verify`,
+		payload
+	);
+	return response.data;
+}
+
+export async function disableMFA(
+	payload: { password: string },
+	apiUrl: string = DEFAULT_API_URL
+): Promise<{ message: string }> {
+	const response = await axios.post<{ message: string }>(
+		`${apiUrl}/auth/mfa/disable`,
+		payload
+	);
+	return response.data;
+}

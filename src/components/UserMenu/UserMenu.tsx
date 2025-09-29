@@ -1,7 +1,12 @@
 import { Menu, Badge } from '@mantine/core';
-import { IconChevronDown, IconLogout, IconShield } from '@tabler/icons-react';
+import {
+	IconChevronDown,
+	IconLogout,
+	IconShield,
+	IconUser,
+} from '@tabler/icons-react';
 import styles from './UserMenu.module.css';
-// import { useNavigate } from "react-router";
+import { useNavigate } from 'react-router';
 import logout from '~/utils/logout';
 import { useSessionStore } from '~/stores/sessionStore';
 import { useImpersonationState } from '~/hooks/useImpersonationState';
@@ -9,6 +14,7 @@ import { useImpersonationState } from '~/hooks/useImpersonationState';
 export const UserMenu: React.FC = () => {
 	const { user, targetClient } = useSessionStore();
 	const { isImpersonating } = useImpersonationState();
+	const navigate = useNavigate();
 
 	// Show target client name when impersonating, otherwise user's username
 	const displayName =
@@ -22,6 +28,10 @@ export const UserMenu: React.FC = () => {
 	const handleLogout = () => {
 		// Use centralized logout utility
 		logout();
+	};
+
+	const handleProfileClick = () => {
+		navigate('/profile');
 	};
 
 	const fetcher = { state: 'idle' } as const;
@@ -71,8 +81,12 @@ export const UserMenu: React.FC = () => {
 					</>
 				) : (
 					<>
-						<Menu.Item>Profile</Menu.Item>
-						<Menu.Item>Settings</Menu.Item>
+						<Menu.Item
+							onClick={handleProfileClick}
+							leftSection={<IconUser size={14} />}
+						>
+							Profile
+						</Menu.Item>
 						<Menu.Divider />
 						<Menu.Item
 							color='red'
