@@ -10,29 +10,30 @@ import {
 	Group,
 	SegmentedControl,
 	Divider,
-} from "@mantine/core";
-import { useForm } from "@mantine/form";
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
 import {
 	IconAt,
 	IconLock,
 	IconAlertCircle,
 	IconEye,
 	IconEyeOff,
-} from "@tabler/icons-react";
-import { useState } from "react";
-import { useNavigate } from "react-router";
-import { useLogin } from "~/queries/authQueries";
-import { getErrorMessage } from "~/utils/httpClient";
-import classes from "./LoginForm.module.css";
-import Logo from "~/components/Logo";
-import { MFALoginResponse } from "~/api/authApi";
-import OTPVerificationModal from "./OTPVerificationModal";
+} from '@tabler/icons-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { useLogin } from '~/queries/authQueries';
+import { getErrorMessage } from '~/utils/httpClient';
+import classes from './LoginForm.module.css';
+import Logo from '~/components/Logo';
+import { MFALoginResponse } from '~/api/authApi';
+import { APP_VERSION } from '~/version';
+import OTPVerificationModal from './OTPVerificationModal';
 
 interface FormValues {
 	username: string;
 	password: string;
 	rememberMe: boolean;
-	loginType: "USER_PASS" | "LDAP";
+	loginType: 'USER_PASS' | 'LDAP';
 }
 
 export function LoginForm() {
@@ -49,17 +50,17 @@ export function LoginForm() {
 
 	const form = useForm<FormValues>({
 		initialValues: {
-			username: "",
-			password: "",
+			username: '',
+			password: '',
 			rememberMe: false,
 			// default to USER_PASS so existing users keep normal behavior
-			loginType: "USER_PASS",
+			loginType: 'USER_PASS',
 		},
 		// Ensure the form never performs native submission
-		onSubmitPreventDefault: "always",
+		onSubmitPreventDefault: 'always',
 		validate: {
-			username: (value) => (!value.trim() ? "Username is required" : null),
-			password: (value) => (!value ? "Password is required" : null),
+			username: (value) => (!value.trim() ? 'Username is required' : null),
+			password: (value) => (!value ? 'Password is required' : null),
 		},
 	});
 
@@ -68,7 +69,7 @@ export function LoginForm() {
 	const handleOTPSuccess = () => {
 		setOtpModalOpened(false);
 		setPendingLoginData(null);
-		navigate("/");
+		navigate('/');
 	};
 
 	const handleOTPModalClose = () => {
@@ -79,12 +80,12 @@ export function LoginForm() {
 	return (
 		<div className={classes.wrapper}>
 			<div className={classes.form}>
-				<Paper className={classes.paper} radius="md" withBorder>
+				<Paper className={classes.paper} radius='md' withBorder>
 					<div className={classes.header}>
 						<div className={classes.logo}>
 							<Logo />
 						</div>
-						<Text className={classes.subtitle} size="sm" c="dimmed">
+						<Text className={classes.subtitle} size='sm' c='dimmed'>
 							Sign in to your account to continue
 						</Text>
 					</div>
@@ -110,7 +111,7 @@ export function LoginForm() {
 										setOtpModalOpened(true);
 									} else {
 										// Direct login success, navigate to dashboard
-										navigate("/");
+										navigate('/');
 									}
 								} catch (err: any) {
 									setFormError(getErrorMessage(err));
@@ -121,61 +122,61 @@ export function LoginForm() {
 						{/* Loading overlay */}
 						{(isSubmitting || isRedirecting) && (
 							<div className={classes.loadingOverlay}>
-								<Group gap="sm">
-									<Loader size="sm" />
-									<Text size="sm" c="dimmed">
+								<Group gap='sm'>
+									<Loader size='sm' />
+									<Text size='sm' c='dimmed'>
 										Signing in...
 									</Text>
 								</Group>
 							</div>
 						)}
-						<Stack gap="xs">
+						<Stack gap='xs'>
 							<SegmentedControl
 								fullWidth
 								value={form.values.loginType}
-								onChange={(v) => form.setFieldValue("loginType", v as any)}
+								onChange={(v) => form.setFieldValue('loginType', v as any)}
 								data={[
-									{ label: "Credentials", value: "USER_PASS" },
-									{ label: "LDAP", value: "LDAP" },
+									{ label: 'Credentials', value: 'USER_PASS' },
+									{ label: 'LDAP', value: 'LDAP' },
 								]}
 							/>
 							<Divider />
 							<div>
 								<Text className={classes.inputLabel} mb={4}>
-									Username <span style={{ color: "red" }}>*</span>
+									Username <span style={{ color: 'red' }}>*</span>
 								</Text>
 								<TextInput
 									required
 									placeholder={
-										form.values.loginType === "USER_PASS"
-											? "Enter your username"
-											: "Enter your LDAP username"
+										form.values.loginType === 'USER_PASS'
+											? 'Enter your username'
+											: 'Enter your LDAP username'
 									}
 									leftSection={
 										<IconAt className={classes.inputIcon} stroke={1.5} />
 									}
-									leftSectionPointerEvents="none"
+									leftSectionPointerEvents='none'
 									classNames={{
 										input: classes.input,
 										root: classes.inputRoot,
 									}}
-									{...form.getInputProps("username")}
-									name="username"
-									autoComplete="username"
+									{...form.getInputProps('username')}
+									name='username'
+									autoComplete='username'
 								/>
 							</div>
 
 							<div>
 								<Text className={classes.inputLabel} mb={4}>
-									Password <span style={{ color: "red" }}>*</span>
+									Password <span style={{ color: 'red' }}>*</span>
 								</Text>
 								<PasswordInput
 									required
-									placeholder="Enter your password"
+									placeholder='Enter your password'
 									leftSection={
 										<IconLock className={classes.inputIcon} stroke={1.5} />
 									}
-									leftSectionPointerEvents="none"
+									leftSectionPointerEvents='none'
 									visibilityToggleIcon={({ reveal }) =>
 										reveal ? (
 											<IconEyeOff size={18} stroke={1.5} />
@@ -188,9 +189,9 @@ export function LoginForm() {
 										root: classes.inputRoot,
 										visibilityToggle: classes.visibilityToggle,
 									}}
-									{...form.getInputProps("password")}
-									name="password"
-									autoComplete="current-password"
+									{...form.getInputProps('password')}
+									name='password'
+									autoComplete='current-password'
 								/>
 							</div>
 
@@ -198,13 +199,13 @@ export function LoginForm() {
 							{/* Form error alert */}
 							{formError && (
 								<Alert
-									variant="light"
-									color="red"
-									title="Login failed"
+									variant='light'
+									color='red'
+									title='Login failed'
 									icon={<IconAlertCircle size={18} />}
-									mb="md"
-									radius="md"
-									p="sm"
+									mb='md'
+									radius='md'
+									p='sm'
 									className={classes.errorMessage}
 								>
 									{formError}
@@ -212,12 +213,12 @@ export function LoginForm() {
 							)}
 
 							<Button
-								type="submit"
+								type='submit'
 								fullWidth
-								mt="md"
+								mt='md'
 								className={classes.submitButton}
 								loading={isLoading}
-								loaderProps={{ type: "dots" }}
+								loaderProps={{ type: 'dots' }}
 								leftSection={!isLoading && <IconLock size={18} stroke={1.5} />}
 								disabled={isLoading}
 							>
@@ -226,6 +227,13 @@ export function LoginForm() {
 						</Stack>
 					</form>
 				</Paper>
+
+				{/* Version: placed directly under the login card */}
+				<div className={classes.footer} aria-hidden>
+					<Text size='xs' c='dimmed'>
+						Version {APP_VERSION}
+					</Text>
+				</div>
 			</div>
 
 			{/* OTP Verification Modal */}

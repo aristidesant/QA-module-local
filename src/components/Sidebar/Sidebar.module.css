@@ -1,275 +1,288 @@
 /* Uses --sidebar-width from Layout.module.css */
 
 .sidebar {
-    height: 100%;
-    background: var(--mantine-color-white);
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    box-shadow: none;
-    width: 100%;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border-right: none;
+	height: 100%;
+	background: var(--mantine-color-white);
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+	box-shadow: none;
+	width: 100%;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	border-right: none;
 }
 
 .sidebarExpanded {
-  padding: 1.5rem 1rem;
+	padding: 1.5rem 1rem;
 }
 
 .sidebarCollapsed {
-  padding: 1.5rem 0.5rem;
+	padding: 1.5rem 0.5rem;
 }
 
 .logoWrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 0.5rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 0.5rem;
+}
+
+.versionWrapper {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 0.5rem;
+}
+
+.versionText {
+	text-align: center;
+	white-space: nowrap;
+	color: var(--mantine-color-dark-4);
+	font-size: 0.8rem;
 }
 
 .userCardWrapper {
-  margin-top: auto;
-  margin-bottom: 0.5rem;
-  display: flex;
-  justify-content: center;
+	margin-top: auto;
+	margin-bottom: 0.5rem;
+	display: flex;
+	justify-content: center;
 }
 
 .divider {
-  margin: 0.5rem 0;
+	margin: 0.5rem 0;
 }
 
 .sectionHeader {
-  transition: opacity 0.2s;
+	transition: opacity 0.2s;
 }
 
 .menuList {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  height: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	height: 100%;
 }
 
 .menuItem {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border-radius: 8px;
-  color: var(--mantine-color-dark-6);
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 0.95rem;
-  transition: all 0.15s ease;
-  position: relative;
-  min-height: 44px;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 16px;
+	border-radius: 8px;
+	color: var(--mantine-color-dark-6);
+	text-decoration: none;
+	font-weight: 500;
+	font-size: 0.95rem;
+	transition: all 0.15s ease;
+	position: relative;
+	min-height: 44px;
 }
 
 .menuItem:hover {
-  background: var(--mantine-color-gray-0);
-  color: var(--mantine-color-dark-8);
-  text-decoration: none;
+	background: var(--mantine-color-gray-0);
+	color: var(--mantine-color-dark-8);
+	text-decoration: none;
 }
 
 .menuItemSelected {
-  background: var(--mantine-color-blue-0);
-  color: var(--mantine-primary-color-filled);
-  font-weight: 600;
-  border-radius: 32px 0 0 32px;
-  margin-right: -1rem;
-  padding-right: calc(16px + 1rem);
-  position: relative;
+	background: var(--mantine-color-blue-0);
+	color: var(--mantine-primary-color-filled);
+	font-weight: 600;
+	border-radius: 32px 0 0 32px;
+	margin-right: -1rem;
+	padding-right: calc(16px + 1rem);
+	position: relative;
 }
 
 .menuItemSelected::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: var(--mantine-color-blue-8);
+	content: '';
+	position: absolute;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	width: 3px;
+	background: var(--mantine-color-blue-8);
 }
 
 .menuIcon {
-  display: flex;
-  align-items: center;
-  color: inherit;
-  flex-shrink: 0;
-  margin-right: 0;
-  transition: color 0.2s;
+	display: flex;
+	align-items: center;
+	color: inherit;
+	flex-shrink: 0;
+	margin-right: 0;
+	transition: color 0.2s;
 }
 
 .menuText {
-  color: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  white-space: nowrap;
-  overflow: hidden;
-  transition: opacity 0.2s ease;
+	color: inherit;
+	font-size: inherit;
+	font-weight: inherit;
+	white-space: nowrap;
+	overflow: hidden;
+	transition: opacity 0.2s ease;
 }
 
 /* Hide text and section headers when sidebar is collapsed */
 .sidebarCollapsed .menuText {
-  opacity: 0;
-  width: 0;
+	opacity: 0;
+	width: 0;
 }
 
 .sidebarCollapsed .sectionHeader {
-  opacity: 0;
-  width: 0;
-  height: 0;
-  overflow: hidden;
+	opacity: 0;
+	width: 0;
+	height: 0;
+	overflow: hidden;
 }
 
 .sidebarCollapsed .divider {
-  margin: 0.25rem 0;
+	margin: 0.25rem 0;
 }
 
 .sidebarCollapsed .logoWrapper {
-  margin-bottom: 1rem;
+	margin-bottom: 1rem;
 }
 
 .sidebarCollapsed .userCardWrapper {
-  margin-top: auto;
-  margin-bottom: 1rem;
+	margin-top: auto;
+	margin-bottom: 1rem;
 }
 
 /* Adjust menu item layout for collapsed state */
 .menuItemCollapsed {
-  justify-content: center;
-  padding: 12px;
-  gap: 0;
-  border-radius: 8px;
-  margin-right: 0;
+	justify-content: center;
+	padding: 12px;
+	gap: 0;
+	border-radius: 8px;
+	margin-right: 0;
 }
 
 .menuItemCollapsed.menuItemSelected {
-  border-radius: 8px;
-  margin-right: 0;
-  padding: 12px;
+	border-radius: 8px;
+	margin-right: 0;
+	padding: 12px;
 }
 
 .menuItemCollapsed.menuItemSelected::after {
-  display: none;
+	display: none;
 }
 
 @media (max-width: 768px) {
-  .sidebarExpanded {
-    --sidebar-width: 180px;
-  }
-  .sidebarCollapsed {
-    --sidebar-width: 56px;
-  }
+	.sidebarExpanded {
+		--sidebar-width: 180px;
+	}
+	.sidebarCollapsed {
+		--sidebar-width: 56px;
+	}
 }
 
 .menuList {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
 }
 
 .menuItem {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border-radius: 8px;
-  color: var(--mantine-color-dark-6);
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 0.95rem;
-  transition: all 0.15s ease;
-  position: relative;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 16px;
+	border-radius: 8px;
+	color: var(--mantine-color-dark-6);
+	text-decoration: none;
+	font-weight: 500;
+	font-size: 0.95rem;
+	transition: all 0.15s ease;
+	position: relative;
 }
 
 .menuItem:hover {
-  background: var(--mantine-color-gray-0);
-  color: var(--mantine-color-dark-8);
-  text-decoration: none;
-  
+	background: var(--mantine-color-gray-0);
+	color: var(--mantine-color-dark-8);
+	text-decoration: none;
 }
 
 .menuItemSelected {
-  background: var(--mantine-color-blue-0);
-  color: var(--mantine-primary-color-filled);
-  font-weight: 600;
-  border-radius: 32px 0 0 32px;
-  margin-right: -1rem;
-  padding-right: calc(16px + 1rem);
-  position: relative;
+	background: var(--mantine-color-blue-0);
+	color: var(--mantine-primary-color-filled);
+	font-weight: 600;
+	border-radius: 32px 0 0 32px;
+	margin-right: -1rem;
+	padding-right: calc(16px + 1rem);
+	position: relative;
 }
 
 .menuItemSelected::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: var(--mantine-color-blue-8);
+	content: '';
+	position: absolute;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	width: 3px;
+	background: var(--mantine-color-blue-8);
 }
 
 .menuIcon {
-  display: flex;
-  align-items: center;
-  color: inherit;
-  flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	color: inherit;
+	flex-shrink: 0;
 }
 
 .menuText {
-  color: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  white-space: nowrap;
-  overflow: hidden;
-  transition: opacity 0.2s ease;
+	color: inherit;
+	font-size: inherit;
+	font-weight: inherit;
+	white-space: nowrap;
+	overflow: hidden;
+	transition: opacity 0.2s ease;
 }
 
 /* Hide text and section headers when sidebar is collapsed */
 .sidebarCollapsed .menuText {
-  opacity: 0;
-  width: 0;
+	opacity: 0;
+	width: 0;
 }
 
 .sidebarCollapsed .sectionHeader {
-  opacity: 0;
-  width: 0;
-  height: 0;
-  overflow: hidden;
+	opacity: 0;
+	width: 0;
+	height: 0;
+	overflow: hidden;
 }
 
 .sidebarCollapsed .divider {
-  margin: 0.25rem 0;
+	margin: 0.25rem 0;
 }
 
 .sidebarCollapsed .logoWrapper {
-  margin-bottom: 1rem;
+	margin-bottom: 1rem;
 }
 
 .sidebarCollapsed .userCardWrapper {
-  margin-top: auto;
-  margin-bottom: 1rem;
+	margin-top: auto;
+	margin-bottom: 1rem;
 }
 
 /* Adjust menu item layout for collapsed state */
 .menuItemCollapsed {
-  justify-content: center;
-  padding: 12px;
-  gap: 0;
-  border-radius: 8px;
-  margin-right: 0;
+	justify-content: center;
+	padding: 12px;
+	gap: 0;
+	border-radius: 8px;
+	margin-right: 0;
 }
 
 .menuItemCollapsed.menuItemSelected {
-  border-radius: 8px;
-  margin-right: 0;
-  padding: 12px;
+	border-radius: 8px;
+	margin-right: 0;
+	padding: 12px;
 }
 
 .menuItemCollapsed.menuItemSelected::after {
-  display: none;
+	display: none;
 }

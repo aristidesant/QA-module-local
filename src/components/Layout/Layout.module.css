@@ -1,349 +1,366 @@
 :root {
-  --sidebar-width: 240px;
-  --sidebar-width-collapsed: 64px;
-  --sidebar-width-mobile: 180px;
-  --sidebar-width-collapsed-mobile: 56px;
+	--sidebar-width: 240px;
+	--sidebar-width-collapsed: 64px;
+	--sidebar-width-mobile: 180px;
+	--sidebar-width-collapsed-mobile: 56px;
 }
 
 .container {
-  display: flex;
-  height: 100vh;
-  width: 100%;
+	display: flex;
+	height: 100vh;
+	width: 100%;
 }
 
 .navbar {
-  width: var(--sidebar-width);
-  min-width: var(--sidebar-width);
-  max-width: var(--sidebar-width);
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  background: var(--mantine-color-body, rgba(255, 255, 255, 0.95));
-  border-right: 1px solid var(--mantine-color-gray-2);
-  z-index: 100;
+	width: var(--sidebar-width);
+	min-width: var(--sidebar-width);
+	max-width: var(--sidebar-width);
+	transition:
+		width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+		min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	background: var(--mantine-color-body, rgba(255, 255, 255, 0.95));
+	border-right: 1px solid var(--mantine-color-gray-2);
+	z-index: 100;
 }
 
 .navbarExpanded {
-  width: 240px;
-  min-width: 240px;
-  max-width: 240px;
+	width: 240px;
+	min-width: 240px;
+	max-width: 240px;
 }
 
 .navbarCollapsed {
-  width: 64px;
-  min-width: 64px;
-  max-width: 64px;
+	width: 64px;
+	min-width: 64px;
+	max-width: 64px;
 }
 
 @media (max-width: 768px) {
-  .navbarExpanded {
-    width: 180px;
-    min-width: 180px;
-    max-width: 180px;
-  }
-  .navbarCollapsed {
-    width: 56px;
-    min-width: 56px;
-    max-width: 56px;
-  }
+	.navbarExpanded {
+		width: 180px;
+		min-width: 180px;
+		max-width: 180px;
+	}
+	.navbarCollapsed {
+		width: 56px;
+		min-width: 56px;
+		max-width: 56px;
+	}
 }
 
 .content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  height: 100vh; /* Full viewport height */
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	height: 100vh; /* Full viewport height */
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .header {
-  height: 70px;
-  background: transparent;
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: stretch;
-  padding: 0;
-  width: 100%;
-  position: sticky;
-  top: 0;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	height: 70px;
+	background: transparent;
+	z-index: 200;
+	display: flex;
+	align-items: center;
+	justify-content: stretch;
+	padding: 0;
+	width: 100%;
+	position: sticky;
+	top: 0;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .headerCard {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  background: var(--mantine-color-white, #fff);
-  border-radius: 0;
-  border: none !important;
-  box-shadow: none !important;
-  border-bottom: 1px solid var(--mantine-color-gray-2) !important;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	background: var(--mantine-color-white, #fff);
+	border-radius: 0;
+	border: none !important;
+	box-shadow: none !important;
+	border-bottom: 1px solid var(--mantine-color-gray-2) !important;
 }
 
 .headerContentGap {
-  height: 1.5rem;
-  width: 100%;
+	height: 1.5rem;
+	width: 100%;
 }
 .mainWrapper {
-  flex: 1;
-  height: calc(100vh - 70px);
-  overflow-y: hidden; /* Remove scroll, will be handled by inner components */
+	flex: 1;
+	height: calc(100vh - 70px);
+	overflow-y: hidden; /* Remove scroll, will be handled by inner components */
 }
 .layout {
-  min-height: 100vh;
-  background: white;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  overflow: hidden;
+	min-height: 100vh;
+	background: white;
+	font-family:
+		-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+		Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	overflow: hidden;
 }
 
 /* Remove conflicting AppShell styles since we're using custom layout */
 
 .main {
-  background: transparent;
-  width: 100%;
-  position: relative;
-  max-width: none;
-  margin: 0;
-  box-sizing: border-box;
-  flex: 1 1 0;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  height: 100%; /* Ensure it takes full height */
-  overflow: hidden; /* Prevent scrolling at this level */
+	background: transparent;
+	width: 100%;
+	position: relative;
+	max-width: none;
+	margin: 0;
+	box-sizing: border-box;
+	flex: 1 1 0;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	height: 100%; /* Ensure it takes full height */
+	overflow: hidden; /* Prevent scrolling at this level */
+}
+
+.appFooter {
+	height: 36px;
+	border-top: 1px solid var(--mantine-color-gray-2);
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	padding: 0 1rem;
+	background: var(--mantine-color-white, #fff);
+}
+
+.footerInner {
+	color: var(--mantine-color-gray-6);
+	font-size: 13px;
 }
 
 /* Add subtle background shapes */
 .main::before {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 30%;
-  height: 40%;
-  background-image: radial-gradient(
-    circle,
-    rgba(59, 130, 246, 0.05) 10%,
-    transparent 70%
-  );
-  pointer-events: none;
-  z-index: -1;
+	content: '';
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 30%;
+	height: 40%;
+	background-image: radial-gradient(
+		circle,
+		rgba(59, 130, 246, 0.05) 10%,
+		transparent 70%
+	);
+	pointer-events: none;
+	z-index: -1;
 }
 
 .main::after {
-  content: "";
-  position: absolute;
-  left: 20%;
-  bottom: 10%;
-  width: 40%;
-  height: 50%;
-  background-image: radial-gradient(
-    circle,
-    rgba(59, 130, 246, 0.03) 20%,
-    transparent 80%
-  );
-  pointer-events: none;
-  z-index: -1;
+	content: '';
+	position: absolute;
+	left: 20%;
+	bottom: 10%;
+	width: 40%;
+	height: 50%;
+	background-image: radial-gradient(
+		circle,
+		rgba(59, 130, 246, 0.03) 20%,
+		transparent 80%
+	);
+	pointer-events: none;
+	z-index: -1;
 }
 
 /* Ensure the content inside main is centered */
 .main > div {
-  width: 100%;
-  margin: 0;
-  position: relative;
-  z-index: 1;
+	width: 100%;
+	margin: 0;
+	position: relative;
+	z-index: 1;
 }
 
 .notifications {
-  z-index: 1000;
+	z-index: 1000;
 }
 
 .contentContainer {
-  background: white;
-  border-radius: 12px;
-  /* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04); */
-  padding: 2rem;
-  margin-bottom: 2rem;
+	background: white;
+	border-radius: 12px;
+	/* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04); */
+	padding: 2rem;
+	margin-bottom: 2rem;
 }
 
 /* Mobile responsive adjustments */
 @media (max-width: 768px) {
-  .main {
-    padding: 1rem;
-    width: 100%;
-    max-width: 100vw;
-    min-width: 0;
-  }
+	.main {
+		padding: 1rem;
+		width: 100%;
+		max-width: 100vw;
+		min-width: 0;
+	}
 
-  :global(.mantine-AppShell-main) {
-    padding: 1rem !important;
-    margin-left: 0 !important;
-    width: 100% !important;
-    max-width: 100vw !important;
-  }
+	:global(.mantine-AppShell-main) {
+		padding: 1rem !important;
+		margin-left: 0 !important;
+		width: 100% !important;
+		max-width: 100vw !important;
+	}
 
-  /* Ensure content containers use full width on mobile */
-  .main > div {
-    max-width: 100vw;
-    width: 100vw;
-  }
+	/* Ensure content containers use full width on mobile */
+	.main > div {
+		max-width: 100vw;
+		width: 100vw;
+	}
 
-  .container {
-    flex-direction: column;
-    width: 100vw;
-    height: 100vh;
-  }
+	.container {
+		flex-direction: column;
+		width: 100vw;
+		height: 100vh;
+	}
 
-  .navbar {
-    width: 100vw;
-    min-width: 0;
-    max-width: 100vw;
-    height: auto;
-    position: relative;
-  }
+	.navbar {
+		width: 100vw;
+		min-width: 0;
+		max-width: 100vw;
+		height: auto;
+		position: relative;
+	}
 
-  .content {
-    width: 100vw;
-    min-width: 0;
-  }
+	.content {
+		width: 100vw;
+		min-width: 0;
+	}
 
-  .contentContainer {
-    padding: 1.5rem;
-  }
+	.contentContainer {
+		padding: 1.5rem;
+	}
 }
 
 /* Scrollbar styling */
 .navbar::-webkit-scrollbar {
-  width: 4px;
+	width: 4px;
 }
 
 .navbar::-webkit-scrollbar-track {
-  background: transparent;
+	background: transparent;
 }
 
 .navbar::-webkit-scrollbar-thumb {
-  background-color: var(--mantine-color-gray-3);
-  border-radius: 2px;
+	background-color: var(--mantine-color-gray-3);
+	border-radius: 2px;
 }
 
 /* Smooth transitions for layout changes */
 .navbar,
 .main {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Enhanced focus states for accessibility */
 .burger:focus-visible {
-  outline: 2px solid var(--mantine-color-blue-6);
-  outline-offset: 2px;
-  border-radius: 4px;
+	outline: 2px solid var(--mantine-color-blue-6);
+	outline-offset: 2px;
+	border-radius: 4px;
 }
 
 /* Additional UI enhancements */
 .headerRight {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
+	display: flex;
+	align-items: center;
+	gap: 1.25rem;
 }
 
 .notificationIcon {
-  position: relative;
-  cursor: pointer;
-  padding: 7px;
-  border-radius: 50%;
-  color: var(--mantine-color-gray-7);
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+	position: relative;
+	cursor: pointer;
+	padding: 7px;
+	border-radius: 50%;
+	color: var(--mantine-color-gray-7);
+	transition: all 0.2s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .notificationIcon:hover {
-  background-color: rgba(241, 245, 249, 0.9);
-  color: var(--mantine-color-blue-6);
-  transform: translateY(-2px);
+	background-color: rgba(241, 245, 249, 0.9);
+	color: var(--mantine-color-blue-6);
+	transform: translateY(-2px);
 }
 
 .notificationBadge {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background-color: var(--mantine-color-red-6);
-  color: white;
-  font-size: 0.6rem;
-  font-weight: 700;
-  height: 16px;
-  min-width: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  padding: 0 4px;
-  border: 2px solid white;
-  transform: translate(30%, -30%);
+	position: absolute;
+	top: 0;
+	right: 0;
+	background-color: var(--mantine-color-red-6);
+	color: white;
+	font-size: 0.6rem;
+	font-weight: 700;
+	height: 16px;
+	min-width: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	padding: 0 4px;
+	border: 2px solid white;
+	transform: translate(30%, -30%);
 }
 
 .userMenu {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 6px 12px 6px 6px;
-  border-radius: 50px;
-  transition: all 0.2s ease;
-  background: rgba(241, 245, 249, 0.8);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 6px 12px 6px 6px;
+	border-radius: 50px;
+	transition: all 0.2s ease;
+	background: rgba(241, 245, 249, 0.8);
+	border: 1px solid rgba(226, 232, 240, 0.8);
+	cursor: pointer;
 }
 
 .userMenu:hover {
-  background: rgba(241, 245, 249, 1);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+	background: rgba(241, 245, 249, 1);
+	transform: translateY(-1px);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .userAvatar {
-  border-radius: 50%;
-  background: linear-gradient(45deg, #60a5fa, #3b82f6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 600;
+	border-radius: 50%;
+	background: linear-gradient(45deg, #60a5fa, #3b82f6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	font-weight: 600;
 }
 
 .userInfo {
-  display: flex;
-  flex-direction: column;
-  min-width: 100px;
+	display: flex;
+	flex-direction: column;
+	min-width: 100px;
 }
 
 /* Breadcrumb styles */
 .breadcrumbContainer {
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+	margin-bottom: 1.5rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	flex-wrap: wrap;
 }
 
 .breadcrumb {
-  font-size: 0.875rem;
-  color: var(--mantine-color-gray-6);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+	font-size: 0.875rem;
+	color: var(--mantine-color-gray-6);
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
 }
 
 .breadcrumbActive {
-  color: var(--mantine-color-gray-8);
-  font-weight: 500;
+	color: var(--mantine-color-gray-8);
+	font-weight: 500;
 }
