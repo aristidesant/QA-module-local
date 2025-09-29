@@ -2,7 +2,6 @@ import {
 	IconMail,
 	IconUser,
 	IconShieldCheck,
-	IconCircleCheck,
 	IconBuildingSkyscraper,
 	IconCalendar,
 	IconShieldOff,
@@ -20,7 +19,6 @@ export const UserInfoCard: React.FC = () => {
 
 	const initials = user.username?.slice(0, 2).toUpperCase() || 'U';
 	const isMFAEnabled = user?.mfaEnabled || false;
-	const isActive = user.status === 'active';
 
 	// Format date if available
 	const formatDate = (date: string | Date | null | undefined) => {
@@ -46,16 +44,6 @@ export const UserInfoCard: React.FC = () => {
 				<div className={styles.userInfo}>
 					<h3 className={styles.userName}>{user.username}</h3>
 					<p className={styles.userEmail}>{user.email}</p>
-					<div className={styles.statusContainer}>
-						<span
-							className={`${styles.statusBadge} ${
-								isActive ? styles.active : styles.inactive
-							}`}
-						>
-							<IconCircleCheck size={14} stroke={2} />
-							<span>{isActive ? 'Active' : 'Inactive'}</span>
-						</span>
-					</div>
 				</div>
 			</div>
 

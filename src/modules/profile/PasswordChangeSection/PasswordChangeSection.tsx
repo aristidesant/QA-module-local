@@ -1,7 +1,7 @@
 import { PasswordInput, Button } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { IconLock, IconCheck, IconX } from '@tabler/icons-react';
+import { IconLock, IconX } from '@tabler/icons-react';
 import { useChangePassword } from '~/queries/userQueries';
 import styles from '../ProfilePage.module.css';
 
@@ -32,11 +32,12 @@ export const PasswordChangeSection: React.FC = () => {
 			});
 
 			notifications.show({
-				title: 'Password Updated',
+				title: '✓ Password Successfully Updated',
 				message:
-					'Your password has been changed successfully. Please use your new password on your next login.',
+					'Your password has been changed successfully. Make sure to use your new password the next time you sign in.',
 				color: 'green',
-				icon: <IconCheck size={18} />,
+				icon: <IconLock size={18} />,
+				autoClose: 6000,
 			});
 
 			form.reset();
@@ -45,9 +46,10 @@ export const PasswordChangeSection: React.FC = () => {
 				title: 'Password Change Failed',
 				message:
 					error?.response?.data?.message ||
-					'Unable to change your password. Please verify your current password is correct and try again.',
+					'Unable to update your password. Please verify your current password is correct and ensure your new password meets the security requirements.',
 				color: 'red',
 				icon: <IconX size={18} />,
+				autoClose: 7000,
 			});
 		}
 	});

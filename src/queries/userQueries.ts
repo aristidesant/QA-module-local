@@ -46,9 +46,9 @@ export function useChangePassword() {
  * Mutation to initiate MFA setup (get QR code)
  */
 export function useEnableMFA() {
-	return useMutation<EnableMFAResponse, Error, void>({
-		mutationFn: async () => {
-			return enableMFA();
+	return useMutation<EnableMFAResponse, Error, { password: string }>({
+		mutationFn: async (payload: { password: string }) => {
+			return enableMFA(payload);
 		},
 	});
 }

@@ -13,22 +13,32 @@ import {
 	useEnableMFA,
 	useVerifyAndEnableMFA,
 	useDisableMFA,
+	useCurrentUser,
 } from '~/queries/userQueries';
 import { useSessionStore } from '~/stores/sessionStore';
 import styles from '../ProfilePage.module.css';
 
 export const MFASection: React.FC = () => {
-	const { user } = useSessionStore();
-	const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
-	const [secret, setSecret] = useState<string | null>(null);
+	const { user, setUser } = useSessionStore();
 	const [showDisableForm, setShowDisableForm] = useState(false);
-
+	const [showEnableForm, setShowEnableForm] = useState(false);
+	const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
 	const enableMFAMutation = useEnableMFA();
 	const verifyMFAMutation = useVerifyAndEnableMFA();
 	const disableMFAMutation = useDisableMFA();
+	const currentUserQuery = useCurrentUser();
 
 	// Check if MFA is enabled from user data or auth response
 	const isMFAEnabled = user?.mfaEnabled || false;
+
+	const enableForm = useForm({
+		initialValues: {
+			password: '',
+		},
+		validate: {
+			password: (value) => (value.length === 0 ? 'Password is required' : null),
+		},
+	});
 
 	const verifyForm = useForm({
 		initialValues: {
@@ -48,47 +58,66 @@ export const MFASection: React.FC = () => {
 		},
 	});
 
-	const handleEnableMFA = async () => {
+	const handleEnableMFA = enableForm.onSubmit(async (values) => {
 		try {
-			const response = await enableMFAMutation.mutateAsync();
+			const response = await enableMFAMutation.mutateAsync({
+				password: values.password,
+			});
+
+			notifications.show({
+				title: 'MFA Setup Enabled',
+				message: `Next time you log in, you'll need to enter a verification code from your email.`,
+				color: 'blue',
+				icon: <IconCheck size={18} />,
+				autoClose: 5000,
+			});
+
 			setQrCodeUrl(response.qrCodeUrl);
-			setSecret(response.secret);
+			setShowEnableForm(false);
+			const updatedUser = (await currentUserQuery.refetch())?.data;
+			if (updatedUser) {
+				setUser(updatedUser);
+			}
+
+			enableForm.reset();
 		} catch (error: any) {
 			notifications.show({
-				title: 'Setup Failed',
+				title: 'Authentication Failed',
 				message:
 					error?.response?.data?.message ||
-					'Unable to start two-factor authentication setup. Please try again in a few moments.',
+					'Unable to verify your password. Please check your password and try again.',
 				color: 'red',
 				icon: <IconX size={18} />,
+				autoClose: 7000,
 			});
 		}
-	};
+	});
 
 	const handleVerifyMFA = verifyForm.onSubmit(async (values) => {
 		try {
 			await verifyMFAMutation.mutateAsync({ code: values.code });
 
 			notifications.show({
-				title: 'Two-Factor Authentication Enabled',
+				title: '✓ Two-Factor Authentication Enabled',
 				message:
-					"Your account is now protected with two-factor authentication. You'll need your authenticator app to sign in.",
+					"Success! Your account is now protected with two-factor authentication. You'll need to enter a verification code from your email each time you sign in.",
 				color: 'green',
-				icon: <IconCheck size={18} />,
+				icon: <IconShieldCheck size={18} />,
+				autoClose: 8000,
 			});
 
 			// Reset state
 			setQrCodeUrl(null);
-			setSecret(null);
 			verifyForm.reset();
 		} catch (error: any) {
 			notifications.show({
 				title: 'Verification Failed',
 				message:
 					error?.response?.data?.message ||
-					'The code you entered is invalid or has expired. Please check your authenticator app and try again.',
+					'The verification code you entered is invalid or has expired. Please request a new code or check your email for the most recent one.',
 				color: 'red',
 				icon: <IconX size={18} />,
+				autoClose: 7000,
 			});
 		}
 	});
@@ -100,29 +129,35 @@ export const MFASection: React.FC = () => {
 			notifications.show({
 				title: 'Two-Factor Authentication Disabled',
 				message:
-					'Two-factor authentication has been turned off. Your account is now less secure. Consider re-enabling it for better protection.',
-				color: 'yellow',
-				icon: <IconCheck size={18} />,
+					'Two-factor authentication has been successfully turned off. Your account security has been reduced. We strongly recommend re-enabling MFA to protect your account.',
+				color: 'orange',
+				icon: <IconShieldOff size={18} />,
+				autoClose: 8000,
 			});
 
 			disableForm.reset();
 			setShowDisableForm(false);
 		} catch (error: any) {
 			notifications.show({
-				title: 'Unable to Disable',
+				title: 'Authentication Failed',
 				message:
 					error?.response?.data?.message ||
-					'Cannot disable two-factor authentication. Please verify your password is correct and try again.',
+					'Unable to disable two-factor authentication. Please verify your password is correct and try again.',
 				color: 'red',
 				icon: <IconX size={18} />,
+				autoClose: 7000,
 			});
 		}
 	});
 
 	const handleCancelSetup = () => {
 		setQrCodeUrl(null);
-		setSecret(null);
 		verifyForm.reset();
+	};
+
+	const handleCancelEnable = () => {
+		setShowEnableForm(false);
+		enableForm.reset();
 	};
 
 	const handleCancelDisable = () => {
@@ -157,40 +192,39 @@ export const MFASection: React.FC = () => {
 					)}
 				</div>
 			</div>
-
 			<p className={styles.sectionDescription}>
 				Enhance your account security by requiring both your password and a
-				time-sensitive verification code from your mobile device when signing
-				in. This significantly reduces the risk of unauthorized access.
+				verification code sent to your email address when signing in. This
+				significantly reduces the risk of unauthorized access.
 			</p>
-
-			{!isMFAEnabled && !qrCodeUrl && (
+			{!isMFAEnabled && !qrCodeUrl && !showEnableForm && (
 				<>
 					<Alert
 						icon={<IconInfoCircle size={16} />}
-						title='Setup Instructions'
+						title='How Email-Based OTP Works'
 						color='blue'
 						variant='light'
 					>
 						<ol className={styles.stepList}>
+							<li>Click "Enable MFA" to start the setup process</li>
+							<li>Enter your password to confirm your identity</li>
 							<li>
-								Download an authenticator app like Google Authenticator,
-								Microsoft Authenticator, or Authy on your mobile device
+								A 6-digit verification code will be sent to your registered
+								email address
 							</li>
 							<li>
-								Scan the QR code with your authenticator app, or enter the
-								secret key manually
+								Enter the code from your email to complete the setup and
+								activate MFA
 							</li>
 							<li>
-								Enter the 6-digit verification code generated by the app to
-								complete setup
+								Future logins will require a code sent to your email for
+								verification
 							</li>
 						</ol>
 					</Alert>{' '}
 					<div className={styles.formActions}>
 						<Button
-							onClick={handleEnableMFA}
-							loading={enableMFAMutation.isPending}
+							onClick={() => setShowEnableForm(true)}
 							leftSection={<IconShieldCheck size={18} />}
 						>
 							Enable MFA
@@ -198,33 +232,63 @@ export const MFASection: React.FC = () => {
 					</div>
 				</>
 			)}
+			{!isMFAEnabled && showEnableForm && !qrCodeUrl && (
+				<>
+					<Alert
+						icon={<IconInfoCircle size={16} />}
+						title='Confirm Your Identity'
+						color='blue'
+						variant='light'
+					>
+						To enable two-factor authentication, please enter your current
+						password to confirm your identity. This is an important security
+						measure to ensure you're the account owner.
+					</Alert>{' '}
+					<form onSubmit={handleEnableMFA} className={styles.form}>
+						<PasswordInput
+							label='Password'
+							placeholder='Enter your password'
+							required
+							{...enableForm.getInputProps('password')}
+						/>
 
+						<div className={styles.formActions}>
+							<Button
+								type='submit'
+								loading={enableMFAMutation.isPending}
+								disabled={!enableForm.isValid()}
+							>
+								Continue
+							</Button>
+							<Button
+								type='button'
+								variant='outline'
+								onClick={handleCancelEnable}
+								disabled={enableMFAMutation.isPending}
+							>
+								Cancel
+							</Button>
+						</div>
+					</form>
+				</>
+			)}{' '}
 			{qrCodeUrl && (
 				<>
-					<div className={styles.qrCodeContainer}>
-						<p className={styles.infoText}>
-							Scan this QR code using your authenticator app
-						</p>
-						<div className={styles.qrCode}>
-							<img src={qrCodeUrl} alt='MFA QR Code' width={200} height={200} />
-						</div>
-						{secret && (
-							<div>
-								<p
-									className={styles.infoText}
-									style={{ marginBottom: 4, textAlign: 'center' }}
-								>
-									Can't scan? Enter this secret key manually in your app:
-								</p>
-								<div className={styles.secretKey}>{secret}</div>
-							</div>
-						)}
-					</div>
+					<Alert
+						icon={<IconInfoCircle size={16} />}
+						title='Verification Code Sent'
+						color='blue'
+						variant='light'
+					>
+						A 6-digit verification code has been sent to your email address{' '}
+						<strong>{user?.email}</strong>. Please check your inbox (and spam
+						folder) and enter the code below to complete the setup.
+					</Alert>
 
 					<form onSubmit={handleVerifyMFA} className={styles.form}>
 						<TextInput
-							label='Verification Code'
-							placeholder='Enter 6-digit code'
+							label='Verification Code from Email'
+							placeholder='Enter 6-digit code from your email'
 							required
 							maxLength={6}
 							{...verifyForm.getInputProps('code')}
@@ -250,7 +314,6 @@ export const MFASection: React.FC = () => {
 					</form>
 				</>
 			)}
-
 			{isMFAEnabled && !showDisableForm && (
 				<>
 					<Alert
@@ -260,8 +323,8 @@ export const MFASection: React.FC = () => {
 						variant='light'
 					>
 						Your account is currently protected with two-factor authentication.
-						Each time you sign in, you'll be prompted to enter a verification
-						code from your authenticator app for added security.
+						Each time you sign in, a verification code will be sent to your
+						registered email address for added security.
 					</Alert>{' '}
 					<div className={styles.formActions}>
 						<Button
@@ -275,7 +338,6 @@ export const MFASection: React.FC = () => {
 					</div>
 				</>
 			)}
-
 			{isMFAEnabled && showDisableForm && (
 				<>
 					<Alert

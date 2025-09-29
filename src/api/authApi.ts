@@ -136,11 +136,12 @@ export interface VerifyMFAPayload {
 }
 
 export async function enableMFA(
+	payload: { password: string },
 	apiUrl: string = DEFAULT_API_URL
 ): Promise<EnableMFAResponse> {
 	const response = await axios.post<EnableMFAResponse>(
 		`${apiUrl}/auth/mfa/enable`,
-		{}
+		payload
 	);
 	return response.data;
 }
