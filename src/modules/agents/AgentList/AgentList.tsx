@@ -1,9 +1,8 @@
 import React from 'react';
-import { IconUsersGroup } from '@tabler/icons-react';
+import { IconUsersGroup, IconSearch, IconX } from '@tabler/icons-react';
 import AgentCreate from '../AgentCreate';
 import AgentCard from '../AgentCard';
 import {
-	Title,
 	Stack,
 	SimpleGrid,
 	Text,
@@ -12,16 +11,34 @@ import {
 	Transition,
 	Button,
 	Pagination,
-	Center as MantineCenter,
+	Center,
+	TextInput,
+	Loader,
+	Group,
+	ActionIcon,
+	Chip,
 } from '@mantine/core';
-import { useDisclosure, useMediaQuery } from '@mantine/hooks';
+import {
+	useDisclosure,
+	useMediaQuery,
+	useDebouncedValue,
+} from '@mantine/hooks';
 import classes from './AgentList.module.css';
 import type AgentListObject from '~/models/AgentListObject';
 import AgentSimpleDetails from '../AgentSimpleDetails/AgentSimpleDetails';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { useGetAllAgents } from '~/queries/agentQueries';
-import { Loader, Center } from '@mantine/core';
 import { useAgentStore } from '~/stores/agentStore';
+
+interface AgentFilters {
+	name: string;
+	type: 'all' | 'INBOUND' | 'OUTBOUND';
+}
+
+const INITIAL_FILTERS: AgentFilters = {
+	name: '',
+	type: 'all',
+};
 
 const AgentList: React.FC = () => {
 	const [opened, { open, close }] = useDisclosure(false);
@@ -29,7 +46,11 @@ const AgentList: React.FC = () => {
 	const isMobile = useMediaQuery('(max-width: 1200px)');
 
 	const LIMIT = 6;
-	const [page, setPage] = React.useState<number>(1);
+	const [page, setPage] = React.useState(1);
+	const [filters, setFilters] = React.useState<AgentFilters>(INITIAL_FILTERS);
+
+	// Debounce the name filter to reduce API calls
+	const [debouncedName] = useDebouncedValue(filters.name, 500);
 
 	const {
 		data: agents,
@@ -39,44 +60,58 @@ const AgentList: React.FC = () => {
 	} = useGetAllAgents({
 		page,
 		limit: LIMIT,
+		...(debouncedName ? { name: debouncedName } : {}),
+		...(filters.type !== 'all' ? { agentType: filters.type } : {}),
 	});
 
+	// Reset to first page when filters change
 	React.useEffect(() => {
-		// Clear selection when changing pages to avoid referencing agents not visible
-
+		setPage(1);
 		setSelectedAgent(null);
-	}, [page]);
+	}, [debouncedName, filters.type, setSelectedAgent]);
+
+	// Clear selection when changing pages
+	React.useEffect(() => {
+		setSelectedAgent(null);
+	}, [page, setSelectedAgent]);
 
 	const handleAgentCardClick = (agent: AgentListObject) => {
-		if (selectedAgent?.id === agent.id) {
-			setSelectedAgent(null);
-		} else {
-			setSelectedAgent(agent);
-		}
+		setSelectedAgent(selectedAgent?.id === agent.id ? null : agent);
 	};
+
+	const handleFilterChange = (key: keyof AgentFilters, value: string) => {
+		setFilters((prev) => ({ ...prev, [key]: value }));
+	};
+
+	const handleClearFilters = () => {
+		setFilters(INITIAL_FILTERS);
+	};
+
+	const hasActiveFilters =
+		debouncedName !== INITIAL_FILTERS.name ||
+		filters.type !== INITIAL_FILTERS.type;
+
+	const hasAgents = (agents?.total || 0) > 0;
+	const hasMultiplePages = (agents?.totalPages || 1) > 1;
 
 	return (
 		<ContentContainer
 			title='Agent Directory'
 			description='Manage and monitor all your AI agents in one place.'
-			onBackClick={() => {
-				setSelectedAgent(null);
-			}}
+			onBackClick={() => setSelectedAgent(null)}
 			rightSection={
-				<>
-					<Transition
-						mounted={!!selectedAgent}
-						transition={isMobile ? 'slide-up' : 'slide-left'}
-						duration={200}
-						timingFunction='cubic-bezier(0.4, 0, 0.2, 1)'
-					>
-						{(styles) => (
-							<div style={styles}>
-								{selectedAgent && <AgentSimpleDetails agent={selectedAgent} />}
-							</div>
-						)}
-					</Transition>
-				</>
+				<Transition
+					mounted={!!selectedAgent}
+					transition={isMobile ? 'slide-up' : 'slide-left'}
+					duration={200}
+					timingFunction='cubic-bezier(0.4, 0, 0.2, 1)'
+				>
+					{(styles) => (
+						<div style={styles}>
+							{selectedAgent && <AgentSimpleDetails agent={selectedAgent} />}
+						</div>
+					)}
+				</Transition>
 			}
 			titleRight={
 				<Button onClick={open} size='sm'>
@@ -84,82 +119,135 @@ const AgentList: React.FC = () => {
 				</Button>
 			}
 		>
-			<Stack>
+			<Stack gap='lg'>
 				<AgentCreate opened={opened} onClose={close} />
 
+				{/* Filters */}
+				<Paper className={classes.filtersWrapper}>
+					<Group gap='md' wrap='nowrap' className={classes.filtersContainer}>
+						<TextInput
+							placeholder='Search agents...'
+							leftSection={<IconSearch size={16} />}
+							value={filters.name}
+							onChange={(e) =>
+								handleFilterChange('name', e.currentTarget.value)
+							}
+							className={classes.searchInput}
+						/>
+						<Chip.Group
+							value={filters.type}
+							onChange={(value) => {
+								if (typeof value === 'string') {
+									handleFilterChange('type', value);
+								}
+							}}
+						>
+							<Group gap='xs' wrap='nowrap' className={classes.typeFilters}>
+								<Chip
+									value='all'
+									variant='light'
+									size='sm'
+									className={classes.typeChip}
+								>
+									All
+								</Chip>
+								<Chip
+									value='INBOUND'
+									variant='light'
+									color='teal'
+									size='sm'
+									className={classes.typeChip}
+								>
+									Inbound
+								</Chip>
+								<Chip
+									value='OUTBOUND'
+									variant='light'
+									color='blue'
+									size='sm'
+									className={classes.typeChip}
+								>
+									Outbound
+								</Chip>
+							</Group>
+						</Chip.Group>{' '}
+						<ActionIcon
+							variant='subtle'
+							size='lg'
+							onClick={handleClearFilters}
+							className={classes.clearButton}
+							style={{ opacity: hasActiveFilters ? 1 : 0.3 }}
+							disabled={!hasActiveFilters}
+							title='Clear filters'
+						>
+							<IconX size={18} />
+						</ActionIcon>
+					</Group>
+				</Paper>
+
+				{/* Loading State */}
 				{isLoading && (
 					<Center p='xl'>
 						<Loader size='md' />
 					</Center>
 				)}
 
+				{/* Error State */}
 				{isError && (
-					<Paper className={classes.emptyState} shadow='none'>
+					<Paper className={classes.emptyState}>
 						<Stack align='center' gap='xs'>
-							<Title order={3} className={classes.emptyTitle}>
+							<Text size='lg' fw={600} c='dimmed'>
 								Failed to load agents
-							</Title>
-							<Text className={classes.emptyText} c='red'>
+							</Text>
+							<Text size='sm' c='red'>
 								{(error as any)?.message || 'Please try again.'}
 							</Text>
 						</Stack>
 					</Paper>
 				)}
 
-				<Transition
-					mounted={(agents?.total || 0) > 0}
-					transition='fade'
-					duration={400}
-					timingFunction='ease'
-				>
-					{(styles) => (
-						<SimpleGrid
-							cols={{ base: 1, sm: 2, md: 2, lg: 2, xl: 3 }}
-							style={styles}
-						>
-							{(agents?.data || []).map((agent: AgentListObject) => (
-								<AgentCard
-									key={agent.id}
-									onClick={handleAgentCardClick}
-									agent={agent}
-								/>
-							))}
-						</SimpleGrid>
-					)}
-				</Transition>
+				{/* Agents Grid */}
+				{!isLoading && !isError && hasAgents && (
+					<SimpleGrid cols={{ base: 1, sm: 2, md: 2, lg: 2, xl: 3 }}>
+						{(agents?.data || []).map((agent: AgentListObject) => (
+							<AgentCard
+								key={agent.id}
+								onClick={handleAgentCardClick}
+								agent={agent}
+							/>
+						))}
+					</SimpleGrid>
+				)}
 
-				{/* Pagination controls */}
-				{(agents?.total || 0) > 0 && (agents?.totalPages || 1) > 1 && (
-					<MantineCenter mt='md'>
+				{/* Pagination */}
+				{hasAgents && hasMultiplePages && (
+					<Center mt='md'>
 						<Pagination
-							total={Math.max(
-								agents?.totalPages ||
-									Math.ceil((agents?.total || 0) / LIMIT) ||
-									1,
-								1
-							)}
+							total={agents?.totalPages || 1}
 							value={page}
 							onChange={setPage}
 							withEdges
 							size='sm'
 						/>
-					</MantineCenter>
+					</Center>
 				)}
 
-				{agents && (agents.data?.length || 0) === 0 && (
-					<Paper className={classes.emptyState} shadow='none'>
-						<Stack align='center' gap='xs'>
+				{/* Empty State */}
+				{!isLoading && !isError && !hasAgents && (
+					<Paper className={classes.emptyState}>
+						<Stack align='center' gap='md'>
 							<div className={classes.avatarContainer}>
 								<Avatar size={80} radius='xl' color='blue'>
 									<IconUsersGroup size={40} stroke={1.5} />
 								</Avatar>
 							</div>
-							<Title order={3} className={classes.emptyTitle}>
-								No Agents Yet
-							</Title>
-							<Text className={classes.emptyText}>
-								Create your first agent to start building amazing conversations
-								and automations
+							<Text size='lg' fw={600} c='dimmed'>
+								{hasActiveFilters ? 'No agents found' : 'No Agents Yet'}
+							</Text>
+							<Text size='sm' c='dimmed' ta='center' maw={400}>
+								{hasActiveFilters
+									? "Try adjusting your filters to find what you're looking for"
+									: 'Create your first agent to start building amazing conversations and automations'}
 							</Text>
 						</Stack>
 					</Paper>
