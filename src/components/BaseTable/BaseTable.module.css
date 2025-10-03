@@ -1,53 +1,55 @@
 .root {
-  width: 100%;
-  overflow: auto;
+	width: 100%;
+	overflow: auto;
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
 }
 .table {
-  width: 100%;
-  border-collapse: collapse;
+	width: 100%;
+	border-collapse: collapse;
 }
 .thead {
-  background: var(--mantine-color-gray-0);
+	background: var(--mantine-color-gray-0);
 }
 .th,
 .td {
-  padding: 8px 12px;
-  text-align: left;
-  border-bottom: 1px solid var(--mantine-color-gray-2);
-  font-size: 14px;
+	padding: 8px 12px;
+	text-align: left;
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+	font-size: 14px;
 }
 .compactTh,
 .compactTd {
-  font-size: var(--mantine-font-size-xs);
-  padding: 6px 8px;
+	font-size: var(--mantine-font-size-xs);
+	padding: 6px 8px;
 }
 .sortable {
-  cursor: pointer;
+	cursor: pointer;
 }
 
 /* Header Content and Sort Icons */
 .headerContent {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
 }
 
 .sortIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--mantine-color-gray-5);
-  transition: color 0.2s ease;
-  opacity: 0.6;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--mantine-color-gray-5);
+	transition: color 0.2s ease;
+	opacity: 0.6;
 }
 
 .sortable:hover .sortIcon {
-  color: var(--mantine-color-blue-6);
-  opacity: 1;
+	color: var(--mantine-color-blue-6);
+	opacity: 1;
 }
 
 .th[data-sorted] .sortIcon {
-  color: var(--mantine-color-blue-6);
-  opacity: 1;
+	color: var(--mantine-color-blue-6);
+	opacity: 1;
 }

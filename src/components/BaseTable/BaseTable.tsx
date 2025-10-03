@@ -49,11 +49,11 @@ function BaseTable<TData>({
 	return (
 		<div className={`${styles.root} ${className ?? ''}`}>
 			<Table className={styles.table} striped highlightOnHover>
-				<thead className={styles.thead}>
+				<Table.Thead className={styles.thead}>
 					{table.getHeaderGroups().map((headerGroup) => (
-						<tr key={headerGroup.id}>
+						<Table.Tr key={headerGroup.id}>
 							{headerGroup.headers.map((header) => (
-								<th
+								<Table.Th
 									key={header.id}
 									className={[
 										styles.th,
@@ -87,20 +87,20 @@ function BaseTable<TData>({
 											)}
 										</div>
 									)}
-								</th>
+								</Table.Th>
 							))}
-						</tr>
+						</Table.Tr>
 					))}
-				</thead>
+				</Table.Thead>
 				<tbody>
 					{table.getRowModel().rows.map((row) => (
-						<tr
+						<Table.Tr
 							key={row.id}
 							onClick={() => onRowClick?.(row.original)}
 							className={getRowClassName?.(row)}
 						>
 							{row.getVisibleCells().map((cell) => (
-								<td
+								<Table.Td
 									key={cell.id}
 									className={[
 										styles.td,
@@ -111,9 +111,9 @@ function BaseTable<TData>({
 										.join(' ')}
 								>
 									{flexRender(cell.column.columnDef.cell, cell.getContext())}
-								</td>
+								</Table.Td>
 							))}
-						</tr>
+						</Table.Tr>
 					))}
 				</tbody>
 			</Table>

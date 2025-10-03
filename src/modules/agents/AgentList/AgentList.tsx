@@ -1,10 +1,8 @@
 import React from 'react';
 import { IconUsersGroup, IconSearch, IconX } from '@tabler/icons-react';
 import AgentCreate from '../AgentCreate';
-import AgentCard from '../AgentCard';
 import {
 	Stack,
-	SimpleGrid,
 	Text,
 	Avatar,
 	Paper,
@@ -17,6 +15,8 @@ import {
 	Group,
 	ActionIcon,
 	Chip,
+	Modal,
+	Select,
 } from '@mantine/core';
 import {
 	useDisclosure,
@@ -29,6 +29,9 @@ import AgentSimpleDetails from '../AgentSimpleDetails/AgentSimpleDetails';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { useGetAllAgents } from '~/queries/agentQueries';
 import { useAgentStore } from '~/stores/agentStore';
+import BaseTable from '~/components/BaseTable/BaseTable';
+import { useAgentColumns } from './useAgentColumns';
+import { OutboundCallForm } from '~/components/OutboundCallForm';
 
 interface AgentFilters {
 	name: string;
@@ -45,9 +48,15 @@ const AgentList: React.FC = () => {
 	const { setSelectedAgent, selectedAgent } = useAgentStore();
 	const isMobile = useMediaQuery('(max-width: 1200px)');
 
-	const LIMIT = 6;
+	// Test call modal state
+	const [testCallModalOpened, setTestCallModalOpened] = React.useState(false);
+	const [selectedAgentForCall, setSelectedAgentForCall] =
+		React.useState<AgentListObject | null>(null);
+
 	const [page, setPage] = React.useState(1);
+	const [pageSize, setPageSize] = React.useState(10);
 	const [filters, setFilters] = React.useState<AgentFilters>(INITIAL_FILTERS);
+	// Debounce the name filter to reduce API calls
 
 	// Debounce the name filter to reduce API calls
 	const [debouncedName] = useDebouncedValue(filters.name, 500);
@@ -59,25 +68,50 @@ const AgentList: React.FC = () => {
 		error,
 	} = useGetAllAgents({
 		page,
-		limit: LIMIT,
+		limit: pageSize,
 		...(debouncedName ? { name: debouncedName } : {}),
 		...(filters.type !== 'all' ? { agentType: filters.type } : {}),
 	});
 
-	// Reset to first page when filters change
+	// Reset to first page when filters or page size change
 	React.useEffect(() => {
 		setPage(1);
 		setSelectedAgent(null);
-	}, [debouncedName, filters.type, setSelectedAgent]);
+	}, [debouncedName, filters.type, pageSize, setSelectedAgent]);
 
 	// Clear selection when changing pages
 	React.useEffect(() => {
 		setSelectedAgent(null);
 	}, [page, setSelectedAgent]);
 
-	const handleAgentCardClick = (agent: AgentListObject) => {
-		setSelectedAgent(selectedAgent?.id === agent.id ? null : agent);
+	const handleAgentClick = (agent: AgentListObject) => {
+		setSelectedAgent(agent);
 	};
+
+	const handleEdit = (agent: AgentListObject) => {
+		console.log('Edit agent', agent);
+		// TODO: Implement edit
+	};
+
+	const handleTestCall = (agent: AgentListObject) => {
+		setSelectedAgentForCall(agent);
+		setTestCallModalOpened(true);
+	};
+
+	const handleTestCallSuccess = () => {
+		setTestCallModalOpened(false);
+		setSelectedAgentForCall(null);
+	};
+
+	const handleTestCallClose = () => {
+		setTestCallModalOpened(false);
+		setSelectedAgentForCall(null);
+	};
+
+	const columns = useAgentColumns({
+		onEdit: handleEdit,
+		onTestCall: handleTestCall,
+	});
 
 	const handleFilterChange = (key: keyof AgentFilters, value: string) => {
 		setFilters((prev) => ({ ...prev, [key]: value }));
@@ -170,7 +204,20 @@ const AgentList: React.FC = () => {
 									Outbound
 								</Chip>
 							</Group>
-						</Chip.Group>{' '}
+						</Chip.Group>
+						<Select
+							placeholder='Page size'
+							data={['10', '20', '50', '100']}
+							value={pageSize.toString()}
+							onChange={(value) => {
+								if (value) {
+									setPageSize(parseInt(value));
+								}
+							}}
+							size='sm'
+							w={120}
+							allowDeselect={false}
+						/>
 						<ActionIcon
 							variant='subtle'
 							size='lg'
@@ -206,17 +253,14 @@ const AgentList: React.FC = () => {
 					</Paper>
 				)}
 
-				{/* Agents Grid */}
+				{/* Agents Table */}
 				{!isLoading && !isError && hasAgents && (
-					<SimpleGrid cols={{ base: 1, sm: 2, md: 2, lg: 2, xl: 3 }}>
-						{(agents?.data || []).map((agent: AgentListObject) => (
-							<AgentCard
-								key={agent.id}
-								onClick={handleAgentCardClick}
-								agent={agent}
-							/>
-						))}
-					</SimpleGrid>
+					<BaseTable<AgentListObject>
+						data={agents?.data || []}
+						columns={columns}
+						onRowClick={handleAgentClick}
+						density={'default'}
+					/>
 				)}
 
 				{/* Pagination */}
@@ -253,6 +297,23 @@ const AgentList: React.FC = () => {
 					</Paper>
 				)}
 			</Stack>
+
+			{/* Test Call Modal */}
+			<Modal
+				opened={testCallModalOpened}
+				onClose={handleTestCallClose}
+				title='Test Agent Call'
+				size='md'
+				centered
+			>
+				{selectedAgentForCall && (
+					<OutboundCallForm
+						agent={selectedAgentForCall}
+						onSuccess={handleTestCallSuccess}
+						onClose={handleTestCallClose}
+					/>
+				)}
+			</Modal>
 		</ContentContainer>
 	);
 };
