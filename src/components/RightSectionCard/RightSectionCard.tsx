@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import { Text } from '@mantine/core';
+import { Card, Text } from '@mantine/core';
 import type { TablerIcon } from '@tabler/icons-react';
 import styles from './RightSectionCard.module.css';
 
@@ -21,8 +21,8 @@ export const RightSectionCard: React.FC<RightSectionCardProps> = ({
 	children,
 }) => {
 	return (
-		<section className={styles.card}>
-			<header className={styles.header}>
+		<Card className={styles.card}>
+			<Card.Section inheritPadding py={'sm'} className={styles.header}>
 				<div className={styles.titleGroup}>
 					{Icon && (
 						<Icon
@@ -43,9 +43,9 @@ export const RightSectionCard: React.FC<RightSectionCardProps> = ({
 				{rightSection && (
 					<div className={styles.rightSection}>{rightSection}</div>
 				)}
-			</header>
+			</Card.Section>
 			<div className={styles.content}>{children}</div>
-		</section>
+		</Card>
 	);
 };
 

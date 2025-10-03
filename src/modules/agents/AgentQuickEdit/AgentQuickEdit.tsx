@@ -6,7 +6,6 @@ import AgentListObject from '~/models/AgentListObject';
 import type { AgentConfigModel } from '~/models/AgentListObject';
 import { useUpdateAgent } from '~/queries/agentQueries';
 import AgentVoices from '~/modules/agent/AgentVoices';
-import AgentTemperatureControl from '~/modules/agent/AgentTemperatureControl';
 
 type AgentQuickEditProps = {
 	agent: AgentListObject;
@@ -99,10 +98,7 @@ const AgentQuickEdit: React.FC<AgentQuickEditProps> = ({ agent, onUpdate }) => {
 				onUpdateAgentData={handleAgentUpdate}
 				agent={agent}
 			/>
-			<AgentTemperatureControl
-				agentData={editableAgent}
-				onUpdateAgentData={handleAgentUpdate}
-			/>
+
 			<Button
 				leftSection={
 					isPending ? <Loader size={18} /> : <IconDeviceFloppy size={18} />

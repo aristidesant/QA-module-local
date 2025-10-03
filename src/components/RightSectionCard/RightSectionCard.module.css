@@ -4,7 +4,6 @@
 	gap: var(--mantine-spacing-sm);
 	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: 12px;
-	background-color: var(--mantine-color-gray-0);
 	padding: var(--mantine-spacing-md);
 }
 
