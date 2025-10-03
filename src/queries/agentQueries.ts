@@ -1,7 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import agentApi, { FindAllAgentsResponse } from "~/api/agentApi";
-import type { AgentUpdateModel } from "~/models/AgentListObject";
-import type { Campaign } from "~/models/CampaignsModel";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import agentApi, { FindAllAgentsResponse } from '~/api/agentApi';
+import type { AgentUpdateModel } from '~/models/AgentListObject';
+import type { Campaign } from '~/models/CampaignsModel';
 
 // Create agent
 export const useCreateAgent = () => {
@@ -12,10 +12,10 @@ export const useCreateAgent = () => {
 			return api.createAgent(agent);
 		},
 		onSuccess: (_data) => {
-			queryClient.invalidateQueries({ queryKey: ["agents"] });
+			queryClient.invalidateQueries({ queryKey: ['agents'] });
 		},
 		onError: (error) => {
-			console.error("Error creating agent:", error);
+			console.error('Error creating agent:', error);
 		},
 	});
 };
@@ -23,7 +23,7 @@ export const useCreateAgent = () => {
 // Get all agents
 export const useGetAllAgents = (params?: Record<string, unknown>) => {
 	return useQuery<FindAllAgentsResponse>({
-		queryKey: ["agents", params],
+		queryKey: ['agents', params],
 		queryFn: async () => {
 			const api = agentApi();
 			return api.findAllAgents(params);
@@ -34,7 +34,7 @@ export const useGetAllAgents = (params?: Record<string, unknown>) => {
 // Get one agent by id
 export const useGetAgent = (id: string) => {
 	return useQuery({
-		queryKey: ["agent", id],
+		queryKey: ['agent', id],
 		queryFn: async () => {
 			const api = agentApi();
 			return api.findAgent(id);
@@ -46,12 +46,13 @@ export const useGetAgent = (id: string) => {
 // Get agent campaigns
 export const useGetAgentCampaigns = (agentId: string) => {
 	return useQuery<Campaign[]>({
-		queryKey: ["agent", agentId, "campaigns"],
+		queryKey: ['agent', agentId, 'campaigns'],
 		queryFn: async () => {
 			const api = agentApi();
 			return api.getAgentCampaigns(agentId);
 		},
 		enabled: !!agentId,
+		retry: false,
 	});
 };
 
@@ -70,13 +71,13 @@ export const useUpdateAgent = () => {
 			return api.updateAgent(id, data);
 		},
 		onSuccess: (data) => {
-			queryClient.invalidateQueries({ queryKey: ["agents"] });
+			queryClient.invalidateQueries({ queryKey: ['agents'] });
 			if (data?.id) {
-				queryClient.invalidateQueries({ queryKey: ["agent", data.id] });
+				queryClient.invalidateQueries({ queryKey: ['agent', data.id] });
 			}
 		},
 		onError: (error) => {
-			console.error("Error updating agent:", error);
+			console.error('Error updating agent:', error);
 		},
 	});
 };
@@ -90,11 +91,11 @@ export const useDeleteAgent = () => {
 			return api.deleteAgent(id);
 		},
 		onSuccess: (_, id) => {
-			queryClient.invalidateQueries({ queryKey: ["agents"] });
-			queryClient.invalidateQueries({ queryKey: ["agent", id] });
+			queryClient.invalidateQueries({ queryKey: ['agents'] });
+			queryClient.invalidateQueries({ queryKey: ['agent', id] });
 		},
 		onError: (error) => {
-			console.error("Error deleting agent:", error);
+			console.error('Error deleting agent:', error);
 		},
 	});
 };

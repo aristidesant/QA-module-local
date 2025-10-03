@@ -32,6 +32,8 @@ import { useAgentStore } from '~/stores/agentStore';
 import BaseTable from '~/components/BaseTable/BaseTable';
 import { useAgentColumns } from './useAgentColumns';
 import { OutboundCallForm } from '~/components/OutboundCallForm';
+import { modals } from '@mantine/modals';
+import AgentQuickEdit from '../AgentQuickEdit';
 
 interface AgentFilters {
 	name: string;
@@ -66,6 +68,7 @@ const AgentList: React.FC = () => {
 		isLoading,
 		isError,
 		error,
+		refetch: reloadAgents,
 	} = useGetAllAgents({
 		page,
 		limit: pageSize,
@@ -89,8 +92,21 @@ const AgentList: React.FC = () => {
 	};
 
 	const handleEdit = (agent: AgentListObject) => {
-		console.log('Edit agent', agent);
-		// TODO: Implement edit
+		modals.open({
+			title: 'Edit Agent',
+			modalId: 'edit-agent-modal',
+			size: 'lg',
+			children: (
+				<AgentQuickEdit
+					onUpdate={() => {
+						modals.close('edit-agent-modal');
+						reloadAgents();
+						setSelectedAgent(null);
+					}}
+					agent={agent}
+				/>
+			),
+		});
 	};
 
 	const handleTestCall = (agent: AgentListObject) => {
@@ -258,6 +274,7 @@ const AgentList: React.FC = () => {
 					<BaseTable<AgentListObject>
 						data={agents?.data || []}
 						columns={columns}
+						selectedKey={`${selectedAgent?.id}`}
 						onRowClick={handleAgentClick}
 						density={'default'}
 					/>

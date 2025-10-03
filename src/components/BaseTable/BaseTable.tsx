@@ -18,6 +18,7 @@ import styles from './BaseTable.module.css';
 
 export type BaseTableProps<TData> = {
 	data: TData[];
+	selectedKey?: string;
 	columns: ColumnDef<TData, any>[];
 	initialSort?: SortingState;
 	onRowClick?: (row: TData) => void;
@@ -28,6 +29,7 @@ export type BaseTableProps<TData> = {
 
 function BaseTable<TData>({
 	data,
+	selectedKey,
 	columns,
 	initialSort = [],
 	onRowClick,
@@ -92,12 +94,12 @@ function BaseTable<TData>({
 						</Table.Tr>
 					))}
 				</Table.Thead>
-				<tbody>
+				<Table.Tbody className={styles.tbody}>
 					{table.getRowModel().rows.map((row) => (
 						<Table.Tr
 							key={row.id}
 							onClick={() => onRowClick?.(row.original)}
-							className={getRowClassName?.(row)}
+							className={`${getRowClassName?.(row)} ${row.original === selectedKey ? styles.selectedRow : ''}`}
 						>
 							{row.getVisibleCells().map((cell) => (
 								<Table.Td
@@ -115,7 +117,7 @@ function BaseTable<TData>({
 							))}
 						</Table.Tr>
 					))}
-				</tbody>
+				</Table.Tbody>
 			</Table>
 		</div>
 	);

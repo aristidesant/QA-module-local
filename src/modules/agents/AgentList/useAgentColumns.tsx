@@ -1,13 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table';
-import {
-	Avatar,
-	Chip,
-	Tooltip,
-	ActionIcon,
-	Group,
-	Text,
-	Badge,
-} from '@mantine/core';
+import { Avatar, Tooltip, ActionIcon, Group, Text, Badge } from '@mantine/core';
 import { IconEdit, IconPhone } from '@tabler/icons-react';
 import type AgentListObject from '~/models/AgentListObject';
 
@@ -148,7 +140,7 @@ export const useAgentColumns = ({
 								<IconPhone size={16} />
 							</ActionIcon>
 						</Tooltip>
-						<Tooltip label='Edit'>
+						<Tooltip label='Edit Agent'>
 							<ActionIcon
 								size='sm'
 								variant='subtle'

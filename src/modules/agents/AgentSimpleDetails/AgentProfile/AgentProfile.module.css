@@ -1,0 +1,86 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+}
+
+.avatarStack {
+	position: relative;
+}
+
+.avatar {
+	border: 2px solid var(--mantine-color-gray-3);
+	background-color: var(--mantine-color-gray-1);
+}
+
+.statusDot {
+	position: absolute;
+	right: 4px;
+	bottom: 4px;
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	border: 2px solid var(--mantine-color-gray-0);
+}
+
+.statusOnline {
+	background-color: var(--mantine-color-teal-6);
+}
+
+.statusOffline {
+	background-color: var(--mantine-color-gray-5);
+}
+
+.name {
+	font-size: 18px;
+	font-weight: 700;
+	color: var(--mantine-color-gray-9);
+	text-align: center;
+	letter-spacing: -0.01em;
+}
+
+.languageChip {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 14px;
+	border-radius: 999px;
+	border: 1px solid var(--mantine-color-gray-3);
+	background-color: var(--mantine-color-gray-1);
+}
+
+.flagIcon {
+	font-size: 14px;
+	line-height: 1;
+}
+
+.languageText {
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.4px;
+	text-transform: uppercase;
+	color: var(--mantine-color-gray-7);
+}
+
+.traitsList {
+	display: flex;
+	gap: 6px;
+	flex-wrap: wrap;
+	justify-content: center;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.trait {
+	padding: 4px 10px;
+	border-radius: 8px;
+	border: 1px solid var(--mantine-color-gray-3);
+	background-color: var(--mantine-color-gray-0);
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--mantine-color-gray-7);
+	text-transform: uppercase;
+	letter-spacing: 0.3px;
+}

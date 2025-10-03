@@ -1,11 +1,11 @@
-import React from "react";
-import { Stack, Box, Center } from "@mantine/core";
-import AgentProfile from "~/components/AgentProfile/AgentProfile";
-import styles from "./AgentBasicDetails.module.css";
-import type AgentListObject from "~/models/AgentListObject";
-import AgentVoiceProgress from "../AgentSimpleDetails/AgentVoiceProgress";
-import type { AgentConfigModel } from "~/models/AgentListObject";
-import { VoiceMiniPlayer } from "~/components/VoiceMiniPlayer";
+import React from 'react';
+import { Stack, Box, Center } from '@mantine/core';
+import AgentProfile from '~/modules/agents/AgentSimpleDetails/AgentProfile/AgentProfile';
+import styles from './AgentBasicDetails.module.css';
+import type AgentListObject from '~/models/AgentListObject';
+import AgentVoiceProgress from '../AgentSimpleDetails/AgentVoiceProgress';
+import type { AgentConfigModel } from '~/models/AgentListObject';
+import { VoiceMiniPlayer } from '~/components/VoiceMiniPlayer';
 
 export interface AgentBasicDetailsProps {
 	/** The agent data to display */
@@ -19,10 +19,10 @@ const AgentBasicDetails: React.FC<AgentBasicDetailsProps> = ({
 }) => {
 	return (
 		<div>
-			<Stack gap="xs">
+			<Stack gap='xs'>
 				{/* Agent Profile Section */}
 				<Box className={styles.agentSection}>
-					<AgentProfile agent={agent} size="lg" />
+					<AgentProfile agent={agent} size='lg' />
 				</Box>
 
 				{/* Voice Settings Section */}
@@ -37,7 +37,7 @@ const AgentBasicDetails: React.FC<AgentBasicDetailsProps> = ({
 						agentData?.conversationConfig?.tts?.similarityBoost ?? 0.8
 					}
 				/>
-				<Center mt="lg">
+				<Center mt='lg'>
 					<VoiceMiniPlayer
 						disabled={!agent?.voice?.previewUrl}
 						voiceUrl={agent?.voice?.previewUrl}

@@ -8,28 +8,28 @@
 
 .avatarWrapper {
 	position: relative;
-	margin-bottom: var(--mantine-spacing-sm);
+	margin-bottom: 12px;
 }
 
 .avatar {
 	border-radius: 50%;
-	border: 3px solid var(--mantine-color-white);
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	border: 2px solid var(--mantine-color-gray-3);
+	transition: border-color 200ms ease;
 }
 
 .statusDot {
 	position: absolute;
-	bottom: 0;
-	right: 0;
-	width: 32px;
-	height: 32px;
+	bottom: 2px;
+	right: 2px;
+	width: 24px;
+	height: 24px;
 	border-radius: 50%;
-	border: 4px solid var(--mantine-color-white);
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+	border: 3px solid var(--mantine-color-white);
+	transition: background-color 200ms ease;
 }
 
 .statusOnline {
-	background-color: var(--mantine-color-green-6);
+	background-color: var(--mantine-color-green-5);
 }
 
 .statusOffline {
@@ -37,30 +37,33 @@
 }
 
 .agentName {
-	font-size: 16px;
-	font-weight: 600;
+	font-size: 18px;
+	font-weight: 700;
 	color: var(--mantine-color-gray-9);
-	margin-bottom: var(--mantine-spacing-xs);
+	margin-bottom: 4px;
 	text-align: center;
-	line-height: 1.2;
+	line-height: 1.3;
 }
 
 .languageRow {
 	display: flex;
 	align-items: center;
 	gap: 6px;
-	margin-bottom: var(--mantine-spacing-sm);
+	margin-bottom: 0;
+	padding: 4px 12px;
+	background-color: var(--mantine-color-gray-0);
+	border-radius: 4px;
 }
 
 .flagIcon {
-	font-size: 16px;
+	font-size: 14px;
 	line-height: 1;
 }
 
 .languageText {
-	font-size: 14px;
-	color: var(--mantine-color-gray-6);
-	font-weight: 500;
+	font-size: 13px;
+	color: var(--mantine-color-gray-7);
+	font-weight: 600;
 }
 
 .traitsContainer {

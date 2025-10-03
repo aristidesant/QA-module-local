@@ -53,3 +53,7 @@
 	color: var(--mantine-color-blue-6);
 	opacity: 1;
 }
+
+.selectedRow {
+	background: var(--mantine-color-blue-0);
+}

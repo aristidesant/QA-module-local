@@ -1,0 +1,97 @@
+.card {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: 12px;
+	background-color: var(--mantine-color-gray-0);
+	padding: var(--mantine-spacing-md);
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: var(--mantine-spacing-sm);
+}
+
+.titleGroup {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--mantine-spacing-sm);
+}
+
+.icon {
+	color: var(--mantine-color-teal-6);
+	margin-top: 2px;
+}
+
+.titleCopy {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.title {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+}
+
+.subtitle {
+	font-size: 11px;
+	color: var(--mantine-color-gray-6);
+}
+
+.loadingState {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--mantine-spacing-xs);
+	padding: var(--mantine-spacing-md);
+	border: 1px dashed var(--mantine-color-gray-4);
+	border-radius: 10px;
+}
+
+.campaignBody {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.campaignName {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+}
+
+.description {
+	line-height: 1.4;
+}
+
+.metaRow {
+	display: flex;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-sm);
+	font-size: 11px;
+}
+
+.emptyState {
+	font-size: 12px;
+	color: var(--mantine-color-gray-6);
+	text-align: center;
+	padding: var(--mantine-spacing-sm);
+	border-radius: 10px;
+	border: 1px dashed var(--mantine-color-gray-4);
+}
+
+@media (max-width: 420px) {
+	.card {
+		padding: var(--mantine-spacing-sm);
+	}
+
+	.metaRow {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}

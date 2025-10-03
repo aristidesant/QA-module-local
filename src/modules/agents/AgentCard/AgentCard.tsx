@@ -17,7 +17,7 @@ import {
 	IconPhoneIncoming,
 	IconPhoneOutgoing,
 } from '@tabler/icons-react';
-import AgentProfile from '~/components/AgentProfile/AgentProfile';
+import AgentProfile from '~/modules/agents/AgentSimpleDetails/AgentProfile/AgentProfile';
 
 import styles from './AgentCard.module.css';
 import badgeStyles from './AgentTypeBadge.module.css';

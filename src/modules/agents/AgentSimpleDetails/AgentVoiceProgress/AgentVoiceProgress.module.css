@@ -1,63 +1,69 @@
-.progressContainer {
-  width: 100%;
+.wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
 }
 
-.progressCard {
-  background: var(--mantine-color-white);
-  border-radius: var(--mantine-radius-md);
-  padding: var(--mantine-spacing-sm);
-  width: 100%;
-  transition: box-shadow 0.2s ease;
+.metricRow {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: 10px;
+	padding: 10px 12px;
+	background-color: var(--mantine-color-gray-0);
 }
 
-.progressCard:hover {
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+.metricHeader {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
 }
 
-.progressIcon {
-  color: var(--mantine-color-gray-6);
-  flex-shrink: 0;
+.metricIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--mantine-color-blue-6);
+	width: 28px;
+	height: 28px;
+	border-radius: 8px;
+	border: 1px solid var(--mantine-color-gray-3);
+	background-color: var(--mantine-color-gray-1);
 }
 
-.progressLabel {
-  color: var(--mantine-color-gray-8);
-  font-size: var(--mantine-font-size-sm);
+.metricCopy {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	flex: 1;
+	min-width: 0;
 }
 
-.progressValue {
-  color: var(--mantine-color-gray-6);
-  font-size: var(--mantine-font-size-sm);
-  min-width: 60px;
-  text-align: right;
+.metricLabel {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
 }
 
-.progressBar {
-  width: 100%;
+.metricHint {
+	font-size: 11px;
+	color: var(--mantine-color-gray-6);
+	line-height: 1.3;
 }
 
-/* Override Mantine progress bar styles to match the design */
-.progressBar .mantine-Progress-section {
-  background: var(--mantine-color-blue-6);
+.metricStatus {
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--mantine-color-gray-7);
+	text-transform: uppercase;
+	letter-spacing: 0.4px;
 }
 
-.progressBar .mantine-Progress-root {
-  background-color: var(--mantine-color-gray-2);
-  height: 8px;
+.metricProgress :global(.mantine-Progress-root) {
+	background-color: var(--mantine-color-gray-2);
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .progressCard {
-    padding: var(--mantine-spacing-xs);
-  }
-
-  .progressLabel,
-  .progressValue {
-    font-size: var(--mantine-font-size-xs);
-  }
-
-  .progressIcon {
-    width: 16px;
-    height: 16px;
-  }
+.metricProgress :global(.mantine-Progress-section) {
+	background-color: var(--mantine-color-blue-6);
 }
