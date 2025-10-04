@@ -10,9 +10,8 @@ import { useDispositionLabel } from '~/hooks/useDispositionLabel';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 
 const CampaignTabs = () => {
-	const { selectedTab, setSelectedTab, setRightComponent } = useCampaignsStore(
-		(state) => state
-	);
+	const { selectedTab, selectedCampaign, setSelectedTab, setRightComponent } =
+		useCampaignsStore((state) => state);
 	const dispositionLabel = useDispositionLabel();
 	return (
 		<Tabs
@@ -33,9 +32,11 @@ const CampaignTabs = () => {
 				<Tabs.Tab leftSection={<IconUser />} value='agents'>
 					Agents
 				</Tabs.Tab>
-				<Tabs.Tab leftSection={<IconUsersGroup />} value='contacts'>
-					Contacts
-				</Tabs.Tab>
+				{selectedCampaign?.type === 'OUTBOUND' && (
+					<Tabs.Tab leftSection={<IconUsersGroup />} value='contacts'>
+						Contacts
+					</Tabs.Tab>
+				)}
 				<Tabs.Tab leftSection={<IconList />} value='dispositions'>
 					{dispositionLabel('Dispositions')}
 				</Tabs.Tab>
