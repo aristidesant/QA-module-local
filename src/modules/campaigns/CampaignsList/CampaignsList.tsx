@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, Stack, Card, Button } from '@mantine/core';
 import { IconAlertCircle, IconRocket, IconPlus } from '@tabler/icons-react';
 import {
@@ -25,6 +25,17 @@ import { useCampaignsColumns } from './useCampaignsColumns';
 import CampaignsListSkeleton from './CampaignsListSkeleton';
 import CloneCampaignForm from '../CloneCampaignForm';
 
+interface CampaignFiltersType {
+	type?: string;
+	campaignExecutionType?: string;
+	status?: string;
+	budgetMin?: number;
+	budgetMax?: number;
+	spentMin?: number;
+	spentMax?: number;
+	userId?: number;
+}
+
 export const CampaignsList: React.FC = () => {
 	const {
 		selectCampaign,
@@ -40,6 +51,14 @@ export const CampaignsList: React.FC = () => {
 		searchDebounceMs: 500,
 	});
 
+	const [sortBy, setSortBy] = useState('createdAt');
+	const [filters, setFilters] = useState<CampaignFiltersType>({});
+
+	// Reset to first page when filters change
+	useEffect(() => {
+		pagination.setCurrentPage(1);
+	}, [filters, pagination]);
+
 	// Fetch data with server-side pagination
 	const {
 		data: campaignsResponse,
@@ -48,9 +67,7 @@ export const CampaignsList: React.FC = () => {
 		isError,
 		error,
 		refetch: reloadCampaigns,
-	} = useGetAllCampaignsPaginated(pagination.getApiParams());
-
-	const [sortBy, setSortBy] = useState('createdAt');
+	} = useGetAllCampaignsPaginated({ ...pagination.getApiParams(), ...filters });
 	const { mutateAsync: deleteCampaign } = useDeleteCampaign();
 
 	// Calculate total pages from server response
@@ -165,6 +182,8 @@ export const CampaignsList: React.FC = () => {
 					onSearchChange={pagination.setSearchValue}
 					sortBy={sortBy}
 					onSortChange={setSortBy}
+					filters={filters}
+					onFiltersChange={setFilters}
 				/>
 
 				{isLoading || isFetching ? (

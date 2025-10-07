@@ -1,45 +1,91 @@
 .filtersContainer {
-    padding: var(--mantine-spacing-xs);
-    /* background: var(--mantine-color-gray-0); */
-    /* border-radius: var(--mantine-radius-md); */
-    /* border: 1px solid var(--mantine-color-gray-2); */
-    /* margin-bottom: var(--mantine-spacing-xs); */
+	background-color: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-lg);
+	padding: var(--mantine-spacing-lg);
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
 }
 
-.searchInput {
-    width: 300px;
-    max-width: 100%;
+.toolbar {
+	display: grid;
+	gap: var(--mantine-spacing-sm);
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	align-items: center;
 }
 
-.searchInput input {
-    background-color: var(--mantine-color-gray-1) !important;
-    /* border: none !important; */
+.fieldGroup {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
 }
 
-.searchIcon {
-    color: var(--mantine-color-gray-6);
+.title {
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-7);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
 }
 
+.activeBadge {
+	background-color: var(--mantine-color-blue-0);
+	color: var(--mantine-color-blue-6);
+}
 
+.sortBlock {
+	justify-content: flex-start;
+}
 
 .sortLabel {
-    font-size: var(--mantine-font-size-sm);
-    color: var(--mantine-color-gray-7);
-    font-weight: 500;
-    white-space: nowrap;
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-6);
+	font-weight: 500;
+	white-space: nowrap;
 }
 
 .sortSelect {
-    min-width: 150px;
+	min-width: 160px;
 }
 
+.searchBlock {
+	width: 100%;
+}
 
+.searchInput {
+	width: 100%;
+}
+
+.searchInput input {
+	background-color: var(--mantine-color-gray-1);
+	border-color: transparent;
+}
+
+.searchIcon {
+	color: var(--mantine-color-gray-6);
+}
 
 .filtersButton {
-    border-radius: var(--mantine-radius-sm);
-    transition: all 0.15s ease;
+	justify-self: end;
 }
 
-.filtersButton:hover {
-    background-color: var(--mantine-color-gray-1);
+.divider {
+	border-color: var(--mantine-color-gray-3);
+}
+
+.filtersGrid {
+	margin-top: var(--mantine-spacing-sm);
+}
+
+.actionsRow {
+	align-items: center;
+}
+
+.hint {
+	color: var(--mantine-color-gray-6);
+}
+
+.resetButton:disabled {
+	color: var(--mantine-color-gray-5);
 }
