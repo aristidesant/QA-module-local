@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-	Text,
-	Switch,
-	ActionIcon,
-	Menu,
-	Collapse,
-	HoverCard,
-} from '@mantine/core';
+import { Text, Switch, ActionIcon, Menu, HoverCard } from '@mantine/core';
 import {
 	IconChevronUp,
 	IconDots,
