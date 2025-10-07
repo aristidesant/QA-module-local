@@ -1,6 +1,14 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { Avatar, Tooltip, ActionIcon, Group, Text, Badge } from '@mantine/core';
-import { IconEdit, IconPhone, IconCopy } from '@tabler/icons-react';
+import {
+	Avatar,
+	Tooltip,
+	ActionIcon,
+	Group,
+	Text,
+	Badge,
+	Loader,
+} from '@mantine/core';
+import { IconEdit, IconPhone, IconCopy, IconTrash } from '@tabler/icons-react';
 import type AgentListObject from '~/models/AgentListObject';
 
 // Helper to get flag emoji from language code
@@ -31,12 +39,16 @@ interface UseAgentColumnsProps {
 	onEdit: (agent: AgentListObject) => void;
 	onTestCall: (agent: AgentListObject) => void;
 	onDuplicate: (agent: AgentListObject) => void;
+	onDelete: (agent: AgentListObject) => void;
+	isDeleting?: boolean;
 }
 
 export const useAgentColumns = ({
 	onEdit,
 	onTestCall,
 	onDuplicate,
+	onDelete,
+	isDeleting = false,
 }: UseAgentColumnsProps): ColumnDef<AgentListObject, any>[] => {
 	return [
 		{
@@ -165,6 +177,20 @@ export const useAgentColumns = ({
 								}}
 							>
 								<IconEdit size={16} />
+							</ActionIcon>
+						</Tooltip>
+						<Tooltip label='Delete Agent'>
+							<ActionIcon
+								size='sm'
+								variant='subtle'
+								color='red'
+								disabled={isDeleting}
+								onClick={(e) => {
+									e.stopPropagation();
+									onDelete(agent);
+								}}
+							>
+								{isDeleting ? <Loader size={16} /> : <IconTrash size={16} />}
 							</ActionIcon>
 						</Tooltip>
 					</Group>

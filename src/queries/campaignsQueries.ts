@@ -277,3 +277,34 @@ export const useDeleteCampaign = () => {
 		},
 	});
 };
+
+// Clone campaign
+export const useCloneCampaign = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async ({
+			campaignId,
+			data,
+		}: {
+			campaignId: string;
+			data: {
+				name: string;
+				description: string;
+				agentsToDuplicate: Array<{ agentId: string; newName: string }>;
+			};
+		}) => {
+			const api = campaignsApi();
+			return api.cloneCampaign(campaignId, data);
+		},
+		onSuccess: (data) => {
+			queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+			queryClient.invalidateQueries({ queryKey: ['campaigns-paginated'] });
+			// eslint-disable-next-line no-console
+			console.log('Campaign cloned successfully:', data);
+		},
+		onError: (error) => {
+			// eslint-disable-next-line no-console
+			console.error('Error cloning campaign:', error);
+		},
+	});
+};

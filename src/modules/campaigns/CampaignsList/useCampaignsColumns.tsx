@@ -22,9 +22,9 @@ import {
 	IconCheck,
 	IconArrowUpRight,
 	IconArrowDownLeft,
+	IconCopy,
 } from '@tabler/icons-react';
 import type { Campaign } from '~/models/CampaignsModel';
-import ScoreGauge from './CampaignsListItem/ScoreGauge';
 
 // Helper to get status info
 const getCampaignStatusInfo = (status: string) => {
@@ -91,11 +91,13 @@ const getProgressColor = (percentage: number): string => {
 interface UseCampaignsColumnsProps {
 	onEdit: (campaign: Campaign) => void;
 	onDelete: (campaign: Campaign) => void;
+	onClone: (campaign: Campaign) => void;
 }
 
 export const useCampaignsColumns = ({
 	onEdit,
 	onDelete,
+	onClone,
 }: UseCampaignsColumnsProps): ColumnDef<Campaign, any>[] => {
 	return [
 		{
@@ -236,7 +238,7 @@ export const useCampaignsColumns = ({
 			cell: ({ row }) => {
 				const campaign = row.original;
 				return (
-					<Menu shadow='md' width={160}>
+					<Menu shadow='md' width={200}>
 						<Menu.Target>
 							<ActionIcon
 								variant='subtle'
@@ -257,6 +259,15 @@ export const useCampaignsColumns = ({
 								leftSection={<IconEye size={14} />}
 							>
 								Edit Campaign
+							</Menu.Item>
+							<Menu.Item
+								onClick={(e) => {
+									e.stopPropagation();
+									onClone(campaign);
+								}}
+								leftSection={<IconCopy size={14} />}
+							>
+								Clone Campaign
 							</Menu.Item>
 							<Menu.Divider />
 							<Menu.Item

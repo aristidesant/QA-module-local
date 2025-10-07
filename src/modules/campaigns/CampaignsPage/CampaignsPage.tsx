@@ -3,10 +3,14 @@ import { ContentContainer } from '~/components/ContentContainer/ContentContainer
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import { CampaignsForm } from '../CampaignsForm/CampaignsForm';
 import { Campaign } from '~/models/CampaignsModel';
+import { useGetCampaign } from '~/queries/campaignsQueries';
 
 export default function CampaignsPage() {
 	const { rightComponent, selectedCampaign, editCampaign, resetView } =
 		useCampaignsStore((state) => state);
+	const { data: campaign } = useGetCampaign(
+		selectedCampaign?.id ? `${selectedCampaign?.id}` : ``
+	); // Ensure campaign data is fresh
 
 	return (
 		<ContentContainer
@@ -16,8 +20,8 @@ export default function CampaignsPage() {
 			}}
 			rightSection={rightComponent || <></>}
 		>
-			{editCampaign ? (
-				<CampaignsForm campaign={selectedCampaign as Campaign} />
+			{editCampaign && campaign ? (
+				<CampaignsForm campaign={campaign as Campaign} />
 			) : (
 				<CampaignsList />
 			)}

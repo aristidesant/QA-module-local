@@ -8,7 +8,7 @@ import {
 	SortingState,
 	useReactTable,
 } from '@tanstack/react-table';
-import { Table } from '@mantine/core';
+import { Table, LoadingOverlay } from '@mantine/core';
 import {
 	IconChevronUp,
 	IconChevronDown,
@@ -25,6 +25,7 @@ export type BaseTableProps<TData> = {
 	className?: string;
 	density?: 'default' | 'compact';
 	getRowClassName?: (row: Row<TData>) => string | undefined;
+	isLoading?: boolean;
 };
 
 function BaseTable<TData>({
@@ -36,6 +37,7 @@ function BaseTable<TData>({
 	className,
 	density = 'default',
 	getRowClassName,
+	isLoading = false,
 }: BaseTableProps<TData>) {
 	const [sorting, setSorting] = React.useState<SortingState>(initialSort);
 
@@ -50,6 +52,7 @@ function BaseTable<TData>({
 
 	return (
 		<div className={`${styles.root} ${className ?? ''}`}>
+			<LoadingOverlay visible={isLoading} />
 			<Table className={styles.table} striped highlightOnHover>
 				<Table.Thead className={styles.thead}>
 					{table.getHeaderGroups().map((headerGroup) => (

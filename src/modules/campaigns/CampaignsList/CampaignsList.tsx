@@ -23,6 +23,7 @@ import EmptyState from '~/components/EmptyState';
 import BaseTable from '~/components/BaseTable';
 import { useCampaignsColumns } from './useCampaignsColumns';
 import CampaignsListSkeleton from './CampaignsListSkeleton';
+import CloneCampaignForm from '../CloneCampaignForm';
 
 export const CampaignsList: React.FC = () => {
 	const {
@@ -95,6 +96,24 @@ export const CampaignsList: React.FC = () => {
 						});
 					}
 				},
+			});
+		},
+		onClone: (campaign) => {
+			modals.open({
+				modalId: 'clone-campaign',
+				title: 'Clone Campaign',
+				children: (
+					<CloneCampaignForm
+						campaign={campaign}
+						onComplete={() => {
+							reloadCampaigns();
+							selectCampaign(null);
+							modals.close('clone-campaign');
+						}}
+					/>
+				),
+				size: 'lg',
+				centered: true,
 			});
 		},
 	});

@@ -27,7 +27,7 @@ import classes from './AgentList.module.css';
 import type AgentListObject from '~/models/AgentListObject';
 import AgentSimpleDetails from '../AgentSimpleDetails/AgentSimpleDetails';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
-import { useGetAllAgents } from '~/queries/agentQueries';
+import { useGetAllAgents, useDeleteAgent } from '~/queries/agentQueries';
 import { useAgentStore } from '~/stores/agentStore';
 import BaseTable from '~/components/BaseTable/BaseTable';
 import { useAgentColumns } from './useAgentColumns';
@@ -72,6 +72,7 @@ const AgentList: React.FC = () => {
 	const {
 		data: agents,
 		isLoading,
+		isFetching,
 		isError,
 		error,
 		refetch: reloadAgents,
@@ -81,6 +82,8 @@ const AgentList: React.FC = () => {
 		...(debouncedName ? { name: debouncedName } : {}),
 		...(filters.type !== 'all' ? { agentType: filters.type } : {}),
 	});
+
+	const deleteMutation = useDeleteAgent();
 
 	// Reset to first page when filters or page size change
 	React.useEffect(() => {
@@ -146,10 +149,22 @@ const AgentList: React.FC = () => {
 		setSelectedAgentForDuplicate(null);
 	};
 
+	const handleDelete = (agent: AgentListObject) => {
+		modals.openConfirmModal({
+			title: 'Delete Agent',
+			children: `Are you sure you want to delete "${agent.name}"? This action cannot be undone.`,
+			labels: { confirm: 'Delete', cancel: 'Cancel' },
+			confirmProps: { color: 'red' },
+			onConfirm: () => deleteMutation.mutate(agent.id),
+		});
+	};
+
 	const columns = useAgentColumns({
 		onEdit: handleEdit,
 		onTestCall: handleTestCall,
 		onDuplicate: handleDuplicate,
+		onDelete: handleDelete,
+		isDeleting: deleteMutation.isPending,
 	});
 
 	const handleFilterChange = (key: keyof AgentFilters, value: string) => {
@@ -297,6 +312,7 @@ const AgentList: React.FC = () => {
 					<BaseTable<AgentListObject>
 						data={agents?.data || []}
 						columns={columns}
+						isLoading={deleteMutation.isPending || isFetching}
 						selectedKey={`${selectedAgent?.id}`}
 						onRowClick={handleAgentClick}
 						density={'default'}

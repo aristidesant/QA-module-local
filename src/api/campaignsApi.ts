@@ -117,6 +117,22 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 			);
 			return response.data;
 		},
+
+		// CLONE campaign
+		cloneCampaign: async (
+			campaignId: string,
+			data: {
+				name: string;
+				description: string;
+				agentsToDuplicate: Array<{ agentId: string; newName: string }>;
+			}
+		) => {
+			const response = await axios.post(
+				`${DEFAULT_API_URL}/campaigns/${campaignId}/clone`,
+				data
+			);
+			return response.data;
+		},
 	};
 };
 
