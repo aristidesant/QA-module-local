@@ -1,13 +1,5 @@
 import React, { useEffect } from 'react';
-import {
-	Card,
-	Group,
-	Stack,
-	Button,
-	LoadingOverlay,
-	Paper,
-	Box,
-} from '@mantine/core';
+import { Group, Stack, Button, LoadingOverlay, Box } from '@mantine/core';
 import { IconEdit, IconDeviceFloppy } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import type { Scheduler } from '~/models/SchedulerModel';
