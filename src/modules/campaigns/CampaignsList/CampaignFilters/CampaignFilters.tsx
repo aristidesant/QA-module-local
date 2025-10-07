@@ -4,7 +4,6 @@ import {
 	Collapse,
 	Divider,
 	Group,
-	NumberInput,
 	Select,
 	SimpleGrid,
 	Text,
@@ -33,6 +32,25 @@ interface CampaignFiltersProps {
 	onFiltersChange: (filters: CampaignFiltersProps['filters']) => void;
 }
 
+const sortOptions = [
+	{ value: 'createdAt', label: 'Creation date' },
+	{ value: 'name', label: 'Name' },
+	{ value: 'status', label: 'Status' },
+	{ value: 'lastActivity', label: 'Last activity' },
+];
+
+const typeOptions = [
+	{ value: 'OUTBOUND', label: 'Outbound' },
+	{ value: 'INBOUND', label: 'Inbound' },
+];
+
+const statusOptions = [
+	{ value: 'ACTIVE', label: 'Active' },
+	{ value: 'INACTIVE', label: 'Inactive' },
+	{ value: 'PAUSED', label: 'Paused' },
+	{ value: 'COMPLETED', label: 'Completed' },
+	{ value: 'RUNNING', label: 'Running' },
+];
 export default function CampaignFilters({
 	searchValue,
 	onSearchChange,
@@ -48,26 +66,6 @@ export default function CampaignFilters({
 	).length;
 	const hasActiveFilters = activeFiltersCount > 0;
 
-	const sortOptions = [
-		{ value: 'createdAt', label: 'Creation date' },
-		{ value: 'name', label: 'Name' },
-		{ value: 'status', label: 'Status' },
-		{ value: 'lastActivity', label: 'Last activity' },
-	];
-
-	const typeOptions = [
-		{ value: 'OUTBOUND', label: 'Outbound' },
-		{ value: 'INBOUND', label: 'Inbound' },
-	];
-
-	const statusOptions = [
-		{ value: 'ACTIVE', label: 'Active' },
-		{ value: 'INACTIVE', label: 'Inactive' },
-		{ value: 'PAUSED', label: 'Paused' },
-		{ value: 'COMPLETED', label: 'Completed' },
-		{ value: 'RUNNING', label: 'Running' },
-	];
-
 	const executionTypeOptions = [{ value: 'TIME_BASED', label: 'Time Based' }];
 
 	const handleFilterChange = <
@@ -80,15 +78,6 @@ export default function CampaignFilters({
 			...filters,
 			[key]: value ?? undefined,
 		});
-	};
-
-	const parseNumberValue = (value: string | number | undefined) => {
-		if (value === '' || value === undefined || value === null) {
-			return undefined;
-		}
-
-		const numericValue = Number(value);
-		return Number.isNaN(numericValue) ? undefined : numericValue;
 	};
 
 	return (
