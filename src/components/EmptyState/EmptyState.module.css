@@ -1,0 +1,18 @@
+.container {
+	padding: var(--mantine-spacing-xl);
+}
+
+.icon {
+	margin-bottom: var(--mantine-spacing-xl);
+}
+
+.title {
+	margin-top: var(--mantine-spacing-xl);
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
+.subtitle {
+	margin-top: var(--mantine-spacing-xs);
+	margin-bottom: var(--mantine-spacing-lg);
+	text-align: center;
+}
