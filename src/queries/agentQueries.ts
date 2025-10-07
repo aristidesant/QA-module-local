@@ -1,5 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import agentApi, { FindAllAgentsResponse } from '~/api/agentApi';
+import agentApi, {
+	FindAllAgentsResponse,
+	DuplicateAgentDto,
+} from '~/api/agentApi';
 import type { AgentUpdateModel } from '~/models/AgentListObject';
 import type { Campaign } from '~/models/CampaignsModel';
 
@@ -16,6 +19,29 @@ export const useCreateAgent = () => {
 		},
 		onError: (error) => {
 			console.error('Error creating agent:', error);
+		},
+	});
+};
+
+// Duplicate agent
+export const useDuplicateAgent = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async ({
+			agentId,
+			data,
+		}: {
+			agentId: string;
+			data: DuplicateAgentDto;
+		}) => {
+			const api = agentApi();
+			return api.duplicateAgent(agentId, data);
+		},
+		onSuccess: (_data) => {
+			queryClient.invalidateQueries({ queryKey: ['agents'] });
+		},
+		onError: (error) => {
+			console.error('Error duplicating agent:', error);
 		},
 	});
 };

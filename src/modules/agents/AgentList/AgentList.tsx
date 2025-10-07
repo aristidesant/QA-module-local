@@ -34,6 +34,7 @@ import { useAgentColumns } from './useAgentColumns';
 import { OutboundCallForm } from '~/components/OutboundCallForm';
 import { modals } from '@mantine/modals';
 import AgentQuickEdit from '../AgentQuickEdit';
+import DuplicateAgentModal from './DuplicateAgentModal';
 
 interface AgentFilters {
 	name: string;
@@ -53,6 +54,11 @@ const AgentList: React.FC = () => {
 	// Test call modal state
 	const [testCallModalOpened, setTestCallModalOpened] = React.useState(false);
 	const [selectedAgentForCall, setSelectedAgentForCall] =
+		React.useState<AgentListObject | null>(null);
+
+	// Duplicate modal state
+	const [duplicateModalOpened, setDuplicateModalOpened] = React.useState(false);
+	const [selectedAgentForDuplicate, setSelectedAgentForDuplicate] =
 		React.useState<AgentListObject | null>(null);
 
 	const [page, setPage] = React.useState(1);
@@ -124,9 +130,26 @@ const AgentList: React.FC = () => {
 		setSelectedAgentForCall(null);
 	};
 
+	const handleDuplicate = (agent: AgentListObject) => {
+		setSelectedAgentForDuplicate(agent);
+		setDuplicateModalOpened(true);
+	};
+
+	const handleDuplicateSuccess = () => {
+		setDuplicateModalOpened(false);
+		setSelectedAgentForDuplicate(null);
+		// The mutation will invalidate queries, so the list will refresh
+	};
+
+	const handleDuplicateClose = () => {
+		setDuplicateModalOpened(false);
+		setSelectedAgentForDuplicate(null);
+	};
+
 	const columns = useAgentColumns({
 		onEdit: handleEdit,
 		onTestCall: handleTestCall,
+		onDuplicate: handleDuplicate,
 	});
 
 	const handleFilterChange = (key: keyof AgentFilters, value: string) => {
@@ -331,6 +354,15 @@ const AgentList: React.FC = () => {
 					/>
 				)}
 			</Modal>
+
+			{/* Duplicate Agent Modal */}
+			<DuplicateAgentModal
+				opened={duplicateModalOpened}
+				onClose={handleDuplicateClose}
+				onSuccess={handleDuplicateSuccess}
+				originalName={selectedAgentForDuplicate?.name || ''}
+				agentId={selectedAgentForDuplicate?.id || ''}
+			/>
 		</ContentContainer>
 	);
 };

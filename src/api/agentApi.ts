@@ -1,7 +1,7 @@
-import { BodyCreateAgentV1ConvaiAgentsCreatePost } from "@elevenlabs/elevenlabs-js/api/resources/conversationalAi";
-import axios from "axios";
-import type AgentListObject from "~/models/AgentListObject";
-import { DEFAULT_API_URL } from "./config";
+import { BodyCreateAgentV1ConvaiAgentsCreatePost } from '@elevenlabs/elevenlabs-js/api/resources/conversationalAi';
+import axios from 'axios';
+import type AgentListObject from '~/models/AgentListObject';
+import { DEFAULT_API_URL } from './config';
 
 export interface FindAllAgentsResponse {
 	data: AgentListObject[];
@@ -10,11 +10,24 @@ export interface FindAllAgentsResponse {
 	limit: number;
 	totalPages: number;
 }
+
+export interface DuplicateAgentDto {
+	name: string;
+}
 const agentApi = (_authHeader: Record<string, string> = {}) => {
 	return {
 		// CREATE agent
 		createAgent: async (agent: BodyCreateAgentV1ConvaiAgentsCreatePost) => {
 			const response = await axios.post(`${DEFAULT_API_URL}/agents`, agent);
+			return response.data;
+		},
+
+		// DUPLICATE agent
+		duplicateAgent: async (agentId: string, data: DuplicateAgentDto) => {
+			const response = await axios.post(
+				`${DEFAULT_API_URL}/agents/${agentId}/duplicate`,
+				data
+			);
 			return response.data;
 		},
 

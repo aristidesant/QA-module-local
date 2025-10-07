@@ -1,6 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Avatar, Tooltip, ActionIcon, Group, Text, Badge } from '@mantine/core';
-import { IconEdit, IconPhone } from '@tabler/icons-react';
+import { IconEdit, IconPhone, IconCopy } from '@tabler/icons-react';
 import type AgentListObject from '~/models/AgentListObject';
 
 // Helper to get flag emoji from language code
@@ -30,11 +30,13 @@ const timeAgo = (date: Date): string => {
 interface UseAgentColumnsProps {
 	onEdit: (agent: AgentListObject) => void;
 	onTestCall: (agent: AgentListObject) => void;
+	onDuplicate: (agent: AgentListObject) => void;
 }
 
 export const useAgentColumns = ({
 	onEdit,
 	onTestCall,
+	onDuplicate,
 }: UseAgentColumnsProps): ColumnDef<AgentListObject, any>[] => {
 	return [
 		{
@@ -138,6 +140,19 @@ export const useAgentColumns = ({
 								}}
 							>
 								<IconPhone size={16} />
+							</ActionIcon>
+						</Tooltip>
+						<Tooltip label='Duplicate Agent'>
+							<ActionIcon
+								size='sm'
+								variant='subtle'
+								color='blue'
+								onClick={(e) => {
+									e.stopPropagation();
+									onDuplicate(agent);
+								}}
+							>
+								<IconCopy size={16} />
 							</ActionIcon>
 						</Tooltip>
 						<Tooltip label='Edit Agent'>
