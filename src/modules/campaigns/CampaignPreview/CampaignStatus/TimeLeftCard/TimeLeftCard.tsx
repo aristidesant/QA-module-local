@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import {
-	Card,
 	Group,
 	Text,
 	Progress,
@@ -8,12 +7,13 @@ import {
 	ActionIcon,
 	Skeleton,
 } from '@mantine/core';
-import { IconRefresh } from '@tabler/icons-react';
+import { IconClock, IconRefresh } from '@tabler/icons-react';
 import styles from './TimeLeftCard.module.css';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import { useGetCampaignsTimeEnd } from '~/queries/campaignsQueries';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import RightSectionCard from '~/components/RightSectionCard';
 
 // Extend dayjs with duration plugin
 dayjs.extend(duration);
@@ -66,37 +66,24 @@ const TimeLeftCard: React.FC<TimeLeftCardProps> = () => {
 	}, [timeData?.timeEnd]);
 
 	return (
-		<Card radius='md' padding='md' withBorder className={styles.timeCard}>
-			{isLoading ? (
-				// Loading skeleton
-				<>
-					<Group justify='space-between' className={styles.timeHeader}>
-						<Group gap='xs'>
-							<Skeleton height={16} width={120} />
-							<Skeleton circle height={16} width={16} />
-						</Group>
-						<Skeleton height={16} width={80} />
-					</Group>
-					<Skeleton height={8} radius='xl' mt='sm' />
-				</>
-			) : (
-				<>
-					<Group justify='space-between' className={styles.timeHeader}>
-						<Group gap='xs'>
-							<Text fw={500} fz='sm'>
-								{isCompleted ? 'Campaign Status' : "Today's time left"}
-							</Text>
-							<ActionIcon
-								size='xs'
-								variant='subtle'
-								color='gray'
-								onClick={() => refetch()}
-								disabled={isCompleted}
-								className={styles.refetchButton}
-							>
-								<IconRefresh size={12} />
-							</ActionIcon>
-						</Group>
+		<RightSectionCard
+			title={isCompleted ? 'Campaign Status' : "Today's time left"}
+			icon={IconClock}
+			rightSection={
+				isLoading ? (
+					<Skeleton height={16} width={80} />
+				) : (
+					<Group gap='xs' align='center'>
+						<ActionIcon
+							size='xs'
+							variant='subtle'
+							color='gray'
+							onClick={() => refetch()}
+							disabled={isCompleted}
+							className={styles.refetchButton}
+						>
+							<IconRefresh size={12} />
+						</ActionIcon>
 						{isCompleted ? (
 							<Badge size='sm' color='green' variant='light'>
 								Completed
@@ -107,18 +94,23 @@ const TimeLeftCard: React.FC<TimeLeftCardProps> = () => {
 							</Text>
 						)}
 					</Group>
-					{!isCompleted && (
-						<Progress
-							value={progress}
-							size='md'
-							radius='xl'
-							color='blue'
-							className={styles.progressBar}
-						/>
-					)}
-				</>
+				)
+			}
+		>
+			{isLoading ? (
+				<Skeleton height={8} radius='xl' mt='sm' />
+			) : !isCompleted ? (
+				<Progress
+					value={progress}
+					size='md'
+					radius='xl'
+					color='blue'
+					className={styles.progressBar}
+				/>
+			) : (
+				<></>
 			)}
-		</Card>
+		</RightSectionCard>
 	);
 };
 

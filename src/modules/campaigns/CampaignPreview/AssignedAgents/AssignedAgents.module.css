@@ -27,25 +27,25 @@
 	position: absolute;
 	bottom: 1px;
 	right: 1px;
-	width: 10px;
-	height: 10px;
+	width: 8px;
+	height: 8px;
 	border-radius: 50%;
 	border: 2px solid var(--mantine-color-white);
 }
 
-.statusIndicator.online {
+.statusIndicatorOnline {
 	background-color: var(--mantine-color-green-6);
 }
 
-.statusIndicator.busy {
+.statusIndicatorBusy {
 	background-color: var(--mantine-color-yellow-6);
 }
 
-.statusIndicator.away {
+.statusIndicatorAway {
 	background-color: var(--mantine-color-orange-6);
 }
 
-.statusIndicator.offline {
+.statusIndicatorOffline {
 	background-color: var(--mantine-color-gray-6);
 }
 
