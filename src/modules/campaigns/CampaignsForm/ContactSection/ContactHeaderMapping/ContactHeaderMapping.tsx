@@ -1,9 +1,12 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { Button, Card, Group, Text } from '@mantine/core';
+import { Button, Card, Group, Text, Menu, ActionIcon } from '@mantine/core';
 import { useGetClientConfig } from '~/queries/clientConfigQueries';
+import { useGetCampaignContactSchemas } from '~/queries/campaignContactSchemasQueries';
+import { IconPlus } from '@tabler/icons-react';
 import styles from './ContactHeaderMapping.module.css';
 import { modals } from '@mantine/modals';
 import type { MappedResult } from '~/models/ContactFileSummary';
+import type { CampaignContactSchemaField } from '~/models/CampaignContactSchemaModel';
 
 interface SystemColumn {
 	name: string;
@@ -16,6 +19,8 @@ interface ContactHeaderMappingProps {
 	documentColumns: string[];
 	onMappingChange: (mappings: MappedResult) => void;
 	result?: MappedResult;
+	schemaFields?: CampaignContactSchemaField[];
+	onSchemaSelected?: (schemaId: number) => void;
 }
 
 interface FieldMapping {
@@ -27,6 +32,8 @@ export function ContactHeaderMapping({
 	documentColumns,
 	onMappingChange,
 	result,
+	schemaFields = [],
+	onSchemaSelected,
 }: ContactHeaderMappingProps) {
 	const [selectedSystemField, setSelectedSystemField] = useState<string | null>(
 		null
@@ -38,20 +45,68 @@ export function ContactHeaderMapping({
 	const [finalizedSystemFields, setFinalizedSystemFields] = useState<
 		Set<string>
 	>(new Set());
+	const [additionalSchemaFields, setAdditionalSchemaFields] = useState<
+		CampaignContactSchemaField[]
+	>([]);
 
 	const { data: systemConfig, isLoading: isLoadingSystemColumns } =
 		useGetClientConfig('contact_columns');
+	const { data: schemas } = useGetCampaignContactSchemas();
 
-	// Transform and memoize system columns
+	// Transform and memoize system columns including schema fields
 	const systemColumns = useMemo<SystemColumn[]>(() => {
-		if (!systemConfig?.value) return [];
-		try {
-			return JSON.parse(systemConfig.value) as SystemColumn[];
-		} catch (error) {
-			console.error('Error parsing contact headers:', error);
-			return [];
+		const baseColumns: SystemColumn[] = [];
+
+		// Add system columns from config
+		if (systemConfig?.value) {
+			try {
+				baseColumns.push(...(JSON.parse(systemConfig.value) as SystemColumn[]));
+			} catch (error) {
+				console.error('Error parsing contact headers:', error);
+			}
 		}
-	}, [systemConfig]);
+
+		// Add initial schema fields as system columns
+		const initialSchemaColumns: SystemColumn[] = schemaFields.map((field) => ({
+			name: field.name,
+			label: field.label,
+			type: field.type,
+			isArray: field.isArray,
+		}));
+
+		// Add additional schema fields as system columns
+		const additionalSchemaColumns: SystemColumn[] = additionalSchemaFields.map(
+			(field) => ({
+				name: field.name,
+				label: field.label,
+				type: field.type,
+				isArray: field.isArray,
+			})
+		);
+
+		return [
+			...baseColumns,
+			...initialSchemaColumns,
+			...additionalSchemaColumns,
+		];
+	}, [systemConfig, schemaFields, additionalSchemaFields]);
+
+	// Function to add dynamic columns from a selected campaign column set
+	const addSchemaFields = useCallback(
+		(selectedSchemaFields: CampaignContactSchemaField[]) => {
+			// Filter out columns that are already present
+			const existingFieldNames = new Set([
+				...systemColumns.map((col) => col.name),
+				...additionalSchemaFields.map((field) => field.name),
+			]);
+
+			const newFields = selectedSchemaFields.filter(
+				(field) => !existingFieldNames.has(field.name)
+			);
+			setAdditionalSchemaFields((prev) => [...prev, ...newFields]);
+		},
+		[systemColumns, additionalSchemaFields]
+	);
 
 	// Initialize mappings when component mounts or when result prop changes
 	useEffect(() => {
@@ -199,9 +254,84 @@ export function ContactHeaderMapping({
 				{/* System Columns */}
 				<div className={styles.column}>
 					<Card withBorder className={styles.columnCard}>
-						<Text size='sm' fw={500} mb='xs'>
-							System columns
-						</Text>
+						<Group justify='space-between' align='center' mb='xs'>
+							<Text size='sm' fw={500}>
+								System columns
+							</Text>{' '}
+							{schemas && schemas.length > 0 && (
+								<Group gap='xs' align='center'>
+									<Text size='xs' c='dimmed'>
+										Add dynamic columns
+									</Text>
+									<Menu position='bottom-end' withArrow width={300}>
+										<Menu.Target>
+											<ActionIcon
+												variant='light'
+												size='sm'
+												title='Load additional columns for mapping'
+											>
+												<IconPlus size={12} />
+											</ActionIcon>
+										</Menu.Target>
+										<Menu.Dropdown>
+											<Menu.Label>Available Column Sets</Menu.Label>
+											{schemas.map((schema, index) => (
+												<div key={schema.id}>
+													<Menu.Item
+														onClick={() => {
+															addSchemaFields(schema.schemaFields);
+															onSchemaSelected?.(schema.id);
+														}}
+														style={{
+															whiteSpace: 'normal',
+															height: 'auto',
+															padding: '12px 16px',
+															marginBottom:
+																index < schemas.length - 1 ? '8px' : '0',
+														}}
+													>
+														<div>
+															<Group gap={6} align='baseline' mb={4}>
+																<Text size='sm' fw={500}>
+																	{schema.name}
+																</Text>
+																<Text size='xs' c='dimmed'>
+																	(v{schema.version || 1})
+																</Text>
+															</Group>
+															<Text size='xs' c='dimmed' mb={6}>
+																{schema.description || ''}
+															</Text>
+															<Text size='xs' fw={500} c='blue' mb={2}>
+																Available fields ({schema.schemaFields.length}):
+															</Text>
+															<Text
+																size='xs'
+																c='dimmed'
+																style={{ lineHeight: 1.3 }}
+															>
+																{schema.schemaFields
+																	.map((field) => field.label || field.name)
+																	.join(', ')}
+															</Text>
+														</div>
+													</Menu.Item>
+													{index < schemas.length - 1 && (
+														<div
+															style={{
+																height: '1px',
+																backgroundColor: 'var(--mantine-color-gray-3)',
+																margin: '4px 8px',
+															}}
+														/>
+													)}
+												</div>
+											))}
+										</Menu.Dropdown>
+									</Menu>
+								</Group>
+							)}
+						</Group>
 						<div className={styles.itemsContainer}>
 							{isLoadingSystemColumns ? (
 								<Text size='sm' c='dimmed'>
