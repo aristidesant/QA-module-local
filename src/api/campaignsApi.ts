@@ -133,6 +133,18 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 			);
 			return response.data;
 		},
+
+		// ASSIGN objective to campaign
+		assignObjectiveToCampaign: async (
+			campaignId: string | number,
+			objectiveId: number
+		) => {
+			const response = await axios.patch<Campaign>(
+				`${DEFAULT_API_URL}/campaigns/${campaignId}/assign-objective`,
+				{ objectiveId }
+			);
+			return response.data;
+		},
 	};
 };
 
