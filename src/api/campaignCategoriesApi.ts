@@ -27,9 +27,13 @@ const campaignCategoriesApi = (_authHeader: Record<string, string> = {}) => {
 		/**
 		 * Get all campaign categories
 		 */
-		getCampaignCategories: async (): Promise<CampaignCategory[]> => {
+		getCampaignCategories: async (params?: {
+			name?: string;
+			active?: boolean;
+		}): Promise<CampaignCategory[]> => {
 			const response = await axios.get<CampaignCategory[]>(
-				`${DEFAULT_API_URL}/campaign-categories`
+				`${DEFAULT_API_URL}/campaign-categories`,
+				{ params }
 			);
 			return response.data;
 		},

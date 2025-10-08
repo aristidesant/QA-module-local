@@ -29,12 +29,15 @@ export const useCreateCampaignCategory = () => {
 };
 
 // Get all campaign categories
-export const useGetCampaignCategories = () => {
+export const useGetCampaignCategories = (params?: {
+	name?: string;
+	active?: boolean;
+}) => {
 	return useQuery({
-		queryKey: ['campaign-categories'],
+		queryKey: ['campaign-categories', params],
 		queryFn: async () => {
 			const api = campaignCategoriesApi();
-			return api.getCampaignCategories();
+			return api.getCampaignCategories(params);
 		},
 	});
 };
