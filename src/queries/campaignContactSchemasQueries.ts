@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import campaignContactSchemasApi from '~/api/campaignContactSchemasApi';
 import type {
+	CampaignContactSchemaApiParams,
 	CreateCampaignContactSchemaRequest,
 	UpdateCampaignContactSchemaRequest,
 } from '../models/CampaignContactSchemaModel';
@@ -26,12 +27,14 @@ export const useCreateCampaignContactSchema = () => {
 };
 
 // Get all campaign contact schemas
-export const useGetCampaignContactSchemas = () => {
+export const useGetCampaignContactSchemas = (
+	params?: CampaignContactSchemaApiParams
+) => {
 	return useQuery({
-		queryKey: ['campaign-contact-schemas'],
+		queryKey: ['campaign-contact-schemas', params],
 		queryFn: async () => {
 			const api = campaignContactSchemasApi();
-			return api.getCampaignContactSchemas();
+			return api.getCampaignContactSchemas(params);
 		},
 	});
 };

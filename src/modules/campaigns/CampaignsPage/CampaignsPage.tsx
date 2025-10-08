@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Tabs } from '@mantine/core';
-import { IconRocket, IconCategory } from '@tabler/icons-react';
+import { IconRocket, IconCategory, IconTarget } from '@tabler/icons-react';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import CampaignsList from '../CampaignsList';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import { CampaignsForm } from '../CampaignsForm/CampaignsForm';
 import { CampaignCategoriesContent } from '../CampaignCategoriesContent';
+import { CampaignObjectivesContent } from '../CampaignObjectivesContent';
 import { Campaign } from '~/models/CampaignsModel';
 import { useGetCampaign } from '~/queries/campaignsQueries';
 import styles from './CampaignsPage.module.css';
@@ -39,7 +40,7 @@ export default function CampaignsPage() {
 	return (
 		<ContentContainer
 			title='Campaigns'
-			description='Manage your campaigns and organize them with custom categories'
+			description='Manage your campaigns, organize them with categories, and define objectives'
 			rightSection={getRightSection()}
 		>
 			<Tabs
@@ -64,6 +65,13 @@ export default function CampaignsPage() {
 					>
 						Campaign Categories
 					</Tabs.Tab>
+					<Tabs.Tab
+						value='objectives'
+						leftSection={<IconTarget size={18} />}
+						className={styles.tab}
+					>
+						Campaign Objectives
+					</Tabs.Tab>
 				</Tabs.List>
 
 				<Tabs.Panel value='campaigns' className={styles.tabPanel}>
@@ -72,6 +80,10 @@ export default function CampaignsPage() {
 
 				<Tabs.Panel value='categories' className={styles.tabPanel}>
 					<CampaignCategoriesContent />
+				</Tabs.Panel>
+
+				<Tabs.Panel value='objectives' className={styles.tabPanel}>
+					<CampaignObjectivesContent />
 				</Tabs.Panel>
 			</Tabs>
 		</ContentContainer>

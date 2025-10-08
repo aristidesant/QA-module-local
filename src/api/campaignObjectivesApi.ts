@@ -1,6 +1,8 @@
 import axios from 'axios';
 import type {
 	CampaignObjective,
+	CampaignObjectiveResponse,
+	CampaignObjectiveApiParams,
 	CreateCampaignObjectiveRequest,
 	UpdateCampaignObjectiveRequest,
 } from '../models/CampaignObjectiveModel';
@@ -27,9 +29,12 @@ const campaignObjectivesApi = (_authHeader: Record<string, string> = {}) => {
 		/**
 		 * Get all campaign objectives
 		 */
-		getCampaignObjectives: async (): Promise<CampaignObjective[]> => {
-			const response = await axios.get<CampaignObjective[]>(
-				`${DEFAULT_API_URL}/campaign-objectives`
+		getCampaignObjectives: async (
+			params?: CampaignObjectiveApiParams
+		): Promise<CampaignObjectiveResponse> => {
+			const response = await axios.get<CampaignObjectiveResponse>(
+				`${DEFAULT_API_URL}/campaign-objectives`,
+				{ params }
 			);
 			return response.data;
 		},

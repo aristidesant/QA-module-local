@@ -51,7 +51,8 @@ export function ContactHeaderMapping({
 
 	const { data: systemConfig, isLoading: isLoadingSystemColumns } =
 		useGetClientConfig('contact_columns');
-	const { data: schemas } = useGetCampaignContactSchemas();
+	const { data: schemasResponse } = useGetCampaignContactSchemas();
+	const schemas = schemasResponse?.data || [];
 
 	// Transform and memoize system columns including schema fields
 	const systemColumns = useMemo<SystemColumn[]>(() => {

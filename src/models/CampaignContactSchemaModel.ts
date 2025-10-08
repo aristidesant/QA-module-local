@@ -79,10 +79,18 @@ export interface UpdateCampaignContactSchemaRequest {
 }
 
 export interface CampaignContactSchemaResponse {
-	schemas: CampaignContactSchema[];
 	total: number;
-	page?: number;
+	limit: number;
+	offset: number;
+	data: CampaignContactSchema[];
+}
+
+export interface CampaignContactSchemaApiParams {
+	name?: string;
+	objectiveId?: number;
+	isActive?: boolean;
 	limit?: number;
+	offset?: number;
 }
 
 export interface SchemaContactDataCheck {

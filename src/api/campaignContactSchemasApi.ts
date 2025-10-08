@@ -1,6 +1,8 @@
 import axios from 'axios';
 import type {
 	CampaignContactSchema,
+	CampaignContactSchemaResponse,
+	CampaignContactSchemaApiParams,
 	CreateCampaignContactSchemaRequest,
 	UpdateCampaignContactSchemaRequest,
 	SchemaContactDataCheck,
@@ -30,9 +32,12 @@ const campaignContactSchemasApi = (
 		/**
 		 * Get all campaign contact schemas
 		 */
-		getCampaignContactSchemas: async (): Promise<CampaignContactSchema[]> => {
-			const response = await axios.get<CampaignContactSchema[]>(
-				`${DEFAULT_API_URL}/campaign-contact-schemas`
+		getCampaignContactSchemas: async (
+			params?: CampaignContactSchemaApiParams
+		): Promise<CampaignContactSchemaResponse> => {
+			const response = await axios.get<CampaignContactSchemaResponse>(
+				`${DEFAULT_API_URL}/campaign-contact-schemas`,
+				{ params }
 			);
 			return response.data;
 		},

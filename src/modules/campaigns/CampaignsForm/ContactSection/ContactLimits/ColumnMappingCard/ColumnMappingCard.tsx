@@ -47,7 +47,8 @@ function ColumnMappingCard({
 	const isAllMapped = mappedColumnsCount === totalColumns;
 
 	// Get campaign contact schemas for dynamic fields
-	const { data: schemas } = useGetCampaignContactSchemas();
+	const { data: schemasResponse } = useGetCampaignContactSchemas();
+	const schemas = schemasResponse?.data || [];
 
 	// Find schema fields based on objective ID
 	const schemaFields: CampaignContactSchemaField[] = objectiveId

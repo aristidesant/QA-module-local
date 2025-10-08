@@ -38,8 +38,16 @@ export interface UpdateCampaignObjectiveRequest {
 }
 
 export interface CampaignObjectiveResponse {
-	objectives: CampaignObjective[];
 	total: number;
-	page?: number;
+	limit: number;
+	offset: number;
+	data: CampaignObjective[];
+}
+
+export interface CampaignObjectiveApiParams {
+	name?: string;
+	categoryId?: number;
+	active?: boolean;
 	limit?: number;
+	offset?: number;
 }

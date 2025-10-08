@@ -1,6 +1,8 @@
 import axios from 'axios';
 import type {
 	CampaignCategory,
+	CampaignCategoryResponse,
+	CampaignCategoryApiParams,
 	CreateCampaignCategoryRequest,
 	UpdateCampaignCategoryRequest,
 } from '../models/CampaignCategoryModel';
@@ -27,11 +29,10 @@ const campaignCategoriesApi = (_authHeader: Record<string, string> = {}) => {
 		/**
 		 * Get all campaign categories
 		 */
-		getCampaignCategories: async (params?: {
-			name?: string;
-			active?: boolean;
-		}): Promise<CampaignCategory[]> => {
-			const response = await axios.get<CampaignCategory[]>(
+		getCampaignCategories: async (
+			params?: CampaignCategoryApiParams
+		): Promise<CampaignCategoryResponse> => {
+			const response = await axios.get<CampaignCategoryResponse>(
 				`${DEFAULT_API_URL}/campaign-categories`,
 				{ params }
 			);

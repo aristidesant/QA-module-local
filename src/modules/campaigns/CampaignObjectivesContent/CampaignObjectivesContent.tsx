@@ -1,82 +1,89 @@
 import React, { useState } from 'react';
 import { Button, Group, Text, Modal, Badge } from '@mantine/core';
-import { IconPlus, IconEdit, IconTrash } from '@tabler/icons-react';
+import { IconPlus, IconEdit, IconTrash, IconTag } from '@tabler/icons-react';
 import BaseTable from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
-import { useDeleteCampaignCategory } from '~/queries/campaignCategoriesQueries';
-import { CampaignCategory } from '~/models/CampaignCategoryModel';
+import { useDeleteCampaignObjective } from '~/queries/campaignObjectivesQueries';
+import { CampaignObjective } from '~/models/CampaignObjectiveModel';
 import { ColumnDef } from '@tanstack/react-table';
 import { notifications } from '@mantine/notifications';
-import { CampaignCategoriesForm } from '../CampaignCategoriesForm/CampaignCategoriesForm';
-import { CampaignCategoriesFilters } from '../CampaignCategoriesFilters';
+import { CampaignObjectivesForm } from '../CampaignObjectivesForm/CampaignObjectivesForm';
+import { CampaignObjectivesFilters } from '../CampaignObjectivesFilters';
 import { CampaignCategoriesPagination } from '../CampaignCategoriesPagination';
-import { useCampaignCategoriesWithFilters } from '../hooks/useFilteredCategories';
-import styles from './CampaignCategoriesContent.module.css';
+import { useCampaignObjectivesWithFilters } from '../hooks/useFilteredObjectives';
+import styles from './CampaignObjectivesContent.module.css';
 
-export const CampaignCategoriesContent: React.FC = () => {
+type EnrichedObjective = CampaignObjective & {
+	categoryName: string;
+};
+
+export const CampaignObjectivesContent: React.FC = () => {
 	const [createModalOpened, setCreateModalOpened] = useState(false);
 	const [editModalOpened, setEditModalOpened] = useState(false);
-	const [selectedCategory, setSelectedCategory] =
-		useState<CampaignCategory | null>(null);
+	const [selectedObjective, setSelectedObjective] =
+		useState<CampaignObjective | null>(null);
 
 	// Use the combined hook that handles both server and client filtering
 	const {
-		categories,
+		objectives,
 		pagination,
 		filters,
 		setPagination,
 		setFilters,
 		isLoading,
-	} = useCampaignCategoriesWithFilters();
+	} = useCampaignObjectivesWithFilters();
 
-	const deleteCategory = useDeleteCampaignCategory();
+	const deleteObjective = useDeleteCampaignObjective();
 
-	const handleEdit = (category: CampaignCategory) => {
-		setSelectedCategory(category);
+	const handleEdit = (objective: CampaignObjective) => {
+		setSelectedObjective(objective);
 		setEditModalOpened(true);
 	};
 
 	const handleDelete = async (id: number) => {
 		try {
-			await deleteCategory.mutateAsync(id);
+			await deleteObjective.mutateAsync(id);
 			notifications.show({
 				title: 'Success',
-				message: 'Campaign category deleted successfully',
+				message: 'Campaign objective deleted successfully',
 				color: 'green',
 			});
 		} catch (error) {
 			notifications.show({
 				title: 'Error',
-				message: 'Failed to delete campaign category',
+				message: 'Failed to delete campaign objective',
 				color: 'red',
 			});
 		}
 	};
 
-	const columns: ColumnDef<CampaignCategory>[] = [
+	const columns: ColumnDef<EnrichedObjective>[] = [
 		{
 			accessorKey: 'name',
 			header: 'Name',
 			cell: ({ row }) => (
-				<Text fw={500} className={styles.categoryName}>
+				<Text fw={500} className={styles.objectiveName}>
 					{row.original.name}
 				</Text>
 			),
 		},
 		{
-			accessorKey: 'code',
-			header: 'Code',
+			accessorKey: 'categoryName',
+			header: 'Category',
 			cell: ({ row }) => (
-				<Text c='dimmed' className={styles.categoryCode}>
-					{row.original.code}
-				</Text>
+				<Group gap='xs'>
+					<IconTag size={14} className={styles.categoryIcon} />
+					<Text className={styles.categoryName}>
+						{row.original.categoryName}
+					</Text>
+				</Group>
 			),
 		},
 		{
 			accessorKey: 'description',
 			header: 'Description',
 			cell: ({ row }) => (
-				<Text className={styles.categoryDescription}>
+				<Text className={styles.objectiveDescription}>
 					{row.original.description || 'No description'}
 				</Text>
 			),
@@ -115,7 +122,7 @@ export const CampaignCategoriesContent: React.FC = () => {
 						color='red'
 						leftSection={<IconTrash size={14} />}
 						onClick={() => handleDelete(row.original.id)}
-						loading={deleteCategory.isPending}
+						loading={deleteObjective.isPending}
 						className={styles.actionButton}
 					>
 						Delete
@@ -125,8 +132,8 @@ export const CampaignCategoriesContent: React.FC = () => {
 		},
 	];
 
-	// Show empty state only if no categories exist at all (not filtered)
-	const showEmptyState = categories.length === 0 && !isLoading;
+	// Show empty state only if no objectives exist at all (not filtered)
+	const showEmptyState = objectives.length === 0 && !isLoading;
 
 	if (showEmptyState) {
 		return (
@@ -134,10 +141,10 @@ export const CampaignCategoriesContent: React.FC = () => {
 				<Group justify='space-between' className={styles.header}>
 					<div>
 						<Text size='lg' fw={600}>
-							Campaign Categories
+							Campaign Objectives
 						</Text>
 						<Text size='sm' c='dimmed'>
-							Organize your campaigns with custom categories
+							Define and organize objectives for your campaigns
 						</Text>
 					</div>
 					<Button
@@ -145,20 +152,20 @@ export const CampaignCategoriesContent: React.FC = () => {
 						onClick={() => setCreateModalOpened(true)}
 						className={styles.createButton}
 					>
-						Create Category
+						Create Objective
 					</Button>
 				</Group>
 
 				<EmptyState
 					icon={<IconPlus size={48} />}
-					title='No categories found'
-					subtitle='Get started by creating your first campaign category'
+					title='No objectives found'
+					subtitle='Get started by creating your first campaign objective'
 					button={
 						<Button
 							leftSection={<IconPlus size={16} />}
 							onClick={() => setCreateModalOpened(true)}
 						>
-							Create Category
+							Create Objective
 						</Button>
 					}
 				/>
@@ -166,10 +173,10 @@ export const CampaignCategoriesContent: React.FC = () => {
 				<Modal
 					opened={createModalOpened}
 					onClose={() => setCreateModalOpened(false)}
-					title='Create Campaign Category'
+					title='Create Campaign Objective'
 					size='md'
 				>
-					<CampaignCategoriesForm
+					<CampaignObjectivesForm
 						onSuccess={() => setCreateModalOpened(false)}
 						onCancel={() => setCreateModalOpened(false)}
 					/>
@@ -183,10 +190,10 @@ export const CampaignCategoriesContent: React.FC = () => {
 			<Group justify='space-between' className={styles.header}>
 				<div>
 					<Text size='lg' fw={600}>
-						Campaign Categories
+						Campaign Objectives
 					</Text>
 					<Text size='sm' c='dimmed'>
-						Organize your campaigns with custom categories
+						Define and organize objectives for your campaigns
 					</Text>
 				</div>
 				<Button
@@ -194,20 +201,20 @@ export const CampaignCategoriesContent: React.FC = () => {
 					onClick={() => setCreateModalOpened(true)}
 					className={styles.createButton}
 				>
-					Create Category
+					Create Objective
 				</Button>
 			</Group>
 
-			<CampaignCategoriesFilters
+			<CampaignObjectivesFilters
 				filters={filters}
 				onFiltersChange={setFilters}
 				resultsCount={pagination.total}
 			/>
 
-			{categories.length === 0 && !isLoading ? (
+			{objectives.length === 0 && !isLoading ? (
 				<div className={styles.noResultsContainer}>
 					<Text size='lg' fw={500} ta='center'>
-						No categories match your filters
+						No objectives match your filters
 					</Text>
 					<Text size='sm' c='dimmed' ta='center'>
 						Try adjusting your search criteria or filters
@@ -216,7 +223,7 @@ export const CampaignCategoriesContent: React.FC = () => {
 			) : (
 				<>
 					<BaseTable
-						data={categories}
+						data={objectives}
 						columns={columns}
 						isLoading={isLoading}
 						className={styles.table}
@@ -234,10 +241,10 @@ export const CampaignCategoriesContent: React.FC = () => {
 			<Modal
 				opened={createModalOpened}
 				onClose={() => setCreateModalOpened(false)}
-				title='Create Campaign Category'
+				title='Create Campaign Objective'
 				size='md'
 			>
-				<CampaignCategoriesForm
+				<CampaignObjectivesForm
 					onSuccess={() => setCreateModalOpened(false)}
 					onCancel={() => setCreateModalOpened(false)}
 				/>
@@ -248,21 +255,21 @@ export const CampaignCategoriesContent: React.FC = () => {
 				opened={editModalOpened}
 				onClose={() => {
 					setEditModalOpened(false);
-					setSelectedCategory(null);
+					setSelectedObjective(null);
 				}}
-				title='Edit Campaign Category'
+				title='Edit Campaign Objective'
 				size='md'
 			>
-				{selectedCategory && (
-					<CampaignCategoriesForm
-						category={selectedCategory}
+				{selectedObjective && (
+					<CampaignObjectivesForm
+						objective={selectedObjective}
 						onSuccess={() => {
 							setEditModalOpened(false);
-							setSelectedCategory(null);
+							setSelectedObjective(null);
 						}}
 						onCancel={() => {
 							setEditModalOpened(false);
-							setSelectedCategory(null);
+							setSelectedObjective(null);
 						}}
 					/>
 				)}

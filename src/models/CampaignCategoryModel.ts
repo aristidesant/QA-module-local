@@ -31,8 +31,15 @@ export interface UpdateCampaignCategoryRequest {
 }
 
 export interface CampaignCategoryResponse {
-	categories: CampaignCategory[];
 	total: number;
-	page?: number;
+	limit: number;
+	offset: number;
+	data: CampaignCategory[];
+}
+
+export interface CampaignCategoryApiParams {
+	name?: string;
+	active?: boolean;
 	limit?: number;
+	offset?: number;
 }

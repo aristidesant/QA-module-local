@@ -1,23 +1,29 @@
 import { useMemo, useState } from 'react';
+import { useGetCampaignObjectives } from '~/queries/campaignObjectivesQueries';
 import { useGetCampaignCategories } from '~/queries/campaignCategoriesQueries';
-import { CampaignCategory } from '~/models/CampaignCategoryModel';
-import type { CategoryFilters } from '../CampaignCategoriesFilters';
+import { CampaignObjective } from '~/models/CampaignObjectiveModel';
+import type { ObjectiveFilters } from '../CampaignObjectivesFilters';
 import type { PaginationState } from '../CampaignCategoriesPagination';
 
-interface UseCampaignCategoriesWithFiltersResult {
-	categories: CampaignCategory[];
+type EnrichedObjective = CampaignObjective & {
+	categoryName: string;
+};
+
+interface UseCampaignObjectivesWithFiltersResult {
+	objectives: EnrichedObjective[];
 	pagination: PaginationState;
-	filters: CategoryFilters;
+	filters: ObjectiveFilters;
 	setPagination: (pagination: PaginationState) => void;
-	setFilters: (filters: CategoryFilters) => void;
+	setFilters: (filters: ObjectiveFilters) => void;
 	isLoading: boolean;
 }
 
-export const useCampaignCategoriesWithFilters =
-	(): UseCampaignCategoriesWithFiltersResult => {
-		const [filters, setFilters] = useState<CategoryFilters>({
+export const useCampaignObjectivesWithFilters =
+	(): UseCampaignObjectivesWithFiltersResult => {
+		const [filters, setFilters] = useState<ObjectiveFilters>({
 			search: '',
 			status: 'all',
+			categoryId: null,
 			sortBy: 'name',
 			sortOrder: 'asc',
 		});
@@ -32,6 +38,7 @@ export const useCampaignCategoriesWithFilters =
 		const serverParams = useMemo(() => {
 			const params: {
 				name?: string;
+				categoryId?: number;
 				active?: boolean;
 				limit?: number;
 				offset?: number;
@@ -40,6 +47,11 @@ export const useCampaignCategoriesWithFilters =
 			// Use name search for server-side filtering
 			if (filters.search.trim()) {
 				params.name = filters.search.trim();
+			}
+
+			// Use categoryId for server-side filtering
+			if (filters.categoryId !== null) {
+				params.categoryId = filters.categoryId;
 			}
 
 			// Use active status for server-side filtering
@@ -52,17 +64,33 @@ export const useCampaignCategoriesWithFilters =
 			params.offset = (pagination.page - 1) * pagination.pageSize;
 
 			return params;
-		}, [filters.search, filters.status, pagination.page, pagination.pageSize]);
+		}, [
+			filters.search,
+			filters.categoryId,
+			filters.status,
+			pagination.page,
+			pagination.pageSize,
+		]);
 
 		// Fetch data with server-side filtering and pagination
 		const { data: response, isLoading } =
-			useGetCampaignCategories(serverParams);
+			useGetCampaignObjectives(serverParams);
 
-		// Extract categories from API response and apply client-side sorting
-		const rawCategories = useMemo(() => {
+		// Get categories for enriching objective data
+		const { data: categoriesResponse } = useGetCampaignCategories();
+		const categories = categoriesResponse?.data || [];
+
+		// Extract objectives from API response and enrich with category data
+		const rawObjectives = useMemo(() => {
 			if (!response?.data) return [];
-			return response.data;
-		}, [response?.data]);
+
+			return response.data.map((objective) => ({
+				...objective,
+				categoryName:
+					categories.find((cat) => cat.id === objective.categoryId)?.name ||
+					'Unknown Category',
+			}));
+		}, [response?.data, categories]);
 
 		// Update pagination with server response
 		const updatedPagination = useMemo(() => {
@@ -77,8 +105,8 @@ export const useCampaignCategoriesWithFilters =
 		}, [response, pagination]);
 
 		// Apply client-side sorting since server doesn't handle it
-		const categories = useMemo(() => {
-			const result = [...rawCategories];
+		const objectives = useMemo(() => {
+			const result = [...rawObjectives];
 
 			result.sort((a, b) => {
 				let comparison = 0;
@@ -87,8 +115,10 @@ export const useCampaignCategoriesWithFilters =
 					case 'name':
 						comparison = a.name.localeCompare(b.name);
 						break;
-					case 'code':
-						comparison = a.code.localeCompare(b.code);
+					case 'categoryId':
+						comparison = (a.categoryName || '').localeCompare(
+							b.categoryName || ''
+						);
 						break;
 					case 'createdAt':
 						comparison =
@@ -106,9 +136,9 @@ export const useCampaignCategoriesWithFilters =
 			});
 
 			return result;
-		}, [rawCategories, filters.sortBy, filters.sortOrder]);
+		}, [rawObjectives, filters.sortBy, filters.sortOrder]);
 
-		const handleFiltersChange = (newFilters: CategoryFilters) => {
+		const handleFiltersChange = (newFilters: ObjectiveFilters) => {
 			setFilters(newFilters);
 			// Reset to first page when filters change
 			setPagination((prev) => ({
@@ -122,7 +152,7 @@ export const useCampaignCategoriesWithFilters =
 		};
 
 		return {
-			categories,
+			objectives,
 			pagination: updatedPagination,
 			filters,
 			setPagination: handlePaginationChange,

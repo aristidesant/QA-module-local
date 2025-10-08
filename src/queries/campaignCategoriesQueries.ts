@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import campaignCategoriesApi from '../api/campaignCategoriesApi';
 import type {
+	CampaignCategoryApiParams,
 	CreateCampaignCategoryRequest,
 	UpdateCampaignCategoryRequest,
 } from '../models/CampaignCategoryModel';
@@ -29,10 +30,9 @@ export const useCreateCampaignCategory = () => {
 };
 
 // Get all campaign categories
-export const useGetCampaignCategories = (params?: {
-	name?: string;
-	active?: boolean;
-}) => {
+export const useGetCampaignCategories = (
+	params?: CampaignCategoryApiParams
+) => {
 	return useQuery({
 		queryKey: ['campaign-categories', params],
 		queryFn: async () => {

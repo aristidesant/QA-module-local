@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import campaignObjectivesApi from '../api/campaignObjectivesApi';
 import type {
+	CampaignObjectiveApiParams,
 	CreateCampaignObjectiveRequest,
 	UpdateCampaignObjectiveRequest,
 } from '../models/CampaignObjectiveModel';
@@ -38,12 +39,14 @@ export const useCreateCampaignObjective = () => {
 };
 
 // Get all campaign objectives
-export const useGetCampaignObjectives = () => {
+export const useGetCampaignObjectives = (
+	params?: CampaignObjectiveApiParams
+) => {
 	return useQuery({
-		queryKey: ['campaign-objectives'],
+		queryKey: ['campaign-objectives', params],
 		queryFn: async () => {
 			const api = campaignObjectivesApi();
-			return api.getCampaignObjectives();
+			return api.getCampaignObjectives(params);
 		},
 	});
 };
