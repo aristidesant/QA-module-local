@@ -24,6 +24,7 @@ import { useExportConversationAudio } from '~/queries/conversationsQueries';
 import classes from './ConversationPlayer.module.css';
 import RightSection from '~/components/RightSection';
 import { useConversationStore } from '~/stores/useConversationStore';
+import RightSectionCard from '~/components/RightSectionCard';
 
 interface ConversationPlayerProps {
 	voiceFile?: VoiceFileModel | null;
@@ -170,118 +171,111 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 	}
 
 	return (
-		<Paper className={classes.container} radius='md'>
-			<RightSection
-				title={title}
-				description={
-					<Group justify='space-between' align='center'>
-						{description && (
-							<Text size='xs' c='dimmed'>
-								{description}
-							</Text>
-						)}
-						{conversationId && (
-							<Tooltip label='Download conversation audio' position='bottom'>
-								<ActionIcon
-									variant='subtle'
-									color='gray'
-									size='sm'
-									onClick={handleDownload}
-									aria-label='Download audio'
-									loading={exportAudioMutation.isPending}
-									disabled={exportAudioMutation.isPending}
-								>
-									<IconDownload size={16} />
-								</ActionIcon>
-							</Tooltip>
-						)}
-					</Group>
-				}
-			>
-				<audio
-					ref={audioRef}
-					src={audioSrc}
-					onTimeUpdate={handleTimeUpdate}
-					onLoadedMetadata={handleLoadedMetadata}
-					onEnded={() => setIsPlaying(false)}
-					hidden
-				/>
+		<RightSectionCard
+			title={title}
+			icon={IconPlayerPlay}
+			rightSection={
+				conversationId && (
+					<Tooltip label='Download conversation audio' position='bottom'>
+						<ActionIcon
+							variant='light'
+							color='gray'
+							size='sm'
+							onClick={handleDownload}
+							aria-label='Download audio'
+							loading={exportAudioMutation.isPending}
+							disabled={exportAudioMutation.isPending}
+						>
+							<IconDownload size={16} />
+						</ActionIcon>
+					</Tooltip>
+				)
+			}
+			description={description}
+		>
+			<audio
+				ref={audioRef}
+				src={audioSrc}
+				onTimeUpdate={handleTimeUpdate}
+				onLoadedMetadata={handleLoadedMetadata}
+				onEnded={() => setIsPlaying(false)}
+				hidden
+			/>
 
-				<Stack gap='md'>
-					{Boolean(fileId) && (isPresignedLoading || isPresignedError) && (
-						<Text size='xs' c='dimmed'>
-							{isPresignedLoading ? 'Loading audio…' : 'Could not load audio.'}
+			<Stack gap='md'>
+				{Boolean(fileId) && (isPresignedLoading || isPresignedError) && (
+					<Text size='xs' c='dimmed'>
+						{isPresignedLoading ? 'Loading audio…' : 'Could not load audio.'}
+					</Text>
+				)}
+				{/* Progress Bar */}
+				<Box className={classes.progressSection}>
+					<Slider
+						value={currentTime}
+						onChange={handleSeek}
+						max={duration || 100}
+						label={(val) => formatTime(Number(val))}
+						className={classes.progressSlider}
+						classNames={{
+							track: classes.sliderTrack,
+							bar: classes.sliderBar,
+							thumb: classes.sliderThumb,
+						}}
+					/>
+					<Group justify='space-between' mt='xs'>
+						<Text size='xs' c='dimmed' className={classes.timeText}>
+							{formatTime(currentTime)}
 						</Text>
-					)}
-					{/* Progress Bar */}
-					<Box className={classes.progressSection}>
-						<Slider
-							value={currentTime}
-							onChange={handleSeek}
-							max={duration || 100}
-							label={(val) => formatTime(Number(val))}
-							className={classes.progressSlider}
-							classNames={{
-								track: classes.sliderTrack,
-								bar: classes.sliderBar,
-								thumb: classes.sliderThumb,
-							}}
-						/>
-						<Group justify='space-between' mt='xs'>
-							<Text size='xs' c='dimmed' className={classes.timeText}>
-								{formatTime(currentTime)}
-							</Text>
-							<Text size='xs' c='dimmed' className={classes.timeText}>
-								{formatTime(duration)}
-							</Text>
-						</Group>
-					</Box>
-
-					{/* Controls */}
-					<Group justify='center' gap='md' className={classes.controlsGroup}>
-						<ActionIcon
-							variant='subtle'
-							color='gray'
-							size='lg'
-							onClick={() => seek(-10)}
-							aria-label='Rewind 10 seconds'
-							title='Rewind 10s'
-							className={classes.controlButton}
-						>
-							<IconPlayerSkipBack size={20} />
-						</ActionIcon>
-
-						<ActionIcon
-							variant='filled'
-							color='blue'
-							radius='xl'
-							size='xl'
-							onClick={togglePlayPause}
-							aria-label={isPlaying ? 'Pause' : 'Play'}
-							className={classes.playButton}
-						>
-							{isPlaying ? (
-								<IconPlayerPause size={28} />
-							) : (
-								<IconPlayerPlay size={28} style={{ marginLeft: '2px' }} />
-							)}
-						</ActionIcon>
-
-						<ActionIcon
-							variant='subtle'
-							color='gray'
-							size='lg'
-							onClick={() => seek(10)}
-							aria-label='Forward 10 seconds'
-							title='Forward 10s'
-							className={classes.controlButton}
-						>
-							<IconPlayerSkipForward size={20} />
-						</ActionIcon>
+						<Text size='xs' c='dimmed' className={classes.timeText}>
+							{formatTime(duration)}
+						</Text>
 					</Group>
-				</Stack>
-			</RightSection>
-		</Paper>
+				</Box>
+
+				{/* Controls */}
+				<Group justify='center' gap='md' className={classes.controlsGroup}>
+					<ActionIcon
+						variant='subtle'
+						color='gray'
+						size='lg'
+						onClick={() => seek(-10)}
+						aria-label='Rewind 10 seconds'
+						title='Rewind 10s'
+						className={classes.controlButton}
+					>
+						<IconPlayerSkipBack size={20} />
+					</ActionIcon>
+
+					<ActionIcon
+						variant='filled'
+						color='blue'
+						radius='xl'
+						size='xl'
+						onClick={togglePlayPause}
+						aria-label={isPlaying ? 'Pause' : 'Play'}
+						className={classes.playButton}
+					>
+						{isPlaying ? (
+							<IconPlayerPause size={28} />
+						) : (
+							<IconPlayerPlay size={28} style={{ marginLeft: '2px' }} />
+						)}
+					</ActionIcon>
+
+					<ActionIcon
+						variant='subtle'
+						color='gray'
+						size='lg'
+						onClick={() => seek(10)}
+						aria-label='Forward 10 seconds'
+						title='Forward 10s'
+						className={classes.controlButton}
+					>
+						<IconPlayerSkipForward size={20} />
+					</ActionIcon>
+				</Group>
+			</Stack>
+		</RightSectionCard>
 	);
 };
 

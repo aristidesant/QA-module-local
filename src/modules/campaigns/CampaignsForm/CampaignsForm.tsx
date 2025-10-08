@@ -20,6 +20,7 @@ import { ContactSection } from './ContactSection/ContactSection';
 import ParametersSection from './ParametersSection';
 import AgentSection from './AgentSection';
 import DispositionSection from './DispositionSection';
+import ConversationsSection from './ConversationsSection';
 
 interface CampaignsFormProps {
 	campaign?: Partial<Campaign>;
@@ -134,6 +135,9 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({ campaign }) => {
 				)}
 				{selectedTab === 'contacts' && <ContactSection />}
 				{selectedTab === 'dispositions' && <DispositionSection />}
+				{selectedTab === 'conversations' && (
+					<ConversationsSection campaignId={campaign?.id} />
+				)}
 				{selectedTab === 'params' && (
 					<SectionCard
 						title='Working Hours'

@@ -241,6 +241,7 @@ export const CampaignsList: React.FC = () => {
 							onItemsPerPageChange={handleItemsPerPageChange}
 							searchTerm={pagination.debouncedSearch}
 							isLoading={isLoading}
+							itemLabel='campaigns'
 						/>
 					</>
 				)}

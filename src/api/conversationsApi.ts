@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type {
 	ConversationsModel,
-	ConversationTableModel,
+	PaginatedConversationsResponse,
 } from '~/models/ConversationsModels';
 import { DEFAULT_API_URL } from './config';
 
@@ -44,11 +44,22 @@ const conversationsApi = (_authHeader: Record<string, string> = {}) => {
 			return response.data;
 		},
 
-		// Get all conversations for current client
-		getConversations: async () => {
-			const response = await axios.get<ConversationTableModel[]>(
-				`${DEFAULT_API_URL}/conversations`
-			);
+		getConversations: async (
+			campaignId?: string | number,
+			params?: {
+				limit?: number;
+				offset?: number;
+				search?: string;
+			}
+		) => {
+			const response = await axios.get<
+				PaginatedConversationsResponse<ConversationsModel>
+			>(`${DEFAULT_API_URL}/conversations`, {
+				params: {
+					...params,
+					...(campaignId ? { campaignId } : {}),
+				},
+			});
 			return response.data;
 		},
 

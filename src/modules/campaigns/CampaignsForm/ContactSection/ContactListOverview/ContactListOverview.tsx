@@ -307,6 +307,7 @@ export const ContactListOverview: React.FC<ContactListOverviewProps> = () => {
 					onItemsPerPageChange={handleItemsPerPageChange}
 					searchTerm={pagination.debouncedSearch}
 					isLoading={isLoading}
+					itemLabel='contacts'
 				/>
 			</Stack>
 		</Card>

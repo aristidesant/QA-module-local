@@ -1,5 +1,5 @@
-import { Group, Text, Pagination, Select } from "@mantine/core";
-import styles from "./PaginationControls.module.css";
+import { Group, Text, Pagination, Select } from '@mantine/core';
+import styles from './PaginationControls.module.css';
 
 interface PaginationControlsProps {
 	currentPage: number;
@@ -10,13 +10,14 @@ interface PaginationControlsProps {
 	onItemsPerPageChange: (value: string | null) => void;
 	searchTerm?: string;
 	isLoading?: boolean;
+	itemLabel?: string;
 }
 
 const ITEMS_PER_PAGE_OPTIONS = [
-	{ value: "5", label: "5 per page" },
-	{ value: "10", label: "10 per page" },
-	{ value: "20", label: "20 per page" },
-	{ value: "50", label: "50 per page" },
+	{ value: '5', label: '5 per page' },
+	{ value: '10', label: '10 per page' },
+	{ value: '20', label: '20 per page' },
+	{ value: '50', label: '50 per page' },
 ];
 
 export const PaginationControls: React.FC<PaginationControlsProps> = ({
@@ -28,6 +29,7 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
 	onItemsPerPageChange,
 	searchTerm,
 	isLoading = false,
+	itemLabel = 'items',
 }) => {
 	if (totalItems === 0 && !isLoading) {
 		return null;
@@ -43,16 +45,16 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
 		<div className={styles.container}>
 			{/* Results Summary - Centered */}
 			<div className={styles.summary}>
-				<Text size="sm" c="dimmed">
+				<Text size='sm' c='dimmed'>
 					{isLoading ? (
-						"Loading..."
+						'Loading...'
 					) : (
 						<>
-							Showing {startItem}-{endItem} of {totalItems.toLocaleString()}{" "}
-							contacts
+							Showing {startItem}-{endItem} of {totalItems.toLocaleString()}{' '}
+							{itemLabel}
 							{searchTerm && (
-								<Text component="span" size="sm" c="blue" fw={500}>
-									{" "}
+								<Text component='span' size='sm' c='blue' fw={500}>
+									{' '}
 									(filtered by "{searchTerm}")
 								</Text>
 							)}
@@ -65,15 +67,15 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
 			<div className={styles.controls}>
 				{/* Items per page selector - Left */}
 				<div className={styles.leftControl}>
-					<Group gap="xs">
-						<Text size="sm" c="dimmed">
+					<Group gap='xs'>
+						<Text size='sm' c='dimmed'>
 							Show:
 						</Text>
 						<Select
 							value={itemsPerPage.toString()}
 							onChange={onItemsPerPageChange}
 							data={ITEMS_PER_PAGE_OPTIONS}
-							size="xs"
+							size='xs'
 							className={styles.itemsSelect}
 							withCheckIcon={false}
 							disabled={shouldDisableItemsSelect}
@@ -87,7 +89,7 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
 						total={Math.max(totalPages, 1)} // Ensure at least 1 page is shown
 						value={currentPage}
 						onChange={onPageChange}
-						size="sm"
+						size='sm'
 						withEdges
 						className={styles.pagination}
 						disabled={shouldDisablePagination}
@@ -96,7 +98,7 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
 
 				{/* Page info - Right */}
 				<div className={styles.rightControl}>
-					<Text size="xs" c="dimmed" className={styles.pageInfo}>
+					<Text size='xs' c='dimmed' className={styles.pageInfo}>
 						Page {currentPage} of {Math.max(totalPages, 1)}
 					</Text>
 				</div>
