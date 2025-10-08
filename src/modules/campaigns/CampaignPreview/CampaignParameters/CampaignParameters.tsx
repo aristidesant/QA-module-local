@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
-	Card,
 	Text,
 	Stack,
 	Group,
@@ -9,20 +8,16 @@ import {
 	Flex,
 	ActionIcon,
 	Tooltip,
-	Collapse,
+	Divider,
 } from '@mantine/core';
-import {
-	IconRefresh,
-	IconChevronDown,
-	IconChevronUp,
-} from '@tabler/icons-react';
+import { IconRefresh, IconMist } from '@tabler/icons-react';
 import styles from './CampaignParameters.module.css';
 import { useGetCampaignScheduleSummary } from '~/queries/campaignsQueries';
 import { useCampaignsStore } from '~/stores/campaignsStore';
+import RightSectionCard from '~/components/RightSectionCard';
 
 const CampaignParameters: React.FC = () => {
 	const selectedCampaign = useCampaignsStore((state) => state.selectedCampaign);
-	const [scheduleExpanded, setScheduleExpanded] = useState(false);
 
 	const {
 		data: scheduleSummary,
@@ -41,16 +36,13 @@ const CampaignParameters: React.FC = () => {
 	// Early return if no campaign is selected
 	if (!selectedCampaign) {
 		return (
-			<Stack gap='md' mt='sm'>
-				<div>
-					<Text fw={600} size='md' className={styles.title}>
-						Defined Parameters
-					</Text>
-					<Text size='xs' c='dimmed' className={styles.subtitle}>
-						No campaign selected.
-					</Text>
-				</div>
-			</Stack>
+			<RightSectionCard
+				title='Defined Parameters'
+				description='No campaign selected.'
+				icon={IconMist}
+			>
+				<></>
+			</RightSectionCard>
 		);
 	}
 
@@ -116,135 +108,107 @@ const CampaignParameters: React.FC = () => {
 
 	if (isLoading) {
 		return (
-			<Stack gap='md' mt='sm'>
-				<Group justify='space-between' align='flex-start'>
-					<div>
-						<Skeleton height={20} width='60%' mb='xs' />
-						<Skeleton height={14} width='80%' />
-					</div>
-					<Skeleton height={28} width={28} radius='sm' />
-				</Group>
+			<RightSectionCard
+				title='Defined Parameters'
+				description='Controls interaction execution and timing.'
+				icon={IconMist}
+				rightSection={
+					<Tooltip
+						label={isCompleted ? 'Campaign is completed' : 'Refresh parameters'}
+						withArrow
+					>
+						<ActionIcon
+							variant='subtle'
+							color='gray'
+							size='sm'
+							onClick={handleRefetch}
+							disabled={isCompleted || isLoading}
+							className={styles.refetchButton}
+						>
+							<IconRefresh size={14} />
+						</ActionIcon>
+					</Tooltip>
+				}
+			>
 				<Stack gap='xs'>
 					{[1, 2, 3].map((index) => (
-						<Card
-							key={index}
-							radius='md'
-							padding='sm'
-							withBorder
-							className={styles.parameterCard}
-						>
-							<Group justify='space-between'>
+						<div key={index}>
+							<Group justify='space-between' align='center'>
 								<Skeleton height={16} width='40%' />
 								<Skeleton height={16} width='30%' />
 							</Group>
-						</Card>
+							{index < 3 && <Divider />}
+						</div>
 					))}
 				</Stack>
-			</Stack>
+			</RightSectionCard>
 		);
 	}
 
 	return (
-		<Stack gap='md' mt='sm'>
-			<Group justify='space-between' align='flex-start'>
-				<div>
-					<Text fw={600} size='md' className={styles.title}>
-						Defined Parameters &nbsp;
-						<Tooltip
-							label={
-								isCompleted ? 'Campaign is completed' : 'Refresh parameters'
-							}
-							withArrow
-						>
-							<ActionIcon
-								variant='subtle'
-								color='gray'
-								size='sm'
-								onClick={handleRefetch}
-								disabled={isCompleted || isLoading}
-								className={styles.refetchButton}
-							>
-								<IconRefresh size={14} />
-							</ActionIcon>
-						</Tooltip>
-					</Text>
-					<Text size='xs' c='dimmed' className={styles.subtitle}>
-						These settings control how and when interactions are executed.
-					</Text>
-				</div>
-			</Group>
-
-			<Stack gap='xs' className={styles.parametersList}>
-				{/* Active Schedule Days */}
-				{activeSchedules.length > 0 && (
-					<Card
-						radius='md'
-						padding='sm'
-						withBorder
-						className={styles.parameterCard}
+		<RightSectionCard
+			title='Defined Parameters'
+			description='Controls interaction execution and timing.'
+			icon={IconMist}
+			rightSection={
+				<Tooltip
+					label={isCompleted ? 'Campaign is completed' : 'Refresh parameters'}
+					withArrow
+				>
+					<ActionIcon
+						variant='subtle'
+						color='gray'
+						size='sm'
+						onClick={handleRefetch}
+						disabled={isCompleted || isLoading}
+						className={styles.refetchButton}
 					>
+						<IconRefresh size={14} />
+					</ActionIcon>
+				</Tooltip>
+			}
+		>
+			<Stack gap='xs' className={styles.parametersList}>
+				{activeSchedules.length > 0 && (
+					<>
+						<Group justify='space-between' align='center'>
+							<Text fw={600} size='sm'>
+								Active schedule
+							</Text>
+						</Group>
 						<Stack gap='xs'>
-							<Group
-								justify='space-between'
-								align='center'
-								onClick={() => setScheduleExpanded(!scheduleExpanded)}
-								className={styles.scheduleHeader}
-							>
-								<Text size='sm' c='dimmed'>
-									Calling schedule ({activeSchedules.length} days)
-								</Text>
-								<ActionIcon
-									variant='subtle'
-									size='sm'
-									className={styles.expandButton}
+							{activeSchedules.map((schedule, index) => (
+								<Group
+									key={index}
+									justify='space-between'
+									className={styles.scheduleRow}
 								>
-									{scheduleExpanded ? (
-										<IconChevronUp size={16} />
-									) : (
-										<IconChevronDown size={16} />
-									)}
-								</ActionIcon>
-							</Group>
-							<Collapse in={scheduleExpanded}>
-								<Stack gap='xs'>
-									{activeSchedules.map((schedule, index) => (
-										<Group
-											key={index}
-											justify='space-between'
-											className={styles.scheduleRow}
-										>
-											<Text size='sm' fw={500} className={styles.dayLabel}>
-												{getDayAbbreviation(schedule.day)}
-											</Text>
-											<Flex gap='xs' align='center'>
-												<Text size='xs' c='dimmed'>
-													{formatTime(schedule.startHour)}
-												</Text>
-												<Text size='xs' c='dimmed'>
-													-
-												</Text>
-												<Text size='xs' c='dimmed'>
-													{formatTime(schedule.endHour)}
-												</Text>
-											</Flex>
-										</Group>
-									))}
-								</Stack>
-							</Collapse>
+									<Text size='sm' fw={500} className={styles.dayLabel}>
+										{getDayAbbreviation(schedule.day)}
+									</Text>
+									<Flex gap='xs' align='center'>
+										<Text size='xs' c='dimmed'>
+											{formatTime(schedule.startHour)}
+										</Text>
+										<Text size='xs' c='dimmed'>
+											-
+										</Text>
+										<Text size='xs' c='dimmed'>
+											{formatTime(schedule.endHour)}
+										</Text>
+									</Flex>
+								</Group>
+							))}
 						</Stack>
-					</Card>
+						<Divider />
+					</>
 				)}
 
 				{/* Voicemail Detection */}
 				{parameters?.voicemailDetection !== undefined && (
-					<Card
-						radius='md'
-						padding='sm'
-						withBorder
-						className={styles.parameterCard}
-					>
-						<Group justify='space-between' className={styles.parameterItem}>
-							<Text size='sm' c='dimmed'>
+					<>
+						<Group justify='space-between' align='center'>
+							<Text fw={600} size='sm'>
 								Voicemail detection
 							</Text>
 							<Badge
@@ -255,57 +219,45 @@ const CampaignParameters: React.FC = () => {
 								{parameters.voicemailDetection ? 'Enabled' : 'Disabled'}
 							</Badge>
 						</Group>
-					</Card>
+						<Divider />
+					</>
 				)}
 
 				{/* Call Retries */}
 				{parameters?.callRetries !== undefined && (
-					<Card
-						radius='md'
-						padding='sm'
-						withBorder
-						className={styles.parameterCard}
-					>
-						<Group justify='space-between' className={styles.parameterItem}>
-							<Text size='sm' c='dimmed'>
+					<>
+						<Group justify='space-between' align='center'>
+							<Text fw={600} size='sm'>
 								Call retries
 							</Text>
 							<Text size='sm' fw={500}>
 								Up to {parameters.callRetries} times
 							</Text>
 						</Group>
-					</Card>
+						<Divider />
+					</>
 				)}
 
 				{/* Max Concurrent Calls */}
 				{parameters?.maxConcurrentCalls && (
-					<Card
-						radius='md'
-						padding='sm'
-						withBorder
-						className={styles.parameterCard}
-					>
-						<Group justify='space-between' className={styles.parameterItem}>
-							<Text size='sm' c='dimmed'>
+					<>
+						<Group justify='space-between' align='center'>
+							<Text fw={600} size='sm'>
 								Max concurrent calls
 							</Text>
 							<Text size='sm' fw={500}>
 								{parameters.maxConcurrentCalls} calls
 							</Text>
 						</Group>
-					</Card>
+						<Divider />
+					</>
 				)}
 
 				{/* Answer Machine Detection */}
 				{parameters?.answerMachineDetection !== undefined && (
-					<Card
-						radius='md'
-						padding='sm'
-						withBorder
-						className={styles.parameterCard}
-					>
-						<Group justify='space-between' className={styles.parameterItem}>
-							<Text size='sm' c='dimmed'>
+					<>
+						<Group justify='space-between' align='center'>
+							<Text fw={600} size='sm'>
 								Answer machine detection
 							</Text>
 							<Badge
@@ -316,7 +268,8 @@ const CampaignParameters: React.FC = () => {
 								{parameters.answerMachineDetection ? 'Enabled' : 'Disabled'}
 							</Badge>
 						</Group>
-					</Card>
+						<Divider />
+					</>
 				)}
 
 				{/* Show empty state if no parameters or schedule data */}
@@ -325,24 +278,17 @@ const CampaignParameters: React.FC = () => {
 					parameters?.callRetries === undefined &&
 					!parameters?.maxConcurrentCalls &&
 					parameters?.answerMachineDetection === undefined && (
-						<Card
-							radius='md'
-							padding='lg'
-							withBorder
-							className={styles.parameterCard}
+						<Text
+							size='sm'
+							c='dimmed'
+							ta='center'
+							className={styles.emptyState}
 						>
-							<Text
-								size='sm'
-								c='dimmed'
-								ta='center'
-								className={styles.emptyState}
-							>
-								No parameters configured for this campaign.
-							</Text>
-						</Card>
+							No parameters configured for this campaign.
+						</Text>
 					)}
 			</Stack>
-		</Stack>
+		</RightSectionCard>
 	);
 };
 

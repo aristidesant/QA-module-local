@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo } from 'react';
 import {
 	Card,
 	Badge,
@@ -11,7 +11,7 @@ import {
 	Avatar,
 	Divider,
 	Flex,
-} from "@mantine/core";
+} from '@mantine/core';
 import {
 	IconDotsVertical,
 	IconTrash,
@@ -24,10 +24,10 @@ import {
 	IconExclamationMark,
 	IconCircleCheck,
 	IconPlayerPlayFilled,
-} from "@tabler/icons-react";
-import styles from "./CampaignsListItem.module.css";
-import type { Campaign } from "~/models/CampaignsModel";
-import ScoreGauge from "./ScoreGauge";
+} from '@tabler/icons-react';
+import styles from './CampaignsListItem.module.css';
+import type { Campaign } from '~/models/CampaignsModel';
+import ScoreGauge from './ScoreGauge';
 
 export type CampaignsListItemProps = {
 	campaign: Campaign;
@@ -50,14 +50,14 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 
 	// Determine progress bar color based on completion percentage
 	const getProgressColor = (percentage: number): string => {
-		if (percentage >= 80) return "green";
-		if (percentage >= 50) return "blue";
-		if (percentage >= 25) return "yellow";
-		return "red";
+		if (percentage >= 80) return 'green';
+		if (percentage >= 50) return 'blue';
+		if (percentage >= 25) return 'yellow';
+		return 'red';
 	};
 
 	const statusInfo = useMemo(
-		() => getCampaignStatusIcon(campaign.status ?? ""),
+		() => getCampaignStatusIcon(campaign.status ?? ''),
 		[campaign]
 	);
 
@@ -68,70 +68,70 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 			}
 			withBorder
 			onClick={onClick}
-			role="button"
+			role='button'
 			aria-pressed={selected}
 			aria-label={`View campaign ${campaign.name}`}
 			tabIndex={0}
 		>
 			{/* Header */}
-			<Group justify="space-between" align="center" className={styles.header}>
-				<Group gap={8} align="center">
+			<Group justify='space-between' align='center' className={styles.header}>
+				<Group gap={8} align='center'>
 					{/* Campaign Icon */}
 					<Avatar
 						size={24}
-						radius="xl"
+						radius='xl'
 						color={statusInfo.color}
 						className={styles.campaignIcon}
 						title={statusInfo.label}
 					>
-						{statusInfo.icon}
+						<statusInfo.iconComponent size={16} />
 					</Avatar>
-					<Flex direction="column">
-						<Text fz={"xs"} c="dimmed">
+					<Flex direction='column'>
+						<Text fz={'xs'} c='dimmed'>
 							Campaign
 						</Text>
-						<Text fz="xs" fw={500} className={styles.campaignName}>
+						<Text fz='xs' fw={500} className={styles.campaignName}>
 							{campaign?.name}
 						</Text>
 					</Flex>
 				</Group>
 
-				<Group gap={8} align="center">
+				<Group gap={8} align='center'>
 					<Badge
-						variant="light"
-						color={"gray"}
-						radius="lg"
-						size="md"
+						variant='light'
+						color={'gray'}
+						radius='lg'
+						size='md'
 						fw={600}
-						p="sm"
+						p='sm'
 						style={{
-							alignContent: "center",
-							textTransform: "capitalize",
+							alignContent: 'center',
+							textTransform: 'capitalize',
 						}}
 						// className={styles.typeBadge}
 						rightSection={
-							campaign.type === "OUTBOUND" ? (
+							campaign.type === 'OUTBOUND' ? (
 								<IconArrowUpRight
 									size={12}
-									color="var(--mantine-color-green-light-color)"
+									color='var(--mantine-color-green-light-color)'
 								/>
 							) : (
 								<IconArrowDownLeft
 									size={12}
-									color="var(--mantine-color-blue-light-color)"
+									color='var(--mantine-color-blue-light-color)'
 								/>
 							)
 						}
 					>
 						{campaign.type}
 					</Badge>
-					<Menu shadow="md" width={160}>
+					<Menu shadow='md' width={160}>
 						<Menu.Target>
 							<ActionIcon
-								variant="subtle"
-								color="gray"
-								radius="md"
-								aria-label="Campaign actions"
+								variant='subtle'
+								color='gray'
+								radius='md'
+								aria-label='Campaign actions'
 								onClick={(e) => e.stopPropagation()}
 							>
 								<IconDotsVertical size={16} aria-hidden />
@@ -152,7 +152,7 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 							<Menu.Item
 								onClick={onDelete}
 								leftSection={<IconTrash size={14} />}
-								color="red"
+								color='red'
 							>
 								Delete
 							</Menu.Item>
@@ -163,27 +163,27 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 			<Divider />
 			{/* Main Content */}
 			<Group
-				align="center"
-				justify="space-between"
-				mt="md"
+				align='center'
+				justify='space-between'
+				mt='md'
 				className={styles.mainContent}
 			>
 				<Stack gap={8} className={styles.progressSection}>
-					<Group gap={8} align="center">
-						<Text size="sm" fw={500} className={styles.progressLabel}>
+					<Group gap={8} align='center'>
+						<Text size='sm' fw={500} className={styles.progressLabel}>
 							Contact List Progress
 						</Text>
 					</Group>
 					<Progress
 						value={progressPercentage}
 						color={getProgressColor(progressPercentage)}
-						size="md"
-						radius="xl"
+						size='md'
+						radius='xl'
 						className={styles.progressBar}
 					/>
-					<Text size="sm" c="dimmed" className={styles.campaignDescription}>
+					<Text size='sm' c='dimmed' className={styles.campaignDescription}>
 						{campaign.description ||
-							"Automated calls to existing customers to inform them of their eligibility for a credit limit increase and collect confirmation to proceed."}
+							'Automated calls to existing customers to inform them of their eligibility for a credit limit increase and collect confirmation to proceed.'}
 					</Text>
 				</Stack>
 
@@ -199,21 +199,21 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 								{campaign.agents.slice(0, 4).map((campaignAgent) => (
 									<div key={campaignAgent.id} className={styles.agentItem}>
 										<Avatar
-											radius="xl"
+											radius='xl'
 											size={28}
-											color="blue"
+											color='blue'
 											className={styles.agentAvatar}
 											title={`${campaignAgent.agent.name} - ${campaignAgent.agent.language}`}
 										>
 											{campaignAgent.agent.name.charAt(0).toUpperCase()}
 										</Avatar>
 										<div className={styles.agentInfo}>
-											<Text size="xs" fw={500} className={styles.agentName}>
+											<Text size='xs' fw={500} className={styles.agentName}>
 												{campaignAgent.agent.name}
 											</Text>
 											<Text
-												size="xs"
-												c="dimmed"
+												size='xs'
+												c='dimmed'
 												className={styles.agentLanguage}
 											>
 												{campaignAgent.agent.language}
@@ -224,12 +224,12 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 								{campaign.agents.length > 4 && (
 									<div className={styles.moreAgents}>
 										<Avatar
-											radius="xl"
+											radius='xl'
 											size={28}
-											color="gray"
+											color='gray'
 											className={styles.moreAgentsAvatar}
 										>
-											<Text size="xs" fw={600}>
+											<Text size='xs' fw={600}>
 												+{campaign.agents.length - 4}
 											</Text>
 										</Avatar>
@@ -240,19 +240,19 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 					) : (
 						<div className={styles.noAgentsContainer}>
 							<Avatar
-								radius="xl"
+								radius='xl'
 								size={28}
-								color="gray"
-								variant="light"
+								color='gray'
+								variant='light'
 								className={styles.noAgentsAvatar}
 							>
 								<IconExclamationMark size={16} />
 							</Avatar>
 							<div className={styles.noAgentsText}>
-								<Text size="xs" c="dimmed" className={styles.noAgentsMessage}>
+								<Text size='xs' c='dimmed' className={styles.noAgentsMessage}>
 									No agents assigned
 								</Text>
-								<Text size="xs" c="dimmed" className={styles.noAgentsSubtext}>
+								<Text size='xs' c='dimmed' className={styles.noAgentsSubtext}>
 									Assign agents to start this campaign
 								</Text>
 							</div>
@@ -273,53 +273,52 @@ export default CampaignsListItem;
  */
 export const getCampaignStatusIcon = (status: string) => {
 	const campaignStatus = status?.toLowerCase();
-	const size = 30;
 
 	switch (campaignStatus) {
-		case "active":
+		case 'active':
 			return {
-				icon: <IconPlayerPlayFilled size={size} />,
-				color: "green",
-				label: "Active",
+				iconComponent: IconPlayerPlayFilled,
+				color: 'green',
+				label: 'Active',
 			};
-		case "running":
+		case 'running':
 			return {
-				icon: <IconBolt size={size} />,
-				color: "green",
-				label: "Running",
+				iconComponent: IconBolt,
+				color: 'green',
+				label: 'Running',
 			};
-		case "paused":
+		case 'paused':
 			return {
-				icon: <IconPlayerPause size={size} />,
-				color: "yellow",
-				label: "Paused",
+				iconComponent: IconPlayerPause,
+				color: 'yellow',
+				label: 'Paused',
 			};
-		case "completed":
+		case 'completed':
 			return {
-				icon: <IconCircleCheck size={size} />,
-				color: "green",
-				label: "Completed",
+				iconComponent: IconCircleCheck,
+				color: 'green',
+				label: 'Completed',
 			};
-		case "inactive":
-		case "incomplete":
-		case "error":
+		case 'inactive':
+		case 'incomplete':
+		case 'error':
 			return {
-				icon: <IconExclamationMark size={size} />,
-				color: "red",
-				label: "Inactive",
+				iconComponent: IconExclamationMark,
+				color: 'red',
+				label: 'Inactive',
 			};
-		case "ready":
-		case "scheduled":
+		case 'ready':
+		case 'scheduled':
 			return {
-				icon: <IconCheck size={size} />,
-				color: "blue",
-				label: "Ready",
+				iconComponent: IconCheck,
+				color: 'blue',
+				label: 'Ready',
 			};
 		default:
 			return {
-				icon: <IconCheck size={size} />,
-				color: "gray",
-				label: "Unknown Status",
+				iconComponent: IconCheck,
+				color: 'gray',
+				label: 'Unknown Status',
 			};
 	}
 };

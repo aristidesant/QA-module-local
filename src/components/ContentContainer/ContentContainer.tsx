@@ -8,6 +8,7 @@ export interface ContentContainerProps {
 	rightSection?: ReactNode;
 	title?: string;
 	titleRight?: ReactNode;
+	titleIcon?: ReactNode;
 	description?: string;
 	showBackButton?: boolean;
 	rightSectionTitle?: ReactNode;
@@ -25,6 +26,7 @@ export const ContentContainer = ({
 	rightSectionTitle,
 	titleRight,
 	mainScroll = true,
+	titleIcon,
 	onBackClick,
 }: ContentContainerProps) => (
 	<div className={styles.container}>
@@ -49,9 +51,12 @@ export const ContentContainer = ({
 							{(title || description) && (
 								<Flex direction={'column'}>
 									{title && (
-										<Title c='dark' order={5}>
-											{title}
-										</Title>
+										<Flex align='center' gap='xs'>
+											{titleIcon}
+											<Title c='dark' order={5}>
+												{title}
+											</Title>
+										</Flex>
 									)}
 									{description && (
 										<Text fz='xs' c='dimmed'>

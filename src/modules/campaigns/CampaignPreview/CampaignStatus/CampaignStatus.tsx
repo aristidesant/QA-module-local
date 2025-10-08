@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo } from 'react';
-import { Card, Group, Text, Stack, Box, ThemeIcon } from '@mantine/core';
-import styles from './CampaignStatus.module.css';
+import { Stack } from '@mantine/core';
 import { getCampaignStatusIcon } from '../../CampaignsList/CampaignsListItem/CampaignsListItem';
 import type { Campaign } from '../../../../models/CampaignsModel';
 import { useGetCampaign } from '~/queries/campaignsQueries';
 import TimeLeftCard from './TimeLeftCard';
+import RightSectionCard from '~/components/RightSectionCard';
 
 interface CampaignStatusProps {
 	campaign: Campaign;
@@ -53,27 +53,14 @@ const CampaignStatus: React.FC<CampaignStatusProps> = ({ campaign }) => {
 
 	return (
 		<Stack gap='xs'>
-			<Card radius='md' padding='md' withBorder className={styles.card}>
-				<Group align='center' wrap='nowrap' gap={16}>
-					<ThemeIcon
-						radius='xl'
-						size={40}
-						color={statusInfo.color}
-						variant='light'
-						className={styles.icon}
-					>
-						{statusInfo.icon}
-					</ThemeIcon>
-					<Box>
-						<Text fw={600} fz='md' className={styles.statusTitle}>
-							{statusInfo.label}
-						</Text>
-						<Text fz='sm' c='gray.6' className={styles.statusDesc}>
-							{description}
-						</Text>
-					</Box>
-				</Group>
-			</Card>
+			<RightSectionCard
+				title={statusInfo.label}
+				description={description}
+				icon={statusInfo.iconComponent}
+				iconColor={statusInfo.color}
+			>
+				<></>
+			</RightSectionCard>
 			<TimeLeftCard />
 		</Stack>
 	);

@@ -46,15 +46,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 				if (typeof value !== 'number' || isNaN(value)) {
 					return 'Human Equivalent must be a number';
 				}
-				if (value < 10) {
-					return 'Human Equivalent must not be less than 10';
-				}
-				if (value > 500) {
-					return 'Human Equivalent must not be greater than 500';
-				}
-				if (value % 10 !== 0) {
-					return 'Human Equivalent must be in increments of 10';
-				}
+
 				return null;
 			},
 		},

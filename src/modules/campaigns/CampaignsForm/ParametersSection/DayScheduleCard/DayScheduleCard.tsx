@@ -118,7 +118,7 @@ export const DayScheduleCard: React.FC = () => {
 													format='12h'
 													variant='filled'
 													value={day.startHour ?? undefined}
-													minutesStep={60}
+													minutesStep={30}
 													classNames={{ input: styles.timeInput }}
 													onChange={(value) => {
 														let dateObj: Date | null = null;
@@ -163,7 +163,7 @@ export const DayScheduleCard: React.FC = () => {
 													withDropdown
 													variant='filled'
 													value={day.endHour ?? undefined}
-													minutesStep={60}
+													minutesStep={30}
 													classNames={{ input: styles.timeInput }}
 													onChange={(value) => {
 														let dateObj: Date | null = null;

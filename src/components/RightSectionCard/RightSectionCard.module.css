@@ -8,14 +8,25 @@
 }
 
 .header {
-	display: flex;
-	justify-content: flex-start;
-	align-items: flex-start;
+	display: grid;
+	align-items: start;
 	gap: var(--mantine-spacing-sm);
 }
 
-.headerWithRight {
-	justify-content: space-between;
+.header.withIcon.withRight {
+	grid-template-columns: auto 1fr auto;
+}
+
+.header.withIcon:not(.withRight) {
+	grid-template-columns: auto 1fr;
+}
+
+.header:not(.withIcon).withRight {
+	grid-template-columns: 1fr auto;
+}
+
+.header:not(.withIcon):not(.withRight) {
+	grid-template-columns: 1fr;
 }
 
 .titleGroup {

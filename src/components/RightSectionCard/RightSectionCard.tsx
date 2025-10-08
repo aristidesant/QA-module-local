@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import { Card, Group, Text, ThemeIcon } from '@mantine/core';
+import { Card, Text, ThemeIcon } from '@mantine/core';
 import type { TablerIcon } from '@tabler/icons-react';
 import styles from './RightSectionCard.module.css';
 
@@ -27,28 +27,24 @@ export const RightSectionCard: React.FC<RightSectionCardProps> = ({
 			<Card.Section
 				inheritPadding
 				py={'sm'}
-				className={`${styles.header} ${rightSection ? styles.headerWithRight : ''}`}
+				className={`${styles.header} ${Icon ? styles.withIcon : ''} ${rightSection ? styles.withRight : ''}`}
 			>
-				<Group gap={'xs'} align='center' justify='space-between' w={'100%'}>
-					<Group gap={'xs'} align='center'>
-						{Icon && (
-							<ThemeIcon variant='light' color={iconColor}>
-								<Icon size={18} className={styles.icon} />
-							</ThemeIcon>
-						)}
-						<div className={styles.titleCopy}>
-							<Text fz='xs' tt='uppercase' className={styles.title}>
-								{title}
-							</Text>
-							{description && (
-								<Text className={styles.subtitle}>{description}</Text>
-							)}
-						</div>
-					</Group>
-					{rightSection && (
-						<div className={styles.rightSection}>{rightSection}</div>
+				{Icon && (
+					<ThemeIcon variant='light' color={iconColor}>
+						<Icon size={18} className={styles.icon} />
+					</ThemeIcon>
+				)}
+				<div className={styles.titleCopy}>
+					<Text fz='xs' tt='uppercase' className={styles.title}>
+						{title}
+					</Text>
+					{description && (
+						<Text className={styles.subtitle}>{description}</Text>
 					)}
-				</Group>
+				</div>
+				{rightSection && (
+					<div className={styles.rightSection}>{rightSection}</div>
+				)}
 			</Card.Section>
 			<div className={styles.content}>{children}</div>
 		</Card>

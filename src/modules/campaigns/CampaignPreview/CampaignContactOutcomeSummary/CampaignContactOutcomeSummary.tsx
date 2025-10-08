@@ -1,10 +1,11 @@
 import { PieChart } from '@mantine/charts';
-import { Card, Text, ActionIcon, Skeleton } from '@mantine/core';
-import { IconRefresh } from '@tabler/icons-react';
+import { Text, ActionIcon, Skeleton } from '@mantine/core';
+import { IconRefresh, IconChartPie } from '@tabler/icons-react';
 import React from 'react';
 import { Campaign } from '~/models/CampaignsModel';
 import classes from './CampaignContactOutcomeSummary.module.css';
 import { useGetCallDispositionReportParents } from '~/queries/callDispositionQueries';
+import RightSectionCard from '~/components/RightSectionCard';
 
 interface CCOSummaryProps {
 	campaign?: Campaign;
@@ -57,27 +58,24 @@ const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 	const hasData = data?.dispositions && data.dispositions.length > 0;
 
 	return (
-		<Card className={classes.root} radius='lg' withBorder={false}>
-			<div className={classes.headerContainer}>
-				<div>
-					<Text className={classes.header}>Contact Outcome Summary</Text>
-					<Text className={classes.subheader}>
-						Quick view of contact distribution by result.
-					</Text>
-				</div>
+		<RightSectionCard
+			title='Outcome Summary'
+			description='Contact distribution by result.'
+			icon={IconChartPie}
+			iconColor='var(--mantine-color-blue-6)'
+			rightSection={
 				<ActionIcon
 					variant='subtle'
 					color='gray'
 					size='sm'
-					className={classes.refreshButton}
 					onClick={() => refetch()}
 					disabled={isCompleted}
 					aria-label='Refresh data'
 				>
 					<IconRefresh size={16} />
 				</ActionIcon>
-			</div>
-
+			}
+		>
 			{isLoading && campaign?.id ? (
 				// Loading skeleton
 				<>
@@ -161,7 +159,7 @@ const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 					</>
 				)}
 			</div>
-		</Card>
+		</RightSectionCard>
 	);
 };
 
