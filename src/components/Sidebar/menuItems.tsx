@@ -26,29 +26,19 @@ export const menuItems: MenuItem[] = [
 		exact: true,
 	},
 	{
-		label: 'Agents',
-		icon: <IconRobot size={20} className={styles.menuIcon} />,
-		to: '/agents',
-	},
-	{
-		label: 'Prompter',
-		icon: <IconLibrary size={20} className={styles.menuIcon} />,
-		to: '/prompter',
-	},
-	{
 		label: 'Campaigns',
 		icon: <IconListDetails size={20} className={styles.menuIcon} />,
 		to: '/campaigns',
 	},
 	{
+		label: 'Agents',
+		icon: <IconRobot size={20} className={styles.menuIcon} />,
+		to: '/agents',
+	},
+	{
 		label: 'Conversations',
 		icon: <IconPhoneCall size={20} className={styles.menuIcon} />,
 		to: '/conversations',
-	},
-	{
-		label: 'Tools',
-		icon: <IconTools size={20} className={styles.menuIcon} />,
-		to: '/tools',
 	},
 ];
 
@@ -62,5 +52,15 @@ export const maintenanceItems: MenuItem[] = [
 		label: 'Knowledge Bases',
 		icon: <IconLibrary size={20} className={styles.menuIcon} />,
 		to: '/knowledge-bases',
+	},
+	{
+		label: 'Tools',
+		icon: <IconTools size={20} className={styles.menuIcon} />,
+		to: '/tools',
+	},
+	{
+		label: 'Prompter',
+		icon: <IconLibrary size={20} className={styles.menuIcon} />,
+		to: '/prompter',
 	},
 ];

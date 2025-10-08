@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Text, Stack, Card, Button } from '@mantine/core';
+import { Text, Card, Button } from '@mantine/core';
 import { IconAlertCircle, IconRocket, IconPlus } from '@tabler/icons-react';
 import {
 	useDeleteCampaign,
 	useGetAllCampaignsPaginated,
 } from '~/queries/campaignsQueries';
 import styles from './CampaignsList.module.css';
-import { CampaignsDetails } from '../CampaignsDetails';
-import SectionCard from '~/components/SectionCard';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import CampaignAgentList from '../CampaignAgentList';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import CampaignPreview from '../CampaignPreview';
 import type { Campaign } from '~/models/CampaignsModel';
@@ -24,6 +21,7 @@ import BaseTable from '~/components/BaseTable';
 import { useCampaignsColumns } from './useCampaignsColumns';
 import CampaignsListSkeleton from './CampaignsListSkeleton';
 import CloneCampaignForm from '../CloneCampaignForm';
+import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 
 interface CampaignFiltersType {
 	type?: string;
@@ -41,8 +39,8 @@ export const CampaignsList: React.FC = () => {
 		selectCampaign,
 		selectedCampaign,
 		setRightComponent,
+		rightComponent,
 		setEditCampaign,
-		editCampaign,
 	} = useCampaignsStore((state) => state);
 
 	// Use the pagination hook for all pagination logic
@@ -153,6 +151,10 @@ export const CampaignsList: React.FC = () => {
 						selectCampaign(null);
 						modals.close('create-campaign');
 					}}
+					onCancel={() => {
+						selectCampaign(null);
+						modals.close('create-campaign');
+					}}
 				/>
 			),
 			size: 'lg',
@@ -167,12 +169,17 @@ export const CampaignsList: React.FC = () => {
 	};
 
 	return (
-		<Stack className={styles.tableWrapper}>
-			<SectionCard
+		<>
+			<ContentContainer
 				title='Campaign list'
 				description='Manage and monitor all your campaigns in one place.'
-				headerActions={
-					<Button fz='xs' onClick={handleShowAddNewCampaignModal}>
+				rightSection={rightComponent || <></>}
+				titleRight={
+					<Button
+						fz='xs'
+						leftSection={<IconPlus size={16} />}
+						onClick={handleShowAddNewCampaignModal}
+					>
 						New Campaign
 					</Button>
 				}
@@ -245,13 +252,7 @@ export const CampaignsList: React.FC = () => {
 						/>
 					</>
 				)}
-			</SectionCard>
-			{selectedCampaign?.id && editCampaign && (
-				<>
-					<CampaignsDetails campaignId={`${selectedCampaign?.id}`} />
-					<CampaignAgentList campaignId={`${selectedCampaign?.id}`} />
-				</>
-			)}
-		</Stack>
+			</ContentContainer>
+		</>
 	);
 };

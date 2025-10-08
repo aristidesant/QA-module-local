@@ -35,7 +35,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 		initialValues: {
 			name: '',
 			description: '',
-			humanEquivalent: 10,
+			humanEquivalent: 0,
 		},
 		validate: {
 			name: (value) => (value.trim() ? null : 'Name is required'),
@@ -121,14 +121,14 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 					<label htmlFor='humanEquivalent'>Human Equivalent</label>
 					<Slider
 						id='humanEquivalent'
-						min={10}
+						min={0}
 						max={500}
-						step={10}
+						step={1}
 						value={form.values.humanEquivalent as number}
 						onChange={(value) => form.setFieldValue('humanEquivalent', value)}
-						marks={Array.from({ length: 6 }, (_, i) => ({
-							value: 10 + i * 100,
-							label: String(10 + i * 100),
+						marks={Array.from({ length: 11 }, (_, i) => ({
+							value: i * 50,
+							label: String(i * 50),
 						}))}
 					/>
 					{form.errors.humanEquivalent && (

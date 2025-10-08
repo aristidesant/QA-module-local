@@ -11,6 +11,7 @@ import {
 } from '@mantine/core';
 import { IconSearch, IconAdjustments, IconFilter } from '@tabler/icons-react';
 import { useState } from 'react';
+import { FilterContainer } from '~/components/FilterContainer';
 import styles from './CampaignFilters.module.css';
 
 interface CampaignFiltersProps {
@@ -81,7 +82,7 @@ export default function CampaignFilters({
 
 	return (
 		<div className={styles.filtersContainer}>
-			<div className={styles.mainControls}>
+			<FilterContainer>
 				<Group gap='xs' className={styles.titleGroup}>
 					<IconFilter size={18} className={styles.titleIcon} />
 					<Text className={styles.title}>Filters</Text>
@@ -131,7 +132,7 @@ export default function CampaignFilters({
 						Advanced
 					</Button>
 				</div>
-			</div>
+			</FilterContainer>
 
 			<Collapse in={opened}>
 				<div className={styles.advancedFilters}>
