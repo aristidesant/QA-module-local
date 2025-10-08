@@ -11,6 +11,12 @@ const Layout = React.lazy(() => import('./components/Layout/Layout'));
 const CampaignsPage = React.lazy(
 	() => import('./modules/campaigns/CampaignsPage/CampaignsPage')
 );
+const CampaignCategoriesPage = React.lazy(
+	() => import('./modules/campaigns/CampaignCategoriesPage')
+);
+const CampaignObjectivesPage = React.lazy(
+	() => import('./modules/campaigns/CampaignObjectivesPage')
+);
 const ToolsPage = React.lazy(() => import('./modules/tools/ToolsPage'));
 const PrompterPage = React.lazy(() =>
 	import('./modules/prompter/PrompterPage').then((m) => ({
@@ -102,6 +108,22 @@ const router = createBrowserRouter([
 						element: (
 							<Suspense fallback={<div>Loading outcomes...</div>}>
 								<DispositionPage />
+							</Suspense>
+						),
+					},
+					{
+						path: 'campaign-categories',
+						element: (
+							<Suspense fallback={<div>Loading campaign categories...</div>}>
+								<CampaignCategoriesPage />
+							</Suspense>
+						),
+					},
+					{
+						path: 'campaign-objectives',
+						element: (
+							<Suspense fallback={<div>Loading campaign objectives...</div>}>
+								<CampaignObjectivesPage />
 							</Suspense>
 						),
 					},
