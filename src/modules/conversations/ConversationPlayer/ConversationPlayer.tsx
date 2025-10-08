@@ -7,8 +7,8 @@ import {
 	Stack,
 	Text,
 	Box,
-	Paper,
 	Tooltip,
+	Select,
 } from '@mantine/core';
 import {
 	IconPlayerPlay,
@@ -42,6 +42,8 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [currentTime, setCurrentTime] = useState(0);
 	const [duration, setDuration] = useState(0);
+	const [volume, setVolume] = useState(1);
+	const [playbackRate, setPlaybackRate] = useState(1);
 	const audioRef = useRef<HTMLAudioElement>(null);
 	const conversationId = useConversationStore((state) => state.selectedId);
 
@@ -95,10 +97,29 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 		}
 	};
 
+	// Handle volume change
+	const handleVolumeChange = (value: number) => {
+		setVolume(value);
+		if (audioRef.current) {
+			audioRef.current.volume = value;
+		}
+	};
+
+	// Handle playback rate change
+	const handlePlaybackRateChange = (value: string | null) => {
+		const rate = parseFloat(value || '1');
+		setPlaybackRate(rate);
+		if (audioRef.current) {
+			audioRef.current.playbackRate = rate;
+		}
+	};
+
 	// Handle audio loaded metadata
 	const handleLoadedMetadata = () => {
 		if (audioRef.current) {
 			setDuration(audioRef.current.duration);
+			audioRef.current.volume = volume;
+			audioRef.current.playbackRate = playbackRate;
 		}
 	};
 
@@ -151,13 +172,47 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 			// Ensure the new source is applied and loaded
 			audioRef.current.src = audioSrc;
 			audioRef.current.load();
+			audioRef.current.volume = volume;
+			audioRef.current.playbackRate = playbackRate;
 		}
-	}, [audioSrc]);
+	}, [audioSrc, volume, playbackRate]);
+
+	// Keyboard controls
+	useEffect(() => {
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (
+				event.target instanceof HTMLInputElement ||
+				event.target instanceof HTMLTextAreaElement
+			)
+				return;
+
+			switch (event.code) {
+				case 'Space':
+					event.preventDefault();
+					togglePlayPause();
+					break;
+				case 'ArrowLeft':
+					event.preventDefault();
+					seek(-5);
+					break;
+				case 'ArrowRight':
+					event.preventDefault();
+					seek(5);
+					break;
+			}
+		};
+
+		window.addEventListener('keydown', handleKeyDown);
+		return () => window.removeEventListener('keydown', handleKeyDown);
+	}, [isPlaying, duration]);
 
 	// No valid voice file
 	if (!fileId && !voiceFile?.repositoryRoute) {
 		return (
-			<Paper className={classes.container} radius='md'>
+			<Box
+				className={classes.container}
+				style={{ borderRadius: 'var(--mantine-radius-md)' }}
+			>
 				<RightSection title={title} description={description}>
 					<Box className={classes.emptyState}>
 						<IconVolume size={32} className={classes.emptyIcon} />
@@ -166,7 +221,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 						</Text>
 					</Box>
 				</RightSection>
-			</Paper>
+			</Box>
 		);
 	}
 
@@ -202,9 +257,9 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 				hidden
 			/>
 
-			<Stack gap='md'>
+			<Stack gap='xs'>
 				{Boolean(fileId) && (isPresignedLoading || isPresignedError) && (
-					<Text size='xs' c='dimmed'>
+					<Text size='xs' c='dimmed' ta='center' fw={500}>
 						{isPresignedLoading ? 'Loading audio…' : 'Could not load audio.'}
 					</Text>
 				)}
@@ -222,18 +277,14 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 							thumb: classes.sliderThumb,
 						}}
 					/>
-					<Group justify='space-between' mt='xs'>
-						<Text size='xs' c='dimmed' className={classes.timeText}>
-							{formatTime(currentTime)}
-						</Text>
-						<Text size='xs' c='dimmed' className={classes.timeText}>
-							{formatTime(duration)}
-						</Text>
+					<Group justify='space-between' mt='sm'>
+						<Text className={classes.timeText}>{formatTime(currentTime)}</Text>
+						<Text className={classes.timeText}>{formatTime(duration)}</Text>
 					</Group>
 				</Box>
 
 				{/* Controls */}
-				<Group justify='center' gap='md' className={classes.controlsGroup}>
+				<Group justify='center' gap='lg' className={classes.playbackControls}>
 					<ActionIcon
 						variant='subtle'
 						color='gray'
@@ -273,6 +324,46 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 					>
 						<IconPlayerSkipForward size={20} />
 					</ActionIcon>
+				</Group>
+
+				{/* Volume and Speed Controls */}
+				<Group gap='md' align='center'>
+					<Group
+						flex={2}
+						gap='sm'
+						align='center'
+						className={classes.volumeGroup}
+					>
+						<IconVolume size={16} className={classes.volumeIcon} />
+						<Slider
+							value={volume}
+							onChange={handleVolumeChange}
+							min={0}
+							max={1}
+							step={0.1}
+							className={classes.volumeSlider}
+							classNames={{
+								track: classes.sliderTrack,
+								bar: classes.sliderBar,
+								thumb: classes.sliderThumb,
+							}}
+						/>
+					</Group>
+					<Select
+						value={playbackRate.toString()}
+						onChange={handlePlaybackRateChange}
+						flex={1}
+						data={[
+							{ value: '0.5', label: '0.5×' },
+							{ value: '0.75', label: '0.75×' },
+							{ value: '1', label: '1.0×' },
+							{ value: '1.25', label: '1.25×' },
+							{ value: '1.5', label: '1.5×' },
+							{ value: '2', label: '2.0×' },
+						]}
+						size='xs'
+						allowDeselect={false}
+					/>
 				</Group>
 			</Stack>
 		</RightSectionCard>

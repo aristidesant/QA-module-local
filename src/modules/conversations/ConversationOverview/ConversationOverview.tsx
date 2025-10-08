@@ -20,6 +20,7 @@ import {
 	IconLoader,
 	IconX,
 	IconClock,
+	IconMessages,
 } from '@tabler/icons-react';
 import type { ConversationsModel } from '~/models/ConversationsModels';
 import styles from './ConversationOverview.module.css';
@@ -256,9 +257,13 @@ export function ConversationOverview({
 			{transcriptSummary && (
 				<RightSectionCard
 					title='Conversation Summary'
+					icon={IconMessages}
+					iconColor='blue'
 					description='Auto-generated from the call transcript'
 				>
-					<Text className={styles.summaryText}>{transcriptSummary}</Text>
+					<Text fz='xs' className={styles.summaryText}>
+						{transcriptSummary}
+					</Text>
 				</RightSectionCard>
 			)}{' '}
 			<ConversationPlayer
