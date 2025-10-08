@@ -1,91 +1,108 @@
 .filtersContainer {
-	background-color: var(--mantine-color-gray-0);
+	background-color: var(--mantine-color-white);
 	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: var(--mantine-radius-lg);
-	padding: var(--mantine-spacing-lg);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+}
+
+.mainControls {
 	display: flex;
-	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
 	gap: var(--mantine-spacing-md);
+	flex-wrap: wrap;
 }
 
-.toolbar {
-	display: grid;
-	gap: var(--mantine-spacing-sm);
-	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-	align-items: center;
+.titleGroup {
+	flex-shrink: 0;
 }
 
-.fieldGroup {
-	display: flex;
-	align-items: center;
-	gap: var(--mantine-spacing-xs);
+.titleIcon {
+	color: var(--mantine-color-gray-6);
 }
 
 .title {
 	font-size: var(--mantine-font-size-sm);
 	color: var(--mantine-color-gray-7);
 	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
 }
 
 .activeBadge {
-	background-color: var(--mantine-color-blue-0);
-	color: var(--mantine-color-blue-6);
+	background-color: var(--mantine-color-blue-1);
+	color: var(--mantine-color-blue-7);
 }
 
-.sortBlock {
-	justify-content: flex-start;
-}
-
-.sortLabel {
-	font-size: var(--mantine-font-size-sm);
-	color: var(--mantine-color-gray-6);
-	font-weight: 500;
-	white-space: nowrap;
-}
-
-.sortSelect {
-	min-width: 160px;
-}
-
-.searchBlock {
-	width: 100%;
+.controlsWrapper {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	flex: 1;
+	min-width: 0;
+	justify-content: flex-end;
+	flex-wrap: wrap;
 }
 
 .searchInput {
-	width: 100%;
+	min-width: 200px;
+	flex: 1;
+	max-width: 400px;
 }
 
 .searchInput input {
-	background-color: var(--mantine-color-gray-1);
-	border-color: transparent;
-}
-
-.searchIcon {
-	color: var(--mantine-color-gray-6);
-}
-
-.filtersButton {
-	justify-self: end;
-}
-
-.divider {
 	border-color: var(--mantine-color-gray-3);
 }
 
-.filtersGrid {
+.searchIcon {
+	color: var(--mantine-color-gray-5);
+}
+
+.sortSelect {
+	min-width: 140px;
+	flex-shrink: 0;
+}
+
+.filtersButton {
+	flex-shrink: 0;
+}
+
+.advancedFilters {
+	padding-top: var(--mantine-spacing-md);
 	margin-top: var(--mantine-spacing-sm);
-}
-
-.actionsRow {
-	align-items: center;
-}
-
-.hint {
-	color: var(--mantine-color-gray-6);
+	border-top: 1px solid var(--mantine-color-gray-2);
 }
 
 .resetButton:disabled {
 	color: var(--mantine-color-gray-5);
+	opacity: 0.5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+	.mainControls {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.titleGroup {
+		width: 100%;
+	}
+
+	.controlsWrapper {
+		width: 100%;
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.searchInput,
+	.sortSelect,
+	.filtersButton {
+		max-width: 100%;
+		width: 100%;
+	}
+}
+
+@media (max-width: 480px) {
+	.filtersContainer {
+		padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	}
 }

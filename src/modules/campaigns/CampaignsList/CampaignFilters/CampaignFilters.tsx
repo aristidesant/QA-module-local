@@ -2,15 +2,14 @@ import {
 	Badge,
 	Button,
 	Collapse,
-	Divider,
 	Group,
 	Select,
-	SimpleGrid,
+	Stack,
 	Text,
 	TextInput,
 	CloseButton,
 } from '@mantine/core';
-import { IconSearch, IconAdjustments } from '@tabler/icons-react';
+import { IconSearch, IconAdjustments, IconFilter } from '@tabler/icons-react';
 import { useState } from 'react';
 import styles from './CampaignFilters.module.css';
 
@@ -82,115 +81,106 @@ export default function CampaignFilters({
 
 	return (
 		<div className={styles.filtersContainer}>
-			<div className={styles.toolbar}>
-				<div className={styles.fieldGroup}>
-					<Text className={styles.title} component='span'>
-						Campaign filters
-					</Text>
+			<div className={styles.mainControls}>
+				<Group gap='xs' className={styles.titleGroup}>
+					<IconFilter size={18} className={styles.titleIcon} />
+					<Text className={styles.title}>Filters</Text>
 					{hasActiveFilters && (
-						<Badge size='sm' className={styles.activeBadge}>
-							{activeFiltersCount} active
+						<Badge size='sm' variant='light' className={styles.activeBadge}>
+							{activeFiltersCount}
 						</Badge>
 					)}
-				</div>
-
-				<Group gap='xs' wrap='nowrap' className={styles.sortBlock}>
-					<span className={styles.sortLabel}>Sort by</span>
-					<Select
-						value={sortBy}
-						onChange={(value) => onSortChange(value || 'createdAt')}
-						data={sortOptions}
-						className={styles.sortSelect}
-						size='sm'
-						variant='filled'
-						comboboxProps={{ withinPortal: true }}
-					/>
 				</Group>
 
-				<div className={styles.searchBlock}>
+				<div className={styles.controlsWrapper}>
 					<TextInput
 						placeholder='Search campaigns...'
 						value={searchValue}
 						onChange={(event) => onSearchChange(event.currentTarget.value)}
+						leftSection={<IconSearch size={16} className={styles.searchIcon} />}
 						rightSection={
-							searchValue ? (
+							searchValue && (
 								<CloseButton
 									size='sm'
 									onClick={() => onSearchChange('')}
 									variant='subtle'
 								/>
-							) : (
-								<IconSearch size={16} className={styles.searchIcon} />
 							)
 						}
-						radius='md'
+						size='sm'
 						className={styles.searchInput}
 					/>
-				</div>
 
-				<Button
-					size='sm'
-					leftSection={<IconAdjustments size={16} />}
-					className={styles.filtersButton}
-					onClick={() => setOpened((prev) => !prev)}
-					variant={hasActiveFilters ? 'filled' : 'light'}
-				>
-					{hasActiveFilters ? `Filters (${activeFiltersCount})` : 'Filters'}
-				</Button>
+					<Select
+						value={sortBy}
+						onChange={(value) => onSortChange(value || 'createdAt')}
+						data={sortOptions}
+						placeholder='Sort by'
+						className={styles.sortSelect}
+						size='sm'
+						comboboxProps={{ withinPortal: true }}
+					/>
+
+					<Button
+						size='sm'
+						leftSection={<IconAdjustments size={16} />}
+						className={styles.filtersButton}
+						onClick={() => setOpened((prev) => !prev)}
+						variant={opened ? 'light' : 'default'}
+					>
+						Advanced
+					</Button>
+				</div>
 			</div>
-			{opened && <Divider className={styles.divider} />}
 
 			<Collapse in={opened}>
-				<SimpleGrid
-					cols={{ base: 1, sm: 2, lg: 4 }}
-					spacing='md'
-					className={styles.filtersGrid}
-				>
-					<Select
-						label='Type'
-						placeholder='Select type'
-						data={typeOptions}
-						value={filters.type}
-						onChange={(value) => handleFilterChange('type', value)}
-						clearable
-						size='sm'
-					/>
-					<Select
-						label='Execution Type'
-						placeholder='Select execution type'
-						data={executionTypeOptions}
-						value={filters.campaignExecutionType}
-						onChange={(value) =>
-							handleFilterChange('campaignExecutionType', value)
-						}
-						clearable
-						size='sm'
-					/>
-					<Select
-						label='Status'
-						placeholder='Select status'
-						data={statusOptions}
-						value={filters.status}
-						onChange={(value) => handleFilterChange('status', value)}
-						clearable
-						size='sm'
-					/>
-				</SimpleGrid>
+				<div className={styles.advancedFilters}>
+					<Stack gap='sm'>
+						<Group gap='sm' grow>
+							<Select
+								label='Type'
+								placeholder='All types'
+								data={typeOptions}
+								value={filters.type}
+								onChange={(value) => handleFilterChange('type', value)}
+								clearable
+								size='sm'
+							/>
+							<Select
+								label='Execution Type'
+								placeholder='All execution types'
+								data={executionTypeOptions}
+								value={filters.campaignExecutionType}
+								onChange={(value) =>
+									handleFilterChange('campaignExecutionType', value)
+								}
+								clearable
+								size='sm'
+							/>
+							<Select
+								label='Status'
+								placeholder='All statuses'
+								data={statusOptions}
+								value={filters.status}
+								onChange={(value) => handleFilterChange('status', value)}
+								clearable
+								size='sm'
+							/>
+						</Group>
 
-				<Group justify='space-between' mt='md' className={styles.actionsRow}>
-					<Text size='sm' className={styles.hint}>
-						Narrow down campaigns by combining filters.
-					</Text>
-					<Button
-						variant='subtle'
-						size='sm'
-						className={styles.resetButton}
-						onClick={() => onFiltersChange({})}
-						disabled={!hasActiveFilters}
-					>
-						Reset filters
-					</Button>
-				</Group>
+						<Group justify='flex-end'>
+							<Button
+								variant='subtle'
+								size='xs'
+								className={styles.resetButton}
+								onClick={() => onFiltersChange({})}
+								disabled={!hasActiveFilters}
+							>
+								Clear all filters
+							</Button>
+						</Group>
+					</Stack>
+				</div>
 			</Collapse>
 		</div>
 	);
