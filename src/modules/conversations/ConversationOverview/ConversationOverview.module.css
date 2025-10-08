@@ -1,194 +1,315 @@
 .container {
-  max-width: 360px;
+	max-width: 400px;
 }
+
 .paper {
-  background-color: var(--mantine-color-white);
-  transition: border-color 0.15s ease, transform 0.15s ease;
-  position: relative;
-  border: 1px solid var(--mantine-color-gray-2);
-  border-radius: var(--mantine-radius-md);
-  padding-top: calc(var(--mantine-spacing-md) - 2px);
+	background-color: var(--mantine-color-white);
+	transition: border-color 0.2s ease;
+	position: relative;
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	padding-top: calc(var(--mantine-spacing-md) - 2px);
 }
 
 .paper:hover {
-  border-color: var(--mantine-color-gray-3);
+	border-color: var(--mantine-color-gray-4);
 }
 
 /* Status indicator dot */
 .statusDot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-right: 6px;
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	margin-right: 6px;
 }
 
 .statusDot.completed {
-  background-color: var(--mantine-color-green-6);
+	background-color: var(--mantine-color-green-6);
 }
 
 .statusDot.in_progress {
-  background-color: var(--mantine-color-blue-6);
+	background-color: var(--mantine-color-blue-6);
 }
 
 .statusDot.failed,
 .statusDot.error {
-  background-color: var(--mantine-color-red-6);
+	background-color: var(--mantine-color-red-6);
 }
 
 .statusDot.pending {
-  background-color: var(--mantine-color-yellow-6);
+	background-color: var(--mantine-color-yellow-6);
 }
 
 /* Header styles */
 .header {
-  margin-bottom: 0.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--mantine-color-gray-2);
+	margin-bottom: 0.5rem;
+	padding-bottom: 0.5rem;
+	border-bottom: 1px solid var(--mantine-color-gray-2);
 }
 
 .cardHeader {
-  margin-bottom: 0.25rem;
+	margin-bottom: 0.25rem;
 }
 
 .accent {
-  width: 10px;
-  height: 10px;
-  border-radius: 2px;
-  display: inline-block;
+	width: 10px;
+	height: 10px;
+	border-radius: 2px;
+	display: inline-block;
 }
 
 .accent.completed {
-  background-color: var(--mantine-color-green-6);
+	background-color: var(--mantine-color-green-6);
 }
 
 .accent.in_progress {
-  background-color: var(--mantine-color-blue-6);
+	background-color: var(--mantine-color-blue-6);
 }
 
 .accent.failed,
 .accent.error {
-  background-color: var(--mantine-color-red-6);
+	background-color: var(--mantine-color-red-6);
 }
 
 .accent.pending {
-  background-color: var(--mantine-color-yellow-6);
+	background-color: var(--mantine-color-yellow-6);
 }
 
 /* Text styles */
 .darkText {
-  color: var(--mantine-color-gray-9);
+	color: var(--mantine-color-gray-9);
 }
 
 .lightText {
-  color: var(--mantine-color-gray-6);
-  font-size: 0.85rem;
+	color: var(--mantine-color-gray-6);
+	font-size: 0.85rem;
 }
 
 .sectionTitle {
-  color: var(--mantine-color-gray-8);
-  letter-spacing: 0.2px;
+	color: var(--mantine-color-gray-8);
+	letter-spacing: 0.2px;
 }
 
 /* Status badge */
 .statusBadge {
-  text-transform: capitalize;
-  font-weight: 500;
-  letter-spacing: 0.3px;
+	text-transform: capitalize;
+	font-weight: 500;
+	letter-spacing: 0.3px;
 }
 
 .statusBadge.completed {
-  color: var(--mantine-color-green-8);
-  background-color: var(--mantine-color-green-0);
+	color: var(--mantine-color-green-8);
+	background-color: var(--mantine-color-green-0);
 }
 
 .statusBadge.in_progress {
-  color: var(--mantine-color-blue-8);
-  background-color: var(--mantine-color-blue-0);
+	color: var(--mantine-color-blue-8);
+	background-color: var(--mantine-color-blue-0);
 }
 
 .statusBadge.failed,
 .statusBadge.error {
-  color: var(--mantine-color-red-8);
-  background-color: var(--mantine-color-red-0);
+	color: var(--mantine-color-red-8);
+	background-color: var(--mantine-color-red-0);
 }
 
 .statusBadge.pending {
-  color: var(--mantine-color-yellow-8);
-  background-color: var(--mantine-color-yellow-0);
+	color: var(--mantine-color-yellow-8);
+	background-color: var(--mantine-color-yellow-0);
 }
 
-.topRow {
-  margin-top: 0.25rem;
+/* Contact Header Section */
+.contactHeader {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding: 2px 0;
 }
 
 .avatar {
-  border: 1px solid var(--mantine-color-blue-2);
-  background: var(--mantine-color-blue-0);
-  color: var(--mantine-color-blue-8);
+	flex-shrink: 0;
+	border: 2px solid var(--mantine-color-blue-1);
+	background: var(--mantine-color-blue-0);
+	color: var(--mantine-color-blue-7);
 }
 
-.identity {
-  min-width: 0;
+.contactInfo {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
 }
 
-.truncate {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
-  display: block;
+.contactName {
+	font-size: 16px;
+	font-weight: 700;
+	color: var(--mantine-color-gray-9);
+	line-height: 1.3;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
-.statContent {
-  /* allow content to wrap to multiple lines while keeping layout aligned with icon */
-  min-width: 0;
-  display: block;
-  word-break: break-word;
+.phoneGroup {
+	flex-wrap: nowrap;
 }
 
-.phone {
-  color: var(--mantine-color-gray-7);
+.phoneIcon {
+	flex-shrink: 0;
+	color: var(--mantine-color-gray-5);
+}
+
+.phoneNumber {
+	font-size: 13px;
+	color: var(--mantine-color-gray-7);
+	font-weight: 500;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .copyBtn {
-  color: var(--mantine-color-gray-6);
+	flex-shrink: 0;
+	color: var(--mantine-color-gray-5);
+	transition: color 0.2s ease;
 }
 
-.icon {
-  color: var(--mantine-color-gray-6);
+.copyBtn:hover {
+	color: var(--mantine-color-blue-6);
 }
 
-.statGrid {
-  margin-top: 0.25rem;
+/* Divider */
+.divider {
+	margin: 16px 0;
+	border-color: var(--mantine-color-gray-2);
 }
 
-.statItem {
-  align-items: flex-start;
-  min-width: 0;
+/* Stats Grid */
+.statsGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	gap: 12px;
+}
+
+.statCard {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	padding: 12px;
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: 8px;
+	transition:
+		border-color 0.2s ease,
+		background-color 0.2s ease;
+}
+
+.statCard:hover {
+	background: var(--mantine-color-gray-1);
+	border-color: var(--mantine-color-gray-3);
+}
+
+.statIconWrapper {
+	flex-shrink: 0;
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: 6px;
+}
+
+.statIcon {
+	color: var(--mantine-color-gray-6);
+}
+
+.statContent {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
 }
 
 .statLabel {
-  color: var(--mantine-color-gray-6);
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.3px;
+	color: var(--mantine-color-gray-6);
+	line-height: 1.2;
+}
+
+.statValue {
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--mantine-color-gray-9);
+	line-height: 1.3;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.statSubtext {
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--mantine-color-gray-6);
+	line-height: 1.2;
+}
+
+/* Summary Section */
+.summaryText {
+	font-size: 14px;
+	line-height: 1.6;
+	color: var(--mantine-color-gray-8);
+	font-weight: 400;
+}
+
+/* Responsive adjustments */
+@media (max-width: 420px) {
+	.statsGrid {
+		grid-template-columns: 1fr;
+	}
+
+	.contactHeader {
+		gap: 12px;
+	}
+
+	.avatar {
+		width: 40px;
+		height: 40px;
+	}
+
+	.contactName {
+		font-size: 15px;
+	}
+
+	.statCard {
+		padding: 10px;
+	}
 }
 
 .campaignBadge {
-  background: var(--mantine-color-gray-0);
-  color: var(--mantine-color-gray-8);
-  border: 1px solid var(--mantine-color-gray-2);
+	background: var(--mantine-color-gray-0);
+	color: var(--mantine-color-gray-8);
+	border: 1px solid var(--mantine-color-gray-2);
 }
 
 /* Subtle colored top border per status for visual flair */
 .paper.completed {
-  border-top: 3px solid var(--mantine-color-green-5);
+	border-top: 3px solid var(--mantine-color-green-5);
 }
 .paper.in_progress {
-  border-top: 3px solid var(--mantine-color-blue-5);
+	border-top: 3px solid var(--mantine-color-blue-5);
 }
 .paper.failed,
 .paper.error {
-  border-top: 3px solid var(--mantine-color-red-5);
+	border-top: 3px solid var(--mantine-color-red-5);
 }
 .paper.pending {
-  border-top: 3px solid var(--mantine-color-yellow-5);
+	border-top: 3px solid var(--mantine-color-yellow-5);
 }

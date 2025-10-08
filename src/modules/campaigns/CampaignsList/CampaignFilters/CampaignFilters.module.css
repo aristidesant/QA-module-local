@@ -1,45 +1,91 @@
 .filtersContainer {
-    padding: var(--mantine-spacing-xs);
-    /* background: var(--mantine-color-gray-0); */
-    /* border-radius: var(--mantine-radius-md); */
-    /* border: 1px solid var(--mantine-color-gray-2); */
-    /* margin-bottom: var(--mantine-spacing-xs); */
+	margin-bottom: var(--mantine-spacing-md);
+}
+
+.titleGroup {
+	flex-shrink: 0;
+}
+
+.titleIcon {
+	color: var(--mantine-color-gray-6);
+}
+
+.title {
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-7);
+	font-weight: 600;
+}
+
+.activeBadge {
+	background-color: var(--mantine-color-blue-1);
+	color: var(--mantine-color-blue-7);
+}
+
+.controlsWrapper {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	flex: 1;
+	min-width: 0;
+	justify-content: flex-end;
+	flex-wrap: wrap;
 }
 
 .searchInput {
-    width: 300px;
-    max-width: 100%;
+	min-width: 200px;
+	flex: 1;
+	max-width: 400px;
 }
 
 .searchInput input {
-    background-color: var(--mantine-color-gray-1) !important;
-    /* border: none !important; */
+	border-color: var(--mantine-color-gray-3);
 }
 
 .searchIcon {
-    color: var(--mantine-color-gray-6);
-}
-
-
-
-.sortLabel {
-    font-size: var(--mantine-font-size-sm);
-    color: var(--mantine-color-gray-7);
-    font-weight: 500;
-    white-space: nowrap;
+	color: var(--mantine-color-gray-5);
 }
 
 .sortSelect {
-    min-width: 150px;
+	min-width: 140px;
+	flex-shrink: 0;
 }
-
-
 
 .filtersButton {
-    border-radius: var(--mantine-radius-sm);
-    transition: all 0.15s ease;
+	flex-shrink: 0;
 }
 
-.filtersButton:hover {
-    background-color: var(--mantine-color-gray-1);
+.advancedFilters {
+	padding: var(--mantine-spacing-md);
+	margin-top: var(--mantine-spacing-sm);
+	border-top: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+}
+
+.resetButton:disabled {
+	color: var(--mantine-color-gray-5);
+	opacity: 0.5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+	.controlsWrapper {
+		width: 100%;
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.searchInput,
+	.sortSelect,
+	.filtersButton {
+		max-width: 100%;
+		width: 100%;
+	}
+}
+
+@media (max-width: 480px) {
+	.advancedFilters {
+		padding: var(--mantine-spacing-sm);
+	}
 }

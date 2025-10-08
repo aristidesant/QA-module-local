@@ -1,279 +1,245 @@
-import type { FC } from "react";
+import type { FC, ReactNode } from 'react';
+import { Group, Text, Badge, Skeleton, Button, Divider } from '@mantine/core';
 import {
-  Paper,
-  Group,
-  Stack,
-  Text,
-  Badge,
-  Skeleton,
-  Anchor,
-  ThemeIcon,
-  Divider,
-} from "@mantine/core";
-import { IconInfoCircle, IconClock, IconPhoneOff } from "@tabler/icons-react";
-import { useCallDispositionByConversationId } from "~/queries/callDispositionQueries";
-import type { CallDispositionModel } from "~/models/CallDispositionModel";
-import styles from "./ConversationDisposition.module.css";
-import RightSection from "~/components/RightSection";
+	IconInfoCircle,
+	IconClock,
+	IconPhoneOff,
+	IconPhone,
+	IconRefresh,
+	IconRecordMail,
+	IconShieldCheck,
+} from '@tabler/icons-react';
+import { useCallDispositionByConversationId } from '~/queries/callDispositionQueries';
+import type { CallDispositionModel } from '~/models/CallDispositionModel';
+import styles from './ConversationDisposition.module.css';
+import RightSectionCard from '~/components/RightSectionCard';
 
 type ConversationDispositionProps = {
-  conversationId: string | number;
-  compact?: boolean;
+	conversationId: string | number;
 };
 
 const ConversationDisposition: FC<ConversationDispositionProps> = ({
-  conversationId,
-  compact,
+	conversationId,
 }) => {
-  const { data, isLoading, isError, refetch } =
-    useCallDispositionByConversationId(conversationId);
+	const { data, isLoading, isError, refetch } =
+		useCallDispositionByConversationId(conversationId);
 
-  const normalizeStatus = (raw?: string) => {
-    const v = (raw || "").toString().trim().toUpperCase();
-    if (v.includes("POS")) return "POSITIVE" as const;
-    if (v.includes("NEG")) return "NEGATIVE" as const;
-    if (v.includes("NEU")) return "NEUTRAL" as const;
-    return "NEUTRAL" as const;
-  };
+	const normalizeStatus = (raw?: string) => {
+		const v = (raw || '').toString().trim().toUpperCase();
+		if (v.includes('POS')) return 'POSITIVE' as const;
+		if (v.includes('NEG')) return 'NEGATIVE' as const;
+		if (v.includes('NEU')) return 'NEUTRAL' as const;
+		return 'NEUTRAL' as const;
+	};
 
-  const getStatusPresentation = (
-    status: ReturnType<typeof normalizeStatus>
-  ) => {
-    switch (status) {
-      case "POSITIVE":
-        return {
-          color: "green" as const,
-          borderColorVar: "var(--mantine-color-green-5)",
-          label: "Positive",
-        };
-      case "NEGATIVE":
-        return {
-          color: "red" as const,
-          borderColorVar: "var(--mantine-color-red-5)",
-          label: "Negative",
-        };
-      case "NEUTRAL":
-      default:
-        return {
-          color: "gray" as const,
-          borderColorVar: "var(--mantine-color-gray-4)",
-          label: "Neutral",
-        };
-    }
-  };
+	const getStatusPresentation = (
+		status: ReturnType<typeof normalizeStatus>
+	) => {
+		switch (status) {
+			case 'POSITIVE':
+				return {
+					color: 'green' as const,
+					borderColorVar: 'var(--mantine-color-green-5)',
+					label: 'Positive',
+				};
+			case 'NEGATIVE':
+				return {
+					color: 'red' as const,
+					borderColorVar: 'var(--mantine-color-red-5)',
+					label: 'Negative',
+				};
+			case 'NEUTRAL':
+			default:
+				return {
+					color: 'gray' as const,
+					borderColorVar: 'var(--mantine-color-gray-4)',
+					label: 'Neutral',
+				};
+		}
+	};
 
-  const formatDuration = (totalSeconds?: number) => {
-    if (!totalSeconds || totalSeconds <= 0) return "as soon as possible";
-    const minutesTotal = Math.floor(totalSeconds / 60);
-    const days = Math.floor(minutesTotal / (60 * 24));
-    const hours = Math.floor((minutesTotal % (60 * 24)) / 60);
-    const minutes = minutesTotal % 60;
-    const parts: string[] = [];
-    if (days) parts.push(`${days} ${days === 1 ? "day" : "days"}`);
-    if (hours) parts.push(`${hours} ${hours === 1 ? "hour" : "hours"}`);
-    if (minutes)
-      parts.push(`${minutes} ${minutes === 1 ? "minute" : "minutes"}`);
-    if (!parts.length) return "less than a minute";
-    if (parts.length === 1) return parts[0];
-    if (parts.length === 2) return `${parts[0]} and ${parts[1]}`;
-    return `${parts[0]}, ${parts[1]} and ${parts[2]}`;
-  };
+	const formatDuration = (totalSeconds?: number) => {
+		if (!totalSeconds || totalSeconds <= 0) return 'as soon as possible';
+		const minutesTotal = Math.floor(totalSeconds / 60);
+		const days = Math.floor(minutesTotal / (60 * 24));
+		const hours = Math.floor((minutesTotal % (60 * 24)) / 60);
+		const minutes = minutesTotal % 60;
+		const parts: string[] = [];
+		if (days) parts.push(`${days} ${days === 1 ? 'day' : 'days'}`);
+		if (hours) parts.push(`${hours} ${hours === 1 ? 'hour' : 'hours'}`);
+		if (minutes)
+			parts.push(`${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`);
+		if (!parts.length) return 'less than a minute';
+		if (parts.length === 1) return parts[0];
+		if (parts.length === 2) return `${parts[0]} and ${parts[1]}`;
+		return `${parts[0]}, ${parts[1]} and ${parts[2]}`;
+	};
 
-  if (isLoading) {
-    return (
-      <Paper p={compact ? "xs" : "sm"} className={styles.paper}>
-        <RightSection
-          title="Disposition"
-          description={
-            <Text size="xs" c="dimmed">
-              Fetching latest status…
-            </Text>
-          }
-        >
-          <Stack gap={6} className={styles.skeletonStack}>
-            <Skeleton height={10} mt={2} radius="sm" />
-            <Skeleton height={10} mt={2} width="70%" radius="sm" />
-          </Stack>
-        </RightSection>
-      </Paper>
-    );
-  }
+	if (isLoading) {
+		return (
+			<RightSectionCard
+				title='Disposition'
+				description='Loading status'
+				icon={IconPhone}
+				iconColor='var(--mantine-color-gray-4)'
+			>
+				<div className={styles.loadingState}>
+					<Skeleton height={32} radius='md' mb={8} />
+					<Skeleton height={48} radius='md' />
+				</div>
+			</RightSectionCard>
+		);
+	}
 
-  if (isError) {
-    return (
-      <Paper p={compact ? "xs" : "sm"} className={styles.paper}>
-        <RightSection
-          title="Disposition"
-          description={
-            <Group gap="xs" align="center">
-              <IconInfoCircle size={14} className={styles.lightText} />
-              <Text size="xs" c="dimmed">
-                Trouble loading disposition
-              </Text>
-            </Group>
-          }
-        >
-          <Stack gap={6} className={styles.errorStack}>
-            <Text size="sm" className={styles.darkText}>
-              We couldn’t display the disposition right now.
-            </Text>
-            <Text size="xs" className={styles.lightText}>
-              Please try again in a moment.
-            </Text>
-            {refetch && (
-              <Anchor component="button" size="xs" onClick={() => refetch()}>
-                Try again
-              </Anchor>
-            )}
-          </Stack>
-        </RightSection>
-      </Paper>
-    );
-  }
+	if (isError) {
+		return (
+			<RightSectionCard
+				title='Disposition'
+				description='Failed to load'
+				icon={IconInfoCircle}
+				iconColor='var(--mantine-color-red-6)'
+			>
+				<div className={styles.errorState}>
+					<Text size='sm' c='dimmed' mb={12}>
+						Couldn't load disposition data
+					</Text>
+					<Button
+						variant='light'
+						color='gray'
+						size='xs'
+						leftSection={<IconRefresh size={14} />}
+						onClick={() => refetch()}
+						fullWidth
+					>
+						Retry
+					</Button>
+				</div>
+			</RightSectionCard>
+		);
+	}
 
-  const disposition = data as CallDispositionModel | undefined;
-  const name = disposition?.dispositionName || "No disposition";
-  const description = disposition?.dispositionDescription;
-  const notes = disposition?.notes;
-  const status = normalizeStatus(
-    disposition?.callStatus || disposition?.dispositionName
-  );
-  const statusView = getStatusPresentation(status);
-  const updatedAt = disposition?.updatedAt || disposition?.createdAt;
-  const requiresReschedule = Boolean(disposition?.requiresReschedule);
-  const rescheduleTimeSec = disposition?.rescheduleTime;
-  const isInvalidatesNumber = Boolean(disposition?.isInvalidatesNumber);
-  const isFinal = Boolean(disposition?.isFinal);
-  const isVoiceMail = Boolean(disposition?.isVoiceMail);
+	const disposition = data as CallDispositionModel | undefined;
+	const name = disposition?.dispositionName || 'No disposition';
+	const description = disposition?.dispositionDescription;
+	const notes = disposition?.notes;
+	const status = normalizeStatus(
+		disposition?.callStatus || disposition?.dispositionName
+	);
+	const statusView = getStatusPresentation(status);
+	const updatedAt = disposition?.updatedAt || disposition?.createdAt;
+	const requiresReschedule = Boolean(disposition?.requiresReschedule);
+	const rescheduleTimeSec = disposition?.rescheduleTime;
+	const isInvalidatesNumber = Boolean(disposition?.isInvalidatesNumber);
+	const isFinal = Boolean(disposition?.isFinal);
+	const isVoiceMail = Boolean(disposition?.isVoiceMail);
+	const timestampLabel = updatedAt
+		? new Date(updatedAt).toLocaleDateString('en-US', {
+				month: 'short',
+				day: 'numeric',
+				hour: 'numeric',
+				minute: '2-digit',
+			})
+		: undefined;
 
-  return (
-    <Paper
-      p={compact ? "xs" : "sm"}
-      className={`${styles.paper} ${compact ? styles.compact : ""}`}
-      style={{ borderColor: statusView.borderColorVar }}
-    >
-      <RightSection
-        title="Disposition"
-        description={
-          updatedAt ? (
-            <Badge
-              variant="light"
-              radius="sm"
-              size="xs"
-              className={styles.badge}
-            >
-              Updated {new Date(updatedAt).toLocaleString()}
-            </Badge>
-          ) : (
-            <Badge
-              variant="light"
-              radius="sm"
-              size="xs"
-              className={styles.badge}
-            >
-              Not updated
-            </Badge>
-          )
-        }
-      >
-        <Stack gap={6} className={styles.contentStack}>
-          <Group
-            className={styles.headerRow}
-            align="center"
-            gap={8}
-            wrap="nowrap"
-          >
-            <Group
-              gap={8}
-              align="center"
-              className={styles.titleGroup}
-              wrap="nowrap"
-            >
-              <Badge
-                color={statusView.color}
-                variant="filled"
-                radius="sm"
-                className={styles.statusBadge}
-              >
-                {statusView.label}
-              </Badge>
-            </Group>
+	const traitBadges = [
+		isFinal && {
+			key: 'final',
+			label: 'Finalized',
+			icon: <IconShieldCheck size={12} />,
+		},
+		isVoiceMail && {
+			key: 'voicemail',
+			label: 'Voicemail',
+			icon: <IconRecordMail size={12} />,
+		},
+	].filter(Boolean) as Array<{
+		key: string;
+		label: string;
+		icon: ReactNode;
+	}>;
 
-            <Group gap={6} className={styles.rightFlags}>
-              {isFinal && (
-                <Badge size="xs" variant="outline" color="gray" radius="sm">
-                  Final
-                </Badge>
-              )}
-              {isVoiceMail && (
-                <Badge size="xs" variant="outline" color="gray" radius="sm">
-                  Voicemail
-                </Badge>
-              )}
-            </Group>
-          </Group>
-          <Text fw={700} className={styles.name} title={name}>
-            {name}
-          </Text>
+	return (
+		<RightSectionCard
+			title='Disposition'
+			description={timestampLabel || 'No updates yet'}
+			icon={IconPhone}
+			iconColor={statusView.borderColorVar}
+		>
+			<div className={styles.content}>
+				<div className={styles.header}>
+					<Badge
+						color={statusView.color}
+						variant='filled'
+						size='sm'
+						className={styles.statusBadge}
+					>
+						{statusView.label}
+					</Badge>
+					{timestampLabel && (
+						<div className={styles.timestamp}>
+							<IconClock size={12} />
+							<Text size='xs'>{timestampLabel}</Text>
+						</div>
+					)}
+				</div>
 
-          {description && (
-            <Text size="xs" c="dimmed" className={styles.description}>
-              {description}
-            </Text>
-          )}
+				<div className={styles.summary}>
+					<Text className={styles.dispositionName}>{name}</Text>
+					{description && (
+						<Text className={styles.description}>{description}</Text>
+					)}
+				</div>
 
-          {(requiresReschedule || isInvalidatesNumber) && <Divider my={6} />}
+				{traitBadges.length > 0 && (
+					<Group gap={8} className={styles.traits} wrap='wrap'>
+						{traitBadges.map((trait) => (
+							<div key={trait.key} className={styles.trait}>
+								{trait.icon}
+								<Text size='xs'>{trait.label}</Text>
+							</div>
+						))}
+					</Group>
+				)}
 
-          {requiresReschedule && (
-            <Group gap="xs" align="flex-start">
-              <ThemeIcon size="sm" radius="sm" variant="light" color="blue">
-                <IconClock size={16} />
-              </ThemeIcon>
-              <Stack gap={2}>
-                <Text size="xs" fw={600}>
-                  Follow-up required
-                </Text>
-                <Text size="xs" c="dimmed">
-                  Call the contact back in {formatDuration(rescheduleTimeSec)}.
-                </Text>
-              </Stack>
-            </Group>
-          )}
+				{(requiresReschedule || isInvalidatesNumber) && (
+					<div className={styles.actions}>
+						{requiresReschedule && (
+							<div className={styles.action}>
+								<IconClock size={14} />
+								<div>
+									<Text size='xs' className={styles.actionLabel}>
+										Callback required
+									</Text>
+									<Text size='xs'>{formatDuration(rescheduleTimeSec)}</Text>
+								</div>
+							</div>
+						)}
+						{isInvalidatesNumber && (
+							<div className={`${styles.action} ${styles.actionCritical}`}>
+								<IconPhoneOff size={14} />
+								<div>
+									<Text size='xs' className={styles.actionLabel}>
+										Number invalidated
+									</Text>
+									<Text size='xs'>Do not retry this contact</Text>
+								</div>
+							</div>
+						)}
+					</div>
+				)}
 
-          {isInvalidatesNumber && (
-            <Group gap="xs" align="flex-start">
-              <ThemeIcon size="sm" radius="sm" variant="light" color="red">
-                <IconPhoneOff size={16} />
-              </ThemeIcon>
-              <Stack gap={2}>
-                <Text size="xs" fw={600}>
-                  Number invalidated
-                </Text>
-                <Text size="xs" c="dimmed">
-                  This phone number has been marked invalid and will no longer
-                  be dialed.
-                </Text>
-              </Stack>
-            </Group>
-          )}
-
-          <Divider my={6} />
-
-          <div className={styles.notes}>
-            {notes ? (
-              <Text size="xs" className={styles.lightText} title={notes}>
-                {notes}
-              </Text>
-            ) : (
-              <Text size="xs" className={styles.lightText}>
-                No notes provided
-              </Text>
-            )}
-          </div>
-        </Stack>
-      </RightSection>
-    </Paper>
-  );
+				{notes && (
+					<>
+						<Divider className={styles.notesDivider} />
+						<div className={styles.notes}>
+							<Text className={styles.notesLabel}>Agent notes</Text>
+							<Text className={styles.notesText}>{notes}</Text>
+						</div>
+					</>
+				)}
+			</div>
+		</RightSectionCard>
+	);
 };
 
 export default ConversationDisposition;

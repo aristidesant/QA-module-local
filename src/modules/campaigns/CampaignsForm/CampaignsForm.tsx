@@ -20,6 +20,8 @@ import { ContactSection } from './ContactSection/ContactSection';
 import ParametersSection from './ParametersSection';
 import AgentSection from './AgentSection';
 import DispositionSection from './DispositionSection';
+import ConversationsSection from './ConversationsSection';
+import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 
 interface CampaignsFormProps {
 	campaign?: Partial<Campaign>;
@@ -27,7 +29,9 @@ interface CampaignsFormProps {
 }
 
 export const CampaignsForm: React.FC<CampaignsFormProps> = ({ campaign }) => {
-	const { selectedTab } = useCampaignsStore((state) => state);
+	const { selectedTab, rightComponent, resetView } = useCampaignsStore(
+		(state) => state
+	);
 	const { mutateAsync: createCampaign, isPending: isCreating } =
 		useCreateCampaign();
 	const { mutateAsync: updateCampaign, isPending: isUpdating } =
@@ -115,51 +119,62 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({ campaign }) => {
 	};
 
 	return (
-		<CampaignFormProvider form={form}>
-			<LoadingOverlay visible={isCreating || isUpdating} />
-			<Stack gap='xs'>
-				<Box p='xs'>
-					<CampaignTabs />
-				</Box>
-				{selectedTab === 'general' && (
-					<form onSubmit={form.onSubmit(handleSubmit)}>
-						<GeneralSection />
-						<div />
-					</form>
-				)}
-				{selectedTab === 'agents' && (
-					<form onSubmit={form.onSubmit(handleSubmit)}>
-						<AgentSection />
-					</form>
-				)}
-				{selectedTab === 'contacts' && <ContactSection />}
-				{selectedTab === 'dispositions' && <DispositionSection />}
-				{selectedTab === 'params' && (
-					<SectionCard
-						title='Working Hours'
-						description='Define the days and time ranges during which your agents are allowed to make calls.'
-					>
-						<ParametersSection
-							workingHours={form.values.workingHours || {}}
-							onChange={(day, field, value) => {
-								const updatedHours = { ...form.values.workingHours };
-								updatedHours[day] = { ...updatedHours[day], [field]: value };
-								form.setFieldValue('workingHours', updatedHours);
-							}}
-							onCopyToAll={(sourceDay) => {
-								const sourceHours = form.values.workingHours?.[sourceDay];
-								if (!sourceHours) return;
+		<ContentContainer
+			rightSection={rightComponent || <></>}
+			onBackClick={() => {
+				resetView();
+			}}
+			showBackButton
+		>
+			<CampaignFormProvider form={form}>
+				<LoadingOverlay visible={isCreating || isUpdating} />
+				<Stack gap='xs'>
+					<Box p='xs'>
+						<CampaignTabs />
+					</Box>
+					{selectedTab === 'general' && (
+						<form onSubmit={form.onSubmit(handleSubmit)}>
+							<GeneralSection />
+							<div />
+						</form>
+					)}
+					{selectedTab === 'agents' && (
+						<form onSubmit={form.onSubmit(handleSubmit)}>
+							<AgentSection />
+						</form>
+					)}
+					{selectedTab === 'contacts' && <ContactSection />}
+					{selectedTab === 'dispositions' && <DispositionSection />}
+					{selectedTab === 'conversations' && (
+						<ConversationsSection campaignId={campaign?.id} />
+					)}
+					{selectedTab === 'params' && (
+						<SectionCard
+							title='Working Hours'
+							description='Define the days and time ranges during which your agents are allowed to make calls.'
+						>
+							<ParametersSection
+								workingHours={form.values.workingHours || {}}
+								onChange={(day, field, value) => {
+									const updatedHours = { ...form.values.workingHours };
+									updatedHours[day] = { ...updatedHours[day], [field]: value };
+									form.setFieldValue('workingHours', updatedHours);
+								}}
+								onCopyToAll={(sourceDay) => {
+									const sourceHours = form.values.workingHours?.[sourceDay];
+									if (!sourceHours) return;
 
-								const updatedHours = { ...form.values.workingHours };
-								Object.keys(updatedHours).forEach((day) => {
-									updatedHours[day] = { ...sourceHours };
-								});
-								form.setFieldValue('workingHours', updatedHours);
-							}}
-						/>
-					</SectionCard>
-				)}
-			</Stack>
-		</CampaignFormProvider>
+									const updatedHours = { ...form.values.workingHours };
+									Object.keys(updatedHours).forEach((day) => {
+										updatedHours[day] = { ...sourceHours };
+									});
+									form.setFieldValue('workingHours', updatedHours);
+								}}
+							/>
+						</SectionCard>
+					)}
+				</Stack>
+			</CampaignFormProvider>
+		</ContentContainer>
 	);
 };

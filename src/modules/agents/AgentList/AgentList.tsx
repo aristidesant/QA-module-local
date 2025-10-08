@@ -35,6 +35,7 @@ import { OutboundCallForm } from '~/components/OutboundCallForm';
 import { modals } from '@mantine/modals';
 import AgentQuickEdit from '../AgentQuickEdit';
 import DuplicateAgentModal from './DuplicateAgentModal';
+import { FilterContainer, filterClasses } from '~/components/FilterContainer';
 
 interface AgentFilters {
 	name: string;
@@ -211,80 +212,76 @@ const AgentList: React.FC = () => {
 				<AgentCreate opened={opened} onClose={close} />
 
 				{/* Filters */}
-				<Paper className={classes.filtersWrapper}>
-					<Group gap='md' wrap='nowrap' className={classes.filtersContainer}>
-						<TextInput
-							placeholder='Search agents...'
-							leftSection={<IconSearch size={16} />}
-							value={filters.name}
-							onChange={(e) =>
-								handleFilterChange('name', e.currentTarget.value)
+				<FilterContainer>
+					<TextInput
+						placeholder='Search agents...'
+						leftSection={<IconSearch size={16} />}
+						value={filters.name}
+						onChange={(e) => handleFilterChange('name', e.currentTarget.value)}
+						className={filterClasses.searchInput}
+					/>
+					<Chip.Group
+						value={filters.type}
+						onChange={(value) => {
+							if (typeof value === 'string') {
+								handleFilterChange('type', value);
 							}
-							className={classes.searchInput}
-						/>
-						<Chip.Group
-							value={filters.type}
-							onChange={(value) => {
-								if (typeof value === 'string') {
-									handleFilterChange('type', value);
-								}
-							}}
-						>
-							<Group gap='xs' wrap='nowrap' className={classes.typeFilters}>
-								<Chip
-									value='all'
-									variant='light'
-									size='sm'
-									className={classes.typeChip}
-								>
-									All
-								</Chip>
-								<Chip
-									value='INBOUND'
-									variant='light'
-									color='teal'
-									size='sm'
-									className={classes.typeChip}
-								>
-									Inbound
-								</Chip>
-								<Chip
-									value='OUTBOUND'
-									variant='light'
-									color='blue'
-									size='sm'
-									className={classes.typeChip}
-								>
-									Outbound
-								</Chip>
-							</Group>
-						</Chip.Group>
-						<Select
-							placeholder='Page size'
-							data={['10', '20', '50', '100']}
-							value={pageSize.toString()}
-							onChange={(value) => {
-								if (value) {
-									setPageSize(parseInt(value));
-								}
-							}}
-							size='sm'
-							w={120}
-							allowDeselect={false}
-						/>
-						<ActionIcon
-							variant='subtle'
-							size='lg'
-							onClick={handleClearFilters}
-							className={classes.clearButton}
-							style={{ opacity: hasActiveFilters ? 1 : 0.3 }}
-							disabled={!hasActiveFilters}
-							title='Clear filters'
-						>
-							<IconX size={18} />
-						</ActionIcon>
-					</Group>
-				</Paper>
+						}}
+					>
+						<Group gap='xs' wrap='nowrap' className={filterClasses.typeFilters}>
+							<Chip
+								value='all'
+								variant='light'
+								size='sm'
+								className={filterClasses.typeChip}
+							>
+								All
+							</Chip>
+							<Chip
+								value='INBOUND'
+								variant='light'
+								color='teal'
+								size='sm'
+								className={filterClasses.typeChip}
+							>
+								Inbound
+							</Chip>
+							<Chip
+								value='OUTBOUND'
+								variant='light'
+								color='blue'
+								size='sm'
+								className={filterClasses.typeChip}
+							>
+								Outbound
+							</Chip>
+						</Group>
+					</Chip.Group>
+					<Select
+						placeholder='Page size'
+						data={['10', '20', '50', '100']}
+						value={pageSize.toString()}
+						onChange={(value) => {
+							if (value) {
+								setPageSize(parseInt(value));
+							}
+						}}
+						size='sm'
+						w={120}
+						allowDeselect={false}
+					/>
+					<ActionIcon
+						variant='subtle'
+						size='lg'
+						onClick={handleClearFilters}
+						className={filterClasses.clearButton}
+						style={{ opacity: hasActiveFilters ? 1 : 0.3 }}
+						disabled={!hasActiveFilters}
+						title='Clear filters'
+					>
+						<IconX size={18} />
+					</ActionIcon>
+				</FilterContainer>
 
 				{/* Loading State */}
 				{isLoading && (

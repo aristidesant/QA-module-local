@@ -1,36 +1,33 @@
-import { ContentContainer } from "~/components/ContentContainer/ContentContainer";
-import SectionCard from "~/components/SectionCard";
-import ConversationsList from "../ConversationsList";
-import { useConversationStore } from "~/stores/useConversationStore";
-import FallbackRightComponent from "~/components/FallbackRightComponent";
-import { useEffect } from "react";
+import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
+import { useConversationStore } from '~/stores/useConversationStore';
+import FallbackRightComponent from '~/components/FallbackRightComponent';
+import { useEffect } from 'react';
+import ConversationsList from '~/modules/conversations/ConversationsList';
 
 const ConversationsPage = () => {
-  const { selectionContent, clearSelection } = useConversationStore(
-    (state) => state
-  );
+	const { selectionContent, clearSelection } = useConversationStore(
+		(state) => state
+	);
 
-  useEffect(() => {
-    return () => {
-      clearSelection?.();
-    };
-  }, []);
+	useEffect(() => {
+		return () => {
+			clearSelection?.();
+		};
+	}, [clearSelection]);
 
-  return (
-    <ContentContainer
-      description="Manage, review, and take action on conversations across your campaigns. Select a conversation to view transcripts, agent notes, and next steps."
-      title="Conversations"
-      rightSection={
-        selectionContent || (
-          <FallbackRightComponent description="No conversation selected. Choose a conversation to view transcripts, notes, and associated actions." />
-        )
-      }
-    >
-      <SectionCard>
-        <ConversationsList />
-      </SectionCard>
-    </ContentContainer>
-  );
+	return (
+		<ContentContainer
+			description='Manage, review, and take action on conversations across your campaigns. Select a conversation to view transcripts, agent notes, and next steps.'
+			title='Conversations'
+			rightSection={
+				selectionContent || (
+					<FallbackRightComponent description='No conversation selected. Choose a conversation to view transcripts, notes, and associated actions.' />
+				)
+			}
+		>
+			<ConversationsList />
+		</ContentContainer>
+	);
 };
 
 export default ConversationsPage;

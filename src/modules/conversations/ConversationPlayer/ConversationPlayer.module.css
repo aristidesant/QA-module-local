@@ -1,99 +1,135 @@
 .container {
-  width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
-  padding: 1.5rem;
-  background-color: var(--mantine-color-white);
-  border: 1px solid var(--mantine-color-gray-2);
+	width: 100%;
+	max-width: 480px;
+	margin: 0 auto;
+	padding: 1rem;
+	background-color: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-2);
 }
 
 .emptyState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 1rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 2rem 1rem;
 }
 
 .emptyIcon {
-  color: var(--mantine-color-gray-4);
+	color: var(--mantine-color-gray-4);
 }
 
 .progressSection {
-  width: 100%;
+	width: 100%;
+	padding: 0.5rem 0;
 }
 
 .progressSlider {
-  width: 100%;
+	width: 100%;
+	padding: 0.25rem 0;
 }
 
 .sliderTrack {
-  height: 6px;
-  background-color: var(--mantine-color-gray-2);
-  border-radius: 3px;
+	height: 6px;
+	background-color: var(--mantine-color-gray-2);
+	border-radius: 3px;
 }
 
 .sliderBar {
-  background-color: var(--mantine-color-blue-5);
-  height: 6px;
-  border-radius: 3px;
+	background-color: var(--mantine-color-blue-6);
+	height: 6px;
+	border-radius: 3px;
 }
 
 .sliderThumb {
-  width: 18px;
-  height: 18px;
-  background-color: var(--mantine-color-blue-6);
-  border: 2px solid var(--mantine-color-white);
-  border-radius: 50%;
-  transition: transform 0.2s ease;
+	width: 16px;
+	height: 16px;
+	background-color: var(--mantine-color-blue-7);
+	border: 3px solid var(--mantine-color-white);
+	border-radius: 50%;
+	transition: background-color 0.2s ease;
 }
 
 .sliderThumb:hover {
-  transform: scale(1.1);
+	background-color: var(--mantine-color-blue-8);
 }
 
 .timeText {
-  font-family: var(--mantine-font-family-monospace);
-  font-weight: 500;
-  letter-spacing: 0.5px;
+	font-family: var(--mantine-font-family-monospace);
+	font-weight: 600;
+	letter-spacing: 0.5px;
+	font-size: 11px;
+	color: var(--mantine-color-gray-7);
 }
 
 .controlsGroup {
-  padding: 0.5rem 0;
+	padding: 0.5rem 0;
+}
+
+.playbackControls {
+	padding: 0.5rem 0;
 }
 
 .playButton {
-  transition: transform 0.2s ease;
+	transition: background-color 0.2s ease;
 }
 
-.playButton:active {
-  transform: scale(0.95);
+.playButton:hover {
+	background-color: var(--mantine-color-blue-7);
 }
 
 .controlButton {
-  color: var(--mantine-color-gray-6);
-  transition: color 0.2s ease, transform 0.2s ease;
+	color: var(--mantine-color-gray-6);
+	transition: color 0.15s ease;
 }
 
 .controlButton:hover {
-  color: var(--mantine-color-gray-8);
+	color: var(--mantine-color-blue-6);
+	background-color: var(--mantine-color-blue-0);
 }
 
-.controlButton:active {
-  transform: scale(0.9);
+.volumeGroup {
+	padding: 0.75rem 0;
+	flex: 1;
+	background-color: var(--mantine-color-gray-0);
+	border-radius: var(--mantine-radius-md);
+	padding: 0.5rem 0.75rem;
+}
+
+.volumeIcon {
+	color: var(--mantine-color-blue-6);
+	flex-shrink: 0;
+	transition: color 0.2s ease;
+}
+
+.volumeIcon:hover {
+	color: var(--mantine-color-blue-7);
+}
+
+.volumeSlider {
+	flex: 1;
+}
+
+.speedSelect {
+	min-width: 80px;
+	border-radius: var(--mantine-radius-md);
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .container {
-    max-width: 100%;
-    padding: 1rem;
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-  }
-  
-  .controlsGroup {
-    gap: 0.75rem;
-  }
+	.container {
+		max-width: 100%;
+		padding: 0.75rem;
+		border-radius: 0;
+		border-left: none;
+		border-right: none;
+	}
+
+	.controlsGroup {
+		gap: 0.5rem;
+	}
+
+	.volumeGroup {
+		padding: 0.25rem 0;
+	}
 }

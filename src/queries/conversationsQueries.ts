@@ -1,5 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+	useMutation,
+	useQuery,
+	useQueryClient,
+	keepPreviousData,
+} from '@tanstack/react-query';
 import conversationsApi, {
+	Conversation,
 	type PostCallDataParams,
 	type StartDemoParams,
 	type UpdateConversationParams,
@@ -7,21 +13,24 @@ import conversationsApi, {
 import type {
 	ConversationDemoModel,
 	ConversationsModel,
-	ConversationTableModel,
+	PaginatedConversationsResponse,
 } from '~/models/ConversationsModels';
 
 const getApi = () => conversationsApi();
+
+type ConversationsQueryParams = {
+	campaignId?: string | number | null;
+	limit?: number;
+	offset?: number;
+	search?: string;
+};
 
 // Create a new conversation
 // TODO: Replace 'any' with a specific CreateConversationParams type if available
 export const useCreateConversation = () => {
 	const queryClient = useQueryClient();
 
-	return useMutation<
-		import('~/api/conversationsApi').Conversation,
-		unknown,
-		Record<string, unknown>
-	>({
+	return useMutation<Conversation, unknown, Record<string, unknown>>({
 		mutationFn: async (data) => {
 			const api = getApi();
 			return api.createConversation(data);
@@ -32,21 +41,27 @@ export const useCreateConversation = () => {
 	});
 };
 
-// Get all conversations for current client
-export const useGetConversations = () => {
-	return useQuery<ConversationTableModel[]>({
-		queryKey: ['conversations'],
+// Get all conversations for current client or for a specific campaign
+export const useGetConversations = (params?: ConversationsQueryParams) => {
+	const { campaignId, limit, offset, search } = params || {};
+
+	return useQuery<PaginatedConversationsResponse<ConversationsModel>>({
+		queryKey: ['conversations', campaignId ?? 'all', { limit, offset, search }],
 		queryFn: async () => {
 			const api = getApi();
-			return api.getConversations();
+			return api.getConversations(campaignId ?? undefined, {
+				limit,
+				offset,
+				search,
+			});
 		},
-		refetchOnWindowFocus: false,
-		retry: false,
+		staleTime: 30_000,
+		placeholderData: keepPreviousData,
+		enabled: campaignId ? Boolean(campaignId) : true,
 	});
 };
 
 // Start a new conversation
-// TODO: Replace 'Record<string, unknown>' with a specific StartConversationParams type if available
 export const useStartConversation = () => {
 	const queryClient = useQueryClient();
 

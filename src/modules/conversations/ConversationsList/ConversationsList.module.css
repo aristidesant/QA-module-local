@@ -1,439 +1,124 @@
-/* Base styles */
-.tableContainer {
-  background-color: var(--mantine-color-white);
-  border-radius: var(--mantine-radius-md);
-  overflow: hidden;
-  padding: 0;
-  position: relative;
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
 }
 
-/* Responsive scroll container for table */
-.scrollContainer {
-  width: 100%;
-  overflow-x: auto;
-  background: var(--mantine-color-white);
-  border-radius: var(--mantine-radius-md);
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-  scrollbar-width: thin;
-  scrollbar-color: var(--mantine-color-gray-4) transparent;
+.toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-sm);
+	flex-wrap: wrap;
+	background-color: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-sm);
 }
 
-.scrollContainer::-webkit-scrollbar {
-  height: 6px;
+.searchInput {
+	flex: 1;
+	min-width: 220px;
 }
 
-.scrollContainer::-webkit-scrollbar-track {
-  background: var(--mantine-color-gray-1);
+.actions {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
 }
 
-.scrollContainer::-webkit-scrollbar-thumb {
-  background-color: var(--mantine-color-gray-4);
-  border-radius: 3px;
+.tableWrapper {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	overflow: hidden;
+	background-color: var(--mantine-color-white);
 }
 
-.scrollContainer::-webkit-scrollbar-thumb:hover {
-  background-color: var(--mantine-color-gray-5);
-}
-
-/* Table styles */
-.table {
-  background-color: var(--mantine-color-white);
-  border-radius: var(--mantine-radius-md);
-  overflow: hidden;
-  border-collapse: separate;
-  border-spacing: 0;
-  width: 100%;
-}
-
-/* Header styles */
-.header {
-  background-color: var(--mantine-color-gray-0);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 600;
-  font-size: 0.7rem;
-  color: var(--mantine-color-gray-6);
-  padding: 0.5rem 0.75rem;
-  height: 36px;
-  white-space: nowrap;
-}
-
-/* Row styles */
-.row {
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-  font-size: 0.8rem;
-  height: 40px;
-}
-
-.row:hover {
-  background-color: var(--mantine-color-gray-0);
+.emptyWrapper {
+	padding: var(--mantine-spacing-xl);
 }
 
 .selectedRow {
-  background-color: var(--mantine-color-blue-0);
-  border-left: 2px solid var(--mantine-color-blue-6);
+	background-color: var(--mantine-color-blue-0);
 }
 
-/* Cell styles */
-.cell {
-  padding: 0.5rem 0.75rem;
-  vertical-align: middle;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 200px;
+.contactCell {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
 }
 
-/* Status badge styles */
+.contactName {
+	text-transform: capitalize;
+}
+
+.contactMeta {
+	letter-spacing: 0.02em;
+}
+
+.agentName {
+	text-transform: capitalize;
+}
+
 .statusBadge {
-  text-transform: none;
-  letter-spacing: 0.02em;
-  font-size: var(--mantine-font-size-xs);
-  padding: 0 var(--mantine-spacing-xs);
-  height: 24px;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  border-radius: var(--mantine-radius-sm);
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.statusFailed {
-  background-color: var(--mantine-color-red-1);
-  color: var(--mantine-color-red-7);
-  border: 1px solid var(--mantine-color-red-3);
-}
-
-.statusInitiated {
-  background-color: var(--mantine-color-yellow-1);
-  color: var(--mantine-color-yellow-7);
-  border: 1px solid var(--mantine-color-yellow-3);
+	font-weight: 600;
+	text-transform: capitalize;
 }
 
 .statusCompleted {
-  background-color: var(--mantine-color-green-1);
-  color: var(--mantine-color-green-7);
-  border: 1px solid var(--mantine-color-green-3);
+	background-color: var(--mantine-color-green-1);
+	color: var(--mantine-color-green-7);
 }
 
-/* Compact layout adjustments */
-.compactCell {
-  padding: 0.25rem 0.5rem;
-  font-size: 0.8rem;
+.statusInProgress {
+	background-color: var(--mantine-color-blue-1);
+	color: var(--mantine-color-blue-7);
 }
 
-/* Ellipsis for text overflow */
-.textEllipsis {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-  display: inline-block;
+.statusFailed {
+	background-color: var(--mantine-color-red-1);
+	color: var(--mantine-color-red-7);
 }
 
-/* Phone number styles */
-.phoneNumber {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 500;
-  color: var(--mantine-color-gray-8);
+.statusPending {
+	background-color: var(--mantine-color-yellow-1);
+	color: var(--mantine-color-yellow-7);
 }
 
-/* Text styles */
-.text {
-  font-size: var(--mantine-font-size-sm);
-  color: var(--mantine-color-gray-7);
+.statusUnknown {
+	background-color: var(--mantine-color-gray-1);
+	color: var(--mantine-color-gray-7);
 }
 
-/* Loading container */
-.loadingContainer {
-  padding: var(--mantine-spacing-xl);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.dateCell {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
 }
 
-/* Empty state */
-.emptyState {
-  padding: var(--mantine-spacing-xl);
-  text-align: center;
-  color: var(--mantine-color-gray-6);
+.dateRelative {
+	color: var(--mantine-color-blue-7);
+	text-transform: capitalize;
 }
 
-/* Filters container */
-.filtersContainer {
-  padding: var(--mantine-spacing-md);
-  border-bottom: 1px solid var(--mantine-color-gray-3);
-  background-color: var(--mantine-color-gray-0);
+.dateAbsolute {
+	font-family: var(--mantine-font-family-monospace);
 }
 
-/* Sort indicators */
-.sortIndicator {
-  display: inline-flex;
-  align-items: center;
-  margin-left: var(--mantine-spacing-xs);
-  opacity: 0.7;
-  transition: opacity 0.15s ease;
+.durationCell {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
 }
 
-.sortIndicator:hover {
-  opacity: 1;
+.duration {
+	color: var(--mantine-color-gray-8);
 }
 
-/* Pagination container */
-.paginationContainer {
-  border-top: 1px solid var(--mantine-color-gray-3);
-  background-color: var(--mantine-color-gray-0);
-  padding: var(--mantine-spacing-md);
+.durationActive {
+	color: var(--mantine-color-blue-7);
 }
 
-/* Filter buttons */
-.filterButton {
-  transition: all 0.15s ease;
-}
-
-.filterButton:hover {
-  background-color: var(--mantine-color-blue-0);
-  color: var(--mantine-color-blue-7);
-}
-
-/* Responsive column visibility */
-.columnHideMobile {
-  display: table-cell;
-}
-
-.columnHideTablet {
-  display: table-cell;
-}
-
-.columnHideSmall {
-  display: table-cell;
-}
-
-@media (max-width: 768px) {
-  .columnHideMobile {
-    display: none !important;
-  }
-}
-
-@media (max-width: 992px) {
-  .columnHideTablet {
-    display: none !important;
-  }
-}
-
-@media (max-width: 576px) {
-  .columnHideSmall {
-    display: none !important;
-  }
-}
-
-/* Responsive design */
-@media (max-width: 1200px) {
-  .tableContainer {
-    font-size: var(--mantine-font-size-sm);
-  }
-  
-  .header {
-    font-size: 0.65rem;
-    padding: 0.4rem 0.6rem;
-  }
-  
-  .cell {
-    padding: 0.4rem 0.6rem;
-    max-width: 150px;
-  }
-}
-
-@media (max-width: 992px) {
-  .tableContainer {
-    border-radius: var(--mantine-radius-sm);
-  }
-  
-  .scrollContainer {
-    border-radius: var(--mantine-radius-sm);
-  }
-  
-  .table {
-    font-size: var(--mantine-font-size-sm);
-    border-radius: var(--mantine-radius-sm);
-  }
-
-  .header {
-    font-size: 0.6rem;
-    padding: 0.35rem 0.5rem;
-    height: 32px;
-  }
-
-  .cell {
-    padding: 0.35rem 0.5rem;
-    max-width: 120px;
-    font-size: var(--mantine-font-size-sm);
-  }
-
-  .row {
-    height: 36px;
-    font-size: var(--mantine-font-size-sm);
-  }
-
-  .statusBadge {
-    font-size: 0.65rem;
-    padding: 0.1rem 0.4rem;
-    height: 20px;
-  }
-  
-  .textEllipsis {
-    max-width: 100px;
-  }
-}
-
-@media (max-width: 768px) {
-  .tableContainer {
-    margin: 0;
-    border-radius: var(--mantine-radius-xs);
-  }
-  
-  .scrollContainer {
-    border-radius: var(--mantine-radius-xs);
-  }
-
-  .table {
-    font-size: var(--mantine-font-size-xs);
-    border-radius: var(--mantine-radius-xs);
-  }
-
-  .header {
-    font-size: 0.55rem;
-    padding: 0.3rem 0.4rem;
-    height: 28px;
-    letter-spacing: 0.03em;
-  }
-
-  .cell {
-    padding: 0.3rem 0.4rem;
-    max-width: 100px;
-    font-size: var(--mantine-font-size-xs);
-  }
-
-  .row {
-    height: 32px;
-    font-size: var(--mantine-font-size-xs);
-  }
-
-  .statusBadge {
-    font-size: 0.6rem;
-    padding: 0.05rem 0.3rem;
-    height: 18px;
-    min-width: 50px;
-    justify-content: center;
-  }
-
-  .phoneNumber {
-    gap: 4px;
-    font-size: var(--mantine-font-size-xs);
-  }
-  
-  .textEllipsis {
-    max-width: 80px;
-  }
-
-  .filtersContainer {
-    flex-direction: column;
-    gap: var(--mantine-spacing-sm);
-    padding: var(--mantine-spacing-sm);
-  }
-
-  .paginationContainer {
-    flex-direction: column;
-    gap: var(--mantine-spacing-sm);
-    text-align: center;
-    padding: var(--mantine-spacing-sm);
-  }
-}
-
-@media (max-width: 576px) {
-  .tableContainer {
-    font-size: 0.75rem;
-  }
-
-  .header {
-    font-size: 0.5rem;
-    padding: 0.25rem 0.3rem;
-    height: 24px;
-    font-weight: 700;
-  }
-
-  .cell {
-    padding: 0.25rem 0.3rem;
-    max-width: 70px;
-    font-size: 0.75rem;
-  }
-
-  .row {
-    height: 28px;
-    font-size: 0.75rem;
-  }
-
-  .statusBadge {
-    font-size: 0.55rem;
-    padding: 0.05rem 0.25rem;
-    height: 16px;
-    min-width: 45px;
-    border-radius: 8px;
-  }
-
-  .phoneNumber {
-    gap: 2px;
-    font-size: 0.7rem;
-  }
-  
-  .textEllipsis {
-    max-width: 60px;
-  }
-
-  .text {
-    font-size: 0.75rem;
-  }
-
-  /* Stack pagination elements on very small screens */
-  .paginationContainer {
-    gap: var(--mantine-spacing-xs);
-  }
-}
-
-@media (max-width: 480px) {
-  .header {
-    font-size: 0.45rem;
-    padding: 0.2rem 0.25rem;
-    height: 20px;
-  }
-
-  .cell {
-    padding: 0.2rem 0.25rem;
-    max-width: 50px;
-    font-size: 0.7rem;
-  }
-
-  .row {
-    height: 24px;
-    font-size: 0.7rem;
-  }
-
-  .statusBadge {
-    font-size: 0.5rem;
-    padding: 0.05rem 0.2rem;
-    height: 14px;
-    min-width: 40px;
-  }
-  
-  .textEllipsis {
-    max-width: 45px;
-  }
-
-  .phoneNumber {
-    font-size: 0.65rem;
-  }
+.durationContext {
+	text-transform: capitalize;
 }

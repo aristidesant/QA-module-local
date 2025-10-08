@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Card, Group, Stack, Button, LoadingOverlay } from '@mantine/core';
+import { Group, Stack, Button, LoadingOverlay, Box } from '@mantine/core';
 import { IconEdit, IconDeviceFloppy } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import type { Scheduler } from '~/models/SchedulerModel';
@@ -151,7 +151,7 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 	};
 
 	return (
-		<Card withBorder p='md' radius='md'>
+		<Box>
 			<LoadingOverlay
 				visible={
 					updateScheduleMutation.isPending ||
@@ -209,6 +209,6 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 					</SchedulerFormProvider>
 				)}
 			</Stack>
-		</Card>
+		</Box>
 	);
 };

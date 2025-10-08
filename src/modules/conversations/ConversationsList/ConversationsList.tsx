@@ -1,130 +1,205 @@
-import { useCallback, useState } from 'react';
-import { Table, Loader, Center, Text, Box, Stack } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+	ActionIcon,
+	Center,
+	Group,
+	Text,
+	TextInput,
+	Tooltip,
+} from '@mantine/core';
+import {
+	IconMessagesOff,
+	IconRefresh,
+	IconSearch,
+	IconFileExcel,
+} from '@tabler/icons-react';
+import BaseTable from '~/components/BaseTable';
+import EmptyState from '~/components/EmptyState';
+import PaginationControls from '~/components/PaginationControls';
+import { usePagination } from '~/hooks/usePagination';
 import { useGetConversations } from '~/queries/conversationsQueries';
 import { useConversationStore } from '~/stores/useConversationStore';
-import { ConversationDetails } from '../ConversationDetails/ConversationDetails';
+import ConversationDetails from '~/modules/conversations/ConversationDetails';
 import type { ConversationsModel } from '~/models/ConversationsModels';
-import SectionCard from '~/components/SectionCard';
-import { useConversationsTable } from './useConversationsTable';
-import { TableHeader } from './components/TableHeader';
-import { TableBody } from './components/TableBody';
-import { TablePagination } from './components/TablePagination';
-import { TableToolbar } from './components/TableToolbar';
+import { useConversationsColumns } from './useConversationsColumns';
+import ExportToExcelModal from './components/ExportToExcelModal';
 import styles from './ConversationsList.module.css';
 
-export function ConversationsList() {
-	const {
-		data: typedConversations,
-		isLoading,
-		isFetching,
-		isError,
-		refetch: handleRefresh,
-	} = useGetConversations();
-	const { selectedId, setSelection } = useConversationStore();
-	const isMobile = useMediaQuery('(max-width: 768px)');
+type ConversationsListProps = {
+	campaignId?: number | string;
+	onConversationClick?: (conversation: ConversationsModel) => void;
+	selectedConversationId?: number | null;
+	searchPlaceholder?: string;
+	className?: string;
+};
 
-	// Stable callback for row clicks
-	const handleRowClick = useCallback(
-		(conversation: ConversationsModel) => {
-			setSelection(
-				conversation.id,
-				<ConversationDetails conversation={conversation} />
-			);
-		},
-		[setSelection]
-	);
-
-	const [globalFilter, setGlobalFilter] = useState('');
-
-	const { table, getRowProps, pageSizeOptions, totalRows, currentPageRows } =
-		useConversationsTable({
-			data: typedConversations,
-			onRowClick: handleRowClick,
-			selectedRowId: selectedId,
-			globalFilter,
-			onGlobalFilterChange: setGlobalFilter,
-		});
-	if (isLoading) {
-		return (
-			<Center p='xl'>
-				<Loader size='md' />
-			</Center>
-		);
-	}
-
-	if (isError) {
-		return (
-			<Center p='xl'>
-				<Text c='red'>Error loading conversations</Text>
-			</Center>
-		);
-	}
-
-	if (!typedConversations || typedConversations.length === 0) {
-		return (
-			<Center p='xl'>
-				<Text c='dimmed'>No conversations found</Text>
-			</Center>
-		);
-	}
-
-	// Dynamic minWidth based on screen size
-	const getMinWidth = () => {
-		if (isMobile) return 500;
-		return 700;
+const ConversationsList: React.FC<ConversationsListProps> = ({
+	campaignId,
+	onConversationClick,
+	selectedConversationId,
+	searchPlaceholder = 'Search conversations',
+	className,
+}) => {
+	const pagination = usePagination({
+		initialItemsPerPage: 10,
+		searchDebounceMs: 400,
+	});
+	const paginationParams = pagination.getApiParams() as {
+		limit: number;
+		offset: number;
+		name?: string;
 	};
 
-	return (
-		<SectionCard
-			title='Conversations'
-			description='Click on a conversation to view details'
-		>
-			<Stack gap={0}>
-				<Box className={styles.tableContainer}>
-					<TableToolbar
-						table={table}
-						globalFilter={globalFilter}
-						onGlobalFilterChange={setGlobalFilter}
-						onRefresh={handleRefresh}
-						isLoading={isLoading || isFetching}
-					/>
+	const { limit, offset, name } = paginationParams;
 
-					{/* Responsive scroll container for the table */}
-					<Table.ScrollContainer
-						minWidth={getMinWidth()}
-						className={styles.scrollContainer}
-						type='native'
-					>
-						<Table
-							highlightOnHover
-							withTableBorder
-							verticalSpacing={isMobile ? 'xs' : 'sm'}
-							horizontalSpacing={isMobile ? 'xs' : 'md'}
-							className={styles.table}
-						>
-							<TableHeader
-								headers={table.getHeaderGroups()[0]?.headers || []}
-							/>
+	const { data, isLoading, isFetching, isError, error, refetch } =
+		useGetConversations({
+			campaignId,
+			limit,
+			offset,
+			search: name,
+		});
 
-							<TableBody
-								rows={currentPageRows || []}
-								getRowProps={getRowProps}
-								isLoading={isLoading}
-								isEmpty={(currentPageRows?.length || 0) === 0}
-							/>
-						</Table>
-					</Table.ScrollContainer>
-
-					<TablePagination
-						table={table}
-						totalRows={totalRows}
-						pageSizeOptions={pageSizeOptions}
-					/>
-				</Box>
-			</Stack>
-		</SectionCard>
+	const { selectedId, setSelection } = useConversationStore();
+	const [internalSelectedId, setInternalSelectedId] = useState<number | null>(
+		null
 	);
-}
+	const [exportModalOpened, setExportModalOpened] = useState(false);
+
+	useEffect(() => {
+		setInternalSelectedId(null);
+	}, [campaignId]);
+
+	const conversations = data?.conversations ?? [];
+	const totalItems = data?.total ?? 0;
+
+	const totalPages = useMemo(() => {
+		return pagination.calculateTotalPages(totalItems);
+	}, [pagination, totalItems]);
+
+	const isTableLoading = isLoading || isFetching;
+
+	const effectiveSelectedId =
+		selectedConversationId ??
+		(onConversationClick ? internalSelectedId : selectedId);
+
+	const userTimezone = useMemo(() => {
+		// Hardcode to AST (Atlantic Standard Time, UTC-4) as requested
+		return 'America/Puerto_Rico';
+	}, []);
+
+	const handleRowClick = useCallback(
+		(conversation: ConversationsModel) => {
+			if (onConversationClick) {
+				setInternalSelectedId(conversation.id);
+				onConversationClick(conversation);
+				return;
+			}
+
+			setSelection(
+				conversation.id,
+				<ConversationDetails id={conversation.id} />
+			);
+		},
+		[onConversationClick, setSelection]
+	);
+
+	const handleItemsPerPageChange = (value: string | null) => {
+		if (value) {
+			pagination.setItemsPerPage(parseInt(value, 10));
+		}
+	};
+
+	const columns = useConversationsColumns(userTimezone);
+
+	return (
+		<div className={`${styles.root} ${className ?? ''}`}>
+			<Group className={styles.toolbar}>
+				<TextInput
+					className={styles.searchInput}
+					placeholder={searchPlaceholder}
+					value={pagination.searchValue}
+					onChange={(event) =>
+						pagination.setSearchValue(event.currentTarget.value)
+					}
+					leftSection={<IconSearch size={16} />}
+				/>
+				<div className={styles.actions}>
+					<Tooltip label='Refresh conversations' withArrow>
+						<ActionIcon
+							variant='default'
+							size='md'
+							onClick={() => refetch()}
+							aria-label='Refresh conversations'
+							loading={isFetching}
+							disabled={isFetching}
+						>
+							<IconRefresh size={16} />
+						</ActionIcon>
+					</Tooltip>
+					<Tooltip label='Export conversations' withArrow>
+						<ActionIcon
+							variant='default'
+							size='md'
+							onClick={() => setExportModalOpened(true)}
+							aria-label='Export conversations'
+						>
+							<IconFileExcel size={16} />
+						</ActionIcon>
+					</Tooltip>
+				</div>
+			</Group>
+
+			{isError ? (
+				<Center className={styles.emptyWrapper}>
+					<Text size='sm' c='red'>
+						{error instanceof Error
+							? error.message
+							: 'Unable to load conversations. Please try again.'}
+					</Text>
+				</Center>
+			) : conversations.length === 0 && !isTableLoading ? (
+				<div className={styles.emptyWrapper}>
+					<EmptyState
+						icon={<IconMessagesOff size={48} stroke={1.2} />}
+						title='No conversations yet'
+						subtitle='We will display conversations as soon as they are available.'
+					/>
+				</div>
+			) : (
+				<div className={styles.tableWrapper}>
+					<BaseTable
+						data={conversations}
+						columns={columns}
+						isLoading={isTableLoading}
+						density='compact'
+						onRowClick={handleRowClick}
+						getRowClassName={(row) =>
+							row.original.id === effectiveSelectedId
+								? styles.selectedRow
+								: undefined
+						}
+					/>
+				</div>
+			)}
+
+			<PaginationControls
+				currentPage={pagination.currentPage}
+				totalPages={totalPages}
+				itemsPerPage={pagination.itemsPerPage}
+				totalItems={totalItems}
+				onPageChange={pagination.setCurrentPage}
+				onItemsPerPageChange={handleItemsPerPageChange}
+				searchTerm={pagination.debouncedSearch}
+				isLoading={isTableLoading}
+				itemLabel='conversations'
+			/>
+			<ExportToExcelModal
+				opened={exportModalOpened}
+				onClose={() => setExportModalOpened(false)}
+			/>
+		</div>
+	);
+};
 
 export default ConversationsList;

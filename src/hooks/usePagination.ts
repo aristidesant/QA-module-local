@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useDebouncedValue } from "@mantine/hooks";
+import { useState, useEffect } from 'react';
+import { useDebouncedValue } from '@mantine/hooks';
 
 interface UsePaginationProps {
 	initialItemsPerPage?: number;
@@ -28,7 +28,7 @@ export const usePagination = ({
 }: UsePaginationProps = {}): UsePaginationReturn => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [itemsPerPage, setItemsPerPage] = useState(initialItemsPerPage);
-	const [searchValue, setSearchValue] = useState("");
+	const [searchValue, setSearchValue] = useState('');
 
 	// Debounce search to avoid too many API calls
 	const [debouncedSearch] = useDebouncedValue(searchValue, searchDebounceMs);
@@ -46,7 +46,7 @@ export const usePagination = ({
 		};
 
 		if (debouncedSearch.trim()) {
-			return { ...params, firstName: debouncedSearch.trim() };
+			return { ...params, name: debouncedSearch.trim() };
 		}
 
 		return params;
