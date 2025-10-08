@@ -1,7 +1,7 @@
-import { type ReactNode } from "react";
-import { IconArrowLeft } from "@tabler/icons-react";
-import styles from "./ContentContainer.module.css";
-import { Divider, Text, Title, ActionIcon, Tooltip, Flex } from "@mantine/core";
+import { type ReactNode } from 'react';
+import { IconArrowLeft } from '@tabler/icons-react';
+import styles from './ContentContainer.module.css';
+import { Divider, Text, Title, ActionIcon, Tooltip, Flex } from '@mantine/core';
 
 export interface ContentContainerProps {
 	children: ReactNode;
@@ -11,6 +11,7 @@ export interface ContentContainerProps {
 	description?: string;
 	showBackButton?: boolean;
 	rightSectionTitle?: ReactNode;
+	mainScroll?: boolean; // new prop to control left/main scroll
 
 	onBackClick?: () => void;
 }
@@ -23,36 +24,37 @@ export const ContentContainer = ({
 	showBackButton = false,
 	rightSectionTitle,
 	titleRight,
+	mainScroll = true,
 	onBackClick,
 }: ContentContainerProps) => (
 	<div className={styles.container}>
 		<div className={styles.main}>
 			{(title || description || showBackButton) && (
 				<div className={styles.header}>
-					<Flex gap={"xs"} align={"center"} justify={"space-between"}>
-						<Flex gap={"xs"} align={"center"}>
+					<Flex gap={'xs'} align={'center'} justify={'space-between'}>
+						<Flex gap={'xs'} align={'center'}>
 							{showBackButton && (
-								<Tooltip label="Back" position="bottom" withArrow>
+								<Tooltip label='Back' position='bottom' withArrow>
 									<ActionIcon
-										variant="light"
-										color="gray"
-										aria-label="Back"
+										variant='light'
+										color='gray'
+										aria-label='Back'
 										onClick={onBackClick}
-										size="lg"
+										size='lg'
 									>
 										<IconArrowLeft size={20} />
 									</ActionIcon>
 								</Tooltip>
 							)}
 							{(title || description) && (
-								<Flex direction={"column"}>
+								<Flex direction={'column'}>
 									{title && (
-										<Title c="dark" order={5}>
+										<Title c='dark' order={5}>
 											{title}
 										</Title>
 									)}
 									{description && (
-										<Text fz="xs" c="dimmed">
+										<Text fz='xs' c='dimmed'>
 											{description}
 										</Text>
 									)}
@@ -61,10 +63,14 @@ export const ContentContainer = ({
 						</Flex>
 						{titleRight && titleRight}
 					</Flex>
-					<Divider mt="xs" className={styles.divider} />
+					<Divider mt='xs' className={styles.divider} />
 				</div>
 			)}
-			<div className={styles.content}>{children}</div>
+			<div
+				className={`${styles.content} ${!mainScroll ? styles.noMainScroll : ''}`}
+			>
+				{children}
+			</div>
 		</div>
 		{rightSection && (
 			<aside className={styles.rightSection}>

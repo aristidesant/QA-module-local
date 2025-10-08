@@ -13,40 +13,31 @@ import styles from './CampaignsPage.module.css';
 
 export default function CampaignsPage() {
 	const [activeTab, setActiveTab] = useState<string | null>('campaigns');
-
 	const { selectedCampaign, editCampaign } = useCampaignsStore(
 		(state) => state
 	);
 	const { data: campaign } = useGetCampaign(
-		selectedCampaign?.id ? `${selectedCampaign?.id}` : ``
-	); // Ensure campaign data is fresh
+		selectedCampaign?.id ? `${selectedCampaign?.id}` : ''
+	);
 
-	// Determine the right section based on the state
-	const getRightSection = () => {
-		if (activeTab === 'campaigns' && editCampaign && campaign) {
-			return null; // CampaignsForm will handle its own layout
-		}
-		return null;
-	};
-
-	// Render campaigns content based on state
+	// Only campaigns tab needs special handling (form vs list). Other tabs just render content.
 	const renderCampaignsContent = () => {
-		if (editCampaign && campaign) {
+		if (editCampaign && campaign)
 			return <CampaignsForm campaign={campaign as Campaign} />;
-		}
-		return <CampaignsList />;
+		return <CampaignsList />; // This component already provides its own ContentContainer with rightSection scrolling
 	};
 
 	return (
+		// For categories/objectives we still want a shell, so we keep one top-level container
 		<ContentContainer
 			title='Campaigns'
 			description='Manage your campaigns, organize them with categories, and define objectives'
-			rightSection={getRightSection()}
+			mainScroll={activeTab !== 'campaigns'}
 		>
 			<Tabs
 				value={activeTab}
 				onChange={setActiveTab}
-				className={styles.tabs}
+				className={styles.tabsSimplified}
 				keepMounted={false}
 				variant='default'
 			>
@@ -74,15 +65,13 @@ export default function CampaignsPage() {
 					</Tabs.Tab>
 				</Tabs.List>
 
-				<Tabs.Panel value='campaigns' className={styles.tabPanel}>
+				<Tabs.Panel value='campaigns' className={styles.tabPanelNoScroll}>
 					{renderCampaignsContent()}
 				</Tabs.Panel>
-
-				<Tabs.Panel value='categories' className={styles.tabPanel}>
+				<Tabs.Panel value='categories' className={styles.tabPanelShell}>
 					<CampaignCategoriesContent />
 				</Tabs.Panel>
-
-				<Tabs.Panel value='objectives' className={styles.tabPanel}>
+				<Tabs.Panel value='objectives' className={styles.tabPanelShell}>
 					<CampaignObjectivesContent />
 				</Tabs.Panel>
 			</Tabs>
