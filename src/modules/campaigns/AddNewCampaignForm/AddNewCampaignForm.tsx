@@ -32,6 +32,7 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 			name: '',
 			description: '',
 			type: '',
+			budget: 500,
 		},
 		validate: {
 			name: (value) => (value.trim().length < 2 ? 'Name is required' : null),
