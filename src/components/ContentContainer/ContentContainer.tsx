@@ -12,6 +12,7 @@ export interface ContentContainerProps {
 	description?: string;
 	showBackButton?: boolean;
 	rightSectionTitle?: ReactNode;
+	mainScroll?: boolean; // new prop to control left/main scroll
 
 	onBackClick?: () => void;
 }
@@ -24,6 +25,7 @@ export const ContentContainer = ({
 	showBackButton = false,
 	rightSectionTitle,
 	titleRight,
+	mainScroll = true,
 	titleIcon,
 	onBackClick,
 }: ContentContainerProps) => (
@@ -69,7 +71,11 @@ export const ContentContainer = ({
 					<Divider mt='xs' className={styles.divider} />
 				</div>
 			)}
-			<div className={styles.content}>{children}</div>
+			<div
+				className={`${styles.content} ${!mainScroll ? styles.noMainScroll : ''}`}
+			>
+				{children}
+			</div>
 		</div>
 		{rightSection && (
 			<aside className={styles.rightSection}>

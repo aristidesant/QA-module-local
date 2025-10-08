@@ -6,6 +6,7 @@ import type { Campaign } from '../../../models/CampaignsModel';
 import {
 	useCreateCampaign,
 	useUpdateCampaign,
+	useAssignCampaignObjective,
 } from '~/queries/campaignsQueries';
 import { notifications } from '@mantine/notifications';
 import {
@@ -36,6 +37,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({ campaign }) => {
 		useCreateCampaign();
 	const { mutateAsync: updateCampaign, isPending: isUpdating } =
 		useUpdateCampaign();
+	const { mutateAsync: assignObjective } = useAssignCampaignObjective();
 
 	const defaultWorkingHours = {
 		monday: { enabled: true, from: '09:00', to: '17:30' },
@@ -57,6 +59,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({ campaign }) => {
 			status: campaign?.status || 'ACTIVE',
 			userId: campaign?.userId ?? 0,
 			promptId: campaign?.promptId ?? undefined,
+			objectiveId: campaign?.objectiveId ?? undefined,
 			clientId: campaign?.clientId ?? 0,
 			tags: campaign?.tags || [],
 			workingHours: campaign?.workingHours || defaultWorkingHours,
@@ -80,41 +83,48 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({ campaign }) => {
 			return;
 		}
 
-		if (campaign?.id) {
-			// Up date existing campaign
-			try {
-				await updateCampaign({
+		try {
+			let savedCampaign: Campaign;
+
+			if (campaign?.id) {
+				// Update existing campaign
+				savedCampaign = await updateCampaign({
 					data: value,
 					id: `${campaign.id}`,
 				});
-				notifications.show({
-					title: 'Campaign Updated',
-					message: 'Your campaign has been successfully updated.',
-					color: 'green',
-				});
-			} catch (error) {
-				notifications.show({
-					title: 'Error',
-					message: 'Failed to update campaign. Please try again.',
-					color: 'red',
-				});
+			} else {
+				// Create new campaign
+				savedCampaign = await createCampaign(value);
 			}
-		} else {
-			// Create new campaign
-			try {
-				await createCampaign(value);
-				notifications.show({
-					title: 'Campaign Created',
-					message: 'Your campaign has been successfully created.',
-					color: 'green',
-				});
-			} catch (error) {
-				notifications.show({
-					title: 'Error',
-					message: 'Failed to create campaign. Please try again.',
-					color: 'red',
-				});
+
+			// Handle objective assignment if an objective is selected
+			if (value.objectiveId && savedCampaign.id) {
+				try {
+					await assignObjective({
+						campaignId: savedCampaign.id,
+						objectiveId: value.objectiveId,
+					});
+				} catch (objectiveError) {
+					// Don't fail the whole operation if objective assignment fails
+					notifications.show({
+						title: 'Warning',
+						message: 'Campaign saved but objective assignment failed.',
+						color: 'yellow',
+					});
+				}
 			}
+
+			notifications.show({
+				title: campaign?.id ? 'Campaign Updated' : 'Campaign Created',
+				message: `Your campaign has been successfully ${campaign?.id ? 'updated' : 'created'}.`,
+				color: 'green',
+			});
+		} catch (error) {
+			notifications.show({
+				title: 'Error',
+				message: `Failed to ${campaign?.id ? 'update' : 'create'} campaign. Please try again.`,
+				color: 'red',
+			});
 		}
 	};
 

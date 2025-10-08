@@ -22,6 +22,7 @@ export interface ProcessContactGroupFileRequest {
 	groupMaxCallPerContact: number;
 	groupMaxCallPerGroup: number;
 	schedulerId: number;
+	schemaId: number;
 }
 
 export interface ProcessContactGroupFileResponse {

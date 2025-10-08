@@ -308,3 +308,33 @@ export const useCloneCampaign = () => {
 		},
 	});
 };
+
+export const useAssignCampaignObjective = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async ({
+			campaignId,
+			objectiveId,
+		}: {
+			campaignId: string | number;
+			objectiveId: number;
+		}) => {
+			const api = campaignsApi();
+			return api.assignObjectiveToCampaign(campaignId, objectiveId);
+		},
+		onSuccess: (data) => {
+			// Invalidate campaign and list queries to reflect objective assignment
+			queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+			queryClient.invalidateQueries({ queryKey: ['campaigns-paginated'] });
+			if (data?.id) {
+				queryClient.invalidateQueries({ queryKey: ['campaign', data.id] });
+			}
+			// eslint-disable-next-line no-console
+			console.log('Objective assigned to campaign successfully:', data);
+		},
+		onError: (error) => {
+			// eslint-disable-next-line no-console
+			console.error('Error assigning objective to campaign:', error);
+		},
+	});
+};

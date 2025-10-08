@@ -1,0 +1,81 @@
+.container {
+	padding: var(--mantine-spacing-md);
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-lg);
+}
+
+.header {
+	padding-bottom: var(--mantine-spacing-sm);
+	border-bottom: 1px solid var(--mantine-color-gray-3);
+}
+
+.createButton {
+	background-color: var(--mantine-color-blue-6);
+	border: none;
+	border-radius: var(--mantine-radius-sm);
+	color: white;
+	font-weight: 500;
+}
+
+.createButton:hover {
+	background-color: var(--mantine-color-blue-7);
+}
+
+.table {
+	flex: 1;
+}
+
+.objectiveName {
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-9);
+}
+
+.categoryIcon {
+	color: var(--mantine-color-blue-6);
+	flex-shrink: 0;
+}
+
+.categoryName {
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-7);
+	font-weight: 500;
+}
+
+.objectiveDescription {
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-7);
+	max-width: 250px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.statusBadge {
+	text-transform: capitalize;
+}
+
+.actionsGroup {
+	gap: var(--mantine-spacing-xs);
+}
+
+.actionButton {
+	font-size: var(--mantine-font-size-xs);
+	padding: 4px 8px;
+	height: auto;
+	border-radius: var(--mantine-radius-xs);
+}
+
+.noResultsContainer {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: var(--mantine-spacing-xl);
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	gap: var(--mantine-spacing-xs);
+	min-height: 200px;
+}

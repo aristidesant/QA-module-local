@@ -2,6 +2,7 @@
 
 import type { AgentConfigModel } from './AgentListObject';
 import { CampaignAgent } from './CampaignAgentModel';
+import { CampaignObjective } from './CampaignObjectiveModel';
 
 export interface WorkingHours {
 	[key: string]: {
@@ -51,6 +52,7 @@ export interface Campaign {
 	userId: number;
 	clientId: number;
 	promptId?: number;
+	objectiveId?: number;
 	createdAt: string; // ISO date string
 	updatedAt: string; // ISO date string
 	overAllScore?: number;
@@ -70,6 +72,9 @@ export interface Campaign {
 		id: number;
 		name: string;
 	};
+
+	// Objective information
+	objective?: CampaignObjective;
 
 	// Agents assigned to campaign
 	agents?: Array<{
