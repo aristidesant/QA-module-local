@@ -20,12 +20,11 @@ export interface CategoryFilters {
 interface CampaignCategoriesFiltersProps {
 	filters: CategoryFilters;
 	onFiltersChange: (filters: CategoryFilters) => void;
-	resultsCount: number;
 }
 
 export const CampaignCategoriesFilters: React.FC<
 	CampaignCategoriesFiltersProps
-> = ({ filters, onFiltersChange, resultsCount }) => {
+> = ({ filters, onFiltersChange }) => {
 	const hasActiveFilters =
 		filters.search !== '' ||
 		filters.status !== 'all' ||
@@ -134,12 +133,6 @@ export const CampaignCategoriesFilters: React.FC<
 						</ActionIcon>
 					)}
 				</Group>
-			</Group>
-
-			<Group justify='space-between' className={styles.resultsInfo}>
-				<Text size='sm' c='dimmed'>
-					{resultsCount} {resultsCount === 1 ? 'category' : 'categories'} found
-				</Text>
 			</Group>
 		</div>
 	);

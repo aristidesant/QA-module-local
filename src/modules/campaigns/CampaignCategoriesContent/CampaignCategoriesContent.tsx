@@ -173,7 +173,6 @@ export const CampaignCategoriesContent: React.FC<
 			<CampaignCategoriesFilters
 				filters={filters}
 				onFiltersChange={setFilters}
-				resultsCount={pagination.total}
 			/>
 
 			{categories.length === 0 && !isLoading ? (
@@ -186,7 +185,7 @@ export const CampaignCategoriesContent: React.FC<
 					</Text>
 				</div>
 			) : (
-				<div className={styles.tableWrapper}>
+				<>
 					<BaseTable
 						data={categories}
 						columns={columns}
@@ -212,7 +211,7 @@ export const CampaignCategoriesContent: React.FC<
 						isLoading={isLoading}
 						itemLabel='categories'
 					/>
-				</div>
+				</>
 			)}
 
 			{/* Create Modal */}

@@ -21,13 +21,11 @@ export interface SchemaFilters {
 interface CampaignSchemasFiltersProps {
 	filters: SchemaFilters;
 	onFiltersChange: (filters: SchemaFilters) => void;
-	resultsCount: number;
 }
 
 export const CampaignSchemasFilters: React.FC<CampaignSchemasFiltersProps> = ({
 	filters,
 	onFiltersChange,
-	resultsCount,
 }) => {
 	// Get objectives for the filter
 	const { data: objectivesResponse } = useGetCampaignObjectives();
@@ -140,12 +138,6 @@ export const CampaignSchemasFilters: React.FC<CampaignSchemasFiltersProps> = ({
 						</ActionIcon>
 					)}
 				</Group>
-			</Group>
-
-			<Group justify='space-between' className={styles.resultsInfo}>
-				<Text size='sm' c='dimmed'>
-					{resultsCount} {resultsCount === 1 ? 'schema' : 'schemas'} found
-				</Text>
 			</Group>
 		</div>
 	);

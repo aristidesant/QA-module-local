@@ -180,7 +180,6 @@ export const CampaignObjectivesContent: React.FC<
 			<CampaignObjectivesFilters
 				filters={filters}
 				onFiltersChange={setFilters}
-				resultsCount={pagination.total}
 			/>
 
 			{objectives.length === 0 && !isLoading ? (
@@ -193,7 +192,7 @@ export const CampaignObjectivesContent: React.FC<
 					</Text>
 				</div>
 			) : (
-				<div className={styles.tableWrapper}>
+				<>
 					<BaseTable
 						data={objectives}
 						columns={columns}
@@ -219,7 +218,7 @@ export const CampaignObjectivesContent: React.FC<
 						isLoading={isLoading}
 						itemLabel='objectives'
 					/>
-				</div>
+				</>
 			)}
 
 			{/* Create Modal */}

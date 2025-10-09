@@ -1,13 +1,13 @@
 .filtersContainer {
-	margin-bottom: var(--mantine-spacing-lg);
 	background: var(--mantine-color-gray-0);
 	border: 1px solid var(--mantine-color-gray-2);
 	border-radius: var(--mantine-radius-md);
-	padding: var(--mantine-spacing-md);
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	margin-bottom: var(--mantine-spacing-md);
 }
 
 .filtersHeader {
-	margin-bottom: var(--mantine-spacing-sm);
+	margin-bottom: 0;
 }
 
 .titleGroup {

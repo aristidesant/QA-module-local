@@ -173,11 +173,7 @@ export const CampaignSchemasContent: React.FC<CampaignSchemasContentProps> = ({
 
 	return (
 		<div className={styles.container}>
-			<CampaignSchemasFilters
-				filters={filters}
-				onFiltersChange={setFilters}
-				resultsCount={pagination.total}
-			/>
+			<CampaignSchemasFilters filters={filters} onFiltersChange={setFilters} />
 
 			{schemas.length === 0 && !isLoading ? (
 				<div className={styles.noResultsContainer}>
@@ -189,7 +185,7 @@ export const CampaignSchemasContent: React.FC<CampaignSchemasContentProps> = ({
 					</Text>
 				</div>
 			) : (
-				<div className={styles.tableWrapper}>
+				<>
 					<BaseTable
 						data={schemas}
 						columns={columns}
@@ -215,7 +211,7 @@ export const CampaignSchemasContent: React.FC<CampaignSchemasContentProps> = ({
 						isLoading={isLoading}
 						itemLabel='schemas'
 					/>
-				</div>
+				</>
 			)}
 
 			{/* Create Modal */}

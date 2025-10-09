@@ -2,7 +2,7 @@
 	padding: var(--mantine-spacing-md);
 	display: flex;
 	flex-direction: column;
-	gap: var(--mantine-spacing-md);
+	gap: 0;
 }
 
 .header {
@@ -23,22 +23,11 @@
 }
 
 .table {
-	flex: 1;
-}
-
-.tableWrapper {
-	display: flex;
-	flex-direction: column;
-	border: 1px solid var(--mantine-color-gray-2);
+	font-size: 13px;
+	background: var(--mantine-color-white);
 	border-radius: var(--mantine-radius-md);
 	overflow: hidden;
-	background: var(--mantine-color-white);
-	flex: 1;
-}
-
-.tableWrapper .table {
-	border: none;
-	border-radius: 0;
+	border: 1px solid var(--mantine-color-gray-2);
 }
 
 .schemaName {
