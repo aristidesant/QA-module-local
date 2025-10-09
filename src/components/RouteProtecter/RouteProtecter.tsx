@@ -1,5 +1,4 @@
 import { Outlet, useLoaderData, Navigate, useLocation } from 'react-router';
-import { ModalsProvider } from '@mantine/modals';
 import { useEffect } from 'react';
 import { useSessionStore } from '~/stores/sessionStore';
 import type { UserModel } from '~/models/UserModels';
@@ -93,10 +92,10 @@ export const RouteProtecter = () => {
 	}
 
 	return (
-		<ModalsProvider modalProps={{ withinPortal: false }}>
+		<>
 			<Outlet />
 			<ImpersonationLoadingOverlay />
-		</ModalsProvider>
+		</>
 	);
 };
 
