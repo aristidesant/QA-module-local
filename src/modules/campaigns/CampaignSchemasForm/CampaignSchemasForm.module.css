@@ -1,0 +1,27 @@
+.form {
+	width: 100%;
+}
+
+.fieldRow {
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-gray-0);
+}
+
+.actions {
+	padding-top: var(--mantine-spacing-md);
+	border-top: 1px solid var(--mantine-color-gray-2);
+}
+
+.submitButton {
+	background-color: var(--mantine-color-blue-6);
+	border: none;
+	border-radius: var(--mantine-radius-sm);
+	color: white;
+	font-weight: 500;
+}
+
+.submitButton:hover {
+	background-color: var(--mantine-color-blue-7);
+}

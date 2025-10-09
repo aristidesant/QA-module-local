@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Group, Text, Modal, Badge } from '@mantine/core';
+import { Button, Group, Text, Modal, Badge, Tooltip } from '@mantine/core';
 import { IconPlus, IconEdit, IconTrash } from '@tabler/icons-react';
 import BaseTable from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
@@ -9,12 +9,18 @@ import { ColumnDef } from '@tanstack/react-table';
 import { notifications } from '@mantine/notifications';
 import { CampaignCategoriesForm } from '../CampaignCategoriesForm/CampaignCategoriesForm';
 import { CampaignCategoriesFilters } from '../CampaignCategoriesFilters';
-import { CampaignCategoriesPagination } from '../CampaignCategoriesPagination';
+import PaginationControls from '~/components/PaginationControls';
 import { useCampaignCategoriesWithFilters } from '../hooks/useFilteredCategories';
 import styles from './CampaignCategoriesContent.module.css';
 
-export const CampaignCategoriesContent: React.FC = () => {
-	const [createModalOpened, setCreateModalOpened] = useState(false);
+interface CampaignCategoriesContentProps {
+	createModalOpened: boolean;
+	setCreateModalOpened: (opened: boolean) => void;
+}
+
+export const CampaignCategoriesContent: React.FC<
+	CampaignCategoriesContentProps
+> = ({ createModalOpened, setCreateModalOpened }) => {
 	const [editModalOpened, setEditModalOpened] = useState(false);
 	const [selectedCategory, setSelectedCategory] =
 		useState<CampaignCategory | null>(null);
@@ -100,26 +106,28 @@ export const CampaignCategoriesContent: React.FC = () => {
 			header: 'Actions',
 			cell: ({ row }) => (
 				<Group gap='xs' className={styles.actionsGroup}>
-					<Button
-						size='xs'
-						variant='subtle'
-						leftSection={<IconEdit size={14} />}
-						onClick={() => handleEdit(row.original)}
-						className={styles.actionButton}
-					>
-						Edit
-					</Button>
-					<Button
-						size='xs'
-						variant='subtle'
-						color='red'
-						leftSection={<IconTrash size={14} />}
-						onClick={() => handleDelete(row.original.id)}
-						loading={deleteCategory.isPending}
-						className={styles.actionButton}
-					>
-						Delete
-					</Button>
+					<Tooltip label='Edit category' withArrow>
+						<Button
+							size='xs'
+							variant='subtle'
+							onClick={() => handleEdit(row.original)}
+							className={styles.actionButton}
+						>
+							<IconEdit size={14} />
+						</Button>
+					</Tooltip>
+					<Tooltip label='Delete category' withArrow>
+						<Button
+							size='xs'
+							variant='subtle'
+							color='red'
+							onClick={() => handleDelete(row.original.id)}
+							loading={deleteCategory.isPending}
+							className={styles.actionButton}
+						>
+							<IconTrash size={14} />
+						</Button>
+					</Tooltip>
 				</Group>
 			),
 		},
@@ -131,24 +139,6 @@ export const CampaignCategoriesContent: React.FC = () => {
 	if (showEmptyState) {
 		return (
 			<div className={styles.container}>
-				<Group justify='space-between' className={styles.header}>
-					<div>
-						<Text size='lg' fw={600}>
-							Campaign Categories
-						</Text>
-						<Text size='sm' c='dimmed'>
-							Organize your campaigns with custom categories
-						</Text>
-					</div>
-					<Button
-						leftSection={<IconPlus size={16} />}
-						onClick={() => setCreateModalOpened(true)}
-						className={styles.createButton}
-					>
-						Create Category
-					</Button>
-				</Group>
-
 				<EmptyState
 					icon={<IconPlus size={48} />}
 					title='No categories found'
@@ -180,28 +170,9 @@ export const CampaignCategoriesContent: React.FC = () => {
 
 	return (
 		<div className={styles.container}>
-			<Group justify='space-between' className={styles.header}>
-				<div>
-					<Text size='lg' fw={600}>
-						Campaign Categories
-					</Text>
-					<Text size='sm' c='dimmed'>
-						Organize your campaigns with custom categories
-					</Text>
-				</div>
-				<Button
-					leftSection={<IconPlus size={16} />}
-					onClick={() => setCreateModalOpened(true)}
-					className={styles.createButton}
-				>
-					Create Category
-				</Button>
-			</Group>
-
 			<CampaignCategoriesFilters
 				filters={filters}
 				onFiltersChange={setFilters}
-				resultsCount={pagination.total}
 			/>
 
 			{categories.length === 0 && !isLoading ? (
@@ -222,10 +193,23 @@ export const CampaignCategoriesContent: React.FC = () => {
 						className={styles.table}
 					/>
 
-					<CampaignCategoriesPagination
-						pagination={pagination}
-						onPaginationChange={setPagination}
-						disabled={false} // Now enabled with server-side pagination
+					<PaginationControls
+						currentPage={pagination.page}
+						totalPages={Math.ceil(pagination.total / pagination.pageSize)}
+						itemsPerPage={pagination.pageSize}
+						totalItems={pagination.total}
+						onPageChange={(page) => setPagination({ ...pagination, page })}
+						onItemsPerPageChange={(value) => {
+							if (value) {
+								setPagination({
+									...pagination,
+									page: 1,
+									pageSize: parseInt(value, 10),
+								});
+							}
+						}}
+						isLoading={isLoading}
+						itemLabel='categories'
 					/>
 				</>
 			)}

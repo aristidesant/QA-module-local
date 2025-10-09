@@ -1,110 +1,106 @@
 import React, { useState } from 'react';
 import { Button, Group, Text, Modal, Badge, Tooltip } from '@mantine/core';
-import { IconPlus, IconEdit, IconTrash, IconTag } from '@tabler/icons-react';
+import {
+	IconPlus,
+	IconEdit,
+	IconTrash,
+	IconDatabase,
+} from '@tabler/icons-react';
 import BaseTable from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
-import { useDeleteCampaignObjective } from '~/queries/campaignObjectivesQueries';
-import { CampaignObjective } from '~/models/CampaignObjectiveModel';
+import { useDeleteCampaignContactSchema } from '~/queries/campaignContactSchemasQueries';
+import { CampaignContactSchema } from '~/models/CampaignContactSchemaModel';
 import { ColumnDef } from '@tanstack/react-table';
 import { notifications } from '@mantine/notifications';
-import { CampaignObjectivesForm } from '../CampaignObjectivesForm/CampaignObjectivesForm';
-import { CampaignObjectivesFilters } from '../CampaignObjectivesFilters';
+import { CampaignSchemasForm } from '../CampaignSchemasForm';
 import PaginationControls from '~/components/PaginationControls';
-import { useCampaignObjectivesWithFilters } from '../hooks/useFilteredObjectives';
-import styles from './CampaignObjectivesContent.module.css';
 
-type EnrichedObjective = CampaignObjective & {
-	categoryName: string;
-};
+import styles from './CampaignSchemasContent.module.css';
+import { useCampaignSchemasWithFilters } from '../hooks/useFilteredSchemas';
+import { CampaignSchemasFilters } from '../CampaignSchemasFilters';
 
-interface CampaignObjectivesContentProps {
+interface CampaignSchemasContentProps {
 	createModalOpened: boolean;
 	setCreateModalOpened: (opened: boolean) => void;
 }
 
-export const CampaignObjectivesContent: React.FC<
-	CampaignObjectivesContentProps
-> = ({ createModalOpened, setCreateModalOpened }) => {
+export const CampaignSchemasContent: React.FC<CampaignSchemasContentProps> = ({
+	createModalOpened,
+	setCreateModalOpened,
+}) => {
 	const [editModalOpened, setEditModalOpened] = useState(false);
-	const [selectedObjective, setSelectedObjective] =
-		useState<CampaignObjective | null>(null);
+	const [selectedSchema, setSelectedSchema] =
+		useState<CampaignContactSchema | null>(null);
 
 	// Use the combined hook that handles both server and client filtering
-	const {
-		objectives,
-		pagination,
-		filters,
-		setPagination,
-		setFilters,
-		isLoading,
-	} = useCampaignObjectivesWithFilters();
+	const { schemas, pagination, filters, setPagination, setFilters, isLoading } =
+		useCampaignSchemasWithFilters();
 
-	const deleteObjective = useDeleteCampaignObjective();
+	const deleteSchema = useDeleteCampaignContactSchema();
 
-	const handleEdit = (objective: CampaignObjective) => {
-		setSelectedObjective(objective);
+	const handleEdit = (schema: CampaignContactSchema) => {
+		setSelectedSchema(schema);
 		setEditModalOpened(true);
 	};
 
 	const handleDelete = async (id: number) => {
 		try {
-			await deleteObjective.mutateAsync(id);
+			await deleteSchema.mutateAsync(id);
 			notifications.show({
 				title: 'Success',
-				message: 'Campaign objective deleted successfully',
+				message: 'Campaign schema deleted successfully',
 				color: 'green',
 			});
 		} catch (error) {
 			notifications.show({
 				title: 'Error',
-				message: 'Failed to delete campaign objective',
+				message: 'Failed to delete campaign schema',
 				color: 'red',
 			});
 		}
 	};
 
-	const columns: ColumnDef<EnrichedObjective>[] = [
+	const columns: ColumnDef<CampaignContactSchema>[] = [
 		{
 			accessorKey: 'name',
 			header: 'Name',
 			cell: ({ row }) => (
-				<Text fw={500} className={styles.objectiveName}>
+				<Text className={styles.schemaName} fw={500}>
 					{row.original.name}
 				</Text>
 			),
 		},
 		{
-			accessorKey: 'categoryName',
-			header: 'Category',
+			accessorKey: 'code',
+			header: 'Code',
 			cell: ({ row }) => (
-				<Group gap='xs'>
-					<IconTag size={14} className={styles.categoryIcon} />
-					<Text className={styles.categoryName}>
-						{row.original.categoryName}
-					</Text>
-				</Group>
+				<Text className={styles.schemaCode}>{row.original.code}</Text>
 			),
 		},
 		{
-			accessorKey: 'description',
-			header: 'Description',
+			accessorKey: 'objective',
+			header: 'Objective',
 			cell: ({ row }) => (
-				<Text className={styles.objectiveDescription}>
-					{row.original.description || 'No description'}
+				<Text className={styles.objectiveName}>
+					{row.original.objective?.name || 'No objective'}
 				</Text>
 			),
 		},
 		{
-			accessorKey: 'active',
-			header: 'Status',
+			accessorKey: 'schemaFields',
+			header: 'Fields Count',
 			cell: ({ row }) => (
-				<Badge
-					variant='light'
-					color={row.original.active ? 'green' : 'gray'}
-					size='sm'
-					className={styles.statusBadge}
-				>
-					{row.original.active ? 'Active' : 'Inactive'}
+				<Badge variant='light' color='blue' size='sm'>
+					{row.original.schemaFields?.length || 0} fields
+				</Badge>
+			),
+		},
+		{
+			accessorKey: 'version',
+			header: 'Version',
+			cell: ({ row }) => (
+				<Badge variant='light' size='sm'>
+					v{row.original.version}
 				</Badge>
 			),
 		},
@@ -113,7 +109,7 @@ export const CampaignObjectivesContent: React.FC<
 			header: 'Actions',
 			cell: ({ row }) => (
 				<Group gap='xs' className={styles.actionsGroup}>
-					<Tooltip label='Edit objective' withArrow>
+					<Tooltip label='Edit schema' withArrow>
 						<Button
 							size='xs'
 							variant='subtle'
@@ -123,13 +119,13 @@ export const CampaignObjectivesContent: React.FC<
 							<IconEdit size={14} />
 						</Button>
 					</Tooltip>
-					<Tooltip label='Delete objective' withArrow>
+					<Tooltip label='Delete schema' withArrow>
 						<Button
 							size='xs'
 							variant='subtle'
 							color='red'
 							onClick={() => handleDelete(row.original.id)}
-							loading={deleteObjective.isPending}
+							loading={deleteSchema.isPending}
 							className={styles.actionButton}
 						>
 							<IconTrash size={14} />
@@ -140,22 +136,22 @@ export const CampaignObjectivesContent: React.FC<
 		},
 	];
 
-	// Show empty state only if no objectives exist at all (not filtered)
-	const showEmptyState = objectives.length === 0 && !isLoading;
+	// Show empty state only if no schemas exist at all (not filtered)
+	const showEmptyState = schemas.length === 0 && !isLoading;
 
 	if (showEmptyState) {
 		return (
 			<div className={styles.container}>
 				<EmptyState
-					icon={<IconPlus size={48} />}
-					title='No objectives found'
-					subtitle='Get started by creating your first campaign objective'
+					icon={<IconDatabase size={48} />}
+					title='No schemas found'
+					subtitle='Get started by creating your first campaign schema'
 					button={
 						<Button
 							leftSection={<IconPlus size={16} />}
 							onClick={() => setCreateModalOpened(true)}
 						>
-							Create Objective
+							Create Schema
 						</Button>
 					}
 				/>
@@ -163,10 +159,10 @@ export const CampaignObjectivesContent: React.FC<
 				<Modal
 					opened={createModalOpened}
 					onClose={() => setCreateModalOpened(false)}
-					title='Create Campaign Objective'
-					size='md'
+					title='Create Campaign Schema'
+					size='lg'
 				>
-					<CampaignObjectivesForm
+					<CampaignSchemasForm
 						onSuccess={() => setCreateModalOpened(false)}
 						onCancel={() => setCreateModalOpened(false)}
 					/>
@@ -177,15 +173,12 @@ export const CampaignObjectivesContent: React.FC<
 
 	return (
 		<div className={styles.container}>
-			<CampaignObjectivesFilters
-				filters={filters}
-				onFiltersChange={setFilters}
-			/>
+			<CampaignSchemasFilters filters={filters} onFiltersChange={setFilters} />
 
-			{objectives.length === 0 && !isLoading ? (
+			{schemas.length === 0 && !isLoading ? (
 				<div className={styles.noResultsContainer}>
 					<Text size='lg' fw={500} ta='center'>
-						No objectives match your filters
+						No schemas match your filters
 					</Text>
 					<Text size='sm' c='dimmed' ta='center'>
 						Try adjusting your search criteria or filters
@@ -194,7 +187,7 @@ export const CampaignObjectivesContent: React.FC<
 			) : (
 				<>
 					<BaseTable
-						data={objectives}
+						data={schemas}
 						columns={columns}
 						isLoading={isLoading}
 						className={styles.table}
@@ -216,7 +209,7 @@ export const CampaignObjectivesContent: React.FC<
 							}
 						}}
 						isLoading={isLoading}
-						itemLabel='objectives'
+						itemLabel='schemas'
 					/>
 				</>
 			)}
@@ -225,10 +218,10 @@ export const CampaignObjectivesContent: React.FC<
 			<Modal
 				opened={createModalOpened}
 				onClose={() => setCreateModalOpened(false)}
-				title='Create Campaign Objective'
-				size='md'
+				title='Create Campaign Schema'
+				size='lg'
 			>
-				<CampaignObjectivesForm
+				<CampaignSchemasForm
 					onSuccess={() => setCreateModalOpened(false)}
 					onCancel={() => setCreateModalOpened(false)}
 				/>
@@ -239,21 +232,21 @@ export const CampaignObjectivesContent: React.FC<
 				opened={editModalOpened}
 				onClose={() => {
 					setEditModalOpened(false);
-					setSelectedObjective(null);
+					setSelectedSchema(null);
 				}}
-				title='Edit Campaign Objective'
-				size='md'
+				title='Edit Campaign Schema'
+				size='lg'
 			>
-				{selectedObjective && (
-					<CampaignObjectivesForm
-						objective={selectedObjective}
+				{selectedSchema && (
+					<CampaignSchemasForm
+						schema={selectedSchema}
 						onSuccess={() => {
 							setEditModalOpened(false);
-							setSelectedObjective(null);
+							setSelectedSchema(null);
 						}}
 						onCancel={() => {
 							setEditModalOpened(false);
-							setSelectedObjective(null);
+							setSelectedSchema(null);
 						}}
 					/>
 				)}

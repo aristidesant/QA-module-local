@@ -6,6 +6,9 @@ import {
 	IconRobot,
 	IconLibrary,
 	IconCheckupList,
+	IconCategory,
+	IconTarget,
+	IconDatabase,
 } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 import styles from './Sidebar.module.css';
@@ -47,6 +50,21 @@ export const maintenanceItems: MenuItem[] = [
 		label: 'Outcomes',
 		icon: <IconCheckupList size={20} className={styles.menuIcon} />,
 		to: '/outcomes',
+	},
+	{
+		label: 'Categories',
+		icon: <IconCategory size={20} className={styles.menuIcon} />,
+		to: '/campaign-categories',
+	},
+	{
+		label: 'Objectives',
+		icon: <IconTarget size={20} className={styles.menuIcon} />,
+		to: '/campaign-objectives',
+	},
+	{
+		label: 'Schemas',
+		icon: <IconDatabase size={20} className={styles.menuIcon} />,
+		to: '/campaign-schemas',
 	},
 	{
 		label: 'Knowledge Bases',

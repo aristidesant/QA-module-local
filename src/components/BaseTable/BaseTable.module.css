@@ -3,10 +3,13 @@
 	overflow: auto;
 	border: 1px solid var(--mantine-color-gray-2);
 	border-radius: var(--mantine-radius-md);
+	margin: 0;
+	padding: 0;
 }
 .table {
 	width: 100%;
 	border-collapse: collapse;
+	margin: 0;
 }
 .thead {
 	background: var(--mantine-color-gray-0);

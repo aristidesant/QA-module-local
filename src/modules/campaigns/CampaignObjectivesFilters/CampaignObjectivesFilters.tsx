@@ -22,12 +22,11 @@ export interface ObjectiveFilters {
 interface CampaignObjectivesFiltersProps {
 	filters: ObjectiveFilters;
 	onFiltersChange: (filters: ObjectiveFilters) => void;
-	resultsCount: number;
 }
 
 export const CampaignObjectivesFilters: React.FC<
 	CampaignObjectivesFiltersProps
-> = ({ filters, onFiltersChange, resultsCount }) => {
+> = ({ filters, onFiltersChange }) => {
 	// Get categories for the category filter
 	const { data: categoriesResponse } = useGetCampaignCategories();
 	const categories = categoriesResponse?.data || [];
@@ -162,12 +161,6 @@ export const CampaignObjectivesFilters: React.FC<
 						</ActionIcon>
 					)}
 				</Group>
-			</Group>
-
-			<Group justify='space-between' className={styles.resultsInfo}>
-				<Text size='sm' c='dimmed'>
-					{resultsCount} {resultsCount === 1 ? 'objective' : 'objectives'} found
-				</Text>
 			</Group>
 		</div>
 	);
