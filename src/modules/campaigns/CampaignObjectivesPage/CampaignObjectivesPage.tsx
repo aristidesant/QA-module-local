@@ -1,9 +1,12 @@
+import { useState } from 'react';
 import { Button } from '@mantine/core';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { CampaignObjectivesContent } from '../CampaignObjectivesContent';
 import { IconTarget, IconPlus } from '@tabler/icons-react';
 
 export default function CampaignObjectivesPage() {
+	const [createModalOpened, setCreateModalOpened] = useState(false);
+
 	return (
 		<ContentContainer
 			title='Campaign Objectives'
@@ -12,17 +15,16 @@ export default function CampaignObjectivesPage() {
 			titleRight={
 				<Button
 					leftSection={<IconPlus size={16} />}
-					onClick={() => {
-						// This will be handled by the child component
-						const event = new CustomEvent('openCreateObjectiveModal');
-						window.dispatchEvent(event);
-					}}
+					onClick={() => setCreateModalOpened(true)}
 				>
 					Create Objective
 				</Button>
 			}
 		>
-			<CampaignObjectivesContent />
+			<CampaignObjectivesContent
+				createModalOpened={createModalOpened}
+				setCreateModalOpened={setCreateModalOpened}
+			/>
 		</ContentContainer>
 	);
 }

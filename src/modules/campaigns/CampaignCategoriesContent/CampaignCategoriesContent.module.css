@@ -1,9 +1,8 @@
 .container {
 	padding: var(--mantine-spacing-md);
-	height: 100%;
 	display: flex;
 	flex-direction: column;
-	gap: var(--mantine-spacing-lg);
+	gap: var(--mantine-spacing-md);
 }
 
 .header {
@@ -25,6 +24,21 @@
 
 .table {
 	flex: 1;
+}
+
+.tableWrapper {
+	display: flex;
+	flex-direction: column;
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	overflow: hidden;
+	background: var(--mantine-color-white);
+	flex: 1;
+}
+
+.tableWrapper .table {
+	border: none;
+	border-radius: 0;
 }
 
 .categoryName {

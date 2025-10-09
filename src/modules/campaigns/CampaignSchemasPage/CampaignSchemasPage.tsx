@@ -1,27 +1,27 @@
 import { useState } from 'react';
 import { Button } from '@mantine/core';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
-import { CampaignCategoriesContent } from '../CampaignCategoriesContent';
-import { IconCategory, IconPlus } from '@tabler/icons-react';
+import { IconDatabase, IconPlus } from '@tabler/icons-react';
+import { CampaignSchemasContent } from '../CampaignSchemasContent';
 
-export default function CampaignCategoriesPage() {
+export default function CampaignSchemasPage() {
 	const [createModalOpened, setCreateModalOpened] = useState(false);
 
 	return (
 		<ContentContainer
-			title='Campaign Categories'
-			description='Organize and manage campaign categories to better structure your campaigns'
-			titleIcon={<IconCategory size={24} />}
+			title='Campaign Schemas'
+			description='Define and manage contact data schemas for your campaigns'
+			titleIcon={<IconDatabase size={24} />}
 			titleRight={
 				<Button
 					leftSection={<IconPlus size={16} />}
 					onClick={() => setCreateModalOpened(true)}
 				>
-					Create Category
+					Create Schema
 				</Button>
 			}
 		>
-			<CampaignCategoriesContent
+			<CampaignSchemasContent
 				createModalOpened={createModalOpened}
 				setCreateModalOpened={setCreateModalOpened}
 			/>

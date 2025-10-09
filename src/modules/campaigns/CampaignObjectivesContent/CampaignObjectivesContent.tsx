@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, Group, Text, Modal, Badge, Tooltip } from '@mantine/core';
 import { IconPlus, IconEdit, IconTrash, IconTag } from '@tabler/icons-react';
 import BaseTable from '~/components/BaseTable';
@@ -9,7 +9,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { notifications } from '@mantine/notifications';
 import { CampaignObjectivesForm } from '../CampaignObjectivesForm/CampaignObjectivesForm';
 import { CampaignObjectivesFilters } from '../CampaignObjectivesFilters';
-import { CampaignCategoriesPagination } from '../CampaignCategoriesPagination';
+import PaginationControls from '~/components/PaginationControls';
 import { useCampaignObjectivesWithFilters } from '../hooks/useFilteredObjectives';
 import styles from './CampaignObjectivesContent.module.css';
 
@@ -17,22 +17,17 @@ type EnrichedObjective = CampaignObjective & {
 	categoryName: string;
 };
 
-export const CampaignObjectivesContent: React.FC = () => {
-	const [createModalOpened, setCreateModalOpened] = useState(false);
+interface CampaignObjectivesContentProps {
+	createModalOpened: boolean;
+	setCreateModalOpened: (opened: boolean) => void;
+}
+
+export const CampaignObjectivesContent: React.FC<
+	CampaignObjectivesContentProps
+> = ({ createModalOpened, setCreateModalOpened }) => {
 	const [editModalOpened, setEditModalOpened] = useState(false);
 	const [selectedObjective, setSelectedObjective] =
 		useState<CampaignObjective | null>(null);
-
-	// Listen for create modal event from parent
-	useEffect(() => {
-		const handleOpenCreateModal = () => setCreateModalOpened(true);
-		window.addEventListener('openCreateObjectiveModal', handleOpenCreateModal);
-		return () =>
-			window.removeEventListener(
-				'openCreateObjectiveModal',
-				handleOpenCreateModal
-			);
-	}, []);
 
 	// Use the combined hook that handles both server and client filtering
 	const {
@@ -198,7 +193,7 @@ export const CampaignObjectivesContent: React.FC = () => {
 					</Text>
 				</div>
 			) : (
-				<>
+				<div className={styles.tableWrapper}>
 					<BaseTable
 						data={objectives}
 						columns={columns}
@@ -206,12 +201,25 @@ export const CampaignObjectivesContent: React.FC = () => {
 						className={styles.table}
 					/>
 
-					<CampaignCategoriesPagination
-						pagination={pagination}
-						onPaginationChange={setPagination}
-						disabled={false} // Now enabled with server-side pagination
+					<PaginationControls
+						currentPage={pagination.page}
+						totalPages={Math.ceil(pagination.total / pagination.pageSize)}
+						itemsPerPage={pagination.pageSize}
+						totalItems={pagination.total}
+						onPageChange={(page) => setPagination({ ...pagination, page })}
+						onItemsPerPageChange={(value) => {
+							if (value) {
+								setPagination({
+									...pagination,
+									page: 1,
+									pageSize: parseInt(value, 10),
+								});
+							}
+						}}
+						isLoading={isLoading}
+						itemLabel='objectives'
 					/>
-				</>
+				</div>
 			)}
 
 			{/* Create Modal */}
