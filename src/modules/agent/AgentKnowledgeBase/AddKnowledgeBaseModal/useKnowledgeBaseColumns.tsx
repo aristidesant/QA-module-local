@@ -1,7 +1,12 @@
 import { useMemo, type ReactNode } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
-import { Badge, Text, ThemeIcon } from '@mantine/core';
-import { IconFileText, IconWorld, IconApi } from '@tabler/icons-react';
+import { Badge, Text, ThemeIcon, HoverCard } from '@mantine/core';
+import {
+	IconFileText,
+	IconWorld,
+	IconApi,
+	IconInfoCircle,
+} from '@tabler/icons-react';
 import type KnowledgeBaseModel from '~/models/KnowledgeBaseModel';
 import { KnowledgeBaseType } from '~/models/KnowledgeBaseModel';
 import styles from './AddKnowledgeBaseModal.module.css';
@@ -57,7 +62,7 @@ const formatUpdatedAt = (value?: string | null) => {
 	};
 };
 
-const buildSourceLabel = (knowledgeBase: KnowledgeBaseModel) => {
+const getFullSource = (knowledgeBase: KnowledgeBaseModel) => {
 	if (knowledgeBase.sourceUrl) {
 		return knowledgeBase.sourceUrl;
 	}
@@ -67,59 +72,93 @@ const buildSourceLabel = (knowledgeBase: KnowledgeBaseModel) => {
 	}
 
 	if (knowledgeBase.textContent) {
-		return knowledgeBase.textContent.length > 80
-			? `${knowledgeBase.textContent.slice(0, 77)}…`
-			: knowledgeBase.textContent;
+		return knowledgeBase.textContent;
 	}
 
-	return 'No source information';
-};
+	if (knowledgeBase.identifier) {
+		return knowledgeBase.identifier;
+	}
 
-const truncateSourceLabel = (label: string) =>
-	label.length > 120 ? `${label.slice(0, 117)}…` : label;
+	return 'No source information available.';
+};
 
 export const useKnowledgeBaseColumns = () =>
 	useMemo<ColumnDef<KnowledgeBaseModel>[]>(
 		() => [
 			{
 				accessorKey: 'name',
-				header: 'Knowledge base',
+				header: 'Name',
 				cell: ({ row }) => {
 					const knowledgeBase = row.original;
 					const meta = resolvedTypeMeta(knowledgeBase.type);
-					const sourceLabel = truncateSourceLabel(
-						buildSourceLabel(knowledgeBase)
-					);
-
 					return (
 						<div className={styles.cellContent}>
 							<div className={styles.cellHeader}>
-								<ThemeIcon size='sm' radius='md' variant='light' color='gray'>
+								<ThemeIcon size='xs' radius='md' variant='light' color='gray'>
 									{meta.icon}
 								</ThemeIcon>
 								<Text className={styles.name}>{knowledgeBase.name}</Text>
-								<Badge
-									size='xs'
-									variant='light'
-									color={meta.color}
-									className={styles.typePill}
-								>
-									{meta.label}
-								</Badge>
 							</div>
-							{knowledgeBase.description ? (
-								<Text className={styles.description}>
-									{knowledgeBase.description}
-								</Text>
-							) : null}
-							{sourceLabel ? (
-								<Text className={styles.source}>{sourceLabel}</Text>
-							) : null}
 						</div>
 					);
 				},
+			},
+			{
+				accessorKey: 'type',
+				header: 'Type',
+				cell: ({ row }) => {
+					const knowledgeBase = row.original;
+					const meta = resolvedTypeMeta(knowledgeBase.type);
+					return (
+						<Badge size='xs' variant='light' color={meta.color}>
+							{meta.label}
+						</Badge>
+					);
+				},
 				meta: {
-					cellClassName: styles.primaryCell,
+					cellClassName: styles.typeCell,
+				},
+			},
+			{
+				accessorKey: 'description',
+				header: 'Description',
+				cell: ({ row }) => {
+					const knowledgeBase = row.original;
+					return knowledgeBase.description ? (
+						<Text className={styles.description}>
+							{knowledgeBase.description}
+						</Text>
+					) : (
+						<Text size='xs' c='dimmed'>
+							—
+						</Text>
+					);
+				},
+			},
+			{
+				accessorKey: 'source',
+				header: 'Source',
+				cell: ({ row }) => {
+					const knowledgeBase = row.original;
+					const fullSource = getFullSource(knowledgeBase);
+					return (
+						<HoverCard width={320}>
+							<HoverCard.Target>
+								<IconInfoCircle size={14} style={{ cursor: 'pointer' }} />
+							</HoverCard.Target>
+							<HoverCard.Dropdown>
+								<Text
+									size='xs'
+									style={{ wordBreak: 'break-all', overflowWrap: 'anywhere' }}
+								>
+									{fullSource}
+								</Text>
+							</HoverCard.Dropdown>
+						</HoverCard>
+					);
+				},
+				meta: {
+					cellClassName: styles.sourceCell,
 				},
 			},
 			{
@@ -137,10 +176,9 @@ export const useKnowledgeBaseColumns = () =>
 					}
 
 					return (
-						<div className={styles.timestampWrapper}>
-							<Text className={styles.timestampDate}>{formatted.date}</Text>
-							<Text className={styles.timestampTime}>{formatted.time}</Text>
-						</div>
+						<Text className={styles.timestampDate}>
+							{formatted.date} {formatted.time}
+						</Text>
 					);
 				},
 				meta: {

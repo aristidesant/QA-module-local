@@ -131,33 +131,28 @@ export const AddKnowledgeBaseModal: React.FC<AddKnowledgeBaseModalProps> = ({
 				) : (
 					<>
 						<div className={styles.instructions}>
-							<Text size='sm' fw={600}>
-								Select a knowledge base to assign
-							</Text>
-							<Text size='xs' c='dimmed'>
-								Only active knowledge bases are listed below.
+							<Text size='sm' fw={500}>
+								Select a knowledge base to assign to the agent.
 							</Text>
 						</div>
-						<div className={styles.tableContainer}>
-							<BaseTable
-								data={activeKnowledgeBases}
-								columns={columns}
-								initialSort={[{ id: 'name', desc: false }]}
-								onRowClick={handleRowSelect}
-								className={styles.table}
-								density='compact'
-								getRowClassName={(row) => {
-									const classNames = [styles.tableRow];
-									if (row.original.id === selectedKnowledgeBaseId) {
-										classNames.push(styles.tableRowSelected);
-									}
-									return classNames.join(' ');
-								}}
-							/>
-						</div>
+						<BaseTable
+							data={activeKnowledgeBases}
+							columns={columns}
+							initialSort={[{ id: 'name', desc: false }]}
+							onRowClick={handleRowSelect}
+							className={styles.table}
+							density='compact'
+							getRowClassName={(row) => {
+								const classNames = [styles.tableRow];
+								if (row.original.id === selectedKnowledgeBaseId) {
+									classNames.push(styles.tableRowSelected);
+								}
+								return classNames.join(' ');
+							}}
+						/>
 						<div className={styles.selectionPanel}>
 							{selectedKnowledgeBase ? (
-								<Stack gap={6}>
+								<Stack gap={4}>
 									<Text size='sm' fw={600} className={styles.selectionTitle}>
 										{selectedKnowledgeBase.name}
 									</Text>

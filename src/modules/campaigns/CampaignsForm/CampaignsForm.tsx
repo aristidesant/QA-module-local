@@ -134,6 +134,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({ campaign }) => {
 			onBackClick={() => {
 				resetView();
 			}}
+			title={`Editing campaign`}
+			description={`Manage settings and configurations for your campaign.`}
 			showBackButton
 		>
 			<CampaignFormProvider form={form}>
