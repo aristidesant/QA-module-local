@@ -16,6 +16,7 @@ import {
 	IconUsers,
 } from '@tabler/icons-react';
 import { Link } from 'react-router';
+import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import CampaignStatusCard from './CampaignStatusCard';
 import ClientSearchBox from './ClientSearchBox';
 import ClientList from './ClientList';
@@ -47,16 +48,7 @@ export default function WelcomeCard({
 		: subheading;
 
 	return (
-		<div className={classes.container}>
-			<div className={classes.header}>
-				<Title order={1} className={classes.title}>
-					{displayHeading}
-				</Title>
-				<Text size='sm' c='dimmed' className={classes.subtitle}>
-					{displaySubheading}
-				</Text>
-			</div>
-
+		<ContentContainer title={displayHeading} description={displaySubheading}>
 			<div className={classes.mainCard}>
 				{!isImpersonating && (
 					<div className={classes.topRow}>
@@ -224,6 +216,6 @@ export default function WelcomeCard({
 					</div>
 				)}
 			</div>
-		</div>
+		</ContentContainer>
 	);
 }
