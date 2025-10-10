@@ -11,6 +11,7 @@ export type RightSectionCardProps = {
 	rightSection?: ReactNode;
 	children: ReactNode;
 	style?: React.CSSProperties;
+	onClick?: () => void;
 };
 
 export const RightSectionCard: React.FC<RightSectionCardProps> = ({
@@ -21,9 +22,10 @@ export const RightSectionCard: React.FC<RightSectionCardProps> = ({
 	rightSection,
 	children,
 	style,
+	onClick,
 }) => {
 	return (
-		<Card className={styles.card} style={style}>
+		<Card className={styles.card} style={style} onClick={onClick}>
 			<Card.Section
 				inheritPadding
 				py={'sm'}

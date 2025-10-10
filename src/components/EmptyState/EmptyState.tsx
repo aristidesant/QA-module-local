@@ -3,29 +3,33 @@ import { Stack, Text } from '@mantine/core';
 import styles from './EmptyState.module.css';
 
 interface EmptyStateProps {
-	icon: React.ReactNode;
-	title: string;
-	subtitle: string;
-	button?: React.ReactNode;
+	icon?: React.ReactNode;
+	message: string;
+	description?: string;
+	action?: React.ReactNode;
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({
 	icon,
-	title,
-	subtitle,
-	button,
+	message,
+	description,
+	action,
 }) => {
 	return (
-		<Stack align='center' justify='center' className={styles.container}>
-			<div className={styles.icon}>{icon}</div>
-			<Text size='xl' fw={600} className={styles.title}>
-				{title}
-			</Text>
-			<Text size='md' c='dimmed' className={styles.subtitle}>
-				{subtitle}
-			</Text>
-			{button}
-		</Stack>
+		<div className={styles.wrapper}>
+			<Stack align='center' justify='center' className={styles.container}>
+				{icon && (
+					<div className={styles.iconWrapper}>
+						<div className={styles.icon}>{icon}</div>
+					</div>
+				)}
+				<Text className={styles.message}>{message}</Text>
+				{description && (
+					<Text className={styles.description}>{description}</Text>
+				)}
+				{action && <div className={styles.action}>{action}</div>}
+			</Stack>
+		</div>
 	);
 };
 

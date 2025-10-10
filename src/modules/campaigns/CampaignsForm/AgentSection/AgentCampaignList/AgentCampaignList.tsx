@@ -9,10 +9,15 @@ import {
 	Text,
 	LoadingOverlay,
 	Badge,
-	Stack,
 } from '@mantine/core';
 import { modals, openConfirmModal } from '@mantine/modals';
-import { IconDots, IconTrash, IconPlus } from '@tabler/icons-react';
+import {
+	IconDots,
+	IconTrash,
+	IconPlus,
+	IconUser,
+	IconInfoCircle,
+} from '@tabler/icons-react';
 import AgentCampaignAdd from '../AgentCampaignAdd';
 import classes from './AgentCampaignList.module.css';
 import {
@@ -21,6 +26,8 @@ import {
 } from '~/queries/campaignAgentsQueries';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import AgentCampaignPreview from '../AgentCampaignPreview';
+import RightSectionCard from '~/components/RightSectionCard';
+import EmptyState from '~/components/EmptyState';
 
 export const AgentCampaignList: React.FC = () => {
 	const { selectedCampaign } = useCampaignsStore((state) => state);
@@ -136,23 +143,14 @@ export const AgentCampaignList: React.FC = () => {
 			</Group>
 
 			{totalAgents === 0 && !isLoading ? (
-				<Card withBorder radius='md' className={classes.emptyCard}>
-					<Stack gap='xs'>
-						<Text fw={500}>No agents assigned</Text>
-						<Text size='sm' color='dimmed'>
-							Start by connecting an agent to unlock campaign automations and
-							voice coverage.
-						</Text>
-						<Button
-							variant='light'
-							color='blue'
-							radius='md'
-							leftSection={<IconPlus size={16} />}
-							onClick={handleAddAgent}
-						>
-							Assign an agent
-						</Button>
-					</Stack>
+				<Card withBorder radius={'md'}>
+					<EmptyState
+						icon={<IconInfoCircle />}
+						message='No Agents Assigned'
+						description={
+							'There are no agents currently assigned to this campaign.'
+						}
+					/>
 				</Card>
 			) : null}
 
@@ -160,11 +158,10 @@ export const AgentCampaignList: React.FC = () => {
 				const agent = campaignAgent.agent;
 
 				return (
-					<Card
-						className={classes.agentCard}
+					<RightSectionCard
+						icon={IconUser}
+						title={`Agent ${agent?.name || 'Unknown'}`}
 						key={campaignAgent.id}
-						withBorder
-						radius='md'
 						onClick={() => {
 							if (campaignAgent.agentId && selectedCampaign?.id) {
 								setRightComponent?.(
@@ -246,7 +243,7 @@ export const AgentCampaignList: React.FC = () => {
 								</Menu.Dropdown>
 							</Menu>
 						</Group>
-					</Card>
+					</RightSectionCard>
 				);
 			})}
 		</section>

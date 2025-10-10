@@ -1,18 +1,75 @@
+.wrapper {
+	width: 100%;
+	min-height: 200px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--mantine-spacing-md);
+}
+
 .container {
-	padding: var(--mantine-spacing-xl);
+	position: relative;
+	padding: calc(var(--mantine-spacing-xl) * 1.5);
+	width: 100%;
+	max-width: 500px;
+	border: 2px dashed var(--mantine-color-gray-4);
+	border-radius: var(--mantine-radius-lg);
+	background: var(--mantine-color-gray-0);
+	transition: all 0.3s ease;
+}
+
+.container:hover {
+	border-color: var(--mantine-color-blue-4);
+	background: var(--mantine-color-blue-0);
+}
+
+.iconWrapper {
+	margin-bottom: var(--mantine-spacing-lg);
+	position: relative;
 }
 
 .icon {
-	margin-bottom: var(--mantine-spacing-xl);
+	width: 56px;
+	height: 56px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--mantine-color-blue-6);
+	background: var(--mantine-color-white);
+	border: 2px solid var(--mantine-color-blue-2);
+	border-radius: var(--mantine-radius-md);
+	transition: all 0.3s ease;
 }
 
-.title {
-	margin-top: var(--mantine-spacing-xl);
-	margin-bottom: var(--mantine-spacing-xs);
+.icon svg {
+	width: 28px;
+	height: 28px;
 }
 
-.subtitle {
-	margin-top: var(--mantine-spacing-xs);
-	margin-bottom: var(--mantine-spacing-lg);
+.container:hover .icon {
+	background: var(--mantine-color-blue-1);
+	border-color: var(--mantine-color-blue-4);
+}
+
+.message {
+	font-size: 1.125rem;
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+	margin-bottom: var(--mantine-spacing-sm);
 	text-align: center;
+	letter-spacing: -0.02em;
+	line-height: 1.3;
+}
+
+.description {
+	font-size: 0.875rem;
+	color: var(--mantine-color-gray-6);
+	text-align: center;
+	margin-bottom: var(--mantine-spacing-md);
+	line-height: 1.5;
+	max-width: 400px;
+}
+
+.action {
+	margin-top: var(--mantine-spacing-sm);
 }
