@@ -162,8 +162,8 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 				<div className={styles.emptyWrapper}>
 					<EmptyState
 						icon={<IconMessagesOff size={48} stroke={1.2} />}
-						title='No conversations yet'
-						subtitle='We will display conversations as soon as they are available.'
+						message='No conversations yet'
+						description='We will display conversations as soon as they are available.'
 					/>
 				</div>
 			) : (

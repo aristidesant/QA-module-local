@@ -208,9 +208,9 @@ export const CampaignsList: React.FC = () => {
 					<Card mt='xs' withBorder>
 						<EmptyState
 							icon={<IconRocket size={64} stroke={1.2} />}
-							title='No campaigns yet'
-							subtitle='Launch your first campaign to reach your audience'
-							button={
+							message='No campaigns yet'
+							description='Launch your first campaign to reach your audience'
+							action={
 								<Button
 									leftSection={<IconPlus size={18} />}
 									onClick={handleShowAddNewCampaignModal}
@@ -225,8 +225,8 @@ export const CampaignsList: React.FC = () => {
 					<Card mt='xs' withBorder>
 						<EmptyState
 							icon={<IconRocket size={64} stroke={1.2} />}
-							title='No campaigns found'
-							subtitle='Try adjusting your search terms or create a new campaign'
+							message='No campaigns found'
+							description='Try adjusting your search terms or create a new campaign'
 						/>
 					</Card>
 				) : (

@@ -70,7 +70,7 @@
 	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: var(--mantine-radius-md);
 	background-color: var(--mantine-color-body);
-	padding: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-xs);
 }
 
 .tableWrapper :global(th),
@@ -78,6 +78,16 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	padding: 6px 10px;
+	font-size: var(--mantine-font-size-sm);
+	line-height: 1.3;
+}
+
+.tableWrapper :global(th) {
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
 }
 
 .tableWrapper :global(.mantine-Table-tr) {
@@ -133,6 +143,58 @@
 	border: 1px solid var(--mantine-color-red-4);
 	border-radius: var(--mantine-radius-md);
 	background-color: var(--mantine-color-red-0);
+}
+
+/* Column-specific styles */
+.agentCellContent {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+}
+
+.agentDetails {
+	display: flex;
+	flex-direction: column;
+}
+
+.agentName {
+	font-weight: 600;
+	font-size: var(--mantine-font-size-sm);
+}
+
+.agentCell {
+	text-align: left;
+}
+
+.alignLeft {
+	text-align: left;
+}
+
+.alignCenter {
+	text-align: center;
+}
+
+.typeBadgeOutbound {
+	background-color: var(--mantine-color-green-1);
+	color: var(--mantine-color-green-9);
+	text-transform: none;
+	font-weight: 600;
+	font-size: var(--mantine-font-size-xs);
+	padding: 2px 6px;
+}
+
+.typeBadgeInbound {
+	background-color: var(--mantine-color-blue-1);
+	color: var(--mantine-color-blue-9);
+	text-transform: none;
+	font-weight: 600;
+	font-size: var(--mantine-font-size-xs);
+	padding: 2px 6px;
+}
+
+.inlineText {
+	display: inline;
+	font-size: var(--mantine-font-size-sm);
 }
 
 @media (max-width: 600px) {

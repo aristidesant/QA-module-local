@@ -141,9 +141,9 @@ export const CampaignCategoriesContent: React.FC<
 			<div className={styles.container}>
 				<EmptyState
 					icon={<IconPlus size={48} />}
-					title='No categories found'
-					subtitle='Get started by creating your first campaign category'
-					button={
+					message='No categories found'
+					description='Get started by creating your first campaign category'
+					action={
 						<Button
 							leftSection={<IconPlus size={16} />}
 							onClick={() => setCreateModalOpened(true)}

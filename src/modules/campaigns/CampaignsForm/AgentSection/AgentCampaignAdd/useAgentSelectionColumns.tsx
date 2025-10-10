@@ -13,9 +13,9 @@ import {
 	IconInfoCircle,
 	IconPlayerPlay,
 	IconPlayerPause,
-	IconArrowRight,
+	IconPlus,
 } from '@tabler/icons-react';
-import classes from './AgentSelection.module.css';
+import classes from './AgentCampaignAdd.module.css';
 
 interface UseAgentSelectionColumnsOptions {
 	onAdd: (agent: AgentWithCampaignListItem) => void;
@@ -108,26 +108,37 @@ const useAgentSelectionColumns = ({
 				header: 'Actions',
 				cell: ({ row }) => (
 					<Group gap={'xs'}>
-						<ActionIcon
-							variant='subtle'
-							color='blue'
-							onClick={() => onAdd(row.original)}
-							disabled={isDisabled(row.original)}
+						<Tooltip
+							label={
+								isPlaying(row.original)
+									? 'Pause voice preview'
+									: 'Play voice preview'
+							}
+							withArrow
 						>
-							<IconArrowRight size={16} />
-						</ActionIcon>
-						<ActionIcon
-							variant='subtle'
-							color='green'
-							onClick={() => onPlay(row.original)}
-							disabled={!row.original.voicePreviewUrl}
-						>
-							{isPlaying(row.original) ? (
-								<IconPlayerPause size={16} />
-							) : (
-								<IconPlayerPlay size={16} />
-							)}
-						</ActionIcon>
+							<ActionIcon
+								variant='subtle'
+								color='green'
+								onClick={() => onPlay(row.original)}
+								disabled={!row.original.voicePreviewUrl}
+							>
+								{isPlaying(row.original) ? (
+									<IconPlayerPause size={16} />
+								) : (
+									<IconPlayerPlay size={16} />
+								)}
+							</ActionIcon>
+						</Tooltip>
+						<Tooltip label='Add agent' withArrow>
+							<ActionIcon
+								variant='subtle'
+								color='blue'
+								onClick={() => onAdd(row.original)}
+								disabled={isDisabled(row.original)}
+							>
+								<IconPlus size={16} />
+							</ActionIcon>
+						</Tooltip>
 					</Group>
 				),
 				meta: {

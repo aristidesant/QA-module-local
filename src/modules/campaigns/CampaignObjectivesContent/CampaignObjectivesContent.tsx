@@ -148,9 +148,9 @@ export const CampaignObjectivesContent: React.FC<
 			<div className={styles.container}>
 				<EmptyState
 					icon={<IconPlus size={48} />}
-					title='No objectives found'
-					subtitle='Get started by creating your first campaign objective'
-					button={
+					message='No objectives found'
+					description='Get started by creating your first campaign objective'
+					action={
 						<Button
 							leftSection={<IconPlus size={16} />}
 							onClick={() => setCreateModalOpened(true)}

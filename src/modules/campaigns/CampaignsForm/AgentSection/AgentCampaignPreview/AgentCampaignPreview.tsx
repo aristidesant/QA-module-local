@@ -1,15 +1,15 @@
 import React from 'react';
 import { Text, Group, Loader, Button } from '@mantine/core';
-import { IconChevronLeft, IconTrash } from '@tabler/icons-react';
+import { IconTrash } from '@tabler/icons-react';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import AgentCampaignList from '../AgentCampaignList';
 import { useGetAgent } from '~/queries/agentQueries';
 import styles from './AgentCampaignPreview.module.css';
-import { VoiceMiniPlayer } from '~/components/VoiceMiniPlayer';
 import { openConfirmModal } from '@mantine/modals';
 import AgentProfile from '~/modules/agents/AgentSimpleDetails/AgentProfile';
 import AgentVoiceProgress from '~/modules/agents/AgentSimpleDetails/AgentVoiceProgress';
 import { useDeleteCampaignAgent } from '~/queries/campaignAgentsQueries';
+import { VoicePlayer } from '~/components/VoicePlayer';
 
 interface AgentCampaignPreviewProps {
 	agentId: string;
@@ -53,13 +53,6 @@ export const AgentCampaignPreview: React.FC<AgentCampaignPreviewProps> = ({
 
 	return (
 		<div>
-			<button
-				className={styles.backButton}
-				onClick={() => setRightComponent?.(<AgentCampaignList />)}
-				aria-label='Back to agents'
-			>
-				<IconChevronLeft size={18} /> Back to agents
-			</button>
 			{isLoading || !agent ? (
 				<Group justify='center' align='center' style={{ minHeight: 200 }}>
 					<Loader />
@@ -71,6 +64,10 @@ export const AgentCampaignPreview: React.FC<AgentCampaignPreviewProps> = ({
 							agent={agent}
 							traits={['Warm', 'Playful']}
 							size='md'
+						/>
+						<VoicePlayer
+							voiceName={agent.voice?.name || 'Unknown'}
+							previewUrl={agent.voice?.previewUrl}
 						/>
 						<div style={{ width: '100%', marginTop: 18 }}>
 							<AgentVoiceProgress
@@ -103,10 +100,6 @@ export const AgentCampaignPreview: React.FC<AgentCampaignPreviewProps> = ({
 						>
 							Remove Agent from campaign
 						</Button>
-					</div>
-					{/* VoiceMiniPlayer at the bottom */}
-					<div className={styles.voicePlayer}>
-						<VoiceMiniPlayer voiceUrl={agent.voice?.previewUrl} />
 					</div>
 				</>
 			)}

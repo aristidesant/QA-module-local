@@ -39,12 +39,16 @@
 	background: var(--mantine-color-body);
 	margin: 0 var(--mantine-spacing-sm);
 	cursor: pointer;
-	transition: border-color 150ms ease;
-	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	transition: all 150ms ease;
+	padding: var(--mantine-spacing-md);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
 }
 
 .agentCard:hover {
 	border-color: var(--mantine-color-blue-5);
+	background-color: var(--mantine-color-gray-0);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .avatarStatus {
@@ -65,8 +69,4 @@
 
 .statusDot.inactive {
 	background: var(--mantine-color-gray-4);
-}
-
-.menuIcon {
-	color: var(--mantine-color-gray-6);
 }

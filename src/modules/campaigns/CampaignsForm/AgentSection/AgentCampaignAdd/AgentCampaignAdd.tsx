@@ -8,7 +8,7 @@ import {
 } from '@tabler/icons-react';
 import BaseTable from '~/components/BaseTable/BaseTable';
 import PaginationControls from '~/components/PaginationControls/PaginationControls';
-import useAgentSelectionColumns from '~/components/AgentSelection/useAgentSelectionColumns';
+import useAgentSelectionColumns from '~/modules/campaigns/CampaignsForm/AgentSection/AgentCampaignAdd/useAgentSelectionColumns';
 import { useAgentsWithCampaigns } from '~/queries/agentQueries';
 import { useCreateCampaignAgent } from '~/queries/campaignAgentsQueries';
 import type { AgentWithCampaignListItem } from '~/models/AgentListObject';
@@ -172,19 +172,17 @@ export const AgentCampaignAdd: React.FC<AgentCampaignAddProps> = ({
 				)}
 			</>
 
-			<div className={classes.paginationWrapper}>
-				<PaginationControls
-					currentPage={page}
-					totalPages={totalPages}
-					itemsPerPage={limit}
-					totalItems={totalItems}
-					onPageChange={setPage}
-					onItemsPerPageChange={handleItemsPerPageChange}
-					searchTerm={debouncedSearch}
-					isLoading={isLoading}
-					itemLabel='agents'
-				/>
-			</div>
+			<PaginationControls
+				currentPage={page}
+				totalPages={totalPages}
+				itemsPerPage={limit}
+				totalItems={totalItems}
+				onPageChange={setPage}
+				onItemsPerPageChange={handleItemsPerPageChange}
+				searchTerm={debouncedSearch}
+				isLoading={isLoading}
+				itemLabel='agents'
+			/>
 		</Stack>
 	);
 };

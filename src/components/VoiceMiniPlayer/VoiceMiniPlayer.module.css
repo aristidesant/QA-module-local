@@ -61,18 +61,39 @@
 .voiceMiniPlayer.small .playIcon {
 	font-size: 12px;
 	margin-left: 1px;
+	color: white;
 }
 
 .voiceMiniPlayer.small .pauseIcon {
 	font-size: 10px;
+	color: white;
 }
 
 .voiceMiniPlayer.small .loadingSpinner {
 	font-size: 10px;
+	color: white;
 }
 
 .voiceMiniPlayer.small .selectIcon {
 	font-size: 12px;
+}
+
+.voiceMiniPlayer .playIcon {
+	font-size: 16px;
+	color: white;
+	margin-left: 1px;
+}
+
+.voiceMiniPlayer .pauseIcon {
+	font-size: 14px;
+	color: white;
+}
+
+.voiceMiniPlayer .loadingSpinner {
+	color: white;
+	font-size: 16px;
+	animation: spin 1s linear infinite;
+	filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
 }
 
 .waveIndicator {
@@ -134,13 +155,6 @@
 		transform: translate(-50%, -50%) scale(1.2);
 		opacity: 0;
 	}
-}
-
-.loadingSpinner {
-	color: white;
-	font-size: 20px;
-	animation: spin 1s linear infinite;
-	filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
 }
 
 .playButton:disabled .playIcon,

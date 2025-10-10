@@ -3,7 +3,6 @@ import {
 	IconPlayerPlay,
 	IconPlayerPause,
 	IconLoader,
-	IconCheck,
 } from '@tabler/icons-react';
 import styles from './VoiceMiniPlayer.module.css';
 
@@ -18,7 +17,6 @@ export function VoiceMiniPlayer({
 	voiceUrl,
 	disabled = false,
 	size = 'normal',
-	onSelect,
 }: VoiceMiniPlayerProps) {
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
@@ -127,15 +125,6 @@ export function VoiceMiniPlayer({
 					{renderIcon()}
 				</button>
 			</div>
-
-			{/* Select button */}
-			<button
-				className={styles.selectButton}
-				onClick={onSelect}
-				disabled={disabled || !onSelect}
-			>
-				<IconCheck className={styles.selectIcon} />
-			</button>
 		</div>
 	);
 }

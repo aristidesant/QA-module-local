@@ -144,9 +144,9 @@ export const CampaignSchemasContent: React.FC<CampaignSchemasContentProps> = ({
 			<div className={styles.container}>
 				<EmptyState
 					icon={<IconDatabase size={48} />}
-					title='No schemas found'
-					subtitle='Get started by creating your first campaign schema'
-					button={
+					message='No schemas found'
+					description='Get started by creating your first campaign schema'
+					action={
 						<Button
 							leftSection={<IconPlus size={16} />}
 							onClick={() => setCreateModalOpened(true)}
