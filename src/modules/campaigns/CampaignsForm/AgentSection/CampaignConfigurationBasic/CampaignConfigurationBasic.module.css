@@ -1,0 +1,8 @@
+.sectionCard {
+	transition: all 0.2s ease;
+	border: 1px solid var(--mantine-color-gray-2);
+}
+.sectionCard:hover {
+	border-color: var(--mantine-color-blue-3);
+	transform: translateY(-1px);
+}
