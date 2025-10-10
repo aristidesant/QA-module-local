@@ -1,6 +1,11 @@
 import { BodyCreateAgentV1ConvaiAgentsCreatePost } from '@elevenlabs/elevenlabs-js/api/resources/conversationalAi';
 import axios from 'axios';
 import type AgentListObject from '~/models/AgentListObject';
+import type {
+	AgentWithCampaignListItem,
+	AgentWithCampaignsQueryParams,
+} from '~/models/AgentListObject';
+import type { Paginator } from '~/models/Paginator';
 import { DEFAULT_API_URL } from './config';
 
 export interface FindAllAgentsResponse {
@@ -10,6 +15,8 @@ export interface FindAllAgentsResponse {
 	limit: number;
 	totalPages: number;
 }
+
+export type AgentsWithCampaignsResponse = Paginator<AgentWithCampaignListItem>;
 
 export interface DuplicateAgentDto {
 	name: string;
@@ -56,6 +63,22 @@ const agentApi = (_authHeader: Record<string, string> = {}) => {
 		findAgent: async (agentId: string) => {
 			const response = await axios.get<AgentListObject>(
 				`${DEFAULT_API_URL}/agents/${agentId}`
+			);
+			return response.data;
+		},
+
+		// FIND agents with campaigns
+		findAgentsWithCampaigns: async (
+			params?: AgentWithCampaignsQueryParams,
+			extraHeaders?: Record<string, string>
+		) => {
+			const response = await axios.get<AgentsWithCampaignsResponse>(
+				`${DEFAULT_API_URL}/agents/with-campaigns/list`,
+				{
+					params,
+					...(extraHeaders ? { headers: extraHeaders } : {}),
+					timeout: 5000,
+				}
 			);
 			return response.data;
 		},

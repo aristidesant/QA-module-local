@@ -157,3 +157,31 @@ export interface ConversationConfigModel {
 	};
 	languagePresets: Record<string, any>;
 }
+
+export type AgentWithCampaignListItem = Pick<
+	AgentListObject,
+	| 'id'
+	| 'name'
+	| 'status'
+	| 'type'
+	| 'createdAt'
+	| 'updatedAt'
+	| 'clientId'
+	| 'voiceId'
+> & {
+	identifier: string;
+	voiceName: string | null;
+	voiceLanguage: string | null;
+	voicePreviewUrl: string | null;
+	campaignId: string | null;
+	campaignName: string | null;
+};
+
+export type AgentWithCampaignsQueryParams = {
+	name?: string;
+	agentId?: string;
+	agentType?: AgentWithCampaignListItem['type'];
+	status?: AgentWithCampaignListItem['status'];
+	page?: number;
+	limit?: number;
+};

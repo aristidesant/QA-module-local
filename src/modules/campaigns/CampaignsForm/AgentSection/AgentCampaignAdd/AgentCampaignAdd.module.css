@@ -1,63 +1,150 @@
-/* AgentCampaignAdd.module.css */
 .container {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
 }
-.agentList {
-  max-height: 300px;
-  overflow-y: auto;
-  margin-bottom: 1rem;
+
+.header {
+	padding-bottom: var(--mantine-spacing-sm);
+	border-bottom: 1px solid var(--mantine-color-gray-2);
 }
-.agentCard {
-  margin-bottom: 0.5rem;
-  cursor: pointer;
-  background: none;
-  transition: background 0.12s;
-  box-shadow: none;
-  padding: 0.5rem 0.75rem;
+
+.headerIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border-radius: var(--mantine-radius-md);
+	background-color: var(--mantine-color-blue-0);
+	color: var(--mantine-color-blue-6);
 }
-.cardContent {
-  display: flex;
-  align-items: center;
-  width: 100%;
+
+.headerTitle {
+	font-size: var(--mantine-font-size-md);
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+	line-height: 1.2;
 }
-.avatar {
-  flex-shrink: 0;
-  margin-right: 1rem;
+
+.headerSubtitle {
+	color: var(--mantine-color-gray-6);
+	font-size: var(--mantine-font-size-sm);
 }
-.infoBlock {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 auto;
-  min-width: 0;
+
+.resultBadge {
+	background-color: var(--mantine-color-blue-0);
+	color: var(--mantine-color-blue-7);
+	text-transform: none;
+	font-weight: 600;
 }
-.agentName {
-  font-weight: 500;
-  font-size: 1rem;
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+
+.filters {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-md);
+	padding: var(--mantine-spacing-sm);
+	border-radius: var(--mantine-radius-md);
+	background-color: var(--mantine-color-gray-0);
 }
-.language {
-  margin-top: 2px;
-  font-size: 0.85rem;
-  color: var(--mantine-color-gray-6);
+
+.searchInput {
+	flex: 1;
+	min-width: 16rem;
 }
-.checkIcon {
-  margin-left: auto;
+
+.selectionBadge {
+	background-color: var(--mantine-color-green-0);
+	color: var(--mantine-color-green-7);
+	text-transform: none;
+	font-weight: 600;
 }
-.agentCard:hover,
-.agentCard:focus {
-  background: var(--mantine-color-blue-0);
+
+.selectionHint {
+	color: var(--mantine-color-gray-6);
+	font-size: var(--mantine-font-size-sm);
 }
-.selected {
-  background: var(--mantine-color-blue-light);
+
+.tableWrapper {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	background-color: var(--mantine-color-body);
+	padding: var(--mantine-spacing-sm);
 }
-.agentName {
-  font-weight: 500;
+
+.tableWrapper :global(th),
+.tableWrapper :global(td) {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
+
+.tableWrapper :global(.mantine-Table-tr) {
+	transition: background-color 120ms ease-in-out;
+}
+
+.tableWrapper :global(.mantine-Table-tr:hover) {
+	background-color: var(--mantine-color-gray-0);
+}
+
+.emptyState {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-xl) var(--mantine-spacing-lg);
+	text-align: center;
+	color: var(--mantine-color-gray-6);
+}
+
+.emptyIcon {
+	width: 48px;
+	height: 48px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: var(--mantine-radius-xl);
+	background-color: var(--mantine-color-gray-1);
+	color: var(--mantine-color-gray-6);
+}
+
+.subText {
+	color: var(--mantine-color-gray-6);
+	font-size: var(--mantine-font-size-xs);
+}
+
+.selectedRow {
+	background-color: var(--mantine-color-blue-0);
+}
+
+.paginationWrapper {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: var(--mantine-spacing-xs);
+}
+
 .addBtn {
-  margin-top: 1rem;
+	margin-top: var(--mantine-spacing-sm);
+}
+
+.errorAlert {
+	border: 1px solid var(--mantine-color-red-4);
+	border-radius: var(--mantine-radius-md);
+	background-color: var(--mantine-color-red-0);
+}
+
+@media (max-width: 600px) {
+	.filters {
+		flex-direction: column;
+		align-items: stretch;
+		gap: var(--mantine-spacing-sm);
+	}
+
+	.selectionBadge,
+	.selectionHint {
+		width: 100%;
+		text-align: center;
+	}
 }

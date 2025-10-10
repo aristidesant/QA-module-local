@@ -1,18 +1,17 @@
-import { useEffect, useRef, useState } from "react";
-import { useDebouncedFilters } from "./AgentVoicesFilter/useDebouncedFilters";
-import { useGetAllAgentVoices } from "~/queries/agentVoiceQueries";
-import { Text } from "@mantine/core";
-import { Carousel } from "@mantine/carousel";
-import { IconMicrophone } from "@tabler/icons-react";
+import { useEffect, useRef, useState } from 'react';
+import { useGetAllAgentVoices } from '~/queries/agentVoiceQueries';
+import { Text } from '@mantine/core';
+import { Carousel } from '@mantine/carousel';
+import { IconMicrophone } from '@tabler/icons-react';
 
-import SectionCard from "~/components/SectionCard";
-import classes from "./AgentVoices.module.css";
-import { VoiceCard } from "./VoiceCard";
-import type { AgentVoicesFilterValues } from "./AgentVoicesFilter/AgentVoicesFilter";
-import AgentVoiceSettings from "../AgentVoiceSettings";
-import VoiceDetails from "../VoiceDetails";
-import type { AgentConfigModel } from "~/models/AgentListObject";
-import AgentListObject from "~/models/AgentListObject";
+import SectionCard from '~/components/SectionCard';
+import classes from './AgentVoices.module.css';
+import { VoiceCard } from './VoiceCard';
+import AgentVoiceSettings from '../AgentVoiceSettings';
+import VoiceDetails from '../VoiceDetails';
+import type { AgentConfigModel } from '~/models/AgentListObject';
+import AgentListObject from '~/models/AgentListObject';
+import { useDebouncedValue } from '@mantine/hooks';
 
 type AgentVoicesProps = {
 	onSelectVoice: (voiceId: string) => void;
@@ -22,6 +21,15 @@ type AgentVoicesProps = {
 	agent?: AgentListObject;
 };
 
+export interface AgentVoicesFilterValues {
+	name: string;
+	gender: string;
+	language: string;
+	status: string;
+	age: string;
+	accent: string;
+}
+
 const AgentVoices: React.FC<AgentVoicesProps> = ({
 	onSelectVoice,
 	agentData,
@@ -30,14 +38,14 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
 	agent,
 }) => {
 	const [filters] = useState<AgentVoicesFilterValues>({
-		name: "",
-		gender: "",
-		language: "",
-		status: "",
-		age: "",
-		accent: "",
+		name: '',
+		gender: '',
+		language: '',
+		status: '',
+		age: '',
+		accent: '',
 	});
-	const debouncedFilters = useDebouncedFilters(filters, 400);
+	const [debouncedFilters] = useDebouncedValue(filters, 400);
 
 	const {
 		data: elevenLabsVoices,
@@ -45,7 +53,7 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
 		isError,
 	} = useGetAllAgentVoices(
 		Object.fromEntries(
-			Object.entries(debouncedFilters).filter(([_, value]) => value !== "")
+			Object.entries(debouncedFilters).filter(([_, value]) => value !== '')
 		) as Record<string, string>
 	);
 
@@ -130,10 +138,10 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
 		content = (
 			<div className={classes.loadingContainer}>
 				<IconMicrophone className={classes.loadingIcon} size={64} />
-				<Text size="xl" fw={600}>
+				<Text size='xl' fw={600}>
 					Loading voices...
 				</Text>
-				<Text size="sm" c="dimmed">
+				<Text size='sm' c='dimmed'>
 					Fetching available voice options
 				</Text>
 			</div>
@@ -142,10 +150,10 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
 		content = (
 			<div className={classes.errorContainer}>
 				<IconMicrophone className={classes.errorIcon} size={64} />
-				<Text size="xl" fw={600} c="red">
+				<Text size='xl' fw={600} c='red'>
 					Failed to load voices
 				</Text>
-				<Text size="sm" c="dimmed">
+				<Text size='sm' c='dimmed'>
 					There was an error fetching the voice options. Please try again.
 				</Text>
 			</div>
@@ -154,10 +162,10 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
 		content = (
 			<div className={classes.errorContainer}>
 				<IconMicrophone className={classes.errorIcon} size={64} />
-				<Text size="xl" fw={600}>
+				<Text size='xl' fw={600}>
 					No voices found
 				</Text>
-				<Text size="sm" c="dimmed">
+				<Text size='sm' c='dimmed'>
 					Try adjusting your filters or try again later.
 				</Text>
 			</div>
@@ -173,10 +181,10 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
 				/>
 				<Carousel
 					withControls
-					slideSize="20%"
-					slideGap="md"
+					slideSize='20%'
+					slideGap='md'
 					emblaOptions={{
-						align: "center",
+						align: 'center',
 						loop: true,
 					}}
 					onSlideChange={(i) => {
@@ -197,7 +205,7 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
 								<div
 									style={{
 										transform: `scale(${scale})`,
-										transition: "transform 0.3s cubic-bezier(0.4,0,0.2,1)",
+										transition: 'transform 0.3s cubic-bezier(0.4,0,0.2,1)',
 									}}
 								>
 									<VoiceCard
@@ -220,10 +228,10 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
 	return (
 		<SectionCard
 			icon={IconMicrophone}
-			title="Choose AI voice"
-			description="Select the voice that will represent during customer interactions.."
-			contentSpacing="md"
-			id="agent-voices-section"
+			title='Choose AI voice'
+			description='Select the voice that will represent during customer interactions..'
+			contentSpacing='md'
+			id='agent-voices-section'
 		>
 			{/* <AgentVoicesFilter filters={filters} onChange={handleFiltersChange} /> */}
 			{content}

@@ -62,7 +62,7 @@ export const AgentCampaignList: React.FC = () => {
 			modalId: 'add-campaign-agent',
 			title: 'Add Agent to Campaign',
 			centered: true,
-			size: 'md',
+			size: 'xl',
 			children: (
 				<AgentCampaignAdd
 					campaignId={selectedCampaign.id}

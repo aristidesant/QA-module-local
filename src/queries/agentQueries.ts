@@ -2,8 +2,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import agentApi, {
 	FindAllAgentsResponse,
 	DuplicateAgentDto,
+	AgentsWithCampaignsResponse,
 } from '~/api/agentApi';
-import type { AgentUpdateModel } from '~/models/AgentListObject';
+import type {
+	AgentUpdateModel,
+	AgentWithCampaignsQueryParams,
+} from '~/models/AgentListObject';
 import type { Campaign } from '~/models/CampaignsModel';
 
 // Create agent
@@ -54,6 +58,21 @@ export const useGetAllAgents = (params?: Record<string, unknown>) => {
 			const api = agentApi();
 			return api.findAllAgents(params);
 		},
+	});
+};
+
+// Get agents with campaigns
+export const useAgentsWithCampaigns = (
+	params?: AgentWithCampaignsQueryParams,
+	enabled = true
+) => {
+	return useQuery<AgentsWithCampaignsResponse>({
+		queryKey: ['agents', 'with-campaigns', params],
+		queryFn: async () => {
+			const api = agentApi();
+			return api.findAgentsWithCampaigns(params);
+		},
+		enabled,
 	});
 };
 
