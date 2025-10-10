@@ -55,7 +55,7 @@ export const CampaignsList: React.FC = () => {
 	// Reset to first page when filters change
 	useEffect(() => {
 		pagination.setCurrentPage(1);
-	}, [filters, pagination]);
+	}, [filters]);
 
 	// Fetch data with server-side pagination
 	const {
