@@ -1,0 +1,12 @@
+.legend {
+	padding: var(--mantine-spacing-md);
+	background-color: var(--mantine-color-gray-0);
+	border-radius: var(--mantine-radius-md);
+}
+
+.indicator {
+	width: 12px;
+	height: 12px;
+	border-radius: 2px;
+	flex-shrink: 0;
+}

@@ -1,0 +1,12 @@
+.card {
+	background-color: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
+}
+
+.label {
+	font-weight: 500;
+}
+
+.value {
+	color: var(--mantine-color-dark-9);
+}

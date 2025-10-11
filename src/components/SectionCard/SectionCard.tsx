@@ -4,7 +4,7 @@ import styles from './SectionCard.module.css';
 import type { TablerIcon } from '@tabler/icons-react';
 import { SectionTitle } from '../SectionTitle';
 
-interface SectionCardProps {
+export interface SectionCardProps {
 	icon?: TablerIcon;
 	title?: string | ReactNode;
 	description?: string;

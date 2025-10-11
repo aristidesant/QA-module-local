@@ -37,6 +37,7 @@ const ContactsPage = React.lazy(
 );
 const WelcomeCard = React.lazy(() => import('./modules/overview/WelcomeCard'));
 import { LoginForm } from './modules/auth/LoginForm';
+import CampaignLiveMetricPage from './modules/campaigns/CampaignLiveMetricPage/CampaignLiveMetricPage';
 const KnowledgeBasePage = React.lazy(
 	() => import('./modules/knowledge-bases/KnowledgeBasePage')
 );
@@ -87,6 +88,14 @@ const router = createBrowserRouter([
 						element: (
 							<Suspense fallback={<div>Loading campaigns...</div>}>
 								<CampaignsPage />
+							</Suspense>
+						),
+					},
+					{
+						path: 'campaigns/metrics/:campaignId',
+						element: (
+							<Suspense fallback={<div>Loading campaigns...</div>}>
+								<CampaignLiveMetricPage />
 							</Suspense>
 						),
 					},

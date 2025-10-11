@@ -23,8 +23,10 @@ import {
 	IconArrowUpRight,
 	IconArrowDownLeft,
 	IconCopy,
+	IconChartDots,
 } from '@tabler/icons-react';
 import type { Campaign } from '~/models/CampaignsModel';
+import { useNavigate } from 'react-router';
 
 // Helper to get status info
 const getCampaignStatusInfo = (status: string) => {
@@ -99,6 +101,7 @@ export const useCampaignsColumns = ({
 	onDelete,
 	onClone,
 }: UseCampaignsColumnsProps): ColumnDef<Campaign, any>[] => {
+	const navigate = useNavigate();
 	return [
 		{
 			accessorKey: 'name',
@@ -251,6 +254,14 @@ export const useCampaignsColumns = ({
 							</ActionIcon>
 						</Menu.Target>
 						<Menu.Dropdown>
+							<Menu.Item
+								onClick={(e) => {
+									navigate(`/campaigns/metrics/${campaign.id}`);
+								}}
+								leftSection={<IconChartDots size={14} />}
+							>
+								View Metrics
+							</Menu.Item>
 							<Menu.Item
 								onClick={(e) => {
 									e.stopPropagation();

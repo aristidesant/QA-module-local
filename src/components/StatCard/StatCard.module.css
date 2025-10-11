@@ -1,0 +1,28 @@
+.card {
+	background-color: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-2);
+	transition: border-color 0.2s ease;
+}
+
+.card:hover {
+	border-color: var(--mantine-color-gray-4);
+}
+
+.title {
+	font-weight: 500;
+}
+
+.value {
+	color: var(--mantine-color-dark-9);
+	line-height: 1.2;
+}
+
+.subtitle {
+	margin-top: 0.25rem;
+}
+
+.chart {
+	flex-shrink: 0;
+	width: 80px;
+	height: 40px;
+}

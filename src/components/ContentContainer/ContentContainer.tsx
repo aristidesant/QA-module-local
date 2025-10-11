@@ -85,3 +85,5 @@ export const ContentContainer = ({
 		)}
 	</div>
 );
+
+export default ContentContainer;

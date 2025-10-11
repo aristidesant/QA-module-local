@@ -1,0 +1,18 @@
+.container {
+	width: 100%;
+}
+
+.datePicker {
+	width: 200px;
+}
+
+.statusSelect {
+	width: 180px;
+}
+
+@media (max-width: 768px) {
+	.datePicker,
+	.statusSelect {
+		width: 150px;
+	}
+}
