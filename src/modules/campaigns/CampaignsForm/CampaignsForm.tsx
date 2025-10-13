@@ -23,6 +23,7 @@ import AgentSection from './AgentSection';
 import DispositionSection from './DispositionSection';
 import ConversationsSection from './ConversationsSection';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
+import { CampaignStatus } from '~/models/CampaignStatus';
 
 interface CampaignsFormProps {
 	campaign?: Partial<Campaign>;
@@ -56,7 +57,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({ campaign }) => {
 			budget: campaign?.budget ?? 0,
 			spent: campaign?.spent ?? 0,
 			type: campaign?.type || 'OUTBOUND',
-			status: campaign?.status || 'ACTIVE',
+			status: campaign?.status || CampaignStatus.PENDING,
 			userId: campaign?.userId ?? 0,
 			promptId: campaign?.promptId ?? undefined,
 			objectiveId: campaign?.objectiveId ?? undefined,

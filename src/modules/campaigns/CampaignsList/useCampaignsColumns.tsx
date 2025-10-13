@@ -14,10 +14,6 @@ import {
 	IconDotsVertical,
 	IconTrash,
 	IconEye,
-	IconBolt,
-	IconPlayerPause,
-	IconCircleCheck,
-	IconExclamationMark,
 	IconCheck,
 	IconArrowUpRight,
 	IconArrowDownLeft,
@@ -26,57 +22,27 @@ import {
 } from '@tabler/icons-react';
 import type { Campaign } from '~/models/CampaignsModel';
 import { useNavigate } from 'react-router';
+import { CampaignStatus, CampaignStatusConfig } from '~/models/CampaignStatus';
 
 // Helper to get status info
 const getCampaignStatusInfo = (status: string) => {
-	const campaignStatus = status?.toLowerCase();
+	const config = CampaignStatusConfig[status as CampaignStatus];
 	const size = 16;
 
-	switch (campaignStatus) {
-		case 'running':
-			return {
-				icon: <IconBolt size={size} />,
-				color: 'blue.6',
-				label: 'Running',
-			};
-		case 'paused':
-			return {
-				icon: <IconPlayerPause size={size} />,
-				color: 'gray.5',
-				label: 'Paused',
-			};
-		case 'completed':
-			return {
-				icon: <IconCircleCheck size={size} />,
-				color: 'green.6',
-				label: 'Completed',
-			};
-		case 'inactive':
-		case 'incomplete':
-		case 'fail':
-		case 'failed':
-		case 'error':
-			return {
-				icon: <IconExclamationMark size={size} />,
-				color: 'red.6',
-				label: 'Failed',
-			};
-		case 'ready':
-		case 'scheduled':
-		case 'active':
-		case 'pending':
-			return {
-				icon: <IconCheck size={size} />,
-				color: 'yellow.5',
-				label: 'Pending',
-			};
-		default:
-			return {
-				icon: <IconCheck size={size} />,
-				color: 'gray.5',
-				label: 'Unknown Status',
-			};
+	if (config) {
+		return {
+			icon: <config.icon size={size} />,
+			color: config.color,
+			label: config.label,
+		};
 	}
+
+	// Fallback for unknown status
+	return {
+		icon: <IconCheck size={size} />,
+		color: 'gray',
+		label: status || 'Unknown',
+	};
 };
 
 // Helper to get progress color

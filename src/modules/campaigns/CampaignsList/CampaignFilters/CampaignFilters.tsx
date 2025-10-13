@@ -14,6 +14,7 @@ import { IconSearch, IconAdjustments, IconFilter } from '@tabler/icons-react';
 import { useState } from 'react';
 import { FilterContainer } from '~/components/FilterContainer';
 import styles from './CampaignFilters.module.css';
+import { CampaignStatus, CampaignStatusConfig } from '~/models/CampaignStatus';
 
 interface CampaignFiltersProps {
 	searchValue: string;
@@ -23,7 +24,7 @@ interface CampaignFiltersProps {
 	filters: {
 		type?: string;
 		campaignExecutionType?: string;
-		status?: string;
+		status?: CampaignStatus;
 		budgetMin?: number;
 		budgetMax?: number;
 		spentMin?: number;
@@ -46,13 +47,10 @@ const typeOptions = [
 	{ value: 'INBOUND', label: 'Inbound' },
 ];
 
-const statusOptions = [
-	{ value: 'ACTIVE', label: 'Active' },
-	{ value: 'INACTIVE', label: 'Inactive' },
-	{ value: 'PAUSED', label: 'Paused' },
-	{ value: 'COMPLETED', label: 'Completed' },
-	{ value: 'RUNNING', label: 'Running' },
-];
+const statusOptions = Object.values(CampaignStatus).map((status) => ({
+	value: status,
+	label: CampaignStatusConfig[status].label,
+}));
 export default function CampaignFilters({
 	searchValue,
 	onSearchChange,
@@ -168,7 +166,9 @@ export default function CampaignFilters({
 								placeholder='All statuses'
 								data={statusOptions}
 								value={filters.status}
-								onChange={(value) => handleFilterChange('status', value)}
+								onChange={(value) =>
+									handleFilterChange('status', value as CampaignStatus | null)
+								}
 								clearable
 								size='sm'
 							/>

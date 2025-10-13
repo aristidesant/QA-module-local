@@ -15,18 +15,18 @@ import { AddNewCampaignForm } from '../AddNewCampaignForm';
 import CampaignFilters from './CampaignFilters';
 import { usePagination } from '~/hooks/usePagination';
 import PaginationControls from '~/components/PaginationControls';
-import { useFilteredAndSortedCampaigns } from '~/hooks/useFilteredAndSortedCampaigns';
 import EmptyState from '~/components/EmptyState';
 import BaseTable from '~/components/BaseTable';
 import { useCampaignsColumns } from './useCampaignsColumns';
 import CampaignsListSkeleton from './CampaignsListSkeleton';
 import CloneCampaignForm from '../CloneCampaignForm';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
+import { CampaignStatus } from '~/models/CampaignStatus';
 
 interface CampaignFiltersType {
 	type?: string;
 	campaignExecutionType?: string;
-	status?: string;
+	status?: CampaignStatus;
 	budgetMin?: number;
 	budgetMax?: number;
 	spentMin?: number;
@@ -68,20 +68,17 @@ export const CampaignsList: React.FC = () => {
 		isError,
 		error,
 		refetch: reloadCampaigns,
-	} = useGetAllCampaignsPaginated({ ...pagination.getApiParams(), ...filters });
+	} = useGetAllCampaignsPaginated({
+		...pagination.getApiParams(),
+		...filters,
+		sortBy,
+	});
 	const { mutateAsync: deleteCampaign } = useDeleteCampaign();
 
 	// Calculate total pages from server response
 	const totalPages = campaignsResponse?.total
 		? pagination.calculateTotalPages(campaignsResponse.total)
 		: 0;
-
-	// Filter and sort campaigns
-	const filteredAndSortedCampaigns = useFilteredAndSortedCampaigns(
-		campaignsResponse?.data,
-		pagination.debouncedSearch,
-		sortBy
-	);
 
 	const columns = useCampaignsColumns({
 		onEdit: (campaign) => {
@@ -223,8 +220,7 @@ export const CampaignsList: React.FC = () => {
 							}
 						/>
 					</Card>
-				) : filteredAndSortedCampaigns?.length === 0 &&
-				  pagination.searchValue ? (
+				) : campaignsResponse?.data?.length === 0 && pagination.searchValue ? (
 					<Card mt='xs' withBorder>
 						<EmptyState
 							icon={<IconRocket size={64} stroke={1.2} />}
@@ -235,7 +231,7 @@ export const CampaignsList: React.FC = () => {
 				) : (
 					<>
 						<BaseTable
-							data={filteredAndSortedCampaigns || []}
+							data={campaignsResponse?.data || []}
 							columns={columns}
 							onRowClick={handleCampaignClick}
 							selectedKey={selectedCampaign?.id?.toString()}

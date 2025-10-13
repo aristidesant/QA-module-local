@@ -3,6 +3,7 @@
 import type { AgentConfigModel } from './AgentListObject';
 import { CampaignAgent } from './CampaignAgentModel';
 import { CampaignObjective } from './CampaignObjectiveModel';
+import { CampaignStatus } from './CampaignStatus';
 
 export interface WorkingHours {
 	[key: string]: {
@@ -48,7 +49,7 @@ export interface Campaign {
 	budget: number;
 	spent: number;
 	type: 'OUTBOUND' | 'INBOUND';
-	status: 'ACTIVE' | 'INACTIVE' | 'PAUSED' | 'COMPLETED' | 'RUNNING';
+	status: CampaignStatus;
 	userId: number;
 	clientId: number;
 	promptId?: number;

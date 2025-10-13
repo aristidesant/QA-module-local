@@ -14,6 +14,7 @@ import { useCreateCampaign } from '~/queries/campaignsQueries';
 import styles from './AddNewCampaignForm.module.css';
 import { notifications } from '@mantine/notifications';
 import { IconDeviceFloppy } from '@tabler/icons-react';
+import { CampaignStatus } from '~/models/CampaignStatus';
 
 type AddNewCampaignFormProps = {
 	onComplete?: () => void;
@@ -52,7 +53,7 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 			{
 				...values,
 				type: values.type as 'INBOUND' | 'OUTBOUND',
-				status: 'ACTIVE',
+				status: CampaignStatus.PENDING, // New campaigns start as pending
 			},
 			{
 				onSuccess: () => {
