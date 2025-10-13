@@ -6,14 +6,17 @@
 	margin: 0;
 	padding: 0;
 }
+
 .table {
 	width: 100%;
 	border-collapse: collapse;
 	margin: 0;
 }
+
 .thead {
 	background: var(--mantine-color-gray-0);
 }
+
 .th,
 .td {
 	padding: 8px 12px;
@@ -21,11 +24,13 @@
 	border-bottom: 1px solid var(--mantine-color-gray-2);
 	font-size: 14px;
 }
+
 .compactTh,
 .compactTd {
 	font-size: var(--mantine-font-size-xs);
 	padding: 6px 8px;
 }
+
 .sortable {
 	cursor: pointer;
 }
