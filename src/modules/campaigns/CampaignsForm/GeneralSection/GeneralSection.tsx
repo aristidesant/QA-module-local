@@ -1,12 +1,5 @@
 import { useCampaignFormContext } from '../../campaignFormFunctions';
-import {
-	Button,
-	Flex,
-	Select,
-	Switch,
-	Textarea,
-	TextInput,
-} from '@mantine/core';
+import { Button, Flex, Select, Textarea, TextInput } from '@mantine/core';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 import SectionCard from '~/components/SectionCard';
 import {
@@ -71,25 +64,12 @@ const GeneralSection: React.FC = () => {
 				title='Basic Information'
 				description='Define the core details of your campaign to ensure clarity and easy identification.'
 			>
-				<Flex align={'center'}>
-					<TextInput
-						label='Campaign Name'
-						placeholder='Enter campaign name'
-						required
-						style={{ flex: 1, marginRight: '1rem' }}
-						{...form.getInputProps('name')}
-					/>
-					<Switch
-						label='Active'
-						checked={form.values.status === 'ACTIVE'}
-						onChange={(event) =>
-							form.setFieldValue(
-								'status',
-								event.currentTarget.checked ? 'ACTIVE' : 'INACTIVE'
-							)
-						}
-					/>
-				</Flex>
+				<TextInput
+					label='Campaign Name'
+					placeholder='Enter campaign name'
+					required
+					{...form.getInputProps('name')}
+				/>
 
 				<Textarea
 					{...form.getInputProps('description')}

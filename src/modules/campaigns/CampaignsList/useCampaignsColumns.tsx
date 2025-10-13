@@ -14,7 +14,6 @@ import {
 	IconDotsVertical,
 	IconTrash,
 	IconEye,
-	IconPlayerPlayFilled,
 	IconBolt,
 	IconPlayerPause,
 	IconCircleCheck,
@@ -34,49 +33,47 @@ const getCampaignStatusInfo = (status: string) => {
 	const size = 16;
 
 	switch (campaignStatus) {
-		case 'active':
-			return {
-				icon: <IconPlayerPlayFilled size={size} />,
-				color: 'green',
-				label: 'Active',
-			};
 		case 'running':
 			return {
 				icon: <IconBolt size={size} />,
-				color: 'green',
+				color: 'blue.6',
 				label: 'Running',
 			};
 		case 'paused':
 			return {
 				icon: <IconPlayerPause size={size} />,
-				color: 'yellow',
+				color: 'gray.5',
 				label: 'Paused',
 			};
 		case 'completed':
 			return {
 				icon: <IconCircleCheck size={size} />,
-				color: 'green',
+				color: 'green.6',
 				label: 'Completed',
 			};
 		case 'inactive':
 		case 'incomplete':
+		case 'fail':
+		case 'failed':
 		case 'error':
 			return {
 				icon: <IconExclamationMark size={size} />,
-				color: 'red',
-				label: 'Inactive',
+				color: 'red.6',
+				label: 'Failed',
 			};
 		case 'ready':
 		case 'scheduled':
+		case 'active':
+		case 'pending':
 			return {
 				icon: <IconCheck size={size} />,
-				color: 'blue',
-				label: 'Ready',
+				color: 'yellow.5',
+				label: 'Pending',
 			};
 		default:
 			return {
 				icon: <IconCheck size={size} />,
-				color: 'gray',
+				color: 'gray.5',
 				label: 'Unknown Status',
 			};
 	}

@@ -5,6 +5,7 @@ import {
 	Group,
 	Select,
 	Stack,
+	Switch,
 	Text,
 	TextInput,
 	CloseButton,
@@ -28,6 +29,7 @@ interface CampaignFiltersProps {
 		spentMin?: number;
 		spentMax?: number;
 		userId?: number;
+		includeCompleted?: boolean;
 	};
 	onFiltersChange: (filters: CampaignFiltersProps['filters']) => void;
 }
@@ -61,9 +63,12 @@ export default function CampaignFilters({
 }: CampaignFiltersProps) {
 	const [opened, setOpened] = useState(false);
 
-	const activeFiltersCount = Object.values(filters).filter(
-		(value) => value !== undefined && value !== null && value !== ''
-	).length;
+	const activeFiltersCount = Object.entries(filters).filter(([key, value]) => {
+		if (key === 'includeCompleted') {
+			return value === true;
+		}
+		return value !== undefined && value !== null && value !== '';
+	}).length;
 	const hasActiveFilters = activeFiltersCount > 0;
 
 	const executionTypeOptions = [{ value: 'TIME_BASED', label: 'Time Based' }];
@@ -165,6 +170,20 @@ export default function CampaignFilters({
 								value={filters.status}
 								onChange={(value) => handleFilterChange('status', value)}
 								clearable
+								size='sm'
+							/>
+						</Group>
+
+						<Group>
+							<Switch
+								label='Include completed'
+								checked={filters.includeCompleted === true}
+								onChange={(event) =>
+									handleFilterChange(
+										'includeCompleted',
+										event.currentTarget.checked ? true : false
+									)
+								}
 								size='sm'
 							/>
 						</Group>
