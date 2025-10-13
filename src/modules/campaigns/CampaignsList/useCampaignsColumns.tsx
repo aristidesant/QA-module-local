@@ -255,7 +255,7 @@ export const useCampaignsColumns = ({
 						</Menu.Target>
 						<Menu.Dropdown>
 							<Menu.Item
-								onClick={(e) => {
+								onClick={() => {
 									navigate(`/campaigns/metrics/${campaign.id}`);
 								}}
 								leftSection={<IconChartDots size={14} />}

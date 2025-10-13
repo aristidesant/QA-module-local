@@ -3,7 +3,6 @@ import { ActionIcon, Badge, Text, Tooltip, Flex } from '@mantine/core';
 import { openConfirmModal } from '@mantine/modals';
 import {
 	IconTrash,
-	IconPencil,
 	IconDownload,
 	IconRefresh,
 	IconAlertTriangle,
@@ -11,6 +10,7 @@ import {
 	IconArticle,
 	IconLink,
 	IconExternalLink,
+	IconEdit,
 } from '@tabler/icons-react';
 import {
 	KnowledgeBaseType,
@@ -158,98 +158,93 @@ export const useKnowledgeBaseColumns = (
 				cell: ({ row }) => {
 					const item = row.original;
 					return (
-						<div
-							className={styles.actionsCell}
+						<Flex
+							gap={'xs'}
+							justify={'end'}
 							onClick={(e) => e.stopPropagation()}
 						>
-							<Flex gap={'xs'}>
-								{item.file?.repositoryRoute || item.sourceUrl ? (
-									<Tooltip
-										label={
-											item.type === KnowledgeBaseType.URL
-												? 'Open URL'
-												: 'Download file'
+							{item.file?.repositoryRoute || item.sourceUrl ? (
+								<Tooltip
+									label={
+										item.type === KnowledgeBaseType.URL
+											? 'Open URL'
+											: 'Download file'
+									}
+									position='top'
+								>
+									<ActionIcon
+										component='a'
+										href={
+											(item.file?.repositoryRoute as string) ||
+											(item.sourceUrl as string)
 										}
-										position='top'
+										target='_blank'
+										rel='noopener noreferrer'
+										size='sm'
+										variant='subtle'
 									>
-										<ActionIcon
-											component='a'
-											href={
-												(item.file?.repositoryRoute as string) ||
-												(item.sourceUrl as string)
+										{item.type === KnowledgeBaseType.URL ? (
+											<IconExternalLink size={16} />
+										) : (
+											<IconDownload size={16} />
+										)}
+									</ActionIcon>
+								</Tooltip>
+							) : null}
+
+							{(item.status === KnowledgeBaseStatus.FAILED ||
+								!!item.uploadError) && (
+								<Tooltip label='Retry upload' position='top'>
+									<ActionIcon
+										size='sm'
+										variant='subtle'
+										onClick={async () => {
+											try {
+												await retryMutation.mutateAsync(Number(item.id));
+												refetch();
+											} catch (_) {
+												// handled by mutation
 											}
-											target='_blank'
-											rel='noopener noreferrer'
-											size='sm'
-											variant='subtle'
-											className={styles.actionButton}
-										>
-											{item.type === KnowledgeBaseType.URL ? (
-												<IconExternalLink size={16} />
-											) : (
-												<IconDownload size={16} />
-											)}
-										</ActionIcon>
-									</Tooltip>
-								) : null}
-
-								{(item.status === KnowledgeBaseStatus.FAILED ||
-									!!item.uploadError) && (
-									<Tooltip label='Retry upload' position='top'>
-										<ActionIcon
-											size='sm'
-											variant='subtle'
-											className={styles.actionButton}
-											onClick={async () => {
-												try {
-													await retryMutation.mutateAsync(Number(item.id));
-													refetch();
-												} catch (_) {
-													// handled by mutation
-												}
-											}}
-											disabled={retryMutation?.status === 'pending'}
-											loading={retryMutation?.status === 'pending'}
-										>
-											<IconRefresh size={16} />
-										</ActionIcon>
-									</Tooltip>
-								)}
-
-								<Tooltip label='Edit knowledge base' position='top'>
-									<ActionIcon
-										onClick={() =>
-											setRight(<KnowledgeBaseForm id={Number(item.id)} />)
-										}
-										size='sm'
-										variant='subtle'
-										className={styles.actionButton}
+										}}
+										disabled={retryMutation?.status === 'pending'}
+										loading={retryMutation?.status === 'pending'}
 									>
-										<IconPencil size={16} />
+										<IconRefresh size={16} />
 									</ActionIcon>
 								</Tooltip>
+							)}
 
-								<Tooltip label='Delete knowledge base' position='top'>
-									<ActionIcon
-										color='red'
-										onClick={() =>
-											openConfirmModal({
-												title: 'Delete Knowledge Base',
-												children: `Are you sure you want to delete "${item.name}"? This action cannot be undone.`,
-												labels: { confirm: 'Delete', cancel: 'Cancel' },
-												confirmProps: { color: 'red' },
-												onConfirm: () => deleteMutation.mutate(Number(item.id)),
-											})
-										}
-										size='sm'
-										variant='subtle'
-										className={styles.deleteButton}
-									>
-										<IconTrash size={16} />
-									</ActionIcon>
-								</Tooltip>
-							</Flex>
-						</div>
+							<Tooltip label='Edit knowledge base' position='top'>
+								<ActionIcon
+									onClick={() =>
+										setRight(<KnowledgeBaseForm id={Number(item.id)} />)
+									}
+									size='sm'
+									variant='subtle'
+								>
+									<IconEdit size={16} />
+								</ActionIcon>
+							</Tooltip>
+
+							<Tooltip label='Delete knowledge base' position='top'>
+								<ActionIcon
+									color='red'
+									onClick={() =>
+										openConfirmModal({
+											title: 'Delete Knowledge Base',
+											children: `Are you sure you want to delete "${item.name}"? This action cannot be undone.`,
+											labels: { confirm: 'Delete', cancel: 'Cancel' },
+											confirmProps: { color: 'red' },
+											onConfirm: () => deleteMutation.mutate(Number(item.id)),
+										})
+									}
+									size='sm'
+									variant='subtle'
+								>
+									<IconTrash size={16} />
+								</ActionIcon>
+							</Tooltip>
+						</Flex>
 					);
 				},
 				size: 120,
