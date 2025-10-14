@@ -306,9 +306,9 @@ export const CampaignLiveMetricPage = () => {
 							tooltip='Agents currently paused'
 						/>
 						<MetricInfoCard
-							label='Agents in dispo'
+							label='Agents in outcome'
 							value='12'
-							tooltip='Agents in disposition mode'
+							tooltip='Agents in outcome mode'
 						/>
 					</SimpleGrid>
 				</SectionCard>

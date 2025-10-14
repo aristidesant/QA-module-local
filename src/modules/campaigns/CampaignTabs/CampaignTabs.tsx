@@ -38,8 +38,8 @@ const CampaignTabs = () => {
 						Contacts
 					</Tabs.Tab>
 				)}
-				<Tabs.Tab leftSection={<IconList />} value='dispositions'>
-					{dispositionLabel('Dispositions')}
+				<Tabs.Tab leftSection={<IconList />} value='outcomes'>
+					{dispositionLabel('Outcomes')}
 				</Tabs.Tab>
 				<Tabs.Tab leftSection={<IconMessages />} value='conversations'>
 					Conversations

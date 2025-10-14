@@ -43,7 +43,7 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 	return (
 		<Box className={styles.formContainer}>
 			<Text className={styles.sectionTitle}>
-				{dispositionLabel('Dispositions parameters')}
+				{dispositionLabel('Outcome parameters')}
 			</Text>
 
 			<form
@@ -79,7 +79,7 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 						<div className={styles.subSwitchRow}>
 							<Text className={styles.fieldSubtext}>
 								{dispositionLabel(
-									'Indicates whether this disposition invalidates the phone number'
+									'Indicates whether this outcome invalidates the phone number'
 								)}
 							</Text>
 							<div className={styles.switchContainer}>
@@ -100,7 +100,7 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 						<div className={styles.subSwitchRow}>
 							<Text className={styles.fieldSubtext}>
 								{dispositionLabel(
-									'Indicates whether this disposition invalidates the phone number'
+									'Indicates whether this outcome invalidates the phone number'
 								)}
 							</Text>
 							<div className={styles.switchContainer}>
@@ -133,7 +133,7 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 						color='red'
 						type='button'
 					>
-						{dispositionLabel('Delete disposition')}
+						{dispositionLabel('Delete outcome')}
 					</Button>
 				</Stack>
 			</form>

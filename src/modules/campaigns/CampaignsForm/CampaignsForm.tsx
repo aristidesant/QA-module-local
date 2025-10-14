@@ -156,7 +156,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({ campaign }) => {
 						</form>
 					)}
 					{selectedTab === 'contacts' && <ContactSection />}
-					{selectedTab === 'dispositions' && <DispositionSection />}
+					{selectedTab === 'outcomes' && <DispositionSection />}
 					{selectedTab === 'conversations' && (
 						<ConversationsSection campaignId={campaign?.id} />
 					)}
