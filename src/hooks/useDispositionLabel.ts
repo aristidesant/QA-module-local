@@ -2,7 +2,7 @@
 // Purpose: Provide a label transformation function that adapts wording
 // depending on the currently selected campaign type.
 // For INBOUND campaigns we replace occurrences of the word
-// Disposition/disposition (and plural forms) with Contact Driver/contact driver (and plural forms),
+// Disposition/disposition (and plural forms) with Outcome/outcome (and plural forms),
 // preserving the general casing style (UPPER, Title, lower).
 // For any other campaign type we return the original label untouched.
 
@@ -12,21 +12,19 @@ import { useCampaignsStore } from '~/stores/campaignsStore';
  * Returns a function that will transform disposition related labels based on campaign type.
  * Mapping when campaign.type === 'INBOUND':
  * Singular mappings when campaign.type === 'INBOUND':
- *  Disposition  -> Contact Driver
- *  disposition  -> contact driver
- *  DISPOSITION  -> CONTACT DRIVER
+ *  Disposition  -> Outcome
+ *  disposition  -> outcome
+ *  DISPOSITION  -> OUTCOME
  * Plural mappings:
- *  Dispositions -> Contact Drivers
- *  dispositions -> contact drivers
- *  DISPOSITIONS -> CONTACT DRIVERS
+ *  Dispositions -> Outcomes
+ *  dispositions -> outcomes
+ *  DISPOSITIONS -> OUTCOMES
  * All other text remains the same. Word boundaries are respected so we don't
  * accidentally change substrings inside larger words.
  */
 export function useDispositionLabel() {
-	const selectedCampaign = useCampaignsStore((s) => s.selectedCampaign);
 	return (label: string): string => {
 		if (!label || typeof label !== 'string') return label;
-		if (selectedCampaign?.type !== 'INBOUND') return label;
 
 		// Regex captures either 'disposition(s)' or 'outcome(s)' with word boundaries, any casing.
 		const pattern = /\b(disposition|outcome)(s)?\b/gi;
@@ -43,18 +41,18 @@ export function useDispositionLabel() {
 					match[0] === match[0].toUpperCase() &&
 					match.slice(1) === match.slice(1).toLowerCase();
 
-				// Map to Contact Driver(s) respecting casing
+				// Map to Outcome(s) respecting casing
 				if (isAllUpper) {
-					return isPlural ? 'CONTACT DRIVERS' : 'CONTACT DRIVER';
+					return isPlural ? 'OUTCOMES' : 'OUTCOME';
 				}
 				if (isAllLower) {
-					return isPlural ? 'contact drivers' : 'contact driver';
+					return isPlural ? 'outcomes' : 'outcome';
 				}
 				if (isTitle) {
-					return isPlural ? 'Contact Drivers' : 'Contact Driver';
+					return isPlural ? 'Outcomes' : 'Outcome';
 				}
 				// Fallback: default to title case for singular/plural
-				return isPlural ? 'Contact Drivers' : 'Contact Driver';
+				return isPlural ? 'Outcomes' : 'Outcome';
 			}
 		);
 	};
