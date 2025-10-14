@@ -1,1 +1,10 @@
+#!/bin/sh
+
+# Increment version
+node scripts/increment-version.cjs
+
+# Add the updated version file to the commit
+git add src/version.ts
+
+# Run lint-staged
 npx lint-staged

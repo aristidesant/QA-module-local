@@ -11,7 +11,8 @@
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
 		"lint:fix": "prettier --write . && npm run typecheck",
-		"prepare": "husky"
+		"prepare": "husky",
+		"version:increment": "node scripts/increment-version.cjs"
 	},
 	"dependencies": {
 		"@elevenlabs/elevenlabs-js": "^2.8.0",
