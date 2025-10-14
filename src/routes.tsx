@@ -20,6 +20,9 @@ const CampaignObjectivesPage = React.lazy(
 const CampaignSchemasPage = React.lazy(
 	() => import('./modules/campaigns/CampaignSchemasPage')
 );
+const ClientConfigsPage = React.lazy(
+	() => import('./modules/client-configs/ClientConfigsPage')
+);
 const ToolsPage = React.lazy(() => import('./modules/tools/ToolsPage'));
 const PrompterPage = React.lazy(() =>
 	import('./modules/prompter/PrompterPage').then((m) => ({
@@ -151,10 +154,10 @@ const router = createBrowserRouter([
 						),
 					},
 					{
-						path: 'campaign-schemas',
+						path: 'client-configs',
 						element: (
-							<Suspense fallback={<div>Loading campaign schemas...</div>}>
-								<CampaignSchemasPage />
+							<Suspense fallback={<div>Loading client configs...</div>}>
+								<ClientConfigsPage />
 							</Suspense>
 						),
 					},
