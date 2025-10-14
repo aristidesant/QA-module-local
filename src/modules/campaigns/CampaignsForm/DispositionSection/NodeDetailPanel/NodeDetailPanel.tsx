@@ -66,7 +66,7 @@ const NodeDetailPanel: React.FC<NodeDetailPanelProps> = ({
 					label: 'Default',
 					color: 'gray',
 					icon: null,
-					description: 'This is a standard disposition node.',
+					description: 'This is a standard outcome node.',
 				};
 		}
 	};
@@ -130,7 +130,7 @@ const NodeDetailPanel: React.FC<NodeDetailPanelProps> = ({
 						</Group>
 						<Text size='xs' c='dimmed'>
 							{dispositionLabel(
-								'This disposition requires the contact to be rescheduled for a future attempt.'
+								'This outcome requires the contact to be rescheduled for a future attempt.'
 							)}
 						</Text>
 					</Card>
@@ -147,7 +147,7 @@ const NodeDetailPanel: React.FC<NodeDetailPanelProps> = ({
 						</Group>
 						<Text size='xs' c='dimmed'>
 							{dispositionLabel(
-								'This disposition marks the contact number as invalid and prevents future attempts.'
+								'This outcome marks the contact number as invalid and prevents future attempts.'
 							)}
 						</Text>
 					</Card>
