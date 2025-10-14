@@ -5,6 +5,7 @@ import {
 	Group,
 	Select,
 	Stack,
+	Switch,
 	Text,
 	TextInput,
 	CloseButton,
@@ -13,6 +14,7 @@ import { IconSearch, IconAdjustments, IconFilter } from '@tabler/icons-react';
 import { useState } from 'react';
 import { FilterContainer } from '~/components/FilterContainer';
 import styles from './CampaignFilters.module.css';
+import { CampaignStatus, CampaignStatusConfig } from '~/models/CampaignStatus';
 
 interface CampaignFiltersProps {
 	searchValue: string;
@@ -22,12 +24,13 @@ interface CampaignFiltersProps {
 	filters: {
 		type?: string;
 		campaignExecutionType?: string;
-		status?: string;
+		status?: CampaignStatus;
 		budgetMin?: number;
 		budgetMax?: number;
 		spentMin?: number;
 		spentMax?: number;
 		userId?: number;
+		includeCompleted?: boolean;
 	};
 	onFiltersChange: (filters: CampaignFiltersProps['filters']) => void;
 }
@@ -44,13 +47,10 @@ const typeOptions = [
 	{ value: 'INBOUND', label: 'Inbound' },
 ];
 
-const statusOptions = [
-	{ value: 'ACTIVE', label: 'Active' },
-	{ value: 'INACTIVE', label: 'Inactive' },
-	{ value: 'PAUSED', label: 'Paused' },
-	{ value: 'COMPLETED', label: 'Completed' },
-	{ value: 'RUNNING', label: 'Running' },
-];
+const statusOptions = Object.values(CampaignStatus).map((status) => ({
+	value: status,
+	label: CampaignStatusConfig[status].label,
+}));
 export default function CampaignFilters({
 	searchValue,
 	onSearchChange,
@@ -61,9 +61,12 @@ export default function CampaignFilters({
 }: CampaignFiltersProps) {
 	const [opened, setOpened] = useState(false);
 
-	const activeFiltersCount = Object.values(filters).filter(
-		(value) => value !== undefined && value !== null && value !== ''
-	).length;
+	const activeFiltersCount = Object.entries(filters).filter(([key, value]) => {
+		if (key === 'includeCompleted') {
+			return value === true;
+		}
+		return value !== undefined && value !== null && value !== '';
+	}).length;
 	const hasActiveFilters = activeFiltersCount > 0;
 
 	const executionTypeOptions = [{ value: 'TIME_BASED', label: 'Time Based' }];
@@ -163,8 +166,24 @@ export default function CampaignFilters({
 								placeholder='All statuses'
 								data={statusOptions}
 								value={filters.status}
-								onChange={(value) => handleFilterChange('status', value)}
+								onChange={(value) =>
+									handleFilterChange('status', value as CampaignStatus | null)
+								}
 								clearable
+								size='sm'
+							/>
+						</Group>
+
+						<Group>
+							<Switch
+								label='Include completed'
+								checked={filters.includeCompleted === true}
+								onChange={(event) =>
+									handleFilterChange(
+										'includeCompleted',
+										event.currentTarget.checked ? true : false
+									)
+								}
 								size='sm'
 							/>
 						</Group>

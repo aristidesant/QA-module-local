@@ -13,6 +13,7 @@ import styles from './CampaignConfigurationPrompt.module.css';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import CampaignConfigurationPromptHistoryModal from './CampaignConfigurationPromptHistoryModal';
 import CampaignConfigurationPromptEditModal from './CampaignConfigurationPromptEditModal';
+import type { AgentConfigModel } from '~/models/AgentListObject';
 
 const CampaignConfigurationPrompt: React.FC = () => {
 	const form = useCampaignFormContext();
@@ -26,10 +27,21 @@ const CampaignConfigurationPrompt: React.FC = () => {
 
 	const onSelect = useCallback(
 		(selectedPrompt: string) => {
-			form.setFieldValue(
-				'agentConfig.conversationConfig.agent.prompt.prompt',
-				selectedPrompt
-			);
+			const currentConfig = form.values.agentConfig || {};
+			const newConfig = {
+				...currentConfig,
+				conversationConfig: {
+					...currentConfig.conversationConfig,
+					agent: {
+						...currentConfig.conversationConfig?.agent,
+						prompt: {
+							...currentConfig.conversationConfig?.agent?.prompt,
+							prompt: selectedPrompt,
+						},
+					},
+				},
+			};
+			form.setFieldValue('agentConfig', newConfig as Partial<AgentConfigModel>);
 			setRestoreModalOpen(false);
 		},
 		[form]
@@ -38,10 +50,21 @@ const CampaignConfigurationPrompt: React.FC = () => {
 		setEditModalOpen(true);
 	}, []);
 	const handleRemove = useCallback(() => {
-		form.setFieldValue(
-			'agentConfig.conversationConfig.agent.prompt.prompt',
-			''
-		);
+		const currentConfig = form.values.agentConfig || {};
+		const newConfig = {
+			...currentConfig,
+			conversationConfig: {
+				...currentConfig.conversationConfig,
+				agent: {
+					...currentConfig.conversationConfig?.agent,
+					prompt: {
+						...currentConfig.conversationConfig?.agent?.prompt,
+						prompt: '',
+					},
+				},
+			},
+		};
+		form.setFieldValue('agentConfig', newConfig as Partial<AgentConfigModel>);
 	}, [form]);
 	const handleRestorePrompt = useCallback(() => {
 		if (!campaignId) return;
@@ -118,9 +141,24 @@ const CampaignConfigurationPrompt: React.FC = () => {
 					initialPrompt={prompt}
 					onClose={() => setEditModalOpen(false)}
 					onSave={(newPrompt: string) => {
+						console.log('Saving new prompt:', newPrompt);
+						const currentConfig = form.values.agentConfig || {};
+						const newConfig = {
+							...currentConfig,
+							conversationConfig: {
+								...currentConfig.conversationConfig,
+								agent: {
+									...currentConfig.conversationConfig?.agent,
+									prompt: {
+										...currentConfig.conversationConfig?.agent?.prompt,
+										prompt: newPrompt,
+									},
+								},
+							},
+						};
 						form.setFieldValue(
-							'agentConfig.conversationConfig.agent.prompt.prompt',
-							newPrompt
+							'agentConfig',
+							newConfig as Partial<AgentConfigModel>
 						);
 						setEditModalOpen(false);
 					}}
