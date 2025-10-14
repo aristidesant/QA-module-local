@@ -6,6 +6,7 @@ import {
 	IconPlayerPause,
 	IconCheck,
 	IconX,
+	TablerIcon,
 } from '@tabler/icons-react';
 
 export enum CampaignStatus {
@@ -15,6 +16,12 @@ export enum CampaignStatus {
 	COMPLETED = 'COMPLETED',
 	FAILED = 'FAILED',
 }
+
+export type CampaignStatusConfigType = {
+	label: string;
+	color: string;
+	icon: TablerIcon;
+};
 
 export const CampaignStatusConfig = {
 	[CampaignStatus.PENDING]: {

@@ -170,6 +170,31 @@ const conversationsApi = (_authHeader: Record<string, string> = {}) => {
 
 			return { blob: response.data, filename };
 		},
+
+		// Export a single conversation as PDF
+		exportConversationPdf: async (id: string | number) => {
+			const response = await axios.get<Blob>(
+				`${DEFAULT_API_URL}/conversations/${id}/export?format=PDF`,
+				{
+					responseType: 'blob',
+				}
+			);
+
+			// Try to extract filename from Content-Disposition; fall back to default
+			const contentDisposition = response.headers?.['content-disposition'] as
+				| string
+				| undefined;
+			let filename = `conversation-${id}.pdf`;
+			if (contentDisposition) {
+				const match = /filename\*=UTF-8''([^;]+)|filename="?([^";]+)"?/i.exec(
+					contentDisposition
+				);
+				const raw = decodeURIComponent(match?.[1] || match?.[2] || '');
+				if (raw) filename = raw;
+			}
+
+			return { blob: response.data, filename };
+		},
 	};
 };
 

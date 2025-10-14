@@ -7,6 +7,7 @@ import {
 	Tooltip,
 	Divider,
 	CopyButton,
+	Button,
 } from '@mantine/core';
 import {
 	IconPhoneCall,
@@ -15,13 +16,15 @@ import {
 	IconCalendar,
 	IconCopy,
 	IconCheck,
-	IconCoin,
 	IconAlertCircle,
 	IconLoader,
 	IconX,
 	IconClock,
 	IconMessages,
+	IconPdf,
 } from '@tabler/icons-react';
+import { useExportConversationPdf } from '~/queries/conversationsQueries';
+import { notifications } from '@mantine/notifications';
 import type { ConversationsModel } from '~/models/ConversationsModels';
 import styles from './ConversationOverview.module.css';
 import ConversationPlayer from '../ConversationPlayer';
@@ -102,7 +105,6 @@ export function ConversationOverview({
 
 	// Extract metadata values
 	const metadata = transcriptContent?.metadata;
-	const cost = metadata?.cost;
 	const terminationReason = metadata?.termination_reason;
 
 	const formatTermination = (reason?: string | null) => {
@@ -134,6 +136,38 @@ export function ConversationOverview({
 
 	const { icon: StatusIcon, color: statusIconColor } =
 		getStatusIcon(displayStatus);
+
+	const exportConversationMutation = useExportConversationPdf();
+
+	const handleExportConversation = async () => {
+		try {
+			const result = await exportConversationMutation.mutateAsync(
+				conversation.id
+			);
+
+			// Create download link
+			const url = window.URL.createObjectURL(result.blob);
+			const link = document.createElement('a');
+			link.href = url;
+			link.download = result.filename;
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+			window.URL.revokeObjectURL(url);
+
+			notifications.show({
+				title: 'Export Successful',
+				message: 'Conversation exported as PDF',
+				color: 'green',
+			});
+		} catch (error) {
+			notifications.show({
+				title: 'Export Failed',
+				message: 'Failed to export conversation. Please try again.',
+				color: 'red',
+			});
+		}
+	};
 
 	return (
 		<Stack gap='md' className={styles.container}>
@@ -222,18 +256,6 @@ export function ConversationOverview({
 						</div>
 					</div>
 
-					{typeof cost === 'number' && (
-						<div className={styles.statCard}>
-							<div className={styles.statIconWrapper}>
-								<IconCoin size={16} className={styles.statIcon} />
-							</div>
-							<div className={styles.statContent}>
-								<Text className={styles.statLabel}>Call Cost</Text>
-								<Text className={styles.statValue}>{cost} Credits</Text>
-							</div>
-						</div>
-					)}
-
 					{terminationReason !== undefined && (
 						<div className={styles.statCard}>
 							<div className={styles.statIconWrapper}>
@@ -264,6 +286,14 @@ export function ConversationOverview({
 					<Text fz='xs' className={styles.summaryText}>
 						{transcriptSummary}
 					</Text>
+					<Button
+						rightSection={<IconPdf size={16} />}
+						fullWidth
+						loading={exportConversationMutation.isPending}
+						onClick={handleExportConversation}
+					>
+						Download Full Transcript
+					</Button>
 				</RightSectionCard>
 			)}{' '}
 			<ConversationPlayer
