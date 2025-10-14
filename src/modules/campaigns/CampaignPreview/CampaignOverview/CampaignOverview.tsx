@@ -15,6 +15,7 @@ import {
 } from '@tabler/icons-react';
 import classes from './CampaignOverview.module.css';
 import type { Campaign } from '../../../../models/CampaignsModel';
+import { CampaignStatus } from '~/models/CampaignStatus';
 import {
 	useGetCampaign,
 	usePauseOutboundCampaign,
@@ -40,83 +41,107 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 	const { mutate: startCampaign, isPending: isStarting } =
 		useStartOutboundCampaign();
 
-	// Check campaign status directly from campaignData (use fresh data from query)
-	const status = campaignData?.status?.toLowerCase().trim();
-	const isRunning = status === 'running';
-	const isCompleted = status === 'completed';
-	const isInactive = status === 'inactive';
-	const isPaused = status === 'paused';
-	const isActive = status === 'active';
-	const isDisabled = isCompleted || isInactive;
-	const isPending = isPausing || isResuming || isStarting;
+	// Get campaign status from fresh query data
+	const status = campaignData?.status?.toUpperCase() as CampaignStatus;
+	const isMutating = isPausing || isResuming || isStarting;
+
+	// Determine button configuration based on status
+	const getButtonConfig = () => {
+		switch (status) {
+			case CampaignStatus.RUNNING:
+				return {
+					label: 'Pause',
+					color: 'red',
+					variant: 'light',
+					icon: IconPlayerPause,
+					disabled: false,
+				};
+			case CampaignStatus.PAUSED:
+				return {
+					label: 'Resume',
+					color: 'green',
+					variant: 'filled',
+					icon: IconPlayerPlay,
+					disabled: false,
+				};
+			case CampaignStatus.PENDING:
+				return {
+					label: 'Start',
+					color: 'green',
+					variant: 'filled',
+					icon: IconPlayerPlay,
+					disabled: false,
+				};
+			case CampaignStatus.COMPLETED:
+				return {
+					label: 'Completed',
+					color: 'gray',
+					variant: 'filled',
+					icon: IconPlayerPlay,
+					disabled: true,
+				};
+			case CampaignStatus.FAILED:
+				return {
+					label: 'Failed',
+					color: 'gray',
+					variant: 'filled',
+					icon: IconPlayerPlay,
+					disabled: true,
+				};
+			default:
+				return {
+					label: 'Start',
+					color: 'blue',
+					variant: 'filled',
+					icon: IconPlayerPlay,
+					disabled: true,
+				};
+		}
+	};
+
+	const buttonConfig = getButtonConfig();
+
+	// Generic mutation callbacks
+	const onSuccess = (action: string) => {
+		notifications.show({
+			title: 'Success',
+			message: `Campaign ${action} successfully`,
+			color: 'green',
+		});
+		refetch();
+	};
+
+	const onError = (error: any, action: string) => {
+		notifications.show({
+			title: 'Error',
+			message: error?.response?.data?.message || `Failed to ${action} campaign`,
+			color: 'red',
+		});
+		console.error(`Error ${action} campaign:`, error);
+	};
 
 	const handleToggle = () => {
-		if (isRunning) {
-			// Campaign is running, pause it
-			pauseCampaign(campaign?.id, {
-				onSuccess: () => {
-					notifications.show({
-						title: 'Success',
-						message: 'Campaign paused successfully',
-						color: 'green',
-					});
-					refetch(); // Refetch to update UI
-				},
-				onError: (error) => {
-					notifications.show({
-						title: 'Error',
-						message:
-							// @ts-ignore
-							error?.response?.data?.message || 'Failed to pause campaign',
-						color: 'red',
-					});
-					console.error('Error pausing campaign:', error);
-				},
-			});
-		} else if (isPaused) {
-			// Campaign is paused, resume it
-			resumeCampaign(campaign?.id, {
-				onSuccess: () => {
-					notifications.show({
-						title: 'Success',
-						message: 'Campaign resumed successfully',
-						color: 'green',
-					});
-					refetch(); // Refetch to update UI
-				},
-				onError: (error) => {
-					notifications.show({
-						title: 'Error',
-						message:
-							// @ts-ignore
-							error?.response?.data?.message || 'Failed to resume campaign',
-						color: 'red',
-					});
-					console.error('Error resuming campaign:', error);
-				},
-			});
-		} else if (isActive) {
-			// Campaign is active but not running, start it
-			startCampaign(campaign?.id, {
-				onSuccess: () => {
-					notifications.show({
-						title: 'Success',
-						message: 'Campaign started successfully',
-						color: 'green',
-					});
-					refetch(); // Refetch to update UI
-				},
-				onError: (error) => {
-					notifications.show({
-						title: 'Error',
-						message:
-							// @ts-ignore
-							error?.response?.data?.message || 'Failed to start campaign',
-						color: 'red',
-					});
-					console.error('Error starting campaign:', error);
-				},
-			});
+		switch (status) {
+			case CampaignStatus.RUNNING:
+				pauseCampaign(campaign?.id, {
+					onSuccess: () => onSuccess('paused'),
+					onError: (error) => onError(error, 'pause'),
+				});
+				break;
+			case CampaignStatus.PAUSED:
+				resumeCampaign(campaign?.id, {
+					onSuccess: () => onSuccess('resumed'),
+					onError: (error) => onError(error, 'resume'),
+				});
+				break;
+			case CampaignStatus.PENDING:
+				startCampaign(campaign?.id, {
+					onSuccess: () => onSuccess('started'),
+					onError: (error) => onError(error, 'start'),
+				});
+				break;
+			default:
+				break;
 		}
 	};
 
@@ -176,32 +201,16 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 				</Badge>
 
 				<Button
-					variant={isRunning ? 'light' : 'filled'}
-					color={isRunning ? 'red' : isActive || isPaused ? 'green' : 'blue'}
+					variant={buttonConfig.variant as any}
+					color={buttonConfig.color}
 					size='sm'
-					disabled={isDisabled || isPending}
-					loading={isPending}
-					leftSection={
-						isRunning ? (
-							<IconPlayerPause size={14} />
-						) : (
-							<IconPlayerPlay size={14} />
-						)
-					}
+					disabled={buttonConfig.disabled || isMutating}
+					loading={isMutating}
+					leftSection={<buttonConfig.icon size={14} />}
 					onClick={handleToggle}
 					className={classes.toggleButton}
 				>
-					{isCompleted
-						? 'Completed'
-						: isInactive
-							? 'Inactive'
-							: isActive
-								? 'Start'
-								: isRunning
-									? 'Pause'
-									: isPaused
-										? 'Resume'
-										: 'Start'}
+					{buttonConfig.label}
 				</Button>
 			</Group>
 		</Stack>
