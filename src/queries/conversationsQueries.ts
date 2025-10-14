@@ -169,3 +169,17 @@ export const useExportConversationAudio = () => {
 		},
 	});
 };
+
+// Export conversation as PDF (mutation for download actions)
+export const useExportConversationPdf = () => {
+	return useMutation<
+		{ blob: Blob; filename: string },
+		unknown,
+		string | number
+	>({
+		mutationFn: async (id) => {
+			const api = getApi();
+			return api.exportConversationPdf(id);
+		},
+	});
+};

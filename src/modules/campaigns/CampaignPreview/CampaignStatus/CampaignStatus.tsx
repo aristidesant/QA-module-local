@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo } from 'react';
 import { Stack } from '@mantine/core';
-import { getCampaignStatusIcon } from '../../CampaignsList/CampaignsListItem/CampaignsListItem';
 import type { Campaign } from '../../../../models/CampaignsModel';
 import { useGetCampaign } from '~/queries/campaignsQueries';
 import TimeLeftCard from './TimeLeftCard';
 import RightSectionCard from '~/components/RightSectionCard';
+import { getCampaignStatusInfo } from '../../CampaignsList/useCampaignsColumns';
 
 interface CampaignStatusProps {
 	campaign: Campaign;
@@ -43,7 +43,7 @@ const CampaignStatus: React.FC<CampaignStatusProps> = ({ campaign }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [campaign, campaign.status]);
 	const statusInfo = useMemo(
-		() => getCampaignStatusIcon(campaignData?.status ?? ''),
+		() => getCampaignStatusInfo(campaignData?.status ?? ''),
 		[campaignData?.status]
 	);
 	const description = useMemo(
@@ -56,7 +56,7 @@ const CampaignStatus: React.FC<CampaignStatusProps> = ({ campaign }) => {
 			<RightSectionCard
 				title={statusInfo.label}
 				description={description}
-				icon={statusInfo.iconComponent}
+				icon={statusInfo.icon}
 				iconColor={statusInfo.color}
 			>
 				<></>

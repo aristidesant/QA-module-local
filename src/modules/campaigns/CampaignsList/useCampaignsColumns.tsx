@@ -19,19 +19,25 @@ import {
 	IconArrowDownLeft,
 	IconCopy,
 	IconChartDots,
+	IconPhone,
 } from '@tabler/icons-react';
 import type { Campaign } from '~/models/CampaignsModel';
 import { useNavigate } from 'react-router';
-import { CampaignStatus, CampaignStatusConfig } from '~/models/CampaignStatus';
+import {
+	CampaignStatus,
+	CampaignStatusConfig,
+	CampaignStatusConfigType,
+} from '~/models/CampaignStatus';
 
 // Helper to get status info
-const getCampaignStatusInfo = (status: string) => {
+export const getCampaignStatusInfo = (
+	status: string
+): CampaignStatusConfigType => {
 	const config = CampaignStatusConfig[status as CampaignStatus];
-	const size = 16;
 
 	if (config) {
 		return {
-			icon: <config.icon size={size} />,
+			icon: config.icon,
 			color: config.color,
 			label: config.label,
 		};
@@ -39,7 +45,7 @@ const getCampaignStatusInfo = (status: string) => {
 
 	// Fallback for unknown status
 	return {
-		icon: <IconCheck size={size} />,
+		icon: IconCheck,
 		color: 'gray',
 		label: status || 'Unknown',
 	};
@@ -55,12 +61,14 @@ const getProgressColor = (percentage: number): string => {
 
 interface UseCampaignsColumnsProps {
 	onEdit: (campaign: Campaign) => void;
+	onTestCall: (campaign: Campaign) => void;
 	onDelete: (campaign: Campaign) => void;
 	onClone: (campaign: Campaign) => void;
 }
 
 export const useCampaignsColumns = ({
 	onEdit,
+	onTestCall,
 	onDelete,
 	onClone,
 }: UseCampaignsColumnsProps): ColumnDef<Campaign, any>[] => {
@@ -80,7 +88,7 @@ export const useCampaignsColumns = ({
 							color={statusInfo.color}
 							title={statusInfo.label}
 						>
-							{statusInfo.icon}
+							<statusInfo.icon size={16} />
 						</Avatar>
 						<div>
 							<Text size='sm' fw={500} lineClamp={1}>
@@ -131,7 +139,7 @@ export const useCampaignsColumns = ({
 						variant='light'
 						color={statusInfo.color}
 						size='sm'
-						leftSection={statusInfo.icon}
+						leftSection={<statusInfo.icon size={16} />}
 					>
 						{statusInfo.label}
 					</Badge>
@@ -224,6 +232,15 @@ export const useCampaignsColumns = ({
 								leftSection={<IconChartDots size={14} />}
 							>
 								View Metrics
+							</Menu.Item>
+							<Menu.Item
+								onClick={(e) => {
+									e.stopPropagation();
+									onTestCall(campaign);
+								}}
+								leftSection={<IconPhone size={14} />}
+							>
+								Test Call
 							</Menu.Item>
 							<Menu.Item
 								onClick={(e) => {

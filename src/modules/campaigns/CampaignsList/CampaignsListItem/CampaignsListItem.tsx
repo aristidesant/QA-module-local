@@ -16,18 +16,14 @@ import {
 	IconDotsVertical,
 	IconTrash,
 	IconEye,
-	IconPlayerPause,
-	IconCheck,
 	IconArrowUpRight,
 	IconArrowDownLeft,
-	IconBolt,
 	IconExclamationMark,
-	IconCircleCheck,
-	IconPlayerPlayFilled,
 } from '@tabler/icons-react';
 import styles from './CampaignsListItem.module.css';
 import type { Campaign } from '~/models/CampaignsModel';
 import ScoreGauge from './ScoreGauge';
+import { getCampaignStatusInfo } from '../useCampaignsColumns';
 
 export type CampaignsListItemProps = {
 	campaign: Campaign;
@@ -57,7 +53,7 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 	};
 
 	const statusInfo = useMemo(
-		() => getCampaignStatusIcon(campaign.status ?? ''),
+		() => getCampaignStatusInfo(campaign.status ?? ''),
 		[campaign]
 	);
 
@@ -84,7 +80,7 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 						className={styles.campaignIcon}
 						title={statusInfo.label}
 					>
-						<statusInfo.iconComponent size={16} />
+						<statusInfo.icon size={14} />
 					</Avatar>
 					<Flex direction='column'>
 						<Text fz={'xs'} c='dimmed'>
@@ -265,60 +261,3 @@ const CampaignsListItem: React.FC<CampaignsListItemProps> = ({
 };
 
 export default CampaignsListItem;
-
-/**
- * Get the status icon and color for a campaign.
- * @param campaign - Campaign object
- * @returns An object containing the icon, color, and label for the campaign status.
- */
-export const getCampaignStatusIcon = (status: string) => {
-	const campaignStatus = status?.toLowerCase();
-
-	switch (campaignStatus) {
-		case 'active':
-			return {
-				iconComponent: IconPlayerPlayFilled,
-				color: 'green',
-				label: 'Active',
-			};
-		case 'running':
-			return {
-				iconComponent: IconBolt,
-				color: 'green',
-				label: 'Running',
-			};
-		case 'paused':
-			return {
-				iconComponent: IconPlayerPause,
-				color: 'yellow',
-				label: 'Paused',
-			};
-		case 'completed':
-			return {
-				iconComponent: IconCircleCheck,
-				color: 'green',
-				label: 'Completed',
-			};
-		case 'inactive':
-		case 'incomplete':
-		case 'error':
-			return {
-				iconComponent: IconExclamationMark,
-				color: 'red',
-				label: 'Inactive',
-			};
-		case 'ready':
-		case 'scheduled':
-			return {
-				iconComponent: IconCheck,
-				color: 'blue',
-				label: 'Ready',
-			};
-		default:
-			return {
-				iconComponent: IconCheck,
-				color: 'gray',
-				label: 'Unknown Status',
-			};
-	}
-};

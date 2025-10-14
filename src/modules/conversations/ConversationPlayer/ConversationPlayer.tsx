@@ -7,8 +7,8 @@ import {
 	Stack,
 	Text,
 	Box,
-	Tooltip,
 	Select,
+	Button,
 } from '@mantine/core';
 import {
 	IconPlayerPlay,
@@ -16,7 +16,7 @@ import {
 	IconPlayerSkipBack,
 	IconPlayerSkipForward,
 	IconVolume,
-	IconDownload,
+	IconHeadphones,
 } from '@tabler/icons-react';
 import type { VoiceFileModel } from '~/models/ConversationsModels';
 import fileApi from '~/api/fileApi';
@@ -229,23 +229,6 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 		<RightSectionCard
 			title={title}
 			icon={IconPlayerPlay}
-			rightSection={
-				conversationId && (
-					<Tooltip label='Download conversation audio' position='bottom'>
-						<ActionIcon
-							variant='light'
-							color='gray'
-							size='sm'
-							onClick={handleDownload}
-							aria-label='Download audio'
-							loading={exportAudioMutation.isPending}
-							disabled={exportAudioMutation.isPending}
-						>
-							<IconDownload size={16} />
-						</ActionIcon>
-					</Tooltip>
-				)
-			}
 			description={description}
 		>
 			<audio
@@ -365,6 +348,20 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 						allowDeselect={false}
 					/>
 				</Group>
+				{conversationId && (
+					<Button
+						size='sm'
+						fullWidth
+						color='blue'
+						rightSection={<IconHeadphones size={16} />}
+						onClick={handleDownload}
+						aria-label='Download audio'
+						loading={exportAudioMutation.isPending}
+						disabled={exportAudioMutation.isPending}
+					>
+						Download Audio
+					</Button>
+				)}
 			</Stack>
 		</RightSectionCard>
 	);

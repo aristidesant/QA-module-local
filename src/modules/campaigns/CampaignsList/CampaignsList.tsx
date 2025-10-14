@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, Card, Button } from '@mantine/core';
+import { Text, Card, Button, Modal } from '@mantine/core';
 import { IconAlertCircle, IconRocket, IconPlus } from '@tabler/icons-react';
 import {
 	useDeleteCampaign,
@@ -22,6 +22,8 @@ import CampaignsListSkeleton from './CampaignsListSkeleton';
 import CloneCampaignForm from '../CloneCampaignForm';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { CampaignStatus } from '~/models/CampaignStatus';
+import { OutboundCallForm } from '~/components/OutboundCallForm';
+import { useGetAgent } from '~/queries/agentQueries';
 
 interface CampaignFiltersType {
 	type?: string;
@@ -50,6 +52,17 @@ export const CampaignsList: React.FC = () => {
 		searchDebounceMs: 500,
 	});
 
+	// Test call modal state
+	const [testCallModalOpened, setTestCallModalOpened] = useState(false);
+	const [selectedAgentIdForCall, setSelectedAgentIdForCall] = useState<
+		string | null
+	>(null);
+
+	// Fetch the agent when modal is opened
+	const { data: selectedAgentForCall } = useGetAgent(
+		selectedAgentIdForCall || ''
+	);
+
 	const [sortBy, setSortBy] = useState('createdAt');
 	const [filters, setFilters] = useState<CampaignFiltersType>({
 		includeCompleted: false,
@@ -75,6 +88,33 @@ export const CampaignsList: React.FC = () => {
 	});
 	const { mutateAsync: deleteCampaign } = useDeleteCampaign();
 
+	const handleTestCall = (campaign: Campaign) => {
+		// Check if campaign has agents
+		if (!campaign.agents || campaign.agents.length === 0) {
+			notifications.show({
+				title: 'No Agents',
+				message: 'This campaign has no agents assigned.',
+				color: 'yellow',
+			});
+			return;
+		}
+
+		// If campaign has multiple agents, use the first one
+		const agentId = campaign.agents[0].agentId;
+		setSelectedAgentIdForCall(agentId);
+		setTestCallModalOpened(true);
+	};
+
+	const handleTestCallSuccess = () => {
+		setTestCallModalOpened(false);
+		setSelectedAgentIdForCall(null);
+	};
+
+	const handleTestCallClose = () => {
+		setTestCallModalOpened(false);
+		setSelectedAgentIdForCall(null);
+	};
+
 	// Calculate total pages from server response
 	const totalPages = campaignsResponse?.total
 		? pagination.calculateTotalPages(campaignsResponse.total)
@@ -85,6 +125,7 @@ export const CampaignsList: React.FC = () => {
 			selectCampaign(campaign);
 			setEditCampaign(true);
 		},
+		onTestCall: handleTestCall,
 		onDelete: (campaign) => {
 			modals.openConfirmModal({
 				title: 'Delete Campaign',
@@ -252,6 +293,23 @@ export const CampaignsList: React.FC = () => {
 					</>
 				)}
 			</ContentContainer>
+
+			{/* Test Call Modal */}
+			<Modal
+				opened={testCallModalOpened}
+				onClose={handleTestCallClose}
+				title='Test Campaign Call'
+				size='md'
+				centered
+			>
+				{selectedAgentForCall && (
+					<OutboundCallForm
+						agent={selectedAgentForCall}
+						onSuccess={handleTestCallSuccess}
+						onClose={handleTestCallClose}
+					/>
+				)}
+			</Modal>
 		</>
 	);
 };
