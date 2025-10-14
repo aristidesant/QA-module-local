@@ -53,7 +53,11 @@ export default function DoNotCallForm({
 			...(entry ? {} : { phoneNumber: values.phoneNumber }),
 			reason: values.reason as any,
 			notes: values.notes || undefined,
-			expiresAt: values.expiresAt?.toISOString() || undefined,
+			expiresAt: values.expiresAt
+				? values.expiresAt instanceof Date
+					? values.expiresAt.toISOString()
+					: new Date(values.expiresAt).toISOString()
+				: undefined,
 		};
 		onSubmit(data);
 	});
@@ -69,31 +73,27 @@ export default function DoNotCallForm({
 						{...form.getInputProps('phoneNumber')}
 					/>
 				)}
-
 				<Select
 					label='Reason'
 					placeholder='Select reason'
 					data={reasonOptions}
 					required
 					{...form.getInputProps('reason')}
-				/>
-
+				/>{' '}
 				<Textarea
 					label='Notes'
 					placeholder='Additional information...'
 					rows={3}
 					{...form.getInputProps('notes')}
 				/>
-
 				<DateTimePicker
 					label='Expires At'
 					placeholder='Select expiration date (optional)'
 					clearable
 					{...form.getInputProps('expiresAt')}
 				/>
-
 				<Group justify='flex-end' mt='md'>
-					<Button variant='subtle' onClick={onCancel}>
+					<Button variant='subtle' onClick={onCancel} type='button'>
 						Cancel
 					</Button>
 					<Button type='submit'>{entry ? 'Update' : 'Create'}</Button>
