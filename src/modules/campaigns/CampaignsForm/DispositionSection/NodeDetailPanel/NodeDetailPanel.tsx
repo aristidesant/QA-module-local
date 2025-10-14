@@ -80,7 +80,7 @@ const NodeDetailPanel: React.FC<NodeDetailPanelProps> = ({
 		<Box className={styles.panel}>
 			<Group justify='space-between' className={styles.header}>
 				<Text size='lg' fw={600} className={styles.title}>
-					{dispositionLabel('Disposition Details')}
+					{dispositionLabel('Outcome Details')}
 				</Text>
 				<ActionIcon
 					variant='subtle'
@@ -105,7 +105,7 @@ const NodeDetailPanel: React.FC<NodeDetailPanelProps> = ({
 					)}
 				</Box>
 
-				{/* Parent Disposition Badge (centered) */}
+				{/* Parent Outcome Badge (centered) */}
 				{parentNode && (
 					<Group justify='center'>
 						<Badge

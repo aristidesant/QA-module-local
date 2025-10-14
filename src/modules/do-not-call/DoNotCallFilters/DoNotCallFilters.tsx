@@ -27,7 +27,7 @@ interface DoNotCallFiltersProps {
 
 const reasonOptions = [
 	{ value: 'CUSTOMER_REQUEST', label: 'Customer Request' },
-	{ value: 'DISPOSITION_OUTCOME', label: 'Disposition Outcome' },
+	{ value: 'DISPOSITION_OUTCOME', label: 'Outcome' },
 	{ value: 'REGULATORY_COMPLIANCE', label: 'Regulatory Compliance' },
 	{ value: 'MANUAL_ADMIN_BLOCK', label: 'Manual Admin Block' },
 ];
