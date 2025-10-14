@@ -1,0 +1,11 @@
+.errorContainer {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: var(--mantine-spacing-xl);
+	margin-top: var(--mantine-spacing-xs);
+	background-color: var(--mantine-color-red-0);
+	border: 1px solid var(--mantine-color-red-2);
+	border-radius: var(--mantine-radius-md);
+}

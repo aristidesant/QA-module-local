@@ -37,7 +37,6 @@ const DispositionSection: React.FC = () => {
 			}
 			setCampaignId(selectedCampaign?.id);
 		} else {
-			console.log('Initializing new disposition flow', selectedCampaign?.id);
 			setDispositionFlow({});
 			setFlowJson({});
 			setCampaignId(selectedCampaign?.id);
@@ -59,7 +58,7 @@ const DispositionSection: React.FC = () => {
 						modals.close('disposition-form');
 						notifications.show({
 							title: 'Success',
-							message: dispositionLabel('Disposition flow saved successfully.'),
+							message: dispositionLabel('Outcome flow saved successfully.'),
 							color: 'green',
 						});
 					}}
@@ -74,7 +73,7 @@ const DispositionSection: React.FC = () => {
 
 	return (
 		<SectionCard
-			title={dispositionLabel('Disposition Configuration')}
+			title={dispositionLabel('Outcome Configuration')}
 			headerActions={
 				<Flex>
 					{hasFlow ? (
@@ -82,23 +81,23 @@ const DispositionSection: React.FC = () => {
 							onClick={() => handleOpenModal(true)}
 							loading={isLoadingCurrentFlow}
 						>
-							{dispositionLabel('Edit disposition')}
+							{dispositionLabel('Edit outcome')}
 						</Button>
 					) : (
 						<Button onClick={() => handleOpenModal(false)}>
-							{dispositionLabel('Add disposition')}
+							{dispositionLabel('Add outcome')}
 						</Button>
 					)}
 				</Flex>
 			}
 			description={dispositionLabel(
-				'Set up call dispositions for this campaign. Drag items from the catalog to build your disposition structure.'
+				'Set up call outcomes for this campaign. Drag items from the catalog to build your outcome structure.'
 			)}
 		>
 			{currentDispositionFlow ? (
 				<DispositionViewer flow={currentDispositionFlow} />
 			) : (
-				<Text>{dispositionLabel('No disposition flow found.')}</Text>
+				<Text>{dispositionLabel('No outcome flow found.')}</Text>
 			)}
 		</SectionCard>
 	);

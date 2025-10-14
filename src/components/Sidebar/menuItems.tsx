@@ -9,6 +9,7 @@ import {
 	IconCategory,
 	IconTarget,
 	IconDatabase,
+	IconPhoneOff,
 } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 import styles from './Sidebar.module.css';
@@ -80,5 +81,10 @@ export const maintenanceItems: MenuItem[] = [
 		label: 'Prompter',
 		icon: <IconLibrary size={20} className={styles.menuIcon} />,
 		to: '/prompter',
+	},
+	{
+		label: 'Do Not Call',
+		icon: <IconPhoneOff size={20} className={styles.menuIcon} />,
+		to: '/do-not-call',
 	},
 ];

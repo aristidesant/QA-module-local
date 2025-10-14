@@ -42,6 +42,9 @@ const KnowledgeBasePage = React.lazy(
 	() => import('./modules/knowledge-bases/KnowledgeBasePage')
 );
 const ProfilePage = React.lazy(() => import('./modules/profile'));
+const DoNotCallPage = React.lazy(
+	() => import('./modules/do-not-call/DoNotCallPage')
+);
 
 const router = createBrowserRouter([
 	// Public routes
@@ -176,6 +179,14 @@ const router = createBrowserRouter([
 						element: (
 							<Suspense fallback={<div>Loading knowledge bases...</div>}>
 								<KnowledgeBasePage />
+							</Suspense>
+						),
+					},
+					{
+						path: 'do-not-call',
+						element: (
+							<Suspense fallback={<div>Loading Do Not Call...</div>}>
+								<DoNotCallPage />
 							</Suspense>
 						),
 					},

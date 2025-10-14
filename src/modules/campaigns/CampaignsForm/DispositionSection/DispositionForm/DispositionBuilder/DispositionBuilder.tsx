@@ -113,7 +113,6 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 				});
 				onComplete?.();
 			} else {
-				console.log('Creating new disposition flow', campaignId);
 				await createMutation.mutateAsync({
 					flowJson: filledFlowJson as any,
 					campaignId,
@@ -123,7 +122,7 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 		} catch (error) {
 			notifications.show({
 				title: 'Error',
-				message: 'An error occurred while saving the disposition flow.',
+				message: 'An error occurred while saving the outcome flow.',
 				color: 'red',
 			});
 		}
