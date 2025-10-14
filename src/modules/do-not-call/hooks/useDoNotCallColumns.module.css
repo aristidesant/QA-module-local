@@ -1,0 +1,10 @@
+.actionsGroup {
+	gap: var(--mantine-spacing-xs);
+}
+
+.actionButton {
+	font-size: var(--mantine-font-size-xs);
+	padding: 4px 8px;
+	height: auto;
+	border-radius: var(--mantine-radius-xs);
+}

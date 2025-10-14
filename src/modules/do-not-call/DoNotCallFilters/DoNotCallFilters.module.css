@@ -1,0 +1,74 @@
+.filtersContainer {
+	margin-bottom: var(--mantine-spacing-md);
+}
+
+.titleGroup {
+	flex: 0 0 auto;
+}
+
+.title {
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 600;
+	color: var(--mantine-color-text);
+}
+
+.titleIcon {
+	color: var(--mantine-color-dimmed);
+}
+
+.activeBadge {
+	font-weight: 600;
+}
+
+.controlsWrapper {
+	display: flex;
+	gap: var(--mantine-spacing-xs);
+	flex: 1;
+	min-width: 0;
+}
+
+.searchInput {
+	flex: 1;
+	min-width: 200px;
+}
+
+.searchIcon {
+	color: var(--mantine-color-dimmed);
+}
+
+.sortSelect {
+	width: 160px;
+	flex-shrink: 0;
+}
+
+.filtersButton {
+	flex-shrink: 0;
+}
+
+.advancedFilters {
+	margin-top: var(--mantine-spacing-md);
+	padding: var(--mantine-spacing-md);
+	background-color: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+}
+
+.resetButton {
+	color: var(--mantine-color-dimmed);
+}
+
+.resetButton:hover:not(:disabled) {
+	background-color: var(--mantine-color-gray-1);
+}
+
+@media (max-width: 768px) {
+	.controlsWrapper {
+		flex-direction: column;
+	}
+
+	.searchInput,
+	.sortSelect,
+	.filtersButton {
+		width: 100%;
+	}
+}

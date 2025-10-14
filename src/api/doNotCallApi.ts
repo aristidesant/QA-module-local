@@ -8,8 +8,7 @@ import type {
 	DoNotCallCleanExpiredResponse,
 	DoNotCallModel,
 } from '~/models/DoNotCallModel';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import { DEFAULT_API_URL } from './config';
 
 export const doNotCallApi = {
 	/**
@@ -19,7 +18,7 @@ export const doNotCallApi = {
 		params?: DoNotCallListParams
 	): Promise<DoNotCallListResponse> => {
 		const response = await axios.get<DoNotCallListResponse>(
-			`${API_URL}/do-not-call`,
+			`${DEFAULT_API_URL}/do-not-call`,
 			{ params }
 		);
 		return response.data;
@@ -30,7 +29,7 @@ export const doNotCallApi = {
 	 */
 	getById: async (id: number): Promise<DoNotCallModel> => {
 		const response = await axios.get<DoNotCallModel>(
-			`${API_URL}/do-not-call/${id}`
+			`${DEFAULT_API_URL}/do-not-call/${id}`
 		);
 		return response.data;
 	},
@@ -40,7 +39,7 @@ export const doNotCallApi = {
 	 */
 	check: async (phoneNumber: string): Promise<DoNotCallCheckResponse> => {
 		const response = await axios.get<DoNotCallCheckResponse>(
-			`${API_URL}/do-not-call/check/${encodeURIComponent(phoneNumber)}`
+			`${DEFAULT_API_URL}/do-not-call/check/${encodeURIComponent(phoneNumber)}`
 		);
 		return response.data;
 	},
@@ -50,7 +49,7 @@ export const doNotCallApi = {
 	 */
 	create: async (data: DoNotCallCreateRequest): Promise<DoNotCallModel> => {
 		const response = await axios.post<DoNotCallModel>(
-			`${API_URL}/do-not-call`,
+			`${DEFAULT_API_URL}/do-not-call`,
 			data
 		);
 		return response.data;
@@ -64,7 +63,7 @@ export const doNotCallApi = {
 		data: DoNotCallUpdateRequest
 	): Promise<DoNotCallModel> => {
 		const response = await axios.patch<DoNotCallModel>(
-			`${API_URL}/do-not-call/${id}`,
+			`${DEFAULT_API_URL}/do-not-call/${id}`,
 			data
 		);
 		return response.data;
@@ -74,7 +73,7 @@ export const doNotCallApi = {
 	 * Soft delete a DNC entry
 	 */
 	delete: async (id: number): Promise<void> => {
-		await axios.delete(`${API_URL}/do-not-call/${id}`);
+		await axios.delete(`${DEFAULT_API_URL}/do-not-call/${id}`);
 	},
 
 	/**
@@ -82,7 +81,7 @@ export const doNotCallApi = {
 	 */
 	cleanExpired: async (): Promise<DoNotCallCleanExpiredResponse> => {
 		const response = await axios.post<DoNotCallCleanExpiredResponse>(
-			`${API_URL}/do-not-call/clean-expired`
+			`${DEFAULT_API_URL}/do-not-call/clean-expired`
 		);
 		return response.data;
 	},

@@ -22,6 +22,7 @@ import ParametersSection from './ParametersSection';
 import AgentSection from './AgentSection';
 import DispositionSection from './DispositionSection';
 import ConversationsSection from './ConversationsSection';
+import DoNotCallSection from './DoNotCallSection';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { CampaignStatus } from '~/models/CampaignStatus';
 
@@ -160,6 +161,9 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({ campaign }) => {
 					{selectedTab === 'outcomes' && <DispositionSection />}
 					{selectedTab === 'conversations' && (
 						<ConversationsSection campaignId={campaign?.id} />
+					)}
+					{selectedTab === 'do-not-call' && (
+						<DoNotCallSection campaignId={campaign?.id} />
 					)}
 					{selectedTab === 'params' && (
 						<SectionCard

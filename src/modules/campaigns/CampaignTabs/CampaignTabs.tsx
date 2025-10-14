@@ -6,6 +6,7 @@ import {
 	IconUsersGroup,
 	IconList,
 	IconMessages,
+	IconPhoneOff,
 } from '@tabler/icons-react';
 import { useDispositionLabel } from '~/hooks/useDispositionLabel';
 import { useCampaignsStore } from '~/stores/campaignsStore';
@@ -43,6 +44,9 @@ const CampaignTabs = () => {
 				</Tabs.Tab>
 				<Tabs.Tab leftSection={<IconMessages />} value='conversations'>
 					Conversations
+				</Tabs.Tab>
+				<Tabs.Tab leftSection={<IconPhoneOff />} value='do-not-call'>
+					Do Not Call
 				</Tabs.Tab>
 				<Tabs.Tab leftSection={<IconChecklist />} value='params'>
 					Params
