@@ -74,7 +74,7 @@ export function validateAndNormalizeDispositionFlow(
 		id: catalog.id,
 		clientId: catalog.clientId,
 		campaignId: catalog.campaignId,
-		name: catalog.name || 'Disposition Catalog',
+		name: catalog.name || 'Outcome Catalog',
 		description: catalog.description || '',
 		dispositionNodes: catalog.dispositionNodes || [],
 		type: (catalog as any).type ?? 'OUTBOUND',

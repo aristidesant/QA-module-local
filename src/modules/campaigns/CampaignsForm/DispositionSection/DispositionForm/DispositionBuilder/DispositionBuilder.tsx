@@ -76,7 +76,7 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 		) {
 			notifications.show({
 				title: 'Error',
-				message: dispositionLabel('Please add at least one disposition node.'),
+				message: dispositionLabel('Please add at least one outcome node.'),
 				color: 'red',
 			});
 			return;
@@ -86,7 +86,7 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 		if (!flowJson.name || flowJson.name.trim() === '') {
 			notifications.show({
 				title: 'Error',
-				message: dispositionLabel('Disposition name is required.'),
+				message: dispositionLabel('Outcome name is required.'),
 				color: 'red',
 			});
 			return;
@@ -138,12 +138,12 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 			{/* Main content area with two panels */}
 			<Flex mb={'xs'}>
 				<TextInput
-					label={dispositionLabel('Disposition Name')}
+					label={dispositionLabel('Outcome Name')}
 					labelProps={{
 						title: `Campaign ID: ${campaignId || 'N/A'}`,
 					}}
-					placeholder={dispositionLabel('Disposition Name')}
-					description={dispositionLabel('Enter the name of the disposition')}
+					placeholder={dispositionLabel('Outcome Name')}
+					description={dispositionLabel('Enter the name of the outcome')}
 					value={flowJson.name || ''}
 					onChange={(event) =>
 						setFlowJson({ ...flowJson, name: event.currentTarget.value })
@@ -152,7 +152,7 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 				/>
 			</Flex>
 			<Box className={styles.panelsContainer}>
-				{/* Left panel: Disposition nodes */}
+				{/* Left panel: Outcome nodes */}
 				<Box className={styles.leftPanel}>
 					<ScrollArea
 						type='hover'

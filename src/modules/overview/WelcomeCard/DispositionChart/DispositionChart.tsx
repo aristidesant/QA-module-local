@@ -4,7 +4,7 @@ export default function DispositionChart() {
 	return (
 		<div className={classes.card}>
 			<div className={classes.header}>
-				<h3 className={classes.title}>Disposition Results</h3>
+				<h3 className={classes.title}>Outcome</h3>
 			</div>
 
 			<div className={classes.content}>

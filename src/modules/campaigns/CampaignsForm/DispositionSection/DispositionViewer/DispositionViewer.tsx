@@ -50,7 +50,7 @@ const NodeViewer: React.FC<NodeViewerProps> = ({
 			<Box
 				key={node.id}
 				role={isClickable ? 'button' : 'group'}
-				aria-label={`Disposition node: ${node.name}`}
+				aria-label={`Outcome node: ${node.name}`}
 				tabIndex={isClickable ? 0 : -1}
 				className={`${styles.nodeViewer} ${styles[nodeStyle]} ${
 					isClickable ? styles.clickable : styles.nonClickable
@@ -157,7 +157,7 @@ const DispositionViewer: React.FC<DispositionViewerProps> = ({ flow }) => {
 				<Divider />
 				<Box
 					className={styles.nodesContainer}
-					aria-label={dispositionLabel('Disposition nodes list')}
+					aria-label={dispositionLabel('Outcome nodes list')}
 				>
 					{nodes.map((node) => (
 						<NodeViewer key={node.id} node={node} />

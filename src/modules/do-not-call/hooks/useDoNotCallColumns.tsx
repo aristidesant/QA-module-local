@@ -23,7 +23,7 @@ const reasonConfig: Record<
 	DISPOSITION_OUTCOME: {
 		icon: IconAlertCircle,
 		color: 'orange',
-		label: 'Disposition Outcome',
+		label: 'Outcome',
 	},
 	REGULATORY_COMPLIANCE: {
 		icon: IconShieldCheck,
