@@ -1,0 +1,59 @@
+.container {
+	padding: var(--mantine-spacing-md);
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+}
+
+.table {
+	font-size: 13px;
+	background: var(--mantine-color-white);
+	border-radius: var(--mantine-radius-md);
+	overflow: hidden;
+	border: 1px solid var(--mantine-color-gray-2);
+}
+
+.configName {
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-9);
+}
+
+.description {
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-7);
+	max-width: 300px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.value {
+	font-size: var(--mantine-font-size-sm);
+	font-family: var(--mantine-font-family-monospace);
+	background-color: var(--mantine-color-gray-1);
+	padding: 2px 6px;
+	border-radius: var(--mantine-radius-xs);
+	max-width: 200px;
+}
+
+.dateText {
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-6);
+}
+
+.actionsGroup {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--mantine-spacing-xs);
+}
+
+.actionButton {
+	padding: 0;
+	min-width: 28px;
+	height: 28px;
+	border-radius: var(--mantine-radius-sm);
+}
+
+.actionButton:hover {
+	background-color: var(--mantine-color-gray-1);
+}

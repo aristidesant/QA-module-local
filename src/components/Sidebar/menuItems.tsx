@@ -10,6 +10,7 @@ import {
 	IconTarget,
 	IconDatabase,
 	IconPhoneOff,
+	IconSettings,
 } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 import styles from './Sidebar.module.css';
@@ -68,6 +69,11 @@ export const maintenanceItems: MenuItem[] = [
 		to: '/campaign-schemas',
 	},
 	{
+		label: 'Client Configs',
+		icon: <IconSettings size={20} className={styles.menuIcon} />,
+		to: '/client-configs',
+	},
+	{
 		label: 'Knowledge Bases',
 		icon: <IconLibrary size={20} className={styles.menuIcon} />,
 		to: '/knowledge-bases',
@@ -86,5 +92,10 @@ export const maintenanceItems: MenuItem[] = [
 		label: 'Do Not Call',
 		icon: <IconPhoneOff size={20} className={styles.menuIcon} />,
 		to: '/do-not-call',
+	},
+	{
+		label: 'Settings',
+		icon: <IconSettings size={20} className={styles.menuIcon} />,
+		to: '/settings',
 	},
 ];
