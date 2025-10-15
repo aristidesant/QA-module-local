@@ -8,13 +8,14 @@ import {
 } from '@tabler/icons-react';
 import BaseTable from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
-import {
-	useClientConfigs,
-	useDeleteClientConfig,
-} from '~/queries/useClientConfigs';
+import PaginationControls from '~/components/PaginationControls';
+import { useDeleteClientConfig } from '~/queries/useClientConfigs';
 import type { ClientConfig } from '~/models/ClientConfig';
 import type { ColumnDef } from '@tanstack/react-table';
 import { notifications } from '@mantine/notifications';
+import { useClientConfigsStore } from '~/stores/clientConfigsStore';
+import { useFilteredClientConfigs } from '../hooks';
+import { ClientConfigsFilters } from '../ClientConfigsFilters';
 
 import styles from './ClientConfigsContent.module.css';
 import { ClientConfigsForm } from '../ClientConfigsForm';
@@ -37,7 +38,9 @@ export function ClientConfigsContent({
 		null
 	);
 
-	const { data: configs = [], isLoading } = useClientConfigs();
+	const { pagination, setPagination } = useClientConfigsStore();
+	const { configs, totalConfigs, allConfigsCount, isLoading } =
+		useFilteredClientConfigs();
 	const deleteConfig = useDeleteClientConfig();
 
 	const handleEdit = (config: ClientConfig) => {
@@ -146,7 +149,8 @@ export function ClientConfigsContent({
 		},
 	];
 
-	const showEmptyState = configs.length === 0 && !isLoading;
+	// Show empty state only when there are NO configs at all (not when filters don't match)
+	const showEmptyState = allConfigsCount === 0 && !isLoading;
 
 	if (showEmptyState) {
 		return (
@@ -182,12 +186,46 @@ export function ClientConfigsContent({
 
 	return (
 		<div className={styles.container}>
-			<BaseTable
-				data={configs}
-				columns={columns}
-				isLoading={isLoading}
-				className={styles.table}
-			/>
+			<ClientConfigsFilters />
+
+			{configs.length === 0 && !isLoading ? (
+				<div className={styles.noResultsContainer}>
+					<Text size='lg' fw={500} ta='center'>
+						No configurations match your filters
+					</Text>
+					<Text size='sm' c='dimmed' ta='center'>
+						Try adjusting your search criteria or filters
+					</Text>
+				</div>
+			) : (
+				<>
+					<BaseTable
+						data={configs}
+						columns={columns}
+						isLoading={isLoading}
+						className={styles.table}
+					/>
+
+					<PaginationControls
+						currentPage={pagination.page}
+						totalPages={Math.ceil(totalConfigs / pagination.pageSize)}
+						itemsPerPage={pagination.pageSize}
+						totalItems={totalConfigs}
+						onPageChange={(page) => setPagination({ ...pagination, page })}
+						onItemsPerPageChange={(value) => {
+							if (value) {
+								setPagination({
+									...pagination,
+									page: 1,
+									pageSize: parseInt(value, 10),
+								});
+							}
+						}}
+						isLoading={isLoading}
+						itemLabel='configurations'
+					/>
+				</>
+			)}
 
 			{/* Create Modal */}
 			<Modal

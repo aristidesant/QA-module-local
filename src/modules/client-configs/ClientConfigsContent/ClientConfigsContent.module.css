@@ -5,6 +5,18 @@
 	gap: 0;
 }
 
+.noResultsContainer {
+	padding: var(--mantine-spacing-xl);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	background: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	margin-top: var(--mantine-spacing-md);
+}
+
 .table {
 	font-size: 13px;
 	background: var(--mantine-color-white);
