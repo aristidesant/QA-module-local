@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type {
 	ClientConfig,
+	ClientConfigResponse,
 	CreateClientConfig,
 	UpdateClientConfig,
 	ContactColumnMapping,
@@ -27,10 +28,18 @@ const clientConfigApi = () => {
 
 export default clientConfigApi;
 
-// Get all client configurations
-export const getClientConfigs = async (): Promise<ClientConfig[]> => {
-	const response = await axios.get<ClientConfig[]>(
-		`${DEFAULT_API_URL}/client-configs`
+export interface ClientConfigApiParams {
+	limit?: number;
+	offset?: number;
+}
+
+// Get all client configurations with pagination
+export const getClientConfigs = async (
+	params?: ClientConfigApiParams
+): Promise<ClientConfigResponse> => {
+	const response = await axios.get<ClientConfigResponse>(
+		`${DEFAULT_API_URL}/client-configs`,
+		{ params }
 	);
 	return response.data;
 };

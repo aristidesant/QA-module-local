@@ -1,16 +1,29 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useClientConfigs } from '~/queries/useClientConfigs';
 import { useClientConfigsStore } from '~/stores/clientConfigsStore';
 
 export function useFilteredClientConfigs() {
-	const { data: allConfigs = [], isLoading } = useClientConfigs();
 	const { filters, pagination, setPagination } = useClientConfigsStore();
 
-	// Apply filters and sorting (all client-side)
+	// Build API params with pagination
+	const apiParams = useMemo(() => {
+		return {
+			limit: pagination.pageSize,
+			offset: (pagination.page - 1) * pagination.pageSize,
+		};
+	}, [pagination.page, pagination.pageSize]);
+
+	// Fetch data with server-side pagination
+	const { data: response, isLoading } = useClientConfigs(apiParams);
+
+	const allConfigs = response?.configs || [];
+	const serverTotal = response?.total || 0;
+
+	// Apply client-side filters and sorting
 	const filteredAndSortedConfigs = useMemo(() => {
 		let result = [...allConfigs];
 
-		// Apply search filter
+		// Apply search filter (client-side since backend doesn't support it)
 		if (filters.search.trim()) {
 			const searchLower = filters.search.toLowerCase();
 			result = result.filter(
@@ -20,12 +33,12 @@ export function useFilteredClientConfigs() {
 			);
 		}
 
-		// Apply type filter
+		// Apply type filter (client-side)
 		if (filters.type) {
 			result = result.filter((config) => config.type === filters.type);
 		}
 
-		// Apply sorting
+		// Apply sorting (client-side)
 		result.sort((a, b) => {
 			let comparison = 0;
 
@@ -53,27 +66,20 @@ export function useFilteredClientConfigs() {
 		return result;
 	}, [allConfigs, filters]);
 
-	// Apply pagination
-	const paginatedConfigs = useMemo(() => {
-		const startIndex = (pagination.page - 1) * pagination.pageSize;
-		const endIndex = startIndex + pagination.pageSize;
-		return filteredAndSortedConfigs.slice(startIndex, endIndex);
-	}, [filteredAndSortedConfigs, pagination.page, pagination.pageSize]);
-
-	// Update total count in pagination
-	useMemo(() => {
-		if (filteredAndSortedConfigs.length !== pagination.total) {
+	// Update pagination total from server when data changes
+	useEffect(() => {
+		if (serverTotal !== pagination.total) {
 			setPagination({
 				...pagination,
-				total: filteredAndSortedConfigs.length,
+				total: serverTotal,
 			});
 		}
-	}, [filteredAndSortedConfigs.length, pagination, setPagination]);
+	}, [serverTotal, pagination, setPagination]);
 
 	return {
-		configs: paginatedConfigs,
-		totalConfigs: filteredAndSortedConfigs.length,
-		allConfigsCount: allConfigs.length,
+		configs: filteredAndSortedConfigs,
+		totalConfigs: serverTotal,
+		allConfigsCount: serverTotal,
 		isLoading,
 	};
 }

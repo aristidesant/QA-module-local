@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type {
 	ClientConfig,
+	ClientConfigResponse,
 	CreateClientConfig,
 	UpdateClientConfig,
 	ContactColumnMapping,
@@ -13,12 +14,13 @@ import {
 	createClientConfig,
 	updateClientConfig,
 	deleteClientConfig,
+	type ClientConfigApiParams,
 } from '~/api/clientConfigApi';
 
-export const useClientConfigs = () => {
-	return useQuery<ClientConfig[], Error>({
-		queryKey: ['clientConfigs'],
-		queryFn: getClientConfigs,
+export const useClientConfigs = (params?: ClientConfigApiParams) => {
+	return useQuery<ClientConfigResponse, Error>({
+		queryKey: ['clientConfigs', params],
+		queryFn: () => getClientConfigs(params),
 	});
 };
 

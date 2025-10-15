@@ -1,2 +1,2 @@
 // Manual version file generated per request
-export const APP_VERSION = '25101503';
+export const APP_VERSION = '25101504';
