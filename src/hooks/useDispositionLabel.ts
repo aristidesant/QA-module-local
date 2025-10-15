@@ -1,13 +1,3 @@
-// Hook: useDispositionLabel
-// Purpose: Provide a label transformation function that adapts wording
-// depending on the currently selected campaign type.
-// For INBOUND campaigns we replace occurrences of the word
-// Disposition/disposition (and plural forms) with Outcome/outcome (and plural forms),
-// preserving the general casing style (UPPER, Title, lower).
-// For any other campaign type we return the original label untouched.
-
-import { useCampaignsStore } from '~/stores/campaignsStore';
-
 /**
  * Returns a function that will transform disposition related labels based on campaign type.
  * Mapping when campaign.type === 'INBOUND':

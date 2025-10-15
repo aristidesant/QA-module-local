@@ -8,7 +8,6 @@ import {
 	Alert,
 	Loader,
 	Group,
-	SegmentedControl,
 	Divider,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -28,6 +27,7 @@ import Logo from '~/components/Logo';
 import { MFALoginResponse } from '~/api/authApi';
 import { APP_VERSION } from '~/version';
 import OTPVerificationModal from './OTPVerificationModal';
+import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 
 interface FormValues {
 	username: string;
@@ -130,16 +130,10 @@ export function LoginForm() {
 						</div>
 					)}
 					<Stack gap='xs'>
-						<SegmentedControl
+						<AppSegmentedControl
 							fullWidth
 							value={form.values.loginType}
 							onChange={(v) => form.setFieldValue('loginType', v as any)}
-							classNames={{
-								root: classes.segmentedRoot,
-								label: classes.segmentedLabel,
-								control: classes.segmentedControl,
-								indicator: classes.segmentedIndicator,
-							}}
 							data={[
 								{ label: 'Credentials', value: 'USER_PASS' },
 								{ label: 'LDAP', value: 'LDAP' },
