@@ -1,52 +1,46 @@
 .container {
-  height: 100%;
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
+	height: 100%;
+	overflow: auto;
+	display: flex;
+	flex-direction: column;
 }
 
 .emptyState {
-  height: 100%;
-  min-height: 300px;
+	height: 100%;
+	min-height: 300px;
 }
 
 .loadingState {
-  height: 100%;
-  min-height: 200px;
+	height: 100%;
+	min-height: 200px;
 }
 
 .tableRow:hover {
-  cursor: pointer;
-  background-color: var(--mantine-color-gray-0) !important;
+	cursor: pointer;
+	background-color: var(--mantine-color-gray-0) !important;
 }
 
 .tableRow:active {
-  background-color: var(--mantine-color-blue-0) !important;
+	background-color: var(--mantine-color-blue-0) !important;
 }
 
 .tableRow {
-  transition: background-color 0.2s ease;
-}
-
-.description {
-  max-width: 300px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
 }
 
 .container table {
-  background: var(--mantine-color-white);
+	background: var(--mantine-color-white);
 }
 
 .container table th {
-  background: var(--mantine-color-gray-0);
-  font-weight: 600;
-  color: var(--mantine-color-gray-7);
-  border-bottom: 2px solid var(--mantine-color-gray-2);
+	background: var(--mantine-color-gray-0);
+	font-weight: 600;
+	color: var(--mantine-color-gray-7);
+	border-bottom: 2px solid var(--mantine-color-gray-2);
 }
 
 .container table td {
-  border-bottom: 1px solid var(--mantine-color-gray-2);
-  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
 }
