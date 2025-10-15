@@ -53,6 +53,7 @@ export function ConversationOverview({
 		campaign,
 		status = 'unknown',
 		startDate,
+		summary,
 		transcriptContent,
 	} = conversation;
 
@@ -284,7 +285,7 @@ export function ConversationOverview({
 					description='Auto-generated from the call transcript'
 				>
 					<Text fz='xs' className={styles.summaryText}>
-						{transcriptSummary}
+						{summary?.es || summary?.en || transcriptSummary}
 					</Text>
 					<Button
 						rightSection={<IconPdf size={16} />}
