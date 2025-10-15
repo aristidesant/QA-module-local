@@ -93,9 +93,4 @@ export const maintenanceItems: MenuItem[] = [
 		icon: <IconPhoneOff size={20} className={styles.menuIcon} />,
 		to: '/do-not-call',
 	},
-	{
-		label: 'Settings',
-		icon: <IconSettings size={20} className={styles.menuIcon} />,
-		to: '/settings',
-	},
 ];
