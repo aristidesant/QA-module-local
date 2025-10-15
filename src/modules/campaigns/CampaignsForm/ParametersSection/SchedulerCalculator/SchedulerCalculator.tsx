@@ -2,7 +2,6 @@ import React from 'react';
 import { Flex } from '@mantine/core';
 import SchedulerForm from './SchedulerForm';
 import SchedulerResults from './SchedulerResults';
-import styles from './SchedulerCalculator.module.css';
 
 const SchedulerCalculator: React.FC = () => {
 	return (
