@@ -1,0 +1,1 @@
+export { useFilteredClientConfigs } from './useFilteredClientConfigs';

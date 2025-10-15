@@ -8,6 +8,14 @@ export interface ClientConfig {
 	userId: number;
 	createdAt: string;
 	updatedAt: string;
+	deletedAt: string | null;
+}
+
+export interface ClientConfigResponse {
+	configs: ClientConfig[];
+	total: number;
+	limit: number;
+	offset: number;
 }
 
 export interface CreateClientConfig {
