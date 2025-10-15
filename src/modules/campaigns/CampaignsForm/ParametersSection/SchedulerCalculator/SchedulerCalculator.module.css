@@ -1,0 +1,465 @@
+.container {
+	width: 100%;
+}
+
+.formCard {
+	padding: var(--mantine-spacing-md);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-lg);
+	background-color: var(--mantine-color-white);
+}
+
+.header {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+	margin-bottom: var(--mantine-spacing-md);
+}
+
+.headerContent {
+	flex: 1;
+	min-width: 280px;
+}
+
+.title {
+	font-size: 1.125rem;
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+	margin-bottom: var(--mantine-spacing-xs);
+	letter-spacing: -0.01em;
+}
+
+.description {
+	color: var(--mantine-color-gray-6);
+	line-height: 1.5;
+	font-size: 0.8125rem;
+	max-width: 480px;
+}
+
+.segmentedRoot {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-white) 70%,
+		transparent
+	);
+	border: 1px solid
+		color-mix(in srgb, var(--mantine-color-blue-6) 20%, transparent);
+	border-radius: 16px;
+	padding: 4px;
+}
+
+.segmentedControl {
+	border-radius: 12px;
+}
+
+.segmentedLabel {
+	font-weight: 600;
+	color: var(--mantine-color-gray-7);
+	text-transform: none;
+}
+
+.segmentedIndicator {
+	border-radius: 12px;
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-blue-5) 26%,
+		transparent
+	);
+	border: 1px solid
+		color-mix(in srgb, var(--mantine-color-blue-6) 30%, transparent);
+}
+
+.form {
+	display: flex;
+	flex-direction: column;
+}
+
+.section {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+}
+
+.fieldset {
+	display: grid;
+	gap: var(--mantine-spacing-sm);
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.fieldsetTitle {
+	font-size: 0.6875rem;
+	font-weight: 600;
+	color: var(--mantine-color-gray-7);
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	margin-bottom: 2px;
+}
+
+.input {
+	width: 100%;
+}
+
+.sliderSection {
+	display: grid;
+	gap: var(--mantine-spacing-sm);
+	grid-template-columns: repeat(2, 1fr);
+}
+
+.sliderField {
+	display: flex;
+	flex-direction: column;
+	padding: var(--mantine-spacing-sm);
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--mantine-color-white);
+}
+
+.sliderHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: var(--mantine-spacing-sm);
+}
+
+.sliderHeaderText {
+	flex: 1;
+}
+
+.sliderTitle {
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+}
+
+.sliderDescription {
+	margin-top: 2px;
+	font-size: 0.6875rem;
+	color: var(--mantine-color-gray-6);
+	line-height: 1.4;
+}
+
+.sliderValue {
+	background-color: var(--mantine-color-gray-0);
+	color: var(--mantine-color-gray-8);
+	border: 1px solid var(--mantine-color-gray-3);
+	font-weight: 600;
+	font-size: 0.8125rem;
+	padding: 2px 10px;
+	min-width: 52px;
+	text-align: center;
+}
+
+.slider {
+	padding: 0;
+}
+
+.slider :global(.mantine-Slider-track) {
+	background-color: var(--mantine-color-gray-2);
+	height: 8px;
+	border-radius: var(--mantine-radius-xl);
+}
+
+.slider :global(.mantine-Slider-bar) {
+	background-color: var(--mantine-color-gray-8);
+	border-radius: var(--mantine-radius-xl);
+}
+
+.slider :global(.mantine-Slider-thumb) {
+	width: 20px;
+	height: 20px;
+	border: 3px solid var(--mantine-color-gray-8);
+	background-color: var(--mantine-color-white);
+}
+
+.slider :global(.mantine-Slider-markLabel) {
+	font-size: 0.6875rem;
+	color: var(--mantine-color-gray-6);
+	font-weight: 500;
+}
+
+.submit {
+	min-width: 200px;
+	font-weight: 500;
+	border-radius: var(--mantine-radius-md);
+}
+
+.summarySection {
+	display: flex;
+	width: 100%;
+}
+
+.summaryCard {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+	width: 100%;
+	padding: var(--mantine-spacing-md);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	background-color: var(--mantine-color-white);
+}
+
+.summaryHeader {
+	display: flex;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-md);
+	align-items: flex-start;
+	flex-wrap: wrap;
+}
+
+.summaryHeaderContent {
+	flex: 1;
+	min-width: 240px;
+}
+
+.sectionTitle {
+	font-size: var(--mantine-font-size-md);
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+	margin-bottom: 2px;
+}
+
+.sectionHint {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+	line-height: 1.4;
+}
+
+.modeBadge {
+	background-color: var(--mantine-color-blue-0);
+	color: var(--mantine-color-blue-7);
+	border: 1px solid var(--mantine-color-blue-2);
+	font-size: var(--mantine-font-size-xs);
+	height: 24px;
+}
+
+.summaryGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+	gap: var(--mantine-spacing-sm);
+}
+
+.metric {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 10px 12px;
+	border-radius: var(--mantine-radius-sm);
+	background-color: var(--mantine-color-gray-0);
+	border-left: 2px solid var(--mantine-color-blue-5);
+}
+
+.metricLabel {
+	color: var(--mantine-color-gray-6);
+	font-size: var(--mantine-font-size-xs);
+	text-transform: uppercase;
+	font-weight: 500;
+	letter-spacing: 0.05em;
+}
+
+.metricValue {
+	font-size: 1.375rem;
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+	line-height: 1.2;
+}
+
+.metricUnit {
+	margin-left: 4px;
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-6);
+	font-weight: 400;
+}
+
+.summaryAccordion {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.summaryItem {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-sm);
+	background-color: var(--mantine-color-gray-0);
+	transition: border-color 0.15s ease;
+}
+
+.summaryItem:hover {
+	border-color: var(--mantine-color-blue-4);
+}
+
+.summaryControl {
+	padding: 10px 12px;
+}
+
+.summaryLabel {
+	color: var(--mantine-color-gray-8);
+	font-weight: 500;
+}
+
+.waveControl {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-md);
+	width: 100%;
+	flex-wrap: wrap;
+}
+
+.waveInfo {
+	flex: 1;
+	min-width: 200px;
+}
+
+.waveTitle {
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+	margin-bottom: 2px;
+}
+
+.waveSubtitle {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+	line-height: 1.4;
+}
+
+.waveProgressContainer {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+	min-width: 200px;
+}
+
+.waveProgress {
+	width: 100%;
+	height: 6px;
+	background-color: var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-xs);
+}
+
+.waveProgressBar {
+	background-color: var(--mantine-color-blue-5);
+	border-radius: var(--mantine-radius-xs);
+}
+
+.waveMetricsGrid {
+	display: grid;
+	gap: var(--mantine-spacing-sm);
+	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	padding: 10px 12px;
+	background-color: var(--mantine-color-white);
+	border-radius: var(--mantine-radius-sm);
+}
+
+.waveMetric {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.waveMetricLabel {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+	text-transform: uppercase;
+	font-weight: 500;
+	letter-spacing: 0.05em;
+}
+
+.waveMetricValue {
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+	font-size: var(--mantine-font-size-md);
+}
+
+.assumptions {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 10px 12px;
+	background-color: var(--mantine-color-gray-0);
+	border-radius: var(--mantine-radius-sm);
+	border-left: 2px solid var(--mantine-color-gray-4);
+}
+
+.assumptionsLabel {
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 600;
+	text-transform: uppercase;
+	color: var(--mantine-color-gray-7);
+	letter-spacing: 0.05em;
+}
+
+.assumptionsText {
+	color: var(--mantine-color-gray-6);
+	line-height: 1.5;
+	font-size: var(--mantine-font-size-sm);
+}
+
+.placeholder {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	width: 100%;
+	padding: var(--mantine-spacing-xl) var(--mantine-spacing-lg);
+	min-height: 280px;
+	border: 2px dashed var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	background-color: var(--mantine-color-gray-0);
+}
+
+.placeholderTitle {
+	font-size: var(--mantine-font-size-xl);
+	font-weight: 600;
+	color: var(--mantine-color-gray-8);
+}
+
+.placeholderText {
+	color: var(--mantine-color-gray-6);
+	max-width: 32rem;
+	line-height: 1.6;
+	font-size: var(--mantine-font-size-sm);
+}
+
+@media (max-width: 48rem) {
+	.formCard,
+	.summaryCard {
+		padding: var(--mantine-spacing-sm);
+	}
+
+	.form {
+		gap: var(--mantine-spacing-md);
+	}
+
+	.fieldset,
+	.sliderSection {
+		grid-template-columns: 1fr;
+	}
+
+	.submit {
+		width: 100%;
+	}
+
+	.summaryGrid {
+		grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	}
+
+	.metric {
+		padding: var(--mantine-spacing-sm);
+	}
+
+	.metricValue {
+		font-size: 1.5rem;
+	}
+
+	.waveProgressContainer {
+		min-width: 160px;
+	}
+
+	.waveMetricsGrid {
+		grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+	}
+}
