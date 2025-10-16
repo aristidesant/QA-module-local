@@ -1,8 +1,9 @@
 import { useUpdateDispositionNode } from '~/queries/dispositionNodesQueries';
 import { useDeleteDispositionNode } from '~/queries/dispositionNodesQueries';
 import { useCreateDispositionNode } from '~/queries/dispositionNodesQueries';
+import { useReactivateDispositionNode } from '~/queries/dispositionNodesQueries';
 
-import { Box, Flex, Button, ActionIcon, Text } from '@mantine/core';
+import { Box, Flex, Button, ActionIcon, Text, Badge } from '@mantine/core';
 import { Tree } from 'react-arborist';
 import {
 	IconPlus,
@@ -12,10 +13,12 @@ import {
 	IconFileDescription,
 	IconChevronUp,
 	IconChevronRight,
+	IconRefresh,
 } from '@tabler/icons-react';
 import { useState } from 'react';
 import styles from './DispositionCatalogNode.module.css';
 import DispositionNodeForm from './DispositionNodeForm';
+import { notifications } from '@mantine/notifications';
 // Types for modal state
 type ModalState = {
 	open: boolean;
@@ -62,15 +65,52 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 	const createNode = useCreateDispositionNode();
 	const updateNode = useUpdateDispositionNode();
 	const deleteNode = useDeleteDispositionNode();
+	const reactivateNode = useReactivateDispositionNode();
 
 	if (!catalogId) return null;
 	const treeData = data ? mapDispositionNodesToArborist(data) : [];
+
+	// Handler for reactivating node
+	const handleReactivateNode = (nodeData: DispositionNode) => {
+		modals.openConfirmModal({
+			title: 'Reactivate Outcome Node',
+			labels: {
+				confirm: 'Reactivate',
+				cancel: 'Cancel',
+			},
+			children: (
+				<Text size='sm'>
+					Are you sure you want to reactivate this outcome node? It will become
+					available for campaign configuration again.
+				</Text>
+			),
+			confirmProps: { color: 'green' },
+			onConfirm: async () => {
+				try {
+					await reactivateNode.mutateAsync(nodeData.id);
+					await reloadCatalogs();
+					notifications.show({
+						title: 'Node reactivated',
+						message: 'Outcome node was reactivated successfully.',
+						color: 'green',
+					});
+				} catch (error: any) {
+					notifications.show({
+						title: 'Reactivation failed',
+						message: error?.message || 'Failed to reactivate outcome node.',
+						color: 'red',
+					});
+				}
+			},
+		});
+	};
 
 	// React Arborist custom node renderer
 	function Node({ node, style, dragHandle }: any) {
 		const nodeData: DispositionNode = node.data.original;
 		const isOpen = node.isOpen;
 		const hasChildren = node.children && node.children.length > 0;
+		const isInactive = nodeData.isActive === false;
 
 		return (
 			<div
@@ -81,12 +121,13 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 				aria-label={node.data.name}
 				data-has-children={hasChildren}
 				data-expanded={isOpen}
+				data-inactive={isInactive}
 			>
 				<div className={styles.nodeContent}>
 					<div className={styles.nodeLeftSection}>
 						{hasChildren ? (
 							<ActionIcon
-								size='xs'
+								size='sm'
 								variant='transparent'
 								className={styles.chevronIcon}
 								aria-label={isOpen ? 'Collapse' : 'Expand'}
@@ -96,9 +137,9 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 								}}
 							>
 								{isOpen ? (
-									<IconChevronUp size={16} />
+									<IconChevronUp size={18} />
 								) : (
-									<IconChevronRight size={16} />
+									<IconChevronRight size={18} />
 								)}
 							</ActionIcon>
 						) : (
@@ -107,19 +148,65 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 						<span className={styles.nodeIcon} aria-hidden='true'>
 							{node.isLeaf ? (
 								<IconFileDescription
-									size={16}
-									color='var(--mantine-color-gray-6)'
+									size={18}
+									color={
+										isInactive
+											? 'var(--mantine-color-gray-5)'
+											: 'var(--mantine-color-gray-6)'
+									}
 								/>
 							) : (
-								<IconFolder size={16} color='var(--mantine-color-yellow-7)' />
+								<IconFolder
+									size={18}
+									color={
+										isInactive
+											? 'var(--mantine-color-gray-5)'
+											: 'var(--mantine-color-yellow-7)'
+									}
+								/>
 							)}
 						</span>
 					</div>
 					<span className={styles.nodeLabel}>{node.data.name}</span>
+					<div className={styles.statusBadge}>
+						{nodeData.isActive !== undefined && (
+							<Badge
+								size='md'
+								variant='light'
+								color={nodeData.isActive ? 'green' : 'gray'}
+								radius='sm'
+								styles={{
+									root: {
+										textTransform: 'none',
+										fontWeight: 500,
+										minWidth: '70px',
+									},
+								}}
+							>
+								{nodeData.isActive ? 'Active' : 'Inactive'}
+							</Badge>
+						)}
+					</div>
 				</div>
 				<div className={styles.nodeActions}>
+					{isInactive && (
+						<ActionIcon
+							size='md'
+							variant='light'
+							color='green'
+							aria-label='Reactivate node'
+							className={styles.reactivateActionIcon}
+							onClick={(e) => {
+								e.stopPropagation();
+								handleReactivateNode(nodeData);
+							}}
+							title='Reactivate this outcome node'
+						>
+							<IconRefresh size={18} stroke={2} />
+						</ActionIcon>
+					)}
 					<ActionIcon
-						size='xs'
+						size='md'
 						variant='transparent'
 						aria-label='Edit node'
 						className={styles.actionIcon}
@@ -128,10 +215,10 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 							setModal({ open: true, editNode: nodeData });
 						}}
 					>
-						<IconPencil size={14} />
+						<IconPencil size={16} />
 					</ActionIcon>
 					<ActionIcon
-						size='xs'
+						size='md'
 						variant='transparent'
 						aria-label='Add child'
 						className={styles.actionIcon}
@@ -140,10 +227,10 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 							setModal({ open: true, parentId: nodeData.id });
 						}}
 					>
-						<IconPlus size={14} />
+						<IconPlus size={16} />
 					</ActionIcon>
 					<ActionIcon
-						size='xs'
+						size='md'
 						variant='transparent'
 						aria-label='Remove node'
 						className={styles.deleteActionIcon}
@@ -165,7 +252,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 							});
 						}}
 					>
-						<IconTrash size={14} />
+						<IconTrash size={16} />
 					</ActionIcon>
 				</div>
 			</div>
@@ -182,7 +269,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 							openByDefault={true}
 							childrenAccessor='children'
 							idAccessor='id'
-							rowHeight={48}
+							rowHeight={56}
 							width='100%'
 							className={styles.treeRoot}
 						>

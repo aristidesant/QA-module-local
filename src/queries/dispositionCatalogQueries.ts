@@ -133,3 +133,20 @@ export function useUpdateDispositionCatalog() {
 		},
 	});
 }
+
+/**
+ * Mutation hook to reactivate an inactive disposition catalog
+ * @returns Mutation object with methods to reactivate a disposition catalog
+ */
+export function useReactivateDispositionCatalog() {
+	const queryClient = useQueryClient();
+	return useMutation<DispositionCatalogModel, Error, { catalogId: number }>({
+		mutationFn: async ({ catalogId }) => {
+			const api = dispositionCatalogApi();
+			return api.reactivateDispositionCatalog(catalogId);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['dispositionCatalogs'] });
+		},
+	});
+}
