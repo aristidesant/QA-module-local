@@ -1,64 +1,223 @@
+.trigger {
+	display: flex;
+	align-items: center;
+	height: 100%;
+}
+
 .userMenu {
 	display: flex;
 	align-items: center;
-	gap: 0.75rem;
+	gap: 0.875rem;
 	background: transparent;
 	border-radius: 0;
 	padding: 0;
 	box-shadow: none;
 	cursor: pointer;
-	transition: none;
+	transition: opacity 0.2s ease;
+	border-radius: 8px;
+	padding: 0.5rem 0.75rem;
+	position: relative;
+}
+
+.userMenu:hover {
+	opacity: 0.8;
+	background: color-mix(in srgb, var(--mantine-color-gray-1) 50%, transparent);
+}
+
+.userMenu:focus-visible {
+	outline: 2px solid var(--mantine-color-blue-6);
+	outline-offset: 2px;
 }
 
 .avatar {
 	width: 2.5rem;
 	height: 2.5rem;
 	border-radius: 50%;
-	background: var(--mantine-color-gray-1);
+	background: linear-gradient(
+		135deg,
+		var(--mantine-color-blue-5) 0%,
+		var(--mantine-color-blue-6) 100%
+	);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-weight: 600;
-	color: var(--mantine-color-dark-6);
-	font-size: 1rem;
+	font-weight: 700;
+	color: var(--mantine-color-white);
+	font-size: 0.95rem;
+	position: relative;
+	flex-shrink: 0;
+	box-shadow: 0 2px 8px
+		color-mix(in srgb, var(--mantine-color-blue-6) 20%, transparent);
+	transition:
+		transform 0.2s ease,
+		box-shadow 0.2s ease;
+}
+
+.avatar:hover {
+	transform: scale(1.05);
+}
+
+.avatar.impersonating {
+	background: linear-gradient(
+		135deg,
+		var(--mantine-color-orange-5) 0%,
+		var(--mantine-color-orange-6) 100%
+	);
+	box-shadow: 0 2px 8px
+		color-mix(in srgb, var(--mantine-color-orange-6) 20%, transparent);
+}
+
+.impersonationIndicator {
+	position: absolute;
+	bottom: -2px;
+	right: -2px;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background: var(--mantine-color-red-6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--mantine-color-white);
+	border: 2px solid var(--mantine-color-white);
 }
 
 .userInfo {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+	min-width: 0;
+	flex: 1;
 }
 
 .name {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	flex-wrap: wrap;
+	display: block;
 	font-weight: 600;
 	color: var(--mantine-color-dark-8);
-	font-size: 1rem;
-	line-height: 1.2;
+	font-size: 0.95rem;
+	line-height: 1.3;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
-.role {
+.email {
 	color: var(--mantine-color-gray-6);
-	font-size: 0.85rem;
-	line-height: 1.2;
+	font-size: 0.8rem;
+	line-height: 1.3;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
 .chevron {
 	color: var(--mantine-color-gray-6);
-	margin-left: 0.5rem;
-	font-size: 1.2rem;
+	margin-left: 0.25rem;
 	display: flex;
 	align-items: center;
+	flex-shrink: 0;
+	transition:
+		transform 0.2s ease,
+		color 0.2s ease;
 }
 
-.impersonationBadge {
-	font-size: 10px;
-	height: 18px;
-	padding: 0 6px;
+.userMenu:hover .chevron {
+	color: var(--mantine-color-gray-7);
+	transform: translateY(1px);
+}
+
+.dropdown {
+	animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+	from {
+		opacity: 0;
+		transform: translateY(-8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.profileItem {
+	padding: 0.75rem 1rem;
+	font-weight: 500;
+	transition: background-color 0.15s ease;
+}
+
+.profileItem:hover {
+	background: color-mix(in srgb, var(--mantine-color-blue-6) 8%, transparent);
+}
+
+.categoryLabel {
+	padding: 0.875rem 1rem 0.5rem 1rem;
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	color: var(--mantine-color-gray-6);
+}
+
+.categoryGroup {
 	display: flex;
-	align-items: center;
-	gap: 2px;
+	flex-direction: column;
+	gap: 0;
+}
+
+.categoryItem {
+	padding: 0.625rem 1rem;
+	font-size: 0.9rem;
+	transition:
+		background-color 0.15s ease,
+		padding-left 0.15s ease;
+}
+
+.categoryItem:hover {
+	background: color-mix(in srgb, var(--mantine-color-gray-1) 80%, transparent);
+	padding-left: 1.25rem;
+}
+
+.logoutItem {
+	padding: 0.75rem 1rem;
+	font-weight: 500;
+	transition: background-color 0.15s ease;
+}
+
+.logoutItem:hover:not([disabled]) {
+	background: color-mix(in srgb, var(--mantine-color-red-6) 8%, transparent);
+}
+
+/* Impersonation Section */
+.impersonationSection {
+	padding: 1rem;
+	background: color-mix(in srgb, var(--mantine-color-orange-6) 5%, transparent);
+	border-radius: 6px;
+	margin: 0.5rem;
+}
+
+.impersonationHeader {
+	display: flex;
+	gap: 0.75rem;
+	align-items: flex-start;
+	margin-bottom: 0.75rem;
+	color: var(--mantine-color-orange-7);
+}
+
+.impersonationTitle {
+	font-weight: 600;
+	font-size: 0.95rem;
+	color: var(--mantine-color-orange-7);
+}
+
+.impersonationSubtitle {
+	font-size: 0.8rem;
+	color: var(--mantine-color-orange-6);
+}
+
+.impersonationMessage {
+	font-size: 0.8rem;
+	color: var(--mantine-color-orange-6);
+	padding-left: 2.25rem;
 }

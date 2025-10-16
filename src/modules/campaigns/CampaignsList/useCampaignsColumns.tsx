@@ -9,6 +9,7 @@ import {
 	Progress,
 	Menu,
 	Stack,
+	ThemeIcon,
 } from '@mantine/core';
 import {
 	IconDotsVertical,
@@ -20,6 +21,7 @@ import {
 	IconCopy,
 	IconChartDots,
 	IconPhone,
+	IconQuestionMark,
 } from '@tabler/icons-react';
 import type { Campaign } from '~/models/CampaignsModel';
 import { useNavigate } from 'react-router';
@@ -79,25 +81,16 @@ export const useCampaignsColumns = ({
 			header: 'Campaign',
 			cell: ({ row }) => {
 				const campaign = row.original;
-				const statusInfo = getCampaignStatusInfo(campaign.status ?? '');
 				return (
 					<Group gap='sm' wrap='nowrap'>
-						<Avatar
-							size={24}
-							radius='xl'
-							color={statusInfo.color}
-							title={statusInfo.label}
-						>
-							<statusInfo.icon size={16} />
-						</Avatar>
-						<div>
-							<Text size='sm' fw={500} lineClamp={1}>
-								{campaign.name}
-							</Text>
-							<Text size='xs' c='dimmed' lineClamp={1}>
-								{campaign.description || 'No description'}
-							</Text>
-						</div>
+						<Text size='sm' fw={500} lineClamp={1}>
+							{campaign.name}
+						</Text>
+						<Tooltip withArrow label={campaign.description || 'No description'}>
+							<ThemeIcon variant='light' color='blue' size={'xs'}>
+								<IconQuestionMark size={16} />
+							</ThemeIcon>
+						</Tooltip>
 					</Group>
 				);
 			},
