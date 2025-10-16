@@ -11,7 +11,7 @@ import {
 	Pagination,
 	Badge,
 } from '@mantine/core';
-import { IconTrash, IconRefresh } from '@tabler/icons-react';
+import { IconTrash, IconRefresh, IconBan } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { modals } from '@mantine/modals';
 import { useDispositionLabel } from '~/hooks/useDispositionLabel';
@@ -21,6 +21,7 @@ import {
 	useUpdateDispositionCatalog,
 	useDeleteDispositionCatalog,
 	useReactivateDispositionCatalog,
+	useDeactivateDispositionCatalog,
 } from '~/queries/dispositionCatalogQueries';
 import DispositionCatalogForm from '../DispositionCatalogForm';
 import { type ColumnDef } from '@tanstack/react-table';
@@ -38,6 +39,7 @@ const DispositionCatalogList: FC = () => {
 	const updateMutation = useUpdateDispositionCatalog();
 	const deleteMutation = useDeleteDispositionCatalog();
 	const reactivateMutation = useReactivateDispositionCatalog();
+	const deactivateMutation = useDeactivateDispositionCatalog();
 	const dispositionLabel = useDispositionLabel();
 
 	// Table columns definition
@@ -120,6 +122,26 @@ const DispositionCatalogList: FC = () => {
 								</ActionIcon>
 							</Tooltip>
 						)}
+						{row.original.isActive && (
+							<Tooltip label='Deactivate' withArrow>
+								<ActionIcon
+									color='orange'
+									variant='subtle'
+									size='sm'
+									onClick={(e) => {
+										e.stopPropagation();
+										handleDeactivate(row.original);
+									}}
+									loading={
+										deactivateMutation.isPending &&
+										deactivateMutation.variables?.catalogId === row.original.id
+									}
+									aria-label='Deactivate'
+								>
+									<IconBan size={16} />
+								</ActionIcon>
+							</Tooltip>
+						)}
 						<Tooltip label='Delete' withArrow>
 							<ActionIcon
 								color='red'
@@ -148,6 +170,8 @@ const DispositionCatalogList: FC = () => {
 			deleteMutation.variables,
 			reactivateMutation.isPending,
 			reactivateMutation.variables,
+			deactivateMutation.isPending,
+			deactivateMutation.variables,
 		]
 	);
 
@@ -185,6 +209,50 @@ const DispositionCatalogList: FC = () => {
 								title: dispositionLabel('Reactivation failed'),
 								message: dispositionLabel(
 									error?.message || 'Failed to reactivate outcome catalog.'
+								),
+								color: 'red',
+							});
+						},
+					}
+				);
+			},
+		});
+	};
+
+	// Handler for deactivate
+	const handleDeactivate = (catalog: DispositionCatalogModel) => {
+		modals.openConfirmModal({
+			title: dispositionLabel('Deactivate Outcome Catalog'),
+			labels: {
+				confirm: dispositionLabel('Deactivate'),
+				cancel: dispositionLabel('Cancel'),
+			},
+			children: (
+				<Text size='sm'>
+					{dispositionLabel(
+						'Are you sure you want to deactivate this outcome catalog and all its nodes? They will no longer be available for campaign configuration.'
+					)}
+				</Text>
+			),
+			confirmProps: { color: 'red' },
+			onConfirm: () => {
+				deactivateMutation.mutate(
+					{ catalogId: catalog.id },
+					{
+						onSuccess: () => {
+							notifications.show({
+								title: dispositionLabel('Catalog deactivated'),
+								message: dispositionLabel(
+									'Outcome catalog was deactivated successfully.'
+								),
+								color: 'blue',
+							});
+						},
+						onError: (error: any) => {
+							notifications.show({
+								title: dispositionLabel('Deactivation failed'),
+								message: dispositionLabel(
+									error?.message || 'Failed to deactivate outcome catalog.'
 								),
 								color: 'red',
 							});

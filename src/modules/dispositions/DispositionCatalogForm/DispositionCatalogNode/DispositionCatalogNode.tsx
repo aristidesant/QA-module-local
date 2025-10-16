@@ -2,8 +2,17 @@ import { useUpdateDispositionNode } from '~/queries/dispositionNodesQueries';
 import { useDeleteDispositionNode } from '~/queries/dispositionNodesQueries';
 import { useCreateDispositionNode } from '~/queries/dispositionNodesQueries';
 import { useReactivateDispositionNode } from '~/queries/dispositionNodesQueries';
+import { useDeactivateDispositionNode } from '~/queries/dispositionNodesQueries';
 
-import { Box, Flex, Button, ActionIcon, Text, Badge } from '@mantine/core';
+import {
+	Box,
+	Flex,
+	Button,
+	ActionIcon,
+	Text,
+	Badge,
+	Tooltip,
+} from '@mantine/core';
 import { Tree } from 'react-arborist';
 import {
 	IconPlus,
@@ -14,6 +23,7 @@ import {
 	IconChevronUp,
 	IconChevronRight,
 	IconRefresh,
+	IconBan,
 } from '@tabler/icons-react';
 import { useState } from 'react';
 import styles from './DispositionCatalogNode.module.css';
@@ -66,9 +76,45 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 	const updateNode = useUpdateDispositionNode();
 	const deleteNode = useDeleteDispositionNode();
 	const reactivateNode = useReactivateDispositionNode();
+	const deactivateNode = useDeactivateDispositionNode();
 
 	if (!catalogId) return null;
 	const treeData = data ? mapDispositionNodesToArborist(data) : [];
+
+	// Handler for deactivating node
+	const handleDeactivateNode = (nodeData: DispositionNode) => {
+		modals.openConfirmModal({
+			title: 'Deactivate Outcome Node',
+			labels: {
+				confirm: 'Deactivate',
+				cancel: 'Cancel',
+			},
+			children: (
+				<Text size='sm'>
+					Are you sure you want to deactivate this outcome node? It will no
+					longer be available for campaign configuration.
+				</Text>
+			),
+			confirmProps: { color: 'red' },
+			onConfirm: async () => {
+				try {
+					await deactivateNode.mutateAsync(nodeData.id);
+					await reloadCatalogs();
+					notifications.show({
+						title: 'Node deactivated',
+						message: 'Outcome node was deactivated successfully.',
+						color: 'blue',
+					});
+				} catch (error: any) {
+					notifications.show({
+						title: 'Deactivation failed',
+						message: error?.message || 'Failed to deactivate outcome node.',
+						color: 'red',
+					});
+				}
+			},
+		});
+	};
 
 	// Handler for reactivating node
 	const handleReactivateNode = (nodeData: DispositionNode) => {
@@ -190,70 +236,93 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 				</div>
 				<div className={styles.nodeActions}>
 					{isInactive && (
+						<Tooltip label='Reactivate' withArrow position='top'>
+							<ActionIcon
+								size='md'
+								variant='light'
+								color='green'
+								aria-label='Reactivate node'
+								className={styles.reactivateActionIcon}
+								onClick={(e) => {
+									e.stopPropagation();
+									handleReactivateNode(nodeData);
+								}}
+							>
+								<IconRefresh size={18} stroke={2} />
+							</ActionIcon>
+						</Tooltip>
+					)}
+					{!isInactive && (
+						<Tooltip label='Deactivate' withArrow position='top'>
+							<ActionIcon
+								size='md'
+								variant='transparent'
+								aria-label='Deactivate node'
+								className={styles.actionIcon}
+								onClick={(e) => {
+									e.stopPropagation();
+									handleDeactivateNode(nodeData);
+								}}
+							>
+								<IconBan size={16} />
+							</ActionIcon>
+						</Tooltip>
+					)}
+					<Tooltip label='Edit' withArrow position='top'>
 						<ActionIcon
 							size='md'
-							variant='light'
-							color='green'
-							aria-label='Reactivate node'
-							className={styles.reactivateActionIcon}
+							variant='transparent'
+							aria-label='Edit node'
+							className={styles.actionIcon}
 							onClick={(e) => {
 								e.stopPropagation();
-								handleReactivateNode(nodeData);
+								setModal({ open: true, editNode: nodeData });
 							}}
-							title='Reactivate this outcome node'
 						>
-							<IconRefresh size={18} stroke={2} />
+							<IconPencil size={16} />
 						</ActionIcon>
-					)}
-					<ActionIcon
-						size='md'
-						variant='transparent'
-						aria-label='Edit node'
-						className={styles.actionIcon}
-						onClick={(e) => {
-							e.stopPropagation();
-							setModal({ open: true, editNode: nodeData });
-						}}
-					>
-						<IconPencil size={16} />
-					</ActionIcon>
-					<ActionIcon
-						size='md'
-						variant='transparent'
-						aria-label='Add child'
-						className={styles.actionIcon}
-						onClick={(e) => {
-							e.stopPropagation();
-							setModal({ open: true, parentId: nodeData.id });
-						}}
-					>
-						<IconPlus size={16} />
-					</ActionIcon>
-					<ActionIcon
-						size='md'
-						variant='transparent'
-						aria-label='Remove node'
-						className={styles.deleteActionIcon}
-						onClick={async (e) => {
-							e.stopPropagation();
-							modals.openConfirmModal({
-								title: 'Confirm Delete',
-								labels: {
-									confirm: 'Delete',
-									cancel: 'Cancel',
-								},
-								children: (
-									<Text>Are you sure you want to delete this node?</Text>
-								),
-								onConfirm: async () => {
-									await deleteNode.mutateAsync(nodeData.id);
-									await reloadCatalogs();
-								},
-							});
-						}}
-					>
-						<IconTrash size={16} />
-					</ActionIcon>
+					</Tooltip>
+					<Tooltip label='Add child' withArrow position='top'>
+						<ActionIcon
+							size='md'
+							variant='transparent'
+							aria-label='Add child'
+							className={styles.actionIcon}
+							onClick={(e) => {
+								e.stopPropagation();
+								setModal({ open: true, parentId: nodeData.id });
+							}}
+						>
+							<IconPlus size={16} />
+						</ActionIcon>
+					</Tooltip>
+					<Tooltip label='Delete' withArrow position='top'>
+						<ActionIcon
+							size='md'
+							variant='transparent'
+							aria-label='Remove node'
+							className={styles.deleteActionIcon}
+							onClick={async (e) => {
+								e.stopPropagation();
+								modals.openConfirmModal({
+									title: 'Confirm Delete',
+									labels: {
+										confirm: 'Delete',
+										cancel: 'Cancel',
+									},
+									children: (
+										<Text>Are you sure you want to delete this node?</Text>
+									),
+									onConfirm: async () => {
+										await deleteNode.mutateAsync(nodeData.id);
+										await reloadCatalogs();
+									},
+								});
+							}}
+						>
+							<IconTrash size={16} />
+						</ActionIcon>
+					</Tooltip>
 				</div>
 			</div>
 		);

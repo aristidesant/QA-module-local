@@ -209,3 +209,18 @@ export function useReactivateDispositionNode() {
 		},
 	});
 }
+
+export function useDeactivateDispositionNode() {
+	const queryClient = useQueryClient();
+	return useMutation<DispositionNode, Error, number | string>({
+		mutationFn: async (id: number | string) => {
+			const api = dispositionNodesApi();
+			return api.deactivateNode(id);
+		},
+		onSuccess: (_, id) => {
+			queryClient.invalidateQueries({ queryKey: ['dispositionNode', id] });
+			queryClient.invalidateQueries({ queryKey: ['dispositionNodes'] });
+			queryClient.invalidateQueries({ queryKey: ['dispositionTree'] });
+		},
+	});
+}

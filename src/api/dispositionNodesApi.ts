@@ -125,6 +125,14 @@ const dispositionNodesApi = (_authHeader?: Record<string, string>) => {
 			);
 			return response.data;
 		},
+
+		// Deactivate active node
+		deactivateNode: async (id: number | string) => {
+			const response = await axios.patch<DispositionNode>(
+				`${DEFAULT_API_URL}/disposition-nodes/${id}/deactivate`
+			);
+			return response.data;
+		},
 	};
 };
 
