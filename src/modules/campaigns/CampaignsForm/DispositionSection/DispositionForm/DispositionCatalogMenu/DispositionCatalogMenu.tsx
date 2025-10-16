@@ -23,17 +23,23 @@ const DispositionCatalogMenu: React.FC = () => {
 	const { data: catalogs = [], isLoading } = useDispositionCatalogs({
 		type: campaign?.type ?? 'OUTBOUND',
 	});
+
+	// Filter to show only active catalogs
+	const activeCatalogs = useMemo(() => {
+		return catalogs.filter((catalog) => catalog.isActive);
+	}, [catalogs]);
+
 	// Set default catalog if not set or if selectedCatalog is not in the list
 	useEffect(() => {
-		if (catalogs.length > 0) {
+		if (activeCatalogs.length > 0) {
 			if (
 				!selectedCatalog ||
-				!catalogs.some((cat) => cat.id === selectedCatalog.id)
+				!activeCatalogs.some((cat) => cat.id === selectedCatalog.id)
 			) {
-				setSelectedCatalog(catalogs[0]);
+				setSelectedCatalog(activeCatalogs[0]);
 			}
 		}
-	}, [catalogs]);
+	}, [activeCatalogs]);
 
 	// Helper functions
 	const getAllChildIds = (node: DispositionNode): number[] => {
@@ -47,7 +53,12 @@ const DispositionCatalogMenu: React.FC = () => {
 	const availableNodes = useMemo((): AvailableNode[] => {
 		if (!selectedCatalog?.dispositionNodes) return [];
 
-		const allNodes = selectedCatalog.dispositionNodes;
+		// Filter to show only active nodes
+		const activeNodes = selectedCatalog.dispositionNodes.filter(
+			(node) => node.isActive
+		);
+
+		const allNodes = activeNodes;
 		const movedIds = new Set(movedNodeIds.map((id) => parseInt(id)));
 		const result: AvailableNode[] = [];
 
@@ -55,7 +66,13 @@ const DispositionCatalogMenu: React.FC = () => {
 		const addNodeWithChildren = (node: DispositionNode, level: number = 0) => {
 			const hasChildren = node.children && node.children.length > 0;
 			const isMoved = movedIds.has(node.id);
-			const childIds = hasChildren ? getAllChildIds(node) : [];
+
+			// Filter children to only include active ones
+			const activeChildren = hasChildren
+				? node.children!.filter((child) => child.isActive)
+				: [];
+
+			const childIds = activeChildren.length > 0 ? getAllChildIds(node) : [];
 			const allChildrenAndDescendantsMoved =
 				childIds.length > 0 && childIds.every((id) => movedIds.has(id));
 
@@ -65,7 +82,7 @@ const DispositionCatalogMenu: React.FC = () => {
 			}
 
 			// Case 2: Parent node logic
-			if (hasChildren) {
+			if (activeChildren.length > 0) {
 				// Parent is disabled if moved or if not all children are moved
 				result.push({
 					node,
@@ -73,11 +90,9 @@ const DispositionCatalogMenu: React.FC = () => {
 					level,
 				});
 				// Always process children, regardless of parent state
-				if (node.children && node.children.length > 0) {
-					node.children.forEach((child) => {
-						addNodeWithChildren(child, level + 1);
-					});
-				}
+				activeChildren.forEach((child) => {
+					addNodeWithChildren(child, level + 1);
+				});
 			} else {
 				// Case 3: Leaf node logic
 				// Leaf is hidden if moved, else enabled
@@ -102,16 +117,17 @@ const DispositionCatalogMenu: React.FC = () => {
 		<>
 			<Select
 				label='Select Catalog'
-				data={catalogs.map((cat) => ({
+				data={activeCatalogs.map((cat) => ({
 					value: String(cat.id),
 					label: cat.name,
 				}))}
 				value={selectedCatalog ? String(selectedCatalog.id) : null}
 				onChange={(id) => {
-					const catalog = catalogs.find((cat) => String(cat.id) === id) || null;
+					const catalog =
+						activeCatalogs.find((cat) => String(cat.id) === id) || null;
 					setSelectedCatalog(catalog);
 				}}
-				disabled={isLoading || catalogs.length === 0}
+				disabled={isLoading || activeCatalogs.length === 0}
 				mb='md'
 			/>
 			<Divider />

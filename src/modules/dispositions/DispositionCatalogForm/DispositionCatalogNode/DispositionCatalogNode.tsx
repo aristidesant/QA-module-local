@@ -1,8 +1,18 @@
 import { useUpdateDispositionNode } from '~/queries/dispositionNodesQueries';
 import { useDeleteDispositionNode } from '~/queries/dispositionNodesQueries';
 import { useCreateDispositionNode } from '~/queries/dispositionNodesQueries';
+import { useReactivateDispositionNode } from '~/queries/dispositionNodesQueries';
+import { useDeactivateDispositionNode } from '~/queries/dispositionNodesQueries';
 
-import { Box, Flex, Button, ActionIcon, Text } from '@mantine/core';
+import {
+	Box,
+	Flex,
+	Button,
+	ActionIcon,
+	Text,
+	Badge,
+	Tooltip,
+} from '@mantine/core';
 import { Tree } from 'react-arborist';
 import {
 	IconPlus,
@@ -12,10 +22,13 @@ import {
 	IconFileDescription,
 	IconChevronUp,
 	IconChevronRight,
+	IconRefresh,
+	IconBan,
 } from '@tabler/icons-react';
 import { useState } from 'react';
 import styles from './DispositionCatalogNode.module.css';
 import DispositionNodeForm from './DispositionNodeForm';
+import { notifications } from '@mantine/notifications';
 // Types for modal state
 type ModalState = {
 	open: boolean;
@@ -62,15 +75,88 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 	const createNode = useCreateDispositionNode();
 	const updateNode = useUpdateDispositionNode();
 	const deleteNode = useDeleteDispositionNode();
+	const reactivateNode = useReactivateDispositionNode();
+	const deactivateNode = useDeactivateDispositionNode();
 
 	if (!catalogId) return null;
 	const treeData = data ? mapDispositionNodesToArborist(data) : [];
+
+	// Handler for deactivating node
+	const handleDeactivateNode = (nodeData: DispositionNode) => {
+		modals.openConfirmModal({
+			title: 'Deactivate Outcome Node',
+			labels: {
+				confirm: 'Deactivate',
+				cancel: 'Cancel',
+			},
+			children: (
+				<Text size='sm'>
+					Are you sure you want to deactivate this outcome node? It will no
+					longer be available for campaign configuration.
+				</Text>
+			),
+			confirmProps: { color: 'red' },
+			onConfirm: async () => {
+				try {
+					await deactivateNode.mutateAsync(nodeData.id);
+					await reloadCatalogs();
+					notifications.show({
+						title: 'Node deactivated',
+						message: 'Outcome node was deactivated successfully.',
+						color: 'blue',
+					});
+				} catch (error: any) {
+					notifications.show({
+						title: 'Deactivation failed',
+						message: error?.message || 'Failed to deactivate outcome node.',
+						color: 'red',
+					});
+				}
+			},
+		});
+	};
+
+	// Handler for reactivating node
+	const handleReactivateNode = (nodeData: DispositionNode) => {
+		modals.openConfirmModal({
+			title: 'Reactivate Outcome Node',
+			labels: {
+				confirm: 'Reactivate',
+				cancel: 'Cancel',
+			},
+			children: (
+				<Text size='sm'>
+					Are you sure you want to reactivate this outcome node? It will become
+					available for campaign configuration again.
+				</Text>
+			),
+			confirmProps: { color: 'green' },
+			onConfirm: async () => {
+				try {
+					await reactivateNode.mutateAsync(nodeData.id);
+					await reloadCatalogs();
+					notifications.show({
+						title: 'Node reactivated',
+						message: 'Outcome node was reactivated successfully.',
+						color: 'green',
+					});
+				} catch (error: any) {
+					notifications.show({
+						title: 'Reactivation failed',
+						message: error?.message || 'Failed to reactivate outcome node.',
+						color: 'red',
+					});
+				}
+			},
+		});
+	};
 
 	// React Arborist custom node renderer
 	function Node({ node, style, dragHandle }: any) {
 		const nodeData: DispositionNode = node.data.original;
 		const isOpen = node.isOpen;
 		const hasChildren = node.children && node.children.length > 0;
+		const isInactive = nodeData.isActive === false;
 
 		return (
 			<div
@@ -81,12 +167,13 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 				aria-label={node.data.name}
 				data-has-children={hasChildren}
 				data-expanded={isOpen}
+				data-inactive={isInactive}
 			>
 				<div className={styles.nodeContent}>
 					<div className={styles.nodeLeftSection}>
 						{hasChildren ? (
 							<ActionIcon
-								size='xs'
+								size='sm'
 								variant='transparent'
 								className={styles.chevronIcon}
 								aria-label={isOpen ? 'Collapse' : 'Expand'}
@@ -96,9 +183,9 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 								}}
 							>
 								{isOpen ? (
-									<IconChevronUp size={16} />
+									<IconChevronUp size={18} />
 								) : (
-									<IconChevronRight size={16} />
+									<IconChevronRight size={18} />
 								)}
 							</ActionIcon>
 						) : (
@@ -107,66 +194,135 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 						<span className={styles.nodeIcon} aria-hidden='true'>
 							{node.isLeaf ? (
 								<IconFileDescription
-									size={16}
-									color='var(--mantine-color-gray-6)'
+									size={18}
+									color={
+										isInactive
+											? 'var(--mantine-color-gray-5)'
+											: 'var(--mantine-color-gray-6)'
+									}
 								/>
 							) : (
-								<IconFolder size={16} color='var(--mantine-color-yellow-7)' />
+								<IconFolder
+									size={18}
+									color={
+										isInactive
+											? 'var(--mantine-color-gray-5)'
+											: 'var(--mantine-color-yellow-7)'
+									}
+								/>
 							)}
 						</span>
 					</div>
 					<span className={styles.nodeLabel}>{node.data.name}</span>
+					<div className={styles.statusBadge}>
+						{nodeData.isActive !== undefined && (
+							<Badge
+								size='md'
+								variant='light'
+								color={nodeData.isActive ? 'green' : 'gray'}
+								radius='sm'
+								styles={{
+									root: {
+										textTransform: 'none',
+										fontWeight: 500,
+										minWidth: '70px',
+									},
+								}}
+							>
+								{nodeData.isActive ? 'Active' : 'Inactive'}
+							</Badge>
+						)}
+					</div>
 				</div>
 				<div className={styles.nodeActions}>
-					<ActionIcon
-						size='xs'
-						variant='transparent'
-						aria-label='Edit node'
-						className={styles.actionIcon}
-						onClick={(e) => {
-							e.stopPropagation();
-							setModal({ open: true, editNode: nodeData });
-						}}
-					>
-						<IconPencil size={14} />
-					</ActionIcon>
-					<ActionIcon
-						size='xs'
-						variant='transparent'
-						aria-label='Add child'
-						className={styles.actionIcon}
-						onClick={(e) => {
-							e.stopPropagation();
-							setModal({ open: true, parentId: nodeData.id });
-						}}
-					>
-						<IconPlus size={14} />
-					</ActionIcon>
-					<ActionIcon
-						size='xs'
-						variant='transparent'
-						aria-label='Remove node'
-						className={styles.deleteActionIcon}
-						onClick={async (e) => {
-							e.stopPropagation();
-							modals.openConfirmModal({
-								title: 'Confirm Delete',
-								labels: {
-									confirm: 'Delete',
-									cancel: 'Cancel',
-								},
-								children: (
-									<Text>Are you sure you want to delete this node?</Text>
-								),
-								onConfirm: async () => {
-									await deleteNode.mutateAsync(nodeData.id);
-									await reloadCatalogs();
-								},
-							});
-						}}
-					>
-						<IconTrash size={14} />
-					</ActionIcon>
+					{isInactive && (
+						<Tooltip label='Reactivate' withArrow position='top'>
+							<ActionIcon
+								size='md'
+								variant='light'
+								color='green'
+								aria-label='Reactivate node'
+								className={styles.reactivateActionIcon}
+								onClick={(e) => {
+									e.stopPropagation();
+									handleReactivateNode(nodeData);
+								}}
+							>
+								<IconRefresh size={18} stroke={2} />
+							</ActionIcon>
+						</Tooltip>
+					)}
+					{!isInactive && (
+						<Tooltip label='Deactivate' withArrow position='top'>
+							<ActionIcon
+								size='md'
+								variant='transparent'
+								aria-label='Deactivate node'
+								className={styles.actionIcon}
+								onClick={(e) => {
+									e.stopPropagation();
+									handleDeactivateNode(nodeData);
+								}}
+							>
+								<IconBan size={16} />
+							</ActionIcon>
+						</Tooltip>
+					)}
+					<Tooltip label='Edit' withArrow position='top'>
+						<ActionIcon
+							size='md'
+							variant='transparent'
+							aria-label='Edit node'
+							className={styles.actionIcon}
+							onClick={(e) => {
+								e.stopPropagation();
+								setModal({ open: true, editNode: nodeData });
+							}}
+						>
+							<IconPencil size={16} />
+						</ActionIcon>
+					</Tooltip>
+					<Tooltip label='Add child' withArrow position='top'>
+						<ActionIcon
+							size='md'
+							variant='transparent'
+							aria-label='Add child'
+							className={styles.actionIcon}
+							onClick={(e) => {
+								e.stopPropagation();
+								setModal({ open: true, parentId: nodeData.id });
+							}}
+						>
+							<IconPlus size={16} />
+						</ActionIcon>
+					</Tooltip>
+					<Tooltip label='Delete' withArrow position='top'>
+						<ActionIcon
+							size='md'
+							variant='transparent'
+							aria-label='Remove node'
+							className={styles.deleteActionIcon}
+							onClick={async (e) => {
+								e.stopPropagation();
+								modals.openConfirmModal({
+									title: 'Confirm Delete',
+									labels: {
+										confirm: 'Delete',
+										cancel: 'Cancel',
+									},
+									children: (
+										<Text>Are you sure you want to delete this node?</Text>
+									),
+									onConfirm: async () => {
+										await deleteNode.mutateAsync(nodeData.id);
+										await reloadCatalogs();
+									},
+								});
+							}}
+						>
+							<IconTrash size={16} />
+						</ActionIcon>
+					</Tooltip>
 				</div>
 			</div>
 		);
@@ -182,7 +338,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 							openByDefault={true}
 							childrenAccessor='children'
 							idAccessor='id'
-							rowHeight={48}
+							rowHeight={56}
 							width='100%'
 							className={styles.treeRoot}
 						>

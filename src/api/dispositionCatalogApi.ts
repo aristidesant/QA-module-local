@@ -93,6 +93,22 @@ const dispositionCatalogApi = (_authHeader?: Record<string, string>) => {
 			);
 			return response.data;
 		},
+
+		// PATCH reactivate disposition catalog
+		reactivateDispositionCatalog: async (catalogId: number) => {
+			const response = await axios.patch<DispositionCatalogModel>(
+				`${DEFAULT_API_URL}/disposition-catalogs/${catalogId}/reactivate`
+			);
+			return response.data;
+		},
+
+		// PATCH deactivate disposition catalog
+		deactivateDispositionCatalog: async (catalogId: number) => {
+			const response = await axios.patch<DispositionCatalogModel>(
+				`${DEFAULT_API_URL}/disposition-catalogs/${catalogId}/deactivate`
+			);
+			return response.data;
+		},
 	};
 };
 

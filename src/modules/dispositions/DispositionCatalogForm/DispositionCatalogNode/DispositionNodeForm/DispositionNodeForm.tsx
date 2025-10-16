@@ -9,7 +9,6 @@ export type DispositionNodeFormValues = {
 	isInvalidatesNumber: boolean;
 	requiresReschedule: boolean;
 	isFinal: boolean;
-	isActive: boolean;
 	isVoiceMail: boolean;
 };
 
@@ -35,7 +34,6 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 			isInvalidatesNumber: false,
 			requiresReschedule: false,
 			isFinal: false,
-			isActive: true,
 			isVoiceMail: false,
 			...initialValues,
 		},
@@ -48,7 +46,6 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 			isInvalidatesNumber: initialValues?.isInvalidatesNumber || false,
 			requiresReschedule: initialValues?.requiresReschedule || false,
 			isFinal: initialValues?.isFinal || false,
-			isActive: initialValues?.isActive ?? true,
 			isVoiceMail:
 				(initialValues as any)?.isVoiceMail ??
 				(initialValues as any)?.is_voice_mail ??
@@ -89,11 +86,6 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 				<Checkbox
 					label='Is Voice Mail'
 					{...form.getInputProps('isVoiceMail', { type: 'checkbox' })}
-					mb='xs'
-				/>
-				<Checkbox
-					label='Active'
-					{...form.getInputProps('isActive', { type: 'checkbox' })}
 					mb='md'
 				/>
 				<Group justify='flex-end'>
