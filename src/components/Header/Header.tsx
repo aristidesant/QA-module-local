@@ -1,4 +1,9 @@
-import { IconBell, IconMenu2, IconX, IconArrowBack } from '@tabler/icons-react';
+import {
+	IconBell,
+	IconMenu2,
+	IconArrowBack,
+	IconChevronLeft,
+} from '@tabler/icons-react';
 import { ActionIcon, Divider, Button, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import UserMenu from '../UserMenu';
@@ -43,7 +48,7 @@ export const Header: React.FC<HeaderProps> = ({ opened, toggle }) => {
 						aria-pressed={opened}
 						type='button'
 					>
-						{opened ? <IconX size={24} /> : <IconMenu2 size={24} />}
+						{opened ? <IconChevronLeft size={24} /> : <IconMenu2 size={24} />}
 					</button>
 					{/* Add space between burger and any future navigation items */}
 					<div style={{ width: '2rem' }} />

@@ -1,39 +1,32 @@
 /* Base logo container */
 .logo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  user-select: none;
-  transition: transform 0.2s ease;
-}
-
-.logo:hover {
-  transform: translateY(-1px);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+	cursor: pointer;
 }
 
 /* Logo image styling */
 .logoImage {
-  width: 160px;
-  height: 60px;
-  object-fit: contain;
-  border-radius: 12px;
+	width: 160px;
+	height: 60px;
+	object-fit: contain;
+	border-radius: 12px;
 }
 
 /* Logo text styling */
 .logoText {
-  font-family: var(--mantine-font-family-headings);
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--mantine-color-dark-8);
-  text-align: center;
-  line-height: 1.2;
-  letter-spacing: -0.5px;
+	font-family: var(--mantine-font-family-headings);
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: var(--mantine-color-dark-8);
+	text-align: center;
+	line-height: 1.2;
+	letter-spacing: -0.5px;
 }
 
 .logoAccent {
-  color: var(--mantine-primary-color-filled);
-  font-weight: 800;
+	color: var(--mantine-primary-color-filled);
+	font-weight: 800;
 }
-

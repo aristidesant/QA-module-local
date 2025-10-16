@@ -1,4 +1,4 @@
-import { Badge, Loader, Text } from '@mantine/core';
+import { Badge, Loader, Text, Tooltip } from '@mantine/core';
 import { IconPlugConnected } from '@tabler/icons-react';
 import { useAssignedTools } from '~/queries/toolQueries';
 import RightSectionCard from '~/components/RightSectionCard';
@@ -38,23 +38,40 @@ export const AgentToolsDisplay: React.FC<AgentToolsDisplayProps> = ({
 				</div>
 			) : totalTools > 0 ? (
 				<div className={styles.toolsList}>
-					{assignedTools!.map((assignedTool) => (
-						<div key={assignedTool.tool.identifier} className={styles.toolItem}>
-							<div className={styles.toolInfo}>
-								<Text className={styles.toolName}>
-									{assignedTool.tool.name}
-								</Text>
-								{assignedTool.tool.description && (
-									<Text size='xs' c='dimmed'>
-										{assignedTool.tool.description}
-									</Text>
-								)}
-							</div>
-							<Badge variant='light' color='teal' size='sm'>
-								Active
-							</Badge>
-						</div>
-					))}
+					{assignedTools!.map((assignedTool) => {
+						const categoryIcon = assignedTool.tool.category?.icon;
+						const toolDescription = assignedTool.tool.description;
+
+						return (
+							<Tooltip
+								key={assignedTool.tool.identifier}
+								label={toolDescription || 'No description available'}
+								disabled={!toolDescription}
+								position='top'
+								withArrow
+								multiline
+								w={200}
+							>
+								<div className={styles.toolItem}>
+									{categoryIcon && (
+										<img
+											src={categoryIcon}
+											alt={assignedTool.tool.category.name}
+											className={styles.toolIcon}
+										/>
+									)}
+									<div className={styles.toolInfo}>
+										<Text className={styles.toolName}>
+											{assignedTool.tool.name}
+										</Text>
+									</div>
+									<Badge variant='light' color='teal' size='sm'>
+										Active
+									</Badge>
+								</div>
+							</Tooltip>
+						);
+					})}
 				</div>
 			) : (
 				<Text className={styles.emptyState}>

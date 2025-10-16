@@ -1,12 +1,13 @@
 import React from 'react';
-import { Text, Stack, Divider, Tooltip } from '@mantine/core';
-import { menuItems, maintenanceItems, MenuItem } from './menuItems';
+import { Text, Stack, Divider, Tooltip, ThemeIcon } from '@mantine/core';
+import { menuItems, MenuItem } from './menuItems';
 import { Link, useLocation } from 'react-router';
 import styles from './Sidebar.module.css';
 import Logo from '../Logo';
 import { APP_VERSION } from '~/version';
+import { IconInfoCircle } from '@tabler/icons-react';
 
-// menuItems and maintenanceItems are now imported from menuItems.tsx
+// menuItems are now imported from menuItems.tsx
 
 type SidebarProps = {
 	onClose?: () => void;
@@ -27,9 +28,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ onClose: _, opened }) => {
 					<Logo compact={!opened} />
 				</div>
 				<div className={styles.versionWrapper}>
-					<Text c='dimmed' size='xs' className={styles.versionText}>
-						Version {APP_VERSION}
-					</Text>
+					{opened ? (
+						<Text size='xs' c='dimmed'>
+							Version {APP_VERSION}
+						</Text>
+					) : (
+						<Tooltip
+							withArrow
+							label={`Version ${APP_VERSION}`}
+							position='right'
+						>
+							<ThemeIcon size={24} radius='md' variant='light'>
+								<IconInfoCircle size={16} />
+							</ThemeIcon>
+						</Tooltip>
+					)}
 				</div>
 				<Divider className={styles.divider} />
 				<Stack gap='xs'>
@@ -46,21 +59,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ onClose: _, opened }) => {
 						</Text>
 					)}
 					{menuItems.map((item) => renderMenuItem({ ...item, opened }))}
-				</Stack>
-				<Stack gap='xs'>
-					{opened && (
-						<Text
-							size='xs'
-							fw={600}
-							c='dimmed'
-							px='md'
-							mb='xs'
-							className={styles.sectionHeader}
-						>
-							MAINTENANCE
-						</Text>
-					)}
-					{maintenanceItems.map((item) => renderMenuItem({ ...item, opened }))}
 				</Stack>
 			</Stack>
 		</nav>

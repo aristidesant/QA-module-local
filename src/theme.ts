@@ -2,6 +2,11 @@ import { createTheme } from '@mantine/core';
 
 export const theme = createTheme({
 	components: {
+		Button: {
+			defaultProps: {
+				radius: 'md',
+			},
+		},
 		SegmentedControl: {
 			styles: {
 				root: {

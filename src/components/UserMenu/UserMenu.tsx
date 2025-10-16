@@ -1,9 +1,17 @@
-import { Menu, Badge } from '@mantine/core';
+import { Menu, Tooltip, Divider } from '@mantine/core';
 import {
 	IconChevronDown,
 	IconLogout,
 	IconShield,
 	IconUser,
+	IconCheckupList,
+	IconCategory,
+	IconTarget,
+	IconDatabase,
+	IconSettings,
+	IconLibrary,
+	IconTools,
+	IconPhoneOff,
 } from '@tabler/icons-react';
 import styles from './UserMenu.module.css';
 import { useNavigate } from 'react-router';
@@ -23,10 +31,7 @@ export const UserMenu: React.FC = () => {
 		isImpersonating && targetClient ? 'Impersonated Client' : user?.email;
 	const initials = displayName?.slice(0, 2).toUpperCase();
 
-	// const navigate = useNavigate();
-
 	const handleLogout = () => {
-		// Use centralized logout utility
 		logout();
 	};
 
@@ -34,65 +39,167 @@ export const UserMenu: React.FC = () => {
 		navigate('/profile');
 	};
 
+	const handleMaintenanceNavigation = (path: string) => {
+		navigate(path);
+	};
+
 	const fetcher = { state: 'idle' } as const;
 
+	// Organized maintenance categories
+	const maintenanceCategories = [
+		{
+			category: 'Campaign Management',
+			items: [
+				{
+					label: 'Outcomes',
+					icon: <IconCheckupList size={16} />,
+					path: '/outcomes',
+				},
+				{
+					label: 'Categories',
+					icon: <IconCategory size={16} />,
+					path: '/campaign-categories',
+				},
+				{
+					label: 'Objectives',
+					icon: <IconTarget size={16} />,
+					path: '/campaign-objectives',
+				},
+				{
+					label: 'Schemas',
+					icon: <IconDatabase size={16} />,
+					path: '/campaign-schemas',
+				},
+			],
+		},
+		{
+			category: 'Configuration',
+			items: [
+				{
+					label: 'Client Configs',
+					icon: <IconSettings size={16} />,
+					path: '/client-configs',
+				},
+				{
+					label: 'Knowledge Bases',
+					icon: <IconLibrary size={16} />,
+					path: '/knowledge-bases',
+				},
+				{
+					label: 'Do Not Call',
+					icon: <IconPhoneOff size={16} />,
+					path: '/do-not-call',
+				},
+			],
+		},
+		{
+			category: 'Tools & Resources',
+			items: [
+				{
+					label: 'Tools',
+					icon: <IconTools size={16} />,
+					path: '/tools',
+				},
+				{
+					label: 'Prompter',
+					icon: <IconLibrary size={16} />,
+					path: '/prompter',
+				},
+			],
+		},
+	];
+
 	return (
-		<Menu shadow='md' width={180} position='bottom-end'>
+		<Menu shadow='md' width={280} position='bottom-end'>
 			<Menu.Target>
-				<div
-					className={styles.userMenu}
-					tabIndex={0}
-					role='button'
-					aria-label='User menu'
-				>
-					<div className={styles.avatar}>{initials}</div>
-					<div className={styles.userInfo}>
-						<span className={styles.name}>
-							{displayName}
+				<div className={styles.trigger}>
+					<div
+						className={styles.userMenu}
+						tabIndex={0}
+						role='button'
+						aria-label='User menu'
+					>
+						<div
+							className={`${styles.avatar} ${isImpersonating ? styles.impersonating : ''}`}
+						>
+							{initials}
 							{isImpersonating && (
-								<Badge
-									size='xs'
-									color='orange'
-									variant='filled'
-									className={styles.impersonationBadge}
-								>
-									<IconShield size={10} />
-									Impersonating
-								</Badge>
+								<div className={styles.impersonationIndicator}>
+									<IconShield size={12} />
+								</div>
 							)}
-						</span>
-						<span className={styles.role}>{displayEmail}</span>
+						</div>
+						<div className={styles.userInfo}>
+							<span className={styles.name}>{displayName}</span>
+							<span className={styles.email}>{displayEmail}</span>
+						</div>
+						<IconChevronDown size={18} className={styles.chevron} />
 					</div>
-					<span className={styles.chevron}>
-						<IconChevronDown size={18} />
-					</span>
 				</div>
 			</Menu.Target>
-			<Menu.Dropdown>
+			<Menu.Dropdown className={styles.dropdown}>
 				{isImpersonating ? (
-					<>
-						<Menu.Item disabled>
-							<IconShield size={14} />
-							Impersonation Mode
-						</Menu.Item>
-						<Menu.Item disabled>
+					<div className={styles.impersonationSection}>
+						<div className={styles.impersonationHeader}>
+							<IconShield size={18} />
+							<div>
+								<div className={styles.impersonationTitle}>
+									Impersonation Mode
+								</div>
+								<div className={styles.impersonationSubtitle}>
+									You are impersonating a client
+								</div>
+							</div>
+						</div>
+						<div className={styles.impersonationMessage}>
 							Use "Return to Master Client" to exit
-						</Menu.Item>
-					</>
+						</div>
+					</div>
 				) : (
 					<>
 						<Menu.Item
 							onClick={handleProfileClick}
-							leftSection={<IconUser size={14} />}
+							leftSection={<IconUser size={16} />}
+							className={styles.profileItem}
 						>
 							Profile
 						</Menu.Item>
-						<Menu.Divider />
+						<Divider />
+
+						{maintenanceCategories.map((categoryGroup, idx) => (
+							<div key={categoryGroup.category}>
+								<Menu.Label className={styles.categoryLabel}>
+									{categoryGroup.category}
+								</Menu.Label>
+								<div className={styles.categoryGroup}>
+									{categoryGroup.items.map((item) => (
+										<Tooltip
+											key={item.path}
+											label={item.label}
+											position='left'
+											withArrow
+										>
+											<Menu.Item
+												onClick={() => handleMaintenanceNavigation(item.path)}
+												leftSection={item.icon}
+												className={styles.categoryItem}
+											>
+												{item.label}
+											</Menu.Item>
+										</Tooltip>
+									))}
+								</div>
+								{idx < maintenanceCategories.length - 1 && <Divider my='xs' />}
+							</div>
+						))}
+
+						<Divider />
 						<Menu.Item
 							color='red'
 							onClick={handleLogout}
 							disabled={fetcher.state !== 'idle'}
-							leftSection={<IconLogout size={14} />}
+							leftSection={<IconLogout size={16} />}
+							className={styles.logoutItem}
 						>
 							{fetcher.state === 'idle' ? 'Logout' : 'Logging out...'}
 						</Menu.Item>

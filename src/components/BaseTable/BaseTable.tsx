@@ -26,6 +26,7 @@ export type BaseTableProps<TData> = {
 	density?: 'default' | 'compact';
 	getRowClassName?: (row: Row<TData>) => string | undefined;
 	isLoading?: boolean;
+	emptyMessage?: string;
 };
 
 function BaseTable<TData>({
@@ -38,6 +39,7 @@ function BaseTable<TData>({
 	density = 'default',
 	getRowClassName,
 	isLoading = false,
+	emptyMessage,
 }: BaseTableProps<TData>) {
 	const [sorting, setSorting] = React.useState<SortingState>(initialSort);
 
@@ -49,6 +51,9 @@ function BaseTable<TData>({
 		getCoreRowModel: getCoreRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 	});
+
+	const hasData = data && data.length > 0;
+	const displayMessage = emptyMessage || 'No data available';
 
 	return (
 		<div className={`${styles.root} ${className ?? ''}`}>
@@ -98,28 +103,39 @@ function BaseTable<TData>({
 					))}
 				</Table.Thead>
 				<Table.Tbody className={styles.tbody}>
-					{table.getRowModel().rows.map((row) => (
-						<Table.Tr
-							key={row.id}
-							onClick={() => onRowClick?.(row.original)}
-							className={`${getRowClassName?.(row)} ${row.original === selectedKey ? styles.selectedRow : ''}`}
-						>
-							{row.getVisibleCells().map((cell) => (
-								<Table.Td
-									key={cell.id}
-									className={[
-										styles.td,
-										density === 'compact' ? styles.compactTd : '',
-										(cell.column.columnDef.meta as any)?.cellClassName || '',
-									]
-										.filter(Boolean)
-										.join(' ')}
-								>
-									{flexRender(cell.column.columnDef.cell, cell.getContext())}
-								</Table.Td>
-							))}
+					{!hasData ? (
+						<Table.Tr>
+							<Table.Td
+								colSpan={table.getAllColumns().length}
+								className={styles.emptyRow}
+							>
+								{displayMessage}
+							</Table.Td>
 						</Table.Tr>
-					))}
+					) : (
+						table.getRowModel().rows.map((row) => (
+							<Table.Tr
+								key={row.id}
+								onClick={() => onRowClick?.(row.original)}
+								className={`${getRowClassName?.(row)} ${row.original === selectedKey ? styles.selectedRow : ''}`}
+							>
+								{row.getVisibleCells().map((cell) => (
+									<Table.Td
+										key={cell.id}
+										className={[
+											styles.td,
+											density === 'compact' ? styles.compactTd : '',
+											(cell.column.columnDef.meta as any)?.cellClassName || '',
+										]
+											.filter(Boolean)
+											.join(' ')}
+									>
+										{flexRender(cell.column.columnDef.cell, cell.getContext())}
+									</Table.Td>
+								))}
+							</Table.Tr>
+						))
+					)}
 				</Table.Tbody>
 			</Table>
 		</div>

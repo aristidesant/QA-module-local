@@ -57,6 +57,10 @@ export interface ConversationsModel {
 	campaign: Campaign;
 	contact: Contact | null;
 	voiceFile: VoiceFileModel | null;
+	summary?: {
+		es?: string;
+		en?: string;
+	};
 }
 
 export interface TranscriptContent {

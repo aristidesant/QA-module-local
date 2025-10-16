@@ -65,3 +65,10 @@
 .selectedRow {
 	background: var(--mantine-color-blue-0);
 }
+
+.emptyRow {
+	text-align: center;
+	padding: 24px 12px;
+	color: var(--mantine-color-gray-6);
+	font-size: 14px;
+}
