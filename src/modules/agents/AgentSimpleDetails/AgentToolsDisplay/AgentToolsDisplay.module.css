@@ -61,12 +61,25 @@
 
 .toolItem {
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
 	justify-content: space-between;
 	gap: var(--mantine-spacing-sm);
 	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: 10px;
 	padding: 10px 12px;
+	cursor: help;
+	transition: background-color 0.15s ease;
+}
+
+.toolItem:hover {
+	background-color: var(--mantine-color-gray-1);
+}
+
+.toolIcon {
+	width: 24px;
+	height: 24px;
+	object-fit: contain;
+	flex-shrink: 0;
 }
 
 .toolInfo {
