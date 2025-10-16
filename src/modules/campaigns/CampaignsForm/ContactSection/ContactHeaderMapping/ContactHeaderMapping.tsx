@@ -400,7 +400,7 @@ export function ContactHeaderMapping({
 										<div
 											className={getRadioClass(isSelected('document', column))}
 										/>
-										<Text size='sm'>{column}</Text>
+										<Text size='xs'>{column}</Text>
 									</Group>
 								</Card>
 							))}

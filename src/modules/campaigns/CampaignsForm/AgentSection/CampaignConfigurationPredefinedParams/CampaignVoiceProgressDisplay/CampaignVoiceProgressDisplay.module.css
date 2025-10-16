@@ -1,0 +1,69 @@
+.wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+}
+
+.metricRow {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: 10px;
+	padding: 10px 12px;
+	background-color: var(--mantine-color-gray-0);
+}
+
+.metricHeader {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+}
+
+.metricIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--mantine-color-blue-6);
+	width: 28px;
+	height: 28px;
+	border-radius: 8px;
+	border: 1px solid var(--mantine-color-gray-3);
+	background-color: var(--mantine-color-gray-1);
+}
+
+.metricCopy {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	flex: 1;
+	min-width: 0;
+}
+
+.metricLabel {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+}
+
+.metricHint {
+	font-size: 11px;
+	color: var(--mantine-color-gray-6);
+	line-height: 1.3;
+}
+
+.metricStatus {
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--mantine-color-gray-7);
+	text-transform: uppercase;
+	letter-spacing: 0.4px;
+}
+
+.metricProgress :global(.mantine-Progress-root) {
+	background-color: var(--mantine-color-gray-2);
+}
+
+.metricProgress :global(.mantine-Progress-section) {
+	background-color: var(--mantine-color-blue-6);
+}

@@ -4,13 +4,14 @@ import AgentCampaignList from './AgentCampaignList';
 import { Button, Flex, Stack } from '@mantine/core';
 import CampaignConfigurationBasic from './CampaignConfigurationBasic/CampaignConfigurationBasic';
 import CampaignConfigurationPrompt from './CampaignConfigurationPrompt/CampaignConfigurationPrompt';
-import CampaignConfigurationTemperatureControl from './CampaignConfigurationTemperatureControl';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 import CampaignConfigurationTools from './CampaignConfigurationTools';
 import CampaignConfigurationKnowledgeBase from './CampaignConfigurationKnowledgeBase';
+import CampaignConfigurationPredefinedParams from './CampaignConfigurationPredefinedParams';
 
 const AgentSection: React.FC = () => {
 	const { setRightComponent } = useCampaignsStore((state) => state);
+
 	useEffect(() => {
 		setRightComponent?.(<AgentCampaignList />); // Clear the right component when this section mounts
 	}, []);
@@ -19,7 +20,8 @@ const AgentSection: React.FC = () => {
 		<Stack>
 			<CampaignConfigurationBasic />
 			<CampaignConfigurationPrompt />
-			<CampaignConfigurationTemperatureControl />
+			<CampaignConfigurationPredefinedParams />
+			{/* <CampaignConfigurationTemperatureControl /> */}
 			<CampaignConfigurationTools />
 			<CampaignConfigurationKnowledgeBase />
 
