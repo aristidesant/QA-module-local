@@ -21,7 +21,7 @@ import {
 	IconCopy,
 	IconChartDots,
 	IconPhone,
-	IconQuestionMark,
+	IconInfoCircle,
 } from '@tabler/icons-react';
 import type { Campaign } from '~/models/CampaignsModel';
 import { useNavigate } from 'react-router';
@@ -83,14 +83,14 @@ export const useCampaignsColumns = ({
 				const campaign = row.original;
 				return (
 					<Group gap='sm' wrap='nowrap'>
+						<Tooltip withArrow label={campaign.description || 'No description'}>
+							<ThemeIcon variant='light' color='blue' size={'xs'}>
+								<IconInfoCircle size={16} />
+							</ThemeIcon>
+						</Tooltip>
 						<Text size='sm' fw={500} lineClamp={1}>
 							{campaign.name}
 						</Text>
-						<Tooltip withArrow label={campaign.description || 'No description'}>
-							<ThemeIcon variant='light' color='blue' size={'xs'}>
-								<IconQuestionMark size={16} />
-							</ThemeIcon>
-						</Tooltip>
 					</Group>
 				);
 			},
