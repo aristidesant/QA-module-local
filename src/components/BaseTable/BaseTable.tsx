@@ -4,8 +4,11 @@ import {
 	flexRender,
 	getCoreRowModel,
 	getSortedRowModel,
+	getFilteredRowModel,
+	getPaginationRowModel,
 	Row,
 	SortingState,
+	ColumnFiltersState,
 	useReactTable,
 } from '@tanstack/react-table';
 import { Table, LoadingOverlay } from '@mantine/core';
@@ -15,6 +18,8 @@ import {
 	IconArrowsUpDown,
 } from '@tabler/icons-react';
 import styles from './BaseTable.module.css';
+
+export type FilterMode = 'client' | 'server';
 
 export type BaseTableProps<TData> = {
 	data: TData[];
@@ -27,6 +32,44 @@ export type BaseTableProps<TData> = {
 	getRowClassName?: (row: Row<TData>) => string | undefined;
 	isLoading?: boolean;
 	emptyMessage?: string;
+	/**
+	 * Filter mode determines how data is filtered:
+	 * - 'client': BaseTable handles filtering/sorting/pagination internally using TanStack Table
+	 * - 'server': Parent component handles filtering via API, BaseTable just displays the data
+	 */
+	filterMode?: FilterMode;
+	/**
+	 * Server-side pagination info (only used when filterMode='server')
+	 */
+	pageCount?: number;
+	/**
+	 * Current page for server-side pagination (only used when filterMode='server')
+	 */
+	pageIndex?: number;
+	/**
+	 * Page size for server-side pagination (only used when filterMode='server')
+	 */
+	pageSize?: number;
+	/**
+	 * Callback when pagination changes (only used when filterMode='server')
+	 */
+	onPaginationChange?: (pageIndex: number, pageSize: number) => void;
+	/**
+	 * Callback when sorting changes (only used when filterMode='server')
+	 */
+	onSortingChange?: (sorting: SortingState) => void;
+	/**
+	 * Callback when filters change (only used when filterMode='server')
+	 */
+	onFilterChange?: (filters: ColumnFiltersState) => void;
+	/**
+	 * Enable client-side pagination (only used when filterMode='client')
+	 */
+	enablePagination?: boolean;
+	/**
+	 * Enable client-side filtering (only used when filterMode='client')
+	 */
+	enableFiltering?: boolean;
 };
 
 function BaseTable<TData>({
@@ -40,16 +83,89 @@ function BaseTable<TData>({
 	getRowClassName,
 	isLoading = false,
 	emptyMessage,
+	filterMode = 'client',
+	pageCount,
+	pageIndex = 0,
+	pageSize = 10,
+	onPaginationChange,
+	onSortingChange: onSortingChangeProp,
+	onFilterChange,
+	enablePagination = false,
+	enableFiltering = false,
 }: BaseTableProps<TData>) {
 	const [sorting, setSorting] = React.useState<SortingState>(initialSort);
+	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+		[]
+	);
+	const [pagination, setPagination] = React.useState({
+		pageIndex,
+		pageSize,
+	});
+
+	// Handle sorting changes
+	const handleSortingChange = React.useCallback(
+		(updater: any) => {
+			setSorting(updater);
+			if (filterMode === 'server' && onSortingChangeProp) {
+				const newSorting =
+					typeof updater === 'function' ? updater(sorting) : updater;
+				onSortingChangeProp(newSorting);
+			}
+		},
+		[filterMode, onSortingChangeProp, sorting]
+	);
+
+	// Handle filter changes
+	const handleFilterChange = React.useCallback(
+		(updater: any) => {
+			setColumnFilters(updater);
+			if (filterMode === 'server' && onFilterChange) {
+				const newFilters =
+					typeof updater === 'function' ? updater(columnFilters) : updater;
+				onFilterChange(newFilters);
+			}
+		},
+		[filterMode, onFilterChange, columnFilters]
+	);
+
+	// Handle pagination changes
+	const handlePaginationChange = React.useCallback(
+		(updater: any) => {
+			setPagination(updater);
+			if (filterMode === 'server' && onPaginationChange) {
+				const newPagination =
+					typeof updater === 'function' ? updater(pagination) : updater;
+				onPaginationChange(newPagination.pageIndex, newPagination.pageSize);
+			}
+		},
+		[filterMode, onPaginationChange, pagination]
+	);
 
 	const table = useReactTable<TData>({
 		data,
 		columns,
-		state: { sorting },
-		onSortingChange: setSorting,
+		state: {
+			sorting,
+			...(filterMode === 'client' && enableFiltering ? { columnFilters } : {}),
+			...(enablePagination ? { pagination } : {}),
+		},
+		onSortingChange: handleSortingChange,
+		...(filterMode === 'client' && enableFiltering
+			? { onColumnFiltersChange: handleFilterChange }
+			: {}),
+		...(enablePagination ? { onPaginationChange: handlePaginationChange } : {}),
 		getCoreRowModel: getCoreRowModel(),
 		getSortedRowModel: getSortedRowModel(),
+		...(filterMode === 'client' && enableFiltering
+			? { getFilteredRowModel: getFilteredRowModel() }
+			: {}),
+		...(enablePagination && filterMode === 'client'
+			? { getPaginationRowModel: getPaginationRowModel() }
+			: {}),
+		...(filterMode === 'server' && pageCount ? { pageCount } : {}),
+		manualPagination: filterMode === 'server',
+		manualFiltering: filterMode === 'server',
+		manualSorting: filterMode === 'server',
 	});
 
 	const hasData = data && data.length > 0;

@@ -29,7 +29,7 @@ import AgentSimpleDetails from '../AgentSimpleDetails/AgentSimpleDetails';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { useGetAllAgents, useDeleteAgent } from '~/queries/agentQueries';
 import { useAgentStore } from '~/stores/agentStore';
-import BaseTable from '~/components/BaseTable/BaseTable';
+import BaseTable, { type FilterMode } from '~/components/BaseTable/BaseTable';
 import { useAgentColumns } from './useAgentColumns';
 import { OutboundCallForm } from '~/components/OutboundCallForm';
 import { modals } from '@mantine/modals';
@@ -39,7 +39,7 @@ import DuplicateAgentModal from './DuplicateAgentModal';
 interface AgentFilters {
 	name: string;
 	type: 'all' | 'INBOUND' | 'OUTBOUND';
-	sortBy: 'name' | 'createdAt' | 'updatedAt' | 'agentType';
+	sortBy: 'name' | 'createdAt' | 'updatedAt';
 	sortOrder: 'ASC' | 'DESC';
 }
 
@@ -68,11 +68,18 @@ const AgentList: React.FC = () => {
 	const [page, setPage] = React.useState(1);
 	const [pageSize, setPageSize] = React.useState(10);
 	const [filters, setFilters] = React.useState<AgentFilters>(INITIAL_FILTERS);
-	// Debounce the name filter to reduce API calls
 
-	// Debounce the name filter to reduce API calls
+	// Filter mode: 'client' or 'server'
+	// - 'server': API handles filtering, sorting, and pagination
+	// - 'client': Fetch all data, apply filters/sorting/pagination in browser
+	const filterMode: FilterMode = 'server';
+
+	// Debounce the name filter to reduce API calls (only for server-side)
 	const [debouncedName] = useDebouncedValue(filters.name, 500);
 
+	// Fetch all agents for client-side filtering, or paginated for server-side
+	// - Server mode: API handles filtering, sorting, and pagination
+	// - Client mode: Fetch all data, apply filters/sorting/pagination in browser
 	const {
 		data: agents,
 		isLoading,
@@ -81,26 +88,105 @@ const AgentList: React.FC = () => {
 		error,
 		refetch: reloadAgents,
 	} = useGetAllAgents({
-		page,
-		limit: pageSize,
-		...(debouncedName ? { name: debouncedName } : {}),
-		...(filters.type !== 'all' ? { agentType: filters.type } : {}),
-		sortBy: filters.sortBy,
-		sortOrder: filters.sortOrder,
+		page: filterMode === 'server' ? page : 1,
+		limit: filterMode === 'server' ? pageSize : 1000, // Fetch all for client-side
+		...(filterMode === 'server' && debouncedName
+			? { name: debouncedName }
+			: {}),
+		...(filterMode === 'server' && filters.type !== 'all'
+			? { agentType: filters.type }
+			: {}),
+		sortBy: filterMode === 'server' ? filters.sortBy : 'createdAt',
+		sortOrder: filterMode === 'server' ? filters.sortOrder : 'DESC',
 	});
 
 	const deleteMutation = useDeleteAgent();
+
+	// Client-side filtering and sorting
+	const filteredAndSortedAgents = React.useMemo(() => {
+		if (filterMode === 'server' || !agents?.data) {
+			return agents?.data || [];
+		}
+
+		let filtered = [...agents.data];
+
+		// Apply name filter
+		if (filters.name) {
+			const searchLower = filters.name.toLowerCase();
+			filtered = filtered.filter((agent) =>
+				agent.name.toLowerCase().includes(searchLower)
+			);
+		}
+
+		// Apply type filter
+		if (filters.type !== 'all') {
+			filtered = filtered.filter((agent) => agent.type === filters.type);
+		}
+
+		// Apply sorting
+		filtered.sort((a, b) => {
+			let aValue: any;
+			let bValue: any;
+
+			switch (filters.sortBy) {
+				case 'name':
+					aValue = a.name.toLowerCase();
+					bValue = b.name.toLowerCase();
+					break;
+				case 'createdAt':
+					aValue = new Date(a.createdAt).getTime();
+					bValue = new Date(b.createdAt).getTime();
+					break;
+				case 'updatedAt':
+					aValue = new Date(a.updatedAt).getTime();
+					bValue = new Date(b.updatedAt).getTime();
+					break;
+				default:
+					return 0;
+			}
+
+			if (filters.sortOrder === 'ASC') {
+				return aValue > bValue ? 1 : -1;
+			}
+			return aValue < bValue ? 1 : -1;
+		});
+
+		return filtered;
+	}, [filterMode, agents?.data, filters]);
+
+	// Client-side pagination
+	const paginatedAgents = React.useMemo(() => {
+		if (filterMode === 'server') {
+			return filteredAndSortedAgents;
+		}
+
+		const startIndex = (page - 1) * pageSize;
+		const endIndex = startIndex + pageSize;
+		return filteredAndSortedAgents.slice(startIndex, endIndex);
+	}, [filterMode, filteredAndSortedAgents, page, pageSize]);
+
+	// Calculate pagination info for client-side mode
+	const totalItems =
+		filterMode === 'server'
+			? agents?.total || 0
+			: filteredAndSortedAgents.length;
+
+	const totalPages =
+		filterMode === 'server'
+			? agents?.totalPages || 1
+			: Math.ceil(filteredAndSortedAgents.length / pageSize);
 
 	// Reset to first page when filters or page size change
 	React.useEffect(() => {
 		setPage(1);
 		setSelectedAgent(null);
 	}, [
-		debouncedName,
+		filters.name,
 		filters.type,
 		filters.sortBy,
 		filters.sortOrder,
 		pageSize,
+		filterMode,
 		setSelectedAgent,
 	]);
 
@@ -189,13 +275,13 @@ const AgentList: React.FC = () => {
 	};
 
 	const hasActiveFilters =
-		debouncedName !== INITIAL_FILTERS.name ||
+		filters.name !== INITIAL_FILTERS.name ||
 		filters.type !== INITIAL_FILTERS.type ||
 		filters.sortBy !== INITIAL_FILTERS.sortBy ||
 		filters.sortOrder !== INITIAL_FILTERS.sortOrder;
 
-	const hasAgents = (agents?.total || 0) > 0;
-	const hasMultiplePages = (agents?.totalPages || 1) > 1;
+	const hasAgents = totalItems > 0;
+	const hasMultiplePages = totalPages > 1;
 
 	return (
 		<ContentContainer
@@ -278,7 +364,6 @@ const AgentList: React.FC = () => {
 										{ value: 'name', label: 'Name' },
 										{ value: 'createdAt', label: 'Created' },
 										{ value: 'updatedAt', label: 'Updated' },
-										{ value: 'agentType', label: 'Type' },
 									]}
 									value={filters.sortBy}
 									onChange={(value) => {
@@ -372,21 +457,32 @@ const AgentList: React.FC = () => {
 
 				{/* Agents Table */}
 				{!isLoading && !isError && hasAgents && (
-					<BaseTable<AgentListObject>
-						data={agents?.data || []}
-						columns={columns}
-						isLoading={deleteMutation.isPending || isFetching}
-						selectedKey={`${selectedAgent?.id}`}
-						onRowClick={handleAgentClick}
-						density={'default'}
-					/>
+					<>
+						{/* Results Info */}
+						<Group justify='space-between' mb='xs'>
+							<Text size='sm' c='dimmed'>
+								Showing {agents?.data?.length || 0} of {totalItems} agents
+								{hasActiveFilters && ' (filtered)'}
+							</Text>
+						</Group>
+
+						<BaseTable<AgentListObject>
+							data={paginatedAgents}
+							columns={columns}
+							isLoading={deleteMutation.isPending || isFetching}
+							selectedKey={`${selectedAgent?.id}`}
+							onRowClick={handleAgentClick}
+							filterMode={filterMode}
+							density={'default'}
+						/>
+					</>
 				)}
 
 				{/* Pagination */}
 				{hasAgents && hasMultiplePages && (
 					<Center mt='md'>
 						<Pagination
-							total={agents?.totalPages || 1}
+							total={totalPages}
 							value={page}
 							onChange={setPage}
 							withEdges
