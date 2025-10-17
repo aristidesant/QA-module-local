@@ -29,22 +29,25 @@ import AgentSimpleDetails from '../AgentSimpleDetails/AgentSimpleDetails';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { useGetAllAgents, useDeleteAgent } from '~/queries/agentQueries';
 import { useAgentStore } from '~/stores/agentStore';
-import BaseTable from '~/components/BaseTable/BaseTable';
+import BaseTable, { type FilterMode } from '~/components/BaseTable/BaseTable';
 import { useAgentColumns } from './useAgentColumns';
 import { OutboundCallForm } from '~/components/OutboundCallForm';
 import { modals } from '@mantine/modals';
 import AgentQuickEdit from '../AgentQuickEdit';
 import DuplicateAgentModal from './DuplicateAgentModal';
-import { FilterContainer, filterClasses } from '~/components/FilterContainer';
 
 interface AgentFilters {
 	name: string;
 	type: 'all' | 'INBOUND' | 'OUTBOUND';
+	sortBy: 'name' | 'createdAt' | 'updatedAt';
+	sortOrder: 'ASC' | 'DESC';
 }
 
 const INITIAL_FILTERS: AgentFilters = {
 	name: '',
 	type: 'all',
+	sortBy: 'createdAt',
+	sortOrder: 'DESC',
 };
 
 const AgentList: React.FC = () => {
@@ -65,11 +68,18 @@ const AgentList: React.FC = () => {
 	const [page, setPage] = React.useState(1);
 	const [pageSize, setPageSize] = React.useState(10);
 	const [filters, setFilters] = React.useState<AgentFilters>(INITIAL_FILTERS);
-	// Debounce the name filter to reduce API calls
 
-	// Debounce the name filter to reduce API calls
+	// Filter mode: 'client' or 'server'
+	// - 'server': API handles filtering, sorting, and pagination
+	// - 'client': Fetch all data, apply filters/sorting/pagination in browser
+	const filterMode: FilterMode = 'server';
+
+	// Debounce the name filter to reduce API calls (only for server-side)
 	const [debouncedName] = useDebouncedValue(filters.name, 500);
 
+	// Fetch all agents for client-side filtering, or paginated for server-side
+	// - Server mode: API handles filtering, sorting, and pagination
+	// - Client mode: Fetch all data, apply filters/sorting/pagination in browser
 	const {
 		data: agents,
 		isLoading,
@@ -78,19 +88,107 @@ const AgentList: React.FC = () => {
 		error,
 		refetch: reloadAgents,
 	} = useGetAllAgents({
-		page,
-		limit: pageSize,
-		...(debouncedName ? { name: debouncedName } : {}),
-		...(filters.type !== 'all' ? { agentType: filters.type } : {}),
+		page: filterMode === 'server' ? page : 1,
+		limit: filterMode === 'server' ? pageSize : 1000, // Fetch all for client-side
+		...(filterMode === 'server' && debouncedName
+			? { name: debouncedName }
+			: {}),
+		...(filterMode === 'server' && filters.type !== 'all'
+			? { agentType: filters.type }
+			: {}),
+		sortBy: filterMode === 'server' ? filters.sortBy : 'createdAt',
+		sortOrder: filterMode === 'server' ? filters.sortOrder : 'DESC',
 	});
 
 	const deleteMutation = useDeleteAgent();
+
+	// Client-side filtering and sorting
+	const filteredAndSortedAgents = React.useMemo(() => {
+		if (filterMode === 'server' || !agents?.data) {
+			return agents?.data || [];
+		}
+
+		let filtered = [...agents.data];
+
+		// Apply name filter
+		if (filters.name) {
+			const searchLower = filters.name.toLowerCase();
+			filtered = filtered.filter((agent) =>
+				agent.name.toLowerCase().includes(searchLower)
+			);
+		}
+
+		// Apply type filter
+		if (filters.type !== 'all') {
+			filtered = filtered.filter((agent) => agent.type === filters.type);
+		}
+
+		// Apply sorting
+		filtered.sort((a, b) => {
+			let aValue: any;
+			let bValue: any;
+
+			switch (filters.sortBy) {
+				case 'name':
+					aValue = a.name.toLowerCase();
+					bValue = b.name.toLowerCase();
+					break;
+				case 'createdAt':
+					aValue = new Date(a.createdAt).getTime();
+					bValue = new Date(b.createdAt).getTime();
+					break;
+				case 'updatedAt':
+					aValue = new Date(a.updatedAt).getTime();
+					bValue = new Date(b.updatedAt).getTime();
+					break;
+				default:
+					return 0;
+			}
+
+			if (filters.sortOrder === 'ASC') {
+				return aValue > bValue ? 1 : -1;
+			}
+			return aValue < bValue ? 1 : -1;
+		});
+
+		return filtered;
+	}, [filterMode, agents?.data, filters]);
+
+	// Client-side pagination
+	const paginatedAgents = React.useMemo(() => {
+		if (filterMode === 'server') {
+			return filteredAndSortedAgents;
+		}
+
+		const startIndex = (page - 1) * pageSize;
+		const endIndex = startIndex + pageSize;
+		return filteredAndSortedAgents.slice(startIndex, endIndex);
+	}, [filterMode, filteredAndSortedAgents, page, pageSize]);
+
+	// Calculate pagination info for client-side mode
+	const totalItems =
+		filterMode === 'server'
+			? agents?.total || 0
+			: filteredAndSortedAgents.length;
+
+	const totalPages =
+		filterMode === 'server'
+			? agents?.totalPages || 1
+			: Math.ceil(filteredAndSortedAgents.length / pageSize);
 
 	// Reset to first page when filters or page size change
 	React.useEffect(() => {
 		setPage(1);
 		setSelectedAgent(null);
-	}, [debouncedName, filters.type, pageSize, setSelectedAgent]);
+	}, [
+		filters.name,
+		filters.type,
+		filters.sortBy,
+		filters.sortOrder,
+		pageSize,
+		filterMode,
+		setSelectedAgent,
+	]);
 
 	// Clear selection when changing pages
 	React.useEffect(() => {
@@ -177,11 +275,13 @@ const AgentList: React.FC = () => {
 	};
 
 	const hasActiveFilters =
-		debouncedName !== INITIAL_FILTERS.name ||
-		filters.type !== INITIAL_FILTERS.type;
+		filters.name !== INITIAL_FILTERS.name ||
+		filters.type !== INITIAL_FILTERS.type ||
+		filters.sortBy !== INITIAL_FILTERS.sortBy ||
+		filters.sortOrder !== INITIAL_FILTERS.sortOrder;
 
-	const hasAgents = (agents?.total || 0) > 0;
-	const hasMultiplePages = (agents?.totalPages || 1) > 1;
+	const hasAgents = totalItems > 0;
+	const hasMultiplePages = totalPages > 1;
 
 	return (
 		<ContentContainer
@@ -212,76 +312,127 @@ const AgentList: React.FC = () => {
 				<AgentCreate opened={opened} onClose={close} />
 
 				{/* Filters */}
-				<FilterContainer>
-					<TextInput
-						placeholder='Search agents...'
-						leftSection={<IconSearch size={16} />}
-						value={filters.name}
-						onChange={(e) => handleFilterChange('name', e.currentTarget.value)}
-						className={filterClasses.searchInput}
-					/>
-					<Chip.Group
-						value={filters.type}
-						onChange={(value) => {
-							if (typeof value === 'string') {
-								handleFilterChange('type', value);
+				<Paper className={classes.filtersContainer}>
+					<Group gap='md' wrap='wrap'>
+						{/* Search */}
+						<TextInput
+							placeholder='Search agents...'
+							leftSection={<IconSearch size={16} />}
+							value={filters.name}
+							onChange={(e) =>
+								handleFilterChange('name', e.currentTarget.value)
 							}
-						}}
-					>
-						<Group gap='xs' wrap='nowrap' className={filterClasses.typeFilters}>
-							<Chip
-								value='all'
-								variant='light'
-								size='sm'
-								className={filterClasses.typeChip}
+							className={classes.searchInput}
+						/>
+
+						{/* Agent Type Filter */}
+						<div className={classes.filterGroup}>
+							<Text size='xs' fw={500} c='dimmed' mb={4}>
+								Type
+							</Text>
+							<Chip.Group
+								value={filters.type}
+								onChange={(value) => {
+									if (typeof value === 'string') {
+										handleFilterChange('type', value);
+									}
+								}}
 							>
-								All
-							</Chip>
-							<Chip
-								value='INBOUND'
-								variant='light'
-								color='teal'
+								<Group gap='xs' wrap='nowrap'>
+									<Chip value='all' variant='light' size='sm'>
+										All
+									</Chip>
+									<Chip value='INBOUND' variant='light' color='teal' size='sm'>
+										Inbound
+									</Chip>
+									<Chip value='OUTBOUND' variant='light' color='blue' size='sm'>
+										Outbound
+									</Chip>
+								</Group>
+							</Chip.Group>
+						</div>
+
+						{/* Sorting Controls */}
+						<div className={classes.filterGroup}>
+							<Text size='xs' fw={500} c='dimmed' mb={4}>
+								Sort
+							</Text>
+							<Group gap='xs' wrap='nowrap'>
+								<Select
+									placeholder='Sort by'
+									data={[
+										{ value: 'name', label: 'Name' },
+										{ value: 'createdAt', label: 'Created' },
+										{ value: 'updatedAt', label: 'Updated' },
+									]}
+									value={filters.sortBy}
+									onChange={(value) => {
+										if (value) {
+											handleFilterChange('sortBy', value);
+										}
+									}}
+									size='sm'
+									w={120}
+									allowDeselect={false}
+								/>
+								<Select
+									placeholder='Order'
+									data={[
+										{ value: 'ASC', label: 'A-Z ↑' },
+										{ value: 'DESC', label: 'Z-A ↓' },
+									]}
+									value={filters.sortOrder}
+									onChange={(value) => {
+										if (value) {
+											handleFilterChange('sortOrder', value);
+										}
+									}}
+									size='sm'
+									w={100}
+									allowDeselect={false}
+								/>
+							</Group>
+						</div>
+
+						{/* Page Size */}
+						<div className={classes.filterGroup}>
+							<Text size='xs' fw={500} c='dimmed' mb={4}>
+								Show
+							</Text>
+							<Select
+								placeholder='Page size'
+								data={['10', '20', '50', '100']}
+								value={pageSize.toString()}
+								onChange={(value) => {
+									if (value) {
+										setPageSize(parseInt(value));
+									}
+								}}
 								size='sm'
-								className={filterClasses.typeChip}
-							>
-								Inbound
-							</Chip>
-							<Chip
-								value='OUTBOUND'
+								w={80}
+								allowDeselect={false}
+							/>
+						</div>
+
+						{/* Clear Filters */}
+						<div className={classes.filterGroup}>
+							<Text size='xs' fw={500} c='transparent' mb={4}>
+								.
+							</Text>
+							<ActionIcon
 								variant='light'
-								color='blue'
-								size='sm'
-								className={filterClasses.typeChip}
+								size='lg'
+								color='gray'
+								onClick={handleClearFilters}
+								disabled={!hasActiveFilters}
+								title='Clear filters'
+								className={classes.clearButton}
 							>
-								Outbound
-							</Chip>
-						</Group>
-					</Chip.Group>
-					<Select
-						placeholder='Page size'
-						data={['10', '20', '50', '100']}
-						value={pageSize.toString()}
-						onChange={(value) => {
-							if (value) {
-								setPageSize(parseInt(value));
-							}
-						}}
-						size='sm'
-						w={120}
-						allowDeselect={false}
-					/>
-					<ActionIcon
-						variant='subtle'
-						size='lg'
-						onClick={handleClearFilters}
-						className={filterClasses.clearButton}
-						style={{ opacity: hasActiveFilters ? 1 : 0.3 }}
-						disabled={!hasActiveFilters}
-						title='Clear filters'
-					>
-						<IconX size={18} />
-					</ActionIcon>
-				</FilterContainer>
+								<IconX size={18} />
+							</ActionIcon>
+						</div>
+					</Group>
+				</Paper>
 
 				{/* Loading State */}
 				{isLoading && (
@@ -306,21 +457,32 @@ const AgentList: React.FC = () => {
 
 				{/* Agents Table */}
 				{!isLoading && !isError && hasAgents && (
-					<BaseTable<AgentListObject>
-						data={agents?.data || []}
-						columns={columns}
-						isLoading={deleteMutation.isPending || isFetching}
-						selectedKey={`${selectedAgent?.id}`}
-						onRowClick={handleAgentClick}
-						density={'default'}
-					/>
+					<>
+						{/* Results Info */}
+						<Group justify='space-between' mb='xs'>
+							<Text size='sm' c='dimmed'>
+								Showing {agents?.data?.length || 0} of {totalItems} agents
+								{hasActiveFilters && ' (filtered)'}
+							</Text>
+						</Group>
+
+						<BaseTable<AgentListObject>
+							data={paginatedAgents}
+							columns={columns}
+							isLoading={deleteMutation.isPending || isFetching}
+							selectedKey={`${selectedAgent?.id}`}
+							onRowClick={handleAgentClick}
+							filterMode={filterMode}
+							density={'default'}
+						/>
+					</>
 				)}
 
 				{/* Pagination */}
 				{hasAgents && hasMultiplePages && (
 					<Center mt='md'>
 						<Pagination
-							total={agents?.totalPages || 1}
+							total={totalPages}
 							value={page}
 							onChange={setPage}
 							withEdges
