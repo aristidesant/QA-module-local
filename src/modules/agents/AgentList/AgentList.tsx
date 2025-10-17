@@ -35,16 +35,19 @@ import { OutboundCallForm } from '~/components/OutboundCallForm';
 import { modals } from '@mantine/modals';
 import AgentQuickEdit from '../AgentQuickEdit';
 import DuplicateAgentModal from './DuplicateAgentModal';
-import { FilterContainer, filterClasses } from '~/components/FilterContainer';
 
 interface AgentFilters {
 	name: string;
 	type: 'all' | 'INBOUND' | 'OUTBOUND';
+	sortBy: 'name' | 'createdAt' | 'updatedAt' | 'agentType';
+	sortOrder: 'ASC' | 'DESC';
 }
 
 const INITIAL_FILTERS: AgentFilters = {
 	name: '',
 	type: 'all',
+	sortBy: 'createdAt',
+	sortOrder: 'DESC',
 };
 
 const AgentList: React.FC = () => {
@@ -82,6 +85,8 @@ const AgentList: React.FC = () => {
 		limit: pageSize,
 		...(debouncedName ? { name: debouncedName } : {}),
 		...(filters.type !== 'all' ? { agentType: filters.type } : {}),
+		sortBy: filters.sortBy,
+		sortOrder: filters.sortOrder,
 	});
 
 	const deleteMutation = useDeleteAgent();
@@ -90,7 +95,14 @@ const AgentList: React.FC = () => {
 	React.useEffect(() => {
 		setPage(1);
 		setSelectedAgent(null);
-	}, [debouncedName, filters.type, pageSize, setSelectedAgent]);
+	}, [
+		debouncedName,
+		filters.type,
+		filters.sortBy,
+		filters.sortOrder,
+		pageSize,
+		setSelectedAgent,
+	]);
 
 	// Clear selection when changing pages
 	React.useEffect(() => {
@@ -178,7 +190,9 @@ const AgentList: React.FC = () => {
 
 	const hasActiveFilters =
 		debouncedName !== INITIAL_FILTERS.name ||
-		filters.type !== INITIAL_FILTERS.type;
+		filters.type !== INITIAL_FILTERS.type ||
+		filters.sortBy !== INITIAL_FILTERS.sortBy ||
+		filters.sortOrder !== INITIAL_FILTERS.sortOrder;
 
 	const hasAgents = (agents?.total || 0) > 0;
 	const hasMultiplePages = (agents?.totalPages || 1) > 1;
@@ -212,76 +226,128 @@ const AgentList: React.FC = () => {
 				<AgentCreate opened={opened} onClose={close} />
 
 				{/* Filters */}
-				<FilterContainer>
-					<TextInput
-						placeholder='Search agents...'
-						leftSection={<IconSearch size={16} />}
-						value={filters.name}
-						onChange={(e) => handleFilterChange('name', e.currentTarget.value)}
-						className={filterClasses.searchInput}
-					/>
-					<Chip.Group
-						value={filters.type}
-						onChange={(value) => {
-							if (typeof value === 'string') {
-								handleFilterChange('type', value);
+				<Paper className={classes.filtersContainer}>
+					<Group gap='md' wrap='wrap'>
+						{/* Search */}
+						<TextInput
+							placeholder='Search agents...'
+							leftSection={<IconSearch size={16} />}
+							value={filters.name}
+							onChange={(e) =>
+								handleFilterChange('name', e.currentTarget.value)
 							}
-						}}
-					>
-						<Group gap='xs' wrap='nowrap' className={filterClasses.typeFilters}>
-							<Chip
-								value='all'
-								variant='light'
-								size='sm'
-								className={filterClasses.typeChip}
+							className={classes.searchInput}
+						/>
+
+						{/* Agent Type Filter */}
+						<div className={classes.filterGroup}>
+							<Text size='xs' fw={500} c='dimmed' mb={4}>
+								Type
+							</Text>
+							<Chip.Group
+								value={filters.type}
+								onChange={(value) => {
+									if (typeof value === 'string') {
+										handleFilterChange('type', value);
+									}
+								}}
 							>
-								All
-							</Chip>
-							<Chip
-								value='INBOUND'
-								variant='light'
-								color='teal'
+								<Group gap='xs' wrap='nowrap'>
+									<Chip value='all' variant='light' size='sm'>
+										All
+									</Chip>
+									<Chip value='INBOUND' variant='light' color='teal' size='sm'>
+										Inbound
+									</Chip>
+									<Chip value='OUTBOUND' variant='light' color='blue' size='sm'>
+										Outbound
+									</Chip>
+								</Group>
+							</Chip.Group>
+						</div>
+
+						{/* Sorting Controls */}
+						<div className={classes.filterGroup}>
+							<Text size='xs' fw={500} c='dimmed' mb={4}>
+								Sort
+							</Text>
+							<Group gap='xs' wrap='nowrap'>
+								<Select
+									placeholder='Sort by'
+									data={[
+										{ value: 'name', label: 'Name' },
+										{ value: 'createdAt', label: 'Created' },
+										{ value: 'updatedAt', label: 'Updated' },
+										{ value: 'agentType', label: 'Type' },
+									]}
+									value={filters.sortBy}
+									onChange={(value) => {
+										if (value) {
+											handleFilterChange('sortBy', value);
+										}
+									}}
+									size='sm'
+									w={120}
+									allowDeselect={false}
+								/>
+								<Select
+									placeholder='Order'
+									data={[
+										{ value: 'ASC', label: 'A-Z ↑' },
+										{ value: 'DESC', label: 'Z-A ↓' },
+									]}
+									value={filters.sortOrder}
+									onChange={(value) => {
+										if (value) {
+											handleFilterChange('sortOrder', value);
+										}
+									}}
+									size='sm'
+									w={100}
+									allowDeselect={false}
+								/>
+							</Group>
+						</div>
+
+						{/* Page Size */}
+						<div className={classes.filterGroup}>
+							<Text size='xs' fw={500} c='dimmed' mb={4}>
+								Show
+							</Text>
+							<Select
+								placeholder='Page size'
+								data={['10', '20', '50', '100']}
+								value={pageSize.toString()}
+								onChange={(value) => {
+									if (value) {
+										setPageSize(parseInt(value));
+									}
+								}}
 								size='sm'
-								className={filterClasses.typeChip}
-							>
-								Inbound
-							</Chip>
-							<Chip
-								value='OUTBOUND'
+								w={80}
+								allowDeselect={false}
+							/>
+						</div>
+
+						{/* Clear Filters */}
+						<div className={classes.filterGroup}>
+							<Text size='xs' fw={500} c='transparent' mb={4}>
+								.
+							</Text>
+							<ActionIcon
 								variant='light'
-								color='blue'
-								size='sm'
-								className={filterClasses.typeChip}
+								size='lg'
+								color='gray'
+								onClick={handleClearFilters}
+								disabled={!hasActiveFilters}
+								title='Clear filters'
+								className={classes.clearButton}
 							>
-								Outbound
-							</Chip>
-						</Group>
-					</Chip.Group>
-					<Select
-						placeholder='Page size'
-						data={['10', '20', '50', '100']}
-						value={pageSize.toString()}
-						onChange={(value) => {
-							if (value) {
-								setPageSize(parseInt(value));
-							}
-						}}
-						size='sm'
-						w={120}
-						allowDeselect={false}
-					/>
-					<ActionIcon
-						variant='subtle'
-						size='lg'
-						onClick={handleClearFilters}
-						className={filterClasses.clearButton}
-						style={{ opacity: hasActiveFilters ? 1 : 0.3 }}
-						disabled={!hasActiveFilters}
-						title='Clear filters'
-					>
-						<IconX size={18} />
-					</ActionIcon>
-				</FilterContainer>
+								<IconX size={18} />
+							</ActionIcon>
+						</div>
+					</Group>
+				</Paper>
 
 				{/* Loading State */}
 				{isLoading && (

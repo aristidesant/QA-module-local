@@ -45,6 +45,10 @@ const agentApi = (_authHeader: Record<string, string> = {}) => {
 				agentId?: string;
 				page?: number;
 				limit?: number;
+				name?: string;
+				agentType?: 'INBOUND' | 'OUTBOUND';
+				sortBy?: 'name' | 'createdAt' | 'updatedAt' | 'agentType';
+				sortOrder?: 'ASC' | 'DESC';
 			},
 			extraHeaders?: Record<string, string>
 		) => {
