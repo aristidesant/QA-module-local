@@ -83,13 +83,13 @@ const ConfigurationSummary: React.FC<ConfigurationSummaryProps> = ({
 		cards: [
 			{
 				title: 'Voice Engine',
-				value: config?.tts.modelId || 'N/A',
-				subtitle: `Model: ${config?.tts.modelId || 'N/A'}`,
+				value: config?.tts?.modelId || 'N/A',
+				subtitle: `Model: ${config?.tts?.modelId || 'N/A'}`,
 				icon: <IconVolume size={18} />,
 			},
 			{
 				title: 'Output Format',
-				value: config?.tts.agentOutputAudioFormat || 'N/A',
+				value: config?.tts?.agentOutputAudioFormat || 'N/A',
 				subtitle: 'Agent audio response format',
 				icon: <IconFileMusic size={18} />,
 			},
@@ -123,11 +123,11 @@ const ConfigurationSummary: React.FC<ConfigurationSummaryProps> = ({
 			))}
 			{config?.tts && (
 				<CampaignVoiceProgressDisplay
-					stability={config.tts.stability}
-					speed={config.tts.speed}
-					similarityBoost={config.tts.similarityBoost}
-					optimizeLatency={config.tts.optimizeStreamingLatency}
-					temperature={config.agent?.prompt?.temperature}
+					stability={config?.tts?.stability || 0}
+					speed={config?.tts?.speed || 0}
+					similarityBoost={config?.tts?.similarityBoost || 0}
+					optimizeLatency={config?.tts?.optimizeStreamingLatency || 0}
+					temperature={config.agent?.prompt?.temperature || 0}
 				/>
 			)}
 		</Stack>

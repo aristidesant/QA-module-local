@@ -129,6 +129,7 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 							leftSection={<IconDeviceFloppy />}
 							type='submit'
 							loading={createCampaign.isPending}
+							disabled={!form.isValid()}
 							size='sm'
 						>
 							Create Campaign

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import SectionCard from '~/components/SectionCard';
 import useCampaignsPredefinedParams, {
 	CampaignPredefinedParam,
@@ -7,10 +7,9 @@ import { Tooltip, Button, Stack } from '@mantine/core';
 import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
 import { deepMergeConfig } from '~/utils/objectUtils';
 import type { ConversationConfigModel } from '~/models/AgentListObject';
-import { IconRefresh, IconToolsOff } from '@tabler/icons-react';
+import { IconRefresh } from '@tabler/icons-react';
 import CampaignPredefinedParamsModal from './CampaignPredefinedParamsModal';
 import ConfigurationSummary from './ConfigurationSummary';
-import EmptyState from '~/components/EmptyState';
 
 const isValidValue = (value: unknown): boolean => {
 	if (value === null || value === undefined) return false;
@@ -34,10 +33,6 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 	const [appliedParam, setAppliedParam] =
 		useState<CampaignPredefinedParam | null>(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
-
-	const appliedPreviewConfig = useMemo(() => {
-		return appliedParam?.params?.conversationConfig ?? null;
-	}, [appliedParam]);
 
 	const applyConversationConfig = (config: ConversationConfigModel) => {
 		if (!isValidObject(config)) {
@@ -120,26 +115,17 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 							leftSection={<IconRefresh size={16} />}
 							onClick={handleOpenModal}
 						>
-							Select configuration
+							Load configuration
 						</Button>
 					</Tooltip>
 				}
 			>
 				<Stack gap='lg'>
-					{appliedParam ? (
-						<Stack gap='sm'>
-							{appliedPreviewConfig && (
-								<ConfigurationSummary
-									config={form.values?.agentConfig?.conversationConfig}
-								/>
-							)}
-						</Stack>
-					) : (
-						<EmptyState
-							icon={<IconToolsOff />}
-							message='No configuration applied yet. Default values are in use.'
+					<Stack gap='sm'>
+						<ConfigurationSummary
+							config={form.values?.agentConfig?.conversationConfig}
 						/>
-					)}
+					</Stack>
 				</Stack>
 			</SectionCard>
 

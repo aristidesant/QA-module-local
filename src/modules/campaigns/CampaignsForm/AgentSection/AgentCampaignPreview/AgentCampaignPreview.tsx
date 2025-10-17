@@ -7,7 +7,6 @@ import { useGetAgent } from '~/queries/agentQueries';
 import styles from './AgentCampaignPreview.module.css';
 import { openConfirmModal } from '@mantine/modals';
 import AgentProfile from '~/modules/agents/AgentSimpleDetails/AgentProfile';
-import AgentVoiceProgress from '~/modules/agents/AgentSimpleDetails/AgentVoiceProgress';
 import { useDeleteCampaignAgent } from '~/queries/campaignAgentsQueries';
 import { VoicePlayer } from '~/components/VoicePlayer';
 
@@ -69,21 +68,6 @@ export const AgentCampaignPreview: React.FC<AgentCampaignPreviewProps> = ({
 							voiceName={agent.voice?.name || 'Unknown'}
 							previewUrl={agent.voice?.previewUrl}
 						/>
-						<div style={{ width: '100%', marginTop: 18 }}>
-							<AgentVoiceProgress
-								stability={
-									agent.config?.conversationConfig?.tts?.stability ?? 0.5
-								}
-								speed={agent.config?.conversationConfig?.tts?.speed ?? 1.0}
-								similarityBoost={
-									agent.config?.conversationConfig?.tts?.similarityBoost ?? 0.8
-								}
-								optimizeLatency={
-									agent.config?.conversationConfig?.tts
-										?.optimizeStreamingLatency ?? 3
-								}
-							/>
-						</div>
 					</div>
 					{/* Quick Actions */}
 					<div className={styles.quickActions}>

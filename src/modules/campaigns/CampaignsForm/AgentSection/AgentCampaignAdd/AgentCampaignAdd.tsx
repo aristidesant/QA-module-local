@@ -16,6 +16,7 @@ import classes from './AgentCampaignAdd.module.css';
 import { isAxiosError } from 'axios';
 import { notifications } from '@mantine/notifications';
 import { FilterContainer } from '~/components/FilterContainer';
+import { useCampaignsStore } from '~/stores/campaignsStore';
 
 interface AgentCampaignAddProps {
 	campaignId: number;
@@ -34,6 +35,7 @@ export const AgentCampaignAdd: React.FC<AgentCampaignAddProps> = ({
 	const [limit, setLimit] = useState(10);
 	const [playingAgentId, setPlayingAgentId] = useState<string | null>(null);
 	const audioRef = useRef<HTMLAudioElement | null>(null);
+	const { selectedCampaign } = useCampaignsStore((state) => state);
 
 	const queryParams = useMemo(
 		() => ({
@@ -44,8 +46,10 @@ export const AgentCampaignAdd: React.FC<AgentCampaignAddProps> = ({
 		[page, limit, debouncedSearch]
 	);
 
-	const { data, isLoading, isError, refetch } =
-		useAgentsWithCampaigns(queryParams);
+	const { data, isLoading, isError, refetch } = useAgentsWithCampaigns({
+		...queryParams,
+		agentType: selectedCampaign?.type,
+	});
 
 	const tableData = useMemo(
 		() =>
