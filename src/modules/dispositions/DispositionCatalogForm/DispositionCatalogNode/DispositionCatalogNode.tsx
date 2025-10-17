@@ -5,12 +5,14 @@ import { useReactivateDispositionNode } from '~/queries/dispositionNodesQueries'
 import { useDeactivateDispositionNode } from '~/queries/dispositionNodesQueries';
 
 import {
-	Box,
 	Flex,
 	Button,
 	ActionIcon,
 	Text,
 	Badge,
+	Skeleton,
+	Menu,
+	Alert,
 	Tooltip,
 } from '@mantine/core';
 import { Tree } from 'react-arborist';
@@ -20,15 +22,20 @@ import {
 	IconPencil,
 	IconFolder,
 	IconFileDescription,
-	IconChevronUp,
+	IconChevronDown,
 	IconChevronRight,
 	IconRefresh,
 	IconBan,
+	IconDotsVertical,
+	IconGripVertical,
+	IconAlertCircle,
+	IconHelpCircle,
 } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useState, type MouseEvent, type CSSProperties } from 'react';
 import styles from './DispositionCatalogNode.module.css';
 import DispositionNodeForm from './DispositionNodeForm';
 import { notifications } from '@mantine/notifications';
+import { SectionCard } from '~/components/SectionCard';
 // Types for modal state
 type ModalState = {
 	open: boolean;
@@ -66,11 +73,19 @@ type ArboristNode = {
 	original: DispositionNode;
 };
 
+type NodeInnerStyle = CSSProperties & { '--node-indent'?: string };
+type NodeCardStyle = CSSProperties & { '--node-offset'?: string };
+
 const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 	catalogId,
 }) => {
-	const { data, refetch: reloadCatalogs } =
-		useDispositionTreeByCatalog(catalogId);
+	const {
+		data,
+		refetch: reloadCatalogs,
+		isLoading,
+		isError,
+		error,
+	} = useDispositionTreeByCatalog(catalogId);
 	const [modal, setModal] = useState<ModalState>({ open: false });
 	const createNode = useCreateDispositionNode();
 	const updateNode = useUpdateDispositionNode();
@@ -154,175 +169,287 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 	// React Arborist custom node renderer
 	function Node({ node, style, dragHandle }: any) {
 		const nodeData: DispositionNode = node.data.original;
-		const isOpen = node.isOpen;
 		const hasChildren = node.children && node.children.length > 0;
+		const isOpen = node.isOpen;
+		const childCount = node.children ? node.children.length : 0;
 		const isInactive = nodeData.isActive === false;
+		const nodeTypeLabel = hasChildren ? 'Group' : 'Outcome';
+		const levelIndent = node.level * 16;
+		const cardOffset = node.level > 0 ? Math.min(levelIndent, 80) : 0;
+		const cardStyle: NodeCardStyle = cardOffset
+			? { '--node-offset': `${cardOffset}px` }
+			: {};
+		const innerStyle: NodeInnerStyle = {
+			'--node-indent': `${Math.max(cardOffset - 12, 0)}px`,
+		};
+
+		const handleToggle = (event: MouseEvent<HTMLButtonElement>) => {
+			event.stopPropagation();
+			if (hasChildren) {
+				node.toggle();
+			}
+		};
 
 		return (
-			<div
-				style={style}
-				className={styles.nodeContainer}
-				ref={dragHandle}
-				tabIndex={0}
-				aria-label={node.data.name}
-				data-has-children={hasChildren}
-				data-expanded={isOpen}
-				data-inactive={isInactive}
-			>
-				<div className={styles.nodeContent}>
-					<div className={styles.nodeLeftSection}>
-						{hasChildren ? (
-							<ActionIcon
-								size='sm'
-								variant='transparent'
-								className={styles.chevronIcon}
-								aria-label={isOpen ? 'Collapse' : 'Expand'}
-								onClick={(e) => {
-									e.stopPropagation();
-									node.toggle();
-								}}
-							>
-								{isOpen ? (
-									<IconChevronUp size={18} />
+			<div style={style}>
+				<div
+					className={`${styles.nodeCard} ${isInactive ? styles.inactiveNode : ''}`}
+					tabIndex={0}
+					aria-label={node.data.name}
+					data-has-children={hasChildren}
+					data-expanded={isOpen}
+					data-level={node.level}
+					style={cardStyle}
+				>
+					<div className={styles.nodeInner} style={innerStyle}>
+						<div className={styles.nodeLead}>
+							<span
+								className={styles.statusPill}
+								data-status={nodeData.isActive ? 'active' : 'inactive'}
+								aria-hidden='true'
+							/>
+							<div className={styles.nodeToggleArea}>
+								{hasChildren ? (
+									<ActionIcon
+										size='sm'
+										variant='subtle'
+										className={styles.chevronIcon}
+										aria-label={isOpen ? 'Collapse node' : 'Expand node'}
+										onClick={handleToggle}
+									>
+										{isOpen ? (
+											<IconChevronDown size={18} />
+										) : (
+											<IconChevronRight size={18} />
+										)}
+									</ActionIcon>
 								) : (
-									<IconChevronRight size={18} />
+									<span className={styles.chevronPlaceholder} />
 								)}
-							</ActionIcon>
-						) : (
-							<span className={styles.chevronPlaceholder} />
-						)}
-						<span className={styles.nodeIcon} aria-hidden='true'>
-							{node.isLeaf ? (
-								<IconFileDescription
-									size={18}
-									color={
-										isInactive
-											? 'var(--mantine-color-gray-5)'
-											: 'var(--mantine-color-gray-6)'
-									}
-								/>
-							) : (
-								<IconFolder
-									size={18}
-									color={
-										isInactive
-											? 'var(--mantine-color-gray-5)'
-											: 'var(--mantine-color-yellow-7)'
-									}
-								/>
-							)}
-						</span>
+							</div>
+						</div>
+
+						<div className={styles.nodeContent}>
+							<div className={styles.nodeHeader}>
+								<div className={styles.nodeTitle}>
+									<span className={styles.nodeIcon} aria-hidden='true'>
+										{node.isLeaf ? (
+											<IconFileDescription
+												size={18}
+												color={
+													isInactive
+														? 'var(--mantine-color-gray-5)'
+														: 'var(--mantine-color-blue-6)'
+												}
+											/>
+										) : (
+											<IconFolder
+												size={18}
+												color={
+													isInactive
+														? 'var(--mantine-color-gray-5)'
+														: 'var(--mantine-color-yellow-7)'
+												}
+											/>
+										)}
+									</span>
+									<Text className={styles.nodeName} size='sm' fw={600}>
+										{node.data.name}
+									</Text>
+									{node.data.description && (
+										<Tooltip label={node.data.description} withArrow>
+											<ActionIcon
+												size='xs'
+												variant='subtle'
+												className={styles.descriptionIcon}
+											>
+												<IconHelpCircle
+													size={14}
+													color='var(--mantine-color-gray-6)'
+												/>
+											</ActionIcon>
+										</Tooltip>
+									)}
+								</div>
+								<div className={styles.nodeBadges}>
+									<Badge size='xs' variant='light' color='blue' radius='sm'>
+										{nodeTypeLabel}
+									</Badge>
+								</div>
+							</div>
+							<Text className={styles.nodeMetaText} size='xs'>
+								{hasChildren
+									? `${childCount} ${childCount === 1 ? 'child outcome' : 'child outcomes'}`
+									: 'Terminal outcome'}
+							</Text>
+						</div>
+
+						<div className={styles.nodeAside}>
+							<div
+								className={styles.dragHandle}
+								ref={dragHandle}
+								role='button'
+								tabIndex={-1}
+								aria-label='Drag to reorder'
+							>
+								<IconGripVertical size={16} />
+							</div>
+							<div className={styles.nodeActionsDesktop}>
+								<ActionIcon.Group>
+									{isInactive ? (
+										<Tooltip label='Reactivate node' withArrow>
+											<ActionIcon
+												size='sm'
+												variant='light'
+												color='green'
+												onClick={(event) => {
+													event.stopPropagation();
+													handleReactivateNode(nodeData);
+												}}
+											>
+												<IconRefresh size={16} />
+											</ActionIcon>
+										</Tooltip>
+									) : (
+										<Tooltip label='Deactivate node' withArrow>
+											<ActionIcon
+												size='sm'
+												variant='subtle'
+												onClick={(event) => {
+													event.stopPropagation();
+													handleDeactivateNode(nodeData);
+												}}
+											>
+												<IconBan size={16} />
+											</ActionIcon>
+										</Tooltip>
+									)}
+									<Tooltip label='Edit node' withArrow>
+										<ActionIcon
+											size='sm'
+											variant='subtle'
+											onClick={(event) => {
+												event.stopPropagation();
+												setModal({ open: true, editNode: nodeData });
+											}}
+										>
+											<IconPencil size={16} />
+										</ActionIcon>
+									</Tooltip>
+									<Tooltip label='Add child outcome' withArrow>
+										<ActionIcon
+											size='sm'
+											variant='subtle'
+											onClick={(event) => {
+												event.stopPropagation();
+												setModal({ open: true, parentId: nodeData.id });
+											}}
+										>
+											<IconPlus size={16} />
+										</ActionIcon>
+									</Tooltip>
+									<Tooltip label='Delete node' withArrow>
+										<ActionIcon
+											size='sm'
+											variant='light'
+											color='red'
+											onClick={(event) => {
+												event.stopPropagation();
+												modals.openConfirmModal({
+													title: 'Confirm Delete',
+													labels: {
+														confirm: 'Delete',
+														cancel: 'Cancel',
+													},
+													children: (
+														<Text size='sm'>
+															Are you sure you want to delete this node?
+														</Text>
+													),
+													confirmProps: { color: 'red' },
+													onConfirm: async () => {
+														await deleteNode.mutateAsync(nodeData.id);
+														await reloadCatalogs();
+													},
+												});
+											}}
+										>
+											<IconTrash size={16} />
+										</ActionIcon>
+									</Tooltip>
+								</ActionIcon.Group>
+							</div>
+							<Menu shadow='md' width={180} withinPortal>
+								<Menu.Target>
+									<ActionIcon
+										size='sm'
+										variant='subtle'
+										className={styles.nodeActionsMobile}
+										aria-label='Open node actions'
+										onClick={(event) => event.stopPropagation()}
+									>
+										<IconDotsVertical size={16} />
+									</ActionIcon>
+								</Menu.Target>
+								<Menu.Dropdown onClick={(event) => event.stopPropagation()}>
+									{isInactive ? (
+										<Menu.Item
+											leftSection={<IconRefresh size={16} />}
+											onClick={() => handleReactivateNode(nodeData)}
+										>
+											Reactivate
+										</Menu.Item>
+									) : (
+										<Menu.Item
+											leftSection={<IconBan size={16} />}
+											onClick={() => handleDeactivateNode(nodeData)}
+										>
+											Deactivate
+										</Menu.Item>
+									)}
+									<Menu.Item
+										leftSection={<IconPencil size={16} />}
+										onClick={() => setModal({ open: true, editNode: nodeData })}
+									>
+										Edit
+									</Menu.Item>
+									<Menu.Item
+										leftSection={<IconPlus size={16} />}
+										onClick={() =>
+											setModal({ open: true, parentId: nodeData.id })
+										}
+									>
+										Add child
+									</Menu.Item>
+									<Menu.Item
+										leftSection={<IconTrash size={16} />}
+										color='red'
+										onClick={() =>
+											modals.openConfirmModal({
+												title: 'Confirm Delete',
+												labels: {
+													confirm: 'Delete',
+													cancel: 'Cancel',
+												},
+												children: (
+													<Text size='sm'>
+														Are you sure you want to delete this node?
+													</Text>
+												),
+												confirmProps: { color: 'red' },
+												onConfirm: async () => {
+													await deleteNode.mutateAsync(nodeData.id);
+													await reloadCatalogs();
+												},
+											})
+										}
+									>
+										Delete
+									</Menu.Item>
+								</Menu.Dropdown>
+							</Menu>
+						</div>
 					</div>
-					<span className={styles.nodeLabel}>{node.data.name}</span>
-					<div className={styles.statusBadge}>
-						{nodeData.isActive !== undefined && (
-							<Badge
-								size='md'
-								variant='light'
-								color={nodeData.isActive ? 'green' : 'gray'}
-								radius='sm'
-								styles={{
-									root: {
-										textTransform: 'none',
-										fontWeight: 500,
-										minWidth: '70px',
-									},
-								}}
-							>
-								{nodeData.isActive ? 'Active' : 'Inactive'}
-							</Badge>
-						)}
-					</div>
-				</div>
-				<div className={styles.nodeActions}>
-					{isInactive && (
-						<Tooltip label='Reactivate' withArrow position='top'>
-							<ActionIcon
-								size='md'
-								variant='light'
-								color='green'
-								aria-label='Reactivate node'
-								className={styles.reactivateActionIcon}
-								onClick={(e) => {
-									e.stopPropagation();
-									handleReactivateNode(nodeData);
-								}}
-							>
-								<IconRefresh size={18} stroke={2} />
-							</ActionIcon>
-						</Tooltip>
-					)}
-					{!isInactive && (
-						<Tooltip label='Deactivate' withArrow position='top'>
-							<ActionIcon
-								size='md'
-								variant='transparent'
-								aria-label='Deactivate node'
-								className={styles.actionIcon}
-								onClick={(e) => {
-									e.stopPropagation();
-									handleDeactivateNode(nodeData);
-								}}
-							>
-								<IconBan size={16} />
-							</ActionIcon>
-						</Tooltip>
-					)}
-					<Tooltip label='Edit' withArrow position='top'>
-						<ActionIcon
-							size='md'
-							variant='transparent'
-							aria-label='Edit node'
-							className={styles.actionIcon}
-							onClick={(e) => {
-								e.stopPropagation();
-								setModal({ open: true, editNode: nodeData });
-							}}
-						>
-							<IconPencil size={16} />
-						</ActionIcon>
-					</Tooltip>
-					<Tooltip label='Add child' withArrow position='top'>
-						<ActionIcon
-							size='md'
-							variant='transparent'
-							aria-label='Add child'
-							className={styles.actionIcon}
-							onClick={(e) => {
-								e.stopPropagation();
-								setModal({ open: true, parentId: nodeData.id });
-							}}
-						>
-							<IconPlus size={16} />
-						</ActionIcon>
-					</Tooltip>
-					<Tooltip label='Delete' withArrow position='top'>
-						<ActionIcon
-							size='md'
-							variant='transparent'
-							aria-label='Remove node'
-							className={styles.deleteActionIcon}
-							onClick={async (e) => {
-								e.stopPropagation();
-								modals.openConfirmModal({
-									title: 'Confirm Delete',
-									labels: {
-										confirm: 'Delete',
-										cancel: 'Cancel',
-									},
-									children: (
-										<Text>Are you sure you want to delete this node?</Text>
-									),
-									onConfirm: async () => {
-										await deleteNode.mutateAsync(nodeData.id);
-										await reloadCatalogs();
-									},
-								});
-							}}
-						>
-							<IconTrash size={16} />
-						</ActionIcon>
-					</Tooltip>
 				</div>
 			</div>
 		);
@@ -330,20 +457,52 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 
 	return (
 		<>
-			<Box>
-				{treeData.length > 0 && (
+			<SectionCard
+				icon={IconFolder}
+				title='Outcomes'
+				description='Manage outcome nodes and build your disposition tree'
+				contentSpacing='sm'
+				backgroundColor='var(--mantine-color-gray-0)'
+			>
+				{isError && (
+					<Alert
+						icon={<IconAlertCircle size={16} />}
+						title='Unable to load outcomes'
+						color='red'
+						variant='light'
+						className={styles.errorBanner}
+					>
+						{error?.message ??
+							'An unexpected error occurred while loading the catalog.'}
+					</Alert>
+				)}
+				{isLoading ? (
+					<div className={styles.treeWrapper}>
+						<div className={styles.skeletonStack}>
+							{Array.from({ length: 4 }).map((_, index) => (
+								<Skeleton key={index} height={88} radius='md' animate />
+							))}
+						</div>
+					</div>
+				) : treeData.length > 0 ? (
 					<div className={styles.treeWrapper}>
 						<Tree
 							data={treeData}
 							openByDefault={true}
 							childrenAccessor='children'
 							idAccessor='id'
-							rowHeight={56}
+							rowHeight={84}
 							width='100%'
 							className={styles.treeRoot}
 						>
 							{Node}
 						</Tree>
+					</div>
+				) : (
+					<div className={`${styles.treeWrapper} ${styles.emptyState}`}>
+						<Text size='sm' c='dimmed'>
+							No outcomes yet. Start by adding a root outcome for this catalog.
+						</Text>
 					</div>
 				)}
 				<Flex justify='end' align='center' className={styles.addButtonRow}>
@@ -360,7 +519,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 						Add root outcome
 					</Button>
 				</Flex>
-			</Box>
+			</SectionCard>
 			<DispositionNodeForm
 				opened={modal.open}
 				onClose={() => setModal({ open: false })}

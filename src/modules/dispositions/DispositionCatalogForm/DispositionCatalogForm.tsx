@@ -4,10 +4,9 @@ import {
 	TextInput,
 	Textarea,
 	Switch,
-	Select,
+	SegmentedControl,
 	Button,
 	Stack,
-	Card,
 	Group,
 	Divider,
 } from '@mantine/core';
@@ -15,7 +14,8 @@ import type {
 	CreateDispositionCatalog,
 	DispositionCatalogModel,
 } from '~/models/DispositionCatalogModels';
-import RightSection from '~/components/RightSection';
+import RightSectionCard from '~/components/RightSectionCard';
+import { IconForms } from '@tabler/icons-react';
 
 type DispositionCatalogFormCoreProps = {
 	onSubmit: (values: CreateDispositionCatalog) => void;
@@ -59,47 +59,58 @@ const DispositionCatalogForm: FC<DispositionCatalogFormProps> = ({
 		<>
 			<Stack gap='sm'>
 				<form onSubmit={form.onSubmit((values) => onSubmit(values))}>
-					<RightSection
+					<RightSectionCard
+						icon={IconForms}
+						iconColor='red'
 						title='Catalog Details'
 						description='Basic information about the catalog'
 					>
-						<Card padding='md' withBorder>
-							<Stack gap='sm'>
-								<TextInput
-									label='Name'
-									placeholder='Catalog name'
-									required
-									{...form.getInputProps('name')}
-								/>
-								<Select
-									label='Type'
-									placeholder='Select type'
+						<Stack gap='sm'>
+							<TextInput
+								label='Name'
+								placeholder='Catalog name'
+								required
+								{...form.getInputProps('name')}
+							/>
+							<div>
+								<label
+									style={{
+										display: 'block',
+										marginBottom: '8px',
+										fontSize: '14px',
+										fontWeight: 500,
+									}}
+								>
+									Type
+								</label>
+								<SegmentedControl
+									fullWidth
 									data={[
 										{ value: 'INBOUND', label: 'Inbound' },
 										{ value: 'OUTBOUND', label: 'Outbound' },
 									]}
 									{...form.getInputProps('type')}
 								/>
-								<Textarea
-									label='Description'
-									placeholder='Catalog description'
-									autosize
-									minRows={2}
-									{...form.getInputProps('description')}
+							</div>
+							<Textarea
+								label='Description'
+								placeholder='Catalog description'
+								autosize
+								minRows={4}
+								{...form.getInputProps('description')}
+							/>
+							<Divider my='xs' />
+							<Group justify='space-between' align='center'>
+								<Switch
+									label='Default catalog'
+									{...form.getInputProps('isDefault', { type: 'checkbox' })}
 								/>
-								<Divider my='xs' />
-								<Group justify='space-between' align='center'>
-									<Switch
-										label='Default catalog'
-										{...form.getInputProps('isDefault', { type: 'checkbox' })}
-									/>
-									<Button type='submit' loading={loading}>
-										{mode === 'edit' ? 'Update Catalog' : 'Create Catalog'}
-									</Button>
-								</Group>
-							</Stack>
-						</Card>
-					</RightSection>
+								<Button type='submit' loading={loading}>
+									{mode === 'edit' ? 'Update Catalog' : 'Create Catalog'}
+								</Button>
+							</Group>
+						</Stack>
+					</RightSectionCard>
 				</form>
 			</Stack>
 		</>
