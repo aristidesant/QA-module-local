@@ -1,18 +1,15 @@
 import React from 'react';
 import { Text, Switch, ActionIcon, Menu, HoverCard } from '@mantine/core';
-import { modals } from '@mantine/modals';
 import {
 	IconChevronUp,
 	IconDots,
 	IconPencil,
 	IconTrash,
 	IconInfoCircle,
-	IconCalculator,
 } from '@tabler/icons-react';
 import styles from './ScheduleHeader.module.css';
 import type { Scheduler, DayConfig } from '~/models/SchedulerModel';
 import ScheduleHoverItem from './ScheduleHoverItem';
-import SchedulerCalculator from '~/modules/campaigns/CampaignsForm/ParametersSection/SchedulerCalculator';
 
 export interface ScheduleHeaderProps {
 	schedule?: Scheduler;
@@ -206,19 +203,6 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 							</HoverCard.Dropdown>
 						</HoverCard>
 					)}
-					<ActionIcon
-						size='md'
-						variant='subtle'
-						onClick={() =>
-							modals.open({
-								title: 'Scheduler Calculator',
-								fullScreen: true,
-								children: <SchedulerCalculator />,
-							})
-						}
-					>
-						<IconCalculator size={18} />
-					</ActionIcon>
 
 					<Menu position='bottom-end' withinPortal shadow='md'>
 						<Menu.Target>

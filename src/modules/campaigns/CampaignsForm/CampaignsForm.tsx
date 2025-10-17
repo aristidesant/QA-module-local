@@ -1,7 +1,7 @@
 // Refactored to use Mantine's useForm for all form state and validation
 
 import React from 'react';
-import { Stack, LoadingOverlay, Box } from '@mantine/core';
+import { Stack, LoadingOverlay, Box, ActionIcon } from '@mantine/core';
 import type { Campaign } from '../../../models/CampaignsModel';
 import {
 	useCreateCampaign,
@@ -25,6 +25,9 @@ import ConversationsSection from './ConversationsSection';
 import DoNotCallSection from './DoNotCallSection';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { CampaignStatus } from '~/models/CampaignStatus';
+import { modals } from '@mantine/modals';
+import { IconCalculator } from '@tabler/icons-react';
+import SchedulerCalculator from './ParametersSection/SchedulerCalculator';
 
 interface CampaignsFormProps {
 	campaign?: Partial<Campaign>;
@@ -169,6 +172,21 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({ campaign }) => {
 						<SectionCard
 							title='Working Hours'
 							description='Define the days and time ranges during which your agents are allowed to make calls.'
+							headerActions={
+								<ActionIcon
+									size='md'
+									variant='subtle'
+									onClick={() =>
+										modals.open({
+											title: 'Scheduler Calculator',
+											fullScreen: true,
+											children: <SchedulerCalculator />,
+										})
+									}
+								>
+									<IconCalculator size={18} />
+								</ActionIcon>
+							}
 						>
 							<ParametersSection
 								workingHours={form.values.workingHours || {}}
