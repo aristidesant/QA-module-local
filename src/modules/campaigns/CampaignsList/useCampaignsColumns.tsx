@@ -8,7 +8,6 @@ import {
 	Badge,
 	Progress,
 	Menu,
-	Stack,
 	ThemeIcon,
 } from '@mantine/core';
 import {
@@ -101,22 +100,22 @@ export const useCampaignsColumns = ({
 			header: 'Type',
 			cell: ({ row }) => {
 				const campaign = row.original;
+				const isOutbound = campaign.type === 'OUTBOUND';
 				return (
-					<Badge
-						variant='light'
-						color={campaign.type === 'OUTBOUND' ? 'green' : 'blue'}
-						radius='lg'
-						size='sm'
-						rightSection={
-							campaign.type === 'OUTBOUND' ? (
-								<IconArrowUpRight size={12} />
+					<Tooltip label={isOutbound ? 'Outbound' : 'Inbound'}>
+						<ThemeIcon
+							variant='light'
+							color={isOutbound ? 'green' : 'blue'}
+							size='sm'
+							radius='xl'
+						>
+							{isOutbound ? (
+								<IconArrowUpRight size={16} />
 							) : (
-								<IconArrowDownLeft size={12} />
-							)
-						}
-					>
-						{campaign.type}
-					</Badge>
+								<IconArrowDownLeft size={16} />
+							)}
+						</ThemeIcon>
+					</Tooltip>
 				);
 			},
 			size: 120,
@@ -128,14 +127,16 @@ export const useCampaignsColumns = ({
 				const campaign = row.original;
 				const statusInfo = getCampaignStatusInfo(campaign.status ?? '');
 				return (
-					<Badge
-						variant='light'
-						color={statusInfo.color}
-						size='sm'
-						leftSection={<statusInfo.icon size={16} />}
-					>
-						{statusInfo.label}
-					</Badge>
+					<Tooltip label={statusInfo.label}>
+						<Badge
+							variant='light'
+							color={statusInfo.color}
+							size='xs'
+							leftSection={<statusInfo.icon size={16} />}
+						>
+							{statusInfo.label}
+						</Badge>
+					</Tooltip>
 				);
 			},
 			size: 120,
@@ -147,17 +148,14 @@ export const useCampaignsColumns = ({
 				const campaign = row.original;
 				const progressPercentage = campaign.progress || 0;
 				return (
-					<Stack gap={4}>
+					<Tooltip label={`${progressPercentage.toFixed(0)}%`}>
 						<Progress
 							value={progressPercentage}
 							color={getProgressColor(progressPercentage)}
 							size='sm'
 							radius='xl'
 						/>
-						<Text size='xs' c='dimmed'>
-							{progressPercentage.toFixed(0)}%
-						</Text>
-					</Stack>
+					</Tooltip>
 				);
 			},
 			size: 150,
@@ -171,7 +169,7 @@ export const useCampaignsColumns = ({
 				if (!campaign.agents || campaign.agents.length === 0) {
 					return (
 						<Text size='xs' c='dimmed'>
-							No agents
+							N/A
 						</Text>
 					);
 				}

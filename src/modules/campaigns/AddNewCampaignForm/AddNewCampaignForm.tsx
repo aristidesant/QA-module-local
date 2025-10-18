@@ -32,7 +32,7 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 		initialValues: {
 			name: '',
 			description: '',
-			type: '',
+			type: 'OUTBOUND',
 			budget: 500,
 		},
 		validate: {
