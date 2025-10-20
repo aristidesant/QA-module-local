@@ -1,0 +1,75 @@
+.section {
+	background: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-xl);
+	margin-bottom: var(--mantine-spacing-md);
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	margin-bottom: var(--mantine-spacing-lg);
+}
+
+.titleGroup {
+	display: flex;
+	gap: var(--mantine-spacing-sm);
+	align-items: flex-start;
+}
+
+.icon {
+	color: var(--mantine-color-blue-6);
+	margin-top: 2px;
+	flex-shrink: 0;
+}
+
+.title {
+	font-size: var(--mantine-font-size-lg);
+	font-weight: 600;
+	color: var(--mantine-color-dark-9);
+	margin: 0 0 4px 0;
+}
+
+.description {
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-dimmed);
+	margin: 0;
+	line-height: 1.4;
+}
+
+.form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+}
+
+.nameFields {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--mantine-spacing-md);
+}
+
+.nameField {
+	flex: 1;
+}
+
+.inputDisabled {
+	background-color: var(--mantine-color-gray-0);
+	cursor: not-allowed;
+}
+
+.inputEditing {
+	background-color: var(--mantine-color-white);
+}
+
+.actions {
+	display: flex;
+	gap: var(--mantine-spacing-sm);
+	justify-content: flex-end;
+}
+
+.button {
+	min-width: 120px;
+}

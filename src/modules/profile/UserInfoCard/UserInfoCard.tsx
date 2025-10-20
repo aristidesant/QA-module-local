@@ -17,8 +17,20 @@ export const UserInfoCard: React.FC = () => {
 		return null;
 	}
 
-	const initials = user.username?.slice(0, 2).toUpperCase() || 'U';
+	// Get full name or fallback to username
+	const fullName =
+		user.firstName && user.lastName
+			? `${user.firstName} ${user.lastName}`
+			: user.firstName || user.lastName || user.username;
+
+	// Get initials from firstName and lastName, or username
+	const initials =
+		user.firstName && user.lastName
+			? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase()
+			: user.username?.slice(0, 2).toUpperCase() || 'U';
+
 	const isMFAEnabled = user?.mfaEnabled || false;
+	const hasName = !!(user.firstName || user.lastName);
 
 	// Format date if available
 	const formatDate = (date: string | Date | null | undefined) => {
@@ -42,7 +54,8 @@ export const UserInfoCard: React.FC = () => {
 					<div className={styles.avatar}>{initials}</div>
 				</div>
 				<div className={styles.userInfo}>
-					<h3 className={styles.userName}>{user.username}</h3>
+					<h3 className={styles.userName}>{fullName}</h3>
+					{hasName && <p className={styles.userUsername}>@{user.username}</p>}
 					<p className={styles.userEmail}>{user.email}</p>
 				</div>
 			</div>
@@ -51,6 +64,49 @@ export const UserInfoCard: React.FC = () => {
 
 			{/* Information Grid */}
 			<div className={styles.infoGrid}>
+				{hasName && (
+					<>
+						{user.firstName && (
+							<div className={styles.infoRow}>
+								<div className={styles.infoLabel}>
+									<IconUser
+										size={16}
+										stroke={1.5}
+										className={styles.labelIcon}
+									/>
+									<Text size='xs' c='dimmed' fw={500}>
+										First Name
+									</Text>
+								</div>
+								<div className={styles.infoValue}>
+									<Text size='sm' fw={500}>
+										{user.firstName}
+									</Text>
+								</div>
+							</div>
+						)}
+						{user.lastName && (
+							<div className={styles.infoRow}>
+								<div className={styles.infoLabel}>
+									<IconUser
+										size={16}
+										stroke={1.5}
+										className={styles.labelIcon}
+									/>
+									<Text size='xs' c='dimmed' fw={500}>
+										Last Name
+									</Text>
+								</div>
+								<div className={styles.infoValue}>
+									<Text size='sm' fw={500}>
+										{user.lastName}
+									</Text>
+								</div>
+							</div>
+						)}
+					</>
+				)}
+
 				<div className={styles.infoRow}>
 					<div className={styles.infoLabel}>
 						<IconUser size={16} stroke={1.5} className={styles.labelIcon} />

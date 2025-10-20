@@ -6,6 +6,15 @@ interface UserApiClient {
 	getUserById: (id: number) => Promise<UserModel>;
 	getCurrentUser: () => Promise<UserModel>;
 	updateUser: (id: number, userData: Partial<UserModel>) => Promise<UserModel>;
+	updateUserName: (
+		id: number,
+		firstName: string,
+		lastName: string
+	) => Promise<UserModel>;
+	updateCurrentUserName: (
+		firstName: string,
+		lastName: string
+	) => Promise<UserModel>;
 	deleteUser: (id: number) => Promise<void>;
 	createUser: (userData: UserModel) => Promise<UserModel>;
 	getAllUsers: () => Promise<UserModel[]>;
@@ -40,6 +49,33 @@ const userApi = (_authHeader: Record<string, string> = {}): UserApiClient => {
 			const response = await axios.patch<UserModel>(
 				`${DEFAULT_API_URL}/users/${id}`,
 				userData,
+				{ headers: { ..._authHeader } }
+			);
+			return response.data;
+		},
+
+		// Update user name by ID
+		updateUserName: async (
+			id: number,
+			firstName: string,
+			lastName: string
+		): Promise<UserModel> => {
+			const response = await axios.patch<UserModel>(
+				`${DEFAULT_API_URL}/users/${id}/name`,
+				{ firstName, lastName },
+				{ headers: { ..._authHeader } }
+			);
+			return response.data;
+		},
+
+		// Update current user's name
+		updateCurrentUserName: async (
+			firstName: string,
+			lastName: string
+		): Promise<UserModel> => {
+			const response = await axios.patch<UserModel>(
+				`${DEFAULT_API_URL}/users/me/update-name`,
+				{ firstName, lastName },
 				{ headers: { ..._authHeader } }
 			);
 			return response.data;

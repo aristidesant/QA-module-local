@@ -7,6 +7,14 @@ export type AuthRequest = {
 	loginType?: 'USER_PASS' | 'LDAP';
 };
 
+export type SignUpRequest = {
+	username: string;
+	email: string;
+	password: string;
+	firstName?: string;
+	lastName?: string;
+};
+
 export interface MFALoginResponse {
 	message: string;
 	accessToken: any;
@@ -73,6 +81,17 @@ export async function authenticate(
 ): Promise<MFALoginResponse> {
 	const response = await axios.post<MFALoginResponse>(
 		`${apiUrl}/auth/login`,
+		credentials
+	);
+	return response.data;
+}
+
+export async function signUp(
+	credentials: SignUpRequest,
+	apiUrl: string = DEFAULT_API_URL
+): Promise<{ message: string; userId: number }> {
+	const response = await axios.post<{ message: string; userId: number }>(
+		`${apiUrl}/auth/sign-up`,
 		credentials
 	);
 	return response.data;

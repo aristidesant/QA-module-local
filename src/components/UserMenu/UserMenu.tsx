@@ -24,12 +24,25 @@ export const UserMenu: React.FC = () => {
 	const { isImpersonating } = useImpersonationState();
 	const navigate = useNavigate();
 
-	// Show target client name when impersonating, otherwise user's username
+	// Get user's full name or fallback to username
+	const userFullName =
+		user?.firstName && user?.lastName
+			? `${user.firstName} ${user.lastName}`
+			: user?.firstName || user?.lastName || user?.username;
+
+	// Show target client name when impersonating, otherwise user's full name
 	const displayName =
-		isImpersonating && targetClient ? targetClient.name : user?.username;
+		isImpersonating && targetClient ? targetClient.name : userFullName;
 	const displayEmail =
 		isImpersonating && targetClient ? 'Impersonated Client' : user?.email;
-	const initials = displayName?.slice(0, 2).toUpperCase();
+
+	// Get initials from firstName and lastName, or username, or target client
+	const initials =
+		isImpersonating && targetClient
+			? targetClient.name?.slice(0, 2).toUpperCase()
+			: user?.firstName && user?.lastName
+				? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase()
+				: user?.username?.slice(0, 2).toUpperCase();
 
 	const handleLogout = () => {
 		logout();
