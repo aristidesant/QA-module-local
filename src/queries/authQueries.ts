@@ -10,6 +10,8 @@ import {
 	ImpersonateClientResponse,
 	EndImpersonationResponse,
 	type AuthRequest,
+	signUp,
+	type SignUpRequest,
 } from '~/api/authApi';
 import userApi from '~/api/userApi';
 import { jwtDecode } from 'jwt-decode';
@@ -94,6 +96,33 @@ export function useLogin() {
 			console.log('Login mutation failed:', error.message);
 		},
 	});
+}
+
+/**
+ * Sign up mutation: calls /auth/sign-up to create a new user account
+ */
+export function useSignUp() {
+	return useMutation<{ message: string; userId: number }, Error, SignUpRequest>(
+		{
+			mutationFn: async (payload: SignUpRequest) => {
+				const res = await signUp(payload);
+				return res;
+			},
+			onSuccess: (data) => {
+				// Handle successful registration, e.g., show notification
+				console.log(
+					'Sign up successful:',
+					data.message,
+					'User ID:',
+					data.userId
+				);
+			},
+			onError: (error: Error) => {
+				// Handle error if needed, e.g., show notification
+				console.log('Sign up mutation failed:', error.message);
+			},
+		}
+	);
 }
 
 export function useVerifyOTP() {

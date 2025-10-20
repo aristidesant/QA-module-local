@@ -2,6 +2,8 @@ export interface UserModel {
 	id: number;
 	email: string;
 	username: string;
+	firstName?: string;
+	lastName?: string;
 	status: string;
 	clientId: number;
 	createdAt: string | Date;

@@ -1,4 +1,5 @@
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
+import NameChangeSection from './NameChangeSection';
 import PasswordChangeSection from './PasswordChangeSection';
 import MFASection from './MFASection';
 import UserInfoCard from './UserInfoCard';
@@ -12,6 +13,7 @@ export const ProfilePage: React.FC = () => {
 			rightSection={<UserInfoCard />}
 		>
 			<div className={styles.sections}>
+				<NameChangeSection />
 				<PasswordChangeSection />
 				<MFASection />
 			</div>

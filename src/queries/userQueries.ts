@@ -96,3 +96,51 @@ export function useDisableMFA() {
 		},
 	});
 }
+
+/**
+ * Mutation to update a user's name by ID
+ */
+export function useUpdateUserName() {
+	const queryClient = useQueryClient();
+
+	return useMutation<
+		UserModel,
+		Error,
+		{ id: number; firstName: string; lastName: string }
+	>({
+		mutationFn: async ({ id, firstName, lastName }) => {
+			const api = userApi();
+			return api.updateUserName(id, firstName, lastName);
+		},
+		onSuccess: (data, variables) => {
+			// Update cache for the specific user
+			queryClient.setQueryData(['user', variables.id], data);
+			// Invalidate users list if it exists
+			queryClient.invalidateQueries({ queryKey: ['users'] });
+		},
+	});
+}
+
+/**
+ * Mutation to update current user's name
+ */
+export function useUpdateCurrentUserName() {
+	const queryClient = useQueryClient();
+	const { setUser } = useSessionStore();
+
+	return useMutation<UserModel, Error, { firstName: string; lastName: string }>(
+		{
+			mutationFn: async ({ firstName, lastName }) => {
+				const api = userApi();
+				return api.updateCurrentUserName(firstName, lastName);
+			},
+			onSuccess: (updatedUser) => {
+				// Update session store with new user data
+				setUser(updatedUser);
+				// Update current user cache
+				queryClient.setQueryData(['currentUser'], updatedUser);
+				queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+			},
+		}
+	);
+}
