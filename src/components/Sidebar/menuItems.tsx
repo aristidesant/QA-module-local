@@ -2,7 +2,6 @@ import {
 	IconLayoutDashboard,
 	IconListDetails,
 	IconPhoneCall,
-	IconRobot,
 } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 import styles from './Sidebar.module.css';
@@ -26,11 +25,6 @@ export const menuItems: MenuItem[] = [
 		label: 'Campaigns',
 		icon: <IconListDetails size={20} className={styles.menuIcon} />,
 		to: '/campaigns',
-	},
-	{
-		label: 'Agents',
-		icon: <IconRobot size={20} className={styles.menuIcon} />,
-		to: '/agents',
 	},
 	{
 		label: 'Conversations',
