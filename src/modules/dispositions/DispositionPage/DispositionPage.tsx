@@ -1,14 +1,19 @@
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
-import DispositionCatalogList from '../DispositionCatalogList';
+import DispositionCatalogList, {
+	DispositionCatalogListHandles,
+} from '../DispositionCatalogList';
 import { useDispositionStore } from '../dispositionRightComponentStore';
 import DispositionCatalogNode from '../DispositionCatalogForm/DispositionCatalogNode';
 import FallbackRightComponent from '~/components/FallbackRightComponent';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import { Button } from '@mantine/core';
+import { IconOutbound } from '@tabler/icons-react';
 
 const DispositionPage: React.FC = () => {
 	const { rightComponent, catalog, setRightComponent } = useDispositionStore(
 		(s) => s
 	);
+	const catalogListRef = useRef<DispositionCatalogListHandles>(null);
 
 	// clean the right component
 	useEffect(() => {
@@ -17,10 +22,20 @@ const DispositionPage: React.FC = () => {
 		};
 	}, []);
 
+	const handleAddNew = () => {
+		catalogListRef.current?.openCreateForm();
+	};
+
 	return (
 		<ContentContainer
 			title='Outcomes'
 			description='Manage all outcome catalogs.'
+			titleIcon={<IconOutbound />}
+			titleRight={
+				<Button onClick={handleAddNew} size='sm'>
+					Add New Catalog
+				</Button>
+			}
 			rightSection={
 				rightComponent || (
 					<FallbackRightComponent
@@ -33,7 +48,7 @@ const DispositionPage: React.FC = () => {
 				)
 			}
 		>
-			<DispositionCatalogList />
+			<DispositionCatalogList ref={catalogListRef} />
 			{catalog && <DispositionCatalogNode catalogId={catalog.id} />}
 		</ContentContainer>
 	);

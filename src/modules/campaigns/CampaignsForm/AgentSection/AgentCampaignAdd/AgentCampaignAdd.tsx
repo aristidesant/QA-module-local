@@ -17,6 +17,8 @@ import { isAxiosError } from 'axios';
 import { notifications } from '@mantine/notifications';
 import { FilterContainer } from '~/components/FilterContainer';
 import { useCampaignsStore } from '~/stores/campaignsStore';
+import { modals } from '@mantine/modals';
+import CloneAgentModal from './CloneAgentModal';
 
 interface AgentCampaignAddProps {
 	campaignId: number;
@@ -107,9 +109,20 @@ export const AgentCampaignAdd: React.FC<AgentCampaignAddProps> = ({
 		}
 	};
 
+	const handleClone = (agent: AgentWithCampaignListItem) => {
+		modals.open({
+			title: 'Clone Agent',
+			modalId: 'clone-agent-modal',
+			size: 'md',
+			centered: true,
+			children: <CloneAgentModal agent={agent} onSuccess={() => refetch()} />,
+		});
+	};
+
 	const columns = useAgentSelectionColumns({
 		onAdd: handleAdd,
 		onPlay: handlePlay,
+		onClone: handleClone,
 		isDisabled: (row) => !!row.campaignName,
 		isPlaying: (row) => playingAgentId === row.id,
 	});

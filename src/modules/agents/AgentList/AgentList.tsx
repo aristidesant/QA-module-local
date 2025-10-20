@@ -23,10 +23,12 @@ import {
 	useMediaQuery,
 	useDebouncedValue,
 } from '@mantine/hooks';
+import { SortingState } from '@tanstack/react-table';
 import classes from './AgentList.module.css';
 import type AgentListObject from '~/models/AgentListObject';
 import AgentSimpleDetails from '../AgentSimpleDetails/AgentSimpleDetails';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
+import FilterContainer from '~/components/FilterContainer/FilterContainer';
 import { useGetAllAgents, useDeleteAgent } from '~/queries/agentQueries';
 import { useAgentStore } from '~/stores/agentStore';
 import BaseTable, { type FilterMode } from '~/components/BaseTable/BaseTable';
@@ -266,8 +268,22 @@ const AgentList: React.FC = () => {
 		isDeleting: deleteMutation.isPending,
 	});
 
-	const handleFilterChange = (key: keyof AgentFilters, value: string) => {
-		setFilters((prev) => ({ ...prev, [key]: value }));
+	const handleSortingChange = (sorting: SortingState) => {
+		console.log('Sorting changed:', sorting); // TODO: Remove
+		const sort = sorting[0];
+		const newFilters = {
+			...filters,
+			sortBy: sort
+				? (sort.id as 'name' | 'createdAt' | 'updatedAt')
+				: 'createdAt',
+			sortOrder: sort
+				? sort.desc
+					? ('DESC' as const)
+					: ('ASC' as const)
+				: ('DESC' as const),
+		};
+		setFilters(newFilters);
+		console.log('Filter configuration:', newFilters); // TODO: Remove
 	};
 
 	const handleClearFilters = () => {
@@ -282,6 +298,13 @@ const AgentList: React.FC = () => {
 
 	const hasAgents = totalItems > 0;
 	const hasMultiplePages = totalPages > 1;
+
+	function handleFilterChange(key: string, value: string): void {
+		setFilters((prev) => ({
+			...prev,
+			[key]: value,
+		}));
+	}
 
 	return (
 		<ContentContainer
@@ -312,7 +335,7 @@ const AgentList: React.FC = () => {
 				<AgentCreate opened={opened} onClose={close} />
 
 				{/* Filters */}
-				<Paper className={classes.filtersContainer}>
+				<FilterContainer>
 					<Group gap='md' wrap='wrap'>
 						{/* Search */}
 						<TextInput
@@ -327,9 +350,6 @@ const AgentList: React.FC = () => {
 
 						{/* Agent Type Filter */}
 						<div className={classes.filterGroup}>
-							<Text size='xs' fw={500} c='dimmed' mb={4}>
-								Type
-							</Text>
 							<Chip.Group
 								value={filters.type}
 								onChange={(value) => {
@@ -352,73 +372,8 @@ const AgentList: React.FC = () => {
 							</Chip.Group>
 						</div>
 
-						{/* Sorting Controls */}
-						<div className={classes.filterGroup}>
-							<Text size='xs' fw={500} c='dimmed' mb={4}>
-								Sort
-							</Text>
-							<Group gap='xs' wrap='nowrap'>
-								<Select
-									placeholder='Sort by'
-									data={[
-										{ value: 'name', label: 'Name' },
-										{ value: 'createdAt', label: 'Created' },
-										{ value: 'updatedAt', label: 'Updated' },
-									]}
-									value={filters.sortBy}
-									onChange={(value) => {
-										if (value) {
-											handleFilterChange('sortBy', value);
-										}
-									}}
-									size='sm'
-									w={120}
-									allowDeselect={false}
-								/>
-								<Select
-									placeholder='Order'
-									data={[
-										{ value: 'ASC', label: 'A-Z ↑' },
-										{ value: 'DESC', label: 'Z-A ↓' },
-									]}
-									value={filters.sortOrder}
-									onChange={(value) => {
-										if (value) {
-											handleFilterChange('sortOrder', value);
-										}
-									}}
-									size='sm'
-									w={100}
-									allowDeselect={false}
-								/>
-							</Group>
-						</div>
-
-						{/* Page Size */}
-						<div className={classes.filterGroup}>
-							<Text size='xs' fw={500} c='dimmed' mb={4}>
-								Show
-							</Text>
-							<Select
-								placeholder='Page size'
-								data={['10', '20', '50', '100']}
-								value={pageSize.toString()}
-								onChange={(value) => {
-									if (value) {
-										setPageSize(parseInt(value));
-									}
-								}}
-								size='sm'
-								w={80}
-								allowDeselect={false}
-							/>
-						</div>
-
 						{/* Clear Filters */}
 						<div className={classes.filterGroup}>
-							<Text size='xs' fw={500} c='transparent' mb={4}>
-								.
-							</Text>
 							<ActionIcon
 								variant='light'
 								size='lg'
@@ -432,7 +387,7 @@ const AgentList: React.FC = () => {
 							</ActionIcon>
 						</div>
 					</Group>
-				</Paper>
+				</FilterContainer>
 
 				{/* Loading State */}
 				{isLoading && (
@@ -458,14 +413,6 @@ const AgentList: React.FC = () => {
 				{/* Agents Table */}
 				{!isLoading && !isError && hasAgents && (
 					<>
-						{/* Results Info */}
-						<Group justify='space-between' mb='xs'>
-							<Text size='sm' c='dimmed'>
-								Showing {agents?.data?.length || 0} of {totalItems} agents
-								{hasActiveFilters && ' (filtered)'}
-							</Text>
-						</Group>
-
 						<BaseTable<AgentListObject>
 							data={paginatedAgents}
 							columns={columns}
@@ -474,6 +421,10 @@ const AgentList: React.FC = () => {
 							onRowClick={handleAgentClick}
 							filterMode={filterMode}
 							density={'default'}
+							initialSort={[
+								{ id: filters.sortBy, desc: filters.sortOrder === 'DESC' },
+							]}
+							onSortingChange={handleSortingChange}
 						/>
 					</>
 				)}
@@ -481,13 +432,35 @@ const AgentList: React.FC = () => {
 				{/* Pagination */}
 				{hasAgents && hasMultiplePages && (
 					<Center mt='md'>
-						<Pagination
-							total={totalPages}
-							value={page}
-							onChange={setPage}
-							withEdges
-							size='sm'
-						/>
+						<Group gap='md' align='center'>
+							{/* Results Info */}
+							<Group justify='space-between' align='center' mb='xs'>
+								<Text size='sm' c='dimmed'>
+									Showing {agents?.data?.length || 0} of {totalItems} agents
+									{hasActiveFilters && ' (filtered)'}
+								</Text>
+							</Group>
+							<Select
+								placeholder='Page size'
+								data={['10', '20', '50', '100']}
+								value={pageSize.toString()}
+								onChange={(value) => {
+									if (value) {
+										setPageSize(parseInt(value));
+									}
+								}}
+								size='sm'
+								w={80}
+								allowDeselect={false}
+							/>
+							<Pagination
+								total={totalPages}
+								value={page}
+								onChange={setPage}
+								withEdges
+								size='sm'
+							/>
+						</Group>
 					</Center>
 				)}
 

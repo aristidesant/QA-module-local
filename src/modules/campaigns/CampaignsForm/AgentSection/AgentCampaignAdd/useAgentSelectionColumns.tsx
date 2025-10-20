@@ -14,12 +14,14 @@ import {
 	IconPlayerPlay,
 	IconPlayerPause,
 	IconPlus,
+	IconCopy,
 } from '@tabler/icons-react';
 import classes from './AgentCampaignAdd.module.css';
 
 interface UseAgentSelectionColumnsOptions {
 	onAdd: (agent: AgentWithCampaignListItem) => void;
 	onPlay: (agent: AgentWithCampaignListItem) => void;
+	onClone: (agent: AgentWithCampaignListItem) => void;
 	isDisabled: (agent: AgentWithCampaignListItem) => boolean;
 	isPlaying: (agent: AgentWithCampaignListItem) => boolean;
 }
@@ -27,6 +29,7 @@ interface UseAgentSelectionColumnsOptions {
 const useAgentSelectionColumns = ({
 	onAdd,
 	onPlay,
+	onClone,
 	isDisabled,
 	isPlaying,
 }: UseAgentSelectionColumnsOptions): ColumnDef<AgentWithCampaignListItem>[] => {
@@ -129,6 +132,15 @@ const useAgentSelectionColumns = ({
 								)}
 							</ActionIcon>
 						</Tooltip>
+						<Tooltip label='Clone agent' withArrow>
+							<ActionIcon
+								variant='subtle'
+								color='blue'
+								onClick={() => onClone(row.original)}
+							>
+								<IconCopy size={16} />
+							</ActionIcon>
+						</Tooltip>
 						<Tooltip label='Add agent' withArrow>
 							<ActionIcon
 								variant='subtle'
@@ -147,7 +159,7 @@ const useAgentSelectionColumns = ({
 				},
 			},
 		],
-		[onAdd, onPlay, isDisabled, isPlaying]
+		[onAdd, onPlay, onClone, isDisabled, isPlaying]
 	);
 };
 
