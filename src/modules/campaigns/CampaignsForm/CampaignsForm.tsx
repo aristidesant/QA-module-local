@@ -57,6 +57,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({ campaign }) => {
 	const form = useCampaignForm({
 		initialValues: {
 			name: campaign?.name || '',
+			agentName: campaign?.agentName || '',
 			description: campaign?.description || '',
 			budget: campaign?.budget ?? 0,
 			spent: campaign?.spent ?? 0,
@@ -65,6 +66,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({ campaign }) => {
 			userId: campaign?.userId ?? 0,
 			promptId: campaign?.promptId ?? undefined,
 			objectiveId: campaign?.objectiveId ?? undefined,
+			voiceId: campaign?.voiceId ?? undefined,
 			clientId: campaign?.clientId ?? 0,
 			tags: campaign?.tags || [],
 			workingHours: campaign?.workingHours || defaultWorkingHours,

@@ -8,6 +8,27 @@ import { DEFAULT_API_URL } from './config';
 
 // import { getAuthorizationHeader } from "../utils/tokenUtils";
 
+export interface CreateCampaignWithAgentDTO {
+	campaign: {
+		name: string;
+		description: string;
+		budget?: number;
+		spent?: number;
+		type: 'OUTBOUND' | 'INBOUND';
+		campaignExecutionType?: 'TIME_BASED' | 'CONTACT_BASED';
+		status?: string;
+		promptId?: number;
+		objectiveId?: number;
+	};
+	agent: {
+		conversationConfig?: Record<string, any>;
+		platformSettings?: Record<string, any>;
+		name: string;
+		type: 'INBOUND' | 'OUTBOUND';
+		voiceId: string;
+	};
+}
+
 /**
  * Generic Campaigns API client (uses global axios interceptors for auth)
  */
@@ -142,6 +163,15 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 			const response = await axios.patch<Campaign>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}/assign-objective`,
 				{ objectiveId }
+			);
+			return response.data;
+		},
+
+		// CREATE campaign with agent
+		createCampaignWithAgent: async (data: CreateCampaignWithAgentDTO) => {
+			const response = await axios.post<Campaign>(
+				`${DEFAULT_API_URL}/campaigns/with-agent`,
+				data
 			);
 			return response.data;
 		},

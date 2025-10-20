@@ -8,6 +8,7 @@ import { DEFAULT_API_URL } from './config';
 export type StartDemoParams = {
 	agentId: string;
 	phoneNumber: string;
+	campaignId?: number;
 	dynamicVariables?: {
 		customerName: string;
 		customerId: string;

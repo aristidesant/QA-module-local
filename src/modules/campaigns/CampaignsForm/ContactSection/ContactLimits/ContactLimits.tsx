@@ -169,6 +169,8 @@ export const ContactLimits = ({
 						expirationDate: data.expirationDate ?? undefined,
 						maxCallsPerContact: data.maxCallsPerContact ?? undefined,
 						maxCallsPerList: data.maxCallsPerList ?? undefined,
+						name: data.name ?? undefined,
+						description: data.description ?? undefined,
 					},
 				});
 
@@ -216,7 +218,6 @@ export const ContactLimits = ({
 						handleChange('name', name);
 					}}
 				/>
-
 				<Group grow gap={'xs'}>
 					<CallLimitCard
 						title='Max calls'
@@ -231,7 +232,6 @@ export const ContactLimits = ({
 						onChange={(value) => handleChange('maxCallsPerList', value)}
 					/>
 				</Group>
-
 				<SchedulerPreview
 					scheduler={activeScheduler || undefined}
 					onClick={handleScheduleAction}
@@ -248,7 +248,6 @@ export const ContactLimits = ({
 						onSchemaSelected={setSelectedSchemaId}
 					/>
 				)}
-
 				<Group justify='flex-end' mt='md'>
 					<Button
 						variant='outline'

@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import campaignsApi from '~/api/campaignsApi';
+import campaignsApi, {
+	type CreateCampaignWithAgentDTO,
+} from '~/api/campaignsApi';
 import type { Campaign, PaginatedResponse } from '~/models/CampaignsModel';
 
 // Create campaign
@@ -335,6 +337,27 @@ export const useAssignCampaignObjective = () => {
 		onError: (error) => {
 			// eslint-disable-next-line no-console
 			console.error('Error assigning objective to campaign:', error);
+		},
+	});
+};
+
+// Create campaign with agent
+export const useCreateCampaignWithAgent = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async (data: CreateCampaignWithAgentDTO) => {
+			const api = campaignsApi();
+			return api.createCampaignWithAgent(data);
+		},
+		onSuccess: (data) => {
+			queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+			queryClient.invalidateQueries({ queryKey: ['campaigns-paginated'] });
+			// eslint-disable-next-line no-console
+			console.log('Campaign with agent created successfully:', data);
+		},
+		onError: (error) => {
+			// eslint-disable-next-line no-console
+			console.error('Error creating campaign with agent:', error);
 		},
 	});
 };

@@ -1,0 +1,78 @@
+/* Container */
+.container {
+	width: 100%;
+}
+
+/* Loading & Error states */
+.loadingContainer {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-xl);
+}
+
+.errorContainer {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: var(--mantine-spacing-md);
+}
+
+/* Selected voice card */
+.selectedCard {
+	padding: var(--mantine-spacing-md);
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid var(--mantine-color-gray-3);
+	background-color: var(--mantine-color-white);
+	transition: border-color 0.2s ease;
+}
+
+.selectedCard:hover {
+	border-color: var(--mantine-color-blue-5);
+}
+
+.avatarFemale {
+	border: 2px solid var(--mantine-color-pink-4);
+}
+
+.avatarMale {
+	border: 2px solid var(--mantine-color-blue-4);
+}
+
+.voiceName {
+	color: var(--mantine-color-dark-7);
+}
+
+/* Empty state card */
+.emptyCard {
+	padding: var(--mantine-spacing-lg);
+	border-radius: var(--mantine-radius-md);
+	border: 2px dashed var(--mantine-color-gray-4);
+	background-color: var(--mantine-color-gray-0);
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.emptyCard:hover {
+	border-color: var(--mantine-color-blue-5);
+	background-color: var(--mantine-color-blue-0);
+}
+
+.emptyCard:hover .emptyIcon {
+	color: var(--mantine-color-blue-6);
+}
+
+.emptyIcon {
+	color: var(--mantine-color-gray-5);
+	transition: color 0.2s ease;
+}
+
+/* Modal */
+.modalContainer {
+	padding: var(--mantine-spacing-md);
+	max-height: 60vh;
+	overflow-y: auto;
+}

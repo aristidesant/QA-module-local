@@ -5,7 +5,7 @@ import { IconDeviceFloppy } from '@tabler/icons-react';
 import AgentListObject from '~/models/AgentListObject';
 import type { AgentConfigModel } from '~/models/AgentListObject';
 import { useUpdateAgent } from '~/queries/agentQueries';
-import AgentVoices from '~/modules/agent/AgentVoices';
+import AgentVoices from '~/modules/campaigns/AddNewCampaignForm/AgentVoices';
 
 type AgentQuickEditProps = {
 	agent: AgentListObject;
@@ -93,10 +93,8 @@ const AgentQuickEdit: React.FC<AgentQuickEditProps> = ({ agent, onUpdate }) => {
 	return (
 		<Stack>
 			<AgentVoices
-				onSelectVoice={handleVoiceSelect}
-				agentData={editableAgent}
-				onUpdateAgentData={handleAgentUpdate}
-				agent={agent}
+				onVoiceSelect={(voice) => handleVoiceSelect(voice.voice.id)}
+				selectedVoiceId={voiceId}
 			/>
 
 			<Button

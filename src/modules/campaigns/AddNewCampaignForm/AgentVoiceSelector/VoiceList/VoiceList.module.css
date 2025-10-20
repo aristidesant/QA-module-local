@@ -1,0 +1,47 @@
+.container {
+	width: 100%;
+}
+
+.grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: var(--mantine-spacing-md);
+}
+
+.card {
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	cursor: pointer;
+	transition: all 0.2s ease;
+	background-color: var(--mantine-color-white);
+}
+
+.card:hover {
+	border-color: var(--mantine-color-blue-4);
+	background-color: var(--mantine-color-blue-0);
+}
+
+.selectedCard {
+	border-color: var(--mantine-color-blue-5);
+	background-color: var(--mantine-color-blue-1);
+}
+
+.selectedCard:hover {
+	border-color: var(--mantine-color-blue-6);
+	background-color: var(--mantine-color-blue-1);
+}
+
+.playerContainer {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.emptyState {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--mantine-spacing-xl);
+	text-align: center;
+}

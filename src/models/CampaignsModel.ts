@@ -45,6 +45,7 @@ export interface CampaignParameters {
 export interface Campaign {
 	id: number;
 	name: string;
+	agentName: string;
 	description: string;
 	budget: number;
 	spent: number;
@@ -54,6 +55,7 @@ export interface Campaign {
 	clientId: number;
 	promptId?: number;
 	objectiveId?: number;
+	voiceId?: string;
 	createdAt: string; // ISO date string
 	updatedAt: string; // ISO date string
 	overAllScore?: number;

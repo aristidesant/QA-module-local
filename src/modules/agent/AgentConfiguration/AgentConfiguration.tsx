@@ -1,6 +1,6 @@
 import { Button, Group, Loader, Stack, Text } from '@mantine/core';
 import { type ReactNode, useCallback } from 'react';
-import AgentVoices from '../AgentVoices';
+import AgentVoices from '../../campaigns/AddNewCampaignForm/AgentVoices';
 import AgentConfigurationTypeSelector from '../AgentConfigurationTypeSelector';
 import AgentSettings from '../AgentSettings';
 import { useAgentStore } from '~/stores/agentStore';
@@ -51,22 +51,18 @@ const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
 			{isLoading && <div className={styles.loadingOverlay} />}
 			{withVoiceSelection && (
 				<AgentVoices
-					onSelectVoice={(voiceId: string) => {
+					onVoiceSelect={(voice) => {
 						handleAgentUpdate({
 							conversationConfig: {
 								...(editableAgent?.conversationConfig || {}),
 								tts: {
 									...(editableAgent?.conversationConfig?.tts || {}),
-									voiceId: voiceId,
+									voiceId: voice.voice.id,
 								},
 							},
 						});
-						onVoiceSelect(voiceId);
+						onVoiceSelect(voice.voice.id);
 					}}
-					agentData={editableAgent}
-					onSetRightSection={onSetRightSection}
-					onUpdateAgentData={handleAgentUpdate}
-					{...{ agent }}
 				/>
 			)}
 			{agentMode && <AgentConfigurationTypeSelector />}

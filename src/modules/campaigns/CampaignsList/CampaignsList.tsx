@@ -58,6 +58,11 @@ export const CampaignsList: React.FC = () => {
 		string | null
 	>(null);
 
+	const [addNewModalOpened, setAddNewModalOpened] = useState(false);
+	const [campaignTestCallId, setCampaignTestCallId] = useState<number | null>(
+		null
+	);
+
 	// Fetch the agent when modal is opened
 	const { data: selectedAgentForCall } = useGetAgent(
 		selectedAgentIdForCall || ''
@@ -103,16 +108,19 @@ export const CampaignsList: React.FC = () => {
 		const agentId = campaign.agents[0].agentId;
 		setSelectedAgentIdForCall(agentId);
 		setTestCallModalOpened(true);
+		setCampaignTestCallId(campaign.id);
 	};
 
 	const handleTestCallSuccess = () => {
 		setTestCallModalOpened(false);
 		setSelectedAgentIdForCall(null);
+		setCampaignTestCallId(null);
 	};
 
 	const handleTestCallClose = () => {
 		setTestCallModalOpened(false);
 		setSelectedAgentIdForCall(null);
+		setCampaignTestCallId(null);
 	};
 
 	// Calculate total pages from server response
@@ -182,25 +190,7 @@ export const CampaignsList: React.FC = () => {
 	};
 
 	const handleShowAddNewCampaignModal = () => {
-		modals.open({
-			modalId: 'create-campaign',
-			title: 'Create New Campaign',
-			children: (
-				<AddNewCampaignForm
-					onComplete={() => {
-						reloadCampaigns();
-						selectCampaign(null);
-						modals.close('create-campaign');
-					}}
-					onCancel={() => {
-						selectCampaign(null);
-						modals.close('create-campaign');
-					}}
-				/>
-			),
-			size: 'lg',
-			centered: true,
-		});
+		setAddNewModalOpened(true);
 	};
 
 	const handleCampaignClick = (campaign: Campaign) => {
@@ -306,9 +296,31 @@ export const CampaignsList: React.FC = () => {
 					<OutboundCallForm
 						agent={selectedAgentForCall}
 						onSuccess={handleTestCallSuccess}
+						campaignId={campaignTestCallId!}
 						onClose={handleTestCallClose}
 					/>
 				)}
+			</Modal>
+
+			{/* Add New Campaign Modal */}
+			<Modal
+				opened={addNewModalOpened}
+				onClose={() => setAddNewModalOpened(false)}
+				title='Create New Campaign'
+				size='90%'
+				centered
+			>
+				<AddNewCampaignForm
+					onComplete={() => {
+						reloadCampaigns();
+						selectCampaign(null);
+						setAddNewModalOpened(false);
+					}}
+					onCancel={() => {
+						selectCampaign(null);
+						setAddNewModalOpened(false);
+					}}
+				/>
 			</Modal>
 		</>
 	);
