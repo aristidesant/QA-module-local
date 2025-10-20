@@ -174,11 +174,13 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 						isLoading={isTableLoading}
 						density='compact'
 						onRowClick={handleRowClick}
-						getRowClassName={(row) =>
-							row.original.id === effectiveSelectedId
-								? styles.selectedRow
-								: undefined
-						}
+						getRowClassName={(row) => {
+							const classes = [styles.tableRow];
+							if (row.original.id === effectiveSelectedId) {
+								classes.push(styles.selectedRow);
+							}
+							return classes.join(' ');
+						}}
 					/>
 				</div>
 			)}

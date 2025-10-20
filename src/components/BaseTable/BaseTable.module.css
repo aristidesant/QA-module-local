@@ -28,7 +28,7 @@
 .compactTh,
 .compactTd {
 	font-size: var(--mantine-font-size-xs);
-	padding: 6px 8px;
+	padding: 10px 12px;
 }
 
 .sortable {

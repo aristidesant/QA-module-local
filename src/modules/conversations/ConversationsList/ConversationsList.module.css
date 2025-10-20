@@ -42,6 +42,19 @@
 	background-color: var(--mantine-color-blue-0);
 }
 
+.tableRow {
+	cursor: pointer;
+	transition: background-color 0.15s ease;
+}
+
+.tableRow:hover {
+	background-color: var(--mantine-color-gray-1);
+}
+
+.tableRow.selectedRow:hover {
+	background-color: var(--mantine-color-blue-1);
+}
+
 .contactCell {
 	display: flex;
 	flex-direction: column;

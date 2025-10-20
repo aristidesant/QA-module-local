@@ -232,7 +232,7 @@ export function ClientConfigsContent({
 				opened={createModalOpened}
 				onClose={() => setCreateModalOpened(false)}
 				title='Create Client Configuration'
-				size='lg'
+				size='90%'
 			>
 				<ClientConfigsForm
 					onSuccess={() => setCreateModalOpened(false)}
@@ -248,7 +248,7 @@ export function ClientConfigsContent({
 					setSelectedConfig(null);
 				}}
 				title='Edit Client Configuration'
-				size='lg'
+				size='90%'
 			>
 				{selectedConfig && (
 					<ClientConfigsForm

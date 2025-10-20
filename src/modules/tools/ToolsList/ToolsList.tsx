@@ -9,6 +9,7 @@ import BaseTable from '~/components/BaseTable';
 import useToolsListColumns from './useToolsListColumns';
 import styles from './ToolsList.module.css';
 import ToolsListHeader from './ToolsListHeader';
+import EmptyState from '~/components/EmptyState';
 
 interface ToolsListProps {}
 
@@ -112,20 +113,19 @@ function ToolsList({}: ToolsListProps) {
 						/>
 					)}
 
-					<Center className={styles.emptyState}>
-						<Stack align='center' gap='md'>
-							<IconTool size={48} color='var(--mantine-color-gray-5)' />
-							<Text size='lg' fw={500} c='dimmed'>
-								No tools in this category
-							</Text>
-							<Text size='sm' c='dimmed' ta='center'>
+					<EmptyState
+						icon={<IconTool size={48} color='var(--mantine-color-gray-5)' />}
+						message='No tools in this category'
+						description={
+							<>
 								There are no tools under "{selectedToolCategory?.name}"
 								category.
 								<br />
 								Add one to get started.
-							</Text>
-						</Stack>
-					</Center>
+							</>
+						}
+						className={styles.emptyState}
+					/>
 				</div>
 			);
 		}

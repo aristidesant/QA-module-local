@@ -137,74 +137,105 @@ export function ClientConfigsForm({
 	};
 
 	return (
-		<form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
-			<TextInput
-				label='Name'
-				placeholder='contact_columns'
-				required
-				disabled={isEditMode}
-				description={
-					isEditMode
-						? 'Name cannot be changed'
-						: 'Use lowercase letters, numbers, and underscores only'
-				}
-				{...form.getInputProps('name')}
-				className={styles.input}
-			/>
+		<div className={styles.formWrapper}>
+			<div className={styles.container}>
+				{/* Left Side - Common Inputs */}
+				<div className={styles.well}>
+					<div className={styles.sectionHeader}>
+						<h3 className={styles.sectionTitle}>Configuration Details</h3>
+						<p className={styles.sectionDescription}>
+							Set up the basic information for this configuration
+						</p>
+					</div>
 
-			<TextInput
-				label='Description'
-				placeholder='Contact columns mapping for CSV imports'
-				required
-				{...form.getInputProps('description')}
-				className={styles.input}
-			/>
+					<TextInput
+						label='Name'
+						placeholder='contact_columns'
+						required
+						disabled={isEditMode}
+						description={
+							isEditMode
+								? 'Name cannot be changed'
+								: 'Use lowercase letters, numbers, and underscores only'
+						}
+						{...form.getInputProps('name')}
+						className={styles.input}
+						radius='md'
+						size='md'
+					/>
 
-			<Select
-				label='Type'
-				placeholder='Select type'
-				required
-				data={CONFIG_TYPES}
-				{...form.getInputProps('type')}
-				className={styles.input}
-			/>
+					<Textarea
+						label='Description'
+						placeholder='Brief description of the configuration'
+						required
+						autosize={false}
+						minRows={9}
+						rows={9}
+						{...form.getInputProps('description')}
+						className={styles.descriptionTextarea}
+						radius='md'
+					/>
 
-			<Textarea
-				label='Value'
-				placeholder={
-					form.values.type === 'json' || form.values.type === 'array'
-						? '{"key": "value"}'
-						: 'Enter configuration value'
-				}
-				description={
-					form.values.type === 'json' || form.values.type === 'array'
-						? 'Enter valid JSON. It will be auto-formatted on blur.'
-						: 'Enter the configuration value'
-				}
-				required
-				autosize
-				minRows={8}
-				maxRows={20}
-				{...form.getInputProps('value')}
-				onBlur={(e) => {
-					form.getInputProps('value').onBlur?.(e);
-					handleValueBlur();
-				}}
-				className={styles.valueTextarea}
-			/>
+					<Select
+						label='Type'
+						placeholder='Select configuration type'
+						required
+						data={CONFIG_TYPES}
+						{...form.getInputProps('type')}
+						className={styles.input}
+						radius='md'
+						size='md'
+					/>
+				</div>
 
-			<Group justify='flex-end' mt='md' className={styles.actions}>
-				<Button variant='subtle' onClick={onCancel}>
-					Cancel
-				</Button>
-				<Button
-					type='submit'
-					loading={createMutation.isPending || updateMutation.isPending}
-					className={styles.submitButton}
-				>
-					{isEditMode ? 'Update' : 'Create'}
-				</Button>
-			</Group>
-		</form>
+				{/* Right Side - Textarea */}
+				<div className={styles.well}>
+					<div className={styles.sectionHeader}>
+						<h3 className={styles.sectionTitle}>Configuration Value</h3>
+						<p className={styles.sectionDescription}>
+							{form.values.type === 'json' || form.values.type === 'array'
+								? 'Enter valid JSON that will be auto-formatted'
+								: 'Enter the configuration value'}
+						</p>
+					</div>
+
+					<Textarea
+						label='Value'
+						placeholder={
+							form.values.type === 'json' || form.values.type === 'array'
+								? '{"key": "value"}'
+								: 'Enter configuration value'
+						}
+						required
+						autosize
+						minRows={8}
+						maxRows={20}
+						{...form.getInputProps('value')}
+						onBlur={(e) => {
+							form.getInputProps('value').onBlur?.(e);
+							handleValueBlur();
+						}}
+						className={styles.valueTextarea}
+						radius='md'
+					/>
+				</div>
+			</div>
+
+			<form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
+				<Group justify='flex-end' gap='md' className={styles.actions}>
+					<Button variant='light' onClick={onCancel} size='sm' radius='md'>
+						Cancel
+					</Button>
+					<Button
+						type='submit'
+						loading={createMutation.isPending || updateMutation.isPending}
+						size='sm'
+						radius='md'
+					>
+						{isEditMode ? 'Update Configuration' : 'Create Configuration'}
+					</Button>
+				</Group>
+			</form>
+		</div>
 	);
 }
