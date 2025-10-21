@@ -1,14 +1,15 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import schedulerContactGroupApi from "~/api/schedulerContactGroupApi";
-import type { UpdateSchedulerContactGroupPayload } from "~/api/schedulerContactGroupApi";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import schedulerContactGroupApi from '~/api/schedulerContactGroupApi';
+import type { UpdateSchedulerContactGroupPayload } from '~/api/schedulerContactGroupApi';
+import { useCampaignsStore } from '~/stores/campaignsStore';
 
 interface UpdateSchedulerContactGroupParams {
-  id: string | number;
-  payload: UpdateSchedulerContactGroupPayload;
+	id: string | number;
+	payload: UpdateSchedulerContactGroupPayload;
 }
 
 interface DeleteSchedulerContactGroupParams {
-  id: string | number;
+	id: string | number;
 }
 
 /**
@@ -22,40 +23,45 @@ interface DeleteSchedulerContactGroupParams {
  * @returns Query object with scheduler contact groups data
  */
 export function useSchedulerContactGroupsByCampaignAndStatus(
-  campaignId: string | number | undefined,
-  scheduleStatus: string | undefined,
-  options = {}
+	campaignId: string | number | undefined,
+	scheduleStatus: string | undefined,
+	options = {}
 ) {
-  return useQuery({
-    queryKey: ["schedulerContactGroups", campaignId, scheduleStatus],
-    queryFn: async () => {
-      if (!campaignId || !scheduleStatus) return null;
-      const api = schedulerContactGroupApi();
-      return api.getSchedulerContactGroupsByCampaignAndStatus(
-        campaignId,
-        scheduleStatus
-      );
-    },
-    enabled: !!campaignId && !!scheduleStatus,
-    ...options,
-  });
+	return useQuery({
+		queryKey: ['schedulerContactGroups', campaignId, scheduleStatus],
+		queryFn: async () => {
+			if (!campaignId || !scheduleStatus) return null;
+			const api = schedulerContactGroupApi();
+			return api.getSchedulerContactGroupsByCampaignAndStatus(
+				campaignId,
+				scheduleStatus
+			);
+		},
+		enabled: !!campaignId && !!scheduleStatus,
+		...options,
+	});
 }
 
 export function useUpdateSchedulerContactGroup() {
-  const queryClient = useQueryClient();
+	const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async ({ id, payload }: UpdateSchedulerContactGroupParams) => {
-      const api = schedulerContactGroupApi();
-      return api.updateSchedulerContactGroup(id, payload);
-    },
-    onSuccess: () => {
-      // Invalidate relevant queries to refetch fresh data
-      queryClient.invalidateQueries({ queryKey: ["campaignSchedules"] });
-      queryClient.invalidateQueries({ queryKey: ["campaignActiveScheduler"] });
-      queryClient.invalidateQueries({ queryKey: ["schedulerContactGroups"] });
-    },
-  });
+	return useMutation({
+		mutationFn: async ({ id, payload }: UpdateSchedulerContactGroupParams) => {
+			const api = schedulerContactGroupApi();
+			return api.updateSchedulerContactGroup(id, payload);
+		},
+		onSuccess: () => {
+			// Invalidate relevant queries to refetch fresh data
+			queryClient.invalidateQueries({ queryKey: ['campaignSchedules'] });
+			queryClient.invalidateQueries({ queryKey: ['campaignActiveScheduler'] });
+			queryClient.invalidateQueries({ queryKey: ['schedulerContactGroups'] });
+			queryClient.invalidateQueries({ queryKey: ['campaignContacts'] });
+			queryClient.invalidateQueries({ queryKey: ['contactSummaryGroups'] });
+
+			// Trigger store update
+			useCampaignsStore.getState().invalidateContacts();
+		},
+	});
 }
 
 /**
@@ -63,18 +69,23 @@ export function useUpdateSchedulerContactGroup() {
  * @returns Mutation object with methods to delete scheduler contact group
  */
 export function useDeleteSchedulerContactGroup() {
-  const queryClient = useQueryClient();
+	const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async ({ id }: DeleteSchedulerContactGroupParams) => {
-      const api = schedulerContactGroupApi();
-      return api.deleteSchedulerContactGroup(id);
-    },
-    onSuccess: () => {
-      // Invalidate relevant queries to refetch fresh data
-      queryClient.invalidateQueries({ queryKey: ["campaignSchedules"] });
-      queryClient.invalidateQueries({ queryKey: ["campaignActiveScheduler"] });
-      queryClient.invalidateQueries({ queryKey: ["schedulerContactGroups"] });
-    },
-  });
+	return useMutation({
+		mutationFn: async ({ id }: DeleteSchedulerContactGroupParams) => {
+			const api = schedulerContactGroupApi();
+			return api.deleteSchedulerContactGroup(id);
+		},
+		onSuccess: () => {
+			// Invalidate relevant queries to refetch fresh data
+			queryClient.invalidateQueries({ queryKey: ['campaignSchedules'] });
+			queryClient.invalidateQueries({ queryKey: ['campaignActiveScheduler'] });
+			queryClient.invalidateQueries({ queryKey: ['schedulerContactGroups'] });
+			queryClient.invalidateQueries({ queryKey: ['campaignContacts'] });
+			queryClient.invalidateQueries({ queryKey: ['contactSummaryGroups'] });
+
+			// Trigger store update
+			useCampaignsStore.getState().invalidateContacts();
+		},
+	});
 }

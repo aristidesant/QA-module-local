@@ -1,54 +1,55 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import schedulerApi from "~/api/schedulerApi";
-import type { Scheduler } from "~/models/SchedulerModel";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import schedulerApi from '~/api/schedulerApi';
+import type { Scheduler } from '~/models/SchedulerModel';
+import { useCampaignsStore } from '~/stores/campaignsStore';
 
 interface GetCampaignActiveSchedulerParams {
-  campaignId: string | number | undefined;
-  enabled?: boolean;
+	campaignId: string | number | undefined;
+	enabled?: boolean;
 }
 
-type ContactGroupStatus = "active" | "inactive" | "paused";
+type ContactGroupStatus = 'active' | 'inactive' | 'paused';
 
 interface UpdateContactGroupStatusParams {
-  groupId: string | number;
-  status: ContactGroupStatus;
+	groupId: string | number;
+	status: ContactGroupStatus;
 }
 
 interface ActivateScheduleParams {
-  campaignId: string | number;
-  scheduleId: string | number;
+	campaignId: string | number;
+	scheduleId: string | number;
 }
 
 interface CreateScheduleParams {
-  campaignId: string | number;
-  scheduleData: Partial<Scheduler>;
+	campaignId: string | number;
+	scheduleData: Partial<Scheduler>;
 }
 
 interface UpdateScheduleParams {
-  campaignId: string | number;
-  scheduleId: string | number;
-  scheduleData: Partial<Scheduler>;
+	campaignId: string | number;
+	scheduleId: string | number;
+	scheduleData: Partial<Scheduler>;
 }
 
 interface DeleteScheduleParams {
-  campaignId: string | number;
-  scheduleId: string | number;
+	campaignId: string | number;
+	scheduleId: string | number;
 }
 
 interface DeactivateScheduleParams {
-  campaignId: string | number;
-  scheduleId: string | number;
+	campaignId: string | number;
+	scheduleId: string | number;
 }
 
 interface CreatePredefinedScheduleParams {
-  campaignId: string | number;
-  predefinedScheduleData: {
-    name: string;
-    description: string;
-    campaignId: number;
-    humanEquivalent: number;
-  };
+	campaignId: string | number;
+	predefinedScheduleData: {
+		name: string;
+		description: string;
+		campaignId: number;
+		humanEquivalent: number;
+	};
 }
 
 /**
@@ -57,17 +58,17 @@ interface CreatePredefinedScheduleParams {
  * @returns Query result containing an array of Scheduler objects
  */
 export function useCampaignSchedules(campaignId: string | number | undefined) {
-  return useQuery<Scheduler[], Error>({
-    queryKey: ["campaignSchedules", campaignId],
-    queryFn: async () => {
-      if (!campaignId) {
-        return [];
-      }
-      const api = schedulerApi();
-      return api.getCampaignSchedules(campaignId);
-    },
-    enabled: !!campaignId, // Only run the query if campaignId exists
-  });
+	return useQuery<Scheduler[], Error>({
+		queryKey: ['campaignSchedules', campaignId],
+		queryFn: async () => {
+			if (!campaignId) {
+				return [];
+			}
+			const api = schedulerApi();
+			return api.getCampaignSchedules(campaignId);
+		},
+		enabled: !!campaignId, // Only run the query if campaignId exists
+	});
 }
 
 /**
@@ -76,28 +77,28 @@ export function useCampaignSchedules(campaignId: string | number | undefined) {
  * @returns Query result containing a single Scheduler object or null if none active
  */
 export function useCampaignActiveScheduler({
-  campaignId,
-  enabled = true,
+	campaignId,
+	enabled = true,
 }: GetCampaignActiveSchedulerParams) {
-  return useQuery<Scheduler | null, Error>({
-    queryKey: ["campaignActiveScheduler", campaignId],
-    queryFn: async () => {
-      if (!campaignId) {
-        return null;
-      }
-      const api = schedulerApi();
-      try {
-        return await api.getCampaignActiveScheduler(campaignId);
-      } catch (error: unknown) {
-        // If no active scheduler exists, the API might return 404
-        if (axios.isAxiosError(error) && error.response?.status === 404) {
-          return null;
-        }
-        throw error;
-      }
-    },
-    enabled: !!campaignId && enabled,
-  });
+	return useQuery<Scheduler | null, Error>({
+		queryKey: ['campaignActiveScheduler', campaignId],
+		queryFn: async () => {
+			if (!campaignId) {
+				return null;
+			}
+			const api = schedulerApi();
+			try {
+				return await api.getCampaignActiveScheduler(campaignId);
+			} catch (error: unknown) {
+				// If no active scheduler exists, the API might return 404
+				if (axios.isAxiosError(error) && error.response?.status === 404) {
+					return null;
+				}
+				throw error;
+			}
+		},
+		enabled: !!campaignId && enabled,
+	});
 }
 
 /**
@@ -105,17 +106,22 @@ export function useCampaignActiveScheduler({
  * @returns Mutation object with methods to update contact group status
  */
 export function useUpdateContactGroupStatus() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ groupId, status }: UpdateContactGroupStatusParams) => {
-      const api = schedulerApi();
-      return api.updateContactGroupStatus(groupId, status);
-    },
-    onSuccess: () => {
-      // Invalidate relevant queries to refetch fresh data
-      queryClient.invalidateQueries({ queryKey: ["campaignSchedules"] });
-    },
-  });
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async ({ groupId, status }: UpdateContactGroupStatusParams) => {
+			const api = schedulerApi();
+			return api.updateContactGroupStatus(groupId, status);
+		},
+		onSuccess: () => {
+			// Invalidate relevant queries to refetch fresh data
+			queryClient.invalidateQueries({ queryKey: ['campaignSchedules'] });
+			queryClient.invalidateQueries({ queryKey: ['campaignContacts'] });
+			queryClient.invalidateQueries({ queryKey: ['contactSummaryGroups'] });
+
+			// Trigger store update
+			useCampaignsStore.getState().invalidateContacts();
+		},
+	});
 }
 
 /**
@@ -123,22 +129,22 @@ export function useUpdateContactGroupStatus() {
  * @returns Mutation object with methods to activate a schedule
  */
 export function useActivateSchedule() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ campaignId, scheduleId }: ActivateScheduleParams) => {
-      const api = schedulerApi();
-      return api.activateSchedule(campaignId, scheduleId);
-    },
-    onSuccess: (_, variables) => {
-      // Invalidate relevant queries to refetch fresh data
-      queryClient.invalidateQueries({
-        queryKey: ["campaignSchedules", variables.campaignId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["campaignActiveScheduler", variables.campaignId],
-      });
-    },
-  });
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async ({ campaignId, scheduleId }: ActivateScheduleParams) => {
+			const api = schedulerApi();
+			return api.activateSchedule(campaignId, scheduleId);
+		},
+		onSuccess: (_, variables) => {
+			// Invalidate relevant queries to refetch fresh data
+			queryClient.invalidateQueries({
+				queryKey: ['campaignSchedules', variables.campaignId],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ['campaignActiveScheduler', variables.campaignId],
+			});
+		},
+	});
 }
 
 /**
@@ -148,20 +154,20 @@ export function useActivateSchedule() {
  * @returns Query result containing a Scheduler object
  */
 export function useScheduleById(
-  campaignId: string | number | undefined,
-  scheduleId: string | number | undefined
+	campaignId: string | number | undefined,
+	scheduleId: string | number | undefined
 ) {
-  return useQuery<Scheduler, Error>({
-    queryKey: ["schedule", campaignId, scheduleId],
-    queryFn: async () => {
-      if (!campaignId || !scheduleId) {
-        throw new Error("Campaign ID and Schedule ID are required");
-      }
-      const api = schedulerApi();
-      return api.getScheduleById(campaignId, scheduleId);
-    },
-    enabled: !!campaignId && !!scheduleId,
-  });
+	return useQuery<Scheduler, Error>({
+		queryKey: ['schedule', campaignId, scheduleId],
+		queryFn: async () => {
+			if (!campaignId || !scheduleId) {
+				throw new Error('Campaign ID and Schedule ID are required');
+			}
+			const api = schedulerApi();
+			return api.getScheduleById(campaignId, scheduleId);
+		},
+		enabled: !!campaignId && !!scheduleId,
+	});
 }
 
 /**
@@ -172,23 +178,23 @@ export function useScheduleById(
  * @returns Query result containing schedule capacity data
  */
 export function useScheduleCapacity(
-  campaignId: string | number | undefined,
-  scheduleId: string | number | undefined,
-  contactListSize: number | undefined
+	campaignId: string | number | undefined,
+	scheduleId: string | number | undefined,
+	contactListSize: number | undefined
 ) {
-  return useQuery({
-    queryKey: ["scheduleCapacity", campaignId, scheduleId, contactListSize],
-    queryFn: async () => {
-      if (!campaignId || !scheduleId || contactListSize === undefined) {
-        throw new Error(
-          "Campaign ID, Schedule ID, and contact list size are required"
-        );
-      }
-      const api = schedulerApi();
-      return api.getScheduleCapacity(campaignId, scheduleId, contactListSize);
-    },
-    enabled: !!campaignId && !!scheduleId && contactListSize !== undefined,
-  });
+	return useQuery({
+		queryKey: ['scheduleCapacity', campaignId, scheduleId, contactListSize],
+		queryFn: async () => {
+			if (!campaignId || !scheduleId || contactListSize === undefined) {
+				throw new Error(
+					'Campaign ID, Schedule ID, and contact list size are required'
+				);
+			}
+			const api = schedulerApi();
+			return api.getScheduleCapacity(campaignId, scheduleId, contactListSize);
+		},
+		enabled: !!campaignId && !!scheduleId && contactListSize !== undefined,
+	});
 }
 
 /**
@@ -196,22 +202,22 @@ export function useScheduleCapacity(
  * @returns Mutation object with methods to create a schedule
  */
 export function useCreateSchedule() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ campaignId, scheduleData }: CreateScheduleParams) => {
-      const api = schedulerApi();
-      return api.createSchedule(campaignId, {
-        ...scheduleData,
-        status: "active",
-      });
-    },
-    onSuccess: (_, variables) => {
-      // Invalidate relevant queries to refetch fresh data
-      queryClient.invalidateQueries({
-        queryKey: ["campaignSchedules", variables.campaignId],
-      });
-    },
-  });
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async ({ campaignId, scheduleData }: CreateScheduleParams) => {
+			const api = schedulerApi();
+			return api.createSchedule(campaignId, {
+				...scheduleData,
+				status: 'active',
+			});
+		},
+		onSuccess: (_, variables) => {
+			// Invalidate relevant queries to refetch fresh data
+			queryClient.invalidateQueries({
+				queryKey: ['campaignSchedules', variables.campaignId],
+			});
+		},
+	});
 }
 
 /**
@@ -219,26 +225,26 @@ export function useCreateSchedule() {
  * @returns Mutation object with methods to update a schedule
  */
 export function useUpdateSchedule() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({
-      campaignId,
-      scheduleId,
-      scheduleData,
-    }: UpdateScheduleParams) => {
-      const api = schedulerApi();
-      return api.updateSchedule(campaignId, scheduleId, scheduleData);
-    },
-    onSuccess: (_, variables) => {
-      // Invalidate relevant queries to refetch fresh data
-      queryClient.invalidateQueries({
-        queryKey: ["campaignSchedules", variables.campaignId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["schedule", variables.campaignId, variables.scheduleId],
-      });
-    },
-  });
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async ({
+			campaignId,
+			scheduleId,
+			scheduleData,
+		}: UpdateScheduleParams) => {
+			const api = schedulerApi();
+			return api.updateSchedule(campaignId, scheduleId, scheduleData);
+		},
+		onSuccess: (_, variables) => {
+			// Invalidate relevant queries to refetch fresh data
+			queryClient.invalidateQueries({
+				queryKey: ['campaignSchedules', variables.campaignId],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ['schedule', variables.campaignId, variables.scheduleId],
+			});
+		},
+	});
 }
 
 /**
@@ -246,22 +252,22 @@ export function useUpdateSchedule() {
  * @returns Mutation object with methods to delete a schedule
  */
 export function useDeleteSchedule() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ campaignId, scheduleId }: DeleteScheduleParams) => {
-      const api = schedulerApi();
-      return api.deleteSchedule(campaignId, scheduleId);
-    },
-    onSuccess: (_, variables) => {
-      // Invalidate relevant queries to refetch fresh data
-      queryClient.invalidateQueries({
-        queryKey: ["campaignSchedules", variables.campaignId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["schedule", variables.campaignId, variables.scheduleId],
-      });
-    },
-  });
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async ({ campaignId, scheduleId }: DeleteScheduleParams) => {
+			const api = schedulerApi();
+			return api.deleteSchedule(campaignId, scheduleId);
+		},
+		onSuccess: (_, variables) => {
+			// Invalidate relevant queries to refetch fresh data
+			queryClient.invalidateQueries({
+				queryKey: ['campaignSchedules', variables.campaignId],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ['schedule', variables.campaignId, variables.scheduleId],
+			});
+		},
+	});
 }
 
 /**
@@ -269,28 +275,28 @@ export function useDeleteSchedule() {
  * @returns Mutation object with methods to deactivate a schedule
  */
 export function useDeactivateSchedule() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({
-      campaignId,
-      scheduleId,
-    }: DeactivateScheduleParams) => {
-      const api = schedulerApi();
-      return api.deactivateSchedule(campaignId, scheduleId);
-    },
-    onSuccess: (_, variables) => {
-      // Invalidate relevant queries to refetch fresh data
-      queryClient.invalidateQueries({
-        queryKey: ["campaignSchedules", variables.campaignId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["campaignActiveScheduler", variables.campaignId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["schedule", variables.campaignId, variables.scheduleId],
-      });
-    },
-  });
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async ({
+			campaignId,
+			scheduleId,
+		}: DeactivateScheduleParams) => {
+			const api = schedulerApi();
+			return api.deactivateSchedule(campaignId, scheduleId);
+		},
+		onSuccess: (_, variables) => {
+			// Invalidate relevant queries to refetch fresh data
+			queryClient.invalidateQueries({
+				queryKey: ['campaignSchedules', variables.campaignId],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ['campaignActiveScheduler', variables.campaignId],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ['schedule', variables.campaignId, variables.scheduleId],
+			});
+		},
+	});
 }
 
 /**
@@ -298,20 +304,20 @@ export function useDeactivateSchedule() {
  * @returns Mutation object with methods to create a predefined schedule
  */
 export function useCreatePredefinedSchedule() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({
-      campaignId,
-      predefinedScheduleData,
-    }: CreatePredefinedScheduleParams) => {
-      const api = schedulerApi();
-      return api.createPredefinedSchedule(campaignId, predefinedScheduleData);
-    },
-    onSuccess: (_, variables) => {
-      // Invalidate relevant queries to refetch fresh data
-      queryClient.invalidateQueries({
-        queryKey: ["campaignSchedules", variables.campaignId],
-      });
-    },
-  });
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async ({
+			campaignId,
+			predefinedScheduleData,
+		}: CreatePredefinedScheduleParams) => {
+			const api = schedulerApi();
+			return api.createPredefinedSchedule(campaignId, predefinedScheduleData);
+		},
+		onSuccess: (_, variables) => {
+			// Invalidate relevant queries to refetch fresh data
+			queryClient.invalidateQueries({
+				queryKey: ['campaignSchedules', variables.campaignId],
+			});
+		},
+	});
 }
