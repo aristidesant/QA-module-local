@@ -10,7 +10,7 @@ type AgentBasicInfoProps = {
 
 export const AgentBasicInfo: React.FC<AgentBasicInfoProps> = ({ agent }) => {
 	const rawMessage =
-		agent?.config?.conversationConfig?.agent?.first_message?.trim() || '';
+		agent?.config?.conversationConfig?.agent?.firstMessage?.trim() || '';
 	const hasMessage = rawMessage.length > 0;
 	const displayMessage = hasMessage
 		? rawMessage

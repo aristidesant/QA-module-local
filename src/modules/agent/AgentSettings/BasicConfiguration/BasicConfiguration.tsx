@@ -1,10 +1,10 @@
 // BasicConfiguration.tsx
-import React from "react";
-import { Select, Textarea } from "@mantine/core";
-import { IconLanguage, IconSettings } from "@tabler/icons-react";
-import type { AgentConfigModel } from "~/models/AgentListObject";
-import styles from "./BasicConfiguration.module.css";
-import SectionCard from "../../../../components/SectionCard";
+import React from 'react';
+import { Select, Textarea } from '@mantine/core';
+import { IconLanguage, IconSettings } from '@tabler/icons-react';
+import type { AgentConfigModel } from '~/models/AgentListObject';
+import styles from './BasicConfiguration.module.css';
+import SectionCard from '../../../../components/SectionCard';
 
 interface BasicConfigurationProps {
 	agentData: Partial<AgentConfigModel>;
@@ -15,10 +15,10 @@ const BasicConfiguration: React.FC<BasicConfigurationProps> = ({
 	agentData,
 	onUpdateAgentData,
 }) => {
-	const currentLanguage = agentData?.conversationConfig?.agent?.language || "";
+	const currentLanguage = agentData?.conversationConfig?.agent?.language || '';
 	const languageOptions = [
-		{ value: "en", label: "English" },
-		{ value: "es", label: "Spanish" },
+		{ value: 'en', label: 'English' },
+		{ value: 'es', label: 'Spanish' },
 	];
 
 	const handleLanguageChange = (value: string | null) => {
@@ -38,27 +38,27 @@ const BasicConfiguration: React.FC<BasicConfigurationProps> = ({
 	return (
 		<SectionCard
 			icon={IconSettings}
-			title="Basic Configuration"
-			description="Configure the fundamental settings for your agent"
+			title='Basic Configuration'
+			description='Configure the fundamental settings for your agent'
 			className={styles.sectionCard}
-			contentSpacing="lg"
+			contentSpacing='lg'
 		>
 			<Select
-				label="Language"
-				placeholder="Select language"
+				label='Language'
+				placeholder='Select language'
 				value={currentLanguage}
 				onChange={handleLanguageChange}
 				data={languageOptions}
 				description="Choose the language for the agent's responses"
 				searchable
-				nothingFoundMessage="No language found"
+				nothingFoundMessage='No language found'
 				leftSection={<IconLanguage size={16} />}
 			/>
 			<Textarea
-				placeholder="Enter the first message your agent will send..."
+				placeholder='Enter the first message your agent will send...'
 				rows={4}
-				label="Agent First Message"
-				value={agentData?.conversationConfig?.agent?.first_message || ""}
+				label='Agent First Message'
+				value={agentData?.conversationConfig?.agent?.firstMessage || ''}
 				onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
 					onUpdateAgentData({
 						conversationConfig: {
@@ -71,7 +71,7 @@ const BasicConfiguration: React.FC<BasicConfigurationProps> = ({
 						},
 					})
 				}
-				description="This greeting message will be the first thing users see when they interact with your agent"
+				description='This greeting message will be the first thing users see when they interact with your agent'
 			/>
 		</SectionCard>
 	);
