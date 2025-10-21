@@ -168,6 +168,7 @@ const CampaignConfigurationPrompt: React.FC = () => {
 				opened={restoreModalOpen}
 				onClose={() => setRestoreModalOpen(false)}
 				campaignId={campaignId}
+				currentPromptText={prompt}
 				onSelect={onSelect}
 			/>
 		</>

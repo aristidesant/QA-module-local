@@ -1,0 +1,108 @@
+.modalContent {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.metadataBar {
+	padding: var(--mantine-spacing-md) var(--mantine-spacing-lg);
+	background-color: var(--mantine-color-gray-0);
+	border-radius: var(--mantine-radius-md);
+	margin-bottom: var(--mantine-spacing-lg);
+	border: 1px solid var(--mantine-color-gray-2);
+}
+
+.scrollArea {
+	flex: 1;
+	margin-bottom: var(--mantine-spacing-lg);
+}
+
+.actionsBar {
+	padding: var(--mantine-spacing-md) 0;
+	border-top: 1px solid var(--mantine-color-gray-2);
+	margin-top: auto;
+}
+
+.diffContainer {
+	background-color: var(--mantine-color-gray-0);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-lg);
+	border: 1px solid var(--mantine-color-gray-2);
+}
+
+.versionLabels {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: var(--mantine-spacing-md);
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	background-color: var(--mantine-color-white);
+	border-radius: var(--mantine-radius-sm);
+	border: 1px solid var(--mantine-color-gray-3);
+}
+
+.versionLabel {
+	font-weight: 600;
+	font-size: 14px;
+	color: var(--mantine-color-gray-7);
+	letter-spacing: 0.3px;
+}
+
+.versionLabelPrevious {
+	color: var(--mantine-color-red-7);
+}
+
+.versionLabelCurrent {
+	color: var(--mantine-color-green-7);
+}
+
+.diffWrapper :global(.diff) {
+	font-size: 13px;
+	font-family:
+		ui-monospace, 'Cascadia Code', 'Source Code Pro', 'Menlo', 'Monaco',
+		'Consolas', monospace;
+	border-radius: var(--mantine-radius-sm);
+	overflow: hidden;
+}
+
+.diffWrapper :global(.diff-gutter) {
+	min-width: 50px;
+	user-select: none;
+	background-color: var(--mantine-color-gray-0);
+}
+
+.diffWrapper :global(.diff-line) {
+	padding: 4px 12px;
+	line-height: 1.6;
+}
+
+.diffWrapper :global(.diff-gutter-insert) {
+	background-color: var(--mantine-color-green-0);
+}
+
+.diffWrapper :global(.diff-gutter-delete) {
+	background-color: var(--mantine-color-red-0);
+}
+
+.diffWrapper :global(.diff-code-insert) {
+	background-color: var(--mantine-color-green-0);
+}
+
+.diffWrapper :global(.diff-code-delete) {
+	background-color: var(--mantine-color-red-0);
+}
+
+.textContainer {
+	background-color: var(--mantine-color-gray-0);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-lg);
+	border: 1px solid var(--mantine-color-gray-2);
+}
+
+.textContent {
+	font-size: 13px;
+	font-family:
+		ui-monospace, 'Cascadia Code', 'Source Code Pro', 'Menlo', 'Monaco',
+		'Consolas', monospace;
+	line-height: 1.7;
+	color: var(--mantine-color-gray-8);
+}

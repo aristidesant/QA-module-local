@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from 'react';
-import { Text, Group, Modal } from '@mantine/core';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Text, Group, Modal, Badge } from '@mantine/core';
 import { useGetCampaignPromptHistory } from '~/queries/campaignPromptHistoryQueries';
 import { usePagination } from '~/hooks/usePagination';
 import PaginationControls from '~/components/PaginationControls';
@@ -11,11 +11,13 @@ import PromptHistoryModal from './PromptHistoryModal';
 
 interface CampaignPromptHistoryProps {
 	campaignId: string | number;
+	currentPromptText?: string;
 	onSelect: (promptText: string) => void;
 }
 
 const CampaignPromptHistory: React.FC<CampaignPromptHistoryProps> = ({
 	campaignId,
+	currentPromptText,
 	onSelect,
 }) => {
 	const [selectedItem, setSelectedItem] =
@@ -57,6 +59,11 @@ const CampaignPromptHistory: React.FC<CampaignPromptHistoryProps> = ({
 		[pagination]
 	);
 
+	const listWithoutCurrent = useMemo<CampaignPromptHistoryItem[]>(() => {
+		if (!promptHistoryResponse?.data) return [];
+		return promptHistoryResponse.data?.slice(1);
+	}, [promptHistoryResponse?.data]);
+
 	if (isError) {
 		return (
 			<div className={styles.errorContainer}>
@@ -72,19 +79,8 @@ const CampaignPromptHistory: React.FC<CampaignPromptHistoryProps> = ({
 	return (
 		<>
 			<div className={styles.container}>
-				<Group justify='space-between' mb='md'>
-					<div>
-						<Text size='lg' fw={600}>
-							Prompt History
-						</Text>
-						<Text size='sm' c='dimmed'>
-							Select a previous version to restore
-						</Text>
-					</div>
-				</Group>
-
 				<BaseTable
-					data={promptHistoryResponse?.data || []}
+					data={listWithoutCurrent}
 					columns={columns}
 					isLoading={isLoading}
 					density='compact'
@@ -107,12 +103,23 @@ const CampaignPromptHistory: React.FC<CampaignPromptHistoryProps> = ({
 				<Modal
 					opened={modalOpen}
 					onClose={() => setModalOpen(false)}
-					title={`Prompt Version v${selectedItem.version}`}
+					title={
+						<Group gap='sm'>
+							<Text fw={600} size='lg'>
+								Prompt History
+							</Text>
+							<Badge variant='filled' color='blue' size='lg'>
+								v{selectedItem.version}
+							</Badge>
+						</Group>
+					}
 					size='xl'
 					fullScreen
+					padding='xl'
 				>
 					<PromptHistoryModal
 						item={selectedItem}
+						currentPromptText={currentPromptText}
 						onRestore={(promptText: string) => {
 							onSelect(promptText);
 							setModalOpen(false);
