@@ -1,104 +1,184 @@
-.card {
-  background-color: var(--mantine-color-white);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+.content {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
 }
 
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--mantine-shadow-md);
+.overviewCopy {
+	gap: 2px;
 }
 
-.headerSection {
-  padding: 1.5rem 0;
+.topRow {
+	gap: var(--mantine-spacing-sm);
 }
 
 .campaignName {
-  margin-bottom: 0.5rem;
-  color: var(--mantine-color-dark-9);
-  font-weight: 600;
+	font-size: var(--mantine-font-size-md);
+	font-weight: 700;
+	color: var(--mantine-color-dark-8);
+	line-height: 1.2;
+	letter-spacing: -0.01em;
 }
 
-.descriptionSection {
-  padding: 0 1rem;
-  margin-bottom: 1rem;
+.campaignDescription {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+	line-height: 1.4;
+	max-width: 40rem;
+	margin-top: -2px;
 }
 
-.description {
-  text-align: center;
-  color: var(--mantine-color-dimmed);
-  line-height: 1.6;
-  max-width: 800px;
-  margin: 0 auto;
-  font-size: var(--mantine-font-size-sm);
+.badge {
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	font-weight: 700;
+	font-size: calc(var(--mantine-font-size-xs) * 0.8);
+	padding: 4px 8px;
 }
 
-.budgetBar {
-  height: 6px;
-  border-radius: 3px;
-  overflow: hidden;
-  background-color: var(--mantine-color-gray-1);
+.statusBadge {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
 }
 
-.budgetContainer {
-  height: 6px;
-  border-radius: 3px;
-  overflow: hidden;
-  background-color: var(--mantine-color-gray-1);
-  margin: 1rem 0;
-  position: relative;
+.typeBadge {
+	border-color: var(--mantine-color-gray-3);
+	color: var(--mantine-color-gray-7);
+	background-color: var(--mantine-color-gray-0);
 }
 
-.budgetProgress {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  border-radius: 3px;
-  transition: width 0.3s ease, background-color 0.3s ease;
+.statusStack {
+	min-width: 110px;
 }
 
-.budgetProgress::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: linear-gradient(90deg,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.2) 50%,
-      rgba(255, 255, 255, 0.1) 100%);
-  border-radius: 3px;
+.divider {
+	border-color: var(--mantine-color-gray-2);
+	margin: 0;
 }
 
-.tagGroup {
-  flex-wrap: wrap;
-  gap: 0.5rem;
+.metaGrid {
+	width: 100%;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--mantine-spacing-xs);
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	background-color: var(--mantine-color-gray-0);
+	border-radius: var(--mantine-radius-md);
 }
 
-.statusIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.metaItem {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
 }
 
-.toggleButton {
-  min-width: 90px;
-  border-radius: var(--mantine-radius-sm);
-  font-weight: 500;
-  font-size: var(--mantine-font-size-sm);
-  height: 32px;
-  padding: 0 var(--mantine-spacing-sm);
+.metaLabel {
+	font-size: calc(var(--mantine-font-size-xs) * 0.8);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--mantine-color-gray-5);
+	font-weight: 600;
 }
 
-.toggleButton:hover {
-  transform: none;
-  box-shadow: none;
+.metaValue {
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 600;
+	color: var(--mantine-color-dark-7);
+	margin-top: 2px;
 }
 
-/* Responsive adjustments */
+.progressSection {
+	background-color: var(--mantine-color-gray-0);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.progressLabel {
+	font-size: calc(var(--mantine-font-size-xs) * 0.8);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--mantine-color-gray-5);
+	font-weight: 600;
+}
+
+.progressValue {
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 700;
+	color: var(--mantine-color-blue-6);
+	line-height: 1;
+}
+
+.progressBar {
+	height: 6px;
+	border-radius: var(--mantine-radius-md);
+	background-color: var(--mantine-color-gray-2);
+}
+
+.actionsRow {
+	display: flex;
+	gap: var(--mantine-spacing-md);
+	flex-wrap: wrap;
+	align-items: center;
+	row-gap: var(--mantine-spacing-sm);
+}
+
+.actionButton {
+	min-width: 100px;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	height: 36px;
+}
+
+.actionMessage {
+	max-width: 360px;
+}
+
+.actionIcon {
+	margin-top: 2px;
+}
+
+.actionHint {
+	font-size: calc(var(--mantine-font-size-xs) * 0.85);
+	color: var(--mantine-color-gray-6);
+	line-height: 1.4;
+}
+
+.healthSection {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+	padding: var(--mantine-spacing-xs) 0;
+}
+
+.healthTitle {
+	font-size: calc(var(--mantine-font-size-xs) * 0.8);
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--mantine-color-gray-6);
+}
+
 @media (max-width: 48em) {
-  .budgetContainer {
-    margin: 0.75rem 0;
-  }
+	.metaGrid {
+		grid-template-columns: 1fr;
+	}
+
+	.actionsRow {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.topRow {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.statusStack {
+		width: 100%;
+		align-items: flex-start;
+	}
 }
