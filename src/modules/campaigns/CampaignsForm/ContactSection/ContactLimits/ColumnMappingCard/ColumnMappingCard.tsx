@@ -6,9 +6,7 @@ import {
 	IconChevronRight,
 } from '@tabler/icons-react';
 import { ContactHeaderMapping } from '../../ContactHeaderMapping/ContactHeaderMapping';
-import { useGetCampaignContactSchemas } from '~/queries/campaignContactSchemasQueries';
 import type { MappedResult } from '~/models/ContactFileSummary';
-import type { CampaignContactSchemaField } from '~/models/CampaignContactSchemaModel';
 import styles from '../ContactLimits.module.css';
 
 // Required fields that must be mapped for the form to be valid
@@ -46,16 +44,6 @@ function ColumnMappingCard({
 	const totalColumns = headers.length;
 	const isAllMapped = mappedColumnsCount === totalColumns;
 
-	// Get campaign contact schemas for dynamic fields
-	const { data: schemasResponse } = useGetCampaignContactSchemas();
-	const schemas = schemasResponse?.data || [];
-
-	// Find schema fields based on objective ID
-	const schemaFields: CampaignContactSchemaField[] = objectiveId
-		? schemas?.find((schema) => schema.objectiveId === objectiveId)
-				?.schemaFields || []
-		: [];
-
 	const openMappingModal = () => {
 		modals.open({
 			modalId: 'match-columns-modal',
@@ -66,8 +54,9 @@ function ColumnMappingCard({
 					result={columnMappings}
 					documentColumns={headers}
 					onMappingChange={onMappingChange}
-					schemaFields={schemaFields}
+					schemaFields={[]}
 					onSchemaSelected={onSchemaSelected}
+					objectiveId={objectiveId}
 				/>
 			),
 		});

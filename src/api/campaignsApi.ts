@@ -99,11 +99,6 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 
 		// UPDATE campaign (PATCH)
 		updateCampaign: async (campaignId: string, data: Partial<Campaign>) => {
-			console.log(
-				`Updating campaign with ID: ${campaignId}, Data: ${JSON.stringify(
-					data
-				)}`
-			);
 			const response = await axios.patch<Campaign>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}`,
 				data

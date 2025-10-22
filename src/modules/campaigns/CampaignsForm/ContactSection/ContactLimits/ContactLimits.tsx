@@ -26,6 +26,7 @@ type ContactLimitsProps = {
 	schedulerContactGroup: Partial<SchedulerContactGroupModel>;
 	campaignId: string | number;
 	onComplete?: () => void;
+	objectiveId?: number;
 };
 
 export const ContactLimits = ({
@@ -33,6 +34,7 @@ export const ContactLimits = ({
 	schedulerContactGroup,
 	campaignId,
 	onComplete,
+	objectiveId,
 }: ContactLimitsProps) => {
 	const processFileMutation = useProcessContactGroupFile();
 	const updateSchedulerContactGroupMutation = useUpdateSchedulerContactGroup();
@@ -95,7 +97,6 @@ export const ContactLimits = ({
 			onScheduleSelect: handleScheduleSelect,
 			onAddSchedule: () => {
 				// TODO: Implement add schedule functionality
-				console.log('Add schedule clicked');
 			},
 		});
 	};
@@ -252,6 +253,7 @@ export const ContactLimits = ({
 						columnMappings={data?.columnMappings || {}}
 						error={processFileMutation.error?.message}
 						onSchemaSelected={setSelectedSchemaId}
+						objectiveId={objectiveId}
 					/>
 				)}
 				<Group justify='flex-end' mt='md'>

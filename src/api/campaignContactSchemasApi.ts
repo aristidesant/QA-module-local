@@ -92,8 +92,8 @@ const campaignContactSchemasApi = (
 		 */
 		getSchemaByObjectiveId: async (
 			objectiveId: number
-		): Promise<CampaignContactSchema> => {
-			const response = await axios.get<CampaignContactSchema>(
+		): Promise<CampaignContactSchemaResponse> => {
+			const response = await axios.get<CampaignContactSchemaResponse>(
 				`${DEFAULT_API_URL}/campaign-contact-schemas/objective/${objectiveId}`
 			);
 			return response.data;

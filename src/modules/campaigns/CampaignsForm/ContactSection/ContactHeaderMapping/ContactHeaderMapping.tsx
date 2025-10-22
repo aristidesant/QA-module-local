@@ -1,12 +1,16 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Button, Card, Group, Text, Menu, ActionIcon } from '@mantine/core';
 import { useGetClientConfig } from '~/queries/clientConfigQueries';
-import { useGetCampaignContactSchemas } from '~/queries/campaignContactSchemasQueries';
+import { useGetSchemaByObjectiveId } from '~/queries/campaignContactSchemasQueries';
 import { IconPlus } from '@tabler/icons-react';
 import styles from './ContactHeaderMapping.module.css';
 import { modals } from '@mantine/modals';
 import type { MappedResult } from '~/models/ContactFileSummary';
-import type { CampaignContactSchemaField } from '~/models/CampaignContactSchemaModel';
+import type {
+	CampaignContactSchemaField,
+	CampaignContactSchema,
+} from '~/models/CampaignContactSchemaModel';
+import { useCampaignsStore } from '~/stores/campaignsStore';
 
 interface SystemColumn {
 	name: string;
@@ -21,6 +25,7 @@ interface ContactHeaderMappingProps {
 	result?: MappedResult;
 	schemaFields?: CampaignContactSchemaField[];
 	onSchemaSelected?: (schemaId: number) => void;
+	objectiveId?: number;
 }
 
 interface FieldMapping {
@@ -34,7 +39,14 @@ export function ContactHeaderMapping({
 	result,
 	schemaFields = [],
 	onSchemaSelected,
+	objectiveId,
 }: ContactHeaderMappingProps) {
+	// Read from campaign store and prefer store value (objectiveId or objective.id)
+	const { selectedCampaign } = useCampaignsStore();
+
+	const storeObjectiveId =
+		selectedCampaign?.objectiveId ?? selectedCampaign?.objective?.id;
+
 	const [selectedSystemField, setSelectedSystemField] = useState<string | null>(
 		null
 	);
@@ -51,8 +63,15 @@ export function ContactHeaderMapping({
 
 	const { data: systemConfig, isLoading: isLoadingSystemColumns } =
 		useGetClientConfig('contact_columns');
-	const { data: schemasResponse } = useGetCampaignContactSchemas();
-	const schemas = schemasResponse?.data || [];
+
+	// Fetch schemas by objectiveId ONLY when objectiveId is a valid positive number
+	const enableSchemasQuery = storeObjectiveId;
+	const { data: schemasResponse } = useGetSchemaByObjectiveId(
+		storeObjectiveId as number,
+		enableSchemasQuery as any
+	);
+	// Extract schemas array from response, or empty array
+	const schemas: CampaignContactSchema[] = schemasResponse?.data || [];
 
 	// Transform and memoize system columns including schema fields
 	const systemColumns = useMemo<SystemColumn[]>(() => {
@@ -107,6 +126,15 @@ export function ContactHeaderMapping({
 			setAdditionalSchemaFields((prev) => [...prev, ...newFields]);
 		},
 		[systemColumns, additionalSchemaFields]
+	);
+
+	// Handler to add dynamic columns
+	const handleAddDynamicColumns = useCallback(
+		(schemaFields: CampaignContactSchemaField[], schemaId: number) => {
+			addSchemaFields(schemaFields);
+			onSchemaSelected?.(schemaId);
+		},
+		[addSchemaFields, onSchemaSelected]
 	);
 
 	// Initialize mappings when component mounts or when result prop changes
@@ -259,7 +287,11 @@ export function ContactHeaderMapping({
 							<Text size='sm' fw={500}>
 								System columns
 							</Text>{' '}
-							{schemas && schemas.length > 0 && (
+							{!storeObjectiveId ? (
+								<Text size='xs' c='yellow' style={{ fontStyle: 'italic' }}>
+									Select an objective to add dynamic columns
+								</Text>
+							) : schemas && schemas.length > 0 ? (
 								<Group gap='xs' align='center'>
 									<Text size='xs' c='dimmed'>
 										Add dynamic columns
@@ -280,8 +312,10 @@ export function ContactHeaderMapping({
 												<div key={schema.id}>
 													<Menu.Item
 														onClick={() => {
-															addSchemaFields(schema.schemaFields);
-															onSchemaSelected?.(schema.id);
+															handleAddDynamicColumns(
+																schema.schemaFields,
+																schema.id
+															);
 														}}
 														style={{
 															whiteSpace: 'normal',
@@ -331,7 +365,7 @@ export function ContactHeaderMapping({
 										</Menu.Dropdown>
 									</Menu>
 								</Group>
-							)}
+							) : null}
 						</Group>
 						<div className={styles.itemsContainer}>
 							{isLoadingSystemColumns ? (

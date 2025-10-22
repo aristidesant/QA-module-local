@@ -12,12 +12,14 @@ export interface ActiveContactListViewProps {
 	scheduleContactGroups: SchedulerContactGroupModel[];
 	campaignId?: string | number;
 	onUpdateComplete: () => void;
+	objectiveId?: number;
 }
 
 export const ActiveContactListView = ({
 	scheduleContactGroups,
 	campaignId,
 	onUpdateComplete,
+	objectiveId,
 }: ActiveContactListViewProps) => {
 	const [opened, { open, close }] = useDisclosure(false);
 
@@ -51,6 +53,7 @@ export const ActiveContactListView = ({
 							withSwitch={false}
 							campaignId={campaignId}
 							onUpdateComplete={onUpdateComplete}
+							objectiveId={objectiveId}
 						/>
 					))}
 			</div>
@@ -74,6 +77,7 @@ export const ActiveContactListView = ({
 					campaignId={campaignId}
 					onClose={handleClose}
 					onRefresh={onUpdateComplete}
+					objectiveId={objectiveId}
 				/>
 			</Modal>
 		</SectionCard>
