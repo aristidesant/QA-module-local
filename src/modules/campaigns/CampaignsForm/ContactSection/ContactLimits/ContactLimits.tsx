@@ -19,6 +19,7 @@ import { useUpdateSchedulerContactGroup } from '~/queries/schedulerContactGroupQ
 import SchedulerPreview from './SchedulerPreview';
 import ColumnMappingCard from './ColumnMappingCard/ColumnMappingCard';
 import CallLimitCard from './CallLimitCard';
+import { transformFieldMapping } from '~/utils/fieldMappingTransformer';
 
 type ContactLimitsProps = {
 	fileSummary?: ContactFileSummary;
@@ -140,9 +141,14 @@ export const ContactLimits = ({
 				const defaultExpirationDate = new Date();
 				defaultExpirationDate.setDate(defaultExpirationDate.getDate() + 30);
 
+				// Transform field mapping to separate dynamic columns
+				const { fieldMapping } = transformFieldMapping(
+					data.columnMappings || {}
+				);
+
 				await processFileMutation.mutateAsync({
 					contactGroupFileId: fileSummary.contactGroupFileId,
-					fieldMapping: data.columnMappings || {},
+					fieldMapping,
 					groupName:
 						data.name || `Contact List ${new Date().toLocaleDateString()}`,
 					groupDescription: data.description || '',
