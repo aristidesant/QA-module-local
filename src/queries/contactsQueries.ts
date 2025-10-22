@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import contactsApi from "~/api/contactsApi";
-import type { Contact } from "~/models/ContactsModel";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import contactsApi from '~/api/contactsApi';
+import type { Contact } from '~/models/ContactsModel';
 
 // Create contact
 export const useCreateContact = () => {
@@ -11,13 +11,13 @@ export const useCreateContact = () => {
 			return api.createContact(contact);
 		},
 		onSuccess: (data) => {
-			queryClient.invalidateQueries({ queryKey: ["contacts"] });
+			queryClient.invalidateQueries({ queryKey: ['contacts'] });
 			// eslint-disable-next-line no-console
-			console.log("Contact created successfully:", data);
+			console.log('Contact created successfully:', data);
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console
-			console.error("Error creating contact:", error);
+			console.error('Error creating contact:', error);
 		},
 	});
 };
@@ -25,7 +25,7 @@ export const useCreateContact = () => {
 // Get all contacts
 export const useGetAllContacts = (params?: Record<string, any>) => {
 	return useQuery({
-		queryKey: ["contacts", params],
+		queryKey: ['contacts', params],
 		queryFn: async () => {
 			const api = contactsApi();
 			return api.findAllContacts(params);
@@ -36,7 +36,7 @@ export const useGetAllContacts = (params?: Record<string, any>) => {
 // Get contact by id
 export const useGetContact = (id: string) => {
 	return useQuery({
-		queryKey: ["contact", id],
+		queryKey: ['contact', id],
 		queryFn: async () => {
 			const api = contactsApi();
 			return api.findContact(id);
@@ -47,10 +47,17 @@ export const useGetContact = (id: string) => {
 
 export const useGetCampaignContacts = (
 	campaignId: number,
-	params?: { limit?: number; offset?: number; firstName?: string }
+	params?: {
+		limit?: number;
+		offset?: number;
+		firstName?: string;
+		email?: string;
+		phone?: string;
+		status?: string;
+	}
 ) => {
 	return useQuery({
-		queryKey: ["campaignContacts", campaignId, params],
+		queryKey: ['campaignContacts', campaignId, params],
 		queryFn: async () => {
 			const api = contactsApi();
 			return api.findCampaignContacts(campaignId, params);
@@ -61,7 +68,7 @@ export const useGetCampaignContacts = (
 
 export const useGetContactSummaryGroups = (campaignId: number) => {
 	return useQuery({
-		queryKey: ["contactSummaryGroups", campaignId],
+		queryKey: ['contactSummaryGroups', campaignId],
 		queryFn: async () => {
 			const api = contactsApi();
 			return api.findContactSummaryGroups(campaignId);
@@ -84,16 +91,16 @@ export const useUpdateContact = () => {
 			return api.updateContact(id, data);
 		},
 		onSuccess: (data) => {
-			queryClient.invalidateQueries({ queryKey: ["contacts"] });
+			queryClient.invalidateQueries({ queryKey: ['contacts'] });
 			if (data?.id) {
-				queryClient.invalidateQueries({ queryKey: ["contact", data.id] });
+				queryClient.invalidateQueries({ queryKey: ['contact', data.id] });
 			}
 			// eslint-disable-next-line no-console
-			console.log("Contact updated successfully:", data);
+			console.log('Contact updated successfully:', data);
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console
-			console.error("Error updating contact:", error);
+			console.error('Error updating contact:', error);
 		},
 	});
 };
@@ -107,14 +114,14 @@ export const useDeleteContact = () => {
 			return api.deleteContact(id);
 		},
 		onSuccess: (_, id) => {
-			queryClient.invalidateQueries({ queryKey: ["contacts"] });
-			queryClient.invalidateQueries({ queryKey: ["contact", id] });
+			queryClient.invalidateQueries({ queryKey: ['contacts'] });
+			queryClient.invalidateQueries({ queryKey: ['contact', id] });
 			// eslint-disable-next-line no-console
-			console.log("Contact deleted successfully:", id);
+			console.log('Contact deleted successfully:', id);
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console
-			console.error("Error deleting contact:", error);
+			console.error('Error deleting contact:', error);
 		},
 	});
 };

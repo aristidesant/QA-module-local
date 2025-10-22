@@ -35,7 +35,14 @@ const contactsApi = (_authHeader?: Record<string, string>) => {
 		},
 		findCampaignContacts: async (
 			campaignId: number,
-			params?: { limit?: number; offset?: number; firstName?: string }
+			params?: {
+				limit?: number;
+				offset?: number;
+				firstName?: string;
+				email?: string;
+				phone?: string;
+				status?: string;
+			}
 		) => {
 			const response = await axios.get<{
 				contacts: Contact[];

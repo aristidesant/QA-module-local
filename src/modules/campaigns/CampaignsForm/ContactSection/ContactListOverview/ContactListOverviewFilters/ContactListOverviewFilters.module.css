@@ -1,0 +1,81 @@
+.filtersContent {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-md);
+	width: 100%;
+	flex-wrap: wrap;
+}
+
+.searchFilters {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+	flex: 1;
+	min-width: 0;
+	flex-wrap: wrap;
+}
+
+.selectFilters {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+	flex-shrink: 0;
+}
+
+.searchInput {
+	flex: 1;
+	min-width: 200px;
+}
+
+.filterInput {
+	min-width: 160px;
+	flex: 0.8;
+}
+
+.statusSelect {
+	min-width: 150px;
+}
+
+.clearButton {
+	flex-shrink: 0;
+	min-width: 90px;
+	transition:
+		background-color 0.15s ease,
+		color 0.15s ease;
+}
+
+.clearButton:not(:disabled):hover {
+	background-color: var(--mantine-color-red-0);
+	color: var(--mantine-color-red-6);
+}
+
+@media (max-width: 992px) {
+	.filtersContent {
+		flex-direction: column;
+		align-items: stretch;
+		gap: var(--mantine-spacing-sm);
+	}
+
+	.searchFilters {
+		flex-direction: column;
+		width: 100%;
+	}
+
+	.searchInput,
+	.filterInput {
+		width: 100%;
+		min-width: 100%;
+		flex: 1;
+	}
+
+	.selectFilters {
+		width: 100%;
+		flex-direction: column;
+	}
+
+	.statusSelect,
+	.clearButton {
+		width: 100%;
+		min-width: 100%;
+	}
+}
