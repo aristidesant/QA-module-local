@@ -83,6 +83,18 @@ export const useGetCampaignScheduleSummary = (campaignId: string) => {
 	});
 };
 
+export const useGetCampaignRequirements = (campaignId: string) => {
+	return useQuery({
+		queryKey: ['campaign-requirements', campaignId],
+		queryFn: async () => {
+			const api = campaignsApi();
+			return api.getCampaignRequirements(campaignId);
+		},
+		enabled: !!campaignId,
+		retry: false,
+	});
+};
+
 // Update campaign
 export const useUpdateCampaign = () => {
 	const queryClient = useQueryClient();
