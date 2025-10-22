@@ -64,10 +64,11 @@ export function ContactHeaderMapping({
 	const { data: systemConfig, isLoading: isLoadingSystemColumns } =
 		useGetClientConfig('contact_columns');
 
-	// Fetch schemas by objectiveId ONLY when objectiveId is a valid positive number
-	const enableSchemasQuery = storeObjectiveId;
+	// Fetch schemas by objectiveId with fallback to prop if store is not set
+	const enableSchemasQuery = storeObjectiveId ?? objectiveId;
+	const effectiveObjectiveId = storeObjectiveId ?? objectiveId;
 	const { data: schemasResponse } = useGetSchemaByObjectiveId(
-		storeObjectiveId as number,
+		effectiveObjectiveId as number,
 		enableSchemasQuery as any
 	);
 	// Extract schemas array from response, or empty array
@@ -111,30 +112,72 @@ export function ContactHeaderMapping({
 		];
 	}, [systemConfig, schemaFields, additionalSchemaFields]);
 
-	// Function to add dynamic columns from a selected campaign column set
-	const addSchemaFields = useCallback(
-		(selectedSchemaFields: CampaignContactSchemaField[]) => {
-			// Filter out columns that are already present
-			const existingFieldNames = new Set([
-				...systemColumns.map((col) => col.name),
-				...additionalSchemaFields.map((field) => field.name),
-			]);
-
-			const newFields = selectedSchemaFields.filter(
-				(field) => !existingFieldNames.has(field.name)
+	// Convert mappings to the expected result format (arrays for isArray fields)
+	const getMappedResult = useCallback(
+		(currentMappings: FieldMapping[]): MappedResult => {
+			const grouped = currentMappings.reduce<Record<string, string[]>>(
+				(acc, { systemField, documentField }) => {
+					if (!acc[systemField]) acc[systemField] = [];
+					acc[systemField].push(documentField);
+					return acc;
+				},
+				{}
 			);
-			setAdditionalSchemaFields((prev) => [...prev, ...newFields]);
+
+			const resultAcc: MappedResult = {};
+			for (const [systemField, docs] of Object.entries(grouped)) {
+				const column = systemColumns.find((c) => c.name === systemField);
+				if (column?.isArray) {
+					resultAcc[systemField] = docs.map((d) => ({ csvField: d }));
+				} else {
+					resultAcc[systemField] = { csvField: docs[0] };
+				}
+			}
+			return resultAcc;
 		},
-		[systemColumns, additionalSchemaFields]
+		[systemColumns]
 	);
 
-	// Handler to add dynamic columns
+	// Handler to add dynamic columns (single selection only)
 	const handleAddDynamicColumns = useCallback(
-		(schemaFields: CampaignContactSchemaField[], schemaId: number) => {
-			addSchemaFields(schemaFields);
+		(schemaFieldsParam: CampaignContactSchemaField[], schemaId: number) => {
+			// Replace previously selected dynamic fields with the new selection
+			setAdditionalSchemaFields(() => schemaFieldsParam);
+
+			// Compute allowed system field names: base + initial + newly selected dynamic fields
+			const prevAdditionalNames = new Set(
+				additionalSchemaFields.map((f) => f.name)
+			);
+			const allowedNames = new Set(systemColumns.map((c) => c.name));
+			// Remove old dynamic fields from allowed set
+			prevAdditionalNames.forEach((n) => allowedNames.delete(n));
+			// Add the new dynamic fields
+			schemaFieldsParam.forEach((f) => allowedNames.add(f.name));
+
+			// Prune mappings that reference fields no longer available
+			const prunedMappings = mappings.filter((m) =>
+				allowedNames.has(m.systemField)
+			);
+			setMappings(prunedMappings);
+
+			// Reset selection if it referenced a removed field
+			if (selectedSystemField && !allowedNames.has(selectedSystemField)) {
+				setSelectedSystemField(null);
+			}
+
+			// Notify parent consumers
+			onMappingChange(getMappedResult(prunedMappings));
 			onSchemaSelected?.(schemaId);
 		},
-		[addSchemaFields, onSchemaSelected]
+		[
+			additionalSchemaFields,
+			systemColumns,
+			mappings,
+			selectedSystemField,
+			getMappedResult,
+			onMappingChange,
+			onSchemaSelected,
+		]
 	);
 
 	// Initialize mappings when component mounts or when result prop changes
@@ -175,32 +218,6 @@ export function ContactHeaderMapping({
 			),
 		};
 	}, [systemColumns, documentColumns, mappings, finalizedSystemFields]);
-
-	// Convert mappings to the expected result format (arrays for isArray fields)
-	const getMappedResult = useCallback(
-		(currentMappings: FieldMapping[]): MappedResult => {
-			const grouped = currentMappings.reduce<Record<string, string[]>>(
-				(acc, { systemField, documentField }) => {
-					if (!acc[systemField]) acc[systemField] = [];
-					acc[systemField].push(documentField);
-					return acc;
-				},
-				{}
-			);
-
-			const resultAcc: MappedResult = {};
-			for (const [systemField, docs] of Object.entries(grouped)) {
-				const column = systemColumns.find((c) => c.name === systemField);
-				if (column?.isArray) {
-					resultAcc[systemField] = docs.map((d) => ({ csvField: d }));
-				} else {
-					resultAcc[systemField] = { csvField: docs[0] };
-				}
-			}
-			return resultAcc;
-		},
-		[systemColumns]
-	);
 
 	// Handle removing a mapping
 	const handleRemoveMapping = (mappingToRemove: FieldMapping) => {
