@@ -1,156 +1,127 @@
 /* Main container */
 .builderContainer {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  padding: var(--mantine-spacing-lg);
+	position: relative;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	padding: var(--mantine-spacing-md);
 }
 
 /* Panels container */
 .panelsContainer {
-  flex: 1;
-  display: flex;
-  min-height: 0;
-  overflow: hidden;
-  gap: var(--mantine-spacing-md);
+	flex: 1;
+	display: flex;
+	min-height: 0;
+	overflow: hidden;
+	gap: var(--mantine-spacing-md);
 }
 
 /* Left panel */
 .leftPanel {
-  flex: 1;
-  min-width: 0;
-  background: var(--mantine-color-gray-0);
-  border: 1px solid var(--mantine-color-gray-2);
-  border-radius: var(--mantine-radius-md);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+	flex: 1;
+	min-width: 0;
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
 }
 
 /* Right panel */
 .rightPanel {
-  width: 400px;
-  min-width: 320px;
-  max-width: 500px;
-  background: var(--mantine-color-white);
-  border: 1px solid var(--mantine-color-gray-2);
-  border-radius: var(--mantine-radius-md);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+	width: 400px;
+	min-width: 320px;
+	max-width: 500px;
+	background: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
 }
 
 /* Scroll areas */
 .scrollArea {
-  height: 100%;
-  flex: 1;
+	height: 100%;
+	flex: 1;
 }
 
 /* Left panel content */
 .leftPanelContent {
-  padding: var(--mantine-spacing-lg);
-  min-height: 100%;
+	padding: var(--mantine-spacing-sm);
+	min-height: 100%;
+}
+
+.leftPanelHeader {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.emptyState {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+	padding: var(--mantine-spacing-xl) var(--mantine-spacing-lg);
+	border: 1px dashed var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-white);
 }
 
 /* Right panel content */
 .rightPanelContent {
-  padding: var(--mantine-spacing-lg);
-  min-height: 100%;
+	padding: var(--mantine-spacing-md);
+	min-height: 100%;
 }
 
 /* Empty right panel state */
 .emptyRightPanel {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  min-height: 300px;
-  background: var(--mantine-color-gray-0);
-  border-radius: var(--mantine-radius-md);
-  margin: var(--mantine-spacing-md);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	min-height: 300px;
+	background: var(--mantine-color-gray-0);
+	border-radius: var(--mantine-radius-md);
+	margin: var(--mantine-spacing-md);
 }
 
 .emptyPanelText {
-  color: var(--mantine-color-gray-6);
-  font-size: var(--mantine-font-size-md);
-  text-align: center;
-  font-weight: 500;
+	color: var(--mantine-color-gray-6);
+	font-size: var(--mantine-font-size-md);
+	text-align: center;
+	font-weight: 500;
 }
 
 /* Nodes stack */
 .nodesStack {
-  width: 100%;
+	width: 100%;
 }
 
 /* Footer */
 .footer {
-  position: sticky;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: var(--mantine-color-white);
-  border-top: 1px solid var(--mantine-color-gray-3);
-  border-radius: 0 0 var(--mantine-radius-md) var(--mantine-radius-md);
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
-  z-index: 10;
-  padding: var(--mantine-spacing-md) var(--mantine-spacing-lg);
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-top: auto;
-}
-
-/* Drop area styling for disposition nodes */
-.dropArea {
-  min-height: 300px;
-  width: 100%;
-  border: 2px dashed var(--mantine-color-gray-4);
-  background: var(--mantine-color-gray-0);
-  border-radius: var(--mantine-radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--mantine-spacing-xl);
-  transition: all 0.2s ease;
-  margin: var(--mantine-spacing-md);
-}
-
-/* Drop area when it has nodes */
-.dropAreaWithNodes {
-  min-height: 200px;
-  width: 100%;
-  border: 1px solid transparent;
-  background: transparent;
-  border-radius: var(--mantine-radius-md);
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding: var(--mantine-spacing-md);
-  transition: all 0.2s ease;
-}
-
-.dropAreaActive {
-  background: var(--mantine-color-blue-0);
-  border-color: var(--mantine-color-blue-4);
-  border-style: dashed;
-  transform: scale(1.005);
-}
-
-.dropAreaText {
-  color: var(--mantine-color-gray-6);
-  font-weight: 500;
-  font-size: var(--mantine-font-size-lg);
-  text-align: center;
-  width: 100%;
+	position: sticky;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	background: var(--mantine-color-white);
+	border-top: 1px solid var(--mantine-color-gray-3);
+	border-radius: 0 0 var(--mantine-radius-md) var(--mantine-radius-md);
+	z-index: 10;
+	padding: var(--mantine-spacing-md) var(--mantine-spacing-lg);
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	margin-top: auto;
 }
 
 /* Tree container styling */
 .treeContainer {
-  width: 100%;
-  padding: var(--mantine-spacing-md);
-  background: var(--mantine-color-white);
-  border-radius: var(--mantine-radius-md);
-  border: 1px solid var(--mantine-color-gray-2);
+	width: 100%;
+	padding: var(--mantine-spacing-sm);
+	background: var(--mantine-color-white);
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid var(--mantine-color-gray-2);
 }

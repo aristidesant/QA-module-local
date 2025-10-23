@@ -1,151 +1,100 @@
-import React from "react";
-import { Draggable } from "@hello-pangea/dnd";
-import { IconClock } from "@tabler/icons-react";
-import type { DispositionNode } from "~/models/DispositionNodeModel";
-import { getNodeStyle } from "~/utils/dispositionNodeStyles";
-import styles from "./DispositionCatalogMenuItem.module.css";
-
-// Helper to compute all classNames for draggable, icon, and node name
-function getMenuItemClasses({
-  node,
-  hasChildren,
-  disabled,
-  dragSnapshot,
-}: {
-  node: DispositionNode;
-  hasChildren: boolean;
-  disabled: boolean;
-  dragSnapshot: {
-    isDragging: boolean;
-  };
-}) {
-  // Get base node styling using common utility
-  const nodeStyle = getNodeStyle(node, 0);
-
-  // Draggable class
-  let draggableClass = styles.draggable;
-
-  // Add node style classes
-  if (nodeStyle !== "default") {
-    draggableClass += ` ${styles[nodeStyle]}`;
-  }
-
-  if (dragSnapshot.isDragging) {
-    draggableClass += ` ${styles.dragging}`;
-  } else if (disabled) {
-    draggableClass += ` ${styles.disabled}`;
-  } else {
-    draggableClass += ` ${styles.default}`;
-  }
-
-  // Only add root styling for consistency with NodeEditor approach
-  if (!("parentId" in node) || node.parentId == null) {
-    draggableClass += ` ${styles.root}`;
-  }
-
-  // Icon class
-  let iconClass = styles.icon;
-  if (disabled) {
-    iconClass += ` ${styles.iconDisabled}`;
-  } else if (hasChildren) {
-    iconClass += ` ${styles.iconFolder}`;
-  } else {
-    iconClass += ` ${styles.iconFile}`;
-  }
-
-  // Node name class
-  let nodeNameClass = styles.nodeName;
-  nodeNameClass += hasChildren
-    ? ` ${styles.nodeNameFolder}`
-    : ` ${styles.nodeNameFile}`;
-  if (disabled) {
-    nodeNameClass += ` ${styles.nodeNameDisabled}`;
-  }
-
-  return { draggableClass, iconClass, nodeNameClass, nodeStyle };
-}
+import React from 'react';
+import { ActionIcon, Box, Group, Paper, Text, Tooltip } from '@mantine/core';
+import {
+	IconFolder,
+	IconPlus,
+	IconHierarchy3,
+	IconPointFilled,
+} from '@tabler/icons-react';
+import type { DispositionNode } from '~/models/DispositionNodeModel';
+import { getNodeStyle } from '~/utils/dispositionNodeStyles';
+import styles from './DispositionCatalogMenuItem.module.css';
 
 interface Props {
-  node: DispositionNode;
-  path: string;
-  movedNodeIds: string[];
-  disabled?: boolean;
+	node: DispositionNode;
+	disabled?: boolean;
+	onAdd: (node: DispositionNode) => void;
+	onAddGroup?: (node: DispositionNode) => void;
 }
 
 const DispositionCatalogMenuItem: React.FC<Props> = ({
-  node,
-  path,
-  movedNodeIds,
-  disabled = false,
+	node,
+	disabled = false,
+	onAdd,
+	onAddGroup,
 }) => {
-  const hasChildren = Array.isArray(node.children) && node.children.length > 0;
-  const isMoved = movedNodeIds.includes(String(node.id));
+	const hasChildren = Array.isArray(node.children) && node.children.length > 0;
+	const nodeStyle = getNodeStyle(node, 0);
 
-  // Helper function to get status message
-  const getStatusMessage = () => {
-    if (!disabled) return null;
-    if (isMoved && hasChildren) {
-      return "Already added";
-    } else if (hasChildren) {
-      return "Add children first";
-    }
-    return null;
-  };
+	return (
+		<Paper
+			withBorder
+			radius='md'
+			className={`${styles.item} ${disabled ? styles.itemDisabled : ''}`}
+		>
+			<Group justify='space-between' align='center' gap='sm' wrap='nowrap'>
+				<Group gap='sm' wrap='nowrap'>
+					<IconPointFilled
+						size={12}
+						className={`${styles.statusDot} ${styles[`${nodeStyle}Dot`]}`}
+					/>
+					<Box className={styles.iconWrapper}>
+						{hasChildren ? (
+							<IconFolder
+								size={16}
+								className={styles.iconFolder}
+								stroke={1.5}
+							/>
+						) : (
+							<IconHierarchy3
+								size={16}
+								className={styles.iconLeaf}
+								stroke={1.5}
+							/>
+						)}
+					</Box>
+					<Box className={styles.textContent}>
+						<Tooltip
+							label={node.description || node.name}
+							withArrow
+							disabled={!node.description}
+						>
+							<Text fw={hasChildren ? 600 : 500} className={styles.nodeName}>
+								{node.name}
+							</Text>
+						</Tooltip>
+					</Box>
+				</Group>
 
-  return (
-    <Draggable
-      key={`draggable-${node.id}`}
-      draggableId={String(node.id)}
-      index={parseInt(path.split("-").pop() || "0", 10)}
-      isDragDisabled={disabled}
-    >
-      {(dragProvided, dragSnapshot) => {
-        const { draggableClass, iconClass, nodeNameClass, nodeStyle } =
-          getMenuItemClasses({
-            node,
-            hasChildren,
-            disabled,
-            dragSnapshot,
-          });
-        return (
-          <li
-            ref={dragProvided.innerRef}
-            {...dragProvided.draggableProps}
-            className={styles.listItem}
-            style={dragProvided.draggableProps.style}
-          >
-            <div {...dragProvided.dragHandleProps} className={draggableClass}>
-              {/* Status indicator dot */}
-              <div
-                className={`${styles.statusDot} ${styles[`${nodeStyle}Dot`]}`}
-              />
-
-              {/* Icon */}
-              <span className={iconClass}>{hasChildren ? "📁" : "📄"}</span>
-
-              {/* Node name */}
-              <span className={nodeNameClass}>{node.name}</span>
-
-              {/* Clock icon for nodes that require reschedule */}
-              {node?.requiresReschedule && (
-                <IconClock size={16} color="var(--mantine-color-gray-6)" />
-              )}
-
-              {/* Status indicator */}
-              {(() => {
-                const statusMessage = getStatusMessage();
-                return (
-                  statusMessage && (
-                    <span className={styles.status}>{statusMessage}</span>
-                  )
-                );
-              })()}
-            </div>
-          </li>
-        );
-      }}
-    </Draggable>
-  );
+				<Group gap='xs' wrap='nowrap' className={styles.actions}>
+					{hasChildren && onAddGroup ? (
+						<Tooltip label='Add all' withArrow>
+							<ActionIcon
+								variant='subtle'
+								color='teal'
+								onClick={() => onAddGroup(node)}
+								aria-label='Add disposition and all children'
+								disabled={false}
+							>
+								<IconHierarchy3 size={16} />
+							</ActionIcon>
+						</Tooltip>
+					) : null}
+					<Tooltip label='Add to flow' withArrow>
+						<ActionIcon
+							variant='filled'
+							color='blue'
+							onClick={() => onAdd(node)}
+							aria-label='Add disposition to flow'
+							disabled={disabled}
+						>
+							<IconPlus size={16} />
+						</ActionIcon>
+					</Tooltip>
+				</Group>
+			</Group>
+		</Paper>
+	);
 };
 
 export default DispositionCatalogMenuItem;

@@ -1,15 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
 	Card,
 	Text,
-	Box,
 	Group,
 	Tooltip,
 	Flex,
 	Divider,
 	Stack,
+	ActionIcon,
+	Badge,
 } from '@mantine/core';
-import { IconClock, IconPhoneOff } from '@tabler/icons-react';
+import {
+	IconClock,
+	IconPhoneOff,
+	IconChevronDown,
+	IconChevronRight,
+	IconFolder,
+	IconFileDescription,
+} from '@tabler/icons-react';
 import styles from './DispositionViewer.module.css';
 import type { DispositionFlowModel } from '~/models/DispositionFlowModel';
 import type { DispositionNode } from '~/models/DispositionNodeModel';
@@ -34,34 +42,45 @@ const NodeViewer: React.FC<NodeViewerProps> = ({
 	level = 0,
 }) => {
 	const { setRightComponent } = useCampaignsStore();
+	const [isExpanded, setIsExpanded] = useState(true);
 	const isLeaf = isLeafNode(node);
 	const nodeStyle = getNodeStyle(node, level);
 	const hasChildren = !isLeaf;
-	const isClickable = isLeaf; // Only leaf nodes are clickable
+	const isClickable = isLeaf;
+	const childCount = node.children?.length || 0;
+	const levelIndent = level * 16;
+	const cardOffset = level > 0 ? Math.min(levelIndent, 80) : 0;
+	const nodeTypeLabel = hasChildren ? 'Group' : 'Outcome';
 
 	const handleNodeClick = (e: React.MouseEvent) => {
-		if (!isClickable) return; // Ignore clicks on parents
+		if (!isClickable) return;
 		e.stopPropagation();
 		setRightComponent(<NodeDetailPanel node={node} parentNode={parentNode} />);
 	};
 
+	const handleToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
+		e.stopPropagation();
+		if (hasChildren) {
+			setIsExpanded(!isExpanded);
+		}
+	};
+
+	const cardStyle: React.CSSProperties = cardOffset
+		? ({ '--node-offset': `${cardOffset}px` } as React.CSSProperties)
+		: {};
+
+	const innerStyle: React.CSSProperties = {
+		'--node-indent': `${Math.max(cardOffset - 12, 0)}px`,
+	} as React.CSSProperties;
+
 	return (
 		<>
-			<Box
-				key={node.id}
-				role={isClickable ? 'button' : 'group'}
-				aria-label={`Outcome node: ${node.name}`}
+			<div
+				className={`${styles.nodeCard} ${isClickable ? styles.clickable : styles.nonClickable}`}
 				tabIndex={isClickable ? 0 : -1}
-				className={`${styles.nodeViewer} ${styles[nodeStyle]} ${
-					isClickable ? styles.clickable : styles.nonClickable
-				} ${hasChildren ? styles.parentNode : styles.leafNode} ${
-					hasChildren ? styles.disabledNode : ''
-				}`}
-				style={{
-					marginLeft: level > 0 ? `${level * 16 + 8}px` : '0px',
-					width: level > 0 ? `calc(100% - ${level * 16 + 8}px)` : '100%',
-					position: 'relative',
-				}}
+				aria-label={`Outcome node: ${node.name}`}
+				data-level={level}
+				style={cardStyle}
 				onClick={handleNodeClick}
 				onKeyDown={(e) => {
 					if (!isClickable) return;
@@ -72,56 +91,87 @@ const NodeViewer: React.FC<NodeViewerProps> = ({
 						);
 					}
 				}}
-				aria-disabled={!isClickable}
 			>
-				{/* Connection line for child nodes */}
-				{level > 0 && (
-					<>
-						<div className={styles.connectionLine} />
-						<div className={styles.connectionDot} />
-					</>
-				)}
+				<div className={styles.nodeInner} style={innerStyle}>
+					<div className={styles.nodeLead}>
+						<span
+							className={styles.statusPill}
+							data-type={nodeStyle}
+							aria-hidden='true'
+						/>
+						<div className={styles.nodeToggleArea}>
+							{hasChildren ? (
+								<ActionIcon
+									size='sm'
+									variant='subtle'
+									className={styles.chevronIcon}
+									aria-label={isExpanded ? 'Collapse node' : 'Expand node'}
+									onClick={handleToggle}
+								>
+									{isExpanded ? (
+										<IconChevronDown size={18} />
+									) : (
+										<IconChevronRight size={18} />
+									)}
+								</ActionIcon>
+							) : (
+								<span className={styles.chevronPlaceholder} />
+							)}
+						</div>
+					</div>
 
-				{/* Status indicator dot */}
-				<div className={`${styles.statusDot} ${styles[`${nodeStyle}Dot`]}`} />
-
-				<Group
-					justify='space-between'
-					style={{ flex: 1 }}
-					wrap='nowrap'
-					gap='sm'
-				>
-					<Group gap='xs' wrap='nowrap' style={{ minWidth: 0, flex: 1 }}>
-						<Text
-							size={level === 0 ? 'md' : 'sm'}
-							fw={level === 0 ? 600 : 500}
-							className={`${styles.nodeText} ${
-								hasChildren ? styles.disabledText : ''
-							}`}
-							truncate
-							title={node.name}
-						>
-							{node.name}
+					<div className={styles.nodeContent}>
+						<div className={styles.nodeHeader}>
+							<div className={styles.nodeTitle}>
+								<span className={styles.nodeIcon} aria-hidden='true'>
+									{isLeaf ? (
+										<IconFileDescription
+											size={18}
+											color='var(--mantine-color-blue-6)'
+										/>
+									) : (
+										<IconFolder
+											size={18}
+											color='var(--mantine-color-yellow-7)'
+										/>
+									)}
+								</span>
+								<Text className={styles.nodeName} size='sm' fw={600}>
+									{node.name}
+								</Text>
+							</div>
+							<div className={styles.nodeBadges}>
+								<Badge size='xs' variant='light' color='blue' radius='sm'>
+									{nodeTypeLabel}
+								</Badge>
+							</div>
+						</div>
+						<Text className={styles.nodeMetaText} size='xs'>
+							{hasChildren
+								? `${childCount} ${childCount === 1 ? 'child outcome' : 'child outcomes'}`
+								: 'Terminal outcome'}
 						</Text>
-					</Group>
+					</div>
 
-					<Group gap={6} wrap='nowrap'>
-						{node?.isInvalidatesNumber && (
-							<Tooltip withArrow label='Invalidates number'>
-								<IconPhoneOff size={16} color='var(--mantine-color-red-6)' />
-							</Tooltip>
-						)}
-						{node?.requiresReschedule && (
-							<Tooltip withArrow label='Requires reschedule'>
-								<IconClock size={16} color={'var(--mantine-color-orange-6)'} />
-							</Tooltip>
-						)}
-					</Group>
-				</Group>
-			</Box>
+					<div className={styles.nodeAside}>
+						<div className={styles.nodeIcons}>
+							{node?.isInvalidatesNumber && (
+								<Tooltip withArrow label='Invalidates number'>
+									<IconPhoneOff size={16} color='var(--mantine-color-red-6)' />
+								</Tooltip>
+							)}
+							{node?.requiresReschedule && (
+								<Tooltip withArrow label='Requires reschedule'>
+									<IconClock size={16} color='var(--mantine-color-orange-6)' />
+								</Tooltip>
+							)}
+						</div>
+					</div>
+				</div>
+			</div>
 
-			{/* Render children with increased indentation */}
-			{node.children &&
+			{isExpanded &&
+				node.children &&
 				node.children.length > 0 &&
 				node.children.map((child) => (
 					<NodeViewer
@@ -145,9 +195,9 @@ const DispositionViewer: React.FC<DispositionViewerProps> = ({ flow }) => {
 
 	return (
 		<Card className={styles.viewer} withBorder>
-			<Stack gap={'xs'}>
+			<Stack gap='xs'>
 				<Group justify='space-between' align='center'>
-					<Flex direction={'column'}>
+					<Flex direction='column'>
 						<Text fz='xs' c='dimmed' fw={700}>
 							NAME
 						</Text>
@@ -155,14 +205,14 @@ const DispositionViewer: React.FC<DispositionViewerProps> = ({ flow }) => {
 					</Flex>
 				</Group>
 				<Divider />
-				<Box
+				<div
 					className={styles.nodesContainer}
 					aria-label={dispositionLabel('Outcome nodes list')}
 				>
 					{nodes.map((node) => (
 						<NodeViewer key={node.id} node={node} />
 					))}
-				</Box>
+				</div>
 			</Stack>
 		</Card>
 	);

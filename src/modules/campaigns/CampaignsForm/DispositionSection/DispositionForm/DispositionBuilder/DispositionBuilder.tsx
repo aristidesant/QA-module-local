@@ -1,26 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
-	Button,
 	Box,
-	Stack,
-	ScrollArea,
-	Paper,
-	TextInput,
+	Button,
 	Flex,
+	Modal,
+	Paper,
+	ScrollArea,
+	Stack,
+	Text,
+	TextInput,
 } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import styles from './DispositionBuilder.module.css';
 import { useDispositionLabel } from '~/hooks/useDispositionLabel';
-import { Droppable } from '@hello-pangea/dnd';
 import {
 	useCreateDispositionFlow,
 	useUpdateDispositionFlow,
 } from '~/queries/dispositionFlowQueries';
-// import type { DispositionCatalogModel } from '~/models/DispositionCatalogModels';
 import type { DispositionNode } from '~/models/DispositionNodeModel';
 import { useDispositionBuilderStore } from '../../dispositionStore';
 import NodeEditor from './NodeEditor';
 import DispositionNodeForm from './DispositionNodeForm';
-import { notifications } from '@mantine/notifications';
+import DispositionGroupPreview from './DispositionGroupPreview';
 
 type DispositionBuilderProps = {
 	onComplete?: () => void;
@@ -32,41 +33,39 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 	const createMutation = useCreateDispositionFlow();
 	const updateMutation = useUpdateDispositionFlow();
 	const dispositionLabel = useDispositionLabel();
-	const { flowJson, campaignId, dispositionFlow, removeNode, setFlowJson } =
-		useDispositionBuilderStore();
+	const {
+		flowJson,
+		campaignId,
+		dispositionFlow,
+		removeNode,
+		setFlowJson,
+		previewNode,
+		setPreviewNode,
+		populateNodeWithChildren,
+		addMissingSiblingsToParent,
+		selectedCatalog,
+	} = useDispositionBuilderStore();
 
-	// Only keep the original catalog nodes from flowJson
-	const catalogNodes: DispositionNode[] = flowJson.dispositionNodes ?? [];
-
-	// On mount, initialize builderNodes if empty
-	useEffect(() => {
-		if (flowJson?.dispositionNodes?.length === 0 && catalogNodes.length > 0) {
-			setFlowJson({ ...flowJson, dispositionNodes: catalogNodes });
-		}
-	}, [catalogNodes, flowJson, setFlowJson]);
-
-	// State for selected node for editing
 	const [selectedNode, setSelectedNode] = useState<DispositionNode | null>(
 		null
 	);
-
 	const [parentNode, setParentNode] = useState<DispositionNode | null>(null);
 
-	// Handler for node selection
 	const handleNodeSelect = (
 		node: DispositionNode,
-		parentNode?: DispositionNode
+		parent?: DispositionNode
 	) => {
-		if (!node.children || node.children.length === 0) {
-			setSelectedNode(node);
-			setParentNode(parentNode || null);
-		} else {
-			setSelectedNode(null);
-		}
+		setSelectedNode(node);
+		setParentNode(parent ?? null);
 	};
 
 	const handleNodeFormCancel = () => {
 		setSelectedNode(null);
+		setParentNode(null);
+	};
+
+	const handleClosePreview = () => {
+		setPreviewNode(null);
 	};
 
 	const handleSave = async () => {
@@ -82,7 +81,6 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 			return;
 		}
 
-		// Ensure required fields are filled
 		if (!flowJson.name || flowJson.name.trim() === '') {
 			notifications.show({
 				title: 'Error',
@@ -105,6 +103,7 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 			description: flowJson.description,
 			campaignId: campaignId,
 		};
+
 		try {
 			if (dispositionFlow?.id) {
 				await updateMutation.mutateAsync({
@@ -128,20 +127,20 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 		}
 	};
 
+	const isLeafSelected =
+		selectedNode &&
+		(!selectedNode.children || selectedNode.children.length === 0);
+
 	return (
 		<Box className={styles.builderContainer}>
-			{/** Transform labels when necessary based on campaign type */}
-			{/** eslint-disable-next-line react-hooks/rules-of-hooks */}
-			{/* call hook here so it's used in render scope */}
 			{null}
-			{/* the actual hook used below */}
-			{/* Main content area with two panels */}
-			<Flex mb={'xs'}>
+			<Flex mb='xs'>
 				<TextInput
 					label={dispositionLabel('Outcome Name')}
 					labelProps={{
 						title: `Campaign ID: ${campaignId || 'N/A'}`,
 					}}
+					w='50%'
 					placeholder={dispositionLabel('Outcome Name')}
 					description={dispositionLabel('Enter the name of the outcome')}
 					value={flowJson.name || ''}
@@ -152,7 +151,6 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 				/>
 			</Flex>
 			<Box className={styles.panelsContainer}>
-				{/* Left panel: Outcome nodes */}
 				<Box className={styles.leftPanel}>
 					<ScrollArea
 						type='hover'
@@ -174,57 +172,47 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 						}}
 					>
 						<Box className={styles.leftPanelContent}>
-							<Droppable droppableId='builder-drop' type='DISPOSITION_NODE'>
-								{(provided, snapshot) => (
-									<div
-										ref={provided.innerRef}
-										{...provided.droppableProps}
-										className={
-											snapshot.isDraggingOver
-												? `${styles.dropArea} ${styles.dropAreaActive}`
-												: flowJson?.dispositionNodes &&
-													  flowJson.dispositionNodes.length > 0
-													? styles.dropAreaWithNodes
-													: styles.dropArea
-										}
-									>
+							<Stack gap='sm'>
+								<Box className={styles.leftPanelHeader}>
+									<Text fw={600}>Outcome flow</Text>
+									<Text size='sm' c='dimmed'>
+										Use the catalog to add dispositions. Select a node to edit
+										or preview its group.
+									</Text>
+								</Box>
+								{flowJson?.dispositionNodes &&
+								flowJson.dispositionNodes.length > 0 ? (
+									<Box className={styles.treeContainer}>
 										<Stack gap='xs' className={styles.nodesStack}>
-											{flowJson?.dispositionNodes &&
-											flowJson.dispositionNodes.length > 0 ? (
-												<div>
-													{flowJson.dispositionNodes.map((node, idx) => (
-														<NodeEditor
-															key={node.id}
-															node={node}
-															idx={idx}
-															setBuilderNodes={(nodes) => {
-																setFlowJson({
-																	...flowJson,
-																	dispositionNodes: nodes,
-																});
-															}}
-															builderNodes={flowJson.dispositionNodes || []}
-															removeNode={removeNode}
-															onNodeSelect={handleNodeSelect}
-															selectedNodeId={selectedNode?.id}
-														/>
-													))}
-												</div>
-											) : (
-												<div className={styles.dropAreaText}>
-													{dispositionLabel('Drop disposition nodes here')}
-												</div>
-											)}
-											{provided.placeholder}
+											{flowJson.dispositionNodes.map((node) => (
+												<NodeEditor
+													key={node.id}
+													node={node}
+													removeNode={removeNode}
+													onNodeSelect={handleNodeSelect}
+													selectedNodeId={selectedNode?.id}
+													onPopulateChildren={populateNodeWithChildren}
+													onAddMissingSiblings={addMissingSiblingsToParent}
+													onPreviewGroup={setPreviewNode}
+													catalogNodes={selectedCatalog?.dispositionNodes}
+												/>
+											))}
 										</Stack>
-									</div>
+									</Box>
+								) : (
+									<Box className={styles.emptyState}>
+										<Text fw={600} c='var(--mantine-color-gray-6)'>
+											No dispositions selected yet
+										</Text>
+										<Text size='sm' c='var(--mantine-color-gray-5)'>
+											Add dispositions from the catalog to build this flow.
+										</Text>
+									</Box>
 								)}
-							</Droppable>
+							</Stack>
 						</Box>
 					</ScrollArea>
 				</Box>
-
-				{/* Right panel for node editing */}
 				<Box className={styles.rightPanel}>
 					<ScrollArea
 						type='hover'
@@ -246,22 +234,30 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 						}}
 					>
 						<Box className={styles.rightPanelContent}>
-							{selectedNode &&
-							(!selectedNode.children || selectedNode.children.length === 0) ? (
-								<DispositionNodeForm
-									key={selectedNode.id}
-									node={selectedNode}
-									parentNode={parentNode}
-									onSubmit={() => {
-										setSelectedNode(null);
-										setParentNode(null);
-									}}
-									onCancel={handleNodeFormCancel}
-								/>
+							{selectedNode ? (
+								isLeafSelected ? (
+									<DispositionNodeForm
+										key={selectedNode.id}
+										node={selectedNode}
+										parentNode={parentNode}
+										onSubmit={() => {
+											setSelectedNode(null);
+											setParentNode(null);
+										}}
+										onCancel={handleNodeFormCancel}
+									/>
+								) : (
+									<Stack gap='md'>
+										<Text fw={600} size='lg'>
+											Group preview
+										</Text>
+										<DispositionGroupPreview node={selectedNode} />
+									</Stack>
+								)
 							) : (
 								<Box className={styles.emptyRightPanel}>
 									<div className={styles.emptyPanelText}>
-										Select a node to edit its properties
+										Select a node to edit its properties or preview a group
 									</div>
 								</Box>
 							)}
@@ -270,7 +266,6 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 				</Box>
 			</Box>
 
-			{/* Footer */}
 			<Paper withBorder className={styles.footer}>
 				<Button
 					onClick={handleSave}
@@ -281,6 +276,16 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 					{dispositionFlow?.id ? 'Update Flow' : 'Create Flow'}
 				</Button>
 			</Paper>
+
+			<Modal
+				opened={Boolean(previewNode)}
+				onClose={handleClosePreview}
+				size='lg'
+				title='Disposition group preview'
+				withinPortal={false}
+			>
+				{previewNode ? <DispositionGroupPreview node={previewNode} /> : null}
+			</Modal>
 		</Box>
 	);
 };
