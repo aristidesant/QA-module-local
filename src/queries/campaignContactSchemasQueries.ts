@@ -123,3 +123,19 @@ export const useGetSchemaByObjectiveId = (
 		enabled: enabled && !!objectiveId,
 	});
 };
+
+// Get active schema by campaign ID
+export const useGetActiveSchemaByCampaignId = (
+	campaignId: number | undefined,
+	enabled = true
+) => {
+	return useQuery({
+		queryKey: ['campaign-contact-schema-active-by-campaign', campaignId],
+		queryFn: async () => {
+			if (!campaignId) return undefined;
+			const api = campaignContactSchemasApi();
+			return api.getActiveSchemaByCampaignId(campaignId);
+		},
+		enabled: enabled && !!campaignId,
+	});
+};
