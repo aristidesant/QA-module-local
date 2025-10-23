@@ -24,6 +24,9 @@ const CampaignConfigurationPrompt: React.FC = () => {
 		form.values.agentConfig?.conversationConfig?.agent?.prompt?.prompt || '';
 	const selectedCampaign = useCampaignsStore((state) => state.selectedCampaign);
 	const campaignId = selectedCampaign?.id || 0;
+	const contactSchemaId = (form.values.agentConfig as any)?.contactSchemaId as
+		| number
+		| undefined;
 
 	const onSelect = useCallback(
 		(selectedPrompt: string) => {
@@ -139,9 +142,10 @@ const CampaignConfigurationPrompt: React.FC = () => {
 			>
 				<CampaignConfigurationPromptEditModal
 					initialPrompt={prompt}
+					initialSchemaId={contactSchemaId}
 					onClose={() => setEditModalOpen(false)}
-					onSave={(newPrompt: string) => {
-						console.log('Saving new prompt:', newPrompt);
+					onSave={(newPrompt: string, schemaId?: number) => {
+						console.log('Saving new prompt:', newPrompt, 'schemaId:', schemaId);
 						const currentConfig = form.values.agentConfig || {};
 						const newConfig = {
 							...currentConfig,
@@ -155,6 +159,8 @@ const CampaignConfigurationPrompt: React.FC = () => {
 									},
 								},
 							},
+							// Persist user-selected contact schema id at the root of agentConfig
+							contactSchemaId: schemaId,
 						};
 						form.setFieldValue(
 							'agentConfig',

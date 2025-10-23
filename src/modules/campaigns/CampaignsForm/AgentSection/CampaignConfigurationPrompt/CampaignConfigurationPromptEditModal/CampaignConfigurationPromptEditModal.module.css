@@ -240,6 +240,43 @@
 	gap: var(--mantine-spacing-md);
 }
 
+/* Additional styles for schema selector and variables list */
+.content {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+	flex: 1;
+	min-height: 0;
+	overflow-y: auto;
+}
+
+.variablesAccordion {
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+}
+
+.schemaSelect {
+	background: var(--mantine-color-white);
+	border: 2px solid var(--mantine-color-blue-5);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-xs);
+	margin-bottom: var(--mantine-spacing-md);
+}
+
+.variablesList {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--mantine-spacing-xs);
+}
+
+.variableBadge {
+	cursor: default;
+	font-family: var(--mantine-font-family-monospace);
+	font-size: 0.75rem;
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+}
+
 @media (max-width: 1400px) {
 	.canvas {
 		grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);

@@ -98,6 +98,18 @@ const campaignContactSchemasApi = (
 			);
 			return response.data;
 		},
+
+		/**
+		 * Get active schema by campaign ID
+		 */
+		getActiveSchemaByCampaignId: async (
+			campaignId: number
+		): Promise<CampaignContactSchema> => {
+			const response = await axios.get<CampaignContactSchema>(
+				`${DEFAULT_API_URL}/campaign-contact-schemas/campaign/${campaignId}/active`
+			);
+			return response.data;
+		},
 	};
 };
 

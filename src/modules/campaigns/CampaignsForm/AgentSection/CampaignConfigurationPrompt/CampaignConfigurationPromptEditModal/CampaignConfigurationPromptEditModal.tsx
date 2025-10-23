@@ -1,5 +1,5 @@
 // CampaignConfigurationPromptEditModal.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
 	Textarea,
 	Button,
@@ -7,29 +7,58 @@ import {
 	Group,
 	Title,
 	ActionIcon,
+	Select,
+	Accordion,
+	Badge,
+	Stack,
+	Text,
 } from '@mantine/core';
-import { IconDeviceFloppy, IconX } from '@tabler/icons-react';
+import { IconDeviceFloppy, IconX, IconInfoCircle } from '@tabler/icons-react';
 import PromptTemplateSelect from '~/components/PromptTemplateSelect/PromptTemplateSelect';
 import { useGetAllPrompts } from '~/modules/prompt-generator/queries/promptGeneratorQueries';
 import styles from './CampaignConfigurationPromptEditModal.module.css';
+import { useGetCampaignContactSchemas } from '~/queries/campaignContactSchemasQueries';
+import type { CampaignContactSchema } from '~/models/CampaignContactSchemaModel';
 
 interface CampaignConfigurationPromptEditModalProps {
 	initialPrompt: string;
 	onClose: () => void;
-	onSave: (prompt: string) => void;
+	// Include selected schema id in save
+	onSave: (prompt: string, schemaId?: number) => void;
+	initialSchemaId?: number;
 }
 
 const CampaignConfigurationPromptEditModal: React.FC<
 	CampaignConfigurationPromptEditModalProps
-> = ({ initialPrompt, onClose, onSave }) => {
+> = ({ initialPrompt, onClose, onSave, initialSchemaId }) => {
 	const [prompt, setPrompt] = useState<string>(initialPrompt);
 	const [draft, setDraft] = useState<string>(initialPrompt);
 	const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(
 		null
 	);
+	const [selectedSchemaId, setSelectedSchemaId] = useState<string | undefined>(
+		initialSchemaId ? String(initialSchemaId) : undefined
+	);
 
 	// Fetch all prompt templates
 	const { data: prompts } = useGetAllPrompts();
+
+	// Fetch available contact schemas
+	const { data: schemasResponse } = useGetCampaignContactSchemas(
+		{ isActive: true },
+		true
+	);
+
+	// Auto-select first available schema if none provided
+	useEffect(() => {
+		if (!selectedSchemaId && schemasResponse?.data?.length) {
+			setSelectedSchemaId(String(schemasResponse.data[0].id));
+		}
+	}, [selectedSchemaId, schemasResponse?.data]);
+
+	// Resolve current schema
+	const currentSchema: CampaignContactSchema | undefined =
+		schemasResponse?.data.find((s) => s.id === Number(selectedSchemaId));
 
 	// Handle template selection
 	const handleTemplateChange = (value: string | null) => {
@@ -48,7 +77,7 @@ const CampaignConfigurationPromptEditModal: React.FC<
 
 	const handleSave = () => {
 		setPrompt(draft);
-		onSave(draft);
+		onSave(draft, selectedSchemaId ? Number(selectedSchemaId) : undefined);
 		onClose();
 	};
 
@@ -58,6 +87,13 @@ const CampaignConfigurationPromptEditModal: React.FC<
 	};
 
 	const isDirty = draft !== prompt;
+
+	// Prepare schema options
+	const schemaOptions =
+		schemasResponse?.data.map((schema) => ({
+			value: String(schema.id),
+			label: schema.name,
+		})) || [];
 
 	return (
 		<Paper radius='lg' className={styles.modalShell} withBorder>
@@ -87,6 +123,56 @@ const CampaignConfigurationPromptEditModal: React.FC<
 					size='sm'
 					className={styles.templateSelect}
 				/>
+
+				<Select
+					label='Contact Schema'
+					placeholder='Select a contact schema'
+					description='Choose a schema to use dynamic variables from contact data in your prompt.'
+					value={selectedSchemaId}
+					onChange={(value) => setSelectedSchemaId(value || undefined)}
+					data={schemaOptions}
+					clearable
+					searchable
+					size='sm'
+					className={styles.schemaSelect}
+				/>
+
+				{currentSchema && currentSchema.schemaFields?.length ? (
+					<Accordion
+						className={styles.variablesAccordion}
+						defaultValue='variables'
+					>
+						<Accordion.Item value='variables'>
+							<Accordion.Control icon={<IconInfoCircle size={18} />}>
+								<Text size='sm' fw={500}>
+									Available dynamic variables from "{currentSchema.name}"
+								</Text>
+							</Accordion.Control>
+							<Accordion.Panel>
+								<Stack gap='xs'>
+									<Text size='xs' c='dimmed'>
+										Use these variables in your prompt by wrapping them in
+										double curly braces, e.g., {'{{firstName}}'}
+									</Text>
+									<Group gap='xs' className={styles.variablesList}>
+										{currentSchema.schemaFields.map((field) => (
+											<Badge
+												key={field.name}
+												variant='light'
+												color='blue'
+												className={styles.variableBadge}
+												title={field.description || field.label}
+											>
+												{field.name}
+											</Badge>
+										))}
+									</Group>
+								</Stack>
+							</Accordion.Panel>
+						</Accordion.Item>
+					</Accordion>
+				) : null}
+
 				<Textarea
 					label='Agent brief'
 					placeholder='Lay out persona, tone, rules of engagement, escalation paths, and safety guardrails.'

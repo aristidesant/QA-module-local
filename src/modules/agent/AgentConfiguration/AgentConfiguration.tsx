@@ -18,6 +18,7 @@ type AgentConfigurationProps = {
 	withVoiceSelection?: boolean;
 	agent?: AgentListObject;
 	editableAgent?: Partial<AgentConfigModel>;
+	campaignId?: number;
 	onVoiceSelect?: (voiceId: string) => void;
 	onSetRightSection?: (rightSection: ReactNode) => void;
 	onUpdateAgent: (updatedFields: Partial<AgentConfigModel>) => void;
@@ -26,6 +27,7 @@ const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
 	agent,
 	editableAgent,
 	agentMode,
+	campaignId,
 	withVoiceSelection = true,
 	isLoading = false,
 	onUpdateAgent,
@@ -71,6 +73,7 @@ const AgentConfiguration: React.FC<AgentConfigurationProps> = ({
 					<AgentSettings
 						agentData={editableAgent}
 						agent={agent}
+						campaignId={campaignId}
 						onUpdateAgentData={handleAgentUpdate}
 						onSetRightSection={onSetRightSection}
 					/>

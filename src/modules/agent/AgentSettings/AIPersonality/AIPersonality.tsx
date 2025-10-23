@@ -16,17 +16,20 @@ import CampaignPromptHistory from '~/modules/campaigns/CampaignPromptHistory';
 
 interface AIPersonalityProps {
 	agentData: Partial<AgentConfigModel>;
+	campaignId?: number;
 	onUpdateAgentData: (updatedFields: any) => void;
 }
 
 const AIPersonality: React.FC<AIPersonalityProps> = ({
 	agentData,
+	campaignId,
 	onUpdateAgentData,
 }) => {
 	const [editModalOpen, setEditModalOpen] = useState(false);
 	const [restoreModalOpen, setRestoreModalOpen] = useState(false);
 
 	const prompt = agentData?.conversationConfig?.agent?.prompt?.prompt || '';
+	const contactSchemaId = (agentData as any)?.contactSchemaId;
 	const selectedCampaign = useCampaignsStore((state) => state.selectedCampaign);
 
 	const onSelect = useCallback(
@@ -136,8 +139,10 @@ const AIPersonality: React.FC<AIPersonalityProps> = ({
 			>
 				<AIPersonalityEditModal
 					initialPrompt={prompt}
+					campaignId={campaignId || selectedCampaign?.id}
+					initialSchemaId={contactSchemaId}
 					onClose={() => setEditModalOpen(false)}
-					onSave={(newPrompt) => {
+					onSave={(newPrompt, schemaId) => {
 						onUpdateAgentData({
 							conversationConfig: {
 								...(agentData?.conversationConfig || {}),
@@ -149,6 +154,7 @@ const AIPersonality: React.FC<AIPersonalityProps> = ({
 									},
 								},
 							},
+							contactSchemaId: schemaId,
 						});
 						setEditModalOpen(false);
 					}}
