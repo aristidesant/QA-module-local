@@ -1,24 +1,25 @@
 // CampaignConfigurationPromptEditModal.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
-	Textarea,
 	Button,
 	Paper,
 	Group,
 	Title,
 	ActionIcon,
 	Select,
-	Accordion,
 	Badge,
 	Stack,
 	Text,
 } from '@mantine/core';
+import MDEditor from '@uiw/react-md-editor';
 import { IconDeviceFloppy, IconX, IconInfoCircle } from '@tabler/icons-react';
 import PromptTemplateSelect from '~/components/PromptTemplateSelect/PromptTemplateSelect';
 import { useGetAllPrompts } from '~/modules/prompt-generator/queries/promptGeneratorQueries';
 import styles from './CampaignConfigurationPromptEditModal.module.css';
 import { useGetCampaignContactSchemas } from '~/queries/campaignContactSchemasQueries';
 import type { CampaignContactSchema } from '~/models/CampaignContactSchemaModel';
+import '@uiw/react-md-editor/markdown-editor.css';
+import { notifications } from '@mantine/notifications';
 
 interface CampaignConfigurationPromptEditModalProps {
 	initialPrompt: string;
@@ -88,6 +89,42 @@ const CampaignConfigurationPromptEditModal: React.FC<
 
 	const isDirty = draft !== prompt;
 
+	const handleVariableCopy = useCallback((variable: string) => {
+		const copy = async () => {
+			try {
+				if (
+					typeof navigator !== 'undefined' &&
+					navigator.clipboard?.writeText
+				) {
+					await navigator.clipboard.writeText(variable);
+				} else {
+					const textarea = document.createElement('textarea');
+					textarea.value = variable;
+					textarea.setAttribute('readonly', '');
+					textarea.style.position = 'absolute';
+					textarea.style.left = '-9999px';
+					document.body.appendChild(textarea);
+					textarea.select();
+					document.execCommand('copy');
+					document.body.removeChild(textarea);
+				}
+				notifications.show({
+					color: 'blue',
+					title: 'Variable copied',
+					message: `${variable} copied to clipboard.`,
+				});
+			} catch (error) {
+				notifications.show({
+					color: 'red',
+					title: 'Copy failed',
+					message: 'Unable to copy variable. Please try again.',
+				});
+			}
+		};
+
+		void copy();
+	}, []);
+
 	// Prepare schema options
 	const schemaOptions =
 		schemasResponse?.data.map((schema) => ({
@@ -113,78 +150,102 @@ const CampaignConfigurationPromptEditModal: React.FC<
 			</div>
 
 			<div className={styles.content}>
-				<PromptTemplateSelect
-					value={selectedTemplateId}
-					withPreview={false}
-					onChange={handleTemplateChange}
-					description='Choosing a template replaces the current draft content.'
-					clearable
-					searchable
-					size='sm'
-					className={styles.templateSelect}
-				/>
+				<div className={styles.editorColumn}>
+					<div className={styles.controlsGrid}>
+						<PromptTemplateSelect
+							value={selectedTemplateId}
+							withPreview={false}
+							onChange={handleTemplateChange}
+							description='Choosing a template replaces the current draft content.'
+							clearable
+							searchable
+							size='sm'
+							className={styles.templateSelect}
+						/>
+					</div>
 
-				<Select
-					label='Contact Schema'
-					placeholder='Select a contact schema'
-					description='Choose a schema to use dynamic variables from contact data in your prompt.'
-					value={selectedSchemaId}
-					onChange={(value) => setSelectedSchemaId(value || undefined)}
-					data={schemaOptions}
-					clearable
-					searchable
-					size='sm'
-					className={styles.schemaSelect}
-				/>
+					<div className={styles.editorCard}>
+						<div className={styles.editorHeading}>
+							<Text fw={600} size='sm' className={styles.editorLabel}>
+								Agent brief
+							</Text>
+							<Text size='sm' c='dimmed'>
+								Lay out persona, tone, rules of engagement, escalation paths,
+								and guardrails.
+							</Text>
+						</div>
+						<div className={styles.markdownEditor}>
+							<MDEditor
+								value={draft}
+								onChange={(value) => setDraft(value ?? '')}
+								height={420}
+								preview='edit'
+								data-color-mode='light'
+								textareaProps={{
+									placeholder:
+										'Write a clear, directive prompt with sections for persona, tone, playbooks, and safety measures.',
+									autoFocus: true,
+								}}
+							/>
+						</div>
+					</div>
+				</div>
 
-				{currentSchema && currentSchema.schemaFields?.length ? (
-					<Accordion
-						className={styles.variablesAccordion}
-						defaultValue='variables'
-					>
-						<Accordion.Item value='variables'>
-							<Accordion.Control icon={<IconInfoCircle size={18} />}>
-								<Text size='sm' fw={500}>
-									Available dynamic variables from "{currentSchema.name}"
+				<aside className={styles.sidebar}>
+					<div className={styles.sidebarCard}>
+						<Select
+							label='Contact schema'
+							placeholder='Select a contact schema'
+							description='Choose a schema to expose dynamic variables from your contact data.'
+							value={selectedSchemaId}
+							onChange={(value) => setSelectedSchemaId(value || undefined)}
+							data={schemaOptions}
+							clearable
+							searchable
+							size='sm'
+							className={styles.schemaSelect}
+						/>
+						<Group gap='xs'>
+							<IconInfoCircle size={16} className={styles.sidebarIcon} />
+							<Text fw={600} size='sm' className={styles.sidebarTitle}>
+								Dynamic variables
+							</Text>
+						</Group>
+						<Text size='xs' c='dimmed'>
+							Wrap variables in double curly braces to merge contact data into
+							your brief.
+						</Text>
+						{currentSchema && currentSchema.schemaFields?.length ? (
+							<Stack gap='xs' className={styles.variablesStack}>
+								<Text size='xs' fw={500} c='dimmed'>
+									Schema: {currentSchema.name}
 								</Text>
-							</Accordion.Control>
-							<Accordion.Panel>
-								<Stack gap='xs'>
-									<Text size='xs' c='dimmed'>
-										Use these variables in your prompt by wrapping them in
-										double curly braces, e.g., {'{{firstName}}'}
-									</Text>
-									<Group gap='xs' className={styles.variablesList}>
-										{currentSchema.schemaFields.map((field) => (
-											<Badge
-												key={field.name}
-												variant='light'
-												color='blue'
-												className={styles.variableBadge}
-												title={field.description || field.label}
-											>
-												{field.name}
-											</Badge>
-										))}
-									</Group>
-								</Stack>
-							</Accordion.Panel>
-						</Accordion.Item>
-					</Accordion>
-				) : null}
-
-				<Textarea
-					label='Agent brief'
-					placeholder='Lay out persona, tone, rules of engagement, escalation paths, and safety guardrails.'
-					value={draft}
-					onChange={(event) => setDraft(event.currentTarget.value)}
-					className={styles.promptTextarea}
-					description='Keep sections concise with action-led directives. Use lists for playbooks and guardrails.'
-					autosize
-					minRows={20}
-					maxRows={40}
-					autoFocus
-				/>
+								<Group gap='xs' className={styles.variablesList}>
+									{currentSchema.schemaFields.map((field) => (
+										<Badge
+											key={field.name}
+											variant='outline'
+											color='blue'
+											className={styles.variableBadge}
+											title={field.description || field.label}
+											component='button'
+											type='button'
+											onClick={() => handleVariableCopy(`{{${field.name}}}`)}
+											aria-label={`Copy variable {{${field.name}}} to clipboard`}
+										>
+											{`{{${field.name}}}`}
+										</Badge>
+									))}
+								</Group>
+							</Stack>
+						) : (
+							<Text size='sm' c='dimmed'>
+								Select a contact schema to see the variables available for
+								templating.
+							</Text>
+						)}
+					</div>
+				</aside>
 			</div>
 
 			<Group justify='space-between' className={styles.footer}>
