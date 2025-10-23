@@ -13,8 +13,14 @@ export type ContactFileUploadResponse = ContactFileSummary;
 export type CsvFieldMapping = { csvField: string };
 export type MappedResult = Record<string, CsvFieldMapping | CsvFieldMapping[]>;
 
+// Extended field mapping type that supports nested dynamicColumns
+export type FieldMappingWithDynamicColumns = Record<
+	string,
+	CsvFieldMapping | CsvFieldMapping[] | MappedResult
+>;
+
 export interface ProcessContactGroupFileRequest {
-	fieldMapping: MappedResult;
+	fieldMapping: FieldMappingWithDynamicColumns;
 	contactGroupFileId: number;
 	groupName: string;
 	groupDescription: string;

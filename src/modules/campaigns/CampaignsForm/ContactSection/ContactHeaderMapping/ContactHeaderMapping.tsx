@@ -1,12 +1,16 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Button, Card, Group, Text, Menu, ActionIcon } from '@mantine/core';
 import { useGetClientConfig } from '~/queries/clientConfigQueries';
-import { useGetCampaignContactSchemas } from '~/queries/campaignContactSchemasQueries';
+import { useGetSchemaByObjectiveId } from '~/queries/campaignContactSchemasQueries';
 import { IconPlus } from '@tabler/icons-react';
 import styles from './ContactHeaderMapping.module.css';
 import { modals } from '@mantine/modals';
 import type { MappedResult } from '~/models/ContactFileSummary';
-import type { CampaignContactSchemaField } from '~/models/CampaignContactSchemaModel';
+import type {
+	CampaignContactSchemaField,
+	CampaignContactSchema,
+} from '~/models/CampaignContactSchemaModel';
+import { useCampaignsStore } from '~/stores/campaignsStore';
 
 interface SystemColumn {
 	name: string;
@@ -21,6 +25,7 @@ interface ContactHeaderMappingProps {
 	result?: MappedResult;
 	schemaFields?: CampaignContactSchemaField[];
 	onSchemaSelected?: (schemaId: number) => void;
+	objectiveId?: number;
 }
 
 interface FieldMapping {
@@ -34,7 +39,14 @@ export function ContactHeaderMapping({
 	result,
 	schemaFields = [],
 	onSchemaSelected,
+	objectiveId,
 }: ContactHeaderMappingProps) {
+	// Read from campaign store and prefer store value (objectiveId or objective.id)
+	const { selectedCampaign } = useCampaignsStore();
+
+	const storeObjectiveId =
+		selectedCampaign?.objectiveId ?? selectedCampaign?.objective?.id;
+
 	const [selectedSystemField, setSelectedSystemField] = useState<string | null>(
 		null
 	);
@@ -51,8 +63,16 @@ export function ContactHeaderMapping({
 
 	const { data: systemConfig, isLoading: isLoadingSystemColumns } =
 		useGetClientConfig('contact_columns');
-	const { data: schemasResponse } = useGetCampaignContactSchemas();
-	const schemas = schemasResponse?.data || [];
+
+	// Fetch schemas by objectiveId with fallback to prop if store is not set
+	const enableSchemasQuery = storeObjectiveId ?? objectiveId;
+	const effectiveObjectiveId = storeObjectiveId ?? objectiveId;
+	const { data: schemasResponse } = useGetSchemaByObjectiveId(
+		effectiveObjectiveId as number,
+		enableSchemasQuery as any
+	);
+	// Extract schemas array from response, or empty array
+	const schemas: CampaignContactSchema[] = schemasResponse?.data || [];
 
 	// Transform and memoize system columns including schema fields
 	const systemColumns = useMemo<SystemColumn[]>(() => {
@@ -92,21 +112,72 @@ export function ContactHeaderMapping({
 		];
 	}, [systemConfig, schemaFields, additionalSchemaFields]);
 
-	// Function to add dynamic columns from a selected campaign column set
-	const addSchemaFields = useCallback(
-		(selectedSchemaFields: CampaignContactSchemaField[]) => {
-			// Filter out columns that are already present
-			const existingFieldNames = new Set([
-				...systemColumns.map((col) => col.name),
-				...additionalSchemaFields.map((field) => field.name),
-			]);
-
-			const newFields = selectedSchemaFields.filter(
-				(field) => !existingFieldNames.has(field.name)
+	// Convert mappings to the expected result format (arrays for isArray fields)
+	const getMappedResult = useCallback(
+		(currentMappings: FieldMapping[]): MappedResult => {
+			const grouped = currentMappings.reduce<Record<string, string[]>>(
+				(acc, { systemField, documentField }) => {
+					if (!acc[systemField]) acc[systemField] = [];
+					acc[systemField].push(documentField);
+					return acc;
+				},
+				{}
 			);
-			setAdditionalSchemaFields((prev) => [...prev, ...newFields]);
+
+			const resultAcc: MappedResult = {};
+			for (const [systemField, docs] of Object.entries(grouped)) {
+				const column = systemColumns.find((c) => c.name === systemField);
+				if (column?.isArray) {
+					resultAcc[systemField] = docs.map((d) => ({ csvField: d }));
+				} else {
+					resultAcc[systemField] = { csvField: docs[0] };
+				}
+			}
+			return resultAcc;
 		},
-		[systemColumns, additionalSchemaFields]
+		[systemColumns]
+	);
+
+	// Handler to add dynamic columns (single selection only)
+	const handleAddDynamicColumns = useCallback(
+		(schemaFieldsParam: CampaignContactSchemaField[], schemaId: number) => {
+			// Replace previously selected dynamic fields with the new selection
+			setAdditionalSchemaFields(() => schemaFieldsParam);
+
+			// Compute allowed system field names: base + initial + newly selected dynamic fields
+			const prevAdditionalNames = new Set(
+				additionalSchemaFields.map((f) => f.name)
+			);
+			const allowedNames = new Set(systemColumns.map((c) => c.name));
+			// Remove old dynamic fields from allowed set
+			prevAdditionalNames.forEach((n) => allowedNames.delete(n));
+			// Add the new dynamic fields
+			schemaFieldsParam.forEach((f) => allowedNames.add(f.name));
+
+			// Prune mappings that reference fields no longer available
+			const prunedMappings = mappings.filter((m) =>
+				allowedNames.has(m.systemField)
+			);
+			setMappings(prunedMappings);
+
+			// Reset selection if it referenced a removed field
+			if (selectedSystemField && !allowedNames.has(selectedSystemField)) {
+				setSelectedSystemField(null);
+			}
+
+			// Notify parent consumers
+			onMappingChange(getMappedResult(prunedMappings));
+			onSchemaSelected?.(schemaId);
+		},
+		[
+			additionalSchemaFields,
+			systemColumns,
+			mappings,
+			selectedSystemField,
+			getMappedResult,
+			onMappingChange,
+			onSchemaSelected,
+		]
 	);
 
 	// Initialize mappings when component mounts or when result prop changes
@@ -147,32 +218,6 @@ export function ContactHeaderMapping({
 			),
 		};
 	}, [systemColumns, documentColumns, mappings, finalizedSystemFields]);
-
-	// Convert mappings to the expected result format (arrays for isArray fields)
-	const getMappedResult = useCallback(
-		(currentMappings: FieldMapping[]): MappedResult => {
-			const grouped = currentMappings.reduce<Record<string, string[]>>(
-				(acc, { systemField, documentField }) => {
-					if (!acc[systemField]) acc[systemField] = [];
-					acc[systemField].push(documentField);
-					return acc;
-				},
-				{}
-			);
-
-			const resultAcc: MappedResult = {};
-			for (const [systemField, docs] of Object.entries(grouped)) {
-				const column = systemColumns.find((c) => c.name === systemField);
-				if (column?.isArray) {
-					resultAcc[systemField] = docs.map((d) => ({ csvField: d }));
-				} else {
-					resultAcc[systemField] = { csvField: docs[0] };
-				}
-			}
-			return resultAcc;
-		},
-		[systemColumns]
-	);
 
 	// Handle removing a mapping
 	const handleRemoveMapping = (mappingToRemove: FieldMapping) => {
@@ -259,7 +304,11 @@ export function ContactHeaderMapping({
 							<Text size='sm' fw={500}>
 								System columns
 							</Text>{' '}
-							{schemas && schemas.length > 0 && (
+							{!storeObjectiveId ? (
+								<Text size='xs' c='yellow' style={{ fontStyle: 'italic' }}>
+									Select an objective to add dynamic columns
+								</Text>
+							) : schemas && schemas.length > 0 ? (
 								<Group gap='xs' align='center'>
 									<Text size='xs' c='dimmed'>
 										Add dynamic columns
@@ -280,8 +329,10 @@ export function ContactHeaderMapping({
 												<div key={schema.id}>
 													<Menu.Item
 														onClick={() => {
-															addSchemaFields(schema.schemaFields);
-															onSchemaSelected?.(schema.id);
+															handleAddDynamicColumns(
+																schema.schemaFields,
+																schema.id
+															);
 														}}
 														style={{
 															whiteSpace: 'normal',
@@ -331,7 +382,7 @@ export function ContactHeaderMapping({
 										</Menu.Dropdown>
 									</Menu>
 								</Group>
-							)}
+							) : null}
 						</Group>
 						<div className={styles.itemsContainer}>
 							{isLoadingSystemColumns ? (

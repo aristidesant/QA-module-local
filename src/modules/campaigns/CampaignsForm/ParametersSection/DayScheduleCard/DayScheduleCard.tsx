@@ -61,7 +61,6 @@ export const DayScheduleCard: React.FC = () => {
 							isSelected ? styles.highlighted : ''
 						} ${styles.selectable}`}
 						onClick={() => {
-							console.log(`[DayScheduleCard] Clicked day row:`, day.dayOfWeek);
 							setSelectedDay(day.dayOfWeek ?? null);
 							setRightComponent?.(
 								<DayTimeDistribution

@@ -28,6 +28,7 @@ interface ContactListItemProps {
 	withSwitch?: boolean;
 	withAddExpiration?: boolean;
 	campaignId?: string | number;
+	objectiveId?: number;
 }
 
 export function ContactListItem({
@@ -37,6 +38,7 @@ export function ContactListItem({
 	withSwitch = true,
 	withAddExpiration,
 	campaignId,
+	objectiveId,
 }: ContactListItemProps) {
 	const updateContactGroupStatus = useUpdateContactGroupStatus();
 	const deleteSchedulerContactGroup = useDeleteSchedulerContactGroup();
@@ -103,6 +105,7 @@ export function ContactListItem({
 						onUpdateComplete();
 						modals.close('contact-list-modal');
 					}}
+					objectiveId={objectiveId}
 				/>
 			),
 			size: 'xl',

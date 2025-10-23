@@ -6,12 +6,21 @@ import { useGetCampaign } from '~/queries/campaignsQueries';
 import { useEffect } from 'react';
 
 export default function CampaignsPage() {
-	const { selectedCampaign, editCampaign, resetView } = useCampaignsStore(
-		(state) => state
-	);
+	const { selectedCampaign, editCampaign, resetView, selectCampaign } =
+		useCampaignsStore((state) => state);
+
 	const { data: campaign } = useGetCampaign(
-		selectedCampaign?.id ? `${selectedCampaign?.id}` : ''
+		selectedCampaign?.id ? `${selectedCampaign.id}` : ''
 	);
+
+	// Sync fetched campaign into the store when it changes.
+	// Only apply if there is no selection yet or it matches the current selected id
+	useEffect(() => {
+		if (!campaign) return;
+		if (!selectedCampaign || selectedCampaign.id === campaign.id) {
+			selectCampaign(campaign as Campaign);
+		}
+	}, [campaign, selectedCampaign?.id, selectCampaign]);
 
 	useEffect(() => {
 		return () => {

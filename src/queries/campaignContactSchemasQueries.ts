@@ -14,10 +14,8 @@ export const useCreateCampaignContactSchema = () => {
 			const api = campaignContactSchemasApi();
 			return api.createCampaignContactSchema(data);
 		},
-		onSuccess: (data) => {
+		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['campaign-contact-schemas'] });
-			// eslint-disable-next-line no-console
-			console.log('Campaign contact schema created successfully:', data);
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console
@@ -28,7 +26,8 @@ export const useCreateCampaignContactSchema = () => {
 
 // Get all campaign contact schemas
 export const useGetCampaignContactSchemas = (
-	params?: CampaignContactSchemaApiParams
+	params?: CampaignContactSchemaApiParams,
+	enabled = true
 ) => {
 	return useQuery({
 		queryKey: ['campaign-contact-schemas', params],
@@ -36,6 +35,7 @@ export const useGetCampaignContactSchemas = (
 			const api = campaignContactSchemasApi();
 			return api.getCampaignContactSchemas(params);
 		},
+		enabled,
 	});
 };
 
@@ -65,13 +65,11 @@ export const useUpdateCampaignContactSchema = () => {
 			const api = campaignContactSchemasApi();
 			return api.updateCampaignContactSchema(id, data);
 		},
-		onSuccess: (data, variables) => {
+		onSuccess: (_data, variables) => {
 			queryClient.invalidateQueries({ queryKey: ['campaign-contact-schemas'] });
 			queryClient.invalidateQueries({
 				queryKey: ['campaign-contact-schema', variables.id],
 			});
-			// eslint-disable-next-line no-console
-			console.log('Campaign contact schema updated successfully:', data);
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console
@@ -91,8 +89,6 @@ export const useDeleteCampaignContactSchema = () => {
 		onSuccess: (_, id) => {
 			queryClient.invalidateQueries({ queryKey: ['campaign-contact-schemas'] });
 			queryClient.removeQueries({ queryKey: ['campaign-contact-schema', id] });
-			// eslint-disable-next-line no-console
-			console.log('Campaign contact schema deleted successfully');
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console

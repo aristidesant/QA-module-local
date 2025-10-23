@@ -19,12 +19,14 @@ import { useUpdateSchedulerContactGroup } from '~/queries/schedulerContactGroupQ
 import SchedulerPreview from './SchedulerPreview';
 import ColumnMappingCard from './ColumnMappingCard/ColumnMappingCard';
 import CallLimitCard from './CallLimitCard';
+import { transformFieldMapping } from '~/utils/fieldMappingTransformer';
 
 type ContactLimitsProps = {
 	fileSummary?: ContactFileSummary;
 	schedulerContactGroup: Partial<SchedulerContactGroupModel>;
 	campaignId: string | number;
 	onComplete?: () => void;
+	objectiveId?: number;
 };
 
 export const ContactLimits = ({
@@ -32,6 +34,7 @@ export const ContactLimits = ({
 	schedulerContactGroup,
 	campaignId,
 	onComplete,
+	objectiveId,
 }: ContactLimitsProps) => {
 	const processFileMutation = useProcessContactGroupFile();
 	const updateSchedulerContactGroupMutation = useUpdateSchedulerContactGroup();
@@ -94,7 +97,6 @@ export const ContactLimits = ({
 			onScheduleSelect: handleScheduleSelect,
 			onAddSchedule: () => {
 				// TODO: Implement add schedule functionality
-				console.log('Add schedule clicked');
 			},
 		});
 	};
@@ -140,9 +142,14 @@ export const ContactLimits = ({
 				const defaultExpirationDate = new Date();
 				defaultExpirationDate.setDate(defaultExpirationDate.getDate() + 30);
 
+				// Transform field mapping to separate dynamic columns
+				const { fieldMapping } = transformFieldMapping(
+					data.columnMappings || {}
+				);
+
 				await processFileMutation.mutateAsync({
 					contactGroupFileId: fileSummary.contactGroupFileId,
-					fieldMapping: data.columnMappings || {},
+					fieldMapping,
 					groupName:
 						data.name || `Contact List ${new Date().toLocaleDateString()}`,
 					groupDescription: data.description || '',
@@ -246,6 +253,7 @@ export const ContactLimits = ({
 						columnMappings={data?.columnMappings || {}}
 						error={processFileMutation.error?.message}
 						onSchemaSelected={setSelectedSchemaId}
+						objectiveId={objectiveId}
 					/>
 				)}
 				<Group justify='flex-end' mt='md'>

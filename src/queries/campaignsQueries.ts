@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { UseQueryOptions } from '@tanstack/react-query';
 import campaignsApi, {
 	type CreateCampaignWithAgentDTO,
 } from '~/api/campaignsApi';
@@ -12,11 +13,9 @@ export const useCreateCampaign = () => {
 			const api = campaignsApi();
 			return api.createCampaign(campaign);
 		},
-		onSuccess: (data) => {
+		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['campaigns'] });
 			queryClient.invalidateQueries({ queryKey: ['campaigns-paginated'] });
-			// eslint-disable-next-line no-console
-			console.log('Campaign created successfully:', data);
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console
@@ -48,14 +47,21 @@ export const useGetAllCampaignsPaginated = (params?: Record<string, any>) => {
 };
 
 // Get campaign by id
-export const useGetCampaign = (id: string) => {
-	return useQuery({
+export const useGetCampaign = (
+	id: string,
+	options?: Omit<
+		UseQueryOptions<Campaign, unknown, Campaign, ['campaign', string]>,
+		'queryKey' | 'queryFn' | 'enabled'
+	>
+) => {
+	return useQuery<Campaign, unknown, Campaign, ['campaign', string]>({
 		queryKey: ['campaign', id],
 		queryFn: async () => {
 			const api = campaignsApi();
 			return api.findCampaign(id);
 		},
 		enabled: !!id,
+		...options,
 	});
 };
 
@@ -107,7 +113,6 @@ export const useUpdateCampaign = () => {
 			data: Partial<Campaign>;
 		}) => {
 			const api = campaignsApi();
-			console.log('Updating campaign with ID:', id, 'Data:', data);
 			return api.updateCampaign(id, data);
 		},
 		onSuccess: (data) => {
@@ -116,8 +121,6 @@ export const useUpdateCampaign = () => {
 			if (data?.id) {
 				queryClient.invalidateQueries({ queryKey: ['campaign', data.id] });
 			}
-			// eslint-disable-next-line no-console
-			console.log('Campaign updated successfully:', data);
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console
@@ -164,8 +167,6 @@ export const useStartOutboundCampaign = () => {
 					query.queryKey[0] === 'campaigns-paginated' ||
 					query.queryKey[0] === 'campaign',
 			});
-			// eslint-disable-next-line no-console
-			console.log('Campaign started successfully:', campaignId);
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console
@@ -212,8 +213,6 @@ export const usePauseOutboundCampaign = () => {
 					query.queryKey[0] === 'campaigns-paginated' ||
 					query.queryKey[0] === 'campaign',
 			});
-			// eslint-disable-next-line no-console
-			console.log('Campaign paused successfully:', campaignId);
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console
@@ -260,8 +259,6 @@ export const useResumeOutboundCampaign = () => {
 					query.queryKey[0] === 'campaigns-paginated' ||
 					query.queryKey[0] === 'campaign',
 			});
-			// eslint-disable-next-line no-console
-			console.log('Campaign resumed successfully:', campaignId);
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console
@@ -282,8 +279,6 @@ export const useDeleteCampaign = () => {
 			queryClient.invalidateQueries({ queryKey: ['campaigns'] });
 			queryClient.invalidateQueries({ queryKey: ['campaigns-paginated'] });
 			queryClient.invalidateQueries({ queryKey: ['campaign', id] });
-			// eslint-disable-next-line no-console
-			console.log('Campaign deleted successfully:', id);
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console
@@ -310,11 +305,9 @@ export const useCloneCampaign = () => {
 			const api = campaignsApi();
 			return api.cloneCampaign(campaignId, data);
 		},
-		onSuccess: (data) => {
+		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['campaigns'] });
 			queryClient.invalidateQueries({ queryKey: ['campaigns-paginated'] });
-			// eslint-disable-next-line no-console
-			console.log('Campaign cloned successfully:', data);
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console
@@ -343,8 +336,6 @@ export const useAssignCampaignObjective = () => {
 			if (data?.id) {
 				queryClient.invalidateQueries({ queryKey: ['campaign', data.id] });
 			}
-			// eslint-disable-next-line no-console
-			console.log('Objective assigned to campaign successfully:', data);
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console
@@ -361,11 +352,9 @@ export const useCreateCampaignWithAgent = () => {
 			const api = campaignsApi();
 			return api.createCampaignWithAgent(data);
 		},
-		onSuccess: (data) => {
+		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['campaigns'] });
 			queryClient.invalidateQueries({ queryKey: ['campaigns-paginated'] });
-			// eslint-disable-next-line no-console
-			console.log('Campaign with agent created successfully:', data);
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console
