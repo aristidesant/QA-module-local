@@ -47,10 +47,11 @@ const DispositionCatalogMenu: React.FC = () => {
 	// Helper functions
 	const getAllChildIds = (node: DispositionNode): number[] => {
 		if (!node.children || node.children.length === 0) return [];
-		return node.children.reduce<number[]>(
-			(acc, child) => [...acc, child.id, ...getAllChildIds(child)],
-			[]
-		);
+		return node.children.reduce<number[]>((acc, child) => {
+			// Only include active children
+			if (!child.isActive) return acc;
+			return [...acc, child.id, ...getAllChildIds(child)];
+		}, []);
 	};
 
 	const availableNodes = useMemo((): AvailableNode[] => {
@@ -65,10 +66,9 @@ const DispositionCatalogMenu: React.FC = () => {
 		const movedIds = new Set(movedNodeIds.map((id) => parseInt(id)));
 		const result: AvailableNode[] = [];
 
-		// Enhanced logic: covers all edge cases for parent/child visibility and enabled state
+		// Logic: Show parent and children unless all children are added
 		const addNodeWithChildren = (node: DispositionNode, level: number = 0) => {
 			const hasChildren = node.children && node.children.length > 0;
-			const isMoved = movedIds.has(node.id);
 
 			// Filter children to only include active ones
 			const activeChildren = hasChildren
@@ -76,29 +76,33 @@ const DispositionCatalogMenu: React.FC = () => {
 				: [];
 
 			const childIds = activeChildren.length > 0 ? getAllChildIds(node) : [];
-			const allChildrenAndDescendantsMoved =
+			const allChildrenMoved =
 				childIds.length > 0 && childIds.every((id) => movedIds.has(id));
 
-			// Case 1: Hide parent only if it and all descendants are moved
-			if (isMoved && allChildrenAndDescendantsMoved) {
-				return;
-			}
-
-			// Case 2: Parent node logic
+			// Case 1: Parent node with children
 			if (activeChildren.length > 0) {
-				// Parent is disabled if moved or if not all children are moved
+				// Hide parent only if ALL children are in the flow
+				if (allChildrenMoved) {
+					return;
+				}
+
+				// Show parent (always enabled)
 				result.push({
 					node,
-					disabled: isMoved || !allChildrenAndDescendantsMoved,
+					disabled: false,
 					level,
 				});
-				// Always process children, regardless of parent state
+
+				// Process children - only show children that are NOT moved
 				activeChildren.forEach((child) => {
-					addNodeWithChildren(child, level + 1);
+					const childMoved = movedIds.has(child.id);
+					if (!childMoved) {
+						addNodeWithChildren(child, level + 1);
+					}
 				});
 			} else {
-				// Case 3: Leaf node logic
-				// Leaf is hidden if moved, else enabled
+				// Case 2: Leaf node - show only if not moved
+				const isMoved = movedIds.has(node.id);
 				if (!isMoved) {
 					result.push({
 						node,
@@ -124,6 +128,23 @@ const DispositionCatalogMenu: React.FC = () => {
 			const currentNode = findNodeById(catalogNodes, node.id);
 			if (!currentNode) return;
 
+			// Check if this node has children
+			const hasChildren =
+				currentNode.children && currentNode.children.length > 0;
+
+			if (hasChildren) {
+				// If parent node, add all children
+				handleAddGroupWithChildren(
+					currentNode,
+					catalogNodes,
+					flowJson?.dispositionNodes ?? [],
+					addNode,
+					addNodeToParent
+				);
+				return;
+			}
+
+			// For leaf nodes, check if parent is in flow
 			let parentNode: DispositionNode | null = null;
 			if (currentNode.parentId) {
 				parentNode = findNodeById(catalogNodes, currentNode.parentId);
@@ -157,24 +178,6 @@ const DispositionCatalogMenu: React.FC = () => {
 			isParentInFlow,
 			selectedCatalog,
 		]
-	);
-
-	const handleAddGroup = useCallback(
-		(node: DispositionNode) => {
-			if (!selectedCatalog) return;
-			const catalogNodes = selectedCatalog.dispositionNodes ?? [];
-			const targetNode = findNodeById(catalogNodes, node.id);
-			if (!targetNode) return;
-
-			handleAddGroupWithChildren(
-				targetNode,
-				catalogNodes,
-				flowJson?.dispositionNodes ?? [],
-				addNode,
-				addNodeToParent
-			);
-		},
-		[addNode, addNodeToParent, flowJson?.dispositionNodes, selectedCatalog]
 	);
 
 	const hasNodesInFlow = (flowJson?.dispositionNodes?.length ?? 0) > 0;
@@ -220,11 +223,6 @@ const DispositionCatalogMenu: React.FC = () => {
 									node={item.node}
 									disabled={false}
 									onAdd={handleAddNode}
-									onAddGroup={
-										item.node.children && item.node.children.length > 0
-											? handleAddGroup
-											: undefined
-									}
 								/>
 							</div>
 						))}

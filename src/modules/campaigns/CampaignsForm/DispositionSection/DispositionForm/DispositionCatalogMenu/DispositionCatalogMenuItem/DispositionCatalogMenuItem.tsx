@@ -33,7 +33,7 @@ const DispositionCatalogMenuItem: React.FC<Props> = ({
 			className={`${styles.item} ${disabled ? styles.itemDisabled : ''}`}
 		>
 			<Group justify='space-between' align='center' gap='sm' wrap='nowrap'>
-				<Group gap='sm' wrap='nowrap'>
+				<Group gap='sm' wrap='nowrap' style={{ flex: 1, minWidth: 0 }}>
 					<IconPointFilled
 						size={12}
 						className={`${styles.statusDot} ${styles[`${nodeStyle}Dot`]}`}
@@ -53,11 +53,25 @@ const DispositionCatalogMenuItem: React.FC<Props> = ({
 							/>
 						)}
 					</Box>
-					<Box className={styles.textContent}>
+					<Box className={styles.textContent} style={{ minWidth: 0, flex: 1 }}>
 						<Tooltip
-							label={node.description || node.name}
+							label={
+								node.description ? (
+									<Box>
+										<Text fw={600} size='sm'>
+											{node.name}
+										</Text>
+										<Text size='xs' mt={4}>
+											{node.description}
+										</Text>
+									</Box>
+								) : (
+									node.name
+								)
+							}
 							withArrow
-							disabled={!node.description}
+							multiline
+							maw={300}
 						>
 							<Text fw={hasChildren ? 600 : 500} className={styles.nodeName}>
 								{node.name}
