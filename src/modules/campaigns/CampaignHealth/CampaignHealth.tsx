@@ -1,6 +1,6 @@
 // src/modules/campaigns/CampaignHealth/CampaignHealth.tsx
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Alert, Badge, Group, Loader, Stack, Text } from '@mantine/core';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { useGetCampaignRequirements } from '~/queries/campaignsQueries';

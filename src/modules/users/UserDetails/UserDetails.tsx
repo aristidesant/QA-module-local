@@ -3,7 +3,6 @@ import {
 	ActionIcon,
 	Alert,
 	Badge,
-	Loader,
 	Skeleton,
 	Stack,
 	Text,
