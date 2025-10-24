@@ -24,6 +24,7 @@ const ClientConfigsPage = React.lazy(
 	() => import('./modules/client-configs/ClientConfigsPage')
 );
 const ToolsPage = React.lazy(() => import('./modules/tools/ToolsPage'));
+const UsersPage = React.lazy(() => import('./modules/users'));
 const PrompterPage = React.lazy(() =>
 	import('./modules/prompter/PrompterPage').then((m) => ({
 		default: m.PrompterPage,
@@ -110,6 +111,14 @@ const router = createBrowserRouter([
 						element: (
 							<Suspense fallback={<div>Loading contacts...</div>}>
 								<ContactsPage />
+							</Suspense>
+						),
+					},
+					{
+						path: 'users',
+						element: (
+							<Suspense fallback={<div>Loading users...</div>}>
+								<UsersPage />
 							</Suspense>
 						),
 					},

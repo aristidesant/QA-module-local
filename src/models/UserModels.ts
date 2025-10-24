@@ -1,11 +1,15 @@
+import type { ClientModel } from './ClientModel';
+
 export interface UserModel {
 	id: number;
 	email: string;
 	username: string;
-	firstName?: string;
-	lastName?: string;
+	firstName?: string | null;
+	lastName?: string | null;
+	employeeId?: string | null;
 	status: string;
 	clientId: number;
+	client?: Pick<ClientModel, 'id' | 'name' | 'identifier' | 'email'> | null;
 	createdAt: string | Date;
 	updatedAt: string | Date;
 	deletedAt: string | Date | null;
@@ -24,3 +28,14 @@ export interface ImpersonatedClient {
 	iat: number;
 	exp: number;
 }
+
+export interface CreateUserPayload
+	extends Omit<
+		UserModel,
+		'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'status'
+	> {
+	status?: string;
+	password?: string;
+}
+
+export type UpdateUserPayload = Partial<CreateUserPayload>;

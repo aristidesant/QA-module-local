@@ -1,0 +1,96 @@
+.form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-lg);
+	padding: var(--mantine-spacing-xl);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-lg);
+	background-color: var(--mantine-color-body);
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: var(--mantine-spacing-lg);
+}
+
+.title {
+	font-size: var(--mantine-font-size-lg);
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+}
+
+.subtitle {
+	margin-top: calc(var(--mantine-spacing-xs) / 2);
+	color: var(--mantine-color-gray-6);
+	font-size: var(--mantine-font-size-sm);
+	max-width: 36rem;
+}
+
+.statusBadge {
+	text-transform: capitalize;
+}
+
+.section {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+}
+
+.sectionTitle {
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 600;
+	color: var(--mantine-color-gray-7);
+	letter-spacing: 0.01em;
+	text-transform: uppercase;
+}
+
+.row {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--mantine-spacing-md);
+}
+
+.singleColumnRow {
+	grid-template-columns: 1fr;
+}
+
+.field {
+	width: 100%;
+}
+
+.helperCard {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--mantine-spacing-xs) / 2);
+	padding: var(--mantine-spacing-md);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	background-color: var(--mantine-color-gray-0);
+}
+
+.helperTitle {
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 600;
+	color: var(--mantine-color-gray-7);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.helperText {
+	color: var(--mantine-color-gray-6);
+	font-size: var(--mantine-font-size-sm);
+}
+
+.actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--mantine-spacing-sm);
+}
+
+@media (max-width: 48rem) {
+	.row {
+		grid-template-columns: 1fr;
+	}
+}

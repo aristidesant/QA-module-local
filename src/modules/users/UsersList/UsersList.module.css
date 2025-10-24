@@ -1,0 +1,23 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+}
+
+.tableRow {
+	cursor: pointer;
+}
+
+.tableRow:hover {
+	background-color: var(--mantine-color-gray-0);
+}
+
+.actionsCell {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--mantine-spacing-xs);
+}
+
+.actionsHeader {
+	text-align: right;
+}

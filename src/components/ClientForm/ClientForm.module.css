@@ -2,13 +2,95 @@
 	width: 100%;
 }
 
-.form input,
-.form textarea {
-	border-radius: var(--mantine-radius-md);
+.columns {
+	width: 100%;
 }
 
-.form label {
+.section {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-lg);
+	padding: var(--mantine-spacing-lg);
+	background-color: var(--mantine-color-gray-0);
+	border-radius: var(--mantine-radius-lg);
+	border: 1px solid var(--mantine-color-gray-2);
+	height: 100%;
+}
+
+.sectionHeader {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.sectionTitle {
+	font-size: var(--mantine-font-size-lg);
+	font-weight: 600;
+	color: var(--mantine-color-gray-8);
+}
+
+.sectionDescription {
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-6);
+}
+
+.descriptionInput textarea {
+	min-height: 10rem;
+}
+
+.actions {
+	padding: var(--mantine-spacing-md) var(--mantine-spacing-lg);
+	background-color: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-lg);
+}
+
+.actionsHint {
+	color: var(--mantine-color-gray-6);
+	font-size: var(--mantine-font-size-sm);
+	max-width: 24rem;
+}
+
+.form :global(.mantine-TextInput-input),
+.form :global(.mantine-Textarea-input),
+.form :global(.mantine-Select-input),
+.form :global(.mantine-NumberInput-input) {
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid var(--mantine-color-gray-3);
+	transition: border-color 150ms ease;
+	background-color: var(--mantine-color-white);
+}
+
+.form :global(.mantine-TextInput-input:focus),
+.form :global(.mantine-Textarea-input:focus),
+.form :global(.mantine-Select-input:focus),
+.form :global(.mantine-NumberInput-input:focus) {
+	border-color: var(--mantine-color-blue-5);
+}
+
+.form :global(.mantine-TextInput-label),
+.form :global(.mantine-Textarea-label),
+.form :global(.mantine-Select-label),
+.form :global(.mantine-NumberInput-label) {
 	font-weight: 500;
-	color: var(--mantine-color-dark-7);
+	color: var(--mantine-color-gray-7);
 	margin-bottom: var(--mantine-spacing-xs);
+	font-size: var(--mantine-font-size-sm);
+}
+
+.form :global(.mantine-TextInput-input::placeholder),
+.form :global(.mantine-Textarea-input::placeholder),
+.form :global(.mantine-Select-input::placeholder),
+.form :global(.mantine-NumberInput-input::placeholder) {
+	color: var(--mantine-color-gray-5);
+}
+
+@media (max-width: 62rem) {
+	.section {
+		padding: var(--mantine-spacing-md);
+	}
+
+	.actions {
+		padding: var(--mantine-spacing-md);
+	}
 }

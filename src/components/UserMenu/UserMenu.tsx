@@ -12,6 +12,7 @@ import {
 	IconLibrary,
 	IconTools,
 	IconPhoneOff,
+	IconUsers,
 } from '@tabler/icons-react';
 import styles from './UserMenu.module.css';
 import { useNavigate } from 'react-router';
@@ -122,6 +123,24 @@ export const UserMenu: React.FC = () => {
 		},
 	];
 
+	const normalMaintenanceCategories = maintenanceCategories.map((category) => {
+		if (category.category === 'Configuration') {
+			return {
+				...category,
+				items: [
+					...category.items,
+					{
+						label: 'Users',
+						icon: <IconUsers size={16} />,
+						path: '/users',
+					},
+				],
+			};
+		}
+
+		return category;
+	});
+
 	return (
 		<Menu shadow='md' width={280} position='bottom-end'>
 			<Menu.Target>
@@ -152,31 +171,23 @@ export const UserMenu: React.FC = () => {
 			</Menu.Target>
 			<Menu.Dropdown className={styles.dropdown}>
 				{isImpersonating ? (
-					<div className={styles.impersonationSection}>
-						<div className={styles.impersonationHeader}>
-							<IconShield size={18} />
-							<div>
-								<div className={styles.impersonationTitle}>
-									Impersonation Mode
-								</div>
-								<div className={styles.impersonationSubtitle}>
-									You are impersonating a client
+					<>
+						<div className={styles.impersonationSection}>
+							<div className={styles.impersonationHeader}>
+								<IconShield size={18} />
+								<div>
+									<div className={styles.impersonationTitle}>
+										Impersonation Mode
+									</div>
+									<div className={styles.impersonationSubtitle}>
+										You are impersonating a client
+									</div>
 								</div>
 							</div>
+							<div className={styles.impersonationMessage}>
+								Use "Return to Master Client" to exit
+							</div>
 						</div>
-						<div className={styles.impersonationMessage}>
-							Use "Return to Master Client" to exit
-						</div>
-					</div>
-				) : (
-					<>
-						<Menu.Item
-							onClick={handleProfileClick}
-							leftSection={<IconUser size={16} />}
-							className={styles.profileItem}
-						>
-							Profile
-						</Menu.Item>
 						<Divider />
 
 						{maintenanceCategories.map((categoryGroup, idx) => (
@@ -203,6 +214,57 @@ export const UserMenu: React.FC = () => {
 									))}
 								</div>
 								{idx < maintenanceCategories.length - 1 && <Divider my='xs' />}
+							</div>
+						))}
+
+						<Divider />
+						<Menu.Item
+							color='red'
+							onClick={handleLogout}
+							disabled={fetcher.state !== 'idle'}
+							leftSection={<IconLogout size={16} />}
+							className={styles.logoutItem}
+						>
+							{fetcher.state === 'idle' ? 'Logout' : 'Logging out...'}
+						</Menu.Item>
+					</>
+				) : (
+					<>
+						<Menu.Item
+							onClick={handleProfileClick}
+							leftSection={<IconUser size={16} />}
+							className={styles.profileItem}
+						>
+							Profile
+						</Menu.Item>
+						<Divider />
+
+						{normalMaintenanceCategories.map((categoryGroup, idx) => (
+							<div key={categoryGroup.category}>
+								<Menu.Label className={styles.categoryLabel}>
+									{categoryGroup.category}
+								</Menu.Label>
+								<div className={styles.categoryGroup}>
+									{categoryGroup.items.map((item) => (
+										<Tooltip
+											key={item.path}
+											label={item.label}
+											position='left'
+											withArrow
+										>
+											<Menu.Item
+												onClick={() => handleMaintenanceNavigation(item.path)}
+												leftSection={item.icon}
+												className={styles.categoryItem}
+											>
+												{item.label}
+											</Menu.Item>
+										</Tooltip>
+									))}
+								</div>
+								{idx < normalMaintenanceCategories.length - 1 && (
+									<Divider my='xs' />
+								)}
 							</div>
 						))}
 

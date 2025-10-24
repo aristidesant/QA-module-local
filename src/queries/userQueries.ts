@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import userApi from '~/api/userApi';
+import userApi, { type GetAllUsersParams } from '~/api/userApi';
 import {
 	changePassword,
 	enableMFA,
@@ -9,8 +9,40 @@ import {
 	type VerifyMFAPayload,
 	type EnableMFAResponse,
 } from '~/api/authApi';
-import { type UserModel } from '~/models/UserModels';
+import {
+	type UserModel,
+	type CreateUserPayload,
+	type UpdateUserPayload,
+} from '~/models/UserModels';
+import type { Paginator } from '~/models/Paginator';
 import { useSessionStore } from '~/stores/sessionStore';
+
+/**
+ * Query to get all users with pagination
+ */
+export function useGetAllUsers(params?: GetAllUsersParams) {
+	return useQuery<Paginator<UserModel>>({
+		queryKey: ['users', params],
+		queryFn: async () => {
+			const api = userApi();
+			return api.getAllUsers(params);
+		},
+	});
+}
+
+/**
+ * Query to get user by ID
+ */
+export function useGetUser(id: number) {
+	return useQuery<UserModel>({
+		queryKey: ['user', id],
+		queryFn: async () => {
+			const api = userApi();
+			return api.getUserById(id);
+		},
+		enabled: !!id,
+	});
+}
 
 /**
  * Query to get current user
@@ -143,4 +175,60 @@ export function useUpdateCurrentUserName() {
 			},
 		}
 	);
+}
+
+/**
+ * Mutation to create a new user
+ */
+export function useCreateUser() {
+	const queryClient = useQueryClient();
+
+	return useMutation<UserModel, Error, CreateUserPayload>({
+		mutationFn: async (userData: CreateUserPayload) => {
+			const api = userApi();
+			return api.createUser(userData);
+		},
+		onSuccess: (data) => {
+			queryClient.invalidateQueries({ queryKey: ['users'] });
+			queryClient.setQueryData(['user', data.id], data);
+		},
+	});
+}
+
+/**
+ * Mutation to update a user
+ */
+export function useUpdateUser() {
+	const queryClient = useQueryClient();
+
+	return useMutation<UserModel, Error, { id: number; data: UpdateUserPayload }>(
+		{
+			mutationFn: async ({ id, data }) => {
+				const api = userApi();
+				return api.updateUser(id, data);
+			},
+			onSuccess: (data, variables) => {
+				queryClient.setQueryData(['user', variables.id], data);
+				queryClient.invalidateQueries({ queryKey: ['users'] });
+			},
+		}
+	);
+}
+
+/**
+ * Mutation to delete a user
+ */
+export function useDeleteUser() {
+	const queryClient = useQueryClient();
+
+	return useMutation<void, Error, number>({
+		mutationFn: async (id: number) => {
+			const api = userApi();
+			return api.deleteUser(id);
+		},
+		onSuccess: (_, id) => {
+			queryClient.invalidateQueries({ queryKey: ['users'] });
+			queryClient.invalidateQueries({ queryKey: ['user', id] });
+		},
+	});
 }
