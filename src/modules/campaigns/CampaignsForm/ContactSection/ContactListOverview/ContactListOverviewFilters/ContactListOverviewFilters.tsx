@@ -38,23 +38,30 @@ export const ContactListOverviewFilters: React.FC<
 					/>
 
 					<TextInput
+						placeholder='Filter by phone...'
+						value={filters.phone}
+						// Only allow digits: sanitize input by removing non-digit characters
+						onChange={(event) =>
+							onFilterChange(
+								'phone',
+								event.currentTarget.value.replaceAll(/\D/g, '')
+							)
+						}
+						// hint mobile devices to show numeric keyboard
+						inputMode='numeric'
+						pattern='[0-9]*'
+						leftSection={<IconPhone size={16} />}
+						size='sm'
+						className={styles.filterInput}
+					/>
+
+					<TextInput
 						placeholder='Filter by email...'
 						value={filters.email}
 						onChange={(event) =>
 							onFilterChange('email', event.currentTarget.value)
 						}
 						leftSection={<IconMail size={16} />}
-						size='sm'
-						className={styles.filterInput}
-					/>
-
-					<TextInput
-						placeholder='Filter by phone...'
-						value={filters.phone}
-						onChange={(event) =>
-							onFilterChange('phone', event.currentTarget.value)
-						}
-						leftSection={<IconPhone size={16} />}
 						size='sm'
 						className={styles.filterInput}
 					/>
