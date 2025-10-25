@@ -16,7 +16,6 @@ import {
 import { IconTrash } from '@tabler/icons-react';
 import type { DispositionNode } from '~/models/DispositionNodeModel';
 import styles from './DispositionNodeForm.module.css';
-import { useDispositionLabel } from '~/hooks/useDispositionLabel';
 import { useDispositionBuilderStore } from '../../../dispositionStore';
 
 export type DispositionNodeFormProps = {
@@ -38,12 +37,11 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 	});
 
 	const updateNode = useDispositionBuilderStore((state) => state.updateNode);
-	const dispositionLabel = useDispositionLabel();
 
 	return (
 		<Box className={styles.formContainer}>
-			<Text className={styles.sectionTitle}>
-				{dispositionLabel('Outcome parameters')}
+			<Text className={styles.sectionTitle} size='sm'>
+				Outcome parameters
 			</Text>
 
 			<form
@@ -52,15 +50,17 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 					onSubmit?.();
 				})}
 			>
-				<Stack>
+				<Stack gap={4}>
 					<div className={styles.fieldGroup}>
-						<Text className={styles.fieldLabel}>Name</Text>
-						<TextInput value={node.name} readOnly disabled />
+						<Text className={styles.fieldLabel} size='xs'>
+							Name
+						</Text>
+						<TextInput value={node.name} readOnly disabled size='xs' />
 					</div>
 
 					<Center>
 						<Badge
-							size='lg'
+							size='sm'
 							color='red'
 							className={styles.statusBadge}
 							variant='dot'
@@ -70,17 +70,19 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 					</Center>
 
 					<div className={styles.fieldGroup}>
-						<Text className={styles.fieldLabel}>Description</Text>
-						<Textarea value={node.description} readOnly disabled />
+						<Text className={styles.fieldLabel} size='xs'>
+							Description
+						</Text>
+						<Textarea value={node.description} readOnly disabled size='xs' />
 					</div>
 
 					<div className={styles.fieldGroup}>
-						<Text className={styles.fieldLabel}>Defines Number</Text>
+						<Text className={styles.fieldLabel} size='xs'>
+							Defines Number
+						</Text>
 						<div className={styles.subSwitchRow}>
-							<Text className={styles.fieldSubtext}>
-								{dispositionLabel(
-									'Indicates whether this outcome invalidates the phone number'
-								)}
+							<Text className={styles.fieldSubtext} size='xs'>
+								Indicates whether this outcome invalidates the phone number
 							</Text>
 							<div className={styles.switchContainer}>
 								<Switch
@@ -88,7 +90,7 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 									{...form.getInputProps('isInvalidatesNumber', {
 										type: 'checkbox',
 									})}
-									size='md'
+									size='sm'
 									color='blue'
 								/>
 							</div>
@@ -96,12 +98,12 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 					</div>
 
 					<div className={styles.fieldGroup}>
-						<Text className={styles.fieldLabel}>Requires Reschedule</Text>
+						<Text className={styles.fieldLabel} size='xs'>
+							Requires Reschedule
+						</Text>
 						<div className={styles.subSwitchRow}>
-							<Text className={styles.fieldSubtext}>
-								{dispositionLabel(
-									'Indicates whether this outcome invalidates the phone number'
-								)}
+							<Text className={styles.fieldSubtext} size='xs'>
+								Indicates whether this outcome requires a reschedule
 							</Text>
 							<div className={styles.switchContainer}>
 								<Switch
@@ -109,7 +111,7 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 									{...form.getInputProps('requiresReschedule', {
 										type: 'checkbox',
 									})}
-									size='md'
+									size='sm'
 									color='blue'
 								/>
 							</div>
@@ -118,22 +120,28 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 					<Divider />
 
 					<Group justify='flex-end' grow className={styles.actionGroup}>
-						<Button variant='default' onClick={onCancel} type='button'>
+						<Button
+							variant='default'
+							onClick={onCancel}
+							type='button'
+							size='xs'
+						>
 							Cancel
 						</Button>
-						<Button type='submit' variant='filled' color='blue'>
+						<Button type='submit' variant='filled' color='blue' size='xs'>
 							Save
 						</Button>
 					</Group>
 
 					<Button
-						leftSection={<IconTrash size={22} />}
+						leftSection={<IconTrash size={14} />}
 						className={styles.deleteButton}
 						variant='subtle'
 						color='red'
 						type='button'
+						size='xs'
 					>
-						{dispositionLabel('Delete outcome')}
+						Delete outcome
 					</Button>
 				</Stack>
 			</form>

@@ -134,20 +134,21 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 	return (
 		<Box className={styles.builderContainer}>
 			{null}
-			<Flex mb='xs'>
+			<Flex mb={4}>
 				<TextInput
-					label={dispositionLabel('Outcome Name')}
+					label='Outcome Name'
 					labelProps={{
 						title: `Campaign ID: ${campaignId || 'N/A'}`,
 					}}
 					w='50%'
-					placeholder={dispositionLabel('Outcome Name')}
-					description={dispositionLabel('Enter the name of the outcome')}
+					placeholder='Outcome Name'
+					description='Enter the name of the outcome'
 					value={flowJson.name || ''}
 					onChange={(event) =>
 						setFlowJson({ ...flowJson, name: event.currentTarget.value })
 					}
 					required
+					size='xs'
 				/>
 			</Flex>
 			<Box className={styles.panelsContainer}>
@@ -172,18 +173,20 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 						}}
 					>
 						<Box className={styles.leftPanelContent}>
-							<Stack gap='sm'>
+							<Stack gap={4}>
 								<Box className={styles.leftPanelHeader}>
-									<Text fw={600}>Outcome flow</Text>
-									<Text size='sm' c='dimmed'>
-										Use the catalog to add dispositions. Select a node to edit
-										or preview its group.
+									<Text fw={600} size='sm'>
+										Outcome flow
+									</Text>
+									<Text size='xs' c='dimmed'>
+										Use the catalog to add outcomes. Select a node to edit or
+										preview its group.
 									</Text>
 								</Box>
 								{flowJson?.dispositionNodes &&
 								flowJson.dispositionNodes.length > 0 ? (
 									<Box className={styles.treeContainer}>
-										<Stack gap='xs' className={styles.nodesStack}>
+										<Stack gap={3} className={styles.nodesStack}>
 											{flowJson.dispositionNodes.map((node) => (
 												<NodeEditor
 													key={node.id}
@@ -201,11 +204,11 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 									</Box>
 								) : (
 									<Box className={styles.emptyState}>
-										<Text fw={600} c='var(--mantine-color-gray-6)'>
-											No dispositions selected yet
+										<Text fw={600} c='var(--mantine-color-gray-6)' size='xs'>
+											No outcomes selected yet
 										</Text>
-										<Text size='sm' c='var(--mantine-color-gray-5)'>
-											Add dispositions from the catalog to build this flow.
+										<Text size='xs' c='var(--mantine-color-gray-5)'>
+											Add outcomes from the catalog to build this flow.
 										</Text>
 									</Box>
 								)}
@@ -247,8 +250,8 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 										onCancel={handleNodeFormCancel}
 									/>
 								) : (
-									<Stack gap='md'>
-										<Text fw={600} size='lg'>
+									<Stack gap={4}>
+										<Text fw={600} size='sm'>
 											Group preview
 										</Text>
 										<DispositionGroupPreview node={selectedNode} />
@@ -270,7 +273,7 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 				<Button
 					onClick={handleSave}
 					loading={createMutation.isPending || updateMutation.isPending}
-					size='md'
+					size='sm'
 					variant='filled'
 				>
 					{dispositionFlow?.id ? 'Update Flow' : 'Create Flow'}
@@ -281,7 +284,7 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 				opened={Boolean(previewNode)}
 				onClose={handleClosePreview}
 				size='lg'
-				title='Disposition group preview'
+				title='Outcome group preview'
 				withinPortal={false}
 			>
 				{previewNode ? <DispositionGroupPreview node={previewNode} /> : null}

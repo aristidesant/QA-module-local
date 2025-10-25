@@ -1,5 +1,5 @@
 .item {
-	padding: 6px 10px;
+	padding: 4px 8px;
 	background: var(--mantine-color-white);
 	transition:
 		background-color 120ms ease,
@@ -46,8 +46,8 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 20px;
-	height: 20px;
+	width: 16px;
+	height: 16px;
 	border-radius: var(--mantine-radius-sm);
 	background-color: var(--mantine-color-gray-0);
 }
@@ -70,8 +70,8 @@
 
 .nodeName {
 	color: var(--mantine-color-gray-9);
-	line-height: 1.3;
-	font-size: var(--mantine-font-size-sm);
+	line-height: 1.2;
+	font-size: var(--mantine-font-size-xs);
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;

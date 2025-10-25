@@ -9,7 +9,6 @@ import {
 	Text,
 	Stack,
 	Select,
-	Grid,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useCreateCampaignWithAgent } from '~/queries/campaignsQueries';
@@ -24,7 +23,7 @@ import useCampaignsPredefinedParams, {
 } from '../CampaignsForm/useCampaignsPredefinedParams';
 import { deepMergeConfig } from '~/utils/objectUtils';
 import type { ConversationConfigModel } from '~/models/AgentListObject';
-import ConfigurationSummary from '../CampaignsForm/AgentSection/CampaignConfigurationPredefinedParams/ConfigurationSummary';
+// import ConfigurationSummary from '../CampaignsForm/AgentSection/CampaignConfigurationPredefinedParams/ConfigurationSummary';
 import { CreateCampaignWithAgentDTO } from '~/api/campaignsApi';
 
 type AddNewCampaignFormProps = {
@@ -198,100 +197,92 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 	return (
 		<div>
 			<form onSubmit={form.onSubmit(handleSubmit)}>
-				<Grid gutter='md'>
-					<Grid.Col span={4}>
-						<Stack gap={'xs'}>
-							<TextInput
-								label='Campaign Name'
-								description='Give your campaign a descriptive name'
-								placeholder='Enter campaign name'
-								withAsterisk
-								className={styles.field}
-								key={form.key('campaign.name')}
-								{...form.getInputProps('campaign.name')}
-							/>
-							<Textarea
-								label='Description'
-								description='Briefly describe the purpose of this campaign'
-								placeholder='Describe your campaign'
-								withAsterisk
-								className={styles.field}
-								key={form.key('campaign.description')}
-								{...form.getInputProps('campaign.description')}
-								minRows={3}
-								rows={3}
-							/>
+				<Stack gap={'xs'}>
+					<TextInput
+						label='Campaign Name'
+						description='Give your campaign a descriptive name'
+						placeholder='Enter campaign name'
+						withAsterisk
+						className={styles.field}
+						key={form.key('campaign.name')}
+						{...form.getInputProps('campaign.name')}
+					/>
+					<Textarea
+						label='Description'
+						description='Briefly describe the purpose of this campaign'
+						placeholder='Describe your campaign'
+						withAsterisk
+						className={styles.field}
+						key={form.key('campaign.description')}
+						{...form.getInputProps('campaign.description')}
+						minRows={3}
+						rows={3}
+					/>
 
-							<Box className={styles.field}>
-								<Text size='sm' fw={500} mb='xs'>
-									Campaign Type{' '}
-									<span style={{ color: 'var(--mantine-color-red-6)' }}>*</span>
-								</Text>
-								<SegmentedControl
-									data={[
-										{ value: 'INBOUND', label: 'Inbound' },
-										{ value: 'OUTBOUND', label: 'Outbound' },
-									]}
-									{...form.getInputProps('campaign.type')}
-									fullWidth
-									onChange={(value) => {
-										// Update both campaign and agent type to keep them in sync
-										form.setFieldValue(
-											'campaign.type',
-											value as 'INBOUND' | 'OUTBOUND'
-										);
-										form.setFieldValue(
-											'agent.type',
-											value as 'INBOUND' | 'OUTBOUND'
-										);
-									}}
-								/>
-							</Box>
-							<TextInput
-								label='Agent Name'
-								description='Enter the name of the agent'
-								placeholder='Enter agent name'
-								withAsterisk
-								className={styles.field}
-								key={form.key('agent.name')}
-								{...form.getInputProps('agent.name')}
-							/>
-							<AgentVoiceSelector
-								onSelect={handleVoiceSelect}
-								selectedVoiceId={form.values.agent.voiceId}
-							/>
-						</Stack>
-					</Grid.Col>
-					<Grid.Col span={8}>
-						<Stack gap={'xs'}>
-							<Select
-								label='Predefined Configuration'
-								description='Select a predefined conversation configuration'
-								placeholder='Choose a configuration'
-								data={predefinedParams.map((param) => ({
-									value: param.name,
-									label: param.name,
-								}))}
-								value={selectedParam?.name || null}
-								onChange={(value) => {
-									const param = predefinedParams.find((p) => p.name === value);
-									if (param && param.params?.conversationConfig) {
-										applyConversationConfig(param.params.conversationConfig);
-										setSelectedParam(param);
-									}
-								}}
-								clearable
-								className={styles.field}
-							/>
-							<ConfigurationSummary
+					<Box className={styles.field}>
+						<Text size='sm' fw={500} mb='xs'>
+							Campaign Type{' '}
+							<span style={{ color: 'var(--mantine-color-red-6)' }}>*</span>
+						</Text>
+						<SegmentedControl
+							data={[
+								{ value: 'INBOUND', label: 'Inbound' },
+								{ value: 'OUTBOUND', label: 'Outbound' },
+							]}
+							{...form.getInputProps('campaign.type')}
+							fullWidth
+							onChange={(value) => {
+								// Update both campaign and agent type to keep them in sync
+								form.setFieldValue(
+									'campaign.type',
+									value as 'INBOUND' | 'OUTBOUND'
+								);
+								form.setFieldValue(
+									'agent.type',
+									value as 'INBOUND' | 'OUTBOUND'
+								);
+							}}
+						/>
+					</Box>
+					<TextInput
+						label='Agent Name'
+						description='Enter the name of the agent'
+						placeholder='Enter agent name'
+						withAsterisk
+						className={styles.field}
+						key={form.key('agent.name')}
+						{...form.getInputProps('agent.name')}
+					/>
+					<AgentVoiceSelector
+						onSelect={handleVoiceSelect}
+						selectedVoiceId={form.values.agent.voiceId}
+					/>
+					<Select
+						label='Agent Behavior'
+						description='Select a predefined agent behavior configuration'
+						placeholder='Choose an agent behavior'
+						data={predefinedParams.map((param) => ({
+							value: param.name,
+							label: param.name,
+						}))}
+						value={selectedParam?.name || null}
+						onChange={(value) => {
+							const param = predefinedParams.find((p) => p.name === value);
+							if (param && param.params?.conversationConfig) {
+								applyConversationConfig(param.params.conversationConfig);
+								setSelectedParam(param);
+							}
+						}}
+						clearable
+						className={styles.field}
+					/>
+					{/* <ConfigurationSummary
 								config={
 									form.values.agent
 										.conversationConfig as ConversationConfigModel
 								}
-							/>
-						</Stack>
-					</Grid.Col>
-				</Grid>
+							/> */}
+				</Stack>
 				{createCampaignWithAgent.isError && (
 					<Text className={styles.error}>
 						{createCampaignWithAgent.error instanceof Error

@@ -157,21 +157,21 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 				className={`${styles.nodeRow} ${styles[nodeStyle]} ${
 					isSelected ? styles.selected : ''
 				} ${onNodeSelect ? styles.clickable : ''}`}
-				style={{ marginLeft: level === 0 ? 0 : level * 16 }}
+				style={{ marginLeft: level === 0 ? 0 : level * 12 }}
 				onClick={onNodeSelect ? handleSelect : undefined}
 			>
-				<Group gap='xs' wrap='nowrap' className={styles.rowContent}>
+				<Group gap={4} wrap='nowrap' className={styles.rowContent}>
 					{showGroupActions ? (
 						<ActionIcon
-							size='sm'
+							size='xs'
 							variant='subtle'
 							onClick={handleToggleCollapse}
 							aria-label={collapsed ? 'Expand node' : 'Collapse node'}
 						>
 							{collapsed ? (
-								<IconChevronRight size={16} />
+								<IconChevronRight size={12} />
 							) : (
-								<IconChevronDown size={16} />
+								<IconChevronDown size={12} />
 							)}
 						</ActionIcon>
 					) : (
@@ -183,7 +183,7 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 					/>
 
 					<Box className={styles.nodeDetails}>
-						<Group justify='space-between' gap='xs' wrap='nowrap'>
+						<Group justify='space-between' gap={4} wrap='nowrap'>
 							<Text
 								className={styles.nodeTitle}
 								fw={level === 0 ? 600 : 500}
@@ -192,16 +192,16 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 							>
 								{node.name}
 							</Text>
-							<Group gap={4} className={styles.icons} wrap='nowrap'>
+							<Group gap={2} className={styles.icons} wrap='nowrap'>
 								{node.isInvalidatesNumber ? (
 									<Tooltip label='No more call' withArrow>
-										<IconPhoneX size={14} color='var(--mantine-color-red-6)' />
+										<IconPhoneX size={12} color='var(--mantine-color-red-6)' />
 									</Tooltip>
 								) : null}
 								{node.requiresReschedule ? (
 									<Tooltip label='Requires reschedule' withArrow>
 										<IconClock
-											size={14}
+											size={12}
 											color='var(--mantine-color-orange-5)'
 										/>
 									</Tooltip>
@@ -216,7 +216,7 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 						) : null}
 					</Box>
 
-					<Group gap={4} wrap='nowrap' className={styles.actions}>
+					<Group gap={2} wrap='nowrap' className={styles.actions}>
 						{missingSiblingsCount > 0 && onAddMissingSiblings ? (
 							<Tooltip
 								withArrow
@@ -225,13 +225,13 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 								}`}
 							>
 								<ActionIcon
-									size='sm'
+									size='xs'
 									variant='subtle'
 									color='violet'
 									onClick={handleAddMissingSiblings}
 									aria-label='Add missing siblings'
 								>
-									<IconHierarchy3 size={14} />
+									<IconHierarchy3 size={12} />
 								</ActionIcon>
 							</Tooltip>
 						) : null}
@@ -244,13 +244,13 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 								}`}
 							>
 								<ActionIcon
-									size='sm'
+									size='xs'
 									variant='subtle'
 									color='teal'
 									onClick={handlePopulateChildren}
 									aria-label='Add missing children'
 								>
-									<IconHierarchy3 size={14} />
+									<IconHierarchy3 size={12} />
 								</ActionIcon>
 							</Tooltip>
 						) : null}
@@ -258,26 +258,26 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 						{showGroupActions && onPreviewGroup ? (
 							<Tooltip withArrow label='Preview group'>
 								<ActionIcon
-									size='sm'
+									size='xs'
 									variant='subtle'
 									color='blue'
 									onClick={handlePreview}
-									aria-label='Preview disposition group'
+									aria-label='Preview outcome group'
 								>
-									<IconEye size={14} />
+									<IconEye size={12} />
 								</ActionIcon>
 							</Tooltip>
 						) : null}
 
 						<Tooltip withArrow label='Remove'>
 							<ActionIcon
-								size='sm'
+								size='xs'
 								variant='subtle'
 								color='red'
 								onClick={handleRemove}
 								aria-label='Remove node'
 							>
-								<IconTrash size={14} />
+								<IconTrash size={12} />
 							</ActionIcon>
 						</Tooltip>
 					</Group>

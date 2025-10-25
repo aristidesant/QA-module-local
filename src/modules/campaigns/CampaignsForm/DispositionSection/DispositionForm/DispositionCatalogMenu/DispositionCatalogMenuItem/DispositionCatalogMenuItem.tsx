@@ -12,14 +12,12 @@ import styles from './DispositionCatalogMenuItem.module.css';
 
 interface Props {
 	node: DispositionNode;
-	disabled?: boolean;
 	onAdd: (node: DispositionNode) => void;
 	onAddGroup?: (node: DispositionNode) => void;
 }
 
 const DispositionCatalogMenuItem: React.FC<Props> = ({
 	node,
-	disabled = false,
 	onAdd,
 	onAddGroup,
 }) => {
@@ -27,27 +25,23 @@ const DispositionCatalogMenuItem: React.FC<Props> = ({
 	const nodeStyle = getNodeStyle(node, 0);
 
 	return (
-		<Paper
-			withBorder
-			radius='md'
-			className={`${styles.item} ${disabled ? styles.itemDisabled : ''}`}
-		>
-			<Group justify='space-between' align='center' gap='sm' wrap='nowrap'>
-				<Group gap='sm' wrap='nowrap' style={{ flex: 1, minWidth: 0 }}>
+		<Paper withBorder radius='md' className={styles.item}>
+			<Group justify='space-between' align='center' gap='xs' wrap='nowrap'>
+				<Group gap='xs' wrap='nowrap' style={{ flex: 1, minWidth: 0 }}>
 					<IconPointFilled
-						size={12}
+						size={10}
 						className={`${styles.statusDot} ${styles[`${nodeStyle}Dot`]}`}
 					/>
 					<Box className={styles.iconWrapper}>
 						{hasChildren ? (
 							<IconFolder
-								size={16}
+								size={12}
 								className={styles.iconFolder}
 								stroke={1.5}
 							/>
 						) : (
 							<IconHierarchy3
-								size={16}
+								size={12}
 								className={styles.iconLeaf}
 								stroke={1.5}
 							/>
@@ -58,10 +52,10 @@ const DispositionCatalogMenuItem: React.FC<Props> = ({
 							label={
 								node.description ? (
 									<Box>
-										<Text fw={600} size='sm'>
+										<Text fw={600} size='xs'>
 											{node.name}
 										</Text>
-										<Text size='xs' mt={4}>
+										<Text size='xs' mt={2}>
 											{node.description}
 										</Text>
 									</Box>
@@ -80,7 +74,7 @@ const DispositionCatalogMenuItem: React.FC<Props> = ({
 					</Box>
 				</Group>
 
-				<Group gap='xs' wrap='nowrap' className={styles.actions}>
+				<Group gap={4} wrap='nowrap' className={styles.actions}>
 					{hasChildren && onAddGroup ? (
 						<Tooltip label='Add all' withArrow>
 							<ActionIcon
@@ -88,9 +82,9 @@ const DispositionCatalogMenuItem: React.FC<Props> = ({
 								color='teal'
 								onClick={() => onAddGroup(node)}
 								aria-label='Add disposition and all children'
-								disabled={false}
+								size='sm'
 							>
-								<IconHierarchy3 size={16} />
+								<IconHierarchy3 size={14} />
 							</ActionIcon>
 						</Tooltip>
 					) : null}
@@ -100,9 +94,9 @@ const DispositionCatalogMenuItem: React.FC<Props> = ({
 							color='blue'
 							onClick={() => onAdd(node)}
 							aria-label='Add disposition to flow'
-							disabled={disabled}
+							size='sm'
 						>
-							<IconPlus size={16} />
+							<IconPlus size={14} />
 						</ActionIcon>
 					</Tooltip>
 				</Group>
