@@ -69,7 +69,7 @@ export function ContactHeaderMapping({
 	const effectiveObjectiveId = storeObjectiveId ?? objectiveId;
 	const { data: schemasResponse } = useGetSchemaByObjectiveId(
 		effectiveObjectiveId as number,
-		enableSchemasQuery as any
+		!!enableSchemasQuery
 	);
 	// Extract schemas array from response, or empty array
 	const schemas: CampaignContactSchema[] = schemasResponse?.data || [];
