@@ -17,7 +17,7 @@ export default interface AgentListObject {
 }
 
 export type AgentUpdateModel = {
-	useToolIds: boolean;
+	useToolIds?: boolean;
 	conversationConfig: Record<string, any>;
 	platformSettings: Record<string, any>;
 	name: string;
@@ -133,12 +133,12 @@ export interface ConversationConfigModel {
 				maxDocumentsLength: number;
 				maxRetrievedRagChunksCount: number;
 			};
-			tools: any[];
+			tools?: ToolModel[];
+			builtInTools: Record<string, Omit<ToolModel, 'name'>>;
 			prompt: string;
-			toolIds: any[];
+			toolIds?: any[];
 			maxTokens: number;
 			temperature: number;
-			builtInTools: Record<string, any>;
 			mcpServerIds: any[];
 			knowledgeBase: any[];
 			nativeMcpServerIds: any[];
@@ -156,6 +156,19 @@ export interface ConversationConfigModel {
 		maxDurationSeconds: number;
 	};
 	languagePresets: Record<string, any>;
+}
+
+export interface ToolModel {
+	type: string;
+	name: string;
+	description: string;
+	responseTimeoutSecs: number;
+	disableInterruptions: boolean;
+	forcePreToolSpeech: boolean;
+	assignments: any[];
+	toolCallSound: string | null;
+	toolCallSoundBehavior: string;
+	params: Record<string, any>;
 }
 
 export type AgentWithCampaignListItem = Pick<

@@ -91,6 +91,23 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({ campaign }) => {
 		}
 
 		try {
+			// Clean up toolIds from agentConfig before sending
+			const cleanedValue = { ...value };
+			if (cleanedValue.agentConfig?.conversationConfig?.agent?.prompt) {
+				const { toolIds, ...restPrompt } =
+					cleanedValue.agentConfig.conversationConfig.agent.prompt;
+				cleanedValue.agentConfig = {
+					...cleanedValue.agentConfig,
+					conversationConfig: {
+						...cleanedValue.agentConfig.conversationConfig,
+						agent: {
+							...cleanedValue.agentConfig.conversationConfig.agent,
+							prompt: restPrompt,
+						},
+					},
+				};
+			}
+
 			let savedCampaign: Campaign;
 
 			if (campaign?.id) {

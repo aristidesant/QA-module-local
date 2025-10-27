@@ -1,16 +1,20 @@
 // CampaignConfigurationTools.tsx
 import { Stack, Switch } from '@mantine/core';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { useCampaignFormContext } from '../../../campaignFormFunctions';
 import SectionCard from '~/components/SectionCard';
 import { useToolCategories } from '~/queries/toolCategoryQueries';
 import { useToolsByCategory } from '~/queries/toolQueries';
+import type {
+	AgentConfigModel,
+	ConversationConfigModel,
+} from '~/models/AgentListObject';
 
 /**
  * CampaignConfigurationTools Component
  *
  * This component allows users to select tools for the campaign agent.
- * Selected tools are stored in the campaign form's agentConfig.toolIds.
+ * Selected tools are stored in the campaign form's agentConfig.conversationConfig.agent.prompt.tools.
  */
 const CampaignConfigurationTools: React.FC = () => {
 	const form = useCampaignFormContext();
@@ -19,33 +23,62 @@ const CampaignConfigurationTools: React.FC = () => {
 		toolCategories?.find((cat) => cat.name === 'webhook')?.id
 	);
 
-	// Local state to track selected tool identifiers
-	const [selectedToolIds, setSelectedToolIds] = useState<string[]>(
-		(form.values.agentConfig as any)?.toolIds || []
-	);
-
-	// Sync with form when form values change
-	useEffect(() => {
-		setSelectedToolIds((form.values.agentConfig as any)?.toolIds || []);
-	}, [(form.values.agentConfig as any)?.toolIds]);
-
-	const handleToolToggle = useCallback(
-		(toolIdentifier: string, isCurrentlySelected: boolean) => {
-			const newSelectedToolIds = isCurrentlySelected
-				? selectedToolIds.filter((id) => id !== toolIdentifier)
-				: [...selectedToolIds, toolIdentifier];
-
-			setSelectedToolIds(newSelectedToolIds);
-			form.setFieldValue('agentConfig.toolIds', newSelectedToolIds);
-		},
-		[selectedToolIds, form]
-	);
+	const selectedTools =
+		form.values.agentConfig?.conversationConfig?.agent?.prompt?.tools ?? [];
 
 	const isToolSelected = useCallback(
-		(toolIdentifier: string) => {
-			return selectedToolIds.includes(toolIdentifier);
+		(toolName: string) =>
+			selectedTools.some((selectedTool: any) => selectedTool.name === toolName),
+		[selectedTools]
+	);
+
+	const handleToolToggle = useCallback(
+		(tool: any, isCurrentlySelected: boolean) => {
+			const currentAgentConfig = form.values.agentConfig || {};
+			const currentConversationConfig = currentAgentConfig.conversationConfig;
+			const currentAgent = currentConversationConfig?.agent;
+			const currentPrompt = currentAgent?.prompt;
+			const currentTools = currentPrompt?.tools || [];
+
+			const toolName = tool.config?.toolConfig?.name;
+
+			const toolToAdd = tool?.config?.toolConfig;
+
+			toolToAdd.id = tool.identifier;
+
+			const updatedTools = isCurrentlySelected
+				? currentTools.filter(
+						(existingTool: any) => existingTool.name !== toolName
+					)
+				: [
+						...currentTools.filter(
+							(existingTool: any) => existingTool.name !== toolName
+						),
+						toolToAdd,
+					];
+
+			// Remove toolIds from the prompt to avoid sending it
+			const { toolIds, ...restPrompt } = currentPrompt || {};
+
+			const updatedAgentConfig: Partial<AgentConfigModel> = {
+				...currentAgentConfig,
+				conversationConfig: currentConversationConfig
+					? ({
+							...currentConversationConfig,
+							agent: {
+								...currentAgent,
+								prompt: {
+									...restPrompt,
+									tools: updatedTools,
+								},
+							},
+						} as ConversationConfigModel)
+					: undefined,
+			};
+
+			form.setFieldValue('agentConfig', updatedAgentConfig);
 		},
-		[selectedToolIds]
+		[form]
 	);
 
 	return (
@@ -55,7 +88,7 @@ const CampaignConfigurationTools: React.FC = () => {
 		>
 			<Stack>
 				{tools?.map((tool) => {
-					const isSelected = isToolSelected(tool.identifier);
+					const isSelected = isToolSelected(tool.config?.toolConfig?.name);
 					return (
 						<Switch
 							key={tool.identifier}
@@ -63,7 +96,7 @@ const CampaignConfigurationTools: React.FC = () => {
 							description={tool.description}
 							checked={isSelected}
 							onChange={() => {
-								handleToolToggle(tool.identifier, isSelected);
+								handleToolToggle(tool, isSelected);
 							}}
 						/>
 					);

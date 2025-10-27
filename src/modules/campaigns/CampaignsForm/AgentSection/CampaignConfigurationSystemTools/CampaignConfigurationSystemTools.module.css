@@ -1,0 +1,23 @@
+/* Styles for CampaignConfigurationSystemTools */
+
+.toolRow {
+	padding: var(--mantine-spacing-xs) 0;
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.toolRow:last-child {
+	border-bottom: none;
+}
+
+.toolSwitch {
+	flex: 1;
+}
+
+.gearIcon {
+	flex-shrink: 0;
+	transition: color 0.2s;
+}
+
+.gearIcon:hover {
+	color: var(--mantine-color-blue-6);
+}
