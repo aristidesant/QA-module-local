@@ -1,6 +1,18 @@
 import React from 'react';
-import { Text, Group, Loader, Button, ActionIcon } from '@mantine/core';
-import { IconTrash, IconEdit } from '@tabler/icons-react';
+import {
+	Text,
+	Group,
+	Loader,
+	Button,
+	Tooltip,
+	ActionIcon,
+} from '@mantine/core';
+import {
+	IconTrash,
+	IconEdit,
+	IconWaveSquare,
+	IconUser,
+} from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import AgentCampaignList from '../AgentCampaignList';
@@ -11,6 +23,8 @@ import AgentProfile from '~/modules/agents/AgentSimpleDetails/AgentProfile';
 import { useDeleteCampaignAgent } from '~/queries/campaignAgentsQueries';
 import { VoicePlayer } from '~/components/VoicePlayer';
 import AgentVoiceEditModal from './AgentVoiceEditModal';
+import RightSectionCard from '~/components/RightSectionCard';
+import ActionButton from '~/components/ActionButton';
 
 interface AgentCampaignPreviewProps {
 	agentId: string;
@@ -29,9 +43,7 @@ export const AgentCampaignPreview: React.FC<AgentCampaignPreviewProps> = ({
 
 	const openVoiceChangeModal = () => {
 		const currentVoiceId =
-			(agent as any)?.conversationConfig?.tts?.voiceId ||
-			agent?.voice?.id ||
-			'';
+			agent?.config?.conversationConfig?.tts?.voiceId || agent?.voice?.id || '';
 
 		modals.open({
 			modalId: 'agent-voice-edit-modal',
@@ -85,33 +97,44 @@ export const AgentCampaignPreview: React.FC<AgentCampaignPreviewProps> = ({
 			) : (
 				<>
 					<div className={styles.agentDetails}>
-						<AgentProfile
-							agent={agent}
-							traits={['Warm', 'Playful']}
-							size='md'
-						/>
+						<RightSectionCard
+							icon={IconUser}
+							title='Agent Profile'
+							description='Agent avatar, name, and language details'
+						>
+							<AgentProfile agent={agent} size='md' />
+						</RightSectionCard>
 
 						{/* Voice Section */}
 						<div className={styles.voiceSection}>
-							<Group align='center' mb={8}>
-								<Text fw={600} size='sm'>
-									Agent voice
-								</Text>
-								<ActionIcon
-									variant='light'
-									color='blue'
-									size='sm'
-									radius='md'
-									onClick={openVoiceChangeModal}
-									aria-label='Change voice'
-								>
-									<IconEdit size={16} />
-								</ActionIcon>
-							</Group>
-							<VoicePlayer
-								voiceName={agent?.voice?.name || 'Unknown'}
-								previewUrl={agent?.voice?.previewUrl}
-							/>
+							<RightSectionCard
+								title='Voice settings'
+								description='Preview and update the agent voice for this campaign.'
+								icon={IconWaveSquare}
+								iconColor='var(--mantine-color-blue-6)'
+								rightSection={
+									<Tooltip
+										label='Edit agent voice'
+										position='right'
+										withArrow
+										openDelay={150}
+									>
+										<ActionIcon
+											aria-label='Edit agent voice'
+											onClick={openVoiceChangeModal}
+											variant='subtle'
+											size='lg'
+										>
+											<IconEdit size={16} />
+										</ActionIcon>
+									</Tooltip>
+								}
+							>
+								<VoicePlayer
+									voiceName={agent?.voice?.name || 'Unknown'}
+									previewUrl={agent?.voice?.previewUrl}
+								/>
+							</RightSectionCard>
 						</div>
 					</div>
 					{/* Quick Actions */}

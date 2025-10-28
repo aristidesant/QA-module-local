@@ -50,13 +50,6 @@
 	gap: 6px;
 }
 
-.voicePlayer {
-	margin-top: 32px;
-	display: flex;
-	justify-content: center;
-	width: 100%;
-}
-
 .voiceSection {
 	width: 100%;
 	margin-top: 16px;
