@@ -14,7 +14,8 @@ import type {
  * CampaignConfigurationTools Component
  *
  * This component allows users to select tools for the campaign agent.
- * Selected tools are stored in the campaign form's agentConfig.conversationConfig.agent.prompt.tools.
+ * Selected tool identifiers are stored in agentConfig.conversationConfig.agent.prompt.toolIds
+ * and full tool objects are stored in agentConfig.conversationConfig.agent.prompt.tools.
  */
 const CampaignConfigurationTools: React.FC = () => {
 	const form = useCampaignFormContext();
@@ -23,13 +24,12 @@ const CampaignConfigurationTools: React.FC = () => {
 		toolCategories?.find((cat) => cat.name === 'webhook')?.id
 	);
 
-	const selectedTools =
-		form.values.agentConfig?.conversationConfig?.agent?.prompt?.tools ?? [];
+	const selectedToolIds =
+		form.values.agentConfig?.conversationConfig?.agent?.prompt?.toolIds ?? [];
 
 	const isToolSelected = useCallback(
-		(toolName: string) =>
-			selectedTools.some((selectedTool: any) => selectedTool.name === toolName),
-		[selectedTools]
+		(toolIdentifier: string) => selectedToolIds.includes(toolIdentifier),
+		[selectedToolIds]
 	);
 
 	const handleToolToggle = useCallback(
@@ -38,27 +38,13 @@ const CampaignConfigurationTools: React.FC = () => {
 			const currentConversationConfig = currentAgentConfig.conversationConfig;
 			const currentAgent = currentConversationConfig?.agent;
 			const currentPrompt = currentAgent?.prompt;
-			const currentTools = currentPrompt?.tools || [];
+			const currentToolIds = currentPrompt?.toolIds || [];
 
-			const toolName = tool.config?.toolConfig?.name;
+			const toolIdentifier = tool.identifier;
 
-			const toolToAdd = tool?.config?.toolConfig;
-
-			toolToAdd.id = tool.identifier;
-
-			const updatedTools = isCurrentlySelected
-				? currentTools.filter(
-						(existingTool: any) => existingTool.name !== toolName
-					)
-				: [
-						...currentTools.filter(
-							(existingTool: any) => existingTool.name !== toolName
-						),
-						toolToAdd,
-					];
-
-			// Remove toolIds from the prompt to avoid sending it
-			const { toolIds, ...restPrompt } = currentPrompt || {};
+			const updatedToolIds = isCurrentlySelected
+				? currentToolIds.filter((id: string) => id !== toolIdentifier)
+				: [...currentToolIds, toolIdentifier];
 
 			const updatedAgentConfig: Partial<AgentConfigModel> = {
 				...currentAgentConfig,
@@ -68,8 +54,8 @@ const CampaignConfigurationTools: React.FC = () => {
 							agent: {
 								...currentAgent,
 								prompt: {
-									...restPrompt,
-									tools: updatedTools,
+									...currentPrompt,
+									toolIds: updatedToolIds,
 								},
 							},
 						} as ConversationConfigModel)
@@ -88,7 +74,7 @@ const CampaignConfigurationTools: React.FC = () => {
 		>
 			<Stack>
 				{tools?.map((tool) => {
-					const isSelected = isToolSelected(tool.config?.toolConfig?.name);
+					const isSelected = isToolSelected(tool.identifier);
 					return (
 						<Switch
 							key={tool.identifier}

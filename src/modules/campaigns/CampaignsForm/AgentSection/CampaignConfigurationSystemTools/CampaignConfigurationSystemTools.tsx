@@ -11,6 +11,7 @@ import type {
 import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
 import ToolConfigModal from './ToolConfigModal';
 import classes from './CampaignConfigurationSystemTools.module.css';
+import { snakeToCamel } from '~/utils/stringUtils';
 
 type ToolConfigModel = {
 	name: string;
@@ -32,11 +33,12 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 			if (Array.isArray(parsed)) {
 				return parsed.map((tool: any, index: number) => {
 					const name = tool?.name || 'Unnamed Tool';
-					const nameCode =
+					const rawNameCode =
 						tool?.nameCode ||
 						tool?.value?.name ||
 						tool?.value?.type ||
 						`${name?.toLowerCase().replace(/\s+/g, '_')}_${index}`;
+					const nameCode = snakeToCamel(rawNameCode);
 					const toolValue = (tool?.value || tool) as ToolModel;
 					const description = tool?.description || toolValue?.description;
 					return {
@@ -45,7 +47,7 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 						description,
 						value: {
 							...toolValue,
-							name: nameCode,
+							name: rawNameCode,
 						},
 					};
 				});
@@ -58,11 +60,17 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 	}, [systemToolsConfig]);
 
 	const selectedTools =
-		form.values.agentConfig?.conversationConfig?.agent?.prompt?.tools ?? [];
+		form.values.agentConfig?.conversationConfig?.agent?.prompt?.builtInTools ??
+		{};
 
 	const isToolSelected = useCallback(
-		(nameCodeToCheck: string) =>
-			selectedTools.some((tool) => tool.name === nameCodeToCheck),
+		(nameCodeToCheck: string) => {
+			const camelCaseKey = snakeToCamel(nameCodeToCheck);
+			return (
+				selectedTools[camelCaseKey] !== null &&
+				selectedTools[camelCaseKey] !== undefined
+			);
+		},
 		[selectedTools]
 	);
 
@@ -72,27 +80,17 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 			const currentConversationConfig = currentAgentConfig.conversationConfig;
 			const currentAgent = currentConversationConfig?.agent;
 			const currentPrompt = currentAgent?.prompt;
-			const currentTools = currentPrompt?.tools || [];
+			const currentBuiltInTools = currentPrompt?.builtInTools || {};
 
-			const nameCode = toolConfig.nameCode;
-			const normalizedToolValue: ToolModel = {
-				...toolConfig.value,
-				name: nameCode,
+			const nameCode = toolConfig.nameCode; // Already camelCase from configList
+			console.log('NAME', toolConfig.nameCode);
+			// Always include all tools, set to null when disabled
+			const updatedBuiltInTools = {
+				...currentBuiltInTools,
+				[nameCode]: currentlySelected ? null : toolConfig.value,
 			};
 
-			const updatedTools = currentlySelected
-				? currentTools.filter(
-						(existingTool: ToolModel) => existingTool.name !== nameCode
-					)
-				: [
-						...currentTools.filter(
-							(existingTool: ToolModel) => existingTool.name !== nameCode
-						),
-						normalizedToolValue,
-					];
-
-			// Remove toolIds from the prompt to avoid sending it
-			const { toolIds, ...restPrompt } = currentPrompt || {};
+			console.log('Updated builtInTools:', updatedBuiltInTools);
 
 			const updatedAgentConfig: Partial<AgentConfigModel> = {
 				...currentAgentConfig,
@@ -102,8 +100,8 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 							agent: {
 								...currentAgent,
 								prompt: {
-									...restPrompt,
-									tools: updatedTools,
+									...currentPrompt,
+									builtInTools: updatedBuiltInTools,
 								},
 							},
 						} as ConversationConfigModel)
@@ -112,7 +110,7 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 
 			form.setFieldValue('agentConfig', updatedAgentConfig);
 		},
-		[form]
+		[form, configList]
 	);
 
 	const handleOpenModal = useCallback((toolConfig: ToolConfigModel) => {
@@ -131,15 +129,19 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 			const currentConversationConfig = currentAgentConfig.conversationConfig;
 			const currentAgent = currentConversationConfig?.agent;
 			const currentPrompt = currentAgent?.prompt;
-			const currentTools = currentPrompt?.tools || [];
+			const currentBuiltInTools = currentPrompt?.builtInTools || {};
 
-			// Update the tool in the array
-			const updatedTools = currentTools.map((tool: ToolModel) =>
-				tool.name === updatedConfig.name ? updatedConfig : tool
+			// Use camelCase for key, but keep original name in value
+			const nameCode = snakeToCamel(updatedConfig.name);
+			const updatedBuiltInTools = {
+				...currentBuiltInTools,
+				[nameCode]: updatedConfig,
+			};
+
+			console.log(
+				'Updated builtInTools (from config save):',
+				updatedBuiltInTools
 			);
-
-			// Remove toolIds from the prompt to avoid sending it
-			const { toolIds, ...restPrompt } = currentPrompt || {};
 
 			const updatedAgentConfig: Partial<AgentConfigModel> = {
 				...currentAgentConfig,
@@ -149,8 +151,8 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 							agent: {
 								...currentAgent,
 								prompt: {
-									...restPrompt,
-									tools: updatedTools,
+									...currentPrompt,
+									builtInTools: updatedBuiltInTools,
 								},
 							},
 						} as ConversationConfigModel)
@@ -217,9 +219,12 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 					onClose={handleCloseModal}
 					toolName={editingTool.name}
 					toolConfig={
-						selectedTools.find(
-							(tool: ToolModel) => tool.name === editingTool.nameCode
-						) || editingTool.value
+						selectedTools[editingTool.nameCode]
+							? {
+									...selectedTools[editingTool.nameCode],
+									name: editingTool.value.name,
+								}
+							: editingTool.value
 					}
 					onSave={handleSaveToolConfig}
 				/>
