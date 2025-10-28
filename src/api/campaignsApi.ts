@@ -22,7 +22,16 @@ export interface CreateCampaignWithAgentDTO {
 		objectiveId?: number;
 	};
 	agent: {
-		conversationConfig?: Record<string, any>;
+		conversationConfig?: {
+			agent?: {
+				prompt?: {
+					prompt?: string;
+				};
+				outboundPhoneNumberId?: number;
+				inboundPhoneNumberId?: number;
+			};
+			[key: string]: any;
+		};
 		platformSettings?: Record<string, any>;
 		name: string;
 		type: 'INBOUND' | 'OUTBOUND';

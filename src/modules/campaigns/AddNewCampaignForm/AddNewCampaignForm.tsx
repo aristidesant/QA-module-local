@@ -17,6 +17,7 @@ import { notifications } from '@mantine/notifications';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 import { CampaignStatus } from '~/models/CampaignStatus';
 import AgentVoiceSelector from './AgentVoiceSelector';
+import PhoneNumberSelector from './PhoneNumberSelector';
 import type { AgentVoiceModel } from '~/models/AgentVoiceModel';
 import useCampaignsPredefinedParams, {
 	CampaignPredefinedParam,
@@ -81,6 +82,10 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 		},
 		validateInputOnChange: true,
 	});
+
+	const [selectedPhoneNumberId, setSelectedPhoneNumberId] = useState<
+		number | null
+	>(null);
 
 	const predefinedParams = useCampaignsPredefinedParams();
 	const [selectedParam, setSelectedParam] =
@@ -152,10 +157,26 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 
 	const handleSubmit = (values: typeof form.values) => {
 		// Sync the type between campaign and agent to ensure they match
+		const campaignType = values.campaign.type;
+
+		// Build the conversationConfig.agent object with the phone number
+		const agentConfig: any = {
+			...(values.agent.conversationConfig?.agent || {}),
+		};
+
+		// Add the appropriate phone number ID based on campaign type
+		if (selectedPhoneNumberId) {
+			if (campaignType === 'OUTBOUND') {
+				agentConfig.outboundPhoneNumberId = selectedPhoneNumberId;
+			} else if (campaignType === 'INBOUND') {
+				agentConfig.inboundPhoneNumberId = selectedPhoneNumberId;
+			}
+		}
+
 		const dto: CreateCampaignWithAgentDTO = {
 			campaign: {
 				...values.campaign,
-				type: values.campaign.type,
+				type: campaignType,
 				...(values.campaign.promptId && { promptId: values.campaign.promptId }),
 				...(values.campaign.objectiveId && {
 					objectiveId: values.campaign.objectiveId,
@@ -163,7 +184,11 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 			},
 			agent: {
 				...values.agent,
-				type: values.campaign.type, // Use campaign type to ensure they match
+				type: campaignType, // Use campaign type to ensure they match
+				conversationConfig: {
+					...values.agent.conversationConfig,
+					agent: agentConfig,
+				},
 			},
 		};
 
@@ -173,6 +198,7 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 					onComplete();
 				}
 				form.reset();
+				setSelectedPhoneNumberId(null);
 			},
 			onError: (error) => {
 				notifications.show({
@@ -241,9 +267,20 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 									'agent.type',
 									value as 'INBOUND' | 'OUTBOUND'
 								);
+								// Reset phone number selection when type changes
+								setSelectedPhoneNumberId(null);
 							}}
 						/>
 					</Box>
+					<PhoneNumberSelector
+						campaignType={form.values.campaign.type}
+						value={selectedPhoneNumberId}
+						onChange={setSelectedPhoneNumberId}
+						label='Phone Number'
+						description='Select the phone number for this campaign'
+						placeholder='Choose a phone number'
+						withAsterisk
+					/>
 					<TextInput
 						label='Agent Name'
 						description='Enter the name of the agent'
@@ -298,7 +335,7 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 						leftSection={<IconDeviceFloppy />}
 						type='submit'
 						loading={createCampaignWithAgent.isPending}
-						disabled={!form.isValid()}
+						disabled={!form.isValid() || !selectedPhoneNumberId}
 						size='sm'
 					>
 						Create Campaign
