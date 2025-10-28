@@ -1,6 +1,7 @@
 import React from 'react';
-import { Text, Group, Loader, Button } from '@mantine/core';
-import { IconTrash } from '@tabler/icons-react';
+import { Text, Group, Loader, Button, ActionIcon } from '@mantine/core';
+import { IconTrash, IconEdit } from '@tabler/icons-react';
+import { modals } from '@mantine/modals';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import AgentCampaignList from '../AgentCampaignList';
 import { useGetAgent } from '~/queries/agentQueries';
@@ -9,6 +10,7 @@ import { openConfirmModal } from '@mantine/modals';
 import AgentProfile from '~/modules/agents/AgentSimpleDetails/AgentProfile';
 import { useDeleteCampaignAgent } from '~/queries/campaignAgentsQueries';
 import { VoicePlayer } from '~/components/VoicePlayer';
+import AgentVoiceEditModal from './AgentVoiceEditModal';
 
 interface AgentCampaignPreviewProps {
 	agentId: string;
@@ -22,8 +24,32 @@ export const AgentCampaignPreview: React.FC<AgentCampaignPreviewProps> = ({
 	campaignId,
 }) => {
 	const { setRightComponent } = useCampaignsStore();
-	const { data: agent, isLoading } = useGetAgent(agentId);
+	const { data: agent, isLoading, refetch } = useGetAgent(agentId);
 	const deleteMutation = useDeleteCampaignAgent();
+
+	const openVoiceChangeModal = () => {
+		const currentVoiceId =
+			(agent as any)?.conversationConfig?.tts?.voiceId ||
+			agent?.voice?.id ||
+			'';
+
+		modals.open({
+			modalId: 'agent-voice-edit-modal',
+			title: 'Change Agent Voice',
+			size: 'xl',
+			centered: true,
+			children: (
+				<AgentVoiceEditModal
+					agentId={agentId}
+					currentVoiceId={currentVoiceId}
+					onClose={() => modals.close('agent-voice-edit-modal')}
+					onSuccess={() => {
+						refetch();
+					}}
+				/>
+			),
+		});
+	};
 
 	const handleDelete = () => {
 		openConfirmModal({
@@ -64,10 +90,29 @@ export const AgentCampaignPreview: React.FC<AgentCampaignPreviewProps> = ({
 							traits={['Warm', 'Playful']}
 							size='md'
 						/>
-						<VoicePlayer
-							voiceName={agent.voice?.name || 'Unknown'}
-							previewUrl={agent.voice?.previewUrl}
-						/>
+
+						{/* Voice Section */}
+						<div className={styles.voiceSection}>
+							<Group align='center' mb={8}>
+								<Text fw={600} size='sm'>
+									Agent voice
+								</Text>
+								<ActionIcon
+									variant='light'
+									color='blue'
+									size='sm'
+									radius='md'
+									onClick={openVoiceChangeModal}
+									aria-label='Change voice'
+								>
+									<IconEdit size={16} />
+								</ActionIcon>
+							</Group>
+							<VoicePlayer
+								voiceName={agent?.voice?.name || 'Unknown'}
+								previewUrl={agent?.voice?.previewUrl}
+							/>
+						</div>
 					</div>
 					{/* Quick Actions */}
 					<div className={styles.quickActions}>

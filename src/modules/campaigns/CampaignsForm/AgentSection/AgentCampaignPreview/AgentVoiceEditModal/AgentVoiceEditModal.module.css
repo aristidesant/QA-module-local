@@ -1,0 +1,15 @@
+.tableContainer {
+	max-height: 400px;
+	overflow-y: auto;
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+}
+
+.selectedRow {
+	background-color: var(--mantine-color-blue-0);
+	border-left: 3px solid var(--mantine-color-blue-6);
+}
+
+.selectedRow:hover {
+	background-color: var(--mantine-color-blue-1);
+}
