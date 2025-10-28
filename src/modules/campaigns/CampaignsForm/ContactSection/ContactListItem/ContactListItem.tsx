@@ -10,7 +10,7 @@ import {
 	ActionIcon,
 	Divider,
 } from '@mantine/core';
-import { IconClock, IconTrash } from '@tabler/icons-react';
+import { IconClock, IconTrash, IconEdit } from '@tabler/icons-react';
 import type SchedulerContactGroupModel from '~/models/SchedulerContactGroupModel';
 import styles from './ContactListItem.module.css';
 import { useUpdateContactGroupStatus } from '~/queries/schedulerQueries';
@@ -26,7 +26,6 @@ interface ContactListItemProps {
 	onUpdateComplete: () => void;
 	withOpenModal?: boolean;
 	withSwitch?: boolean;
-	withAddExpiration?: boolean;
 	campaignId?: string | number;
 	objectiveId?: number;
 }
@@ -36,7 +35,6 @@ export function ContactListItem({
 	onUpdateComplete,
 	withOpenModal = true,
 	withSwitch = true,
-	withAddExpiration,
 	campaignId,
 	objectiveId,
 }: ContactListItemProps) {
@@ -45,6 +43,7 @@ export function ContactListItem({
 	const [isUpdating, setIsUpdating] = useState(false);
 
 	const handleToggle = async (event: React.ChangeEvent<HTMLInputElement>) => {
+		event.stopPropagation(); // Prevent modal from opening
 		try {
 			setIsUpdating(true);
 			const newStatus = event.currentTarget.checked ? 'active' : 'inactive';
@@ -116,11 +115,7 @@ export function ContactListItem({
 	};
 
 	return (
-		<Box
-			className={styles.contactItem}
-			pos='relative'
-			{...(withOpenModal ? { onClick: handleOpenModal } : {})}
-		>
+		<Box className={styles.contactItem} pos='relative'>
 			{isUpdating && (
 				<Overlay
 					color='#fff'
@@ -143,6 +138,7 @@ export function ContactListItem({
 						<Switch
 							checked={scheduleContactGroup?.status === 'active'}
 							onChange={handleToggle}
+							onClick={(e) => e.stopPropagation()}
 							size='md'
 						/>
 					)}
@@ -155,22 +151,9 @@ export function ContactListItem({
 						</Text>
 					</Flex>
 				</Flex>
-				{scheduleContactGroup?.expirationDate && (
-					<div>
-						<Flex align='center' gap={'xs'} c='dimmed'>
-							<ActionIcon
-								title='Delete this contact list'
-								variant='subtle'
-								size='xs'
-								c='red'
-								onClick={(e) => {
-									e.stopPropagation(); // Prevent triggering the modal open
-									handleDelete();
-								}}
-							>
-								<IconTrash size={16} />
-							</ActionIcon>
-							<Divider orientation='vertical' />
+				<Flex align='center' gap={'xs'} c='dimmed'>
+					{scheduleContactGroup?.expirationDate && (
+						<>
 							<ThemeIcon variant='transparent' size='xs' c='dimmed'>
 								<IconClock style={{ width: rem(14), height: rem(14) }} />
 							</ThemeIcon>
@@ -178,10 +161,36 @@ export function ContactListItem({
 								Expires on{' '}
 								{formatExpirationDate(scheduleContactGroup.expirationDate)}
 							</Text>
-						</Flex>
-					</div>
-				)}
-				{withAddExpiration && !scheduleContactGroup?.expirationDate && <>ok</>}
+							<Divider orientation='vertical' />
+						</>
+					)}
+					{withOpenModal && (
+						<ActionIcon
+							title='Edit contact list'
+							variant='subtle'
+							size='xs'
+							c='blue'
+							onClick={(e) => {
+								e.stopPropagation();
+								handleOpenModal();
+							}}
+						>
+							<IconEdit size={16} />
+						</ActionIcon>
+					)}
+					<ActionIcon
+						title='Delete this contact list'
+						variant='subtle'
+						size='xs'
+						c='red'
+						onClick={(e) => {
+							e.stopPropagation();
+							handleDelete();
+						}}
+					>
+						<IconTrash size={16} />
+					</ActionIcon>
+				</Flex>
 			</Flex>
 		</Box>
 	);

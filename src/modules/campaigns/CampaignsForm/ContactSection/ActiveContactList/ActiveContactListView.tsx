@@ -29,8 +29,8 @@ export const ActiveContactListView = ({
 
 	return (
 		<SectionCard
-			title='Active contact list'
-			description='Manage the contact lists that are currently active for your campaign.'
+			title='Contact lists'
+			description='Displaying all active contact lists associated with this campaign.'
 			headerActions={
 				<Button
 					color='blue'
@@ -43,19 +43,17 @@ export const ActiveContactListView = ({
 			}
 		>
 			<div className={styles.cardsContainer}>
-				{scheduleContactGroups
-					?.filter((item) => item.status === 'active')
-					.map((item) => (
-						<ContactListItem
-							key={item.id}
-							scheduleContactGroup={item}
-							withOpenModal
-							withSwitch={false}
-							campaignId={campaignId}
-							onUpdateComplete={onUpdateComplete}
-							objectiveId={objectiveId}
-						/>
-					))}
+				{scheduleContactGroups.map((item) => (
+					<ContactListItem
+						key={item.id}
+						scheduleContactGroup={item}
+						withOpenModal
+						withSwitch
+						campaignId={campaignId}
+						onUpdateComplete={onUpdateComplete}
+						objectiveId={objectiveId}
+					/>
+				))}
 			</div>
 			<Modal
 				opened={opened}
