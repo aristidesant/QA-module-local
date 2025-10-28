@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import {
 	Stack,
 	SimpleGrid,
@@ -145,6 +145,7 @@ export const CampaignLiveMetricPage = () => {
 	const { campaignId } = useParams<{ campaignId: string }>();
 	const [selectedDate] = useState<Date | null>(new Date());
 	const [viewAllStatus, setViewAllStatus] = useState('all');
+	const navigate = useNavigate();
 
 	// Fetch campaign data
 	const {
@@ -192,6 +193,10 @@ export const CampaignLiveMetricPage = () => {
 	return (
 		<ContentContainer
 			title={campaign.name || 'Campaign Metrics'}
+			showBackButton
+			onBackClick={() => {
+				navigate('/campaigns');
+			}}
 			description={
 				campaign.description ||
 				'Quick snapshot of your AI operations, campaign performance, and real-time engagement metrics — all in one place.'
