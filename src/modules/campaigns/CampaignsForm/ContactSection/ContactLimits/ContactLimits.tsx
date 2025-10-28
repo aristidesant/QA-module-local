@@ -254,6 +254,7 @@ export const ContactLimits = ({
 						error={processFileMutation.error?.message}
 						onSchemaSelected={setSelectedSchemaId}
 						objectiveId={objectiveId}
+						selectedSchemaId={selectedSchemaId}
 					/>
 				)}
 				<Group justify='flex-end' mt='md'>

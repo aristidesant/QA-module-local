@@ -37,6 +37,7 @@ interface ContactHeaderMappingProps {
 	schemaFields?: CampaignContactSchemaField[];
 	onSchemaSelected?: (schemaId: number) => void;
 	objectiveId?: number;
+	selectedSchemaId?: number;
 }
 
 interface FieldMapping {
@@ -51,6 +52,7 @@ export function ContactHeaderMapping({
 	schemaFields = [],
 	onSchemaSelected,
 	objectiveId,
+	selectedSchemaId,
 }: ContactHeaderMappingProps) {
 	// Read from campaign store and prefer store value (objectiveId or objective.id)
 	const { selectedCampaign } = useCampaignsStore();
@@ -220,6 +222,16 @@ export function ContactHeaderMapping({
 		}
 	}, [result]);
 
+	// Restore selected schema fields when selectedSchemaId is provided
+	useEffect(() => {
+		if (selectedSchemaId && selectedSchemaId > 0 && schemas.length > 0) {
+			const selectedSchema = schemas.find((s) => s.id === selectedSchemaId);
+			if (selectedSchema) {
+				setAdditionalSchemaFields(selectedSchema.schemaFields);
+			}
+		}
+	}, [selectedSchemaId, schemas]);
+
 	// Get available fields that aren't currently mapped
 	const { availableSystemFields, availableDocumentFields } = useMemo(() => {
 		const mappedSystemFields = new Set(mappings.map((m) => m.systemField));
@@ -327,9 +339,291 @@ export function ContactHeaderMapping({
 						</Badge>
 					</Group>
 				</div>
-				{(selectedSystemColumn || selectedDocumentField) && (
-					<div className={styles.selectionSummary}>
-						<Group gap={6} wrap='wrap'>
+				<Divider />
+				<div className={styles.contentWrapper}>
+					<div className={styles.columnsLayout}>
+						<div className={styles.listSection}>
+							<div className={styles.sectionHeader}>
+								<Group gap={8} align='center'>
+									<Text size='sm' fw={600}>
+										System fields
+									</Text>
+									<Badge size='xs' variant='light' color='gray'>
+										{availableSystemFields.length}
+									</Badge>
+								</Group>
+								<Group gap={6}>
+									{!effectiveObjectiveId ? (
+										<Badge size='xs' color='yellow' variant='light'>
+											Select objective
+										</Badge>
+									) : schemas && schemas.length > 0 ? (
+										<Menu position='bottom-end' withArrow width={320}>
+											<Menu.Target>
+												<ActionIcon
+													variant='light'
+													size='sm'
+													color='blue'
+													title='Add dynamic columns'
+												>
+													<IconPlus size={14} />
+												</ActionIcon>
+											</Menu.Target>
+											<Menu.Dropdown>
+												<Menu.Label>Dynamic column sets</Menu.Label>
+												{schemas.map((schema, index) => (
+													<div key={schema.id}>
+														<Menu.Item
+															onClick={() => {
+																handleAddDynamicColumns(
+																	schema.schemaFields,
+																	schema.id
+																);
+															}}
+															className={styles.dynamicMenuItem}
+														>
+															<Stack gap={4}>
+																<Group gap={6} align='baseline'>
+																	<Text size='sm' fw={500}>
+																		{schema.name}
+																	</Text>
+																	<Badge size='xs' variant='light'>
+																		v{schema.version || 1}
+																	</Badge>
+																</Group>
+																{schema.description && (
+																	<Text size='xs' c='dimmed' lineClamp={2}>
+																		{schema.description}
+																	</Text>
+																)}
+																<Text size='xs' c='blue' fw={500}>
+																	{schema.schemaFields.length} fields
+																</Text>
+															</Stack>
+														</Menu.Item>
+														{index < schemas.length - 1 && <Divider />}
+													</div>
+												))}
+											</Menu.Dropdown>
+										</Menu>
+									) : null}
+								</Group>
+							</div>
+							<ScrollArea
+								className={styles.itemsScrollArea}
+								scrollHideDelay={0}
+								scrollbarSize={4}
+							>
+								<Stack gap={4} className={styles.itemsStack}>
+									{isLoadingSystemColumns ? (
+										<Text size='xs' c='dimmed' ta='center' mt='md'>
+											Loading columns...
+										</Text>
+									) : availableSystemFields.length === 0 ? (
+										<div className={styles.emptyState}>
+											<Text size='xs' c='dimmed'>
+												All system fields mapped
+											</Text>
+										</div>
+									) : (
+										availableSystemFields.map((column) => {
+											const selected = isSelected('system', column.name);
+											return (
+												<Card
+													key={`system-${column.name}`}
+													withBorder={false}
+													className={getItemClass(selected)}
+													onClick={() =>
+														handleFieldClick('system', column.name)
+													}
+													p='xs'
+												>
+													<Group
+														gap='xs'
+														align='center'
+														justify='space-between'
+													>
+														<Text
+															size='xs'
+															fw={selected ? 600 : 500}
+															style={{ flex: 1, wordBreak: 'break-word' }}
+														>
+															{column.label || column.name}
+														</Text>
+														{selected && (
+															<IconCheck
+																size={14}
+																className={styles.checkIcon}
+															/>
+														)}
+													</Group>
+												</Card>
+											);
+										})
+									)}
+								</Stack>
+							</ScrollArea>
+						</div>
+						<div className={styles.listSection}>
+							<div className={styles.sectionHeader}>
+								<Group gap={8}>
+									<Text size='sm' fw={600}>
+										CSV columns
+									</Text>
+									<Badge size='xs' variant='light' color='gray'>
+										{availableDocumentFields.length}
+									</Badge>
+								</Group>
+								{selectedSystemColumn?.isArray && (
+									<Button
+										size='xs'
+										variant='light'
+										onClick={finalizeArrayField}
+									>
+										Finish multi-select
+									</Button>
+								)}
+							</div>
+							{selectedSystemColumn?.isArray && (
+								<div className={styles.arrayToolbar}>
+									<Text size='xs' c='dimmed'>
+										Add all CSV columns that should populate{' '}
+										<strong>
+											{selectedSystemColumn.label || selectedSystemColumn.name}
+										</strong>
+									</Text>
+								</div>
+							)}
+							<ScrollArea
+								className={styles.itemsScrollArea}
+								scrollHideDelay={0}
+								scrollbarSize={4}
+							>
+								<Stack gap={4} className={styles.itemsStack}>
+									{availableDocumentFields.length === 0 ? (
+										<div className={styles.emptyState}>
+											<Text size='xs' c='dimmed'>
+												All CSV columns mapped
+											</Text>
+										</div>
+									) : (
+										availableDocumentFields.map((column) => (
+											<Card
+												key={`doc-${column}`}
+												withBorder={false}
+												className={getItemClass(isSelected('document', column))}
+												onClick={() => handleFieldClick('document', column)}
+												p='xs'
+											>
+												<Group gap='xs' align='center' justify='space-between'>
+													<Text
+														size='xs'
+														fw={isSelected('document', column) ? 600 : 500}
+														style={{ flex: 1, wordBreak: 'break-word' }}
+													>
+														{column}
+													</Text>
+													{isSelected('document', column) && (
+														<IconCheck size={14} className={styles.checkIcon} />
+													)}
+												</Group>
+											</Card>
+										))
+									)}
+								</Stack>
+							</ScrollArea>
+						</div>
+						<div className={styles.listSection}>
+							<div className={styles.sectionHeader}>
+								<Group gap={6}>
+									<Text size='sm' fw={600}>
+										Current mappings
+									</Text>
+									<Badge size='xs' variant='light' color='blue'>
+										{mappings.length}
+									</Badge>
+								</Group>
+								<Text size='xs' c='dimmed'>
+									Click to remove
+								</Text>
+							</div>
+							<ScrollArea
+								className={styles.itemsScrollArea}
+								scrollHideDelay={0}
+								scrollbarSize={4}
+							>
+								<Stack gap={4} className={styles.itemsStack}>
+									{mappings.length > 0 ? (
+										mappings.map((mapping) => {
+											const systemField = systemColumns.find(
+												(col) => col.name === mapping.systemField
+											);
+											if (!systemField) return null;
+
+											return (
+												<Card
+													key={`mapped-${mapping.systemField}-${mapping.documentField}`}
+													withBorder={false}
+													className={styles.itemCard}
+													onClick={() => handleRemoveMapping(mapping)}
+													p='xs'
+													style={{
+														borderColor: 'var(--mantine-color-gray-3)',
+													}}
+												>
+													<Group
+														gap='xs'
+														align='center'
+														justify='space-between'
+													>
+														<Text
+															size='xs'
+															fw={600}
+															style={{ flex: 1, wordBreak: 'break-word' }}
+														>
+															{systemField.label || systemField.name}
+														</Text>
+														<Text size='xs' c='dimmed'>
+															&rarr;
+														</Text>
+														<Text
+															size='xs'
+															style={{ flex: 1, wordBreak: 'break-word' }}
+														>
+															{mapping.documentField}
+														</Text>
+														<ActionIcon
+															size='xs'
+															variant='subtle'
+															color='red'
+															onClick={(e) => {
+																e.stopPropagation();
+																handleRemoveMapping(mapping);
+															}}
+														>
+															<IconTrash size={12} />
+														</ActionIcon>
+													</Group>
+												</Card>
+											);
+										})
+									) : (
+										<div className={styles.emptyState}>
+											<Text size='xs' c='dimmed' ta='center'>
+												No mappings yet
+											</Text>
+											<Text size='xs' c='dimmed' ta='center' mt={4}>
+												Select a system field and CSV column to add your first
+												mapping.
+											</Text>
+										</div>
+									)}
+								</Stack>
+							</ScrollArea>
+						</div>
+					</div>
+					<div className={styles.stickySelectionBar}>
+						<Group gap={6} wrap='wrap' style={{ flex: 1 }}>
 							{selectedSystemColumn ? (
 								<Group gap={4} wrap='nowrap'>
 									<Badge size='xs' variant='filled' color='blue'>
@@ -364,281 +658,18 @@ export function ContactHeaderMapping({
 								</Text>
 							)}
 						</Group>
-						<Button
-							variant='subtle'
-							size='xs'
-							onClick={() => {
-								setSelectedDocumentField(null);
-								setSelectedSystemField(null);
-							}}
-						>
-							Clear selection
-						</Button>
-					</div>
-				)}
-				<Divider />
-				<div className={styles.columnsLayout}>
-					<div className={styles.listSection}>
-						<div className={styles.sectionHeader}>
-							<Group gap={8} align='center'>
-								<Text size='sm' fw={600}>
-									System fields
-								</Text>
-								<Badge size='xs' variant='light' color='gray'>
-									{availableSystemFields.length}
-								</Badge>
-							</Group>
-							<Group gap={6}>
-								{!effectiveObjectiveId ? (
-									<Badge size='xs' color='yellow' variant='light'>
-										Select objective
-									</Badge>
-								) : schemas && schemas.length > 0 ? (
-									<Menu position='bottom-end' withArrow width={320}>
-										<Menu.Target>
-											<ActionIcon
-												variant='light'
-												size='sm'
-												color='blue'
-												title='Add dynamic columns'
-											>
-												<IconPlus size={14} />
-											</ActionIcon>
-										</Menu.Target>
-										<Menu.Dropdown>
-											<Menu.Label>Dynamic column sets</Menu.Label>
-											{schemas.map((schema, index) => (
-												<div key={schema.id}>
-													<Menu.Item
-														onClick={() => {
-															handleAddDynamicColumns(
-																schema.schemaFields,
-																schema.id
-															);
-														}}
-														className={styles.dynamicMenuItem}
-													>
-														<Stack gap={4}>
-															<Group gap={6} align='baseline'>
-																<Text size='sm' fw={500}>
-																	{schema.name}
-																</Text>
-																<Badge size='xs' variant='light'>
-																	v{schema.version || 1}
-																</Badge>
-															</Group>
-															{schema.description && (
-																<Text size='xs' c='dimmed' lineClamp={2}>
-																	{schema.description}
-																</Text>
-															)}
-															<Text size='xs' c='blue' fw={500}>
-																{schema.schemaFields.length} fields
-															</Text>
-														</Stack>
-													</Menu.Item>
-													{index < schemas.length - 1 && <Divider />}
-												</div>
-											))}
-										</Menu.Dropdown>
-									</Menu>
-								) : null}
-							</Group>
-						</div>
-						<ScrollArea
-							className={styles.itemsScrollArea}
-							scrollHideDelay={0}
-							scrollbarSize={4}
-						>
-							<Stack gap={4} className={styles.itemsStack}>
-								{isLoadingSystemColumns ? (
-									<Text size='xs' c='dimmed' ta='center' mt='md'>
-										Loading columns...
-									</Text>
-								) : availableSystemFields.length === 0 ? (
-									<div className={styles.emptyState}>
-										<Text size='xs' c='dimmed'>
-											All system fields mapped
-										</Text>
-									</div>
-								) : (
-									availableSystemFields.map((column) => {
-										const selected = isSelected('system', column.name);
-										return (
-											<Card
-												key={`system-${column.name}`}
-												withBorder={false}
-												className={getItemClass(selected)}
-												onClick={() => handleFieldClick('system', column.name)}
-												p='xs'
-											>
-												<Group gap='xs' align='center' justify='space-between'>
-													<Text
-														size='xs'
-														fw={selected ? 600 : 500}
-														style={{ flex: 1, wordBreak: 'break-word' }}
-													>
-														{column.label || column.name}
-													</Text>
-													{selected && (
-														<IconCheck size={14} className={styles.checkIcon} />
-													)}
-												</Group>
-											</Card>
-										);
-									})
-								)}
-							</Stack>
-						</ScrollArea>
-					</div>
-					<div className={styles.listSection}>
-						<div className={styles.sectionHeader}>
-							<Group gap={8}>
-								<Text size='sm' fw={600}>
-									CSV columns
-								</Text>
-								<Badge size='xs' variant='light' color='gray'>
-									{availableDocumentFields.length}
-								</Badge>
-							</Group>
-							{selectedSystemColumn?.isArray && (
-								<Button size='xs' variant='light' onClick={finalizeArrayField}>
-									Finish multi-select
-								</Button>
-							)}
-						</div>
-						{selectedSystemColumn?.isArray && (
-							<div className={styles.arrayToolbar}>
-								<Text size='xs' c='dimmed'>
-									Add all CSV columns that should populate{' '}
-									<strong>
-										{selectedSystemColumn.label || selectedSystemColumn.name}
-									</strong>
-								</Text>
-							</div>
+						{(selectedSystemColumn || selectedDocumentField) && (
+							<Button
+								variant='subtle'
+								size='xs'
+								onClick={() => {
+									setSelectedDocumentField(null);
+									setSelectedSystemField(null);
+								}}
+							>
+								Clear selection
+							</Button>
 						)}
-						<ScrollArea
-							className={styles.itemsScrollArea}
-							scrollHideDelay={0}
-							scrollbarSize={4}
-						>
-							<Stack gap={4} className={styles.itemsStack}>
-								{availableDocumentFields.length === 0 ? (
-									<div className={styles.emptyState}>
-										<Text size='xs' c='dimmed'>
-											All CSV columns mapped
-										</Text>
-									</div>
-								) : (
-									availableDocumentFields.map((column) => (
-										<Card
-											key={`doc-${column}`}
-											withBorder={false}
-											className={getItemClass(isSelected('document', column))}
-											onClick={() => handleFieldClick('document', column)}
-											p='xs'
-										>
-											<Group gap='xs' align='center' justify='space-between'>
-												<Text
-													size='xs'
-													fw={isSelected('document', column) ? 600 : 500}
-													style={{ flex: 1, wordBreak: 'break-word' }}
-												>
-													{column}
-												</Text>
-												{isSelected('document', column) && (
-													<IconCheck size={14} className={styles.checkIcon} />
-												)}
-											</Group>
-										</Card>
-									))
-								)}
-							</Stack>
-						</ScrollArea>
-					</div>
-					<div className={styles.listSection}>
-						<div className={styles.sectionHeader}>
-							<Group gap={6}>
-								<Text size='sm' fw={600}>
-									Current mappings
-								</Text>
-								<Badge size='xs' variant='light' color='blue'>
-									{mappings.length}
-								</Badge>
-							</Group>
-							<Text size='xs' c='dimmed'>
-								Click to remove
-							</Text>
-						</div>
-						<ScrollArea
-							className={styles.itemsScrollArea}
-							scrollHideDelay={0}
-							scrollbarSize={4}
-						>
-							<Stack gap={4} className={styles.itemsStack}>
-								{mappings.length > 0 ? (
-									mappings.map((mapping) => {
-										const systemField = systemColumns.find(
-											(col) => col.name === mapping.systemField
-										);
-										if (!systemField) return null;
-
-										return (
-											<Card
-												key={`mapped-${mapping.systemField}-${mapping.documentField}`}
-												withBorder={false}
-												className={styles.itemCard}
-												onClick={() => handleRemoveMapping(mapping)}
-												p='xs'
-												style={{
-													borderColor: 'var(--mantine-color-gray-3)',
-												}}
-											>
-												<Group gap='xs' align='center' justify='space-between'>
-													<Text
-														size='xs'
-														fw={600}
-														style={{ flex: 1, wordBreak: 'break-word' }}
-													>
-														{systemField.label || systemField.name}
-													</Text>
-													<Text size='xs' c='dimmed'>
-														&rarr;
-													</Text>
-													<Text
-														size='xs'
-														style={{ flex: 1, wordBreak: 'break-word' }}
-													>
-														{mapping.documentField}
-													</Text>
-													<ActionIcon
-														size='xs'
-														variant='subtle'
-														color='red'
-														onClick={(e) => {
-															e.stopPropagation();
-															handleRemoveMapping(mapping);
-														}}
-													>
-														<IconTrash size={12} />
-													</ActionIcon>
-												</Group>
-											</Card>
-										);
-									})
-								) : (
-									<div className={styles.emptyState}>
-										<Text size='xs' c='dimmed' ta='center'>
-											No mappings yet
-										</Text>
-										<Text size='xs' c='dimmed' ta='center' mt={4}>
-											Select a system field and CSV column to add your first
-											mapping.
-										</Text>
-									</div>
-								)}
-							</Stack>
-						</ScrollArea>
 					</div>
 				</div>
 			</Card>

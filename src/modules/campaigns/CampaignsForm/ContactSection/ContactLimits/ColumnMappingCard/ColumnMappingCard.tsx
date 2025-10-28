@@ -30,6 +30,9 @@ interface ColumnMappingCardProps {
 
 	/** Callback when a schema is selected for dynamic columns */
 	onSchemaSelected?: (schemaId: number) => void;
+
+	/** Currently selected schema ID for dynamic columns */
+	selectedSchemaId?: number;
 }
 
 function ColumnMappingCard({
@@ -39,6 +42,7 @@ function ColumnMappingCard({
 	error,
 	objectiveId,
 	onSchemaSelected,
+	selectedSchemaId,
 }: ColumnMappingCardProps) {
 	const mappedColumnsCount = Object.keys(columnMappings).length;
 	const totalColumns = headers.length;
@@ -57,6 +61,7 @@ function ColumnMappingCard({
 					schemaFields={[]}
 					onSchemaSelected={onSchemaSelected}
 					objectiveId={objectiveId}
+					selectedSchemaId={selectedSchemaId}
 				/>
 			),
 		});
