@@ -1,64 +1,87 @@
 .container {
-	width: 100%;
-	max-width: 1200px;
-	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.builderCard {
+	background-color: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: 10px;
+	overflow: hidden;
+}
+
+.builderMeta {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 12px 14px;
+}
+
+.selectionSummary {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 8px 14px;
+	background-color: var(--mantine-color-white);
+	border-top: 1px solid var(--mantine-color-gray-3);
+}
+
+.columnsLayout {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(240px, 1fr));
+	gap: 14px;
 	padding: 16px;
 }
 
-.columnsContainer {
-	display: grid;
-	grid-template-columns: 1fr 1fr 1.5fr;
-	/* Make Mapped Result 1.5x wider */
-	gap: 16px;
-	margin-bottom: 24px;
-}
-
-.column {
+.listSection {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
-	min-width: 0;
-	/* Allow flex items to shrink */
+	padding: 12px;
+	background-color: var(--mantine-color-gray-0);
+	border-radius: 8px;
 }
 
-.columnCard {
-	height: 100%;
+.sectionHeader {
 	display: flex;
-	flex-direction: column;
-	background-color: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-3);
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding-bottom: 6px;
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+	margin-bottom: 4px;
+}
+
+.arrayToolbar {
+	padding: 6px 10px;
+	border: 1px solid var(--mantine-color-blue-2);
+	background-color: var(--mantine-color-blue-0);
 	border-radius: 6px;
-	overflow: hidden;
-	min-width: 0;
-	/* Allow flex items to shrink */
 }
 
-.itemsContainer {
+.itemsScrollArea {
 	flex: 1;
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	padding: 8px;
+	padding: 0 2px;
+}
+
+.itemsStack {
+	max-height: 320px;
 	overflow-y: auto;
-	min-height: 300px;
-	max-height: 500px;
 }
 
 .itemCard {
 	cursor: pointer;
-	padding: 8px 12px;
-	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: 4px;
-	transition: all 0.2s ease;
+	padding: 10px 10px;
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: 6px;
+	min-height: 42px;
 	background-color: var(--mantine-color-white);
-	word-wrap: break-word;
-	overflow-wrap: break-word;
-	hyphens: auto;
-	white-space: normal;
-	width: 100%;
-	box-sizing: border-box;
-	min-height: 45px;
-	height: auto;
+	transition: all 0.15s ease;
+	display: flex;
+	justify-content: space-between;
 }
 
 .itemCard:hover {
@@ -67,132 +90,52 @@
 }
 
 .selectedItem {
-	border-color: var(--mantine-color-blue-5);
-	background-color: var(--mantine-color-blue-0);
+	border-color: var(--mantine-color-blue-6);
+	background-color: var(--mantine-color-blue-1);
+	box-shadow: 0 0 0 1px var(--mantine-color-blue-2);
 }
 
-/* Ensure text in item cards doesn't get truncated */
 .itemCard .mantine-Group-root {
-	flex-wrap: nowrap !important;
-	width: 100% !important;
-	min-width: 0 !important;
-	align-items: flex-start !important;
+	align-items: center !important;
 }
 
-.itemCard .mantine-Text-root {
-	flex: 1 !important;
-	min-width: 0 !important;
-	max-width: calc(100% - 25px) !important;
-	/* Account for radio button width + margin */
-	word-break: break-word !important;
-	overflow-wrap: break-word !important;
-	white-space: normal !important;
-	line-height: 1.4 !important;
-	overflow: visible !important;
-	text-overflow: unset !important;
-	display: block !important;
-	width: auto !important;
+.checkIcon {
+	color: var(--mantine-color-blue-5);
 }
 
-/* Additional override for any nested text elements */
-.itemCard * {
-	white-space: normal !important;
-	overflow: visible !important;
-	text-overflow: unset !important;
+.dynamicMenuItem {
+	white-space: normal;
+	height: auto;
+	padding: 10px 12px;
 }
 
-/* Specific override for Mantine components that might interfere */
-.itemCard .mantine-Group-root > * {
-	min-width: 0 !important;
-}
-
-.itemCard .mantine-Group-root > *:not(.radio) {
-	flex: 1 !important;
-	overflow: visible !important;
-}
-
-.radio {
-	width: 14px !important;
-	height: 14px !important;
-	border: 1px solid var(--mantine-color-gray-5);
-	border-radius: 50%;
-	display: flex !important;
-	align-items: center;
-	justify-content: center;
-	flex-shrink: 0 !important;
-	margin-top: 2px;
-	/* Align with first line of text */
-	margin-right: 8px !important;
-}
-
-.radioSelected {
-	border-color: var(--mantine-color-blue-5);
-	background-color: var(--mantine-color-blue-5);
-}
-
-.mappedResults {
+.emptyState {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
-	flex: 1;
-}
-
-.connector {
-	flex: 1;
-	border-top: 1px dashed var(--mantine-color-gray-4);
-	margin: 0 8px;
-}
-
-.actions {
-	display: flex;
-	justify-content: flex-end;
-	gap: 12px;
-	margin-top: 16px;
-}
-
-/* Toolbar for array fields */
-.arrayToolbar {
-	display: flex;
 	align-items: center;
-	justify-content: space-between;
-	padding: 6px 8px;
-	border-bottom: 1px dashed var(--mantine-color-gray-3);
-	background: var(--mantine-color-gray-0);
-	gap: 8px;
+	justify-content: center;
+	padding: 18px;
+	text-align: center;
+	min-height: 150px;
 }
 
-.doneButton {
-	white-space: nowrap;
-}
-
-@media (max-width: 640px) {
-	.columnsContainer {
-		grid-template-columns: 1fr;
-		gap: 12px;
+@media (max-width: 1200px) {
+	.columnsLayout {
+		grid-template-columns: repeat(2, minmax(240px, 1fr));
 	}
+}
 
-	.arrayToolbar {
-		align-items: flex-start;
+@media (max-width: 768px) {
+	.builderMeta {
 		flex-direction: column;
 	}
 
-	.doneButton {
-		margin-top: 6px;
-		width: 100%;
+	.selectionSummary {
+		flex-direction: column;
+		align-items: flex-start;
 	}
 
-	.itemCard {
-		padding: 12px;
-	}
-}
-
-@media (max-width: 1024px) {
-	.columnsContainer {
-		grid-template-columns: 1fr 1fr;
-		gap: 12px;
-	}
-
-	.column:last-child {
-		grid-column: 1 / -1;
+	.columnsLayout {
+		grid-template-columns: 1fr;
 	}
 }
