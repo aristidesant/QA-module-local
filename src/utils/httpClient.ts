@@ -1,5 +1,5 @@
-import axios, { type AxiosInstance, type AxiosResponse } from "axios";
-import { DEFAULT_API_URL } from "~/api/config";
+import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
+import { DEFAULT_API_URL } from '~/api/config';
 
 /**
  * Creates an HTTP client with automatic 401 error handling.
@@ -10,57 +10,57 @@ import { DEFAULT_API_URL } from "~/api/config";
  * @returns Configured Axios instance
  */
 export function createHttpClient(
-  authToken?: string,
-  baseURL: string = DEFAULT_API_URL
+	authToken?: string,
+	baseURL: string = DEFAULT_API_URL
 ): AxiosInstance {
-  const client = axios.create({
-    baseURL,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    // Set a reasonable timeout (30 seconds)
-    timeout: 30000,
-  });
+	const client = axios.create({
+		baseURL,
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		// Set a reasonable timeout (30 seconds)
+		timeout: 30000,
+	});
 
-  // Request interceptor to add auth token
-  client.interceptors.request.use(
-    (config) => {
-      if (authToken) {
-        config.headers.Authorization = `Bearer ${authToken}`;
-      }
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
-    }
-  );
+	// Request interceptor to add auth token
+	client.interceptors.request.use(
+		(config) => {
+			if (authToken) {
+				config.headers.Authorization = `Bearer ${authToken}`;
+			}
+			return config;
+		},
+		(error) => {
+			return Promise.reject(error);
+		}
+	);
 
-  // Response interceptor to handle 401 errors
-  client.interceptors.response.use(
-    (response: AxiosResponse) => {
-      // Return successful responses as-is
-      return response;
-    },
-    (error) => {
-      // Handle 401 Unauthorized errors
-      if (error.response?.status === 401) {
-        console.warn(
-          "HTTP 401: Authentication failed, redirecting to logout..."
-        );
+	// Response interceptor to handle 401 errors
+	client.interceptors.response.use(
+		(response: AxiosResponse) => {
+			// Return successful responses as-is
+			return response;
+		},
+		(error) => {
+			// Handle 401 Unauthorized errors
+			if (error.response?.status === 401) {
+				console.warn(
+					'HTTP 401: Authentication failed, redirecting to logout...'
+				);
 
-        // Only handle redirect on client side
-        if (typeof window !== "undefined") {
-          // Use centralized logout utility
-          import("~/utils/logout").then(({ logout }) => logout());
-        }
-      }
+				// Only handle redirect on client side
+				if (typeof window !== 'undefined') {
+					// Use centralized logout utility
+					import('~/utils/logout').then(({ logout }) => logout());
+				}
+			}
 
-      // Re-throw the error so TanStack Query can handle it appropriately
-      return Promise.reject(error);
-    }
-  );
+			// Re-throw the error so TanStack Query can handle it appropriately
+			return Promise.reject(error);
+		}
+	);
 
-  return client;
+	return client;
 }
 
 /**
@@ -75,30 +75,30 @@ export const httpClient = createHttpClient();
  * @returns Authenticated Axios instance
  */
 export const createAuthenticatedHttpClient = (token: string) => {
-  return createHttpClient(token);
+	return createHttpClient(token);
 };
 
 /**
  * Utility type for API error responses
  */
 export interface ApiError {
-  message: string;
-  statusCode: number;
-  error?: string;
-  details?: any;
+	message: string | string[];
+	statusCode: number;
+	error?: string;
+	details?: any;
 }
 
 /**
  * Type guard to check if an error is an API error response
  */
 export function isApiError(
-  error: any
+	error: any
 ): error is { response: { data: ApiError } } {
-  return (
-    error?.response?.data &&
-    typeof error.response.data === "object" &&
-    "message" in error.response.data
-  );
+	return (
+		error?.response?.data &&
+		typeof error.response.data === 'object' &&
+		'message' in error.response.data
+	);
 }
 
 /**
@@ -106,17 +106,27 @@ export function isApiError(
  * Useful for consistent error handling in components
  */
 export function getErrorMessage(error: any): string {
-  if (isApiError(error)) {
-    return error.response.data.message;
-  }
+	if (isApiError(error)) {
+		const message = error.response.data.message;
+		// Handle array of messages from validation errors
+		if (Array.isArray(message)) {
+			return message.join(', ');
+		}
+		return message;
+	}
 
-  if (error?.response?.data?.message) {
-    return error.response.data.message;
-  }
+	if (error?.response?.data?.message) {
+		const message = error.response.data.message;
+		// Handle array of messages from validation errors
+		if (Array.isArray(message)) {
+			return message.join(', ');
+		}
+		return message;
+	}
 
-  if (error?.message) {
-    return error.message;
-  }
+	if (error?.message) {
+		return error.message;
+	}
 
-  return "An unexpected error occurred";
+	return 'An unexpected error occurred';
 }

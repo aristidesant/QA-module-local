@@ -3,20 +3,17 @@ import {
 	Alert,
 	Badge,
 	Button,
-	Divider,
 	Group,
-	Loader,
 	Paper,
-	PasswordInput,
 	Select,
 	Stack,
 	Text,
 	TextInput,
-	Title,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
+import { getErrorMessage } from '~/utils/httpClient';
 import classes from './UserForm.module.css';
 import {
 	useCreateUser,
@@ -25,6 +22,7 @@ import {
 } from '~/queries/userQueries';
 import { useGetAllClients } from '~/queries/clientQueries';
 import type { CreateUserPayload, UpdateUserPayload } from '~/models/UserModels';
+import UserFormSkeleton from './UserFormSkeleton';
 
 interface UserFormProps {
 	mode: 'create' | 'edit';
@@ -38,7 +36,6 @@ interface UserFormValues {
 	firstName: string;
 	lastName: string;
 	clientId: string | null;
-	password: string;
 }
 
 const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
@@ -51,7 +48,6 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 			firstName: '',
 			lastName: '',
 			clientId: null,
-			password: '',
 		},
 		validate: {
 			email: (value) =>
@@ -96,7 +92,6 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 				firstName: user.firstName ?? '',
 				lastName: user.lastName ?? '',
 				clientId: String(user.clientId),
-				password: '',
 			});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -120,10 +115,6 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 			lastName: values.lastName || undefined,
 			clientId: Number(values.clientId) as number,
 		};
-
-		if (values.password.trim()) {
-			basePayload.password = values.password;
-		}
 
 		try {
 			if (isEditMode) {
@@ -152,18 +143,18 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 		} catch (error) {
 			notifications.show({
 				title: 'Request failed',
-				message: error instanceof Error ? error.message : 'Unknown error',
+				message: getErrorMessage(error),
 				color: 'red',
 			});
 		}
 	});
 
 	if (isEditMode && isUserLoading) {
-		return <Loader size='sm' />;
+		return <UserFormSkeleton />;
 	}
 
 	if (isLoading) {
-		return <Loader size='sm' />;
+		return <UserFormSkeleton />;
 	}
 
 	if (isEditMode && isUserError) {
@@ -185,28 +176,25 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 			className={classes.form}
 			onSubmit={handleSubmit}
 		>
-			<div className={classes.header}>
-				<div>
-					<Title order={4} className={classes.title}>
-						{isEditMode ? 'Edit user' : 'Create new user'}
-					</Title>
+			<Stack gap='md'>
+				<div className={classes.meta}>
+					{!isEditMode && (
+						<Badge variant='light' color='blue' className={classes.statusBadge}>
+							Draft
+						</Badge>
+					)}
 					<Text className={classes.subtitle}>
 						Manage account access, profile information, and security settings in
 						one place.
 					</Text>
 				</div>
-				{!isEditMode && (
-					<Badge variant='light' color='blue' className={classes.statusBadge}>
-						Draft
-					</Badge>
-				)}
-			</div>
-
-			<Divider />
-
-			<Stack gap='lg'>
 				<section className={classes.section}>
-					<Text className={classes.sectionTitle}>Account</Text>
+					<div className={classes.sectionHeader}>
+						<Text className={classes.sectionTitle}>Account</Text>
+						<Text className={classes.sectionDescription}>
+							Access credentials and ownership details.
+						</Text>
+					</div>
 					<div className={classes.row}>
 						<TextInput
 							required
@@ -223,13 +211,7 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 							{...form.getInputProps('username')}
 						/>
 					</div>
-					<div
-						className={
-							isEditMode
-								? classes.row
-								: `${classes.row} ${classes.singleColumnRow}`
-						}
-					>
+					<div className={`${classes.row} ${classes.rowSingle}`}>
 						<Select
 							label='Client'
 							placeholder='Assign client'
@@ -244,7 +226,12 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 				</section>
 
 				<section className={classes.section}>
-					<Text className={classes.sectionTitle}>Profile</Text>
+					<div className={classes.sectionHeader}>
+						<Text className={classes.sectionTitle}>Profile</Text>
+						<Text className={classes.sectionDescription}>
+							Basic details used across the app.
+						</Text>
+					</div>
 					<div className={classes.row}>
 						<TextInput
 							required
@@ -263,39 +250,12 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 					</div>
 				</section>
 
-				<section className={classes.section}>
-					<Text className={classes.sectionTitle}>Security</Text>
-					<div className={classes.row}>
-						<PasswordInput
-							label={isEditMode ? 'Password (optional)' : 'Password'}
-							placeholder={
-								isEditMode ? 'Update password if needed' : 'Temporary password'
-							}
-							value={form.values.password}
-							onChange={(event) =>
-								form.setFieldValue('password', event.currentTarget.value)
-							}
-							className={classes.field}
-						/>
-						<div className={`${classes.helperCard} ${classes.field}`}>
-							<Text className={classes.helperTitle}>Password guidance</Text>
-							<Text className={classes.helperText}>
-								{isEditMode
-									? 'Update credentials only when a security review requires it.'
-									: 'Leave this blank and the user will receive a secure reset link.'}
-							</Text>
-						</div>
-					</div>
-				</section>
+				<Group justify='flex-end' className={classes.actions}>
+					<Button type='submit' loading={isSubmitting} disabled={isSubmitting}>
+						{isEditMode ? 'Save changes' : 'Create user'}
+					</Button>
+				</Group>
 			</Stack>
-
-			<Divider />
-
-			<Group justify='flex-end' className={classes.actions}>
-				<Button type='submit' loading={isSubmitting} disabled={isSubmitting}>
-					{isEditMode ? 'Save changes' : 'Create user'}
-				</Button>
-			</Group>
 		</Paper>
 	);
 };

@@ -5,7 +5,22 @@ import { IconLock, IconX } from '@tabler/icons-react';
 import { useChangePassword } from '~/queries/userQueries';
 import styles from '../ProfilePage.module.css';
 
-export const PasswordChangeSection: React.FC = () => {
+interface PasswordChangeSectionProps {
+	onSuccess?: (payload: {
+		currentPassword: string;
+		newPassword: string;
+	}) => Promise<void> | void;
+	showCancelButton?: boolean;
+	submitLabel?: string;
+	processing?: boolean;
+}
+
+export const PasswordChangeSection: React.FC<PasswordChangeSectionProps> = ({
+	onSuccess,
+	showCancelButton = true,
+	submitLabel = 'Change Password',
+	processing = false,
+}) => {
 	const changePasswordMutation = useChangePassword();
 
 	const form = useForm({
@@ -17,14 +32,38 @@ export const PasswordChangeSection: React.FC = () => {
 		validate: {
 			currentPassword: (value) =>
 				value.length === 0 ? 'Current password is required' : null,
-			newPassword: (value) =>
-				value.length < 8 ? 'New password must be at least 8 characters' : null,
+			newPassword: (value, values) => {
+				if (value.length < 8) {
+					return 'New password must be at least 8 characters';
+				}
+
+				if (value === values.currentPassword) {
+					return 'New password must be different from your current password';
+				}
+
+				return null;
+			},
 			confirmPassword: (value, values) =>
 				value !== values.newPassword ? 'Passwords do not match' : null,
 		},
+		validateInputOnBlur: true,
+		validateInputOnChange: true,
 	});
 
 	const handleSubmit = form.onSubmit(async (values) => {
+		if (values.newPassword !== values.confirmPassword) {
+			form.setFieldError('confirmPassword', 'Passwords do not match');
+			return;
+		}
+
+		if (values.newPassword === values.currentPassword) {
+			form.setFieldError(
+				'newPassword',
+				'New password must be different from your current password'
+			);
+			return;
+		}
+
 		try {
 			await changePasswordMutation.mutateAsync({
 				currentPassword: values.currentPassword,
@@ -39,6 +78,13 @@ export const PasswordChangeSection: React.FC = () => {
 				icon: <IconLock size={18} />,
 				autoClose: 6000,
 			});
+
+			if (onSuccess) {
+				await onSuccess({
+					currentPassword: values.currentPassword,
+					newPassword: values.newPassword,
+				});
+			}
 
 			form.reset();
 		} catch (error: any) {
@@ -91,19 +137,21 @@ export const PasswordChangeSection: React.FC = () => {
 				<div className={styles.formActions}>
 					<Button
 						type='submit'
-						loading={changePasswordMutation.isPending}
-						disabled={!form.isValid()}
+						loading={changePasswordMutation.isPending || processing}
+						disabled={!form.isValid() || processing}
 					>
-						Change Password
+						{submitLabel}
 					</Button>
-					<Button
-						type='button'
-						variant='outline'
-						onClick={() => form.reset()}
-						disabled={changePasswordMutation.isPending}
-					>
-						Cancel
-					</Button>
+					{showCancelButton && (
+						<Button
+							type='button'
+							variant='outline'
+							onClick={() => form.reset()}
+							disabled={changePasswordMutation.isPending || processing}
+						>
+							Cancel
+						</Button>
+					)}
 				</div>
 			</form>
 		</div>

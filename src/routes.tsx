@@ -11,6 +11,9 @@ const Layout = React.lazy(() => import('./components/Layout/Layout'));
 const CampaignsPage = React.lazy(
 	() => import('./modules/campaigns/CampaignsPage/CampaignsPage')
 );
+const ForcePasswordChangePage = React.lazy(
+	() => import('./modules/auth/ForcePasswordChangePage')
+);
 const CampaignCategoriesPage = React.lazy(
 	() => import('./modules/campaigns/CampaignCategoriesPage')
 );
@@ -59,6 +62,14 @@ const router = createBrowserRouter([
 		element: <RouteProtecter />,
 		loader: routeProtecterLoader,
 		children: [
+			{
+				path: 'force-password-change',
+				element: (
+					<Suspense fallback={<div>Preparing security flow...</div>}>
+						<ForcePasswordChangePage />
+					</Suspense>
+				),
+			},
 			{
 				element: (
 					<Suspense fallback={<div>Loading app...</div>}>

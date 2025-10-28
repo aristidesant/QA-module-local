@@ -21,11 +21,11 @@ const AgentSection: React.FC = () => {
 		<Stack>
 			<CampaignConfigurationBasic />
 			<CampaignConfigurationPrompt />
-			<CampaignConfigurationPredefinedParams />
-			<CampaignConfigurationSystemTools />
-			{/* <CampaignConfigurationTemperatureControl /> */}
 			<CampaignConfigurationTools />
+			<CampaignConfigurationSystemTools />
 			<CampaignConfigurationKnowledgeBase />
+			<CampaignConfigurationPredefinedParams />
+			{/* <CampaignConfigurationTemperatureControl /> */}
 
 			<Flex>
 				<Button leftSection={<IconDeviceFloppy size={16} />} type='submit'>

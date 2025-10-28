@@ -14,6 +14,7 @@ export interface UserModel {
 	updatedAt: string | Date;
 	deletedAt: string | Date | null;
 	mfaEnabled?: boolean;
+	needToChangePassword?: boolean;
 }
 
 export interface ImpersonatedClient {

@@ -1,0 +1,12 @@
+.toolRow {
+	padding: var(--mantine-spacing-xs) 0;
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.toolRow:last-child {
+	border-bottom: none;
+}
+
+.toolSwitch {
+	flex: 1;
+}

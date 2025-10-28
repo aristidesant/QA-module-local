@@ -1,7 +1,7 @@
 // CampaignConfigurationTools.tsx
-import { Stack, Switch } from '@mantine/core';
+import { Group, Stack, Switch, Text } from '@mantine/core';
 import { useCallback } from 'react';
-import { useCampaignFormContext } from '../../../campaignFormFunctions';
+import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
 import SectionCard from '~/components/SectionCard';
 import { useToolCategories } from '~/queries/toolCategoryQueries';
 import { useToolsByCategory } from '~/queries/toolQueries';
@@ -9,6 +9,7 @@ import type {
 	AgentConfigModel,
 	ConversationConfigModel,
 } from '~/models/AgentListObject';
+import classes from './CampaignConfigurationTools.module.css';
 
 /**
  * CampaignConfigurationTools Component
@@ -69,24 +70,37 @@ const CampaignConfigurationTools: React.FC = () => {
 
 	return (
 		<SectionCard
-			title='Agent Tools'
+			title='Custom Tools'
 			description='Tools to enhance agent functionality'
 		>
 			<Stack>
-				{tools?.map((tool) => {
-					const isSelected = isToolSelected(tool.identifier);
-					return (
-						<Switch
-							key={tool.identifier}
-							label={tool.name}
-							description={tool.description}
-							checked={isSelected}
-							onChange={() => {
-								handleToolToggle(tool, isSelected);
-							}}
-						/>
-					);
-				})}
+				{!tools || tools.length === 0 ? (
+					<Text size='sm' c='dimmed'>
+						No agent tools configured.
+					</Text>
+				) : (
+					tools.map((tool) => {
+						const isSelected = isToolSelected(tool.identifier);
+						return (
+							<Group
+								key={tool.identifier}
+								justify='space-between'
+								wrap='nowrap'
+								className={classes.toolRow}
+							>
+								<Switch
+									label={tool.name}
+									description={tool.description || 'No description available'}
+									checked={isSelected}
+									onChange={() => {
+										handleToolToggle(tool, isSelected);
+									}}
+									className={classes.toolSwitch}
+								/>
+							</Group>
+						);
+					})
+				)}
 			</Stack>
 		</SectionCard>
 	);
