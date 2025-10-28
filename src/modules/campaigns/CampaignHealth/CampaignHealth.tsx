@@ -1,6 +1,6 @@
 // src/modules/campaigns/CampaignHealth/CampaignHealth.tsx
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Alert, Badge, Group, Loader, Stack, Text } from '@mantine/core';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { useGetCampaignRequirements } from '~/queries/campaignsQueries';
@@ -16,47 +16,7 @@ const CampaignHealth: React.FC<CampaignHealthProps> = ({ campaignId }) => {
 		isLoading,
 		error,
 	} = useGetCampaignRequirements(campaignId);
-	const detailRows = useMemo(() => {
-		const schedules = requirements?.details?.schedules ?? {
-			active: 0,
-			total: 0,
-		};
-		const agents = requirements?.details?.agents ?? {
-			withPrompt: 0,
-			total: 0,
-		};
-		const contactLists = requirements?.details?.contactLists ?? {
-			active: 0,
-			total: 0,
-		};
-		const dispositionFlow = requirements?.details?.dispositionFlow ?? {
-			assigned: false,
-			flowId: null,
-		};
 
-		if (!requirements) {
-			return [];
-		}
-
-		return [
-			{
-				label: 'Active schedules',
-				value: `${schedules.active} / ${schedules.total}`,
-			},
-			{
-				label: 'Agents with prompts',
-				value: `${agents.withPrompt} / ${agents.total}`,
-			},
-			{
-				label: 'Active contact lists',
-				value: `${contactLists.active} / ${contactLists.total}`,
-			},
-			{
-				label: 'Disposition flow',
-				value: dispositionFlow.assigned ? 'Assigned' : 'Not assigned',
-			},
-		];
-	}, [requirements]);
 	if (isLoading) {
 		return (
 			<Group justify='center'>
@@ -136,22 +96,6 @@ const CampaignHealth: React.FC<CampaignHealthProps> = ({ campaignId }) => {
 					))}
 				</Alert>
 			)}
-
-			<div className={classes.detailsSection}>
-				<Text className={classes.sectionTitle}>Key checks</Text>
-				<div className={classes.detailsList}>
-					{detailRows.map(({ label, value }) => (
-						<div key={label} className={classes.detailItem}>
-							<Text component='span' className={classes.detailLabel}>
-								{label}
-							</Text>
-							<Text component='span' className={classes.detailValue}>
-								{value}
-							</Text>
-						</div>
-					))}
-				</div>
-			</div>
 		</Stack>
 	);
 };

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import type { UserModel } from '~/models/UserModels';
 import { DEFAULT_API_URL } from './config';
 
 export type AuthRequest = {
@@ -21,6 +22,8 @@ export interface MFALoginResponse {
 	userId: number;
 	loginType: string;
 	otpEnabled: boolean;
+	needToChangePassword?: boolean;
+	user?: UserModel;
 }
 
 export interface OTPVerifyRequest {

@@ -1,22 +1,20 @@
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useCallback } from 'react';
 import styles from './DispositionCatalogMenu.module.css';
 import { useDispositionBuilderStore } from '../../dispositionStore';
-import { Select, Divider } from '@mantine/core';
-import { Droppable } from '@hello-pangea/dnd';
+import { Select, Divider, Stack, Text, Box } from '@mantine/core';
 import { useDispositionCatalogs } from '~/queries/dispositionCatalogQueries';
 import type { DispositionNode } from '~/models/DispositionNodeModel';
 import DispositionCatalogMenuItem from './DispositionCatalogMenuItem';
 import { useCampaignsStore } from '~/stores/campaignsStore';
-
-interface AvailableNode {
-	node: DispositionNode;
-	disabled: boolean;
-	level: number;
-}
+import { findNodeById, getDirectHierarchyTree } from '~/utils/dragDropUtils';
+import { handleAddGroupWithChildren } from './dispositionCatalogHelper';
+import { useAvailableDispositionNodes } from '~/hooks/useAvailableDispositionNodes';
 
 const DispositionCatalogMenu: React.FC = () => {
 	const { getMovedNodeIds, selectedCatalog, setSelectedCatalog } =
 		useDispositionBuilderStore();
+	const { addNode, addNodeToParent, isParentInFlow, flowJson } =
+		useDispositionBuilderStore((state) => state);
 	const movedNodeIds = getMovedNodeIds();
 	const campaign = useCampaignsStore((state) => state.selectedCampaign);
 
@@ -41,80 +39,75 @@ const DispositionCatalogMenu: React.FC = () => {
 		}
 	}, [activeCatalogs]);
 
-	// Helper functions
-	const getAllChildIds = (node: DispositionNode): number[] => {
-		if (!node.children || node.children.length === 0) return [];
-		return node.children.reduce<number[]>(
-			(acc, child) => [...acc, child.id, ...getAllChildIds(child)],
-			[]
-		);
-	};
+	const availableNodes = useAvailableDispositionNodes(
+		selectedCatalog,
+		movedNodeIds
+	);
 
-	const availableNodes = useMemo((): AvailableNode[] => {
-		if (!selectedCatalog?.dispositionNodes) return [];
+	const handleAddNode = useCallback(
+		(node: DispositionNode) => {
+			if (!selectedCatalog) return;
 
-		// Filter to show only active nodes
-		const activeNodes = selectedCatalog.dispositionNodes.filter(
-			(node) => node.isActive
-		);
+			const catalogNodes = selectedCatalog.dispositionNodes ?? [];
+			const currentNode = findNodeById(catalogNodes, node.id);
+			if (!currentNode) return;
 
-		const allNodes = activeNodes;
-		const movedIds = new Set(movedNodeIds.map((id) => parseInt(id)));
-		const result: AvailableNode[] = [];
+			// Check if this node has children
+			const hasChildren =
+				currentNode.children && currentNode.children.length > 0;
 
-		// Enhanced logic: covers all edge cases for parent/child visibility and enabled state
-		const addNodeWithChildren = (node: DispositionNode, level: number = 0) => {
-			const hasChildren = node.children && node.children.length > 0;
-			const isMoved = movedIds.has(node.id);
-
-			// Filter children to only include active ones
-			const activeChildren = hasChildren
-				? node.children!.filter((child) => child.isActive)
-				: [];
-
-			const childIds = activeChildren.length > 0 ? getAllChildIds(node) : [];
-			const allChildrenAndDescendantsMoved =
-				childIds.length > 0 && childIds.every((id) => movedIds.has(id));
-
-			// Case 1: Hide parent only if it and all descendants are moved
-			if (isMoved && allChildrenAndDescendantsMoved) {
+			if (hasChildren) {
+				// If parent node, add all children
+				handleAddGroupWithChildren(
+					currentNode,
+					catalogNodes,
+					flowJson?.dispositionNodes ?? [],
+					addNode,
+					addNodeToParent
+				);
 				return;
 			}
 
-			// Case 2: Parent node logic
-			if (activeChildren.length > 0) {
-				// Parent is disabled if moved or if not all children are moved
-				result.push({
-					node,
-					disabled: isMoved || !allChildrenAndDescendantsMoved,
-					level,
-				});
-				// Always process children, regardless of parent state
-				activeChildren.forEach((child) => {
-					addNodeWithChildren(child, level + 1);
-				});
-			} else {
-				// Case 3: Leaf node logic
-				// Leaf is hidden if moved, else enabled
-				if (!isMoved) {
-					result.push({
-						node,
-						disabled: false,
-						level,
-					});
-				}
+			// For leaf nodes, check if parent is in flow
+			let parentNode: DispositionNode | null = null;
+			if (currentNode.parentId) {
+				parentNode = findNodeById(catalogNodes, currentNode.parentId);
 			}
-		};
 
-		allNodes.forEach((node) => {
-			addNodeWithChildren(node, 0);
-		});
+			const parentInFlow = parentNode && isParentInFlow(parentNode);
+			if (parentInFlow && parentNode) {
+				addNodeToParent(currentNode);
+				return;
+			}
 
-		return result;
-	}, [selectedCatalog, movedNodeIds]);
+			const hierarchyNode = getDirectHierarchyTree(
+				catalogNodes,
+				currentNode.id
+			);
+
+			if (!hierarchyNode) return;
+
+			const existingIds = new Set(
+				(flowJson?.dispositionNodes ?? []).map((n) => n.id)
+			);
+
+			if (!existingIds.has(hierarchyNode.id)) {
+				addNode(hierarchyNode);
+			}
+		},
+		[
+			addNode,
+			addNodeToParent,
+			flowJson?.dispositionNodes,
+			isParentInFlow,
+			selectedCatalog,
+		]
+	);
+
+	const hasNodesInFlow = (flowJson?.dispositionNodes?.length ?? 0) > 0;
 
 	return (
-		<>
+		<div className={styles.container}>
 			<Select
 				label='Select Catalog'
 				data={activeCatalogs.map((cat) => ({
@@ -127,42 +120,40 @@ const DispositionCatalogMenu: React.FC = () => {
 						activeCatalogs.find((cat) => String(cat.id) === id) || null;
 					setSelectedCatalog(catalog);
 				}}
-				disabled={isLoading || activeCatalogs.length === 0}
-				mb='md'
+				disabled={isLoading || activeCatalogs.length === 0 || hasNodesInFlow}
+				description={
+					hasNodesInFlow
+						? 'Cannot change catalog when outcomes are already added'
+						: undefined
+				}
+				size='xs'
 			/>
-			<Divider />
-			<div style={{ overflowY: 'auto', maxHeight: 'calc(100vh - 200px)' }}>
-				<Droppable
-					droppableId='catalog-menu'
-					isDropDisabled={true}
-					type='DISPOSITION_NODE'
-				>
-					{(provided) => (
-						<div className={styles.menuListWrapper}>
-							<ul ref={provided.innerRef} {...provided.droppableProps}>
-								{availableNodes.map((item, idx) => (
-									<div
-										key={`${item.node.id}-${idx}`}
-										style={{
-											marginLeft: `${item.level * 16}px`,
-											width: `calc(100% - ${item.level * 16}px)`,
-										}}
-									>
-										<DispositionCatalogMenuItem
-											node={item.node}
-											path={`${idx}`}
-											movedNodeIds={movedNodeIds}
-											disabled={item.disabled}
-										/>
-									</div>
-								))}
-								{provided.placeholder}
-							</ul>
-						</div>
-					)}
-				</Droppable>
-			</div>
-		</>
+			<Divider my='xs' />
+			<Box className={styles.menuListWrapper}>
+				{availableNodes.length === 0 ? (
+					<Text c='dimmed' ta='center' size='xs'>
+						No dispositions available in this catalog.
+					</Text>
+				) : (
+					<Stack gap={4}>
+						{availableNodes.map((item, idx) => (
+							<div
+								key={`${item.node.id}-${idx}`}
+								style={{
+									marginLeft: `${item.level * 12}px`,
+									width: `calc(100% - ${item.level * 12}px)`,
+								}}
+							>
+								<DispositionCatalogMenuItem
+									node={item.node}
+									onAdd={handleAddNode}
+								/>
+							</div>
+						))}
+					</Stack>
+				)}
+			</Box>
+		</div>
 	);
 };
 

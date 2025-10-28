@@ -11,6 +11,9 @@ const Layout = React.lazy(() => import('./components/Layout/Layout'));
 const CampaignsPage = React.lazy(
 	() => import('./modules/campaigns/CampaignsPage/CampaignsPage')
 );
+const ForcePasswordChangePage = React.lazy(
+	() => import('./modules/auth/ForcePasswordChangePage')
+);
 const CampaignCategoriesPage = React.lazy(
 	() => import('./modules/campaigns/CampaignCategoriesPage')
 );
@@ -24,6 +27,7 @@ const ClientConfigsPage = React.lazy(
 	() => import('./modules/client-configs/ClientConfigsPage')
 );
 const ToolsPage = React.lazy(() => import('./modules/tools/ToolsPage'));
+const UsersPage = React.lazy(() => import('./modules/users'));
 const PrompterPage = React.lazy(() =>
 	import('./modules/prompter/PrompterPage').then((m) => ({
 		default: m.PrompterPage,
@@ -58,6 +62,14 @@ const router = createBrowserRouter([
 		element: <RouteProtecter />,
 		loader: routeProtecterLoader,
 		children: [
+			{
+				path: 'force-password-change',
+				element: (
+					<Suspense fallback={<div>Preparing security flow...</div>}>
+						<ForcePasswordChangePage />
+					</Suspense>
+				),
+			},
 			{
 				element: (
 					<Suspense fallback={<div>Loading app...</div>}>
@@ -110,6 +122,14 @@ const router = createBrowserRouter([
 						element: (
 							<Suspense fallback={<div>Loading contacts...</div>}>
 								<ContactsPage />
+							</Suspense>
+						),
+					},
+					{
+						path: 'users',
+						element: (
+							<Suspense fallback={<div>Loading users...</div>}>
+								<UsersPage />
 							</Suspense>
 						),
 					},

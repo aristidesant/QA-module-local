@@ -8,6 +8,7 @@ import { IconDeviceFloppy } from '@tabler/icons-react';
 import CampaignConfigurationTools from './CampaignConfigurationTools';
 import CampaignConfigurationKnowledgeBase from './CampaignConfigurationKnowledgeBase';
 import CampaignConfigurationPredefinedParams from './CampaignConfigurationPredefinedParams';
+import CampaignConfigurationSystemTools from './CampaignConfigurationSystemTools';
 
 const AgentSection: React.FC = () => {
 	const { setRightComponent } = useCampaignsStore((state) => state);
@@ -20,10 +21,11 @@ const AgentSection: React.FC = () => {
 		<Stack>
 			<CampaignConfigurationBasic />
 			<CampaignConfigurationPrompt />
+			<CampaignConfigurationTools />
+			<CampaignConfigurationSystemTools />
+			<CampaignConfigurationKnowledgeBase />
 			<CampaignConfigurationPredefinedParams />
 			{/* <CampaignConfigurationTemperatureControl /> */}
-			<CampaignConfigurationTools />
-			<CampaignConfigurationKnowledgeBase />
 
 			<Flex>
 				<Button leftSection={<IconDeviceFloppy size={16} />} type='submit'>

@@ -85,7 +85,8 @@ export function useLogin() {
 					data.accessToken,
 					queryClient,
 					setToken,
-					setUser
+					setUser,
+					data.user
 				);
 			}
 			// For OTP-enabled users, just return the response data

@@ -1,0 +1,63 @@
+.previewContainer {
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-md);
+}
+
+.nodeRow {
+	position: relative;
+	padding-top: var(--mantine-spacing-sm);
+	padding-bottom: var(--mantine-spacing-sm);
+	border-radius: var(--mantine-radius-md);
+}
+
+.nodeRow::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 4px;
+	width: 2px;
+	background-color: var(--mantine-color-gray-2);
+}
+
+.nodeRow:first-of-type::before {
+	display: none;
+}
+
+.content {
+	padding-left: var(--mantine-spacing-lg);
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.nodeName {
+	color: var(--mantine-color-gray-9);
+}
+
+.connector {
+	position: absolute;
+	top: 50%;
+	left: 4px;
+	width: 24px;
+	height: 1px;
+	background-color: var(--mantine-color-gray-3);
+}
+
+.effective {
+	background-color: var(--mantine-color-green-0);
+}
+
+.noEffective {
+	background-color: var(--mantine-color-orange-0);
+}
+
+.noContact {
+	background-color: var(--mantine-color-red-0);
+}
+
+.default {
+	background-color: var(--mantine-color-gray-1);
+}

@@ -64,7 +64,7 @@ export async function clientLoader(): Promise<LoaderData> {
 
 export const RouteProtecter = () => {
 	const { token } = useLoaderData<typeof clientLoader>();
-	const { setToken, token: storeToken, _hasHydrated } = useSessionStore();
+	const { setToken, token: storeToken, user, _hasHydrated } = useSessionStore();
 	const path = useLocation().pathname;
 
 	useEffect(() => {
@@ -88,6 +88,17 @@ export const RouteProtecter = () => {
 	}
 
 	if (authToken && path === '/login') {
+		return <Navigate to='/' replace />;
+	}
+
+	const needsPasswordUpdate =
+		_hasHydrated && authToken && user?.needToChangePassword;
+
+	if (needsPasswordUpdate && path !== '/force-password-change') {
+		return <Navigate to='/force-password-change' replace />;
+	}
+
+	if (!needsPasswordUpdate && path === '/force-password-change') {
 		return <Navigate to='/' replace />;
 	}
 

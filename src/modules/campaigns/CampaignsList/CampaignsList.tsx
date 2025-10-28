@@ -307,7 +307,7 @@ export const CampaignsList: React.FC = () => {
 				opened={addNewModalOpened}
 				onClose={() => setAddNewModalOpened(false)}
 				title='Create New Campaign'
-				size='90%'
+				size='lg'
 				centered
 			>
 				<AddNewCampaignForm

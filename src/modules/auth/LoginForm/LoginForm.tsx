@@ -28,6 +28,7 @@ import { MFALoginResponse } from '~/api/authApi';
 import { APP_VERSION } from '~/version';
 import OTPVerificationModal from './OTPVerificationModal';
 import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
+import { usePasswordResetStore } from '~/stores/passwordResetStore';
 
 interface FormValues {
 	username: string;
@@ -39,6 +40,8 @@ interface FormValues {
 export function LoginForm() {
 	const loginMutation = useLogin();
 	const navigate = useNavigate();
+	const { setPendingCredentials, clearPendingCredentials } =
+		usePasswordResetStore();
 	const [formError, setFormError] = useState<string | null>(null);
 	const [otpModalOpened, setOtpModalOpened] = useState(false);
 	const [pendingLoginData, setPendingLoginData] =
@@ -108,9 +111,27 @@ export function LoginForm() {
 									// Show OTP modal
 									setPendingLoginData(result);
 									setOtpModalOpened(true);
+									clearPendingCredentials();
 								} else {
-									// Direct login success, navigate to dashboard
-									navigate('/');
+									const requiresPasswordUpdate =
+										result?.needToChangePassword ??
+										result?.user?.needToChangePassword ??
+										false;
+
+									if (requiresPasswordUpdate) {
+										setPendingCredentials(values.username, values.loginType);
+										navigate('/force-password-change', {
+											replace: true,
+											state: {
+												username: values.username,
+												loginType: values.loginType,
+											},
+										});
+									} else {
+										// Direct login success, navigate to dashboard
+										clearPendingCredentials();
+										navigate('/');
+									}
 								}
 							} catch (err: any) {
 								setFormError(getErrorMessage(err));

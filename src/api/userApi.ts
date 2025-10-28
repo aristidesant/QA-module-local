@@ -1,11 +1,25 @@
 import axios from 'axios';
-import type { UserModel } from '~/models/UserModels';
+import type {
+	UserModel,
+	CreateUserPayload,
+	UpdateUserPayload,
+} from '~/models/UserModels';
+import type { Paginator } from '~/models/Paginator';
 import { DEFAULT_API_URL } from './config';
+
+export interface GetAllUsersParams {
+	page?: number;
+	limit?: number;
+	search?: string;
+	status?: string;
+	sortBy?: 'username' | 'email' | 'createdAt' | 'updatedAt';
+	sortOrder?: 'ASC' | 'DESC';
+}
 
 interface UserApiClient {
 	getUserById: (id: number) => Promise<UserModel>;
 	getCurrentUser: () => Promise<UserModel>;
-	updateUser: (id: number, userData: Partial<UserModel>) => Promise<UserModel>;
+	updateUser: (id: number, userData: UpdateUserPayload) => Promise<UserModel>;
 	updateUserName: (
 		id: number,
 		firstName: string,
@@ -16,8 +30,8 @@ interface UserApiClient {
 		lastName: string
 	) => Promise<UserModel>;
 	deleteUser: (id: number) => Promise<void>;
-	createUser: (userData: UserModel) => Promise<UserModel>;
-	getAllUsers: () => Promise<UserModel[]>;
+	createUser: (userData: CreateUserPayload) => Promise<UserModel>;
+	getAllUsers: (params?: GetAllUsersParams) => Promise<Paginator<UserModel>>;
 }
 
 // User API client (uses global axios interceptors for auth)
@@ -44,7 +58,7 @@ const userApi = (_authHeader: Record<string, string> = {}): UserApiClient => {
 		// Update user
 		updateUser: async (
 			id: number,
-			userData: Partial<UserModel>
+			userData: UpdateUserPayload
 		): Promise<UserModel> => {
 			const response = await axios.patch<UserModel>(
 				`${DEFAULT_API_URL}/users/${id}`,
@@ -61,7 +75,7 @@ const userApi = (_authHeader: Record<string, string> = {}): UserApiClient => {
 			lastName: string
 		): Promise<UserModel> => {
 			const response = await axios.patch<UserModel>(
-				`${DEFAULT_API_URL}/users/${id}/name`,
+				`${DEFAULT_API_URL}/users/update-name/${id}`,
 				{ firstName, lastName },
 				{ headers: { ..._authHeader } }
 			);
@@ -89,7 +103,7 @@ const userApi = (_authHeader: Record<string, string> = {}): UserApiClient => {
 		},
 
 		// Create user
-		createUser: async (userData: UserModel): Promise<UserModel> => {
+		createUser: async (userData: CreateUserPayload): Promise<UserModel> => {
 			const response = await axios.post<UserModel>(
 				`${DEFAULT_API_URL}/users`,
 				userData,
@@ -98,13 +112,18 @@ const userApi = (_authHeader: Record<string, string> = {}): UserApiClient => {
 			return response.data;
 		},
 
-		// Get all users
-		getAllUsers: async (): Promise<UserModel[]> => {
-			const { data } = await axios.get<UserModel[]>(
+		// Get all users with pagination
+		getAllUsers: async (
+			params?: GetAllUsersParams
+		): Promise<Paginator<UserModel>> => {
+			const response = await axios.get<Paginator<UserModel>>(
 				`${DEFAULT_API_URL}/users`,
-				{ headers: { ..._authHeader } }
+				{
+					params,
+					headers: { ..._authHeader },
+				}
 			);
-			return data;
+			return response.data;
 		},
 	};
 };

@@ -1,147 +1,90 @@
-/* DispositionCatalogMenuItem.module.css */
-
-.listItem {
-  margin-bottom: var(--mantine-spacing-xs);
-  list-style: none;
-  width: 100%;
+.item {
+	padding: 4px 8px;
+	background: var(--mantine-color-white);
+	transition:
+		background-color 120ms ease,
+		border-color 120ms ease;
 }
 
-.draggable {
-  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
-  border-radius: var(--mantine-radius-md);
-  display: flex;
-  align-items: center;
-  gap: var(--mantine-spacing-sm);
-  transition: all 0.2s ease;
-  background: var(--mantine-color-white);
-  min-height: 48px;
-  border: 1px solid var(--mantine-color-gray-3);
-  width: 100%;
-  box-sizing: border-box;
+.item:hover {
+	background: var(--mantine-color-gray-0);
+	border-color: var(--mantine-color-blue-3);
 }
 
-.dragging {
-  background: var(--mantine-color-blue-1);
-  border: 2px solid var(--mantine-color-blue-4);
-  transform: rotate(1deg);
-  opacity: 0.9;
+.itemDisabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+	border-color: var(--mantine-color-gray-3);
 }
 
-.disabled {
-  background: var(--mantine-color-gray-0);
-  border: 1px solid var(--mantine-color-red-3);
-  cursor: not-allowed;
-  opacity: 0.6;
+.itemDisabled:hover {
+	background: var(--mantine-color-white);
+	border-color: var(--mantine-color-gray-3);
 }
 
-.default {
-  cursor: grab;
-}
-
-/* Highlighted node (blue background) - same as NodeEditor */
-.highlighted {
-  background-color: var(--mantine-color-blue-6) !important;
-}
-
-/* Status dots - same as NodeEditor */
 .statusDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-right: var(--mantine-spacing-sm);
-  flex-shrink: 0;
+	flex-shrink: 0;
 }
 
 .effectiveDot {
-  background-color: var(--mantine-color-green-6);
+	color: var(--mantine-color-green-6);
 }
 
 .noEffectiveDot {
-  background-color: var(--mantine-color-orange-6);
+	color: var(--mantine-color-orange-6);
 }
 
 .noContactDot {
-  background-color: var(--mantine-color-red-6);
+	color: var(--mantine-color-red-6);
 }
 
 .defaultDot {
-  background-color: var(--mantine-color-gray-4);
+	color: var(--mantine-color-gray-4);
 }
 
-.icon {
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.iconDisabled {
-  color: var(--mantine-color-red-6);
+.iconWrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 16px;
+	height: 16px;
+	border-radius: var(--mantine-radius-sm);
+	background-color: var(--mantine-color-gray-0);
 }
 
 .iconFolder {
-  color: var(--mantine-color-blue-6);
+	color: var(--mantine-color-blue-6);
 }
 
-.iconFile {
-  color: var(--mantine-color-gray-6);
+.iconLeaf {
+	color: var(--mantine-color-gray-6);
+}
+
+.textContent {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	max-width: 100%;
+	width: 100%;
 }
 
 .nodeName {
-  flex: 1;
-  color: var(--mantine-color-gray-8);
-  line-height: 1.4;
+	color: var(--mantine-color-gray-9);
+	line-height: 1.2;
+	font-size: var(--mantine-font-size-xs);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 100%;
+	display: block;
 }
 
-.nodeNameFolder {
-  font-weight: 600;
+.actions {
+	flex-shrink: 0;
 }
 
-.nodeNameFile {
-  font-weight: 400;
-}
-
-.nodeNameDisabled {
-  color: var(--mantine-color-red-7);
-}
-
-.nodeNameHighlighted {
-  color: white;
-}
-
-.status {
-  font-size: 11px;
-  color: var(--mantine-color-red-6);
-  background: var(--mantine-color-red-0);
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-weight: 500;
-}
-
-/* Interactive states - similar to NodeEditor */
-.draggable:hover:not(.disabled):not(.dragging) {
-  background-color: var(--mantine-color-gray-0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transform: translateY(-1px);
-}
-
-.draggable:active:not(.disabled) {
-  transform: translateY(0);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-/* Node hierarchy styles - simplified to match NodeEditor */
-.root {
-  font-weight: 600;
-  border-left: 3px solid var(--mantine-color-blue-4);
-}
-
-/* Responsive adjustments */
 @media (max-width: 768px) {
-  .draggable {
-    padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
-    min-height: 44px;
-  }
-  
-  .nodeName {
-    font-size: var(--mantine-font-size-sm);
-  }
+	.item {
+		padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	}
 }

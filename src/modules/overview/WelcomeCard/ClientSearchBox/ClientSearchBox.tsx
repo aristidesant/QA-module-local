@@ -48,7 +48,7 @@ export default function ClientSearchBox() {
 				opened={opened}
 				onClose={handleModalClose}
 				title='Create New Client'
-				size='lg'
+				size='90%'
 				centered
 			>
 				<ClientForm onClose={handleModalClose} onSuccess={handleSuccess} />
