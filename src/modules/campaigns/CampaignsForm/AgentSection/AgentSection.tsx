@@ -14,8 +14,8 @@ const AgentSection: React.FC = () => {
 	const { setRightComponent } = useCampaignsStore((state) => state);
 
 	useEffect(() => {
-		setRightComponent?.(<AgentCampaignList />); // Clear the right component when this section mounts
-	}, []);
+		setRightComponent?.(<AgentCampaignList />);
+	}, [setRightComponent]);
 
 	return (
 		<Stack>
