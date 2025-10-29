@@ -1,6 +1,6 @@
-import axios from "axios";
-import type { CallDispositionModel } from "../models/CallDispositionModel";
-import { DEFAULT_API_URL } from "./config";
+import axios from 'axios';
+import type { CallDispositionModel } from '../models/CallDispositionModel';
+import { DEFAULT_API_URL } from './config';
 
 /**
  * Call Disposition API client
@@ -83,11 +83,13 @@ const callDispositionApi = (_authHeader?: Record<string, string>) => {
 		},
 		getCallDispositionReportParents: async (params: {
 			campaignId?: number;
+			dispositionName?: string;
 		}) => {
+			const { dispositionName, ...otherParams } = params;
 			const response = await axios.get(
-				`${DEFAULT_API_URL}/call-dispositions/report/parent-nodes`,
+				`${DEFAULT_API_URL}/call-dispositions/report/disposition${params?.dispositionName ? `/${params?.dispositionName}` : ''}`,
 				{
-					params,
+					params: otherParams,
 				}
 			);
 			return response.data;

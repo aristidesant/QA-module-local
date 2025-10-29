@@ -3,6 +3,7 @@ import { useDeleteDispositionNode } from '~/queries/dispositionNodesQueries';
 import { useCreateDispositionNode } from '~/queries/dispositionNodesQueries';
 import { useReactivateDispositionNode } from '~/queries/dispositionNodesQueries';
 import { useDeactivateDispositionNode } from '~/queries/dispositionNodesQueries';
+import { useDispositionStore } from '~/modules/dispositions/dispositionRightComponentStore';
 
 import {
 	Flex,
@@ -45,6 +46,10 @@ type ModalState = {
 import type { DispositionNode } from '~/models/DispositionNodeModel';
 import { useDispositionTreeByCatalog } from '~/queries/dispositionNodesQueries';
 import { modals } from '@mantine/modals';
+import {
+	OUTBOUND_PROTECTED_ROOT_NODE_NAMES,
+	type OutboundProtectedRootNodeName,
+} from '~/modules/dispositions/constants';
 
 type DispositionCatalogFormProps = {
 	catalogId: number;
@@ -76,6 +81,16 @@ type ArboristNode = {
 type NodeInnerStyle = CSSProperties & { '--node-indent'?: string };
 type NodeCardStyle = CSSProperties & { '--node-offset'?: string };
 
+const isProtectedDefaultNode = (
+	node: DispositionNode,
+	catalogType?: 'INBOUND' | 'OUTBOUND'
+) =>
+	catalogType === 'OUTBOUND' &&
+	(node.parentId === null || typeof node.parentId === 'undefined') &&
+	OUTBOUND_PROTECTED_ROOT_NODE_NAMES.includes(
+		node.name as OutboundProtectedRootNodeName
+	);
+
 const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 	catalogId,
 }) => {
@@ -87,6 +102,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 		error,
 	} = useDispositionTreeByCatalog(catalogId);
 	const [modal, setModal] = useState<ModalState>({ open: false });
+	const catalogType = useDispositionStore((state) => state.catalog?.type);
 	const createNode = useCreateDispositionNode();
 	const updateNode = useUpdateDispositionNode();
 	const deleteNode = useDeleteDispositionNode();
@@ -166,6 +182,35 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 		});
 	};
 
+	const handleEditNode = (nodeData: DispositionNode) => {
+		if (isProtectedDefaultNode(nodeData, catalogType)) {
+			return;
+		}
+		setModal({ open: true, editNode: nodeData });
+	};
+
+	const handleDeleteNode = (nodeData: DispositionNode) => {
+		if (isProtectedDefaultNode(nodeData, catalogType)) {
+			return;
+		}
+
+		modals.openConfirmModal({
+			title: 'Confirm Delete',
+			labels: {
+				confirm: 'Delete',
+				cancel: 'Cancel',
+			},
+			children: (
+				<Text size='sm'>Are you sure you want to delete this node?</Text>
+			),
+			confirmProps: { color: 'red' },
+			onConfirm: async () => {
+				await deleteNode.mutateAsync(nodeData.id);
+				await reloadCatalogs();
+			},
+		});
+	};
+
 	// React Arborist custom node renderer
 	function Node({ node, style, dragHandle }: any) {
 		const nodeData: DispositionNode = node.data.original;
@@ -173,6 +218,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 		const isOpen = node.isOpen;
 		const childCount = node.children ? node.children.length : 0;
 		const isInactive = nodeData.isActive === false;
+		const isProtectedNode = isProtectedDefaultNode(nodeData, catalogType);
 		const nodeTypeLabel = hasChildren ? 'Group' : 'Outcome';
 		const levelIndent = node.level * 16;
 		const cardOffset = node.level > 0 ? Math.min(levelIndent, 80) : 0;
@@ -324,18 +370,20 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 											</ActionIcon>
 										</Tooltip>
 									)}
-									<Tooltip label='Edit node' withArrow>
-										<ActionIcon
-											size='sm'
-											variant='subtle'
-											onClick={(event) => {
-												event.stopPropagation();
-												setModal({ open: true, editNode: nodeData });
-											}}
-										>
-											<IconPencil size={16} />
-										</ActionIcon>
-									</Tooltip>
+									{!isProtectedNode && (
+										<Tooltip label='Edit node' withArrow>
+											<ActionIcon
+												size='sm'
+												variant='subtle'
+												onClick={(event) => {
+													event.stopPropagation();
+													handleEditNode(nodeData);
+												}}
+											>
+												<IconPencil size={16} />
+											</ActionIcon>
+										</Tooltip>
+									)}
 									<Tooltip label='Add child outcome' withArrow>
 										<ActionIcon
 											size='sm'
@@ -348,35 +396,21 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 											<IconPlus size={16} />
 										</ActionIcon>
 									</Tooltip>
-									<Tooltip label='Delete node' withArrow>
-										<ActionIcon
-											size='sm'
-											variant='light'
-											color='red'
-											onClick={(event) => {
-												event.stopPropagation();
-												modals.openConfirmModal({
-													title: 'Confirm Delete',
-													labels: {
-														confirm: 'Delete',
-														cancel: 'Cancel',
-													},
-													children: (
-														<Text size='sm'>
-															Are you sure you want to delete this node?
-														</Text>
-													),
-													confirmProps: { color: 'red' },
-													onConfirm: async () => {
-														await deleteNode.mutateAsync(nodeData.id);
-														await reloadCatalogs();
-													},
-												});
-											}}
-										>
-											<IconTrash size={16} />
-										</ActionIcon>
-									</Tooltip>
+									{!isProtectedNode && (
+										<Tooltip label='Delete node' withArrow>
+											<ActionIcon
+												size='sm'
+												variant='light'
+												color='red'
+												onClick={(event) => {
+													event.stopPropagation();
+													handleDeleteNode(nodeData);
+												}}
+											>
+												<IconTrash size={16} />
+											</ActionIcon>
+										</Tooltip>
+									)}
 								</ActionIcon.Group>
 							</div>
 							<Menu shadow='md' width={180} withinPortal>
@@ -407,12 +441,14 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 											Deactivate
 										</Menu.Item>
 									)}
-									<Menu.Item
-										leftSection={<IconPencil size={16} />}
-										onClick={() => setModal({ open: true, editNode: nodeData })}
-									>
-										Edit
-									</Menu.Item>
+									{!isProtectedNode && (
+										<Menu.Item
+											leftSection={<IconPencil size={16} />}
+											onClick={() => handleEditNode(nodeData)}
+										>
+											Edit
+										</Menu.Item>
+									)}
 									<Menu.Item
 										leftSection={<IconPlus size={16} />}
 										onClick={() =>
@@ -421,31 +457,15 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 									>
 										Add child
 									</Menu.Item>
-									<Menu.Item
-										leftSection={<IconTrash size={16} />}
-										color='red'
-										onClick={() =>
-											modals.openConfirmModal({
-												title: 'Confirm Delete',
-												labels: {
-													confirm: 'Delete',
-													cancel: 'Cancel',
-												},
-												children: (
-													<Text size='sm'>
-														Are you sure you want to delete this node?
-													</Text>
-												),
-												confirmProps: { color: 'red' },
-												onConfirm: async () => {
-													await deleteNode.mutateAsync(nodeData.id);
-													await reloadCatalogs();
-												},
-											})
-										}
-									>
-										Delete
-									</Menu.Item>
+									{!isProtectedNode && (
+										<Menu.Item
+											leftSection={<IconTrash size={16} />}
+											color='red'
+											onClick={() => handleDeleteNode(nodeData)}
+										>
+											Delete
+										</Menu.Item>
+									)}
 								</Menu.Dropdown>
 							</Menu>
 						</div>

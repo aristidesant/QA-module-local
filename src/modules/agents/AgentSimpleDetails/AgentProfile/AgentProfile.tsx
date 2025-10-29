@@ -34,7 +34,6 @@ const getAvatarColor = (gender?: string): string => {
 
 const AgentProfile: React.FC<AgentProfileProps> = ({
 	agent,
-	traits = [],
 	size = 'md',
 	onClick,
 }) => {

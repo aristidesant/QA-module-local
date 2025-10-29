@@ -319,26 +319,25 @@ const DispositionCatalogList = forwardRef<DispositionCatalogListHandles>(
 				<DispositionCatalogForm
 					mode='create'
 					loading={createMutation.isPending}
-					onSubmit={async (values) => {
-						try {
-							await createMutation.mutateAsync(values);
-							notifications.show({
-								title: 'Catalog created',
-								message: dispositionLabel(
-									'Outcome catalog was created successfully.'
-								),
-								color: 'teal',
-							});
-							setRightComponent(null);
-						} catch (error: any) {
-							notifications.show({
-								title: 'Create failed',
-								message: dispositionLabel(
-									error?.message || 'Failed to create outcome catalog.'
-								),
-								color: 'red',
-							});
-						}
+					onSubmit={(values) => createMutation.mutateAsync(values)}
+					onSuccess={(_catalog) => {
+						notifications.show({
+							title: 'Catalog created',
+							message: dispositionLabel(
+								'Outcome catalog was created successfully.'
+							),
+							color: 'teal',
+						});
+						setRightComponent(null);
+					}}
+					onError={(error: any) => {
+						notifications.show({
+							title: 'Create failed',
+							message: dispositionLabel(
+								error?.message || 'Failed to create outcome catalog.'
+							),
+							color: 'red',
+						});
 					}}
 				/>
 			);
@@ -378,29 +377,30 @@ const DispositionCatalogList = forwardRef<DispositionCatalogListHandles>(
 					mode='edit'
 					initialValues={catalog}
 					loading={updateMutation.isPending}
-					onSubmit={async (values) => {
-						try {
-							await updateMutation.mutateAsync({
-								id: catalog.id,
-								data: { ...values, isDefault: !!values.isDefault },
-							});
-							notifications.show({
-								title: 'Catalog updated',
-								message: dispositionLabel(
-									'Outcome catalog was updated successfully.'
-								),
-								color: 'teal',
-							});
-							setRightComponent(null);
-						} catch (error: any) {
-							notifications.show({
-								title: 'Update failed',
-								message: dispositionLabel(
-									error?.message || 'Failed to update outcome catalog.'
-								),
-								color: 'red',
-							});
-						}
+					onSubmit={(values) =>
+						updateMutation.mutateAsync({
+							id: catalog.id,
+							data: { ...values, isDefault: !!values.isDefault },
+						})
+					}
+					onSuccess={(_updatedCatalog) => {
+						notifications.show({
+							title: 'Catalog updated',
+							message: dispositionLabel(
+								'Outcome catalog was updated successfully.'
+							),
+							color: 'teal',
+						});
+						setRightComponent(null);
+					}}
+					onError={(error: any) => {
+						notifications.show({
+							title: 'Update failed',
+							message: dispositionLabel(
+								error?.message || 'Failed to update outcome catalog.'
+							),
+							color: 'red',
+						});
 					}}
 				/>
 			);

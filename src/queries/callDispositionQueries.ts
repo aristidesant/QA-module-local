@@ -66,6 +66,7 @@ export function useCallDispositionReport(params?: {
 }
 export function useGetCallDispositionReportParents(params?: {
 	campaignId?: number;
+	dispositionName?: string;
 }) {
 	return useQuery<{
 		dispositions: {

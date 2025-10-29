@@ -24,7 +24,6 @@ import { useDeleteCampaignAgent } from '~/queries/campaignAgentsQueries';
 import { VoicePlayer } from '~/components/VoicePlayer';
 import AgentVoiceEditModal from './AgentVoiceEditModal';
 import RightSectionCard from '~/components/RightSectionCard';
-import ActionButton from '~/components/ActionButton';
 
 interface AgentCampaignPreviewProps {
 	agentId: string;
