@@ -83,14 +83,12 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 			const currentBuiltInTools = currentPrompt?.builtInTools || {};
 
 			const nameCode = toolConfig.nameCode; // Already camelCase from configList
-			console.log('NAME', toolConfig.nameCode);
+
 			// Always include all tools, set to null when disabled
 			const updatedBuiltInTools = {
 				...currentBuiltInTools,
 				[nameCode]: currentlySelected ? null : toolConfig.value,
 			};
-
-			console.log('Updated builtInTools:', updatedBuiltInTools);
 
 			const updatedAgentConfig: Partial<AgentConfigModel> = {
 				...currentAgentConfig,
@@ -138,11 +136,6 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 				[nameCode]: updatedConfig,
 			};
 
-			console.log(
-				'Updated builtInTools (from config save):',
-				updatedBuiltInTools
-			);
-
 			const updatedAgentConfig: Partial<AgentConfigModel> = {
 				...currentAgentConfig,
 				conversationConfig: currentConversationConfig
@@ -177,7 +170,6 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 						</Text>
 					) : (
 						configList.map((toolConfig) => {
-							console.log(toolConfig);
 							const selected = isToolSelected(toolConfig.nameCode);
 							return (
 								<Group
