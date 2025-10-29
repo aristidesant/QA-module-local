@@ -1,4 +1,4 @@
-import { Box, Card, Group, Stack, Text, ThemeIcon, rem } from '@mantine/core';
+import { Badge, Card, Group, Stack, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import {
 	IconAlertTriangle,
@@ -52,7 +52,7 @@ function ColumnMappingCard({
 		modals.open({
 			modalId: 'match-columns-modal',
 			title: 'Match Columns',
-			size: '900px',
+			size: '90%',
 			children: (
 				<ContactHeaderMapping
 					result={columnMappings}
@@ -69,55 +69,55 @@ function ColumnMappingCard({
 
 	return (
 		<Stack gap='xs'>
-			<Text fw={500} mb={4}>
-				Match Columns
-			</Text>
-			<Text c='dimmed' size='sm' mb='md'>
-				Ensure each column from your document is correctly matched with the
-				system's required fields.
-			</Text>
+			<Group justify='space-between' align='center'>
+				<Text fw={500} size='sm'>
+					Column Mapping
+				</Text>
+				<Badge
+					size='sm'
+					variant='light'
+					color={isAllMapped ? 'green' : 'orange'}
+					leftSection={
+						isAllMapped ? (
+							<IconCheck size={12} />
+						) : (
+							<IconAlertTriangle size={12} />
+						)
+					}
+				>
+					{mappedColumnsCount}/{totalColumns}
+				</Badge>
+			</Group>
 
 			<Card
 				withBorder
 				radius='md'
 				className={styles.matchCard}
 				onClick={openMappingModal}
-				style={{ cursor: 'pointer' }}
+				p='sm'
 			>
 				<Group justify='space-between' align='center'>
-					<Group gap='md' align='center'>
-						<ThemeIcon
-							color={isAllMapped ? 'green' : 'orange'}
-							variant='light'
-							size='md'
-							radius='xl'
-						>
-							{isAllMapped ? (
-								<IconCheck size={16} />
-							) : (
-								<IconAlertTriangle size={16} />
-							)}
-						</ThemeIcon>
-
-						<Box>
-							<Text fw={600} size='lg'>
-								{mappedColumnsCount}/{totalColumns}
+					<Stack gap={4}>
+						<Text size='xs' c='dimmed'>
+							Click to configure field mappings
+						</Text>
+						{!isAllMapped && (
+							<Text size='xs' c='orange' fw={500}>
+								{totalColumns - mappedColumnsCount} unmapped{' '}
+								{totalColumns - mappedColumnsCount === 1 ? 'column' : 'columns'}
 							</Text>
-							<Text size='sm' c='dimmed'>
-								Mapped columns
-							</Text>
-						</Box>
-					</Group>
+						)}
+					</Stack>
 
 					<IconChevronRight
-						style={{ width: rem(20), height: rem(20) }}
-						className={styles.chevron}
+						size={16}
+						style={{ color: 'var(--mantine-color-gray-5)' }}
 					/>
 				</Group>
 			</Card>
 
 			{error && (
-				<Text size='sm' c='red' mt={4}>
+				<Text size='xs' c='red'>
 					{error}
 				</Text>
 			)}

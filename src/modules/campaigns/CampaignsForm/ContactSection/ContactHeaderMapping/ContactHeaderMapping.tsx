@@ -15,12 +15,7 @@ import {
 } from '@mantine/core';
 import { useGetClientConfig } from '~/queries/clientConfigQueries';
 import { useGetSchemaByObjectiveId } from '~/queries/campaignContactSchemasQueries';
-import {
-	IconPlus,
-	IconTrash,
-	IconCheck,
-	IconLetterDSmall,
-} from '@tabler/icons-react';
+import { IconPlus, IconCheck, IconLetterDSmall } from '@tabler/icons-react';
 import styles from './ContactHeaderMapping.module.css';
 import { modals } from '@mantine/modals';
 import type { MappedResult } from '~/models/ContactFileSummary';
@@ -479,33 +474,41 @@ export function ContactHeaderMapping({
 												>
 													<Group
 														gap='xs'
-														align='center'
+														align='flex-start'
 														justify='space-between'
 													>
-														<Group gap='xs' align='center'>
-															<Text
-																size='xs'
-																fw={selected ? 600 : 500}
-																style={{ flex: 1, wordBreak: 'break-word' }}
-															>
-																{column.label || column.name}
-															</Text>
-															{column.isDynamic && (
-																<Tooltip label='Dynamic column'>
-																	<ThemeIcon
-																		variant='transparent'
-																		size={'xs'}
-																		color='red'
-																	>
-																		<IconLetterDSmall />
-																	</ThemeIcon>
-																</Tooltip>
+														<Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
+															<Group gap='xs' align='center' wrap='nowrap'>
+																<Text
+																	size='xs'
+																	fw={selected ? 600 : 500}
+																	style={{ wordBreak: 'break-word' }}
+																>
+																	{column.label || column.name}
+																</Text>
+																{column.isDynamic && (
+																	<Tooltip label='Dynamic column'>
+																		<ThemeIcon
+																			variant='transparent'
+																			size={'xs'}
+																			color='red'
+																		>
+																			<IconLetterDSmall />
+																		</ThemeIcon>
+																	</Tooltip>
+																)}
+															</Group>
+															{column.label && column.label !== column.name && (
+																<Text size='xs' c='dimmed'>
+																	{column.name}
+																</Text>
 															)}
-														</Group>
+														</Stack>
 														{selected && (
 															<IconCheck
 																size={14}
 																className={styles.checkIcon}
+																style={{ flexShrink: 0 }}
 															/>
 														)}
 													</Group>
@@ -567,16 +570,29 @@ export function ContactHeaderMapping({
 												onClick={() => handleFieldClick('document', column)}
 												p='xs'
 											>
-												<Group gap='xs' align='center' justify='space-between'>
-													<Text
-														size='xs'
-														fw={isSelected('document', column) ? 600 : 500}
-														style={{ flex: 1, wordBreak: 'break-word' }}
-													>
-														{column}
-													</Text>
+												<Group
+													gap='xs'
+													align='flex-start'
+													justify='space-between'
+												>
+													<Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
+														<Text
+															size='xs'
+															fw={isSelected('document', column) ? 600 : 500}
+															style={{ wordBreak: 'break-word' }}
+														>
+															{column}
+														</Text>
+														<Text size='xs' c='dimmed'>
+															CSV column
+														</Text>
+													</Stack>
 													{isSelected('document', column) && (
-														<IconCheck size={14} className={styles.checkIcon} />
+														<IconCheck
+															size={14}
+															className={styles.checkIcon}
+															style={{ flexShrink: 0 }}
+														/>
 													)}
 												</Group>
 											</Card>
@@ -625,36 +641,44 @@ export function ContactHeaderMapping({
 												>
 													<Group
 														gap='xs'
-														align='center'
+														align='flex-start'
 														justify='space-between'
 													>
+														<Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
+															<Text
+																size='xs'
+																fw={600}
+																style={{ wordBreak: 'break-word' }}
+															>
+																{systemField.label || systemField.name}
+															</Text>
+															{systemField.label &&
+																systemField.label !== systemField.name && (
+																	<Text size='xs' c='dimmed'>
+																		{systemField.name}
+																	</Text>
+																)}
+														</Stack>
 														<Text
 															size='xs'
-															fw={600}
-															style={{ flex: 1, wordBreak: 'break-word' }}
+															c='dimmed'
+															mx='xs'
+															style={{ flexShrink: 0 }}
 														>
-															{systemField.label || systemField.name}
-														</Text>
-														<Text size='xs' c='dimmed'>
 															&rarr;
 														</Text>
-														<Text
-															size='xs'
-															style={{ flex: 1, wordBreak: 'break-word' }}
-														>
-															{mapping.documentField}
-														</Text>
-														<ActionIcon
-															size='xs'
-															variant='subtle'
-															color='red'
-															onClick={(e) => {
-																e.stopPropagation();
-																handleRemoveMapping(mapping);
-															}}
-														>
-															<IconTrash size={12} />
-														</ActionIcon>
+														<Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
+															<Text
+																size='xs'
+																fw={500}
+																style={{ wordBreak: 'break-word' }}
+															>
+																{mapping.documentField}
+															</Text>
+															<Text size='xs' c='dimmed'>
+																CSV column
+															</Text>
+														</Stack>
 													</Group>
 												</Card>
 											);
