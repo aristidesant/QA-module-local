@@ -256,15 +256,30 @@ const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 					)}
 				</Stack>
 			) : (
-				<div className={classes.emptyState}>
-					<IconChartPie size={48} className={classes.emptyIcon} />
-					<Text className={classes.emptyStateText}>
-						No outcome data available
-					</Text>
-					<Text className={classes.emptyStateSubtext}>
-						Data will appear here once calls are made
-					</Text>
-				</div>
+				<Stack gap='sm'>
+					<div className={classes.emptyState}>
+						<IconChartPie size={48} className={classes.emptyIcon} />
+						<Text className={classes.emptyStateText}>
+							No outcome data available
+						</Text>
+						<Text className={classes.emptyStateSubtext}>
+							Data will appear here once calls are made
+						</Text>
+					</div>
+
+					{dispositionName && (
+						<Button
+							variant='light'
+							color='gray'
+							size='xs'
+							leftSection={<IconX size={14} />}
+							onClick={handleClearFilter}
+							fullWidth
+						>
+							Back to overview
+						</Button>
+					)}
+				</Stack>
 			)}
 		</RightSectionCard>
 	);
