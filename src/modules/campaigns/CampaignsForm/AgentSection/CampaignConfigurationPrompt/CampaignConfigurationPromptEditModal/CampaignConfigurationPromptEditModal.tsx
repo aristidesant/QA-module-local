@@ -245,6 +245,42 @@ const CampaignConfigurationPromptEditModal: React.FC<
 							</Text>
 						)}
 					</div>
+
+					<div className={styles.sidebarCard}>
+						<Group gap='xs'>
+							<IconInfoCircle size={16} className={styles.sidebarIcon} />
+							<Text fw={600} size='sm' className={styles.sidebarTitle}>
+								Static variables
+							</Text>
+						</Group>
+						<Text size='xs' c='dimmed'>
+							Default contact variables available in all campaigns.
+						</Text>
+						<Stack gap='xs' className={styles.variablesStack}>
+							<Group gap='xs' className={styles.variablesList}>
+								{[
+									'firstName',
+									'lastName',
+									'identifier',
+									'identifierType',
+									'address',
+								].map((field) => (
+									<Badge
+										key={field}
+										variant='outline'
+										color='blue'
+										className={styles.variableBadge}
+										component='button'
+										type='button'
+										onClick={() => handleVariableCopy(`{{${field}}}`)}
+										aria-label={`Copy variable {{${field}}} to clipboard`}
+									>
+										{`{{${field}}}`}
+									</Badge>
+								))}
+							</Group>
+						</Stack>
+					</div>
 				</aside>
 			</div>
 
