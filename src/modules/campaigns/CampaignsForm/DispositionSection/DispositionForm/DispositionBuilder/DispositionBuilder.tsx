@@ -196,7 +196,6 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 													selectedNodeId={selectedNode?.id}
 													onPopulateChildren={populateNodeWithChildren}
 													onAddMissingSiblings={addMissingSiblingsToParent}
-													onPreviewGroup={setPreviewNode}
 													catalogNodes={selectedCatalog?.dispositionNodes}
 												/>
 											))}
@@ -250,12 +249,7 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 										onCancel={handleNodeFormCancel}
 									/>
 								) : (
-									<Stack gap={4}>
-										<Text fw={600} size='sm'>
-											Group preview
-										</Text>
-										<DispositionGroupPreview node={selectedNode} />
-									</Stack>
+									<DispositionGroupPreview node={selectedNode} />
 								)
 							) : (
 								<Box className={styles.emptyRightPanel}>

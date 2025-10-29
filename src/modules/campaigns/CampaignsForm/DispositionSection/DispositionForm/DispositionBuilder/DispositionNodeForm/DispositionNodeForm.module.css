@@ -1,95 +1,154 @@
 .formContainer {
+	background: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-lg);
 	padding: var(--mantine-spacing-md);
-	background: var(--mantine-color-body);
-	min-width: 320px;
-	max-width: 400px;
-	height: 100%;
 	display: flex;
 	flex-direction: column;
+	height: 100%;
+}
+
+.form {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	gap: var(--mantine-spacing-md);
+}
+
+.formContent {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+	flex: 1;
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
 	gap: var(--mantine-spacing-sm);
 }
 
-.sectionTitle {
-	font-size: var(--mantine-font-size-md);
-	font-weight: 600;
-	color: var(--mantine-color-dark-8);
-	margin-bottom: var(--mantine-spacing-xs);
-}
-
-.fieldGroup {
+.headerDetails {
 	display: flex;
 	flex-direction: column;
-	gap: var(--mantine-spacing-xs);
+	gap: 2px;
 }
 
-.fieldLabel {
-	font-size: var(--mantine-font-size-xs);
-	font-weight: 600;
-	color: var(--mantine-color-dark-8);
-}
-
-.fieldSubtext {
+.headerEyebrow {
 	font-size: 11px;
 	color: var(--mantine-color-gray-6);
-	margin-bottom: 0;
-}
-.subSwitchRow {
-	display: flex;
-	align-items: center;
-	gap: var(--mantine-spacing-sm);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
 }
 
-.readOnlyInput {
-	background-color: var(--mantine-color-gray-0);
+.headerTitle {
+	font-size: var(--mantine-font-size-md);
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+	line-height: 1.4;
+}
+
+.parentBadge {
+	background: var(--mantine-color-gray-0);
 	border: 1px solid var(--mantine-color-gray-3);
+	color: var(--mantine-color-gray-7);
 }
 
-.readOnlyInput input,
-.readOnlyInput textarea {
-	background-color: var(--mantine-color-gray-0);
-	color: var(--mantine-color-gray-7);
-	cursor: default;
+.statusGroup {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--mantine-spacing-xs);
 }
 
 .statusBadge {
+	border-radius: var(--mantine-radius-sm);
+}
+
+.infoCard {
 	display: flex;
-	align-items: center;
-	gap: var(--mantine-spacing-xs);
-	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
-	background-color: var(--mantine-color-gray-1);
+	flex-direction: column;
+	gap: 4px;
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
 	border-radius: var(--mantine-radius-md);
-	width: fit-content;
+	border: 1px solid var(--mantine-color-gray-3);
+	background: var(--mantine-color-gray-0);
 }
 
-.statusDot {
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	background-color: var(--mantine-color-orange-6);
+.infoLabel {
+	font-size: 11px;
+	color: var(--mantine-color-gray-6);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
 }
 
-.statusText {
-	font-size: var(--mantine-font-size-sm);
-	color: var(--mantine-color-gray-7);
+.infoValue {
+	color: var(--mantine-color-gray-8);
+	line-height: 1.5;
 }
 
-.switchContainer {
+.toggleSection {
 	display: flex;
-	align-items: center;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.sectionLabel {
+	font-size: 11px;
+	color: var(--mantine-color-gray-6);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.toggleGrid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--mantine-spacing-xs);
+}
+
+@media (min-width: 480px) {
+	.toggleGrid {
+		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	}
+}
+
+.toggleCard {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
 	gap: var(--mantine-spacing-sm);
-	margin-top: var(--mantine-spacing-xs);
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid var(--mantine-color-gray-3);
+	background: var(--mantine-color-white);
 }
 
-.switchLabel {
+.toggleContent {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	max-width: 220px;
+}
+
+.toggleTitle {
 	font-size: var(--mantine-font-size-sm);
-	color: var(--mantine-color-dark-6);
+	font-weight: 500;
+	color: var(--mantine-color-gray-9);
 }
 
-.deleteButton {
+.toggleDescription {
+	color: var(--mantine-color-gray-6);
+	line-height: 1.4;
+}
+
+.divider {
 	margin-top: auto;
-	justify-self: flex-end;
 }
 
-.deleteButton:hover {
-	background-color: var(--mantine-color-red-0);
+.actionGroup {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--mantine-spacing-xs);
+	padding-top: var(--mantine-spacing-xs);
+	border-top: 1px solid var(--mantine-color-gray-2);
 }
