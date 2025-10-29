@@ -5,16 +5,35 @@ import {
 	Group,
 	Badge,
 	Skeleton,
-	Flex,
 	ActionIcon,
 	Tooltip,
-	Divider,
 } from '@mantine/core';
 import { IconRefresh, IconMist } from '@tabler/icons-react';
 import styles from './CampaignParameters.module.css';
 import { useGetCampaignScheduleSummary } from '~/queries/campaignsQueries';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import RightSectionCard from '~/components/RightSectionCard';
+
+type FormattedSchedule = {
+	day: string;
+	startHour: string;
+	endHour: string;
+};
+
+type ParameterItem =
+	| {
+			key: string;
+			label: string;
+			type: 'status';
+			display: string;
+			color: string;
+	  }
+	| {
+			key: string;
+			label: string;
+			type: 'text';
+			display: string;
+	  };
 
 const CampaignParameters: React.FC = () => {
 	const selectedCampaign = useCampaignsStore((state) => state.selectedCampaign);
@@ -33,28 +52,12 @@ const CampaignParameters: React.FC = () => {
 		}
 	};
 
-	// Early return if no campaign is selected
-	if (!selectedCampaign) {
-		return (
-			<RightSectionCard
-				title='Defined Parameters'
-				description='No campaign selected.'
-				icon={IconMist}
-			>
-				<></>
-			</RightSectionCard>
-		);
-	}
-
-	const parameters = selectedCampaign.parameters;
-
-	const formatScheduleData = () => {
+	const formatScheduleData = (): FormattedSchedule[] => {
 		if (!scheduleSummary || scheduleSummary.length === 0) {
 			return [];
 		}
 
-		// Group by day and format
-		const dayMap: { [key: string]: any } = {};
+		const dayMap: Record<string, FormattedSchedule> = {};
 
 		scheduleSummary.forEach((schedule) => {
 			const dayKey = schedule.dayOfWeek.toLowerCase();
@@ -67,7 +70,6 @@ const CampaignParameters: React.FC = () => {
 			}
 		});
 
-		// Convert to array and sort by day order
 		const dayOrder = [
 			'monday',
 			'tuesday',
@@ -78,21 +80,22 @@ const CampaignParameters: React.FC = () => {
 			'sunday',
 		];
 
-		const result = dayOrder.map((day) => dayMap[day]).filter(Boolean);
-		return result;
+		return dayOrder
+			.map((day) => dayMap[day])
+			.filter(Boolean) as FormattedSchedule[];
 	};
 
 	const formatTime = (time: string) => {
 		if (!time) return '';
-		const [hours, minutes] = time.split(':');
-		const hour = parseInt(hours);
+		const [hours, minutes = '00'] = time.split(':');
+		const hour = Number.parseInt(hours, 10);
 		const ampm = hour >= 12 ? 'PM' : 'AM';
 		const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-		return `${displayHour}:${minutes || '00'} ${ampm}`;
+		return `${displayHour}:${minutes.padEnd(2, '0')} ${ampm}`;
 	};
 
 	const getDayAbbreviation = (day: string) => {
-		const dayMap: { [key: string]: string } = {
+		const dayMap: Record<string, string> = {
 			Monday: 'Mon',
 			Tuesday: 'Tue',
 			Wednesday: 'Wed',
@@ -104,13 +107,55 @@ const CampaignParameters: React.FC = () => {
 		return dayMap[day] || day.slice(0, 3);
 	};
 
+	if (!selectedCampaign) {
+		return (
+			<RightSectionCard
+				title='Schedule'
+				description='Active dialing windows and call handling limits.'
+				icon={IconMist}
+			>
+				<></>
+			</RightSectionCard>
+		);
+	}
+
 	const activeSchedules = formatScheduleData();
+	const parameters = selectedCampaign.parameters;
+
+	const parameterItems: ParameterItem[] = [
+		parameters?.voicemailDetection !== undefined && {
+			key: 'voicemailDetection',
+			label: 'Voicemail detection',
+			type: 'status',
+			display: parameters.voicemailDetection ? 'Enabled' : 'Disabled',
+			color: parameters.voicemailDetection ? 'teal' : 'gray',
+		},
+		parameters?.callRetries !== undefined && {
+			key: 'callRetries',
+			label: 'Call retries',
+			type: 'text',
+			display: `Up to ${parameters.callRetries} times`,
+		},
+		parameters?.maxConcurrentCalls != null && {
+			key: 'maxConcurrentCalls',
+			label: 'Max concurrent calls',
+			type: 'text',
+			display: `${parameters.maxConcurrentCalls} calls`,
+		},
+		parameters?.answerMachineDetection !== undefined && {
+			key: 'answerMachineDetection',
+			label: 'Answer machine detection',
+			type: 'status',
+			display: parameters.answerMachineDetection ? 'Enabled' : 'Disabled',
+			color: parameters.answerMachineDetection ? 'teal' : 'gray',
+		},
+	].filter(Boolean) as ParameterItem[];
 
 	if (isLoading) {
 		return (
 			<RightSectionCard
-				title='Defined Parameters'
-				description='Controls interaction execution and timing.'
+				title='Schedule'
+				description='Active dialing windows and call handling limits.'
 				icon={IconMist}
 				rightSection={
 					<Tooltip
@@ -131,15 +176,9 @@ const CampaignParameters: React.FC = () => {
 				}
 			>
 				<Stack gap='xs'>
-					{[1, 2, 3].map((index) => (
-						<div key={index}>
-							<Group justify='space-between' align='center'>
-								<Skeleton height={16} width='40%' />
-								<Skeleton height={16} width='30%' />
-							</Group>
-							{index < 3 && <Divider />}
-						</div>
-					))}
+					<Skeleton height={12} radius='xl' />
+					<Skeleton height={48} radius='md' />
+					<Skeleton height={88} radius='md' />
 				</Stack>
 			</RightSectionCard>
 		);
@@ -147,8 +186,8 @@ const CampaignParameters: React.FC = () => {
 
 	return (
 		<RightSectionCard
-			title='Defined Parameters'
-			description='Controls interaction execution and timing.'
+			title='Schedule'
+			description='Active dialing windows and call handling limits.'
 			icon={IconMist}
 			rightSection={
 				<Tooltip
@@ -168,125 +207,80 @@ const CampaignParameters: React.FC = () => {
 				</Tooltip>
 			}
 		>
-			<Stack gap='xs' className={styles.parametersList}>
+			<Stack gap='sm' className={styles.root}>
 				{activeSchedules.length > 0 && (
-					<>
+					<div className={styles.section}>
 						<Group justify='space-between' align='center'>
-							<Text fw={600} size='sm'>
-								Active schedule
+							<Text fw={600} size='sm' className={styles.sectionTitle}>
+								Active windows
 							</Text>
+							<Badge variant='light' color='blue' size='sm'>
+								{activeSchedules.length}{' '}
+								{activeSchedules.length === 1 ? 'day' : 'days'}
+							</Badge>
 						</Group>
-						<Stack gap='xs'>
-							{activeSchedules.map((schedule, index) => (
-								<Group
-									key={index}
-									justify='space-between'
-									className={styles.scheduleRow}
+						<div className={styles.scheduleList}>
+							{activeSchedules.map((schedule) => (
+								<div
+									key={`${schedule.day}-${schedule.startHour}`}
+									className={styles.scheduleChip}
 								>
-									<Text size='sm' fw={500} className={styles.dayLabel}>
+									<Text size='xs' fw={700} className={styles.dayLabel}>
 										{getDayAbbreviation(schedule.day)}
 									</Text>
-									<Flex gap='xs' align='center'>
-										<Text size='xs' c='dimmed'>
-											{formatTime(schedule.startHour)}
-										</Text>
-										<Text size='xs' c='dimmed'>
-											-
-										</Text>
-										<Text size='xs' c='dimmed'>
-											{formatTime(schedule.endHour)}
-										</Text>
-									</Flex>
-								</Group>
+									<Text size='xs' c='dimmed' className={styles.timeRange}>
+										{formatTime(schedule.startHour)} -{' '}
+										{formatTime(schedule.endHour)}
+									</Text>
+								</div>
 							))}
-						</Stack>
-						<Divider />
-					</>
+						</div>
+					</div>
 				)}
 
-				{/* Voicemail Detection */}
-				{parameters?.voicemailDetection !== undefined && (
-					<>
+				{parameterItems.length > 0 && (
+					<div className={styles.section}>
 						<Group justify='space-between' align='center'>
-							<Text fw={600} size='sm'>
-								Voicemail detection
+							<Text fw={600} size='sm' className={styles.sectionTitle}>
+								Call handling
 							</Text>
-							<Badge
-								variant='light'
-								color={parameters.voicemailDetection ? 'green' : 'red'}
-								size='sm'
-							>
-								{parameters.voicemailDetection ? 'Enabled' : 'Disabled'}
+							<Badge variant='light' color='blue' size='sm'>
+								{parameterItems.length} setting
+								{parameterItems.length === 1 ? '' : 's'}
 							</Badge>
 						</Group>
-						<Divider />
-					</>
+						<div className={styles.parametersGrid}>
+							{parameterItems.map((item) => (
+								<div key={item.key} className={styles.parameterCard}>
+									<Text size='xs' c='dimmed' className={styles.parameterLabel}>
+										{item.label}
+									</Text>
+									{item.type === 'status' ? (
+										<Badge
+											size='sm'
+											variant='light'
+											color={item.color}
+											radius='sm'
+											className={styles.parameterBadge}
+										>
+											{item.display}
+										</Badge>
+									) : (
+										<Text size='sm' fw={600} className={styles.parameterValue}>
+											{item.display}
+										</Text>
+									)}
+								</div>
+							))}
+						</div>
+					</div>
 				)}
 
-				{/* Call Retries */}
-				{parameters?.callRetries !== undefined && (
-					<>
-						<Group justify='space-between' align='center'>
-							<Text fw={600} size='sm'>
-								Call retries
-							</Text>
-							<Text size='sm' fw={500}>
-								Up to {parameters.callRetries} times
-							</Text>
-						</Group>
-						<Divider />
-					</>
+				{activeSchedules.length === 0 && parameterItems.length === 0 && (
+					<Text size='sm' c='dimmed' ta='center' className={styles.emptyState}>
+						No schedules or call handling rules configured for this campaign.
+					</Text>
 				)}
-
-				{/* Max Concurrent Calls */}
-				{parameters?.maxConcurrentCalls && (
-					<>
-						<Group justify='space-between' align='center'>
-							<Text fw={600} size='sm'>
-								Max concurrent calls
-							</Text>
-							<Text size='sm' fw={500}>
-								{parameters.maxConcurrentCalls} calls
-							</Text>
-						</Group>
-						<Divider />
-					</>
-				)}
-
-				{/* Answer Machine Detection */}
-				{parameters?.answerMachineDetection !== undefined && (
-					<>
-						<Group justify='space-between' align='center'>
-							<Text fw={600} size='sm'>
-								Answer machine detection
-							</Text>
-							<Badge
-								variant='light'
-								color={parameters.answerMachineDetection ? 'green' : 'red'}
-								size='sm'
-							>
-								{parameters.answerMachineDetection ? 'Enabled' : 'Disabled'}
-							</Badge>
-						</Group>
-						<Divider />
-					</>
-				)}
-
-				{/* Show empty state if no parameters or schedule data */}
-				{activeSchedules.length === 0 &&
-					parameters?.voicemailDetection === undefined &&
-					parameters?.callRetries === undefined &&
-					!parameters?.maxConcurrentCalls &&
-					parameters?.answerMachineDetection === undefined && (
-						<Text
-							size='sm'
-							c='dimmed'
-							ta='center'
-							className={styles.emptyState}
-						>
-							No parameters configured for this campaign.
-						</Text>
-					)}
 			</Stack>
 		</RightSectionCard>
 	);
