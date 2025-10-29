@@ -4,14 +4,13 @@ import {
 	IconChevronDown,
 	IconChevronRight,
 	IconClock,
-	IconEye,
 	IconHierarchy3,
 	IconPhoneX,
 	IconTrash,
 } from '@tabler/icons-react';
 import type { DispositionNode } from '~/models/DispositionNodeModel';
 import { getNodeStyle } from '~/utils/dispositionNodeStyles';
-import { cloneNodeWithChildren, findNodeById } from '~/utils/dragDropUtils';
+import { findNodeById } from '~/utils/dragDropUtils';
 import { useDispositionBuilderStore } from '../../../dispositionStore';
 import styles from './NodeEditor.module.css';
 
@@ -27,7 +26,6 @@ interface NodeEditorProps {
 	selectedNodeId?: number;
 	onPopulateChildren?: (nodeId: number) => void;
 	onAddMissingSiblings?: (nodeId: number) => void;
-	onPreviewGroup?: (node: DispositionNode) => void;
 	catalogNodes?: DispositionNode[] | undefined;
 }
 
@@ -40,7 +38,6 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 	selectedNodeId,
 	onPopulateChildren,
 	onAddMissingSiblings,
-	onPreviewGroup,
 	catalogNodes,
 }) => {
 	const [collapsed, setCollapsed] = useState(false);
@@ -127,15 +124,6 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 			onPopulateChildren(node.id);
 		},
 		[node.id, onPopulateChildren]
-	);
-
-	const handlePreview = useCallback(
-		(event: React.MouseEvent) => {
-			if (!onPreviewGroup) return;
-			event.stopPropagation();
-			onPreviewGroup(cloneNodeWithChildren(node));
-		},
-		[node, onPreviewGroup]
 	);
 
 	const handleAddMissingSiblings = useCallback(
@@ -255,20 +243,6 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 							</Tooltip>
 						) : null}
 
-						{showGroupActions && onPreviewGroup ? (
-							<Tooltip withArrow label='Preview group'>
-								<ActionIcon
-									size='xs'
-									variant='subtle'
-									color='blue'
-									onClick={handlePreview}
-									aria-label='Preview outcome group'
-								>
-									<IconEye size={12} />
-								</ActionIcon>
-							</Tooltip>
-						) : null}
-
 						<Tooltip withArrow label='Remove'>
 							<ActionIcon
 								size='xs'
@@ -296,7 +270,6 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 							selectedNodeId={selectedNodeId}
 							onPopulateChildren={onPopulateChildren}
 							onAddMissingSiblings={onAddMissingSiblings}
-							onPreviewGroup={onPreviewGroup}
 							catalogNodes={catalogNodes}
 						/>
 					))
