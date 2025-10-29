@@ -5,6 +5,7 @@ import type {
 	SchedulerSummary,
 } from '~/models/CampaignsModel';
 import type { CampaignRequirements } from '~/models/CampaignRequirementsModel';
+import type { CampaignLiveMetric } from '~/models/CampaignLiveMetricModel';
 import { DEFAULT_API_URL } from './config';
 
 // import { getAuthorizationHeader } from "../utils/tokenUtils";
@@ -110,6 +111,19 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 		getCampaignRequirements: async (campaignId: string) => {
 			const response = await axios.get<CampaignRequirements>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}/requirements`
+			);
+			return response.data;
+		},
+
+		getLiveMetrics: async (
+			campaignId: string,
+			range: '5m' | '15m' | '1h' | 'today'
+		) => {
+			const response = await axios.get<CampaignLiveMetric>(
+				`${DEFAULT_API_URL}/campaigns/${campaignId}/live-metrics`,
+				{
+					params: { range },
+				}
 			);
 			return response.data;
 		},

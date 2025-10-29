@@ -25,6 +25,7 @@ import {
 } from '~/queries/campaignsQueries';
 import { notifications } from '@mantine/notifications';
 import RightSectionCard from '~/components/RightSectionCard';
+import CleanQueueButton from '../CleanQueueButton';
 import CampaignHealth from '../../CampaignHealth';
 import classes from './CampaignOverview.module.css';
 
@@ -80,8 +81,9 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 	const status = (campaignData?.status ?? campaign.status) as
 		| CampaignStatus
 		| undefined;
-	const isMutating = isPausing || isResuming || isStarting;
+	const isActionMutating = isPausing || isResuming || isStarting;
 	const campaignId = String(displayCampaign?.id ?? campaign.id);
+	const campaignNumericId = Number(displayCampaign?.id ?? campaign.id);
 	const isStartDisabled = useMemo(() => {
 		if (isLoadingRequirements) {
 			return true;
@@ -369,14 +371,18 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 					variant={buttonConfig.variant}
 					color={buttonConfig.color}
 					size='sm'
-					disabled={buttonConfig.disabled || isMutating}
-					loading={isMutating}
+					disabled={buttonConfig.disabled || isActionMutating}
+					loading={isActionMutating}
 					leftSection={<buttonConfig.icon size={14} />}
 					onClick={handleToggle}
 					className={classes.actionButton}
 				>
 					{buttonConfig.label}
 				</Button>
+				<CleanQueueButton
+					campaignId={campaignNumericId}
+					className={classes.actionButton}
+				/>
 
 				{/* Health Section */}
 				<div className={classes.healthSection}>

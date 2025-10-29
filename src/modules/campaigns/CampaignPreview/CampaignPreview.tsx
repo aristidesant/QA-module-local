@@ -5,6 +5,7 @@ import type { Campaign } from '../../../models/CampaignsModel';
 import CampaignContactOutcomeSummary from './CampaignContactOutcomeSummary';
 import CampaignParameters from './CampaignParameters';
 import AssignedAgents from './AssignedAgents';
+import CleanQueueButton from './CleanQueueButton';
 
 interface CampaignPreviewProps {
 	campaign: Campaign & {
@@ -36,6 +37,8 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
 				<CampaignParameters />
 
 				<AssignedAgents />
+
+				<CleanQueueButton campaignId={campaign.id} fullWidth />
 			</Stack>
 		</ScrollArea>
 	);

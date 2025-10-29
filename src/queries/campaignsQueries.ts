@@ -4,6 +4,7 @@ import campaignsApi, {
 	type CreateCampaignWithAgentDTO,
 } from '~/api/campaignsApi';
 import type { Campaign, PaginatedResponse } from '~/models/CampaignsModel';
+import type { CampaignLiveMetric } from '~/models/CampaignLiveMetricModel';
 
 // Create campaign
 export const useCreateCampaign = () => {
@@ -98,6 +99,27 @@ export const useGetCampaignRequirements = (campaignId: string) => {
 		},
 		enabled: !!campaignId,
 		retry: false,
+	});
+};
+
+export const useGetCampaignLiveMetrics = (
+	campaignId: string,
+	range: '5m' | '15m' | '1h' | 'today'
+) => {
+	return useQuery<
+		CampaignLiveMetric,
+		unknown,
+		CampaignLiveMetric,
+		['campaign-live-metrics', string, string]
+	>({
+		queryKey: ['campaign-live-metrics', campaignId, range],
+		queryFn: async () => {
+			const api = campaignsApi();
+			return api.getLiveMetrics(campaignId, range);
+		},
+		enabled: !!campaignId,
+		retry: false,
+		refetchInterval: 5000,
 	});
 };
 
