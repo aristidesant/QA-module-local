@@ -10,10 +10,17 @@ import {
 	Stack,
 	ScrollArea,
 	Divider,
+	ThemeIcon,
+	Tooltip,
 } from '@mantine/core';
 import { useGetClientConfig } from '~/queries/clientConfigQueries';
 import { useGetSchemaByObjectiveId } from '~/queries/campaignContactSchemasQueries';
-import { IconPlus, IconTrash, IconCheck } from '@tabler/icons-react';
+import {
+	IconPlus,
+	IconTrash,
+	IconCheck,
+	IconLetterDSmall,
+} from '@tabler/icons-react';
 import styles from './ContactHeaderMapping.module.css';
 import { modals } from '@mantine/modals';
 import type { MappedResult } from '~/models/ContactFileSummary';
@@ -28,6 +35,7 @@ interface SystemColumn {
 	label: string;
 	type: string;
 	isArray: boolean;
+	isDynamic?: boolean;
 }
 
 interface ContactHeaderMappingProps {
@@ -121,6 +129,7 @@ export function ContactHeaderMapping({
 				label: field.label,
 				type: field.type,
 				isArray: field.isArray,
+				isDynamic: true,
 			})
 		);
 
@@ -248,6 +257,15 @@ export function ContactHeaderMapping({
 		};
 	}, [systemColumns, documentColumns, mappings, finalizedSystemFields]);
 
+	const unmappedDynamicColumns = useMemo(
+		() =>
+			systemColumns.filter((field) => {
+				if (!field.isDynamic) return false;
+				return !mappings.some((mapping) => mapping.systemField === field.name);
+			}),
+		[systemColumns, mappings]
+	);
+
 	// Handle removing a mapping
 	const handleRemoveMapping = (mappingToRemove: FieldMapping) => {
 		const updatedMappings = mappings.filter(
@@ -339,6 +357,27 @@ export function ContactHeaderMapping({
 						</Badge>
 					</Group>
 				</div>
+				{unmappedDynamicColumns.length > 0 && (
+					<div
+						style={{
+							backgroundColor: 'var(--mantine-color-red-0)',
+							borderLeft: '3px solid var(--mantine-color-red-6)',
+							padding: 'var(--mantine-spacing-sm)',
+						}}
+					>
+						<Group gap='xs' align='center'>
+							<ThemeIcon size='sm' color='red' variant='light'>
+								<IconLetterDSmall />
+							</ThemeIcon>
+							<Text size='xs' c='red' fw={500}>
+								{unmappedDynamicColumns.length} dynamic{' '}
+								{unmappedDynamicColumns.length === 1 ? 'field' : 'fields'}{' '}
+								{unmappedDynamicColumns.length === 1 ? 'requires' : 'require'}{' '}
+								mapping
+							</Text>
+						</Group>
+					</div>
+				)}
 				<Divider />
 				<div className={styles.contentWrapper}>
 					<div className={styles.columnsLayout}>
@@ -443,13 +482,26 @@ export function ContactHeaderMapping({
 														align='center'
 														justify='space-between'
 													>
-														<Text
-															size='xs'
-															fw={selected ? 600 : 500}
-															style={{ flex: 1, wordBreak: 'break-word' }}
-														>
-															{column.label || column.name}
-														</Text>
+														<Group gap='xs' align='center'>
+															<Text
+																size='xs'
+																fw={selected ? 600 : 500}
+																style={{ flex: 1, wordBreak: 'break-word' }}
+															>
+																{column.label || column.name}
+															</Text>
+															{column.isDynamic && (
+																<Tooltip label='Dynamic column'>
+																	<ThemeIcon
+																		variant='transparent'
+																		size={'xs'}
+																		color='red'
+																	>
+																		<IconLetterDSmall />
+																	</ThemeIcon>
+																</Tooltip>
+															)}
+														</Group>
 														{selected && (
 															<IconCheck
 																size={14}
@@ -692,7 +744,9 @@ export function ContactHeaderMapping({
 							onMappingChange(getMappedResult(mappings));
 							modals.close('match-columns-modal');
 						}}
-						disabled={mappings.length === 0}
+						disabled={
+							mappings.length === 0 || unmappedDynamicColumns.length > 0
+						}
 					>
 						Save Mappings
 					</Button>
