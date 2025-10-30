@@ -89,41 +89,46 @@ const CampaignConfigurationPromptEditModal: React.FC<
 
 	const isDirty = draft !== prompt;
 
-	const handleVariableCopy = useCallback((variable: string) => {
-		const copy = async () => {
-			try {
-				if (
-					typeof navigator !== 'undefined' &&
-					navigator.clipboard?.writeText
-				) {
-					await navigator.clipboard.writeText(variable);
-				} else {
-					const textarea = document.createElement('textarea');
-					textarea.value = variable;
-					textarea.setAttribute('readonly', '');
-					textarea.style.position = 'absolute';
-					textarea.style.left = '-9999px';
-					document.body.appendChild(textarea);
-					textarea.select();
-					document.execCommand('copy');
-					document.body.removeChild(textarea);
+	const handleVariableCopy = useCallback(
+		(variable: string, isPrompt = false) => {
+			const copy = async () => {
+				try {
+					if (
+						typeof navigator !== 'undefined' &&
+						navigator.clipboard?.writeText
+					) {
+						await navigator.clipboard.writeText(variable);
+					} else {
+						const textarea = document.createElement('textarea');
+						textarea.value = variable;
+						textarea.setAttribute('readonly', '');
+						textarea.style.position = 'absolute';
+						textarea.style.left = '-9999px';
+						document.body.appendChild(textarea);
+						textarea.select();
+						document.execCommand('copy');
+						document.body.removeChild(textarea);
+					}
+					notifications.show({
+						color: 'blue',
+						title: isPrompt ? 'Prompt Copiado' : 'Variable copied',
+						message: isPrompt
+							? 'El prompt ha sido copiado al portapapeles.'
+							: `${variable} copied to clipboard.`,
+					});
+				} catch (error) {
+					notifications.show({
+						color: 'red',
+						title: 'Copy failed',
+						message: 'Unable to copy variable. Please try again.',
+					});
 				}
-				notifications.show({
-					color: 'blue',
-					title: 'Variable copied',
-					message: `${variable} copied to clipboard.`,
-				});
-			} catch (error) {
-				notifications.show({
-					color: 'red',
-					title: 'Copy failed',
-					message: 'Unable to copy variable. Please try again.',
-				});
-			}
-		};
+			};
 
-		void copy();
-	}, []);
+			void copy();
+		},
+		[]
+	);
 
 	// Prepare schema options
 	const schemaOptions =
@@ -192,6 +197,41 @@ const CampaignConfigurationPromptEditModal: React.FC<
 				</div>
 
 				<aside className={styles.sidebar}>
+					<div className={styles.sidebarCard}>
+						<Group gap='xs'>
+							<IconInfoCircle size={16} className={styles.sidebarIcon} />
+							<Text fw={600} size='sm' className={styles.sidebarTitle}>
+								Suggested init prompt
+							</Text>
+						</Group>
+						<Text size='xs' c='dimmed'>
+							Copy this time-aware greeting template to start your prompt.
+						</Text>
+						<Stack gap='xs' className={styles.variablesStack}>
+							<Button
+								variant='outline'
+								size='xs'
+								fullWidth
+								onClick={() =>
+									handleVariableCopy(
+										`**Contexto temporal actual:**
+    * Hora local del cliente: {{currentTime}}
+    * Fecha: {{currentDate}}
+    * Zona horaria: {{timezone}}
+    * Periodo del día: {{dayPeriod}}
+
+**Instrucción de saludo:**
+    Inicia la conversación con: "{{greeting}}"
+    Adapta tu tono y energía al periodo del día actual.`,
+										true
+									)
+								}
+							>
+								Copy init prompt
+							</Button>
+						</Stack>
+					</div>
+
 					<div className={styles.sidebarCard}>
 						<Select
 							label='Contact schema'
