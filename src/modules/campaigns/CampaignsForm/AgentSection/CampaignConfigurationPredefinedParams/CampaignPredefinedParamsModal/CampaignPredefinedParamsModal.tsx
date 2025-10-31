@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Modal, Stack, Select, Text, Group, Button } from '@mantine/core';
+import { Modal, Stack, Select, Group, Button } from '@mantine/core';
 import { CampaignPredefinedParam } from '../../../useCampaignsPredefinedParams';
-import ConfigurationSummary from '../ConfigurationSummary';
 
 interface CampaignPredefinedParamsModalProps {
 	opened: boolean;
@@ -49,7 +48,8 @@ const CampaignPredefinedParamsModal: React.FC<
 			opened={opened}
 			onClose={onClose}
 			title='Configuration Preview'
-			size='xl'
+			centered
+			size='xs'
 		>
 			<Stack gap='md'>
 				<Select
@@ -64,13 +64,7 @@ const CampaignPredefinedParamsModal: React.FC<
 					searchable
 					clearable
 				/>
-				{previewConfig ? (
-					<ConfigurationSummary config={previewConfig} />
-				) : (
-					<Text size='sm' c='dimmed'>
-						Choose a predefined configuration to preview its details.
-					</Text>
-				)}
+
 				<Group justify='flex-end' gap='sm'>
 					<Button variant='default' onClick={onClose}>
 						Cancel
