@@ -55,7 +55,7 @@ const DoNotCallPage = React.lazy(
 const CampaignPredefinedParamsPage = React.lazy(
 	() =>
 		import(
-			'./modules/visual-configs/CampaignPredefinedParamsPage/CampaignPredefinedParamsPage'
+			'./modules/configurations/CampaignPredefinedParamsPage/CampaignPredefinedParamsPage'
 		)
 );
 
