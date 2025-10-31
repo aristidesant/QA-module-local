@@ -1,94 +1,60 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import SectionCard from '~/components/SectionCard';
 import useCampaignsPredefinedParams, {
 	CampaignPredefinedParam,
 } from '../../useCampaignsPredefinedParams';
-import { Tooltip, Button, Stack } from '@mantine/core';
+import { Stack, Text, Group, ActionIcon, Tooltip } from '@mantine/core';
 import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
 import { deepMergeConfig } from '~/utils/objectUtils';
+import type { CampaignPredefinedConversationConfig } from '~/models/CampaignPredefinedParam';
 import type { ConversationConfigModel } from '~/models/AgentListObject';
-import { IconRefresh } from '@tabler/icons-react';
+import { IconRefresh, IconCheck } from '@tabler/icons-react';
 import CampaignPredefinedParamsModal from './CampaignPredefinedParamsModal';
-import ConfigurationSummary from './ConfigurationSummary';
-
-const isValidValue = (value: unknown): boolean => {
-	if (value === null || value === undefined) return false;
-	if (typeof value === 'string' && value.length === 0) return false;
-	if (typeof value === 'number' && isNaN(value)) return false;
-	return true;
-};
-
-const isValidObject = (obj: unknown): obj is Record<string, any> => {
-	return (
-		obj !== null &&
-		obj !== undefined &&
-		typeof obj === 'object' &&
-		!Array.isArray(obj)
-	);
-};
+import styles from './CampaignConfigurationPredefinedParams.module.css';
 
 const CampaignConfigurationPredefinedParams: React.FC = () => {
 	const predefinedParams = useCampaignsPredefinedParams();
+
 	const form = useCampaignFormContext();
 	const [appliedParam, setAppliedParam] =
 		useState<CampaignPredefinedParam | null>(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
-	const applyConversationConfig = (config: ConversationConfigModel) => {
-		if (!isValidObject(config)) {
-			console.log('Config is not a valid object:', config);
-			return;
-		}
-		console.log('Applying conversation config:', config);
-		const conversationConfig: Record<string, any> = {};
+	const applyConversationConfig = (
+		config: CampaignPredefinedConversationConfig
+	) => {
+		const currentAgentConfig = form.values.agentConfig || {};
+		const baseConversationConfig: Record<string, any> = {
+			...(currentAgentConfig.conversationConfig || {}),
+		};
 
-		// Apply all properties from the config that have valid values
-		(
-			[
-				'asr',
-				'tts',
-				'turn',
-				'agent',
-				'conversation',
-				'languagePresets',
-			] as const
-		).forEach((key) => {
-			const value = config[key];
-			console.log(`Processing key '${key}':`, value);
-			console.log(config);
+		const mergedConfig = deepMergeConfig(baseConversationConfig, {
+			...(config.tts
+				? {
+						tts: {
+							...config.tts,
+						},
+					}
+				: {}),
+			...(config.agent
+				? {
+						agent: {
+							...(baseConversationConfig.agent || {}),
+							prompt: {
+								...(baseConversationConfig.agent?.prompt || {}),
+								...config.agent.prompt,
+							},
+						},
+					}
+				: {}),
+		}) as Partial<ConversationConfigModel>;
 
-			// Accept any valid value (object, array, primitive)
-			if (isValidValue(value)) {
-				if (isValidObject(value)) {
-					// Deep clone objects to avoid reference issues
-					conversationConfig[key] = JSON.parse(JSON.stringify(value));
-				} else if (Array.isArray(value)) {
-					conversationConfig[key] = [...value];
-				} else {
-					conversationConfig[key] = value;
-				}
-			}
+		form.setValues({
+			agentConfig: {
+				...currentAgentConfig,
+				conversationConfig: mergedConfig,
+			},
 		});
-
-		// Only update the form if there are valid properties to apply
-		console.log('Filtered conversation config:', conversationConfig);
-		if (Object.keys(conversationConfig).length > 0) {
-			const currentAgentConfig = form.values.agentConfig || {};
-			const mergedConfig = deepMergeConfig(
-				currentAgentConfig.conversationConfig || {},
-				conversationConfig as Record<string, any>
-			);
-
-			console.log('Merged config:', mergedConfig);
-			form.setValues({
-				agentConfig: {
-					...currentAgentConfig,
-					conversationConfig: mergedConfig as ConversationConfigModel,
-				},
-			});
-		} else {
-			console.log('No valid properties to apply from config');
-		}
 	};
 
 	const handleOpenModal = () => {
@@ -100,32 +66,70 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 			applyConversationConfig(param.params.conversationConfig);
 			setAppliedParam(param);
 			setIsModalOpen(false);
+			form.setFieldValue('configId', param.id);
 		}
 	};
+
+	const currentPredefinedParam = useMemo(() => {
+		console.log('predefinedParams:', predefinedParams, form.values.configId);
+
+		if (!predefinedParams || predefinedParams.length === 0) {
+			return null;
+		}
+
+		return predefinedParams.find((param) => param.id === form.values.configId);
+	}, [predefinedParams, form.values.configId]);
 
 	return (
 		<>
 			<SectionCard
-				title='Predefined Parameters'
-				description='Select from predefined parameter sets for your campaign'
-				headerActions={
-					<Tooltip label='Choose from predefined campaign configurations'>
-						<Button
-							variant='light'
-							leftSection={<IconRefresh size={16} />}
-							onClick={handleOpenModal}
-						>
-							Load configuration
-						</Button>
-					</Tooltip>
-				}
+				title='Active Configuration'
+				description='Select and apply predefined conversation configurations for your campaign agent.'
 			>
-				<Stack gap='lg'>
-					<Stack gap='sm'>
-						<ConfigurationSummary
-							config={form.values?.agentConfig?.conversationConfig}
-						/>
-					</Stack>
+				<Stack gap='md'>
+					{currentPredefinedParam ? (
+						<div className={styles.appliedConfigCard}>
+							<Group
+								gap='md'
+								align='flex-start'
+								wrap='nowrap'
+								justify='space-between'
+							>
+								<Group gap='md' align='flex-start' wrap='nowrap'>
+									<div className={styles.checkIconCircle}>
+										<IconCheck size={24} stroke={2.5} />
+									</div>
+									<Stack gap={4} style={{ flex: 1 }}>
+										<Text fw={600} fz='lg' c='dark'>
+											{currentPredefinedParam.name}
+										</Text>
+										<Text fz='sm' c='dimmed'>
+											Active configuration
+										</Text>
+										<Text fz='sm' c='dimmed' mt={8}>
+											Configuration applied successfully
+										</Text>
+									</Stack>
+								</Group>
+								<Tooltip label='Change configuration'>
+									<ActionIcon
+										variant='subtle'
+										size='lg'
+										onClick={handleOpenModal}
+										aria-label='Change configuration'
+									>
+										<IconRefresh size={20} />
+									</ActionIcon>
+								</Tooltip>
+							</Group>
+						</div>
+					) : (
+						<div className={styles.emptyConfigCard}>
+							<Text fz='sm' c='dimmed' ta='center'>
+								No configuration applied
+							</Text>
+						</div>
+					)}
 				</Stack>
 			</SectionCard>
 

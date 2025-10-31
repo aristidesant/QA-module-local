@@ -23,7 +23,7 @@ import useCampaignsPredefinedParams, {
 	CampaignPredefinedParam,
 } from '../CampaignsForm/useCampaignsPredefinedParams';
 import { deepMergeConfig } from '~/utils/objectUtils';
-import type { ConversationConfigModel } from '~/models/AgentListObject';
+import type { CampaignPredefinedConversationConfig } from '~/models/CampaignPredefinedParam';
 // import ConfigurationSummary from '../CampaignsForm/AgentSection/CampaignConfigurationPredefinedParams/ConfigurationSummary';
 import { CreateCampaignWithAgentDTO } from '~/api/campaignsApi';
 
@@ -91,68 +91,33 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 	const [selectedParam, setSelectedParam] =
 		useState<CampaignPredefinedParam | null>(null);
 
-	const isValidValue = (value: unknown): boolean => {
-		if (value === null || value === undefined) return false;
-		if (typeof value === 'string' && value.length === 0) return false;
-		if (typeof value === 'number' && isNaN(value)) return false;
-		return true;
-	};
+	const applyConversationConfig = (
+		config: CampaignPredefinedConversationConfig
+	) => {
+		const currentAgentConfig = form.values.agent.conversationConfig || {};
 
-	const isValidObject = (obj: unknown): obj is Record<string, any> => {
-		return (
-			obj !== null &&
-			obj !== undefined &&
-			typeof obj === 'object' &&
-			!Array.isArray(obj)
-		);
-	};
-
-	const applyConversationConfig = (config: ConversationConfigModel) => {
-		if (!isValidObject(config)) {
-			console.log('Config is not a valid object:', config);
-			return;
-		}
-		const conversationConfig: Record<string, any> = {};
-
-		// Apply all properties from the config that have valid values
-		(
-			[
-				'asr',
-				'tts',
-				'turn',
-				'agent',
-				'conversation',
-				'languagePresets',
-			] as const
-		).forEach((key) => {
-			const value = config[key];
-
-			// Accept any valid value (object, array, primitive)
-			if (isValidValue(value)) {
-				if (isValidObject(value)) {
-					// Deep clone objects to avoid reference issues
-					conversationConfig[key] = JSON.parse(JSON.stringify(value));
-				} else if (Array.isArray(value)) {
-					conversationConfig[key] = [...value];
-				} else {
-					conversationConfig[key] = value;
-				}
-			}
+		const mergedConfig = deepMergeConfig(currentAgentConfig, {
+			...(config.tts
+				? {
+						tts: {
+							...config.tts,
+						},
+					}
+				: {}),
+			...(config.agent
+				? {
+						agent: {
+							...(currentAgentConfig.agent || {}),
+							prompt: {
+								...(currentAgentConfig.agent?.prompt || {}),
+								...config.agent.prompt,
+							},
+						},
+					}
+				: {}),
 		});
 
-		// Only update the form if there are valid properties to apply
-		console.log('Filtered conversation config:', conversationConfig);
-		if (Object.keys(conversationConfig).length > 0) {
-			const currentAgentConfig = form.values.agent || {};
-			const mergedConfig = deepMergeConfig(
-				currentAgentConfig.conversationConfig || {},
-				conversationConfig as Record<string, any>
-			);
-
-			form.setFieldValue('agent.conversationConfig', mergedConfig);
-		} else {
-			console.log('No valid properties to apply from config');
-		}
+		form.setFieldValue('agent.conversationConfig', mergedConfig);
 	};
 
 	const handleSubmit = (values: typeof form.values) => {
@@ -308,6 +273,7 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 							if (param && param.params?.conversationConfig) {
 								applyConversationConfig(param.params.conversationConfig);
 								setSelectedParam(param);
+								form.setFieldValue('campaign.configId', param.id);
 							}
 						}}
 						clearable

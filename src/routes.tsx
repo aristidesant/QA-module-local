@@ -52,6 +52,12 @@ const ProfilePage = React.lazy(() => import('./modules/profile'));
 const DoNotCallPage = React.lazy(
 	() => import('./modules/do-not-call/DoNotCallPage')
 );
+const CampaignPredefinedParamsPage = React.lazy(
+	() =>
+		import(
+			'./modules/visual-configs/CampaignPredefinedParamsPage/CampaignPredefinedParamsPage'
+		)
+);
 
 const router = createBrowserRouter([
 	// Public routes
@@ -210,6 +216,16 @@ const router = createBrowserRouter([
 						element: (
 							<Suspense fallback={<div>Loading Do Not Call...</div>}>
 								<DoNotCallPage />
+							</Suspense>
+						),
+					},
+					{
+						path: 'visual-config/campaign-predefined-params',
+						element: (
+							<Suspense
+								fallback={<div>Loading campaign predefined params...</div>}
+							>
+								<CampaignPredefinedParamsPage />
 							</Suspense>
 						),
 					},

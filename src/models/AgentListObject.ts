@@ -97,7 +97,7 @@ export interface AgentConfigModel {
 	workspaceOverrides: {
 		webhooks: Record<string, any>;
 	};
-	conversationConfig: ConversationConfigModel;
+	conversationConfig: Partial<ConversationConfigModel>;
 }
 
 export interface ConversationConfigModel {

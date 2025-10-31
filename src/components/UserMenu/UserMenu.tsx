@@ -104,6 +104,11 @@ export const UserMenu: React.FC = () => {
 					icon: <IconPhoneOff size={16} />,
 					path: '/do-not-call',
 				},
+				{
+					label: 'Campaign Predefined Params',
+					icon: <IconSettings size={16} />,
+					path: '/visual-config/campaign-predefined-params',
+				},
 			],
 		},
 		{

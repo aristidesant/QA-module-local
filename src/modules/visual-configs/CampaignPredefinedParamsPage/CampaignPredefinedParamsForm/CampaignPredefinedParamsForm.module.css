@@ -1,0 +1,198 @@
+.form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+}
+
+@media (max-width: 480px) {
+	.form {
+		gap: var(--mantine-spacing-sm);
+	}
+}
+
+.actions {
+	padding: var(--mantine-spacing-md);
+	border-top: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--mantine-color-gray-0);
+	margin-top: auto;
+	gap: var(--mantine-spacing-sm);
+	flex-wrap: wrap;
+	display: flex;
+	justify-content: flex-end;
+}
+
+/* On mobile, stack buttons vertically */
+@media (max-width: 480px) {
+	.actions {
+		flex-direction: column;
+		padding: var(--mantine-spacing-md);
+	}
+
+	.actionsRight {
+		flex-basis: 100%;
+		flex-direction: column;
+	}
+
+	.actionsRight :global(button) {
+		width: 100%;
+	}
+
+	.actions :global(button) {
+		width: 100%;
+	}
+}
+
+.section {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-md);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	background-color: var(--mantine-color-gray-0);
+}
+
+@media (max-width: 480px) {
+	.section {
+		gap: var(--mantine-spacing-sm);
+		padding: var(--mantine-spacing-md);
+	}
+}
+
+.sectionHeading {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+	margin-bottom: var(--mantine-spacing-sm);
+	padding-bottom: var(--mantine-spacing-sm);
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.sectionTitle {
+	font-size: var(--mantine-font-size-md);
+	font-weight: 600;
+	color: var(--mantine-color-dark-7);
+	margin: 0;
+}
+
+.sectionDescription {
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-dimmed);
+	margin: 0;
+}
+
+/* Optimize text sizes for mobile */
+@media (max-width: 480px) {
+	.sectionTitle {
+		font-size: calc(var(--mantine-font-size-sm) * 1.15);
+	}
+
+	.sectionDescription {
+		font-size: calc(var(--mantine-font-size-xs) * 1.1);
+	}
+}
+
+.grid {
+	display: grid;
+	gap: var(--mantine-spacing-md);
+	grid-template-columns: 1fr;
+}
+
+.promptField {
+	font-family: var(--mantine-font-family-monospace);
+}
+
+/* Collapsible Section Styles */
+.collapsibleSection {
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	background-color: var(--mantine-color-gray-0);
+	overflow: hidden;
+	margin-bottom: var(--mantine-spacing-md);
+}
+
+.collapsibleHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: var(--mantine-spacing-md);
+	cursor: pointer;
+	background-color: var(--mantine-color-gray-0);
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+	user-select: none;
+	transition: background-color 150ms ease;
+}
+
+.collapsibleHeader:hover {
+	background-color: var(--mantine-color-gray-1);
+}
+
+.collapsibleHeader.isOpen {
+	border-bottom: 1px solid var(--mantine-color-gray-3);
+}
+
+.collapsibleTitle {
+	font-weight: 600;
+	color: var(--mantine-color-dark-6);
+	font-size: var(--mantine-font-size-sm);
+	margin: 0;
+}
+
+.collapsibleIcon {
+	transition: transform 200ms ease;
+	display: flex;
+	align-items: center;
+	color: var(--mantine-color-gray-6);
+}
+
+.collapsibleIcon.isOpen {
+	transform: rotate(180deg);
+}
+
+.collapsibleContent {
+	padding: var(--mantine-spacing-md);
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	max-height: 2000px;
+	overflow: hidden;
+	transition:
+		max-height 250ms ease,
+		opacity 250ms ease;
+	opacity: 1;
+}
+
+.collapsibleContent.isClosed {
+	max-height: 0;
+	opacity: 0;
+	padding: 0 var(--mantine-spacing-md);
+}
+
+/* Slider and input value display */
+.sliderContainer {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.sliderLabel {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+}
+
+.sliderValue {
+	font-weight: 600;
+	color: var(--mantine-color-blue-6);
+	min-width: 50px;
+	text-align: right;
+	font-family: var(--mantine-font-family-monospace);
+	font-size: var(--mantine-font-size-sm);
+}
+
+/* Override Mantine Slider for better mobile spacing */
+.sliderContainer :global(.mantine-Slider-root) {
+	margin-top: var(--mantine-spacing-xs);
+	margin-bottom: var(--mantine-spacing-xs);
+}

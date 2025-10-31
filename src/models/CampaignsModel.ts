@@ -48,6 +48,7 @@ export interface Campaign {
 	agentName: string;
 	description: string;
 	budget: number;
+	configId: string;
 	spent: number;
 	type: 'OUTBOUND' | 'INBOUND';
 	status: CampaignStatus;

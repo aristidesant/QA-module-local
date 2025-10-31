@@ -58,6 +58,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({ campaign }) => {
 		initialValues: {
 			name: campaign?.name || '',
 			agentName: campaign?.agentName || '',
+			configId: campaign?.configId || '',
 			description: campaign?.description || '',
 			budget: campaign?.budget ?? 0,
 			spent: campaign?.spent ?? 0,

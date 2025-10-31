@@ -1,11 +1,17 @@
 import React from 'react';
 import { Stack } from '@mantine/core';
 
+import type { CampaignPredefinedConversationConfig } from '~/models/CampaignPredefinedParam';
 import type { ConversationConfigModel } from '~/models/AgentListObject';
 import CampaignVoiceProgressDisplay from '../CampaignVoiceProgressDisplay';
 
+type SummaryConversationConfig =
+	| CampaignPredefinedConversationConfig
+	| Partial<ConversationConfigModel>
+	| null;
+
 interface ConfigurationSummaryProps {
-	config?: ConversationConfigModel;
+	config?: SummaryConversationConfig;
 }
 
 const ConfigurationSummary: React.FC<ConfigurationSummaryProps> = ({

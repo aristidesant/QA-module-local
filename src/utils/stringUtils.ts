@@ -1,4 +1,11 @@
 /**
+ * Generate a UUID v4 identifier
+ */
+export const generateUUID = (): string => {
+	return crypto.randomUUID();
+};
+
+/**
  * Convert snake_case string to camelCase
  */
 export const snakeToCamel = (str: string): string => {

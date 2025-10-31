@@ -1,13 +1,7 @@
 import { useMemo } from 'react';
-import { ConversationConfigModel } from '~/models/AgentListObject';
+import type { CampaignPredefinedParam } from '~/models/CampaignPredefinedParam';
 import { useClientConfigByName } from '~/queries/useClientConfigs';
-
-export type CampaignPredefinedParam = {
-	name: string;
-	params: {
-		conversationConfig?: ConversationConfigModel;
-	};
-};
+export type { CampaignPredefinedParam } from '~/models/CampaignPredefinedParam';
 
 const useCampaignsPredefinedParams = () => {
 	const { data } = useClientConfigByName('campaign_predefined_params');
