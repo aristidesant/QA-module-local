@@ -5,6 +5,7 @@ import {
 	Button,
 	Group,
 	Paper,
+	PasswordInput,
 	Select,
 	Stack,
 	Text,
@@ -36,6 +37,7 @@ interface UserFormValues {
 	firstName: string;
 	lastName: string;
 	clientId: string | null;
+	password?: string;
 }
 
 const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
@@ -48,6 +50,7 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 			firstName: '',
 			lastName: '',
 			clientId: null,
+			password: '',
 		},
 		validate: {
 			email: (value) =>
@@ -59,6 +62,17 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 				value && Number(value) > 0
 					? null
 					: 'Client ID must be greater than zero',
+			password: (value) => {
+				if (!isEditMode) {
+					if (!value || value.trim().length === 0) {
+						return 'Password is required';
+					}
+					if (value.length < 8) {
+						return 'Password must be at least 8 characters';
+					}
+				}
+				return null;
+			},
 		},
 	});
 
@@ -108,21 +122,18 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 	);
 
 	const handleSubmit = form.onSubmit(async (values) => {
-		const basePayload: CreateUserPayload = {
-			email: values.email,
-			username: values.username,
-			firstName: values.firstName || undefined,
-			lastName: values.lastName || undefined,
-			clientId: Number(values.clientId) as number,
-		};
-
 		try {
 			if (isEditMode) {
 				if (!userId) {
 					throw new Error('Missing user identifier.');
 				}
+				// En modo edición, NUNCA incluir password
 				const updatePayload: UpdateUserPayload = {
-					...basePayload,
+					email: values.email,
+					username: values.username,
+					firstName: values.firstName || undefined,
+					lastName: values.lastName || undefined,
+					clientId: Number(values.clientId) as number,
 				};
 				await updateMutation.mutateAsync({ id: userId, data: updatePayload });
 				notifications.show({
@@ -131,7 +142,16 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 					color: 'green',
 				});
 			} else {
-				await createMutation.mutateAsync(basePayload);
+				// En modo creación, SIEMPRE incluir password
+				const createPayload: CreateUserPayload = {
+					email: values.email,
+					username: values.username,
+					firstName: values.firstName || undefined,
+					lastName: values.lastName || undefined,
+					clientId: Number(values.clientId) as number,
+					password: values.password,
+				};
+				await createMutation.mutateAsync(createPayload);
 				notifications.show({
 					title: 'User created',
 					message: `${values.email} has been added`,
@@ -223,6 +243,18 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 							searchable
 						/>
 					</div>
+					{!isEditMode && (
+						<div className={`${classes.row} ${classes.rowSingle}`}>
+							<PasswordInput
+								required
+								label='Password'
+								placeholder='Enter password'
+								description='Must be at least 8 characters'
+								className={classes.field}
+								{...form.getInputProps('password')}
+							/>
+						</div>
+					)}
 				</section>
 
 				<section className={classes.section}>
