@@ -111,6 +111,13 @@ export const ContactListOverview: React.FC<ContactListOverviewProps> = () => {
 			const primaryPhone = contact.phones?.[0] || '';
 			const primaryEmail = contact.emails?.[0] || '';
 
+			// Map phoneNumbers to include validation errors
+			const phonesWithValidation =
+				contact.phoneNumbers?.map((entry) => ({
+					phoneNumber: entry.phoneNumber,
+					validationError: entry.validationError,
+				})) || [];
+
 			const contactDetails = {
 				id: contact.id.toString(),
 				name: `${contact.firstName || ''} ${contact.lastName || ''}`.trim(),
@@ -119,6 +126,7 @@ export const ContactListOverview: React.FC<ContactListOverviewProps> = () => {
 				location: contact.address || 'N/A',
 				language: 'Spanish',
 				initials: getInitials(contact.firstName || '', contact.lastName || ''),
+				phones: phonesWithValidation,
 				engagementLevel: 87,
 				qualificationScore: 75,
 				sentiment: { positive: 2113, neutral: 45, negative: 16 },
