@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
 	Alert,
 	Badge,
@@ -6,13 +6,14 @@ import {
 	Group,
 	Paper,
 	PasswordInput,
+	Progress,
 	Select,
 	Stack,
 	Text,
 	TextInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IconInfoCircle } from '@tabler/icons-react';
+import { IconCheck, IconInfoCircle, IconX } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { getErrorMessage } from '~/utils/httpClient';
 import classes from './UserForm.module.css';
@@ -42,6 +43,13 @@ interface UserFormValues {
 
 const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 	const isEditMode = mode === 'edit';
+	const [passwordStrength, setPasswordStrength] = useState({
+		minLength: false,
+		hasUppercase: false,
+		hasLowercase: false,
+		hasNumber: false,
+		hasSymbol: false,
+	});
 
 	const form = useForm<UserFormValues>({
 		initialValues: {
@@ -120,6 +128,32 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 		() => (isEditMode && isUserLoading) || isClientsLoading,
 		[isEditMode, isUserLoading, isClientsLoading]
 	);
+
+	// Calculate password strength
+	const checkPasswordStrength = (password: string) => {
+		const strength = {
+			minLength: password.length >= 8,
+			hasUppercase: /[A-Z]/.test(password),
+			hasLowercase: /[a-z]/.test(password),
+			hasNumber: /[0-9]/.test(password),
+			hasSymbol: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+		};
+		setPasswordStrength(strength);
+		return strength;
+	};
+
+	// Calculate progress percentage
+	const passwordProgress = useMemo(() => {
+		const checks = Object.values(passwordStrength).filter(Boolean).length;
+		return (checks / 5) * 100;
+	}, [passwordStrength]);
+
+	// Get progress color
+	const progressColor = useMemo(() => {
+		if (passwordProgress === 100) return 'green';
+		if (passwordProgress >= 60) return 'yellow';
+		return 'red';
+	}, [passwordProgress]);
 
 	const handleSubmit = form.onSubmit(async (values) => {
 		try {
@@ -249,10 +283,114 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 								required
 								label='Password'
 								placeholder='Enter password'
-								description='Must be at least 8 characters'
 								className={classes.field}
 								{...form.getInputProps('password')}
+								onChange={(event) => {
+									form.setFieldValue('password', event.currentTarget.value);
+									checkPasswordStrength(event.currentTarget.value);
+								}}
 							/>
+							{form.values.password && (
+								<Stack gap='xs' style={{ marginTop: '8px' }}>
+									<Group gap='xs' align='center'>
+										<Progress
+											value={passwordProgress}
+											color={progressColor}
+											size='sm'
+											style={{ flex: 1 }}
+										/>
+										<Text size='xs' c='dimmed' style={{ minWidth: '60px' }}>
+											{passwordProgress === 100
+												? 'Strong'
+												: passwordProgress >= 60
+													? 'Medium'
+													: 'Weak'}
+										</Text>
+									</Group>
+									<Stack gap={4}>
+										<Group gap='xs'>
+											{passwordStrength.minLength ? (
+												<IconCheck
+													size={14}
+													color='var(--mantine-color-green-6)'
+												/>
+											) : (
+												<IconX size={14} color='var(--mantine-color-red-6)' />
+											)}
+											<Text
+												size='xs'
+												c={passwordStrength.minLength ? 'green' : 'dimmed'}
+											>
+												At least 8 characters
+											</Text>
+										</Group>
+										<Group gap='xs'>
+											{passwordStrength.hasUppercase ? (
+												<IconCheck
+													size={14}
+													color='var(--mantine-color-green-6)'
+												/>
+											) : (
+												<IconX size={14} color='var(--mantine-color-red-6)' />
+											)}
+											<Text
+												size='xs'
+												c={passwordStrength.hasUppercase ? 'green' : 'dimmed'}
+											>
+												At least 1 uppercase letter
+											</Text>
+										</Group>
+										<Group gap='xs'>
+											{passwordStrength.hasLowercase ? (
+												<IconCheck
+													size={14}
+													color='var(--mantine-color-green-6)'
+												/>
+											) : (
+												<IconX size={14} color='var(--mantine-color-red-6)' />
+											)}
+											<Text
+												size='xs'
+												c={passwordStrength.hasLowercase ? 'green' : 'dimmed'}
+											>
+												At least 1 lowercase letter
+											</Text>
+										</Group>
+										<Group gap='xs'>
+											{passwordStrength.hasNumber ? (
+												<IconCheck
+													size={14}
+													color='var(--mantine-color-green-6)'
+												/>
+											) : (
+												<IconX size={14} color='var(--mantine-color-red-6)' />
+											)}
+											<Text
+												size='xs'
+												c={passwordStrength.hasNumber ? 'green' : 'dimmed'}
+											>
+												At least 1 number
+											</Text>
+										</Group>
+										<Group gap='xs'>
+											{passwordStrength.hasSymbol ? (
+												<IconCheck
+													size={14}
+													color='var(--mantine-color-green-6)'
+												/>
+											) : (
+												<IconX size={14} color='var(--mantine-color-red-6)' />
+											)}
+											<Text
+												size='xs'
+												c={passwordStrength.hasSymbol ? 'green' : 'dimmed'}
+											>
+												At least 1 special character (!@#$%^&*...)
+											</Text>
+										</Group>
+									</Stack>
+								</Stack>
+							)}
 						</div>
 					)}
 				</section>
