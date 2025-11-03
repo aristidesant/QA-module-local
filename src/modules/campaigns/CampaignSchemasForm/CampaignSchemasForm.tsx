@@ -102,7 +102,42 @@ export const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 		},
 	});
 
+	const validateFieldNames = () => {
+		const camelCaseRegex = /^[a-z][a-zA-Z0-9]*$/;
+		const invalidFields: string[] = [];
+
+		schemaFields.forEach((field, index) => {
+			if (!field.name) {
+				invalidFields.push(`Field ${index + 1}: Name is required`);
+			} else if (!camelCaseRegex.test(field.name)) {
+				invalidFields.push(
+					`Field ${index + 1} (${field.name}): Must be camelCase (start with lowercase, use only letters/numbers)`
+				);
+			}
+		});
+
+		return invalidFields;
+	};
+
 	const handleSubmit = async (values: typeof form.values) => {
+		// Validate field names before submission
+		const fieldNameErrors = validateFieldNames();
+		if (fieldNameErrors.length > 0) {
+			notifications.show({
+				title: 'Invalid Field Names',
+				message: (
+					<div>
+						{fieldNameErrors.map((error, idx) => (
+							<div key={idx}>{error}</div>
+						))}
+					</div>
+				),
+				color: 'red',
+				autoClose: 8000,
+			});
+			return;
+		}
+
 		try {
 			const code = generateCode(values.name);
 
@@ -260,6 +295,12 @@ export const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 		setSchemaFields(updated);
 	};
 
+	const isFieldNameValid = (name: string) => {
+		if (!name) return true; // Empty is handled by required validation
+		const camelCaseRegex = /^[a-z][a-zA-Z0-9]*$/;
+		return camelCaseRegex.test(name);
+	};
+
 	return (
 		<form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
 			<Stack gap='md'>
@@ -306,25 +347,31 @@ export const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 						</Button>
 					</Group>
 
-					<Stack gap='sm'>
+					<Stack gap='xs'>
 						{schemaFields.map((field, index) => (
 							<div key={index} className={styles.fieldRow}>
 								<Group gap='sm' align='flex-end'>
-									<TextInput
-										label='Field Name'
-										placeholder='e.g., firstName'
-										required
-										style={{ flex: 1 }}
-										value={field.name}
-										onChange={(event) =>
-											updateField(index, { name: event.currentTarget.value })
-										}
-									/>
+									<div className={styles.fieldCol}>
+										<TextInput
+											label='Field Name'
+											placeholder='e.g., firstName'
+											required
+											value={field.name}
+											onChange={(event) =>
+												updateField(index, { name: event.currentTarget.value })
+											}
+											error={
+												field.name && !isFieldNameValid(field.name)
+													? 'Must be camelCase'
+													: undefined
+											}
+										/>
+									</div>
 									<TextInput
 										label='Field Label'
 										placeholder='e.g., First Name'
 										required
-										style={{ flex: 1 }}
+										className={styles.fieldCol}
 										value={field.label}
 										onChange={(event) =>
 											updateField(index, { label: event.currentTarget.value })
@@ -334,7 +381,7 @@ export const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 										label='Type'
 										data={fieldTypeOptions}
 										required
-										style={{ minWidth: 120 }}
+										className={styles.typeSelect}
 										value={field.type}
 										onChange={(value) =>
 											updateField(index, { type: value as any })

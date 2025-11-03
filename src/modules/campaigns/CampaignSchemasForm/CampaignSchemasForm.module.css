@@ -25,3 +25,51 @@
 .submitButton:hover {
 	background-color: var(--mantine-color-blue-7);
 }
+
+.fieldCol {
+	flex: 1;
+}
+
+.typeSelect {
+	min-width: 140px;
+}
+
+.fieldDescription {
+	margin-top: var(--mantine-spacing-xs);
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-7);
+	line-height: 1.4;
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+}
+
+.fieldDescriptionIcon {
+	color: var(--mantine-color-gray-6);
+}
+
+/* Keep for backward compatibility but no longer used */
+.fieldHelper {
+	margin-top: 6px;
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+	line-height: 1.4;
+}
+
+/* New: full-width inline hint */
+.hint {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	color: var(--mantine-color-gray-5);
+	font-size: var(--mantine-font-size-xs);
+	padding: 0;
+	font-style: italic;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.hintIcon {
+	color: var(--mantine-color-gray-5);
+}
