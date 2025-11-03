@@ -101,6 +101,14 @@ const useUsersColumns = ({
 				},
 			},
 			{
+				accessorKey: 'lastLogin',
+				header: 'Last Login',
+				cell: ({ getValue }) => {
+					const value = getValue<string | Date | null | undefined>();
+					return <Text fz='xs'>{value ? timeAgo(value) : '—'}</Text>;
+				},
+			},
+			{
 				accessorKey: 'updatedAt',
 				header: 'Updated',
 				cell: ({ getValue }) => {

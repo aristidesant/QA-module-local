@@ -20,6 +20,7 @@ import { useGetCampaignContactSchemas } from '~/queries/campaignContactSchemasQu
 import type { CampaignContactSchema } from '~/models/CampaignContactSchemaModel';
 import '@uiw/react-md-editor/markdown-editor.css';
 import { notifications } from '@mantine/notifications';
+import { useClientConfigByName } from '~/queries/useClientConfigs';
 
 interface CampaignConfigurationPromptEditModalProps {
 	initialPrompt: string;
@@ -49,6 +50,10 @@ const CampaignConfigurationPromptEditModal: React.FC<
 		{ isActive: true },
 		true
 	);
+
+	// Fetch suggestion_prompt from client-config
+	const { data: suggestionPromptConfig } =
+		useClientConfigByName('suggestion_prompt');
 
 	// Auto-select first available schema if none provided
 	useEffect(() => {
@@ -111,9 +116,9 @@ const CampaignConfigurationPromptEditModal: React.FC<
 					}
 					notifications.show({
 						color: 'blue',
-						title: isPrompt ? 'Prompt Copiado' : 'Variable copied',
+						title: isPrompt ? 'Prompt copied' : 'Variable copied',
 						message: isPrompt
-							? 'El prompt ha sido copiado al portapapeles.'
+							? 'The prompt has been copied to the clipboard.'
 							: `${variable} copied to clipboard.`,
 					});
 				} catch (error) {
@@ -204,32 +209,30 @@ const CampaignConfigurationPromptEditModal: React.FC<
 								Suggested init prompt
 							</Text>
 						</Group>
-						<Text size='xs' c='dimmed'>
-							Copy this time-aware greeting template to start your prompt.
-						</Text>
-						<Stack gap='xs' className={styles.variablesStack}>
-							<Button
-								variant='outline'
-								size='xs'
-								fullWidth
-								onClick={() =>
-									handleVariableCopy(
-										`**Contexto temporal actual:**
-    * Hora local del cliente: {{currentTime}}
-    * Fecha: {{currentDate}}
-    * Zona horaria: {{timezone}}
-    * Periodo del día: {{dayPeriod}}
-
-**Instrucción de saludo:**
-    Inicia la conversación con: "{{greeting}}"
-    Adapta tu tono y energía al periodo del día actual.`,
-										true
-									)
-								}
-							>
-								Copy init prompt
-							</Button>
-						</Stack>
+						{suggestionPromptConfig?.value ? (
+							<>
+								<Text size='xs' c='dimmed'>
+									Copy this time-aware greeting template to start your prompt.
+								</Text>
+								<Stack gap='xs' className={styles.variablesStack}>
+									<Button
+										variant='outline'
+										size='xs'
+										fullWidth
+										onClick={() =>
+											handleVariableCopy(suggestionPromptConfig.value, true)
+										}
+									>
+										Copy init prompt
+									</Button>
+								</Stack>
+							</>
+						) : (
+							<Text size='xs' c='dimmed'>
+								There are no suggestions for prompt. To enable this feature, go
+								to client-config and add a property called "suggestion_prompt".
+							</Text>
+						)}
 					</div>
 
 					<div className={styles.sidebarCard}>
