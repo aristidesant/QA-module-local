@@ -1,3 +1,14 @@
+export interface PhoneValidationError {
+	code: string;
+	message: string;
+	rawPhone: string;
+}
+
+export interface PhoneEntry {
+	phoneNumber: string;
+	validationError?: PhoneValidationError;
+}
+
 export interface Contact {
 	id: number;
 	firstName: string;
@@ -14,7 +25,7 @@ export interface Contact {
 	contactGroupId: number;
 	emails: string[] | null;
 	phones: string[];
-	phoneNumbers: { phoneNumber: string }[];
+	phoneNumbers: PhoneEntry[];
 	status: 'ACTIVE' | 'INACTIVE' | string;
 }
 
