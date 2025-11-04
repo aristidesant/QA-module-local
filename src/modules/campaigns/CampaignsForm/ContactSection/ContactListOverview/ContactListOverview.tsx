@@ -149,6 +149,16 @@ export const ContactListOverview: React.FC<ContactListOverviewProps> = () => {
 		[pagination]
 	);
 
+	// Check if contact has validation errors
+	const getRowClassName = useCallback((row: { original: Contact }) => {
+		const hasValidationError = row.original.phoneNumbers?.some(
+			(entry) => entry.validationError
+		);
+		return hasValidationError
+			? `${styles.contactRow} ${styles.contactRowError}`
+			: styles.contactRow;
+	}, []);
+
 	// Cleanup right panel on unmount
 	useEffect(() => {
 		return () => {
@@ -186,7 +196,7 @@ export const ContactListOverview: React.FC<ContactListOverviewProps> = () => {
 									? 'No contacts found matching the selected filters.'
 									: 'No contacts available.'
 							}
-							getRowClassName={() => styles.contactRow}
+							getRowClassName={getRowClassName}
 						/>
 					)}
 				</div>

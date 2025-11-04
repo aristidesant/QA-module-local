@@ -60,6 +60,15 @@
 	cursor: pointer;
 }
 
+.contactRowError {
+	background-color: var(--mantine-color-red-0) !important;
+	border-left: 3px solid var(--mantine-color-red-6);
+}
+
+.contactRowError:hover {
+	background-color: var(--mantine-color-red-1) !important;
+}
+
 /* Contact Info Column */
 .avatar {
 	flex-shrink: 0;
@@ -144,6 +153,18 @@
 	border-color: var(--mantine-color-gray-3);
 	color: var(--mantine-color-gray-7);
 	background-color: var(--mantine-color-gray-0);
+}
+
+.errorBadge {
+	font-size: 10px;
+	font-weight: 600;
+	height: 18px;
+	min-width: 18px;
+	padding: 0 6px;
+	cursor: help;
+	flex-shrink: 0;
+	background-color: var(--mantine-color-red-6);
+	color: var(--mantine-color-white);
 }
 
 .completenessWrapper {
