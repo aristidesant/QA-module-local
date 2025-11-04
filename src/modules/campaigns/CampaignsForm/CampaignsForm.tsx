@@ -103,7 +103,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({ campaign }) => {
 						...cleanedValue.agentConfig.conversationConfig,
 						agent: {
 							...cleanedValue.agentConfig.conversationConfig.agent,
-							prompt: restPrompt,
+							prompt: restPrompt as any,
 						},
 					},
 				};

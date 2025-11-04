@@ -133,7 +133,7 @@ export interface ConversationConfigModel {
 				maxDocumentsLength: number;
 				maxRetrievedRagChunksCount: number;
 			};
-			tools: Tool[];
+			tools: SystemToolModel[];
 			prompt: string;
 			toolIds: any[];
 			maxTokens: number;
@@ -158,20 +158,17 @@ export interface ConversationConfigModel {
 	languagePresets: Record<string, any>;
 }
 
-export interface Tool {
+export interface SystemToolModel {
 	type: string;
 	name: string;
 	description: string;
-	response_timeout_secs: number;
-	disable_interruptions: boolean;
-	force_pre_tool_speech: boolean;
+	responseTimeoutSecs: number;
+	disableInterruptions: boolean;
+	forcePreToolSpeech: boolean;
 	assignments: any[];
-	tool_call_sound: string | null;
-	tool_call_sound_behavior: string;
-	params: {
-		system_tool_type: string;
-		transfers: any[];
-	};
+	toolCallSound: string | null;
+	toolCallSoundBehavior: string;
+	params: Record<string, any>;
 }
 
 export type AgentWithCampaignListItem = Pick<

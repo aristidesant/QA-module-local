@@ -47,7 +47,7 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 						},
 					}
 				: {}),
-		}) as Partial<ConversationConfigModel>;
+		}) as ConversationConfigModel;
 
 		form.setValues({
 			agentConfig: {
