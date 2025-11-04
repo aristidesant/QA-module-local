@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from 'react-router';
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router';
 import React, { Suspense } from 'react';
 
 // Route components (lazy-loaded where appropriate to split bundles)
@@ -24,7 +24,7 @@ const CampaignSchemasPage = React.lazy(
 	() => import('./modules/campaigns/CampaignSchemasPage')
 );
 const ClientConfigsPage = React.lazy(
-	() => import('./modules/client-configs/ClientConfigsPage')
+	() => import('./modules/configurations/client-configs/ClientConfigsPage')
 );
 const ToolsPage = React.lazy(() => import('./modules/tools/ToolsPage'));
 const UsersPage = React.lazy(() => import('./modules/users'));
@@ -57,6 +57,15 @@ const CampaignPredefinedParamsPage = React.lazy(
 		import(
 			'./modules/configurations/CampaignPredefinedParamsPage/CampaignPredefinedParamsPage'
 		)
+);
+const RegionalSettingsParamsPage = React.lazy(
+	() =>
+		import(
+			'./modules/configurations/RegionalSettingsParamsPage/RegionalSettingsParamsPage'
+		)
+);
+const ConfigurationsPage = React.lazy(
+	() => import('./modules/configurations/ConfigurationsPage')
 );
 
 const router = createBrowserRouter([
@@ -180,12 +189,48 @@ const router = createBrowserRouter([
 						),
 					},
 					{
-						path: 'client-configs',
+						path: 'configurations',
 						element: (
-							<Suspense fallback={<div>Loading client configs...</div>}>
-								<ClientConfigsPage />
+							<Suspense fallback={<div>Loading configurations...</div>}>
+								<ConfigurationsPage />
 							</Suspense>
 						),
+						children: [
+							{
+								index: true,
+								element: (
+									<Navigate to='/configurations/client-configs' replace />
+								),
+							},
+							{
+								path: 'client-configs',
+								element: (
+									<Suspense fallback={<div>Loading client configs...</div>}>
+										<ClientConfigsPage />
+									</Suspense>
+								),
+							},
+							{
+								path: 'campaign-predefined-params',
+								element: (
+									<Suspense
+										fallback={<div>Loading campaign predefined params...</div>}
+									>
+										<CampaignPredefinedParamsPage />
+									</Suspense>
+								),
+							},
+							{
+								path: 'regional-settings-params',
+								element: (
+									<Suspense
+										fallback={<div>Loading regional settings params...</div>}
+									>
+										<RegionalSettingsParamsPage />
+									</Suspense>
+								),
+							},
+						],
 					},
 					{
 						path: 'prompter',
@@ -219,16 +264,7 @@ const router = createBrowserRouter([
 							</Suspense>
 						),
 					},
-					{
-						path: 'visual-config/campaign-predefined-params',
-						element: (
-							<Suspense
-								fallback={<div>Loading campaign predefined params...</div>}
-							>
-								<CampaignPredefinedParamsPage />
-							</Suspense>
-						),
-					},
+
 					{
 						path: 'profile',
 						element: (

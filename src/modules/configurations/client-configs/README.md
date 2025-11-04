@@ -6,21 +6,21 @@ A complete CRUD module for managing client configurations.
 
 ### Page Component
 
-- `/src/modules/client-configs/ClientConfigsPage/ClientConfigsPage.tsx`
-- `/src/modules/client-configs/ClientConfigsPage/ClientConfigsPage.module.css`
-- `/src/modules/client-configs/ClientConfigsPage/index.ts`
+- `/src/modules/configurations/client-configs/ClientConfigsPage/ClientConfigsPage.tsx`
+- `/src/modules/configurations/client-configs/ClientConfigsPage/ClientConfigsPage.module.css`
+- `/src/modules/configurations/client-configs/ClientConfigsPage/index.ts`
 
 ### Content Component (Table View)
 
-- `/src/modules/client-configs/ClientConfigsContent/ClientConfigsContent.tsx`
-- `/src/modules/client-configs/ClientConfigsContent/ClientConfigsContent.module.css`
-- `/src/modules/client-configs/ClientConfigsContent/index.ts`
+- `/src/modules/configurations/client-configs/ClientConfigsContent/ClientConfigsContent.tsx`
+- `/src/modules/configurations/client-configs/ClientConfigsContent/ClientConfigsContent.module.css`
+- `/src/modules/configurations/client-configs/ClientConfigsContent/index.ts`
 
 ### Form Component (Create/Edit)
 
-- `/src/modules/client-configs/ClientConfigsForm/ClientConfigsForm.tsx`
-- `/src/modules/client-configs/ClientConfigsForm/ClientConfigsForm.module.css`
-- `/src/modules/client-configs/ClientConfigsForm/index.ts`
+- `/src/modules/configurations/client-configs/ClientConfigsForm/ClientConfigsForm.tsx`
+- `/src/modules/configurations/client-configs/ClientConfigsForm/ClientConfigsForm.module.css`
+- `/src/modules/configurations/client-configs/ClientConfigsForm/index.ts`
 
 ## Integration
 

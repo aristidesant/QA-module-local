@@ -17,7 +17,7 @@ export default interface AgentListObject {
 }
 
 export type AgentUpdateModel = {
-	useToolIds?: boolean;
+	useToolIds: boolean;
 	conversationConfig: Record<string, any>;
 	platformSettings: Record<string, any>;
 	name: string;
@@ -97,7 +97,7 @@ export interface AgentConfigModel {
 	workspaceOverrides: {
 		webhooks: Record<string, any>;
 	};
-	conversationConfig: Partial<ConversationConfigModel>;
+	conversationConfig: ConversationConfigModel;
 }
 
 export interface ConversationConfigModel {
@@ -133,12 +133,12 @@ export interface ConversationConfigModel {
 				maxDocumentsLength: number;
 				maxRetrievedRagChunksCount: number;
 			};
-			tools?: ToolModel[];
-			builtInTools: Record<string, Omit<ToolModel, 'name'>>;
+			tools: Tool[];
 			prompt: string;
-			toolIds?: any[];
+			toolIds: any[];
 			maxTokens: number;
 			temperature: number;
+			builtInTools: Record<string, any>;
 			mcpServerIds: any[];
 			knowledgeBase: any[];
 			nativeMcpServerIds: any[];
@@ -158,17 +158,20 @@ export interface ConversationConfigModel {
 	languagePresets: Record<string, any>;
 }
 
-export interface ToolModel {
+export interface Tool {
 	type: string;
 	name: string;
 	description: string;
-	responseTimeoutSecs: number;
-	disableInterruptions: boolean;
-	forcePreToolSpeech: boolean;
+	response_timeout_secs: number;
+	disable_interruptions: boolean;
+	force_pre_tool_speech: boolean;
 	assignments: any[];
-	toolCallSound: string | null;
-	toolCallSoundBehavior: string;
-	params: Record<string, any>;
+	tool_call_sound: string | null;
+	tool_call_sound_behavior: string;
+	params: {
+		system_tool_type: string;
+		transfers: any[];
+	};
 }
 
 export type AgentWithCampaignListItem = Pick<

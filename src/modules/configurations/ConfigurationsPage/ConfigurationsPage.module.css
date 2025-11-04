@@ -1,0 +1,4 @@
+.container {
+	margin-top: var(--mantine-spacing-md);
+	padding-top: var(--mantine-spacing-md);
+}
