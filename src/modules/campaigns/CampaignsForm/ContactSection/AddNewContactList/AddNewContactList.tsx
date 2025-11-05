@@ -1,10 +1,9 @@
-import { Button, Group, Stack, Text, LoadingOverlay, Box } from '@mantine/core';
+import { Button, Group, Stack, Text, Skeleton, Box } from '@mantine/core';
 import { IconUpload } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { useState } from 'react';
 import styles from './AddNewContactList.module.css';
 import { useCampaignSchedules } from '~/queries/schedulerQueries';
-import ContactListItem from '../ContactListItem';
 import { useUploadContactGroupFile } from '~/queries/contactGroupFilesQueries';
 import type { ContactFileSummary } from '~/models/ContactFileSummary';
 import ContactLimits from '../ContactLimits';
@@ -25,12 +24,7 @@ export const AddNewContactList = ({
 	const [summary, setSummary] = useState<ContactFileSummary | null>(null);
 	// Mutation to upload contact list file to backend
 	const uploadContactGroupFileMutation = useUploadContactGroupFile({});
-	const {
-		data: schedules,
-		refetch: reloadCampaignSchedules,
-		isLoading,
-		isFetching,
-	} = useCampaignSchedules(campaignId);
+	const { refetch: reloadCampaignSchedules } = useCampaignSchedules(campaignId);
 
 	const uploadFile = async (file: File | null) => {
 		if (!file) {
@@ -110,54 +104,19 @@ export const AddNewContactList = ({
 						reloadCampaignSchedules();
 						onRefresh();
 					}}
-					schedulerContactGroup={{}}
+					contactGroup={{}}
 					fileSummary={summary}
-					campaignId={campaignId || ''}
 					objectiveId={objectiveId}
+					campaignId={campaignId}
 				/>
 			)}
 			{!summary && (
-				<>
-					<LoadingOverlay
-						visible={
-							isFetching ||
-							isLoading ||
-							uploadContactGroupFileMutation.isPending
-						}
-						zIndex={999}
-						overlayProps={{ radius: 'sm', blur: 1, backgroundOpacity: 0.5 }}
-						loaderProps={{ type: 'bars' }}
-					/>
+				<Skeleton visible={uploadContactGroupFileMutation.isPending}>
 					<Stack gap='md'>
 						<Text size='sm' c='dimmed'>
-							Select which contact lists you want to include in this campaign.
+							Upload a new contact list file for this campaign.
 						</Text>
 
-						<Stack gap='sm'>
-							{schedules
-								?.filter((item) => item.status === 'active')
-								.flatMap((schedule) =>
-									schedule.scheduleContactGroups?.map(
-										(scheduleContactGroup) => {
-											if (!scheduleContactGroup.contactGroup) return null;
-
-											return (
-												<ContactListItem
-													key={scheduleContactGroup.id}
-													scheduleContactGroup={scheduleContactGroup}
-													withOpenModal={false}
-													campaignId={campaignId}
-													onUpdateComplete={() => {
-														reloadCampaignSchedules();
-														onRefresh();
-													}}
-													objectiveId={objectiveId}
-												/>
-											);
-										}
-									)
-								)}
-						</Stack>
 						<div
 							className={`${styles.uploadArea} ${
 								isDragging ? styles.dragActive : ''
@@ -193,7 +152,7 @@ export const AddNewContactList = ({
 							</Button>
 						</Group>
 					</Stack>
-				</>
+				</Skeleton>
 			)}
 		</Box>
 	);

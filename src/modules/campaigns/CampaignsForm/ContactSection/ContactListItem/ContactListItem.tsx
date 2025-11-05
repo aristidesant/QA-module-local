@@ -1,72 +1,38 @@
-import {
-	Box,
-	Flex,
-	Switch,
-	Text,
-	ThemeIcon,
-	rem,
-	Overlay,
-	Loader,
-	ActionIcon,
-	Divider,
-} from '@mantine/core';
-import { IconClock, IconTrash, IconEdit } from '@tabler/icons-react';
-import type SchedulerContactGroupModel from '~/models/SchedulerContactGroupModel';
+import { Box, Flex, Text, Overlay, Loader, ActionIcon } from '@mantine/core';
+import { IconTrash, IconEdit } from '@tabler/icons-react';
+import type ContactGroup from '~/models/ContactGroup';
 import styles from './ContactListItem.module.css';
-import { useUpdateContactGroupStatus } from '~/queries/schedulerQueries';
-import { useDeleteSchedulerContactGroup } from '~/queries/schedulerContactGroupQueries';
+import { useDeleteContactGroup } from '~/queries/contactGroupQueries';
 import { useState } from 'react';
 import { modals } from '@mantine/modals';
 import SectionTitle from '~/components/SectionTitle';
 import ContactLimits from '../ContactLimits';
-import { formatExpirationDate } from '~/utils/dateUtils';
 
 interface ContactListItemProps {
-	scheduleContactGroup: SchedulerContactGroupModel;
+	contactGroup: ContactGroup;
 	onUpdateComplete: () => void;
 	withOpenModal?: boolean;
-	withSwitch?: boolean;
-	campaignId?: string | number;
 	objectiveId?: number;
+	campaignId?: string | number;
 }
 
 export function ContactListItem({
-	scheduleContactGroup,
+	contactGroup,
 	onUpdateComplete,
 	withOpenModal = true,
-	withSwitch = true,
-	campaignId,
 	objectiveId,
+	campaignId,
 }: ContactListItemProps) {
-	const updateContactGroupStatus = useUpdateContactGroupStatus();
-	const deleteSchedulerContactGroup = useDeleteSchedulerContactGroup();
+	const deleteSchedulerContactGroup = useDeleteContactGroup();
 	const [isUpdating, setIsUpdating] = useState(false);
-
-	const handleToggle = async (event: React.ChangeEvent<HTMLInputElement>) => {
-		event.stopPropagation(); // Prevent modal from opening
-		try {
-			setIsUpdating(true);
-			const newStatus = event.currentTarget.checked ? 'active' : 'inactive';
-			await updateContactGroupStatus.mutateAsync({
-				groupId: scheduleContactGroup.id,
-				status: newStatus,
-			});
-			onUpdateComplete();
-		} catch (error) {
-			console.error('Failed to update contact group status:', error);
-		} finally {
-			setIsUpdating(false);
-		}
-	};
 
 	const handleDelete = () => {
 		modals.openConfirmModal({
 			title: 'Delete Contact List',
 			children: (
 				<Text size='sm'>
-					Are you sure you want to delete the contact list "
-					{scheduleContactGroup?.contactGroup.name}"? This action cannot be
-					undone.
+					Are you sure you want to delete the contact list "{contactGroup?.name}
+					"? This action cannot be undone.
 				</Text>
 			),
 			labels: { confirm: 'Delete', cancel: 'Cancel' },
@@ -74,9 +40,7 @@ export function ContactListItem({
 			onConfirm: async () => {
 				try {
 					setIsUpdating(true);
-					await deleteSchedulerContactGroup.mutateAsync({
-						id: scheduleContactGroup.id,
-					});
+					await deleteSchedulerContactGroup.mutateAsync(contactGroup.id);
 					onUpdateComplete();
 				} catch (error) {
 					console.error('Failed to delete contact group:', error);
@@ -98,13 +62,13 @@ export function ContactListItem({
 			),
 			children: (
 				<ContactLimits
-					schedulerContactGroup={scheduleContactGroup}
-					campaignId={campaignId || scheduleContactGroup.scheduleId || ''}
+					contactGroup={contactGroup}
 					onComplete={() => {
 						onUpdateComplete();
 						modals.close('contact-list-modal');
 					}}
 					objectiveId={objectiveId}
+					campaignId={campaignId}
 				/>
 			),
 			size: 'xl',
@@ -134,36 +98,16 @@ export function ContactListItem({
 				opacity={isUpdating ? 0.6 : 1}
 			>
 				<Flex gap={'xs'} align={'center'}>
-					{withSwitch && (
-						<Switch
-							checked={scheduleContactGroup?.status === 'active'}
-							onChange={handleToggle}
-							onClick={(e) => e.stopPropagation()}
-							size='md'
-						/>
-					)}
 					<Flex direction={'column'}>
 						<Text fz='xs' c='dimmed'>
 							Contact list
 						</Text>
 						<Text fw={500} mb={4}>
-							{scheduleContactGroup?.contactGroup.name}
+							{contactGroup?.name}
 						</Text>
 					</Flex>
 				</Flex>
 				<Flex align='center' gap={'xs'} c='dimmed'>
-					{scheduleContactGroup?.expirationDate && (
-						<>
-							<ThemeIcon variant='transparent' size='xs' c='dimmed'>
-								<IconClock style={{ width: rem(14), height: rem(14) }} />
-							</ThemeIcon>
-							<Text size='sm'>
-								Expires on{' '}
-								{formatExpirationDate(scheduleContactGroup.expirationDate)}
-							</Text>
-							<Divider orientation='vertical' />
-						</>
-					)}
 					{withOpenModal && (
 						<ActionIcon
 							title='Edit contact list'

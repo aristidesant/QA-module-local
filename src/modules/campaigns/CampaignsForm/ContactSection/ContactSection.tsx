@@ -1,44 +1,31 @@
-import { Group, Stack } from '@mantine/core';
-import { ActiveContactList } from './ActiveContactList';
-import { StatusBreakdown } from './StatusBreakdown';
-import { ContactQualityScore } from './ContactQualityScore';
-import { MostUsedContactChannels } from './MostUsedContactChannels';
-import { ContactListOverview } from './ContactListOverview';
-import styles from './ContactSection.module.css';
-import SectionCard from '~/components/SectionCard';
+import { useState } from 'react';
+import { Button, Collapse } from '@mantine/core';
+import { IconChevronDown, IconChevronUp } from '@tabler/icons-react';
+import { ContactListContainer } from './ContactList';
 
 export const ContactSection = () => {
+	const [inactiveCollapsed, setInactiveCollapsed] = useState(true);
+
 	return (
 		<>
-			<ActiveContactList />
-
-			<SectionCard
-				title={'Contact Statistics'}
-				description={
-					'Overview of your contact statistics including status breakdown, quality score, and most used channels.'
+			<ContactListContainer isActive={true} />
+			<Button
+				variant='subtle'
+				leftSection={
+					inactiveCollapsed ? (
+						<IconChevronDown size={16} />
+					) : (
+						<IconChevronUp size={16} />
+					)
 				}
+				onClick={() => setInactiveCollapsed(!inactiveCollapsed)}
+				style={{ marginBottom: '1rem' }}
 			>
-				<Group gap='md' className={styles.statsContainer}>
-					{/*  Status Breakdown */}
-					<div className={styles.statusBreakdown}>
-						<StatusBreakdown />
-					</div>
-
-					{/* Quality Score and Channels */}
-					<Stack
-						align='stretch'
-						justify='stretch'
-						gap='md'
-						className={styles.rightColumn}
-					>
-						<ContactQualityScore />
-						<MostUsedContactChannels />
-					</Stack>
-				</Group>
-			</SectionCard>
-
-			{/* Contact List Overview */}
-			<ContactListOverview />
+				{inactiveCollapsed ? 'Show' : 'Hide'} Inactive Contact Lists
+			</Button>
+			<Collapse in={!inactiveCollapsed}>
+				<ContactListContainer isActive={false} />
+			</Collapse>
 		</>
 	);
 };

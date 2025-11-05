@@ -2,55 +2,76 @@ import { createBrowserRouter, RouterProvider, Navigate } from 'react-router';
 import React, { Suspense } from 'react';
 
 // Route components (lazy-loaded where appropriate to split bundles)
-const AgentList = React.lazy(() => import('./modules/agents/AgentList'));
-const AgentPage = React.lazy(() => import('./modules/agent/AgentPage'));
+const AgentList = React.lazy(
+	() => import('./modules/agents/AgentList/AgentList')
+);
+const AgentPage = React.lazy(
+	() => import('./modules/agent/AgentPage/AgentPage')
+);
 import RouteProtecter, {
 	clientLoader as routeProtecterLoader,
 } from './components/RouteProtecter/RouteProtecter';
-const Layout = React.lazy(() => import('./components/Layout/Layout'));
+const Layout = React.lazy(() => import('./components/Layout'));
 const CampaignsPage = React.lazy(
 	() => import('./modules/campaigns/CampaignsPage/CampaignsPage')
 );
+const CampaignPage = React.lazy(
+	() => import('./modules/campaigns/CampaignPage/CampaignPage')
+);
+const CampaignContactListPage = React.lazy(
+	() =>
+		import(
+			'./modules/campaigns/CampaignContactListPage/CampaignContactListPage'
+		)
+);
 const ForcePasswordChangePage = React.lazy(
-	() => import('./modules/auth/ForcePasswordChangePage')
+	() => import('./modules/auth/ForcePasswordChangePage/ForcePasswordChangePage')
 );
 const CampaignCategoriesPage = React.lazy(
-	() => import('./modules/campaigns/CampaignCategoriesPage')
+	() =>
+		import('./modules/campaigns/CampaignCategoriesPage/CampaignCategoriesPage')
 );
 const CampaignObjectivesPage = React.lazy(
-	() => import('./modules/campaigns/CampaignObjectivesPage')
+	() =>
+		import('./modules/campaigns/CampaignObjectivesPage/CampaignObjectivesPage')
 );
 const CampaignSchemasPage = React.lazy(
-	() => import('./modules/campaigns/CampaignSchemasPage')
+	() => import('./modules/campaigns/CampaignSchemasPage/CampaignSchemasPage')
 );
 const ClientConfigsPage = React.lazy(
 	() => import('./modules/configurations/client-configs/ClientConfigsPage')
 );
-const ToolsPage = React.lazy(() => import('./modules/tools/ToolsPage'));
-const UsersPage = React.lazy(() => import('./modules/users'));
+const ToolsPage = React.lazy(
+	() => import('./modules/tools/ToolsPage/ToolsPage')
+);
+const UsersPage = React.lazy(
+	() => import('./modules/users/UsersPage/UsersPage')
+);
 const PrompterPage = React.lazy(() =>
 	import('./modules/prompter/PrompterPage').then((m) => ({
 		default: m.PrompterPage,
 	}))
 );
-const DispositionPage = React.lazy(() =>
-	import('./modules/dispositions').then((m) => ({ default: m.DispositionPage }))
+const DispositionPage = React.lazy(
+	() => import('./modules/dispositions/DispositionPage/DispositionPage')
 );
 const ConversationPage = React.lazy(
 	() => import('./modules/conversations/ConversationsPage/ConversationPage')
 );
 const ContactsPage = React.lazy(
-	() => import('./modules/contacts/ContactsPage')
+	() => import('./modules/contacts/ContactsPage/ContactsPage')
 );
-const WelcomeCard = React.lazy(() => import('./modules/overview/WelcomeCard'));
+const WelcomeCard = React.lazy(
+	() => import('./modules/overview/WelcomeCard/WelcomeCard')
+);
 import { LoginForm } from './modules/auth/LoginForm';
 import CampaignLiveMetricPage from './modules/campaigns/CampaignLiveMetricPage/CampaignLiveMetricPage';
 const KnowledgeBasePage = React.lazy(
-	() => import('./modules/knowledge-bases/KnowledgeBasePage')
+	() => import('./modules/knowledge-bases/KnowledgeBasePage/KnowledgeBasePage')
 );
-const ProfilePage = React.lazy(() => import('./modules/profile'));
+const ProfilePage = React.lazy(() => import('./modules/profile/ProfilePage'));
 const DoNotCallPage = React.lazy(
-	() => import('./modules/do-not-call/DoNotCallPage')
+	() => import('./modules/do-not-call/DoNotCallPage/DoNotCallPage')
 );
 const CampaignPredefinedParamsPage = React.lazy(
 	() =>
@@ -121,6 +142,22 @@ const router = createBrowserRouter([
 						element: (
 							<Suspense fallback={<div>Loading campaigns...</div>}>
 								<CampaignsPage />
+							</Suspense>
+						),
+					},
+					{
+						path: 'campaign/:campaignId',
+						element: (
+							<Suspense fallback={<div>Loading campaign...</div>}>
+								<CampaignPage />
+							</Suspense>
+						),
+					},
+					{
+						path: 'campaign/47/contact-list/:contactGroupId',
+						element: (
+							<Suspense fallback={<div>Loading contact list...</div>}>
+								<CampaignContactListPage />
 							</Suspense>
 						),
 					},

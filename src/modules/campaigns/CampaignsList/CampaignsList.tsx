@@ -24,6 +24,7 @@ import { ContentContainer } from '~/components/ContentContainer/ContentContainer
 import { CampaignStatus } from '~/models/CampaignStatus';
 import { OutboundCallForm } from '~/components/OutboundCallForm';
 import { useGetAgent } from '~/queries/agentQueries';
+import { useNavigate } from 'react-router';
 
 interface CampaignFiltersType {
 	type?: string;
@@ -43,8 +44,8 @@ export const CampaignsList: React.FC = () => {
 		selectedCampaign,
 		setRightComponent,
 		rightComponent,
-		setEditCampaign,
 	} = useCampaignsStore((state) => state);
+	const navigate = useNavigate();
 
 	// Use the pagination hook for all pagination logic
 	const pagination = usePagination({
@@ -130,8 +131,7 @@ export const CampaignsList: React.FC = () => {
 
 	const columns = useCampaignsColumns({
 		onEdit: (campaign) => {
-			selectCampaign(campaign);
-			setEditCampaign(true);
+			navigate(`/campaign/${campaign.id}`);
 		},
 		onTestCall: handleTestCall,
 		onDelete: (campaign) => {
