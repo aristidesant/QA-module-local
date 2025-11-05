@@ -6,21 +6,18 @@ import {
 	IconFilterOff,
 } from '@tabler/icons-react';
 import { FilterContainer } from '~/components/FilterContainer';
-import type { ContactFilters } from '../useContactFilters';
-import styles from './ContactListOverviewFilters.module.css';
+import styles from './ContactGroupContactsTableFilters.module.css';
+import { ContactFilters } from '../useContactFilters';
 
-interface ContactListOverviewFiltersProps {
+interface ContactGroupContactsTableFiltersProps {
 	filters: ContactFilters;
-	onFilterChange: <K extends keyof ContactFilters>(
-		key: K,
-		value: ContactFilters[K]
-	) => void;
+	onFilterChange: (key: keyof ContactFilters, value: string) => void;
 	onClearFilters: () => void;
 	hasActiveFilters: boolean;
 }
 
-export const ContactListOverviewFilters: React.FC<
-	ContactListOverviewFiltersProps
+export const ContactGroupContactsTableFilters: React.FC<
+	ContactGroupContactsTableFiltersProps
 > = ({ filters, onFilterChange, onClearFilters, hasActiveFilters }) => {
 	return (
 		<FilterContainer>
@@ -84,4 +81,4 @@ export const ContactListOverviewFilters: React.FC<
 	);
 };
 
-export default ContactListOverviewFilters;
+export default ContactGroupContactsTableFilters;

@@ -43,6 +43,7 @@ export const useGetContactGroup = (id: number) => {
 			return api.findContactGroup(id);
 		},
 		enabled: !!id,
+		retry: false,
 	});
 };
 
@@ -121,21 +122,6 @@ export const useAddContactToGroup = () => {
 			// eslint-disable-next-line no-console
 			console.error('Error adding contact to group:', error);
 		},
-	});
-};
-
-// Get group contacts
-export const useGetGroupContacts = (
-	groupId: number,
-	params?: Record<string, any>
-) => {
-	return useQuery({
-		queryKey: ['groupContacts', groupId, params],
-		queryFn: async () => {
-			const api = contactGroupApi();
-			return api.getGroupContacts(groupId, params);
-		},
-		enabled: !!groupId,
 	});
 };
 

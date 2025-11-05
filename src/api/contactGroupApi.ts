@@ -1,6 +1,5 @@
 import axios from 'axios';
 import type ContactGroup from '~/models/ContactGroup';
-import type { Contact } from '~/models/ContactsModel';
 import type { PaginatedResponse } from '~/models/CampaignsModel';
 import { DEFAULT_API_URL } from './config';
 
@@ -61,18 +60,6 @@ const contactGroupApi = (_authHeader?: Record<string, string>) => {
 			const response = await axios.post(
 				`${DEFAULT_API_URL}/contact-groups/${id}/contacts`,
 				{ contactId }
-			);
-			return response.data;
-		},
-
-		// GET group contacts
-		getGroupContacts: async (id: number, params?: Record<string, any>) => {
-			const response = await axios.get<Contact[]>(
-				`${DEFAULT_API_URL}/contact-groups/${id}/contacts`,
-				{
-					params,
-					timeout: 5000,
-				}
 			);
 			return response.data;
 		},

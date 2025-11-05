@@ -77,6 +77,15 @@ const useContactListColumns = ({
 				),
 			},
 			{
+				id: 'contactCount',
+				header: 'Total Contacts',
+				cell: ({ row }) => (
+					<Text fz='sm'>
+						{row.original.contactCount?.toLocaleString() || 0}
+					</Text>
+				),
+			},
+			{
 				id: 'queueStatus',
 				header: 'Status',
 				cell: ({ row }) => {

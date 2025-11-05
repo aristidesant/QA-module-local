@@ -45,8 +45,8 @@ export const useGetContact = (id: string) => {
 	});
 };
 
-export const useGetCampaignContacts = (
-	campaignId: number,
+export const useGetContactGroupContacts = (
+	contactGroupId: number,
 	params?: {
 		limit?: number;
 		offset?: number;
@@ -57,12 +57,12 @@ export const useGetCampaignContacts = (
 	}
 ) => {
 	return useQuery({
-		queryKey: ['campaignContacts', campaignId, params],
+		queryKey: ['contactGroupContacts', contactGroupId, params],
 		queryFn: async () => {
 			const api = contactsApi();
-			return api.findCampaignContacts(campaignId, params);
+			return api.findContactGroupContacts(contactGroupId, params);
 		},
-		enabled: !!campaignId,
+		enabled: !!contactGroupId,
 	});
 };
 

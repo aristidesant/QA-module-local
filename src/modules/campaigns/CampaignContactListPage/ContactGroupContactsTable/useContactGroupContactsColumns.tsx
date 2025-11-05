@@ -85,11 +85,7 @@ const useContactGroupContactsColumns = (): ColumnDef<Contact>[] =>
 				header: 'Primary phone',
 				cell: ({ row }) => {
 					const contact = row.original;
-					const primaryPhone =
-						contact.phones?.[0] ||
-						contact.phoneNumbers?.[0]?.phoneNumber ||
-						contact.phone ||
-						'—';
+					const primaryPhone = contact.phoneNumbers?.[0]?.phoneNumber ?? '—';
 					return <Text size='sm'>{primaryPhone}</Text>;
 				},
 			},

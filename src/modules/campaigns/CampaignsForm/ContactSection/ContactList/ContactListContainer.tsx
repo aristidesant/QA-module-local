@@ -11,11 +11,14 @@ export const ContactListContainer = ({
 }: ContactListContainerProps) => {
 	const { selectedCampaign } = useCampaignsStore();
 
-	const { data: contactList, refetch: reloadCampaignSchedules } =
-		useGetContactGroups({
-			campaignId: selectedCampaign?.id,
-			isActive,
-		});
+	const {
+		data: contactList,
+		refetch: reloadCampaignSchedules,
+		isLoading,
+	} = useGetContactGroups({
+		campaignId: selectedCampaign?.id,
+		isActive,
+	});
 
 	return (
 		<ContactListView
@@ -25,6 +28,7 @@ export const ContactListContainer = ({
 			onUpdateComplete={reloadCampaignSchedules}
 			objectiveId={selectedCampaign?.objectiveId}
 			isActive={isActive}
+			isLoading={isLoading}
 		/>
 	);
 };

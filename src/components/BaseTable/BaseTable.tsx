@@ -11,7 +11,7 @@ import {
 	ColumnFiltersState,
 	useReactTable,
 } from '@tanstack/react-table';
-import { Table, LoadingOverlay } from '@mantine/core';
+import { Table, LoadingOverlay, Skeleton } from '@mantine/core';
 import {
 	IconChevronUp,
 	IconChevronDown,
@@ -32,6 +32,7 @@ export type BaseTableProps<TData> = {
 	getRowClassName?: (row: Row<TData>) => string | undefined;
 	isLoading?: boolean;
 	emptyMessage?: string;
+	skeletonRowsCount?: number;
 	/**
 	 * Filter mode determines how data is filtered:
 	 * - 'client': BaseTable handles filtering/sorting/pagination internally using TanStack Table
@@ -83,6 +84,7 @@ function BaseTable<TData>({
 	getRowClassName,
 	isLoading = false,
 	emptyMessage,
+	skeletonRowsCount = 5,
 	filterMode = 'client',
 	pageCount,
 	pageIndex = 0,
@@ -219,7 +221,25 @@ function BaseTable<TData>({
 					))}
 				</Table.Thead>
 				<Table.Tbody className={styles.tbody}>
-					{!hasData ? (
+					{isLoading ? (
+						Array.from({ length: skeletonRowsCount }).map((_, index) => (
+							<Table.Tr key={`skeleton-${index}`}>
+								{table.getAllColumns().map((column) => (
+									<Table.Td
+										key={`skeleton-${index}-${column.id}`}
+										className={[
+											styles.td,
+											density === 'compact' ? styles.compactTd : '',
+										]
+											.filter(Boolean)
+											.join(' ')}
+									>
+										<Skeleton height={20} />
+									</Table.Td>
+								))}
+							</Table.Tr>
+						))
+					) : !hasData ? (
 						<Table.Tr>
 							<Table.Td
 								colSpan={table.getAllColumns().length}

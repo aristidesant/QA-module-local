@@ -3,7 +3,6 @@
 	background: var(--mantine-color-white);
 	border: 1px solid var(--mantine-color-gray-2);
 	border-radius: var(--mantine-radius-md);
-	padding: var(--mantine-spacing-lg);
 }
 
 /* Table Container */

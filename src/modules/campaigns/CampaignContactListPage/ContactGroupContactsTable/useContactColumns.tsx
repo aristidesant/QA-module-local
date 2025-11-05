@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Group, Text, Badge, Avatar, Tooltip } from '@mantine/core';
-import { IconMail, IconPhone, IconAlertCircle } from '@tabler/icons-react';
+import { IconMail, IconPhone } from '@tabler/icons-react';
 import type { Contact } from '~/models/ContactsModel';
 import {
 	getStatusColor,
@@ -10,7 +10,7 @@ import {
 	getUniquePhones,
 	getFullName,
 } from './contactHelpers';
-import styles from './ContactListOverview.module.css';
+import styles from './ContactGroupContactsTable.module.css';
 
 /**
  * Custom hook that returns column definitions for the contacts table
@@ -54,12 +54,6 @@ export const useContactColumns = (): ColumnDef<Contact, any>[] => {
 				cell: ({ row }) => {
 					const contact = row.original;
 					const uniquePhones = getUniquePhones(contact);
-					const hasValidationError = contact.phoneNumbers?.some(
-						(entry) => entry.validationError
-					);
-					const errorCount =
-						contact.phoneNumbers?.filter((entry) => entry.validationError)
-							.length || 0;
 
 					if (uniquePhones.length === 0) {
 						return (
@@ -89,23 +83,6 @@ export const useContactColumns = (): ColumnDef<Contact, any>[] => {
 									{primaryPhone}
 								</Text>
 							</Group>
-							{hasValidationError && (
-								<Tooltip
-									label={`${errorCount} phone number${errorCount > 1 ? 's' : ''} with validation error${errorCount > 1 ? 's' : ''}`}
-									withArrow
-								>
-									<Badge
-										variant='filled'
-										size='xs'
-										radius='xl'
-										color='red'
-										className={styles.errorBadge}
-										leftSection={<IconAlertCircle size={10} />}
-									>
-										{errorCount}
-									</Badge>
-								</Tooltip>
-							)}
 							{additionalCount > 0 && (
 								<Tooltip
 									label={

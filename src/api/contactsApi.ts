@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type { Contact, ContactStatus } from '~/models/ContactsModel';
 import { DEFAULT_API_URL } from './config';
+import { PaginatedResponse } from '~/models/CampaignsModel';
 
 /**
  * Generic Contacts API client
@@ -33,8 +34,8 @@ const contactsApi = (_authHeader?: Record<string, string>) => {
 			);
 			return response.data;
 		},
-		findCampaignContacts: async (
-			campaignId: number,
+		findContactGroupContacts: async (
+			contactGroupId: number,
 			params?: {
 				limit?: number;
 				offset?: number;
@@ -44,14 +45,12 @@ const contactsApi = (_authHeader?: Record<string, string>) => {
 				status?: string;
 			}
 		) => {
-			const response = await axios.get<{
-				contacts: Contact[];
-				limit: number;
-				offset: number;
-				total: number;
-			}>(`${DEFAULT_API_URL}/contacts/campaign/${campaignId}`, {
-				params,
-			});
+			const response = await axios.get<PaginatedResponse<Contact>>(
+				`${DEFAULT_API_URL}/contacts/contact-group/${contactGroupId}`,
+				{
+					params,
+				}
+			);
 			return response.data;
 		},
 

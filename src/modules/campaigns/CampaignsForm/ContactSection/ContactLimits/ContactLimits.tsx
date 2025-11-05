@@ -102,7 +102,7 @@ export const ContactLimits = ({
 					).toISOString(), // 30 days from now
 					groupMaxCallPerContact: 1,
 					groupMaxCallPerGroup: 1,
-					groupHumanEquivalent: humanEquivalent,
+					humanEquivalent: humanEquivalent,
 					schedulerId: activeSchedule?.id || 0,
 					schemaId: selectedSchemaId,
 				});

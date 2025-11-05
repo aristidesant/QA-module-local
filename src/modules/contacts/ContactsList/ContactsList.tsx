@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { modals } from "@mantine/modals";
+import { useMemo } from 'react';
+import { modals } from '@mantine/modals';
 import {
 	Table,
 	Button,
@@ -7,13 +7,13 @@ import {
 	Loader,
 	Text,
 	LoadingOverlay,
-} from "@mantine/core";
-import { IconEdit, IconTrash } from "@tabler/icons-react";
-import { useGetAllContacts, useDeleteContact } from "~/queries/contactsQueries";
-import type { Contact } from "~/models/ContactsModel";
-import classes from "./ContactsList.module.css";
-import { notifications } from "@mantine/notifications";
-import { IconUserOff, IconRefresh } from "@tabler/icons-react";
+} from '@mantine/core';
+import { IconEdit, IconTrash } from '@tabler/icons-react';
+import { useGetAllContacts, useDeleteContact } from '~/queries/contactsQueries';
+import type { Contact } from '~/models/ContactsModel';
+import classes from './ContactsList.module.css';
+import { notifications } from '@mantine/notifications';
+import { IconUserOff, IconRefresh } from '@tabler/icons-react';
 
 interface ContactsListProps {
 	search: string;
@@ -44,13 +44,13 @@ export default function ContactsList({
 				c.firstName.toLowerCase().includes(lower) ||
 				c.lastName.toLowerCase().includes(lower) ||
 				c.emails?.[0].toLowerCase().includes(lower) ||
-				c.phone.toLowerCase().includes(lower)
+				c.phoneNumbers?.[0]?.phoneNumber.toLowerCase().includes(lower)
 		);
 	}, [data, search]);
 
 	if (isLoading) {
 		return (
-			<Group justify="center" py="xl">
+			<Group justify='center' py='xl'>
 				<Loader />
 			</Group>
 		);
@@ -58,8 +58,8 @@ export default function ContactsList({
 
 	if (isError) {
 		return (
-			<Group justify="center" py="xl">
-				<Text c="red">Failed to load contacts.</Text>
+			<Group justify='center' py='xl'>
+				<Text c='red'>Failed to load contacts.</Text>
 			</Group>
 		);
 	}
@@ -92,15 +92,15 @@ export default function ContactsList({
 										stroke={1.5}
 										className={classes.noContactsIcon}
 									/>
-									<Text ta="center" fw={600} fz="lg" mb={4} mt={8}>
+									<Text ta='center' fw={600} fz='lg' mb={4} mt={8}>
 										No contacts found
 									</Text>
-									<Text ta="center" c="dimmed" fz="sm" mb={12}>
+									<Text ta='center' c='dimmed' fz='sm' mb={12}>
 										It looks like you don’t have any contacts yet. Add new
 										contacts to get started!
 									</Text>
 									<Button
-										variant="light"
+										variant='light'
 										leftSection={<IconRefresh size={16} />}
 										onClick={() => reloadList()}
 									>
@@ -122,25 +122,25 @@ export default function ContactsList({
 								<Table.Td>{contact.firstName}</Table.Td>
 								<Table.Td>{contact.lastName}</Table.Td>
 								<Table.Td>{contact.emails?.[0]}</Table.Td>
-								<Table.Td>{contact.phone}</Table.Td>
+								<Table.Td>{contact.phoneNumbers?.[0]?.phoneNumber}</Table.Td>
 								<Table.Td>
-									<Group gap="xs">
+									<Group gap='xs'>
 										<Button
-											size="xs"
-											variant="subtle"
+											size='xs'
+											variant='subtle'
 											leftSection={<IconEdit size={16} />}
 											onClick={() => onEdit(contact.id)}
 										>
 											Edit
 										</Button>
 										<Button
-											size="xs"
-											variant="subtle"
-											color="red"
+											size='xs'
+											variant='subtle'
+											color='red'
 											leftSection={<IconTrash size={16} />}
 											onClick={() =>
 												modals.openConfirmModal({
-													title: "Confirm Deletion",
+													title: 'Confirm Deletion',
 													centered: true,
 													children: (
 														<Text className={classes.confirmDelete}>
@@ -148,8 +148,8 @@ export default function ContactsList({
 															action cannot be undone.
 														</Text>
 													),
-													labels: { confirm: "Delete", cancel: "Cancel" },
-													confirmProps: { color: "red" },
+													labels: { confirm: 'Delete', cancel: 'Cancel' },
+													confirmProps: { color: 'red' },
 													onConfirm: async () => {
 														try {
 															await deleteContact.mutateAsync(
@@ -157,18 +157,18 @@ export default function ContactsList({
 															);
 															reloadList();
 															notifications.show({
-																title: "Contact Deleted",
+																title: 'Contact Deleted',
 																message: `${contact.firstName} ${contact.lastName} has been deleted.`,
-																color: "green",
+																color: 'green',
 															});
 														} catch (error) {
 															notifications.show({
-																title: "Error",
+																title: 'Error',
 																message:
-																	"Failed to delete contact. Please try again.",
-																color: "red",
+																	'Failed to delete contact. Please try again.',
+																color: 'red',
 															});
-															console.error("Failed to delete contact:", error);
+															console.error('Failed to delete contact:', error);
 														}
 													},
 												})

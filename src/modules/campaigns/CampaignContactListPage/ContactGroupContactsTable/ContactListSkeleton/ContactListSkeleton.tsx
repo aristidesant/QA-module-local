@@ -1,5 +1,5 @@
 import { Skeleton, Group, Table } from '@mantine/core';
-import styles from '../ContactListOverview.module.css';
+import styles from '../ContactGroupContactsTable.module.css';
 
 interface ContactListSkeletonProps {
 	rows?: number;
@@ -12,8 +12,8 @@ export const ContactListSkeleton: React.FC<ContactListSkeletonProps> = ({
 		<Table className={styles.table} striped>
 			<Table.Thead>
 				<Table.Tr>
-					<Table.Th>Name</Table.Th>
-					<Table.Th>Primary number</Table.Th>
+					<Table.Th>Contact</Table.Th>
+					<Table.Th>Phone</Table.Th>
 					<Table.Th>Email</Table.Th>
 					<Table.Th>Status</Table.Th>
 				</Table.Tr>

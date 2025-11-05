@@ -154,7 +154,7 @@ const router = createBrowserRouter([
 						),
 					},
 					{
-						path: 'campaign/47/contact-list/:contactGroupId',
+						path: 'campaign/:campaignId/contact-list/:contactGroupId',
 						element: (
 							<Suspense fallback={<div>Loading contact list...</div>}>
 								<CampaignContactListPage />

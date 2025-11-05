@@ -15,10 +15,7 @@ export interface UseContactFiltersProps {
 export interface UseContactFiltersReturn {
 	filters: ContactFilters;
 	debouncedFilters: ContactFilters;
-	setFilter: <K extends keyof ContactFilters>(
-		key: K,
-		value: ContactFilters[K]
-	) => void;
+	setFilter: (key: keyof ContactFilters, value: string) => void;
 	setFilters: (filters: ContactFilters) => void;
 	clearFilters: () => void;
 	hasActiveFilters: boolean;
@@ -45,10 +42,7 @@ export const useContactFilters = ({
 	}, [debouncedFilters, onFiltersChange]);
 
 	// Set a single filter
-	const setFilter = <K extends keyof ContactFilters>(
-		key: K,
-		value: ContactFilters[K]
-	) => {
+	const setFilter = (key: keyof ContactFilters, value: string) => {
 		setFiltersState((prev) => ({
 			...prev,
 			[key]: value,

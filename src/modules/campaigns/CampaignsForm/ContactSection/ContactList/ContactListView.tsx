@@ -19,6 +19,7 @@ export interface ContactListViewProps {
 	onUpdateComplete: () => void;
 	objectiveId?: number;
 	isActive: boolean;
+	isLoading?: boolean;
 }
 
 export const ContactListView = ({
@@ -27,6 +28,7 @@ export const ContactListView = ({
 	onUpdateComplete,
 	objectiveId,
 	isActive,
+	isLoading = false,
 }: ContactListViewProps) => {
 	const navigate = useNavigate();
 	const [opened, { open, close }] = useDisclosure(false);
@@ -130,6 +132,7 @@ export const ContactListView = ({
 				columns={columns}
 				emptyMessage={emptyMessage}
 				onRowClick={handleRowClick}
+				isLoading={isLoading}
 			/>
 			<Modal
 				opened={opened}
