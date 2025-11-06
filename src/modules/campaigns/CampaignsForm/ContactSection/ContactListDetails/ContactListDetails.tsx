@@ -2,13 +2,8 @@ import { useMemo, useState } from 'react';
 import {
 	ActionIcon,
 	Alert,
-	Badge,
-	Box,
 	Button,
-	Divider,
 	Group,
-	Loader,
-	Overlay,
 	Slider,
 	Stack,
 	Text,
@@ -44,7 +39,6 @@ import {
 import { useCampaignActiveSchedule } from '~/queries/schedulerQueries';
 import ContactLimits from '../ContactLimits';
 import { calculateHumanEquivalentValues } from '../ContactLimits/humanEquivalentCalculations';
-import ContactListControl from '../ContactList/ContactListControl';
 import { getQueueStatusConfig } from '../ContactList/queueStatusConfig';
 import styles from './ContactListDetails.module.css';
 
@@ -403,43 +397,82 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 	};
 
 	return (
-		<Box className={styles.wrapper} pos='relative'>
-			{isActionsLoading && (
-				<Overlay
-					className={styles.overlay}
-					color='var(--mantine-color-white)'
-					backgroundOpacity={0.75}
-					blur={3}
-					radius='md'
-					center
-				>
-					<Loader size='sm' />
-				</Overlay>
-			)}
+		<Stack gap='md'>
+			<RightSectionCard
+				title='Actions'
+				description='Manage the lifecycle of this contact list'
+				icon={IconEdit}
+				iconColor='var(--mantine-color-orange-5)'
+			>
+				<Stack gap='md'>
+					<Group gap='xs' justify='center' className={styles.actionsRow}>
+						<Tooltip
+							label={
+								contactGroup.isActive
+									? 'Deactivate contact list'
+									: 'Activate contact list'
+							}
+							withArrow
+						>
+							<ActionIcon
+								variant='light'
+								onClick={handleToggleStatus}
+								aria-label={
+									contactGroup.isActive
+										? 'Deactivate contact list'
+										: 'Activate contact list'
+								}
+								disabled={disableToggle || isActionsLoading}
+							>
+								{contactGroup.isActive ? (
+									<IconToggleRight size={16} />
+								) : (
+									<IconToggleLeft size={16} />
+								)}
+							</ActionIcon>
+						</Tooltip>
 
+						<Tooltip label='Edit contact list' withArrow>
+							<ActionIcon
+								variant='light'
+								onClick={handleEdit}
+								aria-label='Edit contact list'
+								disabled={isActionsLoading}
+							>
+								<IconEdit size={16} />
+							</ActionIcon>
+						</Tooltip>
+
+						<Tooltip label='Delete contact list' withArrow>
+							<ActionIcon
+								variant='light'
+								color='red'
+								onClick={handleDelete}
+								aria-label='Delete contact list'
+								disabled={isActionsLoading}
+							>
+								<IconTrash size={16} />
+							</ActionIcon>
+						</Tooltip>
+
+						<Tooltip label='Open contact list page' withArrow>
+							<ActionIcon
+								variant='light'
+								onClick={handleNavigate}
+								aria-label='Open contact list page'
+								disabled={isActionsLoading}
+							>
+								<IconArrowUpRight size={16} />
+							</ActionIcon>
+						</Tooltip>
+					</Group>
+				</Stack>
+			</RightSectionCard>
 			<RightSectionCard
 				title='Contact List'
 				description='Configuration overview'
 				icon={IconListDetails}
 				iconColor='var(--mantine-color-blue-5)'
-				rightSection={
-					<Group gap='xs'>
-						<Badge
-							variant='light'
-							color={statusConfig.color}
-							className={styles.statusBadge}
-						>
-							{statusConfig.label}
-						</Badge>
-						<Badge
-							variant='outline'
-							color={contactGroup.isActive ? 'blue' : 'gray'}
-							className={styles.statusBadge}
-						>
-							{contactGroup.isActive ? 'Active' : 'Inactive'}
-						</Badge>
-					</Group>
-				}
 			>
 				<Stack gap='md' className={styles.details}>
 					<Text className={styles.listName}>{contactGroup.name}</Text>
@@ -450,7 +483,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 					)}
 
 					<div>
-						<Text className={styles.sectionTitle}>Key metrics</Text>
+						<Text className={styles.sectionTitle}>Configurations</Text>
 						<div className={styles.statsGrid}>
 							{stats.map((item) => (
 								<div key={item.label} className={styles.statCard}>
@@ -465,117 +498,35 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 							))}
 						</div>
 					</div>
-
-					<Divider />
-
-					<div className={styles.metaSection}>
-						<Text className={styles.sectionTitle}>Operational status</Text>
-						<div className={styles.metaGrid}>
-							{metaItems.map((item) => (
-								<div key={item.label} className={styles.metaItem}>
-									<div className={styles.metaHeader}>
-										<ThemeIcon
-											variant='light'
-											color={item.accent || 'gray'}
-											className={styles.metaIcon}
-											size={28}
-										>
-											{item.icon}
-										</ThemeIcon>
-										<Text className={styles.metaLabel}>{item.label}</Text>
-									</div>
-									<Text className={styles.metaValue}>{item.value}</Text>
-								</div>
-							))}
-						</div>
-					</div>
-
-					<Divider />
-
-					<div className={styles.actionsSection}>
-						<Text className={styles.sectionTitle}>Actions</Text>
-						<Text fz='xs' c='var(--mantine-color-gray-6)'>
-							Manage the lifecycle of this contact list without leaving the
-							panel.
-						</Text>
-						<Group gap='xs' className={styles.actionsRow}>
-							<Tooltip
-								label={
-									contactGroup.isActive
-										? 'Deactivate contact list'
-										: 'Activate contact list'
-								}
-								withArrow
-							>
-								<ActionIcon
-									variant='light'
-									onClick={handleToggleStatus}
-									aria-label={
-										contactGroup.isActive
-											? 'Deactivate contact list'
-											: 'Activate contact list'
-									}
-									disabled={disableToggle || isActionsLoading}
-									className={styles.actionButton}
-								>
-									{contactGroup.isActive ? (
-										<IconToggleRight size={16} />
-									) : (
-										<IconToggleLeft size={16} />
-									)}
-								</ActionIcon>
-							</Tooltip>
-
-							<Tooltip label='Edit contact list' withArrow>
-								<ActionIcon
-									variant='light'
-									onClick={handleEdit}
-									aria-label='Edit contact list'
-									disabled={isActionsLoading}
-									className={styles.actionButton}
-								>
-									<IconEdit size={16} />
-								</ActionIcon>
-							</Tooltip>
-
-							<Tooltip label='Delete contact list' withArrow>
-								<ActionIcon
-									variant='light'
-									color='red'
-									onClick={handleDelete}
-									aria-label='Delete contact list'
-									disabled={isActionsLoading}
-									className={styles.actionButton}
-								>
-									<IconTrash size={16} />
-								</ActionIcon>
-							</Tooltip>
-
-							<Tooltip label='Open contact list page' withArrow>
-								<ActionIcon
-									variant='light'
-									onClick={handleNavigate}
-									aria-label='Open contact list page'
-									disabled={isActionsLoading}
-									className={styles.actionButton}
-								>
-									<IconArrowUpRight size={16} />
-								</ActionIcon>
-							</Tooltip>
-						</Group>
-
-						{contactGroup.isActive && (
-							<div className={styles.controlWrapper}>
-								<Text fz='xs' c='var(--mantine-color-gray-6)' mb={4}>
-									Outbound control
-								</Text>
-								<ContactListControl contactGroup={contactGroup} />
-							</div>
-						)}
-					</div>
 				</Stack>
 			</RightSectionCard>
-		</Box>
+
+			<RightSectionCard
+				title='Operational Status'
+				description='Current operational information'
+				icon={IconGauge}
+				iconColor='var(--mantine-color-green-5)'
+			>
+				<div className={styles.metaGrid}>
+					{metaItems.map((item) => (
+						<div key={item.label} className={styles.metaItem}>
+							<div className={styles.metaHeader}>
+								<ThemeIcon
+									variant='light'
+									color={item.accent || 'gray'}
+									className={styles.metaIcon}
+									size={28}
+								>
+									{item.icon}
+								</ThemeIcon>
+								<Text className={styles.metaLabel}>{item.label}</Text>
+							</div>
+							<Text className={styles.metaValue}>{item.value}</Text>
+						</div>
+					))}
+				</div>
+			</RightSectionCard>
+		</Stack>
 	);
 };
 

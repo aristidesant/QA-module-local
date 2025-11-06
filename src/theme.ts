@@ -7,6 +7,22 @@ export const theme = createTheme({
 				radius: 'md',
 			},
 		},
+		ActionIcon: {
+			defaultProps: {
+				variant: 'light',
+				radius: 'md',
+			},
+			styles: {
+				root: {
+					width: '38px',
+					height: '38px',
+					borderRadius: '12px',
+					'&:disabled': {
+						opacity: 0.6,
+					},
+				},
+			},
+		},
 		SegmentedControl: {
 			styles: {
 				root: {
