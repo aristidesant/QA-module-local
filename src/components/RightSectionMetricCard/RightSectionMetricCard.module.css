@@ -1,0 +1,40 @@
+.metaGrid {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+}
+
+.metaItem {
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: 12px;
+	padding: var(--mantine-spacing-sm);
+	background-color: var(--mantine-color-white);
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.metaHeader {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+}
+
+.metaIcon {
+	width: 28px;
+	height: 28px;
+}
+
+.metaLabel {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--mantine-color-gray-7);
+	text-transform: uppercase;
+	letter-spacing: 0.4px;
+}
+
+.metaValue {
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--mantine-color-gray-9);
+}

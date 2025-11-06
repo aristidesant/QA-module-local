@@ -26,7 +26,10 @@ import ConversationDetails from '~/modules/conversations/ConversationDetails';
 
 const CampaignContactListPage = () => {
 	const navigate = useNavigate();
-	const { contactGroupId } = useParams<{ contactGroupId: string }>();
+	const { contactGroupId, campaignId } = useParams<{
+		contactGroupId: string;
+		campaignId: string;
+	}>();
 
 	const contactGroupIdNumber = useMemo(() => {
 		if (!contactGroupId) {
@@ -138,7 +141,7 @@ const CampaignContactListPage = () => {
 
 	const commonContainerProps = {
 		showBackButton: true,
-		onBackClick: () => navigate('/campaign/47'),
+		onBackClick: () => navigate(`/campaign/${campaignId}`),
 	};
 
 	if (hasInvalidId) {
@@ -162,7 +165,7 @@ const CampaignContactListPage = () => {
 						<Button
 							variant='light'
 							leftSection={<IconArrowLeft size={16} />}
-							onClick={() => navigate('/campaign/47')}
+							onClick={() => navigate(`/campaign/${campaignId}`)}
 						>
 							Return to Campaign
 						</Button>
