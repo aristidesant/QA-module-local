@@ -19,15 +19,19 @@ export interface HourConfig {
 
 export interface DayConfig {
 	dayOfWeek:
-		| 'MONDAY'
-		| 'TUESDAY'
-		| 'WEDNESDAY'
-		| 'THURSDAY'
-		| 'FRIDAY'
-		| 'SATURDAY'
-		| 'SUNDAY';
+		| 'monday'
+		| 'tuesday'
+		| 'wednesday'
+		| 'thursday'
+		| 'friday'
+		| 'saturday'
+		| 'sunday';
+	dayOrder?: number;
 	isActive: boolean;
 	dailyCallLimit: number;
+	dayCapacity?: number;
+	startHour?: string; // Format: 'HH:mm'
+	endHour?: string; // Format: 'HH:mm'
 	hourConfigs: HourConfig[];
 }
 
