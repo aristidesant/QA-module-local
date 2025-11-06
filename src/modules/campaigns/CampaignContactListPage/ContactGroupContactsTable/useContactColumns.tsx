@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Group, Text, Badge, Avatar, Tooltip } from '@mantine/core';
-import { IconMail, IconPhone } from '@tabler/icons-react';
+import { IconMail, IconPhone, IconAlertCircle } from '@tabler/icons-react';
 import type { Contact } from '~/models/ContactsModel';
 import {
 	getStatusColor,
@@ -54,6 +54,12 @@ export const useContactColumns = (): ColumnDef<Contact, any>[] => {
 				cell: ({ row }) => {
 					const contact = row.original;
 					const uniquePhones = getUniquePhones(contact);
+					const hasValidationError = contact.phoneNumbers?.some(
+						(entry) => entry.validationError
+					);
+					const errorCount =
+						contact.phoneNumbers?.filter((entry) => entry.validationError)
+							.length || 0;
 
 					if (uniquePhones.length === 0) {
 						return (
@@ -63,7 +69,11 @@ export const useContactColumns = (): ColumnDef<Contact, any>[] => {
 						);
 					}
 
-					const primaryPhone = uniquePhones[0];
+					// Show phone number with error first, if any
+					const phoneWithError = contact.phoneNumbers?.find(
+						(entry) => entry.validationError
+					);
+					const primaryPhone = phoneWithError?.phoneNumber || uniquePhones[0];
 					const additionalCount = uniquePhones.length - 1;
 
 					return (
@@ -79,10 +89,32 @@ export const useContactColumns = (): ColumnDef<Contact, any>[] => {
 									stroke={1.6}
 									className={styles.columnIcon}
 								/>
-								<Text size='xs' className={styles.phoneText} fw={500}>
+								<Text
+									size='xs'
+									className={styles.phoneText}
+									fw={500}
+									c={phoneWithError ? 'red' : undefined}
+								>
 									{primaryPhone}
 								</Text>
 							</Group>
+							{hasValidationError && (
+								<Tooltip
+									label={`${errorCount} phone number${errorCount > 1 ? 's' : ''} with validation error${errorCount > 1 ? 's' : ''}`}
+									withArrow
+								>
+									<Badge
+										variant='filled'
+										size='xs'
+										radius='xl'
+										color='red'
+										className={styles.errorBadge}
+										leftSection={<IconAlertCircle size={10} />}
+									>
+										{errorCount}
+									</Badge>
+								</Tooltip>
+							)}
 							{additionalCount > 0 && (
 								<Tooltip
 									label={

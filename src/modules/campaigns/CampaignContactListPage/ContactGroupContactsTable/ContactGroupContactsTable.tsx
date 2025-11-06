@@ -118,9 +118,13 @@ export const ContactGroupContactsTable: React.FC<
 	);
 
 	// Check if contact has validation errors
-	const getRowClassName = useCallback((_row: { original: Contact }) => {
-		// For now, no validation errors since model doesn't have phoneNumbers
-		return styles.contactRow;
+	const getRowClassName = useCallback((row: { original: Contact }) => {
+		const hasValidationError = row.original.phoneNumbers?.some(
+			(entry) => entry.validationError
+		);
+		return hasValidationError
+			? `${styles.contactRow} ${styles.contactRowError}`
+			: styles.contactRow;
 	}, []);
 
 	// Cleanup right panel on unmount
