@@ -4,9 +4,6 @@ import { TimePicker } from '@mantine/dates';
 import { IconClockOff, IconInfoCircle } from '@tabler/icons-react';
 import styles from './DayScheduleCard.module.css';
 import { useSchedulerFormContext } from '../SchedulerCard/schedulerFormProvider';
-import { useCampaignsStore } from '~/stores/campaignsStore';
-import DayTimeDistribution from './DayTimeDistribution';
-import type { DayConfig } from '~/models/SchedulerModel';
 import {
 	calculateDayMinutes,
 	calculatePerAgentTalkMinutes,
@@ -24,16 +21,10 @@ const formatDayName = (day?: string | null) => {
 };
 
 export const DayScheduleCard: React.FC = () => {
-	const { setRightComponent } = useCampaignsStore((state) => state);
 	const form = useSchedulerFormContext();
 	const dayConfigs = (form.values.dayConfigs || []) as MaybeDayConfig[];
 	const humanEquivalent = Number(form.values.humanEquivalent || 1);
 	const [selectedDay, setSelectedDay] = useState<string | null>(null);
-
-	const handleTimeDistributionUpdateComplete = () => {
-		setRightComponent?.(null);
-		setSelectedDay(null);
-	};
 
 	return (
 		<Stack gap='sm'>
@@ -62,12 +53,6 @@ export const DayScheduleCard: React.FC = () => {
 						} ${styles.selectable}`}
 						onClick={() => {
 							setSelectedDay(day.dayOfWeek ?? null);
-							setRightComponent?.(
-								<DayTimeDistribution
-									dayConfig={day as DayConfig}
-									onComplete={handleTimeDistributionUpdateComplete}
-								/>
-							);
 						}}
 					>
 						<Flex
