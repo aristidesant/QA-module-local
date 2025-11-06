@@ -12,6 +12,7 @@ import useContactListColumns from './useContactListColumns';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import ContactListDetails from '../ContactListDetails';
 import { PaginatedResponse } from '~/models/CampaignsModel';
+import CapacityProgress from './CapacityProgress';
 
 export interface ContactListViewProps {
 	contactGroups?: ContactGroup[] | PaginatedResponse<ContactGroup>;
@@ -42,7 +43,7 @@ export const ContactListView = ({
 		isActive,
 		campaignId,
 		onNavigateToContactList: (contactGroup) => {
-			const targetCampaignId = campaignId ?? 47;
+			const targetCampaignId = campaignId;
 			navigate(`/campaign/${targetCampaignId}/contact-list/${contactGroup.id}`);
 		},
 	});
@@ -127,6 +128,7 @@ export const ContactListView = ({
 				</Tooltip>
 			}
 		>
+			{isActive && <CapacityProgress campaignId={campaignId} />}
 			<BaseTable
 				data={contactListsArray}
 				columns={columns}

@@ -7,7 +7,6 @@ import {
 	Slider,
 	Stack,
 	Text,
-	ThemeIcon,
 	Tooltip,
 } from '@mantine/core';
 import {
@@ -28,6 +27,7 @@ import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router';
 import RightSectionCard from '~/components/RightSectionCard';
+import RightSectionMetricCard from '~/components/RightSectionMetricCard';
 import SectionTitle from '~/components/SectionTitle';
 import type ContactGroup from '~/models/ContactGroup';
 import {
@@ -501,31 +501,13 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 				</Stack>
 			</RightSectionCard>
 
-			<RightSectionCard
+			<RightSectionMetricCard
 				title='Operational Status'
 				description='Current operational information'
 				icon={IconGauge}
 				iconColor='var(--mantine-color-green-5)'
-			>
-				<div className={styles.metaGrid}>
-					{metaItems.map((item) => (
-						<div key={item.label} className={styles.metaItem}>
-							<div className={styles.metaHeader}>
-								<ThemeIcon
-									variant='light'
-									color={item.accent || 'gray'}
-									className={styles.metaIcon}
-									size={28}
-								>
-									{item.icon}
-								</ThemeIcon>
-								<Text className={styles.metaLabel}>{item.label}</Text>
-							</div>
-							<Text className={styles.metaValue}>{item.value}</Text>
-						</div>
-					))}
-				</div>
-			</RightSectionCard>
+				metaItems={metaItems}
+			/>
 		</Stack>
 	);
 };
