@@ -27,6 +27,7 @@ export interface ProcessContactGroupFileRequest {
 	groupExpiration: string; // ISO date string
 	groupMaxCallPerContact: number;
 	groupMaxCallPerGroup: number;
+	humanEquivalent: number;
 	schedulerId: number;
 	schemaId: number;
 }

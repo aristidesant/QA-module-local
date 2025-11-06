@@ -26,7 +26,7 @@ A complete CRUD module for managing client configurations.
 
 ### Route Added
 
-- Path: `/client-configs`
+- Path: `/configurations/client-configs`
 - Component: `ClientConfigsPage`
 - Added to `/src/routes.tsx`
 
@@ -67,7 +67,7 @@ A complete CRUD module for managing client configurations.
 
 ## Usage
 
-Navigate to `/client-configs` in the application or click "Client Configs" in the sidebar under the Maintenance section.
+Navigate to `/configurations/client-configs` in the application or click "Client Configs" in the sidebar under the Maintenance section.
 
 ## Tech Stack
 

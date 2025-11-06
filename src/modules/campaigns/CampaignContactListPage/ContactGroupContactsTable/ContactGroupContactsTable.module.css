@@ -1,0 +1,224 @@
+/* Card Container */
+.card {
+	background: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+}
+
+/* Table Container */
+.tableContainer {
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	overflow: hidden;
+	background: var(--mantine-color-white);
+}
+
+/* Table Base Styles */
+.table {
+	background: var(--mantine-color-white);
+}
+
+.table thead tr {
+	background-color: var(--mantine-color-gray-0);
+	border-bottom: 2px solid var(--mantine-color-gray-3);
+}
+
+.table th {
+	font-weight: 600;
+	color: var(--mantine-color-gray-7);
+	font-size: 11px;
+	padding: 12px 16px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	white-space: nowrap;
+	border-bottom: none;
+}
+
+.table td {
+	padding: 14px 16px;
+	border-bottom: 1px solid var(--mantine-color-gray-1);
+	vertical-align: middle;
+	font-size: var(--mantine-font-size-sm);
+}
+
+.table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+/* Row Interactions */
+.table tbody tr {
+	transition: background-color 0.12s ease;
+	cursor: pointer;
+}
+
+.table tbody tr:hover {
+	background-color: var(--mantine-color-blue-0);
+}
+
+.contactRow {
+	cursor: pointer;
+}
+
+.contactRowError {
+	background-color: var(--mantine-color-red-0) !important;
+	border-left: 3px solid var(--mantine-color-red-6);
+}
+
+.contactRowError:hover {
+	background-color: var(--mantine-color-red-1) !important;
+}
+
+/* Contact Info Column */
+.avatar {
+	flex-shrink: 0;
+	font-weight: 600;
+	font-size: 13px;
+}
+
+.contactInfo {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+	flex: 1;
+}
+
+.metaBadge {
+	font-weight: 500;
+	letter-spacing: 0.2px;
+	background-color: var(--mantine-color-gray-0);
+	color: var(--mantine-color-gray-7);
+	border-color: var(--mantine-color-gray-2);
+}
+
+.nameText {
+	color: var(--mantine-color-gray-9);
+	font-weight: 500;
+	line-height: 1.3;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* Phone Column */
+.phoneText {
+	color: var(--mantine-color-gray-8);
+	font-family: var(--mantine-font-family-monospace);
+	font-size: 12px;
+	line-height: 1.4;
+	white-space: nowrap;
+}
+
+.phoneTooltip {
+	font-family: var(--mantine-font-family-monospace);
+	font-size: 12px;
+	line-height: 1.6;
+}
+
+.valueWrapper {
+	min-width: 0;
+}
+
+.columnIcon {
+	color: var(--mantine-color-gray-5);
+	flex-shrink: 0;
+}
+
+/* Email Column */
+.emailText {
+	color: var(--mantine-color-blue-7);
+	font-weight: 400;
+	font-size: 12px;
+	max-width: 160px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	line-height: 1.4;
+}
+
+.emailText:hover {
+	color: var(--mantine-color-blue-8);
+}
+
+/* Count Badges */
+.countBadge {
+	font-size: 10px;
+	font-weight: 600;
+	height: 18px;
+	min-width: 18px;
+	padding: 0 6px;
+	cursor: help;
+	flex-shrink: 0;
+	border-color: var(--mantine-color-gray-3);
+	color: var(--mantine-color-gray-7);
+	background-color: var(--mantine-color-gray-0);
+}
+
+.errorBadge {
+	font-size: 10px;
+	font-weight: 600;
+	height: 18px;
+	min-width: 18px;
+	padding: 0 6px;
+	cursor: help;
+	flex-shrink: 0;
+	background-color: var(--mantine-color-red-6);
+	color: var(--mantine-color-white);
+}
+
+.completenessWrapper {
+	width: 72px;
+}
+
+.completenessRoot {
+	flex: 1;
+	background-color: var(--mantine-color-gray-1);
+}
+
+.completenessSection {
+	background-color: var(--mantine-color-teal-4);
+}
+
+/* Status Column */
+.statusBadge {
+	font-weight: 500;
+	font-size: 11px;
+	letter-spacing: 0.3px;
+	white-space: nowrap;
+}
+
+/* Empty State */
+.emptyState {
+	color: var(--mantine-color-gray-4);
+	font-style: normal;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+	.card {
+		padding: var(--mantine-spacing-md);
+	}
+
+	.table th {
+		padding: 10px 12px;
+		font-size: 10px;
+	}
+
+	.table td {
+		padding: 12px;
+		font-size: var(--mantine-font-size-xs);
+	}
+
+	.nameText {
+		font-size: 13px;
+	}
+
+	.phoneText,
+	.emailText {
+		font-size: 11px;
+	}
+
+	.tableContainer {
+		overflow-x: auto;
+	}
+}

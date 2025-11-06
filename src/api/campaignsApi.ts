@@ -176,22 +176,34 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 			return response.data;
 		},
 
-		startOutboundCampaign: async (campaignId: number) => {
+		startOutboundCampaign: async (
+			campaignId: number,
+			contactGroupId: number
+		) => {
 			const response = await axios.post(`${DEFAULT_API_URL}/outbound/start`, {
 				campaignId,
+				contactGroupId,
 			});
 			return response.data;
 		},
 
-		pauseOutboundCampaign: async (campaignId: number) => {
+		pauseOutboundCampaign: async (
+			campaignId: number,
+			contactGroupId: number
+		) => {
 			const response = await axios.patch(`${DEFAULT_API_URL}/outbound/pause`, {
 				campaignId,
+				contactGroupId,
 			});
 			return response.data;
 		},
-		resumeOutboundCampaign: async (campaignId: number) => {
+		resumeOutboundCampaign: async (
+			campaignId: number,
+			contactGroupId: number
+		) => {
 			const response = await axios.patch(`${DEFAULT_API_URL}/outbound/resume`, {
 				campaignId,
+				contactGroupId,
 			});
 			return response.data;
 		},

@@ -7,6 +7,12 @@ export interface PhoneValidationError {
 export interface PhoneEntry {
 	phoneNumber: string;
 	validationError?: PhoneValidationError;
+	// Optional metadata fields returned by some APIs
+	lastCalledAt?: string | null; // ISO datetime or null when never called
+	maxRetryAttempts?: number;
+	priorityOrder?: number;
+	retryCounter?: number;
+	status?: string; // e.g. 'DO_NOT_CONTACT', 'ACTIVE', etc.
 }
 
 export interface Contact {
@@ -14,19 +20,15 @@ export interface Contact {
 	firstName: string;
 	lastName: string;
 	identifier: string;
-	identifierType: 'PERSONAL_ID' | string;
-	birthDate: string; // ISO date string: YYYY-MM-DD
-	address: string;
-	phone: string;
+	identifierType: string | null;
+	emails: string[];
+	phoneNumbers: PhoneEntry[];
 	clientId: number;
 	userId: number;
+	contactGroupId: number;
+	status: 'ACTIVE' | 'INACTIVE' | string;
 	createdAt: string; // ISO datetime string
 	updatedAt: string; // ISO datetime string
-	contactGroupId: number;
-	emails: string[] | null;
-	phones: string[];
-	phoneNumbers: PhoneEntry[];
-	status: 'ACTIVE' | 'INACTIVE' | string;
 }
 
 export enum ContactStatus {

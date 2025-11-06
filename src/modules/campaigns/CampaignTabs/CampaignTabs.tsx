@@ -27,25 +27,25 @@ const CampaignTabs = () => {
 			radius='md'
 		>
 			<Tabs.List>
-				<Tabs.Tab leftSection={<IconGalaxy />} value='general'>
-					General
-				</Tabs.Tab>
-				<Tabs.Tab leftSection={<IconUser />} value='agents'>
-					Agents
-				</Tabs.Tab>
 				{selectedCampaign?.type === 'OUTBOUND' && (
 					<Tabs.Tab leftSection={<IconUsersGroup />} value='contacts'>
 						Contacts
 					</Tabs.Tab>
 				)}
-				<Tabs.Tab leftSection={<IconList />} value='outcomes'>
-					{dispositionLabel('Outcomes')}
-				</Tabs.Tab>
 				<Tabs.Tab leftSection={<IconMessages />} value='conversations'>
 					Conversations
 				</Tabs.Tab>
+				<Tabs.Tab leftSection={<IconUser />} value='agents'>
+					Agents
+				</Tabs.Tab>
+				<Tabs.Tab leftSection={<IconList />} value='outcomes'>
+					{dispositionLabel('Outcomes')}
+				</Tabs.Tab>
 				<Tabs.Tab leftSection={<IconChecklist />} value='params'>
 					Params
+				</Tabs.Tab>
+				<Tabs.Tab leftSection={<IconGalaxy />} value='general'>
+					General
 				</Tabs.Tab>
 			</Tabs.List>
 		</Tabs>

@@ -4,8 +4,9 @@ import campaignsApi, {
 	type CreateCampaignWithAgentDTO,
 	type CreateCampaignScheduleDTO,
 } from '~/api/campaignsApi';
-import type { Campaign, PaginatedResponse } from '~/models/CampaignsModel';
+import type { Campaign } from '~/models/CampaignsModel';
 import type { CampaignLiveMetric } from '~/models/CampaignLiveMetricModel';
+import type ContactGroup from '~/models/ContactGroup';
 
 // Create campaign
 export const useCreateCampaign = () => {
@@ -181,45 +182,30 @@ export const useUpdateCampaign = () => {
 export const useStartOutboundCampaign = () => {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: async (campaignId: number) => {
+		mutationFn: async ({
+			campaignId,
+			contactGroupId,
+		}: {
+			campaignId: number;
+			contactGroupId: number;
+		}) => {
 			const api = campaignsApi();
-			return api.startOutboundCampaign(campaignId);
+			return api.startOutboundCampaign(campaignId, contactGroupId);
 		},
-		onSuccess: (_, campaignId) => {
-			// Update the campaigns list cache directly
+		onSuccess: (_, { contactGroupId }) => {
+			// Update contact group status
 			queryClient.setQueryData(
-				['campaigns-paginated'],
-				(oldData: PaginatedResponse<Campaign> | undefined) => {
+				['contactGroup', contactGroupId],
+				(oldData: ContactGroup | undefined) => {
 					if (!oldData) return oldData;
-					return {
-						...oldData,
-						data: oldData.data.map((campaign) =>
-							campaign.id === campaignId
-								? { ...campaign, status: 'RUNNING' as const }
-								: campaign
-						),
-					};
+					return { ...oldData, queueStatus: 'RUNNING' };
 				}
 			);
-
-			// Force immediate refetch as backup
-			queryClient.refetchQueries({ queryKey: ['campaigns'] });
-			queryClient.refetchQueries({ queryKey: ['campaigns-paginated'] });
-			queryClient.refetchQueries({
-				queryKey: ['campaign', campaignId],
-			});
-
-			// Also invalidate all campaign-related queries as backup
-			queryClient.invalidateQueries({
-				predicate: (query) =>
-					query.queryKey[0] === 'campaigns' ||
-					query.queryKey[0] === 'campaigns-paginated' ||
-					query.queryKey[0] === 'campaign',
-			});
+			queryClient.invalidateQueries({ queryKey: ['contactGroups'] });
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console
-			console.error('Error starting campaign:', error);
+			console.error('Error starting outbound campaign:', error);
 		},
 	});
 };
@@ -227,45 +213,30 @@ export const useStartOutboundCampaign = () => {
 export const usePauseOutboundCampaign = () => {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: async (campaignId: number) => {
+		mutationFn: async ({
+			campaignId,
+			contactGroupId,
+		}: {
+			campaignId: number;
+			contactGroupId: number;
+		}) => {
 			const api = campaignsApi();
-			return api.pauseOutboundCampaign(campaignId);
+			return api.pauseOutboundCampaign(campaignId, contactGroupId);
 		},
-		onSuccess: (_, campaignId) => {
-			// Update the campaigns list cache directly
+		onSuccess: (_, { contactGroupId }) => {
+			// Update contact group status
 			queryClient.setQueryData(
-				['campaigns-paginated'],
-				(oldData: PaginatedResponse<Campaign> | undefined) => {
+				['contactGroup', contactGroupId],
+				(oldData: ContactGroup | undefined) => {
 					if (!oldData) return oldData;
-					return {
-						...oldData,
-						data: oldData.data.map((campaign) =>
-							campaign.id === campaignId
-								? { ...campaign, status: 'PAUSED' as const }
-								: campaign
-						),
-					};
+					return { ...oldData, queueStatus: 'PAUSED' };
 				}
 			);
-
-			// Force immediate refetch as backup
-			queryClient.refetchQueries({ queryKey: ['campaigns'] });
-			queryClient.refetchQueries({ queryKey: ['campaigns-paginated'] });
-			queryClient.refetchQueries({
-				queryKey: ['campaign', campaignId],
-			});
-
-			// Also invalidate all campaign-related queries as backup
-			queryClient.invalidateQueries({
-				predicate: (query) =>
-					query.queryKey[0] === 'campaigns' ||
-					query.queryKey[0] === 'campaigns-paginated' ||
-					query.queryKey[0] === 'campaign',
-			});
+			queryClient.invalidateQueries({ queryKey: ['contactGroups'] });
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console
-			console.error('Error pausing campaign:', error);
+			console.error('Error pausing outbound campaign:', error);
 		},
 	});
 };
@@ -273,45 +244,30 @@ export const usePauseOutboundCampaign = () => {
 export const useResumeOutboundCampaign = () => {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: async (campaignId: number) => {
+		mutationFn: async ({
+			campaignId,
+			contactGroupId,
+		}: {
+			campaignId: number;
+			contactGroupId: number;
+		}) => {
 			const api = campaignsApi();
-			return api.resumeOutboundCampaign(campaignId);
+			return api.resumeOutboundCampaign(campaignId, contactGroupId);
 		},
-		onSuccess: (_, campaignId) => {
-			// Update the campaigns list cache directly
+		onSuccess: (_, { contactGroupId }) => {
+			// Update contact group status
 			queryClient.setQueryData(
-				['campaigns-paginated'],
-				(oldData: PaginatedResponse<Campaign> | undefined) => {
+				['contactGroup', contactGroupId],
+				(oldData: ContactGroup | undefined) => {
 					if (!oldData) return oldData;
-					return {
-						...oldData,
-						data: oldData.data.map((campaign) =>
-							campaign.id === campaignId
-								? { ...campaign, status: 'RUNNING' as const }
-								: campaign
-						),
-					};
+					return { ...oldData, queueStatus: 'RUNNING' };
 				}
 			);
-
-			// Force immediate refetch as backup
-			queryClient.refetchQueries({ queryKey: ['campaigns'] });
-			queryClient.refetchQueries({ queryKey: ['campaigns-paginated'] });
-			queryClient.refetchQueries({
-				queryKey: ['campaign', campaignId],
-			});
-
-			// Also invalidate all campaign-related queries as backup
-			queryClient.invalidateQueries({
-				predicate: (query) =>
-					query.queryKey[0] === 'campaigns' ||
-					query.queryKey[0] === 'campaigns-paginated' ||
-					query.queryKey[0] === 'campaign',
-			});
+			queryClient.invalidateQueries({ queryKey: ['contactGroups'] });
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console
-			console.error('Error resuming campaign:', error);
+			console.error('Error resuming outbound campaign:', error);
 		},
 	});
 };

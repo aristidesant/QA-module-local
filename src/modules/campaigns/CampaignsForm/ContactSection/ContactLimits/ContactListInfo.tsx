@@ -34,7 +34,7 @@ interface ContactListInfoProps {
 	expirationDate?: string | null;
 
 	/** Callback when expiration date is changed */
-	onExpirationChange: (date: string | null) => void;
+	onExpirationChange?: (date: string | null) => void;
 
 	/** Callback when list name is changed */
 	onNameChange?: (name: string) => void;
@@ -85,7 +85,7 @@ export function ContactListInfo({
 	const handleDateChange = (dateString: string | null) => {
 		// Store and pass the date as a simple YYYY-MM-DD string to avoid timezone issues
 		setSelectedDate(dateString);
-		onExpirationChange(dateString);
+		onExpirationChange?.(dateString);
 		setOpened(false);
 	};
 
@@ -97,7 +97,7 @@ export function ContactListInfo({
 	const clearDate = (e: React.MouseEvent) => {
 		e.stopPropagation();
 		setSelectedDate(null);
-		onExpirationChange(null);
+		onExpirationChange?.(null);
 	};
 
 	return (
@@ -158,80 +158,82 @@ export function ContactListInfo({
 						)}
 					</Flex>
 				</Group>
-				<Popover
-					opened={opened}
-					onChange={setOpened}
-					onDismiss={() => setOpened(false)}
-					position='bottom'
-					withArrow
-					shadow='md'
-					width={300}
-				>
-					<Popover.Target>
-						<Button
-							variant='subtle'
-							size='sm'
-							c={expirationDate ? 'green' : 'blue'}
-							className={classes.dateButton}
-							leftSection={<IconCalendar size={16} stroke={1.5} />}
-							rightSection={
-								expirationDate ? (
-									<Box
-										component='span'
-										onClick={clearDate}
-										className={classes.clearButton}
-									>
-										<IconX size={14} />
-									</Box>
-								) : null
-							}
-							onClick={() => setOpened((o) => !o)}
-						>
-							{expirationDate
-								? `Expires: ${formatExpirationDate(expirationDate)}`
-								: 'Add expiration date'}
-						</Button>
-					</Popover.Target>
-					<Popover.Dropdown>
-						<DatePicker
-							value={selectedDate}
-							onChange={(dateString) => {
-								// Mantine v8 DatePicker already returns YYYY-MM-DD string format
-								// Pass it directly to avoid any timezone conversion issues
-								handleDateChange(dateString);
-							}}
-							minDate={getStartOfToday()}
-							firstDayOfWeek={0}
-							allowDeselect
-							size='sm'
-							styles={{
-								day: {
-									'&[data-selected]': {
-										backgroundColor: 'var(--mantine-color-blue-6)',
-									},
-									'&[data-selected]:hover': {
-										backgroundColor: 'var(--mantine-color-blue-7)',
-									},
-								},
-							}}
-						/>
-						<Group justify='space-between' mt='md'>
-							<Text size='xs' c='dimmed'>
-								{expirationDate &&
-								dayjs(expirationDate).isBefore(dayjs().startOf('day'), 'day')
-									? 'Selected date is in the past'
-									: 'Select an expiration date'}
-							</Text>
+				{onExpirationChange && (
+					<Popover
+						opened={opened}
+						onChange={setOpened}
+						onDismiss={() => setOpened(false)}
+						position='bottom'
+						withArrow
+						shadow='md'
+						width={300}
+					>
+						<Popover.Target>
 							<Button
 								variant='subtle'
-								size='xs'
-								onClick={() => setOpened(false)}
+								size='sm'
+								c={expirationDate ? 'green' : 'blue'}
+								className={classes.dateButton}
+								leftSection={<IconCalendar size={16} stroke={1.5} />}
+								rightSection={
+									expirationDate ? (
+										<Box
+											component='span'
+											onClick={clearDate}
+											className={classes.clearButton}
+										>
+											<IconX size={14} />
+										</Box>
+									) : null
+								}
+								onClick={() => setOpened((o) => !o)}
 							>
-								Close
+								{expirationDate
+									? `Expires: ${formatExpirationDate(expirationDate)}`
+									: 'Add expiration date'}
 							</Button>
-						</Group>
-					</Popover.Dropdown>
-				</Popover>
+						</Popover.Target>
+						<Popover.Dropdown>
+							<DatePicker
+								value={selectedDate}
+								onChange={(dateString) => {
+									// Mantine v8 DatePicker already returns YYYY-MM-DD string format
+									// Pass it directly to avoid any timezone conversion issues
+									handleDateChange(dateString);
+								}}
+								minDate={getStartOfToday()}
+								firstDayOfWeek={0}
+								allowDeselect
+								size='sm'
+								styles={{
+									day: {
+										'&[data-selected]': {
+											backgroundColor: 'var(--mantine-color-blue-6)',
+										},
+										'&[data-selected]:hover': {
+											backgroundColor: 'var(--mantine-color-blue-7)',
+										},
+									},
+								}}
+							/>
+							<Group justify='space-between' mt='md'>
+								<Text size='xs' c='dimmed'>
+									{expirationDate &&
+									dayjs(expirationDate).isBefore(dayjs().startOf('day'), 'day')
+										? 'Selected date is in the past'
+										: 'Select an expiration date'}
+								</Text>
+								<Button
+									variant='subtle'
+									size='xs'
+									onClick={() => setOpened(false)}
+								>
+									Close
+								</Button>
+							</Group>
+						</Popover.Dropdown>
+					</Popover>
+				)}
 			</Flex>
 		</Card>
 	);

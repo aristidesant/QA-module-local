@@ -1,7 +1,7 @@
-import { Button, Group, Loader, Paper, Stack, Text } from "@mantine/core";
-import { IconEdit, IconTrash } from "@tabler/icons-react";
-import { useGetContact, useDeleteContact } from "~/queries/contactsQueries";
-import classes from "./ContactsDetails.module.css";
+import { Button, Group, Loader, Paper, Stack, Text } from '@mantine/core';
+import { IconEdit, IconTrash } from '@tabler/icons-react';
+import { useGetContact, useDeleteContact } from '~/queries/contactsQueries';
+import classes from './ContactsDetails.module.css';
 
 interface ContactsDetailsProps {
 	contactId: number;
@@ -23,7 +23,7 @@ export default function ContactsDetails({
 
 	if (isLoading) {
 		return (
-			<Group justify="center" py="xl">
+			<Group justify='center' py='xl'>
 				<Loader />
 			</Group>
 		);
@@ -31,8 +31,8 @@ export default function ContactsDetails({
 
 	if (isError || !contact) {
 		return (
-			<Group justify="center" py="xl">
-				<Text c="red">Failed to load contact details.</Text>
+			<Group justify='center' py='xl'>
+				<Text c='red'>Failed to load contact details.</Text>
 			</Group>
 		);
 	}
@@ -43,30 +43,30 @@ export default function ContactsDetails({
 	};
 
 	return (
-		<Paper withBorder p="md" className={classes.detailsContainer}>
+		<Paper withBorder p='md' className={classes.detailsContainer}>
 			<Stack>
-				<Text fw={500} size="lg">
+				<Text fw={500} size='lg'>
 					{contact.firstName} {contact.lastName}
 				</Text>
 				<Text>Email: {contact.emails?.[0]}</Text>
-				<Text>Phone: {contact.phone}</Text>
+				<Text>Phone: {contact.phoneNumbers?.[0]?.phoneNumber}</Text>
 				<Text>Identifier: {contact.identifier}</Text>
 				<Text>Identifier Type: {contact.identifierType}</Text>
-				<Text>Birth Date: {contact.birthDate}</Text>
-				<Text>Address: {contact.address}</Text>
-				<Group mt="md">
+				{/* <Text>Birth Date: {contact.birthDate}</Text> */}
+				{/* <Text>Address: {contact.address}</Text> */}
+				<Group mt='md'>
 					<Button
 						leftSection={<IconEdit size={16} />}
 						onClick={() => onEdit(contact.id)}
-						size="xs"
+						size='xs'
 					>
 						Edit
 					</Button>
 					<Button
 						leftSection={<IconTrash size={16} />}
-						color="red"
+						color='red'
 						onClick={handleDelete}
-						size="xs"
+						size='xs'
 						loading={deleteContact.isPending}
 					>
 						Delete

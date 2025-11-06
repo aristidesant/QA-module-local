@@ -1,9 +1,7 @@
 import axios from 'axios';
-import type {
-	ConversationsModel,
-	PaginatedConversationsResponse,
-} from '~/models/ConversationsModels';
+import type { ConversationsModel } from '~/models/ConversationsModels';
 import { DEFAULT_API_URL } from './config';
+import { PaginatedResponse } from '~/models/CampaignsModel';
 
 export type StartDemoParams = {
 	agentId: string;
@@ -47,20 +45,23 @@ const conversationsApi = (_authHeader: Record<string, string> = {}) => {
 
 		getConversations: async (
 			campaignId?: string | number,
+			contactGroupId?: string | number,
 			params?: {
 				limit?: number;
 				offset?: number;
 				search?: string;
 			}
 		) => {
-			const response = await axios.get<
-				PaginatedConversationsResponse<ConversationsModel>
-			>(`${DEFAULT_API_URL}/conversations`, {
-				params: {
-					...params,
-					...(campaignId ? { campaignId } : {}),
-				},
-			});
+			const response = await axios.get<PaginatedResponse<ConversationsModel>>(
+				`${DEFAULT_API_URL}/conversations`,
+				{
+					params: {
+						...params,
+						...(campaignId ? { campaignId } : {}),
+						...(contactGroupId ? { contactGroupId } : {}),
+					},
+				}
+			);
 			return response.data;
 		},
 

@@ -11,7 +11,7 @@ import {
 } from '~/queries/schedulerQueries';
 import styles from './SchedulerCard.module.css';
 import ScheduleHeader from './ScheduleHeader';
-import { ActiveContactListView } from '../../ContactSection/ActiveContactList/ActiveContactListView';
+import { ContactListView } from '../../ContactSection/ContactList/ContactListView';
 import CapacityCall from '../CapacityCall/CapacityCall';
 import {
 	SchedulerFormProvider,
@@ -177,10 +177,11 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 								<CapacityCall />
 
 								{/* Active Contact List */}
-								<ActiveContactListView
-									scheduleContactGroups={scheduler.scheduleContactGroups || []}
+								<ContactListView
+									contactGroups={scheduler.scheduleContactGroups || []}
 									onUpdateComplete={() => {}}
 									campaignId={campaignId}
+									isActive={true}
 								/>
 
 								{/* Update Schedule Button */}

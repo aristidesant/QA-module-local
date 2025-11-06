@@ -6,7 +6,7 @@ import { useClientConfigByName } from '~/queries/useClientConfigs';
 import type {
 	AgentConfigModel,
 	ConversationConfigModel,
-	ToolModel,
+	SystemToolModel,
 } from '~/models/AgentListObject';
 import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
 import ToolConfigModal from './ToolConfigModal';
@@ -17,7 +17,7 @@ type ToolConfigModel = {
 	name: string;
 	nameCode: string;
 	description?: string;
-	value: ToolModel;
+	value: SystemToolModel;
 };
 
 const CampaignConfigurationSystemTools: React.FC = () => {
@@ -39,7 +39,7 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 						tool?.value?.type ||
 						`${name?.toLowerCase().replace(/\s+/g, '_')}_${index}`;
 					const nameCode = snakeToCamel(rawNameCode);
-					const toolValue = (tool?.value || tool) as ToolModel;
+					const toolValue = (tool?.value || tool) as SystemToolModel;
 					const description = tool?.description || toolValue?.description;
 					return {
 						name,
@@ -122,7 +122,7 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 	}, []);
 
 	const handleSaveToolConfig = useCallback(
-		(updatedConfig: ToolModel) => {
+		(updatedConfig: SystemToolModel) => {
 			const currentAgentConfig = form.values.agentConfig || {};
 			const currentConversationConfig = currentAgentConfig.conversationConfig;
 			const currentAgent = currentConversationConfig?.agent;

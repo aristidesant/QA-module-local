@@ -5,12 +5,13 @@ import useCampaignPredefinedParamsColumns from './useCampaignPredefinedParamsCol
 interface CampaignPredefinedParamsListProps {
 	data: CampaignPredefinedParam[];
 	onRowClick?: (param: CampaignPredefinedParam) => void;
+	onDelete?: (param: CampaignPredefinedParam) => void;
 }
 
 const CampaignPredefinedParamsList: React.FC<
 	CampaignPredefinedParamsListProps
-> = ({ data, onRowClick }) => {
-	const columns = useCampaignPredefinedParamsColumns();
+> = ({ data, onRowClick, onDelete }) => {
+	const columns = useCampaignPredefinedParamsColumns({ onDelete });
 
 	return <BaseTable data={data} columns={columns} onRowClick={onRowClick} />;
 };

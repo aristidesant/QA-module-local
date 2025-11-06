@@ -82,6 +82,8 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 		| undefined;
 	const isActionMutating = isPausing || isResuming || isStarting;
 	const campaignId = String(displayCampaign?.id ?? campaign.id);
+	const campaignNumericId = displayCampaign?.id ?? campaign.id;
+	const contactGroupId = displayCampaign?.contactList?.id;
 	const isStartDisabled = useMemo(() => {
 		if (isLoadingRequirements) {
 			return true;
@@ -175,31 +177,83 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 		console.error(`Error ${action} campaign:`, error);
 	}, []);
 
+	const ensureContactGroup = useCallback(
+		(action: string) => {
+			if (!campaignNumericId || !contactGroupId) {
+				notifications.show({
+					title: 'Unavailable',
+					message:
+						'No contact list is available for this campaign. Add one before attempting to manage delivery.',
+					color: 'yellow',
+				});
+				console.error(
+					`Cannot ${action} campaign without an associated contact list.`,
+					{
+						campaignId: campaignNumericId,
+						contactGroupId,
+					}
+				);
+				return false;
+			}
+			return true;
+		},
+		[campaignNumericId, contactGroupId]
+	);
+
 	const handleToggle = useCallback(() => {
 		switch (status) {
 			case CampaignStatus.RUNNING:
-				pauseCampaign(campaign?.id, {
-					onSuccess: () => onSuccess('paused'),
-					onError: (error) => onError(error, 'pause'),
-				});
+				if (!ensureContactGroup('pause')) {
+					return;
+				}
+				pauseCampaign(
+					{
+						campaignId: campaignNumericId,
+						contactGroupId: contactGroupId!,
+					},
+					{
+						onSuccess: () => onSuccess('paused'),
+						onError: (error) => onError(error, 'pause'),
+					}
+				);
 				break;
 			case CampaignStatus.PAUSED:
-				resumeCampaign(campaign?.id, {
-					onSuccess: () => onSuccess('resumed'),
-					onError: (error) => onError(error, 'resume'),
-				});
+				if (!ensureContactGroup('resume')) {
+					return;
+				}
+				resumeCampaign(
+					{
+						campaignId: campaignNumericId,
+						contactGroupId: contactGroupId!,
+					},
+					{
+						onSuccess: () => onSuccess('resumed'),
+						onError: (error) => onError(error, 'resume'),
+					}
+				);
 				break;
 			case CampaignStatus.PENDING:
-				startCampaign(campaign?.id, {
-					onSuccess: () => onSuccess('started'),
-					onError: (error) => onError(error, 'start'),
-				});
+				if (!ensureContactGroup('start')) {
+					return;
+				}
+				startCampaign(
+					{
+						campaignId: campaignNumericId,
+						contactGroupId: contactGroupId!,
+					},
+					{
+						onSuccess: () => onSuccess('started'),
+						onError: (error) => onError(error, 'start'),
+					}
+				);
 				break;
 			default:
 				break;
 		}
 	}, [
-		campaign?.id,
+		campaignNumericId,
+		contactGroupId,
+		ensureContactGroup,
 		onError,
 		onSuccess,
 		pauseCampaign,
@@ -207,7 +261,6 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 		startCampaign,
 		status,
 	]);
-
 	const statusConfig =
 		(status && CampaignStatusConfig[status]) ??
 		({

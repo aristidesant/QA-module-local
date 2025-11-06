@@ -1,0 +1,102 @@
+.panel {
+	position: relative;
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-sm);
+	background-color: var(--mantine-color-white);
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
+.statusSection {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	flex: 1;
+	min-width: 0;
+}
+
+.statusBadge {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	border-radius: var(--mantine-radius-sm);
+	padding: 2px 8px;
+	width: fit-content;
+}
+
+.statusLabel {
+	letter-spacing: 0.3px;
+}
+
+.statusDescription {
+	max-width: 400px;
+	line-height: 1.4;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.statusPending {
+	background-color: var(--mantine-color-yellow-0);
+	color: var(--mantine-color-yellow-8);
+	border: 1px solid var(--mantine-color-yellow-2);
+}
+
+.statusRunning {
+	background-color: var(--mantine-color-green-0);
+	color: var(--mantine-color-green-8);
+	border: 1px solid var(--mantine-color-green-2);
+}
+
+.statusPaused {
+	background-color: var(--mantine-color-blue-0);
+	color: var(--mantine-color-blue-8);
+	border: 1px solid var(--mantine-color-blue-2);
+}
+
+.statusComplete {
+	background-color: var(--mantine-color-teal-0);
+	color: var(--mantine-color-teal-8);
+	border: 1px solid var(--mantine-color-teal-2);
+}
+
+.statusFailed {
+	background-color: var(--mantine-color-red-0);
+	color: var(--mantine-color-red-8);
+	border: 1px solid var(--mantine-color-red-2);
+}
+
+.statusUnknown {
+	background-color: var(--mantine-color-gray-0);
+	color: var(--mantine-color-gray-7);
+	border: 1px solid var(--mantine-color-gray-3);
+}
+
+.reloadButton {
+	transition:
+		background-color 200ms ease,
+		transform 150ms ease;
+}
+
+.reloadButton:hover {
+	transform: rotate(45deg);
+}
+
+.divider {
+	height: 1px;
+	background-color: var(--mantine-color-gray-2);
+	margin: var(--mantine-spacing-xs) 0;
+}
+
+.metricsGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	gap: var(--mantine-spacing-xs);
+}

@@ -5,7 +5,7 @@ import MFASection from './MFASection';
 import UserInfoCard from './UserInfoCard';
 import styles from './ProfilePage.module.css';
 
-export const ProfilePage: React.FC = () => {
+const ProfilePage: React.FC = () => {
 	return (
 		<ContentContainer
 			title='Profile Settings'
@@ -20,3 +20,6 @@ export const ProfilePage: React.FC = () => {
 		</ContentContainer>
 	);
 };
+
+export { ProfilePage };
+export default ProfilePage;

@@ -32,9 +32,13 @@ import SchedulerCalculator from './ParametersSection/SchedulerCalculator';
 interface CampaignsFormProps {
 	campaign?: Partial<Campaign>;
 	loading?: boolean;
+	onBack?: () => void;
 }
 
-export const CampaignsForm: React.FC<CampaignsFormProps> = ({ campaign }) => {
+export const CampaignsForm: React.FC<CampaignsFormProps> = ({
+	campaign,
+	onBack,
+}) => {
 	const { selectedTab, rightComponent, resetView } = useCampaignsStore(
 		(state) => state
 	);
@@ -103,7 +107,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({ campaign }) => {
 						...cleanedValue.agentConfig.conversationConfig,
 						agent: {
 							...cleanedValue.agentConfig.conversationConfig.agent,
-							prompt: restPrompt,
+							prompt: restPrompt as any,
 						},
 					},
 				};
@@ -158,6 +162,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({ campaign }) => {
 			rightSection={rightComponent || <></>}
 			onBackClick={() => {
 				resetView();
+				onBack?.();
 			}}
 			title={`Editing campaign`}
 			description={`Manage settings and configurations for your campaign.`}

@@ -15,6 +15,7 @@
 - When asked to split a component, unless we explicitly provide a path, create the component in the same folder as the main component file.
 - When you consider a new component is needed, create it in the same folder as the main component file.
 - This project has a FLAT design, Don't use shadows, gradients, animations, or any other 3D effects unless explicitly requested.
+- IMPORTANT!! No matter the language in which the request is being provided by the user, we write code in English as well as comments when needed. DO NOT WRITE CODE OR COMMENTS IN SPANISH
 
 # Project Structure & Architecture
 

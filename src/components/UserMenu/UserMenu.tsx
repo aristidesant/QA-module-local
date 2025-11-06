@@ -92,7 +92,7 @@ export const UserMenu: React.FC = () => {
 				{
 					label: 'Client Configs',
 					icon: <IconSettings size={16} />,
-					path: '/client-configs',
+					path: '/configurations/client-configs',
 				},
 				{
 					label: 'Knowledge Bases',
@@ -107,7 +107,7 @@ export const UserMenu: React.FC = () => {
 				{
 					label: 'Campaign Predefined Params',
 					icon: <IconSettings size={16} />,
-					path: '/visual-config/campaign-predefined-params',
+					path: '/configurations/campaign-predefined-params',
 				},
 			],
 		},

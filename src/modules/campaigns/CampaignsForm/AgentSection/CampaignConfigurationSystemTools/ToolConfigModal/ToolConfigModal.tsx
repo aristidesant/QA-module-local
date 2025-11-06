@@ -1,15 +1,15 @@
 import React from 'react';
 import { Modal, Stack, Textarea, Checkbox } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import type { ToolModel } from '~/models/AgentListObject';
+import type { SystemToolModel } from '~/models/AgentListObject';
 import classes from './ToolConfigModal.module.css';
 
 interface ToolConfigModalProps {
 	opened: boolean;
 	onClose: () => void;
 	toolName: string;
-	toolConfig: ToolModel;
-	onSave: (updatedConfig: ToolModel) => void;
+	toolConfig: SystemToolModel;
+	onSave: (updatedConfig: SystemToolModel) => void;
 }
 
 const ToolConfigModal: React.FC<ToolConfigModalProps> = ({
@@ -29,7 +29,7 @@ const ToolConfigModal: React.FC<ToolConfigModalProps> = ({
 
 	const handleSave = () => {
 		const values = form.values;
-		const updatedConfig: ToolModel = {
+		const updatedConfig: SystemToolModel = {
 			...toolConfig,
 			description: values.description,
 			disableInterruptions: values.disableInterruptions,
