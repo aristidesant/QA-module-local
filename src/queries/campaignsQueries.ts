@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { UseQueryOptions } from '@tanstack/react-query';
 import campaignsApi, {
 	type CreateCampaignWithAgentDTO,
+	type CreateCampaignScheduleDTO,
 } from '~/api/campaignsApi';
 import type { Campaign, PaginatedResponse } from '~/models/CampaignsModel';
 import type { CampaignLiveMetric } from '~/models/CampaignLiveMetricModel';
@@ -87,6 +88,32 @@ export const useGetCampaignScheduleSummary = (campaignId: string) => {
 		},
 		enabled: !!campaignId,
 		retry: false,
+	});
+};
+
+export const useCreateCampaignSchedule = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async ({
+			campaignId,
+			data,
+		}: {
+			campaignId: string;
+			data: CreateCampaignScheduleDTO;
+		}) => {
+			const api = campaignsApi();
+			return api.createCampaignSchedule(campaignId, data);
+		},
+		onSuccess: (_, { campaignId }) => {
+			queryClient.invalidateQueries({ queryKey: ['campaign', campaignId] });
+			queryClient.invalidateQueries({
+				queryKey: ['campaign-schedule-summary', campaignId],
+			});
+		},
+		onError: (error) => {
+			// eslint-disable-next-line no-console
+			console.error('Error creating campaign schedule:', error);
+		},
 	});
 };
 

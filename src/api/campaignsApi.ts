@@ -10,6 +10,34 @@ import { DEFAULT_API_URL } from './config';
 
 // import { getAuthorizationHeader } from "../utils/tokenUtils";
 
+export interface HourConfig {
+	hour: string;
+	hourOrder: number;
+	capacity: number;
+	isActive: boolean;
+}
+
+export interface DayConfig {
+	dayOfWeek:
+		| 'MONDAY'
+		| 'TUESDAY'
+		| 'WEDNESDAY'
+		| 'THURSDAY'
+		| 'FRIDAY'
+		| 'SATURDAY'
+		| 'SUNDAY';
+	isActive: boolean;
+	dailyCallLimit: number;
+	hourConfigs: HourConfig[];
+}
+
+export interface CreateCampaignScheduleDTO {
+	name: string;
+	description: string;
+	humanEquivalent: number;
+	dayConfigs: DayConfig[];
+}
+
 export interface CreateCampaignWithAgentDTO {
 	campaign: {
 		name: string;
@@ -104,6 +132,17 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 		findCampaignScheduleSummary: async (campaignId: string) => {
 			const response = await axios.get<SchedulerSummary[]>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}/schedules/day-configs/summary`
+			);
+			return response.data;
+		},
+
+		createCampaignSchedule: async (
+			campaignId: string,
+			data: CreateCampaignScheduleDTO
+		) => {
+			const response = await axios.post(
+				`${DEFAULT_API_URL}/campaigns/${campaignId}/schedules`,
+				data
 			);
 			return response.data;
 		},
