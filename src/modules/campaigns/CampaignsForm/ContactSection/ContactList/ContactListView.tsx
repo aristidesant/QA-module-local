@@ -10,7 +10,7 @@ import type ContactGroup from '~/models/ContactGroup';
 import BaseTable from '~/components/BaseTable';
 import useContactListColumns from './useContactListColumns';
 import { useCampaignsStore } from '~/stores/campaignsStore';
-import ContactListDetails from '../ContactListItem';
+import ContactListDetails from '../ContactListDetails';
 import { PaginatedResponse } from '~/models/CampaignsModel';
 
 export interface ContactListViewProps {

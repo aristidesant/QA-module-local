@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
 	Stack,
 	Box,
@@ -7,7 +7,9 @@ import {
 	Button,
 	Text,
 	Slider,
+	Alert,
 } from '@mantine/core';
+import { IconInfoCircle } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import type {
 	ContactFileSummary,
@@ -20,6 +22,11 @@ import ColumnMappingCard from './ColumnMappingCard/ColumnMappingCard';
 import { transformFieldMapping } from '~/utils/fieldMappingTransformer';
 import { useUpdateContactGroup } from '~/queries/contactGroupQueries';
 import { useCampaignActiveSchedule } from '~/queries/schedulerQueries';
+import { useGetContactGroups } from '~/queries/contactGroupQueries';
+import {
+	calculateHumanEquivalentValues,
+	type HumanEquivalentCalculations,
+} from './humanEquivalentCalculations';
 
 type ContactLimitsProps = {
 	fileSummary?: ContactFileSummary;
@@ -38,7 +45,12 @@ export const ContactLimits = ({
 }: ContactLimitsProps) => {
 	const processFileMutation = useProcessContactGroupFile();
 	const updateContactGroupMutation = useUpdateContactGroup();
+
 	const { data: activeSchedule } = useCampaignActiveSchedule(campaignId);
+	const { data: contactGroups } = useGetContactGroups({
+		isActive: true,
+		campaignId,
+	});
 	const [data, setData] = useState<{
 		name: string;
 		description: string;
@@ -76,8 +88,42 @@ export const ContactLimits = ({
 			});
 			return false;
 		}
+
+		// Validate human equivalent doesn't exceed available capacity
+		if (humanEquivalent > sliderMax) {
+			notifications.show({
+				title: 'Invalid Input',
+				message: 'Human equivalent exceeds available capacity.',
+				color: 'red',
+			});
+			return false;
+		}
+
+		// Prevent creating when scheduler is full
+		if (isCreatingAndFull) {
+			notifications.show({
+				title: 'Scheduler Full',
+				message:
+					'Cannot create contact group. Please increase the scheduler capacity first.',
+				color: 'red',
+			});
+			return false;
+		}
+
 		return true;
 	};
+
+	const humanEquivalentCalculations =
+		useMemo((): HumanEquivalentCalculations => {
+			return calculateHumanEquivalentValues(
+				contactGroups?.data || [],
+				activeSchedule,
+				contactGroup.id
+			);
+		}, [contactGroups?.data, activeSchedule, contactGroup.id]);
+
+	const { maxAvailableHumanEquivalent, isCreatingAndFull, sliderMax } =
+		humanEquivalentCalculations;
 	const handleSubmit = async () => {
 		// Validate form before submission
 		if (!validateForm()) {
@@ -162,24 +208,43 @@ export const ContactLimits = ({
 					}}
 				/>
 				{/* Human Equivalent Slider */}
+				{isCreatingAndFull && (
+					<Alert
+						icon={<IconInfoCircle size={16} />}
+						title='Scheduler Capacity Full'
+						color='yellow'
+					>
+						The active schedule has no available capacity. Please increase the
+						Human Equivalent capacity in the scheduler configuration to add new
+						contact groups.
+					</Alert>
+				)}
 				<Box>
-					<Text size='sm' fw={500} mb='xs'>
-						Human Equivalent: {humanEquivalent}
-					</Text>
+					<Group justify='space-between' mb='xs'>
+						<Text size='sm' fw={500}>
+							Human Equivalent: {humanEquivalent}
+						</Text>
+						<Text size='xs' c='dimmed'>
+							Available: {maxAvailableHumanEquivalent}
+						</Text>
+					</Group>
 					<Slider
 						value={humanEquivalent}
 						onChange={setHumanEquivalent}
 						min={1}
-						max={100}
+						max={sliderMax}
 						step={1}
 						label={(value) => `${value}`}
 						size='md'
+						disabled={isCreatingAndFull}
 					/>
 				</Box>
 				{/* Active Schedule Display */}
 				{activeSchedule && (
 					<Text size='sm' c='dimmed'>
-						Active Schedule: {activeSchedule.name}
+						Active Schedule: {activeSchedule.name} (
+						{maxAvailableHumanEquivalent}/{activeSchedule.humanEquivalent || 0}{' '}
+						available)
 					</Text>
 				)}
 				{/*Column Mapper*/}
@@ -215,7 +280,8 @@ export const ContactLimits = ({
 						}
 						disabled={
 							processFileMutation.isPending ||
-							updateContactGroupMutation.isPending
+							updateContactGroupMutation.isPending ||
+							isCreatingAndFull
 						}
 					>
 						{contactGroup.id ? 'Update contact list' : 'Save contact list'}

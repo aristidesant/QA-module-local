@@ -13,12 +13,12 @@ import conversationsApi, {
 import type {
 	ConversationDemoModel,
 	ConversationsModel,
-	PaginatedConversationsResponse,
 } from '~/models/ConversationsModels';
 
 const getApi = () => conversationsApi();
 
 type ConversationsQueryParams = {
+	contactGroupId?: string | number | null;
 	campaignId?: string | number | null;
 	limit?: number;
 	offset?: number;
@@ -43,17 +43,21 @@ export const useCreateConversation = () => {
 
 // Get all conversations for current client or for a specific campaign
 export const useGetConversations = (params?: ConversationsQueryParams) => {
-	const { campaignId, limit, offset, search } = params || {};
+	const { campaignId, contactGroupId, limit, offset, search } = params || {};
 
-	return useQuery<PaginatedConversationsResponse<ConversationsModel>>({
+	return useQuery({
 		queryKey: ['conversations', campaignId ?? 'all', { limit, offset, search }],
 		queryFn: async () => {
 			const api = getApi();
-			return api.getConversations(campaignId ?? undefined, {
-				limit,
-				offset,
-				search,
-			});
+			return api.getConversations(
+				campaignId ?? undefined,
+				contactGroupId ?? undefined,
+				{
+					limit,
+					offset,
+					search,
+				}
+			);
 		},
 		staleTime: 30_000,
 		placeholderData: keepPreviousData,

@@ -26,7 +26,7 @@ export const ContactListControl = ({
 	const handleAction = () => {
 		if (contactGroup.queueStatus === 'PENDING') {
 			startMutation.mutate({
-				campaignId: contactGroup.campaignId,
+				campaignId: contactGroup?.schedule?.campaignId || 0,
 				contactGroupId: contactGroup.id,
 			});
 		} else if (contactGroup.queueStatus === 'PAUSED') {
@@ -43,7 +43,7 @@ export const ContactListControl = ({
 	};
 
 	const isDisabled =
-		contactGroup.queueStatus === 'COMPLETE' ||
+		contactGroup.queueStatus === 'COMPLETED' ||
 		contactGroup.queueStatus === 'FAILED';
 
 	let icon = <IconPlayerPlay size={16} />;
@@ -55,7 +55,7 @@ export const ContactListControl = ({
 	} else if (contactGroup.queueStatus === 'RUNNING') {
 		icon = <IconPlayerPause size={16} />;
 		tooltip = 'Pause contact list';
-	} else if (contactGroup.queueStatus === 'COMPLETE') {
+	} else if (contactGroup.queueStatus === 'COMPLETED') {
 		icon = <IconPlayerPlay size={16} />;
 		tooltip = 'Contact list is complete';
 	} else if (contactGroup.queueStatus === 'FAILED') {

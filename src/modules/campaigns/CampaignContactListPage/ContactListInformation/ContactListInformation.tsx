@@ -21,7 +21,7 @@ export const ContactListInformation = ({
 		| 'PENDING'
 		| 'RUNNING'
 		| 'PAUSED'
-		| 'COMPLETE'
+		| 'COMPLETED'
 		| 'FAILED'
 		| 'UNKNOWN';
 
@@ -52,7 +52,7 @@ export const ContactListInformation = ({
 			accentClass: 'statusPaused',
 			StatusIcon: IconAlertTriangle,
 		},
-		COMPLETE: {
+		COMPLETED: {
 			label: 'Complete',
 			description: 'All contacts processed for this list.',
 			accentClass: 'statusComplete',
@@ -85,10 +85,7 @@ export const ContactListInformation = ({
 			label: 'Max Calls / Contact',
 			value: contactGroup.maxCallsPerContact,
 		},
-		{
-			label: 'Max Calls / List',
-			value: contactGroup.maxCallsPerList,
-		},
+
 		{
 			label: 'Human Equivalent',
 			value: Math.round(contactGroup.humanEquivalent),
@@ -110,8 +107,8 @@ export const ContactListInformation = ({
 					<div
 						className={`${classes.statusBadge} ${classes[status.accentClass]}`}
 					>
-						<StatusIcon size={16} strokeWidth={2.5} />
-						<Text size='sm' fw={600} className={classes.statusLabel}>
+						<StatusIcon size={14} strokeWidth={2.5} />
+						<Text size='xs' fw={600} className={classes.statusLabel}>
 							{status.label}
 						</Text>
 					</div>
@@ -119,17 +116,17 @@ export const ContactListInformation = ({
 						{status.description}
 					</Text>
 				</div>
-				<Tooltip label='Reload contact list' withArrow position='left'>
+				<Tooltip label='Reload' withArrow position='left'>
 					<ActionIcon
 						variant='light'
 						color='gray'
-						size='lg'
+						size='sm'
 						aria-label='Reload contact list'
 						onClick={() => {
 							void onReload();
 						}}
 					>
-						<IconRefresh size={18} strokeWidth={2} />
+						<IconRefresh size={16} strokeWidth={2} />
 					</ActionIcon>
 				</Tooltip>
 			</div>

@@ -27,6 +27,7 @@ import styles from './ConversationsList.module.css';
 
 type ConversationsListProps = {
 	campaignId?: number | string;
+	contactGroupId?: number | string;
 	onConversationClick?: (conversation: ConversationsModel) => void;
 	selectedConversationId?: number | null;
 	searchPlaceholder?: string;
@@ -35,6 +36,7 @@ type ConversationsListProps = {
 
 const ConversationsList: React.FC<ConversationsListProps> = ({
 	campaignId,
+	contactGroupId,
 	onConversationClick,
 	selectedConversationId,
 	searchPlaceholder = 'Search conversations',
@@ -55,6 +57,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 	const { data, isLoading, isFetching, isError, error, refetch } =
 		useGetConversations({
 			campaignId,
+			contactGroupId,
 			limit,
 			offset,
 			search: name,
@@ -70,7 +73,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 		setInternalSelectedId(null);
 	}, [campaignId]);
 
-	const conversations = data?.conversations ?? [];
+	const conversations = data?.data ?? [];
 	const totalItems = data?.total ?? 0;
 
 	const totalPages = useMemo(() => {

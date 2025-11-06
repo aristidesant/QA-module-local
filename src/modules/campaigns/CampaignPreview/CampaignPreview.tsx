@@ -30,7 +30,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
 	return (
 		<ScrollArea h='100%' type='scroll' offsetScrollbars>
 			<Stack gap='xs' p='xs'>
-				<CampaignOverview {...{ campaign }} />
+				{campaign?.type === 'INBOUND' && <CampaignOverview {...{ campaign }} />}
 
 				<CampaignContactOutcomeSummary {...{ campaign }} />
 

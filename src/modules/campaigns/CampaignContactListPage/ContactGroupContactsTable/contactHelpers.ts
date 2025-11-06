@@ -7,13 +7,7 @@ export const getStatusColor = (contact: Contact) => {
 };
 
 export const getContactStatus = (contact: Contact) => {
-	const hasPhone = contact.phoneNumbers && contact.phoneNumbers.length > 0;
-	const hasEmail = contact.emails && contact.emails.length > 0;
-	return hasEmail && hasPhone
-		? 'Active'
-		: hasPhone || hasEmail
-			? 'Partial'
-			: 'Inactive';
+	return contact?.status;
 };
 
 export const getInitials = (firstName: string, lastName: string) => {

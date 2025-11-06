@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Button, Flex, Loader, Text } from '@mantine/core';
 import {
@@ -17,9 +17,12 @@ import {
 	usePauseOutboundCampaign,
 	useResumeOutboundCampaign,
 } from '~/queries/campaignsQueries';
+import { useCampaignContactListStore } from '~/stores/campaignContactListStore';
 import ContactGroupSummary from './ContactGroupSummary';
 import ContactGroupContactsTable from './ContactGroupContactsTable';
 import ContactListInformation from './ContactListInformation';
+import ConversationsList from '~/modules/conversations/ConversationsList';
+import ConversationDetails from '~/modules/conversations/ConversationDetails';
 
 const CampaignContactListPage = () => {
 	const navigate = useNavigate();
@@ -40,6 +43,18 @@ const CampaignContactListPage = () => {
 	const startMutation = useStartOutboundCampaign();
 	const pauseMutation = usePauseOutboundCampaign();
 	const resumeMutation = useResumeOutboundCampaign();
+
+	const { setRightComponent, rightComponent } = useCampaignContactListStore();
+
+	useEffect(() => {
+		if (contactGroupQuery.data) {
+			setRightComponent(
+				<ContactGroupSummary contactGroup={contactGroupQuery.data} />
+			);
+		} else {
+			setRightComponent(null);
+		}
+	}, [contactGroupQuery.data, setRightComponent]);
 
 	const isLoadingMutations =
 		startMutation.isPending ||
@@ -96,7 +111,7 @@ const CampaignContactListPage = () => {
 	const handleAction = () => {
 		if (!contactGroupQuery.data) return;
 		const payload = {
-			campaignId: contactGroupQuery.data.campaignId,
+			campaignId: contactGroupQuery.data.schedule?.campaignId || 0,
 			contactGroupId: contactGroupQuery.data.id,
 		};
 
@@ -212,9 +227,7 @@ const CampaignContactListPage = () => {
 			{...commonContainerProps}
 			title={contactGroupQuery.data.name}
 			description='Review and manage the contacts associated with this list.'
-			rightSection={
-				<ContactGroupSummary contactGroup={contactGroupQuery.data} />
-			}
+			rightSection={rightComponent}
 		>
 			<SectionCard
 				title='Contact List Information'
@@ -234,6 +247,17 @@ const CampaignContactListPage = () => {
 				<ContactListInformation
 					contactGroup={contactGroupQuery.data}
 					onReload={() => contactGroupQuery.refetch()}
+				/>
+			</SectionCard>
+			<SectionCard
+				title='Conversations'
+				description='All conversations associated with this contact list.'
+			>
+				<ConversationsList
+					onConversationClick={(conversation) => {
+						setRightComponent(<ConversationDetails id={conversation?.id} />);
+					}}
+					contactGroupId={contactGroupId}
 				/>
 			</SectionCard>
 			<SectionCard

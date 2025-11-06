@@ -6,9 +6,11 @@ import {
 	getSortedRowModel,
 	getFilteredRowModel,
 	getPaginationRowModel,
+	getExpandedRowModel,
 	Row,
 	SortingState,
 	ColumnFiltersState,
+	ExpandedState,
 	useReactTable,
 } from '@tanstack/react-table';
 import { Table, LoadingOverlay, Skeleton } from '@mantine/core';
@@ -16,6 +18,7 @@ import {
 	IconChevronUp,
 	IconChevronDown,
 	IconArrowsUpDown,
+	IconChevronRight,
 } from '@tabler/icons-react';
 import styles from './BaseTable.module.css';
 
@@ -71,6 +74,22 @@ export type BaseTableProps<TData> = {
 	 * Enable client-side filtering (only used when filterMode='client')
 	 */
 	enableFiltering?: boolean;
+	/**
+	 * Enable expandable rows
+	 */
+	enableExpanding?: boolean;
+	/**
+	 * Render function for expanded row content
+	 */
+	renderExpandedRow?: (row: TData) => React.ReactNode;
+	/**
+	 * Callback when row expansion changes
+	 */
+	onExpandedChange?: (expandedRowIds: string[]) => void;
+	/**
+	 * Initially expanded row IDs
+	 */
+	initialExpandedRows?: string[];
 };
 
 function BaseTable<TData>({
@@ -94,6 +113,10 @@ function BaseTable<TData>({
 	onFilterChange,
 	enablePagination = false,
 	enableFiltering = false,
+	enableExpanding = false,
+	renderExpandedRow,
+	onExpandedChange,
+	initialExpandedRows = [],
 }: BaseTableProps<TData>) {
 	const [sorting, setSorting] = React.useState<SortingState>(initialSort);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -103,6 +126,9 @@ function BaseTable<TData>({
 		pageIndex,
 		pageSize,
 	});
+	const [expanded, setExpanded] = React.useState<ExpandedState>(
+		initialExpandedRows.reduce((acc, id) => ({ ...acc, [id]: true }), {})
+	);
 
 	// Handle sorting changes
 	const handleSortingChange = React.useCallback(
@@ -143,6 +169,22 @@ function BaseTable<TData>({
 		[filterMode, onPaginationChange, pagination]
 	);
 
+	// Handle expanded state changes
+	const handleExpandedChange = React.useCallback(
+		(updater: any) => {
+			setExpanded(updater);
+			if (onExpandedChange) {
+				const newExpanded =
+					typeof updater === 'function' ? updater(expanded) : updater;
+				const expandedIds = Object.keys(newExpanded).filter(
+					(key) => newExpanded[key]
+				);
+				onExpandedChange(expandedIds);
+			}
+		},
+		[onExpandedChange, expanded]
+	);
+
 	const table = useReactTable<TData>({
 		data,
 		columns,
@@ -150,12 +192,14 @@ function BaseTable<TData>({
 			sorting,
 			...(filterMode === 'client' && enableFiltering ? { columnFilters } : {}),
 			...(enablePagination ? { pagination } : {}),
+			...(enableExpanding ? { expanded } : {}),
 		},
 		onSortingChange: handleSortingChange,
 		...(filterMode === 'client' && enableFiltering
 			? { onColumnFiltersChange: handleFilterChange }
 			: {}),
 		...(enablePagination ? { onPaginationChange: handlePaginationChange } : {}),
+		...(enableExpanding ? { onExpandedChange: handleExpandedChange } : {}),
 		getCoreRowModel: getCoreRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		...(filterMode === 'client' && enableFiltering
@@ -164,6 +208,7 @@ function BaseTable<TData>({
 		...(enablePagination && filterMode === 'client'
 			? { getPaginationRowModel: getPaginationRowModel() }
 			: {}),
+		...(enableExpanding ? { getExpandedRowModel: getExpandedRowModel() } : {}),
 		...(filterMode === 'server' && pageCount ? { pageCount } : {}),
 		manualPagination: filterMode === 'server',
 		manualFiltering: filterMode === 'server',
@@ -180,6 +225,19 @@ function BaseTable<TData>({
 				<Table.Thead className={styles.thead}>
 					{table.getHeaderGroups().map((headerGroup) => (
 						<Table.Tr key={headerGroup.id}>
+							{enableExpanding && renderExpandedRow && (
+								<Table.Th
+									className={[
+										styles.th,
+										styles.expandCell,
+										density === 'compact' ? styles.compactTh : '',
+									]
+										.filter(Boolean)
+										.join(' ')}
+								>
+									{/* Empty header for expand column */}
+								</Table.Th>
+							)}
 							{headerGroup.headers.map((header) => (
 								<Table.Th
 									key={header.id}
@@ -250,26 +308,72 @@ function BaseTable<TData>({
 						</Table.Tr>
 					) : (
 						table.getRowModel().rows.map((row) => (
-							<Table.Tr
-								key={row.id}
-								onClick={() => onRowClick?.(row.original)}
-								className={`${getRowClassName?.(row)} ${row.original === selectedKey ? styles.selectedRow : ''}`}
-							>
-								{row.getVisibleCells().map((cell) => (
-									<Table.Td
-										key={cell.id}
-										className={[
-											styles.td,
-											density === 'compact' ? styles.compactTd : '',
-											(cell.column.columnDef.meta as any)?.cellClassName || '',
-										]
-											.filter(Boolean)
-											.join(' ')}
-									>
-										{flexRender(cell.column.columnDef.cell, cell.getContext())}
-									</Table.Td>
-								))}
-							</Table.Tr>
+							<React.Fragment key={row.id}>
+								<Table.Tr
+									onClick={() => {
+										if (enableExpanding && renderExpandedRow) {
+											row.toggleExpanded();
+										}
+										onRowClick?.(row.original);
+									}}
+									className={`${getRowClassName?.(row)} ${row.original === selectedKey ? styles.selectedRow : ''} ${enableExpanding && renderExpandedRow ? styles.expandableRow : ''}`}
+								>
+									{enableExpanding && renderExpandedRow && (
+										<Table.Td
+											className={[
+												styles.td,
+												styles.expandCell,
+												density === 'compact' ? styles.compactTd : '',
+											]
+												.filter(Boolean)
+												.join(' ')}
+											onClick={(e) => {
+												e.stopPropagation();
+												row.toggleExpanded();
+											}}
+										>
+											<div className={styles.expandIcon}>
+												<IconChevronRight
+													size={16}
+													className={
+														row.getIsExpanded() ? styles.expandIconRotated : ''
+													}
+												/>
+											</div>
+										</Table.Td>
+									)}
+									{row.getVisibleCells().map((cell) => (
+										<Table.Td
+											key={cell.id}
+											className={[
+												styles.td,
+												density === 'compact' ? styles.compactTd : '',
+												(cell.column.columnDef.meta as any)?.cellClassName ||
+													'',
+											]
+												.filter(Boolean)
+												.join(' ')}
+										>
+											{flexRender(
+												cell.column.columnDef.cell,
+												cell.getContext()
+											)}
+										</Table.Td>
+									))}
+								</Table.Tr>
+								{enableExpanding &&
+									renderExpandedRow &&
+									row.getIsExpanded() && (
+										<Table.Tr className={styles.expandedRow}>
+											<Table.Td
+												colSpan={table.getAllColumns().length + 1}
+												className={styles.expandedContent}
+											>
+												{renderExpandedRow(row.original)}
+											</Table.Td>
+										</Table.Tr>
+									)}
+							</React.Fragment>
 						))
 					)}
 				</Table.Tbody>

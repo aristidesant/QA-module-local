@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useCallback, useState } from 'react';
+import { Text } from '@mantine/core';
 import styles from './ContactGroupContactsTable.module.css';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import { ContactDetails } from '~/modules/campaigns/CampaignsForm/ContactSection/ContactDetails';
@@ -12,6 +13,7 @@ import type { SortingState } from '@tanstack/react-table';
 import { useContactColumns } from './useContactColumns';
 import ContactListSkeleton from './ContactListSkeleton';
 import { useGetContactGroupContacts } from '~/queries/contactsQueries';
+import PhoneNumbersTable from './PhoneNumbersTable';
 
 interface ContactGroupContactsTableProps {
 	contactGroupId: number;
@@ -154,6 +156,18 @@ export const ContactGroupContactsTable: React.FC<
 						onRowClick={handleContactClick}
 						filterMode='server'
 						onSortingChange={setSorting}
+						enableExpanding={true}
+						renderExpandedRow={(contact) =>
+							contact.phoneNumbers && contact.phoneNumbers.length > 0 ? (
+								<div style={{ padding: '8px 0' }}>
+									<PhoneNumbersTable phoneNumbers={contact.phoneNumbers} />
+								</div>
+							) : (
+								<Text size='sm' c='dimmed' p='md'>
+									No phone numbers available
+								</Text>
+							)
+						}
 						emptyMessage={
 							contactFilters.hasActiveFilters
 								? 'No contacts found matching the selected filters.'

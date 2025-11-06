@@ -1,3 +1,5 @@
+import { Scheduler } from './SchedulerModel';
+
 /**
  * Represents a contact group in the system
  */
@@ -7,6 +9,7 @@ export default interface ContactGroup {
 	description: string;
 	campaignId: number;
 	scheduleId: number;
+	schedule?: Scheduler;
 	queueStatus: string;
 	isActive: boolean;
 	contactCount: number;

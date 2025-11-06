@@ -1,27 +1,22 @@
 .panel {
 	position: relative;
-	padding: var(--mantine-spacing-xl);
+	padding: var(--mantine-spacing-sm);
 	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: var(--mantine-radius-md);
+	border-radius: var(--mantine-radius-sm);
 	background-color: var(--mantine-color-white);
-	transition: border-color 200ms ease;
-}
-
-.panel:hover {
-	border-color: var(--mantine-color-gray-3);
 }
 
 .header {
 	display: flex;
 	justify-content: space-between;
-	align-items: flex-start;
-	gap: var(--mantine-spacing-lg);
-	margin-bottom: var(--mantine-spacing-md);
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	margin-bottom: var(--mantine-spacing-xs);
 }
 
 .statusSection {
 	display: flex;
-	flex-direction: column;
+	align-items: center;
 	gap: var(--mantine-spacing-xs);
 	flex: 1;
 	min-width: 0;
@@ -30,15 +25,10 @@
 .statusBadge {
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
+	gap: 4px;
 	border-radius: var(--mantine-radius-sm);
-	padding: 6px 12px;
+	padding: 2px 8px;
 	width: fit-content;
-	transition: transform 200ms ease;
-}
-
-.statusBadge:hover {
-	transform: translateY(-1px);
 }
 
 .statusLabel {
@@ -46,8 +36,11 @@
 }
 
 .statusDescription {
-	max-width: 450px;
-	line-height: 1.5;
+	max-width: 400px;
+	line-height: 1.4;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .statusPending {
@@ -99,11 +92,11 @@
 .divider {
 	height: 1px;
 	background-color: var(--mantine-color-gray-2);
-	margin: var(--mantine-spacing-md) 0;
+	margin: var(--mantine-spacing-xs) 0;
 }
 
 .metricsGrid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-	gap: var(--mantine-spacing-sm);
+	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	gap: var(--mantine-spacing-xs);
 }
