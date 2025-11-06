@@ -1,15 +1,9 @@
 import BaseTable from '~/components/BaseTable';
 import { usePhoneNumbersColumns } from './usePhoneNumbersColumns';
-
-interface PhoneNumber {
-	phoneNumber: string;
-	type?: string;
-	status?: string;
-	retries?: number;
-}
+import type { PhoneEntry } from '~/models/ContactsModel';
 
 interface PhoneNumbersTableProps {
-	phoneNumbers: PhoneNumber[];
+	phoneNumbers: PhoneEntry[];
 }
 
 function PhoneNumbersTable({ phoneNumbers }: PhoneNumbersTableProps) {

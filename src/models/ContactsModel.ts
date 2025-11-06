@@ -7,6 +7,12 @@ export interface PhoneValidationError {
 export interface PhoneEntry {
 	phoneNumber: string;
 	validationError?: PhoneValidationError;
+	// Optional metadata fields returned by some APIs
+	lastCalledAt?: string | null; // ISO datetime or null when never called
+	maxRetryAttempts?: number;
+	priorityOrder?: number;
+	retryCounter?: number;
+	status?: string; // e.g. 'DO_NOT_CONTACT', 'ACTIVE', etc.
 }
 
 export interface Contact {
