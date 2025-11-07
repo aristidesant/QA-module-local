@@ -6,7 +6,6 @@ import {
 	Group,
 	Text,
 	Badge,
-	Progress,
 	Menu,
 	ThemeIcon,
 } from '@mantine/core';
@@ -50,14 +49,6 @@ export const getCampaignStatusInfo = (
 		color: 'gray',
 		label: status || 'Unknown',
 	};
-};
-
-// Helper to get progress color
-const getProgressColor = (percentage: number): string => {
-	if (percentage >= 80) return 'green';
-	if (percentage >= 50) return 'blue';
-	if (percentage >= 25) return 'yellow';
-	return 'red';
 };
 
 interface UseCampaignsColumnsProps {
@@ -140,25 +131,6 @@ export const useCampaignsColumns = ({
 				);
 			},
 			size: 120,
-		},
-		{
-			accessorKey: 'progress',
-			header: 'Progress',
-			cell: ({ row }) => {
-				const campaign = row.original;
-				const progressPercentage = campaign.progress || 0;
-				return (
-					<Tooltip label={`${progressPercentage.toFixed(0)}%`}>
-						<Progress
-							value={progressPercentage}
-							color={getProgressColor(progressPercentage)}
-							size='sm'
-							radius='xl'
-						/>
-					</Tooltip>
-				);
-			},
-			size: 150,
 		},
 
 		{

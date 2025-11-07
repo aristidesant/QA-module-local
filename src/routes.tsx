@@ -267,6 +267,22 @@ const router = createBrowserRouter([
 									</Suspense>
 								),
 							},
+							{
+								path: 'do-not-call',
+								element: (
+									<Suspense fallback={<div>Loading Do Not Call...</div>}>
+										<DoNotCallPage />
+									</Suspense>
+								),
+							},
+							{
+								path: 'knowledge-bases',
+								element: (
+									<Suspense fallback={<div>Loading knowledge bases...</div>}>
+										<KnowledgeBasePage />
+									</Suspense>
+								),
+							},
 						],
 					},
 					{
@@ -285,23 +301,6 @@ const router = createBrowserRouter([
 							</Suspense>
 						),
 					},
-					{
-						path: 'knowledge-bases',
-						element: (
-							<Suspense fallback={<div>Loading knowledge bases...</div>}>
-								<KnowledgeBasePage />
-							</Suspense>
-						),
-					},
-					{
-						path: 'do-not-call',
-						element: (
-							<Suspense fallback={<div>Loading Do Not Call...</div>}>
-								<DoNotCallPage />
-							</Suspense>
-						),
-					},
-
 					{
 						path: 'profile',
 						element: (
