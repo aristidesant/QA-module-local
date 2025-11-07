@@ -1,0 +1,69 @@
+.sectionCard {
+	background: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-lg);
+	margin-bottom: var(--mantine-spacing-md);
+}
+
+.sectionHeader {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
+.sectionIcon {
+	color: var(--mantine-color-blue-6);
+}
+
+.sectionTitle {
+	font-size: var(--mantine-font-size-md);
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+	margin: 0;
+}
+
+.sectionDescription {
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-6);
+	margin-bottom: var(--mantine-spacing-md);
+}
+
+.field {
+	margin-bottom: var(--mantine-spacing-md);
+}
+
+.promptActions {
+	display: flex;
+	gap: var(--mantine-spacing-xs);
+	position: absolute;
+	right: var(--mantine-spacing-xs);
+	top: var(--mantine-spacing-xs);
+}
+
+.promptActionButton {
+	background: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-sm);
+	padding: var(--mantine-spacing-xs);
+	cursor: pointer;
+	color: var(--mantine-color-gray-7);
+	transition: all 0.2s ease;
+}
+
+.promptActionButton:hover {
+	background: var(--mantine-color-gray-1);
+	color: var(--mantine-color-gray-9);
+}
+
+.knowledgeBaseEmpty {
+	text-align: center;
+	padding: var(--mantine-spacing-xl);
+	color: var(--mantine-color-gray-6);
+	font-size: var(--mantine-font-size-sm);
+}
+
+.addKnowledgeBaseButton {
+	width: 100%;
+}

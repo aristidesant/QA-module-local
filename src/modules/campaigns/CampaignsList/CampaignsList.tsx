@@ -11,7 +11,7 @@ import { notifications } from '@mantine/notifications';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import CampaignPreview from '../CampaignPreview';
 import type { Campaign } from '~/models/CampaignsModel';
-import { AddNewCampaignForm } from '../AddNewCampaignForm';
+import { CampaignWizard } from '../CampaignWizard';
 import CampaignFilters from './CampaignFilters';
 import { usePagination } from '~/hooks/usePagination';
 import PaginationControls from '~/components/PaginationControls';
@@ -25,6 +25,7 @@ import { CampaignStatus } from '~/models/CampaignStatus';
 import { OutboundCallForm } from '~/components/OutboundCallForm';
 import { useGetAgent } from '~/queries/agentQueries';
 import { useNavigate } from 'react-router';
+import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 
 interface CampaignFiltersType {
 	type?: string;
@@ -46,6 +47,9 @@ export const CampaignsList: React.FC = () => {
 		rightComponent,
 	} = useCampaignsStore((state) => state);
 	const navigate = useNavigate();
+
+	// Get the wizard reset function
+	const resetWizard = useCampaignWizardStore((state) => state.reset);
 
 	// Use the pagination hook for all pagination logic
 	const pagination = usePagination({
@@ -190,6 +194,8 @@ export const CampaignsList: React.FC = () => {
 	};
 
 	const handleShowAddNewCampaignModal = () => {
+		// Reset wizard to ensure fresh start
+		resetWizard();
 		setAddNewModalOpened(true);
 	};
 
@@ -305,19 +311,24 @@ export const CampaignsList: React.FC = () => {
 			{/* Add New Campaign Modal */}
 			<Modal
 				opened={addNewModalOpened}
-				onClose={() => setAddNewModalOpened(false)}
+				onClose={() => {
+					resetWizard();
+					setAddNewModalOpened(false);
+				}}
 				title='Create New Campaign'
-				size='lg'
+				size='1200px'
 				centered
 			>
-				<AddNewCampaignForm
+				<CampaignWizard
 					onComplete={() => {
 						reloadCampaigns();
 						selectCampaign(null);
+						resetWizard();
 						setAddNewModalOpened(false);
 					}}
 					onCancel={() => {
 						selectCampaign(null);
+						resetWizard();
 						setAddNewModalOpened(false);
 					}}
 				/>
