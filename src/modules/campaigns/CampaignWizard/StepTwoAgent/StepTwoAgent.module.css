@@ -58,10 +58,39 @@
 }
 
 .knowledgeBaseEmpty {
-	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
 	padding: var(--mantine-spacing-xl);
 	color: var(--mantine-color-gray-6);
 	font-size: var(--mantine-font-size-sm);
+}
+
+.knowledgeBaseItem {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-sm);
+	padding: var(--mantine-spacing-sm);
+	background: var(--mantine-color-gray-0);
+}
+
+.knowledgeBaseContent {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--mantine-spacing-sm);
+}
+
+.knowledgeBaseInfo {
+	flex: 1;
+	min-width: 0;
+}
+
+.knowledgeBaseHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-xs);
+	margin-bottom: var(--mantine-spacing-xs);
 }
 
 .addKnowledgeBaseButton {

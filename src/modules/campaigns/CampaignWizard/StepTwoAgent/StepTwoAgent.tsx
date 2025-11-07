@@ -18,14 +18,14 @@ import {
 	IconSettings,
 	IconMessageCircle,
 	IconBrain,
-	IconDatabase,
-	IconPlus,
 	IconCopy,
 	IconEdit,
 	IconTrash,
 } from '@tabler/icons-react';
-import MDEditor from '@uiw/react-md-editor';
+import CampaignConfigurationPromptEditModal from '~/modules/campaigns/CampaignsForm/AgentSection/CampaignConfigurationPrompt/CampaignConfigurationPromptEditModal';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
+import KnowledgeBaseSection from './KnowledgeBaseSection';
 import useCampaignsPredefinedParams from '../../CampaignsForm/useCampaignsPredefinedParams';
 import styles from './StepTwoAgent.module.css';
 import sharedStyles from '../CampaignWizard.module.css';
@@ -55,7 +55,6 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 		language,
 		firstMessage,
 		agentPrompt,
-		knowledgeBaseIds,
 		createdCampaign,
 		setAgentBehaviorId,
 		setLanguage,
@@ -72,6 +71,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 
 	const predefinedParams = useCampaignsPredefinedParams();
 	const updateCampaign = useUpdateCampaign();
+	const queryClient = useQueryClient();
 
 	// Get campaign ID for fetching (only if campaign exists)
 	const campaignId = createdCampaign?.id ? String(createdCampaign.id) : '';
@@ -92,13 +92,12 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 			language,
 			firstMessage,
 			agentPrompt,
-			knowledgeBaseIds,
 		},
 		validate: {
-			language: (value) => (!value ? 'Language is required' : null),
-			firstMessage: (value) =>
+			language: (value: string) => (!value ? 'Language is required' : null),
+			firstMessage: (value: string) =>
 				value.trim().length < 2 ? 'First message is required' : null,
-			agentPrompt: (value) =>
+			agentPrompt: (value: string) =>
 				value.trim().length < 10 ? 'Agent prompt is required' : null,
 		},
 		validateInputOnChange: true,
@@ -117,8 +116,10 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 	};
 
 	const handleSubmit = async (values: typeof form.values) => {
-		// Get fresh campaign from store
+		// Get fresh campaign and knowledge base IDs from store
 		const currentCampaign = useCampaignWizardStore.getState().createdCampaign;
+		const currentKnowledgeBaseIds =
+			useCampaignWizardStore.getState().knowledgeBaseIds;
 
 		if (
 			!currentCampaign ||
@@ -148,6 +149,8 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 			if (currentCampaign.agentConfig) {
 				updatePayload.agentConfig = {
 					...currentCampaign.agentConfig,
+					// Add knowledge base IDs directly to agentConfig
+					knowledgeBaseIds: currentKnowledgeBaseIds,
 					conversationConfig: {
 						...(currentCampaign.agentConfig.conversationConfig || {}),
 						agent: {
@@ -158,7 +161,6 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 								...(currentCampaign.agentConfig.conversationConfig?.agent
 									?.prompt || {}),
 								prompt: values.agentPrompt,
-								knowledgeBase: values.knowledgeBaseIds || [],
 							},
 						},
 					},
@@ -177,8 +179,16 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 			setLanguage(values.language);
 			setFirstMessage(values.firstMessage);
 			setAgentPrompt(values.agentPrompt);
-			setKnowledgeBaseIds(values.knowledgeBaseIds);
+			setKnowledgeBaseIds(currentKnowledgeBaseIds);
 			setIsSubmitting(false);
+
+			// Invalidate campaign cache to ensure fresh data in edit form
+			queryClient.invalidateQueries({
+				queryKey: ['campaign', String(currentCampaign.id)],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ['campaigns'],
+			});
 
 			notifications.show({
 				title: 'Agent Configured',
@@ -214,16 +224,6 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 	const handleEditPrompt = () => {
 		setPromptDraft(form.values.agentPrompt);
 		setPromptEditorOpened(true);
-	};
-
-	const handleSavePrompt = () => {
-		form.setFieldValue('agentPrompt', promptDraft);
-		setPromptEditorOpened(false);
-		notifications.show({
-			title: 'Prompt Updated',
-			message: 'Agent prompt has been updated',
-			color: 'green',
-		});
 	};
 
 	const handleClearPrompt = () => {
@@ -354,29 +354,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 					</Box>
 
 					{/* Knowledge Base Section */}
-					<Box className={styles.sectionCard}>
-						<div className={styles.sectionHeader}>
-							<IconDatabase size={20} className={styles.sectionIcon} />
-							<h3 className={styles.sectionTitle}>Knowledge Base</h3>
-						</div>
-						<Text className={styles.sectionDescription}>
-							Provide your agent with essential information to handle questions
-							accurately and confidently during calls.
-						</Text>
-
-						<Box className={styles.knowledgeBaseEmpty}>
-							<Text size='sm'>No knowledge bases selected</Text>
-						</Box>
-
-						<Button
-							leftSection={<IconPlus size={16} />}
-							variant='light'
-							fullWidth
-							className={styles.addKnowledgeBaseButton}
-						>
-							Add Knowledge Base
-						</Button>
-					</Box>
+					<KnowledgeBaseSection />
 				</Stack>
 
 				<Group className={sharedStyles.actions}>
@@ -397,31 +375,24 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 			<Modal
 				opened={promptEditorOpened}
 				onClose={() => setPromptEditorOpened(false)}
-				title='Edit Agent Prompt'
-				size='xl'
+				size='100%'
 				centered
+				withCloseButton={false}
+				padding={0}
 			>
-				<Stack gap='md'>
-					<Text size='sm' c='dimmed'>
-						Define the core behavior and tone of your AI agent. This prompt will
-						guide how the agent speaks, responds, and handles conversations.
-					</Text>
-					<MDEditor
-						value={promptDraft}
-						onChange={(value) => setPromptDraft(value || '')}
-						preview='edit'
-						height={400}
-					/>
-					<Group justify='flex-end' mt='md'>
-						<Button
-							variant='default'
-							onClick={() => setPromptEditorOpened(false)}
-						>
-							Cancel
-						</Button>
-						<Button onClick={handleSavePrompt}>Save Prompt</Button>
-					</Group>
-				</Stack>
+				<CampaignConfigurationPromptEditModal
+					initialPrompt={promptDraft}
+					onClose={() => setPromptEditorOpened(false)}
+					onSave={(prompt, _schemaId) => {
+						form.setFieldValue('agentPrompt', prompt);
+						setPromptEditorOpened(false);
+						notifications.show({
+							title: 'Prompt Updated',
+							message: 'Agent prompt has been updated',
+							color: 'green',
+						});
+					}}
+				/>
 			</Modal>
 		</>
 	);
