@@ -5,10 +5,12 @@ import { useCleanOutboundQueue } from '~/queries/outboundQueries';
 
 type CleanQueueButtonProps = {
 	campaignId: number;
+	contactGroupId?: number;
 } & Omit<ButtonProps, 'leftSection' | 'onClick' | 'loading' | 'children'>;
 
 const CleanQueueButton: React.FC<CleanQueueButtonProps> = ({
 	campaignId,
+	contactGroupId,
 	disabled: disabledProp,
 	variant = 'light',
 	color = 'red',
@@ -17,18 +19,18 @@ const CleanQueueButton: React.FC<CleanQueueButtonProps> = ({
 }) => {
 	const { mutate, isPending } = useCleanOutboundQueue();
 
-	const isCampaignIdValid = useMemo(
-		() => Number.isFinite(campaignId),
-		[campaignId]
+	const isValid = useMemo(
+		() => Number.isFinite(campaignId) && Number.isFinite(contactGroupId),
+		[campaignId, contactGroupId]
 	);
 
 	const handleClick = useCallback(() => {
-		if (!isCampaignIdValid) {
+		if (!isValid) {
 			return;
 		}
 
-		mutate({ campaignId });
-	}, [campaignId, isCampaignIdValid, mutate]);
+		mutate({ campaignId, contactGroupId: contactGroupId! });
+	}, [campaignId, contactGroupId, isValid, mutate]);
 
 	return (
 		<Button
@@ -37,7 +39,7 @@ const CleanQueueButton: React.FC<CleanQueueButtonProps> = ({
 			color={color}
 			size={size}
 			loading={isPending}
-			disabled={isPending || disabledProp || !isCampaignIdValid}
+			disabled={isPending || disabledProp || !isValid}
 			onClick={handleClick}
 			{...rest}
 		>

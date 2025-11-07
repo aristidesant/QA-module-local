@@ -38,7 +38,11 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
 
 				<AssignedAgents />
 
-				<CleanQueueButton campaignId={campaign.id} fullWidth />
+				<CleanQueueButton
+					campaignId={campaign.id}
+					contactGroupId={campaign.contactList?.id}
+					fullWidth
+				/>
 			</Stack>
 		</ScrollArea>
 	);

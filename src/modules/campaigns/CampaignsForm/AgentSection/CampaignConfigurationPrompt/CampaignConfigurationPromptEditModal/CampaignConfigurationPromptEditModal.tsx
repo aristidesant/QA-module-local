@@ -1,5 +1,5 @@
 // CampaignConfigurationPromptEditModal.tsx
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
 	Button,
 	Paper,
@@ -21,6 +21,14 @@ import type { CampaignContactSchema } from '~/models/CampaignContactSchemaModel'
 import '@uiw/react-md-editor/markdown-editor.css';
 import { notifications } from '@mantine/notifications';
 import { useClientConfigByName } from '~/queries/useClientConfigs';
+
+const staticPromptVariablesFallback = [
+	'firstName',
+	'lastName',
+	'identifier',
+	'identifierType',
+	'address',
+];
 
 interface CampaignConfigurationPromptEditModalProps {
 	initialPrompt: string;
@@ -54,6 +62,20 @@ const CampaignConfigurationPromptEditModal: React.FC<
 	// Fetch suggestion_prompt from client-config
 	const { data: suggestionPromptConfig } =
 		useClientConfigByName('suggestion_prompt');
+	const { data: staticPromptVariables } = useClientConfigByName(
+		'static_prompt_variables'
+	);
+
+	const staticVariablesList = useMemo<string[]>(() => {
+		try {
+			return (
+				staticPromptVariables?.value?.split(',').map((v: string) => v.trim()) ||
+				staticPromptVariablesFallback
+			);
+		} catch (error) {
+			return staticPromptVariablesFallback;
+		}
+	}, [staticPromptVariables]);
 
 	// Auto-select first available schema if none provided
 	useEffect(() => {
@@ -301,13 +323,7 @@ const CampaignConfigurationPromptEditModal: React.FC<
 						</Text>
 						<Stack gap='xs' className={styles.variablesStack}>
 							<Group gap='xs' className={styles.variablesList}>
-								{[
-									'firstName',
-									'lastName',
-									'identifier',
-									'identifierType',
-									'address',
-								].map((field) => (
+								{staticVariablesList.map((field) => (
 									<Badge
 										key={field}
 										variant='outline'

@@ -1,6 +1,6 @@
-import { ActionIcon, Modal, Tooltip, Loader } from '@mantine/core';
+import { ActionIcon, Modal, Tooltip, Loader, Group } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconPlus } from '@tabler/icons-react';
+import { IconPlus, IconRefresh } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import AddNewContactList from '../AddNewContactList';
 import SelectActiveContactList from './SelectActiveContactList';
@@ -21,6 +21,7 @@ export interface ContactListViewProps {
 	objectiveId?: number;
 	isActive: boolean;
 	isLoading?: boolean;
+	isRefetching?: boolean;
 }
 
 export const ContactListView = ({
@@ -71,8 +72,8 @@ export const ContactListView = ({
 
 	const title = (
 		<>
-			{isActive ? 'Contact lists' : 'Inactive Contact Lists'} ({activeCount}){' '}
-			{isLoading && <Loader size='xs' />}
+			{isActive ? 'Contact lists' : 'Inactive Contact Lists'} ({activeCount}
+			){' '}
 		</>
 	);
 	const description = isActive
@@ -118,17 +119,30 @@ export const ContactListView = ({
 			title={title}
 			description={description}
 			headerActions={
-				<Tooltip label={tooltipLabel}>
-					<ActionIcon
-						color='blue'
-						size='sm'
-						variant='light'
-						onClick={open}
-						aria-label={tooltipLabel}
-					>
-						<IconPlus size={18} />
-					</ActionIcon>
-				</Tooltip>
+				<Group gap='xs'>
+					<Tooltip label='Reload'>
+						<ActionIcon
+							color='gray'
+							size='sm'
+							variant='light'
+							onClick={onUpdateComplete}
+							aria-label='Reload contact lists'
+						>
+							<IconRefresh size={18} />
+						</ActionIcon>
+					</Tooltip>
+					<Tooltip label={tooltipLabel}>
+						<ActionIcon
+							color='blue'
+							size='sm'
+							variant='light'
+							onClick={open}
+							aria-label={tooltipLabel}
+						>
+							<IconPlus size={18} />
+						</ActionIcon>
+					</Tooltip>
+				</Group>
 			}
 		>
 			{isActive && <CapacityProgress campaignId={campaignId} />}
