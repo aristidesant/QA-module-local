@@ -1,4 +1,4 @@
-import { ActionIcon, Modal, Tooltip } from '@mantine/core';
+import { ActionIcon, Modal, Tooltip, Loader } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
@@ -69,9 +69,12 @@ export const ContactListView = ({
 
 	const activeCount = contactListsArray.length;
 
-	const title = isActive
-		? `Contact lists (${activeCount})`
-		: `Inactive Contact Lists (${activeCount})`;
+	const title = (
+		<>
+			{isActive ? 'Contact lists' : 'Inactive Contact Lists'} ({activeCount}){' '}
+			{isLoading && <Loader size='xs' />}
+		</>
+	);
 	const description = isActive
 		? 'Displaying all active contact lists associated with this campaign.'
 		: 'Displaying all inactive contact lists associated with this campaign.';

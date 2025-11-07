@@ -27,6 +27,7 @@ import {
 	calculateHumanEquivalentValues,
 	type HumanEquivalentCalculations,
 } from './humanEquivalentCalculations';
+import CapacityProgress from '../ContactList/CapacityProgress';
 
 type ContactLimitsProps = {
 	fileSummary?: ContactFileSummary;
@@ -239,14 +240,9 @@ export const ContactLimits = ({
 						disabled={isCreatingAndFull}
 					/>
 				</Box>
-				{/* Active Schedule Display */}
-				{activeSchedule && (
-					<Text size='sm' c='dimmed'>
-						Active Schedule: {activeSchedule.name} (
-						{maxAvailableHumanEquivalent}/{activeSchedule.humanEquivalent || 0}{' '}
-						available)
-					</Text>
-				)}
+
+				{activeSchedule && <CapacityProgress campaignId={campaignId} />}
+
 				{/*Column Mapper*/}
 				{fileSummary && !contactGroup?.id && (
 					<ColumnMappingCard

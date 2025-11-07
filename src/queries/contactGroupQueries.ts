@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+	useMutation,
+	useQuery,
+	useQueryClient,
+	type UseQueryOptions,
+} from '@tanstack/react-query';
 import contactGroupApi from '~/api/contactGroupApi';
 import type ContactGroup from '~/models/ContactGroup';
 import type { PaginatedResponse } from '~/models/CampaignsModel';
@@ -24,13 +29,17 @@ export const useCreateContactGroup = () => {
 };
 
 // Get all contact groups (paginated)
-export const useGetContactGroups = (params?: Record<string, any>) => {
+export const useGetContactGroups = (
+	params?: Record<string, any>,
+	options?: Partial<UseQueryOptions<PaginatedResponse<ContactGroup>>>
+) => {
 	return useQuery<PaginatedResponse<ContactGroup>>({
 		queryKey: ['contactGroups', params],
 		queryFn: async () => {
 			const api = contactGroupApi();
 			return api.findAllContactGroups(params);
 		},
+		...options,
 	});
 };
 

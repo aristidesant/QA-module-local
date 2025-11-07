@@ -6,14 +6,12 @@ import {
 	Group,
 	Text,
 	Badge,
-	Progress,
 	Menu,
 	ThemeIcon,
 } from '@mantine/core';
 import {
 	IconDotsVertical,
 	IconTrash,
-	IconEye,
 	IconCheck,
 	IconArrowUpRight,
 	IconArrowDownLeft,
@@ -21,6 +19,7 @@ import {
 	IconChartDots,
 	IconPhone,
 	IconInfoCircle,
+	IconArrowRight,
 } from '@tabler/icons-react';
 import type { Campaign } from '~/models/CampaignsModel';
 import { useNavigate } from 'react-router';
@@ -50,14 +49,6 @@ export const getCampaignStatusInfo = (
 		color: 'gray',
 		label: status || 'Unknown',
 	};
-};
-
-// Helper to get progress color
-const getProgressColor = (percentage: number): string => {
-	if (percentage >= 80) return 'green';
-	if (percentage >= 50) return 'blue';
-	if (percentage >= 25) return 'yellow';
-	return 'red';
 };
 
 interface UseCampaignsColumnsProps {
@@ -141,25 +132,6 @@ export const useCampaignsColumns = ({
 			},
 			size: 120,
 		},
-		{
-			accessorKey: 'progress',
-			header: 'Progress',
-			cell: ({ row }) => {
-				const campaign = row.original;
-				const progressPercentage = campaign.progress || 0;
-				return (
-					<Tooltip label={`${progressPercentage.toFixed(0)}%`}>
-						<Progress
-							value={progressPercentage}
-							color={getProgressColor(progressPercentage)}
-							size='sm'
-							radius='xl'
-						/>
-					</Tooltip>
-				);
-			},
-			size: 150,
-		},
 
 		{
 			accessorKey: 'agents',
@@ -203,70 +175,77 @@ export const useCampaignsColumns = ({
 			cell: ({ row }) => {
 				const campaign = row.original;
 				return (
-					<Menu shadow='md' width={200}>
-						<Menu.Target>
+					<Group gap='xs'>
+						<Tooltip label='Go to Campaign'>
 							<ActionIcon
 								variant='subtle'
-								color='gray'
+								color='blue'
 								radius='md'
-								aria-label='Campaign actions'
-								onClick={(e) => e.stopPropagation()}
-							>
-								<IconDotsVertical size={16} aria-hidden />
-							</ActionIcon>
-						</Menu.Target>
-						<Menu.Dropdown>
-							<Menu.Item
-								onClick={() => {
-									navigate(`/campaigns/metrics/${campaign.id}`);
-								}}
-								leftSection={<IconChartDots size={14} />}
-							>
-								View Metrics
-							</Menu.Item>
-							<Menu.Item
-								onClick={(e) => {
-									e.stopPropagation();
-									onTestCall(campaign);
-								}}
-								leftSection={<IconPhone size={14} />}
-							>
-								Test Call
-							</Menu.Item>
-							<Menu.Item
+								aria-label='Go to campaign'
 								onClick={(e) => {
 									e.stopPropagation();
 									onEdit(campaign);
 								}}
-								leftSection={<IconEye size={14} />}
 							>
-								Edit Campaign
-							</Menu.Item>
-							<Menu.Item
-								onClick={(e) => {
-									e.stopPropagation();
-									onClone(campaign);
-								}}
-								leftSection={<IconCopy size={14} />}
-							>
-								Clone Campaign
-							</Menu.Item>
-							<Menu.Divider />
-							<Menu.Item
-								onClick={(e) => {
-									e.stopPropagation();
-									onDelete(campaign);
-								}}
-								leftSection={<IconTrash size={14} />}
-								color='red'
-							>
-								Delete
-							</Menu.Item>
-						</Menu.Dropdown>
-					</Menu>
+								<IconArrowRight size={16} />
+							</ActionIcon>
+						</Tooltip>
+						<Menu shadow='md' width={200}>
+							<Menu.Target>
+								<ActionIcon
+									variant='subtle'
+									color='gray'
+									radius='md'
+									aria-label='Campaign actions'
+									onClick={(e) => e.stopPropagation()}
+								>
+									<IconDotsVertical size={16} aria-hidden />
+								</ActionIcon>
+							</Menu.Target>
+							<Menu.Dropdown>
+								<Menu.Item
+									onClick={() => {
+										navigate(`/campaigns/metrics/${campaign.id}`);
+									}}
+									leftSection={<IconChartDots size={14} />}
+								>
+									View Metrics
+								</Menu.Item>
+								<Menu.Item
+									onClick={(e) => {
+										e.stopPropagation();
+										onTestCall(campaign);
+									}}
+									leftSection={<IconPhone size={14} />}
+								>
+									Test Call
+								</Menu.Item>
+								<Menu.Item
+									onClick={(e) => {
+										e.stopPropagation();
+										onClone(campaign);
+									}}
+									leftSection={<IconCopy size={14} />}
+								>
+									Clone Campaign
+								</Menu.Item>
+								<Menu.Divider />
+								<Menu.Item
+									onClick={(e) => {
+										e.stopPropagation();
+										onDelete(campaign);
+									}}
+									leftSection={<IconTrash size={14} />}
+									color='red'
+								>
+									Delete
+								</Menu.Item>
+							</Menu.Dropdown>
+						</Menu>
+					</Group>
 				);
 			},
-			size: 60,
+			size: 100,
 			enableSorting: false,
 		},
 	];

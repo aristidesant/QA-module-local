@@ -1,5 +1,11 @@
 import { ActionIcon, Tooltip } from '@mantine/core';
-import { IconPlayerPlay, IconPlayerPause } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
+import {
+	IconPlayerPlay,
+	IconPlayerPause,
+	IconCircleCheck,
+	IconX,
+} from '@tabler/icons-react';
 import type ContactGroup from '~/models/ContactGroup';
 import {
 	useStartOutboundCampaign,
@@ -23,22 +29,100 @@ export const ContactListControl = ({
 		pauseMutation.isPending ||
 		resumeMutation.isPending;
 
+	const showSuccessNotification = (message: string) => {
+		notifications.show({
+			title: 'Contact list updated',
+			message,
+			color: 'green',
+			icon: <IconCircleCheck size={18} />,
+			autoClose: 5000,
+		});
+	};
+
+	const showErrorNotification = (error: unknown, fallbackMessage: string) => {
+		const apiMessage =
+			(error as { response?: { data?: { message?: string } } })?.response?.data
+				?.message || (error instanceof Error ? error.message : null);
+
+		notifications.show({
+			title: 'Contact list action failed',
+			message: apiMessage || fallbackMessage,
+			color: 'red',
+			icon: <IconX size={18} />,
+			autoClose: 7000,
+		});
+	};
+
+	const campaignId =
+		contactGroup.schedule?.campaignId ?? contactGroup.campaignId;
+
 	const handleAction = () => {
+		if (isDisabled || isLoading) {
+			return;
+		}
+
+		if (!campaignId) {
+			showErrorNotification(
+				null,
+				'Unable to process this contact list because the campaign is unknown. Please refresh and try again.'
+			);
+			return;
+		}
+
 		if (contactGroup.queueStatus === 'PENDING') {
-			startMutation.mutate({
-				campaignId: contactGroup?.schedule?.campaignId || 0,
-				contactGroupId: contactGroup.id,
-			});
+			startMutation.mutate(
+				{
+					campaignId,
+					contactGroupId: contactGroup.id,
+				},
+				{
+					onSuccess: () => {
+						showSuccessNotification('The contact list is now running.');
+					},
+					onError: (error) => {
+						showErrorNotification(
+							error,
+							'We could not start the contact list. Please try again.'
+						);
+					},
+				}
+			);
 		} else if (contactGroup.queueStatus === 'PAUSED') {
-			resumeMutation.mutate({
-				campaignId: contactGroup.campaignId,
-				contactGroupId: contactGroup.id,
-			});
+			resumeMutation.mutate(
+				{
+					campaignId,
+					contactGroupId: contactGroup.id,
+				},
+				{
+					onSuccess: () => {
+						showSuccessNotification('The contact list has been resumed.');
+					},
+					onError: (error) => {
+						showErrorNotification(
+							error,
+							'We could not resume the contact list. Please try again.'
+						);
+					},
+				}
+			);
 		} else if (contactGroup.queueStatus === 'RUNNING') {
-			pauseMutation.mutate({
-				campaignId: contactGroup.campaignId,
-				contactGroupId: contactGroup.id,
-			});
+			pauseMutation.mutate(
+				{
+					campaignId,
+					contactGroupId: contactGroup.id,
+				},
+				{
+					onSuccess: () => {
+						showSuccessNotification('The contact list has been paused.');
+					},
+					onError: (error) => {
+						showErrorNotification(
+							error,
+							'We could not pause the contact list. Please try again.'
+						);
+					},
+				}
+			);
 		}
 	};
 

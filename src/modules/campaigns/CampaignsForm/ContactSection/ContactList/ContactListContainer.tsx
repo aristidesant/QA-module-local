@@ -15,10 +15,15 @@ export const ContactListContainer = ({
 		data: contactList,
 		refetch: reloadCampaignSchedules,
 		isLoading,
-	} = useGetContactGroups({
-		campaignId: selectedCampaign?.id,
-		isActive,
-	});
+	} = useGetContactGroups(
+		{
+			campaignId: selectedCampaign?.id,
+			isActive,
+		},
+		{
+			refetchInterval: 10000, // Refetch every 10 seconds to keep data fresh
+		}
+	);
 
 	return (
 		<ContactListView

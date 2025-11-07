@@ -11,7 +11,6 @@ import {
 	IconSettings,
 	IconLibrary,
 	IconTools,
-	IconPhoneOff,
 	IconUsers,
 } from '@tabler/icons-react';
 import styles from './UserMenu.module.css';
@@ -90,24 +89,9 @@ export const UserMenu: React.FC = () => {
 			category: 'Configuration',
 			items: [
 				{
-					label: 'Client Configs',
+					label: 'Configurations',
 					icon: <IconSettings size={16} />,
 					path: '/configurations/client-configs',
-				},
-				{
-					label: 'Knowledge Bases',
-					icon: <IconLibrary size={16} />,
-					path: '/knowledge-bases',
-				},
-				{
-					label: 'Do Not Call',
-					icon: <IconPhoneOff size={16} />,
-					path: '/do-not-call',
-				},
-				{
-					label: 'Campaign Predefined Params',
-					icon: <IconSettings size={16} />,
-					path: '/configurations/campaign-predefined-params',
 				},
 			],
 		},
