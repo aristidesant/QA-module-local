@@ -3,12 +3,16 @@ import { Stepper } from '@mantine/core';
 import {
 	IconListDetails,
 	IconSettings,
-	IconUsers,
+	IconNetwork,
+	IconClock,
 	IconCheck,
 } from '@tabler/icons-react';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 import { StepOneGeneral } from './StepOneGeneral';
 import { StepTwoAgent } from './StepTwoAgent';
+import { StepThreeOutcomes } from './StepThreeOutcomes';
+import { StepFourParameters } from './StepFourParameters';
+import { StepFiveSuccess } from './StepFiveSuccess';
 import styles from './CampaignWizard.module.css';
 
 interface CampaignWizardProps {
@@ -29,7 +33,7 @@ export const CampaignWizard: React.FC<CampaignWizardProps> = ({
 
 	return (
 		<div className={styles.container}>
-			<Stepper active={activeStep} className={styles.stepper}>
+			<Stepper active={activeStep} iconSize={42} className={styles.stepper}>
 				<Stepper.Step
 					label='General'
 					description='Campaign details'
@@ -51,24 +55,32 @@ export const CampaignWizard: React.FC<CampaignWizardProps> = ({
 				</Stepper.Step>
 
 				<Stepper.Step
-					label='Contacts'
-					description='Audience selection'
-					icon={<IconUsers size={18} />}
+					label='Outcomes'
+					description='Outcome configuration'
+					icon={<IconNetwork size={18} />}
 				>
 					<div className={styles.stepContent}>
-						{/* Step 3 will be added here */}
-						<p>Step 3 - Coming soon</p>
+						<StepThreeOutcomes onNext={nextStep} onBack={prevStep} />
 					</div>
 				</Stepper.Step>
 
 				<Stepper.Step
-					label='Review'
-					description='Final check'
+					label='Parameters'
+					description='Working hours & settings'
+					icon={<IconClock size={18} />}
+				>
+					<div className={styles.stepContent}>
+						<StepFourParameters onNext={nextStep} onBack={prevStep} />
+					</div>
+				</Stepper.Step>
+
+				<Stepper.Step
+					label='Complete'
+					description='Campaign ready'
 					icon={<IconCheck size={18} />}
 				>
 					<div className={styles.stepContent}>
-						{/* Step 4 will be added here */}
-						<p>Step 4 - Coming soon</p>
+						<StepFiveSuccess onComplete={onComplete || (() => {})} />
 					</div>
 				</Stepper.Step>
 			</Stepper>

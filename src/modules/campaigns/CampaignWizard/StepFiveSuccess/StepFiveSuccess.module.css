@@ -1,0 +1,35 @@
+.container {
+	max-width: 500px;
+	padding: var(--mantine-spacing-xl);
+}
+
+.successIcon {
+	border: 3px solid var(--mantine-color-green-2);
+}
+
+.title {
+	color: var(--mantine-color-dark-9);
+}
+
+.subtitle {
+	max-width: 400px;
+	line-height: 1.5;
+}
+
+.summaryCard {
+	width: 100%;
+	background-color: var(--mantine-color-gray-0);
+}
+
+.nextSteps {
+	max-width: 350px;
+}
+
+.actions {
+	margin-top: var(--mantine-spacing-md);
+}
+
+.closeButton {
+	margin-top: var(--mantine-spacing-sm);
+	color: var(--mantine-color-gray-6);
+}

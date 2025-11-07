@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { Campaign } from '~/models/CampaignsModel';
+import { useCampaignsStore } from './campaignsStore';
 
 interface CampaignWizardState {
 	activeStep: number;
@@ -65,7 +66,13 @@ export const useCampaignWizardStore = create<CampaignWizardState>((set) => ({
 	setCampaignType: (type) => set({ campaignType: type, phoneNumberId: null }),
 	setPhoneNumberId: (id) => set({ phoneNumberId: id }),
 	setObjectiveId: (id) => set({ objectiveId: id }),
-	setCreatedCampaign: (campaign) => set({ createdCampaign: campaign }),
+	setCreatedCampaign: (campaign) => {
+		set({ createdCampaign: campaign });
+		// Sync with campaigns store so AddScheduler has access to campaign ID
+		if (campaign) {
+			useCampaignsStore.getState().selectCampaign(campaign);
+		}
+	},
 	setIsSubmitting: (isSubmitting) => set({ isSubmitting }),
 	setAgentBehaviorId: (id) => set({ agentBehaviorId: id }),
 	setLanguage: (language) => set({ language }),

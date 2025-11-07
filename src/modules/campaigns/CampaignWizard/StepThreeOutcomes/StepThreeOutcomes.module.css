@@ -1,0 +1,44 @@
+.sectionCard {
+	background: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-lg);
+	margin-bottom: var(--mantine-spacing-md);
+}
+
+.sectionHeader {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
+.sectionIcon {
+	color: var(--mantine-color-blue-6);
+}
+
+.sectionTitle {
+	font-size: var(--mantine-font-size-md);
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+	margin: 0;
+}
+
+.sectionDescription {
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-6);
+	margin-bottom: var(--mantine-spacing-md);
+}
+
+.createFlowContainer {
+	border: 1px dashed var(--mantine-color-gray-4);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-gray-0);
+}
+
+.flowSummary {
+	border: 1px solid var(--mantine-color-green-3);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-green-0);
+	padding: var(--mantine-spacing-md);
+}
