@@ -1,4 +1,4 @@
-import { ActionIcon, Modal, Tooltip, Loader, Group } from '@mantine/core';
+import { ActionIcon, Modal, Tooltip, Group } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus, IconRefresh } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
