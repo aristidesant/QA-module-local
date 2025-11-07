@@ -301,6 +301,7 @@ export function ConversationOverview({
 				voiceFile={conversation?.voiceFile}
 				title='Recording'
 				description='Listen to the call recording'
+				paramConversationId={conversation?.id}
 			/>
 		</Stack>
 	);

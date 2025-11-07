@@ -31,6 +31,7 @@ interface ConversationPlayerProps {
 	voiceFileId?: number | string | null;
 	title?: string;
 	description?: string;
+	paramConversationId?: number | string;
 }
 //IconDeviceAudioTape
 const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
@@ -38,6 +39,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 	voiceFileId,
 	title = 'Recording',
 	description,
+	paramConversationId,
 }) => {
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [currentTime, setCurrentTime] = useState(0);
@@ -45,7 +47,8 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 	const [volume, setVolume] = useState(1);
 	const [playbackRate, setPlaybackRate] = useState(1);
 	const audioRef = useRef<HTMLAudioElement>(null);
-	const conversationId = useConversationStore((state) => state.selectedId);
+	const conversationId =
+		useConversationStore((state) => state.selectedId) || paramConversationId;
 
 	// Export audio mutation
 	const exportAudioMutation = useExportConversationAudio();
