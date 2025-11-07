@@ -8,6 +8,8 @@ import {
 	IconPlayerPlay,
 	IconRefresh,
 } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
+import { modals } from '@mantine/modals';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import EmptyState from '~/components/EmptyState';
@@ -111,8 +113,35 @@ const CampaignContactListPage = () => {
 		: 'UNKNOWN';
 	const status = statusConfig[statusKey] ?? statusConfig.UNKNOWN;
 
-	const handleAction = () => {
+	const handleAction = async () => {
 		if (!contactGroupQuery.data) return;
+
+		let confirmMessage = '';
+		if (status.actionType === 'start') {
+			confirmMessage =
+				'Starting the campaign will begin calling contacts in this list. This action cannot be undone immediately. Are you sure you want to start?';
+		} else if (status.actionType === 'pause') {
+			confirmMessage =
+				'Pausing the campaign will stop all ongoing calls. You can resume later. Are you sure you want to pause?';
+		} else if (status.actionType === 'resume') {
+			confirmMessage =
+				'Resuming the campaign will continue calling contacts from where it left off. Are you sure you want to resume?';
+		}
+
+		const confirmed = await new Promise<boolean>((resolve) => {
+			modals.openConfirmModal({
+				title: 'Confirm Action',
+				children: confirmMessage,
+				labels: { confirm: 'Yes', cancel: 'No' },
+				onConfirm: () => resolve(true),
+				onCancel: () => resolve(false),
+			});
+		});
+
+		if (!confirmed) {
+			return;
+		}
+
 		const payload = {
 			campaignId: contactGroupQuery.data.schedule?.campaignId || 0,
 			contactGroupId: contactGroupQuery.data.id,
@@ -120,7 +149,19 @@ const CampaignContactListPage = () => {
 
 		const mutationOptions = {
 			onSuccess: () => {
+				notifications.show({
+					title: 'Success',
+					message: `Campaign ${status.actionType}d successfully`,
+					color: 'green',
+				});
 				void contactGroupQuery.refetch();
+			},
+			onError: (error: Error) => {
+				notifications.show({
+					title: 'Error',
+					message: `Failed to ${status.actionType} campaign: ${error.message}`,
+					color: 'red',
+				});
 			},
 		};
 
@@ -214,7 +255,22 @@ const CampaignContactListPage = () => {
 						<Button
 							variant='light'
 							leftSection={<IconRefresh size={16} />}
-							onClick={() => contactGroupQuery.refetch()}
+							onClick={async () => {
+								try {
+									await contactGroupQuery.refetch();
+									notifications.show({
+										title: 'Success',
+										message: 'Contact list reloaded successfully',
+										color: 'green',
+									});
+								} catch (error) {
+									notifications.show({
+										title: 'Error',
+										message: `Failed to reload: ${(error as Error).message}`,
+										color: 'red',
+									});
+								}
+							}}
 							loading={contactGroupQuery.isRefetching}
 						>
 							Try Again

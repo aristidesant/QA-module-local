@@ -17,6 +17,7 @@ import {
 	IconInfoCircle,
 	IconListDetails,
 	IconPhoneCall,
+	IconRefresh,
 	IconRepeat,
 	IconToggleLeft,
 	IconToggleRight,
@@ -37,6 +38,7 @@ import {
 	useUpdateContactGroup,
 } from '~/queries/contactGroupQueries';
 import { useCampaignActiveSchedule } from '~/queries/schedulerQueries';
+import { useCleanOutboundQueue } from '~/queries/outboundQueries';
 import ContactLimits from '../ContactLimits';
 import { calculateHumanEquivalentValues } from '../ContactLimits/humanEquivalentCalculations';
 import { getQueueStatusConfig } from '../ContactList/queueStatusConfig';
@@ -93,6 +95,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 	const toggleMutation = useToggleContactGroupStatus();
 	const updateMutation = useUpdateContactGroup();
 	const deleteMutation = useDeleteContactGroup();
+	const cleanQueueMutation = useCleanOutboundQueue();
 	const { data: activeSchedule } = useCampaignActiveSchedule(campaignId);
 	const { data: contactGroups } = useGetContactGroups({
 		isActive: true,
@@ -189,9 +192,11 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 		toggleMutation.isPending ||
 		updateMutation.isPending ||
 		deleteMutation.isPending ||
+		cleanQueueMutation.isPending ||
 		isEditingHumanEquivalent;
 
 	const disableToggle = contactGroup.queueStatus === 'COMPLETED';
+	const disableCleanQueue = contactGroup.queueStatus === 'COMPLETED';
 
 	const handleEdit = () => {
 		modals.open({
@@ -388,6 +393,37 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 		});
 	};
 
+	const handleCleanQueue = () => {
+		const targetCampaignId = campaignId ?? contactGroup.campaignId;
+		if (!targetCampaignId) {
+			return;
+		}
+
+		modals.openConfirmModal({
+			title: 'Clean Queue',
+			children: (
+				<Text size='sm'>
+					Are you sure you want to clean the queue for the contact list "
+					{contactGroup.name}"? This will restart the campaign.
+				</Text>
+			),
+			labels: { confirm: 'Clean Queue', cancel: 'Cancel' },
+			confirmProps: { color: 'orange' },
+			onConfirm: async () => {
+				try {
+					await cleanQueueMutation.mutateAsync({
+						campaignId: Number(targetCampaignId),
+						contactGroupId: contactGroup.id,
+					});
+					onUpdateComplete();
+				} catch (error) {
+					// eslint-disable-next-line no-console
+					console.error('Error cleaning queue:', error);
+				}
+			},
+		});
+	};
+
 	const handleNavigate = () => {
 		const targetCampaignId = campaignId ?? contactGroup.campaignId;
 		if (!targetCampaignId) {
@@ -452,6 +488,18 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 								disabled={isActionsLoading}
 							>
 								<IconTrash size={16} />
+							</ActionIcon>
+						</Tooltip>
+
+						<Tooltip label='Clean queue' withArrow>
+							<ActionIcon
+								variant='light'
+								color='orange'
+								onClick={handleCleanQueue}
+								aria-label='Clean queue'
+								disabled={disableCleanQueue || isActionsLoading}
+							>
+								<IconRefresh size={16} />
 							</ActionIcon>
 						</Tooltip>
 

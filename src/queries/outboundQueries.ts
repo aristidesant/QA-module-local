@@ -6,9 +6,12 @@ export const useCleanOutboundQueue = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async ({ campaignId }: CleanOutboundQueuePayload) => {
+		mutationFn: async ({
+			campaignId,
+			contactGroupId,
+		}: CleanOutboundQueuePayload) => {
 			const api = outboundApi();
-			return api.cleanOutboundQueue({ campaignId });
+			return api.cleanOutboundQueue({ campaignId, contactGroupId });
 		},
 		onSuccess: (_, variables) => {
 			notifications.show({
