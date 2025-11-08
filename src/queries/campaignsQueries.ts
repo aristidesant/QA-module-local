@@ -46,6 +46,7 @@ export const useGetAllCampaignsPaginated = (params?: Record<string, any>) => {
 			const api = campaignsApi();
 			return api.findAllCampaignsPaginated(params);
 		},
+		retry: false,
 	});
 };
 

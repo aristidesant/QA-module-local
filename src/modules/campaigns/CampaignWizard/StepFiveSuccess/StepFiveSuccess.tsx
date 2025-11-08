@@ -2,14 +2,13 @@ import React from 'react';
 import {
 	Button,
 	Group,
-	Stack,
 	Text,
 	ThemeIcon,
-	Center,
 	Badge,
 	Card,
+	Center,
 } from '@mantine/core';
-import { IconCheck, IconEye } from '@tabler/icons-react';
+import { IconCheck, IconEye, IconRocket } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 import styles from './StepFiveSuccess.module.css';
@@ -38,116 +37,127 @@ export const StepFiveSuccess: React.FC<StepFiveSuccessProps> = ({
 		}
 	};
 
+	const budgetLabel =
+		typeof createdCampaign?.budget === 'number'
+			? `$${createdCampaign.budget.toLocaleString()}`
+			: '—';
+
 	return (
 		<Center py='xl'>
-			<Stack align='center' gap='xl' className={styles.container}>
-				{/* Success Icon */}
-				<ThemeIcon
-					variant='light'
-					color='green'
-					size={80}
-					className={styles.successIcon}
-				>
-					<IconCheck size={40} />
-				</ThemeIcon>
-
-				{/* Success Message */}
-				<Stack align='center' gap='sm'>
-					<Text size='xl' fw={600} className={styles.title}>
-						🎉 Campaign Created Successfully!
-					</Text>
-					<Text size='md' c='dimmed' ta='center' className={styles.subtitle}>
-						Your campaign "{createdCampaign?.name}" has been created and is
-						ready to launch.
-					</Text>
-				</Stack>
-
-				{/* Campaign Summary Card */}
-				<Card withBorder radius='md' className={styles.summaryCard}>
-					<Stack gap='sm'>
-						<Text size='sm' fw={500} mb='xs'>
-							Campaign Summary
+			<div className={styles.surface}>
+				<div className={styles.header}>
+					<div>
+						<Badge variant='light' color='teal' size='sm'>
+							Step 5 · Completed
+						</Badge>
+						<Text className={styles.title}>Campaign is live and ready</Text>
+						<Text className={styles.description}>
+							{createdCampaign?.name
+								? `“${createdCampaign.name}” is configured. Review the summary or jump straight to the campaign overview.`
+								: 'Your campaign is configured. Review the summary or jump straight to the campaign overview.'}
 						</Text>
+					</div>
+					<ThemeIcon
+						variant='light'
+						color='teal'
+						size={70}
+						radius='xl'
+						className={styles.icon}
+					>
+						<IconCheck size={32} />
+					</ThemeIcon>
+				</div>
 
-						<Group justify='space-between'>
-							<Text size='sm' c='dimmed'>
-								Name:
-							</Text>
-							<Text size='sm' fw={500}>
-								{createdCampaign?.name}
+				<div className={styles.contentGrid}>
+					<Card withBorder radius='md' className={styles.summaryCard}>
+						<Text size='sm' fw={600} className={styles.cardTitle}>
+							Campaign snapshot
+						</Text>
+						<div className={styles.summaryList}>
+							<div className={styles.summaryItem}>
+								<Text size='xs' c='dimmed'>
+									Name
+								</Text>
+								<Text size='sm' fw={600}>
+									{createdCampaign?.name || '—'}
+								</Text>
+							</div>
+							<div className={styles.summaryItem}>
+								<Text size='xs' c='dimmed'>
+									Type
+								</Text>
+								<Badge variant='light' color='blue' size='sm'>
+									{createdCampaign?.type || '—'}
+								</Badge>
+							</div>
+							<div className={styles.summaryItem}>
+								<Text size='xs' c='dimmed'>
+									Status
+								</Text>
+								<Badge variant='light' color='yellow' size='sm'>
+									{createdCampaign?.status || '—'}
+								</Badge>
+							</div>
+							<div className={styles.summaryItem}>
+								<Text size='xs' c='dimmed'>
+									Budget
+								</Text>
+								<Text size='sm' fw={600}>
+									{budgetLabel}
+								</Text>
+							</div>
+						</div>
+					</Card>
+
+					<Card withBorder radius='md' className={styles.nextCard}>
+						<Text size='sm' fw={600} className={styles.cardTitle}>
+							Keep the momentum
+						</Text>
+						<ul className={styles.nextList}>
+							<li>
+								<Text size='sm'>
+									Review dispositions and outcome automations.
+								</Text>
+							</li>
+							<li>
+								<Text size='sm'>
+									Upload your contact list or connect a segment.
+								</Text>
+							</li>
+							<li>
+								<Text size='sm'>
+									Schedule working hours and throttling rules.
+								</Text>
+							</li>
+							<li>
+								<Text size='sm'>Launch a test call to validate the flow.</Text>
+							</li>
+						</ul>
+						<Group gap='xs' mt='md'>
+							<ThemeIcon variant='light' color='blue' radius='md' size='lg'>
+								<IconRocket size={18} />
+							</ThemeIcon>
+							<Text size='xs' c='dimmed'>
+								Tip: monitor performance from the campaign dashboard once calls
+								start.
 							</Text>
 						</Group>
+					</Card>
+				</div>
 
-						<Group justify='space-between'>
-							<Text size='sm' c='dimmed'>
-								Type:
-							</Text>
-							<Badge variant='light' color='blue' size='sm'>
-								{createdCampaign?.type}
-							</Badge>
-						</Group>
-
-						<Group justify='space-between'>
-							<Text size='sm' c='dimmed'>
-								Status:
-							</Text>
-							<Badge variant='light' color='yellow' size='sm'>
-								{createdCampaign?.status}
-							</Badge>
-						</Group>
-
-						<Group justify='space-between'>
-							<Text size='sm' c='dimmed'>
-								Budget:
-							</Text>
-							<Text size='sm' fw={500}>
-								${createdCampaign?.budget}
-							</Text>
-						</Group>
-					</Stack>
-				</Card>
-
-				{/* Next Steps */}
-				<Stack align='center' gap='md'>
-					<Text size='sm' fw={500}>
-						What's next?
-					</Text>
-					<Stack gap='xs' className={styles.nextSteps}>
-						<Text size='xs' c='dimmed' ta='center'>
-							✅ Configure agent settings and knowledge bases
-						</Text>
-						<Text size='xs' c='dimmed' ta='center'>
-							✅ Set up outcome flows for call categorization
-						</Text>
-						<Text size='xs' c='dimmed' ta='center'>
-							✅ Define working hours and parameters
-						</Text>
-						<Text size='xs' c='dimmed' ta='center'>
-							📞 Ready to add contacts and launch your campaign!
-						</Text>
-					</Stack>
-				</Stack>
-
-				{/* Action Buttons */}
-				<Group gap='sm' className={styles.actions}>
+				<Group className={styles.actions} gap='sm'>
 					<Button
 						variant='outline'
 						leftSection={<IconEye size={16} />}
 						onClick={handleViewCampaign}
 					>
-						View Campaign
+						View campaign
+					</Button>
+					<Button variant='default' onClick={handleComplete}>
+						Close wizard
 					</Button>
 				</Group>
-
-				{/* Close Button */}
-				<Button
-					variant='default'
-					onClick={handleComplete}
-					className={styles.closeButton}
-				>
-					Close Wizard
-				</Button>
-			</Stack>
+			</div>
 		</Center>
 	);
 };

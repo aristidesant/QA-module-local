@@ -142,7 +142,16 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 
 	return (
 		<>
-			<Stack gap='md'>
+			<Stack gap='xl' className={sharedStyles.stepSurface}>
+				<Box className={sharedStyles.stepHeaderCard}>
+					<Text className={sharedStyles.stepEyebrow}>Outcome routing</Text>
+					<Text className={sharedStyles.stepTitle}>Design the flow</Text>
+					<Text className={sharedStyles.stepDescriptionText}>
+						Build a simple map that tells the system what to do after each
+						conversation. Keep the experience consistent for every contact.
+					</Text>
+				</Box>
+
 				{/* Outcomes Configuration Section */}
 				<Box className={styles.sectionCard}>
 					<div className={styles.sectionHeader}>
@@ -232,7 +241,10 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 				withCloseButton={false}
 				padding={0}
 			>
-				<DispositionForm onComplete={handleFlowComplete} />
+				<DispositionForm
+					onCancel={handleCloseModal}
+					onComplete={handleFlowComplete}
+				/>
 			</Modal>
 		</>
 	);

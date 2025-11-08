@@ -95,8 +95,6 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 		},
 		validate: {
 			language: (value: string) => (!value ? 'Language is required' : null),
-			firstMessage: (value: string) =>
-				value.trim().length < 2 ? 'First message is required' : null,
 			agentPrompt: (value: string) =>
 				value.trim().length < 10 ? 'Agent prompt is required' : null,
 		},
@@ -245,116 +243,126 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 	return (
 		<>
 			<form onSubmit={form.onSubmit(handleSubmit)}>
-				<Stack gap='md'>
-					{/* Agent Behavior Section */}
-					<Box className={styles.sectionCard}>
-						{' '}
-						<Select
-							label='Agent Behavior'
-							description='Select a predefined agent behavior configuration'
-							placeholder='Choose an agent behavior'
-							data={predefinedParams
-								.filter((param) => param.id)
-								.map((param) => ({
-									value: String(param.id),
-									label: param.name || 'Unnamed',
-								}))}
-							value={
-								form.values.agentBehaviorId
-									? String(form.values.agentBehaviorId)
-									: null
-							}
-							onChange={handleBehaviorChange}
-							clearable
-							className={sharedStyles.field}
-						/>
-					</Box>
-
-					{/* Basic Configuration Section */}
-					<Box className={styles.sectionCard}>
-						<div className={styles.sectionHeader}>
-							<IconSettings size={20} className={styles.sectionIcon} />
-							<h3 className={styles.sectionTitle}>Basic Configuration</h3>
-						</div>
-						<Text className={styles.sectionDescription}>
-							Configure the fundamental settings for your campaign agent
+				<Stack gap='xl' className={sharedStyles.stepSurface}>
+					<Box className={sharedStyles.stepHeaderCard}>
+						<Text className={sharedStyles.stepEyebrow}>
+							Agent configuration
 						</Text>
-
-						<Select
-							label='Language'
-							description="Choose the language for the agent's responses"
-							placeholder='Select language'
-							data={LANGUAGE_OPTIONS}
-							{...form.getInputProps('language')}
-							withAsterisk
-							searchable
-							leftSection={<IconMessageCircle size={16} />}
-							className={sharedStyles.field}
-						/>
-
-						<Textarea
-							label='Agent First Message'
-							description='This greeting message will be the first thing users see when they interact with your agent'
-							placeholder='Enter the first message your agent will send...'
-							{...form.getInputProps('firstMessage')}
-							withAsterisk
-							minRows={3}
-							className={sharedStyles.field}
-						/>
-					</Box>
-
-					{/* Agent Prompt Section */}
-					<Box className={styles.sectionCard}>
-						<div className={styles.sectionHeader}>
-							<IconBrain size={20} className={styles.sectionIcon} />
-							<h3 className={styles.sectionTitle}>Agent Prompt</h3>
-						</div>
-						<Text className={styles.sectionDescription}>
-							Define the core behavior and tone of your AI agent. This prompt
-							will guide how the agent speaks, responds, and handles
-							conversations within the campaign.
+						<Text className={sharedStyles.stepTitle}>
+							Shape the conversation
 						</Text>
-
-						<Box style={{ position: 'relative' }}>
-							<Textarea
-								placeholder='**Prompt para el Agente de IA:**'
-								{...form.getInputProps('agentPrompt')}
-								withAsterisk
-								minRows={8}
-								className={sharedStyles.field}
-							/>
-							<div className={styles.promptActions}>
-								<ActionIcon
-									variant='subtle'
-									onClick={handleCopyPrompt}
-									title='Copy prompt'
-									className={styles.promptActionButton}
-								>
-									<IconCopy size={16} />
-								</ActionIcon>
-								<ActionIcon
-									variant='subtle'
-									onClick={handleEditPrompt}
-									title='Edit prompt'
-									className={styles.promptActionButton}
-								>
-									<IconEdit size={16} />
-								</ActionIcon>
-								<ActionIcon
-									variant='subtle'
-									color='red'
-									onClick={handleClearPrompt}
-									title='Clear prompt'
-									className={styles.promptActionButton}
-								>
-									<IconTrash size={16} />
-								</ActionIcon>
-							</div>
-						</Box>
+						<Text className={sharedStyles.stepDescriptionText}>
+							Configure behavior, language, and prompt for the agent.
+						</Text>
 					</Box>
 
-					{/* Knowledge Base Section */}
-					<KnowledgeBaseSection />
+					<div className={styles.layoutGrid}>
+						<div className={styles.primaryColumn}>
+							<Box className={styles.sectionCard}>
+								<div className={styles.sectionHeader}>
+									<IconSettings size={20} className={styles.sectionIcon} />
+									<h3 className={styles.sectionTitle}>Conversation Setup</h3>
+								</div>
+								<Text className={styles.sectionDescription}>
+									Select behavior, language, and greeting for conversation
+									start.
+								</Text>
+
+								<div className={styles.fieldGrid}>
+									<Select
+										label='Agent Behavior'
+										description='Baseline configuration'
+										placeholder='Choose behavior'
+										data={predefinedParams
+											.filter((param) => param.id)
+											.map((param) => ({
+												value: String(param.id),
+												label: param.name || 'Unnamed',
+											}))}
+										value={
+											form.values.agentBehaviorId
+												? String(form.values.agentBehaviorId)
+												: null
+										}
+										onChange={handleBehaviorChange}
+										clearable
+										className={sharedStyles.field}
+									/>
+
+									<Select
+										label='Language'
+										description='Response language'
+										placeholder='Select language'
+										data={LANGUAGE_OPTIONS}
+										{...form.getInputProps('language')}
+										withAsterisk
+										searchable
+										leftSection={<IconMessageCircle size={16} />}
+										className={sharedStyles.field}
+									/>
+								</div>
+
+								<Textarea
+									label='Agent First Message'
+									description='Initial greeting'
+									placeholder='Enter the first message your agent will send...'
+									{...form.getInputProps('firstMessage')}
+									minRows={2}
+									className={sharedStyles.field}
+								/>
+							</Box>
+							<Box className={styles.sectionCard}>
+								<div className={styles.sectionHeader}>
+									<IconBrain size={20} className={styles.sectionIcon} />
+									<h3 className={styles.sectionTitle}>Agent Prompt</h3>
+								</div>
+								<Text className={styles.sectionDescription}>
+									Define the agent's behavior and tone.
+								</Text>
+
+								<Box style={{ position: 'relative' }}>
+									<Textarea
+										placeholder='**Prompt para el Agente de IA:**'
+										{...form.getInputProps('agentPrompt')}
+										withAsterisk
+										minRows={7}
+										className={sharedStyles.field}
+									/>
+									<div className={styles.promptActions}>
+										<ActionIcon
+											variant='subtle'
+											onClick={handleCopyPrompt}
+											title='Copy prompt'
+											className={styles.promptActionButton}
+										>
+											<IconCopy size={16} />
+										</ActionIcon>
+										<ActionIcon
+											variant='subtle'
+											onClick={handleEditPrompt}
+											title='Edit prompt'
+											className={styles.promptActionButton}
+										>
+											<IconEdit size={16} />
+										</ActionIcon>
+										<ActionIcon
+											variant='subtle'
+											color='red'
+											onClick={handleClearPrompt}
+											title='Clear prompt'
+											className={styles.promptActionButton}
+										>
+											<IconTrash size={16} />
+										</ActionIcon>
+									</div>
+								</Box>
+							</Box>
+						</div>
+
+						<div className={styles.secondaryColumn}>
+							<KnowledgeBaseSection />
+						</div>
+					</div>
 				</Stack>
 
 				<Group className={sharedStyles.actions}>

@@ -164,73 +164,107 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 
 	return (
 		<form onSubmit={form.onSubmit(handleSubmit)}>
-			<Stack gap='md'>
-				<TextInput
-					label='Campaign Name'
-					description='Give your campaign a descriptive name'
-					placeholder='Enter campaign name'
-					withAsterisk
-					className={styles.field}
-					{...form.getInputProps('campaignName')}
-				/>
-
-				<Textarea
-					label='Description'
-					description='Briefly describe the purpose of this campaign'
-					placeholder='Describe your campaign'
-					withAsterisk
-					className={styles.field}
-					{...form.getInputProps('description')}
-					minRows={3}
-					rows={3}
-				/>
-
-				<Box className={styles.field}>
-					<Text className={styles.fieldLabel}>
-						Campaign Type <span className={styles.required}>*</span>
+			<Stack gap='xl' className={styles.stepSurface}>
+				<Box className={styles.stepHeaderCard}>
+					<Text className={styles.stepEyebrow}>General setup</Text>
+					<Text className={styles.stepTitle}>Campaign essentials</Text>
+					<Text className={styles.stepDescriptionText}>
+						Define how this campaign is presented to your team and contacts. The
+						name, description, and type keep everyone aligned.
 					</Text>
-					<SegmentedControl
-						data={[
-							{ value: 'INBOUND', label: 'Inbound' },
-							{ value: 'OUTBOUND', label: 'Outbound' },
-						]}
-						{...form.getInputProps('campaignType')}
-						fullWidth
-						className={styles.segmentedControl}
-					/>
 				</Box>
 
-				<PhoneNumberSelector
-					campaignType={form.values.campaignType}
-					value={form.values.phoneNumberId}
-					onChange={(value) => form.setFieldValue('phoneNumberId', value)}
-					label='Phone Number'
-					description='Select the phone number for this campaign'
-					placeholder='Choose a phone number'
-					withAsterisk
-				/>
+				<div className={styles.sectionGrid}>
+					<Box className={styles.wizardCard}>
+						<div className={styles.sectionHeading}>
+							<Text className={styles.sectionHeadingTitle}>Identity</Text>
+							<Text className={styles.sectionHeadingDescription}>
+								Set the tone and structure for this campaign.
+							</Text>
+						</div>
+						<Stack gap='md'>
+							<TextInput
+								label='Campaign Name'
+								description='Give your campaign a descriptive name'
+								placeholder='Enter campaign name'
+								withAsterisk
+								className={styles.field}
+								{...form.getInputProps('campaignName')}
+							/>
 
-				<Select
-					label='Campaign Objective'
-					description='Choose the main objective this campaign aims to achieve'
-					placeholder='Localizacion'
-					data={
-						objectivesResponse?.data?.map((obj) => ({
-							value: obj.id.toString(),
-							label: obj.name,
-						})) || []
-					}
-					value={form.values.objectiveId?.toString() || null}
-					onChange={(value) =>
-						form.setFieldValue(
-							'objectiveId',
-							value ? parseInt(value, 10) : null
-						)
-					}
-					searchable
-					clearable
-					className={styles.field}
-				/>
+							<Textarea
+								label='Description'
+								description='Briefly describe the purpose of this campaign'
+								placeholder='Describe your campaign'
+								withAsterisk
+								className={styles.field}
+								{...form.getInputProps('description')}
+								minRows={3}
+								rows={3}
+							/>
+
+							<Box className={styles.field}>
+								<Text className={styles.fieldLabel}>
+									Campaign Type <span className={styles.required}>*</span>
+								</Text>
+								<Text className={styles.fieldDescription}>
+									Choose how calls will be routed.
+								</Text>
+								<SegmentedControl
+									data={[
+										{ value: 'INBOUND', label: 'Inbound' },
+										{ value: 'OUTBOUND', label: 'Outbound' },
+									]}
+									{...form.getInputProps('campaignType')}
+									fullWidth
+									className={styles.segmentedControl}
+								/>
+							</Box>
+						</Stack>
+					</Box>
+
+					<Box className={styles.wizardCard}>
+						<div className={styles.sectionHeading}>
+							<Text className={styles.sectionHeadingTitle}>Routing</Text>
+							<Text className={styles.sectionHeadingDescription}>
+								Match this campaign to the right number and objective.
+							</Text>
+						</div>
+						<Stack gap='md'>
+							<PhoneNumberSelector
+								campaignType={form.values.campaignType}
+								value={form.values.phoneNumberId}
+								onChange={(value) => form.setFieldValue('phoneNumberId', value)}
+								label='Phone Number'
+								description='Select the phone number for this campaign'
+								placeholder='Choose a phone number'
+								withAsterisk
+							/>
+
+							<Select
+								label='Campaign Objective'
+								description='Choose the main objective this campaign aims to achieve'
+								placeholder='Select an objective'
+								data={
+									objectivesResponse?.data?.map((obj) => ({
+										value: obj.id.toString(),
+										label: obj.name,
+									})) || []
+								}
+								value={form.values.objectiveId?.toString() || null}
+								onChange={(value) =>
+									form.setFieldValue(
+										'objectiveId',
+										value ? parseInt(value, 10) : null
+									)
+								}
+								searchable
+								clearable
+								className={styles.field}
+							/>
+						</Stack>
+					</Box>
+				</div>
 
 				{createCampaignWithAgent.isError && (
 					<Text className={styles.error}>

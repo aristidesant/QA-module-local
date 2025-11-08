@@ -8,6 +8,7 @@ export default interface ContactGroup {
 	name: string;
 	description: string;
 	campaignId: number;
+	createdAt: string;
 	scheduleId: number;
 	schedule?: Scheduler;
 	queueStatus: string;

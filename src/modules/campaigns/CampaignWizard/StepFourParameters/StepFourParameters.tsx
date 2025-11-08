@@ -7,6 +7,7 @@ import {
 	ActionIcon,
 	Center,
 	Loader,
+	Box,
 } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
@@ -128,7 +129,18 @@ export const StepFourParameters: React.FC<StepFourParametersProps> = ({
 
 	return (
 		<>
-			<Stack gap='md'>
+			<Stack gap='xl' className={sharedStyles.stepSurface}>
+				<Box className={sharedStyles.stepHeaderCard}>
+					<Text className={sharedStyles.stepEyebrow}>Scheduling</Text>
+					<Text className={sharedStyles.stepTitle}>
+						Control your calling window
+					</Text>
+					<Text className={sharedStyles.stepDescriptionText}>
+						Keep outreach aligned with business hours and compliance. Copy
+						schedules across days or fine-tune each block.
+					</Text>
+				</Box>
+
 				{/* Working Hours Configuration Section */}
 				<SectionCard
 					title='Working Hours'

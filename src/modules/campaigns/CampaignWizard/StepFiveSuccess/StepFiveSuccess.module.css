@@ -1,35 +1,107 @@
-.container {
-	max-width: 500px;
+.surface {
+	width: min(960px, 100%);
+	background: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-lg);
 	padding: var(--mantine-spacing-xl);
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xl);
 }
 
-.successIcon {
-	border: 3px solid var(--mantine-color-green-2);
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: var(--mantine-spacing-lg);
 }
 
 .title {
-	color: var(--mantine-color-dark-9);
+	font-size: var(--mantine-font-size-xl);
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+	margin-top: var(--mantine-spacing-sm);
 }
 
-.subtitle {
-	max-width: 400px;
-	line-height: 1.5;
+.description {
+	color: var(--mantine-color-gray-6);
+	max-width: 56ch;
+	line-height: 1.4;
+	margin-top: var(--mantine-spacing-xxs);
 }
 
-.summaryCard {
-	width: 100%;
-	background-color: var(--mantine-color-gray-0);
+.icon {
+	border: 2px solid var(--mantine-color-teal-2);
 }
 
-.nextSteps {
-	max-width: 350px;
+.contentGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	gap: var(--mantine-spacing-lg);
+}
+
+.summaryCard,
+.nextCard {
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-3);
+}
+
+.cardTitle {
+	margin-bottom: var(--mantine-spacing-sm);
+	color: var(--mantine-color-gray-8);
+}
+
+.summaryList {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: var(--mantine-spacing-md);
+}
+
+.summaryItem {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xxs);
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-white);
+}
+
+.nextCard {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+}
+
+.nextList {
+	margin: 0;
+	padding-left: var(--mantine-spacing-lg);
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+	color: var(--mantine-color-gray-7);
+}
+
+.nextList li {
+	list-style: disc;
 }
 
 .actions {
-	margin-top: var(--mantine-spacing-md);
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--mantine-spacing-sm);
 }
 
-.closeButton {
-	margin-top: var(--mantine-spacing-sm);
-	color: var(--mantine-color-gray-6);
+@media (max-width: 768px) {
+	.surface {
+		padding: var(--mantine-spacing-lg);
+	}
+
+	.header {
+		flex-direction: column;
+	}
+
+	.actions {
+		flex-direction: column;
+	}
 }

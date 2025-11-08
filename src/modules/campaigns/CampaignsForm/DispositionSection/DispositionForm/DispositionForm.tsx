@@ -6,9 +6,13 @@ import styles from './DispositionForm.module.css';
 
 interface DispositionFormProps {
 	onComplete?: () => void;
+	onCancel?: () => void;
 }
 
-const DispositionForm: React.FC<DispositionFormProps> = ({ onComplete }) => {
+const DispositionForm: React.FC<DispositionFormProps> = ({
+	onComplete,
+	onCancel,
+}) => {
 	return (
 		<div className={styles.wrapper}>
 			<Grid gutter='md' h='100%'>
@@ -21,7 +25,7 @@ const DispositionForm: React.FC<DispositionFormProps> = ({ onComplete }) => {
 				</Grid.Col>
 				<Grid.Col span={9}>
 					<Paper className={styles.rightSection} withBorder>
-						<DispositionBuilder onComplete={onComplete} />
+						<DispositionBuilder onComplete={onComplete} onCancel={onCancel} />
 					</Paper>
 				</Grid.Col>
 			</Grid>

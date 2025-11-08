@@ -3,6 +3,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { ActionIcon, Badge, Group, Text, Tooltip } from '@mantine/core';
 import { IconArrowUpRight } from '@tabler/icons-react';
 import type ContactGroup from '~/models/ContactGroup';
+import { timeAgo } from '~/utils/dateUtils';
 import ContactListHoverCard from './ContactListHoverCard';
 import ContactListControl from './ContactListControl';
 import {
@@ -48,11 +49,19 @@ const useContactListColumns = ({
 			{
 				id: 'name',
 				header: 'Name',
-				cell: ({ row }) => (
-					<Text fz='sm' fw={500}>
-						{row.original.name}
-					</Text>
-				),
+				cell: ({ row }) => {
+					const name = row.original.name;
+					const maxLength = 20;
+					const truncated =
+						name.length > maxLength ? name.slice(0, maxLength) + '...' : name;
+					return (
+						<Tooltip label={name} disabled={name.length <= maxLength}>
+							<Text fz='sm' fw={500}>
+								{truncated}
+							</Text>
+						</Tooltip>
+					);
+				},
 			},
 			{
 				id: 'contactCount',
@@ -70,6 +79,13 @@ const useContactListColumns = ({
 					<Text fz='sm'>
 						{row.original.humanEquivalent?.toLocaleString() || 0}
 					</Text>
+				),
+			},
+			{
+				id: 'createdAt',
+				header: 'Created',
+				cell: ({ row }) => (
+					<Text fz='sm'>{timeAgo(row.original.createdAt)}</Text>
 				),
 			},
 			{

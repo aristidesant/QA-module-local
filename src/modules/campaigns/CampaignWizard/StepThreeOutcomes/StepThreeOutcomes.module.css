@@ -1,16 +1,17 @@
 .sectionCard {
 	background: var(--mantine-color-white);
 	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: var(--mantine-radius-md);
+	border-radius: var(--mantine-radius-lg);
 	padding: var(--mantine-spacing-lg);
-	margin-bottom: var(--mantine-spacing-md);
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
 }
 
 .sectionHeader {
 	display: flex;
 	align-items: center;
 	gap: var(--mantine-spacing-xs);
-	margin-bottom: var(--mantine-spacing-xs);
 }
 
 .sectionIcon {
@@ -27,18 +28,22 @@
 .sectionDescription {
 	font-size: var(--mantine-font-size-sm);
 	color: var(--mantine-color-gray-6);
-	margin-bottom: var(--mantine-spacing-md);
+	line-height: 1.35;
 }
 
 .createFlowContainer {
 	border: 1px dashed var(--mantine-color-gray-4);
-	border-radius: var(--mantine-radius-md);
+	border-radius: var(--mantine-radius-lg);
 	background: var(--mantine-color-gray-0);
+	padding: 0 var(--mantine-spacing-lg);
 }
 
 .flowSummary {
 	border: 1px solid var(--mantine-color-green-3);
-	border-radius: var(--mantine-radius-md);
+	border-radius: var(--mantine-radius-lg);
 	background: var(--mantine-color-green-0);
 	padding: var(--mantine-spacing-md);
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
 }

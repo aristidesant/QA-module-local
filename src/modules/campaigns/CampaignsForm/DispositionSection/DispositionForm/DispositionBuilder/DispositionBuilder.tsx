@@ -3,6 +3,7 @@ import {
 	Box,
 	Button,
 	Flex,
+	Group,
 	Modal,
 	Paper,
 	ScrollArea,
@@ -25,10 +26,12 @@ import DispositionGroupPreview from './DispositionGroupPreview';
 
 type DispositionBuilderProps = {
 	onComplete?: () => void;
+	onCancel?: () => void;
 };
 
 const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 	onComplete,
+	onCancel,
 }) => {
 	const createMutation = useCreateDispositionFlow();
 	const updateMutation = useUpdateDispositionFlow();
@@ -262,18 +265,23 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 					</ScrollArea>
 				</Box>
 			</Box>
-
 			<Paper withBorder className={styles.footer}>
-				<Button
-					onClick={handleSave}
-					loading={createMutation.isPending || updateMutation.isPending}
-					size='sm'
-					variant='filled'
-				>
-					{dispositionFlow?.id ? 'Update Flow' : 'Create Flow'}
-				</Button>
-			</Paper>
-
+				<Group justify='space-between'>
+					{onCancel && (
+						<Button onClick={onCancel} size='sm' variant='default'>
+							Cancel
+						</Button>
+					)}
+					<Button
+						onClick={handleSave}
+						loading={createMutation.isPending || updateMutation.isPending}
+						size='sm'
+						variant='filled'
+					>
+						{dispositionFlow?.id ? 'Update Flow' : 'Create Flow'}
+					</Button>
+				</Group>
+			</Paper>{' '}
 			<Modal
 				opened={Boolean(previewNode)}
 				onClose={handleClosePreview}

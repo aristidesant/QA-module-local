@@ -1,16 +1,30 @@
+.layoutGrid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--mantine-spacing-md);
+}
+
+.primaryColumn,
+.secondaryColumn {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+}
+
 .sectionCard {
 	background: var(--mantine-color-white);
 	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: var(--mantine-radius-md);
-	padding: var(--mantine-spacing-lg);
-	margin-bottom: var(--mantine-spacing-md);
+	border-radius: var(--mantine-radius-lg);
+	padding: var(--mantine-spacing-md);
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
 }
 
 .sectionHeader {
 	display: flex;
 	align-items: center;
 	gap: var(--mantine-spacing-xs);
-	margin-bottom: var(--mantine-spacing-xs);
 }
 
 .sectionIcon {
@@ -27,7 +41,13 @@
 .sectionDescription {
 	font-size: var(--mantine-font-size-sm);
 	color: var(--mantine-color-gray-6);
-	margin-bottom: var(--mantine-spacing-md);
+	line-height: 1.35;
+}
+
+.fieldGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: var(--mantine-spacing-md);
 }
 
 .field {
@@ -38,8 +58,8 @@
 	display: flex;
 	gap: var(--mantine-spacing-xs);
 	position: absolute;
-	right: var(--mantine-spacing-xs);
-	top: var(--mantine-spacing-xs);
+	right: var(--mantine-spacing-sm);
+	top: var(--mantine-spacing-sm);
 }
 
 .promptActionButton {
@@ -49,35 +69,40 @@
 	padding: var(--mantine-spacing-xs);
 	cursor: pointer;
 	color: var(--mantine-color-gray-7);
-	transition: all 0.2s ease;
+	transition:
+		color 0.15s ease,
+		border-color 0.15s ease,
+		background 0.15s ease;
 }
 
 .promptActionButton:hover {
 	background: var(--mantine-color-gray-1);
 	color: var(--mantine-color-gray-9);
+	border-color: var(--mantine-color-gray-4);
 }
 
 .knowledgeBaseEmpty {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: var(--mantine-spacing-xs);
+	gap: var(--mantine-spacing-sm);
 	padding: var(--mantine-spacing-xl);
 	color: var(--mantine-color-gray-6);
 	font-size: var(--mantine-font-size-sm);
+	text-align: center;
 }
 
 .knowledgeBaseItem {
 	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: var(--mantine-radius-sm);
-	padding: var(--mantine-spacing-sm);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-md);
 	background: var(--mantine-color-gray-0);
 }
 
 .knowledgeBaseContent {
 	display: flex;
 	align-items: flex-start;
-	gap: var(--mantine-spacing-sm);
+	gap: var(--mantine-spacing-md);
 }
 
 .knowledgeBaseInfo {
@@ -95,4 +120,10 @@
 
 .addKnowledgeBaseButton {
 	width: 100%;
+}
+
+@media (max-width: 1024px) {
+	.layoutGrid {
+		grid-template-columns: 1fr;
+	}
 }

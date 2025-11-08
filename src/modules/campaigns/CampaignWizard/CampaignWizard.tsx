@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stepper } from '@mantine/core';
+import { Stepper, Text, Badge } from '@mantine/core';
 import {
 	IconListDetails,
 	IconSettings,
@@ -26,14 +26,38 @@ export const CampaignWizard: React.FC<CampaignWizardProps> = ({
 }) => {
 	const { activeStep, nextStep, prevStep, reset } = useCampaignWizardStore();
 
+	const stepsMeta = [
+		{ label: 'General', description: 'Campaign details' },
+		{ label: 'Agent', description: 'Agent setup' },
+		{ label: 'Outcomes', description: 'Outcome configuration' },
+		{ label: 'Parameters', description: 'Working hours & settings' },
+		{ label: 'Complete', description: 'Campaign ready' },
+	];
+
+	const currentStep = stepsMeta[Math.min(activeStep, stepsMeta.length - 1)];
+
 	const handleCancel = () => {
 		reset();
 		onCancel?.();
 	};
 
 	return (
-		<div className={styles.container}>
-			<Stepper active={activeStep} iconSize={42} className={styles.stepper}>
+		<div className={styles.wrapper}>
+			<Stepper
+				active={activeStep}
+				iconSize={34}
+				size='sm'
+				contentPadding='0'
+				classNames={{
+					root: styles.stepperRoot,
+					steps: styles.stepperSteps,
+					stepBody: styles.stepBody,
+					stepLabel: styles.stepLabel,
+					stepDescription: styles.stepDescription,
+					stepIcon: styles.stepIcon,
+					separator: styles.stepSeparator,
+				}}
+			>
 				<Stepper.Step
 					label='General'
 					description='Campaign details'

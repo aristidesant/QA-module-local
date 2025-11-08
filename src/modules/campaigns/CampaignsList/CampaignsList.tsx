@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Text, Card, Button, Modal } from '@mantine/core';
-import { IconAlertCircle, IconRocket, IconPlus } from '@tabler/icons-react';
+import { Text, Card, Button, Modal, ActionIcon, Group } from '@mantine/core';
+import {
+	IconAlertCircle,
+	IconRocket,
+	IconPlus,
+	IconRefresh,
+} from '@tabler/icons-react';
 import {
 	useDeleteCampaign,
 	useGetAllCampaignsPaginated,
@@ -212,13 +217,14 @@ export const CampaignsList: React.FC = () => {
 				description='Manage and monitor all your campaigns in one place.'
 				rightSection={rightComponent || <></>}
 				titleRight={
-					<Button
-						fz='xs'
-						leftSection={<IconPlus size={16} />}
-						onClick={handleShowAddNewCampaignModal}
-					>
-						New Campaign
-					</Button>
+					<Group gap='xs'>
+						<ActionIcon onClick={handleShowAddNewCampaignModal}>
+							<IconPlus size={16} />
+						</ActionIcon>
+						<ActionIcon onClick={() => reloadCampaigns()}>
+							<IconRefresh size={16} />
+						</ActionIcon>
+					</Group>
 				}
 			>
 				<CampaignFilters
