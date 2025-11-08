@@ -2,10 +2,27 @@ import { useState } from 'react';
 import { Button } from '@mantine/core';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { IconDatabase, IconPlus } from '@tabler/icons-react';
-import { CampaignSchemasContent } from '../CampaignSchemasContent';
+import { CampaignSchemasContent } from '~/modules/campaigns/CampaignSchemasContent';
 
-export default function CampaignSchemasPage() {
+interface CampaignSchemasPageProps {
+	embedded?: boolean;
+}
+
+export default function CampaignSchemasPage({
+	embedded = false,
+}: CampaignSchemasPageProps) {
 	const [createModalOpened, setCreateModalOpened] = useState(false);
+
+	const content = (
+		<CampaignSchemasContent
+			createModalOpened={createModalOpened}
+			setCreateModalOpened={setCreateModalOpened}
+		/>
+	);
+
+	if (embedded) {
+		return content;
+	}
 
 	return (
 		<ContentContainer
@@ -21,10 +38,7 @@ export default function CampaignSchemasPage() {
 				</Button>
 			}
 		>
-			<CampaignSchemasContent
-				createModalOpened={createModalOpened}
-				setCreateModalOpened={setCreateModalOpened}
-			/>
+			{content}
 		</ContentContainer>
 	);
 }

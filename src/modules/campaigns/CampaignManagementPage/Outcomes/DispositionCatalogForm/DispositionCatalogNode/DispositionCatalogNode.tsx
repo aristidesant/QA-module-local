@@ -3,7 +3,7 @@ import { useDeleteDispositionNode } from '~/queries/dispositionNodesQueries';
 import { useCreateDispositionNode } from '~/queries/dispositionNodesQueries';
 import { useReactivateDispositionNode } from '~/queries/dispositionNodesQueries';
 import { useDeactivateDispositionNode } from '~/queries/dispositionNodesQueries';
-import { useDispositionStore } from '~/modules/dispositions/dispositionRightComponentStore';
+import { useDispositionStore } from '../../dispositionRightComponentStore';
 
 import {
 	Flex,
@@ -49,7 +49,7 @@ import { modals } from '@mantine/modals';
 import {
 	OUTBOUND_PROTECTED_ROOT_NODE_NAMES,
 	type OutboundProtectedRootNodeName,
-} from '~/modules/dispositions/constants';
+} from '../../constants';
 
 type DispositionCatalogFormProps = {
 	catalogId: number;

@@ -1,11 +1,28 @@
 import { useState } from 'react';
 import { Button } from '@mantine/core';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
-import { CampaignCategoriesContent } from '../CampaignCategoriesContent';
+import { CampaignCategoriesContent } from '~/modules/campaigns/CampaignCategoriesContent';
 import { IconCategory, IconPlus } from '@tabler/icons-react';
 
-export default function CampaignCategoriesPage() {
+interface CampaignCategoriesPageProps {
+	embedded?: boolean;
+}
+
+export default function CampaignCategoriesPage({
+	embedded = false,
+}: CampaignCategoriesPageProps) {
 	const [createModalOpened, setCreateModalOpened] = useState(false);
+
+	const content = (
+		<CampaignCategoriesContent
+			createModalOpened={createModalOpened}
+			setCreateModalOpened={setCreateModalOpened}
+		/>
+	);
+
+	if (embedded) {
+		return content;
+	}
 
 	return (
 		<ContentContainer
@@ -21,10 +38,7 @@ export default function CampaignCategoriesPage() {
 				</Button>
 			}
 		>
-			<CampaignCategoriesContent
-				createModalOpened={createModalOpened}
-				setCreateModalOpened={setCreateModalOpened}
-			/>
+			{content}
 		</ContentContainer>
 	);
 }

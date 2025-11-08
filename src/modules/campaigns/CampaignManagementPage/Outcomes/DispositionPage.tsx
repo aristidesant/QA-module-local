@@ -1,17 +1,23 @@
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import DispositionCatalogList, {
 	DispositionCatalogListHandles,
-} from '../DispositionCatalogList';
-import { useDispositionStore } from '../dispositionRightComponentStore';
-import DispositionCatalogNode from '../DispositionCatalogForm/DispositionCatalogNode';
+} from './DispositionCatalogList';
+import { useDispositionStore } from './dispositionRightComponentStore';
+import DispositionCatalogNode from './DispositionCatalogForm/DispositionCatalogNode';
 import FallbackRightComponent from '~/components/FallbackRightComponent';
 import { useEffect, useRef } from 'react';
 import { Button } from '@mantine/core';
 import { IconOutbound } from '@tabler/icons-react';
 
-const DispositionPage: React.FC = () => {
+interface DispositionPageProps {
+	embedded?: boolean;
+}
+
+const DispositionPage: React.FC<DispositionPageProps> = ({
+	embedded = false,
+}) => {
 	const { rightComponent, catalog, setRightComponent } = useDispositionStore(
-		(s) => s
+		(s: any) => s
 	);
 	const catalogListRef = useRef<DispositionCatalogListHandles>(null);
 
@@ -25,6 +31,17 @@ const DispositionPage: React.FC = () => {
 	const handleAddNew = () => {
 		catalogListRef.current?.openCreateForm();
 	};
+
+	const content = (
+		<>
+			<DispositionCatalogList ref={catalogListRef} />
+			{catalog && <DispositionCatalogNode catalogId={catalog.id} />}
+		</>
+	);
+
+	if (embedded) {
+		return content;
+	}
 
 	return (
 		<ContentContainer
@@ -48,8 +65,7 @@ const DispositionPage: React.FC = () => {
 				)
 			}
 		>
-			<DispositionCatalogList ref={catalogListRef} />
-			{catalog && <DispositionCatalogNode catalogId={catalog.id} />}
+			{content}
 		</ContentContainer>
 	);
 };

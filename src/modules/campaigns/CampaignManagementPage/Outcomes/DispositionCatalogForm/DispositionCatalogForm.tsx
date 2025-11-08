@@ -18,7 +18,7 @@ import type {
 import RightSectionCard from '~/components/RightSectionCard';
 import { IconForms, IconInfoCircle } from '@tabler/icons-react';
 import { useCreateDispositionNode } from '~/queries/dispositionNodesQueries';
-import { OUTBOUND_PROTECTED_ROOT_NODE_DEFAULTS } from '~/modules/dispositions/constants';
+import { OUTBOUND_PROTECTED_ROOT_NODE_DEFAULTS } from '../constants';
 
 type DispositionCatalogFormCoreProps = {
 	onSubmit: (

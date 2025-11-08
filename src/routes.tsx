@@ -12,12 +12,7 @@ import RouteProtecter, {
 	clientLoader as routeProtecterLoader,
 } from './components/RouteProtecter/RouteProtecter';
 const Layout = React.lazy(() => import('./components/Layout'));
-const CampaignsPage = React.lazy(
-	() => import('./modules/campaigns/CampaignsPage/CampaignsPage')
-);
-const CampaignPage = React.lazy(
-	() => import('./modules/campaigns/CampaignPage/CampaignPage')
-);
+
 const CampaignContactListPage = React.lazy(
 	() =>
 		import(
@@ -29,14 +24,21 @@ const ForcePasswordChangePage = React.lazy(
 );
 const CampaignCategoriesPage = React.lazy(
 	() =>
-		import('./modules/campaigns/CampaignCategoriesPage/CampaignCategoriesPage')
+		import(
+			'./modules/campaigns/CampaignManagementPage/Categories/CampaignCategoriesPage'
+		)
 );
 const CampaignObjectivesPage = React.lazy(
 	() =>
-		import('./modules/campaigns/CampaignObjectivesPage/CampaignObjectivesPage')
+		import(
+			'./modules/campaigns/CampaignManagementPage/Objectives/CampaignObjectivesPage'
+		)
 );
 const CampaignSchemasPage = React.lazy(
-	() => import('./modules/campaigns/CampaignSchemasPage/CampaignSchemasPage')
+	() =>
+		import(
+			'./modules/campaigns/CampaignManagementPage/Schemas/CampaignSchemasPage'
+		)
 );
 const ClientConfigsPage = React.lazy(
 	() => import('./modules/configurations/client-configs/ClientConfigsPage')
@@ -53,7 +55,10 @@ const PrompterPage = React.lazy(() =>
 	}))
 );
 const DispositionPage = React.lazy(
-	() => import('./modules/dispositions/DispositionPage/DispositionPage')
+	() =>
+		import(
+			'./modules/campaigns/CampaignManagementPage/Outcomes/DispositionPage'
+		)
 );
 const ConversationPage = React.lazy(
 	() => import('./modules/conversations/ConversationsPage/ConversationPage')
@@ -87,6 +92,12 @@ const RegionalSettingsParamsPage = React.lazy(
 );
 const ConfigurationsPage = React.lazy(
 	() => import('./modules/configurations/ConfigurationsPage')
+);
+const CampaignManagementPage = React.lazy(
+	() => import('./modules/campaigns/CampaignManagementPage')
+);
+const CampaignPage = React.lazy(
+	() => import('./modules/campaigns/CampaignPage/CampaignPage')
 );
 
 const router = createBrowserRouter([
@@ -138,10 +149,10 @@ const router = createBrowserRouter([
 						),
 					},
 					{
-						path: 'campaigns',
+						path: 'campaign-management',
 						element: (
-							<Suspense fallback={<div>Loading campaigns...</div>}>
-								<CampaignsPage />
+							<Suspense fallback={<div>Loading campaign management...</div>}>
+								<CampaignManagementPage />
 							</Suspense>
 						),
 					},

@@ -4,13 +4,9 @@ import {
 	IconLogout,
 	IconShield,
 	IconUser,
-	IconCheckupList,
-	IconCategory,
-	IconTarget,
-	IconDatabase,
 	IconSettings,
-	IconLibrary,
 	IconTools,
+	IconLibrary,
 	IconUsers,
 } from '@tabler/icons-react';
 import styles from './UserMenu.module.css';
@@ -64,24 +60,9 @@ export const UserMenu: React.FC = () => {
 			category: 'Campaign Management',
 			items: [
 				{
-					label: 'Outcomes',
-					icon: <IconCheckupList size={16} />,
-					path: '/outcomes',
-				},
-				{
-					label: 'Categories',
-					icon: <IconCategory size={16} />,
-					path: '/campaign-categories',
-				},
-				{
-					label: 'Objectives',
-					icon: <IconTarget size={16} />,
-					path: '/campaign-objectives',
-				},
-				{
-					label: 'Schemas',
-					icon: <IconDatabase size={16} />,
-					path: '/campaign-schemas',
+					label: 'Campaign Management',
+					icon: <IconSettings size={16} />,
+					path: '/campaign-management',
 				},
 			],
 		},
