@@ -1,0 +1,210 @@
+.wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-lg);
+	width: 100%;
+}
+
+.header {
+	display: flex;
+	justify-content: flex-end;
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-lg);
+	background: var(--mantine-color-gray-0);
+	min-height: 72px;
+}
+
+.headerSummary {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xxs);
+	min-width: 200px;
+	align-items: flex-end;
+}
+
+.headerSummaryTitle {
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+}
+
+.headerSummaryDescription {
+	color: var(--mantine-color-gray-6);
+	font-size: var(--mantine-font-size-xs);
+}
+
+@media (max-width: 768px) {
+	.headerSummary {
+		align-items: flex-start;
+		width: 100%;
+	}
+
+	.header {
+		justify-content: flex-start;
+		padding: var(--mantine-spacing-sm);
+	}
+}
+
+.stepperRoot {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-lg);
+	background: var(--mantine-color-white);
+	padding: var(--mantine-spacing-md);
+}
+
+.stepperSteps {
+	gap: var(--mantine-spacing-md);
+}
+
+.stepIcon {
+	background: var(--mantine-color-blue-0);
+	color: var(--mantine-color-blue-7);
+	border: 1px solid var(--mantine-color-blue-2);
+	width: 32px;
+	height: 32px;
+}
+
+.stepLabel {
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+}
+
+.stepDescription {
+	color: var(--mantine-color-gray-6);
+	font-size: var(--mantine-font-size-xs);
+}
+
+.stepBody {
+	padding-bottom: 0;
+}
+
+.stepSeparator {
+	background: var(--mantine-color-gray-2);
+}
+
+.stepContent {
+	margin-top: var(--mantine-spacing-lg);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-lg);
+	background: var(--mantine-color-gray-0);
+	padding: var(--mantine-spacing-lg);
+}
+
+.stepSurface {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-lg);
+}
+
+.stepHeaderCard {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xxs);
+	padding-bottom: var(--mantine-spacing-sm);
+	border-bottom: 1px solid var(--mantine-color-gray-3);
+}
+
+.stepEyebrow {
+	font-size: var(--mantine-font-size-xs);
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--mantine-color-blue-6);
+}
+
+.stepTitle {
+	font-size: var(--mantine-font-size-md);
+	font-weight: 600;
+	margin: 0;
+	color: var(--mantine-color-gray-9);
+}
+
+.stepDescriptionText {
+	color: var(--mantine-color-gray-6);
+	line-height: 1.35;
+}
+
+.sectionGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: var(--mantine-spacing-md);
+}
+
+.wizardCard {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-white);
+	padding: var(--mantine-spacing-lg);
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+}
+
+.sectionHeading {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xxs);
+}
+
+.sectionHeadingTitle {
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+}
+
+.sectionHeadingDescription {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+}
+
+.actions {
+	display: flex;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-md);
+	margin-top: var(--mantine-spacing-lg);
+	padding-top: var(--mantine-spacing-lg);
+	border-top: 1px solid var(--mantine-color-gray-3);
+}
+
+.field {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xxs);
+}
+
+.fieldLabel {
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 600;
+	color: var(--mantine-color-gray-8);
+}
+
+.fieldDescription {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+}
+
+.required {
+	color: var(--mantine-color-red-6);
+}
+
+.segmentedControl {
+	width: 100%;
+}
+
+.error {
+	color: var(--mantine-color-red-6);
+	font-size: var(--mantine-font-size-sm);
+	margin-top: var(--mantine-spacing-md);
+}
+
+@media (max-width: 768px) {
+	.stepContent {
+		padding: var(--mantine-spacing-md);
+	}
+
+	.actions {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}

@@ -38,6 +38,9 @@ interface ContactListInfoProps {
 
 	/** Callback when list name is changed */
 	onNameChange?: (name: string) => void;
+
+	/** Whether the name field should be readonly */
+	readonly?: boolean;
 }
 
 export function ContactListInfo({
@@ -46,6 +49,7 @@ export function ContactListInfo({
 	expirationDate,
 	onExpirationChange,
 	onNameChange,
+	readonly = false,
 }: ContactListInfoProps) {
 	const [opened, setOpened] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
@@ -143,7 +147,7 @@ export function ContactListInfo({
 								<Text fw={500} size='sm' style={{ flex: 1 }}>
 									{listName || placeholder}
 								</Text>
-								{onNameChange && (
+								{onNameChange && !readonly && (
 									<Tooltip label='Edit name'>
 										<ActionIcon
 											variant='subtle'

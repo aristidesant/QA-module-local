@@ -1,0 +1,49 @@
+.sectionCard {
+	background: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-lg);
+	padding: var(--mantine-spacing-lg);
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+}
+
+.sectionHeader {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+}
+
+.sectionIcon {
+	color: var(--mantine-color-blue-6);
+}
+
+.sectionTitle {
+	font-size: var(--mantine-font-size-md);
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+	margin: 0;
+}
+
+.sectionDescription {
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-6);
+	line-height: 1.35;
+}
+
+.createFlowContainer {
+	border: 1px dashed var(--mantine-color-gray-4);
+	border-radius: var(--mantine-radius-lg);
+	background: var(--mantine-color-gray-0);
+	padding: 0 var(--mantine-spacing-lg);
+}
+
+.flowSummary {
+	border: 1px solid var(--mantine-color-green-3);
+	border-radius: var(--mantine-radius-lg);
+	background: var(--mantine-color-green-0);
+	padding: var(--mantine-spacing-md);
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}

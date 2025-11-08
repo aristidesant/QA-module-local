@@ -1,6 +1,6 @@
 // Refactored to use Mantine's useForm for all form state and validation
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Stack, LoadingOverlay, Box, ActionIcon } from '@mantine/core';
 import type { Campaign } from '../../../models/CampaignsModel';
 import {
@@ -87,6 +87,30 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			clientId: (value) => (value >= 0 ? null : 'Client ID must be 0 or more'),
 		},
 	});
+
+	// Update form values when campaign prop changes (e.g., after wizard updates)
+	useEffect(() => {
+		if (campaign) {
+			form.setValues({
+				name: campaign.name || '',
+				agentName: campaign.agentName || '',
+				configId: campaign.configId || '',
+				description: campaign.description || '',
+				budget: campaign.budget ?? 0,
+				spent: campaign.spent ?? 0,
+				type: campaign.type || 'OUTBOUND',
+				status: campaign.status || CampaignStatus.PENDING,
+				userId: campaign.userId ?? 0,
+				promptId: campaign.promptId ?? undefined,
+				objectiveId: campaign.objectiveId ?? undefined,
+				voiceId: campaign.voiceId ?? undefined,
+				clientId: campaign.clientId ?? 0,
+				tags: campaign.tags || [],
+				workingHours: campaign.workingHours || defaultWorkingHours,
+				agentConfig: campaign.agentConfig || {},
+			});
+		}
+	}, [campaign]);
 
 	const handleSubmit = async (
 		value: Omit<Campaign, 'id' | 'createdAt' | 'updatedAt'>
