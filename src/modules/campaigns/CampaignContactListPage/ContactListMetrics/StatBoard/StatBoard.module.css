@@ -1,0 +1,26 @@
+.statBoard {
+	background-color: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	width: 100%;
+	padding: var(--mantine-spacing-md) !important;
+}
+
+.statBoardHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-sm);
+}
+
+.statBoardHint {
+	white-space: nowrap;
+}
+
+.statGrid {
+	display: grid;
+}
+
+.metricCard {
+	height: 100%;
+}

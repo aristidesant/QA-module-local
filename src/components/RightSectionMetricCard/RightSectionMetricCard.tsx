@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, ThemeIcon } from '@mantine/core';
+import { Text } from '@mantine/core';
 import type { TablerIcon } from '@tabler/icons-react';
 import RightSectionCard from '~/components/RightSectionCard';
 import styles from './RightSectionMetricCard.module.css';
@@ -36,18 +36,11 @@ const RightSectionMetricCard: React.FC<RightSectionMetricCardProps> = ({
 			<div className={styles.metaGrid}>
 				{metaItems.map((item) => (
 					<div key={item.label} className={styles.metaItem}>
+						<div className={styles.metaIcon}>{item.icon}</div>
 						<div className={styles.metaHeader}>
-							<ThemeIcon
-								variant='light'
-								color={item.accent || 'gray'}
-								className={styles.metaIcon}
-								size={28}
-							>
-								{item.icon}
-							</ThemeIcon>
 							<Text className={styles.metaLabel}>{item.label}</Text>
+							<Text className={styles.metaValue}>{item.value}</Text>
 						</div>
-						<Text className={styles.metaValue}>{item.value}</Text>
 					</div>
 				))}
 			</div>

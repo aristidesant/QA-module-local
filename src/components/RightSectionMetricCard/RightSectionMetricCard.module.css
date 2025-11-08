@@ -1,40 +1,63 @@
 .metaGrid {
-	display: flex;
-	flex-direction: column;
-	gap: var(--mantine-spacing-sm);
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: var(--mantine-spacing-md);
+}
+
+@media (min-width: 768px) {
+	.metaGrid {
+		grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+		max-width: 100%;
+	}
 }
 
 .metaItem {
-	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: 12px;
-	padding: var(--mantine-spacing-sm);
-	background-color: var(--mantine-color-white);
 	display: flex;
-	flex-direction: column;
-	gap: var(--mantine-spacing-xs);
+	align-items: flex-start;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-md);
+	background-color: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	transition: border-color 0.2s ease;
+}
+
+.metaItem:hover {
+	border-color: var(--mantine-color-blue-3);
 }
 
 .metaHeader {
+	flex: 1;
+	min-width: 0;
 	display: flex;
-	align-items: center;
-	gap: var(--mantine-spacing-sm);
+	flex-direction: column;
+	gap: 6px;
 }
 
 .metaIcon {
-	width: 28px;
-	height: 28px;
+	flex-shrink: 0;
+	width: 36px;
+	height: 36px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
 }
 
 .metaLabel {
-	font-size: 12px;
+	font-size: 11px;
 	font-weight: 600;
-	color: var(--mantine-color-gray-7);
 	text-transform: uppercase;
-	letter-spacing: 0.4px;
+	letter-spacing: 0.5px;
+	color: var(--mantine-color-gray-6);
+	line-height: 1.2;
 }
 
 .metaValue {
-	font-size: 14px;
-	font-weight: 500;
+	font-size: 18px;
+	font-weight: 700;
 	color: var(--mantine-color-gray-9);
+	line-height: 1.2;
 }
