@@ -3,7 +3,6 @@ import { useDeleteDispositionNode } from '~/queries/dispositionNodesQueries';
 import { useCreateDispositionNode } from '~/queries/dispositionNodesQueries';
 import { useReactivateDispositionNode } from '~/queries/dispositionNodesQueries';
 import { useDeactivateDispositionNode } from '~/queries/dispositionNodesQueries';
-import { useDispositionStore } from '../../dispositionRightComponentStore';
 
 import {
 	Flex,
@@ -50,6 +49,7 @@ import {
 	OUTBOUND_PROTECTED_ROOT_NODE_NAMES,
 	type OutboundProtectedRootNodeName,
 } from '../../constants';
+import { useDispositionStore } from '../../dispositionRightComponentStore';
 
 type DispositionCatalogFormProps = {
 	catalogId: number;

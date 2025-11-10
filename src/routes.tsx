@@ -100,6 +100,10 @@ const CampaignPage = React.lazy(
 	() => import('./modules/campaigns/CampaignPage/CampaignPage')
 );
 
+const CampaignsPage = React.lazy(
+	() => import('./modules/campaigns/CampaignsPage/CampaignsPage')
+);
+
 const router = createBrowserRouter([
 	// Public routes
 	{ path: '/login', element: <LoginForm /> },
@@ -153,6 +157,14 @@ const router = createBrowserRouter([
 						element: (
 							<Suspense fallback={<div>Loading campaign management...</div>}>
 								<CampaignManagementPage />
+							</Suspense>
+						),
+					},
+					{
+						path: 'campaigns',
+						element: (
+							<Suspense fallback={<div>Loading campaigns...</div>}>
+								<CampaignsPage />
 							</Suspense>
 						),
 					},
