@@ -197,7 +197,14 @@ const conversationsApi = (_authHeader: Record<string, string> = {}) => {
 
 			return { blob: response.data, filename };
 		},
+
+		// Fail and pause a conversation
+		failAndPauseConversation: async (id: string) => {
+			const response = await axios.post<void>(
+				`${DEFAULT_API_URL}/conversations/${id}/fail-and-pause`
+			);
+			return response.data;
+		},
 	};
 };
-
 export default conversationsApi;

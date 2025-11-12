@@ -187,3 +187,19 @@ export const useExportConversationPdf = () => {
 		},
 	});
 };
+
+// Fail and pause a conversation
+export const useFailAndPauseConversation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<void, unknown, string>({
+		mutationFn: async (id) => {
+			const api = getApi();
+			return api.failAndPauseConversation(id);
+		},
+		onSuccess: (_, id) => {
+			queryClient.invalidateQueries({ queryKey: ['conversations'] });
+			queryClient.invalidateQueries({ queryKey: ['conversation', id] });
+		},
+	});
+};
