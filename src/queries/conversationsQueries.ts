@@ -203,3 +203,19 @@ export const useFailAndPauseConversation = () => {
 		},
 	});
 };
+
+// Fetch and process a conversation
+export const useFetchAndProcessConversation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<void, unknown, string>({
+		mutationFn: async (id) => {
+			const api = getApi();
+			return api.fetchAndProcessConversation(id);
+		},
+		onSuccess: (_, id) => {
+			queryClient.invalidateQueries({ queryKey: ['conversations'] });
+			queryClient.invalidateQueries({ queryKey: ['conversation', id] });
+		},
+	});
+};
