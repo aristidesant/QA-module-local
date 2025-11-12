@@ -1,4 +1,5 @@
 import { Center, Button } from '@mantine/core';
+import { modals } from '@mantine/modals';
 import { IconArrowRight } from '@tabler/icons-react';
 import { useFailAndPauseConversation } from '~/queries/conversationsQueries';
 import RightSectionCard from '~/components/RightSectionCard';
@@ -16,11 +17,19 @@ export function ConversationActions({
 	const failAndPauseMutation = useFailAndPauseConversation();
 
 	const handleFailAndPause = () => {
-		failAndPauseMutation.mutate(`${conversation.id}`, {
-			onSuccess: () => {
-				if (onReload) {
-					onReload();
-				}
+		modals.openConfirmModal({
+			title: 'Confirm Action',
+			children:
+				'Are you sure you want to fail and pause this conversation? This action cannot be undone.',
+			labels: { confirm: 'Yes, Fail and Pause', cancel: 'Cancel' },
+			onConfirm: () => {
+				failAndPauseMutation.mutate(`${conversation.id}`, {
+					onSuccess: () => {
+						if (onReload) {
+							onReload();
+						}
+					},
+				});
 			},
 		});
 	};
