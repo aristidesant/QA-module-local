@@ -1,0 +1,228 @@
+@import '@mantine/core/styles.layer.css';
+
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.subtitle {
+	color: var(--mantine-color-dimmed);
+	margin-top: 4px;
+}
+
+.sectionTitle {
+	font-weight: 600;
+	margin-bottom: 8px;
+}
+
+.sectionDescription {
+	color: var(--mantine-color-dimmed);
+	font-size: 14px;
+}
+
+.configGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: 16px;
+}
+
+.configCard {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: 12px;
+	padding: 16px;
+	background: var(--mantine-color-body);
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.configCardActive {
+	border-color: var(--mantine-color-blue-5);
+}
+
+.configTitle {
+	font-weight: 600;
+}
+
+.configDescription {
+	color: var(--mantine-color-dimmed);
+	font-size: 14px;
+	margin-top: 2px;
+}
+
+.addressRow {
+	color: var(--mantine-color-gray-7);
+}
+
+.addressText {
+	font-weight: 600;
+	word-break: break-all;
+}
+
+.metadataList {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	gap: 8px 12px;
+	margin-top: 4px;
+}
+
+.metadataItem {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.metadataLabel {
+	font-size: 12px;
+	color: var(--mantine-color-dimmed);
+	text-transform: uppercase;
+}
+
+.metadataValue {
+	font-weight: 600;
+}
+
+.selectButton {
+	align-self: flex-start;
+	margin-top: auto;
+}
+
+.connectionSection {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: 12px;
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	background: var(--mantine-color-body);
+}
+
+.connectionHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.selectedServerCard {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding: 16px;
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: 10px;
+}
+
+.iconPill {
+	width: 40px;
+	height: 40px;
+	border-radius: 999px;
+	border: 1px solid var(--mantine-color-gray-4);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--mantine-color-gray-0);
+	color: var(--mantine-color-blue-6);
+}
+
+.selectedDetails {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.selectedLabel {
+	font-size: 12px;
+	color: var(--mantine-color-dimmed);
+	text-transform: uppercase;
+}
+
+.selectedValue {
+	font-weight: 600;
+}
+
+.selectedAddress {
+	font-size: 14px;
+	color: var(--mantine-color-gray-7);
+	word-break: break-all;
+}
+
+.credentialsForm {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 12px;
+	align-items: flex-end;
+}
+
+.credentialsForm button {
+	min-width: 160px;
+}
+
+.statusRow {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+}
+
+.statusBadge {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.statusLabel {
+	font-size: 12px;
+	color: var(--mantine-color-dimmed);
+	text-transform: uppercase;
+}
+
+.statusValue {
+	text-transform: capitalize;
+}
+
+.activeHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	margin-bottom: 8px;
+}
+
+.callCell {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.remoteIdentity {
+	font-weight: 600;
+}
+
+.callId {
+	font-size: 12px;
+	color: var(--mantine-color-dimmed);
+}
+
+.directionIcon {
+	width: 26px;
+	height: 26px;
+	border-radius: 8px;
+	border: 1px solid var(--mantine-color-gray-3);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--mantine-color-blue-6);
+}
+
+.durationText {
+	font-family: 'JetBrains Mono', 'Fira Mono', monospace;
+	font-weight: 600;
+}

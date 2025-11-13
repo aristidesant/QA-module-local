@@ -20,6 +20,7 @@ import {
 	IconRefresh,
 	IconPhoneCall,
 	IconTargetArrow,
+	IconSpeakerphone,
 } from '@tabler/icons-react';
 import { useContactListMetrics } from '~/modules/queries/metricsQueries';
 import styles from './ContactListMetrics.module.css';
@@ -27,6 +28,8 @@ import SectionCard from '~/components/SectionCard';
 import SummaryPanel from './SummaryPanel';
 import StatBoard from './StatBoard';
 import type { SpecificMetric } from '~/models/LiveMetrics';
+import { modals } from '@mantine/modals';
+import SIPTrunk from '~/components/SIPTrunk';
 
 type ContactListMetricsProps = {
 	contactGroupId?: number | string;
@@ -405,6 +408,18 @@ const ContactListMetrics = ({ contactGroupId }: ContactListMetricsProps) => {
 						size='sm'
 					>
 						<IconRefresh size={16} />
+					</ActionIcon>
+					<ActionIcon
+						onClick={() => {
+							modals.open({
+								modalId: 'sip-trunk-info-modal',
+								fullScreen: true,
+								title: 'SIP Trunk Information',
+								children: <SIPTrunk />,
+							});
+						}}
+					>
+						<IconSpeakerphone size={16} />
 					</ActionIcon>
 				</Flex>
 			}
