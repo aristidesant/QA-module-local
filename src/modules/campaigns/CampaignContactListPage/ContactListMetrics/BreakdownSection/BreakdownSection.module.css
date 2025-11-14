@@ -1,0 +1,79 @@
+.breakdownGrid {
+	width: 100%;
+}
+
+.breakdownCard {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.breakdownContent {
+	height: 100%;
+}
+
+.chartWrapper {
+	width: 100%;
+	margin-top: var(--mantine-spacing-xs);
+	display: flex;
+	flex-direction: column;
+}
+
+.breakdownChart {
+	width: 100% !important;
+	max-width: 100% !important;
+	flex: 1;
+}
+
+.breakdownChart > div {
+	width: 100% !important;
+}
+
+.breakdownChart svg {
+	width: 100% !important;
+	max-width: 100% !important;
+}
+
+.breakdownList {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	padding-top: var(--mantine-spacing-sm);
+	border-top: 1px solid var(--mantine-color-gray-2);
+}
+
+.breakdownRow {
+	padding: var(--mantine-spacing-xs) 0;
+	border-radius: var(--mantine-radius-sm);
+	transition: background-color 0.15s ease;
+}
+
+.breakdownHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: var(--mantine-spacing-xxs);
+	gap: var(--mantine-spacing-sm);
+}
+
+.breakdownRow:hover {
+	background-color: var(--mantine-color-gray-0);
+}
+
+.breakdownLabel {
+	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.breakdownCount {
+	margin-top: var(--mantine-spacing-xxs);
+}
+
+@media (max-width: 62rem) {
+	.breakdownChart {
+		height: 200px !important;
+	}
+}

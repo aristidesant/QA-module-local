@@ -1,4 +1,4 @@
-import { Card, Text, Flex, Box } from '@mantine/core';
+import { Text } from '@mantine/core';
 import { type ReactNode } from 'react';
 import styles from './StatCard.module.css';
 
@@ -10,54 +10,38 @@ export interface StatCardProps {
 	color?: string;
 	className?: string;
 	icon?: ReactNode;
+	variant?: 'default' | 'compact';
 }
 
 export const StatCard = ({
 	title,
 	value,
 	subtitle,
-	chart,
 	color,
 	className,
 	icon,
+	variant = 'default',
 }: StatCardProps) => {
+	const cardClassName = [
+		styles.card,
+		variant === 'compact' ? styles.compact : '',
+		className || '',
+	]
+		.filter(Boolean)
+		.join(' ');
+
 	return (
-		<Card
-			className={`${styles.card} ${className || ''}`.trim()}
-			withBorder
-			padding='md'
-			radius='lg'
-		>
-			<Flex
-				align='stretch'
-				justify='space-between'
-				gap='md'
-				className={styles.wrapper}
-			>
-				<Flex direction='column' gap='sm' className={styles.content}>
-					<Flex align='flex-start' gap='sm' className={styles.header}>
-						{icon && <Box className={styles.icon}>{icon}</Box>}
-						<Text size='sm' c='dimmed' className={styles.title}>
-							{title}
-						</Text>
-					</Flex>
-					<Text
-						size='xl'
-						fw={600}
-						className={styles.value}
-						style={color ? { color } : undefined}
-					>
-						{value}
-					</Text>
-					{subtitle && (
-						<Text size='xs' c='dimmed' className={styles.subtitle}>
-							{subtitle}
-						</Text>
-					)}
-				</Flex>
-				{chart && <Box className={styles.chart}>{chart}</Box>}
-			</Flex>
-		</Card>
+		<div className={cardClassName}>
+			{icon && <div className={styles.iconWrapper}>{icon}</div>}
+			<div className={styles.content}>
+				<Text className={styles.label}>{title}</Text>
+				<Text className={styles.value} style={color ? { color } : undefined}>
+					{value}
+				</Text>
+				{subtitle && <Text className={styles.subtitle}>{subtitle}</Text>}
+			</div>
+			{/* {chart && <div className={styles.chart}>{chart}</div>} */}
+		</div>
 	);
 };
 

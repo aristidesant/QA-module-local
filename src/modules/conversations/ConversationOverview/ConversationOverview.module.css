@@ -189,42 +189,45 @@
 /* Stats Grid */
 .statsGrid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-	gap: 12px;
+	grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+	gap: var(--mantine-spacing-md);
+}
+
+@media (min-width: 768px) {
+	.statsGrid {
+		grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	}
 }
 
 .statCard {
 	display: flex;
 	align-items: flex-start;
-	gap: 10px;
-	padding: 12px;
-	background: var(--mantine-color-gray-0);
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-md);
+	background: var(--mantine-color-white);
 	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: 8px;
-	transition:
-		border-color 0.2s ease,
-		background-color 0.2s ease;
+	border-radius: var(--mantine-radius-md);
+	transition: border-color 0.2s ease;
 }
 
 .statCard:hover {
-	background: var(--mantine-color-gray-1);
-	border-color: var(--mantine-color-gray-3);
+	border-color: var(--mantine-color-blue-3);
 }
 
 .statIconWrapper {
 	flex-shrink: 0;
-	width: 32px;
-	height: 32px;
+	width: 36px;
+	height: 36px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: var(--mantine-color-white);
+	background: var(--mantine-color-gray-0);
 	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: 6px;
+	border-radius: var(--mantine-radius-md);
 }
 
 .statIcon {
-	color: var(--mantine-color-gray-6);
+	color: var(--mantine-color-gray-7);
 }
 
 .statContent {
@@ -232,33 +235,33 @@
 	min-width: 0;
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
+	gap: 6px;
 }
 
 .statLabel {
 	font-size: 11px;
 	font-weight: 600;
 	text-transform: uppercase;
-	letter-spacing: 0.3px;
+	letter-spacing: 0.5px;
 	color: var(--mantine-color-gray-6);
 	line-height: 1.2;
 }
 
 .statValue {
-	font-size: 14px;
+	font-size: 16px;
 	font-weight: 700;
 	color: var(--mantine-color-gray-9);
-	line-height: 1.3;
+	line-height: 1.2;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
 .statSubtext {
-	font-size: 12px;
+	font-size: 13px;
 	font-weight: 500;
 	color: var(--mantine-color-gray-6);
-	line-height: 1.2;
+	line-height: 1.3;
 }
 
 /* Summary Section */

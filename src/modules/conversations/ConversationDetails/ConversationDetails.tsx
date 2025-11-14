@@ -1,4 +1,4 @@
-import { Box, Tabs, Loader, Center } from '@mantine/core';
+import { Box, Tabs, Loader, Center, Stack } from '@mantine/core';
 import { IconInfoCircle, IconFileText } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import dayjs from 'dayjs';
@@ -10,15 +10,21 @@ import { TranscriptViewer } from '~/modules/conversations/TranscriptViewer';
 import styles from './ConversationDetails.module.css';
 import ConversationOverview from '../ConversationOverview';
 import { useGetConversation } from '~/queries/conversationsQueries';
+import ConversationActions from './ConversationActions';
 dayjs.extend(relativeTime);
 
 interface ConversationDetailsProps {
 	id: number;
+	onReload?: () => void;
 }
 
-export function ConversationDetails({ id }: ConversationDetailsProps) {
+export function ConversationDetails({
+	id,
+	onReload,
+}: ConversationDetailsProps) {
 	const {
 		data: conversation,
+		refetch: reloadCurrent,
 		isLoading,
 		isFetching,
 	} = useGetConversation(`${id}`);
@@ -68,6 +74,10 @@ export function ConversationDetails({ id }: ConversationDetailsProps) {
 			</Center>
 		);
 	}
+	const handleReload = () => {
+		onReload?.();
+		reloadCurrent();
+	};
 
 	return (
 		<Box p='md' className={styles.container}>
@@ -95,11 +105,17 @@ export function ConversationDetails({ id }: ConversationDetailsProps) {
 
 				<Tabs.Panel value='overview' pt='md'>
 					{conversation ? (
-						<ConversationOverview
-							conversation={conversation}
-							status={safeStatus}
-							duration={duration}
-						/>
+						<Stack>
+							<ConversationActions
+								conversation={conversation}
+								onReload={handleReload}
+							/>
+							<ConversationOverview
+								conversation={conversation}
+								status={safeStatus}
+								duration={duration}
+							/>
+						</Stack>
 					) : null}
 				</Tabs.Panel>
 

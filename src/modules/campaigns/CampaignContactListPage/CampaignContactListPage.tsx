@@ -23,6 +23,7 @@ import { useCampaignContactListStore } from '~/stores/campaignContactListStore';
 import ContactGroupSummary from './ContactGroupSummary';
 import ContactGroupContactsTable from './ContactGroupContactsTable';
 import ContactListInformation from './ContactListInformation';
+import ContactListMetrics from './ContactListMetrics';
 import ConversationsList from '~/modules/conversations/ConversationsList';
 import ConversationDetails from '~/modules/conversations/ConversationDetails';
 
@@ -308,6 +309,7 @@ const CampaignContactListPage = () => {
 					onReload={() => contactGroupQuery.refetch()}
 				/>
 			</SectionCard>
+			<ContactListMetrics contactGroupId={contactGroupId} />
 			<SectionCard
 				title='Conversations'
 				description='All conversations associated with this contact list.'

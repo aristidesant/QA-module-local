@@ -101,7 +101,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 
 			setSelection(
 				conversation.id,
-				<ConversationDetails id={conversation.id} />
+				<ConversationDetails onReload={refetch} id={conversation.id} />
 			);
 		},
 		[onConversationClick, setSelection]
