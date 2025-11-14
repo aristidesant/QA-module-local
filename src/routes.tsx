@@ -11,6 +11,7 @@ const AgentPage = React.lazy(
 import RouteProtecter, {
 	clientLoader as routeProtecterLoader,
 } from './components/RouteProtecter/RouteProtecter';
+import SuspenseFallback from './components/SuspenseFallback';
 const Layout = React.lazy(() => import('./components/Layout'));
 const CampaignsPage = React.lazy(
 	() => import('./modules/campaigns/CampaignsPage/CampaignsPage')
@@ -101,14 +102,16 @@ const router = createBrowserRouter([
 			{
 				path: 'force-password-change',
 				element: (
-					<Suspense fallback={<div>Preparing security flow...</div>}>
+					<Suspense
+						fallback={<SuspenseFallback message='Preparing security flow...' />}
+					>
 						<ForcePasswordChangePage />
 					</Suspense>
 				),
 			},
 			{
 				element: (
-					<Suspense fallback={<div>Loading app...</div>}>
+					<Suspense fallback={<SuspenseFallback message='Loading app...' />}>
 						<Layout />
 					</Suspense>
 				),
@@ -116,7 +119,9 @@ const router = createBrowserRouter([
 					{
 						index: true,
 						element: (
-							<Suspense fallback={<div>Loading...</div>}>
+							<Suspense
+								fallback={<SuspenseFallback message='Loading dashboard...' />}
+							>
 								<WelcomeCard />
 							</Suspense>
 						),
@@ -124,7 +129,9 @@ const router = createBrowserRouter([
 					{
 						path: 'agents',
 						element: (
-							<Suspense fallback={<div>Loading agents...</div>}>
+							<Suspense
+								fallback={<SuspenseFallback message='Loading agents...' />}
+							>
 								<AgentList />
 							</Suspense>
 						),
@@ -132,7 +139,9 @@ const router = createBrowserRouter([
 					{
 						path: 'agent/:agent_id',
 						element: (
-							<Suspense fallback={<div>Loading agent...</div>}>
+							<Suspense
+								fallback={<SuspenseFallback message='Loading agent...' />}
+							>
 								<AgentPage />
 							</Suspense>
 						),
@@ -140,7 +149,9 @@ const router = createBrowserRouter([
 					{
 						path: 'campaigns',
 						element: (
-							<Suspense fallback={<div>Loading campaigns...</div>}>
+							<Suspense
+								fallback={<SuspenseFallback message='Loading campaigns...' />}
+							>
 								<CampaignsPage />
 							</Suspense>
 						),
@@ -148,7 +159,9 @@ const router = createBrowserRouter([
 					{
 						path: 'campaign/:campaignId',
 						element: (
-							<Suspense fallback={<div>Loading campaign...</div>}>
+							<Suspense
+								fallback={<SuspenseFallback message='Loading campaign...' />}
+							>
 								<CampaignPage />
 							</Suspense>
 						),
@@ -156,7 +169,11 @@ const router = createBrowserRouter([
 					{
 						path: 'campaign/:campaignId/contact-list/:contactGroupId',
 						element: (
-							<Suspense fallback={<div>Loading contact list...</div>}>
+							<Suspense
+								fallback={
+									<SuspenseFallback message='Loading contact list...' />
+								}
+							>
 								<CampaignContactListPage />
 							</Suspense>
 						),
@@ -164,7 +181,11 @@ const router = createBrowserRouter([
 					{
 						path: 'campaigns/metrics/:campaignId',
 						element: (
-							<Suspense fallback={<div>Loading campaigns...</div>}>
+							<Suspense
+								fallback={
+									<SuspenseFallback message='Loading campaign metrics...' />
+								}
+							>
 								<CampaignLiveMetricPage />
 							</Suspense>
 						),
@@ -172,7 +193,9 @@ const router = createBrowserRouter([
 					{
 						path: 'contacts',
 						element: (
-							<Suspense fallback={<div>Loading contacts...</div>}>
+							<Suspense
+								fallback={<SuspenseFallback message='Loading contacts...' />}
+							>
 								<ContactsPage />
 							</Suspense>
 						),
@@ -180,7 +203,9 @@ const router = createBrowserRouter([
 					{
 						path: 'users',
 						element: (
-							<Suspense fallback={<div>Loading users...</div>}>
+							<Suspense
+								fallback={<SuspenseFallback message='Loading users...' />}
+							>
 								<UsersPage />
 							</Suspense>
 						),
@@ -188,7 +213,11 @@ const router = createBrowserRouter([
 					{
 						path: 'conversations',
 						element: (
-							<Suspense fallback={<div>Loading conversations...</div>}>
+							<Suspense
+								fallback={
+									<SuspenseFallback message='Loading conversations...' />
+								}
+							>
 								<ConversationPage />
 							</Suspense>
 						),
@@ -196,7 +225,9 @@ const router = createBrowserRouter([
 					{
 						path: 'outcomes',
 						element: (
-							<Suspense fallback={<div>Loading outcomes...</div>}>
+							<Suspense
+								fallback={<SuspenseFallback message='Loading outcomes...' />}
+							>
 								<DispositionPage />
 							</Suspense>
 						),
@@ -204,7 +235,11 @@ const router = createBrowserRouter([
 					{
 						path: 'campaign-categories',
 						element: (
-							<Suspense fallback={<div>Loading campaign categories...</div>}>
+							<Suspense
+								fallback={
+									<SuspenseFallback message='Loading campaign categories...' />
+								}
+							>
 								<CampaignCategoriesPage />
 							</Suspense>
 						),
@@ -212,7 +247,11 @@ const router = createBrowserRouter([
 					{
 						path: 'campaign-objectives',
 						element: (
-							<Suspense fallback={<div>Loading campaign objectives...</div>}>
+							<Suspense
+								fallback={
+									<SuspenseFallback message='Loading campaign objectives...' />
+								}
+							>
 								<CampaignObjectivesPage />
 							</Suspense>
 						),
@@ -220,7 +259,11 @@ const router = createBrowserRouter([
 					{
 						path: 'campaign-schemas',
 						element: (
-							<Suspense fallback={<div>Loading campaign schemas...</div>}>
+							<Suspense
+								fallback={
+									<SuspenseFallback message='Loading campaign schemas...' />
+								}
+							>
 								<CampaignSchemasPage />
 							</Suspense>
 						),
@@ -228,7 +271,11 @@ const router = createBrowserRouter([
 					{
 						path: 'configurations',
 						element: (
-							<Suspense fallback={<div>Loading configurations...</div>}>
+							<Suspense
+								fallback={
+									<SuspenseFallback message='Loading configurations...' />
+								}
+							>
 								<ConfigurationsPage />
 							</Suspense>
 						),
@@ -242,7 +289,11 @@ const router = createBrowserRouter([
 							{
 								path: 'client-configs',
 								element: (
-									<Suspense fallback={<div>Loading client configs...</div>}>
+									<Suspense
+										fallback={
+											<SuspenseFallback message='Loading client configs...' />
+										}
+									>
 										<ClientConfigsPage />
 									</Suspense>
 								),
@@ -251,7 +302,9 @@ const router = createBrowserRouter([
 								path: 'campaign-predefined-params',
 								element: (
 									<Suspense
-										fallback={<div>Loading campaign predefined params...</div>}
+										fallback={
+											<SuspenseFallback message='Loading campaign predefined params...' />
+										}
 									>
 										<CampaignPredefinedParamsPage />
 									</Suspense>
@@ -261,7 +314,9 @@ const router = createBrowserRouter([
 								path: 'regional-settings-params',
 								element: (
 									<Suspense
-										fallback={<div>Loading regional settings params...</div>}
+										fallback={
+											<SuspenseFallback message='Loading regional settings params...' />
+										}
 									>
 										<RegionalSettingsParamsPage />
 									</Suspense>
@@ -270,7 +325,11 @@ const router = createBrowserRouter([
 							{
 								path: 'do-not-call',
 								element: (
-									<Suspense fallback={<div>Loading Do Not Call...</div>}>
+									<Suspense
+										fallback={
+											<SuspenseFallback message='Loading Do Not Call...' />
+										}
+									>
 										<DoNotCallPage />
 									</Suspense>
 								),
@@ -278,7 +337,11 @@ const router = createBrowserRouter([
 							{
 								path: 'knowledge-bases',
 								element: (
-									<Suspense fallback={<div>Loading knowledge bases...</div>}>
+									<Suspense
+										fallback={
+											<SuspenseFallback message='Loading knowledge bases...' />
+										}
+									>
 										<KnowledgeBasePage />
 									</Suspense>
 								),
@@ -288,7 +351,9 @@ const router = createBrowserRouter([
 					{
 						path: 'prompter',
 						element: (
-							<Suspense fallback={<div>Loading prompter...</div>}>
+							<Suspense
+								fallback={<SuspenseFallback message='Loading prompter...' />}
+							>
 								<PrompterPage />
 							</Suspense>
 						),
@@ -296,7 +361,9 @@ const router = createBrowserRouter([
 					{
 						path: 'tools',
 						element: (
-							<Suspense fallback={<div>Loading tools...</div>}>
+							<Suspense
+								fallback={<SuspenseFallback message='Loading tools...' />}
+							>
 								<ToolsPage />
 							</Suspense>
 						),
@@ -304,7 +371,9 @@ const router = createBrowserRouter([
 					{
 						path: 'profile',
 						element: (
-							<Suspense fallback={<div>Loading profile...</div>}>
+							<Suspense
+								fallback={<SuspenseFallback message='Loading profile...' />}
+							>
 								<ProfilePage />
 							</Suspense>
 						),
