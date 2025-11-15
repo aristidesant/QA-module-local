@@ -1,12 +1,17 @@
-import { Center, ActionIcon, Tooltip, Group } from '@mantine/core';
+import { Center, ActionIcon, Tooltip, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
-import { IconArrowRight, IconRefresh } from '@tabler/icons-react';
+import {
+	IconArrowRight,
+	IconRefresh,
+	type TablerIcon,
+} from '@tabler/icons-react';
 import {
 	useFailAndPauseConversation,
 	useFetchAndProcessConversation,
 } from '~/queries/conversationsQueries';
 import RightSectionCard from '~/components/RightSectionCard';
 import { ConversationsModel } from '~/models/ConversationsModels';
+import styles from './ConversationActions.module.css';
 
 interface ConversationActionsProps {
 	conversation: ConversationsModel;
@@ -56,38 +61,58 @@ export function ConversationActions({
 		});
 	};
 
+	const currentAction: {
+		icon: TablerIcon;
+		label: string;
+		hint: string;
+		onClick: () => void;
+		loading: boolean;
+		tooltip: string;
+	} =
+		conversation.status === 'initiated'
+			? {
+					icon: IconArrowRight,
+					label: 'Reprocess Event',
+					hint: 'Retry the current event to get the conversation back on track.',
+					onClick: handleReprocessEvent,
+					loading: failAndPauseMutation.isPending,
+					tooltip: 'Reprocess Event',
+				}
+			: {
+					icon: IconRefresh,
+					label: 'Fetch and Process',
+					hint: 'Grab the latest data and let the pipeline run again.',
+					onClick: handleFetchAndProcess,
+					loading: fetchAndProcessMutation.isPending,
+					tooltip: 'Fetch and Process',
+				};
+
+	const ActiveActionIcon = currentAction.icon;
+
 	return (
 		<RightSectionCard
 			title='Actions'
 			description='Actions that can be performed on this conversation.'
 		>
-			<Center>
-				<Group gap='md'>
-					{conversation.status === 'initiated' && (
-						<Tooltip label='Reprocess Event'>
-							<ActionIcon
-								size='lg'
-								variant='light'
-								onClick={handleReprocessEvent}
-								loading={failAndPauseMutation.isPending}
-							>
-								<IconArrowRight size={20} />
-							</ActionIcon>
-						</Tooltip>
-					)}
-					{conversation.status !== 'initiated' && (
-						<Tooltip label='Fetch and Process'>
-							<ActionIcon
-								size='lg'
-								variant='light'
-								onClick={handleFetchAndProcess}
-								loading={fetchAndProcessMutation.isPending}
-							>
-								<IconRefresh size={20} />
-							</ActionIcon>
-						</Tooltip>
-					)}
-				</Group>
+			<Center className={styles.actions}>
+				<div className={styles.actionItem}>
+					<Tooltip label={currentAction.tooltip} position='top'>
+						<ActionIcon
+							size='lg'
+							variant='light'
+							onClick={currentAction.onClick}
+							loading={currentAction.loading}
+							className={styles.actionIcon}
+							aria-label={currentAction.label}
+						>
+							<ActiveActionIcon size={20} />
+						</ActionIcon>
+					</Tooltip>
+					<div className={styles.copy}>
+						<Text className={styles.actionLabel}>{currentAction.label}</Text>
+						<Text className={styles.actionHint}>{currentAction.hint}</Text>
+					</div>
+				</div>
 			</Center>
 		</RightSectionCard>
 	);
