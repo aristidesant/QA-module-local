@@ -6,7 +6,10 @@ export type SuspenseFallbackProps = {
 	description?: string;
 };
 
-function SuspenseFallback({ message, description }: SuspenseFallbackProps) {
+const SuspenseFallback: React.FunctionComponent<SuspenseFallbackProps> = ({
+	message,
+	description,
+}) => {
 	return (
 		<div className={classes.wrapper} role='status' aria-live='polite'>
 			<Loader color='var(--mantine-color-blue-6)' size='lg' />
@@ -18,6 +21,6 @@ function SuspenseFallback({ message, description }: SuspenseFallbackProps) {
 			</div>
 		</div>
 	);
-}
+};
 
 export default SuspenseFallback;
