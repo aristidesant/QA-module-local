@@ -26,6 +26,7 @@ import ContactListInformation from './ContactListInformation';
 import ContactListMetrics from './ContactListMetrics';
 import ConversationsList from '~/modules/conversations/ConversationsList';
 import ConversationDetails from '~/modules/conversations/ConversationDetails';
+import FaultyPhonesAlert from './ContactGroupContactsTable/FaultyPhonesAlert';
 
 const CampaignContactListPage = () => {
 	const navigate = useNavigate();
@@ -325,6 +326,7 @@ const CampaignContactListPage = () => {
 				title='Contacts'
 				description='All contacts associated with this list.'
 			>
+				<FaultyPhonesAlert contactGroupId={contactGroupIdNumber} />
 				<ContactGroupContactsTable contactGroupId={contactGroupIdNumber} />
 			</SectionCard>
 		</ContentContainer>

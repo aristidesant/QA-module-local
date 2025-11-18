@@ -54,6 +54,7 @@ export const useGetContactGroupContacts = (
 		email?: string;
 		phone?: string;
 		status?: string;
+		excludeInvalid?: boolean;
 	}
 ) => {
 	return useQuery({
@@ -61,6 +62,22 @@ export const useGetContactGroupContacts = (
 		queryFn: async () => {
 			const api = contactsApi();
 			return api.findContactGroupContacts(contactGroupId, params);
+		},
+		enabled: !!contactGroupId,
+	});
+};
+
+// Get contacts in a contact group that have phone numbers with validation errors
+export const useGetContactGroupContactsWithPhoneValidationErrors = (
+	contactGroupId: number
+) => {
+	return useQuery({
+		queryKey: ['contactGroupContactsWithPhoneValidationErrors', contactGroupId],
+		queryFn: async () => {
+			const api = contactsApi();
+			return api.findContactGroupContactsWithPhoneValidationErrors(
+				contactGroupId
+			);
 		},
 		enabled: !!contactGroupId,
 	});

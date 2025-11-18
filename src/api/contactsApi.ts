@@ -43,6 +43,7 @@ const contactsApi = (_authHeader?: Record<string, string>) => {
 				email?: string;
 				phone?: string;
 				status?: string;
+				excludeInvalid?: boolean;
 			}
 		) => {
 			const response = await axios.get<PaginatedResponse<Contact>>(
@@ -50,6 +51,17 @@ const contactsApi = (_authHeader?: Record<string, string>) => {
 				{
 					params,
 				}
+			);
+			return response.data;
+		},
+
+		// FIND contacts in a contact group with phone numbers that have validation errors
+		// Endpoint returns a plain array (no pagination)
+		findContactGroupContactsWithPhoneValidationErrors: async (
+			contactGroupId: number
+		) => {
+			const response = await axios.get<Contact[]>(
+				`${DEFAULT_API_URL}/contacts/contact-group/${contactGroupId}/phone-numbers/with-validation-errors`
 			);
 			return response.data;
 		},

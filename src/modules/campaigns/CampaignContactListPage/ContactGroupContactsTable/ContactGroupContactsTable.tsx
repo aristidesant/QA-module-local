@@ -47,8 +47,18 @@ export const ContactGroupContactsTable: React.FC<
 		phone: contactFilters.debouncedFilters.phone || undefined,
 	});
 
-	// Get contacts from query
-	const contacts = groupContactsQuery.data?.data ?? [];
+	// Get contacts from query and filter out those with validation errors
+	const allContacts = groupContactsQuery.data?.data ?? [];
+	const contacts = useMemo(() => {
+		return allContacts.filter((contact) => {
+			// Exclude contacts that have any phone number with a validation error
+			const hasFaultyPhone = contact.phoneNumbers?.some(
+				(phone) => phone.validationError
+			);
+			return !hasFaultyPhone;
+		});
+	}, [allContacts]);
+
 	const totalContacts = groupContactsQuery.data?.total ?? 0;
 	const isLoading = groupContactsQuery.isLoading;
 	const error = groupContactsQuery.error;
@@ -117,14 +127,9 @@ export const ContactGroupContactsTable: React.FC<
 		[pagination]
 	);
 
-	// Check if contact has validation errors
-	const getRowClassName = useCallback((row: { original: Contact }) => {
-		const hasValidationError = row.original.phoneNumbers?.some(
-			(entry) => entry.validationError
-		);
-		return hasValidationError
-			? `${styles.contactRow} ${styles.contactRowError}`
-			: styles.contactRow;
+	// Row className
+	const getRowClassName = useCallback(() => {
+		return styles.contactRow;
 	}, []);
 
 	// Cleanup right panel on unmount
