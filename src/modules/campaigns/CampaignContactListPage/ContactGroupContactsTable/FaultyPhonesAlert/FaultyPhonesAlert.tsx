@@ -19,6 +19,7 @@ const FaultyPhonesAlert = ({ contactGroupId }: FaultyPhonesAlertProps) => {
 	const {
 		data: faultyContacts,
 		isLoading,
+		isFetching,
 		refetch: refetchFaulty,
 	} = useGetContactGroupContactsWithPhoneValidationErrors(contactGroupId);
 
@@ -72,6 +73,16 @@ const FaultyPhonesAlert = ({ contactGroupId }: FaultyPhonesAlertProps) => {
 
 	return (
 		<>
+			{isFetching && (
+				<Alert
+					color='gray'
+					variant='light'
+					className={styles.alert}
+					icon={<Loader size='sm' />}
+				>
+					<Text size='sm'>Refreshing faulty phones…</Text>
+				</Alert>
+			)}
 			<Alert
 				color='orange'
 				variant='light'

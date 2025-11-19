@@ -17,7 +17,7 @@ import {
 	IconX,
 	IconCheck,
 } from '@tabler/icons-react';
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useMemo, useState, useEffect, useCallback, useRef } from 'react';
 import { notifications } from '@mantine/notifications';
 import type { Contact } from '~/models/ContactsModel';
 import BaseTable from '~/components/BaseTable';
@@ -57,7 +57,8 @@ const FaultyPhonesModal = ({
 	const queryClient = useQueryClient();
 
 	const [editingPhoneId, setEditingPhoneId] = useState<number | null>(null);
-	const [editedValue, setEditedValue] = useState<string>('');
+	// Keep the current edited values in a ref map to avoid re-mounting inputs
+	const editedValuesRef = useRef<Record<number, string>>({});
 	const [rows, setRows] = useState<FaultyPhoneRow[]>([]);
 
 	const faultyPhoneRows = useMemo(() => {
@@ -85,23 +86,23 @@ const FaultyPhonesModal = ({
 
 	const beginEdit = useCallback((row: FaultyPhoneRow) => {
 		setEditingPhoneId(row.phoneNumberId);
-		setEditedValue(row.phoneNumber);
+		editedValuesRef.current[row.phoneNumberId] = row.phoneNumber;
 	}, []);
 
 	const cancelEdit = useCallback(() => {
 		setEditingPhoneId(null);
-		setEditedValue('');
 	}, []);
 
 	const saveEdit = useCallback(() => {
 		if (editingPhoneId == null) return;
 		const row = rows.find((r) => r.phoneNumberId === editingPhoneId);
 		if (!row) return;
+		const newValue = editedValuesRef.current[editingPhoneId] ?? row.phoneNumber;
 		updatePhoneMutation.mutate(
 			{
 				contactId: row.contactId,
 				phoneNumberId: row.phoneNumberId,
-				phoneNumber: editedValue,
+				phoneNumber: newValue,
 			},
 			{
 				onSuccess: () => {
@@ -140,14 +141,45 @@ const FaultyPhonesModal = ({
 				},
 			}
 		);
-	}, [
-		editingPhoneId,
-		rows,
-		editedValue,
-		updatePhoneMutation,
-		cancelEdit,
-		onAfterUpdate,
-	]);
+	}, [editingPhoneId, rows, updatePhoneMutation, cancelEdit, onAfterUpdate]);
+
+	// Small controlled input component to keep focus stable while typing
+	const EditablePhoneInput = ({
+		phoneNumberId,
+		initialValue,
+	}: {
+		phoneNumberId: number;
+		initialValue: string;
+	}) => {
+		const [value, setValue] = useState<string>(
+			editedValuesRef.current[phoneNumberId] ?? initialValue
+		);
+		useEffect(() => {
+			// Sync with ref when editing starts for this id
+			if (editingPhoneId === phoneNumberId) {
+				const current = editedValuesRef.current[phoneNumberId] ?? initialValue;
+				setValue(current);
+			}
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+		}, [editingPhoneId, phoneNumberId]);
+
+		const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+			const next = e.currentTarget.value;
+			setValue(next);
+			editedValuesRef.current[phoneNumberId] = next;
+		};
+
+		return (
+			<TextInput
+				value={value}
+				onChange={onChange}
+				size='xs'
+				placeholder='Enter phone'
+				className={styles.editInput}
+				autoFocus
+			/>
+		);
+	};
 
 	const handleExport = async () => {
 		try {
@@ -210,13 +242,9 @@ const FaultyPhonesModal = ({
 					if (isEditing) {
 						return (
 							<Group gap='xs'>
-								<TextInput
-									value={editedValue}
-									onChange={(e) => setEditedValue(e.currentTarget.value)}
-									size='xs'
-									placeholder='Enter phone'
-									className={styles.editInput}
-									data-autofocus
+								<EditablePhoneInput
+									phoneNumberId={original.phoneNumberId}
+									initialValue={original.phoneNumber}
 								/>
 							</Group>
 						);
@@ -291,7 +319,6 @@ const FaultyPhonesModal = ({
 		],
 		[
 			editingPhoneId,
-			editedValue,
 			beginEdit,
 			cancelEdit,
 			saveEdit,

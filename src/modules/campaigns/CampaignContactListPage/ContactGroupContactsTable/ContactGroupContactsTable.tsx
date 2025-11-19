@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useCallback, useState } from 'react';
-import { Text } from '@mantine/core';
+import { LoadingOverlay, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import styles from './ContactGroupContactsTable.module.css';
 import { useCampaignsStore } from '~/stores/campaignsStore';
@@ -16,7 +16,6 @@ import ContactListSkeleton from './ContactListSkeleton';
 import { useGetContactGroupContacts } from '~/queries/contactsQueries';
 import {
 	useExportContactGroupFileOriginal,
-	useLatestContactGroupFile,
 	useAppendContactGroupFile,
 	useUploadContactGroupFile,
 } from '~/queries/contactGroupFilesQueries';
@@ -50,8 +49,7 @@ export const ContactGroupContactsTable: React.FC<
 	// Export query
 	const exportQuery = useExportContactGroupFileOriginal(contactGroupId);
 
-	// Latest file (needed before append)
-	const latestFileQuery = useLatestContactGroupFile(contactGroupId, false);
+	// Removed: latest file prefetch is not needed for append flow
 
 	// Schema is no longer required for append
 
@@ -83,9 +81,8 @@ export const ContactGroupContactsTable: React.FC<
 	// Upload mutation (to upload new CSV prior to append)
 	const uploadMutation = useUploadContactGroupFile({});
 
-	const handleOpenAppendModal = async () => {
-		// Fetch latest existing file (baseline, optional)
-		await latestFileQuery.refetch();
+	const handleOpenAppendModal = () => {
+		// Open immediately for a snappier UX
 		setShowAppendModal(true);
 	};
 
@@ -265,7 +262,7 @@ export const ContactGroupContactsTable: React.FC<
 			/>
 
 			{/* Contact Table */}
-			<div className={styles.tableContainer}>
+			<div className={styles.tableContainer} style={{ position: 'relative' }}>
 				{isLoading ? (
 					<ContactListSkeleton />
 				) : error ? (
@@ -298,6 +295,13 @@ export const ContactGroupContactsTable: React.FC<
 								: 'No contacts available in this group.'
 						}
 						getRowClassName={getRowClassName}
+					/>
+				)}
+				{!isLoading && groupContactsQuery.isFetching && (
+					<LoadingOverlay
+						visible
+						zIndex={1}
+						overlayProps={{ radius: 'sm', blur: 1 }}
 					/>
 				)}
 			</div>
