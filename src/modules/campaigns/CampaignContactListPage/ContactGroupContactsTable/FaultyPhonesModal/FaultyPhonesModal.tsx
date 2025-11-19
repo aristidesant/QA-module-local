@@ -218,17 +218,6 @@ const FaultyPhonesModal = ({
 									className={styles.editInput}
 									data-autofocus
 								/>
-								<ActionIcon
-									color='green'
-									variant='light'
-									onClick={saveEdit}
-									loading={updatePhoneMutation.isPending}
-								>
-									<IconCheck size={16} />
-								</ActionIcon>
-								<ActionIcon color='red' variant='subtle' onClick={cancelEdit}>
-									<IconX size={16} />
-								</ActionIcon>
 							</Group>
 						);
 					}
