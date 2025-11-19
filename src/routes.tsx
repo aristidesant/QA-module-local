@@ -100,6 +100,9 @@ const CampaignManagementPage = React.lazy(
 const CampaignPage = React.lazy(
 	() => import('./modules/campaigns/CampaignPage/CampaignPage')
 );
+const CampaignViewPage = React.lazy(
+	() => import('./modules/campaigns/CampaignViewPage/CampaignViewPage')
+);
 
 const CampaignsPage = React.lazy(
 	() => import('./modules/campaigns/CampaignsPage/CampaignsPage')
@@ -186,6 +189,18 @@ const router = createBrowserRouter([
 								fallback={<SuspenseFallback message='Loading campaign...' />}
 							>
 								<CampaignPage />
+							</Suspense>
+						),
+					},
+					{
+						path: 'campaign/view/:campaignId',
+						element: (
+							<Suspense
+								fallback={
+									<SuspenseFallback message='Loading campaign view...' />
+								}
+							>
+								<CampaignViewPage />
 							</Suspense>
 						),
 					},

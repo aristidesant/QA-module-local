@@ -1,370 +1,195 @@
 // CampaignConfigurationPromptEditModal.tsx
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router';
 import {
-	Button,
+	Accordion,
 	Paper,
+	Button,
 	Group,
-	Title,
-	ActionIcon,
-	Select,
+	LoadingOverlay,
 	Badge,
-	Stack,
 	Text,
+	ThemeIcon,
+	Tooltip,
+	ActionIcon,
 } from '@mantine/core';
-import MDEditor from '@uiw/react-md-editor';
-import { IconDeviceFloppy, IconX, IconInfoCircle } from '@tabler/icons-react';
-import PromptTemplateSelect from '~/components/PromptTemplateSelect/PromptTemplateSelect';
-import { useGetAllPrompts } from '~/modules/prompt-generator/queries/promptGeneratorQueries';
+import {
+	IconSparkles,
+	IconInfoCircle,
+	IconDeviceFloppy,
+} from '@tabler/icons-react';
 import styles from './CampaignConfigurationPromptEditModal.module.css';
-import { useGetCampaignContactSchemas } from '~/queries/campaignContactSchemasQueries';
-import type { CampaignContactSchema } from '~/models/CampaignContactSchemaModel';
-import '@uiw/react-md-editor/markdown-editor.css';
-import { notifications } from '@mantine/notifications';
-import { useClientConfigByName } from '~/queries/useClientConfigs';
-
-const staticPromptVariablesFallback = [
-	'firstName',
-	'lastName',
-	'identifier',
-	'identifierType',
-	'address',
-];
+import { useGetAllCampaignPromptTypes } from '~/queries/campaignPromptTypeQueries';
+import {
+	useGetCampaignPrompts,
+	useCreateCampaignPromptsBatch,
+} from '~/queries/campaignPromptQueries';
+import type { CampaignPromptModel } from '~/models/CampaignPromptModel';
+import PromptTypeAccordionItem from './PromptTypeAccordionItem';
 
 interface CampaignConfigurationPromptEditModalProps {
-	initialPrompt: string;
 	onClose: () => void;
-	// Include selected schema id in save
-	onSave: (prompt: string, schemaId?: number) => void;
+	onSave: () => void;
 	initialSchemaId?: number;
+	campaignId?: number;
 }
 
 const CampaignConfigurationPromptEditModal: React.FC<
 	CampaignConfigurationPromptEditModalProps
-> = ({ initialPrompt, onClose, onSave, initialSchemaId }) => {
-	const [prompt, setPrompt] = useState<string>(initialPrompt);
-	const [draft, setDraft] = useState<string>(initialPrompt);
-	const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(
-		null
+> = (props) => {
+	const { campaignId: routeCampaignId } = useParams();
+	const campaignId = props.campaignId || Number(routeCampaignId);
+
+	const { data: types } = useGetAllCampaignPromptTypes();
+	const { data: existingPrompts, isLoading: isLoadingPrompts } =
+		useGetCampaignPrompts({ campaignId }, { enabled: !!campaignId });
+	const { mutate: saveBatch, isPending: isSaving } =
+		useCreateCampaignPromptsBatch();
+
+	const [prompts, setPrompts] = useState<Record<number, CampaignPromptModel>>(
+		{}
 	);
-	const [selectedSchemaId, setSelectedSchemaId] = useState<string | undefined>(
-		initialSchemaId ? String(initialSchemaId) : undefined
-	);
+	const [activeAccordionValue, setActiveAccordionValue] = useState<
+		string | null
+	>(null);
 
-	// Fetch all prompt templates
-	const { data: prompts } = useGetAllPrompts();
-
-	// Fetch available contact schemas
-	const { data: schemasResponse } = useGetCampaignContactSchemas(
-		{ isActive: true },
-		true
-	);
-
-	// Fetch suggestion_prompt from client-config
-	const { data: suggestionPromptConfig } =
-		useClientConfigByName('suggestion_prompt');
-	const { data: staticPromptVariables } = useClientConfigByName(
-		'static_prompt_variables'
-	);
-
-	const staticVariablesList = useMemo<string[]>(() => {
-		try {
-			return (
-				staticPromptVariables?.value?.split(',').map((v: string) => v.trim()) ||
-				staticPromptVariablesFallback
-			);
-		} catch (error) {
-			return staticPromptVariablesFallback;
-		}
-	}, [staticPromptVariables]);
-
-	// Auto-select first available schema if none provided
 	useEffect(() => {
-		if (!selectedSchemaId && schemasResponse?.data?.length) {
-			setSelectedSchemaId(String(schemasResponse.data[0].id));
+		if (existingPrompts) {
+			const initialPrompts: Record<number, CampaignPromptModel> = {};
+			existingPrompts.forEach((p) => {
+				initialPrompts[p.typeId] = p;
+			});
+			setPrompts(initialPrompts);
 		}
-	}, [selectedSchemaId, schemasResponse?.data]);
+	}, [existingPrompts]);
 
-	// Resolve current schema
-	const currentSchema: CampaignContactSchema | undefined =
-		schemasResponse?.data.find((s) => s.id === Number(selectedSchemaId));
+	useEffect(() => {
+		if (!types || types.length === 0) return;
+		setActiveAccordionValue((current) => current ?? String(types[0].id));
+	}, [types]);
 
-	// Handle template selection
-	const handleTemplateChange = (value: string | null) => {
-		setSelectedTemplateId(value);
-		if (!value) return;
-		const template = prompts?.find((item) => item.id === Number(value));
-		if (template?.generatedPrompt) {
-			setDraft(template.generatedPrompt);
-		}
+	const handleAccordionChange = (value: string | string[] | null) => {
+		setActiveAccordionValue(Array.isArray(value) ? (value[0] ?? null) : value);
 	};
 
-	const handleCancel = () => {
-		setDraft(prompt);
-		onClose();
+	const handleChange = (typeId: number, value: string) => {
+		setPrompts((prev) => ({
+			...prev,
+			[typeId]: {
+				...prev[typeId],
+				typeId,
+				campaignId: campaignId!,
+				prompt: value,
+			},
+		}));
 	};
 
 	const handleSave = () => {
-		setPrompt(draft);
-		onSave(draft, selectedSchemaId ? Number(selectedSchemaId) : undefined);
-		onClose();
+		const promptsList = Object.values(prompts).filter(
+			(p) => p.prompt && p.prompt.trim() !== ''
+		);
+		saveBatch(
+			{ prompts: promptsList },
+			{
+				onSuccess: () => {
+					props.onSave();
+					props.onClose();
+				},
+			}
+		);
 	};
-
-	const handleReset = () => {
-		setDraft(prompt);
-		setSelectedTemplateId(null);
-	};
-
-	const isDirty = draft !== prompt;
-
-	const handleVariableCopy = useCallback(
-		(variable: string, isPrompt = false) => {
-			const copy = async () => {
-				try {
-					if (
-						typeof navigator !== 'undefined' &&
-						navigator.clipboard?.writeText
-					) {
-						await navigator.clipboard.writeText(variable);
-					} else {
-						const textarea = document.createElement('textarea');
-						textarea.value = variable;
-						textarea.setAttribute('readonly', '');
-						textarea.style.position = 'absolute';
-						textarea.style.left = '-9999px';
-						document.body.appendChild(textarea);
-						textarea.select();
-						document.execCommand('copy');
-						document.body.removeChild(textarea);
-					}
-					notifications.show({
-						color: 'blue',
-						title: isPrompt ? 'Prompt copied' : 'Variable copied',
-						message: isPrompt
-							? 'The prompt has been copied to the clipboard.'
-							: `${variable} copied to clipboard.`,
-					});
-				} catch (error) {
-					notifications.show({
-						color: 'red',
-						title: 'Copy failed',
-						message: 'Unable to copy variable. Please try again.',
-					});
-				}
-			};
-
-			void copy();
-		},
-		[]
-	);
-
-	// Prepare schema options
-	const schemaOptions =
-		schemasResponse?.data.map((schema) => ({
-			value: String(schema.id),
-			label: schema.name,
-		})) || [];
 
 	return (
-		<Paper radius='lg' className={styles.modalShell} withBorder>
-			<div className={styles.header}>
-				<Title order={2} className={styles.title}>
-					AI personality studio
-				</Title>
-				<ActionIcon
-					variant='subtle'
-					color='gray'
-					onClick={onClose}
-					size='lg'
-					aria-label='Close editor'
-				>
-					<IconX size={18} />
-				</ActionIcon>
-			</div>
-
-			<div className={styles.content}>
-				<div className={styles.editorColumn}>
-					<div className={styles.controlsGrid}>
-						<PromptTemplateSelect
-							value={selectedTemplateId}
-							withPreview={false}
-							onChange={handleTemplateChange}
-							description='Choosing a template replaces the current draft content.'
-							clearable
-							searchable
+		<Paper radius='md' className={styles.modalShell} withBorder>
+			<LoadingOverlay visible={isLoadingPrompts || isSaving} />
+			<div className={styles.mainContainer}>
+				<div className={styles.header}>
+					<Group align='center' gap='sm' style={{ flex: 1 }}>
+						<ThemeIcon
+							color='blue'
+							variant='light'
+							size='lg'
+							radius='md'
+							className={styles.pulseIcon}
+						>
+							<IconSparkles size={18} />
+						</ThemeIcon>
+						<div className={styles.headerContent}>
+							<Group gap='xs' align='center'>
+								<Text className={styles.title}>Prompt configuration</Text>
+								<div className={styles.badgesRow}>
+									<Badge size='xs' variant='light' color='blue'>
+										{types?.length ?? 0} types
+									</Badge>
+									{campaignId && (
+										<Badge size='xs' variant='light' color='grape'>
+											#{campaignId}
+										</Badge>
+									)}
+									<Badge size='xs' variant='outline' color='teal'>
+										MD
+									</Badge>
+								</div>
+							</Group>
+							<Text size='xs' c='dimmed' className={styles.subtitle}>
+								Curated, compact instructions for every interaction type.
+							</Text>
+						</div>
+					</Group>
+					<Tooltip
+						label='Prompts are stored per message type and can be reused.'
+						withArrow
+						position='left'
+					>
+						<ActionIcon
+							variant='subtle'
+							color='gray'
 							size='sm'
-							className={styles.templateSelect}
-						/>
-					</div>
-
-					<div className={styles.editorCard}>
-						<div className={styles.editorHeading}>
-							<Text fw={600} size='sm' className={styles.editorLabel}>
-								Agent brief
-							</Text>
-							<Text size='sm' c='dimmed'>
-								Lay out persona, tone, rules of engagement, escalation paths,
-								and guardrails.
-							</Text>
-						</div>
-						<div className={styles.markdownEditor}>
-							<MDEditor
-								value={draft}
-								onChange={(value) => setDraft(value ?? '')}
-								height={420}
-								preview='edit'
-								data-color-mode='light'
-								textareaProps={{
-									placeholder:
-										'Write a clear, directive prompt with sections for persona, tone, playbooks, and safety measures.',
-									autoFocus: true,
-								}}
-							/>
-						</div>
-					</div>
+							aria-label='Prompt tips'
+						>
+							<IconInfoCircle size={16} />
+						</ActionIcon>
+					</Tooltip>
 				</div>
 
-				<aside className={styles.sidebar}>
-					<div className={styles.sidebarCard}>
-						<Group gap='xs'>
-							<IconInfoCircle size={16} className={styles.sidebarIcon} />
-							<Text fw={600} size='sm' className={styles.sidebarTitle}>
-								Suggested init prompt
-							</Text>
-						</Group>
-						{suggestionPromptConfig?.value ? (
-							<>
-								<Text size='xs' c='dimmed'>
-									Copy this time-aware greeting template to start your prompt.
-								</Text>
-								<Stack gap='xs' className={styles.variablesStack}>
-									<Button
-										variant='outline'
-										size='xs'
-										fullWidth
-										onClick={() =>
-											handleVariableCopy(suggestionPromptConfig.value, true)
-										}
-									>
-										Copy init prompt
-									</Button>
-								</Stack>
-							</>
-						) : (
-							<Text size='xs' c='dimmed'>
-								There are no suggestions for prompt. To enable this feature, go
-								to client-config and add a property called "suggestion_prompt".
-							</Text>
-						)}
-					</div>
-
-					<div className={styles.sidebarCard}>
-						<Select
-							label='Contact schema'
-							placeholder='Select a contact schema'
-							description='Choose a schema to expose dynamic variables from your contact data.'
-							value={selectedSchemaId}
-							onChange={(value) => setSelectedSchemaId(value || undefined)}
-							data={schemaOptions}
-							clearable
-							searchable
-							size='sm'
-							className={styles.schemaSelect}
-						/>
-						<Group gap='xs'>
-							<IconInfoCircle size={16} className={styles.sidebarIcon} />
-							<Text fw={600} size='sm' className={styles.sidebarTitle}>
-								Dynamic variables
-							</Text>
-						</Group>
-						<Text size='xs' c='dimmed'>
-							Wrap variables in double curly braces to merge contact data into
-							your brief.
-						</Text>
-						{currentSchema && currentSchema.schemaFields?.length ? (
-							<Stack gap='xs' className={styles.variablesStack}>
-								<Text size='xs' fw={500} c='dimmed'>
-									Schema: {currentSchema.name}
-								</Text>
-								<Group gap='xs' className={styles.variablesList}>
-									{currentSchema.schemaFields.map((field) => (
-										<Badge
-											key={field.name}
-											variant='outline'
-											color='blue'
-											className={styles.variableBadge}
-											title={field.description || field.label}
-											component='button'
-											type='button'
-											onClick={() => handleVariableCopy(`{{${field.name}}}`)}
-											aria-label={`Copy variable {{${field.name}}} to clipboard`}
-										>
-											{`{{${field.name}}}`}
-										</Badge>
-									))}
-								</Group>
-							</Stack>
-						) : (
-							<Text size='sm' c='dimmed'>
-								Select a contact schema to see the variables available for
-								templating.
-							</Text>
-						)}
-					</div>
-
-					<div className={styles.sidebarCard}>
-						<Group gap='xs'>
-							<IconInfoCircle size={16} className={styles.sidebarIcon} />
-							<Text fw={600} size='sm' className={styles.sidebarTitle}>
-								Static variables
-							</Text>
-						</Group>
-						<Text size='xs' c='dimmed'>
-							Default contact variables available in all campaigns.
-						</Text>
-						<Stack gap='xs' className={styles.variablesStack}>
-							<Group gap='xs' className={styles.variablesList}>
-								{staticVariablesList.map((field) => (
-									<Badge
-										key={field}
-										variant='outline'
-										color='blue'
-										className={styles.variableBadge}
-										component='button'
-										type='button'
-										onClick={() => handleVariableCopy(`{{${field}}}`)}
-										aria-label={`Copy variable {{${field}}} to clipboard`}
-									>
-										{`{{${field}}}`}
-									</Badge>
-								))}
-							</Group>
-						</Stack>
-					</div>
-				</aside>
-			</div>
-
-			<Group justify='space-between' className={styles.footer}>
-				<Button
-					variant='subtle'
-					color='gray'
-					onClick={handleReset}
-					disabled={!isDirty}
-				>
-					Reset
-				</Button>
-				<Group gap='sm'>
-					<Button variant='default' onClick={handleCancel}>
-						Cancel
-					</Button>
-					<Button
-						leftSection={<IconDeviceFloppy size={16} />}
-						onClick={handleSave}
-						disabled={!draft.trim()}
+				<div className={styles.scrollableContent}>
+					<Accordion
+						radius='md'
+						className={styles.accordionRoot}
+						value={activeAccordionValue}
+						onChange={handleAccordionChange}
+						transitionDuration={150}
 					>
-						Save
-					</Button>
-				</Group>
-			</Group>
+						{types?.map((type) => (
+							<PromptTypeAccordionItem
+								key={type.id}
+								type={type}
+								value={prompts[type.id]?.prompt}
+								onChange={(val) => handleChange(type.id, val)}
+								campaignId={campaignId!}
+							/>
+						))}
+					</Accordion>
+				</div>
+
+				<div className={styles.footer}>
+					<Text size='xs' c='dimmed'>
+						Save to share these prompts with every agent in this campaign.
+					</Text>
+					<Group gap='xs'>
+						<Button variant='subtle' onClick={props.onClose}>
+							Cancel
+						</Button>
+						<Button
+							onClick={handleSave}
+							loading={isSaving}
+							leftSection={<IconDeviceFloppy size={16} />}
+						>
+							Save prompts
+						</Button>
+					</Group>
+				</div>
+			</div>
 		</Paper>
 	);
 };

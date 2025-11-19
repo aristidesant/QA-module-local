@@ -3,9 +3,7 @@ import {
 	IconChecklist,
 	IconGalaxy,
 	IconUser,
-	IconUsersGroup,
 	IconList,
-	IconMessages,
 } from '@tabler/icons-react';
 import { useDispositionLabel } from '~/hooks/useDispositionLabel';
 import { useCampaignsStore } from '~/stores/campaignsStore';
@@ -27,14 +25,6 @@ const CampaignTabs = () => {
 			radius='md'
 		>
 			<Tabs.List>
-				{selectedCampaign?.type === 'OUTBOUND' && (
-					<Tabs.Tab leftSection={<IconUsersGroup />} value='contacts'>
-						Contacts
-					</Tabs.Tab>
-				)}
-				<Tabs.Tab leftSection={<IconMessages />} value='conversations'>
-					Conversations
-				</Tabs.Tab>
 				<Tabs.Tab leftSection={<IconUser />} value='agents'>
 					Agents
 				</Tabs.Tab>

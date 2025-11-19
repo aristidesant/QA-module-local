@@ -1,0 +1,135 @@
+.accordionItem {
+	border-bottom: 1px solid var(--mantine-color-gray-3);
+}
+
+.accordionItem:last-of-type {
+	border-bottom: none;
+}
+
+.accordionControl {
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	background-color: transparent;
+	transition: background-color 0.15s ease;
+}
+
+.accordionItem[data-active] .accordionControl {
+	background-color: var(--mantine-color-white);
+}
+
+.accordionControl:hover {
+	background-color: var(--mantine-color-gray-1);
+}
+
+.controlInner {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+	width: 100%;
+}
+
+.controlText {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.controlMeta {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+}
+
+.controlStatus {
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	font-weight: 600;
+}
+
+.controlStatus[data-filled='false'] {
+	color: var(--mantine-color-gray-6);
+}
+
+.controlStatus[data-filled='true'] {
+	color: var(--mantine-color-blue-6);
+}
+
+.accordionPanel {
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-md)
+		var(--mantine-spacing-md);
+	border-top: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--mantine-color-white);
+}
+
+.promptSelect {
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
+.editorWrapper {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+	border-radius: var(--mantine-radius-sm);
+	overflow: hidden;
+	border: 1px solid var(--mantine-color-gray-3);
+	background: var(--mantine-color-white);
+	padding: var(--mantine-spacing-xs);
+}
+
+.editorHint {
+	margin: 0 var(--mantine-spacing-xs);
+}
+
+.mdEditor {
+	border: none !important;
+	box-shadow: none !important;
+	background-color: transparent !important;
+}
+
+/* Override MDEditor toolbar to look flatter */
+.mdEditor :global(.w-md-editor-toolbar) {
+	background-color: var(--mantine-color-gray-0);
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+	padding: 4px;
+}
+
+.mdEditor :global(.w-md-editor-toolbar li > button) {
+	color: var(--mantine-color-gray-7);
+	border-radius: 4px;
+}
+
+.mdEditor :global(.w-md-editor-toolbar li > button:hover) {
+	background-color: var(--mantine-color-gray-2);
+	color: var(--mantine-color-black);
+}
+
+.variableDropdown {
+	border: 1px solid var(--mantine-color-gray-3);
+	background-color: var(--mantine-color-white);
+	padding: var(--mantine-spacing-xs);
+	box-shadow: none;
+}
+
+.variableList {
+	padding: 0;
+}
+
+.variableOption {
+	width: 100%;
+	border: none;
+	border-radius: var(--mantine-radius-sm);
+	padding: 6px 8px;
+	background-color: transparent;
+	transition: background-color 120ms ease;
+}
+
+.variableOption:hover,
+.variableOption[data-active='true'] {
+	background-color: var(--mantine-color-blue-0);
+}
+
+.variableMeta {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}

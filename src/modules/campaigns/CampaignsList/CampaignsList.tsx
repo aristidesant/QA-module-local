@@ -142,6 +142,9 @@ export const CampaignsList: React.FC = () => {
 		onEdit: (campaign) => {
 			navigate(`/campaign/${campaign.id}`);
 		},
+		onView: (campaign) => {
+			navigate(`/campaign/view/${campaign.id}`);
+		},
 		onTestCall: handleTestCall,
 		onDelete: (campaign) => {
 			modals.openConfirmModal({
