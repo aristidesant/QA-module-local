@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useCallback, useState } from 'react';
 import { Text } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import styles from './ContactGroupContactsTable.module.css';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import { ContactDetails } from '~/modules/campaigns/CampaignsForm/ContactSection/ContactDetails';
@@ -13,6 +14,7 @@ import type { SortingState } from '@tanstack/react-table';
 import { useContactColumns } from './useContactColumns';
 import ContactListSkeleton from './ContactListSkeleton';
 import { useGetContactGroupContacts } from '~/queries/contactsQueries';
+import { useExportContactGroupFileOriginal } from '~/queries/contactGroupFilesQueries';
 import PhoneNumbersTable from './PhoneNumbersTable';
 
 interface ContactGroupContactsTableProps {
@@ -37,6 +39,9 @@ export const ContactGroupContactsTable: React.FC<
 	const contactFilters = useContactFilters({
 		debounceMs: 500,
 	});
+
+	// Export query
+	const exportQuery = useExportContactGroupFileOriginal(contactGroupId);
 
 	// Query for contacts with server-side filtering and pagination
 	const groupContactsQuery = useGetContactGroupContacts(contactGroupId, {
@@ -132,6 +137,44 @@ export const ContactGroupContactsTable: React.FC<
 		return styles.contactRow;
 	}, []);
 
+	// Handle export
+	const handleExport = useCallback(async () => {
+		try {
+			const result = await exportQuery.refetch();
+			if (result.data) {
+				// Create a Blob from the CSV content
+				const blob = new Blob([result.data], {
+					type: 'text/csv;charset=utf-8;',
+				});
+				const url = URL.createObjectURL(blob);
+
+				// Create a temporary link and trigger download
+				const link = document.createElement('a');
+				link.href = url;
+				link.download = `contacts-${contactGroupId}.csv`;
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+
+				// Clean up the URL object
+				URL.revokeObjectURL(url);
+
+				notifications.show({
+					title: 'Export Successful',
+					message: 'Contacts exported successfully',
+					color: 'green',
+				});
+			}
+		} catch (error) {
+			notifications.show({
+				title: 'Export Failed',
+				message:
+					error instanceof Error ? error.message : 'Failed to export contacts',
+				color: 'red',
+			});
+		}
+	}, [exportQuery, contactGroupId]);
+
 	// Cleanup right panel on unmount
 	useEffect(() => {
 		return () => {
@@ -147,6 +190,8 @@ export const ContactGroupContactsTable: React.FC<
 				onFilterChange={contactFilters.setFilter}
 				onClearFilters={contactFilters.clearFilters}
 				hasActiveFilters={contactFilters.hasActiveFilters}
+				onExport={handleExport}
+				isExporting={exportQuery.isFetching}
 			/>
 
 			{/* Contact Table */}

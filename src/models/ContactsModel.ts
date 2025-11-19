@@ -15,6 +15,11 @@ export interface PhoneEntry {
 	status?: string; // e.g. 'DO_NOT_CONTACT', 'ACTIVE', etc.
 }
 
+// Represents a stored phone number entity belonging to a contact
+export interface ContactPhoneNumber extends PhoneEntry {
+	id: number;
+}
+
 export interface Contact {
 	id: number;
 	firstName: string;
@@ -22,7 +27,7 @@ export interface Contact {
 	identifier: string;
 	identifierType: string | null;
 	emails: string[];
-	phoneNumbers: PhoneEntry[];
+	phoneNumbers: ContactPhoneNumber[]; // include id for editing operations
 	clientId: number;
 	userId: number;
 	contactGroupId: number;

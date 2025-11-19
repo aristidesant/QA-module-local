@@ -1,9 +1,10 @@
-import { TextInput, ActionIcon } from '@mantine/core';
+import { TextInput, ActionIcon, Tooltip } from '@mantine/core';
 import {
 	IconSearch,
 	IconMail,
 	IconPhone,
 	IconFilterOff,
+	IconDownload,
 } from '@tabler/icons-react';
 import { FilterContainer } from '~/components/FilterContainer';
 import styles from './ContactGroupContactsTableFilters.module.css';
@@ -14,11 +15,20 @@ interface ContactGroupContactsTableFiltersProps {
 	onFilterChange: (key: keyof ContactFilters, value: string) => void;
 	onClearFilters: () => void;
 	hasActiveFilters: boolean;
+	onExport?: () => void;
+	isExporting?: boolean;
 }
 
 export const ContactGroupContactsTableFilters: React.FC<
 	ContactGroupContactsTableFiltersProps
-> = ({ filters, onFilterChange, onClearFilters, hasActiveFilters }) => {
+> = ({
+	filters,
+	onFilterChange,
+	onClearFilters,
+	hasActiveFilters,
+	onExport,
+	isExporting,
+}) => {
 	return (
 		<FilterContainer>
 			<div className={styles.filtersContent}>
@@ -65,6 +75,19 @@ export const ContactGroupContactsTableFilters: React.FC<
 				</div>
 
 				<div className={styles.selectFilters}>
+					{onExport && (
+						<Tooltip label='Export contact list' withArrow>
+							<ActionIcon
+								variant='light'
+								color='blue'
+								size='lg'
+								onClick={onExport}
+								loading={isExporting}
+							>
+								<IconDownload size={16} />
+							</ActionIcon>
+						</Tooltip>
+					)}
 					<ActionIcon
 						variant='light'
 						color='gray'

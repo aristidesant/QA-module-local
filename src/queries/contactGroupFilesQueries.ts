@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import contactGroupFilesApi from '~/api/contactGroupFilesApi';
 import type {
 	ContactFileSummary,
@@ -96,5 +96,17 @@ export const useProcessContactGroupFile = (
 		onError: (error) => {
 			options?.onError?.(error);
 		},
+	});
+};
+
+// Export original contact group file (CSV) using stored mapping & column order
+export const useExportContactGroupFileOriginal = (contactGroupId: number) => {
+	return useQuery({
+		queryKey: ['contactGroupFileOriginalExport', contactGroupId],
+		queryFn: async () => {
+			const api = contactGroupFilesApi();
+			return api.exportContactGroupFileOriginal(contactGroupId);
+		},
+		enabled: false, // manual trigger via refetch
 	});
 };
