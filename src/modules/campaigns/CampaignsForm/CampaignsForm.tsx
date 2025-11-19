@@ -2,6 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { Stack, LoadingOverlay, Box, ActionIcon } from '@mantine/core';
+import { useQueryClient } from '@tanstack/react-query';
 import type { Campaign } from '../../../models/CampaignsModel';
 import {
 	useCreateCampaign,
@@ -17,11 +18,9 @@ import CampaignTabs from '../CampaignTabs';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import GeneralSection from './GeneralSection/GeneralSection';
 import SectionCard from '~/components/SectionCard';
-import { ContactSection } from './ContactSection/ContactSection';
 import ParametersSection from './ParametersSection';
 import AgentSection from './AgentSection';
 import DispositionSection from './DispositionSection';
-import ConversationsSection from './ConversationsSection';
 import DoNotCallSection from './DoNotCallSection';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { CampaignStatus } from '~/models/CampaignStatus';
@@ -39,6 +38,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	campaign,
 	onBack,
 }) => {
+	const queryClient = useQueryClient();
 	const { selectedTab, rightComponent, resetView } = useCampaignsStore(
 		(state) => state
 	);
@@ -110,6 +110,10 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 				agentConfig: campaign.agentConfig || {},
 			});
 		}
+		return () => {
+			form.reset();
+			resetView();
+		};
 	}, [campaign]);
 
 	const handleSubmit = async (
@@ -144,6 +148,9 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 				savedCampaign = await updateCampaign({
 					data: value,
 					id: `${campaign.id}`,
+				});
+				await queryClient.invalidateQueries({
+					queryKey: ['campaign', String(campaign.id)],
 				});
 			} else {
 				// Create new campaign
@@ -209,11 +216,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 							<AgentSection />
 						</form>
 					)}
-					{selectedTab === 'contacts' && <ContactSection />}
 					{selectedTab === 'outcomes' && <DispositionSection />}
-					{selectedTab === 'conversations' && (
-						<ConversationsSection campaignId={campaign?.id} />
-					)}
 					{selectedTab === 'do-not-call' && (
 						<DoNotCallSection campaignId={campaign?.id} />
 					)}

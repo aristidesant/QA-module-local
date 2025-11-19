@@ -3,6 +3,7 @@ import type { ToolCategoryModel } from './ToolCategoryModel';
 export interface ToolModel {
 	id: number;
 	identifier: string;
+	prompt: string;
 	name: string;
 	description: string;
 	categoryId: number;

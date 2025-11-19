@@ -134,39 +134,16 @@ const CampaignConfigurationPrompt: React.FC = () => {
 			<Modal
 				opened={editModalOpen}
 				onClose={() => setEditModalOpen(false)}
-				withCloseButton={false}
+				title="Edit Agent's Prompt"
 				centered
 				fullScreen
-				padding={0}
-				radius={0}
 			>
 				<CampaignConfigurationPromptEditModal
-					initialPrompt={prompt}
 					initialSchemaId={contactSchemaId}
 					onClose={() => setEditModalOpen(false)}
-					onSave={(newPrompt: string, schemaId?: number) => {
-						console.log('Saving new prompt:', newPrompt, 'schemaId:', schemaId);
-						const currentConfig = form.values.agentConfig || {};
-						const newConfig = {
-							...currentConfig,
-							conversationConfig: {
-								...currentConfig.conversationConfig,
-								agent: {
-									...currentConfig.conversationConfig?.agent,
-									prompt: {
-										...currentConfig.conversationConfig?.agent?.prompt,
-										prompt: newPrompt,
-									},
-								},
-							},
-							// Persist user-selected contact schema id at the root of agentConfig
-							contactSchemaId: schemaId,
-						};
-						form.setFieldValue(
-							'agentConfig',
-							newConfig as Partial<AgentConfigModel>
-						);
+					onSave={() => {
 						setEditModalOpen(false);
+						// Modal saves directly to backend, so we might need to refresh context or just close
 					}}
 				/>
 			</Modal>

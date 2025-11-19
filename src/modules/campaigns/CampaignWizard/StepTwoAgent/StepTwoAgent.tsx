@@ -67,7 +67,6 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 
 	// Modal state for prompt editor
 	const [promptEditorOpened, setPromptEditorOpened] = useState(false);
-	const [promptDraft, setPromptDraft] = useState('');
 
 	const predefinedParams = useCampaignsPredefinedParams();
 	const updateCampaign = useUpdateCampaign();
@@ -220,7 +219,6 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 	};
 
 	const handleEditPrompt = () => {
-		setPromptDraft(form.values.agentPrompt);
 		setPromptEditorOpened(true);
 	};
 
@@ -389,10 +387,9 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 				padding={0}
 			>
 				<CampaignConfigurationPromptEditModal
-					initialPrompt={promptDraft}
+					campaignId={Number(campaignId)}
 					onClose={() => setPromptEditorOpened(false)}
-					onSave={(prompt, _schemaId) => {
-						form.setFieldValue('agentPrompt', prompt);
+					onSave={() => {
 						setPromptEditorOpened(false);
 						notifications.show({
 							title: 'Prompt Updated',

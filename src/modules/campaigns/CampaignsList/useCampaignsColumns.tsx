@@ -19,7 +19,8 @@ import {
 	IconChartDots,
 	IconPhone,
 	IconInfoCircle,
-	IconArrowRight,
+	IconEye,
+	IconPencil,
 } from '@tabler/icons-react';
 import type { Campaign } from '~/models/CampaignsModel';
 import { useNavigate } from 'react-router';
@@ -53,6 +54,7 @@ export const getCampaignStatusInfo = (
 
 interface UseCampaignsColumnsProps {
 	onEdit: (campaign: Campaign) => void;
+	onView: (campaign: Campaign) => void;
 	onTestCall: (campaign: Campaign) => void;
 	onDelete: (campaign: Campaign) => void;
 	onClone: (campaign: Campaign) => void;
@@ -60,6 +62,7 @@ interface UseCampaignsColumnsProps {
 
 export const useCampaignsColumns = ({
 	onEdit,
+	onView,
 	onTestCall,
 	onDelete,
 	onClone,
@@ -176,18 +179,32 @@ export const useCampaignsColumns = ({
 				const campaign = row.original;
 				return (
 					<Group gap='xs'>
-						<Tooltip label='Go to Campaign'>
+						<Tooltip label='Edit campaign'>
 							<ActionIcon
 								variant='subtle'
 								color='blue'
 								radius='md'
-								aria-label='Go to campaign'
+								aria-label='Edit campaign'
 								onClick={(e) => {
 									e.stopPropagation();
 									onEdit(campaign);
 								}}
 							>
-								<IconArrowRight size={16} />
+								<IconPencil size={16} />
+							</ActionIcon>
+						</Tooltip>
+						<Tooltip label='View campaign'>
+							<ActionIcon
+								variant='subtle'
+								color='gray'
+								radius='md'
+								aria-label='View campaign'
+								onClick={(e) => {
+									e.stopPropagation();
+									onView(campaign);
+								}}
+							>
+								<IconEye size={16} />
 							</ActionIcon>
 						</Tooltip>
 						<Menu shadow='md' width={200}>

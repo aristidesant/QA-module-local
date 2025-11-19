@@ -22,11 +22,9 @@ export const useCampaignsStore = create<CampaignsStoreState>((set) => ({
 	setEditCampaign: (editCampaign) => set({ editCampaign }),
 	selectedCampaign: null,
 	selectCampaign: (campaign) => {
-		const defaultTab =
-			campaign?.type === 'OUTBOUND' ? 'contacts' : 'conversations';
-		set({ selectedCampaign: campaign, selectedTab: defaultTab });
+		set({ selectedCampaign: campaign, selectedTab: 'agents' });
 	},
-	selectedTab: 'general',
+	selectedTab: 'agent',
 	rightComponent: null,
 	contactsVersion: 0,
 	selectedVoiceId: undefined,
@@ -39,7 +37,7 @@ export const useCampaignsStore = create<CampaignsStoreState>((set) => ({
 		set({
 			selectedCampaign: null,
 			rightComponent: null,
-			selectedTab: 'general',
+			selectedTab: 'agents',
 			editCampaign: false,
 			selectedVoiceId: undefined,
 		}),
