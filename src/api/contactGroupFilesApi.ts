@@ -3,6 +3,8 @@ import type {
 	ContactFileSummary,
 	ProcessContactGroupFileRequest,
 	ProcessContactGroupFileResponse,
+	AppendContactGroupFileRequest,
+	AppendContactGroupFileResponse,
 } from '~/models/ContactFileSummary';
 import { DEFAULT_API_URL } from './config';
 
@@ -41,6 +43,37 @@ const contactGroupFilesApi = (_authHeader?: Record<string, string>) => {
 			const response = await axios.post<ProcessContactGroupFileResponse>(
 				`${DEFAULT_API_URL}/contact-group-files/process`,
 				data
+			);
+			return response.data;
+		},
+
+		/**
+		 * Appends contacts from a previously uploaded contact group file into an existing contact group
+		 * @param contactGroupId - The target contact group identifier
+		 * @param data - The request payload with file and schema IDs
+		 * @returns Processing summary
+		 */
+		appendToContactGroup: async (
+			contactGroupId: number,
+			data: AppendContactGroupFileRequest
+		): Promise<AppendContactGroupFileResponse> => {
+			const response = await axios.post<AppendContactGroupFileResponse>(
+				`${DEFAULT_API_URL}/contact-group-files/contact-groups/${contactGroupId}/append`,
+				data
+			);
+			return response.data;
+		},
+
+		/**
+		 * Retrieves the most recent contact group file for a specific contact group
+		 * @param contactGroupId - Contact group identifier
+		 * @returns Contact file summary
+		 */
+		getLatestContactGroupFile: async (
+			contactGroupId: number
+		): Promise<ContactFileSummary> => {
+			const response = await axios.get<ContactFileSummary>(
+				`${DEFAULT_API_URL}/contact-group-files/contact-group/${contactGroupId}`
 			);
 			return response.data;
 		},

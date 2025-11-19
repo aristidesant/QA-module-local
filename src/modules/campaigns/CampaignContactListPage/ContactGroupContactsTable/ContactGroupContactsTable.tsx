@@ -14,16 +14,23 @@ import type { SortingState } from '@tanstack/react-table';
 import { useContactColumns } from './useContactColumns';
 import ContactListSkeleton from './ContactListSkeleton';
 import { useGetContactGroupContacts } from '~/queries/contactsQueries';
-import { useExportContactGroupFileOriginal } from '~/queries/contactGroupFilesQueries';
+import {
+	useExportContactGroupFileOriginal,
+	useLatestContactGroupFile,
+	useAppendContactGroupFile,
+	useUploadContactGroupFile,
+} from '~/queries/contactGroupFilesQueries';
 import PhoneNumbersTable from './PhoneNumbersTable';
+import AppendContactsModal from './AppendContactsModal';
 
 interface ContactGroupContactsTableProps {
 	contactGroupId: number;
+	campaignId?: number; // needed to resolve active schema for append workflow
 }
 
 export const ContactGroupContactsTable: React.FC<
 	ContactGroupContactsTableProps
-> = ({ contactGroupId }) => {
+> = ({ contactGroupId, campaignId }) => {
 	const { setRightComponent } = useCampaignsStore();
 
 	// Pagination state
@@ -42,6 +49,67 @@ export const ContactGroupContactsTable: React.FC<
 
 	// Export query
 	const exportQuery = useExportContactGroupFileOriginal(contactGroupId);
+
+	// Latest file (needed before append)
+	const latestFileQuery = useLatestContactGroupFile(contactGroupId, false);
+
+	// Schema is no longer required for append
+
+	// Append modal state
+	const [showAppendModal, setShowAppendModal] = useState(false);
+
+	// Append mutation
+	const appendMutation = useAppendContactGroupFile({
+		onSuccess: () => {
+			notifications.show({
+				title: 'Contacts appended',
+				message: 'New contacts were added to the list.',
+				color: 'green',
+			});
+			void groupContactsQuery.refetch();
+		},
+		onError: (error) => {
+			notifications.show({
+				title: 'Append failed',
+				message:
+					error instanceof Error
+						? error.message
+						: 'Unable to append contacts. Please try again.',
+				color: 'red',
+			});
+		},
+	});
+
+	// Upload mutation (to upload new CSV prior to append)
+	const uploadMutation = useUploadContactGroupFile({});
+
+	const handleOpenAppendModal = async () => {
+		// Fetch latest existing file (baseline, optional)
+		await latestFileQuery.refetch();
+		setShowAppendModal(true);
+	};
+
+	// Step 1: Upload CSV and return file id
+	const handleUploadCsv = async (file: File | null) => {
+		if (!file) throw new Error('No file provided');
+		if (!campaignId) {
+			throw new Error('Campaign ID is required to upload file.');
+		}
+		const isCsv = file.name.toLowerCase().endsWith('.csv');
+		if (!isCsv) {
+			throw new Error('Only CSV files are supported.');
+		}
+		const uploaded = await uploadMutation.mutateAsync({ file, campaignId });
+		return { contactGroupFileId: uploaded.contactGroupFileId };
+	};
+
+	// Step 2: Append uploaded file to list (schema ignored)
+	const handleAppendUploadedFile = async (contactGroupFileId: number) => {
+		await appendMutation.mutateAsync({
+			contactGroupId,
+			contactGroupFileId,
+		});
+	};
 
 	// Query for contacts with server-side filtering and pagination
 	const groupContactsQuery = useGetContactGroupContacts(contactGroupId, {
@@ -192,6 +260,8 @@ export const ContactGroupContactsTable: React.FC<
 				hasActiveFilters={contactFilters.hasActiveFilters}
 				onExport={handleExport}
 				isExporting={exportQuery.isFetching}
+				onAppend={handleOpenAppendModal}
+				isAppending={appendMutation.isPending || uploadMutation.isPending}
 			/>
 
 			{/* Contact Table */}
@@ -244,6 +314,16 @@ export const ContactGroupContactsTable: React.FC<
 				isLoading={isLoading}
 				itemLabel='contacts'
 			/>
+
+			{showAppendModal && (
+				<AppendContactsModal
+					onClose={() => setShowAppendModal(false)}
+					onUpload={(file) => handleUploadCsv(file)}
+					onAppend={(fileId) => handleAppendUploadedFile(fileId)}
+					isUploading={uploadMutation.isPending}
+					isAppending={appendMutation.isPending}
+				/>
+			)}
 		</>
 	);
 };

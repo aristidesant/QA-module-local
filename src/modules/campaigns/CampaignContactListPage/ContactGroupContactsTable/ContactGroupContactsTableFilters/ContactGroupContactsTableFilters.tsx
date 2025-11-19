@@ -5,6 +5,7 @@ import {
 	IconPhone,
 	IconFilterOff,
 	IconDownload,
+	IconUpload,
 } from '@tabler/icons-react';
 import { FilterContainer } from '~/components/FilterContainer';
 import styles from './ContactGroupContactsTableFilters.module.css';
@@ -17,6 +18,8 @@ interface ContactGroupContactsTableFiltersProps {
 	hasActiveFilters: boolean;
 	onExport?: () => void;
 	isExporting?: boolean;
+	onAppend?: () => void;
+	isAppending?: boolean;
 }
 
 export const ContactGroupContactsTableFilters: React.FC<
@@ -28,6 +31,8 @@ export const ContactGroupContactsTableFilters: React.FC<
 	hasActiveFilters,
 	onExport,
 	isExporting,
+	onAppend,
+	isAppending,
 }) => {
 	return (
 		<FilterContainer>
@@ -75,6 +80,19 @@ export const ContactGroupContactsTableFilters: React.FC<
 				</div>
 
 				<div className={styles.selectFilters}>
+					{onAppend && (
+						<Tooltip label='Append contacts via CSV' withArrow>
+							<ActionIcon
+								variant='light'
+								color='blue'
+								size='lg'
+								onClick={onAppend}
+								loading={isAppending}
+							>
+								<IconUpload size={16} />
+							</ActionIcon>
+						</Tooltip>
+					)}
 					{onExport && (
 						<Tooltip label='Export contact list' withArrow>
 							<ActionIcon

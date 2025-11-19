@@ -327,7 +327,10 @@ const CampaignContactListPage = () => {
 				description='All contacts associated with this list.'
 			>
 				<FaultyPhonesAlert contactGroupId={contactGroupIdNumber} />
-				<ContactGroupContactsTable contactGroupId={contactGroupIdNumber} />
+				<ContactGroupContactsTable
+					contactGroupId={contactGroupIdNumber}
+					campaignId={campaignId ? Number(campaignId) : undefined}
+				/>
 			</SectionCard>
 		</ContentContainer>
 	);
