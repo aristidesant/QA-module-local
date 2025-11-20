@@ -1,0 +1,130 @@
+.modalContent {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.modalHeader {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.subtitle {
+	color: var(--mantine-color-gray-6);
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.tableSurface {
+	border-radius: 12px;
+	background-color: var(--mantine-color-white);
+	padding: 4px;
+}
+
+.filters {
+	display: grid;
+	grid-template-columns: 1.2fr 0.8fr;
+	gap: var(--mantine-spacing-xs);
+}
+
+.filterControl {
+	border: 1px solid var(--mantine-color-gray-3);
+	background-color: var(--mantine-color-white);
+}
+
+.filterControl:focus-within {
+	border-color: var(--mantine-color-blue-5);
+}
+
+.tableNote {
+	color: var(--mantine-color-gray-6);
+	font-size: 11px;
+	margin-top: 2px;
+}
+
+.selectionHeader,
+.selectionCell {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 48px;
+}
+
+.nameCell {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	min-width: 0;
+}
+
+.nameTitle {
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+	font-size: 14px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.badgePill {
+	border-radius: 999px;
+}
+
+.statusBadge {
+	font-weight: 600;
+}
+
+.inlineMeta {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	color: var(--mantine-color-gray-7);
+	font-size: 12px;
+	white-space: nowrap;
+}
+
+.metaGroup {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	justify-content: flex-end;
+	flex-wrap: nowrap;
+}
+
+.truncate {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-sm);
+	border-top: 1px solid var(--mantine-color-gray-2);
+	padding-top: var(--mantine-spacing-xs);
+	margin-top: 2px;
+}
+
+.selectionCount {
+	color: var(--mantine-color-gray-7);
+	font-size: 13px;
+}
+
+.actions {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+}
+
+.compactTable :global(table) {
+	font-size: 13px;
+}
+
+.compactTable :global(th),
+.compactTable :global(td) {
+	padding: 6px 10px;
+}

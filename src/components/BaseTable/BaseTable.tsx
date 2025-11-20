@@ -13,7 +13,13 @@ import {
 	ExpandedState,
 	useReactTable,
 } from '@tanstack/react-table';
-import { Table, LoadingOverlay, Skeleton } from '@mantine/core';
+import {
+	Table,
+	LoadingOverlay,
+	Skeleton,
+	Pagination,
+	Group,
+} from '@mantine/core';
 import {
 	IconChevronUp,
 	IconChevronDown,
@@ -90,6 +96,10 @@ export type BaseTableProps<TData> = {
 	 * Initially expanded row IDs
 	 */
 	initialExpandedRows?: string[];
+	/**
+	 * Render built-in pagination controls (client/server)
+	 */
+	showPaginationControls?: boolean;
 };
 
 function BaseTable<TData>({
@@ -117,6 +127,7 @@ function BaseTable<TData>({
 	renderExpandedRow,
 	onExpandedChange,
 	initialExpandedRows = [],
+	showPaginationControls = false,
 }: BaseTableProps<TData>) {
 	const [sorting, setSorting] = React.useState<SortingState>(initialSort);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -169,6 +180,22 @@ function BaseTable<TData>({
 		[filterMode, onPaginationChange, pagination]
 	);
 
+	React.useEffect(() => {
+		if (filterMode !== 'server') return;
+		if (
+			pagination.pageIndex !== pageIndex ||
+			pagination.pageSize !== pageSize
+		) {
+			setPagination({ pageIndex, pageSize });
+		}
+	}, [
+		filterMode,
+		pageIndex,
+		pageSize,
+		pagination.pageIndex,
+		pagination.pageSize,
+	]);
+
 	// Handle expanded state changes
 	const handleExpandedChange = React.useCallback(
 		(updater: any) => {
@@ -217,6 +244,8 @@ function BaseTable<TData>({
 
 	const hasData = data && data.length > 0;
 	const displayMessage = emptyMessage || 'No data available';
+	const shouldShowPagination =
+		enablePagination && showPaginationControls && table.getPageCount() > 1;
 
 	return (
 		<div className={`${styles.root} ${className ?? ''}`}>
@@ -381,6 +410,21 @@ function BaseTable<TData>({
 					)}
 				</Table.Tbody>
 			</Table>
+			{shouldShowPagination ? (
+				<Group
+					justify='space-between'
+					align='center'
+					className={styles.pagination}
+				>
+					<Pagination
+						withEdges
+						size='sm'
+						value={table.getState().pagination.pageIndex + 1}
+						total={table.getPageCount()}
+						onChange={(page) => table.setPageIndex(page - 1)}
+					/>
+				</Group>
+			) : null}
 		</div>
 	);
 }

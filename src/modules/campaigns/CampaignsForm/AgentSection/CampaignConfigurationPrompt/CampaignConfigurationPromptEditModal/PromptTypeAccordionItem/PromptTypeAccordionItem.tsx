@@ -54,9 +54,7 @@ const PromptTypeAccordionItem: React.FC<PromptTypeAccordionItemProps> = ({
 			.filter((p) => p.campaignId !== campaignId && p.id !== undefined)
 			.map((p) => ({
 				value: String(p.id),
-				label: `Campaign #${p.campaignId}: ${p.prompt.substring(0, 50)}${
-					p.prompt.length > 50 ? '...' : ''
-				}`,
+				label: `${p.campaign?.name}`,
 			}));
 	}, [otherPrompts, campaignId]);
 

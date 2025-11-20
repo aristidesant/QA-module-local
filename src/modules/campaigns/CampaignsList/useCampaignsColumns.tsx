@@ -178,7 +178,7 @@ export const useCampaignsColumns = ({
 			cell: ({ row }) => {
 				const campaign = row.original;
 				return (
-					<Group gap='xs'>
+					<Group gap='xs' justify='end'>
 						<Tooltip label='Edit campaign'>
 							<ActionIcon
 								color='blue'
@@ -194,7 +194,7 @@ export const useCampaignsColumns = ({
 						</Tooltip>
 						<Tooltip label='View campaign'>
 							<ActionIcon
-								color='gray'
+								color='teal'
 								radius='md'
 								aria-label='View campaign'
 								onClick={(e) => {
@@ -221,7 +221,11 @@ export const useCampaignsColumns = ({
 									onClick={() => {
 										navigate(`/campaigns/metrics/${campaign.id}`);
 									}}
-									leftSection={<IconChartDots size={14} />}
+									leftSection={
+										<ThemeIcon variant='light' color='violet' size={'xs'}>
+											<IconChartDots size={14} />
+										</ThemeIcon>
+									}
 								>
 									View Metrics
 								</Menu.Item>
@@ -230,7 +234,11 @@ export const useCampaignsColumns = ({
 										e.stopPropagation();
 										onTestCall(campaign);
 									}}
-									leftSection={<IconPhone size={14} />}
+									leftSection={
+										<ThemeIcon variant='light' color='green' size={'xs'}>
+											<IconPhone size={14} />
+										</ThemeIcon>
+									}
 								>
 									Test Call
 								</Menu.Item>
@@ -239,7 +247,11 @@ export const useCampaignsColumns = ({
 										e.stopPropagation();
 										onClone(campaign);
 									}}
-									leftSection={<IconCopy size={14} />}
+									leftSection={
+										<ThemeIcon variant='light' color='orange' size={'xs'}>
+											<IconCopy size={14} />
+										</ThemeIcon>
+									}
 								>
 									Clone Campaign
 								</Menu.Item>
@@ -249,7 +261,11 @@ export const useCampaignsColumns = ({
 										e.stopPropagation();
 										onDelete(campaign);
 									}}
-									leftSection={<IconTrash size={14} />}
+									leftSection={
+										<ThemeIcon variant='light' color='red' size={'xs'}>
+											<IconTrash size={14} />
+										</ThemeIcon>
+									}
 									color='red'
 								>
 									Delete
