@@ -9,8 +9,9 @@ import { useDispositionLabel } from '~/hooks/useDispositionLabel';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 
 const CampaignTabs = () => {
-	const { selectedTab, selectedCampaign, setSelectedTab, setRightComponent } =
-		useCampaignsStore((state) => state);
+	const { selectedTab, setSelectedTab, setRightComponent } = useCampaignsStore(
+		(state) => state
+	);
 	const dispositionLabel = useDispositionLabel();
 	return (
 		<Tabs

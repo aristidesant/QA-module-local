@@ -300,7 +300,10 @@ function BaseTable<TData>({
 					) : !hasData ? (
 						<Table.Tr>
 							<Table.Td
-								colSpan={table.getAllColumns().length}
+								colSpan={
+									table.getAllColumns().length +
+									(enableExpanding && renderExpandedRow ? 1 : 0)
+								}
 								className={styles.emptyRow}
 							>
 								{displayMessage}

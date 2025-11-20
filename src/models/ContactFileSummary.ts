@@ -39,3 +39,17 @@ export interface ProcessContactGroupFileResponse {
 	totalProcessed?: number;
 	failedCount?: number;
 }
+
+// Append previously uploaded file into an existing contact group
+export interface AppendContactGroupFileRequest {
+	contactGroupFileId: number;
+	schemaId?: number;
+}
+
+export interface AppendContactGroupFileResponse {
+	contactGroupFileId: number;
+	contactGroupId: number;
+	processedRows: number;
+	errorRows: number;
+	status: string; // e.g., "complete"
+}

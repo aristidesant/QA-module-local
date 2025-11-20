@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Alert, Flex, Loader, Stack, ActionIcon, Tooltip } from '@mantine/core';
 import { IconAlertCircle, IconEdit } from '@tabler/icons-react';
-import CampaignPreview from '../CampaignPreview';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { useGetCampaign } from '~/queries/campaignsQueries';
 import { useCampaignsStore } from '~/stores/campaignsStore';

@@ -54,6 +54,7 @@ export const useGetContactGroupContacts = (
 		email?: string;
 		phone?: string;
 		status?: string;
+		excludeInvalid?: boolean;
 	}
 ) => {
 	return useQuery({
@@ -63,6 +64,74 @@ export const useGetContactGroupContacts = (
 			return api.findContactGroupContacts(contactGroupId, params);
 		},
 		enabled: !!contactGroupId,
+	});
+};
+
+// Update a specific contact's phone number
+export const useUpdateContactPhoneNumber = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async (params: {
+			contactId: number | string;
+			phoneNumberId: number | string;
+			phoneNumber: string;
+		}) => {
+			const api = contactsApi();
+			return api.updateContactPhoneNumber(
+				params.contactId,
+				params.phoneNumberId,
+				{ phoneNumber: params.phoneNumber }
+			);
+		},
+		onSuccess: (_data, variables) => {
+			queryClient.invalidateQueries({ queryKey: ['contacts'] });
+			if (variables?.contactId) {
+				queryClient.invalidateQueries({
+					queryKey: ['contact', String(variables.contactId)],
+				});
+			}
+			// eslint-disable-next-line no-console
+			console.log('Contact phone number updated successfully');
+		},
+		onError: (error) => {
+			// eslint-disable-next-line no-console
+			console.error('Error updating contact phone number:', error);
+		},
+	});
+};
+
+// Get contacts in a contact group that have phone numbers with validation errors
+export const useGetContactGroupContactsWithPhoneValidationErrors = (
+	contactGroupId: number
+) => {
+	return useQuery({
+		queryKey: ['contactGroupContactsWithPhoneValidationErrors', contactGroupId],
+		queryFn: async () => {
+			const api = contactsApi();
+			return api.findContactGroupContactsWithPhoneValidationErrors(
+				contactGroupId
+			);
+		},
+		enabled: !!contactGroupId,
+	});
+};
+
+// Export CSV for contact group contacts with phone validation errors
+export const useExportContactGroupContactsWithPhoneValidationErrors = (
+	contactGroupId: number
+) => {
+	return useQuery({
+		queryKey: [
+			'contactGroupContactsWithPhoneValidationErrorsExport',
+			contactGroupId,
+		],
+		queryFn: async () => {
+			const api = contactsApi();
+			return api.exportContactGroupContactsWithPhoneValidationErrors(
+				contactGroupId
+			);
+		},
+		enabled: false, // Only run when manually triggered via refetch
 	});
 };
 

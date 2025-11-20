@@ -1,5 +1,9 @@
 import axios from 'axios';
-import type { Contact, ContactStatus } from '~/models/ContactsModel';
+import type {
+	Contact,
+	ContactStatus,
+	ContactPhoneNumber,
+} from '~/models/ContactsModel';
 import { DEFAULT_API_URL } from './config';
 import { PaginatedResponse } from '~/models/CampaignsModel';
 
@@ -43,6 +47,7 @@ const contactsApi = (_authHeader?: Record<string, string>) => {
 				email?: string;
 				phone?: string;
 				status?: string;
+				excludeInvalid?: boolean;
 			}
 		) => {
 			const response = await axios.get<PaginatedResponse<Contact>>(
@@ -54,11 +59,46 @@ const contactsApi = (_authHeader?: Record<string, string>) => {
 			return response.data;
 		},
 
+		// FIND contacts in a contact group with phone numbers that have validation errors
+		// Endpoint returns a plain array (no pagination)
+		findContactGroupContactsWithPhoneValidationErrors: async (
+			contactGroupId: number
+		) => {
+			const response = await axios.get<Contact[]>(
+				`${DEFAULT_API_URL}/contacts/contact-group/${contactGroupId}/phone-numbers/with-validation-errors`
+			);
+			return response.data;
+		},
+
+		// EXPORT contacts in a contact group with phone numbers that have validation errors
+		// Returns a string (e.g., a presigned URL or CSV content reference)
+		exportContactGroupContactsWithPhoneValidationErrors: async (
+			contactGroupId: number
+		) => {
+			const response = await axios.get<string>(
+				`${DEFAULT_API_URL}/contacts/contact-group/${contactGroupId}/phone-numbers/with-validation-errors/export`
+			);
+			return response.data;
+		},
+
 		findContactSummaryGroups: async (campaignId: number) => {
 			const response = await axios.get<{
 				statusBreakdown: { status: `${ContactStatus}`; count: number }[];
 				totalContacts: number;
 			}>(`${DEFAULT_API_URL}/contacts/summary/status/${campaignId}`);
+			return response.data;
+		},
+
+		// UPDATE a specific contact phone number
+		updateContactPhoneNumber: async (
+			contactId: number | string,
+			phoneNumberId: number | string,
+			data: { phoneNumber: string }
+		) => {
+			const response = await axios.patch<ContactPhoneNumber>(
+				`${DEFAULT_API_URL}/contacts/${contactId}/phone-numbers/${phoneNumberId}`,
+				data
+			);
 			return response.data;
 		},
 

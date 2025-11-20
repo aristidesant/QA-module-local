@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useCallback, useState } from 'react';
-import { Text } from '@mantine/core';
+import { LoadingOverlay, Text } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import styles from './ContactGroupContactsTable.module.css';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import { ContactDetails } from '~/modules/campaigns/CampaignsForm/ContactSection/ContactDetails';
@@ -13,15 +14,22 @@ import type { SortingState } from '@tanstack/react-table';
 import { useContactColumns } from './useContactColumns';
 import ContactListSkeleton from './ContactListSkeleton';
 import { useGetContactGroupContacts } from '~/queries/contactsQueries';
+import {
+	useExportContactGroupFileOriginal,
+	useAppendContactGroupFile,
+	useUploadContactGroupFile,
+} from '~/queries/contactGroupFilesQueries';
 import PhoneNumbersTable from './PhoneNumbersTable';
+import AppendContactsModal from './AppendContactsModal';
 
 interface ContactGroupContactsTableProps {
 	contactGroupId: number;
+	campaignId?: number; // needed to resolve active schema for append workflow
 }
 
 export const ContactGroupContactsTable: React.FC<
 	ContactGroupContactsTableProps
-> = ({ contactGroupId }) => {
+> = ({ contactGroupId, campaignId }) => {
 	const { setRightComponent } = useCampaignsStore();
 
 	// Pagination state
@@ -38,6 +46,68 @@ export const ContactGroupContactsTable: React.FC<
 		debounceMs: 500,
 	});
 
+	// Export query
+	const exportQuery = useExportContactGroupFileOriginal(contactGroupId);
+
+	// Removed: latest file prefetch is not needed for append flow
+
+	// Schema is no longer required for append
+
+	// Append modal state
+	const [showAppendModal, setShowAppendModal] = useState(false);
+
+	// Append mutation
+	const appendMutation = useAppendContactGroupFile({
+		onSuccess: () => {
+			notifications.show({
+				title: 'Contacts appended',
+				message: 'New contacts were added to the list.',
+				color: 'green',
+			});
+			void groupContactsQuery.refetch();
+		},
+		onError: (error) => {
+			notifications.show({
+				title: 'Append failed',
+				message:
+					error instanceof Error
+						? error.message
+						: 'Unable to append contacts. Please try again.',
+				color: 'red',
+			});
+		},
+	});
+
+	// Upload mutation (to upload new CSV prior to append)
+	const uploadMutation = useUploadContactGroupFile({});
+
+	const handleOpenAppendModal = () => {
+		// Open immediately for a snappier UX
+		setShowAppendModal(true);
+	};
+
+	// Step 1: Upload CSV and return file id
+	const handleUploadCsv = async (file: File | null) => {
+		if (!file) throw new Error('No file provided');
+		if (!campaignId) {
+			throw new Error('Campaign ID is required to upload file.');
+		}
+		const isCsv = file.name.toLowerCase().endsWith('.csv');
+		if (!isCsv) {
+			throw new Error('Only CSV files are supported.');
+		}
+		const uploaded = await uploadMutation.mutateAsync({ file, campaignId });
+		return { contactGroupFileId: uploaded.contactGroupFileId };
+	};
+
+	// Step 2: Append uploaded file to list (schema ignored)
+	const handleAppendUploadedFile = async (contactGroupFileId: number) => {
+		await appendMutation.mutateAsync({
+			contactGroupId,
+			contactGroupFileId,
+		});
+	};
+
 	// Query for contacts with server-side filtering and pagination
 	const groupContactsQuery = useGetContactGroupContacts(contactGroupId, {
 		limit: pagination.itemsPerPage,
@@ -47,8 +117,18 @@ export const ContactGroupContactsTable: React.FC<
 		phone: contactFilters.debouncedFilters.phone || undefined,
 	});
 
-	// Get contacts from query
-	const contacts = groupContactsQuery.data?.data ?? [];
+	// Get contacts from query and filter out those with validation errors
+	const allContacts = groupContactsQuery.data?.data ?? [];
+	const contacts = useMemo(() => {
+		return allContacts.filter((contact) => {
+			// Exclude contacts that have any phone number with a validation error
+			const hasFaultyPhone = contact.phoneNumbers?.some(
+				(phone) => phone.validationError
+			);
+			return !hasFaultyPhone;
+		});
+	}, [allContacts]);
+
 	const totalContacts = groupContactsQuery.data?.total ?? 0;
 	const isLoading = groupContactsQuery.isLoading;
 	const error = groupContactsQuery.error;
@@ -117,15 +197,48 @@ export const ContactGroupContactsTable: React.FC<
 		[pagination]
 	);
 
-	// Check if contact has validation errors
-	const getRowClassName = useCallback((row: { original: Contact }) => {
-		const hasValidationError = row.original.phoneNumbers?.some(
-			(entry) => entry.validationError
-		);
-		return hasValidationError
-			? `${styles.contactRow} ${styles.contactRowError}`
-			: styles.contactRow;
+	// Row className
+	const getRowClassName = useCallback(() => {
+		return styles.contactRow;
 	}, []);
+
+	// Handle export
+	const handleExport = useCallback(async () => {
+		try {
+			const result = await exportQuery.refetch();
+			if (result.data) {
+				// Create a Blob from the CSV content
+				const blob = new Blob([result.data], {
+					type: 'text/csv;charset=utf-8;',
+				});
+				const url = URL.createObjectURL(blob);
+
+				// Create a temporary link and trigger download
+				const link = document.createElement('a');
+				link.href = url;
+				link.download = `contacts-${contactGroupId}.csv`;
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+
+				// Clean up the URL object
+				URL.revokeObjectURL(url);
+
+				notifications.show({
+					title: 'Export Successful',
+					message: 'Contacts exported successfully',
+					color: 'green',
+				});
+			}
+		} catch (error) {
+			notifications.show({
+				title: 'Export Failed',
+				message:
+					error instanceof Error ? error.message : 'Failed to export contacts',
+				color: 'red',
+			});
+		}
+	}, [exportQuery, contactGroupId]);
 
 	// Cleanup right panel on unmount
 	useEffect(() => {
@@ -142,10 +255,14 @@ export const ContactGroupContactsTable: React.FC<
 				onFilterChange={contactFilters.setFilter}
 				onClearFilters={contactFilters.clearFilters}
 				hasActiveFilters={contactFilters.hasActiveFilters}
+				onExport={handleExport}
+				isExporting={exportQuery.isFetching}
+				onAppend={handleOpenAppendModal}
+				isAppending={appendMutation.isPending || uploadMutation.isPending}
 			/>
 
 			{/* Contact Table */}
-			<div className={styles.tableContainer}>
+			<div className={styles.tableContainer} style={{ position: 'relative' }}>
 				{isLoading ? (
 					<ContactListSkeleton />
 				) : error ? (
@@ -180,6 +297,13 @@ export const ContactGroupContactsTable: React.FC<
 						getRowClassName={getRowClassName}
 					/>
 				)}
+				{!isLoading && groupContactsQuery.isFetching && (
+					<LoadingOverlay
+						visible
+						zIndex={1}
+						overlayProps={{ radius: 'sm', blur: 1 }}
+					/>
+				)}
 			</div>
 
 			{/* Pagination */}
@@ -194,6 +318,16 @@ export const ContactGroupContactsTable: React.FC<
 				isLoading={isLoading}
 				itemLabel='contacts'
 			/>
+
+			{showAppendModal && (
+				<AppendContactsModal
+					onClose={() => setShowAppendModal(false)}
+					onUpload={(file) => handleUploadCsv(file)}
+					onAppend={(fileId) => handleAppendUploadedFile(fileId)}
+					isUploading={uploadMutation.isPending}
+					isAppending={appendMutation.isPending}
+				/>
+			)}
 		</>
 	);
 };
