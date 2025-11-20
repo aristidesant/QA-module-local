@@ -1,0 +1,24 @@
+/* Override BaseTable root for nested context */
+/* Remove internal border; keep lighter base */
+.subTableRoot {
+	border: 1px solid var(--mantine-color-gray-2);
+	background: var(--mantine-color-gray-1);
+}
+
+/* Make header slightly stronger for contrast */
+.subTableRoot :global(thead) {
+	background: var(--mantine-color-gray-2);
+}
+
+/* Reduce row hover intensity to differentiate from main table */
+.subTableRoot :global(tbody tr:hover) {
+	background: var(--mantine-color-gray-3);
+}
+
+.editInput {
+	width: 140px;
+}
+
+.phoneNumber {
+	font-family: var(--mantine-font-family-monospace);
+}

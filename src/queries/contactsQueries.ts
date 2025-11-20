@@ -50,7 +50,7 @@ export const useGetContactGroupContacts = (
 	params?: {
 		limit?: number;
 		offset?: number;
-		firstName?: string;
+		name?: string;
 		email?: string;
 		phone?: string;
 		status?: string;

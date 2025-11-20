@@ -1,7 +1,13 @@
 import { useMemo } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
-import { Group, Text, Badge, Avatar, Tooltip } from '@mantine/core';
-import { IconMail, IconPhone, IconAlertCircle } from '@tabler/icons-react';
+import { Group, Text, Badge, Avatar, Tooltip, ActionIcon } from '@mantine/core';
+import {
+	IconMail,
+	IconPhone,
+	IconAlertCircle,
+	IconPencil,
+	IconTrash,
+} from '@tabler/icons-react';
 import type { Contact } from '~/models/ContactsModel';
 import {
 	getStatusColor,
@@ -16,7 +22,11 @@ import styles from './ContactGroupContactsTable.module.css';
  * Custom hook that returns column definitions for the contacts table
  * Memoized to prevent unnecessary recalculations
  */
-export const useContactColumns = (): ColumnDef<Contact, any>[] => {
+export const useContactColumns = (
+	onEdit?: (contact: Contact) => void,
+	onDelete?: (contact: Contact) => void,
+	isDeleting?: (contactId: number) => boolean
+): ColumnDef<Contact, any>[] => {
 	return useMemo(
 		() => [
 			{
@@ -221,7 +231,45 @@ export const useContactColumns = (): ColumnDef<Contact, any>[] => {
 				},
 				size: 160,
 			},
+			// Actions column (optional)
+			...(onEdit || onDelete
+				? [
+						{
+							id: 'actions',
+							header: 'Actions',
+							size: 110,
+							cell: ({ row }: any) => {
+								const contact = row.original;
+								return (
+									<Group gap={4} wrap='nowrap'>
+										{onEdit && (
+											<ActionIcon
+												variant='subtle'
+												color='blue'
+												size='sm'
+												onClick={() => onEdit(contact)}
+											>
+												<IconPencil size={14} />
+											</ActionIcon>
+										)}
+										{onDelete && (
+											<ActionIcon
+												variant='subtle'
+												color='red'
+												size='sm'
+												onClick={() => onDelete(contact)}
+												loading={isDeleting?.(contact.id) || false}
+											>
+												<IconTrash size={14} />
+											</ActionIcon>
+										)}
+									</Group>
+								);
+							},
+						},
+					]
+				: []),
 		],
-		[]
+		[onEdit, onDelete, isDeleting]
 	);
 };

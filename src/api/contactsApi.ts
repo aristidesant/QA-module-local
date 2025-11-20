@@ -43,7 +43,7 @@ const contactsApi = (_authHeader?: Record<string, string>) => {
 			params?: {
 				limit?: number;
 				offset?: number;
-				firstName?: string;
+				name?: string;
 				email?: string;
 				phone?: string;
 				status?: string;

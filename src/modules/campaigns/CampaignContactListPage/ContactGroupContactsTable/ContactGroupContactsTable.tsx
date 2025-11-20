@@ -12,6 +12,9 @@ import { useContactFilters } from './useContactFilters';
 import type { Contact } from '~/models/ContactsModel';
 import type { SortingState } from '@tanstack/react-table';
 import { useContactColumns } from './useContactColumns';
+import EditContactModal from './EditContactModal';
+import { useDeleteContact } from '~/queries/contactsQueries';
+import { modals } from '@mantine/modals';
 import ContactListSkeleton from './ContactListSkeleton';
 import { useGetContactGroupContacts } from '~/queries/contactsQueries';
 import {
@@ -19,7 +22,7 @@ import {
 	useAppendContactGroupFile,
 	useUploadContactGroupFile,
 } from '~/queries/contactGroupFilesQueries';
-import PhoneNumbersTable from './PhoneNumbersTable';
+import EditablePhoneNumbersTable from './EditablePhoneNumbersTable';
 import AppendContactsModal from './AppendContactsModal';
 
 interface ContactGroupContactsTableProps {
@@ -112,7 +115,7 @@ export const ContactGroupContactsTable: React.FC<
 	const groupContactsQuery = useGetContactGroupContacts(contactGroupId, {
 		limit: pagination.itemsPerPage,
 		offset: (pagination.currentPage - 1) * pagination.itemsPerPage,
-		firstName: contactFilters.debouncedFilters.name || undefined,
+		name: contactFilters.debouncedFilters.name || undefined,
 		email: contactFilters.debouncedFilters.email || undefined,
 		phone: contactFilters.debouncedFilters.phone || undefined,
 	});
@@ -150,8 +153,60 @@ export const ContactGroupContactsTable: React.FC<
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [sorting]);
 
-	// Table columns
-	const columns = useContactColumns();
+	// Edit contact modal state
+	const [editContactId, setEditContactId] = useState<number | null>(null);
+	const [deletingContactId, setDeletingContactId] = useState<number | null>(
+		null
+	);
+	const deleteContactMutation = useDeleteContact();
+
+	const handleEditContact = useCallback((contact: Contact) => {
+		setEditContactId(contact.id);
+	}, []);
+
+	const handleDeleteContact = useCallback(
+		(contact: Contact) => {
+			modals.openConfirmModal({
+				title: 'Delete Contact',
+				children: `Are you sure you want to delete ${contact.firstName} ${contact.lastName}? This action cannot be undone.`,
+				labels: { confirm: 'Delete', cancel: 'Cancel' },
+				confirmProps: { color: 'red' },
+				onConfirm: () => {
+					setDeletingContactId(contact.id);
+					deleteContactMutation.mutate(contact.id.toString(), {
+						onSuccess: () => {
+							notifications.show({
+								title: 'Deleted',
+								message: 'Contact deleted successfully.',
+								color: 'green',
+							});
+							setDeletingContactId(null);
+							void groupContactsQuery.refetch();
+						},
+						onError: (error) => {
+							notifications.show({
+								title: 'Error',
+								message:
+									error instanceof Error
+										? error.message
+										: 'Failed to delete contact.',
+								color: 'red',
+							});
+							setDeletingContactId(null);
+						},
+					});
+				},
+			});
+		},
+		[deleteContactMutation, groupContactsQuery]
+	);
+
+	const columns = useContactColumns(
+		handleEditContact,
+		handleDeleteContact,
+		(contactId) =>
+			deleteContactMutation.isPending && deletingContactId === contactId
+	);
 
 	// Helper to get contact initials
 	const getInitials = useCallback((firstName: string, lastName: string) => {
@@ -281,7 +336,11 @@ export const ContactGroupContactsTable: React.FC<
 						renderExpandedRow={(contact) =>
 							contact.phoneNumbers && contact.phoneNumbers.length > 0 ? (
 								<div style={{ padding: '8px 0' }}>
-									<PhoneNumbersTable phoneNumbers={contact.phoneNumbers} />
+									<EditablePhoneNumbersTable
+										contactId={contact.id}
+										contactGroupId={contactGroupId}
+										phoneNumbers={contact.phoneNumbers}
+									/>
 								</div>
 							) : (
 								<Text size='sm' c='dimmed' p='md'>
@@ -328,6 +387,12 @@ export const ContactGroupContactsTable: React.FC<
 					isAppending={appendMutation.isPending}
 				/>
 			)}
+			<EditContactModal
+				opened={editContactId != null}
+				onClose={() => setEditContactId(null)}
+				contactId={editContactId}
+				contactGroupId={contactGroupId}
+			/>
 		</>
 	);
 };
