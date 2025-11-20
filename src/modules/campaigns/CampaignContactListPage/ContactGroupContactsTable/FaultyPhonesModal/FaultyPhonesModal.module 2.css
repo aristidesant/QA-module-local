@@ -1,0 +1,12 @@
+.phoneNumber {
+	font-family: 'Courier New', monospace;
+	letter-spacing: 0.5px;
+	white-space: nowrap;
+}
+
+.errorMessage {
+	max-width: 280px;
+	white-space: normal;
+	word-break: break-word;
+	overflow-wrap: anywhere;
+}

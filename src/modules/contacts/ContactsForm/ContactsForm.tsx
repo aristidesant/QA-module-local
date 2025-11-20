@@ -11,6 +11,7 @@ import {
 	Divider,
 } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
+import { notifications } from '@mantine/notifications';
 import {
 	useCreateContact,
 	useUpdateContact,
@@ -36,17 +37,27 @@ export default function ContactsForm({
 	const createContact = useCreateContact();
 	const updateContact = useUpdateContact();
 
-	const form = useForm<Partial<Contact>>({
+	// We keep local form shape broadened (includes helper fields like `email`)
+	const form = useForm<any>({
 		initialValues: {
 			firstName: '',
 			lastName: '',
-			phoneNumbers: [],
+			identifier: '',
+			identifierType: null,
+			birthDate: null,
+			address: '',
+			email: '', // single email input mapped to emails[]
+			phoneNumbers: [], // used only on create
 		},
 		validate: {
-			firstName: (value) => (value ? null : 'First name is required'),
-			lastName: (value) => (value ? null : 'Last name is required'),
-			phoneNumbers: (value) =>
-				value && value.length > 0 ? null : 'Phone number is required',
+			firstName: (value: string) => (value ? null : 'First name is required'),
+			lastName: (value: string) => (value ? null : 'Last name is required'),
+			phoneNumbers: (value: any[]) =>
+				mode === 'edit'
+					? null // allow empty during edit (handled elsewhere)
+					: value && value.length > 0
+						? null
+						: 'At least one phone number is required',
 		},
 	});
 
@@ -59,7 +70,7 @@ export default function ContactsForm({
 				identifierType: contact.identifierType,
 				// birthDate: contact.birthDate,
 				// address: contact.address,
-				emails: contact.emails,
+				email: contact.emails?.[0] || '',
 				phoneNumbers: contact.phoneNumbers,
 			});
 		} else if (mode === 'create') {
@@ -68,20 +79,50 @@ export default function ContactsForm({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [mode, contact]);
 
-	const onSubmit = async (values: Partial<Contact>) => {
+	const onSubmit = async (values: any) => {
+		// Build sanitized payload for backend
+		const payload: Partial<Contact> = {
+			firstName: values.firstName,
+			lastName: values.lastName,
+			identifier: values.identifier || undefined,
+			identifierType: values.identifierType || undefined,
+			emails: values.email ? [values.email] : contact?.emails, // preserve existing if blank
+		};
+
 		try {
 			if (mode === 'create') {
-				await createContact.mutateAsync(values);
+				// include phoneNumbers only on create if provided
+				if (values.phoneNumbers && values.phoneNumbers.length > 0) {
+					(payload as any).phoneNumbers = values.phoneNumbers;
+				}
+				await createContact.mutateAsync(payload);
+				notifications.show({
+					title: 'Contact Created',
+					message: 'The contact has been created successfully.',
+					color: 'green',
+				});
 			} else if (mode === 'edit' && contactId) {
 				await updateContact.mutateAsync({
 					id: contactId.toString(),
-					data: values,
+					data: payload, // exclude phoneNumbers for edit
+				});
+				notifications.show({
+					title: 'Contact Updated',
+					message: 'Changes saved successfully.',
+					color: 'green',
 				});
 			}
 			onSuccess();
 			form.reset();
 		} catch (error) {
-			// Error handled by Tanstack Query
+			notifications.show({
+				title: 'Error',
+				message:
+					error instanceof Error
+						? error.message
+						: 'Failed to submit contact form.',
+				color: 'red',
+			});
 		}
 	};
 
