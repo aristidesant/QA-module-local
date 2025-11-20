@@ -1,8 +1,9 @@
 // Refactored to use Mantine's useForm for all form state and validation
 
 import React, { useEffect } from 'react';
-import { Stack, LoadingOverlay, Box, ActionIcon } from '@mantine/core';
+import { Stack, LoadingOverlay, Box, ActionIcon, Tooltip } from '@mantine/core';
 import { useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router';
 import type { Campaign } from '../../../models/CampaignsModel';
 import {
 	useCreateCampaign,
@@ -25,7 +26,7 @@ import DoNotCallSection from './DoNotCallSection';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { CampaignStatus } from '~/models/CampaignStatus';
 import { modals } from '@mantine/modals';
-import { IconCalculator } from '@tabler/icons-react';
+import { IconCalculator, IconEye } from '@tabler/icons-react';
 import SchedulerCalculator from './ParametersSection/SchedulerCalculator';
 
 interface CampaignsFormProps {
@@ -38,6 +39,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	campaign,
 	onBack,
 }) => {
+	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const { selectedTab, rightComponent, resetView } = useCampaignsStore(
 		(state) => state
@@ -195,7 +197,24 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 				resetView();
 				onBack?.();
 			}}
-			title={`Editing campaign`}
+			title={
+				campaign?.id
+					? `Editing Campaign: ${campaign.name}`
+					: 'Create New Campaign'
+			}
+			titleRight={
+				campaign?.id && (
+					<Tooltip label='View Campaign' withArrow>
+						<ActionIcon
+							variant='light'
+							size='lg'
+							onClick={() => navigate(`/campaign/view/${campaign.id}`)}
+						>
+							<IconEye size={20} />
+						</ActionIcon>
+					</Tooltip>
+				)
+			}
 			description={`Manage settings and configurations for your campaign.`}
 			showBackButton
 		>

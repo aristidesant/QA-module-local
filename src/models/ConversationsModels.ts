@@ -21,6 +21,7 @@ export type PaginatedConversationsResponse<TConversation = ConversationsModel> =
 		conversations: TConversation[];
 	};
 import type AgentListObject from './AgentListObject';
+import { CallDispositionModel } from './CallDispositionModel';
 import type { Campaign } from './CampaignsModel';
 
 export type ConversationDemoModel = {
@@ -57,6 +58,7 @@ export interface ConversationsModel {
 	campaign: Campaign;
 	contact: Contact | null;
 	voiceFile: VoiceFileModel | null;
+	dispositions?: CallDispositionModel | null;
 	summary?: {
 		es?: string;
 		en?: string;

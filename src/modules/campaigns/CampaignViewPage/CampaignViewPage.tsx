@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Alert, Flex, Loader, Stack } from '@mantine/core';
-import { IconAlertCircle } from '@tabler/icons-react';
+import { Alert, Flex, Loader, Stack, ActionIcon, Tooltip } from '@mantine/core';
+import { IconAlertCircle, IconEdit } from '@tabler/icons-react';
 import CampaignPreview from '../CampaignPreview';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { useGetCampaign } from '~/queries/campaignsQueries';
@@ -97,6 +97,17 @@ const CampaignViewPage = () => {
 			description='Review the latest performance and configuration details.'
 			showBackButton
 			onBackClick={() => navigate('/campaigns')}
+			titleRight={
+				<Tooltip label='Edit Campaign' withArrow>
+					<ActionIcon
+						variant='light'
+						size='lg'
+						onClick={() => navigate(`/campaign/${campaign.id}`)}
+					>
+						<IconEdit size={20} />
+					</ActionIcon>
+				</Tooltip>
+			}
 			rightSection={<CampaignPreview campaign={campaign} />}
 			rightSectionTitle='Campaign snapshot'
 		>

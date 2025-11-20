@@ -183,7 +183,7 @@ const CampaignContactListPage = () => {
 
 	const commonContainerProps = {
 		showBackButton: true,
-		onBackClick: () => navigate(`/campaign/${campaignId}`),
+		onBackClick: () => navigate(`/campaign/view/${campaignId}`),
 	};
 
 	if (hasInvalidId) {
@@ -207,7 +207,7 @@ const CampaignContactListPage = () => {
 						<Button
 							variant='light'
 							leftSection={<IconArrowLeft size={16} />}
-							onClick={() => navigate(`/campaign/${campaignId}`)}
+							onClick={() => navigate(`/campaign/view/${campaignId}`)}
 						>
 							Return to Campaign
 						</Button>

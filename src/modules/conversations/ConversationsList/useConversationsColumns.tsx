@@ -98,11 +98,21 @@ export const useConversationsColumns = (userTimezone: string) => {
 				),
 			},
 			{
-				id: 'agent',
-				header: 'Agent',
-				cell: ({ row }) => (
-					<Text size='xs'>{row.original.agentName ?? '—'}</Text>
-				),
+				id: 'disposition',
+				header: 'Disposition',
+				cell: ({ row }) => {
+					const color =
+						row?.original?.dispositions?.callStatus === 'NEGATIVE'
+							? 'red'
+							: row?.original?.dispositions?.callStatus === 'POSITIVE'
+								? 'green'
+								: 'gray';
+					return (
+						<Badge color={color} size='xs'>
+							{row.original?.dispositions?.dispositionName ?? 'N/A'}
+						</Badge>
+					);
+				},
 			},
 			{
 				accessorKey: 'status',
