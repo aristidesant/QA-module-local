@@ -11,7 +11,6 @@ import {
 } from '~/queries/schedulerQueries';
 import styles from './SchedulerCard.module.css';
 import ScheduleHeader from './ScheduleHeader';
-import { ContactListView } from '../../ContactSection/ContactList/ContactListView';
 import CapacityCall from '../CapacityCall/CapacityCall';
 import {
 	SchedulerFormProvider,
@@ -175,14 +174,6 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 							<Stack gap='lg'>
 								{/* Capacity Call Section */}
 								<CapacityCall />
-
-								{/* Active Contact List */}
-								<ContactListView
-									contactGroups={scheduler.scheduleContactGroups || []}
-									onUpdateComplete={() => {}}
-									campaignId={campaignId}
-									isActive={true}
-								/>
 
 								{/* Update Schedule Button */}
 								<Group justify='flex-end'>

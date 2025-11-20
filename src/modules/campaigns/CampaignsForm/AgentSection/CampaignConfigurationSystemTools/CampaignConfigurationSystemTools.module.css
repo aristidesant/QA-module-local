@@ -1,21 +1,86 @@
-/* Styles for CampaignConfigurationSystemTools */
-
 .toolRow {
-	padding: var(--mantine-spacing-xs) 0;
-	border-bottom: 1px solid var(--mantine-color-gray-2);
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-sm);
+	background: var(--mantine-color-body);
+	transition:
+		border-color 120ms ease,
+		background-color 120ms ease;
+	border-left: 3px solid var(--mantine-color-gray-4);
 }
 
-.toolRow:last-child {
-	border-bottom: none;
+.toolRow:not(:last-child) {
+	margin-bottom: var(--mantine-spacing-xxs);
 }
 
-.toolSwitch {
+.toolRow:hover {
+	border-color: var(--mantine-color-gray-5);
+	background: var(--mantine-color-gray-0);
+}
+
+.toolRowActive {
+	border-color: var(--mantine-color-blue-5);
+	background: var(--mantine-color-blue-0);
+	border-left-color: var(--mantine-color-blue-5);
+}
+
+.rowHeader {
+	margin-bottom: var(--mantine-spacing-xxs);
+}
+
+.toolTitle {
 	flex: 1;
 }
 
+.iconBadge {
+	display: grid;
+	place-items: center;
+	width: 26px;
+	height: 26px;
+	border-radius: 999px;
+	background: var(--mantine-color-gray-1);
+	color: var(--mantine-color-gray-7);
+}
+
+.toolName {
+	font-size: var(--mantine-font-size-sm);
+}
+
+.toolType {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 2px 8px;
+	border-radius: 999px;
+	border: 1px solid var(--mantine-color-gray-3);
+	background: var(--mantine-color-gray-1);
+	color: var(--mantine-color-gray-7);
+	font-size: var(--mantine-font-size-xs);
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+}
+
+.toolTypeActive {
+	border-color: var(--mantine-color-blue-4);
+	color: var(--mantine-color-blue-8);
+	background: var(--mantine-color-blue-1);
+}
+
+.toolDescription {
+	line-height: 1.5;
+}
+
+.toolMeta {
+	color: var(--mantine-color-gray-7);
+	font-size: var(--mantine-font-size-xs);
+}
+
+.toolActions {
+	align-items: center;
+}
+
 .gearIcon {
-	flex-shrink: 0;
-	transition: color 0.2s;
+	transition: color 150ms ease;
 }
 
 .gearIcon:hover {

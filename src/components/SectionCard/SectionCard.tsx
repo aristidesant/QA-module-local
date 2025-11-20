@@ -1,8 +1,7 @@
 import React, { type ReactNode } from 'react';
-import { Card } from '@mantine/core';
-import styles from './SectionCard.module.css';
+import { Card, Text, Title } from '@mantine/core';
 import type { TablerIcon } from '@tabler/icons-react';
-import { SectionTitle } from '../SectionTitle';
+import styles from './SectionCard.module.css';
 
 export interface SectionCardProps {
 	icon?: TablerIcon;
@@ -32,6 +31,8 @@ export const SectionCard: React.FC<SectionCardProps> = ({
 	contentSpacing = 'md',
 	backgroundColor,
 	id,
+	className,
+	padding = 'lg',
 }) => {
 	// Convert spacing to pixel value if it's a string preset
 	const getSpacingValue = (): string => {
@@ -52,25 +53,39 @@ export const SectionCard: React.FC<SectionCardProps> = ({
 
 	const contentStyle = {
 		gap: getSpacingValue(),
-		...(backgroundColor ? { backgroundColor } : {}),
 	};
+
+	const cardClassName = [styles.sectionCard, className]
+		.filter(Boolean)
+		.join(' ');
 
 	return (
 		<Card
 			id={id}
+			className={cardClassName}
+			padding={padding}
 			style={backgroundColor ? { backgroundColor } : undefined}
 			data-testid='section-card'
 		>
-			{title && (
+			{(title || description || Icon || headerActions) && (
 				<div className={styles.sectionHeader}>
-					<SectionTitle
-						title={title}
-						description={description}
-						icon={Icon && <Icon size={20} />}
-						order={6}
-						withLine={true}
-						className={styles.sectionTitleWrapper}
-					/>
+					<div className={styles.sectionTitleContent}>
+						<div className={styles.sectionTitleRow}>
+							{Icon && (
+								<span className={styles.iconBadge}>
+									<Icon size={18} />
+								</span>
+							)}
+							{title && (
+								<Title order={5} className={styles.sectionTitle}>
+									{title}
+								</Title>
+							)}
+						</div>
+						{description && (
+							<Text className={styles.sectionDescription}>{description}</Text>
+						)}
+					</div>
 					{headerActions && (
 						<div className={styles.headerActions}>{headerActions}</div>
 					)}

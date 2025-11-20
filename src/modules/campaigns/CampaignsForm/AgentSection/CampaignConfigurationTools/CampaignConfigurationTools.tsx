@@ -1,6 +1,7 @@
 // CampaignConfigurationTools.tsx
 import { Group, Stack, Switch, Text } from '@mantine/core';
 import { useCallback } from 'react';
+import { IconPuzzle } from '@tabler/icons-react';
 import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
 import SectionCard from '~/components/SectionCard';
 import { useToolCategories } from '~/queries/toolCategoryQueries';
@@ -73,7 +74,7 @@ const CampaignConfigurationTools: React.FC = () => {
 			title='Custom Tools'
 			description='Tools to enhance agent functionality'
 		>
-			<Stack>
+			<Stack gap='xs'>
 				{!tools || tools.length === 0 ? (
 					<Text size='sm' c='dimmed'>
 						No agent tools configured.
@@ -82,22 +83,46 @@ const CampaignConfigurationTools: React.FC = () => {
 					tools.map((tool) => {
 						const isSelected = isToolSelected(tool.identifier);
 						return (
-							<Group
+							<div
 								key={tool.identifier}
-								justify='space-between'
-								wrap='nowrap'
-								className={classes.toolRow}
+								className={`${classes.toolRow} ${
+									isSelected ? classes.toolRowActive : ''
+								}`}
 							>
-								<Switch
-									label={tool.name}
-									description={tool.description || 'No description available'}
-									checked={isSelected}
-									onChange={() => {
-										handleToolToggle(tool, isSelected);
-									}}
-									className={classes.toolSwitch}
-								/>
-							</Group>
+								<Group
+									align='flex-start'
+									justify='space-between'
+									gap='sm'
+									className={classes.rowHeader}
+								>
+									<Group gap='xs' align='center' className={classes.toolTitle}>
+										<div className={classes.iconBadge}>
+											<IconPuzzle size={14} />
+										</div>
+										<div>
+											<Text fw={600} className={classes.toolName}>
+												{tool.name}
+											</Text>
+											<Text size='xs' className={classes.toolMeta}>
+												Custom integration
+											</Text>
+										</div>
+									</Group>
+
+									<Switch
+										aria-label={`Toggle ${tool.name}`}
+										checked={isSelected}
+										onChange={() => {
+											handleToolToggle(tool, isSelected);
+										}}
+										size='sm'
+										className={classes.toolSwitch}
+									/>
+								</Group>
+								<Text size='sm' c='dimmed' className={classes.toolDescription}>
+									{tool.description || 'No description available'}
+								</Text>
+							</div>
 						);
 					})
 				)}

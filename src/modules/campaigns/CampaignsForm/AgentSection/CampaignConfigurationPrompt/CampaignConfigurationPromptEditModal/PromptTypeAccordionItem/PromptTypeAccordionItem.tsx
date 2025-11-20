@@ -51,9 +51,9 @@ const PromptTypeAccordionItem: React.FC<PromptTypeAccordionItemProps> = ({
 	const promptOptions = useMemo(() => {
 		if (!otherPrompts) return [];
 		return otherPrompts
-			.filter((p) => p.campaignId !== campaignId)
+			.filter((p) => p.campaignId !== campaignId && p.id !== undefined)
 			.map((p) => ({
-				value: p.prompt,
+				value: String(p.id),
 				label: `Campaign #${p.campaignId}: ${p.prompt.substring(0, 50)}${
 					p.prompt.length > 50 ? '...' : ''
 				}`,
@@ -172,6 +172,19 @@ const PromptTypeAccordionItem: React.FC<PromptTypeAccordionItemProps> = ({
 		]
 	);
 
+	const handlePromptSelect = useCallback(
+		(promptId: string | null) => {
+			if (!promptId || !otherPrompts) return;
+			const selectedPrompt = otherPrompts.find(
+				(p) => p.id !== undefined && String(p.id) === promptId
+			);
+			if (selectedPrompt?.prompt) {
+				onChange(selectedPrompt.prompt);
+			}
+		},
+		[onChange, otherPrompts]
+	);
+
 	const promptLength = useMemo(() => value?.trim().length ?? 0, [value]);
 	const promptLines = useMemo(() => {
 		if (!value) return 0;
@@ -218,7 +231,7 @@ const PromptTypeAccordionItem: React.FC<PromptTypeAccordionItemProps> = ({
 							label='Reuse from another campaign'
 							placeholder='Load prompt from another campaign...'
 							data={promptOptions}
-							onChange={(val) => val && onChange(val)}
+							onChange={handlePromptSelect}
 							searchable
 							clearable
 							size='xs'

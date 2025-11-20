@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Stack, Switch, Text, Group, ActionIcon } from '@mantine/core';
-import { IconSettings } from '@tabler/icons-react';
+import { Stack, Switch, Text, Group, ActionIcon, Tooltip } from '@mantine/core';
+import { IconCpu, IconSettings } from '@tabler/icons-react';
 import SectionCard from '~/components/SectionCard';
 import { useClientConfigByName } from '~/queries/useClientConfigs';
 import type {
@@ -108,7 +108,7 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 
 			form.setFieldValue('agentConfig', updatedAgentConfig);
 		},
-		[form, configList]
+		[form]
 	);
 
 	const handleOpenModal = useCallback((toolConfig: ToolConfigModel) => {
@@ -163,7 +163,7 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 				title='System Tools'
 				description='Configure system-related settings for the campaign.'
 			>
-				<Stack>
+				<Stack gap='xs'>
 					{configList.length === 0 ? (
 						<Text size='sm' c='dimmed'>
 							No system tools configured.
@@ -172,33 +172,82 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 						configList.map((toolConfig) => {
 							const selected = isToolSelected(toolConfig.nameCode);
 							return (
-								<Group
+								<div
 									key={toolConfig.nameCode}
-									justify='space-between'
-									wrap='nowrap'
-									className={classes.toolRow}
+									className={`${classes.toolRow} ${
+										selected ? classes.toolRowActive : ''
+									}`}
 								>
-									<Switch
-										label={toolConfig.name}
-										description={
-											toolConfig.description || 'No description available'
-										}
-										checked={selected}
-										onChange={() => handleToggle(toolConfig, selected)}
-										className={classes.toolSwitch}
-									/>
-									{selected && (
-										<ActionIcon
-											variant='subtle'
-											color='gray'
-											size='lg'
-											onClick={() => handleOpenModal(toolConfig)}
-											className={classes.gearIcon}
+									<Group
+										align='flex-start'
+										justify='space-between'
+										gap='sm'
+										className={classes.rowHeader}
+									>
+										<Group
+											gap='xs'
+											align='center'
+											className={classes.toolTitle}
 										>
-											<IconSettings size={18} />
-										</ActionIcon>
-									)}
-								</Group>
+											<div className={classes.iconBadge}>
+												<IconCpu size={14} />
+											</div>
+											<div>
+												<Group gap={6} align='center'>
+													<Text fw={600} className={classes.toolName}>
+														{toolConfig.name}
+													</Text>
+													<span
+														className={`${classes.toolType} ${
+															selected ? classes.toolTypeActive : ''
+														}`}
+													>
+														{toolConfig.value?.type || 'Custom'}
+													</span>
+												</Group>
+												<Text size='xs' className={classes.toolMeta}>
+													System utility
+												</Text>
+											</div>
+										</Group>
+
+										<Group gap='xs' className={classes.toolActions}>
+											<Switch
+												aria-label={`Toggle ${toolConfig.name}`}
+												checked={selected}
+												onChange={() => handleToggle(toolConfig, selected)}
+												size='sm'
+											/>
+											<Tooltip
+												label={
+													selected ? 'Configure tool' : 'Enable to configure'
+												}
+												withArrow
+											>
+												<ActionIcon
+													variant='subtle'
+													color='gray'
+													size='md'
+													disabled={!selected}
+													onClick={() => {
+														if (!selected) return;
+														handleOpenModal(toolConfig);
+													}}
+													className={classes.gearIcon}
+												>
+													<IconSettings size={16} />
+												</ActionIcon>
+											</Tooltip>
+										</Group>
+									</Group>
+									<Text
+										size='sm'
+										c='dimmed'
+										className={classes.toolDescription}
+									>
+										{toolConfig.description || 'No description available'}
+									</Text>
+								</div>
 							);
 						})
 					)}
