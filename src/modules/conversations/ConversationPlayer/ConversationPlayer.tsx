@@ -32,6 +32,7 @@ interface ConversationPlayerProps {
 	title?: string;
 	description?: string;
 	paramConversationId?: number | string;
+	contactName?: string;
 }
 //IconDeviceAudioTape
 const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
@@ -40,6 +41,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 	title = 'Recording',
 	description,
 	paramConversationId,
+	contactName,
 }) => {
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [currentTime, setCurrentTime] = useState(0);
@@ -156,7 +158,12 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 			const url = URL.createObjectURL(result.blob);
 			const link = document.createElement('a');
 			link.href = url;
-			link.download = result.filename;
+
+			const filename = contactName
+				? `${contactName.toUpperCase()}.MP3`
+				: `conversation-${conversationId}.mp3`;
+
+			link.download = filename;
 			document.body.appendChild(link);
 			link.click();
 			document.body.removeChild(link);

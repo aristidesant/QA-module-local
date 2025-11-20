@@ -150,7 +150,15 @@ export function ConversationOverview({
 			const url = window.URL.createObjectURL(result.blob);
 			const link = document.createElement('a');
 			link.href = url;
-			link.download = result.filename;
+
+			const firstName = conversation.contact?.firstName || '';
+			const lastName = conversation.contact?.lastName || '';
+			const fullName = `${firstName} ${lastName}`.trim();
+			const filename = fullName
+				? `${fullName.toUpperCase()}.PDF`
+				: `conversation-${conversation.id}.pdf`;
+
+			link.download = filename;
 			document.body.appendChild(link);
 			link.click();
 			document.body.removeChild(link);
@@ -302,6 +310,9 @@ export function ConversationOverview({
 				title='Recording'
 				description='Listen to the call recording'
 				paramConversationId={conversation?.id}
+				contactName={`${getValueOrEmpty(contact?.firstName)} ${getValueOrEmpty(
+					contact?.lastName
+				)}`.trim()}
 			/>
 		</Stack>
 	);
