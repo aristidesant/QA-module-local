@@ -181,7 +181,6 @@ export const useCampaignsColumns = ({
 					<Group gap='xs'>
 						<Tooltip label='Edit campaign'>
 							<ActionIcon
-								variant='subtle'
 								color='blue'
 								radius='md'
 								aria-label='Edit campaign'
@@ -195,7 +194,6 @@ export const useCampaignsColumns = ({
 						</Tooltip>
 						<Tooltip label='View campaign'>
 							<ActionIcon
-								variant='subtle'
 								color='gray'
 								radius='md'
 								aria-label='View campaign'
@@ -210,7 +208,6 @@ export const useCampaignsColumns = ({
 						<Menu shadow='md' width={200}>
 							<Menu.Target>
 								<ActionIcon
-									variant='subtle'
 									color='gray'
 									radius='md'
 									aria-label='Campaign actions'

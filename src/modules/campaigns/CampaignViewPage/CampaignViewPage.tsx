@@ -12,8 +12,9 @@ const CampaignViewPage = () => {
 	const { campaignId } = useParams<{ campaignId: string }>();
 	const navigate = useNavigate();
 
-	const selectCampaign = useCampaignsStore((state) => state.selectCampaign);
-	const resetView = useCampaignsStore((state) => state.resetView);
+	const { selectCampaign, resetView, rightComponent } = useCampaignsStore(
+		(state) => state
+	);
 
 	const {
 		data: campaign,
@@ -108,8 +109,7 @@ const CampaignViewPage = () => {
 					</ActionIcon>
 				</Tooltip>
 			}
-			rightSection={<CampaignPreview campaign={campaign} />}
-			rightSectionTitle='Campaign snapshot'
+			rightSection={rightComponent || <></>}
 		>
 			<Stack gap='md'>
 				<ContactSection />
