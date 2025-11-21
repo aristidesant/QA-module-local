@@ -1,0 +1,11 @@
+.form {
+	width: 100%;
+}
+
+.actions {
+	margin-top: var(--mantine-spacing-sm);
+}
+
+.submitButton {
+	background-color: var(--mantine-color-blue-6);
+}

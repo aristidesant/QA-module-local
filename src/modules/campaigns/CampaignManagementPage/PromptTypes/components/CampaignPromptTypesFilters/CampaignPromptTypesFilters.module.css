@@ -1,0 +1,49 @@
+.filtersContainer {
+	padding: var(--mantine-spacing-md) 0;
+}
+
+.filtersHeader {
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+}
+
+.titleGroup {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+}
+
+.titleIcon {
+	color: var(--mantine-color-gray-6);
+}
+
+.title {
+	color: var(--mantine-color-gray-9);
+}
+
+.activeBadge {
+	background: var(--mantine-color-blue-0);
+	color: var(--mantine-color-blue-6);
+}
+
+.controlsWrapper {
+	display: flex;
+	gap: var(--mantine-spacing-xs);
+	align-items: center;
+}
+
+.searchInput {
+	min-width: 240px;
+}
+
+.searchIcon {
+	color: var(--mantine-color-gray-6);
+}
+
+.sortSelect {
+	min-width: 180px;
+}
+
+.clearButton {
+	border: 1px solid var(--mantine-color-gray-3);
+}

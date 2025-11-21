@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Text, Modal, ActionIcon } from '@mantine/core';
-import { IconPlus } from '@tabler/icons-react';
+import { Button, Modal, ActionIcon } from '@mantine/core';
+import { IconPlus, IconSearchOff, IconCategory } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import BaseTable from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
@@ -105,7 +105,9 @@ const CampaignCategoriesContent: React.FC<CampaignCategoriesContentProps> = ({
 	return (
 		<div className={styles.container}>
 			<SectionCard
+				icon={IconCategory}
 				title='Campaign Categories'
+				description='Organize categories used to classify campaigns and apply filters.'
 				padding='lg'
 				headerActions={
 					<ActionIcon
@@ -124,12 +126,19 @@ const CampaignCategoriesContent: React.FC<CampaignCategoriesContentProps> = ({
 
 				{categories.length === 0 && !isLoading ? (
 					<div className={styles.noResultsContainer}>
-						<Text size='lg' fw={500} ta='center'>
-							No categories match your filters
-						</Text>
-						<Text size='sm' c='dimmed' ta='center'>
-							Try adjusting your search criteria or filters
-						</Text>
+						<EmptyState
+							icon={<IconSearchOff size={48} />}
+							message='No categories match your filters'
+							description='Try adjusting your search criteria or filters'
+							action={
+								<Button
+									leftSection={<IconPlus size={16} />}
+									onClick={() => setCreateModalOpened(true)}
+								>
+									Create Category
+								</Button>
+							}
+						/>
 					</div>
 				) : (
 					<>

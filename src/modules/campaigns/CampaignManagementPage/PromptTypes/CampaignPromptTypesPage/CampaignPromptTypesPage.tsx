@@ -1,20 +1,20 @@
 import { useState } from 'react';
 import { Button } from '@mantine/core';
+import { IconMessageChatbot, IconPlus } from '@tabler/icons-react';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
-import CampaignObjectivesContent from '~/modules/campaigns/CampaignManagementPage/Objectives/components/CampaignObjectivesContent';
-import { IconTarget, IconPlus } from '@tabler/icons-react';
+import CampaignPromptTypesContent from '../components/CampaignPromptTypesContent';
 
-interface CampaignObjectivesPageProps {
+interface CampaignPromptTypesPageProps {
 	embedded?: boolean;
 }
 
-export default function CampaignObjectivesPage({
+const CampaignPromptTypesPage: React.FC<CampaignPromptTypesPageProps> = ({
 	embedded = false,
-}: CampaignObjectivesPageProps) {
+}) => {
 	const [createModalOpened, setCreateModalOpened] = useState(false);
 
 	const content = (
-		<CampaignObjectivesContent
+		<CampaignPromptTypesContent
 			createModalOpened={createModalOpened}
 			setCreateModalOpened={setCreateModalOpened}
 		/>
@@ -26,19 +26,21 @@ export default function CampaignObjectivesPage({
 
 	return (
 		<ContentContainer
-			title='Campaign Objectives'
-			description='Define and manage objectives to guide your campaign strategies and measure success'
-			titleIcon={<IconTarget size={24} />}
+			title='Campaign Prompt Types'
+			description='Manage the prompt types that organize campaign prompts.'
+			titleIcon={<IconMessageChatbot size={24} />}
 			titleRight={
 				<Button
 					leftSection={<IconPlus size={16} />}
 					onClick={() => setCreateModalOpened(true)}
 				>
-					Create Objective
+					Create Prompt Type
 				</Button>
 			}
 		>
 			{content}
 		</ContentContainer>
 	);
-}
+};
+
+export default CampaignPromptTypesPage;

@@ -1,19 +1,11 @@
 import React, { useState } from 'react';
-import {
-	Button,
-	Group,
-	Text,
-	Modal,
-	Badge,
-	Tooltip,
-	ActionIcon,
-} from '@mantine/core';
-import { IconPlus, IconEdit, IconTrash, IconTag } from '@tabler/icons-react';
+import { Button, Modal, ActionIcon } from '@mantine/core';
+import { IconPlus, IconSearchOff, IconTarget } from '@tabler/icons-react';
 import BaseTable from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
 import { useDeleteCampaignObjective } from '~/queries/campaignObjectivesQueries';
 import { CampaignObjective } from '~/models/CampaignObjectiveModel';
-import { ColumnDef } from '@tanstack/react-table';
+import { useCampaignObjectivesColumns } from './useCampaignObjectivesColumns';
 import { notifications } from '@mantine/notifications';
 import { CampaignObjectivesForm } from '../CampaignObjectivesForm/CampaignObjectivesForm';
 import { CampaignObjectivesFilters } from '../CampaignObjectivesFilters';
@@ -22,18 +14,17 @@ import { useCampaignObjectivesWithFilters } from '../../../../hooks/useFilteredO
 import styles from './CampaignObjectivesContent.module.css';
 import SectionCard from '~/components/SectionCard/SectionCard';
 
-type EnrichedObjective = CampaignObjective & {
-	categoryName: string;
-};
+// EnrichedObjective type is provided by the columns hook and the data hook
 
 interface CampaignObjectivesContentProps {
 	createModalOpened: boolean;
 	setCreateModalOpened: (opened: boolean) => void;
 }
 
-export const CampaignObjectivesContent: React.FC<
-	CampaignObjectivesContentProps
-> = ({ createModalOpened, setCreateModalOpened }) => {
+const CampaignObjectivesContent: React.FC<CampaignObjectivesContentProps> = ({
+	createModalOpened,
+	setCreateModalOpened,
+}) => {
 	const [editModalOpened, setEditModalOpened] = useState(false);
 	const [selectedObjective, setSelectedObjective] =
 		useState<CampaignObjective | null>(null);
@@ -72,122 +63,26 @@ export const CampaignObjectivesContent: React.FC<
 		}
 	};
 
-	const columns: ColumnDef<EnrichedObjective>[] = [
-		{
-			accessorKey: 'name',
-			header: 'Name',
-			cell: ({ row }) => (
-				<Text fw={600} className={styles.objectiveName}>
-					{row.original.name}
-				</Text>
-			),
-		},
-		{
-			accessorKey: 'categoryName',
-			header: 'Category',
-			cell: ({ row }) => (
-				<Group gap='xs'>
-					<IconTag size={14} className={styles.categoryIcon} />
-					<Text size='sm' className={styles.categoryName}>
-						{row.original.categoryName}
-					</Text>
-				</Group>
-			),
-		},
-		{
-			accessorKey: 'description',
-			header: 'Description',
-			cell: ({ row }) => (
-				<Text size='sm' c='dimmed' className={styles.objectiveDescription}>
-					{row.original.description || 'No description'}
-				</Text>
-			),
-		},
-		{
-			accessorKey: 'active',
-			header: 'Status',
-			cell: ({ row }) => (
-				<Badge
-					variant='dot'
-					color={row.original.active ? 'green' : 'gray'}
-					size='sm'
-					className={styles.statusBadge}
-				>
-					{row.original.active ? 'Active' : 'Inactive'}
-				</Badge>
-			),
-		},
-		{
-			id: 'actions',
-			header: 'Actions',
-			cell: ({ row }) => (
-				<Group gap='xs' className={styles.actionsGroup}>
-					<Tooltip label='Edit objective' withArrow>
-						<Button
-							size='xs'
-							variant='light'
-							onClick={() => handleEdit(row.original)}
-							className={styles.actionButton}
-						>
-							<IconEdit size={14} />
-						</Button>
-					</Tooltip>
-					<Tooltip label='Delete objective' withArrow>
-						<Button
-							size='xs'
-							variant='light'
-							color='red'
-							onClick={() => handleDelete(row.original.id)}
-							loading={deleteObjective.isPending}
-							className={styles.actionButton}
-						>
-							<IconTrash size={14} />
-						</Button>
-					</Tooltip>
-				</Group>
-			),
-		},
-	];
+	const columns = useCampaignObjectivesColumns({
+		onEdit: handleEdit,
+		onDelete: handleDelete,
+		isDeletePending: deleteObjective.isPending,
+	});
 
-	// Show empty state only if no objectives exist at all (not filtered)
-	const showEmptyState = objectives.length === 0 && !isLoading;
-
-	if (showEmptyState) {
-		return (
-			<div className={styles.container}>
-				<EmptyState
-					icon={<IconPlus size={48} />}
-					message='No objectives found'
-					description='Get started by creating your first campaign objective'
-					action={
-						<Button
-							leftSection={<IconPlus size={16} />}
-							onClick={() => setCreateModalOpened(true)}
-						>
-							Create Objective
-						</Button>
-					}
-				/>
-
-				<Modal
-					opened={createModalOpened}
-					onClose={() => setCreateModalOpened(false)}
-					title='Create Campaign Objective'
-					size='md'
-				>
-					<CampaignObjectivesForm
-						onSuccess={() => setCreateModalOpened(false)}
-						onCancel={() => setCreateModalOpened(false)}
-					/>
-				</Modal>
-			</div>
-		);
-	}
+	// Show initial empty state (no objectives exist) only when default filters are active
+	const defaultFiltersActive =
+		filters.search === '' &&
+		filters.status === 'all' &&
+		filters.categoryId === null;
+	const showInitialEmptyState =
+		objectives.length === 0 && !isLoading && defaultFiltersActive;
 
 	return (
 		<div className={styles.container}>
 			<SectionCard
+				icon={IconTarget}
 				title='Campaign Objectives'
+				description='Add and manage campaign objectives to define expected outcomes and tracking.'
 				padding='lg'
 				headerActions={
 					<ActionIcon
@@ -204,14 +99,37 @@ export const CampaignObjectivesContent: React.FC<
 					onFiltersChange={setFilters}
 				/>
 
-				{objectives.length === 0 && !isLoading ? (
+				{showInitialEmptyState ? (
+					<div className={styles.emptyStateContainer}>
+						<EmptyState
+							icon={<IconPlus size={48} />}
+							message='No objectives found'
+							description='Get started by creating your first campaign objective'
+							action={
+								<Button
+									leftSection={<IconPlus size={16} />}
+									onClick={() => setCreateModalOpened(true)}
+								>
+									Create Objective
+								</Button>
+							}
+						/>
+					</div>
+				) : objectives.length === 0 && !isLoading ? (
 					<div className={styles.noResultsContainer}>
-						<Text size='lg' fw={500} ta='center'>
-							No objectives match your filters
-						</Text>
-						<Text size='sm' c='dimmed' ta='center'>
-							Try adjusting your search criteria or filters
-						</Text>
+						<EmptyState
+							icon={<IconSearchOff size={48} />}
+							message='No objectives match your filters'
+							description='Try adjusting your search criteria or filters'
+							action={
+								<Button
+									leftSection={<IconPlus size={16} />}
+									onClick={() => setCreateModalOpened(true)}
+								>
+									Create Objective
+								</Button>
+							}
+						/>
 					</div>
 				) : (
 					<>
@@ -285,3 +203,5 @@ export const CampaignObjectivesContent: React.FC<
 		</div>
 	);
 };
+
+export default CampaignObjectivesContent;

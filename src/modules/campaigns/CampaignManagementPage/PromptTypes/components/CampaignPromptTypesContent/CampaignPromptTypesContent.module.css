@@ -1,0 +1,50 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+}
+
+.table {
+	background: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	overflow: hidden;
+}
+
+.typeName {
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+}
+
+.iconBadge {
+	font-family: var(--mantine-font-family-monospace);
+	text-transform: none;
+}
+
+.orderValue {
+	color: var(--mantine-color-gray-9);
+}
+
+.createdAt {
+	color: var(--mantine-color-dimmed);
+	font-size: var(--mantine-font-size-xs);
+}
+
+.actionsGroup {
+	gap: var(--mantine-spacing-xs);
+}
+
+.actionButton {
+	height: auto;
+	padding: 6px 10px;
+}
+
+.noResultsContainer {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: var(--mantine-spacing-xl);
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+}

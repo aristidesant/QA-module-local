@@ -44,6 +44,10 @@ export interface CampaignObjectiveResponse {
 	data: CampaignObjective[];
 }
 
+export type CampaignObjectiveWithCategoryName = CampaignObjective & {
+	categoryName: string;
+};
+
 export interface CampaignObjectiveApiParams {
 	name?: string;
 	categoryId?: number;

@@ -14,8 +14,15 @@ import {
 	Tooltip,
 	Pagination,
 	Badge,
+	Button,
 } from '@mantine/core';
-import { IconTrash, IconRefresh, IconBan, IconPlus } from '@tabler/icons-react';
+import {
+	IconTrash,
+	IconRefresh,
+	IconBan,
+	IconPlus,
+	IconDatabase,
+} from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { modals } from '@mantine/modals';
 import { useDispositionLabel } from '~/hooks/useDispositionLabel';
@@ -28,6 +35,7 @@ import {
 	useDeactivateDispositionCatalog,
 } from '~/queries/dispositionCatalogQueries';
 import DispositionCatalogForm from '../DispositionCatalogForm';
+import EmptyState from '~/components/EmptyState';
 import { type ColumnDef } from '@tanstack/react-table';
 import type { DispositionCatalogModel } from '~/models/DispositionCatalogModels';
 import styles from './DispositionCatalogList.module.css';
@@ -414,7 +422,9 @@ const DispositionCatalogList = forwardRef<DispositionCatalogListHandles>(
 		return (
 			<div className={styles.root}>
 				<SectionCard
+					icon={IconDatabase}
 					title='Outcome Catalogs'
+					description='Create and manage outcome catalogs to group disposition nodes for campaigns.'
 					padding='lg'
 					headerActions={
 						<ActionIcon variant='filled' color='blue' onClick={handleCreate}>
@@ -423,9 +433,21 @@ const DispositionCatalogList = forwardRef<DispositionCatalogListHandles>(
 					}
 				>
 					{!data || data.length === 0 ? (
-						<Center>
-							<Text>No outcome catalogs found.</Text>
-						</Center>
+						<div className={styles.emptyStateContainer}>
+							<EmptyState
+								icon={<IconPlus size={48} />}
+								message='No outcome catalogs found'
+								description='Get started by creating your first outcome catalog'
+								action={
+									<Button
+										leftSection={<IconPlus size={16} />}
+										onClick={handleCreate}
+									>
+										Create Catalog
+									</Button>
+								}
+							/>
+						</div>
 					) : (
 						<>
 							<div className={styles.table}>

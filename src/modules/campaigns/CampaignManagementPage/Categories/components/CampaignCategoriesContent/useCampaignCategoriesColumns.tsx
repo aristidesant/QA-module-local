@@ -22,7 +22,7 @@ export const useCampaignCategoriesColumns = ({
 				accessorKey: 'name',
 				header: 'Name',
 				cell: ({ row }) => (
-					<Text fw={600} className={styles.categoryName}>
+					<Text fw={500} size='sm' className={styles.categoryName}>
 						{row.original.name}
 					</Text>
 				),
@@ -31,9 +31,9 @@ export const useCampaignCategoriesColumns = ({
 				accessorKey: 'code',
 				header: 'Code',
 				cell: ({ row }) => (
-					<Text c='dimmed' size='sm' className={styles.categoryCode}>
+					<Badge tt={'none'} variant='outline' color='green' size='sm'>
 						{row.original.code}
-					</Text>
+					</Badge>
 				),
 			},
 			{
@@ -57,8 +57,8 @@ export const useCampaignCategoriesColumns = ({
 				header: 'Status',
 				cell: ({ row }) => (
 					<Badge
-						variant='light'
-						color={row.original.active ? 'green' : 'gray'}
+						variant='dot'
+						color={row.original.active ? 'teal' : 'gray'}
 						size='sm'
 						className={styles.statusBadge}
 					>

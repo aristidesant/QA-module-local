@@ -81,3 +81,15 @@
 	gap: var(--mantine-spacing-xs);
 	min-height: 200px;
 }
+
+.emptyStateContainer {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--mantine-spacing-xl);
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	gap: var(--mantine-spacing-xs);
+	min-height: 220px;
+}

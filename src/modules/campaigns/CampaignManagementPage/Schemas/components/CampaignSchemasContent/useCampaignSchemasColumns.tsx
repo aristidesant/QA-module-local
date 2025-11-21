@@ -8,7 +8,6 @@ import {
 	ActionIcon,
 	Box,
 	ThemeIcon,
-	Code,
 	CopyButton,
 } from '@mantine/core';
 import {
@@ -37,37 +36,15 @@ export const useCampaignSchemasColumns = ({
 			{
 				accessorKey: 'name',
 				header: 'Schema Details',
-				size: 300,
 				cell: ({ row }) => (
-					<Group gap='md' wrap='nowrap'>
-						<ThemeIcon size={42} radius='md' variant='light' color='blue'>
-							<IconDatabase size={22} stroke={1.5} />
-						</ThemeIcon>
-						<Box>
-							<Text size='sm' fw={600} c='dark.3' style={{ lineHeight: 1.3 }}>
-								{row.original.name}
-							</Text>
-							{row.original.description && (
-								<Tooltip
-									label={row.original.description}
-									multiline
-									w={300}
-									withArrow
-									position='bottom-start'
-								>
-									<Text
-										size='xs'
-										c='dimmed'
-										lineClamp={1}
-										mt={2}
-										style={{ cursor: 'help' }}
-									>
-										{row.original.description}
-									</Text>
-								</Tooltip>
-							)}
-						</Box>
-					</Group>
+					<Tooltip
+						label={row.original.description || 'No description'}
+						withArrow
+					>
+						<Text fz='xs' fw={600}>
+							{row.original.name}
+						</Text>
+					</Tooltip>
 				),
 			},
 			{
@@ -76,19 +53,9 @@ export const useCampaignSchemasColumns = ({
 				size: 140,
 				cell: ({ row }) => (
 					<Group gap={8} wrap='nowrap'>
-						<Code
-							c='dark.3'
-							bg='gray.1'
-							fw={600}
-							style={{
-								fontSize: '11px',
-								borderRadius: '6px',
-								padding: '4px 8px',
-								border: '1px solid var(--mantine-color-gray-2)',
-							}}
-						>
+						<Badge tt='none' size='sm' variant='outline' color='green'>
 							{row.original.code}
-						</Code>
+						</Badge>
 						<CopyButton value={row.original.code} timeout={2000}>
 							{({ copied, copy }) => (
 								<Tooltip
@@ -153,10 +120,9 @@ export const useCampaignSchemasColumns = ({
 						withArrow
 					>
 						<Badge
-							variant='light'
+							variant='dot'
 							color={row.original.isActive ? 'teal' : 'gray'}
-							size='md'
-							radius='sm'
+							size='xs'
 							tt='uppercase'
 							fw={600}
 						>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Text, Modal } from '@mantine/core';
+import { Button, Text, Modal, ActionIcon, Tooltip } from '@mantine/core';
 import { IconPlus, IconDatabase } from '@tabler/icons-react';
 import BaseTable from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
@@ -104,16 +104,20 @@ const CampaignSchemasContent: React.FC<CampaignSchemasContentProps> = ({
 	return (
 		<div className={styles.container}>
 			<SectionCard
+				icon={IconDatabase}
 				title='Campaign Schemas'
+				description='Campaign Schemas where the objectives belong to'
 				padding='lg'
 				headerActions={
-					<Button
-						leftSection={<IconPlus size={16} />}
-						onClick={() => setCreateModalOpened(true)}
-						size='xs'
-					>
-						Create Schema
-					</Button>
+					<Tooltip label='Create a new campaign schema' withArrow>
+						<ActionIcon
+							variant='filled'
+							onClick={() => setCreateModalOpened(true)}
+							size='xs'
+						>
+							<IconPlus size={16} />
+						</ActionIcon>
+					</Tooltip>
 				}
 			>
 				<CampaignSchemasFilters
