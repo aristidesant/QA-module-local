@@ -4,40 +4,6 @@
 	gap: var(--mantine-spacing-xl);
 }
 
-.sectionCard {
-	background: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: var(--mantine-radius-md);
-	padding: var(--mantine-spacing-xl);
-}
-
-.sectionHeader {
-	display: flex;
-	align-items: center;
-	gap: var(--mantine-spacing-sm);
-	margin-bottom: var(--mantine-spacing-md);
-	padding-bottom: var(--mantine-spacing-md);
-	border-bottom: 1px solid var(--mantine-color-gray-2);
-}
-
-.sectionIcon {
-	color: var(--mantine-color-blue-6);
-}
-
-.sectionTitle {
-	font-size: var(--mantine-font-size-lg);
-	font-weight: 600;
-	color: var(--mantine-color-text);
-	margin: 0;
-}
-
-.sectionDescription {
-	font-size: var(--mantine-font-size-sm);
-	color: var(--mantine-color-dimmed);
-	margin-top: var(--mantine-spacing-xs);
-	margin-bottom: var(--mantine-spacing-md);
-}
-
 .form {
 	display: flex;
 	flex-direction: column;
@@ -48,34 +14,6 @@
 	display: flex;
 	gap: var(--mantine-spacing-sm);
 	margin-top: var(--mantine-spacing-md);
-}
-
-.qrCodeContainer {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	padding: var(--mantine-spacing-xl);
-	background: var(--mantine-color-gray-0);
-	border-radius: var(--mantine-radius-md);
-	margin-bottom: var(--mantine-spacing-md);
-}
-
-.qrCode {
-	background: white;
-	padding: var(--mantine-spacing-md);
-	border-radius: var(--mantine-radius-sm);
-	margin-bottom: var(--mantine-spacing-md);
-}
-
-.secretKey {
-	font-family: var(--mantine-font-family-monospace);
-	font-size: var(--mantine-font-size-sm);
-	background: var(--mantine-color-gray-1);
-	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
-	border-radius: var(--mantine-radius-sm);
-	word-break: break-all;
-	text-align: center;
-	margin-top: var(--mantine-spacing-sm);
 }
 
 .statusBadge {
@@ -96,12 +34,6 @@
 .statusBadge.disabled {
 	background: var(--mantine-color-gray-1);
 	color: var(--mantine-color-gray-7);
-}
-
-.infoText {
-	font-size: var(--mantine-font-size-sm);
-	color: var(--mantine-color-dimmed);
-	margin-bottom: var(--mantine-spacing-md);
 }
 
 .stepList {

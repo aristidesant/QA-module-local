@@ -75,8 +75,11 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 	// Get campaign ID for fetching (only if campaign exists)
 	const campaignId = createdCampaign?.id ? String(createdCampaign.id) : '';
 
-	const { data: freshCampaign, isLoading: isFetchingCampaign } =
-		useGetCampaign(campaignId);
+	const {
+		data: freshCampaign,
+		isLoading: isFetchingCampaign,
+		refetch: reloadFreshCampaign,
+	} = useGetCampaign(campaignId);
 
 	// Update store with fresh campaign data when it loads
 	useEffect(() => {
@@ -324,6 +327,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 										{...form.getInputProps('agentPrompt')}
 										withAsterisk
 										minRows={7}
+										rows={7}
 										className={sharedStyles.field}
 									/>
 									<div className={styles.promptActions}>
@@ -391,6 +395,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 					onClose={() => setPromptEditorOpened(false)}
 					onSave={() => {
 						setPromptEditorOpened(false);
+						reloadFreshCampaign();
 						notifications.show({
 							title: 'Prompt Updated',
 							message: 'Agent prompt has been updated',

@@ -16,6 +16,7 @@ import {
 	useCurrentUser,
 } from '~/queries/userQueries';
 import { useSessionStore } from '~/stores/sessionStore';
+import { SectionCard } from '~/components/SectionCard/SectionCard';
 import styles from '../ProfilePage.module.css';
 
 export const MFASection: React.FC = () => {
@@ -166,14 +167,11 @@ export const MFASection: React.FC = () => {
 	};
 
 	return (
-		<div className={styles.sectionCard}>
-			<div className={styles.sectionHeader}>
-				<IconShieldCheck className={styles.sectionIcon} size={24} />
-				<div style={{ flex: 1 }}>
-					<h2 className={styles.sectionTitle}>
-						Two-Factor Authentication (MFA)
-					</h2>
-				</div>
+		<SectionCard
+			title='Two-Factor Authentication (MFA)'
+			description='Enhance your account security by requiring both your password and a verification code sent to your email address when signing in. This significantly reduces the risk of unauthorized access.'
+			icon={IconShieldCheck}
+			headerActions={
 				<div
 					className={`${styles.statusBadge} ${
 						isMFAEnabled ? styles.enabled : styles.disabled
@@ -191,12 +189,8 @@ export const MFASection: React.FC = () => {
 						</>
 					)}
 				</div>
-			</div>
-			<p className={styles.sectionDescription}>
-				Enhance your account security by requiring both your password and a
-				verification code sent to your email address when signing in. This
-				significantly reduces the risk of unauthorized access.
-			</p>
+			}
+		>
 			{!isMFAEnabled && !qrCodeUrl && !showEnableForm && (
 				<>
 					<Alert
@@ -379,6 +373,6 @@ export const MFASection: React.FC = () => {
 					</form>
 				</>
 			)}
-		</div>
+		</SectionCard>
 	);
 };

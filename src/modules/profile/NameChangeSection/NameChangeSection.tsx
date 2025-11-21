@@ -7,6 +7,7 @@ import {
 	useCurrentUser,
 	useUpdateCurrentUserName,
 } from '~/queries/userQueries';
+import { SectionCard } from '~/components/SectionCard/SectionCard';
 import styles from './NameChangeSection.module.css';
 
 export const NameChangeSection: React.FC = () => {
@@ -87,19 +88,11 @@ export const NameChangeSection: React.FC = () => {
 	}
 
 	return (
-		<div className={styles.section}>
-			<div className={styles.header}>
-				<div className={styles.titleGroup}>
-					<IconUser size={20} stroke={1.5} className={styles.icon} />
-					<div>
-						<h3 className={styles.title}>Display Name</h3>
-						<p className={styles.description}>
-							Update your first and last name that others will see
-						</p>
-					</div>
-				</div>
-			</div>
-
+		<SectionCard
+			title='Display Name'
+			description='Update your first and last name that others will see'
+			icon={IconUser}
+		>
 			<form onSubmit={handleSubmit} className={styles.form}>
 				<div className={styles.nameFields}>
 					<TextInput
@@ -154,7 +147,7 @@ export const NameChangeSection: React.FC = () => {
 					)}
 				</div>
 			</form>
-		</div>
+		</SectionCard>
 	);
 };
 

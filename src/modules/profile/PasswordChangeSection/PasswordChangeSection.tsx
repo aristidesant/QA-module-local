@@ -3,6 +3,7 @@ import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { IconLock, IconX } from '@tabler/icons-react';
 import { useChangePassword } from '~/queries/userQueries';
+import { SectionCard } from '~/components/SectionCard/SectionCard';
 import styles from '../ProfilePage.module.css';
 
 interface PasswordChangeSectionProps {
@@ -101,17 +102,11 @@ export const PasswordChangeSection: React.FC<PasswordChangeSectionProps> = ({
 	});
 
 	return (
-		<div className={styles.sectionCard}>
-			<div className={styles.sectionHeader}>
-				<IconLock className={styles.sectionIcon} size={24} />
-				<h2 className={styles.sectionTitle}>Change Password</h2>
-			</div>
-			<p className={styles.sectionDescription}>
-				Keep your account secure by regularly updating your password. Use a
-				strong, unique password with at least 8 characters that includes a mix
-				of letters, numbers, and symbols.
-			</p>
-
+		<SectionCard
+			title='Change Password'
+			description='Keep your account secure by regularly updating your password. Use a strong, unique password with at least 8 characters that includes a mix of letters, numbers, and symbols.'
+			icon={IconLock}
+		>
 			<form onSubmit={handleSubmit} className={styles.form}>
 				<PasswordInput
 					label='Current Password'
@@ -154,6 +149,6 @@ export const PasswordChangeSection: React.FC<PasswordChangeSectionProps> = ({
 					)}
 				</div>
 			</form>
-		</div>
+		</SectionCard>
 	);
 };

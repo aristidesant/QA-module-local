@@ -3,14 +3,13 @@ import SectionCard from '~/components/SectionCard';
 import useCampaignsPredefinedParams, {
 	CampaignPredefinedParam,
 } from '../../useCampaignsPredefinedParams';
-import { Stack, Text, Group, ActionIcon, Tooltip } from '@mantine/core';
+import { Stack, Text, Group, Button, Paper, ThemeIcon } from '@mantine/core';
 import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
 import { deepMergeConfig } from '~/utils/objectUtils';
 import type { CampaignPredefinedConversationConfig } from '~/models/CampaignPredefinedParam';
 import type { ConversationConfigModel } from '~/models/AgentListObject';
-import { IconRefresh, IconCheck } from '@tabler/icons-react';
+import { IconCheck, IconSettings } from '@tabler/icons-react';
 import CampaignPredefinedParamsModal from './CampaignPredefinedParamsModal';
-import styles from './CampaignConfigurationPredefinedParams.module.css';
 
 const CampaignConfigurationPredefinedParams: React.FC = () => {
 	const predefinedParams = useCampaignsPredefinedParams();
@@ -71,12 +70,9 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 	};
 
 	const currentPredefinedParam = useMemo(() => {
-		console.log('predefinedParams:', predefinedParams, form.values.configId);
-
 		if (!predefinedParams || predefinedParams.length === 0) {
 			return null;
 		}
-
 		return predefinedParams.find((param) => param.id === form.values.configId);
 	}, [predefinedParams, form.values.configId]);
 
@@ -86,51 +82,55 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 				title='Active Configuration'
 				description='Select and apply predefined conversation configurations for your campaign agent.'
 			>
-				<Stack gap='md'>
-					{currentPredefinedParam ? (
-						<div className={styles.appliedConfigCard}>
-							<Group
-								gap='md'
-								align='flex-start'
-								wrap='nowrap'
-								justify='space-between'
-							>
-								<Group gap='md' align='flex-start' wrap='nowrap'>
-									<div className={styles.checkIconCircle}>
-										<IconCheck size={24} stroke={2.5} />
-									</div>
-									<Stack gap={4} style={{ flex: 1 }}>
-										<Text fw={600} fz='lg' c='dark'>
-											{currentPredefinedParam.name}
-										</Text>
-										<Text fz='sm' c='dimmed'>
-											Active configuration
-										</Text>
-										<Text fz='sm' c='dimmed' mt={8}>
-											Configuration applied successfully
-										</Text>
-									</Stack>
-								</Group>
-								<Tooltip label='Change configuration'>
-									<ActionIcon
-										variant='subtle'
-										size='lg'
-										onClick={handleOpenModal}
-										aria-label='Change configuration'
-									>
-										<IconRefresh size={20} />
-									</ActionIcon>
-								</Tooltip>
+				{currentPredefinedParam ? (
+					<Paper withBorder p='md' radius='md' bg='var(--mantine-color-body)'>
+						<Group justify='space-between' align='center'>
+							<Group gap='sm'>
+								<ThemeIcon size='lg' radius='xl' color='teal' variant='light'>
+									<IconCheck size={20} />
+								</ThemeIcon>
+								<div>
+									<Text fw={600} size='sm'>
+										{currentPredefinedParam.name}
+									</Text>
+									<Text size='xs' c='dimmed'>
+										Active configuration
+									</Text>
+								</div>
 							</Group>
-						</div>
-					) : (
-						<div className={styles.emptyConfigCard}>
-							<Text fz='sm' c='dimmed' ta='center'>
+							<Button
+								variant='light'
+								size='xs'
+								onClick={handleOpenModal}
+								leftSection={<IconSettings size={14} />}
+							>
+								Change
+							</Button>
+						</Group>
+					</Paper>
+				) : (
+					<Paper
+						withBorder
+						p='lg'
+						radius='md'
+						bg='var(--mantine-color-gray-0)'
+						style={{ borderStyle: 'dashed' }}
+					>
+						<Stack align='center' gap='xs'>
+							<Text size='sm' c='dimmed'>
 								No configuration applied
 							</Text>
-						</div>
-					)}
-				</Stack>
+							<Button
+								variant='outline'
+								size='xs'
+								onClick={handleOpenModal}
+								leftSection={<IconSettings size={14} />}
+							>
+								Select Configuration
+							</Button>
+						</Stack>
+					</Paper>
+				)}
 			</SectionCard>
 
 			<CampaignPredefinedParamsModal

@@ -6,8 +6,9 @@ import {
 	IconCalendar,
 	IconShieldOff,
 } from '@tabler/icons-react';
-import { Divider, Text } from '@mantine/core';
+import { Stack, Text } from '@mantine/core';
 import { useSessionStore } from '~/stores/sessionStore';
+import { RightSectionCard } from '~/components/RightSectionCard/RightSectionCard';
 import styles from './UserInfoCard.module.css';
 
 export const UserInfoCard: React.FC = () => {
@@ -47,163 +48,87 @@ export const UserInfoCard: React.FC = () => {
 	};
 
 	return (
-		<div className={styles.card}>
-			{/* Header Section */}
-			<div className={styles.header}>
-				<div className={styles.avatarContainer}>
-					<div className={styles.avatar}>{initials}</div>
-				</div>
-				<div className={styles.userInfo}>
-					<h3 className={styles.userName}>{fullName}</h3>
-					{hasName && <p className={styles.userUsername}>@{user.username}</p>}
-					<p className={styles.userEmail}>{user.email}</p>
-				</div>
-			</div>
-
-			<Divider my='lg' color='gray.2' />
-
-			{/* Information Grid */}
-			<div className={styles.infoGrid}>
-				{hasName && (
-					<>
-						{user.firstName && (
-							<div className={styles.infoRow}>
-								<div className={styles.infoLabel}>
-									<IconUser
-										size={16}
-										stroke={1.5}
-										className={styles.labelIcon}
-									/>
-									<Text size='xs' c='dimmed' fw={500}>
-										First Name
-									</Text>
-								</div>
-								<div className={styles.infoValue}>
-									<Text size='sm' fw={500}>
-										{user.firstName}
-									</Text>
-								</div>
-							</div>
-						)}
-						{user.lastName && (
-							<div className={styles.infoRow}>
-								<div className={styles.infoLabel}>
-									<IconUser
-										size={16}
-										stroke={1.5}
-										className={styles.labelIcon}
-									/>
-									<Text size='xs' c='dimmed' fw={500}>
-										Last Name
-									</Text>
-								</div>
-								<div className={styles.infoValue}>
-									<Text size='sm' fw={500}>
-										{user.lastName}
-									</Text>
-								</div>
-							</div>
-						)}
-					</>
-				)}
-
-				<div className={styles.infoRow}>
-					<div className={styles.infoLabel}>
-						<IconUser size={16} stroke={1.5} className={styles.labelIcon} />
-						<Text size='xs' c='dimmed' fw={500}>
-							Username
-						</Text>
+		<Stack gap='md'>
+			<RightSectionCard
+				title='User Profile'
+				icon={IconUser}
+				iconColor='var(--mantine-color-indigo-6)'
+			>
+				<div className={styles.profileContent}>
+					<div className={styles.avatarContainer}>
+						<div className={styles.avatar}>{initials}</div>
 					</div>
-					<div className={styles.infoValue}>
-						<Text size='sm' fw={500}>
-							{user.username}
-						</Text>
-					</div>
-				</div>
-
-				<div className={styles.infoRow}>
-					<div className={styles.infoLabel}>
-						<IconMail size={16} stroke={1.5} className={styles.labelIcon} />
-						<Text size='xs' c='dimmed' fw={500}>
-							Email Address
-						</Text>
-					</div>
-					<div className={styles.infoValue}>
-						<Text size='sm' fw={500} className={styles.emailText}>
-							{user.email}
-						</Text>
-					</div>
-				</div>
-
-				<div className={styles.infoRow}>
-					<div className={styles.infoLabel}>
-						<IconBuildingSkyscraper
-							size={16}
-							stroke={1.5}
-							className={styles.labelIcon}
-						/>
-						<Text size='xs' c='dimmed' fw={500}>
-							Client ID
-						</Text>
-					</div>
-					<div className={styles.infoValue}>
-						<Text size='sm' fw={600} className={styles.clientIdText}>
-							#{user.clientId}
-						</Text>
-					</div>
-				</div>
-
-				<div className={styles.infoRow}>
-					<div className={styles.infoLabel}>
-						<IconCalendar size={16} stroke={1.5} className={styles.labelIcon} />
-						<Text size='xs' c='dimmed' fw={500}>
-							Member Since
-						</Text>
-					</div>
-					<div className={styles.infoValue}>
-						<Text size='sm' fw={500}>
-							{formatDate(user.createdAt)}
-						</Text>
-					</div>
-				</div>
-			</div>
-
-			<Divider my='lg' color='gray.2' />
-
-			{/* Security Section */}
-			<div className={styles.securitySection}>
-				<div className={styles.sectionTitle}>
-					<IconShieldCheck
-						size={18}
-						stroke={1.5}
-						className={styles.sectionIcon}
-					/>
-					<Text size='sm' fw={600}>
-						Security
-					</Text>
-				</div>
-				<div className={styles.securityCard}>
-					<div className={styles.securityItem}>
-						<Text size='xs' c='dimmed' fw={500}>
-							Two-Factor Authentication
-						</Text>
-						<div
-							className={`${styles.mfaBadge} ${
-								isMFAEnabled ? styles.mfaEnabled : styles.mfaDisabled
-							}`}
-						>
-							{isMFAEnabled ? (
-								<IconShieldCheck size={16} stroke={2} />
-							) : (
-								<IconShieldOff size={16} stroke={2} />
-							)}
-							<Text size='sm' fw={600}>
-								{isMFAEnabled ? 'Enabled' : 'Disabled'}
-							</Text>
+					<div className={styles.userInfo}>
+						<h3 className={styles.userName}>{fullName}</h3>
+						{hasName && <p className={styles.userUsername}>@{user.username}</p>}
+						<div className={styles.emailBadge}>
+							<IconMail size={14} />
+							<span>{user.email}</span>
 						</div>
 					</div>
 				</div>
-			</div>
-		</div>
+			</RightSectionCard>
+
+			<RightSectionCard
+				title='Account Details'
+				icon={IconShieldCheck}
+				iconColor='var(--mantine-color-teal-6)'
+			>
+				<div className={styles.detailsList}>
+					<div className={styles.detailItem}>
+						<div className={styles.detailIcon}>
+							<IconBuildingSkyscraper size={16} />
+						</div>
+						<div className={styles.detailContent}>
+							<Text size='xs' c='dimmed' fw={600} tt='uppercase'>
+								Client ID
+							</Text>
+							<Text size='sm' fw={700} className={styles.clientIdText}>
+								#{user.clientId}
+							</Text>
+						</div>
+					</div>
+
+					<div className={styles.detailItem}>
+						<div className={styles.detailIcon}>
+							<IconCalendar size={16} />
+						</div>
+						<div className={styles.detailContent}>
+							<Text size='xs' c='dimmed' fw={600} tt='uppercase'>
+								Member Since
+							</Text>
+							<Text size='sm' fw={500}>
+								{formatDate(user.createdAt)}
+							</Text>
+						</div>
+					</div>
+
+					<div className={styles.detailItem}>
+						<div className={styles.detailIcon}>
+							{isMFAEnabled ? (
+								<IconShieldCheck
+									size={16}
+									color='var(--mantine-color-green-6)'
+								/>
+							) : (
+								<IconShieldOff size={16} color='var(--mantine-color-red-6)' />
+							)}
+						</div>
+						<div className={styles.detailContent}>
+							<Text size='xs' c='dimmed' fw={600} tt='uppercase'>
+								Security Status
+							</Text>
+							<div
+								className={`${styles.mfaBadge} ${
+									isMFAEnabled ? styles.mfaEnabled : styles.mfaDisabled
+								}`}
+							>
+								{isMFAEnabled ? 'MFA Enabled' : 'MFA Disabled'}
+							</div>
+						</div>
+					</div>
+				</div>
+			</RightSectionCard>
+		</Stack>
 	);
 };

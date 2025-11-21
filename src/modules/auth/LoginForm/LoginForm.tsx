@@ -7,7 +7,6 @@ import {
 	Stack,
 	Alert,
 	Loader,
-	Group,
 	Divider,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -142,12 +141,12 @@ export function LoginForm() {
 					{/* Loading overlay */}
 					{(isSubmitting || isRedirecting) && (
 						<div className={classes.loadingOverlay}>
-							<Group gap='sm'>
-								<Loader size='sm' />
-								<Text size='sm' c='dimmed'>
+							<Stack gap='xs' align='center'>
+								<Loader size='sm' type='dots' />
+								<Text size='sm' fw={500} c='dimmed'>
 									Signing in...
 								</Text>
-							</Group>
+							</Stack>
 						</div>
 					)}
 					<Stack gap='xs'>
