@@ -1,270 +1,372 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
-  TextInput,
-  Textarea,
-  Button,
-  Paper,
-  Stack,
-  Group,
-  Text,
-  Badge,
-  Title,
-  FileInput,
+	TextInput,
+	Textarea,
+	Button,
+	Stack,
+	Group,
+	Text,
+	Badge,
+	FileInput,
+	Box,
+	Alert,
+	Divider,
 } from '@mantine/core';
-import { IconFile, IconUpload, IconWorldWww } from '@tabler/icons-react';
+import { useForm } from '@mantine/form';
+import {
+	IconFile,
+	IconUpload,
+	IconWorldWww,
+	IconBook,
+	IconInfoCircle,
+} from '@tabler/icons-react';
 import FormSelect from '~/components/ui/FormSelect/FormSelect';
-import { useCreateKnowledgeBase, useKnowledgeBase, useUpdateKnowledgeBase } from '~/queries/knowledgeBaseQueries';
+import {
+	useCreateKnowledgeBase,
+	useKnowledgeBase,
+	useUpdateKnowledgeBase,
+} from '~/queries/knowledgeBaseQueries';
 import { KnowledgeBaseType } from '~/models/KnowledgeBaseModel';
 import useKnowledgeBaseStore from '../store/knowledgeBaseStore';
+import RightSectionCard from '~/components/RightSectionCard/RightSectionCard';
 import styles from './KnowledgeBaseForm.module.css';
 
 interface Props {
-  id?: number;
+	id?: number;
 }
 
+type FormValues = {
+	name: string;
+	description: string;
+	type: KnowledgeBaseType | '';
+	sourceUrl: string;
+	textContent: string;
+	file: File | null;
+};
+
 const KnowledgeBaseForm = ({ id }: Props = {}) => {
-  const clearRight = useKnowledgeBaseStore((s) => s.clearRightComponent);
-  const createMutation = useCreateKnowledgeBase();
-  const updateMutation = useUpdateKnowledgeBase();
-  const { data: kb, isLoading } = useKnowledgeBase(id);
+	const clearRight = useKnowledgeBaseStore((s) => s.clearRightComponent);
+	const createMutation = useCreateKnowledgeBase();
+	const updateMutation = useUpdateKnowledgeBase();
+	const { data: kb, isLoading } = useKnowledgeBase(id);
 
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [type, setType] = useState<KnowledgeBaseType | ''>('');
-  const [sourceUrl, setSourceUrl] = useState<string>('');
-  const [textContent, setTextContent] = useState<string>('');
-  const [file, setFile] = useState<File | null>(null);
+	const hasExistingFile = useMemo(
+		() => Boolean(kb?.file || kb?.fileId),
+		[kb?.file, kb?.fileId]
+	);
+	const hasExistingText = useMemo(
+		() => Boolean(kb?.textContent?.trim()),
+		[kb?.textContent]
+	);
 
-  // Derived validation state
-  const urlError = useMemo(() => {
-    if (type !== KnowledgeBaseType.URL) return null;
-    if (!sourceUrl) return 'Please enter a URL.';
-    try {
-      // Will throw on invalid
-      // eslint-disable-next-line no-new
-      new URL(sourceUrl);
-      return null;
-    } catch {
-      return 'Enter a valid URL (e.g., https://example.com/docs).';
-    }
-  }, [sourceUrl, type]);
+	const form = useForm<FormValues>({
+		initialValues: {
+			name: '',
+			description: '',
+			type: '',
+			sourceUrl: '',
+			textContent: '',
+			file: null,
+		},
+		validate: (values) => {
+			const errors: Partial<Record<keyof FormValues, string>> = {};
 
-  const fileError = useMemo(() => {
-    const hasExistingFile = !!kb?.file || !!kb?.fileId;
-    if (type === KnowledgeBaseType.FILE) {
-      // Require a file if creating without an existing one; allow keeping current file on update
-      return !file && !hasExistingFile ? 'Please upload a file.' : null;
-    }
-    if (type === KnowledgeBaseType.TEXT) {
-      const existingText = kb?.textContent?.trim();
-      return !file && !textContent?.trim() && !existingText ? 'Add text or upload a .txt/.md file.' : null;
-    }
-    return null;
-  }, [file, textContent, type, kb?.file, kb?.fileId, kb?.textContent]);
+			if (!values.name.trim()) {
+				errors.name = 'Name is required.';
+			}
 
-  const isSaving = createMutation?.status === 'pending' || updateMutation?.status === 'pending';
+			if (!values.type) {
+				errors.type = 'Select how you will provide content.';
+			}
 
-  const canSave = useMemo(() => {
-    if (!name.trim()) return false;
-    if (!type) return false;
-    if (type === KnowledgeBaseType.URL && urlError) return false;
-    if ((type === KnowledgeBaseType.FILE || type === KnowledgeBaseType.TEXT) && fileError) return false;
-    return true;
-  }, [fileError, name, type, urlError]);
+			if (values.type === KnowledgeBaseType.URL) {
+				if (!values.sourceUrl) {
+					errors.sourceUrl = 'Please enter a URL.';
+				} else {
+					try {
+						// eslint-disable-next-line no-new
+						new URL(values.sourceUrl);
+					} catch {
+						errors.sourceUrl =
+							'Enter a valid URL (e.g., https://example.com/docs).';
+					}
+				}
+			}
 
-  useEffect(() => {
-    if (!kb) return;
-    setName(kb.name ?? '');
-    setDescription(kb.description ?? '');
-    setType(kb.type ?? '');
-    setSourceUrl(kb.sourceUrl ?? '');
-    setTextContent(kb.textContent ?? '');
-    // Do not set file from server value; file is only for new upload
-  }, [kb]);
+			if (values.type === KnowledgeBaseType.FILE && !hasExistingFile) {
+				if (!values.file) {
+					errors.file = 'Upload a PDF to continue.';
+				}
+			}
 
-  const onSave = async () => {
-    if (!canSave) return;
-    try {
-      if (id) {
-        await updateMutation.mutateAsync({
-          id: Number(id),
-          data: {
-            name: name.trim(),
-            description: description.trim(),
-            type: type || undefined,
-            sourceUrl: sourceUrl || undefined,
-            textContent: textContent || undefined,
-            file: file || undefined,
-          },
-        });
-      } else {
-        await createMutation.mutateAsync({
-          name: name.trim(),
-          description: description.trim(),
-          type: type || undefined,
-          sourceUrl: sourceUrl || undefined,
-          textContent: textContent || undefined,
-          file: file || undefined,
-        });
-      }
-      clearRight();
-    } catch (err) {
-      // swallow here; mutations have their own error handling
-    }
-  };
+			if (values.type === KnowledgeBaseType.TEXT && !hasExistingText) {
+				if (!values.textContent.trim() && !values.file) {
+					errors.textContent = 'Add text or upload a .txt/.md file.';
+				}
+			}
 
-  // compute status label/color to show on top header as requested
-  const headerStatus = (() => {
-    const label = (kb?.status ?? (file ? 'PENDING' : 'INACTIVE')) as string;
-    const colorMap: Record<string, string> = {
-      PENDING: 'yellow',
-      UPLOADING: 'blue',
-      ACTIVE: 'green',
-      FAILED: 'red',
-      INACTIVE: 'gray',
-    };
-    const color = colorMap[label] ?? 'blue';
-    return { label, color } as const;
-  })();
+			return errors;
+		},
+		validateInputOnBlur: true,
+		validateInputOnChange: true,
+	});
 
-  return (
-    <div className={styles.container}>
-      {/* 1) Centralized Title with description and status - No card */}
-      <Stack gap="xs" align="center" className={styles.header}>
-        <Title order={3} className={styles.title}>Knowledge Base</Title>
-        <Text c="dimmed" size="sm" ta="center">
-          Add or edit a knowledge base entry for your agent.
-        </Text>
-        <Badge color={headerStatus.color} size="sm">{headerStatus.label}</Badge>
-      </Stack>
+	useEffect(() => {
+		if (!kb) return;
+		form.setValues({
+			name: kb.name ?? '',
+			description: kb.description ?? '',
+			type: kb.type ?? '',
+			sourceUrl: kb.sourceUrl ?? '',
+			textContent: kb.textContent ?? '',
+			file: null,
+		});
+		form.resetDirty();
+		// Do not set file from server value; file is only for new upload
+		// form object is stable; dependency on form triggers unnecessary reruns
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [kb]);
 
-      {/* 2) Card with the Form inputs */}
-  <Paper withBorder radius="sm" p="xs">
-  <Stack gap="sm">
-          <TextInput
-            label="Name"
-            placeholder="e.g., Product FAQs"
-            value={name}
-            onChange={(e) => setName(e.currentTarget.value)}
-            required
-            disabled={isLoading}
-          />
+	const parseError = (error: unknown) => {
+		if (!error) return null;
+		if (typeof error === 'string') return error;
+		if (error instanceof Error) return error.message;
+		if (typeof (error as any)?.response?.data?.message === 'string') {
+			return (error as any).response.data.message as string;
+		}
+		return 'Unable to save this knowledge base. Please try again.';
+	};
 
-          <FormSelect
-            label="Type"
-            placeholder="Select a content source"
-            value={type ?? ''}
-            onChange={(v) => {
-              setType((v as KnowledgeBaseType) ?? '');
-              // Reset source-specific fields when switching type
-              setSourceUrl('');
-              setTextContent('');
-              setFile(null);
-            }}
-            data={[
-              { value: KnowledgeBaseType.FILE, label: 'File (PDF)' },
-              { value: KnowledgeBaseType.URL, label: 'URL' },
-              { value: KnowledgeBaseType.TEXT, label: 'Text (paste/upload)' },
-            ]}
-            disabled={isLoading}
-          />
+	const handleSubmit = form.onSubmit(async (values) => {
+		try {
+			const payload = {
+				name: values.name.trim(),
+				description: values.description.trim(),
+				type: values.type || undefined,
+				sourceUrl: values.sourceUrl || undefined,
+				textContent: values.textContent || undefined,
+				file: values.file || undefined,
+			};
 
-          {type === KnowledgeBaseType.URL && (
-            <TextInput
-              label="Source URL"
-              placeholder="https://example.com/docs/article"
-              value={sourceUrl}
-              onChange={(e) => setSourceUrl(e.currentTarget.value)}
-              leftSection={<IconWorldWww size={16} />}
-              error={urlError}
-              description="Publicly accessible page to fetch content from."
-              disabled={isLoading}
-            />
-          )}
+			if (id) {
+				await updateMutation.mutateAsync({
+					id: Number(id),
+					data: payload,
+				});
+			} else {
+				await createMutation.mutateAsync(payload);
+			}
+			clearRight();
+		} catch (err) {
+			// Errors handled via mutation state and alert
+		}
+	});
 
-          {type === KnowledgeBaseType.TEXT && (
-            <Textarea
-              label="Text Content"
-              placeholder="Paste relevant text here..."
-              value={textContent}
-              onChange={(e) => setTextContent(e.currentTarget.value)}
-              autosize
-              minRows={4}
-              disabled={isLoading}
-            />
-          )}
+	const isSaving =
+		createMutation?.status === 'pending' ||
+		updateMutation?.status === 'pending';
 
-          <Textarea
-            label="Description"
-            placeholder="Short internal note about this knowledge base"
-            value={description}
-            onChange={(e) => setDescription(e.currentTarget.value)}
-            autosize
-            minRows={3}
-            disabled={isLoading}
-          />
+	// compute status label/color to show on top header as requested
+	const headerStatus = (() => {
+		const label = (kb?.status ??
+			(form.values.file ? 'PENDING' : 'INACTIVE')) as string;
+		const colorMap: Record<string, string> = {
+			PENDING: 'yellow',
+			UPLOADING: 'blue',
+			ACTIVE: 'green',
+			FAILED: 'red',
+			INACTIVE: 'gray',
+		};
+		const color = colorMap[label] ?? 'blue';
+		return { label, color } as const;
+	})();
 
-          {/* Only show upload inputs when creating a new knowledge base (no `id`) */}
-          {!id && (type === KnowledgeBaseType.FILE || type === KnowledgeBaseType.TEXT) && (
-            <div className={styles.fileBlock}>
-              <FileInput
-                label={type === KnowledgeBaseType.FILE ? 'Upload file' : 'Optional: Upload text file'}
-                placeholder={type === KnowledgeBaseType.FILE ? 'Choose a file or drop it here' : 'Attach a .txt or .md (optional)'}
-                value={file}
-                onChange={setFile}
-                accept={type === KnowledgeBaseType.FILE ? '.pdf,application/pdf' : '.txt,text/plain,.md'}
-                leftSection={<IconFile size={16} />}
-                rightSection={<IconUpload size={16} />}
-                clearable
-                error={fileError}
-                description={
-                  type === KnowledgeBaseType.FILE
-                    ? 'Supported: PDF. Max 25MB.'
-                    : 'Supported: TXT/MD. You can also paste text above.'
-                }
-                disabled={isLoading}
-              />
-              {file && (
-                <Text size="sm" className={styles.fileName} title={file.name}>
-                  {file.name}
-                </Text>
-              )}
-            </div>
-          )}
-        </Stack>
-      </Paper>
+	const mutationError = parseError(
+		createMutation.error ?? updateMutation.error
+	);
 
-      {/* 3) Card with informational stuff (not editable, visible for update only) */}
-      {id && kb?.type === KnowledgeBaseType.FILE && (
-        <Paper withBorder radius="sm" p="xs">
-          <Stack gap="xs">
-            <Group justify="space-between">
-              <Text size="sm" c="dimmed">File name</Text>
-              <Text size="sm">{file ? file.name : (kb?.file?.name ?? 'No file')}</Text>
-            </Group>
-          </Stack>
-        </Paper>
-      )}
+	return (
+		<RightSectionCard
+			title='Knowledge Base'
+			description='Add or edit a knowledge base entry for your agent.'
+			icon={IconBook}
+			rightSection={
+				<Badge color={headerStatus.color} size='sm'>
+					{headerStatus.label}
+				</Badge>
+			}
+		>
+			<form className={styles.form} onSubmit={handleSubmit}>
+				{mutationError && (
+					<Alert
+						color='red'
+						icon={<IconInfoCircle size={16} />}
+						className={styles.alert}
+					>
+						{mutationError}
+					</Alert>
+				)}
 
-      {/* 4) Card with the button actions */}
-  <Paper withBorder radius="sm" p="xs" className={styles.footerCard}>
-        <Group justify="space-between" className={styles.footer}>
-          <Text size="sm" c="dimmed">
-            Changes are saved to your workspace.
-          </Text>
-          <Group gap="sm">
-            <Button variant="default" onClick={() => clearRight()} disabled={isSaving}>
-              Cancel
-            </Button>
-            <Button onClick={onSave} loading={isSaving} disabled={!canSave || isLoading}>
-              Save
-            </Button>
-          </Group>
-        </Group>
-      </Paper>
-    </div>
-  );
+				<Stack gap='sm' className={styles.section}>
+					<div className={styles.sectionHeader}>
+						<Text className={styles.sectionTitle}>Basics</Text>
+						<Text size='xs' c='dimmed'>
+							Name this base and choose how its content will be ingested.
+						</Text>
+					</div>
+					<TextInput
+						label='Name'
+						placeholder='e.g., Product FAQs'
+						required
+						disabled={isLoading}
+						withAsterisk
+						{...form.getInputProps('name')}
+					/>
+
+					<FormSelect
+						label='Type'
+						placeholder='Select a content source'
+						value={form.values.type ?? ''}
+						onChange={(v) => {
+							const nextType = (v as KnowledgeBaseType) ?? '';
+							form.setFieldValue('type', nextType);
+							form.setFieldValue('sourceUrl', '');
+							form.setFieldValue('textContent', '');
+							form.setFieldValue('file', null);
+						}}
+						data={[
+							{ value: KnowledgeBaseType.FILE, label: 'File (PDF)' },
+							{ value: KnowledgeBaseType.URL, label: 'URL' },
+							{ value: KnowledgeBaseType.TEXT, label: 'Text (paste/upload)' },
+						]}
+						disabled={isLoading}
+						error={form.errors.type}
+						className={styles.fullWidth}
+					/>
+				</Stack>
+
+				<Divider
+					label='Content source'
+					labelPosition='left'
+					className={styles.divider}
+				/>
+
+				<Stack gap='sm' className={styles.section}>
+					<Box className={styles.hint}>
+						<Text size='xs' c='dimmed'>
+							Use a live URL for public docs, upload a PDF, or paste text to
+							train your agent. Choose the option that best matches your
+							content.
+						</Text>
+					</Box>
+
+					{form.values.type === KnowledgeBaseType.URL && (
+						<TextInput
+							label='Source URL'
+							placeholder='https://example.com/docs/article'
+							leftSection={<IconWorldWww size={16} />}
+							description='Publicly accessible page to fetch content from.'
+							disabled={isLoading}
+							{...form.getInputProps('sourceUrl')}
+						/>
+					)}
+
+					{form.values.type === KnowledgeBaseType.TEXT && (
+						<Textarea
+							label='Text Content'
+							placeholder='Paste relevant text here...'
+							autosize
+							minRows={4}
+							disabled={isLoading}
+							{...form.getInputProps('textContent')}
+						/>
+					)}
+
+					{!id &&
+						(form.values.type === KnowledgeBaseType.FILE ||
+							form.values.type === KnowledgeBaseType.TEXT) && (
+							<Box>
+								<FileInput
+									label={
+										form.values.type === KnowledgeBaseType.FILE
+											? 'Upload file'
+											: 'Optional: Upload text file'
+									}
+									placeholder={
+										form.values.type === KnowledgeBaseType.FILE
+											? 'Choose a file or drop it here'
+											: 'Attach a .txt or .md (optional)'
+									}
+									value={form.values.file}
+									onChange={(value) => form.setFieldValue('file', value)}
+									accept={
+										form.values.type === KnowledgeBaseType.FILE
+											? '.pdf,application/pdf'
+											: '.txt,text/plain,.md'
+									}
+									leftSection={<IconFile size={16} />}
+									rightSection={<IconUpload size={16} />}
+									clearable
+									error={form.errors.file}
+									description={
+										form.values.type === KnowledgeBaseType.FILE
+											? 'Supported: PDF. Max 25MB.'
+											: 'Supported: TXT/MD. You can also paste text above.'
+									}
+									disabled={isLoading}
+								/>
+								{form.values.file && (
+									<Text size='sm' mt='xs' c='dimmed'>
+										Selected: {form.values.file.name}
+									</Text>
+								)}
+							</Box>
+						)}
+				</Stack>
+
+				<Divider
+					label='Notes'
+					labelPosition='left'
+					className={styles.divider}
+				/>
+
+				<Textarea
+					label='Description'
+					placeholder='Short internal note about this knowledge base'
+					autosize
+					minRows={3}
+					disabled={isLoading}
+					{...form.getInputProps('description')}
+				/>
+
+				{id && kb?.type === KnowledgeBaseType.FILE && (
+					<Box className={styles.metaCard}>
+						<Text className={styles.metaLabel}>Current file</Text>
+						<Text className={styles.metaValue}>
+							{form.values.file?.name ?? kb?.file?.name ?? 'No file uploaded'}
+						</Text>
+					</Box>
+				)}
+
+				<Group justify='flex-end' className={styles.actions}>
+					<Button
+						variant='default'
+						onClick={() => clearRight()}
+						disabled={isSaving}
+					>
+						Cancel
+					</Button>
+					<Button
+						type='submit'
+						loading={isSaving}
+						disabled={!form.isValid() || isLoading}
+					>
+						Save
+					</Button>
+				</Group>
+			</form>
+		</RightSectionCard>
+	);
 };
 
 export default KnowledgeBaseForm;
-

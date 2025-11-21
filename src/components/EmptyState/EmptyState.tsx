@@ -19,7 +19,12 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
 	return (
 		<div className={`${styles.wrapper} ${className || ''}`.trim()}>
-			<Stack align='center' justify='center' className={styles.container}>
+			<Stack
+				align='center'
+				justify='center'
+				gap='xs'
+				className={styles.container}
+			>
 				{icon && (
 					<div className={styles.iconWrapper}>
 						<div className={styles.icon}>{icon}</div>

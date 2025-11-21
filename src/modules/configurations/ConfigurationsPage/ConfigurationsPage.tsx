@@ -1,4 +1,5 @@
-import { Tabs, rem } from '@mantine/core';
+import { Tabs } from '@mantine/core';
+import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import {
 	IconSettings,
 	IconList,
@@ -24,23 +25,28 @@ export default function ConfigurationsPage() {
 	};
 
 	return (
-		<div className={styles.container}>
-			<Tabs value={getActiveTab()} variant='outline'>
+		<ContentContainer
+			title='Configurations'
+			description='Manage global, campaign, regional, do not call, and knowledge base settings'
+			titleIcon={<IconSettings size={24} />}
+		>
+			<Tabs
+				value={getActiveTab()}
+				variant='outline'
+				radius='md'
+				classNames={{ tab: styles.tab }}
+			>
 				<Tabs.List>
 					<Tabs.Tab
 						value='client-configs'
-						leftSection={
-							<IconSettings style={{ width: rem(16), height: rem(16) }} />
-						}
+						leftSection={<IconSettings size={16} />}
 						onClick={() => navigate('/configurations/client-configs')}
 					>
 						Global
 					</Tabs.Tab>
 					<Tabs.Tab
 						value='campaign-predefined-params'
-						leftSection={
-							<IconList style={{ width: rem(16), height: rem(16) }} />
-						}
+						leftSection={<IconList size={16} />}
 						onClick={() =>
 							navigate('/configurations/campaign-predefined-params')
 						}
@@ -49,37 +55,31 @@ export default function ConfigurationsPage() {
 					</Tabs.Tab>
 					<Tabs.Tab
 						value='regional-settings-params'
-						leftSection={
-							<IconGlobe style={{ width: rem(16), height: rem(16) }} />
-						}
+						leftSection={<IconGlobe size={16} />}
 						onClick={() => navigate('/configurations/regional-settings-params')}
 					>
 						Regional
 					</Tabs.Tab>
 					<Tabs.Tab
 						value='do-not-call'
-						leftSection={
-							<IconPhoneOff style={{ width: rem(16), height: rem(16) }} />
-						}
+						leftSection={<IconPhoneOff size={16} />}
 						onClick={() => navigate('/configurations/do-not-call')}
 					>
 						Do Not Call
 					</Tabs.Tab>
 					<Tabs.Tab
 						value='knowledge-bases'
-						leftSection={
-							<IconLibrary style={{ width: rem(16), height: rem(16) }} />
-						}
+						leftSection={<IconLibrary size={16} />}
 						onClick={() => navigate('/configurations/knowledge-bases')}
 					>
 						Knowledge Base
 					</Tabs.Tab>
 				</Tabs.List>
 
-				<Tabs.Panel value={getActiveTab()}>
+				<Tabs.Panel value={getActiveTab()} py='xs'>
 					<Outlet />
 				</Tabs.Panel>
 			</Tabs>
-		</div>
+		</ContentContainer>
 	);
 }

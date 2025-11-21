@@ -181,7 +181,6 @@ export const useKnowledgeBaseColumns = (
 										target='_blank'
 										rel='noopener noreferrer'
 										size='sm'
-										variant='subtle'
 									>
 										{item.type === KnowledgeBaseType.URL ? (
 											<IconExternalLink size={16} />
@@ -197,7 +196,6 @@ export const useKnowledgeBaseColumns = (
 								<Tooltip label='Retry upload' position='top'>
 									<ActionIcon
 										size='sm'
-										variant='subtle'
 										onClick={async () => {
 											try {
 												await retryMutation.mutateAsync(Number(item.id));
@@ -220,7 +218,6 @@ export const useKnowledgeBaseColumns = (
 										setRight(<KnowledgeBaseForm id={Number(item.id)} />)
 									}
 									size='sm'
-									variant='subtle'
 								>
 									<IconEdit size={16} />
 								</ActionIcon>
@@ -239,7 +236,6 @@ export const useKnowledgeBaseColumns = (
 										})
 									}
 									size='sm'
-									variant='subtle'
 								>
 									<IconTrash size={16} />
 								</ActionIcon>
