@@ -265,18 +265,20 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 							{...form.getInputProps('username')}
 						/>
 					</div>
-					<div className={`${classes.row} ${classes.rowSingle}`}>
-						<Select
-							label='Client'
-							placeholder='Assign client'
-							data={clientOptions}
-							className={classes.field}
-							value={form.values.clientId}
-							onChange={(value) => form.setFieldValue('clientId', value)}
-							withAsterisk
-							searchable
-						/>
-					</div>
+					{!isEditMode && (
+						<div className={`${classes.row} ${classes.rowSingle}`}>
+							<Select
+								label='Client'
+								placeholder='Assign client'
+								data={clientOptions}
+								className={classes.field}
+								value={form.values.clientId}
+								onChange={(value) => form.setFieldValue('clientId', value)}
+								withAsterisk
+								searchable
+							/>
+						</div>
+					)}
 					{!isEditMode && (
 						<div className={`${classes.row} ${classes.rowSingle}`}>
 							<PasswordInput
