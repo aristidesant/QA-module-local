@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@mantine/core';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { IconDatabase, IconPlus } from '@tabler/icons-react';
-import { CampaignSchemasContent } from '~/modules/campaigns/CampaignSchemasContent';
+import CampaignSchemasContent from '~/modules/campaigns/CampaignManagementPage/Schemas/components/CampaignSchemasContent';
 
 interface CampaignSchemasPageProps {
 	embedded?: boolean;

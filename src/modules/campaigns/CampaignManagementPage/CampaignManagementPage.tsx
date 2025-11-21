@@ -13,7 +13,12 @@ export default function CampaignManagementPage() {
 			description='Manage campaign categories, objectives, schemas, and outcomes'
 			titleIcon={<IconSettings size={24} />}
 		>
-			<Tabs defaultValue='categories' keepMounted={false}>
+			<Tabs
+				defaultValue='categories'
+				keepMounted={false}
+				variant='pills'
+				radius='md'
+			>
 				<Tabs.List>
 					<Tabs.Tab value='categories'>Categories</Tabs.Tab>
 					<Tabs.Tab value='objectives'>Objectives</Tabs.Tab>
@@ -21,19 +26,19 @@ export default function CampaignManagementPage() {
 					<Tabs.Tab value='outcomes'>Outcomes</Tabs.Tab>
 				</Tabs.List>
 
-				<Tabs.Panel value='categories' pt='md'>
+				<Tabs.Panel value='categories' py='xs'>
 					<CampaignCategoriesPage embedded />
 				</Tabs.Panel>
 
-				<Tabs.Panel value='objectives' pt='md'>
+				<Tabs.Panel value='objectives' py='xs'>
 					<CampaignObjectivesPage embedded />
 				</Tabs.Panel>
 
-				<Tabs.Panel value='schemas' pt='md'>
+				<Tabs.Panel value='schemas' py='xs'>
 					<CampaignSchemasPage embedded />
 				</Tabs.Panel>
 
-				<Tabs.Panel value='outcomes' pt='md'>
+				<Tabs.Panel value='outcomes' py='xs'>
 					<DispositionPage embedded />
 				</Tabs.Panel>
 			</Tabs>

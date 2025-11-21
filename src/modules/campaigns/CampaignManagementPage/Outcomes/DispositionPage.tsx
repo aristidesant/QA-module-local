@@ -1,13 +1,14 @@
-import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
-import DispositionCatalogList, {
-	DispositionCatalogListHandles,
-} from './DispositionCatalogList';
-import { useDispositionStore } from './dispositionRightComponentStore';
-import DispositionCatalogNode from './DispositionCatalogForm/DispositionCatalogNode';
-import FallbackRightComponent from '~/components/FallbackRightComponent';
 import { useEffect, useRef } from 'react';
 import { Button } from '@mantine/core';
 import { IconOutbound } from '@tabler/icons-react';
+import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
+
+import { useDispositionStore } from './dispositionRightComponentStore';
+import FallbackRightComponent from '~/components/FallbackRightComponent';
+import DispositionCatalogList, {
+	DispositionCatalogListHandles,
+} from './components/DispositionCatalogList';
+import DispositionCatalogNode from './components/DispositionCatalogForm/DispositionCatalogNode';
 
 interface DispositionPageProps {
 	embedded?: boolean;

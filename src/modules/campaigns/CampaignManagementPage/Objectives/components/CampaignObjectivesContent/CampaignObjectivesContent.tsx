@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { Button, Group, Text, Modal, Badge, Tooltip } from '@mantine/core';
+import {
+	Button,
+	Group,
+	Text,
+	Modal,
+	Badge,
+	Tooltip,
+	ActionIcon,
+} from '@mantine/core';
 import { IconPlus, IconEdit, IconTrash, IconTag } from '@tabler/icons-react';
 import BaseTable from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
@@ -10,8 +18,9 @@ import { notifications } from '@mantine/notifications';
 import { CampaignObjectivesForm } from '../CampaignObjectivesForm/CampaignObjectivesForm';
 import { CampaignObjectivesFilters } from '../CampaignObjectivesFilters';
 import PaginationControls from '~/components/PaginationControls';
-import { useCampaignObjectivesWithFilters } from '../hooks/useFilteredObjectives';
+import { useCampaignObjectivesWithFilters } from '../../../../hooks/useFilteredObjectives';
 import styles from './CampaignObjectivesContent.module.css';
+import SectionCard from '~/components/SectionCard/SectionCard';
 
 type EnrichedObjective = CampaignObjective & {
 	categoryName: string;
@@ -68,7 +77,7 @@ export const CampaignObjectivesContent: React.FC<
 			accessorKey: 'name',
 			header: 'Name',
 			cell: ({ row }) => (
-				<Text fw={500} className={styles.objectiveName}>
+				<Text fw={600} className={styles.objectiveName}>
 					{row.original.name}
 				</Text>
 			),
@@ -79,7 +88,7 @@ export const CampaignObjectivesContent: React.FC<
 			cell: ({ row }) => (
 				<Group gap='xs'>
 					<IconTag size={14} className={styles.categoryIcon} />
-					<Text className={styles.categoryName}>
+					<Text size='sm' className={styles.categoryName}>
 						{row.original.categoryName}
 					</Text>
 				</Group>
@@ -89,7 +98,7 @@ export const CampaignObjectivesContent: React.FC<
 			accessorKey: 'description',
 			header: 'Description',
 			cell: ({ row }) => (
-				<Text className={styles.objectiveDescription}>
+				<Text size='sm' c='dimmed' className={styles.objectiveDescription}>
 					{row.original.description || 'No description'}
 				</Text>
 			),
@@ -99,7 +108,7 @@ export const CampaignObjectivesContent: React.FC<
 			header: 'Status',
 			cell: ({ row }) => (
 				<Badge
-					variant='light'
+					variant='dot'
 					color={row.original.active ? 'green' : 'gray'}
 					size='sm'
 					className={styles.statusBadge}
@@ -116,7 +125,7 @@ export const CampaignObjectivesContent: React.FC<
 					<Tooltip label='Edit objective' withArrow>
 						<Button
 							size='xs'
-							variant='subtle'
+							variant='light'
 							onClick={() => handleEdit(row.original)}
 							className={styles.actionButton}
 						>
@@ -126,7 +135,7 @@ export const CampaignObjectivesContent: React.FC<
 					<Tooltip label='Delete objective' withArrow>
 						<Button
 							size='xs'
-							variant='subtle'
+							variant='light'
 							color='red'
 							onClick={() => handleDelete(row.original.id)}
 							loading={deleteObjective.isPending}
@@ -177,49 +186,64 @@ export const CampaignObjectivesContent: React.FC<
 
 	return (
 		<div className={styles.container}>
-			<CampaignObjectivesFilters
-				filters={filters}
-				onFiltersChange={setFilters}
-			/>
+			<SectionCard
+				title='Campaign Objectives'
+				padding='lg'
+				headerActions={
+					<ActionIcon
+						variant='filled'
+						color='blue'
+						onClick={() => setCreateModalOpened(true)}
+					>
+						<IconPlus size={18} />
+					</ActionIcon>
+				}
+			>
+				<CampaignObjectivesFilters
+					filters={filters}
+					onFiltersChange={setFilters}
+				/>
 
-			{objectives.length === 0 && !isLoading ? (
-				<div className={styles.noResultsContainer}>
-					<Text size='lg' fw={500} ta='center'>
-						No objectives match your filters
-					</Text>
-					<Text size='sm' c='dimmed' ta='center'>
-						Try adjusting your search criteria or filters
-					</Text>
-				</div>
-			) : (
-				<>
-					<BaseTable
-						data={objectives}
-						columns={columns}
-						isLoading={isLoading}
-						className={styles.table}
-					/>
+				{objectives.length === 0 && !isLoading ? (
+					<div className={styles.noResultsContainer}>
+						<Text size='lg' fw={500} ta='center'>
+							No objectives match your filters
+						</Text>
+						<Text size='sm' c='dimmed' ta='center'>
+							Try adjusting your search criteria or filters
+						</Text>
+					</div>
+				) : (
+					<>
+						<BaseTable
+							data={objectives}
+							columns={columns}
+							isLoading={isLoading}
+							className={styles.table}
+							density='default'
+						/>
 
-					<PaginationControls
-						currentPage={pagination.page}
-						totalPages={Math.ceil(pagination.total / pagination.pageSize)}
-						itemsPerPage={pagination.pageSize}
-						totalItems={pagination.total}
-						onPageChange={(page) => setPagination({ ...pagination, page })}
-						onItemsPerPageChange={(value) => {
-							if (value) {
-								setPagination({
-									...pagination,
-									page: 1,
-									pageSize: parseInt(value, 10),
-								});
-							}
-						}}
-						isLoading={isLoading}
-						itemLabel='objectives'
-					/>
-				</>
-			)}
+						<PaginationControls
+							currentPage={pagination.page}
+							totalPages={Math.ceil(pagination.total / pagination.pageSize)}
+							itemsPerPage={pagination.pageSize}
+							totalItems={pagination.total}
+							onPageChange={(page) => setPagination({ ...pagination, page })}
+							onItemsPerPageChange={(value) => {
+								if (value) {
+									setPagination({
+										...pagination,
+										page: 1,
+										pageSize: parseInt(value, 10),
+									});
+								}
+							}}
+							isLoading={isLoading}
+							itemLabel='objectives'
+						/>
+					</>
+				)}
+			</SectionCard>
 
 			{/* Create Modal */}
 			<Modal

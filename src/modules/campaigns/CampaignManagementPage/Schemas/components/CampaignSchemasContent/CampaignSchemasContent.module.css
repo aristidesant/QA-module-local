@@ -1,33 +1,14 @@
 .container {
-	padding: var(--mantine-spacing-md);
 	display: flex;
 	flex-direction: column;
-	gap: 0;
-}
-
-.header {
-	padding-bottom: var(--mantine-spacing-sm);
-	border-bottom: 1px solid var(--mantine-color-gray-3);
-}
-
-.createButton {
-	background-color: var(--mantine-color-blue-6);
-	border: none;
-	border-radius: var(--mantine-radius-sm);
-	color: white;
-	font-weight: 500;
-}
-
-.createButton:hover {
-	background-color: var(--mantine-color-blue-7);
+	gap: var(--mantine-spacing-md);
 }
 
 .table {
-	font-size: 13px;
 	background: var(--mantine-color-white);
 	border-radius: var(--mantine-radius-md);
-	overflow: hidden;
 	border: 1px solid var(--mantine-color-gray-2);
+	overflow: hidden;
 }
 
 .schemaName {
@@ -36,11 +17,8 @@
 }
 
 .schemaCode {
-	font-size: var(--mantine-font-size-sm);
 	font-family: var(--mantine-font-family-monospace);
-	background-color: var(--mantine-color-gray-1);
-	padding: 2px 6px;
-	border-radius: var(--mantine-radius-xs);
+	letter-spacing: 0.5px;
 }
 
 .objectiveName {
@@ -52,19 +30,13 @@
 	white-space: nowrap;
 }
 
-.statusBadge {
-	text-transform: capitalize;
-}
-
 .actionsGroup {
-	gap: var(--mantine-spacing-xs);
+	opacity: 0.7;
+	transition: opacity 0.2s ease;
 }
 
-.actionButton {
-	font-size: var(--mantine-font-size-xs);
-	padding: 4px 8px;
-	height: auto;
-	border-radius: var(--mantine-radius-xs);
+.table:hover .actionsGroup {
+	opacity: 1;
 }
 
 .noResultsContainer {
@@ -77,5 +49,5 @@
 	border: 1px solid var(--mantine-color-gray-2);
 	border-radius: var(--mantine-radius-md);
 	gap: var(--mantine-spacing-xs);
-	min-height: 200px;
+	min-height: 300px;
 }

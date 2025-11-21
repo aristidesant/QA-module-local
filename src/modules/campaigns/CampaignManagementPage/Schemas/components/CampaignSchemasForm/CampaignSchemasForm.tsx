@@ -61,7 +61,7 @@ const generateCode = (name: string) => {
 		.replace(/\s+/g, '-');
 };
 
-export const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
+const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 	schema,
 	onSuccess,
 	onCancel,
@@ -476,3 +476,5 @@ export const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 		</form>
 	);
 };
+
+export default CampaignSchemasForm;

@@ -2,8 +2,8 @@ import { useMemo, useState } from 'react';
 import { useGetCampaignObjectives } from '~/queries/campaignObjectivesQueries';
 import { useGetCampaignCategories } from '~/queries/campaignCategoriesQueries';
 import { CampaignObjective } from '~/models/CampaignObjectiveModel';
-import type { ObjectiveFilters } from '../CampaignObjectivesFilters';
-import type { PaginationState } from '../CampaignCategoriesPagination';
+import type { ObjectiveFilters } from '../CampaignManagementPage/Objectives/components/CampaignObjectivesFilters';
+import type { PaginationState } from '../CampaignManagementPage/Categories/components/CampaignCategoriesPagination';
 
 type EnrichedObjective = CampaignObjective & {
 	categoryName: string;

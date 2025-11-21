@@ -47,9 +47,9 @@ import { useDispositionTreeByCatalog } from '~/queries/dispositionNodesQueries';
 import { modals } from '@mantine/modals';
 import {
 	OUTBOUND_PROTECTED_ROOT_NODE_NAMES,
-	type OutboundProtectedRootNodeName,
-} from '../../constants';
-import { useDispositionStore } from '../../dispositionRightComponentStore';
+	OutboundProtectedRootNodeName,
+} from '../../../constants';
+import { useDispositionStore } from '../../../dispositionRightComponentStore';
 
 type DispositionCatalogFormProps = {
 	catalogId: number;

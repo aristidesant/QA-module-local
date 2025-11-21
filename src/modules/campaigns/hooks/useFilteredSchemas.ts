@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useGetCampaignContactSchemas } from '~/queries/campaignContactSchemasQueries';
 import { CampaignContactSchema } from '~/models/CampaignContactSchemaModel';
-import type { SchemaFilters } from '../CampaignSchemasFilters';
-import type { PaginationState } from '../CampaignCategoriesPagination';
+import type { SchemaFilters } from '../CampaignManagementPage/Schemas/components/CampaignSchemasFilters';
+import type { PaginationState } from '../CampaignManagementPage/Categories/components/CampaignCategoriesPagination';
 
 interface UseCampaignSchemasWithFiltersResult {
 	schemas: CampaignContactSchema[];

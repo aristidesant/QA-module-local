@@ -15,7 +15,7 @@ import {
 	Pagination,
 	Badge,
 } from '@mantine/core';
-import { IconTrash, IconRefresh, IconBan } from '@tabler/icons-react';
+import { IconTrash, IconRefresh, IconBan, IconPlus } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { modals } from '@mantine/modals';
 import { useDispositionLabel } from '~/hooks/useDispositionLabel';
@@ -31,8 +31,9 @@ import DispositionCatalogForm from '../DispositionCatalogForm';
 import { type ColumnDef } from '@tanstack/react-table';
 import type { DispositionCatalogModel } from '~/models/DispositionCatalogModels';
 import styles from './DispositionCatalogList.module.css';
-import { useDispositionStore } from '../dispositionRightComponentStore';
 import BaseTable from '~/components/BaseTable';
+import SectionCard from '~/components/SectionCard/SectionCard';
+import { useDispositionStore } from '../../dispositionRightComponentStore';
 
 export interface DispositionCatalogListHandles {
 	openCreateForm: () => void;
@@ -68,7 +69,9 @@ const DispositionCatalogList = forwardRef<DispositionCatalogListHandles>(
 						return (
 							<div className={styles.nameCell}>
 								<div className={styles.nameRow}>
-									<div className={styles.nameText}>{name}</div>
+									<Text fw={600} className={styles.nameText}>
+										{name}
+									</Text>
 									{type && (
 										<div className={styles.typeBadge}>
 											<Badge
@@ -82,7 +85,9 @@ const DispositionCatalogList = forwardRef<DispositionCatalogListHandles>(
 									)}
 								</div>
 								{description && (
-									<div className={styles.descriptionText}>{description}</div>
+									<Text size='sm' c='dimmed' className={styles.descriptionText}>
+										{description}
+									</Text>
 								)}
 							</div>
 						);
@@ -95,7 +100,7 @@ const DispositionCatalogList = forwardRef<DispositionCatalogListHandles>(
 					cell: ({ row }) => (
 						<Badge
 							size='sm'
-							variant='light'
+							variant='dot'
 							color={row.original.isActive ? 'green' : 'gray'}
 						>
 							{row.original.isActive ? 'Active' : 'Inactive'}
@@ -119,7 +124,7 @@ const DispositionCatalogList = forwardRef<DispositionCatalogListHandles>(
 								<Tooltip label='Reactivate' withArrow>
 									<ActionIcon
 										color='green'
-										variant='subtle'
+										variant='light'
 										size='sm'
 										onClick={(e) => {
 											e.stopPropagation();
@@ -140,7 +145,7 @@ const DispositionCatalogList = forwardRef<DispositionCatalogListHandles>(
 								<Tooltip label='Deactivate' withArrow>
 									<ActionIcon
 										color='orange'
-										variant='subtle'
+										variant='light'
 										size='sm'
 										onClick={(e) => {
 											e.stopPropagation();
@@ -160,7 +165,7 @@ const DispositionCatalogList = forwardRef<DispositionCatalogListHandles>(
 							<Tooltip label='Delete' withArrow>
 								<ActionIcon
 									color='red'
-									variant='subtle'
+									variant='light'
 									size='sm'
 									onClick={(e) => {
 										e.stopPropagation();
@@ -408,33 +413,44 @@ const DispositionCatalogList = forwardRef<DispositionCatalogListHandles>(
 
 		return (
 			<div className={styles.root}>
-				{!data || data.length === 0 ? (
-					<Center>
-						<Text>No outcome catalogs found.</Text>
-					</Center>
-				) : (
-					<>
-						<div className={styles.table}>
-							<BaseTable
-								data={paginatedData}
-								columns={columns}
-								onRowClick={(row) => handleEdit(row)}
-								className={styles.table}
-							/>
-						</div>
-						{data.length > pageSize && (
-							<Center mt='md'>
-								<Pagination
-									total={Math.ceil(data.length / pageSize)}
-									value={page}
-									onChange={setPage}
-									size='sm'
-									withEdges
+				<SectionCard
+					title='Outcome Catalogs'
+					padding='lg'
+					headerActions={
+						<ActionIcon variant='filled' color='blue' onClick={handleCreate}>
+							<IconPlus size={18} />
+						</ActionIcon>
+					}
+				>
+					{!data || data.length === 0 ? (
+						<Center>
+							<Text>No outcome catalogs found.</Text>
+						</Center>
+					) : (
+						<>
+							<div className={styles.table}>
+								<BaseTable
+									data={paginatedData}
+									columns={columns}
+									onRowClick={(row) => handleEdit(row)}
+									className={styles.table}
+									density='default'
 								/>
-							</Center>
-						)}
-					</>
-				)}
+							</div>
+							{data.length > pageSize && (
+								<Center mt='md'>
+									<Pagination
+										total={Math.ceil(data.length / pageSize)}
+										value={page}
+										onChange={setPage}
+										size='sm'
+										withEdges
+									/>
+								</Center>
+							)}
+						</>
+					)}
+				</SectionCard>
 			</div>
 		);
 	}

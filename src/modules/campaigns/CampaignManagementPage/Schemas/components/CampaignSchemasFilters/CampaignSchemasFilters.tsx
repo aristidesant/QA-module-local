@@ -23,7 +23,7 @@ interface CampaignSchemasFiltersProps {
 	onFiltersChange: (filters: SchemaFilters) => void;
 }
 
-export const CampaignSchemasFilters: React.FC<CampaignSchemasFiltersProps> = ({
+const CampaignSchemasFilters: React.FC<CampaignSchemasFiltersProps> = ({
 	filters,
 	onFiltersChange,
 }) => {
@@ -142,3 +142,5 @@ export const CampaignSchemasFilters: React.FC<CampaignSchemasFiltersProps> = ({
 		</div>
 	);
 };
+
+export default CampaignSchemasFilters;

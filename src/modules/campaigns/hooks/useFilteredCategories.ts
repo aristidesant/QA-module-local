@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useGetCampaignCategories } from '~/queries/campaignCategoriesQueries';
 import { CampaignCategory } from '~/models/CampaignCategoryModel';
-import type { CategoryFilters } from '../CampaignCategoriesFilters';
-import type { PaginationState } from '../CampaignCategoriesPagination';
+import type { CategoryFilters } from '../CampaignManagementPage/Categories/components/CampaignCategoriesFilters';
+import type { PaginationState } from '../CampaignManagementPage/Categories/components/CampaignCategoriesPagination';
 
 interface UseCampaignCategoriesWithFiltersResult {
 	categories: CampaignCategory[];

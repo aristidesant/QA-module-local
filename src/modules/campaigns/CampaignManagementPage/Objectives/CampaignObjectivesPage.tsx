@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@mantine/core';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
-import { CampaignObjectivesContent } from '~/modules/campaigns/CampaignObjectivesContent';
+import { CampaignObjectivesContent } from '~/modules/campaigns/CampaignManagementPage/Objectives/components/CampaignObjectivesContent';
 import { IconTarget, IconPlus } from '@tabler/icons-react';
 
 interface CampaignObjectivesPageProps {
