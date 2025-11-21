@@ -1,5 +1,13 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Stack, Switch, Text, Group, ActionIcon, Tooltip } from '@mantine/core';
+import {
+	Stack,
+	Switch,
+	Text,
+	Group,
+	ActionIcon,
+	Tooltip,
+	Badge,
+} from '@mantine/core';
 import { IconCpu, IconSettings } from '@tabler/icons-react';
 import SectionCard from '~/components/SectionCard';
 import { useClientConfigByName } from '~/queries/useClientConfigs';
@@ -197,13 +205,9 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 													<Text fw={600} className={classes.toolName}>
 														{toolConfig.name}
 													</Text>
-													<span
-														className={`${classes.toolType} ${
-															selected ? classes.toolTypeActive : ''
-														}`}
-													>
+													<Badge size='xs' variant='light'>
 														{toolConfig.value?.type || 'Custom'}
-													</span>
+													</Badge>
 												</Group>
 												<Text size='xs' className={classes.toolMeta}>
 													System utility

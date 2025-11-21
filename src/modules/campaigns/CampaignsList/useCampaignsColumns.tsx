@@ -8,6 +8,8 @@ import {
 	Badge,
 	Menu,
 	ThemeIcon,
+	HoverCard,
+	Stack,
 } from '@mantine/core';
 import {
 	IconDotsVertical,
@@ -76,11 +78,33 @@ export const useCampaignsColumns = ({
 				const campaign = row.original;
 				return (
 					<Group gap='sm' wrap='nowrap'>
-						<Tooltip withArrow label={campaign.description || 'No description'}>
-							<ThemeIcon variant='light' color='blue' size={'xs'}>
-								<IconInfoCircle size={16} />
-							</ThemeIcon>
-						</Tooltip>
+						<HoverCard width={280} shadow='md' withArrow position='right'>
+							<HoverCard.Target>
+								<ThemeIcon
+									variant='light'
+									color='blue'
+									size={'xs'}
+									style={{ cursor: 'pointer' }}
+								>
+									<IconInfoCircle size={16} />
+								</ThemeIcon>
+							</HoverCard.Target>
+							<HoverCard.Dropdown>
+								<Stack gap='xs'>
+									<Group justify='space-between'>
+										<Text size='sm' fw={700}>
+											Campaign Details
+										</Text>
+										<Badge size='xs' variant='outline' color='gray'>
+											ID: {campaign.id}
+										</Badge>
+									</Group>
+									<Text size='xs' c='dimmed'>
+										{campaign.description || 'No description available.'}
+									</Text>
+								</Stack>
+							</HoverCard.Dropdown>
+						</HoverCard>
 						<Text size='sm' fw={500} lineClamp={1}>
 							{campaign.name}
 						</Text>
