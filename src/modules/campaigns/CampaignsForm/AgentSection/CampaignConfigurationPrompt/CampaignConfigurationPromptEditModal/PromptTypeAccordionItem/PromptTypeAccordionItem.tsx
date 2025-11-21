@@ -217,7 +217,7 @@ const PromptTypeAccordionItem: React.FC<PromptTypeAccordionItemProps> = ({
 							variant='outline'
 							color={isDrafted ? 'blue' : 'gray'}
 						>
-							{promptLines} lines
+							{promptLines} lines)
 						</Badge>
 					</div>
 				</div>

@@ -25,6 +25,7 @@ import {
 	useCreateCampaignPromptsBatch,
 } from '~/queries/campaignPromptQueries';
 import type { CampaignPromptModel } from '~/models/CampaignPromptModel';
+import type { CampaignPromptTypeModel } from '~/models/CampaignPromptTypeModel';
 import PromptTypeAccordionItem from './PromptTypeAccordionItem';
 
 interface CampaignConfigurationPromptEditModalProps {
@@ -54,14 +55,35 @@ const CampaignConfigurationPromptEditModal: React.FC<
 	>(null);
 
 	useEffect(() => {
-		if (existingPrompts) {
+		if (types) {
 			const initialPrompts: Record<number, CampaignPromptModel> = {};
-			existingPrompts.forEach((p) => {
-				initialPrompts[p.typeId] = p;
+
+			if (existingPrompts) {
+				existingPrompts.forEach((p) => {
+					initialPrompts[p.typeId] = p;
+				});
+			}
+
+			types.forEach((type) => {
+				const current = initialPrompts[type.id];
+				if (!current) {
+					initialPrompts[type.id] = {
+						typeId: type.id,
+						campaignId: campaignId!,
+						prompt: '',
+						order: type.order,
+					};
+				} else {
+					initialPrompts[type.id] = {
+						...current,
+						order: type.order,
+					};
+				}
 			});
+
 			setPrompts(initialPrompts);
 		}
-	}, [existingPrompts]);
+	}, [existingPrompts, types, campaignId]);
 
 	useEffect(() => {
 		if (!types || types.length === 0) return;
@@ -72,16 +94,21 @@ const CampaignConfigurationPromptEditModal: React.FC<
 		setActiveAccordionValue(Array.isArray(value) ? (value[0] ?? null) : value);
 	};
 
-	const handleChange = (typeId: number, value: string) => {
-		setPrompts((prev) => ({
-			...prev,
-			[typeId]: {
-				...prev[typeId],
-				typeId,
-				campaignId: campaignId!,
-				prompt: value,
-			},
-		}));
+	const handleChange = (type: CampaignPromptTypeModel, value: string) => {
+		setPrompts((prev) => {
+			const currentPrompt = prev[type.id];
+
+			return {
+				...prev,
+				[type.id]: {
+					...currentPrompt,
+					typeId: type.id,
+					campaignId: campaignId!,
+					prompt: value,
+					order: type.order,
+				},
+			};
+		});
 	};
 
 	const handleSave = () => {
@@ -161,13 +188,15 @@ const CampaignConfigurationPromptEditModal: React.FC<
 						transitionDuration={150}
 					>
 						{types?.map((type) => (
-							<PromptTypeAccordionItem
-								key={type.id}
-								type={type}
-								value={prompts[type.id]?.prompt}
-								onChange={(val) => handleChange(type.id, val)}
-								campaignId={campaignId!}
-							/>
+							<>
+								<PromptTypeAccordionItem
+									key={type.id}
+									type={type}
+									value={prompts[type.id]?.prompt}
+									onChange={(val) => handleChange(type, val)}
+									campaignId={campaignId!}
+								/>
+							</>
 						))}
 					</Accordion>
 				</div>

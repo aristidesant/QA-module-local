@@ -7,4 +7,5 @@ export type CampaignPromptModel = {
 	prompt: string;
 	createdAt?: string;
 	campaign?: Campaign;
+	order?: number;
 };

@@ -1,5 +1,5 @@
 import { Group, Text, Badge, Tooltip, Button } from '@mantine/core';
-import { IconEdit, IconTrash, IconTag } from '@tabler/icons-react';
+import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { ColumnDef } from '@tanstack/react-table';
 import {
 	CampaignObjective,

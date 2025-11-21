@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ActionIcon, Button, Modal, Text } from '@mantine/core';
+import { ActionIcon, Button, Modal } from '@mantine/core';
 import { IconPlus, IconSearchOff, IconSparkles } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import BaseTable from '~/components/BaseTable';

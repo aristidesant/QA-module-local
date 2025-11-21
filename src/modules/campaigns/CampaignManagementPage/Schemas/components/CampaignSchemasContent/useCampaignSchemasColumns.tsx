@@ -6,17 +6,9 @@ import {
 	Group,
 	Tooltip,
 	ActionIcon,
-	Box,
-	ThemeIcon,
 	CopyButton,
 } from '@mantine/core';
-import {
-	IconEdit,
-	IconTrash,
-	IconDatabase,
-	IconCheck,
-	IconCopy,
-} from '@tabler/icons-react';
+import { IconEdit, IconTrash, IconCheck, IconCopy } from '@tabler/icons-react';
 import { CampaignContactSchema } from '~/models/CampaignContactSchemaModel';
 import styles from './CampaignSchemasContent.module.css';
 
