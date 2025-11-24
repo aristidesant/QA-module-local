@@ -105,7 +105,9 @@
 - Use Vitest as the test runner.
 - Use React Testing Library for component testing.
 - Test files must be co-located with the component they test, named `[Component].test.tsx`.
+- **IMPORTANT**: Each component should have exactly ONE test file (e.g., `ComponentName.test.tsx`). All tests for a component must be organized within this single file using `describe` blocks to group related test cases. Do NOT create multiple test files for the same component (e.g., avoid `Component.feature1.test.tsx`, `Component.feature2.test.tsx`).
 - Use `vi` from `vitest` for mocking.
 - Ensure to mock external dependencies like `react-router-dom` hooks or API calls if necessary.
 - Use `screen` from `@testing-library/react` for querying elements.
 - Use `userEvent` from `@testing-library/user-event` for interactions.
+- Prefer integration-style tests using `renderWithProviders` over heavy mocking when possible.

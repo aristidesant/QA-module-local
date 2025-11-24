@@ -20,3 +20,13 @@ Object.defineProperty(window, 'matchMedia', {
 		dispatchEvent: vi.fn(),
 	})),
 });
+
+// Mock ResizeObserver for Mantine components in test environment
+Object.defineProperty(globalThis, 'ResizeObserver', {
+	writable: true,
+	value: class {
+		observe() {}
+		unobserve() {}
+		disconnect() {}
+	},
+});

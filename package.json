@@ -14,8 +14,9 @@
 		"prepare": "husky",
 		"version:increment": "node scripts/increment-version.cjs",
 		"test": "vitest --coverage --coverage.reporter=text-summary",
-		"coverage": "vitest run --coverage",
-		"coverage:light": "vitest run --coverage --coverage.reporter=text-summary"
+		"coverage:full": "vitest run --coverage",
+		"coverage:light": "vitest run --coverage --coverage.reporter=text-summary",
+		"coverage": "VALID_COVERAGE_ONLY=true vitest run --coverage --coverage.reporter=text"
 	},
 	"dependencies": {
 		"@elevenlabs/elevenlabs-js": "^2.8.0",
@@ -47,6 +48,7 @@
 		"zustand": "^5.0.7"
 	},
 	"devDependencies": {
+		"@types/node": "^20.5.9",
 		"@testing-library/dom": "^10.4.1",
 		"@testing-library/jest-dom": "^6.9.1",
 		"@testing-library/react": "^16.3.0",

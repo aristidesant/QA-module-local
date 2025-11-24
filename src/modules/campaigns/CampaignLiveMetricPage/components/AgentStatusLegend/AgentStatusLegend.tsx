@@ -12,7 +12,12 @@ interface AgentStatusLegendProps {
 
 export const AgentStatusLegend = ({ items }: AgentStatusLegendProps) => {
 	return (
-		<Flex wrap='wrap' gap='md' className={styles.legend}>
+		<Flex
+			wrap='wrap'
+			gap='md'
+			className={styles.legend}
+			data-testid='agent-status-legend'
+		>
 			{items.map((item) => (
 				<Flex key={item.label} align='center' gap='xs'>
 					<Box
