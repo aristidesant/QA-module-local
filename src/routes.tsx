@@ -2,12 +2,7 @@ import { createBrowserRouter, RouterProvider, Navigate } from 'react-router';
 import React, { Suspense } from 'react';
 
 // Route components (lazy-loaded where appropriate to split bundles)
-const AgentList = React.lazy(
-	() => import('./modules/agents/AgentList/AgentList')
-);
-const AgentPage = React.lazy(
-	() => import('./modules/agent/AgentPage/AgentPage')
-);
+
 import RouteProtecter, {
 	clientLoader as routeProtecterLoader,
 } from './components/RouteProtecter/RouteProtecter';
@@ -141,26 +136,6 @@ const router = createBrowserRouter([
 								fallback={<SuspenseFallback message='Loading dashboard...' />}
 							>
 								<WelcomeCard />
-							</Suspense>
-						),
-					},
-					{
-						path: 'agents',
-						element: (
-							<Suspense
-								fallback={<SuspenseFallback message='Loading agents...' />}
-							>
-								<AgentList />
-							</Suspense>
-						),
-					},
-					{
-						path: 'agent/:agent_id',
-						element: (
-							<Suspense
-								fallback={<SuspenseFallback message='Loading agent...' />}
-							>
-								<AgentPage />
 							</Suspense>
 						),
 					},

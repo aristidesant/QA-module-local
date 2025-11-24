@@ -19,7 +19,7 @@ import AgentCampaignList from '../AgentCampaignList';
 import { useGetAgent } from '~/queries/agentQueries';
 import styles from './AgentCampaignPreview.module.css';
 import { openConfirmModal } from '@mantine/modals';
-import AgentProfile from '~/modules/agents/AgentSimpleDetails/AgentProfile';
+import AgentProfile from '~/modules/campaigns/CampaignsForm/AgentSection/AgentCampaignPreview/AgentProfile';
 import { useDeleteCampaignAgent } from '~/queries/campaignAgentsQueries';
 import { VoicePlayer } from '~/components/VoicePlayer';
 import AgentVoiceEditModal from './AgentVoiceEditModal';

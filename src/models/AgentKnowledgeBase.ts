@@ -1,5 +1,3 @@
-import { AgentKnowledgeBase } from '~/modules/agent/AgentKnowledgeBase';
-
 export interface AgentKnowledgeBase {
 	id: number;
 	agentId: string;
