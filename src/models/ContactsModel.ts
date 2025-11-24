@@ -28,6 +28,8 @@ export interface Contact {
 	identifierType: string | null;
 	emails: string[];
 	phoneNumbers: ContactPhoneNumber[]; // include id for editing operations
+	birthDate: string | null; // ISO date string
+	address: string;
 	clientId: number;
 	userId: number;
 	contactGroupId: number;
