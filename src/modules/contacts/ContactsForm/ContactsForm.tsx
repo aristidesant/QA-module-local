@@ -68,8 +68,8 @@ export default function ContactsForm({
 				lastName: contact.lastName,
 				identifier: contact.identifier,
 				identifierType: contact.identifierType,
-				// birthDate: contact.birthDate,
-				// address: contact.address,
+				birthDate: contact.birthDate,
+				address: contact.address,
 				email: contact.emails?.[0] || '',
 				phoneNumbers: contact.phoneNumbers,
 			});
@@ -84,9 +84,13 @@ export default function ContactsForm({
 		const payload: Partial<Contact> = {
 			firstName: values.firstName,
 			lastName: values.lastName,
-			identifier: values.identifier || undefined,
-			identifierType: values.identifierType || undefined,
-			emails: values.email ? [values.email] : contact?.emails, // preserve existing if blank
+			...(values.identifier ? { identifier: values.identifier } : {}),
+			...(values.identifierType
+				? { identifierType: values.identifierType }
+				: {}),
+			emails: values.email ? [values.email] : contact?.emails, // preserve existing if blank,
+			...(values.address ? { address: values.address } : {}),
+			...(values.birthDate ? { birthDate: values.birthDate } : {}),
 		};
 
 		try {
