@@ -4,6 +4,8 @@
 - `npm run build` - Create production build with SSR support
 - `npm run start` - Serve production build with React Router serve
 - `npm run typecheck` - Generate type definitions and run TypeScript checks
+- `npm run test` - Run unit and integration tests with Vitest
+- `npm run coverage` - Run tests and generate coverage report
 
 # General Code Style & Formatting
 
@@ -97,3 +99,13 @@
 - API functions should be organized by feature in `api/` directory
 - Follow established patterns for API client initialization
 - Handle authentication state consistently across the application
+
+# Testing
+
+- Use Vitest as the test runner.
+- Use React Testing Library for component testing.
+- Test files must be co-located with the component they test, named `[Component].test.tsx`.
+- Use `vi` from `vitest` for mocking.
+- Ensure to mock external dependencies like `react-router-dom` hooks or API calls if necessary.
+- Use `screen` from `@testing-library/react` for querying elements.
+- Use `userEvent` from `@testing-library/user-event` for interactions.

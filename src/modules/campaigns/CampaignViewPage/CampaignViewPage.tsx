@@ -1,14 +1,27 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Alert, Flex, Loader, Stack, ActionIcon, Tooltip } from '@mantine/core';
+import {
+	Alert,
+	Flex,
+	Loader,
+	Stack,
+	ActionIcon,
+	Tooltip,
+	Text,
+} from '@mantine/core';
 import { IconAlertCircle, IconEdit } from '@tabler/icons-react';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
-import { useGetCampaign } from '~/queries/campaignsQueries';
+import {
+	useGetCampaign,
+	useGetCampaignRequirements,
+} from '~/queries/campaignsQueries';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import { ContactSection } from '../CampaignsForm/ContactSection';
+import CampaignHealth from '../CampaignHealth';
 
 const CampaignViewPage = () => {
 	const { campaignId } = useParams<{ campaignId: string }>();
+	const { data: requet } = useGetCampaignRequirements(campaignId ?? '');
 	const navigate = useNavigate();
 
 	const { selectCampaign, resetView, rightComponent } = useCampaignsStore(
@@ -108,7 +121,13 @@ const CampaignViewPage = () => {
 					</ActionIcon>
 				</Tooltip>
 			}
-			rightSection={rightComponent || <></>}
+			rightSection={
+				<Stack>
+					<Text>{requet?.canRun}</Text>
+					{campaign?.id && <CampaignHealth campaignId={`${campaign.id}`} />}
+					{rightComponent || <></>}
+				</Stack>
+			}
 		>
 			<Stack gap='md'>
 				<ContactSection />

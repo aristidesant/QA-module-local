@@ -12,7 +12,10 @@
 		"format:check": "prettier --check .",
 		"lint:fix": "prettier --write . && npm run typecheck",
 		"prepare": "husky",
-		"version:increment": "node scripts/increment-version.cjs"
+		"version:increment": "node scripts/increment-version.cjs",
+		"test": "vitest --coverage --coverage.reporter=text-summary",
+		"coverage": "vitest run --coverage",
+		"coverage:light": "vitest run --coverage --coverage.reporter=text-summary"
 	},
 	"dependencies": {
 		"@elevenlabs/elevenlabs-js": "^2.8.0",
@@ -44,17 +47,24 @@
 		"zustand": "^5.0.7"
 	},
 	"devDependencies": {
+		"@testing-library/dom": "^10.4.1",
+		"@testing-library/jest-dom": "^6.9.1",
+		"@testing-library/react": "^16.3.0",
+		"@testing-library/user-event": "^14.6.1",
 		"@types/react": "^19.1.8",
 		"@types/react-dom": "^19.1.6",
 		"@vitejs/plugin-react": "^4.5.2",
+		"@vitest/coverage-v8": "^4.0.13",
 		"husky": "^9.1.7",
+		"jsdom": "^27.2.0",
 		"lint-staged": "^16.1.5",
 		"postcss": "^8.5.5",
 		"postcss-preset-mantine": "1.17.0",
 		"postcss-simple-vars": "^7.0.1",
 		"prettier": "^3.6.2",
 		"typescript": "^5.8.3",
-		"vite": "7.1.11"
+		"vite": "7.1.11",
+		"vitest": "^4.0.13"
 	},
 	"lint-staged": {
 		"*.{js,jsx,ts,tsx,json,css,md}": [

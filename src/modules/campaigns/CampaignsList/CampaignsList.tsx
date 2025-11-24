@@ -221,10 +221,16 @@ export const CampaignsList: React.FC = () => {
 				rightSection={rightComponent || <></>}
 				titleRight={
 					<Group gap='xs'>
-						<ActionIcon onClick={handleShowAddNewCampaignModal}>
+						<ActionIcon
+							onClick={handleShowAddNewCampaignModal}
+							data-testid='header-create-campaign-btn'
+						>
 							<IconPlus size={16} />
 						</ActionIcon>
-						<ActionIcon onClick={() => reloadCampaigns()}>
+						<ActionIcon
+							onClick={() => reloadCampaigns()}
+							data-testid='header-refresh-btn'
+						>
 							<IconRefresh size={16} />
 						</ActionIcon>
 					</Group>
@@ -250,6 +256,14 @@ export const CampaignsList: React.FC = () => {
 								: 'Failed to load campaigns.'}
 						</Text>
 					</div>
+				) : campaignsResponse?.data?.length === 0 && pagination.searchValue ? (
+					<Card mt='xs' withBorder>
+						<EmptyState
+							icon={<IconRocket size={64} stroke={1.2} />}
+							message='No campaigns found'
+							description='Try adjusting your search terms or create a new campaign'
+						/>
+					</Card>
 				) : !campaignsResponse?.data || campaignsResponse.data.length === 0 ? (
 					<Card mt='xs' withBorder>
 						<EmptyState
@@ -264,14 +278,6 @@ export const CampaignsList: React.FC = () => {
 									Create Campaign
 								</Button>
 							}
-						/>
-					</Card>
-				) : campaignsResponse?.data?.length === 0 && pagination.searchValue ? (
-					<Card mt='xs' withBorder>
-						<EmptyState
-							icon={<IconRocket size={64} stroke={1.2} />}
-							message='No campaigns found'
-							description='Try adjusting your search terms or create a new campaign'
 						/>
 					</Card>
 				) : (
@@ -345,3 +351,5 @@ export const CampaignsList: React.FC = () => {
 		</>
 	);
 };
+
+export default CampaignsList;

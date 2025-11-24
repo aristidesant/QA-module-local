@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# Run typecheck
+npm run typecheck
+
+# Run tests
+npx vitest run
+
 # Increment version
 node scripts/increment-version.cjs
 
