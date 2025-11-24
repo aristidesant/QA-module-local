@@ -179,6 +179,38 @@ describe('useCampaignsColumns', () => {
 		fireEvent.click(deleteItem);
 		expect(onDelete).toHaveBeenCalledWith(sampleCampaign);
 	});
+
+	it('renders action buttons in correct order: View, Edit, Menu', () => {
+		const TestComponent = () => {
+			const columns = useCampaignsColumns(defaultProps);
+			const actionsCol = columns.find((c) => (c as any).id === 'actions');
+			return (
+				<div>
+					{(actionsCol as any).cell({ row: { original: sampleCampaign } })}
+				</div>
+			);
+		};
+
+		render(
+			<MantineProvider>
+				<TestComponent />
+			</MantineProvider>
+		);
+
+		const viewButton = screen.getByLabelText('View campaign');
+		const editButton = screen.getByLabelText('Edit campaign');
+		const menuButton = screen.getByLabelText('Campaign actions');
+
+		// Verify DOM order: View should come before Edit, Edit should come before Menu
+		expect(
+			viewButton.compareDocumentPosition(editButton) &
+				Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+		expect(
+			editButton.compareDocumentPosition(menuButton) &
+				Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+	});
 });
 
 describe('getCampaignStatusInfo', () => {

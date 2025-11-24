@@ -203,19 +203,6 @@ export const useCampaignsColumns = ({
 				const campaign = row.original;
 				return (
 					<Group gap='xs' justify='end'>
-						<Tooltip label='Edit campaign'>
-							<ActionIcon
-								color='blue'
-								radius='md'
-								aria-label='Edit campaign'
-								onClick={(e) => {
-									e.stopPropagation();
-									onEdit(campaign);
-								}}
-							>
-								<IconPencil size={16} />
-							</ActionIcon>
-						</Tooltip>
 						<Tooltip label='View campaign'>
 							<ActionIcon
 								color='teal'
@@ -227,6 +214,19 @@ export const useCampaignsColumns = ({
 								}}
 							>
 								<IconEye size={16} />
+							</ActionIcon>
+						</Tooltip>
+						<Tooltip label='Edit campaign'>
+							<ActionIcon
+								color='blue'
+								radius='md'
+								aria-label='Edit campaign'
+								onClick={(e) => {
+									e.stopPropagation();
+									onEdit(campaign);
+								}}
+							>
+								<IconPencil size={16} />
 							</ActionIcon>
 						</Tooltip>
 						<Menu shadow='md' width={200}>
