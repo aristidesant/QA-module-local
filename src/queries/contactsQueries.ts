@@ -100,6 +100,36 @@ export const useUpdateContactPhoneNumber = () => {
 	});
 };
 
+// Create phone numbers for an existing contact
+export const useCreateContactPhoneNumbers = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async (params: {
+			contactId: number | string;
+			phones: string[];
+		}) => {
+			const api = contactsApi();
+			return api.createContactPhoneNumbers(params.contactId, {
+				phones: params.phones,
+			});
+		},
+		onSuccess: (_data, variables) => {
+			queryClient.invalidateQueries({ queryKey: ['contacts'] });
+			if (variables?.contactId) {
+				queryClient.invalidateQueries({
+					queryKey: ['contact', String(variables.contactId)],
+				});
+			}
+			// eslint-disable-next-line no-console
+			console.log('Contact phone numbers added successfully');
+		},
+		onError: (error) => {
+			// eslint-disable-next-line no-console
+			console.error('Error adding contact phone numbers:', error);
+		},
+	});
+};
+
 // Get contacts in a contact group that have phone numbers with validation errors
 export const useGetContactGroupContactsWithPhoneValidationErrors = (
 	contactGroupId: number
