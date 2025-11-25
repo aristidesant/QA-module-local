@@ -63,7 +63,8 @@
 }
 
 .selectedRow {
-	background: var(--mantine-color-blue-0);
+	background: var(--mantine-color-blue-0) !important;
+	border-left: 3px solid var(--mantine-color-blue-6);
 }
 
 .emptyRow {

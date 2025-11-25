@@ -249,7 +249,7 @@ const DoNotCallSection: React.FC<DoNotCallSectionProps> = () => {
 						data={doNotCallResponse?.data || []}
 						columns={columns}
 						onRowClick={(entry) => setSelectedEntry(entry)}
-						selectedKey={selectedEntry?.id?.toString()}
+						selectedRowId={selectedEntry?.id?.toString()}
 					/>
 
 					<PaginationControls

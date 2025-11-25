@@ -286,7 +286,7 @@ export const CampaignsList: React.FC = () => {
 							data={campaignsResponse?.data || []}
 							columns={columns}
 							onRowClick={handleCampaignClick}
-							selectedKey={selectedCampaign?.id?.toString()}
+							selectedRowId={selectedCampaign?.id?.toString()}
 						/>
 
 						{/* Pagination Controls */}

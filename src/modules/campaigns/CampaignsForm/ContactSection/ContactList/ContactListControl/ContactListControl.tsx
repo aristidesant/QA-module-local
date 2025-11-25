@@ -11,6 +11,7 @@ import {
 	useStartOutboundCampaign,
 	usePauseOutboundCampaign,
 	useResumeOutboundCampaign,
+	useGetCampaignRequirements,
 } from '~/queries/campaignsQueries';
 
 interface ContactListControlProps {
@@ -55,6 +56,13 @@ export const ContactListControl = ({
 
 	const campaignId =
 		contactGroup.schedule?.campaignId ?? contactGroup.campaignId;
+
+	const { data: requirements } = useGetCampaignRequirements(
+		campaignId?.toString() ?? ''
+	);
+
+	const canStartOrResume =
+		requirements?.hasDispositionFlow && requirements?.hasActiveSchedule;
 
 	const handleAction = () => {
 		if (isDisabled || isLoading) {
@@ -126,16 +134,27 @@ export const ContactListControl = ({
 		}
 	};
 
-	const isDisabled =
+	const isStatusDisabled =
 		contactGroup.queueStatus === 'COMPLETED' ||
 		contactGroup.queueStatus === 'FAILED';
 
+	const isStartOrResumeAction =
+		contactGroup.queueStatus === 'PENDING' ||
+		contactGroup.queueStatus === 'PAUSED';
+
+	const isDisabled =
+		isStatusDisabled || (isStartOrResumeAction && !canStartOrResume);
+
 	let icon = <IconPlayerPlay size={16} />;
-	let tooltip = 'Start contact list';
+	let tooltip = canStartOrResume
+		? 'Start contact list'
+		: 'Campaign requirements not met';
 
 	if (contactGroup.queueStatus === 'PAUSED') {
 		icon = <IconPlayerPlay size={16} />;
-		tooltip = 'Resume contact list';
+		tooltip = canStartOrResume
+			? 'Resume contact list'
+			: 'Campaign requirements not met';
 	} else if (contactGroup.queueStatus === 'RUNNING') {
 		icon = <IconPlayerPause size={16} />;
 		tooltip = 'Pause contact list';

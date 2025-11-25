@@ -129,9 +129,7 @@ const CampaignViewPage = () => {
 				</Stack>
 			}
 		>
-			<Stack gap='md'>
-				<ContactSection />
-			</Stack>
+			<ContactSection />
 		</ContentContainer>
 	);
 };

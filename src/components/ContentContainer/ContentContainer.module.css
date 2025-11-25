@@ -106,10 +106,19 @@
 	flex-direction: column;
 }
 
-.content > form > :last-child,
-.content > div > :last-child {
+.content > form > :last-child {
 	margin-top: auto;
-	padding-top: 20px;
+	padding-top: var(--mantine-spacing-lg);
+}
+
+.content > div > :last-child:not([role='tabpanel']) {
+	margin-top: auto;
+	padding-top: var(--mantine-spacing-lg);
+}
+
+.content [role='tabpanel'] {
+	margin-top: var(--mantine-spacing-md);
+	padding-top: var(--mantine-spacing-md);
 }
 
 .rightSection {

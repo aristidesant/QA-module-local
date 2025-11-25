@@ -32,7 +32,8 @@ export type FilterMode = 'client' | 'server';
 
 export type BaseTableProps<TData> = {
 	data: TData[];
-	selectedKey?: string;
+	selectedRowId?: string | number | null;
+	getRowId?: (row: TData) => string | number;
 	columns: ColumnDef<TData, any>[];
 	initialSort?: SortingState;
 	onRowClick?: (row: TData) => void;
@@ -104,7 +105,8 @@ export type BaseTableProps<TData> = {
 
 function BaseTable<TData>({
 	data,
-	selectedKey,
+	selectedRowId,
+	getRowId,
 	columns,
 	initialSort = [],
 	onRowClick,
@@ -339,74 +341,91 @@ function BaseTable<TData>({
 							</Table.Td>
 						</Table.Tr>
 					) : (
-						table.getRowModel().rows.map((row) => (
-							<React.Fragment key={row.id}>
-								<Table.Tr
-									onClick={() => {
-										if (enableExpanding && renderExpandedRow) {
-											row.toggleExpanded();
-										}
-										onRowClick?.(row.original);
-									}}
-									className={`${getRowClassName?.(row)} ${row.original === selectedKey ? styles.selectedRow : ''} ${enableExpanding && renderExpandedRow ? styles.expandableRow : ''}`}
-								>
-									{enableExpanding && renderExpandedRow && (
-										<Table.Td
-											className={[
-												styles.td,
-												styles.expandCell,
-												density === 'compact' ? styles.compactTd : '',
-											]
-												.filter(Boolean)
-												.join(' ')}
-											onClick={(e) => {
-												e.stopPropagation();
+						table.getRowModel().rows.map((row) => {
+							const rowId = getRowId?.(row.original);
+							const isSelected =
+								selectedRowId != null &&
+								rowId != null &&
+								rowId === selectedRowId;
+							return (
+								<React.Fragment key={row.id}>
+									<Table.Tr
+										onClick={() => {
+											if (enableExpanding && renderExpandedRow) {
 												row.toggleExpanded();
-											}}
-										>
-											<div className={styles.expandIcon}>
-												<IconChevronRight
-													size={16}
-													className={
-														row.getIsExpanded() ? styles.expandIconRotated : ''
-													}
-												/>
-											</div>
-										</Table.Td>
-									)}
-									{row.getVisibleCells().map((cell) => (
-										<Table.Td
-											key={cell.id}
-											className={[
-												styles.td,
-												density === 'compact' ? styles.compactTd : '',
-												(cell.column.columnDef.meta as any)?.cellClassName ||
-													'',
-											]
-												.filter(Boolean)
-												.join(' ')}
-										>
-											{flexRender(
-												cell.column.columnDef.cell,
-												cell.getContext()
-											)}
-										</Table.Td>
-									))}
-								</Table.Tr>
-								{enableExpanding &&
-									renderExpandedRow &&
-									row.getIsExpanded() && (
-										<Table.Tr className={styles.expandedRow}>
+											}
+											onRowClick?.(row.original);
+										}}
+										className={[
+											getRowClassName?.(row),
+											isSelected ? styles.selectedRow : '',
+											enableExpanding && renderExpandedRow
+												? styles.expandableRow
+												: '',
+										]
+											.filter(Boolean)
+											.join(' ')}
+									>
+										{enableExpanding && renderExpandedRow && (
 											<Table.Td
-												colSpan={table.getAllColumns().length + 1}
-												className={styles.expandedContent}
+												className={[
+													styles.td,
+													styles.expandCell,
+													density === 'compact' ? styles.compactTd : '',
+												]
+													.filter(Boolean)
+													.join(' ')}
+												onClick={(e) => {
+													e.stopPropagation();
+													row.toggleExpanded();
+												}}
 											>
-												{renderExpandedRow(row.original)}
+												<div className={styles.expandIcon}>
+													<IconChevronRight
+														size={16}
+														className={
+															row.getIsExpanded()
+																? styles.expandIconRotated
+																: ''
+														}
+													/>
+												</div>
 											</Table.Td>
-										</Table.Tr>
-									)}
-							</React.Fragment>
-						))
+										)}
+										{row.getVisibleCells().map((cell) => (
+											<Table.Td
+												key={cell.id}
+												className={[
+													styles.td,
+													density === 'compact' ? styles.compactTd : '',
+													(cell.column.columnDef.meta as any)?.cellClassName ||
+														'',
+												]
+													.filter(Boolean)
+													.join(' ')}
+											>
+												{flexRender(
+													cell.column.columnDef.cell,
+													cell.getContext()
+												)}
+											</Table.Td>
+										))}
+									</Table.Tr>
+									{enableExpanding &&
+										renderExpandedRow &&
+										row.getIsExpanded() && (
+											<Table.Tr className={styles.expandedRow}>
+												<Table.Td
+													colSpan={table.getAllColumns().length + 1}
+													className={styles.expandedContent}
+												>
+													{renderExpandedRow(row.original)}
+												</Table.Td>
+											</Table.Tr>
+										)}
+								</React.Fragment>
+							);
+						})
 					)}
 				</Table.Tbody>
 			</Table>

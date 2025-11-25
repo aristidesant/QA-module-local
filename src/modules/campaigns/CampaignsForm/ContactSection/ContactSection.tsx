@@ -1,31 +1,34 @@
 import { useState } from 'react';
-import { Button, Collapse } from '@mantine/core';
-import { IconChevronDown, IconChevronUp } from '@tabler/icons-react';
+import { Tabs } from '@mantine/core';
+import { IconUsers, IconUserOff } from '@tabler/icons-react';
 import { ContactListContainer } from './ContactList';
 
 export const ContactSection = () => {
-	const [inactiveCollapsed, setInactiveCollapsed] = useState(true);
+	const [activeTab, setActiveTab] = useState<string | null>('active');
 
 	return (
-		<>
-			<ContactListContainer isActive={true} />
-			<Button
-				variant='subtle'
-				leftSection={
-					inactiveCollapsed ? (
-						<IconChevronDown size={16} />
-					) : (
-						<IconChevronUp size={16} />
-					)
-				}
-				onClick={() => setInactiveCollapsed(!inactiveCollapsed)}
-				style={{ marginBottom: '1rem' }}
-			>
-				{inactiveCollapsed ? 'Show' : 'Hide'} Inactive Contact Lists
-			</Button>
-			<Collapse in={!inactiveCollapsed}>
+		<Tabs
+			value={activeTab}
+			onChange={setActiveTab}
+			variant='outline'
+			keepMounted={false}
+		>
+			<Tabs.List>
+				<Tabs.Tab value='active' leftSection={<IconUsers size={16} />}>
+					Active Lists
+				</Tabs.Tab>
+				<Tabs.Tab value='inactive' leftSection={<IconUserOff size={16} />}>
+					Inactive Lists
+				</Tabs.Tab>
+			</Tabs.List>
+
+			<Tabs.Panel value='active'>
+				<ContactListContainer isActive={true} />
+			</Tabs.Panel>
+
+			<Tabs.Panel value='inactive'>
 				<ContactListContainer isActive={false} />
-			</Collapse>
-		</>
+			</Tabs.Panel>
+		</Tabs>
 	);
 };

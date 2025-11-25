@@ -64,7 +64,6 @@
 	flex-wrap: wrap;
 	padding: calc(var(--mantine-spacing-xs) * 0.75) var(--mantine-spacing-sm);
 	border-radius: var(--mantine-radius-md);
-	border: 1px solid var(--mantine-color-gray-3);
 	background: var(--mantine-color-gray-0);
 }
 

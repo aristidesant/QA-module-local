@@ -1,4 +1,5 @@
-import { ActionIcon, Modal, Tooltip, Group } from '@mantine/core';
+import { useState } from 'react';
+import { ActionIcon, Modal, Tooltip, Group, Stack } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus, IconRefresh } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
@@ -37,6 +38,9 @@ export const ContactListView = ({
 	const [inactiveExpanded, { toggle: toggleInactiveExpanded }] =
 		useDisclosure(true);
 	const { setRightComponent } = useCampaignsStore();
+	const [selectedContactListId, setSelectedContactListId] = useState<
+		number | null
+	>(null);
 
 	const columns = useContactListColumns({
 		onUpdateComplete,
@@ -54,6 +58,7 @@ export const ContactListView = ({
 	};
 
 	const handleRowClick = (contactList: ContactGroup) => {
+		setSelectedContactListId(contactList.id);
 		setRightComponent(
 			<ContactListDetails
 				contactGroup={contactList}
@@ -92,96 +97,93 @@ export const ContactListView = ({
 		? 'No contact lists available'
 		: 'No inactive contact lists available';
 
-	if (!isActive && !inactiveExpanded) {
-		return (
+	const isCollapsed = !isActive && !inactiveExpanded;
+
+	return (
+		<Stack>
+			{isActive && <CapacityProgress campaignId={campaignId} />}
 			<SectionCard
 				title={title}
 				description={description}
 				headerActions={
-					<Tooltip label={tooltipLabel}>
-						<ActionIcon
-							color='blue'
-							size='sm'
-							variant='light'
-							onClick={toggleInactiveExpanded}
-							aria-label='Expand inactive contact lists'
-						>
-							<IconPlus size={18} />
-						</ActionIcon>
-					</Tooltip>
+					<Group gap='xs'>
+						<Tooltip label='Reload'>
+							<ActionIcon
+								color='gray'
+								size='sm'
+								variant='light'
+								onClick={onUpdateComplete}
+								aria-label='Reload contact lists'
+								disabled={isCollapsed}
+								title={
+									isCollapsed ? 'Reload unavailable while collapsed' : 'Reload'
+								}
+							>
+								<IconRefresh size={18} />
+							</ActionIcon>
+						</Tooltip>
+						<Tooltip label={tooltipLabel}>
+							<ActionIcon
+								color='blue'
+								size='sm'
+								variant='light'
+								onClick={() =>
+									isCollapsed ? toggleInactiveExpanded() : open()
+								}
+								aria-label={tooltipLabel}
+							>
+								<IconPlus size={18} />
+							</ActionIcon>
+						</Tooltip>
+					</Group>
 				}
-			/>
-		);
-	}
-
-	return (
-		<SectionCard
-			title={title}
-			description={description}
-			headerActions={
-				<Group gap='xs'>
-					<Tooltip label='Reload'>
-						<ActionIcon
-							color='gray'
-							size='sm'
-							variant='light'
-							onClick={onUpdateComplete}
-							aria-label='Reload contact lists'
-						>
-							<IconRefresh size={18} />
-						</ActionIcon>
-					</Tooltip>
-					<Tooltip label={tooltipLabel}>
-						<ActionIcon
-							color='blue'
-							size='sm'
-							variant='light'
-							onClick={open}
-							aria-label={tooltipLabel}
-						>
-							<IconPlus size={18} />
-						</ActionIcon>
-					</Tooltip>
-				</Group>
-			}
-		>
-			{isActive && <CapacityProgress campaignId={campaignId} />}
-			<BaseTable
-				data={contactListsArray}
-				columns={columns}
-				emptyMessage={emptyMessage}
-				onRowClick={handleRowClick}
-				isLoading={isLoading}
-			/>
-			<Modal
-				opened={opened}
-				onClose={handleClose}
-				title={
-					<>
-						<SectionTitle title={modalTitle} description={modalDescription} />
-					</>
-				}
-				size='xl'
-				centered
-				withCloseButton
-				closeOnClickOutside={false}
 			>
-				{isActive ? (
-					<AddNewContactList
-						campaignId={campaignId}
-						onClose={handleClose}
-						onRefresh={onUpdateComplete}
-						objectiveId={objectiveId}
-					/>
-				) : (
-					<SelectActiveContactList
-						campaignId={campaignId}
-						onClose={handleClose}
-						onRefresh={onUpdateComplete}
-						objectiveId={objectiveId}
-					/>
+				{!isCollapsed && (
+					<>
+						<BaseTable
+							data={contactListsArray}
+							columns={columns}
+							emptyMessage={emptyMessage}
+							onRowClick={handleRowClick}
+							isLoading={isLoading}
+							selectedRowId={selectedContactListId}
+							getRowId={(row) => row.id}
+						/>
+						<Modal
+							opened={opened}
+							onClose={handleClose}
+							title={
+								<>
+									<SectionTitle
+										title={modalTitle}
+										description={modalDescription}
+									/>
+								</>
+							}
+							size='xl'
+							centered
+							withCloseButton
+							closeOnClickOutside={false}
+						>
+							{isActive ? (
+								<AddNewContactList
+									campaignId={campaignId}
+									onClose={handleClose}
+									onRefresh={onUpdateComplete}
+									objectiveId={objectiveId}
+								/>
+							) : (
+								<SelectActiveContactList
+									campaignId={campaignId}
+									onClose={handleClose}
+									onRefresh={onUpdateComplete}
+									objectiveId={objectiveId}
+								/>
+							)}
+						</Modal>
+					</>
 				)}
-			</Modal>
-		</SectionCard>
+			</SectionCard>
+		</Stack>
 	);
 };

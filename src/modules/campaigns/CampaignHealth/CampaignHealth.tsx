@@ -1,8 +1,14 @@
 // src/modules/campaigns/CampaignHealth/CampaignHealth.tsx
 
 import React from 'react';
-import { Alert, Badge, Group, Loader, Stack, Text } from '@mantine/core';
-import { IconCheck, IconX } from '@tabler/icons-react';
+import { useNavigate } from 'react-router';
+import { Alert, Button, Group, Loader, Stack, Text } from '@mantine/core';
+import {
+	IconX,
+	IconAlertTriangle,
+	IconCalendarOff,
+	IconArrowRight,
+} from '@tabler/icons-react';
 import { useGetCampaignRequirements } from '~/queries/campaignsQueries';
 import classes from './CampaignHealth.module.css';
 
@@ -11,6 +17,7 @@ interface CampaignHealthProps {
 }
 
 const CampaignHealth: React.FC<CampaignHealthProps> = ({ campaignId }) => {
+	const navigate = useNavigate();
 	const {
 		data: requirements,
 		isLoading,
@@ -37,65 +44,53 @@ const CampaignHealth: React.FC<CampaignHealthProps> = ({ campaignId }) => {
 	}
 
 	if (!requirements) {
-		return (
-			<Text className={classes.loadingText}>
-				No requirements data available.
-			</Text>
-		);
+		return null;
 	}
 
-	const {
-		canRun = false,
-		campaignType = 'Unknown',
-		missingRequirements = [],
-	} = requirements;
+	const { hasDispositionFlow = false, hasActiveSchedule = false } =
+		requirements;
+
+	// If all requirements are met, don't show anything
+	if (hasDispositionFlow && hasActiveSchedule) {
+		return null;
+	}
 
 	return (
 		<Stack gap='md' className={classes.root}>
-			<div className={classes.statusCard}>
-				<Group
-					justify='space-between'
-					align='flex-start'
-					className={classes.statusHeader}
-				>
-					<div className={classes.statusCopy}>
-						<Text className={classes.statusLabel}>Overall status</Text>
-						<Text className={classes.statusCaption}>
-							Campaign type: {campaignType}
-						</Text>
+			<div className={classes.detailsList}>
+				{!hasDispositionFlow && (
+					<div className={classes.detailItem}>
+						<Group gap='xs'>
+							<IconAlertTriangle size={16} className={classes.iconWarning} />
+							<Text className={classes.detailLabel}>Disposition Flow</Text>
+						</Group>
+						<Group gap='xs'>
+							<IconX size={14} className={classes.iconError} />
+							<Text className={classes.detailValue}>Not configured</Text>
+						</Group>
 					</div>
-					<Badge
-						color={canRun ? 'green' : 'red'}
-						leftSection={canRun ? <IconCheck size={14} /> : <IconX size={14} />}
-						variant='light'
-						className={classes.statusBadge}
-					>
-						{canRun ? 'Ready to Run' : 'Not Ready'}
-					</Badge>
-				</Group>
+				)}
+				{!hasActiveSchedule && (
+					<div className={classes.detailItem}>
+						<Group gap='xs'>
+							<IconCalendarOff size={16} className={classes.iconWarning} />
+							<Text className={classes.detailLabel}>Active Schedule</Text>
+						</Group>
+						<Group gap='xs'>
+							<IconX size={14} className={classes.iconError} />
+							<Text className={classes.detailValue}>Not active</Text>
+						</Group>
+					</div>
+				)}
 			</div>
-
-			{!canRun && missingRequirements.length > 0 && (
-				<Alert
-					color='orange'
-					variant='light'
-					title='Missing requirements'
-					classNames={{
-						root: classes.requirementsCard,
-						title: classes.requirementsTitle,
-						message: classes.requirementsMessage,
-					}}
-				>
-					{missingRequirements.map((req, index) => (
-						<div key={index} className={classes.requirementItem}>
-							<span className={classes.requirementBullet}>•</span>
-							<Text component='span' className={classes.requirementCopy}>
-								{req}
-							</Text>
-						</div>
-					))}
-				</Alert>
-			)}
+			<Button
+				variant='light'
+				rightSection={<IconArrowRight size={16} />}
+				onClick={() => navigate(`/campaign/${campaignId}`)}
+				className={classes.editButton}
+			>
+				Go to edit
+			</Button>
 		</Stack>
 	);
 };

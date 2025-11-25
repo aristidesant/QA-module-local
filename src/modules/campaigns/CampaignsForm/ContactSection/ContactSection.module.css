@@ -1,40 +1,74 @@
 .container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: var(--mantine-spacing-md);
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
 }
 
 .statsContainer {
-  gap: var(--mantine-spacing-md);
-  align-items: flex-start;
-  display: flex;
-  flex-wrap: nowrap;
+	gap: var(--mantine-spacing-md);
+	align-items: flex-start;
+	display: flex;
+	flex-wrap: nowrap;
 }
 
 .statusBreakdown {
-  flex: 1;
-  min-width: 0;
+	flex: 1;
+	min-width: 0;
 }
 
 .rightColumn {
-  flex: 0 0 300px;
-  min-width: 300px;
+	flex: 0 0 300px;
+	min-width: 300px;
 }
 
 @media (max-width: 768px) {
-  .statsContainer {
-    flex-direction: column;
-  }
-  
-  .statusBreakdown {
-    flex: 1;
-    width: 100%;
-  }
-  
-  .rightColumn {
-    flex: 1;
-    width: 100%;
-    min-width: unset;
-  }
+	.statsContainer {
+		flex-direction: column;
+	}
+
+	.statusBreakdown {
+		flex: 1;
+		width: 100%;
+	}
+
+	.rightColumn {
+		flex: 1;
+		width: 100%;
+		min-width: unset;
+	}
+}
+
+.tabsRoot {
+	width: 100%;
+}
+
+.tabsList {
+	border-bottom: 1px solid var(--mantine-color-gray-3);
+	margin-bottom: var(--mantine-spacing-md);
+}
+
+.tab {
+	font-weight: 500;
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	color: var(--mantine-color-gray-6);
+	border: none;
+	border-bottom: 2px solid transparent;
+	transition:
+		color 0.15s ease,
+		border-color 0.15s ease;
+}
+
+.tab:hover {
+	color: var(--mantine-color-gray-8);
+	background-color: transparent;
+}
+
+.tab[data-active] {
+	color: var(--mantine-primary-color-filled);
+	border-bottom-color: var(--mantine-primary-color-filled);
+}
+
+.tabPanel {
+	padding-top: var(--mantine-spacing-xs);
 }

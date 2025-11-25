@@ -118,20 +118,121 @@ describe('CampaignContactListPage', () => {
 		expect(screen.getByText('Contact List Not Found')).toBeInTheDocument();
 	});
 
-	it('renders success state and child components', () => {
+	describe('Tabs visibility and navigation', () => {
 		const mockData = { id: 1, name: 'Test List', queueStatus: 'PENDING' };
-		(useGetContactGroup as any).mockReturnValue({
-			isLoading: false,
-			data: mockData,
+
+		beforeEach(() => {
+			(useGetContactGroup as any).mockReturnValue({
+				isLoading: false,
+				data: mockData,
+			});
 		});
 
-		renderWithProviders(<CampaignContactListPage />);
+		it('renders all tab headers', () => {
+			renderWithProviders(<CampaignContactListPage />);
 
-		expect(screen.getByText('Test List')).toBeInTheDocument();
-		expect(screen.getByTestId('contact-list-info')).toBeInTheDocument();
-		expect(screen.getByTestId('contact-list-metrics')).toBeInTheDocument();
-		expect(screen.getByTestId('conversations-list')).toBeInTheDocument();
-		expect(screen.getByTestId('contacts-table')).toBeInTheDocument();
+			expect(
+				screen.getByRole('tab', { name: /overview/i })
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole('tab', { name: /conversations/i })
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole('tab', { name: /contacts/i })
+			).toBeInTheDocument();
+		});
+
+		it('renders Overview tab content by default and hides other tabs content', () => {
+			renderWithProviders(<CampaignContactListPage />);
+
+			// Overview tab content should be visible
+			expect(screen.getByTestId('contact-list-info')).toBeInTheDocument();
+			expect(screen.getByTestId('contact-list-metrics')).toBeInTheDocument();
+
+			// Other tabs content should NOT be visible (keepMounted={false})
+			expect(
+				screen.queryByTestId('conversations-list')
+			).not.toBeInTheDocument();
+			expect(screen.queryByTestId('contacts-table')).not.toBeInTheDocument();
+			expect(
+				screen.queryByTestId('faulty-phones-alert')
+			).not.toBeInTheDocument();
+		});
+
+		it('shows Conversations tab content and hides others when clicking Conversations tab', () => {
+			renderWithProviders(<CampaignContactListPage />);
+
+			const conversationsTab = screen.getByRole('tab', {
+				name: /conversations/i,
+			});
+			fireEvent.click(conversationsTab);
+
+			// Conversations tab content should be visible
+			expect(screen.getByTestId('conversations-list')).toBeInTheDocument();
+
+			// Overview tab content should NOT be visible
+			expect(screen.queryByTestId('contact-list-info')).not.toBeInTheDocument();
+			expect(
+				screen.queryByTestId('contact-list-metrics')
+			).not.toBeInTheDocument();
+
+			// Contacts tab content should NOT be visible
+			expect(screen.queryByTestId('contacts-table')).not.toBeInTheDocument();
+			expect(
+				screen.queryByTestId('faulty-phones-alert')
+			).not.toBeInTheDocument();
+		});
+
+		it('shows Contacts tab content and hides others when clicking Contacts tab', () => {
+			renderWithProviders(<CampaignContactListPage />);
+
+			const contactsTab = screen.getByRole('tab', { name: /contacts/i });
+			fireEvent.click(contactsTab);
+
+			// Contacts tab content should be visible
+			expect(screen.getByTestId('contacts-table')).toBeInTheDocument();
+			expect(screen.getByTestId('faulty-phones-alert')).toBeInTheDocument();
+
+			// Overview tab content should NOT be visible
+			expect(screen.queryByTestId('contact-list-info')).not.toBeInTheDocument();
+			expect(
+				screen.queryByTestId('contact-list-metrics')
+			).not.toBeInTheDocument();
+
+			// Conversations tab content should NOT be visible
+			expect(
+				screen.queryByTestId('conversations-list')
+			).not.toBeInTheDocument();
+		});
+
+		it('can navigate between tabs correctly', () => {
+			renderWithProviders(<CampaignContactListPage />);
+
+			// Start at Overview (default)
+			expect(screen.getByTestId('contact-list-info')).toBeInTheDocument();
+
+			// Navigate to Conversations
+			fireEvent.click(screen.getByRole('tab', { name: /conversations/i }));
+			expect(screen.getByTestId('conversations-list')).toBeInTheDocument();
+			expect(screen.queryByTestId('contact-list-info')).not.toBeInTheDocument();
+
+			// Navigate to Contacts
+			fireEvent.click(screen.getByRole('tab', { name: /contacts/i }));
+			expect(screen.getByTestId('contacts-table')).toBeInTheDocument();
+			expect(
+				screen.queryByTestId('conversations-list')
+			).not.toBeInTheDocument();
+
+			// Navigate back to Overview
+			fireEvent.click(screen.getByRole('tab', { name: /overview/i }));
+			expect(screen.getByTestId('contact-list-info')).toBeInTheDocument();
+			expect(screen.queryByTestId('contacts-table')).not.toBeInTheDocument();
+		});
+
+		it('renders contact list name in success state', () => {
+			renderWithProviders(<CampaignContactListPage />);
+			expect(screen.getByText('Test List')).toBeInTheDocument();
+		});
 	});
 
 	it('handles start campaign action', async () => {

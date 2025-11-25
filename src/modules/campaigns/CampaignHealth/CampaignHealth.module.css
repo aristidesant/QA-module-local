@@ -137,3 +137,21 @@
 	font-weight: 600;
 	color: var(--mantine-color-gray-9);
 }
+
+.iconSuccess {
+	color: var(--mantine-color-green-6);
+}
+
+.iconError {
+	color: var(--mantine-color-red-6);
+}
+
+.iconWarning {
+	color: var(--mantine-color-orange-6);
+}
+
+.editButton {
+	align-self: flex-start;
+	font-size: 12px;
+	font-weight: 500;
+}

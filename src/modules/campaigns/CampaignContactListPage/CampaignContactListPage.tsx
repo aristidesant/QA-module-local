@@ -1,12 +1,15 @@
 import { useMemo, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Button, Flex, Loader, Text } from '@mantine/core';
+import { Button, Flex, Loader, Tabs, Text } from '@mantine/core';
 import {
 	IconAlertCircle,
 	IconArrowLeft,
+	IconInfoCircle,
+	IconMessage,
 	IconPlayerPause,
 	IconPlayerPlay,
 	IconRefresh,
+	IconUsers,
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { modals } from '@mantine/modals';
@@ -290,48 +293,75 @@ const CampaignContactListPage = () => {
 			description='Review and manage the contacts associated with this list.'
 			rightSection={rightComponent}
 		>
-			<SectionCard
-				title='Contact List Information'
-				description='View the status and metrics for this contact list.'
-				headerActions={
-					<Button
-						variant='filled'
-						onClick={handleAction}
-						disabled={primaryActionDisabled}
-						loading={isLoadingMutations}
-						leftSection={status.actionIcon}
+			<Tabs variant='outline' defaultValue='overview' keepMounted={false}>
+				<Tabs.List>
+					<Tabs.Tab value='overview' leftSection={<IconInfoCircle size={16} />}>
+						Overview
+					</Tabs.Tab>
+					<Tabs.Tab
+						value='conversations'
+						leftSection={<IconMessage size={16} />}
 					>
-						{status.actionLabel}
-					</Button>
-				}
-			>
-				<ContactListInformation
-					contactGroup={contactGroupQuery.data}
-					onReload={() => contactGroupQuery.refetch()}
-				/>
-			</SectionCard>
-			<ContactListMetrics contactGroupId={contactGroupId} />
-			<SectionCard
-				title='Conversations'
-				description='All conversations associated with this contact list.'
-			>
-				<ConversationsList
-					onConversationClick={(conversation) => {
-						setRightComponent(<ConversationDetails id={conversation?.id} />);
-					}}
-					contactGroupId={contactGroupId}
-				/>
-			</SectionCard>
-			<SectionCard
-				title='Contacts'
-				description='All contacts associated with this list.'
-			>
-				<FaultyPhonesAlert contactGroupId={contactGroupIdNumber} />
-				<ContactGroupContactsTable
-					contactGroupId={contactGroupIdNumber}
-					campaignId={campaignId ? Number(campaignId) : undefined}
-				/>
-			</SectionCard>
+						Conversations
+					</Tabs.Tab>
+					<Tabs.Tab value='contacts' leftSection={<IconUsers size={16} />}>
+						Contacts
+					</Tabs.Tab>
+				</Tabs.List>
+
+				<Tabs.Panel value='overview' pt='md'>
+					<SectionCard
+						title='Contact List Information'
+						description='View the status and metrics for this contact list.'
+						headerActions={
+							<Button
+								variant='filled'
+								onClick={handleAction}
+								disabled={primaryActionDisabled}
+								loading={isLoadingMutations}
+								leftSection={status.actionIcon}
+							>
+								{status.actionLabel}
+							</Button>
+						}
+					>
+						<ContactListInformation
+							contactGroup={contactGroupQuery.data}
+							onReload={() => contactGroupQuery.refetch()}
+						/>
+					</SectionCard>
+					<ContactListMetrics contactGroupId={contactGroupId} />
+				</Tabs.Panel>
+
+				<Tabs.Panel value='conversations' pt='md'>
+					<SectionCard
+						title='Conversations'
+						description='All conversations associated with this contact list.'
+					>
+						<ConversationsList
+							onConversationClick={(conversation) => {
+								setRightComponent(
+									<ConversationDetails id={conversation?.id} />
+								);
+							}}
+							contactGroupId={contactGroupId}
+						/>
+					</SectionCard>
+				</Tabs.Panel>
+
+				<Tabs.Panel value='contacts' pt='md'>
+					<SectionCard
+						title='Contacts'
+						description='All contacts associated with this list.'
+					>
+						<FaultyPhonesAlert contactGroupId={contactGroupIdNumber} />
+						<ContactGroupContactsTable
+							contactGroupId={contactGroupIdNumber}
+							campaignId={campaignId ? Number(campaignId) : undefined}
+						/>
+					</SectionCard>
+				</Tabs.Panel>
+			</Tabs>
 		</ContentContainer>
 	);
 };
