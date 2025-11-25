@@ -20,11 +20,12 @@ interface AddPhoneNumbersModalProps {
 	onSaved: () => void;
 }
 
-const phoneRegex = /^\+?[1-9]\d{7,14}$/; // Basic E.164 range check
+// Dominican Republic numbers: country code +1 and area codes 809, 829, 849 followed by 7 digits
+const phoneRegex = /^\+1(809|829|849)\d{7}$/;
 
 const AddPhoneNumbersModal: React.FC<AddPhoneNumbersModalProps> = ({
 	contactId,
-	contactGroupId, // reserved if future validation needed
+	// contactGroupId, // reserved if future validation needed
 	onClose,
 	onSaved,
 }) => {
@@ -99,7 +100,7 @@ const AddPhoneNumbersModal: React.FC<AddPhoneNumbersModalProps> = ({
 		<Modal opened onClose={onClose} title='Add Phone Numbers' size='md'>
 			<Group gap='xs' mb='xs'>
 				<Text size='xs' c='dimmed'>
-					Enter one or more phone numbers in international format (E.164).
+					Enter Dominican Republic numbers (+1 809/829/849 XXXXXXX).
 				</Text>
 			</Group>
 			<Group gap='xs' className={styles.rows}>
@@ -115,7 +116,7 @@ const AddPhoneNumbersModal: React.FC<AddPhoneNumbersModalProps> = ({
 								placeholder='+18095551234'
 								size='xs'
 								className={styles.input}
-								error={isInvalid ? 'Invalid format' : undefined}
+								error={isInvalid ? 'Invalid DR number' : undefined}
 							/>
 							<ActionIcon
 								variant='subtle'
@@ -145,7 +146,8 @@ const AddPhoneNumbersModal: React.FC<AddPhoneNumbersModalProps> = ({
 			)}
 			{invalidPhones.length > 0 && !hasDuplicates && (
 				<Text size='xs' c='red' mt='xs'>
-					Fix invalid numbers before saving.
+					{invalidPhones.length} invalid Dominican Republic number
+					{invalidPhones.length === 1 ? '' : 's'} detected.
 				</Text>
 			)}
 			<Group justify='space-between' mt='md'>
