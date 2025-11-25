@@ -102,6 +102,18 @@ const contactsApi = (_authHeader?: Record<string, string>) => {
 			return response.data;
 		},
 
+		// CREATE phone numbers for an existing contact
+		createContactPhoneNumbers: async (
+			contactId: number | string,
+			data: { phones: string[] }
+		) => {
+			const response = await axios.post<ContactPhoneNumber[]>(
+				`${DEFAULT_API_URL}/contacts/${contactId}/phone-numbers`,
+				data
+			);
+			return response.data;
+		},
+
 		// UPDATE contact (PATCH)
 		updateContact: async (contactId: string, data: Partial<Contact>) => {
 			const response = await axios.patch<Contact>(
