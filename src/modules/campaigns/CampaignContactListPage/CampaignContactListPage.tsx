@@ -1,6 +1,6 @@
 import { useMemo, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Button, Flex, Loader, Tabs, Text } from '@mantine/core';
+import { Button, Flex, Loader, Stack, Tabs, Text } from '@mantine/core';
 import {
 	IconAlertCircle,
 	IconArrowLeft,
@@ -21,6 +21,7 @@ import {
 	useStartOutboundCampaign,
 	usePauseOutboundCampaign,
 	useResumeOutboundCampaign,
+	useGetCampaign,
 } from '~/queries/campaignsQueries';
 import { useCampaignContactListStore } from '~/stores/campaignContactListStore';
 import ContactGroupSummary from './ContactGroupSummary';
@@ -37,7 +38,7 @@ const CampaignContactListPage = () => {
 		contactGroupId: string;
 		campaignId: string;
 	}>();
-
+	const { data: campaign } = useGetCampaign(`${campaignId}`);
 	const contactGroupIdNumber = useMemo(() => {
 		if (!contactGroupId) {
 			return Number.NaN;
@@ -289,7 +290,7 @@ const CampaignContactListPage = () => {
 	return (
 		<ContentContainer
 			{...commonContainerProps}
-			title={contactGroupQuery.data.name}
+			title={`${campaign ? campaign.name : 'Unknown Campaign'}`}
 			description='Review and manage the contacts associated with this list.'
 			rightSection={rightComponent}
 		>
@@ -309,31 +310,33 @@ const CampaignContactListPage = () => {
 					</Tabs.Tab>
 				</Tabs.List>
 
-				<Tabs.Panel value='overview' pt='md'>
-					<SectionCard
-						title='Contact List Information'
-						description='View the status and metrics for this contact list.'
-						headerActions={
-							<Button
-								variant='filled'
-								onClick={handleAction}
-								disabled={primaryActionDisabled}
-								loading={isLoadingMutations}
-								leftSection={status.actionIcon}
-							>
-								{status.actionLabel}
-							</Button>
-						}
-					>
-						<ContactListInformation
-							contactGroup={contactGroupQuery.data}
-							onReload={() => contactGroupQuery.refetch()}
-						/>
-					</SectionCard>
-					<ContactListMetrics contactGroupId={contactGroupId} />
+				<Tabs.Panel value='overview' mb='md'>
+					<Stack gap='md'>
+						<SectionCard
+							title='Contact List Information'
+							description='View the status and metrics for this contact list.'
+							headerActions={
+								<Button
+									variant='filled'
+									onClick={handleAction}
+									disabled={primaryActionDisabled}
+									loading={isLoadingMutations}
+									leftSection={status.actionIcon}
+								>
+									{status.actionLabel}
+								</Button>
+							}
+						>
+							<ContactListInformation
+								contactGroup={contactGroupQuery.data}
+								onReload={() => contactGroupQuery.refetch()}
+							/>
+						</SectionCard>
+						<ContactListMetrics contactGroupId={contactGroupId} />
+					</Stack>
 				</Tabs.Panel>
 
-				<Tabs.Panel value='conversations' pt='md'>
+				<Tabs.Panel value='conversations' mb='md'>
 					<SectionCard
 						title='Conversations'
 						description='All conversations associated with this contact list.'
@@ -349,7 +352,7 @@ const CampaignContactListPage = () => {
 					</SectionCard>
 				</Tabs.Panel>
 
-				<Tabs.Panel value='contacts' pt='md'>
+				<Tabs.Panel value='contacts' mb='md'>
 					<SectionCard
 						title='Contacts'
 						description='All contacts associated with this list.'

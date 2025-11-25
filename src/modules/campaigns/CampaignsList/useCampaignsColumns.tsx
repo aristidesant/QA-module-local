@@ -1,6 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table';
 import {
-	Avatar,
 	Tooltip,
 	ActionIcon,
 	Group,
@@ -31,6 +30,7 @@ import {
 	CampaignStatusConfig,
 	CampaignStatusConfigType,
 } from '~/models/CampaignStatus';
+import { timeAgo } from '~/utils/dateUtils';
 
 // Helper to get status info
 export const getCampaignStatusInfo = (
@@ -120,81 +120,37 @@ export const useCampaignsColumns = ({
 				const campaign = row.original;
 				const isOutbound = campaign.type === 'OUTBOUND';
 				return (
-					<Tooltip label={isOutbound ? 'Outbound' : 'Inbound'}>
-						<ThemeIcon
-							variant='light'
-							color={isOutbound ? 'green' : 'blue'}
-							size='sm'
-							radius='xl'
-						>
-							{isOutbound ? (
-								<IconArrowUpRight size={16} />
+					<Badge
+						variant='light'
+						color={isOutbound ? 'teal' : 'violet'}
+						size='md'
+						radius='sm'
+						leftSection={
+							isOutbound ? (
+								<IconArrowUpRight size={14} />
 							) : (
-								<IconArrowDownLeft size={16} />
-							)}
-						</ThemeIcon>
-					</Tooltip>
+								<IconArrowDownLeft size={14} />
+							)
+						}
+					>
+						{isOutbound ? 'Outbound' : 'Inbound'}
+					</Badge>
 				);
 			},
-			size: 120,
+			size: 140,
 		},
 		{
-			accessorKey: 'status',
-			header: 'Status',
+			accessorKey: 'updatedAt',
+			header: 'Last Updated',
 			cell: ({ row }) => {
 				const campaign = row.original;
-				const statusInfo = getCampaignStatusInfo(campaign.status ?? '');
 				return (
-					<Tooltip label={statusInfo.label}>
-						<Badge
-							variant='light'
-							color={statusInfo.color}
-							size='xs'
-							leftSection={<statusInfo.icon size={16} />}
-						>
-							{statusInfo.label}
-						</Badge>
-					</Tooltip>
+					<Text size='sm' c='dimmed'>
+						{timeAgo(campaign.updatedAt)}
+					</Text>
 				);
 			},
-			size: 120,
-		},
-
-		{
-			accessorKey: 'agents',
-			header: 'Agents',
-			cell: ({ row }) => {
-				const campaign = row.original;
-				if (!campaign.agents || campaign.agents.length === 0) {
-					return (
-						<Text size='xs' c='dimmed'>
-							N/A
-						</Text>
-					);
-				}
-				return (
-					<Group gap={4}>
-						{campaign.agents.slice(0, 3).map((campaignAgent) => (
-							<Tooltip
-								key={campaignAgent.id}
-								label={`${campaignAgent.agent.name} - ${campaignAgent.agent.language}`}
-							>
-								<Avatar radius='xl' size={24} color='blue'>
-									{campaignAgent.agent.name.charAt(0).toUpperCase()}
-								</Avatar>
-							</Tooltip>
-						))}
-						{campaign.agents.length > 3 && (
-							<Avatar radius='xl' size={24} color='gray'>
-								<Text size='xs' fw={600}>
-									+{campaign.agents.length - 3}
-								</Text>
-							</Avatar>
-						)}
-					</Group>
-				);
-			},
-			size: 150,
+			size: 140,
 		},
 		{
 			id: 'actions',

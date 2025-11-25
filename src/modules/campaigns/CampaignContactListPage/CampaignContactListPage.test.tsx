@@ -7,6 +7,7 @@ import {
 	useStartOutboundCampaign,
 	usePauseOutboundCampaign,
 	useResumeOutboundCampaign,
+	useGetCampaign,
 } from '~/queries/campaignsQueries';
 import { useCampaignContactListStore } from '~/stores/campaignContactListStore';
 import { useNavigate, useParams } from 'react-router';
@@ -26,6 +27,7 @@ vi.mock('~/queries/campaignsQueries', () => ({
 	useStartOutboundCampaign: vi.fn(),
 	usePauseOutboundCampaign: vi.fn(),
 	useResumeOutboundCampaign: vi.fn(),
+	useGetCampaign: vi.fn(),
 }));
 
 vi.mock('~/stores/campaignContactListStore', () => ({
@@ -82,6 +84,9 @@ describe('CampaignContactListPage', () => {
 		(useCampaignContactListStore as any).mockReturnValue({
 			setRightComponent: mockSetRightComponent,
 			rightComponent: null,
+		});
+		(useGetCampaign as any).mockReturnValue({
+			data: { id: 10, name: 'Test Campaign' },
 		});
 		(useStartOutboundCampaign as any).mockReturnValue({
 			mutate: mockMutate,
@@ -229,9 +234,9 @@ describe('CampaignContactListPage', () => {
 			expect(screen.queryByTestId('contacts-table')).not.toBeInTheDocument();
 		});
 
-		it('renders contact list name in success state', () => {
+		it('renders campaign name in success state', () => {
 			renderWithProviders(<CampaignContactListPage />);
-			expect(screen.getByText('Test List')).toBeInTheDocument();
+			expect(screen.getByText('Test Campaign')).toBeInTheDocument();
 		});
 	});
 

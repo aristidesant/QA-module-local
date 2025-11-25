@@ -63,14 +63,26 @@ vi.mock('@mantine/core', async (importOriginal) => {
 	const actual: any = await importOriginal();
 	return {
 		...actual,
-		FileInput: ({ onChange, error, value, ...props }: any) => (
+		FileInput: ({
+			onChange,
+			error,
+			value,
+			leftSection,
+			rightSection,
+			clearable,
+			label,
+			description,
+			...props
+		}: any) => (
 			<div data-testid='file-input-wrapper'>
+				{label && <label>{label}</label>}
 				<input
 					data-testid='file-input'
 					type='file'
 					onChange={(e) => onChange(e.target.files?.[0] || null)}
 					{...props}
 				/>
+				{description && <span>{description}</span>}
 				{error && <div data-testid='file-error'>{error}</div>}
 			</div>
 		),

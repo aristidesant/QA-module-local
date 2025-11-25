@@ -82,37 +82,6 @@ describe('useCampaignsColumns', () => {
 		renderCell('type', { ...sampleCampaign, type: 'INBOUND' as any });
 	});
 
-	it('renders status column correctly', () => {
-		renderCell('status', { ...sampleCampaign, status: 'ACTIVE' as any });
-		expect(screen.getByText('ACTIVE')).toBeInTheDocument();
-	});
-
-	it('renders agents column with N/A when no agents', () => {
-		renderCell('agents', { ...sampleCampaign, agents: [] });
-		expect(screen.getByText('N/A')).toBeInTheDocument();
-	});
-
-	it('renders agents column with agents', () => {
-		const agents = [
-			{ id: 1, agent: { name: 'Agent 1', language: 'en' } },
-			{ id: 2, agent: { name: 'Agent 2', language: 'es' } },
-		];
-		renderCell('agents', { ...sampleCampaign, agents: agents as any });
-		// Mantine Avatar usually renders initials
-		expect(screen.getAllByText('A')).toHaveLength(2);
-	});
-
-	it('renders agents column with overflow', () => {
-		const agents = [
-			{ id: 1, agent: { name: 'Agent 1', language: 'en' } },
-			{ id: 2, agent: { name: 'Agent 2', language: 'es' } },
-			{ id: 3, agent: { name: 'Agent 3', language: 'fr' } },
-			{ id: 4, agent: { name: 'Agent 4', language: 'de' } },
-		];
-		renderCell('agents', { ...sampleCampaign, agents: agents as any });
-		expect(screen.getByText('+1')).toBeInTheDocument();
-	});
-
 	it('renders action column and handles interactions', async () => {
 		const onEdit = vi.fn();
 		const onView = vi.fn();
