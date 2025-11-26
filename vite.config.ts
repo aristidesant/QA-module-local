@@ -24,7 +24,13 @@ export default defineConfig({
 		css: false,
 		coverage: ((): any => {
 			const baseInclude = ['src/**/*.{ts,tsx}'];
-			const baseExclude = ['src/models/**'];
+			const baseExclude = [
+				'src/models/**',
+				'src/**/*.test.{ts,tsx}',
+				'src/**/*.spec.{ts,tsx}',
+				'src/test-utils/**',
+				'src/setupTests.ts',
+			];
 
 			if (process.env.VALID_COVERAGE_ONLY === 'true') {
 				// Build a list of source files that have corresponding test files

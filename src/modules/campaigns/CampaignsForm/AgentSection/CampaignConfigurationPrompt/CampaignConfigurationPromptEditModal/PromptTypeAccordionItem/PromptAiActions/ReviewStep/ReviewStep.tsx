@@ -8,7 +8,7 @@ import {
 	Alert,
 	Text,
 } from '@mantine/core';
-import { IconCheck, IconX } from '@tabler/icons-react';
+import { IconCheck } from '@tabler/icons-react';
 import { Diff } from 'react-diff-view';
 import 'react-diff-view/style/index.css';
 import type { DiffResult } from '../diffUtils';
@@ -17,14 +17,12 @@ import styles from '../PromptAiActions.module.css';
 type ReviewStepProps = {
 	diffData: DiffResult | null;
 	onApply: () => void;
-	onReject: () => void;
 	onCancel: () => void;
 };
 
 const ReviewStep: React.FC<ReviewStepProps> = ({
 	diffData,
 	onApply,
-	onReject,
 	onCancel,
 }) => {
 	const renderDiffContent = () => {
@@ -83,16 +81,7 @@ const ReviewStep: React.FC<ReviewStepProps> = ({
 		<Stack gap='md'>
 			{renderDiffContent()}
 
-			<Group justify='space-between' gap='xs'>
-				<Button
-					variant='subtle'
-					size='sm'
-					color='gray'
-					leftSection={<IconX size={14} />}
-					onClick={onReject}
-				>
-					Try again
-				</Button>
+			<Group justify='end' gap='xs'>
 				<Group gap='xs'>
 					<Button variant='subtle' size='sm' onClick={onCancel}>
 						Cancel

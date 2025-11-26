@@ -244,9 +244,6 @@ describe('PromptAiActions', () => {
 			expect(
 				within(modalContent).getByRole('button', { name: /apply changes/i })
 			).toBeInTheDocument();
-			expect(
-				within(modalContent).getByRole('button', { name: /try again/i })
-			).toBeInTheDocument();
 		});
 
 		it('should apply changes when user clicks "Apply changes" button', async () => {
@@ -333,7 +330,7 @@ describe('PromptAiActions', () => {
 			});
 
 			await user.click(
-				within(modalContent).getByRole('button', { name: /try again/i })
+				within(modalContent).getByRole('button', { name: /cancel/i })
 			);
 
 			await waitFor(() => {
@@ -343,53 +340,6 @@ describe('PromptAiActions', () => {
 			expect(
 				within(modalContent).queryByRole('button', { name: /apply changes/i })
 			).not.toBeInTheDocument();
-		});
-
-		it('should close modal without applying when cancel is clicked in review step', async () => {
-			const user = userEvent.setup();
-			const originalPrompt = 'Original prompt content';
-			const improvedContent = 'Improved prompt content';
-
-			mockMutateAsync.mockResolvedValueOnce({ content: improvedContent });
-
-			renderWithProviders(
-				<PromptAiActions
-					prompt={originalPrompt}
-					onApply={mockOnApply}
-					type={mockType}
-				/>
-			);
-
-			await user.click(
-				screen.getByRole('button', { name: /improve with ai/i })
-			);
-
-			await waitFor(() => {
-				expect(
-					document.querySelector('.mantine-Modal-content')
-				).toBeInTheDocument();
-			});
-
-			const modalContent = getModalContent();
-			await user.click(
-				within(modalContent).getByRole('button', { name: /generate/i })
-			);
-
-			await waitFor(() => {
-				expect(screen.getByText('Review AI suggestions')).toBeInTheDocument();
-			});
-
-			await user.click(
-				within(modalContent).getByRole('button', { name: /cancel/i })
-			);
-
-			await waitFor(() => {
-				expect(
-					document.querySelector('.mantine-Modal-content')
-				).not.toBeInTheDocument();
-			});
-
-			expect(mockOnApply).not.toHaveBeenCalled();
 		});
 	});
 

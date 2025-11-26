@@ -1,6 +1,6 @@
 import React from 'react';
-import { Stack, Group, Button, Tooltip, Modal } from '@mantine/core';
-import { IconSparkles, IconWand } from '@tabler/icons-react';
+import { Group, Button, Tooltip, Modal, Text } from '@mantine/core';
+import { IconInfoCircle, IconSparkles, IconWand } from '@tabler/icons-react';
 import 'react-diff-view/style/index.css';
 import { usePromptAiActions } from './usePromptAiActions';
 import ComposeStep from './ComposeStep';
@@ -59,21 +59,25 @@ const PromptAiActions: React.FC<PromptAiActionsProps> = ({
 	});
 
 	return (
-		<Stack gap='xs' className={styles.wrapper}>
-			<Group gap='xs' justify='flex-end'>
-				<Tooltip label={buttonTooltip} withArrow>
-					<Button
-						variant={hasContent ? 'outline' : 'filled'}
-						size='xs'
-						leftSection={
-							hasContent ? <IconWand size={14} /> : <IconSparkles size={14} />
-						}
-						onClick={openEditor}
-					>
-						{buttonLabel}
-					</Button>
-				</Tooltip>
+		<Group gap='xs' justify='space-between' className={styles.wrapper}>
+			<Group gap='xs' className={styles.infoMessage}>
+				<IconInfoCircle size={16} />
+				<Text size='xs'>
+					Type <strong>{'{{'}</strong> to see available dynamic variables
+				</Text>
 			</Group>
+			<Tooltip label={buttonTooltip} withArrow>
+				<Button
+					variant={hasContent ? 'outline' : 'filled'}
+					size='xs'
+					leftSection={
+						hasContent ? <IconWand size={14} /> : <IconSparkles size={14} />
+					}
+					onClick={openEditor}
+				>
+					{buttonLabel}
+				</Button>
+			</Tooltip>
 
 			<Modal
 				opened={editorOpen}
@@ -108,12 +112,11 @@ const PromptAiActions: React.FC<PromptAiActionsProps> = ({
 					<ReviewStep
 						diffData={diffData}
 						onApply={handleApplyChanges}
-						onReject={handleReject}
-						onCancel={handleCloseModal}
+						onCancel={handleReject}
 					/>
 				)}
 			</Modal>
-		</Stack>
+		</Group>
 	);
 };
 

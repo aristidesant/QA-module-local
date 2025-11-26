@@ -35,6 +35,13 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 						},
 					}
 				: {}),
+			...(config.asr
+				? {
+						asr: {
+							...config.asr,
+						},
+					}
+				: {}),
 			...(config.agent
 				? {
 						agent: {

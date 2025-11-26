@@ -3,8 +3,8 @@
 # Run typecheck
 npm run typecheck
 
-# Run tests
-npx vitest run
+# Run tests only for modified files with coverage check for new files
+node scripts/pre-commit-tests.cjs
 
 # Increment version
 node scripts/increment-version.cjs

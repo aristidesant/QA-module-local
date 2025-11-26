@@ -5,6 +5,10 @@
 	background: var(--mantine-color-gray-0);
 }
 
+.infoMessage {
+	color: var(--mantine-color-blue-6);
+}
+
 /* System Prompt Section */
 .systemPromptSection {
 	border: 1px solid var(--mantine-color-gray-3);

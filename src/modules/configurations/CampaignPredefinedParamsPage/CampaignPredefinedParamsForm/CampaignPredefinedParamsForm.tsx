@@ -9,6 +9,7 @@ import {
 	Select,
 	Divider,
 	Text as MantineText,
+	TagsInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -21,7 +22,13 @@ import useCampaignPredefinedParamsStore from '../store/useCampaignPredefinedPara
 import { generateUUID } from '~/utils/stringUtils';
 import RightSectionCard from '~/components/RightSectionCard/RightSectionCard';
 import { IconSettings } from '@tabler/icons-react';
-import { AUDIO_FORMATS, LLM_MODELS, TTS_MODELS } from './formConfig';
+import {
+	AUDIO_FORMATS,
+	LLM_MODELS,
+	TTS_MODELS,
+	ASR_PROVIDERS,
+	ASR_QUALITY,
+} from './formConfig';
 import styles from './CampaignPredefinedParamsForm.module.css';
 
 interface CampaignPredefinedParamsFormProps {
@@ -43,6 +50,12 @@ const CampaignPredefinedParamsForm: React.FC<
 		initialValues: {
 			id: param?.id || generateUUID(),
 			name: param?.name || '',
+			// ASR
+			asrQuality: conversationConfig?.asr?.quality || 'high',
+			asrKeywords: conversationConfig?.asr?.keywords || [],
+			asrProvider: conversationConfig?.asr?.provider || 'elevenlabs',
+			asrUserInputAudioFormat:
+				conversationConfig?.asr?.userInputAudioFormat || 'pcm_16000',
 			// TTS
 			ttsModelId: conversationConfig?.tts?.modelId || 'eleven_turbo_v2_5',
 			ttsStability: conversationConfig?.tts?.stability || 0.5,
@@ -68,6 +81,11 @@ const CampaignPredefinedParamsForm: React.FC<
 				}
 				return null;
 			},
+			// ASR validations
+			asrQuality: (value) => (!value ? 'ASR quality is required' : null),
+			asrProvider: (value) => (!value ? 'ASR provider is required' : null),
+			asrUserInputAudioFormat: (value) =>
+				!value ? 'User input audio format is required' : null,
 			// TTS validations
 			ttsModelId: (value) => (!value ? 'TTS model ID is required' : null),
 			ttsStability: (value) =>
@@ -98,6 +116,11 @@ const CampaignPredefinedParamsForm: React.FC<
 			const cfg = param.params.conversationConfig;
 			form.setValues({
 				name: param.name,
+				// ASR
+				asrQuality: cfg?.asr?.quality || 'high',
+				asrKeywords: cfg?.asr?.keywords || [],
+				asrProvider: cfg?.asr?.provider || 'elevenlabs',
+				asrUserInputAudioFormat: cfg?.asr?.userInputAudioFormat || 'pcm_16000',
 				// TTS
 				ttsModelId: cfg?.tts?.modelId || 'eleven_turbo_v2_5',
 				ttsStability: cfg?.tts?.stability || 0.5,
@@ -116,6 +139,12 @@ const CampaignPredefinedParamsForm: React.FC<
 	const buildConversationConfig = (
 		values: typeof form.values
 	): CampaignPredefinedConversationConfig => ({
+		asr: {
+			quality: values.asrQuality,
+			keywords: values.asrKeywords,
+			provider: values.asrProvider,
+			userInputAudioFormat: values.asrUserInputAudioFormat,
+		},
 		tts: {
 			modelId: values.ttsModelId,
 			stability: values.ttsStability,
@@ -230,6 +259,50 @@ const CampaignPredefinedParamsForm: React.FC<
 								: 'Unique identifier for this configuration'
 						}
 					/>
+
+					<Divider />
+
+					<div className={styles.section}>
+						<div className={styles.sectionHeading}>
+							<MantineText className={styles.sectionTitle}>
+								Speech recognition
+							</MantineText>
+							<MantineText className={styles.sectionDescription}>
+								Configure how the system transcribes caller speech.
+							</MantineText>
+						</div>
+
+						<div className={styles.grid}>
+							<Select
+								label='Provider'
+								placeholder='Select ASR provider'
+								required
+								data={ASR_PROVIDERS}
+								{...form.getInputProps('asrProvider')}
+								searchable
+							/>
+							<Select
+								label='Quality'
+								placeholder='Select quality'
+								required
+								data={ASR_QUALITY}
+								{...form.getInputProps('asrQuality')}
+							/>
+							<Select
+								label='Input Audio Format'
+								placeholder='Select format'
+								required
+								data={AUDIO_FORMATS}
+								{...form.getInputProps('asrUserInputAudioFormat')}
+							/>
+							<TagsInput
+								label='Keywords'
+								placeholder='Type and press Enter'
+								description='Add keywords to improve transcription accuracy'
+								{...form.getInputProps('asrKeywords')}
+							/>
+						</div>
+					</div>
 
 					<Divider />
 

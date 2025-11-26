@@ -22,3 +22,11 @@ export const TTS_MODELS = [
 	{ value: 'eleven_flash_v2_5', label: 'Eleven Flash v2.5' },
 	{ value: 'eleven_multilingual_v2', label: 'Eleven Multilingual v2' },
 ];
+
+export const ASR_PROVIDERS = [{ value: 'elevenlabs', label: 'ElevenLabs' }];
+
+export const ASR_QUALITY = [
+	{ value: 'high', label: 'High' },
+	{ value: 'medium', label: 'Medium' },
+	{ value: 'low', label: 'Low' },
+];

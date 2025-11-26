@@ -16,7 +16,10 @@ import {
 	Popover,
 	ScrollArea,
 	UnstyledButton,
+	Modal,
 } from '@mantine/core';
+import { generateDiffData, type DiffResult } from './PromptAiActions/diffUtils';
+import ReviewStep from './PromptAiActions/ReviewStep';
 import MDEditor from '@uiw/react-md-editor';
 import { IconMessageChatbot, IconNotes } from '@tabler/icons-react';
 import type { CampaignPromptTypeModel } from '~/models/CampaignPromptTypeModel';
@@ -44,6 +47,11 @@ const PromptTypeAccordionItem: React.FC<PromptTypeAccordionItemProps> = ({
 	const [showVariableMenu, setShowVariableMenu] = useState(false);
 	const [variableFilter, setVariableFilter] = useState('');
 	const [activeVariableIndex, setActiveVariableIndex] = useState(0);
+
+	// State for diff preview modal when importing from another campaign
+	const [showDiffPreview, setShowDiffPreview] = useState(false);
+	const [pendingPrompt, setPendingPrompt] = useState<string | null>(null);
+	const [diffData, setDiffData] = useState<DiffResult | null>(null);
 
 	const { data: otherPrompts } = useGetCampaignPrompts({ typeId: type.id });
 	const allVariables = usePromptVariables(campaignId);
@@ -176,12 +184,40 @@ const PromptTypeAccordionItem: React.FC<PromptTypeAccordionItemProps> = ({
 			const selectedPrompt = otherPrompts.find(
 				(p) => p.id !== undefined && String(p.id) === promptId
 			);
-			if (selectedPrompt?.prompt) {
-				onChange(selectedPrompt.prompt);
+			if (!selectedPrompt?.prompt) return;
+
+			const currentValue = value?.trim() || '';
+			const newPrompt = selectedPrompt.prompt;
+
+			// If there's no existing content, apply directly without preview
+			if (!currentValue) {
+				onChange(newPrompt);
+				return;
 			}
+
+			// If there's existing content, show diff preview
+			const diff = generateDiffData(value || '', newPrompt);
+			setDiffData(diff);
+			setPendingPrompt(newPrompt);
+			setShowDiffPreview(true);
 		},
-		[onChange, otherPrompts]
+		[onChange, otherPrompts, value]
 	);
+
+	const handleApplyPendingPrompt = useCallback(() => {
+		if (pendingPrompt) {
+			onChange(pendingPrompt);
+		}
+		setShowDiffPreview(false);
+		setPendingPrompt(null);
+		setDiffData(null);
+	}, [pendingPrompt, onChange]);
+
+	const handleCancelDiffPreview = useCallback(() => {
+		setShowDiffPreview(false);
+		setPendingPrompt(null);
+		setDiffData(null);
+	}, []);
 
 	const promptLength = useMemo(() => value?.trim().length ?? 0, [value]);
 	const promptLines = useMemo(() => {
@@ -342,6 +378,20 @@ const PromptTypeAccordionItem: React.FC<PromptTypeAccordionItemProps> = ({
 					/>
 				</Stack>
 			</Accordion.Panel>
+
+			<Modal
+				opened={showDiffPreview}
+				onClose={handleCancelDiffPreview}
+				title='Review changes before importing'
+				size='80%'
+				centered
+			>
+				<ReviewStep
+					diffData={diffData}
+					onApply={handleApplyPendingPrompt}
+					onCancel={handleCancelDiffPreview}
+				/>
+			</Modal>
 		</Accordion.Item>
 	);
 };

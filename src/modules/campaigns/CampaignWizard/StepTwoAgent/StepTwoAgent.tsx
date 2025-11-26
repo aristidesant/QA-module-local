@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
 	Select,
 	Textarea,
@@ -46,6 +46,33 @@ const LANGUAGE_OPTIONS = [
 	{ value: 'pt', label: 'Portuguese' },
 ];
 
+const areIdsEqual = (
+	idsA?: number[] | null,
+	idsB?: number[] | null
+): boolean => {
+	if (!idsA && !idsB) return true;
+	if (!idsA || !idsB) return false;
+	if (idsA.length !== idsB.length) return false;
+	return idsA.every((id, index) => id === idsB[index]);
+};
+
+const extractKnowledgeBaseIds = (
+	rawKnowledgeBase: unknown
+): { ids: number[]; isPresent: boolean } => {
+	if (!Array.isArray(rawKnowledgeBase)) return { ids: [], isPresent: false };
+	const ids = rawKnowledgeBase
+		.map((item) => {
+			if (typeof item === 'number') return item;
+			if (typeof item === 'object' && item && 'id' in item) {
+				const idValue = (item as { id?: unknown }).id;
+				return typeof idValue === 'number' ? idValue : null;
+			}
+			return null;
+		})
+		.filter((id): id is number => typeof id === 'number');
+	return { ids, isPresent: true };
+};
+
 export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 	onNext,
 	onBack,
@@ -56,6 +83,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 		firstMessage,
 		agentPrompt,
 		createdCampaign,
+		knowledgeBaseIds,
 		setAgentBehaviorId,
 		setLanguage,
 		setFirstMessage,
@@ -103,6 +131,85 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 		validateInputOnChange: true,
 	});
 
+	const lastSyncedCampaignRef = useRef<{
+		campaignId: number;
+		updatedAt?: string;
+		values: typeof form.values;
+		knowledgeBaseIds?: number[];
+	} | null>(null);
+
+	useEffect(() => {
+		if (!createdCampaign) return;
+
+		const conversationAgent =
+			createdCampaign.agentConfig?.conversationConfig?.agent;
+		const promptFromCampaign = conversationAgent?.prompt?.prompt;
+		const { ids: knowledgeBaseIdsFromCampaign, isPresent: hasKbIds } =
+			extractKnowledgeBaseIds(conversationAgent?.prompt?.knowledgeBase);
+
+		const nextValues: typeof form.values = {
+			agentBehaviorId:
+				createdCampaign.configId ?? form.values.agentBehaviorId ?? null,
+			language:
+				conversationAgent?.language ??
+				form.values.language ??
+				LANGUAGE_OPTIONS[0].value,
+			firstMessage:
+				conversationAgent?.firstMessage ?? form.values.firstMessage ?? '',
+			agentPrompt:
+				typeof promptFromCampaign === 'string'
+					? promptFromCampaign
+					: form.values.agentPrompt,
+		};
+
+		const lastSynced = lastSyncedCampaignRef.current;
+		const nextKnowledgeBaseIds = hasKbIds
+			? knowledgeBaseIdsFromCampaign
+			: (lastSynced?.knowledgeBaseIds ?? knowledgeBaseIds);
+		const hasValueChanges =
+			!lastSynced ||
+			lastSynced.campaignId !== createdCampaign.id ||
+			lastSynced.updatedAt !== createdCampaign.updatedAt ||
+			lastSynced.values.agentBehaviorId !== nextValues.agentBehaviorId ||
+			lastSynced.values.language !== nextValues.language ||
+			lastSynced.values.firstMessage !== nextValues.firstMessage ||
+			lastSynced.values.agentPrompt !== nextValues.agentPrompt ||
+			(hasKbIds &&
+				!areIdsEqual(
+					lastSynced?.knowledgeBaseIds,
+					knowledgeBaseIdsFromCampaign
+				));
+
+		if (!hasValueChanges) return;
+
+		form.setValues(nextValues);
+		form.resetDirty(nextValues);
+		setAgentBehaviorId(nextValues.agentBehaviorId);
+		setLanguage(nextValues.language);
+		setFirstMessage(nextValues.firstMessage);
+		setAgentPrompt(nextValues.agentPrompt);
+
+		if (hasKbIds) {
+			setKnowledgeBaseIds(knowledgeBaseIdsFromCampaign);
+		}
+
+		lastSyncedCampaignRef.current = {
+			campaignId: createdCampaign.id,
+			updatedAt: createdCampaign.updatedAt,
+			values: nextValues,
+			knowledgeBaseIds: nextKnowledgeBaseIds,
+		};
+	}, [
+		createdCampaign,
+		form,
+		knowledgeBaseIds,
+		setAgentBehaviorId,
+		setAgentPrompt,
+		setFirstMessage,
+		setKnowledgeBaseIds,
+		setLanguage,
+	]);
+
 	const handleBehaviorChange = (value: string | null) => {
 		if (!value) {
 			form.setFieldValue('agentBehaviorId', null);
@@ -149,8 +256,6 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 			if (currentCampaign.agentConfig) {
 				updatePayload.agentConfig = {
 					...currentCampaign.agentConfig,
-					// Add knowledge base IDs directly to agentConfig
-					knowledgeBaseIds: currentKnowledgeBaseIds,
 					conversationConfig: {
 						...(currentCampaign.agentConfig.conversationConfig || {}),
 						agent: {
@@ -161,6 +266,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 								...(currentCampaign.agentConfig.conversationConfig?.agent
 									?.prompt || {}),
 								prompt: values.agentPrompt,
+								knowledgeBase: currentKnowledgeBaseIds,
 							},
 						},
 					},

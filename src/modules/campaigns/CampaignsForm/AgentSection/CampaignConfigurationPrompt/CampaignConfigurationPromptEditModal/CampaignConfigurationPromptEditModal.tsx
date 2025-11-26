@@ -7,7 +7,6 @@ import {
 	Button,
 	Group,
 	LoadingOverlay,
-	Badge,
 	Text,
 	ThemeIcon,
 	Tooltip,
@@ -144,19 +143,6 @@ const CampaignConfigurationPromptEditModal: React.FC<
 						<div className={styles.headerContent}>
 							<Group gap='xs' align='center'>
 								<Text className={styles.title}>Prompt configuration</Text>
-								<div className={styles.badgesRow}>
-									<Badge size='xs' variant='light' color='blue'>
-										{types?.length ?? 0} types
-									</Badge>
-									{campaignId && (
-										<Badge size='xs' variant='light' color='grape'>
-											#{campaignId}
-										</Badge>
-									)}
-									<Badge size='xs' variant='outline' color='teal'>
-										MD
-									</Badge>
-								</div>
 							</Group>
 							<Text size='xs' c='dimmed' className={styles.subtitle}>
 								Curated, compact instructions for every interaction type.
