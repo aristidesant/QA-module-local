@@ -19,6 +19,8 @@ import {
 } from '~/queries/contactsQueries';
 import type { Contact } from '~/models/ContactsModel';
 import { IconDeviceFloppy } from '@tabler/icons-react';
+import VariableDataEditor from '~/modules/contacts/VariableDataEditor';
+import { useContactEditStore } from '~/stores/contactEditStore';
 
 interface ContactsFormProps {
 	mode: 'create' | 'edit';
@@ -36,6 +38,7 @@ export default function ContactsForm({
 	);
 	const createContact = useCreateContact();
 	const updateContact = useUpdateContact();
+	const { variableData, setInitialVariableData } = useContactEditStore();
 
 	// We keep local form shape broadened (includes helper fields like `email`)
 	const form = useForm<any>({
@@ -73,8 +76,11 @@ export default function ContactsForm({
 				email: contact.emails?.[0] || '',
 				phoneNumbers: contact.phoneNumbers,
 			});
+			// Initialize variableData store from contact
+			setInitialVariableData(contact.variableData?.contactData || {});
 		} else if (mode === 'create') {
 			form.reset();
+			setInitialVariableData({});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [mode, contact]);
@@ -108,7 +114,11 @@ export default function ContactsForm({
 			} else if (mode === 'edit' && contactId) {
 				await updateContact.mutateAsync({
 					id: contactId.toString(),
-					data: payload, // exclude phoneNumbers for edit
+					data: {
+						...payload,
+						// attach dynamic variables
+						variableData: { contactData: variableData },
+					},
 				});
 				notifications.show({
 					title: 'Contact Updated',
@@ -209,6 +219,7 @@ export default function ContactsForm({
 						type='tel'
 					/> */}
 				</SimpleGrid>
+				<VariableDataEditor title='Dynamic Variables' />
 				<Divider />
 				<Group justify='end' mt='md'>
 					<Button

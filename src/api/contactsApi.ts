@@ -3,6 +3,7 @@ import type {
 	Contact,
 	ContactStatus,
 	ContactPhoneNumber,
+	UpdateContactPayload,
 } from '~/models/ContactsModel';
 import { DEFAULT_API_URL } from './config';
 import { PaginatedResponse } from '~/models/CampaignsModel';
@@ -115,7 +116,8 @@ const contactsApi = (_authHeader?: Record<string, string>) => {
 		},
 
 		// UPDATE contact (PATCH)
-		updateContact: async (contactId: string, data: Partial<Contact>) => {
+		// Accepts new payload shape including variableData and phones array
+		updateContact: async (contactId: string, data: UpdateContactPayload) => {
 			const response = await axios.patch<Contact>(
 				`${DEFAULT_API_URL}/contacts/${contactId}`,
 				data
