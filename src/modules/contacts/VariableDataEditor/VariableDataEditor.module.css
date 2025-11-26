@@ -1,0 +1,30 @@
+.root {
+	border: 1px solid var(--mantine-color-gray-3);
+	background: var(--mantine-color-gray-0);
+	border-radius: var(--mantine-radius-sm);
+	padding: var(--mantine-spacing-sm);
+}
+
+.title {
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
+.rows {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.row {
+}
+
+.key {
+	width: 200px;
+}
+
+.value {
+	flex: 1;
+}
+
+.addRow {
+}

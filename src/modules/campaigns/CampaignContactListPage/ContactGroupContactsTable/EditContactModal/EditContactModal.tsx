@@ -1,8 +1,10 @@
 import { Modal, Title, Group } from '@mantine/core';
+import { useEffect } from 'react';
 import { IconPencil } from '@tabler/icons-react';
 import ContactsForm from '~/modules/contacts/ContactsForm/ContactsForm';
 import { useQueryClient } from '@tanstack/react-query';
 import styles from './EditContactModal.module.css';
+import { useContactEditStore } from '~/stores/contactEditStore';
 
 interface EditContactModalProps {
 	opened: boolean;
@@ -18,11 +20,22 @@ function EditContactModal({
 	contactGroupId,
 }: EditContactModalProps) {
 	const queryClient = useQueryClient();
+	const { setContext, clear } = useContactEditStore();
+
+	useEffect(() => {
+		if (opened) {
+			setContext({ contactId, contactGroupId });
+		}
+		// no cleanup here; we clear on modal close explicitly
+	}, [opened, contactId, contactGroupId, setContext]);
 
 	return (
 		<Modal
 			opened={opened}
-			onClose={onClose}
+			onClose={() => {
+				clear();
+				onClose();
+			}}
 			size='lg'
 			title={
 				<Group gap='xs'>
@@ -41,6 +54,7 @@ function EditContactModal({
 							queryClient.invalidateQueries({
 								queryKey: ['contactGroupContacts', contactGroupId],
 							});
+							clear();
 							onClose();
 						}}
 					/>
