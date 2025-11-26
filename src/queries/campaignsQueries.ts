@@ -180,6 +180,34 @@ export const useUpdateCampaign = () => {
 	});
 };
 
+// Update campaign (light version - excludes agentConfig)
+export const useUpdateCampaignLight = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async ({
+			id,
+			data,
+		}: {
+			id: string;
+			data: Partial<Campaign>;
+		}) => {
+			const api = campaignsApi();
+			return api.updateCampaignLight(id, data);
+		},
+		onSuccess: (data) => {
+			queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+			queryClient.invalidateQueries({ queryKey: ['campaigns-paginated'] });
+			if (data?.id) {
+				queryClient.invalidateQueries({ queryKey: ['campaign', data.id] });
+			}
+		},
+		onError: (error) => {
+			// eslint-disable-next-line no-console
+			console.error('Error updating campaign (light):', error);
+		},
+	});
+};
+
 export const useStartOutboundCampaign = () => {
 	const queryClient = useQueryClient();
 	return useMutation({

@@ -8,6 +8,7 @@ import type { Campaign } from '../../../models/CampaignsModel';
 import {
 	useCreateCampaign,
 	useUpdateCampaign,
+	useUpdateCampaignLight,
 	useAssignCampaignObjective,
 } from '~/queries/campaignsQueries';
 import { notifications } from '@mantine/notifications';
@@ -48,6 +49,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		useCreateCampaign();
 	const { mutateAsync: updateCampaign, isPending: isUpdating } =
 		useUpdateCampaign();
+	const { mutateAsync: updateCampaignLight, isPending: isUpdatingLight } =
+		useUpdateCampaignLight();
 	const { mutateAsync: assignObjective } = useAssignCampaignObjective();
 
 	const defaultWorkingHours = {
@@ -112,14 +115,19 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 				agentConfig: campaign.agentConfig || {},
 			});
 		}
+	}, [campaign]);
+
+	// Reset view only on component unmount
+	useEffect(() => {
 		return () => {
 			form.reset();
 			resetView();
 		};
-	}, [campaign]);
+	}, []);
 
 	const handleSubmit = async (
-		value: Omit<Campaign, 'id' | 'createdAt' | 'updatedAt'>
+		value: Omit<Campaign, 'id' | 'createdAt' | 'updatedAt'>,
+		isLight = false
 	) => {
 		if (form.validate().hasErrors) {
 			return;
@@ -143,14 +151,26 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 				};
 			}
 
+			// Prepare data for light update (excludes agentConfig)
+			const dataToSend = isLight
+				? (({ agentConfig, ...rest }) => rest)(value)
+				: value;
+
 			let savedCampaign: Campaign;
 
 			if (campaign?.id) {
 				// Update existing campaign
-				savedCampaign = await updateCampaign({
-					data: value,
-					id: `${campaign.id}`,
-				});
+				if (isLight) {
+					savedCampaign = await updateCampaignLight({
+						data: dataToSend,
+						id: `${campaign.id}`,
+					});
+				} else {
+					savedCampaign = await updateCampaign({
+						data: dataToSend,
+						id: `${campaign.id}`,
+					});
+				}
 				await queryClient.invalidateQueries({
 					queryKey: ['campaign', String(campaign.id)],
 				});
@@ -219,19 +239,21 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			showBackButton
 		>
 			<CampaignFormProvider form={form}>
-				<LoadingOverlay visible={isCreating || isUpdating} />
+				<LoadingOverlay visible={isCreating || isUpdating || isUpdatingLight} />
 				<Stack gap='xs'>
 					<Box p='xs'>
 						<CampaignTabs />
 					</Box>
 					{selectedTab === 'general' && (
-						<form onSubmit={form.onSubmit(handleSubmit)}>
+						<form
+							onSubmit={form.onSubmit((values) => handleSubmit(values, true))}
+						>
 							<GeneralSection />
 							<div />
 						</form>
 					)}
 					{selectedTab === 'agents' && (
-						<form onSubmit={form.onSubmit(handleSubmit)}>
+						<form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
 							<AgentSection />
 						</form>
 					)}

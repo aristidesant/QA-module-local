@@ -183,6 +183,21 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 			);
 			return response.data;
 		},
+		// UPDATE campaign (PATCH)
+		updateCampaignLight: async (
+			campaignId: string,
+			data: Partial<Campaign>
+		) => {
+			if (data.agentConfig?.conversationConfig?.agent?.prompt?.prompt) {
+				delete (data.agentConfig.conversationConfig.agent.prompt as any).prompt;
+			}
+
+			const response = await axios.patch<Campaign>(
+				`${DEFAULT_API_URL}/campaigns/${campaignId}/details`,
+				data
+			);
+			return response.data;
+		},
 
 		startOutboundCampaign: async (
 			campaignId: number,
