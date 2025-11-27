@@ -7,6 +7,7 @@ import {
 	useUpdateCampaignPromptType,
 } from '~/queries/campaignPromptTypeQueries';
 import type { CampaignPromptTypeModel } from '~/models/CampaignPromptTypeModel';
+import { getErrorMessage } from '~/utils/httpClient';
 import styles from './CampaignPromptTypesForm.module.css';
 
 interface CampaignPromptTypesFormProps {
@@ -34,7 +35,8 @@ const CampaignPromptTypesForm: React.FC<CampaignPromptTypesFormProps> = ({
 			name: (value) => (!value.trim() ? 'Name is required' : null),
 			icon: (value) => (!value.trim() ? 'Icon is required' : null),
 			order: (value) =>
-				typeof value !== 'number' || Number.isNaN(value) || value < 1
+				isEditing &&
+				(typeof value !== 'number' || Number.isNaN(value) || value < 1)
 					? 'Order must be 1 or greater'
 					: null,
 		},
@@ -60,7 +62,6 @@ const CampaignPromptTypesForm: React.FC<CampaignPromptTypesFormProps> = ({
 				await createPromptType.mutateAsync({
 					name: values.name.trim(),
 					icon: values.icon.trim(),
-					order: values.order,
 				});
 				notifications.show({
 					title: 'Success',
@@ -72,10 +73,9 @@ const CampaignPromptTypesForm: React.FC<CampaignPromptTypesFormProps> = ({
 		} catch (error) {
 			notifications.show({
 				title: 'Error',
-				message: `Failed to ${isEditing ? 'update' : 'create'} campaign prompt type`,
+				message: getErrorMessage(error),
 				color: 'red',
 			});
-			console.error(error);
 		}
 	};
 
@@ -98,13 +98,15 @@ const CampaignPromptTypesForm: React.FC<CampaignPromptTypesFormProps> = ({
 					{...form.getInputProps('icon')}
 				/>
 
-				<NumberInput
-					label='Order'
-					placeholder='1'
-					min={1}
-					required
-					{...form.getInputProps('order')}
-				/>
+				{isEditing && (
+					<NumberInput
+						label='Order'
+						placeholder='1'
+						min={1}
+						required
+						{...form.getInputProps('order')}
+					/>
+				)}
 
 				<Group justify='flex-end' gap='sm' className={styles.actions}>
 					<Button variant='subtle' onClick={onCancel} disabled={isLoading}>
