@@ -101,7 +101,7 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 			>
 				<div className={styles.errorState}>
 					<Text size='sm' c='dimmed' mb={12}>
-						Couldn't load disposition data
+						Couldn't load outcome data
 					</Text>
 					<Button
 						variant='light'
@@ -119,7 +119,7 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 	}
 
 	const disposition = data as CallDispositionModel | undefined;
-	const name = disposition?.dispositionName || 'No disposition';
+	const name = disposition?.dispositionName || 'No outcome';
 	const description = disposition?.dispositionDescription;
 	const notes = disposition?.notes;
 	const status = normalizeStatus(

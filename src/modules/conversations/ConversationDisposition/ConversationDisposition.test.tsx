@@ -170,7 +170,7 @@ describe('ConversationDisposition', () => {
 				'Failed to load'
 			);
 			expect(
-				screen.getByText("Couldn't load disposition data")
+				screen.getByText("Couldn't load outcome data")
 			).toBeInTheDocument();
 		});
 
@@ -232,7 +232,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('No disposition')).toBeInTheDocument();
+			expect(screen.getByText('No outcome')).toBeInTheDocument();
 		});
 	});
 
