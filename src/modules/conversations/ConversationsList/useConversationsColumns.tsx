@@ -99,7 +99,7 @@ export const useConversationsColumns = (userTimezone: string) => {
 			},
 			{
 				id: 'disposition',
-				header: 'Disposition',
+				header: 'Outcome',
 				cell: ({ row }) => {
 					const color =
 						row?.original?.dispositions?.callStatus === 'NEGATIVE'

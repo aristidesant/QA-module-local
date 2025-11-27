@@ -78,7 +78,7 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 	if (isLoading) {
 		return (
 			<RightSectionCard
-				title='Disposition'
+				title='Outcome'
 				description='Loading status'
 				icon={IconPhone}
 				iconColor='var(--mantine-color-gray-4)'
@@ -94,7 +94,7 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 	if (isError) {
 		return (
 			<RightSectionCard
-				title='Disposition'
+				title='Outcome'
 				description='Failed to load'
 				icon={IconInfoCircle}
 				iconColor='var(--mantine-color-red-6)'
@@ -160,7 +160,7 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 
 	return (
 		<RightSectionCard
-			title='Disposition'
+			title='Outcome'
 			description={timestampLabel || 'No updates yet'}
 			icon={IconPhone}
 			iconColor={statusView.borderColorVar}
