@@ -6,7 +6,6 @@ export interface CampaignRequirements {
 	hasActiveSchedule: boolean;
 	hasAgentsWithPrompt: boolean;
 	hasDispositionFlow: boolean;
-	hasActiveContactList: boolean;
 	missingRequirements: string[];
 	details: {
 		schedules: {
@@ -16,10 +15,6 @@ export interface CampaignRequirements {
 		agents: {
 			total: number;
 			withPrompt: number;
-		};
-		contactLists: {
-			total: number;
-			active: number;
 		};
 		dispositionFlow: {
 			assigned: boolean;

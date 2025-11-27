@@ -211,12 +211,26 @@ function main() {
 		`\n🧪 Found ${testFiles.length} test file(s) for staged source files`
 	);
 
+	// Check if any .tsx files are missing test files
+	const tsxFiles = stagedFiles.filter((f) => f.endsWith('.tsx'));
+	const tsxFilesWithoutTests = tsxFiles.filter((f) => !findTestFile(f));
+
+	if (tsxFilesWithoutTests.length > 0) {
+		console.log('\n❌ TSX files missing test files:');
+		tsxFilesWithoutTests.forEach((f) => console.log(`   - ${f}`));
+		console.log('\n⚠️  All .tsx files must have corresponding test files.');
+		console.log(
+			'   Create test files following the pattern: ComponentName.test.tsx\n'
+		);
+		return 1;
+	}
+
 	if (testFiles.length === 0 && newFiles.length === 0) {
 		console.log('✓ No tests to run\n');
 		return 0;
 	}
 
-	// Check if new files have test files
+	// Check if new files have test files (additional check for coverage requirements)
 	const newFilesWithoutTests = newFiles.filter((f) => !findTestFile(f));
 	if (newFilesWithoutTests.length > 0) {
 		console.log('\n❌ New files missing test files:');
