@@ -78,7 +78,7 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 	if (isLoading) {
 		return (
 			<RightSectionCard
-				title='Disposition'
+				title='Outcome'
 				description='Loading status'
 				icon={IconPhone}
 				iconColor='var(--mantine-color-gray-4)'
@@ -94,14 +94,14 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 	if (isError) {
 		return (
 			<RightSectionCard
-				title='Disposition'
+				title='Outcome'
 				description='Failed to load'
 				icon={IconInfoCircle}
 				iconColor='var(--mantine-color-red-6)'
 			>
 				<div className={styles.errorState}>
 					<Text size='sm' c='dimmed' mb={12}>
-						Couldn't load disposition data
+						Couldn't load outcome data
 					</Text>
 					<Button
 						variant='light'
@@ -119,7 +119,7 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 	}
 
 	const disposition = data as CallDispositionModel | undefined;
-	const name = disposition?.dispositionName || 'No disposition';
+	const name = disposition?.dispositionName || 'No outcome';
 	const description = disposition?.dispositionDescription;
 	const notes = disposition?.notes;
 	const status = normalizeStatus(
@@ -160,7 +160,7 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 
 	return (
 		<RightSectionCard
-			title='Disposition'
+			title='Outcome'
 			description={timestampLabel || 'No updates yet'}
 			icon={IconPhone}
 			iconColor={statusView.borderColorVar}
