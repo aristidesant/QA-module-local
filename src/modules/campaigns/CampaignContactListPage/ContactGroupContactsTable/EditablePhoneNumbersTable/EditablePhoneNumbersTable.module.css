@@ -19,6 +19,29 @@
 	width: 140px;
 }
 
+.addBar {
+	display: flex;
+	justify-content: flex-end;
+	padding: var(--mantine-spacing-xs);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-sm);
+	background: var(--mantine-color-gray-0);
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
 .phoneNumber {
 	font-family: var(--mantine-font-family-monospace);
+}
+
+.addRow {
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
+.addInput {
+	width: 180px;
+}
+
+.addActions {
+	display: flex;
+	align-items: center;
 }

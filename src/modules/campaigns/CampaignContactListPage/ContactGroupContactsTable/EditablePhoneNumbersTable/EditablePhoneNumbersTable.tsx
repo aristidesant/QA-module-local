@@ -6,12 +6,14 @@ import {
 	ActionIcon,
 	Tooltip,
 	TextInput,
+	Button,
 } from '@mantine/core';
 import {
 	IconPencil,
 	IconCheck,
 	IconX,
 	IconAlertCircle,
+	IconPlus,
 } from '@tabler/icons-react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { notifications } from '@mantine/notifications';
@@ -20,6 +22,7 @@ import type { ContactPhoneNumber } from '~/models/ContactsModel';
 import { useUpdateContactPhoneNumber } from '~/queries/contactsQueries';
 import { useQueryClient } from '@tanstack/react-query';
 import styles from './EditablePhoneNumbersTable.module.css';
+import AddPhoneNumbersModal from './AddPhoneNumbersModal';
 
 interface EditablePhoneNumbersTableProps {
 	contactId: number;
@@ -39,7 +42,10 @@ function EditablePhoneNumbersTable({
 	const [editingId, setEditingId] = useState<number | null>(null);
 	const editedValuesRef = useRef<Record<number, string>>({});
 	const updateMutation = useUpdateContactPhoneNumber();
+	// Creation handled in modal component
 	const queryClient = useQueryClient();
+
+	const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
 
 	const beginEdit = useCallback((row: RowShape) => {
 		setEditingId(row.id);
@@ -102,6 +108,18 @@ function EditablePhoneNumbersTable({
 		queryClient,
 		onAfterUpdate,
 	]);
+
+	const handlePhonesAdded = useCallback(() => {
+		// Invalidate queries after modal save
+		queryClient.invalidateQueries({
+			queryKey: ['contactGroupContacts', contactGroupId],
+		});
+		queryClient.invalidateQueries({ queryKey: ['contacts'] });
+		queryClient.invalidateQueries({
+			queryKey: ['contact', String(contactId)],
+		});
+		onAfterUpdate?.();
+	}, [queryClient, contactGroupId, contactId, onAfterUpdate]);
 
 	const EditableInput = ({
 		id,
@@ -266,14 +284,40 @@ function EditablePhoneNumbersTable({
 	);
 
 	return (
-		<BaseTable
-			data={phoneNumbers}
-			columns={columns}
-			enablePagination={false}
-			density='compact'
-			emptyMessage='No phone numbers available'
-			className={styles.subTableRoot}
-		/>
+		<>
+			<Group justify='flex-end' className={styles.addBar}>
+				<Tooltip label='Add phone numbers'>
+					<Button
+						variant='light'
+						color='blue'
+						size='xs'
+						leftSection={<IconPlus size={14} />}
+						onClick={() => setAddModalOpen(true)}
+					>
+						Add
+					</Button>
+				</Tooltip>
+			</Group>
+			<BaseTable
+				data={phoneNumbers}
+				columns={columns}
+				enablePagination={false}
+				density='compact'
+				emptyMessage='No phone numbers available'
+				className={styles.subTableRoot}
+			/>
+			{addModalOpen && (
+				<AddPhoneNumbersModal
+					contactId={contactId}
+					contactGroupId={contactGroupId}
+					onClose={() => setAddModalOpen(false)}
+					onSaved={() => {
+						setAddModalOpen(false);
+						handlePhonesAdded();
+					}}
+				/>
+			)}
+		</>
 	);
 }
 
