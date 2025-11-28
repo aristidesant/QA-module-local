@@ -1,6 +1,16 @@
 import { useMemo, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Button, Flex, Loader, Stack, Tabs, Text } from '@mantine/core';
+import {
+	Badge,
+	Breadcrumbs,
+	Anchor,
+	Button,
+	Flex,
+	Loader,
+	Stack,
+	Tabs,
+	Text,
+} from '@mantine/core';
 import {
 	IconAlertCircle,
 	IconArrowLeft,
@@ -31,6 +41,8 @@ import ContactListMetrics from './ContactListMetrics';
 import ConversationsList from '~/modules/conversations/ConversationsList';
 import ConversationDetails from '~/modules/conversations/ConversationDetails';
 import FaultyPhonesAlert from './ContactGroupContactsTable/FaultyPhonesAlert';
+import { getQueueStatusConfig } from '~/modules/campaigns/CampaignsForm/ContactSection/ContactList/queueStatusConfig';
+import { timeAgo } from '~/utils/dateUtils';
 
 const CampaignContactListPage = () => {
 	const navigate = useNavigate();
@@ -118,6 +130,10 @@ const CampaignContactListPage = () => {
 		? (contactGroupQuery.data.queueStatus?.toUpperCase() ?? 'UNKNOWN')
 		: 'UNKNOWN';
 	const status = statusConfig[statusKey] ?? statusConfig.UNKNOWN;
+
+	const queueStatusConfig = contactGroupQuery.data
+		? getQueueStatusConfig(contactGroupQuery.data.queueStatus ?? '')
+		: null;
 
 	const handleAction = async () => {
 		if (!contactGroupQuery.data) return;
@@ -287,11 +303,34 @@ const CampaignContactListPage = () => {
 		);
 	}
 
+	const breadcrumbTitle = (
+		<Breadcrumbs>
+			<Anchor
+				size='sm'
+				fw={500}
+				onClick={() => navigate(`/campaign/view/${campaignId}`)}
+				style={{ cursor: 'pointer' }}
+			>
+				{campaign ? campaign.name : 'Unknown Campaign'}
+			</Anchor>
+			<Text size='sm' fw={500}>
+				{contactGroupQuery.data.name}
+			</Text>
+		</Breadcrumbs>
+	);
+
 	return (
 		<ContentContainer
 			{...commonContainerProps}
-			title={`${campaign ? campaign.name : 'Unknown Campaign'}`}
-			description='Review and manage the contacts associated with this list.'
+			title={breadcrumbTitle}
+			description={`Created ${timeAgo(contactGroupQuery.data.createdAt)}`}
+			titleRight={
+				queueStatusConfig ? (
+					<Badge color={queueStatusConfig.color} variant='light' size='sm'>
+						{queueStatusConfig.label}
+					</Badge>
+				) : null
+			}
 			rightSection={rightComponent}
 		>
 			<Tabs variant='outline' defaultValue='overview' keepMounted={false}>

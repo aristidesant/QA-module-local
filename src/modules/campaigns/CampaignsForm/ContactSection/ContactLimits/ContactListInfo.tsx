@@ -9,6 +9,7 @@ import {
 	TextInput,
 	ActionIcon,
 	Tooltip,
+	ThemeIcon,
 } from '@mantine/core';
 import {
 	IconCalendar,
@@ -16,8 +17,9 @@ import {
 	IconEdit,
 	IconCheck,
 	IconX as IconXCircle,
+	IconList,
+	IconAlertCircle,
 } from '@tabler/icons-react';
-// Removed date-fns, using dayjs instead
 import { DatePicker } from '@mantine/dates';
 import { useState, useEffect } from 'react';
 import classes from './ContactListInfo.module.css';
@@ -26,9 +28,7 @@ import { formatExpirationDate } from '~/utils/dateUtils';
 
 interface ContactListInfoProps {
 	/** Name of the contact list */
-	listName?: string;
-
-	placeholder?: string;
+	listName: string;
 
 	/** Expiration date of the list (YYYY-MM-DD string or null) */
 	expirationDate?: string | null;
@@ -45,7 +45,6 @@ interface ContactListInfoProps {
 
 export function ContactListInfo({
 	listName,
-	placeholder = 'Enter contact list name',
 	expirationDate,
 	onExpirationChange,
 	onNameChange,
@@ -104,61 +103,95 @@ export function ContactListInfo({
 		onExpirationChange?.(null);
 	};
 
+	const hasName = listName && listName.trim().length > 0;
+
 	return (
-		<Card withBorder>
-			<Flex justify='space-between' align='center'>
-				<Group justify='space-between' align='center'>
+		<Card
+			withBorder
+			className={`${classes.card} ${!hasName && !isEditing ? classes.cardEmpty : ''}`}
+		>
+			<Flex justify='space-between' align='center' gap='md'>
+				<Group gap='md' style={{ flex: 1 }}>
+					<ThemeIcon
+						size='xl'
+						radius='md'
+						variant='light'
+						color={hasName ? 'blue' : 'orange'}
+						className={!hasName && !isEditing ? classes.iconPulse : ''}
+					>
+						{hasName ? <IconList size={20} /> : <IconAlertCircle size={20} />}
+					</ThemeIcon>
 					<Flex direction='column' style={{ flex: 1 }}>
-						<Text size='xs' c='dimmed'>
-							Contact list
+						<Text
+							size='xs'
+							c={hasName ? 'dimmed' : 'orange'}
+							tt='uppercase'
+							fw={600}
+							lh={1.2}
+						>
+							{hasName ? 'Contact List Name' : 'Name Required'}
 						</Text>
 						{isEditing ? (
-							<Group gap='xs' align='center'>
+							<Group gap='xs' align='center' mt={4}>
 								<TextInput
 									value={editedName}
 									onChange={(e) => setEditedName(e.currentTarget.value)}
 									onKeyDown={handleKeyDown}
-									placeholder={placeholder}
+									placeholder='e.g. Q4 Marketing Leads, Support Follow-ups...'
 									autoFocus
 									size='sm'
-									style={{ flex: 1 }}
+									className={classes.nameInput}
 								/>
 								<Tooltip label='Save'>
 									<ActionIcon
-										variant='subtle'
+										variant='light'
 										color='green'
 										onClick={handleNameSave}
+										size='sm'
+										disabled={!editedName?.trim()}
 									>
-										<IconCheck size={16} />
+										<IconCheck size={14} />
 									</ActionIcon>
 								</Tooltip>
 								<Tooltip label='Cancel'>
 									<ActionIcon
-										variant='subtle'
+										variant='light'
 										color='red'
 										onClick={handleCancelEdit}
+										size='sm'
 									>
-										<IconXCircle size={16} />
+										<IconXCircle size={14} />
 									</ActionIcon>
 								</Tooltip>
 							</Group>
-						) : (
+						) : hasName ? (
 							<Group gap='xs' align='center'>
-								<Text fw={500} size='sm' style={{ flex: 1 }}>
-									{listName || placeholder}
+								<Text fw={600} size='sm' className={classes.listName}>
+									{listName}
 								</Text>
 								{onNameChange && !readonly && (
 									<Tooltip label='Edit name'>
 										<ActionIcon
 											variant='subtle'
-											size='sm'
+											size='xs'
+											color='gray'
 											onClick={() => setIsEditing(true)}
+											className={classes.editButton}
 										>
-											<IconEdit size={14} />
+											<IconEdit size={12} />
 										</ActionIcon>
 									</Tooltip>
 								)}
 							</Group>
+						) : (
+							<Box
+								className={classes.emptyNameBox}
+								onClick={() => !readonly && onNameChange && setIsEditing(true)}
+							>
+								<Text className={classes.placeholderText}>
+									Click to add a name for this contact list
+								</Text>
+							</Box>
 						)}
 					</Flex>
 				</Group>

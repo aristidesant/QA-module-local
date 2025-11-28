@@ -6,7 +6,7 @@ import { Divider, Text, Title, ActionIcon, Tooltip, Flex } from '@mantine/core';
 export interface ContentContainerProps {
 	children: ReactNode;
 	rightSection?: ReactNode;
-	title?: string;
+	title?: ReactNode;
 	titleRight?: ReactNode;
 	titleIcon?: ReactNode;
 	description?: string;

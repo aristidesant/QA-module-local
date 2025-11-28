@@ -28,7 +28,6 @@ import {
 	type HumanEquivalentCalculations,
 } from './humanEquivalentCalculations';
 import CapacityProgress from '../ContactList/CapacityProgress';
-import { generateUUIDv4 } from '~/utils/uuidUtils';
 
 type ContactLimitsProps = {
 	fileSummary?: ContactFileSummary;
@@ -58,7 +57,7 @@ export const ContactLimits = ({
 		description: string;
 		columnMappings: MappedResult;
 	}>({
-		name: contactGroup.name || (!contactGroup.id ? generateUUIDv4() : ''),
+		name: contactGroup.name || '',
 		description: contactGroup.description || '',
 		columnMappings: {} as MappedResult,
 	});
@@ -82,8 +81,8 @@ export const ContactLimits = ({
 
 	// Validate form data
 	const validateForm = (): boolean => {
-		// Name is required only for existing contact groups (when updating)
-		if (contactGroup.id && !data.name?.trim()) {
+		// Name is always required
+		if (!data.name?.trim()) {
 			notifications.show({
 				title: 'Invalid Input',
 				message: 'Contact list name is required.',
@@ -205,11 +204,9 @@ export const ContactLimits = ({
 				{/* Contact list information */}
 				<ContactListInfo
 					listName={data?.name}
-					placeholder='Enter contact list name'
 					onNameChange={(name) => {
 						handleChange('name', name);
 					}}
-					readonly={!contactGroup.id}
 				/>
 				{/* Human Equivalent Slider */}
 				{isCreatingAndFull && (
