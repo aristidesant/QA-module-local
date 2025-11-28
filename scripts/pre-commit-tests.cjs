@@ -98,14 +98,22 @@ function runTestsWithCoverage(testFiles, coverageFiles) {
 		return { success: true, coverage: {} };
 	}
 
-	const coverageInclude = coverageFiles
-		.map((f) => f.replace(/\\/g, '/'))
-		.join(',');
+	// Build coverage include flags - each file needs its own --coverage.include flag
+	// Convert paths to glob patterns that Vitest can match
+	const coverageIncludeFlags = coverageFiles
+		.map((f) => {
+			// Convert to forward slashes and create a glob pattern
+			const normalizedPath = f.replace(/\\/g, '/');
+			// Use **/ prefix to match from any directory level
+			return `--coverage.include="**/${path.basename(normalizedPath)}"`;
+		})
+		.join(' ');
 
 	try {
 		// Run tests with coverage for specific files
-		const cmd = `npx vitest run ${testFiles.join(' ')} --coverage --coverage.include="${coverageInclude}" --coverage.reporter=json --coverage.reporter=text-summary --silent`;
+		const cmd = `npx vitest run ${testFiles.join(' ')} --coverage ${coverageIncludeFlags} --coverage.reporter=json --coverage.reporter=text-summary --silent`;
 		console.log(`Running tests for modified files...`);
+		console.log(`Coverage files: ${coverageFiles.join(', ')}`);
 
 		execSync(cmd, {
 			encoding: 'utf-8',
@@ -138,12 +146,23 @@ function checkNewFilesCoverage(newFiles, coverageData) {
 	for (const file of newFiles) {
 		const filePath = path.resolve(process.cwd(), file);
 		const relativePath = file.replace(/\\/g, '/');
+		const fileName = path.basename(file);
 
-		// Look for coverage data for this file
-		const fileCoverage =
+		// Look for coverage data for this file - try multiple patterns
+		let fileCoverage =
 			coverageData[filePath] ||
 			coverageData[relativePath] ||
 			coverageData[`./${relativePath}`];
+
+		// If not found, search by filename in all coverage keys
+		if (!fileCoverage) {
+			const coverageKey = Object.keys(coverageData).find(
+				(key) => key !== 'total' && key.endsWith(fileName)
+			);
+			if (coverageKey) {
+				fileCoverage = coverageData[coverageKey];
+			}
+		}
 
 		if (!fileCoverage) {
 			// No coverage data means no tests

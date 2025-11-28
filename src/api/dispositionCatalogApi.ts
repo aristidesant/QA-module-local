@@ -7,6 +7,78 @@ import type { DispositionFlowModel } from '~/models/DispositionFlowModel';
 import { DEFAULT_API_URL } from './config';
 
 /**
+ * Represents a campaign with its associated disposition catalog
+ */
+export interface CampaignWithDispositionCatalog {
+	id: number;
+	name: string;
+	description: string;
+	clientId: number;
+	userId: number;
+	dispositionCatalog: {
+		id: number;
+		name: string;
+		description: string;
+		campaignId: number;
+		isActive: boolean;
+		isDefault: boolean;
+		type: string;
+		clientId: number;
+		userId: number;
+		createdAt: string;
+		updatedAt: string;
+	};
+	createdAt: string;
+	updatedAt: string;
+}
+
+/**
+ * Payload for copying a disposition catalog to a new campaign
+ */
+export interface CopyDispositionCatalogPayload {
+	sourceCatalogId: number;
+	targetCampaignId: number;
+	newCatalogName: string;
+}
+
+/**
+ * Response from copying a disposition catalog
+ */
+export interface CopiedDispositionCatalogResponse {
+	id: number;
+	name: string;
+	description: string;
+	clientId: number;
+	campaignId: number;
+	isActive: boolean;
+	isDefault: boolean;
+	dispositionNodes: {
+		id: number;
+		clientId: number;
+		userId: number;
+		name: string;
+		description: string;
+		isInvalidatesNumber: boolean;
+		requiresReschedule: boolean;
+		isFinal: boolean;
+		order: number;
+		isActive: boolean;
+		isVoiceMail: boolean;
+		catalogId: number;
+		parentId: number | null;
+		children: string[];
+		createdAt: string;
+		updatedAt: string;
+		deletedAt: string | null;
+	}[];
+	activeNodesCount: number;
+	inactiveNodesCount: number;
+	type: string;
+	createdAt: string;
+	updatedAt: string;
+}
+
+/**
  * Internal Disposition Catalog API client
  * Note: Authorization handled by global Axios interceptor.
  * This API should only be used through React Query hooks in dispositionCatalogQueries.ts
@@ -106,6 +178,23 @@ const dispositionCatalogApi = (_authHeader?: Record<string, string>) => {
 		deactivateDispositionCatalog: async (catalogId: number) => {
 			const response = await axios.patch<DispositionCatalogModel>(
 				`${DEFAULT_API_URL}/disposition-catalogs/${catalogId}/deactivate`
+			);
+			return response.data;
+		},
+
+		// GET all campaigns that have a disposition catalog
+		getCampaignsWithCatalog: async () => {
+			const response = await axios.get<CampaignWithDispositionCatalog[]>(
+				`${DEFAULT_API_URL}/disposition-catalogs/campaigns/with-catalog`
+			);
+			return response.data;
+		},
+
+		// POST copy disposition catalog to a new campaign
+		copyToCampaign: async (data: CopyDispositionCatalogPayload) => {
+			const response = await axios.post<CopiedDispositionCatalogResponse>(
+				`${DEFAULT_API_URL}/disposition-catalogs/copy-to-campaign`,
+				data
 			);
 			return response.data;
 		},

@@ -47,3 +47,35 @@
 	flex-direction: column;
 	gap: var(--mantine-spacing-xs);
 }
+
+.segmentedControl {
+	background: var(--mantine-color-gray-1);
+}
+
+.importContainer {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-lg);
+	background: var(--mantine-color-white);
+	padding: var(--mantine-spacing-md);
+}
+
+.searchInput {
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-3);
+}
+
+.searchInput:focus {
+	border-color: var(--mantine-color-blue-5);
+}
+
+.campaignCard {
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	cursor: default;
+	transition: border-color 0.15s ease;
+}
+
+.campaignCard:hover {
+	border-color: var(--mantine-color-blue-4);
+}

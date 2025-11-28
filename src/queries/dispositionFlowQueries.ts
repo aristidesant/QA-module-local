@@ -1,5 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import dispositionFlowApi from '~/api/dispositionFlowApi';
+import dispositionFlowApi, {
+	type CampaignWithDispositionFlow,
+	type CopyDispositionFlowPayload,
+	type CopyDispositionFlowResponse,
+} from '~/api/dispositionFlowApi';
 import type { DispositionFlowModel } from '~/models/DispositionFlowModel';
 
 /**
@@ -92,6 +96,22 @@ export function useDispositionFlowsByUser(userId?: string | number) {
 			return api.getDispositionFlowsByUser(userId);
 		},
 		enabled: !!userId,
+	});
+}
+
+/**
+ * Hook to fetch all campaigns that have a disposition flow
+ * @param enabled - Whether to enable the query (defaults to true)
+ * @returns Query result containing an array of CampaignWithDispositionFlow objects
+ */
+export function useCampaignsWithDispositionFlow(enabled = true) {
+	return useQuery<CampaignWithDispositionFlow[], Error>({
+		queryKey: ['campaignsWithDispositionFlow'],
+		queryFn: async () => {
+			const api = dispositionFlowApi();
+			return api.getCampaignsWithDispositionFlow();
+		},
+		enabled,
 	});
 }
 
@@ -191,6 +211,40 @@ export function useDeleteDispositionFlow() {
 			});
 			// Invalidate all disposition flows queries
 			queryClient.invalidateQueries({ queryKey: ['dispositionFlows'] });
+		},
+	});
+}
+
+/**
+ * Mutation hook to copy a disposition flow to a new campaign
+ * @returns Mutation object with methods to copy a disposition flow
+ */
+export function useCopyDispositionFlow() {
+	const queryClient = useQueryClient();
+	return useMutation<
+		CopyDispositionFlowResponse,
+		Error,
+		CopyDispositionFlowPayload
+	>({
+		mutationFn: async (data) => {
+			const api = dispositionFlowApi();
+			return api.copyToCampaign(data);
+		},
+		onSuccess: (data) => {
+			// Invalidate disposition flows queries
+			queryClient.invalidateQueries({ queryKey: ['dispositionFlows'] });
+			queryClient.invalidateQueries({
+				queryKey: ['campaignsWithDispositionFlow'],
+			});
+			// Invalidate campaign-specific queries
+			if (data.campaign?.id) {
+				queryClient.invalidateQueries({
+					queryKey: ['dispositionFlows', 'campaign', data.campaign.id],
+				});
+				queryClient.invalidateQueries({
+					queryKey: ['dispositionFlows', 'campaignPath', data.campaign.id],
+				});
+			}
 		},
 	});
 }

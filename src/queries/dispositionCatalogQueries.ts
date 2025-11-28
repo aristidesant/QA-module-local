@@ -1,5 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import dispositionCatalogApi from '~/api/dispositionCatalogApi';
+import dispositionCatalogApi, {
+	type CampaignWithDispositionCatalog,
+	type CopyDispositionCatalogPayload,
+	type CopiedDispositionCatalogResponse,
+} from '~/api/dispositionCatalogApi';
 import type {
 	DispositionCatalogModel,
 	CreateDispositionCatalog,
@@ -26,6 +30,22 @@ export function useDispositionCatalogs(queryParams?: {
 			const api = dispositionCatalogApi();
 			return api.getAllDispositionCatalogs(queryParams);
 		},
+	});
+}
+
+/**
+ * Hook to fetch all campaigns that have a disposition catalog
+ * @param enabled - Whether to enable the query (defaults to true)
+ * @returns Query result containing an array of CampaignWithDispositionCatalog objects
+ */
+export function useCampaignsWithDispositionCatalog(enabled = true) {
+	return useQuery<CampaignWithDispositionCatalog[], Error>({
+		queryKey: ['campaignsWithDispositionCatalog'],
+		queryFn: async () => {
+			const api = dispositionCatalogApi();
+			return api.getCampaignsWithCatalog();
+		},
+		enabled,
 	});
 }
 
@@ -164,6 +184,30 @@ export function useDeactivateDispositionCatalog() {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['dispositionCatalogs'] });
+		},
+	});
+}
+
+/**
+ * Mutation hook to copy a disposition catalog to a new campaign
+ * @returns Mutation object with methods to copy a disposition catalog
+ */
+export function useCopyDispositionCatalog() {
+	const queryClient = useQueryClient();
+	return useMutation<
+		CopiedDispositionCatalogResponse,
+		Error,
+		CopyDispositionCatalogPayload
+	>({
+		mutationFn: async (data) => {
+			const api = dispositionCatalogApi();
+			return api.copyToCampaign(data);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['dispositionCatalogs'] });
+			queryClient.invalidateQueries({
+				queryKey: ['campaignsWithDispositionCatalog'],
+			});
 		},
 	});
 }
