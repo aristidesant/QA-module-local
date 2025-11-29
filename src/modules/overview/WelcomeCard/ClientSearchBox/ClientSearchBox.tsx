@@ -3,7 +3,7 @@ import { IconSearch, IconPlus } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { useQueryClient } from '@tanstack/react-query';
 import { useClientStore } from '~/stores/clientStore';
-import ClientForm from '~/components/ClientForm';
+import ClientForm from '../ClientForm';
 import classes from './ClientSearchBox.module.css';
 
 export default function ClientSearchBox() {
