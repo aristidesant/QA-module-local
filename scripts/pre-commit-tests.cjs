@@ -32,7 +32,8 @@ function getStagedFiles() {
 					!file.includes('.spec.') &&
 					!file.includes('setupTests') &&
 					!file.includes('/models/') &&
-					!file.includes('/test-utils/')
+					!file.includes('/test-utils/') &&
+					!file.includes('__tests__')
 			);
 	} catch (error) {
 		return [];
@@ -57,7 +58,8 @@ function getNewFiles() {
 					!file.includes('.spec.') &&
 					!file.includes('setupTests') &&
 					!file.includes('/models/') &&
-					!file.includes('/test-utils/')
+					!file.includes('/test-utils/') &&
+					!file.includes('__tests__')
 			);
 	} catch (error) {
 		return [];
