@@ -115,6 +115,7 @@ const CampaignViewPage = () => {
 					<ActionIcon
 						variant='light'
 						size='lg'
+						aria-label='Edit Campaign'
 						onClick={() => navigate(`/campaign/${campaign.id}`)}
 					>
 						<IconEdit size={20} />

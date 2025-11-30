@@ -1,0 +1,111 @@
+import { screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import EditablePhoneNumbersTable from './EditablePhoneNumbersTable';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
+
+const mutateMock = vi.fn();
+
+vi.mock('~/components/BaseTable', () => ({
+	default: ({ data, columns }: { data: any[]; columns: any[] }) => (
+		<div>
+			{data.map((row) => (
+				<div key={row.id} data-testid={`row-${row.id}`}>
+					{columns.map((col: any) => (
+						<div key={col.id ?? col.accessorKey}>
+							{col.cell?.({
+								row: { original: row },
+								getValue: () =>
+									col.accessorKey ? (row as any)[col.accessorKey] : undefined,
+							})}
+						</div>
+					))}
+				</div>
+			))}
+		</div>
+	),
+}));
+
+vi.mock('./AddPhoneNumbersModal', () => ({
+	default: ({
+		onClose,
+		onSaved,
+	}: {
+		onClose: () => void;
+		onSaved: () => void;
+	}) => (
+		<div data-testid='add-modal'>
+			<button onClick={onClose}>Close</button>
+			<button onClick={onSaved}>Saved</button>
+		</div>
+	),
+}));
+
+vi.mock('~/queries/contactsQueries', () => ({
+	useUpdateContactPhoneNumber: () => ({
+		mutate: mutateMock,
+		isPending: false,
+	}),
+}));
+
+vi.mock('@mantine/notifications', () => ({
+	notifications: {
+		show: vi.fn(),
+	},
+}));
+
+describe('EditablePhoneNumbersTable', () => {
+	beforeEach(() => {
+		mutateMock.mockReset();
+	});
+
+	it('allows editing and saving a phone number', async () => {
+		const user = userEvent.setup();
+		const onAfterUpdate = vi.fn();
+
+		mutateMock.mockImplementation((_payload, opts) => {
+			opts?.onSuccess?.();
+		});
+
+		renderWithProviders(
+			<EditablePhoneNumbersTable
+				contactId={1}
+				contactGroupId={2}
+				phoneNumbers={[{ id: 10, phoneNumber: '+18095551234', status: 'OK' }]}
+				onAfterUpdate={onAfterUpdate}
+			/>
+		);
+
+		const row = screen.getByTestId('row-10');
+		const editButton = within(row).getAllByRole('button')[0];
+		await user.click(editButton);
+
+		const input = screen.getByPlaceholderText('Enter phone');
+		await user.clear(input);
+		await user.type(input, '+18095559999');
+
+		const saveButton = within(row).getAllByRole('button')[0];
+		await user.click(saveButton);
+
+		expect(mutateMock).toHaveBeenCalledWith(
+			{ contactId: 1, phoneNumberId: 10, phoneNumber: '+18095559999' },
+			expect.any(Object)
+		);
+		expect(onAfterUpdate).toHaveBeenCalled();
+	});
+
+	it('opens add phone modal', async () => {
+		const user = userEvent.setup();
+
+		renderWithProviders(
+			<EditablePhoneNumbersTable
+				contactId={1}
+				contactGroupId={2}
+				phoneNumbers={[]}
+			/>
+		);
+
+		await user.click(screen.getByRole('button', { name: 'Add' }));
+		expect(screen.getByTestId('add-modal')).toBeInTheDocument();
+	});
+});

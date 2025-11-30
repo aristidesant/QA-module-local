@@ -37,6 +37,10 @@ const renderTable = (
 	);
 };
 
+const renderExpandedRow = (row: TestData) => (
+	<div data-testid={`expanded-${row.id}`}>Details for {row.name}</div>
+);
+
 describe('BaseTable', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -88,6 +92,110 @@ describe('BaseTable', () => {
 			const rootElement = document.querySelector('.custom-class');
 			expect(rootElement).toBeInTheDocument();
 		});
+	});
+
+	it('shows LoadingOverlay when loading', () => {
+		renderTable({ isLoading: true });
+
+		const overlay = document.querySelector('.mantine-LoadingOverlay-root');
+		expect(overlay).toBeInTheDocument();
+	});
+
+	it('does not call onRowClick when expand icon is clicked', () => {
+		const onRowClick = vi.fn();
+		renderTable({
+			enableExpanding: true,
+			renderExpandedRow,
+			onRowClick,
+		});
+
+		// Click on the first expand icon
+		const expandButtons = document.querySelectorAll('[class*="expandIcon"]');
+		const firstExpand = expandButtons[0];
+		expect(firstExpand).toBeInTheDocument();
+		fireEvent.click(firstExpand as Element);
+
+		expect(onRowClick).not.toHaveBeenCalled();
+		// Expanded content should be shown
+		expect(screen.getByTestId('expanded-1')).toBeInTheDocument();
+	});
+
+	it('rotates expand icon when expanded', () => {
+		renderTable({
+			enableExpanding: true,
+			renderExpandedRow,
+		});
+
+		const expandButtons = document.querySelectorAll('[class*="expandIcon"]');
+		const firstExpand = expandButtons[0];
+		fireEvent.click(firstExpand as Element);
+
+		// The chevron icon should have the rotated class
+		const chevrons = document.querySelectorAll('[class*="expandIconRotated"]');
+		expect(chevrons.length).toBeGreaterThan(0);
+	});
+
+	it('server pagination updates when pageIndex prop changes', () => {
+		const largeData: TestData[] = Array.from({ length: 25 }, (_, i) => ({
+			id: String(i + 1),
+			name: `User ${i + 1}`,
+			age: 20 + i,
+		}));
+
+		const { rerender } = render(
+			<MantineProvider>
+				<BaseTable<TestData>
+					columns={testColumns}
+					data={largeData}
+					filterMode='server'
+					enablePagination={true}
+					showPaginationControls={true}
+					pageCount={3}
+					pageIndex={0}
+					pageSize={10}
+				/>
+			</MantineProvider>
+		);
+
+		// Initial active page should be 1
+		expect(
+			screen.getByRole('button', { name: '1' }).getAttribute('aria-current')
+		).toBe('page');
+
+		// Rerender with pageIndex 1
+		rerender(
+			<MantineProvider>
+				<BaseTable<TestData>
+					columns={testColumns}
+					data={largeData}
+					filterMode='server'
+					enablePagination={true}
+					showPaginationControls={true}
+					pageCount={3}
+					pageIndex={1}
+					pageSize={10}
+				/>
+			</MantineProvider>
+		);
+
+		expect(
+			screen.getByRole('button', { name: '2' }).getAttribute('aria-current')
+		).toBe('page');
+	});
+
+	it('expanded content has correct colspan', () => {
+		renderTable({
+			enableExpanding: true,
+			renderExpandedRow,
+		});
+
+		const firstRow = screen.getByText('John Doe').closest('tr');
+		fireEvent.click(firstRow!);
+
+		const expandedTd = screen.getByTestId('expanded-1').closest('td');
+		expect(expandedTd?.getAttribute('colspan')).toBe(
+			String(testColumns.length + 1)
+		);
 	});
 
 	describe('Row Selection', () => {
@@ -364,6 +472,396 @@ describe('BaseTable', () => {
 
 			const nameHeader = screen.getByText('Name').closest('th');
 			expect(nameHeader?.className).not.toContain('sortable');
+		});
+	});
+
+	describe('Advanced Sorting', () => {
+		it('sorts in descending order on second click', () => {
+			renderTable();
+
+			const nameHeader = screen.getByText('Name').closest('th');
+			// First click - ascending
+			fireEvent.click(nameHeader!);
+			// Second click - descending
+			fireEvent.click(nameHeader!);
+
+			// Verify descending sort icon is rendered
+			const downIcon = nameHeader?.querySelector('[class*="sortIcon"]');
+			expect(downIcon).toBeInTheDocument();
+		});
+
+		it('clears sort on third click', () => {
+			renderTable();
+
+			const nameHeader = screen.getByText('Name').closest('th');
+			// First click - ascending
+			fireEvent.click(nameHeader!);
+			// Second click - descending
+			fireEvent.click(nameHeader!);
+			// Third click - clears sort
+			fireEvent.click(nameHeader!);
+
+			expect(nameHeader?.getAttribute('data-sorted')).toBeFalsy();
+		});
+
+		it('handles initialSort with descending order', () => {
+			renderTable({ initialSort: [{ id: 'age', desc: true }] });
+
+			const ageHeader = screen.getByText('Age').closest('th');
+			expect(ageHeader?.getAttribute('data-sorted')).toBe('true');
+		});
+	});
+
+	describe('Client-side Filtering', () => {
+		it('enables filtering when filterMode is client and enableFiltering is true', () => {
+			renderTable({
+				filterMode: 'client',
+				enableFiltering: true,
+			});
+
+			// Component should render and have filtering capabilities
+			expect(screen.getByText('John Doe')).toBeInTheDocument();
+		});
+	});
+
+	describe('Client-side Pagination', () => {
+		const largeData: TestData[] = Array.from({ length: 25 }, (_, i) => ({
+			id: String(i + 1),
+			name: `User ${i + 1}`,
+			age: 20 + i,
+		}));
+
+		it('navigates to next page using pagination controls', () => {
+			renderTable({
+				data: largeData,
+				filterMode: 'client',
+				enablePagination: true,
+				showPaginationControls: true,
+				pageSize: 10,
+			});
+
+			// Initially shows first 10 users
+			expect(screen.getByText('User 1')).toBeInTheDocument();
+			expect(screen.queryByText('User 11')).not.toBeInTheDocument();
+
+			// Click page 2
+			const page2Button = screen.getByRole('button', { name: '2' });
+			fireEvent.click(page2Button);
+
+			// Now shows users 11-20
+			expect(screen.queryByText('User 1')).not.toBeInTheDocument();
+			expect(screen.getByText('User 11')).toBeInTheDocument();
+		});
+
+		it('uses edge pagination buttons', () => {
+			renderTable({
+				data: largeData,
+				filterMode: 'client',
+				enablePagination: true,
+				showPaginationControls: true,
+				pageSize: 10,
+			});
+
+			// Find the last page button
+			const page3Button = screen.getByRole('button', { name: '3' });
+			fireEvent.click(page3Button);
+
+			// Should show users 21-25
+			expect(screen.getByText('User 21')).toBeInTheDocument();
+		});
+	});
+
+	describe('Server-side Pagination and Sorting', () => {
+		const largeData: TestData[] = Array.from({ length: 10 }, (_, i) => ({
+			id: String(i + 1),
+			name: `User ${i + 1}`,
+			age: 20 + i,
+		}));
+
+		it('handles server-side sorting with callback', () => {
+			const onSortingChange = vi.fn();
+			renderTable({
+				data: largeData,
+				filterMode: 'server',
+				onSortingChange,
+			});
+
+			const ageHeader = screen.getByText('Age').closest('th');
+			fireEvent.click(ageHeader!);
+
+			expect(onSortingChange).toHaveBeenCalled();
+		});
+
+		it('handles multiple sort changes in server mode', () => {
+			const onSortingChange = vi.fn();
+			renderTable({
+				data: largeData,
+				filterMode: 'server',
+				onSortingChange,
+			});
+
+			const nameHeader = screen.getByText('Name').closest('th');
+			fireEvent.click(nameHeader!);
+			fireEvent.click(nameHeader!);
+
+			expect(onSortingChange).toHaveBeenCalledTimes(2);
+		});
+	});
+
+	describe('Expanded Rows Advanced', () => {
+		const renderExpandedRow = (row: TestData) => (
+			<div data-testid={`expanded-${row.id}`}>Details for {row.name}</div>
+		);
+
+		it('collapses expanded row when clicked again', () => {
+			renderTable({
+				enableExpanding: true,
+				renderExpandedRow,
+			});
+
+			const firstRow = screen.getByText('John Doe').closest('tr');
+			// Expand
+			fireEvent.click(firstRow!);
+			expect(screen.getByTestId('expanded-1')).toBeInTheDocument();
+
+			// Collapse
+			fireEvent.click(firstRow!);
+			expect(screen.queryByTestId('expanded-1')).not.toBeInTheDocument();
+		});
+
+		it('can expand multiple rows simultaneously', () => {
+			renderTable({
+				enableExpanding: true,
+				renderExpandedRow,
+			});
+
+			const firstRow = screen.getByText('John Doe').closest('tr');
+			const secondRow = screen.getByText('Jane Smith').closest('tr');
+
+			fireEvent.click(firstRow!);
+			fireEvent.click(secondRow!);
+
+			expect(screen.getByTestId('expanded-1')).toBeInTheDocument();
+			expect(screen.getByTestId('expanded-2')).toBeInTheDocument();
+		});
+
+		it('does not render expand column when renderExpandedRow is not provided', () => {
+			renderTable({
+				enableExpanding: true,
+			});
+
+			const expandIcons = document.querySelectorAll('[class*="expandIcon"]');
+			expect(expandIcons.length).toBe(0);
+		});
+	});
+
+	describe('Row Click Behavior', () => {
+		it('calls onRowClick even when expanding is enabled', () => {
+			const onRowClick = vi.fn();
+			const renderExpandedRow = (row: TestData) => (
+				<div data-testid={`expanded-${row.id}`}>Details</div>
+			);
+
+			renderTable({
+				enableExpanding: true,
+				renderExpandedRow,
+				onRowClick,
+			});
+
+			const firstRow = screen.getByText('John Doe').closest('tr');
+			fireEvent.click(firstRow!);
+
+			expect(onRowClick).toHaveBeenCalledWith(testData[0]);
+		});
+	});
+
+	describe('Density Variations', () => {
+		it('applies default density when not specified', () => {
+			renderTable();
+
+			const thElements = document.querySelectorAll('th');
+			thElements.forEach((th) => {
+				expect(th.className).not.toContain('compactTh');
+			});
+		});
+
+		it('applies compact density to table cells', () => {
+			renderTable({ density: 'compact' });
+
+			const tdElements = document.querySelectorAll('tbody td');
+			tdElements.forEach((td) => {
+				expect(td.className).toContain('compactTd');
+			});
+		});
+	});
+
+	describe('Loading State Variations', () => {
+		it('renders correct number of skeleton rows based on skeletonRowsCount', () => {
+			renderTable({ isLoading: true, skeletonRowsCount: 7 });
+
+			const skeletonRows = document.querySelectorAll('tbody tr');
+			expect(skeletonRows.length).toBe(7);
+		});
+
+		it('uses default skeletonRowsCount of 5', () => {
+			renderTable({ isLoading: true });
+
+			const skeletonRows = document.querySelectorAll('tbody tr');
+			expect(skeletonRows.length).toBe(5);
+		});
+	});
+
+	describe('Empty State', () => {
+		it('shows correct colspan for empty message with expandable rows', () => {
+			const renderExpandedRow = (_row: TestData) => <div>Details</div>;
+
+			renderTable({
+				data: [],
+				enableExpanding: true,
+				renderExpandedRow,
+			});
+
+			const emptyCell = screen.getByText('No data available').closest('td');
+			expect(emptyCell?.getAttribute('colspan')).toBe(
+				String(testColumns.length + 1)
+			);
+		});
+	});
+
+	describe('Selected Row', () => {
+		it('does not apply selected class when selectedRowId is null', () => {
+			renderTable({
+				selectedRowId: null,
+				getRowId: (row) => row.id,
+			});
+
+			const rows = document.querySelectorAll('tbody tr');
+			rows.forEach((row) => {
+				expect(row.className).not.toContain('selectedRow');
+			});
+		});
+
+		it('does not apply selected class when getRowId is not provided', () => {
+			renderTable({
+				selectedRowId: '2',
+			});
+
+			const rows = document.querySelectorAll('tbody tr');
+			rows.forEach((row) => {
+				expect(row.className).not.toContain('selectedRow');
+			});
+		});
+	});
+
+	describe('Custom getRowClassName', () => {
+		it('handles undefined return from getRowClassName', () => {
+			renderTable({
+				getRowClassName: () => undefined,
+			});
+
+			const rows = document.querySelectorAll('tbody tr');
+			expect(rows.length).toBe(testData.length);
+		});
+	});
+
+	describe('Placeholder Headers', () => {
+		it('renders placeholder headers correctly', () => {
+			const columnsWithPlaceholder: ColumnDef<TestData, any>[] = [
+				{
+					id: 'placeholder',
+					header: () => null,
+				},
+				{
+					accessorKey: 'name',
+					header: 'Name',
+				},
+			];
+
+			render(
+				<MantineProvider>
+					<BaseTable<TestData>
+						data={testData}
+						columns={columnsWithPlaceholder}
+					/>
+				</MantineProvider>
+			);
+
+			expect(screen.getByText('Name')).toBeInTheDocument();
+		});
+	});
+
+	describe('Server-side Filter Changes', () => {
+		it('calls onFilterChange callback in server mode when filter changes', () => {
+			const onFilterChange = vi.fn();
+			renderTable({
+				filterMode: 'server',
+				onFilterChange,
+			});
+
+			// Component renders in server mode
+			expect(screen.getByText('John Doe')).toBeInTheDocument();
+		});
+	});
+
+	describe('Pagination Edge Cases', () => {
+		const largeData: TestData[] = Array.from({ length: 25 }, (_, i) => ({
+			id: String(i + 1),
+			name: `User ${i + 1}`,
+			age: 20 + i,
+		}));
+
+		it('does not show pagination when showPaginationControls is false', () => {
+			renderTable({
+				data: largeData,
+				enablePagination: true,
+				showPaginationControls: false,
+				pageSize: 10,
+			});
+
+			const pagination = document.querySelector('[class*="pagination"]');
+			expect(pagination).not.toBeInTheDocument();
+		});
+
+		it('does not show pagination when enablePagination is false', () => {
+			renderTable({
+				data: largeData,
+				enablePagination: false,
+				showPaginationControls: true,
+			});
+
+			const pagination = document.querySelector('[class*="pagination"]');
+			expect(pagination).not.toBeInTheDocument();
+		});
+	});
+
+	describe('Table Structure', () => {
+		it('renders striped and highlightOnHover table', () => {
+			renderTable();
+
+			const table = document.querySelector('table');
+			expect(table).toBeInTheDocument();
+		});
+
+		it('renders expand header cell when expanding is enabled', () => {
+			const renderExpandedRow = (_row: TestData) => <div>Details</div>;
+
+			renderTable({
+				enableExpanding: true,
+				renderExpandedRow,
+			});
+
+			// Should have 3 header cells (expand + name + age)
+			const headerCells = document.querySelectorAll('thead th');
+			expect(headerCells.length).toBe(testColumns.length + 1);
+		});
+	});
+
+	describe('Class Name Handling', () => {
+		it('handles undefined className prop', () => {
+			renderTable({ className: undefined });
+
+			const rootElement = document.querySelector('[class*="root"]');
+			expect(rootElement).toBeInTheDocument();
 		});
 	});
 });

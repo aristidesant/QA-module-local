@@ -31,6 +31,7 @@ function getStagedFiles() {
 					!file.includes('.test.') &&
 					!file.includes('.spec.') &&
 					!file.includes('setupTests') &&
+					!file.includes('test-setup.d.ts') &&
 					!file.includes('/models/') &&
 					!file.includes('/test-utils/') &&
 					!file.includes('__tests__')
@@ -57,6 +58,7 @@ function getNewFiles() {
 					!file.includes('.test.') &&
 					!file.includes('.spec.') &&
 					!file.includes('setupTests') &&
+					!file.includes('test-setup.d.ts') &&
 					!file.includes('/models/') &&
 					!file.includes('/test-utils/') &&
 					!file.includes('__tests__')
