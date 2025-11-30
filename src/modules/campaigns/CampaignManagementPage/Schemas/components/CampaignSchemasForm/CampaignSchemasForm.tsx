@@ -382,6 +382,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 										data={fieldTypeOptions}
 										required
 										className={styles.typeSelect}
+										aria-label='Field type'
 										value={field.type}
 										onChange={(value) =>
 											updateField(index, { type: value as any })
@@ -400,6 +401,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 										<ActionIcon
 											color='red'
 											variant='subtle'
+											aria-label='Remove field'
 											onClick={() => removeField(index)}
 											mb='xs'
 										>
