@@ -7,18 +7,9 @@
 .toolbar {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: flex-end;
 	gap: var(--mantine-spacing-sm);
 	flex-wrap: wrap;
-	background-color: var(--mantine-color-gray-0);
-	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: var(--mantine-radius-md);
-	padding: var(--mantine-spacing-sm);
-}
-
-.searchInput {
-	flex: 1;
-	min-width: 220px;
 }
 
 .actions {

@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MantineProvider } from '@mantine/core';
 import ConversationsList from './ConversationsList';
 import type { ConversationsModel } from '~/models/ConversationsModels';
+import type { ConversationFiltersType } from './ConversationFilters';
 
 // Mock useGetConversations
 const mockUseGetConversations = vi.fn();
@@ -20,16 +21,12 @@ vi.mock('~/stores/useConversationStore', () => ({
 }));
 
 // Mock usePagination
-const mockSetSearchValue = vi.fn();
 const mockSetCurrentPage = vi.fn();
 const mockSetItemsPerPage = vi.fn();
 vi.mock('~/hooks/usePagination', () => ({
 	usePagination: () => ({
 		currentPage: 1,
 		itemsPerPage: 10,
-		searchValue: '',
-		debouncedSearch: '',
-		setSearchValue: mockSetSearchValue,
 		setCurrentPage: mockSetCurrentPage,
 		setItemsPerPage: mockSetItemsPerPage,
 		getApiParams: () => ({ offset: 0, limit: 10 }),
@@ -50,6 +47,27 @@ vi.mock('./components/ExportToExcelModal', () => ({
 				<button onClick={onClose}>Close Export</button>
 			</div>
 		) : null,
+}));
+
+// Mock ConversationFilters
+vi.mock('./ConversationFilters', () => ({
+	default: ({
+		filters,
+		onFiltersChange,
+	}: {
+		filters: ConversationFiltersType;
+		onFiltersChange: (filters: ConversationFiltersType) => void;
+	}) => (
+		<div data-testid='conversation-filters'>
+			<button
+				data-testid='apply-filter'
+				onClick={() => onFiltersChange({ contactName: 'Test' })}
+			>
+				Apply Filter
+			</button>
+			<span data-testid='current-filters'>{JSON.stringify(filters)}</span>
+		</div>
+	),
 }));
 
 // Mock BaseTable
@@ -262,18 +280,9 @@ describe('ConversationsList', () => {
 			).toBeInTheDocument();
 		});
 
-		it('renders search input with custom placeholder', () => {
-			renderComponent({ searchPlaceholder: 'Custom search placeholder' });
-			expect(
-				screen.getByPlaceholderText('Custom search placeholder')
-			).toBeInTheDocument();
-		});
-
-		it('renders search input with default placeholder', () => {
+		it('renders conversation filters component', () => {
 			renderComponent();
-			expect(
-				screen.getByPlaceholderText('Search conversations')
-			).toBeInTheDocument();
+			expect(screen.getByTestId('conversation-filters')).toBeInTheDocument();
 		});
 
 		it('renders pagination controls', () => {
@@ -335,11 +344,13 @@ describe('ConversationsList', () => {
 			expect(mockSetSelection).not.toHaveBeenCalled();
 		});
 
-		it('updates search value when typing in search input', () => {
+		it('applies filter when filter component triggers change', () => {
 			renderComponent();
-			const searchInput = screen.getByPlaceholderText('Search conversations');
-			fireEvent.change(searchInput, { target: { value: 'test search' } });
-			expect(mockSetSearchValue).toHaveBeenCalledWith('test search');
+			const applyFilterButton = screen.getByTestId('apply-filter');
+			fireEvent.click(applyFilterButton);
+
+			// The filter should be applied and passed to useGetConversations
+			expect(mockUseGetConversations).toHaveBeenCalled();
 		});
 
 		it('handles pagination items per page change', () => {

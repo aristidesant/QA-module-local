@@ -1,0 +1,85 @@
+.filtersContainer {
+	margin-bottom: var(--mantine-spacing-md);
+}
+
+.titleGroup {
+	flex-shrink: 0;
+}
+
+.titleIcon {
+	color: var(--mantine-color-gray-6);
+}
+
+.title {
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-7);
+	font-weight: 600;
+}
+
+.activeBadge {
+	background-color: var(--mantine-color-blue-1);
+	color: var(--mantine-color-blue-7);
+}
+
+.controlsWrapper {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	flex: 1;
+	min-width: 0;
+	justify-content: flex-end;
+	flex-wrap: wrap;
+}
+
+.searchInput {
+	min-width: 200px;
+	flex: 1;
+	max-width: 400px;
+}
+
+.searchInput input {
+	border-color: var(--mantine-color-gray-3);
+}
+
+.searchIcon {
+	color: var(--mantine-color-gray-5);
+}
+
+.filtersButton {
+	flex-shrink: 0;
+}
+
+.advancedFilters {
+	padding: var(--mantine-spacing-md);
+	margin-top: var(--mantine-spacing-sm);
+	border-top: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+}
+
+.resetButton:disabled {
+	color: var(--mantine-color-gray-5);
+	opacity: 0.5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+	.controlsWrapper {
+		width: 100%;
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.searchInput,
+	.filtersButton {
+		max-width: 100%;
+		width: 100%;
+	}
+}
+
+@media (max-width: 480px) {
+	.advancedFilters {
+		padding: var(--mantine-spacing-sm);
+	}
+}
