@@ -28,6 +28,9 @@ describe('useContactFilters', () => {
 			useContactFilters({ onFiltersChange, debounceMs: 100 })
 		);
 
+		// Clear the initial call that happens on mount
+		onFiltersChange.mockClear();
+
 		act(() => {
 			result.current.setFilter('email', 'user@example.com');
 		});

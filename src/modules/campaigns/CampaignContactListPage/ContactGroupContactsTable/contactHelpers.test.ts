@@ -29,11 +29,22 @@ const buildContact = (overrides: Partial<Contact> = {}): Contact => ({
 
 describe('contactHelpers', () => {
 	it('gets status color based on available channels', () => {
+		// Email only returns gray (no phone)
 		expect(
 			getStatusColor(
 				buildContact({ emails: ['john@example.com'], phoneNumbers: [] })
 			)
+		).toBe('gray');
+		// Phone only returns blue
+		expect(
+			getStatusColor(
+				buildContact({
+					emails: [],
+					phoneNumbers: [{ phoneNumber: '123', id: 1 }],
+				})
+			)
 		).toBe('blue');
+		// Both email and phone returns green
 		expect(
 			getStatusColor(
 				buildContact({
@@ -42,6 +53,7 @@ describe('contactHelpers', () => {
 				})
 			)
 		).toBe('green');
+		// Neither returns gray
 		expect(getStatusColor(buildContact())).toBe('gray');
 	});
 

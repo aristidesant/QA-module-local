@@ -10,12 +10,9 @@ const setModeMock = vi.fn();
 const setRightComponentMock = vi.fn();
 const clearRightComponentMock = vi.fn();
 
-const MockForm = () => <div data-testid='mock-form'>Mocked Param Form</div>;
-MockForm.displayName = 'MockCampaignPredefinedParamsForm';
-
 vi.mock('../CampaignPredefinedParamsForm', () => ({
 	__esModule: true,
-	default: MockForm,
+	default: () => <div data-testid='mock-form'>Mocked Param Form</div>,
 }));
 
 vi.mock('../store/useCampaignPredefinedParamsStore', () => ({
@@ -89,9 +86,11 @@ describe('CampaignPredefinedParamsDetail', () => {
 
 		expect(screen.getByText('Detailed parameter')).toBeInTheDocument();
 		expect(screen.getByText('TTS Model')).toBeInTheDocument();
-		expect(screen.getByText('eleven_model_x')).toBeInTheDocument();
+		// eleven_model_x may appear multiple times (in summary and detail), use getAllByText
+		expect(screen.getAllByText('eleven_model_x').length).toBeGreaterThan(0);
 		expect(screen.getByText('LLM')).toBeInTheDocument();
-		expect(screen.getByText('gpt-4o-mini')).toBeInTheDocument();
+		// gpt-4o-mini may appear multiple times (in summary and detail)
+		expect(screen.getAllByText('gpt-4o-mini').length).toBeGreaterThan(0);
 		expect(screen.getByText('TTS Configuration')).toBeInTheDocument();
 		expect(screen.getByText('Agent Configuration')).toBeInTheDocument();
 		expect(screen.getByText('Speed')).toBeInTheDocument();

@@ -90,8 +90,9 @@ describe('KnowledgeBaseSection', () => {
 		expect(
 			await screen.findByText('Select Knowledge Bases')
 		).toBeInTheDocument();
-		expect(screen.getByText('KB 1')).toBeInTheDocument();
-		expect(screen.getByText('KB 2')).toBeInTheDocument();
+		// Use getAllByText since KB 1 appears both in the main view and in the modal
+		expect(screen.getAllByText('KB 1').length).toBeGreaterThan(0);
+		expect(screen.getAllByText('KB 2').length).toBeGreaterThan(0);
 	});
 
 	it('saves selections from modal', async () => {

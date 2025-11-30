@@ -88,12 +88,16 @@ describe('useAgentVoicesColumns', () => {
 			props: CellContext<AgentVoiceModel, unknown>
 		) => React.ReactNode;
 
-		renderCell(cellFn({ row } as CellContext<AgentVoiceModel, unknown>));
+		const { container } = renderCell(
+			cellFn({ row } as CellContext<AgentVoiceModel, unknown>)
+		);
 
+		// The voice cell uses HoverCard which may not render full content immediately
+		// Check for the voice name which should be visible in the HoverCard.Target
 		expect(screen.getByText('Test Voice')).toBeInTheDocument();
-		expect(screen.getByText('English')).toBeInTheDocument();
-		// Badge shows the original gender value
-		expect(screen.getByText('MALE')).toBeInTheDocument();
+		// The language and gender appear in the voice cell content
+		expect(container.textContent).toMatch(/English/);
+		expect(container.textContent).toMatch(/MALE/);
 	});
 
 	it('calls onPlayVoice when play button clicked and shows progress when playing', () => {
@@ -113,7 +117,9 @@ describe('useAgentVoicesColumns', () => {
 			props: CellContext<AgentVoiceModel, unknown>
 		) => React.ReactNode;
 
-		renderCell(cellFn({ row } as CellContext<AgentVoiceModel, unknown>));
+		const { unmount } = renderCell(
+			cellFn({ row } as CellContext<AgentVoiceModel, unknown>)
+		);
 
 		const playButton = screen.getByLabelText('Play voice preview');
 		fireEvent.click(playButton);
@@ -121,6 +127,9 @@ describe('useAgentVoicesColumns', () => {
 			'voice-1',
 			'https://example.com/preview.mp3'
 		);
+
+		// Cleanup previous render
+		unmount();
 
 		// Rerender hook as playing
 		rerender({ playingVoiceId: 'voice-1', playProgress: 50 } as any);
@@ -138,10 +147,12 @@ describe('useAgentVoicesColumns', () => {
 	});
 
 	it('is memoized and returns same reference if props do not change', () => {
+		// Use a stable reference for onPlayVoice
+		const onPlayVoice = vi.fn();
 		const { result, rerender } = renderHook(
 			({ playingVoiceId, playProgress }) =>
 				useAgentVoicesColumns({
-					onPlayVoice: vi.fn(),
+					onPlayVoice,
 					playingVoiceId,
 					playProgress,
 				}),
@@ -155,10 +166,12 @@ describe('useAgentVoicesColumns', () => {
 	});
 
 	it('returns new reference when playingVoiceId changes', () => {
+		// Use a stable reference for onPlayVoice
+		const onPlayVoice = vi.fn();
 		const { result, rerender } = renderHook(
 			({ playingVoiceId, playProgress }) =>
 				useAgentVoicesColumns({
-					onPlayVoice: vi.fn(),
+					onPlayVoice,
 					playingVoiceId,
 					playProgress,
 				}),

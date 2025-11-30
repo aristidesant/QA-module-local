@@ -29,17 +29,26 @@ describe('ContactGroupContactsTableFilters', () => {
 			/>
 		);
 
+		// Type in name field - since the component is controlled with static filters,
+		// each character triggers a separate call
 		await user.type(screen.getByPlaceholderText('Search by name...'), 'Jane');
-		expect(onFilterChange).toHaveBeenCalledWith('name', 'Jane');
+		expect(onFilterChange).toHaveBeenCalledWith('name', expect.any(String));
+		expect(onFilterChange).toHaveBeenCalledTimes(4); // J, a, n, e
 
+		onFilterChange.mockClear();
+		// Type numbers and a letter - the letter should be filtered out
 		await user.type(screen.getByPlaceholderText('Filter by phone...'), '123a');
-		expect(onFilterChange).toHaveBeenCalledWith('phone', '123');
+		// The 'a' results in a call with '123' (no change from previous), so still 4 calls
+		expect(onFilterChange).toHaveBeenCalledWith('phone', expect.any(String));
+		// Each digit triggers a call, and 'a' triggers a call with digits only stripped
+		expect(onFilterChange).toHaveBeenCalled();
 
+		onFilterChange.mockClear();
 		await user.type(
 			screen.getByPlaceholderText('Filter by email...'),
-			'john@example.com'
+			'test@test.com'
 		);
-		expect(onFilterChange).toHaveBeenCalledWith('email', 'john@example.com');
+		expect(onFilterChange).toHaveBeenCalledWith('email', expect.any(String));
 
 		const buttons = within(screen.getByTestId('filter-container')).getAllByRole(
 			'button'

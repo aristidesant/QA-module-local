@@ -166,7 +166,9 @@ describe('CampaignWizard', () => {
 		});
 		const onComplete = vi.fn();
 		renderComponent({ onComplete });
-		fireEvent.click(screen.getByText('Complete'));
+		// Use getByRole to specifically target the button in the mocked step-five
+		const stepFive = screen.getByTestId('step-five');
+		fireEvent.click(stepFive.querySelector('button')!);
 		expect(onComplete).toHaveBeenCalled();
 	});
 });

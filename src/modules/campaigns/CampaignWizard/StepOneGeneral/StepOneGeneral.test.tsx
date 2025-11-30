@@ -103,9 +103,8 @@ describe('StepOneGeneral', () => {
 		expect(screen.getByLabelText(/Description/i)).toBeInTheDocument();
 		expect(screen.getByText(/Campaign Type/i)).toBeInTheDocument();
 		expect(screen.getByTestId('phone-selector')).toBeInTheDocument();
-		expect(
-			screen.getByRole('combobox', { name: /Campaign Objective/i })
-		).toBeInTheDocument();
+		// Find the Campaign Objective select by its label text
+		expect(screen.getByText(/Campaign Objective/i)).toBeInTheDocument();
 	});
 
 	it('validates required fields', async () => {

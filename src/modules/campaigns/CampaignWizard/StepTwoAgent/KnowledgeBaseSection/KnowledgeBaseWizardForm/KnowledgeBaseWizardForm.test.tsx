@@ -98,18 +98,23 @@ describe('KnowledgeBaseWizardForm', () => {
 		await waitFor(() => expect(submitButton).not.toBeDisabled());
 		fireEvent.click(submitButton);
 
-		expect(mockMutateAsync).toHaveBeenCalledWith(
-			expect.objectContaining({
-				name: 'Test KB',
-				type: KnowledgeBaseType.URL,
-				sourceUrl: 'https://example.com',
-			})
-		);
-		expect(notifications.show).toHaveBeenCalledWith(
-			expect.objectContaining({
-				title: 'Success',
-			})
-		);
+		await waitFor(() => {
+			expect(mockMutateAsync).toHaveBeenCalledWith(
+				expect.objectContaining({
+					name: 'Test KB',
+					type: KnowledgeBaseType.URL,
+					sourceUrl: 'https://example.com',
+				})
+			);
+		});
+
+		await waitFor(() => {
+			expect(notifications.show).toHaveBeenCalledWith(
+				expect.objectContaining({
+					title: 'Success',
+				})
+			);
+		});
 		expect(mockOnSuccess).toHaveBeenCalled();
 	});
 
@@ -191,14 +196,16 @@ describe('KnowledgeBaseWizardForm', () => {
 		});
 		await waitFor(() => expect(submitButton).not.toBeDisabled());
 
-		// Submit form directly
-		fireEvent.submit(submitButton.closest('form')!);
+		// Click the submit button instead of submitting the form directly
+		fireEvent.click(submitButton);
 
-		expect(notifications.show).toHaveBeenCalledWith(
-			expect.objectContaining({
-				title: 'Error',
-				color: 'red',
-			})
-		);
+		await waitFor(() => {
+			expect(notifications.show).toHaveBeenCalledWith(
+				expect.objectContaining({
+					title: 'Error',
+					color: 'red',
+				})
+			);
+		});
 	});
 });

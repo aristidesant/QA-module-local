@@ -117,9 +117,11 @@ describe('StepTwoAgent', () => {
 		renderComponent();
 		expect(screen.getByText(/Conversation Setup/i)).toBeInTheDocument();
 		expect(screen.getByText(/Agent Behavior/i)).toBeInTheDocument();
-		expect(screen.getByText(/Language/i)).toBeInTheDocument();
+		// Language appears multiple times (in text and as label), just verify it's present
+		expect(screen.getAllByText(/Language/i).length).toBeGreaterThan(0);
 		expect(screen.getByLabelText(/Agent First Message/i)).toBeInTheDocument();
-		expect(screen.getByText(/Agent Prompt/i)).toBeInTheDocument();
+		// Use getAllByText for Agent Prompt since it appears in section title and label
+		expect(screen.getAllByText(/Agent Prompt/i).length).toBeGreaterThan(0);
 		expect(screen.getByTestId('knowledge-base-section')).toBeInTheDocument();
 	});
 
@@ -132,7 +134,9 @@ describe('StepTwoAgent', () => {
 		);
 		fireEvent.change(promptInput, { target: { value: '' } });
 
-		const submitButton = screen.getByText('Save & Continue');
+		const submitButton = screen.getByRole('button', {
+			name: /Save & Continue/i,
+		});
 		expect(submitButton).toBeDisabled();
 	});
 
@@ -146,7 +150,9 @@ describe('StepTwoAgent', () => {
 			target: { value: 'This is a valid prompt with enough length.' },
 		});
 
-		const submitButton = screen.getByText('Save & Continue');
+		const submitButton = screen.getByRole('button', {
+			name: /Save & Continue/i,
+		});
 		await waitFor(() => expect(submitButton).not.toBeDisabled());
 	});
 
@@ -161,11 +167,15 @@ describe('StepTwoAgent', () => {
 			target: { value: 'This is a valid prompt with enough length.' },
 		});
 
-		const submitButton = screen.getByText('Save & Continue');
+		const submitButton = screen.getByRole('button', {
+			name: /Save & Continue/i,
+		});
 		await waitFor(() => expect(submitButton).not.toBeDisabled());
 		fireEvent.click(submitButton);
 
-		expect(mockMutateAsync).toHaveBeenCalled();
+		await waitFor(() => {
+			expect(mockMutateAsync).toHaveBeenCalled();
+		});
 		expect(mockInvalidateQueries).toHaveBeenCalled();
 		expect(notifications.show).toHaveBeenCalledWith(
 			expect.objectContaining({
@@ -187,24 +197,30 @@ describe('StepTwoAgent', () => {
 			target: { value: 'This is a valid prompt with enough length.' },
 		});
 
-		const submitButton = screen.getByText('Save & Continue');
+		const submitButton = screen.getByRole('button', {
+			name: /Save & Continue/i,
+		});
 		await waitFor(() => expect(submitButton).not.toBeDisabled());
 		fireEvent.click(submitButton);
 
-		expect(notifications.show).toHaveBeenCalledWith(
-			expect.objectContaining({
-				title: 'Error',
-				message: 'Update failed',
-				color: 'red',
-			})
-		);
+		await waitFor(() => {
+			expect(notifications.show).toHaveBeenCalledWith(
+				expect.objectContaining({
+					title: 'Error',
+					message: 'Update failed',
+					color: 'red',
+				})
+			);
+		});
 	});
 
-	it('opens prompt editor modal', () => {
+	it('opens prompt editor modal', async () => {
 		renderComponent();
 		const editButton = screen.getByTitle('Edit prompt');
 		fireEvent.click(editButton);
-		expect(screen.getByTestId('prompt-edit-modal')).toBeInTheDocument();
+		await waitFor(() => {
+			expect(screen.getByTestId('prompt-edit-modal')).toBeInTheDocument();
+		});
 	});
 
 	it('copies prompt to clipboard', async () => {

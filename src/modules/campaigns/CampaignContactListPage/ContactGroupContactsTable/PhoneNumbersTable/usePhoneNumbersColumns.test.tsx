@@ -1,5 +1,6 @@
 import { render, renderHook } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
+import { MantineProvider } from '@mantine/core';
 import { usePhoneNumbersColumns } from './usePhoneNumbersColumns';
 
 const buildRow = (override: any = {}) => ({
@@ -22,12 +23,12 @@ describe('usePhoneNumbersColumns', () => {
 		});
 
 		const { getByText } = render(
-			<>
+			<MantineProvider>
 				{(phoneColumn as any)?.cell?.({
 					getValue: () => row.phoneNumber,
 					row: { original: row },
 				} as any)}
-			</>
+			</MantineProvider>
 		);
 
 		expect(getByText('+18095551234')).toBeInTheDocument();
@@ -45,7 +46,7 @@ describe('usePhoneNumbersColumns', () => {
 
 		const row = buildRow({ status: '', retryCounter: undefined });
 		const { getByText } = render(
-			<>
+			<MantineProvider>
 				{(statusColumn as any)?.cell?.({
 					getValue: () => row.status,
 					row: { original: row },
@@ -54,7 +55,7 @@ describe('usePhoneNumbersColumns', () => {
 					getValue: () => row.retryCounter,
 					row: { original: row },
 				} as any)}
-			</>
+			</MantineProvider>
 		);
 
 		expect(getByText('N/A')).toBeInTheDocument();
