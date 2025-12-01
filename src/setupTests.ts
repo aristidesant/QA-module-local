@@ -1,6 +1,21 @@
 import '@testing-library/jest-dom';
-import { cleanup } from '@testing-library/react';
 import { afterEach, vi } from 'vitest';
+import * as React from 'react';
+
+// Polyfill React.act for React 19 compatibility with @testing-library/react
+// React 19 removed act from react-dom/test-utils, but testing-library still expects it
+if (typeof (React as any).act === 'undefined') {
+	(React as any).act = (callback: () => void | Promise<void>) => {
+		const result = callback();
+		if (result && typeof (result as Promise<void>).then === 'function') {
+			return result;
+		}
+		return Promise.resolve();
+	};
+}
+
+// Import cleanup after React.act polyfill is in place
+const { cleanup } = await import('@testing-library/react');
 
 // Runs a cleanup after each test case (e.g. clearing jsdom)
 afterEach(() => {

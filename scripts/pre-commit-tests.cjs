@@ -61,7 +61,8 @@ function getNewFiles() {
 					!file.includes('test-setup.d.ts') &&
 					!file.includes('/models/') &&
 					!file.includes('/test-utils/') &&
-					!file.includes('__tests__')
+					!file.includes('__tests__') &&
+					!file.endsWith('/index.ts') // Exclude barrel/re-export files
 			);
 	} catch (error) {
 		return [];
@@ -115,7 +116,7 @@ function runTestsWithCoverage(testFiles, coverageFiles) {
 
 	try {
 		// Run tests with coverage for specific files
-		const cmd = `npx vitest run ${testFiles.join(' ')} --coverage ${coverageIncludeFlags} --coverage.reporter=json --coverage.reporter=text-summary --silent`;
+		const cmd = `npx vitest run ${testFiles.join(' ')} --coverage ${coverageIncludeFlags} --coverage.reporter=json-summary --coverage.reporter=text-summary --silent`;
 		console.log(`Running tests for modified files...`);
 		console.log(`Coverage files: ${coverageFiles.join(', ')}`);
 

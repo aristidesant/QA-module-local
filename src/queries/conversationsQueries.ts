@@ -23,6 +23,10 @@ type ConversationsQueryParams = {
 	limit?: number;
 	offset?: number;
 	search?: string;
+	contactName?: string;
+	contactPhoneNumber?: string;
+	dispositionName?: string;
+	status?: string;
 };
 
 // Create a new conversation
@@ -43,10 +47,32 @@ export const useCreateConversation = () => {
 
 // Get all conversations for current client or for a specific campaign
 export const useGetConversations = (params?: ConversationsQueryParams) => {
-	const { campaignId, contactGroupId, limit, offset, search } = params || {};
+	const {
+		campaignId,
+		contactGroupId,
+		limit,
+		offset,
+		search,
+		contactName,
+		contactPhoneNumber,
+		dispositionName,
+		status,
+	} = params || {};
 
 	return useQuery({
-		queryKey: ['conversations', campaignId ?? 'all', { limit, offset, search }],
+		queryKey: [
+			'conversations',
+			campaignId ?? 'all',
+			{
+				limit,
+				offset,
+				search,
+				contactName,
+				contactPhoneNumber,
+				dispositionName,
+				status,
+			},
+		],
 		queryFn: async () => {
 			const api = getApi();
 			return api.getConversations(
@@ -56,6 +82,10 @@ export const useGetConversations = (params?: ConversationsQueryParams) => {
 					limit,
 					offset,
 					search,
+					contactName,
+					contactPhoneNumber,
+					dispositionName,
+					status,
 				}
 			);
 		},

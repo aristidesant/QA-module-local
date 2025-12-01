@@ -63,7 +63,8 @@ vi.mock(
 		}: {
 			onPlayVoice: (voiceId: string, previewUrl: string) => void;
 		}) => {
-			// Expose onPlayVoice for testing
+			//Expose onPlayVoice for testing
+			//@ts-ignore
 			(global as Record<string, unknown>).__testOnPlayVoice = onPlayVoice;
 			return [];
 		},
@@ -387,7 +388,9 @@ describe('CampaignVoiceSelector', () => {
 		const playMock = vi.fn().mockResolvedValue(undefined);
 		audioElement.play = playMock;
 
-		// Get the onPlayVoice callback from the mock
+		// Get the onPlayVoic
+		// callback from the mock
+		//@ts-ignore
 		const onPlayVoice = (global as Record<string, unknown>)
 			.__testOnPlayVoice as (voiceId: string, previewUrl: string) => void;
 
@@ -419,6 +422,7 @@ describe('CampaignVoiceSelector', () => {
 		const playMock = vi.fn().mockResolvedValue(undefined);
 		audioElement.play = playMock;
 
+		//@ts-ignore
 		const onPlayVoice = (global as Record<string, unknown>)
 			.__testOnPlayVoice as (voiceId: string, previewUrl: string) => void;
 
@@ -531,8 +535,11 @@ describe('CampaignVoiceSelector', () => {
 		audioElement.play = playMock;
 		audioElement.pause = pauseMock;
 
-		const onPlayVoice = (global as Record<string, unknown>)
-			.__testOnPlayVoice as (voiceId: string, previewUrl: string) => void;
+		const onPlayVoice = //@ts-ignore
+			(global as Record<string, unknown>).__testOnPlayVoice as (
+				voiceId: string,
+				previewUrl: string
+			) => void;
 
 		// Play first voice - this should call play
 		onPlayVoice('voice-1', 'https://example.com/preview1.mp3');
@@ -563,8 +570,11 @@ describe('CampaignVoiceSelector', () => {
 		const playMock = vi.fn().mockRejectedValue(new Error('Play failed'));
 		audioElement.play = playMock;
 
-		const onPlayVoice = (global as Record<string, unknown>)
-			.__testOnPlayVoice as (voiceId: string, previewUrl: string) => void;
+		const onPlayVoice = //@ts-ignore
+			(global as Record<string, unknown>).__testOnPlayVoice as (
+				voiceId: string,
+				previewUrl: string
+			) => void;
 
 		// Call the play voice handler
 		onPlayVoice('voice-1', 'https://example.com/preview.mp3');

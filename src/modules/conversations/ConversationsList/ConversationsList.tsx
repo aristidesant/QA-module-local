@@ -1,16 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-	ActionIcon,
-	Center,
-	Group,
-	Text,
-	TextInput,
-	Tooltip,
-} from '@mantine/core';
+import { ActionIcon, Center, Group, Text, Tooltip } from '@mantine/core';
 import {
 	IconMessagesOff,
 	IconRefresh,
-	IconSearch,
 	IconFileExcel,
 } from '@tabler/icons-react';
 import BaseTable from '~/components/BaseTable';
@@ -23,6 +15,9 @@ import ConversationDetails from '~/modules/conversations/ConversationDetails';
 import type { ConversationsModel } from '~/models/ConversationsModels';
 import { useConversationsColumns } from './useConversationsColumns';
 import ExportToExcelModal from './components/ExportToExcelModal';
+import ConversationFilters, {
+	type ConversationFiltersType,
+} from './ConversationFilters';
 import styles from './ConversationsList.module.css';
 
 type ConversationsListProps = {
@@ -30,7 +25,6 @@ type ConversationsListProps = {
 	contactGroupId?: number | string;
 	onConversationClick?: (conversation: ConversationsModel) => void;
 	selectedConversationId?: number | null;
-	searchPlaceholder?: string;
 	className?: string;
 };
 
@@ -39,20 +33,21 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 	contactGroupId,
 	onConversationClick,
 	selectedConversationId,
-	searchPlaceholder = 'Search conversations',
 	className,
 }) => {
 	const pagination = usePagination({
 		initialItemsPerPage: 10,
-		searchDebounceMs: 400,
 	});
-	const paginationParams = pagination.getApiParams() as {
-		limit: number;
-		offset: number;
-		name?: string;
-	};
 
-	const { limit, offset, name } = paginationParams;
+	const { limit, offset } = pagination.getApiParams();
+
+	// Filter state
+	const [filters, setFilters] = useState<ConversationFiltersType>({});
+
+	// Reset to first page when filters change
+	useEffect(() => {
+		pagination.setCurrentPage(1);
+	}, [filters]);
 
 	const { data, isLoading, isFetching, isError, error, refetch } =
 		useGetConversations({
@@ -60,7 +55,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 			contactGroupId,
 			limit,
 			offset,
-			search: name,
+			...filters,
 		});
 
 	const { selectedId, setSelection } = useConversationStore();
@@ -117,16 +112,9 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 
 	return (
 		<div className={`${styles.root} ${className ?? ''}`}>
+			<ConversationFilters filters={filters} onFiltersChange={setFilters} />
+
 			<Group className={styles.toolbar}>
-				<TextInput
-					className={styles.searchInput}
-					placeholder={searchPlaceholder}
-					value={pagination.searchValue}
-					onChange={(event) =>
-						pagination.setSearchValue(event.currentTarget.value)
-					}
-					leftSection={<IconSearch size={16} />}
-				/>
 				<div className={styles.actions}>
 					<Tooltip label='Refresh conversations' withArrow>
 						<ActionIcon
@@ -195,7 +183,6 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 				totalItems={totalItems}
 				onPageChange={pagination.setCurrentPage}
 				onItemsPerPageChange={handleItemsPerPageChange}
-				searchTerm={pagination.debouncedSearch}
 				isLoading={isTableLoading}
 				itemLabel='conversations'
 			/>

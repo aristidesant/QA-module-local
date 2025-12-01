@@ -24,7 +24,7 @@
 		"paths": {
 			"~/*": ["src/*"]
 		},
-		"types": ["vitest/globals", "node"]
+		"types": ["vitest/globals"]
 	},
 	"include": ["src"],
 	"exclude": ["src/test-setup.d.ts"],

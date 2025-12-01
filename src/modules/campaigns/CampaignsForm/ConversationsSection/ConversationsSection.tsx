@@ -50,7 +50,6 @@ const ConversationsSection: React.FC<ConversationsSectionProps> = ({
 			<ConversationsList
 				campaignId={campaignId}
 				onConversationClick={handleConversationClick}
-				searchPlaceholder='Search campaign conversations'
 			/>
 		</SectionCard>
 	);

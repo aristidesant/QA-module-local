@@ -133,6 +133,7 @@ describe('AgentCampaignAdd', () => {
 			this.pause = audioPause;
 			this.onended = null;
 		}) as unknown as typeof Audio;
+		// @ts-ignore
 		global.Audio = MockAudio;
 
 		const agent = {
@@ -175,6 +176,7 @@ describe('AgentCampaignAdd', () => {
 			this.pause = audioPause;
 			this.onended = null;
 		}) as unknown as typeof Audio;
+		// @ts-ignore
 		global.Audio = MockAudio;
 
 		const agent1 = {
@@ -471,6 +473,7 @@ describe('AgentCampaignAdd', () => {
 			this.pause = vi.fn();
 			this.onended = null;
 		}) as unknown as typeof Audio;
+		// @ts-ignore
 		global.Audio = MockAudio;
 
 		mockUseAgentsWithCampaigns.mockReturnValue({
@@ -507,6 +510,7 @@ describe('AgentCampaignAdd', () => {
 			this.pause = audioPause;
 			this.onended = null;
 		});
+		// @ts-ignore
 		global.Audio = MockAudioFn as unknown as typeof Audio;
 
 		const agent = {
@@ -548,6 +552,7 @@ describe('AgentCampaignAdd', () => {
 			this.pause = vi.fn();
 			this.onended = null;
 		});
+		// @ts-ignore
 		global.Audio = MockAudioFn as unknown as typeof Audio;
 
 		mockUseAgentsWithCampaigns.mockReturnValue({
