@@ -1,11 +1,15 @@
 .dayRow {
 	padding: var(--mantine-spacing-sm);
-	border-radius: var(--mantine-radius-md);
+	border-radius: var(--mantine-radius-sm);
 	border: 1px solid var(--mantine-color-gray-2);
 	background-color: var(--mantine-color-white);
 	transition:
 		background-color 150ms ease,
 		border-color 150ms ease;
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+	width: 100%;
 }
 
 .highlighted {
@@ -19,93 +23,94 @@
 
 .dayContent {
 	width: 100%;
-	gap: var(--mantine-spacing-md);
+	gap: var(--mantine-spacing-xs);
+	align-items: center;
 }
 
 .dayHeader {
-	min-width: 160px;
+	min-width: 120px;
+	justify-content: center;
 }
 
 .dayInfo {
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
+	gap: 0;
+	justify-content: center;
+	align-items: center;
 }
 
 .dayName {
-	font-size: var(--mantine-font-size-md);
 	font-weight: 600;
 	color: var(--mantine-color-text);
 	min-width: 90px;
 }
 
-.dayStatus {
-	font-size: var(--mantine-font-size-xs);
+.dayWindow {
 	color: var(--mantine-color-gray-6);
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
+	line-height: 1.3;
 }
 
 .timeSection {
 	display: flex;
-	flex-direction: column;
+	align-items: center;
 	gap: var(--mantine-spacing-sm);
+	flex: 1;
+	justify-content: center;
 	width: 100%;
 }
 
 .timeInputsContainer {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: var(--mantine-spacing-md);
+	display: flex;
+	gap: var(--mantine-spacing-xs);
+	align-items: center;
+	flex-wrap: wrap;
+	justify-content: center;
 }
 
 .timeInputWrapper {
 	display: flex;
 	flex-direction: column;
-	gap: var(--mantine-spacing-xs);
-	min-width: 0;
+	gap: 1px;
+	align-items: flex-start;
 }
 
 .timeLabel {
-	font-weight: 600;
-	font-size: var(--mantine-font-size-xs);
+	font-weight: 500;
+	font-size: 10px;
 	color: var(--mantine-color-gray-6);
 	text-transform: uppercase;
-	letter-spacing: 0.04em;
+	letter-spacing: 0.03em;
 }
 
 .timeInput {
-	width: 100%;
+	width: 88px;
 }
 
 .metricsContainer {
 	display: flex;
-	flex-direction: column;
-	gap: 4px;
-	align-items: flex-end;
+	gap: var(--mantine-spacing-xs);
+	align-items: center;
+	flex-wrap: wrap;
+	justify-content: center;
 }
 
-.metricsTitle {
-	font-size: var(--mantine-font-size-xs);
-	color: var(--mantine-color-gray-6);
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
-}
-
-.metricsRow {
+.metricItem {
 	display: flex;
-	gap: var(--mantine-spacing-lg);
-	align-items: baseline;
-	font-size: var(--mantine-font-size-sm);
-	color: var(--mantine-color-gray-7);
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+	padding: 6px 10px;
+	background-color: var(--mantine-color-gray-0);
+	border-radius: var(--mantine-radius-sm);
+	min-width: 110px;
 }
 
-.metricsLabel {
-	display: inline-flex;
-	flex-direction: column;
-	gap: 2px;
-	font-size: var(--mantine-font-size-xs);
-	color: var(--mantine-color-gray-6);
+.metricLabel {
+	font-size: 10px;
+	color: var(--mantine-color-gray-7);
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
 }
 
 .metricsValue {
@@ -117,13 +122,11 @@
 .closedBadge {
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	gap: var(--mantine-spacing-xs);
-	background-color: var(--mantine-color-gray-1);
+	gap: 6px;
+	padding: 6px 12px;
+	background-color: var(--mantine-color-gray-0);
 	border-radius: var(--mantine-radius-sm);
-	color: var(--mantine-color-dimmed);
-	min-height: 48px;
-	min-width: 220px;
+	color: var(--mantine-color-gray-5);
 }
 
 .selectable {
@@ -133,21 +136,18 @@
 		border-color 0.2s ease;
 }
 
+.selectable:focus-visible {
+	outline: 2px solid var(--mantine-color-blue-2);
+	outline-offset: 1px;
+}
+
 .selectable:hover {
 	background-color: var(--mantine-color-gray-0);
 	border-color: var(--mantine-color-gray-3);
 }
 
-.estimationNote {
-	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
-	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: var(--mantine-radius-md);
-	background-color: var(--mantine-color-gray-0);
-}
-
-.estimationIcon {
-	color: var(--mantine-color-blue-6);
-	margin-top: 2px;
+.dayRow:focus-within {
+	border-color: var(--mantine-color-blue-4);
 }
 
 /* Responsive adjustments */
@@ -156,12 +156,19 @@
 		min-width: unset;
 	}
 
+	.timeSection {
+		flex-direction: column;
+		align-items: center;
+		gap: var(--mantine-spacing-xs);
+	}
+
 	.timeInputsContainer {
-		grid-template-columns: 1fr;
-		gap: var(--mantine-spacing-sm);
+		flex-direction: row;
+		width: 100%;
 	}
 
 	.metricsContainer {
-		align-items: flex-start;
+		flex-direction: row;
+		width: 100%;
 	}
 }

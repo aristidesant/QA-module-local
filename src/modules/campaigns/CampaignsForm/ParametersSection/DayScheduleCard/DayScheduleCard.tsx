@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Group, Switch, Text, Flex, Stack } from '@mantine/core';
 import { TimePicker } from '@mantine/dates';
-import { IconClockOff, IconInfoCircle } from '@tabler/icons-react';
+import { IconClockOff } from '@tabler/icons-react';
 import styles from './DayScheduleCard.module.css';
 import { useSchedulerFormContext } from '../SchedulerCard/schedulerFormProvider';
 import {
@@ -13,11 +13,7 @@ import {
 } from '../utils/schedulerMetrics';
 
 const formatDayName = (day?: string | null) => {
-	if (!day) {
-		return 'Day';
-	}
-
-	return day.charAt(0).toUpperCase() + day.slice(1);
+	return day ? day.charAt(0).toUpperCase() + day.slice(1) : 'Day';
 };
 
 export const DayScheduleCard: React.FC = () => {
@@ -27,14 +23,7 @@ export const DayScheduleCard: React.FC = () => {
 	const [selectedDay, setSelectedDay] = useState<string | null>(null);
 
 	return (
-		<Stack gap='sm'>
-			<Group gap='xs' className={styles.estimationNote} align='flex-start'>
-				<IconInfoCircle size={16} className={styles.estimationIcon} />
-				<Text size='xs' c='dimmed'>
-					Time ranges and talk minutes are estimations based on your current
-					schedule. Adjust times to explore different daily coverage scenarios.
-				</Text>
-			</Group>
+		<Stack gap='xs'>
 			{dayConfigs?.map((day, index) => {
 				const isActive = day.isActive;
 				const isSelected = selectedDay === day.dayOfWeek;
@@ -51,16 +40,28 @@ export const DayScheduleCard: React.FC = () => {
 						className={`${styles.dayRow} ${
 							isSelected ? styles.highlighted : ''
 						} ${styles.selectable}`}
+						role='button'
+						tabIndex={0}
+						aria-pressed={isSelected}
+						aria-label={`${formatDayName(day.dayOfWeek)} schedule`}
 						onClick={() => {
 							setSelectedDay(day.dayOfWeek ?? null);
+						}}
+						onKeyDown={(e) => {
+							if (e.key === 'Enter' || e.key === ' ') {
+								e.preventDefault();
+								setSelectedDay(isSelected ? null : (day.dayOfWeek ?? null));
+							}
 						}}
 					>
 						<Flex
 							justify='space-between'
-							align='flex-start'
+							align='center'
 							className={styles.dayContent}
+							direction={{ base: 'column', sm: 'row' }}
+							gap='sm'
 						>
-							<Group gap='md' align='flex-start' className={styles.dayHeader}>
+							<Group gap='xs' align='center' className={styles.dayHeader}>
 								<div
 									onClick={(e) => {
 										e.stopPropagation();
@@ -68,8 +69,9 @@ export const DayScheduleCard: React.FC = () => {
 								>
 									<Switch
 										className={styles.daySwitch}
-										size='md'
+										size='sm'
 										checked={isActive}
+										aria-label={`Toggle ${formatDayName(day.dayOfWeek)} active`}
 										onChange={(e) => {
 											e.stopPropagation();
 
@@ -81,11 +83,13 @@ export const DayScheduleCard: React.FC = () => {
 									/>
 								</div>
 								<div className={styles.dayInfo}>
-									<Text className={styles.dayName}>
+									<Text className={styles.dayName} size='sm'>
 										{formatDayName(day.dayOfWeek)}
 									</Text>
-									<Text className={styles.dayStatus}>
-										{isActive ? 'Estimated coverage' : 'Inactive day'}
+									<Text className={styles.dayWindow} size='xs'>
+										{isActive
+											? `Window: ${formatMinutesLabel(dayMinutes)}`
+											: 'No calling window'}
 									</Text>
 								</div>
 							</Group>
@@ -94,10 +98,13 @@ export const DayScheduleCard: React.FC = () => {
 								<div className={styles.timeSection}>
 									<div className={styles.timeInputsContainer}>
 										<div className={styles.timeInputWrapper}>
-											<Text className={styles.timeLabel}>Start time</Text>
+											<Text className={styles.timeLabel} size='xs'>
+												Start
+											</Text>
 											<div onClick={(e) => e.stopPropagation()}>
 												<TimePicker
-													size='md'
+													size='xs'
+													aria-label='Start time'
 													withDropdown
 													format='12h'
 													variant='filled'
@@ -139,10 +146,13 @@ export const DayScheduleCard: React.FC = () => {
 											</div>
 										</div>
 										<div className={styles.timeInputWrapper}>
-											<Text className={styles.timeLabel}>End time</Text>
+											<Text className={styles.timeLabel} size='xs'>
+												End
+											</Text>
 											<div onClick={(e) => e.stopPropagation()}>
 												<TimePicker
-													size='md'
+													size='xs'
+													aria-label='End time'
 													format='12h'
 													withDropdown
 													variant='filled'
@@ -185,23 +195,22 @@ export const DayScheduleCard: React.FC = () => {
 										</div>
 									</div>
 									<div className={styles.metricsContainer}>
-										<Text className={styles.metricsTitle}>
-											Estimated talk time
-										</Text>
-										<Group gap='md' wrap='nowrap' className={styles.metricsRow}>
-											<Text component='span' className={styles.metricsLabel}>
-												Minutes per agent
-												<Text component='span' className={styles.metricsValue}>
-													{formatMinutesLabel(perAgentMinutes)}
-												</Text>
+										<div className={styles.metricItem}>
+											<Text className={styles.metricLabel} size='xs'>
+												Per agent
 											</Text>
-											<Text component='span' className={styles.metricsLabel}>
-												Team minutes
-												<Text component='span' className={styles.metricsValue}>
-													{formatMinutesLabel(teamMinutes)}
-												</Text>
+											<Text className={styles.metricsValue} size='sm'>
+												{formatMinutesLabel(perAgentMinutes)}
 											</Text>
-										</Group>
+										</div>
+										<div className={styles.metricItem}>
+											<Text className={styles.metricLabel} size='xs'>
+												Team total
+											</Text>
+											<Text className={styles.metricsValue} size='sm'>
+												{formatMinutesLabel(teamMinutes)}
+											</Text>
+										</div>
 									</div>
 								</div>
 							) : (
