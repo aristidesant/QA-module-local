@@ -198,7 +198,7 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
 							emptySegmentColor='var(--mantine-color-gray-2)'
 							labelPosition='center'
 							label={
-								<Text size='xl' fw={700}>
+								<Text component='span' size='xl' fw={700}>
 									{engagementLevel}
 								</Text>
 							}
@@ -238,7 +238,7 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
 							emptySegmentColor='var(--mantine-color-gray-2)'
 							labelPosition='center'
 							label={
-								<Text size='lg' fw={600}>
+								<Text component='span' size='lg' fw={600}>
 									{qualificationScore}%
 								</Text>
 							}

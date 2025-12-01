@@ -7,15 +7,18 @@ import {
 	Stack,
 	Alert,
 	Loader,
-	Divider,
+	Title,
+	Group,
+	Box,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import {
-	IconAt,
+	IconUser,
 	IconLock,
 	IconAlertCircle,
 	IconEye,
 	IconEyeOff,
+	IconArrowRight,
 } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
@@ -81,14 +84,22 @@ export function LoginForm() {
 
 	return (
 		<div className={classes.wrapper}>
+			<div className={classes.decorativeOrb1} />
+			<div className={classes.decorativeOrb2} />
+
 			<Paper className={classes.paper} radius='xl'>
 				<div className={classes.header}>
-					<div className={classes.logo}>
+					<Box className={classes.logoContainer}>
 						<Logo />
+					</Box>
+					<div className={classes.headerText}>
+						<Title order={2} className={classes.title}>
+							Welcome back
+						</Title>
+						<Text className={classes.subtitle}>
+							Sign in to manage your agents and campaigns
+						</Text>
 					</div>
-					<Text className={classes.subtitle} size='sm' c='dimmed'>
-						Sign in to manage your agents and campaigns
-					</Text>
 				</div>
 
 				<form
@@ -141,56 +152,53 @@ export function LoginForm() {
 					{/* Loading overlay */}
 					{(isSubmitting || isRedirecting) && (
 						<div className={classes.loadingOverlay}>
-							<Stack gap='xs' align='center'>
-								<Loader size='sm' type='dots' />
-								<Text size='sm' fw={500} c='dimmed'>
+							<Stack gap='sm' align='center'>
+								<Loader size='md' type='dots' color='blue' />
+								<Text size='sm' fw={600} c='blue.7'>
 									Signing in...
 								</Text>
 							</Stack>
 						</div>
 					)}
-					<Stack gap='xs'>
-						<AppSegmentedControl
-							fullWidth
-							value={form.values.loginType}
-							onChange={(v) => form.setFieldValue('loginType', v as any)}
-							data={[
-								{ label: 'Credentials', value: 'USER_PASS' },
-								{ label: 'LDAP', value: 'LDAP' },
-							]}
-						/>
-						<Divider className={classes.sectionDivider} />
-						<div>
-							<Text className={classes.inputLabel} mb={4}>
-								Username <span className={classes.requiredMark}>*</span>
-							</Text>
+					<Stack gap='md'>
+						<Box className={classes.segmentedWrapper}>
+							<AppSegmentedControl
+								fullWidth
+								value={form.values.loginType}
+								onChange={(v) => form.setFieldValue('loginType', v as any)}
+								data={[
+									{ label: 'Credentials', value: 'USER_PASS' },
+									{ label: 'LDAP', value: 'LDAP' },
+								]}
+							/>
+						</Box>
+
+						<Stack gap='sm'>
 							<TextInput
 								required
+								label='Username'
 								placeholder={
 									form.values.loginType === 'USER_PASS'
 										? 'Enter your username'
 										: 'Enter your LDAP username'
 								}
 								leftSection={
-									<IconAt className={classes.inputIcon} stroke={1.5} />
+									<IconUser className={classes.inputIcon} stroke={1.5} />
 								}
 								leftSectionPointerEvents='none'
 								classNames={{
 									input: classes.input,
 									root: classes.inputRoot,
+									label: classes.inputLabel,
 								}}
 								{...form.getInputProps('username')}
 								name='username'
 								autoComplete='username'
 							/>
-						</div>
 
-						<div>
-							<Text className={classes.inputLabel} mb={4}>
-								Password <span className={classes.requiredMark}>*</span>
-							</Text>
 							<PasswordInput
 								required
+								label='Password'
 								placeholder='Enter your password'
 								leftSection={
 									<IconLock className={classes.inputIcon} stroke={1.5} />
@@ -206,25 +214,23 @@ export function LoginForm() {
 								classNames={{
 									input: classes.input,
 									root: classes.inputRoot,
+									label: classes.inputLabel,
 									visibilityToggle: classes.visibilityToggle,
 								}}
 								{...form.getInputProps('password')}
 								name='password'
 								autoComplete='current-password'
 							/>
-						</div>
+						</Stack>
 
-						{/* loginType is selected at the top of the form */}
 						{/* Form error alert */}
 						{formError && (
 							<Alert
 								variant='light'
 								color='red'
-								title='Login failed'
-								icon={<IconAlertCircle size={18} />}
-								mb='md'
-								radius='md'
-								p='sm'
+								title='Unable to sign in'
+								icon={<IconAlertCircle size={20} />}
+								radius='lg'
 								className={classes.errorMessage}
 							>
 								{formError}
@@ -234,11 +240,13 @@ export function LoginForm() {
 						<Button
 							type='submit'
 							fullWidth
-							mt='md'
+							mt='sm'
 							className={classes.submitButton}
 							loading={isLoading}
 							loaderProps={{ type: 'dots' }}
-							leftSection={!isLoading && <IconLock size={18} stroke={1.5} />}
+							rightSection={
+								!isLoading && <IconArrowRight size={18} stroke={2} />
+							}
 							disabled={isLoading}
 						>
 							Sign in
@@ -246,11 +254,12 @@ export function LoginForm() {
 					</Stack>
 				</form>
 			</Paper>
-			<div className={classes.footer}>
-				<Text size='xs' c='dimmed' className={classes.version}>
-					Version {APP_VERSION}
+
+			<Group className={classes.footer} gap='xs'>
+				<Text size='xs' className={classes.version}>
+					v{APP_VERSION}
 				</Text>
-			</div>
+			</Group>
 
 			{/* OTP Verification Modal */}
 			<OTPVerificationModal
