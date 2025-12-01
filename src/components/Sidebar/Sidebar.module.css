@@ -8,16 +8,8 @@
 	overflow-y: auto;
 	box-shadow: none;
 	width: 100%;
-	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	border-right: none;
-}
-
-.sidebarExpanded {
 	padding: 1.5rem 1rem;
-}
-
-.sidebarCollapsed {
-	padding: 1.5rem 0.5rem;
 }
 
 .logoWrapper {
@@ -135,58 +127,4 @@
 	white-space: nowrap;
 	overflow: hidden;
 	transition: opacity 0.2s ease;
-}
-
-/* Hide text and section headers when sidebar is collapsed */
-.sidebarCollapsed .menuText {
-	opacity: 0;
-	width: 0;
-}
-
-.sidebarCollapsed .sectionHeader {
-	opacity: 0;
-	width: 0;
-	height: 0;
-	overflow: hidden;
-}
-
-.sidebarCollapsed .divider {
-	margin: 0.25rem 0;
-}
-
-.sidebarCollapsed .logoWrapper {
-	margin-bottom: 1rem;
-}
-
-.sidebarCollapsed .userCardWrapper {
-	margin-top: auto;
-	margin-bottom: 1rem;
-}
-
-/* Adjust menu item layout for collapsed state */
-.menuItemCollapsed {
-	justify-content: center;
-	padding: 12px;
-	gap: 0;
-	border-radius: 8px;
-	margin-right: 0;
-}
-
-.menuItemCollapsed.menuItemSelected {
-	border-radius: 8px;
-	margin-right: 0;
-	padding: 12px;
-}
-
-.menuItemCollapsed.menuItemSelected::after {
-	display: none;
-}
-
-@media (max-width: 768px) {
-	.sidebarExpanded {
-		--sidebar-width: 180px;
-	}
-	.sidebarCollapsed {
-		--sidebar-width: 56px;
-	}
 }

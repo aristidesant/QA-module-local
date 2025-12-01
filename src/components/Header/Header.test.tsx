@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MantineProvider } from '@mantine/core';
 import { Header } from './Header';
@@ -35,71 +35,40 @@ vi.mock('@mantine/modals', () => ({
 	},
 }));
 
-const renderHeader = (props: { opened: boolean; toggle: () => void }) => {
+const renderHeader = () => {
 	return render(
 		<MantineProvider>
-			<Header {...props} />
+			<Header />
 		</MantineProvider>
 	);
 };
 
 describe('Header', () => {
-	const mockToggle = vi.fn();
-
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockIsImpersonating.mockReturnValue(false);
 	});
 
 	describe('Rendering', () => {
-		it('renders the header with menu button', () => {
-			renderHeader({ opened: true, toggle: mockToggle });
+		it('renders the header', () => {
+			renderHeader();
 
-			expect(
-				screen.getByRole('button', { name: /close menu/i })
-			).toBeInTheDocument();
+			expect(screen.getByRole('banner')).toBeInTheDocument();
 		});
 
 		it('renders the notification bell icon', () => {
-			renderHeader({ opened: true, toggle: mockToggle });
+			renderHeader();
 
 			// The bell icon is in an ActionIcon
 			const buttons = screen.getAllByRole('button');
 			expect(buttons.length).toBeGreaterThan(0);
-		});
-
-		it('shows chevron left icon when opened is true', () => {
-			renderHeader({ opened: true, toggle: mockToggle });
-
-			expect(
-				screen.getByRole('button', { name: /close menu/i })
-			).toBeInTheDocument();
-		});
-
-		it('shows menu icon when opened is false', () => {
-			renderHeader({ opened: false, toggle: mockToggle });
-
-			expect(
-				screen.getByRole('button', { name: /open menu/i })
-			).toBeInTheDocument();
-		});
-	});
-
-	describe('Menu Toggle', () => {
-		it('calls toggle when menu button is clicked', () => {
-			renderHeader({ opened: true, toggle: mockToggle });
-
-			const menuButton = screen.getByRole('button', { name: /close menu/i });
-			fireEvent.click(menuButton);
-
-			expect(mockToggle).toHaveBeenCalledTimes(1);
 		});
 	});
 
 	describe('Impersonation State', () => {
 		it('does not show return button when not impersonating', () => {
 			mockIsImpersonating.mockReturnValue(false);
-			renderHeader({ opened: true, toggle: mockToggle });
+			renderHeader();
 
 			expect(
 				screen.queryByRole('button', { name: /return to master client/i })
@@ -108,21 +77,21 @@ describe('Header', () => {
 
 		it('shows return button when impersonating', () => {
 			mockIsImpersonating.mockReturnValue(true);
-			renderHeader({ opened: true, toggle: mockToggle });
+			renderHeader();
 
 			expect(
 				screen.getByRole('button', { name: /return to master client/i })
 			).toBeInTheDocument();
 		});
 
-		it('opens confirmation modal when return button is clicked', () => {
+		it('opens confirmation modal when return button is clicked', async () => {
 			mockIsImpersonating.mockReturnValue(true);
-			renderHeader({ opened: true, toggle: mockToggle });
+			renderHeader();
 
 			const returnButton = screen.getByRole('button', {
 				name: /return to master client/i,
 			});
-			fireEvent.click(returnButton);
+			returnButton.click();
 
 			expect(mockOpenConfirmModal).toHaveBeenCalledWith(
 				expect.objectContaining({
@@ -139,30 +108,14 @@ describe('Header', () => {
 				onConfirm();
 			});
 
-			renderHeader({ opened: true, toggle: mockToggle });
+			renderHeader();
 
 			const returnButton = screen.getByRole('button', {
 				name: /return to master client/i,
 			});
-			fireEvent.click(returnButton);
+			returnButton.click();
 
 			expect(mockMutate).toHaveBeenCalledTimes(1);
-		});
-	});
-
-	describe('Accessibility', () => {
-		it('has correct aria-label on menu button when opened', () => {
-			renderHeader({ opened: true, toggle: mockToggle });
-
-			const menuButton = screen.getByRole('button', { name: /close menu/i });
-			expect(menuButton).toHaveAttribute('aria-pressed', 'true');
-		});
-
-		it('has correct aria-label on menu button when closed', () => {
-			renderHeader({ opened: false, toggle: mockToggle });
-
-			const menuButton = screen.getByRole('button', { name: /open menu/i });
-			expect(menuButton).toHaveAttribute('aria-pressed', 'false');
 		});
 	});
 });

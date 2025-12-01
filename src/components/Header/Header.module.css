@@ -190,24 +190,6 @@
 	min-width: 100px;
 }
 
-.burger {
-	color: var(--mantine-color-dark-7);
-	transition: all 0.2s ease;
-	border-radius: 8px;
-	padding: 8px;
-	background: transparent;
-	border: none;
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-}
-
-.burger:hover {
-	color: var(--mantine-color-blue-6);
-	background: var(--mantine-color-blue-0);
-	transform: scale(1.05);
-}
-
 .returnButton {
 	font-size: 12px;
 	height: 32px;

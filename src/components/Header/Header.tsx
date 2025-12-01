@@ -1,9 +1,4 @@
-import {
-	IconBell,
-	IconMenu2,
-	IconArrowBack,
-	IconChevronLeft,
-} from '@tabler/icons-react';
+import { IconBell, IconArrowBack } from '@tabler/icons-react';
 import { ActionIcon, Divider, Button, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import UserMenu from '../UserMenu';
@@ -11,12 +6,7 @@ import { useImpersonationState } from '~/hooks/useImpersonationState';
 import { useEndImpersonation } from '~/queries/authQueries';
 import styles from './Header.module.css';
 
-interface HeaderProps {
-	opened: boolean;
-	toggle: () => void;
-}
-
-export const Header: React.FC<HeaderProps> = ({ opened, toggle }) => {
+export const Header: React.FC = () => {
 	const { isImpersonating } = useImpersonationState();
 	const endImpersonationMutation = useEndImpersonation();
 
@@ -40,19 +30,7 @@ export const Header: React.FC<HeaderProps> = ({ opened, toggle }) => {
 	return (
 		<header className={styles.header}>
 			<div className={styles.headerContent}>
-				<div className={styles.headerLeft}>
-					<button
-						className={styles.burger}
-						onClick={toggle}
-						aria-label={opened ? 'Close menu' : 'Open menu'}
-						aria-pressed={opened}
-						type='button'
-					>
-						{opened ? <IconChevronLeft size={24} /> : <IconMenu2 size={24} />}
-					</button>
-					{/* Add space between burger and any future navigation items */}
-					<div style={{ width: '2rem' }} />
-				</div>
+				<div className={styles.headerLeft} />
 				<div className={styles.headerRight}>
 					{isImpersonating && (
 						<>

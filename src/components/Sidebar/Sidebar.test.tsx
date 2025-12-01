@@ -6,11 +6,7 @@ import { Sidebar, renderMenuItem } from './Sidebar';
 
 // Mock the Logo component
 vi.mock('../Logo', () => ({
-	default: ({ compact }: { compact: boolean }) => (
-		<div data-testid='logo' data-compact={compact}>
-			Logo
-		</div>
-	),
+	default: () => <div data-testid='logo'>Logo</div>,
 }));
 
 // Mock the version
@@ -40,11 +36,11 @@ vi.mock('./menuItems', () => ({
 	],
 }));
 
-const renderSidebar = (opened: boolean = true) => {
+const renderSidebar = () => {
 	return render(
 		<MantineProvider>
 			<MemoryRouter initialEntries={['/']}>
-				<Sidebar opened={opened} />
+				<Sidebar />
 			</MemoryRouter>
 		</MantineProvider>
 	);
@@ -73,84 +69,16 @@ describe('Sidebar', () => {
 			expect(screen.getByText('Conversations')).toBeInTheDocument();
 		});
 
-		it('renders MENU section header when expanded', () => {
-			renderSidebar(true);
+		it('renders MENU section header', () => {
+			renderSidebar();
 
 			expect(screen.getByText('MENU')).toBeInTheDocument();
 		});
 
-		it('does not render MENU section header when collapsed', () => {
-			renderSidebar(false);
-
-			expect(screen.queryByText('MENU')).not.toBeInTheDocument();
-		});
-	});
-
-	describe('Expanded State', () => {
-		it('applies expanded class when opened is true', () => {
-			const { container } = renderSidebar(true);
-
-			const nav = container.querySelector('nav');
-			expect(nav?.className).toContain('sidebarExpanded');
-			expect(nav?.className).not.toContain('sidebarCollapsed');
-		});
-
-		it('renders version text when expanded', () => {
-			renderSidebar(true);
+		it('renders version text', () => {
+			renderSidebar();
 
 			expect(screen.getByText('Version 1.0.0')).toBeInTheDocument();
-		});
-
-		it('passes compact=false to Logo when expanded', () => {
-			renderSidebar(true);
-
-			const logo = screen.getByTestId('logo');
-			expect(logo.getAttribute('data-compact')).toBe('false');
-		});
-
-		it('shows menu item text when expanded', () => {
-			renderSidebar(true);
-
-			expect(screen.getByText('Overview')).toBeInTheDocument();
-			expect(screen.getByText('Campaigns')).toBeInTheDocument();
-		});
-
-		it('sets aria-expanded to true when opened', () => {
-			renderSidebar(true);
-
-			const nav = screen.getByRole('navigation');
-			expect(nav.getAttribute('aria-expanded')).toBe('true');
-		});
-	});
-
-	describe('Collapsed State', () => {
-		it('applies collapsed class when opened is false', () => {
-			const { container } = renderSidebar(false);
-
-			const nav = container.querySelector('nav');
-			expect(nav?.className).toContain('sidebarCollapsed');
-			expect(nav?.className).not.toContain('sidebarExpanded');
-		});
-
-		it('passes compact=true to Logo when collapsed', () => {
-			renderSidebar(false);
-
-			const logo = screen.getByTestId('logo');
-			expect(logo.getAttribute('data-compact')).toBe('true');
-		});
-
-		it('does not render version text directly when collapsed', () => {
-			renderSidebar(false);
-
-			// When collapsed, version is shown in a tooltip, not as plain text
-			expect(screen.queryByText('Version 1.0.0')).not.toBeInTheDocument();
-		});
-
-		it('sets aria-expanded to false when collapsed', () => {
-			renderSidebar(false);
-
-			const nav = screen.getByRole('navigation');
-			expect(nav.getAttribute('aria-expanded')).toBe('false');
 		});
 	});
 
@@ -191,7 +119,7 @@ describe('Sidebar', () => {
 			render(
 				<MantineProvider>
 					<MemoryRouter initialEntries={['/']}>
-						<Sidebar opened={true} />
+						<Sidebar />
 					</MemoryRouter>
 				</MantineProvider>
 			);
@@ -204,7 +132,7 @@ describe('Sidebar', () => {
 			render(
 				<MantineProvider>
 					<MemoryRouter initialEntries={['/campaigns']}>
-						<Sidebar opened={true} />
+						<Sidebar />
 					</MemoryRouter>
 				</MantineProvider>
 			);
@@ -217,7 +145,7 @@ describe('Sidebar', () => {
 			render(
 				<MantineProvider>
 					<MemoryRouter initialEntries={['/campaigns/123']}>
-						<Sidebar opened={true} />
+						<Sidebar />
 					</MemoryRouter>
 				</MantineProvider>
 			);
@@ -230,7 +158,7 @@ describe('Sidebar', () => {
 			render(
 				<MantineProvider>
 					<MemoryRouter initialEntries={['/']}>
-						<Sidebar opened={true} />
+						<Sidebar />
 					</MemoryRouter>
 				</MantineProvider>
 			);
@@ -252,18 +180,16 @@ describe('Sidebar', () => {
 			icon,
 			to,
 			exact,
-			opened,
 		}: {
 			label: string;
 			icon: React.ReactNode;
 			to: string;
 			exact?: boolean;
-			opened?: boolean;
 		}) => {
-			return renderMenuItem({ label, icon, to, exact, opened });
+			return renderMenuItem({ label, icon, to, exact });
 		};
 
-		it('renders menu item with icon and label when opened', () => {
+		it('renders menu item with icon and label', () => {
 			render(
 				<MantineProvider>
 					<MemoryRouter initialEntries={['/']}>
@@ -271,7 +197,6 @@ describe('Sidebar', () => {
 							label='Test Item'
 							icon={<span data-testid='test-icon'>Icon</span>}
 							to='/test'
-							opened={true}
 						/>
 					</MemoryRouter>
 				</MantineProvider>
@@ -279,25 +204,6 @@ describe('Sidebar', () => {
 
 			expect(screen.getByTestId('test-icon')).toBeInTheDocument();
 			expect(screen.getByText('Test Item')).toBeInTheDocument();
-		});
-
-		it('renders menu item with icon in tooltip when collapsed', () => {
-			render(
-				<MantineProvider>
-					<MemoryRouter initialEntries={['/']}>
-						<RenderMenuItemWrapper
-							label='Test Item'
-							icon={<span data-testid='test-icon'>Icon</span>}
-							to='/test'
-							opened={false}
-						/>
-					</MemoryRouter>
-				</MantineProvider>
-			);
-
-			expect(screen.getByTestId('test-icon')).toBeInTheDocument();
-			// Label should not be visible as text when collapsed
-			expect(screen.queryByText('Test Item')).not.toBeInTheDocument();
 		});
 
 		it('applies selected style for exact match when exact is true', () => {
@@ -309,7 +215,6 @@ describe('Sidebar', () => {
 							icon={<span>Icon</span>}
 							to='/'
 							exact={true}
-							opened={true}
 						/>
 					</MemoryRouter>
 				</MantineProvider>
@@ -328,7 +233,6 @@ describe('Sidebar', () => {
 							icon={<span>Icon</span>}
 							to='/'
 							exact={true}
-							opened={true}
 						/>
 					</MemoryRouter>
 				</MantineProvider>
@@ -347,7 +251,6 @@ describe('Sidebar', () => {
 							icon={<span>Icon</span>}
 							to='/campaigns'
 							exact={false}
-							opened={true}
 						/>
 					</MemoryRouter>
 				</MantineProvider>
@@ -355,59 +258,6 @@ describe('Sidebar', () => {
 
 			const link = container.querySelector('a');
 			expect(link?.className).toContain('menuItemSelected');
-		});
-
-		it('applies collapsed style when opened is false', () => {
-			const { container } = render(
-				<MantineProvider>
-					<MemoryRouter initialEntries={['/']}>
-						<RenderMenuItemWrapper
-							label='Test'
-							icon={<span>Icon</span>}
-							to='/test'
-							opened={false}
-						/>
-					</MemoryRouter>
-				</MantineProvider>
-			);
-
-			const link = container.querySelector('a');
-			expect(link?.className).toContain('menuItemCollapsed');
-		});
-
-		it('does not apply collapsed style when opened is true', () => {
-			const { container } = render(
-				<MantineProvider>
-					<MemoryRouter initialEntries={['/']}>
-						<RenderMenuItemWrapper
-							label='Test'
-							icon={<span>Icon</span>}
-							to='/test'
-							opened={true}
-						/>
-					</MemoryRouter>
-				</MantineProvider>
-			);
-
-			const link = container.querySelector('a');
-			expect(link?.className).not.toContain('menuItemCollapsed');
-		});
-
-		it('defaults opened to true when not provided', () => {
-			render(
-				<MantineProvider>
-					<MemoryRouter initialEntries={['/']}>
-						<RenderMenuItemWrapper
-							label='Test Item'
-							icon={<span data-testid='test-icon'>Icon</span>}
-							to='/test'
-						/>
-					</MemoryRouter>
-				</MantineProvider>
-			);
-
-			// Label should be visible when opened defaults to true
-			expect(screen.getByText('Test Item')).toBeInTheDocument();
 		});
 	});
 
@@ -423,7 +273,7 @@ describe('Sidebar', () => {
 			render(
 				<MantineProvider>
 					<MemoryRouter initialEntries={['/campaigns']}>
-						<Sidebar opened={true} />
+						<Sidebar />
 					</MemoryRouter>
 				</MantineProvider>
 			);
@@ -436,7 +286,7 @@ describe('Sidebar', () => {
 			render(
 				<MantineProvider>
 					<MemoryRouter initialEntries={['/campaigns']}>
-						<Sidebar opened={true} />
+						<Sidebar />
 					</MemoryRouter>
 				</MantineProvider>
 			);

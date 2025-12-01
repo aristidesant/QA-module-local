@@ -11,7 +11,6 @@ export type MenuItem = {
 	icon: ReactNode;
 	to: string;
 	exact?: boolean;
-	opened?: boolean;
 };
 
 export const menuItems: MenuItem[] = [
