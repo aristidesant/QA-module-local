@@ -1,113 +1,250 @@
-# Core Commands
+# Project Instructions
 
-- `npm run dev` - Start development server with React Router v7 dev mode (port 8080)
-- `npm run build` - Create production build with SSR support
-- `npm run start` - Serve production build with React Router serve
-- `npm run typecheck` - Generate type definitions and run TypeScript checks
-- `npm run test` - Run unit and integration tests with Vitest
-- `npm run coverage` - Run tests and generate coverage report
+## ⚠️ CRITICAL: Language Rule
 
-# General Code Style & Formatting
+**ALWAYS write code and comments in English.** Even if the user writes in Spanish or another language, your code and comments MUST be in English. No exceptions.
 
-- Follow the Airbnb Style Guide for all code formatting.
-- Name React component files using PascalCase (e.g., `UserCard.tsx`, not `user-card.tsx`).
-- Export components as default exports (e.g., `export default UserCard`).
-- Each component must be isolated in its own folder. The folder and the main component file should both use the component name. Include an `index.ts` file in the folder to export the component as the default export. This is a MUST all the time (e.g., `export { default } from './UserCard'`).
-- No matter the prompt language used by the user, the code should be written in English.
-- When asked to split a component, unless we explicitly provide a path, create the component in the same folder as the main component file.
-- When you consider a new component is needed, create it in the same folder as the main component file.
-- This project has a FLAT design, Don't use shadows, gradients, animations, or any other 3D effects unless explicitly requested.
-- IMPORTANT!! No matter the language in which the request is being provided by the user, we write code in English as well as comments when needed. DO NOT WRITE CODE OR COMMENTS IN SPANISH
+---
 
-# Project Structure & Architecture
+## 🎨 DESIGN IS TOP PRIORITY
 
-- **Frontend Framework**: React Router v7 with SSR enabled by default
-- **Build Tool**: Vite with React Router dev plugin and TypeScript paths
-- **Major Dependencies**:
-  - Mantine v8 for UI components and theming
-  - Tanstack Query for data fetching and caching
-  - Zustand for state management
-  - Axios for HTTP requests
-  - ElevenLabs SDK for voice integration
-  - JWT for authentication
+> **You are building a beautiful, modern web application. Every screen you create must look stunning and professional.**
 
-- **External Services**:
-  - Backend API (configured via `API_URL` env var)
-  - ElevenLabs API for voice synthesis and conversational AI
-  - Session management with secure cookies
+### What "Beautiful Design" Means
 
-- The project uses React Router v7.
-  We MUST use them over anything else of custom components. If a core component does not exist, they need to be created in a file inside that folder.
+1. **Clean and Simple**: Use flat design. NO shadows, NO gradients, NO 3D effects.
+2. **Well Organized**: Good spacing between elements. Text is easy to read. Everything is aligned.
+3. **Modern Look**: Like top SaaS apps (Notion, Linear, Stripe). Polished, not ugly or basic.
+4. **Ready for Users**: Every screen should look like a final product, not a rough draft.
 
-- This project is using Tanstack Query for data fetching and caching.
-- Current structure follows `app/` directory (actual structure) vs documented `src/` structure:
-  ```
-  app/
-  ├── api/          # HTTP client functions for backend services
-  ├── components/   # Reusable UI components
-  ├── modules/      # Feature-specific modules (agent, campaigns, etc.)
-  ├── queries/      # Tanstack Query hooks
-  ├── routes/       # React Router v7 route components
-  ├── store/        # Zustand stores
-  ├── models/       # TypeScript types and interfaces
-  ├── hooks/        # Custom React hooks
-  ├── utils/        # Utility functions
-  └── styles/       # Global CSS styles
-  ```
+### Design Checklist (Follow This)
 
-# Styling & UI
+- ✅ Use plenty of white space (empty space between elements)
+- ✅ Keep text sizes consistent (headings big, body text smaller)
+- ✅ Align elements in a grid pattern
+- ✅ Use subtle color accents to highlight important items
+- ✅ Make buttons and links obvious and easy to click
+- ✅ Show loading states and error messages clearly
+- ✅ Use light mode (white/light backgrounds) by default
 
-- Use Mantine UI, V8. Search on internet whenever is required to get the latest implementation without breaking changes. component.
-- Every style should be place within a .module.css with the name of the component.
-- Prefer light mode for anything.
-- When asked in anyways to improve a component, always go with flat design, no shadows and no animnations that moves the component. Color highlights are preferred for animations.
-- Css Style MUST be preferred vs inline styling or component props.
-- Use `@tabler/icons-react` for all icons.
-- Use var(--mantine-xxx) to apply all the mantine properties in CSS files instead of defining your own styles/colors, etc..
-- Use the shared `BaseTable` component for list and table UIs by default. When creating new list or table views, prefer `src/components/BaseTable/BaseTable` (a generic TanStack Table wrapper using Mantine styling). Only deviate from `BaseTable` when there is a clear, documented reason (for example: very custom markup or performance-critical virtualization). Ensure new list components accept the same column/data shapes and use the generic `ColumnDef<T>` typing from `@tanstack/react-table`.
-- Make sure the columns are in a separated files and we create a hook for that particular columns of that list.
+### What to AVOID
 
-# Data Fetching & Forms
+- ❌ Crowded layouts with too many elements
+- ❌ Inconsistent spacing or random alignment
+- ❌ Ugly default browser styles
+- ❌ Missing hover states on clickable items
+- ❌ Placeholder text like "Lorem ipsum" in final code
+- ❌ Generic or boring designs
 
-- Use Mantine Form for form handling.
+---
 
-# State Management & Logic
+## Tech Stack (What Tools to Use)
 
-- Use Zustand for state management.
-- Use Tanstack React Query for data fetching and caching.
-- Use Action/Loader and Fetcher for data fetching in some cases.
+| Purpose          | Tool                              |
+| ---------------- | --------------------------------- |
+| Routing          | React Router v7 (client-side SPA) |
+| Build            | Vite with TypeScript              |
+| UI Components    | Mantine v8                        |
+| Data Fetching    | TanStack React Query              |
+| State Management | Zustand                           |
+| HTTP Requests    | Axios                             |
+| Icons            | @tabler/icons-react               |
+| Authentication   | JWT with secure cookies           |
 
-# TypeScript & Imports
+---
 
-- Use strict TypeScript configuration with `verbatimModuleSyntax` enabled
-- Path mapping configured: use `~/` for `./app/` imports
-- All TypeScript types should be properly defined in `models/` directory
-- Use proper type exports/imports and avoid `any` types
+## Project Folders
 
-# Environment & Configuration
+All code lives in `src/`:
 
-- Required environment variables:
-  - `API_URL` - Backend API endpoint
-  - `SESSION_SECRET_KEY` - Session management secret
-- Development server runs on port 8080
-- SSR enabled by default in React Router config
-- Authentication uses JWT tokens with secure session cookies
+```
+src/
+├── api/          # Functions that call the backend API
+├── components/   # Reusable UI pieces (buttons, cards, etc.)
+├── modules/      # Feature code (agents, campaigns, etc.)
+├── queries/      # React Query hooks for data fetching
+├── routes/       # Page components for each URL
+├── stores/       # Zustand state stores
+├── models/       # TypeScript types and interfaces
+├── hooks/        # Custom React hooks
+├── utils/        # Helper functions
+└── styles/       # Global CSS
+```
 
-# Error Handling & API Integration
+---
 
-- Use Axios for HTTP requests with consistent error handling
-- API functions should be organized by feature in `api/` directory
-- Follow established patterns for API client initialization
-- Handle authentication state consistently across the application
+## How to Write Components
 
-# Testing
+### File Naming
 
-- Use Vitest as the test runner.
-- Use React Testing Library for component testing.
-- Test files must be co-located with the component they test, named `[Component].test.tsx`.
-- **IMPORTANT**: Each component should have exactly ONE test file (e.g., `ComponentName.test.tsx`). All tests for a component must be organized within this single file using `describe` blocks to group related test cases. Do NOT create multiple test files for the same component (e.g., avoid `Component.feature1.test.tsx`, `Component.feature2.test.tsx`).
-- Use `vi` from `vitest` for mocking.
-- Ensure to mock external dependencies like `react-router-dom` hooks or API calls if necessary.
-- Use `screen` from `@testing-library/react` for querying elements.
-- Use `userEvent` from `@testing-library/user-event` for interactions.
-- Prefer integration-style tests using `renderWithProviders` over heavy mocking when possible.
+- Use **PascalCase** for component files: `UserCard.tsx`, `CampaignList.tsx`
+
+### Folder Structure
+
+Each component gets its own folder:
+
+```
+components/
+└── UserCard/
+    ├── UserCard.tsx        # Main component code
+    ├── UserCard.module.css # Styles for this component
+    └── index.ts            # Export file
+```
+
+The `index.ts` file must contain:
+
+```ts
+export { default } from './UserCard';
+```
+
+### Creating New Components
+
+- Put new components in `src/components/` (for reusable ones)
+- Put page-specific components in the same folder as the page
+- When you split a big component into smaller pieces, keep them in the same folder
+
+---
+
+## Styling Rules
+
+### Use Mantine v8
+
+- **Always use Mantine components** (Button, Card, Text, Stack, Group, etc.)
+- Check the latest Mantine v8 docs if unsure about a component
+
+### Use CSS Modules
+
+- Put styles in `.module.css` files (example: `UserCard.module.css`)
+- Use Mantine's CSS variables: `var(--mantine-color-blue-6)`, `var(--mantine-spacing-md)`
+- Do NOT use inline styles unless absolutely necessary
+
+### Icons
+
+- Use icons from `@tabler/icons-react`
+- Example: `import { IconUser } from '@tabler/icons-react';`
+
+---
+
+## Tables and Lists
+
+- **Always use `BaseTable`** from `src/components/BaseTable/BaseTable`
+- This is a pre-built table component using TanStack Table + Mantine
+- Put column definitions in separate files with hooks like `useUsersTableColumns`
+
+---
+
+## Data and Forms
+
+### Fetching Data
+
+- Use **TanStack React Query** for all API calls
+- Use React Router loaders when they fit better
+
+### Forms
+
+- Use **Mantine Form** for form handling
+- Validate inputs and show clear error messages
+
+### API Calls
+
+- Use **Axios** for HTTP requests
+- Put API functions in `src/api/` organized by feature
+
+---
+
+## State Management
+
+- Use **Zustand** for global state
+- Keep stores in `src/stores/`
+- Keep feature logic in `src/modules/`
+
+---
+
+## TypeScript Rules
+
+- Use **strict TypeScript** settings
+- Use `~/` for imports (points to `src/`)
+- Put all types in `src/models/`
+- **Never use `any`** - always define proper types
+
+---
+
+## Routing
+
+- Use **React Router v7** - do not create custom routing
+- Use loaders and actions for data fetching when it makes sense
+- Put route components in `src/routes/`
+
+---
+
+## Commands
+
+| Command             | What It Does                   |
+| ------------------- | ------------------------------ |
+| `npm run dev`       | Start dev server on port 8080  |
+| `npm run build`     | Build for production           |
+| `npm run start`     | Run production build           |
+| `npm run typecheck` | Check TypeScript types         |
+| `npm run test`      | Run tests                      |
+| `npm run coverage`  | Run tests with coverage report |
+
+---
+
+## Testing
+
+### Tools
+
+- **Vitest** for running tests
+- **React Testing Library** for component tests
+
+### Test File Rules
+
+- Put test files next to the component: `UserCard.test.tsx`
+- **One test file per component** (not multiple test files)
+
+### How to Write Tests
+
+```tsx
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
+
+// Always use renderWithProviders, not render
+```
+
+### Mocking
+
+- Use `vi` from vitest for mocks
+- Mock API calls and router hooks when needed
+
+---
+
+## Environment Variables
+
+| Variable             | Purpose                |
+| -------------------- | ---------------------- |
+| `API_URL`            | Backend API URL        |
+| `SESSION_SECRET_KEY` | Session encryption key |
+
+---
+
+## Quick Reference
+
+### Do This ✅
+
+- Write beautiful, clean UI
+- Use Mantine v8 components
+- Use CSS modules for styles
+- Use React Query for data
+- Use Zustand for state
+- Write code in English
+- Follow the folder structure
+
+### Don't Do This ❌
+
+- Create ugly or basic designs
+- Use shadows or gradients
+- Write inline styles
+- Use `any` in TypeScript
+- Write code in Spanish
+- Skip loading/error states

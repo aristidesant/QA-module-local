@@ -118,6 +118,7 @@ export const CampaignVoiceProgressDisplay: React.FC<
 						size='sm'
 						radius='xl'
 						className={styles.metricProgress}
+						aria-label={metric.label}
 					/>
 				</div>
 			))}
