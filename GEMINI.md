@@ -27,6 +27,15 @@
 - ✅ Show loading states and error messages clearly
 - ✅ Use light mode (white/light backgrounds) by default
 
+### Size & Spacing Rules (IMPORTANT)
+
+- ✅ **Use small font sizes** - prefer `size="sm"` for Text components
+- ✅ **Use smaller component variants** - prefer `size="sm"` for Button, Input, Select, etc.
+- ✅ **Default gap is `xs`** - use `var(--mantine-spacing-xs)` or `gap="xs"` between elements
+- ✅ **Compact layouts** - use `--mantine-spacing-xs` for padding/margin when possible
+- ✅ For Stack/Group components, default to `gap="xs"`
+- ✅ For tables, use compact row heights with small text
+
 ### What to AVOID
 
 - ❌ Crowded layouts with too many elements
