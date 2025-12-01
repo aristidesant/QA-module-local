@@ -100,7 +100,7 @@ describe('ConversationFilters', () => {
 					screen.getByPlaceholderText('Filter by phone number')
 				).toBeInTheDocument();
 				expect(
-					screen.getByPlaceholderText('Filter by disposition')
+					screen.getByPlaceholderText('Filter by outcome')
 				).toBeInTheDocument();
 				expect(screen.getByText('Status')).toBeInTheDocument();
 			});
@@ -239,7 +239,7 @@ describe('ConversationFilters', () => {
 	});
 
 	describe('Disposition Filter', () => {
-		it('calls onFiltersChange when disposition is typed', async () => {
+		it('calls onFiltersChange when outcome is typed', async () => {
 			const mockOnFiltersChange = vi.fn();
 			renderComponent({ onFiltersChange: mockOnFiltersChange });
 
@@ -247,7 +247,7 @@ describe('ConversationFilters', () => {
 			const advancedButton = screen.getByRole('button', { name: /advanced/i });
 			await userEvent.click(advancedButton);
 
-			const input = await screen.findByPlaceholderText('Filter by disposition');
+			const input = await screen.findByPlaceholderText('Filter by outcome');
 			await userEvent.type(input, 'Interested');
 
 			await waitFor(() => {
@@ -255,13 +255,13 @@ describe('ConversationFilters', () => {
 			});
 		});
 
-		it('displays existing disposition filter value', async () => {
+		it('displays existing outcome filter value', async () => {
 			renderComponent({ filters: { dispositionName: 'Not Interested' } });
 
 			const advancedButton = screen.getByRole('button', { name: /advanced/i });
 			await userEvent.click(advancedButton);
 
-			const input = await screen.findByPlaceholderText('Filter by disposition');
+			const input = await screen.findByPlaceholderText('Filter by outcome');
 			expect(input).toHaveValue('Not Interested');
 		});
 	});

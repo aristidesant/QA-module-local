@@ -179,8 +179,8 @@ export default function ConversationFilters({
 								size='sm'
 							/>
 							<TextInput
-								label='Disposition'
-								placeholder='Filter by disposition'
+								label='Outcome'
+								placeholder='Filter by outcome'
 								value={localDisposition}
 								onChange={(event) =>
 									setLocalDisposition(event.currentTarget.value)
