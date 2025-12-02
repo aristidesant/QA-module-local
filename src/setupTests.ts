@@ -45,3 +45,7 @@ Object.defineProperty(globalThis, 'ResizeObserver', {
 		disconnect() {}
 	},
 });
+
+// Mock scrollIntoView for Mantine Combobox components in test environment
+// jsdom doesn't implement scrollIntoView, which Mantine's Combobox uses
+Element.prototype.scrollIntoView = vi.fn();
