@@ -140,6 +140,14 @@ const KnowledgeBaseWizardForm: React.FC<KnowledgeBaseWizardFormProps> = ({
 					required
 					disabled={isSaving}
 				/>
+				<Textarea
+					label='Description'
+					placeholder='Short internal note about this knowledge base'
+					{...form.getInputProps('description')}
+					autosize
+					minRows={3}
+					disabled={isSaving}
+				/>
 
 				<FormSelect
 					label='Type'
@@ -176,15 +184,6 @@ const KnowledgeBaseWizardForm: React.FC<KnowledgeBaseWizardFormProps> = ({
 						disabled={isSaving}
 					/>
 				)}
-
-				<Textarea
-					label='Description'
-					placeholder='Short internal note about this knowledge base'
-					{...form.getInputProps('description')}
-					autosize
-					minRows={3}
-					disabled={isSaving}
-				/>
 
 				{(form.values.type === KnowledgeBaseType.FILE ||
 					form.values.type === KnowledgeBaseType.TEXT) && (

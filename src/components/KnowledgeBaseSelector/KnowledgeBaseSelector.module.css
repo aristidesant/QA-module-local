@@ -1,0 +1,47 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+}
+
+.controls {
+	display: grid;
+	grid-template-columns: 1fr 180px;
+	gap: var(--mantine-spacing-xs);
+}
+
+.tableWrapper {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	overflow: hidden;
+}
+
+.footer {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--mantine-spacing-xs);
+}
+
+.typeBadge {
+	font-weight: 500;
+}
+
+.statusBadge {
+	text-transform: capitalize;
+}
+
+.nameCell {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.description {
+	color: var(--mantine-color-gray-6);
+	font-size: var(--mantine-font-size-xs);
+	line-height: 1.2;
+	max-width: 560px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
