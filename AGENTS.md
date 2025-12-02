@@ -210,6 +210,7 @@ export { default } from './UserCard';
 
 - Put test files next to the component: `UserCard.test.tsx`
 - **One test file per component** (not multiple test files)
+- When asked to increase coverage of a test, run the coverage for that file/folder only, do not run full coverage unless user asks for it.
 
 ### How to Write Tests
 
