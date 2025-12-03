@@ -10,7 +10,6 @@ import {
 	Loader,
 	Modal,
 	Stack,
-	Switch,
 	Group,
 } from '@mantine/core';
 import {
@@ -22,6 +21,7 @@ import {
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 import { useKnowledgeBases } from '~/queries/knowledgeBaseQueries';
 import type KnowledgeBaseModel from '~/models/KnowledgeBaseModel';
+import KnowledgeBaseSelector from '~/components/KnowledgeBaseSelector';
 
 import styles from '../StepTwoAgent.module.css';
 import KnowledgeBaseWizardForm from './KnowledgeBaseWizardForm';
@@ -66,16 +66,8 @@ const KnowledgeBaseSection: React.FC = () => {
 		setKnowledgeBaseIds(newIds);
 	};
 
-	const handleToggleKnowledgeBase = (kbId: number, checked: boolean) => {
-		if (checked) {
-			setTempSelectedIds((prev) => [...prev, kbId]);
-		} else {
-			setTempSelectedIds((prev) => prev.filter((id) => id !== kbId));
-		}
-	};
-
-	const handleSaveSelections = () => {
-		setKnowledgeBaseIds(tempSelectedIds);
+	const handleSaveSelections = (ids: number[]) => {
+		setKnowledgeBaseIds(ids);
 		setIsModalOpen(false);
 	};
 
@@ -187,33 +179,13 @@ const KnowledgeBaseSection: React.FC = () => {
 				opened={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
 				title='Select Knowledge Bases'
-				size='lg'
+				size='xl'
 			>
-				<Stack>
-					{allKnowledgeBases && allKnowledgeBases.length > 0 ? (
-						allKnowledgeBases.map((kb) => (
-							<Switch
-								key={kb.id}
-								label={kb.name}
-								description={kb.description}
-								checked={tempSelectedIds.includes(kb.id)}
-								onChange={(event) =>
-									handleToggleKnowledgeBase(kb.id, event.currentTarget.checked)
-								}
-							/>
-						))
-					) : (
-						<Text size='sm' c='dimmed'>
-							No knowledge bases available
-						</Text>
-					)}
-				</Stack>
-				<Group justify='flex-end' mt='md'>
-					<Button variant='default' onClick={() => setIsModalOpen(false)}>
-						Cancel
-					</Button>
-					<Button onClick={handleSaveSelections}>Save Selections</Button>
-				</Group>
+				<KnowledgeBaseSelector
+					initialSelectedIds={tempSelectedIds}
+					onCancel={() => setIsModalOpen(false)}
+					onSave={handleSaveSelections}
+				/>
 			</Modal>
 
 			{/* Create Modal */}

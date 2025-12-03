@@ -138,7 +138,6 @@ const CampaignConfigurationKnowledgeBase: React.FC = () => {
 				onClose={handleCloseModal}
 				selectedIds={selectedKbIds}
 				onSave={handleSaveSelections}
-				allKnowledgeBases={allKnowledgeBases || []}
 			/>
 		</SectionCard>
 	);

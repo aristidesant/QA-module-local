@@ -99,9 +99,14 @@ describe('KnowledgeBaseSection', () => {
 		renderComponent();
 		fireEvent.click(screen.getByText('Select Existing'));
 
-		// Wait for modal
-		const switch2 = await screen.findByLabelText('KB 2');
-		fireEvent.click(switch2);
+		// Wait for modal and click the row containing KB 2
+		const modal = await screen.findByRole('dialog');
+		const rows = modal.querySelectorAll('tr');
+		const kb2Row = Array.from(rows).find((r) =>
+			r.textContent?.includes('KB 2')
+		) as HTMLElement | undefined;
+		expect(kb2Row).toBeTruthy();
+		if (kb2Row) fireEvent.click(kb2Row);
 
 		fireEvent.click(screen.getByText('Save Selections'));
 
