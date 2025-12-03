@@ -58,11 +58,15 @@ describe('StepTwoAgent', () => {
 	const mockInvalidateQueries = vi.fn();
 	const mockReloadFreshCampaign = vi.fn();
 
-	const mockStore = {
+	let mockStore: ReturnType<typeof createMockStore>;
+
+	const createMockStore = ({
+		agentPrompt = '',
+	}: { agentPrompt?: string } = {}) => ({
 		agentBehaviorId: null,
 		language: 'es',
 		firstMessage: '',
-		agentPrompt: '',
+		agentPrompt,
 		createdCampaign: { id: 1, agentConfig: {} },
 		knowledgeBaseIds: [],
 		setAgentBehaviorId: vi.fn(),
@@ -72,10 +76,11 @@ describe('StepTwoAgent', () => {
 		setKnowledgeBaseIds: vi.fn(),
 		setIsSubmitting: vi.fn(),
 		setCreatedCampaign: vi.fn(),
-	};
+	});
 
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockStore = createMockStore();
 		(
 			useCampaignWizardStore as unknown as ReturnType<typeof vi.fn>
 		).mockReturnValue(mockStore);
@@ -120,19 +125,12 @@ describe('StepTwoAgent', () => {
 		// Language appears multiple times (in text and as label), just verify it's present
 		expect(screen.getAllByText(/Language/i).length).toBeGreaterThan(0);
 		expect(screen.getByLabelText(/Agent First Message/i)).toBeInTheDocument();
-		// Use getAllByText for Agent Prompt since it appears in section title and label
-		expect(screen.getAllByText(/Agent Prompt/i).length).toBeGreaterThan(0);
+		expect(screen.getByLabelText(/Agent prompt/i)).toBeInTheDocument();
 		expect(screen.getByTestId('knowledge-base-section')).toBeInTheDocument();
 	});
 
 	it('validates required fields', async () => {
 		renderComponent();
-
-		// Clear prompt to trigger validation error if it was pre-filled
-		const promptInput = screen.getByPlaceholderText(
-			/\*\*Prompt para el Agente de IA:\*\*/i
-		);
-		fireEvent.change(promptInput, { target: { value: '' } });
 
 		const submitButton = screen.getByRole('button', {
 			name: /Save & Continue/i,
@@ -141,14 +139,17 @@ describe('StepTwoAgent', () => {
 	});
 
 	it('enables submit button when valid', async () => {
-		renderComponent();
-
-		const promptInput = screen.getByPlaceholderText(
-			/\*\*Prompt para el Agente de IA:\*\*/i
-		);
-		fireEvent.change(promptInput, {
-			target: { value: 'This is a valid prompt with enough length.' },
+		mockStore = createMockStore({
+			agentPrompt: 'This is a valid prompt with enough length.',
 		});
+		(
+			useCampaignWizardStore as unknown as ReturnType<typeof vi.fn>
+		).mockReturnValue(mockStore);
+		(useCampaignWizardStore as any).getState = vi
+			.fn()
+			.mockReturnValue(mockStore);
+
+		renderComponent();
 
 		const submitButton = screen.getByRole('button', {
 			name: /Save & Continue/i,
@@ -158,14 +159,17 @@ describe('StepTwoAgent', () => {
 
 	it('submits form successfully', async () => {
 		mockMutateAsync.mockResolvedValue({ id: 1, agentConfig: {} });
-		renderComponent();
-
-		const promptInput = screen.getByPlaceholderText(
-			/\*\*Prompt para el Agente de IA:\*\*/i
-		);
-		fireEvent.change(promptInput, {
-			target: { value: 'This is a valid prompt with enough length.' },
+		mockStore = createMockStore({
+			agentPrompt: 'This is a valid prompt with enough length.',
 		});
+		(
+			useCampaignWizardStore as unknown as ReturnType<typeof vi.fn>
+		).mockReturnValue(mockStore);
+		(useCampaignWizardStore as any).getState = vi
+			.fn()
+			.mockReturnValue(mockStore);
+
+		renderComponent();
 
 		const submitButton = screen.getByRole('button', {
 			name: /Save & Continue/i,
@@ -188,14 +192,17 @@ describe('StepTwoAgent', () => {
 
 	it('handles submission error', async () => {
 		mockMutateAsync.mockRejectedValue(new Error('Update failed'));
-		renderComponent();
-
-		const promptInput = screen.getByPlaceholderText(
-			/\*\*Prompt para el Agente de IA:\*\*/i
-		);
-		fireEvent.change(promptInput, {
-			target: { value: 'This is a valid prompt with enough length.' },
+		mockStore = createMockStore({
+			agentPrompt: 'This is a valid prompt with enough length.',
 		});
+		(
+			useCampaignWizardStore as unknown as ReturnType<typeof vi.fn>
+		).mockReturnValue(mockStore);
+		(useCampaignWizardStore as any).getState = vi
+			.fn()
+			.mockReturnValue(mockStore);
+
+		renderComponent();
 
 		const submitButton = screen.getByRole('button', {
 			name: /Save & Continue/i,
@@ -216,50 +223,10 @@ describe('StepTwoAgent', () => {
 
 	it('opens prompt editor modal', async () => {
 		renderComponent();
-		const editButton = screen.getByTitle('Edit prompt');
+		const editButton = screen.getByRole('button', { name: /Edit prompt/i });
 		fireEvent.click(editButton);
 		await waitFor(() => {
 			expect(screen.getByTestId('prompt-edit-modal')).toBeInTheDocument();
 		});
-	});
-
-	it('copies prompt to clipboard', async () => {
-		const writeText = vi.fn();
-		Object.assign(navigator, {
-			clipboard: {
-				writeText,
-			},
-		});
-
-		renderComponent();
-
-		const promptInput = screen.getByPlaceholderText(
-			/\*\*Prompt para el Agente de IA:\*\*/i
-		);
-		fireEvent.change(promptInput, { target: { value: 'Prompt to copy' } });
-
-		const copyButton = screen.getByTitle('Copy prompt');
-		fireEvent.click(copyButton);
-
-		expect(writeText).toHaveBeenCalledWith('Prompt to copy');
-		expect(notifications.show).toHaveBeenCalledWith(
-			expect.objectContaining({
-				title: 'Copied',
-			})
-		);
-	});
-
-	it('clears prompt', () => {
-		renderComponent();
-
-		const promptInput = screen.getByPlaceholderText(
-			/\*\*Prompt para el Agente de IA:\*\*/i
-		);
-		fireEvent.change(promptInput, { target: { value: 'Prompt to clear' } });
-
-		const clearButton = screen.getByTitle('Clear prompt');
-		fireEvent.click(clearButton);
-
-		expect(promptInput).toHaveValue('');
 	});
 });

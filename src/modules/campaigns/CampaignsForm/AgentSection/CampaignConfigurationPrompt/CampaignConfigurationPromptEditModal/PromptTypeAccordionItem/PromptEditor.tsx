@@ -219,7 +219,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
 
 	return (
 		<>
-			<Stack gap={4}>
+			<Stack gap={4} className={styles.editorStack}>
 				{promptOptions.length > 0 && (
 					<Select
 						label='Reuse from another campaign'
@@ -253,7 +253,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
 								value={value || ''}
 								onChange={(val) => onChange(val || '')}
 								preview='edit'
-								height={240}
+								height='100%'
 								className={styles.mdEditor}
 								textareaProps={
 									{
