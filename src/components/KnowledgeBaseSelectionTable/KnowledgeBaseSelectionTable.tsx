@@ -7,6 +7,9 @@ import {
 	SegmentedControl,
 	Text,
 	TextInput,
+	Center,
+	Box,
+	Tooltip,
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import {
@@ -243,18 +246,52 @@ const KnowledgeBaseSelectionTable: React.FC<
 						placeholder='Search knowledge bases'
 						value={searchTerm}
 						onChange={(e) => setSearchTerm(e.currentTarget.value)}
+						className={styles.searchInput}
 					/>
-					<SegmentedControl
-						size='xs'
-						value={typeFilter}
-						onChange={(v) => setTypeFilter(v as TypeFilter)}
-						data={[
-							{ label: 'All', value: 'ALL' },
-							{ label: 'URL', value: 'URL' },
-							{ label: 'Text', value: 'TEXT' },
-							{ label: 'File', value: 'FILE' },
-						]}
-					/>
+					<div className={styles.filterSection}>
+						<SegmentedControl
+							size='xs'
+							value={typeFilter}
+							onChange={(v) => setTypeFilter(v as TypeFilter)}
+							className={styles.typeFilter}
+							data={[
+								{ label: 'All', value: 'ALL' },
+								{
+									label: (
+										<Tooltip label='URL sources' withArrow position='top'>
+											<Center>
+												<IconLink size={14} />
+												<Box ml={4}>URL</Box>
+											</Center>
+										</Tooltip>
+									),
+									value: 'URL',
+								},
+								{
+									label: (
+										<Tooltip label='Text snippets' withArrow position='top'>
+											<Center>
+												<IconTextRecognition size={14} />
+												<Box ml={4}>Text</Box>
+											</Center>
+										</Tooltip>
+									),
+									value: 'TEXT',
+								},
+								{
+									label: (
+										<Tooltip label='Uploaded files' withArrow position='top'>
+											<Center>
+												<IconFile size={14} />
+												<Box ml={4}>File</Box>
+											</Center>
+										</Tooltip>
+									),
+									value: 'FILE',
+								},
+							]}
+						/>
+					</div>
 				</Group>
 				{showCreateButton && onCreateNew && (
 					<Button
