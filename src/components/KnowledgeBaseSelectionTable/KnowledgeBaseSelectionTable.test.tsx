@@ -2,13 +2,12 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
-import CampaignConfigurationKnowledgeBaseAddModal from './CampaignConfigurationKnowledgeBaseAddModal';
+import KnowledgeBaseSelectionTable from './KnowledgeBaseSelectionTable';
 import type KnowledgeBaseModel from '~/models/KnowledgeBaseModel';
 import {
 	KnowledgeBaseType,
 	KnowledgeBaseStatus,
 } from '~/models/KnowledgeBaseModel';
-import { useKnowledgeBaseModalStore } from '~/stores/knowledgeBaseModalStore';
 import { useKnowledgeBaseSelectionStore } from '~/stores/knowledgeBaseSelectionStore';
 import * as knowledgeBaseQueries from '~/queries/knowledgeBaseQueries';
 
@@ -49,13 +48,6 @@ const mockKnowledgeBases: KnowledgeBaseModel[] = [
 		type: KnowledgeBaseType.TEXT,
 		status: KnowledgeBaseStatus.INACTIVE,
 	}),
-	createMockKnowledgeBase({
-		id: 4,
-		name: 'Training Materials',
-		description: 'Employee training content',
-		type: KnowledgeBaseType.FILE,
-		status: KnowledgeBaseStatus.FAILED,
-	}),
 ];
 
 // Mock the knowledge base queries
@@ -72,43 +64,26 @@ vi.mock('~/queries/knowledgeBaseQueries', async () => {
 	};
 });
 
-describe('CampaignConfigurationKnowledgeBaseAddModal', () => {
+describe('KnowledgeBaseSelectionTable', () => {
 	const defaultProps = {
-		opened: true,
-		onClose: vi.fn(),
-		selectedIds: [] as number[],
+		initialSelectedIds: [] as number[],
+		onCancel: vi.fn(),
 		onSave: vi.fn(),
+		showFooter: true,
 	};
 
 	beforeEach(() => {
 		vi.clearAllMocks();
-		useKnowledgeBaseModalStore.getState().reset();
 		useKnowledgeBaseSelectionStore.getState().reset();
 	});
 
 	afterEach(() => {
-		useKnowledgeBaseModalStore.getState().reset();
 		useKnowledgeBaseSelectionStore.getState().reset();
 	});
 
 	describe('Rendering', () => {
-		it('renders modal with title and subtitle', () => {
-			renderWithProviders(
-				<CampaignConfigurationKnowledgeBaseAddModal {...defaultProps} />
-			);
-
-			expect(screen.getByText('Select Knowledge Bases')).toBeInTheDocument();
-			expect(
-				screen.getByText(
-					/Pick the knowledge bases that should power this agent/
-				)
-			).toBeInTheDocument();
-		});
-
-		it('renders search input and type filter', () => {
-			renderWithProviders(
-				<CampaignConfigurationKnowledgeBaseAddModal {...defaultProps} />
-			);
+		it('renders search input and type filter controls', () => {
+			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
 
 			expect(
 				screen.getByPlaceholderText('Search knowledge bases')
@@ -117,20 +92,31 @@ describe('CampaignConfigurationKnowledgeBaseAddModal', () => {
 		});
 
 		it('renders all knowledge bases in the table', () => {
-			renderWithProviders(
-				<CampaignConfigurationKnowledgeBaseAddModal {...defaultProps} />
-			);
+			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
 
 			expect(screen.getByText('Product Documentation')).toBeInTheDocument();
 			expect(screen.getByText('FAQ Website')).toBeInTheDocument();
 			expect(screen.getByText('Company Policy')).toBeInTheDocument();
-			expect(screen.getByText('Training Materials')).toBeInTheDocument();
 		});
 
-		it('renders Cancel and Save buttons', () => {
-			renderWithProviders(
-				<CampaignConfigurationKnowledgeBaseAddModal {...defaultProps} />
-			);
+		it('renders type badges for each knowledge base', () => {
+			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
+
+			// Use getAllByText since URL/TEXT appear in both filter controls and badges
+			const fileBadges = screen.getAllByText('FILE');
+			const urlElements = screen.getAllByText('URL');
+			const textElements = screen.getAllByText(/^TEXT$/);
+
+			// FILE only appears as badge (not in filter)
+			expect(fileBadges.length).toBeGreaterThanOrEqual(1);
+			// URL appears in filter + badge
+			expect(urlElements.length).toBeGreaterThanOrEqual(2);
+			// TEXT appears in filter (as "Text") + badge (as "TEXT")
+			expect(textElements.length).toBeGreaterThanOrEqual(1);
+		});
+
+		it('renders Cancel and Save buttons when showFooter is true', () => {
+			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
 
 			expect(
 				screen.getByRole('button', { name: /cancel/i })
@@ -140,55 +126,64 @@ describe('CampaignConfigurationKnowledgeBaseAddModal', () => {
 			).toBeInTheDocument();
 		});
 
-		it('shows selection count as 0 when nothing selected', () => {
+		it('does not render footer when showFooter is false', () => {
 			renderWithProviders(
-				<CampaignConfigurationKnowledgeBaseAddModal {...defaultProps} />
+				<KnowledgeBaseSelectionTable {...defaultProps} showFooter={false} />
 			);
+
+			expect(
+				screen.queryByRole('button', { name: /cancel/i })
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole('button', { name: /save selections/i })
+			).not.toBeInTheDocument();
+		});
+
+		it('shows selection count as 0 when nothing selected', () => {
+			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
 
 			expect(screen.getByText('0 selected')).toBeInTheDocument();
 		});
 
 		it('shows correct selection count when items are pre-selected', () => {
 			renderWithProviders(
-				<CampaignConfigurationKnowledgeBaseAddModal
+				<KnowledgeBaseSelectionTable
 					{...defaultProps}
-					selectedIds={[1, 2]}
+					initialSelectedIds={[1, 2]}
 				/>
 			);
 
 			expect(screen.getByText('2 selected')).toBeInTheDocument();
 		});
 
-		it('does not render when modal is closed', () => {
+		it('renders Create new button when showCreateButton is true', () => {
+			const onCreateNew = vi.fn();
 			renderWithProviders(
-				<CampaignConfigurationKnowledgeBaseAddModal
+				<KnowledgeBaseSelectionTable
 					{...defaultProps}
-					opened={false}
+					showCreateButton
+					onCreateNew={onCreateNew}
 				/>
 			);
 
 			expect(
-				screen.queryByText('Select Knowledge Bases')
-			).not.toBeInTheDocument();
+				screen.getByRole('button', { name: /create new/i })
+			).toBeInTheDocument();
 		});
 
-		it('renders type badges for knowledge bases', () => {
-			renderWithProviders(
-				<CampaignConfigurationKnowledgeBaseAddModal {...defaultProps} />
-			);
+		it('does not render Create new button when showCreateButton is false', () => {
+			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
 
-			expect(screen.getAllByText('FILE').length).toBeGreaterThan(0);
-			expect(screen.getAllByText('URL').length).toBeGreaterThan(0);
-			expect(screen.getAllByText('TEXT').length).toBeGreaterThan(0);
+			expect(
+				screen.queryByRole('button', { name: /create new/i })
+			).not.toBeInTheDocument();
 		});
 	});
 
 	describe('Selection Functionality', () => {
 		it('toggles selection when checkbox is clicked', async () => {
 			const user = userEvent.setup();
-			renderWithProviders(
-				<CampaignConfigurationKnowledgeBaseAddModal {...defaultProps} />
-			);
+			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
 
 			const checkbox = screen.getByRole('checkbox', {
 				name: /select product documentation/i,
@@ -200,24 +195,26 @@ describe('CampaignConfigurationKnowledgeBaseAddModal', () => {
 
 		it('toggles selection when row is clicked', async () => {
 			const user = userEvent.setup();
-			renderWithProviders(
-				<CampaignConfigurationKnowledgeBaseAddModal {...defaultProps} />
-			);
+			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
 
-			const row = screen.getByText('Product Documentation').closest('tr');
-			if (row) {
-				await user.click(row);
-			}
+			// Get the table body row for Product Documentation
+			const rows = screen.getAllByRole('row');
+			// First row is header, second row is first data row
+			const dataRow = rows[1];
 
-			expect(screen.getByText('1 selected')).toBeInTheDocument();
+			await user.click(dataRow);
+
+			await waitFor(() => {
+				expect(screen.getByText('1 selected')).toBeInTheDocument();
+			});
 		});
 
 		it('deselects when checkbox is clicked again', async () => {
 			const user = userEvent.setup();
 			renderWithProviders(
-				<CampaignConfigurationKnowledgeBaseAddModal
+				<KnowledgeBaseSelectionTable
 					{...defaultProps}
-					selectedIds={[1]}
+					initialSelectedIds={[1]}
 				/>
 			);
 
@@ -233,9 +230,7 @@ describe('CampaignConfigurationKnowledgeBaseAddModal', () => {
 
 		it('can select multiple items sequentially', async () => {
 			const user = userEvent.setup();
-			renderWithProviders(
-				<CampaignConfigurationKnowledgeBaseAddModal {...defaultProps} />
-			);
+			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
 
 			const checkbox1 = screen.getByRole('checkbox', {
 				name: /select product documentation/i,
@@ -256,11 +251,25 @@ describe('CampaignConfigurationKnowledgeBaseAddModal', () => {
 			});
 		});
 
-		it('pre-selects items based on selectedIds prop', () => {
+		it('selects all when header checkbox is clicked', async () => {
+			const user = userEvent.setup();
+			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
+
+			const headerCheckbox = screen.getByRole('checkbox', {
+				name: /select all/i,
+			});
+			await user.click(headerCheckbox);
+
+			await waitFor(() => {
+				expect(screen.getByText('3 selected')).toBeInTheDocument();
+			});
+		});
+
+		it('pre-selects items based on initialSelectedIds prop', () => {
 			renderWithProviders(
-				<CampaignConfigurationKnowledgeBaseAddModal
+				<KnowledgeBaseSelectionTable
 					{...defaultProps}
-					selectedIds={[1, 3]}
+					initialSelectedIds={[1, 3]}
 				/>
 			);
 
@@ -277,30 +286,27 @@ describe('CampaignConfigurationKnowledgeBaseAddModal', () => {
 		});
 	});
 
-	describe('Modal Actions', () => {
-		it('calls onClose when Cancel button is clicked', async () => {
+	describe('Actions', () => {
+		it('calls onCancel when Cancel button is clicked', async () => {
 			const user = userEvent.setup();
-			const onClose = vi.fn();
+			const onCancel = vi.fn();
 			renderWithProviders(
-				<CampaignConfigurationKnowledgeBaseAddModal
-					{...defaultProps}
-					onClose={onClose}
-				/>
+				<KnowledgeBaseSelectionTable {...defaultProps} onCancel={onCancel} />
 			);
 
 			await user.click(screen.getByRole('button', { name: /cancel/i }));
 
-			expect(onClose).toHaveBeenCalledTimes(1);
+			expect(onCancel).toHaveBeenCalledTimes(1);
 		});
 
 		it('calls onSave with selected IDs when Save button is clicked', async () => {
 			const user = userEvent.setup();
 			const onSave = vi.fn();
 			renderWithProviders(
-				<CampaignConfigurationKnowledgeBaseAddModal
+				<KnowledgeBaseSelectionTable
 					{...defaultProps}
 					onSave={onSave}
-					selectedIds={[1, 2]}
+					initialSelectedIds={[1, 2]}
 				/>
 			);
 
@@ -315,10 +321,7 @@ describe('CampaignConfigurationKnowledgeBaseAddModal', () => {
 			const user = userEvent.setup();
 			const onSave = vi.fn();
 			renderWithProviders(
-				<CampaignConfigurationKnowledgeBaseAddModal
-					{...defaultProps}
-					onSave={onSave}
-				/>
+				<KnowledgeBaseSelectionTable {...defaultProps} onSave={onSave} />
 			);
 
 			const checkbox = screen.getByRole('checkbox', {
@@ -332,77 +335,41 @@ describe('CampaignConfigurationKnowledgeBaseAddModal', () => {
 
 			expect(onSave).toHaveBeenCalledWith([1]);
 		});
-	});
 
-	describe('Create New Functionality', () => {
-		it('renders Create new button in list view', () => {
-			renderWithProviders(
-				<CampaignConfigurationKnowledgeBaseAddModal {...defaultProps} />
-			);
-
-			expect(
-				screen.getByRole('button', { name: /create new/i })
-			).toBeInTheDocument();
-		});
-
-		it('switches to create view when Create new button is clicked', async () => {
+		it('calls onCreateNew when Create new button is clicked', async () => {
 			const user = userEvent.setup();
+			const onCreateNew = vi.fn();
 			renderWithProviders(
-				<CampaignConfigurationKnowledgeBaseAddModal {...defaultProps} />
-			);
-
-			await user.click(screen.getByRole('button', { name: /create new/i }));
-
-			expect(
-				screen.getByRole('heading', { name: 'Create Knowledge Base' })
-			).toBeInTheDocument();
-			expect(
-				screen.getByRole('button', { name: /back to list/i })
-			).toBeInTheDocument();
-		});
-
-		it('returns to list view when Back to list button is clicked', async () => {
-			const user = userEvent.setup();
-			renderWithProviders(
-				<CampaignConfigurationKnowledgeBaseAddModal {...defaultProps} />
-			);
-
-			await user.click(screen.getByRole('button', { name: /create new/i }));
-			expect(
-				screen.getByRole('heading', { name: 'Create Knowledge Base' })
-			).toBeInTheDocument();
-
-			await user.click(screen.getByRole('button', { name: /back to list/i }));
-
-			expect(screen.getByText('Select Knowledge Bases')).toBeInTheDocument();
-		}, 10000);
-
-		it('resets store state when modal is closed', () => {
-			useKnowledgeBaseModalStore.getState().showCreateView();
-			expect(useKnowledgeBaseModalStore.getState().view).toBe('create');
-
-			renderWithProviders(
-				<CampaignConfigurationKnowledgeBaseAddModal
+				<KnowledgeBaseSelectionTable
 					{...defaultProps}
-					opened={false}
+					showCreateButton
+					onCreateNew={onCreateNew}
 				/>
 			);
 
-			expect(useKnowledgeBaseModalStore.getState().view).toBe('list');
-		});
-
-		it('hides list view elements when in create view', async () => {
-			const user = userEvent.setup();
-			renderWithProviders(
-				<CampaignConfigurationKnowledgeBaseAddModal {...defaultProps} />
-			);
-
 			await user.click(screen.getByRole('button', { name: /create new/i }));
 
-			expect(
-				screen.queryByPlaceholderText('Search knowledge bases')
-			).not.toBeInTheDocument();
-			expect(screen.queryByText('0 selected')).not.toBeInTheDocument();
+			expect(onCreateNew).toHaveBeenCalledTimes(1);
+		});
+	});
+
+	describe('Custom Props', () => {
+		it('displays custom empty message when no data', () => {
+			vi.mocked(knowledgeBaseQueries.useKnowledgeBases).mockReturnValue({
+				data: [],
+				isLoading: false,
+			} as unknown as ReturnType<
+				typeof knowledgeBaseQueries.useKnowledgeBases
+			>);
+
+			renderWithProviders(
+				<KnowledgeBaseSelectionTable
+					{...defaultProps}
+					emptyMessage='Custom empty message'
+				/>
+			);
+
+			expect(screen.getByText('Custom empty message')).toBeInTheDocument();
 		});
 	});
 });

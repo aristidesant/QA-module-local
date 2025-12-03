@@ -14,44 +14,16 @@ import { notifications } from '@mantine/notifications';
 import { useCreateKnowledgeBase } from '~/queries/knowledgeBaseQueries';
 import { KnowledgeBaseType } from '~/models/KnowledgeBaseModel';
 import type KnowledgeBaseModel from '~/models/KnowledgeBaseModel';
+import {
+	isValidUrl,
+	normalizeUrl,
+	inferType,
+} from '~/modules/knowledge-bases/utils';
 
 interface KnowledgeBaseWizardFormProps {
 	onSuccess: (createdKb: KnowledgeBaseModel) => void;
 	onCancel: () => void;
 }
-
-/**
- * Checks if a string is a valid URL (and only a URL, no extra text)
- */
-const isValidUrl = (text: string): boolean => {
-	const trimmed = text.trim();
-	if (!trimmed) return false;
-	// Check if it's just a URL with no other content
-	if (trimmed.includes(' ') || trimmed.includes('\n')) return false;
-	try {
-		const url = new URL(trimmed);
-		return url.protocol === 'http:' || url.protocol === 'https:';
-	} catch {
-		return false;
-	}
-};
-
-/**
- * Infers the knowledge base type based on user input
- */
-const inferType = (
-	content: string,
-	file: File | null
-): KnowledgeBaseType | null => {
-	// File takes priority
-	if (file) return KnowledgeBaseType.FILE;
-	// Check if content is a URL
-	if (isValidUrl(content)) return KnowledgeBaseType.URL;
-	// If there's text content, it's TEXT type
-	if (content.trim()) return KnowledgeBaseType.TEXT;
-	// No valid input
-	return null;
-};
 
 const KnowledgeBaseWizardForm: React.FC<KnowledgeBaseWizardFormProps> = ({
 	onSuccess,
@@ -108,7 +80,8 @@ const KnowledgeBaseWizardForm: React.FC<KnowledgeBaseWizardFormProps> = ({
 				name: values.name.trim(),
 				description: values.description.trim(),
 				type: inferredType,
-				sourceUrl: isUrl ? values.content.trim() : undefined,
+				// Normalize URL by adding https:// if missing
+				sourceUrl: isUrl ? normalizeUrl(values.content) : undefined,
 				textContent:
 					inferredType === KnowledgeBaseType.TEXT
 						? values.content.trim()

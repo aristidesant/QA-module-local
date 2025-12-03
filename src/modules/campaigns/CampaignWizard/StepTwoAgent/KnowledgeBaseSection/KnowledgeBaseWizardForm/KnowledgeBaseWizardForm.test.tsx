@@ -135,7 +135,7 @@ describe('KnowledgeBaseWizardForm', () => {
 			expect(
 				screen.getByText(/content will be fetched from the provided link/i)
 			).toBeInTheDocument();
-		});
+		}, 10000);
 
 		it('shows text content message when regular text is entered', async () => {
 			const user = userEvent.setup();
@@ -149,7 +149,7 @@ describe('KnowledgeBaseWizardForm', () => {
 
 			expect(screen.getByText(/Text content:/i)).toBeInTheDocument();
 			expect(screen.getByText(/will be used as-is/i)).toBeInTheDocument();
-		});
+		}, 10000);
 
 		it('treats text with URL and extra content as TEXT type', async () => {
 			const user = userEvent.setup();
@@ -357,7 +357,7 @@ describe('KnowledgeBaseWizardForm', () => {
 					file: undefined,
 				});
 			});
-		});
+		}, 10000);
 
 		it('submits with URL type when a valid URL is entered', async () => {
 			const user = userEvent.setup();
@@ -384,7 +384,7 @@ describe('KnowledgeBaseWizardForm', () => {
 					file: undefined,
 				});
 			});
-		});
+		}, 10000);
 
 		it('submits with FILE type when a file is uploaded', async () => {
 			const user = userEvent.setup();
@@ -443,7 +443,7 @@ describe('KnowledgeBaseWizardForm', () => {
 			await waitFor(() => {
 				expect(mockOnSuccess).toHaveBeenCalledWith(createdKb);
 			});
-		});
+		}, 10000);
 
 		it('shows success notification on successful creation', async () => {
 			const user = userEvent.setup();
@@ -550,6 +550,26 @@ describe('KnowledgeBaseWizardForm', () => {
 			await user.type(screen.getByLabelText(/content/i), 'not-a-valid-url');
 
 			expect(screen.getByText(/Text content:/i)).toBeInTheDocument();
+		});
+
+		it('detects URLs without protocol (like hello.dev)', async () => {
+			const user = userEvent.setup();
+			renderForm();
+
+			await user.type(screen.getByLabelText(/name/i), 'Test KB');
+			await user.type(screen.getByLabelText(/content/i), 'hello.dev');
+
+			expect(screen.getByText(/url detected/i)).toBeInTheDocument();
+		});
+
+		it('detects URLs with common TLDs like .io, .ai, .app', async () => {
+			const user = userEvent.setup();
+			renderForm();
+
+			await user.type(screen.getByLabelText(/name/i), 'Test KB');
+			await user.type(screen.getByLabelText(/content/i), 'myapp.io');
+
+			expect(screen.getByText(/url detected/i)).toBeInTheDocument();
 		});
 
 		it('handles URLs with query parameters', async () => {

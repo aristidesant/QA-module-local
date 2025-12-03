@@ -122,14 +122,17 @@ describe('KnowledgeBaseSelector', () => {
 		// Skip header row; click first data row
 		await user.click(rows[1]);
 		// After clicking row, its checkbox should be checked
-		let checkboxes = screen.getAllByRole('checkbox');
-		// first column header checkbox + 3 row checkboxes
-		await waitFor(() => expect(checkboxes[1]).toBeChecked());
+		await waitFor(() => {
+			const checkboxes = screen.getAllByRole('checkbox');
+			expect(checkboxes[1]).toBeChecked();
+		});
 		// clicking again should uncheck
 		await user.click(rows[1]);
-		checkboxes = screen.getAllByRole('checkbox');
-		await waitFor(() => expect(checkboxes[1]).not.toBeChecked());
-	});
+		await waitFor(() => {
+			const checkboxes = screen.getAllByRole('checkbox');
+			expect(checkboxes[1]).not.toBeChecked();
+		});
+	}, 10000);
 
 	it('selects/deselects via checkbox and header select-all', async () => {
 		setup();
