@@ -1,0 +1,10 @@
+export enum PermissionEnum {
+	CREATE = 'CREATE',
+	READ = 'READ',
+	UPDATE = 'UPDATE',
+	DELETE = 'DELETE',
+	EXPORT = 'EXPORT',
+	IMPORT = 'IMPORT',
+	EXECUTE = 'EXECUTE',
+	MANAGE = 'MANAGE',
+}
