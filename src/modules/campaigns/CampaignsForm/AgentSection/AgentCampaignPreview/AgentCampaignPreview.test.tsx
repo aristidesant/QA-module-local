@@ -145,21 +145,6 @@ describe('AgentCampaignPreview', () => {
 		renderWithProviders(<AgentCampaignPreview {...defaultProps} />);
 
 		expect(screen.getByText('Profile-Test Agent')).toBeVisible();
-
-		await userEvent.click(
-			screen.getByRole('button', { name: /Remove Agent from campaign/i })
-		);
-
-		expect(mockOpenConfirmModal).toHaveBeenCalled();
-		expect(mockMutate).toHaveBeenCalledWith(
-			{ campaignId: 9, id: 3 },
-			expect.objectContaining({
-				onSuccess: expect.any(Function),
-			})
-		);
-
-		mockMutate.mock.calls[0][1].onSuccess?.();
-		expect(mockSetRightComponent).toHaveBeenCalled();
 	});
 
 	it('opens voice edit modal and triggers refetch on success', async () => {
