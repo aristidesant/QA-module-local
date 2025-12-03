@@ -4,7 +4,10 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	flex-shrink: 0;
+	/* Allow the container to shrink when space is limited but enforce a default size */
+	min-width: 0; /* prevents overflow in flex layouts */
+	min-height: 140px;
+	width: 100%;
 }
 
 .parentBadge {

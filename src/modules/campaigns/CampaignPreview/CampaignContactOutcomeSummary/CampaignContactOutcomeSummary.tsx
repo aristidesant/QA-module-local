@@ -28,6 +28,17 @@ const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 	const [parentColor, setParentColor] = React.useState<string | undefined>(
 		undefined
 	);
+	// Delay chart rendering until after mount to ensure container has dimensions
+	const [isMounted, setIsMounted] = React.useState(false);
+
+	React.useEffect(() => {
+		// Use requestAnimationFrame to ensure DOM has been painted
+		const raf = requestAnimationFrame(() => {
+			setIsMounted(true);
+		});
+		return () => cancelAnimationFrame(raf);
+	}, []);
+
 	const { data, refetch, isLoading } = useGetCallDispositionReportParents({
 		campaignId: campaign?.id,
 		dispositionName,
@@ -183,15 +194,18 @@ const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 					)}
 
 					<div className={classes.chartContainer}>
-						<PieChart
-							data={PIE_DATA}
-							size={140}
-							strokeWidth={1}
-							h={140}
-							strokeColor='var(--mantine-color-body)'
-							withLabelsLine={!!dispositionName}
-							withLabels={!!dispositionName}
-						/>
+						{isMounted ? (
+							<PieChart
+								data={PIE_DATA}
+								size={140}
+								strokeWidth={1}
+								strokeColor='var(--mantine-color-body)'
+								withLabelsLine={!!dispositionName}
+								withLabels={!!dispositionName}
+							/>
+						) : (
+							<Skeleton circle height={140} width={140} />
+						)}
 					</div>
 
 					<Stack gap={6}>

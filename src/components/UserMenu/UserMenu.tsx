@@ -8,6 +8,7 @@ import {
 	IconTools,
 	IconLibrary,
 	IconUsers,
+	IconKey,
 } from '@tabler/icons-react';
 import styles from './UserMenu.module.css';
 import { useNavigate } from 'react-router';
@@ -103,6 +104,11 @@ export const UserMenu: React.FC = () => {
 						label: 'Users',
 						icon: <IconUsers size={16} />,
 						path: '/users',
+					},
+					{
+						label: 'Roles',
+						icon: <IconKey size={16} />,
+						path: '/roles',
 					},
 				],
 			};

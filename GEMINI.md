@@ -87,6 +87,9 @@ src/
 ### File Naming
 
 - Use **PascalCase** for component files: `UserCard.tsx`, `CampaignList.tsx`
+- For each .tsx component, create a test.
+- For each .ts file of API, queries or hooks, add a **tests** folder in the same location of the file to be added the test.
+- File should be name as the component file .test.tsx or .test.ts
 
 ### Folder Structure
 
@@ -210,6 +213,8 @@ export { default } from './UserCard';
 
 - Put test files next to the component: `UserCard.test.tsx`
 - **One test file per component** (not multiple test files)
+- When asked to increase coverage of a test, run the coverage for that file/folder only, do not run full coverage unless user asks for it.
+- IMPORTANT!!, WHEN DEBUGGING TESTS, DO NOT RUN FULL TEST OF THE PROJECT, JUST RUN WHAT YOU ARE TRYING TO DEBUG.
 
 ### How to Write Tests
 

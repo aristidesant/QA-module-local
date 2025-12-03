@@ -1,24 +1,24 @@
 .layoutGrid {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	gap: var(--mantine-spacing-md);
+	gap: var(--mantine-spacing-sm);
 }
 
 .primaryColumn,
 .secondaryColumn {
 	display: flex;
 	flex-direction: column;
-	gap: var(--mantine-spacing-md);
+	gap: var(--mantine-spacing-sm);
 }
 
 .sectionCard {
 	background: var(--mantine-color-white);
 	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: var(--mantine-radius-lg);
-	padding: var(--mantine-spacing-md);
+	padding: var(--mantine-spacing-sm);
 	display: flex;
 	flex-direction: column;
-	gap: var(--mantine-spacing-sm);
+	gap: var(--mantine-spacing-xs);
 }
 
 .sectionHeader {
@@ -47,38 +47,43 @@
 .fieldGrid {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-	gap: var(--mantine-spacing-md);
+	gap: var(--mantine-spacing-sm);
 }
 
 .field {
-	margin-bottom: var(--mantine-spacing-md);
+	margin-bottom: var(--mantine-spacing-sm);
 }
 
-.promptActions {
+.promptLayout {
 	display: flex;
-	gap: var(--mantine-spacing-xs);
-	position: absolute;
-	right: var(--mantine-spacing-sm);
-	top: var(--mantine-spacing-sm);
-}
-
-.promptActionButton {
-	background: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: var(--mantine-radius-sm);
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-sm);
 	padding: var(--mantine-spacing-xs);
-	cursor: pointer;
-	color: var(--mantine-color-gray-7);
-	transition:
-		color 0.15s ease,
-		border-color 0.15s ease,
-		background 0.15s ease;
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-gray-0);
 }
 
-.promptActionButton:hover {
-	background: var(--mantine-color-gray-1);
+.promptTitle {
+	margin: 0;
+	font-weight: 600;
 	color: var(--mantine-color-gray-9);
-	border-color: var(--mantine-color-gray-4);
+	font-size: var(--mantine-font-size-sm);
+}
+
+.promptHint {
+	margin: 0;
+	color: var(--mantine-color-gray-6);
+	font-size: var(--mantine-font-size-xs);
+}
+
+.promptTextarea {
+	background: var(--mantine-color-gray-0);
+	border-color: var(--mantine-color-gray-3);
+	color: var(--mantine-color-gray-7);
+	font-size: var(--mantine-font-size-sm);
+	padding: var(--mantine-spacing-xs);
 }
 
 .knowledgeBaseEmpty {

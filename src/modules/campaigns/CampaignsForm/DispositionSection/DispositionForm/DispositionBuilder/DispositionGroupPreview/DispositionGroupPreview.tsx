@@ -22,7 +22,7 @@ type NodeStats = {
 	depth: number;
 };
 
-const collectNodeStats = (
+export const collectNodeStats = (
 	current: DispositionNode,
 	level: number = 0
 ): NodeStats => {
@@ -48,6 +48,83 @@ const collectNodeStats = (
 	}
 
 	return stats;
+};
+
+export const renderNode = (
+	current: DispositionNode,
+	level: number = 0
+): React.ReactNode => {
+	const nodeStyle = getNodeStyle(current, level);
+	const childCount = current.children?.length ?? 0;
+	const badgeLabel = level === 0 ? 'Root group' : `Level ${level}`;
+
+	return (
+		<li key={current.id} className={styles.nodeItem}>
+			<Box
+				className={`${styles.nodeCard} ${styles[nodeStyle]} ${
+					level === 0 ? styles.nodeCardRoot : ''
+				}`}
+				style={{ '--indent-level': level } as React.CSSProperties}
+			>
+				<Group
+					className={styles.nodeHeader}
+					align='flex-start'
+					justify='space-between'
+					gap='xs'
+				>
+					<Box className={styles.nodeHeaderContent}>
+						<Text
+							fw={level === 0 ? 600 : 500}
+							className={styles.nodeTitle}
+							size={level === 0 ? 'sm' : 'xs'}
+						>
+							{current.name}
+						</Text>
+						<Text size='xs' c='dimmed' className={styles.nodeMeta}>
+							{childCount > 0
+								? `${childCount} ${
+										childCount === 1 ? 'linked outcome' : 'linked outcomes'
+									}`
+								: 'Leaf outcome'}
+						</Text>
+					</Box>
+					<Badge color='gray' variant='light' size='xs'>
+						{badgeLabel}
+					</Badge>
+				</Group>
+
+				{current.description ? (
+					<Text size='xs' c='dimmed' className={styles.nodeDescription}>
+						{current.description}
+					</Text>
+				) : null}
+
+				<Group gap='xs' wrap='wrap' className={styles.nodeBadges}>
+					{current.requiresReschedule ? (
+						<Badge color='orange' variant='light' size='xs'>
+							Requires reschedule
+						</Badge>
+					) : null}
+					{current.isInvalidatesNumber ? (
+						<Badge color='red' variant='light' size='xs'>
+							Do not retry
+						</Badge>
+					) : null}
+					{current.isFinal ? (
+						<Badge color='green' variant='light' size='xs'>
+							Final outcome
+						</Badge>
+					) : null}
+				</Group>
+			</Box>
+
+			{current.children && current.children.length > 0 ? (
+				<ul className={styles.nodeChildren}>
+					{current.children.map((child) => renderNode(child, level + 1))}
+				</ul>
+			) : null}
+		</li>
+	);
 };
 
 const DispositionGroupPreview: React.FC<DispositionGroupPreviewProps> = ({
@@ -83,82 +160,7 @@ const DispositionGroupPreview: React.FC<DispositionGroupPreviewProps> = ({
 		},
 	];
 
-	const renderNode = (
-		current: DispositionNode,
-		level: number = 0
-	): React.ReactNode => {
-		const nodeStyle = getNodeStyle(current, level);
-		const childCount = current.children?.length ?? 0;
-		const badgeLabel = level === 0 ? 'Root group' : `Level ${level}`;
-
-		return (
-			<li key={current.id} className={styles.nodeItem}>
-				<Box
-					className={`${styles.nodeCard} ${styles[nodeStyle]} ${
-						level === 0 ? styles.nodeCardRoot : ''
-					}`}
-					style={{ '--indent-level': level } as React.CSSProperties}
-				>
-					<Group
-						className={styles.nodeHeader}
-						align='flex-start'
-						justify='space-between'
-						gap='xs'
-					>
-						<Box className={styles.nodeHeaderContent}>
-							<Text
-								fw={level === 0 ? 600 : 500}
-								className={styles.nodeTitle}
-								size={level === 0 ? 'sm' : 'xs'}
-							>
-								{current.name}
-							</Text>
-							<Text size='xs' c='dimmed' className={styles.nodeMeta}>
-								{childCount > 0
-									? `${childCount} ${
-											childCount === 1 ? 'linked outcome' : 'linked outcomes'
-										}`
-									: 'Leaf outcome'}
-							</Text>
-						</Box>
-						<Badge color='gray' variant='light' size='xs'>
-							{badgeLabel}
-						</Badge>
-					</Group>
-
-					{current.description ? (
-						<Text size='xs' c='dimmed' className={styles.nodeDescription}>
-							{current.description}
-						</Text>
-					) : null}
-
-					<Group gap='xs' wrap='wrap' className={styles.nodeBadges}>
-						{current.requiresReschedule ? (
-							<Badge color='orange' variant='light' size='xs'>
-								Requires reschedule
-							</Badge>
-						) : null}
-						{current.isInvalidatesNumber ? (
-							<Badge color='red' variant='light' size='xs'>
-								Do not retry
-							</Badge>
-						) : null}
-						{current.isFinal ? (
-							<Badge color='green' variant='light' size='xs'>
-								Final outcome
-							</Badge>
-						) : null}
-					</Group>
-				</Box>
-
-				{current.children && current.children.length > 0 ? (
-					<ul className={styles.nodeChildren}>
-						{current.children.map((child) => renderNode(child, level + 1))}
-					</ul>
-				) : null}
-			</li>
-		);
-	};
+	// use top-level renderNode helper
 
 	return (
 		<Stack gap='sm' className={styles.previewContainer}>

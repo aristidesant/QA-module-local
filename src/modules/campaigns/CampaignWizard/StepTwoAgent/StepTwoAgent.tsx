@@ -7,7 +7,6 @@ import {
 	Stack,
 	Box,
 	Text,
-	ActionIcon,
 	Loader,
 	Center,
 	Modal,
@@ -18,9 +17,7 @@ import {
 	IconSettings,
 	IconMessageCircle,
 	IconBrain,
-	IconCopy,
 	IconEdit,
-	IconTrash,
 } from '@tabler/icons-react';
 import CampaignConfigurationPromptEditModal from '~/modules/campaigns/CampaignsForm/AgentSection/CampaignConfigurationPrompt/CampaignConfigurationPromptEditModal';
 import { useQueryClient } from '@tanstack/react-query';
@@ -316,23 +313,8 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 		}
 	};
 
-	const handleCopyPrompt = () => {
-		if (form.values.agentPrompt) {
-			navigator.clipboard.writeText(form.values.agentPrompt);
-			notifications.show({
-				title: 'Copied',
-				message: 'Prompt copied to clipboard',
-				color: 'blue',
-			});
-		}
-	};
-
 	const handleEditPrompt = () => {
 		setPromptEditorOpened(true);
-	};
-
-	const handleClearPrompt = () => {
-		form.setFieldValue('agentPrompt', '');
 	};
 
 	// If we're still loading campaign data, show loading state
@@ -380,6 +362,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 										label='Agent Behavior'
 										description='Baseline configuration'
 										placeholder='Choose behavior'
+										size='sm'
 										data={predefinedParams
 											.filter((param) => param.id)
 											.map((param) => ({
@@ -403,6 +386,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 										data={LANGUAGE_OPTIONS}
 										{...form.getInputProps('language')}
 										withAsterisk
+										size='sm'
 										searchable
 										leftSection={<IconMessageCircle size={16} />}
 										className={sharedStyles.field}
@@ -414,6 +398,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 									description='Initial greeting'
 									placeholder='Enter the first message your agent will send...'
 									{...form.getInputProps('firstMessage')}
+									size='sm'
 									minRows={2}
 									className={sharedStyles.field}
 								/>
@@ -424,46 +409,41 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 									<h3 className={styles.sectionTitle}>Agent Prompt</h3>
 								</div>
 								<Text className={styles.sectionDescription}>
-									Define the agent's behavior and tone.
+									Review the locked prompt. Use Edit to refine instructions.
 								</Text>
 
-								<Box style={{ position: 'relative' }}>
-									<Textarea
-										placeholder='**Prompt para el Agente de IA:**'
-										{...form.getInputProps('agentPrompt')}
-										withAsterisk
-										minRows={7}
-										rows={7}
-										className={sharedStyles.field}
-									/>
-									<div className={styles.promptActions}>
-										<ActionIcon
-											variant='subtle'
-											onClick={handleCopyPrompt}
-											title='Copy prompt'
-											className={styles.promptActionButton}
-										>
-											<IconCopy size={16} />
-										</ActionIcon>
-										<ActionIcon
-											variant='subtle'
-											onClick={handleEditPrompt}
-											title='Edit prompt'
-											className={styles.promptActionButton}
-										>
-											<IconEdit size={16} />
-										</ActionIcon>
-										<ActionIcon
-											variant='subtle'
-											color='red'
-											onClick={handleClearPrompt}
-											title='Clear prompt'
-											className={styles.promptActionButton}
-										>
-											<IconTrash size={16} />
-										</ActionIcon>
+								<div className={styles.promptLayout}>
+									<div>
+										<Text className={styles.promptTitle}>Prompt content</Text>
+										<Text className={styles.promptHint}>
+											This prompt is managed centrally. Edits will open the full
+											editor.
+										</Text>
 									</div>
-								</Box>
+
+									<Button
+										size='xs'
+										variant='light'
+										leftSection={<IconEdit size={14} />}
+										onClick={handleEditPrompt}
+									>
+										Edit prompt
+									</Button>
+								</div>
+
+								<Textarea
+									aria-label='Agent prompt'
+									placeholder='AI agent prompt'
+									value={form.values.agentPrompt}
+									readOnly
+									disabled
+									withAsterisk
+									minRows={6}
+									autosize
+									size='sm'
+									className={sharedStyles.field}
+									classNames={{ input: styles.promptTextarea }}
+								/>
 							</Box>
 						</div>
 
@@ -474,13 +454,14 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 				</Stack>
 
 				<Group className={sharedStyles.actions}>
-					<Button variant='default' onClick={onBack}>
+					<Button variant='default' onClick={onBack} size='sm'>
 						Back
 					</Button>
 					<Button
 						type='submit'
 						loading={updateCampaign.isPending}
 						disabled={!form.isValid()}
+						size='sm'
 					>
 						Save & Continue
 					</Button>
@@ -493,6 +474,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 				onClose={() => setPromptEditorOpened(false)}
 				size='100%'
 				centered
+				fullScreen
 				withCloseButton={false}
 				padding={0}
 			>

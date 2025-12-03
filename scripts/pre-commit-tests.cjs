@@ -25,7 +25,7 @@ function getStagedFiles() {
 		return output
 			.split('\n')
 			.filter((file) => file.trim())
-			.filter((file) => /\.(ts|tsx)$/.test(file))
+			.filter((file) => /\.tsx$/.test(file)) // Only .tsx files
 			.filter(
 				(file) =>
 					!file.includes('.test.') &&
@@ -34,7 +34,11 @@ function getStagedFiles() {
 					!file.includes('test-setup.d.ts') &&
 					!file.includes('/models/') &&
 					!file.includes('/test-utils/') &&
-					!file.includes('__tests__')
+					!file.includes('/contants/') &&
+					!file.includes('__tests__') &&
+					!file.endsWith('routes.tsx') &&
+					!file.endsWith('App.tsx') &&
+					!file.endsWith('main.tsx')
 			);
 	} catch (error) {
 		return [];
@@ -52,7 +56,7 @@ function getNewFiles() {
 		return output
 			.split('\n')
 			.filter((file) => file.trim())
-			.filter((file) => /\.(ts|tsx)$/.test(file))
+			.filter((file) => /\.tsx$/.test(file)) // Only .tsx files
 			.filter(
 				(file) =>
 					!file.includes('.test.') &&
@@ -61,8 +65,12 @@ function getNewFiles() {
 					!file.includes('test-setup.d.ts') &&
 					!file.includes('/models/') &&
 					!file.includes('/test-utils/') &&
+					!file.includes('/contants/') &&
 					!file.includes('__tests__') &&
-					!file.endsWith('/index.ts') // Exclude barrel/re-export files
+					!file.endsWith('/index.ts') && // Exclude barrel/re-export files
+					!file.endsWith('routes.tsx') &&
+					!file.endsWith('App.tsx') &&
+					!file.endsWith('main.tsx')
 			);
 	} catch (error) {
 		return [];

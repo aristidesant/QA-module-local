@@ -167,6 +167,9 @@ const CampaignParameters: React.FC = () => {
 							color='gray'
 							size='sm'
 							onClick={handleRefetch}
+							aria-label={
+								isCompleted ? 'Campaign is completed' : 'Refresh parameters'
+							}
 							disabled={isCompleted || isLoading}
 							className={styles.refetchButton}
 						>
@@ -198,6 +201,9 @@ const CampaignParameters: React.FC = () => {
 						variant='subtle'
 						color='gray'
 						size='sm'
+						aria-label={
+							isCompleted ? 'Campaign is completed' : 'Refresh parameters'
+						}
 						onClick={handleRefetch}
 						disabled={isCompleted || isLoading}
 						className={styles.refetchButton}

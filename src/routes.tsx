@@ -45,6 +45,9 @@ const ToolsPage = React.lazy(
 const UsersPage = React.lazy(
 	() => import('./modules/users/UsersPage/UsersPage')
 );
+const RolesPage = React.lazy(
+	() => import('./modules/roles/RolesPage/RolesPage')
+);
 const PrompterPage = React.lazy(() =>
 	import('./modules/prompter/PrompterPage').then((m) => ({
 		default: m.PrompterPage,
@@ -220,6 +223,16 @@ const router = createBrowserRouter([
 								fallback={<SuspenseFallback message='Loading users...' />}
 							>
 								<UsersPage />
+							</Suspense>
+						),
+					},
+					{
+						path: 'roles',
+						element: (
+							<Suspense
+								fallback={<SuspenseFallback message='Loading roles...' />}
+							>
+								<RolesPage />
 							</Suspense>
 						),
 					},

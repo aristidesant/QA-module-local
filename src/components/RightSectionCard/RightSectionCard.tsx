@@ -41,7 +41,9 @@ export const RightSectionCard: React.FC<RightSectionCardProps> = ({
 						{title}
 					</Text>
 					{description && (
-						<Text className={styles.subtitle}>{description}</Text>
+						<Text component='div' className={styles.subtitle}>
+							{description}
+						</Text>
 					)}
 				</div>
 				{rightSection && (

@@ -1,26 +1,10 @@
 import React from 'react';
-import {
-	Text,
-	Group,
-	Loader,
-	Button,
-	Tooltip,
-	ActionIcon,
-} from '@mantine/core';
-import {
-	IconTrash,
-	IconEdit,
-	IconWaveSquare,
-	IconUser,
-} from '@tabler/icons-react';
+import { Group, Loader, Tooltip, ActionIcon } from '@mantine/core';
+import { IconEdit, IconWaveSquare, IconUser } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
-import { useCampaignsStore } from '~/stores/campaignsStore';
-import AgentCampaignList from '../AgentCampaignList';
 import { useGetAgent } from '~/queries/agentQueries';
 import styles from './AgentCampaignPreview.module.css';
-import { openConfirmModal } from '@mantine/modals';
 import AgentProfile from '~/modules/campaigns/CampaignsForm/AgentSection/AgentCampaignPreview/AgentProfile';
-import { useDeleteCampaignAgent } from '~/queries/campaignAgentsQueries';
 import { VoicePlayer } from '~/components/VoicePlayer';
 import AgentVoiceEditModal from './AgentVoiceEditModal';
 import RightSectionCard from '~/components/RightSectionCard';
@@ -33,12 +17,8 @@ interface AgentCampaignPreviewProps {
 
 export const AgentCampaignPreview: React.FC<AgentCampaignPreviewProps> = ({
 	agentId,
-	campaignAgentId,
-	campaignId,
 }) => {
-	const { setRightComponent } = useCampaignsStore();
 	const { data: agent, isLoading, refetch } = useGetAgent(agentId);
-	const deleteMutation = useDeleteCampaignAgent();
 
 	const openVoiceChangeModal = () => {
 		const currentVoiceId =
@@ -59,31 +39,6 @@ export const AgentCampaignPreview: React.FC<AgentCampaignPreviewProps> = ({
 					}}
 				/>
 			),
-		});
-	};
-
-	const handleDelete = () => {
-		openConfirmModal({
-			title: 'Remove Agent from campaign',
-			centered: true,
-			children: (
-				<Text size='sm'>
-					Are you sure you want to remove this agent from the campaign? This
-					action cannot be undone.
-				</Text>
-			),
-			labels: { confirm: 'Delete', cancel: 'Cancel' },
-			confirmProps: { color: 'red' },
-			onConfirm: () => {
-				deleteMutation.mutate(
-					{ campaignId, id: campaignAgentId },
-					{
-						onSuccess: () => {
-							setRightComponent?.(<AgentCampaignList />);
-						},
-					}
-				);
-			},
 		});
 	};
 
@@ -135,22 +90,6 @@ export const AgentCampaignPreview: React.FC<AgentCampaignPreviewProps> = ({
 								/>
 							</RightSectionCard>
 						</div>
-					</div>
-					{/* Quick Actions */}
-					<div className={styles.quickActions}>
-						<Text fw={600} size='sm' mb={4}>
-							Quick actions
-						</Text>
-						<Button
-							onClick={handleDelete}
-							color='red'
-							fullWidth
-							variant='light'
-							leftSection={<IconTrash size={18} />}
-							disabled={deleteMutation.isPending}
-						>
-							Remove Agent from campaign
-						</Button>
 					</div>
 				</>
 			)}
