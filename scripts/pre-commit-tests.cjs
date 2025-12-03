@@ -22,7 +22,7 @@ function getStagedFiles() {
 				encoding: 'utf-8',
 			}
 		);
-        return output
+		return output
 			.split('\n')
 			.filter((file) => file.trim())
 			.filter((file) => /\.tsx$/.test(file)) // Only .tsx files

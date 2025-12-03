@@ -1,5 +1,5 @@
 .accordionItem {
-	border-bottom: 1px solid var(--mantine-color-gray-3);
+	border-bottom: 1px solid var(--mantine-color-gray-2);
 }
 
 .accordionItem:last-of-type {
@@ -7,7 +7,7 @@
 }
 
 .accordionControl {
-	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
 	background-color: transparent;
 	transition: background-color 0.15s ease;
 }
@@ -17,37 +17,38 @@
 }
 
 .accordionControl:hover {
-	background-color: var(--mantine-color-gray-1);
+	background-color: var(--mantine-color-gray-0);
 }
 
 .controlInner {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	gap: var(--mantine-spacing-sm);
+	gap: var(--mantine-spacing-xs);
 	width: 100%;
 }
 
 .controlText {
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
+	gap: 1px;
 }
 
 .controlMeta {
 	display: flex;
 	align-items: center;
-	gap: var(--mantine-spacing-xs);
+	gap: 4px;
 }
 
 .controlStatus {
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
 	font-weight: 600;
+	font-size: 0.65rem;
 }
 
 .controlStatus[data-filled='false'] {
-	color: var(--mantine-color-gray-6);
+	color: var(--mantine-color-gray-5);
 }
 
 .controlStatus[data-filled='true'] {
@@ -55,29 +56,29 @@
 }
 
 .accordionPanel {
-	padding: var(--mantine-spacing-xs) var(--mantine-spacing-md)
-		var(--mantine-spacing-md);
-	border-top: 1px solid var(--mantine-color-gray-2);
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	border-top: 1px solid var(--mantine-color-gray-1);
 	background-color: var(--mantine-color-white);
 }
 
 .promptSelect {
-	margin-bottom: var(--mantine-spacing-xs);
+	margin-bottom: 4px;
 }
 
 .editorWrapper {
 	display: flex;
 	flex-direction: column;
-	gap: var(--mantine-spacing-xs);
+	gap: 4px;
 	border-radius: var(--mantine-radius-sm);
 	overflow: hidden;
-	border: 1px solid var(--mantine-color-gray-3);
+	border: 1px solid var(--mantine-color-gray-2);
 	background: var(--mantine-color-white);
-	padding: var(--mantine-spacing-xs);
+	padding: 6px;
 }
 
 .editorHint {
-	margin: 0 var(--mantine-spacing-xs);
+	margin: 0 4px;
+	font-size: 0.7rem;
 }
 
 .mdEditor {
@@ -89,25 +90,33 @@
 /* Override MDEditor toolbar to look flatter */
 .mdEditor :global(.w-md-editor-toolbar) {
 	background-color: var(--mantine-color-gray-0);
-	border-bottom: 1px solid var(--mantine-color-gray-2);
-	padding: 4px;
+	border-bottom: 1px solid var(--mantine-color-gray-1);
+	padding: 2px 4px;
+	min-height: unset;
 }
 
 .mdEditor :global(.w-md-editor-toolbar li > button) {
-	color: var(--mantine-color-gray-7);
-	border-radius: 4px;
+	color: var(--mantine-color-gray-6);
+	border-radius: var(--mantine-radius-sm);
+	padding: 2px 4px;
+	height: 24px;
+	width: 24px;
 }
 
 .mdEditor :global(.w-md-editor-toolbar li > button:hover) {
-	background-color: var(--mantine-color-gray-2);
-	color: var(--mantine-color-black);
+	background-color: var(--mantine-color-gray-1);
+	color: var(--mantine-color-dark-6);
+}
+
+.mdEditor :global(.w-md-editor-content) {
+	min-height: 200px;
 }
 
 .variableDropdown {
-	border: 1px solid var(--mantine-color-gray-3);
+	border: 1px solid var(--mantine-color-gray-2);
 	background-color: var(--mantine-color-white);
-	padding: var(--mantine-spacing-xs);
-	box-shadow: none;
+	padding: 6px;
+	z-index: 1000;
 }
 
 .variableList {
@@ -118,9 +127,9 @@
 	width: 100%;
 	border: none;
 	border-radius: var(--mantine-radius-sm);
-	padding: 6px 8px;
+	padding: 4px 6px;
 	background-color: transparent;
-	transition: background-color 120ms ease;
+	transition: background-color 100ms ease;
 }
 
 .variableOption:hover,
@@ -131,5 +140,5 @@
 .variableMeta {
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
+	gap: 1px;
 }

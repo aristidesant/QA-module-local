@@ -37,6 +37,7 @@ const mockExistingPrompts: CampaignPromptModel[] = [
 
 let mockIsLoadingPrompts = false;
 let mockIsSaving = false;
+let mockTypesData: CampaignPromptTypeModel[] | undefined = mockTypes;
 
 vi.mock('react-router', () => ({
 	useParams: () => ({ campaignId: '123' }),
@@ -44,7 +45,7 @@ vi.mock('react-router', () => ({
 
 vi.mock('~/queries/campaignPromptTypeQueries', () => ({
 	useGetAllCampaignPromptTypes: () => ({
-		data: mockTypes,
+		data: mockTypesData,
 		isLoading: false,
 	}),
 }));
@@ -60,7 +61,7 @@ vi.mock('~/queries/campaignPromptQueries', () => ({
 	}),
 }));
 
-vi.mock('./PromptTypeAccordionItem', () => ({
+vi.mock('./PromptTypeAccordionItem/PromptEditor', () => ({
 	default: ({
 		type,
 		value,
@@ -69,8 +70,9 @@ vi.mock('./PromptTypeAccordionItem', () => ({
 		type: CampaignPromptTypeModel;
 		value?: string;
 		onChange: (val: string) => void;
+		campaignId: number;
 	}) => (
-		<div data-testid={`accordion-item-${type.id}`}>
+		<div>
 			<span data-testid={`type-name-${type.id}`}>{type.name}</span>
 			<input
 				data-testid={`prompt-input-${type.id}`}
@@ -89,6 +91,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 		vi.clearAllMocks();
 		mockIsLoadingPrompts = false;
 		mockIsSaving = false;
+		mockTypesData = mockTypes;
 	});
 
 	describe('Rendering', () => {
@@ -102,11 +105,11 @@ describe('CampaignConfigurationPromptEditModal', () => {
 
 			expect(screen.getByText('Prompt configuration')).toBeInTheDocument();
 			expect(
-				screen.getByText(/Curated, compact instructions/i)
+				screen.getByText(/Configure prompts for each interaction type/i)
 			).toBeInTheDocument();
 		});
 
-		it('renders all prompt types as accordion items', () => {
+		it('renders all prompt types in the navigation menu', () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
 					onClose={mockOnClose}
@@ -114,9 +117,9 @@ describe('CampaignConfigurationPromptEditModal', () => {
 				/>
 			);
 
-			expect(screen.getByTestId('accordion-item-1')).toBeInTheDocument();
-			expect(screen.getByTestId('accordion-item-2')).toBeInTheDocument();
-			expect(screen.getByTestId('accordion-item-3')).toBeInTheDocument();
+			expect(screen.getByTestId('prompt-menu-item-1')).toBeInTheDocument();
+			expect(screen.getByTestId('prompt-menu-item-2')).toBeInTheDocument();
+			expect(screen.getByTestId('prompt-menu-item-3')).toBeInTheDocument();
 		});
 
 		it('displays type names correctly', () => {
@@ -127,9 +130,15 @@ describe('CampaignConfigurationPromptEditModal', () => {
 				/>
 			);
 
-			expect(screen.getByTestId('type-name-1')).toHaveTextContent('Greeting');
-			expect(screen.getByTestId('type-name-2')).toHaveTextContent('Farewell');
-			expect(screen.getByTestId('type-name-3')).toHaveTextContent('Objection');
+			expect(screen.getByTestId('prompt-menu-item-1')).toHaveTextContent(
+				'Greeting'
+			);
+			expect(screen.getByTestId('prompt-menu-item-2')).toHaveTextContent(
+				'Farewell'
+			);
+			expect(screen.getByTestId('prompt-menu-item-3')).toHaveTextContent(
+				'Objection'
+			);
 		});
 
 		it('renders cancel and save buttons', () => {
@@ -143,9 +152,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 			expect(
 				screen.getByRole('button', { name: /cancel/i })
 			).toBeInTheDocument();
-			expect(
-				screen.getByRole('button', { name: /save prompts/i })
-			).toBeInTheDocument();
+			expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument();
 		});
 
 		it('renders footer text', () => {
@@ -157,11 +164,11 @@ describe('CampaignConfigurationPromptEditModal', () => {
 			);
 
 			expect(
-				screen.getByText(/Save to share these prompts with every agent/i)
+				screen.getByText(/Save to apply prompts across this campaign/i)
 			).toBeInTheDocument();
 		});
 
-		it('renders info tooltip button', () => {
+		it('renders types count badge', () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
 					onClose={mockOnClose}
@@ -169,9 +176,21 @@ describe('CampaignConfigurationPromptEditModal', () => {
 				/>
 			);
 
-			expect(
-				screen.getByRole('button', { name: /prompt tips/i })
-			).toBeInTheDocument();
+			expect(screen.getByText('Types')).toBeInTheDocument();
+			expect(screen.getByText('3')).toBeInTheDocument();
+		});
+
+		it('renders active type name in editor header', () => {
+			renderWithProviders(
+				<CampaignConfigurationPromptEditModal
+					onClose={mockOnClose}
+					onSave={mockOnSave}
+				/>
+			);
+
+			// First type should be active by default, shown in both menu and editor
+			const greetingTexts = screen.getAllByText('Greeting');
+			expect(greetingTexts.length).toBeGreaterThanOrEqual(2);
 		});
 	});
 
@@ -222,9 +241,13 @@ describe('CampaignConfigurationPromptEditModal', () => {
 				);
 			});
 
+			fireEvent.click(screen.getByTestId('prompt-menu-item-2'));
+
 			expect(screen.getByTestId('prompt-input-2')).toHaveValue(
 				'Goodbye! Thanks!'
 			);
+
+			fireEvent.click(screen.getByTestId('prompt-menu-item-3'));
 			expect(screen.getByTestId('prompt-input-3')).toHaveValue('');
 		});
 	});
@@ -237,6 +260,8 @@ describe('CampaignConfigurationPromptEditModal', () => {
 					onSave={mockOnSave}
 				/>
 			);
+
+			fireEvent.click(screen.getByTestId('prompt-menu-item-3'));
 
 			const input = screen.getByTestId('prompt-input-3');
 			fireEvent.change(input, { target: { value: 'New objection handling' } });
@@ -295,7 +320,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 				);
 			});
 
-			fireEvent.click(screen.getByRole('button', { name: /save prompts/i }));
+			fireEvent.click(screen.getByRole('button', { name: /save/i }));
 
 			expect(mockSaveBatch).toHaveBeenCalledWith(
 				expect.objectContaining({
@@ -328,7 +353,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 				);
 			});
 
-			fireEvent.click(screen.getByRole('button', { name: /save prompts/i }));
+			fireEvent.click(screen.getByRole('button', { name: /save/i }));
 
 			const savedPrompts = mockSaveBatch.mock.calls[0][0].prompts;
 			expect(savedPrompts).not.toContainEqual(
@@ -350,10 +375,12 @@ describe('CampaignConfigurationPromptEditModal', () => {
 				);
 			});
 
+			fireEvent.click(screen.getByTestId('prompt-menu-item-3'));
+
 			const input = screen.getByTestId('prompt-input-3');
 			fireEvent.change(input, { target: { value: '   ' } });
 
-			fireEvent.click(screen.getByRole('button', { name: /save prompts/i }));
+			fireEvent.click(screen.getByRole('button', { name: /save/i }));
 
 			const savedPrompts = mockSaveBatch.mock.calls[0][0].prompts;
 			expect(savedPrompts).not.toContainEqual(
@@ -379,7 +406,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 				);
 			});
 
-			fireEvent.click(screen.getByRole('button', { name: /save prompts/i }));
+			fireEvent.click(screen.getByRole('button', { name: /save/i }));
 
 			expect(mockOnSave).toHaveBeenCalledTimes(1);
 			expect(mockOnClose).toHaveBeenCalledTimes(1);
@@ -402,7 +429,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 				target: { value: 'Hello from campaign 456' },
 			});
 
-			fireEvent.click(screen.getByRole('button', { name: /save prompts/i }));
+			fireEvent.click(screen.getByRole('button', { name: /save/i }));
 
 			expect(mockSaveBatch).toHaveBeenCalledWith(
 				expect.objectContaining({
@@ -428,6 +455,167 @@ describe('CampaignConfigurationPromptEditModal', () => {
 			);
 
 			expect(screen.getByText('Prompt configuration')).toBeInTheDocument();
+		});
+
+		it('uses initialSchemaId when it matches a valid type', () => {
+			renderWithProviders(
+				<CampaignConfigurationPromptEditModal
+					onClose={mockOnClose}
+					onSave={mockOnSave}
+					initialSchemaId={2}
+				/>
+			);
+
+			// Type 2 (Farewell) should be active
+			expect(screen.getByTestId('prompt-menu-item-2')).toHaveAttribute(
+				'data-active',
+				'true'
+			);
+			expect(screen.getByTestId('prompt-menu-item-1')).toHaveAttribute(
+				'data-active',
+				'false'
+			);
+		});
+
+		it('falls back to first type when initialSchemaId does not match any type', () => {
+			renderWithProviders(
+				<CampaignConfigurationPromptEditModal
+					onClose={mockOnClose}
+					onSave={mockOnSave}
+					initialSchemaId={999}
+				/>
+			);
+
+			// Should fall back to first type (Greeting)
+			expect(screen.getByTestId('prompt-menu-item-1')).toHaveAttribute(
+				'data-active',
+				'true'
+			);
+		});
+	});
+
+	describe('Edge Cases', () => {
+		it('shows empty state when no types are available', () => {
+			mockTypesData = [];
+
+			renderWithProviders(
+				<CampaignConfigurationPromptEditModal
+					onClose={mockOnClose}
+					onSave={mockOnSave}
+				/>
+			);
+
+			expect(
+				screen.getByText(/Select a prompt type to start editing/i)
+			).toBeInTheDocument();
+		});
+
+		it('handles undefined types gracefully', () => {
+			mockTypesData = undefined;
+
+			renderWithProviders(
+				<CampaignConfigurationPromptEditModal
+					onClose={mockOnClose}
+					onSave={mockOnSave}
+				/>
+			);
+
+			expect(screen.getByText('Prompt configuration')).toBeInTheDocument();
+		});
+
+		it('shows correct badge for drafted prompts', () => {
+			renderWithProviders(
+				<CampaignConfigurationPromptEditModal
+					onClose={mockOnClose}
+					onSave={mockOnSave}
+				/>
+			);
+
+			// Menu items with content should show "Drafted" badge
+			const draftedBadges = screen.getAllByText('Drafted');
+			expect(draftedBadges.length).toBeGreaterThanOrEqual(2);
+		});
+
+		it('shows line count badge in editor for drafted prompts', async () => {
+			renderWithProviders(
+				<CampaignConfigurationPromptEditModal
+					onClose={mockOnClose}
+					onSave={mockOnSave}
+				/>
+			);
+
+			await waitFor(() => {
+				expect(screen.getByTestId('prompt-input-1')).toHaveValue(
+					'Hello! Welcome!'
+				);
+			});
+
+			// The active prompt has content, so it should show line count
+			expect(screen.getByText(/1 line/i)).toBeInTheDocument();
+		});
+
+		it('shows Empty badge for prompts without content', async () => {
+			renderWithProviders(
+				<CampaignConfigurationPromptEditModal
+					onClose={mockOnClose}
+					onSave={mockOnSave}
+				/>
+			);
+
+			// Click on Objection which has no content
+			fireEvent.click(screen.getByTestId('prompt-menu-item-3'));
+
+			await waitFor(() => {
+				expect(screen.getByText('Empty')).toBeInTheDocument();
+			});
+		});
+
+		it('allows clicking on different menu items to switch active type', () => {
+			renderWithProviders(
+				<CampaignConfigurationPromptEditModal
+					onClose={mockOnClose}
+					onSave={mockOnSave}
+				/>
+			);
+
+			// Initially type 1 should be active
+			expect(screen.getByTestId('prompt-menu-item-1')).toHaveAttribute(
+				'data-active',
+				'true'
+			);
+
+			// Click on type 2
+			fireEvent.click(screen.getByTestId('prompt-menu-item-2'));
+
+			// Type 2 should now be active
+			expect(screen.getByTestId('prompt-menu-item-2')).toHaveAttribute(
+				'data-active',
+				'true'
+			);
+			expect(screen.getByTestId('prompt-menu-item-1')).toHaveAttribute(
+				'data-active',
+				'false'
+			);
+		});
+
+		it('updates prompt value when changed with long text', async () => {
+			renderWithProviders(
+				<CampaignConfigurationPromptEditModal
+					onClose={mockOnClose}
+					onSave={mockOnSave}
+				/>
+			);
+
+			const input = screen.getByTestId('prompt-input-1');
+			fireEvent.change(input, {
+				target: { value: 'This is a long prompt with detailed instructions' },
+			});
+
+			await waitFor(() => {
+				expect(input).toHaveValue(
+					'This is a long prompt with detailed instructions'
+				);
+			});
 		});
 	});
 });

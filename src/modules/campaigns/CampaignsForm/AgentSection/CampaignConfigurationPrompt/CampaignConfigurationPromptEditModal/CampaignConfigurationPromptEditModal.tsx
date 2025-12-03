@@ -1,22 +1,19 @@
 // CampaignConfigurationPromptEditModal.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams } from 'react-router';
 import {
-	Accordion,
 	Paper,
 	Button,
 	Group,
 	LoadingOverlay,
 	Text,
 	ThemeIcon,
-	Tooltip,
-	ActionIcon,
+	Stack,
+	Box,
+	Badge,
+	ScrollArea,
 } from '@mantine/core';
-import {
-	IconSparkles,
-	IconInfoCircle,
-	IconDeviceFloppy,
-} from '@tabler/icons-react';
+import { IconSparkles, IconDeviceFloppy } from '@tabler/icons-react';
 import styles from './CampaignConfigurationPromptEditModal.module.css';
 import { useGetAllCampaignPromptTypes } from '~/queries/campaignPromptTypeQueries';
 import {
@@ -25,7 +22,8 @@ import {
 } from '~/queries/campaignPromptQueries';
 import type { CampaignPromptModel } from '~/models/CampaignPromptModel';
 import type { CampaignPromptTypeModel } from '~/models/CampaignPromptTypeModel';
-import PromptTypeAccordionItem from './PromptTypeAccordionItem';
+import PromptEditor from './PromptTypeAccordionItem/PromptEditor';
+import PromptMenuItem from './PromptMenuItem';
 
 interface CampaignConfigurationPromptEditModalProps {
 	onClose: () => void;
@@ -49,9 +47,7 @@ const CampaignConfigurationPromptEditModal: React.FC<
 	const [prompts, setPrompts] = useState<Record<number, CampaignPromptModel>>(
 		{}
 	);
-	const [activeAccordionValue, setActiveAccordionValue] = useState<
-		string | null
-	>(null);
+	const [activeTypeId, setActiveTypeId] = useState<number | null>(null);
 
 	useEffect(() => {
 		if (types) {
@@ -86,12 +82,18 @@ const CampaignConfigurationPromptEditModal: React.FC<
 
 	useEffect(() => {
 		if (!types || types.length === 0) return;
-		setActiveAccordionValue((current) => current ?? String(types[0].id));
-	}, [types]);
+		if (activeTypeId !== null) return;
 
-	const handleAccordionChange = (value: string | string[] | null) => {
-		setActiveAccordionValue(Array.isArray(value) ? (value[0] ?? null) : value);
-	};
+		const fallbackTypeId = types[0]?.id;
+		const preferredTypeId =
+			props.initialSchemaId && types.some((t) => t.id === props.initialSchemaId)
+				? props.initialSchemaId
+				: fallbackTypeId;
+
+		if (preferredTypeId) {
+			setActiveTypeId(preferredTypeId);
+		}
+	}, [types, activeTypeId, props.initialSchemaId]);
 
 	const handleChange = (type: CampaignPromptTypeModel, value: string) => {
 		setPrompts((prev) => {
@@ -110,6 +112,22 @@ const CampaignConfigurationPromptEditModal: React.FC<
 		});
 	};
 
+	const getPromptMeta = useCallback(
+		(typeId: number) => {
+			const promptValue = prompts[typeId]?.prompt || '';
+			const trimmed = promptValue.trim();
+			const lines = trimmed
+				? trimmed.split('\n').filter((line) => line.trim().length > 0).length
+				: 0;
+
+			return {
+				isDrafted: trimmed.length > 0,
+				lines,
+			};
+		},
+		[prompts]
+	);
+
 	const handleSave = () => {
 		const promptsList = Object.values(prompts).filter(
 			(p) => p.prompt && p.prompt.trim() !== ''
@@ -125,82 +143,132 @@ const CampaignConfigurationPromptEditModal: React.FC<
 		);
 	};
 
+	const activeType = useMemo(() => {
+		return types?.find((t) => t.id === activeTypeId);
+	}, [types, activeTypeId]);
+
+	const activePromptMeta = useMemo(() => {
+		if (!activeTypeId) return null;
+		return getPromptMeta(activeTypeId);
+	}, [activeTypeId, getPromptMeta]);
+
 	return (
-		<Paper radius='md' className={styles.modalShell} withBorder>
+		<Paper radius='sm' className={styles.modalShell} withBorder>
 			<LoadingOverlay visible={isLoadingPrompts || isSaving} />
 			<div className={styles.mainContainer}>
 				<div className={styles.header}>
-					<Group align='center' gap='sm' style={{ flex: 1 }}>
+					<Group align='center' gap={6} className={styles.headerMain}>
 						<ThemeIcon
 							color='blue'
 							variant='light'
-							size='lg'
-							radius='md'
+							size='sm'
+							radius='sm'
 							className={styles.pulseIcon}
 						>
-							<IconSparkles size={18} />
+							<IconSparkles size={14} />
 						</ThemeIcon>
 						<div className={styles.headerContent}>
-							<Group gap='xs' align='center'>
-								<Text className={styles.title}>Prompt configuration</Text>
-							</Group>
-							<Text size='xs' c='dimmed' className={styles.subtitle}>
-								Curated, compact instructions for every interaction type.
+							<Text className={styles.title}>Prompt configuration</Text>
+							<Text c='dimmed' className={styles.subtitle}>
+								Configure prompts for each interaction type
 							</Text>
 						</div>
 					</Group>
-					<Tooltip
-						label='Prompts are stored per message type and can be reused.'
-						withArrow
-						position='left'
-					>
-						<ActionIcon
-							variant='subtle'
-							color='gray'
-							size='sm'
-							aria-label='Prompt tips'
-						>
-							<IconInfoCircle size={16} />
-						</ActionIcon>
-					</Tooltip>
 				</div>
 
-				<div className={styles.scrollableContent}>
-					<Accordion
-						radius='md'
-						className={styles.accordionRoot}
-						value={activeAccordionValue}
-						onChange={handleAccordionChange}
-						transitionDuration={150}
-					>
-						{types?.map((type) => (
-							<>
-								<PromptTypeAccordionItem
-									key={type.id}
-									type={type}
-									value={prompts[type.id]?.prompt}
-									onChange={(val) => handleChange(type, val)}
-									campaignId={campaignId!}
-								/>
-							</>
-						))}
-					</Accordion>
+				<div className={styles.contentGrid}>
+					<div className={styles.menuColumn}>
+						<div className={styles.menuHeader}>
+							<Text size='xs' fw={500} c='dimmed'>
+								Types
+							</Text>
+							<Badge size='xs' variant='light' color='gray' radius='sm'>
+								{types?.length ?? 0}
+							</Badge>
+						</div>
+						<ScrollArea className={styles.menuScroll} type='auto'>
+							<Stack gap={2}>
+								{types?.map((type) => {
+									const promptMeta = getPromptMeta(type.id);
+
+									return (
+										<PromptMenuItem
+											key={type.id}
+											typeId={type.id}
+											label={type.name}
+											isActive={activeTypeId === type.id}
+											onClick={() => setActiveTypeId(type.id)}
+											isDrafted={promptMeta.isDrafted}
+											lines={promptMeta.lines}
+										/>
+									);
+								})}
+							</Stack>
+						</ScrollArea>
+					</div>
+					<div className={styles.editorColumn}>
+						{activeType ? (
+							<div className={styles.editorShell}>
+								<Group
+									justify='space-between'
+									align='center'
+									gap='xs'
+									className={styles.editorHeader}
+								>
+									<Box className={styles.editorHeaderText}>
+										<Text fw={600} size='sm'>
+											{activeType.name}
+										</Text>
+									</Box>
+									{activePromptMeta && (
+										<Badge
+											size='xs'
+											variant='light'
+											color={activePromptMeta.isDrafted ? 'blue' : 'gray'}
+											radius='sm'
+										>
+											{activePromptMeta.isDrafted
+												? `${activePromptMeta.lines} line${
+														activePromptMeta.lines === 1 ? '' : 's'
+													}`
+												: 'Empty'}
+										</Badge>
+									)}
+								</Group>
+								<Stack gap='xs' className={styles.editorContent}>
+									<PromptEditor
+										type={activeType}
+										value={prompts[activeType.id]?.prompt}
+										onChange={(val) => handleChange(activeType, val)}
+										campaignId={campaignId!}
+									/>
+								</Stack>
+							</div>
+						) : (
+							<div className={styles.emptyState}>
+								<Text size='xs' c='dimmed'>
+									Select a prompt type to start editing.
+								</Text>
+							</div>
+						)}
+					</div>
 				</div>
 
 				<div className={styles.footer}>
 					<Text size='xs' c='dimmed'>
-						Save to share these prompts with every agent in this campaign.
+						Save to apply prompts across this campaign.
 					</Text>
 					<Group gap='xs'>
-						<Button variant='subtle' onClick={props.onClose}>
+						<Button variant='subtle' size='xs' onClick={props.onClose}>
 							Cancel
 						</Button>
 						<Button
 							onClick={handleSave}
 							loading={isSaving}
-							leftSection={<IconDeviceFloppy size={16} />}
+							size='xs'
+							leftSection={<IconDeviceFloppy size={14} />}
 						>
-							Save prompts
+							Save
 						</Button>
 					</Group>
 				</div>
