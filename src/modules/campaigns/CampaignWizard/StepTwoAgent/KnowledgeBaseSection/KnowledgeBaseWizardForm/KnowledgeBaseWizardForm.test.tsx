@@ -22,6 +22,7 @@ vi.mock('~/queries/knowledgeBaseQueries', () => ({
 
 // Mock Mantine's FileInput since testing file uploads in JSDOM is complex
 let mockFileInputOnChange: ((file: File | null) => void) | null = null;
+// @ts-ignore
 let mockFileInputValue: File | null = null;
 let mockFileInputDisabled = false;
 
