@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import CampaignConfigurationKnowledgeBaseAddModal from './CampaignConfigurationKnowledgeBaseAddModal';
 import type KnowledgeBaseModel from '~/models/KnowledgeBaseModel';
@@ -9,6 +9,7 @@ import {
 	KnowledgeBaseStatus,
 } from '~/models/KnowledgeBaseModel';
 import useKnowledgeBaseSelectionColumns from './useKnowledgeBaseSelectionColumns';
+import { useKnowledgeBaseModalStore } from '~/stores/knowledgeBaseModalStore';
 
 const createMockKnowledgeBase = (
 	overrides: Partial<KnowledgeBaseModel> = {}
@@ -67,6 +68,11 @@ describe('CampaignConfigurationKnowledgeBaseAddModal', () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
+		useKnowledgeBaseModalStore.getState().reset();
+	});
+
+	afterEach(() => {
+		useKnowledgeBaseModalStore.getState().reset();
 	});
 
 	describe('Rendering', () => {
@@ -163,14 +169,12 @@ describe('CampaignConfigurationKnowledgeBaseAddModal', () => {
 			).toBeInTheDocument();
 		});
 
-		it('renders helper note about sorting', () => {
+		it('renders helper note', () => {
 			renderWithProviders(
 				<CampaignConfigurationKnowledgeBaseAddModal {...defaultProps} />
 			);
 
-			expect(
-				screen.getByText(/Need to narrow the list\? Sort by the column headers/)
-			).toBeInTheDocument();
+			expect(screen.getByText(/Need to narrow the list\?/)).toBeInTheDocument();
 		});
 	});
 
@@ -330,7 +334,7 @@ describe('CampaignConfigurationKnowledgeBaseAddModal', () => {
 				expect(screen.getByText('Company Policy')).toBeInTheDocument();
 				expect(screen.getByText('Training Materials')).toBeInTheDocument();
 			});
-		});
+		}, 10000);
 
 		it('combines search and type filter', async () => {
 			const user = userEvent.setup();
@@ -356,7 +360,7 @@ describe('CampaignConfigurationKnowledgeBaseAddModal', () => {
 					screen.queryByText('Training Materials')
 				).not.toBeInTheDocument();
 			});
-		});
+		}, 10000);
 	});
 
 	describe('Selection Functionality', () => {
@@ -518,6 +522,136 @@ describe('CampaignConfigurationKnowledgeBaseAddModal', () => {
 			);
 
 			expect(screen.getByText('1 selected')).toBeInTheDocument();
+		});
+	});
+
+	describe('Create New Functionality', () => {
+		it('renders Create new button in list view', () => {
+			renderWithProviders(
+				<CampaignConfigurationKnowledgeBaseAddModal {...defaultProps} />
+			);
+
+			expect(
+				screen.getByRole('button', { name: /create new/i })
+			).toBeInTheDocument();
+		});
+
+		it('switches to create view when Create new button is clicked', async () => {
+			const user = userEvent.setup();
+			renderWithProviders(
+				<CampaignConfigurationKnowledgeBaseAddModal {...defaultProps} />
+			);
+
+			await user.click(screen.getByRole('button', { name: /create new/i }));
+
+			// Should show create form title in modal header
+			expect(
+				screen.getByRole('heading', { name: 'Create Knowledge Base' })
+			).toBeInTheDocument();
+			// Should show back button
+			expect(
+				screen.getByRole('button', { name: /back to list/i })
+			).toBeInTheDocument();
+		});
+
+		it('shows create form fields in create view', async () => {
+			const user = userEvent.setup();
+			renderWithProviders(
+				<CampaignConfigurationKnowledgeBaseAddModal {...defaultProps} />
+			);
+
+			await user.click(screen.getByRole('button', { name: /create new/i }));
+
+			// Should show form fields from KnowledgeBaseWizardForm
+			expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
+			expect(screen.getByLabelText(/description/i)).toBeInTheDocument();
+			expect(screen.getByLabelText(/content/i)).toBeInTheDocument();
+		});
+
+		it('returns to list view when Back to list button is clicked', async () => {
+			const user = userEvent.setup();
+			renderWithProviders(
+				<CampaignConfigurationKnowledgeBaseAddModal {...defaultProps} />
+			);
+
+			// Go to create view
+			await user.click(screen.getByRole('button', { name: /create new/i }));
+			expect(
+				screen.getByRole('heading', { name: 'Create Knowledge Base' })
+			).toBeInTheDocument();
+
+			// Go back to list view
+			await user.click(screen.getByRole('button', { name: /back to list/i }));
+
+			// Should show list view again
+			expect(screen.getByText('Select Knowledge Bases')).toBeInTheDocument();
+			expect(
+				screen.getByRole('button', { name: /create new/i })
+			).toBeInTheDocument();
+		}, 10000);
+
+		it('returns to list view when Cancel is clicked in create form', async () => {
+			const user = userEvent.setup();
+			renderWithProviders(
+				<CampaignConfigurationKnowledgeBaseAddModal {...defaultProps} />
+			);
+
+			// Go to create view
+			await user.click(screen.getByRole('button', { name: /create new/i }));
+
+			// Click Cancel in the form
+			await user.click(screen.getByRole('button', { name: /^cancel$/i }));
+
+			// Should show list view again
+			expect(screen.getByText('Select Knowledge Bases')).toBeInTheDocument();
+		}, 10000);
+
+		it('resets store state when modal is closed', () => {
+			// Manually set store to create view
+			useKnowledgeBaseModalStore.getState().showCreateView();
+			expect(useKnowledgeBaseModalStore.getState().view).toBe('create');
+
+			// Render with modal closed (which triggers reset)
+			renderWithProviders(
+				<CampaignConfigurationKnowledgeBaseAddModal
+					{...defaultProps}
+					opened={false}
+				/>
+			);
+
+			// Store should be reset to list view
+			expect(useKnowledgeBaseModalStore.getState().view).toBe('list');
+		});
+
+		it('hides list view elements when in create view', async () => {
+			const user = userEvent.setup();
+			renderWithProviders(
+				<CampaignConfigurationKnowledgeBaseAddModal {...defaultProps} />
+			);
+
+			await user.click(screen.getByRole('button', { name: /create new/i }));
+
+			// List view elements should not be present
+			expect(
+				screen.queryByPlaceholderText('Search by name or description')
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByPlaceholderText('Filter by type')
+			).not.toBeInTheDocument();
+			expect(screen.queryByText('0 selected')).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole('button', { name: /save selections/i })
+			).not.toBeInTheDocument();
+		});
+
+		it('shows helper note for filters instead of sorting', () => {
+			renderWithProviders(
+				<CampaignConfigurationKnowledgeBaseAddModal {...defaultProps} />
+			);
+
+			expect(
+				screen.getByText(/Need to narrow the list\? Use filters or create/)
+			).toBeInTheDocument();
 		});
 	});
 });

@@ -16,6 +16,16 @@
 	line-height: 1.5;
 }
 
+.backButton {
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
+.filtersRow {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+}
+
 .tableSurface {
 	border-radius: 12px;
 	background-color: var(--mantine-color-white);
