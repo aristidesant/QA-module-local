@@ -8,10 +8,9 @@ import {
 	Text,
 	FileInput,
 } from '@mantine/core';
-import { IconFile, IconUpload, IconWorldWww } from '@tabler/icons-react';
+import { IconFile, IconUpload } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import FormSelect from '~/components/ui/FormSelect/FormSelect';
 import { useCreateKnowledgeBase } from '~/queries/knowledgeBaseQueries';
 import { KnowledgeBaseType } from '~/models/KnowledgeBaseModel';
 import type KnowledgeBaseModel from '~/models/KnowledgeBaseModel';
@@ -20,6 +19,39 @@ interface KnowledgeBaseWizardFormProps {
 	onSuccess: (createdKb: KnowledgeBaseModel) => void;
 	onCancel: () => void;
 }
+
+/**
+ * Checks if a string is a valid URL (and only a URL, no extra text)
+ */
+const isValidUrl = (text: string): boolean => {
+	const trimmed = text.trim();
+	if (!trimmed) return false;
+	// Check if it's just a URL with no other content
+	if (trimmed.includes(' ') || trimmed.includes('\n')) return false;
+	try {
+		const url = new URL(trimmed);
+		return url.protocol === 'http:' || url.protocol === 'https:';
+	} catch {
+		return false;
+	}
+};
+
+/**
+ * Infers the knowledge base type based on user input
+ */
+const inferType = (
+	content: string,
+	file: File | null
+): KnowledgeBaseType | null => {
+	// File takes priority
+	if (file) return KnowledgeBaseType.FILE;
+	// Check if content is a URL
+	if (isValidUrl(content)) return KnowledgeBaseType.URL;
+	// If there's text content, it's TEXT type
+	if (content.trim()) return KnowledgeBaseType.TEXT;
+	// No valid input
+	return null;
+};
 
 const KnowledgeBaseWizardForm: React.FC<KnowledgeBaseWizardFormProps> = ({
 	onSuccess,
@@ -32,62 +64,55 @@ const KnowledgeBaseWizardForm: React.FC<KnowledgeBaseWizardFormProps> = ({
 		initialValues: {
 			name: '',
 			description: '',
-			type: '' as KnowledgeBaseType | '',
-			sourceUrl: '',
-			textContent: '',
+			content: '',
 		},
 		validate: {
 			name: (value) => (!value.trim() ? 'Name is required' : null),
-			type: (value) => (!value ? 'Type is required' : null),
-			sourceUrl: (value, values) => {
-				if (values.type !== KnowledgeBaseType.URL) return null;
-				if (!value) return 'URL is required';
-				try {
-					new URL(value);
-					return null;
-				} catch {
-					return 'Enter a valid URL';
-				}
-			},
-			textContent: (value, values) => {
-				if (values.type !== KnowledgeBaseType.TEXT) return null;
-				if (!value.trim() && !file) return 'Text content or file is required';
-				return null;
-			},
 		},
 	});
 
-	const fileError = useMemo(() => {
-		if (form.values.type === KnowledgeBaseType.FILE) {
-			return !file ? 'Please upload a file' : null;
+	// Infer the type based on current input
+	const inferredType = useMemo(
+		() => inferType(form.values.content, file),
+		[form.values.content, file]
+	);
+
+	// Determine what the content represents based on inferred type
+	const contentInfo = useMemo(() => {
+		if (file) {
+			return { label: 'File selected', type: 'file' as const };
+		}
+		if (isValidUrl(form.values.content)) {
+			return { label: 'URL detected', type: 'url' as const };
+		}
+		if (form.values.content.trim()) {
+			return { label: 'Text content', type: 'text' as const };
 		}
 		return null;
-	}, [file, form.values.type]);
+	}, [form.values.content, file]);
 
 	const canSave = useMemo(() => {
-		if (!form.values.name.trim() || !form.values.type) return false;
-		if (form.values.type === KnowledgeBaseType.URL && form.errors.sourceUrl)
-			return false;
-		if (form.values.type === KnowledgeBaseType.FILE && fileError) return false;
-		if (
-			form.values.type === KnowledgeBaseType.TEXT &&
-			form.errors.textContent &&
-			!file
-		)
-			return false;
+		if (!form.values.name.trim()) return false;
+		// Need either file or content
+		if (!file && !form.values.content.trim()) return false;
 		return true;
-	}, [form.values, form.errors, fileError, file]);
+	}, [form.values.name, form.values.content, file]);
 
 	const handleSubmit = async (values: typeof form.values) => {
-		if (!canSave) return;
+		if (!canSave || !inferredType) return;
 
 		try {
+			const isUrl = inferredType === KnowledgeBaseType.URL;
+
 			const result = await createMutation.mutateAsync({
 				name: values.name.trim(),
 				description: values.description.trim(),
-				type: values.type || undefined,
-				sourceUrl: values.sourceUrl || undefined,
-				textContent: values.textContent || undefined,
+				type: inferredType,
+				sourceUrl: isUrl ? values.content.trim() : undefined,
+				textContent:
+					inferredType === KnowledgeBaseType.TEXT
+						? values.content.trim()
+						: undefined,
 				file: file || undefined,
 			});
 
@@ -98,7 +123,7 @@ const KnowledgeBaseWizardForm: React.FC<KnowledgeBaseWizardFormProps> = ({
 			});
 
 			onSuccess(result);
-		} catch (error) {
+		} catch {
 			notifications.show({
 				title: 'Error',
 				message: 'Failed to create knowledge base',
@@ -107,12 +132,12 @@ const KnowledgeBaseWizardForm: React.FC<KnowledgeBaseWizardFormProps> = ({
 		}
 	};
 
-	const handleTypeChange = (value: string | null) => {
-		form.setFieldValue('type', (value as KnowledgeBaseType) ?? '');
-		// Reset source-specific fields when switching type
-		form.setFieldValue('sourceUrl', '');
-		form.setFieldValue('textContent', '');
-		setFile(null);
+	const handleFileChange = (newFile: File | null) => {
+		setFile(newFile);
+		// If a file is selected, clear the text content since file takes priority
+		if (newFile) {
+			form.setFieldValue('content', '');
+		}
 	};
 
 	const isSaving = createMutation.status === 'pending';
@@ -122,7 +147,7 @@ const KnowledgeBaseWizardForm: React.FC<KnowledgeBaseWizardFormProps> = ({
 		values: typeof form.values
 	) => {
 		event.preventDefault();
-		event.stopPropagation(); // Prevent event from bubbling to parent form
+		event.stopPropagation();
 		handleSubmit(values);
 	};
 
@@ -140,88 +165,65 @@ const KnowledgeBaseWizardForm: React.FC<KnowledgeBaseWizardFormProps> = ({
 					required
 					disabled={isSaving}
 				/>
+
 				<Textarea
 					label='Description'
 					placeholder='Short internal note about this knowledge base'
 					{...form.getInputProps('description')}
 					autosize
-					minRows={3}
+					minRows={2}
 					disabled={isSaving}
 				/>
 
-				<FormSelect
-					label='Type'
-					placeholder='Select a content source'
-					value={form.values.type ?? ''}
-					onChange={handleTypeChange}
-					data={[
-						{ value: KnowledgeBaseType.FILE, label: 'File (PDF)' },
-						{ value: KnowledgeBaseType.URL, label: 'URL' },
-						{ value: KnowledgeBaseType.TEXT, label: 'Text (paste/upload)' },
-					]}
-					disabled={isSaving}
+				<Textarea
+					label='Content'
+					placeholder='Paste a URL or text content here...'
+					{...form.getInputProps('content')}
+					autosize
+					minRows={4}
+					disabled={isSaving || !!file}
+					description={
+						file
+							? 'Remove the file above to enter text or URL instead'
+							: 'Paste a URL to fetch content from a webpage, or enter text directly'
+					}
 				/>
 
-				{form.values.type === KnowledgeBaseType.URL && (
-					<TextInput
-						label='Source URL'
-						placeholder='https://example.com/docs/article'
-						{...form.getInputProps('sourceUrl')}
-						leftSection={<IconWorldWww size={16} />}
-						description='Publicly accessible page to fetch content from.'
-						disabled={isSaving}
-						required
-					/>
-				)}
+				<FileInput
+					label='Or upload a file'
+					placeholder='Choose a PDF file or drop it here'
+					value={file}
+					onChange={handleFileChange}
+					accept='.pdf,application/pdf'
+					leftSection={<IconFile size={16} />}
+					rightSection={<IconUpload size={16} />}
+					clearable
+					description={
+						form.values.content.trim()
+							? 'Clear the text above to upload a file instead'
+							: 'Supported: PDF. Max 25MB.'
+					}
+					disabled={isSaving || !!form.values.content.trim()}
+				/>
 
-				{form.values.type === KnowledgeBaseType.TEXT && (
-					<Textarea
-						label='Text Content'
-						placeholder='Paste relevant text here...'
-						{...form.getInputProps('textContent')}
-						autosize
-						minRows={4}
-						disabled={isSaving}
-					/>
-				)}
-
-				{(form.values.type === KnowledgeBaseType.FILE ||
-					form.values.type === KnowledgeBaseType.TEXT) && (
-					<FileInput
-						label={
-							form.values.type === KnowledgeBaseType.FILE
-								? 'Upload file'
-								: 'Optional: Upload text file'
-						}
-						placeholder={
-							form.values.type === KnowledgeBaseType.FILE
-								? 'Choose a file or drop it here'
-								: 'Attach a .txt or .md (optional)'
-						}
-						value={file}
-						onChange={setFile}
-						accept={
-							form.values.type === KnowledgeBaseType.FILE
-								? '.pdf,application/pdf'
-								: '.txt,text/plain,.md'
-						}
-						leftSection={<IconFile size={16} />}
-						rightSection={<IconUpload size={16} />}
-						clearable
-						error={fileError}
-						description={
-							form.values.type === KnowledgeBaseType.FILE
-								? 'Supported: PDF. Max 25MB.'
-								: 'Supported: TXT/MD. You can also paste text above.'
-						}
-						disabled={isSaving}
-						required={form.values.type === KnowledgeBaseType.FILE}
-					/>
-				)}
-
-				{file && (
-					<Text size='sm' c='dimmed' title={file.name}>
-						Selected: {file.name}
+				{contentInfo && (
+					<Text size='sm' c='dimmed'>
+						{contentInfo.type === 'file' && file && (
+							<>
+								📄 <strong>File:</strong> {file.name}
+							</>
+						)}
+						{contentInfo.type === 'url' && (
+							<>
+								🔗 <strong>URL detected:</strong> Content will be fetched from
+								the provided link
+							</>
+						)}
+						{contentInfo.type === 'text' && (
+							<>
+								📝 <strong>Text content:</strong> Will be used as-is
+							</>
+						)}
 					</Text>
 				)}
 			</Stack>

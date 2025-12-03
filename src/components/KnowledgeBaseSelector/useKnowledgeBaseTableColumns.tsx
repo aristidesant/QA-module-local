@@ -49,6 +49,7 @@ export const useKnowledgeBaseTableColumns = (): ColumnDef<
 			id: 'name',
 			header: 'Name',
 			accessorFn: (row) => row.name,
+			enableSorting: false,
 			cell: ({ row }) => {
 				const kb = row.original;
 				return (
@@ -64,6 +65,7 @@ export const useKnowledgeBaseTableColumns = (): ColumnDef<
 			id: 'description',
 			header: 'Description',
 			accessorFn: (row) => row.description ?? '',
+			enableSorting: false,
 			cell: ({ row }) => {
 				const kb = row.original;
 				const fallback =
@@ -87,6 +89,7 @@ export const useKnowledgeBaseTableColumns = (): ColumnDef<
 			id: 'type',
 			header: 'Type',
 			accessorFn: (row) => row.type,
+			enableSorting: false,
 			cell: ({ row }) => typeBadge(row.original.type),
 			meta: { headerClassName: styles.typeBadge },
 		},
