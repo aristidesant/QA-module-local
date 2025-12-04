@@ -66,7 +66,11 @@ export function ContactListInfo({
 	}, [listName]);
 
 	const handleNameSave = () => {
-		if (editedName?.trim() && editedName !== listName) {
+		if (
+			editedName?.trim() &&
+			editedName.trim().length >= 3 &&
+			editedName !== listName
+		) {
 			onNameChange?.(editedName.trim());
 		}
 		setIsEditing(false);
@@ -135,9 +139,16 @@ export function ContactListInfo({
 							<Group gap='xs' align='center' mt={4}>
 								<TextInput
 									value={editedName}
-									onChange={(e) => setEditedName(e.currentTarget.value)}
+									onChange={(e) =>
+										setEditedName(
+											e.currentTarget.value
+												.replace(/[^A-Za-z\s\d-]/g, '')
+												.replace(/\s+/g, ' ')
+										)
+									}
 									onKeyDown={handleKeyDown}
 									placeholder='e.g. Q4 Marketing Leads, Support Follow-ups...'
+									description='Allowed characters: A-Z, a-z, 0-9, spaces, and hyphens. Minimum 3 characters.'
 									autoFocus
 									size='sm'
 									className={classes.nameInput}
@@ -148,7 +159,9 @@ export function ContactListInfo({
 										color='green'
 										onClick={handleNameSave}
 										size='sm'
-										disabled={!editedName?.trim()}
+										disabled={
+											!editedName?.trim() || editedName.trim().length < 3
+										}
 									>
 										<IconCheck size={14} />
 									</ActionIcon>

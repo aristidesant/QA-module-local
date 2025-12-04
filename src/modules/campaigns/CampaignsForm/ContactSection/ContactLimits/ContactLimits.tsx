@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import {
 	Stack,
 	Box,
@@ -28,6 +28,7 @@ import {
 	type HumanEquivalentCalculations,
 } from './humanEquivalentCalculations';
 import CapacityProgress from '../ContactList/CapacityProgress';
+import { useCampaignsStore } from '~/stores/campaignsStore';
 
 type ContactLimitsProps = {
 	fileSummary?: ContactFileSummary;
@@ -45,6 +46,7 @@ export const ContactLimits = ({
 	campaignId,
 }: ContactLimitsProps) => {
 	const processFileMutation = useProcessContactGroupFile();
+	const { setRightComponent } = useCampaignsStore((state) => state);
 	const updateContactGroupMutation = useUpdateContactGroup();
 
 	const { data: activeSchedule } = useCampaignActiveSchedule(campaignId);
@@ -67,6 +69,19 @@ export const ContactLimits = ({
 	const [humanEquivalent, setHumanEquivalent] = useState<number>(
 		contactGroup.humanEquivalent || 1
 	);
+
+	// Sync state when contactGroup prop changes
+	useEffect(() => {
+		setData((prev) => ({
+			...prev,
+			name: contactGroup.name || '',
+			description: contactGroup.description || '',
+		}));
+	}, [contactGroup.name, contactGroup.description]);
+
+	useEffect(() => {
+		setHumanEquivalent(contactGroup.humanEquivalent || 1);
+	}, [contactGroup.humanEquivalent]);
 
 	// Handle form field changes
 	const handleChange = <K extends keyof typeof data>(
@@ -177,6 +192,7 @@ export const ContactLimits = ({
 					color: 'green',
 				});
 			}
+			setRightComponent(null);
 			onComplete?.();
 		} catch (error: any) {
 			const errorMessage =

@@ -224,7 +224,7 @@ describe('ContactListInfo', () => {
 			expect(onNameChange).not.toHaveBeenCalled();
 		});
 
-		it('does not call onNameChange when name is only whitespace', async () => {
+		it('does not call onNameChange when name is only whitespace or less than 3 characters', async () => {
 			const user = userEvent.setup();
 			const onNameChange = vi.fn();
 			const { container } = renderWithProviders(
@@ -244,9 +244,15 @@ describe('ContactListInfo', () => {
 			await user.click(saveButton!);
 
 			expect(onNameChange).not.toHaveBeenCalled();
+
+			// Test with less than 3 characters
+			await user.clear(input);
+			await user.type(input, 'ab');
+			await user.click(saveButton!);
+			expect(onNameChange).not.toHaveBeenCalled();
 		});
 
-		it('disables save button when name is empty', async () => {
+		it('disables save button when name is empty or less than 3 characters', async () => {
 			const user = userEvent.setup();
 			const onNameChange = vi.fn();
 			const { container } = renderWithProviders(
@@ -263,6 +269,82 @@ describe('ContactListInfo', () => {
 				'button[data-variant="light"][class*="mantine-ActionIcon"]'
 			);
 			expect(saveButton).toBeDisabled();
+
+			// Test with less than 3 characters
+			await user.type(input, 'ab');
+			expect(saveButton).toBeDisabled();
+
+			// Test with exactly 3 characters
+			await user.type(input, 'c');
+			expect(saveButton).not.toBeDisabled();
+		});
+
+		it('filters out invalid characters from input', async () => {
+			const user = userEvent.setup();
+			const onNameChange = vi.fn();
+			const { container } = renderWithProviders(
+				<ContactListInfo listName='Test List' onNameChange={onNameChange} />
+			);
+
+			const editButton = container.querySelector('[class*="editButton"]');
+			await user.click(editButton!);
+
+			const input = screen.getByRole('textbox');
+			await user.clear(input);
+			await user.type(input, 'Test123!@#');
+
+			expect(input).toHaveValue('Test123');
+		});
+
+		it('replaces multiple consecutive spaces with single space', async () => {
+			const user = userEvent.setup();
+			const onNameChange = vi.fn();
+			const { container } = renderWithProviders(
+				<ContactListInfo listName='Test List' onNameChange={onNameChange} />
+			);
+
+			const editButton = container.querySelector('[class*="editButton"]');
+			await user.click(editButton!);
+
+			const input = screen.getByRole('textbox');
+			await user.clear(input);
+			await user.type(input, 'Test   Name  123');
+
+			expect(input).toHaveValue('Test Name 123');
+		});
+
+		it('allows valid characters: letters, numbers, spaces, and hyphens', async () => {
+			const user = userEvent.setup();
+			const onNameChange = vi.fn();
+			const { container } = renderWithProviders(
+				<ContactListInfo listName='Test List' onNameChange={onNameChange} />
+			);
+
+			const editButton = container.querySelector('[class*="editButton"]');
+			await user.click(editButton!);
+
+			const input = screen.getByRole('textbox');
+			await user.clear(input);
+			await user.type(input, 'Test-Name 123 With Spaces');
+
+			expect(input).toHaveValue('Test-Name 123 With Spaces');
+		});
+
+		it('shows description with allowed characters and minimum length when editing', async () => {
+			const user = userEvent.setup();
+			const onNameChange = vi.fn();
+			const { container } = renderWithProviders(
+				<ContactListInfo listName='Test List' onNameChange={onNameChange} />
+			);
+
+			const editButton = container.querySelector('[class*="editButton"]');
+			await user.click(editButton!);
+
+			expect(
+				screen.getByText(
+					'Allowed characters: A-Z, a-z, 0-9, spaces, and hyphens. Minimum 3 characters.'
+				)
+			).toBeInTheDocument();
 		});
 	});
 

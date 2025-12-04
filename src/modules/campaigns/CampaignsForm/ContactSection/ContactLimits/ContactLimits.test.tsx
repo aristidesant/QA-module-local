@@ -2,7 +2,10 @@ import { screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { ContactLimits } from './ContactLimits';
+import { MantineProvider } from '@mantine/core';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
+import { queryClient } from '~/test-utils/renderWithProviders';
 import type { ContactFileSummary } from '~/models/ContactFileSummary';
 import type FileModel from '~/models/FileModel';
 
@@ -283,6 +286,37 @@ describe('ContactLimits', () => {
 
 			// The mapping should be updated (verified by no errors thrown)
 			expect(screen.getByTestId('column-mapping-card')).toBeInTheDocument();
+		});
+
+		it('syncs displayed values when contactGroup prop changes', () => {
+			const { rerender } = renderWithProviders(
+				<ContactLimits
+					contactGroup={{ id: 1, name: 'First Group', humanEquivalent: 2 }}
+					campaignId={1}
+				/>
+			);
+
+			const rerenderWithProviders = (ui: React.ReactNode) =>
+				rerender(
+					<QueryClientProvider client={queryClient}>
+						<MantineProvider>{ui}</MantineProvider>
+					</QueryClientProvider>
+				);
+
+			expect(screen.getByTestId('list-name')).toHaveTextContent('First Group');
+			expect(screen.getByText(/Human Equivalent: 2/)).toBeInTheDocument();
+
+			rerenderWithProviders(
+				<ContactLimits
+					contactGroup={{ id: 2, name: 'Updated Group', humanEquivalent: 4 }}
+					campaignId={1}
+				/>
+			);
+
+			expect(screen.getByTestId('list-name')).toHaveTextContent(
+				'Updated Group'
+			);
+			expect(screen.getByText(/Human Equivalent: 4/)).toBeInTheDocument();
 		});
 	});
 
