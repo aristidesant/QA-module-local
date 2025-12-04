@@ -15,10 +15,13 @@ import { useNavigate } from 'react-router';
 import logout from '~/utils/logout';
 import { useSessionStore } from '~/stores/sessionStore';
 import { useImpersonationState } from '~/hooks/useImpersonationState';
+import { usePermissions } from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/contants/ModuleEnum';
 
 export const UserMenu: React.FC = () => {
 	const { user, targetClient } = useSessionStore();
 	const { isImpersonating } = useImpersonationState();
+	const { canAccessModule } = usePermissions();
 	const navigate = useNavigate();
 
 	// Get user's full name or fallback to username
@@ -64,6 +67,7 @@ export const UserMenu: React.FC = () => {
 					label: 'Campaign Management',
 					icon: <IconSettings size={16} />,
 					path: '/campaign-management',
+					module: ModuleEnum.CAMPAIGNS,
 				},
 			],
 		},
@@ -74,6 +78,7 @@ export const UserMenu: React.FC = () => {
 					label: 'Configurations',
 					icon: <IconSettings size={16} />,
 					path: '/configurations/client-configs',
+					module: ModuleEnum.SETTINGS,
 				},
 			],
 		},
@@ -84,11 +89,13 @@ export const UserMenu: React.FC = () => {
 					label: 'Tools',
 					icon: <IconTools size={16} />,
 					path: '/tools',
+					module: ModuleEnum.TOOLS,
 				},
 				{
 					label: 'Prompter',
 					icon: <IconLibrary size={16} />,
 					path: '/prompter',
+					module: ModuleEnum.PROMPTS,
 				},
 			],
 		},
@@ -104,11 +111,13 @@ export const UserMenu: React.FC = () => {
 						label: 'Users',
 						icon: <IconUsers size={16} />,
 						path: '/users',
+						module: ModuleEnum.USERS,
 					},
 					{
 						label: 'Roles',
 						icon: <IconKey size={16} />,
 						path: '/roles',
+						module: ModuleEnum.ROLES,
 					},
 				],
 			};
@@ -116,6 +125,18 @@ export const UserMenu: React.FC = () => {
 
 		return category;
 	});
+
+	const filteredCategories = (categories: typeof maintenanceCategories) =>
+		categories
+			.map((category) => ({
+				...category,
+				items: category.items.filter((item) => canAccessModule(item.module)),
+			}))
+			.filter((category) => category.items.length > 0);
+
+	const categoriesToRender = isImpersonating
+		? filteredCategories(maintenanceCategories)
+		: filteredCategories(normalMaintenanceCategories);
 
 	return (
 		<Menu shadow='md' width={280} position='bottom-end'>
@@ -166,32 +187,43 @@ export const UserMenu: React.FC = () => {
 						</div>
 						<Divider />
 
-						{maintenanceCategories.map((categoryGroup, idx) => (
-							<div key={categoryGroup.category}>
-								<Menu.Label className={styles.categoryLabel}>
-									{categoryGroup.category}
-								</Menu.Label>
-								<div className={styles.categoryGroup}>
-									{categoryGroup.items.map((item) => (
-										<Tooltip
-											key={item.path}
-											label={item.label}
-											position='left'
-											withArrow
-										>
-											<Menu.Item
-												onClick={() => handleMaintenanceNavigation(item.path)}
-												leftSection={item.icon}
-												className={styles.categoryItem}
+						{categoriesToRender.length > 0 ? (
+							categoriesToRender.map((categoryGroup, idx) => (
+								<div key={categoryGroup.category}>
+									<Menu.Label className={styles.categoryLabel}>
+										{categoryGroup.category}
+									</Menu.Label>
+									<div className={styles.categoryGroup}>
+										{categoryGroup.items.map((item) => (
+											<Tooltip
+												key={item.path}
+												label={item.label}
+												position='left'
+												withArrow
 											>
-												{item.label}
-											</Menu.Item>
-										</Tooltip>
-									))}
+												<Menu.Item
+													onClick={() => handleMaintenanceNavigation(item.path)}
+													leftSection={item.icon}
+													className={styles.categoryItem}
+												>
+													{item.label}
+												</Menu.Item>
+											</Tooltip>
+										))}
+									</div>
+									{idx < categoriesToRender.length - 1 && <Divider my='xs' />}
 								</div>
-								{idx < maintenanceCategories.length - 1 && <Divider my='xs' />}
+							))
+						) : (
+							<div className={styles.emptyPermissions}>
+								<span className={styles.emptyPermissionsTitle}>
+									No accessible modules
+								</span>
+								<span className={styles.emptyPermissionsSubtitle}>
+									Request access to see maintenance tools.
+								</span>
 							</div>
-						))}
+						)}
 
 						<Divider />
 						<Menu.Item
@@ -215,34 +247,43 @@ export const UserMenu: React.FC = () => {
 						</Menu.Item>
 						<Divider />
 
-						{normalMaintenanceCategories.map((categoryGroup, idx) => (
-							<div key={categoryGroup.category}>
-								<Menu.Label className={styles.categoryLabel}>
-									{categoryGroup.category}
-								</Menu.Label>
-								<div className={styles.categoryGroup}>
-									{categoryGroup.items.map((item) => (
-										<Tooltip
-											key={item.path}
-											label={item.label}
-											position='left'
-											withArrow
-										>
-											<Menu.Item
-												onClick={() => handleMaintenanceNavigation(item.path)}
-												leftSection={item.icon}
-												className={styles.categoryItem}
+						{categoriesToRender.length > 0 ? (
+							categoriesToRender.map((categoryGroup, idx) => (
+								<div key={categoryGroup.category}>
+									<Menu.Label className={styles.categoryLabel}>
+										{categoryGroup.category}
+									</Menu.Label>
+									<div className={styles.categoryGroup}>
+										{categoryGroup.items.map((item) => (
+											<Tooltip
+												key={item.path}
+												label={item.label}
+												position='left'
+												withArrow
 											>
-												{item.label}
-											</Menu.Item>
-										</Tooltip>
-									))}
+												<Menu.Item
+													onClick={() => handleMaintenanceNavigation(item.path)}
+													leftSection={item.icon}
+													className={styles.categoryItem}
+												>
+													{item.label}
+												</Menu.Item>
+											</Tooltip>
+										))}
+									</div>
+									{idx < categoriesToRender.length - 1 && <Divider my='xs' />}
 								</div>
-								{idx < normalMaintenanceCategories.length - 1 && (
-									<Divider my='xs' />
-								)}
+							))
+						) : (
+							<div className={styles.emptyPermissions}>
+								<span className={styles.emptyPermissionsTitle}>
+									No accessible modules
+								</span>
+								<span className={styles.emptyPermissionsSubtitle}>
+									Request access to see maintenance tools.
+								</span>
 							</div>
-						))}
+						)}
 
 						<Divider />
 						<Menu.Item

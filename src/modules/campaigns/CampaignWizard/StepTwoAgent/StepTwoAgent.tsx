@@ -474,6 +474,11 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 				onClose={() => setPromptEditorOpened(false)}
 				size='100%'
 				centered
+				styles={{
+					body: {
+						height: '90%',
+					},
+				}}
 				fullScreen
 				withCloseButton={false}
 				padding={0}

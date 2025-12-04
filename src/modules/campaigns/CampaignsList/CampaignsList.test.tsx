@@ -6,6 +6,16 @@ import { notifications } from '@mantine/notifications';
 import CampaignsList from './CampaignsList';
 import type { Campaign, PaginatedResponse } from '~/models/CampaignsModel';
 
+// Mock usePermissions
+const mockCanPerformAction = vi.fn((_module: any, _permission: any) => true);
+const mockCanAccessModule = vi.fn((_module: any) => true);
+vi.mock('~/hooks/usePermissions', () => ({
+	default: () => ({
+		canPerformAction: mockCanPerformAction,
+		canAccessModule: mockCanAccessModule,
+	}),
+}));
+
 // Mock useNavigate
 const mockNavigate = vi.fn();
 vi.mock('react-router', async () => {
@@ -275,6 +285,7 @@ describe('CampaignsList', () => {
 		vi.clearAllMocks();
 
 		// Default mock values
+		mockCanPerformAction.mockReturnValue(true);
 		mockUseGetAllCampaignsPaginated.mockReturnValue({
 			data: {
 				data: [sampleCampaign],
@@ -431,10 +442,7 @@ describe('CampaignsList', () => {
 		});
 		renderComponent();
 
-		const actions = screen.getAllByLabelText('Campaign actions');
-		fireEvent.click(actions[0]);
-
-		const testCall = await screen.findByText('Test Call');
+		const testCall = screen.getAllByLabelText('Test Call')[0];
 		fireEvent.click(testCall);
 
 		expect(await screen.findByTestId('outbound-call-form')).toBeInTheDocument();
@@ -458,10 +466,7 @@ describe('CampaignsList', () => {
 
 		renderComponent();
 
-		const actions = screen.getAllByLabelText('Campaign actions');
-		fireEvent.click(actions[0]);
-
-		const testCall = await screen.findByText('Test Call');
+		const testCall = screen.getAllByLabelText('Test Call')[0];
 		fireEvent.click(testCall);
 
 		expect(notifications.show).toHaveBeenCalledWith(
@@ -474,18 +479,14 @@ describe('CampaignsList', () => {
 
 	it('calls modals.openConfirmModal when Delete is clicked', async () => {
 		renderComponent();
-		const actions = screen.getAllByLabelText('Campaign actions');
-		fireEvent.click(actions[0]);
-		const deleteItem = await screen.findByText('Delete');
+		const deleteItem = screen.getAllByLabelText('Delete campaign')[0];
 		fireEvent.click(deleteItem);
 		expect(mockOpenConfirm).toHaveBeenCalled();
 	});
 
 	it('calls modals.open when Clone is clicked', async () => {
 		renderComponent();
-		const actions = screen.getAllByLabelText('Campaign actions');
-		fireEvent.click(actions[0]);
-		const cloneItem = await screen.findByText('Clone Campaign');
+		const cloneItem = screen.getAllByLabelText('Clone campaign')[0];
 		fireEvent.click(cloneItem);
 		expect(mockOpenModal).toHaveBeenCalledWith(
 			expect.objectContaining({
@@ -513,9 +514,7 @@ describe('CampaignsList', () => {
 
 	it('handles delete confirmation success', async () => {
 		renderComponent();
-		const actions = screen.getAllByLabelText('Campaign actions');
-		fireEvent.click(actions[0]);
-		const deleteItem = await screen.findByText('Delete');
+		const deleteItem = screen.getAllByLabelText('Delete campaign')[0];
 		fireEvent.click(deleteItem);
 
 		expect(mockOpenConfirm).toHaveBeenCalled();
@@ -540,9 +539,7 @@ describe('CampaignsList', () => {
 		mockUseDeleteCampaign.mockReturnValue({ mutateAsync: mockMutateAsync });
 
 		renderComponent();
-		const actions = screen.getAllByLabelText('Campaign actions');
-		fireEvent.click(actions[0]);
-		const deleteItem = await screen.findByText('Delete');
+		const deleteItem = screen.getAllByLabelText('Delete campaign')[0];
 		fireEvent.click(deleteItem);
 
 		const { onConfirm } = mockOpenConfirm.mock.calls[0][0];
@@ -571,9 +568,7 @@ describe('CampaignsList', () => {
 		// Instead, let's assume we can access the children from the mock call arguments and render them.
 
 		renderComponent();
-		const actions = screen.getAllByLabelText('Campaign actions');
-		fireEvent.click(actions[0]);
-		const cloneItem = await screen.findByText('Clone Campaign');
+		const cloneItem = screen.getAllByLabelText('Clone campaign')[0];
 		fireEvent.click(cloneItem);
 
 		expect(mockOpenModal).toHaveBeenCalled();
@@ -596,9 +591,7 @@ describe('CampaignsList', () => {
 		});
 		renderComponent();
 
-		const actions = screen.getAllByLabelText('Campaign actions');
-		fireEvent.click(actions[0]);
-		const testCall = await screen.findByText('Test Call');
+		const testCall = screen.getAllByLabelText('Test Call')[0];
 		fireEvent.click(testCall);
 
 		expect(await screen.findByTestId('outbound-call-form')).toBeInTheDocument();
@@ -612,7 +605,6 @@ describe('CampaignsList', () => {
 		});
 
 		// Re-open and test close
-		fireEvent.click(actions[0]);
 		fireEvent.click(testCall);
 		expect(await screen.findByTestId('outbound-call-form')).toBeInTheDocument();
 
@@ -687,6 +679,34 @@ describe('CampaignsList', () => {
 			);
 		});
 	});
+
+	it('hides create campaign button when user lacks permission', () => {
+		mockCanPerformAction.mockReturnValue(false);
+		renderComponent();
+		expect(
+			screen.queryByTestId('header-create-campaign-btn')
+		).not.toBeInTheDocument();
+	});
+
+	it('hides view and test call actions when user lacks module access', () => {
+		mockCanAccessModule.mockReturnValue(false);
+		renderComponent();
+
+		// View button should not be present
+		expect(screen.queryByLabelText('View campaign')).not.toBeInTheDocument();
+
+		// Test Call should not be present when module access is false
+		expect(screen.queryByLabelText('Test Call')).not.toBeInTheDocument();
+	});
+});
+
+it('hides clone menu item when user lacks CREATE permission', async () => {
+	mockCanPerformAction.mockImplementation((_module: any, permission: any) => {
+		return permission !== 'CREATE';
+	});
+	renderComponent();
+
+	expect(screen.queryByLabelText('Clone campaign')).not.toBeInTheDocument();
 });
 
 // Mock Mantine Modal to avoid portal issues

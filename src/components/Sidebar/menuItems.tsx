@@ -4,6 +4,7 @@ import {
 	IconPhoneCall,
 } from '@tabler/icons-react';
 import { ReactNode } from 'react';
+import { ModuleEnum } from '~/contants/ModuleEnum';
 import styles from './Sidebar.module.css';
 
 export type MenuItem = {
@@ -11,6 +12,7 @@ export type MenuItem = {
 	icon: ReactNode;
 	to: string;
 	exact?: boolean;
+	module: ModuleEnum;
 };
 
 export const menuItems: MenuItem[] = [
@@ -19,15 +21,18 @@ export const menuItems: MenuItem[] = [
 		icon: <IconLayoutDashboard size={20} className={styles.menuIcon} />,
 		to: '/',
 		exact: true,
+		module: ModuleEnum.DASHBOARD,
 	},
 	{
 		label: 'Campaigns',
 		icon: <IconListDetails size={20} className={styles.menuIcon} />,
 		to: '/campaigns',
+		module: ModuleEnum.CAMPAIGNS,
 	},
 	{
 		label: 'Conversations',
 		icon: <IconPhoneCall size={20} className={styles.menuIcon} />,
 		to: '/conversations',
+		module: ModuleEnum.CONVERSATIONS,
 	},
 ];

@@ -1,4 +1,6 @@
 import type { ClientModel } from './ClientModel';
+import type { RoleModel, RoleModulePermissionModel } from './RoleModel';
+import { PermissionEnum } from '~/contants/PermissionEnum';
 
 export interface UserModel {
 	id: number;
@@ -24,6 +26,8 @@ export type UserRoleModel = {
 	userId: number;
 	roleId: number;
 	clientId: number;
+	role?: RoleModel | null;
+	modulePermissions?: RoleModulePermissionModel[];
 };
 
 export interface ImpersonatedClient {
@@ -31,8 +35,8 @@ export interface ImpersonatedClient {
 	email: string;
 	username: string;
 	clientId: number;
-	roles: any[];
-	permissions: any[];
+	roles: string[];
+	permissions: PermissionEnum[];
 	originalClientId: number;
 	impersonatedAt: string;
 	iat: number;

@@ -1,14 +1,22 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Text, Stack, Divider } from '@mantine/core';
 import { menuItems, MenuItem } from './menuItems';
 import { Link, useLocation } from 'react-router';
 import styles from './Sidebar.module.css';
 import Logo from '../Logo';
 import { APP_VERSION } from '~/version';
+import { usePermissions } from '~/hooks/usePermissions';
 
 // menuItems are now imported from menuItems.tsx
 
 export const Sidebar: React.FC = () => {
+	const { canAccessModule } = usePermissions();
+
+	const permittedMenuItems = useMemo(
+		() => menuItems.filter((item) => canAccessModule(item.module)),
+		[canAccessModule]
+	);
+
 	return (
 		<nav className={styles.sidebar} aria-label='Main navigation'>
 			<Stack className={styles.menuList} gap='lg'>
@@ -32,7 +40,18 @@ export const Sidebar: React.FC = () => {
 					>
 						MENU
 					</Text>
-					{menuItems.map((item) => renderMenuItem(item))}
+					{permittedMenuItems.length > 0 ? (
+						permittedMenuItems.map((item) => renderMenuItem(item))
+					) : (
+						<div className={styles.emptyState}>
+							<Text size='sm' c='dimmed' fw={600}>
+								No modules available
+							</Text>
+							<Text size='xs' c='dimmed'>
+								Request access to see navigation options.
+							</Text>
+						</div>
+					)}
 				</Stack>
 			</Stack>
 		</nav>

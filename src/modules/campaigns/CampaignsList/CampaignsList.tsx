@@ -31,6 +31,9 @@ import { OutboundCallForm } from '~/components/OutboundCallForm';
 import { useGetAgent } from '~/queries/agentQueries';
 import { useNavigate } from 'react-router';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/contants/ModuleEnum';
+import { PermissionEnum } from '~/contants/PermissionEnum';
 
 interface CampaignFiltersType {
 	type?: string;
@@ -52,6 +55,7 @@ export const CampaignsList: React.FC = () => {
 		rightComponent,
 	} = useCampaignsStore((state) => state);
 	const navigate = useNavigate();
+	const { canPerformAction } = usePermissions();
 
 	// Get the wizard reset function
 	const resetWizard = useCampaignWizardStore((state) => state.reset);
@@ -221,12 +225,15 @@ export const CampaignsList: React.FC = () => {
 				rightSection={rightComponent || <></>}
 				titleRight={
 					<Group gap='xs'>
-						<ActionIcon
-							onClick={handleShowAddNewCampaignModal}
-							data-testid='header-create-campaign-btn'
-						>
-							<IconPlus size={16} />
-						</ActionIcon>
+						{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.CREATE) && (
+							<ActionIcon
+								onClick={handleShowAddNewCampaignModal}
+								data-testid='header-create-campaign-btn'
+								title='Create New Campaign'
+							>
+								<IconPlus size={16} />
+							</ActionIcon>
+						)}
 						<ActionIcon
 							onClick={() => reloadCampaigns()}
 							data-testid='header-refresh-btn'

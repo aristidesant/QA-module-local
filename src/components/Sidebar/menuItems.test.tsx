@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { ModuleEnum } from '~/contants/ModuleEnum';
 import { menuItems } from './menuItems';
 
 describe('menuItems', () => {
@@ -24,14 +25,17 @@ describe('menuItems', () => {
 			label: 'Overview',
 			to: '/',
 			exact: true,
+			module: ModuleEnum.DASHBOARD,
 		});
 		expect(menuItems[1]).toMatchObject({
 			label: 'Campaigns',
 			to: '/campaigns',
+			module: ModuleEnum.CAMPAIGNS,
 		});
 		expect(menuItems[2]).toMatchObject({
 			label: 'Conversations',
 			to: '/conversations',
+			module: ModuleEnum.CONVERSATIONS,
 		});
 	});
 

@@ -18,6 +18,18 @@ vi.mock('react-router', async () => {
 	};
 });
 
+// Mock usePermissions so action visibility rules can be applied in tests
+const mockCanAccessModule = vi.fn((_module: any) => true);
+const mockCanPerformAction = vi.fn((_module: any, _permission: any) => true);
+vi.mock('~/hooks/usePermissions', () => ({
+	default: () => ({
+		canAccessModule: mockCanAccessModule,
+		canPerformAction: mockCanPerformAction,
+		hasAnyPermission: vi.fn(),
+		hasAllPermissions: vi.fn(),
+	}),
+}));
+
 describe('useCampaignsColumns', () => {
 	const sampleCampaign: Campaign = {
 		id: 123,
@@ -97,6 +109,7 @@ describe('useCampaignsColumns', () => {
 				onDelete,
 				onClone,
 			});
+
 			const actionsCol = columns.find((c) => (c as any).id === 'actions');
 			return (
 				<div>
@@ -119,34 +132,30 @@ describe('useCampaignsColumns', () => {
 		fireEvent.click(screen.getByLabelText('View campaign'));
 		expect(onView).toHaveBeenCalledWith(sampleCampaign);
 
-		// Menu actions
-		const menuButton = screen.getByLabelText('Campaign actions');
-		fireEvent.click(menuButton);
-
-		// View Metrics
-		const metricsItem = await screen.findByText('View Metrics');
-		fireEvent.click(metricsItem);
-		expect(mockNavigate).toHaveBeenCalledWith(
-			`/campaigns/metrics/${sampleCampaign.id}`
-		);
-
-		// Test Call
-		fireEvent.click(menuButton);
-		const testCallItem = await screen.findByText('Test Call');
-		fireEvent.click(testCallItem);
+		// Test Call inline action
+		const testCallBtn = screen.getByLabelText('Test Call');
+		fireEvent.click(testCallBtn);
 		expect(onTestCall).toHaveBeenCalledWith(sampleCampaign);
 
-		// Clone
-		fireEvent.click(menuButton);
-		const cloneItem = await screen.findByText('Clone Campaign');
-		fireEvent.click(cloneItem);
+		// Clone inline action
+		const cloneBtn = screen.getByLabelText('Clone campaign');
+		fireEvent.click(cloneBtn);
 		expect(onClone).toHaveBeenCalledWith(sampleCampaign);
 
-		// Delete
-		fireEvent.click(menuButton);
-		const deleteItem = await screen.findByText('Delete');
-		fireEvent.click(deleteItem);
+		// Delete inline action
+		const deleteBtn = screen.getByLabelText('Delete campaign');
+		fireEvent.click(deleteBtn);
 		expect(onDelete).toHaveBeenCalledWith(sampleCampaign);
+	});
+
+	it('hides clone menu item when user lacks CREATE permission', async () => {
+		mockCanPerformAction.mockImplementation((_module: any, permission: any) => {
+			return permission !== 'CREATE';
+		});
+		renderCell('actions', sampleCampaign);
+
+		expect(screen.queryByLabelText('Clone campaign')).not.toBeInTheDocument();
+		mockCanPerformAction.mockReturnValue(true);
 	});
 
 	it('renders action buttons in correct order: View, Edit, Menu', () => {
@@ -168,15 +177,16 @@ describe('useCampaignsColumns', () => {
 
 		const viewButton = screen.getByLabelText('View campaign');
 		const editButton = screen.getByLabelText('Edit campaign');
-		const menuButton = screen.getByLabelText('Campaign actions');
+		// Menu removed; check order contains these inline icons in order
 
 		// Verify DOM order: View should come before Edit, Edit should come before Menu
 		expect(
 			viewButton.compareDocumentPosition(editButton) &
 				Node.DOCUMENT_POSITION_FOLLOWING
 		).toBeTruthy();
+		const testCallButton = screen.getByLabelText('Test Call');
 		expect(
-			editButton.compareDocumentPosition(menuButton) &
+			editButton.compareDocumentPosition(testCallButton) &
 				Node.DOCUMENT_POSITION_FOLLOWING
 		).toBeTruthy();
 	});

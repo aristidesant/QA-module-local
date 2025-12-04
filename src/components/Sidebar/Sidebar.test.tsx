@@ -1,8 +1,28 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { beforeEach, describe, it, expect, vi } from 'vitest';
 import { MemoryRouter } from 'react-router';
 import { MantineProvider } from '@mantine/core';
 import { Sidebar, renderMenuItem } from './Sidebar';
+import { ModuleEnum } from '~/contants/ModuleEnum';
+
+const { mockCanAccessModule, mockUsePermissions } = vi.hoisted(() => {
+	const canAccess = vi.fn(() => true);
+	return {
+		mockCanAccessModule: canAccess,
+		mockUsePermissions: vi.fn(() => ({
+			activeClientId: 1,
+			permissionMap: {},
+			canAccessModule: canAccess,
+			canPerformAction: vi.fn(),
+			hasAnyPermission: vi.fn(),
+			hasAllPermissions: vi.fn(),
+		})),
+	};
+});
+
+vi.mock('~/hooks/usePermissions', () => ({
+	usePermissions: () => mockUsePermissions(),
+}));
 
 // Mock the Logo component
 vi.mock('../Logo', () => ({
@@ -12,28 +32,6 @@ vi.mock('../Logo', () => ({
 // Mock the version
 vi.mock('~/version', () => ({
 	APP_VERSION: '1.0.0',
-}));
-
-// Mock menuItems
-vi.mock('./menuItems', () => ({
-	menuItems: [
-		{
-			label: 'Overview',
-			icon: <span data-testid='overview-icon'>Overview Icon</span>,
-			to: '/',
-			exact: true,
-		},
-		{
-			label: 'Campaigns',
-			icon: <span data-testid='campaigns-icon'>Campaigns Icon</span>,
-			to: '/campaigns',
-		},
-		{
-			label: 'Conversations',
-			icon: <span data-testid='conversations-icon'>Conversations Icon</span>,
-			to: '/conversations',
-		},
-	],
 }));
 
 const renderSidebar = () => {
@@ -47,6 +45,10 @@ const renderSidebar = () => {
 };
 
 describe('Sidebar', () => {
+	beforeEach(() => {
+		mockCanAccessModule.mockReturnValue(true);
+	});
+
 	describe('Rendering', () => {
 		it('renders the navigation element', () => {
 			renderSidebar();
@@ -79,6 +81,17 @@ describe('Sidebar', () => {
 			renderSidebar();
 
 			expect(screen.getByText('Version 1.0.0')).toBeInTheDocument();
+		});
+
+		it('shows an empty state when no modules are available', () => {
+			mockCanAccessModule.mockReturnValue(false);
+			renderSidebar();
+
+			expect(screen.getByText('No modules available')).toBeInTheDocument();
+			expect(
+				screen.getByText('Request access to see navigation options.')
+			).toBeInTheDocument();
+			expect(screen.queryByText('Overview')).not.toBeInTheDocument();
 		});
 	});
 
@@ -180,13 +193,15 @@ describe('Sidebar', () => {
 			icon,
 			to,
 			exact,
+			module = ModuleEnum.DASHBOARD,
 		}: {
 			label: string;
 			icon: React.ReactNode;
 			to: string;
 			exact?: boolean;
+			module?: ModuleEnum;
 		}) => {
-			return renderMenuItem({ label, icon, to, exact });
+			return renderMenuItem({ label, icon, to, exact, module });
 		};
 
 		it('renders menu item with icon and label', () => {

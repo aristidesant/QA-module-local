@@ -214,7 +214,7 @@ export { default } from './UserCard';
 - Put test files next to the component: `UserCard.test.tsx`
 - **One test file per component** (not multiple test files)
 - When asked to increase coverage of a test, run the coverage for that file/folder only, do not run full coverage unless user asks for it.
-- IMPORTANT!!, WHEN DEBUGGING TESTS, DO NOT RUN FULL TEST OF THE PROJECT, JUST RUN WHAT YOU ARE TRYING TO DEBUG.
+- IMPORTANT: When debugging tests, ALWAYS run only the specific test file(s) or test case(s) relevant to your change. Do NOT run the entire test suite. Use targeted commands like `npm run test -- path/to/testfile`, `vitest path/to/testfile`, or `vitest -t "test name"` to run a single file or test.
 
 ### How to Write Tests
 
@@ -262,3 +262,16 @@ import { renderWithProviders } from '~/test-utils/renderWithProviders';
 - Use `any` in TypeScript
 - Write code in Spanish
 - Skip loading/error states
+
+---
+
+## Permission Architecture (Front-End Usage)
+
+- Determine the active client from `targetClient` (impersonation) or the user's own client.
+- Build permission maps only from roles that belong to the active client; merge permissions per module.
+- Treat `MANAGE` as elevated permission that grants full access for its module.
+- Use `usePermissions` hook helpers for all UI checks:
+  - `canAccessModule(module)` to decide nav visibility or route access.
+  - `canPerformAction(module, permission)` for specific actions.
+  - `hasAnyPermission(module, [permA, permB])` or `hasAllPermissions(module, [permA, permB])` for grouped checks.
+- Never bypass these helpers; keep permission evaluation unified and deterministic.

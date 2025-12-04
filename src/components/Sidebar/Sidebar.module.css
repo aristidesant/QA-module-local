@@ -128,3 +128,11 @@
 	overflow: hidden;
 	transition: opacity 0.2s ease;
 }
+
+.emptyState {
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+	border-radius: 10px;
+	background: var(--mantine-color-gray-0);
+	display: grid;
+	gap: 4px;
+}

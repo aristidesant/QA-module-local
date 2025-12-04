@@ -5,26 +5,26 @@ import {
 	Group,
 	Text,
 	Badge,
-	Menu,
 	ThemeIcon,
 	HoverCard,
 	Stack,
 } from '@mantine/core';
 import {
-	IconDotsVertical,
 	IconTrash,
 	IconCheck,
 	IconArrowUpRight,
 	IconArrowDownLeft,
 	IconCopy,
-	IconChartDots,
 	IconPhone,
 	IconInfoCircle,
 	IconEye,
 	IconPencil,
 } from '@tabler/icons-react';
 import type { Campaign } from '~/models/CampaignsModel';
-import { useNavigate } from 'react-router';
+// useNavigate removed; no client-side navigation from columns
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/contants/ModuleEnum';
+import { PermissionEnum } from '~/contants/PermissionEnum';
 import {
 	CampaignStatus,
 	CampaignStatusConfig,
@@ -69,7 +69,8 @@ export const useCampaignsColumns = ({
 	onDelete,
 	onClone,
 }: UseCampaignsColumnsProps): ColumnDef<Campaign, any>[] => {
-	const navigate = useNavigate();
+	// navigate unused after removing Metrics navigation
+	const { canAccessModule, canPerformAction } = usePermissions();
 	return [
 		{
 			accessorKey: 'name',
@@ -159,99 +160,82 @@ export const useCampaignsColumns = ({
 				const campaign = row.original;
 				return (
 					<Group gap='xs' justify='end'>
-						<Tooltip label='View campaign'>
-							<ActionIcon
-								color='teal'
-								radius='md'
-								aria-label='View campaign'
-								onClick={(e) => {
-									e.stopPropagation();
-									onView(campaign);
-								}}
-							>
-								<IconEye size={16} />
-							</ActionIcon>
-						</Tooltip>
-						<Tooltip label='Edit campaign'>
-							<ActionIcon
-								color='blue'
-								radius='md'
-								aria-label='Edit campaign'
-								onClick={(e) => {
-									e.stopPropagation();
-									onEdit(campaign);
-								}}
-							>
-								<IconPencil size={16} />
-							</ActionIcon>
-						</Tooltip>
-						<Menu shadow='md' width={200}>
-							<Menu.Target>
+						{canAccessModule(ModuleEnum.CAMPAIGNS) && (
+							<Tooltip label='View campaign'>
 								<ActionIcon
-									color='gray'
+									color='teal'
 									radius='md'
-									aria-label='Campaign actions'
-									onClick={(e) => e.stopPropagation()}
-								>
-									<IconDotsVertical size={16} aria-hidden />
-								</ActionIcon>
-							</Menu.Target>
-							<Menu.Dropdown>
-								<Menu.Item
-									onClick={() => {
-										navigate(`/campaigns/metrics/${campaign.id}`);
+									aria-label='View campaign'
+									onClick={(e) => {
+										e.stopPropagation();
+										onView(campaign);
 									}}
-									leftSection={
-										<ThemeIcon variant='light' color='violet' size={'xs'}>
-											<IconChartDots size={14} />
-										</ThemeIcon>
-									}
 								>
-									View Metrics
-								</Menu.Item>
-								<Menu.Item
+									<IconEye size={16} />
+								</ActionIcon>
+							</Tooltip>
+						)}
+						{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.UPDATE) && (
+							<Tooltip label='Edit campaign'>
+								<ActionIcon
+									color='blue'
+									radius='md'
+									aria-label='Edit campaign'
+									onClick={(e) => {
+										e.stopPropagation();
+										onEdit(campaign);
+									}}
+								>
+									<IconPencil size={16} />
+								</ActionIcon>
+							</Tooltip>
+						)}
+						{/* Inline action icons (replacing the 3-dot menu) */}
+						{canAccessModule(ModuleEnum.CAMPAIGNS) && (
+							<Tooltip label='Test Call'>
+								<ActionIcon
+									color='green'
+									radius='md'
+									aria-label='Test Call'
 									onClick={(e) => {
 										e.stopPropagation();
 										onTestCall(campaign);
 									}}
-									leftSection={
-										<ThemeIcon variant='light' color='green' size={'xs'}>
-											<IconPhone size={14} />
-										</ThemeIcon>
-									}
 								>
-									Test Call
-								</Menu.Item>
-								<Menu.Item
+									<IconPhone size={16} />
+								</ActionIcon>
+							</Tooltip>
+						)}
+						{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.CREATE) && (
+							<Tooltip label='Clone campaign'>
+								<ActionIcon
+									color='orange'
+									radius='md'
+									aria-label='Clone campaign'
 									onClick={(e) => {
 										e.stopPropagation();
 										onClone(campaign);
 									}}
-									leftSection={
-										<ThemeIcon variant='light' color='orange' size={'xs'}>
-											<IconCopy size={14} />
-										</ThemeIcon>
-									}
 								>
-									Clone Campaign
-								</Menu.Item>
-								<Menu.Divider />
-								<Menu.Item
+									<IconCopy size={16} />
+								</ActionIcon>
+							</Tooltip>
+						)}
+						{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.DELETE) && (
+							<Tooltip label='Delete campaign'>
+								<ActionIcon
+									color='red'
+									radius='md'
+									aria-label='Delete campaign'
 									onClick={(e) => {
 										e.stopPropagation();
 										onDelete(campaign);
 									}}
-									leftSection={
-										<ThemeIcon variant='light' color='red' size={'xs'}>
-											<IconTrash size={14} />
-										</ThemeIcon>
-									}
-									color='red'
 								>
-									Delete
-								</Menu.Item>
-							</Menu.Dropdown>
-						</Menu>
+									<IconTrash size={16} />
+								</ActionIcon>
+							</Tooltip>
+						)}
 					</Group>
 				);
 			},

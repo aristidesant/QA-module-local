@@ -135,6 +135,11 @@ const CampaignConfigurationPrompt: React.FC = () => {
 				opened={editModalOpen}
 				onClose={() => setEditModalOpen(false)}
 				title="Edit Agent's Prompt"
+				styles={{
+					body: {
+						height: '90%',
+					},
+				}}
 				centered
 				fullScreen
 			>

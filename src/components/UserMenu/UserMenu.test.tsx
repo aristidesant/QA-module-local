@@ -3,6 +3,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { UserMenu } from './UserMenu';
+import { ModuleEnum } from '~/contants/ModuleEnum';
 
 // Mock react-router
 const mockNavigate = vi.fn();
@@ -25,6 +26,19 @@ vi.mock('~/hooks/useImpersonationState', () => ({
 	}),
 }));
 
+const mockCanAccessModule = vi.fn((_module: any) => true);
+
+vi.mock('~/hooks/usePermissions', () => ({
+	usePermissions: () => ({
+		activeClientId: 1,
+		permissionMap: {},
+		canAccessModule: mockCanAccessModule,
+		canPerformAction: vi.fn(),
+		hasAnyPermission: vi.fn(),
+		hasAllPermissions: vi.fn(),
+	}),
+}));
+
 // Mock logout utility
 const mockLogout = vi.fn();
 vi.mock('~/utils/logout', () => ({
@@ -39,6 +53,7 @@ describe('UserMenu', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockIsImpersonating.mockReturnValue(false);
+		mockCanAccessModule.mockImplementation(() => true);
 	});
 
 	it('renders user name, email and initials when not impersonating', async () => {
@@ -268,5 +283,28 @@ describe('UserMenu', () => {
 			await userEvent.click(tools);
 		}
 		expect(mockNavigate).toHaveBeenCalledWith('/tools');
+	});
+
+	it('filters maintenance items based on permissions', async () => {
+		mockCanAccessModule.mockImplementation(
+			(module) => module === ModuleEnum.TOOLS
+		);
+		const { useSessionStore } = await import('~/stores/sessionStore');
+		(useSessionStore as any).mockReturnValue({
+			user: { username: 'janedoe', email: 'jane@example.com' },
+			targetClient: null,
+		});
+
+		renderComponent();
+
+		const trigger = screen.getByRole('button', { name: /user menu/i });
+		await userEvent.click(trigger);
+
+		await waitFor(() => {
+			expect(screen.getByText('Tools')).toBeInTheDocument();
+		});
+		expect(screen.queryByText('Campaign Management')).not.toBeInTheDocument();
+		expect(screen.queryByText('Configurations')).not.toBeInTheDocument();
+		expect(screen.queryByText('Prompter')).not.toBeInTheDocument();
 	});
 });

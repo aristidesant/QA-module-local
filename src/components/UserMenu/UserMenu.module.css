@@ -221,3 +221,20 @@
 	color: var(--mantine-color-orange-6);
 	padding-left: 2.25rem;
 }
+
+.emptyPermissions {
+	padding: 0.75rem 1rem;
+	display: grid;
+	gap: 4px;
+	color: var(--mantine-color-gray-6);
+}
+
+.emptyPermissionsTitle {
+	font-weight: 700;
+	font-size: 0.9rem;
+	color: var(--mantine-color-dark-6);
+}
+
+.emptyPermissionsSubtitle {
+	font-size: 0.8rem;
+}
