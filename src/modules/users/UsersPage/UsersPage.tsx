@@ -63,9 +63,9 @@ const UsersPage: React.FC = () => {
 	const openCreateModal = useCallback(() => {
 		modals.open({
 			title: 'New User',
+			fullScreen: true,
 			children: <UserForm mode='create' onSuccess={handleModalSuccess} />,
 			centered: true,
-			size: 'lg',
 			withCloseButton: true,
 			closeOnClickOutside: false,
 		});
@@ -75,6 +75,12 @@ const UsersPage: React.FC = () => {
 		(userId: number) => {
 			modals.open({
 				title: 'Edit User',
+				fullScreen: true,
+				styles: {
+					body: {
+						height: '90%',
+					},
+				},
 				children: (
 					<UserForm
 						mode='edit'
@@ -83,7 +89,6 @@ const UsersPage: React.FC = () => {
 					/>
 				),
 				centered: true,
-				size: 'xl',
 				withCloseButton: true,
 				closeOnClickOutside: false,
 			});

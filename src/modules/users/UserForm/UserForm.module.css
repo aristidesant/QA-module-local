@@ -1,10 +1,12 @@
 .form {
 	display: flex;
 	flex-direction: column;
-	gap: var(--mantine-spacing-md);
-	padding: 0;
-	background-color: transparent;
-	max-width: 56rem;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-md);
+	background-color: var(--mantine-color-white);
+	width: 100%;
+	height: 100%;
+	min-height: 100%;
 }
 
 .subtitle {
@@ -12,6 +14,15 @@
 	font-size: var(--mantine-font-size-sm);
 	max-width: 42rem;
 	line-height: 1.5;
+}
+
+.metaHeader {
+	padding-bottom: calc(var(--mantine-spacing-xs) / 2);
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.metaHint {
+	color: var(--mantine-color-gray-6);
 }
 
 .statusBadge {
@@ -25,10 +36,23 @@
 	margin-bottom: 0;
 }
 
+.body {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+	overflow: auto;
+	padding-bottom: var(--mantine-spacing-md);
+}
+
 .section {
 	display: flex;
 	flex-direction: column;
 	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	background-color: var(--mantine-color-gray-0);
 }
 
 .sectionTitle {
@@ -56,38 +80,68 @@
 .row {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: var(--mantine-spacing-sm);
+	gap: var(--mantine-spacing-xs);
+	align-items: end;
 }
 
-.rowSingle {
-	grid-template-columns: 1fr;
+.rowTight {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--mantine-spacing-xs);
 }
 
 .field {
 	width: 100%;
 }
 
-.helperCard {
+.helperRow {
+	display: grid;
+	grid-template-columns: 1.2fr 0.8fr;
+	gap: var(--mantine-spacing-sm);
+	align-items: center;
+}
+
+.helper {
 	display: flex;
 	flex-direction: column;
 	gap: calc(var(--mantine-spacing-xs) / 2);
-	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-xs) 0;
 	border-left: 2px solid var(--mantine-color-blue-4);
-	background-color: transparent;
+	padding-left: var(--mantine-spacing-sm);
 }
 
-.helperTitle {
-	font-size: var(--mantine-font-size-xs);
-	font-weight: 600;
-	color: var(--mantine-color-gray-7);
-	text-transform: uppercase;
-	letter-spacing: 0.05em;
+.securityCard {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	background-color: var(--mantine-color-gray-0);
 }
 
-.helperText {
-	color: var(--mantine-color-gray-7);
-	font-size: var(--mantine-font-size-sm);
-	line-height: 1.5;
+.securityHeader {
+	display: flex;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-sm);
+	align-items: center;
+}
+
+.securityTitle {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.securityStatus {
+	text-transform: capitalize;
+}
+
+.securityControls {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
 }
 
 .actions {
@@ -97,37 +151,66 @@
 	padding-top: var(--mantine-spacing-sm);
 	margin-top: 0;
 	border-top: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--mantine-color-white);
+	position: sticky;
+	bottom: 0;
 }
 
-.passwordGrid {
+.passwordCard {
+	display: grid;
+	grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	background-color: var(--mantine-color-white);
+}
+
+.passwordStrengthWrapper {
+	margin-top: 0;
+}
+
+.passwordProgressBar {
+	flex: 1;
+}
+
+.passwordStrengthLabel {
+	min-width: 60px;
+}
+
+.passwordField {
 	display: flex;
 	flex-direction: column;
-	gap: var(--mantine-spacing-xs);
+	gap: calc(var(--mantine-spacing-xs) / 2);
 }
 
-.passwordFields {
+.passwordHint {
+	color: var(--mantine-color-gray-6);
+}
+
+.contentGrid {
 	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
+	grid-template-columns: minmax(360px, 1.1fr) 1fr;
+	gap: var(--mantine-spacing-md);
+	align-items: start;
+	flex: 1;
+	min-height: 0;
+}
+
+.formColumn {
+	display: flex;
+	flex-direction: column;
 	gap: var(--mantine-spacing-sm);
 }
 
-.passwordInput {
-	width: 100%;
+.rolesSection {
+	height: 100%;
 }
 
-.passwordInputFull {
-	grid-column: span 2;
-}
-
-.passwordStrength {
-	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
-	border-left: 2px solid var(--mantine-color-gray-4);
-	background-color: transparent;
-}
-
-.passwordAside {
-	display: flex;
-	align-items: flex-start;
+@media (max-width: 62rem) {
+	.contentGrid {
+		grid-template-columns: 1fr;
+	}
 }
 
 @media (max-width: 48rem) {
@@ -135,19 +218,15 @@
 		grid-template-columns: 1fr;
 	}
 
-	.rowSingle {
+	.rowTight {
 		grid-template-columns: 1fr;
 	}
 
-	.passwordGrid {
+	.helperRow {
 		grid-template-columns: 1fr;
 	}
 
-	.passwordFields {
+	.passwordCard {
 		grid-template-columns: 1fr;
-	}
-
-	.passwordInputFull {
-		grid-column: span 1;
 	}
 }

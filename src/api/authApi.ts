@@ -16,6 +16,14 @@ export type SignUpRequest = {
 	lastName?: string;
 };
 
+/** Client option returned when user has access to multiple clients */
+export interface ClientSelectOption {
+	clientId: number;
+	clientName: string;
+	clientIdentifier: string;
+	roles: string[];
+}
+
 export interface MFALoginResponse {
 	message: string;
 	accessToken: any;
@@ -24,6 +32,27 @@ export interface MFALoginResponse {
 	otpEnabled: boolean;
 	needToChangePassword?: boolean;
 	user?: UserModel;
+	/** True if user has access to multiple clients and must select one */
+	requiresClientSelection?: boolean;
+	/** Available clients when requiresClientSelection is true */
+	availableClients?: ClientSelectOption[];
+	/** Pre-auth token for client selection (valid for 10 minutes) */
+	preAuthToken?: string;
+}
+
+/** Request payload for selecting a client */
+export interface SelectClientRequest {
+	preAuthToken: string;
+	clientId: number;
+	otp?: string;
+}
+
+/** Response from select-client endpoint */
+export interface SelectClientResponse {
+	message: string;
+	accessToken?: string;
+	otpRequired?: boolean;
+	userId?: number;
 }
 
 export interface OTPVerifyRequest {
@@ -105,6 +134,17 @@ export async function verifyOTP(
 ): Promise<{ accessToken: string }> {
 	const response = await axios.post<{ accessToken: string }>(
 		`${DEFAULT_API_URL}/auth/verify-otp`,
+		payload
+	);
+	return response.data;
+}
+
+export async function selectClient(
+	payload: SelectClientRequest,
+	apiUrl: string = DEFAULT_API_URL
+): Promise<SelectClientResponse> {
+	const response = await axios.post<SelectClientResponse>(
+		`${apiUrl}/auth/select-client`,
 		payload
 	);
 	return response.data;

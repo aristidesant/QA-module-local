@@ -16,7 +16,15 @@ export interface UserModel {
 	mfaEnabled?: boolean;
 	needToChangePassword?: boolean;
 	lastLogin?: string | Date | null;
+	userRolesClient?: UserRoleModel[];
 }
+
+export type UserRoleModel = {
+	id?: number;
+	userId: number;
+	roleId: number;
+	clientId: number;
+};
 
 export interface ImpersonatedClient {
 	sub: number;

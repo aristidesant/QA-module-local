@@ -1,0 +1,46 @@
+.clientCard {
+	cursor: pointer;
+	transition: all 0.15s ease;
+	border-color: var(--mantine-color-gray-3);
+}
+
+.clientCard:hover:not([data-disabled='true']) {
+	border-color: var(--mantine-color-blue-4);
+	background-color: var(--mantine-color-blue-0);
+}
+
+.clientCard[data-selected='true'] {
+	border-color: var(--mantine-color-blue-5);
+	background-color: var(--mantine-color-blue-0);
+}
+
+.clientCard[data-disabled='true'] {
+	cursor: not-allowed;
+	opacity: 0.7;
+}
+
+.clientIcon {
+	color: var(--mantine-color-gray-6);
+}
+
+.checkIcon {
+	color: var(--mantine-color-blue-6);
+	opacity: 0;
+	transition: opacity 0.15s ease;
+}
+
+.checkIcon[data-visible='true'] {
+	opacity: 1;
+}
+
+.otpInput input {
+	text-align: center;
+	font-size: var(--mantine-font-size-lg);
+	font-weight: 600;
+	letter-spacing: 0.2rem;
+}
+
+.otpInput input:focus {
+	border-color: var(--mantine-color-blue-6);
+	box-shadow: 0 0 0 1px var(--mantine-color-blue-6);
+}

@@ -12,6 +12,9 @@ import {
 	type AuthRequest,
 	signUp,
 	type SignUpRequest,
+	selectClient,
+	SelectClientRequest,
+	SelectClientResponse,
 } from '~/api/authApi';
 import userApi from '~/api/userApi';
 import { jwtDecode } from 'jwt-decode';
@@ -138,6 +141,37 @@ export function useVerifyOTP() {
 		},
 		onSuccess: async ({ accessToken }) => {
 			await completeLoginFlow(accessToken, queryClient, setToken, setUser);
+		},
+	});
+}
+
+/**
+ * Select client mutation: used when user has access to multiple clients.
+ * Calls /auth/select-client with preAuthToken and selected clientId.
+ */
+export function useSelectClient() {
+	const queryClient = useQueryClient();
+	const { setToken, setUser } = useSessionStore();
+
+	return useMutation<SelectClientResponse, Error, SelectClientRequest>({
+		mutationFn: async (payload: SelectClientRequest) => {
+			const res = await selectClient(payload);
+			return res;
+		},
+		onSuccess: async (data: SelectClientResponse) => {
+			// Only complete login flow if we received an access token
+			// If otpRequired is true, the component will handle showing the OTP input
+			if (data?.accessToken) {
+				await completeLoginFlow(
+					data.accessToken,
+					queryClient,
+					setToken,
+					setUser
+				);
+			}
+		},
+		onError: (error: Error) => {
+			console.error('Client selection failed:', error.message);
 		},
 	});
 }

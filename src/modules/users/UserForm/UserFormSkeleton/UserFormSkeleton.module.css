@@ -1,21 +1,20 @@
 .form {
 	display: flex;
 	flex-direction: column;
-	gap: var(--mantine-spacing-md);
-	padding: 0;
-	background-color: transparent;
-	max-width: 56rem;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-md);
+	background-color: var(--mantine-color-white);
+	height: 100%;
+	min-height: 100%;
 }
 
-.subtitle {
-	color: var(--mantine-color-gray-6);
-	font-size: var(--mantine-font-size-sm);
-	max-width: 42rem;
-	line-height: 1.5;
-}
-
-.statusBadge {
-	text-transform: capitalize;
+.body {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+	overflow: auto;
+	padding-bottom: var(--mantine-spacing-md);
 }
 
 .meta {
@@ -25,10 +24,19 @@
 	margin-bottom: 0;
 }
 
+.metaHeader {
+	padding-bottom: calc(var(--mantine-spacing-xs) / 2);
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
 .section {
 	display: flex;
 	flex-direction: column;
 	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	background-color: var(--mantine-color-gray-0);
 }
 
 .sectionTitle {
@@ -56,38 +64,18 @@
 .row {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: var(--mantine-spacing-sm);
-}
-
-.rowSingle {
-	grid-template-columns: 1fr;
+	gap: var(--mantine-spacing-xs);
+	align-items: end;
 }
 
 .field {
 	width: 100%;
 }
 
-.helperCard {
-	display: flex;
-	flex-direction: column;
-	gap: calc(var(--mantine-spacing-xs) / 2);
-	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
-	border-left: 2px solid var(--mantine-color-blue-4);
-	background-color: transparent;
-}
-
-.helperTitle {
-	font-size: var(--mantine-font-size-xs);
-	font-weight: 600;
-	color: var(--mantine-color-gray-7);
-	text-transform: uppercase;
-	letter-spacing: 0.05em;
-}
-
-.helperText {
-	color: var(--mantine-color-gray-7);
-	font-size: var(--mantine-font-size-sm);
-	line-height: 1.5;
+.helperRow {
+	display: grid;
+	grid-template-columns: 1.2fr 0.8fr;
+	gap: var(--mantine-spacing-sm);
 }
 
 .actions {
@@ -97,37 +85,74 @@
 	padding-top: var(--mantine-spacing-sm);
 	margin-top: 0;
 	border-top: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--mantine-color-white);
+	position: sticky;
+	bottom: 0;
 }
 
-.passwordGrid {
+.passwordCard {
+	display: grid;
+	grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	background-color: var(--mantine-color-white);
+}
+
+.securityCard {
 	display: flex;
 	flex-direction: column;
-	gap: var(--mantine-spacing-xs);
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	background-color: var(--mantine-color-gray-0);
 }
 
-.passwordFields {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
+.securityHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 	gap: var(--mantine-spacing-sm);
 }
 
-.passwordInput {
-	width: 100%;
-}
-
-.passwordInputFull {
-	grid-column: span 2;
-}
-
-.passwordStrength {
-	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
-	border-left: 2px solid var(--mantine-color-gray-4);
-	background-color: transparent;
-}
-
-.passwordAside {
+.securityControls {
 	display: flex;
-	align-items: flex-start;
+	justify-content: space-between;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+}
+
+.passwordStrengthWrapper {
+	margin-top: var(--mantine-spacing-xs);
+}
+
+.passwordProgressBar {
+	flex: 1;
+}
+
+.passwordStrengthLabel {
+	min-width: 60px;
+}
+
+.contentGrid {
+	display: grid;
+	grid-template-columns: minmax(360px, 1.1fr) 1fr;
+	gap: var(--mantine-spacing-md);
+	align-items: start;
+	flex: 1;
+	min-height: 0;
+}
+
+.formColumn {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+}
+
+.rolesSection {
+	height: 100%;
 }
 
 @media (max-width: 48rem) {
@@ -135,19 +160,11 @@
 		grid-template-columns: 1fr;
 	}
 
-	.rowSingle {
+	.helperRow {
 		grid-template-columns: 1fr;
 	}
 
-	.passwordGrid {
+	.passwordCard {
 		grid-template-columns: 1fr;
-	}
-
-	.passwordFields {
-		grid-template-columns: 1fr;
-	}
-
-	.passwordInputFull {
-		grid-column: span 1;
 	}
 }

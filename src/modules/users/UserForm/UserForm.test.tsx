@@ -8,6 +8,7 @@ import {
 import UserForm from './UserForm';
 import * as userQueries from '~/queries/userQueries';
 import * as clientQueries from '~/queries/clientQueries';
+import * as roleQueries from '~/queries/roleQueries';
 
 const notificationMocks = vi.hoisted(() => ({
 	show: vi.fn(),
@@ -61,6 +62,7 @@ describe('UserForm', () => {
 	const mockUseCreateUser = vi.spyOn(userQueries, 'useCreateUser');
 	const mockUseUpdateUser = vi.spyOn(userQueries, 'useUpdateUser');
 	const mockUseGetAllClients = vi.spyOn(clientQueries, 'useGetAllClients');
+	const mockUseGetAllRoles = vi.spyOn(roleQueries, 'useGetAllRoles');
 
 	const createMutateAsync = vi.fn();
 	const updateMutateAsync = vi.fn();
@@ -83,6 +85,21 @@ describe('UserForm', () => {
 		queryClient.clear();
 		mockUseGetAllClients.mockReturnValue({
 			data: [{ id: 3, name: 'Client A', identifier: 'ca', email: 'c@a.com' }],
+			isLoading: false,
+		} as any);
+		mockUseGetAllRoles.mockReturnValue({
+			data: [
+				{
+					id: 7,
+					name: 'Admin',
+					code: 'ADMIN',
+					description: 'Admin role',
+					isSystem: false,
+					isActive: true,
+					createdAt: '2024-01-01T00:00:00Z',
+					updatedAt: '2024-01-01T00:00:00Z',
+				},
+			],
 			isLoading: false,
 		} as any);
 		mockUseCreateUser.mockReturnValue({
@@ -158,6 +175,8 @@ describe('UserForm', () => {
 				lastName: 'Last',
 				clientId: 3,
 				password: 'StrongP@ss1',
+				userRolesClient: [],
+				mfaEnabled: false,
 			});
 			expect(onSuccess).toHaveBeenCalled();
 		});
@@ -201,6 +220,8 @@ describe('UserForm', () => {
 					firstName: 'Updated',
 					lastName: baseUser.lastName,
 					clientId: baseUser.clientId,
+					userRolesClient: [],
+					mfaEnabled: false,
 				},
 			});
 			expect(onSuccess).toHaveBeenCalled();
@@ -211,6 +232,43 @@ describe('UserForm', () => {
 				title: 'User updated',
 			})
 		);
+	});
+
+	it('sends selected roles with client context', async () => {
+		const onSuccess = vi.fn();
+		createMutateAsync.mockResolvedValueOnce(undefined);
+		mockUseGetUser.mockReturnValue({
+			isLoading: false,
+			isError: false,
+			error: null,
+			data: undefined,
+		} as any);
+
+		const user = userEvent.setup();
+		renderWithProviders(<UserForm mode='create' onSuccess={onSuccess} />);
+
+		await user.type(screen.getByLabelText(/Email/i), 'new@example.com');
+		await user.type(screen.getByLabelText(/Username/i), 'new-user');
+		await user.type(screen.getByLabelText(/First name/i), 'First');
+		await user.type(screen.getByLabelText(/Last name/i), 'Last');
+		await user.selectOptions(screen.getByLabelText(/Client/i), '3');
+		await user.type(screen.getByLabelText(/Password/i), 'StrongP@ss1');
+		await user.click(screen.getByLabelText(/Admin/i));
+
+		await user.click(screen.getByRole('button', { name: /Create user/i }));
+
+		await waitFor(() => {
+			expect(createMutateAsync).toHaveBeenCalledWith({
+				email: 'new@example.com',
+				username: 'new-user',
+				firstName: 'First',
+				lastName: 'Last',
+				clientId: 3,
+				password: 'StrongP@ss1',
+				userRolesClient: [{ clientId: 3, roleId: 7, userId: 0 }],
+				mfaEnabled: false,
+			});
+		});
 	});
 });
 

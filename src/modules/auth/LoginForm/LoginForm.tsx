@@ -26,9 +26,10 @@ import { useLogin } from '~/queries/authQueries';
 import { getErrorMessage } from '~/utils/httpClient';
 import classes from './LoginForm.module.css';
 import Logo from '~/components/Logo';
-import { MFALoginResponse } from '~/api/authApi';
+import { ClientSelectOption, MFALoginResponse } from '~/api/authApi';
 import { APP_VERSION } from '~/version';
 import OTPVerificationModal from './OTPVerificationModal';
+import ClientSelectionModal from './ClientSelectionModal';
 import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import { usePasswordResetStore } from '~/stores/passwordResetStore';
 
@@ -48,6 +49,13 @@ export function LoginForm() {
 	const [otpModalOpened, setOtpModalOpened] = useState(false);
 	const [pendingLoginData, setPendingLoginData] =
 		useState<MFALoginResponse | null>(null);
+	// Multi-client selection state
+	const [clientSelectionModalOpened, setClientSelectionModalOpened] =
+		useState(false);
+	const [availableClients, setAvailableClients] = useState<
+		ClientSelectOption[]
+	>([]);
+	const [preAuthToken, setPreAuthToken] = useState<string | null>(null);
 
 	const isSubmitting = loginMutation.isPending;
 	const isRedirecting = false;
@@ -80,6 +88,19 @@ export function LoginForm() {
 	const handleOTPModalClose = () => {
 		setOtpModalOpened(false);
 		setPendingLoginData(null);
+	};
+
+	const handleClientSelectionSuccess = () => {
+		setClientSelectionModalOpened(false);
+		setAvailableClients([]);
+		setPreAuthToken(null);
+		navigate('/');
+	};
+
+	const handleClientSelectionModalClose = () => {
+		setClientSelectionModalOpened(false);
+		setAvailableClients([]);
+		setPreAuthToken(null);
 	};
 
 	return (
@@ -116,6 +137,18 @@ export function LoginForm() {
 										password: values.password,
 										loginType: values.loginType,
 									});
+
+								// Case: User has access to multiple clients
+								if (
+									result?.requiresClientSelection &&
+									result?.availableClients
+								) {
+									setAvailableClients(result.availableClients);
+									setPreAuthToken(result.preAuthToken || null);
+									setClientSelectionModalOpened(true);
+									clearPendingCredentials();
+									return;
+								}
 
 								if (result?.otpEnabled) {
 									// Show OTP modal
@@ -267,6 +300,15 @@ export function LoginForm() {
 				onClose={handleOTPModalClose}
 				userId={pendingLoginData?.userId || 0}
 				onSuccess={handleOTPSuccess}
+			/>
+
+			{/* Client Selection Modal */}
+			<ClientSelectionModal
+				opened={clientSelectionModalOpened}
+				onClose={handleClientSelectionModalClose}
+				availableClients={availableClients}
+				preAuthToken={preAuthToken || ''}
+				onSuccess={handleClientSelectionSuccess}
 			/>
 		</div>
 	);
