@@ -6,14 +6,20 @@ import {
 	Textarea,
 	Slider,
 	Select,
+	Text,
+	Paper,
+	Badge,
+	ThemeIcon,
+	Table,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { IconCheck } from '@tabler/icons-react';
-import React, { useMemo } from 'react';
+import { IconCalendarStats, IconCheck, IconGauge } from '@tabler/icons-react';
+import React, { useCallback, useMemo } from 'react';
 import type { DayConfig } from '~/api/campaignsApi';
 import { useGetClientConfig } from '~/queries/clientConfigQueries';
 import { useCreateCampaignSchedule } from '~/queries/campaignsQueries';
+import classes from './AddShedulerForm.module.css';
 
 interface AddShedulerFormProps {
 	onSuccess?: () => void;
@@ -29,69 +35,36 @@ interface PredefinedScheduleFormValues {
 }
 
 interface PredefinedScheduleConfig {
+	name: string;
 	dayConfigs: DayConfig[];
 }
 
-// Helper function to generate a label for a schedule based on active days and times
-const generateScheduleLabel = (schedule: PredefinedScheduleConfig): string => {
-	const activeDays = schedule.dayConfigs.filter((day) => day.isActive);
-
-	if (activeDays.length === 0) {
-		return 'No active days';
-	}
-
-	// Get unique start and end hours from the day's startHour and endHour properties
-	const timeRanges = new Set<string>();
-	activeDays.forEach((day) => {
-		if (day.startHour && day.endHour) {
-			timeRanges.add(`${day.startHour}-${day.endHour}`);
-		}
-	});
-
-	// Format day names (handle both lowercase and uppercase)
-	const dayNames = activeDays.map((day) => {
-		const dayMap: Record<string, string> = {
-			monday: 'Mon',
-			tuesday: 'Tue',
-			wednesday: 'Wed',
-			thursday: 'Thu',
-			friday: 'Fri',
-			saturday: 'Sat',
-			sunday: 'Sun',
-			MONDAY: 'Mon',
-			TUESDAY: 'Tue',
-			WEDNESDAY: 'Wed',
-			THURSDAY: 'Thu',
-			FRIDAY: 'Fri',
-			SATURDAY: 'Sat',
-			SUNDAY: 'Sun',
-		};
-		return dayMap[day.dayOfWeek] || day.dayOfWeek;
-	});
-
-	// Check if it's weekdays (handle both lowercase and uppercase)
-	const isWeekdays =
-		activeDays.length === 5 &&
-		activeDays.every((day) =>
-			[
-				'monday',
-				'tuesday',
-				'wednesday',
-				'thursday',
-				'friday',
-				'MONDAY',
-				'TUESDAY',
-				'WEDNESDAY',
-				'THURSDAY',
-				'FRIDAY',
-			].includes(day.dayOfWeek)
-		);
-
-	const dayLabel = isWeekdays ? 'Weekdays' : dayNames.join(', ');
-	const timeLabel = Array.from(timeRanges).join(', ');
-
-	return `${dayLabel} ${timeLabel}`;
+const dayLabelMap: Record<DayConfig['dayOfWeek'], string> = {
+	monday: 'Monday',
+	tuesday: 'Tuesday',
+	wednesday: 'Wednesday',
+	thursday: 'Thursday',
+	friday: 'Friday',
+	saturday: 'Saturday',
+	sunday: 'Sunday',
 };
+
+const allDaysOfWeek: Array<DayConfig['dayOfWeek']> = [
+	'monday',
+	'tuesday',
+	'wednesday',
+	'thursday',
+	'friday',
+	'saturday',
+	'sunday',
+];
+
+const humanEquivalentMarks = [
+	{ value: 0, label: '0' },
+	{ value: 50, label: '50' },
+	{ value: 100, label: '100' },
+	{ value: 150, label: '150' },
+];
 
 const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 	onSuccess,
@@ -112,12 +85,12 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 		}
 	}, [clientConfigQuery.data?.value]);
 
-	// Transform schedules to select options with generated labels
+	// Transform schedules to select options using the name property
 	const scheduleOptions = useMemo(
 		() =>
 			predefinedSchedules.map((schedule, index) => ({
 				value: String(index),
-				label: generateScheduleLabel(schedule),
+				label: schedule.name || `Schedule ${index + 1}`,
 			})),
 		[predefinedSchedules]
 	);
@@ -145,6 +118,41 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 			},
 		},
 	});
+
+	const selectedSchedule = useMemo<PredefinedScheduleConfig | null>(() => {
+		if (form.values.predefinedScheduleId === null) return null;
+		return (
+			predefinedSchedules[Number(form.values.predefinedScheduleId)] ?? null
+		);
+	}, [form.values.predefinedScheduleId, predefinedSchedules]);
+
+	const dayConfigMap = useMemo(() => {
+		const map = new Map<DayConfig['dayOfWeek'], DayConfig>();
+		selectedSchedule?.dayConfigs?.forEach((day) => {
+			map.set(day.dayOfWeek, day);
+		});
+		return map;
+	}, [selectedSchedule?.dayConfigs]);
+
+	const getDayStatus = useCallback(
+		(dayOfWeek: DayConfig['dayOfWeek']) => {
+			const dayConfig = dayConfigMap.get(dayOfWeek);
+			if (!dayConfig) {
+				return { isActive: false, times: 'Off' };
+			}
+			const times =
+				dayConfig.startHour && dayConfig.endHour
+					? `${dayConfig.startHour.slice(0, 5)} - ${dayConfig.endHour.slice(0, 5)}`
+					: 'No hours';
+			return { isActive: true, times };
+		},
+		[dayConfigMap]
+	);
+
+	const previewRow = useMemo(() => {
+		if (!selectedSchedule) return null;
+		return allDaysOfWeek.map((day) => getDayStatus(day).times);
+	}, [getDayStatus, selectedSchedule]);
 
 	const handleSubmit = async (values: PredefinedScheduleFormValues) => {
 		if (!campaignId) {
@@ -225,59 +233,196 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 	};
 
 	return (
-		<form onSubmit={form.onSubmit(handleSubmit)}>
+		<form onSubmit={form.onSubmit(handleSubmit)} className={classes.form}>
 			<Stack gap='md'>
-				<Select
-					label='Predefined Schedule'
-					placeholder='Select days and hours configuration'
-					description='Choose a predefined schedule template with days and working hours'
-					data={scheduleOptions}
-					searchable
-					required
-					{...form.getInputProps('predefinedScheduleId')}
-				/>
-				<TextInput
-					label='Schedule Name'
-					placeholder='e.g. Standard Business Hours'
-					required
-					{...form.getInputProps('name')}
-				/>
-				<Textarea
-					label='Description'
-					placeholder='e.g. Monday-Friday 8:00 AM to 5:00 PM'
-					minRows={6}
-					rows={6}
-					maxLength={250}
-					{...form.getInputProps('description')}
-				/>
-				<Stack gap={4}>
-					<label htmlFor='humanEquivalent'>Human Equivalent</label>
-					<Slider
-						id='humanEquivalent'
-						min={0}
-						max={500}
-						step={1}
-						value={form.values.humanEquivalent as number}
-						onChange={(value) => form.setFieldValue('humanEquivalent', value)}
-						marks={Array.from({ length: 11 }, (_, i) => ({
-							value: i * 50,
-							label: String(i * 50),
-						}))}
-					/>
-					{form.errors.humanEquivalent && (
-						<div style={{ color: 'red', fontSize: 12 }}>
-							{form.errors.humanEquivalent}
+				<Group justify='space-between' align='flex-start'>
+					<div>
+						<Text size='sm' fw={700}>
+							Curated schedules
+						</Text>
+						<Text size='xs' c='dimmed'>
+							Pick a template, personalize the naming, and tune the human
+							equivalent you want to simulate.
+						</Text>
+					</div>
+					<Badge
+						variant='light'
+						size='sm'
+						leftSection={<IconCalendarStats size={14} />}
+					>
+						Schedule builder
+					</Badge>
+				</Group>
+
+				<Paper withBorder radius='md' className={classes.panel}>
+					<Stack gap='sm'>
+						<Group gap='xs' align='center'>
+							<ThemeIcon variant='light' color='blue' size='md' radius='md'>
+								<IconCalendarStats size={16} />
+							</ThemeIcon>
+							<div>
+								<Text size='sm' fw={600}>
+									Predefined schedule
+								</Text>
+								<Text size='xs' c='dimmed'>
+									Choose a schedule template with the working days and hours
+									already mapped.
+								</Text>
+							</div>
+						</Group>
+						<Select
+							placeholder='Select days and hours configuration'
+							data={scheduleOptions}
+							searchable
+							required
+							size='sm'
+							nothingFoundMessage='No templates available'
+							className={classes.field}
+							{...form.getInputProps('predefinedScheduleId')}
+						/>
+						<div className={classes.preview}>
+							<Group justify='space-between' align='center' gap='xs'>
+								<div>
+									<Text size='xs' fw={600}>
+										Template preview
+									</Text>
+									<Text size='xs' c='dimmed'>
+										Working hours per weekday for the selected template.
+									</Text>
+								</div>
+								{selectedSchedule && (
+									<Badge size='sm' variant='light' color='blue'>
+										{selectedSchedule.name}
+									</Badge>
+								)}
+							</Group>
+							{selectedSchedule ? (
+								<Table
+									withRowBorders={false}
+									striped={false}
+									highlightOnHover={false}
+									className={classes.previewTable}
+								>
+									<Table.Thead>
+										<Table.Tr>
+											{allDaysOfWeek.map((dayOfWeek) => (
+												<Table.Th
+													key={dayOfWeek}
+													className={classes.previewHeaderCell}
+												>
+													{dayLabelMap[dayOfWeek]}
+												</Table.Th>
+											))}
+										</Table.Tr>
+									</Table.Thead>
+									<Table.Tbody>
+										<Table.Tr>
+											{previewRow?.map((value, index) => {
+												const isOff = value === 'Off';
+												return (
+													<Table.Td key={allDaysOfWeek[index]}>
+														<Text
+															size='xs'
+															fw={600}
+															c={
+																isOff
+																	? 'var(--mantine-color-gray-5)'
+																	: undefined
+															}
+														>
+															{value}
+														</Text>
+													</Table.Td>
+												);
+											})}
+										</Table.Tr>
+									</Table.Tbody>
+								</Table>
+							) : (
+								<Text size='xs' c='dimmed'>
+									Select a template to preview its configured days.
+								</Text>
+							)}
 						</div>
-					)}
-				</Stack>
-				<Group justify='flex-end' mt='md'>
+					</Stack>
+				</Paper>
+
+				<Paper withBorder radius='md' pb={'xl'} className={classes.panel}>
+					<Stack gap='sm'>
+						<Group gap='xs' align='center'>
+							<ThemeIcon variant='light' color='indigo' size='md' radius='md'>
+								<IconGauge size={16} />
+							</ThemeIcon>
+							<div>
+								<Text size='sm' fw={600}>
+									Schedule details
+								</Text>
+								<Text size='xs' c='dimmed'>
+									Add a clear name, short description, and adjust the expected
+									human effort.
+								</Text>
+							</div>
+						</Group>
+						<TextInput
+							label='Schedule name'
+							placeholder='e.g. Standard Business Hours'
+							required
+							size='sm'
+							className={classes.field}
+							{...form.getInputProps('name')}
+						/>
+						<Textarea
+							label='Description'
+							placeholder='e.g. Monday to Friday from 08:00 to 17:00'
+							minRows={3}
+							rows={3}
+							maxLength={250}
+							size='sm'
+							className={classes.field}
+							{...form.getInputProps('description')}
+						/>
+						<Stack gap='xs' className={classes.field}>
+							<Group justify='space-between' align='center'>
+								<Text size='sm' fw={600}>
+									Human equivalent
+								</Text>
+								<Badge size='sm' variant='outline' color='blue'>
+									{form.values.humanEquivalent}
+								</Badge>
+							</Group>
+							<Slider
+								min={0}
+								max={150}
+								step={1}
+								value={form.values.humanEquivalent as number}
+								onChange={(value) =>
+									form.setFieldValue('humanEquivalent', value)
+								}
+								marks={humanEquivalentMarks}
+								size='sm'
+								label={null}
+							/>
+							{form.errors.humanEquivalent && (
+								<Text c='red' size='xs'>
+									{form.errors.humanEquivalent}
+								</Text>
+							)}
+						</Stack>
+					</Stack>
+				</Paper>
+
+				<Group justify='flex-end' className={classes.actionBar}>
 					{onCancel && (
-						<Button variant='outline' onClick={onCancel}>
+						<Button variant='default' onClick={onCancel} size='sm'>
 							Cancel
 						</Button>
 					)}
-					<Button type='submit' loading={createScheduleMutation.isPending}>
-						Create Schedule
+					<Button
+						type='submit'
+						loading={createScheduleMutation.isPending}
+						size='sm'
+					>
+						Create schedule
 					</Button>
 				</Group>
 			</Stack>

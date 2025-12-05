@@ -87,8 +87,7 @@ src/
 ### File Naming
 
 - Use **PascalCase** for component files: `UserCard.tsx`, `CampaignList.tsx`
-- For each .tsx component, create a test.
-- For each .ts file of API, queries or hooks, add a **tests** folder in the same location of the file to be added the test.
+- For each .tsx or .ts component, create a test.
 - File should be name as the component file .test.tsx or .test.ts
 
 ### Folder Structure
@@ -99,6 +98,7 @@ Each component gets its own folder:
 components/
 └── UserCard/
     ├── UserCard.tsx        # Main component code
+    ├── UserCard.test.tsx   # Styles for this component
     ├── UserCard.module.css # Styles for this component
     └── index.ts            # Export file
 ```

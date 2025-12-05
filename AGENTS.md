@@ -87,8 +87,7 @@ src/
 ### File Naming
 
 - Use **PascalCase** for component files: `UserCard.tsx`, `CampaignList.tsx`
-- For each .tsx component, create a test.
-- For each .ts file of API, queries or hooks, add a **tests** folder in the same location of the file to be added the test.
+- For each .tsx or .ts component, create a test.
 - File should be name as the component file .test.tsx or .test.ts
 
 ### Folder Structure
@@ -99,6 +98,7 @@ Each component gets its own folder:
 components/
 └── UserCard/
     ├── UserCard.tsx        # Main component code
+    ├── UserCard.test.tsx   # Styles for this component
     ├── UserCard.module.css # Styles for this component
     └── index.ts            # Export file
 ```
@@ -213,8 +213,9 @@ export { default } from './UserCard';
 
 - Put test files next to the component: `UserCard.test.tsx`
 - **One test file per component** (not multiple test files)
-- When asked to increase coverage of a test, run the coverage for that file/folder only, do not run full coverage unless user asks for it.
-- IMPORTANT: When debugging tests, ALWAYS run only the specific test file(s) or test case(s) relevant to your change. Do NOT run the entire test suite. Use targeted commands like `vitest path/to/testfile`, or `vitest -t "test name"` to run a single file or test.
+- When asked to increase coverage of a test, **only** run coverage for that specific test file (or, in rare cases, a single small folder if explicitly requested). **Do NOT** run global coverage unless the user clearly asks for a full report.
+- Default behavior: **Tests must be run one file at a time.** Always target a single test file (for example, `vitest src/components/UserCard/UserCard.test.tsx`) instead of running the full suite.
+- IMPORTANT: When debugging tests, ALWAYS run only the specific test file or a single test case relevant to your change. Do NOT run the entire test suite by default. Use targeted commands like `vitest path/to/testfile` or `vitest -t "test name"` to focus on a single file or test.
 
 ### How to Write Tests
 

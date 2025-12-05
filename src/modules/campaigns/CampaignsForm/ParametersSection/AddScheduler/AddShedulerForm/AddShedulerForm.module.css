@@ -1,0 +1,59 @@
+.form {
+	display: block;
+}
+
+.panel {
+	background-color: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-md);
+}
+
+.field {
+	max-width: 100%;
+}
+
+.preview {
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-sm);
+	background-color: var(--mantine-color-white);
+	padding: var(--mantine-spacing-xs);
+}
+
+.actionBar {
+	margin-top: var(--mantine-spacing-sm);
+}
+
+.dayBadge {
+	cursor: default;
+}
+
+.dropdown {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-sm);
+	box-shadow: none;
+}
+
+.previewTable {
+	margin-top: var(--mantine-spacing-xs);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-sm);
+	overflow: hidden;
+	font-size: var(--mantine-font-size-xs);
+}
+
+.previewTable th,
+.previewTable td {
+	padding: 6px 8px;
+}
+
+.previewTable thead {
+	background-color: var(--mantine-color-gray-0);
+}
+
+.previewHeaderCell {
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+	color: var(--mantine-color-gray-6);
+	font-weight: 700;
+}
