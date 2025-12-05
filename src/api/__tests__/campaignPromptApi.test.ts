@@ -72,6 +72,7 @@ describe('campaignPromptsApi', () => {
 						typeId: 1,
 						campaignId: 1,
 						prompt: 'Test prompt',
+						isChange: true,
 					},
 				],
 			};

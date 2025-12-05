@@ -47,6 +47,9 @@ const CampaignConfigurationPromptEditModal: React.FC<
 	const [prompts, setPrompts] = useState<Record<number, CampaignPromptModel>>(
 		{}
 	);
+	const [originalPrompts, setOriginalPrompts] = useState<
+		Record<number, CampaignPromptModel>
+	>({});
 	const [activeTypeId, setActiveTypeId] = useState<number | null>(null);
 
 	useEffect(() => {
@@ -77,6 +80,7 @@ const CampaignConfigurationPromptEditModal: React.FC<
 			});
 
 			setPrompts(initialPrompts);
+			setOriginalPrompts(initialPrompts);
 		}
 	}, [existingPrompts, types, campaignId]);
 
@@ -129,9 +133,20 @@ const CampaignConfigurationPromptEditModal: React.FC<
 	);
 
 	const handleSave = () => {
-		const promptsList = Object.values(prompts).filter(
-			(p) => p.prompt && p.prompt.trim() !== ''
-		);
+		// Map prompts with isChange flag for each individual prompt
+		const promptsList = Object.values(prompts)
+			.filter((p) => p.prompt && p.prompt.trim() !== '')
+			.map((prompt) => {
+				const originalPrompt = originalPrompts[prompt.typeId]?.prompt || '';
+				const currentPrompt = prompt.prompt || '';
+				const isChange = currentPrompt !== originalPrompt;
+
+				return {
+					...prompt,
+					isChange,
+				};
+			});
+
 		saveBatch(
 			{ prompts: promptsList },
 			{
