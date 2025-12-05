@@ -51,10 +51,25 @@ const CampaignPage = () => {
 	}, []);
 
 	useEffect(() => {
-		if (campaign && selectedCampaign?.id !== campaign.id) {
+		// When we receive the campaign from the API, always make sure the
+		// full campaign object is selected in the store. This helps avoid
+		// placeholder state where only an ID is selected and prevents UI
+		// flicker when data finishes loading.
+		if (
+			campaign &&
+			(!selectedCampaign ||
+				selectedCampaign.id !== campaign.id ||
+				// If the store holds a partial/stub campaign (no name), prefer
+				// the freshly fetched complete campaign object.
+				(selectedCampaign as any).name !== campaign.name ||
+				// If the store has not been refreshed after an update (no updatedAt or stale),
+				// replace it with the freshly fetched version to keep state in sync.
+				!(selectedCampaign as any).updatedAt ||
+				(selectedCampaign as any).updatedAt !== (campaign as any).updatedAt)
+		) {
 			selectCampaign(campaign);
 		}
-	}, [campaign, selectedCampaign?.id, selectCampaign]);
+	}, [campaign, selectedCampaign, selectCampaign]);
 
 	if (isLoading) {
 		return (

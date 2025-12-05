@@ -6,15 +6,27 @@ import {
 	IconGlobe,
 	IconPhoneOff,
 	IconLibrary,
+	IconClockHour4,
 } from '@tabler/icons-react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
+import { useEffect } from 'react';
+import { usePermissions } from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/contants/ModuleEnum';
+import { PermissionEnum } from '~/contants/PermissionEnum';
 import styles from './ConfigurationsPage.module.css';
 export default function ConfigurationsPage() {
 	const location = useLocation();
 	const navigate = useNavigate();
+	const { canPerformAction } = usePermissions();
+	const canManageSettings = canPerformAction(
+		ModuleEnum.SETTINGS,
+		PermissionEnum.MANAGE
+	);
 
 	const getActiveTab = () => {
 		if (location.pathname.includes('client-configs')) return 'client-configs';
+		if (location.pathname.includes('scheduler-predefined-params'))
+			return 'scheduler-predefined-params';
 		if (location.pathname.includes('campaign-predefined-params'))
 			return 'campaign-predefined-params';
 		if (location.pathname.includes('regional-settings-params'))
@@ -23,6 +35,15 @@ export default function ConfigurationsPage() {
 		if (location.pathname.includes('knowledge-bases')) return 'knowledge-bases';
 		return 'client-configs';
 	};
+
+	useEffect(() => {
+		if (
+			!canManageSettings &&
+			location.pathname.includes('scheduler-predefined-params')
+		) {
+			navigate('/configurations/client-configs', { replace: true });
+		}
+	}, [canManageSettings, location.pathname, navigate]);
 
 	return (
 		<ContentContainer
@@ -60,6 +81,17 @@ export default function ConfigurationsPage() {
 					>
 						Regional
 					</Tabs.Tab>
+					{canManageSettings && (
+						<Tabs.Tab
+							value='scheduler-predefined-params'
+							leftSection={<IconClockHour4 size={16} />}
+							onClick={() =>
+								navigate('/configurations/scheduler-predefined-params')
+							}
+						>
+							Scheduler
+						</Tabs.Tab>
+					)}
 					<Tabs.Tab
 						value='do-not-call'
 						leftSection={<IconPhoneOff size={16} />}

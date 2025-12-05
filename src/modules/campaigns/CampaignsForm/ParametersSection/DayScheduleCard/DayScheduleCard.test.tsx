@@ -137,7 +137,7 @@ describe('DayScheduleCard', () => {
 		renderComponent();
 
 		const mondayRow = screen.getByLabelText(/monday schedule/i);
-		expect(within(mondayRow).getByText('Window: 240 min')).toBeInTheDocument();
+		expect(within(mondayRow).getByText('240 min')).toBeInTheDocument();
 		expect(within(mondayRow).getByText('154 min')).toBeInTheDocument();
 		expect(within(mondayRow).getByText('308 min')).toBeInTheDocument();
 
@@ -210,7 +210,7 @@ describe('DayScheduleCard', () => {
 			);
 		});
 
-		expect(within(mondayRow).getByText('Window: 180 min')).toBeInTheDocument();
+		expect(within(mondayRow).getByText('180 min')).toBeInTheDocument();
 		expect(within(mondayRow).getByText('116 min')).toBeInTheDocument();
 		// Per-agent rounds to 116, team total is 231
 		expect(within(mondayRow).getByText('231 min')).toBeInTheDocument();

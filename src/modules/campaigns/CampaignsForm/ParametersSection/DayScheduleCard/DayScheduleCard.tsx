@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Box, Group, Switch, Text, Flex, Stack } from '@mantine/core';
+import { Box, Switch, Text, Table, Group } from '@mantine/core';
 import { TimePicker } from '@mantine/dates';
-import { IconClockOff } from '@tabler/icons-react';
+import { IconClock, IconClockOff } from '@tabler/icons-react';
 import styles from './DayScheduleCard.module.css';
 import { useSchedulerFormContext } from '../SchedulerCard/schedulerFormProvider';
 import {
@@ -16,6 +16,28 @@ const formatDayName = (day?: string | null) => {
 	return day ? day.charAt(0).toUpperCase() + day.slice(1) : 'Day';
 };
 
+type TimeValue = string | Date | null;
+
+const normalizeTimeValue = (value: TimeValue) => {
+	let dateObj: Date | null = null;
+
+	if (typeof value === 'string') {
+		const parsed = new Date(value);
+		dateObj = !isNaN(parsed.getTime()) ? parsed : null;
+	} else if (value instanceof Date) {
+		dateObj = value;
+	} else if (value && typeof value === 'object' && 'getHours' in value) {
+		dateObj = value as Date;
+	}
+
+	if (dateObj) {
+		dateObj.setMinutes(0, 0, 0);
+		return `${dateObj.getHours().toString().padStart(2, '0')}:00:00`;
+	}
+
+	return value;
+};
+
 export const DayScheduleCard: React.FC = () => {
 	const form = useSchedulerFormContext();
 	const dayConfigs = (form.values.dayConfigs || []) as MaybeDayConfig[];
@@ -23,206 +45,179 @@ export const DayScheduleCard: React.FC = () => {
 	const [selectedDay, setSelectedDay] = useState<string | null>(null);
 
 	return (
-		<Stack gap='xs'>
-			{dayConfigs?.map((day, index) => {
-				const isActive = day.isActive;
-				const isSelected = selectedDay === day.dayOfWeek;
-				const dayMinutes = calculateDayMinutes(day);
-				const perAgentMinutes = calculatePerAgentTalkMinutes(dayMinutes);
-				const teamMinutes = calculateTeamTalkMinutes(
-					perAgentMinutes,
-					humanEquivalent
-				);
+		<Table
+			highlightOnHover
+			striped={false}
+			withColumnBorders={false}
+			withRowBorders={false}
+			horizontalSpacing='sm'
+			verticalSpacing='xs'
+			classNames={{ table: styles.tableRoot, thead: styles.tableHead }}
+		>
+			<Table.Thead>
+				<Table.Tr>
+					<Table.Th className={styles.headerCell}>Day</Table.Th>
+					<Table.Th className={styles.headerCell}>Status</Table.Th>
+					<Table.Th className={styles.headerCell}>Hours</Table.Th>
+					<Table.Th className={styles.headerCell}>Agent</Table.Th>
+					<Table.Th className={styles.headerCell}>Team</Table.Th>
+				</Table.Tr>
+			</Table.Thead>
+			<Table.Tbody>
+				{dayConfigs?.map((day, index) => {
+					const isActive = day.isActive;
+					const isSelected = selectedDay === day.dayOfWeek;
+					const dayMinutes = calculateDayMinutes(day);
+					const perAgentMinutes = calculatePerAgentTalkMinutes(dayMinutes);
+					const teamMinutes = calculateTeamTalkMinutes(
+						perAgentMinutes,
+						humanEquivalent
+					);
 
-				return (
-					<Box
-						key={index}
-						className={`${styles.dayRow} ${
-							isSelected ? styles.highlighted : ''
-						} ${styles.selectable}`}
-						role='button'
-						tabIndex={0}
-						aria-pressed={isSelected}
-						aria-label={`${formatDayName(day.dayOfWeek)} schedule`}
-						onClick={() => {
-							setSelectedDay(day.dayOfWeek ?? null);
-						}}
-						onKeyDown={(e) => {
-							if (e.key === 'Enter' || e.key === ' ') {
-								e.preventDefault();
-								setSelectedDay(isSelected ? null : (day.dayOfWeek ?? null));
-							}
-						}}
-					>
-						<Flex
-							justify='space-between'
-							align='center'
-							className={styles.dayContent}
-							direction={{ base: 'column', sm: 'row' }}
-							gap='sm'
+					const handleTimeChange = (value: TimeValue, fieldPath: string) => {
+						form.setFieldValue(fieldPath, normalizeTimeValue(value));
+					};
+
+					const toggleSelection = () => {
+						setSelectedDay((prev) =>
+							prev === day.dayOfWeek ? null : (day.dayOfWeek ?? null)
+						);
+					};
+
+					return (
+						<Table.Tr
+							key={index}
+							className={`${styles.row} ${isSelected ? styles.rowSelected : ''} ${!isActive ? styles.rowInactive : ''}`}
+							tabIndex={0}
+							role='button'
+							aria-pressed={isSelected}
+							aria-label={`${formatDayName(day.dayOfWeek)} schedule`}
+							onClick={toggleSelection}
+							onKeyDown={(e) => {
+								if (e.key === 'Enter' || e.key === ' ') {
+									e.preventDefault();
+									toggleSelection();
+								}
+							}}
 						>
-							<Group gap='xs' align='center' className={styles.dayHeader}>
-								<div
-									onClick={(e) => {
-										e.stopPropagation();
-									}}
-								>
-									<Switch
-										className={styles.daySwitch}
-										size='sm'
-										checked={isActive}
-										aria-label={`Toggle ${formatDayName(day.dayOfWeek)} active`}
-										onChange={(e) => {
-											e.stopPropagation();
-
-											form.setFieldValue(
-												`dayConfigs.${index}.isActive`,
-												!isActive
-											);
-										}}
+							<Table.Td>
+								<Group gap='xs' align='center' wrap='nowrap'>
+									<Box onClick={(e) => e.stopPropagation()}>
+										<Switch
+											size='xs'
+											checked={isActive}
+											aria-label={`Toggle ${formatDayName(day.dayOfWeek)} active`}
+											onChange={(e) => {
+												e.stopPropagation();
+												form.setFieldValue(
+													`dayConfigs.${index}.isActive`,
+													!isActive
+												);
+											}}
+										/>
+									</Box>
+									<div className={styles.dayCell}>
+										<Text
+											className={`${styles.dayName} ${!isActive ? styles.dayNameInactive : ''}`}
+										>
+											{formatDayName(day.dayOfWeek)}
+										</Text>
+										<Text className={styles.daySubtle}>
+											{isActive ? 'Open window' : 'Paused'}
+										</Text>
+									</div>
+									<div
+										className={`${styles.statusDot} ${isActive ? styles.statusDotActive : styles.statusDotInactive}`}
 									/>
-								</div>
-								<div className={styles.dayInfo}>
-									<Text className={styles.dayName} size='sm'>
-										{formatDayName(day.dayOfWeek)}
-									</Text>
-									<Text className={styles.dayWindow} size='xs'>
-										{isActive
-											? `Window: ${formatMinutesLabel(dayMinutes)}`
-											: 'No calling window'}
-									</Text>
-								</div>
-							</Group>
+								</Group>
+							</Table.Td>
 
-							{isActive ? (
-								<div className={styles.timeSection}>
-									<div className={styles.timeInputsContainer}>
-										<div className={styles.timeInputWrapper}>
-											<Text className={styles.timeLabel} size='xs'>
-												Start
-											</Text>
-											<div onClick={(e) => e.stopPropagation()}>
-												<TimePicker
-													size='xs'
-													aria-label='Start time'
-													withDropdown
-													format='12h'
-													variant='filled'
-													value={day.startHour ?? undefined}
-													minutesStep={30}
-													classNames={{ input: styles.timeInput }}
-													onChange={(value) => {
-														let dateObj: Date | null = null;
-														if (typeof value === 'string') {
-															const parsed = new Date(value);
-															dateObj = !isNaN(parsed.getTime())
-																? parsed
-																: null;
-														} else if (
-															value &&
-															typeof value === 'object' &&
-															'getHours' in value
-														) {
-															dateObj = value as Date;
-														}
-														if (dateObj) {
-															dateObj.setMinutes(0, 0, 0);
-															const hourStr = `${dateObj
-																.getHours()
-																.toString()
-																.padStart(2, '0')}:00:00`;
-															form.setFieldValue(
-																`dayConfigs.${index}.startHour`,
-																hourStr
-															);
-														} else {
-															form.setFieldValue(
-																`dayConfigs.${index}.startHour`,
-																value
-															);
-														}
-													}}
-												/>
-											</div>
-										</div>
-										<div className={styles.timeInputWrapper}>
-											<Text className={styles.timeLabel} size='xs'>
-												End
-											</Text>
-											<div onClick={(e) => e.stopPropagation()}>
-												<TimePicker
-													size='xs'
-													aria-label='End time'
-													format='12h'
-													withDropdown
-													variant='filled'
-													value={day.endHour ?? undefined}
-													minutesStep={30}
-													classNames={{ input: styles.timeInput }}
-													onChange={(value) => {
-														let dateObj: Date | null = null;
-														if (typeof value === 'string') {
-															const parsed = new Date(value);
-															dateObj = !isNaN(parsed.getTime())
-																? parsed
-																: null;
-														} else if (
-															value &&
-															typeof value === 'object' &&
-															'getHours' in value
-														) {
-															dateObj = value as Date;
-														}
-														if (dateObj) {
-															dateObj.setMinutes(0, 0, 0);
-															const hourStr = `${dateObj
-																.getHours()
-																.toString()
-																.padStart(2, '0')}:00:00`;
-															form.setFieldValue(
-																`dayConfigs.${index}.endHour`,
-																hourStr
-															);
-														} else {
-															form.setFieldValue(
-																`dayConfigs.${index}.endHour`,
-																value
-															);
-														}
-													}}
-												/>
-											</div>
-										</div>
+							<Table.Td>
+								{isActive ? (
+									<div className={styles.windowPill}>
+										<IconClock size={12} className={styles.windowIcon} />
+										<Text className={styles.windowText}>
+											{formatMinutesLabel(dayMinutes)}
+										</Text>
 									</div>
-									<div className={styles.metricsContainer}>
-										<div className={styles.metricItem}>
-											<Text className={styles.metricLabel} size='xs'>
-												Per agent
-											</Text>
-											<Text className={styles.metricsValue} size='sm'>
-												{formatMinutesLabel(perAgentMinutes)}
-											</Text>
-										</div>
-										<div className={styles.metricItem}>
-											<Text className={styles.metricLabel} size='xs'>
-												Team total
-											</Text>
-											<Text className={styles.metricsValue} size='sm'>
-												{formatMinutesLabel(teamMinutes)}
-											</Text>
-										</div>
+								) : (
+									<div className={styles.closedLabel}>
+										<IconClockOff size={12} />
+										<Text size='xs'>Closed</Text>
 									</div>
+								)}
+							</Table.Td>
+
+							<Table.Td>
+								{isActive ? (
+									<Group gap='xs' wrap='nowrap' className={styles.timeRange}>
+										<Box onClick={(e) => e.stopPropagation()}>
+											<TimePicker
+												size='xs'
+												aria-label='Start time'
+												withDropdown
+												format='12h'
+												variant='filled'
+												value={day.startHour ?? undefined}
+												minutesStep={30}
+												className={styles.timePicker}
+												onChange={(value) =>
+													handleTimeChange(
+														value,
+														`dayConfigs.${index}.startHour`
+													)
+												}
+											/>
+										</Box>
+										<Text className={styles.timeSeparator}>→</Text>
+										<Box onClick={(e) => e.stopPropagation()}>
+											<TimePicker
+												size='xs'
+												aria-label='End time'
+												format='12h'
+												withDropdown
+												variant='filled'
+												value={day.endHour ?? undefined}
+												minutesStep={30}
+												className={styles.timePicker}
+												onChange={(value) =>
+													handleTimeChange(value, `dayConfigs.${index}.endHour`)
+												}
+											/>
+										</Box>
+									</Group>
+								) : (
+									<Text className={styles.inactiveHint}>
+										No hours configured
+									</Text>
+								)}
+							</Table.Td>
+
+							<Table.Td>
+								<div className={styles.metricCell}>
+									<Text className={styles.metricLabel}>Per agent</Text>
+									<Text
+										className={`${styles.metricValue} ${!isActive ? styles.metricValueInactive : ''}`}
+									>
+										{formatMinutesLabel(perAgentMinutes)}
+									</Text>
 								</div>
-							) : (
-								<Box className={styles.closedBadge}>
-									<IconClockOff size={16} />
-									<Text size='sm'>Closed</Text>
-								</Box>
-							)}
-						</Flex>
-					</Box>
-				);
-			})}
-		</Stack>
+							</Table.Td>
+
+							<Table.Td>
+								<div className={styles.metricCell}>
+									<Text className={styles.metricLabel}>Team total</Text>
+									<Text
+										className={`${styles.metricValue} ${!isActive ? styles.metricValueInactive : ''}`}
+									>
+										{formatMinutesLabel(teamMinutes)}
+									</Text>
+								</div>
+							</Table.Td>
+						</Table.Tr>
+					);
+				})}
+			</Table.Tbody>
+		</Table>
 	);
 };

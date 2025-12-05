@@ -1,174 +1,158 @@
-.dayRow {
-	padding: var(--mantine-spacing-sm);
-	border-radius: var(--mantine-radius-sm);
+/* Compact, modern schedule table */
+.tableRoot {
+	background-color: var(--mantine-color-white);
 	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	overflow: hidden;
+}
+
+.tableHead {
+	background-color: var(--mantine-color-gray-0);
+}
+
+.headerCell {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	font-weight: 600;
+}
+
+.row {
 	background-color: var(--mantine-color-white);
 	transition:
-		background-color 150ms ease,
-		border-color 150ms ease;
-	display: flex;
-	flex-direction: column;
-	gap: var(--mantine-spacing-xs);
-	width: 100%;
+		background-color 140ms ease,
+		transform 140ms ease;
+	cursor: pointer;
 }
 
-.highlighted {
+.row:hover {
+	background-color: var(--mantine-color-gray-0);
+}
+
+.row:focus-visible {
+	outline: 2px solid var(--mantine-color-blue-2);
+	outline-offset: -2px;
+}
+
+.rowSelected {
 	background-color: var(--mantine-color-blue-0);
-	border-color: var(--mantine-color-blue-4);
 }
 
-.daySwitch {
-	margin: 0;
+.rowInactive {
+	opacity: 0.7;
 }
 
-.dayContent {
-	width: 100%;
-	gap: var(--mantine-spacing-xs);
-	align-items: center;
-}
-
-.dayHeader {
-	min-width: 120px;
-	justify-content: center;
-}
-
-.dayInfo {
+.dayCell {
 	display: flex;
 	flex-direction: column;
-	gap: 0;
-	justify-content: center;
-	align-items: center;
+	gap: 2px;
 }
 
 .dayName {
 	font-weight: 600;
-	color: var(--mantine-color-text);
-	min-width: 90px;
-}
-
-.dayWindow {
-	color: var(--mantine-color-gray-6);
-	line-height: 1.3;
-}
-
-.timeSection {
-	display: flex;
-	align-items: center;
-	gap: var(--mantine-spacing-sm);
-	flex: 1;
-	justify-content: center;
-	width: 100%;
-}
-
-.timeInputsContainer {
-	display: flex;
-	gap: var(--mantine-spacing-xs);
-	align-items: center;
-	flex-wrap: wrap;
-	justify-content: center;
-}
-
-.timeInputWrapper {
-	display: flex;
-	flex-direction: column;
-	gap: 1px;
-	align-items: flex-start;
-}
-
-.timeLabel {
-	font-weight: 500;
-	font-size: 10px;
-	color: var(--mantine-color-gray-6);
-	text-transform: uppercase;
-	letter-spacing: 0.03em;
-}
-
-.timeInput {
-	width: 88px;
-}
-
-.metricsContainer {
-	display: flex;
-	gap: var(--mantine-spacing-xs);
-	align-items: center;
-	flex-wrap: wrap;
-	justify-content: center;
-}
-
-.metricItem {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 2px;
-	padding: 6px 10px;
-	background-color: var(--mantine-color-gray-0);
-	border-radius: var(--mantine-radius-sm);
-	min-width: 110px;
-}
-
-.metricLabel {
-	font-size: 10px;
-	color: var(--mantine-color-gray-7);
-	text-transform: uppercase;
-	letter-spacing: 0.03em;
-}
-
-.metricsValue {
 	font-size: var(--mantine-font-size-sm);
-	font-weight: 600;
-	color: var(--mantine-color-blue-7);
+	color: var(--mantine-color-dark-6);
 }
 
-.closedBadge {
-	display: flex;
-	align-items: center;
-	gap: 6px;
-	padding: 6px 12px;
-	background-color: var(--mantine-color-gray-0);
-	border-radius: var(--mantine-radius-sm);
+.dayNameInactive {
 	color: var(--mantine-color-gray-5);
 }
 
-.selectable {
-	cursor: pointer;
-	transition:
-		background-color 0.2s ease,
-		border-color 0.2s ease;
+.daySubtle {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
 }
 
-.selectable:focus-visible {
-	outline: 2px solid var(--mantine-color-blue-2);
-	outline-offset: 1px;
+.statusDot {
+	width: 8px;
+	height: 8px;
+	border-radius: 999px;
+	margin-left: auto;
 }
 
-.selectable:hover {
-	background-color: var(--mantine-color-gray-0);
-	border-color: var(--mantine-color-gray-3);
+.statusDotActive {
+	background-color: var(--mantine-color-green-5);
 }
 
-.dayRow:focus-within {
-	border-color: var(--mantine-color-blue-4);
+.statusDotInactive {
+	background-color: var(--mantine-color-gray-4);
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-	.dayHeader {
-		min-width: unset;
-	}
+.windowPill {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 10px;
+	border-radius: 999px;
+	background-color: var(--mantine-color-blue-0);
+	border: 1px solid var(--mantine-color-blue-2);
+}
 
-	.timeSection {
-		flex-direction: column;
-		align-items: center;
-		gap: var(--mantine-spacing-xs);
-	}
+.windowIcon {
+	color: var(--mantine-color-blue-5);
+}
 
-	.timeInputsContainer {
-		flex-direction: row;
-		width: 100%;
-	}
+.windowText {
+	font-size: 10px;
+	font-weight: 700;
+	color: var(--mantine-color-blue-6);
+}
 
-	.metricsContainer {
-		flex-direction: row;
-		width: 100%;
-	}
+.closedLabel {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	color: var(--mantine-color-gray-6);
+	font-size: var(--mantine-font-size-xs);
+}
+
+.timeRange {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.timePicker {
+	width: 140px;
+}
+
+.timePicker input {
+	height: 30px;
+	font-size: var(--mantine-font-size-xs);
+}
+
+.timeSeparator {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+	font-weight: 600;
+}
+
+.inactiveHint {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-5);
+}
+
+.metricCell {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.metricLabel {
+	font-size: 9px;
+	color: var(--mantine-color-gray-6);
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	font-weight: 600;
+}
+
+.metricValue {
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 700;
+	color: var(--mantine-color-blue-6);
+}
+
+.metricValueInactive {
+	color: var(--mantine-color-gray-5);
 }

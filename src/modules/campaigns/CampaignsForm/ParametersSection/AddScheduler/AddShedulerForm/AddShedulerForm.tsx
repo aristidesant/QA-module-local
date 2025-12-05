@@ -20,6 +20,7 @@ import type { DayConfig } from '~/api/campaignsApi';
 import { useGetClientConfig } from '~/queries/clientConfigQueries';
 import { useCreateCampaignSchedule } from '~/queries/campaignsQueries';
 import classes from './AddShedulerForm.module.css';
+import type { PredefinedScheduleConfig } from '~/models/PredefinedScheduleConfig';
 
 interface AddShedulerFormProps {
 	onSuccess?: () => void;
@@ -32,11 +33,6 @@ interface PredefinedScheduleFormValues {
 	description: string;
 	humanEquivalent: number | '';
 	predefinedScheduleId: string | null;
-}
-
-interface PredefinedScheduleConfig {
-	name: string;
-	dayConfigs: DayConfig[];
 }
 
 const dayLabelMap: Record<DayConfig['dayOfWeek'], string> = {
@@ -65,6 +61,35 @@ const humanEquivalentMarks = [
 	{ value: 100, label: '100' },
 	{ value: 150, label: '150' },
 ];
+
+const DEFAULT_START_HOUR = '08:00';
+const DEFAULT_END_HOUR = '17:00';
+
+const normalizeDayConfigs = (dayConfigs: DayConfig[]): DayConfig[] => {
+	return allDaysOfWeek.map((dayOfWeek, index) => {
+		const existing = dayConfigs.find((day) => day.dayOfWeek === dayOfWeek);
+		const isActive = existing?.isActive ?? false;
+		const startHour =
+			existing?.startHour && existing.startHour.trim()
+				? existing.startHour
+				: DEFAULT_START_HOUR;
+		const endHour =
+			existing?.endHour && existing.endHour.trim()
+				? existing.endHour
+				: DEFAULT_END_HOUR;
+
+		return {
+			dayOfWeek,
+			dayOrder: existing?.dayOrder ?? index + 1,
+			isActive,
+			dailyCallLimit: existing?.dailyCallLimit ?? 0,
+			dayCapacity: existing?.dayCapacity,
+			hourConfigs: existing?.hourConfigs ?? [],
+			startHour,
+			endHour,
+		};
+	});
+};
 
 const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 	onSuccess,
@@ -126,18 +151,24 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 		);
 	}, [form.values.predefinedScheduleId, predefinedSchedules]);
 
+	const normalizedDayConfigs = useMemo<DayConfig[]>(() => {
+		if (!selectedSchedule?.dayConfigs) return [];
+
+		return normalizeDayConfigs(selectedSchedule.dayConfigs);
+	}, [selectedSchedule?.dayConfigs]);
+
 	const dayConfigMap = useMemo(() => {
 		const map = new Map<DayConfig['dayOfWeek'], DayConfig>();
-		selectedSchedule?.dayConfigs?.forEach((day) => {
+		normalizedDayConfigs.forEach((day) => {
 			map.set(day.dayOfWeek, day);
 		});
 		return map;
-	}, [selectedSchedule?.dayConfigs]);
+	}, [normalizedDayConfigs]);
 
 	const getDayStatus = useCallback(
 		(dayOfWeek: DayConfig['dayOfWeek']) => {
 			const dayConfig = dayConfigMap.get(dayOfWeek);
-			if (!dayConfig) {
+			if (!dayConfig || !dayConfig.isActive) {
 				return { isActive: false, times: 'Off' };
 			}
 			const times =
@@ -164,15 +195,9 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 			return;
 		}
 
-		// Get the selected predefined schedule's dayConfigs
-		let dayConfigs: DayConfig[] = [];
-		if (values.predefinedScheduleId !== null) {
-			const selectedSchedule =
-				predefinedSchedules[parseInt(values.predefinedScheduleId, 10)];
-			if (selectedSchedule?.dayConfigs) {
-				dayConfigs = selectedSchedule.dayConfigs;
-			}
-		}
+		// Get the selected predefined schedule's dayConfigs and ensure all days exist
+		const dayConfigs =
+			values.predefinedScheduleId !== null ? normalizedDayConfigs : [];
 
 		// Validate that we have dayConfigs
 		if (dayConfigs.length === 0) {

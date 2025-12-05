@@ -1,123 +1,154 @@
 .container {
+	position: relative;
 	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	width: 100%;
-	gap: 12px;
-	padding: 16px;
-	background: var(--mantine-color-gray-0);
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+	padding: var(--mantine-spacing-sm);
+	background: var(--mantine-color-white);
 	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: var(--mantine-radius-md);
-	transition: border-color 150ms ease;
+	border-radius: var(--mantine-radius-sm);
+	transition:
+		border-color 120ms ease,
+		transform 120ms ease;
+}
+
+.container::before {
+	content: '';
+	position: absolute;
+	inset: var(--mantine-spacing-xs);
+	border-radius: calc(var(--mantine-radius-sm) - 2px);
+	border: 1px dashed var(--mantine-color-gray-2);
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 120ms ease;
 }
 
 .container:hover {
-	border-color: var(--mantine-color-gray-3);
+	border-color: var(--mantine-color-blue-2);
+	transform: translateY(-1px);
 }
 
-.mainSection {
-	display: flex;
-	flex-direction: column;
-	gap: 14px;
-	flex: 1;
-	min-width: 0;
+.container:hover::before {
+	opacity: 1;
 }
 
 .headerRow {
 	display: flex;
-	align-items: flex-start;
-	gap: 12px;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-sm);
 }
 
-.switchTrack {
-	cursor: pointer;
-}
-
-.titleSection {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-	flex: 1;
-	min-width: 0;
-}
-
-.titleRow {
+.titleGroup {
 	display: flex;
 	align-items: center;
-	gap: 10px;
+	gap: var(--mantine-spacing-xs);
+	min-width: 0;
+	flex: 1;
+}
+
+.titleText {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
 	min-width: 0;
 }
 
 .scheduleName {
-	font-size: var(--mantine-font-size-md);
-	font-weight: 600;
-	color: var(--mantine-color-dark-8);
-	line-height: 1.3;
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 700;
+	color: var(--mantine-color-dark-7);
+	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	white-space: nowrap;
+	line-height: 1.2;
+}
+
+.metaRow {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	min-height: 20px;
 }
 
 .statusBadge {
-	display: inline-flex;
-	align-items: center;
-	padding: 3px 10px;
-	border-radius: 4px;
-	font-size: 10px;
-	font-weight: 700;
 	text-transform: uppercase;
-	letter-spacing: 0.05em;
-	line-height: 1;
+	letter-spacing: 0.04em;
+	font-weight: 700;
+}
+
+.metaDivider {
+	width: 4px;
+	height: 4px;
+	border-radius: 50%;
+	background: var(--mantine-color-gray-5);
 	flex-shrink: 0;
 }
 
-.statusActive {
-	background-color: var(--mantine-color-teal-0);
-	color: var(--mantine-color-teal-7);
-	border: 1px solid var(--mantine-color-teal-2);
-}
-
-.statusInactive {
-	background-color: var(--mantine-color-gray-1);
-	color: var(--mantine-color-gray-7);
-	border: 1px solid var(--mantine-color-gray-3);
-}
-
-.description {
+.metaText {
 	font-size: var(--mantine-font-size-xs);
-	color: var(--mantine-color-dimmed);
-	line-height: 1.4;
+	color: var(--mantine-color-gray-6);
+}
+
+.actions {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex-shrink: 0;
 }
 
 .metricsRow {
-	display: flex;
-	align-items: center;
-	gap: 0;
-	padding: 12px;
-	background: var(--mantine-color-white);
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+	gap: var(--mantine-spacing-xs);
+	padding: 6px;
+	background: var(--mantine-color-gray-0);
 	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: 6px;
+	border-radius: var(--mantine-radius-sm);
 }
 
 .metric {
 	display: flex;
-	flex-direction: column;
 	align-items: center;
-	gap: 4px;
-	padding: 0 14px;
+	gap: 8px;
 	min-width: 0;
-	flex: 1;
+	padding: 6px;
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: calc(var(--mantine-radius-sm) - 2px);
+	background: var(--mantine-color-white);
+	transition:
+		border-color 120ms ease,
+		transform 120ms ease;
+}
+
+.metric:hover {
+	border-color: var(--mantine-color-blue-2);
+	transform: translateY(-1px);
+}
+
+.metricIcon {
+	width: 26px;
+	height: 26px;
+	border-radius: 8px;
+	background: var(--mantine-color-blue-0);
+	display: grid;
+	place-items: center;
+	color: var(--mantine-color-blue-6);
+	flex-shrink: 0;
+}
+
+.metricCopy {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
 }
 
 .metricValue {
-	font-size: var(--mantine-font-size-lg);
+	font-size: var(--mantine-font-size-sm);
 	font-weight: 700;
-	color: var(--mantine-color-dark-8);
-	line-height: 1;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	max-width: 100%;
+	color: var(--mantine-color-dark-7);
+	line-height: 1.1;
 }
 
 .metricLabel {
@@ -125,163 +156,46 @@
 	font-weight: 600;
 	color: var(--mantine-color-gray-6);
 	text-transform: uppercase;
-	letter-spacing: 0.06em;
-	line-height: 1;
-	white-space: nowrap;
-}
-
-.metricDivider {
-	width: 1px;
-	height: 32px;
-	background-color: var(--mantine-color-gray-2);
-	flex-shrink: 0;
-}
-
-.slotsSection {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	padding: 10px 12px;
-	background: var(--mantine-color-blue-0);
-	border: 1px solid var(--mantine-color-blue-1);
-	border-radius: 6px;
-}
-
-.slotsHeader {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 8px;
-}
-
-.slotsLabel {
-	font-size: 11px;
-	font-weight: 700;
-	color: var(--mantine-color-blue-7);
-	text-transform: uppercase;
 	letter-spacing: 0.05em;
 	line-height: 1;
 }
 
-.slotsCount {
-	font-size: 10px;
-	font-weight: 600;
-	color: var(--mantine-color-blue-6);
-	padding: 2px 6px;
-	background: var(--mantine-color-blue-1);
-	border-radius: 3px;
-	line-height: 1;
-}
-
-.slotsPreview {
-	font-size: var(--mantine-font-size-xs);
-	color: var(--mantine-color-blue-8);
-	line-height: 1.4;
-	cursor: help;
-}
-
-.tooltipContent {
+.hoverDropdown {
+	padding: var(--mantine-spacing-sm);
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
-	font-size: var(--mantine-font-size-xs);
-	line-height: 1.5;
-}
-
-.actionsSection {
-	display: flex;
-	align-items: flex-start;
-	padding-top: 2px;
-}
-
-.menuButton {
-	transition: background-color 150ms ease;
-}
-
-.menuButton:hover {
-	background-color: var(--mantine-color-gray-1);
-}
-
-.detailsPanel {
-	margin-top: 12px;
-	padding: 16px;
+	gap: var(--mantine-spacing-xs);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-sm);
 	background: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: var(--mantine-radius-md);
 }
 
-.dayConfigsGrid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-	gap: 12px;
-}
-
-.dayConfigCard {
+.hoverItem {
 	display: flex;
-	flex-direction: column;
-	gap: 10px;
-	padding: 14px;
-	background: var(--mantine-color-gray-0);
-	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: 6px;
-}
-
-.dayConfigHeader {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-	padding-bottom: 8px;
-	border-bottom: 1px solid var(--mantine-color-gray-2);
-}
-
-.dayName {
-	font-size: var(--mantine-font-size-sm);
-	font-weight: 700;
-	color: var(--mantine-color-dark-7);
-	text-transform: uppercase;
-	letter-spacing: 0.03em;
-	line-height: 1;
-}
-
-.dayTime {
-	font-size: var(--mantine-font-size-xs);
-	font-weight: 500;
-	color: var(--mantine-color-gray-7);
-	line-height: 1.3;
-}
-
-.dayLimit {
-	font-size: 11px;
-	font-weight: 600;
-	color: var(--mantine-color-gray-6);
-	line-height: 1.3;
-}
-
-.hourConfigs {
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
-}
-
-.hourConfig {
-	display: flex;
-	align-items: center;
 	justify-content: space-between;
-	padding: 6px 8px;
-	background: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: 4px;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+	width: 100%;
 }
 
-.hourTime {
-	font-size: var(--mantine-font-size-xs);
-	font-weight: 600;
+.hoverText {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.hoverDayName {
+	font-weight: 700;
 	color: var(--mantine-color-dark-6);
-	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-.hourCapacity {
+.hoverSubText {
 	font-size: var(--mantine-font-size-xs);
-	font-weight: 500;
-	color: var(--mantine-color-gray-7);
+	color: var(--mantine-color-gray-6);
+}
+
+.hoverBadge {
+	font-weight: 700;
+	letter-spacing: 0.04em;
 }

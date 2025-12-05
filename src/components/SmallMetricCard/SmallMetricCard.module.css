@@ -1,0 +1,136 @@
+/* Base metric card */
+.metricCard {
+	--metric-accent: var(--mantine-color-blue-6);
+	--metric-accent-soft: var(--mantine-color-blue-0);
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	background: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	transition:
+		border-color 120ms ease,
+		background-color 120ms ease,
+		transform 120ms ease;
+	cursor: default;
+}
+
+.metricCard:hover {
+	border-color: var(--metric-accent);
+	background-color: var(--mantine-color-gray-0);
+	transform: translateY(-1px);
+}
+
+.metricIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+	height: 34px;
+	border-radius: calc(var(--mantine-radius-md) - 2px);
+	background: var(--metric-accent-soft);
+	color: var(--metric-accent);
+	border: 1px solid var(--metric-accent);
+}
+
+.metricBody {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.metricValue {
+	font-size: var(--mantine-font-size-lg);
+	font-weight: 700;
+	color: var(--mantine-color-gray-9);
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+}
+
+.metricLabel {
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 600;
+	color: var(--mantine-color-gray-6);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	line-height: 1.1;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.metricInfo {
+	color: var(--mantine-color-gray-5);
+	opacity: 0;
+	transition:
+		opacity 120ms ease,
+		color 120ms ease;
+}
+
+.metricCard:hover .metricInfo {
+	opacity: 1;
+	color: var(--metric-accent);
+}
+
+.metricCard--violet {
+	--metric-accent: var(--mantine-color-violet-6);
+	--metric-accent-soft: var(--mantine-color-violet-0);
+}
+
+.metricCard--teal {
+	--metric-accent: var(--mantine-color-teal-6);
+	--metric-accent-soft: var(--mantine-color-teal-0);
+}
+
+.metricCard--orange {
+	--metric-accent: var(--mantine-color-orange-6);
+	--metric-accent-soft: var(--mantine-color-orange-0);
+}
+
+.metricCard--blue {
+	--metric-accent: var(--mantine-color-blue-6);
+	--metric-accent-soft: var(--mantine-color-blue-0);
+}
+
+.metricCard--green {
+	--metric-accent: var(--mantine-color-green-6);
+	--metric-accent-soft: var(--mantine-color-green-0);
+}
+
+.metricCard--red {
+	--metric-accent: var(--mantine-color-red-6);
+	--metric-accent-soft: var(--mantine-color-red-0);
+}
+
+.metricCard--pink {
+	--metric-accent: var(--mantine-color-pink-6);
+	--metric-accent-soft: var(--mantine-color-pink-0);
+}
+
+.metricCard--cyan {
+	--metric-accent: var(--mantine-color-cyan-6);
+	--metric-accent-soft: var(--mantine-color-cyan-0);
+}
+
+.metricCard--yellow {
+	--metric-accent: var(--mantine-color-yellow-6);
+	--metric-accent-soft: var(--mantine-color-yellow-0);
+}
+
+.metricCard--gray {
+	--metric-accent: var(--mantine-color-gray-6);
+	--metric-accent-soft: var(--mantine-color-gray-0);
+}
+
+@media (max-width: 48em) {
+	.metricCard {
+		padding: var(--mantine-spacing-xs);
+	}
+
+	.metricLabel {
+		max-width: 18ch;
+	}
+}

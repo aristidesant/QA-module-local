@@ -36,20 +36,12 @@ const ScheduleHoverItem: React.FC<Props> = ({ day }) => {
 	const hours = calcDayHours(day.startHour, day.endHour);
 
 	return (
-		<div
-			style={{
-				display: 'flex',
-				justifyContent: 'space-between',
-				width: '100%',
-				alignItems: 'center',
-				gap: 12,
-			}}
-		>
-			<div style={{ minWidth: 0 }}>
+		<div className={styles.hoverItem}>
+			<div className={styles.hoverText}>
 				<Text size='sm' className={styles.hoverDayName} lineClamp={1}>
 					{dayName}
 				</Text>
-				<Text size='xs' c='dimmed' lineClamp={1}>
+				<Text size='xs' className={styles.hoverSubText} lineClamp={1}>
 					{formatTime(day.startHour)} — {formatTime(day.endHour)}
 				</Text>
 			</div>
@@ -57,7 +49,9 @@ const ScheduleHoverItem: React.FC<Props> = ({ day }) => {
 			<Badge
 				variant='outline'
 				radius='sm'
+				size='sm'
 				leftSection={<IconClock size={14} />}
+				className={styles.hoverBadge}
 			>
 				{hours.toFixed(2)}h
 			</Badge>

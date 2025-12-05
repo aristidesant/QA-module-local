@@ -84,4 +84,33 @@ describe('AddScheduler', () => {
 
 		expect(mockModalsClose).toHaveBeenCalledWith('add-schedule-modal');
 	});
+
+	it('disables the add schedule button when no campaign is selected', () => {
+		// Simulate no selected campaign in the store
+		mockUseCampaignsStore.mockImplementation((selector: any) =>
+			selector({ selectedCampaign: null })
+		);
+
+		renderWithProviders(<AddScheduler />);
+
+		const btn = screen.getByRole('button', { name: /add schedule/i });
+		expect(btn).toBeDisabled();
+	});
+
+	it('uses passed campaignId prop when provided', () => {
+		vi.clearAllMocks();
+		// Provide no selected campaign but pass campaignId prop directly
+		mockUseCampaignsStore.mockImplementation((selector: any) =>
+			selector({ selectedCampaign: null })
+		);
+
+		renderWithProviders(<AddScheduler campaignId={42} />);
+
+		const btn = screen.getByRole('button', { name: /add schedule/i });
+		expect(btn).not.toBeDisabled();
+
+		fireEvent.click(btn);
+		const modalConfig = (mockModalsOpen as unknown as Mock).mock.calls[0][0];
+		expect(modalConfig.children.props.campaignId).toBe(42);
+	});
 });

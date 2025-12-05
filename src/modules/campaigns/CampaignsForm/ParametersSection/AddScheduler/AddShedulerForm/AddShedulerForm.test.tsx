@@ -23,6 +23,7 @@ vi.mock('@mantine/notifications', () => ({
 	notifications: { show: vi.fn() },
 }));
 
+import type { DayConfig } from '~/api/campaignsApi';
 import { useCreateCampaignSchedule } from '~/queries/campaignsQueries';
 import { useGetClientConfig } from '~/queries/clientConfigQueries';
 import { notifications } from '@mantine/notifications';
@@ -203,7 +204,7 @@ describe('AddShedulerForm', () => {
 		expect(mockMutateAsync).not.toHaveBeenCalled();
 	});
 
-	it('shows "No hours" when day config has no start and end', async () => {
+	it('fills default hours when day config has no start and end', async () => {
 		const user = userEvent.setup();
 		(useGetClientConfig as ReturnType<typeof vi.fn>).mockReturnValue({
 			data: {
@@ -234,7 +235,7 @@ describe('AddShedulerForm', () => {
 			expect(screen.getByText('No hours template')).toBeInTheDocument()
 		);
 		await user.click(screen.getByText('No hours template'));
-		expect(screen.getByText('No hours')).toBeInTheDocument();
+		expect(screen.getAllByText('08:00 - 17:00').length).toBeGreaterThan(0);
 	});
 
 	it('prevents submission when campaignId is not provided', async () => {
@@ -266,8 +267,9 @@ describe('AddShedulerForm', () => {
 		expect(mockMutateAsync).not.toHaveBeenCalled();
 	});
 
-	it('shows an error if selected template has no dayConfigs', async () => {
+	it('fills empty templates with inactive days instead of blocking submission', async () => {
 		const user = userEvent.setup();
+		mockMutateAsync.mockResolvedValue({});
 		// Provide a template without dayConfigs
 		(useGetClientConfig as ReturnType<typeof vi.fn>).mockReturnValue({
 			data: { value: JSON.stringify([{ name: 'Empty', dayConfigs: [] }]) },
@@ -284,14 +286,14 @@ describe('AddShedulerForm', () => {
 		await user.type(screen.getByLabelText(/Schedule name/i), 'My schedule');
 		await user.click(screen.getByRole('button', { name: /Create schedule/i }));
 
-		await waitFor(() => {
-			expect(notifications.show).toHaveBeenCalledWith(
-				expect.objectContaining({
-					title: 'Error',
-					message: 'Please select a predefined schedule',
-				})
-			);
-		});
+		await waitFor(() => expect(mockMutateAsync).toHaveBeenCalled());
+		const payload = mockMutateAsync.mock.calls[0][0];
+		const dayConfigs = (payload.data.dayConfigs || []) as DayConfig[];
+		expect(dayConfigs).toHaveLength(7);
+		expect(dayConfigs.every((day) => day.dayOfWeek && day.hourConfigs)).toBe(
+			true
+		);
+		expect(dayConfigs.filter((day) => day.isActive).length).toBe(0);
 	});
 
 	it('shows loading state when mutation is pending', () => {
@@ -369,6 +371,105 @@ describe('AddShedulerForm', () => {
 			expect.objectContaining({ title: 'Success' })
 		);
 		expect(mockOnSuccess).toHaveBeenCalled();
+	});
+
+	it('adds missing days as inactive dayConfigs before submission', async () => {
+		const user = userEvent.setup();
+		mockMutateAsync.mockResolvedValue({});
+		renderWithProviders(
+			<AddShedulerForm onSuccess={mockOnSuccess} campaignId={'789'} />
+		);
+
+		const select = screen.getByPlaceholderText(
+			'Select days and hours configuration'
+		);
+		await user.click(select);
+		await waitFor(() =>
+			expect(screen.getByText('Standard Business Hours')).toBeInTheDocument()
+		);
+		await user.click(screen.getByText('Standard Business Hours'));
+
+		await user.type(screen.getByLabelText(/Schedule name/i), 'Full week');
+		await user.type(
+			screen.getByPlaceholderText('e.g. Monday to Friday from 08:00 to 17:00'),
+			'Description'
+		);
+		await user.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+		await waitFor(() => expect(mockMutateAsync).toHaveBeenCalled());
+
+		const payload = mockMutateAsync.mock.calls[0][0];
+		const dayConfigs = (payload.data.dayConfigs || []) as DayConfig[];
+		expect(dayConfigs).toHaveLength(7);
+		const wednesday = dayConfigs.find((day) => day.dayOfWeek === 'wednesday');
+		expect(wednesday).toMatchObject({
+			isActive: false,
+			dailyCallLimit: 0,
+		});
+		const monday = dayConfigs.find((day) => day.dayOfWeek === 'monday');
+		expect(monday?.isActive).toBe(true);
+	});
+
+	it('keeps provided hours for inactive day configs on submission', async () => {
+		const user = userEvent.setup();
+		mockMutateAsync.mockResolvedValue({});
+		(useGetClientConfig as ReturnType<typeof vi.fn>).mockReturnValue({
+			data: {
+				value: JSON.stringify([
+					{
+						name: 'Mixed activity',
+						dayConfigs: [
+							{
+								dayOfWeek: 'monday',
+								isActive: true,
+								dailyCallLimit: 5,
+								startHour: '08:00',
+								endHour: '12:00',
+								hourConfigs: [],
+							},
+							{
+								dayOfWeek: 'saturday',
+								isActive: false,
+								dailyCallLimit: 0,
+								startHour: '09:00',
+								endHour: '18:00',
+								hourConfigs: [],
+							},
+						],
+					},
+				]),
+			},
+			isLoading: false,
+		});
+
+		renderWithProviders(
+			<AddShedulerForm onSuccess={mockOnSuccess} campaignId={'321'} />
+		);
+
+		const select = screen.getByPlaceholderText(
+			'Select days and hours configuration'
+		);
+		await user.click(select);
+		await waitFor(() =>
+			expect(screen.getByText('Mixed activity')).toBeInTheDocument()
+		);
+		await user.click(screen.getByText('Mixed activity'));
+
+		await user.type(
+			screen.getByLabelText(/Schedule name/i),
+			'Reset inactive hours'
+		);
+		await user.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+		await waitFor(() => expect(mockMutateAsync).toHaveBeenCalled());
+		const payload = mockMutateAsync.mock.calls[0][0];
+		const dayConfigs = (payload.data.dayConfigs || []) as DayConfig[];
+		const saturday = dayConfigs.find((day) => day.dayOfWeek === 'saturday');
+		expect(saturday).toMatchObject({
+			isActive: false,
+			startHour: '09:00',
+			endHour: '18:00',
+		});
 	});
 
 	it('shows API error message from server when mutation fails', async () => {

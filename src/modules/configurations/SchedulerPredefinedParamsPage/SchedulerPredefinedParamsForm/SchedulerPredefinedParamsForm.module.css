@@ -1,0 +1,110 @@
+.form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+}
+
+.sectionHeader {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.sectionTitle {
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--mantine-color-dark-7);
+}
+
+.sectionDescription {
+	font-size: 12px;
+	color: var(--mantine-color-dimmed);
+	max-width: 520px;
+}
+
+.daysHeader {
+	display: grid;
+	grid-template-columns: 1.4fr 1fr 1fr 1fr;
+	align-items: center;
+	padding: 0 var(--mantine-spacing-xs);
+	color: var(--mantine-color-dimmed);
+}
+
+.daysGrid {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.dayCard {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-lg);
+	padding: var(--mantine-spacing-xs);
+	background: var(--mantine-color-white);
+	display: grid;
+	grid-template-columns: 1.4fr 1fr 1fr 1fr;
+	align-items: center;
+	column-gap: var(--mantine-spacing-xs);
+	transition:
+		border-color 120ms ease,
+		background-color 120ms ease;
+}
+
+.dayCardActive {
+	border-color: var(--mantine-color-blue-5);
+	background: var(--mantine-color-blue-0);
+}
+
+.dayTitleGroup {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.dayStatus {
+	color: var(--mantine-color-dimmed);
+}
+
+.dayCell {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+}
+
+.inlineInput :global(input) {
+	height: 34px;
+}
+
+.helperText {
+	font-size: 11px;
+	color: var(--mantine-color-dimmed);
+	text-align: right;
+}
+
+.actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--mantine-spacing-xs);
+}
+
+@media (min-width: 900px) {
+	.form {
+		min-width: 520px;
+	}
+}
+
+@media (max-width: 720px) {
+	.daysHeader {
+		display: none;
+	}
+
+	.dayCard {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		row-gap: var(--mantine-spacing-xs);
+	}
+
+	.helperText {
+		grid-column: 1 / -1;
+		text-align: left;
+	}
+}

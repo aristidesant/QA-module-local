@@ -103,6 +103,50 @@ describe('CampaignPage', () => {
 		expect(mockNavigate).toHaveBeenCalledWith('/campaigns');
 	});
 
+	it('selects campaign on initial load', () => {
+		const mockCampaign = { id: '1', name: 'My Campaign' } as any;
+		(useGetCampaign as any).mockReturnValue({
+			isLoading: false,
+			data: mockCampaign,
+		});
+		(mockUsePermissions as any).mockReturnValue(true);
+
+		renderWithProviders(<CampaignPage />);
+
+		expect(mockSelectCampaign).toHaveBeenCalledWith(mockCampaign);
+	});
+
+	it('refreshes selected campaign when store has stale/partial data', () => {
+		const mockCampaign = {
+			id: '1',
+			name: 'Updated Campaign',
+			updatedAt: '2024-01-01T00:00:00Z',
+		} as any;
+
+		// Simulate existing partial campaign in store (missing updatedAt)
+		(useCampaignsStore as any).mockImplementationOnce((selector: any) => {
+			const state = {
+				selectedCampaign: { id: '1', name: 'Old Campaign' },
+				selectCampaign: mockSelectCampaign,
+				resetView: mockResetView,
+				setEditCampaign: mockSetEditCampaign,
+				setSelectedTab: mockSetSelectedTab,
+				setRightComponent: mockSetRightComponent,
+			};
+			return selector ? selector(state) : state;
+		});
+
+		(useGetCampaign as any).mockReturnValue({
+			isLoading: false,
+			data: mockCampaign,
+		});
+		(mockUsePermissions as any).mockReturnValue(true);
+
+		renderWithProviders(<CampaignPage />);
+
+		expect(mockSelectCampaign).toHaveBeenCalledWith(mockCampaign);
+	});
+
 	it('shows AccessDenied when user lacks edit permission', () => {
 		(mockUsePermissions as any).mockReturnValue(false);
 		(useGetCampaign as any).mockReturnValue({

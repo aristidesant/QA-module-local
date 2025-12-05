@@ -85,7 +85,7 @@
 }
 
 .sectionCard:hover {
-	background: var(--mantine-color-gray-0);
+	/* background: var(--mantine-color-gray-0); */
 	border-color: var(--mantine-color-gray-4);
 }
 

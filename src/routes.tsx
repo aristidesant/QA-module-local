@@ -89,6 +89,12 @@ const RegionalSettingsParamsPage = React.lazy(
 			'./modules/configurations/RegionalSettingsParamsPage/RegionalSettingsParamsPage'
 		)
 );
+const SchedulerPredefinedParamsPage = React.lazy(
+	() =>
+		import(
+			'./modules/configurations/SchedulerPredefinedParamsPage/SchedulerPredefinedParamsPage'
+		)
+);
 const ConfigurationsPage = React.lazy(
 	() => import('./modules/configurations/ConfigurationsPage')
 );
@@ -333,6 +339,18 @@ const router = createBrowserRouter([
 										}
 									>
 										<CampaignPredefinedParamsPage />
+									</Suspense>
+								),
+							},
+							{
+								path: 'scheduler-predefined-params',
+								element: (
+									<Suspense
+										fallback={
+											<SuspenseFallback message='Loading scheduler presets...' />
+										}
+									>
+										<SchedulerPredefinedParamsPage />
 									</Suspense>
 								),
 							},

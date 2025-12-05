@@ -1,11 +1,21 @@
 import React from 'react';
-import { Text, Switch, ActionIcon, Menu, HoverCard } from '@mantine/core';
+import {
+	Text,
+	Switch,
+	ActionIcon,
+	Tooltip,
+	HoverCard,
+	Badge,
+} from '@mantine/core';
 import {
 	IconChevronUp,
-	IconDots,
 	IconPencil,
 	IconTrash,
-	IconInfoCircle,
+	IconCalendar,
+	IconUsers,
+	IconCalendarStats,
+	IconClockHour4,
+	IconFlag,
 } from '@tabler/icons-react';
 import styles from './ScheduleHeader.module.css';
 import type { Scheduler, DayConfig } from '~/models/SchedulerModel';
@@ -19,21 +29,6 @@ export interface ScheduleHeaderProps {
 	isOpened?: boolean;
 }
 
-const formatTime = (time?: string | null) => {
-	if (!time) {
-		return 'N/A';
-	}
-
-	// time expected as 'HH:mm:ss' or 'HH:mm'
-	const hhmm = time.slice(0, 5);
-	const [hh, mm] = hhmm.split(':').map(Number);
-	const period = hh >= 12 ? 'pm' : 'am';
-	const hour12 = hh % 12 === 0 ? 12 : hh % 12;
-	// remove leading zero from hour for the ~end display if desired
-	const minuteStr = mm.toString().padStart(2, '0');
-	return `${hour12}:${minuteStr}${period}`;
-};
-
 const calcDayHours = (start?: string | null, end?: string | null) => {
 	if (!start || !end) return 0;
 	const [sh, sm] = start.slice(0, 5).split(':').map(Number);
@@ -44,22 +39,6 @@ const calcDayHours = (start?: string | null, end?: string | null) => {
 	return diff > 0 ? diff / 60 : 0;
 };
 
-const formatDay = (day?: string) => {
-	if (!day) {
-		return 'N/A';
-	}
-
-	return day.charAt(0).toUpperCase() + day.slice(1);
-};
-
-const formatStatus = (status?: string | null) => {
-	if (!status) {
-		return '';
-	}
-
-	return status.charAt(0).toUpperCase() + status.slice(1);
-};
-
 export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 	schedule,
 	onChange,
@@ -67,179 +46,187 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 	onDelete,
 	isOpened = false,
 }) => {
+	const activeDays = (schedule?.dayConfigs ?? []).filter((d) => d.isActive);
+	const isActive = schedule?.status === 'active';
+
+	const humanEquivalentValue =
+		typeof schedule?.humanEquivalent === 'number'
+			? schedule.humanEquivalent.toFixed(0)
+			: '—';
+
 	const metrics = [
 		{
-			label: 'Eq.',
-			value:
-				typeof schedule?.humanEquivalent === 'number'
-					? schedule.humanEquivalent?.toFixed(0)
-					: (Number(schedule?.humanEquivalent) ?? 'N/A'),
+			label: 'Equivalents',
+			value: humanEquivalentValue,
+			icon: IconUsers,
+			tooltip: 'Human equivalents allocated to this schedule',
 		},
 		{
-			label: 'Weekly Hrs',
-			// compute weekly total from active dayConfigs to keep it authoritative
+			label: 'Weekly',
 			value: (() => {
-				const active = (schedule?.dayConfigs ?? []).filter((d) => d.isActive);
-				if (active.length === 0) return 'N/A';
+				if (activeDays.length === 0) return '—';
 				const total =
-					active.reduce(
+					activeDays.reduce(
 						(sum, d) => sum + calcDayHours(d.startHour, d.endHour),
 						0
 					) * (schedule?.humanEquivalent ?? 0);
-				return `${total.toFixed(2)}h`;
+				return `${total.toFixed(1)}h`;
 			})(),
+			icon: IconCalendarStats,
+			tooltip: 'Projected weekly effort for the whole team',
 		},
 		{
-			label: 'Weekly per agent',
-			// compute weekly total from active dayConfigs to keep it authoritative
+			label: 'Per Agent',
 			value: (() => {
-				const active = (schedule?.dayConfigs ?? []).filter((d) => d.isActive);
-				if (active.length === 0) return 'N/A';
-				const total = active.reduce(
+				if (activeDays.length === 0) return '—';
+				const total = activeDays.reduce(
 					(sum, d) => sum + calcDayHours(d.startHour, d.endHour),
 					0
 				);
-				return `${total.toFixed(2)}h`;
+				return `${total.toFixed(1)}h`;
 			})(),
+			icon: IconClockHour4,
+			tooltip: 'Hours per active agent each week',
 		},
 		{
 			label: 'ETA',
 			value:
 				typeof schedule?.estimatedCompletionDays === 'number'
-					? schedule.estimatedCompletionDays.toLocaleString()
-					: (schedule?.estimatedCompletionDays ?? 'N/A'),
+					? `${schedule.estimatedCompletionDays}d`
+					: '—',
+			icon: IconFlag,
+			tooltip: 'Estimated completion in days',
 		},
 	];
 
-	// Only consider active day configs and sort them
 	const sortedDayConfigs = [...(schedule?.dayConfigs ?? [])]
 		.filter((d) => d.isActive)
 		.sort((a, b) => a.dayOrder - b.dayOrder);
 
-	// Format like: "Monday 08:30am~5:30pm"
-	const scheduleSummaries = sortedDayConfigs.map((day) => ({
-		day,
-		summary: `${formatDay(day.dayOfWeek)} ${formatTime(day.startHour)}~${formatTime(
-			day.endHour
-		)}`,
-	}));
-
-	// preview variables removed: schedule is shown only via HoverCard triggered by the info icon
-
 	return (
-		<>
-			<div className={styles.container}>
-				<div className={styles.mainSection}>
-					<div className={styles.headerRow}>
-						<Switch
-							size='sm'
-							checked={schedule?.status === 'active'}
-							onChange={(event) => onChange(event.currentTarget.checked)}
-							classNames={{ track: styles.switchTrack }}
-						/>
-						<div className={styles.titleSection}>
-							<div className={styles.titleRow}>
-								<Text className={styles.scheduleName}>
-									{schedule?.name || 'Untitled Schedule'}
-								</Text>
-								{schedule?.status && (
-									<div
-										className={`${styles.statusBadge} ${schedule.status === 'active' ? styles.statusActive : styles.statusInactive}`}
-									>
-										{formatStatus(schedule.status)}
-									</div>
-								)}
-							</div>
-							{schedule?.description && (
-								<Text className={styles.description} lineClamp={1}>
-									{schedule.description}
-								</Text>
-							)}
+		<div className={styles.container}>
+			{/* Header */}
+			<div className={styles.headerRow}>
+				<div className={styles.titleGroup}>
+					<Switch
+						size='xs'
+						checked={isActive}
+						onChange={(event) => onChange(event.currentTarget.checked)}
+						aria-label='Toggle schedule status'
+					/>
+
+					<div className={styles.titleText}>
+						<Text
+							className={styles.scheduleName}
+							title={schedule?.name || 'Untitled Schedule'}
+						>
+							{schedule?.name || 'Untitled Schedule'}
+						</Text>
+
+						<div className={styles.metaRow}>
+							<Badge
+								size='xs'
+								variant='light'
+								color={isActive ? 'green' : 'gray'}
+								radius='sm'
+								className={styles.statusBadge}
+							>
+								{isActive ? 'Active' : 'Paused'}
+							</Badge>
+							<span className={styles.metaDivider} />
+							<Text size='xs' c='dimmed' className={styles.metaText}>
+								{activeDays.length > 0
+									? `${activeDays.length} active day${
+											activeDays.length === 1 ? '' : 's'
+										}`
+									: 'No active days yet'}
+							</Text>
 						</div>
 					</div>
-
-					<div className={styles.metricsRow}>
-						{metrics.map((metric, index) => (
-							<React.Fragment key={metric.label}>
-								<div className={styles.metric}>
-									<span className={styles.metricValue}>{metric.value}</span>
-									<span className={styles.metricLabel}>{metric.label}</span>
-								</div>
-								{index < metrics.length - 1 && (
-									<div className={styles.metricDivider} />
-								)}
-							</React.Fragment>
-						))}
-					</div>
-
-					{/* schedule moved to actions hover icon to reduce header height */}
 				</div>
 
-				<div className={styles.actionsSection}>
-					{scheduleSummaries.length > 0 && (
-						<HoverCard width={260} openDelay={200} withinPortal withArrow>
+				<div className={styles.actions}>
+					{sortedDayConfigs.length > 0 && (
+						<HoverCard width={240} openDelay={150} withinPortal withArrow>
 							<HoverCard.Target>
 								<ActionIcon
-									size='md'
-									variant='subtle'
+									size='sm'
+									variant='light'
 									color='gray'
-									title='View schedule'
-									className={styles.infoButton}
+									aria-label='View schedule'
 								>
-									<IconInfoCircle size={18} />
+									<IconCalendar size={16} />
 								</ActionIcon>
 							</HoverCard.Target>
-							<HoverCard.Dropdown className={styles.tooltipContent}>
-								<div
-									style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
-								>
-									{scheduleSummaries.map(({ day }, idx) => (
-										<ScheduleHoverItem
-											key={day.id ?? idx}
-											day={day as DayConfig}
-										/>
-									))}
-								</div>
+							<HoverCard.Dropdown className={styles.hoverDropdown}>
+								{sortedDayConfigs.map((day, idx) => (
+									<ScheduleHoverItem
+										key={day.id ?? idx}
+										day={day as DayConfig}
+									/>
+								))}
 							</HoverCard.Dropdown>
 						</HoverCard>
 					)}
 
-					<Menu position='bottom-end' withinPortal shadow='md'>
-						<Menu.Target>
-							<ActionIcon
-								variant='subtle'
-								color='gray'
-								size='md'
-								className={styles.menuButton}
-							>
-								<IconDots size={18} />
-							</ActionIcon>
-						</Menu.Target>
-						<Menu.Dropdown>
-							<Menu.Item
-								leftSection={
-									isOpened ? (
-										<IconChevronUp size={16} />
-									) : (
-										<IconPencil size={16} />
-									)
-								}
-								onClick={onEdit}
-							>
-								{isOpened ? 'Close' : 'Edit'}
-							</Menu.Item>
-							<Menu.Item
-								leftSection={<IconTrash size={16} />}
-								onClick={onDelete}
-								color='red'
-							>
-								Delete
-							</Menu.Item>
-						</Menu.Dropdown>
-					</Menu>
+					<Tooltip label={isOpened ? 'Close' : 'Edit'} withArrow position='top'>
+						<ActionIcon
+							size='sm'
+							variant='light'
+							color='blue'
+							onClick={onEdit}
+							aria-label={isOpened ? 'Close' : 'Edit'}
+						>
+							{isOpened ? (
+								<IconChevronUp size={16} />
+							) : (
+								<IconPencil size={16} />
+							)}
+						</ActionIcon>
+					</Tooltip>
+
+					<Tooltip label='Delete' withArrow position='top'>
+						<ActionIcon
+							size='sm'
+							variant='light'
+							color='red'
+							onClick={onDelete}
+							aria-label='Delete'
+						>
+							<IconTrash size={16} />
+						</ActionIcon>
+					</Tooltip>
 				</div>
 			</div>
-		</>
+
+			{/* Row 2: Metrics */}
+			<div className={styles.metricsRow}>
+				{metrics.map((metric) => (
+					<Tooltip
+						key={metric.label}
+						label={metric.tooltip}
+						withArrow
+						position='top'
+						disabled={!metric.tooltip}
+					>
+						{(() => {
+							const Icon = metric.icon;
+							return (
+								<div className={styles.metric}>
+									<div className={styles.metricIcon}>
+										<Icon size={14} />
+									</div>
+									<div className={styles.metricCopy}>
+										<span className={styles.metricValue}>{metric.value}</span>
+										<span className={styles.metricLabel}>{metric.label}</span>
+									</div>
+								</div>
+							);
+						})()}
+					</Tooltip>
+				))}
+			</div>
+		</div>
 	);
 };
 

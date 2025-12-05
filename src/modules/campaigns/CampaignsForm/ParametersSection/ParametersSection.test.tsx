@@ -2,12 +2,12 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi, beforeEach, type Mock } from 'vitest';
 import ParametersSection from './ParametersSection';
-import { useCampaignsStore } from '~/stores/campaignsStore';
 import { useCampaignSchedules } from '~/queries/schedulerQueries';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
+import { useParams } from 'react-router';
 
-vi.mock('~/stores/campaignsStore', () => ({
-	useCampaignsStore: vi.fn(),
+vi.mock('react-router', () => ({
+	useParams: vi.fn(),
 }));
 
 vi.mock('~/queries/schedulerQueries', () => ({
@@ -36,7 +36,7 @@ vi.mock('./AddScheduler', () => ({
 	default: () => <div data-testid='add-scheduler'>Add Scheduler</div>,
 }));
 
-const mockUseCampaignsStore = useCampaignsStore as unknown as Mock;
+const mockUseParams = useParams as unknown as Mock;
 const mockUseCampaignSchedules = useCampaignSchedules as unknown as Mock;
 
 const baseProps = {
@@ -48,9 +48,7 @@ const baseProps = {
 describe('ParametersSection', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		mockUseCampaignsStore.mockImplementation((selector: any) =>
-			selector({ selectedCampaign: { id: 99 } })
-		);
+		mockUseParams.mockReturnValue({ campaignId: '99' });
 		mockUseCampaignSchedules.mockReturnValue({
 			data: [],
 			refetch: vi.fn(),
@@ -72,7 +70,7 @@ describe('ParametersSection', () => {
 
 		renderWithProviders(<ParametersSection {...baseProps} />);
 
-		expect(mockUseCampaignSchedules).toHaveBeenCalledWith(99);
+		expect(mockUseCampaignSchedules).toHaveBeenCalledWith('99');
 		expect(screen.getAllByTestId('scheduler-card')).toHaveLength(2);
 		expect(screen.getByTestId('add-scheduler')).toBeInTheDocument();
 	});

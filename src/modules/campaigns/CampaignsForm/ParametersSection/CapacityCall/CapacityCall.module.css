@@ -1,172 +1,178 @@
+/* Container */
 .card {
-	background-color: var(--mantine-color-gray-0);
-	padding: var(--mantine-spacing-md);
+	background: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-2);
+	padding: var(--mantine-spacing-sm);
+	overflow: hidden;
 }
 
+/* Header row */
 .header {
-	flex-wrap: wrap;
-	gap: var(--mantine-spacing-md);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-xs);
+	margin-bottom: var(--mantine-spacing-xs);
 }
 
-.headerText {
-	max-width: 420px;
+.titleGroup {
+	display: flex;
+	align-items: center;
+	gap: 6px;
 }
 
 .title {
-	font-size: var(--mantine-font-size-lg);
-	font-weight: 600;
-	color: var(--mantine-color-gray-9);
-}
-
-.subtitle {
-	margin-top: calc(var(--mantine-spacing-xs) / 2);
 	font-size: var(--mantine-font-size-sm);
-	color: var(--mantine-color-gray-6);
-}
-
-.valueChip {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-end;
-	justify-content: center;
-	padding: var(--mantine-spacing-sm);
-	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: var(--mantine-radius-md);
-	min-width: 120px;
-	background-color: var(--mantine-color-white);
-}
-
-.valueNumber {
-	font-size: 1.5rem;
 	font-weight: 600;
-	color: var(--mantine-color-blue-6);
-	line-height: 1.1;
+	color: var(--mantine-color-gray-8);
+	letter-spacing: -0.01em;
 }
 
-.valueLabel {
-	margin-top: calc(var(--mantine-spacing-xs) / 2);
-	font-size: var(--mantine-font-size-xs);
-	color: var(--mantine-color-gray-6);
+.infoButton {
+	color: var(--mantine-color-gray-5);
+	transition: color 0.15s ease;
 }
 
-.sliderSection {
+.infoButton:hover {
+	color: var(--mantine-color-blue-5);
+}
+
+/* Slider row - full width */
+.sliderRow {
 	display: flex;
-	flex-direction: column;
-	gap: var(--mantine-spacing-xs);
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+	padding: 8px 12px;
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	margin-bottom: var(--mantine-spacing-xs);
 }
 
 .sliderLabel {
-	font-size: var(--mantine-font-size-sm);
-	font-weight: 500;
-	color: var(--mantine-color-gray-8);
-}
-
-.sliderHelper {
-	font-size: var(--mantine-font-size-xs);
+	font-size: 11px;
+	font-weight: 600;
 	color: var(--mantine-color-gray-6);
+	white-space: nowrap;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
 }
 
 .sliderRoot {
-	margin-top: var(--mantine-spacing-xs);
+	flex: 1;
 }
 
 .sliderTrack {
-	height: 8px;
-	border-radius: 4px;
-	background-color: var(--mantine-color-gray-3);
+	height: 6px;
+	border-radius: 3px;
+	background: var(--mantine-color-gray-2);
 }
 
 .sliderBar {
-	background-color: var(--mantine-color-blue-5);
+	background: var(--mantine-color-blue-5);
+	border-radius: 3px;
 }
 
 .sliderThumb {
 	height: 16px;
 	width: 16px;
-	border: none;
-	background-color: var(--mantine-color-blue-6);
+	border: 2px solid var(--mantine-color-white);
+	background: var(--mantine-color-blue-6);
+	transition: transform 0.15s ease;
 }
 
-.divider {
-	margin: var(--mantine-spacing-md) 0;
+.sliderThumb:hover {
+	transform: scale(1.1);
 }
 
-.summarySection {
-	display: flex;
-	flex-direction: column;
-	gap: calc(var(--mantine-spacing-xs) / 1.5);
+.sliderValue {
+	min-width: 36px;
+	padding: 4px 8px;
+	background: var(--mantine-color-blue-6);
+	border-radius: var(--mantine-radius-sm);
+	font-size: 11px;
+	font-weight: 700;
+	color: white;
+	text-align: center;
 }
 
-.summaryTitle {
-	font-size: var(--mantine-font-size-sm);
-	font-weight: 600;
-	color: var(--mantine-color-gray-8);
-}
-
-.summaryDescription {
-	font-size: var(--mantine-font-size-sm);
-	color: var(--mantine-color-gray-6);
-	max-width: 560px;
-}
-
+/* Metrics grid */
 .metricsGrid {
-	margin-top: var(--mantine-spacing-xs);
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: var(--mantine-spacing-xs);
+	margin-bottom: var(--mantine-spacing-xs);
 }
 
-.metricCard {
-	border: 1px solid var(--mantine-color-gray-3);
+/* Schedule section */
+.scheduleSection {
+	border: 1px solid var(--mantine-color-gray-2);
 	border-radius: var(--mantine-radius-md);
-	padding: var(--mantine-spacing-md);
-	background-color: var(--mantine-color-white);
+	overflow: hidden;
 }
 
-.metricIcon {
-	display: inline-flex;
+.scheduleHeader {
+	display: flex;
 	align-items: center;
-	justify-content: center;
-	color: var(--mantine-color-blue-6);
-}
-
-.metricLabel {
-	font-size: var(--mantine-font-size-sm);
-	font-weight: 500;
-	color: var(--mantine-color-gray-7);
-}
-
-.metricValue {
-	margin-top: var(--mantine-spacing-sm);
-	font-size: var(--mantine-font-size-xl);
-	font-weight: 600;
-	color: var(--mantine-color-gray-9);
-}
-
-.metricDescription {
-	margin-top: calc(var(--mantine-spacing-xs) / 2);
-	font-size: var(--mantine-font-size-xs);
-	color: var(--mantine-color-gray-6);
-}
-
-.scheduleBlock {
-	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: var(--mantine-radius-md);
-	padding: var(--mantine-spacing-md);
-	background-color: var(--mantine-color-white);
+	justify-content: space-between;
+	padding: 6px 10px;
+	background: var(--mantine-color-gray-0);
+	border-bottom: 1px solid var(--mantine-color-gray-2);
 }
 
 .scheduleTitle {
-	font-size: var(--mantine-font-size-sm);
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 10px;
 	font-weight: 600;
-	color: var(--mantine-color-gray-8);
+	color: var(--mantine-color-gray-6);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
 }
 
 .scheduleBadge {
-	font-size: var(--mantine-font-size-xs);
-	font-weight: 500;
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 2px 8px;
+	background: var(--mantine-color-blue-0);
+	border-radius: var(--mantine-radius-xl);
+	font-size: 10px;
+	font-weight: 600;
 	color: var(--mantine-color-blue-6);
 }
 
-@media (max-width: 40em) {
-	.valueChip {
+.scheduleBadgeDot {
+	width: 5px;
+	height: 5px;
+	border-radius: 50%;
+	background: var(--mantine-color-blue-5);
+	animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.5;
+	}
+}
+
+.scheduleContent {
+	background: var(--mantine-color-white);
+}
+
+/* Responsive */
+@media (max-width: 48em) {
+	.header {
+		flex-direction: column;
 		align-items: flex-start;
+	}
+
+	.metricsGrid {
+		grid-template-columns: 1fr;
 	}
 }
