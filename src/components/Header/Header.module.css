@@ -68,7 +68,8 @@
 
 .headerContent {
 	height: 100%;
-	padding: 0 1.5rem;
+	padding: 0 0.75rem; /* tighter horizontal padding */
+	padding-left: 0; /* ensure left-aligned content */
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -79,7 +80,7 @@
 	display: flex;
 	align-items: center;
 	height: 100%;
-	gap: 1.25rem;
+	gap: var(--mantine-spacing-xs); /* small gap */
 }
 
 .navigationButtons {
@@ -115,7 +116,7 @@
 .headerRight {
 	display: flex;
 	align-items: center;
-	gap: 1.25rem;
+	gap: 0.75rem; /* reduce space between right-side items */
 	margin-left: auto;
 }
 
@@ -207,17 +208,17 @@
 .clientBadge {
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
-	padding: 6px 10px;
+	gap: 0.375rem; /* very compact */
+	padding: 4px 8px; /* tighter badge padding */
 	border-radius: 9999px;
-	background: rgba(241, 245, 249, 0.9);
-	border: 1px solid rgba(226, 232, 240, 0.9);
+	background: rgba(241, 245, 249, 0.85);
+	border: 1px solid rgba(226, 232, 240, 0.85);
 	cursor: default;
 }
 
 .clientAvatar {
-	width: 32px;
-	height: 32px;
+	width: 28px;
+	height: 28px;
 	border-radius: 50%;
 	background: linear-gradient(45deg, #60a5fa, #3b82f6);
 	display: flex;
@@ -231,11 +232,16 @@
 .clientInfo {
 	display: flex;
 	flex-direction: column;
-	min-width: 110px;
+	min-width: 0; /* prevent forcing extra space */
 }
 
 .clientName {
 	line-height: 1;
+	font-size: 0.9rem;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 12rem; /* limit the space used by long names */
 }
 
 .clientIdentifier {

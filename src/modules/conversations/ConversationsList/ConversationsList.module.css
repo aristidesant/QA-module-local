@@ -19,14 +19,12 @@
 }
 
 .tableWrapper {
-	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: var(--mantine-radius-md);
 	overflow: hidden;
-	background-color: var(--mantine-color-white);
+	background-color: transparent;
 }
 
 .emptyWrapper {
-	padding: var(--mantine-spacing-xl);
+	padding: var(--mantine-spacing-lg);
 }
 
 .selectedRow {

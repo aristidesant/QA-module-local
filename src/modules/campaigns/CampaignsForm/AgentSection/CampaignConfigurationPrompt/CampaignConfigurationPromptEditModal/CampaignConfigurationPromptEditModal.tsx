@@ -25,6 +25,9 @@ import type { CampaignPromptTypeModel } from '~/models/CampaignPromptTypeModel';
 import PromptEditor from './PromptTypeAccordionItem/PromptEditor';
 import PromptMenuItem from './PromptMenuItem';
 
+const normalizePromptValue = (value: string) =>
+	value.replace(/\r\n/g, '\n').trim();
+
 interface CampaignConfigurationPromptEditModalProps {
 	onClose: () => void;
 	onSave: () => void;
@@ -80,7 +83,7 @@ const CampaignConfigurationPromptEditModal: React.FC<
 			});
 
 			setPrompts(initialPrompts);
-			setOriginalPrompts(initialPrompts);
+			setOriginalPrompts({ ...initialPrompts });
 		}
 	}, [existingPrompts, types, campaignId]);
 
@@ -120,16 +123,16 @@ const CampaignConfigurationPromptEditModal: React.FC<
 		(typeId: number) => {
 			const promptValue = prompts[typeId]?.prompt || '';
 			const trimmed = promptValue.trim();
-			const lines = trimmed
-				? trimmed.split('\n').filter((line) => line.trim().length > 0).length
-				: 0;
+			const originalValue = originalPrompts[typeId]?.prompt || '';
+			const normalizedCurrent = normalizePromptValue(promptValue);
+			const normalizedOriginal = normalizePromptValue(originalValue);
 
 			return {
-				isDrafted: trimmed.length > 0,
-				lines,
+				hasValue: trimmed.length > 0,
+				isDrafted: normalizedCurrent !== normalizedOriginal,
 			};
 		},
-		[prompts]
+		[prompts, originalPrompts]
 	);
 
 	const handleSave = () => {
@@ -139,7 +142,9 @@ const CampaignConfigurationPromptEditModal: React.FC<
 			.map((prompt) => {
 				const originalPrompt = originalPrompts[prompt.typeId]?.prompt || '';
 				const currentPrompt = prompt.prompt || '';
-				const isChange = currentPrompt !== originalPrompt;
+				const isChange =
+					normalizePromptValue(currentPrompt) !==
+					normalizePromptValue(originalPrompt);
 
 				return {
 					...prompt,
@@ -214,7 +219,7 @@ const CampaignConfigurationPromptEditModal: React.FC<
 											isActive={activeTypeId === type.id}
 											onClick={() => setActiveTypeId(type.id)}
 											isDrafted={promptMeta.isDrafted}
-											lines={promptMeta.lines}
+											hasValue={promptMeta.hasValue}
 										/>
 									);
 								})}
@@ -242,11 +247,7 @@ const CampaignConfigurationPromptEditModal: React.FC<
 											color={activePromptMeta.isDrafted ? 'blue' : 'gray'}
 											radius='sm'
 										>
-											{activePromptMeta.isDrafted
-												? `${activePromptMeta.lines} line${
-														activePromptMeta.lines === 1 ? '' : 's'
-													}`
-												: 'Empty'}
+											{activePromptMeta.isDrafted ? 'Drafted' : 'No changes'}
 										</Badge>
 									)}
 								</Group>

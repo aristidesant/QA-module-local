@@ -8,7 +8,7 @@ interface PromptMenuItemProps {
 	isActive: boolean;
 	onClick: () => void;
 	isDrafted: boolean;
-	lines: number;
+	hasValue: boolean;
 }
 
 const PromptMenuItem: React.FC<PromptMenuItemProps> = ({
@@ -17,6 +17,7 @@ const PromptMenuItem: React.FC<PromptMenuItemProps> = ({
 	isActive,
 	onClick,
 	isDrafted,
+	hasValue,
 }) => {
 	return (
 		<UnstyledButton
@@ -27,16 +28,20 @@ const PromptMenuItem: React.FC<PromptMenuItemProps> = ({
 			data-testid={`prompt-menu-item-${typeId}`}
 		>
 			<div className={styles.menuItemHeader}>
-				<span className={styles.statusDot} data-filled={isDrafted} />
+				<span className={styles.statusDot} data-filled={hasValue} />
 				<Text size='xs' className={styles.menuTitle}>
 					{label}
 				</Text>
 			</div>
-			{isDrafted && (
-				<Badge size='xs' variant='light' color='blue' radius='sm'>
-					Drafted
-				</Badge>
-			)}
+			<Badge
+				size='xs'
+				variant='light'
+				color={isDrafted ? 'blue' : 'gray'}
+				radius='sm'
+				className={styles.menuStatusBadge}
+			>
+				{isDrafted ? 'DRAFTED' : hasValue ? 'Saved' : 'Empty'}
+			</Badge>
 		</UnstyledButton>
 	);
 };

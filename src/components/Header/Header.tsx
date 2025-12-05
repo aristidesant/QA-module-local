@@ -27,7 +27,7 @@ export const Header: React.FC = () => {
 				</div>
 				<div className={styles.headerRight}>
 					{/* client badge moved to left */}
-					<ActionIcon radius={'xl'} size={'lg'} variant='subtle'>
+					<ActionIcon radius={'xl'} size={'md'} variant='subtle'>
 						<IconBell />
 					</ActionIcon>
 					<Divider orientation='vertical' />

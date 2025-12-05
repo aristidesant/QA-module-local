@@ -152,7 +152,9 @@ describe('CampaignConfigurationPromptEditModal', () => {
 			expect(
 				screen.getByRole('button', { name: /cancel/i })
 			).toBeInTheDocument();
-			expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument();
+			expect(
+				screen.getByRole('button', { name: /^Save$/i })
+			).toBeInTheDocument();
 		});
 
 		it('renders footer text', () => {
@@ -320,7 +322,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 				);
 			});
 
-			fireEvent.click(screen.getByRole('button', { name: /save/i }));
+			fireEvent.click(screen.getByRole('button', { name: /^Save$/i }));
 
 			expect(mockSaveBatch).toHaveBeenCalledWith(
 				expect.objectContaining({
@@ -358,7 +360,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 			const input = screen.getByTestId('prompt-input-1');
 			fireEvent.change(input, { target: { value: 'Updated greeting' } });
 
-			fireEvent.click(screen.getByRole('button', { name: /save/i }));
+			fireEvent.click(screen.getByRole('button', { name: /^Save$/i }));
 
 			expect(mockSaveBatch).toHaveBeenCalledWith(
 				expect.objectContaining({
@@ -393,7 +395,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 			const input = screen.getByTestId('prompt-input-3');
 			fireEvent.change(input, { target: { value: 'New objection handling' } });
 
-			fireEvent.click(screen.getByRole('button', { name: /save/i }));
+			fireEvent.click(screen.getByRole('button', { name: /^Save$/i }));
 
 			expect(mockSaveBatch).toHaveBeenCalledWith(
 				expect.objectContaining({
@@ -423,7 +425,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 				);
 			});
 
-			fireEvent.click(screen.getByRole('button', { name: /save/i }));
+			fireEvent.click(screen.getByRole('button', { name: /^Save$/i }));
 
 			const savedPrompts = mockSaveBatch.mock.calls[0][0].prompts;
 			expect(savedPrompts).not.toContainEqual(
@@ -450,7 +452,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 			const input = screen.getByTestId('prompt-input-3');
 			fireEvent.change(input, { target: { value: '   ' } });
 
-			fireEvent.click(screen.getByRole('button', { name: /save/i }));
+			fireEvent.click(screen.getByRole('button', { name: /^Save$/i }));
 
 			const savedPrompts = mockSaveBatch.mock.calls[0][0].prompts;
 			expect(savedPrompts).not.toContainEqual(
@@ -476,7 +478,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 				);
 			});
 
-			fireEvent.click(screen.getByRole('button', { name: /save/i }));
+			fireEvent.click(screen.getByRole('button', { name: /^Save$/i }));
 
 			expect(mockOnSave).toHaveBeenCalledTimes(1);
 			expect(mockOnClose).toHaveBeenCalledTimes(1);
@@ -499,7 +501,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 				target: { value: 'Hello from campaign 456' },
 			});
 
-			fireEvent.click(screen.getByRole('button', { name: /save/i }));
+			fireEvent.click(screen.getByRole('button', { name: /^Save$/i }));
 
 			expect(mockSaveBatch).toHaveBeenCalledWith(
 				expect.objectContaining({
@@ -593,7 +595,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 			expect(screen.getByText('Prompt configuration')).toBeInTheDocument();
 		});
 
-		it('shows correct badge for drafted prompts', () => {
+		it('shows correct badge for menu items with content', () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
 					onClose={mockOnClose}
@@ -601,12 +603,12 @@ describe('CampaignConfigurationPromptEditModal', () => {
 				/>
 			);
 
-			// Menu items with content should show "Drafted" badge
-			const draftedBadges = screen.getAllByText('Drafted');
-			expect(draftedBadges.length).toBeGreaterThanOrEqual(2);
+			// Menu items with content should show "Saved" badge
+			const savedBadges = screen.getAllByText('Saved');
+			expect(savedBadges.length).toBeGreaterThanOrEqual(2);
 		});
 
-		it('shows line count badge in editor for drafted prompts', async () => {
+		it('shows No changes badge in editor for unchanged prompts', async () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
 					onClose={mockOnClose}
@@ -620,8 +622,8 @@ describe('CampaignConfigurationPromptEditModal', () => {
 				);
 			});
 
-			// The active prompt has content, so it should show line count
-			expect(screen.getByText(/1 line/i)).toBeInTheDocument();
+			// The active prompt has content but not edited, so it should show No changes
+			expect(screen.getByText('No changes')).toBeInTheDocument();
 		});
 
 		it('shows Empty badge for prompts without content', async () => {

@@ -12,6 +12,7 @@ describe('PromptMenuItem', () => {
 		isActive: false,
 		onClick: mockOnClick,
 		isDrafted: false,
+		hasValue: false,
 		lines: 5,
 	};
 
@@ -83,40 +84,61 @@ describe('PromptMenuItem', () => {
 	});
 
 	describe('Status Dot', () => {
-		it('renders status dot with data-filled=false when not drafted', () => {
+		it('renders status dot with data-filled=false when hasValue is false', () => {
 			renderWithProviders(
-				<PromptMenuItem {...defaultProps} isDrafted={false} />
+				<PromptMenuItem {...defaultProps} hasValue={false} />
 			);
 
 			const statusDot = document.querySelector('[data-filled]');
 			expect(statusDot).toHaveAttribute('data-filled', 'false');
 		});
 
-		it('renders status dot with data-filled=true when drafted', () => {
-			renderWithProviders(
-				<PromptMenuItem {...defaultProps} isDrafted={true} />
-			);
+		it('renders status dot with data-filled=true when hasValue is true', () => {
+			renderWithProviders(<PromptMenuItem {...defaultProps} hasValue={true} />);
 
 			const statusDot = document.querySelector('[data-filled]');
 			expect(statusDot).toHaveAttribute('data-filled', 'true');
 		});
+
+		it('status dot uses hasValue not isDrafted for data-filled attribute', () => {
+			renderWithProviders(
+				<PromptMenuItem {...defaultProps} isDrafted={true} hasValue={false} />
+			);
+
+			const statusDot = document.querySelector('[data-filled]');
+			expect(statusDot).toHaveAttribute('data-filled', 'false');
+		});
 	});
 
 	describe('Drafted Badge', () => {
-		it('does not show Drafted badge when isDrafted is false', () => {
+		it('does not show DRAFTED badge when isDrafted is false', () => {
 			renderWithProviders(
-				<PromptMenuItem {...defaultProps} isDrafted={false} />
+				<PromptMenuItem {...defaultProps} isDrafted={false} hasValue={false} />
 			);
-
-			expect(screen.queryByText('Drafted')).not.toBeInTheDocument();
+			expect(screen.queryByText('DRAFTED')).not.toBeInTheDocument();
 		});
 
-		it('shows Drafted badge when isDrafted is true', () => {
+		it('shows DRAFTED badge when isDrafted is true', () => {
 			renderWithProviders(
 				<PromptMenuItem {...defaultProps} isDrafted={true} />
 			);
+			expect(screen.getByText('DRAFTED')).toBeInTheDocument();
+		});
 
-			expect(screen.getByText('Drafted')).toBeInTheDocument();
+		it('shows Saved badge when not drafted and hasValue is true', () => {
+			renderWithProviders(
+				<PromptMenuItem {...defaultProps} isDrafted={false} hasValue={true} />
+			);
+
+			expect(screen.getByText('Saved')).toBeInTheDocument();
+		});
+
+		it('shows Empty badge when not drafted and hasValue is false', () => {
+			renderWithProviders(
+				<PromptMenuItem {...defaultProps} isDrafted={false} hasValue={false} />
+			);
+
+			expect(screen.getByText('Empty')).toBeInTheDocument();
 		});
 	});
 
@@ -196,61 +218,83 @@ describe('PromptMenuItem', () => {
 
 			expect(screen.getByTestId('prompt-menu-item--1')).toBeInTheDocument();
 		});
-
-		it('handles zero lines prop', () => {
-			renderWithProviders(<PromptMenuItem {...defaultProps} lines={0} />);
-
-			const button = screen.getByRole('button');
-			expect(button).toBeInTheDocument();
-		});
-
-		it('handles large lines prop', () => {
-			renderWithProviders(<PromptMenuItem {...defaultProps} lines={1000} />);
-
-			const button = screen.getByRole('button');
-			expect(button).toBeInTheDocument();
-		});
 	});
 
 	describe('Combined States', () => {
 		it('renders active and drafted state together', () => {
 			renderWithProviders(
-				<PromptMenuItem {...defaultProps} isActive={true} isDrafted={true} />
+				<PromptMenuItem
+					{...defaultProps}
+					isActive={true}
+					isDrafted={true}
+					hasValue={true}
+				/>
 			);
 
 			const menuItem = screen.getByTestId('prompt-menu-item-1');
 			expect(menuItem).toHaveAttribute('data-active', 'true');
-			expect(screen.getByText('Drafted')).toBeInTheDocument();
+			expect(screen.getByText('DRAFTED')).toBeInTheDocument();
+			expect(document.querySelector('[data-filled]')).toHaveAttribute(
+				'data-filled',
+				'true'
+			);
 		});
 
-		it('renders inactive and not drafted state together', () => {
+		it('renders inactive and empty state together', () => {
 			renderWithProviders(
-				<PromptMenuItem {...defaultProps} isActive={false} isDrafted={false} />
+				<PromptMenuItem
+					{...defaultProps}
+					isActive={false}
+					isDrafted={false}
+					hasValue={false}
+				/>
 			);
 
 			const menuItem = screen.getByTestId('prompt-menu-item-1');
 			expect(menuItem).toHaveAttribute('data-active', 'false');
-			expect(screen.queryByText('Drafted')).not.toBeInTheDocument();
+			expect(screen.getByText('Empty')).toBeInTheDocument();
+			expect(document.querySelector('[data-filled]')).toHaveAttribute(
+				'data-filled',
+				'false'
+			);
 		});
 
-		it('renders active and not drafted state together', () => {
+		it('renders active and saved state together', () => {
 			renderWithProviders(
-				<PromptMenuItem {...defaultProps} isActive={true} isDrafted={false} />
+				<PromptMenuItem
+					{...defaultProps}
+					isActive={true}
+					isDrafted={false}
+					hasValue={true}
+				/>
 			);
 
 			const menuItem = screen.getByTestId('prompt-menu-item-1');
 			expect(menuItem).toHaveAttribute('data-active', 'true');
-			expect(screen.queryByText('Drafted')).not.toBeInTheDocument();
+			expect(screen.getByText('Saved')).toBeInTheDocument();
+			expect(document.querySelector('[data-filled]')).toHaveAttribute(
+				'data-filled',
+				'true'
+			);
 		});
 
-		it('renders inactive and drafted state together', () => {
+		it('renders inactive and drafted state together with hasValue false', () => {
 			renderWithProviders(
-				<PromptMenuItem {...defaultProps} isActive={false} isDrafted={true} />
+				<PromptMenuItem
+					{...defaultProps}
+					isActive={false}
+					isDrafted={true}
+					hasValue={false}
+				/>
 			);
 
 			const menuItem = screen.getByTestId('prompt-menu-item-1');
 			expect(menuItem).toHaveAttribute('data-active', 'false');
-			expect(screen.getByText('Drafted')).toBeInTheDocument();
+			expect(screen.getByText('DRAFTED')).toBeInTheDocument();
+			expect(document.querySelector('[data-filled]')).toHaveAttribute(
+				'data-filled',
+				'false'
+			);
 		});
 	});
 

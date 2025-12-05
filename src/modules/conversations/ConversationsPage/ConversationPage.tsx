@@ -17,8 +17,6 @@ const ConversationsPage = () => {
 
 	return (
 		<ContentContainer
-			description='Manage, review, and take action on conversations across your campaigns. Select a conversation to view transcripts, agent notes, and next steps.'
-			title='Conversations'
 			rightSection={
 				selectionContent || (
 					<FallbackRightComponent description='No conversation selected. Choose a conversation to view transcripts, notes, and associated actions.' />

@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActionIcon, Center, Group, Text, Tooltip } from '@mantine/core';
+import SectionCard from '~/components/SectionCard';
+import { IconMessages as IconMessagesTabler } from '@tabler/icons-react';
 import {
 	IconMessagesOff,
 	IconRefresh,
@@ -128,82 +130,92 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 
 	return (
 		<div className={`${styles.root} ${className ?? ''}`}>
-			<ConversationFilters filters={filters} onFiltersChange={setFilters} />
-
-			<Group className={styles.toolbar}>
-				<div className={styles.actions}>
-					<Tooltip label='Refresh conversations' withArrow>
-						<ActionIcon
-							variant='default'
-							size='md'
-							onClick={() => refetch()}
-							aria-label='Refresh conversations'
-							loading={isFetching}
-							disabled={isFetching}
-						>
-							<IconRefresh size={16} />
-						</ActionIcon>
-					</Tooltip>
-					{canExportConversations && (
-						<Tooltip label='Export conversations' withArrow>
+			<SectionCard
+				id='conversations-list'
+				title='Conversations'
+				description='Latest conversations for this campaign or contact group'
+				icon={IconMessagesTabler}
+				contentSpacing='sm'
+				padding='sm'
+				headerActions={
+					<Group className={styles.actions}>
+						<Tooltip label='Refresh conversations' withArrow>
 							<ActionIcon
 								variant='default'
-								size='md'
-								onClick={() => setExportModalOpened(true)}
-								aria-label='Export conversations'
+								size='sm'
+								onClick={() => refetch()}
+								aria-label='Refresh conversations'
+								loading={isFetching}
+								disabled={isFetching}
 							>
-								<IconFileExcel size={16} />
+								<IconRefresh size={16} />
 							</ActionIcon>
 						</Tooltip>
-					)}
-				</div>
-			</Group>
-
-			{isError ? (
-				<Center className={styles.emptyWrapper}>
-					<Text size='sm' c='red'>
-						{error instanceof Error
-							? error.message
-							: 'Unable to load conversations. Please try again.'}
-					</Text>
-				</Center>
-			) : conversations.length === 0 && !isTableLoading ? (
-				<div className={styles.emptyWrapper}>
-					<EmptyState
-						icon={<IconMessagesOff size={48} stroke={1.2} />}
-						message='No conversations yet'
-						description='We will display conversations as soon as they are available.'
-					/>
-				</div>
-			) : (
-				<div className={styles.tableWrapper}>
-					<BaseTable
-						data={conversations}
-						columns={columns}
+						{canExportConversations && (
+							<Tooltip label='Export conversations' withArrow>
+								<ActionIcon
+									variant='default'
+									size='sm'
+									onClick={() => setExportModalOpened(true)}
+									aria-label='Export conversations'
+								>
+									<IconFileExcel size={16} />
+								</ActionIcon>
+							</Tooltip>
+						)}
+					</Group>
+				}
+				footer={
+					<PaginationControls
+						currentPage={pagination.currentPage}
+						totalPages={totalPages}
+						itemsPerPage={pagination.itemsPerPage}
+						totalItems={totalItems}
+						onPageChange={pagination.setCurrentPage}
+						onItemsPerPageChange={handleItemsPerPageChange}
 						isLoading={isTableLoading}
-						density='compact'
-						onRowClick={handleRowClick}
-						getRowClassName={(row) => {
-							const classes = [styles.tableRow];
-							if (row.original.id === effectiveSelectedId) {
-								classes.push(styles.selectedRow);
-							}
-							return classes.join(' ');
-						}}
+						itemLabel='conversations'
 					/>
-				</div>
-			)}
+				}
+			>
+				<ConversationFilters filters={filters} onFiltersChange={setFilters} />
 
-			<PaginationControls
-				currentPage={pagination.currentPage}
-				totalPages={totalPages}
-				itemsPerPage={pagination.itemsPerPage}
-				totalItems={totalItems}
-				onPageChange={pagination.setCurrentPage}
-				onItemsPerPageChange={handleItemsPerPageChange}
-				isLoading={isTableLoading}
-				itemLabel='conversations'
-			/>
+				{isError ? (
+					<Center className={styles.emptyWrapper}>
+						<Text size='sm' c='red'>
+							{error instanceof Error
+								? error.message
+								: 'Unable to load conversations. Please try again.'}
+						</Text>
+					</Center>
+				) : conversations.length === 0 && !isTableLoading ? (
+					<div className={styles.emptyWrapper}>
+						<EmptyState
+							icon={<IconMessagesOff size={48} stroke={1.2} />}
+							message='No conversations yet'
+							description='We will display conversations as soon as they are available.'
+						/>
+					</div>
+				) : (
+					<div className={styles.tableWrapper}>
+						<BaseTable
+							data={conversations}
+							columns={columns}
+							isLoading={isTableLoading}
+							density='compact'
+							onRowClick={handleRowClick}
+							getRowClassName={(row) => {
+								const classes = [styles.tableRow];
+								if (row.original.id === effectiveSelectedId) {
+									classes.push(styles.selectedRow);
+								}
+								return classes.join(' ');
+							}}
+						/>
+					</div>
+				)}
+			</SectionCard>
+
 			{canExportConversations && (
 				<ExportToExcelModal
 					opened={exportModalOpened}
