@@ -114,7 +114,7 @@ const useContactListColumns = ({
 							{onNavigateToContactList && (
 								<Tooltip label='Open contact list page' withArrow>
 									<ActionIcon
-										variant='subtle'
+										variant='light'
 										onClick={(event) => {
 											event.stopPropagation();
 											onNavigateToContactList(contactGroup);

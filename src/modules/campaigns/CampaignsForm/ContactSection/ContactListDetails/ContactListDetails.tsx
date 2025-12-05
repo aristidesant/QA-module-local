@@ -31,6 +31,9 @@ import RightSectionCard from '~/components/RightSectionCard';
 import RightSectionMetricCard from '~/components/RightSectionMetricCard';
 import SectionTitle from '~/components/SectionTitle';
 import type ContactGroup from '~/models/ContactGroup';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/contants/ModuleEnum';
+import { PermissionEnum } from '~/contants/PermissionEnum';
 import {
 	useDeleteContactGroup,
 	useGetContactGroups,
@@ -92,6 +95,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 	campaignId,
 }) => {
 	const navigate = useNavigate();
+	const { canAccessModule, canPerformAction } = usePermissions();
 	const toggleMutation = useToggleContactGroupStatus();
 	const updateMutation = useUpdateContactGroup();
 	const deleteMutation = useDeleteContactGroup();
@@ -101,6 +105,37 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 		isActive: true,
 		campaignId,
 	});
+
+	const canAccessCampaigns = canAccessModule(ModuleEnum.CAMPAIGNS);
+	const canUpdateCampaigns = canPerformAction(
+		ModuleEnum.CAMPAIGNS,
+		PermissionEnum.UPDATE
+	);
+	const canDeleteCampaigns = canPerformAction(
+		ModuleEnum.CAMPAIGNS,
+		PermissionEnum.DELETE
+	);
+	const canExecuteCampaigns = canPerformAction(
+		ModuleEnum.CAMPAIGNS,
+		PermissionEnum.EXECUTE
+	);
+	const canReadCampaigns = canPerformAction(
+		ModuleEnum.CAMPAIGNS,
+		PermissionEnum.READ
+	);
+
+	const canToggleContactList = canAccessCampaigns && canUpdateCampaigns;
+	const canEditContactList = canAccessCampaigns && canUpdateCampaigns;
+	const canDeleteContactList = canAccessCampaigns && canDeleteCampaigns;
+	const canCleanContactQueue = canAccessCampaigns && canExecuteCampaigns;
+	const canNavigateToContactList = canAccessCampaigns && canReadCampaigns;
+
+	const canRenderActionsCard =
+		canToggleContactList ||
+		canEditContactList ||
+		canDeleteContactList ||
+		canCleanContactQueue ||
+		canNavigateToContactList;
 
 	const [isEditingHumanEquivalent, setIsEditingHumanEquivalent] =
 		useState(false);
@@ -199,6 +234,10 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 	const disableCleanQueue = contactGroup.queueStatus === 'COMPLETED';
 
 	const handleEdit = () => {
+		if (!canEditContactList) {
+			return;
+		}
+
 		modals.open({
 			modalId: 'contact-list-modal',
 			title: (
@@ -226,6 +265,10 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 	};
 
 	const handleToggleStatus = () => {
+		if (!canToggleContactList) {
+			return;
+		}
+
 		if (disableToggle) {
 			return;
 		}
@@ -358,6 +401,10 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 	};
 
 	const handleDelete = () => {
+		if (!canDeleteContactList) {
+			return;
+		}
+
 		modals.openConfirmModal({
 			title: 'Delete Contact List',
 			children: (
@@ -394,6 +441,10 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 	};
 
 	const handleCleanQueue = () => {
+		if (!canCleanContactQueue) {
+			return;
+		}
+
 		const targetCampaignId = campaignId ?? contactGroup.campaignId;
 		if (!targetCampaignId) {
 			return;
@@ -425,6 +476,10 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 	};
 
 	const handleNavigate = () => {
+		if (!canNavigateToContactList) {
+			return;
+		}
+
 		const targetCampaignId = campaignId ?? contactGroup.campaignId;
 		if (!targetCampaignId) {
 			return;
@@ -434,88 +489,100 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 
 	return (
 		<Stack gap='md'>
-			<RightSectionCard
-				title='Actions'
-				description='Manage the lifecycle of this contact list'
-				icon={IconEdit}
-				iconColor='var(--mantine-color-orange-5)'
-			>
-				<Stack gap='md'>
-					<Group gap='xs' justify='center' className={styles.actionsRow}>
-						<Tooltip
-							label={
-								contactGroup.isActive
-									? 'Deactivate contact list'
-									: 'Activate contact list'
-							}
-							withArrow
-						>
-							<ActionIcon
-								variant='light'
-								onClick={handleToggleStatus}
-								aria-label={
-									contactGroup.isActive
-										? 'Deactivate contact list'
-										: 'Activate contact list'
-								}
-								disabled={disableToggle || isActionsLoading}
-							>
-								{contactGroup.isActive ? (
-									<IconToggleRight size={16} />
-								) : (
-									<IconToggleLeft size={16} />
-								)}
-							</ActionIcon>
-						</Tooltip>
+			{canRenderActionsCard && (
+				<RightSectionCard
+					title='Actions'
+					description='Manage the lifecycle of this contact list'
+					icon={IconEdit}
+					iconColor='var(--mantine-color-orange-5)'
+				>
+					<Stack gap='md'>
+						<Group gap='xs' justify='center' className={styles.actionsRow}>
+							{canToggleContactList && (
+								<Tooltip
+									label={
+										contactGroup.isActive
+											? 'Deactivate contact list'
+											: 'Activate contact list'
+									}
+									withArrow
+								>
+									<ActionIcon
+										variant='light'
+										onClick={handleToggleStatus}
+										aria-label={
+											contactGroup.isActive
+												? 'Deactivate contact list'
+												: 'Activate contact list'
+										}
+										disabled={disableToggle || isActionsLoading}
+									>
+										{contactGroup.isActive ? (
+											<IconToggleRight size={16} />
+										) : (
+											<IconToggleLeft size={16} />
+										)}
+									</ActionIcon>
+								</Tooltip>
+							)}
 
-						<Tooltip label='Edit contact list' withArrow>
-							<ActionIcon
-								variant='light'
-								onClick={handleEdit}
-								aria-label='Edit contact list'
-								disabled={isActionsLoading}
-							>
-								<IconEdit size={16} />
-							</ActionIcon>
-						</Tooltip>
+							{canEditContactList && (
+								<Tooltip label='Edit contact list' withArrow>
+									<ActionIcon
+										variant='light'
+										onClick={handleEdit}
+										aria-label='Edit contact list'
+										disabled={isActionsLoading}
+									>
+										<IconEdit size={16} />
+									</ActionIcon>
+								</Tooltip>
+							)}
 
-						<Tooltip label='Delete contact list' withArrow>
-							<ActionIcon
-								variant='light'
-								color='red'
-								onClick={handleDelete}
-								aria-label='Delete contact list'
-								disabled={isActionsLoading}
-							>
-								<IconTrash size={16} />
-							</ActionIcon>
-						</Tooltip>
+							{canDeleteContactList && (
+								<Tooltip label='Delete contact list' withArrow>
+									<ActionIcon
+										variant='light'
+										color='red'
+										onClick={handleDelete}
+										aria-label='Delete contact list'
+										disabled={isActionsLoading}
+									>
+										<IconTrash size={16} />
+									</ActionIcon>
+								</Tooltip>
+							)}
 
-						<Tooltip label='Clean queue' withArrow>
-							<ActionIcon
-								variant='light'
-								color='orange'
-								onClick={handleCleanQueue}
-								aria-label='Clean queue'
-								disabled={disableCleanQueue || isActionsLoading}
-							>
-								<IconRefresh size={16} />
-							</ActionIcon>
-						</Tooltip>
+							{canCleanContactQueue && (
+								<Tooltip label='Clean queue' withArrow>
+									<ActionIcon
+										variant='light'
+										color='orange'
+										onClick={handleCleanQueue}
+										aria-label='Clean queue'
+										disabled={disableCleanQueue || isActionsLoading}
+									>
+										<IconRefresh size={16} />
+									</ActionIcon>
+								</Tooltip>
+							)}
 
-						<Tooltip label='Open contact list page' withArrow>
-							<ActionIcon
-								variant='light'
-								onClick={handleNavigate}
-								aria-label='Open contact list page'
-								disabled={isActionsLoading}
-							>
-								<IconArrowUpRight size={16} />
-							</ActionIcon>
-						</Tooltip>
-					</Group>
-				</Stack>
-			</RightSectionCard>
+							{canNavigateToContactList && (
+								<Tooltip label='Open contact list page' withArrow>
+									<ActionIcon
+										variant='light'
+										onClick={handleNavigate}
+										aria-label='Open contact list page'
+										disabled={isActionsLoading}
+									>
+										<IconArrowUpRight size={16} />
+									</ActionIcon>
+								</Tooltip>
+							)}
+						</Group>
+					</Stack>
+				</RightSectionCard>
+			)}
 			<RightSectionCard
 				title='Contact List'
 				description='Configuration overview'

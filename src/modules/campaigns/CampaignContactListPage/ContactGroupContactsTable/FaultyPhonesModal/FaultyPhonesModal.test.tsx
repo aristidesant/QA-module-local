@@ -5,6 +5,16 @@ import FaultyPhonesModal from './FaultyPhonesModal';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import { notifications } from '@mantine/notifications';
 
+vi.mock('~/hooks/usePermissions', () => ({
+	__esModule: true,
+	default: () => ({
+		canPerformAction: () => true,
+		canAccessModule: () => true,
+		hasAnyPermission: () => true,
+		hasAllPermissions: () => true,
+	}),
+}));
+
 const exportRefetch = vi.fn();
 const updateMutate = vi.fn();
 

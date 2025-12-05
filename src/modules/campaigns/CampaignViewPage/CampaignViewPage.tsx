@@ -11,6 +11,9 @@ import {
 } from '@mantine/core';
 import { IconAlertCircle, IconEdit } from '@tabler/icons-react';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/contants/ModuleEnum';
+import { PermissionEnum } from '~/contants/PermissionEnum';
 import {
 	useGetCampaign,
 	useGetCampaignRequirements,
@@ -23,6 +26,7 @@ const CampaignViewPage = () => {
 	const { campaignId } = useParams<{ campaignId: string }>();
 	const { data: requet } = useGetCampaignRequirements(campaignId ?? '');
 	const navigate = useNavigate();
+	const { canPerformAction } = usePermissions();
 
 	const { selectCampaign, resetView, rightComponent } = useCampaignsStore(
 		(state) => state
@@ -111,16 +115,18 @@ const CampaignViewPage = () => {
 			showBackButton
 			onBackClick={() => navigate('/campaigns')}
 			titleRight={
-				<Tooltip label='Edit Campaign' withArrow>
-					<ActionIcon
-						variant='light'
-						size='lg'
-						aria-label='Edit Campaign'
-						onClick={() => navigate(`/campaign/${campaign.id}`)}
-					>
-						<IconEdit size={20} />
-					</ActionIcon>
-				</Tooltip>
+				canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.UPDATE) ? (
+					<Tooltip label='Edit Campaign' withArrow>
+						<ActionIcon
+							variant='light'
+							size='lg'
+							aria-label='Edit Campaign'
+							onClick={() => navigate(`/campaign/${campaign.id}`)}
+						>
+							<IconEdit size={20} />
+						</ActionIcon>
+					</Tooltip>
+				) : undefined
 			}
 			rightSection={
 				<Stack>

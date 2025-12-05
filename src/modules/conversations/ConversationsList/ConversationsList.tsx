@@ -13,11 +13,15 @@ import { useGetConversations } from '~/queries/conversationsQueries';
 import { useConversationStore } from '~/stores/useConversationStore';
 import ConversationDetails from '~/modules/conversations/ConversationDetails';
 import type { ConversationsModel } from '~/models/ConversationsModels';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/contants/ModuleEnum';
+import { PermissionEnum } from '~/contants/PermissionEnum';
 import { useConversationsColumns } from './useConversationsColumns';
 import ExportToExcelModal from './components/ExportToExcelModal';
 import ConversationFilters, {
 	type ConversationFiltersType,
 } from './ConversationFilters';
+import AccessDenied from '~/components/AccessDenied';
 import styles from './ConversationsList.module.css';
 
 type ConversationsListProps = {
@@ -38,6 +42,12 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 	const pagination = usePagination({
 		initialItemsPerPage: 10,
 	});
+	const { canAccessModule, canPerformAction } = usePermissions();
+	const canViewConversations = canAccessModule(ModuleEnum.CONVERSATIONS);
+	const canExportConversations = canPerformAction(
+		ModuleEnum.CONVERSATIONS,
+		PermissionEnum.EXPORT
+	);
 
 	const { limit, offset } = pagination.getApiParams();
 
@@ -110,6 +120,12 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 
 	const columns = useConversationsColumns(userTimezone);
 
+	if (!canViewConversations) {
+		return (
+			<AccessDenied description='You do not have permission to view conversations.' />
+		);
+	}
+
 	return (
 		<div className={`${styles.root} ${className ?? ''}`}>
 			<ConversationFilters filters={filters} onFiltersChange={setFilters} />
@@ -128,16 +144,18 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 							<IconRefresh size={16} />
 						</ActionIcon>
 					</Tooltip>
-					<Tooltip label='Export conversations' withArrow>
-						<ActionIcon
-							variant='default'
-							size='md'
-							onClick={() => setExportModalOpened(true)}
-							aria-label='Export conversations'
-						>
-							<IconFileExcel size={16} />
-						</ActionIcon>
-					</Tooltip>
+					{canExportConversations && (
+						<Tooltip label='Export conversations' withArrow>
+							<ActionIcon
+								variant='default'
+								size='md'
+								onClick={() => setExportModalOpened(true)}
+								aria-label='Export conversations'
+							>
+								<IconFileExcel size={16} />
+							</ActionIcon>
+						</Tooltip>
+					)}
 				</div>
 			</Group>
 
@@ -186,10 +204,12 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 				isLoading={isTableLoading}
 				itemLabel='conversations'
 			/>
-			<ExportToExcelModal
-				opened={exportModalOpened}
-				onClose={() => setExportModalOpened(false)}
-			/>
+			{canExportConversations && (
+				<ExportToExcelModal
+					opened={exportModalOpened}
+					onClose={() => setExportModalOpened(false)}
+				/>
+			)}
 		</div>
 	);
 };

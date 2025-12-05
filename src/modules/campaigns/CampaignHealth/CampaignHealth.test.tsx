@@ -14,6 +14,14 @@ vi.mock('~/queries/campaignsQueries', () => ({
 	useGetCampaignRequirements: vi.fn(),
 }));
 
+// Mock usePermissions so we can control edit visibility in tests
+const mockCanPerformAction = vi.fn((_module: any, _permission: any) => false);
+vi.mock('~/hooks/usePermissions', () => ({
+	default: () => ({
+		canPerformAction: mockCanPerformAction,
+	}),
+}));
+
 describe('CampaignHealth', () => {
 	const mockCampaignId = '123';
 	const mockNavigate = vi.fn();
@@ -21,6 +29,7 @@ describe('CampaignHealth', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		(useNavigate as ReturnType<typeof vi.fn>).mockReturnValue(mockNavigate);
+		mockCanPerformAction.mockReturnValue(false);
 	});
 
 	describe('Loading state', () => {
@@ -148,6 +157,8 @@ describe('CampaignHealth', () => {
 				},
 			});
 
+			// Grant permission for edit
+			mockCanPerformAction.mockReturnValue(true);
 			renderWithProviders(<CampaignHealth campaignId={mockCampaignId} />);
 
 			const editButton = screen.getByRole('button', { name: /go to edit/i });
@@ -155,6 +166,23 @@ describe('CampaignHealth', () => {
 
 			fireEvent.click(editButton);
 			expect(mockNavigate).toHaveBeenCalledWith(`/campaign/${mockCampaignId}`);
+		});
+
+		it('does not show "Go to edit" button when user lacks permission', () => {
+			mockCanPerformAction.mockReturnValue(false);
+			(useGetCampaignRequirements as ReturnType<typeof vi.fn>).mockReturnValue({
+				isLoading: false,
+				data: {
+					hasDispositionFlow: false,
+					hasActiveSchedule: false,
+				},
+			});
+
+			renderWithProviders(<CampaignHealth campaignId={mockCampaignId} />);
+
+			expect(
+				screen.queryByRole('button', { name: /go to edit/i })
+			).not.toBeInTheDocument();
 		});
 	});
 });

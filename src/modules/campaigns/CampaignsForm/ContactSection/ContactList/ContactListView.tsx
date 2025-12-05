@@ -3,6 +3,9 @@ import { ActionIcon, Modal, Tooltip, Group, Stack } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus, IconRefresh } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/contants/ModuleEnum';
+import { PermissionEnum } from '~/contants/PermissionEnum';
 import AddNewContactList from '../AddNewContactList';
 import SelectActiveContactList from './SelectActiveContactList';
 import SectionTitle from '~/components/SectionTitle';
@@ -38,6 +41,7 @@ export const ContactListView = ({
 	const [inactiveExpanded, { toggle: toggleInactiveExpanded }] =
 		useDisclosure(true);
 	const { setRightComponent } = useCampaignsStore();
+	const { canPerformAction } = usePermissions();
 	const [selectedContactListId, setSelectedContactListId] = useState<
 		number | null
 	>(null);
@@ -122,19 +126,23 @@ export const ContactListView = ({
 								<IconRefresh size={18} />
 							</ActionIcon>
 						</Tooltip>
-						<Tooltip label={tooltipLabel}>
-							<ActionIcon
-								color='blue'
-								size='sm'
-								variant='light'
-								onClick={() =>
-									isCollapsed ? toggleInactiveExpanded() : open()
-								}
-								aria-label={tooltipLabel}
-							>
-								<IconPlus size={18} />
-							</ActionIcon>
-						</Tooltip>
+						{isActive &&
+							canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.CREATE) && (
+								<Tooltip label={tooltipLabel}>
+									<ActionIcon
+										color='blue'
+										size='sm'
+										variant='light'
+										onClick={() =>
+											isCollapsed ? toggleInactiveExpanded() : open()
+										}
+										aria-label={tooltipLabel}
+										data-testid='header-add-contact-list-btn'
+									>
+										<IconPlus size={18} />
+									</ActionIcon>
+								</Tooltip>
+							)}
 					</Group>
 				}
 			>

@@ -4,6 +4,16 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ContactGroupContactsTable from './ContactGroupContactsTable';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
+vi.mock('~/hooks/usePermissions', () => ({
+	__esModule: true,
+	default: () => ({
+		canPerformAction: () => true,
+		canAccessModule: () => true,
+		hasAnyPermission: () => true,
+		hasAllPermissions: () => true,
+	}),
+}));
+
 const setRightComponent = vi.fn();
 const exportRefetch = vi.fn();
 const appendMutate = vi.fn();

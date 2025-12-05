@@ -8,31 +8,10 @@ vi.mock('react-router', () => ({
 	useNavigate: () => vi.fn(),
 }));
 
-// Mock useImpersonationState
-const mockIsImpersonating = vi.fn();
-vi.mock('~/hooks/useImpersonationState', () => ({
-	useImpersonationState: () => ({
-		isImpersonating: mockIsImpersonating(),
-		originalClientId: null,
-		currentClientId: null,
-	}),
-}));
-
-// Mock useEndImpersonation
-const mockMutate = vi.fn();
-vi.mock('~/queries/authQueries', () => ({
-	useEndImpersonation: () => ({
-		mutate: mockMutate,
-		isPending: false,
-	}),
-}));
-
-// Mock mantine modals
-const mockOpenConfirmModal = vi.fn();
-vi.mock('@mantine/modals', () => ({
-	modals: {
-		openConfirmModal: (args: any) => mockOpenConfirmModal(args),
-	},
+// Mock session store
+const mockUseSessionStore = vi.fn();
+vi.mock('~/stores/sessionStore', () => ({
+	useSessionStore: () => mockUseSessionStore(),
 }));
 
 const renderHeader = () => {
@@ -46,7 +25,7 @@ const renderHeader = () => {
 describe('Header', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		mockIsImpersonating.mockReturnValue(false);
+		mockUseSessionStore.mockReturnValue({ user: null });
 	});
 
 	describe('Rendering', () => {
@@ -65,57 +44,39 @@ describe('Header', () => {
 		});
 	});
 
-	describe('Impersonation State', () => {
-		it('does not show return button when not impersonating', () => {
-			mockIsImpersonating.mockReturnValue(false);
+	describe('Client Display', () => {
+		it('does not show client badge when no client', () => {
+			mockUseSessionStore.mockReturnValue({ user: null });
 			renderHeader();
 
+			expect(screen.queryByText(/client/i)).not.toBeInTheDocument();
+		});
+
+		it('shows client badge when user has a client', () => {
+			const mockUser = {
+				id: 1,
+				email: 'test@example.com',
+				username: 'tester',
+				clientId: 2,
+				client: {
+					id: 2,
+					name: 'Acme Corporation',
+					identifier: 'acme',
+					email: 'info@acme.com',
+				},
+				createdAt: new Date().toISOString(),
+				updatedAt: new Date().toISOString(),
+				deletedAt: null,
+				status: 'active',
+			} as any;
+			mockUseSessionStore.mockReturnValue({ user: mockUser });
+
+			renderHeader();
+
+			expect(screen.getByText('Acme Corporation')).toBeInTheDocument();
 			expect(
 				screen.queryByRole('button', { name: /return to master client/i })
 			).not.toBeInTheDocument();
-		});
-
-		it('shows return button when impersonating', () => {
-			mockIsImpersonating.mockReturnValue(true);
-			renderHeader();
-
-			expect(
-				screen.getByRole('button', { name: /return to master client/i })
-			).toBeInTheDocument();
-		});
-
-		it('opens confirmation modal when return button is clicked', async () => {
-			mockIsImpersonating.mockReturnValue(true);
-			renderHeader();
-
-			const returnButton = screen.getByRole('button', {
-				name: /return to master client/i,
-			});
-			returnButton.click();
-
-			expect(mockOpenConfirmModal).toHaveBeenCalledWith(
-				expect.objectContaining({
-					title: 'Return to Master Client',
-					labels: { confirm: 'Return to Master', cancel: 'Cancel' },
-					confirmProps: { color: 'blue' },
-				})
-			);
-		});
-
-		it('calls endImpersonation mutation when confirmed', () => {
-			mockIsImpersonating.mockReturnValue(true);
-			mockOpenConfirmModal.mockImplementation(({ onConfirm }: any) => {
-				onConfirm();
-			});
-
-			renderHeader();
-
-			const returnButton = screen.getByRole('button', {
-				name: /return to master client/i,
-			});
-			returnButton.click();
-
-			expect(mockMutate).toHaveBeenCalledTimes(1);
 		});
 	});
 });

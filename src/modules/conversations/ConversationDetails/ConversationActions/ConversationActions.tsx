@@ -11,6 +11,9 @@ import {
 } from '~/queries/conversationsQueries';
 import RightSectionCard from '~/components/RightSectionCard';
 import { ConversationsModel } from '~/models/ConversationsModels';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/contants/ModuleEnum';
+import { PermissionEnum } from '~/contants/PermissionEnum';
 import styles from './ConversationActions.module.css';
 
 interface ConversationActionsProps {
@@ -24,6 +27,15 @@ export function ConversationActions({
 }: ConversationActionsProps) {
 	const failAndPauseMutation = useFailAndPauseConversation();
 	const fetchAndProcessMutation = useFetchAndProcessConversation();
+	const { canPerformAction } = usePermissions();
+	const canExecuteConversations = canPerformAction(
+		ModuleEnum.CONVERSATIONS,
+		PermissionEnum.EXECUTE
+	);
+
+	if (!canExecuteConversations) {
+		return null;
+	}
 
 	const handleReprocessEvent = () => {
 		modals.openConfirmModal({

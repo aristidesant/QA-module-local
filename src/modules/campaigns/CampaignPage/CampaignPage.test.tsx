@@ -6,13 +6,21 @@ import { useGetCampaign } from '~/queries/campaignsQueries';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import { useNavigate, useParams } from 'react-router';
 
+vi.mock('~/queries/campaignsQueries', () => ({
+	useGetCampaign: vi.fn(),
+}));
+
+const mockUsePermissions = vi.fn();
+vi.mock('~/hooks/usePermissions', () => ({
+	__esModule: true,
+	default: () => ({
+		canPerformAction: mockUsePermissions,
+	}),
+}));
+
 vi.mock('react-router', () => ({
 	useNavigate: vi.fn(),
 	useParams: vi.fn(),
-}));
-
-vi.mock('~/queries/campaignsQueries', () => ({
-	useGetCampaign: vi.fn(),
 }));
 
 vi.mock('~/stores/campaignsStore', () => ({
@@ -53,10 +61,14 @@ describe('CampaignPage', () => {
 			};
 			return selector ? selector(state) : state;
 		});
+
+		// default: allow access unless a test overrides it
+		(mockUsePermissions as any).mockReturnValue(true);
 	});
 
 	it('renders loading state', () => {
 		(useGetCampaign as any).mockReturnValue({ isLoading: true });
+		(mockUsePermissions as any).mockReturnValue(true);
 		renderWithProviders(<CampaignPage />);
 		expect(screen.getByText('Loading Campaign...')).toBeInTheDocument();
 	});
@@ -67,6 +79,7 @@ describe('CampaignPage', () => {
 			isError: true,
 			error: new Error('Failed to fetch'),
 		});
+		(mockUsePermissions as any).mockReturnValue(true);
 		renderWithProviders(<CampaignPage />);
 		expect(screen.getByText('Campaign Unavailable')).toBeInTheDocument();
 		expect(screen.getByText('Failed to fetch')).toBeInTheDocument();
@@ -78,6 +91,7 @@ describe('CampaignPage', () => {
 			isLoading: false,
 			data: mockCampaign,
 		});
+		(mockUsePermissions as any).mockReturnValue(true);
 
 		renderWithProviders(<CampaignPage />);
 
@@ -87,5 +101,23 @@ describe('CampaignPage', () => {
 		const backButton = screen.getByTestId('campaign-form-back');
 		fireEvent.click(backButton);
 		expect(mockNavigate).toHaveBeenCalledWith('/campaigns');
+	});
+
+	it('shows AccessDenied when user lacks edit permission', () => {
+		(mockUsePermissions as any).mockReturnValue(false);
+		(useGetCampaign as any).mockReturnValue({
+			isLoading: false,
+			data: undefined,
+		});
+
+		renderWithProviders(<CampaignPage />);
+
+		expect(
+			screen.getAllByText('You do not have permission to access this page.')
+				.length
+		).toBeGreaterThan(0);
+		expect(
+			screen.getByRole('button', { name: /go to home|dashboard/i })
+		).toBeInTheDocument();
 	});
 });

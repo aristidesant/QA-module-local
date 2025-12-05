@@ -22,6 +22,7 @@ import ClientSearchBox from './ClientSearchBox';
 import ClientList from './ClientList';
 import DispositionChart from './DispositionChart';
 import StatsCard from './StatsCard';
+import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import { useImpersonationState } from '~/hooks/useImpersonationState';
 import { useSessionStore } from '~/stores/sessionStore';
 import classes from './WelcomeCard.module.css';
@@ -35,22 +36,25 @@ export default function WelcomeCard({
 	heading = 'Overview',
 	subheading = 'Global performance snapshot across all clients',
 }: WelcomeCardProps) {
+	const isMasterClient = useIsMasterClient();
 	const { isImpersonating } = useImpersonationState();
-	const { targetClient } = useSessionStore();
+	const { targetClient, user } = useSessionStore();
+
+	const showMasterDashboard = isMasterClient && !isImpersonating;
 
 	// Update heading and subheading for impersonated users
 	const displayHeading =
 		isImpersonating && targetClient
 			? `Welcome to ${targetClient.name}`
 			: heading;
-	const displaySubheading = isImpersonating
-		? 'Your AI-powered call center management platform'
-		: subheading;
+	const displaySubheading = showMasterDashboard
+		? subheading
+		: 'Your AI-powered call center management platform';
 
 	return (
 		<ContentContainer title={displayHeading} description={displaySubheading}>
 			<div className={classes.mainCard}>
-				{!isImpersonating && (
+				{showMasterDashboard && (
 					<div className={classes.topRow}>
 						<CampaignStatusCard />
 						<DispositionChart />
@@ -58,7 +62,21 @@ export default function WelcomeCard({
 					</div>
 				)}
 
-				{isImpersonating ? (
+				{showMasterDashboard ? (
+					<div className={classes.bottomSection}>
+						<div className={classes.sectionHeader}>
+							<Title order={3} size='lg'>
+								Client details overview {user?.clientId}
+							</Title>
+							<Text size='sm' c='dimmed'>
+								Explore campaigns, performance, and account activity at a
+								glance.
+							</Text>
+							<ClientSearchBox />
+						</div>
+						<ClientList />
+					</div>
+				) : (
 					<div className={classes.welcomeSection}>
 						<Card className={classes.welcomeCard}>
 							<Stack gap='xl'>
@@ -199,20 +217,6 @@ export default function WelcomeCard({
 								</SimpleGrid>
 							</Stack>
 						</Card>
-					</div>
-				) : (
-					<div className={classes.bottomSection}>
-						<div className={classes.sectionHeader}>
-							<Title order={3} size='lg'>
-								Client details overview
-							</Title>
-							<Text size='sm' c='dimmed'>
-								Explore campaigns, performance, and account activity at a
-								glance.
-							</Text>
-							<ClientSearchBox />
-						</div>
-						<ClientList />
 					</div>
 				)}
 			</div>

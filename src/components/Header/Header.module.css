@@ -202,3 +202,42 @@
 	background-color: var(--mantine-color-orange-0);
 	border-color: var(--mantine-color-orange-6);
 }
+
+/* Client badge styles */
+.clientBadge {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 6px 10px;
+	border-radius: 9999px;
+	background: rgba(241, 245, 249, 0.9);
+	border: 1px solid rgba(226, 232, 240, 0.9);
+	cursor: default;
+}
+
+.clientAvatar {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	background: linear-gradient(45deg, #60a5fa, #3b82f6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	font-weight: 700;
+	font-size: 12px;
+}
+
+.clientInfo {
+	display: flex;
+	flex-direction: column;
+	min-width: 110px;
+}
+
+.clientName {
+	line-height: 1;
+}
+
+.clientIdentifier {
+	margin-top: -2px;
+}

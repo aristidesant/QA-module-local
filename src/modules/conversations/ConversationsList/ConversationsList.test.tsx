@@ -11,6 +11,14 @@ vi.mock('~/queries/conversationsQueries', () => ({
 	useGetConversations: (...args: unknown[]) => mockUseGetConversations(...args),
 }));
 
+vi.mock('~/hooks/usePermissions', () => ({
+	__esModule: true,
+	default: () => ({
+		canAccessModule: () => true,
+		canPerformAction: () => true,
+	}),
+}));
+
 // Mock useConversationStore
 const mockSetSelection = vi.fn();
 vi.mock('~/stores/useConversationStore', () => ({

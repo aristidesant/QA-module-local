@@ -24,6 +24,9 @@ import {
 } from '~/queries/contactGroupFilesQueries';
 import EditablePhoneNumbersTable from './EditablePhoneNumbersTable';
 import AppendContactsModal from './AppendContactsModal';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/contants/ModuleEnum';
+import { PermissionEnum } from '~/contants/PermissionEnum';
 
 interface ContactGroupContactsTableProps {
 	contactGroupId: number;
@@ -34,6 +37,20 @@ export const ContactGroupContactsTable: React.FC<
 	ContactGroupContactsTableProps
 > = ({ contactGroupId, campaignId }) => {
 	const { setRightComponent } = useCampaignsStore();
+	const { canPerformAction } = usePermissions();
+
+	const canExportContacts = canPerformAction(
+		ModuleEnum.CONTACTS,
+		PermissionEnum.EXPORT
+	);
+	const canUpdateContacts = canPerformAction(
+		ModuleEnum.CONTACTS,
+		PermissionEnum.UPDATE
+	);
+	const canDeleteContacts = canPerformAction(
+		ModuleEnum.CONTACTS,
+		PermissionEnum.DELETE
+	);
 
 	// Pagination state
 	const pagination = usePagination({
@@ -85,6 +102,7 @@ export const ContactGroupContactsTable: React.FC<
 	const uploadMutation = useUploadContactGroupFile({});
 
 	const handleOpenAppendModal = () => {
+		if (!canExportContacts) return;
 		// Open immediately for a snappier UX
 		setShowAppendModal(true);
 	};
@@ -92,6 +110,8 @@ export const ContactGroupContactsTable: React.FC<
 	// Step 1: Upload CSV and return file id
 	const handleUploadCsv = async (file: File | null) => {
 		if (!file) throw new Error('No file provided');
+		if (!canExportContacts)
+			throw new Error('You do not have permission to import contacts.');
 		if (!campaignId) {
 			throw new Error('Campaign ID is required to upload file.');
 		}
@@ -105,6 +125,9 @@ export const ContactGroupContactsTable: React.FC<
 
 	// Step 2: Append uploaded file to list (schema ignored)
 	const handleAppendUploadedFile = async (contactGroupFileId: number) => {
+		if (!canExportContacts) {
+			throw new Error('You do not have permission to import contacts.');
+		}
 		await appendMutation.mutateAsync({
 			contactGroupId,
 			contactGroupFileId,
@@ -202,8 +225,8 @@ export const ContactGroupContactsTable: React.FC<
 	);
 
 	const columns = useContactColumns(
-		handleEditContact,
-		handleDeleteContact,
+		canUpdateContacts ? handleEditContact : undefined,
+		canDeleteContacts ? handleDeleteContact : undefined,
 		(contactId) =>
 			deleteContactMutation.isPending && deletingContactId === contactId
 	);
@@ -259,6 +282,7 @@ export const ContactGroupContactsTable: React.FC<
 
 	// Handle export
 	const handleExport = useCallback(async () => {
+		if (!canExportContacts) return;
 		try {
 			const result = await exportQuery.refetch();
 			if (result.data) {
@@ -293,7 +317,7 @@ export const ContactGroupContactsTable: React.FC<
 				color: 'red',
 			});
 		}
-	}, [exportQuery, contactGroupId]);
+	}, [exportQuery, contactGroupId, canExportContacts]);
 
 	// Cleanup right panel on unmount
 	useEffect(() => {
@@ -310,10 +334,14 @@ export const ContactGroupContactsTable: React.FC<
 				onFilterChange={contactFilters.setFilter}
 				onClearFilters={contactFilters.clearFilters}
 				hasActiveFilters={contactFilters.hasActiveFilters}
-				onExport={handleExport}
-				isExporting={exportQuery.isFetching}
-				onAppend={handleOpenAppendModal}
-				isAppending={appendMutation.isPending || uploadMutation.isPending}
+				onExport={canExportContacts ? handleExport : undefined}
+				isExporting={canExportContacts ? exportQuery.isFetching : false}
+				onAppend={canExportContacts ? handleOpenAppendModal : undefined}
+				isAppending={
+					canExportContacts
+						? appendMutation.isPending || uploadMutation.isPending
+						: false
+				}
 			/>
 
 			{/* Contact Table */}
@@ -378,7 +406,7 @@ export const ContactGroupContactsTable: React.FC<
 				itemLabel='contacts'
 			/>
 
-			{showAppendModal && (
+			{canExportContacts && showAppendModal && (
 				<AppendContactsModal
 					onClose={() => setShowAppendModal(false)}
 					onUpload={(file) => handleUploadCsv(file)}

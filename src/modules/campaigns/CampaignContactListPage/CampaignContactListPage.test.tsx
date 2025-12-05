@@ -19,6 +19,14 @@ vi.mock('react-router', () => ({
 	useParams: vi.fn(),
 }));
 
+vi.mock('~/hooks/usePermissions', () => ({
+	__esModule: true,
+	default: () => ({
+		canPerformAction: () => true,
+		canAccessModule: () => true,
+	}),
+}));
+
 vi.mock('~/queries/contactGroupQueries', () => ({
 	useGetContactGroup: vi.fn(),
 }));

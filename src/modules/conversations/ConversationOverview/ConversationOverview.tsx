@@ -26,6 +26,9 @@ import {
 import { useExportConversationPdf } from '~/queries/conversationsQueries';
 import { notifications } from '@mantine/notifications';
 import type { ConversationsModel } from '~/models/ConversationsModels';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/contants/ModuleEnum';
+import { PermissionEnum } from '~/contants/PermissionEnum';
 import styles from './ConversationOverview.module.css';
 import ConversationPlayer from '../ConversationPlayer';
 import ConversationDisposition from '../ConversationDisposition';
@@ -139,8 +142,17 @@ export function ConversationOverview({
 		getStatusIcon(displayStatus);
 
 	const exportConversationMutation = useExportConversationPdf();
+	const { canPerformAction } = usePermissions();
+	const canExportConversations = canPerformAction(
+		ModuleEnum.CONVERSATIONS,
+		PermissionEnum.EXPORT
+	);
 
 	const handleExportConversation = async () => {
+		if (!canExportConversations) {
+			return;
+		}
+
 		try {
 			const result = await exportConversationMutation.mutateAsync(
 				conversation.id
@@ -295,14 +307,16 @@ export function ConversationOverview({
 					<Text fz='xs' className={styles.summaryText}>
 						{summary?.es || summary?.en || transcriptSummary}
 					</Text>
-					<Button
-						rightSection={<IconPdf size={16} />}
-						fullWidth
-						loading={exportConversationMutation.isPending}
-						onClick={handleExportConversation}
-					>
-						Download Full Transcript
-					</Button>
+					{canExportConversations && (
+						<Button
+							rightSection={<IconPdf size={16} />}
+							fullWidth
+							loading={exportConversationMutation.isPending}
+							onClick={handleExportConversation}
+						>
+							Download Full Transcript
+						</Button>
+					)}
 				</RightSectionCard>
 			)}{' '}
 			<ConversationPlayer

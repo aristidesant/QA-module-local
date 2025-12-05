@@ -7,6 +7,9 @@ import {
 	IconX,
 } from '@tabler/icons-react';
 import type ContactGroup from '~/models/ContactGroup';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/contants/ModuleEnum';
+import { PermissionEnum } from '~/contants/PermissionEnum';
 import {
 	useStartOutboundCampaign,
 	usePauseOutboundCampaign,
@@ -24,6 +27,7 @@ export const ContactListControl = ({
 	const startMutation = useStartOutboundCampaign();
 	const pauseMutation = usePauseOutboundCampaign();
 	const resumeMutation = useResumeOutboundCampaign();
+	const { canPerformAction } = usePermissions();
 
 	const isLoading =
 		startMutation.isPending ||
@@ -57,12 +61,18 @@ export const ContactListControl = ({
 	const campaignId =
 		contactGroup.schedule?.campaignId ?? contactGroup.campaignId;
 
-	const { data: requirements } = useGetCampaignRequirements(
-		campaignId?.toString() ?? ''
+	const canExecuteCampaign = canPerformAction(
+		ModuleEnum.CAMPAIGNS,
+		PermissionEnum.EXECUTE
 	);
 
-	const canStartOrResume =
-		requirements?.hasDispositionFlow && requirements?.hasActiveSchedule;
+	const { data: requirements } = useGetCampaignRequirements(
+		canExecuteCampaign && campaignId ? campaignId.toString() : ''
+	);
+
+	const canStartOrResume = Boolean(
+		requirements?.hasDispositionFlow && requirements?.hasActiveSchedule
+	);
 
 	const handleAction = () => {
 		if (isDisabled || isLoading) {
@@ -145,6 +155,10 @@ export const ContactListControl = ({
 	const isDisabled =
 		isStatusDisabled || (isStartOrResumeAction && !canStartOrResume);
 
+	if (!canExecuteCampaign) {
+		return null;
+	}
+
 	let icon = <IconPlayerPlay size={16} />;
 	let tooltip = canStartOrResume
 		? 'Start contact list'
@@ -169,7 +183,7 @@ export const ContactListControl = ({
 	return (
 		<Tooltip label={tooltip} withArrow>
 			<ActionIcon
-				variant='subtle'
+				variant='light'
 				onClick={handleAction}
 				aria-label={tooltip}
 				loading={isLoading}

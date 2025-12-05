@@ -21,6 +21,9 @@ import {
 import type { VoiceFileModel } from '~/models/ConversationsModels';
 import fileApi from '~/api/fileApi';
 import { useExportConversationAudio } from '~/queries/conversationsQueries';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/contants/ModuleEnum';
+import { PermissionEnum } from '~/contants/PermissionEnum';
 import classes from './ConversationPlayer.module.css';
 import RightSection from '~/components/RightSection';
 import { useConversationStore } from '~/stores/useConversationStore';
@@ -51,6 +54,11 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 	const audioRef = useRef<HTMLAudioElement>(null);
 	const conversationId =
 		useConversationStore((state) => state.selectedId) || paramConversationId;
+	const { canPerformAction } = usePermissions();
+	const canExportConversations = canPerformAction(
+		ModuleEnum.CONVERSATIONS,
+		PermissionEnum.EXPORT
+	);
 
 	// Export audio mutation
 	const exportAudioMutation = useExportConversationAudio();
@@ -149,7 +157,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 
 	// Handle audio download
 	const handleDownload = async () => {
-		if (!conversationId) return;
+		if (!conversationId || !canExportConversations) return;
 
 		try {
 			const result = await exportAudioMutation.mutateAsync(conversationId);
@@ -358,7 +366,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 						allowDeselect={false}
 					/>
 				</Group>
-				{conversationId && (
+				{conversationId && canExportConversations && (
 					<Button
 						size='sm'
 						fullWidth

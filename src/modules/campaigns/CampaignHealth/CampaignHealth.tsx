@@ -10,6 +10,9 @@ import {
 	IconArrowRight,
 } from '@tabler/icons-react';
 import { useGetCampaignRequirements } from '~/queries/campaignsQueries';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/contants/ModuleEnum';
+import { PermissionEnum } from '~/contants/PermissionEnum';
 import classes from './CampaignHealth.module.css';
 
 interface CampaignHealthProps {
@@ -23,6 +26,10 @@ const CampaignHealth: React.FC<CampaignHealthProps> = ({ campaignId }) => {
 		isLoading,
 		error,
 	} = useGetCampaignRequirements(campaignId);
+
+	// Ensure hooks maintain consistent call order by invoking permissions here
+	const { canPerformAction } = usePermissions();
+	const canEdit = canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.UPDATE);
 
 	if (isLoading) {
 		return (
@@ -83,14 +90,16 @@ const CampaignHealth: React.FC<CampaignHealthProps> = ({ campaignId }) => {
 					</div>
 				)}
 			</div>
-			<Button
-				variant='light'
-				rightSection={<IconArrowRight size={16} />}
-				onClick={() => navigate(`/campaign/${campaignId}`)}
-				className={classes.editButton}
-			>
-				Go to edit
-			</Button>
+			{canEdit && (
+				<Button
+					variant='light'
+					rightSection={<IconArrowRight size={16} />}
+					onClick={() => navigate(`/campaign/${campaignId}`)}
+					className={classes.editButton}
+				>
+					Go to edit
+				</Button>
+			)}
 		</Stack>
 	);
 };

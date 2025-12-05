@@ -23,6 +23,9 @@ import { useUpdateContactPhoneNumber } from '~/queries/contactsQueries';
 import { useQueryClient } from '@tanstack/react-query';
 import styles from './EditablePhoneNumbersTable.module.css';
 import AddPhoneNumbersModal from './AddPhoneNumbersModal';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/contants/ModuleEnum';
+import { PermissionEnum } from '~/contants/PermissionEnum';
 
 interface EditablePhoneNumbersTableProps {
 	contactId: number;
@@ -39,6 +42,11 @@ function EditablePhoneNumbersTable({
 	phoneNumbers,
 	onAfterUpdate,
 }: EditablePhoneNumbersTableProps) {
+	const { canPerformAction } = usePermissions();
+	const canUpdateContacts = canPerformAction(
+		ModuleEnum.CONTACTS,
+		PermissionEnum.UPDATE
+	);
 	const [editingId, setEditingId] = useState<number | null>(null);
 	const editedValuesRef = useRef<Record<number, string>>({});
 	const updateMutation = useUpdateContactPhoneNumber();
@@ -47,16 +55,27 @@ function EditablePhoneNumbersTable({
 
 	const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
 
-	const beginEdit = useCallback((row: RowShape) => {
-		setEditingId(row.id);
-		editedValuesRef.current[row.id] = row.phoneNumber;
-	}, []);
+	const beginEdit = useCallback(
+		(row: RowShape) => {
+			if (!canUpdateContacts) return;
+			setEditingId(row.id);
+			editedValuesRef.current[row.id] = row.phoneNumber;
+		},
+		[canUpdateContacts]
+	);
 
 	const cancelEdit = useCallback(() => {
 		setEditingId(null);
 	}, []);
 
+	useEffect(() => {
+		if (!canUpdateContacts) {
+			setEditingId(null);
+		}
+	}, [canUpdateContacts]);
+
 	const saveEdit = useCallback(() => {
+		if (!canUpdateContacts) return;
 		if (editingId == null) return;
 		const row = phoneNumbers.find((p) => p.id === editingId);
 		if (!row) return;
@@ -107,6 +126,7 @@ function EditablePhoneNumbersTable({
 		updateMutation,
 		queryClient,
 		onAfterUpdate,
+		canUpdateContacts,
 	]);
 
 	const handlePhonesAdded = useCallback(() => {
@@ -156,8 +176,8 @@ function EditablePhoneNumbersTable({
 		);
 	};
 
-	const columns = useMemo<ColumnDef<RowShape>[]>(
-		() => [
+	const columns = useMemo<ColumnDef<RowShape>[]>(() => {
+		const baseColumns: ColumnDef<RowShape>[] = [
 			{
 				accessorKey: 'phoneNumber',
 				header: 'Phone Number',
@@ -166,7 +186,7 @@ function EditablePhoneNumbersTable({
 					const original = row.original;
 					const isEditing = editingId === original.id;
 					const hasError = original.validationError;
-					if (isEditing) {
+					if (isEditing && canUpdateContacts) {
 						return (
 							<Group gap='xs'>
 								<EditableInput
@@ -233,7 +253,10 @@ function EditablePhoneNumbersTable({
 					<Text size='xs'>{(getValue() as number) ?? 0}</Text>
 				),
 			},
-			{
+		];
+
+		if (canUpdateContacts) {
+			baseColumns.push({
 				id: 'actions',
 				header: 'Actions',
 				size: 90,
@@ -278,26 +301,36 @@ function EditablePhoneNumbersTable({
 						</Group>
 					);
 				},
-			},
-		],
-		[editingId, beginEdit, cancelEdit, saveEdit, updateMutation.isPending]
-	);
+			});
+		}
+
+		return baseColumns;
+	}, [
+		beginEdit,
+		cancelEdit,
+		saveEdit,
+		updateMutation.isPending,
+		editingId,
+		canUpdateContacts,
+	]);
 
 	return (
 		<>
-			<Group justify='flex-end' className={styles.addBar}>
-				<Tooltip label='Add phone numbers'>
-					<Button
-						variant='light'
-						color='blue'
-						size='xs'
-						leftSection={<IconPlus size={14} />}
-						onClick={() => setAddModalOpen(true)}
-					>
-						Add
-					</Button>
-				</Tooltip>
-			</Group>
+			{canUpdateContacts && (
+				<Group justify='flex-end' className={styles.addBar}>
+					<Tooltip label='Add phone numbers'>
+						<Button
+							variant='light'
+							color='blue'
+							size='xs'
+							leftSection={<IconPlus size={14} />}
+							onClick={() => setAddModalOpen(true)}
+						>
+							Add
+						</Button>
+					</Tooltip>
+				</Group>
+			)}
 			<BaseTable
 				data={phoneNumbers}
 				columns={columns}
@@ -306,7 +339,7 @@ function EditablePhoneNumbersTable({
 				emptyMessage='No phone numbers available'
 				className={styles.subTableRoot}
 			/>
-			{addModalOpen && (
+			{canUpdateContacts && addModalOpen && (
 				<AddPhoneNumbersModal
 					contactId={contactId}
 					contactGroupId={contactGroupId}

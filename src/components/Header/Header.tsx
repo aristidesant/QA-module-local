@@ -1,51 +1,32 @@
-import { IconBell, IconArrowBack } from '@tabler/icons-react';
-import { ActionIcon, Divider, Button, Text } from '@mantine/core';
-import { modals } from '@mantine/modals';
+import { IconBell } from '@tabler/icons-react';
+import { ActionIcon, Divider, Text } from '@mantine/core';
 import UserMenu from '../UserMenu';
-import { useImpersonationState } from '~/hooks/useImpersonationState';
-import { useEndImpersonation } from '~/queries/authQueries';
+import { useSessionStore } from '~/stores/sessionStore';
 import styles from './Header.module.css';
 
 export const Header: React.FC = () => {
-	const { isImpersonating } = useImpersonationState();
-	const endImpersonationMutation = useEndImpersonation();
-
-	const handleReturnToMasterClient = () => {
-		modals.openConfirmModal({
-			title: 'Return to Master Client',
-			children: (
-				<Text size='sm'>
-					Are you sure you want to return to your master client account? You
-					will exit the current client impersonation session.
-				</Text>
-			),
-			labels: { confirm: 'Return to Master', cancel: 'Cancel' },
-			confirmProps: { color: 'blue' },
-			onConfirm: () => {
-				endImpersonationMutation.mutate();
-			},
-		});
-	};
+	const { user } = useSessionStore();
+	const client = user?.client || null;
 
 	return (
 		<header className={styles.header}>
 			<div className={styles.headerContent}>
-				<div className={styles.headerLeft} />
-				<div className={styles.headerRight}>
-					{isImpersonating && (
-						<>
-							<Button
-								variant='outline'
-								size='xs'
-								leftSection={<IconArrowBack size={16} />}
-								onClick={handleReturnToMasterClient}
-								className={styles.returnButton}
-							>
-								Return to Master Client
-							</Button>
-							<Divider orientation='vertical' />
-						</>
+				<div className={styles.headerLeft}>
+					{client && (
+						<div className={styles.clientBadge} title={client.name}>
+							<div className={styles.clientAvatar}>
+								{client.name?.slice(0, 2).toUpperCase()}
+							</div>
+							<div className={styles.clientInfo}>
+								<Text size='sm' fw={700} className={styles.clientName}>
+									{client.name}
+								</Text>
+							</div>
+						</div>
 					)}
+				</div>
+				<div className={styles.headerRight}>
+					{/* client badge moved to left */}
 					<ActionIcon radius={'xl'} size={'lg'} variant='subtle'>
 						<IconBell />
 					</ActionIcon>

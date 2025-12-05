@@ -26,6 +26,9 @@ import { useExportContactGroupContactsWithPhoneValidationErrors } from '~/querie
 import { useUpdateContactPhoneNumber } from '~/queries/contactsQueries';
 import { useQueryClient } from '@tanstack/react-query';
 import styles from './FaultyPhonesModal.module.css';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/contants/ModuleEnum';
+import { PermissionEnum } from '~/contants/PermissionEnum';
 
 interface FaultyPhonesModalProps {
 	opened: boolean;
@@ -51,6 +54,15 @@ const FaultyPhonesModal = ({
 	contactGroupId,
 	onAfterUpdate,
 }: FaultyPhonesModalProps) => {
+	const { canPerformAction } = usePermissions();
+	const canExportContacts = canPerformAction(
+		ModuleEnum.CONTACTS,
+		PermissionEnum.EXPORT
+	);
+	const canUpdateContacts = canPerformAction(
+		ModuleEnum.CONTACTS,
+		PermissionEnum.UPDATE
+	);
 	const exportQuery =
 		useExportContactGroupContactsWithPhoneValidationErrors(contactGroupId);
 	const updatePhoneMutation = useUpdateContactPhoneNumber();
@@ -84,16 +96,27 @@ const FaultyPhonesModal = ({
 		setRows(faultyPhoneRows);
 	}, [faultyPhoneRows]);
 
-	const beginEdit = useCallback((row: FaultyPhoneRow) => {
-		setEditingPhoneId(row.phoneNumberId);
-		editedValuesRef.current[row.phoneNumberId] = row.phoneNumber;
-	}, []);
+	const beginEdit = useCallback(
+		(row: FaultyPhoneRow) => {
+			if (!canUpdateContacts) return;
+			setEditingPhoneId(row.phoneNumberId);
+			editedValuesRef.current[row.phoneNumberId] = row.phoneNumber;
+		},
+		[canUpdateContacts]
+	);
 
 	const cancelEdit = useCallback(() => {
 		setEditingPhoneId(null);
 	}, []);
 
+	useEffect(() => {
+		if (!canUpdateContacts) {
+			setEditingPhoneId(null);
+		}
+	}, [canUpdateContacts]);
+
 	const saveEdit = useCallback(() => {
+		if (!canUpdateContacts) return;
 		if (editingPhoneId == null) return;
 		const row = rows.find((r) => r.phoneNumberId === editingPhoneId);
 		if (!row) return;
@@ -141,7 +164,14 @@ const FaultyPhonesModal = ({
 				},
 			}
 		);
-	}, [editingPhoneId, rows, updatePhoneMutation, cancelEdit, onAfterUpdate]);
+	}, [
+		editingPhoneId,
+		rows,
+		updatePhoneMutation,
+		cancelEdit,
+		onAfterUpdate,
+		canUpdateContacts,
+	]);
 
 	// Small controlled input component to keep focus stable while typing
 	const EditablePhoneInput = ({
@@ -182,6 +212,7 @@ const FaultyPhonesModal = ({
 	};
 
 	const handleExport = async () => {
+		if (!canExportContacts) return;
 		try {
 			const result = await exportQuery.refetch();
 			if (result.data) {
@@ -220,8 +251,8 @@ const FaultyPhonesModal = ({
 		}
 	};
 
-	const columns = useMemo<ColumnDef<FaultyPhoneRow>[]>(
-		() => [
+	const columns = useMemo<ColumnDef<FaultyPhoneRow>[]>(() => {
+		const baseColumns: ColumnDef<FaultyPhoneRow>[] = [
 			{
 				accessorKey: 'contactName',
 				header: 'Contact',
@@ -239,7 +270,7 @@ const FaultyPhonesModal = ({
 				cell: ({ row }) => {
 					const original = row.original;
 					const isEditing = editingPhoneId === original.phoneNumberId;
-					if (isEditing) {
+					if (isEditing && canUpdateContacts) {
 						return (
 							<Group gap='xs'>
 								<EditablePhoneInput
@@ -277,7 +308,10 @@ const FaultyPhonesModal = ({
 					</Text>
 				),
 			},
-			{
+		];
+
+		if (canUpdateContacts) {
+			baseColumns.push({
 				id: 'actions',
 				header: 'Actions',
 				cell: ({ row }) => {
@@ -315,16 +349,18 @@ const FaultyPhonesModal = ({
 						</Group>
 					);
 				},
-			},
-		],
-		[
-			editingPhoneId,
-			beginEdit,
-			cancelEdit,
-			saveEdit,
-			updatePhoneMutation.isPending,
-		]
-	);
+			});
+		}
+
+		return baseColumns;
+	}, [
+		editingPhoneId,
+		beginEdit,
+		cancelEdit,
+		saveEdit,
+		updatePhoneMutation.isPending,
+		canUpdateContacts,
+	]);
 
 	return (
 		<Modal
@@ -346,18 +382,20 @@ const FaultyPhonesModal = ({
 					corrected.
 				</Text>
 
-				<Group justify='flex-end'>
-					<Button
-						variant='light'
-						color='blue'
-						size='sm'
-						leftSection={<IconDownload size={16} />}
-						onClick={handleExport}
-						loading={exportQuery.isFetching}
-					>
-						Export
-					</Button>
-				</Group>
+				{canExportContacts && (
+					<Group justify='flex-end'>
+						<Button
+							variant='light'
+							color='blue'
+							size='sm'
+							leftSection={<IconDownload size={16} />}
+							onClick={handleExport}
+							loading={exportQuery.isFetching}
+						>
+							Export
+						</Button>
+					</Group>
+				)}
 
 				<BaseTable data={rows} columns={columns} enablePagination={false} />
 

@@ -4,6 +4,9 @@ import { useMemo } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import type { TranscriptContent } from '~/models/ConversationsModels';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/contants/ModuleEnum';
+import AccessDenied from '~/components/AccessDenied';
 
 import { TranscriptViewer } from '~/modules/conversations/TranscriptViewer';
 // Analysis and Metadata panels removed from tabs — components may be deleted if unused elsewhere.
@@ -28,6 +31,9 @@ export function ConversationDetails({
 		isLoading,
 		isFetching,
 	} = useGetConversation(`${id}`);
+
+	const { canAccessModule } = usePermissions();
+	const canViewConversations = canAccessModule(ModuleEnum.CONVERSATIONS);
 
 	const duration = useMemo(() => {
 		const duration =
@@ -72,6 +78,12 @@ export function ConversationDetails({
 			<Center p='md' className={styles.container}>
 				<Loader size='lg' color='var(--mantine-primary-color-filled)' />
 			</Center>
+		);
+	}
+
+	if (!canViewConversations) {
+		return (
+			<AccessDenied description='You do not have permission to view conversations.' />
 		);
 	}
 	const handleReload = () => {

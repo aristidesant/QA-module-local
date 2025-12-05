@@ -33,6 +33,9 @@ import {
 	useResumeOutboundCampaign,
 	useGetCampaign,
 } from '~/queries/campaignsQueries';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/contants/ModuleEnum';
+import { PermissionEnum } from '~/contants/PermissionEnum';
 import { useCampaignContactListStore } from '~/stores/campaignContactListStore';
 import ContactGroupSummary from './ContactGroupSummary';
 import ContactGroupContactsTable from './ContactGroupContactsTable';
@@ -66,6 +69,7 @@ const CampaignContactListPage = () => {
 	const startMutation = useStartOutboundCampaign();
 	const pauseMutation = usePauseOutboundCampaign();
 	const resumeMutation = useResumeOutboundCampaign();
+	const { canPerformAction, canAccessModule } = usePermissions();
 
 	const { setRightComponent, rightComponent } = useCampaignContactListStore();
 
@@ -131,12 +135,19 @@ const CampaignContactListPage = () => {
 		: 'UNKNOWN';
 	const status = statusConfig[statusKey] ?? statusConfig.UNKNOWN;
 
+	const canExecuteCampaigns = canPerformAction(
+		ModuleEnum.CAMPAIGNS,
+		PermissionEnum.EXECUTE
+	);
+	const canViewConversations = canAccessModule(ModuleEnum.CONVERSATIONS);
+	const canViewContacts = canAccessModule(ModuleEnum.CONTACTS);
+
 	const queueStatusConfig = contactGroupQuery.data
 		? getQueueStatusConfig(contactGroupQuery.data.queueStatus ?? '')
 		: null;
 
 	const handleAction = async () => {
-		if (!contactGroupQuery.data) return;
+		if (!contactGroupQuery.data || !canExecuteCampaigns) return;
 
 		let confirmMessage = '';
 		if (status.actionType === 'start') {
@@ -197,7 +208,7 @@ const CampaignContactListPage = () => {
 	};
 
 	const primaryActionDisabled =
-		status.actionType === null || isLoadingMutations;
+		status.actionType === null || isLoadingMutations || !canExecuteCampaigns;
 
 	const isLoading = contactGroupQuery.isLoading;
 	const hasInvalidId = Number.isNaN(contactGroupIdNumber);
@@ -338,15 +349,19 @@ const CampaignContactListPage = () => {
 					<Tabs.Tab value='overview' leftSection={<IconInfoCircle size={16} />}>
 						Overview
 					</Tabs.Tab>
-					<Tabs.Tab
-						value='conversations'
-						leftSection={<IconMessage size={16} />}
-					>
-						Conversations
-					</Tabs.Tab>
-					<Tabs.Tab value='contacts' leftSection={<IconUsers size={16} />}>
-						Contacts
-					</Tabs.Tab>
+					{canViewConversations && (
+						<Tabs.Tab
+							value='conversations'
+							leftSection={<IconMessage size={16} />}
+						>
+							Conversations
+						</Tabs.Tab>
+					)}
+					{canViewContacts && (
+						<Tabs.Tab value='contacts' leftSection={<IconUsers size={16} />}>
+							Contacts
+						</Tabs.Tab>
+					)}
 				</Tabs.List>
 
 				<Tabs.Panel value='overview' mb='md'>
@@ -355,15 +370,17 @@ const CampaignContactListPage = () => {
 							title='Contact List Information'
 							description='View the status and metrics for this contact list.'
 							headerActions={
-								<Button
-									variant='filled'
-									onClick={handleAction}
-									disabled={primaryActionDisabled}
-									loading={isLoadingMutations}
-									leftSection={status.actionIcon}
-								>
-									{status.actionLabel}
-								</Button>
+								canExecuteCampaigns ? (
+									<Button
+										variant='filled'
+										onClick={handleAction}
+										disabled={primaryActionDisabled}
+										loading={isLoadingMutations}
+										leftSection={status.actionIcon}
+									>
+										{status.actionLabel}
+									</Button>
+								) : null
 							}
 						>
 							<ContactListInformation
@@ -375,34 +392,38 @@ const CampaignContactListPage = () => {
 					</Stack>
 				</Tabs.Panel>
 
-				<Tabs.Panel value='conversations' mb='md'>
-					<SectionCard
-						title='Conversations'
-						description='All conversations associated with this contact list.'
-					>
-						<ConversationsList
-							onConversationClick={(conversation) => {
-								setRightComponent(
-									<ConversationDetails id={conversation?.id} />
-								);
-							}}
-							contactGroupId={contactGroupId}
-						/>
-					</SectionCard>
-				</Tabs.Panel>
+				{canViewConversations && (
+					<Tabs.Panel value='conversations' mb='md'>
+						<SectionCard
+							title='Conversations'
+							description='All conversations associated with this contact list.'
+						>
+							<ConversationsList
+								onConversationClick={(conversation) => {
+									setRightComponent(
+										<ConversationDetails id={conversation?.id} />
+									);
+								}}
+								contactGroupId={contactGroupId}
+							/>
+						</SectionCard>
+					</Tabs.Panel>
+				)}
 
-				<Tabs.Panel value='contacts' mb='md'>
-					<SectionCard
-						title='Contacts'
-						description='All contacts associated with this list.'
-					>
-						<FaultyPhonesAlert contactGroupId={contactGroupIdNumber} />
-						<ContactGroupContactsTable
-							contactGroupId={contactGroupIdNumber}
-							campaignId={campaignId ? Number(campaignId) : undefined}
-						/>
-					</SectionCard>
-				</Tabs.Panel>
+				{canViewContacts && (
+					<Tabs.Panel value='contacts' mb='md'>
+						<SectionCard
+							title='Contacts'
+							description='All contacts associated with this list.'
+						>
+							<FaultyPhonesAlert contactGroupId={contactGroupIdNumber} />
+							<ContactGroupContactsTable
+								contactGroupId={contactGroupIdNumber}
+								campaignId={campaignId ? Number(campaignId) : undefined}
+							/>
+						</SectionCard>
+					</Tabs.Panel>
+				)}
 			</Tabs>
 		</ContentContainer>
 	);

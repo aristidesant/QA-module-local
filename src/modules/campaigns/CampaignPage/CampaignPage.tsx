@@ -5,6 +5,10 @@ import { IconAlertCircle } from '@tabler/icons-react';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { CampaignsForm } from '../CampaignsForm/CampaignsForm';
 import { useGetCampaign } from '~/queries/campaignsQueries';
+import usePermissions from '~/hooks/usePermissions';
+import { PermissionEnum } from '~/contants/PermissionEnum';
+import { ModuleEnum } from '~/contants/ModuleEnum';
+import AccessDenied from '~/components/AccessDenied';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 
 const CampaignPage = () => {
@@ -26,6 +30,13 @@ const CampaignPage = () => {
 		isError,
 		error,
 	} = useGetCampaign(campaignId ?? '');
+
+	const { canPerformAction } = usePermissions();
+
+	// If a user doesn't have edit access to campaigns, show a generic access denied.
+	if (!canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.UPDATE)) {
+		return <AccessDenied onBackClick={() => navigate('/campaigns')} />;
+	}
 
 	useEffect(() => {
 		setEditCampaign(true);

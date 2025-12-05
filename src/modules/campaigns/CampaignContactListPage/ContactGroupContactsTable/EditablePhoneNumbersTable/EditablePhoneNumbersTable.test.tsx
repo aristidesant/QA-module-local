@@ -4,6 +4,16 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import EditablePhoneNumbersTable from './EditablePhoneNumbersTable';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
+vi.mock('~/hooks/usePermissions', () => ({
+	__esModule: true,
+	default: () => ({
+		canPerformAction: () => true,
+		canAccessModule: () => true,
+		hasAnyPermission: () => true,
+		hasAllPermissions: () => true,
+	}),
+}));
+
 const mutateMock = vi.fn();
 
 vi.mock('~/components/BaseTable', () => ({
