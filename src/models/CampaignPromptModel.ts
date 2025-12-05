@@ -8,4 +8,5 @@ export type CampaignPromptModel = {
 	createdAt?: string;
 	campaign?: Campaign;
 	order?: number;
+	isChange?: boolean;
 };

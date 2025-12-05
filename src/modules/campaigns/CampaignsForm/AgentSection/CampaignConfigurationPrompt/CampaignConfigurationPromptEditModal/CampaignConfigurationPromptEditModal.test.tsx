@@ -328,10 +328,80 @@ describe('CampaignConfigurationPromptEditModal', () => {
 						expect.objectContaining({
 							typeId: 1,
 							prompt: 'Hello! Welcome!',
+							isChange: false,
 						}),
 						expect.objectContaining({
 							typeId: 2,
 							prompt: 'Goodbye! Thanks!',
+							isChange: false,
+						}),
+					]),
+				}),
+				expect.any(Object)
+			);
+		});
+
+		it('sets isChange to true when a prompt is modified', async () => {
+			renderWithProviders(
+				<CampaignConfigurationPromptEditModal
+					onClose={mockOnClose}
+					onSave={mockOnSave}
+				/>
+			);
+
+			await waitFor(() => {
+				expect(screen.getByTestId('prompt-input-1')).toHaveValue(
+					'Hello! Welcome!'
+				);
+			});
+
+			const input = screen.getByTestId('prompt-input-1');
+			fireEvent.change(input, { target: { value: 'Updated greeting' } });
+
+			fireEvent.click(screen.getByRole('button', { name: /save/i }));
+
+			expect(mockSaveBatch).toHaveBeenCalledWith(
+				expect.objectContaining({
+					prompts: expect.arrayContaining([
+						expect.objectContaining({
+							typeId: 1,
+							prompt: 'Updated greeting',
+							isChange: true,
+						}),
+						expect.objectContaining({
+							typeId: 2,
+							prompt: 'Goodbye! Thanks!',
+							isChange: false,
+						}),
+					]),
+				}),
+				expect.any(Object)
+			);
+		});
+
+		it('sets isChange to true for new prompts', async () => {
+			renderWithProviders(
+				<CampaignConfigurationPromptEditModal
+					onClose={mockOnClose}
+					onSave={mockOnSave}
+				/>
+			);
+
+			// Click on Objection (type 3) which is empty initially
+			fireEvent.click(screen.getByTestId('prompt-menu-item-3'));
+
+			const input = screen.getByTestId('prompt-input-3');
+			fireEvent.change(input, { target: { value: 'New objection handling' } });
+
+			fireEvent.click(screen.getByRole('button', { name: /save/i }));
+
+			expect(mockSaveBatch).toHaveBeenCalledWith(
+				expect.objectContaining({
+					prompts: expect.arrayContaining([
+						expect.objectContaining({
+							typeId: 3,
+							prompt: 'New objection handling',
+							isChange: true,
 						}),
 					]),
 				}),
