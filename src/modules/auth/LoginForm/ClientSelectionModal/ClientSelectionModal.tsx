@@ -149,6 +149,9 @@ export default function ClientSelectionModal({
 			}
 			centered
 			size='md'
+			radius='lg'
+			padding='xl'
+			overlayProps={{ backgroundOpacity: 0.55, blur: 3 }}
 			withCloseButton={!isLoading}
 			closeOnClickOutside={!isLoading}
 			closeOnEscape={!isLoading}

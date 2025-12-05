@@ -1,16 +1,17 @@
 .clientCard {
 	cursor: pointer;
-	transition: all 0.15s ease;
-	border-color: var(--mantine-color-gray-3);
+	transition: all 0.2s ease;
+	border-color: var(--mantine-color-gray-2);
+	background-color: var(--mantine-color-white);
 }
 
 .clientCard:hover:not([data-disabled='true']) {
-	border-color: var(--mantine-color-blue-4);
-	background-color: var(--mantine-color-blue-0);
+	border-color: var(--mantine-color-gray-4);
+	background-color: var(--mantine-color-gray-0);
 }
 
 .clientCard[data-selected='true'] {
-	border-color: var(--mantine-color-blue-5);
+	border-color: var(--mantine-color-blue-6);
 	background-color: var(--mantine-color-blue-0);
 }
 
@@ -42,5 +43,5 @@
 
 .otpInput input:focus {
 	border-color: var(--mantine-color-blue-6);
-	box-shadow: 0 0 0 1px var(--mantine-color-blue-6);
+	box-shadow: none;
 }

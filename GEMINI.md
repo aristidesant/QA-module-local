@@ -214,7 +214,7 @@ export { default } from './UserCard';
 - Put test files next to the component: `UserCard.test.tsx`
 - **One test file per component** (not multiple test files)
 - When asked to increase coverage of a test, run the coverage for that file/folder only, do not run full coverage unless user asks for it.
-- IMPORTANT: When debugging tests, ALWAYS run only the specific test file(s) or test case(s) relevant to your change. Do NOT run the entire test suite. Use targeted commands like `npm run test -- path/to/testfile`, `vitest path/to/testfile`, or `vitest -t "test name"` to run a single file or test.
+- IMPORTANT: When debugging tests, ALWAYS run only the specific test file(s) or test case(s) relevant to your change. Do NOT run the entire test suite. Use targeted commands like `vitest path/to/testfile`, or `vitest -t "test name"` to run a single file or test.
 
 ### How to Write Tests
 
@@ -230,6 +230,8 @@ import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 - Use `vi` from vitest for mocks
 - Mock API calls and router hooks when needed
+
+- Avoid `vi.mock` hoisting pitfalls: when using `vi.mock` with a factory, do not reference local variables declared later in the file because the factory runs during hoisting and will trigger TDZ errors. Instead, create `vi.fn()` inside the factory or mock the module and then use the imported mock to configure return values in tests.
 
 ---
 

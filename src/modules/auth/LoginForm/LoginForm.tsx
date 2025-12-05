@@ -105,9 +105,6 @@ export function LoginForm() {
 
 	return (
 		<div className={classes.wrapper}>
-			<div className={classes.decorativeOrb1} />
-			<div className={classes.decorativeOrb2} />
-
 			<Paper className={classes.paper} radius='xl'>
 				<div className={classes.header}>
 					<Box className={classes.logoContainer}>
