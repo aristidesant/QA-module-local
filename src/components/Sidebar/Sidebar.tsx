@@ -10,11 +10,17 @@ import { usePermissions } from '~/hooks/usePermissions';
 // menuItems are now imported from menuItems.tsx
 
 export const Sidebar: React.FC = () => {
-	const { canAccessModule } = usePermissions();
+	const { canAccessModule, canPerformAction } = usePermissions();
 
 	const permittedMenuItems = useMemo(
-		() => menuItems.filter((item) => canAccessModule(item.module)),
-		[canAccessModule]
+		() =>
+			menuItems.filter((item) => {
+				if (item.permission) {
+					return canPerformAction(item.module, item.permission);
+				}
+				return canAccessModule(item.module);
+			}),
+		[canAccessModule, canPerformAction]
 	);
 
 	return (

@@ -17,11 +17,12 @@ import { useSessionStore } from '~/stores/sessionStore';
 import { useImpersonationState } from '~/hooks/useImpersonationState';
 import { usePermissions } from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/contants/ModuleEnum';
+import { PermissionEnum } from '~/contants/PermissionEnum';
 
 export const UserMenu: React.FC = () => {
 	const { user, targetClient } = useSessionStore();
 	const { isImpersonating } = useImpersonationState();
-	const { canAccessModule } = usePermissions();
+	const { canAccessModule, canPerformAction } = usePermissions();
 	const navigate = useNavigate();
 
 	// Get user's full name or fallback to username
@@ -58,8 +59,21 @@ export const UserMenu: React.FC = () => {
 
 	const fetcher = { state: 'idle' } as const;
 
+	type MaintenanceItem = {
+		label: string;
+		icon: React.ReactNode;
+		path: string;
+		module: ModuleEnum;
+		permission?: PermissionEnum;
+	};
+
+	type MaintenanceCategory = {
+		category: string;
+		items: MaintenanceItem[];
+	};
+
 	// Organized maintenance categories
-	const maintenanceCategories = [
+	const maintenanceCategories: MaintenanceCategory[] = [
 		{
 			category: 'Campaign Management',
 			items: [
@@ -67,7 +81,7 @@ export const UserMenu: React.FC = () => {
 					label: 'Campaign Management',
 					icon: <IconSettings size={16} />,
 					path: '/campaign-management',
-					module: ModuleEnum.CAMPAIGNS,
+					module: ModuleEnum.SETTINGS,
 				},
 			],
 		},
@@ -79,6 +93,7 @@ export const UserMenu: React.FC = () => {
 					icon: <IconSettings size={16} />,
 					path: '/configurations/client-configs',
 					module: ModuleEnum.SETTINGS,
+					permission: PermissionEnum.MANAGE,
 				},
 			],
 		},
@@ -90,12 +105,14 @@ export const UserMenu: React.FC = () => {
 					icon: <IconTools size={16} />,
 					path: '/tools',
 					module: ModuleEnum.TOOLS,
+					permission: PermissionEnum.MANAGE,
 				},
 				{
 					label: 'Prompter',
 					icon: <IconLibrary size={16} />,
 					path: '/prompter',
 					module: ModuleEnum.PROMPTS,
+					permission: PermissionEnum.MANAGE,
 				},
 			],
 		},
@@ -112,6 +129,7 @@ export const UserMenu: React.FC = () => {
 						icon: <IconUsers size={16} />,
 						path: '/users',
 						module: ModuleEnum.USERS,
+						permission: PermissionEnum.MANAGE,
 					},
 					{
 						label: 'Roles',
@@ -130,7 +148,12 @@ export const UserMenu: React.FC = () => {
 		categories
 			.map((category) => ({
 				...category,
-				items: category.items.filter((item) => canAccessModule(item.module)),
+				items: category.items.filter((item) => {
+					if (item.permission) {
+						return canPerformAction(item.module, item.permission);
+					}
+					return canAccessModule(item.module);
+				}),
 			}))
 			.filter((category) => category.items.length > 0);
 

@@ -6,35 +6,29 @@ import React, { Suspense } from 'react';
 import RouteProtecter, {
 	clientLoader as routeProtecterLoader,
 } from './components/RouteProtecter/RouteProtecter';
+import ModuleGuard from './components/RouteGuards/ModuleGuard';
+import { ModuleEnum } from '~/contants/ModuleEnum';
 import SuspenseFallback from './components/SuspenseFallback';
 const Layout = React.lazy(() => import('./components/Layout'));
 
 const CampaignContactListPage = React.lazy(
 	() =>
-		import(
-			'./modules/campaigns/CampaignContactListPage/CampaignContactListPage'
-		)
+		import('./modules/campaigns/CampaignContactListPage/CampaignContactListPage')
 );
 const ForcePasswordChangePage = React.lazy(
 	() => import('./modules/auth/ForcePasswordChangePage/ForcePasswordChangePage')
 );
 const CampaignCategoriesPage = React.lazy(
 	() =>
-		import(
-			'./modules/campaigns/CampaignManagementPage/Categories/CampaignCategoriesPage'
-		)
+		import('./modules/campaigns/CampaignManagementPage/Categories/CampaignCategoriesPage')
 );
 const CampaignObjectivesPage = React.lazy(
 	() =>
-		import(
-			'./modules/campaigns/CampaignManagementPage/Objectives/CampaignObjectivesPage'
-		)
+		import('./modules/campaigns/CampaignManagementPage/Objectives/CampaignObjectivesPage')
 );
 const CampaignSchemasPage = React.lazy(
 	() =>
-		import(
-			'./modules/campaigns/CampaignManagementPage/Schemas/CampaignSchemasPage'
-		)
+		import('./modules/campaigns/CampaignManagementPage/Schemas/CampaignSchemasPage')
 );
 const ClientConfigsPage = React.lazy(
 	() => import('./modules/configurations/client-configs/ClientConfigsPage')
@@ -55,21 +49,18 @@ const PrompterPage = React.lazy(() =>
 );
 const DispositionPage = React.lazy(
 	() =>
-		import(
-			'./modules/campaigns/CampaignManagementPage/Outcomes/DispositionPage'
-		)
+		import('./modules/campaigns/CampaignManagementPage/Outcomes/DispositionPage')
 );
 const ConversationPage = React.lazy(
 	() => import('./modules/conversations/ConversationsPage/ConversationPage')
 );
-const ContactsPage = React.lazy(
-	() => import('./modules/contacts/ContactsPage/ContactsPage')
-);
+
 const WelcomeCard = React.lazy(
 	() => import('./modules/overview/WelcomeCard/WelcomeCard')
 );
 import { LoginForm } from './modules/auth/LoginForm';
 import CampaignLiveMetricPage from './modules/campaigns/CampaignLiveMetricPage/CampaignLiveMetricPage';
+import { PermissionEnum } from './contants/PermissionEnum';
 const KnowledgeBasePage = React.lazy(
 	() => import('./modules/knowledge-bases/KnowledgeBasePage/KnowledgeBasePage')
 );
@@ -79,21 +70,15 @@ const DoNotCallPage = React.lazy(
 );
 const CampaignPredefinedParamsPage = React.lazy(
 	() =>
-		import(
-			'./modules/configurations/CampaignPredefinedParamsPage/CampaignPredefinedParamsPage'
-		)
+		import('./modules/configurations/CampaignPredefinedParamsPage/CampaignPredefinedParamsPage')
 );
 const RegionalSettingsParamsPage = React.lazy(
 	() =>
-		import(
-			'./modules/configurations/RegionalSettingsParamsPage/RegionalSettingsParamsPage'
-		)
+		import('./modules/configurations/RegionalSettingsParamsPage/RegionalSettingsParamsPage')
 );
 const SchedulerPredefinedParamsPage = React.lazy(
 	() =>
-		import(
-			'./modules/configurations/SchedulerPredefinedParamsPage/SchedulerPredefinedParamsPage'
-		)
+		import('./modules/configurations/SchedulerPredefinedParamsPage/SchedulerPredefinedParamsPage')
 );
 const ConfigurationsPage = React.lazy(
 	() => import('./modules/configurations/ConfigurationsPage')
@@ -151,165 +136,204 @@ const router = createBrowserRouter([
 					{
 						path: 'campaign-management',
 						element: (
-							<Suspense fallback={<div>Loading campaign management...</div>}>
-								<CampaignManagementPage />
-							</Suspense>
+							<ModuleGuard module={ModuleEnum.SETTINGS}>
+								<Suspense fallback={<div>Loading campaign management...</div>}>
+									<CampaignManagementPage />
+								</Suspense>
+							</ModuleGuard>
 						),
 					},
 					{
 						path: 'campaigns',
 						element: (
-							<Suspense
-								fallback={<SuspenseFallback message='Loading campaigns...' />}
-							>
-								<CampaignsPage />
-							</Suspense>
+							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
+								<Suspense
+									fallback={<SuspenseFallback message='Loading campaigns...' />}
+								>
+									<CampaignsPage />
+								</Suspense>
+							</ModuleGuard>
 						),
 					},
 					{
 						path: 'campaign/:campaignId',
 						element: (
-							<Suspense
-								fallback={<SuspenseFallback message='Loading campaign...' />}
+							<ModuleGuard
+								module={ModuleEnum.CAMPAIGNS}
+								permission={PermissionEnum.UPDATE}
 							>
-								<CampaignPage />
-							</Suspense>
+								<Suspense
+									fallback={<SuspenseFallback message='Loading campaign...' />}
+								>
+									<CampaignPage />
+								</Suspense>
+							</ModuleGuard>
 						),
 					},
 					{
 						path: 'campaign/view/:campaignId',
 						element: (
-							<Suspense
-								fallback={
-									<SuspenseFallback message='Loading campaign view...' />
-								}
-							>
-								<CampaignViewPage />
-							</Suspense>
+							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
+								<Suspense
+									fallback={
+										<SuspenseFallback message='Loading campaign view...' />
+									}
+								>
+									<CampaignViewPage />
+								</Suspense>
+							</ModuleGuard>
 						),
 					},
 					{
 						path: 'campaign/:campaignId/contact-list/:contactGroupId',
 						element: (
-							<Suspense
-								fallback={
-									<SuspenseFallback message='Loading contact list...' />
-								}
-							>
-								<CampaignContactListPage />
-							</Suspense>
+							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
+								<Suspense
+									fallback={
+										<SuspenseFallback message='Loading contact list...' />
+									}
+								>
+									<CampaignContactListPage />
+								</Suspense>
+							</ModuleGuard>
 						),
 					},
 					{
 						path: 'campaigns/metrics/:campaignId',
 						element: (
-							<Suspense
-								fallback={
-									<SuspenseFallback message='Loading campaign metrics...' />
-								}
-							>
-								<CampaignLiveMetricPage />
-							</Suspense>
-						),
-					},
-					{
-						path: 'contacts',
-						element: (
-							<Suspense
-								fallback={<SuspenseFallback message='Loading contacts...' />}
-							>
-								<ContactsPage />
-							</Suspense>
+							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
+								<Suspense
+									fallback={
+										<SuspenseFallback message='Loading campaign metrics...' />
+									}
+								>
+									<CampaignLiveMetricPage />
+								</Suspense>
+							</ModuleGuard>
 						),
 					},
 					{
 						path: 'users',
 						element: (
-							<Suspense
-								fallback={<SuspenseFallback message='Loading users...' />}
+							<ModuleGuard
+								module={ModuleEnum.USERS}
+								permission={PermissionEnum.MANAGE}
 							>
-								<UsersPage />
-							</Suspense>
+								<Suspense
+									fallback={<SuspenseFallback message='Loading users...' />}
+								>
+									<UsersPage />
+								</Suspense>
+							</ModuleGuard>
 						),
 					},
 					{
 						path: 'roles',
 						element: (
-							<Suspense
-								fallback={<SuspenseFallback message='Loading roles...' />}
-							>
-								<RolesPage />
-							</Suspense>
+							<ModuleGuard module={ModuleEnum.ROLES}>
+								<Suspense
+									fallback={<SuspenseFallback message='Loading roles...' />}
+								>
+									<RolesPage />
+								</Suspense>
+							</ModuleGuard>
 						),
 					},
 					{
 						path: 'conversations',
 						element: (
-							<Suspense
-								fallback={
-									<SuspenseFallback message='Loading conversations...' />
-								}
-							>
-								<ConversationPage />
-							</Suspense>
+							<ModuleGuard module={ModuleEnum.CONVERSATIONS}>
+								<Suspense
+									fallback={
+										<SuspenseFallback message='Loading conversations...' />
+									}
+								>
+									<ConversationPage />
+								</Suspense>
+							</ModuleGuard>
 						),
 					},
 					{
 						path: 'outcomes',
 						element: (
-							<Suspense
-								fallback={<SuspenseFallback message='Loading outcomes...' />}
+							<ModuleGuard
+								module={ModuleEnum.CAMPAIGNS}
+								permission={PermissionEnum.MANAGE}
 							>
-								<DispositionPage />
-							</Suspense>
+								<Suspense
+									fallback={<SuspenseFallback message='Loading outcomes...' />}
+								>
+									<DispositionPage />
+								</Suspense>
+							</ModuleGuard>
 						),
 					},
 					{
 						path: 'campaign-categories',
 						element: (
-							<Suspense
-								fallback={
-									<SuspenseFallback message='Loading campaign categories...' />
-								}
+							<ModuleGuard
+								module={ModuleEnum.CAMPAIGNS}
+								permission={PermissionEnum.MANAGE}
 							>
-								<CampaignCategoriesPage />
-							</Suspense>
+								<Suspense
+									fallback={
+										<SuspenseFallback message='Loading campaign categories...' />
+									}
+								>
+									<CampaignCategoriesPage />
+								</Suspense>
+							</ModuleGuard>
 						),
 					},
 					{
 						path: 'campaign-objectives',
 						element: (
-							<Suspense
-								fallback={
-									<SuspenseFallback message='Loading campaign objectives...' />
-								}
+							<ModuleGuard
+								module={ModuleEnum.CAMPAIGNS}
+								permission={PermissionEnum.MANAGE}
 							>
-								<CampaignObjectivesPage />
-							</Suspense>
+								<Suspense
+									fallback={
+										<SuspenseFallback message='Loading campaign objectives...' />
+									}
+								>
+									<CampaignObjectivesPage />
+								</Suspense>
+							</ModuleGuard>
 						),
 					},
 					{
 						path: 'campaign-schemas',
 						element: (
-							<Suspense
-								fallback={
-									<SuspenseFallback message='Loading campaign schemas...' />
-								}
+							<ModuleGuard
+								module={ModuleEnum.CAMPAIGNS}
+								permission={PermissionEnum.MANAGE}
 							>
-								<CampaignSchemasPage />
-							</Suspense>
+								<Suspense
+									fallback={
+										<SuspenseFallback message='Loading campaign schemas...' />
+									}
+								>
+									<CampaignSchemasPage />
+								</Suspense>
+							</ModuleGuard>
 						),
 					},
 					{
 						path: 'configurations',
 						element: (
-							<Suspense
-								fallback={
-									<SuspenseFallback message='Loading configurations...' />
-								}
+							<ModuleGuard
+								module={ModuleEnum.SETTINGS}
+								permission={PermissionEnum.MANAGE}
 							>
-								<ConfigurationsPage />
-							</Suspense>
+								<Suspense
+									fallback={
+										<SuspenseFallback message='Loading configurations...' />
+									}
+								>
+									<ConfigurationsPage />
+								</Suspense>
+							</ModuleGuard>
 						),
 						children: [
 							{
@@ -395,21 +419,31 @@ const router = createBrowserRouter([
 					{
 						path: 'prompter',
 						element: (
-							<Suspense
-								fallback={<SuspenseFallback message='Loading prompter...' />}
+							<ModuleGuard
+								module={ModuleEnum.PROMPTS}
+								permission={PermissionEnum.MANAGE}
 							>
-								<PrompterPage />
-							</Suspense>
+								<Suspense
+									fallback={<SuspenseFallback message='Loading prompter...' />}
+								>
+									<PrompterPage />
+								</Suspense>
+							</ModuleGuard>
 						),
 					},
 					{
 						path: 'tools',
 						element: (
-							<Suspense
-								fallback={<SuspenseFallback message='Loading tools...' />}
+							<ModuleGuard
+								module={ModuleEnum.TOOLS}
+								permission={PermissionEnum.MANAGE}
 							>
-								<ToolsPage />
-							</Suspense>
+								<Suspense
+									fallback={<SuspenseFallback message='Loading tools...' />}
+								>
+									<ToolsPage />
+								</Suspense>
+							</ModuleGuard>
 						),
 					},
 					{

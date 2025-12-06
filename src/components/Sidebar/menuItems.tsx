@@ -5,6 +5,7 @@ import {
 } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 import { ModuleEnum } from '~/contants/ModuleEnum';
+import { PermissionEnum } from '~/contants/PermissionEnum';
 import styles from './Sidebar.module.css';
 
 export type MenuItem = {
@@ -13,6 +14,7 @@ export type MenuItem = {
 	to: string;
 	exact?: boolean;
 	module: ModuleEnum;
+	permission?: PermissionEnum;
 };
 
 export const menuItems: MenuItem[] = [

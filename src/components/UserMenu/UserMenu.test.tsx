@@ -27,13 +27,14 @@ vi.mock('~/hooks/useImpersonationState', () => ({
 }));
 
 const mockCanAccessModule = vi.fn((_module: any) => true);
+const mockCanPerformAction = vi.fn((_module: any, _permission: any) => true);
 
 vi.mock('~/hooks/usePermissions', () => ({
 	usePermissions: () => ({
 		activeClientId: 1,
 		permissionMap: {},
 		canAccessModule: mockCanAccessModule,
-		canPerformAction: vi.fn(),
+		canPerformAction: mockCanPerformAction,
 		hasAnyPermission: vi.fn(),
 		hasAllPermissions: vi.fn(),
 	}),
@@ -54,6 +55,7 @@ describe('UserMenu', () => {
 		vi.clearAllMocks();
 		mockIsImpersonating.mockReturnValue(false);
 		mockCanAccessModule.mockImplementation(() => true);
+		mockCanPerformAction.mockImplementation(() => true);
 	});
 
 	it('renders user name, email and initials when not impersonating', async () => {
@@ -287,6 +289,9 @@ describe('UserMenu', () => {
 
 	it('filters maintenance items based on permissions', async () => {
 		mockCanAccessModule.mockImplementation(
+			(module) => module === ModuleEnum.TOOLS
+		);
+		mockCanPerformAction.mockImplementation(
 			(module) => module === ModuleEnum.TOOLS
 		);
 		const { useSessionStore } = await import('~/stores/sessionStore');
