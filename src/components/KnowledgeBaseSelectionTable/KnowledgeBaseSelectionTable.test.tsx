@@ -64,6 +64,47 @@ vi.mock('~/queries/knowledgeBaseQueries', async () => {
 	};
 });
 
+// Mock useDebouncedValue to avoid act warnings
+vi.mock('@mantine/hooks', async () => {
+	const actual = await vi.importActual<any>('@mantine/hooks');
+	return {
+		...actual,
+		useDebouncedValue: (value: any) => [value, () => {}],
+	};
+});
+
+// Mock Mantine components that cause act warnings
+vi.mock('@mantine/core', async () => {
+	const actual = await vi.importActual<any>('@mantine/core');
+	return {
+		...actual,
+		SegmentedControl: ({ data, value, onChange, ...props }: any) => (
+			<div role='radiogroup' {...props}>
+				{data.map((item: any) => (
+					<button
+						key={item.value || item}
+						onClick={() => onChange(item.value || item)}
+						type='button'
+					>
+						{item.label || item}
+					</button>
+				))}
+			</div>
+		),
+		Checkbox: ({ checked, onChange, indeterminate, ...props }: any) => (
+			<input
+				type='checkbox'
+				checked={checked}
+				onChange={onChange}
+				{...props}
+				ref={(input) => {
+					if (input) input.indeterminate = !!indeterminate;
+				}}
+			/>
+		),
+	};
+});
+
 describe('KnowledgeBaseSelectionTable', () => {
 	const defaultProps = {
 		initialSelectedIds: [] as number[],
@@ -82,28 +123,30 @@ describe('KnowledgeBaseSelectionTable', () => {
 	});
 
 	describe('Rendering', () => {
-		it('renders search input and type filter controls', () => {
+		it('renders search input and type filter controls', async () => {
 			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
 
 			expect(
-				screen.getByPlaceholderText('Search knowledge bases')
+				await screen.findByPlaceholderText('Search knowledge bases')
 			).toBeInTheDocument();
 			expect(screen.getByRole('radiogroup')).toBeInTheDocument();
 		});
 
-		it('renders all knowledge bases in the table', () => {
+		it('renders all knowledge bases in the table', async () => {
 			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
 
-			expect(screen.getByText('Product Documentation')).toBeInTheDocument();
+			expect(
+				await screen.findByText('Product Documentation')
+			).toBeInTheDocument();
 			expect(screen.getByText('FAQ Website')).toBeInTheDocument();
 			expect(screen.getByText('Company Policy')).toBeInTheDocument();
 		});
 
-		it('renders type badges for each knowledge base', () => {
+		it('renders type badges for each knowledge base', async () => {
 			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
 
 			// Use getAllByText since URL/TEXT appear in both filter controls and badges
-			const fileBadges = screen.getAllByText('FILE');
+			const fileBadges = await screen.findAllByText('FILE');
 			const urlElements = screen.getAllByText('URL');
 			const textElements = screen.getAllByText(/^TEXT$/);
 
@@ -115,37 +158,37 @@ describe('KnowledgeBaseSelectionTable', () => {
 			expect(textElements.length).toBeGreaterThanOrEqual(1);
 		});
 
-		it('renders Cancel and Save buttons when showFooter is true', () => {
+		it('renders Cancel and Save buttons when showFooter is true', async () => {
 			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
 
 			expect(
-				screen.getByRole('button', { name: /cancel/i })
+				await screen.findByRole('button', { name: /cancel/i })
 			).toBeInTheDocument();
 			expect(
 				screen.getByRole('button', { name: /save selections/i })
 			).toBeInTheDocument();
 		});
 
-		it('does not render footer when showFooter is false', () => {
+		it('does not render footer when showFooter is false', async () => {
 			renderWithProviders(
 				<KnowledgeBaseSelectionTable {...defaultProps} showFooter={false} />
 			);
 
 			expect(
-				screen.queryByRole('button', { name: /cancel/i })
+				await screen.queryByRole('button', { name: /cancel/i })
 			).not.toBeInTheDocument();
 			expect(
 				screen.queryByRole('button', { name: /save selections/i })
 			).not.toBeInTheDocument();
 		});
 
-		it('shows selection count as 0 when nothing selected', () => {
+		it('shows selection count as 0 when nothing selected', async () => {
 			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
 
-			expect(screen.getByText('0 selected')).toBeInTheDocument();
+			expect(await screen.findByText('0 selected')).toBeInTheDocument();
 		});
 
-		it('shows correct selection count when items are pre-selected', () => {
+		it('shows correct selection count when items are pre-selected', async () => {
 			renderWithProviders(
 				<KnowledgeBaseSelectionTable
 					{...defaultProps}
@@ -153,10 +196,10 @@ describe('KnowledgeBaseSelectionTable', () => {
 				/>
 			);
 
-			expect(screen.getByText('2 selected')).toBeInTheDocument();
+			expect(await screen.findByText('2 selected')).toBeInTheDocument();
 		});
 
-		it('renders Create new button when showCreateButton is true', () => {
+		it('renders Create new button when showCreateButton is true', async () => {
 			const onCreateNew = vi.fn();
 			renderWithProviders(
 				<KnowledgeBaseSelectionTable
@@ -167,11 +210,11 @@ describe('KnowledgeBaseSelectionTable', () => {
 			);
 
 			expect(
-				screen.getByRole('button', { name: /create new/i })
+				await screen.findByRole('button', { name: /create new/i })
 			).toBeInTheDocument();
 		});
 
-		it('does not render Create new button when showCreateButton is false', () => {
+		it('does not render Create new button when showCreateButton is false', async () => {
 			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
 
 			expect(
@@ -185,12 +228,12 @@ describe('KnowledgeBaseSelectionTable', () => {
 			const user = userEvent.setup();
 			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
 
-			const checkbox = screen.getByRole('checkbox', {
+			const checkbox = await screen.findByRole('checkbox', {
 				name: /select product documentation/i,
 			});
 			await user.click(checkbox);
 
-			expect(screen.getByText('1 selected')).toBeInTheDocument();
+			expect(await screen.findByText('1 selected')).toBeInTheDocument();
 		});
 
 		it('toggles selection when row is clicked', async () => {
@@ -198,15 +241,12 @@ describe('KnowledgeBaseSelectionTable', () => {
 			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
 
 			// Get the table body row for Product Documentation
-			const rows = screen.getAllByRole('row');
+			const rows = await screen.findAllByRole('row');
 			// First row is header, second row is first data row
 			const dataRow = rows[1];
 
 			await user.click(dataRow);
-
-			await waitFor(() => {
-				expect(screen.getByText('1 selected')).toBeInTheDocument();
-			});
+			expect(await screen.findByText('1 selected')).toBeInTheDocument();
 		});
 
 		it('deselects when checkbox is clicked again', async () => {
@@ -218,54 +258,45 @@ describe('KnowledgeBaseSelectionTable', () => {
 				/>
 			);
 
-			expect(screen.getByText('1 selected')).toBeInTheDocument();
+			expect(await screen.findByText('1 selected')).toBeInTheDocument();
 
-			const checkbox = screen.getByRole('checkbox', {
+			const checkbox = await screen.findByRole('checkbox', {
 				name: /select product documentation/i,
 			});
 			await user.click(checkbox);
 
-			expect(screen.getByText('0 selected')).toBeInTheDocument();
+			expect(await screen.findByText('0 selected')).toBeInTheDocument();
 		});
 
 		it('can select multiple items sequentially', async () => {
 			const user = userEvent.setup();
 			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
 
-			const checkbox1 = screen.getByRole('checkbox', {
+			const checkbox1 = await screen.findByRole('checkbox', {
 				name: /select product documentation/i,
 			});
 			await user.click(checkbox1);
-
-			await waitFor(() => {
-				expect(screen.getByText('1 selected')).toBeInTheDocument();
-			});
+			expect(await screen.findByText('1 selected')).toBeInTheDocument();
 
 			const checkbox2 = screen.getByRole('checkbox', {
 				name: /select faq website/i,
 			});
 			await user.click(checkbox2);
-
-			await waitFor(() => {
-				expect(screen.getByText('2 selected')).toBeInTheDocument();
-			});
+			expect(await screen.findByText('2 selected')).toBeInTheDocument();
 		});
 
 		it('selects all when header checkbox is clicked', async () => {
 			const user = userEvent.setup();
 			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
 
-			const headerCheckbox = screen.getByRole('checkbox', {
+			const headerCheckbox = await screen.findByRole('checkbox', {
 				name: /select all/i,
 			});
 			await user.click(headerCheckbox);
-
-			await waitFor(() => {
-				expect(screen.getByText('3 selected')).toBeInTheDocument();
-			});
+			expect(await screen.findByText('3 selected')).toBeInTheDocument();
 		});
 
-		it('pre-selects items based on initialSelectedIds prop', () => {
+		it('pre-selects items based on initialSelectedIds prop', async () => {
 			renderWithProviders(
 				<KnowledgeBaseSelectionTable
 					{...defaultProps}
@@ -273,7 +304,7 @@ describe('KnowledgeBaseSelectionTable', () => {
 				/>
 			);
 
-			const checkbox1 = screen.getByRole('checkbox', {
+			const checkbox1 = await screen.findByRole('checkbox', {
 				name: /select product documentation/i,
 			});
 			const checkbox3 = screen.getByRole('checkbox', {
@@ -296,7 +327,7 @@ describe('KnowledgeBaseSelectionTable', () => {
 
 			await user.click(screen.getByRole('button', { name: /cancel/i }));
 
-			expect(onCancel).toHaveBeenCalledTimes(1);
+			await waitFor(() => expect(onCancel).toHaveBeenCalledTimes(1));
 		});
 
 		it('calls onSave with selected IDs when Save button is clicked', async () => {
@@ -314,7 +345,7 @@ describe('KnowledgeBaseSelectionTable', () => {
 				screen.getByRole('button', { name: /save selections/i })
 			);
 
-			expect(onSave).toHaveBeenCalledWith([1, 2]);
+			await waitFor(() => expect(onSave).toHaveBeenCalledWith([1, 2]));
 		});
 
 		it('saves newly selected items', async () => {
@@ -324,7 +355,7 @@ describe('KnowledgeBaseSelectionTable', () => {
 				<KnowledgeBaseSelectionTable {...defaultProps} onSave={onSave} />
 			);
 
-			const checkbox = screen.getByRole('checkbox', {
+			const checkbox = await screen.findByRole('checkbox', {
 				name: /select product documentation/i,
 			});
 			await user.click(checkbox);
@@ -333,7 +364,7 @@ describe('KnowledgeBaseSelectionTable', () => {
 				screen.getByRole('button', { name: /save selections/i })
 			);
 
-			expect(onSave).toHaveBeenCalledWith([1]);
+			await waitFor(() => expect(onSave).toHaveBeenCalledWith([1]));
 		});
 
 		it('calls onCreateNew when Create new button is clicked', async () => {
@@ -349,12 +380,12 @@ describe('KnowledgeBaseSelectionTable', () => {
 
 			await user.click(screen.getByRole('button', { name: /create new/i }));
 
-			expect(onCreateNew).toHaveBeenCalledTimes(1);
+			await waitFor(() => expect(onCreateNew).toHaveBeenCalledTimes(1));
 		});
 	});
 
 	describe('Custom Props', () => {
-		it('displays custom empty message when no data', () => {
+		it('displays custom empty message when no data', async () => {
 			vi.mocked(knowledgeBaseQueries.useKnowledgeBases).mockReturnValue({
 				data: [],
 				isLoading: false,
@@ -369,7 +400,9 @@ describe('KnowledgeBaseSelectionTable', () => {
 				/>
 			);
 
-			expect(screen.getByText('Custom empty message')).toBeInTheDocument();
+			expect(
+				await screen.findByText('Custom empty message')
+			).toBeInTheDocument();
 		});
 	});
 });
