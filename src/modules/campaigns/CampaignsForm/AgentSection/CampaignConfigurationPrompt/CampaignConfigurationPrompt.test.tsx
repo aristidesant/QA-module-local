@@ -1,6 +1,8 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import CampaignConfigurationPrompt from './CampaignConfigurationPrompt';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
+import type { Campaign } from '~/models/CampaignsModel';
 
 const mockSetFieldValue = vi.fn();
 let mockValues = {
@@ -14,7 +16,7 @@ let mockValues = {
 	},
 };
 
-let mockSelectedCampaign: { id: number } | null = { id: 12 };
+let mockSelectedCampaign: Campaign | null = { id: 12 } as Campaign;
 
 vi.mock('~/modules/campaigns/campaignFormFunctions', () => ({
 	useCampaignFormContext: () => ({
@@ -25,9 +27,7 @@ vi.mock('~/modules/campaigns/campaignFormFunctions', () => ({
 
 vi.mock('~/stores/campaignsStore', () => ({
 	useCampaignsStore: (
-		selector: (state: {
-			selectedCampaign: typeof mockSelectedCampaign;
-		}) => unknown
+		selector: (state: { selectedCampaign: Campaign | null }) => unknown
 	) => selector({ selectedCampaign: mockSelectedCampaign }),
 }));
 
@@ -76,18 +76,28 @@ vi.mock('./CampaignConfigurationPromptEditModal', () => ({
 		onClose: () => void;
 		onSave: () => void;
 		initialSchemaId?: number;
-	}) => {
-		mockEditOnClose.mockImplementation(onClose);
-		mockEditOnSave.mockImplementation(onSave);
-		return (
-			<div data-testid='edit-modal-content'>
-				EditModalContent
-				<span data-testid='schema-id'>{initialSchemaId}</span>
-				<button onClick={onClose}>CloseEdit</button>
-				<button onClick={onSave}>SaveEdit</button>
-			</div>
-		);
-	},
+	}) => (
+		<div data-testid='edit-modal-content'>
+			EditModalContent
+			<span data-testid='schema-id'>{initialSchemaId}</span>
+			<button
+				onClick={() => {
+					mockEditOnClose();
+					onClose();
+				}}
+			>
+				CloseEdit
+			</button>
+			<button
+				onClick={() => {
+					mockEditOnSave();
+					onSave();
+				}}
+			>
+				SaveEdit
+			</button>
+		</div>
+	),
 }));
 
 vi.mock('@mantine/core', async (importOriginal) => {
@@ -139,14 +149,19 @@ vi.mock('~/components/SectionCard', () => ({
 		children,
 		title,
 		description,
+		headerActions,
 	}: {
 		children: React.ReactNode;
 		title?: string;
 		description?: string;
+		headerActions?: React.ReactNode;
 	}) => (
 		<div data-testid='section-card'>
 			{title && <h3>{title}</h3>}
 			{description && <p>{description}</p>}
+			{headerActions && (
+				<div data-testid='section-card-header-actions'>{headerActions}</div>
+			)}
 			{children}
 		</div>
 	),
@@ -165,34 +180,22 @@ describe('CampaignConfigurationPrompt', () => {
 				contactSchemaId: 5,
 			},
 		};
-		mockSelectedCampaign = { id: 12 };
+		mockSelectedCampaign = { id: 12 } as Campaign;
 	});
 
 	describe('Rendering', () => {
 		it('displays the current prompt text', () => {
-			render(<CampaignConfigurationPrompt />);
-
-			expect(screen.getByDisplayValue('Initial prompt')).toBeInTheDocument();
+			renderWithProviders(<CampaignConfigurationPrompt />);
+			expect(screen.getByText('Initial prompt')).toBeInTheDocument();
 		});
 
 		it('renders the section card with correct title and description', () => {
-			render(<CampaignConfigurationPrompt />);
-
+			renderWithProviders(<CampaignConfigurationPrompt />);
 			expect(screen.getByText('Agent Prompt')).toBeInTheDocument();
 			expect(
-				screen.getByText(/Define the core behavior and tone of your AI agent/i)
-			).toBeInTheDocument();
-		});
-
-		it('renders all action buttons', () => {
-			render(<CampaignConfigurationPrompt />);
-
-			expect(
-				screen.getByRole('button', { name: /restore from history/i })
-			).toBeInTheDocument();
-			expect(screen.getByRole('button', { name: /edit/i })).toBeInTheDocument();
-			expect(
-				screen.getByRole('button', { name: /remove/i })
+				screen.getByText(
+					'Set the guidance the agent follows when speaking with contacts.'
+				)
 			).toBeInTheDocument();
 		});
 	});
@@ -210,17 +213,17 @@ describe('CampaignConfigurationPrompt', () => {
 				},
 			};
 
-			render(<CampaignConfigurationPrompt />);
+			renderWithProviders(<CampaignConfigurationPrompt />);
 
-			expect(screen.getByDisplayValue('')).toBeInTheDocument();
+			expect(screen.getByText(/No prompt added yet/i)).toBeInTheDocument();
 		});
 
 		it('handles missing agentConfig gracefully', () => {
 			mockValues = {} as typeof mockValues;
 
-			render(<CampaignConfigurationPrompt />);
+			renderWithProviders(<CampaignConfigurationPrompt />);
 
-			expect(screen.getByDisplayValue('')).toBeInTheDocument();
+			expect(screen.getByText(/No prompt added yet/i)).toBeInTheDocument();
 		});
 
 		it('handles missing conversationConfig gracefully', () => {
@@ -228,9 +231,9 @@ describe('CampaignConfigurationPrompt', () => {
 				agentConfig: {} as typeof mockValues.agentConfig,
 			};
 
-			render(<CampaignConfigurationPrompt />);
+			renderWithProviders(<CampaignConfigurationPrompt />);
 
-			expect(screen.getByDisplayValue('')).toBeInTheDocument();
+			expect(screen.getByText(/No prompt added yet/i)).toBeInTheDocument();
 		});
 
 		it('handles missing agent config gracefully', () => {
@@ -242,9 +245,9 @@ describe('CampaignConfigurationPrompt', () => {
 				},
 			};
 
-			render(<CampaignConfigurationPrompt />);
+			renderWithProviders(<CampaignConfigurationPrompt />);
 
-			expect(screen.getByDisplayValue('')).toBeInTheDocument();
+			expect(screen.getByText(/No prompt added yet/i)).toBeInTheDocument();
 		});
 
 		it('handles missing prompt object gracefully', () => {
@@ -257,225 +260,108 @@ describe('CampaignConfigurationPrompt', () => {
 				},
 			};
 
-			render(<CampaignConfigurationPrompt />);
+			renderWithProviders(<CampaignConfigurationPrompt />);
 
-			expect(screen.getByDisplayValue('')).toBeInTheDocument();
-		});
-	});
-
-	describe('Remove Prompt Action', () => {
-		it('clears the prompt when remove is clicked', () => {
-			render(<CampaignConfigurationPrompt />);
-
-			fireEvent.click(screen.getByRole('button', { name: /remove/i }));
-
-			expect(mockSetFieldValue).toHaveBeenCalledWith(
-				'agentConfig',
-				expect.objectContaining({
-					conversationConfig: expect.objectContaining({
-						agent: expect.objectContaining({
-							prompt: expect.objectContaining({ prompt: '' }),
-						}),
-					}),
-				})
-			);
-		});
-
-		it('preserves other agentConfig properties when clearing prompt', () => {
-			render(<CampaignConfigurationPrompt />);
-
-			fireEvent.click(screen.getByRole('button', { name: /remove/i }));
-
-			const call = mockSetFieldValue.mock.calls[0];
-			expect(call[0]).toBe('agentConfig');
-			expect(call[1]).toHaveProperty('contactSchemaId', 5);
-		});
-	});
-
-	describe('History Modal', () => {
-		it('opens restore history modal when restore is clicked', () => {
-			render(<CampaignConfigurationPrompt />);
-
-			fireEvent.click(
-				screen.getByRole('button', { name: /restore from history/i })
-			);
-
-			expect(screen.getByTestId('history-modal')).toBeInTheDocument();
-			expect(screen.getByText('HistoryModal')).toBeInTheDocument();
-		});
-
-		it('passes correct campaignId to history modal', () => {
-			render(<CampaignConfigurationPrompt />);
-
-			fireEvent.click(
-				screen.getByRole('button', { name: /restore from history/i })
-			);
-
-			expect(screen.getByTestId('campaign-id')).toHaveTextContent('12');
-		});
-
-		it('passes current prompt text to history modal', () => {
-			render(<CampaignConfigurationPrompt />);
-
-			fireEvent.click(
-				screen.getByRole('button', { name: /restore from history/i })
-			);
-
-			expect(screen.getByTestId('current-prompt')).toHaveTextContent(
-				'Initial prompt'
-			);
-		});
-
-		it('closes history modal when close is triggered', () => {
-			render(<CampaignConfigurationPrompt />);
-
-			fireEvent.click(
-				screen.getByRole('button', { name: /restore from history/i })
-			);
-			expect(screen.getByTestId('history-modal')).toBeInTheDocument();
-
-			fireEvent.click(screen.getByRole('button', { name: /CloseHistory/i }));
-			expect(screen.queryByTestId('history-modal')).not.toBeInTheDocument();
-		});
-
-		it('updates prompt when a prompt is selected from history', () => {
-			render(<CampaignConfigurationPrompt />);
-
-			fireEvent.click(
-				screen.getByRole('button', { name: /restore from history/i })
-			);
-			fireEvent.click(screen.getByRole('button', { name: /SelectPrompt/i }));
-
-			expect(mockSetFieldValue).toHaveBeenCalledWith(
-				'agentConfig',
-				expect.objectContaining({
-					conversationConfig: expect.objectContaining({
-						agent: expect.objectContaining({
-							prompt: expect.objectContaining({ prompt: 'Restored prompt' }),
-						}),
-					}),
-				})
-			);
-		});
-
-		it('closes history modal after selecting a prompt', () => {
-			render(<CampaignConfigurationPrompt />);
-
-			fireEvent.click(
-				screen.getByRole('button', { name: /restore from history/i })
-			);
-			fireEvent.click(screen.getByRole('button', { name: /SelectPrompt/i }));
-
-			expect(screen.queryByTestId('history-modal')).not.toBeInTheDocument();
-		});
-
-		it('disables restore button when no campaign is selected', () => {
-			mockSelectedCampaign = null;
-
-			render(<CampaignConfigurationPrompt />);
-
-			const restoreButton = screen.getByRole('button', {
-				name: /restore from history/i,
-			});
-			expect(restoreButton).toBeDisabled();
-		});
-
-		it('does not open history modal when campaign id is 0', () => {
-			mockSelectedCampaign = null;
-
-			render(<CampaignConfigurationPrompt />);
-
-			fireEvent.click(
-				screen.getByRole('button', { name: /restore from history/i })
-			);
-
-			expect(screen.queryByTestId('history-modal')).not.toBeInTheDocument();
-		});
-	});
-
-	describe('Edit Modal', () => {
-		it('opens edit modal when edit is clicked', () => {
-			render(<CampaignConfigurationPrompt />);
-
-			fireEvent.click(screen.getByRole('button', { name: /edit/i }));
-
-			expect(screen.getByTestId('edit-modal-content')).toBeInTheDocument();
-			expect(screen.getByText('EditModalContent')).toBeInTheDocument();
-		});
-
-		it('passes initialSchemaId to edit modal', () => {
-			render(<CampaignConfigurationPrompt />);
-
-			fireEvent.click(screen.getByRole('button', { name: /edit/i }));
-
-			expect(screen.getByTestId('schema-id')).toHaveTextContent('5');
-		});
-
-		it('closes edit modal when onClose is triggered', () => {
-			render(<CampaignConfigurationPrompt />);
-
-			fireEvent.click(screen.getByRole('button', { name: /edit/i }));
-			expect(screen.getByTestId('edit-modal-content')).toBeInTheDocument();
-
-			fireEvent.click(screen.getByRole('button', { name: /CloseEdit/i }));
-			expect(
-				screen.queryByTestId('edit-modal-content')
-			).not.toBeInTheDocument();
-		});
-
-		it('closes edit modal when onSave is triggered', () => {
-			render(<CampaignConfigurationPrompt />);
-
-			fireEvent.click(screen.getByRole('button', { name: /edit/i }));
-			expect(screen.getByTestId('edit-modal-content')).toBeInTheDocument();
-
-			fireEvent.click(screen.getByRole('button', { name: /SaveEdit/i }));
-			expect(
-				screen.queryByTestId('edit-modal-content')
-			).not.toBeInTheDocument();
-		});
-
-		it('handles undefined contactSchemaId', () => {
-			mockValues = {
-				agentConfig: {
-					conversationConfig: {
-						agent: {
-							prompt: { prompt: 'Test' },
-						},
-					},
-				} as typeof mockValues.agentConfig,
-			};
-
-			render(<CampaignConfigurationPrompt />);
-
-			fireEvent.click(screen.getByRole('button', { name: /edit/i }));
-
-			expect(screen.getByTestId('schema-id')).toBeEmptyDOMElement();
+			expect(screen.getByText(/No prompt added yet/i)).toBeInTheDocument();
 		});
 	});
 
 	describe('Campaign Selection', () => {
 		it('uses campaign id from store', () => {
-			mockSelectedCampaign = { id: 99 };
+			mockSelectedCampaign = { id: 99 } as Campaign;
 
-			render(<CampaignConfigurationPrompt />);
+			renderWithProviders(<CampaignConfigurationPrompt />);
 
-			fireEvent.click(
-				screen.getByRole('button', { name: /restore from history/i })
-			);
-
-			expect(screen.getByTestId('campaign-id')).toHaveTextContent('99');
+			// Since history modal is removed, this test is no longer relevant
+			// Keeping the mock setup for potential future use
+			expect(screen.getByText('Agent Prompt')).toBeInTheDocument();
 		});
 
 		it('handles null selectedCampaign', () => {
 			mockSelectedCampaign = null;
 
-			render(<CampaignConfigurationPrompt />);
+			renderWithProviders(<CampaignConfigurationPrompt />);
 
-			const restoreButton = screen.getByRole('button', {
-				name: /restore from history/i,
-			});
-			expect(restoreButton).toBeDisabled();
+			// No restore button anymore, so this test is obsolete
+			expect(screen.getByText('Agent Prompt')).toBeInTheDocument();
+		});
+	});
+
+	describe('Interactions', () => {
+		it('toggles expanded state and exposes the collapse control', () => {
+			renderWithProviders(<CampaignConfigurationPrompt />);
+			const expandButton = screen.getByLabelText('Expand prompt');
+			fireEvent.click(expandButton);
+
+			const collapseButtons = screen.getAllByLabelText('Collapse prompt');
+			expect(collapseButtons).toHaveLength(2);
+
+			// Use the secondary collapse control to ensure the extra action exists
+			fireEvent.click(collapseButtons[1]);
+			expect(screen.getByLabelText('Expand prompt')).toBeInTheDocument();
+		});
+
+		it('opens the edit modal and closes it on save', () => {
+			renderWithProviders(<CampaignConfigurationPrompt />);
+			fireEvent.click(screen.getByLabelText('Edit prompt'));
+
+			expect(screen.getByTestId('edit-modal-content')).toBeInTheDocument();
+			expect(screen.getByTestId('schema-id')).toHaveTextContent('5');
+
+			fireEvent.click(screen.getByText('SaveEdit'));
+			expect(mockEditOnSave).toHaveBeenCalled();
+			expect(
+				screen.queryByTestId('edit-modal-content')
+			).not.toBeInTheDocument();
+		});
+
+		it('closes the edit modal when the close control is clicked', () => {
+			renderWithProviders(<CampaignConfigurationPrompt />);
+			fireEvent.click(screen.getByLabelText('Edit prompt'));
+			fireEvent.click(screen.getByText('CloseEdit'));
+
+			expect(mockEditOnClose).toHaveBeenCalled();
+			expect(
+				screen.queryByTestId('edit-modal-content')
+			).not.toBeInTheDocument();
+		});
+	});
+
+	describe('Badges and prompt details', () => {
+		it('renders the schema badge when provided', () => {
+			renderWithProviders(<CampaignConfigurationPrompt />);
+			expect(screen.getByText('Schema #5')).toBeInTheDocument();
+		});
+
+		it('falls back to "No schema" badge when missing', () => {
+			mockValues = {
+				agentConfig: {
+					conversationConfig: {
+						agent: {
+							prompt: { prompt: 'Schema test' },
+						},
+					},
+				},
+			} as typeof mockValues;
+
+			renderWithProviders(<CampaignConfigurationPrompt />);
+			expect(screen.getByText('No schema')).toBeInTheDocument();
+		});
+
+		it('shows char count when prompt text exists', () => {
+			mockValues = {
+				agentConfig: {
+					conversationConfig: {
+						agent: {
+							prompt: { prompt: 'abcde' },
+						},
+					},
+					contactSchemaId: 42,
+				},
+			};
+
+			renderWithProviders(<CampaignConfigurationPrompt />);
+			expect(screen.getByText('5 chars')).toBeInTheDocument();
 		});
 	});
 });

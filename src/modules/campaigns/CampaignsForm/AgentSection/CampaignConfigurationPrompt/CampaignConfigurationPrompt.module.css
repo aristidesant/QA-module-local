@@ -1,174 +1,49 @@
 .sectionCard {
-	transition: all 0.2s ease;
 	border: 1px solid var(--mantine-color-gray-2);
+	transition: border-color 0.2s ease;
 }
+
 .sectionCard:hover {
 	border-color: var(--mantine-color-blue-3);
-	transform: translateY(-1px);
-}
-.fieldGroup {
-	display: flex;
-	flex-direction: column;
-	gap: 1rem;
-}
-.promptContainer {
-	position: relative;
-}
-.promptRow {
-	display: flex;
-	flex-direction: row;
-	gap: 2rem;
-	align-items: flex-start;
-}
-.promptCol {
-	flex: 1 1 0;
-	min-width: 0;
-}
-.iconStack {
-	display: flex;
-	flex-direction: column;
-	gap: 0.75rem;
-	align-items: center;
-	min-width: 48px;
-	max-width: 56px;
-	justify-content: flex-start;
-}
-.actionIcon {
-	margin-bottom: 0.25rem;
-}
-.promptTextarea {
-	font-family: var(--mantine-font-family-monospace);
-	line-height: 1.5;
-}
-.promptCounter {
-	position: absolute;
-	bottom: 0.5rem;
-	right: 0.75rem;
-	font-size: 0.75rem;
-	color: var(--mantine-color-gray-5);
-	background: var(--mantine-color-white);
-	padding: 0.25rem 0.5rem;
-	border-radius: var(--mantine-radius-xs);
-	border: 1px solid var(--mantine-color-gray-2);
 }
 
-.promptDisplay {
-	font-family: var(--mantine-font-family-monospace);
-	background: var(--mantine-color-gray-0);
+.promptStack {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.promptSurface {
 	border: 1px solid var(--mantine-color-gray-2);
 	border-radius: var(--mantine-radius-sm);
-	padding: 1rem;
-	min-height: 8rem;
-	max-height: 18rem;
+	background: var(--mantine-color-gray-0);
+	padding: var(--mantine-spacing-sm);
+}
+
+.promptShell {
+	transition:
+		height 240ms ease-in-out,
+		opacity 180ms ease-in-out;
+	overflow: hidden;
+}
+.promptShellCompact {
+	height: 180px;
+	opacity: 0.96;
 	overflow-y: auto;
-	color: var(--mantine-color-dark-7);
-	line-height: 1.6;
-	font-size: 1rem;
-	white-space: pre-wrap;
-	margin-bottom: 0.5rem;
-	box-shadow: 0 1px 2px rgba(60, 60, 60, 0.04);
-	transition: border 0.2s;
 }
-.promptDisplay:focus {
-	outline: 2px solid var(--mantine-color-blue-3);
-	border-color: var(--mantine-color-blue-3);
+.promptShellExpanded {
+	opacity: 1;
+	overflow: visible;
 }
-.promptLabel {
-	display: block;
-	font-weight: 500;
-	margin-bottom: 0.25rem;
+
+.promptContent {
+	font-family: var(--mantine-font-family-monospace);
+	line-height: 1.45;
 	color: var(--mantine-color-dark-6);
+	white-space: pre-wrap;
+	padding: 0.25rem 0.35rem;
 }
+
 .promptPlaceholder {
 	color: var(--mantine-color-gray-5);
-	font-style: italic;
-}
-
-.removeButton {
-	border: 1px solid var(--mantine-color-red-2);
-}
-.editButton {
-	border: 1px solid var(--mantine-color-gray-4);
-}
-
-.actionRow {
-	display: flex;
-	flex-direction: row;
-	gap: 0.75rem;
-	justify-content: flex-end;
-	margin-top: 1.5rem;
-}
-
-/* New styles for edit modal modern layout */
-.container {
-	width: 100%;
-	max-width: 1100px;
-	margin: 0 auto;
-	background: var(--mantine-color-white);
-}
-.header {
-	display: flex;
-	align-items: flex-start;
-	gap: 1rem;
-}
-.title {
-	margin: 0;
-	font-size: 1.125rem;
-}
-.subtitle {
-	margin-top: 0.25rem;
-}
-.editorArea {
-	position: relative;
-	min-height: 420px;
-}
-.sidePanel {
-	gap: 1rem;
-}
-.livePreviewCard {
-	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: var(--mantine-radius-sm);
-	padding: 0.75rem;
-	background: var(--mantine-color-gray-0);
-}
-.previewTitle {
-	margin-bottom: 0.25rem;
-}
-.previewDesc {
-	margin-bottom: 0.5rem;
-}
-.previewText {
-	font-family: var(--mantine-font-family-monospace);
-	font-size: 0.9rem;
-	color: var(--mantine-color-dark-6);
-	white-space: pre-wrap;
-	line-height: 1.45;
-}
-.quickTips {
-	margin-top: 0.25rem;
-}
-.tipsTitle {
-	margin-bottom: 0.25rem;
-}
-.tipsList {
-	margin: 0;
-	padding-left: 1.1rem;
-	color: var(--mantine-color-gray-6);
-	font-size: 0.9rem;
-}
-.previewScroll {
-	border-radius: var(--mantine-radius-sm);
-}
-
-/* Responsive */
-@media (max-width: 900px) {
-	.container {
-		padding: 0.5rem;
-	}
-	.editorArea {
-		min-height: 320px;
-	}
-	.livePreviewCard {
-		display: none;
-	}
 }
