@@ -215,3 +215,43 @@ export const useToggleContactGroupStatus = () => {
 		},
 	});
 };
+
+// Extend waves for a contact group in EXECUTED state
+export const useExtendContactGroupWaves = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async ({
+			id,
+			additionalWaves,
+		}: {
+			id: number;
+			additionalWaves: number;
+		}) => {
+			const api = contactGroupApi();
+			return api.extendContactGroupWaves(id, additionalWaves);
+		},
+		onSuccess: (data) => {
+			queryClient.invalidateQueries({ queryKey: ['contactGroups'] });
+			if (data?.id) {
+				queryClient.invalidateQueries({ queryKey: ['contactGroup', data.id] });
+			}
+		},
+	});
+};
+
+// Complete an executed contact group
+export const useCompleteContactGroup = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async (id: number) => {
+			const api = contactGroupApi();
+			return api.completeContactGroup(id);
+		},
+		onSuccess: (data) => {
+			queryClient.invalidateQueries({ queryKey: ['contactGroups'] });
+			if (data?.id) {
+				queryClient.invalidateQueries({ queryKey: ['contactGroup', data.id] });
+			}
+		},
+	});
+};

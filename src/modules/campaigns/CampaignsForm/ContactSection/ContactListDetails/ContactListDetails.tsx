@@ -23,6 +23,7 @@ import {
 	IconToggleRight,
 	IconTrash,
 	IconUsers,
+	IconCircleCheck,
 } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
@@ -32,6 +33,7 @@ import RightSectionMetricCard from '~/components/RightSectionMetricCard';
 import SectionTitle from '~/components/SectionTitle';
 import type ContactGroup from '~/models/ContactGroup';
 import usePermissions from '~/hooks/usePermissions';
+import ExtendWavesModal from '~/modules/campaigns/components/ExtendWavesModal';
 import { ModuleEnum } from '~/contants/ModuleEnum';
 import { PermissionEnum } from '~/contants/PermissionEnum';
 import {
@@ -39,6 +41,8 @@ import {
 	useGetContactGroups,
 	useToggleContactGroupStatus,
 	useUpdateContactGroup,
+	useExtendContactGroupWaves,
+	useCompleteContactGroup,
 } from '~/queries/contactGroupQueries';
 import { useCampaignActiveSchedule } from '~/queries/schedulerQueries';
 import { useCleanOutboundQueue } from '~/queries/outboundQueries';
@@ -100,6 +104,8 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 	const updateMutation = useUpdateContactGroup();
 	const deleteMutation = useDeleteContactGroup();
 	const cleanQueueMutation = useCleanOutboundQueue();
+	const extendWavesMutation = useExtendContactGroupWaves();
+	const completeGroupMutation = useCompleteContactGroup();
 	const { data: activeSchedule } = useCampaignActiveSchedule(campaignId);
 	const { data: contactGroups } = useGetContactGroups({
 		isActive: true,
@@ -160,6 +166,15 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 				iconClass: styles.iconGrape,
 			},
 			{
+				label: 'Waves',
+				value:
+					contactGroup.maxWaves && contactGroup.maxWaves > 0
+						? `${contactGroup.currentWave ?? 1} / ${contactGroup.maxWaves}`
+						: 'Not set',
+				icon: <IconRefresh size={16} />,
+				iconClass: styles.iconBlue,
+			},
+			{
 				label: 'Max Calls / Contact',
 				value: formatNumber(contactGroup.maxCallsPerContact),
 				icon: <IconPhoneCall size={16} />,
@@ -175,6 +190,8 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 		[
 			contactGroup.contactCount,
 			contactGroup.humanEquivalent,
+			contactGroup.currentWave,
+			contactGroup.maxWaves,
 			contactGroup.maxCallsPerContact,
 			contactGroup.maxCallsPerList,
 		]
@@ -228,6 +245,8 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 		updateMutation.isPending ||
 		deleteMutation.isPending ||
 		cleanQueueMutation.isPending ||
+		completeGroupMutation.isPending ||
+		extendWavesMutation.isPending ||
 		isEditingHumanEquivalent;
 
 	const disableToggle = contactGroup.queueStatus === 'COMPLETED';
@@ -487,6 +506,95 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 		navigate(`/campaign/${targetCampaignId}/contact-list/${contactGroup.id}`);
 	};
 
+	const handleExtendWaves = () => {
+		if (contactGroup.queueStatus !== 'EXECUTED') {
+			return;
+		}
+
+		modals.open({
+			title: 'Extend Waves',
+			centered: true,
+			children: (
+				<ExtendWavesModal
+					onSubmit={async (wavesToAdd) => {
+						try {
+							await extendWavesMutation.mutateAsync({
+								id: contactGroup.id,
+								additionalWaves: wavesToAdd,
+							});
+							notifications.show({
+								title: 'Waves extended',
+								message: `Added ${wavesToAdd} wave${
+									wavesToAdd === 1 ? '' : 's'
+								} to this list.`,
+								color: 'green',
+							});
+							onUpdateComplete();
+							modals.closeAll();
+						} catch (error) {
+							const apiMessage =
+								(error as { response?: { data?: { message?: string } } })
+									?.response?.data?.message ||
+								(error instanceof Error ? error.message : null) ||
+								'Unable to extend waves. Please try again.';
+							notifications.show({
+								title: 'Extend waves failed',
+								message: apiMessage,
+								color: 'red',
+							});
+						}
+					}}
+					onCancel={() => modals.closeAll()}
+					loading={extendWavesMutation.isPending}
+				/>
+			),
+			withCloseButton: false,
+		});
+	};
+
+	const handleCompleteGroup = () => {
+		if (contactGroup.queueStatus !== 'EXECUTED') {
+			return;
+		}
+
+		modals.openConfirmModal({
+			title: 'Complete Contact List',
+			children: (
+				<Text size='sm'>
+					Mark this contact list as completed? This will stop additional waves
+					and set the list to inactive.
+				</Text>
+			),
+			labels: { confirm: 'Complete', cancel: 'Cancel' },
+			confirmProps: {
+				color: 'green',
+				loading: completeGroupMutation.isPending,
+			},
+			onConfirm: async () => {
+				try {
+					await completeGroupMutation.mutateAsync(contactGroup.id);
+					notifications.show({
+						title: 'Contact list completed',
+						message: 'The list has been marked as completed.',
+						color: 'green',
+					});
+					onUpdateComplete();
+				} catch (error) {
+					const apiMessage =
+						(error as { response?: { data?: { message?: string } } })?.response
+							?.data?.message ||
+						(error instanceof Error ? error.message : null) ||
+						'Unable to complete the contact list. Please try again.';
+					notifications.show({
+						title: 'Complete failed',
+						message: apiMessage,
+						color: 'red',
+					});
+				}
+			},
+		});
+	};
+
 	return (
 		<Stack gap='md'>
 			{canRenderActionsCard && (
@@ -524,6 +632,33 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 										)}
 									</ActionIcon>
 								</Tooltip>
+							)}
+
+							{contactGroup.queueStatus === 'EXECUTED' && (
+								<>
+									<Tooltip label='Extend Waves' withArrow>
+										<ActionIcon
+											variant='light'
+											color='blue'
+											onClick={handleExtendWaves}
+											aria-label='Extend Waves'
+											disabled={isActionsLoading}
+										>
+											<IconRefresh size={16} />
+										</ActionIcon>
+									</Tooltip>
+									<Tooltip label='Complete list' withArrow>
+										<ActionIcon
+											variant='light'
+											color='green'
+											onClick={handleCompleteGroup}
+											aria-label='Complete list'
+											disabled={isActionsLoading}
+										>
+											<IconCircleCheck size={16} />
+										</ActionIcon>
+									</Tooltip>
+								</>
 							)}
 
 							{canEditContactList && (

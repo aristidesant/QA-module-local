@@ -146,7 +146,8 @@ export const ContactListControl = ({
 
 	const isStatusDisabled =
 		contactGroup.queueStatus === 'COMPLETED' ||
-		contactGroup.queueStatus === 'FAILED';
+		contactGroup.queueStatus === 'FAILED' ||
+		contactGroup.queueStatus === 'EXECUTED';
 
 	const isStartOrResumeAction =
 		contactGroup.queueStatus === 'PENDING' ||
@@ -178,6 +179,9 @@ export const ContactListControl = ({
 	} else if (contactGroup.queueStatus === 'FAILED') {
 		icon = <IconPlayerPlay size={16} />;
 		tooltip = 'Contact list has failed';
+	} else if (contactGroup.queueStatus === 'EXECUTED') {
+		icon = <IconPlayerPlay size={16} />;
+		tooltip = 'All planned waves are done. Extend or complete the list.';
 	}
 
 	return (

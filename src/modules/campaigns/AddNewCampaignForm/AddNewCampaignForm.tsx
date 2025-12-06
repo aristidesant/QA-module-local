@@ -9,6 +9,7 @@ import {
 	Text,
 	Stack,
 	Select,
+	NumberInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useCreateCampaignWithAgent } from '~/queries/campaignsQueries';
@@ -50,6 +51,7 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 				status: CampaignStatus.PENDING,
 				promptId: undefined,
 				objectiveId: undefined,
+				defaultMaxWaves: 3,
 			},
 			agent: {
 				conversationConfig: {},
@@ -69,6 +71,8 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 					value !== 'INBOUND' && value !== 'OUTBOUND'
 						? 'Type must be one of the following values: INBOUND, OUTBOUND'
 						: null,
+				defaultMaxWaves: (value) =>
+					!value || value < 1 ? 'Default waves must be at least 1' : null,
 			},
 			agent: {
 				name: (value) =>
@@ -142,6 +146,7 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 			campaign: {
 				...values.campaign,
 				type: campaignType,
+				defaultMaxWaves: values.campaign.defaultMaxWaves || 3,
 				...(values.campaign.promptId && { promptId: values.campaign.promptId }),
 				...(values.campaign.objectiveId && {
 					objectiveId: values.campaign.objectiveId,
@@ -237,6 +242,19 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 							}}
 						/>
 					</Box>
+					<NumberInput
+						label='Default Waves'
+						description='How many waves to run for every new contact list created from this campaign'
+						placeholder='Number of waves'
+						min={1}
+						step={1}
+						size='sm'
+						clampBehavior='strict'
+						allowNegative={false}
+						withAsterisk
+						key={form.key('campaign.defaultMaxWaves')}
+						{...form.getInputProps('campaign.defaultMaxWaves')}
+					/>
 					<PhoneNumberSelector
 						campaignType={form.values.campaign.type}
 						value={selectedPhoneNumberId}

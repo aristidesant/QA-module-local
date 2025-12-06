@@ -26,6 +26,8 @@ const testContactGroup: ContactGroup = {
 	name: 'Test',
 	contactCount: 100,
 	humanEquivalent: 2,
+	maxWaves: 3,
+	currentWave: 1,
 	maxCallsPerContact: 1,
 	maxCallsPerList: 10,
 	queueStatus: 'active',
@@ -78,6 +80,7 @@ describe('useContactListColumns', () => {
 		expect(ids.includes('name')).toBeTruthy();
 		expect(ids.includes('contactCount')).toBeTruthy();
 		expect(ids.includes('humanEquivalent')).toBeTruthy();
+		expect(ids.includes('waves')).toBeTruthy();
 		expect(ids.includes('createdAt')).toBeTruthy();
 		expect(ids.includes('queueStatus')).toBeTruthy();
 		expect(ids.includes('actions')).toBeTruthy();

@@ -30,6 +30,7 @@ export interface ProcessContactGroupFileRequest {
 	humanEquivalent: number;
 	schedulerId: number;
 	schemaId: number;
+	maxWaves: number;
 }
 
 export interface ProcessContactGroupFileResponse {

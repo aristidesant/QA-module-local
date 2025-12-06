@@ -1,5 +1,12 @@
 import { useCampaignFormContext } from '../../campaignFormFunctions';
-import { Button, Flex, Select, Textarea, TextInput } from '@mantine/core';
+import {
+	Button,
+	Flex,
+	NumberInput,
+	Select,
+	Textarea,
+	TextInput,
+} from '@mantine/core';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 import SectionCard from '~/components/SectionCard';
 import {
@@ -95,6 +102,20 @@ const GeneralSection: React.FC = () => {
 					readOnly={false}
 					description='Choose the main objective this campaign aims to achieve'
 					error={loadError ? 'Failed to load objectives' : undefined}
+				/>
+
+				<NumberInput
+					label='Default Waves'
+					description='How many waves should each new contact list run before stopping'
+					min={1}
+					clampBehavior='strict'
+					allowDecimal={false}
+					allowNegative={false}
+					step={1}
+					placeholder='Enter the number of waves'
+					withAsterisk
+					size='sm'
+					{...form.getInputProps('defaultMaxWaves')}
 				/>
 
 				<Flex justify={'end'}>

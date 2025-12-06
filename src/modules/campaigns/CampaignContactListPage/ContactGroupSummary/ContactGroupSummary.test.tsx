@@ -58,6 +58,8 @@ describe('ContactGroupSummary', () => {
 		maxCallsPerContact: 3,
 		maxCallsPerList: 5000,
 		humanEquivalent: 12.5,
+		maxWaves: 6,
+		currentWave: 2,
 	};
 
 	beforeEach(() => {
@@ -216,6 +218,14 @@ describe('ContactGroupSummary', () => {
 			expect(screen.getByText('Max calls per contact')).toBeInTheDocument();
 			expect(screen.getByText('Max calls per list')).toBeInTheDocument();
 			expect(screen.getByText('Human equivalent')).toBeInTheDocument();
+			expect(screen.getByText('Waves')).toBeInTheDocument();
+		});
+
+		it('renders waves value', () => {
+			renderWithProviders(
+				<ContactGroupSummary contactGroup={mockContactGroup} />
+			);
+			expect(screen.getByText('2 / 6')).toBeInTheDocument();
 		});
 	});
 

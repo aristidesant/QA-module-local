@@ -55,11 +55,13 @@ describe('StepOneGeneral', () => {
 		campaignType: 'INBOUND',
 		phoneNumberId: '',
 		objectiveId: null,
+		defaultMaxWaves: 3,
 		setCampaignName: vi.fn(),
 		setDescription: vi.fn(),
 		setCampaignType: vi.fn(),
 		setPhoneNumberId: vi.fn(),
 		setObjectiveId: vi.fn(),
+		setDefaultMaxWaves: vi.fn(),
 		setCreatedCampaign: vi.fn(),
 		setIsSubmitting: vi.fn(),
 	};
@@ -105,6 +107,7 @@ describe('StepOneGeneral', () => {
 		expect(screen.getByTestId('phone-selector')).toBeInTheDocument();
 		// Find the Campaign Objective select by its label text
 		expect(screen.getByText(/Campaign Objective/i)).toBeInTheDocument();
+		expect(screen.getByLabelText(/Default Waves/i)).toBeInTheDocument();
 	});
 
 	it('validates required fields', async () => {
@@ -126,7 +129,7 @@ describe('StepOneGeneral', () => {
 			target: { value: 'Test Description' },
 		});
 		fireEvent.change(screen.getByTestId('phone-selector'), {
-			target: { value: 'phone-123' },
+			target: { value: '10' },
 		});
 
 		const submitButton = screen.getByText('Save & Continue');
@@ -143,7 +146,7 @@ describe('StepOneGeneral', () => {
 			target: { value: 'Test Description' },
 		});
 		fireEvent.change(screen.getByTestId('phone-selector'), {
-			target: { value: 'phone-123' },
+			target: { value: '10' },
 		});
 
 		// Select objective
@@ -159,6 +162,7 @@ describe('StepOneGeneral', () => {
 		const callArgs = mockMutate.mock.calls[0][0];
 		expect(callArgs.campaign.name).toBe('Test Campaign');
 		expect(callArgs.campaign.description).toBe('Test Description');
+		expect(callArgs.campaign.defaultMaxWaves).toBe(3);
 	});
 
 	it('handles submission success', async () => {
@@ -180,7 +184,7 @@ describe('StepOneGeneral', () => {
 			target: { value: 'Test Description' },
 		});
 		fireEvent.change(screen.getByTestId('phone-selector'), {
-			target: { value: 'phone-123' },
+			target: { value: '10' },
 		});
 
 		const submitButton = screen.getByText('Save & Continue');
@@ -215,7 +219,7 @@ describe('StepOneGeneral', () => {
 			target: { value: 'Test Description' },
 		});
 		fireEvent.change(screen.getByTestId('phone-selector'), {
-			target: { value: 'phone-123' },
+			target: { value: '10' },
 		});
 
 		const submitButton = screen.getByText('Save & Continue');

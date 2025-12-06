@@ -89,7 +89,30 @@ const contactGroupApi = (_authHeader?: Record<string, string>) => {
 			);
 			return response.data;
 		},
+
+		// EXTEND waves for an executed contact group
+		extendContactGroupWaves: async (id: number, additionalWaves: number) => {
+			const response = await axios.patch<ContactGroup>(
+				CONTACT_GROUP_ENDPOINTS.extendWaves(id),
+				{ additionalWaves }
+			);
+			return response.data;
+		},
+
+		// COMPLETE an executed contact group
+		completeContactGroup: async (id: number) => {
+			const response = await axios.patch<ContactGroup>(
+				CONTACT_GROUP_ENDPOINTS.complete(id)
+			);
+			return response.data;
+		},
 	};
 };
 
 export default contactGroupApi;
+
+export const CONTACT_GROUP_ENDPOINTS = {
+	extendWaves: (id: number) =>
+		`${DEFAULT_API_URL}/contact-groups/${id}/extend-waves`,
+	complete: (id: number) => `${DEFAULT_API_URL}/contact-groups/${id}/complete`,
+};

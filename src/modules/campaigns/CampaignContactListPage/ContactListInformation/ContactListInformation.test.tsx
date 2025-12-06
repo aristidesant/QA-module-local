@@ -1,8 +1,13 @@
-import { screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ContactListInformation from './ContactListInformation';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import type ContactGroup from '~/models/ContactGroup';
+import {
+	useExtendContactGroupWaves,
+	useCompleteContactGroup,
+} from '~/queries/contactGroupQueries';
+import { modals } from '@mantine/modals';
 
 vi.mock(
 	'~/modules/campaigns/CampaignLiveMetricPage/components/MetricInfoCard/MetricInfoCard',
@@ -15,6 +20,23 @@ vi.mock(
 		),
 	})
 );
+
+vi.mock('~/queries/contactGroupQueries', () => ({
+	useExtendContactGroupWaves: vi.fn(),
+	useCompleteContactGroup: vi.fn(),
+}));
+
+vi.mock('@mantine/modals', () => ({
+	modals: {
+		open: vi.fn(),
+		openConfirmModal: vi.fn(),
+		closeAll: vi.fn(),
+	},
+}));
+
+vi.mock('@mantine/notifications', () => ({
+	notifications: { show: vi.fn() },
+}));
 
 describe('ContactListInformation', () => {
 	const mockOnReload = vi.fn();
@@ -33,10 +55,20 @@ describe('ContactListInformation', () => {
 		maxCallsPerContact: 3,
 		maxCallsPerList: 5000,
 		humanEquivalent: 12.8,
+		maxWaves: 4,
+		currentWave: 2,
 	};
 
 	beforeEach(() => {
 		vi.clearAllMocks();
+		(useExtendContactGroupWaves as unknown as any).mockReturnValue({
+			mutateAsync: vi.fn(),
+			isPending: false,
+		});
+		(useCompleteContactGroup as unknown as any).mockReturnValue({
+			mutateAsync: vi.fn(),
+			isPending: false,
+		});
 	});
 
 	describe('Status Display', () => {
@@ -106,6 +138,22 @@ describe('ContactListInformation', () => {
 			expect(screen.getByText('Failed')).toBeInTheDocument();
 			expect(
 				screen.getByText('An error stopped the campaign. Try restarting.')
+			).toBeInTheDocument();
+		});
+
+		it('renders EXECUTED status correctly', () => {
+			const executedGroup = { ...mockContactGroup, queueStatus: 'EXECUTED' };
+			renderWithProviders(
+				<ContactListInformation
+					contactGroup={executedGroup}
+					onReload={mockOnReload}
+				/>
+			);
+			expect(screen.getByText('Executed')).toBeInTheDocument();
+			expect(
+				screen.getByText(
+					'All planned waves are done. Extend waves or mark the list complete.'
+				)
 			).toBeInTheDocument();
 		});
 
@@ -184,6 +232,28 @@ describe('ContactListInformation', () => {
 			expect(screen.getByTestId('metric-expiration')).toBeInTheDocument();
 		});
 
+		it('renders waves metric', () => {
+			renderWithProviders(
+				<ContactListInformation
+					contactGroup={mockContactGroup}
+					onReload={mockOnReload}
+				/>
+			);
+			expect(screen.getByTestId('metric-waves')).toBeInTheDocument();
+			expect(screen.getByText('2 / 4')).toBeInTheDocument();
+		});
+
+		it('hides extend/complete actions when not EXECUTED', () => {
+			renderWithProviders(
+				<ContactListInformation
+					contactGroup={mockContactGroup}
+					onReload={mockOnReload}
+				/>
+			);
+			expect(screen.queryByLabelText('Extend waves')).not.toBeInTheDocument();
+			expect(screen.queryByLabelText('Complete list')).not.toBeInTheDocument();
+		});
+
 		it('displays contact count of 0 when not set', () => {
 			const noCountGroup = { ...mockContactGroup, contactCount: 0 };
 			renderWithProviders(
@@ -214,6 +284,33 @@ describe('ContactListInformation', () => {
 			);
 			// The component uses Math.round, so 12.8 becomes 13
 			expect(screen.getByTestId('metric-human-equivalent')).toBeInTheDocument();
+		});
+
+		it('shows extend/complete actions when EXECUTED and triggers extend', async () => {
+			const extendMock = vi.fn().mockResolvedValue({});
+			(useExtendContactGroupWaves as unknown as any).mockReturnValue({
+				mutateAsync: extendMock,
+				isPending: false,
+			});
+			(modals.open as unknown as any).mockImplementation(
+				({ children }: any) => {
+					children.props.onSubmit(2);
+				}
+			);
+
+			const executedGroup = { ...mockContactGroup, queueStatus: 'EXECUTED' };
+			renderWithProviders(
+				<ContactListInformation
+					contactGroup={executedGroup}
+					onReload={mockOnReload}
+				/>
+			);
+
+			const extendBtn = screen.getByLabelText('Extend waves');
+			expect(extendBtn).toBeInTheDocument();
+			fireEvent.click(extendBtn);
+
+			await waitFor(() => expect(extendMock).toHaveBeenCalled());
 		});
 	});
 

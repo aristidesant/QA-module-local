@@ -82,6 +82,21 @@ const useContactListColumns = ({
 				),
 			},
 			{
+				id: 'waves',
+				header: 'Waves',
+				cell: ({ row }) => {
+					const { currentWave, maxWaves } = row.original;
+					if (!maxWaves) {
+						return <Text fz='sm'>—</Text>;
+					}
+					return (
+						<Text fz='sm'>
+							{`${currentWave ?? 1} / ${maxWaves.toLocaleString()}`}
+						</Text>
+					);
+				},
+			},
+			{
 				id: 'createdAt',
 				header: 'Created',
 				cell: ({ row }) => (

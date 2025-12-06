@@ -81,6 +81,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			tags: campaign?.tags || [],
 			workingHours: campaign?.workingHours || defaultWorkingHours,
 			agentConfig: campaign?.agentConfig || {},
+			defaultMaxWaves: campaign?.defaultMaxWaves ?? 3,
 		},
 		validate: {
 			name: (value) => (value ? null : 'Name is required'),
@@ -90,6 +91,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			spent: (value) => (value >= 0 ? null : 'Spent must be 0 or more'),
 			userId: (value) => (value >= 0 ? null : 'User ID must be 0 or more'),
 			clientId: (value) => (value >= 0 ? null : 'Client ID must be 0 or more'),
+			defaultMaxWaves: (value) =>
+				value && value >= 1 ? null : 'Default waves must be at least 1',
 		},
 	});
 
@@ -113,6 +116,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 				tags: campaign.tags || [],
 				workingHours: campaign.workingHours || defaultWorkingHours,
 				agentConfig: campaign.agentConfig || {},
+				defaultMaxWaves: campaign.defaultMaxWaves ?? 3,
 			});
 		}
 	}, [campaign]);

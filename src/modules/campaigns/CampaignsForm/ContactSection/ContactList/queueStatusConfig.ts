@@ -7,6 +7,7 @@ export type QueueStatus =
 	| 'RUNNING'
 	| 'PAUSED'
 	| 'FAILED'
+	| 'EXECUTED'
 	| 'COMPLETED';
 
 export interface QueueStatusConfig {
@@ -30,6 +31,10 @@ export const QUEUE_STATUS_CONFIG: Record<QueueStatus, QueueStatusConfig> = {
 	FAILED: {
 		label: 'Failed',
 		color: 'red',
+	},
+	EXECUTED: {
+		label: 'Executed',
+		color: 'grape',
 	},
 	COMPLETED: {
 		label: 'Completed',

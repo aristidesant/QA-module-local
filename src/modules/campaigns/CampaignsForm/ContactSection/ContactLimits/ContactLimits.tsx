@@ -8,6 +8,7 @@ import {
 	Text,
 	Slider,
 	Alert,
+	NumberInput,
 } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
@@ -23,6 +24,7 @@ import { transformFieldMapping } from '~/utils/fieldMappingTransformer';
 import { useUpdateContactGroup } from '~/queries/contactGroupQueries';
 import { useCampaignActiveSchedule } from '~/queries/schedulerQueries';
 import { useGetContactGroups } from '~/queries/contactGroupQueries';
+import { useGetCampaign } from '~/queries/campaignsQueries';
 import {
 	calculateHumanEquivalentValues,
 	type HumanEquivalentCalculations,
@@ -46,7 +48,9 @@ export const ContactLimits = ({
 	campaignId,
 }: ContactLimitsProps) => {
 	const processFileMutation = useProcessContactGroupFile();
-	const { setRightComponent } = useCampaignsStore((state) => state);
+	const { setRightComponent, selectedCampaign } = useCampaignsStore(
+		(state) => state
+	);
 	const updateContactGroupMutation = useUpdateContactGroup();
 
 	const { data: activeSchedule } = useCampaignActiveSchedule(campaignId);
@@ -54,6 +58,9 @@ export const ContactLimits = ({
 		isActive: true,
 		campaignId,
 	});
+	const { data: campaign } = useGetCampaign(
+		campaignId ? String(campaignId) : ''
+	);
 	const [data, setData] = useState<{
 		name: string;
 		description: string;
@@ -69,6 +76,19 @@ export const ContactLimits = ({
 	const [humanEquivalent, setHumanEquivalent] = useState<number>(
 		contactGroup.humanEquivalent || 1
 	);
+	const defaultWaves = useMemo(() => {
+		return (
+			contactGroup.maxWaves ??
+			selectedCampaign?.defaultMaxWaves ??
+			campaign?.defaultMaxWaves ??
+			3
+		);
+	}, [
+		campaign?.defaultMaxWaves,
+		contactGroup.maxWaves,
+		selectedCampaign?.defaultMaxWaves,
+	]);
+	const [maxWaves, setMaxWaves] = useState<number>(defaultWaves);
 
 	// Sync state when contactGroup prop changes
 	useEffect(() => {
@@ -82,6 +102,10 @@ export const ContactLimits = ({
 	useEffect(() => {
 		setHumanEquivalent(contactGroup.humanEquivalent || 1);
 	}, [contactGroup.humanEquivalent]);
+
+	useEffect(() => {
+		setMaxWaves(defaultWaves);
+	}, [defaultWaves]);
 
 	// Handle form field changes
 	const handleChange = <K extends keyof typeof data>(
@@ -111,6 +135,15 @@ export const ContactLimits = ({
 			notifications.show({
 				title: 'Invalid Input',
 				message: 'Human equivalent exceeds available capacity.',
+				color: 'red',
+			});
+			return false;
+		}
+
+		if (!maxWaves || maxWaves < 1) {
+			notifications.show({
+				title: 'Invalid Input',
+				message: 'Waves must be at least 1.',
 				color: 'red',
 			});
 			return false;
@@ -168,6 +201,7 @@ export const ContactLimits = ({
 					humanEquivalent: humanEquivalent,
 					schedulerId: activeSchedule?.id || 0,
 					schemaId: selectedSchemaId,
+					maxWaves,
 				});
 
 				notifications.show({
@@ -183,6 +217,7 @@ export const ContactLimits = ({
 						name: data.name,
 						description: data.description,
 						humanEquivalent,
+						maxWaves,
 					},
 				});
 
@@ -223,6 +258,21 @@ export const ContactLimits = ({
 					onNameChange={(name) => {
 						handleChange('name', name);
 					}}
+				/>
+				<NumberInput
+					label='Max Waves'
+					description='Inherits the campaign default; adjust if this list needs a different number of waves'
+					value={maxWaves}
+					onChange={(value) =>
+						setMaxWaves(typeof value === 'number' ? value : 0)
+					}
+					min={1}
+					step={1}
+					clampBehavior='strict'
+					allowNegative={false}
+					allowDecimal={false}
+					size='sm'
+					withAsterisk
 				/>
 				{/* Human Equivalent Slider */}
 				{isCreatingAndFull && (

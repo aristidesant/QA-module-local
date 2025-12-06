@@ -9,6 +9,7 @@ interface CampaignWizardState {
 	campaignType: 'INBOUND' | 'OUTBOUND';
 	phoneNumberId: number | null;
 	objectiveId: number | null;
+	defaultMaxWaves: number;
 	createdCampaign: Campaign | null;
 	isSubmitting: boolean;
 
@@ -28,6 +29,7 @@ interface CampaignWizardState {
 	setCampaignType: (type: 'INBOUND' | 'OUTBOUND') => void;
 	setPhoneNumberId: (id: number | null) => void;
 	setObjectiveId: (id: number | null) => void;
+	setDefaultMaxWaves: (waves: number) => void;
 	setCreatedCampaign: (campaign: Campaign | null) => void;
 	setIsSubmitting: (isSubmitting: boolean) => void;
 	setAgentBehaviorId: (id: string | number | null) => void;
@@ -45,6 +47,7 @@ const initialState = {
 	campaignType: 'OUTBOUND' as const,
 	phoneNumberId: null,
 	objectiveId: null,
+	defaultMaxWaves: 3,
 	createdCampaign: null,
 	isSubmitting: false,
 	agentBehaviorId: null,
@@ -66,6 +69,7 @@ export const useCampaignWizardStore = create<CampaignWizardState>((set) => ({
 	setCampaignType: (type) => set({ campaignType: type, phoneNumberId: null }),
 	setPhoneNumberId: (id) => set({ phoneNumberId: id }),
 	setObjectiveId: (id) => set({ objectiveId: id }),
+	setDefaultMaxWaves: (waves) => set({ defaultMaxWaves: waves }),
 	setCreatedCampaign: (campaign) => {
 		set({ createdCampaign: campaign });
 		// Sync with campaigns store so AddScheduler has access to campaign ID

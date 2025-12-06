@@ -1,12 +1,20 @@
-import { ActionIcon, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
 import {
 	IconAlertTriangle,
 	IconCircleCheck,
 	IconRefresh,
+	IconRepeat,
 } from '@tabler/icons-react';
+import { modals } from '@mantine/modals';
+import { notifications } from '@mantine/notifications';
 import type ContactGroup from '~/models/ContactGroup';
 import { MetricInfoCard } from '~/modules/campaigns/CampaignLiveMetricPage/components/MetricInfoCard/MetricInfoCard';
 import classes from './ContactListInformation.module.css';
+import {
+	useCompleteContactGroup,
+	useExtendContactGroupWaves,
+} from '~/queries/contactGroupQueries';
+import ExtendWavesModal from '~/modules/campaigns/components/ExtendWavesModal';
 
 interface ContactListInformationProps {
 	contactGroup: ContactGroup;
@@ -17,10 +25,16 @@ export const ContactListInformation = ({
 	contactGroup,
 	onReload,
 }: ContactListInformationProps) => {
+	const extendMutation = useExtendContactGroupWaves();
+	const completeMutation = useCompleteContactGroup();
+	const isActionLoading =
+		extendMutation.isPending || completeMutation.isPending;
+
 	type StatusKey =
 		| 'PENDING'
 		| 'RUNNING'
 		| 'PAUSED'
+		| 'EXECUTED'
 		| 'COMPLETED'
 		| 'FAILED'
 		| 'UNKNOWN';
@@ -64,6 +78,13 @@ export const ContactListInformation = ({
 			accentClass: 'statusFailed',
 			StatusIcon: IconAlertTriangle,
 		},
+		EXECUTED: {
+			label: 'Executed',
+			description:
+				'All planned waves are done. Extend waves or mark the list complete.',
+			accentClass: 'statusComplete',
+			StatusIcon: IconAlertTriangle,
+		},
 		UNKNOWN: {
 			label: 'Unknown',
 			description: 'Status unavailable. Reload for the latest update.',
@@ -85,6 +106,15 @@ export const ContactListInformation = ({
 			label: 'Max Calls / Contact',
 			value: contactGroup.maxCallsPerContact,
 		},
+		{
+			label: 'Waves',
+			value:
+				contactGroup.maxWaves && contactGroup.maxWaves > 0
+					? `${Math.max(contactGroup.currentWave ?? 1, 1)} / ${
+							contactGroup.maxWaves
+						}`
+					: 'Not set',
+		},
 
 		{
 			label: 'Human Equivalent',
@@ -99,6 +129,87 @@ export const ContactListInformation = ({
 	];
 
 	const StatusIcon = status.StatusIcon;
+
+	const handleExtendWaves = () => {
+		if (statusKey !== 'EXECUTED') return;
+
+		modals.open({
+			title: 'Extend Waves',
+			centered: true,
+			withCloseButton: false,
+			children: (
+				<ExtendWavesModal
+					onSubmit={async (wavesToAdd) => {
+						try {
+							await extendMutation.mutateAsync({
+								id: contactGroup.id,
+								additionalWaves: wavesToAdd,
+							});
+							notifications.show({
+								title: 'Waves extended',
+								message: `Added ${wavesToAdd} wave${
+									wavesToAdd === 1 ? '' : 's'
+								} to this list.`,
+								color: 'green',
+							});
+							onReload();
+							modals.closeAll();
+						} catch (error) {
+							const apiMessage =
+								(error as { response?: { data?: { message?: string } } })
+									?.response?.data?.message ||
+								(error instanceof Error ? error.message : null) ||
+								'Unable to extend waves. Please try again.';
+							notifications.show({
+								title: 'Extend waves failed',
+								message: apiMessage,
+								color: 'red',
+							});
+						}
+					}}
+					onCancel={() => modals.closeAll()}
+					loading={extendMutation.isPending}
+				/>
+			),
+		});
+	};
+
+	const handleCompleteList = () => {
+		if (statusKey !== 'EXECUTED') return;
+
+		modals.openConfirmModal({
+			title: 'Complete Contact List',
+			children: (
+				<Text size='sm'>
+					Mark this contact list as completed? No additional waves will run.
+				</Text>
+			),
+			labels: { confirm: 'Complete', cancel: 'Cancel' },
+			confirmProps: { color: 'green', loading: completeMutation.isPending },
+			onConfirm: async () => {
+				try {
+					await completeMutation.mutateAsync(contactGroup.id);
+					notifications.show({
+						title: 'Contact list completed',
+						message: 'The list is now marked as completed.',
+						color: 'green',
+					});
+					onReload();
+				} catch (error) {
+					const apiMessage =
+						(error as { response?: { data?: { message?: string } } })?.response
+							?.data?.message ||
+						(error instanceof Error ? error.message : null) ||
+						'Unable to complete the contact list. Please try again.';
+					notifications.show({
+						title: 'Complete failed',
+						message: apiMessage,
+						color: 'red',
+					});
+				}
+			},
+		});
+	};
 
 	return (
 		<section className={classes.panel}>
@@ -116,19 +227,51 @@ export const ContactListInformation = ({
 						{status.description}
 					</Text>
 				</div>
-				<Tooltip label='Reload' withArrow position='left'>
-					<ActionIcon
-						variant='light'
-						color='gray'
-						size='sm'
-						aria-label='Reload contact list'
-						onClick={() => {
-							void onReload();
-						}}
-					>
-						<IconRefresh size={16} strokeWidth={2} />
-					</ActionIcon>
-				</Tooltip>
+				<Group gap='xs'>
+					{statusKey === 'EXECUTED' && (
+						<>
+							<Tooltip label='Extend Waves' withArrow position='left'>
+								<ActionIcon
+									variant='light'
+									color='blue'
+									size='sm'
+									aria-label='Extend waves'
+									onClick={handleExtendWaves}
+									loading={extendMutation.isPending}
+									disabled={isActionLoading}
+								>
+									<IconRepeat size={16} strokeWidth={2} />
+								</ActionIcon>
+							</Tooltip>
+							<Tooltip label='Complete list' withArrow position='left'>
+								<ActionIcon
+									variant='light'
+									color='green'
+									size='sm'
+									aria-label='Complete list'
+									onClick={handleCompleteList}
+									loading={completeMutation.isPending}
+									disabled={isActionLoading}
+								>
+									<IconCircleCheck size={16} strokeWidth={2} />
+								</ActionIcon>
+							</Tooltip>
+						</>
+					)}
+					<Tooltip label='Reload' withArrow position='left'>
+						<ActionIcon
+							variant='light'
+							color='gray'
+							size='sm'
+							aria-label='Reload contact list'
+							onClick={() => {
+								void onReload();
+							}}
+						>
+							<IconRefresh size={16} strokeWidth={2} />
+						</ActionIcon>
+					</Tooltip>
+				</Group>
 			</div>
 
 			<div className={classes.divider} />

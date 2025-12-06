@@ -88,6 +88,7 @@ describe('contactGroupFilesApi', () => {
 				humanEquivalent: 1,
 				schedulerId: 1,
 				schemaId: 1,
+				maxWaves: 3,
 			};
 			const mockResponse: ProcessContactGroupFileResponse = {
 				success: true,
@@ -120,6 +121,7 @@ describe('contactGroupFilesApi', () => {
 				humanEquivalent: 1,
 				schedulerId: 1,
 				schemaId: 1,
+				maxWaves: 3,
 			};
 			const error = createMockAxiosError('Processing failed', 500);
 			(axios.post as Mock).mockRejectedValue(error);

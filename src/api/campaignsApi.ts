@@ -53,6 +53,7 @@ export interface CreateCampaignWithAgentDTO {
 		status?: string;
 		promptId?: number;
 		objectiveId?: number;
+		defaultMaxWaves?: number;
 	};
 	agent: {
 		conversationConfig?: {

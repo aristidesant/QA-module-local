@@ -63,6 +63,7 @@ export interface Campaign {
 	tags?: string[];
 	workingHours?: WorkingHours;
 	progress?: number; // Campaign progress percentage
+	defaultMaxWaves?: number;
 
 	// User information
 	user?: {

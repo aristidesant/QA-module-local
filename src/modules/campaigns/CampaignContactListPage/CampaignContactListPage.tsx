@@ -118,6 +118,16 @@ const CampaignContactListPage = () => {
 			actionIcon: null,
 			actionType: null,
 		},
+		COMPLETED: {
+			actionLabel: 'No Actions Available',
+			actionIcon: null,
+			actionType: null,
+		},
+		EXECUTED: {
+			actionLabel: 'All waves executed',
+			actionIcon: null,
+			actionType: null,
+		},
 		FAILED: {
 			actionLabel: 'Retry Not Available',
 			actionIcon: null,

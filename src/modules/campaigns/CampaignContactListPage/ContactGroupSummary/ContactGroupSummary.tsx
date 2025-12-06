@@ -35,12 +35,21 @@ const ContactGroupSummary = ({ contactGroup }: ContactGroupSummaryProps) => {
 				label: 'Human equivalent',
 				value: contactGroup.humanEquivalent ?? 'N/A',
 			},
+			{
+				label: 'Waves',
+				value:
+					contactGroup.maxWaves && contactGroup.maxWaves > 0
+						? `${contactGroup.currentWave ?? 1} / ${contactGroup.maxWaves}`
+						: 'Not set',
+			},
 		],
 		[
 			contactGroup.contactCount,
 			contactGroup.maxCallsPerContact,
 			contactGroup.maxCallsPerList,
 			contactGroup.humanEquivalent,
+			contactGroup.currentWave,
+			contactGroup.maxWaves,
 		]
 	);
 

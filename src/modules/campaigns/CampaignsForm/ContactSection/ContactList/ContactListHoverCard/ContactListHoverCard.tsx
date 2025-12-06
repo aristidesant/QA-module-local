@@ -35,6 +35,12 @@ export const ContactListHoverCard = ({
 						<strong>Queue Status:</strong> {contactGroup.queueStatus}
 					</Text>
 					<Text size='xs'>
+						<strong>Waves:</strong>{' '}
+						{contactGroup.maxWaves
+							? `${contactGroup.currentWave ?? 1} / ${contactGroup.maxWaves}`
+							: 'Not set'}
+					</Text>
+					<Text size='xs'>
 						<strong>Max Calls per Contact:</strong>{' '}
 						{contactGroup.maxCallsPerContact}
 					</Text>

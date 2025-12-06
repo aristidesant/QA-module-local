@@ -9,6 +9,7 @@ import {
 	Select,
 	Button,
 	Group,
+	NumberInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -41,6 +42,8 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 		setCampaignType,
 		setPhoneNumberId,
 		setObjectiveId,
+		defaultMaxWaves,
+		setDefaultMaxWaves,
 		setCreatedCampaign,
 		setIsSubmitting,
 	} = useCampaignWizardStore();
@@ -58,6 +61,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 			campaignType,
 			phoneNumberId,
 			objectiveId,
+			defaultMaxWaves,
 		},
 		validate: {
 			campaignName: (value) =>
@@ -65,6 +69,8 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 			description: (value) =>
 				value.trim().length < 2 ? 'Description is required' : null,
 			phoneNumberId: (value) => (!value ? 'Phone number is required' : null),
+			defaultMaxWaves: (value) =>
+				!value || value < 1 ? 'Waves must be at least 1' : null,
 		},
 		validateInputOnChange: true,
 	});
@@ -111,6 +117,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				type: values.campaignType,
 				campaignExecutionType: 'TIME_BASED',
 				status: CampaignStatus.PENDING,
+				defaultMaxWaves: values.defaultMaxWaves || 3,
 				...(values.objectiveId && { objectiveId: values.objectiveId }),
 			},
 			agent: {
@@ -135,6 +142,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				setCampaignType(values.campaignType);
 				setPhoneNumberId(values.phoneNumberId);
 				setObjectiveId(values.objectiveId);
+				setDefaultMaxWaves(values.defaultMaxWaves || 3);
 				setCreatedCampaign(campaign);
 				setIsSubmitting(false);
 
@@ -218,6 +226,18 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 									{...form.getInputProps('campaignType')}
 									fullWidth
 									className={styles.segmentedControl}
+								/>
+								<NumberInput
+									label='Default Waves'
+									description='How many waves each new contact list should run before stopping'
+									min={1}
+									step={1}
+									clampBehavior='strict'
+									allowDecimal={false}
+									allowNegative={false}
+									withAsterisk
+									size='sm'
+									{...form.getInputProps('defaultMaxWaves')}
 								/>
 							</Box>
 						</Stack>
