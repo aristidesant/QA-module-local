@@ -10,23 +10,6 @@ import type {
 } from '~/models/AgentListObject';
 import type { Campaign } from '~/models/CampaignsModel';
 
-// Create agent
-export const useCreateAgent = () => {
-	const queryClient = useQueryClient();
-	return useMutation({
-		mutationFn: async (agent: any) => {
-			const api = agentApi();
-			return api.createAgent(agent);
-		},
-		onSuccess: (_data) => {
-			queryClient.invalidateQueries({ queryKey: ['agents'] });
-		},
-		onError: (error) => {
-			console.error('Error creating agent:', error);
-		},
-	});
-};
-
 // Duplicate agent
 export const useDuplicateAgent = () => {
 	const queryClient = useQueryClient();

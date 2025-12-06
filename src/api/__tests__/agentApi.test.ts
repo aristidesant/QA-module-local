@@ -20,34 +20,6 @@ describe('agentApi', () => {
 		resetAxiosMocks();
 	});
 
-	describe('createAgent', () => {
-		it('should create an agent successfully', async () => {
-			const mockAgent = { name: 'Test Agent' };
-			const mockResponse = { id: '123', name: 'Test Agent' };
-			(axios.post as Mock).mockResolvedValue(createMockResponse(mockResponse));
-
-			const api = agentApi();
-			const result = await api.createAgent(mockAgent as any);
-
-			expect(axios.post).toHaveBeenCalledWith(
-				`${TEST_API_URL}/agents`,
-				mockAgent
-			);
-			expect(result).toEqual(mockResponse);
-		});
-
-		it('should throw error when create fails', async () => {
-			const mockAgent = { name: 'Test Agent' };
-			const error = createMockAxiosError('Creation failed', 400);
-			(axios.post as Mock).mockRejectedValue(error);
-
-			const api = agentApi();
-			await expect(api.createAgent(mockAgent as any)).rejects.toThrow(
-				'Creation failed'
-			);
-		});
-	});
-
 	describe('duplicateAgent', () => {
 		it('should duplicate an agent successfully', async () => {
 			const agentId = '123';

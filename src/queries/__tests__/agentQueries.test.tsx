@@ -3,7 +3,6 @@ import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode } from 'react';
 import {
-	useCreateAgent,
 	useDuplicateAgent,
 	useGetAllAgents,
 	useAgentsWithCampaigns,
@@ -89,28 +88,6 @@ describe('agentQueries', () => {
 
 			await waitFor(() => {
 				expect(mockApi.findAllAgents).toHaveBeenCalledWith(params);
-			});
-		});
-	});
-
-	describe('useCreateAgent', () => {
-		it('should create an agent and invalidate queries', async () => {
-			const mockAgent = { name: 'Test Agent' };
-			mockApi.createAgent.mockResolvedValue(mockAgent);
-
-			const { result } = renderHook(() => useCreateAgent(), {
-				wrapper: createWrapper(queryClient),
-			});
-
-			result.current.mutate(mockAgent);
-
-			await waitFor(() => {
-				expect(result.current.isSuccess).toBe(true);
-			});
-
-			expect(mockApi.createAgent).toHaveBeenCalledWith(mockAgent);
-			expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-				queryKey: ['agents'],
 			});
 		});
 	});
