@@ -8,7 +8,6 @@ describe('useToolsStore', () => {
 		act(() => {
 			useToolsStore.setState({
 				selectedToolCategory: null,
-				rightComponent: null,
 			});
 		});
 	});
@@ -16,19 +15,31 @@ describe('useToolsStore', () => {
 	it('should have initial state', () => {
 		const state = useToolsStore.getState();
 		expect(state.selectedToolCategory).toBeNull();
-		expect(state.rightComponent).toBeNull();
 	});
 
-	it('should set tools category and right component', () => {
+	it('should set tools category', () => {
 		const mockCategory = { id: 1, name: 'Category' } as ToolCategoryModel;
-		const mockComponent = 'Component';
 
 		act(() => {
-			useToolsStore.getState().setToolsCategory(mockCategory, mockComponent);
+			useToolsStore.getState().setToolsCategory(mockCategory);
 		});
 
 		const state = useToolsStore.getState();
 		expect(state.selectedToolCategory).toEqual(mockCategory);
-		expect(state.rightComponent).toBe(mockComponent);
+	});
+
+	it('should clear tools category when set to null', () => {
+		const mockCategory = { id: 1, name: 'Category' } as ToolCategoryModel;
+
+		act(() => {
+			useToolsStore.getState().setToolsCategory(mockCategory);
+		});
+
+		act(() => {
+			useToolsStore.getState().setToolsCategory(null);
+		});
+
+		const state = useToolsStore.getState();
+		expect(state.selectedToolCategory).toBeNull();
 	});
 });

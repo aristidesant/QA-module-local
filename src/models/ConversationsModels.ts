@@ -93,18 +93,35 @@ export interface Metadata {
 
 export interface TranscriptEntry {
 	role: string;
-	message: string;
+	message: string | null;
 	feedback: unknown | null;
 	llm_usage: LlmUsage | null;
-	tool_calls: unknown[];
+	tool_calls: ToolCall[];
 	interrupted: boolean;
 	llm_override: unknown | null;
 	tool_results: unknown[];
 	source_medium: string | null;
+	agent_metadata?: AgentMetadata;
 	original_message: string | null;
 	time_in_call_secs: number;
+	multivoice_message: unknown | null;
 	rag_retrieval_info: unknown | null;
 	conversation_turn_metrics: Record<string, unknown> | null;
+}
+
+export interface AgentMetadata {
+	agent_id: string;
+	branch_id: string | null;
+	workflow_node_id: string | null;
+}
+
+export interface ToolCall {
+	type: string;
+	tool_name: string;
+	request_id: string;
+	tool_details: unknown | null;
+	params_as_json: string;
+	tool_has_been_called: boolean;
 }
 
 export interface LlmUsage {

@@ -1,20 +1,21 @@
-import { Text, Loader, Center, Stack, Button } from '@mantine/core';
-import { IconPlus, IconTool } from '@tabler/icons-react';
-import SectionCard from '~/components/SectionCard';
+import { Text, Loader, Center, Stack } from '@mantine/core';
+import { IconTool } from '@tabler/icons-react';
 import useToolsStore from '~/stores/toolsStore';
 import { useToolsByCategory } from '~/queries/toolQueries';
 import type { ToolModel } from '~/models/ToolModel';
-import ToolForm from '~/modules/tools/ToolForm';
 import BaseTable from '~/components/BaseTable';
 import useToolsListColumns from './useToolsListColumns';
 import styles from './ToolsList.module.css';
 import ToolsListHeader from './ToolsListHeader';
 import EmptyState from '~/components/EmptyState';
 
-interface ToolsListProps {}
+interface ToolsListProps {
+	onCreate: () => void;
+	onEdit: (toolId: string | number) => void;
+}
 
-function ToolsList({}: ToolsListProps) {
-	const { selectedToolCategory, setToolsCategory } = useToolsStore();
+function ToolsList({ onCreate, onEdit }: ToolsListProps) {
+	const { selectedToolCategory } = useToolsStore();
 	const columns = useToolsListColumns();
 
 	const {
@@ -24,37 +25,7 @@ function ToolsList({}: ToolsListProps) {
 	} = useToolsByCategory(selectedToolCategory?.id);
 
 	const handleToolClick = (tool: ToolModel) => {
-		const toolForm = (
-			<ToolForm
-				toolId={tool.id}
-				onSuccess={() => {
-					// Close the form by setting right component to null
-					setToolsCategory(selectedToolCategory, null);
-				}}
-				onCancel={() => {
-					// Close the form by setting right component to null
-					setToolsCategory(selectedToolCategory, null);
-				}}
-			/>
-		);
-		setToolsCategory(selectedToolCategory, toolForm);
-	};
-
-	const handleCreateNewTool = () => {
-		const toolForm = (
-			<ToolForm
-				categoryId={selectedToolCategory?.id}
-				onSuccess={() => {
-					// Close the form by setting right component to null
-					setToolsCategory(selectedToolCategory, null);
-				}}
-				onCancel={() => {
-					// Close the form by setting right component to null
-					setToolsCategory(selectedToolCategory, null);
-				}}
-			/>
-		);
-		setToolsCategory(selectedToolCategory, toolForm);
+		onEdit(tool.id);
 	};
 
 	const renderContent = () => {
@@ -109,7 +80,7 @@ function ToolsList({}: ToolsListProps) {
 					{selectedToolCategory && (
 						<ToolsListHeader
 							category={selectedToolCategory}
-							onCreate={handleCreateNewTool}
+							onCreate={onCreate}
 						/>
 					)}
 
@@ -140,30 +111,7 @@ function ToolsList({}: ToolsListProps) {
 		);
 	};
 
-	return (
-		<SectionCard
-			description='List of tools'
-			title={
-				selectedToolCategory
-					? `${selectedToolCategory.name} Tools (${tools?.length})`
-					: 'Tools'
-			}
-			headerActions={
-				<Button
-					leftSection={<IconPlus size={16} />}
-					onClick={handleCreateNewTool}
-					variant='light'
-					size='sm'
-				>
-					Create New Tool
-				</Button>
-			}
-			icon={IconTool}
-			contentSpacing='xs'
-		>
-			{renderContent()}
-		</SectionCard>
-	);
+	return <>{renderContent()}</>;
 }
 
 export default ToolsList;

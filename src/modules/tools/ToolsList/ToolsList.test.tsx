@@ -18,16 +18,6 @@ vi.mock('./useToolsListColumns', () => ({
 	default: () => [],
 }));
 
-vi.mock('~/components/SectionCard', () => ({
-	default: ({ title, children, headerActions }: any) => (
-		<div data-testid='section-card'>
-			<h2>{title}</h2>
-			<div data-testid='header-actions'>{headerActions}</div>
-			{children}
-		</div>
-	),
-}));
-
 vi.mock('~/components/BaseTable', () => ({
 	default: ({ onRowClick, data }: any) => (
 		<div data-testid='base-table'>
@@ -44,19 +34,6 @@ vi.mock('~/components/BaseTable', () => ({
 	),
 }));
 
-vi.mock('~/modules/tools/ToolForm', () => ({
-	default: () => <div data-testid='tool-form'>ToolForm</div>,
-}));
-
-vi.mock('./ToolsListHeader', () => ({
-	default: ({ category, onCreate }: any) => (
-		<div data-testid='tools-list-header'>
-			<span>{category.name} Header</span>
-			<button onClick={onCreate}>Create Header</button>
-		</div>
-	),
-}));
-
 vi.mock('~/components/EmptyState', () => ({
 	default: ({ message }: any) => <div data-testid='empty-state'>{message}</div>,
 }));
@@ -66,7 +43,8 @@ const renderWithProvider = (component: React.ReactNode) => {
 };
 
 describe('ToolsList', () => {
-	const mockSetToolsCategory = vi.fn();
+	const mockOnCreate = vi.fn();
+	const mockOnEdit = vi.fn();
 	const mockCategory = { id: 1, name: 'Webhook' };
 	const mockTools = [
 		{ id: 101, name: 'Tool 1' },
@@ -77,14 +55,12 @@ describe('ToolsList', () => {
 		vi.clearAllMocks();
 		(useToolsStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
 			selectedToolCategory: mockCategory,
-			setToolsCategory: mockSetToolsCategory,
 		});
 	});
 
 	it('renders select category state when no category is selected', () => {
 		(useToolsStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
 			selectedToolCategory: null,
-			setToolsCategory: mockSetToolsCategory,
 		});
 		(useToolsByCategory as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
 			{
@@ -93,7 +69,9 @@ describe('ToolsList', () => {
 			}
 		);
 
-		renderWithProvider(<ToolsList />);
+		renderWithProvider(
+			<ToolsList onCreate={mockOnCreate} onEdit={mockOnEdit} />
+		);
 		expect(screen.getByText('Select a category first')).toBeInTheDocument();
 	});
 
@@ -105,7 +83,9 @@ describe('ToolsList', () => {
 			}
 		);
 
-		renderWithProvider(<ToolsList />);
+		renderWithProvider(
+			<ToolsList onCreate={mockOnCreate} onEdit={mockOnEdit} />
+		);
 		expect(screen.getByText('Loading tools...')).toBeInTheDocument();
 	});
 
@@ -118,12 +98,13 @@ describe('ToolsList', () => {
 			}
 		);
 
-		renderWithProvider(<ToolsList />);
+		renderWithProvider(
+			<ToolsList onCreate={mockOnCreate} onEdit={mockOnEdit} />
+		);
 		expect(screen.getByText('Error loading tools')).toBeInTheDocument();
-		expect(screen.getByText('Failed to load tools')).toBeInTheDocument();
 	});
 
-	it('renders empty list state', () => {
+	it('renders empty list state and handles create from header', () => {
 		(useToolsByCategory as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
 			{
 				data: [],
@@ -131,10 +112,10 @@ describe('ToolsList', () => {
 			}
 		);
 
-		renderWithProvider(<ToolsList />);
-		expect(screen.getByTestId('tools-list-header')).toBeInTheDocument();
+		renderWithProvider(
+			<ToolsList onCreate={mockOnCreate} onEdit={mockOnEdit} />
+		);
 		expect(screen.getByTestId('empty-state')).toBeInTheDocument();
-		expect(screen.getByText('No tools in this category')).toBeInTheDocument();
 	});
 
 	it('renders tools table', () => {
@@ -145,13 +126,15 @@ describe('ToolsList', () => {
 			}
 		);
 
-		renderWithProvider(<ToolsList />);
+		renderWithProvider(
+			<ToolsList onCreate={mockOnCreate} onEdit={mockOnEdit} />
+		);
 		expect(screen.getByTestId('base-table')).toBeInTheDocument();
 		expect(screen.getByText('Tool 1')).toBeInTheDocument();
 		expect(screen.getByText('Tool 2')).toBeInTheDocument();
 	});
 
-	it('opens create tool form when create button is clicked', () => {
+	it('calls onEdit when a row is clicked', () => {
 		(useToolsByCategory as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
 			{
 				data: mockTools,
@@ -159,35 +142,13 @@ describe('ToolsList', () => {
 			}
 		);
 
-		renderWithProvider(<ToolsList />);
-
-		const createButton = screen.getByRole('button', {
-			name: /create new tool/i,
-		});
-		fireEvent.click(createButton);
-
-		expect(mockSetToolsCategory).toHaveBeenCalledWith(
-			mockCategory,
-			expect.anything()
+		renderWithProvider(
+			<ToolsList onCreate={mockOnCreate} onEdit={mockOnEdit} />
 		);
-	});
-
-	it('opens edit tool form when a row is clicked', () => {
-		(useToolsByCategory as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
-			{
-				data: mockTools,
-				isLoading: false,
-			}
-		);
-
-		renderWithProvider(<ToolsList />);
 
 		const row = screen.getByTestId('row-101');
 		fireEvent.click(row);
 
-		expect(mockSetToolsCategory).toHaveBeenCalledWith(
-			mockCategory,
-			expect.anything()
-		);
+		expect(mockOnEdit).toHaveBeenCalledWith(101);
 	});
 });

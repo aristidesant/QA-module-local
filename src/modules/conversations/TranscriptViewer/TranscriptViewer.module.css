@@ -1,80 +1,219 @@
 .transcriptContainer {
-  width: 100%;
+	width: 100%;
+	padding: var(--mantine-spacing-xs);
 }
 
 /* Row alignment wrappers */
 .messageRow {
-  width: 100%;
-  display: flex;
-  margin-block: calc(var(--mantine-spacing-xs) * 0.5);
+	width: 100%;
+	display: flex;
+	margin-block: var(--mantine-spacing-xs);
+	animation: slideIn 0.2s ease-out;
+}
+
+@keyframes slideIn {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 .leftAligned {
-  justify-content: flex-start;
+	justify-content: flex-start;
 }
 
 .rightAligned {
-  justify-content: flex-end;
+	justify-content: flex-end;
 }
 
 .centerAligned {
-  justify-content: center;
+	justify-content: center;
 }
 
 .messageGroup {
-  max-width: 84%;
+	max-width: 80%;
+	min-width: 200px;
 }
 
-/* Speech bubble */
+/* Speech bubble with soft border */
 .messageBubble {
-  position: relative;
-  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
-  min-height: 36px;
-  border-radius: 14px;
-  background-color: var(--mantine-color-gray-0);
-  border: 1px solid var(--mantine-color-gray-3);
-}
-
-.messageBubble:hover {
-  border-color: var(--mantine-color-gray-5);
+	position: relative;
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	min-height: 36px;
+	border-radius: 12px;
+	transition: background-color 0.15s ease;
 }
 
 .agentBubble {
-  background-color: var(--mantine-color-blue-0);
-  border-color: var(--mantine-color-blue-3);
+	background-color: var(--mantine-color-blue-0);
+	border: 1px solid var(--mantine-color-blue-2);
+	border-left: 3px solid var(--mantine-color-blue-5);
+}
+
+.agentBubble:hover {
+	background-color: var(--mantine-color-blue-1);
 }
 
 .userBubble {
-  background-color: var(--mantine-color-green-0);
-  border-color: var(--mantine-color-green-3);
+	background-color: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-left: 3px solid var(--mantine-color-green-5);
+}
+
+.userBubble:hover {
+	background-color: var(--mantine-color-gray-1);
 }
 
 .meta {
-  margin-bottom: var(--mantine-spacing-xs);
-  padding-bottom: 2px;
-  border-bottom: 1px solid color-mix(in oklab, var(--mantine-color-gray-3) 60%, transparent);
+	margin-bottom: var(--mantine-spacing-xs);
+	padding-bottom: 4px;
 }
 
 .message {
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  line-height: 1.5;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	line-height: 1.55;
+	color: var(--mantine-color-gray-8);
 }
 
 .interrupted {
-  margin-top: var(--mantine-spacing-xs);
+	margin-top: var(--mantine-spacing-xs);
+	display: flex;
+	align-items: center;
+	gap: 4px;
 }
 
-/* System banner (centered) */
+/* System banner - flat design (no gradient) */
 .systemBanner {
-  background-color: var(--mantine-color-gray-0);
+	background-color: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
 }
 
-/* Flip layout for right-aligned rows so avatar follows bubble visually */
-.rightAligned .messageGroup {
-  margin-left: auto;
+.systemBanner:hover {
+	background-color: var(--mantine-color-gray-1);
 }
 
-.leftAligned .messageGroup {
-  margin-right: auto;
+/* Tool calls section */
+.toolCallsSection {
+	margin-top: var(--mantine-spacing-xs);
+	padding-top: var(--mantine-spacing-xs);
+	border-top: 1px dashed var(--mantine-color-gray-3);
+}
+
+.toolBadge {
+	cursor: pointer;
+	transition: transform 0.1s ease;
+}
+
+.toolBadge:hover {
+	transform: translateY(-1px);
+}
+
+.toolDetailsPopover {
+	max-width: 400px;
+}
+
+.toolDetailsCode {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-size: 11px;
+	background-color: var(--mantine-color-dark-8);
+	color: var(--mantine-color-gray-2);
+	border-radius: 6px;
+	padding: var(--mantine-spacing-xs);
+	max-height: 200px;
+	overflow: auto;
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+/* Timestamp styling */
+.timestamp {
+	font-variant-numeric: tabular-nums;
+}
+
+/* Avatar styles */
+.avatar {
+	flex-shrink: 0;
+}
+
+/* Empty state */
+.emptyState {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: var(--mantine-spacing-xl);
+	min-height: 200px;
+	text-align: center;
+}
+
+.emptyStateIcon {
+	opacity: 0.4;
+	margin-bottom: var(--mantine-spacing-sm);
+}
+
+/* Technical details section */
+.technicalDetails {
+	margin-top: var(--mantine-spacing-xs);
+	padding-top: var(--mantine-spacing-xs);
+	border-top: 1px dashed var(--mantine-color-gray-3);
+}
+
+.technicalDetailsHeader {
+	user-select: none;
+}
+
+.technicalDetailsContent {
+	max-width: 400px;
+}
+
+.detailRow {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--mantine-spacing-xs);
+}
+
+.detailLabel {
+	flex-shrink: 0;
+	min-width: 100px;
+}
+
+.detailValue {
+	flex: 1;
+	word-break: break-word;
+}
+
+/* LLM Usage section */
+.llmUsageCard {
+	padding: var(--mantine-spacing-xs);
+	background-color: var(--mantine-color-gray-1);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: 6px;
+}
+
+.llmUsageGrid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: var(--mantine-spacing-xs);
+}
+
+.llmUsageItem {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.costBadge {
+	font-variant-numeric: tabular-nums;
+}
+
+/* Monospace text for IDs */
+.monoText {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-size: 11px;
 }

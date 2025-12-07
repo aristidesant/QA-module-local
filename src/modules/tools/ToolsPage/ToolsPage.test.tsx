@@ -1,33 +1,63 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ToolsPage from './ToolsPage';
-import useToolsStore from '~/stores/toolsStore';
 import { MantineProvider } from '@mantine/core';
 
 // Mock child components
-vi.mock('../ToolsList/ToolsCategories', () => ({
-	default: () => <div data-testid='tools-categories'>ToolsCategories</div>,
-}));
-
 vi.mock('../ToolsList', () => ({
-	default: () => <div data-testid='tools-list'>ToolsList</div>,
+	default: ({ onCreate, onEdit }: any) => (
+		<div data-testid='tools-list'>
+			<button onClick={onCreate} data-testid='create-btn'>
+				Create Tool
+			</button>
+			<button onClick={() => onEdit(123)} data-testid='edit-btn'>
+				Edit Tool 123
+			</button>
+		</div>
+	),
 }));
 
-// Mock ContentContainer
+vi.mock('./ToolsModal', () => ({
+	default: ({ opened, onClose, toolId }: any) =>
+		opened ? (
+			<div data-testid='tools-modal'>
+				Modal Open. Tool: {toolId || 'New'}
+				<button onClick={onClose} data-testid='close-modal-btn'>
+					Close
+				</button>
+			</div>
+		) : null,
+}));
+
 vi.mock('~/components/ContentContainer/ContentContainer', () => ({
-	ContentContainer: ({ title, description, rightSection, children }: any) => (
+	ContentContainer: ({ title, description, children, titleRight }: any) => (
 		<div data-testid='content-container'>
 			<h1>{title}</h1>
 			<p>{description}</p>
-			<div data-testid='right-section'>{rightSection}</div>
+			<div data-testid='title-right'>{titleRight}</div>
 			{children}
 		</div>
 	),
 }));
 
+// Mock queries
+vi.mock('~/queries/toolCategoryQueries', () => ({
+	useToolCategories: vi.fn(() => ({
+		data: [
+			{ id: 1, name: 'Webhook' },
+			{ id: 2, name: 'Others' },
+		],
+		isLoading: false,
+	})),
+}));
+
 // Mock store
+const mockSetToolsCategory = vi.fn();
 vi.mock('~/stores/toolsStore', () => ({
-	default: vi.fn(),
+	default: vi.fn(() => ({
+		selectedToolCategory: null,
+		setToolsCategory: mockSetToolsCategory,
+	})),
 }));
 
 const renderWithProvider = (component: React.ReactNode) => {
@@ -39,38 +69,35 @@ describe('ToolsPage', () => {
 		vi.clearAllMocks();
 	});
 
-	it('renders correctly with default state', () => {
-		// Mock store return value
-		(useToolsStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-			rightComponent: null,
-		});
-
+	it('renders correctly and attempts to set default category', () => {
 		renderWithProvider(<ToolsPage />);
 
 		expect(screen.getByTestId('content-container')).toBeInTheDocument();
-		expect(screen.getByText('Tools')).toBeInTheDocument();
-		expect(
-			screen.getByText('Manage your tools and integrations')
-		).toBeInTheDocument();
-		expect(screen.getByTestId('tools-categories')).toBeInTheDocument();
-		expect(screen.getByTestId('tools-list')).toBeInTheDocument();
-		expect(screen.getByTestId('right-section')).toBeEmptyDOMElement();
+		// Should attempt to set webhook category
+		expect(mockSetToolsCategory).toHaveBeenCalledWith(
+			expect.objectContaining({ name: 'Webhook' })
+		);
 	});
 
-	it('renders rightComponent when present in store', () => {
-		const MockRightComponent = (
-			<div data-testid='mock-right-component'>Right Component</div>
-		);
-
-		// Mock store return value with rightComponent
-		(useToolsStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-			rightComponent: MockRightComponent,
-		});
-
+	it('opens modal when create is clicked', async () => {
 		renderWithProvider(<ToolsPage />);
 
-		expect(screen.getByTestId('right-section')).toContainElement(
-			screen.getByTestId('mock-right-component')
-		);
+		fireEvent.click(screen.getByTestId('create-btn'));
+
+		await waitFor(() => {
+			expect(screen.getByTestId('tools-modal')).toBeInTheDocument();
+			expect(screen.getByText('Modal Open. Tool: New')).toBeInTheDocument();
+		});
+	});
+
+	it('opens modal with toolId when edit is clicked', async () => {
+		renderWithProvider(<ToolsPage />);
+
+		fireEvent.click(screen.getByTestId('edit-btn'));
+
+		await waitFor(() => {
+			expect(screen.getByTestId('tools-modal')).toBeInTheDocument();
+			expect(screen.getByText('Modal Open. Tool: 123')).toBeInTheDocument();
+		});
 	});
 });

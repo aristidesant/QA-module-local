@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import {
 	Stack,
 	Text,
@@ -8,24 +8,25 @@ import {
 	Button,
 	Group,
 	Loader,
-	Center,
 	ActionIcon,
-	Divider,
-	Badge,
-	Box,
-	Alert,
 	Paper,
+	Badge,
+	ScrollArea,
+	ThemeIcon,
+	LoadingOverlay,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import {
 	IconDeviceFloppy,
-	IconX,
 	IconPlus,
-	IconTrash,
-	IconTool,
 	IconAlertCircle,
-	IconInfoCircle,
 	IconMinus,
+	IconX,
+	IconSettings,
+	IconApi,
+	IconKey,
+	IconRoute,
+	IconBraces,
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import {
@@ -86,6 +87,22 @@ interface FormValues {
 	authConnection: string;
 }
 
+type SectionId = 'general' | 'api' | 'headers' | 'parameters' | 'body';
+
+interface Section {
+	id: SectionId;
+	label: string;
+	icon: React.ReactNode;
+}
+
+const SECTIONS: Section[] = [
+	{ id: 'general', label: 'General', icon: <IconSettings size={14} /> },
+	{ id: 'api', label: 'API Config', icon: <IconApi size={14} /> },
+	{ id: 'headers', label: 'Headers', icon: <IconKey size={14} /> },
+	{ id: 'parameters', label: 'Parameters', icon: <IconRoute size={14} /> },
+	{ id: 'body', label: 'Request Body', icon: <IconBraces size={14} /> },
+];
+
 const HTTP_METHODS = [
 	{ value: 'GET', label: 'GET' },
 	{ value: 'POST', label: 'POST' },
@@ -104,6 +121,7 @@ const PROPERTY_TYPES = [
 
 function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 	const [isEdit, setIsEdit] = useState(!!toolId);
+	const [activeSection, setActiveSection] = useState<SectionId>('general');
 
 	// Queries
 	const {
@@ -155,23 +173,10 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 			setIsEdit(true);
 		} else {
 			setIsEdit(false);
-			// Reset form to clean state for new tool creation
-			form.setValues({
-				name: '',
-				description: '',
-				prompt: '',
-				identifier: '',
-				categoryId: categoryId ? categoryId.toString() : '',
-				status: 'active',
-				url: '',
-				method: 'GET',
-				responseTimeoutSecs: 30,
-				headers: [],
-				queryParameters: [],
-				pathParameters: [],
-				requestBodyProperties: [],
-				authConnection: '',
-			});
+			form.reset();
+			if (categoryId) {
+				form.setFieldValue('categoryId', categoryId.toString());
+			}
 		}
 	}, [toolId, categoryId]);
 
@@ -180,17 +185,14 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 		if (toolId && tool) {
 			setIsEdit(true);
 
-			// Extract headers from tool config
 			const headers = Object.entries(
 				tool.config?.toolConfig?.apiSchema?.requestHeaders || {}
 			).map(([key, value]) => ({ key, value: value as string }));
 
-			// Extract path parameters
 			const pathParameters = Object.entries(
 				tool.config?.toolConfig?.apiSchema?.pathParamsSchema || {}
 			).map(([key, value]) => ({ key, value: value as string }));
 
-			// Extract request body properties
 			const requestBodyProperties = Object.entries(
 				tool.config?.toolConfig?.apiSchema?.requestBodySchema?.properties || {}
 			).map(([key, property]) => ({
@@ -218,37 +220,17 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 				method: tool.config?.toolConfig?.apiSchema?.method || 'GET',
 				responseTimeoutSecs: tool.config?.toolConfig?.responseTimeoutSecs || 30,
 				headers,
-				queryParameters: [], // Not directly stored in the model, would need to parse from URL
+				queryParameters: [],
 				pathParameters,
 				requestBodyProperties,
 				authConnection:
 					tool.config?.toolConfig?.apiSchema?.auth_connection || '',
 			});
-		} else {
-			setIsEdit(false);
-			// Reset form to initial values and set categoryId if provided
-			form.setValues({
-				name: '',
-				description: '',
-				prompt: '',
-				identifier: '',
-				categoryId: categoryId ? categoryId.toString() : '',
-				status: 'active',
-				url: '',
-				method: 'GET',
-				responseTimeoutSecs: 30,
-				headers: [],
-				queryParameters: [],
-				pathParameters: [],
-				requestBodyProperties: [],
-				authConnection: '',
-			});
 		}
-	}, [tool, toolId, categoryId]);
+	}, [tool, toolId]);
 
 	const handleSubmit = async (values: FormValues) => {
 		try {
-			// Convert form values to ToolModel structure
 			const requestHeaders = values.headers.reduce(
 				(acc, header) => {
 					if (header.key && header.value) {
@@ -300,8 +282,8 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 					accessInfo: {
 						role: 'creator',
 						isCreator: true,
-						creatorName: 'Current User', // This should come from auth context
-						creatorEmail: 'user@example.com', // This should come from auth context
+						creatorName: 'Current User',
+						creatorEmail: 'user@example.com',
 					},
 					toolConfig: {
 						name: values.name,
@@ -350,42 +332,35 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 			}
 
 			onSuccess?.();
-		} catch (error: any) {
+		} catch (error: unknown) {
+			const errorMessage =
+				error instanceof Error
+					? error.message
+					: `Failed to ${isEdit ? 'update' : 'create'} tool`;
 			notifications.show({
 				title: 'Error',
-				message:
-					error?.message || `Failed to ${isEdit ? 'update' : 'create'} tool`,
+				message: errorMessage,
 				color: 'red',
 				icon: <IconAlertCircle size={18} />,
 			});
 		}
 	};
 
-	const addHeader = () => {
+	const addHeader = () =>
 		form.insertListItem('headers', { key: '', value: '' });
-	};
+	const removeHeader = (index: number) => form.removeListItem('headers', index);
 
-	const removeHeader = (index: number) => {
-		form.removeListItem('headers', index);
-	};
-
-	const addQueryParameter = () => {
+	const addQueryParameter = () =>
 		form.insertListItem('queryParameters', { key: '', value: '' });
-	};
-
-	const removeQueryParameter = (index: number) => {
+	const removeQueryParameter = (index: number) =>
 		form.removeListItem('queryParameters', index);
-	};
 
-	const addPathParameter = () => {
+	const addPathParameter = () =>
 		form.insertListItem('pathParameters', { key: '', value: '' });
-	};
-
-	const removePathParameter = (index: number) => {
+	const removePathParameter = (index: number) =>
 		form.removeListItem('pathParameters', index);
-	};
 
-	const addRequestBodyProperty = () => {
+	const addRequestBodyProperty = () =>
 		form.insertListItem('requestBodyProperties', {
 			key: '',
 			type: 'string',
@@ -394,340 +369,354 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 			dynamicVariable: '',
 			required: false,
 		});
-	};
-
-	const removeRequestBodyProperty = (index: number) => {
+	const removeRequestBodyProperty = (index: number) =>
 		form.removeListItem('requestBodyProperties', index);
-	};
+
+	// Section status calculations
+	const sectionStatus = useMemo(() => {
+		const values = form.values;
+		return {
+			general: !!(values.name && values.description && values.categoryId),
+			api: !!(values.url && values.method),
+			headers: values.headers.length > 0,
+			parameters:
+				values.pathParameters.length > 0 || values.queryParameters.length > 0,
+			body: values.requestBodyProperties.length > 0,
+		};
+	}, [form.values]);
+
+	const sectionErrors = useMemo(() => {
+		const errors = form.errors;
+		return {
+			general: !!(errors.name || errors.description || errors.categoryId),
+			api: !!errors.url,
+			headers: false,
+			parameters: false,
+			body: false,
+		};
+	}, [form.errors]);
+
+	const categoryOptions = categories.map((cat: ToolCategoryModel) => ({
+		value: cat.id.toString(),
+		label: cat.name,
+	}));
+
+	// Filter sections based on HTTP method
+	const visibleSections = SECTIONS.filter((section) => {
+		if (section.id === 'body') {
+			return ['POST', 'PUT', 'PATCH'].includes(form.values.method);
+		}
+		return true;
+	});
 
 	if (toolId && isLoadingTool) {
 		return (
-			<Center className={styles.loadingState}>
-				<Stack align='center' gap='md'>
-					<Loader size='lg' />
-					<Text size='sm' c='dimmed'>
-						Loading tool...
-					</Text>
-				</Stack>
-			</Center>
+			<div className={styles.loadingState}>
+				<Loader size='md' />
+				<Text size='sm' c='dimmed' mt='xs'>
+					Loading tool...
+				</Text>
+			</div>
 		);
 	}
 
 	if (toolId && toolError) {
 		return (
 			<div className={styles.errorState}>
-				<Stack align='center' gap='md'>
-					<IconAlertCircle size={48} color='var(--mantine-color-red-5)' />
-					<Text size='lg' fw={500} c='red'>
-						Error loading tool
-					</Text>
-					<Text size='sm' c='dimmed'>
-						{toolError.message}
-					</Text>
-				</Stack>
+				<IconAlertCircle size={48} color='var(--mantine-color-red-5)' />
+				<Text size='md' fw={500} c='red'>
+					Error loading tool
+				</Text>
+				<Text size='sm' c='dimmed'>
+					{toolError.message}
+				</Text>
 			</div>
 		);
 	}
 
-	const categoryOptions = categories.map((category: ToolCategoryModel) => ({
-		value: category.id.toString(),
-		label: category.name,
-	}));
-
-	return (
-		<div className={styles.formContainer}>
-			<form onSubmit={form.onSubmit(handleSubmit)}>
-				<Stack gap='lg'>
-					{/* Header */}
-					<Group justify='space-between'>
-						<Group gap='sm'>
-							<IconTool size={24} />
-							<Text size='lg' fw={600}>
-								{isEdit ? 'Edit Tool' : 'Create New Tool'}
-							</Text>
-						</Group>
-						{isEdit && tool && (
-							<Badge color='blue' variant='light'>
-								ID: {tool.id}
-							</Badge>
-						)}
-					</Group>
-
-					{/* Basic Configuration */}
-					<div className={styles.formSection}>
-						<Text className={styles.sectionTitle}>Basic Configuration</Text>
-						<Text className={styles.sectionDescription}>
-							Define the basic properties of your tool.
-						</Text>
-
-						<Stack gap='md'>
-							<TextInput
-								label='Name'
-								placeholder='Enter tool name'
-								required
-								{...form.getInputProps('name')}
-							/>
-							{form?.values?.identifier && (
-								<TextInput
-									label='Identifier'
-									placeholder='Enter unique identifier'
-									disabled
-									{...form.getInputProps('identifier')}
-								/>
-							)}
+	const renderSectionContent = () => {
+		switch (activeSection) {
+			case 'general':
+				return (
+					<Stack gap='xs'>
+						<TextInput
+							label='Name'
+							placeholder='e.g., Get Weather'
+							required
+							size='sm'
+							{...form.getInputProps('name')}
+						/>
+						<Textarea
+							label='Description'
+							placeholder='What does this tool do?'
+							required
+							size='sm'
+							minRows={2}
+							{...form.getInputProps('description')}
+						/>
+						<Textarea
+							label='Prompt Instruction'
+							placeholder='Instructions for the agent on how/when to use this tool'
+							size='sm'
+							minRows={2}
+							{...form.getInputProps('prompt')}
+						/>
+						<Group grow gap='xs'>
 							<Select
 								label='Category'
 								placeholder='Select category'
 								required
+								size='sm'
 								data={categoryOptions}
 								disabled={isLoadingCategories}
 								{...form.getInputProps('categoryId')}
 							/>
 							<Select
 								label='Status'
+								size='sm'
 								data={[
 									{ value: 'active', label: 'Active' },
 									{ value: 'inactive', label: 'Inactive' },
 								]}
 								{...form.getInputProps('status')}
 							/>
-							<Textarea
-								label='Description'
-								placeholder='Describe what this tool does and when to use it'
-								required
-								minRows={5}
-								rows={5}
-								{...form.getInputProps('description')}
-							/>
-							<Textarea
-								label='Prompt'
-								placeholder='Enter the prompt for this tool'
-								minRows={3}
-								rows={3}
-								{...form.getInputProps('prompt')}
-							/>
-						</Stack>
-					</div>
+						</Group>
+					</Stack>
+				);
 
-					{/* API Configuration */}
-					<div className={styles.formSection}>
-						<Text className={styles.sectionTitle}>API Configuration</Text>
-						<Text className={styles.sectionDescription}>
-							Configure the HTTP request details for your tool.
-						</Text>
-
-						<Stack gap='md'>
+			case 'api':
+				return (
+					<Stack gap='xs'>
+						<Group gap='xs' align='flex-start'>
 							<Select
 								label='Method'
 								data={HTTP_METHODS}
+								size='sm'
+								w={100}
 								{...form.getInputProps('method')}
 							/>
 							<TextInput
-								label='URL'
-								placeholder='https://api.example.com/endpoint'
+								label='Endpoint URL'
+								placeholder='https://api.example.com/v1/resource'
 								required
+								size='sm'
+								style={{ flex: 1 }}
 								{...form.getInputProps('url')}
 							/>
+						</Group>
+						<Group grow gap='xs'>
 							<TextInput
-								label='Authentication Connection'
-								placeholder='Leave empty if no authentication required'
+								label='Timeout (seconds)'
+								type='number'
+								size='sm'
+								{...form.getInputProps('responseTimeoutSecs')}
+							/>
+							<TextInput
+								label='Auth Connection'
+								placeholder='e.g., github-oauth'
+								size='sm'
 								{...form.getInputProps('authConnection')}
 							/>
-						</Stack>
-					</div>
-
-					{/* Headers */}
-					<div className={styles.formSection}>
-						<Group justify='space-between' mb='md'>
-							<div>
-								<Text className={styles.sectionTitle}>Headers</Text>
-								<Text className={styles.sectionDescription}>
-									Define headers that will be sent with the request.
-								</Text>
-							</div>
 						</Group>
+					</Stack>
+				);
 
-						<Stack gap={'xs'}>
+			case 'headers':
+				return (
+					<Stack gap='xs'>
+						<Group justify='space-between' align='center'>
+							<Text size='sm' fw={500}>
+								Request Headers
+							</Text>
 							<Button
-								variant='light'
-								size='sm'
-								leftSection={<IconPlus size={16} />}
+								variant='subtle'
+								size='xs'
+								leftSection={<IconPlus size={12} />}
 								onClick={addHeader}
-								className={styles.addButton}
 							>
 								Add Header
 							</Button>
-							{form.values.headers.map((_, index) => (
-								<Paper bg='gray.0' p='xs' key={index} withBorder>
-									<Stack gap='xs'>
+						</Group>
+						{form.values.headers.length === 0 ? (
+							<div className={styles.emptyState}>
+								<Text size='xs' c='dimmed'>
+									No headers configured
+								</Text>
+							</div>
+						) : (
+							<div className={styles.parameterList}>
+								{form.values.headers.map((_, index) => (
+									<div key={index} className={styles.parameterItem}>
 										<TextInput
 											placeholder='Header name'
-											flex={1}
+											size='xs'
+											style={{ flex: 1 }}
 											{...form.getInputProps(`headers.${index}.key`)}
 										/>
 										<TextInput
-											placeholder='Header value'
-											flex={1}
+											placeholder='Value'
+											size='xs'
+											style={{ flex: 1 }}
 											{...form.getInputProps(`headers.${index}.value`)}
 										/>
-										<Button
+										<ActionIcon
 											color='red'
-											variant='light'
-											leftSection={<IconMinus />}
+											variant='subtle'
+											size='sm'
 											onClick={() => removeHeader(index)}
+											data-testid={`remove-header-btn-${index}`}
 										>
-											Remove
-										</Button>
-									</Stack>
-								</Paper>
-							))}
-						</Stack>
-
-						{form.values.headers.length === 0 && (
-							<Text size='sm' c='dimmed' ta='center' py='md'>
-								No headers defined. Click "Add Header" to add one.
-							</Text>
+											<IconMinus size={12} />
+										</ActionIcon>
+									</div>
+								))}
+							</div>
 						)}
-					</div>
+					</Stack>
+				);
 
-					{/* Path Parameters */}
-					<div className={styles.formSection}>
-						<Group justify='space-between' mb='md'>
-							<div>
-								<Text className={styles.sectionTitle}>Path Parameters</Text>
-								<Text className={styles.sectionDescription}>
-									Add path parameters wrapped in curly braces to the URL to
-									configure them here.
+			case 'parameters':
+				return (
+					<Stack gap='md'>
+						{/* Path Parameters */}
+						<Stack gap='xs'>
+							<Group justify='space-between' align='center'>
+								<Text size='sm' fw={500}>
+									Path Parameters
 								</Text>
-							</div>
-						</Group>
-						<Stack gap={'xs'}>
-							<Button
-								variant='light'
-								size='sm'
-								leftSection={<IconPlus size={16} />}
-								onClick={addPathParameter}
-								className={styles.addButton}
-							>
-								Add Parameter
-							</Button>
-							{form.values.pathParameters.map((_, index) => (
-								<div key={index} className={styles.parameterField}>
-									<Stack gap='sm'>
-										<TextInput
-											placeholder='Parameter name'
-											flex={1}
-											{...form.getInputProps(`pathParameters.${index}.key`)}
-										/>
-										<TextInput
-											placeholder='Parameter value/description'
-											flex={1}
-											{...form.getInputProps(`pathParameters.${index}.value`)}
-										/>
-										<Button
-											color='red'
-											variant='light'
-											onClick={() => removePathParameter(index)}
-											leftSection={<IconMinus size={16} />}
-										>
-											Remove
-										</Button>
-									</Stack>
-								</div>
-							))}
-						</Stack>
-						{form.values.pathParameters.length === 0 && (
-							<Text size='sm' c='dimmed' ta='center' py='md'>
-								No path parameters defined.
-							</Text>
-						)}
-					</div>
-
-					{/* Query Parameters */}
-					<div className={styles.formSection}>
-						<Group justify='space-between' mb='md'>
-							<div>
-								<Text className={styles.sectionTitle}>Query Parameters</Text>
-								<Text className={styles.sectionDescription}>
-									Define parameters that will be collected by the LLM and sent
-									as the query of the request.
-								</Text>
-							</div>
-							<Button
-								variant='light'
-								size='sm'
-								leftSection={<IconPlus size={16} />}
-								onClick={addQueryParameter}
-								className={styles.addButton}
-							>
-								Add Parameter
-							</Button>
-						</Group>
-
-						{form.values.queryParameters.map((_, index) => (
-							<div key={index} className={styles.parameterField}>
-								<Group gap='sm' className={styles.parameterItem}>
-									<TextInput
-										placeholder='Parameter name'
-										flex={1}
-										{...form.getInputProps(`queryParameters.${index}.key`)}
-									/>
-									<TextInput
-										placeholder='Parameter description'
-										flex={1}
-										{...form.getInputProps(`queryParameters.${index}.value`)}
-									/>
-									<ActionIcon
-										color='red'
-										variant='subtle'
-										onClick={() => removeQueryParameter(index)}
-										className={styles.removeButton}
-									>
-										<IconTrash size={16} />
-									</ActionIcon>
-								</Group>
-							</div>
-						))}
-
-						{form.values.queryParameters.length === 0 && (
-							<Text size='sm' c='dimmed' ta='center' py='md'>
-								No query parameters defined.
-							</Text>
-						)}
-					</div>
-
-					{/* Request Body Properties */}
-					{(form.values.method === 'POST' ||
-						form.values.method === 'PUT' ||
-						form.values.method === 'PATCH') && (
-						<div className={styles.formSection}>
-							<Group justify='space-between' mb='md'>
-								<div>
-									<Text className={styles.sectionTitle}>
-										Request Body Properties
-									</Text>
-									<Text className={styles.sectionDescription}>
-										Define the JSON schema properties for the request body.
-									</Text>
-								</div>
 								<Button
-									variant='light'
-									size='sm'
-									leftSection={<IconPlus size={16} />}
-									onClick={addRequestBodyProperty}
-									className={styles.addButton}
+									variant='subtle'
+									size='xs'
+									leftSection={<IconPlus size={12} />}
+									onClick={addPathParameter}
 								>
-									Add Property
+									Add
 								</Button>
 							</Group>
+							{form.values.pathParameters.length === 0 ? (
+								<div className={styles.emptyState}>
+									<Text size='xs' c='dimmed'>
+										No path parameters
+									</Text>
+								</div>
+							) : (
+								<div className={styles.parameterList}>
+									{form.values.pathParameters.map((_, index) => (
+										<div key={index} className={styles.parameterItem}>
+											<TextInput
+												placeholder='Parameter name'
+												size='xs'
+												style={{ flex: 1 }}
+												{...form.getInputProps(`pathParameters.${index}.key`)}
+											/>
+											<TextInput
+												placeholder='Description'
+												size='xs'
+												style={{ flex: 1 }}
+												{...form.getInputProps(`pathParameters.${index}.value`)}
+											/>
+											<ActionIcon
+												color='red'
+												variant='subtle'
+												size='sm'
+												onClick={() => removePathParameter(index)}
+												data-testid={`remove-path-param-btn-${index}`}
+											>
+												<IconMinus size={12} />
+											</ActionIcon>
+										</div>
+									))}
+								</div>
+							)}
+						</Stack>
 
-							{form.values.requestBodyProperties.map((_, index) => (
-								<Box key={index} className={styles.parameterField} mb='sm'>
-									<Stack gap='xs'>
-										<Group gap={'xs'}>
+						{/* Query Parameters */}
+						<Stack gap='xs'>
+							<Group justify='space-between' align='center'>
+								<Text size='sm' fw={500}>
+									Query Parameters
+								</Text>
+								<Button
+									variant='subtle'
+									size='xs'
+									leftSection={<IconPlus size={12} />}
+									onClick={addQueryParameter}
+								>
+									Add
+								</Button>
+							</Group>
+							{form.values.queryParameters.length === 0 ? (
+								<div className={styles.emptyState}>
+									<Text size='xs' c='dimmed'>
+										No query parameters
+									</Text>
+								</div>
+							) : (
+								<div className={styles.parameterList}>
+									{form.values.queryParameters.map((_, index) => (
+										<div key={index} className={styles.parameterItem}>
+											<TextInput
+												placeholder='Parameter name'
+												size='xs'
+												style={{ flex: 1 }}
+												{...form.getInputProps(`queryParameters.${index}.key`)}
+											/>
+											<TextInput
+												placeholder='Description'
+												size='xs'
+												style={{ flex: 1 }}
+												{...form.getInputProps(
+													`queryParameters.${index}.value`
+												)}
+											/>
+											<ActionIcon
+												color='red'
+												variant='subtle'
+												size='sm'
+												onClick={() => removeQueryParameter(index)}
+												data-testid={`remove-query-param-btn-${index}`}
+											>
+												<IconMinus size={12} />
+											</ActionIcon>
+										</div>
+									))}
+								</div>
+							)}
+						</Stack>
+					</Stack>
+				);
+
+			case 'body':
+				return (
+					<Stack gap='xs'>
+						<Group justify='space-between' align='center'>
+							<Text size='sm' fw={500}>
+								Request Body Properties
+							</Text>
+							<Button
+								variant='subtle'
+								size='xs'
+								leftSection={<IconPlus size={12} />}
+								onClick={addRequestBodyProperty}
+							>
+								Add Property
+							</Button>
+						</Group>
+						{form.values.requestBodyProperties.length === 0 ? (
+							<div className={styles.emptyState}>
+								<Text size='xs' c='dimmed'>
+									No body properties configured
+								</Text>
+							</div>
+						) : (
+							<div className={styles.parameterList}>
+								{form.values.requestBodyProperties.map((_, index) => (
+									<div key={index} className={styles.bodyPropertyItem}>
+										<Group gap='xs' mb='xs'>
 											<TextInput
 												placeholder='Property name'
-												flex={1}
+												size='xs'
+												style={{ flex: 1 }}
 												{...form.getInputProps(
 													`requestBodyProperties.${index}.key`
 												)}
@@ -735,98 +724,196 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 											<Select
 												placeholder='Type'
 												data={PROPERTY_TYPES}
-												flex={1}
-												comboboxProps={{
-													width: 130,
-													withArrow: true,
-												}}
+												size='xs'
+												w={100}
 												{...form.getInputProps(
 													`requestBodyProperties.${index}.type`
 												)}
 											/>
+											<ActionIcon
+												color='red'
+												variant='subtle'
+												size='sm'
+												onClick={() => removeRequestBodyProperty(index)}
+												data-testid={`remove-body-prop-btn-${index}`}
+											>
+												<IconMinus size={12} />
+											</ActionIcon>
 										</Group>
-
 										<Textarea
-											placeholder='Property description'
-											rows={5}
+											placeholder='Description'
+											size='xs'
+											minRows={1}
+											mb='xs'
 											{...form.getInputProps(
 												`requestBodyProperties.${index}.description`
 											)}
 										/>
-										<TextInput
-											placeholder='Constant value (optional)'
-											{...form.getInputProps(
-												`requestBodyProperties.${index}.constantValue`
-											)}
-										/>
-										<TextInput
-											placeholder='Dynamic variable (optional)'
-											{...form.getInputProps(
-												`requestBodyProperties.${index}.dynamicVariable`
-											)}
-										/>
-										<Button
-											variant='light'
-											leftSection={<IconMinus size={16} />}
-											color='red'
-											onClick={() => removeRequestBodyProperty(index)}
-										>
-											Remove
-										</Button>
-									</Stack>
-								</Box>
-							))}
+										<Group gap='xs'>
+											<TextInput
+												placeholder='Constant value'
+												size='xs'
+												style={{ flex: 1 }}
+												{...form.getInputProps(
+													`requestBodyProperties.${index}.constantValue`
+												)}
+											/>
+											<TextInput
+												placeholder='Dynamic variable'
+												size='xs'
+												style={{ flex: 1 }}
+												{...form.getInputProps(
+													`requestBodyProperties.${index}.dynamicVariable`
+												)}
+											/>
+										</Group>
+									</div>
+								))}
+							</div>
+						)}
+					</Stack>
+				);
 
-							{form.values.requestBodyProperties.length === 0 && (
-								<Text size='sm' c='dimmed' ta='center' py='md'>
-									No request body properties defined.
+			default:
+				return null;
+		}
+	};
+
+	return (
+		<Paper radius='sm' className={styles.modalShell} withBorder>
+			<LoadingOverlay
+				visible={createToolMutation.isPending || updateToolMutation.isPending}
+			/>
+			<form
+				id='tool-form'
+				onSubmit={form.onSubmit(handleSubmit)}
+				style={{ display: 'contents' }}
+			>
+				<div className={styles.mainContainer}>
+					{/* Header */}
+					<div className={styles.header}>
+						<Group align='center' gap='xs' className={styles.headerMain}>
+							<ThemeIcon color='blue' variant='light' size='sm' radius='sm'>
+								<IconSettings size={14} />
+							</ThemeIcon>
+							<div className={styles.headerContent}>
+								<Text className={styles.title}>
+									{isEdit ? 'Edit Tool' : 'Create New Tool'}
 								</Text>
-							)}
+								<Text className={styles.subtitle}>
+									Configure your tool settings and API details
+								</Text>
+							</div>
+						</Group>
+						<ActionIcon
+							onClick={onCancel}
+							variant='subtle'
+							color='gray'
+							size='sm'
+						>
+							<IconX size={16} />
+						</ActionIcon>
+					</div>
+
+					{/* Content Grid */}
+					<div className={styles.contentGrid}>
+						{/* Menu Column */}
+						<div className={styles.menuColumn}>
+							<div className={styles.menuHeader}>
+								<Text size='xs' fw={500} c='dimmed'>
+									Sections
+								</Text>
+								<Badge size='xs' variant='light' color='gray' radius='sm'>
+									{visibleSections.length}
+								</Badge>
+							</div>
+							<ScrollArea className={styles.menuScroll} type='auto'>
+								<Stack gap={2}>
+									{visibleSections.map((section) => (
+										<div
+											key={section.id}
+											className={styles.menuItem}
+											data-active={activeSection === section.id}
+											onClick={() => setActiveSection(section.id)}
+											data-testid={`section-menu-${section.id}`}
+										>
+											<div className={styles.menuItemHeader}>
+												<ThemeIcon
+													size='xs'
+													variant='light'
+													color={activeSection === section.id ? 'blue' : 'gray'}
+													radius='sm'
+												>
+													{section.icon}
+												</ThemeIcon>
+												<Text className={styles.menuTitle}>
+													{section.label}
+												</Text>
+											</div>
+											<div
+												className={styles.statusDot}
+												data-filled={sectionStatus[section.id]}
+												data-error={sectionErrors[section.id]}
+											/>
+										</div>
+									))}
+								</Stack>
+							</ScrollArea>
 						</div>
-					)}
 
-					{/* Dynamic Variables Info */}
-					<Alert
-						icon={<IconInfoCircle size='1rem' />}
-						color='blue'
-						className={styles.dynamicVariableSection}
-					>
-						<Text size='sm' fw={500} mb='xs'>
-							Dynamic Variables
+						{/* Editor Column */}
+						<div className={styles.editorColumn}>
+							<div className={styles.editorShell}>
+								<div className={styles.editorHeader}>
+									<div className={styles.editorHeaderText}>
+										<Text fw={600} size='sm'>
+											{
+												visibleSections.find((s) => s.id === activeSection)
+													?.label
+											}
+										</Text>
+									</div>
+									<Badge
+										size='xs'
+										variant='light'
+										color={sectionStatus[activeSection] ? 'green' : 'gray'}
+										radius='sm'
+									>
+										{sectionStatus[activeSection] ? 'Configured' : 'Empty'}
+									</Badge>
+								</div>
+								<div className={styles.editorContent}>
+									{renderSectionContent()}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					{/* Footer */}
+					<div className={styles.footer}>
+						<Text size='xs' c='dimmed'>
+							Fill in required fields to save
 						</Text>
-						<Text size='sm'>
-							Variables in tool parameters will be replaced with actual values
-							when the conversation starts. This helps make your tools more
-							flexible and context-aware.
-						</Text>
-					</Alert>
-
-					<Divider />
-
-					{/* Action Buttons */}
-					<Group justify='flex-end' className={styles.buttonGroup}>
-						{onCancel && (
-							<Button
-								variant='subtle'
-								leftSection={<IconX size={16} />}
-								onClick={onCancel}
-							>
+						<Group gap='xs'>
+							<Button variant='subtle' size='xs' onClick={onCancel}>
 								Cancel
 							</Button>
-						)}
-						<Button
-							type='submit'
-							leftSection={<IconDeviceFloppy size={16} />}
-							loading={
-								createToolMutation.isPending || updateToolMutation.isPending
-							}
-						>
-							{isEdit ? 'Update Tool' : 'Create Tool'}
-						</Button>
-					</Group>
-				</Stack>
+							<Button
+								type='submit'
+								size='xs'
+								leftSection={<IconDeviceFloppy size={14} />}
+								loading={
+									createToolMutation.isPending || updateToolMutation.isPending
+								}
+								data-testid='submit-tool-btn'
+							>
+								{isEdit ? 'Save Changes' : 'Create Tool'}
+							</Button>
+						</Group>
+					</div>
+				</div>
 			</form>
-		</div>
+		</Paper>
 	);
 }
 
