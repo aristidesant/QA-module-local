@@ -18,7 +18,7 @@ import { useCloneCampaign } from '~/queries/campaignsQueries';
 import { notifications } from '@mantine/notifications';
 import type { Campaign } from '~/models/CampaignsModel';
 import styles from './CloneCampaignForm.module.css';
-import { IconCopy, IconAlertCircle, IconInfoCircle } from '@tabler/icons-react';
+import { IconCopy, IconInfoCircle } from '@tabler/icons-react';
 
 type CloneCampaignFormProps = {
 	campaign: Campaign;
