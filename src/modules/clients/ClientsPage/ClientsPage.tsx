@@ -28,7 +28,9 @@ const ClientsPage: React.FC = () => {
 	const openCreateModal = useCallback(() => {
 		modals.open({
 			title: 'New Client',
-			fullScreen: true,
+			fullScreen: false,
+			size: 'xl',
+			radius: 'lg',
 			children: (
 				<ClientForm
 					mode='create'
@@ -46,7 +48,9 @@ const ClientsPage: React.FC = () => {
 		(clientId: number) => {
 			modals.open({
 				title: 'Edit Client',
-				fullScreen: true,
+				fullScreen: false,
+				size: 'xl',
+				radius: 'lg',
 				children: (
 					<ClientForm
 						mode='edit'

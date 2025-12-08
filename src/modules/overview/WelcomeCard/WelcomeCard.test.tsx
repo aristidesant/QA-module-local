@@ -66,14 +66,16 @@ describe('WelcomeCard', () => {
 		);
 
 		// default heading and subheading
-		expect(screen.getByText('Overview')).toBeInTheDocument();
+		expect(screen.getByText('Welcome')).toBeInTheDocument();
 		expect(
 			screen.getByText('Your AI-powered call center management platform')
 		).toBeInTheDocument();
 
 		// Welcome card content
 		expect(
-			screen.getByText('Welcome to your AI Call Center Platform')
+			screen.getByText(
+				'Stay organized across campaigns, agents, and conversations'
+			)
 		).toBeInTheDocument();
 		// Ensure navigation buttons text exist
 		expect(screen.getByText('Campaigns')).toBeInTheDocument();

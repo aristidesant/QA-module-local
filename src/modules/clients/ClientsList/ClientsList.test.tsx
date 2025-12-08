@@ -42,7 +42,6 @@ describe('ClientsList', () => {
 		);
 
 		expect(screen.getByText('Test Client 1')).toBeInTheDocument();
-		expect(screen.getByText('TC1')).toBeInTheDocument();
 	});
 
 	it('renders empty state when no clients', () => {

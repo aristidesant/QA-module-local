@@ -6,6 +6,7 @@ import {
 	Button,
 	Stack,
 	Group,
+	Badge,
 } from '@mantine/core';
 import {
 	IconRobot,
@@ -17,14 +18,12 @@ import {
 } from '@tabler/icons-react';
 import { Link } from 'react-router';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
-import CampaignStatusCard from './CampaignStatusCard';
-import ClientSearchBox from './ClientSearchBox';
-import ClientList from './ClientList';
-import DispositionChart from './DispositionChart';
-import StatsCard from './StatsCard';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import { useImpersonationState } from '~/hooks/useImpersonationState';
 import { useSessionStore } from '~/stores/sessionStore';
+import CampaignStatusCard from './CampaignStatusCard';
+import DispositionChart from './DispositionChart';
+import StatsCard from './StatsCard';
 import classes from './WelcomeCard.module.css';
 
 export type WelcomeCardProps = {
@@ -33,193 +32,188 @@ export type WelcomeCardProps = {
 };
 
 export default function WelcomeCard({
-	heading = 'Overview',
-	subheading = 'Global performance snapshot across all clients',
+	heading: propHeading,
+	subheading: propSubheading,
 }: WelcomeCardProps) {
 	const isMasterClient = useIsMasterClient();
-	const { isImpersonating } = useImpersonationState();
-	const { targetClient, user } = useSessionStore();
+	const impersonationState = useImpersonationState();
+	const { user, targetClient } = useSessionStore();
 
-	const showMasterDashboard = isMasterClient && !isImpersonating;
+	let heading = propHeading || 'Welcome';
+	let subheading =
+		propSubheading || 'Your AI-powered call center management platform';
 
-	// Update heading and subheading for impersonated users
-	const displayHeading =
-		isImpersonating && targetClient
-			? `Welcome to ${targetClient.name}`
-			: heading;
-	const displaySubheading = showMasterDashboard
-		? subheading
-		: 'Your AI-powered call center management platform';
+	if (impersonationState.isImpersonating && targetClient) {
+		heading = `Welcome to ${targetClient.name}`;
+		subheading = 'Your AI-powered call center management platform';
+	} else if (isMasterClient) {
+		heading = user
+			? `Client details overview ${user.clientId}`
+			: 'Client details overview';
+		subheading = propSubheading || 'Global Snapshot';
+	}
+
+	const renderContent = () => {
+		if (isMasterClient && !impersonationState.isImpersonating) {
+			return (
+				<div className={classes.mainCard}>
+					<CampaignStatusCard />
+					<DispositionChart />
+					<StatsCard />
+				</div>
+			);
+		}
+
+		return (
+			<div className={classes.mainCard}>
+				<Card className={classes.welcomeCard} withBorder>
+					<Stack gap='lg'>
+						<div className={classes.welcomeHeader}>
+							<Group gap='xs'>
+								<Badge size='sm' variant='light' color='blue'>
+									Workspace overview
+								</Badge>
+								<Text size='xs' c='dimmed'>
+									Fast links into your daily workflows
+								</Text>
+							</Group>
+							<Title order={2} className={classes.welcomeTitle}>
+								Stay organized across campaigns, agents, and conversations
+							</Title>
+							<Text size='sm' c='dimmed' className={classes.welcomeDescription}>
+								Navigate to the areas you need most. All tools share the same
+								lightweight layout so you can move quickly between tasks.
+							</Text>
+						</div>
+
+						<SimpleGrid
+							cols={{ base: 1, sm: 2, lg: 3 }}
+							spacing='md'
+							className={classes.navigationGrid}
+						>
+							<Button
+								component={Link}
+								to='/campaigns'
+								variant='subtle'
+								className={classes.navButton}
+							>
+								<Group wrap='nowrap' align='flex-start'>
+									<IconListDetails size={20} />
+									<Stack gap={4} align='flex-start'>
+										<Text fw={600} size='sm'>
+											Campaigns
+										</Text>
+										<Text size='xs' c='dimmed'>
+											Create, schedule, and monitor live runs
+										</Text>
+									</Stack>
+								</Group>
+							</Button>
+
+							<Button
+								component={Link}
+								to='/agents'
+								variant='subtle'
+								className={classes.navButton}
+							>
+								<Group wrap='nowrap' align='flex-start'>
+									<IconRobot size={20} />
+									<Stack gap={4} align='flex-start'>
+										<Text fw={600} size='sm'>
+											Agents
+										</Text>
+										<Text size='xs' c='dimmed'>
+											Adjust scripts, voices, and availability
+										</Text>
+									</Stack>
+								</Group>
+							</Button>
+
+							<Button
+								component={Link}
+								to='/contacts'
+								variant='subtle'
+								className={classes.navButton}
+							>
+								<Group wrap='nowrap' align='flex-start'>
+									<IconUsers size={20} />
+									<Stack gap={4} align='flex-start'>
+										<Text fw={600} size='sm'>
+											Contacts
+										</Text>
+										<Text size='xs' c='dimmed'>
+											Upload and review contact lists
+										</Text>
+									</Stack>
+								</Group>
+							</Button>
+
+							<Button
+								component={Link}
+								to='/conversations'
+								variant='subtle'
+								className={classes.navButton}
+							>
+								<Group wrap='nowrap' align='flex-start'>
+									<IconPhoneCall size={20} />
+									<Stack gap={4} align='flex-start'>
+										<Text fw={600} size='sm'>
+											Conversations
+										</Text>
+										<Text size='xs' c='dimmed'>
+											Review transcripts and follow-ups
+										</Text>
+									</Stack>
+								</Group>
+							</Button>
+
+							<Button
+								component={Link}
+								to='/outcomes'
+								variant='subtle'
+								className={classes.navButton}
+							>
+								<Group wrap='nowrap' align='flex-start'>
+									<IconCheckupList size={20} />
+									<Stack gap={4} align='flex-start'>
+										<Text fw={600} size='sm'>
+											Outcomes
+										</Text>
+										<Text size='xs' c='dimmed'>
+											Track call results and labels
+										</Text>
+									</Stack>
+								</Group>
+							</Button>
+
+							<Button
+								component={Link}
+								to='/tools'
+								variant='subtle'
+								className={classes.navButton}
+							>
+								<Group wrap='nowrap' align='flex-start'>
+									<IconTools size={20} />
+									<Stack gap={4} align='flex-start'>
+										<Text fw={600} size='sm'>
+											Tools
+										</Text>
+										<Text size='xs' c='dimmed'>
+											Fine-tune integrations and settings
+										</Text>
+									</Stack>
+								</Group>
+							</Button>
+						</SimpleGrid>
+					</Stack>
+				</Card>
+			</div>
+		);
+	};
 
 	return (
-		<ContentContainer title={displayHeading} description={displaySubheading}>
-			<div className={classes.mainCard}>
-				{showMasterDashboard && (
-					<div className={classes.topRow}>
-						<CampaignStatusCard />
-						<DispositionChart />
-						<StatsCard />
-					</div>
-				)}
-
-				{showMasterDashboard ? (
-					<div className={classes.bottomSection}>
-						<div className={classes.sectionHeader}>
-							<Title order={3} size='lg'>
-								Client details overview {user?.clientId}
-							</Title>
-							<Text size='sm' c='dimmed'>
-								Explore campaigns, performance, and account activity at a
-								glance.
-							</Text>
-							<ClientSearchBox />
-						</div>
-						<ClientList />
-					</div>
-				) : (
-					<div className={classes.welcomeSection}>
-						<Card className={classes.welcomeCard}>
-							<Stack gap='xl'>
-								<div className={classes.welcomeHeader}>
-									<Title order={2} className={classes.welcomeTitle}>
-										Welcome to your AI Call Center Platform
-									</Title>
-									<Text
-										size='md'
-										c='dimmed'
-										className={classes.welcomeDescription}
-									>
-										Streamline your customer interactions with our intelligent
-										AI-powered platform. From campaign management to real-time
-										conversations, explore all the tools you need to enhance
-										your call center operations.
-									</Text>
-								</div>
-
-								<SimpleGrid
-									cols={{ base: 1, sm: 2, lg: 3 }}
-									spacing='md'
-									className={classes.navigationGrid}
-								>
-									<Button
-										component={Link}
-										to='/campaigns'
-										variant='subtle'
-										className={classes.navButton}
-									>
-										<Group wrap='nowrap' align='flex-start'>
-											<IconListDetails size={20} />
-											<Stack gap={4} align='flex-start'>
-												<Text fw={600} size='md'>
-													Campaigns
-												</Text>
-												<Text size='sm' c='dimmed'>
-													Create and manage targeted call campaigns
-												</Text>
-											</Stack>
-										</Group>
-									</Button>
-
-									<Button
-										component={Link}
-										to='/agents'
-										variant='subtle'
-										className={classes.navButton}
-									>
-										<Group wrap='nowrap' align='flex-start'>
-											<IconRobot size={20} />
-											<Stack gap={4} align='flex-start'>
-												<Text fw={600} size='md'>
-													Agents
-												</Text>
-												<Text size='sm' c='dimmed'>
-													Manage and create new agents
-												</Text>
-											</Stack>
-										</Group>
-									</Button>
-
-									<Button
-										component={Link}
-										to='/contacts'
-										variant='subtle'
-										className={classes.navButton}
-									>
-										<Group wrap='nowrap' align='flex-start'>
-											<IconUsers size={20} />
-											<Stack gap={4} align='flex-start'>
-												<Text fw={600} size='md'>
-													Contacts
-												</Text>
-												<Text size='sm' c='dimmed'>
-													Manage and upload contact lists
-												</Text>
-											</Stack>
-										</Group>
-									</Button>
-
-									<Button
-										component={Link}
-										to='/conversations'
-										variant='subtle'
-										className={classes.navButton}
-									>
-										<Group wrap='nowrap' align='flex-start'>
-											<IconPhoneCall size={20} />
-											<Stack gap={4} align='flex-start'>
-												<Text fw={600} size='md'>
-													Conversations
-												</Text>
-												<Text size='sm' c='dimmed'>
-													Review and analyze call transcripts
-												</Text>
-											</Stack>
-										</Group>
-									</Button>
-
-									<Button
-										component={Link}
-										to='/outcomes'
-										variant='subtle'
-										className={classes.navButton}
-									>
-										<Group wrap='nowrap' align='flex-start'>
-											<IconCheckupList size={20} />
-											<Stack gap={4} align='flex-start'>
-												<Text fw={600} size='md'>
-													Outcomes
-												</Text>
-												<Text size='sm' c='dimmed'>
-													Track and categorize call results
-												</Text>
-											</Stack>
-										</Group>
-									</Button>
-
-									<Button
-										component={Link}
-										to='/tools'
-										variant='subtle'
-										className={classes.navButton}
-									>
-										<Group wrap='nowrap' align='flex-start'>
-											<IconTools size={20} />
-											<Stack gap={4} align='flex-start'>
-												<Text fw={600} size='md'>
-													Tools
-												</Text>
-												<Text size='sm' c='dimmed'>
-													Advanced configuration options
-												</Text>
-											</Stack>
-										</Group>
-									</Button>
-								</SimpleGrid>
-							</Stack>
-						</Card>
-					</div>
-				)}
-			</div>
+		<ContentContainer title={heading} description={subheading}>
+			{renderContent()}
 		</ContentContainer>
 	);
 }

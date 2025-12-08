@@ -50,5 +50,12 @@ export const theme = createTheme({
 				},
 			},
 		},
+		Modal: {
+			styles: {
+				body: {
+					height: '90%',
+				},
+			},
+		},
 	},
 });

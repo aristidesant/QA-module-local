@@ -48,9 +48,11 @@ describe('ClientForm', () => {
 			/>
 		);
 
-		expect(screen.getByText('Client Details')).toBeInTheDocument();
-		expect(screen.getByPlaceholderText('Client Name')).toBeInTheDocument();
-		expect(screen.getByText('Create Client')).toBeInTheDocument();
+		expect(screen.getByText('Add a new client')).toBeInTheDocument();
+		expect(screen.getByPlaceholderText('Acme Corporation')).toBeInTheDocument();
+		expect(
+			screen.getByRole('button', { name: 'Create client' })
+		).toBeInTheDocument();
 	});
 
 	it('submits form with valid data', async () => {
@@ -63,10 +65,12 @@ describe('ClientForm', () => {
 		);
 
 		await userEvent.type(
-			screen.getByPlaceholderText('Client Name'),
+			screen.getByPlaceholderText('Acme Corporation'),
 			'New Client'
 		);
-		await userEvent.click(screen.getByText('Create Client'));
+		await userEvent.click(
+			screen.getByRole('button', { name: 'Create client' })
+		);
 
 		await waitFor(() => {
 			expect(mockCreateMutate).toHaveBeenCalledWith(
@@ -104,7 +108,8 @@ describe('ClientForm', () => {
 		);
 
 		expect(screen.getByDisplayValue('Existing Client')).toBeInTheDocument();
-		expect(screen.getByDisplayValue('EX1')).toBeInTheDocument();
-		expect(screen.getByText('Save Changes')).toBeInTheDocument();
+		expect(
+			screen.getByRole('button', { name: 'Save changes' })
+		).toBeInTheDocument();
 	});
 });

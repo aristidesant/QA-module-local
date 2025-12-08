@@ -9,7 +9,6 @@ import {
 	Group,
 	Loader,
 	ActionIcon,
-	Paper,
 	Badge,
 	ScrollArea,
 	ThemeIcon,
@@ -37,6 +36,7 @@ import {
 import { useToolCategories } from '~/queries/toolCategoryQueries';
 import type { ToolModel, ToolRequestBodyProperty } from '~/models/ToolModel';
 import type { ToolCategoryModel } from '~/models/ToolCategoryModel';
+import SectionCard from '~/components/SectionCard/SectionCard';
 import styles from './ToolForm.module.css';
 
 interface ToolFormProps {
@@ -780,42 +780,35 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 	};
 
 	return (
-		<Paper radius='sm' className={styles.modalShell} withBorder>
-			<LoadingOverlay
-				visible={createToolMutation.isPending || updateToolMutation.isPending}
-			/>
-			<form
-				id='tool-form'
-				onSubmit={form.onSubmit(handleSubmit)}
-				style={{ display: 'contents' }}
-			>
-				<div className={styles.mainContainer}>
-					{/* Header */}
-					<div className={styles.header}>
-						<Group align='center' gap='xs' className={styles.headerMain}>
-							<ThemeIcon color='blue' variant='light' size='sm' radius='sm'>
-								<IconSettings size={14} />
-							</ThemeIcon>
-							<div className={styles.headerContent}>
-								<Text className={styles.title}>
-									{isEdit ? 'Edit Tool' : 'Create New Tool'}
-								</Text>
-								<Text className={styles.subtitle}>
-									Configure your tool settings and API details
-								</Text>
-							</div>
-						</Group>
-						<ActionIcon
-							onClick={onCancel}
-							variant='subtle'
-							color='gray'
-							size='sm'
-						>
-							<IconX size={16} />
-						</ActionIcon>
-					</div>
-
-					{/* Content Grid */}
+		<SectionCard
+			icon={IconSettings}
+			title={isEdit ? 'Edit Tool' : 'Create New Tool'}
+			description='Configure your tool settings and API details'
+			className={styles.modalShell}
+			contentSpacing='xs'
+			padding='md'
+			headerActions={
+				onCancel ? (
+					<ActionIcon
+						onClick={onCancel}
+						variant='subtle'
+						color='gray'
+						size='sm'
+					>
+						<IconX size={16} />
+					</ActionIcon>
+				) : undefined
+			}
+		>
+			<div className={styles.sectionCardBody}>
+				<LoadingOverlay
+					visible={createToolMutation.isPending || updateToolMutation.isPending}
+				/>
+				<form
+					id='tool-form'
+					onSubmit={form.onSubmit(handleSubmit)}
+					className={styles.formContent}
+				>
 					<div className={styles.contentGrid}>
 						{/* Menu Column */}
 						<div className={styles.menuColumn}>
@@ -911,9 +904,9 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 							</Button>
 						</Group>
 					</div>
-				</div>
-			</form>
-		</Paper>
+				</form>
+			</div>
+		</SectionCard>
 	);
 }
 

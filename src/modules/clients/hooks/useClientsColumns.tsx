@@ -25,11 +25,6 @@ const useClientsColumns = ({
 				),
 			},
 			{
-				accessorKey: 'identifier',
-				header: 'Identifier',
-				cell: ({ row }) => <Text size='sm'>{row.original.identifier}</Text>,
-			},
-			{
 				accessorKey: 'email',
 				header: 'Email',
 				cell: ({ row }) => (

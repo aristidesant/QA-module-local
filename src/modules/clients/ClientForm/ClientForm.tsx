@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import {
 	Alert,
+	Badge,
 	Button,
 	Group,
 	Paper,
@@ -8,12 +9,16 @@ import {
 	Text,
 	TextInput,
 	Textarea,
+	Grid,
+	Divider,
+	Skeleton,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { getErrorMessage } from '~/utils/httpClient';
 import classes from './ClientForm.module.css';
+import SectionCard from '~/components/SectionCard';
 import {
 	useCreateClient,
 	useUpdateClient,
@@ -33,7 +38,6 @@ interface ClientFormProps {
 
 interface ClientFormValues {
 	name: string;
-	identifier?: string;
 	description?: string;
 	email?: string;
 	phone?: string;
@@ -54,7 +58,6 @@ const ClientForm: React.FC<ClientFormProps> = ({
 	const form = useForm<ClientFormValues>({
 		initialValues: {
 			name: '',
-			identifier: '',
 			description: '',
 			email: '',
 			phone: '',
@@ -92,7 +95,6 @@ const ClientForm: React.FC<ClientFormProps> = ({
 		if (isEditMode && client) {
 			form.setValues({
 				name: client.name,
-				identifier: client.identifier,
 				description: client.description || '',
 				email: client.email || '',
 				phone: client.phone || '',
@@ -160,7 +162,26 @@ const ClientForm: React.FC<ClientFormProps> = ({
 	});
 
 	if (isEditMode && isClientLoading) {
-		return <Group p='md'>loading...</Group>; // Keeping it simple for now or could use Skeleton
+		return (
+			<Paper withBorder radius='md' className={classes.form}>
+				<Stack gap='xs'>
+					<Skeleton height={10} width='30%' radius='xl' />
+					<Skeleton height={24} radius='sm' />
+					<Skeleton height={10} radius='xl' />
+				</Stack>
+				<Divider />
+				<Grid gutter='xs'>
+					{Array.from({ length: 3 }).map((_, index) => (
+						<Grid.Col span={{ base: 12, md: 6, lg: 4 }} key={index}>
+							<Stack gap='xs'>
+								<Skeleton height={12} radius='xl' />
+								<Skeleton height={80} radius='sm' />
+							</Stack>
+						</Grid.Col>
+					))}
+				</Grid>
+			</Paper>
+		);
 	}
 
 	if (isEditMode && isClientError) {
@@ -183,81 +204,129 @@ const ClientForm: React.FC<ClientFormProps> = ({
 			className={classes.form}
 			onSubmit={handleSubmit}
 		>
+			<div className={classes.header}>
+				<Stack gap={4} className={classes.headerCopy}>
+					<Group gap='xs' className={classes.badgeRow}>
+						<Badge
+							variant='light'
+							color='blue'
+							className={classes.statusBadge}
+							size='sm'
+						>
+							{isEditMode ? 'Editing client' : 'Create client'}
+						</Badge>
+						{!isEditMode && (
+							<Badge variant='outline' color='gray' size='sm'>
+								Draft
+							</Badge>
+						)}
+					</Group>
+					<Text className={classes.title}>
+						{isEditMode ? 'Update client profile' : 'Add a new client'}
+					</Text>
+					<Text size='xs' c='dimmed'>
+						Keep contact, address, and billing details tidy so teams can move
+						fast.
+					</Text>
+				</Stack>
+			</div>
+
+			<Divider />
+
 			<div className={classes.body}>
-				<div className={classes.contentGrid}>
-					<Stack gap='sm'>
-						<section className={classes.section}>
-							<div className={classes.sectionHeader}>
-								<Text className={classes.sectionTitle}>Client Details</Text>
-								<Text className={classes.sectionDescription}>
-									Basic information about the client.
-								</Text>
-							</div>
-							<div className={classes.row}>
+				<Stack gap='xs'>
+					<Grid gutter='sm'>
+						<Grid.Col span={{ base: 12, md: 6 }}>
+							<SectionCard
+								title='Profile'
+								description='Name and context for this client.'
+								contentSpacing='sm'
+								padding='md'
+							>
 								<TextInput
 									required
 									label='Name'
-									placeholder='Client Name'
+									placeholder='Acme Corporation'
+									size='sm'
 									{...form.getInputProps('name')}
 								/>
-								<TextInput
-									label='Identifier'
-									placeholder='Unique Identifier'
-									{...form.getInputProps('identifier')}
+								<Textarea
+									label='Description'
+									placeholder='Short mission statement or notes'
+									size='sm'
+									minRows={3}
+									{...form.getInputProps('description')}
 								/>
-							</div>
-							<Textarea
-								label='Description'
-								placeholder='Client description'
-								{...form.getInputProps('description')}
-							/>
-						</section>
+							</SectionCard>
+						</Grid.Col>
 
-						<section className={classes.section}>
-							<div className={classes.sectionHeader}>
-								<Text className={classes.sectionTitle}>Contact Info</Text>
-								<Text className={classes.sectionDescription}>
-									Address and communication details.
-								</Text>
-							</div>
-							<div className={classes.row}>
-								<TextInput
-									label='Email'
-									placeholder='contact@example.com'
-									{...form.getInputProps('email')}
-								/>
-								<TextInput
-									label='Phone'
-									placeholder='+1234567890'
-									{...form.getInputProps('phone')}
-								/>
-							</div>
-							<div className={classes.row}>
-								<TextInput
-									label='Address'
-									placeholder='123 Main St'
-									{...form.getInputProps('address')}
-								/>
-								<TextInput
-									label='RNC'
-									placeholder='Tax ID / RNC'
-									{...form.getInputProps('rnc')}
-								/>
-							</div>
-						</section>
-					</Stack>
-				</div>
+						<Grid.Col span={{ base: 12, md: 6 }}>
+							<SectionCard
+								title='Contact'
+								description='Primary inbox and phone for outreach.'
+								contentSpacing='sm'
+								padding='md'
+							>
+								<div className={classes.row}>
+									<TextInput
+										label='Email'
+										placeholder='team@acme.com'
+										size='sm'
+										{...form.getInputProps('email')}
+									/>
+									<TextInput
+										label='Phone'
+										placeholder='+1 (555) 123-4567'
+										size='sm'
+										{...form.getInputProps('phone')}
+									/>
+								</div>
+							</SectionCard>
+						</Grid.Col>
+					</Grid>
+
+					<SectionCard
+						title='Location & Tax'
+						description='Where the client operates and how they bill.'
+						contentSpacing='sm'
+						padding='md'
+					>
+						<div className={classes.row}>
+							<TextInput
+								label='Address'
+								placeholder='123 Market Street'
+								size='sm'
+								{...form.getInputProps('address')}
+							/>
+							<TextInput
+								label='RNC'
+								placeholder='Tax ID / RNC'
+								size='sm'
+								{...form.getInputProps('rnc')}
+							/>
+						</div>
+					</SectionCard>
+				</Stack>
 			</div>
 
-			<Group justify='flex-end' className={classes.actions}>
-				{onCancel && (
-					<Button variant='default' onClick={onCancel} disabled={isSubmitting}>
-						Cancel
+			<Group justify='space-between' className={classes.actions}>
+				<Text size='xs' c='dimmed'>
+					All changes are saved securely when you submit.
+				</Text>
+				<Group gap='xs'>
+					{onCancel && (
+						<Button
+							variant='default'
+							onClick={onCancel}
+							disabled={isSubmitting}
+						>
+							Cancel
+						</Button>
+					)}
+					<Button type='submit' loading={isSubmitting}>
+						{isEditMode ? 'Save changes' : 'Create client'}
 					</Button>
-				)}
-				<Button type='submit' loading={isSubmitting}>
-					{isEditMode ? 'Save Changes' : 'Create Client'}
-				</Button>
+				</Group>
 			</Group>
 		</Paper>
 	);

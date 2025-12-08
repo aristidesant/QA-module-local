@@ -123,6 +123,7 @@ export { default } from './UserCard';
 
 - **Always use Mantine components** (Button, Card, Text, Stack, Group, etc.)
 - Check the latest Mantine v8 docs if unsure about a component
+- Use `SectionCard` from `src/components/SectionCard` for any form or page sections; avoid custom card wrappers so layouts stay consistent
 
 ### Use CSS Modules
 
