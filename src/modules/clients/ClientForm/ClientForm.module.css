@@ -1,0 +1,61 @@
+.form {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	border: none;
+}
+
+.body {
+	flex: 1;
+	overflow-y: auto;
+	padding: var(--mantine-spacing-md);
+}
+
+.contentGrid {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-lg);
+}
+
+.section {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+}
+
+.sectionHeader {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding-bottom: var(--mantine-spacing-xs);
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.sectionTitle {
+	font-weight: 600;
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-9);
+}
+
+.sectionDescription {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+}
+
+.row {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--mantine-spacing-md);
+}
+
+@media (min-width: 48em) {
+	.row {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+.actions {
+	padding: var(--mantine-spacing-md);
+	border-top: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--mantine-color-white);
+}

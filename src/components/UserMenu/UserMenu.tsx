@@ -9,6 +9,7 @@ import {
 	IconLibrary,
 	IconUsers,
 	IconKey,
+	IconBuilding,
 } from '@tabler/icons-react';
 import styles from './UserMenu.module.css';
 import { useNavigate } from 'react-router';
@@ -92,6 +93,13 @@ export const UserMenu: React.FC = () => {
 					label: 'Configurations',
 					icon: <IconSettings size={16} />,
 					path: '/configurations/client-configs',
+					module: ModuleEnum.SETTINGS,
+					permission: PermissionEnum.MANAGE,
+				},
+				{
+					label: 'Clients',
+					icon: <IconBuilding size={16} />,
+					path: '/clients',
 					module: ModuleEnum.SETTINGS,
 					permission: PermissionEnum.MANAGE,
 				},

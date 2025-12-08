@@ -42,6 +42,9 @@ const UsersPage = React.lazy(
 const RolesPage = React.lazy(
 	() => import('./modules/roles/RolesPage/RolesPage')
 );
+const ClientsPage = React.lazy(
+	() => import('./modules/clients/ClientsPage/ClientsPage')
+);
 const PrompterPage = React.lazy(() =>
 	import('./modules/prompter/PrompterPage').then((m) => ({
 		default: m.PrompterPage,
@@ -235,6 +238,21 @@ const router = createBrowserRouter([
 									fallback={<SuspenseFallback message='Loading roles...' />}
 								>
 									<RolesPage />
+								</Suspense>
+							</ModuleGuard>
+						),
+					},
+					{
+						path: 'clients',
+						element: (
+							<ModuleGuard
+								module={ModuleEnum.SETTINGS}
+								permission={PermissionEnum.MANAGE}
+							>
+								<Suspense
+									fallback={<SuspenseFallback message='Loading clients...' />}
+								>
+									<ClientsPage />
 								</Suspense>
 							</ModuleGuard>
 						),
