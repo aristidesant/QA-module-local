@@ -32,6 +32,40 @@ type FormValues = {
 	dayConfigs: FormDayConfig[];
 };
 
+const normalizeTimeInput = (value: string, fallback = '00:00'): string => {
+	const trimmed = value.trim();
+	if (!trimmed) return fallback;
+
+	const sanitized = trimmed.replace(/[^\d:]/g, '');
+
+	let hourPart = '';
+	let minutePart = '';
+
+	if (sanitized.includes(':')) {
+		[hourPart, minutePart = ''] = sanitized.split(':');
+	} else if (sanitized.length > 2) {
+		hourPart = sanitized.slice(0, 2);
+		minutePart = sanitized.slice(2, 4);
+	} else {
+		hourPart = sanitized;
+		minutePart = '';
+	}
+
+	const parsedHour = Number.parseInt(hourPart, 10);
+	const parsedMinute = minutePart ? Number.parseInt(minutePart, 10) : 0;
+
+	const safeHour = Number.isNaN(parsedHour)
+		? 0
+		: Math.min(Math.max(parsedHour, 0), 23);
+	const safeMinute = Number.isNaN(parsedMinute)
+		? 0
+		: Math.min(Math.max(parsedMinute, 0), 59);
+
+	return `${safeHour.toString().padStart(2, '0')}:${safeMinute
+		.toString()
+		.padStart(2, '0')}`;
+};
+
 const SchedulerPredefinedParamsForm: React.FC<
 	SchedulerPredefinedParamsFormProps
 > = ({ schedule, list, config, onClose }) => {
@@ -76,6 +110,13 @@ const SchedulerPredefinedParamsForm: React.FC<
 		form.setFieldValue('dayConfigs', updated);
 	};
 
+	const handleTimeBlur = (index: number, field: 'startHour' | 'endHour') => {
+		const normalizedTime = normalizeTimeInput(
+			form.values.dayConfigs[index]?.[field] ?? ''
+		);
+		updateDayField(index, field, normalizedTime);
+	};
+
 	const handleSubmit = async (values: FormValues) => {
 		if (!config) {
 			notifications.show({
@@ -86,7 +127,19 @@ const SchedulerPredefinedParamsForm: React.FC<
 			return;
 		}
 
-		const activeDays = values.dayConfigs.filter((day) => day.isActive);
+		const normalizedDayConfigs = values.dayConfigs.map((day, index) => {
+			const startHour = normalizeTimeInput(day.startHour, DEFAULT_START_HOUR);
+			const endHour = normalizeTimeInput(day.endHour, DEFAULT_END_HOUR);
+
+			return {
+				...day,
+				startHour,
+				endHour,
+				dayOrder: day.dayOrder ?? index + 1,
+			};
+		});
+
+		const activeDays = normalizedDayConfigs.filter((day) => day.isActive);
 		if (!activeDays.length) {
 			notifications.show({
 				title: 'Add at least one active day',
@@ -96,10 +149,7 @@ const SchedulerPredefinedParamsForm: React.FC<
 			return;
 		}
 
-		const invalidDay = activeDays.find((day) => {
-			if (!day.startHour || !day.endHour) return true;
-			return day.startHour >= day.endHour;
-		});
+		const invalidDay = activeDays.find((day) => day.startHour >= day.endHour);
 
 		if (invalidDay) {
 			notifications.show({
@@ -111,16 +161,16 @@ const SchedulerPredefinedParamsForm: React.FC<
 			return;
 		}
 
-		const normalizedDays: DayConfig[] = values.dayConfigs.map((day, index) => ({
+		const normalizedDays: DayConfig[] = normalizedDayConfigs.map((day) => ({
 			dayOfWeek: day.dayOfWeek,
-			dayOrder: day.dayOrder ?? index + 1,
+			dayOrder: day.dayOrder,
 			isActive: day.isActive,
 			dailyCallLimit:
 				typeof day.dailyCallLimit === 'number' ? day.dailyCallLimit : 0,
 			dayCapacity:
 				typeof day.dayCapacity === 'number' ? day.dayCapacity : undefined,
-			startHour: day.startHour?.trim() || DEFAULT_START_HOUR,
-			endHour: day.endHour?.trim() || DEFAULT_END_HOUR,
+			startHour: day.startHour,
+			endHour: day.endHour,
 			hourConfigs: day.hourConfigs ?? [],
 		}));
 
@@ -244,6 +294,7 @@ const SchedulerPredefinedParamsForm: React.FC<
 								onChange={(event) =>
 									updateDayField(index, 'startHour', event.currentTarget.value)
 								}
+								onBlur={() => handleTimeBlur(index, 'startHour')}
 								className={classes.inlineInput}
 							/>
 							<TextInput
@@ -254,6 +305,7 @@ const SchedulerPredefinedParamsForm: React.FC<
 								onChange={(event) =>
 									updateDayField(index, 'endHour', event.currentTarget.value)
 								}
+								onBlur={() => handleTimeBlur(index, 'endHour')}
 								className={classes.inlineInput}
 							/>
 							<Text size='xs' className={classes.helperText}>

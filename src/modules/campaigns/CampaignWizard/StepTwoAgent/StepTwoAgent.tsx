@@ -403,6 +403,10 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 									className={sharedStyles.field}
 								/>
 							</Box>
+							<KnowledgeBaseSection />
+						</div>
+
+						<div className={styles.secondaryColumn}>
 							<Box className={styles.sectionCard}>
 								<div className={styles.sectionHeader}>
 									<IconBrain size={20} className={styles.sectionIcon} />
@@ -438,17 +442,12 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 									readOnly
 									disabled
 									withAsterisk
-									minRows={6}
-									autosize
+									rows={16}
 									size='sm'
 									className={sharedStyles.field}
 									classNames={{ input: styles.promptTextarea }}
 								/>
 							</Box>
-						</div>
-
-						<div className={styles.secondaryColumn}>
-							<KnowledgeBaseSection />
 						</div>
 					</div>
 				</Stack>
