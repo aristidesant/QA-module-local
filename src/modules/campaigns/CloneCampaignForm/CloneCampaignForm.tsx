@@ -11,13 +11,14 @@ import {
 	Avatar,
 	Badge,
 	Box,
+	Alert,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useCloneCampaign } from '~/queries/campaignsQueries';
 import { notifications } from '@mantine/notifications';
 import type { Campaign } from '~/models/CampaignsModel';
 import styles from './CloneCampaignForm.module.css';
-import { IconCopy } from '@tabler/icons-react';
+import { IconCopy, IconInfoCircle } from '@tabler/icons-react';
 
 type CloneCampaignFormProps = {
 	campaign: Campaign;
@@ -40,6 +41,7 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 	const [agentsToDuplicate, setAgentsToDuplicate] = useState<
 		AgentToDuplicate[]
 	>([]);
+	const [validationError, setValidationError] = useState<string | null>(null);
 
 	// Initialize agents from campaign
 	useEffect(() => {
@@ -72,12 +74,14 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 		setAgentsToDuplicate((prev) =>
 			prev.map((agent, i) => (i === index ? { ...agent, selected } : agent))
 		);
+		setValidationError(null);
 	};
 
 	const handleAgentNameChange = (index: number, newName: string) => {
 		setAgentsToDuplicate((prev) =>
 			prev.map((agent, i) => (i === index ? { ...agent, newName } : agent))
 		);
+		setValidationError(null);
 	};
 
 	const validateAgents = (): string | null => {
@@ -93,6 +97,37 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 		return null;
 	};
 
+	/**
+	 * Try to extract a human-friendly error message from different error shapes.
+	 * Supports Axios-like { response: { data: { message } } } and plain Error objects.
+	 */
+	const getApiErrorMessage = (error: unknown): string => {
+		// Axios-style response body: error.response?.data?.message
+		const asAny = error as any;
+		if (asAny?.response?.data) {
+			// If server returns { message } or { error, message }
+			const data = asAny.response.data;
+			if (typeof data === 'string') return data;
+			if (typeof data.message === 'string') return data.message;
+			if (typeof data.error === 'string') return data.error;
+			// fallback to JSON string of body
+			try {
+				return JSON.stringify(data);
+			} catch {
+				return String(data);
+			}
+		}
+
+		// Some libraries place body directly: error.data?.message
+		if (asAny?.data?.message) return String(asAny.data.message);
+
+		// Default Error instance
+		if (error instanceof Error) return error.message;
+
+		// Fallback to string conversion
+		return String(error ?? 'Unknown error');
+	};
+
 	const selectedAgentsCount = agentsToDuplicate.filter(
 		(agent) => agent.selected
 	).length;
@@ -100,13 +135,10 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 	const handleSubmit = (values: typeof form.values) => {
 		const agentValidationError = validateAgents();
 		if (agentValidationError) {
-			notifications.show({
-				title: 'Validation Error',
-				message: agentValidationError,
-				color: 'red',
-			});
+			setValidationError(agentValidationError);
 			return;
 		}
+		setValidationError(null);
 
 		const selectedAgents = agentsToDuplicate
 			.filter((agent) => agent.selected)
@@ -136,12 +168,10 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 					}
 				},
 				onError: (error) => {
+					const message = getApiErrorMessage(error);
 					notifications.show({
 						title: 'Error',
-						message:
-							error instanceof Error
-								? error.message
-								: 'Failed to clone campaign',
+						message: message || 'Failed to clone campaign',
 						color: 'red',
 					});
 				},
@@ -257,12 +287,16 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 					)}
 				</section>
 
-				{cloneCampaign.isError && (
-					<Text className={styles.error}>
-						{cloneCampaign.error instanceof Error
-							? cloneCampaign.error.message
-							: 'Error cloning campaign'}
-					</Text>
+				{validationError && (
+					<Alert
+						icon={<IconInfoCircle size={18} />}
+						title='Validation required'
+						color='yellow'
+						variant='light'
+						className={styles.alert}
+					>
+						{validationError}
+					</Alert>
 				)}
 
 				<Group className={styles.buttonGroup}>

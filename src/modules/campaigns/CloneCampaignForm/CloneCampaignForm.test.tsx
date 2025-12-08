@@ -95,11 +95,11 @@ describe('CloneCampaignForm', () => {
 		await user.click(screen.getByRole('button', { name: /clone campaign/i }));
 
 		expect(mutateMock).not.toHaveBeenCalled();
-		expect(notifications.show).toHaveBeenCalledWith({
-			title: 'Validation Error',
-			message: 'At least one agent must be selected',
-			color: 'red',
-		});
+
+		// We now surface agent validation errors inline (Alert) rather than using notifications
+		expect(
+			screen.getByText('At least one agent must be selected')
+		).toBeInTheDocument();
 	});
 
 	it('submits selected agents and calls completion handlers', async () => {
@@ -138,5 +138,34 @@ describe('CloneCampaignForm', () => {
 			color: 'green',
 		});
 		expect(onComplete).toHaveBeenCalled();
+	});
+
+	it('displays API error message in notification when clone fails', async () => {
+		const serverMessage =
+			'Agent name conflict: the following name(s) already exist: Copy of Element. Please choose different names for duplication.';
+
+		const user = userEvent.setup();
+
+		mutateMock.mockImplementation((_payload, { onError }: any) => {
+			onError?.({ response: { data: { message: serverMessage } } });
+		});
+
+		(useCloneCampaign as unknown as Mock).mockReturnValue({
+			mutate: mutateMock,
+			isPending: false,
+			isError: false,
+			error: null,
+		});
+
+		renderWithProviders(<CloneCampaignForm campaign={baseCampaign} />);
+
+		await user.click(screen.getByRole('button', { name: /clone campaign/i }));
+
+		// server message should be shown in notification
+		expect(notifications.show).toHaveBeenCalledWith({
+			title: 'Error',
+			message: serverMessage,
+			color: 'red',
+		});
 	});
 });

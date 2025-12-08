@@ -146,9 +146,13 @@
 	color: var(--mantine-color-gray-6, #868e96);
 }
 
-.error {
-	color: var(--mantine-color-red-6, #e03131);
-	font-size: var(--mantine-font-size-sm);
+.alert {
+	border-radius: var(--mantine-radius-md);
+	/* Make long server messages readable and keep spacing consistent */
+	white-space: pre-wrap; /* preserve line breaks */
+	word-break: break-word;
+	margin-top: var(--mantine-spacing-sm);
+	padding: calc(var(--mantine-spacing-xs) * 1.25) !important;
 }
 
 .buttonGroup {
