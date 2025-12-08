@@ -144,14 +144,16 @@ export function ContactListInfo({
 											e.currentTarget.value
 												.replace(/[^A-Za-z\s\d-]/g, '')
 												.replace(/\s+/g, ' ')
+												.slice(0, 50)
 										)
 									}
 									onKeyDown={handleKeyDown}
 									placeholder='e.g. Q4 Marketing Leads, Support Follow-ups...'
-									description='Allowed characters: A-Z, a-z, 0-9, spaces, and hyphens. Minimum 3 characters.'
+									description='Allowed characters: A-Z, a-z, 0-9, spaces, and hyphens. Minimum 3 characters. Maximum 50 characters.'
 									autoFocus
 									size='sm'
 									className={classes.nameInput}
+									maxLength={50}
 								/>
 								<Tooltip label='Save'>
 									<ActionIcon

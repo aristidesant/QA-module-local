@@ -330,6 +330,26 @@ describe('ContactListInfo', () => {
 			expect(input).toHaveValue('Test-Name 123 With Spaces');
 		});
 
+		it('limits input to 75 characters', async () => {
+			const user = userEvent.setup();
+			const onNameChange = vi.fn();
+			const { container } = renderWithProviders(
+				<ContactListInfo listName='Test List' onNameChange={onNameChange} />
+			);
+
+			const editButton = container.querySelector('[class*="editButton"]');
+			await user.click(editButton!);
+
+			const input = screen.getByRole('textbox');
+			const longString = 'a'.repeat(90); // 90 characters
+
+			await user.clear(input);
+			await user.type(input, longString);
+
+			expect(input).toHaveValue('a'.repeat(50));
+			expect(input).toHaveAttribute('maxLength', '50');
+		});
+
 		it('shows description with allowed characters and minimum length when editing', async () => {
 			const user = userEvent.setup();
 			const onNameChange = vi.fn();
@@ -342,7 +362,7 @@ describe('ContactListInfo', () => {
 
 			expect(
 				screen.getByText(
-					'Allowed characters: A-Z, a-z, 0-9, spaces, and hyphens. Minimum 3 characters.'
+					'Allowed characters: A-Z, a-z, 0-9, spaces, and hyphens. Minimum 3 characters. Maximum 50 characters.'
 				)
 			).toBeInTheDocument();
 		});
