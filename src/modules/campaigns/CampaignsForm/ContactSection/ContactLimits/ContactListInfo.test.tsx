@@ -330,7 +330,7 @@ describe('ContactListInfo', () => {
 			expect(input).toHaveValue('Test-Name 123 With Spaces');
 		});
 
-		it('limits input to 75 characters', async () => {
+		it('limits input to 50 characters', async () => {
 			const user = userEvent.setup();
 			const onNameChange = vi.fn();
 			const { container } = renderWithProviders(
