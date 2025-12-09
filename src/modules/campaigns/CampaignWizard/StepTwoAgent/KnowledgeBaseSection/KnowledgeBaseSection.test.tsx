@@ -1,7 +1,10 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import KnowledgeBaseSection from './KnowledgeBaseSection';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
-import { useKnowledgeBases } from '~/queries/knowledgeBaseQueries';
+import {
+	useKnowledgeBases,
+	useKnowledgeBasesPaginated,
+} from '~/queries/knowledgeBaseQueries';
 import { MantineProvider } from '@mantine/core';
 
 // Mock stores and queries
@@ -11,6 +14,7 @@ vi.mock('~/stores/campaignWizardStore', () => ({
 
 vi.mock('~/queries/knowledgeBaseQueries', () => ({
 	useKnowledgeBases: vi.fn(),
+	useKnowledgeBasesPaginated: vi.fn(),
 }));
 
 // Mock child components
@@ -43,6 +47,20 @@ describe('KnowledgeBaseSection', () => {
 				{ id: 1, name: 'KB 1', status: 'active' },
 				{ id: 2, name: 'KB 2', status: 'pending' },
 			],
+			isLoading: false,
+			error: null,
+		});
+		(
+			useKnowledgeBasesPaginated as unknown as ReturnType<typeof vi.fn>
+		).mockReturnValue({
+			data: {
+				data: [
+					{ id: 1, name: 'KB 1', status: 'active' },
+					{ id: 2, name: 'KB 2', status: 'pending' },
+				],
+				total: 2,
+				totalPages: 1,
+			},
 			isLoading: false,
 			error: null,
 		});

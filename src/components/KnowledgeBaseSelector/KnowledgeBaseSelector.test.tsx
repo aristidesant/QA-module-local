@@ -90,6 +90,10 @@ vi.mock('~/queries/knowledgeBaseQueries', async () => {
 	return {
 		...actual,
 		useKnowledgeBases: vi.fn(() => ({ data: kbData, isLoading: false })),
+		useKnowledgeBasesPaginated: vi.fn(() => ({
+			data: { data: kbData, total: kbData.length, totalPages: 1 },
+			isLoading: false,
+		})),
 	};
 });
 
