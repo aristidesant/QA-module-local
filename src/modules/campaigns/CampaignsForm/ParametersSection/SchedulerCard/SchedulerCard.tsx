@@ -18,6 +18,8 @@ import {
 } from './schedulerFormProvider';
 import { modals } from '@mantine/modals';
 import { useCampaignsStore } from '~/stores/campaignsStore';
+import { notifications } from '@mantine/notifications';
+import { parseTimeToMinutes } from '../utils/schedulerMetrics';
 
 export interface SchedulerCardProps {
 	scheduler: Scheduler;
@@ -78,6 +80,35 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 	// Handle form submission
 	const handleSubmit = async (values: Partial<Scheduler>) => {
 		try {
+			const invalidDays = (values.dayConfigs || []).reduce<string[]>(
+				(list, dayConfig) => {
+					if (!dayConfig?.isActive) return list;
+
+					const start = parseTimeToMinutes(dayConfig.startHour ?? undefined);
+					const end = parseTimeToMinutes(dayConfig.endHour ?? undefined);
+
+					if (start === null || end === null || end <= start) {
+						const dayName = dayConfig.dayOfWeek
+							? `${dayConfig.dayOfWeek.charAt(0).toUpperCase()}${dayConfig.dayOfWeek.slice(1)}`
+							: 'Day';
+						return [...list, dayName];
+					}
+
+					return list;
+				},
+				[]
+			);
+
+			if (invalidDays.length > 0) {
+				notifications.show({
+					title: 'Fix schedule time ranges',
+					message: `Update the time window for: ${invalidDays.join(', ')}`,
+					color: 'red',
+					withBorder: true,
+				});
+				return;
+			}
+
 			// Validate form data if needed
 			const validation = form.validate();
 			if (validation.hasErrors) {

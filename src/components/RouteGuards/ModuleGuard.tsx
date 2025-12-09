@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router';
 import { usePermissions } from '~/hooks/usePermissions';
+import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import AccessDenied from '~/components/AccessDenied/AccessDenied';
@@ -10,10 +11,21 @@ interface ModuleGuardProps {
 	module: ModuleEnum;
 	permission?: PermissionEnum;
 	children?: ReactNode;
+	masterOnly?: boolean;
 }
 
-const ModuleGuard = ({ module, permission, children }: ModuleGuardProps) => {
+const ModuleGuard = ({
+	module,
+	permission,
+	children,
+	masterOnly = false,
+}: ModuleGuardProps) => {
 	const { canAccessModule, canPerformAction } = usePermissions();
+	const isMasterClient = useIsMasterClient();
+
+	if (masterOnly && !isMasterClient) {
+		return <AccessDenied />;
+	}
 
 	const hasAccess = permission
 		? canPerformAction(module, permission)

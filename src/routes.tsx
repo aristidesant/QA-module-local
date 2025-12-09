@@ -221,6 +221,7 @@ const router = createBrowserRouter([
 							<ModuleGuard
 								module={ModuleEnum.USERS}
 								permission={PermissionEnum.MANAGE}
+								masterOnly
 							>
 								<Suspense
 									fallback={<SuspenseFallback message='Loading users...' />}
@@ -233,7 +234,7 @@ const router = createBrowserRouter([
 					{
 						path: 'roles',
 						element: (
-							<ModuleGuard module={ModuleEnum.ROLES}>
+							<ModuleGuard module={ModuleEnum.ROLES} masterOnly>
 								<Suspense
 									fallback={<SuspenseFallback message='Loading roles...' />}
 								>
@@ -248,6 +249,7 @@ const router = createBrowserRouter([
 							<ModuleGuard
 								module={ModuleEnum.SETTINGS}
 								permission={PermissionEnum.MANAGE}
+								masterOnly
 							>
 								<Suspense
 									fallback={<SuspenseFallback message='Loading clients...' />}
@@ -440,6 +442,7 @@ const router = createBrowserRouter([
 							<ModuleGuard
 								module={ModuleEnum.PROMPTS}
 								permission={PermissionEnum.MANAGE}
+								masterOnly
 							>
 								<Suspense
 									fallback={<SuspenseFallback message='Loading prompter...' />}
@@ -455,6 +458,7 @@ const router = createBrowserRouter([
 							<ModuleGuard
 								module={ModuleEnum.TOOLS}
 								permission={PermissionEnum.MANAGE}
+								masterOnly
 							>
 								<Suspense
 									fallback={<SuspenseFallback message='Loading tools...' />}

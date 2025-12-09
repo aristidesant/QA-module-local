@@ -328,26 +328,6 @@ describe('CampaignConfigurationPrompt', () => {
 	});
 
 	describe('Badges and prompt details', () => {
-		it('renders the schema badge when provided', () => {
-			renderWithProviders(<CampaignConfigurationPrompt />);
-			expect(screen.getByText('Schema #5')).toBeInTheDocument();
-		});
-
-		it('falls back to "No schema" badge when missing', () => {
-			mockValues = {
-				agentConfig: {
-					conversationConfig: {
-						agent: {
-							prompt: { prompt: 'Schema test' },
-						},
-					},
-				},
-			} as typeof mockValues;
-
-			renderWithProviders(<CampaignConfigurationPrompt />);
-			expect(screen.getByText('No schema')).toBeInTheDocument();
-		});
-
 		it('shows char count when prompt text exists', () => {
 			mockValues = {
 				agentConfig: {

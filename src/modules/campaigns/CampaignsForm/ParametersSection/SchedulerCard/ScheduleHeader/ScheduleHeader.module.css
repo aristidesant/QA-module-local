@@ -9,7 +9,7 @@
 	border-radius: var(--mantine-radius-sm);
 	transition:
 		border-color 120ms ease,
-		transform 120ms ease;
+		background-color 120ms ease;
 }
 
 .container::before {
@@ -25,7 +25,6 @@
 
 .container:hover {
 	border-color: var(--mantine-color-blue-2);
-	transform: translateY(-1px);
 }
 
 .container:hover::before {
@@ -93,15 +92,12 @@
 .actions {
 	display: flex;
 	align-items: center;
-	gap: 6px;
+	gap: var(--mantine-spacing-xs);
 	flex-shrink: 0;
 }
 
 .metricsRow {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-	gap: var(--mantine-spacing-xs);
-	padding: 6px;
+	padding: var(--mantine-spacing-xs);
 	background: var(--mantine-color-gray-0);
 	border: 1px solid var(--mantine-color-gray-2);
 	border-radius: var(--mantine-radius-sm);
@@ -112,24 +108,22 @@
 	align-items: center;
 	gap: 8px;
 	min-width: 0;
-	padding: 6px;
-	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: calc(var(--mantine-radius-sm) - 2px);
+	padding: var(--mantine-spacing-xs);
 	background: var(--mantine-color-white);
 	transition:
 		border-color 120ms ease,
-		transform 120ms ease;
+		background-color 120ms ease;
 }
 
 .metric:hover {
 	border-color: var(--mantine-color-blue-2);
-	transform: translateY(-1px);
+	background: var(--mantine-color-blue-0);
 }
 
 .metricIcon {
 	width: 26px;
 	height: 26px;
-	border-radius: 8px;
+	border-radius: var(--mantine-radius-sm);
 	background: var(--mantine-color-blue-0);
 	display: grid;
 	place-items: center;

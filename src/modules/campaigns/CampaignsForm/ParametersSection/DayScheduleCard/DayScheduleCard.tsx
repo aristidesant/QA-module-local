@@ -9,6 +9,7 @@ import {
 	calculatePerAgentTalkMinutes,
 	calculateTeamTalkMinutes,
 	formatMinutesLabel,
+	parseTimeToMinutes,
 	type MaybeDayConfig,
 } from '../utils/schedulerMetrics';
 
@@ -18,7 +19,7 @@ const formatDayName = (day?: string | null) => {
 
 type TimeValue = string | Date | null;
 
-const normalizeTimeValue = (value: TimeValue) => {
+const normalizeTimeValue = (value: TimeValue): string | null => {
 	let dateObj: Date | null = null;
 
 	if (typeof value === 'string') {
@@ -35,7 +36,7 @@ const normalizeTimeValue = (value: TimeValue) => {
 		return `${dateObj.getHours().toString().padStart(2, '0')}:00:00`;
 	}
 
-	return value;
+	return value as string | null;
 };
 
 export const DayScheduleCard: React.FC = () => {
@@ -43,6 +44,27 @@ export const DayScheduleCard: React.FC = () => {
 	const dayConfigs = (form.values.dayConfigs || []) as MaybeDayConfig[];
 	const humanEquivalent = Number(form.values.humanEquivalent || 1);
 	const [selectedDay, setSelectedDay] = useState<string | null>(null);
+	const [timeErrors, setTimeErrors] = useState<Record<string, string | null>>(
+		{}
+	);
+
+	const validateTimeRange = (
+		start: string | null,
+		end: string | null
+	): string | null => {
+		const startMinutes = parseTimeToMinutes(start ?? undefined);
+		const endMinutes = parseTimeToMinutes(end ?? undefined);
+
+		if (startMinutes === null || endMinutes === null) {
+			return null;
+		}
+
+		if (endMinutes <= startMinutes) {
+			return 'End time must be later than start time.';
+		}
+
+		return null;
+	};
 
 	return (
 		<Table
@@ -65,6 +87,7 @@ export const DayScheduleCard: React.FC = () => {
 			</Table.Thead>
 			<Table.Tbody>
 				{dayConfigs?.map((day, index) => {
+					const dayKey = day?.dayOfWeek ?? String(index);
 					const isActive = day.isActive;
 					const isSelected = selectedDay === day.dayOfWeek;
 					const dayMinutes = calculateDayMinutes(day);
@@ -74,8 +97,37 @@ export const DayScheduleCard: React.FC = () => {
 						humanEquivalent
 					);
 
-					const handleTimeChange = (value: TimeValue, fieldPath: string) => {
-						form.setFieldValue(fieldPath, normalizeTimeValue(value));
+					const handleTimeChange = (
+						value: TimeValue,
+						fieldPath: string,
+						field: 'start' | 'end'
+					) => {
+						const normalized = normalizeTimeValue(value);
+						const nextStart =
+							field === 'start' ? normalized : (day.startHour ?? null);
+						const nextEnd =
+							field === 'end' ? normalized : (day.endHour ?? null);
+
+						const error = validateTimeRange(nextStart, nextEnd);
+
+						if (error) {
+							setTimeErrors((prev) => ({ ...prev, [dayKey]: error }));
+
+							if (field === 'start') {
+								form.setFieldValue(fieldPath, normalized);
+								(form.setFieldValue as any)(
+									`dayConfigs.${index}.endHour`,
+									null
+								);
+							} else {
+								(form.setFieldValue as any)(fieldPath, null);
+							}
+
+							return;
+						}
+
+						setTimeErrors((prev) => ({ ...prev, [dayKey]: null }));
+						form.setFieldValue(fieldPath, normalized);
 					};
 
 					const toggleSelection = () => {
@@ -150,42 +202,59 @@ export const DayScheduleCard: React.FC = () => {
 
 							<Table.Td>
 								{isActive ? (
-									<Group gap='xs' wrap='nowrap' className={styles.timeRange}>
-										<Box onClick={(e) => e.stopPropagation()}>
-											<TimePicker
+									<div className={styles.timeRangeWrapper}>
+										<Group gap='xs' wrap='nowrap' className={styles.timeRange}>
+											<Box onClick={(e) => e.stopPropagation()}>
+												<TimePicker
+													size='xs'
+													aria-label='Start time'
+													withDropdown
+													format='12h'
+													variant='filled'
+													value={day.startHour}
+													minutesStep={30}
+													className={styles.timePicker}
+													onChange={(value) =>
+														handleTimeChange(
+															value,
+															`dayConfigs.${index}.startHour`,
+															'start'
+														)
+													}
+												/>
+											</Box>
+											<Text className={styles.timeSeparator}>→</Text>
+											<Box onClick={(e) => e.stopPropagation()}>
+												<TimePicker
+													size='xs'
+													aria-label='End time'
+													format='12h'
+													withDropdown
+													variant='filled'
+													value={day.endHour}
+													minutesStep={30}
+													className={styles.timePicker}
+													onChange={(value) =>
+														handleTimeChange(
+															value,
+															`dayConfigs.${index}.endHour`,
+															'end'
+														)
+													}
+												/>
+											</Box>
+										</Group>
+										{timeErrors[dayKey] ? (
+											<Text
 												size='xs'
-												aria-label='Start time'
-												withDropdown
-												format='12h'
-												variant='filled'
-												value={day.startHour ?? undefined}
-												minutesStep={30}
-												className={styles.timePicker}
-												onChange={(value) =>
-													handleTimeChange(
-														value,
-														`dayConfigs.${index}.startHour`
-													)
-												}
-											/>
-										</Box>
-										<Text className={styles.timeSeparator}>→</Text>
-										<Box onClick={(e) => e.stopPropagation()}>
-											<TimePicker
-												size='xs'
-												aria-label='End time'
-												format='12h'
-												withDropdown
-												variant='filled'
-												value={day.endHour ?? undefined}
-												minutesStep={30}
-												className={styles.timePicker}
-												onChange={(value) =>
-													handleTimeChange(value, `dayConfigs.${index}.endHour`)
-												}
-											/>
-										</Box>
-									</Group>
+												className={styles.timeError}
+												role='alert'
+												aria-live='polite'
+											>
+												{timeErrors[dayKey]}
+											</Text>
+										) : null}
+									</div>
 								) : (
 									<Text className={styles.inactiveHint}>
 										No hours configured

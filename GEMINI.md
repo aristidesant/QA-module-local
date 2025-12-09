@@ -26,6 +26,7 @@
 - ✅ Make buttons and links obvious and easy to click
 - ✅ Show loading states and error messages clearly
 - ✅ Use light mode (white/light backgrounds) by default
+- ✅ Keep hover states stable: change color or opacity, but never move, resize, or shift elements on hover
 
 ### Size & Spacing Rules (IMPORTANT)
 
