@@ -57,8 +57,8 @@ vi.mock('~/queries/knowledgeBaseQueries', async () => {
 	);
 	return {
 		...actual,
-		useKnowledgeBases: vi.fn(() => ({
-			data: mockKnowledgeBases,
+		useKnowledgeBasesPaginated: vi.fn(() => ({
+			data: { data: mockKnowledgeBases, total: mockKnowledgeBases.length },
 			isLoading: false,
 		})),
 	};
@@ -72,6 +72,19 @@ vi.mock('@mantine/hooks', async () => {
 		useDebouncedValue: (value: any) => [value, () => {}],
 	};
 });
+
+// Removed BaseTable mock to allow real table rendering
+// vi.mock('~/components/BaseTable/BaseTable', () => {
+//   return {
+//     __esModule: true,
+//     default: ({ onPaginationChange, children, ..._props }: any) => (
+//       <div>
+//         <button onClick={() => onPaginationChange?.(1, 10)}>go-page-2</button>
+//         <div>{children}</div>
+//       </div>
+//     ),
+//   };
+// });
 
 // Mock Mantine components that cause act warnings
 vi.mock('@mantine/core', async () => {
@@ -123,6 +136,17 @@ describe('KnowledgeBaseSelectionTable', () => {
 	});
 
 	describe('Rendering', () => {
+		it('calls paginated hook with default limit/offset', async () => {
+			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
+			expect(
+				knowledgeBaseQueries.useKnowledgeBasesPaginated
+			).toHaveBeenCalled();
+			const params = vi
+				.mocked(knowledgeBaseQueries.useKnowledgeBasesPaginated)
+				.mock.calls.at(-1)?.[0] as any;
+			expect(params).toEqual(expect.objectContaining({ limit: 10, offset: 0 }));
+		});
+
 		it('renders search input and type filter controls', async () => {
 			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
 
@@ -384,13 +408,43 @@ describe('KnowledgeBaseSelectionTable', () => {
 		});
 	});
 
-	describe('Custom Props', () => {
-		it('displays custom empty message when no data', async () => {
-			vi.mocked(knowledgeBaseQueries.useKnowledgeBases).mockReturnValue({
-				data: [],
+	describe('Server pagination', () => {
+		it('updates offset when changing page', async () => {
+			// Ensure pagination shows multiple pages
+			vi.mocked(
+				knowledgeBaseQueries.useKnowledgeBasesPaginated
+			).mockReturnValue({
+				data: { data: mockKnowledgeBases, total: 25 },
 				isLoading: false,
 			} as unknown as ReturnType<
-				typeof knowledgeBaseQueries.useKnowledgeBases
+				typeof knowledgeBaseQueries.useKnowledgeBasesPaginated
+			>);
+
+			const user = userEvent.setup();
+			renderWithProviders(<KnowledgeBaseSelectionTable {...defaultProps} />);
+
+			await user.click(screen.getByRole('button', { name: '2' }));
+
+			await waitFor(() => {
+				const params = vi
+					.mocked(knowledgeBaseQueries.useKnowledgeBasesPaginated)
+					.mock.calls.at(-1)?.[0] as any;
+				expect(params).toEqual(
+					expect.objectContaining({ limit: 10, offset: 10 })
+				);
+			});
+		});
+	});
+
+	describe('Custom Props', () => {
+		it('displays custom empty message when no data', async () => {
+			vi.mocked(
+				knowledgeBaseQueries.useKnowledgeBasesPaginated
+			).mockReturnValue({
+				data: { data: [], total: 0 },
+				isLoading: false,
+			} as unknown as ReturnType<
+				typeof knowledgeBaseQueries.useKnowledgeBasesPaginated
 			>);
 
 			renderWithProviders(
