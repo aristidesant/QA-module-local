@@ -1,9 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './KnowledgeBaseList.module.css';
 import { Button, Text, Skeleton, Stack } from '@mantine/core';
 import { IconPlus, IconFileText } from '@tabler/icons-react';
+import type { SortingState } from '@tanstack/react-table';
+import { useDebouncedValue } from '@mantine/hooks';
 import {
-	useKnowledgeBases,
+	useKnowledgeBasesPaginated,
 	useDeleteKnowledgeBase,
 	useRetryKnowledgeBase,
 } from '~/queries/knowledgeBaseQueries';
@@ -16,26 +18,43 @@ import KnowledgeBaseFilter from './KnowledgeBaseFilter';
 
 const KnowledgeBaseList = () => {
 	const setRight = useKnowledgeBaseStore((s) => s.setRightComponent);
-	const { data: items = [], isLoading, refetch } = useKnowledgeBases();
+	// Server-side sorting state (single-column sort)
+	const [sorting, setSorting] = useState<SortingState>([
+		{ id: 'name', desc: false },
+	]);
+
+	const sortBy = sorting?.[0]?.id;
+	const sortOrder = sorting?.[0]?.desc ? 'desc' : 'asc';
 	const deleteMutation = useDeleteKnowledgeBase();
 	const retryMutation = useRetryKnowledgeBase();
 
 	const [query, setQuery] = useState('');
 	const [statusFilter, setStatusFilter] = useState<string | null>(null);
 	const [typeFilter, setTypeFilter] = useState<string | null>(null);
+	const [debouncedQuery] = useDebouncedValue(query, 300);
 
-	const filtered = useMemo(() => {
-		const q = query.trim().toLowerCase();
-		return (items || []).filter((i: KnowledgeBaseModel) => {
-			const matchesQuery =
-				!q ||
-				(i.name || '').toLowerCase().includes(q) ||
-				(i.description || '').toLowerCase().includes(q);
-			const matchesStatus = !statusFilter || i.status === statusFilter;
-			const matchesType = !typeFilter || i.type === typeFilter;
-			return matchesQuery && matchesStatus && matchesType;
-		});
-	}, [items, query, statusFilter, typeFilter]);
+	// Pagination state (server-side)
+	const [pageIndex, setPageIndex] = useState(0); // 0-based
+	const [pageSize, setPageSize] = useState(10);
+
+	// Reset to first page when filters/sorting change
+	useEffect(() => {
+		setPageIndex(0);
+	}, [debouncedQuery, statusFilter, typeFilter, sorting]);
+
+	const { data, isLoading, refetch } = useKnowledgeBasesPaginated({
+		search: debouncedQuery || undefined,
+		status: statusFilter || undefined,
+		type: typeFilter || undefined,
+		sortBy,
+		sortOrder,
+		limit: pageSize,
+		offset: pageIndex * pageSize,
+	});
+	const items = data?.data ?? [];
+
+	// Server-side filtering: current page items only
+	const filtered = items;
 
 	const columns = useKnowledgeBaseColumns(
 		retryMutation,
@@ -44,8 +63,8 @@ const KnowledgeBaseList = () => {
 		refetch
 	);
 
-	const total = items?.length ?? 0;
-	const count = filtered.length;
+	const total = data?.total ?? 0; // total matching filters
+	const count = filtered.length; // items in current page
 
 	return (
 		<Stack gap={'xs'}>
@@ -92,11 +111,25 @@ const KnowledgeBaseList = () => {
 					<BaseTable<KnowledgeBaseModel>
 						data={filtered}
 						columns={columns}
-						initialSort={[{ id: 'name', desc: false }]}
+						initialSort={sorting}
 						onRowClick={(row) =>
 							setRight(<KnowledgeBaseForm id={Number(row.id)} />)
 						}
 						density='default'
+						filterMode='server'
+						onSortingChange={(newSorting) => {
+							setSorting(newSorting);
+						}}
+						// Server-side pagination controls
+						enablePagination
+						showPaginationControls
+						pageCount={Math.max(1, Math.ceil((data?.total ?? 0) / pageSize))}
+						pageIndex={pageIndex}
+						pageSize={pageSize}
+						onPaginationChange={(nextPageIndex, nextPageSize) => {
+							setPageIndex(nextPageIndex);
+							setPageSize(nextPageSize);
+						}}
 					/>
 				</div>
 			)}

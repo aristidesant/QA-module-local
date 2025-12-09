@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import {
 	Badge,
 	Button,
@@ -23,7 +23,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import BaseTable from '~/components/BaseTable/BaseTable';
 import type KnowledgeBaseModel from '~/models/KnowledgeBaseModel';
 import { KnowledgeBaseType } from '~/models/KnowledgeBaseModel';
-import { useKnowledgeBases } from '~/queries/knowledgeBaseQueries';
+import { useKnowledgeBasesPaginated } from '~/queries/knowledgeBaseQueries';
 import { useKnowledgeBaseSelectionStore } from '~/stores/knowledgeBaseSelectionStore';
 import styles from './KnowledgeBaseSelectionTable.module.css';
 
@@ -123,10 +123,26 @@ const KnowledgeBaseSelectionTable: React.FC<
 		typeFilter === 'ALL'
 			? undefined
 			: (typeFilter as unknown as KnowledgeBaseType);
-	const { data = [], isLoading } = useKnowledgeBases({
+	// Server-side pagination state (1-based page for backend)
+	const [pageIndex, setPageIndex] = useState(0); // 0-based in UI
+	const [pageSize, setPageSize] = useState(10);
+
+	// Reset to first page when filters change
+	useEffect(() => {
+		setPageIndex(0);
+	}, [debouncedSearch, apiType]);
+
+	const response = useKnowledgeBasesPaginated({
 		search: debouncedSearch || undefined,
 		type: apiType,
+		limit: pageSize,
+		offset: pageIndex * pageSize,
 	});
+	const isLoading = response.isLoading;
+	const data = response.data?.data ?? [];
+	const total = response.data?.total ?? 0;
+	const totalPages =
+		response.data?.totalPages ?? Math.max(1, Math.ceil(total / pageSize));
 
 	const allIds = useMemo(() => data.map((kb) => kb.id), [data]);
 	const allSelected =
@@ -312,9 +328,16 @@ const KnowledgeBaseSelectionTable: React.FC<
 					density='compact'
 					isLoading={isLoading}
 					emptyMessage={emptyMessage}
+					filterMode='server'
 					enablePagination
-					enableFiltering={false}
 					showPaginationControls
+					pageCount={totalPages}
+					pageIndex={pageIndex}
+					pageSize={pageSize}
+					onPaginationChange={(nextPageIndex, nextPageSize) => {
+						setPageIndex(nextPageIndex);
+						setPageSize(nextPageSize);
+					}}
 					onRowClick={handleRowClick}
 				/>
 			</div>
