@@ -120,7 +120,16 @@ const knowledgeBaseApi = (_authHeader?: Record<string, string>) => {
 				},
 			});
 
-			return response.data as KnowledgeBaseModel[];
+			const raw = response.data as any;
+			// Normalize shape: backend may return array or { data: KnowledgeBaseModel[] }
+			if (Array.isArray(raw)) {
+				return raw as KnowledgeBaseModel[];
+			}
+			if (raw && Array.isArray(raw.data)) {
+				return raw.data as KnowledgeBaseModel[];
+			}
+			// Fallback to empty array to prevent runtime errors
+			return [] as KnowledgeBaseModel[];
 		},
 		/**
 		 * Retrieve knowledge bases with optional filters, sorting, and pagination, returning total count.
