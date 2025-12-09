@@ -12,15 +12,13 @@
 	border-radius: var(--mantine-radius-md);
 	transition:
 		border-color 120ms ease,
-		background-color 120ms ease,
-		transform 120ms ease;
+		background-color 120ms ease;
 	cursor: default;
 }
 
 .metricCard:hover {
 	border-color: var(--metric-accent);
 	background-color: var(--mantine-color-gray-0);
-	transform: translateY(-1px);
 }
 
 .metricIcon {

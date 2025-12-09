@@ -66,9 +66,6 @@ describe('ScheduleHeader', () => {
 		expect(screen.getByText('Per Agent')).toBeInTheDocument();
 		expect(screen.getByText('3.0h')).toBeInTheDocument();
 
-		expect(screen.getByText('ETA')).toBeInTheDocument();
-		expect(screen.getByText('5d')).toBeInTheDocument();
-
 		// Actions
 		const switchEl = screen.getByLabelText('Toggle schedule status');
 		await userEvent.click(switchEl);

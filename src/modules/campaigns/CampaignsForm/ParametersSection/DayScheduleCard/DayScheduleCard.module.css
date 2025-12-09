@@ -113,6 +113,12 @@
 	gap: 8px;
 }
 
+.timeRangeWrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
 .timePicker {
 	width: 140px;
 }
@@ -125,6 +131,12 @@
 .timeSeparator {
 	font-size: var(--mantine-font-size-xs);
 	color: var(--mantine-color-gray-6);
+	font-weight: 600;
+}
+
+.timeError {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-red-6);
 	font-weight: 600;
 }
 

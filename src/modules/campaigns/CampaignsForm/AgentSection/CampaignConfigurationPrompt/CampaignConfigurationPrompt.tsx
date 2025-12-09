@@ -95,15 +95,6 @@ const CampaignConfigurationPrompt: React.FC = () => {
 							<Badge size='sm' variant='light' color='gray'>
 								{hasPrompt ? `${prompt.length} chars` : 'Empty'}
 							</Badge>
-							{contactSchemaId ? (
-								<Badge size='sm' variant='light' color='blue'>
-									Schema #{contactSchemaId}
-								</Badge>
-							) : (
-								<Badge size='sm' variant='outline' color='gray'>
-									No schema
-								</Badge>
-							)}
 						</Group>
 					</Group>
 					<Paper withBorder radius='sm' p='sm' className={styles.promptSurface}>

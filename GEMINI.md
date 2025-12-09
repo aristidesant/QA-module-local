@@ -26,6 +26,7 @@
 - ✅ Make buttons and links obvious and easy to click
 - ✅ Show loading states and error messages clearly
 - ✅ Use light mode (white/light backgrounds) by default
+- ✅ Keep hover states stable: change color or opacity, but never move, resize, or shift elements on hover
 
 ### Size & Spacing Rules (IMPORTANT)
 
@@ -123,6 +124,7 @@ export { default } from './UserCard';
 
 - **Always use Mantine components** (Button, Card, Text, Stack, Group, etc.)
 - Check the latest Mantine v8 docs if unsure about a component
+- Use `SectionCard` from `src/components/SectionCard` for any form or page sections; avoid custom card wrappers so layouts stay consistent
 
 ### Use CSS Modules
 
@@ -213,8 +215,9 @@ export { default } from './UserCard';
 
 - Put test files next to the component: `UserCard.test.tsx`
 - **One test file per component** (not multiple test files)
-- When asked to increase coverage of a test, run the coverage for that file/folder only, do not run full coverage unless user asks for it.
-- IMPORTANT: When debugging tests, ALWAYS run only the specific test file(s) or test case(s) relevant to your change. Do NOT run the entire test suite. Use targeted commands like `vitest path/to/testfile`, or `vitest -t "test name"` to run a single file or test.
+- When asked to increase coverage of a test, **only** run coverage for that specific test file (or, in rare cases, a single small folder if explicitly requested). **Do NOT** run global coverage unless the user clearly asks for a full report.
+- Default behavior: **Tests must be run one file at a time.** Always target a single test file (for example, `vitest src/components/UserCard/UserCard.test.tsx`) instead of running the full suite.
+- IMPORTANT: When debugging tests, ALWAYS run only the specific test file or a single test case relevant to your change. Do NOT run the entire test suite by default. Use targeted commands like `vitest path/to/testfile` or `vitest -t "test name"` to focus on a single file or test.
 
 ### How to Write Tests
 

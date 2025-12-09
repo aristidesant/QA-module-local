@@ -215,4 +215,46 @@ describe('DayScheduleCard', () => {
 		// Per-agent rounds to 116, team total is 231
 		expect(within(mondayRow).getByText('231 min')).toBeInTheDocument();
 	});
+
+	it('prevents setting an end time that is not later than the start time', async () => {
+		const { user, formRef } = renderComponent();
+
+		const mondayRow = screen.getByLabelText(/monday schedule/i);
+		const endInput = within(mondayRow).getByLabelText('End time');
+
+		await user.clear(endInput);
+		fireEvent.change(endInput, { target: { value: '08:00' } });
+
+		await waitFor(() => {
+			expect(
+				screen.getByText('End time must be later than start time.')
+			).toBeInTheDocument();
+		});
+
+		expect(formRef.current?.values.dayConfigs?.[0]?.endHour).toBeNull();
+	});
+
+	it('clears the end time when the start time moves past it and surfaces the error', async () => {
+		const { user, formRef } = renderComponent();
+
+		const mondayRow = screen.getByLabelText(/monday schedule/i);
+		const startInput = within(mondayRow).getByLabelText('Start time');
+
+		await user.clear(startInput);
+		fireEvent.change(startInput, { target: { value: '13:00' } });
+
+		await waitFor(() => {
+			expect(formRef.current?.values.dayConfigs?.[0]?.startHour).toBe(
+				'13:00:00'
+			);
+		});
+
+		await waitFor(() => {
+			expect(formRef.current?.values.dayConfigs?.[0]?.endHour).toBeNull();
+		});
+
+		expect(
+			screen.getByText('End time must be later than start time.')
+		).toBeInTheDocument();
+	});
 });

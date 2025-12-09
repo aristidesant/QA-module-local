@@ -6,6 +6,10 @@ import {
 	Tooltip,
 	HoverCard,
 	Badge,
+	Group,
+	Stack,
+	Box,
+	SimpleGrid,
 } from '@mantine/core';
 import {
 	IconChevronUp,
@@ -15,11 +19,11 @@ import {
 	IconUsers,
 	IconCalendarStats,
 	IconClockHour4,
-	IconFlag,
 } from '@tabler/icons-react';
 import styles from './ScheduleHeader.module.css';
 import type { Scheduler, DayConfig } from '~/models/SchedulerModel';
 import ScheduleHoverItem from './ScheduleHoverItem';
+import SmallMetricCard from '~/components/SmallMetricCard/SmallMetricCard';
 
 export interface ScheduleHeaderProps {
 	schedule?: Scheduler;
@@ -48,11 +52,13 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 }) => {
 	const activeDays = (schedule?.dayConfigs ?? []).filter((d) => d.isActive);
 	const isActive = schedule?.status === 'active';
-
 	const humanEquivalentValue =
 		typeof schedule?.humanEquivalent === 'number'
 			? schedule.humanEquivalent.toFixed(0)
-			: '—';
+			: typeof schedule?.humanEquivalent === 'string' &&
+				  !isNaN(Number(schedule.humanEquivalent))
+				? Number(schedule.humanEquivalent).toFixed(0)
+				: '—';
 
 	const metrics = [
 		{
@@ -88,15 +94,6 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 			icon: IconClockHour4,
 			tooltip: 'Hours per active agent each week',
 		},
-		{
-			label: 'ETA',
-			value:
-				typeof schedule?.estimatedCompletionDays === 'number'
-					? `${schedule.estimatedCompletionDays}d`
-					: '—',
-			icon: IconFlag,
-			tooltip: 'Estimated completion in days',
-		},
 	];
 
 	const sortedDayConfigs = [...(schedule?.dayConfigs ?? [])]
@@ -105,9 +102,13 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 
 	return (
 		<div className={styles.container}>
-			{/* Header */}
-			<div className={styles.headerRow}>
-				<div className={styles.titleGroup}>
+			<Group
+				align='center'
+				justify='space-between'
+				gap='sm'
+				className={styles.headerRow}
+			>
+				<Group align='center' gap='xs' className={styles.titleGroup}>
 					<Switch
 						size='xs'
 						checked={isActive}
@@ -115,7 +116,7 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 						aria-label='Toggle schedule status'
 					/>
 
-					<div className={styles.titleText}>
+					<Stack gap={4} className={styles.titleText}>
 						<Text
 							className={styles.scheduleName}
 							title={schedule?.name || 'Untitled Schedule'}
@@ -123,7 +124,7 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 							{schedule?.name || 'Untitled Schedule'}
 						</Text>
 
-						<div className={styles.metaRow}>
+						<Group gap='xs' className={styles.metaRow}>
 							<Badge
 								size='xs'
 								variant='light'
@@ -133,7 +134,7 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 							>
 								{isActive ? 'Active' : 'Paused'}
 							</Badge>
-							<span className={styles.metaDivider} />
+							<Box className={styles.metaDivider} />
 							<Text size='xs' c='dimmed' className={styles.metaText}>
 								{activeDays.length > 0
 									? `${activeDays.length} active day${
@@ -141,13 +142,13 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 										}`
 									: 'No active days yet'}
 							</Text>
-						</div>
-					</div>
-				</div>
+						</Group>
+					</Stack>
+				</Group>
 
-				<div className={styles.actions}>
+				<Group gap='xs' className={styles.actions}>
 					{sortedDayConfigs.length > 0 && (
-						<HoverCard width={240} openDelay={150} withinPortal withArrow>
+						<HoverCard width={260} openDelay={120} withinPortal withArrow>
 							<HoverCard.Target>
 								<ActionIcon
 									size='sm'
@@ -196,36 +197,28 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 							<IconTrash size={16} />
 						</ActionIcon>
 					</Tooltip>
-				</div>
-			</div>
+				</Group>
+			</Group>
 
-			{/* Row 2: Metrics */}
-			<div className={styles.metricsRow}>
-				{metrics.map((metric) => (
-					<Tooltip
-						key={metric.label}
-						label={metric.tooltip}
-						withArrow
-						position='top'
-						disabled={!metric.tooltip}
-					>
-						{(() => {
-							const Icon = metric.icon;
-							return (
-								<div className={styles.metric}>
-									<div className={styles.metricIcon}>
-										<Icon size={14} />
-									</div>
-									<div className={styles.metricCopy}>
-										<span className={styles.metricValue}>{metric.value}</span>
-										<span className={styles.metricLabel}>{metric.label}</span>
-									</div>
-								</div>
-							);
-						})()}
-					</Tooltip>
-				))}
-			</div>
+			<SimpleGrid
+				cols={{ base: 1, sm: 3 }}
+				spacing='xs'
+				className={styles.metricsRow}
+			>
+				{metrics.map((metric) => {
+					const Icon = metric.icon;
+					return (
+						<SmallMetricCard
+							key={metric.label}
+							icon={<Icon size={14} />}
+							value={metric.value}
+							label={metric.label}
+							color='blue'
+							tooltip={metric.tooltip}
+						/>
+					);
+				})}
+			</SimpleGrid>
 		</div>
 	);
 };
