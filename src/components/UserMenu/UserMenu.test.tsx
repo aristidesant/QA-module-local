@@ -16,6 +16,11 @@ vi.mock('~/stores/sessionStore', () => ({
 	useSessionStore: vi.fn(),
 }));
 
+const mockIsMasterClient = vi.fn();
+vi.mock('~/hooks/useIsMasterClient', () => ({
+	useIsMasterClient: () => mockIsMasterClient(),
+}));
+
 // Mock impersonation hook
 const mockIsImpersonating = vi.fn();
 vi.mock('~/hooks/useImpersonationState', () => ({
@@ -56,6 +61,7 @@ describe('UserMenu', () => {
 		mockIsImpersonating.mockReturnValue(false);
 		mockCanAccessModule.mockImplementation(() => true);
 		mockCanPerformAction.mockImplementation(() => true);
+		mockIsMasterClient.mockReturnValue(true);
 	});
 
 	it('renders user name, email and initials when not impersonating', async () => {
@@ -121,7 +127,7 @@ describe('UserMenu', () => {
 		expect(mockLogout).toHaveBeenCalled();
 	});
 
-	it('includes Users and Roles in maintenance sections when not impersonating', async () => {
+	it('includes Users, Roles, and Clients when master client and not impersonating', async () => {
 		const { useSessionStore } = await import('~/stores/sessionStore');
 		(useSessionStore as any).mockReturnValue({
 			user: { username: 'janedoe', email: 'jane@example.com' },
@@ -133,11 +139,35 @@ describe('UserMenu', () => {
 		const trigger = screen.getByRole('button', { name: /user menu/i });
 		await userEvent.click(trigger);
 
-		// Users and Roles should be available in normal mode
+		// Users, Roles, and Clients should be available in normal mode
 		await waitFor(() => {
 			expect(screen.getByText('Users')).toBeInTheDocument();
+			expect(screen.getByText('Roles')).toBeInTheDocument();
+			expect(screen.getByText('Clients')).toBeInTheDocument();
 		});
-		expect(screen.getByText('Roles')).toBeInTheDocument();
+	});
+
+	it('hides master-only maintenance entries when not a master client', async () => {
+		mockIsMasterClient.mockReturnValue(false);
+		const { useSessionStore } = await import('~/stores/sessionStore');
+		(useSessionStore as any).mockReturnValue({
+			user: { username: 'janedoe', email: 'jane@example.com' },
+			targetClient: null,
+		});
+
+		renderComponent();
+
+		const trigger = screen.getByRole('button', { name: /user menu/i });
+		await userEvent.click(trigger);
+
+		await waitFor(() => {
+			expect(screen.getByText('Profile')).toBeInTheDocument();
+		});
+		expect(screen.queryByText('Users')).not.toBeInTheDocument();
+		expect(screen.queryByText('Roles')).not.toBeInTheDocument();
+		expect(screen.queryByText('Clients')).not.toBeInTheDocument();
+		expect(screen.queryByText('Tools')).not.toBeInTheDocument();
+		expect(screen.queryByText('Prompter')).not.toBeInTheDocument();
 	});
 
 	it('renders impersonation UI and hides Users and Roles when impersonating', async () => {

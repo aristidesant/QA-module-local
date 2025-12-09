@@ -17,6 +17,7 @@ import logout from '~/utils/logout';
 import { useSessionStore } from '~/stores/sessionStore';
 import { useImpersonationState } from '~/hooks/useImpersonationState';
 import { usePermissions } from '~/hooks/usePermissions';
+import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 
@@ -24,6 +25,7 @@ export const UserMenu: React.FC = () => {
 	const { user, targetClient } = useSessionStore();
 	const { isImpersonating } = useImpersonationState();
 	const { canAccessModule, canPerformAction } = usePermissions();
+	const isMasterClient = useIsMasterClient();
 	const navigate = useNavigate();
 
 	// Get user's full name or fallback to username
@@ -66,6 +68,7 @@ export const UserMenu: React.FC = () => {
 		path: string;
 		module: ModuleEnum;
 		permission?: PermissionEnum;
+		masterOnly?: boolean;
 	};
 
 	type MaintenanceCategory = {
@@ -102,6 +105,7 @@ export const UserMenu: React.FC = () => {
 					path: '/clients',
 					module: ModuleEnum.SETTINGS,
 					permission: PermissionEnum.MANAGE,
+					masterOnly: true,
 				},
 			],
 		},
@@ -114,6 +118,7 @@ export const UserMenu: React.FC = () => {
 					path: '/tools',
 					module: ModuleEnum.TOOLS,
 					permission: PermissionEnum.MANAGE,
+					masterOnly: true,
 				},
 				{
 					label: 'Prompter',
@@ -121,6 +126,7 @@ export const UserMenu: React.FC = () => {
 					path: '/prompter',
 					module: ModuleEnum.PROMPTS,
 					permission: PermissionEnum.MANAGE,
+					masterOnly: true,
 				},
 			],
 		},
@@ -128,23 +134,26 @@ export const UserMenu: React.FC = () => {
 
 	const normalMaintenanceCategories = maintenanceCategories.map((category) => {
 		if (category.category === 'Configuration') {
+			const usersItem: MaintenanceItem = {
+				label: 'Users',
+				icon: <IconUsers size={16} />,
+				path: '/users',
+				module: ModuleEnum.USERS,
+				permission: PermissionEnum.MANAGE,
+				masterOnly: true,
+			};
+			const rolesItem: MaintenanceItem = {
+				label: 'Roles',
+				icon: <IconKey size={16} />,
+				path: '/roles',
+				module: ModuleEnum.ROLES,
+				masterOnly: true,
+			};
 			return {
 				...category,
 				items: [
 					...category.items,
-					{
-						label: 'Users',
-						icon: <IconUsers size={16} />,
-						path: '/users',
-						module: ModuleEnum.USERS,
-						permission: PermissionEnum.MANAGE,
-					},
-					{
-						label: 'Roles',
-						icon: <IconKey size={16} />,
-						path: '/roles',
-						module: ModuleEnum.ROLES,
-					},
+					...(isMasterClient ? [usersItem, rolesItem] : []),
 				],
 			};
 		}
@@ -157,6 +166,9 @@ export const UserMenu: React.FC = () => {
 			.map((category) => ({
 				...category,
 				items: category.items.filter((item) => {
+					if (item.masterOnly && !isMasterClient) {
+						return false;
+					}
 					if (item.permission) {
 						return canPerformAction(item.module, item.permission);
 					}

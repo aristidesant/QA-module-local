@@ -14,6 +14,12 @@ vi.mock('~/components/AccessDenied/AccessDenied', () => ({
 }));
 
 // Mock the permissions hook
+const mockUseIsMasterClient = vi.fn();
+
+vi.mock('~/hooks/useIsMasterClient', () => ({
+	useIsMasterClient: () => mockUseIsMasterClient(),
+}));
+
 vi.mock('~/hooks/usePermissions', () => ({
 	usePermissions: vi.fn(),
 }));
@@ -28,6 +34,7 @@ describe('ModuleGuard', () => {
 			canAccessModule: mockCanAccessModule,
 			canPerformAction: mockCanPerformAction,
 		});
+		mockUseIsMasterClient.mockReturnValue(true);
 	});
 
 	it('renders children when user has module access (no permission specified)', () => {
@@ -126,5 +133,38 @@ describe('ModuleGuard', () => {
 		);
 
 		expect(screen.getByTestId('outlet-content')).toBeInTheDocument();
+	});
+
+	it('renders AccessDenied when masterOnly is true and user is not master client', () => {
+		mockUseIsMasterClient.mockReturnValue(false);
+		mockCanAccessModule.mockReturnValue(true);
+
+		renderWithProviders(
+			<MemoryRouter>
+				<ModuleGuard module={ModuleEnum.SETTINGS} masterOnly>
+					<div data-testid='child-content'>Child Content</div>
+				</ModuleGuard>
+			</MemoryRouter>
+		);
+
+		expect(screen.getByTestId('access-denied')).toBeInTheDocument();
+		expect(screen.queryByTestId('child-content')).not.toBeInTheDocument();
+		expect(mockCanAccessModule).not.toHaveBeenCalled();
+	});
+
+	it('renders children when masterOnly is true and user is master client', () => {
+		mockUseIsMasterClient.mockReturnValue(true);
+		mockCanAccessModule.mockReturnValue(true);
+
+		renderWithProviders(
+			<MemoryRouter>
+				<ModuleGuard module={ModuleEnum.SETTINGS} masterOnly>
+					<div data-testid='child-content'>Child Content</div>
+				</ModuleGuard>
+			</MemoryRouter>
+		);
+
+		expect(screen.getByTestId('child-content')).toBeInTheDocument();
+		expect(mockCanAccessModule).toHaveBeenCalledWith(ModuleEnum.SETTINGS);
 	});
 });
