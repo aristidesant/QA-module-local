@@ -34,8 +34,8 @@ import SectionTitle from '~/components/SectionTitle';
 import type ContactGroup from '~/models/ContactGroup';
 import usePermissions from '~/hooks/usePermissions';
 import ExtendWavesModal from '~/modules/campaigns/components/ExtendWavesModal';
-import { ModuleEnum } from '~/contants/ModuleEnum';
-import { PermissionEnum } from '~/contants/PermissionEnum';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import {
 	useDeleteContactGroup,
 	useGetContactGroups,

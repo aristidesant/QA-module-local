@@ -1,208 +1,65 @@
 .voicePlayer {
-  background: linear-gradient(135deg, var(--mantine-color-blue-6), var(--mantine-color-blue-7));
-  padding: 12px 18px;
-  border-radius: 38px;
-  margin: 6px 0;
-  box-shadow: 
-    0 6px 24px 0 rgba(37, 117, 252, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.voicePlayer::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.05) 50%, transparent 70%);
-  pointer-events: none;
-  width: 100%;
-  height: 100%;
-}
-
-.voicePlayer:hover {
-  box-shadow: 
-    0 9px 30px 0 rgba(37, 117, 252, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  transform: translateY(-1.5px);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+	background: var(--mantine-color-gray-0);
+	padding: 12px 16px;
+	border-radius: 16px;
+	border: 1px solid var(--mantine-color-gray-3);
+	width: 100%;
+	box-sizing: border-box;
 }
 
 .iconWrapper {
-  padding: 4px;
-  border-radius: 9px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+	padding: 6px;
+	border-radius: 12px;
+	background: var(--mantine-color-blue-0);
+	color: var(--mantine-color-blue-7);
+	border: 1px solid var(--mantine-color-blue-2);
 }
 
 .waveIcon {
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+	filter: none;
 }
 
 .voiceLabel {
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+	font-weight: 600;
+	letter-spacing: 0.3px;
+	color: var(--mantine-color-gray-7);
 }
 
 .voiceName {
-  font-weight: 500;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+	font-weight: 600;
+	color: var(--mantine-color-blue-7);
 }
 
 .playButtonWrapper {
-  position: relative;
-  flex-shrink: 0;
-  margin-left: auto;
-}
-
-.playButtonWrapper::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: conic-gradient(from 0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
-  border-radius: 50%;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: 0;
-}
-
-.playButtonWrapper:hover::before {
-  opacity: 1;
+	position: relative;
+	flex-shrink: 0;
+	margin-left: auto;
 }
 
 .playButton {
-  background: linear-gradient(135deg, #ffffff, #f8f9fa);
-  border: none;
-  color: var(--mantine-color-blue-7);
-  padding: 0;
-  min-width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  box-shadow: 
-    0 4px 15px 0 rgba(37, 117, 252, 0.25),
-    0 1px 6px 0 rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-  border: 1px solid rgba(255, 255, 255, 0.9);
+	background: var(--mantine-color-blue-6);
+	color: var(--mantine-color-white);
+	min-width: 44px;
+	height: 44px;
+	border-radius: 14px;
+	border: 1px solid var(--mantine-color-blue-6);
+	transition:
+		background-color 0.2s ease,
+		transform 0.2s ease,
+		border-color 0.2s ease;
 }
 
-.playButton::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, 
-    transparent 30%, 
-    rgba(37, 117, 252, 0.1) 50%, 
-    transparent 70%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
+.playButton:hover:not(:disabled) {
+	background: var(--mantine-color-blue-7);
+	border-color: var(--mantine-color-blue-7);
+	transform: translateY(-1px);
 }
 
-.playButton:hover {
-  background: linear-gradient(135deg, #f1f3f4, #e9ecef);
-  color: var(--mantine-color-blue-8);
-  transform: scale(1.06);
-  box-shadow: 
-    0 6px 21px 0 rgba(37, 117, 252, 0.35),
-    0 3px 9px 0 rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(37, 117, 252, 0.2);
+.playButton:disabled {
+	opacity: 0.6;
 }
 
-.playButton:hover::before {
-  opacity: 1;
-}
-
-.playButton:active {
-  transform: scale(1.01);
-  background: linear-gradient(135deg, #e9ecef, #dee2e6);
-  box-shadow: 
-    0 3px 12px 0 rgba(37, 117, 252, 0.3),
-    0 1px 4px 0 rgba(0, 0, 0, 0.1),
-    inset 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.playButton.playing {
-  background: linear-gradient(135deg, var(--mantine-color-blue-6), var(--mantine-color-blue-7));
-  color: var(--mantine-color-white);
-  animation: playingPulse 3s infinite;
-  box-shadow: 
-    0 4px 18px 0 rgba(37, 117, 252, 0.4),
-    0 0 15px 0 rgba(37, 117, 252, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 4px 16px 0 rgba(37, 117, 252, 0.2);
-  }
-  50% {
-    box-shadow: 0 4px 20px 0 rgba(37, 117, 252, 0.4);
-  }
-  100% {
-    box-shadow: 0 4px 16px 0 rgba(37, 117, 252, 0.2);
-  }
-}
-
-@keyframes playingPulse {
-  0% {
-    box-shadow: 
-      0 4px 18px 0 rgba(37, 117, 252, 0.4),
-      0 0 15px 0 rgba(37, 117, 252, 0.3);
-  }
-  50% {
-    box-shadow: 
-      0 6px 24px 0 rgba(37, 117, 252, 0.6),
-      0 0 22px 0 rgba(37, 117, 252, 0.5);
-    transform: scale(1.04);
-  }
-  100% {
-    box-shadow: 
-      0 4px 18px 0 rgba(37, 117, 252, 0.4),
-      0 0 15px 0 rgba(37, 117, 252, 0.3);
-  }
-}
-
-/* Override disabled button styles for better visual feedback */
-.playButton[disabled] {
-  opacity: 0.4 !important;
-  cursor: not-allowed !important;
-  transform: none !important;
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef) !important;
-  color: var(--mantine-color-gray-6) !important;
-  box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.05) !important;
-  border: 1px solid rgba(0, 0, 0, 0.1) !important;
-}
-
-.playButton[disabled]:hover {
-  transform: none !important;
-  box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.05) !important;
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef) !important;
-  color: var(--mantine-color-gray-6) !important;
-}
-
-.playButton[disabled]::before {
-  display: none;
+.playing {
+	background: var(--mantine-color-blue-8);
+	border-color: var(--mantine-color-blue-8);
 }

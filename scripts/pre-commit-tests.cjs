@@ -34,7 +34,7 @@ function getStagedFiles() {
 					!file.includes('test-setup.d.ts') &&
 					!file.includes('/models/') &&
 					!file.includes('/test-utils/') &&
-					!file.includes('/contants/') &&
+					!file.includes('/constants/') &&
 					!file.includes('__tests__') &&
 					!file.endsWith('routes.tsx') &&
 					!file.endsWith('App.tsx') &&
@@ -65,7 +65,7 @@ function getNewFiles() {
 					!file.includes('test-setup.d.ts') &&
 					!file.includes('/models/') &&
 					!file.includes('/test-utils/') &&
-					!file.includes('/contants/') &&
+					!file.includes('/constants/') &&
 					!file.includes('__tests__') &&
 					!file.endsWith('/index.ts') && // Exclude barrel/re-export files
 					!file.endsWith('routes.tsx') &&

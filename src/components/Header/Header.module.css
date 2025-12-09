@@ -172,12 +172,11 @@
 .userMenu:hover {
 	background: rgba(241, 245, 249, 1);
 	transform: translateY(-1px);
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .userAvatar {
 	border-radius: 50%;
-	background: linear-gradient(45deg, #60a5fa, #3b82f6);
+	background: var(--mantine-color-blue-6);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -220,7 +219,7 @@
 	width: 28px;
 	height: 28px;
 	border-radius: 50%;
-	background: linear-gradient(45deg, #60a5fa, #3b82f6);
+	background: var(--mantine-color-blue-6);
 	display: flex;
 	align-items: center;
 	justify-content: center;

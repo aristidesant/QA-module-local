@@ -4,8 +4,8 @@ import {
 	IconPhoneCall,
 } from '@tabler/icons-react';
 import { ReactNode } from 'react';
-import { ModuleEnum } from '~/contants/ModuleEnum';
-import { PermissionEnum } from '~/contants/PermissionEnum';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import styles from './Sidebar.module.css';
 
 export type MenuItem = {

@@ -12,8 +12,8 @@ import {
 import RightSectionCard from '~/components/RightSectionCard';
 import { ConversationsModel } from '~/models/ConversationsModels';
 import usePermissions from '~/hooks/usePermissions';
-import { ModuleEnum } from '~/contants/ModuleEnum';
-import { PermissionEnum } from '~/contants/PermissionEnum';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import styles from './ConversationActions.module.css';
 
 interface ConversationActionsProps {

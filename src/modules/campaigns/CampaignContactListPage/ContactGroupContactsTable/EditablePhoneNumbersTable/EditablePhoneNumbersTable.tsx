@@ -24,8 +24,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import styles from './EditablePhoneNumbersTable.module.css';
 import AddPhoneNumbersModal from './AddPhoneNumbersModal';
 import usePermissions from '~/hooks/usePermissions';
-import { ModuleEnum } from '~/contants/ModuleEnum';
-import { PermissionEnum } from '~/contants/PermissionEnum';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 
 interface EditablePhoneNumbersTableProps {
 	contactId: number;

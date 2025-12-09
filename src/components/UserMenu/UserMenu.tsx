@@ -17,8 +17,8 @@ import logout from '~/utils/logout';
 import { useSessionStore } from '~/stores/sessionStore';
 import { useImpersonationState } from '~/hooks/useImpersonationState';
 import { usePermissions } from '~/hooks/usePermissions';
-import { ModuleEnum } from '~/contants/ModuleEnum';
-import { PermissionEnum } from '~/contants/PermissionEnum';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 
 export const UserMenu: React.FC = () => {
 	const { user, targetClient } = useSessionStore();

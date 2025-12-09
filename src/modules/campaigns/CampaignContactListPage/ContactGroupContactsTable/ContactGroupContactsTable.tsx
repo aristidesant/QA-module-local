@@ -25,8 +25,8 @@ import {
 import EditablePhoneNumbersTable from './EditablePhoneNumbersTable';
 import AppendContactsModal from './AppendContactsModal';
 import usePermissions from '~/hooks/usePermissions';
-import { ModuleEnum } from '~/contants/ModuleEnum';
-import { PermissionEnum } from '~/contants/PermissionEnum';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 
 interface ContactGroupContactsTableProps {
 	contactGroupId: number;

@@ -3,8 +3,8 @@ import { Button, Modal, Stack, Text } from '@mantine/core';
 import { IconCalendarTime, IconLock, IconPlus } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import ContentContainer from '~/components/ContentContainer';
-import { ModuleEnum } from '~/contants/ModuleEnum';
-import { PermissionEnum } from '~/contants/PermissionEnum';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import { usePermissions } from '~/hooks/usePermissions';
 import type { PredefinedScheduleConfig } from '~/models/PredefinedScheduleConfig';
 import {

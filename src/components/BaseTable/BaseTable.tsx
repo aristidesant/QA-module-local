@@ -1,16 +1,19 @@
 import React from 'react';
 import {
 	ColumnDef,
-	flexRender,
-	getCoreRowModel,
-	getSortedRowModel,
-	getFilteredRowModel,
-	getPaginationRowModel,
-	getExpandedRowModel,
+	ColumnFiltersState,
+	ColumnMeta,
+	ExpandedState,
+	PaginationState,
 	Row,
 	SortingState,
-	ColumnFiltersState,
-	ExpandedState,
+	Updater,
+	flexRender,
+	getCoreRowModel,
+	getExpandedRowModel,
+	getFilteredRowModel,
+	getPaginationRowModel,
+	getSortedRowModel,
 	useReactTable,
 } from '@tanstack/react-table';
 import {
@@ -30,11 +33,23 @@ import styles from './BaseTable.module.css';
 
 export type FilterMode = 'client' | 'server';
 
+type BaseTableColumnMetaBase = {
+	headerClassName?: string;
+	cellClassName?: string;
+};
+
+type BaseTableColumnMeta<TData> = ColumnMeta<TData, unknown> &
+	BaseTableColumnMetaBase;
+
+export type BaseTableColumnDef<TData> = ColumnDef<TData, unknown> & {
+	meta?: BaseTableColumnMeta<TData>;
+};
+
 export type BaseTableProps<TData> = {
 	data: TData[];
 	selectedRowId?: string | number | null;
 	getRowId?: (row: TData) => string | number;
-	columns: ColumnDef<TData, any>[];
+	columns: BaseTableColumnDef<TData>[];
 	initialSort?: SortingState;
 	onRowClick?: (row: TData) => void;
 	className?: string;
@@ -135,7 +150,7 @@ function BaseTable<TData>({
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
 		[]
 	);
-	const [pagination, setPagination] = React.useState({
+	const [pagination, setPagination] = React.useState<PaginationState>({
 		pageIndex,
 		pageSize,
 	});
@@ -145,7 +160,7 @@ function BaseTable<TData>({
 
 	// Handle sorting changes
 	const handleSortingChange = React.useCallback(
-		(updater: any) => {
+		(updater: Updater<SortingState>) => {
 			setSorting(updater);
 			if (filterMode === 'server' && onSortingChangeProp) {
 				const newSorting =
@@ -158,7 +173,7 @@ function BaseTable<TData>({
 
 	// Handle filter changes
 	const handleFilterChange = React.useCallback(
-		(updater: any) => {
+		(updater: Updater<ColumnFiltersState>) => {
 			setColumnFilters(updater);
 			if (filterMode === 'server' && onFilterChange) {
 				const newFilters =
@@ -171,7 +186,7 @@ function BaseTable<TData>({
 
 	// Handle pagination changes
 	const handlePaginationChange = React.useCallback(
-		(updater: any) => {
+		(updater: Updater<PaginationState>) => {
 			setPagination(updater);
 			if (filterMode === 'server' && onPaginationChange) {
 				const newPagination =
@@ -200,13 +215,15 @@ function BaseTable<TData>({
 
 	// Handle expanded state changes
 	const handleExpandedChange = React.useCallback(
-		(updater: any) => {
+		(updater: Updater<ExpandedState>) => {
 			setExpanded(updater);
 			if (onExpandedChange) {
 				const newExpanded =
 					typeof updater === 'function' ? updater(expanded) : updater;
-				const expandedIds = Object.keys(newExpanded).filter(
-					(key) => newExpanded[key]
+				const expandedRecord =
+					typeof newExpanded === 'boolean' ? {} : newExpanded;
+				const expandedIds = Object.keys(expandedRecord).filter(
+					(key) => expandedRecord[key]
 				);
 				onExpandedChange(expandedIds);
 			}
@@ -276,9 +293,11 @@ function BaseTable<TData>({
 										styles.th,
 										density === 'compact' ? styles.compactTh : '',
 										header.column.getCanSort() ? styles.sortable : '',
-										// Allow column-level header className via meta
-										(header.column.columnDef.meta as any)?.headerClassName ||
-											'',
+										(
+											header.column.columnDef.meta as
+												| BaseTableColumnMeta<TData>
+												| undefined
+										)?.headerClassName || '',
 									]
 										.filter(Boolean)
 										.join(' ')}
@@ -398,8 +417,11 @@ function BaseTable<TData>({
 												className={[
 													styles.td,
 													density === 'compact' ? styles.compactTd : '',
-													(cell.column.columnDef.meta as any)?.cellClassName ||
-														'',
+													(
+														cell.column.columnDef.meta as
+															| BaseTableColumnMeta<TData>
+															| undefined
+													)?.cellClassName || '',
 												]
 													.filter(Boolean)
 													.join(' ')}

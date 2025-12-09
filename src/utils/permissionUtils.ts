@@ -1,5 +1,5 @@
-import { ModuleEnum } from '~/contants/ModuleEnum';
-import { PermissionEnum } from '~/contants/PermissionEnum';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import type { RoleModulePermissionModel } from '~/models/RoleModel';
 import type { UserModel, UserRoleModel } from '~/models/UserModels';
 

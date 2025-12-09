@@ -3,7 +3,7 @@ import { beforeEach, describe, it, expect, vi } from 'vitest';
 import { MemoryRouter } from 'react-router';
 import { MantineProvider } from '@mantine/core';
 import { Sidebar, renderMenuItem } from './Sidebar';
-import { ModuleEnum } from '~/contants/ModuleEnum';
+import { ModuleEnum } from '~/constants/ModuleEnum';
 
 const { mockCanAccessModule, mockUsePermissions } = vi.hoisted(() => {
 	const canAccess = vi.fn(() => true);

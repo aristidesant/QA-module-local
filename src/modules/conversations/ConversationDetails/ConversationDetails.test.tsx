@@ -9,7 +9,23 @@ import {
 	useFetchAndProcessConversation,
 	useExportConversationPdf,
 } from '~/queries/conversationsQueries';
-import usePermissions from '~/hooks/usePermissions';
+import type { PermissionEvaluator } from '~/hooks/usePermissions';
+
+const { mockUsePermissions } = vi.hoisted(() => ({
+	mockUsePermissions: vi.fn<() => PermissionEvaluator>(),
+}));
+
+const buildPermissionEvaluator = (
+	overrides: Partial<PermissionEvaluator> = {}
+): PermissionEvaluator => ({
+	activeClientId: 1,
+	permissionMap: {},
+	canAccessModule: () => true,
+	canPerformAction: () => false,
+	hasAnyPermission: () => false,
+	hasAllPermissions: () => false,
+	...overrides,
+});
 
 vi.mock('~/queries/conversationsQueries', () => ({
 	useGetConversation: vi.fn(),
@@ -20,7 +36,9 @@ vi.mock('~/queries/conversationsQueries', () => ({
 }));
 
 vi.mock('~/hooks/usePermissions', () => ({
-	default: vi.fn(),
+	__esModule: true,
+	default: mockUsePermissions,
+	usePermissions: mockUsePermissions,
 }));
 
 describe('ConversationDetails', () => {
@@ -33,9 +51,7 @@ describe('ConversationDetails', () => {
 			isLoading: true,
 			isFetching: false,
 		});
-		(usePermissions as unknown as any).mockReturnValue({
-			canAccessModule: () => true,
-		});
+		mockUsePermissions.mockReturnValue(buildPermissionEvaluator());
 
 		renderWithProviders(
 			<MemoryRouter>
@@ -53,9 +69,11 @@ describe('ConversationDetails', () => {
 			isFetching: false,
 			data: null,
 		});
-		(usePermissions as unknown as any).mockReturnValue({
-			canAccessModule: () => false,
-		});
+		mockUsePermissions.mockReturnValue(
+			buildPermissionEvaluator({
+				canAccessModule: () => false,
+			})
+		);
 
 		renderWithProviders(
 			<MemoryRouter>
@@ -80,10 +98,11 @@ describe('ConversationDetails', () => {
 			isFetching: false,
 			data: mockConversation,
 		});
-		(usePermissions as unknown as any).mockReturnValue({
-			canAccessModule: () => true,
-			canPerformAction: () => true,
-		});
+		mockUsePermissions.mockReturnValue(
+			buildPermissionEvaluator({
+				canPerformAction: () => true,
+			})
+		);
 		(useFailAndPauseConversation as unknown as any).mockReturnValue({
 			mutate: vi.fn(),
 			isPending: false,

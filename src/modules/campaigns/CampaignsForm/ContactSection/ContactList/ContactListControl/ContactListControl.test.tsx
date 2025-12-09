@@ -2,8 +2,8 @@ import { screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import ContactListControl from './ContactListControl';
 import renderWithProviders from '~/test-utils/renderWithProviders';
-import { ModuleEnum } from '~/contants/ModuleEnum';
-import { PermissionEnum } from '~/contants/PermissionEnum';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import type ContactGroup from '~/models/ContactGroup';
 
 const mockCanPerformAction = vi.fn();

@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { MASTER_CLIENT_ID } from '~/contants/client';
+import { MASTER_CLIENT_ID } from '~/constants/client';
 import { useSessionStore } from '~/stores/sessionStore';
 import { useIsMasterClient } from '../useIsMasterClient';
 

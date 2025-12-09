@@ -26,7 +26,10 @@ import useCampaignsPredefinedParams, {
 import { deepMergeConfig } from '~/utils/objectUtils';
 import type { CampaignPredefinedConversationConfig } from '~/models/CampaignPredefinedParam';
 // import ConfigurationSummary from '../CampaignsForm/AgentSection/CampaignConfigurationPredefinedParams/ConfigurationSummary';
-import { CreateCampaignWithAgentDTO } from '~/api/campaignsApi';
+import {
+	CreateCampaignWithAgentDTO,
+	type ConversationAgentConfig,
+} from '~/api/campaignsApi';
 
 type AddNewCampaignFormProps = {
 	onComplete?: () => void;
@@ -129,7 +132,7 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 		const campaignType = values.campaign.type;
 
 		// Build the conversationConfig.agent object with the phone number
-		const agentConfig: any = {
+		const agentConfig: ConversationAgentConfig = {
 			...(values.agent.conversationConfig?.agent || {}),
 		};
 

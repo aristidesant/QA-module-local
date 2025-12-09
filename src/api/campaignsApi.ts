@@ -35,6 +35,20 @@ export interface DayConfig {
 	hourConfigs: HourConfig[];
 }
 
+export type ConversationAgentConfig = {
+	prompt?: {
+		prompt?: string;
+	};
+	outboundPhoneNumberId?: number;
+	inboundPhoneNumberId?: number;
+	[key: string]: unknown;
+};
+
+export type ConversationConfigPayload = {
+	agent?: ConversationAgentConfig;
+	[key: string]: unknown;
+};
+
 export interface CreateCampaignScheduleDTO {
 	name: string;
 	description: string;
@@ -56,22 +70,35 @@ export interface CreateCampaignWithAgentDTO {
 		defaultMaxWaves?: number;
 	};
 	agent: {
-		conversationConfig?: {
-			agent?: {
-				prompt?: {
-					prompt?: string;
-				};
-				outboundPhoneNumberId?: number;
-				inboundPhoneNumberId?: number;
-			};
-			[key: string]: any;
-		};
-		platformSettings?: Record<string, any>;
+		conversationConfig?: ConversationConfigPayload;
+		platformSettings?: Record<string, unknown>;
 		name: string;
 		type: 'INBOUND' | 'OUTBOUND';
 		voiceId: string;
 	};
 }
+
+type AgentConfigPayload = {
+	conversationConfig?: {
+		agent?: {
+			prompt?: Record<string, unknown> | string;
+		};
+	};
+};
+
+const removePromptText = (agentConfig?: AgentConfigPayload) => {
+	const agentConversation = agentConfig?.conversationConfig?.agent;
+
+	if (
+		agentConversation &&
+		agentConversation.prompt &&
+		typeof agentConversation.prompt === 'object'
+	) {
+		const { prompt: _rawPrompt, ...restPrompt } =
+			agentConversation.prompt as Record<string, unknown>;
+		agentConversation.prompt = restPrompt;
+	}
+};
 
 /**
  * Generic Campaigns API client (uses global axios interceptors for auth)
@@ -89,7 +116,7 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 
 		// FIND ALL campaigns
 		findAllCampaigns: async (
-			params?: Record<string, any>,
+			params?: Record<string, unknown>,
 			extraHeaders?: Record<string, string>
 		) => {
 			const response = await axios.get<Campaign[]>(
@@ -105,7 +132,7 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 
 		// FIND ALL campaigns with pagination
 		findAllCampaignsPaginated: async (
-			params?: Record<string, any>,
+			params?: Record<string, unknown>,
 			extraHeaders?: Record<string, string>
 		) => {
 			const response = await axios.get<PaginatedResponse<Campaign>>(
@@ -174,9 +201,7 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 
 		// UPDATE campaign (PATCH)
 		updateCampaign: async (campaignId: string, data: Partial<Campaign>) => {
-			if (data.agentConfig?.conversationConfig?.agent?.prompt?.prompt) {
-				delete (data.agentConfig.conversationConfig.agent.prompt as any).prompt;
-			}
+			removePromptText(data.agentConfig);
 
 			const response = await axios.patch<Campaign>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}`,
@@ -189,9 +214,7 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 			campaignId: string,
 			data: Partial<Campaign>
 		) => {
-			if (data.agentConfig?.conversationConfig?.agent?.prompt?.prompt) {
-				delete (data.agentConfig.conversationConfig.agent.prompt as any).prompt;
-			}
+			removePromptText(data.agentConfig);
 
 			const response = await axios.patch<Campaign>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}/details`,

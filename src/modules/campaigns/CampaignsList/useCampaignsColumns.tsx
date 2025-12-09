@@ -23,8 +23,8 @@ import {
 import type { Campaign } from '~/models/CampaignsModel';
 // useNavigate removed; no client-side navigation from columns
 import usePermissions from '~/hooks/usePermissions';
-import { ModuleEnum } from '~/contants/ModuleEnum';
-import { PermissionEnum } from '~/contants/PermissionEnum';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import {
 	CampaignStatus,
 	CampaignStatusConfig,
@@ -79,7 +79,7 @@ export const useCampaignsColumns = ({
 				const campaign = row.original;
 				return (
 					<Group gap='sm' wrap='nowrap'>
-						<HoverCard width={280} shadow='md' withArrow position='right'>
+						<HoverCard width={280} shadow='none' withArrow position='right'>
 							<HoverCard.Target>
 								<ThemeIcon
 									variant='light'

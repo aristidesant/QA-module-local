@@ -1,6 +1,6 @@
 import type { ClientModel } from './ClientModel';
 import type { RoleModel, RoleModulePermissionModel } from './RoleModel';
-import { PermissionEnum } from '~/contants/PermissionEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 
 export interface UserModel {
 	id: number;
@@ -43,11 +43,10 @@ export interface ImpersonatedClient {
 	exp: number;
 }
 
-export interface CreateUserPayload
-	extends Omit<
-		UserModel,
-		'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'status'
-	> {
+export interface CreateUserPayload extends Omit<
+	UserModel,
+	'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'status'
+> {
 	status?: string;
 	password?: string;
 }

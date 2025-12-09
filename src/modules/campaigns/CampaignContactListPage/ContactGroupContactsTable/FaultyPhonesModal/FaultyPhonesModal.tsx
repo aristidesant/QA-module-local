@@ -27,8 +27,8 @@ import { useUpdateContactPhoneNumber } from '~/queries/contactsQueries';
 import { useQueryClient } from '@tanstack/react-query';
 import styles from './FaultyPhonesModal.module.css';
 import usePermissions from '~/hooks/usePermissions';
-import { ModuleEnum } from '~/contants/ModuleEnum';
-import { PermissionEnum } from '~/contants/PermissionEnum';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 
 interface FaultyPhonesModalProps {
 	opened: boolean;

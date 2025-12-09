@@ -11,8 +11,8 @@ import {
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import { useEffect } from 'react';
 import { usePermissions } from '~/hooks/usePermissions';
-import { ModuleEnum } from '~/contants/ModuleEnum';
-import { PermissionEnum } from '~/contants/PermissionEnum';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import styles from './ConfigurationsPage.module.css';
 export default function ConfigurationsPage() {
 	const location = useLocation();

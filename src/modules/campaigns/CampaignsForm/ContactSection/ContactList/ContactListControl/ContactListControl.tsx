@@ -8,8 +8,8 @@ import {
 } from '@tabler/icons-react';
 import type ContactGroup from '~/models/ContactGroup';
 import usePermissions from '~/hooks/usePermissions';
-import { ModuleEnum } from '~/contants/ModuleEnum';
-import { PermissionEnum } from '~/contants/PermissionEnum';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import {
 	useStartOutboundCampaign,
 	usePauseOutboundCampaign,

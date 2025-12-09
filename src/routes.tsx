@@ -7,7 +7,7 @@ import RouteProtecter, {
 	clientLoader as routeProtecterLoader,
 } from './components/RouteProtecter/RouteProtecter';
 import ModuleGuard from './components/RouteGuards/ModuleGuard';
-import { ModuleEnum } from '~/contants/ModuleEnum';
+import { ModuleEnum } from '~/constants/ModuleEnum';
 import SuspenseFallback from './components/SuspenseFallback';
 const Layout = React.lazy(() => import('./components/Layout'));
 
@@ -63,7 +63,7 @@ const WelcomeCard = React.lazy(
 );
 import { LoginForm } from './modules/auth/LoginForm';
 import CampaignLiveMetricPage from './modules/campaigns/CampaignLiveMetricPage/CampaignLiveMetricPage';
-import { PermissionEnum } from './contants/PermissionEnum';
+import { PermissionEnum } from './constants/PermissionEnum';
 const KnowledgeBasePage = React.lazy(
 	() => import('./modules/knowledge-bases/KnowledgeBasePage/KnowledgeBasePage')
 );

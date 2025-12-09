@@ -3,7 +3,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { UserMenu } from './UserMenu';
-import { ModuleEnum } from '~/contants/ModuleEnum';
+import { ModuleEnum } from '~/constants/ModuleEnum';
 
 // Mock react-router
 const mockNavigate = vi.fn();

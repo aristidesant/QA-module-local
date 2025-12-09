@@ -14,11 +14,7 @@
 	width: 80px;
 	height: 80px;
 	border-radius: 50%;
-	background: linear-gradient(
-		135deg,
-		var(--mantine-color-indigo-5),
-		var(--mantine-color-blue-6)
-	);
+	background: var(--mantine-color-indigo-5);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -26,7 +22,6 @@
 	font-weight: 700;
 	color: white;
 	letter-spacing: 1px;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 	border: 3px solid white;
 }
 

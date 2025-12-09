@@ -55,7 +55,7 @@ const useUsersColumns = ({
 
 					return (
 						<Group gap='xs' align='center'>
-							<HoverCard width={280} shadow='md'>
+							<HoverCard width={280} shadow='none'>
 								<HoverCard.Target>
 									<ActionIcon variant='subtle' size='sm'>
 										<IconInfoCircle size={14} />
@@ -85,7 +85,7 @@ const useUsersColumns = ({
 					const clientName = client.name || `Client #${client.id}`;
 
 					return (
-						<HoverCard width={280} shadow='md'>
+						<HoverCard width={280} shadow='none'>
 							<HoverCard.Target>
 								<Text fz='xs'>{clientName}</Text>
 							</HoverCard.Target>

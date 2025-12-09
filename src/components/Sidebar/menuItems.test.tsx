@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ModuleEnum } from '~/contants/ModuleEnum';
+import { ModuleEnum } from '~/constants/ModuleEnum';
 import { menuItems } from './menuItems';
 
 describe('menuItems', () => {

@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import type { TranscriptContent } from '~/models/ConversationsModels';
 import usePermissions from '~/hooks/usePermissions';
-import { ModuleEnum } from '~/contants/ModuleEnum';
+import { ModuleEnum } from '~/constants/ModuleEnum';
 import AccessDenied from '~/components/AccessDenied';
 
 import { TranscriptViewer } from '~/modules/conversations/TranscriptViewer';

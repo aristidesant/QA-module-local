@@ -32,8 +32,8 @@ import { useGetAgent } from '~/queries/agentQueries';
 import { useNavigate } from 'react-router';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 import usePermissions from '~/hooks/usePermissions';
-import { ModuleEnum } from '~/contants/ModuleEnum';
-import { PermissionEnum } from '~/contants/PermissionEnum';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 
 interface CampaignFiltersType {
 	type?: string;

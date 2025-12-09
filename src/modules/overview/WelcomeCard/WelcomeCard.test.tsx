@@ -2,7 +2,6 @@ import { screen } from '@testing-library/react';
 import { describe, it, beforeEach, vi } from 'vitest';
 import WelcomeCard from './WelcomeCard';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
-import { MemoryRouter } from 'react-router';
 
 // Mock hooks
 vi.mock('~/hooks/useIsMasterClient', () => ({
@@ -59,11 +58,7 @@ describe('WelcomeCard', () => {
 			user: { clientId: 42 },
 		} as any);
 
-		renderWithProviders(
-			<MemoryRouter>
-				<WelcomeCard />
-			</MemoryRouter>
-		);
+		renderWithProviders(<WelcomeCard />);
 
 		// default heading and subheading
 		expect(screen.getByText('Welcome')).toBeInTheDocument();
@@ -72,12 +67,13 @@ describe('WelcomeCard', () => {
 		).toBeInTheDocument();
 
 		// Welcome card content
+		expect(screen.getByText('Your workspace overview')).toBeInTheDocument();
 		expect(
 			screen.getByText(
-				'Stay organized across campaigns, agents, and conversations'
+				'Manage campaigns, agents, and conversations from a unified platform'
 			)
 		).toBeInTheDocument();
-		// Ensure navigation buttons text exist
+		// Ensure feature cards text exist
 		expect(screen.getByText('Campaigns')).toBeInTheDocument();
 		expect(screen.getByText('Agents')).toBeInTheDocument();
 		expect(screen.getByText('Contacts')).toBeInTheDocument();
@@ -96,9 +92,7 @@ describe('WelcomeCard', () => {
 		} as any);
 
 		renderWithProviders(
-			<MemoryRouter>
-				<WelcomeCard heading='Overview' subheading='Global Snapshot' />
-			</MemoryRouter>
+			<WelcomeCard heading='Overview' subheading='Global Snapshot' />
 		);
 
 		// dashboard components visible
@@ -121,11 +115,7 @@ describe('WelcomeCard', () => {
 			user: { clientId: 100 },
 		} as any);
 
-		renderWithProviders(
-			<MemoryRouter>
-				<WelcomeCard />
-			</MemoryRouter>
-		);
+		renderWithProviders(<WelcomeCard />);
 
 		expect(screen.getByText('Welcome to Acme Corp')).toBeInTheDocument();
 		expect(

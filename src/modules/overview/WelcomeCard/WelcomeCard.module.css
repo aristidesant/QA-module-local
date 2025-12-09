@@ -6,7 +6,7 @@
 }
 
 .welcomeCard {
-	padding: var(--mantine-spacing-md);
+	padding: var(--mantine-spacing-sm);
 	border-radius: var(--mantine-radius-md);
 	background-color: var(--mantine-color-white);
 	color: var(--mantine-color-dark-7);
@@ -16,148 +16,81 @@
 	display: flex;
 	flex-direction: column;
 	gap: var(--mantine-spacing-xs);
+	margin-bottom: var(--mantine-spacing-xs);
 }
 
 .welcomeTitle {
 	color: var(--mantine-color-dark-8);
-	font-size: clamp(1.4rem, 3vw, 1.7rem);
+	font-size: var(--mantine-font-size-lg);
 	font-weight: 600;
 	letter-spacing: -0.2px;
 	line-height: 1.3;
 }
 
 .welcomeDescription {
-	max-width: 680px;
 	line-height: 1.5;
 	font-size: var(--mantine-font-size-sm);
 }
 
 .navigationGrid {
-	margin-top: var(--mantine-spacing-sm);
-	gap: var(--mantine-spacing-sm);
+	gap: var(--mantine-spacing-xs);
 }
 
-.navButton {
-	height: auto !important;
-	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
-	border: 1px solid var(--mantine-color-gray-3);
+.featureCard {
+	padding: var(--mantine-spacing-sm);
 	border-radius: var(--mantine-radius-md);
 	background-color: var(--mantine-color-white);
-	color: var(--mantine-color-dark-7);
-	display: flex;
-	flex-direction: row;
-	align-items: stretch !important;
-	text-align: left;
-	min-height: auto;
-	gap: var(--mantine-spacing-sm);
-	white-space: normal !important;
-	overflow: visible !important;
+	border: 1px solid var(--mantine-color-gray-3);
+	transition: none;
 }
 
-.navButton :global(.mantine-Button-inner) {
-	width: 100%;
-	align-items: stretch !important;
-	overflow: visible !important;
-}
-
-.navButton :global(.mantine-Button-label) {
-	display: block;
-	white-space: normal !important;
-	text-overflow: clip !important;
-	overflow: visible !important;
-	width: 100%;
-	min-width: 0;
-}
-
-.navButton :global(.mantine-Group-root) {
-	width: 100%;
-	align-items: flex-start !important;
-	min-width: 0;
-	overflow: visible;
-}
-
-.navButton :global(.mantine-Stack-root) {
-	flex: 1;
-	min-width: 0;
-	width: 100%;
-}
-
-.navButton :global(.mantine-Text-root) {
-	white-space: normal !important;
-	word-break: break-word;
-}
-
-.navButton [data-button-icon] {
+.iconWrapper {
 	color: white;
-	padding: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-xs);
 	border-radius: var(--mantine-radius-sm);
-	width: 40px;
-	height: 40px;
+	width: 32px;
+	height: 32px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
 }
 
-.navButton .mantine-Stack-root .mantine-Text-root:first-child {
-	color: var(--mantine-color-dark-8);
-	font-weight: 600;
-	font-size: var(--mantine-font-size-sm);
-	letter-spacing: -0.05px;
-	line-height: 1.3;
-}
-
-.navButton .mantine-Stack-root .mantine-Text-root:last-child {
-	color: var(--mantine-color-gray-6);
-	font-size: var(--mantine-font-size-xs);
-	line-height: 1.4;
-}
-
-.navButton:nth-child(1) [data-button-icon] {
+.iconWrapper[data-color='blue'] {
 	background-color: var(--mantine-color-blue-5);
 }
 
-.navButton:nth-child(2) [data-button-icon] {
+.iconWrapper[data-color='cyan'] {
 	background-color: var(--mantine-color-cyan-5);
 }
 
-.navButton:nth-child(3) [data-button-icon] {
+.iconWrapper[data-color='teal'] {
 	background-color: var(--mantine-color-teal-5);
 }
 
-.navButton:nth-child(4) [data-button-icon] {
+.iconWrapper[data-color='green'] {
 	background-color: var(--mantine-color-green-5);
 }
 
-.navButton:nth-child(5) [data-button-icon] {
+.iconWrapper[data-color='orange'] {
 	background-color: var(--mantine-color-orange-5);
 }
 
-.navButton:nth-child(6) [data-button-icon] {
+.iconWrapper[data-color='violet'] {
 	background-color: var(--mantine-color-violet-5);
 }
 
 @media (max-width: 768px) {
 	.mainCard {
-		padding: var(--mantine-spacing-sm);
+		padding: var(--mantine-spacing-xs);
 	}
 
 	.welcomeCard {
-		padding: var(--mantine-spacing-sm);
+		padding: var(--mantine-spacing-xs);
 	}
 
-	.navigationGrid {
-		gap: var(--mantine-spacing-xs);
-	}
-
-	.navButton {
-		padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
-		gap: var(--mantine-spacing-xs);
-	}
-
-	.navButton [data-button-icon] {
-		width: 32px;
-		height: 32px;
-		padding: 6px;
+	.iconWrapper {
+		width: 28px;
+		height: 28px;
 	}
 }

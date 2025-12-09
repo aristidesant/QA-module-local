@@ -6,8 +6,8 @@ import { ContentContainer } from '~/components/ContentContainer/ContentContainer
 import { CampaignsForm } from '../CampaignsForm/CampaignsForm';
 import { useGetCampaign } from '~/queries/campaignsQueries';
 import usePermissions from '~/hooks/usePermissions';
-import { PermissionEnum } from '~/contants/PermissionEnum';
-import { ModuleEnum } from '~/contants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
+import { ModuleEnum } from '~/constants/ModuleEnum';
 import AccessDenied from '~/components/AccessDenied';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 

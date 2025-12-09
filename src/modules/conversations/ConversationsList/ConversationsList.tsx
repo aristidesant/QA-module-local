@@ -16,8 +16,8 @@ import { useConversationStore } from '~/stores/useConversationStore';
 import ConversationDetails from '~/modules/conversations/ConversationDetails';
 import type { ConversationsModel } from '~/models/ConversationsModels';
 import usePermissions from '~/hooks/usePermissions';
-import { ModuleEnum } from '~/contants/ModuleEnum';
-import { PermissionEnum } from '~/contants/PermissionEnum';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import { useConversationsColumns } from './useConversationsColumns';
 import ExportToExcelModal from './components/ExportToExcelModal';
 import ConversationFilters, {

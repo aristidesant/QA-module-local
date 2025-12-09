@@ -31,8 +31,8 @@ import type {
 	RoleModulePermissionPayload,
 } from '~/models/RoleModel';
 import RoleFormSkeleton from './RoleFormSkeleton';
-import { ModuleEnum } from '~/contants/ModuleEnum';
-import { PermissionEnum } from '~/contants/PermissionEnum';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 
 interface RoleFormProps {
 	mode: 'create' | 'edit';
