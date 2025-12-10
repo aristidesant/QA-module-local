@@ -1,21 +1,21 @@
 .form {
 	display: flex;
 	flex-direction: column;
-	gap: var(--mantine-spacing-md);
+	gap: var(--mantine-spacing-sm);
 }
 
 @media (max-width: 480px) {
 	.form {
-		gap: var(--mantine-spacing-sm);
+		gap: var(--mantine-spacing-xs);
 	}
 }
 
 .actions {
-	padding: var(--mantine-spacing-md);
+	padding: var(--mantine-spacing-sm);
 	border-top: 1px solid var(--mantine-color-gray-2);
 	background-color: var(--mantine-color-gray-0);
 	margin-top: auto;
-	gap: var(--mantine-spacing-sm);
+	gap: var(--mantine-spacing-xs);
 	flex-wrap: wrap;
 	display: flex;
 	justify-content: flex-end;

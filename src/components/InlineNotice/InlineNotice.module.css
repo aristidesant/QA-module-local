@@ -1,0 +1,49 @@
+.root {
+	display: flex;
+	flex-direction: row;
+	gap: var(--mantine-spacing-sm);
+	align-items: center;
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+	border: 1px solid var(--notice-frame);
+	border-radius: var(--mantine-radius-md);
+	background: var(--notice-surface);
+}
+
+.iconWrapper {
+	width: 28px;
+	height: 28px;
+	border-radius: 999px;
+	border: 1px solid var(--notice-frame);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--notice-icon);
+	background: white;
+}
+
+.contentText {
+	display: flex;
+	flex-direction: row;
+	gap: var(--mantine-spacing-xs);
+	align-items: center;
+	flex-wrap: wrap;
+	min-width: 0;
+	margin-top: 0 !important;
+	padding-top: 0 !important;
+}
+
+.title {
+	color: var(--notice-title);
+	line-height: 1.5;
+}
+
+.description {
+	color: var(--notice-description);
+	line-height: 1.5;
+	word-break: break-word;
+}
+
+.iconWrapper :global(svg) {
+	width: 16px;
+	height: 16px;
+}

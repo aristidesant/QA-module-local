@@ -12,6 +12,7 @@ vi.mock('../hooks', () => ({
 		allConfigsCount: 0,
 		isLoading: false,
 	})),
+	useClientConfigsColumns: vi.fn(() => []),
 }));
 
 describe('ClientConfigsPage', () => {
@@ -83,6 +84,30 @@ describe('ClientConfigsPage', () => {
 				allConfigsCount: 1,
 				isLoading: false,
 			});
+
+			// Provide a minimal column definition so the table renders rows
+			vi.mocked(hooks.useClientConfigsColumns).mockReturnValue([
+				{
+					accessorKey: 'name',
+					header: 'Name',
+					cell: ({ row }: any) => <div>{row.original.name}</div>,
+				},
+				{
+					accessorKey: 'description',
+					header: 'Description',
+					cell: ({ row }: any) => <div>{row.original.description}</div>,
+				},
+				{
+					accessorKey: 'type',
+					header: 'Type',
+					cell: ({ row }: any) => <div>{row.original.type}</div>,
+				},
+				{
+					accessorKey: 'value',
+					header: 'Value',
+					cell: ({ row }: any) => <div>{row.original.value}</div>,
+				},
+			] as any);
 
 			renderWithProviders(<ClientConfigsPage />);
 

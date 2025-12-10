@@ -4,7 +4,7 @@ export interface ClientConfig {
 	description: string;
 	value: string;
 	type: string;
-	clientId: number;
+	clientId: number | null;
 	userId: number;
 	createdAt: string;
 	updatedAt: string;

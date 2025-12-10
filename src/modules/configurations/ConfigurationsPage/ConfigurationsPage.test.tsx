@@ -27,8 +27,9 @@ describe('ConfigurationsPage', () => {
 
 		renderWithProviders(<ConfigurationsPage />);
 
-		const globalTab = screen.getByRole('tab', { name: /global/i });
-		expect(globalTab).toBeInTheDocument();
+		// the default tab for non-master is Campaign
+		const campaignTab = screen.getByRole('tab', { name: /campaign/i });
+		expect(campaignTab).toBeInTheDocument();
 
 		fireEvent.click(screen.getByRole('tab', { name: /campaign/i }));
 		expect(navigateMock).toHaveBeenCalledWith(

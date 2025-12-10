@@ -2,7 +2,7 @@
 	padding: var(--mantine-spacing-md);
 	display: flex;
 	flex-direction: column;
-	gap: 0;
+	gap: var(--mantine-spacing-xs);
 }
 
 .noResultsContainer {

@@ -1,4 +1,4 @@
-import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import SchedulerPredefinedParamsPage from './SchedulerPredefinedParamsPage';
@@ -6,11 +6,15 @@ import * as queries from '~/queries/useClientConfigs';
 import * as rr from 'react-router';
 
 const mockCanPerformAction = vi.fn().mockReturnValue(true);
+const mockIsMasterClient = vi.fn().mockReturnValue(false);
 
 vi.mock('~/hooks/usePermissions', () => ({
 	usePermissions: () => ({
 		canPerformAction: mockCanPerformAction,
 	}),
+}));
+vi.mock('~/hooks/useIsMasterClient', () => ({
+	useIsMasterClient: () => mockIsMasterClient(),
 }));
 
 const sampleSchedules = [
@@ -45,6 +49,7 @@ describe('SchedulerPredefinedParamsPage', () => {
 				description: 'desc',
 				type: 'json',
 				value: JSON.stringify(sampleSchedules),
+				clientId: 1,
 			},
 		} as any);
 
@@ -61,6 +66,7 @@ describe('SchedulerPredefinedParamsPage', () => {
 				description: 'desc',
 				type: 'json',
 				value: JSON.stringify(sampleSchedules),
+				clientId: 1,
 			},
 		} as any);
 
@@ -81,6 +87,7 @@ describe('SchedulerPredefinedParamsPage', () => {
 				description: 'desc',
 				type: 'json',
 				value: JSON.stringify(sampleSchedules),
+				clientId: 1,
 			},
 		} as any);
 
@@ -117,5 +124,99 @@ describe('SchedulerPredefinedParamsPage', () => {
 		expect(
 			screen.getByText(/No permission to edit scheduler presets/i)
 		).toBeInTheDocument();
+	});
+
+	it('shows InlineNotice when global and non-master, and shows create override', () => {
+		// Non-master viewing global config
+		mockIsMasterClient.mockReturnValue(false);
+		vi.spyOn(rr, 'useNavigate').mockReturnValue(vi.fn() as any);
+		vi.spyOn(queries, 'useClientConfigByName').mockReturnValue({
+			data: {
+				name: 'scheduler_predefined_params',
+				description: 'desc',
+				type: 'json',
+				value: JSON.stringify(sampleSchedules),
+				clientId: null,
+			},
+		} as any);
+
+		vi.spyOn(queries, 'useCreateClientConfig').mockReturnValue({
+			mutateAsync: vi.fn().mockResolvedValue({}),
+			isPending: false,
+		} as any);
+
+		renderWithProviders(<SchedulerPredefinedParamsPage />);
+
+		expect(screen.getByText(/Global configuration/i)).toBeInTheDocument();
+		expect(screen.getByLabelText('Create override')).toBeInTheDocument();
+	});
+
+	it('can create override for global when non-master', async () => {
+		mockIsMasterClient.mockReturnValue(false);
+		vi.spyOn(rr, 'useNavigate').mockReturnValue(vi.fn() as any);
+		vi.spyOn(queries, 'useClientConfigByName').mockReturnValue({
+			data: {
+				name: 'scheduler_predefined_params',
+				description: 'desc',
+				type: 'json',
+				value: JSON.stringify(sampleSchedules),
+				clientId: null,
+			},
+		} as any);
+
+		const mutateCreate = vi.fn().mockResolvedValue({});
+		vi.spyOn(queries, 'useCreateClientConfig').mockReturnValue({
+			mutateAsync: mutateCreate,
+			isPending: false,
+		} as any);
+
+		renderWithProviders(<SchedulerPredefinedParamsPage />);
+
+		fireEvent.click(screen.getByLabelText('Create override'));
+
+		await waitFor(() => {
+			expect(mutateCreate).toHaveBeenCalled();
+		});
+	});
+
+	it('can delete override (client override config)', async () => {
+		// Master or client override case: show delete config
+		mockIsMasterClient.mockReturnValue(true);
+		vi.spyOn(rr, 'useNavigate').mockReturnValue(vi.fn() as any);
+		vi.spyOn(queries, 'useClientConfigByName').mockReturnValue({
+			data: {
+				name: 'scheduler_predefined_params',
+				description: 'desc',
+				type: 'json',
+				value: JSON.stringify(sampleSchedules),
+				clientId: 1,
+			},
+		} as any);
+
+		const deleteMutate = vi.fn().mockResolvedValue({});
+		vi.spyOn(queries, 'useDeleteClientConfig').mockReturnValue({
+			mutateAsync: deleteMutate,
+			isPending: false,
+		} as any);
+
+		renderWithProviders(<SchedulerPredefinedParamsPage />);
+
+		fireEvent.click(screen.getByLabelText('Delete override'));
+
+		await waitFor(() => {
+			expect(screen.getByText('Delete configuration')).toBeInTheDocument();
+		});
+
+		const dialog = screen.getByRole('dialog', {
+			name: /Delete configuration/i,
+		});
+		const dialogWithin = within(dialog);
+		fireEvent.click(
+			dialogWithin.getByRole('button', { name: /Delete override/i })
+		);
+
+		await waitFor(() => {
+			expect(deleteMutate).toHaveBeenCalled();
+		});
 	});
 });

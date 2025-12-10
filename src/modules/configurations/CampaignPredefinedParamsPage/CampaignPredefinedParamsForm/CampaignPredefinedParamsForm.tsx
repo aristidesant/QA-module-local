@@ -1,52 +1,92 @@
-import { useEffect } from 'react';
-import {
-	TextInput,
-	Button,
-	Group,
-	Slider,
-	ActionIcon,
-	Stack,
-	Select,
-	Divider,
-	Text as MantineText,
-	TagsInput,
-} from '@mantine/core';
+import { useEffect, useState } from 'react';
+import { Badge, Button, Group, Text as MantineText } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { IconX } from '@tabler/icons-react';
-import { useUpdateClientConfig } from '~/queries/useClientConfigs';
+import {
+	useCreateClientConfig,
+	useUpdateClientConfig,
+} from '~/queries/useClientConfigs';
 import type { CampaignPredefinedParam } from '~/modules/campaigns/CampaignsForm/useCampaignsPredefinedParams';
 import type { ClientConfig } from '~/models/ClientConfig';
 import type { CampaignPredefinedConversationConfig } from '~/models/CampaignPredefinedParam';
-import useCampaignPredefinedParamsStore from '../store/useCampaignPredefinedParamsStore';
 import { generateUUID } from '~/utils/stringUtils';
-import RightSectionCard from '~/components/RightSectionCard/RightSectionCard';
-import { IconSettings } from '@tabler/icons-react';
+import { ModalMenu, ModalBody } from '~/components/ModalMenu';
 import {
-	AUDIO_FORMATS,
-	LLM_MODELS,
-	TTS_MODELS,
-	ASR_PROVIDERS,
-	ASR_QUALITY,
-} from './formConfig';
+	IconInfoCircle,
+	IconMicrophone,
+	IconVolume,
+	IconRobot,
+} from '@tabler/icons-react';
+import {
+	CampaignPredefinedFormProvider,
+	type FormValues,
+} from './CampaignPredefinedFormProvider';
+
 import styles from './CampaignPredefinedParamsForm.module.css';
+import GeneralSection from './components/GeneralSection';
+import ASRSection from './components/ASRSection';
+import TTSSection from './components/TTSSection';
+import AgentSection from './components/AgentSection';
 
 interface CampaignPredefinedParamsFormProps {
 	param?: CampaignPredefinedParam;
 	list: CampaignPredefinedParam[];
 	config: ClientConfig | undefined;
+	saveStrategy: 'create' | 'update';
+	mode: 'create' | 'edit';
+	onCancel: () => void;
+	onSuccess: () => void;
+	canSubmit?: boolean;
 }
+const menuItems = [
+	{ id: 'general', label: 'General', icon: IconInfoCircle },
+	{ id: 'asr', label: 'Speech Recognition', icon: IconMicrophone },
+	{ id: 'tts', label: 'Voice Output', icon: IconVolume },
+	{ id: 'agent', label: 'Agent Personality', icon: IconRobot },
+];
+
+const sectionCopy: Record<
+	'general' | 'asr' | 'tts' | 'agent',
+	{ title: string; description: string }
+> = {
+	general: {
+		title: 'General',
+		description: 'Name this preset and keep it discoverable for teammates.',
+	},
+	asr: {
+		title: 'Speech Recognition',
+		description: 'Control quality, keywords, and input formats for calls.',
+	},
+	tts: {
+		title: 'Voice Output',
+		description: 'Tune speed, clarity, and latency for outbound audio.',
+	},
+	agent: {
+		title: 'Agent Personality',
+		description: 'Pick the model and tone that will represent the brand.',
+	},
+};
 
 const CampaignPredefinedParamsForm: React.FC<
 	CampaignPredefinedParamsFormProps
-> = ({ param, list, config }) => {
-	const isEditMode = !!param;
-	const { clearRightComponent } = useCampaignPredefinedParamsStore();
+> = ({
+	param,
+	list,
+	config,
+	saveStrategy,
+	mode,
+	onCancel,
+	onSuccess,
+	canSubmit = true,
+}) => {
+	const isEditMode = mode === 'edit' && !!param;
+	const createMutation = useCreateClientConfig();
 	const updateMutation = useUpdateClientConfig();
+	const [activeTab, setActiveTab] = useState<string>('general');
 
 	const conversationConfig = param?.params.conversationConfig;
 
-	const form = useForm({
+	const form = useForm<FormValues>({
 		initialValues: {
 			id: param?.id || generateUUID(),
 			name: param?.name || '',
@@ -195,14 +235,24 @@ const CampaignPredefinedParamsForm: React.FC<
 				updatedList = [...list, newParam];
 			}
 
-			await updateMutation.mutateAsync({
-				name: config.name,
-				data: {
+			const parsedValue = JSON.stringify(updatedList);
+			if (saveStrategy === 'create') {
+				await createMutation.mutateAsync({
+					name: config.name,
 					description: config.description,
-					value: JSON.stringify(updatedList),
+					value: parsedValue,
 					type: config.type,
-				},
-			});
+				});
+			} else {
+				await updateMutation.mutateAsync({
+					name: config.name,
+					data: {
+						description: config.description,
+						value: parsedValue,
+						type: config.type,
+					},
+				});
+			}
 
 			notifications.show({
 				title: 'Success',
@@ -210,7 +260,7 @@ const CampaignPredefinedParamsForm: React.FC<
 				color: 'green',
 			});
 
-			clearRightComponent();
+			onSuccess();
 		} catch (error) {
 			notifications.show({
 				title: 'Error',
@@ -220,279 +270,85 @@ const CampaignPredefinedParamsForm: React.FC<
 		}
 	};
 
+	const renderSection = () => {
+		switch (activeTab) {
+			case 'asr':
+				return <ASRSection />;
+			case 'tts':
+				return <TTSSection />;
+			case 'agent':
+				return <AgentSection />;
+			default:
+				return <GeneralSection />;
+		}
+	};
+
+	const activeSection =
+		sectionCopy[activeTab as keyof typeof sectionCopy] || sectionCopy.general;
+
 	return (
 		<form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
-			<RightSectionCard
-				title={isEditMode ? 'Edit Parameter' : 'Create Parameter'}
-				icon={IconSettings}
-				iconColor='var(--mantine-color-blue-6)'
-				rightSection={
-					<ActionIcon
-						variant='subtle'
-						color='gray'
-						aria-label='Close form'
-						onClick={clearRightComponent}
-						size='sm'
-					>
-						<IconX size={14} />
-					</ActionIcon>
-				}
-			>
-				<Stack gap='lg'>
-					<div className={styles.sectionHeading}>
-						<MantineText className={styles.sectionTitle}>
-							General information
-						</MantineText>
-						<MantineText className={styles.sectionDescription}>
-							Name and organize this preset so the team recognizes it quickly.
-						</MantineText>
-					</div>
-
-					<TextInput
-						label='Parameter Name'
-						placeholder='e.g., Fast response agent'
-						required
-						{...form.getInputProps('name')}
-						description={
-							isEditMode
-								? 'Changing the name will create a new parameter'
-								: 'Unique identifier for this configuration'
+			<CampaignPredefinedFormProvider form={form} isEditMode={isEditMode}>
+				<div className={styles.mainContainer}>
+					<ModalBody
+						menu={
+							<ModalMenu
+								items={menuItems}
+								activeId={activeTab}
+								onSelect={setActiveTab}
+							/>
 						}
-					/>
+					>
+						<div className={styles.editorColumn}>
+							<div className={styles.editorShell}>
+								<div className={styles.editorHeader}>
+									<div className={styles.editorHeaderText}>
+										<MantineText fw={600} size='sm'>
+											{activeSection.title}
+										</MantineText>
+										<MantineText size='xs' c='dimmed'>
+											{activeSection.description}
+										</MantineText>
+									</div>
+									<Badge
+										size='sm'
+										variant='light'
+										color={isEditMode ? 'blue' : 'green'}
+									>
+										{isEditMode ? 'Editing preset' : 'New preset'}
+									</Badge>
+								</div>
 
-					<Divider />
+								<div className={styles.editorContent}>{renderSection()}</div>
+							</div>
+						</div>
+					</ModalBody>
 
-					<div className={styles.section}>
-						<div className={styles.sectionHeading}>
-							<MantineText className={styles.sectionTitle}>
-								Speech recognition
-							</MantineText>
-							<MantineText className={styles.sectionDescription}>
-								Configure how the system transcribes caller speech.
+					<div className={styles.actions}>
+						<div className={styles.actionsLeft}>
+							<MantineText size='xs' c='dimmed'>
+								{isEditMode
+									? 'Changes update this preset for every campaign using it.'
+									: 'Creating a fresh preset adds it to your campaign defaults.'}
 							</MantineText>
 						</div>
-
-						<div className={styles.grid}>
-							<Select
-								label='Provider'
-								placeholder='Select ASR provider'
-								required
-								data={ASR_PROVIDERS}
-								{...form.getInputProps('asrProvider')}
-								searchable
-							/>
-							<Select
-								label='Quality'
-								placeholder='Select quality'
-								required
-								data={ASR_QUALITY}
-								{...form.getInputProps('asrQuality')}
-							/>
-							<Select
-								label='Input Audio Format'
-								placeholder='Select format'
-								required
-								data={AUDIO_FORMATS}
-								{...form.getInputProps('asrUserInputAudioFormat')}
-							/>
-							<TagsInput
-								label='Keywords'
-								placeholder='Type and press Enter'
-								description='Add keywords to improve transcription accuracy'
-								{...form.getInputProps('asrKeywords')}
-							/>
-						</div>
+						<Group justify='flex-end' gap='xs' className={styles.actionsRight}>
+							<Button variant='subtle' size='sm' onClick={onCancel}>
+								Cancel
+							</Button>
+							{(canSubmit || !isEditMode) && (
+								<Button
+									type='submit'
+									size='sm'
+									loading={updateMutation.isPending || createMutation.isPending}
+								>
+									{isEditMode ? 'Update' : 'Create'}
+								</Button>
+							)}
+						</Group>
 					</div>
-
-					<Divider />
-
-					<div className={styles.section}>
-						<div className={styles.sectionHeading}>
-							<MantineText className={styles.sectionTitle}>
-								Voice output
-							</MantineText>
-							<MantineText className={styles.sectionDescription}>
-								Tune the ElevenLabs synthesis defaults that callers will hear.
-							</MantineText>
-						</div>
-
-						<div className={styles.grid}>
-							<Select
-								label='Model'
-								placeholder='Select TTS model'
-								required
-								data={TTS_MODELS}
-								{...form.getInputProps('ttsModelId')}
-								searchable
-							/>
-							<Select
-								label='Output Audio Format'
-								placeholder='Select format'
-								required
-								data={AUDIO_FORMATS}
-								{...form.getInputProps('ttsAgentOutputAudioFormat')}
-							/>
-							<div className={styles.sliderContainer}>
-								<div className={styles.sliderLabel}>
-									<label>Speed</label>
-									<span className={styles.sliderValue}>
-										{form.values.ttsSpeed.toFixed(2)}
-									</span>
-								</div>
-								<Slider
-									min={0.25}
-									max={4.0}
-									step={0.01}
-									value={form.values.ttsSpeed}
-									onChange={(value) => form.setFieldValue('ttsSpeed', value)}
-									marks={[
-										{ value: 0.25, label: '0.25' },
-										{ value: 2.0, label: '2.0' },
-										{ value: 4.0, label: '4.0' },
-									]}
-								/>
-								<MantineText size='xs' c='dimmed'>
-									Speech rate (0.25–4.0)
-								</MantineText>
-							</div>
-							<div className={styles.sliderContainer}>
-								<div className={styles.sliderLabel}>
-									<label>Streaming Latency</label>
-									<span className={styles.sliderValue}>
-										{form.values.ttsOptimizeStreamingLatency}
-									</span>
-								</div>
-								<Slider
-									min={0}
-									max={4}
-									step={1}
-									value={form.values.ttsOptimizeStreamingLatency}
-									onChange={(value) =>
-										form.setFieldValue('ttsOptimizeStreamingLatency', value)
-									}
-									marks={[
-										{ value: 0, label: '0' },
-										{ value: 2, label: '2' },
-										{ value: 4, label: '4' },
-									]}
-								/>
-								<MantineText size='xs' c='dimmed'>
-									0 = best quality, 4 = lowest latency
-								</MantineText>
-							</div>
-							<div className={styles.sliderContainer}>
-								<div className={styles.sliderLabel}>
-									<label>Stability</label>
-									<span className={styles.sliderValue}>
-										{form.values.ttsStability.toFixed(2)}
-									</span>
-								</div>
-								<Slider
-									min={0}
-									max={1}
-									step={0.01}
-									value={form.values.ttsStability}
-									onChange={(value) =>
-										form.setFieldValue('ttsStability', value)
-									}
-									marks={[
-										{ value: 0, label: '0' },
-										{ value: 0.5, label: '0.5' },
-										{ value: 1, label: '1' },
-									]}
-								/>
-								<MantineText size='xs' c='dimmed'>
-									Voice consistency (0–1)
-								</MantineText>
-							</div>
-							<div className={styles.sliderContainer}>
-								<div className={styles.sliderLabel}>
-									<label>Similarity Boost</label>
-									<span className={styles.sliderValue}>
-										{form.values.ttsSimilarityBoost.toFixed(2)}
-									</span>
-								</div>
-								<Slider
-									min={0}
-									max={1}
-									step={0.01}
-									value={form.values.ttsSimilarityBoost}
-									onChange={(value) =>
-										form.setFieldValue('ttsSimilarityBoost', value)
-									}
-									marks={[
-										{ value: 0, label: '0' },
-										{ value: 0.5, label: '0.5' },
-										{ value: 1, label: '1' },
-									]}
-								/>
-								<MantineText size='xs' c='dimmed'>
-									Match to original voice (0–1)
-								</MantineText>
-							</div>
-						</div>
-					</div>
-
-					<Divider />
-
-					<div className={styles.section}>
-						<div className={styles.sectionHeading}>
-							<MantineText className={styles.sectionTitle}>
-								Agent personality
-							</MantineText>
-							<MantineText className={styles.sectionDescription}>
-								Shape the tone and behaviour of the assistant.
-							</MantineText>
-						</div>
-						<div className={styles.grid}>
-							<Select
-								label='LLM Model'
-								placeholder='Select LLM model'
-								required
-								data={LLM_MODELS}
-								{...form.getInputProps('agentPromptLlm')}
-								searchable
-							/>
-							<div className={styles.sliderContainer}>
-								<div className={styles.sliderLabel}>
-									<label>Temperature</label>
-									<span className={styles.sliderValue}>
-										{form.values.agentPromptTemperature.toFixed(2)}
-									</span>
-								</div>
-								<Slider
-									min={0}
-									max={2}
-									step={0.01}
-									value={form.values.agentPromptTemperature}
-									onChange={(value) =>
-										form.setFieldValue('agentPromptTemperature', value)
-									}
-									marks={[
-										{ value: 0, label: '0' },
-										{ value: 1, label: '1' },
-										{ value: 2, label: '2' },
-									]}
-								/>
-								<MantineText size='xs' c='dimmed'>
-									Controls randomness (0–2)
-								</MantineText>
-							</div>
-						</div>
-					</div>
-				</Stack>
-			</RightSectionCard>
-
-			<Group justify='space-between' mt='md' className={styles.actions}>
-				<Group justify='flex-end' className={styles.actionsRight}>
-					<Button variant='light' onClick={clearRightComponent}>
-						Cancel
-					</Button>
-					<Button type='submit' loading={updateMutation.isPending}>
-						{isEditMode ? 'Update' : 'Create'}
-					</Button>
-				</Group>
-			</Group>
+				</div>
+			</CampaignPredefinedFormProvider>
 		</form>
 	);
 };

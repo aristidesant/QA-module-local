@@ -1,34 +1,23 @@
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {
-	describe,
-	it,
-	expect,
-	vi,
-	beforeEach,
-	afterEach,
-	type Mock,
-} from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import CampaignPredefinedParamsForm from './CampaignPredefinedParamsForm';
 import * as queries from '~/queries/useClientConfigs';
-import useCampaignPredefinedParamsStore from '../store/useCampaignPredefinedParamsStore';
 import { notifications } from '@mantine/notifications';
 import type { CampaignPredefinedParam } from '~/modules/campaigns/CampaignsForm/useCampaignsPredefinedParams';
 import type { ClientConfig } from '~/models/ClientConfig';
 
 // Mock the queries
 vi.mock('~/queries/useClientConfigs', () => ({
+	useCreateClientConfig: () => ({
+		mutateAsync: vi.fn().mockResolvedValue({}),
+		isPending: false,
+	}),
 	useUpdateClientConfig: () => ({
 		mutateAsync: vi.fn().mockResolvedValue({}),
 		isPending: false,
 	}),
-}));
-
-// Mock the store
-vi.mock('../store/useCampaignPredefinedParamsStore', () => ({
-	__esModule: true,
-	default: vi.fn(),
 }));
 
 // Mock notifications
@@ -93,40 +82,42 @@ describe('CampaignPredefinedParamsForm', () => {
 
 	describe('Create mode', () => {
 		it('should render the form in create mode when no param is provided', () => {
-			const clearRightComponent = vi.fn();
-			(useCampaignPredefinedParamsStore as unknown as Mock).mockReturnValue({
-				clearRightComponent,
-			});
-
+			const onCancel = vi.fn();
+			const onSuccess = vi.fn();
 			renderWithProviders(
 				<CampaignPredefinedParamsForm
 					param={undefined}
 					list={mockEmptyList}
 					config={mockConfig}
+					mode='create'
+					saveStrategy='update'
+					onCancel={onCancel}
+					onSuccess={onSuccess}
 				/>
 			);
 
-			expect(screen.getByText('Create Parameter')).toBeInTheDocument();
-			expect(screen.getByText('General information')).toBeInTheDocument();
-			expect(screen.getByText('Speech recognition')).toBeInTheDocument();
-			expect(screen.getByText('Voice output')).toBeInTheDocument();
-			expect(screen.getByText('Agent personality')).toBeInTheDocument();
+			expect(screen.getByText('New preset')).toBeInTheDocument();
+			expect(screen.getAllByText('General').length).toBeGreaterThan(0);
+			expect(screen.getByText('Speech Recognition')).toBeInTheDocument();
+			expect(screen.getByText('Voice Output')).toBeInTheDocument();
+			expect(screen.getByText('Agent Personality')).toBeInTheDocument();
 			expect(
 				screen.getByRole('button', { name: /Create/i })
 			).toBeInTheDocument();
 		});
 
 		it('validates required name', async () => {
-			const clearRightComponent = vi.fn();
-			(useCampaignPredefinedParamsStore as unknown as Mock).mockReturnValue({
-				clearRightComponent,
-			});
-
+			const onCancel = vi.fn();
+			const onSuccess = vi.fn();
 			renderWithProviders(
 				<CampaignPredefinedParamsForm
 					param={undefined}
 					list={mockEmptyList}
 					config={mockConfig}
+					mode='create'
+					saveStrategy='update'
+					onCancel={onCancel}
+					onSuccess={onSuccess}
 				/>
 			);
 
@@ -140,16 +131,17 @@ describe('CampaignPredefinedParamsForm', () => {
 		});
 
 		it('prevents duplicate names', async () => {
-			const clearRightComponent = vi.fn();
-			(useCampaignPredefinedParamsStore as unknown as Mock).mockReturnValue({
-				clearRightComponent,
-			});
-
+			const onCancel = vi.fn();
+			const onSuccess = vi.fn();
 			renderWithProviders(
 				<CampaignPredefinedParamsForm
 					param={undefined}
 					list={[mockExistingParam]}
 					config={mockConfig}
+					mode='create'
+					saveStrategy='update'
+					onCancel={onCancel}
+					onSuccess={onSuccess}
 				/>
 			);
 
@@ -169,11 +161,8 @@ describe('CampaignPredefinedParamsForm', () => {
 		});
 
 		it('submits and calls update mutation on success', async () => {
-			const clearRightComponent = vi.fn();
-			(useCampaignPredefinedParamsStore as unknown as Mock).mockReturnValue({
-				clearRightComponent,
-			});
-
+			const onCancel = vi.fn();
+			const onSuccess = vi.fn();
 			const mutateAsync = vi.fn().mockResolvedValue({});
 			vi.spyOn(queries, 'useUpdateClientConfig').mockReturnValue({
 				mutateAsync,
@@ -185,6 +174,10 @@ describe('CampaignPredefinedParamsForm', () => {
 					param={undefined}
 					list={mockEmptyList}
 					config={mockConfig}
+					mode='create'
+					saveStrategy='update'
+					onCancel={onCancel}
+					onSuccess={onSuccess}
 				/>
 			);
 
@@ -195,7 +188,7 @@ describe('CampaignPredefinedParamsForm', () => {
 			await userEvent.click(screen.getByRole('button', { name: /Create/i }));
 
 			await waitFor(() => expect(mutateAsync).toHaveBeenCalled());
-			expect(clearRightComponent).toHaveBeenCalled();
+			expect(onSuccess).toHaveBeenCalled();
 			expect(notifications.show).toHaveBeenCalledWith({
 				title: 'Success',
 				message: 'Parameter created successfully',
@@ -204,11 +197,8 @@ describe('CampaignPredefinedParamsForm', () => {
 		});
 
 		it('shows notification on mutation error', async () => {
-			const clearRightComponent = vi.fn();
-			(useCampaignPredefinedParamsStore as unknown as Mock).mockReturnValue({
-				clearRightComponent,
-			});
-
+			const onCancel = vi.fn();
+			const onSuccess = vi.fn();
 			const mutateAsync = vi.fn().mockRejectedValue(new Error('err'));
 			vi.spyOn(queries, 'useUpdateClientConfig').mockReturnValue({
 				mutateAsync,
@@ -220,6 +210,10 @@ describe('CampaignPredefinedParamsForm', () => {
 					param={undefined}
 					list={mockEmptyList}
 					config={mockConfig}
+					mode='create'
+					saveStrategy='update'
+					onCancel={onCancel}
+					onSuccess={onSuccess}
 				/>
 			);
 
@@ -230,26 +224,27 @@ describe('CampaignPredefinedParamsForm', () => {
 			await userEvent.click(screen.getByRole('button', { name: /Create/i }));
 
 			await waitFor(() => expect(notifications.show).toHaveBeenCalled());
-			expect(clearRightComponent).not.toHaveBeenCalled();
+			expect(onSuccess).not.toHaveBeenCalled();
 		});
 	});
 
 	describe('Edit mode', () => {
 		it('renders edit mode and populates values', () => {
-			const clearRightComponent = vi.fn();
-			(useCampaignPredefinedParamsStore as unknown as Mock).mockReturnValue({
-				clearRightComponent,
-			});
-
+			const onCancel = vi.fn();
+			const onSuccess = vi.fn();
 			renderWithProviders(
 				<CampaignPredefinedParamsForm
 					param={mockExistingParam}
 					list={[mockExistingParam]}
 					config={mockConfig}
+					mode='edit'
+					saveStrategy='update'
+					onCancel={onCancel}
+					onSuccess={onSuccess}
 				/>
 			);
 
-			expect(screen.getByText('Edit Parameter')).toBeInTheDocument();
+			expect(screen.getByText('Editing preset')).toBeInTheDocument();
 			expect(
 				screen.getByDisplayValue('Fast Response Agent')
 			).toBeInTheDocument();
@@ -261,16 +256,17 @@ describe('CampaignPredefinedParamsForm', () => {
 
 	describe('Form actions', () => {
 		it('should have Cancel and Create buttons in create mode', () => {
-			const clearRightComponent = vi.fn();
-			(useCampaignPredefinedParamsStore as unknown as Mock).mockReturnValue({
-				clearRightComponent,
-			});
-
+			const onCancel = vi.fn();
+			const onSuccess = vi.fn();
 			renderWithProviders(
 				<CampaignPredefinedParamsForm
 					param={undefined}
 					list={mockEmptyList}
 					config={mockConfig}
+					mode='create'
+					saveStrategy='update'
+					onCancel={onCancel}
+					onSuccess={onSuccess}
 				/>
 			);
 
@@ -283,16 +279,17 @@ describe('CampaignPredefinedParamsForm', () => {
 		});
 
 		it('should have Cancel and Update buttons in edit mode', () => {
-			const clearRightComponent = vi.fn();
-			(useCampaignPredefinedParamsStore as unknown as Mock).mockReturnValue({
-				clearRightComponent,
-			});
-
+			const onCancel = vi.fn();
+			const onSuccess = vi.fn();
 			renderWithProviders(
 				<CampaignPredefinedParamsForm
 					param={mockExistingParam}
 					list={[mockExistingParam]}
 					config={mockConfig}
+					mode='edit'
+					saveStrategy='update'
+					onCancel={onCancel}
+					onSuccess={onSuccess}
 				/>
 			);
 
@@ -305,82 +302,81 @@ describe('CampaignPredefinedParamsForm', () => {
 		});
 	});
 
-	describe('Close button', () => {
-		it('should render close button in the header', () => {
-			const clearRightComponent = vi.fn();
-			(useCampaignPredefinedParamsStore as unknown as Mock).mockReturnValue({
-				clearRightComponent,
-			});
-
-			renderWithProviders(
-				<CampaignPredefinedParamsForm
-					param={undefined}
-					list={mockEmptyList}
-					config={mockConfig}
-				/>
-			);
-
-			const closeButton = screen.getByLabelText('Close form');
-			expect(closeButton).toBeInTheDocument();
-		});
-	});
-
 	describe('Help text', () => {
-		it('should display description text for each section', () => {
-			const clearRightComponent = vi.fn();
-			(useCampaignPredefinedParamsStore as unknown as Mock).mockReturnValue({
-				clearRightComponent,
-			});
-
+		it('should display description text for each section', async () => {
+			const onCancel = vi.fn();
+			const onSuccess = vi.fn();
 			renderWithProviders(
 				<CampaignPredefinedParamsForm
 					param={undefined}
 					list={mockEmptyList}
 					config={mockConfig}
+					mode='create'
+					saveStrategy='update'
+					onCancel={onCancel}
+					onSuccess={onSuccess}
 				/>
 			);
 
+			// General is active by default
 			expect(
 				screen.getByText(
-					'Name and organize this preset so the team recognizes it quickly.'
+					'Name this preset and keep it discoverable for teammates.'
 				)
 			).toBeInTheDocument();
-			expect(
-				screen.getByText('Configure how the system transcribes caller speech.')
-			).toBeInTheDocument();
+
+			// Switch to Speech Recognition
+			await userEvent.click(screen.getByText('Speech Recognition'));
 			expect(
 				screen.getByText(
-					'Tune the ElevenLabs synthesis defaults that callers will hear.'
+					'Control quality, keywords, and input formats for calls.'
 				)
 			).toBeInTheDocument();
+
+			// Switch to Voice Output
+			await userEvent.click(screen.getByText('Voice Output'));
 			expect(
-				screen.getByText('Shape the tone and behaviour of the assistant.')
+				screen.getByText('Tune speed, clarity, and latency for outbound audio.')
+			).toBeInTheDocument();
+
+			// Switch to Agent Personality
+			await userEvent.click(screen.getByText('Agent Personality'));
+			expect(
+				screen.getByText(
+					'Pick the model and tone that will represent the brand.'
+				)
 			).toBeInTheDocument();
 		});
 
-		it('should display slider help text', () => {
-			const clearRightComponent = vi.fn();
-			(useCampaignPredefinedParamsStore as unknown as Mock).mockReturnValue({
-				clearRightComponent,
-			});
-
+		it('should display slider help text', async () => {
+			const onCancel = vi.fn();
+			const onSuccess = vi.fn();
 			renderWithProviders(
 				<CampaignPredefinedParamsForm
 					param={undefined}
 					list={mockEmptyList}
 					config={mockConfig}
+					mode='create'
+					saveStrategy='update'
+					onCancel={onCancel}
+					onSuccess={onSuccess}
 				/>
 			);
 
+			// Switch to Voice Output to access TTS sliders
+			await userEvent.click(screen.getByText('Voice Output'));
 			expect(screen.getByText('Speech rate (0.25–4.0)')).toBeInTheDocument();
 			expect(screen.getByText('Voice consistency (0–1)')).toBeInTheDocument();
 			expect(
 				screen.getByText('Match to original voice (0–1)')
 			).toBeInTheDocument();
-			expect(screen.getByText('Controls randomness (0–2)')).toBeInTheDocument();
 			expect(
 				screen.getByText('0 = best quality, 4 = lowest latency')
 			).toBeInTheDocument();
+
+			// Switch to Agent Personality for the temperature slider helper text
+			await userEvent.click(screen.getByText('Agent Personality'));
+			expect(screen.getByText('Controls randomness (0–2)')).toBeInTheDocument();
 		});
 	});
 });

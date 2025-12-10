@@ -13,10 +13,12 @@ import { useEffect } from 'react';
 import { usePermissions } from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
+import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import styles from './ConfigurationsPage.module.css';
 export default function ConfigurationsPage() {
 	const location = useLocation();
 	const navigate = useNavigate();
+	const isMasterClient = useIsMasterClient();
 	const { canPerformAction } = usePermissions();
 	const canManageSettings = canPerformAction(
 		ModuleEnum.SETTINGS,
@@ -24,7 +26,8 @@ export default function ConfigurationsPage() {
 	);
 
 	const getActiveTab = () => {
-		if (location.pathname.includes('client-configs')) return 'client-configs';
+		if (isMasterClient && location.pathname.includes('client-configs'))
+			return 'client-configs';
 		if (location.pathname.includes('scheduler-predefined-params'))
 			return 'scheduler-predefined-params';
 		if (location.pathname.includes('campaign-predefined-params'))
@@ -33,17 +36,20 @@ export default function ConfigurationsPage() {
 			return 'regional-settings-params';
 		if (location.pathname.includes('do-not-call')) return 'do-not-call';
 		if (location.pathname.includes('knowledge-bases')) return 'knowledge-bases';
-		return 'client-configs';
+		return isMasterClient ? 'client-configs' : 'campaign-predefined-params';
 	};
 
 	useEffect(() => {
+		if (!isMasterClient && location.pathname.includes('client-configs')) {
+			navigate('/configurations/campaign-predefined-params', { replace: true });
+		}
 		if (
 			!canManageSettings &&
 			location.pathname.includes('scheduler-predefined-params')
 		) {
 			navigate('/configurations/client-configs', { replace: true });
 		}
-	}, [canManageSettings, location.pathname, navigate]);
+	}, [canManageSettings, isMasterClient, location.pathname, navigate]);
 
 	return (
 		<ContentContainer
@@ -58,13 +64,15 @@ export default function ConfigurationsPage() {
 				classNames={{ tab: styles.tab }}
 			>
 				<Tabs.List>
-					<Tabs.Tab
-						value='client-configs'
-						leftSection={<IconSettings size={16} />}
-						onClick={() => navigate('/configurations/client-configs')}
-					>
-						Global
-					</Tabs.Tab>
+					{isMasterClient && (
+						<Tabs.Tab
+							value='client-configs'
+							leftSection={<IconSettings size={16} />}
+							onClick={() => navigate('/configurations/client-configs')}
+						>
+							Global
+						</Tabs.Tab>
+					)}
 					<Tabs.Tab
 						value='campaign-predefined-params'
 						leftSection={<IconList size={16} />}

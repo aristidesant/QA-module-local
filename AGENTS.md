@@ -285,3 +285,39 @@ import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 - Always call React hooks unconditionally and before any early returns; do not place hooks after conditional returns or inside branches/loops.
 - When adding permission checks with `usePermissions`, declare the hook alongside other hooks at the top of the component to keep call order stable.
+
+---
+
+## Standard Modal & Form Layouts
+
+When building complex forms or configuration modals, follow this standard layout pattern:
+
+### Structure (2-Column Grid)
+
+- **Container**: Use `ModalBody` from `src/components/ModalMenu` to enforce the standard 2-column grid (`220px 1fr`).
+- **Background**: Use `var(--mantine-color-gray-0)` for the main container background.
+- **Panels**: Both the sidebar (menu) and content area should be white panels with:
+  - `border: 1px solid var(--mantine-color-gray-2)`
+  - `border-radius: var(--mantine-radius-sm)`
+  - `background: var(--mantine-color-white)`
+
+### Sidebar Menu Style
+
+- **Component**: Use `ModalMenu` from `src/components/ModalMenu`.
+- **Props**:
+  - `items`: Array of `{ id, label, icon }`
+  - `activeId`: Current active section ID
+  - `onSelect`: Callback to change section
+- **Style**: The component handles all standard styling (hover states, active states, typography).
+
+### Content Area
+
+- **Header**: Title (`fw={600}`, `size="sm"`) + Status Badge (if applicable).
+- **Separator**: `border-bottom: 1px solid var(--mantine-color-gray-1)`.
+- **Body**: Padding `sm` or `md`.
+
+### Footer
+
+- **Location**: Fixed at the bottom of the container.
+- **Style**: `border-top: 1px solid var(--mantine-color-gray-1)`, `bg="white"`.
+- **Actions**: Right-aligned primary actions (Save), Left-aligned secondary (Cancel).

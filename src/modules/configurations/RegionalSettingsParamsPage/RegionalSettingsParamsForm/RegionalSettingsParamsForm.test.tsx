@@ -77,3 +77,46 @@ describe('RegionalSettingsParamsForm', () => {
 		});
 	});
 });
+
+it('calls create mutation when saveStrategy is create', async () => {
+	const createMutateAsync = vi.fn().mockResolvedValue({});
+	vi.spyOn(queryHooks, 'useCreateClientConfig').mockReturnValue({
+		mutateAsync: createMutateAsync,
+		isPending: false,
+	} as any);
+
+	const onCancel = vi.fn();
+	renderWithProviders(
+		<RegionalSettingsParamsForm
+			regionalSettings={{ timezone: 'UTC', locale: 'en-US' }}
+			config={{
+				id: 1,
+				clientId: 1,
+				userId: 1,
+				createdAt: new Date().toISOString(),
+				updatedAt: new Date().toISOString(),
+				deletedAt: null,
+				name: 'regional_settings',
+				description: 'desc',
+				type: 'json',
+				value: '{}',
+			}}
+			onCancel={onCancel}
+			saveStrategy='create'
+		/>
+	);
+
+	fireEvent.change(screen.getByLabelText(/Timezone/i), {
+		target: { value: 'America/Santo_Domingo' },
+	});
+	fireEvent.change(screen.getByLabelText(/Locale/i), {
+		target: { value: 'es-DO' },
+	});
+
+	fireEvent.click(screen.getByRole('button', { name: /Create Settings/i }));
+
+	await waitFor(() => {
+		expect(createMutateAsync).toHaveBeenCalled();
+		expect(onCancel).toHaveBeenCalled();
+	});
+});

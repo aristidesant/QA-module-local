@@ -4,7 +4,10 @@ import { notifications } from '@mantine/notifications';
 import type { DayConfig } from '~/api/campaignsApi';
 import type { ClientConfig } from '~/models/ClientConfig';
 import type { PredefinedScheduleConfig } from '~/models/PredefinedScheduleConfig';
-import { useUpdateClientConfig } from '~/queries/useClientConfigs';
+import {
+	useUpdateClientConfig,
+	useCreateClientConfig,
+} from '~/queries/useClientConfigs';
 import {
 	DEFAULT_END_HOUR,
 	DEFAULT_START_HOUR,
@@ -18,6 +21,8 @@ interface SchedulerPredefinedParamsFormProps {
 	list: PredefinedScheduleConfig[];
 	config: ClientConfig | undefined;
 	onClose: () => void;
+	saveStrategy?: 'create' | 'update';
+	canSubmit?: boolean;
 }
 
 type FormDayConfig = DayConfig & {
@@ -68,9 +73,17 @@ const normalizeTimeInput = (value: string, fallback = '00:00'): string => {
 
 const SchedulerPredefinedParamsForm: React.FC<
 	SchedulerPredefinedParamsFormProps
-> = ({ schedule, list, config, onClose }) => {
+> = ({
+	schedule,
+	list,
+	config,
+	onClose,
+	saveStrategy = 'update',
+	canSubmit = true,
+}) => {
 	const isEditMode = !!schedule;
 	const updateMutation = useUpdateClientConfig();
+	const createMutation = useCreateClientConfig();
 
 	const form = useForm<FormValues>({
 		initialValues: {
@@ -197,14 +210,23 @@ const SchedulerPredefinedParamsForm: React.FC<
 		}
 
 		try {
-			await updateMutation.mutateAsync({
-				name: config.name,
-				data: {
+			if (saveStrategy === 'create') {
+				await createMutation.mutateAsync({
+					name: config.name,
 					description: config.description,
 					value: JSON.stringify(updatedList),
 					type: config.type,
-				},
-			});
+				});
+			} else {
+				await updateMutation.mutateAsync({
+					name: config.name,
+					data: {
+						description: config.description,
+						value: JSON.stringify(updatedList),
+						type: config.type,
+					},
+				});
+			}
 
 			notifications.show({
 				title: isEditMode ? 'Preset updated' : 'Preset created',
@@ -320,9 +342,15 @@ const SchedulerPredefinedParamsForm: React.FC<
 				<Button variant='light' size='sm' onClick={onClose}>
 					Cancel
 				</Button>
-				<Button type='submit' loading={updateMutation.isPending} size='sm'>
-					{isEditMode ? 'Update preset' : 'Create preset'}
-				</Button>
+				{canSubmit && (
+					<Button
+						type='submit'
+						loading={updateMutation.isPending || createMutation.isPending}
+						size='sm'
+					>
+						{isEditMode ? 'Update preset' : 'Create preset'}
+					</Button>
+				)}
 			</Group>
 		</form>
 	);

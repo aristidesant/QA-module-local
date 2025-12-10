@@ -8,25 +8,31 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { IconGlobe } from '@tabler/icons-react';
-import { useUpdateClientConfig } from '~/queries/useClientConfigs';
+import {
+	useUpdateClientConfig,
+	useCreateClientConfig,
+} from '~/queries/useClientConfigs';
 import type { RegionalSettings } from '~/models/RegionalSettingsParam';
 import type { ClientConfig } from '~/models/ClientConfig';
-import RightSectionCard from '~/components/RightSectionCard/RightSectionCard';
 import styles from './RegionalSettingsParamsForm.module.css';
 
 interface RegionalSettingsParamsFormProps {
 	regionalSettings: RegionalSettings;
 	config: ClientConfig | undefined;
 	onCancel?: () => void;
+	saveStrategy?: 'create' | 'update';
+	canSubmit?: boolean;
 }
 
 const RegionalSettingsParamsForm: React.FC<RegionalSettingsParamsFormProps> = ({
 	regionalSettings,
 	config,
 	onCancel,
+	saveStrategy = 'update',
+	canSubmit = true,
 }) => {
 	const updateMutation = useUpdateClientConfig();
+	const createMutation = useCreateClientConfig();
 
 	const form = useForm({
 		initialValues: {
@@ -62,14 +68,23 @@ const RegionalSettingsParamsForm: React.FC<RegionalSettingsParamsFormProps> = ({
 				locale: values.locale,
 			};
 
-			await updateMutation.mutateAsync({
-				name: config.name,
-				data: {
+			if (saveStrategy === 'create') {
+				await createMutation.mutateAsync({
+					name: config.name,
 					description: config.description,
 					value: JSON.stringify(newSettings),
 					type: config.type,
-				},
-			});
+				});
+			} else {
+				await updateMutation.mutateAsync({
+					name: config.name,
+					data: {
+						description: config.description,
+						value: JSON.stringify(newSettings),
+						type: config.type,
+					},
+				});
+			}
 
 			notifications.show({
 				title: 'Success',
@@ -89,47 +104,51 @@ const RegionalSettingsParamsForm: React.FC<RegionalSettingsParamsFormProps> = ({
 
 	return (
 		<form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
-			<RightSectionCard
-				title='Edit Regional Settings'
-				icon={IconGlobe}
-				iconColor='var(--mantine-color-blue-6)'
-			>
-				<Stack gap='lg'>
-					<div className={styles.sectionHeading}>
-						<MantineText className={styles.sectionTitle}>
-							Regional Configuration
-						</MantineText>
-						<MantineText className={styles.sectionDescription}>
-							Configure timezone and locale for the application.
-						</MantineText>
-					</div>
+			<Stack gap='sm'>
+				<div className={styles.sectionHeading}>
+					<MantineText className={styles.sectionTitle}>
+						Regional Configuration
+					</MantineText>
+					<MantineText className={styles.sectionDescription}>
+						Timezone and locale used to format dates, currencies, and schedules.
+					</MantineText>
+				</div>
 
-					<TextInput
-						label='Timezone'
-						placeholder='e.g., America/Santo_Domingo'
-						required
-						{...form.getInputProps('timezone')}
-						description='IANA timezone identifier'
-					/>
+				<TextInput
+					label='Timezone'
+					placeholder='e.g., America/Santo_Domingo'
+					required
+					size='sm'
+					{...form.getInputProps('timezone')}
+					description='IANA timezone identifier'
+				/>
 
-					<TextInput
-						label='Locale'
-						placeholder='e.g., es-DO'
-						required
-						{...form.getInputProps('locale')}
-						description='BCP 47 language tag'
-					/>
-				</Stack>
-			</RightSectionCard>
+				<TextInput
+					label='Locale'
+					placeholder='e.g., es-DO'
+					required
+					size='sm'
+					{...form.getInputProps('locale')}
+					description='BCP 47 language tag'
+				/>
+			</Stack>
 
 			<Group justify='space-between' mt='md' className={styles.actions}>
 				<Group justify='flex-end' className={styles.actionsRight}>
-					<Button variant='light' onClick={onCancel}>
+					<Button variant='default' size='sm' onClick={onCancel}>
 						Cancel
 					</Button>
-					<Button type='submit' loading={updateMutation.isPending}>
-						Update Settings
-					</Button>
+					{canSubmit && (
+						<Button
+							type='submit'
+							size='sm'
+							loading={updateMutation.isPending || createMutation.isPending}
+						>
+							{saveStrategy === 'create'
+								? 'Create Settings'
+								: 'Update Settings'}
+						</Button>
+					)}
 				</Group>
 			</Group>
 		</form>

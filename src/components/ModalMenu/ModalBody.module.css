@@ -1,0 +1,16 @@
+.body {
+	display: grid;
+	grid-template-columns: 220px 1fr;
+	gap: var(--mantine-spacing-xs);
+	height: 100%;
+	min-height: 0;
+	overflow: hidden;
+	align-items: stretch;
+}
+
+@media (max-width: 768px) {
+	.body {
+		grid-template-columns: 1fr;
+		grid-template-rows: auto 1fr;
+	}
+}

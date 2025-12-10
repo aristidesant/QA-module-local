@@ -1,7 +1,28 @@
 import { useMemo, useState } from 'react';
-import { Button, Modal, Stack, Text } from '@mantine/core';
-import { IconCalendarTime, IconLock, IconPlus } from '@tabler/icons-react';
+import {
+	Button,
+	Modal,
+	Stack,
+	Text,
+	Group,
+	ActionIcon,
+	Tooltip,
+} from '@mantine/core';
+import {
+	IconCalendarTime,
+	IconLock,
+	IconPlus,
+	IconSettings,
+	IconTrash,
+	IconAlertTriangle,
+} from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
+import InlineNotice from '~/components/InlineNotice';
+import { useIsMasterClient } from '~/hooks/useIsMasterClient';
+import {
+	useCreateClientConfig,
+	useDeleteClientConfig,
+} from '~/queries/useClientConfigs';
 import ContentContainer from '~/components/ContentContainer';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
@@ -23,6 +44,9 @@ const SchedulerPredefinedParamsPage = () => {
 	);
 	const { data } = useClientConfigByName('scheduler_predefined_params');
 	const updateMutation = useUpdateClientConfig();
+	const createMutation = useCreateClientConfig();
+	const deleteMutation = useDeleteClientConfig();
+	const isMasterClient = useIsMasterClient();
 
 	const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 	const [scheduleToDelete, setScheduleToDelete] =
@@ -30,6 +54,7 @@ const SchedulerPredefinedParamsPage = () => {
 	const [editorOpen, setEditorOpen] = useState(false);
 	const [selectedSchedule, setSelectedSchedule] =
 		useState<PredefinedScheduleConfig | null>(null);
+	const [deleteConfigModalOpen, setDeleteConfigModalOpen] = useState(false);
 
 	const list = useMemo<PredefinedScheduleConfig[]>(() => {
 		if (!data?.value) return [];
@@ -40,12 +65,25 @@ const SchedulerPredefinedParamsPage = () => {
 		}
 	}, [data]);
 
+	const hasConfig = !!data;
+	const isGlobalConfig = data?.clientId == null;
+	const canEditConfig = isMasterClient || !isGlobalConfig;
+	const canCreateOverride = !isMasterClient && isGlobalConfig;
+	const canDeleteParams = !isGlobalConfig;
+	const canDeleteConfig = !isGlobalConfig;
+	const saveStrategy: 'create' | 'update' = canCreateOverride
+		? 'create'
+		: 'update';
+	const canSubmitEdits = !(isGlobalConfig && !isMasterClient);
+
 	const handleRowClick = (schedule: PredefinedScheduleConfig) => {
+		if (!hasConfig || (!canEditConfig && !canCreateOverride)) return;
 		setSelectedSchedule(schedule);
 		setEditorOpen(true);
 	};
 
 	const handleAddNew = () => {
+		if (!hasConfig) return;
 		setSelectedSchedule(null);
 		setEditorOpen(true);
 	};
@@ -120,15 +158,88 @@ const SchedulerPredefinedParamsPage = () => {
 			description='Curate reusable schedules with consistent days and hours'
 			titleIcon={<IconCalendarTime size={24} />}
 			titleRight={
-				<Button
-					leftSection={<IconPlus size={16} />}
-					onClick={handleAddNew}
-					size='sm'
-				>
-					Add schedule
-				</Button>
+				hasConfig ? (
+					<Group gap={'xs'}>
+						{canCreateOverride && (
+							<Tooltip label='Create override' withArrow>
+								<ActionIcon
+									variant='light'
+									color='grape'
+									aria-label='Create override'
+									onClick={async () => {
+										if (!data || !canCreateOverride) return;
+										try {
+											await createMutation.mutateAsync({
+												name: data.name,
+												description: data.description,
+												value: data.value,
+												type: data.type,
+											});
+										} catch (e) {
+											console.error('Failed to create override:', e);
+										}
+									}}
+									loading={createMutation.isPending}
+									disabled={createMutation.isPending}
+								>
+									<IconSettings size={16} />
+								</ActionIcon>
+							</Tooltip>
+						)}
+						{canDeleteConfig && (
+							<Tooltip label='Delete override' withArrow>
+								<ActionIcon
+									variant='light'
+									color='red'
+									aria-label='Delete override'
+									onClick={() => setDeleteConfigModalOpen(true)}
+									loading={deleteMutation.isPending}
+									disabled={deleteMutation.isPending}
+								>
+									<IconTrash size={16} />
+								</ActionIcon>
+							</Tooltip>
+						)}
+						{(canEditConfig || (!isGlobalConfig && canCreateOverride)) && (
+							<Tooltip label='Add schedule' withArrow>
+								<ActionIcon
+									variant='filled'
+									color='blue'
+									aria-label='Add schedule'
+									onClick={handleAddNew}
+									disabled={
+										!hasConfig || (!canEditConfig && !canCreateOverride)
+									}
+								>
+									<IconPlus size={16} />
+								</ActionIcon>
+							</Tooltip>
+						)}
+					</Group>
+				) : undefined
 			}
 		>
+			<Stack gap={'xs'}>
+				{isGlobalConfig && (
+					<InlineNotice
+						title='Global configuration'
+						icon={<IconAlertTriangle size={16} />}
+						color='orange'
+						description={
+							isMasterClient
+								? 'Changes here update the global defaults for every client. Proceed carefully.'
+								: 'These values are read-only for your client. Create an override to customize them.'
+						}
+					/>
+				)}
+				<span>
+					<SchedulerPredefinedParamsList
+						data={list}
+						onRowClick={handleRowClick}
+						onDelete={canDeleteParams ? handleDeleteClick : undefined}
+					/>
+				</span>
+			</Stack>
 			<Modal
 				opened={deleteModalOpen}
 				onClose={() => setDeleteModalOpen(false)}
@@ -160,11 +271,7 @@ const SchedulerPredefinedParamsPage = () => {
 					</Button>
 				</div>
 			</Modal>
-			<SchedulerPredefinedParamsList
-				data={list}
-				onRowClick={handleRowClick}
-				onDelete={handleDeleteClick}
-			/>
+
 			<Modal
 				opened={editorOpen}
 				onClose={closeEditor}
@@ -178,8 +285,48 @@ const SchedulerPredefinedParamsPage = () => {
 					schedule={selectedSchedule ?? undefined}
 					list={list}
 					config={data}
+					saveStrategy={saveStrategy}
+					canSubmit={canSubmitEdits}
 					onClose={closeEditor}
 				/>
+			</Modal>
+			<Modal
+				opened={deleteConfigModalOpen}
+				onClose={() => setDeleteConfigModalOpen(false)}
+				title='Delete configuration'
+				centered
+				size='sm'
+			>
+				<Text size='sm' mb='md'>
+					Delete this client override to use the global scheduler presets?
+				</Text>
+				<Group gap='xs' justify='flex-end'>
+					<Button
+						variant='default'
+						size='xs'
+						onClick={() => setDeleteConfigModalOpen(false)}
+					>
+						Cancel
+					</Button>
+					<Button
+						color='red'
+						size='xs'
+						onClick={async () => {
+							if (!data || !canDeleteConfig) return;
+							try {
+								await deleteMutation.mutateAsync(data.name);
+								setDeleteConfigModalOpen(false);
+								setEditorOpen(false);
+								setSelectedSchedule(null);
+							} catch (e) {
+								console.error('Failed to delete configuration:', e);
+							}
+						}}
+						loading={deleteMutation.isPending}
+					>
+						Delete override
+					</Button>
+				</Group>
 			</Modal>
 		</ContentContainer>
 	);

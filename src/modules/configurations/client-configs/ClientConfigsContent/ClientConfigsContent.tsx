@@ -1,20 +1,14 @@
 import { useState } from 'react';
-import { Button, Group, Text, Modal, Badge, Tooltip } from '@mantine/core';
-import {
-	IconPlus,
-	IconEdit,
-	IconTrash,
-	IconSettings,
-} from '@tabler/icons-react';
+import { Button, Group, Text, Modal } from '@mantine/core';
+import { IconPlus, IconSettings } from '@tabler/icons-react';
 import BaseTable from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
 import PaginationControls from '~/components/PaginationControls';
 import { useDeleteClientConfig } from '~/queries/useClientConfigs';
 import type { ClientConfig } from '~/models/ClientConfig';
-import type { ColumnDef } from '@tanstack/react-table';
 import { notifications } from '@mantine/notifications';
 import { useClientConfigsStore } from '~/stores/clientConfigsStore';
-import { useFilteredClientConfigs } from '../hooks';
+import { useClientConfigsColumns, useFilteredClientConfigs } from '../hooks';
 import { ClientConfigsFilters } from '../ClientConfigsFilters';
 
 import styles from './ClientConfigsContent.module.css';
@@ -74,80 +68,7 @@ export function ClientConfigsContent({
 		}
 	};
 
-	const columns: ColumnDef<ClientConfig>[] = [
-		{
-			accessorKey: 'name',
-			header: 'Name',
-			cell: ({ row }) => (
-				<Text className={styles.configName} fw={500}>
-					{row.original.name}
-				</Text>
-			),
-		},
-		{
-			accessorKey: 'description',
-			header: 'Description',
-			cell: ({ row }) => (
-				<Text className={styles.description}>{row.original.description}</Text>
-			),
-		},
-		{
-			accessorKey: 'type',
-			header: 'Type',
-			cell: ({ row }) => (
-				<Badge variant='light' size='sm'>
-					{row.original.type}
-				</Badge>
-			),
-		},
-		{
-			accessorKey: 'value',
-			header: 'Value',
-			cell: ({ row }) => (
-				<Text className={styles.value} lineClamp={1}>
-					{row.original.value}
-				</Text>
-			),
-		},
-		{
-			accessorKey: 'updatedAt',
-			header: 'Last Updated',
-			cell: ({ row }) => (
-				<Text className={styles.dateText}>
-					{new Date(row.original.updatedAt).toLocaleDateString()}
-				</Text>
-			),
-		},
-		{
-			id: 'actions',
-			header: 'Actions',
-			cell: ({ row }) => (
-				<Group gap='xs' className={styles.actionsGroup}>
-					<Tooltip label='Edit configuration' withArrow>
-						<Button
-							size='xs'
-							variant='subtle'
-							onClick={() => handleEdit(row.original)}
-							className={styles.actionButton}
-						>
-							<IconEdit size={14} />
-						</Button>
-					</Tooltip>
-					<Tooltip label='Delete configuration' withArrow>
-						<Button
-							size='xs'
-							variant='subtle'
-							color='red'
-							onClick={() => handleDeleteClick(row.original)}
-							className={styles.actionButton}
-						>
-							<IconTrash size={14} />
-						</Button>
-					</Tooltip>
-				</Group>
-			),
-		},
-	];
+	const columns = useClientConfigsColumns(handleEdit, handleDeleteClick);
 
 	// Show empty state only when there are NO configs at all (not when filters don't match)
 	const showEmptyState = allConfigsCount === 0 && !isLoading;
@@ -163,6 +84,7 @@ export function ClientConfigsContent({
 						<Button
 							leftSection={<IconPlus size={16} />}
 							onClick={() => setCreateModalOpened(true)}
+							size='sm'
 						>
 							Create Configuration
 						</Button>
@@ -190,7 +112,7 @@ export function ClientConfigsContent({
 
 			{configs.length === 0 && !isLoading ? (
 				<div className={styles.noResultsContainer}>
-					<Text size='lg' fw={500} ta='center'>
+					<Text size='sm' fw={600} ta='center'>
 						No configurations match your filters
 					</Text>
 					<Text size='sm' c='dimmed' ta='center'>
@@ -289,6 +211,7 @@ export function ClientConfigsContent({
 							setDeleteModalOpened(false);
 							setConfigToDelete(null);
 						}}
+						size='sm'
 					>
 						Cancel
 					</Button>
@@ -296,6 +219,7 @@ export function ClientConfigsContent({
 						color='red'
 						onClick={handleDeleteConfirm}
 						loading={deleteConfig.isPending}
+						size='sm'
 					>
 						Delete
 					</Button>
