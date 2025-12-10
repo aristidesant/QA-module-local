@@ -19,7 +19,7 @@ import {
 	IconSearch,
 	IconTextRecognition,
 } from '@tabler/icons-react';
-import type { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef, SortingState } from '@tanstack/react-table';
 import BaseTable from '~/components/BaseTable/BaseTable';
 import type KnowledgeBaseModel from '~/models/KnowledgeBaseModel';
 import { KnowledgeBaseType } from '~/models/KnowledgeBaseModel';
@@ -127,14 +127,24 @@ const KnowledgeBaseSelectionTable: React.FC<
 	const [pageIndex, setPageIndex] = useState(0); // 0-based in UI
 	const [pageSize, setPageSize] = useState(10);
 
+	// Server-side sorting state (single-column sort)
+	const [sorting, setSorting] = useState<SortingState>([
+		{ id: 'name', desc: false },
+	]);
+
+	const sortBy = sorting?.[0]?.id;
+	const sortOrder = sorting?.[0]?.desc ? 'desc' : 'asc';
+
 	// Reset to first page when filters change
 	useEffect(() => {
 		setPageIndex(0);
-	}, [debouncedSearch, apiType]);
+	}, [debouncedSearch, apiType, sorting]);
 
 	const response = useKnowledgeBasesPaginated({
 		search: debouncedSearch || undefined,
 		type: apiType,
+		sortBy,
+		sortOrder,
 		limit: pageSize,
 		offset: pageIndex * pageSize,
 	});
@@ -189,7 +199,7 @@ const KnowledgeBaseSelectionTable: React.FC<
 				id: 'name',
 				header: 'Name',
 				accessorFn: (row) => row.name,
-				enableSorting: false,
+				enableSorting: true,
 				cell: ({ row }) => {
 					const kb = row.original;
 					return (
@@ -205,7 +215,7 @@ const KnowledgeBaseSelectionTable: React.FC<
 				id: 'description',
 				header: 'Description',
 				accessorFn: (row) => row.description ?? '',
-				enableSorting: false,
+				enableSorting: true,
 				cell: ({ row }) => {
 					const kb = row.original;
 					const fallback =
@@ -229,7 +239,7 @@ const KnowledgeBaseSelectionTable: React.FC<
 				id: 'type',
 				header: 'Type',
 				accessorFn: (row) => row.type,
-				enableSorting: false,
+				enableSorting: true,
 				cell: ({ row }) => <TypeBadge type={row.original.type} />,
 			},
 		],
@@ -329,6 +339,10 @@ const KnowledgeBaseSelectionTable: React.FC<
 					isLoading={isLoading}
 					emptyMessage={emptyMessage}
 					filterMode='server'
+					initialSort={sorting}
+					onSortingChange={(newSorting) => {
+						setSorting(newSorting);
+					}}
 					enablePagination
 					showPaginationControls
 					pageCount={totalPages}

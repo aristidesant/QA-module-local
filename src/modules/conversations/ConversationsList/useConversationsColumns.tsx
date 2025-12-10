@@ -82,6 +82,8 @@ export const useConversationsColumns = (userTimezone: string) => {
 			{
 				id: 'contactName',
 				header: 'Contact Name',
+				accessorFn: (row) => row.contactName ?? '',
+				enableSorting: false,
 				cell: ({ row }) => (
 					<Text size='xs' fw={600}>
 						{row.original.contactName || '—'}
@@ -91,6 +93,8 @@ export const useConversationsColumns = (userTimezone: string) => {
 			{
 				id: 'phoneNumber',
 				header: 'Phone Number',
+				accessorFn: (row) => row.contactPhoneNumber ?? '',
+				enableSorting: false,
 				cell: ({ row }) => (
 					<Text size='xs' fw={600}>
 						{row.original.contactPhoneNumber || '—'}
@@ -100,6 +104,8 @@ export const useConversationsColumns = (userTimezone: string) => {
 			{
 				id: 'disposition',
 				header: 'Outcome',
+				accessorFn: (row) => row?.dispositions?.dispositionName ?? '',
+				enableSorting: false,
 				cell: ({ row }) => {
 					const color =
 						row?.original?.dispositions?.callStatus === 'NEGATIVE'
@@ -125,10 +131,12 @@ export const useConversationsColumns = (userTimezone: string) => {
 						</Badge>
 					);
 				},
+				enableSorting: true,
 			},
 			{
 				accessorKey: 'startDate',
 				header: 'When',
+				enableSorting: true,
 				cell: ({ getValue }) => {
 					const value = getValue<string>();
 					if (!value) return <Text size='xs'>—</Text>;

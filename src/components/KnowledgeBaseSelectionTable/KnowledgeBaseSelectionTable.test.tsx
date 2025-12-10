@@ -1,3 +1,4 @@
+// (Removed earlier custom mocks to avoid interfering with existing test suite)
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -457,6 +458,54 @@ describe('KnowledgeBaseSelectionTable', () => {
 			expect(
 				await screen.findByText('Custom empty message')
 			).toBeInTheDocument();
+		});
+	});
+});
+
+describe('KnowledgeBaseSelectionTable - Server-side sorting', () => {
+	it('sends default name asc sorting on initial load', async () => {
+		renderWithProviders(<KnowledgeBaseSelectionTable />);
+
+		expect(knowledgeBaseQueries.useKnowledgeBasesPaginated).toHaveBeenCalled();
+		const params = vi
+			.mocked(knowledgeBaseQueries.useKnowledgeBasesPaginated)
+			.mock.calls.at(-1)?.[0] as any;
+		expect(params).toEqual(
+			expect.objectContaining({ sortBy: 'name', sortOrder: 'asc' })
+		);
+	});
+
+	it('toggles to name desc and resets to first page', async () => {
+		// Ensure multiple pages so we can navigate to page 2
+		vi.mocked(knowledgeBaseQueries.useKnowledgeBasesPaginated).mockReturnValue({
+			data: { data: mockKnowledgeBases, total: 25 },
+			isLoading: false,
+		} as unknown as ReturnType<
+			typeof knowledgeBaseQueries.useKnowledgeBasesPaginated
+		>);
+
+		const user = userEvent.setup();
+		renderWithProviders(<KnowledgeBaseSelectionTable />);
+
+		// Go to page 2
+		await user.click(screen.getByRole('button', { name: '2' }));
+
+		// Click the Name column header to toggle sorting
+		const nameHeader = screen.getByRole('columnheader', { name: /name/i });
+		await user.click(nameHeader);
+
+		// Expect latest call to have desc and offset reset to 0
+		await waitFor(() => {
+			const params = vi
+				.mocked(knowledgeBaseQueries.useKnowledgeBasesPaginated)
+				.mock.calls.at(-1)?.[0] as any;
+			expect(params).toEqual(
+				expect.objectContaining({
+					sortBy: 'name',
+					sortOrder: 'desc',
+					offset: 0,
+				})
+			);
 		});
 	});
 });
