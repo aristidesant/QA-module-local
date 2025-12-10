@@ -1,6 +1,7 @@
 import { IconTrendingUp } from '@tabler/icons-react';
 import classes from './StatsCard.module.css';
 
+// TODO: Delete this component
 export default function StatsCard() {
 	return (
 		<div className={classes.card}>

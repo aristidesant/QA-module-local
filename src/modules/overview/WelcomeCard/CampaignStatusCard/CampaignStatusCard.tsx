@@ -1,5 +1,6 @@
 import classes from './CampaignStatusCard.module.css';
 
+// TODO: Delete this component
 export default function CampaignStatusCard() {
 	return (
 		<div className={classes.card}>

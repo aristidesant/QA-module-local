@@ -1,4 +1,4 @@
-.container {
+.contentContainer {
 	display: flex;
 	flex-direction: row;
 	width: 100%;
@@ -6,10 +6,10 @@
 	background: var(--mantine-color-body);
 }
 
-.main {
+.contentContainerMain {
 	flex: 1 1 0;
 	background: var(--mantine-color-body);
-	padding: var(--antine-spacing-xs) var(--mantine-spacing-lg);
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-lg);
 	min-width: 0;
 	display: flex;
 	flex-direction: column;
@@ -17,68 +17,16 @@
 	position: relative;
 }
 
-.headerRow {
-	display: flex;
-	align-items: center;
-	gap: 16px;
-	padding: var(--mantine-spacing-xs);
-}
-
-.header {
+.contentContainerHeader {
 	padding: var(--mantine-spacing-md);
 	padding-bottom: 0;
 }
 
-.backButton {
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-	background: none;
-	border: none;
-	color: var(--mantine-color-blue-6);
-	font-family:
-		-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-		Cantarell, sans-serif;
-	font-size: 14px;
-	font-weight: 500;
-	cursor: pointer;
-	padding: 8px 0;
-	margin-bottom: 16px;
-	transition: color 0.2s ease;
+.contentContainerDivider {
+	border-color: var(--mantine-color-gray-2);
 }
 
-.backButton:hover {
-	color: var(--mantine-color-blue-7);
-}
-
-.title {
-	font-family:
-		-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-		Cantarell, sans-serif;
-	font-size: 36px;
-	font-weight: 800;
-	color: var(--mantine-color-dark-9);
-	line-height: 1.1;
-	margin: 0 0 16px 0;
-	letter-spacing: -0.02em;
-	border-bottom: 3px solid var(--mantine-color-blue-6);
-	padding-bottom: 12px;
-	display: inline-block;
-}
-
-.description {
-	font-family:
-		-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-		Cantarell, sans-serif;
-	font-size: 16px;
-	font-weight: 400;
-	color: var(--mantine-color-gray-6);
-	line-height: 1.5;
-	margin: 0;
-	max-width: 600px;
-}
-
-.content {
+.contentContainerContent {
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
 	overscroll-behavior: contain;
@@ -89,39 +37,18 @@
 	padding-right: var(--mantine-spacing-xs);
 }
 
-.noMainScroll {
+.contentContainerNoMainScroll {
 	overflow: hidden;
 	/* disable scroll when we only want right section scrolling */
 	height: auto;
 }
 
-.content > * {
-	flex-shrink: 0;
-}
-
-.content > form,
-.content > div {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-}
-
-.content > form > :last-child {
-	margin-top: auto;
-	padding-top: var(--mantine-spacing-lg);
-}
-
-.content > div > :last-child:not([role='tabpanel']) {
-	margin-top: auto;
-	padding-top: var(--mantine-spacing-lg);
-}
-
-.content [role='tabpanel'] {
+.contentContainerContent [role='tabpanel'] {
 	margin-top: var(--mantine-spacing-md);
 	padding-top: var(--mantine-spacing-md);
 }
 
-.rightSection {
+.contentContainerRightSection {
 	width: 380px;
 	background: var(--mantine-color-gray-1);
 	border-left: 1px solid var(--mantine-color-gray-3);
@@ -134,14 +61,14 @@
 	flex-shrink: 0;
 }
 
-.rightSection > :first-child {
+.contentContainerRightSection > :first-child {
 	padding: 32px 24px;
 	flex-shrink: 0;
 	background: var(--mantine-color-gray-1);
 	border-bottom: 1px solid var(--mantine-color-gray-3);
 }
 
-.rightSection > :last-child {
+.contentContainerRightSection > :last-child {
 	flex: 1;
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;

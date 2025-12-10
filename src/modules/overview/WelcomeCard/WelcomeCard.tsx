@@ -11,15 +11,51 @@ import { ContentContainer } from '~/components/ContentContainer/ContentContainer
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import { useImpersonationState } from '~/hooks/useImpersonationState';
 import { useSessionStore } from '~/stores/sessionStore';
-import CampaignStatusCard from './CampaignStatusCard';
-import DispositionChart from './DispositionChart';
-import StatsCard from './StatsCard';
 import classes from './WelcomeCard.module.css';
 
 export type WelcomeCardProps = {
 	heading?: string;
 	subheading?: string;
 };
+
+const features = [
+	{
+		icon: IconListDetails,
+		title: 'Campaigns',
+		description: 'Create, schedule, and monitor live runs',
+		color: 'blue',
+	},
+	{
+		icon: IconRobot,
+		title: 'Agents',
+		description: 'Adjust scripts, voices, and availability',
+		color: 'cyan',
+	},
+	{
+		icon: IconUsers,
+		title: 'Contacts',
+		description: 'Upload and review contact lists',
+		color: 'teal',
+	},
+	{
+		icon: IconPhoneCall,
+		title: 'Conversations',
+		description: 'Review transcripts and follow-ups',
+		color: 'green',
+	},
+	{
+		icon: IconCheckupList,
+		title: 'Outcomes',
+		description: 'Track call results and labels',
+		color: 'orange',
+	},
+	{
+		icon: IconTools,
+		title: 'Tools',
+		description: 'Fine-tune integrations and settings',
+		color: 'violet',
+	},
+];
 
 export default function WelcomeCard({
 	heading: propHeading,
@@ -43,56 +79,7 @@ export default function WelcomeCard({
 		subheading = propSubheading || 'Global Snapshot';
 	}
 
-	const features = [
-		{
-			icon: IconListDetails,
-			title: 'Campaigns',
-			description: 'Create, schedule, and monitor live runs',
-			color: 'blue',
-		},
-		{
-			icon: IconRobot,
-			title: 'Agents',
-			description: 'Adjust scripts, voices, and availability',
-			color: 'cyan',
-		},
-		{
-			icon: IconUsers,
-			title: 'Contacts',
-			description: 'Upload and review contact lists',
-			color: 'teal',
-		},
-		{
-			icon: IconPhoneCall,
-			title: 'Conversations',
-			description: 'Review transcripts and follow-ups',
-			color: 'green',
-		},
-		{
-			icon: IconCheckupList,
-			title: 'Outcomes',
-			description: 'Track call results and labels',
-			color: 'orange',
-		},
-		{
-			icon: IconTools,
-			title: 'Tools',
-			description: 'Fine-tune integrations and settings',
-			color: 'violet',
-		},
-	];
-
 	const renderContent = () => {
-		if (isMasterClient && !impersonationState.isImpersonating) {
-			return (
-				<div className={classes.mainCard}>
-					<CampaignStatusCard />
-					<DispositionChart />
-					<StatsCard />
-				</div>
-			);
-		}
-
 		return (
 			<div className={classes.mainCard}>
 				<Card className={classes.welcomeCard} withBorder>

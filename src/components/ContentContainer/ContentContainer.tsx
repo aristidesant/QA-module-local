@@ -29,10 +29,10 @@ export const ContentContainer = ({
 	titleIcon,
 	onBackClick,
 }: ContentContainerProps) => (
-	<div className={styles.container}>
-		<div className={styles.main}>
+	<div className={styles.contentContainer}>
+		<div className={styles.contentContainerMain}>
 			{(title || description || showBackButton) && (
-				<div className={styles.header}>
+				<div className={styles.contentContainerHeader}>
 					<Flex gap={'xs'} align={'center'} justify={'space-between'}>
 						<Flex gap={'xs'} align={'center'}>
 							{showBackButton && (
@@ -68,17 +68,17 @@ export const ContentContainer = ({
 						</Flex>
 						{titleRight && titleRight}
 					</Flex>
-					<Divider mt='xs' className={styles.divider} />
+					<Divider mt='xs' className={styles.contentContainerDivider} />
 				</div>
 			)}
 			<div
-				className={`${styles.content} ${!mainScroll ? styles.noMainScroll : ''}`}
+				className={`${styles.contentContainerContent} ${!mainScroll ? styles.contentContainerNoMainScroll : ''}`}
 			>
 				{children}
 			</div>
 		</div>
 		{rightSection && (
-			<aside className={styles.rightSection}>
+			<aside className={styles.contentContainerRightSection}>
 				{rightSectionTitle && <div>{rightSectionTitle}</div>}
 				<div>{rightSection}</div>
 			</aside>

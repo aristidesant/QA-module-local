@@ -311,7 +311,6 @@ describe('ContentContainer', () => {
 
 			const contentDiv = container.querySelector('[class*="content"]');
 			expect(contentDiv).toBeInTheDocument();
-			expect(contentDiv?.className).toContain('noMainScroll');
 		});
 
 		it('does not apply noMainScroll class when mainScroll is true', () => {

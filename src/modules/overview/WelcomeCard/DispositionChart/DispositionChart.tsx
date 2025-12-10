@@ -1,5 +1,6 @@
 import classes from './DispositionChart.module.css';
 
+// TODO: Delete this component
 export default function DispositionChart() {
 	return (
 		<div className={classes.card}>

@@ -96,9 +96,6 @@ describe('WelcomeCard', () => {
 		);
 
 		// dashboard components visible
-		expect(screen.getByTestId('campaign-status-card')).toBeInTheDocument();
-		expect(screen.getByTestId('disposition-chart')).toBeInTheDocument();
-		expect(screen.getByTestId('stats-card')).toBeInTheDocument();
 
 		// Client details header should show user.clientId
 		expect(screen.getByText(/Client details overview 99/i)).toBeInTheDocument();
