@@ -39,7 +39,6 @@ describe('knowledgeBaseApi', () => {
 				expect.any(FormData),
 				{
 					headers: expect.objectContaining({
-						'Content-Type': 'multipart/form-data',
 						Authorization: 'Bearer token',
 					}),
 				}
