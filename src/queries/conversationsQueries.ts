@@ -27,6 +27,8 @@ type ConversationsQueryParams = {
 	contactPhoneNumber?: string;
 	dispositionName?: string;
 	status?: string;
+	sortBy?: string;
+	sortOrder?: 'asc' | 'desc';
 };
 
 // Create a new conversation
@@ -57,6 +59,8 @@ export const useGetConversations = (params?: ConversationsQueryParams) => {
 		contactPhoneNumber,
 		dispositionName,
 		status,
+		sortBy,
+		sortOrder,
 	} = params || {};
 
 	return useQuery({
@@ -71,6 +75,8 @@ export const useGetConversations = (params?: ConversationsQueryParams) => {
 				contactPhoneNumber,
 				dispositionName,
 				status,
+				sortBy,
+				sortOrder,
 			},
 		],
 		queryFn: async () => {
@@ -86,6 +92,8 @@ export const useGetConversations = (params?: ConversationsQueryParams) => {
 					contactPhoneNumber,
 					dispositionName,
 					status,
+					sortBy,
+					sortOrder,
 				}
 			);
 		},

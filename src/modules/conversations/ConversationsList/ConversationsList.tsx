@@ -25,6 +25,7 @@ import ConversationFilters, {
 } from './ConversationFilters';
 import AccessDenied from '~/components/AccessDenied';
 import styles from './ConversationsList.module.css';
+import type { SortingState } from '@tanstack/react-table';
 
 type ConversationsListProps = {
 	campaignId?: number | string;
@@ -53,6 +54,14 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 
 	const { limit, offset } = pagination.getApiParams();
 
+	// Server-side sorting state (single-column sort)
+	const [sorting, setSorting] = useState<SortingState>([
+		{ id: 'startDate', desc: true },
+	]);
+
+	const sortBy = sorting?.[0]?.id;
+	const sortOrder = sorting?.[0]?.desc ? 'desc' : 'asc';
+
 	// Filter state
 	const [filters, setFilters] = useState<ConversationFiltersType>({});
 
@@ -68,6 +77,8 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 			limit,
 			offset,
 			...filters,
+			sortBy,
+			sortOrder,
 		});
 
 	const { selectedId, setSelection } = useConversationStore();
@@ -203,7 +214,14 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 							columns={columns}
 							isLoading={isTableLoading}
 							density='compact'
+							filterMode='server'
 							onRowClick={handleRowClick}
+							initialSort={sorting}
+							onSortingChange={(newSorting) => {
+								setSorting(newSorting);
+								// Reset to first page when sorting changes
+								pagination.setCurrentPage(1);
+							}}
 							getRowClassName={(row) => {
 								const classes = [styles.tableRow];
 								if (row.original.id === effectiveSelectedId) {

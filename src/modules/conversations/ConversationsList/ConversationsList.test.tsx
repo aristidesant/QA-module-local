@@ -1,9 +1,87 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, fireEvent } from '@testing-library/react';
+import { beforeEach } from 'vitest';
 import { MantineProvider } from '@mantine/core';
-import ConversationsList from './ConversationsList';
 import type { ConversationsModel } from '~/models/ConversationsModels';
 import type { ConversationFiltersType } from './ConversationFilters';
+import { describe, it, expect, vi } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { screen, waitFor } from '@testing-library/react';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
+import ConversationsList from './ConversationsList';
+import * as conversationsQueries from '~/queries/conversationsQueries';
+
+// Avoid act warnings from debounce
+vi.mock('@mantine/hooks', async () => {
+	const actual = await vi.importActual<any>('@mantine/hooks');
+	return { ...actual, useDebouncedValue: (v: any) => [v] };
+});
+
+describe('ConversationsList - server-side sorting', () => {
+	it('sends default createdAt desc sorting on initial load', async () => {
+		const hookSpy = vi
+			.spyOn(conversationsQueries, 'useGetConversations')
+			.mockImplementation(
+				() =>
+					({
+						data: { data: [], total: 0 },
+						isLoading: false,
+						isFetching: false,
+						isError: false,
+						error: null,
+						refetch: vi.fn(),
+					}) as any
+			);
+		renderWithProviders(<ConversationsList />);
+
+		expect(hookSpy).toHaveBeenCalled();
+		const params = hookSpy.mock.calls.at(-1)?.[0] as any;
+		expect(params).toEqual(
+			expect.objectContaining({ sortBy: 'startDate', sortOrder: 'desc' })
+		);
+	});
+
+	it('toggles to createdAt asc and resets to first page', async () => {
+		// Ensure table renders and multiple pages to navigate
+		const hookSpy = vi
+			.spyOn(conversationsQueries, 'useGetConversations')
+			.mockReturnValue({
+				data: {
+					data: [
+						{ id: 1, createdAt: '2024-01-01T00:00:00Z' },
+						{ id: 2, createdAt: '2024-01-02T00:00:00Z' },
+					],
+					total: 25,
+				},
+				isLoading: false,
+				isFetching: false,
+				isError: false,
+				error: null,
+				refetch: vi.fn(),
+			} as any);
+
+		const user = userEvent.setup();
+		renderWithProviders(<ConversationsList />);
+
+		// Move to page 2 via PaginationControls
+		await user.click(screen.getByTestId('page-2'));
+
+		// Click the Created At column header (assuming column labeled Created At)
+		// Fallback to generic 'Created' matching if exact label differs
+		const createdHeader = screen.getByRole('columnheader', { name: /when/i });
+		await user.click(createdHeader);
+
+		await waitFor(() => {
+			const params = hookSpy.mock.calls.at(-1)?.[0] as any;
+			expect(params).toEqual(
+				expect.objectContaining({
+					sortBy: 'startDate',
+					sortOrder: 'desc',
+					offset: 0,
+				})
+			);
+		});
+	});
+});
 
 // Mock useGetConversations
 const mockUseGetConversations = vi.fn();
@@ -78,7 +156,7 @@ vi.mock('./ConversationFilters', () => ({
 	),
 }));
 
-// Mock BaseTable
+// Mock BaseTable (use a table element to avoid hydration warnings)
 vi.mock('~/components/BaseTable', () => ({
 	__esModule: true,
 	default: ({
@@ -90,7 +168,7 @@ vi.mock('~/components/BaseTable', () => ({
 		onRowClick?: (row: ConversationsModel) => void;
 		columns: { id?: string; header: string }[];
 	}) => (
-		<div data-testid='base-table'>
+		<table data-testid='base-table'>
 			<thead>
 				<tr>
 					{columns.map((col, i) => (
@@ -109,7 +187,7 @@ vi.mock('~/components/BaseTable', () => ({
 					</tr>
 				))}
 			</tbody>
-		</div>
+		</table>
 	),
 }));
 
@@ -216,6 +294,8 @@ const renderComponent = (props = {}) =>
 
 describe('ConversationsList', () => {
 	beforeEach(() => {
+		// Ensure any previous spies (from the sorting suite) are removed
+		vi.restoreAllMocks();
 		vi.clearAllMocks();
 
 		mockUseGetConversations.mockReturnValue({
