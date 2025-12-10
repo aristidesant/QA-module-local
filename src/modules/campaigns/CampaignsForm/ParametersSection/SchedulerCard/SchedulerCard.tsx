@@ -156,6 +156,7 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 					handleReload?.();
 				} catch (error) {
 					console.error('Failed to delete scheduler:', error);
+					handleReload?.();
 				}
 			},
 		});

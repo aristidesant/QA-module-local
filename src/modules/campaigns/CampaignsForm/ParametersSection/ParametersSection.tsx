@@ -51,7 +51,7 @@ export const ParametersSection: React.FC<ParametersSectionProps> = ({}) => {
 					</Stack>
 				</>
 			)}
-			<AddScheduler />
+			<AddScheduler handleReload={handleReloading} />
 		</Stack>
 	);
 };

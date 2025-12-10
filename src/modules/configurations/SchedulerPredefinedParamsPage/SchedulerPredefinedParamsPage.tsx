@@ -69,7 +69,7 @@ const SchedulerPredefinedParamsPage = () => {
 	const isGlobalConfig = data?.clientId == null;
 	const canEditConfig = isMasterClient || !isGlobalConfig;
 	const canCreateOverride = !isMasterClient && isGlobalConfig;
-	const canDeleteParams = !isGlobalConfig;
+	const canDeleteParams = !isGlobalConfig || isMasterClient;
 	const canDeleteConfig = !isGlobalConfig;
 	const saveStrategy: 'create' | 'update' = canCreateOverride
 		? 'create'

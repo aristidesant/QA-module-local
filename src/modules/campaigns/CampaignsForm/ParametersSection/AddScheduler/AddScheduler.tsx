@@ -5,20 +5,20 @@ import React from 'react';
 import AddShedulerForm from './AddShedulerForm';
 import styles from './AddScheduler.module.css';
 import { useCampaignsStore } from '~/stores/campaignsStore';
-import { useCampaignSchedules } from '~/queries/schedulerQueries';
 import { useParams } from 'react-router';
 
 interface AddSchedulerProps {
 	campaignId?: string | number;
+	handleReload?: () => void;
 }
 
 const AddScheduler: React.FC<AddSchedulerProps> = ({
 	campaignId: propCampaignId,
+	handleReload,
 }) => {
 	const { selectedCampaign } = useCampaignsStore((state) => state);
 	const { campaignId: paramCampaignId } = useParams<{ campaignId: string }>();
 	const campaignId = propCampaignId ?? selectedCampaign?.id ?? paramCampaignId;
-	const { refetch: reloadCampaignSchedule } = useCampaignSchedules(campaignId);
 	const handleClick = () => {
 		modals.open({
 			modalId: 'add-schedule-modal',
@@ -29,7 +29,7 @@ const AddScheduler: React.FC<AddSchedulerProps> = ({
 				<AddShedulerForm
 					campaignId={campaignId}
 					onSuccess={() => {
-						reloadCampaignSchedule();
+						handleReload?.();
 						modals.close('add-schedule-modal');
 					}}
 					onCancel={() => modals.close('add-schedule-modal')}

@@ -63,7 +63,7 @@ describe('AddScheduler', () => {
 	});
 
 	it('calls refetch and closes modal when AddShedulerForm onSuccess is called', () => {
-		renderWithProviders(<AddScheduler />);
+		renderWithProviders(<AddScheduler handleReload={mockRefetch} />);
 
 		fireEvent.click(screen.getByRole('button', { name: /add schedule/i }));
 		const modalConfig = (mockModalsOpen as unknown as Mock).mock.calls[0][0];
