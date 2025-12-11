@@ -55,7 +55,7 @@ const conversationsApi = (_authHeader: Record<string, string> = {}) => {
 				dispositionName?: string;
 				status?: string;
 				sortBy?: string;
-				sortOrder?: 'asc' | 'desc';
+				sortOrder?: 'ASC' | 'DESC';
 			}
 		) => {
 			const response = await axios.get<PaginatedResponse<ConversationsModel>>(

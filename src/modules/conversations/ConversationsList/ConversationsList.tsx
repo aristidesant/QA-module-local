@@ -60,7 +60,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 	]);
 
 	const sortBy = sorting?.[0]?.id;
-	const sortOrder = sorting?.[0]?.desc ? 'desc' : 'asc';
+	const sortOrder = sorting?.[0]?.desc ? 'DESC' : 'ASC';
 
 	// Filter state
 	const [filters, setFilters] = useState<ConversationFiltersType>({});

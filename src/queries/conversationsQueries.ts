@@ -28,7 +28,7 @@ type ConversationsQueryParams = {
 	dispositionName?: string;
 	status?: string;
 	sortBy?: string;
-	sortOrder?: 'asc' | 'desc';
+	sortOrder?: 'ASC' | 'DESC';
 };
 
 // Create a new conversation

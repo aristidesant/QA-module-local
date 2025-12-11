@@ -36,7 +36,7 @@ describe('ConversationsList - server-side sorting', () => {
 		expect(hookSpy).toHaveBeenCalled();
 		const params = hookSpy.mock.calls.at(-1)?.[0] as any;
 		expect(params).toEqual(
-			expect.objectContaining({ sortBy: 'startDate', sortOrder: 'desc' })
+			expect.objectContaining({ sortBy: 'startDate', sortOrder: 'DESC' })
 		);
 	});
 
@@ -75,7 +75,7 @@ describe('ConversationsList - server-side sorting', () => {
 			expect(params).toEqual(
 				expect.objectContaining({
 					sortBy: 'startDate',
-					sortOrder: 'desc',
+					sortOrder: 'DESC',
 					offset: 0,
 				})
 			);
