@@ -83,7 +83,7 @@ export const useConversationsColumns = (userTimezone: string) => {
 				id: 'contactName',
 				header: 'Contact Name',
 				accessorFn: (row) => row.contactName ?? '',
-				enableSorting: false,
+				enableSorting: true,
 				cell: ({ row }) => (
 					<Text size='xs' fw={600}>
 						{row.original.contactName || '—'}
@@ -102,10 +102,10 @@ export const useConversationsColumns = (userTimezone: string) => {
 				),
 			},
 			{
-				id: 'disposition',
+				id: 'dispositionName',
 				header: 'Outcome',
 				accessorFn: (row) => row?.dispositions?.dispositionName ?? '',
-				enableSorting: false,
+				enableSorting: true,
 				cell: ({ row }) => {
 					const color =
 						row?.original?.dispositions?.callStatus === 'NEGATIVE'
