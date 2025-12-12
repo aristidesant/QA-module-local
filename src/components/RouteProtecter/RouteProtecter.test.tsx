@@ -6,6 +6,15 @@ import RouteProtecter, { clientLoader, useToken } from './RouteProtecter';
 import { useSessionStore } from '~/stores/sessionStore';
 import * as jwtDecodeModule from 'jwt-decode';
 import * as reactRouter from 'react-router';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import userApi from '~/api/userApi';
+import type { ReactNode } from 'react';
+
+vi.mock('~/api/userApi', () => ({
+	default: vi.fn(() => ({
+		getCurrentUser: vi.fn(),
+	})),
+}));
 
 // Mock jwt-decode
 vi.mock('jwt-decode', () => ({
@@ -23,6 +32,18 @@ vi.mock('~/stores/sessionStore', () => ({
 }));
 
 const mockUseSessionStore = vi.mocked(useSessionStore);
+const mockUserApi = vi.mocked(userApi);
+
+const renderWithQuery = (ui: ReactNode) => {
+	const queryClient = new QueryClient({
+		defaultOptions: { queries: { retry: false } },
+	});
+	return render(
+		<QueryClientProvider client={queryClient}>
+			<MantineProvider>{ui}</MantineProvider>
+		</QueryClientProvider>
+	);
+};
 
 // Helper to create valid JWT token (expires in future)
 const createValidToken = () => {
@@ -37,11 +58,11 @@ const createExpiredToken = () => {
 describe('RouteProtecter', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		localStorage.clear();
+		sessionStorage.clear();
 	});
 
 	afterEach(() => {
-		localStorage.clear();
+		sessionStorage.clear();
 		vi.restoreAllMocks();
 	});
 
@@ -51,26 +72,12 @@ describe('RouteProtecter', () => {
 			expect(result).toEqual({ token: null, user: null });
 		});
 
-		it('returns token from session-storage', async () => {
+		it('returns token from sessionStorage accessToken', async () => {
 			const mockToken = createValidToken();
 			const futureExp = Math.floor(Date.now() / 1000) + 3600;
 
-			localStorage.setItem(
-				'session-storage',
-				JSON.stringify({ state: { token: mockToken } })
-			);
+			sessionStorage.setItem('accessToken', mockToken);
 
-			vi.mocked(jwtDecodeModule.jwtDecode).mockReturnValue({ exp: futureExp });
-
-			const result = await clientLoader();
-			expect(result.token).toBe(mockToken);
-		});
-
-		it('falls back to accessToken when session-storage is empty', async () => {
-			const mockToken = createValidToken();
-			const futureExp = Math.floor(Date.now() / 1000) + 3600;
-
-			localStorage.setItem('accessToken', mockToken);
 			vi.mocked(jwtDecodeModule.jwtDecode).mockReturnValue({ exp: futureExp });
 
 			const result = await clientLoader();
@@ -81,17 +88,18 @@ describe('RouteProtecter', () => {
 			const expiredToken = createExpiredToken();
 			const pastExp = Math.floor(Date.now() / 1000) - 3600;
 
-			localStorage.setItem('accessToken', expiredToken);
+			sessionStorage.setItem('accessToken', expiredToken);
 			vi.mocked(jwtDecodeModule.jwtDecode).mockReturnValue({ exp: pastExp });
 
 			const result = await clientLoader();
 			expect(result).toEqual({ token: null, user: null });
+			expect(sessionStorage.getItem('accessToken')).toBeNull();
 		});
 
 		it('returns null when exp is not finite', async () => {
 			const mockToken = createValidToken();
 
-			localStorage.setItem('accessToken', mockToken);
+			sessionStorage.setItem('accessToken', mockToken);
 			vi.mocked(jwtDecodeModule.jwtDecode).mockReturnValue({ exp: NaN });
 
 			const result = await clientLoader();
@@ -101,47 +109,24 @@ describe('RouteProtecter', () => {
 		it('returns null when jwtDecode throws', async () => {
 			const mockToken = 'invalid-token';
 
-			localStorage.setItem('accessToken', mockToken);
+			sessionStorage.setItem('accessToken', mockToken);
 			vi.mocked(jwtDecodeModule.jwtDecode).mockImplementation(() => {
 				throw new Error('Invalid token');
 			});
 
 			const result = await clientLoader();
 			expect(result).toEqual({ token: null, user: null });
-		});
-
-		it('handles invalid JSON in session-storage gracefully', async () => {
-			const mockToken = createValidToken();
-			const futureExp = Math.floor(Date.now() / 1000) + 3600;
-
-			localStorage.setItem('session-storage', 'invalid-json');
-			localStorage.setItem('accessToken', mockToken);
-			vi.mocked(jwtDecodeModule.jwtDecode).mockReturnValue({ exp: futureExp });
-
-			const result = await clientLoader();
-			expect(result.token).toBe(mockToken);
-		});
-
-		it('returns null when session-storage has no token field', async () => {
-			localStorage.setItem(
-				'session-storage',
-				JSON.stringify({ state: { user: {} } })
-			);
-
-			const result = await clientLoader();
-			expect(result).toEqual({ token: null, user: null });
+			expect(sessionStorage.getItem('accessToken')).toBeNull();
 		});
 	});
 
 	describe('RouteProtecter Component Logic', () => {
 		// Create a test component that mirrors RouteProtecter's redirect logic
 		const TestRouteProtecter = () => {
-			const { token: storeToken, user, _hasHydrated } = useSessionStore();
+			const { token: storeToken, user } = useSessionStore();
 			const path = reactRouter.useLocation().pathname;
 
-			// Simulate using loader token (we mock this scenario)
-			const loaderToken = null; // Simulating no loader token for these tests
-			const authToken = _hasHydrated ? storeToken : loaderToken;
+			const authToken = storeToken;
 
 			if (!authToken && path !== '/login') {
 				return <reactRouter.Navigate to='/login' replace />;
@@ -152,7 +137,7 @@ describe('RouteProtecter', () => {
 			}
 
 			const needsPasswordUpdate =
-				_hasHydrated && authToken && user?.needToChangePassword;
+				Boolean(authToken) && user?.needToChangePassword;
 
 			if (needsPasswordUpdate && path !== '/force-password-change') {
 				return <reactRouter.Navigate to='/force-password-change' replace />;
@@ -174,13 +159,11 @@ describe('RouteProtecter', () => {
 			mockUseSessionStore.mockReturnValue({
 				token: 'valid-token',
 				user: { needToChangePassword: false },
-				_hasHydrated: true,
 				setToken: vi.fn(),
 				setUser: vi.fn(),
 				setTargetClient: vi.fn(),
 				clearUser: vi.fn(),
 				targetClient: null,
-				_setHasHydrated: vi.fn(),
 			} as any);
 
 			render(
@@ -203,13 +186,11 @@ describe('RouteProtecter', () => {
 			mockUseSessionStore.mockReturnValue({
 				token: null,
 				user: null,
-				_hasHydrated: true,
 				setToken: vi.fn(),
 				setUser: vi.fn(),
 				setTargetClient: vi.fn(),
 				clearUser: vi.fn(),
 				targetClient: null,
-				_setHasHydrated: vi.fn(),
 			} as any);
 
 			render(
@@ -234,13 +215,11 @@ describe('RouteProtecter', () => {
 			mockUseSessionStore.mockReturnValue({
 				token: 'valid-token',
 				user: { needToChangePassword: false },
-				_hasHydrated: true,
 				setToken: vi.fn(),
 				setUser: vi.fn(),
 				setTargetClient: vi.fn(),
 				clearUser: vi.fn(),
 				targetClient: null,
-				_setHasHydrated: vi.fn(),
 			} as any);
 
 			render(
@@ -265,13 +244,11 @@ describe('RouteProtecter', () => {
 			mockUseSessionStore.mockReturnValue({
 				token: 'valid-token',
 				user: { needToChangePassword: true },
-				_hasHydrated: true,
 				setToken: vi.fn(),
 				setUser: vi.fn(),
 				setTargetClient: vi.fn(),
 				clearUser: vi.fn(),
 				targetClient: null,
-				_setHasHydrated: vi.fn(),
 			} as any);
 
 			render(
@@ -299,13 +276,11 @@ describe('RouteProtecter', () => {
 			mockUseSessionStore.mockReturnValue({
 				token: 'valid-token',
 				user: { needToChangePassword: false },
-				_hasHydrated: true,
 				setToken: vi.fn(),
 				setUser: vi.fn(),
 				setTargetClient: vi.fn(),
 				clearUser: vi.fn(),
 				targetClient: null,
-				_setHasHydrated: vi.fn(),
 			} as any);
 
 			render(
@@ -329,75 +304,15 @@ describe('RouteProtecter', () => {
 			});
 		});
 
-		it('uses loader token when store has not hydrated', () => {
-			mockUseSessionStore.mockReturnValue({
-				token: null,
-				user: null,
-				_hasHydrated: false,
-				setToken: vi.fn(),
-				setUser: vi.fn(),
-				setTargetClient: vi.fn(),
-				clearUser: vi.fn(),
-				targetClient: null,
-				_setHasHydrated: vi.fn(),
-			} as any);
-
-			render(
-				<MantineProvider>
-					<MemoryRouter initialEntries={['/']}>
-						<Routes>
-							<Route path='/' element={<TestRouteProtecter />}>
-								<Route index element={<div>Home Content</div>} />
-							</Route>
-							<Route path='/login' element={<div>Login Page</div>} />
-						</Routes>
-					</MemoryRouter>
-				</MantineProvider>
-			);
-
-			// When not hydrated and no loader token, should redirect to login
-			expect(screen.getByText('Login Page')).toBeInTheDocument();
-		});
-
-		it('renders content without calling setToken when store has not hydrated', () => {
-			const setTokenMock = vi.fn();
-
-			mockUseSessionStore.mockReturnValue({
-				token: null,
-				user: null,
-				_hasHydrated: false,
-				setToken: setTokenMock,
-				setUser: vi.fn(),
-				setTargetClient: vi.fn(),
-				clearUser: vi.fn(),
-				targetClient: null,
-				_setHasHydrated: vi.fn(),
-			} as any);
-
-			render(
-				<MantineProvider>
-					<MemoryRouter initialEntries={['/login']}>
-						<Routes>
-							<Route path='/login' element={<div>Login Page</div>} />
-						</Routes>
-					</MemoryRouter>
-				</MantineProvider>
-			);
-
-			expect(screen.getByText('Login Page')).toBeInTheDocument();
-		});
-
 		it('shows login page for unauthenticated users', () => {
 			mockUseSessionStore.mockReturnValue({
 				token: null,
 				user: null,
-				_hasHydrated: true,
 				setToken: vi.fn(),
 				setUser: vi.fn(),
 				setTargetClient: vi.fn(),
 				clearUser: vi.fn(),
 				targetClient: null,
-				_setHasHydrated: vi.fn(),
 			} as any);
 
 			render(
@@ -414,9 +329,16 @@ describe('RouteProtecter', () => {
 		});
 
 		describe('loader token synchronization', () => {
-			it('calls setToken when loader token differs and store has hydrated', async () => {
+			it('calls setToken when loader token differs from store token', async () => {
 				const setTokenMock = vi.fn();
 				const loaderToken = 'loader-token';
+
+				mockUserApi.mockReturnValue({
+					getCurrentUser: vi.fn().mockResolvedValue({
+						id: 1,
+						needToChangePassword: false,
+					}),
+				} as any);
 
 				vi.spyOn(reactRouter, 'useLoaderData').mockReturnValue({
 					token: loaderToken,
@@ -425,26 +347,22 @@ describe('RouteProtecter', () => {
 				mockUseSessionStore.mockReturnValue({
 					token: 'store-token',
 					user: { needToChangePassword: false },
-					_hasHydrated: true,
 					setToken: setTokenMock,
 					setUser: vi.fn(),
 					setTargetClient: vi.fn(),
 					clearUser: vi.fn(),
 					targetClient: null,
-					_setHasHydrated: vi.fn(),
 				} as any);
 
-				render(
-					<MantineProvider>
-						<MemoryRouter initialEntries={['/']}>
-							<Routes>
-								<Route path='/' element={<RouteProtecter />}>
-									<Route index element={<div>Home Content</div>} />
-								</Route>
-								<Route path='/login' element={<div>Login Page</div>} />
-							</Routes>
-						</MemoryRouter>
-					</MantineProvider>
+				renderWithQuery(
+					<MemoryRouter initialEntries={['/']}>
+						<Routes>
+							<Route path='/' element={<RouteProtecter />}>
+								<Route index element={<div>Home Content</div>} />
+							</Route>
+							<Route path='/login' element={<div>Login Page</div>} />
+						</Routes>
+					</MemoryRouter>
 				);
 
 				await waitFor(() =>
@@ -456,6 +374,13 @@ describe('RouteProtecter', () => {
 				const setTokenMock = vi.fn();
 				const loaderToken = 'same-token';
 
+				mockUserApi.mockReturnValue({
+					getCurrentUser: vi.fn().mockResolvedValue({
+						id: 1,
+						needToChangePassword: false,
+					}),
+				} as any);
+
 				vi.spyOn(reactRouter, 'useLoaderData').mockReturnValue({
 					token: loaderToken,
 				} as any);
@@ -463,60 +388,21 @@ describe('RouteProtecter', () => {
 				mockUseSessionStore.mockReturnValue({
 					token: loaderToken,
 					user: { needToChangePassword: false },
-					_hasHydrated: true,
 					setToken: setTokenMock,
 					setUser: vi.fn(),
 					setTargetClient: vi.fn(),
 					clearUser: vi.fn(),
 					targetClient: null,
-					_setHasHydrated: vi.fn(),
 				} as any);
 
-				render(
-					<MantineProvider>
-						<MemoryRouter initialEntries={['/']}>
-							<Routes>
-								<Route path='/' element={<RouteProtecter />}>
-									<Route index element={<div>Home Content</div>} />
-								</Route>
-							</Routes>
-						</MemoryRouter>
-					</MantineProvider>
-				);
-
-				await waitFor(() => expect(setTokenMock).not.toHaveBeenCalled());
-			});
-
-			it('does not call setToken when store has not hydrated', async () => {
-				const setTokenMock = vi.fn();
-				const loaderToken = 'loader-token';
-
-				vi.spyOn(reactRouter, 'useLoaderData').mockReturnValue({
-					token: loaderToken,
-				} as any);
-
-				mockUseSessionStore.mockReturnValue({
-					token: 'store-token',
-					user: { needToChangePassword: false },
-					_hasHydrated: false,
-					setToken: setTokenMock,
-					setUser: vi.fn(),
-					setTargetClient: vi.fn(),
-					clearUser: vi.fn(),
-					targetClient: null,
-					_setHasHydrated: vi.fn(),
-				} as any);
-
-				render(
-					<MantineProvider>
-						<MemoryRouter initialEntries={['/']}>
-							<Routes>
-								<Route path='/' element={<RouteProtecter />}>
-									<Route index element={<div>Home Content</div>} />
-								</Route>
-							</Routes>
-						</MemoryRouter>
-					</MantineProvider>
+				renderWithQuery(
+					<MemoryRouter initialEntries={['/']}>
+						<Routes>
+							<Route path='/' element={<RouteProtecter />}>
+								<Route index element={<div>Home Content</div>} />
+							</Route>
+						</Routes>
+					</MemoryRouter>
 				);
 
 				await waitFor(() => expect(setTokenMock).not.toHaveBeenCalled());
@@ -536,13 +422,11 @@ describe('RouteProtecter', () => {
 			mockUseSessionStore.mockReturnValue({
 				token: mockToken,
 				user: mockUser,
-				_hasHydrated: true,
 				setToken: vi.fn(),
 				setUser: vi.fn(),
 				setTargetClient: vi.fn(),
 				clearUser: vi.fn(),
 				targetClient: null,
-				_setHasHydrated: vi.fn(),
 			} as any);
 
 			const TestComponent = () => {
@@ -571,13 +455,11 @@ describe('RouteProtecter', () => {
 			mockUseSessionStore.mockReturnValue({
 				token: null,
 				user: null,
-				_hasHydrated: true,
 				setToken: vi.fn(),
 				setUser: vi.fn(),
 				setTargetClient: vi.fn(),
 				clearUser: vi.fn(),
 				targetClient: null,
-				_setHasHydrated: vi.fn(),
 			} as any);
 
 			const TestComponent = () => {

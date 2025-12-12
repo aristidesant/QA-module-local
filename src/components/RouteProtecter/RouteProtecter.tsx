@@ -5,33 +5,28 @@ import type { UserModel } from '~/models/UserModels';
 import { jwtDecode } from 'jwt-decode';
 import dayjs from 'dayjs';
 import ImpersonationLoadingOverlay from '~/components/ImpersonationLoadingOverlay';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import userApi from '~/api/userApi';
+import { logout } from '~/utils/logout';
+import { LoadingOverlay } from '@mantine/core';
+import classes from './RouteProtecter.module.css';
 
 type LoaderData = {
 	token: string | null;
 	user: UserModel | null;
 };
 
-// Client loader to check session from localStorage - simplified to only validate token
+const ACCESS_TOKEN_KEY = 'accessToken';
+
+// Client loader to check session from sessionStorage (token only)
 export async function clientLoader(): Promise<LoaderData> {
-	// Try to get token from the persisted store first, fallback to legacy accessToken
 	let token: string | null = null;
 
 	if (typeof window !== 'undefined') {
 		try {
-			// Try to get from persisted store
-			const sessionStorage = window.localStorage.getItem('session-storage');
-			if (sessionStorage) {
-				const parsed = JSON.parse(sessionStorage);
-				token = parsed?.state?.token || null;
-			}
-
-			// Fallback to legacy accessToken for backward compatibility
-			if (!token) {
-				token = window.localStorage.getItem('accessToken');
-			}
+			token = window.sessionStorage.getItem(ACCESS_TOKEN_KEY);
 		} catch {
-			// If parsing fails, try legacy accessToken
-			token = window.localStorage.getItem('accessToken');
+			// ignore storage errors
 		}
 	}
 
@@ -39,12 +34,13 @@ export async function clientLoader(): Promise<LoaderData> {
 
 	try {
 		// Just validate token expiration
-		const decoded: any = jwtDecode(token);
+		const decoded: unknown = jwtDecode(token);
+		const expSeconds = (decoded as { exp?: number | string } | null)?.exp;
 		const now = dayjs();
 		const expMillis =
-			typeof decoded?.exp === 'number'
-				? decoded.exp * 1000
-				: Number(decoded?.exp) * 1000;
+			typeof expSeconds === 'number'
+				? expSeconds * 1000
+				: Number(expSeconds) * 1000;
 
 		if (
 			!Number.isFinite(expMillis) ||
@@ -52,36 +48,83 @@ export async function clientLoader(): Promise<LoaderData> {
 			dayjs(expMillis).isSame(now)
 		) {
 			console.debug('JWT token expired');
+			try {
+				window.sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+			} catch {}
 			return { token: null, user: null };
 		}
 
 		// Return token only - let the store handle user data
 		return { token, user: null };
 	} catch (error) {
+		try {
+			window.sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+		} catch {}
 		return { token: null, user: null };
 	}
 }
 
 export const RouteProtecter = () => {
 	const { token } = useLoaderData<typeof clientLoader>();
-	const { setToken, token: storeToken, user, _hasHydrated } = useSessionStore();
+	const queryClient = useQueryClient();
+	const { setToken, token: storeToken, user, setUser } = useSessionStore();
 	const path = useLocation().pathname;
 
 	useEffect(() => {
-		// Only update store after hydration is complete
-		if (!_hasHydrated) return;
-
-		// Only set token if it's different from what's already in store
-		if (token && token !== storeToken) {
+		if (token !== storeToken) {
 			setToken(token);
 		}
+		if (!token) {
+			setUser(null);
+			queryClient.removeQueries({ queryKey: ['currentUser'] });
+		}
+	}, [queryClient, setToken, setUser, storeToken, token]);
 
-		// The loader no longer fetches user data, so we don't need to sync user from loader
-		// User data is now managed entirely by the auth mutations and persist store
-	}, [token, setToken, storeToken, _hasHydrated]);
+	const authToken = storeToken ?? token;
 
-	// Handle authentication redirects - use store token if hydrated, otherwise use loader token
-	const authToken = _hasHydrated ? storeToken : token;
+	const meQuery = useQuery<UserModel>({
+		queryKey: ['currentUser'],
+		queryFn: async () => {
+			const api = userApi();
+			return api.getCurrentUser();
+		},
+		enabled: Boolean(authToken),
+		refetchOnMount: 'always',
+		refetchOnWindowFocus: true,
+		refetchOnReconnect: true,
+		retry: false,
+	});
+	const refetchMe = meQuery.refetch;
+
+	useEffect(() => {
+		if (!authToken) return;
+		if (meQuery.data) setUser(meQuery.data);
+	}, [authToken, meQuery.data, setUser]);
+
+	useEffect(() => {
+		if (!authToken) return;
+
+		const handleVisibilityChange = () => {
+			if (document.visibilityState === 'visible') {
+				refetchMe();
+			}
+		};
+
+		document.addEventListener('visibilitychange', handleVisibilityChange);
+		return () => {
+			document.removeEventListener('visibilitychange', handleVisibilityChange);
+		};
+	}, [authToken, refetchMe]);
+
+	useEffect(() => {
+		if (!authToken) return;
+		if (!meQuery.isError) return;
+
+		const status = (meQuery.error as any)?.response?.status;
+		if (status === 401) {
+			logout('/login', { reason: 'expired' });
+		}
+	}, [authToken, meQuery.error, meQuery.isError]);
 
 	if (!authToken && path !== '/login') {
 		return <Navigate to='/login' replace />;
@@ -91,8 +134,7 @@ export const RouteProtecter = () => {
 		return <Navigate to='/' replace />;
 	}
 
-	const needsPasswordUpdate =
-		_hasHydrated && authToken && user?.needToChangePassword;
+	const needsPasswordUpdate = Boolean(authToken) && user?.needToChangePassword;
 
 	if (needsPasswordUpdate && path !== '/force-password-change') {
 		return <Navigate to='/force-password-change' replace />;
@@ -103,10 +145,15 @@ export const RouteProtecter = () => {
 	}
 
 	return (
-		<>
+		<div className={classes.root}>
+			<LoadingOverlay
+				visible={Boolean(authToken) && !user && meQuery.isPending}
+				overlayProps={{ color: 'white', opacity: 0.75 }}
+				loaderProps={{ type: 'dots' }}
+			/>
 			<Outlet />
 			<ImpersonationLoadingOverlay />
-		</>
+		</div>
 	);
 };
 

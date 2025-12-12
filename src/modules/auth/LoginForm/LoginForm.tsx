@@ -21,7 +21,7 @@ import {
 	IconArrowRight,
 } from '@tabler/icons-react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { useLogin } from '~/queries/authQueries';
 import { getErrorMessage } from '~/utils/httpClient';
 import classes from './LoginForm.module.css';
@@ -32,6 +32,8 @@ import OTPVerificationModal from './OTPVerificationModal';
 import ClientSelectionModal from './ClientSelectionModal';
 import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import { usePasswordResetStore } from '~/stores/passwordResetStore';
+import { useEffect } from 'react';
+import { useSessionStore } from '~/stores/sessionStore';
 
 interface FormValues {
 	username: string;
@@ -43,6 +45,8 @@ interface FormValues {
 export function LoginForm() {
 	const loginMutation = useLogin();
 	const navigate = useNavigate();
+	const location = useLocation();
+	const { setToken, setUser, setTargetClient } = useSessionStore();
 	const { setPendingCredentials, clearPendingCredentials } =
 		usePasswordResetStore();
 	const [formError, setFormError] = useState<string | null>(null);
@@ -60,6 +64,19 @@ export function LoginForm() {
 	const isSubmitting = loginMutation.isPending;
 	const isRedirecting = false;
 	const isLoading = isSubmitting || isRedirecting;
+	const logoutReason = new URLSearchParams(location.search).get('reason');
+
+	useEffect(() => {
+		// Defensive: ensure no stale token remains when landing on /login.
+		try {
+			window.sessionStorage.removeItem('accessToken');
+		} catch {
+			// ignore storage errors
+		}
+		setUser(null);
+		setTargetClient(null);
+		setToken(null);
+	}, [setTargetClient, setToken, setUser]);
 
 	const form = useForm<FormValues>({
 		initialValues: {
@@ -191,6 +208,18 @@ export function LoginForm() {
 						</div>
 					)}
 					<Stack gap='md'>
+						{logoutReason === 'expired' && (
+							<Alert
+								variant='light'
+								color='red'
+								title='Session expired'
+								icon={<IconAlertCircle size={20} />}
+								radius='lg'
+								className={classes.errorMessage}
+							>
+								Please sign in again to continue.
+							</Alert>
+						)}
 						<Box className={classes.segmentedWrapper}>
 							<AppSegmentedControl
 								fullWidth

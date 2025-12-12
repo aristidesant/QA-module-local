@@ -67,12 +67,12 @@ describe('ForcePasswordChangePage', () => {
 			clearPendingCredentials: mockClearPendingCredentials,
 		} as any);
 
-		// Ensure session store is hydrated and no user to avoid route redirect
-		useSessionStore.setState({ _hasHydrated: true, user: null });
+		// Ensure no user to avoid route redirect
+		useSessionStore.setState({ user: null });
 
 		// Mock logout util
-		vi.spyOn(logoutUtil, 'logout').mockImplementation((redirectTo?: string) =>
-			mockLogout(redirectTo)
+		vi.spyOn(logoutUtil, 'logout').mockImplementation(
+			(redirectTo?: string, _options?: any) => mockLogout(redirectTo)
 		);
 	});
 

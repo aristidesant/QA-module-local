@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import type { UserModel } from '~/models/UserModels';
 import type { TargetClient } from '~/api/authApi';
 
@@ -11,38 +10,28 @@ interface SessionState {
 	setToken: (token: string | null) => void;
 	setTargetClient: (targetClient: TargetClient | null) => void;
 	clearUser: () => void;
-	// Add hydration state for persistence
-	_hasHydrated: boolean;
-	_setHasHydrated: (hasHydrated: boolean) => void;
 }
 
-export const useSessionStore = create<SessionState>()(
-	persist(
-		(set) => ({
-			user: null,
-			token: null,
-			targetClient: null,
-			_hasHydrated: false,
-			setToken: (token) => set({ token }),
-			setUser: (user) => set({ user }),
-			setTargetClient: (targetClient) => {
-				set({ targetClient });
-			},
-			clearUser: () => {
-				set({ user: null, targetClient: null });
-			},
-			_setHasHydrated: (hasHydrated) => set({ _hasHydrated: hasHydrated }),
-		}),
-		{
-			name: 'session-storage',
-			partialize: (state) => ({
-				user: state.user,
-				token: state.token,
-				targetClient: state.targetClient,
-			}),
-			onRehydrateStorage: () => (state) => {
-				state?._setHasHydrated(true);
-			},
+const ACCESS_TOKEN_KEY = 'accessToken';
+
+export const useSessionStore = create<SessionState>()((set) => ({
+	user: null,
+	token: null,
+	targetClient: null,
+	setToken: (token) => {
+		set({ token });
+		if (typeof window === 'undefined') return;
+		try {
+			if (token) {
+				window.sessionStorage.setItem(ACCESS_TOKEN_KEY, token);
+			} else {
+				window.sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+			}
+		} catch {
+			// ignore storage errors
 		}
-	)
-);
+	},
+	setUser: (user) => set({ user }),
+	setTargetClient: (targetClient) => set({ targetClient }),
+	clearUser: () => set({ user: null, targetClient: null }),
+}));

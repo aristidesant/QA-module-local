@@ -34,10 +34,10 @@ axios.interceptors.request.use(
 				(config.headers &&
 					(config.headers['Authorization'] ||
 						config.headers['authorization'])) ||
-					false
+				false
 			);
 			if (!hasAuthHeader && typeof window !== 'undefined') {
-				const token = window.localStorage?.getItem('accessToken');
+				const token = window.sessionStorage?.getItem('accessToken');
 				if (token) {
 					config.headers['Authorization'] = `Bearer ${token}`;
 				}
@@ -65,7 +65,9 @@ axios.interceptors.response.use(
 			typeof window !== 'undefined'
 		) {
 			// Use centralized logout utility for authenticated requests only
-			import('~/utils/logout').then(({ logout }) => logout());
+			import('~/utils/logout').then(({ logout }) =>
+				logout('/login', { reason: 'expired' })
+			);
 		}
 		return Promise.reject(error);
 	}

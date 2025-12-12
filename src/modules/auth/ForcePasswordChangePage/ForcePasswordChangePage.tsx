@@ -35,7 +35,7 @@ const ForcePasswordChangePage = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const loginMutation = useLogin();
-	const { user, _hasHydrated } = useSessionStore();
+	const { user } = useSessionStore();
 	const { pendingUsername, pendingLoginType, clearPendingCredentials } =
 		usePasswordResetStore();
 
@@ -52,13 +52,11 @@ const ForcePasswordChangePage = () => {
 	const missingCredentials = !usernameForReauth;
 
 	useEffect(() => {
-		if (!_hasHydrated) return;
-
 		if (user && !user.needToChangePassword) {
 			clearPendingCredentials();
 			navigate('/', { replace: true });
 		}
-	}, [_hasHydrated, clearPendingCredentials, navigate, user]);
+	}, [clearPendingCredentials, navigate, user]);
 
 	const handlePasswordChanged = async ({
 		newPassword,

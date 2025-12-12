@@ -8,9 +8,11 @@ describe('useSessionStore', () => {
 	beforeEach(() => {
 		act(() => {
 			useSessionStore.getState().clearUser();
-			useSessionStore.getState()._setHasHydrated(false);
 			useSessionStore.getState().setToken(null);
 		});
+		try {
+			window.sessionStorage.clear();
+		} catch {}
 	});
 
 	it('should have initial state', () => {
@@ -18,7 +20,6 @@ describe('useSessionStore', () => {
 		expect(state.user).toBeNull();
 		expect(state.token).toBeNull();
 		expect(state.targetClient).toBeNull();
-		expect(state._hasHydrated).toBe(false);
 	});
 
 	it('should set token', () => {
@@ -26,6 +27,7 @@ describe('useSessionStore', () => {
 			useSessionStore.getState().setToken('token-123');
 		});
 		expect(useSessionStore.getState().token).toBe('token-123');
+		expect(window.sessionStorage.getItem('accessToken')).toBe('token-123');
 	});
 
 	it('should set user', () => {
@@ -57,10 +59,12 @@ describe('useSessionStore', () => {
 		expect(state.targetClient).toBeNull();
 	});
 
-	it('should set hydrated state', () => {
+	it('should clear token', () => {
 		act(() => {
-			useSessionStore.getState()._setHasHydrated(true);
+			useSessionStore.getState().setToken('token-123');
+			useSessionStore.getState().setToken(null);
 		});
-		expect(useSessionStore.getState()._hasHydrated).toBe(true);
+		expect(useSessionStore.getState().token).toBeNull();
+		expect(window.sessionStorage.getItem('accessToken')).toBeNull();
 	});
 });

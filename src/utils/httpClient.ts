@@ -51,7 +51,9 @@ export function createHttpClient(
 				// Only handle redirect on client side
 				if (typeof window !== 'undefined') {
 					// Use centralized logout utility
-					import('~/utils/logout').then(({ logout }) => logout());
+					import('~/utils/logout').then(({ logout }) =>
+						logout('/login', { reason: 'expired' })
+					);
 				}
 			}
 

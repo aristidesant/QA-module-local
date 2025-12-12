@@ -32,12 +32,12 @@ async function completeLoginFlow(
 	setUser: (user: any) => void,
 	userFromResponse?: any // Optional user data from API response
 ) {
-	// Persist token (keep legacy storage for backward compatibility)
+	// Persist token (sessionStorage only)
 	try {
-		window.localStorage.setItem('accessToken', accessToken);
+		window.sessionStorage.setItem('accessToken', accessToken);
 	} catch {}
 
-	// Put token in store (this will also persist via Zustand persist middleware)
+	// Put token in store
 	setToken(accessToken);
 
 	// If user data is provided from API response, use it directly
@@ -260,8 +260,7 @@ export function useEndImpersonation() {
 
 export function logoutClientSide() {
 	try {
-		window.localStorage.removeItem('accessToken');
-		window.localStorage.removeItem('session-storage');
+		window.sessionStorage.removeItem('accessToken');
 	} catch {}
 	const { setToken, setUser, setTargetClient } = useSessionStore.getState();
 	setToken(null);

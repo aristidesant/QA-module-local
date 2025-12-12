@@ -8,11 +8,13 @@ import * as passwordResetStore from '~/stores/passwordResetStore';
 
 // Mock dependencies
 const mockNavigate = vi.fn();
+const mockLocation = { search: '' };
 vi.mock('react-router', async () => {
 	const actual = await vi.importActual('react-router');
 	return {
 		...actual,
 		useNavigate: () => mockNavigate,
+		useLocation: () => mockLocation,
 	};
 });
 
