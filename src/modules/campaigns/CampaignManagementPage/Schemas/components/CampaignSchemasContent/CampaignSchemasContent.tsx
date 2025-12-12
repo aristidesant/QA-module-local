@@ -196,7 +196,7 @@ const CampaignSchemasContent: React.FC<CampaignSchemasContentProps> = ({
 					setSelectedSchema(null);
 				}}
 				title='Edit Campaign Schema'
-				size='lg'
+				size='xl'
 			>
 				{selectedSchema && (
 					<CampaignSchemasForm
