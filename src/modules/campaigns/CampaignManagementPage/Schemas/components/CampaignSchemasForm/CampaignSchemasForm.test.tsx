@@ -5,6 +5,24 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import CampaignSchemasForm from './CampaignSchemasForm';
 import { CampaignContactSchema } from '~/models/CampaignContactSchemaModel';
 
+vi.mock(
+	'~/modules/campaigns/CampaignManagementPage/components/ObjectivePickerPanel',
+	() => ({
+		default: ({
+			onSelect,
+		}: {
+			onSelect: (objective: { id: number; name: string }) => void;
+		}) => (
+			<button
+				type='button'
+				onClick={() => onSelect({ id: 1, name: 'Objective 1' })}
+			>
+				Pick Objective 1
+			</button>
+		),
+	})
+);
+
 // Mock notifications
 const mockNotificationsShow = vi.fn();
 vi.mock('@mantine/notifications', () => ({
@@ -99,7 +117,7 @@ describe('CampaignSchemasForm', () => {
 		);
 		const objectiveInput = screen.getByPlaceholderText('Select an objective');
 		fireEvent.click(objectiveInput);
-		fireEvent.click(screen.getByText('Objective 1'));
+		fireEvent.click(screen.getByText('Pick Objective 1'));
 		fireEvent.change(screen.getByPlaceholderText('e.g., firstName'), {
 			target: { value: 'firstName' },
 		});
@@ -188,7 +206,7 @@ describe('CampaignSchemasForm', () => {
 			});
 			const objectiveInput = screen.getByPlaceholderText('Select an objective');
 			fireEvent.click(objectiveInput);
-			fireEvent.click(screen.getByText('Objective 1'));
+			fireEvent.click(screen.getByText('Pick Objective 1'));
 			fireEvent.change(screen.getByPlaceholderText('e.g., firstName'), {
 				target: { value: 'InvalidName' },
 			});

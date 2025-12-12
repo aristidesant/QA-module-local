@@ -6,10 +6,12 @@ import {
 	TextInput,
 	Textarea,
 	Switch,
-	Select,
+	ActionIcon,
+	Collapse,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
+import { IconChevronRight } from '@tabler/icons-react';
 import {
 	useCreateCampaignObjective,
 	useUpdateCampaignObjective,
@@ -20,6 +22,7 @@ import {
 	CreateCampaignObjectiveRequest,
 	UpdateCampaignObjectiveRequest,
 } from '~/models/CampaignObjectiveModel';
+import CategoryPickerPanel from '~/modules/campaigns/CampaignManagementPage/components/CategoryPickerPanel';
 import styles from './CampaignObjectivesForm.module.css';
 
 interface CampaignObjectivesFormProps {
@@ -34,6 +37,7 @@ export const CampaignObjectivesForm: React.FC<CampaignObjectivesFormProps> = ({
 	onCancel,
 }) => {
 	const isEditing = !!objective;
+	const [categoryPickerOpen, setCategoryPickerOpen] = React.useState(false);
 	const createObjective = useCreateCampaignObjective();
 	const updateObjective = useUpdateCampaignObjective();
 
@@ -98,11 +102,10 @@ export const CampaignObjectivesForm: React.FC<CampaignObjectivesFormProps> = ({
 
 	const isLoading = createObjective.isPending || updateObjective.isPending;
 
-	// Transform categories for select options
-	const categoryOptions = categories.map((category) => ({
-		value: category.id.toString(),
-		label: category.name,
-	}));
+	const selectedCategoryName =
+		categories.find(
+			(category) => category.id.toString() === form.values.categoryId
+		)?.name || '';
 
 	return (
 		<form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
@@ -114,13 +117,40 @@ export const CampaignObjectivesForm: React.FC<CampaignObjectivesFormProps> = ({
 					{...form.getInputProps('name')}
 				/>
 
-				<Select
+				<TextInput
 					label='Category'
 					placeholder='Select a category'
 					required
-					data={categoryOptions}
-					{...form.getInputProps('categoryId')}
+					readOnly
+					value={selectedCategoryName}
+					error={form.errors.categoryId}
+					rightSection={
+						<ActionIcon
+							variant='subtle'
+							size='sm'
+							aria-label='Browse categories'
+							onClick={() => setCategoryPickerOpen((v) => !v)}
+						>
+							<IconChevronRight size={16} />
+						</ActionIcon>
+					}
+					onClick={() => setCategoryPickerOpen(true)}
 				/>
+
+				<Collapse in={categoryPickerOpen}>
+					<CategoryPickerPanel
+						selectedCategoryId={
+							form.values.categoryId
+								? parseInt(form.values.categoryId, 10)
+								: null
+						}
+						onSelect={(category) => {
+							form.setFieldValue('categoryId', category.id.toString());
+							setCategoryPickerOpen(false);
+						}}
+						onClose={() => setCategoryPickerOpen(false)}
+					/>
+				</Collapse>
 
 				<Textarea
 					label='Description'

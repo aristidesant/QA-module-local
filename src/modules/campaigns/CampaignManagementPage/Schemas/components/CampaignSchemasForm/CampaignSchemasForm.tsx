@@ -10,10 +10,16 @@ import {
 	ActionIcon,
 	Checkbox,
 	Modal,
+	Collapse,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { IconPlus, IconTrash, IconAlertCircle } from '@tabler/icons-react';
+import {
+	IconPlus,
+	IconTrash,
+	IconAlertCircle,
+	IconChevronRight,
+} from '@tabler/icons-react';
 import {
 	useCreateCampaignContactSchema,
 	useUpdateCampaignContactSchema,
@@ -24,6 +30,7 @@ import {
 	CreateCampaignContactSchemaRequest,
 	UpdateCampaignContactSchemaRequest,
 } from '~/models/CampaignContactSchemaModel';
+import ObjectivePickerPanel from '~/modules/campaigns/CampaignManagementPage/components/ObjectivePickerPanel';
 import styles from './CampaignSchemasForm.module.css';
 
 interface CampaignSchemasFormProps {
@@ -69,6 +76,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 	const isEditing = !!schema;
 	const createSchema = useCreateCampaignContactSchema();
 	const updateSchema = useUpdateCampaignContactSchema();
+	const [objectivePickerOpen, setObjectivePickerOpen] = useState(false);
 
 	// Get objectives for the select
 	const { data: objectivesResponse } = useGetCampaignObjectives();
@@ -76,7 +84,13 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 
 	// State for version creation modal
 	const [showVersionModal, setShowVersionModal] = useState(false);
-	const [pendingUpdateData, setPendingUpdateData] = useState<any>(null);
+	const [pendingUpdateData, setPendingUpdateData] = useState<null | {
+		name: string;
+		icon: string;
+		objectiveId: string;
+		description: string;
+		fields: SchemaField[];
+	}>(null);
 
 	const [schemaFields, setSchemaFields] = useState<SchemaField[]>(
 		schema?.schemaFields || [
@@ -246,30 +260,10 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 
 	const isLoading = createSchema.isPending || updateSchema.isPending;
 
-	// Transform objectives for select options - grouped by category
-	const objectiveOptions = React.useMemo(() => {
-		// Group objectives by category
-		const grouped = objectives.reduce(
-			(acc, objective) => {
-				const categoryName = objective.category?.name || 'Uncategorized';
-				if (!acc[categoryName]) {
-					acc[categoryName] = [];
-				}
-				acc[categoryName].push({
-					value: objective.id.toString(),
-					label: objective.name,
-				});
-				return acc;
-			},
-			{} as Record<string, Array<{ value: string; label: string }>>
-		);
-
-		// Convert to Mantine grouped select format
-		return Object.entries(grouped).map(([group, items]) => ({
-			group,
-			items,
-		}));
-	}, [objectives]);
+	const selectedObjectiveName =
+		objectives.find(
+			(objective) => objective.id.toString() === form.values.objectiveId
+		)?.name || '';
 
 	const addField = () => {
 		setSchemaFields([
@@ -317,13 +311,40 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 					{...form.getInputProps('icon')}
 				/>
 
-				<Select
+				<TextInput
 					label='Objective'
 					placeholder='Select an objective'
 					required
-					data={objectiveOptions}
-					{...form.getInputProps('objectiveId')}
+					readOnly
+					value={selectedObjectiveName}
+					error={form.errors.objectiveId}
+					rightSection={
+						<ActionIcon
+							variant='subtle'
+							size='sm'
+							aria-label='Browse objectives'
+							onClick={() => setObjectivePickerOpen((v) => !v)}
+						>
+							<IconChevronRight size={16} />
+						</ActionIcon>
+					}
+					onClick={() => setObjectivePickerOpen(true)}
 				/>
+
+				<Collapse in={objectivePickerOpen}>
+					<ObjectivePickerPanel
+						selectedObjectiveId={
+							form.values.objectiveId
+								? parseInt(form.values.objectiveId, 10)
+								: null
+						}
+						onSelect={(objective) => {
+							form.setFieldValue('objectiveId', objective.id.toString());
+							setObjectivePickerOpen(false);
+						}}
+						onClose={() => setObjectivePickerOpen(false)}
+					/>
+				</Collapse>
 
 				<Textarea
 					label='Description'

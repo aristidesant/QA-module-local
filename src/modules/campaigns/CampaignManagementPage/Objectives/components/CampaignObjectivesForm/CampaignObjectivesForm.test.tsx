@@ -1,8 +1,9 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { notifications } from '@mantine/notifications';
 import { CampaignObjectivesForm } from './CampaignObjectivesForm';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 const createMutateAsync = vi.fn();
 const updateMutateAsync = vi.fn();
@@ -45,21 +46,30 @@ vi.mock('@mantine/core', async (importOriginal) => {
 			onChange,
 			placeholder,
 			required,
+			onClick,
+			readOnly,
+			rightSection,
 		}: {
 			label: string;
 			value?: string;
-			onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+			onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 			placeholder?: string;
 			required?: boolean;
+			onClick?: () => void;
+			readOnly?: boolean;
+			rightSection?: React.ReactNode;
 		}) => (
 			<label>
 				{label}
 				<input
 					value={value}
-					onChange={onChange}
+					onChange={onChange ?? (() => undefined)}
 					placeholder={placeholder}
 					required={required}
+					onClick={onClick}
+					readOnly={readOnly}
 				/>
+				{rightSection}
 			</label>
 		),
 		Textarea: ({
@@ -76,35 +86,6 @@ vi.mock('@mantine/core', async (importOriginal) => {
 			<label>
 				{label}
 				<textarea value={value} onChange={onChange} placeholder={placeholder} />
-			</label>
-		),
-		Select: ({
-			label,
-			data,
-			value,
-			onChange,
-			required,
-		}: {
-			label: string;
-			data: { value: string; label: string }[];
-			value?: string;
-			onChange: (value: string | null) => void;
-			required?: boolean;
-		}) => (
-			<label>
-				{label}
-				<select
-					value={value}
-					onChange={(event) => onChange(event.currentTarget.value)}
-					required={required}
-				>
-					<option value=''>Select</option>
-					{data.map((option) => (
-						<option key={option.value} value={option.value}>
-							{option.label}
-						</option>
-					))}
-				</select>
 			</label>
 		),
 		Switch: ({
@@ -152,6 +133,21 @@ vi.mock('@mantine/core', async (importOriginal) => {
 	};
 });
 
+vi.mock(
+	'~/modules/campaigns/CampaignManagementPage/components/CategoryPickerPanel',
+	() => ({
+		default: ({
+			onSelect,
+		}: {
+			onSelect: (category: { id: number; name: string }) => void;
+		}) => (
+			<button type='button' onClick={() => onSelect({ id: 1, name: 'Sales' })}>
+				Pick Sales
+			</button>
+		),
+	})
+);
+
 describe('CampaignObjectivesForm', () => {
 	const onSuccess = vi.fn();
 	const onCancel = vi.fn();
@@ -163,12 +159,13 @@ describe('CampaignObjectivesForm', () => {
 	});
 
 	it('creates an objective successfully', async () => {
-		render(
+		renderWithProviders(
 			<CampaignObjectivesForm onSuccess={onSuccess} onCancel={onCancel} />
 		);
 
 		await userEvent.type(screen.getByLabelText('Name'), 'New Objective');
-		await userEvent.selectOptions(screen.getByLabelText('Category'), '1');
+		await userEvent.click(screen.getByLabelText('Category'));
+		await userEvent.click(screen.getByText('Pick Sales'));
 		await userEvent.type(
 			screen.getByLabelText('Description'),
 			'Objective description'
@@ -189,7 +186,7 @@ describe('CampaignObjectivesForm', () => {
 	});
 
 	it('updates an objective successfully', async () => {
-		render(
+		renderWithProviders(
 			<CampaignObjectivesForm
 				objective={{
 					id: 2,
@@ -209,7 +206,8 @@ describe('CampaignObjectivesForm', () => {
 
 		await userEvent.clear(screen.getByLabelText('Name'));
 		await userEvent.type(screen.getByLabelText('Name'), 'Updated Name');
-		await userEvent.selectOptions(screen.getByLabelText('Category'), '1');
+		await userEvent.click(screen.getByLabelText('Category'));
+		await userEvent.click(screen.getByText('Pick Sales'));
 		await userEvent.click(screen.getByLabelText('Active'));
 
 		await userEvent.click(screen.getByText('Update'));
@@ -231,12 +229,13 @@ describe('CampaignObjectivesForm', () => {
 	it('shows error notification on failure', async () => {
 		createMutateAsync.mockRejectedValueOnce(new Error('fail'));
 
-		render(
+		renderWithProviders(
 			<CampaignObjectivesForm onSuccess={onSuccess} onCancel={onCancel} />
 		);
 
 		await userEvent.type(screen.getByLabelText('Name'), 'Bad Objective');
-		await userEvent.selectOptions(screen.getByLabelText('Category'), '1');
+		await userEvent.click(screen.getByLabelText('Category'));
+		await userEvent.click(screen.getByText('Pick Sales'));
 
 		await userEvent.click(screen.getByText('Create'));
 
@@ -250,7 +249,7 @@ describe('CampaignObjectivesForm', () => {
 	});
 
 	it('invokes cancel handler', async () => {
-		render(
+		renderWithProviders(
 			<CampaignObjectivesForm onSuccess={onSuccess} onCancel={onCancel} />
 		);
 

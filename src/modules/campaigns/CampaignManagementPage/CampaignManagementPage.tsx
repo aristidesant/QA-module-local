@@ -2,17 +2,13 @@ import { Tabs } from '@mantine/core';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import {
 	IconSettings,
-	IconCategory,
-	IconTarget,
-	IconSchema,
 	IconClipboardCheck,
 	IconMessageChatbot,
+	IconAdjustments,
 } from '@tabler/icons-react';
-import CampaignCategoriesPage from './Categories/CampaignCategoriesPage';
-import CampaignObjectivesPage from './Objectives/CampaignObjectivesPage';
-import CampaignSchemasPage from './Schemas/CampaignSchemasPage';
 import DispositionPage from './Outcomes/DispositionPage';
 import CampaignPromptTypesPage from './PromptTypes';
+import CampaignTaxonomySetupTab from './Setup/CampaignTaxonomySetupTab';
 import classes from './CampaignManagementPage.module.css';
 
 export default function CampaignManagementPage() {
@@ -23,22 +19,15 @@ export default function CampaignManagementPage() {
 			titleIcon={<IconSettings size={24} />}
 		>
 			<Tabs
-				defaultValue='categories'
+				defaultValue='setup'
 				keepMounted={false}
 				variant='outline'
 				radius='md'
 				classNames={{ tab: classes.tab }}
 			>
 				<Tabs.List>
-					<Tabs.Tab value='categories' leftSection={<IconCategory size={16} />}>
-						Categories
-					</Tabs.Tab>
-					<Tabs.Tab value='objectives' leftSection={<IconTarget size={16} />}>
-						Objectives
-					</Tabs.Tab>
-
-					<Tabs.Tab value='schemas' leftSection={<IconSchema size={16} />}>
-						Schemas
+					<Tabs.Tab value='setup' leftSection={<IconAdjustments size={16} />}>
+						Campaign Setup
 					</Tabs.Tab>
 					<Tabs.Tab
 						value='outcomes'
@@ -54,20 +43,12 @@ export default function CampaignManagementPage() {
 					</Tabs.Tab>
 				</Tabs.List>
 
-				<Tabs.Panel value='categories' py='xs'>
-					<CampaignCategoriesPage embedded />
-				</Tabs.Panel>
-
-				<Tabs.Panel value='objectives' py='xs'>
-					<CampaignObjectivesPage embedded />
+				<Tabs.Panel value='setup' py='xs'>
+					<CampaignTaxonomySetupTab />
 				</Tabs.Panel>
 
 				<Tabs.Panel value='promptTypes' py='xs'>
 					<CampaignPromptTypesPage embedded />
-				</Tabs.Panel>
-
-				<Tabs.Panel value='schemas' py='xs'>
-					<CampaignSchemasPage embedded />
 				</Tabs.Panel>
 
 				<Tabs.Panel value='outcomes' py='xs'>

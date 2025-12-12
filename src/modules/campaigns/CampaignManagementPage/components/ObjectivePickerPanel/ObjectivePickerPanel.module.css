@@ -1,0 +1,33 @@
+.panel {
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-sm);
+	background: var(--mantine-color-gray-0);
+	padding: var(--mantine-spacing-xs);
+}
+
+.header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-xs);
+}
+
+.headerText {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.tableWrap {
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-sm);
+	background: var(--mantine-color-white);
+	overflow: hidden;
+}
+
+.inlineForm {
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-sm);
+	background: var(--mantine-color-white);
+	padding: var(--mantine-spacing-xs);
+}
