@@ -12,19 +12,26 @@ import {
 	Stack,
 	Group,
 	Badge,
+	ActionIcon,
 	ThemeIcon,
 	Popover,
 	ScrollArea,
 	UnstyledButton,
 	Modal,
+	Tooltip,
 } from '@mantine/core';
 import { generateDiffData, type DiffResult } from './PromptAiActions/diffUtils';
 import ReviewStep from './PromptAiActions/ReviewStep';
 import MDEditor from '@uiw/react-md-editor';
-import { IconMessageChatbot, IconNotes } from '@tabler/icons-react';
+import {
+	IconHistory,
+	IconMessageChatbot,
+	IconNotes,
+} from '@tabler/icons-react';
 import type { CampaignPromptTypeModel } from '~/models/CampaignPromptTypeModel';
 import { useGetCampaignPrompts } from '~/queries/campaignPromptQueries';
 import { usePromptVariables } from '~/hooks/usePromptVariables';
+import CampaignConfigurationPromptHistoryModal from '~/modules/campaigns/CampaignsForm/AgentSection/CampaignConfigurationPrompt/CampaignConfigurationPromptHistoryModal';
 import styles from './PromptTypeAccordionItem.module.css';
 import '@uiw/react-md-editor/markdown-editor.css';
 import PromptAiActions from './PromptAiActions';
@@ -52,6 +59,8 @@ const PromptTypeAccordionItem: React.FC<PromptTypeAccordionItemProps> = ({
 	const [showDiffPreview, setShowDiffPreview] = useState(false);
 	const [pendingPrompt, setPendingPrompt] = useState<string | null>(null);
 	const [diffData, setDiffData] = useState<DiffResult | null>(null);
+
+	const [historyModalOpen, setHistoryModalOpen] = useState(false);
 
 	const { data: otherPrompts } = useGetCampaignPrompts({ typeId: type.id });
 	const allVariables = usePromptVariables(campaignId);
@@ -219,6 +228,14 @@ const PromptTypeAccordionItem: React.FC<PromptTypeAccordionItemProps> = ({
 		setDiffData(null);
 	}, []);
 
+	const handleOpenHistory = useCallback(
+		(event: React.MouseEvent<HTMLElement>) => {
+			event.stopPropagation();
+			setHistoryModalOpen(true);
+		},
+		[]
+	);
+
 	const promptLength = useMemo(() => value?.trim().length ?? 0, [value]);
 	const promptLines = useMemo(() => {
 		if (!value) return 0;
@@ -255,6 +272,26 @@ const PromptTypeAccordionItem: React.FC<PromptTypeAccordionItemProps> = ({
 						>
 							{promptLines} lines)
 						</Badge>
+						<Tooltip label='View prompt history' withArrow>
+							<ActionIcon
+								role='button'
+								tabIndex={0}
+								variant='light'
+								color='gray'
+								size='sm'
+								aria-label='Prompt history'
+								onClick={handleOpenHistory}
+								onKeyDown={(event) => {
+									event.stopPropagation();
+									if (event.key === 'Enter' || event.key === ' ') {
+										event.preventDefault();
+										setHistoryModalOpen(true);
+									}
+								}}
+							>
+								<IconHistory size={14} />
+							</ActionIcon>
+						</Tooltip>
 					</div>
 				</div>
 			</Accordion.Control>
@@ -392,6 +429,18 @@ const PromptTypeAccordionItem: React.FC<PromptTypeAccordionItemProps> = ({
 					onCancel={handleCancelDiffPreview}
 				/>
 			</Modal>
+
+			<CampaignConfigurationPromptHistoryModal
+				opened={historyModalOpen}
+				onClose={() => setHistoryModalOpen(false)}
+				campaignId={campaignId}
+				campaignPromptTypeId={type.id}
+				currentPromptText={value}
+				onSelect={(selectedPrompt) => {
+					onChange(selectedPrompt);
+					setHistoryModalOpen(false);
+				}}
+			/>
 		</Accordion.Item>
 	);
 };

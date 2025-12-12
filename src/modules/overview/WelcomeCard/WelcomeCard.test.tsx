@@ -60,19 +60,13 @@ describe('WelcomeCard', () => {
 
 		renderWithProviders(<WelcomeCard />);
 
-		// default heading and subheading
+		// default title and description are present
 		expect(screen.getByText('Welcome')).toBeInTheDocument();
 		expect(
 			screen.getByText('Your AI-powered call center management platform')
 		).toBeInTheDocument();
 
-		// Welcome card content
-		expect(screen.getByText('Your workspace overview')).toBeInTheDocument();
-		expect(
-			screen.getByText(
-				'Manage campaigns, agents, and conversations from a unified platform'
-			)
-		).toBeInTheDocument();
+		// Welcome card content is rendered through heading/subheading above
 		// Ensure feature cards text exist
 		expect(screen.getByText('Campaigns')).toBeInTheDocument();
 		expect(screen.getByText('Agents')).toBeInTheDocument();
@@ -97,9 +91,8 @@ describe('WelcomeCard', () => {
 
 		// dashboard components visible
 
-		// Client details header should show user.clientId
-		expect(screen.getByText(/Client details overview 99/i)).toBeInTheDocument();
-		expect(screen.getByText('Global Snapshot')).toBeInTheDocument();
+		// For master client, heading should reflect client details
+		expect(screen.getByText('Client details overview 99')).toBeInTheDocument();
 	});
 
 	it('displays impersonation welcome heading when impersonating and targetClient provided', () => {
@@ -114,6 +107,7 @@ describe('WelcomeCard', () => {
 
 		renderWithProviders(<WelcomeCard />);
 
+		// When impersonating, the main title and description update
 		expect(screen.getByText('Welcome to Acme Corp')).toBeInTheDocument();
 		expect(
 			screen.getByText('Your AI-powered call center management platform')

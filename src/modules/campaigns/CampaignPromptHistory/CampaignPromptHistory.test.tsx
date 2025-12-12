@@ -6,9 +6,12 @@ import CampaignPromptHistory from './CampaignPromptHistory';
 
 // Mock query hook
 const mockUseGetCampaignPromptHistory = vi.fn();
+const mockUseGetCampaignPromptHistoryByPromptType = vi.fn();
 vi.mock('~/queries/campaignPromptHistoryQueries', () => ({
 	useGetCampaignPromptHistory: (...args: any[]) =>
 		mockUseGetCampaignPromptHistory(...args),
+	useGetCampaignPromptHistoryByPromptType: (...args: any[]) =>
+		mockUseGetCampaignPromptHistoryByPromptType(...args),
 }));
 
 // Mock pagination hook to avoid debounce
@@ -86,9 +89,14 @@ vi.mock('~/components/PaginationControls', () => ({
 describe('CampaignPromptHistory', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockUseGetCampaignPromptHistoryByPromptType.mockReturnValue({
+			data: undefined,
+			isLoading: false,
+			isError: false,
+		});
 	});
 
-	it('renders list of prompt history (excluding current prompt)', async () => {
+	it('renders list of prompt history excluding current prompt', async () => {
 		// two items: 1 is current (index 0), 2 is previous -> should render only item 2
 		mockUseGetCampaignPromptHistory.mockReturnValue({
 			data: {
@@ -197,5 +205,45 @@ describe('CampaignPromptHistory', () => {
 		);
 
 		expect(screen.getByText('Boom')).toBeInTheDocument();
+	});
+
+	it('uses prompt-type history hook when campaignPromptTypeId is provided', async () => {
+		mockUseGetCampaignPromptHistory.mockReturnValue({
+			data: undefined,
+			isLoading: false,
+			isError: false,
+		});
+		mockUseGetCampaignPromptHistoryByPromptType.mockReturnValue({
+			data: {
+				total: 1,
+				limit: 5,
+				offset: 0,
+				data: [
+					{
+						id: 2,
+						campaignId: 1,
+						version: 2,
+						promptText: 'PREV',
+						createdAt: '2023-01-01T00:00:00Z',
+						user: { id: 2, username: 'prev' },
+					},
+				],
+			},
+			isLoading: false,
+			isError: false,
+		});
+
+		const mockOnSelect = vi.fn();
+		renderWithProviders(
+			<CampaignPromptHistory
+				campaignId={'1'}
+				campaignPromptTypeId={'10'}
+				currentPromptText={'CURRENT'}
+				onSelect={mockOnSelect}
+			/>
+		);
+
+		expect(mockUseGetCampaignPromptHistoryByPromptType).toHaveBeenCalled();
+		expect(await screen.findByTestId('base-table')).toBeInTheDocument();
 	});
 });

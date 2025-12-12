@@ -11,18 +11,21 @@ import {
 	Stack,
 	Group,
 	Badge,
+	ActionIcon,
 	Popover,
 	ScrollArea,
 	UnstyledButton,
 	Modal,
+	Tooltip,
 } from '@mantine/core';
 import { generateDiffData, type DiffResult } from './PromptAiActions/diffUtils';
 import ReviewStep from './PromptAiActions/ReviewStep';
 import MDEditor from '@uiw/react-md-editor';
-import { IconNotes } from '@tabler/icons-react';
+import { IconHistory, IconNotes } from '@tabler/icons-react';
 import type { CampaignPromptTypeModel } from '~/models/CampaignPromptTypeModel';
 import { useGetCampaignPrompts } from '~/queries/campaignPromptQueries';
 import { usePromptVariables } from '~/hooks/usePromptVariables';
+import CampaignConfigurationPromptHistoryModal from '~/modules/campaigns/CampaignsForm/AgentSection/CampaignConfigurationPrompt/CampaignConfigurationPromptHistoryModal';
 import styles from './PromptTypeAccordionItem.module.css';
 import '@uiw/react-md-editor/markdown-editor.css';
 import PromptAiActions from './PromptAiActions';
@@ -50,6 +53,8 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
 	const [showDiffPreview, setShowDiffPreview] = useState(false);
 	const [pendingPrompt, setPendingPrompt] = useState<string | null>(null);
 	const [diffData, setDiffData] = useState<DiffResult | null>(null);
+
+	const [historyModalOpen, setHistoryModalOpen] = useState(false);
 
 	const { data: otherPrompts } = useGetCampaignPrompts({ typeId: type.id });
 	const allVariables = usePromptVariables(campaignId);
@@ -220,6 +225,19 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
 	return (
 		<>
 			<Stack gap={4} className={styles.editorStack}>
+				<Group justify='flex-end' gap='xs'>
+					<Tooltip label='View prompt history' withArrow>
+						<ActionIcon
+							variant='light'
+							color='gray'
+							size='sm'
+							aria-label='Prompt history'
+							onClick={() => setHistoryModalOpen(true)}
+						>
+							<IconHistory size={14} />
+						</ActionIcon>
+					</Tooltip>
+				</Group>
 				{promptOptions.length > 0 && (
 					<Select
 						label='Reuse from another campaign'
@@ -352,6 +370,18 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
 					onCancel={handleCancelDiffPreview}
 				/>
 			</Modal>
+
+			<CampaignConfigurationPromptHistoryModal
+				opened={historyModalOpen}
+				onClose={() => setHistoryModalOpen(false)}
+				campaignId={campaignId}
+				campaignPromptTypeId={type.id}
+				currentPromptText={value}
+				onSelect={(selectedPrompt) => {
+					onChange(selectedPrompt);
+					setHistoryModalOpen(false);
+				}}
+			/>
 		</>
 	);
 };

@@ -1,6 +1,9 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Text, Group, Modal, Badge } from '@mantine/core';
-import { useGetCampaignPromptHistory } from '~/queries/campaignPromptHistoryQueries';
+import {
+	useGetCampaignPromptHistory,
+	useGetCampaignPromptHistoryByPromptType,
+} from '~/queries/campaignPromptHistoryQueries';
 import { usePagination } from '~/hooks/usePagination';
 import PaginationControls from '~/components/PaginationControls';
 import BaseTable from '~/components/BaseTable';
@@ -11,12 +14,14 @@ import PromptHistoryModal from './PromptHistoryModal';
 
 interface CampaignPromptHistoryProps {
 	campaignId: string | number;
+	campaignPromptTypeId?: string | number;
 	currentPromptText?: string;
 	onSelect: (promptText: string) => void;
 }
 
 const CampaignPromptHistory: React.FC<CampaignPromptHistoryProps> = ({
 	campaignId,
+	campaignPromptTypeId,
 	currentPromptText,
 	onSelect,
 }) => {
@@ -29,12 +34,25 @@ const CampaignPromptHistory: React.FC<CampaignPromptHistoryProps> = ({
 		searchDebounceMs: 300,
 	});
 
+	const plainCampaignId = campaignPromptTypeId ? 0 : campaignId;
+
+	const plainHistoryQuery = useGetCampaignPromptHistory(
+		plainCampaignId,
+		pagination.getApiParams()
+	);
+
+	const promptTypeHistoryQuery = useGetCampaignPromptHistoryByPromptType(
+		campaignId,
+		campaignPromptTypeId ?? 0,
+		pagination.getApiParams()
+	);
+
 	const {
 		data: promptHistoryResponse,
 		isLoading,
 		isError,
 		error,
-	} = useGetCampaignPromptHistory(campaignId, pagination.getApiParams());
+	} = campaignPromptTypeId ? promptTypeHistoryQuery : plainHistoryQuery;
 
 	const totalPages = promptHistoryResponse?.total
 		? pagination.calculateTotalPages(promptHistoryResponse.total)
@@ -59,9 +77,10 @@ const CampaignPromptHistory: React.FC<CampaignPromptHistoryProps> = ({
 		[pagination]
 	);
 
-	const listWithoutCurrent = useMemo<CampaignPromptHistoryItem[]>(() => {
+	const historyList = useMemo<CampaignPromptHistoryItem[]>(() => {
 		if (!promptHistoryResponse?.data) return [];
-		return promptHistoryResponse.data?.slice(1);
+		// The first item returned by the backend is the current version; do not show it.
+		return promptHistoryResponse.data.slice(1);
 	}, [promptHistoryResponse?.data]);
 
 	if (isError) {
@@ -80,7 +99,7 @@ const CampaignPromptHistory: React.FC<CampaignPromptHistoryProps> = ({
 		<>
 			<div className={styles.container}>
 				<BaseTable
-					data={listWithoutCurrent}
+					data={historyList}
 					columns={columns}
 					isLoading={isLoading}
 					density='compact'

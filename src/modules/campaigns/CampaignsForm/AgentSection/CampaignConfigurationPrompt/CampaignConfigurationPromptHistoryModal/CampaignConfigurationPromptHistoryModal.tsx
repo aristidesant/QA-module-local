@@ -7,13 +7,21 @@ interface CampaignConfigurationPromptHistoryModalProps {
 	opened: boolean;
 	onClose: () => void;
 	campaignId: number;
+	campaignPromptTypeId?: number;
 	currentPromptText?: string;
 	onSelect: (selectedPrompt: string) => void;
 }
 
 const CampaignConfigurationPromptHistoryModal: React.FC<
 	CampaignConfigurationPromptHistoryModalProps
-> = ({ opened, onClose, campaignId, currentPromptText, onSelect }) => {
+> = ({
+	opened,
+	onClose,
+	campaignId,
+	campaignPromptTypeId,
+	currentPromptText,
+	onSelect,
+}) => {
 	return (
 		<Modal
 			opened={opened}
@@ -24,6 +32,7 @@ const CampaignConfigurationPromptHistoryModal: React.FC<
 		>
 			<CampaignPromptHistory
 				campaignId={campaignId}
+				campaignPromptTypeId={campaignPromptTypeId}
 				currentPromptText={currentPromptText}
 				onSelect={onSelect}
 			/>

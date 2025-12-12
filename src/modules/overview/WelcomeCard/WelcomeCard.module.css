@@ -1,30 +1,54 @@
 .mainCard {
 	background-color: var(--mantine-color-gray-0);
 	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: var(--mantine-radius-md);
-	padding: var(--mantine-spacing-sm);
+	border-radius: var(--mantine-radius-sm);
+	padding: var(--mantine-spacing-xs);
 }
 
 .welcomeCard {
-	padding: var(--mantine-spacing-sm);
-	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-xs);
+	border-radius: var(--mantine-radius-sm);
 	background-color: var(--mantine-color-white);
 	color: var(--mantine-color-dark-7);
 }
 
-.welcomeHeader {
-	display: flex;
-	flex-direction: column;
+.body {
 	gap: var(--mantine-spacing-xs);
-	margin-bottom: var(--mantine-spacing-xs);
+}
+
+.hero {
+	padding: var(--mantine-spacing-xs);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-sm);
+	background: var(--mantine-color-gray-0);
+}
+
+.heroIcon {
+	flex-shrink: 0;
+}
+
+.heroText {
+	gap: 2px;
+}
+
+.heroBadges {
+	flex-wrap: nowrap;
+}
+
+.heroBadge {
+	border: 1px solid transparent;
+}
+
+.heroDivider {
+	border-color: var(--mantine-color-gray-2);
 }
 
 .welcomeTitle {
 	color: var(--mantine-color-dark-8);
-	font-size: var(--mantine-font-size-lg);
+	font-size: var(--mantine-font-size-md);
 	font-weight: 600;
 	letter-spacing: -0.2px;
-	line-height: 1.3;
+	line-height: 1.25;
 }
 
 .welcomeDescription {
@@ -37,47 +61,123 @@
 }
 
 .featureCard {
-	padding: var(--mantine-spacing-sm);
-	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-xs);
+	border-radius: var(--mantine-radius-sm);
 	background-color: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-3);
-	transition: none;
+	border: 1px solid var(--mantine-color-gray-2);
+	position: relative;
+	overflow: hidden;
+	transition:
+		background-color 120ms ease,
+		border-color 120ms ease;
+}
+
+.featureCard::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 3px;
+	background: var(--mantine-color-gray-3);
+}
+
+.featureCard[data-color='blue']::before {
+	background: var(--mantine-color-blue-6);
+}
+.featureCard[data-color='cyan']::before {
+	background: var(--mantine-color-cyan-6);
+}
+.featureCard[data-color='teal']::before {
+	background: var(--mantine-color-teal-6);
+}
+.featureCard[data-color='green']::before {
+	background: var(--mantine-color-green-6);
+}
+.featureCard[data-color='orange']::before {
+	background: var(--mantine-color-orange-6);
+}
+.featureCard[data-color='violet']::before {
+	background: var(--mantine-color-violet-6);
 }
 
 .iconWrapper {
-	color: white;
-	padding: var(--mantine-spacing-xs);
+	color: var(--mantine-color-dark-7);
+	border: 1px solid var(--mantine-color-gray-2);
 	border-radius: var(--mantine-radius-sm);
-	width: 32px;
-	height: 32px;
+	width: 28px;
+	height: 28px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
+	background-color: var(--mantine-color-gray-1);
 }
 
 .iconWrapper[data-color='blue'] {
-	background-color: var(--mantine-color-blue-5);
+	background-color: var(--mantine-color-blue-0);
+	border-color: var(--mantine-color-blue-1);
+	color: var(--mantine-color-blue-6);
 }
 
 .iconWrapper[data-color='cyan'] {
-	background-color: var(--mantine-color-cyan-5);
+	background-color: var(--mantine-color-cyan-0);
+	border-color: var(--mantine-color-cyan-1);
+	color: var(--mantine-color-cyan-6);
 }
 
 .iconWrapper[data-color='teal'] {
-	background-color: var(--mantine-color-teal-5);
+	background-color: var(--mantine-color-teal-0);
+	border-color: var(--mantine-color-teal-1);
+	color: var(--mantine-color-teal-6);
 }
 
 .iconWrapper[data-color='green'] {
-	background-color: var(--mantine-color-green-5);
+	background-color: var(--mantine-color-green-0);
+	border-color: var(--mantine-color-green-1);
+	color: var(--mantine-color-green-6);
 }
 
 .iconWrapper[data-color='orange'] {
-	background-color: var(--mantine-color-orange-5);
+	background-color: var(--mantine-color-orange-0);
+	border-color: var(--mantine-color-orange-1);
+	color: var(--mantine-color-orange-6);
 }
 
 .iconWrapper[data-color='violet'] {
-	background-color: var(--mantine-color-violet-5);
+	background-color: var(--mantine-color-violet-0);
+	border-color: var(--mantine-color-violet-1);
+	color: var(--mantine-color-violet-6);
+}
+
+.featureContent {
+	flex: 1;
+}
+
+.featureTitle {
+	color: var(--mantine-color-dark-8);
+}
+
+.featureDescription {
+	line-height: 1.45;
+}
+
+.featureChevron {
+	color: var(--mantine-color-gray-6);
+	opacity: 0.7;
+	transition:
+		opacity 120ms ease,
+		color 120ms ease;
+}
+
+.featureCard:hover {
+	background-color: var(--mantine-color-gray-0);
+	border-color: var(--mantine-color-gray-3);
+}
+
+.featureCard:hover .featureChevron {
+	opacity: 1;
+	color: var(--mantine-color-dark-5);
 }
 
 @media (max-width: 768px) {
@@ -90,7 +190,7 @@
 	}
 
 	.iconWrapper {
-		width: 28px;
-		height: 28px;
+		width: 26px;
+		height: 26px;
 	}
 }

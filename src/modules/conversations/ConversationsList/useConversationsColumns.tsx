@@ -102,7 +102,7 @@ export const useConversationsColumns = (userTimezone: string) => {
 				),
 			},
 			{
-				id: 'dispositionName',
+				id: 'disposition',
 				header: 'Outcome',
 				accessorFn: (row) => row?.dispositions?.dispositionName ?? '',
 				enableSorting: true,

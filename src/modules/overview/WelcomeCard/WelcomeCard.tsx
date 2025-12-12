@@ -1,4 +1,13 @@
-import { Text, Title, Card, SimpleGrid, Stack, Group } from '@mantine/core';
+import {
+	Text,
+	Title,
+	Card,
+	SimpleGrid,
+	Stack,
+	Group,
+	ThemeIcon,
+	Divider,
+} from '@mantine/core';
 import {
 	IconRobot,
 	IconListDetails,
@@ -6,8 +15,9 @@ import {
 	IconTools,
 	IconCheckupList,
 	IconUsers,
+	IconChevronRight,
+	IconSparkles,
 } from '@tabler/icons-react';
-import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import { useImpersonationState } from '~/hooks/useImpersonationState';
 import { useSessionStore } from '~/stores/sessionStore';
@@ -83,19 +93,42 @@ export default function WelcomeCard({
 		return (
 			<div className={classes.mainCard}>
 				<Card className={classes.welcomeCard} withBorder>
-					<Stack gap='xs'>
-						<div className={classes.welcomeHeader}>
-							<Title order={2} className={classes.welcomeTitle}>
-								Your workspace overview
-							</Title>
-							<Text size='sm' c='dimmed' className={classes.welcomeDescription}>
-								Manage campaigns, agents, and conversations from a unified
-								platform
-							</Text>
-						</div>
+					<Stack gap='xs' className={classes.body}>
+						<Group
+							align='flex-start'
+							justify='space-between'
+							gap='xs'
+							className={classes.hero}
+						>
+							<Group gap='xs' align='center' wrap='nowrap'>
+								<ThemeIcon
+									size={36}
+									radius='sm'
+									variant='light'
+									color='blue'
+									className={classes.heroIcon}
+								>
+									<IconSparkles size={18} />
+								</ThemeIcon>
+								<Stack gap={2} className={classes.heroText}>
+									<Title order={2} className={classes.welcomeTitle}>
+										{heading}
+									</Title>
+									<Text
+										size='sm'
+										c='dimmed'
+										className={classes.welcomeDescription}
+									>
+										{subheading}
+									</Text>
+								</Stack>
+							</Group>
+						</Group>
+
+						<Divider className={classes.heroDivider} />
 
 						<SimpleGrid
-							cols={{ base: 1, sm: 2, lg: 3 }}
+							cols={{ base: 1, md: 2 }}
 							spacing='xs'
 							className={classes.navigationGrid}
 						>
@@ -106,22 +139,42 @@ export default function WelcomeCard({
 										key={feature.title}
 										className={classes.featureCard}
 										withBorder
+										data-color={feature.color}
 									>
-										<Group wrap='nowrap' align='flex-start' gap='xs'>
-											<div
-												className={classes.iconWrapper}
-												data-color={feature.color}
-											>
-												<Icon size={18} />
-											</div>
-											<Stack gap={2} style={{ flex: 1 }}>
-												<Text fw={600} size='sm'>
-													{feature.title}
-												</Text>
-												<Text size='xs' c='dimmed'>
-													{feature.description}
-												</Text>
-											</Stack>
+										<Group
+											wrap='nowrap'
+											align='center'
+											justify='space-between'
+											gap='xs'
+										>
+											<Group wrap='nowrap' align='flex-start' gap='xs'>
+												<div
+													className={classes.iconWrapper}
+													data-color={feature.color}
+												>
+													<Icon size={18} />
+												</div>
+												<Stack gap={2} className={classes.featureContent}>
+													<Text
+														fw={600}
+														size='sm'
+														className={classes.featureTitle}
+													>
+														{feature.title}
+													</Text>
+													<Text
+														size='xs'
+														c='dimmed'
+														className={classes.featureDescription}
+													>
+														{feature.description}
+													</Text>
+												</Stack>
+											</Group>
+											<IconChevronRight
+												size={16}
+												className={classes.featureChevron}
+											/>
 										</Group>
 									</Card>
 								);
@@ -133,9 +186,5 @@ export default function WelcomeCard({
 		);
 	};
 
-	return (
-		<ContentContainer title={heading} description={subheading}>
-			{renderContent()}
-		</ContentContainer>
-	);
+	return renderContent();
 }

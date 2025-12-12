@@ -156,6 +156,44 @@ vi.mock('./PromptAiActions/ReviewStep', () => ({
 	),
 }));
 
+const mockHistoryModalOnSelect = vi.fn();
+
+vi.mock(
+	'~/modules/campaigns/CampaignsForm/AgentSection/CampaignConfigurationPrompt/CampaignConfigurationPromptHistoryModal',
+	() => ({
+		default: ({
+			opened,
+			onClose,
+			campaignId,
+			campaignPromptTypeId,
+			currentPromptText,
+			onSelect,
+		}: {
+			opened: boolean;
+			onClose: () => void;
+			campaignId: number;
+			campaignPromptTypeId?: number;
+			currentPromptText?: string;
+			onSelect: (prompt: string) => void;
+		}) => {
+			mockHistoryModalOnSelect.mockImplementation(onSelect);
+			return opened ? (
+				<div data-testid='history-modal'>
+					<span data-testid='history-campaign-id'>{campaignId}</span>
+					<span data-testid='history-prompt-type-id'>
+						{campaignPromptTypeId}
+					</span>
+					<span data-testid='history-current-prompt'>{currentPromptText}</span>
+					<button onClick={() => onSelect('Selected prompt from history')}>
+						Select History
+					</button>
+					<button onClick={onClose}>Close History</button>
+				</div>
+			) : null;
+		},
+	})
+);
+
 const mockType: CampaignPromptTypeModel = {
 	id: 1,
 	name: 'Greeting',
@@ -240,6 +278,28 @@ describe('PromptEditor', () => {
 			expect(
 				screen.getByText('Reuse from another campaign')
 			).toBeInTheDocument();
+		});
+
+		it('opens history modal and restores selected prompt', async () => {
+			renderWithProviders(
+				<PromptEditor {...defaultProps} value='Current prompt' />
+			);
+
+			const user = userEvent.setup();
+			await user.click(screen.getByLabelText('Prompt history'));
+
+			expect(screen.getByTestId('history-modal')).toBeInTheDocument();
+			expect(screen.getByTestId('history-prompt-type-id')).toHaveTextContent(
+				'1'
+			);
+
+			await user.click(screen.getByText('Select History'));
+
+			await waitFor(() => {
+				expect(mockOnChange).toHaveBeenCalledWith(
+					'Selected prompt from history'
+				);
+			});
 		});
 	});
 

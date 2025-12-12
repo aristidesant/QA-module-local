@@ -7,10 +7,12 @@ const mockOnSelect = vi.fn();
 vi.mock('~/modules/campaigns/CampaignPromptHistory', () => ({
 	default: ({
 		campaignId,
+		campaignPromptTypeId,
 		currentPromptText,
 		onSelect,
 	}: {
 		campaignId: number;
+		campaignPromptTypeId?: number;
 		currentPromptText?: string;
 		onSelect: (prompt: string) => void;
 	}) => {
@@ -18,6 +20,7 @@ vi.mock('~/modules/campaigns/CampaignPromptHistory', () => ({
 		return (
 			<div data-testid='campaign-prompt-history'>
 				<span data-testid='history-campaign-id'>{campaignId}</span>
+				<span data-testid='history-prompt-type-id'>{campaignPromptTypeId}</span>
 				<span data-testid='history-current-prompt'>{currentPromptText}</span>
 				<button onClick={() => onSelect('Selected prompt from history')}>
 					Select Prompt
@@ -131,6 +134,22 @@ describe('CampaignConfigurationPromptHistoryModal', () => {
 
 			expect(screen.getByTestId('history-campaign-id')).toHaveTextContent(
 				'456'
+			);
+		});
+
+		it('passes campaignPromptTypeId to CampaignPromptHistory', () => {
+			render(
+				<CampaignConfigurationPromptHistoryModal
+					opened={true}
+					onClose={mockOnClose}
+					campaignId={456}
+					campaignPromptTypeId={99}
+					onSelect={mockOnSelectProp}
+				/>
+			);
+
+			expect(screen.getByTestId('history-prompt-type-id')).toHaveTextContent(
+				'99'
 			);
 		});
 
