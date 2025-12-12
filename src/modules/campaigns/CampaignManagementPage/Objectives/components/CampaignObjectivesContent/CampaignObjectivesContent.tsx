@@ -168,7 +168,7 @@ const CampaignObjectivesContent: React.FC<CampaignObjectivesContentProps> = ({
 				opened={createModalOpened}
 				onClose={() => setCreateModalOpened(false)}
 				title='Create Campaign Objective'
-				size='md'
+				size='xl'
 			>
 				<CampaignObjectivesForm
 					onSuccess={() => setCreateModalOpened(false)}
@@ -184,7 +184,7 @@ const CampaignObjectivesContent: React.FC<CampaignObjectivesContentProps> = ({
 					setSelectedObjective(null);
 				}}
 				title='Edit Campaign Objective'
-				size='md'
+				size='xl'
 			>
 				{selectedObjective && (
 					<CampaignObjectivesForm
