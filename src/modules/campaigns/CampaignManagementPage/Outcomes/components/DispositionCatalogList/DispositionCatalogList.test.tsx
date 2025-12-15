@@ -263,6 +263,23 @@ vi.mock('@mantine/core', () => ({
 			{children}
 		</button>
 	),
+	LoadingOverlay: ({ visible }: { visible: boolean }) =>
+		visible ? <div data-testid='loading-overlay'>Loading...</div> : null,
+	Modal: ({
+		children,
+		opened,
+		onClose,
+	}: {
+		children: React.ReactNode;
+		opened: boolean;
+		onClose: () => void;
+	}) =>
+		opened ? (
+			<div data-testid='modal'>
+				<button onClick={onClose}>Close</button>
+				{children}
+			</div>
+		) : null,
 }));
 
 describe('DispositionCatalogList', () => {
@@ -313,8 +330,8 @@ describe('DispositionCatalogList', () => {
 
 		fireEvent.click(screen.getByText('Create Catalog'));
 
-		expect(setRightComponent).toHaveBeenCalled();
-		expect(clearCatalog).toHaveBeenCalled();
+		expect(screen.getByTestId('modal')).toBeInTheDocument();
+		expect(screen.getByTestId('catalog-form-create')).toBeInTheDocument();
 	});
 
 	it('renders table rows and opens edit form on row click', () => {
@@ -323,10 +340,8 @@ describe('DispositionCatalogList', () => {
 		expect(screen.getByTestId('base-table')).toBeInTheDocument();
 		fireEvent.click(screen.getByTestId('row-0'));
 
-		expect(setCatalog).toHaveBeenCalledWith(
-			expect.objectContaining({ name: 'Catalog One' })
-		);
-		expect(setRightComponent).toHaveBeenCalled();
+		expect(screen.getByTestId('modal')).toBeInTheDocument();
+		expect(screen.getByTestId('catalog-form-edit')).toBeInTheDocument();
 	});
 
 	it('reactivates, deactivates and deletes catalog', () => {
