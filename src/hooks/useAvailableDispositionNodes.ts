@@ -62,10 +62,7 @@ export const useAvailableDispositionNodes = (
 
 				// Process children - only show children that are NOT moved
 				activeChildren.forEach((child) => {
-					const childMoved = movedIds.has(child.id);
-					if (!childMoved) {
-						addNodeWithChildren(child, level + 1);
-					}
+					addNodeWithChildren(child, level + 1);
 				});
 			} else {
 				// Case 2: Leaf node - show only if not moved

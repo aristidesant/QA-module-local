@@ -22,6 +22,7 @@ describe('useCampaignWizardStore', () => {
 		expect(state.objectiveId).toBeNull();
 		expect(state.createdCampaign).toBeNull();
 		expect(state.isSubmitting).toBe(false);
+		expect(state.isResumingDraft).toBe(false);
 		expect(state.agentBehaviorId).toBeNull();
 		expect(state.language).toBe('es');
 		expect(state.firstMessage).toBe('');
@@ -164,5 +165,69 @@ describe('useCampaignWizardStore', () => {
 			useCampaignWizardStore.getState().reset();
 		});
 		expect(useCampaignWizardStore.getState().campaignName).toBe('');
+	});
+
+	it('should set isResumingDraft', () => {
+		act(() => {
+			useCampaignWizardStore.getState().setIsResumingDraft(true);
+		});
+		expect(useCampaignWizardStore.getState().isResumingDraft).toBe(true);
+	});
+
+	it('should initialize from draft campaign', () => {
+		const draftCampaign = {
+			id: 123,
+			name: 'Draft Campaign',
+			description: 'Draft description',
+			type: 'INBOUND' as const,
+			objectiveId: 456,
+			defaultMaxWaves: 5,
+			isDraft: true,
+			draftStep: 2,
+		} as Campaign;
+
+		const selectCampaignSpy = vi.spyOn(
+			useCampaignsStore.getState(),
+			'selectCampaign'
+		);
+
+		act(() => {
+			useCampaignWizardStore.getState().initializeFromDraft(draftCampaign);
+		});
+
+		const state = useCampaignWizardStore.getState();
+		expect(state.createdCampaign).toEqual(draftCampaign);
+		expect(state.campaignName).toBe('Draft Campaign');
+		expect(state.description).toBe('Draft description');
+		expect(state.campaignType).toBe('INBOUND');
+		expect(state.objectiveId).toBe(456);
+		expect(state.defaultMaxWaves).toBe(5);
+		expect(state.activeStep).toBe(2);
+		expect(state.isResumingDraft).toBe(true);
+		expect(selectCampaignSpy).toHaveBeenCalledWith(draftCampaign);
+	});
+
+	it('should use default draftStep of 0 when not provided', () => {
+		const draftCampaign = {
+			id: 123,
+			name: 'Draft Campaign',
+			description: 'Draft description',
+			type: 'OUTBOUND' as const,
+			isDraft: true,
+		} as Campaign;
+
+		act(() => {
+			useCampaignWizardStore.getState().initializeFromDraft(draftCampaign);
+		});
+
+		expect(useCampaignWizardStore.getState().activeStep).toBe(0);
+	});
+
+	it('should reset isResumingDraft on reset', () => {
+		act(() => {
+			useCampaignWizardStore.getState().setIsResumingDraft(true);
+			useCampaignWizardStore.getState().reset();
+		});
+		expect(useCampaignWizardStore.getState().isResumingDraft).toBe(false);
 	});
 });

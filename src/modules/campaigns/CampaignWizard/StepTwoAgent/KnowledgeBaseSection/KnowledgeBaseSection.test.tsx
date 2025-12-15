@@ -4,6 +4,7 @@ import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 import {
 	useKnowledgeBases,
 	useKnowledgeBasesPaginated,
+	useKnowledgeBasesByIds,
 } from '~/queries/knowledgeBaseQueries';
 import { MantineProvider } from '@mantine/core';
 
@@ -15,6 +16,7 @@ vi.mock('~/stores/campaignWizardStore', () => ({
 vi.mock('~/queries/knowledgeBaseQueries', () => ({
 	useKnowledgeBases: vi.fn(),
 	useKnowledgeBasesPaginated: vi.fn(),
+	useKnowledgeBasesByIds: vi.fn(),
 }));
 
 // Mock child components
@@ -64,6 +66,9 @@ describe('KnowledgeBaseSection', () => {
 			isLoading: false,
 			error: null,
 		});
+		(
+			useKnowledgeBasesByIds as unknown as ReturnType<typeof vi.fn>
+		).mockReturnValue([]);
 	});
 
 	const renderComponent = () => {

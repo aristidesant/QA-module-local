@@ -19,6 +19,8 @@ import {
 	IconInfoCircle,
 	IconEye,
 	IconPencil,
+	IconFileDescription,
+	IconSettings,
 } from '@tabler/icons-react';
 import type { Campaign } from '~/models/CampaignsModel';
 // useNavigate removed; no client-side navigation from columns
@@ -60,6 +62,7 @@ interface UseCampaignsColumnsProps {
 	onTestCall: (campaign: Campaign) => void;
 	onDelete: (campaign: Campaign) => void;
 	onClone: (campaign: Campaign) => void;
+	onContinueDraft?: (campaign: Campaign) => void;
 }
 
 export const useCampaignsColumns = ({
@@ -68,6 +71,7 @@ export const useCampaignsColumns = ({
 	onTestCall,
 	onDelete,
 	onClone,
+	onContinueDraft,
 }: UseCampaignsColumnsProps): ColumnDef<Campaign, any>[] => {
 	// navigate unused after removing Metrics navigation
 	const { canAccessModule, canPerformAction } = usePermissions();
@@ -109,6 +113,20 @@ export const useCampaignsColumns = ({
 						<Text size='sm' fw={500} lineClamp={1}>
 							{campaign.name}
 						</Text>
+						{campaign.isDraft && (
+							<Tooltip
+								label={`Setup incomplete - continue from step ${(campaign.draftStep ?? 0) + 1}`}
+							>
+								<Badge
+									variant='light'
+									color='red'
+									size='md'
+									leftSection={<IconFileDescription size={12} />}
+								>
+									Draft
+								</Badge>
+							</Tooltip>
+						)}
 					</Group>
 				);
 			},
@@ -160,12 +178,32 @@ export const useCampaignsColumns = ({
 				const campaign = row.original;
 				return (
 					<Group gap='xs' justify='end'>
+						{campaign.isDraft && onContinueDraft && (
+							<Tooltip label='Continue setup'>
+								<ActionIcon
+									color='red'
+									radius='md'
+									aria-label='Continue setup'
+									onClick={(e) => {
+										e.stopPropagation();
+										onContinueDraft(campaign);
+									}}
+								>
+									<IconSettings size={16} />
+								</ActionIcon>
+							</Tooltip>
+						)}
 						{canAccessModule(ModuleEnum.CAMPAIGNS) && (
-							<Tooltip label='View campaign'>
+							<Tooltip
+								label={
+									campaign.isDraft ? 'Complete setup first' : 'View campaign'
+								}
+							>
 								<ActionIcon
 									color='teal'
 									radius='md'
 									aria-label='View campaign'
+									disabled={campaign.isDraft}
 									onClick={(e) => {
 										e.stopPropagation();
 										onView(campaign);
@@ -176,11 +214,16 @@ export const useCampaignsColumns = ({
 							</Tooltip>
 						)}
 						{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.UPDATE) && (
-							<Tooltip label='Edit campaign'>
+							<Tooltip
+								label={
+									campaign.isDraft ? 'Complete setup first' : 'Edit campaign'
+								}
+							>
 								<ActionIcon
 									color='blue'
 									radius='md'
 									aria-label='Edit campaign'
+									disabled={campaign.isDraft}
 									onClick={(e) => {
 										e.stopPropagation();
 										onEdit(campaign);
@@ -192,11 +235,14 @@ export const useCampaignsColumns = ({
 						)}
 						{/* Inline action icons (replacing the 3-dot menu) */}
 						{canAccessModule(ModuleEnum.CAMPAIGNS) && (
-							<Tooltip label='Test Call'>
+							<Tooltip
+								label={campaign.isDraft ? 'Complete setup first' : 'Test Call'}
+							>
 								<ActionIcon
 									color='green'
 									radius='md'
 									aria-label='Test Call'
+									disabled={campaign.isDraft}
 									onClick={(e) => {
 										e.stopPropagation();
 										onTestCall(campaign);
@@ -207,11 +253,16 @@ export const useCampaignsColumns = ({
 							</Tooltip>
 						)}
 						{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.CREATE) && (
-							<Tooltip label='Clone campaign'>
+							<Tooltip
+								label={
+									campaign.isDraft ? 'Complete setup first' : 'Clone campaign'
+								}
+							>
 								<ActionIcon
 									color='orange'
 									radius='md'
 									aria-label='Clone campaign'
+									disabled={campaign.isDraft}
 									onClick={(e) => {
 										e.stopPropagation();
 										onClone(campaign);

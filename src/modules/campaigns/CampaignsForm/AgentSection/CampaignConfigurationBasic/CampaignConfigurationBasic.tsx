@@ -49,7 +49,7 @@ const CampaignConfigurationBasic: React.FC = () => {
 				rows={4}
 				label='Agent First Message'
 				value={
-					form.values.agentConfig?.conversationConfig?.agent?.firstMessage || ''
+					form.values.agentConfig?.conversationConfig?.agent?.firstMessage ?? ''
 				}
 				onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
 					form.setFieldValue(

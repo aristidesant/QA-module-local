@@ -15,6 +15,8 @@ import {
 	Pagination,
 	Badge,
 	Button,
+	Modal,
+	LoadingOverlay,
 } from '@mantine/core';
 import {
 	IconTrash,
@@ -41,7 +43,6 @@ import type { DispositionCatalogModel } from '~/models/DispositionCatalogModels'
 import styles from './DispositionCatalogList.module.css';
 import BaseTable from '~/components/BaseTable';
 import SectionCard from '~/components/SectionCard/SectionCard';
-import { useDispositionStore } from '../../dispositionRightComponentStore';
 
 export interface DispositionCatalogListHandles {
 	openCreateForm: () => void;
@@ -49,16 +50,19 @@ export interface DispositionCatalogListHandles {
 
 const DispositionCatalogList = forwardRef<DispositionCatalogListHandles>(
 	(_, ref) => {
-		const { data, isLoading, isError } = useDispositionCatalogs();
-		const { setRightComponent, setCatalog, clearCatalog } = useDispositionStore(
-			(s) => s
-		);
+		const { data, isLoading, isError, isFetching } = useDispositionCatalogs();
+		// Local state handling replaced global store for right component
+		// const { setRightComponent, setCatalog, clearCatalog } = useDispositionStore((s) => s);
 		const createMutation = useCreateDispositionCatalog();
 		const updateMutation = useUpdateDispositionCatalog();
 		const deleteMutation = useDeleteDispositionCatalog();
 		const reactivateMutation = useReactivateDispositionCatalog();
 		const deactivateMutation = useDeactivateDispositionCatalog();
 		const dispositionLabel = useDispositionLabel();
+
+		const [isModalOpen, setIsModalOpen] = useState(false);
+		const [selectedCatalog, setSelectedCatalog] =
+			useState<DispositionCatalogModel | null>(null);
 
 		// Pagination state - must be declared before any early returns
 		const [page, setPage] = useState(1);
@@ -327,34 +331,9 @@ const DispositionCatalogList = forwardRef<DispositionCatalogListHandles>(
 
 		// Handler for create - wrapped in useCallback so it can be used by useImperativeHandle
 		const handleCreate = useCallback(() => {
-			clearCatalog();
-			setRightComponent(
-				<DispositionCatalogForm
-					mode='create'
-					loading={createMutation.isPending}
-					onSubmit={(values) => createMutation.mutateAsync(values)}
-					onSuccess={(_catalog) => {
-						notifications.show({
-							title: 'Catalog created',
-							message: dispositionLabel(
-								'Outcome catalog was created successfully.'
-							),
-							color: 'teal',
-						});
-						setRightComponent(null);
-					}}
-					onError={(error: any) => {
-						notifications.show({
-							title: 'Create failed',
-							message: dispositionLabel(
-								error?.message || 'Failed to create outcome catalog.'
-							),
-							color: 'red',
-						});
-					}}
-				/>
-			);
-		}, [clearCatalog, setRightComponent, createMutation, dispositionLabel]);
+			setSelectedCatalog(null);
+			setIsModalOpen(true);
+		}, []);
 
 		// Expose imperative handle so parent can open the create form
 		useImperativeHandle(
@@ -383,40 +362,8 @@ const DispositionCatalogList = forwardRef<DispositionCatalogListHandles>(
 
 		// Handler for edit
 		const handleEdit = (catalog: DispositionCatalogModel) => {
-			setCatalog(catalog);
-			setRightComponent(
-				<DispositionCatalogForm
-					key={catalog.id}
-					mode='edit'
-					initialValues={catalog}
-					loading={updateMutation.isPending}
-					onSubmit={(values) =>
-						updateMutation.mutateAsync({
-							id: catalog.id,
-							data: { ...values, isDefault: !!values.isDefault },
-						})
-					}
-					onSuccess={(_updatedCatalog) => {
-						notifications.show({
-							title: 'Catalog updated',
-							message: dispositionLabel(
-								'Outcome catalog was updated successfully.'
-							),
-							color: 'teal',
-						});
-						setRightComponent(null);
-					}}
-					onError={(error: any) => {
-						notifications.show({
-							title: 'Update failed',
-							message: dispositionLabel(
-								error?.message || 'Failed to update outcome catalog.'
-							),
-							color: 'red',
-						});
-					}}
-				/>
-			);
+			setSelectedCatalog(catalog);
+			setIsModalOpen(true);
 		};
 
 		return (
@@ -432,6 +379,11 @@ const DispositionCatalogList = forwardRef<DispositionCatalogListHandles>(
 						</ActionIcon>
 					}
 				>
+					<LoadingOverlay
+						visible={isFetching && !isLoading}
+						zIndex={100}
+						overlayProps={{ radius: 'sm', blur: 2 }}
+					/>
 					{!data || data.length === 0 ? (
 						<div className={styles.emptyStateContainer}>
 							<EmptyState
@@ -473,6 +425,60 @@ const DispositionCatalogList = forwardRef<DispositionCatalogListHandles>(
 						</>
 					)}
 				</SectionCard>
+
+				<Modal
+					opened={isModalOpen}
+					onClose={() => setIsModalOpen(false)}
+					title={selectedCatalog ? 'Edit Catalog' : 'Create Catalog'}
+					size='lg'
+				>
+					{isModalOpen && (
+						<DispositionCatalogForm
+							key={selectedCatalog?.id || 'create'}
+							mode={(selectedCatalog ? 'edit' : 'create') as any}
+							initialValues={selectedCatalog || undefined}
+							loading={
+								selectedCatalog
+									? updateMutation.isPending
+									: createMutation.isPending
+							}
+							onSubmit={(values) =>
+								selectedCatalog
+									? updateMutation.mutateAsync({
+											id: selectedCatalog.id,
+											data: { ...values, isDefault: !!values.isDefault },
+										})
+									: createMutation.mutateAsync(values)
+							}
+							onSuccess={(_catalog) => {
+								notifications.show({
+									title: selectedCatalog
+										? 'Catalog updated'
+										: 'Catalog created',
+									message: dispositionLabel(
+										selectedCatalog
+											? 'Outcome catalog was updated successfully.'
+											: 'Outcome catalog was created successfully.'
+									),
+									color: 'teal',
+								});
+								setIsModalOpen(false);
+							}}
+							onError={(error: any) => {
+								notifications.show({
+									title: selectedCatalog ? 'Update failed' : 'Create failed',
+									message: dispositionLabel(
+										error?.message ||
+											(selectedCatalog
+												? 'Failed to update outcome catalog.'
+												: 'Failed to create outcome catalog.')
+									),
+									color: 'red',
+								});
+							}}
+						/>
+					)}
+				</Modal>
 			</div>
 		);
 	}

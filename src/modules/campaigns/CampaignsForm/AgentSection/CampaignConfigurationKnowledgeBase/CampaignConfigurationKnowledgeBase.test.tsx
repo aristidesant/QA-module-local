@@ -4,6 +4,7 @@ import CampaignConfigurationKnowledgeBase from './CampaignConfigurationKnowledge
 
 const mockSetFieldValue = vi.fn();
 const mockUseKnowledgeBases = vi.fn();
+const mockUseKnowledgeBasesByIds = vi.fn();
 const mockFormValues = vi.fn();
 
 vi.mock('~/modules/campaigns/campaignFormFunctions', () => ({
@@ -15,6 +16,8 @@ vi.mock('~/modules/campaigns/campaignFormFunctions', () => ({
 
 vi.mock('~/queries/knowledgeBaseQueries', () => ({
 	useKnowledgeBases: (...args: unknown[]) => mockUseKnowledgeBases(...args),
+	useKnowledgeBasesByIds: (...args: unknown[]) =>
+		mockUseKnowledgeBasesByIds(...args),
 }));
 
 vi.mock('@mantine/core', async (importOriginal) => {
@@ -86,8 +89,18 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockFormValues.mockReturnValue({
-			agentConfig: { knowledgeBaseIds: [1] },
+			agentConfig: {
+				knowledgeBaseIds: [], // Root (Legacy/Backend)
+				conversationConfig: {
+					agent: {
+						prompt: {
+							knowledgeBase: [1], // Deep (Wizard/Standard)
+						},
+					},
+				},
+			},
 		});
+		mockUseKnowledgeBasesByIds.mockReturnValue([]);
 	});
 
 	describe('Loading State', () => {
@@ -122,7 +135,16 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 	describe('Empty State', () => {
 		it('shows empty state when no knowledge bases are selected', () => {
 			mockFormValues.mockReturnValue({
-				agentConfig: { knowledgeBaseIds: [] },
+				agentConfig: {
+					knowledgeBaseIds: [],
+					conversationConfig: {
+						agent: {
+							prompt: {
+								knowledgeBase: [],
+							},
+						},
+					},
+				},
 			});
 			mockUseKnowledgeBases.mockReturnValue({
 				data: [
@@ -167,7 +189,19 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 	});
 
 	describe('Knowledge Base Display', () => {
-		it('renders selected knowledge bases and allows removing them', () => {
+		it('renders selected knowledge bases from DEEP path', () => {
+			mockFormValues.mockReturnValue({
+				agentConfig: {
+					knowledgeBaseIds: [],
+					conversationConfig: {
+						agent: {
+							prompt: {
+								knowledgeBase: [1],
+							},
+						},
+					},
+				},
+			});
 			mockUseKnowledgeBases.mockReturnValue({
 				data: [
 					{
@@ -182,30 +216,28 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 			});
 
 			render(<CampaignConfigurationKnowledgeBase />);
-
 			expect(screen.getByText('KB One')).toBeVisible();
-
-			fireEvent.click(screen.getByRole('button', { name: /Remove KB One/i }));
-
-			expect(mockSetFieldValue).toHaveBeenCalledWith(
-				'agentConfig.knowledgeBaseIds',
-				[]
-			);
 		});
 
-		it('renders multiple knowledge bases correctly', () => {
+		it('renders selected knowledge bases from ROOT path (legacy/backend)', () => {
 			mockFormValues.mockReturnValue({
-				agentConfig: { knowledgeBaseIds: [1, 2, 3] },
+				agentConfig: {
+					knowledgeBaseIds: [2],
+					conversationConfig: {
+						agent: {
+							prompt: {
+								knowledgeBase: [],
+							},
+						},
+					},
+				},
 			});
 			mockUseKnowledgeBases.mockReturnValue({
 				data: [
-					{ id: 1, name: 'KB One', status: 'active', createdAt: '2024-01-01' },
-					{ id: 2, name: 'KB Two', status: 'pending', createdAt: '2024-02-01' },
 					{
-						id: 3,
-						name: 'KB Three',
-						status: 'failed',
-						createdAt: '2024-03-01',
+						id: 2,
+						name: 'KB Two',
+						status: 'active',
 					},
 				],
 				isLoading: false,
@@ -213,10 +245,34 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 			});
 
 			render(<CampaignConfigurationKnowledgeBase />);
+			expect(screen.getByText('KB Two')).toBeVisible();
+		});
 
+		it('merges IDs from both paths', () => {
+			mockFormValues.mockReturnValue({
+				agentConfig: {
+					knowledgeBaseIds: [2],
+					conversationConfig: {
+						agent: {
+							prompt: {
+								knowledgeBase: [1],
+							},
+						},
+					},
+				},
+			});
+			mockUseKnowledgeBases.mockReturnValue({
+				data: [
+					{ id: 1, name: 'KB One', status: 'active' },
+					{ id: 2, name: 'KB Two', status: 'active' },
+				],
+				isLoading: false,
+				error: null,
+			});
+
+			render(<CampaignConfigurationKnowledgeBase />);
 			expect(screen.getByText('KB One')).toBeVisible();
 			expect(screen.getByText('KB Two')).toBeVisible();
-			expect(screen.getByText('KB Three')).toBeVisible();
 		});
 
 		it('displays status badges for each knowledge base', () => {
@@ -262,9 +318,18 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 	});
 
 	describe('Removing Knowledge Bases', () => {
-		it('removes specific knowledge base from multiple selections', () => {
+		it('removes specific knowledge base and updates BOTH paths', () => {
 			mockFormValues.mockReturnValue({
-				agentConfig: { knowledgeBaseIds: [1, 2, 3] },
+				agentConfig: {
+					knowledgeBaseIds: [1, 2, 3],
+					conversationConfig: {
+						agent: {
+							prompt: {
+								knowledgeBase: [1, 2, 3],
+							},
+						},
+					},
+				},
 			});
 			mockUseKnowledgeBases.mockReturnValue({
 				data: [
@@ -285,6 +350,12 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 
 			fireEvent.click(screen.getByRole('button', { name: /Remove KB Two/i }));
 
+			// Check update to Deep Path
+			expect(mockSetFieldValue).toHaveBeenCalledWith(
+				'agentConfig.conversationConfig.agent.prompt.knowledgeBase',
+				[1, 3]
+			);
+			// Check update to Root Path
 			expect(mockSetFieldValue).toHaveBeenCalledWith(
 				'agentConfig.knowledgeBaseIds',
 				[1, 3]
@@ -333,9 +404,18 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 			).not.toBeInTheDocument();
 		});
 
-		it('saves new selections and closes modal when save is triggered', () => {
+		it('saves new selections to BOTH paths and closes modal when save is triggered', () => {
 			mockFormValues.mockReturnValue({
-				agentConfig: { knowledgeBaseIds: [] },
+				agentConfig: {
+					knowledgeBaseIds: [],
+					conversationConfig: {
+						agent: {
+							prompt: {
+								knowledgeBase: [],
+							},
+						},
+					},
+				},
 			});
 			mockUseKnowledgeBases.mockReturnValue({
 				data: [
@@ -353,6 +433,12 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 			);
 			fireEvent.click(screen.getByRole('button', { name: /Save Selections/i }));
 
+			// Deep Path
+			expect(mockSetFieldValue).toHaveBeenCalledWith(
+				'agentConfig.conversationConfig.agent.prompt.knowledgeBase',
+				[1, 2]
+			);
+			// Root Path
 			expect(mockSetFieldValue).toHaveBeenCalledWith(
 				'agentConfig.knowledgeBaseIds',
 				[1, 2]
@@ -371,7 +457,15 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 			['unknown', 'KB Unknown'],
 		])('renders knowledge base with %s status', (status, name) => {
 			mockFormValues.mockReturnValue({
-				agentConfig: { knowledgeBaseIds: [1] },
+				agentConfig: {
+					conversationConfig: {
+						agent: {
+							prompt: {
+								knowledgeBase: [1],
+							},
+						},
+					},
+				},
 			});
 			mockUseKnowledgeBases.mockReturnValue({
 				data: [{ id: 1, name, status, createdAt: '2024-01-01' }],

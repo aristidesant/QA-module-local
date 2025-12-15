@@ -504,4 +504,38 @@ describe('campaignsApi', () => {
 			expect(result).toEqual(mockResponse);
 		});
 	});
+
+	describe('setDraft', () => {
+		it('should set campaign draft status to true', async () => {
+			const campaignId = '123';
+			const draftData = { isDraft: true, draftStep: 2 };
+			const mockResponse = { id: 123, isDraft: true, draftStep: 2 };
+			(axios.patch as Mock).mockResolvedValue(createMockResponse(mockResponse));
+
+			const api = campaignsApi();
+			const result = await api.setDraft(campaignId, draftData);
+
+			expect(axios.patch).toHaveBeenCalledWith(
+				`${TEST_API_URL}/campaigns/${campaignId}/draft`,
+				draftData
+			);
+			expect(result).toEqual(mockResponse);
+		});
+
+		it('should set campaign draft status to false', async () => {
+			const campaignId = '123';
+			const draftData = { isDraft: false, draftStep: 0 };
+			const mockResponse = { id: 123, isDraft: false, draftStep: 0 };
+			(axios.patch as Mock).mockResolvedValue(createMockResponse(mockResponse));
+
+			const api = campaignsApi();
+			const result = await api.setDraft(campaignId, draftData);
+
+			expect(axios.patch).toHaveBeenCalledWith(
+				`${TEST_API_URL}/campaigns/${campaignId}/draft`,
+				draftData
+			);
+			expect(result).toEqual(mockResponse);
+		});
+	});
 });

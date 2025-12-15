@@ -35,7 +35,12 @@ vi.mock('~/queries/campaignsQueries', () => ({
 	useGetAllCampaignsPaginated: (...args: any[]) =>
 		mockUseGetAllCampaignsPaginated(...args),
 	useDeleteCampaign: () => mockUseDeleteCampaign(),
+	useSetCampaignDraft: () => ({
+		mutateAsync: mockSetCampaignDraft,
+	}),
 }));
+
+const mockSetCampaignDraft = vi.fn();
 
 vi.mock('~/queries/agentQueries', () => ({
 	useGetAgent: (id: string) => mockUseGetAgent(id),
@@ -55,10 +60,21 @@ vi.mock('~/stores/campaignsStore', () => ({
 }));
 
 const mockResetWizard = vi.fn();
+const mockInitializeFromDraft = vi.fn();
+let mockActiveStep = 0;
+let mockCreatedCampaign: Campaign | null = null;
+let mockIsResumingDraft = false;
+let mockHasOutcomeFlow = false;
+
 vi.mock('~/stores/campaignWizardStore', () => ({
-	useCampaignWizardStore: vi.fn((selector: any) =>
-		selector({ reset: mockResetWizard })
-	),
+	useCampaignWizardStore: vi.fn(() => ({
+		reset: mockResetWizard,
+		initializeFromDraft: mockInitializeFromDraft,
+		activeStep: mockActiveStep,
+		createdCampaign: mockCreatedCampaign,
+		isResumingDraft: mockIsResumingDraft,
+		hasOutcomeFlow: mockHasOutcomeFlow,
+	})),
 }));
 
 // Mock usePagination to avoid debounce issues
@@ -280,12 +296,27 @@ const sampleCampaign: Campaign = {
 	],
 };
 
+const sampleDraftCampaign: Campaign = {
+	...sampleCampaign,
+	id: 2,
+	name: 'Draft Campaign',
+	isDraft: true,
+	draftStep: 2,
+};
+
 describe('CampaignsList', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 
+		// Reset wizard state mocks
+		mockActiveStep = 0;
+		mockCreatedCampaign = null;
+		mockIsResumingDraft = false;
+		mockHasOutcomeFlow = false;
+
 		// Default mock values
 		mockCanPerformAction.mockReturnValue(true);
+		mockCanAccessModule.mockReturnValue(true);
 		mockUseGetAllCampaignsPaginated.mockReturnValue({
 			data: {
 				data: [sampleCampaign],
@@ -697,6 +728,111 @@ describe('CampaignsList', () => {
 
 		// Test Call should not be present when module access is false
 		expect(screen.queryByLabelText('Test Call')).not.toBeInTheDocument();
+	});
+
+	it('renders draft badge for draft campaigns', () => {
+		mockUseGetAllCampaignsPaginated.mockReturnValue({
+			data: {
+				data: [sampleDraftCampaign],
+				total: 1,
+				offset: 0,
+				limit: 10,
+			} as PaginatedResponse<Campaign>,
+			isLoading: false,
+			isFetching: false,
+			isError: false,
+			error: null,
+			refetch: vi.fn(),
+		});
+
+		renderComponent();
+		expect(screen.getByText('Draft Campaign')).toBeInTheDocument();
+	});
+
+	it('opens wizard at draft step when Continue Draft is clicked', async () => {
+		mockUseGetAllCampaignsPaginated.mockReturnValue({
+			data: {
+				data: [sampleDraftCampaign],
+				total: 1,
+				offset: 0,
+				limit: 10,
+			} as PaginatedResponse<Campaign>,
+			isLoading: false,
+			isFetching: false,
+			isError: false,
+			error: null,
+			refetch: vi.fn(),
+		});
+
+		renderComponent();
+
+		const continueDraftBtn = screen.getByLabelText('Continue setup');
+		fireEvent.click(continueDraftBtn);
+
+		expect(mockInitializeFromDraft).toHaveBeenCalledWith(sampleDraftCampaign);
+		expect(await screen.findByTestId('campaign-wizard')).toBeInTheDocument();
+	});
+
+	it('deletes campaign when discarding a new campaign (not a resumed draft)', async () => {
+		// Set up wizard state for a new campaign (not resuming draft)
+		mockActiveStep = 1;
+		mockCreatedCampaign = sampleCampaign;
+		mockIsResumingDraft = false;
+
+		const mockDeleteMutateAsync = vi.fn().mockResolvedValue(undefined);
+		mockUseDeleteCampaign.mockReturnValue({
+			mutateAsync: mockDeleteMutateAsync,
+		});
+
+		renderComponent();
+
+		// Open wizard
+		fireEvent.click(screen.getByTestId('header-create-campaign-btn'));
+
+		// Click cancel to trigger the draft confirmation modal
+		fireEvent.click(screen.getByText('Cancel Wizard'));
+
+		// Verify confirm modal was opened
+		expect(mockOpenConfirm).toHaveBeenCalled();
+
+		// Get the onCancel callback and call it
+		const { onCancel } = mockOpenConfirm.mock.calls[0][0];
+		await onCancel();
+
+		// Should have deleted the campaign
+		expect(mockDeleteMutateAsync).toHaveBeenCalledWith('1');
+		expect(mockResetWizard).toHaveBeenCalled();
+	});
+
+	it('does not delete campaign when discarding a resumed draft', async () => {
+		// Set up wizard state for resuming a draft
+		mockActiveStep = 1;
+		mockCreatedCampaign = sampleDraftCampaign;
+		mockIsResumingDraft = true;
+
+		const mockDeleteMutateAsync = vi.fn().mockResolvedValue(undefined);
+		mockUseDeleteCampaign.mockReturnValue({
+			mutateAsync: mockDeleteMutateAsync,
+		});
+
+		renderComponent();
+
+		// Open wizard
+		fireEvent.click(screen.getByTestId('header-create-campaign-btn'));
+
+		// Click cancel to trigger the draft confirmation modal
+		fireEvent.click(screen.getByText('Cancel Wizard'));
+
+		// Verify confirm modal was opened
+		expect(mockOpenConfirm).toHaveBeenCalled();
+
+		// Get the onCancel callback and call it
+		const { onCancel } = mockOpenConfirm.mock.calls[0][0];
+		await onCancel();
+
+		// Should NOT have deleted the campaign (it's an existing draft)
+		expect(mockDeleteMutateAsync).not.toHaveBeenCalled();
+		expect(mockResetWizard).toHaveBeenCalled();
 	});
 });
 

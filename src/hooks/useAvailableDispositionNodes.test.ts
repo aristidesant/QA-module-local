@@ -267,4 +267,52 @@ describe('useAvailableDispositionNodes', () => {
 			expect(firstResult).toBe(secondResult);
 		});
 	});
+	describe('when dealing with partial grandchildren', () => {
+		it('should show parent when a grandchild is NOT in the flow, even if child is', () => {
+			const grandchildNode = createMockNode({
+				id: 3,
+				name: 'Grandchild',
+				isActive: true,
+			});
+			const childNode = createMockNode({
+				id: 2,
+				name: 'Child',
+				isActive: true,
+				children: [grandchildNode],
+			});
+			const parentNode = createMockNode({
+				id: 1,
+				name: 'Parent',
+				children: [childNode],
+			});
+
+			// Flow contains Parent(1) and Child(2), but NOT Grandchild(3)
+			// Parent should be visible (enabled or disabled dep on logic, but visible)
+			// Child should be visible to allow selecting Grandchild
+			const movedIds = ['1', '2'];
+
+			const { result } = renderHook(() =>
+				useAvailableDispositionNodes(
+					{ dispositionNodes: [parentNode] },
+					movedIds
+				)
+			);
+
+			// We expect:
+			// Parent Node (level 0) - should be present because deep children are missing
+			// Child Node (level 1) - should be present because its child (Grandchild) is missing
+			// Grandchild Node (level 2) - should be present because it is missing
+
+			// Currently, the bug causes recursion to stop at Child because Child is in movedIds.
+
+			const parent = result.current.find((n) => n.node.id === 1);
+			expect(parent).toBeDefined();
+
+			const child = result.current.find((n) => n.node.id === 2);
+			expect(child).toBeDefined();
+
+			const grandchild = result.current.find((n) => n.node.id === 3);
+			expect(grandchild).toBeDefined();
+		});
+	});
 });

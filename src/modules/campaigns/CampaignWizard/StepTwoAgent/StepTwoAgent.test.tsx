@@ -68,7 +68,7 @@ describe('StepTwoAgent', () => {
 		firstMessage: '',
 		agentPrompt,
 		createdCampaign: { id: 1, agentConfig: {} },
-		knowledgeBaseIds: [],
+		knowledgeBaseIds: [] as number[],
 		setAgentBehaviorId: vi.fn(),
 		setLanguage: vi.fn(),
 		setFirstMessage: vi.fn(),
@@ -162,6 +162,7 @@ describe('StepTwoAgent', () => {
 		mockStore = createMockStore({
 			agentPrompt: 'This is a valid prompt with enough length.',
 		});
+		mockStore.knowledgeBaseIds = [100]; // Set some KB IDs for the test
 		(
 			useCampaignWizardStore as unknown as ReturnType<typeof vi.fn>
 		).mockReturnValue(mockStore);
@@ -178,7 +179,22 @@ describe('StepTwoAgent', () => {
 		fireEvent.click(submitButton);
 
 		await waitFor(() => {
-			expect(mockMutateAsync).toHaveBeenCalled();
+			expect(mockMutateAsync).toHaveBeenCalledWith(
+				expect.objectContaining({
+					data: expect.objectContaining({
+						agentConfig: expect.objectContaining({
+							knowledgeBaseIds: [100], // Verify Root Path update
+							conversationConfig: expect.objectContaining({
+								agent: expect.objectContaining({
+									prompt: expect.objectContaining({
+										knowledgeBase: [100], // Verify Deep Path update
+									}),
+								}),
+							}),
+						}),
+					}),
+				})
+			);
 		});
 		expect(mockInvalidateQueries).toHaveBeenCalled();
 		expect(notifications.show).toHaveBeenCalledWith(
@@ -227,6 +243,51 @@ describe('StepTwoAgent', () => {
 		fireEvent.click(editButton);
 		await waitFor(() => {
 			expect(screen.getByTestId('prompt-edit-modal')).toBeInTheDocument();
+		});
+	});
+
+	it('calls updateCampaign and onNext when valid form is submitted, removing toolIds', async () => {
+		mockMutateAsync.mockResolvedValue({ id: 1, name: 'Updated Campaign' });
+		const storeWithToolIds = {
+			...mockStore,
+			createdCampaign: {
+				...mockStore.createdCampaign,
+				agentConfig: {
+					conversationConfig: {
+						agent: {
+							prompt: {
+								prompt: 'Existing prompt',
+								toolIds: [1, 2, 3],
+							},
+						},
+					},
+				},
+			},
+		};
+		(
+			useCampaignWizardStore as unknown as ReturnType<typeof vi.fn>
+		).mockReturnValue(storeWithToolIds);
+
+		renderComponent();
+
+		// Fill in required valid data
+		fireEvent.change(screen.getByPlaceholderText(/Select language/i), {
+			target: { value: 'es' },
+		});
+
+		const submitButton = screen.getByRole('button', {
+			name: /Save & Continue/i,
+		});
+		await waitFor(() => expect(submitButton).not.toBeDisabled());
+		fireEvent.click(submitButton);
+
+		await waitFor(() => {
+			expect(mockMutateAsync).toHaveBeenCalled();
+			const payload = mockMutateAsync.mock.calls[0][0].data;
+			expect(
+				payload.agentConfig.conversationConfig.agent.prompt.toolIds
+			).toBeUndefined();
+			expect(mockOnNext).toHaveBeenCalled();
 		});
 	});
 });

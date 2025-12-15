@@ -124,7 +124,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 		initialValues: {
 			name: '',
 			description: '',
-			humanEquivalent: 0,
+			humanEquivalent: 1,
 			predefinedScheduleId: null,
 		},
 		validate: {

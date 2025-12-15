@@ -3,6 +3,7 @@ import type { UseQueryOptions } from '@tanstack/react-query';
 import campaignsApi, {
 	type CreateCampaignWithAgentDTO,
 	type CreateCampaignScheduleDTO,
+	type SetDraftDto,
 } from '~/api/campaignsApi';
 import type { Campaign } from '~/models/CampaignsModel';
 import type { CampaignLiveMetric } from '~/models/CampaignLiveMetricModel';
@@ -393,6 +394,36 @@ export const useCreateCampaignWithAgent = () => {
 		onError: (error) => {
 			// eslint-disable-next-line no-console
 			console.error('Error creating campaign with agent:', error);
+		},
+	});
+};
+
+// Set campaign draft status
+export const useSetCampaignDraft = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async ({
+			campaignId,
+			data,
+		}: {
+			campaignId: string;
+			data: SetDraftDto;
+		}) => {
+			const api = campaignsApi();
+			return api.setDraft(campaignId, data);
+		},
+		onSuccess: (updatedCampaign) => {
+			queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+			queryClient.invalidateQueries({ queryKey: ['campaigns-paginated'] });
+			if (updatedCampaign?.id) {
+				queryClient.invalidateQueries({
+					queryKey: ['campaign', String(updatedCampaign.id)],
+				});
+			}
+		},
+		onError: (error) => {
+			// eslint-disable-next-line no-console
+			console.error('Error setting campaign draft status:', error);
 		},
 	});
 };

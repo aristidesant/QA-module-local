@@ -48,6 +48,18 @@ describe('knowledgeBaseSelectionStore', () => {
 			expect(state.selectedIds.has(2)).toBe(false);
 			expect(state.selectedIds.has(3)).toBe(true);
 		});
+
+		it('handles string IDs by converting to numbers', () => {
+			const store = useKnowledgeBaseSelectionStore.getState();
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			store.toggleSelection('1' as any);
+
+			const state = useKnowledgeBaseSelectionStore.getState();
+			expect(state.selectedIds.has(1)).toBe(true);
+			// Should be stored as number, not string
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			expect(state.selectedIds.has('1' as any)).toBe(false);
+		});
 	});
 
 	describe('setSelected', () => {
@@ -180,6 +192,47 @@ describe('knowledgeBaseSelectionStore', () => {
 			expect(state.selectedIds.size).toBe(0);
 			expect(state.searchTerm).toBe('');
 			expect(state.typeFilter).toBe('ALL');
+		});
+
+		it('creates a new Set instance on each reset to avoid shared references', () => {
+			const store = useKnowledgeBaseSelectionStore.getState();
+			store.reset();
+			const setAfterFirstReset =
+				useKnowledgeBaseSelectionStore.getState().selectedIds;
+
+			store.reset();
+			const setAfterSecondReset =
+				useKnowledgeBaseSelectionStore.getState().selectedIds;
+
+			// Each reset should create a new Set, not reuse the same one
+			expect(setAfterFirstReset).not.toBe(setAfterSecondReset);
+		});
+
+		it('preserves independence between resets when selecting', () => {
+			const store = useKnowledgeBaseSelectionStore.getState();
+
+			// First usage cycle
+			store.reset();
+			store.toggleSelection(1);
+			expect(useKnowledgeBaseSelectionStore.getState().selectedIds.has(1)).toBe(
+				true
+			);
+
+			// Second usage cycle - simulate reopening modal
+			store.reset();
+			// After reset, nothing should be selected
+			expect(useKnowledgeBaseSelectionStore.getState().selectedIds.size).toBe(
+				0
+			);
+
+			// Selecting should work independently
+			store.toggleSelection(2);
+			expect(useKnowledgeBaseSelectionStore.getState().selectedIds.has(2)).toBe(
+				true
+			);
+			expect(useKnowledgeBaseSelectionStore.getState().selectedIds.has(1)).toBe(
+				false
+			);
 		});
 	});
 });

@@ -93,6 +93,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			clientId: (value) => (value >= 0 ? null : 'Client ID must be 0 or more'),
 			defaultMaxWaves: (value) =>
 				value && value >= 1 ? null : 'Default waves must be at least 1',
+			objectiveId: (value) => (value ? null : 'Campaign Objective is required'),
 		},
 	});
 

@@ -39,12 +39,14 @@ vi.mock('~/queries/dispositionFlowQueries', () => ({
 
 // Mock campaignWizardStore
 const mockSetIsSubmitting = vi.fn();
+const mockSetHasOutcomeFlow = vi.fn();
 const mockCreatedCampaign = { id: 1, name: 'Test Campaign' };
 
 vi.mock('~/stores/campaignWizardStore', () => ({
 	useCampaignWizardStore: () => ({
 		createdCampaign: mockCreatedCampaign,
 		setIsSubmitting: mockSetIsSubmitting,
+		setHasOutcomeFlow: mockSetHasOutcomeFlow,
 	}),
 }));
 
