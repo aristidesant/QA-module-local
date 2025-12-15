@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
 	TextInput,
 	Textarea,
@@ -10,6 +10,10 @@ import {
 	Button,
 	Group,
 	NumberInput,
+	Modal,
+	ActionIcon,
+	Tooltip,
+	Input,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -21,6 +25,9 @@ import type { CreateCampaignWithAgentDTO } from '~/api/campaignsApi';
 import styles from '../CampaignWizard.module.css';
 import { useGetCampaignObjectives } from '~/queries/campaignObjectivesQueries';
 import { useGetAllAgentVoices } from '~/queries/agentVoiceQueries';
+import { CampaignObjectivesForm } from '~/modules/campaigns/CampaignManagementPage/Objectives/components/CampaignObjectivesForm/CampaignObjectivesForm';
+import { IconPlus } from '@tabler/icons-react';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface StepOneGeneralProps {
 	onNext: () => void;
@@ -48,6 +55,9 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 		setIsSubmitting,
 	} = useCampaignWizardStore();
 
+	const [isObjectiveModalOpen, setIsObjectiveModalOpen] = useState(false);
+	const queryClient = useQueryClient();
+
 	const createCampaignWithAgent = useCreateCampaignWithAgent();
 	const { data: objectivesResponse } = useGetCampaignObjectives({
 		active: true,
@@ -64,13 +74,16 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 			defaultMaxWaves,
 		},
 		validate: {
-			campaignName: (value) =>
+			campaignName: (value: string) =>
 				value.trim().length < 2 ? 'Campaign name is required' : null,
-			description: (value) =>
+			description: (value: string) =>
 				value.trim().length < 2 ? 'Description is required' : null,
-			phoneNumberId: (value) => (!value ? 'Phone number is required' : null),
-			defaultMaxWaves: (value) =>
+			phoneNumberId: (value: number | null) =>
+				!value ? 'Phone number is required' : null,
+			defaultMaxWaves: (value: number) =>
 				!value || value < 1 ? 'Waves must be at least 1' : null,
+			objectiveId: (value: number | null) =>
+				!value ? 'Campaign objective is required' : null,
 		},
 		validateInputOnChange: true,
 	});
@@ -90,6 +103,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				title: 'Error',
 				message: 'No agent voices available. Please contact support.',
 				color: 'red',
+				// ...
 			});
 			return;
 		}
@@ -118,7 +132,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				campaignExecutionType: 'TIME_BASED',
 				status: CampaignStatus.PENDING,
 				defaultMaxWaves: values.defaultMaxWaves || 3,
-				...(values.objectiveId && { objectiveId: values.objectiveId }),
+				objectiveId: values.objectiveId!, // Guaranteed by validation
 			},
 			agent: {
 				conversationConfig: {
@@ -170,143 +184,183 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 		});
 	};
 
+	const handleObjectiveCreated = () => {
+		setIsObjectiveModalOpen(false);
+		queryClient.invalidateQueries({ queryKey: ['campaignObjectives'] });
+	};
+
 	return (
-		<form onSubmit={form.onSubmit(handleSubmit)}>
-			<Stack gap='xl' className={styles.stepSurface}>
-				<Box className={styles.stepHeaderCard}>
-					<Text className={styles.stepEyebrow}>General setup</Text>
-					<Text className={styles.stepTitle}>Campaign essentials</Text>
-					<Text className={styles.stepDescriptionText}>
-						Define how this campaign is presented to your team and contacts. The
-						name, description, and type keep everyone aligned.
-					</Text>
-				</Box>
+		<>
+			<form onSubmit={form.onSubmit(handleSubmit)}>
+				<Stack gap='xl' className={styles.stepSurface}>
+					<Box className={styles.stepHeaderCard}>
+						<Text className={styles.stepEyebrow}>General setup</Text>
+						<Text className={styles.stepTitle}>Campaign essentials</Text>
+						<Text className={styles.stepDescriptionText}>
+							Define how this campaign is presented to your team and contacts.
+							The name, description, and type keep everyone aligned.
+						</Text>
+					</Box>
 
-				<div className={styles.sectionGrid}>
-					<Box className={styles.wizardCard}>
-						<div className={styles.sectionHeading}>
-							<Text className={styles.sectionHeadingTitle}>Identity</Text>
-							<Text className={styles.sectionHeadingDescription}>
-								Set the tone and structure for this campaign.
-							</Text>
-						</div>
-						<Stack gap='md'>
-							<TextInput
-								label='Campaign Name'
-								description='Give your campaign a descriptive name'
-								placeholder='Enter campaign name'
-								withAsterisk
-								className={styles.field}
-								{...form.getInputProps('campaignName')}
-							/>
-
-							<Textarea
-								label='Description'
-								description='Briefly describe the purpose of this campaign'
-								placeholder='Describe your campaign'
-								withAsterisk
-								className={styles.field}
-								{...form.getInputProps('description')}
-								minRows={3}
-								rows={3}
-							/>
-
-							<Box className={styles.field}>
-								<Text className={styles.fieldLabel}>
-									Campaign Type <span className={styles.required}>*</span>
+					<div className={styles.sectionGrid}>
+						<Box className={styles.wizardCard}>
+							<div className={styles.sectionHeading}>
+								<Text className={styles.sectionHeadingTitle}>Identity</Text>
+								<Text className={styles.sectionHeadingDescription}>
+									Set the tone and structure for this campaign.
 								</Text>
-								<Text className={styles.fieldDescription}>
-									Choose how calls will be routed.
-								</Text>
-								<SegmentedControl
-									data={[
-										{ value: 'INBOUND', label: 'Inbound' },
-										{ value: 'OUTBOUND', label: 'Outbound' },
-									]}
-									{...form.getInputProps('campaignType')}
-									fullWidth
-									className={styles.segmentedControl}
-								/>
-								<NumberInput
-									label='Default Waves'
-									description='How many waves each new contact list should run before stopping'
-									min={1}
-									step={1}
-									clampBehavior='strict'
-									allowDecimal={false}
-									allowNegative={false}
+							</div>
+							<Stack gap='md'>
+								<TextInput
+									label='Campaign Name'
+									description='Give your campaign a descriptive name'
+									placeholder='Enter campaign name'
 									withAsterisk
-									size='sm'
-									{...form.getInputProps('defaultMaxWaves')}
+									className={styles.field}
+									{...form.getInputProps('campaignName')}
 								/>
-							</Box>
-						</Stack>
-					</Box>
 
-					<Box className={styles.wizardCard}>
-						<div className={styles.sectionHeading}>
-							<Text className={styles.sectionHeadingTitle}>Routing</Text>
-							<Text className={styles.sectionHeadingDescription}>
-								Match this campaign to the right number and objective.
-							</Text>
-						</div>
-						<Stack gap='md'>
-							<PhoneNumberSelector
-								campaignType={form.values.campaignType}
-								value={form.values.phoneNumberId}
-								onChange={(value) => form.setFieldValue('phoneNumberId', value)}
-								label='Phone Number'
-								description='Select the phone number for this campaign'
-								placeholder='Choose a phone number'
-								withAsterisk
-							/>
+								<Textarea
+									label='Description'
+									description='Briefly describe the purpose of this campaign'
+									placeholder='Describe your campaign'
+									withAsterisk
+									className={styles.field}
+									{...form.getInputProps('description')}
+									minRows={3}
+									rows={3}
+								/>
 
-							<Select
-								label='Campaign Objective'
-								description='Choose the main objective this campaign aims to achieve'
-								placeholder='Select an objective'
-								data={
-									objectivesResponse?.data?.map((obj) => ({
-										value: obj.id.toString(),
-										label: obj.name,
-									})) || []
-								}
-								value={form.values.objectiveId?.toString() || null}
-								onChange={(value) =>
-									form.setFieldValue(
-										'objectiveId',
-										value ? parseInt(value, 10) : null
-									)
-								}
-								searchable
-								clearable
-								className={styles.field}
-							/>
-						</Stack>
-					</Box>
-				</div>
+								<Box className={styles.field}>
+									<Text className={styles.fieldLabel}>
+										Campaign Type <span className={styles.required}>*</span>
+									</Text>
+									<Text className={styles.fieldDescription}>
+										Choose how calls will be routed.
+									</Text>
+									<SegmentedControl
+										data={[
+											{ value: 'INBOUND', label: 'Inbound' },
+											{ value: 'OUTBOUND', label: 'Outbound' },
+										]}
+										{...form.getInputProps('campaignType')}
+										fullWidth
+										className={styles.segmentedControl}
+									/>
+									<NumberInput
+										label='Default Waves'
+										description='How many waves each new contact list should run before stopping'
+										min={1}
+										step={1}
+										clampBehavior='strict'
+										allowDecimal={false}
+										allowNegative={false}
+										withAsterisk
+										size='sm'
+										{...form.getInputProps('defaultMaxWaves')}
+									/>
+								</Box>
+							</Stack>
+						</Box>
 
-				{createCampaignWithAgent.isError && (
-					<Text className={styles.error}>
-						{createCampaignWithAgent.error instanceof Error
-							? createCampaignWithAgent.error.message
-							: 'Error creating campaign'}
-					</Text>
-				)}
-			</Stack>
+						<Box className={styles.wizardCard}>
+							<div className={styles.sectionHeading}>
+								<Text className={styles.sectionHeadingTitle}>Routing</Text>
+								<Text className={styles.sectionHeadingDescription}>
+									Match this campaign to the right number and objective.
+								</Text>
+							</div>
+							<Stack gap='md'>
+								<PhoneNumberSelector
+									campaignType={form.values.campaignType}
+									value={form.values.phoneNumberId}
+									onChange={(value) =>
+										form.setFieldValue('phoneNumberId', value)
+									}
+									label='Phone Number'
+									description='Select the phone number for this campaign'
+									placeholder='Choose a phone number'
+									withAsterisk
+								/>
 
-			<Group className={styles.actions}>
-				<Button variant='default' onClick={onCancel}>
-					Cancel
-				</Button>
-				<Button
-					type='submit'
-					loading={createCampaignWithAgent.isPending}
-					disabled={!form.isValid()}
-				>
-					Save & Continue
-				</Button>
-			</Group>
-		</form>
+								<Input.Wrapper
+									label='Campaign Objective'
+									description='Choose the main objective this campaign aims to achieve'
+									error={form.errors.objectiveId}
+									withAsterisk
+									className={styles.field}
+								>
+									<Group gap='xs'>
+										<Select
+											placeholder='Select an objective'
+											data={
+												objectivesResponse?.data?.map((obj) => ({
+													value: obj.id.toString(),
+													label: obj.name,
+												})) || []
+											}
+											value={form.values.objectiveId?.toString() || null}
+											onChange={(value) =>
+												form.setFieldValue(
+													'objectiveId',
+													value ? parseInt(value, 10) : null
+												)
+											}
+											searchable
+											clearable
+											error={!!form.errors.objectiveId}
+											style={{ flex: 1 }}
+										/>
+										<Tooltip label='Create new objective'>
+											<ActionIcon
+												variant='light'
+												color='blue'
+												size='lg'
+												onClick={() => setIsObjectiveModalOpen(true)}
+											>
+												<IconPlus size={20} />
+											</ActionIcon>
+										</Tooltip>
+									</Group>
+								</Input.Wrapper>
+							</Stack>
+						</Box>
+					</div>
+
+					{createCampaignWithAgent.isError && (
+						<Text className={styles.error}>
+							{createCampaignWithAgent.error instanceof Error
+								? createCampaignWithAgent.error.message
+								: 'Error creating campaign'}
+						</Text>
+					)}
+				</Stack>
+
+				<Group className={styles.actions}>
+					<Button variant='default' onClick={onCancel}>
+						Cancel
+					</Button>
+					<Button
+						type='submit'
+						loading={createCampaignWithAgent.isPending}
+						disabled={!form.isValid()}
+					>
+						Save & Continue
+					</Button>
+				</Group>
+			</form>
+
+			<Modal
+				opened={isObjectiveModalOpen}
+				onClose={() => setIsObjectiveModalOpen(false)}
+				title='Create Campaign Objective'
+				centered
+			>
+				<CampaignObjectivesForm
+					onSuccess={handleObjectiveCreated}
+					onCancel={() => setIsObjectiveModalOpen(false)}
+				/>
+			</Modal>
+		</>
 	);
 };

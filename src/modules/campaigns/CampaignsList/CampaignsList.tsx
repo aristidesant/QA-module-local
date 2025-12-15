@@ -1,5 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Text, Card, Button, Modal, ActionIcon, Group } from '@mantine/core';
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+	Text,
+	Card,
+	Button,
+	Modal,
+	ActionIcon,
+	Group,
+	LoadingOverlay,
+} from '@mantine/core';
 import {
 	IconAlertCircle,
 	IconRocket,
@@ -9,6 +17,7 @@ import {
 import {
 	useDeleteCampaign,
 	useGetAllCampaignsPaginated,
+	useSetCampaignDraft,
 } from '~/queries/campaignsQueries';
 import styles from './CampaignsList.module.css';
 import { modals } from '@mantine/modals';
@@ -57,8 +66,19 @@ export const CampaignsList: React.FC = () => {
 	const navigate = useNavigate();
 	const { canPerformAction } = usePermissions();
 
-	// Get the wizard reset function
-	const resetWizard = useCampaignWizardStore((state) => state.reset);
+	// Get wizard store functions
+	const {
+		reset: resetWizard,
+		initializeFromDraft,
+		activeStep,
+		createdCampaign,
+		isResumingDraft,
+		hasOutcomeFlow,
+	} = useCampaignWizardStore();
+
+	// Draft mutation
+	const { mutateAsync: setDraft, isPending: isDraftSaving } =
+		useSetCampaignDraft();
 
 	// Use the pagination hook for all pagination logic
 	const pagination = usePagination({
@@ -137,6 +157,204 @@ export const CampaignsList: React.FC = () => {
 		setCampaignTestCallId(null);
 	};
 
+	// Handle continuing a draft campaign
+	const handleContinueDraft = useCallback(
+		(campaign: Campaign) => {
+			if (!campaign.isDraft) return;
+
+			initializeFromDraft(campaign);
+			setAddNewModalOpened(true);
+		},
+		[initializeFromDraft]
+	);
+
+	// Step names for display (0-indexed)
+	const STEP_NAMES = ['General', 'Agent', 'Outcomes', 'Parameters', 'Complete'];
+
+	// Step constants
+	const FINAL_STEP = 4;
+	const FIRST_STEP = 0;
+	const OUTCOMES_STEP = 2;
+	const PARAMETERS_STEP = 3;
+
+	// Handle wizard close with draft confirmation
+	const handleWizardClose = useCallback(async () => {
+		// If we're on the final step (step 4 = Complete), clear draft status if it was a draft
+		if (activeStep === FINAL_STEP) {
+			// If the campaign was a draft, clear the draft status since we reached completion
+			if (createdCampaign?.id && createdCampaign.isDraft) {
+				try {
+					await setDraft({
+						campaignId: String(createdCampaign.id),
+						data: { isDraft: false, draftStep: 0 },
+					});
+					reloadCampaigns();
+				} catch (error) {
+					// eslint-disable-next-line no-console
+					console.error('Failed to clear draft status:', error);
+				}
+			}
+			resetWizard();
+			setAddNewModalOpened(false);
+			return;
+		}
+
+		// If no campaign was created yet (step 0 = General before submission), just close
+		// Step 0 doesn't need drafting because the campaign hasn't been created yet
+		if (activeStep === FIRST_STEP || !createdCampaign) {
+			resetWizard();
+			setAddNewModalOpened(false);
+			return;
+		}
+
+		// If already drafted on this step, no need to save again
+		if (createdCampaign.isDraft && createdCampaign.draftStep === activeStep) {
+			resetWizard();
+			setAddNewModalOpened(false);
+			return;
+		}
+
+		// Special case: On Outcomes step (2) with outcome flow created
+		// The outcome step is essentially complete, so draft to Parameters step (3)
+		const isOutcomeStepComplete =
+			activeStep === OUTCOMES_STEP && hasOutcomeFlow;
+
+		if (isOutcomeStepComplete) {
+			// Determine if this is a new campaign (never drafted before)
+			const isNewCampaign = !isResumingDraft;
+
+			modals.openConfirmModal({
+				title: 'Save as Draft?',
+				children: (
+					<Text size='sm'>
+						Your outcome flow has been saved. You can continue from the{' '}
+						<strong>Parameters</strong> step later.
+					</Text>
+				),
+				labels: { confirm: 'Save Draft', cancel: 'Discard' },
+				confirmProps: { color: 'orange' },
+				onConfirm: async () => {
+					try {
+						// Save draft at Parameters step since Outcomes is complete
+						await setDraft({
+							campaignId: String(createdCampaign.id),
+							data: { isDraft: true, draftStep: PARAMETERS_STEP },
+						});
+						notifications.show({
+							title: 'Draft Saved',
+							message:
+								'Your campaign has been saved. Continue from Parameters step.',
+							color: 'green',
+						});
+						reloadCampaigns();
+					} catch (error) {
+						notifications.show({
+							title: 'Error',
+							message: 'Failed to save draft. Please try again.',
+							color: 'red',
+						});
+					} finally {
+						resetWizard();
+						setAddNewModalOpened(false);
+					}
+				},
+				onCancel: async () => {
+					// If this is a new campaign (never drafted), delete it when discarding
+					if (isNewCampaign && createdCampaign?.id) {
+						try {
+							await deleteCampaign(String(createdCampaign.id));
+							reloadCampaigns();
+						} catch (error) {
+							// eslint-disable-next-line no-console
+							console.error('Failed to delete discarded campaign:', error);
+						}
+					}
+					resetWizard();
+					setAddNewModalOpened(false);
+				},
+			});
+			return;
+		}
+
+		// Determine if this is a new campaign (never drafted before)
+		// A campaign is "new" if we're NOT resuming a draft
+		const isNewCampaign = !isResumingDraft;
+
+		// Show confirmation modal for draft save
+		modals.openConfirmModal({
+			title: 'Save as Draft?',
+			children: (
+				<Text size='sm'>
+					Your campaign will be saved as a draft. You can continue from the{' '}
+					<strong>{STEP_NAMES[activeStep]}</strong> step later.
+				</Text>
+			),
+			labels: { confirm: 'Save Draft', cancel: 'Discard' },
+			confirmProps: { color: 'orange' },
+			onConfirm: async () => {
+				try {
+					await setDraft({
+						campaignId: String(createdCampaign.id),
+						data: { isDraft: true, draftStep: activeStep },
+					});
+					notifications.show({
+						title: 'Draft Saved',
+						message: 'Your campaign has been saved as a draft.',
+						color: 'green',
+					});
+					reloadCampaigns();
+				} catch (error) {
+					notifications.show({
+						title: 'Error',
+						message: 'Failed to save draft. Please try again.',
+						color: 'red',
+					});
+				} finally {
+					resetWizard();
+					setAddNewModalOpened(false);
+				}
+			},
+			onCancel: async () => {
+				// If this is a new campaign (never drafted), delete it when discarding
+				// If it's an existing draft being resumed, just close without deleting
+				if (isNewCampaign && createdCampaign?.id) {
+					try {
+						await deleteCampaign(String(createdCampaign.id));
+						reloadCampaigns();
+					} catch (error) {
+						// Silently fail - campaign will be cleaned up or user can delete manually
+						// eslint-disable-next-line no-console
+						console.error('Failed to delete discarded campaign:', error);
+					}
+				}
+				resetWizard();
+				setAddNewModalOpened(false);
+			},
+		});
+	}, [
+		activeStep,
+		createdCampaign,
+		hasOutcomeFlow,
+		isResumingDraft,
+		resetWizard,
+		setDraft,
+		deleteCampaign,
+		reloadCampaigns,
+	]);
+
+	// Handle Escape key for wizard modal
+	useEffect(() => {
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === 'Escape' && addNewModalOpened) {
+				event.preventDefault();
+				handleWizardClose();
+			}
+		};
+
+		document.addEventListener('keydown', handleKeyDown);
+		return () => document.removeEventListener('keydown', handleKeyDown);
+	}, [addNewModalOpened, handleWizardClose]);
+
 	// Calculate total pages from server response
 	const totalPages = campaignsResponse?.total
 		? pagination.calculateTotalPages(campaignsResponse.total)
@@ -196,6 +414,7 @@ export const CampaignsList: React.FC = () => {
 				centered: true,
 			});
 		},
+		onContinueDraft: handleContinueDraft,
 	});
 
 	// Helper functions
@@ -333,26 +552,39 @@ export const CampaignsList: React.FC = () => {
 			{/* Add New Campaign Modal */}
 			<Modal
 				opened={addNewModalOpened}
-				onClose={() => {
-					resetWizard();
-					setAddNewModalOpened(false);
-				}}
-				title='Create New Campaign'
+				onClose={handleWizardClose}
+				title={
+					isResumingDraft ? 'Continue Campaign Setup' : 'Create New Campaign'
+				}
 				size='1200px'
 				centered
+				closeOnEscape={false}
 			>
+				<LoadingOverlay
+					visible={isDraftSaving}
+					overlayProps={{ blur: 2 }}
+					loaderProps={{ children: 'Saving draft...' }}
+				/>
 				<CampaignWizard
-					onComplete={() => {
+					onComplete={async () => {
+						// If resuming a draft, clear the draft status
+						if (isResumingDraft && createdCampaign?.id) {
+							try {
+								await setDraft({
+									campaignId: String(createdCampaign.id),
+									data: { isDraft: false, draftStep: 0 },
+								});
+							} catch (error) {
+								// eslint-disable-next-line no-console
+								console.error('Failed to clear draft status:', error);
+							}
+						}
 						reloadCampaigns();
 						selectCampaign(null);
 						resetWizard();
 						setAddNewModalOpened(false);
 					}}
-					onCancel={() => {
-						selectCampaign(null);
-						resetWizard();
-						setAddNewModalOpened(false);
-					}}
+					onCancel={handleWizardClose}
 				/>
 			</Modal>
 		</>

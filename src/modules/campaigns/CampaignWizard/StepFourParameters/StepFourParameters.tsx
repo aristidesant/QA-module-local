@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
 	Button,
 	Group,
@@ -10,15 +10,11 @@ import {
 	Box,
 } from '@mantine/core';
 import { modals } from '@mantine/modals';
-import { notifications } from '@mantine/notifications';
-import { useQueryClient } from '@tanstack/react-query';
 import { IconCalculator } from '@tabler/icons-react';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
-import { useUpdateCampaign } from '~/queries/campaignsQueries';
 import SectionCard from '~/components/SectionCard';
 import ParametersSection from '~/modules/campaigns/CampaignsForm/ParametersSection';
 import SchedulerCalculator from '~/modules/campaigns/CampaignsForm/ParametersSection/SchedulerCalculator';
-import type { WorkingHours } from '~/models/CampaignsModel';
 import sharedStyles from '../CampaignWizard.module.css';
 
 interface StepFourParametersProps {
@@ -30,89 +26,10 @@ export const StepFourParameters: React.FC<StepFourParametersProps> = ({
 	onNext,
 	onBack,
 }) => {
-	const { createdCampaign, setIsSubmitting, setCreatedCampaign } =
-		useCampaignWizardStore();
+	const { createdCampaign } = useCampaignWizardStore();
 
-	const updateCampaign = useUpdateCampaign();
-	const queryClient = useQueryClient();
-
-	// Start with empty working hours unless campaign already has them
-	const [workingHours, setWorkingHours] = useState<WorkingHours>(
-		createdCampaign?.workingHours || {}
-	);
-
-	const handleWorkingHoursChange = (
-		day: string,
-		field: string,
-		value: boolean | string
-	) => {
-		const updatedHours = { ...workingHours };
-		updatedHours[day] = { ...updatedHours[day], [field]: value };
-		setWorkingHours(updatedHours);
-	};
-
-	const handleCopyToAll = (sourceDay: string) => {
-		const sourceHours = workingHours[sourceDay];
-		if (!sourceHours) return;
-
-		const updatedHours = { ...workingHours };
-		Object.keys(updatedHours).forEach((day) => {
-			updatedHours[day] = { ...sourceHours };
-		});
-		setWorkingHours(updatedHours);
-	};
-
-	const handleSubmit = async () => {
-		if (!createdCampaign?.id) {
-			notifications.show({
-				title: 'Error',
-				message: 'Campaign not found. Please start from step 1.',
-				color: 'red',
-			});
-			return;
-		}
-
-		setIsSubmitting(true);
-
-		try {
-			// Update campaign with working hours
-			const updatedCampaign = await updateCampaign.mutateAsync({
-				id: String(createdCampaign.id),
-				data: {
-					workingHours,
-				},
-			});
-
-			// Update store with fresh campaign data
-			setCreatedCampaign(updatedCampaign);
-			setIsSubmitting(false);
-
-			// Invalidate campaign cache
-			queryClient.invalidateQueries({
-				queryKey: ['campaign', String(createdCampaign.id)],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ['campaigns'],
-			});
-
-			notifications.show({
-				title: 'Working Hours Saved',
-				message: 'Campaign working hours configured successfully.',
-				color: 'green',
-			});
-
-			onNext();
-		} catch (error) {
-			setIsSubmitting(false);
-			notifications.show({
-				title: 'Error',
-				message:
-					error instanceof Error
-						? error.message
-						: 'Failed to save working hours configuration',
-				color: 'red',
-			});
-		}
+	const handleSubmit = () => {
+		onNext();
 	};
 
 	// Loading state check
@@ -162,9 +79,10 @@ export const StepFourParameters: React.FC<StepFourParametersProps> = ({
 					}
 				>
 					<ParametersSection
-						workingHours={workingHours}
-						onChange={handleWorkingHoursChange}
-						onCopyToAll={handleCopyToAll}
+						workingHours={createdCampaign.workingHours || {}}
+						onChange={() => {}}
+						onCopyToAll={() => {}}
+						campaignId={createdCampaign.id}
 					/>
 				</SectionCard>
 			</Stack>
@@ -173,11 +91,7 @@ export const StepFourParameters: React.FC<StepFourParametersProps> = ({
 				<Button variant='default' onClick={onBack}>
 					Back
 				</Button>
-				<Button
-					type='button'
-					loading={updateCampaign.isPending}
-					onClick={handleSubmit}
-				>
+				<Button type='button' onClick={handleSubmit}>
 					Save & Continue
 				</Button>
 			</Group>

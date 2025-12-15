@@ -11,19 +11,72 @@ import {
 	ActionIcon,
 	Tooltip,
 } from '@mantine/core';
-import { useKnowledgeBases } from '~/queries/knowledgeBaseQueries';
+import {
+	useKnowledgeBases,
+	useKnowledgeBasesByIds,
+} from '~/queries/knowledgeBaseQueries';
 import CampaignConfigurationKnowledgeBaseAddModal from './CampaignConfigurationKnowledgeBaseAddModal';
 import styles from './CampaignConfigurationKnowledgeBase.module.css';
+import type KnowledgeBaseModel from '~/models/KnowledgeBaseModel';
 
 const CampaignConfigurationKnowledgeBase: React.FC = () => {
 	const form = useCampaignFormContext();
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const { data: allKnowledgeBases, isLoading, error } = useKnowledgeBases();
+	const {
+		data: allKnowledgeBases,
+		isLoading: isLoadingAll,
+		error,
+	} = useKnowledgeBases();
 
-	const selectedKbIds =
+	const extractKnowledgeBaseIds = (rawKnowledgeBase: unknown): number[] => {
+		if (!Array.isArray(rawKnowledgeBase)) return [];
+		return rawKnowledgeBase
+			.map((item) => {
+				if (typeof item === 'number') return item;
+				if (typeof item === 'object' && item && 'id' in item) {
+					return (item as any).id;
+				}
+				return null;
+			})
+			.filter((id): id is number => typeof id === 'number');
+	};
+
+	// Extract IDs from deep path (Wizard/New structure)
+	const rawKbData =
+		(form.values.agentConfig as any)?.conversationConfig?.agent?.prompt
+			?.knowledgeBase || [];
+	const deepKbIds = extractKnowledgeBaseIds(rawKbData);
+
+	// Extract IDs from root path (Backend/Legacy structure)
+	const rootKbIds: number[] =
 		(form.values.agentConfig as any)?.knowledgeBaseIds || [];
-	const selectedKnowledgeBases =
-		allKnowledgeBases?.filter((kb) => selectedKbIds.includes(kb.id)) || [];
+
+	console.log({ deepKbIds, rootKbIds });
+
+	// Merge both sources
+	const selectedKbIds = Array.from(new Set([...deepKbIds, ...rootKbIds]));
+
+	// Identify missing IDs
+	const missingIds = selectedKbIds.filter(
+		(id) => !allKnowledgeBases?.some((kb) => kb.id === id)
+	);
+
+	// Fetch missing KBs
+	const missingKbQueries = useKnowledgeBasesByIds(missingIds);
+	const isLoadingMissing = missingKbQueries.some((q: any) => q.isLoading);
+
+	// Combine available KBs
+	const missingKbs = missingKbQueries
+		.map((q: any) => q.data)
+		.filter((kb): kb is KnowledgeBaseModel => !!kb);
+
+	const combinedKnowledgeBases = [...(allKnowledgeBases || []), ...missingKbs];
+
+	const selectedKnowledgeBases = combinedKnowledgeBases.filter((kb) =>
+		selectedKbIds.includes(kb.id)
+	);
+
+	const isLoading = isLoadingAll || isLoadingMissing;
 
 	const getIconForKnowledgeBase = () => {
 		return <IconFileText size={20} />;
@@ -50,13 +103,23 @@ const CampaignConfigurationKnowledgeBase: React.FC = () => {
 		setIsModalOpen(false);
 	};
 
-	const handleUnassignKnowledgeBase = (knowledgeBaseId: number) => {
-		const newIds = selectedKbIds.filter((id: number) => id !== knowledgeBaseId);
+	const updateKnowledgeBaseIds = (newIds: number[]) => {
+		// Update deep path
+		form.setFieldValue(
+			'agentConfig.conversationConfig.agent.prompt.knowledgeBase',
+			newIds
+		);
+		// Update root path
 		form.setFieldValue('agentConfig.knowledgeBaseIds', newIds);
 	};
 
+	const handleUnassignKnowledgeBase = (knowledgeBaseId: number) => {
+		const newIds = selectedKbIds.filter((id: number) => id !== knowledgeBaseId);
+		updateKnowledgeBaseIds(newIds);
+	};
+
 	const handleSaveSelections = (newSelectedIds: number[]) => {
-		form.setFieldValue('agentConfig.knowledgeBaseIds', newSelectedIds);
+		updateKnowledgeBaseIds(newSelectedIds);
 		setIsModalOpen(false);
 	};
 

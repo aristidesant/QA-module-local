@@ -1,6 +1,7 @@
 import {
 	useMutation,
 	useQuery,
+	useQueries,
 	useQueryClient,
 	UseQueryOptions,
 } from '@tanstack/react-query';
@@ -74,6 +75,19 @@ export const useKnowledgeBase = (id?: number) => {
 	};
 
 	return useQuery<KnowledgeBaseModel, Error>(options);
+};
+
+export const useKnowledgeBasesByIds = (ids: number[]) => {
+	return useQueries({
+		queries: ids.map((id) => ({
+			queryKey: ['knowledgeBase', id],
+			queryFn: async () => {
+				const api = knowledgeBaseApi();
+				return api.getKnowledgeBase(id);
+			},
+			staleTime: 1000 * 60 * 5, // 5 minutes
+		})),
+	});
 };
 
 export const useUpdateKnowledgeBase = () => {

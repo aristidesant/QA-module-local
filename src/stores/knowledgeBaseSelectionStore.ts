@@ -40,26 +40,29 @@ export const useKnowledgeBaseSelectionStore =
 	create<KnowledgeBaseSelectionState>((set, get) => ({
 		...initialState,
 
-		initializeSelection: (ids) => set({ selectedIds: new Set(ids) }),
+		initializeSelection: (ids) =>
+			set({ selectedIds: new Set(ids.map(Number)) }),
 
 		toggleSelection: (id) =>
 			set((state) => {
+				const numId = Number(id);
 				const next = new Set(state.selectedIds);
-				if (next.has(id)) {
-					next.delete(id);
+				if (next.has(numId)) {
+					next.delete(numId);
 				} else {
-					next.add(id);
+					next.add(numId);
 				}
 				return { selectedIds: next };
 			}),
 
 		setSelected: (id, selected) =>
 			set((state) => {
+				const numId = Number(id);
 				const next = new Set(state.selectedIds);
 				if (selected) {
-					next.add(id);
+					next.add(numId);
 				} else {
-					next.delete(id);
+					next.delete(numId);
 				}
 				return { selectedIds: next };
 			}),
@@ -67,21 +70,21 @@ export const useKnowledgeBaseSelectionStore =
 		selectAll: (ids) =>
 			set((state) => {
 				const next = new Set(state.selectedIds);
-				ids.forEach((id) => next.add(id));
+				ids.forEach((id) => next.add(Number(id)));
 				return { selectedIds: next };
 			}),
 
 		deselectAll: (ids) =>
 			set((state) => {
 				const next = new Set(state.selectedIds);
-				ids.forEach((id) => next.delete(id));
+				ids.forEach((id) => next.delete(Number(id)));
 				return { selectedIds: next };
 			}),
 
 		addToSelection: (id) =>
 			set((state) => {
 				const next = new Set(state.selectedIds);
-				next.add(id);
+				next.add(Number(id));
 				return { selectedIds: next };
 			}),
 
@@ -91,5 +94,10 @@ export const useKnowledgeBaseSelectionStore =
 
 		getSelectedArray: () => Array.from(get().selectedIds),
 
-		reset: () => set(initialState),
+		reset: () =>
+			set({
+				selectedIds: new Set<number>(),
+				searchTerm: '',
+				typeFilter: 'ALL',
+			}),
 	}));

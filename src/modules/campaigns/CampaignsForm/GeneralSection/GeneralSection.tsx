@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useCampaignFormContext } from '../../campaignFormFunctions';
 import {
 	Button,
@@ -6,16 +7,25 @@ import {
 	Select,
 	Textarea,
 	TextInput,
+	Modal,
+	ActionIcon,
+	Tooltip,
+	Input,
+	Group,
 } from '@mantine/core';
-import { IconDeviceFloppy } from '@tabler/icons-react';
+import { IconDeviceFloppy, IconPlus } from '@tabler/icons-react';
 import SectionCard from '~/components/SectionCard';
 import {
 	useGetCampaignObjectives,
 	useGetCampaignObjectiveById,
 } from '~/queries/campaignObjectivesQueries';
+import { CampaignObjectivesForm } from '~/modules/campaigns/CampaignManagementPage/Objectives/components/CampaignObjectivesForm/CampaignObjectivesForm';
+import { useQueryClient } from '@tanstack/react-query';
 
 const GeneralSection: React.FC = () => {
 	const form = useCampaignFormContext();
+	const [isObjectiveModalOpen, setIsObjectiveModalOpen] = useState(false);
+	const queryClient = useQueryClient();
 
 	// Fetch paginated (includes .data array)
 	const {
@@ -65,6 +75,11 @@ const GeneralSection: React.FC = () => {
 		form.setFieldValue('objectiveId', parseInt(value, 10));
 	};
 
+	const handleObjectiveCreated = () => {
+		setIsObjectiveModalOpen(false);
+		queryClient.invalidateQueries({ queryKey: ['campaignObjectives'] });
+	};
+
 	return (
 		<>
 			<SectionCard
@@ -86,23 +101,44 @@ const GeneralSection: React.FC = () => {
 					minRows={5}
 				/>
 
-				<Select
+				<Input.Wrapper
 					label='Campaign Objective'
-					placeholder={
-						objectivesLoading
-							? 'Loading objectives...'
-							: 'Select an objective for this campaign'
-					}
-					data={selectData}
-					value={form.values.objectiveId?.toString() || null}
-					onChange={handleObjectiveChange}
-					searchable
-					clearable
-					disabled={objectivesLoading}
-					readOnly={false}
 					description='Choose the main objective this campaign aims to achieve'
-					error={loadError ? 'Failed to load objectives' : undefined}
-				/>
+					error={
+						(form.errors.objectiveId as React.ReactNode) ||
+						(loadError ? 'Failed to load objectives' : undefined)
+					}
+					withAsterisk
+				>
+					<Group gap='xs'>
+						<Select
+							placeholder={
+								objectivesLoading
+									? 'Loading objectives...'
+									: 'Select an objective for this campaign'
+							}
+							data={selectData}
+							value={form.values.objectiveId?.toString() || null}
+							onChange={handleObjectiveChange}
+							searchable
+							clearable
+							disabled={objectivesLoading}
+							readOnly={false}
+							error={!!form.errors.objectiveId || !!loadError}
+							style={{ flex: 1 }}
+						/>
+						<Tooltip label='Create new objective'>
+							<ActionIcon
+								variant='light'
+								color='blue'
+								size='lg'
+								onClick={() => setIsObjectiveModalOpen(true)}
+							>
+								<IconPlus size={20} />
+							</ActionIcon>
+						</Tooltip>
+					</Group>
+				</Input.Wrapper>
 
 				<NumberInput
 					label='Default Waves'
@@ -124,6 +160,18 @@ const GeneralSection: React.FC = () => {
 					</Button>
 				</Flex>
 			</SectionCard>
+
+			<Modal
+				opened={isObjectiveModalOpen}
+				onClose={() => setIsObjectiveModalOpen(false)}
+				title='Create Campaign Objective'
+				centered
+			>
+				<CampaignObjectivesForm
+					onSuccess={handleObjectiveCreated}
+					onCancel={() => setIsObjectiveModalOpen(false)}
+				/>
+			</Modal>
 		</>
 	);
 };

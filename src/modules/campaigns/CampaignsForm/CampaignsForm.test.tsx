@@ -149,6 +149,7 @@ describe('CampaignsForm', () => {
 		status: CampaignStatus.RUNNING,
 		userId: 1,
 		clientId: 1,
+		objectiveId: 101,
 		tags: [],
 		workingHours: {
 			monday: { enabled: true, from: '09:00', to: '17:30' },

@@ -67,7 +67,9 @@ const extractKnowledgeBaseIds = (
 			return null;
 		})
 		.filter((id): id is number => typeof id === 'number');
-	return { ids, isPresent: true };
+	// Only consider KB data "present" if there are actual IDs.
+	// An empty array means no KB was saved, so we should preserve local selections.
+	return { ids, isPresent: ids.length > 0 };
 };
 
 export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
@@ -80,7 +82,6 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 		firstMessage,
 		agentPrompt,
 		createdCampaign,
-		knowledgeBaseIds,
 		setAgentBehaviorId,
 		setLanguage,
 		setFirstMessage,
@@ -135,6 +136,10 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 		knowledgeBaseIds?: number[];
 	} | null>(null);
 
+	// Store form ref to avoid dependency on form object in useEffect
+	const formRef = useRef(form);
+	formRef.current = form;
+
 	useEffect(() => {
 		if (!createdCampaign) return;
 
@@ -144,32 +149,50 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 		const { ids: knowledgeBaseIdsFromCampaign, isPresent: hasKbIds } =
 			extractKnowledgeBaseIds(conversationAgent?.prompt?.knowledgeBase);
 
-		const nextValues: typeof form.values = {
+		// Use formRef to get current values without form in deps
+		const currentFormValues = formRef.current.values;
+
+		// Determine if server has actual values vs empty/undefined
+		// Only use server values if they exist and are non-empty, otherwise preserve user input
+		const serverFirstMessage = conversationAgent?.firstMessage;
+		const hasServerFirstMessage =
+			typeof serverFirstMessage === 'string' && serverFirstMessage.length > 0;
+
+		const nextValues = {
 			agentBehaviorId:
-				createdCampaign.configId ?? form.values.agentBehaviorId ?? null,
+				createdCampaign.configId ?? currentFormValues.agentBehaviorId ?? null,
 			language:
 				conversationAgent?.language ??
-				form.values.language ??
+				currentFormValues.language ??
 				LANGUAGE_OPTIONS[0].value,
-			firstMessage:
-				conversationAgent?.firstMessage ?? form.values.firstMessage ?? '',
+			// Preserve user's first message if server doesn't have one saved yet
+			firstMessage: hasServerFirstMessage
+				? serverFirstMessage
+				: (currentFormValues.firstMessage ?? ''),
 			agentPrompt:
 				typeof promptFromCampaign === 'string'
 					? promptFromCampaign
-					: form.values.agentPrompt,
+					: currentFormValues.agentPrompt,
 		};
 
 		const lastSynced = lastSyncedCampaignRef.current;
+		// Get current KB IDs from store to preserve local selections.
+		// When hasKbIds is false (server doesn't have KB data yet), ALWAYS use the current store value
+		// to preserve any user selections that haven't been saved to the server yet.
+		const currentStoreKbIds =
+			useCampaignWizardStore.getState().knowledgeBaseIds;
 		const nextKnowledgeBaseIds = hasKbIds
 			? knowledgeBaseIdsFromCampaign
-			: (lastSynced?.knowledgeBaseIds ?? knowledgeBaseIds);
+			: currentStoreKbIds;
 		const hasValueChanges =
 			!lastSynced ||
 			lastSynced.campaignId !== createdCampaign.id ||
 			lastSynced.updatedAt !== createdCampaign.updatedAt ||
 			lastSynced.values.agentBehaviorId !== nextValues.agentBehaviorId ||
 			lastSynced.values.language !== nextValues.language ||
-			lastSynced.values.firstMessage !== nextValues.firstMessage ||
+			// Only consider firstMessage changed if server has a value and it differs
+			(hasServerFirstMessage &&
+				lastSynced.values.firstMessage !== nextValues.firstMessage) ||
 			lastSynced.values.agentPrompt !== nextValues.agentPrompt ||
 			(hasKbIds &&
 				!areIdsEqual(
@@ -179,8 +202,8 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 
 		if (!hasValueChanges) return;
 
-		form.setValues(nextValues);
-		form.resetDirty(nextValues);
+		formRef.current.setValues(nextValues);
+		formRef.current.resetDirty(nextValues);
 		setAgentBehaviorId(nextValues.agentBehaviorId);
 		setLanguage(nextValues.language);
 		setFirstMessage(nextValues.firstMessage);
@@ -196,10 +219,12 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 			values: nextValues,
 			knowledgeBaseIds: nextKnowledgeBaseIds,
 		};
+		// Note: knowledgeBaseIds intentionally excluded from deps to prevent
+		// re-sync when user locally selects KB before saving.
+		// form is accessed via formRef to prevent re-runs when form values change.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [
 		createdCampaign,
-		form,
-		knowledgeBaseIds,
 		setAgentBehaviorId,
 		setAgentPrompt,
 		setFirstMessage,
@@ -249,26 +274,34 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 				}),
 			};
 
-			// Update agent configuration if it exists
-			if (currentCampaign.agentConfig) {
-				updatePayload.agentConfig = {
-					...currentCampaign.agentConfig,
-					conversationConfig: {
-						...(currentCampaign.agentConfig.conversationConfig || {}),
-						agent: {
-							...(currentCampaign.agentConfig.conversationConfig?.agent || {}),
-							language: values.language,
-							firstMessage: values.firstMessage,
-							prompt: {
-								...(currentCampaign.agentConfig.conversationConfig?.agent
-									?.prompt || {}),
-								prompt: values.agentPrompt,
-								knowledgeBase: currentKnowledgeBaseIds,
-							},
+			// Always build agent configuration - even if agentConfig doesn't exist yet
+			// This ensures newly configured agent data is saved to the campaign
+			const existingAgentConfig = currentCampaign.agentConfig ?? {};
+			const existingConversationConfig =
+				(existingAgentConfig as any).conversationConfig ?? {};
+			const existingAgent = existingConversationConfig.agent ?? {};
+			// Clean up toolIds from prompt before sending
+			const { toolIds, ...existingPrompt } = existingAgent.prompt ?? {};
+
+			updatePayload.agentConfig = {
+				...existingAgentConfig,
+				// Save KB IDs to root path as required by backend
+				knowledgeBaseIds: currentKnowledgeBaseIds,
+				conversationConfig: {
+					...existingConversationConfig,
+					agent: {
+						...existingAgent,
+						language: values.language,
+						firstMessage: values.firstMessage,
+						prompt: {
+							...existingPrompt,
+							prompt: values.agentPrompt,
+							// Also save to deep path for frontend consistency (Wizard state)
+							knowledgeBase: currentKnowledgeBaseIds,
 						},
 					},
-				};
-			}
+				},
+			};
 
 			// Update campaign with agent configuration
 			const updatedCampaign = await updateCampaign.mutateAsync({

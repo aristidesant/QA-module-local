@@ -78,6 +78,11 @@ export interface CreateCampaignWithAgentDTO {
 	};
 }
 
+export interface SetDraftDto {
+	isDraft: boolean;
+	draftStep: number;
+}
+
 type AgentConfigPayload = {
 	conversationConfig?: {
 		agent?: {
@@ -295,6 +300,15 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 		createCampaignWithAgent: async (data: CreateCampaignWithAgentDTO) => {
 			const response = await axios.post<Campaign>(
 				`${DEFAULT_API_URL}/campaigns/with-agent`,
+				data
+			);
+			return response.data;
+		},
+
+		// SET campaign draft status
+		setDraft: async (campaignId: string, data: SetDraftDto) => {
+			const response = await axios.patch<Campaign>(
+				`${DEFAULT_API_URL}/campaigns/${campaignId}/draft`,
 				data
 			);
 			return response.data;

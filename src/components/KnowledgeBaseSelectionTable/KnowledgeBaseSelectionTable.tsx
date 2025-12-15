@@ -112,11 +112,21 @@ const KnowledgeBaseSelectionTable: React.FC<
 
 	const [debouncedSearch] = useDebouncedValue(searchTerm, 300);
 
-	// Initialize selection on mount
+	// Initialize selection on mount and when initialSelectedIds changes
+	// Use a ref to track the previous IDs to avoid unnecessary re-initializations
+	const prevInitialIdsRef = React.useRef<number[]>([]);
 	useEffect(() => {
-		initializeSelection(initialSelectedIds);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+		// Only initialize if the IDs have actually changed (by value, not reference)
+		const prevIds = prevInitialIdsRef.current;
+		const idsChanged =
+			prevIds.length !== initialSelectedIds.length ||
+			initialSelectedIds.some((id, i) => id !== prevIds[i]);
+
+		if (idsChanged) {
+			initializeSelection(initialSelectedIds);
+			prevInitialIdsRef.current = initialSelectedIds;
+		}
+	}, [initializeSelection, initialSelectedIds]);
 
 	// Fetch knowledge bases
 	const apiType =
@@ -154,7 +164,7 @@ const KnowledgeBaseSelectionTable: React.FC<
 	const totalPages =
 		response.data?.totalPages ?? Math.max(1, Math.ceil(total / pageSize));
 
-	const allIds = useMemo(() => data.map((kb) => kb.id), [data]);
+	const allIds = useMemo(() => data.map((kb) => Number(kb.id)), [data]);
 	const allSelected =
 		allIds.length > 0 && allIds.every((id) => selectedIds.has(id));
 	const someSelected = allIds.some((id) => selectedIds.has(id));
@@ -184,7 +194,7 @@ const KnowledgeBaseSelectionTable: React.FC<
 					<div onClick={(e) => e.stopPropagation()}>
 						<Checkbox
 							size='xs'
-							checked={selectedIds.has(row.original.id)}
+							checked={selectedIds.has(Number(row.original.id))}
 							onChange={(e) =>
 								setSelected(row.original.id, e.currentTarget.checked)
 							}

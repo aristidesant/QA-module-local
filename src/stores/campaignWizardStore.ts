@@ -12,6 +12,8 @@ interface CampaignWizardState {
 	defaultMaxWaves: number;
 	createdCampaign: Campaign | null;
 	isSubmitting: boolean;
+	isResumingDraft: boolean; // Flag to indicate resuming a draft campaign
+	hasOutcomeFlow: boolean; // Flag to indicate if outcome flow has been created/imported
 
 	// Step 2 - Agent Configuration
 	agentBehaviorId: string | number | null;
@@ -37,6 +39,9 @@ interface CampaignWizardState {
 	setFirstMessage: (message: string) => void;
 	setAgentPrompt: (prompt: string) => void;
 	setKnowledgeBaseIds: (ids: number[]) => void;
+	setIsResumingDraft: (isResumingDraft: boolean) => void;
+	setHasOutcomeFlow: (hasOutcomeFlow: boolean) => void;
+	initializeFromDraft: (campaign: Campaign) => void;
 	reset: () => void;
 }
 
@@ -50,6 +55,8 @@ const initialState = {
 	defaultMaxWaves: 3,
 	createdCampaign: null,
 	isSubmitting: false,
+	isResumingDraft: false,
+	hasOutcomeFlow: false,
 	agentBehaviorId: null,
 	language: 'es',
 	firstMessage: '',
@@ -83,5 +90,21 @@ export const useCampaignWizardStore = create<CampaignWizardState>((set) => ({
 	setFirstMessage: (message) => set({ firstMessage: message }),
 	setAgentPrompt: (prompt) => set({ agentPrompt: prompt }),
 	setKnowledgeBaseIds: (ids) => set({ knowledgeBaseIds: ids }),
+	setIsResumingDraft: (isResumingDraft) => set({ isResumingDraft }),
+	setHasOutcomeFlow: (hasOutcomeFlow) => set({ hasOutcomeFlow }),
+	initializeFromDraft: (campaign) => {
+		set({
+			createdCampaign: campaign,
+			campaignName: campaign.name,
+			description: campaign.description,
+			campaignType: campaign.type,
+			objectiveId: campaign.objectiveId ?? null,
+			defaultMaxWaves: campaign.defaultMaxWaves ?? 3,
+			activeStep: campaign.draftStep ?? 0,
+			isResumingDraft: true,
+		});
+		// Sync with campaigns store
+		useCampaignsStore.getState().selectCampaign(campaign);
+	},
 	reset: () => set(initialState),
 }));

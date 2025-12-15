@@ -19,7 +19,10 @@ import {
 	IconFileXFilled,
 } from '@tabler/icons-react';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
-import { useKnowledgeBases } from '~/queries/knowledgeBaseQueries';
+import {
+	useKnowledgeBases,
+	useKnowledgeBasesByIds,
+} from '~/queries/knowledgeBaseQueries';
 import type KnowledgeBaseModel from '~/models/KnowledgeBaseModel';
 import KnowledgeBaseSelector from '~/components/KnowledgeBaseSelector';
 
@@ -32,10 +35,34 @@ const KnowledgeBaseSection: React.FC = () => {
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 	const [tempSelectedIds, setTempSelectedIds] = useState<number[]>([]);
 
-	const { data: allKnowledgeBases, isLoading, error } = useKnowledgeBases();
+	const {
+		data: allKnowledgeBases,
+		isLoading: isLoadingAll,
+		error,
+	} = useKnowledgeBases();
 
-	const selectedKnowledgeBases =
-		allKnowledgeBases?.filter((kb) => knowledgeBaseIds.includes(kb.id)) || [];
+	// Identify missing IDs (selected but not in the main list)
+	const missingIds = knowledgeBaseIds.filter(
+		(id) => !allKnowledgeBases?.some((kb) => kb.id === id)
+	);
+
+	// Fetch missing KBs
+	const missingKbQueries = useKnowledgeBasesByIds(missingIds);
+	const isLoadingMissing = missingKbQueries.some((q: any) => q.isLoading);
+
+	// Combine available KBs
+	const missingKbs = missingKbQueries
+		.map((q: any) => q.data)
+		.filter((kb): kb is KnowledgeBaseModel => !!kb);
+
+	const combinedKnowledgeBases = [...(allKnowledgeBases || []), ...missingKbs];
+
+	// Filter from the combined list
+	const selectedKnowledgeBases = combinedKnowledgeBases.filter((kb) =>
+		knowledgeBaseIds.includes(kb.id)
+	);
+
+	const isLoading = isLoadingAll || isLoadingMissing;
 
 	const getStatusColor = (status: string) => {
 		switch (status?.toLowerCase()) {

@@ -53,7 +53,8 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 	onNext,
 	onBack,
 }) => {
-	const { createdCampaign, setIsSubmitting } = useCampaignWizardStore();
+	const { createdCampaign, setIsSubmitting, setHasOutcomeFlow } =
+		useCampaignWizardStore();
 
 	const [modalOpened, setModalOpened] = useState(false);
 	const [previewModalOpened, setPreviewModalOpened] = useState(false);
@@ -99,6 +100,7 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 
 	const handleFlowComplete = () => {
 		setHasCreatedFlow(true);
+		setHasOutcomeFlow(true); // Sync with wizard store
 		setModalOpened(false);
 		notifications.show({
 			title: 'Outcome Flow Created',
@@ -136,6 +138,7 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 			setSelectedFlowId(flowId);
 			setImportedFlowName(campaignName);
 			setHasCreatedFlow(true);
+			setHasOutcomeFlow(true); // Sync with wizard store
 
 			notifications.show({
 				title: 'Outcome Flow Imported',
@@ -187,6 +190,7 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 		}
 
 		setHasCreatedFlow(false);
+		setHasOutcomeFlow(false); // Sync with wizard store
 		setSelectedFlowId(null);
 		setImportedFlowName('');
 		setCopiedFlowId(null);

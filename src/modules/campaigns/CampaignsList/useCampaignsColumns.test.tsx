@@ -48,12 +48,21 @@ describe('useCampaignsColumns', () => {
 		agents: [],
 	};
 
+	const draftCampaign: Campaign = {
+		...sampleCampaign,
+		id: 456,
+		name: 'Draft Campaign',
+		isDraft: true,
+		draftStep: 2,
+	};
+
 	const defaultProps = {
 		onEdit: vi.fn(),
 		onView: vi.fn(),
 		onTestCall: vi.fn(),
 		onDelete: vi.fn(),
 		onClone: vi.fn(),
+		onContinueDraft: vi.fn(),
 	};
 
 	beforeEach(() => {
@@ -83,6 +92,18 @@ describe('useCampaignsColumns', () => {
 		expect(screen.getByText('Sample')).toBeInTheDocument();
 	});
 
+	it('renders draft badge for draft campaigns', () => {
+		renderCell('name', draftCampaign);
+		expect(screen.getByText('Draft Campaign')).toBeInTheDocument();
+		expect(screen.getByText('Draft')).toBeInTheDocument();
+	});
+
+	it('does not render draft badge for non-draft campaigns', () => {
+		renderCell('name', sampleCampaign);
+		expect(screen.getByText('Sample')).toBeInTheDocument();
+		expect(screen.queryByText('Draft')).not.toBeInTheDocument();
+	});
+
 	it('renders type column correctly for OUTBOUND', () => {
 		renderCell('type', { ...sampleCampaign, type: 'OUTBOUND' });
 		// Check if the icon container is present (Mantine ThemeIcon)
@@ -100,6 +121,7 @@ describe('useCampaignsColumns', () => {
 		const onTestCall = vi.fn();
 		const onDelete = vi.fn();
 		const onClone = vi.fn();
+		const onContinueDraft = vi.fn();
 
 		const TestComponent = () => {
 			const columns = useCampaignsColumns({
@@ -108,6 +130,7 @@ describe('useCampaignsColumns', () => {
 				onTestCall,
 				onDelete,
 				onClone,
+				onContinueDraft,
 			});
 
 			const actionsCol = columns.find((c) => (c as any).id === 'actions');
@@ -146,6 +169,39 @@ describe('useCampaignsColumns', () => {
 		const deleteBtn = screen.getByLabelText('Delete campaign');
 		fireEvent.click(deleteBtn);
 		expect(onDelete).toHaveBeenCalledWith(sampleCampaign);
+
+		// Continue Draft should NOT be visible for non-draft campaigns
+		expect(screen.queryByLabelText('Continue draft')).not.toBeInTheDocument();
+	});
+
+	it('renders Continue Draft button for draft campaigns', async () => {
+		const onContinueDraft = vi.fn();
+
+		const TestComponent = () => {
+			const columns = useCampaignsColumns({
+				...defaultProps,
+				onContinueDraft,
+			});
+
+			const actionsCol = columns.find((c) => (c as any).id === 'actions');
+			return (
+				<div>
+					{(actionsCol as any).cell({ row: { original: draftCampaign } })}
+				</div>
+			);
+		};
+
+		render(
+			<MantineProvider>
+				<TestComponent />
+			</MantineProvider>
+		);
+
+		const continueDraftBtn = screen.getByLabelText('Continue setup');
+		expect(continueDraftBtn).toBeInTheDocument();
+
+		fireEvent.click(continueDraftBtn);
+		expect(onContinueDraft).toHaveBeenCalledWith(draftCampaign);
 	});
 
 	it('hides clone menu item when user lacks CREATE permission', async () => {

@@ -17,16 +17,22 @@ interface ParametersSectionProps {
 	onChange: (day: string, field: keyof DaySchedule, value: any) => void;
 	onCopyToAll: (day: string) => void;
 	onSchedulerUpdate?: (scheduler: Scheduler) => void;
+	/** Campaign ID - can be passed directly (e.g., from wizard) or will fall back to URL param */
+	campaignId?: string | number;
 }
 
-export const ParametersSection: React.FC<ParametersSectionProps> = ({}) => {
+export const ParametersSection: React.FC<ParametersSectionProps> = ({
+	campaignId: propCampaignId,
+}) => {
 	const { campaignId: paramCampaignId } = useParams<{ campaignId: string }>();
+	// Use prop campaignId first (for wizard), then fall back to URL param (for edit page)
+	const campaignId = propCampaignId ?? paramCampaignId;
 	const {
 		data: campaignSchedule,
 		refetch: reloadCampaignSchedule,
 		isLoading: campaignScheduleLoading,
 		isFetching: campaignScheduleFetching,
-	} = useCampaignSchedules(paramCampaignId);
+	} = useCampaignSchedules(campaignId);
 
 	const handleReloading = () => {
 		reloadCampaignSchedule();
@@ -44,14 +50,14 @@ export const ParametersSection: React.FC<ParametersSectionProps> = ({}) => {
 							<SchedulerCard
 								key={JSON.stringify(scheduler)}
 								scheduler={scheduler}
-								campaignId={paramCampaignId!}
+								campaignId={String(campaignId)}
 								handleReload={handleReloading}
 							/>
 						))}
 					</Stack>
 				</>
 			)}
-			<AddScheduler handleReload={handleReloading} />
+			<AddScheduler campaignId={campaignId} handleReload={handleReloading} />
 		</Stack>
 	);
 };
