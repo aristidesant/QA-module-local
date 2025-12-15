@@ -12,6 +12,7 @@ import {
 	Text,
 	Textarea,
 	TextInput,
+	Tooltip,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconInfoCircle } from '@tabler/icons-react';
@@ -33,6 +34,7 @@ import type {
 import RoleFormSkeleton from './RoleFormSkeleton';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
+import { getPermissionTooltip } from '../utils/getPermissionTooltip';
 
 interface RoleFormProps {
 	mode: 'create' | 'edit';
@@ -372,25 +374,39 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 											form.values.modulePermissions[currentModule]?.some(
 												(p) => p.permission === permission
 											) ?? false;
+										const tooltipLabel = getPermissionTooltip(
+											currentModule,
+											permission
+										);
 										return (
-											<div
+											<Tooltip
 												key={permission}
-												className={`${classes.permissionItem} ${isChecked ? classes.permissionItemActive : ''}`}
+												label={tooltipLabel}
+												withArrow
+												multiline
+												w={260}
+												position='top-start'
+												offset={6}
 											>
-												<Checkbox
-													label={
-														permission.charAt(0) +
-														permission.slice(1).toLowerCase()
-													}
-													size='xs'
-													checked={isChecked}
-													onChange={() =>
-														handlePermissionToggle(currentModule, permission)
-													}
-													disabled={isSystemRole}
-													className={classes.permissionCheckbox}
-												/>
-											</div>
+												<div
+													data-testid={`permission-item-${currentModule}-${permission}`}
+													className={`${classes.permissionItem} ${isChecked ? classes.permissionItemActive : ''}`}
+												>
+													<Checkbox
+														label={
+															permission.charAt(0) +
+															permission.slice(1).toLowerCase()
+														}
+														size='xs'
+														checked={isChecked}
+														onChange={() =>
+															handlePermissionToggle(currentModule, permission)
+														}
+														disabled={isSystemRole}
+														className={classes.permissionCheckbox}
+													/>
+												</div>
+											</Tooltip>
 										);
 									})}
 								</div>

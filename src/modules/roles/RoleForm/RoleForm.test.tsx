@@ -108,6 +108,21 @@ describe('RoleForm', () => {
 			).toBeInTheDocument();
 		});
 
+		it('shows a tooltip describing permission access', async () => {
+			const user = userEvent.setup();
+			const onSuccess = vi.fn();
+			renderWithProviders(<RoleForm mode='create' onSuccess={onSuccess} />);
+
+			const permissionTile = screen.getByTestId(
+				'permission-item-DASHBOARD-READ'
+			);
+			await user.hover(permissionTile);
+
+			expect(
+				await screen.findByText('Access the Overview dashboard (home page).')
+			).toBeInTheDocument();
+		});
+
 		it('should show validation errors when submitting empty form', async () => {
 			const user = userEvent.setup();
 			const onSuccess = vi.fn();
