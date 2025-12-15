@@ -72,6 +72,7 @@ export default function ObjectivePickerPanel({
 							<Button
 								size='xs'
 								variant={isSelected ? 'filled' : 'light'}
+								type='button'
 								onClick={() =>
 									onSelect({ id: row.original.id, name: row.original.name })
 								}
@@ -102,13 +103,19 @@ export default function ObjectivePickerPanel({
 						size='xs'
 						variant={showCreate ? 'filled' : 'light'}
 						leftSection={<IconPlus size={14} />}
+						type='button'
 						onClick={() => setShowCreate((v) => !v)}
 					>
 						New objective
 					</Button>
 					{onClose && (
 						<Tooltip label='Close' withArrow>
-							<ActionIcon size='sm' variant='subtle' onClick={onClose}>
+							<ActionIcon
+								size='sm'
+								variant='subtle'
+								type='button'
+								onClick={onClose}
+							>
 								<IconX size={16} />
 							</ActionIcon>
 						</Tooltip>
@@ -119,6 +126,7 @@ export default function ObjectivePickerPanel({
 			<Collapse in={showCreate}>
 				<div className={styles.inlineForm}>
 					<CampaignObjectivesForm
+						withinParentForm
 						onSuccess={() => setShowCreate(false)}
 						onCancel={() => setShowCreate(false)}
 					/>

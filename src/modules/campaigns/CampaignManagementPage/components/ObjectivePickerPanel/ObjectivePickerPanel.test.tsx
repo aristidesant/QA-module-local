@@ -3,6 +3,10 @@ import { describe, it, expect, vi } from 'vitest';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import ObjectivePickerPanel from './ObjectivePickerPanel';
 
+const { objectivesFormSpy } = vi.hoisted(() => ({
+	objectivesFormSpy: vi.fn(),
+}));
+
 vi.mock('~/modules/campaigns/hooks/useFilteredObjectives', () => ({
 	useCampaignObjectivesWithFilters: () => ({
 		objectives: [
@@ -73,7 +77,10 @@ vi.mock(
 vi.mock(
 	'~/modules/campaigns/CampaignManagementPage/Objectives/components/CampaignObjectivesForm/CampaignObjectivesForm',
 	() => ({
-		CampaignObjectivesForm: () => <div data-testid='objective-form'>Form</div>,
+		CampaignObjectivesForm: (props: { withinParentForm?: boolean }) => {
+			objectivesFormSpy(props);
+			return <div data-testid='objective-form'>Form</div>;
+		},
 	})
 );
 
@@ -84,5 +91,20 @@ describe('ObjectivePickerPanel', () => {
 
 		fireEvent.click(screen.getByText('Select'));
 		expect(onSelect).toHaveBeenCalledWith({ id: 1, name: 'Objective A' });
+	});
+
+	it('renders inline create form without nested <form> submissions', () => {
+		const onSelect = vi.fn();
+		renderWithProviders(<ObjectivePickerPanel onSelect={onSelect} />);
+
+		fireEvent.click(screen.getByRole('button', { name: /new objective/i }));
+
+		expect(objectivesFormSpy).toHaveBeenCalledWith(
+			expect.objectContaining({ withinParentForm: true })
+		);
+
+		expect(
+			screen.getByRole('button', { name: /new objective/i })
+		).toHaveAttribute('type', 'button');
 	});
 });

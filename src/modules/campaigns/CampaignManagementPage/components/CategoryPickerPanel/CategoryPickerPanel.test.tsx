@@ -3,6 +3,10 @@ import { describe, it, expect, vi } from 'vitest';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import CategoryPickerPanel from './CategoryPickerPanel';
 
+const { categoriesFormSpy } = vi.hoisted(() => ({
+	categoriesFormSpy: vi.fn(),
+}));
+
 vi.mock('~/modules/campaigns/hooks/useFilteredCategories', () => ({
 	useCampaignCategoriesWithFilters: () => ({
 		categories: [
@@ -66,7 +70,10 @@ vi.mock(
 vi.mock(
 	'~/modules/campaigns/CampaignManagementPage/Categories/components/CampaignCategoriesForm/CampaignCategoriesForm',
 	() => ({
-		CampaignCategoriesForm: () => <div data-testid='category-form'>Form</div>,
+		CampaignCategoriesForm: (props: { withinParentForm?: boolean }) => {
+			categoriesFormSpy(props);
+			return <div data-testid='category-form'>Form</div>;
+		},
 	})
 );
 
@@ -77,5 +84,20 @@ describe('CategoryPickerPanel', () => {
 
 		fireEvent.click(screen.getByText('Select'));
 		expect(onSelect).toHaveBeenCalledWith({ id: 1, name: 'Sales' });
+	});
+
+	it('renders inline create form without nested <form> submissions', () => {
+		const onSelect = vi.fn();
+		renderWithProviders(<CategoryPickerPanel onSelect={onSelect} />);
+
+		fireEvent.click(screen.getByRole('button', { name: /new category/i }));
+
+		expect(categoriesFormSpy).toHaveBeenCalledWith(
+			expect.objectContaining({ withinParentForm: true })
+		);
+
+		expect(
+			screen.getByRole('button', { name: /new category/i })
+		).toHaveAttribute('type', 'button');
 	});
 });

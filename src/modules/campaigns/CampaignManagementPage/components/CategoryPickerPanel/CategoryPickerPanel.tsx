@@ -70,6 +70,7 @@ export default function CategoryPickerPanel({
 							<Button
 								size='xs'
 								variant={isSelected ? 'filled' : 'light'}
+								type='button'
 								onClick={() =>
 									onSelect({ id: row.original.id, name: row.original.name })
 								}
@@ -100,13 +101,19 @@ export default function CategoryPickerPanel({
 						size='xs'
 						variant={showCreate ? 'filled' : 'light'}
 						leftSection={<IconPlus size={14} />}
+						type='button'
 						onClick={() => setShowCreate((v) => !v)}
 					>
 						New category
 					</Button>
 					{onClose && (
 						<Tooltip label='Close' withArrow>
-							<ActionIcon size='sm' variant='subtle' onClick={onClose}>
+							<ActionIcon
+								size='sm'
+								variant='subtle'
+								type='button'
+								onClick={onClose}
+							>
 								<IconX size={16} />
 							</ActionIcon>
 						</Tooltip>
@@ -117,6 +124,7 @@ export default function CategoryPickerPanel({
 			<Collapse in={showCreate}>
 				<div className={styles.inlineForm}>
 					<CampaignCategoriesForm
+						withinParentForm
 						onSuccess={() => setShowCreate(false)}
 						onCancel={() => setShowCreate(false)}
 					/>

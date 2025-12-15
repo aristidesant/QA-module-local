@@ -24,12 +24,14 @@ interface CampaignCategoriesFormProps {
 	category?: CampaignCategory;
 	onSuccess: () => void;
 	onCancel: () => void;
+	withinParentForm?: boolean;
 }
 
 export const CampaignCategoriesForm: React.FC<CampaignCategoriesFormProps> = ({
 	category,
 	onSuccess,
 	onCancel,
+	withinParentForm = false,
 }) => {
 	const isEditing = !!category;
 	const createCategory = useCreateCampaignCategory();
@@ -92,49 +94,69 @@ export const CampaignCategoriesForm: React.FC<CampaignCategoriesFormProps> = ({
 
 	const isLoading = createCategory.isPending || updateCategory.isPending;
 
+	const handleClickSubmit = () => {
+		const validation = form.validate();
+		if (validation.hasErrors) return;
+		void handleSubmit(form.values);
+	};
+
+	const content = (
+		<Stack gap='md'>
+			<TextInput
+				label='Name'
+				placeholder='Enter category name'
+				required
+				{...form.getInputProps('name')}
+			/>
+
+			<TextInput
+				label='Code'
+				placeholder='Enter category code'
+				required
+				{...form.getInputProps('code')}
+			/>
+
+			<Textarea
+				label='Description'
+				placeholder='Enter category description (optional)'
+				rows={3}
+				{...form.getInputProps('description')}
+			/>
+
+			<Switch
+				label='Active'
+				description='When enabled, this category will be available for use'
+				{...form.getInputProps('active', { type: 'checkbox' })}
+			/>
+
+			<Group justify='flex-end' gap='sm' className={styles.actions}>
+				<Button
+					variant='subtle'
+					type='button'
+					onClick={onCancel}
+					disabled={isLoading}
+				>
+					Cancel
+				</Button>
+				<Button
+					type={withinParentForm ? 'button' : 'submit'}
+					loading={isLoading}
+					className={styles.submitButton}
+					onClick={withinParentForm ? handleClickSubmit : undefined}
+				>
+					{isEditing ? 'Update' : 'Create'}
+				</Button>
+			</Group>
+		</Stack>
+	);
+
+	if (withinParentForm) {
+		return <div className={styles.form}>{content}</div>;
+	}
+
 	return (
 		<form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
-			<Stack gap='md'>
-				<TextInput
-					label='Name'
-					placeholder='Enter category name'
-					required
-					{...form.getInputProps('name')}
-				/>
-
-				<TextInput
-					label='Code'
-					placeholder='Enter category code'
-					required
-					{...form.getInputProps('code')}
-				/>
-
-				<Textarea
-					label='Description'
-					placeholder='Enter category description (optional)'
-					rows={3}
-					{...form.getInputProps('description')}
-				/>
-
-				<Switch
-					label='Active'
-					description='When enabled, this category will be available for use'
-					{...form.getInputProps('active', { type: 'checkbox' })}
-				/>
-
-				<Group justify='flex-end' gap='sm' className={styles.actions}>
-					<Button variant='subtle' onClick={onCancel} disabled={isLoading}>
-						Cancel
-					</Button>
-					<Button
-						type='submit'
-						loading={isLoading}
-						className={styles.submitButton}
-					>
-						{isEditing ? 'Update' : 'Create'}
-					</Button>
-				</Group>
-			</Stack>
+			{content}
 		</form>
 	);
 };

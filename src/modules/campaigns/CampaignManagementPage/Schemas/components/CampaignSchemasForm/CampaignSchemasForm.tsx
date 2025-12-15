@@ -322,6 +322,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 						<ActionIcon
 							variant='subtle'
 							size='sm'
+							type='button'
 							aria-label='Browse objectives'
 							onClick={() => setObjectivePickerOpen((v) => !v)}
 						>
@@ -362,6 +363,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 							size='xs'
 							variant='light'
 							leftSection={<IconPlus size={14} />}
+							type='button'
 							onClick={addField}
 						>
 							Add Field
@@ -436,7 +438,12 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 				</div>
 
 				<Group justify='flex-end' gap='sm' className={styles.actions}>
-					<Button variant='subtle' onClick={onCancel} disabled={isLoading}>
+					<Button
+						variant='subtle'
+						type='button'
+						onClick={onCancel}
+						disabled={isLoading}
+					>
 						Cancel
 					</Button>
 					<Button
@@ -479,6 +486,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 					<Group justify='flex-end' gap='sm' mt='md'>
 						<Button
 							variant='subtle'
+							type='button'
 							onClick={() => {
 								setShowVersionModal(false);
 								setPendingUpdateData(null);
@@ -488,6 +496,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 							Cancel
 						</Button>
 						<Button
+							type='button'
 							onClick={handleCreateNewVersion}
 							loading={createSchema.isPending}
 						>
