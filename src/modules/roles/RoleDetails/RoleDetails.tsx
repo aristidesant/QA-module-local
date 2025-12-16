@@ -21,6 +21,7 @@ import classes from './RoleDetails.module.css';
 import { useGetRole } from '~/queries/roleQueries';
 import { timeAgo } from '~/utils/dateUtils';
 import useRolesPageStore from '../store/useRolesPageStore';
+import { ModuleEnum } from '~/constants/ModuleEnum';
 
 interface RoleDetailsProps {
 	roleId: number;
@@ -189,16 +190,18 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleId }) => {
 	);
 
 	// Group permissions by module
-	const groupedPermissions = (role.modulePermissions || []).reduce(
-		(acc, mp) => {
-			if (!acc[mp.module]) {
-				acc[mp.module] = [];
-			}
-			acc[mp.module].push(mp.permission);
-			return acc;
-		},
-		{} as Record<string, string[]>
-	);
+	const groupedPermissions = (role.modulePermissions || [])
+		.filter((permission) => permission.module !== ModuleEnum.AGENTS)
+		.reduce(
+			(acc, mp) => {
+				if (!acc[mp.module]) {
+					acc[mp.module] = [];
+				}
+				acc[mp.module].push(mp.permission);
+				return acc;
+			},
+			{} as Record<string, string[]>
+		);
 
 	return (
 		<Stack gap='md' className={classes.cards}>

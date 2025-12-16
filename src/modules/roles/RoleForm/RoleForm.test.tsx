@@ -108,6 +108,31 @@ describe('RoleForm', () => {
 			).toBeInTheDocument();
 		});
 
+		it('does not show the Agents module', () => {
+			const onSuccess = vi.fn();
+			renderWithProviders(<RoleForm mode='create' onSuccess={onSuccess} />);
+
+			expect(screen.queryByText('Agents')).not.toBeInTheDocument();
+		});
+
+		it('shows a master-client tooltip for Tools and Prompts', async () => {
+			const user = userEvent.setup();
+			const onSuccess = vi.fn();
+			renderWithProviders(<RoleForm mode='create' onSuccess={onSuccess} />);
+
+			const toolsIcon = screen.getByTestId('master-client-only-TOOLS');
+			await user.hover(toolsIcon);
+			expect(
+				await screen.findByText('Only available for the master client.')
+			).toBeInTheDocument();
+
+			const promptsIcon = screen.getByTestId('master-client-only-PROMPTS');
+			await user.hover(promptsIcon);
+			expect(
+				await screen.findByText('Only available for the master client.')
+			).toBeInTheDocument();
+		});
+
 		it('shows a tooltip describing permission access', async () => {
 			const user = userEvent.setup();
 			const onSuccess = vi.fn();
@@ -121,6 +146,23 @@ describe('RoleForm', () => {
 			expect(
 				await screen.findByText('Access the Overview dashboard (home page).')
 			).toBeInTheDocument();
+		});
+
+		it('disables other actions when Manage is selected', async () => {
+			const user = userEvent.setup();
+			const onSuccess = vi.fn();
+			renderWithProviders(<RoleForm mode='create' onSuccess={onSuccess} />);
+
+			const readCheckbox = screen.getByRole('checkbox', { name: 'Read' });
+			const manageCheckbox = screen.getByRole('checkbox', { name: 'Manage' });
+
+			await user.click(readCheckbox);
+			expect(readCheckbox).toBeChecked();
+
+			await user.click(manageCheckbox);
+			expect(manageCheckbox).toBeChecked();
+			expect(readCheckbox).not.toBeChecked();
+			expect(readCheckbox).toBeDisabled();
 		});
 
 		it('should show validation errors when submitting empty form', async () => {
