@@ -26,12 +26,15 @@ import KnowledgeBaseSection from './KnowledgeBaseSection';
 import useCampaignsPredefinedParams from '../../CampaignsForm/useCampaignsPredefinedParams';
 import styles from './StepTwoAgent.module.css';
 import sharedStyles from '../CampaignWizard.module.css';
-import { useUpdateCampaign, useGetCampaign } from '~/queries/campaignsQueries';
+import {
+	useUpdateCampaign,
+	useGetCampaign,
+	useSetCampaignDraft,
+} from '~/queries/campaignsQueries';
 import '@uiw/react-md-editor/markdown-editor.css';
 
 interface StepTwoAgentProps {
 	onNext: () => void;
-	onBack: () => void;
 }
 
 const LANGUAGE_OPTIONS = [
@@ -72,10 +75,7 @@ const extractKnowledgeBaseIds = (
 	return { ids, isPresent: ids.length > 0 };
 };
 
-export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
-	onNext,
-	onBack,
-}) => {
+export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 	const {
 		agentBehaviorId,
 		language,
@@ -96,6 +96,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 
 	const predefinedParams = useCampaignsPredefinedParams();
 	const updateCampaign = useUpdateCampaign();
+	const { mutateAsync: setDraft } = useSetCampaignDraft();
 	const queryClient = useQueryClient();
 
 	// Get campaign ID for fetching (only if campaign exists)
@@ -332,6 +333,12 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 				color: 'green',
 			});
 
+			// Save draft step as 2 (Outcomes Step)
+			await setDraft({
+				campaignId: String(currentCampaign.id),
+				data: { isDraft: true, draftStep: 2 },
+			}).catch((err) => console.error('Failed to save draft step', err));
+
 			onNext();
 		} catch (error) {
 			setIsSubmitting(false);
@@ -485,10 +492,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({
 					</div>
 				</Stack>
 
-				<Group className={sharedStyles.actions}>
-					<Button variant='default' onClick={onBack} size='sm'>
-						Back
-					</Button>
+				<Group className={sharedStyles.actions} justify='flex-end'>
 					<Button
 						type='submit'
 						loading={updateCampaign.isPending}

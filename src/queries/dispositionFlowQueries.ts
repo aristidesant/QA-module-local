@@ -112,6 +112,7 @@ export function useCampaignsWithDispositionFlow(enabled = true) {
 			return api.getCampaignsWithDispositionFlow();
 		},
 		enabled,
+		retry: false,
 	});
 }
 

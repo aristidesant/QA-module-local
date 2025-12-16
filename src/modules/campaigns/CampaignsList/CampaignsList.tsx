@@ -346,6 +346,11 @@ export const CampaignsList: React.FC = () => {
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
 			if (event.key === 'Escape' && addNewModalOpened) {
+				// Check if there are multiple open modals (outer wizard + inner modal)
+				const openModals = document.querySelectorAll('.mantine-Modal-content');
+				if (openModals.length > 1) {
+					return; // Let the inner modal handle it
+				}
 				event.preventDefault();
 				handleWizardClose();
 			}

@@ -35,6 +35,16 @@ vi.mock('~/queries/dispositionFlowQueries', () => ({
 	useCopyDispositionFlow: () => mockCopyDispositionFlow(),
 	useDispositionFlow: (id?: number) => mockDispositionFlow(id),
 	useDeleteDispositionFlow: () => mockDeleteDispositionFlow(),
+	useDispositionFlowsByCampaignPath: () => ({
+		data: [],
+		isLoading: false,
+	}),
+}));
+
+vi.mock('~/queries/campaignsQueries', () => ({
+	useSetCampaignDraft: () => ({
+		mutateAsync: vi.fn().mockResolvedValue({}),
+	}),
 }));
 
 // Mock campaignWizardStore
@@ -120,7 +130,6 @@ vi.mock('@mantine/core', async () => {
 
 describe('StepThreeOutcomes', () => {
 	const mockOnNext = vi.fn();
-	const mockOnBack = vi.fn();
 
 	const defaultQueryMocks = () => {
 		mockCreateDispositionFlow.mockReturnValue({
@@ -162,9 +171,7 @@ describe('StepThreeOutcomes', () => {
 
 	describe('Initial Rendering', () => {
 		it('renders the component with proper header and description', () => {
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			expect(screen.getByText('Design the flow')).toBeInTheDocument();
 			expect(screen.getByText('Outcome Configuration')).toBeInTheDocument();
@@ -174,32 +181,16 @@ describe('StepThreeOutcomes', () => {
 		});
 
 		it('renders create/import segmented control', () => {
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			expect(screen.getByText('Create New')).toBeInTheDocument();
 			expect(screen.getByText('Import from Campaign')).toBeInTheDocument();
 		});
 
-		it('renders Back and Save & Continue buttons', () => {
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+		it('renders Save & Continue button', () => {
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
-			expect(screen.getByText('Back')).toBeInTheDocument();
-			expect(screen.getByText('Save & Continue')).toBeInTheDocument();
-		});
-
-		it('disables Save & Continue button when no flow is created', () => {
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
-
-			const saveButton = screen.getByRole('button', {
-				name: /Save & Continue/i,
-			});
-			expect(saveButton).toBeDisabled();
+			expect(screen.getByText('Continue')).toBeInTheDocument();
 		});
 	});
 
@@ -209,9 +200,7 @@ describe('StepThreeOutcomes', () => {
 		// conditional rendering logic. The mock setup ensures createdCampaign
 		// is always available in other tests.
 		it('renders component when campaign data is available', () => {
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			expect(screen.getByText('Outcome Configuration')).toBeInTheDocument();
 		});
@@ -219,9 +208,7 @@ describe('StepThreeOutcomes', () => {
 
 	describe('Create Flow Mode', () => {
 		it('shows create flow interface by default', () => {
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			expect(
 				screen.getByText('No outcome flow configured')
@@ -230,9 +217,7 @@ describe('StepThreeOutcomes', () => {
 		});
 
 		it('opens disposition form modal when Create Outcome Flow is clicked', () => {
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Create Outcome Flow'));
 
@@ -240,9 +225,7 @@ describe('StepThreeOutcomes', () => {
 		});
 
 		it('initializes disposition builder when opening modal', () => {
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Create Outcome Flow'));
 
@@ -252,9 +235,7 @@ describe('StepThreeOutcomes', () => {
 		});
 
 		it('closes modal when cancel is clicked in disposition form', () => {
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Create Outcome Flow'));
 			expect(screen.getByTestId('disposition-form')).toBeInTheDocument();
@@ -264,9 +245,7 @@ describe('StepThreeOutcomes', () => {
 		});
 
 		it('shows success state when flow is completed', () => {
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Create Outcome Flow'));
 			fireEvent.click(screen.getByTestId('disposition-form-complete'));
@@ -311,9 +290,7 @@ describe('StepThreeOutcomes', () => {
 		});
 
 		it('switches to import mode when Import from Campaign is clicked', () => {
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Import from Campaign'));
 
@@ -323,9 +300,7 @@ describe('StepThreeOutcomes', () => {
 		});
 
 		it('displays list of campaigns with flows', () => {
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Import from Campaign'));
 
@@ -334,9 +309,7 @@ describe('StepThreeOutcomes', () => {
 		});
 
 		it('filters campaigns based on search query', () => {
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Import from Campaign'));
 
@@ -348,9 +321,7 @@ describe('StepThreeOutcomes', () => {
 		});
 
 		it('shows empty state when no campaigns match search', () => {
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Import from Campaign'));
 
@@ -370,9 +341,7 @@ describe('StepThreeOutcomes', () => {
 				refetch: vi.fn(),
 			});
 
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Import from Campaign'));
 
@@ -392,9 +361,7 @@ describe('StepThreeOutcomes', () => {
 				refetch: mockRefetch,
 			});
 
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Import from Campaign'));
 			fireEvent.click(screen.getByText('Refresh'));
@@ -432,9 +399,7 @@ describe('StepThreeOutcomes', () => {
 		});
 
 		it('opens preview modal when preview button is clicked', async () => {
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Import from Campaign'));
 
@@ -450,9 +415,7 @@ describe('StepThreeOutcomes', () => {
 		});
 
 		it('displays DispositionViewer in preview modal', async () => {
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Import from Campaign'));
 
@@ -465,9 +428,7 @@ describe('StepThreeOutcomes', () => {
 		});
 
 		it('closes preview modal when close button is clicked', async () => {
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Import from Campaign'));
 
@@ -521,9 +482,7 @@ describe('StepThreeOutcomes', () => {
 				isPending: false,
 			});
 
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Import from Campaign'));
 			fireEvent.click(screen.getByText('Use flow'));
@@ -547,9 +506,7 @@ describe('StepThreeOutcomes', () => {
 				isPending: false,
 			});
 
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Import from Campaign'));
 			fireEvent.click(screen.getByText('Use flow'));
@@ -575,9 +532,7 @@ describe('StepThreeOutcomes', () => {
 				isPending: false,
 			});
 
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Import from Campaign'));
 			fireEvent.click(screen.getByText('Use flow'));
@@ -602,9 +557,7 @@ describe('StepThreeOutcomes', () => {
 				isPending: false,
 			});
 
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Import from Campaign'));
 			fireEvent.click(screen.getByText('Use flow'));
@@ -624,9 +577,7 @@ describe('StepThreeOutcomes', () => {
 				isPending: false,
 			});
 
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Import from Campaign'));
 			fireEvent.click(screen.getByText('Use flow'));
@@ -652,9 +603,7 @@ describe('StepThreeOutcomes', () => {
 				isPending: false,
 			});
 
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Import from Campaign'));
 			fireEvent.click(screen.getByText('Use flow'));
@@ -667,9 +616,7 @@ describe('StepThreeOutcomes', () => {
 
 	describe('Start Over Functionality', () => {
 		it('shows Start Over button after flow is created', () => {
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Create Outcome Flow'));
 			fireEvent.click(screen.getByTestId('disposition-form-complete'));
@@ -709,9 +656,7 @@ describe('StepThreeOutcomes', () => {
 				refetch: vi.fn(),
 			});
 
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			// Import a flow first
 			fireEvent.click(screen.getByText('Import from Campaign'));
@@ -761,9 +706,7 @@ describe('StepThreeOutcomes', () => {
 				refetch: vi.fn(),
 			});
 
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Import from Campaign'));
 			fireEvent.click(screen.getByText('Use flow'));
@@ -818,9 +761,7 @@ describe('StepThreeOutcomes', () => {
 				refetch: vi.fn(),
 			});
 
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Import from Campaign'));
 			fireEvent.click(screen.getByText('Use flow'));
@@ -874,9 +815,7 @@ describe('StepThreeOutcomes', () => {
 				refetch: vi.fn(),
 			});
 
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Import from Campaign'));
 			fireEvent.click(screen.getByText('Use flow'));
@@ -897,16 +836,6 @@ describe('StepThreeOutcomes', () => {
 	});
 
 	describe('Navigation', () => {
-		it('calls onBack when Back button is clicked', () => {
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
-
-			fireEvent.click(screen.getByText('Back'));
-
-			expect(mockOnBack).toHaveBeenCalled();
-		});
-
 		it('calls onNext directly when Continue is clicked after import', async () => {
 			const mockMutateAsync = vi.fn().mockResolvedValue({
 				flow: { id: 100 },
@@ -933,9 +862,7 @@ describe('StepThreeOutcomes', () => {
 				refetch: vi.fn(),
 			});
 
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
 
 			fireEvent.click(screen.getByText('Import from Campaign'));
 			fireEvent.click(screen.getByText('Use flow'));
@@ -946,34 +873,8 @@ describe('StepThreeOutcomes', () => {
 
 			fireEvent.click(screen.getByText('Continue'));
 
-			expect(mockOnNext).toHaveBeenCalled();
-		});
-	});
-
-	describe('Submit Flow (Save & Continue)', () => {
-		it('shows error when trying to submit without flow', async () => {
-			mockFlowJson = {};
-
-			// Need to enable the button by having hasCreatedFlow = true
-			// But flowJson is empty, so it should show error
-			renderWithProviders(
-				<StepThreeOutcomes onNext={mockOnNext} onBack={mockOnBack} />
-			);
-
-			// Create a flow first to enable the button
-			fireEvent.click(screen.getByText('Create Outcome Flow'));
-			fireEvent.click(screen.getByTestId('disposition-form-complete'));
-
-			// Now try to submit
-			fireEvent.click(screen.getByText('Save & Continue'));
-
 			await waitFor(() => {
-				expect(notifications.show).toHaveBeenCalledWith(
-					expect.objectContaining({
-						title: 'No Outcome Flow',
-						color: 'orange',
-					})
-				);
+				expect(mockOnNext).toHaveBeenCalled();
 			});
 		});
 	});

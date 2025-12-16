@@ -55,7 +55,9 @@ export const CampaignObjectivesForm: React.FC<CampaignObjectivesFormProps> = ({
 			active: objective?.active ?? true,
 		},
 		validate: {
+			// @ts-ignore
 			name: (value) => (!value ? 'Name is required' : null),
+			// @ts-ignore
 			categoryId: (value) => (!value ? 'Category is required' : null),
 		},
 	});

@@ -19,7 +19,6 @@ import {
 	Tooltip,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { useQueryClient } from '@tanstack/react-query';
 import {
 	IconPlus,
 	IconNetwork,
@@ -39,22 +38,21 @@ import {
 	useCopyDispositionFlow,
 	useDispositionFlow,
 	useDeleteDispositionFlow,
+	useDispositionFlowsByCampaignPath,
 } from '~/queries/dispositionFlowQueries';
+import { useSetCampaignDraft } from '~/queries/campaignsQueries';
 import useDispositionLabel from '~/hooks/useDispositionLabel';
 import styles from './StepThreeOutcomes.module.css';
 import sharedStyles from '../CampaignWizard.module.css';
 
 interface StepThreeOutcomesProps {
 	onNext: () => void;
-	onBack: () => void;
 }
 
 export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 	onNext,
-	onBack,
 }) => {
-	const { createdCampaign, setIsSubmitting, setHasOutcomeFlow } =
-		useCampaignWizardStore();
+	const { createdCampaign, setHasOutcomeFlow } = useCampaignWizardStore();
 
 	const [modalOpened, setModalOpened] = useState(false);
 	const [previewModalOpened, setPreviewModalOpened] = useState(false);
@@ -79,8 +77,22 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 	const deleteDispositionFlow = useDeleteDispositionFlow();
 	const { data: previewFlow, isLoading: isLoadingPreviewFlow } =
 		useDispositionFlow(previewFlowId ?? undefined);
-	const queryClient = useQueryClient();
 	const dispositionLabel = useDispositionLabel();
+
+	// Check for existing flow
+	const { data: existingFlow, isLoading: isLoadingExistingFlow } =
+		useDispositionFlowsByCampaignPath(createdCampaign?.id);
+
+	const { mutateAsync: setDraft } = useSetCampaignDraft();
+
+	React.useEffect(() => {
+		if (existingFlow?.id) {
+			setHasCreatedFlow(true);
+			setHasOutcomeFlow(true);
+			// Ideally we would set validation state here too
+			setSelectedFlowId(existingFlow.id);
+		}
+	}, [existingFlow, setHasOutcomeFlow]);
 
 	const { flowJson, setDispositionFlow, setFlowJson, setCampaignId } =
 		useDispositionBuilderStore();
@@ -215,52 +227,27 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 			return;
 		}
 
-		if (!hasCreatedFlow || !flowJson || Object.keys(flowJson).length === 0) {
+		// Simplified check: If we have flagged that a flow is created, we trust it.
+		// The checking of flowJson is handled by the modal saving process.
+		if (!hasCreatedFlow && !existingFlow?.id) {
 			notifications.show({
 				title: 'No Outcome Flow',
-				message: 'Please create an outcome flow before continuing.',
+				message: 'Please create or import an outcome flow before continuing.',
 				color: 'orange',
 			});
 			return;
 		}
 
-		setIsSubmitting(true);
+		// Proceed to next step directly as the flow is already saved in the DB
+		// by either the Modal (Create) or the Import logic.
 
-		try {
-			// Create disposition flow for the campaign
-			await updateCampaign.mutateAsync({
-				flowJson: flowJson as any, // Type assertion for now
-				campaignId: createdCampaign.id,
-			});
+		// Save draft step as 3 (Parameters Step)
+		await setDraft({
+			campaignId: String(createdCampaign.id),
+			data: { isDraft: true, draftStep: 3 },
+		}).catch((err) => console.error('Failed to save draft step', err));
 
-			setIsSubmitting(false);
-
-			// Invalidate related queries
-			queryClient.invalidateQueries({
-				queryKey: ['dispositionFlows', 'campaign', createdCampaign.id],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ['dispositionFlows'],
-			});
-
-			notifications.show({
-				title: 'Outcome Flow Saved',
-				message: 'Outcome configuration saved successfully.',
-				color: 'green',
-			});
-
-			onNext();
-		} catch (error) {
-			setIsSubmitting(false);
-			notifications.show({
-				title: 'Error',
-				message:
-					error instanceof Error
-						? error.message
-						: 'Failed to save outcome configuration',
-				color: 'red',
-			});
-		}
+		onNext();
 	};
 
 	// Count nodes in flow for summary
@@ -564,17 +551,14 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 				</Box>
 			</Stack>
 
-			<Group className={sharedStyles.actions}>
-				<Button variant='default' onClick={onBack}>
-					Back
-				</Button>
+			<Group className={sharedStyles.actions} justify='flex-end'>
 				<Button
 					type='button'
-					loading={updateCampaign.isPending}
+					loading={updateCampaign.isPending || isLoadingExistingFlow}
 					disabled={!hasCreatedFlow || copyingFlowId !== null}
-					onClick={selectedFlowId ? onNext : handleSubmit}
+					onClick={handleSubmit} // Unified handler
 				>
-					{selectedFlowId ? 'Continue' : 'Save & Continue'}
+					Continue
 				</Button>
 			</Group>
 

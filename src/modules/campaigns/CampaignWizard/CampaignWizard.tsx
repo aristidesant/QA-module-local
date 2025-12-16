@@ -24,7 +24,7 @@ export const CampaignWizard: React.FC<CampaignWizardProps> = ({
 	onComplete,
 	onCancel,
 }) => {
-	const { activeStep, nextStep, prevStep, reset } = useCampaignWizardStore();
+	const { activeStep, nextStep, reset } = useCampaignWizardStore();
 
 	const handleCancel = () => {
 		reset();
@@ -64,7 +64,7 @@ export const CampaignWizard: React.FC<CampaignWizardProps> = ({
 					icon={<IconSettings size={18} />}
 				>
 					<div className={styles.stepContent}>
-						<StepTwoAgent onNext={nextStep} onBack={prevStep} />
+						<StepTwoAgent onNext={nextStep} />
 					</div>
 				</Stepper.Step>
 
@@ -74,7 +74,7 @@ export const CampaignWizard: React.FC<CampaignWizardProps> = ({
 					icon={<IconNetwork size={18} />}
 				>
 					<div className={styles.stepContent}>
-						<StepThreeOutcomes onNext={nextStep} onBack={prevStep} />
+						<StepThreeOutcomes onNext={nextStep} />
 					</div>
 				</Stepper.Step>
 
@@ -84,7 +84,7 @@ export const CampaignWizard: React.FC<CampaignWizardProps> = ({
 					icon={<IconClock size={18} />}
 				>
 					<div className={styles.stepContent}>
-						<StepFourParameters onNext={nextStep} onBack={prevStep} />
+						<StepFourParameters onNext={nextStep} />
 					</div>
 				</Stepper.Step>
 

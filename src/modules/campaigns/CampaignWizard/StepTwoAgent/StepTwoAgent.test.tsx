@@ -2,7 +2,11 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { StepTwoAgent } from './StepTwoAgent';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 import useCampaignsPredefinedParams from '../../CampaignsForm/useCampaignsPredefinedParams';
-import { useUpdateCampaign, useGetCampaign } from '~/queries/campaignsQueries';
+import {
+	useUpdateCampaign,
+	useGetCampaign,
+	useSetCampaignDraft,
+} from '~/queries/campaignsQueries';
 import { useQueryClient } from '@tanstack/react-query';
 import { MantineProvider } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
@@ -19,6 +23,7 @@ vi.mock('../../CampaignsForm/useCampaignsPredefinedParams', () => ({
 vi.mock('~/queries/campaignsQueries', () => ({
 	useUpdateCampaign: vi.fn(),
 	useGetCampaign: vi.fn(),
+	useSetCampaignDraft: vi.fn(),
 }));
 
 vi.mock('@tanstack/react-query', () => ({
@@ -53,8 +58,9 @@ vi.mock(
 
 describe('StepTwoAgent', () => {
 	const mockOnNext = vi.fn();
-	const mockOnBack = vi.fn();
+
 	const mockMutateAsync = vi.fn();
+	const mockSetDraft = vi.fn();
 	const mockInvalidateQueries = vi.fn();
 	const mockReloadFreshCampaign = vi.fn();
 
@@ -94,12 +100,16 @@ describe('StepTwoAgent', () => {
 			useCampaignsPredefinedParams as unknown as ReturnType<typeof vi.fn>
 		).mockReturnValue([{ id: 1, name: 'Behavior 1' }]);
 
-		(useUpdateCampaign as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+		(useUpdateCampaign as any).mockReturnValue({
 			mutateAsync: mockMutateAsync,
 			isPending: false,
 		});
 
-		(useGetCampaign as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+		(useSetCampaignDraft as any).mockReturnValue({
+			mutateAsync: mockSetDraft.mockResolvedValue({}),
+		});
+
+		(useGetCampaign as any).mockReturnValue({
 			data: null,
 			isLoading: false,
 			refetch: mockReloadFreshCampaign,
@@ -113,7 +123,7 @@ describe('StepTwoAgent', () => {
 	const renderComponent = () => {
 		return render(
 			<MantineProvider>
-				<StepTwoAgent onNext={mockOnNext} onBack={mockOnBack} />
+				<StepTwoAgent onNext={mockOnNext} />
 			</MantineProvider>
 		);
 	};
