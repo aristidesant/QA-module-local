@@ -20,31 +20,28 @@ vi.mock('./StepOneGeneral', () => ({
 }));
 
 vi.mock('./StepTwoAgent', () => ({
-	StepTwoAgent: ({ onNext, onBack }: any) => (
+	StepTwoAgent: ({ onNext }: any) => (
 		<div data-testid='step-two'>
 			Step Two
 			<button onClick={onNext}>Next</button>
-			<button onClick={onBack}>Back</button>
 		</div>
 	),
 }));
 
 vi.mock('./StepThreeOutcomes', () => ({
-	StepThreeOutcomes: ({ onNext, onBack }: any) => (
+	StepThreeOutcomes: ({ onNext }: any) => (
 		<div data-testid='step-three'>
 			Step Three
 			<button onClick={onNext}>Next</button>
-			<button onClick={onBack}>Back</button>
 		</div>
 	),
 }));
 
 vi.mock('./StepFourParameters', () => ({
-	StepFourParameters: ({ onNext, onBack }: any) => (
+	StepFourParameters: ({ onNext }: any) => (
 		<div data-testid='step-four'>
 			Step Four
 			<button onClick={onNext}>Next</button>
-			<button onClick={onBack}>Back</button>
 		</div>
 	),
 }));

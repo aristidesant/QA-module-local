@@ -1,7 +1,10 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { StepOneGeneral } from './StepOneGeneral';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
-import { useCreateCampaignWithAgent } from '~/queries/campaignsQueries';
+import {
+	useCreateCampaignWithAgent,
+	useSetCampaignDraft,
+} from '~/queries/campaignsQueries';
 import { useGetCampaignObjectives } from '~/queries/campaignObjectivesQueries';
 import { useGetAllAgentVoices } from '~/queries/agentVoiceQueries';
 import { MantineProvider } from '@mantine/core';
@@ -14,6 +17,7 @@ vi.mock('~/stores/campaignWizardStore', () => ({
 
 vi.mock('~/queries/campaignsQueries', () => ({
 	useCreateCampaignWithAgent: vi.fn(),
+	useSetCampaignDraft: vi.fn(),
 }));
 
 vi.mock('~/queries/campaignObjectivesQueries', () => ({
@@ -104,6 +108,11 @@ describe('StepOneGeneral', () => {
 			isPending: false,
 			isError: false,
 			error: null,
+		});
+		(
+			useSetCampaignDraft as unknown as ReturnType<typeof vi.fn>
+		).mockReturnValue({
+			mutateAsync: vi.fn(),
 		});
 		(
 			useGetCampaignObjectives as unknown as ReturnType<typeof vi.fn>

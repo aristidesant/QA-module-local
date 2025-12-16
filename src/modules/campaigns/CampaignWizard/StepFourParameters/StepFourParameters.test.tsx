@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { StepFourParameters } from './StepFourParameters';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 import { MantineProvider } from '@mantine/core';
@@ -6,6 +6,10 @@ import { MantineProvider } from '@mantine/core';
 // Mock stores and hooks
 vi.mock('~/stores/campaignWizardStore', () => ({
 	useCampaignWizardStore: vi.fn(),
+}));
+
+vi.mock('~/queries/campaignsQueries', () => ({
+	useSetCampaignDraft: vi.fn(),
 }));
 
 // Mock child components
@@ -41,23 +45,27 @@ vi.mock('@mantine/modals', () => ({
 
 describe('StepFourParameters', () => {
 	const mockOnNext = vi.fn();
-	const mockOnBack = vi.fn();
 
 	const mockStore = {
 		createdCampaign: { id: 1, workingHours: {} },
 	};
 
-	beforeEach(() => {
+	beforeEach(async () => {
 		vi.clearAllMocks();
 		(
 			useCampaignWizardStore as unknown as ReturnType<typeof vi.fn>
 		).mockReturnValue(mockStore);
+
+		const { useSetCampaignDraft } = await import('~/queries/campaignsQueries');
+		(useSetCampaignDraft as any).mockReturnValue({
+			mutateAsync: vi.fn().mockResolvedValue({}),
+		});
 	});
 
 	const renderComponent = () => {
 		return render(
 			<MantineProvider>
-				<StepFourParameters onNext={mockOnNext} onBack={mockOnBack} />
+				<StepFourParameters onNext={mockOnNext} />
 			</MantineProvider>
 		);
 	};
@@ -78,21 +86,14 @@ describe('StepFourParameters', () => {
 		expect(screen.getByText('Loading campaign data...')).toBeInTheDocument();
 	});
 
-	it('continues to next step on save', () => {
+	it('continues to next step on save', async () => {
 		renderComponent();
 
 		const saveButton = screen.getByText('Save & Continue');
 		fireEvent.click(saveButton);
 
-		expect(mockOnNext).toHaveBeenCalled();
-	});
-
-	it('goes back on back button click', () => {
-		renderComponent();
-
-		const backButton = screen.getByText('Back');
-		fireEvent.click(backButton);
-
-		expect(mockOnBack).toHaveBeenCalled();
+		await waitFor(() => {
+			expect(mockOnNext).toHaveBeenCalled();
+		});
 	});
 });

@@ -19,7 +19,10 @@ import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 import PhoneNumberSelector from '../../AddNewCampaignForm/PhoneNumberSelector';
-import { useCreateCampaignWithAgent } from '~/queries/campaignsQueries';
+import {
+	useCreateCampaignWithAgent,
+	useSetCampaignDraft,
+} from '~/queries/campaignsQueries';
 import { CampaignStatus } from '~/models/CampaignStatus';
 import type { CreateCampaignWithAgentDTO } from '~/api/campaignsApi';
 import styles from '../CampaignWizard.module.css';
@@ -59,6 +62,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 	const queryClient = useQueryClient();
 
 	const createCampaignWithAgent = useCreateCampaignWithAgent();
+	const { mutateAsync: setDraft } = useSetCampaignDraft();
 	const { data: objectivesResponse } = useGetCampaignObjectives({
 		active: true,
 	});
@@ -166,6 +170,12 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 						'Campaign created successfully. Continue to configure your agent.',
 					color: 'green',
 				});
+
+				// Save draft step as 1 (Agent Step)
+				setDraft({
+					campaignId: String(campaign.id),
+					data: { isDraft: true, draftStep: 1 },
+				}).catch((err) => console.error('Failed to save draft step', err));
 
 				// Proceed to next step
 				onNext();
@@ -355,6 +365,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				onClose={() => setIsObjectiveModalOpen(false)}
 				title='Create Campaign Objective'
 				centered
+				size='xl'
 			>
 				<CampaignObjectivesForm
 					onSuccess={handleObjectiveCreated}

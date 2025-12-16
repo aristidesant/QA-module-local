@@ -16,19 +16,30 @@ import SectionCard from '~/components/SectionCard';
 import ParametersSection from '~/modules/campaigns/CampaignsForm/ParametersSection';
 import SchedulerCalculator from '~/modules/campaigns/CampaignsForm/ParametersSection/SchedulerCalculator';
 import sharedStyles from '../CampaignWizard.module.css';
+import { useSetCampaignDraft } from '~/queries/campaignsQueries';
 
 interface StepFourParametersProps {
 	onNext: () => void;
-	onBack: () => void;
 }
 
 export const StepFourParameters: React.FC<StepFourParametersProps> = ({
 	onNext,
-	onBack,
 }) => {
 	const { createdCampaign } = useCampaignWizardStore();
+	const { mutateAsync: setDraft } = useSetCampaignDraft();
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
+		if (createdCampaign?.id) {
+			try {
+				await setDraft({
+					campaignId: String(createdCampaign.id),
+					data: { isDraft: true, draftStep: 4 }, // Save as Step 4 (Success Step)
+				});
+			} catch (error) {
+				// eslint-disable-next-line no-console
+				console.error('Failed to save draft step:', error);
+			}
+		}
 		onNext();
 	};
 
@@ -87,10 +98,7 @@ export const StepFourParameters: React.FC<StepFourParametersProps> = ({
 				</SectionCard>
 			</Stack>
 
-			<Group className={sharedStyles.actions}>
-				<Button variant='default' onClick={onBack}>
-					Back
-				</Button>
+			<Group className={sharedStyles.actions} justify='flex-end'>
 				<Button type='button' onClick={handleSubmit}>
 					Save & Continue
 				</Button>

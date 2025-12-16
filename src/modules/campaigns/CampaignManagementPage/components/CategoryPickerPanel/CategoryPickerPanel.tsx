@@ -122,13 +122,23 @@ export default function CategoryPickerPanel({
 			</div>
 
 			<Collapse in={showCreate}>
-				<div className={styles.inlineForm}>
-					<CampaignCategoriesForm
-						withinParentForm
-						onSuccess={() => setShowCreate(false)}
-						onCancel={() => setShowCreate(false)}
-					/>
-				</div>
+				<fieldset
+					disabled={!showCreate}
+					style={{
+						border: 'none',
+						padding: 0,
+						margin: 0,
+						minInlineSize: 'auto',
+					}}
+				>
+					<div className={styles.inlineForm}>
+						<CampaignCategoriesForm
+							withinParentForm
+							onSuccess={() => setShowCreate(false)}
+							onCancel={() => setShowCreate(false)}
+						/>
+					</div>
+				</fieldset>
 			</Collapse>
 
 			<CampaignCategoriesFilters
