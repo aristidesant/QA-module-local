@@ -10,6 +10,17 @@ import {
 } from '~/models/KnowledgeBaseModel';
 import * as queries from '~/queries/knowledgeBaseQueries';
 
+vi.mock('~/hooks/usePermissions', () => ({
+	usePermissions: () => ({
+		activeClientId: 1,
+		permissionMap: {},
+		canAccessModule: vi.fn(() => true),
+		canPerformAction: vi.fn(() => true),
+		hasAnyPermission: vi.fn(() => true),
+		hasAllPermissions: vi.fn(() => true),
+	}),
+}));
+
 const mockKB = (
 	overrides: Partial<KnowledgeBaseModel> = {}
 ): KnowledgeBaseModel => ({

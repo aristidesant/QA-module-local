@@ -10,6 +10,17 @@ import KnowledgeBaseForm, {
 } from './KnowledgeBaseForm';
 import { KnowledgeBaseType } from '~/models/KnowledgeBaseModel';
 
+vi.mock('~/hooks/usePermissions', () => ({
+	usePermissions: () => ({
+		activeClientId: 1,
+		permissionMap: {},
+		canAccessModule: vi.fn(() => true),
+		canPerformAction: vi.fn(() => true),
+		hasAnyPermission: vi.fn(() => true),
+		hasAllPermissions: vi.fn(() => true),
+	}),
+}));
+
 // Mock dependencies
 vi.mock('~/queries/knowledgeBaseQueries', () => ({
 	useCreateKnowledgeBase: vi.fn(),

@@ -147,7 +147,6 @@ const useRolesColumns = ({
 						<Group gap='xs' justify='flex-end' wrap='nowrap'>
 							<Tooltip label='View role' withArrow>
 								<ActionIcon
-									variant='subtle'
 									onClick={(event) => {
 										event.stopPropagation();
 										onView(role.id);
@@ -159,7 +158,6 @@ const useRolesColumns = ({
 							</Tooltip>
 							<Tooltip label='Edit role' withArrow>
 								<ActionIcon
-									variant='subtle'
 									onClick={(event) => {
 										event.stopPropagation();
 										onEdit(role.id);
@@ -178,7 +176,6 @@ const useRolesColumns = ({
 								withArrow
 							>
 								<ActionIcon
-									variant='subtle'
 									color='red'
 									onClick={(event) => {
 										event.stopPropagation();

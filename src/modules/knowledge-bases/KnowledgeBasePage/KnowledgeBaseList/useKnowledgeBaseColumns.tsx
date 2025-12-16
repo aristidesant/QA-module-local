@@ -21,6 +21,8 @@ import { createColumnHelper, type ColumnDef } from '@tanstack/react-table';
 import type { KnowledgeBaseModel } from '~/models/KnowledgeBaseModel';
 import dayjs from 'dayjs';
 import styles from './KnowledgeBaseList.module.css';
+import type { UseMutationResult } from '@tanstack/react-query';
+import type React from 'react';
 
 const truncate = (s: string | undefined, n = 80) =>
 	s && s.length > n ? s.slice(0, n - 1) + '…' : s || '';
@@ -36,15 +38,21 @@ const statusConfig = {
 const formatDate = (iso?: string | null) =>
 	iso ? dayjs(iso).format('YYYY-MM-DD HH:mm') : '-';
 
+type PermissionFlags = {
+	canUpdate: boolean;
+	canDelete: boolean;
+};
+
 export const useKnowledgeBaseColumns = (
-	retryMutation: any,
-	deleteMutation: any,
-	setRight: any,
-	refetch: any
+	retryMutation: UseMutationResult<unknown, unknown, number, unknown>,
+	deleteMutation: UseMutationResult<unknown, unknown, number, unknown>,
+	setRight: (node: React.ReactNode) => void,
+	refetch: () => Promise<unknown>,
+	{ canUpdate, canDelete }: PermissionFlags
 ) => {
 	const columnHelper = createColumnHelper<KnowledgeBaseModel>();
 
-	const columns = useMemo<ColumnDef<KnowledgeBaseModel, any>[]>(
+	const columns = useMemo<Array<ColumnDef<KnowledgeBaseModel, unknown>>>(
 		() => [
 			columnHelper.accessor('name', {
 				id: 'name',
@@ -174,6 +182,11 @@ export const useKnowledgeBaseColumns = (
 								>
 									<ActionIcon
 										component='a'
+										aria-label={
+											item.type === KnowledgeBaseType.URL
+												? 'Open URL'
+												: 'Download file'
+										}
 										href={
 											(item.file?.repositoryRoute as string) ||
 											(item.sourceUrl as string)
@@ -191,55 +204,63 @@ export const useKnowledgeBaseColumns = (
 								</Tooltip>
 							) : null}
 
-							{(item.status === KnowledgeBaseStatus.FAILED ||
-								!!item.uploadError) && (
-								<Tooltip label='Retry upload' position='top'>
+							{canUpdate &&
+								(item.status === KnowledgeBaseStatus.FAILED ||
+									!!item.uploadError) && (
+									<Tooltip label='Retry upload' position='top'>
+										<ActionIcon
+											size='sm'
+											aria-label='Retry upload'
+											onClick={async () => {
+												try {
+													await retryMutation.mutateAsync(Number(item.id));
+													refetch();
+												} catch (_) {
+													// handled by mutation
+												}
+											}}
+											disabled={retryMutation?.status === 'pending'}
+											loading={retryMutation?.status === 'pending'}
+										>
+											<IconRefresh size={16} />
+										</ActionIcon>
+									</Tooltip>
+								)}
+
+							{canUpdate && (
+								<Tooltip label='Edit knowledge base' position='top'>
 									<ActionIcon
+										onClick={() =>
+											setRight(<KnowledgeBaseForm id={Number(item.id)} />)
+										}
 										size='sm'
-										onClick={async () => {
-											try {
-												await retryMutation.mutateAsync(Number(item.id));
-												refetch();
-											} catch (_) {
-												// handled by mutation
-											}
-										}}
-										disabled={retryMutation?.status === 'pending'}
-										loading={retryMutation?.status === 'pending'}
+										aria-label='Edit knowledge base'
 									>
-										<IconRefresh size={16} />
+										<IconEdit size={16} />
 									</ActionIcon>
 								</Tooltip>
 							)}
 
-							<Tooltip label='Edit knowledge base' position='top'>
-								<ActionIcon
-									onClick={() =>
-										setRight(<KnowledgeBaseForm id={Number(item.id)} />)
-									}
-									size='sm'
-								>
-									<IconEdit size={16} />
-								</ActionIcon>
-							</Tooltip>
-
-							<Tooltip label='Delete knowledge base' position='top'>
-								<ActionIcon
-									color='red'
-									onClick={() =>
-										openConfirmModal({
-											title: 'Delete Knowledge Base',
-											children: `Are you sure you want to delete "${item.name}"? This action cannot be undone.`,
-											labels: { confirm: 'Delete', cancel: 'Cancel' },
-											confirmProps: { color: 'red' },
-											onConfirm: () => deleteMutation.mutate(Number(item.id)),
-										})
-									}
-									size='sm'
-								>
-									<IconTrash size={16} />
-								</ActionIcon>
-							</Tooltip>
+							{canDelete && (
+								<Tooltip label='Delete knowledge base' position='top'>
+									<ActionIcon
+										color='red'
+										aria-label='Delete knowledge base'
+										onClick={() =>
+											openConfirmModal({
+												title: 'Delete Knowledge Base',
+												children: `Are you sure you want to delete "${item.name}"? This action cannot be undone.`,
+												labels: { confirm: 'Delete', cancel: 'Cancel' },
+												confirmProps: { color: 'red' },
+												onConfirm: () => deleteMutation.mutate(Number(item.id)),
+											})
+										}
+										size='sm'
+									>
+										<IconTrash size={16} />
+									</ActionIcon>
+								</Tooltip>
+							)}
 						</Flex>
 					);
 				},
@@ -250,7 +271,7 @@ export const useKnowledgeBaseColumns = (
 				},
 			}),
 		],
-		[retryMutation, deleteMutation, setRight, refetch]
+		[retryMutation, deleteMutation, setRight, refetch, canUpdate, canDelete]
 	);
 
 	return columns;
