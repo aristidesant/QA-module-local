@@ -15,7 +15,7 @@ import {
 	Tooltip,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IconInfoCircle } from '@tabler/icons-react';
+import { IconAlertCircle, IconInfoCircle } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { getErrorMessage } from '~/utils/httpClient';
 import classes from './RoleForm.module.css';
@@ -52,14 +52,39 @@ interface RoleFormValues {
 	modulePermissions: Record<string, ModulePermissionFormValue[]>;
 }
 
-const MODULES = Object.values(ModuleEnum);
+const MODULES = Object.values(ModuleEnum).filter(
+	(module) => module !== ModuleEnum.AGENTS
+);
 const PERMISSIONS = Object.values(PermissionEnum);
+const MASTER_CLIENT_ONLY_MODULES = new Set<string>([
+	ModuleEnum.TOOLS,
+	ModuleEnum.PROMPTS,
+]);
+const MASTER_CLIENT_ONLY_TOOLTIP = 'Only available for the master client.';
 
 const formatModuleName = (module: string): string => {
 	return module
 		.split('_')
 		.map((word) => word.charAt(0) + word.slice(1).toLowerCase())
 		.join(' ');
+};
+
+const normalizeModulePermissions = (
+	modulePermissions: Record<string, ModulePermissionFormValue[]>
+): Record<string, ModulePermissionFormValue[]> => {
+	return Object.fromEntries(
+		Object.entries(modulePermissions).map(([module, permissions]) => {
+			const managePermission = permissions.find(
+				(permission) => permission.permission === PermissionEnum.MANAGE
+			);
+
+			if (managePermission) {
+				return [module, [managePermission]];
+			}
+
+			return [module, permissions];
+		})
+	);
 };
 
 const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
@@ -117,7 +142,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 				description: role.description ?? '',
 				isActive: role.isActive,
 				isSystem: role.isSystem,
-				modulePermissions,
+				modulePermissions: normalizeModulePermissions(modulePermissions),
 			});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -139,9 +164,22 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 			(p) => p.permission === permission
 		);
 
-		const updatedPermissions = existingPermission
-			? currentPermissions.filter((p) => p.permission !== permission)
-			: [...currentPermissions, { module, permission }];
+		const hasManage = currentPermissions.some(
+			(p) => p.permission === PermissionEnum.MANAGE
+		);
+
+		if (permission !== PermissionEnum.MANAGE && hasManage) {
+			return;
+		}
+
+		const updatedPermissions =
+			permission === PermissionEnum.MANAGE
+				? existingPermission
+					? currentPermissions.filter((p) => p.permission !== permission)
+					: [{ module, permission }]
+				: existingPermission
+					? currentPermissions.filter((p) => p.permission !== permission)
+					: [...currentPermissions, { module, permission }];
 
 		form.setFieldValue('modulePermissions', {
 			...form.values.modulePermissions,
@@ -244,6 +282,12 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 
 	const isSystemRole = isEditMode && role?.isSystem;
 	const currentModule = activeModule || MODULES[0] || '';
+	const isMasterClientOnlyModule =
+		MASTER_CLIENT_ONLY_MODULES.has(currentModule);
+	const isManageSelectedForCurrentModule =
+		form.values.modulePermissions[currentModule]?.some(
+			(permission) => permission.permission === PermissionEnum.MANAGE
+		) ?? false;
 
 	const modulePermissionCount = (module: string) =>
 		form.values.modulePermissions[module]?.length ?? 0;
@@ -330,6 +374,8 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 										{MODULES.map((module) => {
 											const count = modulePermissionCount(module);
 											const isActiveModule = module === currentModule;
+											const isMasterClientOnly =
+												MASTER_CLIENT_ONLY_MODULES.has(module);
 											return (
 												<button
 													key={module}
@@ -338,8 +384,28 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 													onClick={() => setActiveModule(module)}
 													disabled={isSystemRole}
 												>
-													<span className={classes.moduleTabLabel}>
-														{formatModuleName(module)}
+													<span className={classes.moduleTabLabelRow}>
+														<span className={classes.moduleTabLabelText}>
+															{formatModuleName(module)}
+														</span>
+														{isMasterClientOnly && (
+															<Tooltip
+																label={MASTER_CLIENT_ONLY_TOOLTIP}
+																withArrow
+																position='right'
+																offset={10}
+															>
+																<span
+																	role='img'
+																	aria-label='Master client only'
+																	data-testid={`master-client-only-${module}`}
+																	className={classes.masterClientOnlyIcon}
+																	onClick={(event) => event.stopPropagation()}
+																>
+																	<IconAlertCircle size={14} />
+																</span>
+															</Tooltip>
+														)}
 													</span>
 													{count > 0 && (
 														<Badge
@@ -360,9 +426,27 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 
 							<div className={classes.permissionsPanel}>
 								<div className={classes.permissionsPanelHeader}>
-									<Text className={classes.permissionsPanelTitle}>
-										{formatModuleName(currentModule)}
-									</Text>
+									<div className={classes.permissionsPanelTitleRow}>
+										<Text className={classes.permissionsPanelTitle}>
+											{formatModuleName(currentModule)}
+										</Text>
+										{isMasterClientOnlyModule && (
+											<Tooltip
+												label={MASTER_CLIENT_ONLY_TOOLTIP}
+												withArrow
+												position='top'
+												offset={6}
+											>
+												<span
+													role='img'
+													aria-label='Master client only'
+													className={classes.masterClientOnlyIcon}
+												>
+													<IconAlertCircle size={14} />
+												</span>
+											</Tooltip>
+										)}
+									</div>
 									<Text className={classes.permissionsPanelCount}>
 										{modulePermissionCount(currentModule)} of{' '}
 										{PERMISSIONS.length} selected
@@ -374,6 +458,10 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 											form.values.modulePermissions[currentModule]?.some(
 												(p) => p.permission === permission
 											) ?? false;
+										const isDisabled =
+											isSystemRole ||
+											(isManageSelectedForCurrentModule &&
+												permission !== PermissionEnum.MANAGE);
 										const tooltipLabel = getPermissionTooltip(
 											currentModule,
 											permission
@@ -402,7 +490,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 														onChange={() =>
 															handlePermissionToggle(currentModule, permission)
 														}
-														disabled={isSystemRole}
+														disabled={isDisabled}
 														className={classes.permissionCheckbox}
 													/>
 												</div>

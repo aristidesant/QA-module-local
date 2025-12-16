@@ -173,6 +173,40 @@
 	color: var(--mantine-color-gray-9);
 }
 
+.moduleTabLabelRow {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	min-width: 0;
+	flex: 1;
+}
+
+.moduleTabLabelText {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-7);
+	font-weight: 500;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	min-width: 0;
+}
+
+.moduleTabActive .moduleTabLabelText {
+	color: var(--mantine-color-gray-9);
+}
+
+.masterClientOnlyIcon {
+	display: flex;
+	align-items: center;
+	flex-shrink: 0;
+	color: var(--mantine-color-gray-5);
+	cursor: help;
+}
+
+.moduleTabActive .masterClientOnlyIcon {
+	color: var(--mantine-color-gray-6);
+}
+
 .moduleCount {
 	flex-shrink: 0;
 }
@@ -192,6 +226,13 @@
 	justify-content: space-between;
 	padding-bottom: var(--mantine-spacing-xs);
 	border-bottom: 1px solid var(--mantine-color-gray-1);
+}
+
+.permissionsPanelTitleRow {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	min-width: 0;
 }
 
 .permissionsPanelTitle {

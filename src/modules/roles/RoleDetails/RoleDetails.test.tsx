@@ -142,7 +142,7 @@ describe('RoleDetails', () => {
 
 		await waitFor(() => {
 			expect(screen.getByText('Campaigns')).toBeInTheDocument();
-			expect(screen.getByText('Agents')).toBeInTheDocument();
+			expect(screen.queryByText('Agents')).not.toBeInTheDocument();
 			expect(screen.getByText('Users')).toBeInTheDocument();
 		});
 	});
