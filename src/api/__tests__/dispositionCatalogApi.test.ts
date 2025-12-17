@@ -6,6 +6,7 @@ import type {
 	DispositionCatalogModel,
 	CreateDispositionCatalog,
 } from '~/models/DispositionCatalogModels';
+import type { PaginatedResponse } from '~/models/CampaignsModel';
 import type { DispositionFlowModel } from '~/models/DispositionFlowModel';
 import type {
 	CampaignWithDispositionCatalog,
@@ -73,6 +74,62 @@ describe('dispositionCatalogApi', () => {
 
 			expect(axios.get).toHaveBeenCalledWith(
 				`${TEST_API_URL}/disposition-catalogs?type=INBOUND`
+			);
+			expect(result).toEqual(mockResponse);
+		});
+	});
+
+	describe('getAllDispositionCatalogsAllPaged', () => {
+		it('should get paged disposition catalogs without params', async () => {
+			const mockResponse: PaginatedResponse<DispositionCatalogModel> = {
+				total: 1,
+				limit: 10,
+				offset: 0,
+				data: [
+					{
+						id: 1,
+						name: 'Test Catalog',
+						description: 'Test Description',
+						clientId: 1,
+						isActive: true,
+						isDefault: true,
+						type: 'INBOUND',
+						createdAt: '2023-01-01T00:00:00Z',
+						updatedAt: '2023-01-01T00:00:00Z',
+					},
+				],
+			};
+			(axios.get as Mock).mockResolvedValue(createMockResponse(mockResponse));
+
+			const api = dispositionCatalogApi();
+			const result = await api.getAllDispositionCatalogsAllPaged();
+
+			expect(axios.get).toHaveBeenCalledWith(
+				`${TEST_API_URL}/disposition-catalogs/all`
+			);
+			expect(result).toEqual(mockResponse);
+		});
+
+		it('should get paged disposition catalogs with params', async () => {
+			const queryParams = {
+				limit: 10,
+				offset: 20,
+				sortBy: 'createdAt',
+				sortOrder: 'DESC' as const,
+			};
+			const mockResponse: PaginatedResponse<DispositionCatalogModel> = {
+				total: 100,
+				limit: 10,
+				offset: 20,
+				data: [],
+			};
+			(axios.get as Mock).mockResolvedValue(createMockResponse(mockResponse));
+
+			const api = dispositionCatalogApi();
+			const result = await api.getAllDispositionCatalogsAllPaged(queryParams);
+
+			expect(axios.get).toHaveBeenCalledWith(
+				`${TEST_API_URL}/disposition-catalogs/all?limit=10&offset=20&sortBy=createdAt&sortOrder=DESC`
 			);
 			expect(result).toEqual(mockResponse);
 		});

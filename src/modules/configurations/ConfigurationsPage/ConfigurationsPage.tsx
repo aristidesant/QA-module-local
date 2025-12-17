@@ -5,7 +5,6 @@ import {
 	IconList,
 	IconGlobe,
 	IconPhoneOff,
-	IconLibrary,
 	IconClockHour4,
 } from '@tabler/icons-react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
@@ -35,7 +34,6 @@ export default function ConfigurationsPage() {
 		if (location.pathname.includes('regional-settings-params'))
 			return 'regional-settings-params';
 		if (location.pathname.includes('do-not-call')) return 'do-not-call';
-		if (location.pathname.includes('knowledge-bases')) return 'knowledge-bases';
 		return isMasterClient ? 'client-configs' : 'campaign-predefined-params';
 	};
 
@@ -54,7 +52,7 @@ export default function ConfigurationsPage() {
 	return (
 		<ContentContainer
 			title='Configurations'
-			description='Manage global, campaign, regional, do not call, and knowledge base settings'
+			description='Manage global, campaign, regional, and do not call settings'
 			titleIcon={<IconSettings size={24} />}
 		>
 			<Tabs
@@ -106,13 +104,6 @@ export default function ConfigurationsPage() {
 						onClick={() => navigate('/configurations/do-not-call')}
 					>
 						Do Not Call
-					</Tabs.Tab>
-					<Tabs.Tab
-						value='knowledge-bases'
-						leftSection={<IconLibrary size={16} />}
-						onClick={() => navigate('/configurations/knowledge-bases')}
-					>
-						Knowledge Base
 					</Tabs.Tab>
 				</Tabs.List>
 

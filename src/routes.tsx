@@ -422,19 +422,24 @@ const router = createBrowserRouter([
 									</Suspense>
 								),
 							},
-							{
-								path: 'knowledge-bases',
-								element: (
-									<Suspense
-										fallback={
-											<SuspenseFallback message='Loading knowledge bases...' />
-										}
-									>
-										<KnowledgeBasePage />
-									</Suspense>
-								),
-							},
 						],
+					},
+					{
+						path: 'knowledge-bases',
+						element: (
+							<ModuleGuard
+								module={ModuleEnum.KNOWLEDGE_BASES}
+								permission={PermissionEnum.READ}
+							>
+								<Suspense
+									fallback={
+										<SuspenseFallback message='Loading knowledge bases...' />
+									}
+								>
+									<KnowledgeBasePage />
+								</Suspense>
+							</ModuleGuard>
+						),
 					},
 					{
 						path: 'prompter',

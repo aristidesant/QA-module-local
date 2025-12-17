@@ -15,9 +15,25 @@ import { type KnowledgeBaseModel } from '~/models/KnowledgeBaseModel';
 import BaseTable from '~/components/BaseTable';
 import { useKnowledgeBaseColumns } from './useKnowledgeBaseColumns';
 import KnowledgeBaseFilter from './KnowledgeBaseFilter';
+import { usePermissions } from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 
 const KnowledgeBaseList = () => {
 	const setRight = useKnowledgeBaseStore((s) => s.setRightComponent);
+	const { canPerformAction } = usePermissions();
+	const canCreate = canPerformAction(
+		ModuleEnum.KNOWLEDGE_BASES,
+		PermissionEnum.CREATE
+	);
+	const canUpdate = canPerformAction(
+		ModuleEnum.KNOWLEDGE_BASES,
+		PermissionEnum.UPDATE
+	);
+	const canDelete = canPerformAction(
+		ModuleEnum.KNOWLEDGE_BASES,
+		PermissionEnum.DELETE
+	);
 	// Server-side sorting state (single-column sort)
 	const [sorting, setSorting] = useState<SortingState>([
 		{ id: 'name', desc: false },
@@ -60,7 +76,8 @@ const KnowledgeBaseList = () => {
 		retryMutation,
 		deleteMutation,
 		setRight,
-		refetch
+		refetch,
+		{ canUpdate, canDelete }
 	);
 
 	const total = data?.total ?? 0; // total matching filters
@@ -96,14 +113,16 @@ const KnowledgeBaseList = () => {
 						<Text size='sm' c='dimmed' className={styles.emptyDescription}>
 							Create your first knowledge base to surface documents to agents.
 						</Text>
-						<Button
-							mt='lg'
-							onClick={() => setRight(<KnowledgeBaseForm />)}
-							leftSection={<IconPlus size={18} />}
-							size='md'
-						>
-							Create Knowledge Base
-						</Button>
+						{canCreate ? (
+							<Button
+								mt='lg'
+								onClick={() => setRight(<KnowledgeBaseForm />)}
+								leftSection={<IconPlus size={18} />}
+								size='md'
+							>
+								Create Knowledge Base
+							</Button>
+						) : null}
 					</div>
 				</div>
 			) : (

@@ -28,12 +28,16 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 	onSubmit,
 }) => {
 	const form = useForm<DispositionNode>({
-		initialValues: { ...node },
+		initialValues: {
+			...node,
+			doNotCall: node.doNotCall ?? node.do_not_call ?? false,
+		},
 	});
 
 	const updateNode = useDispositionBuilderStore((state) => state.updateNode);
 
-	const { isInvalidatesNumber, requiresReschedule, isFinal } = form.values;
+	const { doNotCall, isInvalidatesNumber, requiresReschedule, isFinal } =
+		form.values;
 
 	const statusBadges = useMemo(
 		() =>
@@ -56,8 +60,14 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 							color: 'red',
 						}
 					: null,
+				doNotCall
+					? {
+							label: 'Do not call',
+							color: 'red',
+						}
+					: null,
 			].filter(Boolean) as Array<{ label: string; color: string }>,
-		[isFinal, isInvalidatesNumber, requiresReschedule]
+		[doNotCall, isFinal, isInvalidatesNumber, requiresReschedule]
 	);
 
 	const parentLabel = parentNode?.name ?? 'Root level outcome';
@@ -137,6 +147,26 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 									{...form.getInputProps('isInvalidatesNumber', {
 										type: 'checkbox',
 									})}
+									aria-label='Invalidates number'
+									size='sm'
+									color='blue'
+								/>
+							</div>
+
+							<div className={styles.toggleCard}>
+								<div className={styles.toggleContent}>
+									<Text className={styles.toggleTitle}>Do not call</Text>
+									<Text className={styles.toggleDescription} size='xs'>
+										Mark this outcome as do not call so the contact is excluded
+										from future dialing.
+									</Text>
+								</div>
+								<Switch
+									key={form.key('doNotCall')}
+									{...form.getInputProps('doNotCall', {
+										type: 'checkbox',
+									})}
+									aria-label='Do not call'
 									size='sm'
 									color='blue'
 								/>
@@ -157,6 +187,7 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 									{...form.getInputProps('requiresReschedule', {
 										type: 'checkbox',
 									})}
+									aria-label='Requires reschedule'
 									size='sm'
 									color='blue'
 								/>

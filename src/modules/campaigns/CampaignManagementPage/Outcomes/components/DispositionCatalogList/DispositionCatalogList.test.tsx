@@ -1,6 +1,23 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import DispositionCatalogList from './DispositionCatalogList';
+import { useDispositionCatalogsPaged } from '~/queries/dispositionCatalogQueries';
+
+type DispositionCatalogsPagedResult = ReturnType<
+	typeof useDispositionCatalogsPaged
+>;
+
+function mockDispositionCatalogsPaged(result: {
+	data: DispositionCatalogsPagedResult['data'];
+	isLoading: boolean;
+	isError: boolean;
+	error: DispositionCatalogsPagedResult['error'];
+	isFetching: boolean;
+}) {
+	vi.mocked(useDispositionCatalogsPaged).mockReturnValue(
+		result as unknown as DispositionCatalogsPagedResult
+	);
+}
 
 const mockCreateMutation = {
 	mutateAsync: vi.fn(),
@@ -9,11 +26,6 @@ const mockCreateMutation = {
 const mockUpdateMutation = {
 	mutateAsync: vi.fn(),
 	isPending: false,
-};
-const mockDeleteMutation = {
-	mutate: vi.fn(),
-	isPending: false,
-	variables: undefined as any,
 };
 const mockReactivateMutation = {
 	mutate: vi.fn(),
@@ -26,59 +38,15 @@ const mockDeactivateMutation = {
 	variables: undefined as any,
 };
 
-const mockUseCatalogs = vi.hoisted(() => {
-	let value = {
-		data: [
-			{
-				id: 1,
-				name: 'Catalog One',
-				description: 'Desc',
-				type: 'INBOUND',
-				createdAt: '2024-01-01T00:00:00Z',
-				isActive: true,
-			},
-		],
-		isLoading: false,
-		isError: false,
-		error: undefined,
-	};
-
-	return {
-		useDispositionCatalogs: () => value,
-		__setValue: (v: any) => {
-			value = v;
-		},
-		__reset: () => {
-			value = {
-				data: [
-					{
-						id: 1,
-						name: 'Catalog One',
-						description: 'Desc',
-						type: 'INBOUND',
-						createdAt: '2024-01-01T00:00:00Z',
-						isActive: true,
-					},
-				],
-				isLoading: false,
-				isError: false,
-				error: undefined,
-			};
-		},
-	};
-});
-
-const setRightComponent = vi.fn();
 const setCatalog = vi.fn();
 const clearCatalog = vi.fn();
 
 vi.mock('~/queries/dispositionCatalogQueries', () => ({
-	useDispositionCatalogs: () => mockUseCatalogs.useDispositionCatalogs(),
-	useCreateDispositionCatalog: () => mockCreateMutation,
-	useUpdateDispositionCatalog: () => mockUpdateMutation,
-	useDeleteDispositionCatalog: () => mockDeleteMutation,
-	useReactivateDispositionCatalog: () => mockReactivateMutation,
-	useDeactivateDispositionCatalog: () => mockDeactivateMutation,
+	useDispositionCatalogsPaged: vi.fn(),
+	useCreateDispositionCatalog: vi.fn(() => mockCreateMutation),
+	useUpdateDispositionCatalog: vi.fn(() => mockUpdateMutation),
+	useReactivateDispositionCatalog: vi.fn(() => mockReactivateMutation),
+	useDeactivateDispositionCatalog: vi.fn(() => mockDeactivateMutation),
 }));
 
 vi.mock('~/hooks/useDispositionLabel', () => ({
@@ -208,11 +176,12 @@ vi.mock('@mantine/modals', () => ({
 }));
 
 vi.mock('../../dispositionRightComponentStore', () => ({
-	useDispositionStore: () => ({
-		setRightComponent,
-		setCatalog,
-		clearCatalog,
-	}),
+	useDispositionStore: (selector: any) =>
+		selector({
+			catalog: null,
+			setCatalog,
+			clearCatalog,
+		}),
 }));
 
 vi.mock('@mantine/core', () => ({
@@ -285,15 +254,44 @@ vi.mock('@mantine/core', () => ({
 describe('DispositionCatalogList', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		mockUseCatalogs.__reset();
+		mockDispositionCatalogsPaged({
+			data: {
+				data: [
+					{
+						id: 1,
+						name: 'Catalog One',
+						description: 'Desc',
+						clientId: 1,
+						isDefault: false,
+						type: 'INBOUND',
+						createdAt: '2024-01-01T00:00:00Z',
+						updatedAt: '2024-01-01T00:00:00Z',
+						isActive: true,
+					},
+				],
+				total: 1,
+				limit: 10,
+				offset: 0,
+			},
+			isLoading: false,
+			isError: false,
+			error: null,
+			isFetching: false,
+		});
 	});
 
 	it('shows loader when loading', () => {
-		mockUseCatalogs.__setValue({
-			data: [],
+		mockDispositionCatalogsPaged({
+			data: {
+				data: [],
+				total: 0,
+				limit: 10,
+				offset: 0,
+			},
 			isLoading: true,
 			isError: false,
-			error: undefined,
+			error: null,
+			isFetching: false,
 		});
 
 		render(<DispositionCatalogList />);
@@ -302,11 +300,17 @@ describe('DispositionCatalogList', () => {
 	});
 
 	it('renders error state', () => {
-		mockUseCatalogs.__setValue({
-			data: [],
+		mockDispositionCatalogsPaged({
+			data: {
+				data: [],
+				total: 0,
+				limit: 10,
+				offset: 0,
+			},
 			isLoading: false,
 			isError: true,
 			error: new Error('fail'),
+			isFetching: false,
 		});
 
 		render(<DispositionCatalogList />);
@@ -317,11 +321,17 @@ describe('DispositionCatalogList', () => {
 	});
 
 	it('renders empty state and triggers create flow', () => {
-		mockUseCatalogs.__setValue({
-			data: [],
+		mockDispositionCatalogsPaged({
+			data: {
+				data: [],
+				total: 0,
+				limit: 10,
+				offset: 0,
+			},
 			isLoading: false,
 			isError: false,
-			error: undefined,
+			error: null,
+			isFetching: false,
 		});
 
 		render(<DispositionCatalogList />);
@@ -334,31 +344,69 @@ describe('DispositionCatalogList', () => {
 		expect(screen.getByTestId('catalog-form-create')).toBeInTheDocument();
 	});
 
-	it('renders table rows and opens edit form on row click', () => {
-		render(<DispositionCatalogList />);
+	it('renders table rows and selects catalog on row click', () => {
+		const onEditNodes = vi.fn();
+		render(<DispositionCatalogList onEditNodes={onEditNodes} />);
 
 		expect(screen.getByTestId('base-table')).toBeInTheDocument();
 		fireEvent.click(screen.getByTestId('row-0'));
+
+		expect(setCatalog).toHaveBeenCalledWith(
+			expect.objectContaining({ id: 1, name: 'Catalog One' })
+		);
+		expect(onEditNodes).toHaveBeenCalledWith(
+			expect.objectContaining({ id: 1, name: 'Catalog One' })
+		);
+		expect(screen.queryByTestId('modal')).not.toBeInTheDocument();
+	});
+
+	it('opens edit details form from action icon', () => {
+		render(<DispositionCatalogList />);
+
+		fireEvent.click(screen.getByLabelText('Edit details'));
 
 		expect(screen.getByTestId('modal')).toBeInTheDocument();
 		expect(screen.getByTestId('catalog-form-edit')).toBeInTheDocument();
 	});
 
-	it('reactivates, deactivates and deletes catalog', () => {
-		mockUseCatalogs.__setValue({
-			data: [
-				{
-					id: 2,
-					name: 'Inactive',
-					description: '',
-					type: 'INBOUND',
-					createdAt: '',
-					isActive: false,
-				},
-			],
+	it('selects catalog nodes from action icon', () => {
+		const onEditNodes = vi.fn();
+		render(<DispositionCatalogList onEditNodes={onEditNodes} />);
+
+		fireEvent.click(screen.getByLabelText('Edit nodes'));
+
+		expect(setCatalog).toHaveBeenCalledWith(
+			expect.objectContaining({ id: 1, name: 'Catalog One' })
+		);
+		expect(onEditNodes).toHaveBeenCalledWith(
+			expect.objectContaining({ id: 1, name: 'Catalog One' })
+		);
+	});
+
+	it('reactivates and deactivates catalog', () => {
+		mockDispositionCatalogsPaged({
+			data: {
+				data: [
+					{
+						id: 2,
+						name: 'Inactive',
+						description: '',
+						clientId: 1,
+						isDefault: false,
+						type: 'INBOUND',
+						createdAt: '',
+						updatedAt: '',
+						isActive: false,
+					},
+				],
+				total: 1,
+				limit: 10,
+				offset: 0,
+			},
 			isLoading: false,
 			isError: false,
-			error: undefined,
+			error: null,
+			isFetching: false,
 		});
 
 		const { unmount } = render(<DispositionCatalogList />);
@@ -371,20 +419,29 @@ describe('DispositionCatalogList', () => {
 
 		unmount();
 
-		mockUseCatalogs.__setValue({
-			data: [
-				{
-					id: 3,
-					name: 'Active',
-					description: '',
-					type: 'INBOUND',
-					createdAt: '',
-					isActive: true,
-				},
-			],
+		mockDispositionCatalogsPaged({
+			data: {
+				data: [
+					{
+						id: 3,
+						name: 'Active',
+						description: '',
+						clientId: 1,
+						isDefault: false,
+						type: 'INBOUND',
+						createdAt: '',
+						updatedAt: '',
+						isActive: true,
+					},
+				],
+				total: 1,
+				limit: 10,
+				offset: 0,
+			},
 			isLoading: false,
 			isError: false,
-			error: undefined,
+			error: null,
+			isFetching: false,
 		});
 
 		render(<DispositionCatalogList />);
@@ -394,33 +451,5 @@ describe('DispositionCatalogList', () => {
 			{ catalogId: 3 },
 			expect.any(Object)
 		);
-
-		fireEvent.click(screen.getByLabelText('Delete'));
-		expect(mockDeleteMutation.mutate).toHaveBeenCalledWith(
-			{ id: 3 },
-			expect.any(Object)
-		);
-	});
-
-	it('supports pagination controls when data exceeds page size', () => {
-		mockUseCatalogs.__setValue({
-			data: Array.from({ length: 11 }).map((_, index) => ({
-				id: index + 1,
-				name: `Catalog ${index + 1}`,
-				description: '',
-				type: 'INBOUND',
-				createdAt: '',
-				isActive: true,
-			})),
-			isLoading: false,
-			isError: false,
-			error: undefined,
-		});
-
-		render(<DispositionCatalogList />);
-
-		expect(screen.getByTestId('pagination')).toBeInTheDocument();
-		fireEvent.click(screen.getByText('Next'));
-		expect(screen.getByTestId('pagination-value')).toHaveTextContent('2');
 	});
 });

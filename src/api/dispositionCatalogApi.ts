@@ -3,6 +3,7 @@ import type {
 	DispositionCatalogModel,
 	CreateDispositionCatalog,
 } from '~/models/DispositionCatalogModels';
+import type { PaginatedResponse } from '~/models/CampaignsModel';
 import type { DispositionFlowModel } from '~/models/DispositionFlowModel';
 import { DEFAULT_API_URL } from './config';
 
@@ -59,6 +60,7 @@ export interface CopiedDispositionCatalogResponse {
 		name: string;
 		description: string;
 		isInvalidatesNumber: boolean;
+		doNotCall: boolean;
 		requiresReschedule: boolean;
 		isFinal: boolean;
 		order: number;
@@ -103,6 +105,31 @@ const dispositionCatalogApi = (_authHeader?: Record<string, string>) => {
 			const response = await axios.get<DispositionCatalogModel[]>(
 				url.toString()
 			);
+			return response.data;
+		},
+
+		// GET all disposition catalogs (paged, server-side sort)
+		getAllDispositionCatalogsAllPaged: async (queryParams?: {
+			limit?: number;
+			offset?: number;
+			sortBy?: string;
+			sortOrder?: 'ASC' | 'DESC';
+			type?: string;
+			[key: string]: any;
+		}) => {
+			const url = new URL(`${DEFAULT_API_URL}/disposition-catalogs/all`);
+
+			if (queryParams) {
+				Object.entries(queryParams).forEach(([key, value]) => {
+					if (value !== undefined && value !== null) {
+						url.searchParams.append(key, String(value));
+					}
+				});
+			}
+
+			const response = await axios.get<
+				PaginatedResponse<DispositionCatalogModel>
+			>(url.toString());
 			return response.data;
 		},
 

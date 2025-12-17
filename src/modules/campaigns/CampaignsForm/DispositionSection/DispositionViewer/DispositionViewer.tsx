@@ -13,6 +13,7 @@ import {
 import {
 	IconClock,
 	IconPhoneOff,
+	IconPhoneX,
 	IconChevronDown,
 	IconChevronRight,
 	IconFolder,
@@ -72,6 +73,8 @@ const NodeViewer: React.FC<NodeViewerProps> = ({
 	const innerStyle: React.CSSProperties = {
 		'--node-indent': `${Math.max(cardOffset - 12, 0)}px`,
 	} as React.CSSProperties;
+
+	const isDoNotCall = Boolean(node.doNotCall ?? node.do_not_call);
 
 	return (
 		<>
@@ -155,14 +158,31 @@ const NodeViewer: React.FC<NodeViewerProps> = ({
 
 					<div className={styles.nodeAside}>
 						<div className={styles.nodeIcons}>
+							{isDoNotCall ? (
+								<Tooltip withArrow label='Do not call'>
+									<IconPhoneX
+										size={16}
+										color='var(--mantine-color-red-6)'
+										aria-label='Do not call'
+									/>
+								</Tooltip>
+							) : null}
 							{node?.isInvalidatesNumber && (
 								<Tooltip withArrow label='Invalidates number'>
-									<IconPhoneOff size={16} color='var(--mantine-color-red-6)' />
+									<IconPhoneOff
+										size={16}
+										color='var(--mantine-color-red-6)'
+										aria-label='Invalidates number'
+									/>
 								</Tooltip>
 							)}
 							{node?.requiresReschedule && (
 								<Tooltip withArrow label='Requires reschedule'>
-									<IconClock size={16} color='var(--mantine-color-orange-6)' />
+									<IconClock
+										size={16}
+										color='var(--mantine-color-orange-6)'
+										aria-label='Requires reschedule'
+									/>
 								</Tooltip>
 							)}
 						</div>

@@ -1,214 +1,132 @@
 import {
-	useMemo,
 	useState,
 	forwardRef,
 	useImperativeHandle,
 	useCallback,
+	useEffect,
+	useRef,
 } from 'react';
 import {
 	Loader,
 	Center,
 	Text,
-	Group,
 	ActionIcon,
-	Tooltip,
-	Pagination,
-	Badge,
 	Button,
 	Modal,
 	LoadingOverlay,
 } from '@mantine/core';
-import {
-	IconTrash,
-	IconRefresh,
-	IconBan,
-	IconPlus,
-	IconDatabase,
-} from '@tabler/icons-react';
+import { IconPlus, IconDatabase } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { modals } from '@mantine/modals';
+import type { SortingState } from '@tanstack/react-table';
 import { useDispositionLabel } from '~/hooks/useDispositionLabel';
 import {
-	useDispositionCatalogs,
+	useDispositionCatalogsPaged,
 	useCreateDispositionCatalog,
 	useUpdateDispositionCatalog,
-	useDeleteDispositionCatalog,
 	useReactivateDispositionCatalog,
 	useDeactivateDispositionCatalog,
 } from '~/queries/dispositionCatalogQueries';
 import DispositionCatalogForm from '../DispositionCatalogForm';
 import EmptyState from '~/components/EmptyState';
-import { type ColumnDef } from '@tanstack/react-table';
 import type { DispositionCatalogModel } from '~/models/DispositionCatalogModels';
 import styles from './DispositionCatalogList.module.css';
 import BaseTable from '~/components/BaseTable';
 import SectionCard from '~/components/SectionCard/SectionCard';
+import { useDispositionStore } from '../../dispositionRightComponentStore';
+import { useDispositionCatalogTableColumns } from './useDispositionCatalogTableColumns';
 
 export interface DispositionCatalogListHandles {
 	openCreateForm: () => void;
 }
 
-const DispositionCatalogList = forwardRef<DispositionCatalogListHandles>(
-	(_, ref) => {
-		const { data, isLoading, isError, isFetching } = useDispositionCatalogs();
-		// Local state handling replaced global store for right component
-		// const { setRightComponent, setCatalog, clearCatalog } = useDispositionStore((s) => s);
-		const createMutation = useCreateDispositionCatalog();
-		const updateMutation = useUpdateDispositionCatalog();
-		const deleteMutation = useDeleteDispositionCatalog();
-		const reactivateMutation = useReactivateDispositionCatalog();
-		const deactivateMutation = useDeactivateDispositionCatalog();
-		const dispositionLabel = useDispositionLabel();
+type DispositionCatalogListProps = {
+	onEditNodes?: (catalog: DispositionCatalogModel) => void;
+};
 
-		const [isModalOpen, setIsModalOpen] = useState(false);
-		const [selectedCatalog, setSelectedCatalog] =
-			useState<DispositionCatalogModel | null>(null);
+const DispositionCatalogList = forwardRef<
+	DispositionCatalogListHandles,
+	DispositionCatalogListProps
+>(({ onEditNodes }, ref) => {
+	const [pageIndex, setPageIndex] = useState(0);
+	const [pageSize, setPageSize] = useState(10);
+	const [sorting, setSorting] = useState<SortingState>([
+		{ id: 'createdAt', desc: true },
+	]);
 
-		// Pagination state - must be declared before any early returns
-		const [page, setPage] = useState(1);
-		const pageSize = 10;
+	const sortBy = sorting[0]?.id;
+	const sortOrder = sorting[0]?.desc ? 'DESC' : 'ASC';
+	const offset = pageIndex * pageSize;
 
-		// Table columns definition
-		const columns = useMemo<ColumnDef<DispositionCatalogModel>[]>(
-			() => [
-				{
-					id: 'nameAndDescription',
-					header: 'Name',
-					cell: ({ row }) => {
-						const name = row.original.name;
-						const description = row.original.description;
-						const type = row.original.type;
-						return (
-							<div className={styles.nameCell}>
-								<div className={styles.nameRow}>
-									<Text fw={600} className={styles.nameText}>
-										{name}
-									</Text>
-									{type && (
-										<div className={styles.typeBadge}>
-											<Badge
-												size='xs'
-												variant='light'
-												color={type === 'INBOUND' ? 'blue' : 'green'}
-											>
-												{type}
-											</Badge>
-										</div>
-									)}
-								</div>
-								{description && (
-									<Text size='sm' c='dimmed' className={styles.descriptionText}>
-										{description}
-									</Text>
-								)}
-							</div>
-						);
-					},
-				},
-				{
-					id: 'status',
-					header: 'Status',
-					accessorKey: 'isActive',
-					cell: ({ row }) => (
-						<Badge
-							size='sm'
-							variant='dot'
-							color={row.original.isActive ? 'green' : 'gray'}
-						>
-							{row.original.isActive ? 'Active' : 'Inactive'}
-						</Badge>
-					),
-				},
-				{
-					accessorKey: 'createdAt',
-					header: 'Created At',
-					cell: (info) =>
-						info.getValue()
-							? new Date(info.getValue() as string).toLocaleString()
-							: '-',
-				},
-				{
-					id: 'actions',
-					header: 'Actions',
-					cell: ({ row }) => (
-						<Group gap={4}>
-							{!row.original.isActive && (
-								<Tooltip label='Reactivate' withArrow>
-									<ActionIcon
-										color='green'
-										variant='light'
-										size='sm'
-										onClick={(e) => {
-											e.stopPropagation();
-											handleReactivate(row.original);
-										}}
-										loading={
-											reactivateMutation.isPending &&
-											reactivateMutation.variables?.catalogId ===
-												row.original.id
-										}
-										aria-label='Reactivate'
-									>
-										<IconRefresh size={16} />
-									</ActionIcon>
-								</Tooltip>
-							)}
-							{row.original.isActive && (
-								<Tooltip label='Deactivate' withArrow>
-									<ActionIcon
-										color='orange'
-										variant='light'
-										size='sm'
-										onClick={(e) => {
-											e.stopPropagation();
-											handleDeactivate(row.original);
-										}}
-										loading={
-											deactivateMutation.isPending &&
-											deactivateMutation.variables?.catalogId ===
-												row.original.id
-										}
-										aria-label='Deactivate'
-									>
-										<IconBan size={16} />
-									</ActionIcon>
-								</Tooltip>
-							)}
-							<Tooltip label='Delete' withArrow>
-								<ActionIcon
-									color='red'
-									variant='light'
-									size='sm'
-									onClick={(e) => {
-										e.stopPropagation();
-										handleDelete(row.original);
-									}}
-									loading={
-										deleteMutation.isPending &&
-										deleteMutation.variables?.id === row.original.id
-									}
-									aria-label='Delete'
-								>
-									<IconTrash size={16} />
-								</ActionIcon>
-							</Tooltip>
-						</Group>
-					),
-					enableSorting: false,
-				},
-			],
-			[
-				deleteMutation.isPending,
-				deleteMutation.variables,
-				reactivateMutation.isPending,
-				reactivateMutation.variables,
-				deactivateMutation.isPending,
-				deactivateMutation.variables,
-			]
-		);
+	const {
+		data: paginatedResponse,
+		isLoading,
+		isError,
+		isFetching,
+	} = useDispositionCatalogsPaged({
+		limit: pageSize,
+		offset,
+		sortBy,
+		sortOrder,
+	});
 
-		// Handler for reactivate
-		const handleReactivate = (catalog: DispositionCatalogModel) => {
+	const data = paginatedResponse?.data ?? [];
+	const total = paginatedResponse?.total ?? 0;
+	const pageCount = total > 0 ? Math.ceil(total / pageSize) : 0;
+	const setCatalog = useDispositionStore((state) => state.setCatalog);
+	const selectedCatalogId = useDispositionStore(
+		(state) => state.catalog?.id ?? null
+	);
+	const createMutation = useCreateDispositionCatalog();
+	const updateMutation = useUpdateDispositionCatalog();
+	const reactivateMutation = useReactivateDispositionCatalog();
+	const deactivateMutation = useDeactivateDispositionCatalog();
+	const dispositionLabel = useDispositionLabel();
+
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [selectedCatalog, setSelectedCatalog] =
+		useState<DispositionCatalogModel | null>(null);
+
+	const selectedCatalogIdRef = useRef<number | null>(selectedCatalogId);
+	useEffect(() => {
+		selectedCatalogIdRef.current = selectedCatalogId;
+	}, [selectedCatalogId]);
+
+	type CatalogIdVariables = { catalogId: number } | undefined;
+
+	const reactivateStateRef = useRef<{
+		isPending: boolean;
+		variables: CatalogIdVariables;
+	}>({ isPending: false, variables: undefined });
+	reactivateStateRef.current = {
+		isPending: reactivateMutation.isPending,
+		variables: reactivateMutation.variables as CatalogIdVariables,
+	};
+
+	const deactivateStateRef = useRef<{
+		isPending: boolean;
+		variables: CatalogIdVariables;
+	}>({ isPending: false, variables: undefined });
+	deactivateStateRef.current = {
+		isPending: deactivateMutation.isPending,
+		variables: deactivateMutation.variables as CatalogIdVariables,
+	};
+
+	const handleSelectCatalog = useCallback(
+		(catalog: DispositionCatalogModel) => {
+			setCatalog(catalog);
+			onEditNodes?.(catalog);
+		},
+		[onEditNodes, setCatalog]
+	);
+
+	const handleEditDetails = useCallback((catalog: DispositionCatalogModel) => {
+		setSelectedCatalog(catalog);
+		setIsModalOpen(true);
+	}, []);
+
+	const handleReactivate = useCallback(
+		(catalog: DispositionCatalogModel) => {
 			modals.openConfirmModal({
 				title: dispositionLabel('Reactivate Outcome Catalog'),
 				labels: {
@@ -236,7 +154,7 @@ const DispositionCatalogList = forwardRef<DispositionCatalogListHandles>(
 									color: 'green',
 								});
 							},
-							onError: (error: any) => {
+							onError: (error: Error) => {
 								notifications.show({
 									title: dispositionLabel('Reactivation failed'),
 									message: dispositionLabel(
@@ -249,10 +167,12 @@ const DispositionCatalogList = forwardRef<DispositionCatalogListHandles>(
 					);
 				},
 			});
-		};
+		},
+		[dispositionLabel, reactivateMutation]
+	);
 
-		// Handler for deactivate
-		const handleDeactivate = (catalog: DispositionCatalogModel) => {
+	const handleDeactivate = useCallback(
+		(catalog: DispositionCatalogModel) => {
 			modals.openConfirmModal({
 				title: dispositionLabel('Deactivate Outcome Catalog'),
 				labels: {
@@ -280,7 +200,7 @@ const DispositionCatalogList = forwardRef<DispositionCatalogListHandles>(
 									color: 'blue',
 								});
 							},
-							onError: (error: any) => {
+							onError: (error: Error) => {
 								notifications.show({
 									title: dispositionLabel('Deactivation failed'),
 									message: dispositionLabel(
@@ -293,196 +213,194 @@ const DispositionCatalogList = forwardRef<DispositionCatalogListHandles>(
 					);
 				},
 			});
-		};
+		},
+		[deactivateMutation, dispositionLabel]
+	);
 
-		// Handler for delete
-		const handleDelete = (catalog: DispositionCatalogModel) => {
-			deleteMutation.mutate(
-				{ id: catalog.id },
-				{
-					onSuccess: () => {
-						notifications.show({
-							title: 'Catalog deleted',
-							message: dispositionLabel(
-								'Outcome catalog was deleted successfully.'
-							),
-							color: 'teal',
-						});
-					},
-					onError: (error: any) => {
-						notifications.show({
-							title: 'Delete failed',
-							message: dispositionLabel(
-								error?.message || 'Failed to delete outcome catalog.'
-							),
-							color: 'red',
-						});
-					},
-				}
-			);
-		};
+	// Table columns definition
+	const columns = useDispositionCatalogTableColumns({
+		onEditNodes: handleSelectCatalog,
+		onEditDetails: handleEditDetails,
+		onReactivate: handleReactivate,
+		onDeactivate: handleDeactivate,
+		reactivateState: reactivateStateRef.current,
+		deactivateState: deactivateStateRef.current,
+	});
 
-		// Paginated data
-		const paginatedData = useMemo<DispositionCatalogModel[]>(() => {
-			if (!data) return [];
-			const start = (page - 1) * pageSize;
-			return data.slice(start, start + pageSize);
-		}, [data, page]);
+	// Handler for create - wrapped in useCallback so it can be used by useImperativeHandle
+	const handleCreate = useCallback(() => {
+		setSelectedCatalog(null);
+		setIsModalOpen(true);
+	}, []);
 
-		// Handler for create - wrapped in useCallback so it can be used by useImperativeHandle
-		const handleCreate = useCallback(() => {
-			setSelectedCatalog(null);
-			setIsModalOpen(true);
-		}, []);
+	// Expose imperative handle so parent can open the create form
+	useImperativeHandle(
+		ref,
+		() => ({
+			openCreateForm: handleCreate,
+		}),
+		[handleCreate]
+	);
 
-		// Expose imperative handle so parent can open the create form
-		useImperativeHandle(
-			ref,
-			() => ({
-				openCreateForm: handleCreate,
-			}),
-			[handleCreate]
-		);
-
-		if (isLoading) {
-			return (
-				<Center>
-					<Loader />
-				</Center>
-			);
-		}
-
-		if (isError) {
-			return (
-				<Center>
-					<Text c='red'>Failed to load disposition catalogs.</Text>
-				</Center>
-			);
-		}
-
-		// Handler for edit
-		const handleEdit = (catalog: DispositionCatalogModel) => {
-			setSelectedCatalog(catalog);
-			setIsModalOpen(true);
-		};
-
+	if (isLoading) {
 		return (
-			<div className={styles.root}>
-				<SectionCard
-					icon={IconDatabase}
-					title='Outcome Catalogs'
-					description='Create and manage outcome catalogs to group disposition nodes for campaigns.'
-					padding='lg'
-					headerActions={
-						<ActionIcon variant='filled' color='blue' onClick={handleCreate}>
-							<IconPlus size={18} />
-						</ActionIcon>
-					}
-				>
-					<LoadingOverlay
-						visible={isFetching && !isLoading}
-						zIndex={100}
-						overlayProps={{ radius: 'sm', blur: 2 }}
-					/>
-					{!data || data.length === 0 ? (
-						<div className={styles.emptyStateContainer}>
-							<EmptyState
-								icon={<IconPlus size={48} />}
-								message='No outcome catalogs found'
-								description='Get started by creating your first outcome catalog'
-								action={
-									<Button
-										leftSection={<IconPlus size={16} />}
-										onClick={handleCreate}
-									>
-										Create Catalog
-									</Button>
-								}
+			<Center>
+				<Loader />
+			</Center>
+		);
+	}
+
+	if (isError) {
+		return (
+			<Center>
+				<Text c='red'>Failed to load disposition catalogs.</Text>
+			</Center>
+		);
+	}
+
+	return (
+		<div className={styles.root}>
+			<SectionCard
+				icon={IconDatabase}
+				title='Outcome Catalogs'
+				description='Create and manage outcome catalogs to group disposition nodes for campaigns.'
+				padding='xs'
+				headerActions={
+					<ActionIcon variant='light' color='blue' onClick={handleCreate}>
+						<IconPlus size={18} />
+					</ActionIcon>
+				}
+			>
+				<LoadingOverlay
+					visible={isFetching && !isLoading}
+					zIndex={100}
+					overlayProps={{ radius: 'sm', blur: 2 }}
+				/>
+				{total === 0 ? (
+					<div className={styles.emptyStateContainer}>
+						<EmptyState
+							icon={<IconPlus size={48} />}
+							message='No outcome catalogs found'
+							description='Get started by creating your first outcome catalog'
+							action={
+								<Button
+									leftSection={<IconPlus size={16} />}
+									onClick={handleCreate}
+								>
+									Create Catalog
+								</Button>
+							}
+						/>
+					</div>
+				) : (
+					<>
+						<div className={styles.table}>
+							<BaseTable
+								data={data}
+								columns={columns}
+								onRowClick={(row) => handleSelectCatalog(row)}
+								className={styles.table}
+								density='compact'
+								filterMode='server'
+								enablePagination
+								showPaginationControls
+								pageCount={pageCount}
+								pageIndex={pageIndex}
+								pageSize={pageSize}
+								initialSort={sorting}
+								onPaginationChange={(nextPageIndex, nextPageSize) => {
+									setPageIndex(nextPageIndex);
+									setPageSize(nextPageSize);
+								}}
+								onSortingChange={(nextSorting) => {
+									setSorting(nextSorting);
+									setPageIndex(0);
+								}}
 							/>
 						</div>
-					) : (
-						<>
-							<div className={styles.table}>
-								<BaseTable
-									data={paginatedData}
-									columns={columns}
-									onRowClick={(row) => handleEdit(row)}
-									className={styles.table}
-									density='default'
-								/>
-							</div>
-							{data.length > pageSize && (
-								<Center mt='md'>
-									<Pagination
-										total={Math.ceil(data.length / pageSize)}
-										value={page}
-										onChange={setPage}
-										size='sm'
-										withEdges
-									/>
-								</Center>
-							)}
-						</>
-					)}
-				</SectionCard>
+					</>
+				)}
+			</SectionCard>
 
-				<Modal
-					opened={isModalOpen}
-					onClose={() => setIsModalOpen(false)}
-					title={selectedCatalog ? 'Edit Catalog' : 'Create Catalog'}
-					size='lg'
-				>
-					{isModalOpen && (
+			<Modal
+				opened={isModalOpen}
+				onClose={() => setIsModalOpen(false)}
+				title={selectedCatalog ? 'Edit Catalog' : 'Create Catalog'}
+				size='lg'
+			>
+				{isModalOpen &&
+					(selectedCatalog ? (
 						<DispositionCatalogForm
-							key={selectedCatalog?.id || 'create'}
-							mode={(selectedCatalog ? 'edit' : 'create') as any}
-							initialValues={selectedCatalog || undefined}
-							loading={
-								selectedCatalog
-									? updateMutation.isPending
-									: createMutation.isPending
-							}
+							key={selectedCatalog.id}
+							mode={'edit' as const}
+							initialValues={selectedCatalog}
+							loading={updateMutation.isPending}
 							onSubmit={(values) =>
-								selectedCatalog
-									? updateMutation.mutateAsync({
-											id: selectedCatalog.id,
-											data: { ...values, isDefault: !!values.isDefault },
-										})
-									: createMutation.mutateAsync(values)
+								updateMutation.mutateAsync({
+									id: selectedCatalog.id,
+									data: { ...values, isDefault: !!values.isDefault },
+								})
 							}
-							onSuccess={(_catalog) => {
+							onSuccess={() => {
 								notifications.show({
-									title: selectedCatalog
-										? 'Catalog updated'
-										: 'Catalog created',
+									title: 'Catalog updated',
 									message: dispositionLabel(
-										selectedCatalog
-											? 'Outcome catalog was updated successfully.'
-											: 'Outcome catalog was created successfully.'
+										'Outcome catalog was updated successfully.'
 									),
 									color: 'teal',
 								});
 								setIsModalOpen(false);
 							}}
-							onError={(error: any) => {
+							onError={(error: unknown) => {
+								const errorMessage =
+									error instanceof Error
+										? error.message
+										: (error as { message: string })?.message;
 								notifications.show({
-									title: selectedCatalog ? 'Update failed' : 'Create failed',
+									title: 'Update failed',
 									message: dispositionLabel(
-										error?.message ||
-											(selectedCatalog
-												? 'Failed to update outcome catalog.'
-												: 'Failed to create outcome catalog.')
+										errorMessage || 'Failed to update outcome catalog.'
 									),
 									color: 'red',
 								});
 							}}
 						/>
-					)}
-				</Modal>
-			</div>
-		);
-	}
-);
+					) : (
+						<DispositionCatalogForm
+							key='create'
+							mode={'create' as const}
+							initialValues={undefined}
+							loading={createMutation.isPending}
+							onSubmit={(values) => createMutation.mutateAsync(values)}
+							onSuccess={() => {
+								notifications.show({
+									title: 'Catalog created',
+									message: dispositionLabel(
+										'Outcome catalog was created successfully.'
+									),
+									color: 'teal',
+								});
+								setIsModalOpen(false);
+							}}
+							onError={(error: unknown) => {
+								const errorMessage =
+									error instanceof Error
+										? error.message
+										: (error as { message: string })?.message;
+								notifications.show({
+									title: 'Create failed',
+									message: dispositionLabel(
+										errorMessage || 'Failed to create outcome catalog.'
+									),
+									color: 'red',
+								});
+							}}
+						/>
+					))}
+			</Modal>
+		</div>
+	);
+});
 
 DispositionCatalogList.displayName = 'DispositionCatalogList';
 

@@ -7,6 +7,7 @@ import {
 	IconSettings,
 	IconTools,
 	IconLibrary,
+	IconBook,
 	IconUsers,
 	IconKey,
 	IconBuilding,
@@ -112,6 +113,13 @@ export const UserMenu: React.FC = () => {
 		{
 			category: 'Tools & Resources',
 			items: [
+				{
+					label: 'Knowledge Bases',
+					icon: <IconBook size={16} />,
+					path: '/knowledge-bases',
+					module: ModuleEnum.KNOWLEDGE_BASES,
+					permission: PermissionEnum.READ,
+				},
 				{
 					label: 'Tools',
 					icon: <IconTools size={16} />,

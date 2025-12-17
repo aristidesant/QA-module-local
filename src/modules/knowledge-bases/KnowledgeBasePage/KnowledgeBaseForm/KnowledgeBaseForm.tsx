@@ -31,6 +31,9 @@ import useKnowledgeBaseStore from '../store/knowledgeBaseStore';
 import RightSectionCard from '~/components/RightSectionCard/RightSectionCard';
 import { isValidUrl, normalizeUrl, inferType } from '../../utils';
 import styles from './KnowledgeBaseForm.module.css';
+import { usePermissions } from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 
 // Re-export utils for backward compatibility with tests
 export { isValidUrl, normalizeUrl, inferType } from '../../utils';
@@ -48,12 +51,22 @@ type FormValues = {
 
 const KnowledgeBaseForm = ({ id }: Props = {}) => {
 	const clearRight = useKnowledgeBaseStore((s) => s.clearRightComponent);
+	const { canPerformAction } = usePermissions();
 	const createMutation = useCreateKnowledgeBase();
 	const updateMutation = useUpdateKnowledgeBase();
 	const { data: kb, isLoading } = useKnowledgeBase(id);
 
 	// Track if editing an existing knowledge base
 	const isEditMode = Boolean(id);
+	const canCreate = canPerformAction(
+		ModuleEnum.KNOWLEDGE_BASES,
+		PermissionEnum.CREATE
+	);
+	const canUpdate = canPerformAction(
+		ModuleEnum.KNOWLEDGE_BASES,
+		PermissionEnum.UPDATE
+	);
+	const isReadOnly = isEditMode ? !canUpdate : !canCreate;
 
 	const form = useForm<FormValues>({
 		initialValues: {
@@ -132,8 +145,11 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 		if (!error) return null;
 		if (typeof error === 'string') return error;
 		if (error instanceof Error) return error.message;
-		if (typeof (error as any)?.response?.data?.message === 'string') {
-			return (error as any).response.data.message as string;
+		const maybeAxios = error as {
+			response?: { data?: { message?: unknown } };
+		};
+		if (typeof maybeAxios?.response?.data?.message === 'string') {
+			return maybeAxios.response.data.message;
 		}
 		return 'Unable to save this knowledge base. Please try again.';
 	};
@@ -158,6 +174,7 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 	};
 
 	const handleSubmit = form.onSubmit(async (values) => {
+		if (isReadOnly) return;
 		try {
 			const type = effectiveType || inferType(values.content, values.file);
 
@@ -280,6 +297,15 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 						{mutationError}
 					</Alert>
 				)}
+				{isReadOnly && (
+					<Alert
+						color='gray'
+						icon={<IconInfoCircle size={16} />}
+						className={styles.alert}
+					>
+						You have read-only access to knowledge bases.
+					</Alert>
+				)}
 
 				<Stack gap='sm' className={styles.section}>
 					<div className={styles.sectionHeader}>
@@ -292,7 +318,7 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 						label='Name'
 						placeholder='e.g., Product FAQs'
 						required
-						disabled={isLoading}
+						disabled={isLoading || isReadOnly}
 						withAsterisk
 						{...form.getInputProps('name')}
 					/>
@@ -301,7 +327,7 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 						placeholder='Short internal note about this knowledge base'
 						autosize
 						minRows={3}
-						disabled={isLoading}
+						disabled={isLoading || isReadOnly}
 						{...form.getInputProps('description')}
 					/>
 				</Stack>
@@ -345,7 +371,7 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 						}
 						autosize
 						minRows={4}
-						disabled={isLoading || hasFile}
+						disabled={isLoading || hasFile || isReadOnly}
 						value={form.values.content}
 						onChange={handleContentChange}
 						error={form.errors.content}
@@ -374,7 +400,7 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 										? 'Clear the text to upload a file instead.'
 										: 'Supported: PDF, TXT, MD. Max 25MB.'
 								}
-								disabled={isLoading || hasContent}
+								disabled={isLoading || hasContent || isReadOnly}
 							/>
 							{form.values.file && (
 								<Text size='sm' mt='xs' c='dimmed'>
@@ -403,13 +429,15 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 					>
 						Cancel
 					</Button>
-					<Button
-						type='submit'
-						loading={isSaving}
-						disabled={!form.isValid() || isLoading}
-					>
-						Save
-					</Button>
+					{!isReadOnly && (
+						<Button
+							type='submit'
+							loading={isSaving}
+							disabled={!form.isValid() || isLoading}
+						>
+							Save
+						</Button>
+					)}
 				</Group>
 			</form>
 		</RightSectionCard>

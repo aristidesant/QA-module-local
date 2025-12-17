@@ -219,6 +219,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 		const childCount = node.children ? node.children.length : 0;
 		const isInactive = nodeData.isActive === false;
 		const isProtectedNode = isProtectedDefaultNode(nodeData, catalogType);
+		const isDoNotCall = Boolean(nodeData.doNotCall ?? nodeData.do_not_call);
 		const nodeTypeLabel = hasChildren ? 'Group' : 'Outcome';
 		const levelIndent = node.level * 16;
 		const cardOffset = node.level > 0 ? Math.min(levelIndent, 80) : 0;
@@ -321,6 +322,16 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 									<Badge size='xs' variant='light' color='blue' radius='sm'>
 										{nodeTypeLabel}
 									</Badge>
+									{isDoNotCall && (
+										<Tooltip
+											label='Do not call this client again after this outcome'
+											withArrow
+										>
+											<Badge size='xs' variant='light' color='red' radius='sm'>
+												Do not call
+											</Badge>
+										</Tooltip>
+									)}
 								</div>
 							</div>
 							<Text className={styles.nodeMetaText} size='xs'>

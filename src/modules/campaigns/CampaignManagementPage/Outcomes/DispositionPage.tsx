@@ -1,10 +1,9 @@
-import { useEffect, useRef } from 'react';
-import { Button } from '@mantine/core';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { Button, Modal, Text } from '@mantine/core';
 import { IconOutbound } from '@tabler/icons-react';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 
 import { useDispositionStore } from './dispositionRightComponentStore';
-import FallbackRightComponent from '~/components/FallbackRightComponent';
 import DispositionCatalogList, {
 	DispositionCatalogListHandles,
 } from './components/DispositionCatalogList';
@@ -17,16 +16,19 @@ interface DispositionPageProps {
 const DispositionPage: React.FC<DispositionPageProps> = ({
 	embedded = false,
 }) => {
-	const { rightComponent, catalog, setRightComponent } = useDispositionStore(
-		(s: any) => s
-	);
+	const catalog = useDispositionStore((state) => state.catalog);
+	const clearCatalog = useDispositionStore((state) => state.clearCatalog);
 	const catalogListRef = useRef<DispositionCatalogListHandles>(null);
+	const [nodesModalOpen, setNodesModalOpen] = useState(false);
 
-	// clean the right component
 	useEffect(() => {
 		return () => {
-			setRightComponent(null);
+			clearCatalog();
 		};
+	}, [clearCatalog]);
+
+	const handleOpenNodesModal = useCallback(() => {
+		setNodesModalOpen(true);
 	}, []);
 
 	const handleAddNew = () => {
@@ -35,8 +37,32 @@ const DispositionPage: React.FC<DispositionPageProps> = ({
 
 	const content = (
 		<>
-			<DispositionCatalogList ref={catalogListRef} />
-			{catalog && <DispositionCatalogNode catalogId={catalog.id} />}
+			<DispositionCatalogList
+				ref={catalogListRef}
+				onEditNodes={handleOpenNodesModal}
+			/>
+			<Modal
+				opened={nodesModalOpen && !!catalog}
+				onClose={() => setNodesModalOpen(false)}
+				title={
+					<div>
+						<Text size='sm' fw={600}>
+							Edit outcomes
+						</Text>
+						{catalog?.name ? (
+							<Text size='xs' c='dimmed'>
+								{catalog.name}
+							</Text>
+						) : null}
+					</div>
+				}
+				size='xl'
+				centered
+			>
+				{nodesModalOpen && catalog ? (
+					<DispositionCatalogNode catalogId={catalog.id} />
+				) : null}
+			</Modal>
 		</>
 	);
 
@@ -53,17 +79,6 @@ const DispositionPage: React.FC<DispositionPageProps> = ({
 				<Button onClick={handleAddNew} size='sm'>
 					Add New Catalog
 				</Button>
-			}
-			rightSection={
-				rightComponent || (
-					<FallbackRightComponent
-						title='No catalog selected'
-						description={
-							'Select an outcome catalog from the list to view and edit its nodes, or create a new catalog to get started.'
-						}
-						actionText='Use the left list to choose or create a catalog'
-					/>
-				)
 			}
 		>
 			{content}
