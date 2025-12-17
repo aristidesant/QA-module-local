@@ -189,9 +189,26 @@ describe('DispositionCatalogForm', () => {
 			expect(onSubmit).toHaveBeenCalled();
 		});
 
-		expect(createNodeMutateAsync).toHaveBeenCalledTimes(
-			OUTBOUND_PROTECTED_ROOT_NODE_DEFAULTS.length
-		);
+		await waitFor(() => {
+			expect(createNodeMutateAsync).toHaveBeenCalledTimes(
+				OUTBOUND_PROTECTED_ROOT_NODE_DEFAULTS.length
+			);
+		});
+
+		// Verify each call included the catalog id and the correct node name
+		OUTBOUND_PROTECTED_ROOT_NODE_DEFAULTS.forEach((node, idx) => {
+			expect(createNodeMutateAsync).toHaveBeenNthCalledWith(
+				idx + 1,
+				expect.objectContaining({
+					data: expect.objectContaining({
+						name: node.name,
+						catalogId: 15,
+						parentId: undefined,
+					}),
+				})
+			);
+		});
+
 		expect(onSuccess).toHaveBeenCalled();
 	});
 
@@ -222,6 +239,7 @@ describe('DispositionCatalogForm', () => {
 
 		await waitFor(() => {
 			expect(onError).toHaveBeenCalled();
+			expect(createNodeMutateAsync).toHaveBeenCalled();
 		});
 	});
 

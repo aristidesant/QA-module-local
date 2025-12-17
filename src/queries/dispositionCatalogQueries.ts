@@ -1,9 +1,15 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+	useQuery,
+	useMutation,
+	useQueryClient,
+	keepPreviousData,
+} from '@tanstack/react-query';
 import dispositionCatalogApi, {
 	type CampaignWithDispositionCatalog,
 	type CopyDispositionCatalogPayload,
 	type CopiedDispositionCatalogResponse,
 } from '~/api/dispositionCatalogApi';
+import type { PaginatedResponse } from '~/models/CampaignsModel';
 import type {
 	DispositionCatalogModel,
 	CreateDispositionCatalog,
@@ -30,6 +36,53 @@ export function useDispositionCatalogs(queryParams?: {
 			const api = dispositionCatalogApi();
 			return api.getAllDispositionCatalogs(queryParams);
 		},
+	});
+}
+
+type DispositionCatalogsPagedQueryParams = {
+	limit?: number;
+	offset?: number;
+	sortBy?: string;
+	sortOrder?: 'ASC' | 'DESC';
+	type?: string;
+	enabled?: boolean;
+};
+
+/**
+ * Hook to fetch disposition catalogs using the /all paginated endpoint.
+ * This supports server-side pagination and sorting.
+ */
+export function useDispositionCatalogsPaged(
+	params?: DispositionCatalogsPagedQueryParams
+) {
+	const {
+		limit,
+		offset,
+		sortBy,
+		sortOrder,
+		type,
+		enabled = true,
+	} = params || {};
+
+	return useQuery<PaginatedResponse<DispositionCatalogModel>, Error>({
+		queryKey: [
+			'dispositionCatalogs',
+			'all',
+			{ limit, offset, sortBy, sortOrder, type },
+		],
+		queryFn: async () => {
+			const api = dispositionCatalogApi();
+			return api.getAllDispositionCatalogsAllPaged({
+				limit,
+				offset,
+				sortBy,
+				sortOrder,
+				type,
+			});
+		},
+		staleTime: 30_000,
+		placeholderData: keepPreviousData,
+		enabled,
 	});
 }
 

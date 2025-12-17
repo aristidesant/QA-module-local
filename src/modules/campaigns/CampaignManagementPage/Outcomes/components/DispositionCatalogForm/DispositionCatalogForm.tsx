@@ -57,7 +57,7 @@ const DispositionCatalogForm: FC<DispositionCatalogFormProps> = ({
 			campaignId: initialValues?.campaignId || undefined,
 			isDefault: initialValues?.isDefault || false,
 			type:
-				(initialValues as Partial<DispositionCatalogModel>)?.type || undefined,
+				(initialValues as Partial<DispositionCatalogModel>)?.type || 'OUTBOUND',
 		},
 		validate: {
 			name: (value) => (!value ? 'Name is required' : null),
@@ -68,24 +68,22 @@ const DispositionCatalogForm: FC<DispositionCatalogFormProps> = ({
 	const handleSubmit = async (values: CreateDispositionCatalog) => {
 		try {
 			const catalog = await onSubmit(values);
-			if (mode === 'create' && values.type === 'OUTBOUND' && catalog?.id) {
-				try {
-					for (const defaultNode of OUTBOUND_PROTECTED_ROOT_NODE_DEFAULTS) {
-						await createNode.mutateAsync({
+
+			// If we're creating an outbound catalog, create the protected default root nodes
+			if (mode === 'create' && (catalog as any)?.type === 'OUTBOUND') {
+				await Promise.all(
+					OUTBOUND_PROTECTED_ROOT_NODE_DEFAULTS.map((node) =>
+						createNode.mutateAsync({
 							data: {
-								...defaultNode,
-								catalogId: catalog.id,
-								parentId: null,
+								...node,
+								catalogId: (catalog as any).id,
+								parentId: undefined,
 							},
-						});
-					}
-				} catch (nodeError: any) {
-					const message =
-						nodeError?.message ||
-						'Failed to initialize default outbound outcomes.';
-					throw new Error(message);
-				}
+						})
+					)
+				);
 			}
+
 			onSuccess?.(catalog);
 		} catch (error) {
 			onError?.(error);
