@@ -20,18 +20,17 @@ interface StepFiveSuccessProps {
 export const StepFiveSuccess: React.FC<StepFiveSuccessProps> = ({
 	onComplete,
 }) => {
-	const { createdCampaign, reset } = useCampaignWizardStore();
+	const { createdCampaign } = useCampaignWizardStore();
 	const navigate = useNavigate();
 
 	const handleComplete = () => {
-		reset(); // Clear wizard state
 		onComplete();
 	};
 
 	const handleViewCampaign = () => {
 		if (createdCampaign?.id) {
-			reset(); // Clear wizard state
 			navigate(`/campaign/${createdCampaign.id}`);
+			onComplete(); // Ensure cleanup happens via parent
 		} else {
 			handleComplete();
 		}

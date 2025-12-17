@@ -58,14 +58,13 @@ describe('StepFiveSuccess', () => {
 	it('handles view campaign action', () => {
 		renderComponent();
 		fireEvent.click(screen.getByText('View campaign'));
-		expect(mockReset).toHaveBeenCalled();
 		expect(mockNavigate).toHaveBeenCalledWith('/campaign/1');
+		expect(mockOnComplete).toHaveBeenCalled();
 	});
 
 	it('handles close wizard action', () => {
 		renderComponent();
 		fireEvent.click(screen.getByText('Close wizard'));
-		expect(mockReset).toHaveBeenCalled();
 		expect(mockOnComplete).toHaveBeenCalled();
 	});
 
