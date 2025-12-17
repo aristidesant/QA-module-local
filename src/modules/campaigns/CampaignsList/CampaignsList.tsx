@@ -207,13 +207,6 @@ export const CampaignsList: React.FC = () => {
 			return;
 		}
 
-		// If already drafted on this step, no need to save again
-		if (createdCampaign.isDraft && createdCampaign.draftStep === activeStep) {
-			resetWizard();
-			setAddNewModalOpened(false);
-			return;
-		}
-
 		// Special case: On Outcomes step (2) with outcome flow created
 		// The outcome step is essentially complete, so draft to Parameters step (3)
 		const isOutcomeStepComplete =
@@ -572,8 +565,8 @@ export const CampaignsList: React.FC = () => {
 				/>
 				<CampaignWizard
 					onComplete={async () => {
-						// If resuming a draft, clear the draft status
-						if (isResumingDraft && createdCampaign?.id) {
+						// Clear draft status if it's a draft (whether new or resumed)
+						if (createdCampaign?.id && createdCampaign.isDraft) {
 							try {
 								await setDraft({
 									campaignId: String(createdCampaign.id),
