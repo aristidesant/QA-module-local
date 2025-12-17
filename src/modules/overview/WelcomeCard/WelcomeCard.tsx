@@ -10,12 +10,10 @@ import {
 } from '@mantine/core';
 import {
 	IconRobot,
-	IconListDetails,
 	IconPhoneCall,
 	IconTools,
 	IconCheckupList,
 	IconUsers,
-	IconChevronRight,
 	IconSparkles,
 } from '@tabler/icons-react';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
@@ -30,40 +28,46 @@ export type WelcomeCardProps = {
 
 const features = [
 	{
-		icon: IconListDetails,
-		title: 'Campaigns',
-		description: 'Create, schedule, and monitor live runs',
-		color: 'blue',
+		icon: IconSparkles,
+		title: 'Smart Campaigns',
+		description:
+			'Automate your outreach with intelligent scheduling and real-time monitoring.',
+		color: 'indigo',
 	},
 	{
 		icon: IconRobot,
-		title: 'Agents',
-		description: 'Adjust scripts, voices, and availability',
-		color: 'cyan',
-	},
-	{
-		icon: IconUsers,
-		title: 'Contacts',
-		description: 'Upload and review contact lists',
-		color: 'teal',
+		title: 'AI Digital Agents',
+		description:
+			'Deploy lifelike voices that handle complex conversations with natural fluency.',
+		color: 'blue',
 	},
 	{
 		icon: IconPhoneCall,
-		title: 'Conversations',
-		description: 'Review transcripts and follow-ups',
-		color: 'green',
-	},
-	{
-		icon: IconCheckupList,
-		title: 'Outcomes',
-		description: 'Track call results and labels',
-		color: 'orange',
+		title: 'Interaction Hub',
+		description:
+			'Securely review transcripts and follow-ups for every AI-powered conversation.',
+		color: 'teal',
 	},
 	{
 		icon: IconTools,
-		title: 'Tools',
-		description: 'Fine-tune integrations and settings',
+		title: 'Seamless Tools',
+		description:
+			'Integrate your existing workflow with custom webhooks and technical powerups.',
 		color: 'violet',
+	},
+	{
+		icon: IconUsers,
+		title: 'Active Contacts',
+		description:
+			'Effectively manage and segment your audience lists for maximum impact.',
+		color: 'cyan',
+	},
+	{
+		icon: IconCheckupList,
+		title: 'Growth Analytics',
+		description:
+			'Transform call outcomes into actionable insights to scale your operations.',
+		color: 'orange',
 	},
 ];
 
@@ -75,116 +79,96 @@ export default function WelcomeCard({
 	const impersonationState = useImpersonationState();
 	const { user, targetClient } = useSessionStore();
 
-	let heading = propHeading || 'Welcome';
+	let heading = propHeading || 'The Future of AI Voice';
 	let subheading =
-		propSubheading || 'Your AI-powered call center management platform';
+		propSubheading ||
+		'Scale your business with intelligent conversational agents that handle every interaction with human-like precision.';
+
+	const displayName = user?.firstName || user?.username;
 
 	if (impersonationState.isImpersonating && targetClient) {
 		heading = `Welcome to ${targetClient.name}`;
-		subheading = 'Your AI-powered call center management platform';
+		subheading =
+			'Your AI-powered destination for seamless voice automation and customer engagement.';
+	} else if (displayName) {
+		heading = `Welcome back, ${displayName}!`;
+		subheading = isMasterClient
+			? 'Gain a strategic snapshot of your entire conversational ecosystem.'
+			: subheading;
 	} else if (isMasterClient) {
-		heading = user
-			? `Client details overview ${user.clientId}`
-			: 'Client details overview';
-		subheading = propSubheading || 'Global Snapshot';
+		heading = 'Enterprise Overview';
+		subheading =
+			propSubheading ||
+			'Gain a strategic snapshot of your entire conversational ecosystem.';
 	}
 
-	const renderContent = () => {
-		return (
-			<div className={classes.mainCard}>
-				<Card className={classes.welcomeCard} withBorder>
-					<Stack gap='xs' className={classes.body}>
-						<Group
-							align='flex-start'
-							justify='space-between'
-							gap='xs'
-							className={classes.hero}
-						>
-							<Group gap='xs' align='center' wrap='nowrap'>
-								<ThemeIcon
-									size={36}
-									radius='sm'
-									variant='light'
-									color='blue'
-									className={classes.heroIcon}
-								>
-									<IconSparkles size={18} />
-								</ThemeIcon>
-								<Stack gap={2} className={classes.heroText}>
-									<Title order={2} className={classes.welcomeTitle}>
-										{heading}
-									</Title>
-									<Text
-										size='sm'
-										c='dimmed'
-										className={classes.welcomeDescription}
-									>
-										{subheading}
+	return (
+		<div className={classes.wrapper}>
+			<Card className={classes.heroCard} withBorder radius='md'>
+				<Stack gap='xl'>
+					<div className={classes.heroContent}>
+						<Group justify='space-between' align='flex-start' wrap='nowrap'>
+							<Stack gap='xs' maw={600}>
+								<Group gap='xs'>
+									<ThemeIcon variant='light' size='sm' radius='xl' color='blue'>
+										<IconSparkles size={12} />
+									</ThemeIcon>
+									<Text size='xs' fw={700} tt='uppercase' lts={1} c='blue.6'>
+										AI Management Platform
 									</Text>
-								</Stack>
-							</Group>
+								</Group>
+								<Title order={1} className={classes.heroTitle}>
+									{heading}
+								</Title>
+								<Text size='sm' c='dimmed' className={classes.heroSubheading}>
+									{subheading}
+								</Text>
+							</Stack>
 						</Group>
+					</div>
 
-						<Divider className={classes.heroDivider} />
+					<Divider variant='dashed' />
 
-						<SimpleGrid
-							cols={{ base: 1, md: 2 }}
-							spacing='xs'
-							className={classes.navigationGrid}
-						>
+					<div className={classes.featuresSection}>
+						<SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing='md'>
 							{features.map((feature) => {
 								const Icon = feature.icon;
 								return (
-									<Card
-										key={feature.title}
-										className={classes.featureCard}
-										withBorder
-										data-color={feature.color}
-									>
-										<Group
-											wrap='nowrap'
-											align='center'
-											justify='space-between'
-											gap='xs'
-										>
-											<Group wrap='nowrap' align='flex-start' gap='xs'>
-												<div
-													className={classes.iconWrapper}
-													data-color={feature.color}
+									<div key={feature.title} className={classes.featureItem}>
+										<Group wrap='nowrap' align='flex-start' gap='sm'>
+											<ThemeIcon
+												variant='light'
+												size={32}
+												radius='md'
+												color={feature.color}
+												className={classes.featureIcon}
+											>
+												<Icon size={18} />
+											</ThemeIcon>
+											<Stack gap={4}>
+												<Text
+													fw={600}
+													size='sm'
+													className={classes.featureTitle}
 												>
-													<Icon size={18} />
-												</div>
-												<Stack gap={2} className={classes.featureContent}>
-													<Text
-														fw={600}
-														size='sm'
-														className={classes.featureTitle}
-													>
-														{feature.title}
-													</Text>
-													<Text
-														size='xs'
-														c='dimmed'
-														className={classes.featureDescription}
-													>
-														{feature.description}
-													</Text>
-												</Stack>
-											</Group>
-											<IconChevronRight
-												size={16}
-												className={classes.featureChevron}
-											/>
+													{feature.title}
+												</Text>
+												<Text
+													size='xs'
+													c='dimmed'
+													className={classes.featureDescription}
+												>
+													{feature.description}
+												</Text>
+											</Stack>
 										</Group>
-									</Card>
+									</div>
 								);
 							})}
 						</SimpleGrid>
-					</Stack>
-				</Card>
-			</div>
-		);
-	};
-
-	return renderContent();
+					</div>
+				</Stack>
+			</Card>
+		</div>
+	);
 }

@@ -55,25 +55,27 @@ describe('WelcomeCard', () => {
 			isImpersonating: false,
 		} as any);
 		vi.mocked(useSessionStore).mockReturnValue({
-			user: { clientId: 42 },
+			user: { clientId: 42, firstName: 'User' },
 		} as any);
 
 		renderWithProviders(<WelcomeCard />);
 
 		// default title and description are present
-		expect(screen.getByText('Welcome')).toBeInTheDocument();
+		expect(screen.getByText('Welcome back, User!')).toBeInTheDocument();
 		expect(
-			screen.getByText('Your AI-powered call center management platform')
+			screen.getByText(
+				/Scale your business with intelligent conversational agents/
+			)
 		).toBeInTheDocument();
 
 		// Welcome card content is rendered through heading/subheading above
 		// Ensure feature cards text exist
-		expect(screen.getByText('Campaigns')).toBeInTheDocument();
-		expect(screen.getByText('Agents')).toBeInTheDocument();
-		expect(screen.getByText('Contacts')).toBeInTheDocument();
-		expect(screen.getByText('Conversations')).toBeInTheDocument();
-		expect(screen.getByText('Outcomes')).toBeInTheDocument();
-		expect(screen.getByText('Tools')).toBeInTheDocument();
+		expect(screen.getByText('Smart Campaigns')).toBeInTheDocument();
+		expect(screen.getByText('AI Digital Agents')).toBeInTheDocument();
+		expect(screen.getByText('Interaction Hub')).toBeInTheDocument();
+		expect(screen.getByText('Seamless Tools')).toBeInTheDocument();
+		expect(screen.getByText('Active Contacts')).toBeInTheDocument();
+		expect(screen.getByText('Growth Analytics')).toBeInTheDocument();
 	});
 
 	it('renders master dashboard when in master client and not impersonating', () => {
@@ -82,17 +84,15 @@ describe('WelcomeCard', () => {
 			isImpersonating: false,
 		} as any);
 		vi.mocked(useSessionStore).mockReturnValue({
-			user: { clientId: 99 },
+			user: { clientId: 99, firstName: 'Admin' },
 		} as any);
 
-		renderWithProviders(
-			<WelcomeCard heading='Overview' subheading='Global Snapshot' />
-		);
+		renderWithProviders(<WelcomeCard />);
 
 		// dashboard components visible
 
 		// For master client, heading should reflect client details
-		expect(screen.getByText('Client details overview 99')).toBeInTheDocument();
+		expect(screen.getByText('Welcome back, Admin!')).toBeInTheDocument();
 	});
 
 	it('displays impersonation welcome heading when impersonating and targetClient provided', () => {
@@ -110,7 +110,9 @@ describe('WelcomeCard', () => {
 		// When impersonating, the main title and description update
 		expect(screen.getByText('Welcome to Acme Corp')).toBeInTheDocument();
 		expect(
-			screen.getByText('Your AI-powered call center management platform')
+			screen.getByText(
+				'Your AI-powered destination for seamless voice automation and customer engagement.'
+			)
 		).toBeInTheDocument();
 	});
 });
