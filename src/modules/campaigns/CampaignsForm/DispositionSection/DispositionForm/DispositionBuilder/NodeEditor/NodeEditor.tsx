@@ -5,6 +5,7 @@ import {
 	IconChevronRight,
 	IconClock,
 	IconHierarchy3,
+	IconPhoneOff,
 	IconPhoneX,
 	IconTrash,
 } from '@tabler/icons-react';
@@ -94,6 +95,7 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 	const showGroupActions = hasChildren || hasCatalogChildren;
 	const nodeStyle = getNodeStyle(node, level);
 	const isSelected = selectedNodeId === node.id;
+	const isDoNotCall = Boolean(node.doNotCall ?? node.do_not_call);
 
 	const handleToggleCollapse = useCallback((event: React.MouseEvent) => {
 		event.stopPropagation();
@@ -134,10 +136,6 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 		},
 		[node.id, onAddMissingSiblings]
 	);
-
-	const statusBadges = useMemo(() => {
-		return [];
-	}, []);
 
 	return (
 		<>
@@ -181,9 +179,22 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 								{node.name}
 							</Text>
 							<Group gap={2} className={styles.icons} wrap='nowrap'>
+								{isDoNotCall ? (
+									<Tooltip label='Do not call' withArrow>
+										<IconPhoneX
+											size={12}
+											color='var(--mantine-color-red-6)'
+											aria-label='Do not call'
+										/>
+									</Tooltip>
+								) : null}
 								{node.isInvalidatesNumber ? (
-									<Tooltip label='No more call' withArrow>
-										<IconPhoneX size={12} color='var(--mantine-color-red-6)' />
+									<Tooltip label='Invalidates number' withArrow>
+										<IconPhoneOff
+											size={12}
+											color='var(--mantine-color-red-6)'
+											aria-label='Invalidates number'
+										/>
 									</Tooltip>
 								) : null}
 								{node.requiresReschedule ? (
@@ -191,17 +202,12 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 										<IconClock
 											size={12}
 											color='var(--mantine-color-orange-5)'
+											aria-label='Requires reschedule'
 										/>
 									</Tooltip>
 								) : null}
 							</Group>
 						</Group>
-
-						{statusBadges.length > 0 ? (
-							<Group gap={4} mt={4} className={styles.badges} wrap='wrap'>
-								{statusBadges}
-							</Group>
-						) : null}
 					</Box>
 
 					<Group gap={2} wrap='nowrap' className={styles.actions}>

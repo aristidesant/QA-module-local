@@ -103,19 +103,27 @@ describe('DispositionNodeForm', () => {
 			name: 'Toggle Node',
 			description: 'Has description',
 			isInvalidatesNumber: false,
+			doNotCall: false,
 			requiresReschedule: false,
 			isFinal: false,
 		} as any;
 
 		renderWithProviders(<DispositionNodeForm node={node} />);
 
-		const switches = screen.getAllByRole('switch');
-		// First switch => Invalidates number
-		fireEvent.click(switches[0]);
+		fireEvent.click(
+			screen.getByRole('switch', { name: /invalidates number/i })
+		);
 		expect(screen.getByText(/Do not retry/i)).toBeInTheDocument();
 
-		// Second switch => Requires reschedule
-		fireEvent.click(switches[1]);
+		fireEvent.click(screen.getByRole('switch', { name: /do not call/i }));
+		const doNotCallBadgeEls = screen
+			.getAllByText(/Do not call/i)
+			.filter((el) => el.tagName === 'SPAN');
+		expect(doNotCallBadgeEls.length).toBeGreaterThan(0);
+
+		fireEvent.click(
+			screen.getByRole('switch', { name: /requires reschedule/i })
+		);
 		// There is a 'Requires reschedule' title and a badge. Ensure the badge exists by
 		// finding the text whose element is a <span> (Mantine badge label renders as span).
 		const badgeEls = screen
@@ -149,6 +157,7 @@ describe('DispositionNodeForm', () => {
 			name: 'Save node',
 			description: '',
 			isInvalidatesNumber: false,
+			doNotCall: false,
 			requiresReschedule: false,
 			isFinal: false,
 		} as any;
@@ -158,9 +167,10 @@ describe('DispositionNodeForm', () => {
 			<DispositionNodeForm node={node} onSubmit={onSubmit} />
 		);
 
-		const switches = screen.getAllByRole('switch');
-		// Toggle first switch
-		fireEvent.click(switches[0]);
+		fireEvent.click(
+			screen.getByRole('switch', { name: /invalidates number/i })
+		);
+		fireEvent.click(screen.getByRole('switch', { name: /do not call/i }));
 		// Save
 		fireEvent.click(screen.getByRole('button', { name: /save/i }));
 
@@ -169,6 +179,7 @@ describe('DispositionNodeForm', () => {
 			expect.objectContaining({
 				id: 7,
 				isInvalidatesNumber: true,
+				doNotCall: true,
 			})
 		);
 		expect(onSubmit).toHaveBeenCalled();

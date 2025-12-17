@@ -68,7 +68,6 @@ const mockUseCatalogs = vi.hoisted(() => {
 	};
 });
 
-const setRightComponent = vi.fn();
 const setCatalog = vi.fn();
 const clearCatalog = vi.fn();
 
@@ -208,11 +207,12 @@ vi.mock('@mantine/modals', () => ({
 }));
 
 vi.mock('../../dispositionRightComponentStore', () => ({
-	useDispositionStore: () => ({
-		setRightComponent,
-		setCatalog,
-		clearCatalog,
-	}),
+	useDispositionStore: (selector: any) =>
+		selector({
+			catalog: null,
+			setCatalog,
+			clearCatalog,
+		}),
 }));
 
 vi.mock('@mantine/core', () => ({
@@ -334,14 +334,43 @@ describe('DispositionCatalogList', () => {
 		expect(screen.getByTestId('catalog-form-create')).toBeInTheDocument();
 	});
 
-	it('renders table rows and opens edit form on row click', () => {
-		render(<DispositionCatalogList />);
+	it('renders table rows and selects catalog on row click', () => {
+		const onEditNodes = vi.fn();
+		render(<DispositionCatalogList onEditNodes={onEditNodes} />);
 
 		expect(screen.getByTestId('base-table')).toBeInTheDocument();
 		fireEvent.click(screen.getByTestId('row-0'));
 
+		expect(setCatalog).toHaveBeenCalledWith(
+			expect.objectContaining({ id: 1, name: 'Catalog One' })
+		);
+		expect(onEditNodes).toHaveBeenCalledWith(
+			expect.objectContaining({ id: 1, name: 'Catalog One' })
+		);
+		expect(screen.queryByTestId('modal')).not.toBeInTheDocument();
+	});
+
+	it('opens edit details form from action icon', () => {
+		render(<DispositionCatalogList />);
+
+		fireEvent.click(screen.getByLabelText('Edit details'));
+
 		expect(screen.getByTestId('modal')).toBeInTheDocument();
 		expect(screen.getByTestId('catalog-form-edit')).toBeInTheDocument();
+	});
+
+	it('selects catalog nodes from action icon', () => {
+		const onEditNodes = vi.fn();
+		render(<DispositionCatalogList onEditNodes={onEditNodes} />);
+
+		fireEvent.click(screen.getByLabelText('Edit nodes'));
+
+		expect(setCatalog).toHaveBeenCalledWith(
+			expect.objectContaining({ id: 1, name: 'Catalog One' })
+		);
+		expect(onEditNodes).toHaveBeenCalledWith(
+			expect.objectContaining({ id: 1, name: 'Catalog One' })
+		);
 	});
 
 	it('reactivates, deactivates and deletes catalog', () => {

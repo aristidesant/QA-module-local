@@ -59,6 +59,7 @@ export interface CopiedDispositionCatalogResponse {
 		name: string;
 		description: string;
 		isInvalidatesNumber: boolean;
+		doNotCall: boolean;
 		requiresReschedule: boolean;
 		isFinal: boolean;
 		order: number;

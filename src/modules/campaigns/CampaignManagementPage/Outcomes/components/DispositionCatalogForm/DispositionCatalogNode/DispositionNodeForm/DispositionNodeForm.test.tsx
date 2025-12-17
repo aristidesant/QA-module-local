@@ -89,6 +89,7 @@ describe('DispositionNodeForm', () => {
 		await userEvent.type(screen.getByLabelText('Name'), 'Outcome');
 		await userEvent.type(screen.getByLabelText('Description'), 'Desc');
 		await userEvent.click(screen.getByLabelText('Invalidates Number'));
+		await userEvent.click(screen.getByLabelText('Do not call'));
 		await userEvent.click(screen.getByLabelText('Requires Reschedule'));
 		await userEvent.click(screen.getByLabelText('Is Final'));
 		await userEvent.click(screen.getByLabelText('Is Voice Mail'));
@@ -101,6 +102,7 @@ describe('DispositionNodeForm', () => {
 				name: 'Outcome',
 				description: 'Desc',
 				isInvalidatesNumber: true,
+				doNotCall: true,
 				requiresReschedule: true,
 				isFinal: true,
 				isVoiceMail: true,
@@ -119,6 +121,7 @@ describe('DispositionNodeForm', () => {
 						name: 'First',
 						description: 'A',
 						isInvalidatesNumber: false,
+						doNotCall: false,
 						requiresReschedule: false,
 						isFinal: false,
 						isVoiceMail: false,
@@ -139,6 +142,7 @@ describe('DispositionNodeForm', () => {
 						name: 'Second',
 						description: 'B',
 						isInvalidatesNumber: true,
+						doNotCall: true,
 						requiresReschedule: true,
 						isFinal: true,
 						isVoiceMail: true,
@@ -149,6 +153,7 @@ describe('DispositionNodeForm', () => {
 
 		expect(screen.getByLabelText('Name')).toHaveValue('Second');
 		expect(screen.getByLabelText('Invalidates Number')).toBeChecked();
+		expect(screen.getByLabelText('Do not call')).toBeChecked();
 		expect(screen.getByLabelText('Requires Reschedule')).toBeChecked();
 		expect(screen.getByLabelText('Is Final')).toBeChecked();
 		expect(screen.getByLabelText('Is Voice Mail')).toBeChecked();

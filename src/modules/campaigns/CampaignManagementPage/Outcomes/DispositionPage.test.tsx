@@ -3,11 +3,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import React, { forwardRef, useImperativeHandle } from 'react';
 import DispositionPage from './DispositionPage';
 
-const setRightComponent = vi.fn();
-const clearRightComponent = vi.fn();
-const setCatalog = vi.fn();
+const clearCatalog = vi.fn();
 
 let openCreateForm: () => void;
+let onEditNodesFromProps: ((catalog: { id: number }) => void) | undefined;
 
 vi.mock('@mantine/core', () => ({
 	Button: ({
@@ -21,63 +20,70 @@ vi.mock('@mantine/core', () => ({
 			{children}
 		</button>
 	),
+	Modal: ({
+		children,
+		opened,
+		title,
+	}: {
+		children: React.ReactNode;
+		opened: boolean;
+		title?: React.ReactNode;
+	}) =>
+		opened ? (
+			<div data-testid='nodes-modal'>
+				<div data-testid='nodes-modal-title'>{title}</div>
+				{children}
+			</div>
+		) : null,
+	Text: ({ children }: { children: React.ReactNode }) => (
+		<span>{children}</span>
+	),
 }));
 
 vi.mock('./dispositionRightComponentStore', () => ({
-	useDispositionStore: vi.fn(() => ({
-		rightComponent: null,
-		catalog: { id: 1, name: 'Catalog A' },
-		setRightComponent,
-		clearRightComponent,
-		setCatalog,
-	})),
+	useDispositionStore: (selector: any) =>
+		selector({
+			catalog: { id: 1, name: 'Catalog A' },
+			clearCatalog,
+		}),
 }));
 
 vi.mock('~/components/ContentContainer/ContentContainer', () => ({
 	ContentContainer: ({
 		children,
 		titleRight,
-		rightSection,
 	}: {
 		children: React.ReactNode;
 		titleRight?: React.ReactNode;
-		rightSection?: React.ReactNode;
 	}) => (
 		<div data-testid='content-container'>
 			<div data-testid='title-right'>{titleRight}</div>
-			<div data-testid='right-section'>{rightSection}</div>
 			{children}
-		</div>
-	),
-}));
-
-vi.mock('~/components/FallbackRightComponent', () => ({
-	default: ({
-		title,
-		description,
-		actionText,
-	}: {
-		title: string;
-		description: string;
-		actionText: string;
-	}) => (
-		<div data-testid='fallback'>
-			<span>{title}</span>
-			<span>{description}</span>
-			<span>{actionText}</span>
 		</div>
 	),
 }));
 
 vi.mock('./components/DispositionCatalogList', () => ({
 	__esModule: true,
-	default: forwardRef((_, ref) => {
-		openCreateForm = vi.fn();
-		useImperativeHandle(ref, () => ({
-			openCreateForm,
-		}));
-		return <div data-testid='catalog-list'>Catalog List</div>;
-	}),
+	default: forwardRef(
+		(props: { onEditNodes?: (catalog: { id: number }) => void }, ref) => {
+			onEditNodesFromProps = props.onEditNodes;
+			openCreateForm = vi.fn();
+			useImperativeHandle(ref, () => ({
+				openCreateForm,
+			}));
+			return (
+				<div data-testid='catalog-list'>
+					<button
+						type='button'
+						onClick={() => onEditNodesFromProps?.({ id: 1 })}
+					>
+						Open nodes
+					</button>
+				</div>
+			);
+		}
+	),
 }));
 
 vi.mock('./components/DispositionCatalogForm/DispositionCatalogNode', () => ({
@@ -96,26 +102,27 @@ describe('DispositionPage', () => {
 		render(<DispositionPage embedded />);
 
 		expect(screen.getByTestId('catalog-list')).toBeInTheDocument();
+		fireEvent.click(screen.getByText('Open nodes'));
+		expect(screen.getByTestId('nodes-modal')).toBeInTheDocument();
 		expect(screen.getByTestId('catalog-node')).toHaveTextContent('Catalog 1');
 		expect(screen.queryByTestId('content-container')).not.toBeInTheDocument();
 	});
 
-	it('renders container with fallback and triggers create action', () => {
+	it('renders container and triggers create action', () => {
 		render(<DispositionPage />);
 
 		expect(screen.getByTestId('content-container')).toBeInTheDocument();
-		expect(screen.getByTestId('fallback')).toBeInTheDocument();
 
 		fireEvent.click(screen.getByText('Add New Catalog'));
 
 		expect(openCreateForm).toHaveBeenCalled();
 	});
 
-	it('clears right component on unmount', () => {
+	it('clears selected catalog on unmount', () => {
 		const { unmount } = render(<DispositionPage />);
 
 		unmount();
 
-		expect(setRightComponent).toHaveBeenCalledWith(null);
+		expect(clearCatalog).toHaveBeenCalled();
 	});
 });

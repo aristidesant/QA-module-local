@@ -92,6 +92,20 @@ describe('NodeEditor', () => {
 		expect(svgs.length).toBeGreaterThanOrEqual(2);
 	});
 
+	it('shows do not call badge when doNotCall is true', () => {
+		const removeNode = vi.fn();
+		const node = {
+			id: 30,
+			name: 'DNC Node',
+			children: [],
+			doNotCall: true,
+		} as any;
+
+		renderWithProviders(<NodeEditor node={node} removeNode={removeNode} />);
+
+		expect(screen.getByLabelText(/Do not call/i)).toBeInTheDocument();
+	});
+
 	it('shows add missing children button and handles click', () => {
 		const removeNode = vi.fn();
 		const onPopulateChildren = vi.fn();

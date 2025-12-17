@@ -108,6 +108,26 @@ describe('DispositionViewer', () => {
 		expect(svgs.length).toBeGreaterThanOrEqual(3);
 	});
 
+	it('shows do not call badge when doNotCall is true', () => {
+		const flow = {
+			flowJson: {
+				name: 'DNC Flow',
+				dispositionNodes: [
+					{
+						id: 8,
+						name: 'DNC Leaf',
+						children: [],
+						doNotCall: true,
+					},
+				],
+			},
+		} as any;
+
+		renderWithProviders(<DispositionViewer flow={flow} />);
+
+		expect(screen.getByLabelText(/Do not call/i)).toBeInTheDocument();
+	});
+
 	it('applies node style classes based on name content', () => {
 		const names = [
 			{ name: 'Effective contact - root', expected: 'effective' },
