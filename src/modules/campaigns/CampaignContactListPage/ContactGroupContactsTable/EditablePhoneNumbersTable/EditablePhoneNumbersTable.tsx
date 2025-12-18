@@ -14,12 +14,17 @@ import {
 	IconX,
 	IconAlertCircle,
 	IconPlus,
+	IconTrash,
 } from '@tabler/icons-react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { notifications } from '@mantine/notifications';
+import { modals } from '@mantine/modals';
 import BaseTable from '~/components/BaseTable';
 import type { ContactPhoneNumber } from '~/models/ContactsModel';
-import { useUpdateContactPhoneNumber } from '~/queries/contactsQueries';
+import {
+	useUpdateContactPhoneNumber,
+	useDeleteContactPhoneNumber,
+} from '~/queries/contactsQueries';
 import { useQueryClient } from '@tanstack/react-query';
 import styles from './EditablePhoneNumbersTable.module.css';
 import AddPhoneNumbersModal from './AddPhoneNumbersModal';
@@ -50,6 +55,7 @@ function EditablePhoneNumbersTable({
 	const [editingId, setEditingId] = useState<number | null>(null);
 	const editedValuesRef = useRef<Record<number, string>>({});
 	const updateMutation = useUpdateContactPhoneNumber();
+	const deleteMutation = useDeleteContactPhoneNumber();
 	// Creation handled in modal component
 	const queryClient = useQueryClient();
 
@@ -67,6 +73,73 @@ function EditablePhoneNumbersTable({
 	const cancelEdit = useCallback(() => {
 		setEditingId(null);
 	}, []);
+
+	const handleDelete = useCallback(
+		(row: RowShape) => {
+			if (!canUpdateContacts) return;
+			modals.openConfirmModal({
+				title: 'Delete Phone Number',
+				children: (
+					<Text size='sm'>
+						Are you sure you want to delete the phone number{' '}
+						<Text span fw={700}>
+							{row.phoneNumber}
+						</Text>
+						? This action cannot be undone.
+					</Text>
+				),
+				labels: { confirm: 'Delete', cancel: 'Cancel' },
+				confirmProps: { color: 'red' },
+				onConfirm: () => {
+					deleteMutation.mutate(
+						{ contactId, phoneNumberId: row.id },
+						{
+							onSuccess: () => {
+								notifications.show({
+									title: 'Deleted',
+									message: 'Phone number deleted successfully',
+									color: 'green',
+								});
+								// Invalidate queries to refresh everything including faulty list
+								queryClient.invalidateQueries({
+									queryKey: [
+										'contactGroupContactsWithPhoneValidationErrors',
+										contactGroupId,
+									],
+								});
+								queryClient.invalidateQueries({
+									queryKey: ['contactGroupContacts', contactGroupId],
+								});
+								queryClient.invalidateQueries({ queryKey: ['contacts'] });
+								queryClient.invalidateQueries({
+									queryKey: ['contact', String(contactId)],
+								});
+								onAfterUpdate?.();
+							},
+							onError: (error) => {
+								notifications.show({
+									title: 'Delete Failed',
+									message:
+										error instanceof Error
+											? error.message
+											: 'Failed to delete phone number',
+									color: 'red',
+								});
+							},
+						}
+					);
+				},
+			});
+		},
+		[
+			canUpdateContacts,
+			contactId,
+			contactGroupId,
+			deleteMutation,
+			queryClient,
+			onAfterUpdate,
+		]
+	);
 
 	useEffect(() => {
 		if (!canUpdateContacts) {
@@ -266,16 +339,29 @@ function EditablePhoneNumbersTable({
 					return (
 						<Group gap={4} className={styles.actions}>
 							{!isEditing && (
-								<Tooltip label='Edit phone number'>
-									<ActionIcon
-										variant='subtle'
-										color='blue'
-										size='sm'
-										onClick={() => beginEdit(original)}
-									>
-										<IconPencil size={14} />
-									</ActionIcon>
-								</Tooltip>
+								<>
+									<Tooltip label='Edit phone number'>
+										<ActionIcon
+											variant='subtle'
+											color='blue'
+											size='sm'
+											onClick={() => beginEdit(original)}
+										>
+											<IconPencil size={14} />
+										</ActionIcon>
+									</Tooltip>
+									<Tooltip label='Delete phone number'>
+										<ActionIcon
+											variant='subtle'
+											color='red'
+											size='sm'
+											onClick={() => handleDelete(original)}
+											loading={deleteMutation.isPending}
+										>
+											<IconTrash size={14} />
+										</ActionIcon>
+									</Tooltip>
+								</>
 							)}
 							{isEditing && (
 								<Group gap={4}>
@@ -309,7 +395,9 @@ function EditablePhoneNumbersTable({
 		beginEdit,
 		cancelEdit,
 		saveEdit,
+		handleDelete,
 		updateMutation.isPending,
+		deleteMutation.isPending,
 		editingId,
 		canUpdateContacts,
 	]);
