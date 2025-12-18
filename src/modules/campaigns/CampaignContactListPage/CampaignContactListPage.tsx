@@ -37,6 +37,7 @@ import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import { useCampaignContactListStore } from '~/stores/campaignContactListStore';
+import { getErrorMessage } from '~/utils/httpClient';
 import ContactGroupSummary from './ContactGroupSummary';
 import ContactGroupContactsTable from './ContactGroupContactsTable';
 import ContactListInformation from './ContactListInformation';
@@ -202,7 +203,7 @@ const CampaignContactListPage = () => {
 			onError: (error: Error) => {
 				notifications.show({
 					title: 'Error',
-					message: `Failed to ${status.actionType} campaign: ${error.message}`,
+					message: getErrorMessage(error),
 					color: 'red',
 				});
 			},
@@ -274,10 +275,7 @@ const CampaignContactListPage = () => {
 	}
 
 	if (contactGroupQuery.isError || !contactGroupQuery.data) {
-		const errorMessage =
-			contactGroupQuery.error instanceof Error
-				? contactGroupQuery.error.message
-				: 'Unable to load contact list information';
+		const errorMessage = getErrorMessage(contactGroupQuery.error);
 
 		return (
 			<ContentContainer
@@ -309,7 +307,7 @@ const CampaignContactListPage = () => {
 								} catch (error) {
 									notifications.show({
 										title: 'Error',
-										message: `Failed to reload: ${(error as Error).message}`,
+										message: getErrorMessage(error),
 										color: 'red',
 									});
 								}

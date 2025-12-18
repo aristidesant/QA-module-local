@@ -26,6 +26,7 @@ import AddPhoneNumbersModal from './AddPhoneNumbersModal';
 import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
+import { getErrorMessage } from '~/utils/httpClient';
 
 interface EditablePhoneNumbersTableProps {
 	contactId: number;
@@ -108,11 +109,8 @@ function EditablePhoneNumbersTable({
 				},
 				onError: (error) => {
 					notifications.show({
-						title: 'Update Failed',
-						message:
-							error instanceof Error
-								? error.message
-								: 'Failed to update phone number',
+						title: 'Error',
+						message: getErrorMessage(error),
 						color: 'red',
 					});
 				},
