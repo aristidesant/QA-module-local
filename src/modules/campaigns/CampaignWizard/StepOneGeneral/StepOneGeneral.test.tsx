@@ -257,4 +257,22 @@ describe('StepOneGeneral', () => {
 		const callArgs = mockMutate.mock.calls[0][0];
 		expect(callArgs.campaign.objectiveId).toBe(1);
 	});
+
+	it('clears phone number when campaign type changes', async () => {
+		renderComponent();
+
+		// Set a phone number first
+		const phoneSelector = screen.getByTestId(
+			'phone-selector'
+		) as HTMLInputElement;
+		fireEvent.change(phoneSelector, { target: { value: '123' } });
+		expect(phoneSelector.value).toBe('123');
+
+		// Change campaign type to OUTBOUND
+		const outboundRadio = screen.getByLabelText(/Outbound/i);
+		fireEvent.click(outboundRadio);
+
+		// Verify phone number is cleared
+		expect(phoneSelector.value).toBe('');
+	});
 });

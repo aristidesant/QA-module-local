@@ -41,6 +41,8 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 	onNext,
 	onCancel,
 }) => {
+	type CampaignTypeValue = 'INBOUND' | 'OUTBOUND';
+
 	const {
 		campaignName,
 		description,
@@ -199,6 +201,13 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 		queryClient.invalidateQueries({ queryKey: ['campaignObjectives'] });
 	};
 
+	const handleCampaignTypeChange = (value: string) => {
+		if (value !== 'INBOUND' && value !== 'OUTBOUND') return;
+		const nextValue: CampaignTypeValue = value;
+		form.setFieldValue('campaignType', nextValue);
+		form.setFieldValue('phoneNumberId', null);
+	};
+
 	return (
 		<>
 			<form onSubmit={form.onSubmit(handleSubmit)}>
@@ -253,7 +262,8 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 											{ value: 'INBOUND', label: 'Inbound' },
 											{ value: 'OUTBOUND', label: 'Outbound' },
 										]}
-										{...form.getInputProps('campaignType')}
+										value={form.values.campaignType}
+										onChange={handleCampaignTypeChange}
 										fullWidth
 										className={styles.segmentedControl}
 									/>
