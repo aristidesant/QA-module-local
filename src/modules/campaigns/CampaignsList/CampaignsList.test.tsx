@@ -105,6 +105,16 @@ vi.mock('~/hooks/usePagination', () => ({
 // Mock mantine modals and notifications
 const mockOpenConfirm = vi.fn();
 const mockOpenModal = vi.fn();
+
+const getLastOpenConfirmArgs = () => {
+	const calls = mockOpenConfirm.mock.calls;
+	const lastCall = calls[calls.length - 1];
+	if (!lastCall) {
+		throw new Error('Expected modals.openConfirmModal to be called');
+	}
+	return lastCall[0] as { onConfirm: () => void; onCancel?: () => void };
+};
+
 vi.mock('@mantine/modals', () => ({
 	modals: {
 		openConfirmModal: (...args: any[]) => mockOpenConfirm(...args),
@@ -666,10 +676,12 @@ describe('CampaignsList', () => {
 		expect(mockSelectCampaign).toHaveBeenCalledWith(null);
 		expect(mockResetWizard).toHaveBeenCalled();
 
-		// Re-open and test Cancel
+		// Re-open and test Cancel (early step shows discard confirmation)
 		fireEvent.click(createButton);
 		fireEvent.click(screen.getByText('Cancel Wizard'));
-		expect(mockSelectCampaign).toHaveBeenCalledWith(null);
+		expect(mockOpenConfirm).toHaveBeenCalled();
+		const { onConfirm: onDiscardConfirm } = getLastOpenConfirmArgs();
+		onDiscardConfirm();
 		expect(mockResetWizard).toHaveBeenCalled();
 
 		// Re-open and test Modal Close (onClose prop)
@@ -677,6 +689,9 @@ describe('CampaignsList', () => {
 		expect(await screen.findByTestId('campaign-wizard')).toBeInTheDocument();
 		const closeButtons = screen.getAllByTestId('modal-close-btn');
 		fireEvent.click(closeButtons[0]);
+		expect(mockOpenConfirm).toHaveBeenCalled();
+		const { onConfirm: onDiscardConfirmFromClose } = getLastOpenConfirmArgs();
+		onDiscardConfirmFromClose();
 		expect(mockResetWizard).toHaveBeenCalled();
 		await waitFor(() => {
 			expect(screen.queryByTestId('campaign-wizard')).not.toBeInTheDocument();
@@ -773,8 +788,7 @@ describe('CampaignsList', () => {
 		expect(await screen.findByTestId('campaign-wizard')).toBeInTheDocument();
 	});
 
-	it('deletes campaign when discarding a new campaign (not a resumed draft)', async () => {
-		// Set up wizard state for a new campaign (not resuming draft)
+	it('does not delete campaign when discarding from early steps (new campaign)', async () => {
 		mockActiveStep = 1;
 		mockCreatedCampaign = sampleCampaign;
 		mockIsResumingDraft = false;
@@ -785,27 +799,18 @@ describe('CampaignsList', () => {
 		});
 
 		renderComponent();
-
-		// Open wizard
 		fireEvent.click(screen.getByTestId('header-create-campaign-btn'));
-
-		// Click cancel to trigger the draft confirmation modal
 		fireEvent.click(screen.getByText('Cancel Wizard'));
 
-		// Verify confirm modal was opened
 		expect(mockOpenConfirm).toHaveBeenCalled();
+		const { onConfirm } = getLastOpenConfirmArgs();
+		onConfirm();
 
-		// Get the onCancel callback and call it
-		const { onCancel } = mockOpenConfirm.mock.calls[0][0];
-		await onCancel();
-
-		// Should have deleted the campaign
-		expect(mockDeleteMutateAsync).toHaveBeenCalledWith('1');
+		expect(mockDeleteMutateAsync).not.toHaveBeenCalled();
 		expect(mockResetWizard).toHaveBeenCalled();
 	});
 
-	it('does not delete campaign when discarding a resumed draft', async () => {
-		// Set up wizard state for resuming a draft
+	it('does not delete campaign when discarding from early steps (resumed draft)', async () => {
 		mockActiveStep = 1;
 		mockCreatedCampaign = sampleDraftCampaign;
 		mockIsResumingDraft = true;
@@ -816,21 +821,13 @@ describe('CampaignsList', () => {
 		});
 
 		renderComponent();
-
-		// Open wizard
 		fireEvent.click(screen.getByTestId('header-create-campaign-btn'));
-
-		// Click cancel to trigger the draft confirmation modal
 		fireEvent.click(screen.getByText('Cancel Wizard'));
 
-		// Verify confirm modal was opened
 		expect(mockOpenConfirm).toHaveBeenCalled();
+		const { onConfirm } = getLastOpenConfirmArgs();
+		onConfirm();
 
-		// Get the onCancel callback and call it
-		const { onCancel } = mockOpenConfirm.mock.calls[0][0];
-		await onCancel();
-
-		// Should NOT have deleted the campaign (it's an existing draft)
 		expect(mockDeleteMutateAsync).not.toHaveBeenCalled();
 		expect(mockResetWizard).toHaveBeenCalled();
 	});

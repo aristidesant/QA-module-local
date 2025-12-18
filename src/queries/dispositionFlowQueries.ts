@@ -212,6 +212,17 @@ export function useDeleteDispositionFlow() {
 			});
 			// Invalidate all disposition flows queries
 			queryClient.invalidateQueries({ queryKey: ['dispositionFlows'] });
+			// Invalidate campaign-related flow queries (partial match)
+			queryClient.invalidateQueries({
+				queryKey: ['dispositionFlows', 'campaign'],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ['dispositionFlows', 'campaignPath'],
+			});
+			// Invalidate campaigns list that depends on flow presence
+			queryClient.invalidateQueries({
+				queryKey: ['campaignsWithDispositionFlow'],
+			});
 		},
 	});
 }

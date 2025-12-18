@@ -73,7 +73,6 @@ export const CampaignsList: React.FC = () => {
 		activeStep,
 		createdCampaign,
 		isResumingDraft,
-		hasOutcomeFlow,
 	} = useCampaignWizardStore();
 
 	// Draft mutation
@@ -172,96 +171,27 @@ export const CampaignsList: React.FC = () => {
 	const STEP_NAMES = ['General', 'Agent', 'Outcomes', 'Parameters', 'Complete'];
 
 	// Step constants
-	const FINAL_STEP = 4;
 	const FIRST_STEP = 0;
-	const OUTCOMES_STEP = 2;
-	const PARAMETERS_STEP = 3;
+	const AGENT_STEP = 1;
 
-	// Handle wizard close with draft confirmation
-	const handleWizardClose = useCallback(async () => {
-		// If we're on the final step (step 4 = Complete), clear draft status if it was a draft
-		if (activeStep === FINAL_STEP) {
-			// If the campaign was a draft, clear the draft status since we reached completion
-			if (createdCampaign?.id && createdCampaign.isDraft) {
-				try {
-					await setDraft({
-						campaignId: String(createdCampaign.id),
-						data: { isDraft: false, draftStep: 0 },
-					});
-					reloadCampaigns();
-				} catch (error) {
-					// eslint-disable-next-line no-console
-					console.error('Failed to clear draft status:', error);
-				}
-			}
-			resetWizard();
-			setAddNewModalOpened(false);
-			return;
-		}
+	// Handle wizard close (no draft save / no campaign deletion)
+	const handleWizardClose = useCallback(() => {
+		// Only acknowledge potential loss on early steps (General + Agent)
+		const shouldConfirmDiscard =
+			activeStep === FIRST_STEP || activeStep === AGENT_STEP;
 
-		// If no campaign was created yet (step 0 = General before submission), just close
-		// Step 0 doesn't need drafting because the campaign hasn't been created yet
-		if (activeStep === FIRST_STEP || !createdCampaign) {
-			resetWizard();
-			setAddNewModalOpened(false);
-			return;
-		}
-
-		// Special case: On Outcomes step (2) with outcome flow created
-		// The outcome step is essentially complete, so draft to Parameters step (3)
-		const isOutcomeStepComplete =
-			activeStep === OUTCOMES_STEP && hasOutcomeFlow;
-
-		if (isOutcomeStepComplete) {
-			// Determine if this is a new campaign (never drafted before)
-			const isNewCampaign = !isResumingDraft;
-
+		if (shouldConfirmDiscard) {
 			modals.openConfirmModal({
-				title: 'Save as Draft?',
+				title: 'Discard changes?',
 				children: (
 					<Text size='sm'>
-						Your outcome flow has been saved. You can continue from the{' '}
-						<strong>Parameters</strong> step later.
+						Any unsaved changes in <strong>{STEP_NAMES[activeStep]}</strong>{' '}
+						will be lost when you close this wizard.
 					</Text>
 				),
-				labels: { confirm: 'Save Draft', cancel: 'Discard' },
-				confirmProps: { color: 'orange' },
-				onConfirm: async () => {
-					try {
-						// Save draft at Parameters step since Outcomes is complete
-						await setDraft({
-							campaignId: String(createdCampaign.id),
-							data: { isDraft: true, draftStep: PARAMETERS_STEP },
-						});
-						notifications.show({
-							title: 'Draft Saved',
-							message:
-								'Your campaign has been saved. Continue from Parameters step.',
-							color: 'green',
-						});
-						reloadCampaigns();
-					} catch (error) {
-						notifications.show({
-							title: 'Error',
-							message: 'Failed to save draft. Please try again.',
-							color: 'red',
-						});
-					} finally {
-						resetWizard();
-						setAddNewModalOpened(false);
-					}
-				},
-				onCancel: async () => {
-					// If this is a new campaign (never drafted), delete it when discarding
-					if (isNewCampaign && createdCampaign?.id) {
-						try {
-							await deleteCampaign(String(createdCampaign.id));
-							reloadCampaigns();
-						} catch (error) {
-							// eslint-disable-next-line no-console
-							console.error('Failed to delete discarded campaign:', error);
-						}
-					}
+				labels: { confirm: 'Discard changes', cancel: 'Keep editing' },
+				confirmProps: { color: 'red' },
+				onConfirm: () => {
 					resetWizard();
 					setAddNewModalOpened(false);
 				},
@@ -269,71 +199,9 @@ export const CampaignsList: React.FC = () => {
 			return;
 		}
 
-		// Determine if this is a new campaign (never drafted before)
-		// A campaign is "new" if we're NOT resuming a draft
-		const isNewCampaign = !isResumingDraft;
-
-		// Show confirmation modal for draft save
-		modals.openConfirmModal({
-			title: 'Save as Draft?',
-			children: (
-				<Text size='sm'>
-					Your campaign will be saved as a draft. You can continue from the{' '}
-					<strong>{STEP_NAMES[activeStep]}</strong> step later.
-				</Text>
-			),
-			labels: { confirm: 'Save Draft', cancel: 'Discard' },
-			confirmProps: { color: 'orange' },
-			onConfirm: async () => {
-				try {
-					await setDraft({
-						campaignId: String(createdCampaign.id),
-						data: { isDraft: true, draftStep: activeStep },
-					});
-					notifications.show({
-						title: 'Draft Saved',
-						message: 'Your campaign has been saved as a draft.',
-						color: 'green',
-					});
-					reloadCampaigns();
-				} catch (error) {
-					notifications.show({
-						title: 'Error',
-						message: 'Failed to save draft. Please try again.',
-						color: 'red',
-					});
-				} finally {
-					resetWizard();
-					setAddNewModalOpened(false);
-				}
-			},
-			onCancel: async () => {
-				// If this is a new campaign (never drafted), delete it when discarding
-				// If it's an existing draft being resumed, just close without deleting
-				if (isNewCampaign && createdCampaign?.id) {
-					try {
-						await deleteCampaign(String(createdCampaign.id));
-						reloadCampaigns();
-					} catch (error) {
-						// Silently fail - campaign will be cleaned up or user can delete manually
-						// eslint-disable-next-line no-console
-						console.error('Failed to delete discarded campaign:', error);
-					}
-				}
-				resetWizard();
-				setAddNewModalOpened(false);
-			},
-		});
-	}, [
-		activeStep,
-		createdCampaign,
-		hasOutcomeFlow,
-		isResumingDraft,
-		resetWizard,
-		setDraft,
-		deleteCampaign,
-		reloadCampaigns,
-	]);
+		resetWizard();
+		setAddNewModalOpened(false);
+	}, [activeStep, resetWizard]);
 
 	// Handle Escape key for wizard modal
 	useEffect(() => {

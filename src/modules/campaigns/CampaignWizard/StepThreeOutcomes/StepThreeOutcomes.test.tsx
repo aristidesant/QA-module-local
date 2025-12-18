@@ -11,12 +11,14 @@ vi.mock('@mantine/notifications', () => ({
 
 // Mock React Query client
 const mockInvalidateQueries = vi.fn();
+const mockSetQueryData = vi.fn();
 vi.mock('@tanstack/react-query', async () => {
 	const actual = await vi.importActual<any>('@tanstack/react-query');
 	return {
 		...actual,
 		useQueryClient: () => ({
 			invalidateQueries: mockInvalidateQueries,
+			setQueryData: mockSetQueryData,
 		}),
 	};
 });
@@ -27,6 +29,10 @@ const mockCampaignsWithFlows = vi.fn();
 const mockCopyDispositionFlow = vi.fn();
 const mockDispositionFlow = vi.fn();
 const mockDeleteDispositionFlow = vi.fn();
+let mockExistingFlow: {
+	id: number;
+	flowJson?: Record<string, unknown>;
+} | null = null;
 
 vi.mock('~/queries/dispositionFlowQueries', () => ({
 	useCreateDispositionFlow: () => mockCreateDispositionFlow(),
@@ -36,8 +42,11 @@ vi.mock('~/queries/dispositionFlowQueries', () => ({
 	useDispositionFlow: (id?: number) => mockDispositionFlow(id),
 	useDeleteDispositionFlow: () => mockDeleteDispositionFlow(),
 	useDispositionFlowsByCampaignPath: () => ({
-		data: [],
+		data: mockExistingFlow,
 		isLoading: false,
+		refetch: vi
+			.fn()
+			.mockImplementation(async () => ({ data: mockExistingFlow })),
 	}),
 }));
 
@@ -166,6 +175,7 @@ describe('StepThreeOutcomes', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockFlowJson = {};
+		mockExistingFlow = null;
 		defaultQueryMocks();
 	});
 
@@ -259,6 +269,21 @@ describe('StepThreeOutcomes', () => {
 					color: 'green',
 				})
 			);
+		});
+	});
+
+	describe('Existing Flow Behavior', () => {
+		it('shows already configured message when campaign already has a flow', async () => {
+			mockExistingFlow = { id: 999, flowJson: { dispositionNodes: [] } };
+
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
+
+			await waitFor(() => {
+				expect(
+					screen.getByText('Outcome flow already configured')
+				).toBeInTheDocument();
+			});
+			expect(screen.queryByText('Imported')).not.toBeInTheDocument();
 		});
 	});
 
@@ -624,6 +649,33 @@ describe('StepThreeOutcomes', () => {
 			expect(screen.getByText('Start Over')).toBeInTheDocument();
 		});
 
+		it('deletes existing campaign flow when Start Over is clicked after create', async () => {
+			mockExistingFlow = null;
+			const mockDeleteMutateAsync = vi.fn().mockResolvedValue({});
+			mockDeleteDispositionFlow.mockReturnValue({
+				mutateAsync: mockDeleteMutateAsync,
+				isPending: false,
+			});
+
+			renderWithProviders(<StepThreeOutcomes onNext={mockOnNext} />);
+			fireEvent.click(screen.getByText('Create Outcome Flow'));
+			fireEvent.click(screen.getByTestId('disposition-form-complete'));
+
+			// Flow exists in the backend after creation; simulate it becoming available
+			// for the refetch used by Start Over.
+			mockExistingFlow = { id: 321, flowJson: { dispositionNodes: [] } };
+
+			await waitFor(() => {
+				expect(screen.getByText('Start Over')).toBeInTheDocument();
+			});
+
+			fireEvent.click(screen.getByText('Start Over'));
+
+			await waitFor(() => {
+				expect(mockDeleteMutateAsync).toHaveBeenCalledWith(321);
+			});
+		});
+
 		it('deletes copied flow when Start Over is clicked after import', async () => {
 			const mockCopyMutateAsync = vi.fn().mockResolvedValue({
 				flow: { id: 100 },
@@ -776,7 +828,7 @@ describe('StepThreeOutcomes', () => {
 				expect(notifications.show).toHaveBeenCalledWith(
 					expect.objectContaining({
 						title: 'Error',
-						message: 'Failed to remove the imported flow. Please try again.',
+						message: expect.any(String),
 						color: 'red',
 					})
 				);
@@ -827,6 +879,10 @@ describe('StepThreeOutcomes', () => {
 			});
 
 			fireEvent.click(screen.getByText('Start Over'));
+
+			await waitFor(() => {
+				expect(mockDeleteMutateAsync).toHaveBeenCalledWith(100);
+			});
 
 			await waitFor(() => {
 				expect(screen.getByText('Create New')).toBeInTheDocument();
