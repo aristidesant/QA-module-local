@@ -15,6 +15,7 @@ import {
 	useExtendContactGroupWaves,
 } from '~/queries/contactGroupQueries';
 import ExtendWavesModal from '~/modules/campaigns/components/ExtendWavesModal';
+import { getErrorMessage } from '~/utils/httpClient';
 
 interface ContactListInformationProps {
 	contactGroup: ContactGroup;
@@ -155,14 +156,9 @@ export const ContactListInformation = ({
 							onReload();
 							modals.closeAll();
 						} catch (error) {
-							const apiMessage =
-								(error as { response?: { data?: { message?: string } } })
-									?.response?.data?.message ||
-								(error instanceof Error ? error.message : null) ||
-								'Unable to extend waves. Please try again.';
 							notifications.show({
-								title: 'Extend waves failed',
-								message: apiMessage,
+								title: 'Error',
+								message: getErrorMessage(error),
 								color: 'red',
 							});
 						}
@@ -196,14 +192,9 @@ export const ContactListInformation = ({
 					});
 					onReload();
 				} catch (error) {
-					const apiMessage =
-						(error as { response?: { data?: { message?: string } } })?.response
-							?.data?.message ||
-						(error instanceof Error ? error.message : null) ||
-						'Unable to complete the contact list. Please try again.';
 					notifications.show({
-						title: 'Complete failed',
-						message: apiMessage,
+						title: 'Error',
+						message: getErrorMessage(error),
 						color: 'red',
 					});
 				}
