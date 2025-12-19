@@ -27,7 +27,7 @@ import styles from './CampaignObjectivesForm.module.css';
 
 interface CampaignObjectivesFormProps {
 	objective?: CampaignObjective;
-	onSuccess: () => void;
+	onSuccess: (objective?: CampaignObjective) => void;
 	onCancel: () => void;
 	withinParentForm?: boolean;
 }
@@ -71,7 +71,7 @@ export const CampaignObjectivesForm: React.FC<CampaignObjectivesFormProps> = ({
 					categoryId: parseInt(values.categoryId),
 					active: values.active,
 				};
-				await updateObjective.mutateAsync({
+				const updatedObjective = await updateObjective.mutateAsync({
 					id: objective.id,
 					data: updateData,
 				});
@@ -80,6 +80,7 @@ export const CampaignObjectivesForm: React.FC<CampaignObjectivesFormProps> = ({
 					message: 'Campaign objective updated successfully',
 					color: 'green',
 				});
+				onSuccess(updatedObjective);
 			} else {
 				const createData: CreateCampaignObjectiveRequest = {
 					name: values.name,
@@ -87,14 +88,15 @@ export const CampaignObjectivesForm: React.FC<CampaignObjectivesFormProps> = ({
 					categoryId: parseInt(values.categoryId),
 					active: values.active,
 				};
-				await createObjective.mutateAsync(createData);
+				const createdObjective = await createObjective.mutateAsync(createData);
 				notifications.show({
 					title: 'Success',
 					message: 'Campaign objective created successfully',
 					color: 'green',
 				});
+				onSuccess(createdObjective);
 			}
-			onSuccess();
+			// onSuccess call moved inside existing blocks to pass specific data
 		} catch (error) {
 			notifications.show({
 				title: 'Error',
