@@ -15,6 +15,7 @@ vi.mock('~/hooks/usePermissions', () => ({
 }));
 
 const mutateMock = vi.fn();
+const deleteMutateMock = vi.fn();
 
 vi.mock('~/components/BaseTable', () => ({
 	default: ({ data, columns }: { data: any[]; columns: any[] }) => (
@@ -56,6 +57,10 @@ vi.mock('~/queries/contactsQueries', () => ({
 		mutate: mutateMock,
 		isPending: false,
 	}),
+	useDeleteContactPhoneNumber: () => ({
+		mutate: deleteMutateMock,
+		isPending: false,
+	}),
 }));
 
 vi.mock('@mantine/notifications', () => ({
@@ -64,9 +69,16 @@ vi.mock('@mantine/notifications', () => ({
 	},
 }));
 
+vi.mock('@mantine/modals', () => ({
+	modals: {
+		openConfirmModal: ({ onConfirm }: { onConfirm: () => void }) => onConfirm(),
+	},
+}));
+
 describe('EditablePhoneNumbersTable', () => {
 	beforeEach(() => {
 		mutateMock.mockReset();
+		deleteMutateMock.mockReset();
 	});
 
 	it('allows editing and saving a phone number', async () => {
@@ -87,6 +99,7 @@ describe('EditablePhoneNumbersTable', () => {
 		);
 
 		const row = screen.getByTestId('row-10');
+		// Edit button is the first one
 		const editButton = within(row).getAllByRole('button')[0];
 		await user.click(editButton);
 
@@ -102,6 +115,71 @@ describe('EditablePhoneNumbersTable', () => {
 			expect.any(Object)
 		);
 		expect(onAfterUpdate).toHaveBeenCalled();
+	});
+
+	it('allows deleting a phone number', async () => {
+		const user = userEvent.setup();
+		const onAfterUpdate = vi.fn();
+
+		deleteMutateMock.mockImplementation((_payload, opts) => {
+			opts?.onSuccess?.();
+		});
+
+		renderWithProviders(
+			<EditablePhoneNumbersTable
+				contactId={1}
+				contactGroupId={2}
+				phoneNumbers={[{ id: 10, phoneNumber: '+18095551234', status: 'OK' }]}
+				onAfterUpdate={onAfterUpdate}
+			/>
+		);
+
+		const row = screen.getByTestId('row-10');
+		// Delete button is the second one
+		const deleteButton = within(row).getAllByRole('button')[1];
+		await user.click(deleteButton);
+
+		expect(deleteMutateMock).toHaveBeenCalledWith(
+			{ contactId: 1, phoneNumberId: 10 },
+			expect.any(Object)
+		);
+		expect(onAfterUpdate).toHaveBeenCalled();
+	});
+
+	it('handles delete error correctly', async () => {
+		const user = userEvent.setup();
+		const onAfterUpdate = vi.fn();
+		const { notifications } = await import('@mantine/notifications');
+
+		deleteMutateMock.mockImplementation((_payload, opts) => {
+			opts?.onError?.(new Error('Delete failed'));
+		});
+
+		renderWithProviders(
+			<EditablePhoneNumbersTable
+				contactId={1}
+				contactGroupId={2}
+				phoneNumbers={[{ id: 10, phoneNumber: '+18095551234', status: 'OK' }]}
+				onAfterUpdate={onAfterUpdate}
+			/>
+		);
+
+		const row = screen.getByTestId('row-10');
+		// Delete button is the second one
+		const deleteButton = within(row).getAllByRole('button')[1];
+		await user.click(deleteButton);
+
+		expect(deleteMutateMock).toHaveBeenCalledWith(
+			{ contactId: 1, phoneNumberId: 10 },
+			expect.any(Object)
+		);
+		expect(notifications.show).toHaveBeenCalledWith(
+			expect.objectContaining({
+				title: 'Delete Failed',
+				color: 'red',
+			})
+		);
+		expect(onAfterUpdate).not.toHaveBeenCalled();
 	});
 
 	it('opens add phone modal', async () => {

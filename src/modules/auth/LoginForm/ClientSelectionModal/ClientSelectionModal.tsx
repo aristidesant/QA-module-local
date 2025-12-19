@@ -10,6 +10,9 @@ import {
 	TextInput,
 	Loader,
 	Box,
+	ScrollArea,
+	SimpleGrid,
+	PinInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import {
@@ -17,11 +20,13 @@ import {
 	IconBuilding,
 	IconShieldCheck,
 	IconCheck,
+	IconSearch,
 } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { ClientSelectOption } from '~/api/authApi';
 import { useSelectClient } from '~/queries/authQueries';
 import { getErrorMessage } from '~/utils/httpClient';
+import EmptyState from '~/components/EmptyState';
 import classes from './ClientSelectionModal.module.css';
 
 export const validateOtpValue = (value: string) => {
@@ -57,6 +62,17 @@ export default function ClientSelectionModal({
 	const [step, setStep] = useState<ModalStep>('select-client');
 	const [selectedClient, setSelectedClient] =
 		useState<ClientSelectOption | null>(null);
+	const [search, setSearch] = useState('');
+
+	const filteredClients = useMemo(() => {
+		if (!search.trim()) return availableClients;
+		const query = search.toLowerCase();
+		return availableClients.filter(
+			(client) =>
+				client.clientName.toLowerCase().includes(query) ||
+				client.clientIdentifier.toLowerCase().includes(query)
+		);
+	}, [availableClients, search]);
 
 	const form = useForm<FormValues>({
 		initialValues: {
@@ -93,7 +109,7 @@ export default function ClientSelectionModal({
 				handleClose();
 				onSuccess?.();
 			}
-		} catch (err: any) {
+		} catch (err) {
 			setFormError(getErrorMessage(err));
 			setSelectedClient(null);
 		}
@@ -114,7 +130,7 @@ export default function ClientSelectionModal({
 				handleClose();
 				onSuccess?.();
 			}
-		} catch (err: any) {
+		} catch (err) {
 			setFormError(getErrorMessage(err));
 		}
 	};
@@ -133,96 +149,141 @@ export default function ClientSelectionModal({
 			opened={opened}
 			onClose={handleClose}
 			title={
-				<Group gap='sm'>
+				<Group gap='xs'>
 					{step === 'select-client' ? (
 						<>
-							<IconBuilding size={20} />
-							<Text fw={600}>Select Organization</Text>
+							<IconBuilding size={16} />
+							<Text fw={600} size='sm'>
+								Select Organization
+							</Text>
 						</>
 					) : (
 						<>
-							<IconShieldCheck size={20} />
-							<Text fw={600}>Two-Factor Authentication</Text>
+							<IconShieldCheck size={16} />
+							<Text fw={600} size='sm'>
+								Two-Factor Authentication
+							</Text>
 						</>
 					)}
 				</Group>
 			}
 			centered
-			size='md'
-			radius='lg'
-			padding='xl'
+			size='lg'
+			radius='sm'
+			padding='md'
 			overlayProps={{ backgroundOpacity: 0.55, blur: 3 }}
 			withCloseButton={!isLoading}
 			closeOnClickOutside={!isLoading}
 			closeOnEscape={!isLoading}
 		>
 			{step === 'select-client' ? (
-				<Stack gap='md'>
+				<Stack gap='xs'>
 					<Text size='sm' c='dimmed'>
 						You have access to multiple organizations. Please select which one
 						you would like to sign in to.
 					</Text>
 
-					<Stack gap='xs'>
-						{availableClients.map((client) => (
-							<Card
-								key={client.clientId}
-								className={classes.clientCard}
-								padding='sm'
-								radius='md'
-								withBorder
-								onClick={() => !isLoading && handleClientSelect(client)}
-								data-selected={selectedClient?.clientId === client.clientId}
-								data-disabled={isLoading}
-							>
-								<Group justify='space-between' wrap='nowrap'>
-									<Box style={{ flex: 1, minWidth: 0 }}>
-										<Group gap='xs' wrap='nowrap'>
-											<IconBuilding
-												size={16}
-												className={classes.clientIcon}
-												stroke={1.5}
-											/>
-											<Text size='sm' fw={500} truncate>
-												{client.clientName}
-											</Text>
-										</Group>
-										<Group gap={4} mt={4}>
-											{client.roles.map((role) => (
-												<Badge
-													key={role}
-													size='xs'
-													variant='light'
-													color='blue'
-												>
-													{role}
-												</Badge>
-											))}
-										</Group>
-									</Box>
-									{selectedClient?.clientId === client.clientId && isLoading ? (
-										<Loader size='xs' />
-									) : (
-										<IconCheck
-											size={16}
-											className={classes.checkIcon}
-											data-visible={
+					{availableClients.length > 5 && (
+						<TextInput
+							placeholder='Search organizations...'
+							leftSection={<IconSearch size={14} />}
+							value={search}
+							onChange={(e) => setSearch(e.currentTarget.value)}
+							size='sm'
+							autoFocus
+						/>
+					)}
+
+					<ScrollArea
+						h={availableClients.length > 10 ? 450 : 'auto'}
+						type='auto'
+						offsetScrollbars
+					>
+						<Box
+							style={{ minHeight: availableClients.length > 5 ? 450 : 'auto' }}
+						>
+							{filteredClients.length > 0 ? (
+								<SimpleGrid cols={{ base: 1, sm: 2 }} spacing='xs'>
+									{filteredClients.map((client) => (
+										<Card
+											key={client.clientId}
+											className={classes.clientCard}
+											padding='sm'
+											radius='sm'
+											withBorder
+											onClick={() => !isLoading && handleClientSelect(client)}
+											data-selected={
 												selectedClient?.clientId === client.clientId
 											}
-										/>
-									)}
-								</Group>
-							</Card>
-						))}
-					</Stack>
+											data-disabled={isLoading}
+										>
+											<Group
+												justify='space-between'
+												wrap='nowrap'
+												align='center'
+												className={classes.cardContent}
+											>
+												<Group gap='sm' wrap='nowrap' align='center'>
+													<div className={classes.iconWrapper}>
+														<IconBuilding size={16} stroke={1.5} />
+													</div>
+													<Box style={{ flex: 1, minWidth: 0 }}>
+														<Text size='sm' fw={500} truncate>
+															{client.clientName}
+														</Text>
+														<Group gap={4}>
+															{client.roles.map((role) => (
+																<Badge
+																	key={role}
+																	size='xs'
+																	variant='dot'
+																	color='blue'
+																	styles={{
+																		label: {
+																			textTransform: 'none',
+																			fontWeight: 400,
+																		},
+																	}}
+																>
+																	{role}
+																</Badge>
+															))}
+														</Group>
+													</Box>
+												</Group>
+												{selectedClient?.clientId === client.clientId &&
+												isLoading ? (
+													<Loader size='xs' />
+												) : (
+													<IconCheck
+														size={16}
+														className={classes.checkIcon}
+														data-visible={
+															selectedClient?.clientId === client.clientId
+														}
+													/>
+												)}
+											</Group>
+										</Card>
+									))}
+								</SimpleGrid>
+							) : (
+								<EmptyState
+									icon={<IconBuilding size={32} />}
+									message='No organizations found'
+									description='Try adjusting your search to find what you are looking for.'
+								/>
+							)}
+						</Box>
+					</ScrollArea>
 
 					{formError && (
 						<Alert
 							variant='light'
 							color='red'
 							title='Unable to select organization'
-							icon={<IconAlertCircle size={18} />}
-							radius='md'
+							icon={<IconAlertCircle size={16} />}
+							radius='sm'
 						>
 							{formError}
 						</Alert>
@@ -230,41 +291,51 @@ export default function ClientSelectionModal({
 				</Stack>
 			) : (
 				<form onSubmit={form.onSubmit(handleOTPSubmit)}>
-					<Stack gap='md'>
+					<Stack gap='xs' style={{ minHeight: 450 }}>
 						<Text size='sm' c='dimmed'>
 							Please enter the 6-digit verification code sent to your email to
 							continue signing in to{' '}
-							<Text span fw={500}>
+							<Text span fw={500} size='sm'>
 								{selectedClient?.clientName}
 							</Text>
 							.
 						</Text>
 
-						<TextInput
-							label='Verification Code'
-							placeholder='Enter 6-digit code'
-							maxLength={6}
-							className={classes.otpInput}
-							{...form.getInputProps('otp')}
-							disabled={isLoading}
-							autoComplete='one-time-code'
-							inputMode='numeric'
-							pattern='[0-9]*'
-						/>
+						<Stack align='center' gap='md' py='md'>
+							<PinInput
+								length={6}
+								type='number'
+								oneTimeCode
+								autoFocus
+								disabled={isLoading}
+								{...form.getInputProps('otp')}
+								size='md'
+								aria-label='Verification code'
+								onComplete={(value) => {
+									form.setFieldValue('otp', value);
+									form.onSubmit(handleOTPSubmit)();
+								}}
+							/>
+							{form.errors.otp && (
+								<Text size='xs' c='red'>
+									{form.errors.otp}
+								</Text>
+							)}
+						</Stack>
 
 						{formError && (
 							<Alert
 								variant='light'
 								color='red'
 								title='Verification failed'
-								icon={<IconAlertCircle size={18} />}
-								radius='md'
+								icon={<IconAlertCircle size={16} />}
+								radius='sm'
 							>
 								{formError}
 							</Alert>
 						)}
 
-						<Group justify='space-between' mt='md'>
+						<Group justify='space-between' mt='auto' pt='md'>
 							<Button
 								variant='subtle'
 								onClick={handleBackToClientSelection}
@@ -285,7 +356,7 @@ export default function ClientSelectionModal({
 								<Button
 									type='submit'
 									loading={isLoading}
-									leftSection={!isLoading && <IconShieldCheck size={16} />}
+									leftSection={!isLoading && <IconShieldCheck size={14} />}
 									disabled={isLoading}
 									size='sm'
 								>

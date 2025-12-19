@@ -27,6 +27,7 @@ import AppendContactsModal from './AppendContactsModal';
 import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
+import { getErrorMessage } from '~/utils/httpClient';
 
 interface ContactGroupContactsTableProps {
 	contactGroupId: number;
@@ -88,11 +89,8 @@ export const ContactGroupContactsTable: React.FC<
 		},
 		onError: (error) => {
 			notifications.show({
-				title: 'Append failed',
-				message:
-					error instanceof Error
-						? error.message
-						: 'Unable to append contacts. Please try again.',
+				title: 'Error',
+				message: getErrorMessage(error),
 				color: 'red',
 			});
 		},
@@ -209,10 +207,7 @@ export const ContactGroupContactsTable: React.FC<
 						onError: (error) => {
 							notifications.show({
 								title: 'Error',
-								message:
-									error instanceof Error
-										? error.message
-										: 'Failed to delete contact.',
+								message: getErrorMessage(error),
 								color: 'red',
 							});
 							setDeletingContactId(null);
@@ -311,9 +306,8 @@ export const ContactGroupContactsTable: React.FC<
 			}
 		} catch (error) {
 			notifications.show({
-				title: 'Export Failed',
-				message:
-					error instanceof Error ? error.message : 'Failed to export contacts',
+				title: 'Error',
+				message: getErrorMessage(error),
 				color: 'red',
 			});
 		}
@@ -349,10 +343,7 @@ export const ContactGroupContactsTable: React.FC<
 				{isLoading ? (
 					<ContactListSkeleton />
 				) : error ? (
-					<div>
-						Error:{' '}
-						{error instanceof Error ? error.message : 'An error occurred'}
-					</div>
+					<div>Error: {getErrorMessage(error)}</div>
 				) : (
 					<BaseTable
 						data={contacts}

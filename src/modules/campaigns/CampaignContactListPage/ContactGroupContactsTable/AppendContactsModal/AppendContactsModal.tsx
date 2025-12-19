@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Alert, Button, Group, Modal, Stack, Text } from '@mantine/core';
 import { IconUpload } from '@tabler/icons-react';
 import styles from './AppendContactsModal.module.css';
+import { getErrorMessage } from '~/utils/httpClient';
 
 interface AppendContactsModalProps {
 	onClose: () => void;
@@ -54,9 +55,7 @@ const AppendContactsModal = ({
 			const result = await onUpload(file);
 			setUploadedFileId(result.contactGroupFileId);
 		} catch (err) {
-			setErrorMessage(
-				err instanceof Error ? err.message : 'Failed to upload file.'
-			);
+			setErrorMessage(getErrorMessage(err));
 		}
 	};
 
@@ -67,9 +66,7 @@ const AppendContactsModal = ({
 			await onAppend(uploadedFileId);
 			onClose();
 		} catch (err) {
-			setErrorMessage(
-				err instanceof Error ? err.message : 'Failed to append contacts.'
-			);
+			setErrorMessage(getErrorMessage(err));
 		}
 	};
 

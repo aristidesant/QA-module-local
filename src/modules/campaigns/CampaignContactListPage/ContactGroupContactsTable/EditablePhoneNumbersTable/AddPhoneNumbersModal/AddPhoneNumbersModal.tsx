@@ -12,6 +12,7 @@ import { IconPlus, IconX, IconDeviceFloppy } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { useCreateContactPhoneNumbers } from '~/queries/contactsQueries';
 import styles from './AddPhoneNumbersModal.module.css';
+import { getErrorMessage } from '~/utils/httpClient';
 
 interface AddPhoneNumbersModalProps {
 	contactId: number;
@@ -84,11 +85,8 @@ const AddPhoneNumbersModal: React.FC<AddPhoneNumbersModalProps> = ({
 				},
 				onError: (error) => {
 					notifications.show({
-						title: 'Add Failed',
-						message:
-							error instanceof Error
-								? error.message
-								: 'Failed to add phone numbers',
+						title: 'Error',
+						message: getErrorMessage(error),
 						color: 'red',
 					});
 				},

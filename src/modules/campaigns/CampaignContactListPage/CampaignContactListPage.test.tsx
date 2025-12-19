@@ -12,6 +12,8 @@ import {
 import { useCampaignContactListStore } from '~/stores/campaignContactListStore';
 import { useNavigate, useParams } from 'react-router';
 import { modals } from '@mantine/modals';
+import { notifications } from '@mantine/notifications';
+import { getErrorMessage } from '~/utils/httpClient';
 
 // Mock dependencies
 vi.mock('react-router', () => ({
@@ -52,6 +54,10 @@ vi.mock('@mantine/notifications', () => ({
 	notifications: {
 		show: vi.fn(),
 	},
+}));
+
+vi.mock('~/utils/httpClient', () => ({
+	getErrorMessage: vi.fn((error: any) => error?.message || 'Error'),
 }));
 
 // Mock child components
@@ -271,6 +277,52 @@ describe('CampaignContactListPage', () => {
 		await waitFor(() => {
 			expect(modals.openConfirmModal).toHaveBeenCalled();
 			expect(mockMutate).toHaveBeenCalled();
+		});
+	});
+
+	it('shows error notification when start campaign fails', async () => {
+		const mockData = {
+			id: 1,
+			name: 'Test List',
+			queueStatus: 'PENDING',
+			schedule: { campaignId: 10 },
+		};
+		(useGetContactGroup as any).mockReturnValue({
+			isLoading: false,
+			data: mockData,
+		});
+		(modals.openConfirmModal as any).mockImplementation(({ onConfirm }: any) =>
+			onConfirm()
+		);
+
+		const apiError = {
+			response: {
+				data: {
+					message: 'No contacts with available phone numbers found',
+				},
+			},
+		};
+
+		(mockMutate as any).mockImplementation((_payload: any, options: any) => {
+			options.onError(apiError);
+		});
+
+		(getErrorMessage as any).mockReturnValue(apiError.response.data.message);
+
+		renderWithProviders(<CampaignContactListPage />);
+
+		const startButton = screen.getByText('Start Campaign');
+		fireEvent.click(startButton);
+
+		await waitFor(() => {
+			expect(notifications.show).toHaveBeenCalledWith(
+				expect.objectContaining({
+					title: 'Error',
+					message: apiError.response.data.message,
+					color: 'red',
+				})
+			);
+			expect(getErrorMessage).toHaveBeenCalledWith(apiError);
 		});
 	});
 
