@@ -103,6 +103,17 @@ const contactsApi = (_authHeader?: Record<string, string>) => {
 			return response.data;
 		},
 
+		// DELETE a specific contact phone number
+		deleteContactPhoneNumber: async (
+			contactId: number | string,
+			phoneNumberId: number | string
+		) => {
+			const response = await axios.delete(
+				`${DEFAULT_API_URL}/contacts/${contactId}/phone-numbers/${phoneNumberId}`
+			);
+			return response.data;
+		},
+
 		// CREATE phone numbers for an existing contact
 		createContactPhoneNumbers: async (
 			contactId: number | string,

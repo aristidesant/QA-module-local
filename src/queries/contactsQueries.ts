@@ -100,6 +100,35 @@ export const useUpdateContactPhoneNumber = () => {
 	});
 };
 
+// Delete contact phone number
+export const useDeleteContactPhoneNumber = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async ({
+			contactId,
+			phoneNumberId,
+		}: {
+			contactId: number | string;
+			phoneNumberId: number | string;
+		}) => {
+			const api = contactsApi();
+			return api.deleteContactPhoneNumber(contactId, phoneNumberId);
+		},
+		onSuccess: (_, { contactId }) => {
+			queryClient.invalidateQueries({ queryKey: ['contacts'] });
+			queryClient.invalidateQueries({
+				queryKey: ['contact', String(contactId)],
+			});
+			// eslint-disable-next-line no-console
+			console.log('Contact phone number deleted successfully');
+		},
+		onError: (error) => {
+			// eslint-disable-next-line no-console
+			console.error('Error deleting contact phone number:', error);
+		},
+	});
+};
+
 // Create phone numbers for an existing contact
 export const useCreateContactPhoneNumbers = () => {
 	const queryClient = useQueryClient();
