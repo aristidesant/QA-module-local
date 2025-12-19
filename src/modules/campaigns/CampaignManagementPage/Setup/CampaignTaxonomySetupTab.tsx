@@ -13,7 +13,7 @@ import CampaignSchemasPage from '../Schemas/CampaignSchemasPage';
 type TaxonomySection = 'schemas' | 'objectives' | 'categories';
 
 export default function CampaignTaxonomySetupTab() {
-	const [activeId, setActiveId] = useState<TaxonomySection>('schemas');
+	const [activeId, setActiveId] = useState<TaxonomySection>('categories');
 
 	const items = useMemo<ModalMenuItem[]>(
 		() => [

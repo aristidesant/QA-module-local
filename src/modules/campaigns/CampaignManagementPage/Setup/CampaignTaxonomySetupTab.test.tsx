@@ -19,12 +19,13 @@ describe('CampaignTaxonomySetupTab', () => {
 	it('renders schemas by default and switches sections', () => {
 		renderWithProviders(<CampaignTaxonomySetupTab />);
 
-		expect(screen.getByTestId('schemas-page')).toBeInTheDocument();
+		// Default section is Categories (not Schemas)
+		expect(screen.getByTestId('categories-page')).toBeInTheDocument();
 
 		fireEvent.click(screen.getByText('Objectives'));
 		expect(screen.getByTestId('objectives-page')).toBeInTheDocument();
 
-		fireEvent.click(screen.getByText('Categories'));
-		expect(screen.getByTestId('categories-page')).toBeInTheDocument();
+		fireEvent.click(screen.getByText('Schemas'));
+		expect(screen.getByTestId('schemas-page')).toBeInTheDocument();
 	});
 });
