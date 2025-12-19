@@ -1,4 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { AxiosError } from 'axios';
+import { notifications } from '@mantine/notifications';
 import { StepOneGeneral } from './StepOneGeneral';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 import {
@@ -55,7 +57,9 @@ vi.mock(
 		CampaignObjectivesForm: ({ onSuccess, onCancel }: any) => (
 			<div data-testid='campaign-objectives-form'>
 				Campaign Objectives Form
-				<button onClick={onSuccess}>Success</button>
+				<button onClick={() => onSuccess({ id: 999, name: 'New Objective' })}>
+					Success
+				</button>
 				<button onClick={onCancel}>Cancel</button>
 			</div>
 		),
@@ -228,6 +232,48 @@ describe('StepOneGeneral', () => {
 		}
 	});
 
+	it('auto-selects newly created objective', async () => {
+		renderComponent();
+
+		// Open modal
+		const createButtons = screen.getAllByRole('button');
+		const createButton = createButtons.find(
+			(btn) =>
+				!btn.textContent?.includes('Cancel') &&
+				!btn.textContent?.includes('Save')
+		);
+
+		if (createButton) {
+			fireEvent.click(createButton);
+
+			// Find Success button in the mocked form and click it
+			const successButton = await screen.findByText('Success');
+			fireEvent.click(successButton);
+
+			// The modal should close
+			await waitFor(() => {
+				expect(
+					screen.queryByTestId('campaign-objectives-form')
+				).not.toBeInTheDocument();
+			});
+
+			// The objectiveId should be set to 999.
+			// To verify, let's fill other required fields and check if the form is valid (submit button enabled)
+			fireEvent.change(screen.getByLabelText(/Campaign Name/i), {
+				target: { value: 'Test Campaign' },
+			});
+			fireEvent.change(screen.getByLabelText(/Description/i), {
+				target: { value: 'Test Description' },
+			});
+			fireEvent.change(screen.getByTestId('phone-selector'), {
+				target: { value: '10' },
+			});
+
+			const submitButton = screen.getByText('Save & Continue');
+			await waitFor(() => expect(submitButton).not.toBeDisabled());
+		}
+	});
+
 	it('submits the form with correct data', async () => {
 		// Mock store with objective selected
 		const storeWithObjective = { ...mockStore, objectiveId: 1 };
@@ -274,5 +320,89 @@ describe('StepOneGeneral', () => {
 
 		// Verify phone number is cleared
 		expect(phoneSelector.value).toBe('');
+	});
+
+	it('shows specific error message from API response', async () => {
+		const errorMessage =
+			'Failed to create agent: Agent with name Demo already exists for this client. Campaign creation aborted.';
+
+		const axiosError = new AxiosError(
+			'Bad Gateway',
+			'502',
+			undefined,
+			undefined,
+			{
+				data: {
+					message: errorMessage,
+					error: 'Bad Gateway',
+					statusCode: 502,
+				},
+				status: 502,
+				statusText: 'Bad Gateway',
+				headers: {},
+				config: {} as any,
+			}
+		);
+
+		// Mock the mutation to return the error
+		const mockCreateWithError = {
+			mutate: (_data: any, { onError }: any) => {
+				onError(axiosError);
+			},
+			isPending: false,
+		};
+
+		(
+			useCreateCampaignWithAgent as unknown as ReturnType<typeof vi.fn>
+		).mockReturnValue(mockCreateWithError);
+
+		// Use store with objective selected so we can submit immediately
+		const storeWithObjective = { ...mockStore, objectiveId: 1 };
+		(
+			useCampaignWizardStore as unknown as ReturnType<typeof vi.fn>
+		).mockReturnValue(storeWithObjective);
+
+		renderComponent();
+
+		fireEvent.change(screen.getByLabelText(/Campaign Name/i), {
+			target: { value: 'Duplicate Campaign' },
+		});
+		fireEvent.change(screen.getByLabelText(/Description/i), {
+			target: { value: 'Test Description' },
+		});
+		fireEvent.change(screen.getByTestId('phone-selector'), {
+			target: { value: '10' },
+		});
+
+		const submitButton = screen.getByText('Save & Continue');
+		await waitFor(() => expect(submitButton).not.toBeDisabled());
+		fireEvent.click(submitButton);
+
+		// Verify notification is called with the specific message
+		expect(notifications.show).toHaveBeenCalledWith(
+			expect.objectContaining({
+				title: 'Error',
+				message: errorMessage,
+				color: 'red',
+			})
+		);
+	});
+
+	it('renders error alert when creation fails', () => {
+		// Mock failure state
+		(
+			useCreateCampaignWithAgent as unknown as ReturnType<typeof vi.fn>
+		).mockReturnValue({
+			mutate: vi.fn(),
+			isPending: false,
+			isError: true,
+			error: new Error('Some error'),
+		});
+
+		renderComponent();
+
+		expect(
+			screen.getByText(/Please check the notification for details/i)
+		).toBeInTheDocument();
 	});
 });

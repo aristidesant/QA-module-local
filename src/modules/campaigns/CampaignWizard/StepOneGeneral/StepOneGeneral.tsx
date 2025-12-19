@@ -1,3 +1,4 @@
+import { isAxiosError } from 'axios';
 import React, { useState } from 'react';
 import {
 	TextInput,
@@ -14,6 +15,7 @@ import {
 	ActionIcon,
 	Tooltip,
 	Input,
+	Alert,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -24,12 +26,13 @@ import {
 	useSetCampaignDraft,
 } from '~/queries/campaignsQueries';
 import { CampaignStatus } from '~/models/CampaignStatus';
+import type { CampaignObjective } from '~/models/CampaignObjectiveModel';
 import type { CreateCampaignWithAgentDTO } from '~/api/campaignsApi';
 import styles from '../CampaignWizard.module.css';
 import { useGetCampaignObjectives } from '~/queries/campaignObjectivesQueries';
 import { useGetAllAgentVoices } from '~/queries/agentVoiceQueries';
 import { CampaignObjectivesForm } from '~/modules/campaigns/CampaignManagementPage/Objectives/components/CampaignObjectivesForm/CampaignObjectivesForm';
-import { IconPlus } from '@tabler/icons-react';
+import { IconPlus, IconAlertCircle } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
 
 interface StepOneGeneralProps {
@@ -184,21 +187,29 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 			},
 			onError: (error) => {
 				setIsSubmitting(false);
+
+				let errorMessage = 'Failed to create campaign';
+				if (isAxiosError(error) && error.response?.data?.message) {
+					errorMessage = error.response.data.message;
+				} else if (error instanceof Error) {
+					errorMessage = error.message;
+				}
+
 				notifications.show({
 					title: 'Error',
-					message:
-						error instanceof Error
-							? error.message
-							: 'Failed to create campaign',
+					message: errorMessage,
 					color: 'red',
 				});
 			},
 		});
 	};
 
-	const handleObjectiveCreated = () => {
+	const handleObjectiveCreated = (objective?: CampaignObjective) => {
 		setIsObjectiveModalOpen(false);
 		queryClient.invalidateQueries({ queryKey: ['campaignObjectives'] });
+		if (objective) {
+			form.setFieldValue('objectiveId', objective.id);
+		}
 	};
 
 	const handleCampaignTypeChange = (value: string) => {
@@ -348,11 +359,14 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 					</div>
 
 					{createCampaignWithAgent.isError && (
-						<Text className={styles.error}>
-							{createCampaignWithAgent.error instanceof Error
-								? createCampaignWithAgent.error.message
-								: 'Error creating campaign'}
-						</Text>
+						<Alert
+							variant='light'
+							color='red'
+							title='Campaign Creation Failed'
+							icon={<IconAlertCircle />}
+						>
+							Please check the notification for details.
+						</Alert>
 					)}
 				</Stack>
 
