@@ -346,7 +346,7 @@ describe('StepOneGeneral', () => {
 
 		// Mock the mutation to return the error
 		const mockCreateWithError = {
-			mutate: (data: any, { onError }: any) => {
+			mutate: (_data: any, { onError }: any) => {
 				onError(axiosError);
 			},
 			isPending: false,
