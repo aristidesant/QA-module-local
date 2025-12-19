@@ -17,9 +17,9 @@ export default function CampaignTaxonomySetupTab() {
 
 	const items = useMemo<ModalMenuItem[]>(
 		() => [
-			{ id: 'schemas', label: 'Schemas', icon: IconSchema },
-			{ id: 'objectives', label: 'Objectives', icon: IconTarget },
 			{ id: 'categories', label: 'Categories', icon: IconCategory },
+			{ id: 'objectives', label: 'Objectives', icon: IconTarget },
+			{ id: 'schemas', label: 'Schemas', icon: IconSchema },
 		],
 		[]
 	);
