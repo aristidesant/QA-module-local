@@ -1,13 +1,15 @@
 .clientCard {
 	cursor: pointer;
-	transition: all 0.2s ease;
+	transition: all 0.15s ease;
 	border-color: var(--mantine-color-gray-2);
 	background-color: var(--mantine-color-white);
+	position: relative;
+	overflow: hidden;
 }
 
 .clientCard:hover:not([data-disabled='true']) {
-	border-color: var(--mantine-color-gray-4);
-	background-color: var(--mantine-color-gray-0);
+	border-color: var(--mantine-color-blue-3);
+	background-color: var(--mantine-color-blue-0);
 }
 
 .clientCard[data-selected='true'] {
@@ -20,28 +22,44 @@
 	opacity: 0.7;
 }
 
-.clientIcon {
+.cardContent {
+	transition: transform 0.15s ease;
+}
+
+.clientCard:active:not([data-disabled='true']) .cardContent {
+	transform: scale(0.98);
+}
+
+.iconWrapper {
+	width: 32px;
+	height: 32px;
+	border-radius: var(--mantine-radius-sm);
+	background-color: var(--mantine-color-gray-1);
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	color: var(--mantine-color-gray-6);
+	transition: all 0.15s ease;
+}
+
+.clientCard:hover .iconWrapper {
+	background-color: var(--mantine-color-blue-1);
+	color: var(--mantine-color-blue-6);
+}
+
+.clientCard[data-selected='true'] .iconWrapper {
+	background-color: var(--mantine-color-blue-6);
+	color: var(--mantine-color-white);
 }
 
 .checkIcon {
 	color: var(--mantine-color-blue-6);
 	opacity: 0;
-	transition: opacity 0.15s ease;
+	transition: all 0.15s ease;
+	transform: scale(0.5);
 }
 
 .checkIcon[data-visible='true'] {
 	opacity: 1;
-}
-
-.otpInput input {
-	text-align: center;
-	font-size: var(--mantine-font-size-lg);
-	font-weight: 600;
-	letter-spacing: 0.2rem;
-}
-
-.otpInput input:focus {
-	border-color: var(--mantine-color-blue-6);
-	box-shadow: none;
+	transform: scale(1);
 }
