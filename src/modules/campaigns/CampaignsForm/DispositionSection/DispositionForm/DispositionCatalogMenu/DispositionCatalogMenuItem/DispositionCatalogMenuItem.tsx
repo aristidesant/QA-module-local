@@ -5,6 +5,8 @@ import {
 	IconPlus,
 	IconHierarchy3,
 	IconPointFilled,
+	IconChevronRight,
+	IconChevronDown,
 } from '@tabler/icons-react';
 import type { DispositionNode } from '~/models/DispositionNodeModel';
 import { getNodeStyle } from '~/utils/dispositionNodeStyles';
@@ -14,12 +16,18 @@ interface Props {
 	node: DispositionNode;
 	onAdd: (node: DispositionNode) => void;
 	onAddGroup?: (node: DispositionNode) => void;
+	isCollapsible?: boolean;
+	isCollapsed?: boolean;
+	onToggleCollapse?: () => void;
 }
 
 const DispositionCatalogMenuItem: React.FC<Props> = ({
 	node,
 	onAdd,
 	onAddGroup,
+	isCollapsible,
+	isCollapsed,
+	onToggleCollapse,
 }) => {
 	const hasChildren = Array.isArray(node.children) && node.children.length > 0;
 	const nodeStyle = getNodeStyle(node, 0);
@@ -28,6 +36,23 @@ const DispositionCatalogMenuItem: React.FC<Props> = ({
 		<Paper withBorder radius='md' className={styles.item}>
 			<Group justify='space-between' align='center' gap='xs' wrap='nowrap'>
 				<Group gap='xs' wrap='nowrap' style={{ flex: 1, minWidth: 0 }}>
+					{isCollapsible ? (
+						<ActionIcon
+							variant='subtle'
+							color='gray'
+							size='xs'
+							onClick={onToggleCollapse}
+							aria-label={isCollapsed ? 'Expand' : 'Collapse'}
+						>
+							{isCollapsed ? (
+								<IconChevronRight size={14} />
+							) : (
+								<IconChevronDown size={14} />
+							)}
+						</ActionIcon>
+					) : (
+						<Box w={22} />
+					)}
 					<IconPointFilled
 						size={10}
 						className={`${styles.statusDot} ${styles[`${nodeStyle}Dot`]}`}
