@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useCallback } from 'react';
+import { useMemo, useEffect, useCallback, useState } from 'react';
 import styles from './DispositionCatalogMenu.module.css';
 import { useDispositionBuilderStore } from '../../dispositionStore';
 import { Select, Divider, Stack, Text, Box } from '@mantine/core';
@@ -17,6 +17,9 @@ const DispositionCatalogMenu: React.FC = () => {
 		useDispositionBuilderStore((state) => state);
 	const movedNodeIds = getMovedNodeIds();
 	const campaign = useCampaignsStore((state) => state.selectedCampaign);
+
+	// Track collapsed state for parent nodes (collapsed by default)
+	const [collapsedNodes, setCollapsedNodes] = useState<Set<number>>(new Set());
 
 	const { data: catalogs = [], isLoading } = useDispositionCatalogs({
 		type: campaign?.type ?? 'OUTBOUND',
@@ -43,6 +46,57 @@ const DispositionCatalogMenu: React.FC = () => {
 		selectedCatalog,
 		movedNodeIds
 	);
+
+	// Collect all parent node IDs from available nodes
+	const parentNodeIds = useMemo(() => {
+		const ids = new Set<number>();
+		availableNodes.forEach((item) => {
+			if (item.node.children && item.node.children.length > 0) {
+				ids.add(item.node.id);
+			}
+		});
+		return ids;
+	}, [availableNodes]);
+
+	// Initialize all parent nodes as collapsed when catalog changes
+	useEffect(() => {
+		setCollapsedNodes(new Set(parentNodeIds));
+	}, [selectedCatalog?.id]);
+
+	// Toggle collapse state for a node
+	const toggleCollapse = useCallback((nodeId: number) => {
+		setCollapsedNodes((prev) => {
+			const newSet = new Set(prev);
+			if (newSet.has(nodeId)) {
+				newSet.delete(nodeId);
+			} else {
+				newSet.add(nodeId);
+			}
+			return newSet;
+		});
+	}, []);
+
+	// Filter visible nodes based on collapsed state
+	const visibleNodes = useMemo(() => {
+		// Build a map of node id to parent id from available nodes
+		const nodeParentMap = new Map<number, number | null>();
+		availableNodes.forEach((item) => {
+			nodeParentMap.set(item.node.id, item.node.parentId ?? null);
+		});
+
+		// Check if any ancestor is collapsed
+		const hasCollapsedAncestor = (nodeId: number): boolean => {
+			const parentId = nodeParentMap.get(nodeId);
+			if (!parentId) return false;
+			if (collapsedNodes.has(parentId)) return true;
+			return hasCollapsedAncestor(parentId);
+		};
+
+		return availableNodes.filter((item) => {
+			// Always show root level nodes (level 0) and nodes without collapsed ancestors
+			return !hasCollapsedAncestor(item.node.id);
+		});
+	}, [availableNodes, collapsedNodes]);
 
 	const handleAddNode = useCallback(
 		(node: DispositionNode) => {
@@ -130,26 +184,35 @@ const DispositionCatalogMenu: React.FC = () => {
 			/>
 			<Divider my='xs' />
 			<Box className={styles.menuListWrapper}>
-				{availableNodes.length === 0 ? (
+				{visibleNodes.length === 0 ? (
 					<Text c='dimmed' ta='center' size='xs'>
 						No dispositions available in this catalog.
 					</Text>
 				) : (
 					<Stack gap={4}>
-						{availableNodes.map((item, idx) => (
-							<div
-								key={`${item.node.id}-${idx}`}
-								style={{
-									marginLeft: `${item.level * 12}px`,
-									width: `calc(100% - ${item.level * 12}px)`,
-								}}
-							>
-								<DispositionCatalogMenuItem
-									node={item.node}
-									onAdd={handleAddNode}
-								/>
-							</div>
-						))}
+						{visibleNodes.map((item, idx) => {
+							const hasChildren =
+								item.node.children && item.node.children.length > 0;
+							const isCollapsed = collapsedNodes.has(item.node.id);
+
+							return (
+								<div
+									key={`${item.node.id}-${idx}`}
+									style={{
+										marginLeft: `${item.level * 12}px`,
+										width: `calc(100% - ${item.level * 12}px)`,
+									}}
+								>
+									<DispositionCatalogMenuItem
+										node={item.node}
+										onAdd={handleAddNode}
+										isCollapsible={hasChildren}
+										isCollapsed={isCollapsed}
+										onToggleCollapse={() => toggleCollapse(item.node.id)}
+									/>
+								</div>
+							);
+						})}
 					</Stack>
 				)}
 			</Box>

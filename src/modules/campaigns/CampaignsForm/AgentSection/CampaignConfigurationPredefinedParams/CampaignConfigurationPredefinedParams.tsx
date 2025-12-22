@@ -86,7 +86,7 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 	return (
 		<>
 			<SectionCard
-				title='Active Configuration'
+				title='Agent Behavior'
 				description='Select and apply predefined conversation configurations for your campaign agent.'
 			>
 				{currentPredefinedParam ? (

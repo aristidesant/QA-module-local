@@ -69,7 +69,9 @@ describe('CampaignPredefinedParamsPage', () => {
 		fireEvent.click(screen.getByLabelText('Add parameter'));
 
 		await waitFor(() =>
-			expect(screen.getByText('Create Campaign Parameter')).toBeInTheDocument()
+			expect(
+				screen.getByText('Create Agent Behavior Configuration')
+			).toBeInTheDocument()
 		);
 	});
 
@@ -90,7 +92,9 @@ describe('CampaignPredefinedParamsPage', () => {
 		fireEvent.click(screen.getByText('Param 1'));
 
 		await waitFor(() =>
-			expect(screen.getByText('Edit Campaign Parameter')).toBeInTheDocument()
+			expect(
+				screen.getByText('Edit Agent Behavior Configuration')
+			).toBeInTheDocument()
 		);
 		expect(screen.getByDisplayValue('Param 1')).toBeInTheDocument();
 	});
