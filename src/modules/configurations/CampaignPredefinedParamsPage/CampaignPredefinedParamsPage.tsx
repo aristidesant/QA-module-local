@@ -143,8 +143,8 @@ const CampaignPredefinedParamsPage = () => {
 
 	return (
 		<ContentContainer
-			title='Campaign Predefined Params'
-			description='Modify the default params'
+			title='Agent Behavior Configurations'
+			description='Modify the default agent behavior parameters for campaigns.'
 			titleRight={
 				hasConfig ? (
 					<Group gap={'xs'}>
@@ -279,8 +279,8 @@ const CampaignPredefinedParamsPage = () => {
 				onClose={handleCloseForm}
 				title={
 					mode === 'edit'
-						? 'Edit Campaign Parameter'
-						: 'Create Campaign Parameter'
+						? 'Edit Agent Behavior Configuration'
+						: 'Create Agent Behavior Configuration'
 				}
 				size='xl'
 				radius='md'

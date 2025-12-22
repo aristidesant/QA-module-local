@@ -170,7 +170,7 @@ describe('CampaignConfigurationPredefinedParams', () => {
 	describe('Initial Rendering', () => {
 		it('renders the section card with title', () => {
 			renderComponent();
-			expect(screen.getByText('Active Configuration')).toBeInTheDocument();
+			expect(screen.getByText('Agent Behavior')).toBeInTheDocument();
 		});
 
 		it('shows empty state when no configuration is applied', () => {
