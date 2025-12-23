@@ -1,12 +1,5 @@
 import { useMemo, useState } from 'react';
-import {
-	ActionIcon,
-	Button,
-	Collapse,
-	Group,
-	Text,
-	Tooltip,
-} from '@mantine/core';
+import { ActionIcon, Button, Group, Text, Tooltip } from '@mantine/core';
 import { IconPlus, IconX } from '@tabler/icons-react';
 import type { ColumnDef } from '@tanstack/react-table';
 import BaseTable from '~/components/BaseTable';
@@ -123,7 +116,7 @@ export default function ObjectivePickerPanel({
 				</Group>
 			</div>
 
-			<Collapse in={showCreate}>
+			{showCreate && (
 				<div className={styles.inlineForm}>
 					<CampaignObjectivesForm
 						withinParentForm
@@ -131,7 +124,7 @@ export default function ObjectivePickerPanel({
 						onCancel={() => setShowCreate(false)}
 					/>
 				</div>
-			</Collapse>
+			)}
 
 			<CampaignObjectivesFilters
 				filters={filters}

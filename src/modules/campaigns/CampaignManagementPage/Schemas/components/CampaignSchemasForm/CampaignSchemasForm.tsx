@@ -200,6 +200,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 				errorMessage.includes('assigned to') ||
 				errorMessage.includes('cannot be edited') ||
 				errorMessage.includes('running campaign') ||
+				errorMessage.includes('existing contact data') ||
 				error?.response?.status === 409; // Conflict status
 
 			if (isEditing && isSchemaInUseError) {
@@ -215,7 +216,9 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 			} else {
 				notifications.show({
 					title: 'Error',
-					message: `Failed to ${isEditing ? 'update' : 'create'} campaign schema`,
+					message:
+						errorMessage ||
+						`Failed to ${isEditing ? 'update' : 'create'} campaign schema`,
 					color: 'red',
 				});
 			}
