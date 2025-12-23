@@ -14,8 +14,19 @@ import {
 	Button,
 	Modal,
 	LoadingOverlay,
+	TextInput,
+	SegmentedControl,
+	Group,
+	Badge,
+	CloseButton,
 } from '@mantine/core';
-import { IconPlus, IconDatabase } from '@tabler/icons-react';
+import { useDebouncedValue } from '@mantine/hooks';
+import {
+	IconPlus,
+	IconDatabase,
+	IconSearch,
+	IconFilter,
+} from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { modals } from '@mantine/modals';
 import type { SortingState } from '@tanstack/react-table';
@@ -29,6 +40,7 @@ import {
 } from '~/queries/dispositionCatalogQueries';
 import DispositionCatalogForm from '../DispositionCatalogForm';
 import EmptyState from '~/components/EmptyState';
+import { FilterContainer } from '~/components/FilterContainer';
 import type { DispositionCatalogModel } from '~/models/DispositionCatalogModels';
 import styles from './DispositionCatalogList.module.css';
 import BaseTable from '~/components/BaseTable';
@@ -54,9 +66,18 @@ const DispositionCatalogList = forwardRef<
 		{ id: 'createdAt', desc: true },
 	]);
 
+	// Filter state
+	const [searchValue, setSearchValue] = useState('');
+	const [debouncedSearch] = useDebouncedValue(searchValue, 300);
+	const [statusFilter, setStatusFilter] = useState<string>('all');
+
 	const sortBy = sorting[0]?.id;
 	const sortOrder = sorting[0]?.desc ? 'DESC' : 'ASC';
 	const offset = pageIndex * pageSize;
+
+	// Convert status filter to isActive boolean
+	const isActiveFilter =
+		statusFilter === 'all' ? undefined : statusFilter === 'active';
 
 	const {
 		data: paginatedResponse,
@@ -68,6 +89,8 @@ const DispositionCatalogList = forwardRef<
 		offset,
 		sortBy,
 		sortOrder,
+		search: debouncedSearch || undefined,
+		isActive: isActiveFilter,
 	});
 
 	const data = paginatedResponse?.data ?? [];
@@ -264,7 +287,7 @@ const DispositionCatalogList = forwardRef<
 				icon={IconDatabase}
 				title='Outcome Catalogs'
 				description='Create and manage outcome catalogs to group disposition nodes for campaigns.'
-				padding='xs'
+				padding='md'
 				headerActions={
 					<ActionIcon variant='light' color='blue' onClick={handleCreate}>
 						<IconPlus size={18} />
@@ -276,19 +299,98 @@ const DispositionCatalogList = forwardRef<
 					zIndex={100}
 					overlayProps={{ radius: 'sm', blur: 2 }}
 				/>
+
+				{/* Filters */}
+				<div className={styles.filtersContainer}>
+					<FilterContainer>
+						<Group gap='xs' className={styles.titleGroup}>
+							<IconFilter size={16} className={styles.titleIcon} />
+							<Text className={styles.title}>Filters</Text>
+							{(searchValue || statusFilter !== 'all') && (
+								<Badge size='xs' variant='light' className={styles.activeBadge}>
+									{(searchValue ? 1 : 0) + (statusFilter !== 'all' ? 1 : 0)}
+								</Badge>
+							)}
+						</Group>
+
+						<div className={styles.controlsWrapper}>
+							<TextInput
+								placeholder='Search by name or description...'
+								leftSection={
+									<IconSearch size={14} className={styles.searchIcon} />
+								}
+								rightSection={
+									searchValue && (
+										<CloseButton
+											size='xs'
+											onClick={() => {
+												setSearchValue('');
+												setPageIndex(0);
+											}}
+											variant='subtle'
+										/>
+									)
+								}
+								value={searchValue}
+								onChange={(e) => {
+									setSearchValue(e.currentTarget.value);
+									setPageIndex(0);
+								}}
+								size='sm'
+								className={styles.searchInput}
+							/>
+
+							<SegmentedControl
+								value={statusFilter}
+								onChange={(value) => {
+									setStatusFilter(value);
+									setPageIndex(0);
+								}}
+								size='xs'
+								className={styles.statusToggle}
+								data={[
+									{ label: 'All', value: 'all' },
+									{ label: 'Active', value: 'active' },
+									{ label: 'Inactive', value: 'inactive' },
+								]}
+							/>
+						</div>
+					</FilterContainer>
+				</div>
+
 				{total === 0 ? (
 					<div className={styles.emptyStateContainer}>
 						<EmptyState
 							icon={<IconPlus size={48} />}
-							message='No outcome catalogs found'
-							description='Get started by creating your first outcome catalog'
+							message={
+								debouncedSearch || statusFilter !== 'all'
+									? 'No matching catalogs found'
+									: 'No outcome catalogs found'
+							}
+							description={
+								debouncedSearch || statusFilter !== 'all'
+									? 'Try adjusting your search or filters'
+									: 'Get started by creating your first outcome catalog'
+							}
 							action={
-								<Button
-									leftSection={<IconPlus size={16} />}
-									onClick={handleCreate}
-								>
-									Create Catalog
-								</Button>
+								debouncedSearch || statusFilter !== 'all' ? (
+									<Button
+										variant='light'
+										onClick={() => {
+											setSearchValue('');
+											setStatusFilter('all');
+										}}
+									>
+										Clear Filters
+									</Button>
+								) : (
+									<Button
+										leftSection={<IconPlus size={16} />}
+										onClick={handleCreate}
+									>
+										Create Catalog
+									</Button>
+								)
 							}
 						/>
 					</div>

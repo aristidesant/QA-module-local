@@ -121,34 +121,6 @@ export const CampaignObjectivesFilters: React.FC<
 						className={styles.statusSelect}
 					/>
 
-					<Select
-						placeholder='Sort by'
-						value={`${filters.sortBy}-${filters.sortOrder}`}
-						onChange={(value) => {
-							if (value) {
-								const [sortBy, sortOrder] = value.split('-') as [
-									ObjectiveFilters['sortBy'],
-									ObjectiveFilters['sortOrder'],
-								];
-								onFiltersChange({
-									...filters,
-									sortBy,
-									sortOrder,
-								});
-							}
-						}}
-						data={[
-							{ value: 'name-asc', label: 'Name A-Z' },
-							{ value: 'name-desc', label: 'Name Z-A' },
-							{ value: 'categoryId-asc', label: 'Category A-Z' },
-							{ value: 'categoryId-desc', label: 'Category Z-A' },
-							{ value: 'createdAt-desc', label: 'Newest First' },
-							{ value: 'createdAt-asc', label: 'Oldest First' },
-							{ value: 'updatedAt-desc', label: 'Recently Updated' },
-						]}
-						className={styles.sortSelect}
-					/>
-
 					{hasActiveFilters && (
 						<ActionIcon
 							variant='subtle'

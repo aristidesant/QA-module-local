@@ -1,12 +1,5 @@
 import { useMemo, useState } from 'react';
-import {
-	ActionIcon,
-	Button,
-	Collapse,
-	Group,
-	Text,
-	Tooltip,
-} from '@mantine/core';
+import { ActionIcon, Button, Group, Text, Tooltip } from '@mantine/core';
 import { IconPlus, IconX } from '@tabler/icons-react';
 import type { ColumnDef } from '@tanstack/react-table';
 import BaseTable from '~/components/BaseTable';
@@ -121,25 +114,15 @@ export default function CategoryPickerPanel({
 				</Group>
 			</div>
 
-			<Collapse in={showCreate}>
-				<fieldset
-					disabled={!showCreate}
-					style={{
-						border: 'none',
-						padding: 0,
-						margin: 0,
-						minInlineSize: 'auto',
-					}}
-				>
-					<div className={styles.inlineForm}>
-						<CampaignCategoriesForm
-							withinParentForm
-							onSuccess={() => setShowCreate(false)}
-							onCancel={() => setShowCreate(false)}
-						/>
-					</div>
-				</fieldset>
-			</Collapse>
+			{showCreate && (
+				<div className={styles.inlineForm}>
+					<CampaignCategoriesForm
+						withinParentForm
+						onSuccess={() => setShowCreate(false)}
+						onCancel={() => setShowCreate(false)}
+					/>
+				</div>
+			)}
 
 			<CampaignCategoriesFilters
 				filters={filters}

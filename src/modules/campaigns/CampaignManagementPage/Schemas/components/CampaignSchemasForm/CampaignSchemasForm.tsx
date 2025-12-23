@@ -200,6 +200,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 				errorMessage.includes('assigned to') ||
 				errorMessage.includes('cannot be edited') ||
 				errorMessage.includes('running campaign') ||
+				errorMessage.includes('existing contact data') ||
 				error?.response?.status === 409; // Conflict status
 
 			if (isEditing && isSchemaInUseError) {
@@ -215,7 +216,9 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 			} else {
 				notifications.show({
 					title: 'Error',
-					message: `Failed to ${isEditing ? 'update' : 'create'} campaign schema`,
+					message:
+						errorMessage ||
+						`Failed to ${isEditing ? 'update' : 'create'} campaign schema`,
 					color: 'red',
 				});
 			}
@@ -373,7 +376,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 					<Stack gap='xs'>
 						{schemaFields.map((field, index) => (
 							<div key={index} className={styles.fieldRow}>
-								<Group gap='sm' align='flex-end'>
+								<Group gap='sm' align='flex-start' wrap='nowrap'>
 									<div className={styles.fieldCol}>
 										<TextInput
 											label='Field Name'
@@ -390,46 +393,51 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 											}
 										/>
 									</div>
-									<TextInput
-										label='Field Label'
-										placeholder='e.g., First Name'
-										required
-										className={styles.fieldCol}
-										value={field.label}
-										onChange={(event) =>
-											updateField(index, { label: event.currentTarget.value })
-										}
-									/>
-									<Select
-										label='Type'
-										data={fieldTypeOptions}
-										required
-										className={styles.typeSelect}
-										aria-label='Field type'
-										value={field.type}
-										onChange={(value) =>
-											updateField(index, { type: value as any })
-										}
-									/>
-									<Checkbox
-										label='Is Array'
-										checked={field.isArray}
-										onChange={(event) =>
-											updateField(index, {
-												isArray: event.currentTarget.checked,
-											})
-										}
-									/>
+									<div className={styles.fieldCol}>
+										<TextInput
+											label='Field Label'
+											placeholder='e.g., First Name'
+											required
+											value={field.label}
+											onChange={(event) =>
+												updateField(index, { label: event.currentTarget.value })
+											}
+										/>
+									</div>
+									<div className={styles.typeSelect}>
+										<Select
+											label='Type'
+											data={fieldTypeOptions}
+											required
+											aria-label='Field type'
+											value={field.type}
+											onChange={(value) =>
+												updateField(index, { type: value as any })
+											}
+										/>
+									</div>
+									<div className={styles.checkboxWrapper}>
+										<Checkbox
+											label='Is Array'
+											checked={field.isArray}
+											onChange={(event) =>
+												updateField(index, {
+													isArray: event.currentTarget.checked,
+												})
+											}
+										/>
+									</div>
 									{schemaFields.length > 1 && (
-										<ActionIcon
-											color='red'
-											variant='subtle'
-											aria-label='Remove field'
-											onClick={() => removeField(index)}
-											mb='xs'
-										>
-											<IconTrash size={16} />
-										</ActionIcon>
+										<div className={styles.deleteButtonWrapper}>
+											<ActionIcon
+												color='red'
+												variant='subtle'
+												aria-label='Remove field'
+												onClick={() => removeField(index)}
+											>
+												<IconTrash size={16} />
+											</ActionIcon>
+										</div>
 									)}
 								</Group>
 							</div>

@@ -97,10 +97,14 @@ export const CampaignObjectivesForm: React.FC<CampaignObjectivesFormProps> = ({
 				onSuccess(createdObjective);
 			}
 			// onSuccess call moved inside existing blocks to pass specific data
-		} catch (error) {
+		} catch (error: any) {
+			const errorMessage =
+				error?.response?.data?.message || error?.message || '';
 			notifications.show({
 				title: 'Error',
-				message: `Failed to ${isEditing ? 'update' : 'create'} campaign objective`,
+				message:
+					errorMessage ||
+					`Failed to ${isEditing ? 'update' : 'create'} campaign objective`,
 				color: 'red',
 			});
 		}

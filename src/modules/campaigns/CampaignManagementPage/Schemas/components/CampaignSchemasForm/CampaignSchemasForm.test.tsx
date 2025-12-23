@@ -242,7 +242,7 @@ describe('CampaignSchemasForm', () => {
 				expect(mockNotificationsShow).toHaveBeenCalledWith(
 					expect.objectContaining({
 						title: 'Error',
-						message: 'Failed to create campaign schema',
+						message: 'create failed',
 					})
 				);
 				expect(onSuccess).not.toHaveBeenCalled();
@@ -319,7 +319,7 @@ describe('CampaignSchemasForm', () => {
 				expect(mockNotificationsShow).toHaveBeenCalledWith(
 					expect.objectContaining({
 						title: 'Error',
-						message: 'Failed to update campaign schema',
+						message: 'update failed',
 					})
 				);
 			});

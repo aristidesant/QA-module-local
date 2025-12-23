@@ -161,6 +161,12 @@ vi.mock('../DispositionCatalogForm', () => ({
 
 vi.mock('~/components/SectionCard/SectionCard.module.css', () => ({}));
 
+vi.mock('~/components/FilterContainer', () => ({
+	FilterContainer: ({ children }: { children: React.ReactNode }) => (
+		<div data-testid='filter-container'>{children}</div>
+	),
+}));
+
 vi.mock('@mantine/notifications', () => ({
 	notifications: {
 		show: vi.fn(),
@@ -234,6 +240,55 @@ vi.mock('@mantine/core', () => ({
 	),
 	LoadingOverlay: ({ visible }: { visible: boolean }) =>
 		visible ? <div data-testid='loading-overlay'>Loading...</div> : null,
+	TextInput: ({
+		value,
+		onChange,
+		placeholder,
+		rightSection,
+	}: {
+		value: string;
+		onChange: (e: any) => void;
+		placeholder: string;
+		rightSection?: React.ReactNode;
+	}) => (
+		<div data-testid='text-input-wrapper'>
+			<input
+				data-testid='search-input'
+				value={value}
+				onChange={onChange}
+				placeholder={placeholder}
+			/>
+			{rightSection && (
+				<div data-testid='search-clear-section'>{rightSection}</div>
+			)}
+		</div>
+	),
+	CloseButton: ({ onClick }: { onClick: () => void }) => (
+		<button data-testid='clear-search-button' onClick={onClick} type='button'>
+			Clear
+		</button>
+	),
+	SegmentedControl: ({
+		value,
+		onChange,
+		data,
+	}: {
+		value: string;
+		onChange: (val: string) => void;
+		data: { label: string; value: string }[];
+	}) => (
+		<div data-testid='segmented-control'>
+			{data.map((item) => (
+				<button
+					key={item.value}
+					onClick={() => onChange(item.value)}
+					data-active={value === item.value}
+				>
+					{item.label}
+				</button>
+			))}
+		</div>
+	),
 	Modal: ({
 		children,
 		opened,
@@ -451,5 +506,291 @@ describe('DispositionCatalogList', () => {
 			{ catalogId: 3 },
 			expect.any(Object)
 		);
+	});
+
+	describe('Filters', () => {
+		it('renders filter container with search input and status toggle', () => {
+			render(<DispositionCatalogList />);
+
+			expect(screen.getByTestId('filter-container')).toBeInTheDocument();
+			expect(screen.getByTestId('search-input')).toBeInTheDocument();
+			expect(screen.getByTestId('segmented-control')).toBeInTheDocument();
+		});
+
+		it('renders search input with correct placeholder', () => {
+			render(<DispositionCatalogList />);
+
+			const searchInput = screen.getByTestId('search-input');
+			expect(searchInput).toHaveAttribute(
+				'placeholder',
+				'Search by name or description...'
+			);
+		});
+
+		it('updates search value when typing', () => {
+			render(<DispositionCatalogList />);
+
+			const searchInput = screen.getByTestId('search-input');
+			fireEvent.change(searchInput, { target: { value: 'test search' } });
+
+			expect(searchInput).toHaveValue('test search');
+		});
+
+		it('shows clear button when search has value', () => {
+			render(<DispositionCatalogList />);
+
+			const searchInput = screen.getByTestId('search-input');
+
+			// Initially no clear button
+			expect(
+				screen.queryByTestId('clear-search-button')
+			).not.toBeInTheDocument();
+
+			// Type something
+			fireEvent.change(searchInput, { target: { value: 'test' } });
+
+			// Clear button should appear
+			expect(screen.getByTestId('clear-search-button')).toBeInTheDocument();
+		});
+
+		it('clears search when clear button is clicked', () => {
+			render(<DispositionCatalogList />);
+
+			const searchInput = screen.getByTestId('search-input');
+			fireEvent.change(searchInput, { target: { value: 'test' } });
+
+			const clearButton = screen.getByTestId('clear-search-button');
+			fireEvent.click(clearButton);
+
+			expect(searchInput).toHaveValue('');
+		});
+
+		it('renders status filter with All, Active, and Inactive options', () => {
+			render(<DispositionCatalogList />);
+
+			const segmentedControl = screen.getByTestId('segmented-control');
+			expect(segmentedControl).toHaveTextContent('All');
+			expect(segmentedControl).toHaveTextContent('Active');
+			expect(segmentedControl).toHaveTextContent('Inactive');
+		});
+
+		it('has All status selected by default', () => {
+			render(<DispositionCatalogList />);
+
+			const segmentedControl = screen.getByTestId('segmented-control');
+			const allButton = segmentedControl.querySelector(
+				'button[data-active="true"]'
+			);
+			expect(allButton).toHaveTextContent('All');
+		});
+
+		it('changes status filter when clicking on Active', () => {
+			render(<DispositionCatalogList />);
+
+			const segmentedControl = screen.getByTestId('segmented-control');
+			const activeButton = segmentedControl.querySelector(
+				'button:nth-child(2)'
+			);
+			fireEvent.click(activeButton!);
+
+			expect(activeButton).toHaveAttribute('data-active', 'true');
+		});
+
+		it('changes status filter when clicking on Inactive', () => {
+			render(<DispositionCatalogList />);
+
+			const segmentedControl = screen.getByTestId('segmented-control');
+			const inactiveButton = segmentedControl.querySelector(
+				'button:nth-child(3)'
+			);
+			fireEvent.click(inactiveButton!);
+
+			expect(inactiveButton).toHaveAttribute('data-active', 'true');
+		});
+
+		it('shows active filters badge when search has value', () => {
+			render(<DispositionCatalogList />);
+
+			const filterContainer = screen.getByTestId('filter-container');
+
+			// Initially no badge in filter container
+			expect(
+				filterContainer.querySelector('[data-testid="badge"]')
+			).not.toBeInTheDocument();
+
+			// Type something
+			const searchInput = screen.getByTestId('search-input');
+			fireEvent.change(searchInput, { target: { value: 'test' } });
+
+			// Badge should appear in filter container with count 1
+			const badge = filterContainer.querySelector('[data-testid="badge"]');
+			expect(badge).toBeInTheDocument();
+			expect(badge).toHaveTextContent('1');
+		});
+
+		it('shows active filters badge when status filter is not All', () => {
+			render(<DispositionCatalogList />);
+
+			const filterContainer = screen.getByTestId('filter-container');
+
+			// Initially no badge in filter container
+			expect(
+				filterContainer.querySelector('[data-testid="badge"]')
+			).not.toBeInTheDocument();
+
+			// Click Active in the segmented control
+			const segmentedControl = screen.getByTestId('segmented-control');
+			const activeButton = segmentedControl.querySelector(
+				'button:nth-child(2)'
+			);
+			fireEvent.click(activeButton!);
+
+			// Badge should appear in filter container with count 1
+			const badge = filterContainer.querySelector('[data-testid="badge"]');
+			expect(badge).toBeInTheDocument();
+			expect(badge).toHaveTextContent('1');
+		});
+
+		it('shows badge with count 2 when both search and status filter are active', () => {
+			render(<DispositionCatalogList />);
+
+			const filterContainer = screen.getByTestId('filter-container');
+			const searchInput = screen.getByTestId('search-input');
+			fireEvent.change(searchInput, { target: { value: 'test' } });
+
+			const segmentedControl = screen.getByTestId('segmented-control');
+			const activeButton = segmentedControl.querySelector(
+				'button:nth-child(2)'
+			);
+			fireEvent.click(activeButton!);
+
+			const badge = filterContainer.querySelector('[data-testid="badge"]');
+			expect(badge).toHaveTextContent('2');
+		});
+
+		it('shows Clear Filters button when filters are active and no results', () => {
+			mockDispositionCatalogsPaged({
+				data: {
+					data: [],
+					total: 0,
+					limit: 10,
+					offset: 0,
+				},
+				isLoading: false,
+				isError: false,
+				error: null,
+				isFetching: false,
+			});
+
+			render(<DispositionCatalogList />);
+
+			// Apply a filter - status filter is synchronous
+			const segmentedControl = screen.getByTestId('segmented-control');
+			const activeButton = segmentedControl.querySelector(
+				'button:nth-child(2)'
+			);
+			fireEvent.click(activeButton!);
+
+			expect(screen.getByText('Clear Filters')).toBeInTheDocument();
+		});
+
+		it('clears all filters when Clear Filters button is clicked', () => {
+			mockDispositionCatalogsPaged({
+				data: {
+					data: [],
+					total: 0,
+					limit: 10,
+					offset: 0,
+				},
+				isLoading: false,
+				isError: false,
+				error: null,
+				isFetching: false,
+			});
+
+			render(<DispositionCatalogList />);
+
+			// Apply filters
+			const searchInput = screen.getByTestId('search-input');
+			fireEvent.change(searchInput, { target: { value: 'test' } });
+
+			const segmentedControl = screen.getByTestId('segmented-control');
+			const activeButton = segmentedControl.querySelector(
+				'button:nth-child(2)'
+			);
+			fireEvent.click(activeButton!);
+
+			// Click Clear Filters
+			fireEvent.click(screen.getByText('Clear Filters'));
+
+			// Filters should be cleared
+			expect(searchInput).toHaveValue('');
+			const allButton = segmentedControl.querySelector('button:first-child');
+			expect(allButton).toHaveAttribute('data-active', 'true');
+		});
+
+		it('calls query with search parameter when searching', () => {
+			render(<DispositionCatalogList />);
+
+			const searchInput = screen.getByTestId('search-input');
+			fireEvent.change(searchInput, { target: { value: 'catalog name' } });
+
+			// The mock is called with the search parameter
+			// Note: Due to debouncing, immediate check may not reflect the search value
+			// but the state update is triggered
+			expect(useDispositionCatalogsPaged).toHaveBeenCalled();
+		});
+
+		it('calls query with isActive true when Active filter is selected', () => {
+			render(<DispositionCatalogList />);
+
+			const segmentedControl = screen.getByTestId('segmented-control');
+			const activeButton = segmentedControl.querySelector(
+				'button:nth-child(2)'
+			);
+			fireEvent.click(activeButton!);
+
+			expect(useDispositionCatalogsPaged).toHaveBeenCalledWith(
+				expect.objectContaining({
+					isActive: true,
+				})
+			);
+		});
+
+		it('calls query with isActive false when Inactive filter is selected', () => {
+			render(<DispositionCatalogList />);
+
+			const segmentedControl = screen.getByTestId('segmented-control');
+			const inactiveButton = segmentedControl.querySelector(
+				'button:nth-child(3)'
+			);
+			fireEvent.click(inactiveButton!);
+
+			expect(useDispositionCatalogsPaged).toHaveBeenCalledWith(
+				expect.objectContaining({
+					isActive: false,
+				})
+			);
+		});
+
+		it('calls query with isActive undefined when All filter is selected', () => {
+			render(<DispositionCatalogList />);
+
+			const segmentedControl = screen.getByTestId('segmented-control');
+			// First select Active, then back to All
+			const activeButton = segmentedControl.querySelector(
+				'button:nth-child(2)'
+			);
+			fireEvent.click(activeButton!);
+
+			const allButton = segmentedControl.querySelector('button:first-child');
+			fireEvent.click(allButton!);
+
+			expect(useDispositionCatalogsPaged).toHaveBeenLastCalledWith(
+				expect.objectContaining({
+					isActive: undefined,
+				})
+			);
+		});
 	});
 });

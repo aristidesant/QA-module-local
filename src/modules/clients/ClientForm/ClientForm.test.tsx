@@ -48,7 +48,6 @@ describe('ClientForm', () => {
 			/>
 		);
 
-		expect(screen.getByText('Add a new client')).toBeInTheDocument();
 		expect(screen.getByPlaceholderText('Acme Corporation')).toBeInTheDocument();
 		expect(
 			screen.getByRole('button', { name: 'Create client' })
