@@ -34,6 +34,16 @@
 	min-width: 140px;
 }
 
+.checkboxWrapper {
+	padding-top: 25px;
+	/* Align with input fields that have labels */
+}
+
+.deleteButtonWrapper {
+	padding-top: 25px;
+	/* Align with input fields that have labels */
+}
+
 .fieldDescription {
 	margin-top: var(--mantine-spacing-xs);
 	font-size: var(--mantine-font-size-xs);
