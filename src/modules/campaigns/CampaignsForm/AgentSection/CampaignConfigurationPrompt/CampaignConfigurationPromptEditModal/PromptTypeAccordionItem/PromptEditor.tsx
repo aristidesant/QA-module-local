@@ -35,6 +35,7 @@ type PromptEditorProps = {
 	value?: string;
 	onChange: (value: string) => void;
 	campaignId: number;
+	headerLeftSection?: React.ReactNode;
 };
 
 const PromptEditor: React.FC<PromptEditorProps> = ({
@@ -42,6 +43,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
 	value,
 	onChange,
 	campaignId,
+	headerLeftSection,
 }) => {
 	const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 	const lastCursorRef = useRef<number | null>(null);
@@ -225,7 +227,8 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
 	return (
 		<>
 			<Stack gap={4} className={styles.editorStack}>
-				<Group justify='flex-end' gap='xs'>
+				<Group justify='space-between' gap='xs'>
+					<div>{headerLeftSection}</div>
 					<Tooltip label='View prompt history' withArrow>
 						<ActionIcon
 							variant='light'
