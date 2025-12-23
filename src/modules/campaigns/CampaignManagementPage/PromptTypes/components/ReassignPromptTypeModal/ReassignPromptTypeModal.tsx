@@ -19,10 +19,12 @@ import {
 	IconArrowRight,
 	IconEye,
 	IconDownload,
+	IconEdit,
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import campaignPromptsApi from '~/api/campaignPromptApi';
 import campaignPromptTypeApi from '~/api/campaignPromptTypeApi';
+import PromptEditor from '~/modules/campaigns/CampaignsForm/AgentSection/CampaignConfigurationPrompt/CampaignConfigurationPromptEditModal/PromptTypeAccordionItem/PromptEditor';
 import type { CampaignPromptUsageModel } from '~/models/CampaignPromptUsageModel';
 import type { CampaignPromptTypeModel } from '~/models/CampaignPromptTypeModel';
 
@@ -33,6 +35,65 @@ interface ReassignPromptTypeModalProps {
 	affectedCampaigns: CampaignPromptUsageModel[];
 	onDeleteType: (id: number) => Promise<void>;
 }
+
+interface EditReassignmentPromptModalProps {
+	opened: boolean;
+	onClose: () => void;
+	value: string;
+	onChange: (val: string) => void;
+	targetType: CampaignPromptTypeModel;
+	currentCampaignId: number;
+	originalPrompt?: string;
+}
+
+const EditReassignmentPromptModal: React.FC<
+	EditReassignmentPromptModalProps
+> = ({
+	opened,
+	onClose,
+	value,
+	onChange,
+	targetType,
+	currentCampaignId,
+	originalPrompt,
+}) => {
+	return (
+		<Modal
+			opened={opened}
+			onClose={onClose}
+			title='Edit Prompt Content'
+			size='lg'
+		>
+			<Stack gap='md'>
+				<div style={{ height: 400 }}>
+					<PromptEditor
+						type={targetType}
+						value={value}
+						onChange={onChange}
+						campaignId={currentCampaignId}
+						headerLeftSection={
+							originalPrompt && (
+								<Button
+									variant='light'
+									size='xs'
+									leftSection={<IconDownload size={14} />}
+									onClick={() => onChange(originalPrompt)}
+									fullWidth={false}
+									w='fit-content'
+								>
+									Import original prompt
+								</Button>
+							)
+						}
+					/>
+				</div>
+				<Group justify='flex-end'>
+					<Button onClick={onClose}>Done</Button>
+				</Group>
+			</Stack>
+		</Modal>
+	);
+};
 
 const DELETE_OPTION_VALUE = 'delete_prompt';
 
@@ -54,6 +115,7 @@ const ReassignPromptTypeModal: React.FC<ReassignPromptTypeModalProps> = ({
 	// Map of campaignPromptId -> newPromptContent
 	const [newPrompts, setNewPrompts] = useState<Record<number, string>>({});
 	const [viewPrompt, setViewPrompt] = useState<string | null>(null);
+	const [editingPromptId, setEditingPromptId] = useState<number | null>(null);
 
 	useEffect(() => {
 		if (opened && affectedCampaigns.length > 0) {
@@ -186,11 +248,16 @@ const ReassignPromptTypeModal: React.FC<ReassignPromptTypeModalProps> = ({
 		affectedCampaigns.length > 0 &&
 		affectedCampaigns.every((c) => {
 			const assignment = assignments[c.campaignPromptId];
-			if (!assignment) return false;
-			if (assignment === DELETE_OPTION_VALUE) return true;
-			// If reassigning, must have prompt content
-			return !!newPrompts[c.campaignPromptId]?.trim();
+			return !!assignment;
 		});
+
+	const hasEmptyPrompts = affectedCampaigns.some((c) => {
+		const assignment = assignments[c.campaignPromptId];
+		if (assignment && assignment !== DELETE_OPTION_VALUE) {
+			return !newPrompts[c.campaignPromptId]?.trim();
+		}
+		return false;
+	});
 
 	return (
 		<Modal
@@ -279,58 +346,29 @@ const ReassignPromptTypeModal: React.FC<ReassignPromptTypeModalProps> = ({
 																	...prev,
 																	[campaign.campaignPromptId]: val,
 																}));
-																// Pre-fill prompt content if reassigning
-																if (
-																	val !== DELETE_OPTION_VALUE &&
-																	campaign.prompt
-																) {
-																	setNewPrompts((prev) => ({
-																		...prev,
-																		[campaign.campaignPromptId]:
-																			campaign.prompt!,
-																	}));
-																}
 															}
 														}}
 														allowDeselect={false}
 														w={250}
 													/>
 													{isReassigning && (
-														<Group gap={4} align='flex-start'>
-															{campaign.prompt && (
-																<ActionIcon
-																	variant='light'
-																	size='sm'
-																	mt={4}
-																	onClick={() =>
-																		setNewPrompts((prev) => ({
-																			...prev,
-																			[campaign.campaignPromptId]:
-																				campaign.prompt!,
-																		}))
-																	}
-																	title='Import existing prompt'
-																>
-																	<IconDownload size={14} />
-																</ActionIcon>
-															)}
-															<Textarea
+														<Group gap={4} align='center'>
+															<Button
 																size='xs'
-																placeholder='New prompt content'
-																minRows={2}
-																autosize
-																value={
-																	newPrompts[campaign.campaignPromptId] || ''
+																variant={
+																	newPrompts[campaign.campaignPromptId]
+																		? 'light'
+																		: 'outline'
 																}
-																onChange={(e) => {
-																	const val = e.currentTarget.value;
-																	setNewPrompts((prev) => ({
-																		...prev,
-																		[campaign.campaignPromptId]: val,
-																	}));
-																}}
-																style={{ flex: 1 }}
-															/>
+																leftSection={<IconEdit size={14} />}
+																onClick={() =>
+																	setEditingPromptId(campaign.campaignPromptId)
+																}
+															>
+																{newPrompts[campaign.campaignPromptId]
+																	? 'Edit Prompt'
+																	: 'Add Prompt'}
+															</Button>
 														</Group>
 													)}
 												</Stack>
@@ -341,6 +379,16 @@ const ReassignPromptTypeModal: React.FC<ReassignPromptTypeModalProps> = ({
 							</Table.Tbody>
 						</Table>
 					</ScrollArea.Autosize>
+				)}
+
+				{hasEmptyPrompts && (
+					<Alert
+						color='orange'
+						variant='light'
+						icon={<IconAlertTriangle size={16} />}
+					>
+						Some reassigned prompts are empty.
+					</Alert>
 				)}
 
 				<Group justify='flex-end' mt='md'>
@@ -377,6 +425,43 @@ const ReassignPromptTypeModal: React.FC<ReassignPromptTypeModalProps> = ({
 					</Button>
 				</Group>
 			</Modal>
+
+			<EditReassignmentPromptModal
+				opened={editingPromptId !== null}
+				onClose={() => setEditingPromptId(null)}
+				value={editingPromptId ? newPrompts[editingPromptId] || '' : ''}
+				onChange={(val) => {
+					if (editingPromptId) {
+						setNewPrompts((prev) => ({
+							...prev,
+							[editingPromptId]: val,
+						}));
+					}
+				}}
+				targetType={
+					(editingPromptId &&
+						assignments[editingPromptId] &&
+						availableTypesMap[
+							affectedCampaigns.find(
+								(c) => c.campaignPromptId === editingPromptId
+							)?.campaignId || 0
+						]?.find(
+							(t) => t.id === parseInt(assignments[editingPromptId], 10)
+						)) ||
+					({} as CampaignPromptTypeModel)
+				}
+				currentCampaignId={
+					affectedCampaigns.find((c) => c.campaignPromptId === editingPromptId)
+						?.campaignId || 0
+				}
+				originalPrompt={
+					editingPromptId
+						? affectedCampaigns.find(
+								(c) => c.campaignPromptId === editingPromptId
+							)?.prompt
+						: undefined
+				}
+			/>
 		</Modal>
 	);
 };

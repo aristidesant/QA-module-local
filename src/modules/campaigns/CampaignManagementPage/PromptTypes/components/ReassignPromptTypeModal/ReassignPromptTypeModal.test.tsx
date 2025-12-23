@@ -1,20 +1,41 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import ReassignPromptTypeModal from './ReassignPromptTypeModal';
 import type { CampaignPromptTypeModel } from '~/models/CampaignPromptTypeModel';
 import type { CampaignPromptUsageModel } from '~/models/CampaignPromptUsageModel';
 import campaignPromptTypeApi from '~/api/campaignPromptTypeApi';
 import campaignPromptsApi from '~/api/campaignPromptApi';
 
+import { useGetCampaignPrompts } from '~/queries/campaignPromptQueries';
+
 // Mock APIs
 vi.mock('~/api/campaignPromptTypeApi');
 vi.mock('~/api/campaignPromptApi');
+vi.mock('~/queries/campaignPromptQueries');
 vi.mock('@mantine/notifications', () => ({
 	notifications: {
 		show: vi.fn(),
 	},
 }));
+
+// Mock PromptEditor to avoid complex hook dependencies
+vi.mock(
+	'~/modules/campaigns/CampaignsForm/AgentSection/CampaignConfigurationPrompt/CampaignConfigurationPromptEditModal/PromptTypeAccordionItem/PromptEditor',
+	() => ({
+		default: ({ value, onChange, headerLeftSection }: any) => (
+			<div data-testid='mock-prompt-editor'>
+				{headerLeftSection}
+				<textarea
+					data-testid='prompt-editor-textarea'
+					value={value || ''}
+					onChange={(e) => onChange(e.target.value)}
+					placeholder='Enter prompt content...'
+				/>
+			</div>
+		),
+	})
+);
 
 // Mock Mantine Select for easier testing
 vi.mock('@mantine/core', async (importOriginal) => {
@@ -97,19 +118,27 @@ describe('ReassignPromptTypeModal', () => {
 			deleteCampaignPrompt: vi.fn().mockResolvedValue({ success: true }),
 			getCampaignPromptsByType: vi.fn().mockResolvedValue([]),
 		});
+		(useGetCampaignPrompts as any).mockReturnValue({
+			data: [
+				{
+					id: 999,
+					campaignId: 300,
+					campaign: { name: 'Other Campaign' },
+					prompt: 'Prompt from other campaign',
+				},
+			],
+		});
 	});
 
 	const renderModal = () => {
-		return render(
-			<MantineProvider>
-				<ReassignPromptTypeModal
-					opened={true}
-					onClose={mockOnClose}
-					typeToDelete={mockTypeToDelete}
-					affectedCampaigns={mockAffectedCampaigns}
-					onDeleteType={mockOnDeleteType}
-				/>
-			</MantineProvider>
+		return renderWithProviders(
+			<ReassignPromptTypeModal
+				opened={true}
+				onClose={mockOnClose}
+				typeToDelete={mockTypeToDelete}
+				affectedCampaigns={mockAffectedCampaigns}
+				onDeleteType={mockOnDeleteType}
+			/>
 		);
 	};
 
@@ -162,7 +191,7 @@ describe('ReassignPromptTypeModal', () => {
 		expect(selects[0]).toHaveValue('delete_prompt');
 	});
 
-	it('shows import button and textarea when reassigning', async () => {
+	it('shows edit button when reassigning and opens modal with import options', async () => {
 		renderModal();
 		await waitFor(() =>
 			expect(
@@ -175,12 +204,49 @@ describe('ReassignPromptTypeModal', () => {
 		// Select a type to reassign (ID 2)
 		fireEvent.change(selects[0], { target: { value: '2' } });
 
-		// Check for textarea
-		expect(
-			screen.getByPlaceholderText('New prompt content')
-		).toBeInTheDocument();
-		// Check for import button (by title)
-		expect(screen.getByTitle('Import existing prompt')).toBeInTheDocument();
+		// Check for "Add Prompt" button (initially empty)
+		const addPromptButton = screen.getByText('Add Prompt');
+		expect(addPromptButton).toBeInTheDocument();
+
+		// Click Add Prompt
+		fireEvent.click(addPromptButton);
+
+		// Check for modal content
+		expect(await screen.findByText('Edit Prompt Content')).toBeInTheDocument();
+
+		// Check for "Import original prompt" button inside modal (passed via headerLeftSection)
+		expect(screen.getByText('Import original prompt')).toBeInTheDocument();
+
+		// Check for PromptEditor
+		expect(screen.getByTestId('mock-prompt-editor')).toBeInTheDocument();
+	});
+
+	it('imports existing prompt correctly inside modal', async () => {
+		renderModal();
+		await waitFor(() =>
+			expect(
+				screen.queryByText('Checking campaign constraints...')
+			).not.toBeInTheDocument()
+		);
+
+		const selects = screen.getAllByTestId('mock-select');
+		fireEvent.change(selects[0], { target: { value: '2' } });
+
+		const addPromptButton = screen.getByText('Add Prompt');
+		fireEvent.click(addPromptButton);
+
+		const importButton = await screen.findByText('Import original prompt');
+		fireEvent.click(importButton);
+
+		// Check if textarea has value
+		const textarea = screen.getByTestId('prompt-editor-textarea');
+		expect(textarea).toHaveValue('Original Prompt A');
+
+		// Close modal
+		fireEvent.click(screen.getByText('Done'));
+
+		// Button should now say "Edit Prompt"
+		expect(screen.getByText('Edit Prompt')).toBeInTheDocument();
 	});
 
 	it('calls onDeleteType when all campaigns are handled', async () => {
