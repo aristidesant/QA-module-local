@@ -45,6 +45,8 @@ type DispositionCatalogsPagedQueryParams = {
 	sortBy?: string;
 	sortOrder?: 'ASC' | 'DESC';
 	type?: string;
+	search?: string;
+	isActive?: boolean;
 	enabled?: boolean;
 };
 
@@ -61,6 +63,8 @@ export function useDispositionCatalogsPaged(
 		sortBy,
 		sortOrder,
 		type,
+		search,
+		isActive,
 		enabled = true,
 	} = params || {};
 
@@ -68,7 +72,7 @@ export function useDispositionCatalogsPaged(
 		queryKey: [
 			'dispositionCatalogs',
 			'all',
-			{ limit, offset, sortBy, sortOrder, type },
+			{ limit, offset, sortBy, sortOrder, type, search, isActive },
 		],
 		queryFn: async () => {
 			const api = dispositionCatalogApi();
@@ -78,6 +82,8 @@ export function useDispositionCatalogsPaged(
 				sortBy,
 				sortOrder,
 				type,
+				search,
+				isActive,
 			});
 		},
 		staleTime: 30_000,

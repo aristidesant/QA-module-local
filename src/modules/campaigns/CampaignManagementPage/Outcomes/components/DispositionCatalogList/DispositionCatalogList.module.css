@@ -2,13 +2,64 @@
 	width: 100%;
 }
 
+.filtersContainer {
+	margin-bottom: var(--mantine-spacing-sm);
+}
+
+.titleGroup {
+	flex-shrink: 0;
+}
+
+.titleIcon {
+	color: var(--mantine-color-gray-6);
+}
+
+.title {
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-7);
+	font-weight: 600;
+}
+
+.activeBadge {
+	background-color: var(--mantine-color-blue-1);
+	color: var(--mantine-color-blue-7);
+}
+
+.controlsWrapper {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	flex: 1;
+	min-width: 0;
+	justify-content: flex-end;
+}
+
+.searchInput {
+	min-width: 200px;
+	flex: 1;
+	max-width: 300px;
+}
+
+.searchInput input {
+	border-color: var(--mantine-color-gray-3);
+}
+
+.searchIcon {
+	color: var(--mantine-color-gray-5);
+}
+
+.statusToggle {
+	flex-shrink: 0;
+}
+
 .table {
 	width: 100%;
 }
 
 .tableEl {
 	width: 100%;
-	border-collapse: separate; /* allows for better row separators */
+	border-collapse: separate;
+	/* allows for better row separators */
 	border-spacing: 0;
 	table-layout: fixed;
 }

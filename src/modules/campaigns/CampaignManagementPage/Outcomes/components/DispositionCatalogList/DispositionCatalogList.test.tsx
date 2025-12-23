@@ -234,6 +234,43 @@ vi.mock('@mantine/core', () => ({
 	),
 	LoadingOverlay: ({ visible }: { visible: boolean }) =>
 		visible ? <div data-testid='loading-overlay'>Loading...</div> : null,
+	TextInput: ({
+		value,
+		onChange,
+		placeholder,
+	}: {
+		value: string;
+		onChange: (e: any) => void;
+		placeholder: string;
+	}) => (
+		<input
+			data-testid='text-input'
+			value={value}
+			onChange={onChange}
+			placeholder={placeholder}
+		/>
+	),
+	SegmentedControl: ({
+		value,
+		onChange,
+		data,
+	}: {
+		value: string;
+		onChange: (val: string) => void;
+		data: { label: string; value: string }[];
+	}) => (
+		<div data-testid='segmented-control'>
+			{data.map((item) => (
+				<button
+					key={item.value}
+					onClick={() => onChange(item.value)}
+					data-active={value === item.value}
+				>
+					{item.label}
+				</button>
+			))}
+		</div>
+	),
 	Modal: ({
 		children,
 		opened,
