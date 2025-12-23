@@ -53,26 +53,10 @@ const CampaignSchemasFilters: React.FC<CampaignSchemasFiltersProps> = ({
 		});
 	};
 
-	const handleSortChange = (value: string | null) => {
-		if (value) {
-			const [sortBy, sortOrder] = value.split('-') as [
-				SchemaFilters['sortBy'],
-				SchemaFilters['sortOrder'],
-			];
-			onFiltersChange({
-				...filters,
-				sortBy,
-				sortOrder,
-			});
-		}
-	};
-
 	const objectiveOptions = objectives.map((objective) => ({
 		value: objective.id.toString(),
 		label: objective.name,
 	}));
-
-	const sortValue = `${filters.sortBy}-${filters.sortOrder}`;
 
 	return (
 		<div className={styles.filtersContainer}>
@@ -106,24 +90,6 @@ const CampaignSchemasFilters: React.FC<CampaignSchemasFiltersProps> = ({
 						}
 						data={[{ value: '', label: 'All Objectives' }, ...objectiveOptions]}
 						className={styles.objectiveSelect}
-					/>
-
-					<Select
-						placeholder='Sort by'
-						value={sortValue}
-						onChange={handleSortChange}
-						data={[
-							{ value: 'name-asc', label: 'Name A-Z' },
-							{ value: 'name-desc', label: 'Name Z-A' },
-							{ value: 'code-asc', label: 'Code A-Z' },
-							{ value: 'code-desc', label: 'Code Z-A' },
-							{ value: 'objectiveId-asc', label: 'Objective A-Z' },
-							{ value: 'objectiveId-desc', label: 'Objective Z-A' },
-							{ value: 'createdAt-desc', label: 'Newest First' },
-							{ value: 'createdAt-asc', label: 'Oldest First' },
-							{ value: 'updatedAt-desc', label: 'Recently Updated' },
-						]}
-						className={styles.sortSelect}
 					/>
 
 					{hasActiveFilters && (

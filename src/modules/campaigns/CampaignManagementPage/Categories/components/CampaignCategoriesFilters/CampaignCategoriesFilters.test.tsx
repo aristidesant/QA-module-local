@@ -60,17 +60,6 @@ describe('CampaignCategoriesFilters', () => {
 			expect(screen.getByPlaceholderText('Status')).toBeInTheDocument();
 		});
 
-		it('renders sort select', () => {
-			renderWithProviders(
-				<CampaignCategoriesFilters
-					filters={defaultFilters}
-					onFiltersChange={onFiltersChange}
-				/>
-			);
-
-			expect(screen.getByPlaceholderText('Sort by')).toBeInTheDocument();
-		});
-
 		it('does not show active badge when no filters are active', () => {
 			renderWithProviders(
 				<CampaignCategoriesFilters

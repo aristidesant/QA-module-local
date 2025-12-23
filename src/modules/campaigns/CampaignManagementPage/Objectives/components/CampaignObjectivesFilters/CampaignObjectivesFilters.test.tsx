@@ -175,15 +175,5 @@ describe('CampaignObjectivesFilters', () => {
 			...baseFilters,
 			status: 'inactive',
 		});
-
-		await userEvent.selectOptions(
-			screen.getByLabelText('Sort by'),
-			'name-desc'
-		);
-		expect(onFiltersChange).toHaveBeenCalledWith({
-			...baseFilters,
-			sortBy: 'name',
-			sortOrder: 'desc',
-		});
 	});
 });

@@ -79,18 +79,6 @@ describe('CampaignSchemasFilters', () => {
 			).toBeInTheDocument();
 		});
 
-		it('renders sort select with options', () => {
-			renderWithProviders(
-				<CampaignSchemasFilters
-					filters={defaultFilters}
-					onFiltersChange={onFiltersChange}
-				/>
-			);
-
-			// Sort select should be present - using placeholder text
-			expect(screen.getByPlaceholderText('Sort by')).toBeInTheDocument();
-		});
-
 		it('does not show active badge when no filters are active', () => {
 			renderWithProviders(
 				<CampaignSchemasFilters
@@ -293,129 +281,6 @@ describe('CampaignSchemasFilters', () => {
 		});
 	});
 
-	describe('Sort filter interactions', () => {
-		it('calls onFiltersChange when selecting a sort option', async () => {
-			const user = userEvent.setup();
-			renderWithProviders(
-				<CampaignSchemasFilters
-					filters={defaultFilters}
-					onFiltersChange={onFiltersChange}
-				/>
-			);
-
-			const sortSelect = screen.getByPlaceholderText('Sort by');
-			await user.click(sortSelect);
-
-			const option = await screen.findByText('Name Z-A');
-			await user.click(option);
-
-			expect(onFiltersChange).toHaveBeenCalledWith({
-				...defaultFilters,
-				sortBy: 'name',
-				sortOrder: 'desc',
-			});
-		});
-
-		it('calls onFiltersChange with code-asc when selecting Code A-Z', async () => {
-			const user = userEvent.setup();
-			renderWithProviders(
-				<CampaignSchemasFilters
-					filters={defaultFilters}
-					onFiltersChange={onFiltersChange}
-				/>
-			);
-
-			const sortSelect = screen.getByPlaceholderText('Sort by');
-			await user.click(sortSelect);
-
-			const option = await screen.findByText('Code A-Z');
-			await user.click(option);
-
-			expect(onFiltersChange).toHaveBeenCalledWith({
-				...defaultFilters,
-				sortBy: 'code',
-				sortOrder: 'asc',
-			});
-		});
-
-		it('shows active badge when sortOrder is desc', () => {
-			renderWithProviders(
-				<CampaignSchemasFilters
-					filters={{ ...defaultFilters, sortOrder: 'desc' }}
-					onFiltersChange={onFiltersChange}
-				/>
-			);
-
-			expect(screen.getByText('Active')).toBeInTheDocument();
-		});
-
-		it('calls onFiltersChange with createdAt-desc for Newest First', async () => {
-			const user = userEvent.setup();
-			renderWithProviders(
-				<CampaignSchemasFilters
-					filters={defaultFilters}
-					onFiltersChange={onFiltersChange}
-				/>
-			);
-
-			const sortSelect = screen.getByPlaceholderText('Sort by');
-			await user.click(sortSelect);
-
-			const option = await screen.findByText('Newest First');
-			await user.click(option);
-
-			expect(onFiltersChange).toHaveBeenCalledWith({
-				...defaultFilters,
-				sortBy: 'createdAt',
-				sortOrder: 'desc',
-			});
-		});
-
-		it('calls onFiltersChange with objectiveId-asc for Objective A-Z', async () => {
-			const user = userEvent.setup();
-			renderWithProviders(
-				<CampaignSchemasFilters
-					filters={defaultFilters}
-					onFiltersChange={onFiltersChange}
-				/>
-			);
-
-			const sortSelect = screen.getByPlaceholderText('Sort by');
-			await user.click(sortSelect);
-
-			const option = await screen.findByText('Objective A-Z');
-			await user.click(option);
-
-			expect(onFiltersChange).toHaveBeenCalledWith({
-				...defaultFilters,
-				sortBy: 'objectiveId',
-				sortOrder: 'asc',
-			});
-		});
-
-		it('calls onFiltersChange with updatedAt-desc for Recently Updated', async () => {
-			const user = userEvent.setup();
-			renderWithProviders(
-				<CampaignSchemasFilters
-					filters={defaultFilters}
-					onFiltersChange={onFiltersChange}
-				/>
-			);
-
-			const sortSelect = screen.getByPlaceholderText('Sort by');
-			await user.click(sortSelect);
-
-			const option = await screen.findByText('Recently Updated');
-			await user.click(option);
-
-			expect(onFiltersChange).toHaveBeenCalledWith({
-				...defaultFilters,
-				sortBy: 'updatedAt',
-				sortOrder: 'desc',
-			});
-		});
-	});
-
 	describe('Edge cases', () => {
 		it('handles empty objectives list gracefully', () => {
 			vi.doMock('~/queries/campaignObjectivesQueries', () => ({
@@ -466,29 +331,6 @@ describe('CampaignSchemasFilters', () => {
 
 			expect(screen.getByText('Active')).toBeInTheDocument();
 			expect(screen.getByTitle('Clear all filters')).toBeInTheDocument();
-		});
-
-		it('renders all sort options when dropdown is opened', async () => {
-			const user = userEvent.setup();
-			renderWithProviders(
-				<CampaignSchemasFilters
-					filters={defaultFilters}
-					onFiltersChange={onFiltersChange}
-				/>
-			);
-
-			const sortSelect = screen.getByPlaceholderText('Sort by');
-			await user.click(sortSelect);
-
-			expect(await screen.findByText('Name A-Z')).toBeInTheDocument();
-			expect(screen.getByText('Name Z-A')).toBeInTheDocument();
-			expect(screen.getByText('Code A-Z')).toBeInTheDocument();
-			expect(screen.getByText('Code Z-A')).toBeInTheDocument();
-			expect(screen.getByText('Objective A-Z')).toBeInTheDocument();
-			expect(screen.getByText('Objective Z-A')).toBeInTheDocument();
-			expect(screen.getByText('Newest First')).toBeInTheDocument();
-			expect(screen.getByText('Oldest First')).toBeInTheDocument();
-			expect(screen.getByText('Recently Updated')).toBeInTheDocument();
 		});
 	});
 });
