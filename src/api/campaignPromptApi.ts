@@ -3,6 +3,7 @@ import { DEFAULT_API_URL } from './config';
 import type { CampaignPromptModel } from '~/models/CampaignPromptModel';
 import type { CampaignPromptGenerateRequest } from '~/models/CampaignPromptGenerateModel';
 import type { CampaignPromptGenerateResponse } from '~/models/CampaignPromptGenerateResponse';
+import type { CampaignPromptUsageModel } from '~/models/CampaignPromptUsageModel';
 
 const campaignPromptsApi = () => {
 	return {
@@ -43,6 +44,14 @@ const campaignPromptsApi = () => {
 				`${DEFAULT_API_URL}/campaign-prompts/${id}`
 			);
 			return response.data;
+		},
+
+		// GET campaign prompts by type
+		getCampaignPromptsByType: async (typeId: number) => {
+			const response = await axios.get<{ data: CampaignPromptUsageModel[] }>(
+				`${DEFAULT_API_URL}/campaign-prompts/by-type/${typeId}`
+			);
+			return response.data.data;
 		},
 
 		// UPDATE campaign prompt

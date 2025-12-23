@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { Badge, Button, Group, Text, Tooltip } from '@mantine/core';
-import { modals } from '@mantine/modals';
 import {
 	IconEdit,
 	IconTrash,
@@ -96,21 +95,7 @@ export const useCampaignPromptTypesColumns = ({
 								size='xs'
 								variant='light'
 								color='red'
-								onClick={() =>
-									modals.openConfirmModal({
-										title: 'Confirm Delete',
-										children: (
-											<Text size='sm'>
-												Are you sure you want to delete this prompt type?
-											</Text>
-										),
-										labels: { confirm: 'Delete', cancel: 'Cancel' },
-										confirmProps: { color: 'red' },
-										onConfirm: async () => {
-											await onDelete(row.original.id);
-										},
-									})
-								}
+								onClick={() => onDelete(row.original.id)}
 								loading={isDeletePending}
 								className={styles.actionButton}
 							>

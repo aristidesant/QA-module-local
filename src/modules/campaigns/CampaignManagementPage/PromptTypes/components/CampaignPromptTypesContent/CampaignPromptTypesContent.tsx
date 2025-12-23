@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ActionIcon, Button, Modal } from '@mantine/core';
+import { ActionIcon, Button, Modal, Text } from '@mantine/core';
+import { modals } from '@mantine/modals';
 import { IconPlus, IconSearchOff, IconSparkles } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import BaseTable from '~/components/BaseTable';
@@ -10,6 +11,7 @@ import {
 	useDeleteCampaignPromptType,
 	useGetAllCampaignPromptTypes,
 } from '~/queries/campaignPromptTypeQueries';
+import campaignPromptsApi from '~/api/campaignPromptApi';
 import type { CampaignPromptTypeModel } from '~/models/CampaignPromptTypeModel';
 import CampaignPromptTypesFilters, {
 	PromptTypeFilters,
@@ -17,6 +19,8 @@ import CampaignPromptTypesFilters, {
 import CampaignPromptTypesForm from '../CampaignPromptTypesForm';
 import { useCampaignPromptTypesColumns } from './useCampaignPromptTypesColumns';
 import styles from './CampaignPromptTypesContent.module.css';
+import ReassignPromptTypeModal from '../ReassignPromptTypeModal';
+import type { CampaignPromptUsageModel } from '~/models/CampaignPromptUsageModel';
 
 interface CampaignPromptTypesContentProps {
 	createModalOpened: boolean;
@@ -49,6 +53,13 @@ const CampaignPromptTypesContent: React.FC<CampaignPromptTypesContentProps> = ({
 		page: 1,
 		pageSize: 10,
 	});
+
+	const [reassignModalOpened, setReassignModalOpened] = useState(false);
+	const [affectedCampaigns, setAffectedCampaigns] = useState<
+		CampaignPromptUsageModel[]
+	>([]);
+	const [typeToDelete, setTypeToDelete] =
+		useState<CampaignPromptTypeModel | null>(null);
 
 	const promptTypes = promptTypesData ?? [];
 
@@ -104,7 +115,7 @@ const CampaignPromptTypesContent: React.FC<CampaignPromptTypesContentProps> = ({
 		setEditModalOpened(true);
 	};
 
-	const handleDelete = async (id: number) => {
+	const performDelete = async (id: number) => {
 		try {
 			await deletePromptType.mutateAsync(id);
 			notifications.show({
@@ -119,6 +130,40 @@ const CampaignPromptTypesContent: React.FC<CampaignPromptTypesContentProps> = ({
 				color: 'red',
 			});
 			console.error(error);
+		}
+	};
+
+	const handleDelete = async (id: number) => {
+		try {
+			const affected = await campaignPromptsApi().getCampaignPromptsByType(id);
+
+			if (affected.length > 0) {
+				const type = promptTypes.find((t) => t.id === id);
+				if (type) {
+					setTypeToDelete(type);
+					setAffectedCampaigns(affected);
+					setReassignModalOpened(true);
+				}
+			} else {
+				modals.openConfirmModal({
+					title: 'Confirm Delete',
+					children: (
+						<Text size='sm'>
+							Are you sure you want to delete this prompt type?
+						</Text>
+					),
+					labels: { confirm: 'Delete', cancel: 'Cancel' },
+					confirmProps: { color: 'red' },
+					onConfirm: () => performDelete(id),
+				});
+			}
+		} catch (error) {
+			console.error(error);
+			notifications.show({
+				title: 'Error',
+				message: 'Failed to check prompt type usage',
+				color: 'red',
+			});
 		}
 	};
 
@@ -279,6 +324,20 @@ const CampaignPromptTypesContent: React.FC<CampaignPromptTypesContentProps> = ({
 					/>
 				)}
 			</Modal>
+
+			{typeToDelete && (
+				<ReassignPromptTypeModal
+					opened={reassignModalOpened}
+					onClose={() => {
+						setReassignModalOpened(false);
+						setTypeToDelete(null);
+						setAffectedCampaigns([]);
+					}}
+					typeToDelete={typeToDelete}
+					affectedCampaigns={affectedCampaigns}
+					onDeleteType={performDelete}
+				/>
+			)}
 		</div>
 	);
 };

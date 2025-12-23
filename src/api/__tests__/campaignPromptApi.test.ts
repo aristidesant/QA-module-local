@@ -170,6 +170,32 @@ describe('campaignPromptsApi', () => {
 		});
 	});
 
+	describe('getCampaignPromptsByType', () => {
+		it('should fetch campaign prompts by type', async () => {
+			const typeId = 1;
+			const mockResponse = {
+				data: [
+					{
+						campaignPromptId: 1,
+						campaignTypeId: 1,
+						campaignId: 1,
+						campaignName: 'Test Campaign',
+						prompt: 'Test Prompt',
+					},
+				],
+			};
+			(axios.get as Mock).mockResolvedValue(createMockResponse(mockResponse));
+
+			const api = campaignPromptsApi();
+			const result = await api.getCampaignPromptsByType(typeId);
+
+			expect(axios.get).toHaveBeenCalledWith(
+				`${TEST_API_URL}/campaign-prompts/by-type/${typeId}`
+			);
+			expect(result).toEqual(mockResponse.data);
+		});
+	});
+
 	describe('updateCampaignPrompt', () => {
 		it('should update a campaign prompt successfully', async () => {
 			const id = 1;

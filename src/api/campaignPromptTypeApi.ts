@@ -55,6 +55,30 @@ const campaignPromptTypeApi = (_authHeader?: Record<string, string>) => {
 			);
 			return response.data;
 		},
+
+		// REASSIGN campaign prompt type
+		reassignCampaignPromptType: async (data: {
+			items: {
+				campaignId: number;
+				oldCampaignPromptTypeId: number;
+				newCampaignPromptTypeId: number;
+				newPrompt: string;
+			}[];
+		}) => {
+			const response = await axios.post(
+				`${DEFAULT_API_URL}/campaign-prompt-types/reassign`,
+				data
+			);
+			return response.data;
+		},
+
+		// GET available campaign prompt types for a campaign
+		getAvailableCampaignPromptTypes: async (campaignId: number) => {
+			const response = await axios.get<CampaignPromptTypeModel[]>(
+				`${DEFAULT_API_URL}/campaign-prompt-types/available/${campaignId}`
+			);
+			return response.data;
+		},
 	};
 };
 
