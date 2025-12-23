@@ -1,7 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import {
 	Alert,
-	Badge,
 	Button,
 	Group,
 	Paper,
@@ -206,25 +205,7 @@ const ClientForm: React.FC<ClientFormProps> = ({
 		>
 			<div className={classes.header}>
 				<Stack gap={4} className={classes.headerCopy}>
-					<Group gap='xs' className={classes.badgeRow}>
-						<Badge
-							variant='light'
-							color='blue'
-							className={classes.statusBadge}
-							size='sm'
-						>
-							{isEditMode ? 'Editing client' : 'Create client'}
-						</Badge>
-						{!isEditMode && (
-							<Badge variant='outline' color='gray' size='sm'>
-								Draft
-							</Badge>
-						)}
-					</Group>
-					<Text className={classes.title}>
-						{isEditMode ? 'Update client profile' : 'Add a new client'}
-					</Text>
-					<Text size='xs' c='dimmed'>
+					<Text size='sm' c='dimmed'>
 						Keep contact, address, and billing details tidy so teams can move
 						fast.
 					</Text>
