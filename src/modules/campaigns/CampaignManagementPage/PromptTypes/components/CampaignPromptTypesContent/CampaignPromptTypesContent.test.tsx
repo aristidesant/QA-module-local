@@ -6,6 +6,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { CampaignPromptTypeModel } from '~/models/CampaignPromptTypeModel';
 import CampaignPromptTypesContent from './CampaignPromptTypesContent';
 
+// Mock campaignPromptsApi
+vi.mock('~/api/campaignPromptApi', () => ({
+	default: () => ({
+		getCampaignPromptsByType: vi.fn().mockResolvedValue([]),
+	}),
+}));
+
 // Mock notifications - must be defined with vi.hoisted for proper hoisting
 const { mockNotificationsShow, mockDeletePromptType, mockPromptTypesData } =
 	vi.hoisted(() => ({
@@ -47,6 +54,8 @@ vi.mock('@mantine/core', async (importOriginal) => {
 				modalCloseHandlers.create = onClose;
 			} else if (title === 'Edit Campaign Prompt Type') {
 				modalCloseHandlers.edit = onClose;
+			} else if (title === 'Prompt Type in Use') {
+				modalCloseHandlers.reassign = onClose;
 			}
 			return opened ? (
 				<div data-testid={`modal-${title.toLowerCase().replace(/\s+/g, '-')}`}>
