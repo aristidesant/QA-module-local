@@ -175,4 +175,54 @@ describe('campaignPromptTypeApi', () => {
 			expect(result).toEqual(mockResponse);
 		});
 	});
+
+	describe('reassignCampaignPromptType', () => {
+		it('should reassign campaign prompt types successfully', async () => {
+			const mockData = {
+				items: [
+					{
+						campaignId: 1,
+						oldCampaignPromptTypeId: 1,
+						newCampaignPromptTypeId: 2,
+						newPrompt: 'New Prompt',
+					},
+				],
+			};
+			const mockResponse = { success: true };
+			(axios.post as Mock).mockResolvedValue(createMockResponse(mockResponse));
+
+			const api = campaignPromptTypeApi();
+			const result = await api.reassignCampaignPromptType(mockData);
+
+			expect(axios.post).toHaveBeenCalledWith(
+				`${TEST_API_URL}/campaign-prompt-types/reassign`,
+				mockData
+			);
+			expect(result).toEqual(mockResponse);
+		});
+	});
+
+	describe('getAvailableCampaignPromptTypes', () => {
+		it('should fetch available campaign prompt types for a campaign', async () => {
+			const campaignId = 1;
+			const mockResponse: CampaignPromptTypeModel[] = [
+				{
+					id: 2,
+					name: 'Available Type',
+					icon: 'icon',
+					order: 2,
+					createdAt: '2023-01-01T00:00:00Z',
+				},
+			];
+			(axios.get as Mock).mockResolvedValue(createMockResponse(mockResponse));
+
+			const api = campaignPromptTypeApi();
+			const result = await api.getAvailableCampaignPromptTypes(campaignId);
+
+			expect(axios.get).toHaveBeenCalledWith(
+				`${TEST_API_URL}/campaign-prompt-types/available/${campaignId}`
+			);
+			expect(result).toEqual(mockResponse);
+		});
+	});
 });
