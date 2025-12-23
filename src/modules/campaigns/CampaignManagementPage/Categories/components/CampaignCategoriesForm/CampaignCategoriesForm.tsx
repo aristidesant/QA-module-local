@@ -83,10 +83,14 @@ export const CampaignCategoriesForm: React.FC<CampaignCategoriesFormProps> = ({
 				});
 			}
 			onSuccess();
-		} catch (error) {
+		} catch (error: any) {
+			const errorMessage =
+				error?.response?.data?.message || error?.message || '';
 			notifications.show({
 				title: 'Error',
-				message: `Failed to ${isEditing ? 'update' : 'create'} campaign category`,
+				message:
+					errorMessage ||
+					`Failed to ${isEditing ? 'update' : 'create'} campaign category`,
 				color: 'red',
 			});
 		}
