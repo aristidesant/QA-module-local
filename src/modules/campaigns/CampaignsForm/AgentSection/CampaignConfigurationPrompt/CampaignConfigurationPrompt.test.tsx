@@ -194,7 +194,7 @@ describe('CampaignConfigurationPrompt', () => {
 			expect(screen.getByText('Agent Prompt')).toBeInTheDocument();
 			expect(
 				screen.getByText(
-					'Set the guidance the agent follows when speaking with contacts.'
+					'Define the instructions the agent will follow when speaking with contacts.'
 				)
 			).toBeInTheDocument();
 		});
@@ -215,7 +215,9 @@ describe('CampaignConfigurationPrompt', () => {
 
 			renderWithProviders(<CampaignConfigurationPrompt />);
 
-			expect(screen.getByText(/No prompt added yet/i)).toBeInTheDocument();
+			expect(
+				screen.getByText(/No prompt has been added yet/i)
+			).toBeInTheDocument();
 		});
 
 		it('handles missing agentConfig gracefully', () => {
@@ -223,7 +225,9 @@ describe('CampaignConfigurationPrompt', () => {
 
 			renderWithProviders(<CampaignConfigurationPrompt />);
 
-			expect(screen.getByText(/No prompt added yet/i)).toBeInTheDocument();
+			expect(
+				screen.getByText(/No prompt has been added yet/i)
+			).toBeInTheDocument();
 		});
 
 		it('handles missing conversationConfig gracefully', () => {
@@ -233,7 +237,9 @@ describe('CampaignConfigurationPrompt', () => {
 
 			renderWithProviders(<CampaignConfigurationPrompt />);
 
-			expect(screen.getByText(/No prompt added yet/i)).toBeInTheDocument();
+			expect(
+				screen.getByText(/No prompt has been added yet/i)
+			).toBeInTheDocument();
 		});
 
 		it('handles missing agent config gracefully', () => {
@@ -247,7 +253,9 @@ describe('CampaignConfigurationPrompt', () => {
 
 			renderWithProviders(<CampaignConfigurationPrompt />);
 
-			expect(screen.getByText(/No prompt added yet/i)).toBeInTheDocument();
+			expect(
+				screen.getByText(/No prompt has been added yet/i)
+			).toBeInTheDocument();
 		});
 
 		it('handles missing prompt object gracefully', () => {
@@ -262,7 +270,9 @@ describe('CampaignConfigurationPrompt', () => {
 
 			renderWithProviders(<CampaignConfigurationPrompt />);
 
-			expect(screen.getByText(/No prompt added yet/i)).toBeInTheDocument();
+			expect(
+				screen.getByText(/No prompt has been added yet/i)
+			).toBeInTheDocument();
 		});
 	});
 
@@ -341,7 +351,7 @@ describe('CampaignConfigurationPrompt', () => {
 			};
 
 			renderWithProviders(<CampaignConfigurationPrompt />);
-			expect(screen.getByText('5 chars')).toBeInTheDocument();
+			expect(screen.getByText('5 characters')).toBeInTheDocument();
 		});
 	});
 });

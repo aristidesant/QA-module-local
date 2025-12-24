@@ -83,6 +83,14 @@ export function ContactListInfo({
 		setIsEditing(false);
 	};
 
+	const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+		if (event.key === 'Enter') {
+			handleNameSave();
+		} else if (event.key === 'Escape') {
+			handleCancelEdit();
+		}
+	};
+
 	const handleDateChange = (dateString: string | null) => {
 		// Store and pass the date as a simple YYYY-MM-DD string to avoid timezone issues
 		setSelectedDate(dateString);
@@ -151,6 +159,7 @@ export function ContactListInfo({
 									)}
 									autoFocus
 									size='sm'
+									onKeyDown={handleKeyDown}
 									className={classes.nameInput}
 									maxLength={50}
 								/>

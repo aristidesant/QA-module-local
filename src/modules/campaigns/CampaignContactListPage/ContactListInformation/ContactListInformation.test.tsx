@@ -152,7 +152,7 @@ describe('ContactListInformation', () => {
 			expect(screen.getByText('Executed')).toBeInTheDocument();
 			expect(
 				screen.getByText(
-					'All planned waves are done. Extend waves or mark the list complete.'
+					'All planned waves have finished. Extend waves or mark list as complete.'
 				)
 			).toBeInTheDocument();
 		});
@@ -250,7 +250,7 @@ describe('ContactListInformation', () => {
 					onReload={mockOnReload}
 				/>
 			);
-			expect(screen.queryByLabelText('Extend waves')).not.toBeInTheDocument();
+			expect(screen.queryByLabelText('Extend Waves')).not.toBeInTheDocument();
 			expect(screen.queryByLabelText('Complete list')).not.toBeInTheDocument();
 		});
 
@@ -306,7 +306,7 @@ describe('ContactListInformation', () => {
 				/>
 			);
 
-			const extendBtn = screen.getByLabelText('Extend waves');
+			const extendBtn = screen.getByLabelText('Extend Waves');
 			expect(extendBtn).toBeInTheDocument();
 			fireEvent.click(extendBtn);
 

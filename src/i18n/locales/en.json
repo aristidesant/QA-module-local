@@ -12,7 +12,9 @@
 		"currency": "$",
 		"goBack": "Go Back",
 		"goToHome": "Go to Home",
-		"referenceText": "Reference Text"
+		"referenceText": "Reference Text",
+		"success": "Success",
+		"close": "Close"
 	},
 	"accessDenied": {
 		"title": "Access Denied",
@@ -646,6 +648,9 @@
 					"inactive": "Inactive Lists"
 				},
 				"title": "Contacts",
+				"tooltips": {
+					"reload": "Reload contact list"
+				},
 				"description": "Information about the contacts in this campaign",
 				"list": {
 					"activeTitle": "Contact lists",

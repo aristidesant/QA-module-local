@@ -12,7 +12,9 @@
 		"currency": "$",
 		"goBack": "Volver",
 		"goToHome": "Ir al Inicio",
-		"referenceText": "Texto de referencia"
+		"referenceText": "Texto de referencia",
+		"success": "Éxito",
+		"close": "Cerrar"
 	},
 	"accessDenied": {
 		"title": "Acceso Denegado",
@@ -644,6 +646,9 @@
 					"inactive": "Listas Inactivas"
 				},
 				"title": "Contactos",
+				"tooltips": {
+					"reload": "Recargar lista de contactos"
+				},
 				"description": "Información sobre los contactos en esta campaña",
 				"list": {
 					"activeTitle": "Listas de contactos",

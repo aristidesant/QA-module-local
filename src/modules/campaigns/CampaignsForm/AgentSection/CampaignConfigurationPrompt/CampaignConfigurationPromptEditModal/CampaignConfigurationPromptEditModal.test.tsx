@@ -103,7 +103,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 				/>
 			);
 
-			expect(screen.getByText('Prompt configuration')).toBeInTheDocument();
+			expect(screen.getByText('Prompt Configuration')).toBeInTheDocument();
 			expect(
 				screen.getByText(/Configure prompts for each interaction type/i)
 			).toBeInTheDocument();
@@ -166,7 +166,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 			);
 
 			expect(
-				screen.getByText(/Save to apply prompts across this campaign/i)
+				screen.getByText(/Save to apply prompts throughout this campaign/i)
 			).toBeInTheDocument();
 		});
 
@@ -526,7 +526,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 				/>
 			);
 
-			expect(screen.getByText('Prompt configuration')).toBeInTheDocument();
+			expect(screen.getByText('Prompt Configuration')).toBeInTheDocument();
 		});
 
 		it('uses initialSchemaId when it matches a valid type', () => {
@@ -592,7 +592,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 				/>
 			);
 
-			expect(screen.getByText('Prompt configuration')).toBeInTheDocument();
+			expect(screen.getByText('Prompt Configuration')).toBeInTheDocument();
 		});
 
 		it('shows correct badge for menu items with content', () => {

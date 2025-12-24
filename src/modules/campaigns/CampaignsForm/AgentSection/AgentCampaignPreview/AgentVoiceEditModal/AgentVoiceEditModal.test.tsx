@@ -199,7 +199,7 @@ describe('AgentVoiceEditModal', () => {
 		expect(mockMutateAsync).not.toHaveBeenCalled();
 		expect(showNotification).toHaveBeenCalledWith(
 			expect.objectContaining({
-				title: 'Error',
+				title: 'An error occurred',
 				message: 'Agent data not loaded',
 			})
 		);
@@ -312,7 +312,7 @@ describe('AgentVoiceEditModal', () => {
 		await waitFor(() =>
 			expect(showNotification).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: 'Error',
+					title: 'An error occurred',
 					message: errorMessage,
 				})
 			)
@@ -343,7 +343,7 @@ describe('AgentVoiceEditModal', () => {
 		await waitFor(() =>
 			expect(showNotification).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: 'Error',
+					title: 'An error occurred',
 					message: 'Failed to update agent voice',
 				})
 			)
@@ -474,7 +474,7 @@ describe('AgentVoiceEditModal', () => {
 
 		expect(
 			screen.getByText(
-				/Select a voice for your agent and click save to apply the changes/i
+				/Select a voice for your agent and click save to apply changes/i
 			)
 		).toBeInTheDocument();
 	});
