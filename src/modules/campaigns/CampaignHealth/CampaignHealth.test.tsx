@@ -10,6 +10,12 @@ vi.mock('react-router', () => ({
 	useNavigate: vi.fn(),
 }));
 
+vi.mock('react-i18next', () => ({
+	useTranslation: () => ({
+		t: (key: string) => key,
+	}),
+}));
+
 vi.mock('~/queries/campaignsQueries', () => ({
 	useGetCampaignRequirements: vi.fn(),
 }));
@@ -39,9 +45,7 @@ describe('CampaignHealth', () => {
 			});
 
 			renderWithProviders(<CampaignHealth campaignId={mockCampaignId} />);
-			expect(
-				screen.getByText('Loading campaign health...')
-			).toBeInTheDocument();
+			expect(screen.getByText('health.loading')).toBeInTheDocument();
 		});
 	});
 
@@ -53,9 +57,7 @@ describe('CampaignHealth', () => {
 			});
 
 			renderWithProviders(<CampaignHealth campaignId={mockCampaignId} />);
-			expect(
-				screen.getByText('Failed to load campaign requirements.')
-			).toBeInTheDocument();
+			expect(screen.getByText('health.failedToLoad')).toBeInTheDocument();
 		});
 	});
 
@@ -69,10 +71,14 @@ describe('CampaignHealth', () => {
 			renderWithProviders(<CampaignHealth campaignId={mockCampaignId} />);
 
 			// Component should not render any meaningful content
-			expect(screen.queryByText('Disposition Flow')).not.toBeInTheDocument();
-			expect(screen.queryByText('Active Schedule')).not.toBeInTheDocument();
 			expect(
-				screen.queryByRole('button', { name: /go to edit/i })
+				screen.queryByText('health.dispositionFlow')
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByText('health.activeSchedule')
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole('button', { name: /health.goToEdit/i })
 			).not.toBeInTheDocument();
 		});
 	});
@@ -90,10 +96,14 @@ describe('CampaignHealth', () => {
 			renderWithProviders(<CampaignHealth campaignId={mockCampaignId} />);
 
 			// Component should not render any meaningful content when healthy
-			expect(screen.queryByText('Disposition Flow')).not.toBeInTheDocument();
-			expect(screen.queryByText('Active Schedule')).not.toBeInTheDocument();
 			expect(
-				screen.queryByRole('button', { name: /go to edit/i })
+				screen.queryByText('health.dispositionFlow')
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByText('health.activeSchedule')
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole('button', { name: /health.goToEdit/i })
 			).not.toBeInTheDocument();
 		});
 	});
@@ -110,9 +120,11 @@ describe('CampaignHealth', () => {
 
 			renderWithProviders(<CampaignHealth campaignId={mockCampaignId} />);
 
-			expect(screen.getByText('Disposition Flow')).toBeInTheDocument();
-			expect(screen.getByText('Not configured')).toBeInTheDocument();
-			expect(screen.queryByText('Active Schedule')).not.toBeInTheDocument();
+			expect(screen.getByText('health.dispositionFlow')).toBeInTheDocument();
+			expect(screen.getByText('health.notConfigured')).toBeInTheDocument();
+			expect(
+				screen.queryByText('health.activeSchedule')
+			).not.toBeInTheDocument();
 		});
 
 		it('shows active schedule warning when not active', () => {
@@ -126,9 +138,11 @@ describe('CampaignHealth', () => {
 
 			renderWithProviders(<CampaignHealth campaignId={mockCampaignId} />);
 
-			expect(screen.getByText('Active Schedule')).toBeInTheDocument();
-			expect(screen.getByText('Not active')).toBeInTheDocument();
-			expect(screen.queryByText('Disposition Flow')).not.toBeInTheDocument();
+			expect(screen.getByText('health.activeSchedule')).toBeInTheDocument();
+			expect(screen.getByText('health.notActive')).toBeInTheDocument();
+			expect(
+				screen.queryByText('health.dispositionFlow')
+			).not.toBeInTheDocument();
 		});
 
 		it('shows both warnings when both requirements are missing', () => {
@@ -142,10 +156,10 @@ describe('CampaignHealth', () => {
 
 			renderWithProviders(<CampaignHealth campaignId={mockCampaignId} />);
 
-			expect(screen.getByText('Disposition Flow')).toBeInTheDocument();
-			expect(screen.getByText('Not configured')).toBeInTheDocument();
-			expect(screen.getByText('Active Schedule')).toBeInTheDocument();
-			expect(screen.getByText('Not active')).toBeInTheDocument();
+			expect(screen.getByText('health.dispositionFlow')).toBeInTheDocument();
+			expect(screen.getByText('health.notConfigured')).toBeInTheDocument();
+			expect(screen.getByText('health.activeSchedule')).toBeInTheDocument();
+			expect(screen.getByText('health.notActive')).toBeInTheDocument();
 		});
 
 		it('shows "Go to edit" button and navigates on click', () => {
@@ -161,7 +175,9 @@ describe('CampaignHealth', () => {
 			mockCanPerformAction.mockReturnValue(true);
 			renderWithProviders(<CampaignHealth campaignId={mockCampaignId} />);
 
-			const editButton = screen.getByRole('button', { name: /go to edit/i });
+			const editButton = screen.getByRole('button', {
+				name: /health.goToEdit/i,
+			});
 			expect(editButton).toBeInTheDocument();
 
 			fireEvent.click(editButton);
@@ -181,7 +197,7 @@ describe('CampaignHealth', () => {
 			renderWithProviders(<CampaignHealth campaignId={mockCampaignId} />);
 
 			expect(
-				screen.queryByRole('button', { name: /go to edit/i })
+				screen.queryByRole('button', { name: /health.goToEdit/i })
 			).not.toBeInTheDocument();
 		});
 	});

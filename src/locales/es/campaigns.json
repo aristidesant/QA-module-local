@@ -453,5 +453,15 @@
 				"allWavesDone": "Todas las oleadas ejecutadas"
 			}
 		}
+	},
+	"health": {
+		"loading": "Cargando salud de la campaña...",
+		"error": "Error",
+		"failedToLoad": "Error al cargar los requisitos de la campaña.",
+		"dispositionFlow": "Flujo de disposición",
+		"notConfigured": "No configurado",
+		"activeSchedule": "Horario activo",
+		"notActive": "No activo",
+		"goToEdit": "Ir a editar"
 	}
 }

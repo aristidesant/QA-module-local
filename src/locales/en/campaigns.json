@@ -453,5 +453,15 @@
 				"allWavesDone": "All waves executed"
 			}
 		}
+	},
+	"health": {
+		"loading": "Loading campaign health...",
+		"error": "Error",
+		"failedToLoad": "Failed to load campaign requirements.",
+		"dispositionFlow": "Disposition Flow",
+		"notConfigured": "Not configured",
+		"activeSchedule": "Active Schedule",
+		"notActive": "Not active",
+		"goToEdit": "Go to edit"
 	}
 }
