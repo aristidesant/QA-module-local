@@ -8,6 +8,7 @@ import {
 	Box,
 	Alert,
 } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import styles from "./PromptFormForm.module.css";
 import { useForm } from "@mantine/form";
 import { useGetAllPromptTypes } from "~/queries/promptTypesQueries";
@@ -26,17 +27,18 @@ export type PromptFormFormProps = {
 export const PromptFormForm: React.FC<PromptFormFormProps> = ({
 	initialValues,
 	onSubmit,
-	submitLabel = "Save",
+	submitLabel,
 }) => {
+	const { t } = useTranslation();
 	const form = useForm<Partial<PromptForm>>({
 		initialValues: initialValues || {},
 		validate: {
-			name: (value) => (!value ? "Prompt name is required" : null),
-			typeId: (value) => (!value ? "Prompt type is required" : null),
+			name: (value) => (!value ? t("promptForm.validation.nameRequired") : null),
+			typeId: (value) => (!value ? t("promptForm.validation.typeRequired") : null),
 			form: (value) => {
-				if (!value) return "Field configuration is required";
+				if (!value) return t("promptForm.validation.fieldConfigRequired");
 				if (!value.fields || value.fields.length === 0) {
-					return "At least one form field is required";
+					return t("promptForm.validation.atLeastOneField");
 				}
 				return null;
 			},
@@ -100,7 +102,7 @@ export const PromptFormForm: React.FC<PromptFormFormProps> = ({
 						// Additional validation for form fields
 						if (!values.form?.fields || values.form.fields.length === 0) {
 							setSubmitError(
-								"Please add at least one form field before submitting."
+								t("promptForm.validation.atLeastOneField")
 							);
 							return;
 						}
@@ -119,11 +121,11 @@ export const PromptFormForm: React.FC<PromptFormFormProps> = ({
 							form.values.form.fields.length === 0
 						) {
 							setSubmitError(
-								"Please add at least one form field before submitting."
+								t("promptForm.validation.atLeastOneField")
 							);
 						} else {
 							setSubmitError(
-								"Please correct the errors above before submitting."
+								t("common.error")
 							);
 						}
 					}
@@ -138,8 +140,8 @@ export const PromptFormForm: React.FC<PromptFormFormProps> = ({
 				>
 					<Stack gap="md">
 						<Select
-							placeholder="Select a category"
-							label="Select Category"
+							placeholder={t("promptForm.form.selectCategoryPlaceholder")}
+							label={t("promptForm.form.selectCategory")}
 							value={categoryId}
 							onChange={(value) => {
 								if (value) {
@@ -154,8 +156,8 @@ export const PromptFormForm: React.FC<PromptFormFormProps> = ({
 							}
 						/>
 						<Select
-							placeholder="Select a prompt type"
-							label="Select Prompt Type"
+							placeholder={t("promptForm.form.selectPromptTypePlaceholder")}
+							label={t("promptForm.form.selectPromptType")}
 							required
 							{...form.getInputProps("typeId")}
 							data={
@@ -173,7 +175,7 @@ export const PromptFormForm: React.FC<PromptFormFormProps> = ({
 						/>
 						<TextInput
 							{...form.getInputProps("name")}
-							label="Prompt Name"
+							label={t("promptForm.form.promptName")}
 							required
 						/>
 					</Stack>

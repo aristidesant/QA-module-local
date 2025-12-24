@@ -1,5 +1,6 @@
 import { Modal, Button, Group, Title } from "@mantine/core";
 import { IconPlus, IconX } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 import PromptInputFieldBuilder from "./PromptInputFieldBuilder";
 import type { PromptGeneratorFormField } from "~/config/prompt-generator/generatorForm";
 import styles from "./PromptInputFieldBuilder.module.css";
@@ -17,6 +18,7 @@ export default function PromptInputFieldModal({
   onSave,
   field,
 }: PromptInputFieldModalProps) {
+  const { t } = useTranslation();
   const handleSave = (f: PromptGeneratorFormField) => {
     onSave(f);
     onClose();
@@ -32,7 +34,7 @@ export default function PromptInputFieldModal({
           className={styles.sectionTitle}
           style={{ marginBottom: 0 }}
         >
-          {field ? "Edit Field" : "Add New Field"}
+          {field ? t("promptForm.field.edit") : t("promptForm.field.addNew")}
         </Title>
       }
       centered
@@ -57,9 +59,9 @@ export default function PromptInputFieldModal({
             window.dispatchEvent(event);
           }}
           size="sm"
-          aria-label={field ? "Save changes" : "Add field"}
+          aria-label={field ? t("common.save") : t("promptForm.field.addNew")}
         >
-          {field ? "Save" : "Add"}
+          {field ? t("common.save") : t("common.create")}
         </Button>
         <Button
           leftSection={<IconX size={18} />}
@@ -68,9 +70,9 @@ export default function PromptInputFieldModal({
           onClick={onClose}
           className={styles.cancelButton}
           size="sm"
-          aria-label="Cancel"
+          aria-label={t("common.cancel")}
         >
-          Cancel
+          {t("common.cancel")}
         </Button>
       </Group>
     </Modal>

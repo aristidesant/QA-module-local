@@ -1,5 +1,6 @@
 import React from "react";
 import { Text, Badge, SimpleGrid, Loader, Stack } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import {
   IconCalendar,
   IconUser,
@@ -20,6 +21,7 @@ export interface CampaignsDetailsProps {
 export const CampaignsDetails: React.FC<CampaignsDetailsProps> = ({
   campaignId,
 }) => {
+  const { t } = useTranslation();
   const {
     data: campaign,
     isLoading,
@@ -28,10 +30,10 @@ export const CampaignsDetails: React.FC<CampaignsDetailsProps> = ({
 
   if (isLoading || isFetching) {
     return (
-      <SectionCard title="Loading Campaign Details..." icon={IconDetails}>
+      <SectionCard title={t("campaigns.details.loading")} icon={IconDetails}>
         <Stack align="center" justify="center" gap={"xs"}>
           <Loader size="lg" />
-          <Text mt="md">Fetching campaign details, please wait...</Text>
+          <Text mt="md">{t("campaigns.details.fetching")}</Text>
         </Stack>
       </SectionCard>
     );
@@ -39,8 +41,8 @@ export const CampaignsDetails: React.FC<CampaignsDetailsProps> = ({
   if (!campaign) {
     return (
       <SectionCard
-        title="Campaign Not Found"
-        description="The requested campaign does not exist."
+        title={t("campaigns.details.notFound")}
+        description={t("campaigns.details.notFoundDescription")}
         icon={IconDetails}
       />
     );
@@ -48,7 +50,7 @@ export const CampaignsDetails: React.FC<CampaignsDetailsProps> = ({
   return (
     <SectionCard
       title={`${formatValue(campaign.name)} Details`}
-      description={campaign.description || "No description available"}
+      description={campaign.description || t("campaigns.details.noDescription")}
       headerActions={
         campaign.status ? (
           <Badge
@@ -68,37 +70,37 @@ export const CampaignsDetails: React.FC<CampaignsDetailsProps> = ({
         className={styles.detailsGrid}
       >
         <InformationDetails
-          label="Type"
+          label={t("campaigns.details.type")}
           icon={IconTag}
           value={formatValue(campaign.type)}
         />
         <InformationDetails
-          label="Budget"
+          label={t("campaigns.details.budget")}
           icon={IconCash}
           value={formatCurrency(campaign.budget)}
         />
         <InformationDetails
-          label="Spent"
+          label={t("campaigns.details.spent")}
           icon={IconCash}
           value={formatCurrency(campaign.spent)}
         />
         <InformationDetails
-          label="User ID"
+          label={t("campaigns.details.userId")}
           icon={IconUser}
           value={formatValue(campaign.userId)}
         />
         <InformationDetails
-          label="Client ID"
+          label={t("campaigns.details.clientId")}
           icon={IconUser}
           value={formatValue(campaign.clientId)}
         />
         <InformationDetails
-          label="Created"
+          label={t("campaigns.details.created")}
           icon={IconCalendar}
           value={formatDate(campaign.createdAt)}
         />
         <InformationDetails
-          label="Updated"
+          label={t("campaigns.details.updated")}
           icon={IconCalendar}
           value={formatDate(campaign.updatedAt)}
         />

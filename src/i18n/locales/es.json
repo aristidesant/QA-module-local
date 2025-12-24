@@ -357,5 +357,144 @@
 			"textSnippet": "Fragmento de texto",
 			"file": "Archivo"
 		}
+	},
+	"contacts": {
+		"page": {
+			"title": "Contactos",
+			"description": "Administra tus contactos",
+			"searchPlaceholder": "Buscar contactos",
+			"newContact": "Nuevo Contacto"
+		},
+		"form": {
+			"editTitle": "Editar Contacto",
+			"newTitle": "Nuevo Contacto",
+			"created": "Contacto Creado",
+			"updated": "Contacto Actualizado",
+			"confirmDeletion": "Confirmar Eliminación",
+			"deleted": "Contacto Eliminado"
+		}
+	},
+	"promptForm": {
+		"page": {
+			"title": "Constructor de Formularios de Prompts",
+			"description": "Crea y gestiona formularios de prompts dinámicamente. Usa esta página para agregar, editar o eliminar formularios de prompts para tus agentes."
+		},
+		"field": {
+			"label": "Etiqueta",
+			"description": "Descripción",
+			"placeholder": "Marcador de posición",
+			"addNew": "Agregar Nuevo Campo",
+			"edit": "Editar Campo",
+			"delete": "Eliminar campo"
+		},
+		"form": {
+			"selectCategory": "Seleccionar Categoría",
+			"selectCategoryPlaceholder": "Selecciona una categoría",
+			"selectPromptType": "Seleccionar Tipo de Prompt",
+			"selectPromptTypePlaceholder": "Selecciona un tipo de prompt",
+			"promptName": "Nombre del Prompt"
+		},
+		"validation": {
+			"nameRequired": "El nombre del prompt es requerido",
+			"typeRequired": "El tipo de prompt es requerido",
+			"fieldConfigRequired": "La configuración del campo es requerida",
+			"atLeastOneField": "Se requiere al menos un campo de formulario"
+		}
+	},
+	"campaigns": {
+		"details": {
+			"loading": "Cargando Detalles de la Campaña...",
+			"fetching": "Obteniendo detalles de la campaña, por favor espera...",
+			"notFound": "Campaña No Encontrada",
+			"notFoundDescription": "La campaña solicitada no existe.",
+			"noDescription": "Sin descripción disponible",
+			"type": "Tipo",
+			"budget": "Presupuesto",
+			"spent": "Gastado",
+			"userId": "ID de Usuario",
+			"clientId": "ID de Cliente",
+			"created": "Creado",
+			"updated": "Actualizado"
+		},
+		"configuration": {
+			"editPrompt": "Editar Prompt del Agente"
+		},
+		"overview": {
+			"success": "Éxito",
+			"unavailable": "No disponible"
+		},
+		"voices": {
+			"selectVoice": "Seleccionar Voz de IA"
+		},
+		"workingHours": {
+			"title": "Horario de Trabajo",
+			"noSchedule": "Sin horario configurado",
+			"noDays": "Sin días configurados",
+			"noActiveDays": "Sin días activos",
+			"everyDay": "Todos los días",
+			"weekdays": "Días laborables",
+			"weekends": "Fines de semana",
+			"selectSchedule": "Seleccionar un Horario",
+			"applySchedule": "Aplicar Horario",
+			"selectSchedulePlaceholder": "Selecciona un horario",
+			"or": "O",
+			"noScheduleInfo": "Sin información de horario"
+		},
+		"scheduler": {
+			"instructions": "Ingresa los datos de la campaña arriba y selecciona \"Calcular proyección\" para"
+		}
+	},
+	"auth": {
+		"otp": {
+			"title": "Autenticación de Dos Factores",
+			"description": "Por favor, ingresa el código de verificación de 6 dígitos de tu aplicación de autenticación.",
+			"label": "Código de Verificación",
+			"placeholder": "Ingresa código de 6 dígitos",
+			"verificationFailed": "Verificación fallida",
+			"required": "El código OTP es requerido",
+			"mustBeSixDigits": "El código OTP debe tener 6 dígitos",
+			"mustBeNumeric": "El código OTP debe contener solo números"
+		}
+	},
+	"conversationsList": {
+		"searchPlaceholder": "Buscar conversaciones...",
+		"loadingData": "Cargando datos",
+		"refreshData": "Actualizar datos",
+		"exportToExcel": "Exportar a Excel"
+	},
+	"roles": {
+		"newRole": "Nuevo Rol",
+		"editRole": "Editar Rol",
+		"cannotDeleteSystem": "No se puede eliminar rol del sistema",
+		"deleteRole": "Eliminar Rol",
+		"deleted": "Rol eliminado",
+		"unableToDelete": "No se pudo eliminar el rol",
+		"updated": "Rol actualizado",
+		"created": "Rol creado",
+		"requestFailed": "La solicitud falló"
+	},
+	"promptGenerator": {
+		"createdPrompt": "Prompt Creado",
+		"createdPromptColon": "Prompt Creado:",
+		"copied": "¡Copiado!",
+		"copyToClipboard": "Copiar al portapapeles",
+		"copyPrompt": "Copiar prompt",
+		"success": "¡Éxito!"
+	},
+	"filters": {
+		"duration": {
+			"min": "Mín",
+			"max": "Máx"
+		},
+		"dateRange": {
+			"startDate": "Fecha de inicio",
+			"endDate": "Fecha de fin"
+		},
+		"status": {
+			"placeholder": "Filtrar por estado"
+		}
+	},
+	"knowledgeBases": {
+		"deleteKnowledgeBase": "Eliminar Base de Conocimiento"
 	}
 }

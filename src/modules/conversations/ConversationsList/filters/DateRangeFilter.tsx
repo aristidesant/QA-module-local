@@ -1,12 +1,14 @@
 import { DateInput } from "@mantine/dates";
 import { Group, Text } from "@mantine/core";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface DateRangeFilterProps {
   onDateRangeChange: (startDate: Date | null, endDate: Date | null) => void;
 }
 
 export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
+  const { t } = useTranslation();
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
@@ -28,7 +30,7 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
         Date Range:
       </Text>
       <DateInput
-        placeholder="Start date"
+        placeholder={t("filters.dateRange.startDate")}
         value={startDate}
         onChange={handleStartDateChange}
         size="sm"
@@ -40,7 +42,7 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
         to
       </Text>
       <DateInput
-        placeholder="End date"
+        placeholder={t("filters.dateRange.endDate")}
         value={endDate}
         onChange={handleEndDateChange}
         size="sm"

@@ -1,5 +1,6 @@
 import { MultiSelect } from "@mantine/core";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 interface StatusFilterProps {
   value: string[];
@@ -8,6 +9,7 @@ interface StatusFilterProps {
 }
 
 export function StatusFilter({ value, onChange, data }: StatusFilterProps) {
+  const { t } = useTranslation();
   const statusOptions = useMemo(() => {
     const uniqueStatuses = Array.from(new Set(data)).filter(Boolean);
     return uniqueStatuses.map((status) => ({
@@ -19,7 +21,7 @@ export function StatusFilter({ value, onChange, data }: StatusFilterProps) {
 
   return (
     <MultiSelect
-      placeholder="Filter by status"
+      placeholder={t("filters.status.placeholder")}
       value={value}
       onChange={onChange}
       data={statusOptions}
