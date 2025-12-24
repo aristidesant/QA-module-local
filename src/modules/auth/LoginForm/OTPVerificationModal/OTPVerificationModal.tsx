@@ -10,6 +10,7 @@ import {
 import { useForm } from "@mantine/form";
 import { IconAlertCircle, IconShieldCheck } from "@tabler/icons-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useVerifyOTP } from "~/queries/authQueries";
 import { getErrorMessage } from "~/utils/httpClient";
 import classes from "./OTPVerificationModal.module.css";
@@ -31,6 +32,7 @@ export default function OTPVerificationModal({
 	userId,
 	onSuccess,
 }: OTPVerificationModalProps) {
+	const { t } = useTranslation();
 	const verifyOTPMutation = useVerifyOTP();
 	const [formError, setFormError] = useState<string | null>(null);
 
@@ -40,9 +42,9 @@ export default function OTPVerificationModal({
 		},
 		validate: {
 			otp: (value) => {
-				if (!value.trim()) return "OTP code is required";
-				if (value.length !== 6) return "OTP code must be 6 digits";
-				if (!/^\d+$/.test(value)) return "OTP code must contain only numbers";
+				if (!value.trim()) return t("auth.otp.required");
+				if (value.length !== 6) return t("auth.otp.mustBeSixDigits");
+				if (!/^\d+$/.test(value)) return t("auth.otp.mustBeNumeric");
 				return null;
 			},
 		},
@@ -75,7 +77,7 @@ export default function OTPVerificationModal({
 			title={
 				<Group gap="sm">
 					<IconShieldCheck size={20} />
-					<Text fw={600}>Two-Factor Authentication</Text>
+					<Text fw={600}>{t("auth.otp.title")}</Text>
 				</Group>
 			}
 			centered
@@ -87,13 +89,12 @@ export default function OTPVerificationModal({
 			<form onSubmit={form.onSubmit(handleSubmit)}>
 				<Stack gap="md">
 					<Text size="sm" c="dimmed">
-						Please enter the 6-digit verification code from your authenticator
-						app.
+						{t("auth.otp.description")}
 					</Text>
 
 					<TextInput
-						label="Verification Code"
-						placeholder="Enter 6-digit code"
+						label={t("auth.otp.label")}
+						placeholder={t("auth.otp.placeholder")}
 						maxLength={6}
 						className={classes.otpInput}
 						{...form.getInputProps("otp")}
@@ -107,7 +108,7 @@ export default function OTPVerificationModal({
 						<Alert
 							variant="light"
 							color="red"
-							title="Verification failed"
+							title={t("auth.otp.verificationFailed")}
 							icon={<IconAlertCircle size={18} />}
 							radius="md"
 						>
@@ -121,7 +122,7 @@ export default function OTPVerificationModal({
 							onClick={handleClose}
 							disabled={verifyOTPMutation.isPending}
 						>
-							Cancel
+							{t("common.cancel")}
 						</Button>
 						<Button
 							type="submit"

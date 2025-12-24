@@ -1,4 +1,5 @@
 import { Stack, TextInput } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import styles from "./PromptInputFieldBuilder.module.css";
 import React from "react";
 import type { PromptGeneratorFormField } from "~/config/prompt-generator/generatorForm";
@@ -13,6 +14,7 @@ export default function PromptInputFieldBuilder({
   onSave,
   field,
 }: PromptInputFieldBuilderProps) {
+  const { t } = useTranslation();
   const [activeField, setActiveField] = React.useState<
     Partial<PromptGeneratorFormField>
   >({});
@@ -60,7 +62,7 @@ export default function PromptInputFieldBuilder({
     <Stack gap={8} className={styles.inputsStack} style={{ width: "100%" }}>
       <TextInput
         className={styles.inputFlex}
-        label="Label"
+        label={t("promptForm.field.label")}
         name="label"
         value={activeField?.label ?? ""}
         onChange={handleInputChange}
@@ -75,7 +77,7 @@ export default function PromptInputFieldBuilder({
       />
       <TextInput
         className={styles.inputFlex}
-        label="Description"
+        label={t("promptForm.field.description")}
         name="description"
         value={activeField?.description ?? ""}
         onChange={handleInputChange}
@@ -89,7 +91,7 @@ export default function PromptInputFieldBuilder({
       />
       <TextInput
         className={styles.inputFlex}
-        label="Placeholder"
+        label={t("promptForm.field.placeholder")}
         name="placeholder"
         value={activeField?.placeholder ?? ""}
         onChange={handleInputChange}

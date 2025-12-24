@@ -1,6 +1,7 @@
 import React from "react";
 import { Paper, Flex, Text, ActionIcon, Tooltip } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 import type { PromptGeneratorFormField } from "~/config/prompt-generator/generatorForm";
 import styles from "./FieldCard.module.css";
 
@@ -11,6 +12,7 @@ interface FieldCardProps {
 }
 
 const FieldCard: React.FC<FieldCardProps> = ({ field, onEdit, onDelete }) => {
+  const { t } = useTranslation();
   return (
     <Paper
       className={styles.fieldPaper}
@@ -38,11 +40,11 @@ const FieldCard: React.FC<FieldCardProps> = ({ field, onEdit, onDelete }) => {
       )}
       {field.placeholder && (
         <Text size="xs" c="gray.6" className={styles.fieldPlaceholder}>
-          Placeholder: {field.placeholder}
+          {t("promptForm.field.placeholder")}: {field.placeholder}
         </Text>
       )}
       <Flex className={styles.actionIcons} align="center" justify="end">
-        <Tooltip label="Delete field" withArrow position="top">
+        <Tooltip label={t("promptForm.field.delete")} withArrow position="top">
           <ActionIcon
             color="red"
             size="sm"
@@ -51,7 +53,7 @@ const FieldCard: React.FC<FieldCardProps> = ({ field, onEdit, onDelete }) => {
               e.stopPropagation();
               onDelete();
             }}
-            aria-label="Delete field"
+            aria-label={t("promptForm.field.delete")}
           >
             <IconTrash size={16} />
           </ActionIcon>

@@ -357,5 +357,144 @@
 			"textSnippet": "Text snippet",
 			"file": "File"
 		}
+	},
+	"contacts": {
+		"page": {
+			"title": "Contacts",
+			"description": "Manage your contacts",
+			"searchPlaceholder": "Search contacts",
+			"newContact": "New Contact"
+		},
+		"form": {
+			"editTitle": "Edit Contact",
+			"newTitle": "New Contact",
+			"created": "Contact Created",
+			"updated": "Contact Updated",
+			"confirmDeletion": "Confirm Deletion",
+			"deleted": "Contact Deleted"
+		}
+	},
+	"promptForm": {
+		"page": {
+			"title": "Prompt Form Builder",
+			"description": "Create and manage prompt forms dynamically. Use this page to add, edit, or remove prompt forms for your agents."
+		},
+		"field": {
+			"label": "Label",
+			"description": "Description",
+			"placeholder": "Placeholder",
+			"addNew": "Add New Field",
+			"edit": "Edit Field",
+			"delete": "Delete field"
+		},
+		"form": {
+			"selectCategory": "Select Category",
+			"selectCategoryPlaceholder": "Select a category",
+			"selectPromptType": "Select Prompt Type",
+			"selectPromptTypePlaceholder": "Select a prompt type",
+			"promptName": "Prompt Name"
+		},
+		"validation": {
+			"nameRequired": "Prompt name is required",
+			"typeRequired": "Prompt type is required",
+			"fieldConfigRequired": "Field configuration is required",
+			"atLeastOneField": "At least one form field is required"
+		}
+	},
+	"campaigns": {
+		"details": {
+			"loading": "Loading Campaign Details...",
+			"fetching": "Fetching campaign details, please wait...",
+			"notFound": "Campaign Not Found",
+			"notFoundDescription": "The requested campaign does not exist.",
+			"noDescription": "No description available",
+			"type": "Type",
+			"budget": "Budget",
+			"spent": "Spent",
+			"userId": "User ID",
+			"clientId": "Client ID",
+			"created": "Created",
+			"updated": "Updated"
+		},
+		"configuration": {
+			"editPrompt": "Edit Agent's Prompt"
+		},
+		"overview": {
+			"success": "Success",
+			"unavailable": "Unavailable"
+		},
+		"voices": {
+			"selectVoice": "Select AI Voice"
+		},
+		"workingHours": {
+			"title": "Working Hours",
+			"noSchedule": "No schedule configured",
+			"noDays": "No days configured",
+			"noActiveDays": "No active days",
+			"everyDay": "Every day",
+			"weekdays": "Weekdays",
+			"weekends": "Weekends",
+			"selectSchedule": "Select a Schedule",
+			"applySchedule": "Apply Schedule",
+			"selectSchedulePlaceholder": "Select a schedule",
+			"or": "OR",
+			"noScheduleInfo": "No schedule information"
+		},
+		"scheduler": {
+			"instructions": "Enter the campaign inputs above and select \"Calculate projection\" to"
+		}
+	},
+	"auth": {
+		"otp": {
+			"title": "Two-Factor Authentication",
+			"description": "Please enter the 6-digit verification code from your authenticator app.",
+			"label": "Verification Code",
+			"placeholder": "Enter 6-digit code",
+			"verificationFailed": "Verification failed",
+			"required": "OTP code is required",
+			"mustBeSixDigits": "OTP code must be 6 digits",
+			"mustBeNumeric": "OTP code must contain only numbers"
+		}
+	},
+	"conversationsList": {
+		"searchPlaceholder": "Search conversations...",
+		"loadingData": "Loading data",
+		"refreshData": "Refresh data",
+		"exportToExcel": "Export to Excel"
+	},
+	"roles": {
+		"newRole": "New Role",
+		"editRole": "Edit Role",
+		"cannotDeleteSystem": "Cannot delete system role",
+		"deleteRole": "Delete Role",
+		"deleted": "Role deleted",
+		"unableToDelete": "Unable to delete role",
+		"updated": "Role updated",
+		"created": "Role created",
+		"requestFailed": "Request failed"
+	},
+	"promptGenerator": {
+		"createdPrompt": "Created Prompt",
+		"createdPromptColon": "Created Prompt:",
+		"copied": "Copied!",
+		"copyToClipboard": "Copy to clipboard",
+		"copyPrompt": "Copy prompt",
+		"success": "Success!"
+	},
+	"filters": {
+		"duration": {
+			"min": "Min",
+			"max": "Max"
+		},
+		"dateRange": {
+			"startDate": "Start date",
+			"endDate": "End date"
+		},
+		"status": {
+			"placeholder": "Filter by status"
+		}
+	},
+	"knowledgeBases": {
+		"deleteKnowledgeBase": "Delete Knowledge Base"
 	}
 }

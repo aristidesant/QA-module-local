@@ -11,6 +11,7 @@ import {
 } from "@mantine/core";
 import { IconCopy } from "@tabler/icons-react";
 import { useClipboard } from "@mantine/hooks";
+import { useTranslation } from "react-i18next";
 
 export interface PromptOutputDisplayProps {
   prompt?: string;
@@ -30,8 +31,9 @@ const formatPromptContent = (content?: string) => {
 
 export const PromptOutputDisplay: React.FC<PromptOutputDisplayProps> = ({
   prompt,
-  title = "Created Prompt",
+  title,
 }) => {
+  const { t } = useTranslation();
   const theme = useMantineTheme();
   const clipboard = useClipboard({ timeout: 2000 });
 
@@ -52,10 +54,10 @@ export const PromptOutputDisplay: React.FC<PromptOutputDisplayProps> = ({
         }}
       >
         <Text fw={600} size="lg">
-          {title}
+          {title || t("promptGenerator.createdPrompt")}
         </Text>
         <Tooltip
-          label={clipboard.copied ? "Copied!" : "Copy to clipboard"}
+          label={clipboard.copied ? t("promptGenerator.copied") : t("promptGenerator.copyToClipboard")}
           withArrow
           position="top"
         >
@@ -64,7 +66,7 @@ export const PromptOutputDisplay: React.FC<PromptOutputDisplayProps> = ({
             color={clipboard.copied ? "teal" : "gray"}
             onClick={handleCopy}
             disabled={!prompt}
-            aria-label="Copy prompt"
+            aria-label={t("promptGenerator.copyPrompt")}
           >
             <IconCopy size={18} />
           </ActionIcon>

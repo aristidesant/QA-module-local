@@ -1,6 +1,7 @@
 // PromptOutputDisplayMantineTextarea.tsx
 import React from "react";
 import { Textarea, Paper, Title } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import styles from "./PromptOutputDisplay.module.css";
 
 export interface PromptOutputDisplayProps {
@@ -10,12 +11,13 @@ export interface PromptOutputDisplayProps {
 
 export const PromptOutputDisplay: React.FC<PromptOutputDisplayProps> = ({
   prompt,
-  title = "Created Prompt:",
+  title,
 }) => {
+  const { t } = useTranslation();
   return (
     <Paper className={styles.outputPaper} shadow="sm" radius="md" withBorder>
       <Title order={4} className={styles.outputTitle}>
-        {title}
+        {title || t("promptGenerator.createdPromptColon")}
       </Title>
       <Textarea
         className={styles.outputPromptInput}

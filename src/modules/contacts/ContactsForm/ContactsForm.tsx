@@ -12,6 +12,7 @@ import {
 } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
+import { useTranslation } from 'react-i18next';
 import {
 	useCreateContact,
 	useUpdateContact,
@@ -33,6 +34,7 @@ export default function ContactsForm({
 	contactId,
 	onSuccess,
 }: ContactsFormProps) {
+	const { t } = useTranslation();
 	const { data: contact, isLoading: isLoadingContact } = useGetContact(
 		contactId ? contactId.toString() : ''
 	);
@@ -107,7 +109,7 @@ export default function ContactsForm({
 				}
 				await createContact.mutateAsync(payload);
 				notifications.show({
-					title: 'Contact Created',
+					title: t('contacts.form.created'),
 					message: 'The contact has been created successfully.',
 					color: 'green',
 				});
@@ -121,7 +123,7 @@ export default function ContactsForm({
 					},
 				});
 				notifications.show({
-					title: 'Contact Updated',
+					title: t('contacts.form.updated'),
 					message: 'Changes saved successfully.',
 					color: 'green',
 				});
@@ -130,7 +132,7 @@ export default function ContactsForm({
 			form.reset();
 		} catch (error) {
 			notifications.show({
-				title: 'Error',
+				title: t('common.error'),
 				message:
 					error instanceof Error
 						? error.message

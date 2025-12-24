@@ -4,6 +4,7 @@ import {
   IconSearch,
   IconFileSpreadsheet,
 } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 import type { Table } from "@tanstack/react-table";
 import type { ConversationTableModel } from "~/models/ConversationsModels";
 import { useState } from "react";
@@ -23,6 +24,7 @@ export function TableToolbar({
   onRefresh,
   isLoading = false,
 }: TableToolbarProps) {
+  const { t } = useTranslation();
   const [exportOpen, setExportOpen] = useState(false);
 
   const toolbarStyle = {
@@ -39,7 +41,7 @@ export function TableToolbar({
   return (
     <Group justify="space-between" style={toolbarStyle}>
       <TextInput
-        placeholder="Search conversations..."
+        placeholder={t("conversationsList.searchPlaceholder")}
         value={globalFilter ?? ""}
         onChange={(e) => onGlobalFilterChange(e.target.value)}
         leftSection={<IconSearch size={16} />}
@@ -48,7 +50,7 @@ export function TableToolbar({
 
       <Group gap="xs">
         {isLoading && (
-          <Tooltip label="Loading data">
+          <Tooltip label={t("conversationsList.loadingData")}>
             <ActionIcon
               variant="subtle"
               size="lg"
@@ -60,7 +62,7 @@ export function TableToolbar({
           </Tooltip>
         )}
         {onRefresh && (
-          <Tooltip label="Refresh data">
+          <Tooltip label={t("conversationsList.refreshData")}>
             <ActionIcon
               variant="subtle"
               size="lg"
@@ -72,7 +74,7 @@ export function TableToolbar({
           </Tooltip>
         )}
 
-        <Tooltip label="Export to Excel">
+        <Tooltip label={t("conversationsList.exportToExcel")}>
           <ActionIcon
             variant="subtle"
             size="lg"

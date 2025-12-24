@@ -1,15 +1,17 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { PromptFormList } from "../PromptFormList/PromptFormList";
 import { ContentContainer } from "~/components/ContentContainer/ContentContainer";
 import usePromptFormStore from "../usePromptFormStore";
 
 export const PromptFormPage: React.FC = () => {
+	const { t } = useTranslation();
 	const { rightComponent } = usePromptFormStore((state) => state);
 	return (
 		<ContentContainer
-			title="Prompt Form Builder"
+			title={t("promptForm.page.title")}
 			rightSection={rightComponent || <></>}
-			description="Create and manage prompt forms dynamically. Use this page to add, edit, or remove prompt forms for your agents."
+			description={t("promptForm.page.description")}
 		>
 			<PromptFormList />
 		</ContentContainer>
