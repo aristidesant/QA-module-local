@@ -11,6 +11,7 @@ import {
 	Modal,
 } from '@mantine/core';
 import { IconMicrophone, IconChevronDown } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 
 import { useGetAllAgentVoices } from '~/queries/agentVoiceQueries';
 import type { AgentVoiceModel } from '~/models/AgentVoiceModel';
@@ -28,6 +29,7 @@ const AgentVoiceSelector: React.FC<AgentVoiceSelectorProps> = ({
 	onSelect,
 	selectedVoiceId,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const { data: elevenLabsVoices, isLoading, isError } = useGetAllAgentVoices();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -60,7 +62,7 @@ const AgentVoiceSelector: React.FC<AgentVoiceSelectorProps> = ({
 			<div className={classes.loadingContainer}>
 				<Loader color='var(--mantine-color-blue-6)' size='sm' />
 				<Text size='sm' c='dimmed'>
-					Loading voices...
+					{t('addNewCampaign.voices.loading')}
 				</Text>
 			</div>
 		);
@@ -70,7 +72,7 @@ const AgentVoiceSelector: React.FC<AgentVoiceSelectorProps> = ({
 		return (
 			<div className={classes.errorContainer}>
 				<Text size='sm' c='red'>
-					Failed to load voices
+					{t('addNewCampaign.voices.error')}
 				</Text>
 			</div>
 		);
@@ -115,7 +117,11 @@ const AgentVoiceSelector: React.FC<AgentVoiceSelectorProps> = ({
 												: 'blue'
 										}
 									>
-										{selectedVoice.voice.gender ?? 'Unknown'}
+										{selectedVoice.voice.gender
+											? t(
+													`addNewCampaign.voices.${selectedVoice.voice.gender.toLowerCase()}`
+												)
+											: t('addNewCampaign.voices.unknown')}
 									</Badge>
 								</Group>
 							</Stack>
@@ -131,7 +137,7 @@ const AgentVoiceSelector: React.FC<AgentVoiceSelectorProps> = ({
 							onClick={openVoiceModal}
 							rightSection={<IconChevronDown size={14} />}
 						>
-							Change
+							{t('addNewCampaign.voices.changeVoice')}
 						</Button>
 					</Group>
 				</Card>
@@ -140,7 +146,7 @@ const AgentVoiceSelector: React.FC<AgentVoiceSelectorProps> = ({
 					<Group justify='center' align='center' gap='sm'>
 						<IconMicrophone size={20} className={classes.emptyIcon} />
 						<Text size='sm' c='dimmed' fw={500}>
-							Select a voice
+							{t('addNewCampaign.voices.selectVoice')}
 						</Text>
 					</Group>
 				</Card>
@@ -149,7 +155,7 @@ const AgentVoiceSelector: React.FC<AgentVoiceSelectorProps> = ({
 			<Modal
 				opened={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
-				title='Select AI Voice'
+				title={t('addNewCampaign.voices.modalTitle')}
 				size='xl'
 				centered
 				closeOnClickOutside={false}

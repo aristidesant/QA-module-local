@@ -1,4 +1,5 @@
 import { Avatar, Badge, Group, Stack, Text } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import type { AgentVoiceModel } from '~/models/AgentVoiceModel';
 import { VoiceMiniPlayer } from '~/components/VoiceMiniPlayer';
 import { getLanguageFlagEmoji } from '~/utils/agentUtils';
@@ -15,11 +16,13 @@ const VoiceList: React.FC<VoiceListProps> = ({
 	selectedVoiceId,
 	onVoiceSelect,
 }) => {
+	const { t } = useTranslation('campaigns');
+
 	if (!voices.length) {
 		return (
 			<div className={classes.emptyState}>
 				<Text c='dimmed' size='sm'>
-					No voices found
+					{t('addNewCampaign.voices.noVoices')}
 				</Text>
 			</div>
 		);
@@ -83,7 +86,11 @@ const VoiceList: React.FC<VoiceListProps> = ({
 											variant='light'
 											color={gender === 'female' ? 'pink' : 'blue'}
 										>
-											{voice.gender ?? 'Unknown'}
+											{voice.gender
+												? t(
+														`addNewCampaign.voices.${voice.gender.toLowerCase()}`
+													)
+												: t('addNewCampaign.voices.unknown')}
 										</Badge>
 									</Group>
 								</Stack>

@@ -11,6 +11,14 @@ vi.mock('~/utils/agentUtils', () => ({
 	getLanguageFlagEmoji: () => '🇺🇸',
 }));
 
+// Mock react-i18next
+const tMock = (key: string) => key;
+vi.mock('react-i18next', () => ({
+	useTranslation: () => ({
+		t: tMock,
+	}),
+}));
+
 type ColumnWithAccessorKey = ColumnDef<AgentVoiceModel> & {
 	accessorKey?: string;
 };
@@ -68,9 +76,9 @@ describe('useAgentVoicesColumns', () => {
 		expect(result.current).toHaveLength(2);
 		const columns = result.current as ColumnWithAccessorKey[];
 		expect(columns[0].accessorKey).toBe('voice');
-		expect(columns[0].header).toBe('Voice');
+		expect(columns[0].header).toBe('addNewCampaign.voices.voice');
 		expect(columns[1].id).toBe('controls');
-		expect(columns[1].header).toBe('Preview');
+		expect(columns[1].header).toBe('addNewCampaign.voices.preview');
 	});
 
 	it('renders voice name, language and gender badge in the voice cell', () => {
@@ -97,7 +105,7 @@ describe('useAgentVoicesColumns', () => {
 		expect(screen.getByText('Test Voice')).toBeInTheDocument();
 		// The language and gender appear in the voice cell content
 		expect(container.textContent).toMatch(/English/);
-		expect(container.textContent).toMatch(/MALE/);
+		expect(container.textContent).toMatch(/addNewCampaign.voices.male/);
 	});
 
 	it('calls onPlayVoice when play button clicked and shows progress when playing', () => {
@@ -121,7 +129,7 @@ describe('useAgentVoicesColumns', () => {
 			cellFn({ row } as CellContext<AgentVoiceModel, unknown>)
 		);
 
-		const playButton = screen.getByLabelText('Play voice preview');
+		const playButton = screen.getByLabelText('addNewCampaign.voices.playAria');
 		fireEvent.click(playButton);
 		expect(onPlayVoice).toHaveBeenCalledWith(
 			'voice-1',
@@ -139,7 +147,9 @@ describe('useAgentVoicesColumns', () => {
 		) => React.ReactNode;
 		renderCell(playingCellFn({ row } as CellContext<AgentVoiceModel, unknown>));
 
-		const pauseButton = screen.getByLabelText('Pause voice preview');
+		const pauseButton = screen.getByLabelText(
+			'addNewCampaign.voices.pauseAria'
+		);
 		expect(pauseButton).toBeInTheDocument();
 
 		const progress = screen.getByRole('progressbar');

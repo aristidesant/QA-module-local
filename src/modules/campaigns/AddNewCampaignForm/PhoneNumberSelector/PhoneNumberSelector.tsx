@@ -1,5 +1,6 @@
 import React from 'react';
 import { Select } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import { useSimplePhoneNumberList } from '~/queries/phoneNumberQueries';
 import type { SimplePhoneNumberListParams } from '~/api/phoneNumberApi';
 
@@ -18,12 +19,13 @@ const PhoneNumberSelector: React.FC<PhoneNumberSelectorProps> = ({
 	campaignType,
 	value,
 	onChange,
-	label = 'Phone Number',
-	description = 'Select the phone number for this campaign',
-	placeholder = 'Choose a phone number',
+	label,
+	description,
+	placeholder,
 	withAsterisk = false,
 	error,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const params: SimplePhoneNumberListParams = {
 		type: campaignType,
 	};
@@ -38,9 +40,11 @@ const PhoneNumberSelector: React.FC<PhoneNumberSelectorProps> = ({
 
 	return (
 		<Select
-			label={label}
-			description={description}
-			placeholder={placeholder}
+			label={label || t('addNewCampaign.form.phoneNumber')}
+			description={description || t('addNewCampaign.form.phoneNumberDesc')}
+			placeholder={
+				placeholder || t('addNewCampaign.form.phoneNumberPlaceholder')
+			}
 			withAsterisk={withAsterisk}
 			data={selectData}
 			value={value?.toString() || null}

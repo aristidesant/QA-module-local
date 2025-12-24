@@ -5,6 +5,13 @@ import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import { AddNewCampaignForm } from './AddNewCampaignForm';
 import { notifications } from '@mantine/notifications';
 
+// Mock react-i18next
+vi.mock('react-i18next', () => ({
+	useTranslation: () => ({
+		t: (key: string) => key,
+	}),
+}));
+
 // Mock child components to isolate form logic
 vi.mock('./AgentVoiceSelector', () => ({
 	default: ({ onSelect, selectedVoiceId }: any) => (
@@ -111,20 +118,26 @@ describe('AddNewCampaignForm', () => {
 		renderWithProviders(<AddNewCampaignForm />);
 
 		expect(
-			screen.getByPlaceholderText('Enter campaign name')
+			screen.getByPlaceholderText('addNewCampaign.form.campaignNamePlaceholder')
 		).toBeInTheDocument();
 		expect(
-			screen.getByPlaceholderText('Describe your campaign')
+			screen.getByPlaceholderText('addNewCampaign.form.descriptionPlaceholder')
 		).toBeInTheDocument();
-		expect(screen.getByText('Campaign Type')).toBeInTheDocument();
-		expect(screen.getByPlaceholderText('Enter agent name')).toBeInTheDocument();
+		expect(
+			screen.getByText('addNewCampaign.form.campaignType')
+		).toBeInTheDocument();
+		expect(
+			screen.getByPlaceholderText('addNewCampaign.form.agentNamePlaceholder')
+		).toBeInTheDocument();
 	});
 
 	it('calls onCancel when cancel is clicked', () => {
 		const onCancel = vi.fn();
 		renderWithProviders(<AddNewCampaignForm onCancel={onCancel} />);
 
-		fireEvent.click(screen.getByRole('button', { name: /Cancel/i }));
+		fireEvent.click(
+			screen.getByRole('button', { name: /addNewCampaign.form.cancelButton/i })
+		);
 		expect(onCancel).toHaveBeenCalled();
 	});
 
@@ -142,22 +155,35 @@ describe('AddNewCampaignForm', () => {
 
 		renderWithProviders(<AddNewCampaignForm onComplete={onComplete} />);
 
-		fireEvent.change(screen.getByPlaceholderText('Enter campaign name'), {
-			target: { value: 'My Campaign' },
-		});
-		fireEvent.change(screen.getByPlaceholderText('Describe your campaign'), {
-			target: { value: 'A sample campaign' },
-		});
-		fireEvent.change(screen.getByPlaceholderText('Enter agent name'), {
-			target: { value: 'Agent X' },
-		});
+		fireEvent.change(
+			screen.getByPlaceholderText(
+				'addNewCampaign.form.campaignNamePlaceholder'
+			),
+			{
+				target: { value: 'My Campaign' },
+			}
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText('addNewCampaign.form.descriptionPlaceholder'),
+			{
+				target: { value: 'A sample campaign' },
+			}
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText('addNewCampaign.form.agentNamePlaceholder'),
+			{
+				target: { value: 'Agent X' },
+			}
+		);
 
 		// Select voice and phone using mocked children
 		fireEvent.click(screen.getByTestId('select-voice'));
 		fireEvent.click(screen.getByTestId('select-phone'));
 
 		// Submit the form
-		const createBtn = screen.getByRole('button', { name: /Create Campaign/i });
+		const createBtn = screen.getByRole('button', {
+			name: /addNewCampaign.form.createButton/i,
+		});
 		await waitFor(() => expect(createBtn).not.toBeDisabled());
 		fireEvent.click(createBtn);
 
@@ -188,19 +214,32 @@ describe('AddNewCampaignForm', () => {
 
 		renderWithProviders(<AddNewCampaignForm />);
 
-		fireEvent.change(screen.getByPlaceholderText('Enter campaign name'), {
-			target: { value: 'My Campaign' },
-		});
-		fireEvent.change(screen.getByPlaceholderText('Describe your campaign'), {
-			target: { value: 'A sample campaign' },
-		});
-		fireEvent.change(screen.getByPlaceholderText('Enter agent name'), {
-			target: { value: 'Agent X' },
-		});
+		fireEvent.change(
+			screen.getByPlaceholderText(
+				'addNewCampaign.form.campaignNamePlaceholder'
+			),
+			{
+				target: { value: 'My Campaign' },
+			}
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText('addNewCampaign.form.descriptionPlaceholder'),
+			{
+				target: { value: 'A sample campaign' },
+			}
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText('addNewCampaign.form.agentNamePlaceholder'),
+			{
+				target: { value: 'Agent X' },
+			}
+		);
 		fireEvent.click(screen.getByTestId('select-voice'));
 		fireEvent.click(screen.getByTestId('select-phone'));
 
-		const createBtn = screen.getByRole('button', { name: /Create Campaign/i });
+		const createBtn = screen.getByRole('button', {
+			name: /addNewCampaign.form.createButton/i,
+		});
 		await waitFor(() => expect(createBtn).not.toBeDisabled());
 		fireEvent.click(createBtn);
 
@@ -223,19 +262,32 @@ describe('AddNewCampaignForm', () => {
 		renderWithProviders(<AddNewCampaignForm />);
 
 		// Fill valid values and select phone
-		fireEvent.change(screen.getByPlaceholderText('Enter campaign name'), {
-			target: { value: 'My Campaign' },
-		});
-		fireEvent.change(screen.getByPlaceholderText('Describe your campaign'), {
-			target: { value: 'A sample campaign' },
-		});
-		fireEvent.change(screen.getByPlaceholderText('Enter agent name'), {
-			target: { value: 'Agent X' },
-		});
+		fireEvent.change(
+			screen.getByPlaceholderText(
+				'addNewCampaign.form.campaignNamePlaceholder'
+			),
+			{
+				target: { value: 'My Campaign' },
+			}
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText('addNewCampaign.form.descriptionPlaceholder'),
+			{
+				target: { value: 'A sample campaign' },
+			}
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText('addNewCampaign.form.agentNamePlaceholder'),
+			{
+				target: { value: 'Agent X' },
+			}
+		);
 		fireEvent.click(screen.getByTestId('select-voice'));
 		fireEvent.click(screen.getByTestId('select-phone'));
 
-		const createBtn = screen.getByRole('button', { name: /Create Campaign/i });
+		const createBtn = screen.getByRole('button', {
+			name: /addNewCampaign.form.createButton/i,
+		});
 		await waitFor(() => expect(createBtn).not.toBeDisabled());
 		fireEvent.click(createBtn);
 
@@ -245,7 +297,9 @@ describe('AddNewCampaignForm', () => {
 	it('create button is disabled when no phone selected', () => {
 		renderWithProviders(<AddNewCampaignForm />);
 
-		const createBtn = screen.getByRole('button', { name: /Create Campaign/i });
+		const createBtn = screen.getByRole('button', {
+			name: /addNewCampaign.form.createButton/i,
+		});
 		expect(createBtn).toBeDisabled();
 	});
 
@@ -253,22 +307,35 @@ describe('AddNewCampaignForm', () => {
 		autoSelectPhone = true;
 		renderWithProviders(<AddNewCampaignForm />);
 
-		fireEvent.change(screen.getByPlaceholderText('Enter campaign name'), {
-			target: { value: 'My Campaign' },
-		});
-		fireEvent.change(screen.getByPlaceholderText('Describe your campaign'), {
-			target: { value: 'A sample campaign' },
-		});
-		fireEvent.change(screen.getByPlaceholderText('Enter agent name'), {
-			target: { value: 'Agent X' },
-		});
+		fireEvent.change(
+			screen.getByPlaceholderText(
+				'addNewCampaign.form.campaignNamePlaceholder'
+			),
+			{
+				target: { value: 'My Campaign' },
+			}
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText('addNewCampaign.form.descriptionPlaceholder'),
+			{
+				target: { value: 'A sample campaign' },
+			}
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText('addNewCampaign.form.agentNamePlaceholder'),
+			{
+				target: { value: 'Agent X' },
+			}
+		);
 		fireEvent.click(screen.getByTestId('select-voice'));
 		fireEvent.click(screen.getByTestId('select-phone'));
 
 		await waitFor(() =>
 			expect(screen.getByTestId('selected-phone-id')).toHaveTextContent('10')
 		);
-		const createBtn = screen.getByRole('button', { name: /Create Campaign/i });
+		const createBtn = screen.getByRole('button', {
+			name: /addNewCampaign.form.createButton/i,
+		});
 		await waitFor(() => expect(createBtn).not.toBeDisabled());
 	});
 
@@ -286,19 +353,30 @@ describe('AddNewCampaignForm', () => {
 		renderWithProviders(<AddNewCampaignForm />);
 
 		// fill required inputs
-		fireEvent.change(screen.getByPlaceholderText('Enter campaign name'), {
-			target: { value: 'My Campaign' },
-		});
-		fireEvent.change(screen.getByPlaceholderText('Describe your campaign'), {
-			target: { value: 'A sample campaign' },
-		});
-		fireEvent.change(screen.getByPlaceholderText('Enter agent name'), {
-			target: { value: 'Agent X' },
-		});
+		fireEvent.change(
+			screen.getByPlaceholderText(
+				'addNewCampaign.form.campaignNamePlaceholder'
+			),
+			{
+				target: { value: 'My Campaign' },
+			}
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText('addNewCampaign.form.descriptionPlaceholder'),
+			{
+				target: { value: 'A sample campaign' },
+			}
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText('addNewCampaign.form.agentNamePlaceholder'),
+			{
+				target: { value: 'Agent X' },
+			}
+		);
 
 		// change campaign type to INBOUND using segmented control input
 		// Mantine SegmentedControl renders inputs with type radio, but labels are clickable
-		fireEvent.click(screen.getByText('Inbound'));
+		fireEvent.click(screen.getByText('columns.inbound'));
 
 		// select voice and phone for inbound
 		fireEvent.click(screen.getByTestId('select-voice'));
@@ -308,7 +386,9 @@ describe('AddNewCampaignForm', () => {
 		);
 
 		// Submit
-		const createBtn = screen.getByRole('button', { name: /Create Campaign/i });
+		const createBtn = screen.getByRole('button', {
+			name: /addNewCampaign.form.createButton/i,
+		});
 		await waitFor(() => expect(createBtn).not.toBeDisabled());
 		fireEvent.click(createBtn);
 
@@ -347,20 +427,33 @@ describe('AddNewCampaignForm', () => {
 		renderWithProviders(<AddNewCampaignForm />);
 
 		// Fill other required fields
-		fireEvent.change(screen.getByPlaceholderText('Enter campaign name'), {
-			target: { value: 'My Campaign' },
-		});
-		fireEvent.change(screen.getByPlaceholderText('Describe your campaign'), {
-			target: { value: 'A sample campaign' },
-		});
-		fireEvent.change(screen.getByPlaceholderText('Enter agent name'), {
-			target: { value: 'Agent X' },
-		});
+		fireEvent.change(
+			screen.getByPlaceholderText(
+				'addNewCampaign.form.campaignNamePlaceholder'
+			),
+			{
+				target: { value: 'My Campaign' },
+			}
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText('addNewCampaign.form.descriptionPlaceholder'),
+			{
+				target: { value: 'A sample campaign' },
+			}
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText('addNewCampaign.form.agentNamePlaceholder'),
+			{
+				target: { value: 'Agent X' },
+			}
+		);
 		fireEvent.click(screen.getByTestId('select-voice'));
 		fireEvent.click(screen.getByTestId('select-phone'));
 
 		// Select agent behavior
-		const select = screen.getByPlaceholderText('Choose an agent behavior');
+		const select = screen.getByPlaceholderText(
+			'addNewCampaign.form.agentBehaviorPlaceholder'
+		);
 		// Open dropdown
 		fireEvent.click(select);
 		// Click option
@@ -368,7 +461,9 @@ describe('AddNewCampaignForm', () => {
 		fireEvent.click(option);
 
 		// Submit
-		const createBtn = screen.getByRole('button', { name: /Create Campaign/i });
+		const createBtn = screen.getByRole('button', {
+			name: /addNewCampaign.form.createButton/i,
+		});
 		await waitFor(() => expect(createBtn).not.toBeDisabled());
 		fireEvent.click(createBtn);
 
@@ -393,39 +488,65 @@ describe('AddNewCampaignForm', () => {
 		renderWithProviders(<AddNewCampaignForm />);
 
 		// fill valid form values
-		fireEvent.change(screen.getByPlaceholderText('Enter campaign name'), {
-			target: { value: 'My Campaign' },
-		});
-		fireEvent.change(screen.getByPlaceholderText('Describe your campaign'), {
-			target: { value: 'A sample campaign' },
-		});
-		fireEvent.change(screen.getByPlaceholderText('Enter agent name'), {
-			target: { value: 'Agent X' },
-		});
+		fireEvent.change(
+			screen.getByPlaceholderText(
+				'addNewCampaign.form.campaignNamePlaceholder'
+			),
+			{
+				target: { value: 'My Campaign' },
+			}
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText('addNewCampaign.form.descriptionPlaceholder'),
+			{
+				target: { value: 'A sample campaign' },
+			}
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText('addNewCampaign.form.agentNamePlaceholder'),
+			{
+				target: { value: 'Agent X' },
+			}
+		);
 		fireEvent.click(screen.getByTestId('select-voice'));
 		fireEvent.click(screen.getByTestId('select-phone'));
 
-		const createBtn = screen.getByRole('button', { name: /Create Campaign/i });
+		const createBtn = screen.getByRole('button', {
+			name: /addNewCampaign.form.createButton/i,
+		});
 		await waitFor(() => expect(createBtn).not.toBeDisabled());
 		fireEvent.click(createBtn);
 
 		await waitFor(() =>
-			expect(screen.getByText('Error creating campaign')).toBeInTheDocument()
+			expect(
+				screen.getByText('addNewCampaign.form.errorMessage')
+			).toBeInTheDocument()
 		);
 	});
 
 	it('rejects whitespace-only values and displays validation messages', async () => {
 		renderWithProviders(<AddNewCampaignForm />);
 
-		fireEvent.change(screen.getByPlaceholderText('Enter campaign name'), {
-			target: { value: '   ' },
-		});
-		fireEvent.change(screen.getByPlaceholderText('Describe your campaign'), {
-			target: { value: '   ' },
-		});
-		fireEvent.change(screen.getByPlaceholderText('Enter agent name'), {
-			target: { value: '   ' },
-		});
+		fireEvent.change(
+			screen.getByPlaceholderText(
+				'addNewCampaign.form.campaignNamePlaceholder'
+			),
+			{
+				target: { value: '   ' },
+			}
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText('addNewCampaign.form.descriptionPlaceholder'),
+			{
+				target: { value: '   ' },
+			}
+		);
+		fireEvent.change(
+			screen.getByPlaceholderText('addNewCampaign.form.agentNamePlaceholder'),
+			{
+				target: { value: '   ' },
+			}
+		);
 
 		// ensure phone selected for the form
 		fireEvent.click(screen.getByTestId('select-phone'));
@@ -433,12 +554,20 @@ describe('AddNewCampaignForm', () => {
 			expect(screen.getByTestId('selected-phone-id')).toHaveTextContent('10')
 		);
 
-		const createBtn = screen.getByRole('button', { name: /Create Campaign/i });
+		const createBtn = screen.getByRole('button', {
+			name: /addNewCampaign.form.createButton/i,
+		});
 		expect(createBtn).toBeDisabled();
 
 		// validation messages
-		expect(screen.getByText('Campaign name is required')).toBeInTheDocument();
-		expect(screen.getByText('Description is required')).toBeInTheDocument();
-		expect(screen.getByText('Agent name is required')).toBeInTheDocument();
+		expect(
+			screen.getByText('addNewCampaign.validation.nameRequired')
+		).toBeInTheDocument();
+		expect(
+			screen.getByText('addNewCampaign.validation.descriptionRequired')
+		).toBeInTheDocument();
+		expect(
+			screen.getByText('addNewCampaign.validation.agentNameRequired')
+		).toBeInTheDocument();
 	});
 });

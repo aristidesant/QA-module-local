@@ -4,6 +4,13 @@ import { MantineProvider } from '@mantine/core';
 import AgentVoiceSelector from './AgentVoiceSelector';
 import type { AgentVoiceModel } from '~/models/AgentVoiceModel';
 
+// Mock react-i18next
+vi.mock('react-i18next', () => ({
+	useTranslation: () => ({
+		t: (key: string) => key,
+	}),
+}));
+
 const mockUseGetAllAgentVoices = vi.fn();
 vi.mock('~/queries/agentVoiceQueries', () => ({
 	useGetAllAgentVoices: (...args: any[]) => mockUseGetAllAgentVoices(...args),
@@ -61,7 +68,9 @@ describe('AgentVoiceSelector', () => {
 			</MantineProvider>
 		);
 
-		expect(screen.getByText('Loading voices...')).toBeInTheDocument();
+		expect(
+			screen.getByText('addNewCampaign.voices.loading')
+		).toBeInTheDocument();
 	});
 
 	it('shows error state', () => {
@@ -77,7 +86,7 @@ describe('AgentVoiceSelector', () => {
 			</MantineProvider>
 		);
 
-		expect(screen.getByText('Failed to load voices')).toBeInTheDocument();
+		expect(screen.getByText('addNewCampaign.voices.error')).toBeInTheDocument();
 	});
 
 	it('opens modal and selects a voice', () => {
@@ -119,7 +128,7 @@ describe('AgentVoiceSelector', () => {
 		);
 
 		// Click the empty card to open the modal
-		fireEvent.click(screen.getByText('Select a voice'));
+		fireEvent.click(screen.getByText('addNewCampaign.voices.selectVoice'));
 
 		// Click the mocked voice list button
 		fireEvent.click(screen.getByText('Select Voice One'));
@@ -170,7 +179,7 @@ describe('AgentVoiceSelector', () => {
 		);
 
 		expect(screen.getByText('Voice One')).toBeInTheDocument();
-		fireEvent.click(screen.getByText('Change'));
+		fireEvent.click(screen.getByText('addNewCampaign.voices.changeVoice'));
 		fireEvent.click(screen.getByText('Select Voice One'));
 		expect(onSelect).toHaveBeenCalled();
 	});

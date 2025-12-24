@@ -3,6 +3,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MantineProvider } from '@mantine/core';
 import PhoneNumberSelector from './PhoneNumberSelector';
 
+// Mock react-i18next
+vi.mock('react-i18next', () => ({
+	useTranslation: () => ({
+		t: (key: string) => key,
+	}),
+}));
+
 const mockUseSimplePhoneNumberList = vi.fn();
 vi.mock('~/queries/phoneNumberQueries', () => ({
 	useSimplePhoneNumberList: (...args: any[]) =>
