@@ -9,7 +9,13 @@
 		"loading": "Cargando...",
 		"error": "Ha ocurrido un error",
 		"noData": "No hay datos disponibles",
-		"currency": "$"
+		"currency": "$",
+		"goBack": "Volver",
+		"goToHome": "Ir al Inicio"
+	},
+	"accessDenied": {
+		"title": "Acceso Denegado",
+		"description": "No tienes permiso para acceder a esta página."
 	},
 	"nav": {
 		"dashboard": "Tablero",
@@ -304,5 +310,52 @@
 		"hour": "h",
 		"minute": "m",
 		"second": "s"
+	},
+	"outboundCallForm": {
+		"agentCallTitle": "Llamada de agente",
+		"agentCallDesc": "Experimenta una llamada en vivo desde tu agente de IA. Ingresa tu número de teléfono y recibe una demostración para escuchar cómo suena tu configuración en una conversación real.",
+		"customerName": "Nombre del cliente",
+		"customerId": "ID del cliente",
+		"calling": "Llamando...",
+		"requestDemo": "Solicitar llamada de demostración",
+		"testCallSentTitle": "Llamada de prueba enviada",
+		"testCallSentMsg": "Se ha enviado una llamada de prueba a {{phone}}.",
+		"startDemoErrorTitle": "Error",
+		"startDemoErrorMsg": "No se pudo iniciar la conversación de demostración. Por favor, inténtalo de nuevo.",
+		"validation": {
+			"agentRequired": "Se requiere un agente",
+			"phoneInvalid": "Ingresa un número válido: +1 seguido de 809, 829 o 849 y 7 dígitos (ej., +18093336600)",
+			"campaignRequired": "Se requiere campaña",
+			"customerNameRequired": "Se requiere el nombre del cliente",
+			"customerIdRequired": "Se requiere el identificador del cliente"
+		}
+	},
+	"pagination": {
+		"showing": "Mostrando",
+		"of": "de",
+		"filteredBy": "(filtrado por \"{{term}}\")",
+		"show": "Mostrar:",
+		"page": "Página"
+	},
+	"knowledgeBaseSelection": {
+		"noKnowledgeBases": "No se encontraron bases de conocimiento",
+		"searchPlaceholder": "Buscar bases de conocimiento",
+		"all": "Todas",
+		"url": "URL",
+		"text": "Texto",
+		"file": "Archivo",
+		"createNew": "Crear nuevo",
+		"selected": "{{count}} seleccionados",
+		"saveSelections": "Guardar selecciones",
+		"cancel": "Cancelar",
+		"columns": {
+			"name": "Nombre",
+			"description": "Descripción",
+			"type": "Tipo"
+		},
+		"fallbacks": {
+			"textSnippet": "Fragmento de texto",
+			"file": "Archivo"
+		}
 	}
 }

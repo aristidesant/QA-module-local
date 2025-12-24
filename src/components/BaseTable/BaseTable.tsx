@@ -29,6 +29,7 @@ import {
 	IconArrowsUpDown,
 	IconChevronRight,
 } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import styles from './BaseTable.module.css';
 
 export type FilterMode = 'client' | 'server';
@@ -146,6 +147,7 @@ function BaseTable<TData>({
 	initialExpandedRows = [],
 	showPaginationControls = false,
 }: BaseTableProps<TData>) {
+	const { t } = useTranslation();
 	const [sorting, setSorting] = React.useState<SortingState>(initialSort);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
 		[]
@@ -262,7 +264,7 @@ function BaseTable<TData>({
 	});
 
 	const hasData = data && data.length > 0;
-	const displayMessage = emptyMessage || 'No data available';
+	const displayMessage = emptyMessage || t('common.noData');
 	const shouldShowPagination =
 		enablePagination && showPaginationControls && table.getPageCount() > 1;
 

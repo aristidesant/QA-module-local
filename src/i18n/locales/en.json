@@ -9,7 +9,13 @@
 		"loading": "Loading...",
 		"error": "An error occurred",
 		"noData": "No data available",
-		"currency": "$"
+		"currency": "$",
+		"goBack": "Go Back",
+		"goToHome": "Go to Home"
+	},
+	"accessDenied": {
+		"title": "Access Denied",
+		"description": "You do not have permission to access this page."
 	},
 	"nav": {
 		"dashboard": "Dashboard",
@@ -304,5 +310,52 @@
 		"hour": "h",
 		"minute": "m",
 		"second": "s"
+	},
+	"outboundCallForm": {
+		"agentCallTitle": "Agent Call",
+		"agentCallDesc": "Experience a live call from your AI agent. Enter your phone number and receive a demo to hear how your setup sounds in real conversation.",
+		"customerName": "Customer Name",
+		"customerId": "Customer ID",
+		"calling": "Calling...",
+		"requestDemo": "Request Demo Call",
+		"testCallSentTitle": "Test Call Sent",
+		"testCallSentMsg": "A test call has been sent to {{phone}}.",
+		"startDemoErrorTitle": "Error",
+		"startDemoErrorMsg": "Failed to start demo conversation. Please try again.",
+		"validation": {
+			"agentRequired": "Agent is required",
+			"phoneInvalid": "Enter a valid number: +1 followed by 809, 829, or 849 and 7 digits (e.g., +18093336600)",
+			"campaignRequired": "Campaign is required",
+			"customerNameRequired": "Customer name is required",
+			"customerIdRequired": "Customer identifier is required"
+		}
+	},
+	"pagination": {
+		"showing": "Showing",
+		"of": "of",
+		"filteredBy": "(filtered by \"{{term}}\")",
+		"show": "Show:",
+		"page": "Page"
+	},
+	"knowledgeBaseSelection": {
+		"noKnowledgeBases": "No knowledge bases found",
+		"searchPlaceholder": "Search knowledge bases",
+		"all": "All",
+		"url": "URL",
+		"text": "Text",
+		"file": "File",
+		"createNew": "Create new",
+		"selected": "{{count}} selected",
+		"saveSelections": "Save Selections",
+		"cancel": "Cancel",
+		"columns": {
+			"name": "Name",
+			"description": "Description",
+			"type": "Type"
+		},
+		"fallbacks": {
+			"textSnippet": "Text snippet",
+			"file": "File"
+		}
 	}
 }
