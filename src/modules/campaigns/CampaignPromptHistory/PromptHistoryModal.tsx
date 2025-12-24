@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { Text, Group, Button, ScrollArea, Alert, Box } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import { Diff, parseDiff } from 'react-diff-view';
 import { diffLines as computeDiffLines, Change } from 'diff';
 import type { CampaignPromptHistoryItem } from '~/models/CampaignPromptHistoryModel';
@@ -20,6 +21,7 @@ const PromptHistoryModal: React.FC<PromptHistoryModalProps> = ({
 	onRestore,
 	onClose,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const diffData = useMemo(() => {
 		if (!currentPromptText) {
 			return null;
@@ -88,7 +90,7 @@ ${diffLinesArray.join('\n')}`;
 				<Group gap='xl'>
 					<Box>
 						<Text size='xs' c='dimmed' mb={4}>
-							Modified By
+							{t('promptHistory.modifiedBy')}
 						</Text>
 						<Text size='sm' fw={500}>
 							{item.user.username}
@@ -96,10 +98,10 @@ ${diffLinesArray.join('\n')}`;
 					</Box>
 					<Box>
 						<Text size='xs' c='dimmed' mb={4}>
-							Date Modified
+							{t('promptHistory.dateModified')}
 						</Text>
 						<Text size='sm' fw={500}>
-							{dayjs(item.createdAt).format('MMM DD, YYYY [at] hh:mm A')}
+							{dayjs(item.createdAt).format(t('promptHistory.dateFormat'))}
 						</Text>
 					</Box>
 				</Group>
@@ -117,7 +119,7 @@ ${diffLinesArray.join('\n')}`;
 					</Box>
 				) : diffData?.error ? (
 					<Alert color='red' title='Error' radius='md'>
-						Failed to generate diff view. Showing original text instead.
+						{t('promptHistory.diffError')}
 						<Box className={styles.textContainer} mt='md'>
 							<Text
 								className={styles.textContent}
@@ -128,8 +130,8 @@ ${diffLinesArray.join('\n')}`;
 						</Box>
 					</Alert>
 				) : !diffData?.hasChanges ? (
-					<Alert color='blue' title='No Changes' radius='md'>
-						This version is identical to the current prompt.
+					<Alert color='blue' title={t('promptHistory.noChanges')} radius='md'>
+						{t('promptHistory.noChangesDesc')}
 					</Alert>
 				) : diffData.files.length > 0 ? (
 					<Box className={styles.diffContainer}>
@@ -137,12 +139,12 @@ ${diffLinesArray.join('\n')}`;
 							<Text
 								className={`${styles.versionLabel} ${styles.versionLabelPrevious}`}
 							>
-								Previous Version (v{item.version})
+								{t('promptHistory.previousVersion', { version: item.version })}
 							</Text>
 							<Text
 								className={`${styles.versionLabel} ${styles.versionLabelCurrent}`}
 							>
-								Current Version
+								{t('promptHistory.currentVersion')}
 							</Text>
 						</Box>
 						<Box className={styles.diffWrapper}>
@@ -168,7 +170,7 @@ ${diffLinesArray.join('\n')}`;
 			<Box className={styles.actionsBar}>
 				<Group justify='space-between'>
 					<Button variant='subtle' color='gray' onClick={onClose} size='md'>
-						Close
+						{t('promptHistory.close')}
 					</Button>
 					<Button
 						variant='filled'
@@ -176,7 +178,7 @@ ${diffLinesArray.join('\n')}`;
 						onClick={() => onRestore(item.promptText)}
 						size='md'
 					>
-						Restore This Version
+						{t('promptHistory.restoreVersion')}
 					</Button>
 				</Group>
 			</Box>

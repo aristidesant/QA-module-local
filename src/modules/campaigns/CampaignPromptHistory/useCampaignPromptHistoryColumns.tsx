@@ -1,5 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { ActionIcon, Text, Badge, Group, Tooltip, Box } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import { IconCheck, IconEye, IconClock, IconUser } from '@tabler/icons-react';
 import type { CampaignPromptHistoryItem } from '~/models/CampaignPromptHistoryModel';
 import { timeAgo } from '~/utils/dateUtils';
@@ -18,10 +19,11 @@ export const useCampaignPromptHistoryColumns = ({
 	CampaignPromptHistoryItem,
 	any
 >[] => {
+	const { t } = useTranslation('campaigns');
 	return [
 		{
 			accessorKey: 'version',
-			header: 'Version',
+			header: t('promptHistory.columns.version'),
 			cell: ({ row }) => {
 				const item = row.original;
 				return (
@@ -39,11 +41,11 @@ export const useCampaignPromptHistoryColumns = ({
 		},
 		{
 			accessorKey: 'createdAt',
-			header: 'Modified',
+			header: t('promptHistory.columns.modified'),
 			cell: ({ row }) => {
 				const item = row.original;
 				const fullDateTime = dayjs(item.createdAt).format(
-					'MMM DD, YYYY [at] hh:mm A'
+					t('promptHistory.dateFormat')
 				);
 				return (
 					<Tooltip label={fullDateTime} withArrow>
@@ -60,7 +62,7 @@ export const useCampaignPromptHistoryColumns = ({
 		},
 		{
 			accessorKey: 'user',
-			header: 'Modified By',
+			header: t('promptHistory.columns.modifiedBy'),
 			cell: ({ row }) => {
 				const item = row.original;
 				return (
@@ -76,7 +78,7 @@ export const useCampaignPromptHistoryColumns = ({
 		},
 		{
 			accessorKey: 'promptText',
-			header: 'Prompt Preview',
+			header: t('promptHistory.columns.promptPreview'),
 			cell: ({ row }) => {
 				const item = row.original;
 				const truncatedText =
@@ -104,7 +106,10 @@ export const useCampaignPromptHistoryColumns = ({
 				const item = row.original;
 				return (
 					<Group gap='xs' justify='flex-end'>
-						<Tooltip label='View full prompt' withArrow>
+						<Tooltip
+							label={t('promptHistory.columns.viewFullPrompt')}
+							withArrow
+						>
 							<ActionIcon
 								variant='subtle'
 								color='gray'
@@ -115,7 +120,10 @@ export const useCampaignPromptHistoryColumns = ({
 								<IconEye size={18} />
 							</ActionIcon>
 						</Tooltip>
-						<Tooltip label='Restore this version' withArrow>
+						<Tooltip
+							label={t('promptHistory.columns.restoreVersion')}
+							withArrow
+						>
 							<ActionIcon
 								variant='subtle'
 								color='green'

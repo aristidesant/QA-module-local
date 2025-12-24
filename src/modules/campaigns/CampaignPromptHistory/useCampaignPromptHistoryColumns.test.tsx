@@ -1,6 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 import { useCampaignPromptHistoryColumns } from './useCampaignPromptHistoryColumns';
 
+// Mock react-i18next
+vi.mock('react-i18next', () => ({
+	useTranslation: () => ({
+		t: (key: string) => key,
+	}),
+}));
+
 describe('useCampaignPromptHistoryColumns', () => {
 	it('returns expected column definitions', () => {
 		const mockOnSelect = vi.fn();
