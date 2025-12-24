@@ -20,7 +20,7 @@ import {
 } from '~/queries/contactsQueries';
 import type { Contact } from '~/models/ContactsModel';
 import { IconDeviceFloppy } from '@tabler/icons-react';
-import VariableDataEditor from '~/modules/contacts/VariableDataEditor';
+import VariableDataEditor from '../VariableDataEditor';
 import { useContactEditStore } from '~/stores/contactEditStore';
 
 interface ContactsFormProps {

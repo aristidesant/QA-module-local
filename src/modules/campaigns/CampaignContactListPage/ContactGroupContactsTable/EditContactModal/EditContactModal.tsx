@@ -2,7 +2,7 @@ import { Modal, Title, Group } from '@mantine/core';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IconPencil } from '@tabler/icons-react';
-import ContactsForm from '~/modules/contacts/ContactsForm/ContactsForm';
+import ContactsForm from './components/ContactsForm/ContactsForm';
 import { useQueryClient } from '@tanstack/react-query';
 import styles from './EditContactModal.module.css';
 import { useContactEditStore } from '~/stores/contactEditStore';

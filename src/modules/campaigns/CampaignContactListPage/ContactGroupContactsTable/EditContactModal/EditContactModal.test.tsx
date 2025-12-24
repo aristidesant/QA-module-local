@@ -17,7 +17,7 @@ vi.mock('~/stores/contactEditStore', () => ({
 	useContactEditStore: () => ({ setContext, clear }),
 }));
 
-vi.mock('~/modules/contacts/ContactsForm/ContactsForm', () => ({
+vi.mock('./components/ContactsForm/ContactsForm', () => ({
 	__esModule: true,
 	default: ({ onSuccess }: { onSuccess: () => void }) => (
 		<div>
