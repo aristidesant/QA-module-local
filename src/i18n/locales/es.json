@@ -11,7 +11,8 @@
 		"noData": "No hay datos disponibles",
 		"currency": "$",
 		"goBack": "Volver",
-		"goToHome": "Ir al Inicio"
+		"goToHome": "Ir al Inicio",
+		"referenceText": "Texto de referencia"
 	},
 	"accessDenied": {
 		"title": "Acceso Denegado",
@@ -361,9 +362,7 @@
 	"contacts": {
 		"page": {
 			"title": "Contactos",
-			"description": "Administra tus contactos",
-			"searchPlaceholder": "Buscar contactos",
-			"newContact": "Nuevo Contacto"
+			"description": "Administra tus contactos"
 		},
 		"form": {
 			"editTitle": "Editar Contacto",
@@ -557,6 +556,7 @@
 		},
 		"workingHours": {
 			"title": "Horario de Trabajo",
+			"description": "Define los días y los rangos de tiempo durante los cuales tus agentes pueden realizar llamadas.",
 			"noSchedule": "Sin horario configurado",
 			"noDays": "Sin días configurados",
 			"noActiveDays": "Sin días activos",
@@ -569,8 +569,420 @@
 			"or": "O",
 			"noScheduleInfo": "Sin información de horario"
 		},
+		"form": {
+			"title": {
+				"edit": "Editando Campaña: {{name}}"
+			},
+			"description": "Administra la configuración y ajustes de tu campaña.",
+			"notifications": {
+				"warningTitle": "Advertencia",
+				"objectiveAssignmentFailed": "Campaña guardada pero falló la asignación del objetivo.",
+				"successCreated": "Campaña Creada",
+				"successCreatedMessage": "Tu campaña ha sido creada exitosamente.",
+				"successUpdated": "Campaña Actualizada",
+				"successUpdatedMessage": "Tu campaña ha sido actualizada exitosamente.",
+				"errorCreate": "No se pudo crear la campaña. Por favor, inténtalo de nuevo.",
+				"errorUpdate": "No se pudo actualizar la campaña. Por favor, inténtalo de nuevo."
+			},
+			"validation": {
+				"nameRequired": "El nombre es requerido",
+				"typeRequired": "El tipo es requerido",
+				"statusRequired": "El estado es requerido",
+				"budgetMin": "El presupuesto debe ser 0 o más",
+				"spentMin": "El gasto debe ser 0 o más",
+				"userIdMin": "El ID de usuario debe ser 0 o más",
+				"clientIdMin": "El ID de cliente debe ser 0 o más",
+				"defaultWavesMin": "Las olas predeterminadas deben ser al menos 1",
+				"objectiveRequired": "Se requiere Objetivo de Campaña"
+			},
+			"viewTooltip": "Ver campaña",
+			"schedulerCalculator": {
+				"title": "Calculadora de Scheduler"
+			},
+			"agent": {
+				"prompt": {
+					"title": "Prompt del Agente",
+					"description": "Define las instrucciones que el agente seguirá al hablar con los contactos.",
+					"header": {
+						"editAria": "Editar prompt",
+						"collapseAria": "Colapsar prompt",
+						"expandAria": "Expandir prompt"
+					},
+					"previewTitle": "Vista previa del prompt",
+					"previewChars": "{{count}} caracteres",
+					"placeholder": "Aún no se ha agregado un prompt. Edita para definir el tono del agente, restricciones y respuestas de ejemplo.",
+					"keepConcise": "Mantén el prompt conciso y accionable para que el agente responda con confianza.",
+					"modal": {
+						"title": "Configuración de prompts",
+						"subtitle": "Configura los prompts para cada tipo de interacción",
+						"types": "Tipos",
+						"selectPromptType": "Selecciona un tipo de prompt para comenzar a editar.",
+						"saveHint": "Guarda para aplicar los prompts en toda esta campaña.",
+						"editorDrafted": "Borrador",
+						"editorNoChanges": "Sin cambios"
+					},
+					"status": {
+						"drafted": "BORRADOR",
+						"saved": "Guardado",
+						"empty": "Vacío"
+					}
+				},
+				"voice": {
+					"selectHint": "Selecciona una voz para tu agente y haz clic en guardar para aplicar los cambios.",
+					"noVoices": "No se encontraron voces",
+					"save": "Guardar Agente",
+					"saving": "Guardando...",
+					"success": "Voz del agente actualizada correctamente",
+					"error": "No se pudo actualizar la voz del agente",
+					"pleaseSelectVoice": "Por favor selecciona una voz",
+					"agentDataNotLoaded": "Datos del agente no cargados"
+				}
+			},
+			"contacts": {
+				"tabs": {
+					"active": "Listas Activas",
+					"inactive": "Listas Inactivas"
+				},
+				"title": "Contactos",
+				"description": "Información sobre los contactos en esta campaña",
+				"list": {
+					"activeTitle": "Listas de contactos",
+					"inactiveTitle": "Listas de contactos inactivas",
+					"activeDescription": "Mostrando todas las listas de contactos activas asociadas a esta campaña.",
+					"inactiveDescription": "Mostrando todas las listas de contactos inactivas asociadas a esta campaña.",
+					"addNewContactList": "Agregar nueva lista de contactos",
+					"addInactiveContactList": "Agregar lista de contactos inactiva",
+					"reload": "Recargar",
+					"reloadUnavailable": "Recarga no disponible mientras está colapsado",
+					"emptyMessage": "No hay listas de contactos disponibles",
+					"emptyInactiveMessage": "No hay listas de contactos inactivas disponibles",
+					"configuration": "Configuración de la Lista de Contactos",
+					"configurationDescription": "Explore sus listas de contactos existentes o cargue una nueva para comenzar a comunicarse.",
+					"selectActive": "Seleccionar Lista de Contactos Activa",
+					"selectActiveDescription": "Seleccione una lista de contactos activa para agregarla como inactiva para esta campaña.",
+					"columns": {
+						"name": "Nombre",
+						"total": "Total",
+						"assigned": "Asignado",
+						"status": "Estado",
+						"expiration": "Expiración",
+						"actions": "Acciones"
+					},
+					"capacity": {
+						"title": "Uso de Equivalente Humano",
+						"used": "Usado",
+						"remaining": "Restante",
+						"total": "Total",
+						"activityProgress": "Progreso de Actividad",
+						"assignedDescription": "Equivalente Humano Asignado",
+						"of": "de",
+						"totalAssigned": "Total Asignado:"
+					},
+					"activateTooltip": "Activar lista de contactos",
+					"deactivateTooltip": "Desactivar lista de contactos"
+				},
+				"addNew": {
+					"title": "Agregar Nueva Lista de Contactos",
+					"description": "Cargue un nuevo archivo de lista de contactos para esta campaña.",
+					"uploadLabel": "Subir Archivo de Contacto",
+					"dragAndDrop": "Arrastre y suelte su archivo Excel o CSV aquí",
+					"uploading": "Subiendo...",
+					"notifications": {
+						"noFile": {
+							"title": "Ningún archivo seleccionado",
+							"message": "Por favor elija un archivo CSV para subir."
+						},
+						"invalidType": {
+							"title": "Tipo de archivo inválido",
+							"message": "Solo se admiten archivos CSV (.csv) para la carga."
+						},
+						"uploadFailed": {
+							"title": "Error al subir",
+							"message": "Error al subir el archivo de lista de contactos"
+						}
+					}
+				},
+				"controls": {
+					"start": "Iniciar lista de contactos",
+					"resume": "Reanudar lista de contactos",
+					"pause": "Pausar lista de contactos",
+					"requirementsNotMet": "No se cumplen los requisitos de la campaña",
+					"completed": "La lista de contactos está completada",
+					"failed": "La lista de contactos ha fallado",
+					"allWavesDone": "Todas las olas planificadas han terminado. Extienda o complete la lista.",
+					"notifications": {
+						"successTitle": "Lista de contactos actualizada",
+						"errorTitle": "La acción de la lista de contactos falló",
+						"unknownCampaign": "No se puede procesar esta lista de contactos porque la campaña es desconocida. Por favor, actualice e intente de nuevo.",
+						"running": "La lista de contactos se está ejecutando.",
+						"resumed": "La lista de contactos ha sido reanudada.",
+						"paused": "La lista de contactos ha sido pausada.",
+						"startError": "No pudimos iniciar la lista de contactos. Por favor, intente de nuevo.",
+						"resumeError": "No pudimos reanudar la lista de contactos. Por favor, intente de nuevo.",
+						"pauseError": "No pudimos pausar la lista de contactos. Por favor, intente de nuevo."
+					}
+				},
+				"limits": {
+					"maxWavesLabel": "Olas Máximas",
+					"maxWavesDescription": "Hereda el valor predeterminado de la campaña; ajuste si esta lista necesita un número diferente de olas",
+					"capacityFull": {
+						"title": "Capacidad del Programador Llena",
+						"message": "El horario activo no tiene capacidad disponible. Por favor, aumente la capacidad de Equivalente Humano en la configuración del programador para añadir nuevos grupos de contactos."
+					},
+					"humanEquivalentLabel": "Equivalente Humano",
+					"availableLabel": "Disponible",
+					"actions": {
+						"save": "Guardar lista de contactos",
+						"update": "Actualizar lista de contactos"
+					},
+					"notifications": {
+						"invalidInput": "Entrada Inválida",
+						"nameRequired": "El nombre de la lista de contactos es requerido.",
+						"capacityExceeded": "El equivalente humano excede la capacidad disponible.",
+						"wavesMinimum": "Las olas deben ser al menos 1.",
+						"schedulerFullTitle": "Programador Lleno",
+						"schedulerFullMessage": "No se puede crear el grupo de contactos. Por favor, aumente la capacidad del programador primero.",
+						"successTitle": "Éxito",
+						"saveSuccess": "Lista de contactos guardada exitosamente.",
+						"updateSuccess": "Lista de contactos actualizada exitosamente.",
+						"errorTitle": "Error",
+						"saveError": "Error al guardar la lista de contactos. Por favor intente de nuevo."
+					}
+				},
+				"info": {
+					"nameLabel": "Nombre de la Lista de Contactos",
+					"nameRequired": "Nombre Requerido",
+					"namePlaceholder": "ej. Leads de Marketing Q4, Seguimientos de Soporte...",
+					"nameDescription": "Caracteres permitidos: A-Z, a-z, 0-9, espacios y guiones. Mínimo 3 caracteres. Máximo 50 caracteres.",
+					"clickToAddName": "Haga clic para añadir un nombre a esta lista de contactos",
+					"editName": "Editar nombre",
+					"expires": "Expira",
+					"addExpiration": "Añadir fecha de expiración",
+					"selectExpiration": "Seleccione una fecha de expiración",
+					"dateInPast": "La fecha seleccionada está en el pasado"
+				},
+				"mapping": {
+					"title": "Mapeo de Columnas",
+					"matchTitle": "Coincidir Columnas",
+					"clickToConfigure": "Haga clic para configurar el mapeo de campos",
+					"unmapped": "{{count}} columna no mapeada",
+					"unmapped_plural": "{{count}} columnas no mapeadas"
+				},
+				"headerMapping": {
+					"title": "Mapear encabezados CSV a campos del sistema",
+					"description": "Elija un campo del sistema y luego seleccione la columna CSV que debe usar.",
+					"mappedBadge": "{{count}} mapeado",
+					"mappedBadge_plural": "{{count}} mapeados",
+					"csvHeadersBadge": "{{count}} encabezados csv",
+					"dynamicFieldsRequired": "{{count}} campo dinámico requiere mapeo",
+					"dynamicFieldsRequired_plural": "{{count}} campos dinámicos requieren mapeo",
+					"systemFields": "Campos del sistema",
+					"csvColumns": "Columnas CSV",
+					"currentMappings": "Mapeos actuales",
+					"selectObjective": "Seleccionar objetivo",
+					"addDynamicColumns": "Añadir columnas dinámicas",
+					"dynamicSetTitle": "Conjuntos de columnas dinámicas",
+					"loadingColumns": "Cargando columnas...",
+					"allMapped": "Todos los campos del sistema mapeados",
+					"allCsvMapped": "Todas las columnas CSV mapeadas",
+					"dynamicColumnTooltip": "Columna dinámica",
+					"finishMultiSelect": "Finalizar multiselección",
+					"multiSelectDescription": "Añada todas las columnas CSV que deben poblar {{field}}",
+					"csvColumnLabel": "Columna CSV",
+					"clickToRemove": "Haga clic para eliminar",
+					"noMappings": "Aún no hay mapeos",
+					"noMappingsDescription": "Seleccione un campo del sistema y una columna CSV para añadir su primer mapeo.",
+					"pickSystemField": "Elija un campo del sistema para comenzar a mapear",
+					"chooseMatchingCsv": "Elija la columna CSV correspondiente",
+					"systemFieldLabel": "campo del sistema",
+					"selectedCsvLabel": "columna CSV seleccionada",
+					"multiSelectNote": "(acepta múltiples columnas CSV)",
+					"clearSelection": "Limpiar selección",
+					"mappingsCreated": "{{count}} mapeo creado",
+					"mappingsCreated_plural": "{{count}} mapeos creados",
+					"saveMappings": "Guardar Mapeos"
+				}
+			},
+			"details": {
+				"title": "Lista de Contactos",
+				"description": "Resumen de la configuración",
+				"configurations": "Configuraciones",
+				"stats": {
+					"operationalStatus": {
+						"title": "Estado Operativo",
+						"description": "Información operativa actual"
+					},
+					"totalContacts": "Contactos Totales",
+					"humanEquivalent": "Equivalente Humano",
+					"waves": "Olas",
+					"maxCallsPerContact": "Llamadas Máx / Contacto",
+					"maxCallsPerList": "Llamadas Máx / Lista",
+					"notSet": "No establecido",
+					"notAvailable": "No disponible"
+				},
+				"meta": {
+					"queueStatus": "Estado de la cola",
+					"listStatus": "Estado de la lista",
+					"active": "Activa",
+					"inactive": "Inactiva",
+					"expirationDate": "Fecha de expiración",
+					"scheduler": "Programador",
+					"notAssigned": "Sin asignar",
+					"schedulerStatus": "Estado del programador"
+				},
+				"actions": {
+					"title": "Acciones",
+					"description": "Gestiona el ciclo de vida de esta lista de contactos",
+					"extendWaves": "Extender Olas",
+					"completeList": "Completar lista",
+					"editContactList": "Editar lista de contactos",
+					"deleteContactList": "Eliminar lista de contactos",
+					"cleanQueue": "Limpiar cola",
+					"openContactList": "Abrir página de lista de contactos",
+					"activate": "Activar lista de contactos",
+					"deactivate": "Desactivar lista de contactos"
+				},
+				"dialogs": {
+					"deactivate": {
+						"title": "Confirmar cambio de estado",
+						"message": "¿Estás seguro de que deseas desactivar la lista de contactos \"{{name}}\"?"
+					},
+					"activate": {
+						"title": "Activar Lista de Contactos",
+						"message": "Activa la lista de contactos \"{{name}}\" y establece la asignación de Equivalente Humano.",
+						"available": "Disponible: {{count}}",
+						"capacityErrorTitle": "No se puede activar la lista de contactos",
+						"noCapacityTitle": "No hay Equivalente Humano disponible",
+						"capacityErrorMessage": "No se puede activar la lista de contactos \"{{name}}\" porque no hay capacidad de Equivalente Humano disponible. Por favor, aumenta la capacidad del programador o desactiva otras listas primero.",
+						"confirm": "Activar"
+					},
+					"delete": {
+						"title": "Eliminar Lista de Contactos",
+						"message": "¿Estás seguro de que deseas eliminar la lista de contactos \"{{name}}\"? Esta acción no se puede deshacer.",
+						"success": "Lista de contactos eliminada",
+						"successMessage": "\"{{name}}\" fue eliminada correctamente.",
+						"error": "No se pudo eliminar la lista de contactos",
+						"errorMessage": "Error al intentar eliminar la lista. Por favor intente de nuevo."
+					},
+					"cleanQueue": {
+						"title": "Limpiar Cola",
+						"message": "¿Estás seguro de que deseas limpiar la cola de la lista \"{{name}}\"? Esto reiniciará la campaña.",
+						"confirm": "Limpiar Cola"
+					},
+					"extendWaves": {
+						"title": "Extender Olas",
+						"success": "Olas extendidas",
+						"successMessage": "Se añadieron {{count}} ola(s) a esta lista.",
+						"error": "Error al extender olas"
+					},
+					"complete": {
+						"title": "Completar Lista de Contactos",
+						"message": "¿Marcar esta lista como completada? Esto detendrá las olas adicionales y desactivará la lista.",
+						"success": "Lista completada",
+						"successMessage": "La lista ha sido marcada como completada.",
+						"error": "Error al completar"
+					}
+				},
+				"queueStatus": {
+					"pending": "Pendiente",
+					"running": "En ejecución",
+					"paused": "Pausada",
+					"failed": "Fallida",
+					"executed": "Ejecutada",
+					"completed": "Completada"
+				},
+				"messages": {
+					"allWavesDone": "Todas las olas planificadas han finalizado. Extiende las olas o marca la lista como completa."
+				},
+				"notifications": {
+					"wavesExtended": {
+						"title": "Olas extendidas",
+						"message": "Se añadieron {{count}} ola(s) a esta lista."
+					},
+					"completed": {
+						"title": "Lista de contactos completada",
+						"message": "La lista ahora está marcada como completada."
+					},
+					"errorTitle": "Error"
+				},
+				"confirm": {
+					"complete": "Completar",
+					"cancel": "Cancelar",
+					"cleanQueueConfirm": "Limpiar cola"
+				},
+				"dialogs": {
+					"delete": {
+						"title": "Eliminar lista de contactos",
+						"failedTitle": "No se pudo eliminar la lista de contactos",
+						"failedMessage": "No se pudo eliminar la lista de contactos. Por favor intenta de nuevo."
+					},
+					"cleanQueue": {
+						"title": "Limpiar cola",
+						"failedTitle": "No se pudo limpiar la cola",
+						"failedMessage": "No se pudo limpiar la cola. Por favor intenta de nuevo."
+					},
+					"extendFailed": {
+						"title": "Fallo al extender olas",
+						"message": "No se pudieron extender las olas. Por favor intenta de nuevo."
+					},
+					"deleted": {
+						"title": "Lista de contactos eliminada",
+						"message": "{{name}} fue eliminada correctamente."
+					}
+				}
+			}
+		},
 		"scheduler": {
-			"instructions": "Ingresa los datos de la campaña arriba y selecciona \"Calcular proyección\" para"
+			"instructions": "Ingresa los datos de la campaña arriba y selecciona \"Calcular proyección\" para",
+			"schedulerBuilder": {
+				"curatedSchedules": "Horarios curados",
+				"curatedDescription": "Elige una plantilla, personaliza el nombre y ajusta el equivalente humano que deseas simular.",
+				"builder": "Constructor de horarios",
+				"predefinedSchedule": "Horario predefinido",
+				"predefinedDescription": "Elige una plantilla de horario con los días y horas de trabajo ya mapeados.",
+				"predefinedPlaceholder": "Seleccionar configuración de días y horas",
+				"predefinedNoData": "No hay plantillas disponibles",
+				"preview": "Vista previa de la plantilla",
+				"previewDescription": "Horas de trabajo por día de la semana para la plantilla seleccionada.",
+				"previewEmpty": "Selecciona una plantilla para ver sus días configurados.",
+				"details": "Detalles del horario",
+				"detailsDescription": "Añade un nombre claro, una descripción corta y ajusta el esfuerzo humano esperado.",
+				"name": "Nombre del horario",
+				"namePlaceholder": "ej. Horario comercial estándar",
+				"description": "Descripción",
+				"descriptionPlaceholder": "ej. Lunes a viernes de 08:00 a 17:00",
+				"humanEquivalent": "Equivalente humano",
+				"create": "Crear horario",
+				"cancel": "Cancelar",
+				"validation": {
+					"nameRequired": "El nombre es requerido",
+					"scheduleRequired": "Por favor selecciona un horario predefinido",
+					"humanEquivalentRequired": "El equivalente humano es requerido",
+					"humanEquivalentNumber": "El equivalente humano debe ser un número"
+				},
+				"notifications": {
+					"error": "Error",
+					"campaignIdRequired": "El ID de la campaña es requerido",
+					"success": "Éxito",
+					"created": "Horario predefinido creado exitosamente",
+					"failed": "Error al crear el horario predefinido",
+					"errorCreating": "Error al crear el horario"
+				},
+				"status": {
+					"off": "Apagado",
+					"noHours": "Sin horas",
+					"scheduleN": "Horario {{index}}"
+				},
+				"days": {
+					"monday": "Lunes",
+					"tuesday": "Martes",
+					"wednesday": "Miércoles",
+					"thursday": "Jueves",
+					"friday": "Viernes",
+					"saturday": "Sábado",
+					"sunday": "Domingo"
+				}
+			}
 		}
 	},
 	"auth": {

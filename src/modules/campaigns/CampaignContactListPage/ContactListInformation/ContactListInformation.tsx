@@ -1,4 +1,5 @@
 import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import {
 	IconAlertTriangle,
 	IconCircleCheck,
@@ -26,6 +27,7 @@ export const ContactListInformation = ({
 	contactGroup,
 	onReload,
 }: ContactListInformationProps) => {
+	const { t } = useTranslation();
 	const extendMutation = useExtendContactGroupWaves();
 	const completeMutation = useCompleteContactGroup();
 	const isActionLoading =
@@ -81,8 +83,7 @@ export const ContactListInformation = ({
 		},
 		EXECUTED: {
 			label: 'Executed',
-			description:
-				'All planned waves are done. Extend waves or mark the list complete.',
+			description: t('campaigns.form.contacts.details.messages.allWavesDone'),
 			accentClass: 'statusComplete',
 			StatusIcon: IconAlertTriangle,
 		},
@@ -135,7 +136,7 @@ export const ContactListInformation = ({
 		if (statusKey !== 'EXECUTED') return;
 
 		modals.open({
-			title: 'Extend Waves',
+			title: t('campaigns.form.contacts.details.actions.extendWaves'),
 			centered: true,
 			withCloseButton: false,
 			children: (
@@ -147,10 +148,13 @@ export const ContactListInformation = ({
 								additionalWaves: wavesToAdd,
 							});
 							notifications.show({
-								title: 'Waves extended',
-								message: `Added ${wavesToAdd} wave${
-									wavesToAdd === 1 ? '' : 's'
-								} to this list.`,
+								title: t(
+									'campaigns.form.contacts.details.notifications.wavesExtended.title'
+								),
+								message: t(
+									'campaigns.form.contacts.details.notifications.wavesExtended.message',
+									{ count: wavesToAdd }
+								),
 								color: 'green',
 							});
 							onReload();
@@ -174,20 +178,27 @@ export const ContactListInformation = ({
 		if (statusKey !== 'EXECUTED') return;
 
 		modals.openConfirmModal({
-			title: 'Complete Contact List',
+			title: t('campaigns.form.contacts.details.actions.completeList'),
 			children: (
 				<Text size='sm'>
 					Mark this contact list as completed? No additional waves will run.
 				</Text>
 			),
-			labels: { confirm: 'Complete', cancel: 'Cancel' },
+			labels: {
+				confirm: t('campaigns.form.contacts.details.confirm.complete'),
+				cancel: t('campaigns.form.contacts.details.confirm.cancel'),
+			},
 			confirmProps: { color: 'green', loading: completeMutation.isPending },
 			onConfirm: async () => {
 				try {
 					await completeMutation.mutateAsync(contactGroup.id);
 					notifications.show({
-						title: 'Contact list completed',
-						message: 'The list is now marked as completed.',
+						title: t(
+							'campaigns.form.contacts.details.notifications.completed.title'
+						),
+						message: t(
+							'campaigns.form.contacts.details.notifications.completed.message'
+						),
 						color: 'green',
 					});
 					onReload();
@@ -221,12 +232,18 @@ export const ContactListInformation = ({
 				<Group gap='xs'>
 					{statusKey === 'EXECUTED' && (
 						<>
-							<Tooltip label='Extend Waves' withArrow position='left'>
+							<Tooltip
+								label={t('campaigns.form.contacts.details.actions.extendWaves')}
+								withArrow
+								position='left'
+							>
 								<ActionIcon
 									variant='light'
 									color='blue'
 									size='sm'
-									aria-label='Extend waves'
+									aria-label={t(
+										'campaigns.form.contacts.details.actions.extendWaves'
+									)}
 									onClick={handleExtendWaves}
 									loading={extendMutation.isPending}
 									disabled={isActionLoading}
@@ -234,12 +251,20 @@ export const ContactListInformation = ({
 									<IconRepeat size={16} strokeWidth={2} />
 								</ActionIcon>
 							</Tooltip>
-							<Tooltip label='Complete list' withArrow position='left'>
+							<Tooltip
+								label={t(
+									'campaigns.form.contacts.details.actions.completeList'
+								)}
+								withArrow
+								position='left'
+							>
 								<ActionIcon
 									variant='light'
 									color='green'
 									size='sm'
-									aria-label='Complete list'
+									aria-label={t(
+										'campaigns.form.contacts.details.actions.completeList'
+									)}
 									onClick={handleCompleteList}
 									loading={completeMutation.isPending}
 									disabled={isActionLoading}
@@ -249,12 +274,16 @@ export const ContactListInformation = ({
 							</Tooltip>
 						</>
 					)}
-					<Tooltip label='Reload' withArrow position='left'>
+					<Tooltip
+						label={t('campaigns.form.contacts.tooltips.reload')}
+						withArrow
+						position='left'
+					>
 						<ActionIcon
 							variant='light'
 							color='gray'
 							size='sm'
-							aria-label='Reload contact list'
+							aria-label={t('campaigns.form.contacts.tooltips.reload')}
 							onClick={() => {
 								void onReload();
 							}}

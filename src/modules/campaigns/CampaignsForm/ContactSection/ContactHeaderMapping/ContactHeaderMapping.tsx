@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	Button,
 	Card,
@@ -57,6 +58,7 @@ export function ContactHeaderMapping({
 	objectiveId,
 	selectedSchemaId,
 }: ContactHeaderMappingProps) {
+	const { t } = useTranslation();
 	// Read from campaign store and prefer store value (objectiveId or objective.id)
 	const { selectedCampaign } = useCampaignsStore();
 
@@ -337,18 +339,22 @@ export function ContactHeaderMapping({
 				<div className={styles.builderMeta}>
 					<div>
 						<Text size='sm' fw={600}>
-							Map CSV headers to system fields
+							{t('campaigns.form.contacts.headerMapping.title')}
 						</Text>
 						<Text size='xs' c='dimmed'>
-							Choose a system field and then pick the CSV column it should use.
+							{t('campaigns.form.contacts.headerMapping.description')}
 						</Text>
 					</div>
 					<Group gap='xs'>
 						<Badge size='xs' variant='light' color='blue'>
-							{mappings.length} mapped
+							{t('campaigns.form.contacts.headerMapping.mappedBadge', {
+								count: mappings.length,
+							})}
 						</Badge>
 						<Badge size='xs' variant='light' color='gray'>
-							{documentColumns.length} csv headers
+							{t('campaigns.form.contacts.headerMapping.csvHeadersBadge', {
+								count: documentColumns.length,
+							})}
 						</Badge>
 					</Group>
 				</div>
@@ -365,10 +371,12 @@ export function ContactHeaderMapping({
 								<IconLetterDSmall />
 							</ThemeIcon>
 							<Text size='xs' c='red' fw={500}>
-								{unmappedDynamicColumns.length} dynamic{' '}
-								{unmappedDynamicColumns.length === 1 ? 'field' : 'fields'}{' '}
-								{unmappedDynamicColumns.length === 1 ? 'requires' : 'require'}{' '}
-								mapping
+								{t(
+									'campaigns.form.contacts.headerMapping.dynamicFieldsRequired',
+									{
+										count: unmappedDynamicColumns.length,
+									}
+								)}
 							</Text>
 						</Group>
 					</div>
@@ -380,7 +388,7 @@ export function ContactHeaderMapping({
 							<div className={styles.sectionHeader}>
 								<Group gap={8} align='center'>
 									<Text size='sm' fw={600}>
-										System fields
+										{t('campaigns.form.contacts.headerMapping.systemFields')}
 									</Text>
 									<Badge size='xs' variant='light' color='gray'>
 										{availableSystemFields.length}
@@ -389,7 +397,9 @@ export function ContactHeaderMapping({
 								<Group gap={6}>
 									{!effectiveObjectiveId ? (
 										<Badge size='xs' color='yellow' variant='light'>
-											Select objective
+											{t(
+												'campaigns.form.contacts.headerMapping.selectObjective'
+											)}
 										</Badge>
 									) : schemas && schemas.length > 0 ? (
 										<Menu position='bottom-end' withArrow width={320}>
@@ -398,13 +408,19 @@ export function ContactHeaderMapping({
 													variant='light'
 													size='sm'
 													color='blue'
-													title='Add dynamic columns'
+													title={t(
+														'campaigns.form.contacts.headerMapping.addDynamicColumns'
+													)}
 												>
 													<IconPlus size={14} />
 												</ActionIcon>
 											</Menu.Target>
 											<Menu.Dropdown>
-												<Menu.Label>Dynamic column sets</Menu.Label>
+												<Menu.Label>
+													{t(
+														'campaigns.form.contacts.headerMapping.dynamicSetTitle'
+													)}
+												</Menu.Label>
 												{schemas.map((schema, index) => (
 													<div key={schema.id}>
 														<Menu.Item
@@ -431,7 +447,12 @@ export function ContactHeaderMapping({
 																	</Text>
 																)}
 																<Text size='xs' c='blue' fw={500}>
-																	{schema.schemaFields.length} fields
+																	{t(
+																		'campaigns.scheduler.schedulerBuilder.fieldsCount',
+																		{
+																			count: schema.schemaFields.length,
+																		}
+																	)}
 																</Text>
 															</Stack>
 														</Menu.Item>
@@ -451,12 +472,14 @@ export function ContactHeaderMapping({
 								<Stack gap={4} className={styles.itemsStack}>
 									{isLoadingSystemColumns ? (
 										<Text size='xs' c='dimmed' ta='center' mt='md'>
-											Loading columns...
+											{t(
+												'campaigns.form.contacts.headerMapping.loadingColumns'
+											)}
 										</Text>
 									) : availableSystemFields.length === 0 ? (
 										<div className={styles.emptyState}>
 											<Text size='xs' c='dimmed'>
-												All system fields mapped
+												{t('campaigns.form.contacts.headerMapping.allMapped')}
 											</Text>
 										</div>
 									) : (
@@ -487,7 +510,11 @@ export function ContactHeaderMapping({
 																	{column.label || column.name}
 																</Text>
 																{column.isDynamic && (
-																	<Tooltip label='Dynamic column'>
+																	<Tooltip
+																		label={t(
+																			'campaigns.form.contacts.headerMapping.dynamicColumnTooltip'
+																		)}
+																	>
 																		<ThemeIcon
 																			variant='transparent'
 																			size={'xs'}
@@ -523,7 +550,7 @@ export function ContactHeaderMapping({
 							<div className={styles.sectionHeader}>
 								<Group gap={8}>
 									<Text size='sm' fw={600}>
-										CSV columns
+										{t('campaigns.form.contacts.headerMapping.csvColumns')}
 									</Text>
 									<Badge size='xs' variant='light' color='gray'>
 										{availableDocumentFields.length}
@@ -535,17 +562,23 @@ export function ContactHeaderMapping({
 										variant='light'
 										onClick={finalizeArrayField}
 									>
-										Finish multi-select
+										{t(
+											'campaigns.form.contacts.headerMapping.finishMultiSelect'
+										)}
 									</Button>
 								)}
 							</div>
 							{selectedSystemColumn?.isArray && (
 								<div className={styles.arrayToolbar}>
 									<Text size='xs' c='dimmed'>
-										Add all CSV columns that should populate{' '}
-										<strong>
-											{selectedSystemColumn.label || selectedSystemColumn.name}
-										</strong>
+										{t(
+											'campaigns.form.contacts.headerMapping.multiSelectDescription',
+											{
+												field:
+													selectedSystemColumn.label ||
+													selectedSystemColumn.name,
+											}
+										)}
 									</Text>
 								</div>
 							)}
@@ -558,7 +591,9 @@ export function ContactHeaderMapping({
 									{availableDocumentFields.length === 0 ? (
 										<div className={styles.emptyState}>
 											<Text size='xs' c='dimmed'>
-												All CSV columns mapped
+												{t(
+													'campaigns.form.contacts.headerMapping.allCsvMapped'
+												)}
 											</Text>
 										</div>
 									) : (
@@ -584,7 +619,9 @@ export function ContactHeaderMapping({
 															{column}
 														</Text>
 														<Text size='xs' c='dimmed'>
-															CSV column
+															{t(
+																'campaigns.form.contacts.headerMapping.csvColumnLabel'
+															)}
 														</Text>
 													</Stack>
 													{isSelected('document', column) && (
@@ -605,14 +642,14 @@ export function ContactHeaderMapping({
 							<div className={styles.sectionHeader}>
 								<Group gap={6}>
 									<Text size='sm' fw={600}>
-										Current mappings
+										{t('campaigns.form.contacts.headerMapping.currentMappings')}
 									</Text>
 									<Badge size='xs' variant='light' color='blue'>
 										{mappings.length}
 									</Badge>
 								</Group>
 								<Text size='xs' c='dimmed'>
-									Click to remove
+									{t('campaigns.form.contacts.headerMapping.clickToRemove')}
 								</Text>
 							</div>
 							<ScrollArea
@@ -676,7 +713,9 @@ export function ContactHeaderMapping({
 																{mapping.documentField}
 															</Text>
 															<Text size='xs' c='dimmed'>
-																CSV column
+																{t(
+																	'campaigns.form.contacts.headerMapping.csvColumnLabel'
+																)}
 															</Text>
 														</Stack>
 													</Group>
@@ -686,11 +725,12 @@ export function ContactHeaderMapping({
 									) : (
 										<div className={styles.emptyState}>
 											<Text size='xs' c='dimmed' ta='center'>
-												No mappings yet
+												{t('campaigns.form.contacts.headerMapping.noMappings')}
 											</Text>
 											<Text size='xs' c='dimmed' ta='center' mt={4}>
-												Select a system field and CSV column to add your first
-												mapping.
+												{t(
+													'campaigns.form.contacts.headerMapping.noMappingsDescription'
+												)}
 											</Text>
 										</div>
 									)}
@@ -706,11 +746,15 @@ export function ContactHeaderMapping({
 										{selectedSystemColumn.label || selectedSystemColumn.name}
 									</Badge>
 									<Text size='xs' c='dimmed'>
-										system field
+										{t(
+											'campaigns.form.contacts.headerMapping.systemFieldLabel'
+										)}
 									</Text>
 									{selectedSystemColumn.isArray && (
 										<Text size='xs' c='dimmed'>
-											(accepts multiple CSV columns)
+											{t(
+												'campaigns.form.contacts.headerMapping.multiSelectNote'
+											)}
 										</Text>
 									)}
 								</Group>
@@ -725,12 +769,14 @@ export function ContactHeaderMapping({
 										{selectedDocumentField}
 									</Badge>
 									<Text size='xs' c='dimmed'>
-										selected CSV column
+										{t(
+											'campaigns.form.contacts.headerMapping.selectedCsvLabel'
+										)}
 									</Text>
 								</Group>
 							) : (
 								<Text size='xs' c='dimmed'>
-									Choose the matching CSV column
+									{t('campaigns.form.contacts.headerMapping.chooseMatchingCsv')}
 								</Text>
 							)}
 						</Group>
@@ -743,7 +789,7 @@ export function ContactHeaderMapping({
 									setSelectedSystemField(null);
 								}}
 							>
-								Clear selection
+								{t('campaigns.form.contacts.headerMapping.clearSelection')}
 							</Button>
 						)}
 					</div>
@@ -752,7 +798,9 @@ export function ContactHeaderMapping({
 
 			<Group justify='space-between' mt='md'>
 				<Text size='xs' c='dimmed'>
-					{mappings.length} mapping{mappings.length !== 1 ? 's' : ''} created
+					{t('campaigns.form.contacts.headerMapping.mappingsCreated', {
+						count: mappings.length,
+					})}
 				</Text>
 				<Group gap='xs'>
 					<Button
@@ -760,7 +808,7 @@ export function ContactHeaderMapping({
 						size='sm'
 						onClick={() => modals.close('match-columns-modal')}
 					>
-						Cancel
+						{t('common.cancel')}
 					</Button>
 					<Button
 						size='sm'
@@ -772,7 +820,7 @@ export function ContactHeaderMapping({
 							mappings.length === 0 || unmappedDynamicColumns.length > 0
 						}
 					>
-						Save Mappings
+						{t('campaigns.form.contacts.headerMapping.saveMappings')}
 					</Button>
 				</Group>
 			</Group>

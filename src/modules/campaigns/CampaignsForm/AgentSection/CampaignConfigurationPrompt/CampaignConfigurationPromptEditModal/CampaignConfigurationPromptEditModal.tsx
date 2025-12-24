@@ -24,6 +24,7 @@ import type { CampaignPromptModel } from '~/models/CampaignPromptModel';
 import type { CampaignPromptTypeModel } from '~/models/CampaignPromptTypeModel';
 import PromptEditor from './PromptTypeAccordionItem/PromptEditor';
 import PromptMenuItem from './PromptMenuItem';
+import { useTranslation } from 'react-i18next';
 
 const normalizePromptValue = (value: string) =>
 	value.replace(/\r\n/g, '\n').trim();
@@ -46,6 +47,7 @@ const CampaignConfigurationPromptEditModal: React.FC<
 		useGetCampaignPrompts({ campaignId }, { enabled: !!campaignId });
 	const { mutate: saveBatch, isPending: isSaving } =
 		useCreateCampaignPromptsBatch();
+	const { t } = useTranslation();
 
 	const [prompts, setPrompts] = useState<Record<number, CampaignPromptModel>>(
 		{}
@@ -188,9 +190,11 @@ const CampaignConfigurationPromptEditModal: React.FC<
 							<IconSparkles size={14} />
 						</ThemeIcon>
 						<div className={styles.headerContent}>
-							<Text className={styles.title}>Prompt configuration</Text>
+							<Text className={styles.title}>
+								{t('campaigns.form.agent.prompt.modal.title')}
+							</Text>
 							<Text c='dimmed' className={styles.subtitle}>
-								Configure prompts for each interaction type
+								{t('campaigns.form.agent.prompt.modal.subtitle')}
 							</Text>
 						</div>
 					</Group>
@@ -200,7 +204,7 @@ const CampaignConfigurationPromptEditModal: React.FC<
 					<div className={styles.menuColumn}>
 						<div className={styles.menuHeader}>
 							<Text size='xs' fw={500} c='dimmed'>
-								Types
+								{t('campaigns.form.agent.prompt.modal.types')}
 							</Text>
 							<Badge size='xs' variant='light' color='gray' radius='sm'>
 								{types?.length ?? 0}
@@ -247,7 +251,11 @@ const CampaignConfigurationPromptEditModal: React.FC<
 											color={activePromptMeta.isDrafted ? 'blue' : 'gray'}
 											radius='sm'
 										>
-											{activePromptMeta.isDrafted ? 'Drafted' : 'No changes'}
+											{activePromptMeta.isDrafted
+												? t('campaigns.form.agent.prompt.modal.editorDrafted')
+												: t(
+														'campaigns.form.agent.prompt.modal.editorNoChanges'
+													)}
 										</Badge>
 									)}
 								</Group>
@@ -263,7 +271,7 @@ const CampaignConfigurationPromptEditModal: React.FC<
 						) : (
 							<div className={styles.emptyState}>
 								<Text size='xs' c='dimmed'>
-									Select a prompt type to start editing.
+									{t('campaigns.form.agent.prompt.modal.selectPromptType')}
 								</Text>
 							</div>
 						)}
@@ -272,11 +280,11 @@ const CampaignConfigurationPromptEditModal: React.FC<
 
 				<div className={styles.footer}>
 					<Text size='xs' c='dimmed'>
-						Save to apply prompts across this campaign.
+						{t('campaigns.form.agent.prompt.modal.saveHint')}
 					</Text>
 					<Group gap='xs'>
 						<Button variant='subtle' size='xs' onClick={props.onClose}>
-							Cancel
+							{t('common.cancel')}
 						</Button>
 						<Button
 							onClick={handleSave}
@@ -284,7 +292,7 @@ const CampaignConfigurationPromptEditModal: React.FC<
 							size='xs'
 							leftSection={<IconDeviceFloppy size={14} />}
 						>
-							Save
+							{t('common.save')}
 						</Button>
 					</Group>
 				</div>

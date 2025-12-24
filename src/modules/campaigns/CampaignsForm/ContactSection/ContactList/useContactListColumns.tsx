@@ -6,6 +6,7 @@ import type ContactGroup from '~/models/ContactGroup';
 import { timeAgo } from '~/utils/dateUtils';
 import ContactListHoverCard from './ContactListHoverCard';
 import ContactListControl from './ContactListControl';
+import { useTranslation } from 'react-i18next';
 import {
 	useToggleContactGroupStatus,
 	useUpdateContactGroup,
@@ -30,6 +31,7 @@ const useContactListColumns = ({
 	campaignId,
 	onNavigateToContactList,
 }: UseContactListColumnsParams): ColumnDef<ContactGroup>[] => {
+	const { t } = useTranslation();
 	const toggleMutation = useToggleContactGroupStatus();
 	const updateMutation = useUpdateContactGroup();
 	const deleteMutation = useDeleteContactGroup();
@@ -48,7 +50,7 @@ const useContactListColumns = ({
 			},
 			{
 				id: 'name',
-				header: 'Name',
+				header: t('campaigns.form.contacts.list.columns.name'),
 				cell: ({ row }) => {
 					const name = row.original.name;
 					const maxLength = 20;
@@ -65,7 +67,7 @@ const useContactListColumns = ({
 			},
 			{
 				id: 'contactCount',
-				header: 'Total Contacts',
+				header: t('campaigns.form.contacts.list.columns.total'),
 				cell: ({ row }) => (
 					<Text fz='sm'>
 						{row.original.contactCount?.toLocaleString() || 0}
@@ -74,7 +76,7 @@ const useContactListColumns = ({
 			},
 			{
 				id: 'humanEquivalent',
-				header: 'H. EQ',
+				header: t('campaigns.form.contacts.list.columns.assigned'),
 				cell: ({ row }) => (
 					<Text fz='sm'>
 						{row.original.humanEquivalent?.toLocaleString() || 0}
@@ -83,7 +85,7 @@ const useContactListColumns = ({
 			},
 			{
 				id: 'waves',
-				header: 'Waves',
+				header: t('campaigns.form.contacts.details.stats.waves'),
 				cell: ({ row }) => {
 					const { currentWave, maxWaves } = row.original;
 					if (!maxWaves) {
@@ -98,14 +100,14 @@ const useContactListColumns = ({
 			},
 			{
 				id: 'createdAt',
-				header: 'Created',
+				header: t('campaigns.form.contacts.details.meta.listStatus'),
 				cell: ({ row }) => (
 					<Text fz='sm'>{timeAgo(row.original.createdAt)}</Text>
 				),
 			},
 			{
 				id: 'queueStatus',
-				header: 'Status',
+				header: t('campaigns.form.contacts.list.columns.status'),
 				cell: ({ row }) => {
 					const statusConfig = getQueueStatusConfig(row.original.queueStatus);
 					return (
@@ -117,7 +119,7 @@ const useContactListColumns = ({
 			},
 			{
 				id: 'actions',
-				header: 'Actions',
+				header: t('campaigns.form.contacts.list.columns.actions'),
 				cell: ({ row }) => {
 					const contactGroup = row.original;
 
@@ -127,14 +129,21 @@ const useContactListColumns = ({
 					return (
 						<Group gap='xs' justify='flex-start' wrap='nowrap'>
 							{onNavigateToContactList && (
-								<Tooltip label='Open contact list page' withArrow>
+								<Tooltip
+									label={t(
+										'campaigns.form.contacts.details.actions.openContactList'
+									)}
+									withArrow
+								>
 									<ActionIcon
 										variant='light'
 										onClick={(event) => {
 											event.stopPropagation();
 											onNavigateToContactList(contactGroup);
 										}}
-										aria-label='Open contact list page'
+										aria-label={t(
+											'campaigns.form.contacts.details.actions.openContactList'
+										)}
 										disabled={isLoading}
 									>
 										<IconArrowUpRight size={16} />
@@ -157,6 +166,7 @@ const useContactListColumns = ({
 			activeSchedule,
 			contactGroups,
 			onNavigateToContactList,
+			t,
 		]
 	);
 };

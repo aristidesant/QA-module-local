@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback } from 'react';
 import { Button, Stack, Text } from '@mantine/core';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
+import { useTranslation } from 'react-i18next';
 import { useDebouncedValue } from '@mantine/hooks';
 import { useUpdateAgent, useGetAgent } from '~/queries/agentQueries';
 import { useGetAllAgentVoices } from '~/queries/agentVoiceQueries';
@@ -28,6 +29,7 @@ export const AgentVoiceEditModal: React.FC<AgentVoiceEditModalProps> = ({
 	const [playProgress, setPlayProgress] = useState<number>(0);
 	const audioRef = useRef<HTMLAudioElement>(null);
 
+	const { t } = useTranslation();
 	const updateAgentMutation = useUpdateAgent();
 	const { data: agent } = useGetAgent(agentId);
 
@@ -110,8 +112,8 @@ export const AgentVoiceEditModal: React.FC<AgentVoiceEditModalProps> = ({
 	const handleSaveAgent = async () => {
 		if (!selectedVoiceId) {
 			notifications.show({
-				title: 'Error',
-				message: 'Please select a voice',
+				title: t('common.error'),
+				message: t('campaigns.form.agent.voice.pleaseSelectVoice'),
 				color: 'red',
 			});
 			return;
@@ -119,8 +121,8 @@ export const AgentVoiceEditModal: React.FC<AgentVoiceEditModalProps> = ({
 
 		if (!agent) {
 			notifications.show({
-				title: 'Error',
-				message: 'Agent data not loaded',
+				title: t('common.error'),
+				message: t('campaigns.form.agent.voice.agentDataNotLoaded'),
 				color: 'red',
 			});
 			return;
@@ -147,8 +149,8 @@ export const AgentVoiceEditModal: React.FC<AgentVoiceEditModalProps> = ({
 			});
 
 			notifications.show({
-				title: 'Success',
-				message: 'Agent voice updated successfully',
+				title: t('common.success') || 'Success',
+				message: t('campaigns.form.agent.voice.success'),
 				color: 'green',
 			});
 
@@ -156,14 +158,14 @@ export const AgentVoiceEditModal: React.FC<AgentVoiceEditModalProps> = ({
 			onClose();
 		} catch (error: any) {
 			notifications.show({
-				title: 'Error',
+				title: t('common.error'),
 				message:
-					error?.response?.data?.message || 'Failed to update agent voice',
+					error?.response?.data?.message ||
+					t('campaigns.form.agent.voice.error'),
 				color: 'red',
 			});
 		}
 	};
-
 	const hasChanges = selectedVoiceId !== currentVoiceId;
 
 	return (
@@ -176,7 +178,7 @@ export const AgentVoiceEditModal: React.FC<AgentVoiceEditModalProps> = ({
 			/>
 
 			<Text size='sm' c='dimmed'>
-				Select a voice for your agent and click save to apply the changes.
+				{t('campaigns.form.agent.voice.selectHint')}
 			</Text>
 
 			<div className={styles.tableContainer}>
@@ -188,7 +190,7 @@ export const AgentVoiceEditModal: React.FC<AgentVoiceEditModalProps> = ({
 					getRowClassName={(row) =>
 						row.original.voice.id === selectedVoiceId ? styles.selectedRow : ''
 					}
-					emptyMessage='No voices found'
+					emptyMessage={t('campaigns.form.agent.voice.noVoices')}
 					isLoading={isLoadingVoices}
 				/>
 			</div>
@@ -200,7 +202,9 @@ export const AgentVoiceEditModal: React.FC<AgentVoiceEditModalProps> = ({
 				disabled={!hasChanges || updateAgentMutation.isPending}
 				fullWidth
 			>
-				{updateAgentMutation.isPending ? 'Saving...' : 'Save Agent'}
+				{updateAgentMutation.isPending
+					? t('campaigns.form.agent.voice.saving')
+					: t('campaigns.form.agent.voice.save')}
 			</Button>
 		</Stack>
 	);

@@ -11,7 +11,8 @@
 		"noData": "No data available",
 		"currency": "$",
 		"goBack": "Go Back",
-		"goToHome": "Go to Home"
+		"goToHome": "Go to Home",
+		"referenceText": "Reference Text"
 	},
 	"accessDenied": {
 		"title": "Access Denied",
@@ -557,6 +558,7 @@
 		},
 		"workingHours": {
 			"title": "Working Hours",
+			"description": "Define the days and time ranges during which your agents can make calls.",
 			"noSchedule": "No schedule configured",
 			"noDays": "No days configured",
 			"noActiveDays": "No active days",
@@ -569,8 +571,422 @@
 			"or": "OR",
 			"noScheduleInfo": "No schedule information"
 		},
+		"form": {
+			"title": {
+				"edit": "Editing Campaign: {{name}}"
+			},
+			"description": "Manage your campaign configuration and settings.",
+			"notifications": {
+				"warningTitle": "Warning",
+				"objectiveAssignmentFailed": "Campaign saved but objective assignment failed.",
+				"successCreated": "Campaign Created",
+				"successCreatedMessage": "Your campaign has been successfully created.",
+				"successUpdated": "Campaign Updated",
+				"successUpdatedMessage": "Your campaign has been successfully updated.",
+				"errorCreate": "Failed to create campaign. Please try again.",
+				"errorUpdate": "Failed to update campaign. Please try again."
+			},
+			"validation": {
+				"nameRequired": "Name is required",
+				"typeRequired": "Type is required",
+				"statusRequired": "Status is required",
+				"budgetMin": "Budget must be 0 or more",
+				"spentMin": "Spent must be 0 or more",
+				"userIdMin": "User ID must be 0 or more",
+				"clientIdMin": "Client ID must be 0 or more",
+				"defaultWavesMin": "Default waves must be at least 1",
+				"objectiveRequired": "Campaign Objective is required"
+			},
+			"viewTooltip": "View campaign",
+			"schedulerCalculator": {
+				"title": "Scheduler Calculator"
+			},
+			"agent": {
+				"prompt": {
+					"title": "Agent Prompt",
+					"description": "Define the instructions the agent will follow when speaking with contacts.",
+					"header": {
+						"editAria": "Edit prompt",
+						"collapseAria": "Collapse prompt",
+						"expandAria": "Expand prompt"
+					},
+					"previewTitle": "Prompt Preview",
+					"previewChars": "{{count}} characters",
+					"placeholder": "No prompt has been added yet. Edit to define agent tone, constraints, and example responses.",
+					"keepConcise": "Keep the prompt concise and actionable so the agent answers with confidence.",
+					"modal": {
+						"title": "Prompt Configuration",
+						"subtitle": "Configure prompts for each interaction type",
+						"types": "Types",
+						"selectPromptType": "Select a prompt type to start editing.",
+						"saveHint": "Save to apply prompts throughout this campaign.",
+						"editorDrafted": "Draft",
+						"editorNoChanges": "No changes"
+					},
+					"status": {
+						"drafted": "DRAFT",
+						"saved": "Saved",
+						"empty": "Empty"
+					}
+				},
+				"voice": {
+					"selectHint": "Select a voice for your agent and click save to apply changes.",
+					"noVoices": "No voices found",
+					"save": "Save Agent",
+					"saving": "Saving...",
+					"success": "Agent voice updated successfully",
+					"error": "Failed to update agent voice",
+					"pleaseSelectVoice": "Please select a voice",
+					"agentDataNotLoaded": "Agent data not loaded"
+				}
+			},
+			"contacts": {
+				"tabs": {
+					"active": "Active Lists",
+					"inactive": "Inactive Lists"
+				},
+				"title": "Contacts",
+				"description": "Information about the contacts in this campaign",
+				"list": {
+					"activeTitle": "Contact lists",
+					"inactiveTitle": "Inactive Contact Lists",
+					"activeDescription": "Displaying all active contact lists associated with this campaign.",
+					"inactiveDescription": "Displaying all inactive contact lists associated with this campaign.",
+					"addNewContactList": "Add new contact list",
+					"addInactiveContactList": "Add inactive contact list",
+					"reload": "Reload",
+					"reloadUnavailable": "Reload unavailable while collapsed",
+					"emptyMessage": "No contact lists available",
+					"emptyInactiveMessage": "No inactive contact lists available",
+					"configuration": "Contact List Configuration",
+					"configurationDescription": "Browse your existing contact lists or upload a new one to start reaching out.",
+					"selectActive": "Select Active Contact List",
+					"selectActiveDescription": "Select an active contact list to add as inactive for this campaign.",
+					"columns": {
+						"name": "Name",
+						"total": "Total",
+						"assigned": "Assigned",
+						"status": "Status",
+						"expiration": "Expiration",
+						"actions": "Actions"
+					},
+					"capacity": {
+						"title": "Human Equivalent Usage",
+						"used": "Used",
+						"remaining": "Remaining",
+						"total": "Total",
+						"activityProgress": "Activity Progress",
+						"assignedDescription": "Assigned Human Equivalent",
+						"of": "of",
+						"totalAssigned": "Total Assigned:"
+					},
+					"activateTooltip": "Activate contact list",
+					"deactivateTooltip": "Deactivate contact list"
+				},
+				"limits": {
+					"maxWavesLabel": "Max Waves",
+					"maxWavesDescription": "Inherits the campaign default; adjust if this list needs a different number of waves",
+					"capacityFull": {
+						"title": "Scheduler Capacity Full",
+						"message": "The active schedule has no available capacity. Please increase the Human Equivalent capacity in the scheduler configuration to add new contact groups."
+					},
+					"humanEquivalentLabel": "Human Equivalent",
+					"availableLabel": "Available",
+					"actions": {
+						"save": "Save contact list",
+						"update": "Update contact list"
+					},
+					"notifications": {
+						"invalidInput": "Invalid Input",
+						"nameRequired": "Contact list name is required.",
+						"capacityExceeded": "Human equivalent exceeds available capacity.",
+						"wavesMinimum": "Waves must be at least 1.",
+						"schedulerFullTitle": "Scheduler Full",
+						"schedulerFullMessage": "Cannot create contact group. Please increase the scheduler capacity first.",
+						"successTitle": "Success",
+						"saveSuccess": "Contact list saved successfully.",
+						"updateSuccess": "Contact list updated successfully.",
+						"errorTitle": "Error",
+						"saveError": "Failed to save contact list. Please try again."
+					}
+				},
+				"info": {
+					"nameLabel": "Contact List Name",
+					"nameRequired": "Name Required",
+					"namePlaceholder": "e.g. Q4 Marketing Leads, Support Follow-ups...",
+					"nameDescription": "Allowed characters: A-Z, a-z, 0-9, spaces, and hyphens. Minimum 3 characters. Maximum 50 characters.",
+					"clickToAddName": "Click to add a name for this contact list",
+					"editName": "Edit name",
+					"expires": "Expires",
+					"addExpiration": "Add expiration date",
+					"selectExpiration": "Select an expiration date",
+					"dateInPast": "Selected date is in the past"
+				},
+				"mapping": {
+					"title": "Column Mapping",
+					"matchTitle": "Match Columns",
+					"clickToConfigure": "Click to configure field mappings",
+					"unmapped": "{{count}} unmapped column",
+					"unmapped_plural": "{{count}} unmapped columns"
+				},
+				"headerMapping": {
+					"title": "Map CSV headers to system fields",
+					"description": "Choose a system field and then pick the CSV column it should use.",
+					"mappedBadge": "{{count}} mapped",
+					"csvHeadersBadge": "{{count}} csv headers",
+					"dynamicFieldsRequired": "{{count}} dynamic field requires mapping",
+					"dynamicFieldsRequired_plural": "{{count}} dynamic fields require mapping",
+					"systemFields": "System fields",
+					"csvColumns": "CSV columns",
+					"currentMappings": "Current mappings",
+					"selectObjective": "Select objective",
+					"addDynamicColumns": "Add dynamic columns",
+					"dynamicSetTitle": "Dynamic column sets",
+					"loadingColumns": "Loading columns...",
+					"allMapped": "All system fields mapped",
+					"allCsvMapped": "All CSV columns mapped",
+					"dynamicColumnTooltip": "Dynamic column",
+					"finishMultiSelect": "Finish multi-select",
+					"multiSelectDescription": "Add all CSV columns that should populate {{field}}",
+					"csvColumnLabel": "CSV column",
+					"clickToRemove": "Click to remove",
+					"noMappings": "No mappings yet",
+					"noMappingsDescription": "Select a system field and CSV column to add your first mapping.",
+					"pickSystemField": "Pick a system field to start mapping",
+					"chooseMatchingCsv": "Choose the matching CSV column",
+					"systemFieldLabel": "system field",
+					"selectedCsvLabel": "selected CSV column",
+					"multiSelectNote": "(accepts multiple CSV columns)",
+					"clearSelection": "Clear selection",
+					"mappingsCreated": "{{count}} mapping created",
+					"mappingsCreated_plural": "{{count}} mappings created",
+					"saveMappings": "Save Mappings"
+				},
+				"addNew": {
+					"title": "Add New Contact List",
+					"description": "Upload a new contact list file for this campaign.",
+					"uploadLabel": "Upload Contact File",
+					"dragAndDrop": "Drag and drop your Excel or CSV file here",
+					"uploading": "Uploading...",
+					"notifications": {
+						"noFile": {
+							"title": "No file selected",
+							"message": "Please choose a CSV file to upload."
+						},
+						"invalidType": {
+							"title": "Invalid file type",
+							"message": "Only CSV files (.csv) are supported for upload."
+						},
+						"uploadFailed": {
+							"title": "Upload failed",
+							"message": "Failed to upload contact list file"
+						}
+					}
+				},
+				"controls": {
+					"start": "Start contact list",
+					"resume": "Resume contact list",
+					"pause": "Pause contact list",
+					"requirementsNotMet": "Campaign requirements not met",
+					"completed": "Contact list is completed",
+					"failed": "Contact list failed",
+					"allWavesDone": "All planned waves have finished. Extend or complete the list.",
+					"notifications": {
+						"successTitle": "Contact list updated",
+						"errorTitle": "Contact list action failed",
+						"unknownCampaign": "Cannot process this contact list because the campaign is unknown. Please refresh and try again.",
+						"running": "Contact list is running.",
+						"resumed": "Contact list has been resumed.",
+						"paused": "Contact list has been paused.",
+						"startError": "Failed to start contact list. Please try again.",
+						"resumeError": "Failed to resume contact list. Please try again.",
+						"pauseError": "Failed to pause contact list. Please try again."
+					}
+				},
+
+				"details": {
+					"title": "Contact List",
+					"description": "Configuration overview",
+					"listName": "List Name",
+					"noDescription": "No description available",
+					"configurations": "Configurations",
+					"stats": {
+						"operationalStatus": {
+							"title": "Operational Status",
+							"description": "Current operational information"
+						},
+						"totalContacts": "Total Contacts",
+						"humanEquivalent": "Human Equivalent",
+						"waves": "Waves",
+						"maxCallsPerContact": "Max Calls / Contact",
+						"maxCallsPerList": "Max Calls / List",
+						"notSet": "Not set",
+						"notAvailable": "Not available"
+					},
+					"meta": {
+						"queueStatus": "Queue status",
+						"listStatus": "List status",
+						"active": "Active",
+						"inactive": "Inactive",
+						"expirationDate": "Expiration date",
+						"scheduler": "Scheduler",
+						"notAssigned": "Not assigned",
+						"schedulerStatus": "Scheduler status"
+					},
+					"actions": {
+						"title": "Actions",
+						"description": "Manage the lifecycle of this contact list",
+						"extendWaves": "Extend Waves",
+						"completeList": "Complete list",
+						"editContactList": "Edit contact list",
+						"deleteContactList": "Delete contact list",
+						"cleanQueue": "Clean queue",
+						"openContactList": "Open contact list page",
+						"activate": "Activate contact list",
+						"deactivate": "Deactivate contact list"
+					},
+					"dialogs": {
+						"deactivate": {
+							"title": "Confirm Status Change",
+							"message": "Are you sure you want to deactivate the contact list \"{{name}}\"?"
+						},
+						"activate": {
+							"title": "Activate Contact List",
+							"message": "Activate the contact list \"{{name}}\" and set the Human Equivalent allocation.",
+							"available": "Available: {{count}}",
+							"capacityErrorTitle": "Cannot Activate Contact List",
+							"noCapacityTitle": "No Human Equivalent Available",
+							"capacityErrorMessage": "Cannot activate the contact list \"{{name}}\" because there is no available Human Equivalent capacity. Please increase the scheduler capacity or deactivate other contact lists first.",
+							"confirm": "Activate"
+						},
+						"delete": {
+							"title": "Delete Contact List",
+							"message": "Are you sure you want to delete the contact list \"{{name}}\"? This action cannot be undone.",
+							"success": "Contact list removed",
+							"successMessage": "\"{{name}}\" was deleted successfully.",
+							"error": "Unable to delete contact list",
+							"errorMessage": "Failed to delete contact list. Please try again."
+						},
+						"cleanQueue": {
+							"title": "Clean Queue",
+							"message": "Are you sure you want to clean the queue for the contact list \"{{name}}\"? This will restart the campaign.",
+							"confirm": "Clean Queue"
+						},
+						"extendWaves": {
+							"title": "Extend Waves",
+							"success": "Waves extended",
+							"successMessage": "Added {{count}} wave(s) to this list.",
+							"error": "Extend waves failed"
+						},
+						"complete": {
+							"title": "Complete Contact List",
+							"message": "Mark this contact list as completed? This will stop additional waves and set the list to inactive.",
+							"success": "Contact list completed",
+							"successMessage": "The list has been marked as completed.",
+							"error": "Complete failed"
+						}
+					},
+					"queueStatus": {
+						"pending": "Pending",
+						"running": "Running",
+						"paused": "Paused",
+						"failed": "Failed",
+						"executed": "Executed",
+						"completed": "Completed"
+					},
+					"messages": {
+						"allWavesDone": "All planned waves have finished. Extend waves or mark list as complete."
+					},
+					"notifications": {
+						"wavesExtended": {
+							"title": "Waves extended",
+							"message": "{{count}} wave(s) were added to this list."
+						},
+						"completed": {
+							"title": "Contact list completed",
+							"message": "The list is now marked as completed."
+						},
+						"errorTitle": "Error"
+					},
+					"confirm": {
+						"complete": "Complete",
+						"cancel": "Cancel",
+						"cleanQueueConfirm": "Clean queue"
+					},
+					"dialogs": {
+						"delete": {
+							"title": "Delete contact list",
+							"failedTitle": "Failed to delete contact list",
+							"failedMessage": "Could not delete contact list. Please try again."
+						},
+						"cleanQueue": {
+							"title": "Clean queue",
+							"failedTitle": "Failed to clean queue",
+							"failedMessage": "Could not clean queue. Please try again."
+						},
+						"extendFailed": {
+							"title": "Failed to extend waves",
+							"message": "Could not extend waves. Please try again."
+						},
+						"deleted": {
+							"title": "Contact list deleted",
+							"message": "{{name}} was deleted successfully."
+						}
+					}
+				}
+			}
+		},
 		"scheduler": {
-			"instructions": "Enter the campaign inputs above and select \"Calculate projection\" to"
+			"instructions": "Enter the campaign inputs above and select \"Calculate projection\" to",
+			"schedulerBuilder": {
+				"curatedSchedules": "Curated schedules",
+				"curatedDescription": "Pick a template, personalize the naming, and tune the human equivalent you want to simulate.",
+				"builder": "Schedule builder",
+				"predefinedSchedule": "Predefined schedule",
+				"predefinedDescription": "Choose a schedule template with the working days and hours already mapped.",
+				"predefinedPlaceholder": "Select days and hours configuration",
+				"predefinedNoData": "No templates available",
+				"preview": "Template preview",
+				"previewDescription": "Working hours per weekday for the selected template.",
+				"previewEmpty": "Select a template to preview its configured days.",
+				"details": "Schedule details",
+				"detailsDescription": "Add a clear name, short description, and adjust the expected human effort.",
+				"name": "Schedule name",
+				"namePlaceholder": "e.g. Standard Business Hours",
+				"description": "Description",
+				"descriptionPlaceholder": "e.g. Monday to Friday from 08:00 to 17:00",
+				"humanEquivalent": "Human equivalent",
+				"create": "Create schedule",
+				"cancel": "Cancel",
+				"validation": {
+					"nameRequired": "Name is required",
+					"scheduleRequired": "Please select a predefined schedule",
+					"humanEquivalentRequired": "Human Equivalent is required",
+					"humanEquivalentNumber": "Human Equivalent must be a number"
+				},
+				"notifications": {
+					"error": "Error",
+					"campaignIdRequired": "Campaign ID is required",
+					"success": "Success",
+					"created": "Predefined schedule created successfully",
+					"failed": "Failed to create predefined schedule",
+					"errorCreating": "Error Creating Schedule"
+				},
+				"status": {
+					"off": "Off",
+					"noHours": "No hours",
+					"scheduleN": "Schedule {{index}}"
+				},
+				"days": {
+					"monday": "Monday",
+					"tuesday": "Tuesday",
+					"wednesday": "Wednesday",
+					"thursday": "Thursday",
+					"friday": "Friday",
+					"saturday": "Saturday",
+					"sunday": "Sunday"
+				}
+			}
 		}
 	},
 	"auth": {

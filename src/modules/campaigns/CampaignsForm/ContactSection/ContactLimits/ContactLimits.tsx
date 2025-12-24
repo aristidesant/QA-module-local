@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	Stack,
 	Box,
@@ -47,6 +48,7 @@ export const ContactLimits = ({
 	objectiveId,
 	campaignId,
 }: ContactLimitsProps) => {
+	const { t } = useTranslation();
 	const processFileMutation = useProcessContactGroupFile();
 	const { setRightComponent, selectedCampaign } = useCampaignsStore(
 		(state) => state
@@ -123,8 +125,8 @@ export const ContactLimits = ({
 		// Name is always required
 		if (!data.name?.trim()) {
 			notifications.show({
-				title: 'Invalid Input',
-				message: 'Contact list name is required.',
+				title: t('campaigns.form.contacts.limits.notifications.invalidInput'),
+				message: t('campaigns.form.contacts.limits.notifications.nameRequired'),
 				color: 'red',
 			});
 			return false;
@@ -133,8 +135,10 @@ export const ContactLimits = ({
 		// Validate human equivalent doesn't exceed available capacity
 		if (humanEquivalent > sliderMax) {
 			notifications.show({
-				title: 'Invalid Input',
-				message: 'Human equivalent exceeds available capacity.',
+				title: t('campaigns.form.contacts.limits.notifications.invalidInput'),
+				message: t(
+					'campaigns.form.contacts.limits.notifications.capacityExceeded'
+				),
 				color: 'red',
 			});
 			return false;
@@ -142,8 +146,8 @@ export const ContactLimits = ({
 
 		if (!maxWaves || maxWaves < 1) {
 			notifications.show({
-				title: 'Invalid Input',
-				message: 'Waves must be at least 1.',
+				title: t('campaigns.form.contacts.limits.notifications.invalidInput'),
+				message: t('campaigns.form.contacts.limits.notifications.wavesMinimum'),
 				color: 'red',
 			});
 			return false;
@@ -152,9 +156,12 @@ export const ContactLimits = ({
 		// Prevent creating when scheduler is full
 		if (isCreatingAndFull) {
 			notifications.show({
-				title: 'Scheduler Full',
-				message:
-					'Cannot create contact group. Please increase the scheduler capacity first.',
+				title: t(
+					'campaigns.form.contacts.limits.notifications.schedulerFullTitle'
+				),
+				message: t(
+					'campaigns.form.contacts.limits.notifications.schedulerFullMessage'
+				),
 				color: 'red',
 			});
 			return false;
@@ -205,8 +212,10 @@ export const ContactLimits = ({
 				});
 
 				notifications.show({
-					title: 'Success',
-					message: 'Contact list saved successfully.',
+					title: t('campaigns.form.contacts.limits.notifications.successTitle'),
+					message: t(
+						'campaigns.form.contacts.limits.notifications.saveSuccess'
+					),
 					color: 'green',
 				});
 			} else if (contactGroup.id) {
@@ -222,8 +231,10 @@ export const ContactLimits = ({
 				});
 
 				notifications.show({
-					title: 'Success',
-					message: 'Contact list updated successfully.',
+					title: t('campaigns.form.contacts.limits.notifications.successTitle'),
+					message: t(
+						'campaigns.form.contacts.limits.notifications.updateSuccess'
+					),
 					color: 'green',
 				});
 			}
@@ -232,9 +243,9 @@ export const ContactLimits = ({
 		} catch (error: any) {
 			const errorMessage =
 				error?.response?.data?.message ||
-				'Failed to save contact list. Please try again.';
+				t('campaigns.form.contacts.limits.notifications.saveError');
 			notifications.show({
-				title: 'Error',
+				title: t('campaigns.form.contacts.limits.notifications.errorTitle'),
 				message: errorMessage,
 				color: 'red',
 			});
@@ -260,8 +271,8 @@ export const ContactLimits = ({
 					}}
 				/>
 				<NumberInput
-					label='Max Waves'
-					description='Inherits the campaign default; adjust if this list needs a different number of waves'
+					label={t('campaigns.form.contacts.limits.maxWavesLabel')}
+					description={t('campaigns.form.contacts.limits.maxWavesDescription')}
 					value={maxWaves}
 					onChange={(value) =>
 						setMaxWaves(typeof value === 'number' ? value : 0)
@@ -278,21 +289,21 @@ export const ContactLimits = ({
 				{isCreatingAndFull && (
 					<Alert
 						icon={<IconInfoCircle size={16} />}
-						title='Scheduler Capacity Full'
+						title={t('campaigns.form.contacts.limits.capacityFull.title')}
 						color='yellow'
 					>
-						The active schedule has no available capacity. Please increase the
-						Human Equivalent capacity in the scheduler configuration to add new
-						contact groups.
+						{t('campaigns.form.contacts.limits.capacityFull.message')}
 					</Alert>
 				)}
 				<Box>
 					<Group justify='space-between' mb='xs'>
 						<Text size='sm' fw={500}>
-							Human Equivalent: {humanEquivalent}
+							{t('campaigns.form.contacts.limits.humanEquivalentLabel')}:{' '}
+							{humanEquivalent}
 						</Text>
 						<Text size='xs' c='dimmed'>
-							Available: {maxAvailableHumanEquivalent}
+							{t('campaigns.form.contacts.limits.availableLabel')}:{' '}
+							{maxAvailableHumanEquivalent}
 						</Text>
 					</Group>
 					<Slider
@@ -332,7 +343,7 @@ export const ContactLimits = ({
 							updateContactGroupMutation.isPending
 						}
 					>
-						Cancel
+						{t('common.cancel')}
 					</Button>
 					<Button
 						onClick={handleSubmit}
@@ -346,7 +357,9 @@ export const ContactLimits = ({
 							isCreatingAndFull
 						}
 					>
-						{contactGroup.id ? 'Update contact list' : 'Save contact list'}
+						{contactGroup.id
+							? t('campaigns.form.contacts.limits.actions.update')
+							: t('campaigns.form.contacts.limits.actions.save')}
 					</Button>
 				</Group>
 			</Stack>
