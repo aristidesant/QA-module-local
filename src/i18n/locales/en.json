@@ -477,6 +477,7 @@
 			"deleteCampaign": "Delete campaign"
 		},
 		"filters": {
+			"title": "Filters",
 			"searchPlaceholder": "Search campaigns...",
 			"sortBy": "Sort by",
 			"type": "Type",
@@ -486,12 +487,22 @@
 			"status": "Status",
 			"allStatuses": "All statuses",
 			"includeCompleted": "Include completed",
-			"budgetRange": "Budget Range",
-			"min": "Min",
-			"max": "Max",
-			"spentRange": "Spent Range",
+			"advanced": "Advanced",
 			"clearFilters": "Clear filters",
-			"clearAllFilters": "Clear all filters"
+			"clearAllFilters": "Clear all filters",
+			"sortOptions": {
+				"createdAt": "Creation date",
+				"name": "Name",
+				"status": "Status",
+				"lastActivity": "Last activity"
+			},
+			"typeOptions": {
+				"outbound": "Outbound",
+				"inbound": "Inbound"
+			},
+			"executionTypeOptions": {
+				"timeBased": "Time Based"
+			}
 		},
 		"deleteModal": {
 			"title": "Delete Campaign",

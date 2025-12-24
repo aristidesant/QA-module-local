@@ -477,6 +477,7 @@
 			"deleteCampaign": "Eliminar campaña"
 		},
 		"filters": {
+			"title": "Filtros",
 			"searchPlaceholder": "Buscar campañas...",
 			"sortBy": "Ordenar por",
 			"type": "Tipo",
@@ -486,12 +487,22 @@
 			"status": "Estado",
 			"allStatuses": "Todos los estados",
 			"includeCompleted": "Incluir completadas",
-			"budgetRange": "Rango de Presupuesto",
-			"min": "Mín",
-			"max": "Máx",
-			"spentRange": "Rango de Gasto",
+			"advanced": "Avanzado",
 			"clearFilters": "Limpiar filtros",
-			"clearAllFilters": "Limpiar todos los filtros"
+			"clearAllFilters": "Limpiar todos los filtros",
+			"sortOptions": {
+				"createdAt": "Fecha de creación",
+				"name": "Nombre",
+				"status": "Estado",
+				"lastActivity": "Última actividad"
+			},
+			"typeOptions": {
+				"outbound": "Saliente",
+				"inbound": "Entrante"
+			},
+			"executionTypeOptions": {
+				"timeBased": "Basado en Tiempo"
+			}
 		},
 		"deleteModal": {
 			"title": "Eliminar Campaña",
