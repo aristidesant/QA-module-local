@@ -28,14 +28,18 @@ describe('ContactDetails', () => {
 
 		expect(screen.getByText('John Doe')).toBeInTheDocument();
 		expect(screen.getByText('Spanish')).toBeInTheDocument();
-		expect(screen.getByText('Primary phone number')).toBeInTheDocument();
+		expect(screen.getByText('contactDetails.primaryPhone')).toBeInTheDocument();
 		expect(screen.getByText('+34 612 345 678')).toBeInTheDocument();
-		expect(screen.getByText('Email')).toBeInTheDocument();
+		expect(screen.getByText('contactDetails.email')).toBeInTheDocument();
 		expect(screen.getByText('john.doe@example.com')).toBeInTheDocument();
-		expect(screen.getByText('Location')).toBeInTheDocument();
+		expect(screen.getByText('contactDetails.location')).toBeInTheDocument();
 		expect(screen.getByText('Madrid, Spain')).toBeInTheDocument();
-		expect(screen.getByText('Engagement Level')).toBeInTheDocument();
-		expect(screen.getByText('Reviews qualification')).toBeInTheDocument();
+		expect(
+			screen.getByText('contactDetails.engagementLevel.title')
+		).toBeInTheDocument();
+		expect(
+			screen.getByText('contactDetails.reviewsQualification.title')
+		).toBeInTheDocument();
 		expect(screen.getByText('12')).toBeInTheDocument();
 		expect(screen.getByText('3')).toBeInTheDocument();
 		expect(screen.getByText('1')).toBeInTheDocument();
@@ -63,7 +67,7 @@ describe('ContactDetails', () => {
 			/>
 		);
 
-		expect(screen.getByText('Phone Numbers (2)')).toBeInTheDocument();
+		expect(screen.getByText('contactDetails.phoneNumbers')).toBeInTheDocument();
 		expect(screen.getByText('+34 600 111 222')).toBeInTheDocument();
 		expect(screen.getByText('+34 699 888 777')).toBeInTheDocument();
 		expect(screen.getByText('INVALID_NUMBER')).toBeInTheDocument();
@@ -73,17 +77,24 @@ describe('ContactDetails', () => {
 	it('does not render optional cards when data is missing', () => {
 		renderWithProviders(<ContactDetails contact={baseContact} />);
 
-		expect(screen.queryByText('Email')).not.toBeInTheDocument();
-		expect(screen.queryByText('Location')).not.toBeInTheDocument();
-		expect(screen.queryByText(/Phone Numbers/)).not.toBeInTheDocument();
+		expect(screen.queryByText('contactDetails.email')).not.toBeInTheDocument();
+		expect(
+			screen.queryByText('contactDetails.location')
+		).not.toBeInTheDocument();
+		expect(
+			screen.queryByText(/contactDetails.phoneNumbers/)
+		).not.toBeInTheDocument();
 		expect(screen.getByText('87')).toBeInTheDocument();
 		expect(screen.getByText('75%')).toBeInTheDocument();
 		expect(screen.getByText('2113')).toBeInTheDocument();
 		expect(screen.getByText('45')).toBeInTheDocument();
 		expect(screen.getByText('16')).toBeInTheDocument();
 		expect(
-			screen.getAllByText('Measures how engaged John is with your campaigns.')
-		).toHaveLength(2);
+			screen.getByText('contactDetails.engagementLevel.description')
+		).toBeInTheDocument();
+		expect(
+			screen.getByText('contactDetails.reviewsQualification.description')
+		).toBeInTheDocument();
 	});
 
 	it('handles engagement and qualification thresholds', () => {

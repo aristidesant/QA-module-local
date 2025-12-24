@@ -38,6 +38,8 @@ describe('PhoneNumbersTable', () => {
 
 	it('renders empty message when no data', () => {
 		renderWithProviders(<PhoneNumbersTable phoneNumbers={[]} />);
-		expect(screen.getByText('No phone numbers available')).toBeInTheDocument();
+		expect(
+			screen.getByText('contactListPage.phoneNumbersTable.empty')
+		).toBeInTheDocument();
 	});
 });

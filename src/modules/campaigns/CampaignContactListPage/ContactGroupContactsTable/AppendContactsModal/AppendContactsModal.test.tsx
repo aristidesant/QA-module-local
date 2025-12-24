@@ -20,12 +20,20 @@ describe('AppendContactsModal', () => {
 		);
 
 		const file = new File(['csv'], 'contacts.csv', { type: 'text/csv' });
-		const input = screen.getByLabelText(/select csv file/i);
+		const input = screen.getByLabelText(
+			/contactListPage.contactsTable.appendModal.selectFile/i
+		);
 		await user.upload(input, file);
 
-		await user.click(screen.getByRole('button', { name: 'Save File' }));
+		await user.click(
+			screen.getByRole('button', {
+				name: 'contactListPage.contactsTable.appendModal.saveFile',
+			})
+		);
 		expect(onUpload).toHaveBeenCalledWith(file);
-		expect(screen.getByText(/File saved. ID: 7/)).toBeInTheDocument();
+		expect(
+			screen.getByText(/contactListPage.contactsTable.appendModal.fileSaved/)
+		).toBeInTheDocument();
 	});
 
 	it('handles append action after upload', async () => {
@@ -45,10 +53,23 @@ describe('AppendContactsModal', () => {
 		);
 
 		const file = new File(['csv'], 'contacts.csv', { type: 'text/csv' });
-		await user.upload(screen.getByLabelText(/select csv file/i), file);
-		await user.click(screen.getByRole('button', { name: 'Save File' }));
+		await user.upload(
+			screen.getByLabelText(
+				/contactListPage.contactsTable.appendModal.selectFile/i
+			),
+			file
+		);
+		await user.click(
+			screen.getByRole('button', {
+				name: 'contactListPage.contactsTable.appendModal.saveFile',
+			})
+		);
 
-		await user.click(screen.getByRole('button', { name: 'Append to List' }));
+		await user.click(
+			screen.getByRole('button', {
+				name: 'contactListPage.contactsTable.appendModal.appendToList',
+			})
+		);
 		expect(onAppend).toHaveBeenCalledWith(3);
 		expect(onClose).toHaveBeenCalled();
 	});
@@ -70,8 +91,17 @@ describe('AppendContactsModal', () => {
 		);
 
 		const file = new File(['csv'], 'contacts.csv', { type: 'text/csv' });
-		await user.upload(screen.getByLabelText(/select csv file/i), file);
-		await user.click(screen.getByRole('button', { name: 'Save File' }));
+		await user.upload(
+			screen.getByLabelText(
+				/contactListPage.contactsTable.appendModal.selectFile/i
+			),
+			file
+		);
+		await user.click(
+			screen.getByRole('button', {
+				name: 'contactListPage.contactsTable.appendModal.saveFile',
+			})
+		);
 
 		expect(screen.getByText('Failed to upload file.')).toBeInTheDocument();
 	});
@@ -94,9 +124,22 @@ describe('AppendContactsModal', () => {
 		);
 
 		const file = new File(['csv'], 'contacts.csv', { type: 'text/csv' });
-		await user.upload(screen.getByLabelText(/select csv file/i), file);
-		await user.click(screen.getByRole('button', { name: 'Save File' }));
-		await user.click(screen.getByRole('button', { name: 'Append to List' }));
+		await user.upload(
+			screen.getByLabelText(
+				/contactListPage.contactsTable.appendModal.selectFile/i
+			),
+			file
+		);
+		await user.click(
+			screen.getByRole('button', {
+				name: 'contactListPage.contactsTable.appendModal.saveFile',
+			})
+		);
+		await user.click(
+			screen.getByRole('button', {
+				name: 'contactListPage.contactsTable.appendModal.appendToList',
+			})
+		);
 
 		expect(screen.getByText('Failed to append contacts.')).toBeInTheDocument();
 	});
@@ -113,8 +156,9 @@ describe('AppendContactsModal', () => {
 		);
 
 		const file = new File(['data'], 'dropped.csv', { type: 'text/csv' });
-		const dropArea = screen.getByText(/drag & drop or click to browse/i)
-			.parentElement as HTMLElement;
+		const dropArea = screen.getByText(
+			/contactListPage.contactsTable.appendModal.dragAndDrop/i
+		).parentElement as HTMLElement;
 
 		fireEvent.dragOver(dropArea, {
 			dataTransfer: { files: [file] },
@@ -123,7 +167,9 @@ describe('AppendContactsModal', () => {
 			dataTransfer: { files: [file] },
 		});
 
-		expect(screen.getByText('Selected: dropped.csv')).toBeInTheDocument();
+		expect(
+			screen.getByText(/contactListPage.contactsTable.appendModal.selected/)
+		).toBeInTheDocument();
 	});
 
 	it('disables save button when no file selected', () => {
@@ -137,6 +183,10 @@ describe('AppendContactsModal', () => {
 			/>
 		);
 
-		expect(screen.getByRole('button', { name: 'Save File' })).toBeDisabled();
+		expect(
+			screen.getByRole('button', {
+				name: 'contactListPage.contactsTable.appendModal.saveFile',
+			})
+		).toBeDisabled();
 	});
 });

@@ -79,9 +79,11 @@ describe('ContactListInformation', () => {
 					onReload={mockOnReload}
 				/>
 			);
-			expect(screen.getByText('Running')).toBeInTheDocument();
 			expect(
-				screen.getByText('Contacts are currently being dialed.')
+				screen.getByText('contactListPage.status.running')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.status.runningDesc')
 			).toBeInTheDocument();
 		});
 
@@ -93,9 +95,11 @@ describe('ContactListInformation', () => {
 					onReload={mockOnReload}
 				/>
 			);
-			expect(screen.getByText('Pending')).toBeInTheDocument();
 			expect(
-				screen.getByText('Waiting to start. Review settings before launching.')
+				screen.getByText('contactListPage.status.pending')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.status.pendingDesc')
 			).toBeInTheDocument();
 		});
 
@@ -107,9 +111,11 @@ describe('ContactListInformation', () => {
 					onReload={mockOnReload}
 				/>
 			);
-			expect(screen.getByText('Paused')).toBeInTheDocument();
 			expect(
-				screen.getByText('Processing halted. Resume when ready.')
+				screen.getByText('contactListPage.status.paused')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.status.pausedDesc')
 			).toBeInTheDocument();
 		});
 
@@ -121,9 +127,11 @@ describe('ContactListInformation', () => {
 					onReload={mockOnReload}
 				/>
 			);
-			expect(screen.getByText('Complete')).toBeInTheDocument();
 			expect(
-				screen.getByText('All contacts processed for this list.')
+				screen.getByText('contactListPage.status.complete')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.status.completeDesc')
 			).toBeInTheDocument();
 		});
 
@@ -135,9 +143,11 @@ describe('ContactListInformation', () => {
 					onReload={mockOnReload}
 				/>
 			);
-			expect(screen.getByText('Failed')).toBeInTheDocument();
 			expect(
-				screen.getByText('An error stopped the campaign. Try restarting.')
+				screen.getByText('contactListPage.status.failed')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.status.failedDesc')
 			).toBeInTheDocument();
 		});
 
@@ -149,11 +159,11 @@ describe('ContactListInformation', () => {
 					onReload={mockOnReload}
 				/>
 			);
-			expect(screen.getByText('Executed')).toBeInTheDocument();
 			expect(
-				screen.getByText(
-					'All planned waves have finished. Extend waves or mark list as complete.'
-				)
+				screen.getByText('contactListPage.status.executed')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('form.contacts.details.messages.allWavesDone')
 			).toBeInTheDocument();
 		});
 
@@ -168,9 +178,11 @@ describe('ContactListInformation', () => {
 					onReload={mockOnReload}
 				/>
 			);
-			expect(screen.getByText('Unknown')).toBeInTheDocument();
 			expect(
-				screen.getByText('Status unavailable. Reload for the latest update.')
+				screen.getByText('contactListPage.status.unknown')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.status.unknownDesc')
 			).toBeInTheDocument();
 		});
 
@@ -185,7 +197,9 @@ describe('ContactListInformation', () => {
 					onReload={mockOnReload}
 				/>
 			);
-			expect(screen.getByText('Unknown')).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.status.unknown')
+			).toBeInTheDocument();
 		});
 	});
 
@@ -197,7 +211,9 @@ describe('ContactListInformation', () => {
 					onReload={mockOnReload}
 				/>
 			);
-			expect(screen.getByTestId('metric-contacts')).toBeInTheDocument();
+			expect(
+				screen.getByTestId('metric-contactlistpage.summary.contacts')
+			).toBeInTheDocument();
 		});
 
 		it('renders max calls per contact metric', () => {
@@ -208,7 +224,7 @@ describe('ContactListInformation', () => {
 				/>
 			);
 			expect(
-				screen.getByTestId('metric-max-calls-/-contact')
+				screen.getByTestId('metric-contactlistpage.summary.maxcallspercontact')
 			).toBeInTheDocument();
 		});
 
@@ -219,7 +235,9 @@ describe('ContactListInformation', () => {
 					onReload={mockOnReload}
 				/>
 			);
-			expect(screen.getByTestId('metric-human-equivalent')).toBeInTheDocument();
+			expect(
+				screen.getByTestId('metric-contactlistpage.summary.humanequivalent')
+			).toBeInTheDocument();
 		});
 
 		it('renders expiration metric', () => {
@@ -229,7 +247,9 @@ describe('ContactListInformation', () => {
 					onReload={mockOnReload}
 				/>
 			);
-			expect(screen.getByTestId('metric-expiration')).toBeInTheDocument();
+			expect(
+				screen.getByTestId('metric-contactlistpage.summary.expirationdate')
+			).toBeInTheDocument();
 		});
 
 		it('renders waves metric', () => {
@@ -239,7 +259,9 @@ describe('ContactListInformation', () => {
 					onReload={mockOnReload}
 				/>
 			);
-			expect(screen.getByTestId('metric-waves')).toBeInTheDocument();
+			expect(
+				screen.getByTestId('metric-contactlistpage.summary.waves')
+			).toBeInTheDocument();
 			expect(screen.getByText('2 / 4')).toBeInTheDocument();
 		});
 
@@ -250,8 +272,12 @@ describe('ContactListInformation', () => {
 					onReload={mockOnReload}
 				/>
 			);
-			expect(screen.queryByLabelText('Extend Waves')).not.toBeInTheDocument();
-			expect(screen.queryByLabelText('Complete list')).not.toBeInTheDocument();
+			expect(
+				screen.queryByLabelText('form.contacts.details.actions.extendWaves')
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByLabelText('form.contacts.details.actions.completeList')
+			).not.toBeInTheDocument();
 		});
 
 		it('displays contact count of 0 when not set', () => {
@@ -262,7 +288,9 @@ describe('ContactListInformation', () => {
 					onReload={mockOnReload}
 				/>
 			);
-			const metricsContainer = screen.getByTestId('metric-contacts');
+			const metricsContainer = screen.getByTestId(
+				'metric-contactlistpage.summary.contacts'
+			);
 			expect(metricsContainer).toBeInTheDocument();
 		});
 
@@ -274,7 +302,9 @@ describe('ContactListInformation', () => {
 					onReload={mockOnReload}
 				/>
 			);
-			expect(screen.getByTestId('metric-expiration')).toBeInTheDocument();
+			expect(
+				screen.getByTestId('metric-contactlistpage.summary.expirationdate')
+			).toBeInTheDocument();
 		});
 
 		it('rounds human equivalent value', () => {
@@ -283,7 +313,9 @@ describe('ContactListInformation', () => {
 				<ContactListInformation contactGroup={group} onReload={mockOnReload} />
 			);
 			// The component uses Math.round, so 12.8 becomes 13
-			expect(screen.getByTestId('metric-human-equivalent')).toBeInTheDocument();
+			expect(
+				screen.getByTestId('metric-contactlistpage.summary.humanequivalent')
+			).toBeInTheDocument();
 		});
 
 		it('shows extend/complete actions when EXECUTED and triggers extend', async () => {
@@ -306,7 +338,9 @@ describe('ContactListInformation', () => {
 				/>
 			);
 
-			const extendBtn = screen.getByLabelText('Extend Waves');
+			const extendBtn = screen.getByLabelText(
+				'form.contacts.details.actions.extendWaves'
+			);
 			expect(extendBtn).toBeInTheDocument();
 			fireEvent.click(extendBtn);
 
@@ -323,7 +357,7 @@ describe('ContactListInformation', () => {
 				/>
 			);
 			expect(
-				screen.getByRole('button', { name: 'Reload contact list' })
+				screen.getByRole('button', { name: 'form.contacts.tooltips.reload' })
 			).toBeInTheDocument();
 		});
 
@@ -335,7 +369,7 @@ describe('ContactListInformation', () => {
 				/>
 			);
 			const reloadButton = screen.getByRole('button', {
-				name: 'Reload contact list',
+				name: 'form.contacts.tooltips.reload',
 			});
 			fireEvent.click(reloadButton);
 			expect(mockOnReload).toHaveBeenCalledTimes(1);
@@ -350,7 +384,7 @@ describe('ContactListInformation', () => {
 				/>
 			);
 			const reloadButton = screen.getByRole('button', {
-				name: 'Reload contact list',
+				name: 'form.contacts.tooltips.reload',
 			});
 			fireEvent.click(reloadButton);
 			expect(asyncReload).toHaveBeenCalledTimes(1);
@@ -366,7 +400,9 @@ describe('ContactListInformation', () => {
 					onReload={mockOnReload}
 				/>
 			);
-			expect(screen.getByText('Running')).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.status.running')
+			).toBeInTheDocument();
 		});
 
 		it('handles mixed case status', () => {
@@ -377,7 +413,9 @@ describe('ContactListInformation', () => {
 					onReload={mockOnReload}
 				/>
 			);
-			expect(screen.getByText('Paused')).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.status.paused')
+			).toBeInTheDocument();
 		});
 	});
 });

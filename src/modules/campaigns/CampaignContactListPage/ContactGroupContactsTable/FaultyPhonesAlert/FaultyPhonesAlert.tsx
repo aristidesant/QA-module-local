@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Alert, Button, Group, Loader, Text } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import { IconAlertTriangle } from '@tabler/icons-react';
 import {
 	useGetContactGroupContactsWithPhoneValidationErrors,
@@ -14,6 +15,7 @@ interface FaultyPhonesAlertProps {
 }
 
 const FaultyPhonesAlert = ({ contactGroupId }: FaultyPhonesAlertProps) => {
+	const { t } = useTranslation('campaigns');
 	const [modalOpened, setModalOpened] = useState(false);
 
 	const {
@@ -39,7 +41,7 @@ const FaultyPhonesAlert = ({ contactGroupId }: FaultyPhonesAlertProps) => {
 				className={styles.alert}
 				icon={<Loader size='sm' />}
 			>
-				<Text size='sm'>Checking for phone number validation errors...</Text>
+				<Text size='sm'>{t('contactListPage.faultyPhones.checking')}</Text>
 			</Alert>
 		);
 	}
@@ -80,23 +82,26 @@ const FaultyPhonesAlert = ({ contactGroupId }: FaultyPhonesAlertProps) => {
 					className={styles.alert}
 					icon={<Loader size='sm' />}
 				>
-					<Text size='sm'>Refreshing faulty phones…</Text>
+					<Text size='sm'>{t('contactListPage.faultyPhones.refreshing')}</Text>
 				</Alert>
 			)}
 			<Alert
 				color='orange'
 				variant='light'
-				title='Faulty Phone Numbers'
+				title={t('contactListPage.faultyPhones.title')}
 				className={styles.alert}
 				icon={<IconAlertTriangle size={20} />}
 			>
 				<Group justify='space-between' align='center'>
 					<Text size='sm'>
-						{totalFaultyPhones} faulty phone
-						{totalFaultyPhones === 1 ? '' : ' numbers'} across{' '}
-						{faultyContacts.length} contact
-						{faultyContacts.length === 1 ? '' : 's'}. Calls are skipped until
-						corrected.
+						{t('contactListPage.faultyPhones.message', {
+							total: totalFaultyPhones,
+							unit: t(
+								`contactListPage.faultyPhones.unit_${totalFaultyPhones === 1 ? 'one' : 'other'}`
+							),
+							count: faultyContacts.length,
+							plural: faultyContacts.length === 1 ? '' : 's',
+						})}
 					</Text>
 					<Button
 						variant='light'
@@ -104,7 +109,7 @@ const FaultyPhonesAlert = ({ contactGroupId }: FaultyPhonesAlertProps) => {
 						size='sm'
 						onClick={() => setModalOpened(true)}
 					>
-						View Details
+						{t('contactListPage.faultyPhones.viewDetails')}
 					</Button>
 				</Group>
 			</Alert>

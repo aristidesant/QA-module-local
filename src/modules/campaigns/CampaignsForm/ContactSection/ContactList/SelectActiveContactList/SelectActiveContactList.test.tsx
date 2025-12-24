@@ -12,9 +12,7 @@ describe('SelectActiveContactList', () => {
 		renderWithProviders(<SelectActiveContactList {...defaultProps} />);
 
 		expect(
-			screen.getByText(
-				'Select an active contact list to add as inactive for this campaign.'
-			)
+			screen.getByText('campaigns.form.contacts.list.selectActiveDescription')
 		).toBeInTheDocument();
 	});
 });

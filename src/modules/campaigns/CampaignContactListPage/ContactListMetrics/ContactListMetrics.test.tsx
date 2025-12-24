@@ -112,9 +112,11 @@ describe('ContactListMetrics', () => {
 
 			renderWithProviders(<ContactListMetrics contactGroupId={undefined} />);
 
-			expect(screen.getByText('No Contact List Selected')).toBeInTheDocument();
 			expect(
-				screen.getByText('Provide a valid contact list to see live metrics.')
+				screen.getByText('contactListPage.metrics.alerts.noSelection')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.metrics.alerts.noSelectionDesc')
 			).toBeInTheDocument();
 		});
 
@@ -131,7 +133,9 @@ describe('ContactListMetrics', () => {
 
 			renderWithProviders(<ContactListMetrics contactGroupId={0} />);
 
-			expect(screen.getByText('No Contact List Selected')).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.metrics.alerts.noSelection')
+			).toBeInTheDocument();
 		});
 
 		it('renders alert when contactGroupId is an invalid string', () => {
@@ -147,7 +151,9 @@ describe('ContactListMetrics', () => {
 
 			renderWithProviders(<ContactListMetrics contactGroupId='invalid' />);
 
-			expect(screen.getByText('No Contact List Selected')).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.metrics.alerts.noSelection')
+			).toBeInTheDocument();
 		});
 	});
 
@@ -187,11 +193,11 @@ describe('ContactListMetrics', () => {
 
 			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
 
-			expect(screen.getByText('Unable to load metrics')).toBeInTheDocument();
 			expect(
-				screen.getByText(
-					'Something went wrong while retrieving the latest metrics.'
-				)
+				screen.getByText('contactListPage.metrics.alerts.unableToLoad')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.metrics.alerts.unableToLoadDesc')
 			).toBeInTheDocument();
 		});
 
@@ -209,7 +215,7 @@ describe('ContactListMetrics', () => {
 			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
 
 			expect(
-				screen.getByRole('button', { name: /try again/i })
+				screen.getByRole('button', { name: /contactListPage.status.tryAgain/i })
 			).toBeInTheDocument();
 		});
 
@@ -227,7 +233,9 @@ describe('ContactListMetrics', () => {
 
 			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
 
-			const tryAgainButton = screen.getByRole('button', { name: /try again/i });
+			const tryAgainButton = screen.getByRole('button', {
+				name: /contactListPage.status.tryAgain/i,
+			});
 			await user.click(tryAgainButton);
 
 			expect(mockRefetch).toHaveBeenCalled();
@@ -248,11 +256,11 @@ describe('ContactListMetrics', () => {
 
 			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
 
-			expect(screen.getByText('Metrics not available yet')).toBeInTheDocument();
 			expect(
-				screen.getByText(
-					'We have not received any metrics for this contact list in the selected range. Please check back later.'
-				)
+				screen.getByText('contactListPage.metrics.alerts.notAvailable')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.metrics.alerts.notAvailableDesc')
 			).toBeInTheDocument();
 		});
 	});
@@ -273,51 +281,75 @@ describe('ContactListMetrics', () => {
 		it('renders section title', () => {
 			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
 
-			expect(screen.getByText('Contact List Metrics')).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.metrics.title')
+			).toBeInTheDocument();
 		});
 
 		it('renders time range selector with default value', () => {
 			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
 
-			expect(screen.getByText('Since creation')).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.metrics.timeRanges.since_creation')
+			).toBeInTheDocument();
 		});
 
 		it('renders Total Records stat card', () => {
 			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
 
-			expect(screen.getByText('Total Records')).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.metrics.stats.totalRecords')
+			).toBeInTheDocument();
 			expect(screen.getByText('1,000')).toBeInTheDocument();
 		});
 
 		it('renders Contacted stat card', () => {
 			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
 
-			expect(screen.getByText('Contacted')).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.metrics.stats.contacted')
+			).toBeInTheDocument();
 			expect(screen.getByText('750')).toBeInTheDocument();
 		});
 
 		it('renders AHT stat card when averageHandleTimeSeconds is available', () => {
 			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
 
-			expect(screen.getByText('AHT')).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.metrics.stats.aht')
+			).toBeInTheDocument();
 			expect(screen.getByText('3.0 mins')).toBeInTheDocument();
 		});
 
 		it('renders overview highlights (contact rate, effectiveness rate, no contact rate)', () => {
 			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
 
-			expect(screen.getByText('Contact rate')).toBeInTheDocument();
-			expect(screen.getByText('Effectiveness rate')).toBeInTheDocument();
-			expect(screen.getByText('No contact rate')).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.metrics.stats.contactRate')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.metrics.stats.effectivenessRate')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.metrics.stats.noContactRate')
+			).toBeInTheDocument();
 		});
 
 		it('renders quick stats (Effective, No Effective, No contact, DNC)', () => {
 			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
 
-			expect(screen.getByText('Effective')).toBeInTheDocument();
-			expect(screen.getByText('No Effective')).toBeInTheDocument();
-			expect(screen.getByText('No contact')).toBeInTheDocument();
-			expect(screen.getByText('DNC')).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.metrics.stats.effective')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.metrics.stats.noEffective')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.metrics.stats.noContact')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.metrics.stats.dnc')
+			).toBeInTheDocument();
 		});
 	});
 
@@ -343,10 +375,18 @@ describe('ContactListMetrics', () => {
 			await user.click(select);
 
 			await waitFor(() => {
-				expect(screen.getByText('Last 5 minutes')).toBeInTheDocument();
-				expect(screen.getByText('Last 15 minutes')).toBeInTheDocument();
-				expect(screen.getByText('Last hour')).toBeInTheDocument();
-				expect(screen.getByText('Today')).toBeInTheDocument();
+				expect(
+					screen.getByText('contactListPage.metrics.timeRanges.5m')
+				).toBeInTheDocument();
+				expect(
+					screen.getByText('contactListPage.metrics.timeRanges.15m')
+				).toBeInTheDocument();
+				expect(
+					screen.getByText('contactListPage.metrics.timeRanges.1h')
+				).toBeInTheDocument();
+				expect(
+					screen.getByText('contactListPage.metrics.timeRanges.today')
+				).toBeInTheDocument();
 			});
 		});
 
@@ -358,13 +398,19 @@ describe('ContactListMetrics', () => {
 			await user.click(select);
 
 			await waitFor(() => {
-				expect(screen.getByText('Last 5 minutes')).toBeInTheDocument();
+				expect(
+					screen.getByText('contactListPage.metrics.timeRanges.5m')
+				).toBeInTheDocument();
 			});
 
-			await user.click(screen.getByText('Last 5 minutes'));
+			await user.click(
+				screen.getByText('contactListPage.metrics.timeRanges.5m')
+			);
 
 			await waitFor(() => {
-				expect(screen.getByDisplayValue('Last 5 minutes')).toBeInTheDocument();
+				expect(
+					screen.getByDisplayValue('contactListPage.metrics.timeRanges.5m')
+				).toBeInTheDocument();
 			});
 		});
 	});
@@ -427,7 +473,9 @@ describe('ContactListMetrics', () => {
 				await user.click(sipTrunkButton);
 
 				await waitFor(() => {
-					expect(screen.getByText('SIP Trunk Information')).toBeInTheDocument();
+					expect(
+						screen.getByText('contactListPage.metrics.sipTrunkInfo')
+					).toBeInTheDocument();
 				});
 			}
 		});
@@ -447,7 +495,9 @@ describe('ContactListMetrics', () => {
 
 			renderWithProviders(<ContactListMetrics contactGroupId={123} />);
 
-			expect(screen.getByText('Contact List Metrics')).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.metrics.title')
+			).toBeInTheDocument();
 		});
 
 		it('handles string contactGroupId correctly', () => {
@@ -463,7 +513,9 @@ describe('ContactListMetrics', () => {
 
 			renderWithProviders(<ContactListMetrics contactGroupId='456' />);
 
-			expect(screen.getByText('Contact List Metrics')).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.metrics.title')
+			).toBeInTheDocument();
 		});
 	});
 
@@ -494,7 +546,9 @@ describe('ContactListMetrics', () => {
 
 			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
 
-			expect(screen.getByText('Contact rate')).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.metrics.stats.contactRate')
+			).toBeInTheDocument();
 		});
 
 		it('handles missing AHT metric gracefully', () => {
@@ -518,7 +572,9 @@ describe('ContactListMetrics', () => {
 
 			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
 
-			expect(screen.queryByText('AHT')).not.toBeInTheDocument();
+			expect(
+				screen.queryByText('contactListPage.metrics.stats.aht')
+			).not.toBeInTheDocument();
 		});
 
 		it('handles zero values correctly', () => {
@@ -552,7 +608,9 @@ describe('ContactListMetrics', () => {
 
 			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
 
-			expect(screen.getByText('Total Records')).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.metrics.stats.totalRecords')
+			).toBeInTheDocument();
 			// Zero values should be displayed
 			expect(screen.getAllByText('0').length).toBeGreaterThan(0);
 		});

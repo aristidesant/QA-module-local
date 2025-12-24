@@ -96,26 +96,36 @@ describe('ContactGroupSummary', () => {
 			renderWithProviders(
 				<ContactGroupSummary contactGroup={groupWithoutDescription} />
 			);
-			expect(screen.getByText('No description provided.')).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.summary.noDescription')
+			).toBeInTheDocument();
 		});
 
 		it('renders Active badge when isActive is true', () => {
 			renderWithProviders(
 				<ContactGroupSummary contactGroup={mockContactGroup} />
 			);
-			expect(screen.getByText('Active')).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.summary.active')
+			).toBeInTheDocument();
 		});
 
 		it('renders Inactive badge when isActive is false', () => {
 			const inactiveGroup = { ...mockContactGroup, isActive: false };
 			renderWithProviders(<ContactGroupSummary contactGroup={inactiveGroup} />);
-			expect(screen.getByText('Inactive')).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.summary.inactive')
+			).toBeInTheDocument();
 		});
 
 		it('renders the queue status badge', () => {
 			renderWithProviders(
 				<ContactGroupSummary contactGroup={mockContactGroup} />
 			);
+			// The mock for getQueueStatusConfig returns 'Running' or 'Pending'
+			// But the component uses t(config.label)
+			// So it should be 'Running' or 'Pending' if the mock returns those strings
+			// Wait, let's check the component.
 			expect(screen.getByText('Running')).toBeInTheDocument();
 		});
 
@@ -146,7 +156,9 @@ describe('ContactGroupSummary', () => {
 			renderWithProviders(
 				<ContactGroupSummary contactGroup={groupWithoutSchedule} />
 			);
-			expect(screen.getByText('Not set')).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.summary.notSet')
+			).toBeInTheDocument();
 		});
 
 		it('renders formatted expiration date', () => {
@@ -166,7 +178,9 @@ describe('ContactGroupSummary', () => {
 			renderWithProviders(
 				<ContactGroupSummary contactGroup={groupWithoutExpiration} />
 			);
-			expect(screen.getByText('No expiration defined')).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.summary.noExpiration')
+			).toBeInTheDocument();
 		});
 	});
 
@@ -214,11 +228,21 @@ describe('ContactGroupSummary', () => {
 			renderWithProviders(
 				<ContactGroupSummary contactGroup={mockContactGroup} />
 			);
-			expect(screen.getByText('Contacts')).toBeInTheDocument();
-			expect(screen.getByText('Max calls per contact')).toBeInTheDocument();
-			expect(screen.getByText('Max calls per list')).toBeInTheDocument();
-			expect(screen.getByText('Human equivalent')).toBeInTheDocument();
-			expect(screen.getByText('Waves')).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.summary.contacts')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.summary.maxCallsPerContact')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.summary.maxCallsPerList')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.summary.humanEquivalent')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.summary.waves')
+			).toBeInTheDocument();
 		});
 
 		it('renders waves value', () => {
@@ -234,17 +258,23 @@ describe('ContactGroupSummary', () => {
 			renderWithProviders(
 				<ContactGroupSummary contactGroup={mockContactGroup} />
 			);
-			expect(screen.getByTestId('card-details')).toBeInTheDocument();
-			expect(screen.getByText('Contact list metadata')).toBeInTheDocument();
+			expect(
+				screen.getByTestId('card-contactlistpage.summary.details')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.summary.metadata')
+			).toBeInTheDocument();
 		});
 
 		it('renders Metrics card with correct props', () => {
 			renderWithProviders(
 				<ContactGroupSummary contactGroup={mockContactGroup} />
 			);
-			expect(screen.getByTestId('card-metrics')).toBeInTheDocument();
 			expect(
-				screen.getByText('Contact list performance metrics')
+				screen.getByTestId('card-contactlistpage.summary.metrics')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('contactListPage.summary.performanceMetrics')
 			).toBeInTheDocument();
 		});
 	});

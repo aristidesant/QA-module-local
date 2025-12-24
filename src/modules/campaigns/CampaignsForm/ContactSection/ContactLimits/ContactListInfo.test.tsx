@@ -22,22 +22,28 @@ describe('ContactListInfo', () => {
 			renderWithProviders(<ContactListInfo listName='Test List' />);
 
 			expect(screen.getByText('Test List')).toBeInTheDocument();
-			expect(screen.getByText('Contact List Name')).toBeInTheDocument();
+			expect(
+				screen.getByText('campaigns.form.contacts.info.nameLabel')
+			).toBeInTheDocument();
 		});
 
 		it('renders empty state when no list name provided', () => {
 			renderWithProviders(<ContactListInfo listName='' />);
 
-			expect(screen.getByText('Name Required')).toBeInTheDocument();
 			expect(
-				screen.getByText('Click to add a name for this contact list')
+				screen.getByText('campaigns.form.contacts.info.nameRequired')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('campaigns.form.contacts.info.clickToAddName')
 			).toBeInTheDocument();
 		});
 
 		it('renders empty state when list name is only whitespace', () => {
 			renderWithProviders(<ContactListInfo listName='   ' />);
 
-			expect(screen.getByText('Name Required')).toBeInTheDocument();
+			expect(
+				screen.getByText('campaigns.form.contacts.info.nameRequired')
+			).toBeInTheDocument();
 		});
 	});
 
@@ -98,7 +104,7 @@ describe('ContactListInfo', () => {
 			);
 
 			await user.click(
-				screen.getByText('Click to add a name for this contact list')
+				screen.getByText('campaigns.form.contacts.info.clickToAddName')
 			);
 
 			expect(screen.getByRole('textbox')).toBeInTheDocument();
@@ -116,7 +122,7 @@ describe('ContactListInfo', () => {
 			);
 
 			await user.click(
-				screen.getByText('Click to add a name for this contact list')
+				screen.getByText('campaigns.form.contacts.info.clickToAddName')
 			);
 
 			expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
@@ -361,9 +367,7 @@ describe('ContactListInfo', () => {
 			await user.click(editButton!);
 
 			expect(
-				screen.getByText(
-					'Allowed characters: A-Z, a-z, 0-9, spaces, and hyphens. Minimum 3 characters. Maximum 50 characters.'
-				)
+				screen.getByText('campaigns.form.contacts.info.nameDescription')
 			).toBeInTheDocument();
 		});
 	});
@@ -379,7 +383,9 @@ describe('ContactListInfo', () => {
 			);
 
 			expect(
-				screen.getByRole('button', { name: /add expiration date/i })
+				screen.getByRole('button', {
+					name: 'campaigns.form.contacts.info.addExpiration',
+				})
 			).toBeInTheDocument();
 		});
 
@@ -387,7 +393,9 @@ describe('ContactListInfo', () => {
 			renderWithProviders(<ContactListInfo listName='Test List' />);
 
 			expect(
-				screen.queryByRole('button', { name: /add expiration date/i })
+				screen.queryByRole('button', {
+					name: 'campaigns.form.contacts.info.addExpiration',
+				})
 			).not.toBeInTheDocument();
 		});
 
@@ -401,7 +409,9 @@ describe('ContactListInfo', () => {
 				/>
 			);
 
-			expect(screen.getByText(/Expires: Jan 15, 2025/)).toBeInTheDocument();
+			expect(
+				screen.getByText(/campaigns.form.contacts.info.expires: Jan 15, 2025/)
+			).toBeInTheDocument();
 		});
 
 		it('opens date picker popover when clicking expiration button', async () => {
@@ -415,12 +425,14 @@ describe('ContactListInfo', () => {
 			);
 
 			await user.click(
-				screen.getByRole('button', { name: /add expiration date/i })
+				screen.getByRole('button', {
+					name: 'campaigns.form.contacts.info.addExpiration',
+				})
 			);
 
 			await waitFor(() => {
 				expect(
-					screen.getByText('Select an expiration date')
+					screen.getByText('campaigns.form.contacts.info.selectExpiration')
 				).toBeInTheDocument();
 			});
 		});
@@ -436,21 +448,23 @@ describe('ContactListInfo', () => {
 			);
 
 			await user.click(
-				screen.getByRole('button', { name: /add expiration date/i })
+				screen.getByRole('button', {
+					name: 'campaigns.form.contacts.info.addExpiration',
+				})
 			);
 
 			await waitFor(() => {
 				expect(
-					screen.getByText('Select an expiration date')
+					screen.getByText('campaigns.form.contacts.info.selectExpiration')
 				).toBeInTheDocument();
 			});
 
 			// Find the Close button by its text
-			await user.click(screen.getByText('Close'));
+			await user.click(screen.getByText('common.close'));
 
 			await waitFor(() => {
 				expect(
-					screen.queryByText('Select an expiration date')
+					screen.queryByText('campaigns.form.contacts.info.selectExpiration')
 				).not.toBeInTheDocument();
 			});
 		});
@@ -519,7 +533,9 @@ describe('ContactListInfo', () => {
 			);
 
 			// The mock returns 'Jan 15, 2025' for any date
-			expect(screen.getByText(/Expires:/)).toBeInTheDocument();
+			expect(
+				screen.getByText(/campaigns.form.contacts.info.expires/)
+			).toBeInTheDocument();
 		});
 	});
 });

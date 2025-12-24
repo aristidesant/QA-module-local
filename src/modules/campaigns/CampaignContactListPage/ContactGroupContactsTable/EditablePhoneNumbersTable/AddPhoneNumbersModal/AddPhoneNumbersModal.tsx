@@ -9,6 +9,7 @@ import {
 	Tooltip,
 } from '@mantine/core';
 import { IconPlus, IconX, IconDeviceFloppy } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import { notifications } from '@mantine/notifications';
 import { useCreateContactPhoneNumbers } from '~/queries/contactsQueries';
 import styles from './AddPhoneNumbersModal.module.css';
@@ -30,6 +31,7 @@ const AddPhoneNumbersModal: React.FC<AddPhoneNumbersModalProps> = ({
 	onClose,
 	onSaved,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const [phones, setPhones] = useState<string[]>(['']);
 	const createMutation = useCreateContactPhoneNumbers();
 
@@ -77,28 +79,38 @@ const AddPhoneNumbersModal: React.FC<AddPhoneNumbersModalProps> = ({
 			{
 				onSuccess: () => {
 					notifications.show({
-						title: 'Added',
-						message: `${cleanedPhones.length} phone number(s) added successfully`,
+						title: t('contactListPage.actions.success'),
+						message: t(
+							'contactListPage.phoneNumbersTable.addModal.notifications.added',
+							{
+								count: cleanedPhones.length,
+							}
+						),
 						color: 'green',
 					});
 					onSaved();
 				},
 				onError: (error) => {
 					notifications.show({
-						title: 'Error',
+						title: t('contactListPage.status.error'),
 						message: getErrorMessage(error),
 						color: 'red',
 					});
 				},
 			}
 		);
-	}, [canSave, createMutation, contactId, cleanedPhones, onSaved]);
+	}, [canSave, createMutation, contactId, cleanedPhones, onSaved, t]);
 
 	return (
-		<Modal opened onClose={onClose} title='Add Phone Numbers' size='md'>
+		<Modal
+			opened
+			onClose={onClose}
+			title={t('contactListPage.phoneNumbersTable.addModal.title')}
+			size='md'
+		>
 			<Group gap='xs' mb='xs'>
 				<Text size='xs' c='dimmed'>
-					Enter Dominican Republic numbers (+1 809/829/849 XXXXXXX).
+					{t('contactListPage.phoneNumbersTable.addModal.hint')}
 				</Text>
 			</Group>
 			<Group gap='xs' className={styles.rows}>
@@ -114,7 +126,13 @@ const AddPhoneNumbersModal: React.FC<AddPhoneNumbersModalProps> = ({
 								placeholder='+18095551234'
 								size='xs'
 								className={styles.input}
-								error={isInvalid ? 'Invalid DR number' : undefined}
+								error={
+									isInvalid
+										? t(
+												'contactListPage.phoneNumbersTable.addModal.invalidNumber'
+											)
+										: undefined
+								}
 							/>
 							<ActionIcon
 								variant='subtle'
@@ -139,20 +157,33 @@ const AddPhoneNumbersModal: React.FC<AddPhoneNumbersModalProps> = ({
 			</Group>
 			{hasDuplicates && (
 				<Text size='xs' c='red' mt='xs'>
-					Duplicate numbers detected.
+					{t('contactListPage.phoneNumbersTable.addModal.duplicateNumbers')}
 				</Text>
 			)}
 			{invalidPhones.length > 0 && !hasDuplicates && (
 				<Text size='xs' c='red' mt='xs'>
-					{invalidPhones.length} invalid Dominican Republic number
-					{invalidPhones.length === 1 ? '' : 's'} detected.
+					{t(
+						'contactListPage.phoneNumbersTable.addModal.invalidNumbersDetected',
+						{
+							count: invalidPhones.length,
+							plural: invalidPhones.length === 1 ? '' : 's',
+						}
+					)}
 				</Text>
 			)}
 			<Group justify='space-between' mt='md'>
 				<Button variant='subtle' size='xs' onClick={onClose}>
-					Cancel
+					{t('contactListPage.phoneNumbersTable.addModal.cancel')}
 				</Button>
-				<Tooltip label={canSave ? 'Save numbers' : 'Resolve errors to save'}>
+				<Tooltip
+					label={
+						canSave
+							? t('contactListPage.phoneNumbersTable.addModal.tooltips.save')
+							: t(
+									'contactListPage.phoneNumbersTable.addModal.tooltips.resolveErrors'
+								)
+					}
+				>
 					<Button
 						variant='filled'
 						leftSection={<IconDeviceFloppy size={14} />}
@@ -162,7 +193,7 @@ const AddPhoneNumbersModal: React.FC<AddPhoneNumbersModalProps> = ({
 						loading={createMutation.isPending}
 						disabled={!canSave}
 					>
-						Save
+						{t('contactListPage.phoneNumbersTable.addModal.save')}
 					</Button>
 				</Tooltip>
 			</Group>

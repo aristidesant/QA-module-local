@@ -34,11 +34,19 @@ describe('CapacityProgress', () => {
 	it('renders correctly', () => {
 		renderWithProviders(<CapacityProgress campaignId='1' />);
 
-		expect(screen.getByText('Human Equivalent Usage')).toBeInTheDocument();
+		expect(
+			screen.getByText('campaigns.form.contacts.list.capacity.title')
+		).toBeInTheDocument();
 		expect(screen.getByText('50%')).toBeInTheDocument(); // 5/10
-		expect(screen.getByText('Used')).toBeInTheDocument();
-		expect(screen.getByText('Remaining')).toBeInTheDocument();
-		expect(screen.getByText('Total')).toBeInTheDocument();
+		expect(
+			screen.getByText('campaigns.form.contacts.list.capacity.used')
+		).toBeInTheDocument();
+		expect(
+			screen.getByText('campaigns.form.contacts.list.capacity.remaining')
+		).toBeInTheDocument();
+		expect(
+			screen.getByText('campaigns.form.contacts.list.capacity.total')
+		).toBeInTheDocument();
 	});
 
 	it('renders nothing if total capacity is 0 (mocked return)', () => {

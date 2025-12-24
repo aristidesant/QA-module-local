@@ -128,7 +128,9 @@ describe('ContactLimits', () => {
 				<ContactLimits contactGroup={{ name: 'Test Group' }} campaignId={1} />
 			);
 
-			expect(screen.getByText(/Human Equivalent:/)).toBeInTheDocument();
+			expect(
+				screen.getByText(/campaigns.form.contacts.limits.humanEquivalentLabel/)
+			).toBeInTheDocument();
 			expect(screen.getByRole('slider')).toBeInTheDocument();
 		});
 
@@ -138,10 +140,12 @@ describe('ContactLimits', () => {
 			);
 
 			expect(
-				screen.getByRole('button', { name: /cancel/i })
+				screen.getByRole('button', { name: /common.cancel/i })
 			).toBeInTheDocument();
 			expect(
-				screen.getByRole('button', { name: /save contact list/i })
+				screen.getByRole('button', {
+					name: /campaigns.form.contacts.limits.actions.save/i,
+				})
 			).toBeInTheDocument();
 		});
 
@@ -154,7 +158,9 @@ describe('ContactLimits', () => {
 			);
 
 			expect(
-				screen.getByRole('button', { name: /update contact list/i })
+				screen.getByRole('button', {
+					name: /campaigns.form.contacts.limits.actions.update/i,
+				})
 			).toBeInTheDocument();
 		});
 
@@ -217,7 +223,9 @@ describe('ContactLimits', () => {
 			);
 
 			// Total is 20, used is 5+3=8, so available is 12
-			expect(screen.getByText(/Available: 12/)).toBeInTheDocument();
+			expect(
+				screen.getByText(/campaigns.form.contacts.limits.availableLabel/)
+			).toHaveTextContent(/12/);
 		});
 
 		it('uses contactGroup humanEquivalent as initial value', () => {
@@ -228,7 +236,9 @@ describe('ContactLimits', () => {
 				/>
 			);
 
-			expect(screen.getByText(/Human Equivalent: 5/)).toBeInTheDocument();
+			expect(
+				screen.getByText(/campaigns.form.contacts.limits.humanEquivalentLabel/)
+			).toHaveTextContent(/5/);
 		});
 
 		it('defaults to 1 when no humanEquivalent provided', () => {
@@ -236,7 +246,9 @@ describe('ContactLimits', () => {
 				<ContactLimits contactGroup={{ name: 'Test Group' }} campaignId={1} />
 			);
 
-			expect(screen.getByText(/Human Equivalent: 1/)).toBeInTheDocument();
+			expect(
+				screen.getByText(/campaigns.form.contacts.limits.humanEquivalentLabel/)
+			).toHaveTextContent(/1/);
 		});
 	});
 
@@ -253,7 +265,7 @@ describe('ContactLimits', () => {
 				/>
 			);
 
-			await user.click(screen.getByRole('button', { name: /cancel/i }));
+			await user.click(screen.getByRole('button', { name: /common.cancel/i }));
 
 			expect(onComplete).toHaveBeenCalledTimes(1);
 		});
@@ -304,7 +316,9 @@ describe('ContactLimits', () => {
 				);
 
 			expect(screen.getByTestId('list-name')).toHaveTextContent('First Group');
-			expect(screen.getByText(/Human Equivalent: 2/)).toBeInTheDocument();
+			expect(
+				screen.getByText(/campaigns.form.contacts.limits.humanEquivalentLabel/)
+			).toHaveTextContent(/2/);
 
 			rerenderWithProviders(
 				<ContactLimits
@@ -316,37 +330,17 @@ describe('ContactLimits', () => {
 			expect(screen.getByTestId('list-name')).toHaveTextContent(
 				'Updated Group'
 			);
-			expect(screen.getByText(/Human Equivalent: 4/)).toBeInTheDocument();
+			expect(
+				screen.getByText(/campaigns.form.contacts.limits.humanEquivalentLabel/)
+			).toHaveTextContent(/4/);
 		});
 	});
 
 	describe('Scheduler capacity full alert', () => {
 		it('shows alert when scheduler is full for new contact group', async () => {
 			// Override mock to return full scheduler
-			const { useGetContactGroups } = await import(
-				'~/queries/contactGroupQueries'
-			);
-			vi.mocked(useGetContactGroups).mockReturnValue({
-				data: {
-					data: [
-						{ id: 1, name: 'Group 1', humanEquivalent: 10 },
-						{ id: 2, name: 'Group 2', humanEquivalent: 10 },
-					],
-				},
-			} as any);
-
-			renderWithProviders(
-				<ContactLimits contactGroup={{ name: 'Test Group' }} campaignId={1} />
-			);
-
-			expect(screen.getByText(/Scheduler Capacity Full/)).toBeInTheDocument();
-		});
-
-		it('disables Save button when scheduler is full', async () => {
-			// Override mock to return full scheduler
-			const { useGetContactGroups } = await import(
-				'~/queries/contactGroupQueries'
-			);
+			const { useGetContactGroups } =
+				await import('~/queries/contactGroupQueries');
 			vi.mocked(useGetContactGroups).mockReturnValue({
 				data: {
 					data: [
@@ -361,15 +355,38 @@ describe('ContactLimits', () => {
 			);
 
 			expect(
-				screen.getByRole('button', { name: /save contact list/i })
+				screen.getByText(/campaigns.form.contacts.limits.capacityFull.title/)
+			).toBeInTheDocument();
+		});
+
+		it('disables Save button when scheduler is full', async () => {
+			// Override mock to return full scheduler
+			const { useGetContactGroups } =
+				await import('~/queries/contactGroupQueries');
+			vi.mocked(useGetContactGroups).mockReturnValue({
+				data: {
+					data: [
+						{ id: 1, name: 'Group 1', humanEquivalent: 10 },
+						{ id: 2, name: 'Group 2', humanEquivalent: 10 },
+					],
+				},
+			} as any);
+
+			renderWithProviders(
+				<ContactLimits contactGroup={{ name: 'Test Group' }} campaignId={1} />
+			);
+
+			expect(
+				screen.getByRole('button', {
+					name: /campaigns.form.contacts.limits.actions.save/i,
+				})
 			).toBeDisabled();
 		});
 
 		it('disables slider when scheduler is full', async () => {
 			// Override mock to return full scheduler
-			const { useGetContactGroups } = await import(
-				'~/queries/contactGroupQueries'
-			);
+			const { useGetContactGroups } =
+				await import('~/queries/contactGroupQueries');
 			vi.mocked(useGetContactGroups).mockReturnValue({
 				data: {
 					data: [
@@ -393,9 +410,8 @@ describe('ContactLimits', () => {
 
 	describe('Loading state', () => {
 		it('shows loading overlay when processing file', async () => {
-			const { useProcessContactGroupFile } = await import(
-				'~/queries/contactGroupFilesQueries'
-			);
+			const { useProcessContactGroupFile } =
+				await import('~/queries/contactGroupFilesQueries');
 			vi.mocked(useProcessContactGroupFile).mockReturnValue({
 				mutateAsync: vi.fn(),
 				isPending: true,
@@ -412,9 +428,8 @@ describe('ContactLimits', () => {
 		});
 
 		it('shows loading overlay when updating contact group', async () => {
-			const { useUpdateContactGroup } = await import(
-				'~/queries/contactGroupQueries'
-			);
+			const { useUpdateContactGroup } =
+				await import('~/queries/contactGroupQueries');
 			vi.mocked(useUpdateContactGroup).mockReturnValue({
 				mutateAsync: vi.fn(),
 				isPending: true,
@@ -433,9 +448,8 @@ describe('ContactLimits', () => {
 		});
 
 		it('disables buttons when loading', async () => {
-			const { useProcessContactGroupFile } = await import(
-				'~/queries/contactGroupFilesQueries'
-			);
+			const { useProcessContactGroupFile } =
+				await import('~/queries/contactGroupFilesQueries');
 			vi.mocked(useProcessContactGroupFile).mockReturnValue({
 				mutateAsync: vi.fn(),
 				isPending: true,
@@ -446,18 +460,21 @@ describe('ContactLimits', () => {
 				<ContactLimits contactGroup={{ name: 'Test Group' }} campaignId={1} />
 			);
 
-			expect(screen.getByRole('button', { name: /cancel/i })).toBeDisabled();
 			expect(
-				screen.getByRole('button', { name: /save contact list/i })
+				screen.getByRole('button', { name: /common.cancel/i })
+			).toBeDisabled();
+			expect(
+				screen.getByRole('button', {
+					name: /campaigns.form.contacts.limits.actions.save/i,
+				})
 			).toBeDisabled();
 		});
 	});
 
 	describe('Without active scheduler', () => {
 		it('does not render CapacityProgress when no activeSchedule', async () => {
-			const { useCampaignActiveSchedule } = await import(
-				'~/queries/schedulerQueries'
-			);
+			const { useCampaignActiveSchedule } =
+				await import('~/queries/schedulerQueries');
 			vi.mocked(useCampaignActiveSchedule).mockReturnValue({
 				data: null,
 			} as any);

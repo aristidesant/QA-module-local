@@ -17,6 +17,7 @@ import {
 	IconTrash,
 } from '@tabler/icons-react';
 import type { ColumnDef } from '@tanstack/react-table';
+import { useTranslation } from 'react-i18next';
 import { notifications } from '@mantine/notifications';
 import { modals } from '@mantine/modals';
 import BaseTable from '~/components/BaseTable';
@@ -48,6 +49,7 @@ function EditablePhoneNumbersTable({
 	phoneNumbers,
 	onAfterUpdate,
 }: EditablePhoneNumbersTableProps) {
+	const { t } = useTranslation('campaigns');
 	const { canPerformAction } = usePermissions();
 	const canUpdateContacts = canPerformAction(
 		ModuleEnum.CONTACTS,
@@ -79,17 +81,18 @@ function EditablePhoneNumbersTable({
 		(row: RowShape) => {
 			if (!canUpdateContacts) return;
 			modals.openConfirmModal({
-				title: 'Delete Phone Number',
+				title: t('contactListPage.phoneNumbersTable.deleteConfirm.title'),
 				children: (
 					<Text size='sm'>
-						Are you sure you want to delete the phone number{' '}
-						<Text span fw={700}>
-							{row.phoneNumber}
-						</Text>
-						? This action cannot be undone.
+						{t('contactListPage.phoneNumbersTable.deleteConfirm.message', {
+							number: row.phoneNumber,
+						})}
 					</Text>
 				),
-				labels: { confirm: 'Delete', cancel: 'Cancel' },
+				labels: {
+					confirm: t('contactListPage.phoneNumbersTable.deleteConfirm.confirm'),
+					cancel: t('contactListPage.phoneNumbersTable.deleteConfirm.cancel'),
+				},
 				confirmProps: { color: 'red' },
 				onConfirm: () => {
 					deleteMutation.mutate(
@@ -97,8 +100,12 @@ function EditablePhoneNumbersTable({
 						{
 							onSuccess: () => {
 								notifications.show({
-									title: 'Deleted',
-									message: 'Phone number deleted successfully',
+									title: t(
+										'contactListPage.phoneNumbersTable.notifications.deleted'
+									),
+									message: t(
+										'contactListPage.phoneNumbersTable.notifications.deletedMessage'
+									),
 									color: 'green',
 								});
 								// Invalidate queries to refresh everything including faulty list
@@ -119,11 +126,15 @@ function EditablePhoneNumbersTable({
 							},
 							onError: (error) => {
 								notifications.show({
-									title: 'Delete Failed',
+									title: t(
+										'contactListPage.phoneNumbersTable.notifications.deleteFailed'
+									),
 									message:
 										error instanceof Error
 											? error.message
-											: 'Failed to delete phone number',
+											: t(
+													'contactListPage.phoneNumbersTable.notifications.deleteFailed'
+												),
 									color: 'red',
 								});
 							},
@@ -139,6 +150,7 @@ function EditablePhoneNumbersTable({
 			deleteMutation,
 			queryClient,
 			onAfterUpdate,
+			t,
 		]
 	);
 
@@ -173,8 +185,10 @@ function EditablePhoneNumbersTable({
 						queryKey: ['contact', String(contactId)],
 					});
 					notifications.show({
-						title: 'Updated',
-						message: 'Phone number updated successfully',
+						title: t('contactListPage.phoneNumbersTable.notifications.updated'),
+						message: t(
+							'contactListPage.phoneNumbersTable.notifications.updatedMessage'
+						),
 						color: 'green',
 					});
 					setEditingId(null);
@@ -182,7 +196,7 @@ function EditablePhoneNumbersTable({
 				},
 				onError: (error) => {
 					notifications.show({
-						title: 'Error',
+						title: t('contactListPage.status.error'),
 						message: getErrorMessage(error),
 						color: 'red',
 					});
@@ -198,6 +212,7 @@ function EditablePhoneNumbersTable({
 		queryClient,
 		onAfterUpdate,
 		canUpdateContacts,
+		t,
 	]);
 
 	const handlePhonesAdded = useCallback(() => {
@@ -240,7 +255,9 @@ function EditablePhoneNumbersTable({
 				value={value}
 				onChange={onChange}
 				size='xs'
-				placeholder='Enter phone'
+				placeholder={t(
+					'contactListPage.faultyPhones.modal.placeholders.enterPhone'
+				)}
 				className={styles.editInput}
 				autoFocus
 			/>
@@ -251,7 +268,7 @@ function EditablePhoneNumbersTable({
 		const baseColumns: ColumnDef<RowShape>[] = [
 			{
 				accessorKey: 'phoneNumber',
-				header: 'Phone Number',
+				header: t('contactListPage.phoneNumbersTable.columns.phoneNumber'),
 				size: 160,
 				cell: ({ row }) => {
 					const original = row.original;
@@ -301,7 +318,7 @@ function EditablePhoneNumbersTable({
 			},
 			{
 				accessorKey: 'status',
-				header: 'Status',
+				header: t('contactListPage.phoneNumbersTable.columns.status'),
 				size: 90,
 				cell: ({ getValue }) => {
 					const status = getValue() as string;
@@ -318,7 +335,7 @@ function EditablePhoneNumbersTable({
 			},
 			{
 				accessorKey: 'retryCounter',
-				header: 'Retries',
+				header: t('contactListPage.phoneNumbersTable.columns.retries'),
 				size: 70,
 				cell: ({ getValue }) => (
 					<Text size='xs'>{(getValue() as number) ?? 0}</Text>
@@ -329,7 +346,7 @@ function EditablePhoneNumbersTable({
 		if (canUpdateContacts) {
 			baseColumns.push({
 				id: 'actions',
-				header: 'Actions',
+				header: t('contactListPage.phoneNumbersTable.columns.actions'),
 				size: 90,
 				cell: ({ row }) => {
 					const original = row.original;
@@ -338,7 +355,9 @@ function EditablePhoneNumbersTable({
 						<Group gap={4} className={styles.actions}>
 							{!isEditing && (
 								<>
-									<Tooltip label='Edit phone number'>
+									<Tooltip
+										label={t('contactListPage.phoneNumbersTable.tooltips.edit')}
+									>
 										<ActionIcon
 											variant='subtle'
 											color='blue'
@@ -348,7 +367,11 @@ function EditablePhoneNumbersTable({
 											<IconPencil size={14} />
 										</ActionIcon>
 									</Tooltip>
-									<Tooltip label='Delete phone number'>
+									<Tooltip
+										label={t(
+											'contactListPage.phoneNumbersTable.tooltips.delete'
+										)}
+									>
 										<ActionIcon
 											variant='subtle'
 											color='red'
@@ -398,13 +421,14 @@ function EditablePhoneNumbersTable({
 		deleteMutation.isPending,
 		editingId,
 		canUpdateContacts,
+		t,
 	]);
 
 	return (
 		<>
 			{canUpdateContacts && (
 				<Group justify='flex-end' className={styles.addBar}>
-					<Tooltip label='Add phone numbers'>
+					<Tooltip label={t('contactListPage.phoneNumbersTable.tooltips.add')}>
 						<Button
 							variant='light'
 							color='blue'
@@ -412,7 +436,7 @@ function EditablePhoneNumbersTable({
 							leftSection={<IconPlus size={14} />}
 							onClick={() => setAddModalOpen(true)}
 						>
-							Add
+							{t('contactListPage.phoneNumbersTable.add')}
 						</Button>
 					</Tooltip>
 				</Group>
@@ -422,7 +446,7 @@ function EditablePhoneNumbersTable({
 				columns={columns}
 				enablePagination={false}
 				density='compact'
-				emptyMessage='No phone numbers available'
+				emptyMessage={t('contactListPage.phoneNumbersTable.empty')}
 				className={styles.subTableRoot}
 			/>
 			{canUpdateContacts && addModalOpen && (

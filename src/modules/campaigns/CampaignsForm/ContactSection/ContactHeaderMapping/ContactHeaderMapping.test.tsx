@@ -40,10 +40,14 @@ describe('ContactHeaderMapping', () => {
 		);
 
 		expect(
-			screen.getByText('Map CSV headers to system fields')
+			screen.getByText('campaigns.form.contacts.headerMapping.description')
 		).toBeInTheDocument();
-		expect(screen.getByText('CSV columns')).toBeInTheDocument();
-		expect(screen.getByText('System fields')).toBeInTheDocument();
+		expect(
+			screen.getByText('campaigns.form.contacts.headerMapping.csvColumns')
+		).toBeInTheDocument();
+		expect(
+			screen.getByText('campaigns.form.contacts.headerMapping.systemFields')
+		).toBeInTheDocument();
 	});
 
 	it('displays document columns', () => {

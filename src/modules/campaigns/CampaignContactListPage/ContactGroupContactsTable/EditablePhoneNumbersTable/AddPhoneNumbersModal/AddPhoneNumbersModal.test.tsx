@@ -35,8 +35,16 @@ describe('AddPhoneNumbersModal', () => {
 		await user.clear(input);
 		await user.type(input, '123');
 
-		expect(screen.getByText('Invalid DR number')).toBeInTheDocument();
-		expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled();
+		expect(
+			screen.getByText(
+				'contactListPage.phoneNumbersTable.addModal.invalidNumber'
+			)
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole('button', {
+				name: 'contactListPage.phoneNumbersTable.addModal.save',
+			})
+		).toBeDisabled();
 	});
 
 	it('submits cleaned phone numbers', async () => {
@@ -59,7 +67,11 @@ describe('AddPhoneNumbersModal', () => {
 		await user.clear(input);
 		await user.type(input, '+18095551234');
 
-		await user.click(screen.getByRole('button', { name: 'Save' }));
+		await user.click(
+			screen.getByRole('button', {
+				name: 'contactListPage.phoneNumbersTable.addModal.save',
+			})
+		);
 
 		expect(mutateMock).toHaveBeenCalledWith(
 			{ contactId: 22, phones: ['+18095551234'] },
@@ -84,7 +96,15 @@ describe('AddPhoneNumbersModal', () => {
 		await user.type(inputs[0], '+18095551234');
 		await user.type(inputs[1], '+18095551234');
 
-		expect(screen.getByText('Duplicate numbers detected.')).toBeInTheDocument();
-		expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled();
+		expect(
+			screen.getByText(
+				'contactListPage.phoneNumbersTable.addModal.duplicateNumbers'
+			)
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole('button', {
+				name: 'contactListPage.phoneNumbersTable.addModal.save',
+			})
+		).toBeDisabled();
 	});
 });

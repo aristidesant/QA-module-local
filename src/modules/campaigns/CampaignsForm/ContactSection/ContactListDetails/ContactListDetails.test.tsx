@@ -105,11 +105,21 @@ describe('ContactListDetails', () => {
 			</MemoryRouter>
 		);
 
-		expect(screen.getByText('Contact List')).toBeInTheDocument();
+		expect(
+			screen.getByText('campaigns.form.contacts.details.actions.title')
+		).toBeInTheDocument();
 		expect(screen.getByText('Test list')).toBeInTheDocument();
 		expect(screen.getByText('Test description')).toBeInTheDocument();
-		expect(screen.queryByLabelText('Extend Waves')).not.toBeInTheDocument();
-		expect(screen.queryByLabelText('Complete list')).not.toBeInTheDocument();
+		expect(
+			screen.queryByLabelText(
+				'campaigns.form.contacts.details.actions.extendWaves'
+			)
+		).not.toBeInTheDocument();
+		expect(
+			screen.queryByLabelText(
+				'campaigns.form.contacts.details.actions.completeList'
+			)
+		).not.toBeInTheDocument();
 	});
 
 	it('hides actions card when permissions not available', () => {
@@ -127,7 +137,9 @@ describe('ContactListDetails', () => {
 			</MemoryRouter>
 		);
 
-		expect(screen.queryByText('Actions')).not.toBeInTheDocument();
+		expect(
+			screen.queryByText('campaigns.form.contacts.details.actions.title')
+		).not.toBeInTheDocument();
 	});
 
 	it('disables toggle and clean queue when queue status is COMPLETED', () => {
@@ -147,8 +159,12 @@ describe('ContactListDetails', () => {
 			</MemoryRouter>
 		);
 
-		const toggle = screen.getByLabelText('Deactivate contact list');
-		const clean = screen.getByLabelText('Clean queue');
+		const toggle = screen.getByLabelText(
+			'campaigns.form.contacts.details.actions.deactivate'
+		);
+		const clean = screen.getByLabelText(
+			'campaigns.form.contacts.details.actions.cleanQueue'
+		);
 
 		expect(toggle).toBeDisabled();
 		expect(clean).toBeDisabled();
@@ -184,7 +200,9 @@ describe('ContactListDetails', () => {
 			</MemoryRouter>
 		);
 
-		const extendBtn = screen.getByLabelText('Extend Waves');
+		const extendBtn = screen.getByLabelText(
+			'campaigns.form.contacts.details.actions.extendWaves'
+		);
 		expect(extendBtn).toBeInTheDocument();
 
 		extendBtn.click();

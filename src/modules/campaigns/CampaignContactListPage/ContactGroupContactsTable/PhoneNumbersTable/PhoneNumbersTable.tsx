@@ -1,12 +1,14 @@
 import BaseTable from '~/components/BaseTable';
 import { usePhoneNumbersColumns } from './usePhoneNumbersColumns';
 import type { PhoneEntry } from '~/models/ContactsModel';
+import { useTranslation } from 'react-i18next';
 
 interface PhoneNumbersTableProps {
 	phoneNumbers: PhoneEntry[];
 }
 
 function PhoneNumbersTable({ phoneNumbers }: PhoneNumbersTableProps) {
+	const { t } = useTranslation('campaigns');
 	const columns = usePhoneNumbersColumns();
 
 	return (
@@ -14,7 +16,7 @@ function PhoneNumbersTable({ phoneNumbers }: PhoneNumbersTableProps) {
 			data={phoneNumbers}
 			columns={columns}
 			density='compact'
-			emptyMessage='No phone numbers available'
+			emptyMessage={t('contactListPage.phoneNumbersTable.empty')}
 		/>
 	);
 }

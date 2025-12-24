@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Alert, Button, Group, Modal, Stack, Text } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import { IconUpload } from '@tabler/icons-react';
 import styles from './AppendContactsModal.module.css';
 import { getErrorMessage } from '~/utils/httpClient';
@@ -19,6 +20,7 @@ const AppendContactsModal = ({
 	isUploading,
 	isAppending,
 }: AppendContactsModalProps) => {
+	const { t } = useTranslation('campaigns');
 	const [file, setFile] = useState<File | null>(null);
 	const [isDragging, setIsDragging] = useState(false);
 	const [uploadedFileId, setUploadedFileId] = useState<number | null>(null);
@@ -74,7 +76,7 @@ const AppendContactsModal = ({
 		<Modal
 			opened
 			onClose={onClose}
-			title='Append Contacts via CSV'
+			title={t('contactListPage.contactsTable.appendModal.title')}
 			size='md'
 			centered
 		>
@@ -94,25 +96,37 @@ const AppendContactsModal = ({
 					/>
 					<label htmlFor='append-contact-file' className={styles.uploadLabel}>
 						<IconUpload size={28} />
-						<Text fw={500}>{file ? 'Change CSV File' : 'Select CSV File'}</Text>
+						<Text fw={500}>
+							{file
+								? t('contactListPage.contactsTable.appendModal.changeFile')
+								: t('contactListPage.contactsTable.appendModal.selectFile')}
+						</Text>
 						<Text size='xs' c='dimmed'>
-							Drag & drop or click to browse
+							{t('contactListPage.contactsTable.appendModal.dragAndDrop')}
 						</Text>
 						{file && !uploadedFileId && (
 							<Text size='xs' c='blue'>
-								Selected: {file.name}
+								{t('contactListPage.contactsTable.appendModal.selected', {
+									name: file.name,
+								})}
 							</Text>
 						)}
 						{uploadedFileId && (
 							<Text size='xs' c='green'>
-								File saved. ID: {uploadedFileId}
+								{t('contactListPage.contactsTable.appendModal.fileSaved', {
+									id: uploadedFileId,
+								})}
 							</Text>
 						)}
 					</label>
 				</div>
 				{uploadedFileId && (
-					<Alert color='green' variant='light' title='Step 2: Append to list'>
-						Click "Append to List" to add these contacts to the current list.
+					<Alert
+						color='green'
+						variant='light'
+						title={t('contactListPage.contactsTable.appendModal.step2Title')}
+					>
+						{t('contactListPage.contactsTable.appendModal.step2Message')}
 					</Alert>
 				)}
 				{errorMessage && (
@@ -126,7 +140,7 @@ const AppendContactsModal = ({
 						onClick={onClose}
 						disabled={isUploading || isAppending}
 					>
-						Cancel
+						{t('common:actions.cancel')}
 					</Button>
 					{!uploadedFileId ? (
 						<Button
@@ -135,7 +149,7 @@ const AppendContactsModal = ({
 							loading={isUploading}
 							disabled={!file || isUploading}
 						>
-							Save File
+							{t('contactListPage.contactsTable.appendModal.saveFile')}
 						</Button>
 					) : (
 						<Button
@@ -145,7 +159,7 @@ const AppendContactsModal = ({
 							loading={isAppending}
 							disabled={isAppending}
 						>
-							Append to List
+							{t('contactListPage.contactsTable.appendModal.appendToList')}
 						</Button>
 					)}
 				</Group>

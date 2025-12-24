@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useCallback, useState } from 'react';
 import { LoadingOverlay, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
+import { useTranslation } from 'react-i18next';
 import styles from './ContactGroupContactsTable.module.css';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import { ContactDetails } from '~/modules/campaigns/CampaignsForm/ContactSection/ContactDetails';
@@ -37,6 +38,7 @@ interface ContactGroupContactsTableProps {
 export const ContactGroupContactsTable: React.FC<
 	ContactGroupContactsTableProps
 > = ({ contactGroupId, campaignId }) => {
+	const { t } = useTranslation('campaigns');
 	const { setRightComponent } = useCampaignsStore();
 	const { canPerformAction } = usePermissions();
 
@@ -81,15 +83,17 @@ export const ContactGroupContactsTable: React.FC<
 	const appendMutation = useAppendContactGroupFile({
 		onSuccess: () => {
 			notifications.show({
-				title: 'Contacts appended',
-				message: 'New contacts were added to the list.',
+				title: t('contactListPage.contactsTable.notifications.appended.title'),
+				message: t(
+					'contactListPage.contactsTable.notifications.appended.message'
+				),
 				color: 'green',
 			});
 			void groupContactsQuery.refetch();
 		},
 		onError: (error) => {
 			notifications.show({
-				title: 'Error',
+				title: t('common:status.error'),
 				message: getErrorMessage(error),
 				color: 'red',
 			});
@@ -107,15 +111,16 @@ export const ContactGroupContactsTable: React.FC<
 
 	// Step 1: Upload CSV and return file id
 	const handleUploadCsv = async (file: File | null) => {
-		if (!file) throw new Error('No file provided');
+		if (!file)
+			throw new Error(t('contactListPage.contactsTable.errors.noFileProvided'));
 		if (!canExportContacts)
-			throw new Error('You do not have permission to import contacts.');
+			throw new Error(t('contactListPage.contactsTable.errors.noImportPerm'));
 		if (!campaignId) {
-			throw new Error('Campaign ID is required to upload file.');
+			throw new Error(t('contactListPage.contactsTable.errors.noCampaignId'));
 		}
 		const isCsv = file.name.toLowerCase().endsWith('.csv');
 		if (!isCsv) {
-			throw new Error('Only CSV files are supported.');
+			throw new Error(t('contactListPage.contactsTable.errors.onlyCsv'));
 		}
 		const uploaded = await uploadMutation.mutateAsync({ file, campaignId });
 		return { contactGroupFileId: uploaded.contactGroupFileId };
@@ -124,7 +129,7 @@ export const ContactGroupContactsTable: React.FC<
 	// Step 2: Append uploaded file to list (schema ignored)
 	const handleAppendUploadedFile = async (contactGroupFileId: number) => {
 		if (!canExportContacts) {
-			throw new Error('You do not have permission to import contacts.');
+			throw new Error(t('contactListPage.contactsTable.errors.noImportPerm'));
 		}
 		await appendMutation.mutateAsync({
 			contactGroupId,
@@ -188,17 +193,26 @@ export const ContactGroupContactsTable: React.FC<
 	const handleDeleteContact = useCallback(
 		(contact: Contact) => {
 			modals.openConfirmModal({
-				title: 'Delete Contact',
-				children: `Are you sure you want to delete ${contact.firstName} ${contact.lastName}? This action cannot be undone.`,
-				labels: { confirm: 'Delete', cancel: 'Cancel' },
+				title: t('contactListPage.contactsTable.deleteModal.title'),
+				children: t('contactListPage.contactsTable.deleteModal.message', {
+					name: `${contact.firstName} ${contact.lastName}`,
+				}),
+				labels: {
+					confirm: t('common:actions.delete'),
+					cancel: t('common:actions.cancel'),
+				},
 				confirmProps: { color: 'red' },
 				onConfirm: () => {
 					setDeletingContactId(contact.id);
 					deleteContactMutation.mutate(contact.id.toString(), {
 						onSuccess: () => {
 							notifications.show({
-								title: 'Deleted',
-								message: 'Contact deleted successfully.',
+								title: t(
+									'contactListPage.contactsTable.notifications.deleted.title'
+								),
+								message: t(
+									'contactListPage.contactsTable.notifications.deleted.message'
+								),
 								color: 'green',
 							});
 							setDeletingContactId(null);
@@ -206,7 +220,7 @@ export const ContactGroupContactsTable: React.FC<
 						},
 						onError: (error) => {
 							notifications.show({
-								title: 'Error',
+								title: t('common:status.error'),
 								message: getErrorMessage(error),
 								color: 'red',
 							});
@@ -216,7 +230,7 @@ export const ContactGroupContactsTable: React.FC<
 				},
 			});
 		},
-		[deleteContactMutation, groupContactsQuery]
+		[deleteContactMutation, groupContactsQuery, t]
 	);
 
 	const columns = useContactColumns(
@@ -244,8 +258,8 @@ export const ContactGroupContactsTable: React.FC<
 				name: `${contact.firstName || ''} ${contact.lastName || ''}`.trim(),
 				phone: primaryPhone,
 				email: primaryEmail,
-				location: 'N/A',
-				language: 'Spanish',
+				location: t('contactDetails.mockData.location'),
+				language: t('contactDetails.mockData.language'),
 				initials: getInitials(contact.firstName || '', contact.lastName || ''),
 				phones: contact.phoneNumbers || [],
 				engagementLevel: 87,
@@ -299,19 +313,23 @@ export const ContactGroupContactsTable: React.FC<
 				URL.revokeObjectURL(url);
 
 				notifications.show({
-					title: 'Export Successful',
-					message: 'Contacts exported successfully',
+					title: t(
+						'contactListPage.contactsTable.notifications.exported.title'
+					),
+					message: t(
+						'contactListPage.contactsTable.notifications.exported.message'
+					),
 					color: 'green',
 				});
 			}
 		} catch (error) {
 			notifications.show({
-				title: 'Error',
+				title: t('common:status.error'),
 				message: getErrorMessage(error),
 				color: 'red',
 			});
 		}
-	}, [exportQuery, contactGroupId, canExportContacts]);
+	}, [exportQuery, contactGroupId, canExportContacts, t]);
 
 	// Cleanup right panel on unmount
 	useEffect(() => {
@@ -343,7 +361,9 @@ export const ContactGroupContactsTable: React.FC<
 				{isLoading ? (
 					<ContactListSkeleton />
 				) : error ? (
-					<div>Error: {getErrorMessage(error)}</div>
+					<div>
+						{t('common:status.error')}: {getErrorMessage(error)}
+					</div>
 				) : (
 					<BaseTable
 						data={contacts}
@@ -363,14 +383,14 @@ export const ContactGroupContactsTable: React.FC<
 								</div>
 							) : (
 								<Text size='sm' c='dimmed' p='md'>
-									No phone numbers available
+									{t('contactListPage.contactsTable.noPhoneNumbers')}
 								</Text>
 							)
 						}
 						emptyMessage={
 							contactFilters.hasActiveFilters
-								? 'No contacts found matching the selected filters.'
-								: 'No contacts available in this group.'
+								? t('contactListPage.contactsTable.emptyFiltered')
+								: t('contactListPage.contactsTable.empty')
 						}
 						getRowClassName={getRowClassName}
 					/>
@@ -394,7 +414,7 @@ export const ContactGroupContactsTable: React.FC<
 				onItemsPerPageChange={handleItemsPerPageChange}
 				searchTerm=''
 				isLoading={isLoading}
-				itemLabel='contacts'
+				itemLabel={t('contactListPage.contactsTable.itemLabel')}
 			/>
 
 			{canExportContacts && showAppendModal && (
