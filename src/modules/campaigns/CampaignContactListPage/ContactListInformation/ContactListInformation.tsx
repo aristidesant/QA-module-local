@@ -9,7 +9,7 @@ import {
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import type ContactGroup from '~/models/ContactGroup';
-import { MetricInfoCard } from '~/modules/campaigns/CampaignLiveMetricPage/components/MetricInfoCard/MetricInfoCard';
+import { MetricInfoCard } from '~/components/MetricInfoCard';
 import classes from './ContactListInformation.module.css';
 import {
 	useCompleteContactGroup,

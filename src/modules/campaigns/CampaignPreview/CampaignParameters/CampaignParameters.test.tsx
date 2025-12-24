@@ -37,7 +37,7 @@ describe('CampaignParameters', () => {
 			refetch: vi.fn(),
 		});
 		const { container } = renderWithProviders(<CampaignParameters />);
-		expect(screen.getByText('Schedule')).toBeInTheDocument();
+		expect(screen.getByText('preview.parameters.title')).toBeInTheDocument();
 		expect(
 			container.querySelector('.mantine-Skeleton-root')
 		).toBeInTheDocument();
@@ -59,10 +59,16 @@ describe('CampaignParameters', () => {
 			})
 		);
 		renderWithProviders(<CampaignParameters />);
-		expect(screen.getByText('Active windows')).toBeInTheDocument();
-		expect(screen.getByText('Call handling')).toBeInTheDocument();
-		expect(screen.getByText(/Up to 3 times/)).toBeInTheDocument();
-		expect(screen.getByText('Enabled')).toBeInTheDocument();
+		expect(
+			screen.getByText('preview.parameters.activeWindows')
+		).toBeInTheDocument();
+		expect(
+			screen.getByText('preview.parameters.callHandling')
+		).toBeInTheDocument();
+		expect(
+			screen.getByText(/preview.parameters.upToTimes/)
+		).toBeInTheDocument();
+		expect(screen.getByText('preview.parameters.enabled')).toBeInTheDocument();
 	});
 
 	it('shows empty state when no schedules and no parameters', () => {
@@ -78,9 +84,7 @@ describe('CampaignParameters', () => {
 		);
 		renderWithProviders(<CampaignParameters />);
 		expect(
-			screen.getByText(
-				'No schedules or call handling rules configured for this campaign.'
-			)
+			screen.getByText('preview.parameters.noSchedules')
 		).toBeInTheDocument();
 	});
 
@@ -97,7 +101,9 @@ describe('CampaignParameters', () => {
 			})
 		);
 		renderWithProviders(<CampaignParameters />);
-		const button = screen.getByLabelText('Refresh parameters');
+		const button = screen.getByLabelText(
+			'preview.parameters.refreshParameters'
+		);
 		expect(button).toBeInTheDocument();
 		fireEvent.click(button);
 		expect(refetch).toHaveBeenCalled();
@@ -116,7 +122,9 @@ describe('CampaignParameters', () => {
 			})
 		);
 		renderWithProviders(<CampaignParameters />);
-		const button = screen.getByLabelText('Campaign is completed');
+		const button = screen.getByLabelText(
+			'preview.parameters.campaignCompleted'
+		);
 		expect(button).toBeInTheDocument();
 		expect(button).toBeDisabled();
 	});
@@ -154,7 +162,7 @@ describe('CampaignParameters', () => {
 			selector({ selectedCampaign: undefined })
 		);
 		renderWithProviders(<CampaignParameters />);
-		expect(screen.getByText('Schedule')).toBeInTheDocument();
+		expect(screen.getByText('preview.parameters.title')).toBeInTheDocument();
 	});
 
 	it('formats times in 12-hour format with AM/PM', () => {
@@ -209,12 +217,20 @@ describe('CampaignParameters', () => {
 			})
 		);
 		renderWithProviders(<CampaignParameters />);
-		expect(screen.getByText('Voicemail detection')).toBeInTheDocument();
-		expect(screen.getByText('Call retries')).toBeInTheDocument();
-		expect(screen.getByText('Max concurrent calls')).toBeInTheDocument();
-		expect(screen.getByText('Answer machine detection')).toBeInTheDocument();
-		expect(screen.getByText('Enabled')).toBeInTheDocument();
-		expect(screen.getByText('Disabled')).toBeInTheDocument();
+		expect(
+			screen.getByText('preview.parameters.voicemailDetection')
+		).toBeInTheDocument();
+		expect(
+			screen.getByText('preview.parameters.callRetries')
+		).toBeInTheDocument();
+		expect(
+			screen.getByText('preview.parameters.maxConcurrentCalls')
+		).toBeInTheDocument();
+		expect(
+			screen.getByText('preview.parameters.answerMachineDetection')
+		).toBeInTheDocument();
+		expect(screen.getByText('preview.parameters.enabled')).toBeInTheDocument();
+		expect(screen.getByText('preview.parameters.disabled')).toBeInTheDocument();
 	});
 
 	it('shows parameter values correctly', () => {
@@ -236,8 +252,10 @@ describe('CampaignParameters', () => {
 			})
 		);
 		renderWithProviders(<CampaignParameters />);
-		expect(screen.getByText('Up to 7 times')).toBeInTheDocument();
-		expect(screen.getByText('15 calls')).toBeInTheDocument();
+		expect(
+			screen.getByText('preview.parameters.upToTimes')
+		).toBeInTheDocument();
+		expect(screen.getByText('preview.parameters.calls')).toBeInTheDocument();
 	});
 
 	it('handles multiple schedules on same day correctly', () => {
@@ -275,7 +293,7 @@ describe('CampaignParameters', () => {
 			})
 		);
 		renderWithProviders(<CampaignParameters />);
-		expect(screen.getByText('3 days')).toBeInTheDocument();
+		expect(screen.getByText('3 preview.parameters.day')).toBeInTheDocument();
 	});
 
 	it('displays call handling settings count correctly', () => {
@@ -298,7 +316,9 @@ describe('CampaignParameters', () => {
 			})
 		);
 		renderWithProviders(<CampaignParameters />);
-		expect(screen.getByText('3 settings')).toBeInTheDocument();
+		expect(
+			screen.getByText('3 preview.parameters.setting')
+		).toBeInTheDocument();
 	});
 
 	it('displays singular for single setting', () => {
@@ -319,7 +339,9 @@ describe('CampaignParameters', () => {
 			})
 		);
 		renderWithProviders(<CampaignParameters />);
-		expect(screen.getByText('1 setting')).toBeInTheDocument();
+		expect(
+			screen.getByText('1 preview.parameters.setting')
+		).toBeInTheDocument();
 	});
 
 	it('filters out undefined parameters', () => {
@@ -342,9 +364,15 @@ describe('CampaignParameters', () => {
 			})
 		);
 		renderWithProviders(<CampaignParameters />);
-		expect(screen.getByText('Call retries')).toBeInTheDocument();
-		expect(screen.queryByText('Voicemail detection')).not.toBeInTheDocument();
-		expect(screen.queryByText('Max concurrent calls')).not.toBeInTheDocument();
+		expect(
+			screen.getByText('preview.parameters.callRetries')
+		).toBeInTheDocument();
+		expect(
+			screen.queryByText('preview.parameters.voicemailDetection')
+		).not.toBeInTheDocument();
+		expect(
+			screen.queryByText('preview.parameters.maxConcurrentCalls')
+		).not.toBeInTheDocument();
 	});
 
 	it('shows correct title and description in card header', () => {
@@ -359,9 +387,9 @@ describe('CampaignParameters', () => {
 			})
 		);
 		renderWithProviders(<CampaignParameters />);
-		expect(screen.getByText('Schedule')).toBeInTheDocument();
+		expect(screen.getByText('preview.parameters.title')).toBeInTheDocument();
 		expect(
-			screen.getByText('Active dialing windows and call handling limits.')
+			screen.getByText('preview.parameters.description')
 		).toBeInTheDocument();
 	});
 
@@ -377,7 +405,9 @@ describe('CampaignParameters', () => {
 			})
 		);
 		renderWithProviders(<CampaignParameters />);
-		const button = screen.getByLabelText('Refresh parameters');
+		const button = screen.getByLabelText(
+			'preview.parameters.refreshParameters'
+		);
 		expect(button).toBeDisabled();
 	});
 
@@ -394,7 +424,9 @@ describe('CampaignParameters', () => {
 			})
 		);
 		renderWithProviders(<CampaignParameters />);
-		const button = screen.getByLabelText('Refresh parameters');
+		const button = screen.getByLabelText(
+			'preview.parameters.refreshParameters'
+		);
 		fireEvent.click(button);
 		expect(refetch).toHaveBeenCalled();
 	});

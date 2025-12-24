@@ -33,7 +33,7 @@ const CleanQueueButton: React.FC<CleanQueueButtonProps> = ({
 		mutate({ campaignId, contactGroupId: contactGroupId! });
 	}, [campaignId, contactGroupId, isValid, mutate]);
 
-	const { t } = useTranslation();
+	const { t } = useTranslation('campaign.detail');
 
 	return (
 		<Button
@@ -46,7 +46,7 @@ const CleanQueueButton: React.FC<CleanQueueButtonProps> = ({
 			onClick={handleClick}
 			{...rest}
 		>
-			{t('campaigns.form.contacts.details.confirm.cleanQueueConfirm')}
+			{t('preview.cleanQueue.cleanQueueConfirm')}
 		</Button>
 	);
 };

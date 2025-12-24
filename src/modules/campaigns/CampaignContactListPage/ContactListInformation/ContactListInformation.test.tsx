@@ -9,17 +9,20 @@ import {
 } from '~/queries/contactGroupQueries';
 import { modals } from '@mantine/modals';
 
-vi.mock(
-	'~/modules/campaigns/CampaignLiveMetricPage/components/MetricInfoCard/MetricInfoCard',
-	() => ({
-		MetricInfoCard: ({ label, value }: { label: string; value: string }) => (
-			<div data-testid={`metric-${label.toLowerCase().replace(/\s+/g, '-')}`}>
-				<span data-testid='metric-label'>{label}</span>
-				<span data-testid='metric-value'>{value}</span>
-			</div>
-		),
-	})
-);
+vi.mock('~/components/MetricInfoCard', () => ({
+	MetricInfoCard: ({
+		label,
+		value,
+	}: {
+		label: string;
+		value: string | number;
+	}) => (
+		<div data-testid={`metric-${label.toLowerCase().replace(/\s+/g, '-')}`}>
+			<span data-testid='metric-label'>{label}</span>
+			<span data-testid='metric-value'>{value}</span>
+		</div>
+	),
+}));
 
 vi.mock('~/queries/contactGroupQueries', () => ({
 	useExtendContactGroupWaves: vi.fn(),

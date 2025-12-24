@@ -26,10 +26,12 @@ describe('CampaignContactOutcomeSummary', () => {
 		renderWithProviders(
 			<CampaignContactOutcomeSummary campaign={{ id: 1 } as any} />
 		);
-		expect(screen.getByLabelText('Refresh data')).toBeInTheDocument();
+		expect(
+			screen.getByLabelText('preview.outcomeSummary.refreshData')
+		).toBeInTheDocument();
 		// Ensure skeleton text is rendered by checking for no outcome text
 		expect(
-			screen.queryByText('No outcome data available')
+			screen.queryByText('preview.outcomeSummary.noData')
 		).not.toBeInTheDocument();
 	});
 
@@ -43,7 +45,9 @@ describe('CampaignContactOutcomeSummary', () => {
 		renderWithProviders(
 			<CampaignContactOutcomeSummary campaign={{ id: 1 } as any} />
 		);
-		expect(screen.getByText('No outcome data available')).toBeInTheDocument();
+		expect(
+			screen.getByText('preview.outcomeSummary.noData')
+		).toBeInTheDocument();
 	});
 
 	it('renders legend and allows selecting dispositions', () => {
@@ -71,10 +75,14 @@ describe('CampaignContactOutcomeSummary', () => {
 			name: /View Effective Contact/i,
 		});
 		fireEvent.click(viewButton);
-		expect(screen.getByText('Back to overview')).toBeInTheDocument();
+		expect(
+			screen.getByText('preview.outcomeSummary.backToOverview')
+		).toBeInTheDocument();
 
 		// Click refresh button to trigger refetch
-		const refreshButton = screen.getByLabelText('Refresh data');
+		const refreshButton = screen.getByLabelText(
+			'preview.outcomeSummary.refreshData'
+		);
 		fireEvent.click(refreshButton);
 		expect(refetch).toHaveBeenCalled();
 	});
@@ -148,16 +156,20 @@ describe('CampaignContactOutcomeSummary', () => {
 			name: /View Effective Contact/i,
 		});
 		fireEvent.click(viewButton);
-		expect(screen.getByText('Back to overview')).toBeInTheDocument();
+		expect(
+			screen.getByText('preview.outcomeSummary.backToOverview')
+		).toBeInTheDocument();
 
 		// Click back button
 		const backButton = screen.getByRole('button', {
-			name: /Back to overview/i,
+			name: /preview.outcomeSummary.backToOverview/i,
 		});
 		fireEvent.click(backButton);
 
 		// Should no longer show parent badge
-		expect(screen.queryByText(/Back to overview/)).not.toBeInTheDocument();
+		expect(
+			screen.queryByText(/preview.outcomeSummary.backToOverview/)
+		).not.toBeInTheDocument();
 	});
 
 	it('disables refresh button when campaign is completed', () => {
@@ -177,7 +189,9 @@ describe('CampaignContactOutcomeSummary', () => {
 			/>
 		);
 
-		const refreshButton = screen.getByLabelText('Refresh data');
+		const refreshButton = screen.getByLabelText(
+			'preview.outcomeSummary.refreshData'
+		);
 		expect(refreshButton).toBeDisabled();
 	});
 
@@ -249,7 +263,9 @@ describe('CampaignContactOutcomeSummary', () => {
 			refetch: vi.fn(),
 		});
 		renderWithProviders(<CampaignContactOutcomeSummary campaign={undefined} />);
-		expect(screen.getByLabelText('Refresh data')).toBeInTheDocument();
+		expect(
+			screen.getByLabelText('preview.outcomeSummary.refreshData')
+		).toBeInTheDocument();
 	});
 
 	it('handles disposition selection and subsequent refetch correctly', () => {
@@ -273,7 +289,9 @@ describe('CampaignContactOutcomeSummary', () => {
 		});
 		fireEvent.click(viewButton);
 
-		const refreshButton = screen.getByLabelText('Refresh data');
+		const refreshButton = screen.getByLabelText(
+			'preview.outcomeSummary.refreshData'
+		);
 		fireEvent.click(refreshButton);
 
 		expect(refetch).toHaveBeenCalled();
@@ -289,9 +307,11 @@ describe('CampaignContactOutcomeSummary', () => {
 			<CampaignContactOutcomeSummary campaign={{ id: 1 } as any} />
 		);
 
-		expect(screen.getByText('Outcome Summary')).toBeInTheDocument();
 		expect(
-			screen.getByText('Contact distribution by result.')
+			screen.getByText('preview.outcomeSummary.title')
+		).toBeInTheDocument();
+		expect(
+			screen.getByText('preview.outcomeSummary.description')
 		).toBeInTheDocument();
 	});
 });

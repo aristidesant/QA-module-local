@@ -121,5 +121,74 @@
 				}
 			}
 		}
+	},
+	"preview": {
+		"overview": {
+			"title": "Resumen de campaña",
+			"description": "Estado y preparación operativa",
+			"progress": "Progreso",
+			"agent": "Agente",
+			"owner": "Propietario",
+			"created": "Creado",
+			"lastUpdated": "Última actualización",
+			"notAssigned": "No asignado",
+			"unknown": "Desconocido",
+			"operationalHealth": "Salud Operacional",
+			"actions": {
+				"pause": "Pausar",
+				"resume": "Reanudar",
+				"start": "Iniciar",
+				"completed": "Completado",
+				"failed": "Fallido"
+			},
+			"notifications": {
+				"success": "Éxito",
+				"campaignActioned": "Campaña {{action}} exitosamente",
+				"error": "Error",
+				"failedToAction": "No se pudo {{action}} la campaña",
+				"unavailable": "No disponible",
+				"noContactList": "No hay lista de contactos disponible para esta campaña. Agregue una antes de intentar gestionar la entrega."
+			}
+		},
+		"outcomeSummary": {
+			"title": "Resumen de Resultados",
+			"description": "Distribución de contactos por resultado.",
+			"refreshData": "Actualizar datos",
+			"backToOverview": "Volver al resumen",
+			"noData": "No hay datos de resultados disponibles",
+			"noDataDescription": "Los datos aparecerán aquí una vez que se realicen llamadas",
+			"todaysCalls": "Llamadas de hoy"
+		},
+		"parameters": {
+			"title": "Horario",
+			"description": "Ventanas de marcado activas y límites de manejo de llamadas.",
+			"refreshParameters": "Actualizar parámetros",
+			"campaignCompleted": "La campaña está completada",
+			"activeWindows": "Ventanas activas",
+			"day_one": "día",
+			"day_other": "días",
+			"callHandling": "Manejo de llamadas",
+			"setting_one": "configuración",
+			"setting_other": "configuraciones",
+			"voicemailDetection": "Detección de buzón de voz",
+			"callRetries": "Reintentos de llamada",
+			"upToTimes": "Hasta {{count}} veces",
+			"maxConcurrentCalls": "Máximo de llamadas concurrentes",
+			"calls": "{{count}} llamadas",
+			"answerMachineDetection": "Detección de contestador automático",
+			"enabled": "Habilitado",
+			"disabled": "Deshabilitado",
+			"noSchedules": "No hay horarios o reglas de manejo de llamadas configuradas para esta campaña."
+		},
+		"assignedAgents": {
+			"title": "Agentes Asignados",
+			"description": "Estos agentes están actualmente vinculados a esta campaña.",
+			"loadingAgent": "Cargando agente",
+			"noAgents": "Aún no hay agentes asignados",
+			"noAgentsDescription": "Asigne agentes para comenzar a ejecutar campañas"
+		},
+		"cleanQueue": {
+			"cleanQueueConfirm": "Limpiar Cola"
+		}
 	}
 }

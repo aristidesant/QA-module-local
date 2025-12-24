@@ -68,7 +68,6 @@ const WelcomeCard = React.lazy(
 	() => import('./modules/overview/WelcomeCard/WelcomeCard')
 );
 import { LoginForm } from './modules/auth/LoginForm';
-import CampaignLiveMetricPage from './modules/campaigns/CampaignLiveMetricPage/CampaignLiveMetricPage';
 import { PermissionEnum } from './constants/PermissionEnum';
 const KnowledgeBasePage = React.lazy(
 	() => import('./modules/knowledge-bases/KnowledgeBasePage/KnowledgeBasePage')
@@ -236,20 +235,6 @@ const router = createBrowserRouter([
 									}
 								>
 									<CampaignContactListPage />
-								</Suspense>
-							</ModuleGuard>
-						),
-					},
-					{
-						path: 'campaigns/metrics/:campaignId',
-						element: (
-							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
-								<Suspense
-									fallback={
-										<SuspenseFallback message='Loading campaign metrics...' />
-									}
-								>
-									<CampaignLiveMetricPage />
 								</Suspense>
 							</ModuleGuard>
 						),

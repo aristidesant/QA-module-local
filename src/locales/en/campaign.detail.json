@@ -121,5 +121,74 @@
 				}
 			}
 		}
+	},
+	"preview": {
+		"overview": {
+			"title": "Campaign overview",
+			"description": "Status and operational readiness",
+			"progress": "Progress",
+			"agent": "Agent",
+			"owner": "Owner",
+			"created": "Created",
+			"lastUpdated": "Last updated",
+			"notAssigned": "Not assigned",
+			"unknown": "Unknown",
+			"operationalHealth": "Operational Health",
+			"actions": {
+				"pause": "Pause",
+				"resume": "Resume",
+				"start": "Start",
+				"completed": "Completed",
+				"failed": "Failed"
+			},
+			"notifications": {
+				"success": "Success",
+				"campaignActioned": "Campaign {{action}} successfully",
+				"error": "Error",
+				"failedToAction": "Failed to {{action}} campaign",
+				"unavailable": "Unavailable",
+				"noContactList": "No contact list is available for this campaign. Add one before attempting to manage delivery."
+			}
+		},
+		"outcomeSummary": {
+			"title": "Outcome Summary",
+			"description": "Contact distribution by result.",
+			"refreshData": "Refresh data",
+			"backToOverview": "Back to overview",
+			"noData": "No outcome data available",
+			"noDataDescription": "Data will appear here once calls are made",
+			"todaysCalls": "Today's calls"
+		},
+		"parameters": {
+			"title": "Schedule",
+			"description": "Active dialing windows and call handling limits.",
+			"refreshParameters": "Refresh parameters",
+			"campaignCompleted": "Campaign is completed",
+			"activeWindows": "Active windows",
+			"day_one": "day",
+			"day_other": "days",
+			"callHandling": "Call handling",
+			"setting_one": "setting",
+			"setting_other": "settings",
+			"voicemailDetection": "Voicemail detection",
+			"callRetries": "Call retries",
+			"upToTimes": "Up to {{count}} times",
+			"maxConcurrentCalls": "Max concurrent calls",
+			"calls": "{{count}} calls",
+			"answerMachineDetection": "Answer machine detection",
+			"enabled": "Enabled",
+			"disabled": "Disabled",
+			"noSchedules": "No schedules or call handling rules configured for this campaign."
+		},
+		"assignedAgents": {
+			"title": "Assigned Agents",
+			"description": "These agents are currently linked to this campaign.",
+			"loadingAgent": "Loading agent",
+			"noAgents": "No agents assigned yet",
+			"noAgentsDescription": "Assign agents to start running campaigns"
+		},
+		"cleanQueue": {
+			"cleanQueueConfirm": "Clean Queue"
+		}
 	}
 }
