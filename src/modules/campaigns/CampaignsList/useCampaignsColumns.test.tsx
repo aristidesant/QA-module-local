@@ -1,11 +1,18 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import {
 	useCampaignsColumns,
 	getCampaignStatusInfo,
 } from './useCampaignsColumns';
 import type { Campaign } from '~/models/CampaignsModel';
+
+// Mock react-i18next
+vi.mock('react-i18next', () => ({
+	useTranslation: () => ({
+		t: (key: string) => key,
+	}),
+}));
 
 const mockNavigate = vi.fn();
 
@@ -80,11 +87,7 @@ describe('useCampaignsColumns', () => {
 			return <div>{(col as any).cell({ row: { original: campaign } })}</div>;
 		};
 
-		return render(
-			<MantineProvider>
-				<TestComponent />
-			</MantineProvider>
-		);
+		return renderWithProviders(<TestComponent />);
 	};
 
 	it('renders name cell with hover card details', () => {
@@ -95,13 +98,13 @@ describe('useCampaignsColumns', () => {
 	it('renders draft badge for draft campaigns', () => {
 		renderCell('name', draftCampaign);
 		expect(screen.getByText('Draft Campaign')).toBeInTheDocument();
-		expect(screen.getByText('Draft')).toBeInTheDocument();
+		expect(screen.getByText('columns.draft')).toBeInTheDocument();
 	});
 
 	it('does not render draft badge for non-draft campaigns', () => {
 		renderCell('name', sampleCampaign);
 		expect(screen.getByText('Sample')).toBeInTheDocument();
-		expect(screen.queryByText('Draft')).not.toBeInTheDocument();
+		expect(screen.queryByText('columns.draft')).not.toBeInTheDocument();
 	});
 
 	it('renders type column correctly for OUTBOUND', () => {
@@ -141,37 +144,35 @@ describe('useCampaignsColumns', () => {
 			);
 		};
 
-		render(
-			<MantineProvider>
-				<TestComponent />
-			</MantineProvider>
-		);
+		renderWithProviders(<TestComponent />);
 
 		// Edit
-		fireEvent.click(screen.getByLabelText('Edit campaign'));
+		fireEvent.click(screen.getByLabelText('columns.editCampaign'));
 		expect(onEdit).toHaveBeenCalledWith(sampleCampaign);
 
 		// View
-		fireEvent.click(screen.getByLabelText('View campaign'));
+		fireEvent.click(screen.getByLabelText('columns.viewCampaign'));
 		expect(onView).toHaveBeenCalledWith(sampleCampaign);
 
 		// Test Call inline action
-		const testCallBtn = screen.getByLabelText('Test Call');
+		const testCallBtn = screen.getByLabelText('columns.testCall');
 		fireEvent.click(testCallBtn);
 		expect(onTestCall).toHaveBeenCalledWith(sampleCampaign);
 
 		// Clone inline action
-		const cloneBtn = screen.getByLabelText('Clone campaign');
+		const cloneBtn = screen.getByLabelText('columns.cloneCampaign');
 		fireEvent.click(cloneBtn);
 		expect(onClone).toHaveBeenCalledWith(sampleCampaign);
 
 		// Delete inline action
-		const deleteBtn = screen.getByLabelText('Delete campaign');
+		const deleteBtn = screen.getByLabelText('columns.deleteCampaign');
 		fireEvent.click(deleteBtn);
 		expect(onDelete).toHaveBeenCalledWith(sampleCampaign);
 
 		// Continue Draft should NOT be visible for non-draft campaigns
-		expect(screen.queryByLabelText('Continue draft')).not.toBeInTheDocument();
+		expect(
+			screen.queryByLabelText('columns.continueSetup')
+		).not.toBeInTheDocument();
 	});
 
 	it('renders Continue Draft button for draft campaigns', async () => {
@@ -191,13 +192,9 @@ describe('useCampaignsColumns', () => {
 			);
 		};
 
-		render(
-			<MantineProvider>
-				<TestComponent />
-			</MantineProvider>
-		);
+		renderWithProviders(<TestComponent />);
 
-		const continueDraftBtn = screen.getByLabelText('Continue setup');
+		const continueDraftBtn = screen.getByLabelText('columns.continueSetup');
 		expect(continueDraftBtn).toBeInTheDocument();
 
 		fireEvent.click(continueDraftBtn);
@@ -210,7 +207,9 @@ describe('useCampaignsColumns', () => {
 		});
 		renderCell('actions', sampleCampaign);
 
-		expect(screen.queryByLabelText('Clone campaign')).not.toBeInTheDocument();
+		expect(
+			screen.queryByLabelText('columns.cloneCampaign')
+		).not.toBeInTheDocument();
 		mockCanPerformAction.mockReturnValue(true);
 	});
 
@@ -225,14 +224,10 @@ describe('useCampaignsColumns', () => {
 			);
 		};
 
-		render(
-			<MantineProvider>
-				<TestComponent />
-			</MantineProvider>
-		);
+		renderWithProviders(<TestComponent />);
 
-		const viewButton = screen.getByLabelText('View campaign');
-		const editButton = screen.getByLabelText('Edit campaign');
+		const viewButton = screen.getByLabelText('columns.viewCampaign');
+		const editButton = screen.getByLabelText('columns.editCampaign');
 		// Menu removed; check order contains these inline icons in order
 
 		// Verify DOM order: View should come before Edit, Edit should come before Menu
@@ -240,7 +235,7 @@ describe('useCampaignsColumns', () => {
 			viewButton.compareDocumentPosition(editButton) &
 				Node.DOCUMENT_POSITION_FOLLOWING
 		).toBeTruthy();
-		const testCallButton = screen.getByLabelText('Test Call');
+		const testCallButton = screen.getByLabelText('columns.testCall');
 		expect(
 			editButton.compareDocumentPosition(testCallButton) &
 				Node.DOCUMENT_POSITION_FOLLOWING
@@ -250,9 +245,9 @@ describe('useCampaignsColumns', () => {
 
 describe('getCampaignStatusInfo', () => {
 	it('returns proper info for known statuses', () => {
-		const info = getCampaignStatusInfo('ACTIVE');
+		const info = getCampaignStatusInfo('RUNNING');
 		expect(info).toBeDefined();
-		expect(info.label).toBeTruthy();
+		expect(info.label).toBe('status.RUNNING');
 		expect(info.color).toBeTruthy();
 	});
 
@@ -260,5 +255,10 @@ describe('getCampaignStatusInfo', () => {
 		const info = getCampaignStatusInfo('NON_EXISTENT' as any);
 		expect(info.label).toBe('NON_EXISTENT');
 		expect(info.color).toBe('gray');
+	});
+
+	it('returns status.UNKNOWN for empty status', () => {
+		const info = getCampaignStatusInfo('' as any);
+		expect(info.label).toBe('status.UNKNOWN');
 	});
 });

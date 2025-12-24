@@ -58,7 +58,7 @@ interface CampaignFiltersType {
 }
 
 export const CampaignsList: React.FC = () => {
-	const { t } = useTranslation();
+	const { t } = useTranslation(['campaigns', 'common']);
 	const {
 		selectCampaign,
 		selectedCampaign,
@@ -132,8 +132,8 @@ export const CampaignsList: React.FC = () => {
 		// Check if campaign has agents
 		if (!campaign.agents || campaign.agents.length === 0) {
 			notifications.show({
-				title: t('campaigns.list.noAgents'),
-				message: t('campaigns.list.noAgentsMessage'),
+				title: t('list.noAgents'),
+				message: t('list.noAgentsMessage'),
 				color: 'yellow',
 			});
 			return;
@@ -171,11 +171,11 @@ export const CampaignsList: React.FC = () => {
 
 	// Step names for display (0-indexed)
 	const STEP_NAMES = [
-		t('campaigns.list.stepGeneral'),
-		t('campaigns.list.stepAgent'),
-		t('campaigns.list.stepOutcomes'),
-		t('campaigns.list.stepParameters'),
-		t('campaigns.list.stepComplete'),
+		t('list.stepGeneral'),
+		t('list.stepAgent'),
+		t('list.stepOutcomes'),
+		t('list.stepParameters'),
+		t('list.stepComplete'),
 	];
 
 	// Step constants
@@ -190,15 +190,15 @@ export const CampaignsList: React.FC = () => {
 
 		if (shouldConfirmDiscard) {
 			modals.openConfirmModal({
-				title: t('campaigns.list.discardChanges'),
+				title: t('list.discardChanges'),
 				children: (
 					<Text size='sm'>
-						{t('campaigns.list.discardMessage', { step: STEP_NAMES[activeStep] })}
+						{t('list.discardMessage', { step: STEP_NAMES[activeStep] })}
 					</Text>
 				),
-				labels: { 
-					confirm: t('campaigns.list.discardConfirm'), 
-					cancel: t('campaigns.list.keepEditing')
+				labels: {
+					confirm: t('list.discardConfirm'),
+					cancel: t('list.keepEditing'),
 				},
 				confirmProps: { color: 'red' },
 				onConfirm: () => {
@@ -246,13 +246,11 @@ export const CampaignsList: React.FC = () => {
 		onTestCall: handleTestCall,
 		onDelete: (campaign) => {
 			modals.openConfirmModal({
-				title: t('campaigns.deleteModal.title'),
-				children: (
-					<Text size='sm'>{t('campaigns.deleteModal.message')}</Text>
-				),
-				labels: { 
-					confirm: t('campaigns.deleteModal.confirm'), 
-					cancel: t('common.cancel')
+				title: t('deleteModal.title'),
+				children: <Text size='sm'>{t('deleteModal.message')}</Text>,
+				labels: {
+					confirm: t('deleteModal.confirm'),
+					cancel: t('actions.cancel', { ns: 'common' }),
 				},
 				confirmProps: { color: 'red' },
 				onConfirm: async () => {
@@ -261,14 +259,14 @@ export const CampaignsList: React.FC = () => {
 						reloadCampaigns();
 						selectCampaign(null);
 						notifications.show({
-							title: t('campaigns.deleteModal.success'),
-							message: t('campaigns.deleteModal.successMessage'),
+							title: t('deleteModal.success'),
+							message: t('deleteModal.successMessage'),
 							color: 'green',
 						});
 					} catch (error) {
 						notifications.show({
-							title: t('campaigns.deleteModal.error'),
-							message: t('campaigns.deleteModal.errorMessage'),
+							title: t('deleteModal.error'),
+							message: t('deleteModal.errorMessage'),
 							color: 'red',
 						});
 					}
@@ -278,7 +276,7 @@ export const CampaignsList: React.FC = () => {
 		onClone: (campaign) => {
 			modals.open({
 				modalId: 'clone-campaign',
-				title: t('campaigns.clone.title'),
+				title: t('clone.title'),
 				children: (
 					<CloneCampaignForm
 						campaign={campaign}
@@ -318,8 +316,8 @@ export const CampaignsList: React.FC = () => {
 	return (
 		<>
 			<ContentContainer
-				title={t('campaigns.page.title')}
-				description={t('campaigns.page.description')}
+				title={t('page.title')}
+				description={t('page.description')}
 				rightSection={rightComponent || <></>}
 				titleRight={
 					<Group gap='xs'>
@@ -327,7 +325,7 @@ export const CampaignsList: React.FC = () => {
 							<ActionIcon
 								onClick={handleShowAddNewCampaignModal}
 								data-testid='header-create-campaign-btn'
-								title={t('campaigns.list.createCampaign')}
+								title={t('list.createCampaign')}
 							>
 								<IconPlus size={16} />
 							</ActionIcon>
@@ -365,22 +363,22 @@ export const CampaignsList: React.FC = () => {
 					<Card mt='xs' withBorder>
 						<EmptyState
 							icon={<IconRocket size={64} stroke={1.2} />}
-							message={t('campaigns.list.noCampaignsFound')}
-							description={t('campaigns.list.noCampaignsFoundDesc')}
+							message={t('list.noCampaignsFound')}
+							description={t('list.noCampaignsFoundDesc')}
 						/>
 					</Card>
 				) : !campaignsResponse?.data || campaignsResponse.data.length === 0 ? (
 					<Card mt='xs' withBorder>
 						<EmptyState
 							icon={<IconRocket size={64} stroke={1.2} />}
-							message={t('campaigns.list.noCampaignsYet')}
-							description={t('campaigns.list.noCampaignsYetDesc')}
+							message={t('list.noCampaignsYet')}
+							description={t('list.noCampaignsYetDesc')}
 							action={
 								<Button
 									leftSection={<IconPlus size={18} />}
 									onClick={handleShowAddNewCampaignModal}
 								>
-									{t('campaigns.list.createButton')}
+									{t('list.createButton')}
 								</Button>
 							}
 						/>
@@ -404,7 +402,7 @@ export const CampaignsList: React.FC = () => {
 							onItemsPerPageChange={handleItemsPerPageChange}
 							searchTerm={pagination.debouncedSearch}
 							isLoading={isLoading}
-							itemLabel={t('campaigns.list.itemLabel')}
+							itemLabel={t('list.itemLabel')}
 						/>
 					</>
 				)}
@@ -414,7 +412,7 @@ export const CampaignsList: React.FC = () => {
 			<Modal
 				opened={testCallModalOpened}
 				onClose={handleTestCallClose}
-				title={t('campaigns.list.testCallModal')}
+				title={t('list.testCallModal')}
 				size='md'
 				centered
 			>
@@ -433,7 +431,9 @@ export const CampaignsList: React.FC = () => {
 				opened={addNewModalOpened}
 				onClose={handleWizardClose}
 				title={
-					isResumingDraft ? t('campaigns.list.continueCampaignSetup') : t('campaigns.list.createCampaign')
+					isResumingDraft
+						? t('list.continueCampaignSetup')
+						: t('list.createCampaign')
 				}
 				size='1200px'
 				centered
@@ -442,7 +442,7 @@ export const CampaignsList: React.FC = () => {
 				<LoadingOverlay
 					visible={isDraftSaving}
 					overlayProps={{ blur: 2 }}
-					loaderProps={{ children: t('campaigns.list.savingDraft') }}
+					loaderProps={{ children: t('list.savingDraft') }}
 				/>
 				<CampaignWizard
 					onComplete={async () => {

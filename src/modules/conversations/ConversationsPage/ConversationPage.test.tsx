@@ -1,7 +1,14 @@
 import { screen } from '@testing-library/react';
-import { describe, it, beforeEach, vi } from 'vitest';
+import { describe, it, beforeEach, vi, expect } from 'vitest';
 import ConversationPage from './ConversationPage';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
+
+// Mock react-i18next
+vi.mock('react-i18next', () => ({
+	useTranslation: () => ({
+		t: (key: string) => key,
+	}),
+}));
 
 // Mock the conversation store hook
 vi.mock('~/stores/useConversationStore', () => ({
@@ -29,9 +36,8 @@ describe('ConversationPage', () => {
 
 		renderWithProviders(<ConversationPage />);
 
-		expect(
-			screen.getByText(/No conversation selected. Choose a conversation/i)
-		).toBeInTheDocument();
+		expect(screen.getByText('page.fallback')).toBeInTheDocument();
+		expect(screen.getByText('status.nothingSelected')).toBeInTheDocument();
 	});
 
 	it('renders selectionContent when provided', () => {
@@ -43,9 +49,7 @@ describe('ConversationPage', () => {
 		renderWithProviders(<ConversationPage />);
 
 		expect(screen.getByText('Selected Content')).toBeInTheDocument();
-		expect(
-			screen.queryByText(/No conversation selected. Choose a conversation/i)
-		).not.toBeInTheDocument();
+		expect(screen.queryByText('page.fallback')).not.toBeInTheDocument();
 	});
 
 	it('calls clearSelection when unmounted', () => {

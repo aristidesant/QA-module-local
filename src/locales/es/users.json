@@ -1,0 +1,27 @@
+{
+	"title": "Usuarios",
+	"description": "Gestiona las cuentas de usuario y sus roles asociados dentro del sistema.",
+	"searchPlaceholder": "Buscar usuarios...",
+	"newUser": "Nuevo usuario",
+	"editUser": "Editar usuario",
+	"deleteUser": "Eliminar usuario",
+	"deleteConfirm": "¿Estás seguro de que deseas eliminar a este usuario?",
+	"status": {
+		"active": "Activo",
+		"inactive": "Inactivo"
+	},
+	"columns": {
+		"name": "Nombre",
+		"email": "Correo electrónico",
+		"role": "Rol",
+		"status": "Estado",
+		"lastLogin": "Última sesión",
+		"actions": "Acciones"
+	},
+	"notifications": {
+		"created": "Usuario creado con éxito",
+		"updated": "Usuario actualizado con éxito",
+		"deleted": "Usuario eliminado con éxito",
+		"error": "Ocurrió un error. Por favor, inténtalo de nuevo."
+	}
+}

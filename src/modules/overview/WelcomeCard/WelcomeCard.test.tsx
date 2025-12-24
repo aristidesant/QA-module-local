@@ -1,7 +1,30 @@
 import { screen } from '@testing-library/react';
-import { describe, it, beforeEach, vi } from 'vitest';
+import { describe, it, beforeEach, vi, expect } from 'vitest';
 import WelcomeCard from './WelcomeCard';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
+
+// Mock react-i18next
+vi.mock('react-i18next', () => ({
+	useTranslation: () => ({
+		t: (key: string, options?: any) => {
+			if (key === 'welcomeBackHeading')
+				return `Welcome back, ${options?.name}!`;
+			if (key === 'impersonationHeading') return `Welcome to ${options?.name}`;
+			if (key === 'defaultHeading') return 'The Future of AI Voice';
+			if (key === 'defaultSubheading')
+				return 'Scale your business with intelligent conversational agents';
+			if (key === 'impersonationSubheading')
+				return 'Your AI-powered destination for seamless voice automation and customer engagement.';
+			if (key === 'features.smartCampaigns.title') return 'Smart Campaigns';
+			if (key === 'features.aiAgents.title') return 'AI Digital Agents';
+			if (key === 'features.interactionHub.title') return 'Interaction Hub';
+			if (key === 'features.seamlessTools.title') return 'Seamless Tools';
+			if (key === 'features.activeContacts.title') return 'Active Contacts';
+			if (key === 'features.growthAnalytics.title') return 'Growth Analytics';
+			return key;
+		},
+	}),
+}));
 
 // Mock hooks
 vi.mock('~/hooks/useIsMasterClient', () => ({

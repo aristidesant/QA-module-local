@@ -74,6 +74,7 @@ src/
 ├── modules/      # Feature code (agents, campaigns, etc.)
 ├── queries/      # React Query hooks for data fetching
 ├── routes/       # Page components for each URL
+├── locales/      # i18n JSON files organized by lng/ns.json
 ├── stores/       # Zustand state stores
 ├── models/       # TypeScript types and interfaces
 ├── hooks/        # Custom React hooks
@@ -171,14 +172,27 @@ export { default } from './UserCard';
 ### Usage
 
 - Use **react-i18next** for all user-facing text.
-- Use the `useTranslation` hook to access translation functions.
+- Use the `useTranslation('<namespace>')` hook to access translation functions.
 - **NEVER** hardcode strings in components. Always use a translation key.
+- The app uses **lazy-loading** for translations. Namespaces are loaded on demand.
+
+### Namespace Rules
+
+- **`common` namespace**: Contains global strings (actions, status, etc.). It is loaded by default.
+- **Route namespaces**: Each screen must have its own namespace.
+- Namespace names should be derived from the `route.id` or normalized path in `src/routes.tsx`.
+- Example: `route.id = 'campaigns'` -> `src/locales/en/campaigns.json`.
+
+### Loading and Prefetching
+
+1. **Automatic Loading**: Main routes in `src/routes.tsx` use the `I18nNamespaceLoader` component to automatically fetch the namespace associated with the active route ID.
+2. **Prefetching**: Use `prefetchNamespace(ns)` from `~/utils/i18nHelpers` on links (e.g., `onMouseEnter`) to improve perceived performance.
 
 ### Adding New Labels
 
-1. Add the English label to `src/i18n/locales/en.json`.
-2. Add the Spanish label to `src/i18n/locales/es.json`.
-3. Use a descriptive, nested structure (e.g., `common.save`, `agents.list.title`).
+1. Create/Update the JSON file in `src/locales/en/<namespace>.json`.
+2. Create/Update the JSON file in `src/locales/es/<namespace>.json`.
+3. Use a descriptive, nested structure.
 4. If a label is missing, create it immediately in both files.
 
 ### Example
@@ -186,9 +200,15 @@ export { default } from './UserCard';
 ```tsx
 import { useTranslation } from 'react-i18next';
 
-const MyComponent = () => {
-	const { t } = useTranslation();
-	return <Button>{t('common.save')}</Button>;
+const CampaignsPage = () => {
+	// Root pages must specify their namespace
+	const { t } = useTranslation('campaigns');
+	return (
+		<div>
+			<h1>{t('title')}</h1>
+			<Button>{t('actions.save', { ns: 'common' })}</Button>
+		</div>
+	);
 };
 ```
 
@@ -313,39 +333,3 @@ import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 - Always call React hooks unconditionally and before any early returns; do not place hooks after conditional returns or inside branches/loops.
 - When adding permission checks with `usePermissions`, declare the hook alongside other hooks at the top of the component to keep call order stable.
-
----
-
-## Standard Modal & Form Layouts
-
-When building complex forms or configuration modals, follow this standard layout pattern:
-
-### Structure (2-Column Grid)
-
-- **Container**: Use `ModalBody` from `src/components/ModalMenu` to enforce the standard 2-column grid (`220px 1fr`).
-- **Background**: Use `var(--mantine-color-gray-0)` for the main container background.
-- **Panels**: Both the sidebar (menu) and content area should be white panels with:
-  - `border: 1px solid var(--mantine-color-gray-2)`
-  - `border-radius: var(--mantine-radius-sm)`
-  - `background: var(--mantine-color-white)`
-
-### Sidebar Menu Style
-
-- **Component**: Use `ModalMenu` from `src/components/ModalMenu`.
-- **Props**:
-  - `items`: Array of `{ id, label, icon }`
-  - `activeId`: Current active section ID
-  - `onSelect`: Callback to change section
-- **Style**: The component handles all standard styling (hover states, active states, typography).
-
-### Content Area
-
-- **Header**: Title (`fw={600}`, `size="sm"`) + Status Badge (if applicable).
-- **Separator**: `border-bottom: 1px solid var(--mantine-color-gray-1)`.
-- **Body**: Padding `sm` or `md`.
-
-### Footer
-
-- **Location**: Fixed at the bottom of the container.
-- **Style**: `border-top: 1px solid var(--mantine-color-gray-1)`, `bg="white"`.
-- **Actions**: Right-aligned primary actions (Save), Left-aligned secondary (Cancel).

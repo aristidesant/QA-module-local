@@ -15,6 +15,7 @@ export type MenuItem = {
 	exact?: boolean;
 	module: ModuleEnum;
 	permission?: PermissionEnum;
+	i18nNamespace?: string;
 };
 
 export const menuItems: MenuItem[] = [
@@ -24,12 +25,14 @@ export const menuItems: MenuItem[] = [
 		to: '/',
 		exact: true,
 		module: ModuleEnum.DASHBOARD,
+		i18nNamespace: 'overview',
 	},
 	{
 		label: 'sidebar.items.campaigns',
 		icon: <IconListDetails size={20} className={styles.menuIcon} />,
 		to: '/campaigns',
 		module: ModuleEnum.CAMPAIGNS,
+		i18nNamespace: 'campaigns',
 	},
 	{
 		label: 'sidebar.items.conversations',

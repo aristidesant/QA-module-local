@@ -74,6 +74,7 @@ src/
 ├── modules/      # Feature code (agents, campaigns, etc.)
 ├── queries/      # React Query hooks for data fetching
 ├── routes/       # Page components for each URL
+├── locales/      # i18n JSON files organized by lng/ns.json
 ├── stores/       # Zustand state stores
 ├── models/       # TypeScript types and interfaces
 ├── hooks/        # Custom React hooks
@@ -171,14 +172,27 @@ export { default } from './UserCard';
 ### Usage
 
 - Use **react-i18next** for all user-facing text.
-- Use the `useTranslation` hook to access translation functions.
+- Use the `useTranslation('<namespace>')` hook to access translation functions.
 - **NEVER** hardcode strings in components. Always use a translation key.
+- The app uses **lazy-loading** for translations. Namespaces are loaded on demand.
+
+### Namespace Rules
+
+- **`common` namespace**: Contains global strings (actions, status, etc.). It is loaded by default.
+- **Route namespaces**: Each screen must have its own namespace.
+- Namespace names should be derived from the `route.id` or normalized path in `src/routes.tsx`.
+- Example: `route.id = 'campaigns'` -> `src/locales/en/campaigns.json`.
+
+### Loading and Prefetching
+
+1. **Automatic Loading**: Main routes in `src/routes.tsx` use the `I18nNamespaceLoader` component to automatically fetch the namespace associated with the active route ID.
+2. **Prefetching**: Use `prefetchNamespace(ns)` from `~/utils/i18nHelpers` on links (e.g., `onMouseEnter`) to improve perceived performance.
 
 ### Adding New Labels
 
-1. Add the English label to `src/i18n/locales/en.json`.
-2. Add the Spanish label to `src/i18n/locales/es.json`.
-3. Use a descriptive, nested structure (e.g., `common.save`, `agents.list.title`).
+1. Create/Update the JSON file in `src/locales/en/<namespace>.json`.
+2. Create/Update the JSON file in `src/locales/es/<namespace>.json`.
+3. Use a descriptive, nested structure.
 4. If a label is missing, create it immediately in both files.
 
 ### Example
@@ -186,9 +200,15 @@ export { default } from './UserCard';
 ```tsx
 import { useTranslation } from 'react-i18next';
 
-const MyComponent = () => {
-	const { t } = useTranslation();
-	return <Button>{t('common.save')}</Button>;
+const CampaignsPage = () => {
+	// Root pages must specify their namespace
+	const { t } = useTranslation('campaigns');
+	return (
+		<div>
+			<h1>{t('title')}</h1>
+			<Button>{t('actions.save', { ns: 'common' })}</Button>
+		</div>
+	);
 };
 ```
 

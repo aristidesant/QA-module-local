@@ -1,0 +1,37 @@
+{
+	"title": "Bienvenido",
+	"platformLabel": "Plataforma de Gestión de IA",
+	"defaultHeading": "El Futuro de la Voz con IA",
+	"defaultSubheading": "Escala tu negocio con agentes conversacionales inteligentes que manejan cada interacción con precisión humana.",
+	"impersonationHeading": "Bienvenido a {{name}}",
+	"impersonationSubheading": "Tu destino impulsado por IA para una automatización de voz y compromiso del cliente sin interrupciones.",
+	"welcomeBackHeading": "¡Bienvenido de nuevo, {{name}}!",
+	"masterSubheading": "Obtén una visión estratégica de todo tu ecosistema conversacional.",
+	"enterpriseHeading": "Resumen Empresarial",
+	"features": {
+		"smartCampaigns": {
+			"title": "Campañas Inteligentes",
+			"description": "Automatiza tu alcance con programación inteligente y monitoreo en tiempo real."
+		},
+		"aiAgents": {
+			"title": "Agentes Digitales de IA",
+			"description": "Despliega voces realistas que manejan conversaciones complejas con fluidez natural."
+		},
+		"interactionHub": {
+			"title": "Centro de Interacción",
+			"description": "Revisa de forma segura transcripciones y seguimientos de cada conversación impulsada por IA."
+		},
+		"seamlessTools": {
+			"title": "Herramientas Integradas",
+			"description": "Integra tu flujo de trabajo existente con webhooks personalizados y mejoras técnicas."
+		},
+		"activeContacts": {
+			"title": "Contactos Activos",
+			"description": "Gestiona y segmenta eficazmente tus listas de audiencia para un máximo impacto."
+		},
+		"growthAnalytics": {
+			"title": "Analítica de Crecimiento",
+			"description": "Transforma los resultados de las llamadas en información accionable para escalar tus operaciones."
+		}
+	}
+}

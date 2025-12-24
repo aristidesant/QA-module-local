@@ -1,0 +1,85 @@
+{
+	"title": "Nai Agent Service",
+	"actions": {
+		"save": "Guardar",
+		"cancel": "Cancelar",
+		"delete": "Eliminar",
+		"edit": "Editar",
+		"create": "Crear",
+		"search": "Buscar",
+		"close": "Cerrar",
+		"confirm": "Confirmar",
+		"export": "Exportar",
+		"back": "Volver",
+		"next": "Siguiente",
+		"finish": "Finalizar"
+	},
+	"status": {
+		"loading": "Cargando...",
+		"success": "Éxito",
+		"error": "Error",
+		"noData": "No hay datos disponibles",
+		"nothingSelected": "Nada seleccionado"
+	},
+	"sidebar": {
+		"ariaLabel": "Navegación principal",
+		"menu": "MENÚ",
+		"noModules": "No hay módulos disponibles",
+		"requestAccess": "Solicita acceso para ver las opciones de navegación.",
+		"version": "Versión",
+		"items": {
+			"overview": "Resumen",
+			"campaigns": "Campañas",
+			"conversations": "Conversaciones"
+		}
+	},
+	"nav": {
+		"dashboard": "Tablero",
+		"agents": "Agentes",
+		"campaigns": "Campañas",
+		"contacts": "Contactos",
+		"settings": "Configuración",
+		"conversations": "Conversaciones"
+	},
+	"userMenu": {
+		"profile": "Perfil",
+		"logout": "Cerrar sesión",
+		"loggingOut": "Cerrando sesión...",
+		"impersonationMode": "Modo de suplantación",
+		"impersonatingClient": "Estás suplantando a un cliente",
+		"returnToMaster": "Usa \"Volver al cliente maestro\" para salir",
+		"categories": {
+			"campaignManagement": "Gestión de campañas",
+			"configuration": "Configuración",
+			"toolsAndResources": "Herramientas y recursos"
+		},
+		"items": {
+			"campaignManagement": "Gestión de campañas",
+			"configurations": "Configuraciones",
+			"clients": "Clientes",
+			"knowledgeBases": "Bases de conocimiento",
+			"tools": "Herramientas",
+			"prompter": "Prompter",
+			"users": "Usuarios",
+			"roles": "Roles"
+		}
+	},
+	"accessDenied": {
+		"title": "Acceso Denegado",
+		"description": "No tienes permiso para acceder a esta página."
+	},
+	"pagination": {
+		"showing": "Mostrando",
+		"of": "de",
+		"filteredBy": "(filtrado por \"{{term}}\")",
+		"show": "Mostrar:",
+		"page": "Página"
+	},
+	"units": {
+		"day": "d",
+		"hour": "h",
+		"minute": "m",
+		"second": "s"
+	},
+	"currency": "$"
+}

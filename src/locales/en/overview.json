@@ -1,0 +1,37 @@
+{
+	"title": "Welcome",
+	"platformLabel": "AI Management Platform",
+	"defaultHeading": "The Future of AI Voice",
+	"defaultSubheading": "Scale your business with intelligent conversational agents that handle every interaction with human-like precision.",
+	"impersonationHeading": "Welcome to {{name}}",
+	"impersonationSubheading": "Your AI-powered destination for seamless voice automation and engagement.",
+	"welcomeBackHeading": "Welcome back, {{name}}!",
+	"masterSubheading": "Gain a strategic snapshot of your entire conversational ecosystem.",
+	"enterpriseHeading": "Enterprise Overview",
+	"features": {
+		"smartCampaigns": {
+			"title": "Smart Campaigns",
+			"description": "Automate your outreach with intelligent scheduling and real-time monitoring."
+		},
+		"aiAgents": {
+			"title": "AI Digital Agents",
+			"description": "Deploy lifelike voices that handle complex conversations with natural fluency."
+		},
+		"interactionHub": {
+			"title": "Interaction Hub",
+			"description": "Securely review transcripts and follow-ups for every AI-powered conversation."
+		},
+		"seamlessTools": {
+			"title": "Seamless Tools",
+			"description": "Integrate your existing workflow with custom webhooks and technical powerups."
+		},
+		"activeContacts": {
+			"title": "Active Contacts",
+			"description": "Effectively manage and segment your audience lists for maximum impact."
+		},
+		"growthAnalytics": {
+			"title": "Growth Analytics",
+			"description": "Transform call outcomes into actionable insights to scale your operations."
+		}
+	}
+}

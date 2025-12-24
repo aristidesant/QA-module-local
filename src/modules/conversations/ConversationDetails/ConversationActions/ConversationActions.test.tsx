@@ -10,6 +10,13 @@ import {
 } from '~/queries/conversationsQueries';
 import usePermissions from '~/hooks/usePermissions';
 
+// Mock react-i18next
+vi.mock('react-i18next', () => ({
+	useTranslation: () => ({
+		t: (key: string) => key,
+	}),
+}));
+
 vi.mock('~/queries/conversationsQueries', () => ({
 	useFailAndPauseConversation: vi.fn(),
 	useFetchAndProcessConversation: vi.fn(),
@@ -43,7 +50,7 @@ describe('ConversationActions', () => {
 			/>
 		);
 
-		expect(screen.getByText('Reprocess Event')).toBeInTheDocument();
+		expect(screen.getByText('actions.reprocess.label')).toBeInTheDocument();
 	});
 
 	it('renders Fetch and Process for non-initiated status', () => {
@@ -63,7 +70,9 @@ describe('ConversationActions', () => {
 			<ConversationActions conversation={{ id: 2, status: 'failed' } as any} />
 		);
 
-		expect(screen.getByText('Fetch and Process')).toBeInTheDocument();
+		expect(
+			screen.getByText('actions.fetchAndProcess.label')
+		).toBeInTheDocument();
 	});
 
 	it('opens confirm modal on button click', async () => {

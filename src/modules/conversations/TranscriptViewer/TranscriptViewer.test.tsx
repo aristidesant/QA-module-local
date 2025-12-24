@@ -5,6 +5,13 @@ import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import type { TranscriptEntry } from '~/models/ConversationsModels';
 import TranscriptViewer from './TranscriptViewer';
 
+// Mock react-i18next
+vi.mock('react-i18next', () => ({
+	useTranslation: () => ({
+		t: (key: string) => key,
+	}),
+}));
+
 // Mock usePermissions hook
 vi.mock('~/hooks/usePermissions', () => ({
 	usePermissions: vi.fn(() => ({
@@ -54,11 +61,9 @@ describe('TranscriptViewer', () => {
 		it('renders empty state when transcript is empty', () => {
 			renderWithProviders(<TranscriptViewer transcript={[]} />);
 
+			expect(screen.getByText('transcript.empty.message')).toBeInTheDocument();
 			expect(
-				screen.getByText('No transcript entries available')
-			).toBeInTheDocument();
-			expect(
-				screen.getByText('Conversation data will appear here once available')
+				screen.getByText('transcript.empty.description')
 			).toBeInTheDocument();
 		});
 
@@ -69,9 +74,7 @@ describe('TranscriptViewer', () => {
 				/>
 			);
 
-			expect(
-				screen.getByText('No transcript entries available')
-			).toBeInTheDocument();
+			expect(screen.getByText('transcript.empty.message')).toBeInTheDocument();
 		});
 
 		it('filters out entries with no message and no tool calls', () => {
@@ -96,9 +99,11 @@ describe('TranscriptViewer', () => {
 
 			// Should only show the valid message
 			expect(screen.getByText('Valid message')).toBeInTheDocument();
-			expect(screen.getByText('User')).toBeInTheDocument();
+			expect(screen.getByText('transcript.roles.user')).toBeInTheDocument();
 			// Should not show Agent entries since they have no message/tool calls
-			expect(screen.queryByText('Agent')).not.toBeInTheDocument();
+			expect(
+				screen.queryByText('transcript.roles.agent')
+			).not.toBeInTheDocument();
 		});
 
 		it('shows entries with tool calls even if message is empty', () => {
@@ -131,8 +136,10 @@ describe('TranscriptViewer', () => {
 			renderWithProviders(<TranscriptViewer transcript={transcript} />);
 
 			// Should show the entry because it has tool calls
-			expect(screen.getByText('Agent')).toBeInTheDocument();
-			expect(screen.getByText('Tool calls:')).toBeInTheDocument();
+			expect(screen.getByText('transcript.roles.agent')).toBeInTheDocument();
+			expect(
+				screen.getByText('transcript.technical.toolCalls')
+			).toBeInTheDocument();
 			expect(screen.getByText('test_tool')).toBeInTheDocument();
 		});
 	});
@@ -149,7 +156,7 @@ describe('TranscriptViewer', () => {
 
 			renderWithProviders(<TranscriptViewer transcript={transcript} />);
 
-			expect(screen.getByText('User')).toBeInTheDocument();
+			expect(screen.getByText('transcript.roles.user')).toBeInTheDocument();
 			expect(screen.getByText('This is a user message')).toBeInTheDocument();
 			expect(screen.getByText('0:30')).toBeInTheDocument();
 		});
@@ -164,7 +171,7 @@ describe('TranscriptViewer', () => {
 
 			renderWithProviders(<TranscriptViewer transcript={transcript} />);
 
-			expect(screen.getByText('User')).toBeInTheDocument();
+			expect(screen.getByText('transcript.roles.user')).toBeInTheDocument();
 			expect(screen.getByText('Human message')).toBeInTheDocument();
 		});
 	});
@@ -181,7 +188,7 @@ describe('TranscriptViewer', () => {
 
 			renderWithProviders(<TranscriptViewer transcript={transcript} />);
 
-			expect(screen.getByText('Agent')).toBeInTheDocument();
+			expect(screen.getByText('transcript.roles.agent')).toBeInTheDocument();
 			expect(screen.getByText('This is an agent response')).toBeInTheDocument();
 			expect(screen.getByText('0:45')).toBeInTheDocument();
 		});
@@ -197,7 +204,7 @@ describe('TranscriptViewer', () => {
 
 			renderWithProviders(<TranscriptViewer transcript={transcript} />);
 
-			expect(screen.getByText('Interrupted')).toBeInTheDocument();
+			expect(screen.getByText('transcript.interrupted')).toBeInTheDocument();
 		});
 	});
 
@@ -280,7 +287,9 @@ describe('TranscriptViewer', () => {
 				<TranscriptViewer transcript={transcriptWithToolCalls} />
 			);
 
-			expect(screen.queryByText('Tool calls:')).not.toBeInTheDocument();
+			expect(
+				screen.queryByText('transcript.technical.toolCalls')
+			).not.toBeInTheDocument();
 			expect(screen.queryByText('get_customer_info')).not.toBeInTheDocument();
 		});
 
@@ -298,7 +307,9 @@ describe('TranscriptViewer', () => {
 				<TranscriptViewer transcript={transcriptWithToolCalls} />
 			);
 
-			expect(screen.getByText('Tool calls:')).toBeInTheDocument();
+			expect(
+				screen.getByText('transcript.technical.toolCalls')
+			).toBeInTheDocument();
 			expect(screen.getByText('get_customer_info')).toBeInTheDocument();
 		});
 
@@ -323,11 +334,19 @@ describe('TranscriptViewer', () => {
 
 			// Popover should show tool details
 			await waitFor(() => {
-				expect(screen.getByText('Tool Name')).toBeInTheDocument();
+				expect(
+					screen.getByText('transcript.technical.toolName')
+				).toBeInTheDocument();
 			});
-			expect(screen.getByText('Called')).toBeInTheDocument();
-			expect(screen.getByText('Parameters')).toBeInTheDocument();
-			expect(screen.getByText('Request ID')).toBeInTheDocument();
+			expect(
+				screen.getByText('transcript.technical.called')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('transcript.technical.parameters')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('transcript.technical.requestId')
+			).toBeInTheDocument();
 			expect(screen.getByText('req-123')).toBeInTheDocument();
 		});
 
@@ -367,7 +386,9 @@ describe('TranscriptViewer', () => {
 			await user.click(screen.getByText('pending_tool'));
 
 			await waitFor(() => {
-				expect(screen.getByText('Pending')).toBeInTheDocument();
+				expect(
+					screen.getByText('transcript.technical.pending')
+				).toBeInTheDocument();
 			});
 		});
 
@@ -445,7 +466,9 @@ describe('TranscriptViewer', () => {
 				<TranscriptViewer transcript={transcriptWithUserToolCalls} />
 			);
 
-			expect(screen.queryByText('Tool calls:')).not.toBeInTheDocument();
+			expect(
+				screen.queryByText('transcript.technical.toolCalls')
+			).not.toBeInTheDocument();
 			expect(screen.queryByText('should_not_show')).not.toBeInTheDocument();
 		});
 	});
@@ -472,8 +495,8 @@ describe('TranscriptViewer', () => {
 
 			renderWithProviders(<TranscriptViewer transcript={transcript} />);
 
-			expect(screen.getAllByText('User')).toHaveLength(2);
-			expect(screen.getByText('Agent')).toBeInTheDocument();
+			expect(screen.getAllByText('transcript.roles.user')).toHaveLength(2);
+			expect(screen.getByText('transcript.roles.agent')).toBeInTheDocument();
 			expect(screen.getByText('Hello agent')).toBeInTheDocument();
 			expect(screen.getByText('Hello! How can I help?')).toBeInTheDocument();
 			expect(screen.getByText('I have a question')).toBeInTheDocument();
@@ -532,7 +555,9 @@ describe('TranscriptViewer', () => {
 				<TranscriptViewer transcript={transcriptWithLlmUsage} />
 			);
 
-			expect(screen.queryByText('Technical Details')).not.toBeInTheDocument();
+			expect(
+				screen.queryByText('transcript.technicalDetails.title')
+			).not.toBeInTheDocument();
 		});
 
 		it('shows technical details header when user has MANAGE permission and data exists', () => {
@@ -549,7 +574,9 @@ describe('TranscriptViewer', () => {
 				<TranscriptViewer transcript={transcriptWithLlmUsage} />
 			);
 
-			expect(screen.getByText('Technical Details')).toBeInTheDocument();
+			expect(
+				screen.getByText('transcript.technical.title')
+			).toBeInTheDocument();
 		});
 
 		it('shows LLM cost badge in technical details header', () => {
@@ -566,7 +593,7 @@ describe('TranscriptViewer', () => {
 				<TranscriptViewer transcript={transcriptWithLlmUsage} />
 			);
 
-			expect(screen.getByText('$0.0030')).toBeInTheDocument();
+			expect(screen.getByText('common.currency0.0030')).toBeInTheDocument();
 		});
 
 		it('shows technical details on hover', async () => {
@@ -585,14 +612,18 @@ describe('TranscriptViewer', () => {
 				<TranscriptViewer transcript={transcriptWithLlmUsage} />
 			);
 
-			const detailsHeader = screen.getByText('Technical Details');
+			const detailsHeader = screen.getByText('transcript.technical.title');
 			await user.hover(detailsHeader);
 
 			await waitFor(() => {
-				expect(screen.getByText('LLM Usage')).toBeInTheDocument();
+				expect(
+					screen.getByText('transcript.technical.llmUsage')
+				).toBeInTheDocument();
 			});
 			expect(screen.getByText('gpt-4')).toBeInTheDocument();
-			expect(screen.getByText('Input Tokens')).toBeInTheDocument();
+			expect(
+				screen.getByText('transcript.technical.inputTokens')
+			).toBeInTheDocument();
 		});
 
 		it('shows agent metadata on hover', async () => {
@@ -611,10 +642,12 @@ describe('TranscriptViewer', () => {
 				<TranscriptViewer transcript={transcriptWithAgentMetadata} />
 			);
 
-			await user.hover(screen.getByText('Technical Details'));
+			await user.hover(screen.getByText('transcript.technical.title'));
 
 			await waitFor(() => {
-				expect(screen.getByText('Agent Metadata')).toBeInTheDocument();
+				expect(
+					screen.getByText('transcript.technical.agentMetadata')
+				).toBeInTheDocument();
 			});
 			expect(screen.getByText('agent-123')).toBeInTheDocument();
 			expect(screen.getByText('branch-456')).toBeInTheDocument();
@@ -637,10 +670,12 @@ describe('TranscriptViewer', () => {
 				<TranscriptViewer transcript={transcriptWithSourceMedium} />
 			);
 
-			await user.hover(screen.getByText('Technical Details'));
+			await user.hover(screen.getByText('transcript.technical.title'));
 
 			await waitFor(() => {
-				expect(screen.getByText('Source Medium')).toBeInTheDocument();
+				expect(
+					screen.getByText('transcript.technical.sourceMedium')
+				).toBeInTheDocument();
 			});
 			expect(screen.getByText('voice')).toBeInTheDocument();
 		});
@@ -676,7 +711,9 @@ describe('TranscriptViewer', () => {
 				<TranscriptViewer transcript={transcriptWithUserLlm} />
 			);
 
-			expect(screen.queryByText('Technical Details')).not.toBeInTheDocument();
+			expect(
+				screen.queryByText('transcript.technical.title')
+			).not.toBeInTheDocument();
 		});
 
 		it('does NOT show technical details when no technical data exists', () => {
@@ -703,7 +740,9 @@ describe('TranscriptViewer', () => {
 				<TranscriptViewer transcript={transcriptWithoutTechnicalData} />
 			);
 
-			expect(screen.queryByText('Technical Details')).not.toBeInTheDocument();
+			expect(
+				screen.queryByText('transcript.technical.title')
+			).not.toBeInTheDocument();
 		});
 	});
 });

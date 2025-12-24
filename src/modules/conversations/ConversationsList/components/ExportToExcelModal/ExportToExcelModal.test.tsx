@@ -25,7 +25,7 @@ describe('ExportToExcelModal', () => {
 		expect(
 			await screen.findByTestId('export-to-excel-modal-content')
 		).toBeInTheDocument();
-		expect(screen.getByText('conversations.export.title')).toBeInTheDocument();
+		expect(screen.getByText('export.title')).toBeInTheDocument();
 	});
 
 	it('does not render when closed', () => {
@@ -43,7 +43,7 @@ describe('ExportToExcelModal', () => {
 			<ExportToExcelModal opened={true} onClose={mockOnClose} />
 		);
 
-		const cancelBtn = await screen.findByText(/conversations.export.cancel/i);
+		const cancelBtn = await screen.findByText(/actions.cancel/i);
 		fireEvent.click(cancelBtn);
 		expect(mockOnClose).toHaveBeenCalled();
 	});

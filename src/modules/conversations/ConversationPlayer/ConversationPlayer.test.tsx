@@ -6,6 +6,13 @@ import { useExportConversationAudio } from '~/queries/conversationsQueries';
 import { useConversationStore } from '~/stores/useConversationStore';
 import usePermissions from '~/hooks/usePermissions';
 
+// Mock react-i18next
+vi.mock('react-i18next', () => ({
+	useTranslation: () => ({
+		t: (key: string) => key,
+	}),
+}));
+
 vi.mock('~/queries/conversationsQueries', () => ({
 	useExportConversationAudio: vi.fn(),
 }));
@@ -35,7 +42,7 @@ describe('ConversationPlayer', () => {
 
 		renderWithProviders(<ConversationPlayer />);
 
-		expect(screen.getByText('Conversation not available')).toBeInTheDocument();
+		expect(screen.getByText('player.notAvailable')).toBeInTheDocument();
 	});
 
 	it('shows audio controls and download button when file and permission available', async () => {
@@ -63,10 +70,12 @@ describe('ConversationPlayer', () => {
 			/>
 		);
 
-		const playButton = screen.getByLabelText('Play');
+		const playButton = screen.getByLabelText('player.play');
 		expect(playButton).toBeInTheDocument();
 
-		const download = screen.getByRole('button', { name: /download audio/i });
+		const download = screen.getByRole('button', {
+			name: /player.download/i,
+		});
 		expect(download).toBeInTheDocument();
 	});
 });

@@ -1,7 +1,15 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
+import userEvent from '@testing-library/user-event';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import CampaignFilters from './CampaignFilters';
+
+// Mock react-i18next
+vi.mock('react-i18next', () => ({
+	useTranslation: () => ({
+		t: (key: string) => key,
+	}),
+}));
 
 describe('CampaignFilters', () => {
 	const onSearchChange = vi.fn();
@@ -22,50 +30,37 @@ describe('CampaignFilters', () => {
 	});
 
 	it('renders and shows search value', () => {
-		render(
-			<MantineProvider>
-				<CampaignFilters {...baseProps} searchValue={'abc'} />
-			</MantineProvider>
-		);
+		renderWithProviders(<CampaignFilters {...baseProps} searchValue={'abc'} />);
 
-		const input = screen.getByPlaceholderText('Search campaigns...');
+		const input = screen.getByPlaceholderText('filters.searchPlaceholder');
 		expect(input).toBeInTheDocument();
 		expect((input as HTMLInputElement).value).toBe('abc');
 	});
 
-	it('clears search when close button is clicked', () => {
-		render(
-			<MantineProvider>
-				<CampaignFilters {...baseProps} searchValue={'a'} />
-			</MantineProvider>
-		);
+	it('clears search when close button is clicked', async () => {
+		const user = userEvent.setup();
+		renderWithProviders(<CampaignFilters {...baseProps} searchValue={'a'} />);
 
-		// Mantine CloseButton has no accessible name in DOM; query by class
-		const closeBtn = document.querySelector(
-			"[class*='CloseButton-root']"
-		) as HTMLButtonElement;
-		fireEvent.click(closeBtn);
+		const closeBtn = screen.getByLabelText('actions.close');
+		await user.click(closeBtn);
 		expect(onSearchChange).toHaveBeenCalledWith('');
 	});
 
 	it('toggles advanced and updates includeCompleted filter', async () => {
-		render(
-			<MantineProvider>
-				<CampaignFilters {...baseProps} />
-			</MantineProvider>
-		);
+		const user = userEvent.setup();
+		renderWithProviders(<CampaignFilters {...baseProps} />);
 
 		// Open advanced
-		const advButton = screen.getByRole('button', { name: /advanced/i });
-		fireEvent.click(advButton);
+		const advButton = screen.getByRole('button', { name: /filters.advanced/i });
+		await user.click(advButton);
 
-		const includeCompleted = await screen.findByText('Include completed');
+		const includeCompleted = await screen.findByText(
+			'filters.includeCompleted'
+		);
 		expect(includeCompleted).toBeInTheDocument();
 		// Switch may not expose role in DOM consistently; use label text
-		const switchEl = screen.getByLabelText(
-			'Include completed'
-		) as HTMLInputElement;
-		fireEvent.click(switchEl);
+		const switchEl = screen.getByLabelText('filters.includeCompleted');
+		await user.click(switchEl);
 		expect(onFiltersChange).toHaveBeenCalledWith({ includeCompleted: true });
 	});
 });

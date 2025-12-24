@@ -1,5 +1,11 @@
-import { createBrowserRouter, RouterProvider, Navigate } from 'react-router';
 import React, { Suspense } from 'react';
+import {
+	createBrowserRouter,
+	RouterProvider,
+	Navigate,
+	useMatches,
+} from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 // Route components (lazy-loaded where appropriate to split bundles)
 
@@ -100,6 +106,26 @@ const CampaignsPage = React.lazy(
 	() => import('./modules/campaigns/CampaignsPage/CampaignsPage')
 );
 
+/**
+ * Automatically loads i18n namespaces based on the active route's ID.
+ */
+const I18nNamespaceLoader = ({ children }: { children: React.ReactNode }) => {
+	const matches = useMatches();
+	const lastMatch = matches[matches.length - 1];
+	// Derive namespace from route ID or path
+	const namespace = lastMatch?.id;
+
+	// Use useTranslation to ensure the namespace is loaded before rendering children.
+	// This will trigger suspension if the namespace is not yet available.
+	useTranslation(
+		namespace && namespace !== 'root' && !namespace.includes('/')
+			? namespace
+			: 'common'
+	);
+
+	return <>{children}</>;
+};
+
 const router = createBrowserRouter([
 	// Public routes
 	{ path: '/login', element: <LoginForm /> },
@@ -128,12 +154,15 @@ const router = createBrowserRouter([
 				children: [
 					{
 						index: true,
+						id: 'overview',
 						element: (
-							<Suspense
-								fallback={<SuspenseFallback message='Loading dashboard...' />}
-							>
-								<WelcomeCard />
-							</Suspense>
+							<I18nNamespaceLoader>
+								<Suspense
+									fallback={<SuspenseFallback message='Loading dashboard...' />}
+								>
+									<WelcomeCard />
+								</Suspense>
+							</I18nNamespaceLoader>
 						),
 					},
 					{
@@ -148,28 +177,38 @@ const router = createBrowserRouter([
 					},
 					{
 						path: 'campaigns',
+						id: 'campaigns',
 						element: (
 							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
-								<Suspense
-									fallback={<SuspenseFallback message='Loading campaigns...' />}
-								>
-									<CampaignsPage />
-								</Suspense>
+								<I18nNamespaceLoader>
+									<Suspense
+										fallback={
+											<SuspenseFallback message='Loading campaigns...' />
+										}
+									>
+										<CampaignsPage />
+									</Suspense>
+								</I18nNamespaceLoader>
 							</ModuleGuard>
 						),
 					},
 					{
 						path: 'campaign/:campaignId',
+						id: 'campaign.detail',
 						element: (
 							<ModuleGuard
 								module={ModuleEnum.CAMPAIGNS}
 								permission={PermissionEnum.UPDATE}
 							>
-								<Suspense
-									fallback={<SuspenseFallback message='Loading campaign...' />}
-								>
-									<CampaignPage />
-								</Suspense>
+								<I18nNamespaceLoader>
+									<Suspense
+										fallback={
+											<SuspenseFallback message='Loading campaign...' />
+										}
+									>
+										<CampaignPage />
+									</Suspense>
+								</I18nNamespaceLoader>
 							</ModuleGuard>
 						),
 					},

@@ -1,0 +1,11 @@
+{
+	"newRole": "New Role",
+	"editRole": "Edit Role",
+	"cannotDeleteSystem": "Cannot delete system role",
+	"deleteRole": "Delete Role",
+	"deleted": "Role deleted",
+	"unableToDelete": "Unable to delete role",
+	"updated": "Role updated",
+	"created": "Role created",
+	"requestFailed": "Request failed"
+}

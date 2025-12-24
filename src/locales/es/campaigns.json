@@ -1,0 +1,83 @@
+{
+	"page": {
+		"title": "Lista de campañas",
+		"description": "Gestiona y monitorea todas tus campañas en un solo lugar."
+	},
+	"list": {
+		"createCampaign": "Crear Nueva Campaña",
+		"continueCampaignSetup": "Continuar Configuración de Campaña",
+		"noCampaignsFound": "No se encontraron campañas",
+		"noCampaignsFoundDesc": "Intenta ajustar tus términos de búsqueda o crea una nueva campaña",
+		"noCampaignsYet": "Aún no hay campañas",
+		"noCampaignsYetDesc": "Lanza tu primera campaña para llegar a tu audiencia",
+		"createButton": "Crear Campaña",
+		"testCallModal": "Llamada de Prueba de Campaña",
+		"noAgents": "Sin Agentes",
+		"noAgentsMessage": "Esta campaña no tiene agentes asignados.",
+		"savingDraft": "Guardando borrador...",
+		"discardChanges": "¿Descartar cambios?",
+		"discardMessage": "Los cambios no guardados en {{step}} se perderán cuando cierres este asistente.",
+		"discardConfirm": "Descartar cambios",
+		"keepEditing": "Seguir editando",
+		"itemLabel": "campañas",
+		"stepGeneral": "General",
+		"stepAgent": "Agente",
+		"stepOutcomes": "Resultados",
+		"stepParameters": "Parámetros",
+		"stepComplete": "Completar"
+	},
+	"columns": {
+		"campaign": "Campaña",
+		"type": "Tipo",
+		"lastUpdated": "Última Actualización",
+		"campaignDetails": "Detalles de Campaña",
+		"noDescription": "Sin descripción disponible.",
+		"setupIncomplete": "Configuración incompleta - continúa desde el paso {{step}}",
+		"draft": "Borrador",
+		"outbound": "Outbound",
+		"inbound": "Inbound",
+		"continueSetup": "Continuar configuración",
+		"completeSetupFirst": "Completa la configuración primero",
+		"viewCampaign": "Ver campaña",
+		"editCampaign": "Editar campaña",
+		"testCall": "Llamada de Prueba",
+		"cloneCampaign": "Clonar campaña",
+		"deleteCampaign": "Eliminar campaña"
+	},
+	"filters": {
+		"title": "Filtros",
+		"searchPlaceholder": "Buscar campañas...",
+		"sortBy": "Ordenar por",
+		"type": "Tipo",
+		"allTypes": "Todos los tipos",
+		"executionType": "Tipo de Ejecución",
+		"allExecutionTypes": "Todos los tipos de ejecución",
+		"status": "Estado",
+		"allStatuses": "Todos los estados",
+		"includeCompleted": "Incluir completadas",
+		"advanced": "Avanzado",
+		"clearFilters": "Limpiar filtros",
+		"clearAllFilters": "Limpiar todos los filtros",
+		"sortOptions": {
+			"createdAt": "Fecha de creación",
+			"name": "Nombre",
+			"status": "Estado",
+			"lastActivity": "Última actividad"
+		},
+		"typeOptions": {
+			"outbound": "Saliente",
+			"inbound": "Entrante"
+		},
+		"executionTypeOptions": {
+			"timeBased": "Basado en Tiempo"
+		}
+	},
+	"status": {
+		"PENDING": "Pendiente",
+		"RUNNING": "En curso",
+		"PAUSED": "Pausada",
+		"COMPLETED": "Completada",
+		"FAILED": "Fallida",
+		"UNKNOWN": "Desconocido"
+	}
+}

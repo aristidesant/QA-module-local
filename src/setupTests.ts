@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { afterEach, vi } from 'vitest';
 import * as React from 'react';
-import '~/i18n';
+import '~/locales/i18n';
 
 // Polyfill React.act for React 19 compatibility with @testing-library/react
 // React 19 removed act from react-dom/test-utils, but testing-library still expects it

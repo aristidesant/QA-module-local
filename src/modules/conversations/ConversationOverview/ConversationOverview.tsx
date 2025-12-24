@@ -51,7 +51,7 @@ export function ConversationOverview({
 	status: statusOverride,
 	duration: durationOverride,
 }: ConversationOverviewProps) {
-	const { t } = useTranslation();
+	const { t } = useTranslation(['conversations', 'common']);
 	const {
 		contact,
 		agent,
@@ -70,7 +70,7 @@ export function ConversationOverview({
 		try {
 			return new Date(dateString).toLocaleString();
 		} catch (error) {
-			return t('conversations.overview.fallbacks.invalidDate');
+			return t('overview.fallbacks.invalidDate');
 		}
 	};
 
@@ -84,19 +84,19 @@ export function ConversationOverview({
 				minute: '2-digit',
 			});
 		} catch (error) {
-			return t('conversations.overview.fallbacks.invalidDate');
+			return t('overview.fallbacks.invalidDate');
 		}
 	};
 
 	const formatDuration = (seconds?: number) => {
-		if (!seconds) return t('conversations.overview.fallbacks.na');
+		if (!seconds) return t('overview.fallbacks.na');
 		const minutes = Math.floor(seconds / 60);
 		const remainingSeconds = seconds % 60;
-		return `${minutes}${t('units.minute')} ${remainingSeconds}${t('units.second')}`;
+		return `${minutes}${t('units.minute', { ns: 'common' })} ${remainingSeconds}${t('units.second', { ns: 'common' })}`;
 	};
 
 	const contactName = conversation?.externalPhoneNumber
-		? t('conversations.overview.demoContact')
+		? t('overview.demoContact')
 		: `${getValueOrEmpty(contact?.firstName)} ${getValueOrEmpty(
 				contact?.lastName
 			)}`;
@@ -104,32 +104,29 @@ export function ConversationOverview({
 		contact?.phoneNumber ||
 			conversation?.contactPhoneNumber ||
 			conversation?.externalPhoneNumber ||
-			t('conversations.overview.fallbacks.noPhone')
+			t('overview.fallbacks.noPhone')
 	);
 	const agentName = agent?.name
 		? String(agent.name)
-		: t('conversations.overview.fallbacks.unassigned');
+		: t('overview.fallbacks.unassigned');
 	const campaignName = campaign?.name
 		? String(campaign.name)
-		: t('conversations.overview.fallbacks.na');
+		: t('overview.fallbacks.na');
 
 	// Extract metadata values
 	const metadata = transcriptContent?.metadata;
 	const terminationReason = metadata?.termination_reason;
 
 	const formatTermination = (reason?: string | null) => {
-		if (!reason) return t('conversations.overview.termination.unknown');
+		if (!reason) return t('overview.termination.unknown');
 		const r = reason.toLowerCase();
 		if (r.includes('terminated_by') || r.includes('terminated'))
-			return t('conversations.overview.termination.terminated');
+			return t('overview.termination.terminated');
 		if (r.includes('client') && r.includes('disconnect'))
-			return t('conversations.overview.termination.clientDisconnected');
-		if (r.includes('hangup'))
-			return t('conversations.overview.termination.hangup');
-		if (r.includes('timeout'))
-			return t('conversations.overview.termination.timeout');
-		if (r.includes('error'))
-			return t('conversations.overview.termination.error');
+			return t('overview.termination.clientDisconnected');
+		if (r.includes('hangup')) return t('overview.termination.hangup');
+		if (r.includes('timeout')) return t('overview.termination.timeout');
+		if (r.includes('error')) return t('overview.termination.error');
 		// Fallback: capitalize first letter
 		return reason.charAt(0).toUpperCase() + reason.slice(1);
 	};
@@ -186,14 +183,14 @@ export function ConversationOverview({
 			window.URL.revokeObjectURL(url);
 
 			notifications.show({
-				title: t('conversations.overview.notifications.exportSuccess'),
-				message: t('conversations.overview.notifications.exportSuccessMsg'),
+				title: t('overview.notifications.exportSuccess'),
+				message: t('overview.notifications.exportSuccessMsg'),
 				color: 'green',
 			});
 		} catch (error) {
 			notifications.show({
-				title: t('conversations.overview.notifications.exportFailed'),
-				message: t('conversations.overview.notifications.exportFailedMsg'),
+				title: t('overview.notifications.exportFailed'),
+				message: t('overview.notifications.exportFailedMsg'),
 				color: 'red',
 			});
 		}
@@ -203,8 +200,8 @@ export function ConversationOverview({
 		<Stack gap='md' className={styles.container}>
 			{/* Contact & Quick Overview */}
 			<RightSectionCard
-				title={t('conversations.overview.title')}
-				description={t('conversations.overview.description')}
+				title={t('overview.title')}
+				description={t('overview.description')}
 				icon={StatusIcon}
 				iconColor={statusIconColor}
 			>
@@ -225,15 +222,13 @@ export function ConversationOverview({
 								{({ copied, copy }) => (
 									<Tooltip
 										label={
-											copied
-												? t('conversations.overview.copied')
-												: t('conversations.overview.copyPhone')
+											copied ? t('overview.copied') : t('overview.copyPhone')
 										}
 									>
 										<ActionIcon
 											size='xs'
 											variant='subtle'
-											aria-label={t('conversations.overview.copyPhone')}
+											aria-label={t('overview.copyPhone')}
 											onClick={copy}
 											className={styles.copyBtn}
 										>
@@ -259,7 +254,7 @@ export function ConversationOverview({
 						</div>
 						<div className={styles.statContent}>
 							<Text className={styles.statLabel}>
-								{t('conversations.overview.stats.dateTime')}
+								{t('overview.stats.dateTime')}
 							</Text>
 							<Text className={styles.statValue} title={formatDate(startDate)}>
 								{formatDateShort(startDate)}
@@ -276,7 +271,7 @@ export function ConversationOverview({
 						</div>
 						<div className={styles.statContent}>
 							<Text className={styles.statLabel}>
-								{t('conversations.overview.stats.agent')}
+								{t('overview.stats.agent')}
 							</Text>
 							<Text className={styles.statValue} title={agentName}>
 								{agentName}
@@ -290,7 +285,7 @@ export function ConversationOverview({
 						</div>
 						<div className={styles.statContent}>
 							<Text className={styles.statLabel}>
-								{t('conversations.overview.stats.campaign')}
+								{t('overview.stats.campaign')}
 							</Text>
 							<Text className={styles.statValue} title={campaignName}>
 								{campaignName}
@@ -305,7 +300,7 @@ export function ConversationOverview({
 							</div>
 							<div className={styles.statContent}>
 								<Text className={styles.statLabel}>
-									{t('conversations.overview.stats.endReason')}
+									{t('overview.stats.endReason')}
 								</Text>
 								<Text className={styles.statValue} title={terminationReason}>
 									{formatTermination(terminationReason)}
@@ -322,10 +317,10 @@ export function ConversationOverview({
 			{/* Conversation Summary */}
 			{transcriptSummary && (
 				<RightSectionCard
-					title={t('conversations.overview.summary.title')}
+					title={t('overview.summary.title')}
 					icon={IconMessages}
 					iconColor='blue'
-					description={t('conversations.overview.summary.description')}
+					description={t('overview.summary.description')}
 				>
 					<Text fz='xs' className={styles.summaryText}>
 						{summary?.es || summary?.en || transcriptSummary}
@@ -337,15 +332,15 @@ export function ConversationOverview({
 							loading={exportConversationMutation.isPending}
 							onClick={handleExportConversation}
 						>
-							{t('conversations.overview.downloadTranscript')}
+							{t('overview.downloadTranscript')}
 						</Button>
 					)}
 				</RightSectionCard>
 			)}{' '}
 			<ConversationPlayer
 				voiceFile={conversation?.voiceFile}
-				title={t('conversations.player.title')}
-				description={t('conversations.player.description')}
+				title={t('player.title')}
+				description={t('player.description')}
 				paramConversationId={conversation?.id}
 				contactName={`${getValueOrEmpty(contact?.firstName)} ${getValueOrEmpty(
 					contact?.lastName

@@ -1,0 +1,125 @@
+{
+	"page": {
+		"loadingTitle": "Cargando campaña...",
+		"loadingDescription": "Por favor espera mientras obtenemos los detalles de la campaña.",
+		"errorTitle": "Campaña no disponible",
+		"errorDescription": "No pudimos encontrar la campaña que buscas.",
+		"notFound": "Campaña no encontrada o error al cargar."
+	},
+	"general": {
+		"title": "Información Básica",
+		"description": "Define los detalles principales de tu campaña para garantizar claridad y fácil identificación.",
+		"campaignName": "Nombre de Campaña",
+		"enterCampaignName": "Ingresa el nombre de la campaña",
+		"descriptionLabel": "Descripción",
+		"describeYourCampaign": "Describe tu campaña",
+		"campaignObjective": "Objetivo de Campaña",
+		"campaignObjectiveDesc": "Elige el objetivo principal que esta campaña busca alcanzar",
+		"loadingObjectives": "Cargando objetivos...",
+		"selectObjective": "Selecciona un objetivo para esta campaña",
+		"failedToLoadObjectives": "Error al cargar objetivos",
+		"createNewObjective": "Crear nuevo objetivo",
+		"createObjectiveTitle": "Crear Objetivo de Campaña",
+		"defaultWaves": "Olas Predeterminadas",
+		"defaultWavesDesc": "Cuántas olas debe ejecutar cada nueva lista de contactos antes de detenerse",
+		"enterNumberOfWaves": "Ingresa el número de olas"
+	},
+	"form": {
+		"title": {
+			"edit": "Editando Campaña: {{name}}"
+		},
+		"description": "Administra la configuración y ajustes de tu campaña.",
+		"notifications": {
+			"warningTitle": "Advertencia",
+			"objectiveAssignmentFailed": "Campaña guardada pero falló la asignación del objetivo.",
+			"successCreated": "Campaña Creada",
+			"successCreatedMessage": "Tu campaña ha sido creada exitosamente.",
+			"successUpdated": "Campaña Actualizada",
+			"successUpdatedMessage": "Tu campaña ha sido actualizada exitosamente.",
+			"errorCreate": "No se pudo crear la campaña. Por favor, inténtalo de nuevo.",
+			"errorUpdate": "No se pudo actualizar la campaña. Por favor, inténtalo de nuevo."
+		},
+		"validation": {
+			"nameRequired": "El nombre es requerido",
+			"typeRequired": "El tipo es requerido",
+			"statusRequired": "El estado es requerido",
+			"budgetMin": "El presupuesto debe ser 0 o más",
+			"spentMin": "El gasto debe ser 0 o más",
+			"userIdMin": "El ID de usuario debe ser 0 o más",
+			"clientIdMin": "El ID de cliente debe ser 0 o más",
+			"defaultWavesMin": "Las olas predeterminadas deben ser al menos 1",
+			"objectiveRequired": "Se requiere Objetivo de Campaña"
+		},
+		"agent": {
+			"prompt": {
+				"title": "Prompt del Agente",
+				"description": "Define las instrucciones que el agente seguirá al hablar con los contactos.",
+				"header": {
+					"editAria": "Editar prompt",
+					"collapseAria": "Colapsar prompt",
+					"expandAria": "Expandir prompt"
+				},
+				"previewTitle": "Vista previa del prompt",
+				"previewChars": "{{count}} caracteres",
+				"placeholder": "Aún no se ha agregado un prompt. Edita para definir el tono del agente, restricciones y respuestas de ejemplo.",
+				"keepConcise": "Mantén el prompt conciso y accionable para que el agente responda con confianza.",
+				"modal": {
+					"title": "Configuración de prompts",
+					"subtitle": "Configura los prompts para cada tipo de interacción",
+					"types": "Tipos",
+					"selectPromptType": "Selecciona un tipo de prompt para comenzar a editar.",
+					"saveHint": "Guarda para aplicar los prompts en toda esta campaña.",
+					"editorDrafted": "Borrador",
+					"editorNoChanges": "Sin cambios"
+				},
+				"status": {
+					"drafted": "BORRADOR",
+					"saved": "Guardado",
+					"empty": "Vacío"
+				}
+			},
+			"voice": {
+				"selectHint": "Selecciona una voz para tu agente y haz clic en guardar para aplicar los cambios.",
+				"noVoices": "No se encontraron voces",
+				"save": "Guardar Agente",
+				"saving": "Guardando...",
+				"success": "Voz del agente actualizada correctamente",
+				"error": "No se pudo actualizar la voz del agente",
+				"pleaseSelectVoice": "Por favor selecciona una voz",
+				"agentDataNotLoaded": "Datos del agente no cargados"
+			}
+		},
+		"contacts": {
+			"tabs": {
+				"active": "Listas Activas",
+				"inactive": "Listas Inactivas"
+			},
+			"title": "Contactos",
+			"description": "Información sobre los contactos en esta campaña",
+			"list": {
+				"activeTitle": "Listas de contactos",
+				"inactiveTitle": "Listas de contactos inactivas",
+				"activeDescription": "Mostrando todas las listas de contactos activas asociadas a esta campaña.",
+				"inactiveDescription": "Mostrando todas las listas de contactos inactivas asociadas a esta campaña.",
+				"addNewContactList": "Agregar nueva lista de contactos",
+				"addInactiveContactList": "Agregar lista de contactos inactiva",
+				"reload": "Recargar",
+				"reloadUnavailable": "Recarga no disponible mientras está colapsado",
+				"emptyMessage": "No hay listas de contactos disponibles",
+				"emptyInactiveMessage": "No hay listas de contactos inactivas disponibles",
+				"configuration": "Configuración de la Lista de Contactos",
+				"configurationDescription": "Explore sus listas de contactos existentes o cargue una nueva para comenzar a comunicarse.",
+				"selectActive": "Seleccionar Lista de Contactos Activa",
+				"selectActiveDescription": "Seleccione una lista de contactos activa para agregarla como inactiva para esta campaña.",
+				"columns": {
+					"name": "Nombre",
+					"total": "Total",
+					"assigned": "Asignado",
+					"status": "Estado",
+					"expiration": "Expiración",
+					"actions": "Acciones"
+				}
+			}
+		}
+	}
+}

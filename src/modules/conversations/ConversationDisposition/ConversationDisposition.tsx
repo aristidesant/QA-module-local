@@ -22,7 +22,7 @@ type ConversationDispositionProps = {
 const ConversationDisposition: FC<ConversationDispositionProps> = ({
 	conversationId,
 }) => {
-	const { t, i18n } = useTranslation();
+	const { t, i18n } = useTranslation(['conversations', 'common']);
 	const { data, isLoading, isError, refetch } =
 		useCallDispositionByConversationId(conversationId);
 
@@ -42,27 +42,27 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 				return {
 					color: 'green' as const,
 					borderColorVar: 'var(--mantine-color-green-5)',
-					label: t('conversations.disposition.positive'),
+					label: t('disposition.positive'),
 				};
 			case 'NEGATIVE':
 				return {
 					color: 'red' as const,
 					borderColorVar: 'var(--mantine-color-red-5)',
-					label: t('conversations.disposition.negative'),
+					label: t('disposition.negative'),
 				};
 			case 'NEUTRAL':
 			default:
 				return {
 					color: 'gray' as const,
 					borderColorVar: 'var(--mantine-color-gray-4)',
-					label: t('conversations.disposition.neutral'),
+					label: t('disposition.neutral'),
 				};
 		}
 	};
 
 	const formatDuration = (totalSeconds?: number) => {
 		if (!totalSeconds || totalSeconds <= 0)
-			return t('conversations.disposition.duration.asap');
+			return t('disposition.duration.asap');
 		const minutesTotal = Math.floor(totalSeconds / 60);
 		const days = Math.floor(minutesTotal / (60 * 24));
 		const hours = Math.floor((minutesTotal % (60 * 24)) / 60);
@@ -70,29 +70,28 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 		const parts: string[] = [];
 		if (days)
 			parts.push(
-				`${days} ${days === 1 ? t('conversations.disposition.duration.day') : t('conversations.disposition.duration.days')}`
+				`${days} ${days === 1 ? t('disposition.duration.day') : t('disposition.duration.days')}`
 			);
 		if (hours)
 			parts.push(
-				`${hours} ${hours === 1 ? t('conversations.disposition.duration.hour') : t('conversations.disposition.duration.hours')}`
+				`${hours} ${hours === 1 ? t('disposition.duration.hour') : t('disposition.duration.hours')}`
 			);
 		if (minutes)
 			parts.push(
-				`${minutes} ${minutes === 1 ? t('conversations.disposition.duration.minute') : t('conversations.disposition.duration.minutes')}`
+				`${minutes} ${minutes === 1 ? t('disposition.duration.minute') : t('disposition.duration.minutes')}`
 			);
-		if (!parts.length)
-			return t('conversations.disposition.duration.lessThanMinute');
+		if (!parts.length) return t('disposition.duration.lessThanMinute');
 		if (parts.length === 1) return parts[0];
 		if (parts.length === 2)
-			return `${parts[0]} ${t('conversations.disposition.duration.and')} ${parts[1]}`;
-		return `${parts[0]}, ${parts[1]} ${t('conversations.disposition.duration.and')} ${parts[2]}`;
+			return `${parts[0]} ${t('disposition.duration.and')} ${parts[1]}`;
+		return `${parts[0]}, ${parts[1]} ${t('disposition.duration.and')} ${parts[2]}`;
 	};
 
 	if (isLoading) {
 		return (
 			<RightSectionCard
-				title={t('conversations.disposition.title')}
-				description={t('conversations.disposition.loading')}
+				title={t('disposition.title')}
+				description={t('disposition.loading')}
 				icon={IconPhone}
 				iconColor='var(--mantine-color-gray-4)'
 			>
@@ -107,14 +106,14 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 	if (isError) {
 		return (
 			<RightSectionCard
-				title={t('conversations.disposition.title')}
-				description={t('conversations.disposition.failed')}
+				title={t('disposition.title')}
+				description={t('disposition.failed')}
 				icon={IconInfoCircle}
 				iconColor='var(--mantine-color-red-6)'
 			>
 				<div className={styles.errorState}>
 					<Text size='sm' c='dimmed' mb={12}>
-						{t('conversations.disposition.errorMsg')}
+						{t('disposition.errorMsg')}
 					</Text>
 					<Button
 						variant='light'
@@ -124,7 +123,7 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 						onClick={() => refetch()}
 						fullWidth
 					>
-						{t('conversations.disposition.retry')}
+						{t('disposition.retry')}
 					</Button>
 				</div>
 			</RightSectionCard>
@@ -132,8 +131,7 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 	}
 
 	const disposition = data as CallDispositionModel | undefined;
-	const name =
-		disposition?.dispositionName || t('conversations.disposition.noOutcome');
+	const name = disposition?.dispositionName || t('disposition.noOutcome');
 	const description = disposition?.dispositionDescription;
 	const notes = disposition?.notes;
 	const status = normalizeStatus(
@@ -161,12 +159,12 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 	const traitBadges = [
 		isFinal && {
 			key: 'final',
-			label: t('conversations.disposition.finalized'),
+			label: t('disposition.finalized'),
 			icon: <IconShieldCheck size={12} />,
 		},
 		isVoiceMail && {
 			key: 'voicemail',
-			label: t('conversations.disposition.voicemail'),
+			label: t('disposition.voicemail'),
 			icon: <IconRecordMail size={12} />,
 		},
 	].filter(Boolean) as Array<{
@@ -177,8 +175,8 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 
 	return (
 		<RightSectionCard
-			title={t('conversations.disposition.title')}
-			description={timestampLabel || t('conversations.disposition.noUpdates')}
+			title={t('disposition.title')}
+			description={timestampLabel || t('disposition.noUpdates')}
 			icon={IconPhone}
 			iconColor={statusView.borderColorVar}
 		>
@@ -225,7 +223,7 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 								<IconClock size={14} />
 								<div>
 									<Text size='xs' className={styles.actionLabel}>
-										{t('conversations.disposition.callbackRequired')}
+										{t('disposition.callbackRequired')}
 									</Text>
 									<Text size='xs'>{formatDuration(rescheduleTimeSec)}</Text>
 								</div>
@@ -236,11 +234,9 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 								<IconPhoneOff size={14} />
 								<div>
 									<Text size='xs' className={styles.actionLabel}>
-										{t('conversations.disposition.numberInvalidated')}
+										{t('disposition.numberInvalidated')}
 									</Text>
-									<Text size='xs'>
-										{t('conversations.disposition.doNotRetry')}
-									</Text>
+									<Text size='xs'>{t('disposition.doNotRetry')}</Text>
 								</div>
 							</div>
 						)}
@@ -252,7 +248,7 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 						<Divider className={styles.notesDivider} />
 						<div className={styles.notes}>
 							<Text className={styles.notesLabel}>
-								{t('conversations.disposition.agentNotes')}
+								{t('disposition.agentNotes')}
 							</Text>
 							<Text className={styles.notesText}>{notes}</Text>
 						</div>

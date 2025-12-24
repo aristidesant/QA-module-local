@@ -1,0 +1,11 @@
+{
+	"newRole": "Nuevo rol",
+	"editRole": "Editar rol",
+	"cannotDeleteSystem": "No se puede eliminar un rol del sistema",
+	"deleteRole": "Eliminar rol",
+	"deleted": "Rol eliminado",
+	"unableToDelete": "No se pudo eliminar el rol",
+	"updated": "Rol actualizado",
+	"created": "Rol creado",
+	"requestFailed": "La solicitud falló"
+}

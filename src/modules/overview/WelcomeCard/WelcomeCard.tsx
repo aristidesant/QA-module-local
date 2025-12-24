@@ -30,38 +30,38 @@ export type WelcomeCardProps = {
 const features = [
 	{
 		icon: IconSparkles,
-		titleKey: 'welcomeCard.features.smartCampaigns.title',
-		descriptionKey: 'welcomeCard.features.smartCampaigns.description',
+		titleKey: 'features.smartCampaigns.title',
+		descriptionKey: 'features.smartCampaigns.description',
 		color: 'indigo',
 	},
 	{
 		icon: IconRobot,
-		titleKey: 'welcomeCard.features.aiAgents.title',
-		descriptionKey: 'welcomeCard.features.aiAgents.description',
+		titleKey: 'features.aiAgents.title',
+		descriptionKey: 'features.aiAgents.description',
 		color: 'blue',
 	},
 	{
 		icon: IconPhoneCall,
-		titleKey: 'welcomeCard.features.interactionHub.title',
-		descriptionKey: 'welcomeCard.features.interactionHub.description',
+		titleKey: 'features.interactionHub.title',
+		descriptionKey: 'features.interactionHub.description',
 		color: 'teal',
 	},
 	{
 		icon: IconTools,
-		titleKey: 'welcomeCard.features.seamlessTools.title',
-		descriptionKey: 'welcomeCard.features.seamlessTools.description',
+		titleKey: 'features.seamlessTools.title',
+		descriptionKey: 'features.seamlessTools.description',
 		color: 'violet',
 	},
 	{
 		icon: IconUsers,
-		titleKey: 'welcomeCard.features.activeContacts.title',
-		descriptionKey: 'welcomeCard.features.activeContacts.description',
+		titleKey: 'features.activeContacts.title',
+		descriptionKey: 'features.activeContacts.description',
 		color: 'cyan',
 	},
 	{
 		icon: IconCheckupList,
-		titleKey: 'welcomeCard.features.growthAnalytics.title',
-		descriptionKey: 'welcomeCard.features.growthAnalytics.description',
+		titleKey: 'features.growthAnalytics.title',
+		descriptionKey: 'features.growthAnalytics.description',
 		color: 'orange',
 	},
 ];
@@ -70,29 +70,27 @@ export default function WelcomeCard({
 	heading: propHeading,
 	subheading: propSubheading,
 }: WelcomeCardProps) {
-	const { t } = useTranslation();
+	const { t } = useTranslation('overview');
 	const isMasterClient = useIsMasterClient();
 	const impersonationState = useImpersonationState();
 	const { user, targetClient } = useSessionStore();
 
-	let heading = propHeading || t('welcomeCard.defaultHeading');
-	let subheading = propSubheading || t('welcomeCard.defaultSubheading');
+	let heading = propHeading || t('defaultHeading');
+	let subheading = propSubheading || t('defaultSubheading');
 
 	const displayName = user?.firstName || user?.username;
 
 	if (impersonationState.isImpersonating && targetClient) {
-		heading = t('welcomeCard.impersonationHeading', {
+		heading = t('impersonationHeading', {
 			name: targetClient.name,
 		});
-		subheading = t('welcomeCard.impersonationSubheading');
+		subheading = t('impersonationSubheading');
 	} else if (displayName) {
-		heading = t('welcomeCard.welcomeBackHeading', { name: displayName });
-		subheading = isMasterClient
-			? t('welcomeCard.masterSubheading')
-			: subheading;
+		heading = t('welcomeBackHeading', { name: displayName });
+		subheading = isMasterClient ? t('masterSubheading') : subheading;
 	} else if (isMasterClient) {
-		heading = t('welcomeCard.enterpriseHeading');
-		subheading = propSubheading || t('welcomeCard.masterSubheading');
+		heading = t('enterpriseHeading');
+		subheading = propSubheading || t('masterSubheading');
 	}
 
 	return (
@@ -107,7 +105,7 @@ export default function WelcomeCard({
 										<IconSparkles size={12} />
 									</ThemeIcon>
 									<Text size='xs' fw={700} tt='uppercase' lts={1} c='blue.6'>
-										{t('welcomeCard.platformLabel')}
+										{t('platformLabel')}
 									</Text>
 								</Group>
 								<Title order={1} className={classes.heroTitle}>

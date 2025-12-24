@@ -1,0 +1,27 @@
+{
+	"title": "Users",
+	"description": "Manage user accounts and their associated roles within the system.",
+	"searchPlaceholder": "Search users...",
+	"newUser": "New User",
+	"editUser": "Edit User",
+	"deleteUser": "Delete User",
+	"deleteConfirm": "Are you sure you want to delete this user?",
+	"status": {
+		"active": "Active",
+		"inactive": "Inactive"
+	},
+	"columns": {
+		"name": "Name",
+		"email": "Email",
+		"role": "Role",
+		"status": "Status",
+		"lastLogin": "Last Login",
+		"actions": "Actions"
+	},
+	"notifications": {
+		"created": "User created successfully",
+		"updated": "User updated successfully",
+		"deleted": "User deleted successfully",
+		"error": "An error occurred. Please try again."
+	}
+}

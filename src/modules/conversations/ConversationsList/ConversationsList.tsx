@@ -43,7 +43,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 	selectedConversationId,
 	className,
 }) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation(['conversations', 'common']);
 	const pagination = usePagination({
 		initialItemsPerPage: 10,
 	});
@@ -136,26 +136,26 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 	const columns = useConversationsColumns(userTimezone);
 
 	if (!canViewConversations) {
-		return <AccessDenied description={t('conversations.list.error')} />;
+		return <AccessDenied description={t('list.error')} />;
 	}
 
 	return (
 		<div className={`${styles.root} ${className ?? ''}`}>
 			<SectionCard
 				id='conversations-list'
-				title={t('conversations.list.title')}
-				description={t('conversations.list.description')}
+				title={t('list.title')}
+				description={t('list.description')}
 				icon={IconMessagesTabler}
 				contentSpacing='sm'
 				padding='sm'
 				headerActions={
 					<Group className={styles.actions}>
-						<Tooltip label={t('conversations.list.refresh')} withArrow>
+						<Tooltip label={t('list.refresh')} withArrow>
 							<ActionIcon
 								variant='default'
 								size='sm'
 								onClick={() => refetch()}
-								aria-label={t('conversations.list.refresh')}
+								aria-label={t('list.refresh')}
 								loading={isFetching}
 								disabled={isFetching}
 							>
@@ -163,12 +163,12 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 							</ActionIcon>
 						</Tooltip>
 						{canExportConversations && (
-							<Tooltip label={t('conversations.list.export')} withArrow>
+							<Tooltip label={t('list.export')} withArrow>
 								<ActionIcon
 									variant='default'
 									size='sm'
 									onClick={() => setExportModalOpened(true)}
-									aria-label={t('conversations.list.export')}
+									aria-label={t('list.export')}
 								>
 									<IconFileExcel size={16} />
 								</ActionIcon>
@@ -185,7 +185,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 						onPageChange={pagination.setCurrentPage}
 						onItemsPerPageChange={handleItemsPerPageChange}
 						isLoading={isTableLoading}
-						itemLabel={t('conversations.list.itemLabel')}
+						itemLabel={t('list.itemLabel')}
 					/>
 				}
 			>
@@ -194,17 +194,15 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 				{isError ? (
 					<Center className={styles.emptyWrapper}>
 						<Text size='sm' c='red'>
-							{error instanceof Error
-								? error.message
-								: t('conversations.list.error')}
+							{error instanceof Error ? error.message : t('list.error')}
 						</Text>
 					</Center>
 				) : conversations.length === 0 && !isTableLoading ? (
 					<div className={styles.emptyWrapper}>
 						<EmptyState
 							icon={<IconMessagesOff size={48} stroke={1.2} />}
-							message={t('conversations.list.empty.message')}
-							description={t('conversations.list.empty.description')}
+							message={t('list.empty.message')}
+							description={t('list.empty.description')}
 						/>
 					</div>
 				) : (

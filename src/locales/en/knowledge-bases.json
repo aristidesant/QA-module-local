@@ -1,0 +1,22 @@
+{
+	"deleteKnowledgeBase": "Delete Knowledge Base",
+	"noKnowledgeBases": "No knowledge bases found",
+	"searchPlaceholder": "Search knowledge bases",
+	"all": "All",
+	"url": "URL",
+	"text": "Text",
+	"file": "File",
+	"createNew": "Create new",
+	"selected": "{{count}} selected",
+	"saveSelections": "Save Selections",
+	"cancel": "Cancel",
+	"columns": {
+		"name": "Name",
+		"description": "Description",
+		"type": "Type"
+	},
+	"fallbacks": {
+		"textSnippet": "Text snippet",
+		"file": "File"
+	}
+}

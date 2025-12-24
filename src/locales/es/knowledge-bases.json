@@ -1,0 +1,22 @@
+{
+	"deleteKnowledgeBase": "Eliminar base de conocimiento",
+	"noKnowledgeBases": "No se encontraron bases de conocimiento",
+	"searchPlaceholder": "Buscar bases de conocimiento",
+	"all": "Todas",
+	"url": "URL",
+	"text": "Texto",
+	"file": "Archivo",
+	"createNew": "Crear nueva",
+	"selected": "{{count}} seleccionados",
+	"saveSelections": "Guardar selecciones",
+	"cancel": "Cancelar",
+	"columns": {
+		"name": "Nombre",
+		"description": "Descripción",
+		"type": "Tipo"
+	},
+	"fallbacks": {
+		"textSnippet": "Fragmento de texto",
+		"file": "Archivo"
+	}
+}

@@ -4,6 +4,14 @@ import { MantineProvider } from '@mantine/core';
 import ConversationDisposition from './ConversationDisposition';
 import type { CallDispositionModel } from '~/models/CallDispositionModel';
 
+// Mock react-i18next
+vi.mock('react-i18next', () => ({
+	useTranslation: () => ({
+		t: (key: string) => key,
+		i18n: { language: 'en' },
+	}),
+}));
+
 // Mock useCallDispositionByConversationId
 const mockUseCallDispositionByConversationId = vi.fn();
 vi.mock('~/queries/callDispositionQueries', () => ({
@@ -66,8 +74,8 @@ describe('ConversationDisposition', () => {
 		});
 	});
 
-	describe('card title - must always display "Outcome"', () => {
-		it('displays "Outcome" as title when loading', () => {
+	describe('card title - must always display "disposition.title"', () => {
+		it('displays "disposition.title" as title when loading', () => {
 			mockUseCallDispositionByConversationId.mockReturnValue({
 				data: null,
 				isLoading: true,
@@ -76,10 +84,12 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByTestId('card-title')).toHaveTextContent('Outcome');
+			expect(screen.getByTestId('card-title')).toHaveTextContent(
+				'disposition.title'
+			);
 		});
 
-		it('displays "Outcome" as title when error occurs', () => {
+		it('displays "disposition.title" as title when error occurs', () => {
 			mockUseCallDispositionByConversationId.mockReturnValue({
 				data: null,
 				isLoading: false,
@@ -88,15 +98,19 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByTestId('card-title')).toHaveTextContent('Outcome');
+			expect(screen.getByTestId('card-title')).toHaveTextContent(
+				'disposition.title'
+			);
 		});
 
-		it('displays "Outcome" as title when data is loaded', () => {
+		it('displays "disposition.title" as title when data is loaded', () => {
 			renderComponent();
-			expect(screen.getByTestId('card-title')).toHaveTextContent('Outcome');
+			expect(screen.getByTestId('card-title')).toHaveTextContent(
+				'disposition.title'
+			);
 		});
 
-		it('displays "Outcome" as title with positive status', () => {
+		it('displays "disposition.title" as title with positive status', () => {
 			mockUseCallDispositionByConversationId.mockReturnValue({
 				data: { ...sampleDisposition, callStatus: 'POSITIVE' },
 				isLoading: false,
@@ -105,10 +119,12 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByTestId('card-title')).toHaveTextContent('Outcome');
+			expect(screen.getByTestId('card-title')).toHaveTextContent(
+				'disposition.title'
+			);
 		});
 
-		it('displays "Outcome" as title with negative status', () => {
+		it('displays "disposition.title" as title with negative status', () => {
 			mockUseCallDispositionByConversationId.mockReturnValue({
 				data: { ...sampleDisposition, callStatus: 'NEGATIVE' },
 				isLoading: false,
@@ -117,10 +133,12 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByTestId('card-title')).toHaveTextContent('Outcome');
+			expect(screen.getByTestId('card-title')).toHaveTextContent(
+				'disposition.title'
+			);
 		});
 
-		it('displays "Outcome" as title with neutral status', () => {
+		it('displays "disposition.title" as title with neutral status', () => {
 			mockUseCallDispositionByConversationId.mockReturnValue({
 				data: { ...sampleDisposition, callStatus: 'NEUTRAL' },
 				isLoading: false,
@@ -129,13 +147,8 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByTestId('card-title')).toHaveTextContent('Outcome');
-		});
-
-		it('never displays "Disposition" as title', () => {
-			renderComponent();
-			expect(screen.getByTestId('card-title')).not.toHaveTextContent(
-				'Disposition'
+			expect(screen.getByTestId('card-title')).toHaveTextContent(
+				'disposition.title'
 			);
 		});
 	});
@@ -151,7 +164,7 @@ describe('ConversationDisposition', () => {
 
 			renderComponent();
 			expect(screen.getByTestId('card-description')).toHaveTextContent(
-				'Loading status'
+				'disposition.loading'
 			);
 		});
 	});
@@ -167,11 +180,9 @@ describe('ConversationDisposition', () => {
 
 			renderComponent();
 			expect(screen.getByTestId('card-description')).toHaveTextContent(
-				'Failed to load'
+				'disposition.failed'
 			);
-			expect(
-				screen.getByText("Couldn't load outcome data")
-			).toBeInTheDocument();
+			expect(screen.getByText('disposition.errorMsg')).toBeInTheDocument();
 		});
 
 		it('calls refetch when Retry button is clicked', () => {
@@ -184,7 +195,9 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			const retryButton = screen.getByRole('button', { name: /retry/i });
+			const retryButton = screen.getByRole('button', {
+				name: /disposition.retry/i,
+			});
 			fireEvent.click(retryButton);
 			expect(mockRefetch).toHaveBeenCalled();
 		});
@@ -208,7 +221,7 @@ describe('ConversationDisposition', () => {
 			expect(
 				screen.getByText('Customer asked for a follow-up call next week')
 			).toBeInTheDocument();
-			expect(screen.getByText('Agent notes')).toBeInTheDocument();
+			expect(screen.getByText('disposition.agentNotes')).toBeInTheDocument();
 		});
 
 		it('does not display notes section when notes are empty', () => {
@@ -220,10 +233,12 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.queryByText('Agent notes')).not.toBeInTheDocument();
+			expect(
+				screen.queryByText('disposition.agentNotes')
+			).not.toBeInTheDocument();
 		});
 
-		it('displays "No disposition" when dispositionName is missing', () => {
+		it('displays "disposition.noOutcome" when dispositionName is missing', () => {
 			mockUseCallDispositionByConversationId.mockReturnValue({
 				data: { ...sampleDisposition, dispositionName: '' },
 				isLoading: false,
@@ -232,7 +247,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('No outcome')).toBeInTheDocument();
+			expect(screen.getByText('disposition.noOutcome')).toBeInTheDocument();
 		});
 	});
 
@@ -246,7 +261,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('Positive')).toBeInTheDocument();
+			expect(screen.getByText('disposition.positive')).toBeInTheDocument();
 		});
 
 		it('displays Negative badge for negative status', () => {
@@ -258,7 +273,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('Negative')).toBeInTheDocument();
+			expect(screen.getByText('disposition.negative')).toBeInTheDocument();
 		});
 
 		it('displays Neutral badge for neutral status', () => {
@@ -270,7 +285,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('Neutral')).toBeInTheDocument();
+			expect(screen.getByText('disposition.neutral')).toBeInTheDocument();
 		});
 
 		it('displays Neutral badge for unknown status', () => {
@@ -282,7 +297,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('Neutral')).toBeInTheDocument();
+			expect(screen.getByText('disposition.neutral')).toBeInTheDocument();
 		});
 	});
 
@@ -296,7 +311,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('Finalized')).toBeInTheDocument();
+			expect(screen.getByText('disposition.finalized')).toBeInTheDocument();
 		});
 
 		it('displays Voicemail badge when isVoiceMail is true', () => {
@@ -308,7 +323,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('Voicemail')).toBeInTheDocument();
+			expect(screen.getByText('disposition.voicemail')).toBeInTheDocument();
 		});
 
 		it('displays both badges when both flags are true', () => {
@@ -320,8 +335,8 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('Finalized')).toBeInTheDocument();
-			expect(screen.getByText('Voicemail')).toBeInTheDocument();
+			expect(screen.getByText('disposition.finalized')).toBeInTheDocument();
+			expect(screen.getByText('disposition.voicemail')).toBeInTheDocument();
 		});
 	});
 
@@ -339,11 +354,15 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('Callback required')).toBeInTheDocument();
-			expect(screen.getByText('30 minutes')).toBeInTheDocument();
+			expect(
+				screen.getByText('disposition.callbackRequired')
+			).toBeInTheDocument();
+			expect(
+				screen.getByText('30 disposition.duration.minutes')
+			).toBeInTheDocument();
 		});
 
-		it('displays "as soon as possible" when rescheduleTime is 0', () => {
+		it('displays "disposition.duration.asap" when rescheduleTime is 0', () => {
 			mockUseCallDispositionByConversationId.mockReturnValue({
 				data: {
 					...sampleDisposition,
@@ -356,7 +375,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('as soon as possible')).toBeInTheDocument();
+			expect(screen.getByText('disposition.duration.asap')).toBeInTheDocument();
 		});
 
 		it('displays number invalidated when isInvalidatesNumber is true', () => {
@@ -368,8 +387,10 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('Number invalidated')).toBeInTheDocument();
-			expect(screen.getByText('Do not retry this contact')).toBeInTheDocument();
+			expect(
+				screen.getByText('disposition.numberInvalidated')
+			).toBeInTheDocument();
+			expect(screen.getByText('disposition.doNotRetry')).toBeInTheDocument();
 		});
 	});
 
@@ -387,7 +408,9 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('1 day')).toBeInTheDocument();
+			expect(
+				screen.getByText('1 disposition.duration.day')
+			).toBeInTheDocument();
 		});
 
 		it('formats hours correctly', () => {
@@ -403,7 +426,9 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('1 hour')).toBeInTheDocument();
+			expect(
+				screen.getByText('1 disposition.duration.hour')
+			).toBeInTheDocument();
 		});
 
 		it('formats multiple days correctly', () => {
@@ -419,7 +444,9 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('2 days')).toBeInTheDocument();
+			expect(
+				screen.getByText('2 disposition.duration.days')
+			).toBeInTheDocument();
 		});
 
 		it('formats combined duration correctly', () => {
@@ -435,7 +462,11 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('1 day and 1 hour')).toBeInTheDocument();
+			expect(
+				screen.getByText(
+					'1 disposition.duration.day disposition.duration.and 1 disposition.duration.hour'
+				)
+			).toBeInTheDocument();
 		});
 	});
 
@@ -444,11 +475,11 @@ describe('ConversationDisposition', () => {
 			renderComponent();
 			// The timestamp format is "Jan 15, 10:05 AM" or similar based on locale
 			expect(screen.getByTestId('card-description')).not.toHaveTextContent(
-				'No updates yet'
+				'disposition.noUpdates'
 			);
 		});
 
-		it('displays "No updates yet" when no timestamp available', () => {
+		it('displays "disposition.noUpdates" when no timestamp available', () => {
 			mockUseCallDispositionByConversationId.mockReturnValue({
 				data: {
 					...sampleDisposition,
@@ -462,7 +493,7 @@ describe('ConversationDisposition', () => {
 
 			renderComponent();
 			expect(screen.getByTestId('card-description')).toHaveTextContent(
-				'No updates yet'
+				'disposition.noUpdates'
 			);
 		});
 	});

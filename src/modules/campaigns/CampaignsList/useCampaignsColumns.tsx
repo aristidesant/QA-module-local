@@ -53,7 +53,7 @@ export const getCampaignStatusInfo = (
 	return {
 		icon: IconCheck,
 		color: 'gray',
-		label: status || 'Unknown',
+		label: status || 'status.UNKNOWN',
 	};
 };
 
@@ -74,13 +74,13 @@ export const useCampaignsColumns = ({
 	onClone,
 	onContinueDraft,
 }: UseCampaignsColumnsProps): ColumnDef<Campaign, any>[] => {
-	const { t } = useTranslation();
+	const { t } = useTranslation('campaigns');
 	// navigate unused after removing Metrics navigation
 	const { canAccessModule, canPerformAction } = usePermissions();
 	return [
 		{
 			accessorKey: 'name',
-			header: t('campaigns.columns.campaign'),
+			header: t('columns.campaign'),
 			cell: ({ row }) => {
 				const campaign = row.original;
 				return (
@@ -100,14 +100,14 @@ export const useCampaignsColumns = ({
 								<Stack gap='xs'>
 									<Group justify='space-between'>
 										<Text size='sm' fw={700}>
-											{t('campaigns.columns.campaignDetails')}
+											{t('columns.campaignDetails')}
 										</Text>
 										<Badge size='xs' variant='outline' color='gray'>
 											ID: {campaign.id}
 										</Badge>
 									</Group>
 									<Text size='xs' c='dimmed'>
-										{campaign.description || t('campaigns.columns.noDescription')}
+										{campaign.description || t('columns.noDescription')}
 									</Text>
 								</Stack>
 							</HoverCard.Dropdown>
@@ -117,7 +117,9 @@ export const useCampaignsColumns = ({
 						</Text>
 						{campaign.isDraft && (
 							<Tooltip
-								label={t('campaigns.columns.setupIncomplete', { step: (campaign.draftStep ?? 0) + 1 })}
+								label={t('columns.setupIncomplete', {
+									step: (campaign.draftStep ?? 0) + 1,
+								})}
 							>
 								<Badge
 									variant='light'
@@ -125,7 +127,7 @@ export const useCampaignsColumns = ({
 									size='md'
 									leftSection={<IconFileDescription size={12} />}
 								>
-									{t('campaigns.columns.draft')}
+									{t('columns.draft')}
 								</Badge>
 							</Tooltip>
 						)}
@@ -136,7 +138,7 @@ export const useCampaignsColumns = ({
 		},
 		{
 			accessorKey: 'type',
-			header: t('campaigns.columns.type'),
+			header: t('columns.type'),
 			cell: ({ row }) => {
 				const campaign = row.original;
 				const isOutbound = campaign.type === 'OUTBOUND';
@@ -154,7 +156,7 @@ export const useCampaignsColumns = ({
 							)
 						}
 					>
-						{isOutbound ? t('campaigns.columns.outbound') : t('campaigns.columns.inbound')}
+						{isOutbound ? t('columns.outbound') : t('columns.inbound')}
 					</Badge>
 				);
 			},
@@ -162,7 +164,7 @@ export const useCampaignsColumns = ({
 		},
 		{
 			accessorKey: 'updatedAt',
-			header: t('campaigns.columns.lastUpdated'),
+			header: t('columns.lastUpdated'),
 			cell: ({ row }) => {
 				const campaign = row.original;
 				return (
@@ -181,11 +183,11 @@ export const useCampaignsColumns = ({
 				return (
 					<Group gap='xs' justify='end'>
 						{campaign.isDraft && onContinueDraft && (
-							<Tooltip label={t('campaigns.columns.continueSetup')}>
+							<Tooltip label={t('columns.continueSetup')}>
 								<ActionIcon
 									color='red'
 									radius='md'
-									aria-label={t('campaigns.columns.continueSetup')}
+									aria-label={t('columns.continueSetup')}
 									onClick={(e) => {
 										e.stopPropagation();
 										onContinueDraft(campaign);
@@ -198,13 +200,15 @@ export const useCampaignsColumns = ({
 						{canAccessModule(ModuleEnum.CAMPAIGNS) && (
 							<Tooltip
 								label={
-									campaign.isDraft ? t('campaigns.columns.completeSetupFirst') : t('campaigns.columns.viewCampaign')
+									campaign.isDraft
+										? t('columns.completeSetupFirst')
+										: t('columns.viewCampaign')
 								}
 							>
 								<ActionIcon
 									color='teal'
 									radius='md'
-									aria-label={t('campaigns.columns.viewCampaign')}
+									aria-label={t('columns.viewCampaign')}
 									disabled={campaign.isDraft}
 									onClick={(e) => {
 										e.stopPropagation();
@@ -218,13 +222,15 @@ export const useCampaignsColumns = ({
 						{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.UPDATE) && (
 							<Tooltip
 								label={
-									campaign.isDraft ? t('campaigns.columns.completeSetupFirst') : t('campaigns.columns.editCampaign')
+									campaign.isDraft
+										? t('columns.completeSetupFirst')
+										: t('columns.editCampaign')
 								}
 							>
 								<ActionIcon
 									color='blue'
 									radius='md'
-									aria-label={t('campaigns.columns.editCampaign')}
+									aria-label={t('columns.editCampaign')}
 									disabled={campaign.isDraft}
 									onClick={(e) => {
 										e.stopPropagation();
@@ -238,12 +244,16 @@ export const useCampaignsColumns = ({
 						{/* Inline action icons (replacing the 3-dot menu) */}
 						{canAccessModule(ModuleEnum.CAMPAIGNS) && (
 							<Tooltip
-								label={campaign.isDraft ? t('campaigns.columns.completeSetupFirst') : t('campaigns.columns.testCall')}
+								label={
+									campaign.isDraft
+										? t('columns.completeSetupFirst')
+										: t('columns.testCall')
+								}
 							>
 								<ActionIcon
 									color='green'
 									radius='md'
-									aria-label={t('campaigns.columns.testCall')}
+									aria-label={t('columns.testCall')}
 									disabled={campaign.isDraft}
 									onClick={(e) => {
 										e.stopPropagation();
@@ -257,13 +267,15 @@ export const useCampaignsColumns = ({
 						{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.CREATE) && (
 							<Tooltip
 								label={
-									campaign.isDraft ? t('campaigns.columns.completeSetupFirst') : t('campaigns.columns.cloneCampaign')
+									campaign.isDraft
+										? t('columns.completeSetupFirst')
+										: t('columns.cloneCampaign')
 								}
 							>
 								<ActionIcon
 									color='orange'
 									radius='md'
-									aria-label={t('campaigns.columns.cloneCampaign')}
+									aria-label={t('columns.cloneCampaign')}
 									disabled={campaign.isDraft}
 									onClick={(e) => {
 										e.stopPropagation();
@@ -275,11 +287,11 @@ export const useCampaignsColumns = ({
 							</Tooltip>
 						)}
 						{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.DELETE) && (
-							<Tooltip label={t('campaigns.columns.deleteCampaign')}>
+							<Tooltip label={t('columns.deleteCampaign')}>
 								<ActionIcon
 									color='red'
 									radius='md'
-									aria-label={t('campaigns.columns.deleteCampaign')}
+									aria-label={t('columns.deleteCampaign')}
 									onClick={(e) => {
 										e.stopPropagation();
 										onDelete(campaign);

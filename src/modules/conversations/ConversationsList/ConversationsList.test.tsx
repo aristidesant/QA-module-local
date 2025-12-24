@@ -10,6 +10,13 @@ import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import ConversationsList from './ConversationsList';
 import * as conversationsQueries from '~/queries/conversationsQueries';
 
+// Mock react-i18next
+vi.mock('react-i18next', () => ({
+	useTranslation: () => ({
+		t: (key: string) => key,
+	}),
+}));
+
 // Avoid act warnings from debounce
 vi.mock('@mantine/hooks', async () => {
 	const actual = await vi.importActual<any>('@mantine/hooks');
@@ -67,7 +74,9 @@ describe('ConversationsList - server-side sorting', () => {
 
 		// Click the Created At column header (assuming column labeled Created At)
 		// Fallback to generic 'Created' matching if exact label differs
-		const createdHeader = screen.getByRole('columnheader', { name: /when/i });
+		const createdHeader = screen.getByRole('columnheader', {
+			name: /list.columns.when/i,
+		});
 		await user.click(createdHeader);
 
 		await waitFor(() => {
@@ -330,12 +339,8 @@ describe('ConversationsList', () => {
 
 			renderComponent();
 			expect(screen.getByTestId('empty-state')).toBeInTheDocument();
-			expect(screen.getByText('No conversations yet')).toBeInTheDocument();
-			expect(
-				screen.getByText(
-					'We will display conversations as soon as they are available.'
-				)
-			).toBeInTheDocument();
+			expect(screen.getByText('list.empty.message')).toBeInTheDocument();
+			expect(screen.getByText('list.empty.description')).toBeInTheDocument();
 		});
 
 		it('renders error state with error message', () => {
@@ -363,9 +368,7 @@ describe('ConversationsList', () => {
 			});
 
 			renderComponent();
-			expect(
-				screen.getByText('Unable to load conversations. Please try again.')
-			).toBeInTheDocument();
+			expect(screen.getByText('list.error')).toBeInTheDocument();
 		});
 
 		it('renders conversation filters component', () => {
@@ -392,21 +395,21 @@ describe('ConversationsList', () => {
 			});
 
 			renderComponent();
-			const refreshButton = screen.getByLabelText('Refresh conversations');
+			const refreshButton = screen.getByLabelText('list.refresh');
 			fireEvent.click(refreshButton);
 			expect(mockRefetch).toHaveBeenCalled();
 		});
 
 		it('opens export modal when export button is clicked', async () => {
 			renderComponent();
-			const exportButton = screen.getByLabelText('Export conversations');
+			const exportButton = screen.getByLabelText('list.export');
 			fireEvent.click(exportButton);
 			expect(await screen.findByTestId('export-modal')).toBeInTheDocument();
 		});
 
 		it('closes export modal when close button is clicked', async () => {
 			renderComponent();
-			const exportButton = screen.getByLabelText('Export conversations');
+			const exportButton = screen.getByLabelText('list.export');
 			fireEvent.click(exportButton);
 			expect(await screen.findByTestId('export-modal')).toBeInTheDocument();
 
@@ -457,12 +460,12 @@ describe('ConversationsList', () => {
 	describe('column headers', () => {
 		it('renders all expected column headers with exact labels', () => {
 			renderComponent();
-			expect(screen.getByText('Contact Name')).toBeInTheDocument();
-			expect(screen.getByText('Phone Number')).toBeInTheDocument();
-			expect(screen.getByText('Outcome')).toBeInTheDocument();
-			expect(screen.getByText('Status')).toBeInTheDocument();
-			expect(screen.getByText('When')).toBeInTheDocument();
-			expect(screen.getByText('Duration')).toBeInTheDocument();
+			expect(screen.getByText('list.columns.contactName')).toBeInTheDocument();
+			expect(screen.getByText('list.columns.phoneNumber')).toBeInTheDocument();
+			expect(screen.getByText('list.columns.outcome')).toBeInTheDocument();
+			expect(screen.getByText('list.columns.status')).toBeInTheDocument();
+			expect(screen.getByText('list.columns.when')).toBeInTheDocument();
+			expect(screen.getByText('list.columns.duration')).toBeInTheDocument();
 		});
 	});
 

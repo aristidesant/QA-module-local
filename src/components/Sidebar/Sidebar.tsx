@@ -3,6 +3,7 @@ import { Text, Stack, Divider } from '@mantine/core';
 import { menuItems, MenuItem } from './menuItems';
 import { Link, useLocation } from 'react-router';
 import styles from './Sidebar.module.css';
+import { prefetchNamespace } from '~/utils/i18nHelpers';
 import Logo from '../Logo';
 import { APP_VERSION } from '~/version';
 import { usePermissions } from '~/hooks/usePermissions';
@@ -90,6 +91,9 @@ const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item }) => {
 			].join(' ')}
 			aria-current={isSelected ? 'page' : undefined}
 			tabIndex={0}
+			onMouseEnter={() =>
+				item.i18nNamespace && prefetchNamespace(item.i18nNamespace)
+			}
 		>
 			{icon}
 			<span className={styles.menuText}>{t(label)}</span>

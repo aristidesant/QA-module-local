@@ -25,13 +25,13 @@ export default function ExportToExcelModal({
 	onClose,
 	onSubmit,
 }: ExportToExcelModalProps) {
-	const { t } = useTranslation();
+	const { t } = useTranslation(['conversations', 'common']);
 	const [loading, setLoading] = useState(false);
 
 	const directionOptions = useMemo(
 		() => [
-			{ value: 'inbound', label: t('conversations.export.inbound') },
-			{ value: 'outbound', label: t('conversations.export.outbound') },
+			{ value: 'inbound', label: t('export.inbound') },
+			{ value: 'outbound', label: t('export.outbound') },
 		],
 		[t]
 	);
@@ -43,10 +43,9 @@ export default function ExportToExcelModal({
 	}>({
 		initialValues: { from: null, to: null, direction: null },
 		validate: {
-			from: (v) => (v ? null : t('conversations.export.errors.required')),
-			to: (v) => (v ? null : t('conversations.export.errors.required')),
-			direction: (v) =>
-				v ? null : t('conversations.export.errors.selectType'),
+			from: (v) => (v ? null : t('export.errors.required')),
+			to: (v) => (v ? null : t('export.errors.required')),
+			direction: (v) => (v ? null : t('export.errors.selectType')),
 		},
 	});
 
@@ -106,7 +105,7 @@ export default function ExportToExcelModal({
 		<Modal
 			opened={opened}
 			onClose={handleClose}
-			title={<Title order={4}>{t('conversations.export.title')}</Title>}
+			title={<Title order={4}>{t('export.title')}</Title>}
 			centered
 			size='lg'
 			classNames={{ body: classes.root }}
@@ -115,13 +114,13 @@ export default function ExportToExcelModal({
 				className={classes.header}
 				data-testid='export-to-excel-modal-content'
 			>
-				<Text className={classes.hint}>{t('conversations.export.hint')}</Text>
+				<Text className={classes.hint}>{t('export.hint')}</Text>
 			</div>
 
 			<div className={classes.fieldGroup}>
 				<DatePickerInput
-					label={t('conversations.export.from')}
-					placeholder={t('conversations.export.fromPlaceholder')}
+					label={t('export.from')}
+					placeholder={t('export.fromPlaceholder')}
 					value={form.values.from}
 					onChange={(v) =>
 						form.setFieldValue('from', (v as unknown as Date) ?? null)
@@ -134,8 +133,8 @@ export default function ExportToExcelModal({
 				/>
 
 				<DatePickerInput
-					label={t('conversations.export.to')}
-					placeholder={t('conversations.export.toPlaceholder')}
+					label={t('export.to')}
+					placeholder={t('export.toPlaceholder')}
 					value={form.values.to}
 					onChange={(v) =>
 						form.setFieldValue('to', (v as unknown as Date) ?? null)
@@ -148,8 +147,8 @@ export default function ExportToExcelModal({
 				/>
 
 				<Select
-					label={t('conversations.export.type')}
-					placeholder={t('conversations.export.typePlaceholder')}
+					label={t('export.type')}
+					placeholder={t('export.typePlaceholder')}
 					data={directionOptions}
 					value={form.values.direction}
 					onChange={(val) =>
@@ -163,7 +162,7 @@ export default function ExportToExcelModal({
 
 			<Group className={classes.actions}>
 				<Button variant='default' onClick={handleClose}>
-					{t('conversations.export.cancel')}
+					{t('actions.cancel', { ns: 'common' })}
 				</Button>
 				<Button
 					onClick={handleSubmit}
@@ -172,7 +171,7 @@ export default function ExportToExcelModal({
 						!form.values.direction || !form.values.from || !form.values.to
 					}
 				>
-					{t('conversations.export.export')}
+					{t('actions.export', { ns: 'common' })}
 				</Button>
 			</Group>
 		</Modal>
