@@ -11,9 +11,11 @@ import {
 	IconUsers,
 	IconKey,
 	IconBuilding,
+	IconLanguage,
 } from '@tabler/icons-react';
 import styles from './UserMenu.module.css';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import logout from '~/utils/logout';
 import { useSessionStore } from '~/stores/sessionStore';
 import { useImpersonationState } from '~/hooks/useImpersonationState';
@@ -23,11 +25,17 @@ import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 
 export const UserMenu: React.FC = () => {
+	const { t, i18n } = useTranslation();
 	const { user, targetClient } = useSessionStore();
 	const { isImpersonating } = useImpersonationState();
 	const { canAccessModule, canPerformAction } = usePermissions();
 	const isMasterClient = useIsMasterClient();
 	const navigate = useNavigate();
+
+	const toggleLanguage = () => {
+		const newLang = i18n.language === 'en' ? 'es' : 'en';
+		i18n.changeLanguage(newLang);
+	};
 
 	// Get user's full name or fallback to username
 	const userFullName =
@@ -80,10 +88,10 @@ export const UserMenu: React.FC = () => {
 	// Organized maintenance categories
 	const maintenanceCategories: MaintenanceCategory[] = [
 		{
-			category: 'Campaign Management',
+			category: t('userMenu.categories.campaignManagement'),
 			items: [
 				{
-					label: 'Campaign Management',
+					label: t('userMenu.items.campaignManagement'),
 					icon: <IconSettings size={16} />,
 					path: '/campaign-management',
 					module: ModuleEnum.SETTINGS,
@@ -91,17 +99,17 @@ export const UserMenu: React.FC = () => {
 			],
 		},
 		{
-			category: 'Configuration',
+			category: t('userMenu.categories.configuration'),
 			items: [
 				{
-					label: 'Configurations',
+					label: t('userMenu.items.configurations'),
 					icon: <IconSettings size={16} />,
 					path: '/configurations/client-configs',
 					module: ModuleEnum.SETTINGS,
 					permission: PermissionEnum.MANAGE,
 				},
 				{
-					label: 'Clients',
+					label: t('userMenu.items.clients'),
 					icon: <IconBuilding size={16} />,
 					path: '/clients',
 					module: ModuleEnum.SETTINGS,
@@ -111,17 +119,17 @@ export const UserMenu: React.FC = () => {
 			],
 		},
 		{
-			category: 'Tools & Resources',
+			category: t('userMenu.categories.toolsAndResources'),
 			items: [
 				{
-					label: 'Knowledge Bases',
+					label: t('userMenu.items.knowledgeBases'),
 					icon: <IconBook size={16} />,
 					path: '/knowledge-bases',
 					module: ModuleEnum.KNOWLEDGE_BASES,
 					permission: PermissionEnum.READ,
 				},
 				{
-					label: 'Tools',
+					label: t('userMenu.items.tools'),
 					icon: <IconTools size={16} />,
 					path: '/tools',
 					module: ModuleEnum.TOOLS,
@@ -129,7 +137,7 @@ export const UserMenu: React.FC = () => {
 					masterOnly: true,
 				},
 				{
-					label: 'Prompter',
+					label: t('userMenu.items.prompter'),
 					icon: <IconLibrary size={16} />,
 					path: '/prompter',
 					module: ModuleEnum.PROMPTS,
@@ -141,9 +149,9 @@ export const UserMenu: React.FC = () => {
 	];
 
 	const normalMaintenanceCategories = maintenanceCategories.map((category) => {
-		if (category.category === 'Configuration') {
+		if (category.category === t('userMenu.categories.configuration')) {
 			const usersItem: MaintenanceItem = {
-				label: 'Users',
+				label: t('userMenu.items.users'),
 				icon: <IconUsers size={16} />,
 				path: '/users',
 				module: ModuleEnum.USERS,
@@ -151,7 +159,7 @@ export const UserMenu: React.FC = () => {
 				masterOnly: true,
 			};
 			const rolesItem: MaintenanceItem = {
-				label: 'Roles',
+				label: t('userMenu.items.roles'),
 				icon: <IconKey size={16} />,
 				path: '/roles',
 				module: ModuleEnum.ROLES,
@@ -225,15 +233,15 @@ export const UserMenu: React.FC = () => {
 								<IconShield size={18} />
 								<div>
 									<div className={styles.impersonationTitle}>
-										Impersonation Mode
+										{t('userMenu.impersonationMode')}
 									</div>
 									<div className={styles.impersonationSubtitle}>
-										You are impersonating a client
+										{t('userMenu.impersonatingClient')}
 									</div>
 								</div>
 							</div>
 							<div className={styles.impersonationMessage}>
-								Use "Return to Master Client" to exit
+								{t('userMenu.returnToMaster')}
 							</div>
 						</div>
 						<Divider />
@@ -268,15 +276,22 @@ export const UserMenu: React.FC = () => {
 						) : (
 							<div className={styles.emptyPermissions}>
 								<span className={styles.emptyPermissionsTitle}>
-									No accessible modules
+									{t('userMenu.noAccessibleModules')}
 								</span>
 								<span className={styles.emptyPermissionsSubtitle}>
-									Request access to see maintenance tools.
+									{t('userMenu.requestAccess')}
 								</span>
 							</div>
 						)}
 
 						<Divider />
+						<Menu.Item
+							onClick={toggleLanguage}
+							leftSection={<IconLanguage size={16} />}
+							className={styles.categoryItem}
+						>
+							{i18n.language === 'en' ? 'Español' : 'English'}
+						</Menu.Item>
 						<Menu.Item
 							color='red'
 							onClick={handleLogout}
@@ -284,7 +299,9 @@ export const UserMenu: React.FC = () => {
 							leftSection={<IconLogout size={16} />}
 							className={styles.logoutItem}
 						>
-							{fetcher.state === 'idle' ? 'Logout' : 'Logging out...'}
+							{fetcher.state === 'idle'
+								? t('userMenu.logout')
+								: t('userMenu.loggingOut')}
 						</Menu.Item>
 					</>
 				) : (
@@ -294,7 +311,7 @@ export const UserMenu: React.FC = () => {
 							leftSection={<IconUser size={16} />}
 							className={styles.profileItem}
 						>
-							Profile
+							{t('userMenu.profile')}
 						</Menu.Item>
 						<Divider />
 
@@ -328,15 +345,22 @@ export const UserMenu: React.FC = () => {
 						) : (
 							<div className={styles.emptyPermissions}>
 								<span className={styles.emptyPermissionsTitle}>
-									No accessible modules
+									{t('userMenu.noAccessibleModules')}
 								</span>
 								<span className={styles.emptyPermissionsSubtitle}>
-									Request access to see maintenance tools.
+									{t('userMenu.requestAccess')}
 								</span>
 							</div>
 						)}
 
 						<Divider />
+						<Menu.Item
+							onClick={toggleLanguage}
+							leftSection={<IconLanguage size={16} />}
+							className={styles.categoryItem}
+						>
+							{i18n.language === 'en' ? 'Español' : 'English'}
+						</Menu.Item>
 						<Menu.Item
 							color='red'
 							onClick={handleLogout}
@@ -344,7 +368,9 @@ export const UserMenu: React.FC = () => {
 							leftSection={<IconLogout size={16} />}
 							className={styles.logoutItem}
 						>
-							{fetcher.state === 'idle' ? 'Logout' : 'Logging out...'}
+							{fetcher.state === 'idle'
+								? t('userMenu.logout')
+								: t('userMenu.loggingOut')}
 						</Menu.Item>
 					</>
 				)}

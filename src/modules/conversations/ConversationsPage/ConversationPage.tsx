@@ -3,8 +3,10 @@ import { useConversationStore } from '~/stores/useConversationStore';
 import FallbackRightComponent from '~/components/FallbackRightComponent';
 import { useEffect } from 'react';
 import ConversationsList from '~/modules/conversations/ConversationsList';
+import { useTranslation } from 'react-i18next';
 
 const ConversationsPage = () => {
+	const { t } = useTranslation();
 	const { selectionContent, clearSelection } = useConversationStore(
 		(state) => state
 	);
@@ -19,7 +21,9 @@ const ConversationsPage = () => {
 		<ContentContainer
 			rightSection={
 				selectionContent || (
-					<FallbackRightComponent description='No conversation selected. Choose a conversation to view transcripts, notes, and associated actions.' />
+					<FallbackRightComponent
+						description={t('conversations.page.fallback')}
+					/>
 				)
 			}
 		>

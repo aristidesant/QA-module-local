@@ -22,18 +22,18 @@ describe('menuItems', () => {
 
 	it('should have correct labels and routes', () => {
 		expect(menuItems[0]).toMatchObject({
-			label: 'Overview',
+			label: 'sidebar.items.overview',
 			to: '/',
 			exact: true,
 			module: ModuleEnum.DASHBOARD,
 		});
 		expect(menuItems[1]).toMatchObject({
-			label: 'Campaigns',
+			label: 'sidebar.items.campaigns',
 			to: '/campaigns',
 			module: ModuleEnum.CAMPAIGNS,
 		});
 		expect(menuItems[2]).toMatchObject({
-			label: 'Conversations',
+			label: 'sidebar.items.conversations',
 			to: '/conversations',
 			module: ModuleEnum.CONVERSATIONS,
 		});

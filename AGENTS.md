@@ -166,6 +166,34 @@ export { default } from './UserCard';
 
 ---
 
+## Internationalization (i18n)
+
+### Usage
+
+- Use **react-i18next** for all user-facing text.
+- Use the `useTranslation` hook to access translation functions.
+- **NEVER** hardcode strings in components. Always use a translation key.
+
+### Adding New Labels
+
+1. Add the English label to `src/i18n/locales/en.json`.
+2. Add the Spanish label to `src/i18n/locales/es.json`.
+3. Use a descriptive, nested structure (e.g., `common.save`, `agents.list.title`).
+4. If a label is missing, create it immediately in both files.
+
+### Example
+
+```tsx
+import { useTranslation } from 'react-i18next';
+
+const MyComponent = () => {
+	const { t } = useTranslation();
+	return <Button>{t('common.save')}</Button>;
+};
+```
+
+---
+
 ## State Management
 
 - Use **Zustand** for global state

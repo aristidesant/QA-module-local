@@ -27,12 +27,14 @@ import type {
 	TranscriptEntry,
 } from '~/models/ConversationsModels';
 import styles from './TranscriptViewer.module.css';
+import { useTranslation } from 'react-i18next';
 
 interface TranscriptViewerProps {
 	transcript: TranscriptEntry[];
 }
 
 export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
+	const { t } = useTranslation();
 	const { canPerformAction } = usePermissions();
 	const canViewTechnicalDetails = canPerformAction(
 		ModuleEnum.SETTINGS,
@@ -49,10 +51,10 @@ export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
 						stroke={1.5}
 					/>
 					<Text size='sm' c='dimmed' fw={500}>
-						No transcript entries available
+						{t('conversations.transcript.empty.message')}
 					</Text>
 					<Text size='xs' c='dimmed' mt={4}>
-						Conversation data will appear here once available
+						{t('conversations.transcript.empty.description')}
 					</Text>
 				</Box>
 			</Paper>
@@ -128,7 +130,9 @@ export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
 													fw={600}
 													c={isAgent ? 'blue.7' : 'green.7'}
 												>
-													{isAgent ? 'Agent' : 'User'}
+													{isAgent
+														? t('conversations.transcript.roles.agent')
+														: t('conversations.transcript.roles.user')}
 												</Text>
 											</Group>
 											{entry.time_in_call_secs !== undefined && (
@@ -156,7 +160,7 @@ export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
 													color='var(--mantine-color-orange-6)'
 												/>
 												<Text size='xs' c='orange.6' fw={500}>
-													Interrupted
+													{t('conversations.transcript.interrupted')}
 												</Text>
 											</Group>
 										)}
@@ -191,12 +195,13 @@ interface ToolCallsDisplayProps {
 }
 
 function ToolCallsDisplay({ toolCalls }: ToolCallsDisplayProps) {
+	const { t } = useTranslation();
 	return (
 		<Box className={styles.toolCallsSection}>
 			<Group gap={6} align='center'>
 				<IconTool size={12} color='var(--mantine-color-violet-6)' stroke={2} />
 				<Text size='xs' c='dimmed' fw={500}>
-					Tool calls:
+					{t('conversations.transcript.technical.toolCalls')}
 				</Text>
 			</Group>
 			<Group gap={6} mt={4} wrap='wrap'>
@@ -213,6 +218,7 @@ interface ToolCallBadgeProps {
 }
 
 function ToolCallBadge({ tool }: ToolCallBadgeProps) {
+	const { t } = useTranslation();
 	const formattedParams = formatParams(tool.params_as_json);
 
 	return (
@@ -233,7 +239,7 @@ function ToolCallBadge({ tool }: ToolCallBadgeProps) {
 					<Group justify='space-between' align='flex-start'>
 						<Box>
 							<Text size='xs' c='dimmed' fw={500}>
-								Tool Name
+								{t('conversations.transcript.technical.toolName')}
 							</Text>
 							<Text size='sm' fw={600}>
 								{tool.tool_name}
@@ -244,14 +250,16 @@ function ToolCallBadge({ tool }: ToolCallBadgeProps) {
 							variant='dot'
 							color={tool.tool_has_been_called ? 'green' : 'orange'}
 						>
-							{tool.tool_has_been_called ? 'Called' : 'Pending'}
+							{tool.tool_has_been_called
+								? t('conversations.transcript.technical.called')
+								: t('conversations.transcript.technical.pending')}
 						</Badge>
 					</Group>
 
 					{tool.type && (
 						<Box>
 							<Text size='xs' c='dimmed' fw={500}>
-								Type
+								{t('conversations.transcript.technical.type')}
 							</Text>
 							<Text size='sm'>{tool.type}</Text>
 						</Box>
@@ -260,7 +268,7 @@ function ToolCallBadge({ tool }: ToolCallBadgeProps) {
 					{formattedParams && (
 						<Box>
 							<Text size='xs' c='dimmed' fw={500} mb={4}>
-								Parameters
+								{t('conversations.transcript.technical.parameters')}
 							</Text>
 							<Box className={styles.toolDetailsCode}>{formattedParams}</Box>
 						</Box>
@@ -269,7 +277,7 @@ function ToolCallBadge({ tool }: ToolCallBadgeProps) {
 					{tool.request_id && (
 						<Box>
 							<Text size='xs' c='dimmed' fw={500}>
-								Request ID
+								{t('conversations.transcript.technical.requestId')}
 							</Text>
 							<Text size='xs' c='dimmed' className={styles.monoText}>
 								{tool.request_id}
@@ -291,6 +299,7 @@ function TechnicalDetailsSection({
 	entry,
 	isAgent,
 }: TechnicalDetailsSectionProps) {
+	const { t } = useTranslation();
 	// Check if there's any technical data to show
 	const hasLlmUsage = !!(
 		entry.llm_usage && Object.keys(entry.llm_usage.model_usage || {}).length > 0
@@ -338,7 +347,7 @@ function TechnicalDetailsSection({
 					>
 						<IconCpu size={12} color='var(--mantine-color-gray-6)' />
 						<Text size='xs' c='dimmed' fw={500}>
-							Technical Details
+							{t('conversations.transcript.technical.title')}
 						</Text>
 						{hasLlmUsage && (
 							<Badge
@@ -347,7 +356,7 @@ function TechnicalDetailsSection({
 								color='cyan'
 								className={styles.costBadge}
 							>
-								{formatTotalCost(entry.llm_usage!)}
+								{formatTotalCost(entry.llm_usage!, t)}
 							</Badge>
 						)}
 					</Group>
@@ -366,7 +375,7 @@ function TechnicalDetailsSection({
 									fw={500}
 									className={styles.detailLabel}
 								>
-									Source Medium
+									{t('conversations.transcript.technical.sourceMedium')}
 								</Text>
 								<Badge size='xs' variant='light' color='gray'>
 									{entry.source_medium}
@@ -383,7 +392,7 @@ function TechnicalDetailsSection({
 						{hasOriginalMessage && (
 							<Box>
 								<Text size='xs' c='dimmed' fw={500} mb={4}>
-									Original Message
+									{t('conversations.transcript.technical.originalMessage')}
 								</Text>
 								<Text size='xs' c='gray.7' className={styles.monoText}>
 									{entry.original_message}
@@ -395,7 +404,7 @@ function TechnicalDetailsSection({
 						{hasRagInfo && (
 							<Box>
 								<Text size='xs' c='dimmed' fw={500} mb={4}>
-									RAG Retrieval Info
+									{t('conversations.transcript.technical.ragInfo')}
 								</Text>
 								<Box className={styles.toolDetailsCode}>
 									{JSON.stringify(entry.rag_retrieval_info, null, 2)}
@@ -407,7 +416,7 @@ function TechnicalDetailsSection({
 						{hasTurnMetrics && (
 							<Box>
 								<Text size='xs' c='dimmed' fw={500} mb={4}>
-									Turn Metrics
+									{t('conversations.transcript.technical.turnMetrics')}
 								</Text>
 								<Box className={styles.toolDetailsCode}>
 									{JSON.stringify(entry.conversation_turn_metrics, null, 2)}
@@ -426,6 +435,7 @@ interface LlmUsageDisplayProps {
 }
 
 function LlmUsageDisplay({ llmUsage }: LlmUsageDisplayProps) {
+	const { t } = useTranslation();
 	const models = Object.entries(llmUsage.model_usage || {});
 
 	if (models.length === 0) return null;
@@ -433,7 +443,7 @@ function LlmUsageDisplay({ llmUsage }: LlmUsageDisplayProps) {
 	return (
 		<Box>
 			<Text size='xs' c='dimmed' fw={500} mb={4}>
-				LLM Usage
+				{t('conversations.transcript.technical.llmUsage')}
 			</Text>
 			<Stack gap={4}>
 				{models.map(([modelName, usage]) => (
@@ -444,7 +454,7 @@ function LlmUsageDisplay({ llmUsage }: LlmUsageDisplayProps) {
 						<Box className={styles.llmUsageGrid}>
 							<Box className={styles.llmUsageItem}>
 								<Text size='xs' c='dimmed'>
-									Input Tokens
+									{t('conversations.transcript.technical.inputTokens')}
 								</Text>
 								<Text size='xs' fw={500}>
 									{usage.input.tokens.toLocaleString()}
@@ -452,7 +462,7 @@ function LlmUsageDisplay({ llmUsage }: LlmUsageDisplayProps) {
 							</Box>
 							<Box className={styles.llmUsageItem}>
 								<Text size='xs' c='dimmed'>
-									Output Tokens
+									{t('conversations.transcript.technical.outputTokens')}
 								</Text>
 								<Text size='xs' fw={500}>
 									{usage.output_total.tokens.toLocaleString()}
@@ -460,7 +470,7 @@ function LlmUsageDisplay({ llmUsage }: LlmUsageDisplayProps) {
 							</Box>
 							<Box className={styles.llmUsageItem}>
 								<Text size='xs' c='dimmed'>
-									Cache Read
+									{t('conversations.transcript.technical.cacheRead')}
 								</Text>
 								<Text size='xs' fw={500}>
 									{usage.input_cache_read.tokens.toLocaleString()}
@@ -468,7 +478,7 @@ function LlmUsageDisplay({ llmUsage }: LlmUsageDisplayProps) {
 							</Box>
 							<Box className={styles.llmUsageItem}>
 								<Text size='xs' c='dimmed'>
-									Cache Write
+									{t('conversations.transcript.technical.cacheWrite')}
 								</Text>
 								<Text size='xs' fw={500}>
 									{usage.input_cache_write.tokens.toLocaleString()}
@@ -477,7 +487,7 @@ function LlmUsageDisplay({ llmUsage }: LlmUsageDisplayProps) {
 						</Box>
 						<Group gap='xs' mt={4}>
 							<Text size='xs' c='dimmed'>
-								Total Cost:
+								{t('conversations.transcript.technical.totalCost')}
 							</Text>
 							<Badge
 								size='xs'
@@ -500,16 +510,17 @@ interface AgentMetadataDisplayProps {
 }
 
 function AgentMetadataDisplay({ metadata }: AgentMetadataDisplayProps) {
+	const { t } = useTranslation();
 	return (
 		<Box>
 			<Text size='xs' c='dimmed' fw={500} mb={4}>
-				Agent Metadata
+				{t('conversations.transcript.technical.agentMetadata')}
 			</Text>
 			<Stack gap={2}>
 				{metadata.agent_id && (
 					<Group gap='xs'>
 						<Text size='xs' c='dimmed' w={80}>
-							Agent ID
+							{t('conversations.transcript.technical.agentId')}
 						</Text>
 						<Text size='xs' className={styles.monoText}>
 							{metadata.agent_id}
@@ -519,7 +530,7 @@ function AgentMetadataDisplay({ metadata }: AgentMetadataDisplayProps) {
 				{metadata.branch_id && (
 					<Group gap='xs'>
 						<Text size='xs' c='dimmed' w={80}>
-							Branch ID
+							{t('conversations.transcript.technical.branchId')}
 						</Text>
 						<Text size='xs' className={styles.monoText}>
 							{metadata.branch_id}
@@ -529,7 +540,7 @@ function AgentMetadataDisplay({ metadata }: AgentMetadataDisplayProps) {
 				{metadata.workflow_node_id && (
 					<Group gap='xs'>
 						<Text size='xs' c='dimmed' w={80}>
-							Workflow Node
+							{t('conversations.transcript.technical.workflowNode')}
 						</Text>
 						<Text size='xs' className={styles.monoText}>
 							{metadata.workflow_node_id}
@@ -571,12 +582,15 @@ function calculateModelCost(usage: {
 	);
 }
 
-function formatTotalCost(llmUsage: LlmUsage): string {
+function formatTotalCost(
+	llmUsage: LlmUsage,
+	t: (key: string) => string
+): string {
 	const totalCost = Object.values(llmUsage.model_usage || {}).reduce(
 		(sum, usage) => sum + calculateModelCost(usage),
 		0
 	);
-	return `$${totalCost.toFixed(4)}`;
+	return `${t('common.currency')}${totalCost.toFixed(4)}`;
 }
 
 export default TranscriptViewer;

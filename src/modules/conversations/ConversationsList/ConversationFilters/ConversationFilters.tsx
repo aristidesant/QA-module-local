@@ -11,9 +11,10 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { IconUser, IconAdjustments, IconFilter } from '@tabler/icons-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { FilterContainer } from '~/components/FilterContainer';
 import styles from './ConversationFilters.module.css';
+import { useTranslation } from 'react-i18next';
 
 export interface ConversationFiltersType {
 	contactName?: string;
@@ -27,20 +28,27 @@ interface ConversationFiltersProps {
 	onFiltersChange: (filters: ConversationFiltersType) => void;
 }
 
-const statusOptions = [
-	{ value: 'initiated', label: 'Initiated' },
-	{ value: 'in-progress', label: 'In Progress' },
-	{ value: 'done', label: 'Done' },
-	{ value: 'failed', label: 'Failed' },
-];
-
 const DEBOUNCE_MS = 500;
 
 export default function ConversationFilters({
 	filters,
 	onFiltersChange,
 }: ConversationFiltersProps) {
+	const { t } = useTranslation();
 	const [opened, setOpened] = useState(false);
+
+	const statusOptions = useMemo(
+		() => [
+			{ value: 'initiated', label: t('conversations.list.status.pending') },
+			{
+				value: 'in-progress',
+				label: t('conversations.list.status.inProgress'),
+			},
+			{ value: 'done', label: t('conversations.list.status.done') },
+			{ value: 'failed', label: t('conversations.list.status.failed') },
+		],
+		[t]
+	);
 
 	// Local state for text inputs (to allow immediate UI updates)
 	const [localContactName, setLocalContactName] = useState(
@@ -126,7 +134,9 @@ export default function ConversationFilters({
 			<FilterContainer>
 				<Group gap='xs' className={styles.titleGroup}>
 					<IconFilter size={18} className={styles.titleIcon} />
-					<Text className={styles.title}>Filters</Text>
+					<Text className={styles.title}>
+						{t('conversations.filters.title')}
+					</Text>
 					{hasActiveFilters && (
 						<Badge size='sm' variant='light' className={styles.activeBadge}>
 							{activeFiltersCount}
@@ -136,7 +146,7 @@ export default function ConversationFilters({
 
 				<div className={styles.controlsWrapper}>
 					<TextInput
-						placeholder='Filter by contact name...'
+						placeholder={t('conversations.filters.contactName')}
 						value={localContactName}
 						onChange={(event) => setLocalContactName(event.currentTarget.value)}
 						leftSection={<IconUser size={16} className={styles.searchIcon} />}
@@ -160,7 +170,7 @@ export default function ConversationFilters({
 						onClick={() => setOpened((prev) => !prev)}
 						variant={opened ? 'light' : 'default'}
 					>
-						Advanced
+						{t('conversations.filters.advanced')}
 					</Button>
 				</div>
 			</FilterContainer>
@@ -170,8 +180,8 @@ export default function ConversationFilters({
 					<Stack gap='sm'>
 						<Group gap='sm' grow>
 							<TextInput
-								label='Phone Number'
-								placeholder='Filter by phone number'
+								label={t('conversations.filters.phoneNumber')}
+								placeholder={t('conversations.filters.phoneNumberPlaceholder')}
 								value={localPhoneNumber}
 								onChange={(event) =>
 									setLocalPhoneNumber(event.currentTarget.value)
@@ -179,8 +189,8 @@ export default function ConversationFilters({
 								size='sm'
 							/>
 							<TextInput
-								label='Outcome'
-								placeholder='Filter by outcome'
+								label={t('conversations.filters.outcome')}
+								placeholder={t('conversations.filters.outcomePlaceholder')}
 								value={localDisposition}
 								onChange={(event) =>
 									setLocalDisposition(event.currentTarget.value)
@@ -188,8 +198,8 @@ export default function ConversationFilters({
 								size='sm'
 							/>
 							<Select
-								label='Status'
-								placeholder='All statuses'
+								label={t('conversations.filters.status')}
+								placeholder={t('conversations.filters.allStatuses')}
 								data={statusOptions}
 								value={filters.status || null}
 								onChange={handleStatusChange}
@@ -206,7 +216,7 @@ export default function ConversationFilters({
 								onClick={handleClearFilters}
 								disabled={!hasActiveFilters}
 							>
-								Clear all filters
+								{t('conversations.filters.clear')}
 							</Button>
 						</Group>
 					</Stack>
