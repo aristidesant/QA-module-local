@@ -16,6 +16,7 @@ import {
 	IconUsers,
 	IconSparkles,
 } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import { useImpersonationState } from '~/hooks/useImpersonationState';
 import { useSessionStore } from '~/stores/sessionStore';
@@ -29,44 +30,38 @@ export type WelcomeCardProps = {
 const features = [
 	{
 		icon: IconSparkles,
-		title: 'Smart Campaigns',
-		description:
-			'Automate your outreach with intelligent scheduling and real-time monitoring.',
+		titleKey: 'welcomeCard.features.smartCampaigns.title',
+		descriptionKey: 'welcomeCard.features.smartCampaigns.description',
 		color: 'indigo',
 	},
 	{
 		icon: IconRobot,
-		title: 'AI Digital Agents',
-		description:
-			'Deploy lifelike voices that handle complex conversations with natural fluency.',
+		titleKey: 'welcomeCard.features.aiAgents.title',
+		descriptionKey: 'welcomeCard.features.aiAgents.description',
 		color: 'blue',
 	},
 	{
 		icon: IconPhoneCall,
-		title: 'Interaction Hub',
-		description:
-			'Securely review transcripts and follow-ups for every AI-powered conversation.',
+		titleKey: 'welcomeCard.features.interactionHub.title',
+		descriptionKey: 'welcomeCard.features.interactionHub.description',
 		color: 'teal',
 	},
 	{
 		icon: IconTools,
-		title: 'Seamless Tools',
-		description:
-			'Integrate your existing workflow with custom webhooks and technical powerups.',
+		titleKey: 'welcomeCard.features.seamlessTools.title',
+		descriptionKey: 'welcomeCard.features.seamlessTools.description',
 		color: 'violet',
 	},
 	{
 		icon: IconUsers,
-		title: 'Active Contacts',
-		description:
-			'Effectively manage and segment your audience lists for maximum impact.',
+		titleKey: 'welcomeCard.features.activeContacts.title',
+		descriptionKey: 'welcomeCard.features.activeContacts.description',
 		color: 'cyan',
 	},
 	{
 		icon: IconCheckupList,
-		title: 'Growth Analytics',
-		description:
-			'Transform call outcomes into actionable insights to scale your operations.',
+		titleKey: 'welcomeCard.features.growthAnalytics.title',
+		descriptionKey: 'welcomeCard.features.growthAnalytics.description',
 		color: 'orange',
 	},
 ];
@@ -75,31 +70,29 @@ export default function WelcomeCard({
 	heading: propHeading,
 	subheading: propSubheading,
 }: WelcomeCardProps) {
+	const { t } = useTranslation();
 	const isMasterClient = useIsMasterClient();
 	const impersonationState = useImpersonationState();
 	const { user, targetClient } = useSessionStore();
 
-	let heading = propHeading || 'The Future of AI Voice';
-	let subheading =
-		propSubheading ||
-		'Scale your business with intelligent conversational agents that handle every interaction with human-like precision.';
+	let heading = propHeading || t('welcomeCard.defaultHeading');
+	let subheading = propSubheading || t('welcomeCard.defaultSubheading');
 
 	const displayName = user?.firstName || user?.username;
 
 	if (impersonationState.isImpersonating && targetClient) {
-		heading = `Welcome to ${targetClient.name}`;
-		subheading =
-			'Your AI-powered destination for seamless voice automation and customer engagement.';
+		heading = t('welcomeCard.impersonationHeading', {
+			name: targetClient.name,
+		});
+		subheading = t('welcomeCard.impersonationSubheading');
 	} else if (displayName) {
-		heading = `Welcome back, ${displayName}!`;
+		heading = t('welcomeCard.welcomeBackHeading', { name: displayName });
 		subheading = isMasterClient
-			? 'Gain a strategic snapshot of your entire conversational ecosystem.'
+			? t('welcomeCard.masterSubheading')
 			: subheading;
 	} else if (isMasterClient) {
-		heading = 'Enterprise Overview';
-		subheading =
-			propSubheading ||
-			'Gain a strategic snapshot of your entire conversational ecosystem.';
+		heading = t('welcomeCard.enterpriseHeading');
+		subheading = propSubheading || t('welcomeCard.masterSubheading');
 	}
 
 	return (
@@ -114,7 +107,7 @@ export default function WelcomeCard({
 										<IconSparkles size={12} />
 									</ThemeIcon>
 									<Text size='xs' fw={700} tt='uppercase' lts={1} c='blue.6'>
-										AI Management Platform
+										{t('welcomeCard.platformLabel')}
 									</Text>
 								</Group>
 								<Title order={1} className={classes.heroTitle}>
@@ -134,7 +127,7 @@ export default function WelcomeCard({
 							{features.map((feature) => {
 								const Icon = feature.icon;
 								return (
-									<div key={feature.title} className={classes.featureItem}>
+									<div key={feature.titleKey} className={classes.featureItem}>
 										<Group wrap='nowrap' align='flex-start' gap='sm'>
 											<ThemeIcon
 												variant='light'
@@ -151,14 +144,14 @@ export default function WelcomeCard({
 													size='sm'
 													className={classes.featureTitle}
 												>
-													{feature.title}
+													{t(feature.titleKey)}
 												</Text>
 												<Text
 													size='xs'
 													c='dimmed'
 													className={classes.featureDescription}
 												>
-													{feature.description}
+													{t(feature.descriptionKey)}
 												</Text>
 											</Stack>
 										</Group>

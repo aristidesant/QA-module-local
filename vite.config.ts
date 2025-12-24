@@ -18,6 +18,7 @@ export default defineConfig({
 	},
 	test: {
 		globals: true,
+		watch: false,
 		environment: 'jsdom',
 		setupFiles: './src/setupTests.ts',
 		// Disable css transforms during tests to avoid CSS module processing

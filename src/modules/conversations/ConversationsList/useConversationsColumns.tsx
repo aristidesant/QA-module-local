@@ -5,11 +5,14 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import timezone from 'dayjs/plugin/timezone';
 import type { ConversationsModel } from '~/models/ConversationsModels';
+import { useTranslation } from 'react-i18next';
 
 dayjs.extend(relativeTime);
 dayjs.extend(timezone);
 
 export const useConversationsColumns = (userTimezone: string) => {
+	const { t } = useTranslation();
+
 	return useMemo<ColumnDef<ConversationsModel>[]>(() => {
 		const formatZonedDate = (value?: string | null) => {
 			if (!value) return null;
@@ -27,17 +30,20 @@ export const useConversationsColumns = (userTimezone: string) => {
 				normalized.includes('success') ||
 				normalized.includes('done')
 			) {
-				return { color: 'green', label: 'Done' };
+				return { color: 'green', label: t('conversations.list.status.done') };
 			}
 			if (normalized.includes('progress') || normalized.includes('running')) {
-				return { color: 'blue', label: 'In Progress' };
+				return {
+					color: 'blue',
+					label: t('conversations.list.status.inProgress'),
+				};
 			}
 			if (
 				normalized.includes('failed') ||
 				normalized.includes('error') ||
 				normalized.includes('cancel')
 			) {
-				return { color: 'red', label: 'Failed' };
+				return { color: 'red', label: t('conversations.list.status.failed') };
 			}
 			if (
 				normalized.includes('pending') ||
@@ -45,9 +51,12 @@ export const useConversationsColumns = (userTimezone: string) => {
 				normalized.includes('waiting') ||
 				normalized.includes('initiated')
 			) {
-				return { color: 'yellow', label: 'Pending' };
+				return {
+					color: 'yellow',
+					label: t('conversations.list.status.pending'),
+				};
 			}
-			return { color: 'gray', label: 'Unknown' };
+			return { color: 'gray', label: t('conversations.list.status.unknown') };
 		};
 
 		const formatDuration = (
@@ -70,10 +79,11 @@ export const useConversationsColumns = (userTimezone: string) => {
 			const seconds = diffSeconds % 60;
 
 			const parts: string[] = [];
-			if (days) parts.push(`${days}d`);
-			if (hours) parts.push(`${hours}h`);
-			if (minutes) parts.push(`${minutes}m`);
-			if (!days && !hours && !minutes) parts.push(`${seconds}s`);
+			if (days) parts.push(`${days}${t('units.day')}`);
+			if (hours) parts.push(`${hours}${t('units.hour')}`);
+			if (minutes) parts.push(`${minutes}${t('units.minute')}`);
+			if (!days && !hours && !minutes)
+				parts.push(`${seconds}${t('units.second')}`);
 
 			return parts.join(' ') || '—';
 		};
@@ -81,7 +91,7 @@ export const useConversationsColumns = (userTimezone: string) => {
 		return [
 			{
 				id: 'contactName',
-				header: 'Contact Name',
+				header: t('conversations.list.columns.contactName'),
 				accessorFn: (row) => row.contactName ?? '',
 				enableSorting: true,
 				cell: ({ row }) => (
@@ -92,7 +102,7 @@ export const useConversationsColumns = (userTimezone: string) => {
 			},
 			{
 				id: 'phoneNumber',
-				header: 'Phone Number',
+				header: t('conversations.list.columns.phoneNumber'),
 				accessorFn: (row) => row.contactPhoneNumber ?? '',
 				enableSorting: false,
 				cell: ({ row }) => (
@@ -103,7 +113,7 @@ export const useConversationsColumns = (userTimezone: string) => {
 			},
 			{
 				id: 'disposition',
-				header: 'Outcome',
+				header: t('conversations.list.columns.outcome'),
 				accessorFn: (row) => row?.dispositions?.dispositionName ?? '',
 				enableSorting: true,
 				cell: ({ row }) => {
@@ -115,14 +125,15 @@ export const useConversationsColumns = (userTimezone: string) => {
 								: 'gray';
 					return (
 						<Badge color={color} size='xs'>
-							{row.original?.dispositions?.dispositionName ?? 'N/A'}
+							{row.original?.dispositions?.dispositionName ??
+								t('conversations.overview.fallbacks.na')}
 						</Badge>
 					);
 				},
 			},
 			{
 				accessorKey: 'status',
-				header: 'Status',
+				header: t('conversations.list.columns.status'),
 				cell: ({ getValue }) => {
 					const { color, label } = resolveSimpleStatus(getValue<string>());
 					return (
@@ -135,7 +146,7 @@ export const useConversationsColumns = (userTimezone: string) => {
 			},
 			{
 				accessorKey: 'startDate',
-				header: 'When',
+				header: t('conversations.list.columns.when'),
 				enableSorting: true,
 				cell: ({ getValue }) => {
 					const value = getValue<string>();
@@ -148,7 +159,12 @@ export const useConversationsColumns = (userTimezone: string) => {
 					const absolute = zoned.format('MMM D, YYYY • HH:mm');
 
 					return (
-						<Tooltip label={`${absolute} (${userTimezone})`}>
+						<Tooltip
+							label={t('conversations.list.columns.endedAt', {
+								date: absolute,
+								timezone: userTimezone,
+							})}
+						>
 							<Text size='xs'>{relative}</Text>
 						</Tooltip>
 					);
@@ -156,7 +172,7 @@ export const useConversationsColumns = (userTimezone: string) => {
 			},
 			{
 				id: 'duration',
-				header: 'Duration',
+				header: t('conversations.list.columns.duration'),
 				cell: ({ row }) => {
 					const duration = formatDuration(
 						row.original.startDate,
@@ -170,8 +186,11 @@ export const useConversationsColumns = (userTimezone: string) => {
 
 					const zonedEnd = formatZonedDate(endDate);
 					const endTooltip = zonedEnd
-						? `ended at ${zonedEnd.format('MMM D, YYYY • HH:mm')} (${userTimezone})`
-						: 'ended';
+						? t('conversations.list.columns.endedAt', {
+								date: zonedEnd.format('MMM D, YYYY • HH:mm'),
+								timezone: userTimezone,
+							})
+						: t('conversations.list.columns.ended');
 
 					return (
 						<Tooltip label={endTooltip}>
@@ -181,5 +200,5 @@ export const useConversationsColumns = (userTimezone: string) => {
 				},
 			},
 		];
-	}, [userTimezone]);
+	}, [userTimezone, t]);
 };

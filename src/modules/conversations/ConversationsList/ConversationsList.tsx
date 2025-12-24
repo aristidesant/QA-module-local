@@ -26,6 +26,7 @@ import ConversationFilters, {
 import AccessDenied from '~/components/AccessDenied';
 import styles from './ConversationsList.module.css';
 import type { SortingState } from '@tanstack/react-table';
+import { useTranslation } from 'react-i18next';
 
 type ConversationsListProps = {
 	campaignId?: number | string;
@@ -42,6 +43,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 	selectedConversationId,
 	className,
 }) => {
+	const { t } = useTranslation();
 	const pagination = usePagination({
 		initialItemsPerPage: 10,
 	});
@@ -134,28 +136,26 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 	const columns = useConversationsColumns(userTimezone);
 
 	if (!canViewConversations) {
-		return (
-			<AccessDenied description='You do not have permission to view conversations.' />
-		);
+		return <AccessDenied description={t('conversations.list.error')} />;
 	}
 
 	return (
 		<div className={`${styles.root} ${className ?? ''}`}>
 			<SectionCard
 				id='conversations-list'
-				title='Conversations'
-				description='Latest conversations for this campaign or contact group'
+				title={t('conversations.list.title')}
+				description={t('conversations.list.description')}
 				icon={IconMessagesTabler}
 				contentSpacing='sm'
 				padding='sm'
 				headerActions={
 					<Group className={styles.actions}>
-						<Tooltip label='Refresh conversations' withArrow>
+						<Tooltip label={t('conversations.list.refresh')} withArrow>
 							<ActionIcon
 								variant='default'
 								size='sm'
 								onClick={() => refetch()}
-								aria-label='Refresh conversations'
+								aria-label={t('conversations.list.refresh')}
 								loading={isFetching}
 								disabled={isFetching}
 							>
@@ -163,12 +163,12 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 							</ActionIcon>
 						</Tooltip>
 						{canExportConversations && (
-							<Tooltip label='Export conversations' withArrow>
+							<Tooltip label={t('conversations.list.export')} withArrow>
 								<ActionIcon
 									variant='default'
 									size='sm'
 									onClick={() => setExportModalOpened(true)}
-									aria-label='Export conversations'
+									aria-label={t('conversations.list.export')}
 								>
 									<IconFileExcel size={16} />
 								</ActionIcon>
@@ -185,7 +185,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 						onPageChange={pagination.setCurrentPage}
 						onItemsPerPageChange={handleItemsPerPageChange}
 						isLoading={isTableLoading}
-						itemLabel='conversations'
+						itemLabel={t('conversations.list.itemLabel')}
 					/>
 				}
 			>
@@ -196,15 +196,15 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 						<Text size='sm' c='red'>
 							{error instanceof Error
 								? error.message
-								: 'Unable to load conversations. Please try again.'}
+								: t('conversations.list.error')}
 						</Text>
 					</Center>
 				) : conversations.length === 0 && !isTableLoading ? (
 					<div className={styles.emptyWrapper}>
 						<EmptyState
 							icon={<IconMessagesOff size={48} stroke={1.2} />}
-							message='No conversations yet'
-							description='We will display conversations as soon as they are available.'
+							message={t('conversations.list.empty.message')}
+							description={t('conversations.list.empty.description')}
 						/>
 					</div>
 				) : (

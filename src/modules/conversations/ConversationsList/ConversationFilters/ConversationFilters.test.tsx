@@ -430,7 +430,7 @@ describe('ConversationFilters', () => {
 			const statusSelect = await screen.findByPlaceholderText('All statuses');
 			await userEvent.click(statusSelect);
 
-			expect(await screen.findByText('Initiated')).toBeInTheDocument();
+			expect(await screen.findByText('Pending')).toBeInTheDocument();
 		});
 
 		it('has in-progress option available', async () => {

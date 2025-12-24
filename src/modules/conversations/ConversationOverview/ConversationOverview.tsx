@@ -33,6 +33,7 @@ import styles from './ConversationOverview.module.css';
 import ConversationPlayer from '../ConversationPlayer';
 import ConversationDisposition from '../ConversationDisposition';
 import RightSectionCard from '~/components/RightSectionCard';
+import { useTranslation } from 'react-i18next';
 
 interface ConversationOverviewProps {
 	conversation: ConversationsModel;
@@ -50,6 +51,7 @@ export function ConversationOverview({
 	status: statusOverride,
 	duration: durationOverride,
 }: ConversationOverviewProps) {
+	const { t } = useTranslation();
 	const {
 		contact,
 		agent,
@@ -68,7 +70,7 @@ export function ConversationOverview({
 		try {
 			return new Date(dateString).toLocaleString();
 		} catch (error) {
-			return 'Invalid date';
+			return t('conversations.overview.fallbacks.invalidDate');
 		}
 	};
 
@@ -82,19 +84,19 @@ export function ConversationOverview({
 				minute: '2-digit',
 			});
 		} catch (error) {
-			return 'Invalid date';
+			return t('conversations.overview.fallbacks.invalidDate');
 		}
 	};
 
 	const formatDuration = (seconds?: number) => {
-		if (!seconds) return 'N/A';
+		if (!seconds) return t('conversations.overview.fallbacks.na');
 		const minutes = Math.floor(seconds / 60);
 		const remainingSeconds = seconds % 60;
-		return `${minutes}m ${remainingSeconds}s`;
+		return `${minutes}${t('units.minute')} ${remainingSeconds}${t('units.second')}`;
 	};
 
 	const contactName = conversation?.externalPhoneNumber
-		? 'Demo'
+		? t('conversations.overview.demoContact')
 		: `${getValueOrEmpty(contact?.firstName)} ${getValueOrEmpty(
 				contact?.lastName
 			)}`;
@@ -102,25 +104,32 @@ export function ConversationOverview({
 		contact?.phoneNumber ||
 			conversation?.contactPhoneNumber ||
 			conversation?.externalPhoneNumber ||
-			'No phone number'
+			t('conversations.overview.fallbacks.noPhone')
 	);
-	const agentName = agent?.name ? String(agent.name) : 'Unassigned';
-	const campaignName = campaign?.name ? String(campaign.name) : 'N/A';
+	const agentName = agent?.name
+		? String(agent.name)
+		: t('conversations.overview.fallbacks.unassigned');
+	const campaignName = campaign?.name
+		? String(campaign.name)
+		: t('conversations.overview.fallbacks.na');
 
 	// Extract metadata values
 	const metadata = transcriptContent?.metadata;
 	const terminationReason = metadata?.termination_reason;
 
 	const formatTermination = (reason?: string | null) => {
-		if (!reason) return 'Unknown';
+		if (!reason) return t('conversations.overview.termination.unknown');
 		const r = reason.toLowerCase();
 		if (r.includes('terminated_by') || r.includes('terminated'))
-			return 'Terminated';
+			return t('conversations.overview.termination.terminated');
 		if (r.includes('client') && r.includes('disconnect'))
-			return 'Client Disconnected';
-		if (r.includes('hangup')) return 'Hangup';
-		if (r.includes('timeout')) return 'Timeout';
-		if (r.includes('error')) return 'Error';
+			return t('conversations.overview.termination.clientDisconnected');
+		if (r.includes('hangup'))
+			return t('conversations.overview.termination.hangup');
+		if (r.includes('timeout'))
+			return t('conversations.overview.termination.timeout');
+		if (r.includes('error'))
+			return t('conversations.overview.termination.error');
 		// Fallback: capitalize first letter
 		return reason.charAt(0).toUpperCase() + reason.slice(1);
 	};
@@ -177,14 +186,14 @@ export function ConversationOverview({
 			window.URL.revokeObjectURL(url);
 
 			notifications.show({
-				title: 'Export Successful',
-				message: 'Conversation exported as PDF',
+				title: t('conversations.overview.notifications.exportSuccess'),
+				message: t('conversations.overview.notifications.exportSuccessMsg'),
 				color: 'green',
 			});
 		} catch (error) {
 			notifications.show({
-				title: 'Export Failed',
-				message: 'Failed to export conversation. Please try again.',
+				title: t('conversations.overview.notifications.exportFailed'),
+				message: t('conversations.overview.notifications.exportFailedMsg'),
 				color: 'red',
 			});
 		}
@@ -194,8 +203,8 @@ export function ConversationOverview({
 		<Stack gap='md' className={styles.container}>
 			{/* Contact & Quick Overview */}
 			<RightSectionCard
-				title='Conversation Overview'
-				description='Define the conversation key details.'
+				title={t('conversations.overview.title')}
+				description={t('conversations.overview.description')}
 				icon={StatusIcon}
 				iconColor={statusIconColor}
 			>
@@ -214,11 +223,17 @@ export function ConversationOverview({
 							</Text>
 							<CopyButton value={String(contactPhone)} timeout={1200}>
 								{({ copied, copy }) => (
-									<Tooltip label={copied ? 'Copied' : 'Copy phone'}>
+									<Tooltip
+										label={
+											copied
+												? t('conversations.overview.copied')
+												: t('conversations.overview.copyPhone')
+										}
+									>
 										<ActionIcon
 											size='xs'
 											variant='subtle'
-											aria-label='Copy phone number'
+											aria-label={t('conversations.overview.copyPhone')}
 											onClick={copy}
 											className={styles.copyBtn}
 										>
@@ -243,7 +258,9 @@ export function ConversationOverview({
 							<IconCalendar size={16} className={styles.statIcon} />
 						</div>
 						<div className={styles.statContent}>
-							<Text className={styles.statLabel}>Date & Time</Text>
+							<Text className={styles.statLabel}>
+								{t('conversations.overview.stats.dateTime')}
+							</Text>
 							<Text className={styles.statValue} title={formatDate(startDate)}>
 								{formatDateShort(startDate)}
 							</Text>
@@ -258,7 +275,9 @@ export function ConversationOverview({
 							<IconUser size={16} className={styles.statIcon} />
 						</div>
 						<div className={styles.statContent}>
-							<Text className={styles.statLabel}>Agent</Text>
+							<Text className={styles.statLabel}>
+								{t('conversations.overview.stats.agent')}
+							</Text>
 							<Text className={styles.statValue} title={agentName}>
 								{agentName}
 							</Text>
@@ -270,7 +289,9 @@ export function ConversationOverview({
 							<IconInfoCircle size={16} className={styles.statIcon} />
 						</div>
 						<div className={styles.statContent}>
-							<Text className={styles.statLabel}>Campaign</Text>
+							<Text className={styles.statLabel}>
+								{t('conversations.overview.stats.campaign')}
+							</Text>
 							<Text className={styles.statValue} title={campaignName}>
 								{campaignName}
 							</Text>
@@ -283,7 +304,9 @@ export function ConversationOverview({
 								<IconAlertCircle size={16} className={styles.statIcon} />
 							</div>
 							<div className={styles.statContent}>
-								<Text className={styles.statLabel}>End Reason</Text>
+								<Text className={styles.statLabel}>
+									{t('conversations.overview.stats.endReason')}
+								</Text>
 								<Text className={styles.statValue} title={terminationReason}>
 									{formatTermination(terminationReason)}
 								</Text>
@@ -299,10 +322,10 @@ export function ConversationOverview({
 			{/* Conversation Summary */}
 			{transcriptSummary && (
 				<RightSectionCard
-					title='Conversation Summary'
+					title={t('conversations.overview.summary.title')}
 					icon={IconMessages}
 					iconColor='blue'
-					description='Auto-generated from the call transcript'
+					description={t('conversations.overview.summary.description')}
 				>
 					<Text fz='xs' className={styles.summaryText}>
 						{summary?.es || summary?.en || transcriptSummary}
@@ -314,15 +337,15 @@ export function ConversationOverview({
 							loading={exportConversationMutation.isPending}
 							onClick={handleExportConversation}
 						>
-							Download Full Transcript
+							{t('conversations.overview.downloadTranscript')}
 						</Button>
 					)}
 				</RightSectionCard>
 			)}{' '}
 			<ConversationPlayer
 				voiceFile={conversation?.voiceFile}
-				title='Recording'
-				description='Listen to the call recording'
+				title={t('conversations.player.title')}
+				description={t('conversations.player.description')}
 				paramConversationId={conversation?.id}
 				contactName={`${getValueOrEmpty(contact?.firstName)} ${getValueOrEmpty(
 					contact?.lastName

@@ -19,20 +19,20 @@ export type MenuItem = {
 
 export const menuItems: MenuItem[] = [
 	{
-		label: 'Overview',
+		label: 'sidebar.items.overview',
 		icon: <IconLayoutDashboard size={20} className={styles.menuIcon} />,
 		to: '/',
 		exact: true,
 		module: ModuleEnum.DASHBOARD,
 	},
 	{
-		label: 'Campaigns',
+		label: 'sidebar.items.campaigns',
 		icon: <IconListDetails size={20} className={styles.menuIcon} />,
 		to: '/campaigns',
 		module: ModuleEnum.CAMPAIGNS,
 	},
 	{
-		label: 'Conversations',
+		label: 'sidebar.items.conversations',
 		icon: <IconPhoneCall size={20} className={styles.menuIcon} />,
 		to: '/conversations',
 		module: ModuleEnum.CONVERSATIONS,

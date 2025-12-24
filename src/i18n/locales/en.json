@@ -1,0 +1,308 @@
+{
+	"common": {
+		"save": "Save",
+		"cancel": "Cancel",
+		"delete": "Delete",
+		"edit": "Edit",
+		"create": "Create",
+		"search": "Search",
+		"loading": "Loading...",
+		"error": "An error occurred",
+		"noData": "No data available",
+		"currency": "$"
+	},
+	"nav": {
+		"dashboard": "Dashboard",
+		"agents": "Agents",
+		"campaigns": "Campaigns",
+		"contacts": "Contacts",
+		"settings": "Settings",
+		"conversations": "Conversations"
+	},
+	"sidebar": {
+		"ariaLabel": "Main navigation",
+		"menu": "MENU",
+		"noModules": "No modules available",
+		"requestAccess": "Request access to see navigation options.",
+		"version": "Version",
+		"items": {
+			"overview": "Overview",
+			"campaigns": "Campaigns",
+			"conversations": "Conversations"
+		}
+	},
+	"userMenu": {
+		"profile": "Profile",
+		"logout": "Logout",
+		"loggingOut": "Logging out...",
+		"impersonationMode": "Impersonation Mode",
+		"impersonatingClient": "You are impersonating a client",
+		"returnToMaster": "Use \"Return to Master Client\" to exit",
+		"noAccessibleModules": "No accessible modules",
+		"requestAccess": "Request access to see maintenance tools.",
+		"categories": {
+			"campaignManagement": "Campaign Management",
+			"configuration": "Configuration",
+			"toolsAndResources": "Tools & Resources"
+		},
+		"items": {
+			"campaignManagement": "Campaign Management",
+			"configurations": "Configurations",
+			"clients": "Clients",
+			"knowledgeBases": "Knowledge Bases",
+			"tools": "Tools",
+			"prompter": "Prompter",
+			"users": "Users",
+			"roles": "Roles"
+		}
+	},
+	"welcomeCard": {
+		"platformLabel": "AI Management Platform",
+		"defaultHeading": "The Future of AI Voice",
+		"defaultSubheading": "Scale your business with intelligent conversational agents that handle every interaction with human-like precision.",
+		"impersonationHeading": "Welcome to {{name}}",
+		"impersonationSubheading": "Your AI-powered destination for seamless voice automation and customer engagement.",
+		"welcomeBackHeading": "Welcome back, {{name}}!",
+		"masterSubheading": "Gain a strategic snapshot of your entire conversational ecosystem.",
+		"enterpriseHeading": "Enterprise Overview",
+		"features": {
+			"smartCampaigns": {
+				"title": "Smart Campaigns",
+				"description": "Automate your outreach with intelligent scheduling and real-time monitoring."
+			},
+			"aiAgents": {
+				"title": "AI Digital Agents",
+				"description": "Deploy lifelike voices that handle complex conversations with natural fluency."
+			},
+			"interactionHub": {
+				"title": "Interaction Hub",
+				"description": "Securely review transcripts and follow-ups for every AI-powered conversation."
+			},
+			"seamlessTools": {
+				"title": "Seamless Tools",
+				"description": "Integrate your existing workflow with custom webhooks and technical powerups."
+			},
+			"activeContacts": {
+				"title": "Active Contacts",
+				"description": "Effectively manage and segment your audience lists for maximum impact."
+			},
+			"growthAnalytics": {
+				"title": "Growth Analytics",
+				"description": "Transform call outcomes into actionable insights to scale your operations."
+			}
+		}
+	},
+	"conversations": {
+		"page": {
+			"fallback": "No conversation selected. Choose a conversation to view transcripts, notes, and associated actions."
+		},
+		"list": {
+			"title": "Conversations",
+			"description": "Latest conversations for this campaign or contact group",
+			"refresh": "Refresh conversations",
+			"export": "Export conversations",
+			"itemLabel": "conversations",
+			"error": "Unable to load conversations. Please try again.",
+			"accessDenied": "You do not have permission to view conversations.",
+			"empty": {
+				"message": "No conversations yet",
+				"description": "We will display conversations as soon as they are available."
+			},
+			"columns": {
+				"contactName": "Contact Name",
+				"phoneNumber": "Phone Number",
+				"outcome": "Outcome",
+				"status": "Status",
+				"when": "When",
+				"duration": "Duration",
+				"endedAt": "ended at {{date}} ({{timezone}})",
+				"ended": "ended"
+			},
+			"status": {
+				"done": "Done",
+				"inProgress": "In Progress",
+				"failed": "Failed",
+				"pending": "Pending",
+				"unknown": "Unknown"
+			}
+		},
+		"filters": {
+			"title": "Filters",
+			"contactName": "Filter by contact name...",
+			"advanced": "Advanced",
+			"phoneNumber": "Phone Number",
+			"phoneNumberPlaceholder": "Filter by phone number",
+			"outcome": "Outcome",
+			"outcomePlaceholder": "Filter by outcome",
+			"status": "Status",
+			"allStatuses": "All statuses",
+			"clear": "Clear all filters"
+		},
+		"export": {
+			"title": "Export conversations",
+			"hint": "Choose dates and type to export.",
+			"from": "From",
+			"fromPlaceholder": "Pick start date",
+			"to": "To",
+			"toPlaceholder": "Pick end date",
+			"type": "Type",
+			"typePlaceholder": "Select type",
+			"inbound": "Inbound",
+			"outbound": "Outbound",
+			"cancel": "Cancel",
+			"export": "Export",
+			"errors": {
+				"required": "Required",
+				"selectType": "Select a type"
+			}
+		},
+		"details": {
+			"tabs": {
+				"overview": "Overview",
+				"transcript": "Transcript"
+			}
+		},
+		"actions": {
+			"title": "Actions",
+			"description": "Actions that can be performed on this conversation.",
+			"confirmTitle": "Confirm Action",
+			"reprocess": {
+				"label": "Reprocess Event",
+				"hint": "Retry the current event to get the conversation back on track.",
+				"tooltip": "Reprocess Event",
+				"confirmMessage": "Are you sure you want to reprocess this event? This action cannot be undone.",
+				"confirmLabel": "Yes, Reprocess Event"
+			},
+			"fetchAndProcess": {
+				"label": "Fetch and Process",
+				"hint": "Grab the latest data and let the pipeline run again.",
+				"tooltip": "Fetch and Process",
+				"confirmMessage": "Are you sure you want to fetch and process this conversation? This action cannot be undone.",
+				"confirmLabel": "Yes, Fetch and Process"
+			}
+		},
+		"overview": {
+			"title": "Conversation Overview",
+			"description": "Define the conversation key details.",
+			"copyPhone": "Copy phone",
+			"copied": "Copied",
+			"demoContact": "Demo",
+			"stats": {
+				"dateTime": "Date & Time",
+				"agent": "Agent",
+				"campaign": "Campaign",
+				"endReason": "End Reason"
+			},
+			"summary": {
+				"title": "Conversation Summary",
+				"description": "Auto-generated from the call transcript"
+			},
+			"downloadTranscript": "Download Full Transcript",
+			"notifications": {
+				"exportSuccess": "Export Successful",
+				"exportSuccessMsg": "Conversation exported as PDF",
+				"exportFailed": "Export Failed",
+				"exportFailedMsg": "Failed to export conversation. Please try again."
+			},
+			"termination": {
+				"terminated": "Terminated",
+				"clientDisconnected": "Client Disconnected",
+				"hangup": "Hangup",
+				"timeout": "Timeout",
+				"error": "Error",
+				"unknown": "Unknown"
+			},
+			"fallbacks": {
+				"unassigned": "Unassigned",
+				"na": "N/A",
+				"noPhone": "No phone number",
+				"invalidDate": "Invalid date"
+			}
+		},
+		"transcript": {
+			"empty": {
+				"message": "No transcript entries available",
+				"description": "Conversation data will appear here once available"
+			},
+			"roles": {
+				"agent": "Agent",
+				"user": "User"
+			},
+			"interrupted": "Interrupted",
+			"technical": {
+				"title": "Technical Details",
+				"toolCalls": "Tool calls:",
+				"toolName": "Tool Name",
+				"called": "Called",
+				"pending": "Pending",
+				"type": "Type",
+				"parameters": "Parameters",
+				"requestId": "Request ID",
+				"llmUsage": "LLM Usage",
+				"inputTokens": "Input Tokens",
+				"outputTokens": "Output Tokens",
+				"cacheRead": "Cache Read",
+				"cacheWrite": "Cache Write",
+				"totalCost": "Total Cost:",
+				"sourceMedium": "Source Medium",
+				"agentMetadata": "Agent Metadata",
+				"agentId": "Agent ID",
+				"branchId": "Branch ID",
+				"workflowNode": "Workflow Node",
+				"originalMessage": "Original Message",
+				"ragInfo": "RAG Retrieval Info",
+				"turnMetrics": "Turn Metrics"
+			}
+		},
+		"player": {
+			"title": "Recording",
+			"description": "Listen to the call recording",
+			"notAvailable": "Conversation not available",
+			"loading": "Loading audio…",
+			"error": "Could not load audio.",
+			"rewind": "Rewind 10 seconds",
+			"rewindShort": "Rewind 10s",
+			"forward": "Forward 10 seconds",
+			"forwardShort": "Forward 10s",
+			"play": "Play",
+			"pause": "Pause",
+			"download": "Download Audio"
+		},
+		"playbackSpeed": "{{rate}}×",
+		"disposition": {
+			"title": "Outcome",
+			"loading": "Loading status",
+			"failed": "Failed to load",
+			"errorMsg": "Couldn't load outcome data",
+			"retry": "Retry",
+			"noOutcome": "No outcome",
+			"noUpdates": "No updates yet",
+			"positive": "Positive",
+			"negative": "Negative",
+			"neutral": "Neutral",
+			"finalized": "Finalized",
+			"voicemail": "Voicemail",
+			"callbackRequired": "Callback required",
+			"numberInvalidated": "Number invalidated",
+			"doNotRetry": "Do not retry this contact",
+			"agentNotes": "Agent notes",
+			"duration": {
+				"asap": "as soon as possible",
+				"day": "day",
+				"days": "days",
+				"hour": "hour",
+				"hours": "hours",
+				"minute": "minute",
+				"minutes": "minutes",
+				"lessThanMinute": "less than a minute",
+				"and": "and"
+			}
+		}
+	},
+	"units": {
+		"day": "d",
+		"hour": "h",
+		"minute": "m",
+		"second": "s"
+	}
+}

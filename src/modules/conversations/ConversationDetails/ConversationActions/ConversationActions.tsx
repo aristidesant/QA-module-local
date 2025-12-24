@@ -14,6 +14,7 @@ import { ConversationsModel } from '~/models/ConversationsModels';
 import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
+import { useTranslation } from 'react-i18next';
 import styles from './ConversationActions.module.css';
 
 interface ConversationActionsProps {
@@ -25,6 +26,7 @@ export function ConversationActions({
 	conversation,
 	onReload,
 }: ConversationActionsProps) {
+	const { t } = useTranslation();
 	const failAndPauseMutation = useFailAndPauseConversation();
 	const fetchAndProcessMutation = useFetchAndProcessConversation();
 	const { canPerformAction } = usePermissions();
@@ -39,10 +41,12 @@ export function ConversationActions({
 
 	const handleReprocessEvent = () => {
 		modals.openConfirmModal({
-			title: 'Confirm Action',
-			children:
-				'Are you sure you want to reprocess this event? This action cannot be undone.',
-			labels: { confirm: 'Yes, Reprocess Event', cancel: 'Cancel' },
+			title: t('conversations.actions.confirmTitle'),
+			children: t('conversations.actions.reprocess.confirmMessage'),
+			labels: {
+				confirm: t('conversations.actions.reprocess.confirmLabel'),
+				cancel: t('common.cancel'),
+			},
 			onConfirm: () => {
 				failAndPauseMutation.mutate(`${conversation.id}`, {
 					onSuccess: () => {
@@ -57,10 +61,12 @@ export function ConversationActions({
 
 	const handleFetchAndProcess = () => {
 		modals.openConfirmModal({
-			title: 'Confirm Action',
-			children:
-				'Are you sure you want to fetch and process this conversation? This action cannot be undone.',
-			labels: { confirm: 'Yes, Fetch and Process', cancel: 'Cancel' },
+			title: t('conversations.actions.confirmTitle'),
+			children: t('conversations.actions.fetchAndProcess.confirmMessage'),
+			labels: {
+				confirm: t('conversations.actions.fetchAndProcess.confirmLabel'),
+				cancel: t('common.cancel'),
+			},
 			onConfirm: () => {
 				fetchAndProcessMutation.mutate(`${conversation.id}`, {
 					onSuccess: () => {
@@ -84,27 +90,27 @@ export function ConversationActions({
 		conversation.status === 'initiated'
 			? {
 					icon: IconArrowRight,
-					label: 'Reprocess Event',
-					hint: 'Retry the current event to get the conversation back on track.',
+					label: t('conversations.actions.reprocess.label'),
+					hint: t('conversations.actions.reprocess.hint'),
 					onClick: handleReprocessEvent,
 					loading: failAndPauseMutation.isPending,
-					tooltip: 'Reprocess Event',
+					tooltip: t('conversations.actions.reprocess.tooltip'),
 				}
 			: {
 					icon: IconRefresh,
-					label: 'Fetch and Process',
-					hint: 'Grab the latest data and let the pipeline run again.',
+					label: t('conversations.actions.fetchAndProcess.label'),
+					hint: t('conversations.actions.fetchAndProcess.hint'),
 					onClick: handleFetchAndProcess,
 					loading: fetchAndProcessMutation.isPending,
-					tooltip: 'Fetch and Process',
+					tooltip: t('conversations.actions.fetchAndProcess.tooltip'),
 				};
 
 	const ActiveActionIcon = currentAction.icon;
 
 	return (
 		<RightSectionCard
-			title='Actions'
-			description='Actions that can be performed on this conversation.'
+			title={t('conversations.actions.title')}
+			description={t('conversations.actions.description')}
 		>
 			<Center className={styles.actions}>
 				<div className={styles.actionItem}>

@@ -1,9 +1,9 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { beforeEach, describe, it, expect, vi } from 'vitest';
 import { MemoryRouter } from 'react-router';
-import { MantineProvider } from '@mantine/core';
 import { Sidebar, renderMenuItem } from './Sidebar';
 import { ModuleEnum } from '~/constants/ModuleEnum';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 const { mockCanAccessModule, mockUsePermissions } = vi.hoisted(() => {
 	const canAccess = vi.fn(() => true);
@@ -35,12 +35,10 @@ vi.mock('~/version', () => ({
 }));
 
 const renderSidebar = () => {
-	return render(
-		<MantineProvider>
-			<MemoryRouter initialEntries={['/']}>
-				<Sidebar />
-			</MemoryRouter>
-		</MantineProvider>
+	return renderWithProviders(
+		<MemoryRouter initialEntries={['/']}>
+			<Sidebar />
+		</MemoryRouter>
 	);
 };
 
@@ -129,12 +127,10 @@ describe('Sidebar', () => {
 
 	describe('Active State', () => {
 		it('marks Overview as active when on root path', () => {
-			render(
-				<MantineProvider>
-					<MemoryRouter initialEntries={['/']}>
-						<Sidebar />
-					</MemoryRouter>
-				</MantineProvider>
+			renderWithProviders(
+				<MemoryRouter initialEntries={['/']}>
+					<Sidebar />
+				</MemoryRouter>
 			);
 
 			const overviewLink = screen.getByRole('link', { name: /overview/i });
@@ -142,12 +138,10 @@ describe('Sidebar', () => {
 		});
 
 		it('marks Campaigns as active when on campaigns path', () => {
-			render(
-				<MantineProvider>
-					<MemoryRouter initialEntries={['/campaigns']}>
-						<Sidebar />
-					</MemoryRouter>
-				</MantineProvider>
+			renderWithProviders(
+				<MemoryRouter initialEntries={['/campaigns']}>
+					<Sidebar />
+				</MemoryRouter>
 			);
 
 			const campaignsLink = screen.getByRole('link', { name: /campaigns/i });
@@ -155,12 +149,10 @@ describe('Sidebar', () => {
 		});
 
 		it('marks Campaigns as active on campaigns sub-route', () => {
-			render(
-				<MantineProvider>
-					<MemoryRouter initialEntries={['/campaigns/123']}>
-						<Sidebar />
-					</MemoryRouter>
-				</MantineProvider>
+			renderWithProviders(
+				<MemoryRouter initialEntries={['/campaigns/123']}>
+					<Sidebar />
+				</MemoryRouter>
 			);
 
 			const campaignsLink = screen.getByRole('link', { name: /campaigns/i });
@@ -168,12 +160,10 @@ describe('Sidebar', () => {
 		});
 
 		it('does not mark other items as active', () => {
-			render(
-				<MantineProvider>
-					<MemoryRouter initialEntries={['/']}>
-						<Sidebar />
-					</MemoryRouter>
-				</MantineProvider>
+			renderWithProviders(
+				<MemoryRouter initialEntries={['/']}>
+					<Sidebar />
+				</MemoryRouter>
 			);
 
 			const campaignsLink = screen.getByRole('link', { name: /campaigns/i });
@@ -205,34 +195,30 @@ describe('Sidebar', () => {
 		};
 
 		it('renders menu item with icon and label', () => {
-			render(
-				<MantineProvider>
-					<MemoryRouter initialEntries={['/']}>
-						<RenderMenuItemWrapper
-							label='Test Item'
-							icon={<span data-testid='test-icon'>Icon</span>}
-							to='/test'
-						/>
-					</MemoryRouter>
-				</MantineProvider>
+			renderWithProviders(
+				<MemoryRouter initialEntries={['/']}>
+					<RenderMenuItemWrapper
+						label='sidebar.items.overview'
+						icon={<span data-testid='test-icon'>Icon</span>}
+						to='/test'
+					/>
+				</MemoryRouter>
 			);
 
 			expect(screen.getByTestId('test-icon')).toBeInTheDocument();
-			expect(screen.getByText('Test Item')).toBeInTheDocument();
+			expect(screen.getByText('Overview')).toBeInTheDocument();
 		});
 
 		it('applies selected style for exact match when exact is true', () => {
-			const { container } = render(
-				<MantineProvider>
-					<MemoryRouter initialEntries={['/']}>
-						<RenderMenuItemWrapper
-							label='Home'
-							icon={<span>Icon</span>}
-							to='/'
-							exact={true}
-						/>
-					</MemoryRouter>
-				</MantineProvider>
+			const { container } = renderWithProviders(
+				<MemoryRouter initialEntries={['/']}>
+					<RenderMenuItemWrapper
+						label='sidebar.items.overview'
+						icon={<span>Icon</span>}
+						to='/'
+						exact={true}
+					/>
+				</MemoryRouter>
 			);
 
 			const link = container.querySelector('a');
@@ -240,17 +226,15 @@ describe('Sidebar', () => {
 		});
 
 		it('does not apply selected style when path does not match exactly with exact=true', () => {
-			const { container } = render(
-				<MantineProvider>
-					<MemoryRouter initialEntries={['/other']}>
-						<RenderMenuItemWrapper
-							label='Home'
-							icon={<span>Icon</span>}
-							to='/'
-							exact={true}
-						/>
-					</MemoryRouter>
-				</MantineProvider>
+			const { container } = renderWithProviders(
+				<MemoryRouter initialEntries={['/other']}>
+					<RenderMenuItemWrapper
+						label='sidebar.items.overview'
+						icon={<span>Icon</span>}
+						to='/'
+						exact={true}
+					/>
+				</MemoryRouter>
 			);
 
 			const link = container.querySelector('a');
@@ -258,17 +242,15 @@ describe('Sidebar', () => {
 		});
 
 		it('applies selected style for prefix match when exact is false', () => {
-			const { container } = render(
-				<MantineProvider>
-					<MemoryRouter initialEntries={['/campaigns/123']}>
-						<RenderMenuItemWrapper
-							label='Campaigns'
-							icon={<span>Icon</span>}
-							to='/campaigns'
-							exact={false}
-						/>
-					</MemoryRouter>
-				</MantineProvider>
+			const { container } = renderWithProviders(
+				<MemoryRouter initialEntries={['/campaigns/123']}>
+					<RenderMenuItemWrapper
+						label='sidebar.items.campaigns'
+						icon={<span>Icon</span>}
+						to='/campaigns'
+						exact={false}
+					/>
+				</MemoryRouter>
 			);
 
 			const link = container.querySelector('a');
@@ -285,12 +267,10 @@ describe('Sidebar', () => {
 		});
 
 		it('has proper aria-current for active links', () => {
-			render(
-				<MantineProvider>
-					<MemoryRouter initialEntries={['/campaigns']}>
-						<Sidebar />
-					</MemoryRouter>
-				</MantineProvider>
+			renderWithProviders(
+				<MemoryRouter initialEntries={['/campaigns']}>
+					<Sidebar />
+				</MemoryRouter>
 			);
 
 			const activeLink = screen.getByRole('link', { name: /campaigns/i });
@@ -298,12 +278,10 @@ describe('Sidebar', () => {
 		});
 
 		it('inactive links do not have aria-current', () => {
-			render(
-				<MantineProvider>
-					<MemoryRouter initialEntries={['/campaigns']}>
-						<Sidebar />
-					</MemoryRouter>
-				</MantineProvider>
+			renderWithProviders(
+				<MemoryRouter initialEntries={['/campaigns']}>
+					<Sidebar />
+				</MemoryRouter>
 			);
 
 			const inactiveLink = screen.getByRole('link', { name: /overview/i });

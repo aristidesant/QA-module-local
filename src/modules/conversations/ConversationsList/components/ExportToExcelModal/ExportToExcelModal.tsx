@@ -1,10 +1,11 @@
 import { Modal, Group, Button, Title, Text, Select } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
+import { useTranslation } from 'react-i18next';
 
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
@@ -24,7 +25,17 @@ export default function ExportToExcelModal({
 	onClose,
 	onSubmit,
 }: ExportToExcelModalProps) {
+	const { t } = useTranslation();
 	const [loading, setLoading] = useState(false);
+
+	const directionOptions = useMemo(
+		() => [
+			{ value: 'inbound', label: t('conversations.export.inbound') },
+			{ value: 'outbound', label: t('conversations.export.outbound') },
+		],
+		[t]
+	);
+
 	const form = useForm<{
 		from: Date | null;
 		to: Date | null;
@@ -32,9 +43,10 @@ export default function ExportToExcelModal({
 	}>({
 		initialValues: { from: null, to: null, direction: null },
 		validate: {
-			from: (v) => (v ? null : 'Required'),
-			to: (v) => (v ? null : 'Required'),
-			direction: (v) => (v ? null : 'Select a type'),
+			from: (v) => (v ? null : t('conversations.export.errors.required')),
+			to: (v) => (v ? null : t('conversations.export.errors.required')),
+			direction: (v) =>
+				v ? null : t('conversations.export.errors.selectType'),
 		},
 	});
 
@@ -94,21 +106,22 @@ export default function ExportToExcelModal({
 		<Modal
 			opened={opened}
 			onClose={handleClose}
-			title={<Title order={4}>Export conversations</Title>}
+			title={<Title order={4}>{t('conversations.export.title')}</Title>}
 			centered
 			size='lg'
 			classNames={{ body: classes.root }}
 		>
-			<div className={classes.header}>
-				<Text className={classes.hint}>
-					Choose dates and type to export. API call will be wired later.
-				</Text>
+			<div
+				className={classes.header}
+				data-testid='export-to-excel-modal-content'
+			>
+				<Text className={classes.hint}>{t('conversations.export.hint')}</Text>
 			</div>
 
 			<div className={classes.fieldGroup}>
 				<DatePickerInput
-					label='From'
-					placeholder='Pick start date'
+					label={t('conversations.export.from')}
+					placeholder={t('conversations.export.fromPlaceholder')}
 					value={form.values.from}
 					onChange={(v) =>
 						form.setFieldValue('from', (v as unknown as Date) ?? null)
@@ -117,11 +130,12 @@ export default function ExportToExcelModal({
 					valueFormat='YYYY-MM-DD'
 					popoverProps={{ withinPortal: true }}
 					error={form.errors.from}
+					data-testid='export-from-date'
 				/>
 
 				<DatePickerInput
-					label='To'
-					placeholder='Pick end date'
+					label={t('conversations.export.to')}
+					placeholder={t('conversations.export.toPlaceholder')}
 					value={form.values.to}
 					onChange={(v) =>
 						form.setFieldValue('to', (v as unknown as Date) ?? null)
@@ -130,27 +144,26 @@ export default function ExportToExcelModal({
 					valueFormat='YYYY-MM-DD'
 					popoverProps={{ withinPortal: true }}
 					error={form.errors.to}
+					data-testid='export-to-date'
 				/>
 
 				<Select
-					label='Type'
-					placeholder='Select type'
-					data={[
-						{ value: 'inbound', label: 'Inbound' },
-						{ value: 'outbound', label: 'Outbound' },
-					]}
+					label={t('conversations.export.type')}
+					placeholder={t('conversations.export.typePlaceholder')}
+					data={directionOptions}
 					value={form.values.direction}
 					onChange={(val) =>
 						form.setFieldValue('direction', (val as Direction) ?? null)
 					}
 					comboboxProps={{ withinPortal: true }}
 					error={form.errors.direction}
+					data-testid='export-direction-select'
 				/>
 			</div>
 
 			<Group className={classes.actions}>
 				<Button variant='default' onClick={handleClose}>
-					Cancel
+					{t('conversations.export.cancel')}
 				</Button>
 				<Button
 					onClick={handleSubmit}
@@ -159,7 +172,7 @@ export default function ExportToExcelModal({
 						!form.values.direction || !form.values.from || !form.values.to
 					}
 				>
-					Export
+					{t('conversations.export.export')}
 				</Button>
 			</Group>
 		</Modal>

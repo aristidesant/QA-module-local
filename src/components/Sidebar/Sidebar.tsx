@@ -6,11 +6,13 @@ import styles from './Sidebar.module.css';
 import Logo from '../Logo';
 import { APP_VERSION } from '~/version';
 import { usePermissions } from '~/hooks/usePermissions';
+import { useTranslation } from 'react-i18next';
 
 // menuItems are now imported from menuItems.tsx
 
 export const Sidebar: React.FC = () => {
 	const { canAccessModule, canPerformAction } = usePermissions();
+	const { t } = useTranslation();
 
 	const permittedMenuItems = useMemo(
 		() =>
@@ -24,14 +26,14 @@ export const Sidebar: React.FC = () => {
 	);
 
 	return (
-		<nav className={styles.sidebar} aria-label='Main navigation'>
+		<nav className={styles.sidebar} aria-label={t('sidebar.ariaLabel')}>
 			<Stack className={styles.menuList} gap='lg'>
 				<div className={styles.logoWrapper}>
 					<Logo />
 				</div>
 				<div className={styles.versionWrapper}>
 					<Text size='xs' c='dimmed'>
-						Version {APP_VERSION}
+						{t('sidebar.version')} {APP_VERSION}
 					</Text>
 				</div>
 				<Divider className={styles.divider} />
@@ -44,17 +46,19 @@ export const Sidebar: React.FC = () => {
 						mb='xs'
 						className={styles.sectionHeader}
 					>
-						MENU
+						{t('sidebar.menu')}
 					</Text>
 					{permittedMenuItems.length > 0 ? (
-						permittedMenuItems.map((item) => renderMenuItem(item))
+						permittedMenuItems.map((item) => (
+							<SidebarMenuItem key={item.label} item={item} />
+						))
 					) : (
 						<div className={styles.emptyState}>
 							<Text size='sm' c='dimmed' fw={600}>
-								No modules available
+								{t('sidebar.noModules')}
 							</Text>
 							<Text size='xs' c='dimmed'>
-								Request access to see navigation options.
+								{t('sidebar.requestAccess')}
 							</Text>
 						</div>
 					)}
@@ -64,15 +68,21 @@ export const Sidebar: React.FC = () => {
 	);
 };
 
-export const renderMenuItem = ({ label, icon, to, exact }: MenuItem) => {
+interface SidebarMenuItemProps {
+	item: MenuItem;
+}
+
+const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item }) => {
+	const { label, icon, to, exact } = item;
 	const location = useLocation();
+	const { t } = useTranslation();
 
 	const isSelected = exact
 		? location.pathname === to
 		: location.pathname.startsWith(to) && to !== '/';
+
 	return (
 		<Link
-			key={label}
 			to={to}
 			className={[
 				styles.menuItem,
@@ -82,7 +92,14 @@ export const renderMenuItem = ({ label, icon, to, exact }: MenuItem) => {
 			tabIndex={0}
 		>
 			{icon}
-			<span className={styles.menuText}>{label}</span>
+			<span className={styles.menuText}>{t(label)}</span>
 		</Link>
 	);
+};
+
+/**
+ * @deprecated Use SidebarMenuItem component instead
+ */
+export const renderMenuItem = (item: MenuItem) => {
+	return <SidebarMenuItem key={item.label} item={item} />;
 };

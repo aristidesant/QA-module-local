@@ -7,6 +7,7 @@ import type { TranscriptContent } from '~/models/ConversationsModels';
 import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import AccessDenied from '~/components/AccessDenied';
+import { useTranslation } from 'react-i18next';
 
 import { TranscriptViewer } from '~/modules/conversations/TranscriptViewer';
 // Analysis and Metadata panels removed from tabs — components may be deleted if unused elsewhere.
@@ -25,6 +26,7 @@ export function ConversationDetails({
 	id,
 	onReload,
 }: ConversationDetailsProps) {
+	const { t } = useTranslation();
 	const {
 		data: conversation,
 		refetch: reloadCurrent,
@@ -82,9 +84,7 @@ export function ConversationDetails({
 	}
 
 	if (!canViewConversations) {
-		return (
-			<AccessDenied description='You do not have permission to view conversations.' />
-		);
+		return <AccessDenied description={t('conversations.list.accessDenied')} />;
 	}
 	const handleReload = () => {
 		onReload?.();
@@ -104,13 +104,13 @@ export function ConversationDetails({
 					<Tabs.Tab value='overview'>
 						<Box style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
 							<IconInfoCircle size={18} />
-							<span>Overview</span>
+							<span>{t('conversations.details.tabs.overview')}</span>
 						</Box>
 					</Tabs.Tab>
 					<Tabs.Tab value='transcript'>
 						<Box style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
 							<IconFileText size={18} />
-							<span>Transcript</span>
+							<span>{t('conversations.details.tabs.transcript')}</span>
 						</Box>
 					</Tabs.Tab>
 				</Tabs.List>
