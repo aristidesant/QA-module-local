@@ -144,6 +144,19 @@ export const RouteProtecter = () => {
 		return <Navigate to='/' replace />;
 	}
 
+	if (Boolean(authToken) && !user) {
+		return (
+			<div className={classes.root}>
+				<LoadingOverlay
+					visible={true}
+					overlayProps={{ color: 'white', opacity: 0.75 }}
+					loaderProps={{ type: 'dots' }}
+				/>
+				<ImpersonationLoadingOverlay />
+			</div>
+		);
+	}
+
 	return (
 		<div className={classes.root}>
 			<LoadingOverlay
