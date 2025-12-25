@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	Text,
 	Switch,
@@ -50,6 +51,7 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 	onDelete,
 	isOpened = false,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const activeDays = (schedule?.dayConfigs ?? []).filter((d) => d.isActive);
 	const isActive = schedule?.status === 'active';
 	const humanEquivalentValue =
@@ -62,13 +64,13 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 
 	const metrics = [
 		{
-			label: 'Equivalents',
+			label: t('scheduler.header.metrics.equivalents'),
 			value: humanEquivalentValue,
 			icon: IconUsers,
-			tooltip: 'Human equivalents allocated to this schedule',
+			tooltip: t('scheduler.header.tooltip.equivalents'),
 		},
 		{
-			label: 'Weekly',
+			label: t('scheduler.header.metrics.weekly'),
 			value: (() => {
 				if (activeDays.length === 0) return '—';
 				const total =
@@ -79,10 +81,10 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 				return `${total.toFixed(1)}h`;
 			})(),
 			icon: IconCalendarStats,
-			tooltip: 'Projected weekly effort for the whole team',
+			tooltip: t('scheduler.header.tooltip.weekly'),
 		},
 		{
-			label: 'Per Agent',
+			label: t('scheduler.header.metrics.perAgent'),
 			value: (() => {
 				if (activeDays.length === 0) return '—';
 				const total = activeDays.reduce(
@@ -92,7 +94,7 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 				return `${total.toFixed(1)}h`;
 			})(),
 			icon: IconClockHour4,
-			tooltip: 'Hours per active agent each week',
+			tooltip: t('scheduler.header.tooltip.perAgent'),
 		},
 	];
 
@@ -119,9 +121,9 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 					<Stack gap={4} className={styles.titleText}>
 						<Text
 							className={styles.scheduleName}
-							title={schedule?.name || 'Untitled Schedule'}
+							title={schedule?.name || t('scheduler.header.untitled')}
 						>
-							{schedule?.name || 'Untitled Schedule'}
+							{schedule?.name || t('scheduler.header.untitled')}
 						</Text>
 
 						<Group gap='xs' className={styles.metaRow}>
@@ -132,15 +134,17 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 								radius='sm'
 								className={styles.statusBadge}
 							>
-								{isActive ? 'Active' : 'Paused'}
+								{isActive
+									? t('scheduler.header.status.active')
+									: t('scheduler.header.status.paused')}
 							</Badge>
 							<Box className={styles.metaDivider} />
 							<Text size='xs' c='dimmed' className={styles.metaText}>
 								{activeDays.length > 0
-									? `${activeDays.length} active day${
-											activeDays.length === 1 ? '' : 's'
-										}`
-									: 'No active days yet'}
+									? t('scheduler.header.activeDays', {
+											count: activeDays.length,
+										})
+									: t('scheduler.header.noActiveDays')}
 							</Text>
 						</Group>
 					</Stack>
@@ -154,7 +158,7 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 									size='sm'
 									variant='light'
 									color='gray'
-									aria-label='View schedule'
+									aria-label={t('scheduler.header.actions.view')}
 								>
 									<IconCalendar size={16} />
 								</ActionIcon>
@@ -170,13 +174,25 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 						</HoverCard>
 					)}
 
-					<Tooltip label={isOpened ? 'Close' : 'Edit'} withArrow position='top'>
+					<Tooltip
+						label={
+							isOpened
+								? t('scheduler.header.actions.close')
+								: t('scheduler.header.actions.edit')
+						}
+						withArrow
+						position='top'
+					>
 						<ActionIcon
 							size='sm'
 							variant='light'
 							color='blue'
 							onClick={onEdit}
-							aria-label={isOpened ? 'Close' : 'Edit'}
+							aria-label={
+								isOpened
+									? t('scheduler.header.actions.close')
+									: t('scheduler.header.actions.edit')
+							}
 						>
 							{isOpened ? (
 								<IconChevronUp size={16} />
@@ -186,13 +202,17 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 						</ActionIcon>
 					</Tooltip>
 
-					<Tooltip label='Delete' withArrow position='top'>
+					<Tooltip
+						label={t('scheduler.header.actions.delete')}
+						withArrow
+						position='top'
+					>
 						<ActionIcon
 							size='sm'
 							variant='light'
 							color='red'
 							onClick={onDelete}
-							aria-label='Delete'
+							aria-label={t('scheduler.header.actions.delete')}
 						>
 							<IconTrash size={16} />
 						</ActionIcon>

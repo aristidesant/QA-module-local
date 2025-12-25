@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	ActionIcon,
 	Box,
@@ -35,6 +36,7 @@ const formatHours = (hours: number): string => {
 };
 
 const CapacityCall: React.FC = () => {
+	const { t } = useTranslation('campaigns');
 	const form = useSchedulerFormContext();
 	const humanEquivalent = Number(form.values.humanEquivalent || 1);
 	const dayConfigs = (form.values.dayConfigs || []) as MaybeDayConfig[];
@@ -79,9 +81,11 @@ const CapacityCall: React.FC = () => {
 				{/* Header */}
 				<Box className={styles.header}>
 					<Box className={styles.titleGroup}>
-						<Text className={styles.title}>Capacity</Text>
+						<Text className={styles.title}>
+							{t('scheduler.capacity.title')}
+						</Text>
 						<Tooltip
-							label='Translate your schedule into realistic talk time based on 38.5 min/hour efficiency.'
+							label={t('scheduler.capacity.infoTooltip')}
 							multiline
 							maw={220}
 							withArrow
@@ -101,7 +105,9 @@ const CapacityCall: React.FC = () => {
 
 				{/* Full-width slider row */}
 				<Box className={styles.sliderRow}>
-					<Text className={styles.sliderLabel}>Human Equivalent (Agents)</Text>
+					<Text className={styles.sliderLabel}>
+						{t('scheduler.capacity.sliderLabel')}
+					</Text>
 					<Slider
 						value={sliderValue}
 						onChange={(value) =>
@@ -124,25 +130,29 @@ const CapacityCall: React.FC = () => {
 					<SmallMetricCard
 						icon={<IconCalendarTime size={16} />}
 						value={formatHours(metrics.totalWeeklyHours)}
-						label='Scheduled'
+						label={t('scheduler.capacity.metrics.scheduled.label')}
 						color='violet'
-						tooltip={`${metrics.activeDayCount} active days scheduled this week`}
+						tooltip={t('scheduler.capacity.metrics.scheduled.tooltip', {
+							count: metrics.activeDayCount,
+						})}
 					/>
 
 					<SmallMetricCard
 						icon={<IconHeadset size={16} />}
 						value={formatHours(metrics.talkHoursPerHuman)}
-						label='Per Agent'
+						label={t('scheduler.capacity.metrics.perAgent.label')}
 						color='teal'
-						tooltip='Talk time per person at 38.5 min/hour efficiency'
+						tooltip={t('scheduler.capacity.metrics.perAgent.tooltip')}
 					/>
 
 					<SmallMetricCard
 						icon={<IconUsers size={16} />}
 						value={formatHours(metrics.teamTalkHours)}
-						label='Team Total'
+						label={t('scheduler.capacity.metrics.teamTotal.label')}
 						color='orange'
-						tooltip={`Combined talk time for ${sliderValue} agent${sliderValue > 1 ? 's' : ''}`}
+						tooltip={t('scheduler.capacity.metrics.teamTotal.tooltip', {
+							count: sliderValue,
+						})}
 					/>
 				</Box>
 
@@ -151,11 +161,13 @@ const CapacityCall: React.FC = () => {
 					<Box className={styles.scheduleHeader}>
 						<Text className={styles.scheduleTitle}>
 							<IconCalendarTime size={12} />
-							Schedule
+							{t('scheduler.capacity.schedule.title')}
 						</Text>
 						<Box className={styles.scheduleBadge}>
 							<span className={styles.scheduleBadgeDot} />
-							{metrics.activeDayCount} active
+							{t('scheduler.capacity.schedule.activeBadge', {
+								count: metrics.activeDayCount,
+							})}
 						</Box>
 					</Box>
 					<Box className={styles.scheduleContent}>

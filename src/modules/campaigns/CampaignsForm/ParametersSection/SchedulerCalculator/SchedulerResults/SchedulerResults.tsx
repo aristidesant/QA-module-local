@@ -10,6 +10,7 @@ import { useSummaryColumns } from './useSummaryColumns';
 import { useWaveColumns } from './useWaveColumns';
 import type { MetricRow, WaveRow } from './types';
 import styles from '../SchedulerCalculator.module.css';
+import { useTranslation } from 'react-i18next';
 
 const integerFormatter = new Intl.NumberFormat('en-US', {
 	maximumFractionDigits: 0,
@@ -32,13 +33,14 @@ const formatDecimal = (value: number): string =>
 const formatPercent = (value: number): string =>
 	`${percentFormatter.format(Math.max(value, 0))}%`;
 
-const waveLabels: Record<WaveKey, string> = {
-	wave1: 'Wave 1',
-	wave2: 'Wave 2',
-	wave3: 'Wave 3',
-};
+const getWaveLabels = (t: any) => ({
+	wave1: t('scheduler.calculator.results.waves.wave1'),
+	wave2: t('scheduler.calculator.results.waves.wave2'),
+	wave3: t('scheduler.calculator.results.waves.wave3'),
+});
 
 const SchedulerResults: React.FC = () => {
+	const { t } = useTranslation('campaigns');
 	const { summary, mode, formValues } = useSchedulerCalculatorStore();
 
 	const summaryColumns = useSummaryColumns();
@@ -48,33 +50,39 @@ const SchedulerResults: React.FC = () => {
 		if (!summary) return [];
 		return [
 			{
-				metric: 'Campaign volume',
+				metric: t('scheduler.calculator.results.metrics.volume'),
 				value: `${formatInteger(Number(formValues.totalRecords))} records`,
 			},
 			{
-				metric: mode === 'resources' ? 'Agents required' : 'Agents allocated',
+				metric:
+					mode === 'resources'
+						? t('scheduler.calculator.results.metrics.agentsRequired')
+						: t('scheduler.calculator.results.metrics.agentsAllocated'),
 				value: `${formatDecimal(summary.totalAgents)} agents`,
 				isPrincipal: mode === 'resources',
 			},
 			{
-				metric: mode === 'time' ? 'Days to complete' : 'Days planned',
+				metric:
+					mode === 'time'
+						? t('scheduler.calculator.results.metrics.daysToComplete')
+						: t('scheduler.calculator.results.metrics.daysPlanned'),
 				value: `${formatDecimal(summary.daysEstimation)} days`,
 				isPrincipal: mode === 'time',
 			},
 			{
-				metric: 'Total tries',
+				metric: t('scheduler.calculator.results.metrics.totalTries'),
 				value: `${formatInteger(summary.totalTries)} tries`,
 			},
 			{
-				metric: 'Operational hours',
+				metric: t('scheduler.calculator.results.metrics.operationalHours'),
 				value: `${formatDecimal(summary.operationalHours)} hrs`,
 			},
 			{
-				metric: 'Team hours per day',
+				metric: t('scheduler.calculator.results.metrics.teamHoursPerDay'),
 				value: `${formatDecimal(summary.totalTeamHoursByDay)} hrs`,
 			},
 		];
-	}, [summary, mode, formValues.totalRecords]);
+	}, [summary, mode, formValues.totalRecords, t]);
 
 	const waveData = useMemo<WaveRow[]>(() => {
 		if (!summary) return [];
@@ -85,9 +93,10 @@ const SchedulerResults: React.FC = () => {
 			const derivedPercentage = waveDistribution?.derivedPercentage ?? 0;
 			const basePercentage =
 				SCHEDULER_CALCULATOR_CONFIG.contactabilityByWaves[wave.wave] * 100;
+			const labels = getWaveLabels(t);
 
 			return {
-				wave: waveLabels[wave.wave],
+				wave: labels[wave.wave as WaveKey],
 				projected: `${formatPercent(derivedPercentage)} (base: ${formatPercent(basePercentage)})`,
 				progressValue: Math.min(Math.max(derivedPercentage, 0), 100),
 				totalContacted: formatInteger(wave.totalContacted),
@@ -98,7 +107,7 @@ const SchedulerResults: React.FC = () => {
 				totalTime: `${formatInteger(wave.totalTime)} min`,
 			};
 		});
-	}, [summary]);
+	}, [summary, t]);
 
 	return (
 		<section className={styles.summarySection}>
@@ -106,15 +115,17 @@ const SchedulerResults: React.FC = () => {
 				<div className={styles.summaryCard}>
 					<div className={styles.summaryHeader}>
 						<div className={styles.summaryHeaderContent}>
-							<Text className={styles.sectionTitle}>Projection summary</Text>
+							<Text className={styles.sectionTitle}>
+								{t('scheduler.calculator.results.title')}
+							</Text>
 							<Text className={styles.sectionHint}>
-								Compare campaign volume, effort, and daily capacity at a glance.
+								{t('scheduler.calculator.results.hint')}
 							</Text>
 						</div>
 						<Badge size='sm' className={styles.modeBadge}>
 							{mode === 'resources'
-								? 'Resource projection'
-								: 'Timeline projection'}
+								? t('scheduler.calculator.results.badge.resource')
+								: t('scheduler.calculator.results.badge.timeline')}
 						</Badge>
 					</div>
 
@@ -128,7 +139,7 @@ const SchedulerResults: React.FC = () => {
 
 					<div style={{ marginBottom: '12px' }}>
 						<Text size='xs' fw={600} c='gray.7' mb={6}>
-							WAVE BREAKDOWN
+							{t('scheduler.calculator.results.waveBreakdown')}
 						</Text>
 						<BaseTable<WaveRow>
 							data={waveData}
@@ -138,25 +149,29 @@ const SchedulerResults: React.FC = () => {
 					</div>
 
 					<div className={styles.assumptions}>
-						<Text className={styles.assumptionsLabel}>Model assumptions</Text>
+						<Text className={styles.assumptionsLabel}>
+							{t('scheduler.calculator.results.assumptions.title')}
+						</Text>
 						<Text className={styles.assumptionsText}>
-							{formatDecimal(SCHEDULER_CALCULATOR_CONFIG.totalPhonesByAgent)}{' '}
-							phones per record ·{' '}
-							{formatDecimal(SCHEDULER_CALCULATOR_CONFIG.hoursByDay)} hours per
-							agent day ·{' '}
-							{formatDecimal(SCHEDULER_CALCULATOR_CONFIG.minutesMan)} minutes
-							per contact attempt.
+							{t('scheduler.calculator.results.assumptions.text', {
+								phones: formatDecimal(
+									SCHEDULER_CALCULATOR_CONFIG.totalPhonesByAgent
+								),
+								hours: formatDecimal(SCHEDULER_CALCULATOR_CONFIG.hoursByDay),
+								minutesMan: formatDecimal(
+									SCHEDULER_CALCULATOR_CONFIG.minutesMan
+								),
+							})}
 						</Text>
 					</div>
 				</div>
 			) : (
 				<div className={styles.placeholder}>
 					<Text className={styles.placeholderTitle}>
-						Ready to run a projection
+						{t('scheduler.calculator.results.placeholder.title')}
 					</Text>
 					<Text className={styles.placeholderText}>
-						Enter the campaign inputs above and select "Calculate projection" to
-						review staffing and time estimates.
+						{t('scheduler.calculator.results.placeholder.text')}
 					</Text>
 				</div>
 			)}

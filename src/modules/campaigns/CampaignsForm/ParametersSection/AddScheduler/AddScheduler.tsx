@@ -2,6 +2,7 @@ import { Button } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { IconPlus } from '@tabler/icons-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import AddShedulerForm from './AddShedulerForm';
 import styles from './AddScheduler.module.css';
 import { useCampaignsStore } from '~/stores/campaignsStore';
@@ -16,6 +17,7 @@ const AddScheduler: React.FC<AddSchedulerProps> = ({
 	campaignId: propCampaignId,
 	handleReload,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const { selectedCampaign } = useCampaignsStore((state) => state);
 	const { campaignId: paramCampaignId } = useParams<{ campaignId: string }>();
 	const campaignId = propCampaignId ?? selectedCampaign?.id ?? paramCampaignId;
@@ -24,7 +26,7 @@ const AddScheduler: React.FC<AddSchedulerProps> = ({
 			modalId: 'add-schedule-modal',
 			centered: true,
 			size: '60%',
-			title: 'Add Predefined Schedule',
+			title: t('scheduler.add.modalTitle'),
 			children: (
 				<AddShedulerForm
 					campaignId={campaignId}
@@ -46,7 +48,7 @@ const AddScheduler: React.FC<AddSchedulerProps> = ({
 			leftSection={<IconPlus size={16} />}
 			disabled={!campaignId}
 		>
-			Add Schedule
+			{t('scheduler.add.button')}
 		</Button>
 	);
 };

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	Button,
 	Group,
@@ -78,6 +79,7 @@ const initialFormValues: EstimationCalculationFormData = {
 };
 
 const SchedulerForm: React.FC = () => {
+	const { t } = useTranslation('campaigns');
 	const { mode, setMode, setFormValues, calculate } =
 		useSchedulerCalculatorStore();
 
@@ -97,18 +99,18 @@ const SchedulerForm: React.FC = () => {
 	const mainFields: FieldConfig[] = [
 		{
 			name: 'totalRecords',
-			label: 'Total records',
+			label: t('scheduler.calculator.fields.totalRecords'),
 			min: 0,
 		},
 		mode === 'resources'
 			? {
 					name: 'daysEstimation',
-					label: 'Days planned',
+					label: t('scheduler.calculator.fields.daysPlanned'),
 					min: 1,
 				}
 			: {
 					name: 'totalAgents',
-					label: 'Agents allocated',
+					label: t('scheduler.calculator.fields.agentsAllocated'),
 					min: 1,
 				},
 	];
@@ -116,14 +118,14 @@ const SchedulerForm: React.FC = () => {
 	const sliderFields: SliderFieldConfig[] = [
 		{
 			name: 'contactability',
-			label: 'Contactability',
+			label: t('scheduler.calculator.fields.contactability'),
 			min: 0,
 			max: 100,
 			unit: '%',
 		},
 		{
 			name: 'effectiveness',
-			label: 'Effectiveness',
+			label: t('scheduler.calculator.fields.effectiveness'),
 			min: 0,
 			max: 100,
 			unit: '%',
@@ -133,17 +135,17 @@ const SchedulerForm: React.FC = () => {
 	const ahtFields: FieldConfig[] = [
 		{
 			name: 'ahtEffective',
-			label: 'AHT effective contact',
+			label: t('scheduler.calculator.fields.ahtEffective'),
 			min: 0,
 		},
 		{
 			name: 'ahtNoEffective',
-			label: 'AHT no effective contact',
+			label: t('scheduler.calculator.fields.ahtNoEffective'),
 			min: 0,
 		},
 		{
 			name: 'ahtNoContact',
-			label: 'AHT no contact',
+			label: t('scheduler.calculator.fields.ahtNoContact'),
 			min: 0,
 		},
 	];
@@ -189,18 +191,22 @@ const SchedulerForm: React.FC = () => {
 		<div className={styles.formCard}>
 			<header className={styles.header}>
 				<div className={styles.headerContent}>
-					<Text className={styles.title}>Scheduler calculator</Text>
+					<Text className={styles.title}>
+						{t('scheduler.calculator.title')}
+					</Text>
 					<Text className={styles.description}>
-						Define the campaign parameters and project staffing or delivery time
-						with confidence.
+						{t('scheduler.calculator.description')}
 					</Text>
 				</div>
 				<AppSegmentedControl
 					value={mode}
 					onChange={handleModeChange}
 					data={[
-						{ label: 'Resources', value: 'resources' },
-						{ label: 'Time', value: 'time' },
+						{
+							label: t('scheduler.calculator.mode.resources'),
+							value: 'resources',
+						},
+						{ label: t('scheduler.calculator.mode.time'), value: 'time' },
 					]}
 					size='sm'
 					fullWidth
@@ -211,20 +217,22 @@ const SchedulerForm: React.FC = () => {
 					<SimpleGrid cols={2}>{renderFields(mainFields)}</SimpleGrid>
 
 					<div className={styles.section}>
-						<Text className={styles.fieldsetTitle}>Contact rates</Text>
+						<Text className={styles.fieldsetTitle}>
+							{t('scheduler.calculator.contactRates')}
+						</Text>
 						<SimpleGrid cols={2}>{renderSliderFields(sliderFields)}</SimpleGrid>
 					</div>
 
 					<div className={styles.section}>
 						<Text className={styles.fieldsetTitle}>
-							Average handling time (minutes)
+							{t('scheduler.calculator.aht')}
 						</Text>
 						<SimpleGrid cols={2}>{renderFields(ahtFields)}</SimpleGrid>
 					</div>
 
 					<Group justify='flex-end' mt='xs'>
 						<Button type='submit' size='md' className={styles.submit}>
-							Calculate projection
+							{t('scheduler.calculator.calculate')}
 						</Button>
 					</Group>
 				</Stack>

@@ -1,0 +1,77 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90m/Users/ramonmena/Projects/nai-agent-service-front[39m
+
+[2m6:45:40 PM[22m [33m[1m[vite][22m[39m (client) warning: Duplicate key "modalId" in object literal
+27 |  			centered: true,
+28 |  			size: '60%',
+29 |  			modalId: 'add-schedule-modal',
+   |     ^
+30 |  			centered: true,
+31 |  			size: '60%',
+
+  Plugin: vite:esbuild
+  File: /Users/ramonmena/Projects/nai-agent-service-front/src/modules/campaigns/CampaignsForm/ParametersSection/AddScheduler/AddScheduler.tsx
+[2m6:45:40 PM[22m [33m[1m[vite][22m[39m (client) warning: Duplicate key "centered" in object literal
+28 |  			size: '60%',
+29 |  			modalId: 'add-schedule-modal',
+30 |  			centered: true,
+   |     ^
+31 |  			size: '60%',
+32 |  			title: t('scheduler.add.modalTitle'),
+
+  Plugin: vite:esbuild
+  File: /Users/ramonmena/Projects/nai-agent-service-front/src/modules/campaigns/CampaignsForm/ParametersSection/AddScheduler/AddScheduler.tsx
+[2m6:45:40 PM[22m [33m[1m[vite][22m[39m (client) warning: Duplicate key "size" in object literal
+29 |  			modalId: 'add-schedule-modal',
+30 |  			centered: true,
+31 |  			size: '60%',
+   |     ^
+32 |  			title: t('scheduler.add.modalTitle'),
+33 |  			children: (
+
+  Plugin: vite:esbuild
+  File: /Users/ramonmena/Projects/nai-agent-service-front/src/modules/campaigns/CampaignsForm/ParametersSection/AddScheduler/AddScheduler.tsx
+ [32m✓[39m src/modules/campaigns/CampaignsForm/ParametersSection/SchedulerCard/ScheduleHeader/ScheduleHoverItem.test.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 39[2mms[22m[39m
+ [32m✓[39m src/modules/campaigns/CampaignsForm/ParametersSection/ParametersSection.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 155[2mms[22m[39m
+ [32m✓[39m src/modules/campaigns/CampaignsForm/ParametersSection/CapacityCall/CapacityCall.test.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 82[2mms[22m[39m
+ [32m✓[39m src/modules/campaigns/CampaignsForm/ParametersSection/SchedulerCard/ScheduleHeader/ScheduleHeader.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 356[2mms[22m[39m
+     [33m[2m✓[22m[39m renders title, status, metrics and calls handlers [33m 354[2mms[22m[39m
+ [32m✓[39m src/modules/campaigns/CampaignsForm/ParametersSection/DayScheduleCard/DayScheduleCard.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 459[2mms[22m[39m
+ [32m✓[39m src/modules/campaigns/CampaignsForm/ParametersSection/AddScheduler/AddScheduler.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[32m 256[2mms[22m[39m
+ [32m✓[39m src/modules/campaigns/CampaignsForm/ParametersSection/SchedulerCard/SchedulerCard.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 410[2mms[22m[39m
+     [33m[2m✓[22m[39m blocks update and shows a notification when active days have invalid time ranges [33m 409[2mms[22m[39m
+ [32m✓[39m src/modules/campaigns/CampaignsForm/ParametersSection/AddScheduler/AddShedulerForm/AddShedulerForm.test.tsx [2m([22m[2m16 tests[22m[2m)[22m[33m 3311[2mms[22m[39m
+     [33m[2m✓[22m[39m prevents submission when campaignId is not provided [33m 304[2mms[22m[39m
+     [33m[2m✓[22m[39m submits the form and calls the API and onSuccess on success [33m 404[2mms[22m[39m
+     [33m[2m✓[22m[39m shows API error message from server when mutation fails [33m 418[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Suites 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/modules/campaigns/CampaignsForm/ParametersSection/SchedulerCalculator/SchedulerForm/SchedulerForm.test.tsx[2m [ src/modules/campaigns/CampaignsForm/ParametersSection/SchedulerCalculator/SchedulerForm/SchedulerForm.test.tsx ][22m
+[31m[1mError[22m: Transform failed with 1 error:
+/Users/ramonmena/Projects/nai-agent-service-front/src/modules/campaigns/CampaignsForm/ParametersSection/SchedulerCalculator/SchedulerForm/SchedulerForm.tsx:102:7: ERROR: Expected ":" but found "mainFields"[39m
+  Plugin: [35mvite:esbuild[39m
+  File: [36m/Users/ramonmena/Projects/nai-agent-service-front/src/modules/campaigns/CampaignsForm/ParametersSection/SchedulerCalculator/SchedulerForm/SchedulerForm.tsx[39m:102:7
+[33m  
+  Expected ":" but found "mainFields"
+  100 |  		{
+  101 |  			name: 'totalRecords',
+  102 |  	const mainFields: FieldConfig[] = [
+      |         ^
+  103 |  		{
+  104 |  			name: 'totalRecords',
+  [39m
+[90m [2m❯[22m failureErrorWithLog node_modules/esbuild/lib/main.js:[2m1467:15[22m[39m
+[90m [2m❯[22m node_modules/esbuild/lib/main.js:[2m736:50[22m[39m
+[90m [2m❯[22m responseCallbacks.<computed> node_modules/esbuild/lib/main.js:[2m603:9[22m[39m
+[90m [2m❯[22m handleIncomingPacket node_modules/esbuild/lib/main.js:[2m658:12[22m[39m
+[90m [2m❯[22m Socket.readFromStdout node_modules/esbuild/lib/main.js:[2m581:7[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m8 passed[39m[22m[90m (9)[39m
+[2m      Tests [22m [1m[32m33 passed[39m[22m[90m (33)[39m
+[2m   Start at [22m 18:45:38
+[2m   Duration [22m 5.17s[2m (transform 1.26s, setup 1.92s, import 7.20s, tests 5.07s, environment 5.52s)[22m
+

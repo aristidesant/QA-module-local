@@ -165,6 +165,175 @@
 				"failed": "No se pudo crear el horario",
 				"errorCreating": "Error al crear el horario"
 			}
+		},
+		"card": {
+			"notifications": {
+				"fixTimeRanges": {
+					"title": "Corregir rangos de horario",
+					"message": "Actualice la ventana de tiempo para: {{days}}"
+				}
+			},
+			"delete": {
+				"title": "Eliminar Horario",
+				"message": "¿Está seguro de que desea eliminar este horario?",
+				"confirm": "Eliminar",
+				"cancel": "Cancelar"
+			},
+			"update": "Actualizar Horario",
+			"cancel": "Cancelar"
+		},
+		"header": {
+			"metrics": {
+				"equivalents": "Equivalentes",
+				"weekly": "Semanal",
+				"perAgent": "Por Agente"
+			},
+			"tooltip": {
+				"equivalents": "Equivalentes humanos asignados a este horario",
+				"weekly": "Esfuerzo semanal proyectado para todo el equipo",
+				"perAgent": "Horas por agente activo cada semana"
+			},
+			"status": {
+				"active": "Activo",
+				"paused": "Pausado"
+			},
+			"activeDays": "{{count}} día activo",
+			"activeDays_other": "{{count}} días activos",
+			"noActiveDays": "Sin días activos aún",
+			"actions": {
+				"view": "Ver horario",
+				"edit": "Editar",
+				"close": "Cerrar",
+				"delete": "Eliminar"
+			},
+			"untitled": "Horario sin título"
+		},
+		"add": {
+			"button": "Agregar Horario",
+			"modalTitle": "Agregar Horario Predefinido"
+		},
+		"capacity": {
+			"title": "Capacidad",
+			"infoTooltip": "Traduzca su horario en tiempo de conversación realista basado en una eficiencia de 38.5 min/hora.",
+			"sliderLabel": "Equivalente Humano (Agentes)",
+			"metrics": {
+				"scheduled": {
+					"label": "Programado",
+					"tooltip": "{{count}} día activo programado esta semana",
+					"tooltip_other": "{{count}} días activos programados esta semana"
+				},
+				"perAgent": {
+					"label": "Por Agente",
+					"tooltip": "Tiempo de conversación por persona con eficiencia de 38.5 min/hora"
+				},
+				"teamTotal": {
+					"label": "Total del Equipo",
+					"tooltip": "Tiempo de conversación combinado para {{count}} agente",
+					"tooltip_other": "Tiempo de conversación combinado para {{count}} agentes"
+				}
+			},
+			"schedule": {
+				"title": "Horario",
+				"activeBadge": "{{count}} activos"
+			}
+		},
+		"calculator": {
+			"title": "Calculadora de Programador",
+			"description": "Defina los parámetros de la campaña y proyecte el personal o el tiempo de entrega con confianza.",
+			"mode": {
+				"resources": "Recursos",
+				"time": "Tiempo"
+			},
+			"contactRates": "Tasas de contacto",
+			"aht": "Tiempo promedio de manejo (minutos)",
+			"calculate": "Calcular proyección",
+			"fields": {
+				"totalRecords": "Registros totales",
+				"daysPlanned": "Días planeados",
+				"agentsAllocated": "Agentes asignados",
+				"contactability": "Contactabilidad",
+				"effectiveness": "Efectividad",
+				"ahtEffective": "AHT contacto efectivo",
+				"ahtNoEffective": "AHT no efectivo",
+				"ahtNoContact": "AHT no contacto"
+			},
+			"results": {
+				"title": "Resumen de proyección",
+				"hint": "Compare volumen de campaña, esfuerzo y capacidad diaria de un vistazo.",
+				"badge": {
+					"resource": "Proyección de recursos",
+					"timeline": "Proyección de tiempo"
+				},
+				"waveBreakdown": "DESGLOSE POR OLEADA",
+				"assumptions": {
+					"title": "Suposiciones del modelo",
+					"text": "{{phones}} teléfonos por registro · {{hours}} horas por día de agente · {{minutesMan}} minutos por intento de contacto."
+				},
+				"placeholder": {
+					"title": "Listo para ejecutar una proyección",
+					"text": "Ingrese los datos de la campaña arriba y seleccione \"Calcular proyección\" para revisar estimaciones."
+				},
+				"metrics": {
+					"volume": "Volumen de campaña",
+					"agentsRequired": "Agentes requeridos",
+					"agentsAllocated": "Agentes asignados",
+					"daysToComplete": "Días para completar",
+					"daysPlanned": "Días planeados",
+					"totalTries": "Intentos totales",
+					"operationalHours": "Horas operativas",
+					"teamHoursPerDay": "Horas de equipo por día"
+				},
+				"waves": {
+					"wave1": "Oleada 1",
+					"wave2": "Oleada 2",
+					"wave3": "Oleada 3"
+				}
+			}
+		},
+		"overview": {
+			"callsPerHour": {
+				"title": "Llamadas por hora",
+				"subtitle": "Distribución horaria de capacidad",
+				"label": "Llamadas por hora"
+			},
+			"completion": {
+				"title": "Tiempo estimado de finalización",
+				"subtitle": "Línea de tiempo proyectada basada en capacidad actual",
+				"unit": "días"
+			}
+		},
+		"daySchedule": {
+			"headers": {
+				"day": "Día",
+				"status": "Estado",
+				"hours": "Horas",
+				"agent": "Agente",
+				"team": "Equipo"
+			},
+			"status": {
+				"open": "Ventana abierta",
+				"paused": "Pausado",
+				"closed": "Cerrado"
+			},
+			"noHours": "Sin horas configuradas",
+			"metrics": {
+				"perAgent": "Por agente",
+				"teamTotal": "Total equipo"
+			},
+			"errors": {
+				"endTime": "La hora de fin debe ser posterior a la de inicio."
+			}
+		},
+		"workingHours": {
+			"title": "Horario de Trabajo",
+			"description": "Defina los días y rangos horarios en los que sus agentes pueden realizar llamadas.",
+			"summary": {
+				"noActiveDays": "Sin días activos",
+				"noTimeRange": "Sin rango horario",
+				"everyDay": "Todos los días",
+				"weekdays": "Días laborables",
+				"weekends": "Fines de semana"
+			}
 		}
 	},
 	"addNewCampaign": {

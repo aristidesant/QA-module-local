@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Group, Stack, Button, LoadingOverlay, Box } from '@mantine/core';
 import { IconEdit, IconDeviceFloppy } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
@@ -32,6 +33,7 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 	campaignId,
 	handleReload,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const { setRightComponent } = useCampaignsStore((state) => state);
 	const [opened, { open, close }] = useDisclosure(false);
 
@@ -101,8 +103,10 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 
 			if (invalidDays.length > 0) {
 				notifications.show({
-					title: 'Fix schedule time ranges',
-					message: `Update the time window for: ${invalidDays.join(', ')}`,
+					title: t('scheduler.card.notifications.fixTimeRanges.title'),
+					message: t('scheduler.card.notifications.fixTimeRanges.message', {
+						days: invalidDays.join(', '),
+					}),
 					color: 'red',
 					withBorder: true,
 				});
@@ -144,9 +148,12 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 
 	const handleDelete = () => {
 		modals.openConfirmModal({
-			title: 'Delete Schedule',
-			children: 'Are you sure you want to delete this schedule?',
-			labels: { confirm: 'Delete', cancel: 'Cancel' },
+			title: t('scheduler.card.delete.title'),
+			children: t('scheduler.card.delete.message'),
+			labels: {
+				confirm: t('scheduler.card.delete.confirm'),
+				cancel: t('scheduler.card.delete.cancel'),
+			},
 			onConfirm: async () => {
 				try {
 					await deleteScheduleMutation.mutateAsync({
@@ -217,7 +224,7 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 											setRightComponent?.(null);
 										}}
 									>
-										Cancel
+										{t('scheduler.card.cancel')}
 									</Button>
 									<Button
 										type='submit'
@@ -225,7 +232,7 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 										loading={updateScheduleMutation.isPending}
 										className={styles.updateButton}
 									>
-										Update Schedule
+										{t('scheduler.card.update')}
 									</Button>
 								</Group>
 							</Stack>
