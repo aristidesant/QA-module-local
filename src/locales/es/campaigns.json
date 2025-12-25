@@ -78,7 +78,13 @@
 		"PAUSED": "Pausada",
 		"COMPLETED": "Completada",
 		"FAILED": "Fallida",
-		"UNKNOWN": "Desconocido"
+		"UNKNOWN": "Desconocido",
+		"pending": "Pendiente",
+		"running": "En curso",
+		"paused": "Pausada",
+		"complete": "Completada",
+		"failed": "Fallida",
+		"executed": "Ejecutada"
 	},
 	"cloneCampaignForm": {
 		"title": "Clonar campaña",
@@ -244,6 +250,34 @@
 		}
 	},
 	"form": {
+		"title": {
+			"edit": "Editar {{name}}"
+		},
+		"description": "Configura y gestiona los ajustes de tu campaña.",
+		"validation": {
+			"nameRequired": "El nombre de la campaña es obligatorio",
+			"typeRequired": "El tipo de campaña es obligatorio",
+			"statusRequired": "El estado de la campaña es obligatorio",
+			"budgetMin": "El presupuesto debe ser al menos 0",
+			"spentMin": "El monto gastado debe ser al menos 0",
+			"userIdMin": "El ID de usuario debe ser al menos 0",
+			"clientIdMin": "El ID de cliente debe ser al menos 0",
+			"defaultWavesMin": "Las oleadas predeterminadas deben ser al menos 1",
+			"objectiveRequired": "El objetivo de la campaña es obligatorio"
+		},
+		"notifications": {
+			"warningTitle": "Advertencia",
+			"objectiveAssignmentFailed": "No se pudo asignar el objetivo a la campaña",
+			"successUpdated": "Campaña Actualizada",
+			"successCreated": "Campaña Creada",
+			"successUpdatedMessage": "La campaña se ha actualizado correctamente.",
+			"successCreatedMessage": "La campaña se ha creado correctamente.",
+			"errorUpdate": "No se pudo actualizar la campaña",
+			"errorCreate": "No se pudo crear la campaña"
+		},
+		"schedulerCalculator": {
+			"title": "Calculadora de Programador"
+		},
 		"contacts": {
 			"addNew": {
 				"description": "Sube un archivo CSV para crear una lista de contactos.",
@@ -786,6 +820,15 @@
 			}
 		}
 	},
+	"disposition": {
+		"title": "Configuración de Resultados",
+		"description": "Configura los resultados de llamadas para esta campaña. Arrastra elementos del catálogo para construir tu estructura de resultados.",
+		"editOutcome": "Editar resultado",
+		"addOutcome": "Agregar resultado",
+		"noFlowConfigured": "No hay flujo de resultados configurado",
+		"noFlowDescription": "Comienza agregando un nuevo flujo de resultados para rastrear y gestionar los resultados de llamadas de manera efectiva.",
+		"saveSuccess": "Flujo de resultados guardado exitosamente."
+	},
 	"wizard": {
 		"knowledgeBase": {
 			"form": {
@@ -829,5 +872,27 @@
 				"errorMessage": "No se pudo crear la base de conocimiento"
 			}
 		}
+	},
+	"workingHours": {
+		"title": "Horario de Trabajo",
+		"description": "Configura el horario de trabajo para esta campaña."
+	},
+	"general": {
+		"title": "Información General",
+		"description": "Configuración básica de la campaña.",
+		"campaignName": "Nombre de la Campaña",
+		"enterCampaignName": "Ingresa el nombre de la campaña",
+		"descriptionLabel": "Descripción",
+		"describeYourCampaign": "Describe tu campaña",
+		"campaignObjective": "Objetivo de la Campaña",
+		"campaignObjectiveDesc": "Selecciona el objetivo para esta campaña",
+		"failedToLoadObjectives": "Error al cargar los objetivos",
+		"loadingObjectives": "Cargando objetivos...",
+		"selectObjective": "Selecciona un objetivo",
+		"createNewObjective": "Crear nuevo objetivo",
+		"defaultWaves": "Oleadas Predeterminadas",
+		"defaultWavesDesc": "Número de oleadas a ejecutar para cada lista de contactos",
+		"enterNumberOfWaves": "Ingresa el número de oleadas",
+		"createObjectiveTitle": "Crear Nuevo Objetivo"
 	}
 }

@@ -185,7 +185,8 @@
 			"lastUpdated": "Last updated",
 			"email": "Email",
 			"contact": "Contact",
-			"phone": "Phone"
+			"phone": "Phone",
+			"actions": "Actions"
 		},
 		"filters": {
 			"searchByName": "Search by name...",
@@ -194,7 +195,18 @@
 		},
 		"tooltips": {
 			"append": "Append contacts",
-			"export": "Export contacts"
+			"export": "Export contacts",
+			"faultyPhones": "{{count}} faulty phone number{{plural}}"
+		},
+		"status": {
+			"ACTIVE": "Active",
+			"INACTIVE": "Inactive",
+			"CONTACTED": "Contacted",
+			"DO_NOT_RESPOND": "Do not respond",
+			"VOICE_MAIL": "Voice mail",
+			"ON_CALL": "On call",
+			"INICATIVE": "Inactive",
+			"DECEASED": "Deceased"
 		},
 		"unnamedContact": "Unnamed contact",
 		"itemLabel": "contacts",

@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 
 const AgentSection: React.FC = () => {
 	const { setRightComponent } = useCampaignsStore((state) => state);
-	const { t } = useTranslation('common');
+	const { t } = useTranslation(['campaigns', 'campaign.detail', 'common']);
 
 	useEffect(() => {
 		setRightComponent?.(<AgentCampaignList />);

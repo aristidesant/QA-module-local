@@ -22,7 +22,7 @@ import styles from './CampaignConfigurationPrompt.module.css';
 import CampaignConfigurationPromptEditModal from './CampaignConfigurationPromptEditModal';
 
 const CampaignConfigurationPrompt: React.FC = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaigns', 'campaign.detail', 'common']);
 	const form = useCampaignFormContext();
 	const [editModalOpen, setEditModalOpen] = useState(false);
 	const [expanded, setExpanded] = useState(false);

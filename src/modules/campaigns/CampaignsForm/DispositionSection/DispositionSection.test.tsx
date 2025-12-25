@@ -56,11 +56,6 @@ vi.mock('@mantine/notifications', () => ({
 	notifications: { show: mockNotificationsShow },
 }));
 
-vi.mock('~/hooks/useDispositionLabel', () => ({
-	__esModule: true,
-	default: () => (label: string) => `lbl: ${label}`,
-}));
-
 vi.mock('./DispositionViewer', () => ({
 	__esModule: true,
 	default: () => <div>Disposition Viewer</div>,
@@ -142,7 +137,7 @@ describe('DispositionSection', () => {
 		// Hover to show tooltip
 		const user = userEvent.setup();
 		await user.hover(addButton);
-		await screen.findByText('lbl: Add outcome');
+		await screen.findByText('Add outcome');
 		// Click add should open modal and reset builder store
 		fireEvent.click(addButton);
 		expect(mockSetDispositionFlow).toHaveBeenCalledWith({});
@@ -165,7 +160,7 @@ describe('DispositionSection', () => {
 		expect(editButton).toHaveAttribute('data-loading', 'true');
 		const user = userEvent.setup();
 		await user.hover(editButton);
-		await screen.findByText('lbl: Edit outcome');
+		await screen.findByText('Edit outcome');
 	});
 
 	it('populates builder store when editing an existing flow', () => {
@@ -231,7 +226,7 @@ describe('DispositionSection', () => {
 		expect(mockNotificationsShow).toHaveBeenCalledWith(
 			expect.objectContaining({
 				title: 'Success',
-				message: 'lbl: Outcome flow saved successfully.',
+				message: 'Outcome flow saved successfully.',
 				color: 'green',
 			})
 		);
@@ -292,8 +287,7 @@ describe('DispositionSection', () => {
 				/Set up call outcomes for this campaign. Drag items from the catalog to build your outcome structure./i
 			)
 		).toBeInTheDocument();
-		// Because we prefixed labels with 'lbl: ', the description title should include it
-		expect(screen.getByText('lbl: Outcome Configuration')).toBeInTheDocument();
+		expect(screen.getByText('Outcome Configuration')).toBeInTheDocument();
 	});
 });
 

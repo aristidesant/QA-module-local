@@ -78,7 +78,13 @@
 		"PAUSED": "Paused",
 		"COMPLETED": "Completed",
 		"FAILED": "Failed",
-		"UNKNOWN": "Unknown"
+		"UNKNOWN": "Unknown",
+		"pending": "Pending",
+		"running": "Running",
+		"paused": "Paused",
+		"complete": "Complete",
+		"failed": "Failed",
+		"executed": "Executed"
 	},
 	"cloneCampaignForm": {
 		"title": "Clone campaign",
@@ -244,6 +250,34 @@
 		}
 	},
 	"form": {
+		"title": {
+			"edit": "Edit {{name}}"
+		},
+		"description": "Configure and manage your campaign settings.",
+		"validation": {
+			"nameRequired": "Campaign name is required",
+			"typeRequired": "Campaign type is required",
+			"statusRequired": "Campaign status is required",
+			"budgetMin": "Budget must be at least 0",
+			"spentMin": "Spent amount must be at least 0",
+			"userIdMin": "User ID must be at least 0",
+			"clientIdMin": "Client ID must be at least 0",
+			"defaultWavesMin": "Default waves must be at least 1",
+			"objectiveRequired": "Campaign objective is required"
+		},
+		"notifications": {
+			"warningTitle": "Warning",
+			"objectiveAssignmentFailed": "Failed to assign objective to campaign",
+			"successUpdated": "Campaign Updated",
+			"successCreated": "Campaign Created",
+			"successUpdatedMessage": "Campaign has been updated successfully.",
+			"successCreatedMessage": "Campaign has been created successfully.",
+			"errorUpdate": "Failed to update campaign",
+			"errorCreate": "Failed to create campaign"
+		},
+		"schedulerCalculator": {
+			"title": "Scheduler Calculator"
+		},
 		"contacts": {
 			"addNew": {
 				"description": "Upload a CSV file to create a contact list.",
@@ -829,5 +863,36 @@
 				"errorMessage": "Failed to create knowledge base"
 			}
 		}
+	},
+	"workingHours": {
+		"title": "Working Hours",
+		"description": "Configure the working hours for this campaign."
+	},
+	"general": {
+		"title": "General Information",
+		"description": "Basic campaign settings and configuration.",
+		"campaignName": "Campaign Name",
+		"enterCampaignName": "Enter campaign name",
+		"descriptionLabel": "Description",
+		"describeYourCampaign": "Describe your campaign",
+		"campaignObjective": "Campaign Objective",
+		"campaignObjectiveDesc": "Select the objective for this campaign",
+		"failedToLoadObjectives": "Failed to load objectives",
+		"loadingObjectives": "Loading objectives...",
+		"selectObjective": "Select an objective",
+		"createNewObjective": "Create new objective",
+		"defaultWaves": "Default Waves",
+		"defaultWavesDesc": "Number of waves to run for each contact list",
+		"enterNumberOfWaves": "Enter number of waves",
+		"createObjectiveTitle": "Create New Objective"
+	},
+	"disposition": {
+		"title": "Outcome Configuration",
+		"description": "Set up call outcomes for this campaign. Drag items from the catalog to build your outcome structure.",
+		"editOutcome": "Edit outcome",
+		"addOutcome": "Add outcome",
+		"noFlowConfigured": "No outcome flow configured",
+		"noFlowDescription": "Get started by adding a new outcome flow to track and manage call results effectively.",
+		"saveSuccess": "Outcome flow saved successfully."
 	}
 }

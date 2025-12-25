@@ -185,7 +185,8 @@
 			"lastUpdated": "Última actualización",
 			"email": "Correo electrónico",
 			"contact": "Contacto",
-			"phone": "Teléfono"
+			"phone": "Teléfono",
+			"actions": "Acciones"
 		},
 		"filters": {
 			"searchByName": "Buscar por nombre...",
@@ -195,6 +196,16 @@
 		"tooltips": {
 			"append": "Añadir contactos",
 			"export": "Exportar contactos"
+		},
+		"status": {
+			"ACTIVE": "Activo",
+			"INACTIVE": "Inactivo",
+			"CONTACTED": "Contactado",
+			"DO_NOT_RESPOND": "No responder",
+			"VOICE_MAIL": "Buzón de voz",
+			"ON_CALL": "En llamada",
+			"INICATIVE": "Inactivo",
+			"DECEASED": "Fallecido"
 		},
 		"unnamedContact": "Contacto sin nombre",
 		"itemLabel": "contactos",

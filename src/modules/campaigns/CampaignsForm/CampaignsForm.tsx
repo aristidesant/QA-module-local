@@ -64,7 +64,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		sunday: { enabled: false, from: '09:00', to: '17:30' },
 	};
 
-	const { t } = useTranslation();
+	const { t } = useTranslation(['campaigns', 'campaign.detail', 'common']);
 
 	const form = useCampaignForm({
 		initialValues: {
@@ -87,26 +87,18 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			defaultMaxWaves: campaign?.defaultMaxWaves ?? 3,
 		},
 		validate: {
-			name: (value) =>
-				value ? null : t('campaigns.form.validation.nameRequired'),
-			type: (value) =>
-				value ? null : t('campaigns.form.validation.typeRequired'),
-			status: (value) =>
-				value ? null : t('campaigns.form.validation.statusRequired'),
-			budget: (value) =>
-				value >= 0 ? null : t('campaigns.form.validation.budgetMin'),
-			spent: (value) =>
-				value >= 0 ? null : t('campaigns.form.validation.spentMin'),
-			userId: (value) =>
-				value >= 0 ? null : t('campaigns.form.validation.userIdMin'),
+			name: (value) => (value ? null : t('form.validation.nameRequired')),
+			type: (value) => (value ? null : t('form.validation.typeRequired')),
+			status: (value) => (value ? null : t('form.validation.statusRequired')),
+			budget: (value) => (value >= 0 ? null : t('form.validation.budgetMin')),
+			spent: (value) => (value >= 0 ? null : t('form.validation.spentMin')),
+			userId: (value) => (value >= 0 ? null : t('form.validation.userIdMin')),
 			clientId: (value) =>
-				value >= 0 ? null : t('campaigns.form.validation.clientIdMin'),
+				value >= 0 ? null : t('form.validation.clientIdMin'),
 			defaultMaxWaves: (value) =>
-				value && value >= 1
-					? null
-					: t('campaigns.form.validation.defaultWavesMin'),
+				value && value >= 1 ? null : t('form.validation.defaultWavesMin'),
 			objectiveId: (value) =>
-				value ? null : t('campaigns.form.validation.objectiveRequired'),
+				value ? null : t('form.validation.objectiveRequired'),
 		},
 	});
 
@@ -207,10 +199,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 				} catch (objectiveError) {
 					// Don't fail the whole operation if objective assignment fails
 					notifications.show({
-						title: t('campaigns.form.notifications.warningTitle'),
-						message: t(
-							'campaigns.form.notifications.objectiveAssignmentFailed'
-						),
+						title: t('form.notifications.warningTitle'),
+						message: t('form.notifications.objectiveAssignmentFailed'),
 						color: 'yellow',
 					});
 				}
@@ -218,19 +208,19 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 
 			notifications.show({
 				title: campaign?.id
-					? t('campaigns.form.notifications.successUpdated')
-					: t('campaigns.form.notifications.successCreated'),
+					? t('form.notifications.successUpdated')
+					: t('form.notifications.successCreated'),
 				message: campaign?.id
-					? t('campaigns.form.notifications.successUpdatedMessage')
-					: t('campaigns.form.notifications.successCreatedMessage'),
+					? t('form.notifications.successUpdatedMessage')
+					: t('form.notifications.successCreatedMessage'),
 				color: 'green',
 			});
 		} catch (error) {
 			notifications.show({
 				title: t('common.error'),
 				message: campaign?.id
-					? t('campaigns.form.notifications.errorUpdate')
-					: t('campaigns.form.notifications.errorCreate'),
+					? t('form.notifications.errorUpdate')
+					: t('form.notifications.errorCreate'),
 				color: 'red',
 			});
 		}
@@ -245,12 +235,12 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			}}
 			title={
 				campaign?.id
-					? t('campaigns.form.title.edit', { name: campaign.name })
-					: t('campaigns.list.createCampaign')
+					? t('form.title.edit', { name: campaign.name })
+					: t('list.createCampaign')
 			}
 			titleRight={
 				campaign?.id && (
-					<Tooltip label={t('campaigns.columns.viewCampaign')} withArrow>
+					<Tooltip label={t('columns.viewCampaign')} withArrow>
 						<ActionIcon
 							variant='light'
 							size='lg'
@@ -261,7 +251,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 					</Tooltip>
 				)
 			}
-			description={t('campaigns.form.description')}
+			description={t('form.description')}
 			showBackButton
 		>
 			<CampaignFormProvider form={form}>
@@ -289,15 +279,15 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 					)}
 					{selectedTab === 'params' && (
 						<SectionCard
-							title={t('campaigns.workingHours.title')}
-							description={t('campaigns.workingHours.description')}
+							title={t('workingHours.title')}
+							description={t('workingHours.description')}
 							headerActions={
 								<ActionIcon
 									size='md'
 									variant='subtle'
 									onClick={() =>
 										modals.open({
-											title: t('campaigns.form.schedulerCalculator.title'),
+											title: t('form.schedulerCalculator.title'),
 											fullScreen: true,
 											children: <SchedulerCalculator />,
 										})

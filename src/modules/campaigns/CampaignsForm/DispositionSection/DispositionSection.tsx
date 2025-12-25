@@ -10,6 +10,7 @@ import {
 } from '@mantine/core';
 import { IconEdit, IconPlus, IconSitemap } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
+import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
 import DispositionForm from './DispositionForm';
 import { useCampaignsStore } from '~/stores/campaignsStore';
@@ -17,11 +18,10 @@ import { useDispositionBuilderStore } from './dispositionStore';
 import { useDispositionFlowsByCampaignPath } from '~/queries/dispositionFlowQueries';
 import { notifications } from '@mantine/notifications';
 import DispositionViewer from './DispositionViewer';
-import useDispositionLabel from '~/hooks/useDispositionLabel';
 
 const DispositionSection: React.FC = () => {
+	const { t } = useTranslation(['campaigns', 'campaign.detail', 'common']);
 	const { selectedCampaign, setRightComponent } = useCampaignsStore();
-	const dispositionLabel = useDispositionLabel();
 
 	const {
 		data: currentDispositionFlow,
@@ -67,7 +67,7 @@ const DispositionSection: React.FC = () => {
 						modals.close('disposition-form');
 						notifications.show({
 							title: 'Success',
-							message: dispositionLabel('Outcome flow saved successfully.'),
+							message: t('disposition.saveSuccess'),
 							color: 'green',
 						});
 					}}
@@ -82,11 +82,11 @@ const DispositionSection: React.FC = () => {
 
 	return (
 		<SectionCard
-			title={dispositionLabel('Outcome Configuration')}
+			title={t('disposition.title')}
 			headerActions={
 				<Flex>
 					{hasFlow ? (
-						<Tooltip label={dispositionLabel('Edit outcome')}>
+						<Tooltip label={t('disposition.editOutcome')}>
 							<ActionIcon
 								onClick={() => handleOpenModal(true)}
 								loading={isLoadingCurrentFlow}
@@ -97,7 +97,7 @@ const DispositionSection: React.FC = () => {
 							</ActionIcon>
 						</Tooltip>
 					) : (
-						<Tooltip label={dispositionLabel('Add outcome')}>
+						<Tooltip label={t('disposition.addOutcome')}>
 							<ActionIcon
 								onClick={() => handleOpenModal(false)}
 								variant='light'
@@ -109,9 +109,7 @@ const DispositionSection: React.FC = () => {
 					)}
 				</Flex>
 			}
-			description={dispositionLabel(
-				'Set up call outcomes for this campaign. Drag items from the catalog to build your outcome structure.'
-			)}
+			description={t('disposition.description')}
 		>
 			{currentDispositionFlow ? (
 				<DispositionViewer flow={currentDispositionFlow} />
@@ -128,12 +126,10 @@ const DispositionSection: React.FC = () => {
 							<IconSitemap size={24} />
 						</ThemeIcon>
 						<Text size='sm' fw={500} c='dimmed'>
-							{dispositionLabel('No outcome flow configured')}
+							{t('disposition.noFlowConfigured')}
 						</Text>
 						<Text size='xs' c='dimmed' ta='center' maw={400}>
-							{dispositionLabel(
-								'Get started by adding a new outcome flow to track and manage call results effectively.'
-							)}
+							{t('disposition.noFlowDescription')}
 						</Text>
 					</Stack>
 				</Paper>

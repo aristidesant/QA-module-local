@@ -8,7 +8,7 @@ import SectionCard from '~/components/SectionCard';
 import { useTranslation } from 'react-i18next';
 
 const CampaignConfigurationBasic: React.FC = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaigns', 'campaign.detail', 'common']);
 	const form = useCampaignFormContext();
 
 	const currentLanguage =
