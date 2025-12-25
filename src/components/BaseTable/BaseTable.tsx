@@ -264,7 +264,7 @@ function BaseTable<TData>({
 	});
 
 	const hasData = data && data.length > 0;
-	const displayMessage = emptyMessage || t('common.noData');
+	const displayMessage = emptyMessage || t('status.noData');
 	const shouldShowPagination =
 		enablePagination && showPaginationControls && table.getPageCount() > 1;
 
