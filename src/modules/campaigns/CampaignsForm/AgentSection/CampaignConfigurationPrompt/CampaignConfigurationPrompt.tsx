@@ -22,7 +22,7 @@ import styles from './CampaignConfigurationPrompt.module.css';
 import CampaignConfigurationPromptEditModal from './CampaignConfigurationPromptEditModal';
 
 const CampaignConfigurationPrompt: React.FC = () => {
-	const { t } = useTranslation();
+	const { t } = useTranslation('campaigns');
 	const form = useCampaignFormContext();
 	const [editModalOpen, setEditModalOpen] = useState(false);
 	const [expanded, setExpanded] = useState(false);
@@ -56,8 +56,8 @@ const CampaignConfigurationPrompt: React.FC = () => {
 		<>
 			<SectionCard
 				icon={IconBrain}
-				title={t('campaigns.form.agent.prompt.title')}
-				description={t('campaigns.form.agent.prompt.description')}
+				title={t('form.agent.prompt.title')}
+				description={t('form.agent.prompt.description')}
 				className={styles.sectionCard}
 				contentSpacing='sm'
 				padding='md'
@@ -65,7 +65,7 @@ const CampaignConfigurationPrompt: React.FC = () => {
 					<Group gap='xs'>
 						<ActionIcon
 							variant='light'
-							aria-label={t('campaigns.form.agent.prompt.header.editAria')}
+							aria-label={t('form.agent.prompt.header.editAria')}
 							color='blue'
 							onClick={handleEdit}
 							size='sm'
@@ -76,8 +76,8 @@ const CampaignConfigurationPrompt: React.FC = () => {
 							variant='light'
 							aria-label={
 								expanded
-									? t('campaigns.form.agent.prompt.header.collapseAria')
-									: t('campaigns.form.agent.prompt.header.expandAria')
+									? t('form.agent.prompt.header.collapseAria')
+									: t('form.agent.prompt.header.expandAria')
 							}
 							color='blue'
 							onClick={toggleExpanded}
@@ -95,15 +95,15 @@ const CampaignConfigurationPrompt: React.FC = () => {
 				<Stack gap='xs' className={styles.promptStack}>
 					<Group justify='space-between' align='center'>
 						<Text size='sm' fw={600}>
-							{t('campaigns.form.agent.prompt.previewTitle')}
+							{t('form.agent.prompt.previewTitle')}
 						</Text>
 						<Group gap='xs'>
 							<Badge size='sm' variant='light' color='gray'>
 								{hasPrompt
-									? t('campaigns.form.agent.prompt.previewChars', {
+									? t('form.agent.prompt.previewChars', {
 											count: prompt.length,
 										})
-									: t('campaigns.form.agent.prompt.status.empty')}
+									: t('form.agent.prompt.status.empty')}
 							</Badge>
 						</Group>
 					</Group>
@@ -129,15 +129,13 @@ const CampaignConfigurationPrompt: React.FC = () => {
 								}`}
 								aria-label='Agent prompt preview'
 							>
-								{hasPrompt
-									? prompt
-									: t('campaigns.form.agent.prompt.placeholder')}
+								{hasPrompt ? prompt : t('form.agent.prompt.placeholder')}
 							</div>
 						</div>
 					</Paper>
 					<Group justify='space-between' align='center'>
 						<Text size='xs' c='dimmed'>
-							{t('campaigns.form.agent.prompt.keepConcise')}
+							{t('form.agent.prompt.keepConcise')}
 						</Text>
 						{expanded && (
 							<ActionIcon
@@ -145,9 +143,7 @@ const CampaignConfigurationPrompt: React.FC = () => {
 								size='sm'
 								color='blue'
 								onClick={toggleExpanded}
-								aria-label={t(
-									'campaigns.form.agent.prompt.header.collapseAria'
-								)}
+								aria-label={t('form.agent.prompt.header.collapseAria')}
 							>
 								<IconArrowsMinimize size={16} />
 							</ActionIcon>
@@ -158,7 +154,7 @@ const CampaignConfigurationPrompt: React.FC = () => {
 			<Modal
 				opened={editModalOpen}
 				onClose={() => setEditModalOpen(false)}
-				title={t('campaigns.configuration.editPrompt')}
+				title={t('configuration.editPrompt')}
 				styles={{
 					body: {
 						height: '90%',

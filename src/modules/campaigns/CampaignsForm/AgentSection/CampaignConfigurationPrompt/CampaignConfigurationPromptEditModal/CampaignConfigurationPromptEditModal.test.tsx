@@ -622,8 +622,8 @@ describe('CampaignConfigurationPromptEditModal', () => {
 				);
 			});
 
-			// The active prompt has content but not edited, so it should show No changes
-			expect(screen.getByText('No changes')).toBeInTheDocument();
+			// The active prompt has content but not edited, so it should show Saved
+			expect(screen.getAllByText('Saved').length).toBeGreaterThanOrEqual(3);
 		});
 
 		it('shows Empty badge for prompts without content', async () => {

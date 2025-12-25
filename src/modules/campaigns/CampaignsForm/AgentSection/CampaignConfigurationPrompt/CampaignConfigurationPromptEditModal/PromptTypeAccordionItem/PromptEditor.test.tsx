@@ -256,7 +256,7 @@ describe('PromptEditor', () => {
 			renderWithProviders(<PromptEditor {...defaultProps} />);
 
 			expect(
-				screen.getByText(/Keep it under eight lines/i)
+				screen.getByText(/You can use variables like/i)
 			).toBeInTheDocument();
 		});
 
@@ -275,9 +275,7 @@ describe('PromptEditor', () => {
 		it('renders label for reuse select', () => {
 			renderWithProviders(<PromptEditor {...defaultProps} />);
 
-			expect(
-				screen.getByText('Reuse from another campaign')
-			).toBeInTheDocument();
+			expect(screen.getByText('Reuse prompt')).toBeInTheDocument();
 		});
 
 		it('opens history modal and restores selected prompt', async () => {
@@ -286,7 +284,7 @@ describe('PromptEditor', () => {
 			);
 
 			const user = userEvent.setup();
-			await user.click(screen.getByLabelText('Prompt history'));
+			await user.click(screen.getByLabelText('Prompt History'));
 
 			expect(screen.getByTestId('history-modal')).toBeInTheDocument();
 			expect(screen.getByTestId('history-prompt-type-id')).toHaveTextContent(

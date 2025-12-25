@@ -24,18 +24,7 @@ const CampaignContactListPage = React.lazy(
 const ForcePasswordChangePage = React.lazy(
 	() => import('./modules/auth/ForcePasswordChangePage/ForcePasswordChangePage')
 );
-const CampaignCategoriesPage = React.lazy(
-	() =>
-		import('./modules/campaigns/CampaignManagementPage/Categories/CampaignCategoriesPage')
-);
-const CampaignObjectivesPage = React.lazy(
-	() =>
-		import('./modules/campaigns/CampaignManagementPage/Objectives/CampaignObjectivesPage')
-);
-const CampaignSchemasPage = React.lazy(
-	() =>
-		import('./modules/campaigns/CampaignManagementPage/Schemas/CampaignSchemasPage')
-);
+
 const ClientConfigsPage = React.lazy(
 	() => import('./modules/configurations/client-configs/ClientConfigsPage')
 );
@@ -57,8 +46,7 @@ const PrompterPage = React.lazy(() =>
 	}))
 );
 const DispositionPage = React.lazy(
-	() =>
-		import('./modules/campaigns/CampaignManagementPage/Outcomes/DispositionPage')
+	() => import('./modules/outcomes/DispositionPage')
 );
 const ConversationPage = React.lazy(
 	() => import('./modules/conversations/ConversationsPage/ConversationPage')
@@ -92,7 +80,7 @@ const ConfigurationsPage = React.lazy(
 	() => import('./modules/configurations/ConfigurationsPage')
 );
 const CampaignManagementPage = React.lazy(
-	() => import('./modules/campaigns/CampaignManagementPage')
+	() => import('./modules/campaign-management/CampaignManagementPage')
 );
 const CampaignPage = React.lazy(
 	() => import('./modules/campaigns/CampaignPage/CampaignPage')
@@ -136,6 +124,7 @@ const router = createBrowserRouter([
 		children: [
 			{
 				path: 'force-password-change',
+				id: 'auth.force-password-change',
 				element: (
 					<Suspense
 						fallback={<SuspenseFallback message='Preparing security flow...' />}
@@ -166,6 +155,7 @@ const router = createBrowserRouter([
 					},
 					{
 						path: 'campaign-management',
+						id: 'campaign-management',
 						element: (
 							<ModuleGuard module={ModuleEnum.SETTINGS}>
 								<Suspense fallback={<div>Loading campaign management...</div>}>
@@ -213,6 +203,7 @@ const router = createBrowserRouter([
 					},
 					{
 						path: 'campaign/view/:campaignId',
+						id: 'campaign.view',
 						element: (
 							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
 								<Suspense
@@ -227,6 +218,7 @@ const router = createBrowserRouter([
 					},
 					{
 						path: 'campaign/:campaignId/contact-list/:contactGroupId',
+						id: 'campaign.contact-list',
 						element: (
 							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
 								<Suspense
@@ -241,6 +233,7 @@ const router = createBrowserRouter([
 					},
 					{
 						path: 'users',
+						id: 'users',
 						element: (
 							<ModuleGuard
 								module={ModuleEnum.USERS}
@@ -257,6 +250,7 @@ const router = createBrowserRouter([
 					},
 					{
 						path: 'roles',
+						id: 'roles',
 						element: (
 							<ModuleGuard module={ModuleEnum.ROLES} masterOnly>
 								<Suspense
@@ -269,6 +263,7 @@ const router = createBrowserRouter([
 					},
 					{
 						path: 'clients',
+						id: 'clients',
 						element: (
 							<ModuleGuard
 								module={ModuleEnum.SETTINGS}
@@ -285,6 +280,7 @@ const router = createBrowserRouter([
 					},
 					{
 						path: 'conversations',
+						id: 'conversations',
 						element: (
 							<ModuleGuard module={ModuleEnum.CONVERSATIONS}>
 								<Suspense
@@ -299,6 +295,7 @@ const router = createBrowserRouter([
 					},
 					{
 						path: 'outcomes',
+						id: 'outcomes',
 						element: (
 							<ModuleGuard
 								module={ModuleEnum.CAMPAIGNS}
@@ -312,59 +309,10 @@ const router = createBrowserRouter([
 							</ModuleGuard>
 						),
 					},
-					{
-						path: 'campaign-categories',
-						element: (
-							<ModuleGuard
-								module={ModuleEnum.CAMPAIGNS}
-								permission={PermissionEnum.MANAGE}
-							>
-								<Suspense
-									fallback={
-										<SuspenseFallback message='Loading campaign categories...' />
-									}
-								>
-									<CampaignCategoriesPage />
-								</Suspense>
-							</ModuleGuard>
-						),
-					},
-					{
-						path: 'campaign-objectives',
-						element: (
-							<ModuleGuard
-								module={ModuleEnum.CAMPAIGNS}
-								permission={PermissionEnum.MANAGE}
-							>
-								<Suspense
-									fallback={
-										<SuspenseFallback message='Loading campaign objectives...' />
-									}
-								>
-									<CampaignObjectivesPage />
-								</Suspense>
-							</ModuleGuard>
-						),
-					},
-					{
-						path: 'campaign-schemas',
-						element: (
-							<ModuleGuard
-								module={ModuleEnum.CAMPAIGNS}
-								permission={PermissionEnum.MANAGE}
-							>
-								<Suspense
-									fallback={
-										<SuspenseFallback message='Loading campaign schemas...' />
-									}
-								>
-									<CampaignSchemasPage />
-								</Suspense>
-							</ModuleGuard>
-						),
-					},
+
 					{
 						path: 'configurations',
+						id: 'configurations',
 						element: (
 							<ModuleGuard
 								module={ModuleEnum.SETTINGS}
@@ -388,6 +336,7 @@ const router = createBrowserRouter([
 							},
 							{
 								path: 'client-configs',
+								id: 'client-configs',
 								element: (
 									<Suspense
 										fallback={
@@ -400,6 +349,7 @@ const router = createBrowserRouter([
 							},
 							{
 								path: 'campaign-predefined-params',
+								id: 'campaign-predefined-params',
 								element: (
 									<Suspense
 										fallback={
@@ -412,6 +362,7 @@ const router = createBrowserRouter([
 							},
 							{
 								path: 'scheduler-predefined-params',
+								id: 'scheduler-predefined-params',
 								element: (
 									<Suspense
 										fallback={
@@ -424,6 +375,7 @@ const router = createBrowserRouter([
 							},
 							{
 								path: 'regional-settings-params',
+								id: 'regional-settings-params',
 								element: (
 									<Suspense
 										fallback={
@@ -436,6 +388,7 @@ const router = createBrowserRouter([
 							},
 							{
 								path: 'do-not-call',
+								id: 'do-not-call',
 								element: (
 									<Suspense
 										fallback={
@@ -450,6 +403,7 @@ const router = createBrowserRouter([
 					},
 					{
 						path: 'knowledge-bases',
+						id: 'knowledge-bases',
 						element: (
 							<ModuleGuard
 								module={ModuleEnum.KNOWLEDGE_BASES}
@@ -467,6 +421,7 @@ const router = createBrowserRouter([
 					},
 					{
 						path: 'prompter',
+						id: 'prompter',
 						element: (
 							<ModuleGuard
 								module={ModuleEnum.PROMPTS}
@@ -483,6 +438,7 @@ const router = createBrowserRouter([
 					},
 					{
 						path: 'tools',
+						id: 'tools',
 						element: (
 							<ModuleGuard
 								module={ModuleEnum.TOOLS}
@@ -499,6 +455,7 @@ const router = createBrowserRouter([
 					},
 					{
 						path: 'profile',
+						id: 'profile',
 						element: (
 							<Suspense
 								fallback={<SuspenseFallback message='Loading profile...' />}

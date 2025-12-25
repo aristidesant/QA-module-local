@@ -50,7 +50,7 @@ import { getQueueStatusConfig } from '~/modules/campaigns/CampaignsForm/ContactS
 import { timeAgo } from '~/utils/dateUtils';
 
 const CampaignContactListPage = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation('campaign.contact-list');
 	const navigate = useNavigate();
 	const { contactGroupId, campaignId } = useParams<{
 		contactGroupId: string;
@@ -102,42 +102,42 @@ const CampaignContactListPage = () => {
 		}
 	> = {
 		PENDING: {
-			actionLabel: t('contactListPage.actions.start'),
+			actionLabel: t('actions.start'),
 			actionIcon: <IconPlayerPlay size={16} />,
 			actionType: 'start',
 		},
 		RUNNING: {
-			actionLabel: t('contactListPage.actions.pause'),
+			actionLabel: t('actions.pause'),
 			actionIcon: <IconPlayerPause size={16} />,
 			actionType: 'pause',
 		},
 		PAUSED: {
-			actionLabel: t('contactListPage.actions.resume'),
+			actionLabel: t('actions.resume'),
 			actionIcon: <IconPlayerPlay size={16} />,
 			actionType: 'resume',
 		},
 		COMPLETE: {
-			actionLabel: t('contactListPage.actions.noActions'),
+			actionLabel: t('actions.noActions'),
 			actionIcon: null,
 			actionType: null,
 		},
 		COMPLETED: {
-			actionLabel: t('contactListPage.actions.noActions'),
+			actionLabel: t('actions.noActions'),
 			actionIcon: null,
 			actionType: null,
 		},
 		EXECUTED: {
-			actionLabel: t('contactListPage.actions.allWavesExecuted'),
+			actionLabel: t('actions.allWavesExecuted'),
 			actionIcon: null,
 			actionType: null,
 		},
 		FAILED: {
-			actionLabel: t('contactListPage.actions.retryNotAvailable'),
+			actionLabel: t('actions.retryNotAvailable'),
 			actionIcon: null,
 			actionType: null,
 		},
 		UNKNOWN: {
-			actionLabel: t('contactListPage.actions.noActions'),
+			actionLabel: t('actions.noActions'),
 			actionIcon: null,
 			actionType: null,
 		},
@@ -164,20 +164,20 @@ const CampaignContactListPage = () => {
 
 		let confirmMessage = '';
 		if (status.actionType === 'start') {
-			confirmMessage = t('contactListPage.actions.confirmStart');
+			confirmMessage = t('actions.confirmStart');
 		} else if (status.actionType === 'pause') {
-			confirmMessage = t('contactListPage.actions.confirmPause');
+			confirmMessage = t('actions.confirmPause');
 		} else if (status.actionType === 'resume') {
-			confirmMessage = t('contactListPage.actions.confirmResume');
+			confirmMessage = t('actions.confirmResume');
 		}
 
 		const confirmed = await new Promise<boolean>((resolve) => {
 			modals.openConfirmModal({
-				title: t('contactListPage.actions.confirmTitle'),
+				title: t('actions.confirmTitle'),
 				children: confirmMessage,
 				labels: {
-					confirm: t('contactListPage.actions.yes'),
-					cancel: t('contactListPage.actions.no'),
+					confirm: t('actions.yes'),
+					cancel: t('actions.no'),
 				},
 				onConfirm: () => resolve(true),
 				onCancel: () => resolve(false),
@@ -196,8 +196,8 @@ const CampaignContactListPage = () => {
 		const mutationOptions = {
 			onSuccess: () => {
 				notifications.show({
-					title: t('contactListPage.actions.success'),
-					message: t('contactListPage.actions.actionSuccess', {
+					title: t('actions.success'),
+					message: t('actions.actionSuccess', {
 						action: status.actionType,
 					}),
 					color: 'green',
@@ -206,7 +206,7 @@ const CampaignContactListPage = () => {
 			},
 			onError: (error: Error) => {
 				notifications.show({
-					title: t('contactListPage.actions.error'),
+					title: t('actions.error'),
 					message: getErrorMessage(error),
 					color: 'red',
 				});
@@ -237,15 +237,15 @@ const CampaignContactListPage = () => {
 		return (
 			<ContentContainer
 				{...commonContainerProps}
-				title={t('contactListPage.status.invalidId')}
-				description={t('contactListPage.status.invalidIdDesc')}
+				title={t('status.invalidId')}
+				description={t('status.invalidIdDesc')}
 			>
 				<EmptyState
 					icon={<IconAlertCircle size={48} />}
-					message={t('contactListPage.status.invalidId')}
+					message={t('status.invalidId')}
 					description={
 						<Text size='sm' c='dimmed' ta='center'>
-							{t('contactListPage.status.invalidIdDesc')}
+							{t('status.invalidIdDesc')}
 						</Text>
 					}
 					action={
@@ -254,7 +254,7 @@ const CampaignContactListPage = () => {
 							leftSection={<IconArrowLeft size={16} />}
 							onClick={() => navigate(`/campaign/view/${campaignId}`)}
 						>
-							{t('contactListPage.status.returnToCampaign')}
+							{t('status.returnToCampaign')}
 						</Button>
 					}
 				/>
@@ -266,8 +266,8 @@ const CampaignContactListPage = () => {
 		return (
 			<ContentContainer
 				{...commonContainerProps}
-				title={t('contactListPage.status.loading')}
-				description={t('contactListPage.status.loadingDesc')}
+				title={t('status.loading')}
+				description={t('status.loadingDesc')}
 			>
 				<Flex justify='center' align='center' style={{ minHeight: '320px' }}>
 					<Loader size='lg' />
@@ -282,15 +282,15 @@ const CampaignContactListPage = () => {
 		return (
 			<ContentContainer
 				{...commonContainerProps}
-				title={t('contactListPage.status.unavailable')}
-				description={t('contactListPage.status.unavailableDesc')}
+				title={t('status.unavailable')}
+				description={t('status.unavailableDesc')}
 			>
 				<EmptyState
 					icon={<IconAlertCircle size={48} />}
-					message={t('contactListPage.status.unableToLoad')}
+					message={t('status.unableToLoad')}
 					description={
 						<Text size='sm' c='dimmed' ta='center'>
-							{t('contactListPage.status.unableToLoadDesc', {
+							{t('status.unableToLoadDesc', {
 								error: errorMessage,
 							})}
 						</Text>
@@ -303,13 +303,13 @@ const CampaignContactListPage = () => {
 								try {
 									await contactGroupQuery.refetch();
 									notifications.show({
-										title: t('contactListPage.actions.success'),
-										message: t('contactListPage.status.reloadSuccess'),
+										title: t('actions.success'),
+										message: t('status.reloadSuccess'),
 										color: 'green',
 									});
 								} catch (error) {
 									notifications.show({
-										title: t('contactListPage.actions.error'),
+										title: t('actions.error'),
 										message: getErrorMessage(error),
 										color: 'red',
 									});
@@ -317,7 +317,7 @@ const CampaignContactListPage = () => {
 							}}
 							loading={contactGroupQuery.isRefetching}
 						>
-							{t('contactListPage.status.tryAgain')}
+							{t('status.tryAgain')}
 						</Button>
 					}
 				/>
@@ -333,7 +333,7 @@ const CampaignContactListPage = () => {
 				onClick={() => navigate(`/campaign/view/${campaignId}`)}
 				style={{ cursor: 'pointer' }}
 			>
-				{campaign ? campaign.name : t('contactListPage.status.unknownCampaign')}
+				{campaign ? campaign.name : t('status.unknownCampaign')}
 			</Anchor>
 			<Text size='sm' fw={500}>
 				{contactGroupQuery.data.name}
@@ -345,13 +345,13 @@ const CampaignContactListPage = () => {
 		<ContentContainer
 			{...commonContainerProps}
 			title={breadcrumbTitle}
-			description={t('contactListPage.status.created', {
+			description={t('status.created', {
 				time: timeAgo(contactGroupQuery.data.createdAt),
 			})}
 			titleRight={
 				queueStatusConfig ? (
 					<Badge color={queueStatusConfig.color} variant='light' size='sm'>
-						{queueStatusConfig.label}
+						{t(queueStatusConfig.label)}
 					</Badge>
 				) : null
 			}
@@ -360,19 +360,19 @@ const CampaignContactListPage = () => {
 			<Tabs variant='outline' defaultValue='overview' keepMounted={false}>
 				<Tabs.List>
 					<Tabs.Tab value='overview' leftSection={<IconInfoCircle size={16} />}>
-						{t('contactListPage.tabs.overview')}
+						{t('tabs.overview')}
 					</Tabs.Tab>
 					{canViewConversations && (
 						<Tabs.Tab
 							value='conversations'
 							leftSection={<IconMessage size={16} />}
 						>
-							{t('contactListPage.tabs.conversations')}
+							{t('tabs.conversations')}
 						</Tabs.Tab>
 					)}
 					{canViewContacts && (
 						<Tabs.Tab value='contacts' leftSection={<IconUsers size={16} />}>
-							{t('contactListPage.tabs.contacts')}
+							{t('tabs.contacts')}
 						</Tabs.Tab>
 					)}
 				</Tabs.List>
@@ -380,8 +380,8 @@ const CampaignContactListPage = () => {
 				<Tabs.Panel value='overview' mb='md'>
 					<Stack gap='md'>
 						<SectionCard
-							title={t('contactListPage.overview.title')}
-							description={t('contactListPage.overview.description')}
+							title={t('overview.title')}
+							description={t('overview.description')}
 							headerActions={
 								canExecuteCampaigns ? (
 									<Button
@@ -408,8 +408,8 @@ const CampaignContactListPage = () => {
 				{canViewConversations && (
 					<Tabs.Panel value='conversations' mb='md'>
 						<SectionCard
-							title={t('contactListPage.tabs.conversations')}
-							description={t('contactListPage.tabs.conversationsDesc')}
+							title={t('tabs.conversations')}
+							description={t('tabs.conversationsDesc')}
 						>
 							<ConversationsList
 								onConversationClick={(conversation) => {
@@ -426,8 +426,8 @@ const CampaignContactListPage = () => {
 				{canViewContacts && (
 					<Tabs.Panel value='contacts' mb='md'>
 						<SectionCard
-							title={t('contactListPage.tabs.contacts')}
-							description={t('contactListPage.tabs.contactsDesc')}
+							title={t('tabs.contacts')}
+							description={t('tabs.contactsDesc')}
 						>
 							<FaultyPhonesAlert contactGroupId={contactGroupIdNumber} />
 							<ContactGroupContactsTable

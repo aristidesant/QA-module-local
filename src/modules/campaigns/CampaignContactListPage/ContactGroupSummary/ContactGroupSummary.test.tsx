@@ -96,26 +96,20 @@ describe('ContactGroupSummary', () => {
 			renderWithProviders(
 				<ContactGroupSummary contactGroup={groupWithoutDescription} />
 			);
-			expect(
-				screen.getByText('contactListPage.summary.noDescription')
-			).toBeInTheDocument();
+			expect(screen.getByText('No description provided.')).toBeInTheDocument();
 		});
 
 		it('renders Active badge when isActive is true', () => {
 			renderWithProviders(
 				<ContactGroupSummary contactGroup={mockContactGroup} />
 			);
-			expect(
-				screen.getByText('contactListPage.summary.active')
-			).toBeInTheDocument();
+			expect(screen.getByText('Active')).toBeInTheDocument();
 		});
 
 		it('renders Inactive badge when isActive is false', () => {
 			const inactiveGroup = { ...mockContactGroup, isActive: false };
 			renderWithProviders(<ContactGroupSummary contactGroup={inactiveGroup} />);
-			expect(
-				screen.getByText('contactListPage.summary.inactive')
-			).toBeInTheDocument();
+			expect(screen.getByText('Inactive')).toBeInTheDocument();
 		});
 
 		it('renders the queue status badge', () => {
@@ -156,9 +150,7 @@ describe('ContactGroupSummary', () => {
 			renderWithProviders(
 				<ContactGroupSummary contactGroup={groupWithoutSchedule} />
 			);
-			expect(
-				screen.getByText('contactListPage.summary.notSet')
-			).toBeInTheDocument();
+			expect(screen.getByText('Not set')).toBeInTheDocument();
 		});
 
 		it('renders formatted expiration date', () => {
@@ -178,9 +170,7 @@ describe('ContactGroupSummary', () => {
 			renderWithProviders(
 				<ContactGroupSummary contactGroup={groupWithoutExpiration} />
 			);
-			expect(
-				screen.getByText('contactListPage.summary.noExpiration')
-			).toBeInTheDocument();
+			expect(screen.getByText('No expiration defined')).toBeInTheDocument();
 		});
 	});
 
@@ -228,21 +218,11 @@ describe('ContactGroupSummary', () => {
 			renderWithProviders(
 				<ContactGroupSummary contactGroup={mockContactGroup} />
 			);
-			expect(
-				screen.getByText('contactListPage.summary.contacts')
-			).toBeInTheDocument();
-			expect(
-				screen.getByText('contactListPage.summary.maxCallsPerContact')
-			).toBeInTheDocument();
-			expect(
-				screen.getByText('contactListPage.summary.maxCallsPerList')
-			).toBeInTheDocument();
-			expect(
-				screen.getByText('contactListPage.summary.humanEquivalent')
-			).toBeInTheDocument();
-			expect(
-				screen.getByText('contactListPage.summary.waves')
-			).toBeInTheDocument();
+			expect(screen.getByText('Contacts')).toBeInTheDocument();
+			expect(screen.getByText('Max calls per contact')).toBeInTheDocument();
+			expect(screen.getByText('Max calls per list')).toBeInTheDocument();
+			expect(screen.getByText('Human equivalent')).toBeInTheDocument();
+			expect(screen.getByText('Waves')).toBeInTheDocument();
 		});
 
 		it('renders waves value', () => {
@@ -258,23 +238,17 @@ describe('ContactGroupSummary', () => {
 			renderWithProviders(
 				<ContactGroupSummary contactGroup={mockContactGroup} />
 			);
-			expect(
-				screen.getByTestId('card-contactlistpage.summary.details')
-			).toBeInTheDocument();
-			expect(
-				screen.getByText('contactListPage.summary.metadata')
-			).toBeInTheDocument();
+			expect(screen.getByTestId('card-details')).toBeInTheDocument();
+			expect(screen.getByText('Contact list metadata')).toBeInTheDocument();
 		});
 
 		it('renders Metrics card with correct props', () => {
 			renderWithProviders(
 				<ContactGroupSummary contactGroup={mockContactGroup} />
 			);
+			expect(screen.getByTestId('card-metrics')).toBeInTheDocument();
 			expect(
-				screen.getByTestId('card-contactlistpage.summary.metrics')
-			).toBeInTheDocument();
-			expect(
-				screen.getByText('contactListPage.summary.performanceMetrics')
+				screen.getByText('Contact list performance metrics')
 			).toBeInTheDocument();
 		});
 	});

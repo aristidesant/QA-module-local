@@ -118,7 +118,7 @@ describe('CampaignConfigurationSystemTools', () => {
 
 		render(<CampaignConfigurationSystemTools />);
 
-		expect(screen.getByText('No system tools configured.')).toBeVisible();
+		expect(screen.getByText('No system tools available.')).toBeVisible();
 	});
 
 	it('renders tools list & description fallback and badge default', () => {
@@ -143,7 +143,7 @@ describe('CampaignConfigurationSystemTools', () => {
 		expect(screen.getByText('Tool One')).toBeVisible();
 		expect(screen.getByText('desc')).toBeVisible();
 		expect(screen.getByText('Tool Two')).toBeVisible();
-		expect(screen.getByText('No description available')).toBeVisible();
+		expect(screen.getByText('No description available.')).toBeVisible();
 		// Badge default text 'Custom' when type missing
 		expect(screen.getAllByText('Custom').length).toBeGreaterThanOrEqual(1);
 	});
@@ -303,7 +303,7 @@ describe('CampaignConfigurationSystemTools', () => {
 
 		render(<CampaignConfigurationSystemTools />);
 
-		expect(screen.getByText('No system tools configured.')).toBeVisible();
+		expect(screen.getByText('No system tools available.')).toBeVisible();
 	});
 
 	it('enables a tool and stores it in the form', () => {

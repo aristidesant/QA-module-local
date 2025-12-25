@@ -1,0 +1,85 @@
+{
+	"content": {
+		"empty": {
+			"message": "No configurations found",
+			"description": "Get started by creating your first client configuration",
+			"action": "Create Configuration",
+			"modalTitle": "Create Client Configuration"
+		},
+		"noResults": {
+			"title": "No configurations match your filters",
+			"description": "Try adjusting your search criteria or filters"
+		},
+		"modal": {
+			"createTitle": "Create Client Configuration",
+			"editTitle": "Edit Client Configuration",
+			"deleteTitle": "Delete Configuration",
+			"deleteConfirm": "Are you sure you want to delete the configuration {{name}}? This action cannot be undone."
+		},
+		"notifications": {
+			"deleteSuccessTitle": "Success",
+			"deleteSuccessMessage": "Configuration deleted successfully",
+			"deleteErrorTitle": "Error",
+			"deleteErrorMessage": "Failed to delete configuration"
+		},
+		"paginationLabel": "configurations"
+	},
+	"form": {
+		"details": {
+			"title": "Configuration Details",
+			"description": "Set up the basic information for this configuration"
+		},
+		"value": {
+			"title": "Configuration Value",
+			"descriptionDefault": "Enter the configuration value",
+			"descriptionJson": "Enter valid JSON that will be auto-formatted"
+		},
+		"fields": {
+			"name": {
+				"label": "Name",
+				"placeholder": "contact_columns",
+				"descriptionCreate": "Use lowercase letters, numbers, and underscores only",
+				"descriptionEdit": "Name cannot be changed",
+				"required": "Name is required",
+				"invalid": "Name must contain only lowercase letters, numbers, and underscores"
+			},
+			"description": {
+				"label": "Description",
+				"placeholder": "Brief description of the configuration",
+				"required": "Description is required"
+			},
+			"type": {
+				"label": "Type",
+				"placeholder": "Select configuration type",
+				"required": "Type is required",
+				"options": {
+					"string": "String",
+					"number": "Number",
+					"boolean": "Boolean",
+					"json": "JSON",
+					"array": "Array"
+				}
+			},
+			"value": {
+				"label": "Value",
+				"placeholderDefault": "Enter configuration value",
+				"placeholderJson": "{\"key\": \"value\"}",
+				"required": "Value is required",
+				"invalidJson": "Invalid JSON format"
+			}
+		},
+		"actions": {
+			"cancel": "Cancel",
+			"create": "Create Configuration",
+			"update": "Update Configuration"
+		},
+		"notifications": {
+			"createSuccessTitle": "Success",
+			"createSuccessMessage": "Configuration created successfully",
+			"updateSuccessTitle": "Success",
+			"updateSuccessMessage": "Configuration updated successfully",
+			"errorTitle": "Error",
+			"errorMessage": "Failed to {{action}} configuration"
+		}
+	}
+}

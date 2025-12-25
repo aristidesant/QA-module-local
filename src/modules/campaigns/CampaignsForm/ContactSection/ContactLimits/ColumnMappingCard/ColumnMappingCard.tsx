@@ -45,7 +45,7 @@ function ColumnMappingCard({
 	onSchemaSelected,
 	selectedSchemaId,
 }: ColumnMappingCardProps) {
-	const { t } = useTranslation();
+	const { t } = useTranslation('campaigns');
 	const mappedColumnsCount = Object.keys(columnMappings).length;
 	const totalColumns = headers.length;
 	const isAllMapped = mappedColumnsCount === totalColumns;
@@ -53,7 +53,7 @@ function ColumnMappingCard({
 	const openMappingModal = () => {
 		modals.open({
 			modalId: 'match-columns-modal',
-			title: t('campaigns.form.contacts.mapping.matchTitle'),
+			title: t('form.contacts.mapping.matchTitle'),
 			size: '90%',
 			children: (
 				<ContactHeaderMapping
@@ -73,7 +73,7 @@ function ColumnMappingCard({
 		<Stack gap='xs'>
 			<Group justify='space-between' align='center'>
 				<Text fw={500} size='sm'>
-					{t('campaigns.form.contacts.mapping.title')}
+					{t('form.contacts.mapping.title')}
 				</Text>
 				<Badge
 					size='sm'
@@ -101,11 +101,11 @@ function ColumnMappingCard({
 				<Group justify='space-between' align='center'>
 					<Stack gap={4}>
 						<Text size='xs' c='dimmed'>
-							{t('campaigns.form.contacts.mapping.clickToConfigure')}
+							{t('form.contacts.mapping.clickToConfigure')}
 						</Text>
 						{!isAllMapped && (
 							<Text size='xs' c='orange' fw={500}>
-								{t('campaigns.form.contacts.mapping.unmapped', {
+								{t('form.contacts.mapping.unmapped', {
 									count: totalColumns - mappedColumnsCount,
 								})}
 							</Text>

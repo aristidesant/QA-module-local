@@ -19,7 +19,7 @@ import {
 	useGetCampaignObjectives,
 	useGetCampaignObjectiveById,
 } from '~/queries/campaignObjectivesQueries';
-import { CampaignObjectivesForm } from '~/modules/campaigns/CampaignManagementPage/Objectives/components/CampaignObjectivesForm/CampaignObjectivesForm';
+import { CampaignObjectivesForm } from '~/modules/campaign-management/campaign-objectives/components/CampaignObjectivesForm/CampaignObjectivesForm';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
@@ -108,7 +108,9 @@ const GeneralSection: React.FC = () => {
 					description={t('campaigns.general.campaignObjectiveDesc')}
 					error={
 						(form.errors.objectiveId as React.ReactNode) ||
-						(loadError ? t('campaigns.general.failedToLoadObjectives') : undefined)
+						(loadError
+							? t('campaigns.general.failedToLoadObjectives')
+							: undefined)
 					}
 					withAsterisk
 				>

@@ -89,10 +89,10 @@ describe('ReviewStep', () => {
 			);
 
 			expect(
-				screen.getByRole('button', { name: /cancel/i })
+				screen.getByRole('button', { name: 'Cancel' })
 			).toBeInTheDocument();
 			expect(
-				screen.getByRole('button', { name: /apply changes/i })
+				screen.getByRole('button', { name: 'Apply changes' })
 			).toBeInTheDocument();
 		});
 
@@ -140,7 +140,9 @@ describe('ReviewStep', () => {
 
 			expect(screen.getByText('Error')).toBeInTheDocument();
 			expect(
-				screen.getByText(/Failed to generate diff view/i)
+				screen.getByText(
+					'Failed to generate diff view. The AI suggestion may still be valid.'
+				)
 			).toBeInTheDocument();
 		});
 
@@ -170,7 +172,9 @@ describe('ReviewStep', () => {
 
 			expect(screen.getByText('No Changes')).toBeInTheDocument();
 			expect(
-				screen.getByText(/The AI suggestion is identical/i)
+				screen.getByText(
+					'The AI suggestion is identical to your current prompt.'
+				)
 			).toBeInTheDocument();
 		});
 
@@ -231,7 +235,7 @@ describe('ReviewStep', () => {
 				/>
 			);
 
-			await user.click(screen.getByRole('button', { name: /cancel/i }));
+			await user.click(screen.getByRole('button', { name: 'Cancel' }));
 
 			expect(mockOnCancel).toHaveBeenCalledTimes(1);
 		});
@@ -247,7 +251,7 @@ describe('ReviewStep', () => {
 				/>
 			);
 
-			await user.click(screen.getByRole('button', { name: /apply changes/i }));
+			await user.click(screen.getByRole('button', { name: 'Apply changes' }));
 
 			expect(mockOnApply).toHaveBeenCalledTimes(1);
 		});
@@ -263,7 +267,7 @@ describe('ReviewStep', () => {
 				/>
 			);
 
-			await user.click(screen.getByRole('button', { name: /apply changes/i }));
+			await user.click(screen.getByRole('button', { name: 'Apply changes' }));
 
 			expect(mockOnApply).toHaveBeenCalledTimes(1);
 		});
@@ -279,7 +283,7 @@ describe('ReviewStep', () => {
 				/>
 			);
 
-			await user.click(screen.getByRole('button', { name: /apply changes/i }));
+			await user.click(screen.getByRole('button', { name: 'Apply changes' }));
 
 			expect(mockOnApply).toHaveBeenCalledTimes(1);
 		});

@@ -37,7 +37,7 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 	campaign,
 	onComplete,
 }) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation('campaigns', { keyPrefix: 'cloneCampaignForm' });
 	const cloneCampaign = useCloneCampaign();
 
 	const [agentsToDuplicate, setAgentsToDuplicate] = useState<
@@ -50,7 +50,7 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 		if (campaign.agents) {
 			const initialAgents = campaign.agents.map((campaignAgent) => ({
 				agentId: campaignAgent.agentId,
-				newName: t('campaigns.clone.copyOf', { name: campaignAgent.agent.name }),
+				newName: t('copyOf', { name: campaignAgent.agent.name }),
 				selected: true,
 				originalName: campaignAgent.agent.name,
 			}));
@@ -61,13 +61,13 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 	const form = useForm({
 		mode: 'uncontrolled',
 		initialValues: {
-			name: t('campaigns.clone.copyOf', { name: campaign.name }),
+			name: t('copyOf', { name: campaign.name }),
 			description: campaign.description || '',
 		},
 		validate: {
-			name: (value) => (value.trim().length < 2 ? t('campaigns.clone.nameRequired') : null),
+			name: (value) => (value.trim().length < 2 ? t('nameRequired') : null),
 			description: (value) =>
-				value.trim().length < 2 ? t('campaigns.clone.descriptionRequired') : null,
+				value.trim().length < 2 ? t('descriptionRequired') : null,
 		},
 		validateInputOnChange: true,
 	});
@@ -89,11 +89,11 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 	const validateAgents = (): string | null => {
 		const selectedAgents = agentsToDuplicate.filter((agent) => agent.selected);
 		if (selectedAgents.length === 0) {
-			return t('campaigns.clone.atLeastOneAgent');
+			return t('atLeastOneAgent');
 		}
 		for (const agent of selectedAgents) {
 			if (!agent.newName.trim()) {
-				return t('campaigns.clone.allAgentsMustHaveName');
+				return t('allAgentsMustHaveName');
 			}
 		}
 		return null;
@@ -161,8 +161,8 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 			{
 				onSuccess: () => {
 					notifications.show({
-						title: t('campaigns.clone.success'),
-						message: t('campaigns.clone.successMessage'),
+						title: t('success'),
+						message: t('successMessage'),
 						color: 'green',
 					});
 					if (onComplete) {
@@ -172,8 +172,8 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 				onError: (error) => {
 					const message = getApiErrorMessage(error);
 					notifications.show({
-						title: t('campaigns.clone.error'),
-						message: message || t('campaigns.clone.errorMessage'),
+						title: t('error'),
+						message: message || t('errorMessage'),
 						color: 'red',
 					});
 				},
@@ -189,31 +189,29 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 				</Box>
 				<div className={styles.headerContent}>
 					<Text className={styles.title} fw={600}>
-						{t('campaigns.clone.title')}
+						{t('title')}
 					</Text>
-					<Text className={styles.subtitle}>
-						{t('campaigns.clone.adjustDetails')}
-					</Text>
+					<Text className={styles.subtitle}>{t('adjustDetails')}</Text>
 				</div>
 				<Badge className={styles.agentBadge} variant='light' size='sm'>
 					{selectedAgentsCount}
-					{` / ${agentsToDuplicate.length}`} {t('campaigns.clone.selectedCount')}
+					{` / ${agentsToDuplicate.length}`} {t('selectedCount')}
 				</Badge>
 			</Group>
 
 			<form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
 				<Stack gap='md' className={styles.formFields}>
 					<TextInput
-						label={t('campaigns.clone.campaignName')}
-						placeholder={t('campaigns.clone.enterCampaignName')}
+						label={t('campaignName')}
+						placeholder={t('enterCampaignName')}
 						withAsterisk
 						className={styles.field}
 						key={form.key('name')}
 						{...form.getInputProps('name')}
 					/>
 					<Textarea
-						label={t('campaigns.clone.description')}
-						placeholder={t('campaigns.clone.describeYourCampaign')}
+						label={t('description')}
+						placeholder={t('describeYourCampaign')}
 						withAsterisk
 						className={styles.field}
 						key={form.key('description')}
@@ -224,17 +222,15 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 
 				<section className={styles.agentSection}>
 					<Box className={styles.sectionHeader}>
-						<Text className={styles.sectionTitle}>{t('campaigns.clone.agentsToClone')}</Text>
-						<Text className={styles.sectionHint}>
-							{t('campaigns.clone.turnOffAgents')}
-						</Text>
+						<Text className={styles.sectionTitle}>{t('agentsToClone')}</Text>
+						<Text className={styles.sectionHint}>{t('turnOffAgents')}</Text>
 					</Box>
 
 					{agentsToDuplicate.length === 0 ? (
 						<Box className={styles.emptyAgents}>
-							<Text className={styles.emptyTitle}>{t('campaigns.clone.noAgentsLinked')}</Text>
+							<Text className={styles.emptyTitle}>{t('noAgentsLinked')}</Text>
 							<Text className={styles.emptyDescription}>
-								{t('campaigns.clone.noAgentsDescription')}
+								{t('noAgentsDescription')}
 							</Text>
 						</Box>
 					) : (
@@ -252,7 +248,7 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 										onChange={(event) =>
 											handleAgentToggle(index, event.currentTarget.checked)
 										}
-										aria-label={t('campaigns.clone.toggleAgent', { name: agent.originalName })}
+										aria-label={t('toggleAgent', { name: agent.originalName })}
 									/>
 									<Avatar size={36} radius='xl' color='blue'>
 										{agent.originalName.charAt(0).toUpperCase()}
@@ -262,10 +258,10 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 											{agent.originalName}
 										</Text>
 										<Text className={styles.agentMeta} c='dimmed' size='xs'>
-											{t('campaigns.clone.createDedicatedCopy')}
+											{t('createDedicatedCopy')}
 										</Text>
 										<TextInput
-											placeholder={t('campaigns.clone.newAgentName')}
+											placeholder={t('newAgentName')}
 											value={agent.newName}
 											onChange={(event) =>
 												handleAgentNameChange(index, event.currentTarget.value)
@@ -275,7 +271,7 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 											className={styles.agentInput}
 											error={
 												agent.selected && !agent.newName.trim()
-													? t('campaigns.clone.nameRequired')
+													? t('nameRequired')
 													: null
 											}
 										/>
@@ -289,7 +285,7 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 				{validationError && (
 					<Alert
 						icon={<IconInfoCircle size={18} />}
-						title={t('campaigns.clone.validationRequired')}
+						title={t('validationRequired')}
 						color='yellow'
 						variant='light'
 						className={styles.alert}
@@ -300,7 +296,7 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 
 				<Group className={styles.buttonGroup}>
 					<Button type='submit' loading={cloneCampaign.isPending} size='md'>
-						{t('campaigns.clone.cloneButton')}
+						{t('cloneButton')}
 					</Button>
 				</Group>
 			</form>

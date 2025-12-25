@@ -28,13 +28,13 @@ export const useContactColumns = (
 	onDelete?: (contact: Contact) => void,
 	isDeleting?: (contactId: number) => boolean
 ): ColumnDef<Contact, any>[] => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation('campaign.contact-list');
 
 	return useMemo(
 		() => [
 			{
 				accessorKey: 'id',
-				header: t('contactListPage.contactsTable.columns.contact'),
+				header: t('contactsTable.columns.contact'),
 				cell: ({ row }) => {
 					const contact = row.original;
 					const fullName = getFullName(contact);
@@ -63,7 +63,7 @@ export const useContactColumns = (
 			},
 			{
 				accessorKey: 'phones',
-				header: t('contactListPage.contactsTable.columns.phone'),
+				header: t('contactsTable.columns.phone'),
 				cell: ({ row }) => {
 					const contact = row.original;
 					const uniquePhones = getUniquePhones(contact);
@@ -113,13 +113,10 @@ export const useContactColumns = (
 							</Group>
 							{hasValidationError && (
 								<Tooltip
-									label={t(
-										'contactListPage.contactsTable.tooltips.faultyPhones',
-										{
-											count: errorCount,
-											plural: errorCount > 1 ? 's' : '',
-										}
-									)}
+									label={t('contactsTable.tooltips.faultyPhones', {
+										count: errorCount,
+										plural: errorCount > 1 ? 's' : '',
+									})}
 									withArrow
 								>
 									<Badge
@@ -164,7 +161,7 @@ export const useContactColumns = (
 			},
 			{
 				accessorKey: 'emails',
-				header: t('contactListPage.contactsTable.columns.email'),
+				header: t('contactsTable.columns.email'),
 				cell: ({ row }) => {
 					const contact = row.original;
 					const email = contact.emails?.[0] || '';
@@ -218,7 +215,7 @@ export const useContactColumns = (
 			{
 				id: 'status',
 				accessorFn: (contact) => getContactStatus(contact),
-				header: t('contactListPage.contactsTable.columns.status'),
+				header: t('contactsTable.columns.status'),
 				cell: ({ row }) => {
 					const contact = row.original;
 					const status = getContactStatus(contact);
@@ -233,9 +230,7 @@ export const useContactColumns = (
 								radius='sm'
 								className={styles.statusBadge}
 							>
-								{status
-									? t(`contactListPage.contactsTable.status.${status}`)
-									: '—'}
+								{status ? t(`contactsTable.status.${status}`) : '—'}
 							</Badge>
 						</Group>
 					);
@@ -247,7 +242,7 @@ export const useContactColumns = (
 				? [
 						{
 							id: 'actions',
-							header: t('contactListPage.contactsTable.columns.actions'),
+							header: t('contactsTable.columns.actions'),
 							size: 110,
 							cell: ({ row }: any) => {
 								const contact = row.original;

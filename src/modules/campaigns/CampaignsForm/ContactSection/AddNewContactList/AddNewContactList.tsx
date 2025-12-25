@@ -22,7 +22,7 @@ export const AddNewContactList = ({
 	campaignId,
 	objectiveId,
 }: AddNewContactListProps) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation('campaigns');
 	const [summary, setSummary] = useState<ContactFileSummary | null>(null);
 	// Mutation to upload contact list file to backend
 	const uploadContactGroupFileMutation = useUploadContactGroupFile({});
@@ -31,10 +31,8 @@ export const AddNewContactList = ({
 	const uploadFile = async (file: File | null) => {
 		if (!file) {
 			notifications.show({
-				title: t('campaigns.form.contacts.addNew.notifications.noFile.title'),
-				message: t(
-					'campaigns.form.contacts.addNew.notifications.noFile.message'
-				),
+				title: t('form.contacts.addNew.notifications.noFile.title'),
+				message: t('form.contacts.addNew.notifications.noFile.message'),
 				color: 'yellow',
 			});
 			return;
@@ -44,12 +42,8 @@ export const AddNewContactList = ({
 		const isCsv = file.name.toLowerCase().endsWith('.csv');
 		if (!isCsv) {
 			notifications.show({
-				title: t(
-					'campaigns.form.contacts.addNew.notifications.invalidType.title'
-				),
-				message: t(
-					'campaigns.form.contacts.addNew.notifications.invalidType.message'
-				),
+				title: t('form.contacts.addNew.notifications.invalidType.title'),
+				message: t('form.contacts.addNew.notifications.invalidType.message'),
 				color: 'red',
 			});
 			return;
@@ -67,14 +61,10 @@ export const AddNewContactList = ({
 			const message =
 				error instanceof Error
 					? error.message
-					: t(
-							'campaigns.form.contacts.addNew.notifications.uploadFailed.message'
-						);
+					: t('form.contacts.addNew.notifications.uploadFailed.message');
 
 			notifications.show({
-				title: t(
-					'campaigns.form.contacts.addNew.notifications.uploadFailed.title'
-				),
+				title: t('form.contacts.addNew.notifications.uploadFailed.title'),
 				message,
 				color: 'red',
 			});
@@ -126,7 +116,7 @@ export const AddNewContactList = ({
 				<Skeleton visible={uploadContactGroupFileMutation.isPending}>
 					<Stack gap='md'>
 						<Text size='sm' c='dimmed'>
-							{t('campaigns.form.contacts.addNew.description')}
+							{t('form.contacts.addNew.description')}
 						</Text>
 
 						<div
@@ -150,11 +140,9 @@ export const AddNewContactList = ({
 							>
 								<Stack align='center' gap='xs'>
 									<IconUpload size={24} />
-									<Text fw={500}>
-										{t('campaigns.form.contacts.addNew.uploadLabel')}
-									</Text>
+									<Text fw={500}>{t('form.contacts.addNew.uploadLabel')}</Text>
 									<Text size='sm' c='dimmed'>
-										{t('campaigns.form.contacts.addNew.dragAndDrop')}
+										{t('form.contacts.addNew.dragAndDrop')}
 									</Text>
 								</Stack>
 							</label>
@@ -162,7 +150,7 @@ export const AddNewContactList = ({
 
 						<Group justify='flex-end' mt='md'>
 							<Button variant='default' onClick={onClose}>
-								{t('common.cancel')}
+								{t('cancel', { ns: 'common' })}
 							</Button>
 						</Group>
 					</Stack>

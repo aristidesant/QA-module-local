@@ -35,17 +35,17 @@ describe('CapacityProgress', () => {
 		renderWithProviders(<CapacityProgress campaignId='1' />);
 
 		expect(
-			screen.getByText('campaigns.form.contacts.list.capacity.title')
+			screen.getByText('form.contacts.list.capacity.title')
 		).toBeInTheDocument();
 		expect(screen.getByText('50%')).toBeInTheDocument(); // 5/10
 		expect(
-			screen.getByText('campaigns.form.contacts.list.capacity.used')
+			screen.getByText('form.contacts.list.capacity.used')
 		).toBeInTheDocument();
 		expect(
-			screen.getByText('campaigns.form.contacts.list.capacity.remaining')
+			screen.getByText('form.contacts.list.capacity.remaining')
 		).toBeInTheDocument();
 		expect(
-			screen.getByText('campaigns.form.contacts.list.capacity.total')
+			screen.getByText('form.contacts.list.capacity.total')
 		).toBeInTheDocument();
 	});
 

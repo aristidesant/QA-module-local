@@ -58,7 +58,7 @@ describe('AgentProfile', () => {
 
 		renderWithProviders(<AgentProfile onClick={handleClick} />);
 
-		await userEvent.click(screen.getByText(/Unnamed agent/i));
+		await userEvent.click(screen.getByText('Unnamed agent'));
 
 		expect(screen.getByLabelText('Offline')).toBeInTheDocument();
 		expect(screen.getByText('A')).toBeInTheDocument();

@@ -40,13 +40,13 @@ describe('ContactHeaderMapping', () => {
 		);
 
 		expect(
-			screen.getByText('campaigns.form.contacts.headerMapping.description')
+			screen.getByText('form.contacts.headerMapping.description')
 		).toBeInTheDocument();
 		expect(
-			screen.getByText('campaigns.form.contacts.headerMapping.csvColumns')
+			screen.getByText('form.contacts.headerMapping.csvColumns')
 		).toBeInTheDocument();
 		expect(
-			screen.getByText('campaigns.form.contacts.headerMapping.systemFields')
+			screen.getByText('form.contacts.headerMapping.systemFields')
 		).toBeInTheDocument();
 	});
 

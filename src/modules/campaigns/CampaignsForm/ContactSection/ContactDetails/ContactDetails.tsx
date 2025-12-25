@@ -105,7 +105,7 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
 			<Card className={styles.infoCard}>
 				<Group justify='space-between'>
 					<Text size='sm' c='dimmed'>
-						{t('contactDetails.primaryPhone')}
+						{t('form.contacts.details.primaryPhone')}
 					</Text>
 					<Text size='sm' fw={500}>
 						{phone}
@@ -118,7 +118,9 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
 				<Card className={styles.infoCard}>
 					<Stack gap='xs'>
 						<Text size='sm' c='dimmed' fw={500}>
-							{t('contactDetails.phoneNumbers', { count: phones.length })}
+							{t('form.contacts.details.phoneNumbers', {
+								count: phones.length,
+							})}
 						</Text>
 						{phones.map((phoneEntry, index) => (
 							<div key={index} className={styles.phoneEntry}>
@@ -161,7 +163,7 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
 				<Card className={styles.infoCard}>
 					<Group justify='space-between'>
 						<Text size='sm' c='dimmed'>
-							{t('contactDetails.email')}
+							{t('form.contacts.details.email')}
 						</Text>
 						<Text size='sm' fw={500}>
 							{email}
@@ -175,7 +177,7 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
 				<Card className={styles.infoCard}>
 					<Group justify='space-between'>
 						<Text size='sm' c='dimmed'>
-							{t('contactDetails.location')}
+							{t('form.contacts.details.location')}
 						</Text>
 						<Text size='sm' fw={500}>
 							{location}
@@ -210,7 +212,7 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
 
 					<Stack gap='xs' align='center'>
 						<Text size='sm' fw={600}>
-							{t('contactDetails.engagementLevel.title')}
+							{t('form.contacts.details.engagementLevel.title')}
 						</Text>
 						<Text
 							size='xs'
@@ -218,7 +220,7 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
 							ta='center'
 							className={styles.description}
 						>
-							{t('contactDetails.engagementLevel.description', {
+							{t('form.contacts.details.engagementLevel.description', {
 								name: name.split(' ')[0],
 							})}
 						</Text>
@@ -252,7 +254,7 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
 
 					<Stack gap='xs' align='center'>
 						<Text size='sm' fw={600}>
-							{t('contactDetails.reviewsQualification.title')}
+							{t('form.contacts.details.reviewsQualification.title')}
 						</Text>
 						<Text
 							size='xs'
@@ -260,7 +262,7 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
 							ta='center'
 							className={styles.description}
 						>
-							{t('contactDetails.reviewsQualification.description', {
+							{t('form.contacts.details.reviewsQualification.description', {
 								name: name.split(' ')[0],
 							})}
 						</Text>
@@ -270,13 +272,13 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
 					<Stack gap='sm' w='100%'>
 						<Group gap='sm' justify='space-between'>
 							<Text size='sm' c='dimmed'>
-								{t('contactDetails.sentiment.negative')}
+								{t('form.contacts.details.sentiment.negative')}
 							</Text>
 							<Text size='sm' c='dimmed'>
-								{t('contactDetails.sentiment.neutral')}
+								{t('form.contacts.details.sentiment.neutral')}
 							</Text>
 							<Text size='sm' c='dimmed'>
-								{t('contactDetails.sentiment.positive')}
+								{t('form.contacts.details.sentiment.positive')}
 							</Text>
 						</Group>
 
@@ -308,3 +310,5 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
 		</Stack>
 	);
 };
+
+export default ContactDetails;

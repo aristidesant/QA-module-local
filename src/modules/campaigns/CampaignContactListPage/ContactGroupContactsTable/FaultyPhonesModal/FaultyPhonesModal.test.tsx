@@ -176,16 +176,14 @@ describe('FaultyPhonesModal', () => {
 			/>
 		);
 
+		expect(screen.getByText('Faulty Phone Numbers')).toBeInTheDocument();
 		expect(
-			screen.getByText('contactListPage.faultyPhones.title')
-		).toBeInTheDocument();
-		expect(
-			screen.getByText('contactListPage.faultyPhones.modal.total')
+			screen.getByText('Total: 1 faulty phone number')
 		).toBeInTheDocument();
 
 		await user.click(
 			screen.getByRole('button', {
-				name: 'contactListPage.faultyPhones.modal.export',
+				name: 'Export',
 			})
 		);
 		expect(exportRefetch).toHaveBeenCalled();
@@ -212,9 +210,7 @@ describe('FaultyPhonesModal', () => {
 		const editButton = within(row).getAllByRole('button')[0];
 		await user.click(editButton);
 
-		const input = screen.getByPlaceholderText(
-			'contactListPage.faultyPhones.modal.placeholders.enterPhone'
-		);
+		const input = screen.getByPlaceholderText('Enter phone number');
 		await user.clear(input);
 		await user.type(input, '+18095551234');
 
@@ -243,12 +239,12 @@ describe('FaultyPhonesModal', () => {
 
 		await user.click(
 			screen.getByRole('button', {
-				name: 'contactListPage.faultyPhones.modal.export',
+				name: 'Export',
 			})
 		);
 		expect(notifications.show).toHaveBeenCalledWith(
 			expect.objectContaining({
-				title: 'contactListPage.faultyPhones.modal.notifications.exportFailed',
+				title: 'Export Failed',
 				color: 'red',
 			})
 		);
@@ -268,12 +264,7 @@ describe('FaultyPhonesModal', () => {
 		const row = screen.getByTestId('row-10');
 		await user.click(within(row).getAllByRole('button')[0]);
 
-		await user.type(
-			screen.getByPlaceholderText(
-				'contactListPage.faultyPhones.modal.placeholders.enterPhone'
-			),
-			'1'
-		);
+		await user.type(screen.getByPlaceholderText('Enter phone number'), '1');
 		await user.click(within(row).getAllByRole('button')[1]);
 
 		expect(updateMutate).not.toHaveBeenCalled();
@@ -320,7 +311,7 @@ describe('FaultyPhonesModal', () => {
 			expect(screen.getByTestId('row-11')).toBeInTheDocument();
 			expect(screen.getByTestId('row-20')).toBeInTheDocument();
 			expect(
-				screen.getByText('contactListPage.faultyPhones.modal.total')
+				screen.getByText('Total: 3 faulty phone numbers')
 			).toBeInTheDocument();
 		});
 
@@ -371,7 +362,7 @@ describe('FaultyPhonesModal', () => {
 			expect(screen.getByTestId('row-11')).toBeInTheDocument();
 			expect(screen.queryByTestId('row-10')).not.toBeInTheDocument();
 			expect(
-				screen.getByText('contactListPage.faultyPhones.modal.total')
+				screen.getByText('Total: 1 faulty phone number')
 			).toBeInTheDocument();
 		});
 	});
@@ -388,7 +379,7 @@ describe('FaultyPhonesModal', () => {
 			);
 
 			expect(
-				screen.getByText('contactListPage.faultyPhones.modal.total')
+				screen.getByText('Total: 0 faulty phone numbers')
 			).toBeInTheDocument();
 		});
 
@@ -403,7 +394,7 @@ describe('FaultyPhonesModal', () => {
 			);
 
 			expect(
-				screen.getByText('contactListPage.faultyPhones.modal.total')
+				screen.getByText('Total: 0 faulty phone numbers')
 			).toBeInTheDocument();
 		});
 
@@ -418,7 +409,7 @@ describe('FaultyPhonesModal', () => {
 			);
 
 			expect(
-				screen.queryByText('contactListPage.faultyPhones.title')
+				screen.queryByText('Faulty Phone Numbers')
 			).not.toBeInTheDocument();
 		});
 	});
@@ -434,9 +425,7 @@ describe('FaultyPhonesModal', () => {
 				/>
 			);
 
-			expect(
-				screen.getByText('contactListPage.faultyPhones.title')
-			).toBeInTheDocument();
+			expect(screen.getByText('Faulty Phone Numbers')).toBeInTheDocument();
 		});
 
 		it('renders description text', () => {
@@ -450,7 +439,9 @@ describe('FaultyPhonesModal', () => {
 			);
 
 			expect(
-				screen.getByText('contactListPage.faultyPhones.modal.description')
+				screen.getByText(
+					'The following phone numbers have validation errors and need attention. These contacts may not receive calls until the phone numbers are corrected.'
+				)
 			).toBeInTheDocument();
 		});
 	});
@@ -477,8 +468,7 @@ describe('FaultyPhonesModal', () => {
 
 			expect(notifications.show).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title:
-						'contactListPage.faultyPhones.modal.notifications.updateFailed',
+					title: 'Update Failed',
 					message: 'Network error',
 					color: 'red',
 				})
@@ -506,10 +496,8 @@ describe('FaultyPhonesModal', () => {
 
 			expect(notifications.show).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title:
-						'contactListPage.faultyPhones.modal.notifications.updateFailed',
-					message:
-						'contactListPage.faultyPhones.modal.notifications.updateFailed',
+					title: 'Update Failed',
+					message: 'Update Failed',
 					color: 'red',
 				})
 			);
@@ -532,17 +520,15 @@ describe('FaultyPhonesModal', () => {
 
 			await user.click(
 				screen.getByRole('button', {
-					name: 'contactListPage.faultyPhones.modal.export',
+					name: 'Export',
 				})
 			);
 
 			await waitFor(() => {
 				expect(notifications.show).toHaveBeenCalledWith(
 					expect.objectContaining({
-						title:
-							'contactListPage.faultyPhones.modal.notifications.exportSuccess',
-						message:
-							'contactListPage.faultyPhones.modal.notifications.exportSuccess',
+						title: 'Faulty phone numbers exported successfully',
+						message: 'Faulty phone numbers exported successfully',
 						color: 'green',
 					})
 				);
@@ -568,7 +554,7 @@ describe('FaultyPhonesModal', () => {
 
 			await user.click(
 				screen.getByRole('button', {
-					name: 'contactListPage.faultyPhones.modal.export',
+					name: 'Export',
 				})
 			);
 
@@ -598,17 +584,15 @@ describe('FaultyPhonesModal', () => {
 
 			await user.click(
 				screen.getByRole('button', {
-					name: 'contactListPage.faultyPhones.modal.export',
+					name: 'Export',
 				})
 			);
 
 			await waitFor(() => {
 				expect(notifications.show).toHaveBeenCalledWith(
 					expect.objectContaining({
-						title:
-							'contactListPage.faultyPhones.modal.notifications.exportFailed',
-						message:
-							'contactListPage.faultyPhones.modal.notifications.exportFailed',
+						title: 'Export Failed',
+						message: 'Export Failed',
 						color: 'red',
 					})
 				);
@@ -629,9 +613,7 @@ describe('FaultyPhonesModal', () => {
 			);
 
 			// Modal should be visible
-			expect(
-				screen.getByText('contactListPage.faultyPhones.title')
-			).toBeInTheDocument();
+			expect(screen.getByText('Faulty Phone Numbers')).toBeInTheDocument();
 		});
 	});
 

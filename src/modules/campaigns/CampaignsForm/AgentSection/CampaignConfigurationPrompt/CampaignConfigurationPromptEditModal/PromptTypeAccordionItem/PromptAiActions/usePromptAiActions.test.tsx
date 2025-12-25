@@ -3,6 +3,10 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { usePromptAiActions } from './usePromptAiActions';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
+import { I18nextProvider } from 'react-i18next';
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import enCampaigns from '~/locales/en/campaigns.json';
 
 const mockMutateAsync = vi.fn();
 let mockIsPending = false;
@@ -14,6 +18,26 @@ vi.mock('~/queries/campaignPromptQueries', () => ({
 	}),
 }));
 
+// Initialize i18n for tests
+const testI18n = i18n.createInstance();
+testI18n.use(initReactI18next).init({
+	lng: 'en',
+	fallbackLng: 'en',
+	defaultNS: 'campaigns',
+	ns: ['campaigns'],
+	resources: {
+		en: {
+			campaigns: enCampaigns,
+		},
+	},
+	interpolation: {
+		escapeValue: false,
+	},
+	react: {
+		useSuspense: false,
+	},
+});
+
 const createWrapper = () => {
 	const queryClient = new QueryClient({
 		defaultOptions: {
@@ -22,7 +46,9 @@ const createWrapper = () => {
 	});
 
 	return ({ children }: { children: ReactNode }) => (
-		<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+		<QueryClientProvider client={queryClient}>
+			<I18nextProvider i18n={testI18n}>{children}</I18nextProvider>
+		</QueryClientProvider>
 	);
 };
 
@@ -333,7 +359,7 @@ describe('usePromptAiActions', () => {
 			});
 
 			expect(result.current.error).toBe(
-				'Add guidance before sending the request.'
+				'Please provide some instructions for the AI'
 			);
 			expect(mockMutateAsync).not.toHaveBeenCalled();
 		});

@@ -75,6 +75,25 @@
 		"show": "Mostrar:",
 		"page": "Página"
 	},
+	"outboundCallForm": {
+		"agentCallTitle": "Llamada del agente",
+		"agentCallDesc": "Vive una llamada en vivo de tu agente de IA.",
+		"customerName": "Nombre del cliente",
+		"customerId": "ID del cliente",
+		"requestDemo": "Solicitar llamada demo",
+		"calling": "Llamando...",
+		"testCallSentTitle": "Llamada de prueba solicitada",
+		"testCallSentMsg": "Estamos llamando a {{phone}} ahora.",
+		"startDemoErrorTitle": "No se pudo iniciar la demo",
+		"startDemoErrorMsg": "Inténtalo de nuevo.",
+		"validation": {
+			"agentRequired": "El agente es obligatorio.",
+			"phoneInvalid": "Ingresa un número de teléfono válido.",
+			"campaignRequired": "La campaña es obligatoria.",
+			"customerNameRequired": "El nombre del cliente es obligatorio.",
+			"customerIdRequired": "El ID del cliente es obligatorio."
+		}
+	},
 	"units": {
 		"day": "d",
 		"hour": "h",

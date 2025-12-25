@@ -91,11 +91,9 @@ describe('AddNewContactList', () => {
 		);
 
 		expect(
-			screen.getByText('campaigns.form.contacts.addNew.uploadLabel')
+			screen.getByText('form.contacts.addNew.uploadLabel')
 		).toBeInTheDocument();
-		expect(
-			screen.getByRole('button', { name: 'common.cancel' })
-		).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: 'cancel' })).toBeInTheDocument();
 	});
 
 	it('calls onClose when Cancel button clicked', async () => {
@@ -108,7 +106,7 @@ describe('AddNewContactList', () => {
 			/>
 		);
 
-		await user.click(screen.getByRole('button', { name: 'common.cancel' }));
+		await user.click(screen.getByRole('button', { name: 'cancel' }));
 		expect(onClose).toHaveBeenCalledTimes(1);
 	});
 
@@ -150,7 +148,7 @@ describe('AddNewContactList', () => {
 		await waitFor(() =>
 			expect(notifications.show).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: 'campaigns.form.contacts.addNew.notifications.noFile.title',
+					title: 'form.contacts.addNew.notifications.noFile.title',
 				})
 			)
 		);
@@ -174,8 +172,7 @@ describe('AddNewContactList', () => {
 		await waitFor(() =>
 			expect(notifications.show).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title:
-						'campaigns.form.contacts.addNew.notifications.invalidType.title',
+					title: 'form.contacts.addNew.notifications.invalidType.title',
 				})
 			)
 		);
@@ -280,8 +277,7 @@ describe('AddNewContactList', () => {
 		await waitFor(() =>
 			expect(notifications.show).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title:
-						'campaigns.form.contacts.addNew.notifications.uploadFailed.title',
+					title: 'form.contacts.addNew.notifications.uploadFailed.title',
 					message: errorMessage,
 					color: 'red',
 				})
@@ -319,10 +315,8 @@ describe('AddNewContactList', () => {
 		await waitFor(() =>
 			expect(notifications.show).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title:
-						'campaigns.form.contacts.addNew.notifications.uploadFailed.title',
-					message:
-						'campaigns.form.contacts.addNew.notifications.uploadFailed.message',
+					title: 'form.contacts.addNew.notifications.uploadFailed.title',
+					message: 'form.contacts.addNew.notifications.uploadFailed.message',
 					color: 'red',
 				})
 			)
@@ -421,7 +415,7 @@ describe('AddNewContactList', () => {
 		await waitFor(() =>
 			expect(notifications.show).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: 'campaigns.form.contacts.addNew.notifications.noFile.title',
+					title: 'form.contacts.addNew.notifications.noFile.title',
 				})
 			)
 		);

@@ -17,27 +17,27 @@ export interface QueueStatusConfig {
 
 export const QUEUE_STATUS_CONFIG: Record<QueueStatus, QueueStatusConfig> = {
 	PENDING: {
-		label: 'Pending',
+		label: 'contactListPage.status.pending',
 		color: 'gray',
 	},
 	RUNNING: {
-		label: 'Running',
+		label: 'contactListPage.status.running',
 		color: 'blue',
 	},
 	PAUSED: {
-		label: 'Paused',
+		label: 'contactListPage.status.paused',
 		color: 'yellow',
 	},
 	FAILED: {
-		label: 'Failed',
+		label: 'contactListPage.status.failed',
 		color: 'red',
 	},
 	EXECUTED: {
-		label: 'Executed',
+		label: 'contactListPage.status.executed',
 		color: 'grape',
 	},
 	COMPLETED: {
-		label: 'Completed',
+		label: 'contactListPage.status.complete',
 		color: 'green',
 	},
 };

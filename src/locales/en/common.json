@@ -75,6 +75,25 @@
 		"show": "Show:",
 		"page": "Page"
 	},
+	"outboundCallForm": {
+		"agentCallTitle": "Agent Call",
+		"agentCallDesc": "Experience a live call from your AI agent.",
+		"customerName": "Customer name",
+		"customerId": "Customer ID",
+		"requestDemo": "Request demo call",
+		"calling": "Calling...",
+		"testCallSentTitle": "Test call requested",
+		"testCallSentMsg": "We are calling {{phone}} now.",
+		"startDemoErrorTitle": "Could not start demo",
+		"startDemoErrorMsg": "Please try again.",
+		"validation": {
+			"agentRequired": "Agent is required.",
+			"phoneInvalid": "Enter a valid phone number.",
+			"campaignRequired": "Campaign is required.",
+			"customerNameRequired": "Customer name is required.",
+			"customerIdRequired": "Customer ID is required."
+		}
+	},
 	"units": {
 		"day": "d",
 		"hour": "h",

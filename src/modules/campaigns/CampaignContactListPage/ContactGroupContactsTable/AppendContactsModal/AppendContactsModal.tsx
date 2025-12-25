@@ -20,7 +20,7 @@ const AppendContactsModal = ({
 	isUploading,
 	isAppending,
 }: AppendContactsModalProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation('campaign.contact-list');
 	const [file, setFile] = useState<File | null>(null);
 	const [isDragging, setIsDragging] = useState(false);
 	const [uploadedFileId, setUploadedFileId] = useState<number | null>(null);
@@ -76,7 +76,7 @@ const AppendContactsModal = ({
 		<Modal
 			opened
 			onClose={onClose}
-			title={t('contactListPage.contactsTable.appendModal.title')}
+			title={t('contactsTable.appendModal.title')}
 			size='md'
 			centered
 		>
@@ -98,22 +98,22 @@ const AppendContactsModal = ({
 						<IconUpload size={28} />
 						<Text fw={500}>
 							{file
-								? t('contactListPage.contactsTable.appendModal.changeFile')
-								: t('contactListPage.contactsTable.appendModal.selectFile')}
+								? t('contactsTable.appendModal.changeFile')
+								: t('contactsTable.appendModal.selectFile')}
 						</Text>
 						<Text size='xs' c='dimmed'>
-							{t('contactListPage.contactsTable.appendModal.dragAndDrop')}
+							{t('contactsTable.appendModal.dropHint')}
 						</Text>
 						{file && !uploadedFileId && (
 							<Text size='xs' c='blue'>
-								{t('contactListPage.contactsTable.appendModal.selected', {
+								{t('contactsTable.appendModal.selected', {
 									name: file.name,
 								})}
 							</Text>
 						)}
 						{uploadedFileId && (
 							<Text size='xs' c='green'>
-								{t('contactListPage.contactsTable.appendModal.fileSaved', {
+								{t('contactsTable.appendModal.fileSaved', {
 									id: uploadedFileId,
 								})}
 							</Text>
@@ -124,9 +124,9 @@ const AppendContactsModal = ({
 					<Alert
 						color='green'
 						variant='light'
-						title={t('contactListPage.contactsTable.appendModal.step2Title')}
+						title={t('contactsTable.appendModal.step2Title')}
 					>
-						{t('contactListPage.contactsTable.appendModal.step2Message')}
+						{t('contactsTable.appendModal.step2Desc')}
 					</Alert>
 				)}
 				{errorMessage && (
@@ -149,7 +149,7 @@ const AppendContactsModal = ({
 							loading={isUploading}
 							disabled={!file || isUploading}
 						>
-							{t('contactListPage.contactsTable.appendModal.saveFile')}
+							{t('contactsTable.appendModal.saveFile')}
 						</Button>
 					) : (
 						<Button
@@ -159,7 +159,7 @@ const AppendContactsModal = ({
 							loading={isAppending}
 							disabled={isAppending}
 						>
-							{t('contactListPage.contactsTable.appendModal.appendToList')}
+							{t('contactsTable.appendModal.appendToList')}
 						</Button>
 					)}
 				</Group>

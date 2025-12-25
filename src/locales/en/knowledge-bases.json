@@ -18,5 +18,65 @@
 	"fallbacks": {
 		"textSnippet": "Text snippet",
 		"file": "File"
+	},
+	"form": {
+		"title": "Knowledge Base",
+		"description": "Add or edit a knowledge base entry for your agent.",
+		"alerts": {
+			"readOnly": "You have read-only access to knowledge bases.",
+			"saveError": "Unable to save this knowledge base. Please try again."
+		},
+		"sections": {
+			"basics": {
+				"title": "Basics",
+				"description": "Name this knowledge base. Content type is auto-detected."
+			},
+			"content": {
+				"divider": "Content source",
+				"hint": "Enter a URL, paste text, or upload a file. Type is detected automatically."
+			}
+		},
+		"typeIndicator": {
+			"file": "File",
+			"url": "URL",
+			"text": "Text",
+			"fileDetected": "File detected",
+			"urlDetected": "URL detected",
+			"textDetected": "Text detected"
+		},
+		"fields": {
+			"name": {
+				"label": "Name",
+				"placeholder": "e.g., Product FAQs",
+				"required": "Name is required."
+			},
+			"description": {
+				"label": "Description",
+				"placeholder": "Short internal note about this knowledge base"
+			},
+			"content": {
+				"label": "URL or Text Content",
+				"placeholder": "Paste a URL (https://...) or text content here...",
+				"description": "Enter a public URL or paste text content to train your agent.",
+				"descriptionWithFile": "Clear the file to enter text or a URL instead.",
+				"required": "Enter a URL, paste text content, or upload a file.",
+				"invalidUrl": "Enter a valid URL (e.g., https://example.com/docs)."
+			},
+			"file": {
+				"label": "Or upload a file",
+				"placeholder": "Choose a PDF, TXT, or MD file",
+				"description": "Supported: PDF, TXT, MD. Max 25MB.",
+				"descriptionWithContent": "Clear the text to upload a file instead."
+			}
+		},
+		"fileMeta": {
+			"selected": "Selected: {{name}}",
+			"currentLabel": "Current file",
+			"none": "No file uploaded"
+		},
+		"actions": {
+			"cancel": "Cancel",
+			"save": "Save"
+		}
 	}
 }

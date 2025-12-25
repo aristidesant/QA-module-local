@@ -9,5 +9,8 @@
 	"typescript.suggest.autoImports": true,
 	"files.eol": "\n",
 	"files.insertFinalNewline": true,
-	"files.trimTrailingWhitespace": true
+	"files.trimTrailingWhitespace": true,
+	"[json]": {
+		"editor.defaultFormatter": "vscode.json-language-features"
+	}
 }

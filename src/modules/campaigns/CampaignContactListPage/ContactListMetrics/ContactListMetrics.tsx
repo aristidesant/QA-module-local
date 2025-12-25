@@ -189,18 +189,18 @@ const MetricsSkeleton = () => (
 );
 
 const ContactListMetrics = ({ contactGroupId }: ContactListMetricsProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation('campaign.contact-list');
 	const [timeRange, setTimeRange] = useState<string>('since_creation');
 
 	const TIME_RANGE_OPTIONS = useMemo(
 		() => [
-			{ value: '5m', label: t('contactListPage.metrics.timeRanges.5m') },
-			{ value: '15m', label: t('contactListPage.metrics.timeRanges.15m') },
-			{ value: '1h', label: t('contactListPage.metrics.timeRanges.1h') },
-			{ value: 'today', label: t('contactListPage.metrics.timeRanges.today') },
+			{ value: '5m', label: t('metrics.timeRanges.5m') },
+			{ value: '15m', label: t('metrics.timeRanges.15m') },
+			{ value: '1h', label: t('metrics.timeRanges.1h') },
+			{ value: 'today', label: t('metrics.timeRanges.today') },
 			{
 				value: 'since_creation',
-				label: t('contactListPage.metrics.timeRanges.since_creation'),
+				label: t('metrics.timeRanges.since_creation'),
 			},
 		],
 		[t]
@@ -236,25 +236,25 @@ const ContactListMetrics = ({ contactGroupId }: ContactListMetricsProps) => {
 		return [
 			{
 				key: 'totalRecords',
-				title: t('contactListPage.metrics.stats.totalRecords'),
+				title: t('metrics.stats.totalRecords'),
 				value: formatNumber(general.totalRecords),
-				subtitle: t('contactListPage.metrics.stats.totalRecordsDesc'),
+				subtitle: t('metrics.stats.totalRecordsDesc'),
 				icon: <IconAddressBook size={20} />,
 			},
 			{
 				key: 'contactsAttempted',
-				title: t('contactListPage.metrics.stats.contacted'),
+				title: t('metrics.stats.contacted'),
 				value: formatNumber(general.contacts),
-				subtitle: t('contactListPage.metrics.stats.contactedDesc'),
+				subtitle: t('metrics.stats.contactedDesc'),
 				icon: <IconPhoneCall size={20} />,
 			},
 			...(ahtMetric
 				? [
 						{
 							key: 'aht',
-							title: t('contactListPage.metrics.stats.aht'),
+							title: t('metrics.stats.aht'),
 							value: formatTimeToMinutes(ahtMetric.value),
-							subtitle: t('contactListPage.metrics.stats.ahtDesc'),
+							subtitle: t('metrics.stats.ahtDesc'),
 							icon: <IconClock size={20} />,
 						},
 					]
@@ -266,22 +266,22 @@ const ContactListMetrics = ({ contactGroupId }: ContactListMetricsProps) => {
 		() => [
 			{
 				key: 'contact-rate',
-				label: t('contactListPage.metrics.stats.contactRate'),
-				description: t('contactListPage.metrics.stats.contactRateDesc'),
+				label: t('metrics.stats.contactRate'),
+				description: t('metrics.stats.contactRateDesc'),
 				value: contactRateValue,
 				color: 'green.5',
 			},
 			{
 				key: 'effectiveness-rate',
-				label: t('contactListPage.metrics.stats.effectivenessRate'),
-				description: t('contactListPage.metrics.stats.effectivenessRateDesc'),
+				label: t('metrics.stats.effectivenessRate'),
+				description: t('metrics.stats.effectivenessRateDesc'),
 				value: effectivenessRateValue,
 				color: 'blue.5',
 			},
 			{
 				key: 'no-contact-rate',
-				label: t('contactListPage.metrics.stats.noContactRate'),
-				description: t('contactListPage.metrics.stats.noContactRateDesc'),
+				label: t('metrics.stats.noContactRate'),
+				description: t('metrics.stats.noContactRateDesc'),
 				value: noContactRateValue,
 				color: 'orange.5',
 			},
@@ -297,30 +297,30 @@ const ContactListMetrics = ({ contactGroupId }: ContactListMetricsProps) => {
 		return [
 			{
 				key: 'effectiveContacts',
-				label: t('contactListPage.metrics.stats.effective'),
+				label: t('metrics.stats.effective'),
 				value: general.effectiveContacts,
-				description: t('contactListPage.metrics.stats.effectiveDesc'),
+				description: t('metrics.stats.effectiveDesc'),
 				color: 'var(--mantine-color-green-6)',
 			},
 			{
 				key: 'ineffectiveContacts',
-				label: t('contactListPage.metrics.stats.noEffective'),
+				label: t('metrics.stats.noEffective'),
 				value: general.noEffectiveContacts,
-				description: t('contactListPage.metrics.stats.noEffectiveDesc'),
+				description: t('metrics.stats.noEffectiveDesc'),
 				color: 'var(--mantine-color-yellow-6)',
 			},
 			{
 				key: 'noContact',
-				label: t('contactListPage.metrics.stats.noContact'),
+				label: t('metrics.stats.noContact'),
 				value: general.noContact,
-				description: t('contactListPage.metrics.stats.noContactDesc'),
+				description: t('metrics.stats.noContactDesc'),
 				color: 'var(--mantine-color-orange-6)',
 			},
 			{
 				key: 'dnc',
-				label: t('contactListPage.metrics.stats.dnc'),
+				label: t('metrics.stats.dnc'),
 				value: general.dnc,
-				description: t('contactListPage.metrics.stats.dncDesc'),
+				description: t('metrics.stats.dncDesc'),
 				color: 'var(--mantine-color-red-6)',
 			},
 		];
@@ -332,9 +332,9 @@ const ContactListMetrics = ({ contactGroupId }: ContactListMetricsProps) => {
 				variant='light'
 				color='gray'
 				icon={<IconAlertCircle size={18} />}
-				title={t('contactListPage.metrics.alerts.noSelection')}
+				title={t('metrics.alerts.noSelection')}
 			>
-				{t('contactListPage.metrics.alerts.noSelectionDesc')}
+				{t('metrics.alerts.noSelectionDesc')}
 			</Alert>
 		);
 	}
@@ -349,11 +349,11 @@ const ContactListMetrics = ({ contactGroupId }: ContactListMetricsProps) => {
 				variant='light'
 				color='red'
 				icon={<IconAlertCircle size={18} />}
-				title={t('contactListPage.metrics.alerts.unableToLoad')}
+				title={t('metrics.alerts.unableToLoad')}
 			>
 				<Flex align='center' justify='space-between' gap='md'>
 					<Text size='sm' c='dimmed'>
-						{t('contactListPage.metrics.alerts.unableToLoadDesc')}
+						{t('metrics.alerts.unableToLoadDesc')}
 					</Text>
 					<Button
 						variant='light'
@@ -364,7 +364,7 @@ const ContactListMetrics = ({ contactGroupId }: ContactListMetricsProps) => {
 						leftSection={<IconTargetArrow size={16} />}
 						loading={isRefetching}
 					>
-						{t('contactListPage.status.tryAgain')}
+						{t('status.tryAgain')}
 					</Button>
 				</Flex>
 			</Alert>
@@ -377,10 +377,10 @@ const ContactListMetrics = ({ contactGroupId }: ContactListMetricsProps) => {
 				variant='light'
 				color='gray'
 				icon={<IconAlertCircle size={18} />}
-				title={t('contactListPage.metrics.alerts.notAvailable')}
+				title={t('metrics.alerts.notAvailable')}
 			>
 				<Text size='sm' c='dimmed'>
-					{t('contactListPage.metrics.alerts.notAvailableDesc')}
+					{t('metrics.alerts.notAvailableDesc')}
 				</Text>
 			</Alert>
 		);
@@ -388,8 +388,8 @@ const ContactListMetrics = ({ contactGroupId }: ContactListMetricsProps) => {
 
 	return (
 		<SectionCard
-			title={t('contactListPage.metrics.title')}
-			description={t('contactListPage.metrics.description')}
+			title={t('metrics.title')}
+			description={t('metrics.description')}
 			headerActions={
 				<Flex gap='sm' align='center'>
 					<Select
@@ -415,7 +415,7 @@ const ContactListMetrics = ({ contactGroupId }: ContactListMetricsProps) => {
 							modals.open({
 								modalId: 'sip-trunk-info-modal',
 								fullScreen: true,
-								title: t('contactListPage.metrics.sipTrunkInfo'),
+								title: t('metrics.sipTrunkInfo'),
 								children: <SIPTrunk />,
 							});
 						}}

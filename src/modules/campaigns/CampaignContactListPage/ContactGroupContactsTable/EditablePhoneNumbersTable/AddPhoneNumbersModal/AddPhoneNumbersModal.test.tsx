@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi } from 'vitest';
+import { beforeEach, describe, it, expect, vi } from 'vitest';
 import AddPhoneNumbersModal from './AddPhoneNumbersModal';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
@@ -20,6 +20,11 @@ vi.mock('@mantine/notifications', () => ({
 }));
 
 describe('AddPhoneNumbersModal', () => {
+	beforeEach(() => {
+		mutateMock.mockReset();
+		vi.clearAllMocks();
+	});
+
 	it('validates phone numbers and blocks save when invalid', async () => {
 		const user = userEvent.setup();
 		renderWithProviders(
@@ -35,14 +40,10 @@ describe('AddPhoneNumbersModal', () => {
 		await user.clear(input);
 		await user.type(input, '123');
 
-		expect(
-			screen.getByText(
-				'contactListPage.phoneNumbersTable.addModal.invalidNumber'
-			)
-		).toBeInTheDocument();
+		expect(screen.getByText('Invalid DR number')).toBeInTheDocument();
 		expect(
 			screen.getByRole('button', {
-				name: 'contactListPage.phoneNumbersTable.addModal.save',
+				name: 'Save',
 			})
 		).toBeDisabled();
 	});
@@ -69,7 +70,7 @@ describe('AddPhoneNumbersModal', () => {
 
 		await user.click(
 			screen.getByRole('button', {
-				name: 'contactListPage.phoneNumbersTable.addModal.save',
+				name: 'Save',
 			})
 		);
 
@@ -96,14 +97,10 @@ describe('AddPhoneNumbersModal', () => {
 		await user.type(inputs[0], '+18095551234');
 		await user.type(inputs[1], '+18095551234');
 
-		expect(
-			screen.getByText(
-				'contactListPage.phoneNumbersTable.addModal.duplicateNumbers'
-			)
-		).toBeInTheDocument();
+		expect(screen.getByText('Duplicate numbers detected.')).toBeInTheDocument();
 		expect(
 			screen.getByRole('button', {
-				name: 'contactListPage.phoneNumbersTable.addModal.save',
+				name: 'Save',
 			})
 		).toBeDisabled();
 	});

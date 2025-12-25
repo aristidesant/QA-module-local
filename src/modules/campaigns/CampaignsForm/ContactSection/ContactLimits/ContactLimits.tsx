@@ -48,7 +48,7 @@ export const ContactLimits = ({
 	objectiveId,
 	campaignId,
 }: ContactLimitsProps) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation('campaigns');
 	const processFileMutation = useProcessContactGroupFile();
 	const { setRightComponent, selectedCampaign } = useCampaignsStore(
 		(state) => state
@@ -125,8 +125,8 @@ export const ContactLimits = ({
 		// Name is always required
 		if (!data.name?.trim()) {
 			notifications.show({
-				title: t('campaigns.form.contacts.limits.notifications.invalidInput'),
-				message: t('campaigns.form.contacts.limits.notifications.nameRequired'),
+				title: t('form.contacts.limits.notifications.invalidInput'),
+				message: t('form.contacts.limits.notifications.nameRequired'),
 				color: 'red',
 			});
 			return false;
@@ -135,10 +135,8 @@ export const ContactLimits = ({
 		// Validate human equivalent doesn't exceed available capacity
 		if (humanEquivalent > sliderMax) {
 			notifications.show({
-				title: t('campaigns.form.contacts.limits.notifications.invalidInput'),
-				message: t(
-					'campaigns.form.contacts.limits.notifications.capacityExceeded'
-				),
+				title: t('form.contacts.limits.notifications.invalidInput'),
+				message: t('form.contacts.limits.notifications.capacityExceeded'),
 				color: 'red',
 			});
 			return false;
@@ -146,8 +144,8 @@ export const ContactLimits = ({
 
 		if (!maxWaves || maxWaves < 1) {
 			notifications.show({
-				title: t('campaigns.form.contacts.limits.notifications.invalidInput'),
-				message: t('campaigns.form.contacts.limits.notifications.wavesMinimum'),
+				title: t('form.contacts.limits.notifications.invalidInput'),
+				message: t('form.contacts.limits.notifications.wavesMinimum'),
 				color: 'red',
 			});
 			return false;
@@ -156,12 +154,8 @@ export const ContactLimits = ({
 		// Prevent creating when scheduler is full
 		if (isCreatingAndFull) {
 			notifications.show({
-				title: t(
-					'campaigns.form.contacts.limits.notifications.schedulerFullTitle'
-				),
-				message: t(
-					'campaigns.form.contacts.limits.notifications.schedulerFullMessage'
-				),
+				title: t('form.contacts.limits.notifications.schedulerFullTitle'),
+				message: t('form.contacts.limits.notifications.schedulerFullMessage'),
 				color: 'red',
 			});
 			return false;
@@ -198,7 +192,10 @@ export const ContactLimits = ({
 					contactGroupFileId: fileSummary.contactGroupFileId,
 					fieldMapping,
 					groupName:
-						data.name || `Contact List ${new Date().toLocaleDateString()}`,
+						data.name ||
+						t('form.contacts.limits.defaultName', {
+							date: new Date().toLocaleDateString(),
+						}),
 					groupDescription: data.description || '',
 					groupExpiration: new Date(
 						Date.now() + 30 * 24 * 60 * 60 * 1000
@@ -212,10 +209,8 @@ export const ContactLimits = ({
 				});
 
 				notifications.show({
-					title: t('campaigns.form.contacts.limits.notifications.successTitle'),
-					message: t(
-						'campaigns.form.contacts.limits.notifications.saveSuccess'
-					),
+					title: t('form.contacts.limits.notifications.successTitle'),
+					message: t('form.contacts.limits.notifications.saveSuccess'),
 					color: 'green',
 				});
 			} else if (contactGroup.id) {
@@ -231,10 +226,8 @@ export const ContactLimits = ({
 				});
 
 				notifications.show({
-					title: t('campaigns.form.contacts.limits.notifications.successTitle'),
-					message: t(
-						'campaigns.form.contacts.limits.notifications.updateSuccess'
-					),
+					title: t('form.contacts.limits.notifications.successTitle'),
+					message: t('form.contacts.limits.notifications.updateSuccess'),
 					color: 'green',
 				});
 			}
@@ -243,9 +236,9 @@ export const ContactLimits = ({
 		} catch (error: any) {
 			const errorMessage =
 				error?.response?.data?.message ||
-				t('campaigns.form.contacts.limits.notifications.saveError');
+				t('form.contacts.limits.notifications.saveError');
 			notifications.show({
-				title: t('campaigns.form.contacts.limits.notifications.errorTitle'),
+				title: t('form.contacts.limits.notifications.errorTitle'),
 				message: errorMessage,
 				color: 'red',
 			});
@@ -271,8 +264,8 @@ export const ContactLimits = ({
 					}}
 				/>
 				<NumberInput
-					label={t('campaigns.form.contacts.limits.maxWavesLabel')}
-					description={t('campaigns.form.contacts.limits.maxWavesDescription')}
+					label={t('form.contacts.limits.maxWavesLabel')}
+					description={t('form.contacts.limits.maxWavesDescription')}
 					value={maxWaves}
 					onChange={(value) =>
 						setMaxWaves(typeof value === 'number' ? value : 0)
@@ -289,20 +282,20 @@ export const ContactLimits = ({
 				{isCreatingAndFull && (
 					<Alert
 						icon={<IconInfoCircle size={16} />}
-						title={t('campaigns.form.contacts.limits.capacityFull.title')}
+						title={t('form.contacts.limits.capacityFull.title')}
 						color='yellow'
 					>
-						{t('campaigns.form.contacts.limits.capacityFull.message')}
+						{t('form.contacts.limits.capacityFull.message')}
 					</Alert>
 				)}
 				<Box>
 					<Group justify='space-between' mb='xs'>
 						<Text size='sm' fw={500}>
-							{t('campaigns.form.contacts.limits.humanEquivalentLabel')}:{' '}
+							{t('form.contacts.limits.humanEquivalentLabel')}:{' '}
 							{humanEquivalent}
 						</Text>
 						<Text size='xs' c='dimmed'>
-							{t('campaigns.form.contacts.limits.availableLabel')}:{' '}
+							{t('form.contacts.limits.availableLabel')}:{' '}
 							{maxAvailableHumanEquivalent}
 						</Text>
 					</Group>
@@ -343,7 +336,7 @@ export const ContactLimits = ({
 							updateContactGroupMutation.isPending
 						}
 					>
-						{t('common.cancel')}
+						{t('cancel', { ns: 'common' })}
 					</Button>
 					<Button
 						onClick={handleSubmit}
@@ -358,8 +351,8 @@ export const ContactLimits = ({
 						}
 					>
 						{contactGroup.id
-							? t('campaigns.form.contacts.limits.actions.update')
-							: t('campaigns.form.contacts.limits.actions.save')}
+							? t('form.contacts.limits.actions.update')
+							: t('form.contacts.limits.actions.save')}
 					</Button>
 				</Group>
 			</Stack>

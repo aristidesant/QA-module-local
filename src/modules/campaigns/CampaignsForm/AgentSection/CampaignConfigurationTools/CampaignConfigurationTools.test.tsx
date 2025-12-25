@@ -1,6 +1,7 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import CampaignConfigurationTools from './CampaignConfigurationTools';
+import renderWithProviders from '~/test-utils/renderWithProviders';
 
 const mockSetFieldValue = vi.fn();
 const mockUseToolCategories = vi.fn();
@@ -74,7 +75,7 @@ describe('CampaignConfigurationTools', () => {
 		mockUseToolCategories.mockReturnValue({ data: [] });
 		mockUseToolsByCategory.mockReturnValue({ data: [] });
 
-		render(<CampaignConfigurationTools />);
+		renderWithProviders(<CampaignConfigurationTools />);
 
 		expect(screen.getByText('No agent tools configured.')).toBeVisible();
 	});
@@ -87,7 +88,7 @@ describe('CampaignConfigurationTools', () => {
 			data: [{ identifier: 'tool-1', name: 'Webhook Tool', description: '' }],
 		});
 
-		render(<CampaignConfigurationTools />);
+		renderWithProviders(<CampaignConfigurationTools />);
 
 		fireEvent.click(screen.getByRole('switch', { name: /Webhook Tool/i }));
 

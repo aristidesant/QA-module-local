@@ -20,7 +20,7 @@ const PromptMenuItem: React.FC<PromptMenuItemProps> = ({
 	isDrafted,
 	hasValue,
 }) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation('campaigns');
 	return (
 		<UnstyledButton
 			onClick={onClick}
@@ -43,10 +43,10 @@ const PromptMenuItem: React.FC<PromptMenuItemProps> = ({
 				className={styles.menuStatusBadge}
 			>
 				{isDrafted
-					? t('campaigns.form.agent.prompt.status.drafted')
+					? t('form.agent.prompt.editor.status.drafted')
 					: hasValue
-						? t('campaigns.form.agent.prompt.status.saved')
-						: t('campaigns.form.agent.prompt.status.empty')}
+						? t('form.agent.prompt.editor.status.saved')
+						: t('form.agent.prompt.editor.status.empty')}
 			</Badge>
 		</UnstyledButton>
 	);

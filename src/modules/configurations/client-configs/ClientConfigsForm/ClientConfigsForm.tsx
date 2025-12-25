@@ -7,6 +7,7 @@ import {
 	useUpdateClientConfig,
 } from '~/queries/useClientConfigs';
 import type { ClientConfig } from '~/models/ClientConfig';
+import { useTranslation } from 'react-i18next';
 
 import styles from './ClientConfigsForm.module.css';
 
@@ -16,19 +17,12 @@ interface ClientConfigsFormProps {
 	onCancel: () => void;
 }
 
-const CONFIG_TYPES = [
-	{ value: 'string', label: 'String' },
-	{ value: 'number', label: 'Number' },
-	{ value: 'boolean', label: 'Boolean' },
-	{ value: 'json', label: 'JSON' },
-	{ value: 'array', label: 'Array' },
-];
-
 export function ClientConfigsForm({
 	config,
 	onSuccess,
 	onCancel,
 }: ClientConfigsFormProps) {
+	const { t } = useTranslation('client-configs');
 	const isEditMode = !!config;
 
 	const createMutation = useCreateClientConfig();
@@ -43,29 +37,30 @@ export function ClientConfigsForm({
 		},
 		validate: {
 			name: (value) => {
-				if (!value) return 'Name is required';
+				if (!value) return t('form.fields.name.required');
 				if (isEditMode) return null; // Name can't be changed in edit mode
 				if (!/^[a-z0-9_]+$/.test(value)) {
-					return 'Name must contain only lowercase letters, numbers, and underscores';
+					return t('form.fields.name.invalid');
 				}
 				return null;
 			},
-			description: (value) => (!value ? 'Description is required' : null),
+			description: (value) =>
+				!value ? t('form.fields.description.required') : null,
 			value: (value, values) => {
-				if (!value) return 'Value is required';
+				if (!value) return t('form.fields.value.required');
 
 				// Validate JSON/array types
 				if (values.type === 'json' || values.type === 'array') {
 					try {
 						JSON.parse(value);
 					} catch (error) {
-						return 'Invalid JSON format';
+						return t('form.fields.value.invalidJson');
 					}
 				}
 
 				return null;
 			},
-			type: (value) => (!value ? 'Type is required' : null),
+			type: (value) => (!value ? t('form.fields.type.required') : null),
 		},
 	});
 
@@ -109,8 +104,8 @@ export function ClientConfigsForm({
 					},
 				});
 				notifications.show({
-					title: 'Success',
-					message: 'Configuration updated successfully',
+					title: t('form.notifications.updateSuccessTitle'),
+					message: t('form.notifications.updateSuccessMessage'),
 					color: 'green',
 				});
 			} else {
@@ -121,20 +116,45 @@ export function ClientConfigsForm({
 					type: values.type,
 				});
 				notifications.show({
-					title: 'Success',
-					message: 'Configuration created successfully',
+					title: t('form.notifications.createSuccessTitle'),
+					message: t('form.notifications.createSuccessMessage'),
 					color: 'green',
 				});
 			}
 			onSuccess();
 		} catch (error) {
 			notifications.show({
-				title: 'Error',
-				message: `Failed to ${isEditMode ? 'update' : 'create'} configuration`,
+				title: t('form.notifications.errorTitle'),
+				message: t('form.notifications.errorMessage', {
+					action: isEditMode ? 'update' : 'create',
+				}),
 				color: 'red',
 			});
 		}
 	};
+
+	const configTypes = [
+		{
+			value: 'string',
+			label: t('form.fields.type.options.string'),
+		},
+		{
+			value: 'number',
+			label: t('form.fields.type.options.number'),
+		},
+		{
+			value: 'boolean',
+			label: t('form.fields.type.options.boolean'),
+		},
+		{
+			value: 'json',
+			label: t('form.fields.type.options.json'),
+		},
+		{
+			value: 'array',
+			label: t('form.fields.type.options.array'),
+		},
+	];
 
 	return (
 		<div className={styles.formWrapper}>
@@ -142,69 +162,70 @@ export function ClientConfigsForm({
 				{/* Left Side - Common Inputs */}
 				<div className={styles.well}>
 					<div className={styles.sectionHeader}>
-						<h3 className={styles.sectionTitle}>Configuration Details</h3>
+						<h3 className={styles.sectionTitle}>{t('form.details.title')}</h3>
 						<p className={styles.sectionDescription}>
-							Set up the basic information for this configuration
+							{t('form.details.description')}
 						</p>
 					</div>
 
 					<TextInput
-						label='Name'
-						placeholder='contact_columns'
+						label={t('form.fields.name.label')}
+						placeholder={t('form.fields.name.placeholder')}
 						required
 						disabled={isEditMode}
 						description={
 							isEditMode
-								? 'Name cannot be changed'
-								: 'Use lowercase letters, numbers, and underscores only'
+								? t('form.fields.name.descriptionEdit')
+								: t('form.fields.name.descriptionCreate')
 						}
 						{...form.getInputProps('name')}
 						className={styles.input}
-						radius='md'
-						size='md'
+						radius='sm'
+						size='sm'
 					/>
 
 					<Textarea
-						label='Description'
-						placeholder='Brief description of the configuration'
+						label={t('form.fields.description.label')}
+						placeholder={t('form.fields.description.placeholder')}
 						required
 						autosize={false}
 						minRows={9}
 						rows={9}
 						{...form.getInputProps('description')}
 						className={styles.descriptionTextarea}
-						radius='md'
+						radius='sm'
+						size='sm'
 					/>
 
 					<Select
-						label='Type'
-						placeholder='Select configuration type'
+						label={t('form.fields.type.label')}
+						placeholder={t('form.fields.type.placeholder')}
 						required
-						data={CONFIG_TYPES}
+						data={configTypes}
 						{...form.getInputProps('type')}
 						className={styles.input}
-						radius='md'
-						size='md'
+						radius='sm'
+						size='sm'
 					/>
 				</div>
 
 				{/* Right Side - Textarea */}
 				<div className={styles.well}>
 					<div className={styles.sectionHeader}>
-						<h3 className={styles.sectionTitle}>Configuration Value</h3>
+						<h3 className={styles.sectionTitle}>{t('form.value.title')}</h3>
 						<p className={styles.sectionDescription}>
 							{form.values.type === 'json' || form.values.type === 'array'
-								? 'Enter valid JSON that will be auto-formatted'
-								: 'Enter the configuration value'}
+								? t('form.value.descriptionJson')
+								: t('form.value.descriptionDefault')}
 						</p>
 					</div>
 
 					<Textarea
-						label='Value'
+						label={t('form.fields.value.label')}
 						placeholder={
 							form.values.type === 'json' || form.values.type === 'array'
-								? '{"key": "value"}'
-								: 'Enter configuration value'
+								? t('form.fields.value.placeholderJson')
+								: t('form.fields.value.placeholderDefault')
 						}
 						required
 						autosize
@@ -216,23 +237,24 @@ export function ClientConfigsForm({
 							handleValueBlur();
 						}}
 						className={styles.valueTextarea}
-						radius='md'
+						radius='sm'
+						size='sm'
 					/>
 				</div>
 			</div>
 
 			<form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
-				<Group justify='flex-end' gap='md' className={styles.actions}>
-					<Button variant='light' onClick={onCancel} size='sm' radius='md'>
-						Cancel
+				<Group justify='flex-end' gap='xs' className={styles.actions}>
+					<Button variant='light' onClick={onCancel} size='sm' radius='sm'>
+						{t('form.actions.cancel')}
 					</Button>
 					<Button
 						type='submit'
 						loading={createMutation.isPending || updateMutation.isPending}
 						size='sm'
-						radius='md'
+						radius='sm'
 					>
-						{isEditMode ? 'Update Configuration' : 'Create Configuration'}
+						{isEditMode ? t('form.actions.update') : t('form.actions.create')}
 					</Button>
 				</Group>
 			</form>

@@ -40,13 +40,13 @@ interface PredefinedScheduleFormValues {
 const getDayLabelMap = (
 	t: TFunction
 ): Record<DayConfig['dayOfWeek'], string> => ({
-	monday: t('campaigns.scheduler.schedulerBuilder.days.monday'),
-	tuesday: t('campaigns.scheduler.schedulerBuilder.days.tuesday'),
-	wednesday: t('campaigns.scheduler.schedulerBuilder.days.wednesday'),
-	thursday: t('campaigns.scheduler.schedulerBuilder.days.thursday'),
-	friday: t('campaigns.scheduler.schedulerBuilder.days.friday'),
-	saturday: t('campaigns.scheduler.schedulerBuilder.days.saturday'),
-	sunday: t('campaigns.scheduler.schedulerBuilder.days.sunday'),
+	monday: t('scheduler.schedulerBuilder.days.monday'),
+	tuesday: t('scheduler.schedulerBuilder.days.tuesday'),
+	wednesday: t('scheduler.schedulerBuilder.days.wednesday'),
+	thursday: t('scheduler.schedulerBuilder.days.thursday'),
+	friday: t('scheduler.schedulerBuilder.days.friday'),
+	saturday: t('scheduler.schedulerBuilder.days.saturday'),
+	sunday: t('scheduler.schedulerBuilder.days.sunday'),
 });
 
 const allDaysOfWeek: Array<DayConfig['dayOfWeek']> = [
@@ -100,7 +100,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 	onCancel,
 	campaignId,
 }) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation('campaigns');
 	const createScheduleMutation = useCreateCampaignSchedule();
 	const clientConfigQuery = useGetClientConfig('scheduler_predefined_params');
 
@@ -124,7 +124,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 				value: String(index),
 				label:
 					schedule.name ||
-					t('campaigns.scheduler.schedulerBuilder.status.scheduleN', {
+					t('scheduler.schedulerBuilder.status.scheduleN', {
 						index: index + 1,
 					}),
 			})),
@@ -142,22 +142,20 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 			name: (value) =>
 				value.trim()
 					? null
-					: t('campaigns.scheduler.schedulerBuilder.validation.nameRequired'),
+					: t('scheduler.schedulerBuilder.validation.nameRequired'),
 			predefinedScheduleId: (value) =>
 				value
 					? null
-					: t(
-							'campaigns.scheduler.schedulerBuilder.validation.scheduleRequired'
-						),
+					: t('scheduler.schedulerBuilder.validation.scheduleRequired'),
 			humanEquivalent: (value) => {
 				if (value === undefined || value === null) {
 					return t(
-						'campaigns.scheduler.schedulerBuilder.validation.humanEquivalentRequired'
+						'scheduler.schedulerBuilder.validation.humanEquivalentRequired'
 					);
 				}
 				if (typeof value !== 'number' || isNaN(value)) {
 					return t(
-						'campaigns.scheduler.schedulerBuilder.validation.humanEquivalentNumber'
+						'scheduler.schedulerBuilder.validation.humanEquivalentNumber'
 					);
 				}
 
@@ -193,13 +191,13 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 			if (!dayConfig || !dayConfig.isActive) {
 				return {
 					isActive: false,
-					times: t('campaigns.scheduler.schedulerBuilder.status.off'),
+					times: t('scheduler.schedulerBuilder.status.off'),
 				};
 			}
 			const times =
 				dayConfig.startHour && dayConfig.endHour
 					? `${dayConfig.startHour.slice(0, 5)} - ${dayConfig.endHour.slice(0, 5)}`
-					: t('campaigns.scheduler.schedulerBuilder.status.noHours');
+					: t('scheduler.schedulerBuilder.status.noHours');
 			return { isActive: true, times };
 		},
 		[dayConfigMap, t]
@@ -213,9 +211,9 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 	const handleSubmit = async (values: PredefinedScheduleFormValues) => {
 		if (!campaignId) {
 			notifications.show({
-				title: t('campaigns.scheduler.schedulerBuilder.notifications.error'),
+				title: t('scheduler.schedulerBuilder.notifications.error'),
 				message: t(
-					'campaigns.scheduler.schedulerBuilder.notifications.campaignIdRequired'
+					'scheduler.schedulerBuilder.notifications.campaignIdRequired'
 				),
 				color: 'red',
 			});
@@ -229,10 +227,8 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 		// Validate that we have dayConfigs
 		if (dayConfigs.length === 0) {
 			notifications.show({
-				title: t('campaigns.scheduler.schedulerBuilder.notifications.error'),
-				message: t(
-					'campaigns.scheduler.schedulerBuilder.validation.scheduleRequired'
-				),
+				title: t('scheduler.schedulerBuilder.notifications.error'),
+				message: t('scheduler.schedulerBuilder.validation.scheduleRequired'),
 				color: 'red',
 			});
 			return;
@@ -254,10 +250,8 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 			});
 
 			notifications.show({
-				title: t('campaigns.scheduler.schedulerBuilder.notifications.success'),
-				message: t(
-					'campaigns.scheduler.schedulerBuilder.notifications.created'
-				),
+				title: t('scheduler.schedulerBuilder.notifications.success'),
+				message: t('scheduler.schedulerBuilder.notifications.created'),
 				color: 'green',
 				icon: <IconCheck size={16} />,
 			});
@@ -269,9 +263,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 			console.error('Error creating predefined schedule:', error);
 
 			// Extract error message from API response
-			let errorMessage = t(
-				'campaigns.scheduler.schedulerBuilder.notifications.failed'
-			);
+			let errorMessage = t('scheduler.schedulerBuilder.notifications.failed');
 
 			if (error?.response?.data?.message) {
 				// API returned a specific error message
@@ -282,9 +274,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 			}
 
 			notifications.show({
-				title: t(
-					'campaigns.scheduler.schedulerBuilder.notifications.errorCreating'
-				),
+				title: t('scheduler.schedulerBuilder.notifications.errorCreating'),
 				message: errorMessage,
 				color: 'red',
 				autoClose: 8000, // Keep notification visible longer for error messages
@@ -298,10 +288,10 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 				<Group justify='space-between' align='flex-start'>
 					<div>
 						<Text size='sm' fw={700}>
-							{t('campaigns.scheduler.schedulerBuilder.curatedSchedules')}
+							{t('scheduler.schedulerBuilder.curatedSchedules')}
 						</Text>
 						<Text size='xs' c='dimmed'>
-							{t('campaigns.scheduler.schedulerBuilder.curatedDescription')}
+							{t('scheduler.schedulerBuilder.curatedDescription')}
 						</Text>
 					</div>
 					<Badge
@@ -309,7 +299,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 						size='sm'
 						leftSection={<IconCalendarStats size={14} />}
 					>
-						{t('campaigns.scheduler.schedulerBuilder.builder')}
+						{t('scheduler.schedulerBuilder.builder')}
 					</Badge>
 				</Group>
 
@@ -321,25 +311,23 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 							</ThemeIcon>
 							<div>
 								<Text size='sm' fw={600}>
-									{t('campaigns.scheduler.schedulerBuilder.predefinedSchedule')}
+									{t('scheduler.schedulerBuilder.predefinedSchedule')}
 								</Text>
 								<Text size='xs' c='dimmed'>
-									{t(
-										'campaigns.scheduler.schedulerBuilder.predefinedDescription'
-									)}
+									{t('scheduler.schedulerBuilder.predefinedDescription')}
 								</Text>
 							</div>
 						</Group>
 						<Select
 							placeholder={t(
-								'campaigns.scheduler.schedulerBuilder.predefinedPlaceholder'
+								'scheduler.schedulerBuilder.predefinedPlaceholder'
 							)}
 							data={scheduleOptions}
 							searchable
 							required
 							size='sm'
 							nothingFoundMessage={t(
-								'campaigns.scheduler.schedulerBuilder.predefinedNoData'
+								'scheduler.schedulerBuilder.predefinedNoData'
 							)}
 							className={classes.field}
 							{...form.getInputProps('predefinedScheduleId')}
@@ -348,12 +336,10 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 							<Group justify='space-between' align='center' gap='xs'>
 								<div>
 									<Text size='xs' fw={600}>
-										{t('campaigns.scheduler.schedulerBuilder.preview')}
+										{t('scheduler.schedulerBuilder.preview')}
 									</Text>
 									<Text size='xs' c='dimmed'>
-										{t(
-											'campaigns.scheduler.schedulerBuilder.previewDescription'
-										)}
+										{t('scheduler.schedulerBuilder.previewDescription')}
 									</Text>
 								</div>
 								{selectedSchedule && (
@@ -406,7 +392,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 								</Table>
 							) : (
 								<Text size='xs' c='dimmed'>
-									{t('campaigns.scheduler.schedulerBuilder.previewEmpty')}
+									{t('scheduler.schedulerBuilder.previewEmpty')}
 								</Text>
 							)}
 						</div>
@@ -421,27 +407,25 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 							</ThemeIcon>
 							<div>
 								<Text size='sm' fw={600}>
-									{t('campaigns.scheduler.schedulerBuilder.details')}
+									{t('scheduler.schedulerBuilder.details')}
 								</Text>
 								<Text size='xs' c='dimmed'>
-									{t('campaigns.scheduler.schedulerBuilder.detailsDescription')}
+									{t('scheduler.schedulerBuilder.detailsDescription')}
 								</Text>
 							</div>
 						</Group>
 						<TextInput
-							label={t('campaigns.scheduler.schedulerBuilder.name')}
-							placeholder={t(
-								'campaigns.scheduler.schedulerBuilder.namePlaceholder'
-							)}
+							label={t('scheduler.schedulerBuilder.name')}
+							placeholder={t('scheduler.schedulerBuilder.namePlaceholder')}
 							required
 							size='sm'
 							className={classes.field}
 							{...form.getInputProps('name')}
 						/>
 						<Textarea
-							label={t('campaigns.scheduler.schedulerBuilder.description')}
+							label={t('scheduler.schedulerBuilder.description')}
 							placeholder={t(
-								'campaigns.scheduler.schedulerBuilder.descriptionPlaceholder'
+								'scheduler.schedulerBuilder.descriptionPlaceholder'
 							)}
 							minRows={3}
 							rows={3}
@@ -453,7 +437,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 						<Stack gap='xs' className={classes.field}>
 							<Group justify='space-between' align='center'>
 								<Text size='sm' fw={600}>
-									{t('campaigns.scheduler.schedulerBuilder.humanEquivalent')}
+									{t('scheduler.schedulerBuilder.humanEquivalent')}
 								</Text>
 								<Badge size='sm' variant='outline' color='blue'>
 									{form.values.humanEquivalent}
@@ -483,7 +467,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 				<Group justify='flex-end' className={classes.actionBar}>
 					{onCancel && (
 						<Button variant='default' onClick={onCancel} size='sm'>
-							{t('campaigns.scheduler.schedulerBuilder.cancel')}
+							{t('scheduler.schedulerBuilder.cancel')}
 						</Button>
 					)}
 					<Button
@@ -491,7 +475,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 						loading={createScheduleMutation.isPending}
 						size='sm'
 					>
-						{t('campaigns.scheduler.schedulerBuilder.create')}
+						{t('scheduler.schedulerBuilder.create')}
 					</Button>
 				</Group>
 			</Stack>

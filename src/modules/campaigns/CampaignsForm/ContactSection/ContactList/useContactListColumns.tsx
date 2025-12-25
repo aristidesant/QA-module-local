@@ -31,7 +31,7 @@ const useContactListColumns = ({
 	campaignId,
 	onNavigateToContactList,
 }: UseContactListColumnsParams): ColumnDef<ContactGroup>[] => {
-	const { t } = useTranslation();
+	const { t } = useTranslation('campaigns');
 	const toggleMutation = useToggleContactGroupStatus();
 	const updateMutation = useUpdateContactGroup();
 	const deleteMutation = useDeleteContactGroup();
@@ -50,7 +50,7 @@ const useContactListColumns = ({
 			},
 			{
 				id: 'name',
-				header: t('campaigns.form.contacts.list.columns.name'),
+				header: t('form.contacts.list.columns.name'),
 				cell: ({ row }) => {
 					const name = row.original.name;
 					const maxLength = 20;
@@ -67,7 +67,7 @@ const useContactListColumns = ({
 			},
 			{
 				id: 'contactCount',
-				header: t('campaigns.form.contacts.list.columns.total'),
+				header: t('form.contacts.list.columns.total'),
 				cell: ({ row }) => (
 					<Text fz='sm'>
 						{row.original.contactCount?.toLocaleString() || 0}
@@ -76,7 +76,7 @@ const useContactListColumns = ({
 			},
 			{
 				id: 'humanEquivalent',
-				header: t('campaigns.form.contacts.list.columns.assigned'),
+				header: t('form.contacts.list.columns.assigned'),
 				cell: ({ row }) => (
 					<Text fz='sm'>
 						{row.original.humanEquivalent?.toLocaleString() || 0}
@@ -85,7 +85,7 @@ const useContactListColumns = ({
 			},
 			{
 				id: 'waves',
-				header: t('campaigns.form.contacts.details.stats.waves'),
+				header: t('form.contacts.details.stats.waves'),
 				cell: ({ row }) => {
 					const { currentWave, maxWaves } = row.original;
 					if (!maxWaves) {
@@ -100,26 +100,26 @@ const useContactListColumns = ({
 			},
 			{
 				id: 'createdAt',
-				header: t('campaigns.form.contacts.details.meta.listStatus'),
+				header: t('form.contacts.details.meta.listStatus'),
 				cell: ({ row }) => (
 					<Text fz='sm'>{timeAgo(row.original.createdAt)}</Text>
 				),
 			},
 			{
 				id: 'queueStatus',
-				header: t('campaigns.form.contacts.list.columns.status'),
+				header: t('form.contacts.list.columns.status'),
 				cell: ({ row }) => {
 					const statusConfig = getQueueStatusConfig(row.original.queueStatus);
 					return (
 						<Badge variant='light' color={statusConfig.color} size='sm'>
-							{statusConfig.label}
+							{t(statusConfig.label)}
 						</Badge>
 					);
 				},
 			},
 			{
 				id: 'actions',
-				header: t('campaigns.form.contacts.list.columns.actions'),
+				header: t('form.contacts.list.columns.actions'),
 				cell: ({ row }) => {
 					const contactGroup = row.original;
 
@@ -130,9 +130,7 @@ const useContactListColumns = ({
 						<Group gap='xs' justify='flex-start' wrap='nowrap'>
 							{onNavigateToContactList && (
 								<Tooltip
-									label={t(
-										'campaigns.form.contacts.details.actions.openContactList'
-									)}
+									label={t('form.contacts.details.actions.openContactList')}
 									withArrow
 								>
 									<ActionIcon
@@ -142,7 +140,7 @@ const useContactListColumns = ({
 											onNavigateToContactList(contactGroup);
 										}}
 										aria-label={t(
-											'campaigns.form.contacts.details.actions.openContactList'
+											'form.contacts.details.actions.openContactList'
 										)}
 										disabled={isLoading}
 									>

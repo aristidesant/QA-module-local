@@ -11,7 +11,7 @@ export interface CapacityProgressProps {
 }
 
 const CapacityProgress = ({ campaignId }: CapacityProgressProps) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation('campaigns');
 	const { data: activeSchedule } = useCampaignActiveSchedule(campaignId);
 	const { data: contactGroupsData } = useGetContactGroups({
 		isActive: true,
@@ -73,7 +73,7 @@ const CapacityProgress = ({ campaignId }: CapacityProgressProps) => {
 				className={classes.capacityHeader}
 			>
 				<Text size='sm' fw={600} className={classes.capacityTitle}>
-					{t('campaigns.form.contacts.list.capacity.title')}
+					{t('form.contacts.list.capacity.title')}
 				</Text>
 				<Box className={classes.percentageBadge} data-intent={progressIntent}>
 					<Text className={classes.percentageValue}>{usagePercentage}%</Text>
@@ -92,7 +92,7 @@ const CapacityProgress = ({ campaignId }: CapacityProgressProps) => {
 			<Group justify='space-around' className={classes.capacityDetails}>
 				<div className={classes.detailItem}>
 					<Text size='xs' c='dimmed' className={classes.detailLabel}>
-						{t('campaigns.form.contacts.list.capacity.used')}
+						{t('form.contacts.list.capacity.used')}
 					</Text>
 					<Text size='sm' fw={600}>
 						{numberFormatter.format(usageEquivalent)}
@@ -100,7 +100,7 @@ const CapacityProgress = ({ campaignId }: CapacityProgressProps) => {
 				</div>
 				<div className={classes.detailItem}>
 					<Text size='xs' c='dimmed' className={classes.detailLabel}>
-						{t('campaigns.form.contacts.list.capacity.remaining')}
+						{t('form.contacts.list.capacity.remaining')}
 					</Text>
 					<Text size='sm' fw={600}>
 						{numberFormatter.format(remainingCapacity)}
@@ -108,7 +108,7 @@ const CapacityProgress = ({ campaignId }: CapacityProgressProps) => {
 				</div>
 				<div className={classes.detailItem}>
 					<Text size='xs' c='dimmed' className={classes.detailLabel}>
-						{t('campaigns.form.contacts.list.capacity.total')}
+						{t('form.contacts.list.capacity.total')}
 					</Text>
 					<Text size='sm' fw={600}>
 						{numberFormatter.format(totalSchedulerCapacity)}

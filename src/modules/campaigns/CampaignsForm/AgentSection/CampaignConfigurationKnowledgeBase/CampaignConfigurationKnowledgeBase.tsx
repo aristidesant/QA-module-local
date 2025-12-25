@@ -18,8 +18,10 @@ import {
 import CampaignConfigurationKnowledgeBaseAddModal from './CampaignConfigurationKnowledgeBaseAddModal';
 import styles from './CampaignConfigurationKnowledgeBase.module.css';
 import type KnowledgeBaseModel from '~/models/KnowledgeBaseModel';
+import { useTranslation } from 'react-i18next';
 
 const CampaignConfigurationKnowledgeBase: React.FC = () => {
+	const { t } = useTranslation('campaigns');
 	const form = useCampaignFormContext();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const {
@@ -125,20 +127,20 @@ const CampaignConfigurationKnowledgeBase: React.FC = () => {
 
 	return (
 		<SectionCard
-			title='Knowledge Base'
-			description='Provide your agent with essential information to handle questions accurately and confidently during calls.'
+			title={t('form.agent.knowledgeBase.title')}
+			description={t('form.agent.knowledgeBase.description')}
 		>
 			<div className={styles.container}>
 				{isLoading ? (
 					<div className={styles.loadingContainer}>
 						<Loader size='sm' />
 						<Text size='sm' c='dimmed'>
-							Loading knowledge bases...
+							{t('form.agent.knowledgeBase.loading')}
 						</Text>
 					</div>
 				) : error ? (
 					<Text size='sm' c='red'>
-						Error loading knowledge bases
+						{t('form.agent.knowledgeBase.error')}
 					</Text>
 				) : selectedKnowledgeBases.length > 0 ? (
 					selectedKnowledgeBases.map((kb) => (
@@ -159,13 +161,18 @@ const CampaignConfigurationKnowledgeBase: React.FC = () => {
 											>
 												{kb.status}
 											</Badge>
-											<Tooltip label='Remove knowledge base' position='left'>
+											<Tooltip
+												label={t('form.agent.knowledgeBase.remove')}
+												position='left'
+											>
 												<ActionIcon
 													variant='subtle'
 													color='red'
 													size='md'
 													onClick={() => handleUnassignKnowledgeBase(kb.id)}
-													aria-label={`Remove ${kb.name}`}
+													aria-label={t('form.agent.knowledgeBase.removeAria', {
+														name: kb.name,
+													})}
 												>
 													<IconFileXFilled size={18} />
 												</ActionIcon>
@@ -174,7 +181,9 @@ const CampaignConfigurationKnowledgeBase: React.FC = () => {
 									</div>
 									{kb.createdAt && (
 										<div className={styles.assignedDate}>
-											Created: {new Date(kb.createdAt).toLocaleDateString()}
+											{t('form.agent.knowledgeBase.created', {
+												date: new Date(kb.createdAt).toLocaleDateString(),
+											})}
 										</div>
 									)}
 								</div>
@@ -183,7 +192,7 @@ const CampaignConfigurationKnowledgeBase: React.FC = () => {
 					))
 				) : (
 					<Text size='sm' c='dimmed'>
-						No knowledge bases selected
+						{t('form.agent.knowledgeBase.noSelection')}
 					</Text>
 				)}
 				<button
@@ -192,7 +201,7 @@ const CampaignConfigurationKnowledgeBase: React.FC = () => {
 					onClick={handleAddKnowledgeBase}
 				>
 					<IconPlus size={20} className={styles.plusIcon} />
-					<span>Add Knowledge Base</span>
+					<span>{t('form.agent.knowledgeBase.add')}</span>
 				</button>
 			</div>
 

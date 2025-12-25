@@ -52,7 +52,7 @@ vi.mock('~/modules/campaigns/AddNewCampaignForm/PhoneNumberSelector', () => ({
 
 // Mock CampaignObjectivesForm
 vi.mock(
-	'~/modules/campaigns/CampaignManagementPage/Objectives/components/CampaignObjectivesForm/CampaignObjectivesForm',
+	'~/modules/campaign-management/campaign-objectives/components/CampaignObjectivesForm/CampaignObjectivesForm',
 	() => ({
 		CampaignObjectivesForm: ({ onSuccess, onCancel }: any) => (
 			<div data-testid='campaign-objectives-form'>

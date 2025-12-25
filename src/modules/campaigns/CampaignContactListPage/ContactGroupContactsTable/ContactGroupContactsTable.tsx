@@ -38,7 +38,7 @@ interface ContactGroupContactsTableProps {
 export const ContactGroupContactsTable: React.FC<
 	ContactGroupContactsTableProps
 > = ({ contactGroupId, campaignId }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation('campaign.contact-list');
 	const { setRightComponent } = useCampaignsStore();
 	const { canPerformAction } = usePermissions();
 
@@ -83,10 +83,8 @@ export const ContactGroupContactsTable: React.FC<
 	const appendMutation = useAppendContactGroupFile({
 		onSuccess: () => {
 			notifications.show({
-				title: t('contactListPage.contactsTable.notifications.appended.title'),
-				message: t(
-					'contactListPage.contactsTable.notifications.appended.message'
-				),
+				title: t('contactsTable.notifications.appended.title'),
+				message: t('contactsTable.notifications.appended.message'),
 				color: 'green',
 			});
 			void groupContactsQuery.refetch();
@@ -111,16 +109,15 @@ export const ContactGroupContactsTable: React.FC<
 
 	// Step 1: Upload CSV and return file id
 	const handleUploadCsv = async (file: File | null) => {
-		if (!file)
-			throw new Error(t('contactListPage.contactsTable.errors.noFileProvided'));
+		if (!file) throw new Error(t('contactsTable.errors.noFileProvided'));
 		if (!canExportContacts)
-			throw new Error(t('contactListPage.contactsTable.errors.noImportPerm'));
+			throw new Error(t('contactsTable.errors.noImportPerm'));
 		if (!campaignId) {
-			throw new Error(t('contactListPage.contactsTable.errors.noCampaignId'));
+			throw new Error(t('contactsTable.errors.noCampaignId'));
 		}
 		const isCsv = file.name.toLowerCase().endsWith('.csv');
 		if (!isCsv) {
-			throw new Error(t('contactListPage.contactsTable.errors.onlyCsv'));
+			throw new Error(t('contactsTable.errors.onlyCsv'));
 		}
 		const uploaded = await uploadMutation.mutateAsync({ file, campaignId });
 		return { contactGroupFileId: uploaded.contactGroupFileId };
@@ -129,7 +126,7 @@ export const ContactGroupContactsTable: React.FC<
 	// Step 2: Append uploaded file to list (schema ignored)
 	const handleAppendUploadedFile = async (contactGroupFileId: number) => {
 		if (!canExportContacts) {
-			throw new Error(t('contactListPage.contactsTable.errors.noImportPerm'));
+			throw new Error(t('contactsTable.errors.noImportPerm'));
 		}
 		await appendMutation.mutateAsync({
 			contactGroupId,
@@ -193,8 +190,8 @@ export const ContactGroupContactsTable: React.FC<
 	const handleDeleteContact = useCallback(
 		(contact: Contact) => {
 			modals.openConfirmModal({
-				title: t('contactListPage.contactsTable.deleteModal.title'),
-				children: t('contactListPage.contactsTable.deleteModal.message', {
+				title: t('contactsTable.deleteModal.title'),
+				children: t('contactsTable.deleteModal.message', {
 					name: `${contact.firstName} ${contact.lastName}`,
 				}),
 				labels: {
@@ -207,12 +204,8 @@ export const ContactGroupContactsTable: React.FC<
 					deleteContactMutation.mutate(contact.id.toString(), {
 						onSuccess: () => {
 							notifications.show({
-								title: t(
-									'contactListPage.contactsTable.notifications.deleted.title'
-								),
-								message: t(
-									'contactListPage.contactsTable.notifications.deleted.message'
-								),
+								title: t('contactsTable.notifications.deleted.title'),
+								message: t('contactsTable.notifications.deleted.message'),
 								color: 'green',
 							});
 							setDeletingContactId(null);
@@ -313,12 +306,8 @@ export const ContactGroupContactsTable: React.FC<
 				URL.revokeObjectURL(url);
 
 				notifications.show({
-					title: t(
-						'contactListPage.contactsTable.notifications.exported.title'
-					),
-					message: t(
-						'contactListPage.contactsTable.notifications.exported.message'
-					),
+					title: t('contactsTable.notifications.exported.title'),
+					message: t('contactsTable.notifications.exported.message'),
 					color: 'green',
 				});
 			}
@@ -383,14 +372,14 @@ export const ContactGroupContactsTable: React.FC<
 								</div>
 							) : (
 								<Text size='sm' c='dimmed' p='md'>
-									{t('contactListPage.contactsTable.noPhoneNumbers')}
+									{t('contactsTable.noPhoneNumbers')}
 								</Text>
 							)
 						}
 						emptyMessage={
 							contactFilters.hasActiveFilters
-								? t('contactListPage.contactsTable.emptyFiltered')
-								: t('contactListPage.contactsTable.empty')
+								? t('contactsTable.emptyFiltered')
+								: t('contactsTable.empty')
 						}
 						getRowClassName={getRowClassName}
 					/>
@@ -414,7 +403,7 @@ export const ContactGroupContactsTable: React.FC<
 				onItemsPerPageChange={handleItemsPerPageChange}
 				searchTerm=''
 				isLoading={isLoading}
-				itemLabel={t('contactListPage.contactsTable.itemLabel')}
+				itemLabel={t('contactsTable.itemLabel')}
 			/>
 
 			{canExportContacts && showAppendModal && (

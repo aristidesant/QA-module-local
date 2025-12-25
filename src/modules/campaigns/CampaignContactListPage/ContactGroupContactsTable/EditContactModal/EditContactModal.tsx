@@ -20,7 +20,7 @@ function EditContactModal({
 	contactId,
 	contactGroupId,
 }: EditContactModalProps) {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation('campaign.contact-list');
 	const queryClient = useQueryClient();
 	const { setContext, clear } = useContactEditStore();
 
@@ -42,9 +42,7 @@ function EditContactModal({
 			title={
 				<Group gap='xs'>
 					<IconPencil size={18} />
-					<Title order={5}>
-						{t('contactListPage.contactsTable.editModal.title')}
-					</Title>
+					<Title order={5}>{t('contactsTable.editModal.title')}</Title>
 				</Group>
 			}
 		>

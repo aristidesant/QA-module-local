@@ -67,15 +67,15 @@ const formatNumber = (value?: number | null) => {
 	return Number.isFinite(value) ? value.toLocaleString() : '—';
 };
 
-const formatDate = (t: TFunction, value?: string | null) => {
+const formatDate = (t: TFunction, lng: string, value?: string | null) => {
 	if (!value) {
-		return t('campaigns.form.contacts.details.stats.notSet');
+		return t('form.contacts.details.stats.notSet');
 	}
 	const date = new Date(value);
 	if (Number.isNaN(date.getTime())) {
-		return t('campaigns.form.contacts.details.stats.notSet');
+		return t('form.contacts.details.stats.notSet');
 	}
-	return new Intl.DateTimeFormat('en-US', {
+	return new Intl.DateTimeFormat(lng, {
 		year: 'numeric',
 		month: 'short',
 		day: 'numeric',
@@ -84,7 +84,7 @@ const formatDate = (t: TFunction, value?: string | null) => {
 
 const toTitleCase = (t: TFunction, value?: string | null) => {
 	if (!value) {
-		return t('campaigns.form.contacts.details.stats.notAvailable');
+		return t('form.contacts.details.stats.notAvailable');
 	}
 	return value
 		.replace(/_/g, ' ')
@@ -100,7 +100,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 	objectiveId,
 	campaignId,
 }) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation('campaigns');
 	const navigate = useNavigate();
 	const { canAccessModule, canPerformAction } = usePermissions();
 	const toggleMutation = useToggleContactGroupStatus();
@@ -155,43 +155,40 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 	);
 
 	const statusLabel = useMemo(() => {
-		const key = contactGroup.queueStatus?.toLowerCase();
-		return t(`campaigns.form.contacts.details.queueStatus.${key}`, {
-			defaultValue: statusConfig.label,
-		});
-	}, [contactGroup.queueStatus, statusConfig.label, t]);
+		return t(statusConfig.label);
+	}, [statusConfig.label, t]);
 
 	const stats = useMemo(
 		() => [
 			{
-				label: t('campaigns.form.contacts.details.stats.totalContacts'),
+				label: t('form.contacts.details.stats.totalContacts'),
 				value: formatNumber(contactGroup.contactCount),
 				icon: <IconUsers size={16} />,
 				iconClass: styles.iconBlue,
 			},
 			{
-				label: t('campaigns.form.contacts.details.stats.humanEquivalent'),
+				label: t('form.contacts.details.stats.humanEquivalent'),
 				value: formatNumber(contactGroup.humanEquivalent),
 				icon: <IconGauge size={16} />,
 				iconClass: styles.iconGrape,
 			},
 			{
-				label: t('campaigns.form.contacts.details.stats.waves'),
+				label: t('form.contacts.details.stats.waves'),
 				value:
 					contactGroup.maxWaves && contactGroup.maxWaves > 0
 						? `${contactGroup.currentWave ?? 1} / ${contactGroup.maxWaves}`
-						: t('campaigns.form.contacts.details.stats.notSet'),
+						: t('form.contacts.details.stats.notSet'),
 				icon: <IconRefresh size={16} />,
 				iconClass: styles.iconBlue,
 			},
 			{
-				label: t('campaigns.form.contacts.details.stats.maxCallsPerContact'),
+				label: t('form.contacts.details.stats.maxCallsPerContact'),
 				value: formatNumber(contactGroup.maxCallsPerContact),
 				icon: <IconPhoneCall size={16} />,
 				iconClass: styles.iconTeal,
 			},
 			{
-				label: t('campaigns.form.contacts.details.stats.maxCallsPerList'),
+				label: t('form.contacts.details.stats.maxCallsPerList'),
 				value: formatNumber(contactGroup.maxCallsPerList),
 				icon: <IconRepeat size={16} />,
 				iconClass: styles.iconOrange,
@@ -211,35 +208,35 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 	const metaItems = useMemo(
 		() => [
 			{
-				label: t('campaigns.form.contacts.details.meta.queueStatus'),
+				label: t('form.contacts.details.meta.queueStatus'),
 				value: statusLabel,
 				accent: statusConfig.color,
 				icon: <IconGauge size={14} />,
 			},
 			{
-				label: t('campaigns.form.contacts.details.meta.listStatus'),
+				label: t('form.contacts.details.meta.listStatus'),
 				value: contactGroup.isActive
-					? t('campaigns.form.contacts.details.meta.active')
-					: t('campaigns.form.contacts.details.meta.inactive'),
+					? t('form.contacts.details.meta.active')
+					: t('form.contacts.details.meta.inactive'),
 				accent: contactGroup.isActive ? 'blue' : 'gray',
 				icon: <IconListDetails size={14} />,
 			},
 			{
-				label: t('campaigns.form.contacts.details.meta.expirationDate'),
+				label: t('form.contacts.details.meta.expirationDate'),
 				value: formatDate(t, contactGroup.expirationDate),
 				accent: 'indigo',
 				icon: <IconCalendarTime size={14} />,
 			},
 			{
-				label: t('campaigns.form.contacts.details.meta.scheduler'),
+				label: t('form.contacts.details.meta.scheduler'),
 				value:
 					contactGroup.schedule?.name ||
-					t('campaigns.form.contacts.details.meta.notAssigned'),
+					t('form.contacts.details.meta.notAssigned'),
 				accent: 'grape',
 				icon: <IconUsers size={14} />,
 			},
 			{
-				label: t('campaigns.form.contacts.details.meta.schedulerStatus'),
+				label: t('form.contacts.details.meta.schedulerStatus'),
 				value: toTitleCase(t, contactGroup.schedule?.status),
 				accent: 'teal',
 				icon: <IconInfoCircle size={14} />,
@@ -278,7 +275,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 			title: (
 				<SectionTitle
 					title={t('knowledgeBaseSelection.columns.name')}
-					description={t('campaigns.form.contacts.details.description')}
+					description={t('form.contacts.details.description')}
 				/>
 			),
 			children: (
@@ -310,17 +307,17 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 
 		if (contactGroup.isActive) {
 			modals.openConfirmModal({
-				title: t('campaigns.form.contacts.details.dialogs.deactivate.title'),
+				title: t('form.contacts.details.dialogs.deactivate.title'),
 				children: (
 					<Text size='sm'>
-						{t('campaigns.form.contacts.details.dialogs.deactivate.message', {
+						{t('form.contacts.details.dialogs.deactivate.message', {
 							name: contactGroup.name,
 						})}
 					</Text>
 				),
 				labels: {
-					confirm: t('common.save'),
-					cancel: t('common.cancel'),
+					confirm: t('save', { ns: 'common' }),
+					cancel: t('cancel', { ns: 'common' }),
 				},
 				confirmProps: { color: 'blue' },
 				onConfirm: async () => {
@@ -349,23 +346,16 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 
 		if (maxAvailableHumanEquivalent < 1) {
 			modals.open({
-				title: t(
-					'campaigns.form.contacts.details.dialogs.activate.capacityErrorTitle'
-				),
+				title: t('form.contacts.details.dialogs.activate.capacityErrorTitle'),
 				children: (
 					<Alert
 						icon={<IconInfoCircle size={16} />}
-						title={t(
-							'campaigns.form.contacts.details.dialogs.activate.noCapacityTitle'
-						)}
+						title={t('form.contacts.details.dialogs.activate.noCapacityTitle')}
 						color='red'
 					>
-						{t(
-							'campaigns.form.contacts.details.dialogs.activate.capacityErrorMessage',
-							{
-								name: contactGroup.name,
-							}
-						)}
+						{t('form.contacts.details.dialogs.activate.capacityErrorMessage', {
+							name: contactGroup.name,
+						})}
 					</Alert>
 				),
 				centered: true,
@@ -381,23 +371,20 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 			return (
 				<Stack gap='md'>
 					<Text size='sm'>
-						{t('campaigns.form.contacts.details.dialogs.activate.message', {
+						{t('form.contacts.details.dialogs.activate.message', {
 							name: contactGroup.name,
 						})}
 					</Text>
 					<div>
 						<Group justify='space-between' mb='xs'>
 							<Text size='sm' fw={500}>
-								{t('campaigns.form.contacts.details.stats.humanEquivalent')}:{' '}
+								{t('form.contacts.details.stats.humanEquivalent')}:{' '}
 								{selectedHumanEquivalent}
 							</Text>
 							<Text size='xs' c='dimmed'>
-								{t(
-									'campaigns.form.contacts.details.dialogs.activate.available',
-									{
-										count: maxAvailableHumanEquivalent,
-									}
-								)}
+								{t('form.contacts.details.dialogs.activate.available', {
+									count: maxAvailableHumanEquivalent,
+								})}
 							</Text>
 						</Group>
 						<Slider
@@ -411,7 +398,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 					</div>
 					<Group justify='flex-end' gap='sm'>
 						<Button variant='outline' onClick={() => modals.closeAll()}>
-							{t('common.cancel')}
+							{t('cancel', { ns: 'common' })}
 						</Button>
 						<Button
 							onClick={async () => {
@@ -438,7 +425,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 							}}
 							loading={updateMutation.isPending}
 						>
-							{t('campaigns.form.contacts.details.dialogs.activate.confirm')}
+							{t('form.contacts.details.dialogs.activate.confirm')}
 						</Button>
 					</Group>
 				</Stack>
@@ -446,7 +433,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 		};
 
 		modals.open({
-			title: t('campaigns.form.contacts.details.dialogs.activate.title'),
+			title: t('form.contacts.details.dialogs.activate.title'),
 			children: <ActivateModalContent />,
 			size: 'md',
 			centered: true,
@@ -459,37 +446,36 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 		}
 
 		modals.openConfirmModal({
-			title: t('campaigns.form.contacts.details.dialogs.delete.title'),
+			title: t('form.contacts.details.dialogs.delete.title'),
 			children: (
 				<Text size='sm'>
-					{t('campaigns.form.contacts.details.dialogs.delete.message', {
+					{t('form.contacts.details.dialogs.delete.message', {
 						name: contactGroup.name,
 					})}
 				</Text>
 			),
 			labels: {
-				confirm: t('common.delete'),
-				cancel: t('common.cancel'),
+				confirm: t('delete', { ns: 'common' }),
+				cancel: t('cancel', { ns: 'common' }),
 			},
 			confirmProps: { color: 'red' },
 			onConfirm: async () => {
 				try {
 					await deleteMutation.mutateAsync(contactGroup.id);
 					notifications.show({
-						title: t('campaigns.form.contacts.details.dialogs.delete.success'),
-						message: t(
-							'campaigns.form.contacts.details.dialogs.delete.successMessage',
-							{ name: contactGroup.name }
-						),
+						title: t('form.contacts.details.dialogs.delete.success'),
+						message: t('form.contacts.details.dialogs.delete.successMessage', {
+							name: contactGroup.name,
+						}),
 						color: 'green',
 					});
 					onUpdateComplete();
 				} catch (error: any) {
 					const errorMessage =
 						error?.response?.data?.message ||
-						t('campaigns.form.contacts.details.dialogs.delete.errorMessage');
+						t('form.contacts.details.dialogs.delete.errorMessage');
 					notifications.show({
-						title: t('campaigns.form.contacts.details.dialogs.delete.error'),
+						title: t('form.contacts.details.dialogs.delete.error'),
 						message: errorMessage,
 						color: 'red',
 					});
@@ -511,19 +497,17 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 		}
 
 		modals.openConfirmModal({
-			title: t('campaigns.form.contacts.details.dialogs.cleanQueue.title'),
+			title: t('form.contacts.details.dialogs.cleanQueue.title'),
 			children: (
 				<Text size='sm'>
-					{t('campaigns.form.contacts.details.dialogs.cleanQueue.message', {
+					{t('form.contacts.details.dialogs.cleanQueue.message', {
 						name: contactGroup.name,
 					})}
 				</Text>
 			),
 			labels: {
-				confirm: t(
-					'campaigns.form.contacts.details.dialogs.cleanQueue.confirm'
-				),
-				cancel: t('common.cancel'),
+				confirm: t('form.contacts.details.dialogs.cleanQueue.confirm'),
+				cancel: t('cancel', { ns: 'common' }),
 			},
 			confirmProps: { color: 'orange' },
 			onConfirm: async () => {
@@ -559,7 +543,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 		}
 
 		modals.open({
-			title: t('campaigns.form.contacts.details.dialogs.extendWaves.title'),
+			title: t('form.contacts.details.dialogs.extendWaves.title'),
 			centered: true,
 			children: (
 				<ExtendWavesModal
@@ -570,11 +554,9 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 								additionalWaves: wavesToAdd,
 							});
 							notifications.show({
-								title: t(
-									'campaigns.form.contacts.details.dialogs.extendWaves.success'
-								),
+								title: t('form.contacts.details.dialogs.extendWaves.success'),
 								message: t(
-									'campaigns.form.contacts.details.dialogs.extendWaves.successMessage',
+									'form.contacts.details.dialogs.extendWaves.successMessage',
 									{ count: wavesToAdd }
 								),
 								color: 'green',
@@ -586,11 +568,9 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 								(error as { response?: { data?: { message?: string } } })
 									?.response?.data?.message ||
 								(error instanceof Error ? error.message : null) ||
-								t('campaigns.form.contacts.details.dialogs.complete.error');
+								t('form.contacts.details.dialogs.complete.error');
 							notifications.show({
-								title: t(
-									'campaigns.form.contacts.details.dialogs.extendWaves.error'
-								),
+								title: t('form.contacts.details.dialogs.extendWaves.error'),
 								message: apiMessage,
 								color: 'red',
 							});
@@ -610,15 +590,15 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 		}
 
 		modals.openConfirmModal({
-			title: t('campaigns.form.contacts.details.dialogs.complete.title'),
+			title: t('form.contacts.details.dialogs.complete.title'),
 			children: (
 				<Text size='sm'>
-					{t('campaigns.form.contacts.details.dialogs.complete.message')}
+					{t('form.contacts.details.dialogs.complete.message')}
 				</Text>
 			),
 			labels: {
-				confirm: t('common.save'),
-				cancel: t('common.cancel'),
+				confirm: t('save', { ns: 'common' }),
+				cancel: t('cancel', { ns: 'common' }),
 			},
 			confirmProps: {
 				color: 'green',
@@ -628,12 +608,8 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 				try {
 					await completeGroupMutation.mutateAsync(contactGroup.id);
 					notifications.show({
-						title: t(
-							'campaigns.form.contacts.details.dialogs.complete.success'
-						),
-						message: t(
-							'campaigns.form.contacts.details.dialogs.complete.successMessage'
-						),
+						title: t('form.contacts.details.dialogs.complete.success'),
+						message: t('form.contacts.details.dialogs.complete.successMessage'),
 						color: 'green',
 					});
 					onUpdateComplete();
@@ -642,9 +618,9 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 						(error as { response?: { data?: { message?: string } } })?.response
 							?.data?.message ||
 						(error instanceof Error ? error.message : null) ||
-						t('campaigns.form.contacts.details.dialogs.complete.error');
+						t('form.contacts.details.dialogs.complete.error');
 					notifications.show({
-						title: t('campaigns.form.contacts.details.dialogs.complete.error'),
+						title: t('form.contacts.details.dialogs.complete.error'),
 						message: apiMessage,
 						color: 'red',
 					});
@@ -657,8 +633,8 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 		<Stack gap='md'>
 			{canRenderActionsCard && (
 				<RightSectionCard
-					title={t('campaigns.form.contacts.details.actions.title')}
-					description={t('campaigns.form.contacts.details.actions.description')}
+					title={t('form.contacts.details.actions.title')}
+					description={t('form.contacts.details.actions.description')}
 					icon={IconEdit}
 					iconColor='var(--mantine-color-orange-5)'
 				>
@@ -668,8 +644,8 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 								<Tooltip
 									label={
 										contactGroup.isActive
-											? t('campaigns.form.contacts.details.actions.deactivate')
-											: t('campaigns.form.contacts.details.actions.activate')
+											? t('form.contacts.details.actions.deactivate')
+											: t('form.contacts.details.actions.activate')
 									}
 									withArrow
 								>
@@ -678,10 +654,8 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 										onClick={handleToggleStatus}
 										aria-label={
 											contactGroup.isActive
-												? t(
-														'campaigns.form.contacts.details.actions.deactivate'
-													)
-												: t('campaigns.form.contacts.details.actions.activate')
+												? t('form.contacts.details.actions.deactivate')
+												: t('form.contacts.details.actions.activate')
 										}
 										disabled={disableToggle || isActionsLoading}
 									>
@@ -697,9 +671,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 							{contactGroup.queueStatus === 'EXECUTED' && (
 								<>
 									<Tooltip
-										label={t(
-											'campaigns.form.contacts.details.actions.extendWaves'
-										)}
+										label={t('form.contacts.details.actions.extendWaves')}
 										withArrow
 									>
 										<ActionIcon
@@ -707,7 +679,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 											color='blue'
 											onClick={handleExtendWaves}
 											aria-label={t(
-												'campaigns.form.contacts.details.actions.extendWaves'
+												'form.contacts.details.actions.extendWaves'
 											)}
 											disabled={isActionsLoading}
 										>
@@ -715,9 +687,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 										</ActionIcon>
 									</Tooltip>
 									<Tooltip
-										label={t(
-											'campaigns.form.contacts.details.actions.completeList'
-										)}
+										label={t('form.contacts.details.actions.completeList')}
 										withArrow
 									>
 										<ActionIcon
@@ -725,7 +695,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 											color='green'
 											onClick={handleCompleteGroup}
 											aria-label={t(
-												'campaigns.form.contacts.details.actions.completeList'
+												'form.contacts.details.actions.completeList'
 											)}
 											disabled={isActionsLoading}
 										>
@@ -737,16 +707,14 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 
 							{canEditContactList && (
 								<Tooltip
-									label={t(
-										'campaigns.form.contacts.details.actions.editContactList'
-									)}
+									label={t('form.contacts.details.actions.editContactList')}
 									withArrow
 								>
 									<ActionIcon
 										variant='light'
 										onClick={handleEdit}
 										aria-label={t(
-											'campaigns.form.contacts.details.actions.editContactList'
+											'form.contacts.details.actions.editContactList'
 										)}
 										disabled={isActionsLoading}
 									>
@@ -757,9 +725,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 
 							{canDeleteContactList && (
 								<Tooltip
-									label={t(
-										'campaigns.form.contacts.details.actions.deleteContactList'
-									)}
+									label={t('form.contacts.details.actions.deleteContactList')}
 									withArrow
 								>
 									<ActionIcon
@@ -767,7 +733,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 										color='red'
 										onClick={handleDelete}
 										aria-label={t(
-											'campaigns.form.contacts.details.actions.deleteContactList'
+											'form.contacts.details.actions.deleteContactList'
 										)}
 										disabled={isActionsLoading}
 									>
@@ -778,18 +744,14 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 
 							{canCleanContactQueue && (
 								<Tooltip
-									label={t(
-										'campaigns.form.contacts.details.actions.cleanQueue'
-									)}
+									label={t('form.contacts.details.actions.cleanQueue')}
 									withArrow
 								>
 									<ActionIcon
 										variant='light'
 										color='orange'
 										onClick={handleCleanQueue}
-										aria-label={t(
-											'campaigns.form.contacts.details.actions.cleanQueue'
-										)}
+										aria-label={t('form.contacts.details.actions.cleanQueue')}
 										disabled={disableCleanQueue || isActionsLoading}
 									>
 										<IconRefresh size={16} />
@@ -799,16 +761,14 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 
 							{canNavigateToContactList && (
 								<Tooltip
-									label={t(
-										'campaigns.form.contacts.details.actions.openContactList'
-									)}
+									label={t('form.contacts.details.actions.openContactList')}
 									withArrow
 								>
 									<ActionIcon
 										variant='light'
 										onClick={handleNavigate}
 										aria-label={t(
-											'campaigns.form.contacts.details.actions.openContactList'
+											'form.contacts.details.actions.openContactList'
 										)}
 										disabled={isActionsLoading}
 									>
@@ -821,8 +781,8 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 				</RightSectionCard>
 			)}
 			<RightSectionCard
-				title={t('campaigns.form.contacts.details.title')}
-				description={t('campaigns.form.contacts.details.description')}
+				title={t('form.contacts.details.title')}
+				description={t('form.contacts.details.description')}
 				icon={IconListDetails}
 				iconColor='var(--mantine-color-blue-5)'
 			>
@@ -836,7 +796,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 
 					<div>
 						<Text className={styles.sectionTitle}>
-							{t('campaigns.form.contacts.details.configurations')}
+							{t('form.contacts.details.configurations')}
 						</Text>
 						<div className={styles.statsGrid}>
 							{stats.map((item) => (
@@ -856,10 +816,8 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 			</RightSectionCard>
 
 			<RightSectionMetricCard
-				title={t('campaigns.form.contacts.details.operationalStatus.title')}
-				description={t(
-					'campaigns.form.contacts.details.operationalStatus.description'
-				)}
+				title={t('form.contacts.details.operationalStatus.title')}
+				description={t('form.contacts.details.operationalStatus.description')}
 				icon={IconGauge}
 				iconColor='var(--mantine-color-green-5)'
 				metaItems={metaItems}

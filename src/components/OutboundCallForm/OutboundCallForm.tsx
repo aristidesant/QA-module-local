@@ -167,7 +167,7 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
 					onClick={onClose}
 					type='button'
 				>
-					{t('common.cancel')}
+					{t('actions.cancel')}
 				</Button>
 			</Stack>
 		</form>

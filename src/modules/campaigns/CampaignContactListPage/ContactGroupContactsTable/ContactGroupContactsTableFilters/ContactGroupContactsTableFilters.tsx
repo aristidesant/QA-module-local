@@ -35,16 +35,14 @@ export const ContactGroupContactsTableFilters: React.FC<
 	onAppend,
 	isAppending,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation('campaign.contact-list');
 
 	return (
 		<FilterContainer>
 			<div className={styles.filtersContent}>
 				<div className={styles.searchFilters}>
 					<TextInput
-						placeholder={t(
-							'contactListPage.contactsTable.filters.searchByName'
-						)}
+						placeholder={t('contactsTable.filters.searchByName')}
 						value={filters.name}
 						onChange={(event) =>
 							onFilterChange('name', event.currentTarget.value)
@@ -55,9 +53,7 @@ export const ContactGroupContactsTableFilters: React.FC<
 					/>
 
 					<TextInput
-						placeholder={t(
-							'contactListPage.contactsTable.filters.filterByPhone'
-						)}
+						placeholder={t('contactsTable.filters.filterByPhone')}
 						value={filters.phone}
 						// Only allow digits: sanitize input by removing non-digit characters
 						onChange={(event) =>
@@ -75,9 +71,7 @@ export const ContactGroupContactsTableFilters: React.FC<
 					/>
 
 					<TextInput
-						placeholder={t(
-							'contactListPage.contactsTable.filters.filterByEmail'
-						)}
+						placeholder={t('contactsTable.filters.filterByEmail')}
 						value={filters.email}
 						onChange={(event) =>
 							onFilterChange('email', event.currentTarget.value)
@@ -90,10 +84,7 @@ export const ContactGroupContactsTableFilters: React.FC<
 
 				<div className={styles.selectFilters}>
 					{onAppend && (
-						<Tooltip
-							label={t('contactListPage.contactsTable.tooltips.append')}
-							withArrow
-						>
+						<Tooltip label={t('contactsTable.tooltips.append')} withArrow>
 							<ActionIcon
 								variant='light'
 								color='blue'
@@ -106,10 +97,7 @@ export const ContactGroupContactsTableFilters: React.FC<
 						</Tooltip>
 					)}
 					{onExport && (
-						<Tooltip
-							label={t('contactListPage.contactsTable.tooltips.export')}
-							withArrow
-						>
+						<Tooltip label={t('contactsTable.tooltips.export')} withArrow>
 							<ActionIcon
 								variant='light'
 								color='blue'

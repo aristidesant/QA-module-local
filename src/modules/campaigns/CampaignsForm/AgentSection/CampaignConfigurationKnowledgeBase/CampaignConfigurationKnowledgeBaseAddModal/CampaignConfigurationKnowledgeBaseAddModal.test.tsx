@@ -107,9 +107,7 @@ describe('CampaignConfigurationKnowledgeBaseAddModal', () => {
 
 			expect(screen.getByText('Select Knowledge Bases')).toBeInTheDocument();
 			expect(
-				screen.getByText(
-					/Pick the knowledge bases that should power this agent/
-				)
+				screen.getByText(/Select existing knowledge bases or create a new one./)
 			).toBeInTheDocument();
 		});
 

@@ -8,6 +8,7 @@ import AgentProfile from '~/modules/campaigns/CampaignsForm/AgentSection/AgentCa
 import { VoicePlayer } from '~/components/VoicePlayer';
 import AgentVoiceEditModal from './AgentVoiceEditModal';
 import RightSectionCard from '~/components/RightSectionCard';
+import { useTranslation } from 'react-i18next';
 
 interface AgentCampaignPreviewProps {
 	agentId: string;
@@ -18,6 +19,7 @@ interface AgentCampaignPreviewProps {
 export const AgentCampaignPreview: React.FC<AgentCampaignPreviewProps> = ({
 	agentId,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const { data: agent, isLoading, refetch } = useGetAgent(agentId);
 
 	const openVoiceChangeModal = () => {
@@ -26,7 +28,7 @@ export const AgentCampaignPreview: React.FC<AgentCampaignPreviewProps> = ({
 
 		modals.open({
 			modalId: 'agent-voice-edit-modal',
-			title: 'Change Agent Voice',
+			title: t('form.agent.preview.changeVoiceTitle'),
 			size: 'xl',
 			centered: true,
 			children: (
@@ -53,8 +55,8 @@ export const AgentCampaignPreview: React.FC<AgentCampaignPreviewProps> = ({
 					<div className={styles.agentDetails}>
 						<RightSectionCard
 							icon={IconUser}
-							title='Agent Profile'
-							description='Agent avatar, name, and language details'
+							title={t('form.agent.preview.title')}
+							description={t('form.agent.preview.description')}
 						>
 							<AgentProfile agent={agent} size='md' />
 						</RightSectionCard>
@@ -62,19 +64,19 @@ export const AgentCampaignPreview: React.FC<AgentCampaignPreviewProps> = ({
 						{/* Voice Section */}
 						<div className={styles.voiceSection}>
 							<RightSectionCard
-								title='Voice settings'
-								description='Preview and update the agent voice for this campaign.'
+								title={t('form.agent.preview.voiceTitle')}
+								description={t('form.agent.preview.voiceDescription')}
 								icon={IconWaveSquare}
 								iconColor='var(--mantine-color-blue-6)'
 								rightSection={
 									<Tooltip
-										label='Edit agent voice'
+										label={t('form.agent.preview.editVoice')}
 										position='right'
 										withArrow
 										openDelay={150}
 									>
 										<ActionIcon
-											aria-label='Edit agent voice'
+											aria-label={t('form.agent.preview.editVoice')}
 											onClick={openVoiceChangeModal}
 											variant='subtle'
 											size='lg'
@@ -85,7 +87,9 @@ export const AgentCampaignPreview: React.FC<AgentCampaignPreviewProps> = ({
 								}
 							>
 								<VoicePlayer
-									voiceName={agent?.voice?.name || 'Unknown'}
+									voiceName={
+										agent?.voice?.name || t('form.agent.preview.unknownVoice')
+									}
 									previewUrl={agent?.voice?.previewUrl}
 								/>
 							</RightSectionCard>

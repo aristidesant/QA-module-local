@@ -39,18 +39,18 @@ describe('ComposeStep', () => {
 		it('renders user instructions textarea with label for create mode', () => {
 			renderWithProviders(<ComposeStep {...defaultProps} mode='create' />);
 
-			expect(screen.getByText('Your instructions')).toBeInTheDocument();
+			expect(screen.getByText('Instructions')).toBeInTheDocument();
 			expect(
-				screen.getByText(/Describe what you want the AI to create/i)
+				screen.getByText('Describe what you want the AI to generate')
 			).toBeInTheDocument();
 		});
 
 		it('renders user instructions textarea with label for improve mode', () => {
 			renderWithProviders(<ComposeStep {...defaultProps} mode='improve' />);
 
-			expect(screen.getByText('Additional instructions')).toBeInTheDocument();
+			expect(screen.getByText('Improvement Instructions')).toBeInTheDocument();
 			expect(
-				screen.getByText(/Optional: Add specific guidance/i)
+				screen.getByText('Describe how you want to improve the prompt')
 			).toBeInTheDocument();
 		});
 
@@ -69,7 +69,9 @@ describe('ComposeStep', () => {
 			renderWithProviders(<ComposeStep {...defaultProps} mode='create' />);
 
 			expect(
-				screen.getByPlaceholderText(/Create a professional greeting/i)
+				screen.getByPlaceholderText(
+					'E.g., Create a friendly greeting for customers calling about billing inquiries'
+				)
 			).toBeInTheDocument();
 		});
 
@@ -77,7 +79,9 @@ describe('ComposeStep', () => {
 			renderWithProviders(<ComposeStep {...defaultProps} mode='improve' />);
 
 			expect(
-				screen.getByPlaceholderText(/Make it more concise/i)
+				screen.getByPlaceholderText(
+					'E.g., Make it more concise and professional'
+				)
 			).toBeInTheDocument();
 		});
 	});
@@ -256,22 +260,20 @@ describe('ComposeStep', () => {
 		it('shows prompt to improve textarea only in improve mode', () => {
 			renderWithProviders(<ComposeStep {...defaultProps} mode='improve' />);
 
-			expect(screen.getByLabelText(/prompt to improve/i)).toBeInTheDocument();
+			expect(screen.getByLabelText('Current Prompt')).toBeInTheDocument();
 		});
 
 		it('does not show prompt to improve in create mode', () => {
 			renderWithProviders(<ComposeStep {...defaultProps} mode='create' />);
 
-			expect(
-				screen.queryByLabelText(/prompt to improve/i)
-			).not.toBeInTheDocument();
+			expect(screen.queryByLabelText('Current Prompt')).not.toBeInTheDocument();
 		});
 
 		it('shows description for prompt to improve', () => {
 			renderWithProviders(<ComposeStep {...defaultProps} mode='improve' />);
 
 			expect(
-				screen.getByText(/This is your current prompt that will be enhanced/i)
+				screen.getByText('The prompt you want to improve')
 			).toBeInTheDocument();
 		});
 
@@ -287,7 +289,7 @@ describe('ComposeStep', () => {
 				/>
 			);
 
-			const textarea = screen.getByLabelText(/prompt to improve/i);
+			const textarea = screen.getByLabelText('Current Prompt');
 			fireEvent.change(textarea, { target: { value: 'Modified prompt' } });
 
 			expect(mockChange).toHaveBeenCalledWith('Modified prompt');
@@ -317,7 +319,7 @@ describe('ComposeStep', () => {
 			);
 
 			const textarea = screen.getByPlaceholderText(
-				/Create a professional greeting/i
+				'E.g., Create a friendly greeting for customers calling about billing inquiries'
 			);
 			fireEvent.change(textarea, { target: { value: 'New instructions' } });
 
@@ -391,7 +393,7 @@ describe('ComposeStep', () => {
 		it('uses create mode labels when mode is null', () => {
 			renderWithProviders(<ComposeStep {...defaultProps} mode={null} />);
 
-			expect(screen.getByText('Your instructions')).toBeInTheDocument();
+			expect(screen.getByText('Instructions')).toBeInTheDocument();
 		});
 	});
 });

@@ -1,28 +1,27 @@
 import { screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useNavigate } from 'react-router';
 import CampaignHealth from './CampaignHealth';
-import { useGetCampaignRequirements } from '~/queries/campaignsQueries';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
+
+const { mockNavigate, mockUseGetCampaignRequirements, mockCanPerformAction } =
+	vi.hoisted(() => ({
+		mockNavigate: vi.fn(),
+		mockUseGetCampaignRequirements: vi.fn(),
+		mockCanPerformAction: vi.fn(),
+	}));
 
 // Mock dependencies
 vi.mock('react-router', () => ({
-	useNavigate: vi.fn(),
-}));
-
-vi.mock('react-i18next', () => ({
-	useTranslation: () => ({
-		t: (key: string) => key,
-	}),
+	useNavigate: () => mockNavigate,
 }));
 
 vi.mock('~/queries/campaignsQueries', () => ({
-	useGetCampaignRequirements: vi.fn(),
+	useGetCampaignRequirements: mockUseGetCampaignRequirements,
 }));
 
 // Mock usePermissions so we can control edit visibility in tests
-const mockCanPerformAction = vi.fn((_module: any, _permission: any) => false);
 vi.mock('~/hooks/usePermissions', () => ({
+	__esModule: true,
 	default: () => ({
 		canPerformAction: mockCanPerformAction,
 	}),
@@ -30,40 +29,42 @@ vi.mock('~/hooks/usePermissions', () => ({
 
 describe('CampaignHealth', () => {
 	const mockCampaignId = '123';
-	const mockNavigate = vi.fn();
 
 	beforeEach(() => {
 		vi.clearAllMocks();
-		(useNavigate as ReturnType<typeof vi.fn>).mockReturnValue(mockNavigate);
 		mockCanPerformAction.mockReturnValue(false);
 	});
 
 	describe('Loading state', () => {
 		it('renders loading indicator and text', () => {
-			(useGetCampaignRequirements as ReturnType<typeof vi.fn>).mockReturnValue({
+			mockUseGetCampaignRequirements.mockReturnValue({
 				isLoading: true,
 			});
 
 			renderWithProviders(<CampaignHealth campaignId={mockCampaignId} />);
-			expect(screen.getByText('health.loading')).toBeInTheDocument();
+			expect(
+				screen.getByText('Loading campaign health...')
+			).toBeInTheDocument();
 		});
 	});
 
 	describe('Error state', () => {
 		it('renders error alert', () => {
-			(useGetCampaignRequirements as ReturnType<typeof vi.fn>).mockReturnValue({
+			mockUseGetCampaignRequirements.mockReturnValue({
 				isLoading: false,
 				error: new Error('Failed'),
 			});
 
 			renderWithProviders(<CampaignHealth campaignId={mockCampaignId} />);
-			expect(screen.getByText('health.failedToLoad')).toBeInTheDocument();
+			expect(
+				screen.getByText('Failed to load campaign requirements.')
+			).toBeInTheDocument();
 		});
 	});
 
 	describe('No data state', () => {
 		it('renders nothing when data is null', () => {
-			(useGetCampaignRequirements as ReturnType<typeof vi.fn>).mockReturnValue({
+			mockUseGetCampaignRequirements.mockReturnValue({
 				isLoading: false,
 				data: null,
 			});
@@ -71,21 +72,17 @@ describe('CampaignHealth', () => {
 			renderWithProviders(<CampaignHealth campaignId={mockCampaignId} />);
 
 			// Component should not render any meaningful content
+			expect(screen.queryByText('Disposition Flow')).not.toBeInTheDocument();
+			expect(screen.queryByText('Active Schedule')).not.toBeInTheDocument();
 			expect(
-				screen.queryByText('health.dispositionFlow')
-			).not.toBeInTheDocument();
-			expect(
-				screen.queryByText('health.activeSchedule')
-			).not.toBeInTheDocument();
-			expect(
-				screen.queryByRole('button', { name: /health.goToEdit/i })
+				screen.queryByRole('button', { name: /Go to edit/i })
 			).not.toBeInTheDocument();
 		});
 	});
 
 	describe('Healthy campaign state', () => {
 		it('renders nothing when all requirements are met', () => {
-			(useGetCampaignRequirements as ReturnType<typeof vi.fn>).mockReturnValue({
+			mockUseGetCampaignRequirements.mockReturnValue({
 				isLoading: false,
 				data: {
 					hasDispositionFlow: true,
@@ -96,21 +93,17 @@ describe('CampaignHealth', () => {
 			renderWithProviders(<CampaignHealth campaignId={mockCampaignId} />);
 
 			// Component should not render any meaningful content when healthy
+			expect(screen.queryByText('Disposition Flow')).not.toBeInTheDocument();
+			expect(screen.queryByText('Active Schedule')).not.toBeInTheDocument();
 			expect(
-				screen.queryByText('health.dispositionFlow')
-			).not.toBeInTheDocument();
-			expect(
-				screen.queryByText('health.activeSchedule')
-			).not.toBeInTheDocument();
-			expect(
-				screen.queryByRole('button', { name: /health.goToEdit/i })
+				screen.queryByRole('button', { name: /Go to edit/i })
 			).not.toBeInTheDocument();
 		});
 	});
 
 	describe('Missing requirements', () => {
 		it('shows disposition flow warning when not configured', () => {
-			(useGetCampaignRequirements as ReturnType<typeof vi.fn>).mockReturnValue({
+			mockUseGetCampaignRequirements.mockReturnValue({
 				isLoading: false,
 				data: {
 					hasDispositionFlow: false,
@@ -120,15 +113,13 @@ describe('CampaignHealth', () => {
 
 			renderWithProviders(<CampaignHealth campaignId={mockCampaignId} />);
 
-			expect(screen.getByText('health.dispositionFlow')).toBeInTheDocument();
-			expect(screen.getByText('health.notConfigured')).toBeInTheDocument();
-			expect(
-				screen.queryByText('health.activeSchedule')
-			).not.toBeInTheDocument();
+			expect(screen.getByText('Disposition Flow')).toBeInTheDocument();
+			expect(screen.getByText('Not configured')).toBeInTheDocument();
+			expect(screen.queryByText('Active Schedule')).not.toBeInTheDocument();
 		});
 
 		it('shows active schedule warning when not active', () => {
-			(useGetCampaignRequirements as ReturnType<typeof vi.fn>).mockReturnValue({
+			mockUseGetCampaignRequirements.mockReturnValue({
 				isLoading: false,
 				data: {
 					hasDispositionFlow: true,
@@ -138,15 +129,13 @@ describe('CampaignHealth', () => {
 
 			renderWithProviders(<CampaignHealth campaignId={mockCampaignId} />);
 
-			expect(screen.getByText('health.activeSchedule')).toBeInTheDocument();
-			expect(screen.getByText('health.notActive')).toBeInTheDocument();
-			expect(
-				screen.queryByText('health.dispositionFlow')
-			).not.toBeInTheDocument();
+			expect(screen.getByText('Active Schedule')).toBeInTheDocument();
+			expect(screen.getByText('Not active')).toBeInTheDocument();
+			expect(screen.queryByText('Disposition Flow')).not.toBeInTheDocument();
 		});
 
 		it('shows both warnings when both requirements are missing', () => {
-			(useGetCampaignRequirements as ReturnType<typeof vi.fn>).mockReturnValue({
+			mockUseGetCampaignRequirements.mockReturnValue({
 				isLoading: false,
 				data: {
 					hasDispositionFlow: false,
@@ -156,14 +145,14 @@ describe('CampaignHealth', () => {
 
 			renderWithProviders(<CampaignHealth campaignId={mockCampaignId} />);
 
-			expect(screen.getByText('health.dispositionFlow')).toBeInTheDocument();
-			expect(screen.getByText('health.notConfigured')).toBeInTheDocument();
-			expect(screen.getByText('health.activeSchedule')).toBeInTheDocument();
-			expect(screen.getByText('health.notActive')).toBeInTheDocument();
+			expect(screen.getByText('Disposition Flow')).toBeInTheDocument();
+			expect(screen.getByText('Not configured')).toBeInTheDocument();
+			expect(screen.getByText('Active Schedule')).toBeInTheDocument();
+			expect(screen.getByText('Not active')).toBeInTheDocument();
 		});
 
 		it('shows "Go to edit" button and navigates on click', () => {
-			(useGetCampaignRequirements as ReturnType<typeof vi.fn>).mockReturnValue({
+			mockUseGetCampaignRequirements.mockReturnValue({
 				isLoading: false,
 				data: {
 					hasDispositionFlow: false,
@@ -176,7 +165,7 @@ describe('CampaignHealth', () => {
 			renderWithProviders(<CampaignHealth campaignId={mockCampaignId} />);
 
 			const editButton = screen.getByRole('button', {
-				name: /health.goToEdit/i,
+				name: /Go to edit/i,
 			});
 			expect(editButton).toBeInTheDocument();
 
@@ -186,7 +175,7 @@ describe('CampaignHealth', () => {
 
 		it('does not show "Go to edit" button when user lacks permission', () => {
 			mockCanPerformAction.mockReturnValue(false);
-			(useGetCampaignRequirements as ReturnType<typeof vi.fn>).mockReturnValue({
+			mockUseGetCampaignRequirements.mockReturnValue({
 				isLoading: false,
 				data: {
 					hasDispositionFlow: false,
@@ -197,7 +186,7 @@ describe('CampaignHealth', () => {
 			renderWithProviders(<CampaignHealth campaignId={mockCampaignId} />);
 
 			expect(
-				screen.queryByRole('button', { name: /health.goToEdit/i })
+				screen.queryByRole('button', { name: /Go to edit/i })
 			).not.toBeInTheDocument();
 		});
 	});

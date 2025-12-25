@@ -5,7 +5,7 @@ import { ContactListContainer } from './ContactList';
 import { useTranslation } from 'react-i18next';
 
 export const ContactSection = () => {
-	const { t } = useTranslation();
+	const { t } = useTranslation('campaign.view');
 	const [activeTab, setActiveTab] = useState<string | null>('active');
 
 	return (
@@ -17,10 +17,10 @@ export const ContactSection = () => {
 		>
 			<Tabs.List>
 				<Tabs.Tab value='active' leftSection={<IconUsers size={16} />}>
-					{t('campaigns.form.contacts.tabs.active')}
+					{t('contacts.tabs.active')}
 				</Tabs.Tab>
 				<Tabs.Tab value='inactive' leftSection={<IconUserOff size={16} />}>
-					{t('campaigns.form.contacts.tabs.inactive')}
+					{t('contacts.tabs.inactive')}
 				</Tabs.Tab>
 			</Tabs.List>
 

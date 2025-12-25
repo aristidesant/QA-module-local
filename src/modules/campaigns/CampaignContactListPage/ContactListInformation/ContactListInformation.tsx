@@ -27,7 +27,7 @@ export const ContactListInformation = ({
 	contactGroup,
 	onReload,
 }: ContactListInformationProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation('campaign.contact-list');
 	const extendMutation = useExtendContactGroupWaves();
 	const completeMutation = useCompleteContactGroup();
 	const isActionLoading =
@@ -52,44 +52,44 @@ export const ContactListInformation = ({
 		}
 	> = {
 		PENDING: {
-			label: t('contactListPage.status.pending'),
-			description: t('contactListPage.status.pendingDesc'),
+			label: t('status.pending'),
+			description: t('status.pendingDesc'),
 			accentClass: 'statusPending',
 			StatusIcon: IconAlertTriangle,
 		},
 		RUNNING: {
-			label: t('contactListPage.status.running'),
-			description: t('contactListPage.status.runningDesc'),
+			label: t('status.running'),
+			description: t('status.runningDesc'),
 			accentClass: 'statusRunning',
 			StatusIcon: IconCircleCheck,
 		},
 		PAUSED: {
-			label: t('contactListPage.status.paused'),
-			description: t('contactListPage.status.pausedDesc'),
+			label: t('status.paused'),
+			description: t('status.pausedDesc'),
 			accentClass: 'statusPaused',
 			StatusIcon: IconAlertTriangle,
 		},
 		COMPLETED: {
-			label: t('contactListPage.status.complete'),
-			description: t('contactListPage.status.completeDesc'),
+			label: t('status.complete'),
+			description: t('status.completeDesc'),
 			accentClass: 'statusComplete',
 			StatusIcon: IconCircleCheck,
 		},
 		FAILED: {
-			label: t('contactListPage.status.failed'),
-			description: t('contactListPage.status.failedDesc'),
+			label: t('status.failed'),
+			description: t('status.failedDesc'),
 			accentClass: 'statusFailed',
 			StatusIcon: IconAlertTriangle,
 		},
 		EXECUTED: {
-			label: t('contactListPage.status.executed'),
-			description: t('form.contacts.details.messages.allWavesDone'),
+			label: t('status.executed'),
+			description: t('contacts.details.messages.allWavesDone'),
 			accentClass: 'statusComplete',
 			StatusIcon: IconAlertTriangle,
 		},
 		UNKNOWN: {
-			label: t('contactListPage.status.unknown'),
-			description: t('contactListPage.status.unknownDesc'),
+			label: t('status.unknown'),
+			description: t('status.unknownDesc'),
 			accentClass: 'statusUnknown',
 			StatusIcon: IconAlertTriangle,
 		},
@@ -101,32 +101,32 @@ export const ContactListInformation = ({
 
 	const metrics = [
 		{
-			label: t('contactListPage.summary.contacts'),
+			label: t('summary.contacts'),
 			value: contactGroup.contactCount || 0,
 		},
 		{
-			label: t('contactListPage.summary.maxCallsPerContact'),
+			label: t('summary.maxCallsPerContact'),
 			value: contactGroup.maxCallsPerContact,
 		},
 		{
-			label: t('contactListPage.summary.waves'),
+			label: t('summary.waves'),
 			value:
 				contactGroup.maxWaves && contactGroup.maxWaves > 0
 					? `${Math.max(contactGroup.currentWave ?? 1, 1)} / ${
 							contactGroup.maxWaves
 						}`
-					: t('contactListPage.summary.notSet'),
+					: t('summary.notSet'),
 		},
 
 		{
-			label: t('contactListPage.summary.humanEquivalent'),
+			label: t('summary.humanEquivalent'),
 			value: Math.round(contactGroup.humanEquivalent),
 		},
 		{
-			label: t('contactListPage.summary.expirationDate'),
+			label: t('summary.expirationDate'),
 			value: contactGroup.expirationDate
 				? new Date(contactGroup.expirationDate).toLocaleDateString()
-				: t('contactListPage.summary.notSet'),
+				: t('summary.notSet'),
 		},
 	];
 
@@ -136,7 +136,7 @@ export const ContactListInformation = ({
 		if (statusKey !== 'EXECUTED') return;
 
 		modals.open({
-			title: t('form.contacts.details.actions.extendWaves'),
+			title: t('contacts.details.actions.extendWaves'),
 			centered: true,
 			withCloseButton: false,
 			children: (
@@ -148,11 +148,9 @@ export const ContactListInformation = ({
 								additionalWaves: wavesToAdd,
 							});
 							notifications.show({
-								title: t(
-									'form.contacts.details.notifications.wavesExtended.title'
-								),
+								title: t('contacts.details.notifications.wavesExtended.title'),
 								message: t(
-									'form.contacts.details.notifications.wavesExtended.message',
+									'contacts.details.notifications.wavesExtended.message',
 									{ count: wavesToAdd }
 								),
 								color: 'green',
@@ -161,7 +159,7 @@ export const ContactListInformation = ({
 							modals.closeAll();
 						} catch (error) {
 							notifications.show({
-								title: t('contactListPage.actions.error'),
+								title: t('actions.error'),
 								message: getErrorMessage(error),
 								color: 'red',
 							});
@@ -178,27 +176,25 @@ export const ContactListInformation = ({
 		if (statusKey !== 'EXECUTED') return;
 
 		modals.openConfirmModal({
-			title: t('form.contacts.details.actions.completeList'),
-			children: (
-				<Text size='sm'>{t('contactListPage.status.confirmCompleteList')}</Text>
-			),
+			title: t('contacts.details.actions.completeList'),
+			children: <Text size='sm'>{t('status.confirmCompleteList')}</Text>,
 			labels: {
-				confirm: t('form.contacts.details.confirm.complete'),
-				cancel: t('form.contacts.details.confirm.cancel'),
+				confirm: t('contacts.details.confirm.complete'),
+				cancel: t('contacts.details.confirm.cancel'),
 			},
 			confirmProps: { color: 'green', loading: completeMutation.isPending },
 			onConfirm: async () => {
 				try {
 					await completeMutation.mutateAsync(contactGroup.id);
 					notifications.show({
-						title: t('form.contacts.details.notifications.completed.title'),
-						message: t('form.contacts.details.notifications.completed.message'),
+						title: t('contacts.details.notifications.completed.title'),
+						message: t('contacts.details.notifications.completed.message'),
 						color: 'green',
 					});
 					onReload();
 				} catch (error) {
 					notifications.show({
-						title: t('contactListPage.actions.error'),
+						title: t('actions.error'),
 						message: getErrorMessage(error),
 						color: 'red',
 					});
@@ -227,7 +223,7 @@ export const ContactListInformation = ({
 					{statusKey === 'EXECUTED' && (
 						<>
 							<Tooltip
-								label={t('form.contacts.details.actions.extendWaves')}
+								label={t('contacts.details.actions.extendWaves')}
 								withArrow
 								position='left'
 							>
@@ -235,7 +231,7 @@ export const ContactListInformation = ({
 									variant='light'
 									color='blue'
 									size='sm'
-									aria-label={t('form.contacts.details.actions.extendWaves')}
+									aria-label={t('contacts.details.actions.extendWaves')}
 									onClick={handleExtendWaves}
 									loading={extendMutation.isPending}
 									disabled={isActionLoading}
@@ -244,7 +240,7 @@ export const ContactListInformation = ({
 								</ActionIcon>
 							</Tooltip>
 							<Tooltip
-								label={t('form.contacts.details.actions.completeList')}
+								label={t('contacts.details.actions.completeList')}
 								withArrow
 								position='left'
 							>
@@ -252,7 +248,7 @@ export const ContactListInformation = ({
 									variant='light'
 									color='green'
 									size='sm'
-									aria-label={t('form.contacts.details.actions.completeList')}
+									aria-label={t('contacts.details.actions.completeList')}
 									onClick={handleCompleteList}
 									loading={completeMutation.isPending}
 									disabled={isActionLoading}
@@ -263,7 +259,7 @@ export const ContactListInformation = ({
 						</>
 					)}
 					<Tooltip
-						label={t('form.contacts.tooltips.reload')}
+						label={t('contacts.tooltips.reload')}
 						withArrow
 						position='left'
 					>
@@ -271,7 +267,7 @@ export const ContactListInformation = ({
 							variant='light'
 							color='gray'
 							size='sm'
-							aria-label={t('form.contacts.tooltips.reload')}
+							aria-label={t('contacts.tooltips.reload')}
 							onClick={() => {
 								void onReload();
 							}}

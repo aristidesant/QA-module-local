@@ -29,7 +29,7 @@ vi.mock('~/stores/campaignsStore', () => ({
 
 vi.mock('react-i18next', () => ({
 	useTranslation: () => ({
-		t: (key: string) => key,
+		t: (key: string, _options?: any) => key,
 	}),
 }));
 

@@ -1,12 +1,14 @@
-import { Group, Text, Box, Card, Title, Skeleton } from "@mantine/core";
-import styles from "./StatusBreakdown.module.css";
-import { PieChart } from "@mantine/charts";
-import { useCampaignsStore } from "~/stores/campaignsStore";
-import { useGetContactSummaryGroups } from "~/queries/contactsQueries";
-import { ContactStatus } from "~/models/ContactsModel";
-import { useMemo } from "react";
+import { Group, Text, Box, Card, Title, Skeleton } from '@mantine/core';
+import styles from './StatusBreakdown.module.css';
+import { PieChart } from '@mantine/charts';
+import { useCampaignsStore } from '~/stores/campaignsStore';
+import { useGetContactSummaryGroups } from '~/queries/contactsQueries';
+import { ContactStatus } from '~/models/ContactsModel';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const StatusBreakdown = () => {
+	const { t } = useTranslation('campaigns');
 	const selectedCampaign = useCampaignsStore((state) => state.selectedCampaign);
 
 	const { data: summaryData, isLoading } = useGetContactSummaryGroups(
@@ -16,27 +18,29 @@ export const StatusBreakdown = () => {
 	// Function to generate consistent colors for the chart segments
 	const generateChartColors = (index: number): string => {
 		const colors = [
-			"#51cf66", // green
-			"#339af0", // blue
-			"#ff922b", // orange
-			"#ff6b6b", // red
-			"#9775fa", // purple
-			"#22b8cf", // cyan
-			"#ffd43b", // yellow
-			"#f783ac", // pink
-			"#748ffc", // indigo
-			"#20c997", // teal
+			'#51cf66', // green
+			'#339af0', // blue
+			'#ff922b', // orange
+			'#ff6b6b', // red
+			'#9775fa', // purple
+			'#22b8cf', // cyan
+			'#ffd43b', // yellow
+			'#f783ac', // pink
+			'#748ffc', // indigo
+			'#20c997', // teal
 		];
 		return colors[index % colors.length];
 	};
 
 	// Function to format status names for display
 	const formatStatusName = (status: string): string => {
-		return status
-			.toLowerCase()
-			.split("_")
-			.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-			.join(" ");
+		return t(`contactListPage.contactsTable.status.${status}`, {
+			defaultValue: status
+				.toLowerCase()
+				.split('_')
+				.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+				.join(' '),
+		});
 	};
 
 	// Get all possible statuses from the enum
@@ -60,7 +64,7 @@ export const StatusBreakdown = () => {
 					// Find the index of this status in the allStatuses array to get consistent color
 					const statusIndex = allStatuses.indexOf(dp.status as ContactStatus);
 					return {
-						name: dp.status,
+						name: formatStatusName(dp.status),
 						value: dp.count,
 						color: generateChartColors(statusIndex),
 					};
@@ -84,11 +88,11 @@ export const StatusBreakdown = () => {
 
 	return (
 		<Card className={styles.card}>
-			<Title order={5} mb="xs" className={styles.title}>
-				Status Breakdown
+			<Title order={5} mb='xs' className={styles.title}>
+				{t('form.contacts.statusBreakdown.title')}
 			</Title>
-			<Text size="xs" c="dimmed" mb="md" className={styles.subtitle}>
-				Quick view of contact distribution by status.
+			<Text size='xs' c='dimmed' mb='md' className={styles.subtitle}>
+				{t('form.contacts.statusBreakdown.subtitle')}
 			</Text>
 
 			<div className={styles.container}>
@@ -101,16 +105,16 @@ export const StatusBreakdown = () => {
 							<div className={styles.statusList}>
 								{/* Skeleton for status items */}
 								{Array.from({ length: 5 }).map((_, index) => (
-									<Group key={index} justify="space-between" mb="xs">
-										<Group gap="xs">
+									<Group key={index} justify='space-between' mb='xs'>
+										<Group gap='xs'>
 											<Skeleton circle height={12} width={12} />
 											<Skeleton height={12} width={100} />
 										</Group>
 										<Skeleton height={12} width={30} />
 									</Group>
 								))}
-								<Box className={styles.totalContainer} mt="sm" p="xs">
-									<Group justify="space-between">
+								<Box className={styles.totalContainer} mt='sm' p='xs'>
+									<Group justify='space-between'>
 										<Skeleton height={12} width={40} />
 										<Skeleton height={12} width={30} />
 									</Group>
@@ -125,9 +129,9 @@ export const StatusBreakdown = () => {
 									<PieChart
 										data={chartData}
 										size={160}
-										mt="sm"
+										mt='sm'
 										withTooltip
-										tooltipDataSource="segment"
+										tooltipDataSource='segment'
 										strokeWidth={0}
 									/>
 								</div>
@@ -136,7 +140,7 @@ export const StatusBreakdown = () => {
 										<div
 											key={`${item.status}-${index}`}
 											className={`${styles.legendItem} ${
-												!item.hasData ? styles.legendItemEmpty : ""
+												!item.hasData ? styles.legendItemEmpty : ''
 											}`}
 										>
 											<Box
@@ -144,13 +148,13 @@ export const StatusBreakdown = () => {
 												style={{
 													backgroundColor: item.hasData
 														? item.color
-														: "var(--mantine-color-gray-3)",
+														: 'var(--mantine-color-gray-3)',
 												}}
 											/>
-											<Text size="xs" className={styles.legendText}>
+											<Text size='xs' className={styles.legendText}>
 												{formatStatusName(item.status)}
 											</Text>
-											<Text size="xs" fw={600} className={styles.legendCount}>
+											<Text size='xs' fw={600} className={styles.legendCount}>
 												{item.count}
 											</Text>
 										</div>
@@ -160,18 +164,18 @@ export const StatusBreakdown = () => {
 
 							{/* Total Section - Bottom */}
 							<div className={styles.totalSection}>
-								<Text size="sm" fw={600}>
-									Total
+								<Text size='sm' fw={600}>
+									{t('form.contacts.statusBreakdown.total')}
 								</Text>
-								<Text size="xl" fw={700}>
+								<Text size='xl' fw={700}>
 									{summaryData?.totalContacts?.toLocaleString()}
 								</Text>
 							</div>
 						</div>
 					) : (
 						<div className={styles.noDataContainer}>
-							<Text size="sm" c="dimmed" ta="center">
-								No status data available
+							<Text size='sm' c='dimmed' ta='center'>
+								{t('form.contacts.statusBreakdown.noData')}
 							</Text>
 						</div>
 					)}

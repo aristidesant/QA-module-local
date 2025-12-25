@@ -15,7 +15,7 @@ interface FaultyPhonesAlertProps {
 }
 
 const FaultyPhonesAlert = ({ contactGroupId }: FaultyPhonesAlertProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation('campaign.contact-list');
 	const [modalOpened, setModalOpened] = useState(false);
 
 	const {
@@ -41,7 +41,7 @@ const FaultyPhonesAlert = ({ contactGroupId }: FaultyPhonesAlertProps) => {
 				className={styles.alert}
 				icon={<Loader size='sm' />}
 			>
-				<Text size='sm'>{t('contactListPage.faultyPhones.checking')}</Text>
+				<Text size='sm'>{t('faultyPhones.checking')}</Text>
 			</Alert>
 		);
 	}
@@ -82,22 +82,22 @@ const FaultyPhonesAlert = ({ contactGroupId }: FaultyPhonesAlertProps) => {
 					className={styles.alert}
 					icon={<Loader size='sm' />}
 				>
-					<Text size='sm'>{t('contactListPage.faultyPhones.refreshing')}</Text>
+					<Text size='sm'>{t('faultyPhones.refreshing')}</Text>
 				</Alert>
 			)}
 			<Alert
 				color='orange'
 				variant='light'
-				title={t('contactListPage.faultyPhones.title')}
+				title={t('faultyPhones.title')}
 				className={styles.alert}
 				icon={<IconAlertTriangle size={20} />}
 			>
 				<Group justify='space-between' align='center'>
 					<Text size='sm'>
-						{t('contactListPage.faultyPhones.message', {
+						{t('faultyPhones.message', {
 							total: totalFaultyPhones,
 							unit: t(
-								`contactListPage.faultyPhones.unit_${totalFaultyPhones === 1 ? 'one' : 'other'}`
+								`faultyPhones.unit_${totalFaultyPhones === 1 ? 'one' : 'other'}`
 							),
 							count: faultyContacts.length,
 							plural: faultyContacts.length === 1 ? '' : 's',
@@ -109,7 +109,7 @@ const FaultyPhonesAlert = ({ contactGroupId }: FaultyPhonesAlertProps) => {
 						size='sm'
 						onClick={() => setModalOpened(true)}
 					>
-						{t('contactListPage.faultyPhones.viewDetails')}
+						{t('faultyPhones.viewDetails')}
 					</Button>
 				</Group>
 			</Alert>

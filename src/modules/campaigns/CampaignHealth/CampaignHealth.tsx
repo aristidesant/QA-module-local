@@ -21,7 +21,7 @@ interface CampaignHealthProps {
 }
 
 const CampaignHealth: React.FC<CampaignHealthProps> = ({ campaignId }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation('campaign.view');
 	const navigate = useNavigate();
 	const {
 		data: requirements,

@@ -16,12 +16,8 @@ describe('ContactSection', () => {
 	it('renders tabs correctly', () => {
 		renderWithProviders(<ContactSection />);
 
-		expect(
-			screen.getByText('campaigns.form.contacts.tabs.active')
-		).toBeInTheDocument();
-		expect(
-			screen.getByText('campaigns.form.contacts.tabs.inactive')
-		).toBeInTheDocument();
+		expect(screen.getByText('Active')).toBeInTheDocument();
+		expect(screen.getByText('Inactive')).toBeInTheDocument();
 	});
 
 	it('toggles content on tab click', async () => {
@@ -31,9 +27,7 @@ describe('ContactSection', () => {
 		expect(screen.getByTestId('contact-list-active')).toBeInTheDocument();
 
 		// Click inactive tab
-		const inactiveTab = screen.getByText(
-			'campaigns.form.contacts.tabs.inactive'
-		);
+		const inactiveTab = screen.getByText('Inactive');
 		await userEvent.click(inactiveTab);
 
 		expect(screen.getByTestId('contact-list-inactive')).toBeInTheDocument();

@@ -8,7 +8,7 @@ interface PhoneNumbersTableProps {
 }
 
 function PhoneNumbersTable({ phoneNumbers }: PhoneNumbersTableProps) {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation('campaign.contact-list');
 	const columns = usePhoneNumbersColumns();
 
 	return (
@@ -16,7 +16,7 @@ function PhoneNumbersTable({ phoneNumbers }: PhoneNumbersTableProps) {
 			data={phoneNumbers}
 			columns={columns}
 			density='compact'
-			emptyMessage={t('contactListPage.phoneNumbersTable.empty')}
+			emptyMessage={t('phoneNumbersTable.empty')}
 		/>
 	);
 }

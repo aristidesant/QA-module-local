@@ -1,12 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useGenerateCampaignPrompt } from '~/queries/campaignPromptQueries';
 import { generateDiffData, type DiffResult } from './diffUtils';
-import {
-	type ModalStep,
-	type PromptMode,
-	SYSTEM_PROMPTS,
-	ERROR_MESSAGES,
-} from './constants';
+import { type ModalStep, type PromptMode, SYSTEM_PROMPTS } from './constants';
+import { useTranslation } from 'react-i18next';
 
 type UsePromptAiActionsParams = {
 	prompt?: string;
@@ -54,6 +50,7 @@ export const usePromptAiActions = ({
 	typeName,
 	onApply,
 }: UsePromptAiActionsParams): UsePromptAiActionsReturn => {
+	const { t } = useTranslation('campaigns');
 	const [editorOpen, setEditorOpen] = useState(false);
 	const [step, setStep] = useState<ModalStep>('compose');
 	const [systemPromptExpanded, setSystemPromptExpanded] = useState(false);
@@ -118,7 +115,7 @@ export const usePromptAiActions = ({
 		}
 
 		if (!fullPrompt.trim()) {
-			setError(ERROR_MESSAGES.emptyPrompt);
+			setError(t('form.agent.prompt.editor.ai.modal.errors.emptyPrompt'));
 			return;
 		}
 
@@ -149,6 +146,7 @@ export const usePromptAiActions = ({
 		mutateAsync,
 		onApply,
 		handleCloseModal,
+		t,
 	]);
 
 	const handleApplyChanges = useCallback(() => {
@@ -170,17 +168,19 @@ export const usePromptAiActions = ({
 
 	const modalTitle = useMemo(() => {
 		if (step === 'review') {
-			return 'Review AI suggestions';
+			return t('form.agent.prompt.editor.ai.modal.title.review');
 		}
 		return mode === 'improve'
-			? 'Improve prompt with AI'
-			: 'Create prompt with AI';
-	}, [mode, step]);
+			? t('form.agent.prompt.editor.ai.modal.title.improve')
+			: t('form.agent.prompt.editor.ai.modal.title.create');
+	}, [mode, step, t]);
 
-	const buttonLabel = hasContent ? 'Improve with AI' : 'Create with AI';
+	const buttonLabel = hasContent
+		? t('form.agent.prompt.editor.ai.button.improve')
+		: t('form.agent.prompt.editor.ai.button.create');
 	const buttonTooltip = hasContent
-		? 'Refine the existing prompt with AI assistance'
-		: 'Generate a new prompt from scratch with AI';
+		? t('form.agent.prompt.editor.ai.button.tooltip.improve')
+		: t('form.agent.prompt.editor.ai.button.tooltip.create');
 
 	return {
 		// State

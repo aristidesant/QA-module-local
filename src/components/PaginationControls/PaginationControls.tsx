@@ -49,7 +49,7 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
 			<div className={styles.summary}>
 				<Text size='sm' c='dimmed'>
 					{isLoading ? (
-						t('common.loading')
+						t('status.loading')
 					) : (
 						<>
 							{t('pagination.showing')} {startItem}-{endItem}{' '}

@@ -31,7 +31,7 @@ const AddPhoneNumbersModal: React.FC<AddPhoneNumbersModalProps> = ({
 	onClose,
 	onSaved,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation('campaign.contact-list');
 	const [phones, setPhones] = useState<string[]>(['']);
 	const createMutation = useCreateContactPhoneNumbers();
 
@@ -79,20 +79,17 @@ const AddPhoneNumbersModal: React.FC<AddPhoneNumbersModalProps> = ({
 			{
 				onSuccess: () => {
 					notifications.show({
-						title: t('contactListPage.actions.success'),
-						message: t(
-							'contactListPage.phoneNumbersTable.addModal.notifications.added',
-							{
-								count: cleanedPhones.length,
-							}
-						),
+						title: t('actions.success'),
+						message: t('phoneNumbersTable.addModal.notifications.added', {
+							count: cleanedPhones.length,
+						}),
 						color: 'green',
 					});
 					onSaved();
 				},
 				onError: (error) => {
 					notifications.show({
-						title: t('contactListPage.status.error'),
+						title: t('status.error'),
 						message: getErrorMessage(error),
 						color: 'red',
 					});
@@ -105,12 +102,12 @@ const AddPhoneNumbersModal: React.FC<AddPhoneNumbersModalProps> = ({
 		<Modal
 			opened
 			onClose={onClose}
-			title={t('contactListPage.phoneNumbersTable.addModal.title')}
+			title={t('phoneNumbersTable.addModal.title')}
 			size='md'
 		>
 			<Group gap='xs' mb='xs'>
 				<Text size='xs' c='dimmed'>
-					{t('contactListPage.phoneNumbersTable.addModal.hint')}
+					{t('phoneNumbersTable.addModal.hint')}
 				</Text>
 			</Group>
 			<Group gap='xs' className={styles.rows}>
@@ -128,9 +125,7 @@ const AddPhoneNumbersModal: React.FC<AddPhoneNumbersModalProps> = ({
 								className={styles.input}
 								error={
 									isInvalid
-										? t(
-												'contactListPage.phoneNumbersTable.addModal.invalidNumber'
-											)
+										? t('phoneNumbersTable.addModal.invalidNumber')
 										: undefined
 								}
 							/>
@@ -157,31 +152,26 @@ const AddPhoneNumbersModal: React.FC<AddPhoneNumbersModalProps> = ({
 			</Group>
 			{hasDuplicates && (
 				<Text size='xs' c='red' mt='xs'>
-					{t('contactListPage.phoneNumbersTable.addModal.duplicateNumbers')}
+					{t('phoneNumbersTable.addModal.duplicateNumbers')}
 				</Text>
 			)}
 			{invalidPhones.length > 0 && !hasDuplicates && (
 				<Text size='xs' c='red' mt='xs'>
-					{t(
-						'contactListPage.phoneNumbersTable.addModal.invalidNumbersDetected',
-						{
-							count: invalidPhones.length,
-							plural: invalidPhones.length === 1 ? '' : 's',
-						}
-					)}
+					{t('phoneNumbersTable.addModal.invalidNumbersDetected', {
+						count: invalidPhones.length,
+						plural: invalidPhones.length === 1 ? '' : 's',
+					})}
 				</Text>
 			)}
 			<Group justify='space-between' mt='md'>
 				<Button variant='subtle' size='xs' onClick={onClose}>
-					{t('contactListPage.phoneNumbersTable.addModal.cancel')}
+					{t('phoneNumbersTable.addModal.cancel')}
 				</Button>
 				<Tooltip
 					label={
 						canSave
-							? t('contactListPage.phoneNumbersTable.addModal.tooltips.save')
-							: t(
-									'contactListPage.phoneNumbersTable.addModal.tooltips.resolveErrors'
-								)
+							? t('phoneNumbersTable.addModal.tooltips.save')
+							: t('phoneNumbersTable.addModal.tooltips.resolveErrors')
 					}
 				>
 					<Button
@@ -193,7 +183,7 @@ const AddPhoneNumbersModal: React.FC<AddPhoneNumbersModalProps> = ({
 						loading={createMutation.isPending}
 						disabled={!canSave}
 					>
-						{t('contactListPage.phoneNumbersTable.addModal.save')}
+						{t('phoneNumbersTable.addModal.save')}
 					</Button>
 				</Tooltip>
 			</Group>

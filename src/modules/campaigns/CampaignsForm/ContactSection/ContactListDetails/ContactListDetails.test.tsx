@@ -106,19 +106,15 @@ describe('ContactListDetails', () => {
 		);
 
 		expect(
-			screen.getByText('campaigns.form.contacts.details.actions.title')
+			screen.getByText('form.contacts.details.actions.title')
 		).toBeInTheDocument();
 		expect(screen.getByText('Test list')).toBeInTheDocument();
 		expect(screen.getByText('Test description')).toBeInTheDocument();
 		expect(
-			screen.queryByLabelText(
-				'campaigns.form.contacts.details.actions.extendWaves'
-			)
+			screen.queryByLabelText('form.contacts.details.actions.extendWaves')
 		).not.toBeInTheDocument();
 		expect(
-			screen.queryByLabelText(
-				'campaigns.form.contacts.details.actions.completeList'
-			)
+			screen.queryByLabelText('form.contacts.details.actions.completeList')
 		).not.toBeInTheDocument();
 	});
 
@@ -138,7 +134,7 @@ describe('ContactListDetails', () => {
 		);
 
 		expect(
-			screen.queryByText('campaigns.form.contacts.details.actions.title')
+			screen.queryByText('form.contacts.details.actions.title')
 		).not.toBeInTheDocument();
 	});
 
@@ -160,10 +156,10 @@ describe('ContactListDetails', () => {
 		);
 
 		const toggle = screen.getByLabelText(
-			'campaigns.form.contacts.details.actions.deactivate'
+			'form.contacts.details.actions.deactivate'
 		);
 		const clean = screen.getByLabelText(
-			'campaigns.form.contacts.details.actions.cleanQueue'
+			'form.contacts.details.actions.cleanQueue'
 		);
 
 		expect(toggle).toBeDisabled();
@@ -201,7 +197,7 @@ describe('ContactListDetails', () => {
 		);
 
 		const extendBtn = screen.getByLabelText(
-			'campaigns.form.contacts.details.actions.extendWaves'
+			'form.contacts.details.actions.extendWaves'
 		);
 		expect(extendBtn).toBeInTheDocument();
 

@@ -9,11 +9,9 @@ interface SelectActiveContactListProps {
 }
 
 export const SelectActiveContactList = ({}: SelectActiveContactListProps) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation('campaigns');
 	// TODO: Implement SelectActiveContactList component
-	return (
-		<Text>{t('campaigns.form.contacts.list.selectActiveDescription')}</Text>
-	);
+	return <Text>{t('form.contacts.list.selectActiveDescription')}</Text>;
 };
 
 export default SelectActiveContactList;

@@ -119,9 +119,7 @@ describe('CampaignContactListPage', () => {
 	it('renders loading state', () => {
 		(useGetContactGroup as any).mockReturnValue({ isLoading: true });
 		renderWithProviders(<CampaignContactListPage />);
-		expect(
-			screen.getByText('contactListPage.status.loading')
-		).toBeInTheDocument();
+		expect(screen.getByText('Loading Contact List')).toBeInTheDocument();
 	});
 
 	it('renders error state', () => {
@@ -130,16 +128,14 @@ describe('CampaignContactListPage', () => {
 			isError: true,
 		});
 		renderWithProviders(<CampaignContactListPage />);
-		expect(
-			screen.getByText('contactListPage.status.unavailable')
-		).toBeInTheDocument();
+		expect(screen.getByText('Contact List Unavailable')).toBeInTheDocument();
 	});
 
 	it('renders invalid ID state', () => {
 		(useParams as any).mockReturnValue({ contactGroupId: 'invalid' });
 		renderWithProviders(<CampaignContactListPage />);
 		expect(
-			screen.getAllByText('contactListPage.status.invalidId').length
+			screen.getAllByText('Invalid Contact List ID').length
 		).toBeGreaterThan(0);
 	});
 
@@ -156,15 +152,11 @@ describe('CampaignContactListPage', () => {
 		it('renders all tab headers', () => {
 			renderWithProviders(<CampaignContactListPage />);
 
+			expect(screen.getByRole('tab', { name: 'Overview' })).toBeInTheDocument();
 			expect(
-				screen.getByRole('tab', { name: /contactListPage.tabs.overview/i })
+				screen.getByRole('tab', { name: 'Conversations' })
 			).toBeInTheDocument();
-			expect(
-				screen.getByRole('tab', { name: /contactListPage.tabs.conversations/i })
-			).toBeInTheDocument();
-			expect(
-				screen.getByRole('tab', { name: /contactListPage.tabs.contacts/i })
-			).toBeInTheDocument();
+			expect(screen.getByRole('tab', { name: 'Contacts' })).toBeInTheDocument();
 		});
 
 		it('renders Overview tab content by default and hides other tabs content', () => {
@@ -188,7 +180,7 @@ describe('CampaignContactListPage', () => {
 			renderWithProviders(<CampaignContactListPage />);
 
 			const conversationsTab = screen.getByRole('tab', {
-				name: /contactListPage.tabs.conversations/i,
+				name: 'Conversations',
 			});
 			fireEvent.click(conversationsTab);
 
@@ -212,7 +204,7 @@ describe('CampaignContactListPage', () => {
 			renderWithProviders(<CampaignContactListPage />);
 
 			const contactsTab = screen.getByRole('tab', {
-				name: /contactListPage.tabs.contacts/i,
+				name: 'Contacts',
 			});
 			fireEvent.click(contactsTab);
 
@@ -239,25 +231,19 @@ describe('CampaignContactListPage', () => {
 			expect(screen.getByTestId('contact-list-info')).toBeInTheDocument();
 
 			// Navigate to Conversations
-			fireEvent.click(
-				screen.getByRole('tab', { name: /contactListPage.tabs.conversations/i })
-			);
+			fireEvent.click(screen.getByRole('tab', { name: 'Conversations' }));
 			expect(screen.getByTestId('conversations-list')).toBeInTheDocument();
 			expect(screen.queryByTestId('contact-list-info')).not.toBeInTheDocument();
 
 			// Navigate to Contacts
-			fireEvent.click(
-				screen.getByRole('tab', { name: /contactListPage.tabs.contacts/i })
-			);
+			fireEvent.click(screen.getByRole('tab', { name: 'Contacts' }));
 			expect(screen.getByTestId('contacts-table')).toBeInTheDocument();
 			expect(
 				screen.queryByTestId('conversations-list')
 			).not.toBeInTheDocument();
 
 			// Navigate back to Overview
-			fireEvent.click(
-				screen.getByRole('tab', { name: /contactListPage.tabs.overview/i })
-			);
+			fireEvent.click(screen.getByRole('tab', { name: 'Overview' }));
 			expect(screen.getByTestId('contact-list-info')).toBeInTheDocument();
 			expect(screen.queryByTestId('contacts-table')).not.toBeInTheDocument();
 		});
@@ -285,7 +271,7 @@ describe('CampaignContactListPage', () => {
 
 		renderWithProviders(<CampaignContactListPage />);
 
-		const startButton = screen.getByText('contactListPage.actions.start');
+		const startButton = screen.getByText('Start Campaign');
 		fireEvent.click(startButton);
 
 		await waitFor(() => {
@@ -325,13 +311,13 @@ describe('CampaignContactListPage', () => {
 
 		renderWithProviders(<CampaignContactListPage />);
 
-		const startButton = screen.getByText('contactListPage.actions.start');
+		const startButton = screen.getByText('Start Campaign');
 		fireEvent.click(startButton);
 
 		await waitFor(() => {
 			expect(notifications.show).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: 'contactListPage.actions.error',
+					title: 'Error',
 					message: apiError.response.data.message,
 					color: 'red',
 				})
@@ -357,7 +343,7 @@ describe('CampaignContactListPage', () => {
 
 		renderWithProviders(<CampaignContactListPage />);
 
-		const pauseButton = screen.getByText('contactListPage.actions.pause');
+		const pauseButton = screen.getByText('Pause Campaign');
 		fireEvent.click(pauseButton);
 
 		await waitFor(() => {

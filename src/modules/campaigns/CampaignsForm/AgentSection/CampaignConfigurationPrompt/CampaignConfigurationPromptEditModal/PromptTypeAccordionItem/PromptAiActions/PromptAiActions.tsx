@@ -7,6 +7,7 @@ import ComposeStep from './ComposeStep';
 import ReviewStep from './ReviewStep';
 import styles from './PromptAiActions.module.css';
 import type { CampaignPromptTypeModel } from '~/models/CampaignPromptTypeModel';
+import { useTranslation } from 'react-i18next';
 
 type PromptAiActionsProps = {
 	prompt?: string;
@@ -20,6 +21,7 @@ const PromptAiActions: React.FC<PromptAiActionsProps> = ({
 	onApply,
 	type,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const {
 		// State
 		editorOpen,
@@ -62,9 +64,7 @@ const PromptAiActions: React.FC<PromptAiActionsProps> = ({
 		<Group gap='xs' justify='space-between' className={styles.wrapper}>
 			<Group gap='xs' className={styles.infoMessage}>
 				<IconInfoCircle size={16} />
-				<Text size='xs'>
-					Type <strong>{'{{'}</strong> to see available dynamic variables
-				</Text>
+				<Text size='xs'>{t('form.agent.prompt.editor.variables.hint')}</Text>
 			</Group>
 			<Tooltip label={buttonTooltip} withArrow>
 				<Button

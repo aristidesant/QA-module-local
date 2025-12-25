@@ -55,7 +55,7 @@ const FaultyPhonesModal = ({
 	contactGroupId,
 	onAfterUpdate,
 }: FaultyPhonesModalProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation('campaign.contact-list');
 	const { canPerformAction } = usePermissions();
 	const canExportContacts = canPerformAction(
 		ModuleEnum.CONTACTS,
@@ -147,12 +147,8 @@ const FaultyPhonesModal = ({
 					});
 					queryClient.invalidateQueries({ queryKey: ['contacts'] });
 					notifications.show({
-						title: t(
-							'contactListPage.faultyPhones.modal.notifications.updateSuccess'
-						),
-						message: t(
-							'contactListPage.faultyPhones.modal.notifications.updateSuccess'
-						),
+						title: t('faultyPhones.modal.notifications.updateSuccess'),
+						message: t('faultyPhones.modal.notifications.updateSuccess'),
 						color: 'green',
 					});
 					cancelEdit();
@@ -160,15 +156,11 @@ const FaultyPhonesModal = ({
 				},
 				onError: (error) => {
 					notifications.show({
-						title: t(
-							'contactListPage.faultyPhones.modal.notifications.updateFailed'
-						),
+						title: t('faultyPhones.modal.notifications.updateFailed'),
 						message:
 							error instanceof Error
 								? error.message
-								: t(
-										'contactListPage.faultyPhones.modal.notifications.updateFailed'
-									),
+								: t('faultyPhones.modal.notifications.updateFailed'),
 						color: 'red',
 					});
 				},
@@ -215,9 +207,7 @@ const FaultyPhonesModal = ({
 				value={value}
 				onChange={onChange}
 				size='xs'
-				placeholder={t(
-					'contactListPage.faultyPhones.modal.placeholders.enterPhone'
-				)}
+				placeholder={t('faultyPhones.modal.placeholders.enterPhone')}
 				className={styles.editInput}
 				autoFocus
 			/>
@@ -247,26 +237,18 @@ const FaultyPhonesModal = ({
 				URL.revokeObjectURL(url);
 
 				notifications.show({
-					title: t(
-						'contactListPage.faultyPhones.modal.notifications.exportSuccess'
-					),
-					message: t(
-						'contactListPage.faultyPhones.modal.notifications.exportSuccess'
-					),
+					title: t('faultyPhones.modal.notifications.exportSuccess'),
+					message: t('faultyPhones.modal.notifications.exportSuccess'),
 					color: 'green',
 				});
 			}
 		} catch (error) {
 			notifications.show({
-				title: t(
-					'contactListPage.faultyPhones.modal.notifications.exportFailed'
-				),
+				title: t('faultyPhones.modal.notifications.exportFailed'),
 				message:
 					error instanceof Error
 						? error.message
-						: t(
-								'contactListPage.faultyPhones.modal.notifications.exportFailed'
-							),
+						: t('faultyPhones.modal.notifications.exportFailed'),
 				color: 'red',
 			});
 		}
@@ -276,7 +258,7 @@ const FaultyPhonesModal = ({
 		const baseColumns: ColumnDef<FaultyPhoneRow>[] = [
 			{
 				accessorKey: 'contactName',
-				header: t('contactListPage.faultyPhones.modal.columns.contact'),
+				header: t('faultyPhones.modal.columns.contact'),
 				size: 160,
 				cell: ({ getValue }) => (
 					<Text size='sm' fw={500}>
@@ -286,7 +268,7 @@ const FaultyPhonesModal = ({
 			},
 			{
 				accessorKey: 'phoneNumber',
-				header: t('contactListPage.faultyPhones.modal.columns.phoneNumber'),
+				header: t('faultyPhones.modal.columns.phoneNumber'),
 				size: 150,
 				cell: ({ row }) => {
 					const original = row.original;
@@ -311,7 +293,7 @@ const FaultyPhonesModal = ({
 
 			{
 				accessorKey: 'errorCode',
-				header: t('contactListPage.faultyPhones.modal.columns.errorCode'),
+				header: t('faultyPhones.modal.columns.errorCode'),
 				size: 120,
 				cell: ({ getValue }) => (
 					<Badge color='red' variant='light' size='sm'>
@@ -321,7 +303,7 @@ const FaultyPhonesModal = ({
 			},
 			{
 				accessorKey: 'errorMessage',
-				header: t('contactListPage.faultyPhones.modal.columns.errorMessage'),
+				header: t('faultyPhones.modal.columns.errorMessage'),
 				size: 280, // constrain width
 				cell: ({ getValue }) => (
 					<Text size='sm' c='dimmed' className={styles.errorMessage}>
@@ -334,16 +316,14 @@ const FaultyPhonesModal = ({
 		if (canUpdateContacts) {
 			baseColumns.push({
 				id: 'actions',
-				header: t('contactListPage.faultyPhones.modal.columns.actions'),
+				header: t('faultyPhones.modal.columns.actions'),
 				cell: ({ row }) => {
 					const original = row.original;
 					const isEditing = editingPhoneId === original.phoneNumberId;
 					return (
 						<Group gap='xs'>
 							{!isEditing && (
-								<Tooltip
-									label={t('contactListPage.faultyPhones.modal.tooltips.edit')}
-								>
+								<Tooltip label={t('faultyPhones.modal.tooltips.edit')}>
 									<ActionIcon
 										variant='subtle'
 										color='blue'
@@ -393,7 +373,7 @@ const FaultyPhonesModal = ({
 			title={
 				<Group gap='xs'>
 					<IconAlertCircle size={20} color='var(--mantine-color-red-6)' />
-					<Title order={4}>{t('contactListPage.faultyPhones.title')}</Title>
+					<Title order={4}>{t('faultyPhones.title')}</Title>
 				</Group>
 			}
 			centered
@@ -401,7 +381,7 @@ const FaultyPhonesModal = ({
 		>
 			<Stack gap='md'>
 				<Text size='sm' c='dimmed'>
-					{t('contactListPage.faultyPhones.modal.description')}
+					{t('faultyPhones.modal.description')}
 				</Text>
 
 				{canExportContacts && (
@@ -414,7 +394,7 @@ const FaultyPhonesModal = ({
 							onClick={handleExport}
 							loading={exportQuery.isFetching}
 						>
-							{t('contactListPage.faultyPhones.modal.export')}
+							{t('faultyPhones.modal.export')}
 						</Button>
 					</Group>
 				)}
@@ -422,11 +402,9 @@ const FaultyPhonesModal = ({
 				<BaseTable data={rows} columns={columns} enablePagination={false} />
 
 				<Text size='xs' c='dimmed' ta='center'>
-					{t('contactListPage.faultyPhones.modal.total', {
+					{t('faultyPhones.modal.total', {
 						count: rows.length,
-						unit: t(
-							`contactListPage.faultyPhones.unit_${rows.length === 1 ? 'one' : 'other'}`
-						),
+						unit: t(`faultyPhones.unit_${rows.length === 1 ? 'one' : 'other'}`),
 					})}
 				</Text>
 			</Stack>

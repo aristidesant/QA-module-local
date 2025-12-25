@@ -25,7 +25,7 @@ interface ContactListControlProps {
 export const ContactListControl = ({
 	contactGroup,
 }: ContactListControlProps) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation('campaigns');
 	const startMutation = useStartOutboundCampaign();
 	const pauseMutation = usePauseOutboundCampaign();
 	const resumeMutation = useResumeOutboundCampaign();
@@ -38,7 +38,7 @@ export const ContactListControl = ({
 
 	const showSuccessNotification = (message: string) => {
 		notifications.show({
-			title: t('campaigns.form.contacts.controls.notifications.successTitle'),
+			title: t('form.contacts.controls.notifications.successTitle'),
 			message,
 			color: 'green',
 			icon: <IconCircleCheck size={18} />,
@@ -52,7 +52,7 @@ export const ContactListControl = ({
 				?.message || (error instanceof Error ? error.message : null);
 
 		notifications.show({
-			title: t('campaigns.form.contacts.controls.notifications.errorTitle'),
+			title: t('form.contacts.controls.notifications.errorTitle'),
 			message: apiMessage || fallbackMessage,
 			color: 'red',
 			icon: <IconX size={18} />,
@@ -84,7 +84,7 @@ export const ContactListControl = ({
 		if (!campaignId) {
 			showErrorNotification(
 				null,
-				t('campaigns.form.contacts.controls.notifications.unknownCampaign')
+				t('form.contacts.controls.notifications.unknownCampaign')
 			);
 			return;
 		}
@@ -98,13 +98,13 @@ export const ContactListControl = ({
 				{
 					onSuccess: () => {
 						showSuccessNotification(
-							t('campaigns.form.contacts.controls.notifications.running')
+							t('form.contacts.controls.notifications.running')
 						);
 					},
 					onError: (error) => {
 						showErrorNotification(
 							error,
-							t('campaigns.form.contacts.controls.notifications.startError')
+							t('form.contacts.controls.notifications.startError')
 						);
 					},
 				}
@@ -118,13 +118,13 @@ export const ContactListControl = ({
 				{
 					onSuccess: () => {
 						showSuccessNotification(
-							t('campaigns.form.contacts.controls.notifications.resumed')
+							t('form.contacts.controls.notifications.resumed')
 						);
 					},
 					onError: (error) => {
 						showErrorNotification(
 							error,
-							t('campaigns.form.contacts.controls.notifications.resumeError')
+							t('form.contacts.controls.notifications.resumeError')
 						);
 					},
 				}
@@ -138,13 +138,13 @@ export const ContactListControl = ({
 				{
 					onSuccess: () => {
 						showSuccessNotification(
-							t('campaigns.form.contacts.controls.notifications.paused')
+							t('form.contacts.controls.notifications.paused')
 						);
 					},
 					onError: (error) => {
 						showErrorNotification(
 							error,
-							t('campaigns.form.contacts.controls.notifications.pauseError')
+							t('form.contacts.controls.notifications.pauseError')
 						);
 					},
 				}
@@ -170,26 +170,26 @@ export const ContactListControl = ({
 
 	let icon = <IconPlayerPlay size={16} />;
 	let tooltip = canStartOrResume
-		? t('campaigns.form.contacts.controls.start')
-		: t('campaigns.form.contacts.controls.requirementsNotMet');
+		? t('form.contacts.controls.start')
+		: t('form.contacts.controls.requirementsNotMet');
 
 	if (contactGroup.queueStatus === 'PAUSED') {
 		icon = <IconPlayerPlay size={16} />;
 		tooltip = canStartOrResume
-			? t('campaigns.form.contacts.controls.resume')
-			: t('campaigns.form.contacts.controls.requirementsNotMet');
+			? t('form.contacts.controls.resume')
+			: t('form.contacts.controls.requirementsNotMet');
 	} else if (contactGroup.queueStatus === 'RUNNING') {
 		icon = <IconPlayerPause size={16} />;
-		tooltip = t('campaigns.form.contacts.controls.pause');
+		tooltip = t('form.contacts.controls.pause');
 	} else if (contactGroup.queueStatus === 'COMPLETED') {
 		icon = <IconPlayerPlay size={16} />;
-		tooltip = t('campaigns.form.contacts.controls.completed');
+		tooltip = t('form.contacts.controls.completed');
 	} else if (contactGroup.queueStatus === 'FAILED') {
 		icon = <IconPlayerPlay size={16} />;
-		tooltip = t('campaigns.form.contacts.controls.failed');
+		tooltip = t('form.contacts.controls.failed');
 	} else if (contactGroup.queueStatus === 'EXECUTED') {
 		icon = <IconPlayerPlay size={16} />;
-		tooltip = t('campaigns.form.contacts.controls.allWavesDone');
+		tooltip = t('form.contacts.controls.allWavesDone');
 	}
 
 	return (

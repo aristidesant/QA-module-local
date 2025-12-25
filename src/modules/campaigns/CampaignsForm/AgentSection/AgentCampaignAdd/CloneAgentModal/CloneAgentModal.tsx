@@ -6,6 +6,7 @@ import { notifications } from '@mantine/notifications';
 import { modals } from '@mantine/modals';
 import { useDuplicateAgent } from '~/queries/agentQueries';
 import type { AgentWithCampaignListItem } from '~/models/AgentListObject';
+import { useTranslation } from 'react-i18next';
 
 interface CloneAgentModalProps {
 	agent: AgentWithCampaignListItem;
@@ -16,19 +17,22 @@ const CloneAgentModal: React.FC<CloneAgentModalProps> = ({
 	agent,
 	onSuccess,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const duplicateMutation = useDuplicateAgent();
 
+	const isLoading = isSubmitting || duplicateMutation.isPending;
+
 	const form = useForm({
 		initialValues: {
-			name: `${agent.name} Copy`,
+			name: `${agent.name} ${t('form.agent.add.copySuffix')}`,
 		},
 		validate: {
 			name: (value) => {
 				const trimmed = value.trim();
-				if (trimmed.length < 1) return 'Name is required';
+				if (trimmed.length < 1) return t('form.agent.add.cloneNameRequired');
 				if (trimmed === agent.name)
-					return 'The new name must be different from the original agent name';
+					return t('form.agent.add.cloneNameDifferent');
 				return null;
 			},
 		},
@@ -43,18 +47,18 @@ const CloneAgentModal: React.FC<CloneAgentModalProps> = ({
 			});
 			modals.close('clone-agent-modal');
 			notifications.show({
-				title: 'Success',
-				message: 'Agent cloned successfully',
+				title: t('common:status.success'),
+				message: t('form.agent.add.cloneSuccess'),
 				color: 'green',
 			});
 			onSuccess();
 		} catch (error) {
-			let apiMessage = 'Failed to clone agent';
+			let apiMessage = t('form.agent.add.cloneError');
 			if (isAxiosError(error)) {
 				apiMessage = error.response?.data?.message || apiMessage;
 			}
 			notifications.show({
-				title: 'Error',
+				title: t('form.agent.add.error'),
 				message: apiMessage,
 				color: 'red',
 			});
@@ -67,20 +71,20 @@ const CloneAgentModal: React.FC<CloneAgentModalProps> = ({
 		<form onSubmit={form.onSubmit(handleSubmit)}>
 			<Stack gap='md'>
 				<Text size='sm' c='dimmed'>
-					Enter a new name for the cloned agent.
+					{t('form.agent.add.cloneDesc')}
 				</Text>
 				<TextInput
-					label='Agent Name'
-					placeholder='Enter agent name'
+					label={t('form.agent.add.cloneNameLabel')}
+					placeholder={t('form.agent.add.cloneNamePlaceholder')}
 					{...form.getInputProps('name')}
-					disabled={isSubmitting}
+					disabled={isLoading}
 				/>
 				{duplicateMutation.error && (
 					<Text size='sm' c='red'>
 						{isAxiosError(duplicateMutation.error)
 							? duplicateMutation.error.response?.data?.message ||
-								'Failed to clone agent'
-							: 'Failed to clone agent'}
+								t('form.agent.add.cloneError')
+							: t('form.agent.add.cloneError')}
 					</Text>
 				)}
 				<div
@@ -89,12 +93,12 @@ const CloneAgentModal: React.FC<CloneAgentModalProps> = ({
 					<Button
 						variant='default'
 						onClick={() => modals.close('clone-agent-modal')}
-						disabled={isSubmitting}
+						disabled={isLoading}
 					>
-						Cancel
+						{t('form.agent.add.cancel')}
 					</Button>
-					<Button type='submit' loading={isSubmitting}>
-						Clone
+					<Button type='submit' loading={isLoading}>
+						{t('form.agent.add.cloneAction')}
 					</Button>
 				</div>
 			</Stack>

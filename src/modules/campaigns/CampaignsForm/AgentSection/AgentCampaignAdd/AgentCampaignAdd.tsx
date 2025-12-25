@@ -19,6 +19,7 @@ import { FilterContainer } from '~/components/FilterContainer';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import { modals } from '@mantine/modals';
 import CloneAgentModal from './CloneAgentModal';
+import { useTranslation } from 'react-i18next';
 
 interface AgentCampaignAddProps {
 	campaignId: number;
@@ -31,6 +32,7 @@ export const AgentCampaignAdd: React.FC<AgentCampaignAddProps> = ({
 	excludedAgents,
 	onComplete,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const [searchTerm, setSearchTerm] = useState('');
 	const [debouncedSearch] = useDebouncedValue(searchTerm, 400);
 	const [page, setPage] = useState(1);
@@ -87,12 +89,12 @@ export const AgentCampaignAdd: React.FC<AgentCampaignAddProps> = ({
 			{
 				onSuccess: onComplete,
 				onError: (error) => {
-					let apiMessage = 'Failed to add agent to campaign';
+					let apiMessage = t('form.agent.add.addError');
 					if (isAxiosError(error)) {
 						apiMessage = error.response?.data?.message || apiMessage;
 					}
 					notifications.show({
-						title: 'Error',
+						title: t('form.agent.add.error'),
 						message: apiMessage,
 						color: 'red',
 					});
@@ -111,7 +113,7 @@ export const AgentCampaignAdd: React.FC<AgentCampaignAddProps> = ({
 
 	const handleClone = (agent: AgentWithCampaignListItem) => {
 		modals.open({
-			title: 'Clone Agent',
+			title: t('form.agent.add.cloneTitle'),
 			modalId: 'clone-agent-modal',
 			size: 'md',
 			centered: true,
@@ -134,13 +136,13 @@ export const AgentCampaignAdd: React.FC<AgentCampaignAddProps> = ({
 			<FilterContainer>
 				<TextInput
 					className={classes.searchInput}
-					placeholder='Search agents by name'
+					placeholder={t('form.agent.add.searchPlaceholder')}
 					value={searchTerm}
 					onChange={(event) => {
 						setSearchTerm(event.currentTarget.value);
 						setPage(1);
 					}}
-					aria-label='Search agents by name'
+					aria-label={t('form.agent.add.searchPlaceholder')}
 					size='sm'
 					leftSection={<IconSearch size={16} />}
 				/>
@@ -155,9 +157,9 @@ export const AgentCampaignAdd: React.FC<AgentCampaignAddProps> = ({
 						withCloseButton={false}
 					>
 						<Stack gap='xs'>
-							<Text fw={600}>Failed to load agents</Text>
+							<Text fw={600}>{t('form.agent.add.loadError')}</Text>
 							<Text className={classes.subText}>
-								We could not load the agent list. Please try again.
+								{t('form.agent.add.loadErrorDesc')}
 							</Text>
 							<Button
 								variant='outline'
@@ -165,7 +167,7 @@ export const AgentCampaignAdd: React.FC<AgentCampaignAddProps> = ({
 								size='xs'
 								onClick={() => refetch()}
 							>
-								Try again
+								{t('form.agent.add.tryAgain')}
 							</Button>
 						</Stack>
 					</Alert>
@@ -181,9 +183,9 @@ export const AgentCampaignAdd: React.FC<AgentCampaignAddProps> = ({
 						<div className={classes.emptyIcon}>
 							<IconUsersGroup size={24} />
 						</div>
-						<Text fw={500}>No available agents</Text>
+						<Text fw={500}>{t('form.agent.add.noAgents')}</Text>
 						<Text className={classes.subText}>
-							Adjust your filters or pagination to see more results.
+							{t('form.agent.add.noAgentsDesc')}
 						</Text>
 					</div>
 				)}

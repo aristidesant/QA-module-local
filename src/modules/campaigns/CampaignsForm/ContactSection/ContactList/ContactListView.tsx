@@ -37,7 +37,7 @@ export const ContactListView = ({
 	isActive,
 	isLoading = false,
 }: ContactListViewProps) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation('campaigns');
 	const navigate = useNavigate();
 	const [opened, { open, close }] = useDisclosure(false);
 	const [inactiveExpanded, { toggle: toggleInactiveExpanded }] =
@@ -84,26 +84,26 @@ export const ContactListView = ({
 	const title = (
 		<>
 			{isActive
-				? t('campaigns.form.contacts.list.activeTitle')
-				: t('campaigns.form.contacts.list.inactiveTitle')}{' '}
+				? t('form.contacts.list.activeTitle')
+				: t('form.contacts.list.inactiveTitle')}{' '}
 			({activeCount}){' '}
 		</>
 	);
 	const description = isActive
-		? t('campaigns.form.contacts.list.activeDescription')
-		: t('campaigns.form.contacts.list.inactiveDescription');
+		? t('form.contacts.list.activeDescription')
+		: t('form.contacts.list.inactiveDescription');
 	const tooltipLabel = isActive
-		? t('campaigns.form.contacts.list.addNewContactList')
-		: t('campaigns.form.contacts.list.addInactiveContactList');
+		? t('form.contacts.list.addNewContactList')
+		: t('form.contacts.list.addInactiveContactList');
 	const modalTitle = isActive
-		? t('campaigns.form.contacts.list.configuration')
-		: t('campaigns.form.contacts.list.selectActive');
+		? t('form.contacts.list.configuration')
+		: t('form.contacts.list.selectActive');
 	const modalDescription = isActive
-		? t('campaigns.form.contacts.list.configurationDescription')
-		: t('campaigns.form.contacts.list.selectActiveDescription');
+		? t('form.contacts.list.configurationDescription')
+		: t('form.contacts.list.selectActiveDescription');
 	const emptyMessage = isActive
-		? t('campaigns.form.contacts.list.emptyMessage')
-		: t('campaigns.form.contacts.list.emptyInactiveMessage');
+		? t('form.contacts.list.emptyMessage')
+		: t('form.contacts.list.emptyInactiveMessage');
 
 	const isCollapsed = !isActive && !inactiveExpanded;
 
@@ -115,18 +115,18 @@ export const ContactListView = ({
 				description={description}
 				headerActions={
 					<Group gap='xs'>
-						<Tooltip label={t('campaigns.form.contacts.list.reload')}>
+						<Tooltip label={t('form.contacts.list.reload')}>
 							<ActionIcon
 								color='gray'
 								size='sm'
 								variant='light'
 								onClick={onUpdateComplete}
-								aria-label={t('campaigns.form.contacts.list.reload')}
+								aria-label={t('form.contacts.list.reload')}
 								disabled={isCollapsed}
 								title={
 									isCollapsed
-										? t('campaigns.form.contacts.list.reloadUnavailable')
-										: t('campaigns.form.contacts.list.reload')
+										? t('form.contacts.list.reloadUnavailable')
+										: t('form.contacts.list.reload')
 								}
 							>
 								<IconRefresh size={18} />

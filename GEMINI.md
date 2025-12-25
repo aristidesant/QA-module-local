@@ -277,11 +277,66 @@ import { renderWithProviders } from '~/test-utils/renderWithProviders';
 // Always use renderWithProviders, not render
 ```
 
+### i18n in Tests
+
+**CRITICAL**: The `renderWithProviders` utility automatically provides a fully configured i18n instance with all locale files pre-loaded.
+
+#### How It Works
+
+- `renderWithProviders` wraps components with `I18nextProvider`
+- All locale files from `src/locales/en/` and `src/locales/es/` are automatically imported and loaded
+- Translations work exactly as they do in the application
+- **DO NOT mock `react-i18next`** in individual test files
+
+#### Writing Test Assertions
+
+When testing components that use translations:
+
+```tsx
+// ✅ CORRECT: Use the actual translated text from locale files
+expect(screen.getByText('Apply changes')).toBeInTheDocument();
+expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+
+// ❌ WRONG: Don't use translation keys
+expect(screen.getByText('form.agent.prompt.actions.apply')).toBeInTheDocument();
+
+// ❌ WRONG: Don't use regex unless necessary for dynamic content
+expect(screen.getByText(/apply/i)).toBeInTheDocument();
+```
+
+#### Adding New Locale Namespaces to Tests
+
+When you create a new locale namespace (e.g., `src/locales/en/my-feature.json`):
+
+1. The namespace is automatically loaded by `renderWithProviders`
+2. No changes needed to test setup
+3. Just use the translated text in your assertions
+
+#### Checking Translation Keys
+
+To find the correct translated text for assertions:
+
+1. Look at the component's `useTranslation` hook to see which namespace it uses
+2. Open the corresponding locale file (e.g., `src/locales/en/campaigns.json`)
+3. Find the translation key used in the component
+4. Use the English translation value in your test assertion
+
+Example:
+
+```tsx
+// Component uses: t('form.agent.prompt.actions.apply')
+// In src/locales/en/campaigns.json: "apply": "Apply changes"
+// Test assertion:
+expect(
+	screen.getByRole('button', { name: 'Apply changes' })
+).toBeInTheDocument();
+```
+
 ### Mocking
 
 - Use `vi` from vitest for mocks
 - Mock API calls and router hooks when needed
-
+- **NEVER mock `react-i18next`** - it's handled by `renderWithProviders`
 - Avoid `vi.mock` hoisting pitfalls: when using `vi.mock` with a factory, do not reference local variables declared later in the file because the factory runs during hoisting and will trigger TDZ errors. Instead, create `vi.fn()` inside the factory or mock the module and then use the imported mock to configure return values in tests.
 
 ---

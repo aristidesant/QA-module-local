@@ -1,0 +1,40 @@
+{
+	"health": {
+		"loading": "Cargando salud de la campaña...",
+		"error": "Error",
+		"failedToLoad": "Error al cargar los requisitos de la campaña.",
+		"dispositionFlow": "Flujo de disposición",
+		"notConfigured": "No configurado",
+		"activeSchedule": "Horario activo",
+		"notActive": "No activo",
+		"goToEdit": "Ir a editar"
+	},
+	"index": {
+		"title": "Resumen de campaña",
+		"description": "Revise el rendimiento y los detalles de configuración más recientes.",
+		"missingId": {
+			"title": "Campaña faltante",
+			"message": "Se requiere el identificador de la campaña para mostrar esta página."
+		},
+		"loading": {
+			"title": "Cargando campaña...",
+			"description": "Por favor espere mientras obtenemos el resumen de la campaña."
+		},
+		"unavailable": {
+			"title": "Campaña no disponible",
+			"description": "No pudimos cargar la campaña solicitada.",
+			"error": {
+				"defaultMessage": "Campaña no encontrada o error al cargar."
+			}
+		},
+		"actions": {
+			"edit": "Editar campaña"
+		}
+	},
+	"contacts": {
+		"tabs": {
+			"active": "Activos",
+			"inactive": "Inactivos"
+		}
+	}
+}

@@ -51,7 +51,7 @@ export function ContactListInfo({
 	onNameChange,
 	readonly = false,
 }: ContactListInfoProps) {
-	const { t } = useTranslation();
+	const { t } = useTranslation('campaigns');
 	const [opened, setOpened] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
 	const [editedName, setEditedName] = useState(listName);
@@ -136,8 +136,8 @@ export function ContactListInfo({
 							lh={1.2}
 						>
 							{hasName
-								? t('campaigns.form.contacts.info.nameLabel')
-								: t('campaigns.form.contacts.info.nameRequired')}
+								? t('form.contacts.info.nameLabel')
+								: t('form.contacts.info.nameRequired')}
 						</Text>
 						{isEditing ? (
 							<Group gap='xs' align='center' mt={4}>
@@ -151,19 +151,15 @@ export function ContactListInfo({
 												.slice(0, 50)
 										)
 									}
-									placeholder={t(
-										'campaigns.form.contacts.info.namePlaceholder'
-									)}
-									description={t(
-										'campaigns.form.contacts.info.nameDescription'
-									)}
+									placeholder={t('form.contacts.info.namePlaceholder')}
+									description={t('form.contacts.info.nameDescription')}
 									autoFocus
 									size='sm'
 									onKeyDown={handleKeyDown}
 									className={classes.nameInput}
 									maxLength={50}
 								/>
-								<Tooltip label={t('common.save')}>
+								<Tooltip label={t('save', { ns: 'common' })}>
 									<ActionIcon
 										variant='light'
 										color='green'
@@ -176,7 +172,7 @@ export function ContactListInfo({
 										<IconCheck size={14} />
 									</ActionIcon>
 								</Tooltip>
-								<Tooltip label={t('common.cancel')}>
+								<Tooltip label={t('cancel', { ns: 'common' })}>
 									<ActionIcon
 										variant='light'
 										color='red'
@@ -193,7 +189,7 @@ export function ContactListInfo({
 									{listName}
 								</Text>
 								{onNameChange && !readonly && (
-									<Tooltip label={t('campaigns.form.contacts.info.editName')}>
+									<Tooltip label={t('form.contacts.info.editName')}>
 										<ActionIcon
 											variant='subtle'
 											size='xs'
@@ -212,7 +208,7 @@ export function ContactListInfo({
 								onClick={() => !readonly && onNameChange && setIsEditing(true)}
 							>
 								<Text className={classes.placeholderText}>
-									{t('campaigns.form.contacts.info.clickToAddName')}
+									{t('form.contacts.info.clickToAddName')}
 								</Text>
 							</Box>
 						)}
@@ -249,8 +245,8 @@ export function ContactListInfo({
 								onClick={() => setOpened((o) => !o)}
 							>
 								{expirationDate
-									? `${t('campaigns.form.contacts.info.expires')}: ${formatExpirationDate(expirationDate)}`
-									: t('campaigns.form.contacts.info.addExpiration')}
+									? `${t('form.contacts.info.expires')}: ${formatExpirationDate(expirationDate)}`
+									: t('form.contacts.info.addExpiration')}
 							</Button>
 						</Popover.Target>
 						<Popover.Dropdown>
@@ -280,15 +276,15 @@ export function ContactListInfo({
 								<Text size='xs' c='dimmed'>
 									{expirationDate &&
 									dayjs(expirationDate).isBefore(dayjs().startOf('day'), 'day')
-										? t('campaigns.form.contacts.info.dateInPast')
-										: t('campaigns.form.contacts.info.selectExpiration')}
+										? t('form.contacts.info.dateInPast')
+										: t('form.contacts.info.selectExpiration')}
 								</Text>
 								<Button
 									variant='subtle'
 									size='xs'
 									onClick={() => setOpened(false)}
 								>
-									{t('common.close')}
+									{t('close', { ns: 'common' })}
 								</Button>
 							</Group>
 						</Popover.Dropdown>

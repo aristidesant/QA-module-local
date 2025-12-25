@@ -13,7 +13,7 @@ export interface ContactGroupSummaryProps {
 }
 
 const ContactGroupSummary = ({ contactGroup }: ContactGroupSummaryProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation('campaign.contact-list');
 	const statusConfig = useMemo(
 		() => getQueueStatusConfig(contactGroup.queueStatus),
 		[contactGroup.queueStatus]
@@ -22,27 +22,27 @@ const ContactGroupSummary = ({ contactGroup }: ContactGroupSummaryProps) => {
 	const metrics = useMemo(
 		() => [
 			{
-				label: t('contactListPage.summary.contacts'),
+				label: t('summary.contacts'),
 				value: contactGroup.contactCount?.toLocaleString() ?? 'N/A',
 			},
 			{
-				label: t('contactListPage.summary.maxCallsPerContact'),
+				label: t('summary.maxCallsPerContact'),
 				value: contactGroup.maxCallsPerContact ?? 'N/A',
 			},
 			{
-				label: t('contactListPage.summary.maxCallsPerList'),
+				label: t('summary.maxCallsPerList'),
 				value: contactGroup.maxCallsPerList ?? 'N/A',
 			},
 			{
-				label: t('contactListPage.summary.humanEquivalent'),
+				label: t('summary.humanEquivalent'),
 				value: contactGroup.humanEquivalent ?? 'N/A',
 			},
 			{
-				label: t('contactListPage.summary.waves'),
+				label: t('summary.waves'),
 				value:
 					contactGroup.maxWaves && contactGroup.maxWaves > 0
 						? `${contactGroup.currentWave ?? 1} / ${contactGroup.maxWaves}`
-						: t('contactListPage.summary.notSet'),
+						: t('summary.notSet'),
 			},
 		],
 		[
@@ -59,8 +59,8 @@ const ContactGroupSummary = ({ contactGroup }: ContactGroupSummaryProps) => {
 	return (
 		<Stack gap='md' className={styles.root}>
 			<RightSectionCard
-				title={t('contactListPage.summary.details')}
-				description={t('contactListPage.summary.metadata')}
+				title={t('summary.details')}
+				description={t('summary.metadata')}
 				icon={IconInfoCircle}
 				rightSection={
 					<div className={styles.headerBadges}>
@@ -71,8 +71,8 @@ const ContactGroupSummary = ({ contactGroup }: ContactGroupSummaryProps) => {
 							className={styles.badge}
 						>
 							{contactGroup.isActive
-								? t('contactListPage.summary.active')
-								: t('contactListPage.summary.inactive')}
+								? t('summary.active')
+								: t('summary.inactive')}
 						</Badge>
 						<Badge
 							variant='light'
@@ -80,7 +80,7 @@ const ContactGroupSummary = ({ contactGroup }: ContactGroupSummaryProps) => {
 							size='sm'
 							className={styles.badge}
 						>
-							{statusConfig.label}
+							{t(statusConfig.label)}
 						</Badge>
 					</div>
 				}
@@ -91,8 +91,7 @@ const ContactGroupSummary = ({ contactGroup }: ContactGroupSummaryProps) => {
 							{contactGroup.name || '#' + contactGroup.id}
 						</Text>
 						<Text size='xs' c='dimmed' className={styles.smallText}>
-							{contactGroup.description?.trim() ||
-								t('contactListPage.summary.noDescription')}
+							{contactGroup.description?.trim() || t('summary.noDescription')}
 						</Text>
 					</div>
 					{/* status badges moved to header rightSection */}
@@ -105,7 +104,7 @@ const ContactGroupSummary = ({ contactGroup }: ContactGroupSummaryProps) => {
 				>
 					<div>
 						<Text size='xs' c='dimmed'>
-							{t('contactListPage.summary.campaign')}
+							{t('summary.campaign')}
 						</Text>
 						<Text size='sm'>
 							{contactGroup.campaignId ? `#${contactGroup.campaignId}` : '-'}
@@ -113,30 +112,30 @@ const ContactGroupSummary = ({ contactGroup }: ContactGroupSummaryProps) => {
 					</div>
 					<div>
 						<Text size='xs' c='dimmed'>
-							{t('contactListPage.summary.schedule')}
+							{t('summary.schedule')}
 						</Text>
 						<Text size='sm'>
 							{contactGroup.scheduleId
 								? `#${contactGroup.scheduleId}`
-								: t('contactListPage.summary.notSet')}
+								: t('summary.notSet')}
 						</Text>
 					</div>
 					<div>
 						<Text size='xs' c='dimmed'>
-							{t('contactListPage.summary.expirationDate')}
+							{t('summary.expirationDate')}
 						</Text>
 						<Text size='sm'>
 							{contactGroup.expirationDate
 								? formatExpirationDate(contactGroup.expirationDate)
-								: t('contactListPage.summary.noExpiration')}
+								: t('summary.noExpiration')}
 						</Text>
 					</div>
 					{/* removed source field; model doesn't have source */}
 				</SimpleGrid>
 			</RightSectionCard>
 			<RightSectionCard
-				title={t('contactListPage.summary.metrics')}
-				description={t('contactListPage.summary.performanceMetrics')}
+				title={t('summary.metrics')}
+				description={t('summary.performanceMetrics')}
 				icon={IconChartBar}
 			>
 				<div className={styles.metricsGrid}>

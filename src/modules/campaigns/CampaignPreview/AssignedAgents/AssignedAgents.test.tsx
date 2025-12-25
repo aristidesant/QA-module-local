@@ -40,9 +40,7 @@ describe('AssignedAgents', () => {
 			isLoading: true,
 		});
 		renderWithProviders(<AssignedAgents />);
-		expect(
-			screen.getAllByText('preview.assignedAgents.loadingAgent').length
-		).toBeGreaterThan(0);
+		expect(screen.getAllByText('Loading agent').length).toBeGreaterThan(0);
 	});
 
 	it('renders assigned agents when data is present', () => {
@@ -58,9 +56,7 @@ describe('AssignedAgents', () => {
 	it('renders empty state when no agents', () => {
 		mockUseGetCampaignAgents.mockReturnValue({ data: [], isLoading: false });
 		renderWithProviders(<AssignedAgents />);
-		expect(
-			screen.getByText('preview.assignedAgents.noAgents')
-		).toBeInTheDocument();
+		expect(screen.getByText('No agents assigned yet')).toBeInTheDocument();
 	});
 });
 

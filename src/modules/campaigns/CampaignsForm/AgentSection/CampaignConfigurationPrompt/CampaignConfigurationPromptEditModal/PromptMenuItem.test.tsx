@@ -122,7 +122,7 @@ describe('PromptMenuItem', () => {
 			renderWithProviders(
 				<PromptMenuItem {...defaultProps} isDrafted={true} />
 			);
-			expect(screen.getByText('DRAFT')).toBeInTheDocument();
+			expect(screen.getByText('Drafted')).toBeInTheDocument();
 		});
 
 		it('shows Saved badge when not drafted and hasValue is true', () => {
@@ -233,7 +233,7 @@ describe('PromptMenuItem', () => {
 
 			const menuItem = screen.getByTestId('prompt-menu-item-1');
 			expect(menuItem).toHaveAttribute('data-active', 'true');
-			expect(screen.getByText('DRAFT')).toBeInTheDocument();
+			expect(screen.getByText('Drafted')).toBeInTheDocument();
 			expect(document.querySelector('[data-filled]')).toHaveAttribute(
 				'data-filled',
 				'true'
@@ -290,7 +290,7 @@ describe('PromptMenuItem', () => {
 
 			const menuItem = screen.getByTestId('prompt-menu-item-1');
 			expect(menuItem).toHaveAttribute('data-active', 'false');
-			expect(screen.getByText('DRAFT')).toBeInTheDocument();
+			expect(screen.getByText('Drafted')).toBeInTheDocument();
 			expect(document.querySelector('[data-filled]')).toHaveAttribute(
 				'data-filled',
 				'false'

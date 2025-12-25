@@ -21,20 +21,20 @@ const getStatusColor = (status: string) =>
 	STATUS_COLOR[status] ?? STATUS_COLOR.INACTIVE;
 
 const useContactGroupContactsColumns = (): ColumnDef<Contact>[] => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation('campaign.contact-list');
 
 	const formatFullName = (contact: Contact) => {
 		const parts = [contact.firstName, contact.lastName].filter(Boolean);
 		return parts.length > 0
 			? parts.join(' ')
-			: t('contactListPage.contactsTable.unnamedContact');
+			: t('contactsTable.unnamedContact');
 	};
 
 	return useMemo(
 		() => [
 			{
 				id: 'name',
-				header: t('contactListPage.contactsTable.columns.name'),
+				header: t('contactsTable.columns.name'),
 				cell: ({ row }) => {
 					const contact = row.original;
 					return (
@@ -53,7 +53,7 @@ const useContactGroupContactsColumns = (): ColumnDef<Contact>[] => {
 			},
 			{
 				id: 'identifier',
-				header: t('contactListPage.contactsTable.columns.identifier'),
+				header: t('contactsTable.columns.identifier'),
 				cell: ({ row }) => {
 					const contact = row.original;
 					if (!contact.identifier) {
@@ -71,7 +71,7 @@ const useContactGroupContactsColumns = (): ColumnDef<Contact>[] => {
 			},
 			{
 				id: 'status',
-				header: t('contactListPage.contactsTable.columns.status'),
+				header: t('contactsTable.columns.status'),
 				cell: ({ row }) => {
 					const contact = row.original;
 					return (
@@ -87,7 +87,7 @@ const useContactGroupContactsColumns = (): ColumnDef<Contact>[] => {
 			},
 			{
 				id: 'phone',
-				header: t('contactListPage.contactsTable.columns.primaryPhone'),
+				header: t('contactsTable.columns.primaryPhone'),
 				cell: ({ row }) => {
 					const contact = row.original;
 					const primaryPhone = contact.phoneNumbers?.[0]?.phoneNumber ?? '—';
@@ -96,7 +96,7 @@ const useContactGroupContactsColumns = (): ColumnDef<Contact>[] => {
 			},
 			{
 				id: 'updatedAt',
-				header: t('contactListPage.contactsTable.columns.lastUpdated'),
+				header: t('contactsTable.columns.lastUpdated'),
 				cell: ({ row }) => {
 					const contact = row.original;
 					const rawDate = contact.updatedAt ?? contact.createdAt;

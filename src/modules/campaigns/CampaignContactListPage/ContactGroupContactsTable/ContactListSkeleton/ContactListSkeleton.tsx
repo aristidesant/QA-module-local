@@ -9,24 +9,16 @@ interface ContactListSkeletonProps {
 export const ContactListSkeleton: React.FC<ContactListSkeletonProps> = ({
 	rows = 10,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation('campaign.contact-list');
 
 	return (
 		<Table className={styles.table} striped>
 			<Table.Thead>
 				<Table.Tr>
-					<Table.Th>
-						{t('contactListPage.contactsTable.columns.contact')}
-					</Table.Th>
-					<Table.Th>
-						{t('contactListPage.contactsTable.columns.phone')}
-					</Table.Th>
-					<Table.Th>
-						{t('contactListPage.contactsTable.columns.email')}
-					</Table.Th>
-					<Table.Th>
-						{t('contactListPage.contactsTable.columns.status')}
-					</Table.Th>
+					<Table.Th>{t('contactsTable.columns.contact')}</Table.Th>
+					<Table.Th>{t('contactsTable.columns.phone')}</Table.Th>
+					<Table.Th>{t('contactsTable.columns.email')}</Table.Th>
+					<Table.Th>{t('contactsTable.columns.status')}</Table.Th>
 				</Table.Tr>
 			</Table.Thead>
 			<Table.Tbody>

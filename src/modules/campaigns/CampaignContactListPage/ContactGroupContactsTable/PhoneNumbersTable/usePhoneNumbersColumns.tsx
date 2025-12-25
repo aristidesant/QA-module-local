@@ -14,13 +14,13 @@ interface PhoneNumber {
 }
 
 export function usePhoneNumbersColumns() {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation('campaign.contact-list');
 
 	return useMemo<ColumnDef<PhoneNumber>[]>(
 		() => [
 			{
 				accessorKey: 'phoneNumber',
-				header: t('contactListPage.phoneNumbersTable.columns.phoneNumber'),
+				header: t('phoneNumbersTable.columns.phoneNumber'),
 				cell: (info) => {
 					const phoneNumber = info.getValue() as string;
 					const phoneEntry = info.row.original;
@@ -59,7 +59,7 @@ export function usePhoneNumbersColumns() {
 			},
 			{
 				accessorKey: 'status',
-				header: t('contactListPage.phoneNumbersTable.columns.status'),
+				header: t('phoneNumbersTable.columns.status'),
 				cell: (info) => {
 					const status = info.getValue() as string;
 					return status ? (
@@ -75,7 +75,7 @@ export function usePhoneNumbersColumns() {
 			},
 			{
 				accessorKey: 'retryCounter',
-				header: t('contactListPage.phoneNumbersTable.columns.retries'),
+				header: t('phoneNumbersTable.columns.retries'),
 				cell: (info) => {
 					const retries = info.getValue() as number;
 					return <Text size='xs'>{retries ?? 0}</Text>;

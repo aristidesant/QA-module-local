@@ -5,6 +5,7 @@ import React, {
 	useRef,
 	useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	Accordion,
 	Text,
@@ -49,6 +50,7 @@ const PromptTypeAccordionItem: React.FC<PromptTypeAccordionItemProps> = ({
 	onChange,
 	campaignId,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 	const lastCursorRef = useRef<number | null>(null);
 	const [showVariableMenu, setShowVariableMenu] = useState(false);
@@ -263,23 +265,29 @@ const PromptTypeAccordionItem: React.FC<PromptTypeAccordionItemProps> = ({
 							className={styles.controlStatus}
 							data-filled={isDrafted}
 						>
-							{isDrafted ? 'Drafted' : 'Empty'}
+							{isDrafted
+								? t('form.agent.prompt.editor.status.drafted')
+								: t('form.agent.prompt.editor.status.empty')}
 						</Text>
 						<Badge
 							size='xs'
 							variant='outline'
 							color={isDrafted ? 'blue' : 'gray'}
 						>
-							{promptLines} lines)
+							{t('form.agent.prompt.editor.lines', { count: promptLines })}
 						</Badge>
-						<Tooltip label='View prompt history' withArrow>
+						<Tooltip
+							label={t('form.agent.prompt.editor.history.tooltip')}
+							withArrow
+						>
 							<ActionIcon
+								component='span'
 								role='button'
 								tabIndex={0}
 								variant='light'
 								color='gray'
 								size='sm'
-								aria-label='Prompt history'
+								aria-label={t('form.agent.prompt.editor.history.aria')}
 								onClick={handleOpenHistory}
 								onKeyDown={(event) => {
 									event.stopPropagation();
@@ -299,8 +307,8 @@ const PromptTypeAccordionItem: React.FC<PromptTypeAccordionItemProps> = ({
 				<Stack gap='xs'>
 					{promptOptions.length > 0 && (
 						<Select
-							label='Reuse from another campaign'
-							placeholder='Load prompt from another campaign...'
+							label={t('form.agent.prompt.editor.reuse.label')}
+							placeholder={t('form.agent.prompt.editor.reuse.placeholder')}
 							data={promptOptions}
 							onChange={handlePromptSelect}
 							searchable
@@ -322,8 +330,7 @@ const PromptTypeAccordionItem: React.FC<PromptTypeAccordionItemProps> = ({
 						<Popover.Target>
 							<div data-color-mode='light' className={styles.editorWrapper}>
 								<Text size='xs' c='dimmed' className={styles.editorHint}>
-									Keep it under eight lines; highlight tone, persona, and
-									constraints.
+									{t('form.agent.prompt.editor.hint')}
 								</Text>
 								<MDEditor
 									value={value || ''}
@@ -333,7 +340,7 @@ const PromptTypeAccordionItem: React.FC<PromptTypeAccordionItemProps> = ({
 									className={styles.mdEditor}
 									textareaProps={
 										{
-											placeholder: 'Enter your prompt here...',
+											placeholder: t('form.agent.prompt.editor.placeholder'),
 											ref: textareaRef,
 											onKeyUp: handleEditorKeyUp,
 											onKeyDown: handleEditorKeyDown,
@@ -350,14 +357,16 @@ const PromptTypeAccordionItem: React.FC<PromptTypeAccordionItemProps> = ({
 							<Stack gap='xs'>
 								<Group justify='space-between'>
 									<Text size='xs' fw={600}>
-										Available variables
+										{t('form.agent.prompt.editor.variables.popover.title')}
 									</Text>
 									<Badge size='xs' variant='light' color='gray'>
-										Dynamic & system
+										{t('form.agent.prompt.editor.variables.popover.badge')}
 									</Badge>
 								</Group>
 								<Text size='xs' c='dimmed'>
-									Use arrow keys to navigate and Enter to insert.
+									{t(
+										'form.agent.prompt.editor.variables.popover.navigationHint'
+									)}
 								</Text>
 								<ScrollArea.Autosize mah={220}>
 									<Stack gap={4} className={styles.variableList}>
@@ -393,14 +402,20 @@ const PromptTypeAccordionItem: React.FC<PromptTypeAccordionItemProps> = ({
 															variable.source === 'schema' ? 'blue' : 'gray'
 														}
 													>
-														{variable.source === 'schema' ? 'Dyn' : 'Sys'}
+														{variable.source === 'schema'
+															? t(
+																	'form.agent.prompt.editor.variables.popover.source.dyn'
+																)
+															: t(
+																	'form.agent.prompt.editor.variables.popover.source.sys'
+																)}
 													</Badge>
 												</Group>
 											</UnstyledButton>
 										))}
 										{filteredVariables.length === 0 && (
 											<Text size='xs' c='dimmed' ta='center' py='xs'>
-												No variables available.
+												{t('form.agent.prompt.editor.variables.popover.empty')}
 											</Text>
 										)}
 									</Stack>
@@ -419,7 +434,7 @@ const PromptTypeAccordionItem: React.FC<PromptTypeAccordionItemProps> = ({
 			<Modal
 				opened={showDiffPreview}
 				onClose={handleCancelDiffPreview}
-				title='Review changes before importing'
+				title={t('form.agent.prompt.editor.diff.modalTitle')}
 				size='80%'
 				centered
 			>

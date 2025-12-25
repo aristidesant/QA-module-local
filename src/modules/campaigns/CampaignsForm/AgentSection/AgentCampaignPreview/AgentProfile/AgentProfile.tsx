@@ -3,6 +3,7 @@ import React from 'react';
 import { getAgentLanguage, getLanguageFlagEmoji } from '~/utils/agentUtils';
 import type AgentListObject from '~/models/AgentListObject';
 import styles from './AgentProfile.module.css';
+import { useTranslation } from 'react-i18next';
 
 export type AgentProfileProps = {
 	agent?: AgentListObject;
@@ -37,11 +38,12 @@ const AgentProfile: React.FC<AgentProfileProps> = ({
 	size = 'md',
 	onClick,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const avatarSize = avatarSizes[size];
 	const isOnline = agent?.status === 'ACTIVE';
 	const language = getAgentLanguage(agent as unknown as AgentListObject);
 	const flagEmoji = getLanguageFlagEmoji(language);
-	const initials = getInitials(agent?.name || 'AA');
+	const initials = getInitials(agent?.name || 'A');
 	const voiceGender = agent?.voice?.gender;
 	const avatarColor = getAvatarColor(voiceGender);
 
@@ -52,7 +54,7 @@ const AgentProfile: React.FC<AgentProfileProps> = ({
 					color={avatarColor}
 					size={avatarSize}
 					radius={avatarSize}
-					alt={agent?.name || 'Agent avatar'}
+					alt={agent?.name || t('form.agent.preview.avatarAlt')}
 					className={styles.avatar}
 				>
 					{initials}
@@ -61,11 +63,17 @@ const AgentProfile: React.FC<AgentProfileProps> = ({
 					className={`${styles.statusDot} ${
 						isOnline ? styles.statusOnline : styles.statusOffline
 					}`}
-					aria-label={isOnline ? 'Online' : 'Offline'}
+					aria-label={
+						isOnline
+							? t('form.agent.preview.online')
+							: t('form.agent.preview.offline')
+					}
 				/>
 			</div>
 
-			<Text className={styles.name}>{agent?.name || 'Unnamed agent'}</Text>
+			<Text className={styles.name}>
+				{agent?.name || t('form.agent.preview.unnamed')}
+			</Text>
 
 			<div className={styles.languageChip}>
 				<span className={styles.flagIcon} role='img' aria-label={language}>

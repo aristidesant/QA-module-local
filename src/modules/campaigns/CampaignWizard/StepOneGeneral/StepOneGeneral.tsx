@@ -31,7 +31,7 @@ import type { CreateCampaignWithAgentDTO } from '~/api/campaignsApi';
 import styles from '../CampaignWizard.module.css';
 import { useGetCampaignObjectives } from '~/queries/campaignObjectivesQueries';
 import { useGetAllAgentVoices } from '~/queries/agentVoiceQueries';
-import { CampaignObjectivesForm } from '~/modules/campaigns/CampaignManagementPage/Objectives/components/CampaignObjectivesForm/CampaignObjectivesForm';
+import { CampaignObjectivesForm } from '~/modules/campaign-management/campaign-objectives/components/CampaignObjectivesForm/CampaignObjectivesForm';
 import { IconPlus, IconAlertCircle } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
 

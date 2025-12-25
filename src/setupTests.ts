@@ -1,7 +1,6 @@
 import '@testing-library/jest-dom';
 import { afterEach, vi } from 'vitest';
 import * as React from 'react';
-import '~/locales/i18n';
 
 // Polyfill React.act for React 19 compatibility with @testing-library/react
 // React 19 removed act from react-dom/test-utils, but testing-library still expects it
@@ -50,20 +49,3 @@ Object.defineProperty(globalThis, 'ResizeObserver', {
 // Mock scrollIntoView for Mantine Combobox components in test environment
 // jsdom doesn't implement scrollIntoView, which Mantine's Combobox uses
 Element.prototype.scrollIntoView = vi.fn();
-
-// Mock react-i18next
-vi.mock('react-i18next', () => ({
-	useTranslation: () => ({
-		t: (key: string) => key,
-		i18n: {
-			changeLanguage: vi.fn(),
-			language: 'en',
-		},
-	}),
-	initReactI18next: {
-		type: '3rdParty',
-		init: vi.fn(),
-	},
-	Trans: ({ children }: { children: React.ReactNode }) => children,
-	I18nextProvider: ({ children }: { children: React.ReactNode }) => children,
-}));

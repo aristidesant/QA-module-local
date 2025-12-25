@@ -28,17 +28,21 @@ describe('ContactDetails', () => {
 
 		expect(screen.getByText('John Doe')).toBeInTheDocument();
 		expect(screen.getByText('Spanish')).toBeInTheDocument();
-		expect(screen.getByText('contactDetails.primaryPhone')).toBeInTheDocument();
+		expect(
+			screen.getByText('form.contacts.details.primaryPhone')
+		).toBeInTheDocument();
 		expect(screen.getByText('+34 612 345 678')).toBeInTheDocument();
-		expect(screen.getByText('contactDetails.email')).toBeInTheDocument();
+		expect(screen.getByText('form.contacts.details.email')).toBeInTheDocument();
 		expect(screen.getByText('john.doe@example.com')).toBeInTheDocument();
-		expect(screen.getByText('contactDetails.location')).toBeInTheDocument();
+		expect(
+			screen.getByText('form.contacts.details.location')
+		).toBeInTheDocument();
 		expect(screen.getByText('Madrid, Spain')).toBeInTheDocument();
 		expect(
-			screen.getByText('contactDetails.engagementLevel.title')
+			screen.getByText('form.contacts.details.engagementLevel.title')
 		).toBeInTheDocument();
 		expect(
-			screen.getByText('contactDetails.reviewsQualification.title')
+			screen.getByText('form.contacts.details.reviewsQualification.title')
 		).toBeInTheDocument();
 		expect(screen.getByText('12')).toBeInTheDocument();
 		expect(screen.getByText('3')).toBeInTheDocument();
@@ -67,7 +71,9 @@ describe('ContactDetails', () => {
 			/>
 		);
 
-		expect(screen.getByText('contactDetails.phoneNumbers')).toBeInTheDocument();
+		expect(
+			screen.getByText('form.contacts.details.phoneNumbers')
+		).toBeInTheDocument();
 		expect(screen.getByText('+34 600 111 222')).toBeInTheDocument();
 		expect(screen.getByText('+34 699 888 777')).toBeInTheDocument();
 		expect(screen.getByText('INVALID_NUMBER')).toBeInTheDocument();
@@ -77,12 +83,14 @@ describe('ContactDetails', () => {
 	it('does not render optional cards when data is missing', () => {
 		renderWithProviders(<ContactDetails contact={baseContact} />);
 
-		expect(screen.queryByText('contactDetails.email')).not.toBeInTheDocument();
 		expect(
-			screen.queryByText('contactDetails.location')
+			screen.queryByText('form.contacts.details.email')
 		).not.toBeInTheDocument();
 		expect(
-			screen.queryByText(/contactDetails.phoneNumbers/)
+			screen.queryByText('form.contacts.details.location')
+		).not.toBeInTheDocument();
+		expect(
+			screen.queryByText(/form.contacts.details.phoneNumbers/)
 		).not.toBeInTheDocument();
 		expect(screen.getByText('87')).toBeInTheDocument();
 		expect(screen.getByText('75%')).toBeInTheDocument();
@@ -90,10 +98,10 @@ describe('ContactDetails', () => {
 		expect(screen.getByText('45')).toBeInTheDocument();
 		expect(screen.getByText('16')).toBeInTheDocument();
 		expect(
-			screen.getByText('contactDetails.engagementLevel.description')
+			screen.getByText('form.contacts.details.engagementLevel.description')
 		).toBeInTheDocument();
 		expect(
-			screen.getByText('contactDetails.reviewsQualification.description')
+			screen.getByText('form.contacts.details.reviewsQualification.description')
 		).toBeInTheDocument();
 	});
 

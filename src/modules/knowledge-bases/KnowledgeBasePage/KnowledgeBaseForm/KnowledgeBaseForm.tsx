@@ -34,6 +34,7 @@ import styles from './KnowledgeBaseForm.module.css';
 import { usePermissions } from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
+import { useTranslation } from 'react-i18next';
 
 // Re-export utils for backward compatibility with tests
 export { isValidUrl, normalizeUrl, inferType } from '../../utils';
@@ -51,6 +52,7 @@ type FormValues = {
 
 const KnowledgeBaseForm = ({ id }: Props = {}) => {
 	const clearRight = useKnowledgeBaseStore((s) => s.clearRightComponent);
+	const { t } = useTranslation('knowledge-bases');
 	const { canPerformAction } = usePermissions();
 	const createMutation = useCreateKnowledgeBase();
 	const updateMutation = useUpdateKnowledgeBase();
@@ -79,14 +81,14 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 			const errors: Partial<Record<keyof FormValues, string>> = {};
 
 			if (!values.name.trim()) {
-				errors.name = 'Name is required.';
+				errors.name = t('form.fields.name.required');
 			}
 
 			// In edit mode, content is not required (existing content is preserved)
 			if (!isEditMode) {
 				const detectedType = inferType(values.content, values.file);
 				if (!detectedType) {
-					errors.content = 'Enter a URL, paste text content, or upload a file.';
+					errors.content = t('form.fields.content.required');
 				}
 			}
 
@@ -96,8 +98,7 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 					// Normalize URL before validating (add https:// if missing)
 					new URL(normalizeUrl(values.content));
 				} catch {
-					errors.content =
-						'Enter a valid URL (e.g., https://example.com/docs).';
+					errors.content = t('form.fields.content.invalidUrl');
 				}
 			}
 
@@ -151,7 +152,7 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 		if (typeof maybeAxios?.response?.data?.message === 'string') {
 			return maybeAxios.response.data.message;
 		}
-		return 'Unable to save this knowledge base. Please try again.';
+		return t('form.alerts.saveError');
 	};
 
 	const handleFileChange = (file: File | null) => {
@@ -242,9 +243,21 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 				KnowledgeBaseType,
 				{ icon: string; label: string; color: string }
 			> = {
-				[KnowledgeBaseType.FILE]: { icon: '📄', label: 'File', color: 'blue' },
-				[KnowledgeBaseType.URL]: { icon: '🔗', label: 'URL', color: 'green' },
-				[KnowledgeBaseType.TEXT]: { icon: '📝', label: 'Text', color: 'gray' },
+				[KnowledgeBaseType.FILE]: {
+					icon: '📄',
+					label: t('form.typeIndicator.file'),
+					color: 'blue',
+				},
+				[KnowledgeBaseType.URL]: {
+					icon: '🔗',
+					label: t('form.typeIndicator.url'),
+					color: 'green',
+				},
+				[KnowledgeBaseType.TEXT]: {
+					icon: '📝',
+					label: t('form.typeIndicator.text'),
+					color: 'gray',
+				},
 			};
 			return typeLabels[kb.type] ?? null;
 		}
@@ -255,22 +268,22 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 		> = {
 			[KnowledgeBaseType.FILE]: {
 				icon: '📄',
-				label: 'File detected',
+				label: t('form.typeIndicator.fileDetected'),
 				color: 'blue',
 			},
 			[KnowledgeBaseType.URL]: {
 				icon: '🔗',
-				label: 'URL detected',
+				label: t('form.typeIndicator.urlDetected'),
 				color: 'green',
 			},
 			[KnowledgeBaseType.TEXT]: {
 				icon: '📝',
-				label: 'Text detected',
+				label: t('form.typeIndicator.textDetected'),
 				color: 'gray',
 			},
 		};
 		return typeLabels[detectedType];
-	}, [detectedType, isEditMode, kb?.type]);
+	}, [detectedType, isEditMode, kb?.type, t]);
 
 	const mutationError = parseError(
 		createMutation.error ?? updateMutation.error
@@ -278,8 +291,8 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 
 	return (
 		<RightSectionCard
-			title='Knowledge Base'
-			description='Add or edit a knowledge base entry for your agent.'
+			title={t('form.title')}
+			description={t('form.description')}
 			icon={IconBook}
 			rightSection={
 				<Badge color={headerStatus.color} size='sm'>
@@ -303,47 +316,50 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 						icon={<IconInfoCircle size={16} />}
 						className={styles.alert}
 					>
-						You have read-only access to knowledge bases.
+						{t('form.alerts.readOnly')}
 					</Alert>
 				)}
 
-				<Stack gap='sm' className={styles.section}>
+				<Stack gap='xs' className={styles.section}>
 					<div className={styles.sectionHeader}>
-						<Text className={styles.sectionTitle}>Basics</Text>
+						<Text className={styles.sectionTitle}>
+							{t('form.sections.basics.title')}
+						</Text>
 						<Text size='xs' c='dimmed'>
-							Name this knowledge base. Content type is auto-detected.
+							{t('form.sections.basics.description')}
 						</Text>
 					</div>
 					<TextInput
-						label='Name'
-						placeholder='e.g., Product FAQs'
+						label={t('form.fields.name.label')}
+						placeholder={t('form.fields.name.placeholder')}
 						required
 						disabled={isLoading || isReadOnly}
 						withAsterisk
 						{...form.getInputProps('name')}
+						size='sm'
 					/>
 					<Textarea
-						label='Description'
-						placeholder='Short internal note about this knowledge base'
+						label={t('form.fields.description.label')}
+						placeholder={t('form.fields.description.placeholder')}
 						autosize
 						minRows={3}
 						disabled={isLoading || isReadOnly}
 						{...form.getInputProps('description')}
+						size='sm'
 					/>
 				</Stack>
 
 				<Divider
-					label='Content source'
+					label={t('form.sections.content.divider')}
 					labelPosition='left'
 					className={styles.divider}
 				/>
 
-				<Stack gap='sm' className={styles.section}>
+				<Stack gap='xs' className={styles.section}>
 					<Box className={styles.hint}>
 						<Group gap='xs' align='center'>
 							<Text size='xs' c='dimmed'>
-								Enter a URL, paste text, or upload a file. Type is detected
-								automatically.
+								{t('form.sections.content.hint')}
 							</Text>
 							{typeIndicator && (
 								<Badge
@@ -360,8 +376,8 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 
 					{/* Content textarea: URL or Text */}
 					<Textarea
-						label='URL or Text Content'
-						placeholder='Paste a URL (https://...) or text content here...'
+						label={t('form.fields.content.label')}
+						placeholder={t('form.fields.content.placeholder')}
 						leftSection={
 							detectedType === KnowledgeBaseType.URL ? (
 								<IconWorldWww size={16} />
@@ -377,17 +393,18 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 						error={form.errors.content}
 						description={
 							hasFile
-								? 'Clear the file to enter text or a URL instead.'
-								: 'Enter a public URL or paste text content to train your agent.'
+								? t('form.fields.content.descriptionWithFile')
+								: t('form.fields.content.description')
 						}
+						size='sm'
 					/>
 
 					{/* File input: mutually exclusive with content */}
 					{!isEditMode && (
 						<Box>
 							<FileInput
-								label='Or upload a file'
-								placeholder='Choose a PDF, TXT, or MD file'
+								label={t('form.fields.file.label')}
+								placeholder={t('form.fields.file.placeholder')}
 								value={form.values.file}
 								onChange={handleFileChange}
 								accept='.pdf,application/pdf,.txt,text/plain,.md'
@@ -397,14 +414,17 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 								error={form.errors.file}
 								description={
 									hasContent
-										? 'Clear the text to upload a file instead.'
-										: 'Supported: PDF, TXT, MD. Max 25MB.'
+										? t('form.fields.file.descriptionWithContent')
+										: t('form.fields.file.description')
 								}
 								disabled={isLoading || hasContent || isReadOnly}
+								size='sm'
 							/>
 							{form.values.file && (
 								<Text size='sm' mt='xs' c='dimmed'>
-									Selected: {form.values.file.name}
+									{t('form.fileMeta.selected', {
+										name: form.values.file.name,
+									})}
 								</Text>
 							)}
 						</Box>
@@ -413,29 +433,33 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 					{/* Show existing file in edit mode */}
 					{isEditMode && kb?.type === KnowledgeBaseType.FILE && (
 						<Box className={styles.metaCard}>
-							<Text className={styles.metaLabel}>Current file</Text>
+							<Text className={styles.metaLabel}>
+								{t('form.fileMeta.currentLabel')}
+							</Text>
 							<Text className={styles.metaValue}>
-								{kb?.file?.name ?? 'No file uploaded'}
+								{kb?.file?.name ?? t('form.fileMeta.none')}
 							</Text>
 						</Box>
 					)}
 				</Stack>
 
-				<Group justify='flex-end' className={styles.actions}>
+				<Group justify='flex-end' className={styles.actions} gap='xs'>
 					<Button
 						variant='default'
 						onClick={() => clearRight()}
 						disabled={isSaving}
+						size='sm'
 					>
-						Cancel
+						{t('form.actions.cancel')}
 					</Button>
 					{!isReadOnly && (
 						<Button
 							type='submit'
 							loading={isSaving}
 							disabled={!form.isValid() || isLoading}
+							size='sm'
 						>
-							Save
+							{t('form.actions.save')}
 						</Button>
 					)}
 				</Group>

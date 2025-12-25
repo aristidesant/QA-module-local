@@ -25,7 +25,7 @@ describe('CleanQueueButton', () => {
 		renderWithProviders(<CleanQueueButton campaignId={5} />);
 
 		const button = screen.getByRole('button', {
-			name: /preview\.cleanQueue\.cleanQueueConfirm/i,
+			name: 'Clean Queue',
 		});
 		expect(button).toBeDisabled();
 
@@ -41,7 +41,7 @@ describe('CleanQueueButton', () => {
 
 		await user.click(
 			screen.getByRole('button', {
-				name: /preview\.cleanQueue\.cleanQueueConfirm/i,
+				name: 'Clean Queue',
 			})
 		);
 
@@ -63,7 +63,7 @@ describe('CleanQueueButton', () => {
 
 		expect(
 			screen.getByRole('button', {
-				name: /preview\.cleanQueue\.cleanQueueConfirm/i,
+				name: 'Clean Queue',
 			})
 		).toBeDisabled();
 	});

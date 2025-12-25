@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 
 const AgentSection: React.FC = () => {
 	const { setRightComponent } = useCampaignsStore((state) => state);
-	const { t } = useTranslation();
+	const { t } = useTranslation('common');
 
 	useEffect(() => {
 		setRightComponent?.(<AgentCampaignList />);
@@ -31,7 +31,7 @@ const AgentSection: React.FC = () => {
 
 			<Flex>
 				<Button leftSection={<IconDeviceFloppy size={16} />} type='submit'>
-					{t('common.save')}
+					{t('actions.save')}
 				</Button>
 			</Flex>
 		</Stack>

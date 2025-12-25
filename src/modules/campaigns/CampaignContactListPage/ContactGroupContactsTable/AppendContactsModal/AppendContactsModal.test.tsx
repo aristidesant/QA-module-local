@@ -20,20 +20,16 @@ describe('AppendContactsModal', () => {
 		);
 
 		const file = new File(['csv'], 'contacts.csv', { type: 'text/csv' });
-		const input = screen.getByLabelText(
-			/contactListPage.contactsTable.appendModal.selectFile/i
-		);
+		const input = screen.getByLabelText(/Select CSV File/i);
 		await user.upload(input, file);
 
 		await user.click(
 			screen.getByRole('button', {
-				name: 'contactListPage.contactsTable.appendModal.saveFile',
+				name: /Save File/i,
 			})
 		);
 		expect(onUpload).toHaveBeenCalledWith(file);
-		expect(
-			screen.getByText(/contactListPage.contactsTable.appendModal.fileSaved/)
-		).toBeInTheDocument();
+		expect(screen.getByText(/File saved\. ID: 7/i)).toBeInTheDocument();
 	});
 
 	it('handles append action after upload', async () => {
@@ -53,21 +49,16 @@ describe('AppendContactsModal', () => {
 		);
 
 		const file = new File(['csv'], 'contacts.csv', { type: 'text/csv' });
-		await user.upload(
-			screen.getByLabelText(
-				/contactListPage.contactsTable.appendModal.selectFile/i
-			),
-			file
-		);
+		await user.upload(screen.getByLabelText(/Select CSV File/i), file);
 		await user.click(
 			screen.getByRole('button', {
-				name: 'contactListPage.contactsTable.appendModal.saveFile',
+				name: /Save File/i,
 			})
 		);
 
 		await user.click(
 			screen.getByRole('button', {
-				name: 'contactListPage.contactsTable.appendModal.appendToList',
+				name: /Append to List/i,
 			})
 		);
 		expect(onAppend).toHaveBeenCalledWith(3);
@@ -91,19 +82,14 @@ describe('AppendContactsModal', () => {
 		);
 
 		const file = new File(['csv'], 'contacts.csv', { type: 'text/csv' });
-		await user.upload(
-			screen.getByLabelText(
-				/contactListPage.contactsTable.appendModal.selectFile/i
-			),
-			file
-		);
+		await user.upload(screen.getByLabelText(/Select CSV File/i), file);
 		await user.click(
 			screen.getByRole('button', {
-				name: 'contactListPage.contactsTable.appendModal.saveFile',
+				name: /Save File/i,
 			})
 		);
 
-		expect(screen.getByText('Failed to upload file.')).toBeInTheDocument();
+		expect(screen.getByText(/Failed to upload file\./i)).toBeInTheDocument();
 	});
 
 	it('shows append errors', async () => {
@@ -124,24 +110,21 @@ describe('AppendContactsModal', () => {
 		);
 
 		const file = new File(['csv'], 'contacts.csv', { type: 'text/csv' });
-		await user.upload(
-			screen.getByLabelText(
-				/contactListPage.contactsTable.appendModal.selectFile/i
-			),
-			file
-		);
+		await user.upload(screen.getByLabelText(/Select CSV File/i), file);
 		await user.click(
 			screen.getByRole('button', {
-				name: 'contactListPage.contactsTable.appendModal.saveFile',
+				name: /Save File/i,
 			})
 		);
 		await user.click(
 			screen.getByRole('button', {
-				name: 'contactListPage.contactsTable.appendModal.appendToList',
+				name: /Append to List/i,
 			})
 		);
 
-		expect(screen.getByText('Failed to append contacts.')).toBeInTheDocument();
+		expect(
+			screen.getByText(/Failed to append contacts\./i)
+		).toBeInTheDocument();
 	});
 
 	it('handles drag and drop selection', () => {
@@ -156,9 +139,8 @@ describe('AppendContactsModal', () => {
 		);
 
 		const file = new File(['data'], 'dropped.csv', { type: 'text/csv' });
-		const dropArea = screen.getByText(
-			/contactListPage.contactsTable.appendModal.dragAndDrop/i
-		).parentElement as HTMLElement;
+		const dropArea = screen.getByText(/Drag & drop or click to browse/i)
+			.parentElement as HTMLElement;
 
 		fireEvent.dragOver(dropArea, {
 			dataTransfer: { files: [file] },
@@ -167,9 +149,7 @@ describe('AppendContactsModal', () => {
 			dataTransfer: { files: [file] },
 		});
 
-		expect(
-			screen.getByText(/contactListPage.contactsTable.appendModal.selected/)
-		).toBeInTheDocument();
+		expect(screen.getByText('Selected: dropped.csv')).toBeInTheDocument();
 	});
 
 	it('disables save button when no file selected', () => {
@@ -185,7 +165,7 @@ describe('AppendContactsModal', () => {
 
 		expect(
 			screen.getByRole('button', {
-				name: 'contactListPage.contactsTable.appendModal.saveFile',
+				name: /Save File/i,
 			})
 		).toBeDisabled();
 	});

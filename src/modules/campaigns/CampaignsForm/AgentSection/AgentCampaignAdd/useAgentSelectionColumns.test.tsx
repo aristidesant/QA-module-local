@@ -1,10 +1,25 @@
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MantineProvider } from '@mantine/core';
 import type { AgentWithCampaignListItem } from '~/models/AgentListObject';
 import useAgentSelectionColumns from './useAgentSelectionColumns';
+import {
+	renderWithProviders,
+	testI18n,
+	queryClient,
+} from '~/test-utils/renderWithProviders';
+import { I18nextProvider } from 'react-i18next';
+import { QueryClientProvider } from '@tanstack/react-query';
+
+const wrapper = ({ children }: { children: React.ReactNode }) => (
+	<QueryClientProvider client={queryClient}>
+		<I18nextProvider i18n={testI18n}>
+			<MantineProvider>{children}</MantineProvider>
+		</I18nextProvider>
+	</QueryClientProvider>
+);
 
 const createMockAgent = (
 	overrides: Partial<AgentWithCampaignListItem> = {}
@@ -27,7 +42,7 @@ const createMockAgent = (
 });
 
 const renderCellContent = (cell: React.ReactNode) => {
-	return render(<MantineProvider>{cell}</MantineProvider>);
+	return renderWithProviders(cell);
 };
 
 describe('useAgentSelectionColumns', () => {
@@ -43,28 +58,32 @@ describe('useAgentSelectionColumns', () => {
 
 	describe('hook initialization', () => {
 		it('should return correct number of columns', () => {
-			const { result } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			expect(result.current).toHaveLength(4);
 		});
 
 		it('should have correct column headers', () => {
-			const { result } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			const headers = result.current.map((col) => col.header);
@@ -72,14 +91,16 @@ describe('useAgentSelectionColumns', () => {
 		});
 
 		it('should have correct accessor keys', () => {
-			const { result } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			expect(result.current[0]).toHaveProperty('accessorKey', 'name');
@@ -91,14 +112,16 @@ describe('useAgentSelectionColumns', () => {
 
 	describe('Agent column cell', () => {
 		it('should render agent name', () => {
-			const { result } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			const mockAgent = createMockAgent({ name: 'My Custom Agent' });
@@ -113,14 +136,16 @@ describe('useAgentSelectionColumns', () => {
 		});
 
 		it('should show campaign name in tooltip', () => {
-			const { result } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			const mockAgent = createMockAgent({ campaignName: 'Sales Campaign' });
@@ -137,14 +162,16 @@ describe('useAgentSelectionColumns', () => {
 		});
 
 		it('should show "No campaign" when campaignName is null', () => {
-			const { result } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			const mockAgent = createMockAgent({ campaignName: null });
@@ -163,14 +190,16 @@ describe('useAgentSelectionColumns', () => {
 
 	describe('Type column cell', () => {
 		it('should render OUTBOUND badge correctly', () => {
-			const { result } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			const mockAgent = createMockAgent({ type: 'OUTBOUND' });
@@ -185,14 +214,16 @@ describe('useAgentSelectionColumns', () => {
 		});
 
 		it('should render INBOUND badge correctly', () => {
-			const { result } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			const mockAgent = createMockAgent({ type: 'INBOUND' });
@@ -209,14 +240,16 @@ describe('useAgentSelectionColumns', () => {
 
 	describe('Voice column cell', () => {
 		it('should render voice name and language', () => {
-			const { result } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			const mockAgent = createMockAgent({
@@ -235,14 +268,16 @@ describe('useAgentSelectionColumns', () => {
 		});
 
 		it('should render dash when voiceName is null', () => {
-			const { result } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			const mockAgent = createMockAgent({
@@ -260,14 +295,16 @@ describe('useAgentSelectionColumns', () => {
 		});
 
 		it('should not render language when voiceLanguage is null', () => {
-			const { result } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			const mockAgent = createMockAgent({
@@ -289,14 +326,16 @@ describe('useAgentSelectionColumns', () => {
 	describe('Actions column cell', () => {
 		it('should call onPlay when play button is clicked', async () => {
 			const user = userEvent.setup();
-			const { result } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			const mockAgent = createMockAgent();
@@ -315,14 +354,16 @@ describe('useAgentSelectionColumns', () => {
 
 		it('should call onClone when clone button is clicked', async () => {
 			const user = userEvent.setup();
-			const { result } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			const mockAgent = createMockAgent();
@@ -341,14 +382,16 @@ describe('useAgentSelectionColumns', () => {
 
 		it('should call onAdd when add button is clicked', async () => {
 			const user = userEvent.setup();
-			const { result } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			const mockAgent = createMockAgent();
@@ -368,14 +411,16 @@ describe('useAgentSelectionColumns', () => {
 		it('should disable add button when isDisabled returns true', () => {
 			mockIsDisabled.mockReturnValue(true);
 
-			const { result } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			const mockAgent = createMockAgent();
@@ -391,14 +436,16 @@ describe('useAgentSelectionColumns', () => {
 		});
 
 		it('should disable play button when voicePreviewUrl is null', () => {
-			const { result } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			const mockAgent = createMockAgent({ voicePreviewUrl: null });
@@ -416,14 +463,16 @@ describe('useAgentSelectionColumns', () => {
 		it('should show pause icon when isPlaying returns true', () => {
 			mockIsPlaying.mockReturnValue(true);
 
-			const { result } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			const mockAgent = createMockAgent();
@@ -444,14 +493,16 @@ describe('useAgentSelectionColumns', () => {
 		it('should show play icon when isPlaying returns false', () => {
 			mockIsPlaying.mockReturnValue(false);
 
-			const { result } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			const mockAgent = createMockAgent();
@@ -472,14 +523,16 @@ describe('useAgentSelectionColumns', () => {
 
 	describe('column meta properties', () => {
 		it('should have correct meta for agent column', () => {
-			const { result } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			const agentColumn = result.current[0];
@@ -488,14 +541,16 @@ describe('useAgentSelectionColumns', () => {
 		});
 
 		it('should have correct meta for type column', () => {
-			const { result } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			const typeColumn = result.current[1];
@@ -504,14 +559,16 @@ describe('useAgentSelectionColumns', () => {
 		});
 
 		it('should have correct meta for voice column', () => {
-			const { result } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			const voiceColumn = result.current[2];
@@ -520,14 +577,16 @@ describe('useAgentSelectionColumns', () => {
 		});
 
 		it('should have correct meta for actions column', () => {
-			const { result } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			const actionsColumn = result.current[3];
@@ -538,14 +597,16 @@ describe('useAgentSelectionColumns', () => {
 
 	describe('memoization', () => {
 		it('should return the same columns when dependencies do not change', () => {
-			const { result, rerender } = renderHook(() =>
-				useAgentSelectionColumns({
-					onAdd: mockOnAdd,
-					onPlay: mockOnPlay,
-					onClone: mockOnClone,
-					isDisabled: mockIsDisabled,
-					isPlaying: mockIsPlaying,
-				})
+			const { result, rerender } = renderHook(
+				() =>
+					useAgentSelectionColumns({
+						onAdd: mockOnAdd,
+						onPlay: mockOnPlay,
+						onClone: mockOnClone,
+						isDisabled: mockIsDisabled,
+						isPlaying: mockIsPlaying,
+					}),
+				{ wrapper }
 			);
 
 			const firstResult = result.current;
@@ -565,7 +626,10 @@ describe('useAgentSelectionColumns', () => {
 						isDisabled: mockIsDisabled,
 						isPlaying: mockIsPlaying,
 					}),
-				{ initialProps: { onAdd: mockOnAdd } }
+				{
+					wrapper,
+					initialProps: { onAdd: mockOnAdd },
+				}
 			);
 
 			const firstResult = result.current;

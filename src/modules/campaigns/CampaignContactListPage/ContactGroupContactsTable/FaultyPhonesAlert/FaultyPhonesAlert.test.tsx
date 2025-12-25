@@ -77,7 +77,7 @@ describe('FaultyPhonesAlert', () => {
 
 		renderWithProviders(<FaultyPhonesAlert contactGroupId={1} />);
 		expect(
-			screen.getByText('contactListPage.faultyPhones.checking')
+			screen.getByText('Checking for phone number validation errors...')
 		).toBeInTheDocument();
 	});
 
@@ -85,13 +85,11 @@ describe('FaultyPhonesAlert', () => {
 		const user = userEvent.setup();
 		renderWithProviders(<FaultyPhonesAlert contactGroupId={2} />);
 
-		expect(
-			screen.getByText('contactListPage.faultyPhones.title')
-		).toBeInTheDocument();
+		expect(screen.getByText('Faulty Phone Numbers')).toBeInTheDocument();
 
 		await user.click(
 			screen.getByRole('button', {
-				name: 'contactListPage.faultyPhones.viewDetails',
+				name: 'View Details',
 			})
 		);
 		expect(screen.getByTestId('faulty-modal')).toBeInTheDocument();
@@ -104,9 +102,7 @@ describe('FaultyPhonesAlert', () => {
 		};
 
 		renderWithProviders(<FaultyPhonesAlert contactGroupId={3} />);
-		expect(
-			screen.getByText('contactListPage.faultyPhones.refreshing')
-		).toBeInTheDocument();
+		expect(screen.getByText('Refreshing faulty phones…')).toBeInTheDocument();
 	});
 
 	it('returns null when no faulty contacts', () => {
@@ -118,9 +114,7 @@ describe('FaultyPhonesAlert', () => {
 		};
 
 		renderWithProviders(<FaultyPhonesAlert contactGroupId={4} />);
-		expect(
-			screen.queryByText('contactListPage.faultyPhones.title')
-		).not.toBeInTheDocument();
+		expect(screen.queryByText('Faulty Phone Numbers')).not.toBeInTheDocument();
 	});
 
 	it('refetches data after updates inside modal', async () => {
@@ -129,7 +123,7 @@ describe('FaultyPhonesAlert', () => {
 
 		await user.click(
 			screen.getByRole('button', {
-				name: 'contactListPage.faultyPhones.viewDetails',
+				name: 'View Details',
 			})
 		);
 		expect(modalProps.opened).toBe(true);

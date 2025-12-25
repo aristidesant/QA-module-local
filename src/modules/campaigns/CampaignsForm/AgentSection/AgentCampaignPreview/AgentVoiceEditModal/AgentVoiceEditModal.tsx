@@ -23,13 +23,13 @@ export const AgentVoiceEditModal: React.FC<AgentVoiceEditModalProps> = ({
 	onClose,
 	onSuccess,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const [selectedVoiceId, setSelectedVoiceId] =
 		useState<string>(currentVoiceId);
 	const [playingVoiceId, setPlayingVoiceId] = useState<string | null>(null);
 	const [playProgress, setPlayProgress] = useState<number>(0);
 	const audioRef = useRef<HTMLAudioElement>(null);
 
-	const { t } = useTranslation();
 	const updateAgentMutation = useUpdateAgent();
 	const { data: agent } = useGetAgent(agentId);
 
@@ -112,8 +112,8 @@ export const AgentVoiceEditModal: React.FC<AgentVoiceEditModalProps> = ({
 	const handleSaveAgent = async () => {
 		if (!selectedVoiceId) {
 			notifications.show({
-				title: t('common.error'),
-				message: t('campaigns.form.agent.voice.pleaseSelectVoice'),
+				title: t('common:status.error'),
+				message: t('form.agent.voice.pleaseSelectVoice'),
 				color: 'red',
 			});
 			return;
@@ -121,8 +121,8 @@ export const AgentVoiceEditModal: React.FC<AgentVoiceEditModalProps> = ({
 
 		if (!agent) {
 			notifications.show({
-				title: t('common.error'),
-				message: t('campaigns.form.agent.voice.agentDataNotLoaded'),
+				title: t('common:status.error'),
+				message: t('form.agent.voice.agentDataNotLoaded'),
 				color: 'red',
 			});
 			return;
@@ -149,8 +149,8 @@ export const AgentVoiceEditModal: React.FC<AgentVoiceEditModalProps> = ({
 			});
 
 			notifications.show({
-				title: t('common.success') || 'Success',
-				message: t('campaigns.form.agent.voice.success'),
+				title: t('common:status.success'),
+				message: t('form.agent.voice.success'),
 				color: 'green',
 			});
 
@@ -158,10 +158,8 @@ export const AgentVoiceEditModal: React.FC<AgentVoiceEditModalProps> = ({
 			onClose();
 		} catch (error: any) {
 			notifications.show({
-				title: t('common.error'),
-				message:
-					error?.response?.data?.message ||
-					t('campaigns.form.agent.voice.error'),
+				title: t('common:status.error'),
+				message: error?.response?.data?.message || t('form.agent.voice.error'),
 				color: 'red',
 			});
 		}
@@ -178,7 +176,7 @@ export const AgentVoiceEditModal: React.FC<AgentVoiceEditModalProps> = ({
 			/>
 
 			<Text size='sm' c='dimmed'>
-				{t('campaigns.form.agent.voice.selectHint')}
+				{t('form.agent.voice.selectHint')}
 			</Text>
 
 			<div className={styles.tableContainer}>
@@ -190,7 +188,7 @@ export const AgentVoiceEditModal: React.FC<AgentVoiceEditModalProps> = ({
 					getRowClassName={(row) =>
 						row.original.voice.id === selectedVoiceId ? styles.selectedRow : ''
 					}
-					emptyMessage={t('campaigns.form.agent.voice.noVoices')}
+					emptyMessage={t('form.agent.voice.noVoices')}
 					isLoading={isLoadingVoices}
 				/>
 			</div>
@@ -203,8 +201,8 @@ export const AgentVoiceEditModal: React.FC<AgentVoiceEditModalProps> = ({
 				fullWidth
 			>
 				{updateAgentMutation.isPending
-					? t('campaigns.form.agent.voice.saving')
-					: t('campaigns.form.agent.voice.save')}
+					? t('form.agent.voice.saving')
+					: t('form.agent.voice.save')}
 			</Button>
 		</Stack>
 	);

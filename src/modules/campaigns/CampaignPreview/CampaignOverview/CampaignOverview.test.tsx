@@ -5,6 +5,18 @@ import CampaignOverview from './CampaignOverview';
 import { CampaignStatus } from '~/models/CampaignStatus';
 import { notifications } from '@mantine/notifications';
 
+const OVERVIEW_TITLE = 'Campaign overview';
+const OVERVIEW_DESCRIPTION = 'Status and operational readiness';
+const CREATED_LABEL = 'Created';
+const LAST_UPDATED_LABEL = 'Last updated';
+const NOT_ASSIGNED_TEXT = 'Not assigned';
+const UNKNOWN_TEXT = 'Unknown';
+const NOTIFICATION_SUCCESS_TITLE = 'Success';
+const NOTIFICATION_ERROR_TITLE = 'Error';
+const NOTIFICATION_UNAVAILABLE_TITLE = 'Unavailable';
+const NO_CONTACT_LIST_MESSAGE =
+	'No contact list is available for this campaign. Add one before attempting to manage delivery.';
+
 const {
 	mockUseGetCampaign,
 	mockUseGetCampaignRequirements,
@@ -65,7 +77,7 @@ describe('CampaignOverview', () => {
 			isLoading: true,
 		});
 		renderWithProviders(<CampaignOverview campaign={baseCampaign} />);
-		expect(screen.queryByText('preview.overview.title')).toBeInTheDocument();
+		expect(screen.getByText(OVERVIEW_TITLE)).toBeInTheDocument();
 	});
 
 	it('shows Pause button for running campaigns', () => {
@@ -324,10 +336,8 @@ describe('CampaignOverview', () => {
 		});
 		renderWithProviders(<CampaignOverview campaign={campaignData} />);
 		// Date format depends on locale, just check both dates appear
-		expect(screen.getByText('preview.overview.created')).toBeInTheDocument();
-		expect(
-			screen.getByText('preview.overview.lastUpdated')
-		).toBeInTheDocument();
+		expect(screen.getByText(CREATED_LABEL)).toBeInTheDocument();
+		expect(screen.getByText(LAST_UPDATED_LABEL)).toBeInTheDocument();
 	});
 
 	it('shows dashes for undefined dates', () => {
@@ -363,9 +373,7 @@ describe('CampaignOverview', () => {
 			isLoading: false,
 		});
 		renderWithProviders(<CampaignOverview campaign={campaignData} />);
-		expect(
-			screen.getByText('preview.overview.notAssigned')
-		).toBeInTheDocument();
+		expect(screen.getByText(NOT_ASSIGNED_TEXT)).toBeInTheDocument();
 	});
 
 	it('renders CampaignHealth component', () => {
@@ -424,7 +432,7 @@ describe('CampaignOverview', () => {
 		await waitFor(() => {
 			expect(notificationSpy).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: 'preview.overview.notifications.error',
+					title: NOTIFICATION_ERROR_TITLE,
 					color: 'red',
 				})
 			);
@@ -440,10 +448,8 @@ describe('CampaignOverview', () => {
 			isLoading: false,
 		});
 		renderWithProviders(<CampaignOverview campaign={baseCampaign} />);
-		expect(screen.getByText('preview.overview.title')).toBeInTheDocument();
-		expect(
-			screen.getByText('preview.overview.description')
-		).toBeInTheDocument();
+		expect(screen.getByText(OVERVIEW_TITLE)).toBeInTheDocument();
+		expect(screen.getByText(OVERVIEW_DESCRIPTION)).toBeInTheDocument();
 	});
 
 	it('displays type badge with correct format', () => {
@@ -543,7 +549,8 @@ describe('CampaignOverview', () => {
 		fireEvent.click(button);
 		expect(notificationSpy).toHaveBeenCalledWith(
 			expect.objectContaining({
-				title: 'preview.overview.notifications.unavailable',
+				title: NOTIFICATION_UNAVAILABLE_TITLE,
+				message: NO_CONTACT_LIST_MESSAGE,
 				color: 'yellow',
 			})
 		);
@@ -570,7 +577,8 @@ describe('CampaignOverview', () => {
 		fireEvent.click(button);
 		expect(notificationSpy).toHaveBeenCalledWith(
 			expect.objectContaining({
-				title: 'preview.overview.notifications.unavailable',
+				title: NOTIFICATION_UNAVAILABLE_TITLE,
+				message: NO_CONTACT_LIST_MESSAGE,
 				color: 'yellow',
 			})
 		);
@@ -597,7 +605,8 @@ describe('CampaignOverview', () => {
 		fireEvent.click(button);
 		expect(notificationSpy).toHaveBeenCalledWith(
 			expect.objectContaining({
-				title: 'preview.overview.notifications.unavailable',
+				title: NOTIFICATION_UNAVAILABLE_TITLE,
+				message: NO_CONTACT_LIST_MESSAGE,
 				color: 'yellow',
 			})
 		);
@@ -627,8 +636,8 @@ describe('CampaignOverview', () => {
 		await waitFor(() => {
 			expect(notificationSpy).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: 'preview.overview.notifications.success',
-					message: 'preview.overview.notifications.campaignActioned',
+					title: NOTIFICATION_SUCCESS_TITLE,
+					message: 'Campaign paused successfully',
 					color: 'green',
 				})
 			);
@@ -664,8 +673,8 @@ describe('CampaignOverview', () => {
 		await waitFor(() => {
 			expect(notificationSpy).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: 'preview.overview.notifications.success',
-					message: 'preview.overview.notifications.campaignActioned',
+					title: NOTIFICATION_SUCCESS_TITLE,
+					message: 'Campaign resumed successfully',
 					color: 'green',
 				})
 			);
@@ -701,8 +710,8 @@ describe('CampaignOverview', () => {
 		await waitFor(() => {
 			expect(notificationSpy).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: 'preview.overview.notifications.success',
-					message: 'preview.overview.notifications.campaignActioned',
+					title: NOTIFICATION_SUCCESS_TITLE,
+					message: 'Campaign started successfully',
 					color: 'green',
 				})
 			);
@@ -730,8 +739,8 @@ describe('CampaignOverview', () => {
 		await waitFor(() => {
 			expect(notificationSpy).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: 'preview.overview.notifications.error',
-					message: 'preview.overview.notifications.failedToAction',
+					title: NOTIFICATION_ERROR_TITLE,
+					message: 'Failed to pause campaign',
 					color: 'red',
 				})
 			);
@@ -842,7 +851,7 @@ describe('CampaignOverview', () => {
 			isLoading: false,
 		});
 		renderWithProviders(<CampaignOverview campaign={campaignData} />);
-		expect(screen.getByText('preview.overview.unknown')).toBeInTheDocument();
+		expect(screen.getByText(UNKNOWN_TEXT)).toBeInTheDocument();
 	});
 
 	it('handles date formatting error gracefully', () => {
