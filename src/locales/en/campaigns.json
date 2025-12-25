@@ -24,7 +24,13 @@
 		"stepAgent": "Agent",
 		"stepOutcomes": "Outcomes",
 		"stepParameters": "Parameters",
-		"stepComplete": "Complete"
+		"stepComplete": "Complete",
+		"tabs": {
+			"agents": "Agents",
+			"outcomes": "Outcomes",
+			"params": "Params",
+			"general": "General"
+		}
 	},
 	"columns": {
 		"campaign": "Campaign",
