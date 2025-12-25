@@ -1,4 +1,4 @@
-import { Modal, Group, Button, Title, Text, Select } from '@mantine/core';
+import { Modal, Group, Button, Text, Select } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { useState, useMemo } from 'react';
@@ -105,7 +105,11 @@ export default function ExportToExcelModal({
 		<Modal
 			opened={opened}
 			onClose={handleClose}
-			title={<Title order={4}>{t('export.title')}</Title>}
+			title={
+				<Text component='span' fw={600} size='sm'>
+					{t('export.title')}
+				</Text>
+			}
 			centered
 			size='lg'
 			classNames={{ body: classes.root }}
