@@ -893,6 +893,111 @@
 		"addOutcome": "Add outcome",
 		"noFlowConfigured": "No outcome flow configured",
 		"noFlowDescription": "Get started by adding a new outcome flow to track and manage call results effectively.",
-		"saveSuccess": "Outcome flow saved successfully."
+		"saveSuccess": "Outcome flow saved successfully.",
+		"catalog": {
+			"selectCatalog": "Select Catalog",
+			"catalogChangeDisabled": "Cannot change catalog when outcomes are already added",
+			"noDispositions": "No dispositions available in this catalog.",
+			"expand": "Expand",
+			"collapse": "Collapse",
+			"addAll": "Add all",
+			"addAllAria": "Add disposition and all children",
+			"addToFlow": "Add to flow",
+			"addToFlowAria": "Add disposition to flow"
+		},
+		"builder": {
+			"nameLabel": "Outcome Name",
+			"namePlaceholder": "Outcome Name",
+			"nameDescription": "Enter the name of the outcome",
+			"header": "Outcome flow",
+			"headerDescription": "Use the catalog to add outcomes. Select a node to edit or preview its group.",
+			"emptyTitle": "No outcomes selected yet",
+			"emptyDescription": "Add outcomes from the catalog to build this flow.",
+			"emptyRightPanel": "Select a node to edit its properties or preview a group",
+			"updateFlow": "Update Flow",
+			"createFlow": "Create Flow",
+			"previewTitle": "Outcome group preview",
+			"errors": {
+				"minNodes": "Please add at least one outcome node.",
+				"nameRequired": "Outcome name is required.",
+				"saveError": "An error occurred while saving the outcome flow."
+			}
+		},
+		"nodeEditor": {
+			"expand": "Expand node",
+			"collapse": "Collapse node",
+			"doNotCall": "Do not call",
+			"invalidatesNumber": "Invalidates number",
+			"requiresReschedule": "Requires reschedule",
+			"addSiblings": "Add {{count}} missing sibling",
+			"addSiblings_plural": "Add {{count}} missing siblings",
+			"addMissingSiblingsAria": "Add missing siblings",
+			"addChildren": "Add {{count}} missing child",
+			"addChildren_plural": "Add {{count}} missing children",
+			"addMissingChildrenAria": "Add missing children",
+			"remove": "Remove",
+			"removeAria": "Remove node"
+		},
+		"nodeForm": {
+			"editingTitle": "Editing outcome",
+			"rootLevel": "Root level outcome",
+			"descriptionLabel": "Description",
+			"noDescription": "This outcome does not include a description yet.",
+			"behaviorControls": "Behavior controls",
+			"invalidatesNumberTitle": "Invalidates number",
+			"invalidatesNumberDesc": "Prevent the dialer from retrying this phone number after the outcome is used.",
+			"doNotCallTitle": "Do not call",
+			"doNotCallDesc": "Mark this outcome as do not call so the contact is excluded from future dialing.",
+			"rescheduleTitle": "Requires reschedule",
+			"rescheduleDesc": "Flag this outcome so follow-up activities can be scheduled for the contact.",
+			"badges": {
+				"final": "Final outcome",
+				"reschedule": "Requires reschedule",
+				"noRetry": "Do not retry",
+				"doNotCall": "Do not call"
+			}
+		},
+		"groupPreview": {
+			"rootGroup": "Root group",
+			"level": "Level {{level}}",
+			"linkedOutcomes": "{{count}} linked outcome",
+			"linkedOutcomes_plural": "{{count}} linked outcomes",
+			"leafOutcome": "Leaf outcome",
+			"stats": {
+				"total": "Total nodes",
+				"final": "Final outcomes",
+				"reschedule": "Reschedule",
+				"noRetry": "Do not retry",
+				"summary": "{{count}} node across {{levels}} level.",
+				"summary_plural": "{{count}} nodes across {{levels}} levels."
+			}
+		},
+		"viewer": {
+			"group": "Group",
+			"outcome": "Outcome",
+			"nodeAria": "Outcome node: {{name}}",
+			"childOutcomes": "{{count}} child outcome",
+			"childOutcomes_plural": "{{count}} child outcomes",
+			"terminalOutcome": "Terminal outcome",
+			"noNodes": "No outcome nodes found.",
+			"nodesListAria": "Outcome nodes list",
+			"nameHeader": "NAME"
+		},
+		"detailPanel": {
+			"title": "Outcome Details",
+			"parent": "Parent",
+			"effectiveContact": "Effective Contact",
+			"noEffectiveContact": "No Effective Contact",
+			"noContact": "No Contact",
+			"default": "Default",
+			"effectiveDesc": "This node represents a successful contact outcome.",
+			"noEffectiveDesc": "This node represents an unsuccessful contact attempt.",
+			"noContactDesc": "This node represents no contact made.",
+			"defaultDesc": "This is a standard outcome node.",
+			"rescheduleCardTitle": "Requires Reschedule",
+			"rescheduleCardDesc": "This outcome requires the contact to be rescheduled for a future attempt.",
+			"invalidatesCardTitle": "Invalidates Number",
+			"invalidatesCardDesc": "This outcome marks the contact number as invalid and prevents future attempts."
+		}
 	}
 }

@@ -10,6 +10,7 @@ import {
 	ActionIcon,
 	Badge,
 } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import {
 	IconClock,
 	IconPhoneOff,
@@ -25,7 +26,6 @@ import type { DispositionNode } from '~/models/DispositionNodeModel';
 import { getNodeStyle, isLeafNode } from '~/utils/dispositionNodeStyles';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import NodeDetailPanel from '~/modules/campaigns/CampaignsForm/DispositionSection/NodeDetailPanel';
-import { useDispositionLabel } from '~/hooks/useDispositionLabel';
 
 interface DispositionViewerProps {
 	flow: DispositionFlowModel;
@@ -42,6 +42,7 @@ const NodeViewer: React.FC<NodeViewerProps> = ({
 	parentNode,
 	level = 0,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const { setRightComponent } = useCampaignsStore();
 	const [isExpanded, setIsExpanded] = useState(true);
 	const isLeaf = isLeafNode(node);
@@ -51,7 +52,9 @@ const NodeViewer: React.FC<NodeViewerProps> = ({
 	const childCount = node.children?.length || 0;
 	const levelIndent = level * 16;
 	const cardOffset = level > 0 ? Math.min(levelIndent, 80) : 0;
-	const nodeTypeLabel = hasChildren ? 'Group' : 'Outcome';
+	const nodeTypeLabel = hasChildren
+		? t('disposition.viewer.group')
+		: t('disposition.viewer.outcome');
 
 	const handleNodeClick = (e: React.MouseEvent) => {
 		if (!isClickable) return;
@@ -81,7 +84,7 @@ const NodeViewer: React.FC<NodeViewerProps> = ({
 			<div
 				className={`${styles.nodeCard} ${isClickable ? styles.clickable : styles.nonClickable}`}
 				tabIndex={isClickable ? 0 : -1}
-				aria-label={`Outcome node: ${node.name}`}
+				aria-label={t('disposition.viewer.nodeAria', { name: node.name })}
 				data-level={level}
 				style={cardStyle}
 				onClick={handleNodeClick}
@@ -108,7 +111,11 @@ const NodeViewer: React.FC<NodeViewerProps> = ({
 									size='sm'
 									variant='subtle'
 									className={styles.chevronIcon}
-									aria-label={isExpanded ? 'Collapse node' : 'Expand node'}
+									aria-label={
+										isExpanded
+											? t('disposition.nodeEditor.collapse')
+											: t('disposition.nodeEditor.expand')
+									}
 									onClick={handleToggle}
 								>
 									{isExpanded ? (
@@ -151,37 +158,46 @@ const NodeViewer: React.FC<NodeViewerProps> = ({
 						</div>
 						<Text className={styles.nodeMetaText} size='xs'>
 							{hasChildren
-								? `${childCount} ${childCount === 1 ? 'child outcome' : 'child outcomes'}`
-								: 'Terminal outcome'}
+								? t('disposition.viewer.childOutcomes', { count: childCount })
+								: t('disposition.viewer.terminalOutcome')}
 						</Text>
 					</div>
 
 					<div className={styles.nodeAside}>
 						<div className={styles.nodeIcons}>
 							{isDoNotCall ? (
-								<Tooltip withArrow label='Do not call'>
+								<Tooltip
+									withArrow
+									label={t('disposition.nodeEditor.doNotCall')}
+								>
 									<IconPhoneX
 										size={16}
 										color='var(--mantine-color-red-6)'
-										aria-label='Do not call'
+										aria-label={t('disposition.nodeEditor.doNotCall')}
 									/>
 								</Tooltip>
 							) : null}
 							{node?.isInvalidatesNumber && (
-								<Tooltip withArrow label='Invalidates number'>
+								<Tooltip
+									withArrow
+									label={t('disposition.nodeEditor.invalidatesNumber')}
+								>
 									<IconPhoneOff
 										size={16}
 										color='var(--mantine-color-red-6)'
-										aria-label='Invalidates number'
+										aria-label={t('disposition.nodeEditor.invalidatesNumber')}
 									/>
 								</Tooltip>
 							)}
 							{node?.requiresReschedule && (
-								<Tooltip withArrow label='Requires reschedule'>
+								<Tooltip
+									withArrow
+									label={t('disposition.nodeEditor.requiresReschedule')}
+								>
 									<IconClock
 										size={16}
 										color='var(--mantine-color-orange-6)'
-										aria-label='Requires reschedule'
+										aria-label={t('disposition.nodeEditor.requiresReschedule')}
 									/>
 								</Tooltip>
 							)}
@@ -206,11 +222,11 @@ const NodeViewer: React.FC<NodeViewerProps> = ({
 };
 
 const DispositionViewer: React.FC<DispositionViewerProps> = ({ flow }) => {
+	const { t } = useTranslation('campaigns');
 	const nodes = flow?.flowJson?.dispositionNodes ?? [];
-	const dispositionLabel = useDispositionLabel();
 
 	if (!nodes || nodes.length === 0) {
-		return <Text>{dispositionLabel('No disposition nodes found.')}</Text>;
+		return <Text>{t('disposition.viewer.noNodes')}</Text>;
 	}
 
 	return (
@@ -219,7 +235,7 @@ const DispositionViewer: React.FC<DispositionViewerProps> = ({ flow }) => {
 				<Group justify='space-between' align='center'>
 					<Flex direction='column'>
 						<Text fz='xs' c='dimmed' fw={700}>
-							NAME
+							{t('disposition.viewer.nameHeader')}
 						</Text>
 						<Text className={styles.title}>{flow.flowJson.name}</Text>
 					</Flex>
@@ -227,7 +243,7 @@ const DispositionViewer: React.FC<DispositionViewerProps> = ({ flow }) => {
 				<Divider />
 				<div
 					className={styles.nodesContainer}
-					aria-label={dispositionLabel('Outcome nodes list')}
+					aria-label={t('disposition.viewer.nodesListAria')}
 				>
 					{nodes.map((node) => (
 						<NodeViewer key={node.id} node={node} />

@@ -827,7 +827,112 @@
 		"addOutcome": "Agregar resultado",
 		"noFlowConfigured": "No hay flujo de resultados configurado",
 		"noFlowDescription": "Comienza agregando un nuevo flujo de resultados para rastrear y gestionar los resultados de llamadas de manera efectiva.",
-		"saveSuccess": "Flujo de resultados guardado exitosamente."
+		"saveSuccess": "Flujo de resultados guardado exitosamente.",
+		"catalog": {
+			"selectCatalog": "Seleccionar Catálogo",
+			"catalogChangeDisabled": "No se puede cambiar el catálogo cuando ya hay resultados agregados",
+			"noDispositions": "No hay disposiciones disponibles en este catálogo.",
+			"expand": "Expandir",
+			"collapse": "Contraer",
+			"addAll": "Agregar todo",
+			"addAllAria": "Agregar disposición y todos los hijos",
+			"addToFlow": "Agregar al flujo",
+			"addToFlowAria": "Agregar disposición al flujo"
+		},
+		"builder": {
+			"nameLabel": "Nombre del Resultado",
+			"namePlaceholder": "Nombre del Resultado",
+			"nameDescription": "Ingresa el nombre del resultado",
+			"header": "Flujo de resultados",
+			"headerDescription": "Usa el catálogo para agregar resultados. Selecciona un nodo para editar o previsualizar su grupo.",
+			"emptyTitle": "Aún no se han seleccionado resultados",
+			"emptyDescription": "Agrega resultados del catálogo para construir este flujo.",
+			"emptyRightPanel": "Selecciona un nodo para editar sus propiedades o previsualizar un grupo",
+			"updateFlow": "Actualizar Flujo",
+			"createFlow": "Crear Flujo",
+			"previewTitle": "Vista previa del grupo de resultados",
+			"errors": {
+				"minNodes": "Por favor, agrega al menos un nodo de resultado.",
+				"nameRequired": "El nombre del resultado es obligatorio.",
+				"saveError": "Ocurrió un error al guardar el flujo de resultados."
+			}
+		},
+		"nodeEditor": {
+			"expand": "Expandir nodo",
+			"collapse": "Contraer nodo",
+			"doNotCall": "No llamar",
+			"invalidatesNumber": "Invalida número",
+			"requiresReschedule": "Requiere reprogramación",
+			"addSiblings": "Agregar {{count}} hermano faltante",
+			"addSiblings_plural": "Agregar {{count}} hermanos faltantes",
+			"addMissingSiblingsAria": "Agregar hermanos faltantes",
+			"addChildren": "Agregar {{count}} hijo faltante",
+			"addChildren_plural": "Agregar {{count}} hijos faltantes",
+			"addMissingChildrenAria": "Agregar hijos faltantes",
+			"remove": "Eliminar",
+			"removeAria": "Eliminar nodo"
+		},
+		"nodeForm": {
+			"editingTitle": "Editando resultado",
+			"rootLevel": "Resultado de nivel raíz",
+			"descriptionLabel": "Descripción",
+			"noDescription": "Este resultado aún no incluye una descripción.",
+			"behaviorControls": "Controles de comportamiento",
+			"invalidatesNumberTitle": "Invalida número",
+			"invalidatesNumberDesc": "Evita que el marcador vuelva a intentar este número de teléfono después de que se use el resultado.",
+			"doNotCallTitle": "No llamar",
+			"doNotCallDesc": "Marca este resultado como no llamar para que el contacto sea excluido de futuras marcaciones.",
+			"rescheduleTitle": "Requiere reprogramación",
+			"rescheduleDesc": "Marca este resultado para que se puedan programar actividades de seguimiento para el contacto.",
+			"badges": {
+				"final": "Resultado final",
+				"reschedule": "Requiere reprogramación",
+				"noRetry": "No reintentar",
+				"doNotCall": "No llamar"
+			}
+		},
+		"groupPreview": {
+			"rootGroup": "Grupo raíz",
+			"level": "Nivel {{level}}",
+			"linkedOutcomes": "{{count}} resultado vinculado",
+			"linkedOutcomes_plural": "{{count}} resultados vinculados",
+			"leafOutcome": "Resultado hoja",
+			"stats": {
+				"total": "Total de nodos",
+				"final": "Resultados finales",
+				"reschedule": "Reprogramar",
+				"noRetry": "No reintentar",
+				"summary": "{{count}} nodo en {{levels}} nivel.",
+				"summary_plural": "{{count}} nodos en {{levels}} niveles."
+			}
+		},
+		"viewer": {
+			"group": "Grupo",
+			"outcome": "Resultado",
+			"nodeAria": "Nodo de resultado: {{name}}",
+			"childOutcomes": "{{count}} resultado hijo",
+			"childOutcomes_plural": "{{count}} resultados hijos",
+			"terminalOutcome": "Resultado terminal",
+			"noNodes": "No se encontraron nodos de resultado.",
+			"nodesListAria": "Lista de nodos de resultado",
+			"nameHeader": "NOMBRE"
+		},
+		"detailPanel": {
+			"title": "Detalles del Resultado",
+			"parent": "Padre",
+			"effectiveContact": "Contacto Efectivo",
+			"noEffectiveContact": "Sin Contacto Efectivo",
+			"noContact": "Sin Contacto",
+			"default": "Predeterminado",
+			"effectiveDesc": "Este nodo representa un resultado de contacto exitoso.",
+			"noEffectiveDesc": "Este nodo representa un intento de contacto fallido.",
+			"noContactDesc": "Este nodo representa que no se realizó contacto.",
+			"defaultDesc": "Este es un nodo de resultado estándar.",
+			"rescheduleCardTitle": "Requiere Reprogramación",
+			"rescheduleCardDesc": "Este resultado requiere que el contacto sea reprogramado para un intento futuro.",
+			"invalidatesCardTitle": "Invalida Número",
+			"invalidatesCardDesc": "Este resultado marca el número de contacto como inválido y evita futuros intentos."
+		}
 	},
 	"wizard": {
 		"knowledgeBase": {

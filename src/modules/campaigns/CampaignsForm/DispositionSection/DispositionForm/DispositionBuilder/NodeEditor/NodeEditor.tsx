@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { ActionIcon, Box, Group, Text, Tooltip } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import {
 	IconChevronDown,
 	IconChevronRight,
@@ -41,6 +42,7 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 	onAddMissingSiblings,
 	catalogNodes,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const [collapsed, setCollapsed] = useState(false);
 	const { flowJson } = useDispositionBuilderStore();
 
@@ -152,7 +154,11 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 							size='xs'
 							variant='subtle'
 							onClick={handleToggleCollapse}
-							aria-label={collapsed ? 'Expand node' : 'Collapse node'}
+							aria-label={
+								collapsed
+									? t('disposition.nodeEditor.expand')
+									: t('disposition.nodeEditor.collapse')
+							}
 						>
 							{collapsed ? (
 								<IconChevronRight size={12} />
@@ -180,29 +186,40 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 							</Text>
 							<Group gap={2} className={styles.icons} wrap='nowrap'>
 								{isDoNotCall ? (
-									<Tooltip label='Do not call' withArrow>
+									<Tooltip
+										label={t('disposition.nodeEditor.doNotCall')}
+										withArrow
+									>
 										<IconPhoneX
 											size={12}
 											color='var(--mantine-color-red-6)'
-											aria-label='Do not call'
+											aria-label={t('disposition.nodeEditor.doNotCall')}
 										/>
 									</Tooltip>
 								) : null}
 								{node.isInvalidatesNumber ? (
-									<Tooltip label='Invalidates number' withArrow>
+									<Tooltip
+										label={t('disposition.nodeEditor.invalidatesNumber')}
+										withArrow
+									>
 										<IconPhoneOff
 											size={12}
 											color='var(--mantine-color-red-6)'
-											aria-label='Invalidates number'
+											aria-label={t('disposition.nodeEditor.invalidatesNumber')}
 										/>
 									</Tooltip>
 								) : null}
 								{node.requiresReschedule ? (
-									<Tooltip label='Requires reschedule' withArrow>
+									<Tooltip
+										label={t('disposition.nodeEditor.requiresReschedule')}
+										withArrow
+									>
 										<IconClock
 											size={12}
 											color='var(--mantine-color-orange-5)'
-											aria-label='Requires reschedule'
+											aria-label={t(
+												'disposition.nodeEditor.requiresReschedule'
+											)}
 										/>
 									</Tooltip>
 								) : null}
@@ -214,16 +231,18 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 						{missingSiblingsCount > 0 && onAddMissingSiblings ? (
 							<Tooltip
 								withArrow
-								label={`Add ${missingSiblingsCount} missing sibling${
-									missingSiblingsCount > 1 ? 's' : ''
-								}`}
+								label={t('disposition.nodeEditor.addSiblings', {
+									count: missingSiblingsCount,
+								})}
 							>
 								<ActionIcon
 									size='xs'
 									variant='subtle'
 									color='violet'
 									onClick={handleAddMissingSiblings}
-									aria-label='Add missing siblings'
+									aria-label={t(
+										'disposition.nodeEditor.addMissingSiblingsAria'
+									)}
 								>
 									<IconHierarchy3 size={12} />
 								</ActionIcon>
@@ -233,29 +252,31 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 						{missingChildrenCount > 0 && onPopulateChildren ? (
 							<Tooltip
 								withArrow
-								label={`Add ${missingChildrenCount} missing child${
-									missingChildrenCount > 1 ? 'ren' : ''
-								}`}
+								label={t('disposition.nodeEditor.addChildren', {
+									count: missingChildrenCount,
+								})}
 							>
 								<ActionIcon
 									size='xs'
 									variant='subtle'
 									color='teal'
 									onClick={handlePopulateChildren}
-									aria-label='Add missing children'
+									aria-label={t(
+										'disposition.nodeEditor.addMissingChildrenAria'
+									)}
 								>
 									<IconHierarchy3 size={12} />
 								</ActionIcon>
 							</Tooltip>
 						) : null}
 
-						<Tooltip withArrow label='Remove'>
+						<Tooltip withArrow label={t('disposition.nodeEditor.remove')}>
 							<ActionIcon
 								size='xs'
 								variant='subtle'
 								color='red'
 								onClick={handleRemove}
-								aria-label='Remove node'
+								aria-label={t('disposition.nodeEditor.removeAria')}
 							>
 								<IconTrash size={12} />
 							</ActionIcon>
