@@ -4,13 +4,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import renderWithProviders from '~/test-utils/renderWithProviders';
 import CampaignPromptHistory from './CampaignPromptHistory';
 
-// Mock react-i18next
-vi.mock('react-i18next', () => ({
-	useTranslation: () => ({
-		t: (key: string) => key, // Return the key itself for testing
-	}),
-}));
-
 // Mock query hook
 const mockUseGetCampaignPromptHistory = vi.fn();
 const mockUseGetCampaignPromptHistoryByPromptType = vi.fn();
@@ -190,13 +183,11 @@ describe('CampaignPromptHistory', () => {
 		await user.click(viewButton);
 
 		// Modal title should appear
-		expect(
-			await screen.findByText('promptHistory.modalTitle')
-		).toBeInTheDocument();
+		expect(await screen.findByText('Prompt History')).toBeInTheDocument();
 
 		// Click restore from the modal's restore button (restore button is present in PromptHistoryModal)
 		const restoreBtn = screen.getByRole('button', {
-			name: /promptHistory\.restoreVersion/i,
+			name: 'Restore This Version',
 		});
 		await user.click(restoreBtn);
 		expect(mockOnSelect).toHaveBeenCalledWith('PREV');

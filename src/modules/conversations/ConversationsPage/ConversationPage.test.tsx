@@ -3,13 +3,6 @@ import { describe, it, beforeEach, vi, expect } from 'vitest';
 import ConversationPage from './ConversationPage';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
-// Mock react-i18next
-vi.mock('react-i18next', () => ({
-	useTranslation: () => ({
-		t: (key: string) => key,
-	}),
-}));
-
 // Mock the conversation store hook
 vi.mock('~/stores/useConversationStore', () => ({
 	useConversationStore: vi.fn(),
@@ -36,8 +29,12 @@ describe('ConversationPage', () => {
 
 		renderWithProviders(<ConversationPage />);
 
-		expect(screen.getByText('page.fallback')).toBeInTheDocument();
-		expect(screen.getByText('status.nothingSelected')).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				'No conversation selected. Choose a conversation to view transcripts, notes, and associated actions.'
+			)
+		).toBeInTheDocument();
+		expect(screen.getByText('Nothing selected')).toBeInTheDocument();
 	});
 
 	it('renders selectionContent when provided', () => {
@@ -49,7 +46,11 @@ describe('ConversationPage', () => {
 		renderWithProviders(<ConversationPage />);
 
 		expect(screen.getByText('Selected Content')).toBeInTheDocument();
-		expect(screen.queryByText('page.fallback')).not.toBeInTheDocument();
+		expect(
+			screen.queryByText(
+				'No conversation selected. Choose a conversation to view transcripts, notes, and associated actions.'
+			)
+		).not.toBeInTheDocument();
 	});
 
 	it('calls clearSelection when unmounted', () => {

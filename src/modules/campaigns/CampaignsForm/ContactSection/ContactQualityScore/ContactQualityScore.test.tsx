@@ -18,17 +18,13 @@ describe('ContactQualityScore', () => {
 	it('displays the title from translations', () => {
 		renderWithProviders(<ContactQualityScore />);
 
-		expect(
-			screen.getByText('form.contacts.qualityScore.title')
-		).toBeInTheDocument();
+		expect(screen.getByText('Contact quality score')).toBeInTheDocument();
 	});
 
 	it('displays the subtitle from translations', () => {
 		renderWithProviders(<ContactQualityScore />);
 
-		expect(
-			screen.getByText('form.contacts.qualityScore.subtitle')
-		).toBeInTheDocument();
+		expect(screen.getByText('Quality score overview')).toBeInTheDocument();
 	});
 
 	it('renders the green indicator dot', () => {

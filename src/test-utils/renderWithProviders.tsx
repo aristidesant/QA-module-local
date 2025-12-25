@@ -159,14 +159,17 @@ testI18n.use(initReactI18next).init({
 	},
 });
 
+// Reusable wrapper component for tests that use renderHook
+export const TestProviders = ({ children }: { children: ReactNode }) => (
+	<QueryClientProvider client={queryClient}>
+		<I18nextProvider i18n={testI18n}>
+			<MantineProvider>{children}</MantineProvider>
+		</I18nextProvider>
+	</QueryClientProvider>
+);
+
 export const renderWithProviders = (children: ReactNode) => {
-	return render(
-		<QueryClientProvider client={queryClient}>
-			<I18nextProvider i18n={testI18n}>
-				<MantineProvider>{children}</MantineProvider>
-			</I18nextProvider>
-		</QueryClientProvider>
-	);
+	return render(children, { wrapper: TestProviders });
 };
 
 export default renderWithProviders;

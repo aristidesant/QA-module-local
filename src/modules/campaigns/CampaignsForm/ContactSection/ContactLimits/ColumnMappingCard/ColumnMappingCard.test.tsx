@@ -22,22 +22,20 @@ describe('ColumnMappingCard', () => {
 	it('renders correctly', () => {
 		renderWithProviders(<ColumnMappingCard {...defaultProps} />);
 
-		expect(screen.getByText('form.contacts.mapping.title')).toBeInTheDocument();
-		expect(
-			screen.getByText('form.contacts.mapping.clickToConfigure')
-		).toBeInTheDocument();
+		expect(screen.getByText('Column Mapping')).toBeInTheDocument();
+		expect(screen.getByText('Click to configure')).toBeInTheDocument();
 	});
 
 	it('opens modal on click', async () => {
 		renderWithProviders(<ColumnMappingCard {...defaultProps} />);
 
-		const card = screen.getByText('form.contacts.mapping.clickToConfigure');
+		const card = screen.getByText('Click to configure');
 		await userEvent.click(card);
 
 		expect(modals.open).toHaveBeenCalledWith(
 			expect.objectContaining({
 				modalId: 'match-columns-modal',
-				title: 'form.contacts.mapping.matchTitle',
+				title: 'Match Columns',
 			})
 		);
 	});

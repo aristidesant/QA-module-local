@@ -28,6 +28,7 @@ import type {
 } from '~/models/ConversationsModels';
 import styles from './TranscriptViewer.module.css';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 
 interface TranscriptViewerProps {
 	transcript: TranscriptEntry[];
@@ -582,15 +583,12 @@ function calculateModelCost(usage: {
 	);
 }
 
-function formatTotalCost(
-	llmUsage: LlmUsage,
-	t: (key: string) => string
-): string {
+function formatTotalCost(llmUsage: LlmUsage, t: TFunction): string {
 	const totalCost = Object.values(llmUsage.model_usage || {}).reduce(
 		(sum, usage) => sum + calculateModelCost(usage),
 		0
 	);
-	return `${t('common.currency')}${totalCost.toFixed(4)}`;
+	return `${t('currency', { ns: 'common' })}${totalCost.toFixed(4)}`;
 }
 
 export default TranscriptViewer;

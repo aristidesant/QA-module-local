@@ -1,5 +1,9 @@
 {
 	"title": "Nai Agent Service",
+	"common": {
+		"goBack": "Volver",
+		"goToHome": "Ir al inicio"
+	},
 	"actions": {
 		"save": "Guardar",
 		"cancel": "Cancelar",

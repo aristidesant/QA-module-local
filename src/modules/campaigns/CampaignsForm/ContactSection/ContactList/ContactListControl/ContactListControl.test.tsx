@@ -77,7 +77,7 @@ describe('ContactListControl', () => {
 		renderWithProviders(<ContactListControl contactGroup={baseContactGroup} />);
 
 		const actionButton = screen.getByRole('button', {
-			name: 'form.contacts.controls.start',
+			name: 'Start Campaign',
 		});
 
 		expect(actionButton).toHaveAttribute('data-variant', 'light');

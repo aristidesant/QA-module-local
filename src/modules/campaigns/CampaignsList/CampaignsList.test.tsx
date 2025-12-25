@@ -1,17 +1,10 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
 import { MemoryRouter } from 'react-router';
 import { notifications } from '@mantine/notifications';
 import CampaignsList from './CampaignsList';
 import type { Campaign, PaginatedResponse } from '~/models/CampaignsModel';
-
-// Mock react-i18next
-vi.mock('react-i18next', () => ({
-	useTranslation: () => ({
-		t: (key: string) => key,
-	}),
-}));
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 // Mock usePermissions
 const mockCanPerformAction = vi.fn((_module: any, _permission: any) => true);
@@ -266,7 +259,7 @@ vi.mock('~/components/EmptyState', () => ({
 			<div>{message}</div>
 			<div>{description}</div>
 			{action && (
-				<button onClick={action.props.onClick}>list.createButton</button>
+				<button onClick={action.props.onClick}>{action.props.children}</button>
 			)}
 		</div>
 	),
@@ -277,12 +270,10 @@ vi.mock('~/components/EmptyState', () => ({
 
 // Helper to render component
 const renderComponent = () =>
-	render(
-		<MantineProvider>
-			<MemoryRouter>
-				<CampaignsList />
-			</MemoryRouter>
-		</MantineProvider>
+	renderWithProviders(
+		<MemoryRouter>
+			<CampaignsList />
+		</MemoryRouter>
 	);
 
 const sampleCampaign: Campaign = {
@@ -379,8 +370,10 @@ describe('CampaignsList', () => {
 		});
 
 		renderComponent();
-		expect(screen.getByText('list.noCampaignsYet')).toBeInTheDocument();
-		expect(screen.getByText('list.noCampaignsYetDesc')).toBeInTheDocument();
+		expect(screen.getByText('No campaigns yet')).toBeInTheDocument();
+		expect(
+			screen.getByText('Launch your first campaign to reach your audience')
+		).toBeInTheDocument();
 	});
 
 	it('renders empty search results', () => {
@@ -411,8 +404,12 @@ describe('CampaignsList', () => {
 		});
 
 		renderComponent();
-		expect(screen.getByText('list.noCampaignsFound')).toBeInTheDocument();
-		expect(screen.getByText('list.noCampaignsFoundDesc')).toBeInTheDocument();
+		expect(screen.getByText('No campaigns found')).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				'Try adjusting your search terms or create a new campaign'
+			)
+		).toBeInTheDocument();
 	});
 
 	it('renders error state', () => {
@@ -471,7 +468,7 @@ describe('CampaignsList', () => {
 		});
 		renderComponent();
 		const createButton = screen.getByRole('button', {
-			name: /list.createButton/i,
+			name: 'Create Campaign',
 		});
 		fireEvent.click(createButton);
 		expect(mockResetWizard).toHaveBeenCalled();
@@ -484,7 +481,7 @@ describe('CampaignsList', () => {
 		});
 		renderComponent();
 
-		const testCall = screen.getAllByLabelText('columns.testCall')[0];
+		const testCall = screen.getAllByLabelText('Test Call')[0];
 		fireEvent.click(testCall);
 
 		expect(await screen.findByTestId('outbound-call-form')).toBeInTheDocument();
@@ -508,12 +505,12 @@ describe('CampaignsList', () => {
 
 		renderComponent();
 
-		const testCall = screen.getAllByLabelText('columns.testCall')[0];
+		const testCall = screen.getAllByLabelText('Test Call')[0];
 		fireEvent.click(testCall);
 
 		expect(notifications.show).toHaveBeenCalledWith(
 			expect.objectContaining({
-				title: 'list.noAgents',
+				title: 'No Agents',
 				color: 'yellow',
 			})
 		);
@@ -521,14 +518,14 @@ describe('CampaignsList', () => {
 
 	it('calls modals.openConfirmModal when Delete is clicked', async () => {
 		renderComponent();
-		const deleteItem = screen.getAllByLabelText('columns.deleteCampaign')[0];
+		const deleteItem = screen.getAllByLabelText('Delete campaign')[0];
 		fireEvent.click(deleteItem);
 		expect(mockOpenConfirm).toHaveBeenCalled();
 	});
 
 	it('calls modals.open when Clone is clicked', async () => {
 		renderComponent();
-		const cloneItem = screen.getAllByLabelText('columns.cloneCampaign')[0];
+		const cloneItem = screen.getAllByLabelText('Clone campaign')[0];
 		fireEvent.click(cloneItem);
 		expect(mockOpenModal).toHaveBeenCalledWith(
 			expect.objectContaining({
@@ -540,14 +537,14 @@ describe('CampaignsList', () => {
 
 	it('navigates to edit page when Edit is clicked', () => {
 		renderComponent();
-		const editButton = screen.getByLabelText('columns.editCampaign');
+		const editButton = screen.getByLabelText('Edit campaign');
 		fireEvent.click(editButton);
 		expect(mockNavigate).toHaveBeenCalledWith(`/campaign/${sampleCampaign.id}`);
 	});
 
 	it('navigates to view page when View is clicked', () => {
 		renderComponent();
-		const viewButton = screen.getByLabelText('columns.viewCampaign');
+		const viewButton = screen.getByLabelText('View campaign');
 		fireEvent.click(viewButton);
 		expect(mockNavigate).toHaveBeenCalledWith(
 			`/campaign/view/${sampleCampaign.id}`
@@ -556,7 +553,7 @@ describe('CampaignsList', () => {
 
 	it('handles delete confirmation success', async () => {
 		renderComponent();
-		const deleteItem = screen.getAllByLabelText('columns.deleteCampaign')[0];
+		const deleteItem = screen.getAllByLabelText('Delete campaign')[0];
 		fireEvent.click(deleteItem);
 
 		expect(mockOpenConfirm).toHaveBeenCalled();
@@ -581,7 +578,7 @@ describe('CampaignsList', () => {
 		mockUseDeleteCampaign.mockReturnValue({ mutateAsync: mockMutateAsync });
 
 		renderComponent();
-		const deleteItem = screen.getAllByLabelText('columns.deleteCampaign')[0];
+		const deleteItem = screen.getAllByLabelText('Delete campaign')[0];
 		fireEvent.click(deleteItem);
 
 		const { onConfirm } = mockOpenConfirm.mock.calls[0][0];
@@ -610,14 +607,14 @@ describe('CampaignsList', () => {
 		// Instead, let's assume we can access the children from the mock call arguments and render them.
 
 		renderComponent();
-		const cloneItem = screen.getAllByLabelText('columns.cloneCampaign')[0];
+		const cloneItem = screen.getAllByLabelText('Clone campaign')[0];
 		fireEvent.click(cloneItem);
 
 		expect(mockOpenModal).toHaveBeenCalled();
 		const modalContent = mockOpenModal.mock.calls[0][0].children;
 
 		// Render the modal content in a separate render to interact with it
-		const { getByText } = render(modalContent);
+		const { getByText } = renderWithProviders(modalContent);
 		fireEvent.click(getByText('Complete Clone'));
 
 		expect(mockUseGetAllCampaignsPaginated().refetch).toHaveBeenCalled();
@@ -633,7 +630,7 @@ describe('CampaignsList', () => {
 		});
 		renderComponent();
 
-		const testCall = screen.getAllByLabelText('columns.testCall')[0];
+		const testCall = screen.getAllByLabelText('Test Call')[0];
 		fireEvent.click(testCall);
 
 		expect(await screen.findByTestId('outbound-call-form')).toBeInTheDocument();
@@ -740,12 +737,10 @@ describe('CampaignsList', () => {
 		renderComponent();
 
 		// View button should not be present
-		expect(
-			screen.queryByLabelText('columns.viewCampaign')
-		).not.toBeInTheDocument();
+		expect(screen.queryByLabelText('View campaign')).not.toBeInTheDocument();
 
 		// Test Call should not be present when module access is false
-		expect(screen.queryByLabelText('columns.testCall')).not.toBeInTheDocument();
+		expect(screen.queryByLabelText('Test Call')).not.toBeInTheDocument();
 	});
 
 	it('renders draft badge for draft campaigns', () => {
@@ -786,7 +781,7 @@ describe('CampaignsList', () => {
 
 		// In useCampaignsColumns, draft label is 'columns.draft' or 'columns.continueSetup'
 		// It's actually 'columns.continueSetup' for the button label
-		const continueDraftBtn = screen.getByLabelText('columns.continueSetup');
+		const continueDraftBtn = screen.getByLabelText('Continue setup');
 		fireEvent.click(continueDraftBtn);
 
 		expect(mockInitializeFromDraft).toHaveBeenCalledWith(sampleDraftCampaign);
@@ -844,9 +839,7 @@ it('hides clone menu item when user lacks CREATE permission', async () => {
 	});
 	renderComponent();
 
-	expect(
-		screen.queryByLabelText('columns.cloneCampaign')
-	).not.toBeInTheDocument();
+	expect(screen.queryByLabelText('Clone campaign')).not.toBeInTheDocument();
 });
 
 // Mock Mantine Modal to avoid portal issues

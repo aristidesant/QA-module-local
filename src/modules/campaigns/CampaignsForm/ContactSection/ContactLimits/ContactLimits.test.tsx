@@ -128,9 +128,7 @@ describe('ContactLimits', () => {
 				<ContactLimits contactGroup={{ name: 'Test Group' }} campaignId={1} />
 			);
 
-			expect(
-				screen.getByText(/form.contacts.limits.humanEquivalentLabel/)
-			).toBeInTheDocument();
+			expect(screen.getByText(/Human equivalent/)).toBeInTheDocument();
 			expect(screen.getByRole('slider')).toBeInTheDocument();
 		});
 
@@ -140,13 +138,9 @@ describe('ContactLimits', () => {
 			);
 
 			expect(
-				screen.getByRole('button', { name: /cancel/i })
+				screen.getByRole('button', { name: 'Cancel' })
 			).toBeInTheDocument();
-			expect(
-				screen.getByRole('button', {
-					name: /form.contacts.limits.actions.save/i,
-				})
-			).toBeInTheDocument();
+			expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument();
 		});
 
 		it('renders Update button when editing existing contact group', () => {
@@ -158,9 +152,7 @@ describe('ContactLimits', () => {
 			);
 
 			expect(
-				screen.getByRole('button', {
-					name: /form.contacts.limits.actions.update/i,
-				})
+				screen.getByRole('button', { name: 'Update' })
 			).toBeInTheDocument();
 		});
 
@@ -223,9 +215,7 @@ describe('ContactLimits', () => {
 			);
 
 			// Total is 20, used is 5+3=8, so available is 12
-			expect(
-				screen.getByText(/form.contacts.limits.availableLabel/)
-			).toHaveTextContent(/12/);
+			expect(screen.getByText(/Available/)).toHaveTextContent(/12/);
 		});
 
 		it('uses contactGroup humanEquivalent as initial value', () => {
@@ -236,9 +226,7 @@ describe('ContactLimits', () => {
 				/>
 			);
 
-			expect(
-				screen.getByText(/form.contacts.limits.humanEquivalentLabel/)
-			).toHaveTextContent(/5/);
+			expect(screen.getByText(/Human equivalent/)).toHaveTextContent(/5/);
 		});
 
 		it('defaults to 1 when no humanEquivalent provided', () => {
@@ -246,9 +234,7 @@ describe('ContactLimits', () => {
 				<ContactLimits contactGroup={{ name: 'Test Group' }} campaignId={1} />
 			);
 
-			expect(
-				screen.getByText(/form.contacts.limits.humanEquivalentLabel/)
-			).toHaveTextContent(/1/);
+			expect(screen.getByText(/Human equivalent/)).toHaveTextContent(/1/);
 		});
 	});
 
@@ -316,9 +302,7 @@ describe('ContactLimits', () => {
 				);
 
 			expect(screen.getByTestId('list-name')).toHaveTextContent('First Group');
-			expect(
-				screen.getByText(/form.contacts.limits.humanEquivalentLabel/)
-			).toHaveTextContent(/2/);
+			expect(screen.getByText(/Human equivalent/)).toHaveTextContent(/2/);
 
 			rerenderWithProviders(
 				<ContactLimits
@@ -330,9 +314,7 @@ describe('ContactLimits', () => {
 			expect(screen.getByTestId('list-name')).toHaveTextContent(
 				'Updated Group'
 			);
-			expect(
-				screen.getByText(/form.contacts.limits.humanEquivalentLabel/)
-			).toHaveTextContent(/4/);
+			expect(screen.getByText(/Human equivalent/)).toHaveTextContent(/4/);
 		});
 	});
 
@@ -355,7 +337,7 @@ describe('ContactLimits', () => {
 			);
 
 			expect(
-				screen.getByText(/form.contacts.limits.capacityFull.title/)
+				screen.getByText('Scheduler capacity is full')
 			).toBeInTheDocument();
 		});
 
@@ -376,11 +358,7 @@ describe('ContactLimits', () => {
 				<ContactLimits contactGroup={{ name: 'Test Group' }} campaignId={1} />
 			);
 
-			expect(
-				screen.getByRole('button', {
-					name: /form.contacts.limits.actions.save/i,
-				})
-			).toBeDisabled();
+			expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled();
 		});
 
 		it('disables slider when scheduler is full', async () => {
@@ -461,11 +439,7 @@ describe('ContactLimits', () => {
 			);
 
 			expect(screen.getByRole('button', { name: /cancel/i })).toBeDisabled();
-			expect(
-				screen.getByRole('button', {
-					name: /form.contacts.limits.actions.save/i,
-				})
-			).toBeDisabled();
+			expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled();
 		});
 	});
 

@@ -1,14 +1,7 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
 import PhoneNumberSelector from './PhoneNumberSelector';
-
-// Mock react-i18next
-vi.mock('react-i18next', () => ({
-	useTranslation: () => ({
-		t: (key: string) => key,
-	}),
-}));
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 const mockUseSimplePhoneNumberList = vi.fn();
 vi.mock('~/queries/phoneNumberQueries', () => ({
@@ -52,14 +45,12 @@ describe('PhoneNumberSelector', () => {
 		});
 		const onChange = vi.fn();
 
-		render(
-			<MantineProvider>
-				<PhoneNumberSelector
-					campaignType='OUTBOUND'
-					value={null}
-					onChange={onChange}
-				/>
-			</MantineProvider>
+		renderWithProviders(
+			<PhoneNumberSelector
+				campaignType='OUTBOUND'
+				value={null}
+				onChange={onChange}
+			/>
 		);
 
 		expect(screen.getByTestId('phone-select')).toBeDisabled();
@@ -72,14 +63,12 @@ describe('PhoneNumberSelector', () => {
 		});
 		const onChange = vi.fn();
 
-		render(
-			<MantineProvider>
-				<PhoneNumberSelector
-					campaignType='OUTBOUND'
-					value={null}
-					onChange={onChange}
-				/>
-			</MantineProvider>
+		renderWithProviders(
+			<PhoneNumberSelector
+				campaignType='OUTBOUND'
+				value={null}
+				onChange={onChange}
+			/>
 		);
 
 		const select = screen.getByTestId('phone-select');

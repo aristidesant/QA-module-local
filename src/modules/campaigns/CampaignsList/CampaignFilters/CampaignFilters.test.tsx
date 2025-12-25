@@ -4,13 +4,6 @@ import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import CampaignFilters from './CampaignFilters';
 
-// Mock react-i18next
-vi.mock('react-i18next', () => ({
-	useTranslation: () => ({
-		t: (key: string) => key,
-	}),
-}));
-
 describe('CampaignFilters', () => {
 	const onSearchChange = vi.fn();
 	const onSortChange = vi.fn();
@@ -32,7 +25,7 @@ describe('CampaignFilters', () => {
 	it('renders and shows search value', () => {
 		renderWithProviders(<CampaignFilters {...baseProps} searchValue={'abc'} />);
 
-		const input = screen.getByPlaceholderText('filters.searchPlaceholder');
+		const input = screen.getByPlaceholderText('Search campaigns...');
 		expect(input).toBeInTheDocument();
 		expect((input as HTMLInputElement).value).toBe('abc');
 	});
@@ -41,7 +34,7 @@ describe('CampaignFilters', () => {
 		const user = userEvent.setup();
 		renderWithProviders(<CampaignFilters {...baseProps} searchValue={'a'} />);
 
-		const closeBtn = screen.getByLabelText('actions.close');
+		const closeBtn = screen.getByLabelText('Close');
 		await user.click(closeBtn);
 		expect(onSearchChange).toHaveBeenCalledWith('');
 	});
@@ -51,15 +44,13 @@ describe('CampaignFilters', () => {
 		renderWithProviders(<CampaignFilters {...baseProps} />);
 
 		// Open advanced
-		const advButton = screen.getByRole('button', { name: /filters.advanced/i });
+		const advButton = screen.getByRole('button', { name: 'Advanced' });
 		await user.click(advButton);
 
-		const includeCompleted = await screen.findByText(
-			'filters.includeCompleted'
-		);
+		const includeCompleted = await screen.findByText('Include completed');
 		expect(includeCompleted).toBeInTheDocument();
 		// Switch may not expose role in DOM consistently; use label text
-		const switchEl = screen.getByLabelText('filters.includeCompleted');
+		const switchEl = screen.getByLabelText('Include completed');
 		await user.click(switchEl);
 		expect(onFiltersChange).toHaveBeenCalledWith({ includeCompleted: true });
 	});

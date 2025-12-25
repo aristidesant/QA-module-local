@@ -1,16 +1,8 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
 import ConversationDisposition from './ConversationDisposition';
 import type { CallDispositionModel } from '~/models/CallDispositionModel';
-
-// Mock react-i18next
-vi.mock('react-i18next', () => ({
-	useTranslation: () => ({
-		t: (key: string) => key,
-		i18n: { language: 'en' },
-	}),
-}));
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 // Mock useCallDispositionByConversationId
 const mockUseCallDispositionByConversationId = vi.fn();
@@ -56,10 +48,8 @@ const sampleDisposition: CallDispositionModel = {
 };
 
 const renderComponent = (conversationId: string | number = 123) =>
-	render(
-		<MantineProvider>
-			<ConversationDisposition conversationId={conversationId} />
-		</MantineProvider>
+	renderWithProviders(
+		<ConversationDisposition conversationId={conversationId} />
 	);
 
 describe('ConversationDisposition', () => {
@@ -84,9 +74,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByTestId('card-title')).toHaveTextContent(
-				'disposition.title'
-			);
+			expect(screen.getByTestId('card-title')).toHaveTextContent('Outcome');
 		});
 
 		it('displays "disposition.title" as title when error occurs', () => {
@@ -98,16 +86,12 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByTestId('card-title')).toHaveTextContent(
-				'disposition.title'
-			);
+			expect(screen.getByTestId('card-title')).toHaveTextContent('Outcome');
 		});
 
 		it('displays "disposition.title" as title when data is loaded', () => {
 			renderComponent();
-			expect(screen.getByTestId('card-title')).toHaveTextContent(
-				'disposition.title'
-			);
+			expect(screen.getByTestId('card-title')).toHaveTextContent('Outcome');
 		});
 
 		it('displays "disposition.title" as title with positive status', () => {
@@ -119,9 +103,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByTestId('card-title')).toHaveTextContent(
-				'disposition.title'
-			);
+			expect(screen.getByTestId('card-title')).toHaveTextContent('Outcome');
 		});
 
 		it('displays "disposition.title" as title with negative status', () => {
@@ -133,9 +115,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByTestId('card-title')).toHaveTextContent(
-				'disposition.title'
-			);
+			expect(screen.getByTestId('card-title')).toHaveTextContent('Outcome');
 		});
 
 		it('displays "disposition.title" as title with neutral status', () => {
@@ -147,9 +127,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByTestId('card-title')).toHaveTextContent(
-				'disposition.title'
-			);
+			expect(screen.getByTestId('card-title')).toHaveTextContent('Outcome');
 		});
 	});
 
@@ -164,7 +142,7 @@ describe('ConversationDisposition', () => {
 
 			renderComponent();
 			expect(screen.getByTestId('card-description')).toHaveTextContent(
-				'disposition.loading'
+				'Loading status'
 			);
 		});
 	});
@@ -180,9 +158,11 @@ describe('ConversationDisposition', () => {
 
 			renderComponent();
 			expect(screen.getByTestId('card-description')).toHaveTextContent(
-				'disposition.failed'
+				'Failed to load'
 			);
-			expect(screen.getByText('disposition.errorMsg')).toBeInTheDocument();
+			expect(
+				screen.getByText("Couldn't load outcome data")
+			).toBeInTheDocument();
 		});
 
 		it('calls refetch when Retry button is clicked', () => {
@@ -196,7 +176,7 @@ describe('ConversationDisposition', () => {
 
 			renderComponent();
 			const retryButton = screen.getByRole('button', {
-				name: /disposition.retry/i,
+				name: 'Retry',
 			});
 			fireEvent.click(retryButton);
 			expect(mockRefetch).toHaveBeenCalled();
@@ -221,7 +201,7 @@ describe('ConversationDisposition', () => {
 			expect(
 				screen.getByText('Customer asked for a follow-up call next week')
 			).toBeInTheDocument();
-			expect(screen.getByText('disposition.agentNotes')).toBeInTheDocument();
+			expect(screen.getByText('Agent notes')).toBeInTheDocument();
 		});
 
 		it('does not display notes section when notes are empty', () => {
@@ -233,9 +213,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(
-				screen.queryByText('disposition.agentNotes')
-			).not.toBeInTheDocument();
+			expect(screen.queryByText('Agent notes')).not.toBeInTheDocument();
 		});
 
 		it('displays "disposition.noOutcome" when dispositionName is missing', () => {
@@ -247,7 +225,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('disposition.noOutcome')).toBeInTheDocument();
+			expect(screen.getByText('No outcome')).toBeInTheDocument();
 		});
 	});
 
@@ -261,7 +239,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('disposition.positive')).toBeInTheDocument();
+			expect(screen.getByText('Positive')).toBeInTheDocument();
 		});
 
 		it('displays Negative badge for negative status', () => {
@@ -273,7 +251,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('disposition.negative')).toBeInTheDocument();
+			expect(screen.getByText('Negative')).toBeInTheDocument();
 		});
 
 		it('displays Neutral badge for neutral status', () => {
@@ -285,7 +263,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('disposition.neutral')).toBeInTheDocument();
+			expect(screen.getByText('Neutral')).toBeInTheDocument();
 		});
 
 		it('displays Neutral badge for unknown status', () => {
@@ -297,7 +275,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('disposition.neutral')).toBeInTheDocument();
+			expect(screen.getByText('Neutral')).toBeInTheDocument();
 		});
 	});
 
@@ -311,7 +289,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('disposition.finalized')).toBeInTheDocument();
+			expect(screen.getByText('Finalized')).toBeInTheDocument();
 		});
 
 		it('displays Voicemail badge when isVoiceMail is true', () => {
@@ -323,7 +301,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('disposition.voicemail')).toBeInTheDocument();
+			expect(screen.getByText('Voicemail')).toBeInTheDocument();
 		});
 
 		it('displays both badges when both flags are true', () => {
@@ -335,8 +313,8 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('disposition.finalized')).toBeInTheDocument();
-			expect(screen.getByText('disposition.voicemail')).toBeInTheDocument();
+			expect(screen.getByText('Finalized')).toBeInTheDocument();
+			expect(screen.getByText('Voicemail')).toBeInTheDocument();
 		});
 	});
 
@@ -354,12 +332,8 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(
-				screen.getByText('disposition.callbackRequired')
-			).toBeInTheDocument();
-			expect(
-				screen.getByText('30 disposition.duration.minutes')
-			).toBeInTheDocument();
+			expect(screen.getByText('Callback required')).toBeInTheDocument();
+			expect(screen.getByText('30 minutes')).toBeInTheDocument();
 		});
 
 		it('displays "disposition.duration.asap" when rescheduleTime is 0', () => {
@@ -375,7 +349,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(screen.getByText('disposition.duration.asap')).toBeInTheDocument();
+			expect(screen.getByText('as soon as possible')).toBeInTheDocument();
 		});
 
 		it('displays number invalidated when isInvalidatesNumber is true', () => {
@@ -387,10 +361,8 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(
-				screen.getByText('disposition.numberInvalidated')
-			).toBeInTheDocument();
-			expect(screen.getByText('disposition.doNotRetry')).toBeInTheDocument();
+			expect(screen.getByText('Number invalidated')).toBeInTheDocument();
+			expect(screen.getByText('Do not retry this contact')).toBeInTheDocument();
 		});
 	});
 
@@ -408,9 +380,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(
-				screen.getByText('1 disposition.duration.day')
-			).toBeInTheDocument();
+			expect(screen.getByText('1 day')).toBeInTheDocument();
 		});
 
 		it('formats hours correctly', () => {
@@ -426,9 +396,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(
-				screen.getByText('1 disposition.duration.hour')
-			).toBeInTheDocument();
+			expect(screen.getByText('1 hour')).toBeInTheDocument();
 		});
 
 		it('formats multiple days correctly', () => {
@@ -444,9 +412,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(
-				screen.getByText('2 disposition.duration.days')
-			).toBeInTheDocument();
+			expect(screen.getByText('2 days')).toBeInTheDocument();
 		});
 
 		it('formats combined duration correctly', () => {
@@ -462,11 +428,7 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			expect(
-				screen.getByText(
-					'1 disposition.duration.day disposition.duration.and 1 disposition.duration.hour'
-				)
-			).toBeInTheDocument();
+			expect(screen.getByText('1 day and 1 hour')).toBeInTheDocument();
 		});
 	});
 
@@ -475,7 +437,7 @@ describe('ConversationDisposition', () => {
 			renderComponent();
 			// The timestamp format is "Jan 15, 10:05 AM" or similar based on locale
 			expect(screen.getByTestId('card-description')).not.toHaveTextContent(
-				'disposition.noUpdates'
+				'No updates yet'
 			);
 		});
 
@@ -493,7 +455,7 @@ describe('ConversationDisposition', () => {
 
 			renderComponent();
 			expect(screen.getByTestId('card-description')).toHaveTextContent(
-				'disposition.noUpdates'
+				'No updates yet'
 			);
 		});
 	});

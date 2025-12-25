@@ -284,7 +284,7 @@ export function ContactListInfo({
 									size='xs'
 									onClick={() => setOpened(false)}
 								>
-									{t('close', { ns: 'common' })}
+									{t('actions.close', { ns: 'common' })}
 								</Button>
 							</Group>
 						</Popover.Dropdown>

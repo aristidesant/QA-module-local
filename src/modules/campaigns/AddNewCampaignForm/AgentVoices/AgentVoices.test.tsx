@@ -5,13 +5,6 @@ import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import { useGetAllAgentVoices } from '~/queries/agentVoiceQueries';
 import { modals } from '@mantine/modals';
 
-// Mock react-i18next
-vi.mock('react-i18next', () => ({
-	useTranslation: () => ({
-		t: (key: string) => key,
-	}),
-}));
-
 // Mock dependencies
 vi.mock('~/queries/agentVoiceQueries', () => ({
 	useGetAllAgentVoices: vi.fn(),
@@ -69,9 +62,7 @@ describe('AgentVoices', () => {
 	it('renders loading state', () => {
 		(useGetAllAgentVoices as any).mockReturnValue({ isLoading: true });
 		renderWithProviders(<AgentVoices onVoiceSelect={vi.fn()} />);
-		expect(
-			screen.getByText('addNewCampaign.voices.loading')
-		).toBeInTheDocument();
+		expect(screen.getByText('Loading voices...')).toBeInTheDocument();
 	});
 
 	it('renders error state', () => {
@@ -80,7 +71,7 @@ describe('AgentVoices', () => {
 			isError: true,
 		});
 		renderWithProviders(<AgentVoices onVoiceSelect={vi.fn()} />);
-		expect(screen.getByText('addNewCampaign.voices.error')).toBeInTheDocument();
+		expect(screen.getByText('Failed to load voices')).toBeInTheDocument();
 	});
 
 	it('renders empty state', () => {
@@ -89,9 +80,7 @@ describe('AgentVoices', () => {
 			data: [],
 		});
 		renderWithProviders(<AgentVoices onVoiceSelect={vi.fn()} />);
-		expect(
-			screen.getByText('addNewCampaign.voices.noVoices')
-		).toBeInTheDocument();
+		expect(screen.getByText('No voices found')).toBeInTheDocument();
 	});
 
 	it('renders select voice card when no voice selected', () => {
@@ -101,7 +90,7 @@ describe('AgentVoices', () => {
 		});
 		renderWithProviders(<AgentVoices onVoiceSelect={vi.fn()} />);
 		expect(
-			screen.getByText('addNewCampaign.voices.selectVoice')
+			screen.getByText('Select a voice for your campaign')
 		).toBeInTheDocument();
 	});
 
@@ -123,7 +112,7 @@ describe('AgentVoices', () => {
 		});
 		renderWithProviders(<AgentVoices onVoiceSelect={vi.fn()} />);
 
-		fireEvent.click(screen.getByText('addNewCampaign.voices.selectVoice'));
+		fireEvent.click(screen.getByText('Select a voice for your campaign'));
 		expect(modals.open).toHaveBeenCalled();
 	});
 });

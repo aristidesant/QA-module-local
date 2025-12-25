@@ -7,13 +7,6 @@ import {
 } from './useCampaignsColumns';
 import type { Campaign } from '~/models/CampaignsModel';
 
-// Mock react-i18next
-vi.mock('react-i18next', () => ({
-	useTranslation: () => ({
-		t: (key: string) => key,
-	}),
-}));
-
 const mockNavigate = vi.fn();
 
 vi.mock('react-router', async () => {
@@ -98,13 +91,13 @@ describe('useCampaignsColumns', () => {
 	it('renders draft badge for draft campaigns', () => {
 		renderCell('name', draftCampaign);
 		expect(screen.getByText('Draft Campaign')).toBeInTheDocument();
-		expect(screen.getByText('columns.draft')).toBeInTheDocument();
+		expect(screen.getByText('Draft')).toBeInTheDocument();
 	});
 
 	it('does not render draft badge for non-draft campaigns', () => {
 		renderCell('name', sampleCampaign);
 		expect(screen.getByText('Sample')).toBeInTheDocument();
-		expect(screen.queryByText('columns.draft')).not.toBeInTheDocument();
+		expect(screen.queryByText('Draft')).not.toBeInTheDocument();
 	});
 
 	it('renders type column correctly for OUTBOUND', () => {
@@ -147,32 +140,30 @@ describe('useCampaignsColumns', () => {
 		renderWithProviders(<TestComponent />);
 
 		// Edit
-		fireEvent.click(screen.getByLabelText('columns.editCampaign'));
+		fireEvent.click(screen.getByLabelText('Edit campaign'));
 		expect(onEdit).toHaveBeenCalledWith(sampleCampaign);
 
 		// View
-		fireEvent.click(screen.getByLabelText('columns.viewCampaign'));
+		fireEvent.click(screen.getByLabelText('View campaign'));
 		expect(onView).toHaveBeenCalledWith(sampleCampaign);
 
 		// Test Call inline action
-		const testCallBtn = screen.getByLabelText('columns.testCall');
+		const testCallBtn = screen.getByLabelText('Test Call');
 		fireEvent.click(testCallBtn);
 		expect(onTestCall).toHaveBeenCalledWith(sampleCampaign);
 
 		// Clone inline action
-		const cloneBtn = screen.getByLabelText('columns.cloneCampaign');
+		const cloneBtn = screen.getByLabelText('Clone campaign');
 		fireEvent.click(cloneBtn);
 		expect(onClone).toHaveBeenCalledWith(sampleCampaign);
 
 		// Delete inline action
-		const deleteBtn = screen.getByLabelText('columns.deleteCampaign');
+		const deleteBtn = screen.getByLabelText('Delete campaign');
 		fireEvent.click(deleteBtn);
 		expect(onDelete).toHaveBeenCalledWith(sampleCampaign);
 
 		// Continue Draft should NOT be visible for non-draft campaigns
-		expect(
-			screen.queryByLabelText('columns.continueSetup')
-		).not.toBeInTheDocument();
+		expect(screen.queryByLabelText('Continue setup')).not.toBeInTheDocument();
 	});
 
 	it('renders Continue Draft button for draft campaigns', async () => {
@@ -194,7 +185,7 @@ describe('useCampaignsColumns', () => {
 
 		renderWithProviders(<TestComponent />);
 
-		const continueDraftBtn = screen.getByLabelText('columns.continueSetup');
+		const continueDraftBtn = screen.getByLabelText('Continue setup');
 		expect(continueDraftBtn).toBeInTheDocument();
 
 		fireEvent.click(continueDraftBtn);
@@ -207,9 +198,7 @@ describe('useCampaignsColumns', () => {
 		});
 		renderCell('actions', sampleCampaign);
 
-		expect(
-			screen.queryByLabelText('columns.cloneCampaign')
-		).not.toBeInTheDocument();
+		expect(screen.queryByLabelText('Clone campaign')).not.toBeInTheDocument();
 		mockCanPerformAction.mockReturnValue(true);
 	});
 
@@ -226,8 +215,8 @@ describe('useCampaignsColumns', () => {
 
 		renderWithProviders(<TestComponent />);
 
-		const viewButton = screen.getByLabelText('columns.viewCampaign');
-		const editButton = screen.getByLabelText('columns.editCampaign');
+		const viewButton = screen.getByLabelText('View campaign');
+		const editButton = screen.getByLabelText('Edit campaign');
 		// Menu removed; check order contains these inline icons in order
 
 		// Verify DOM order: View should come before Edit, Edit should come before Menu
@@ -235,7 +224,7 @@ describe('useCampaignsColumns', () => {
 			viewButton.compareDocumentPosition(editButton) &
 				Node.DOCUMENT_POSITION_FOLLOWING
 		).toBeTruthy();
-		const testCallButton = screen.getByLabelText('columns.testCall');
+		const testCallButton = screen.getByLabelText('Test Call');
 		expect(
 			editButton.compareDocumentPosition(testCallButton) &
 				Node.DOCUMENT_POSITION_FOLLOWING

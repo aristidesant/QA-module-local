@@ -90,10 +90,8 @@ describe('AddNewContactList', () => {
 			/>
 		);
 
-		expect(
-			screen.getByText('form.contacts.addNew.uploadLabel')
-		).toBeInTheDocument();
-		expect(screen.getByRole('button', { name: 'cancel' })).toBeInTheDocument();
+		expect(screen.getByText('Upload contact list')).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
 	});
 
 	it('calls onClose when Cancel button clicked', async () => {
@@ -106,7 +104,7 @@ describe('AddNewContactList', () => {
 			/>
 		);
 
-		await user.click(screen.getByRole('button', { name: 'cancel' }));
+		await user.click(screen.getByRole('button', { name: 'Cancel' }));
 		expect(onClose).toHaveBeenCalledTimes(1);
 	});
 
@@ -148,7 +146,7 @@ describe('AddNewContactList', () => {
 		await waitFor(() =>
 			expect(notifications.show).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: 'form.contacts.addNew.notifications.noFile.title',
+					title: 'No file selected',
 				})
 			)
 		);
@@ -172,7 +170,7 @@ describe('AddNewContactList', () => {
 		await waitFor(() =>
 			expect(notifications.show).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: 'form.contacts.addNew.notifications.invalidType.title',
+					title: 'Invalid file type',
 				})
 			)
 		);
@@ -277,7 +275,7 @@ describe('AddNewContactList', () => {
 		await waitFor(() =>
 			expect(notifications.show).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: 'form.contacts.addNew.notifications.uploadFailed.title',
+					title: 'Upload failed',
 					message: errorMessage,
 					color: 'red',
 				})
@@ -315,8 +313,8 @@ describe('AddNewContactList', () => {
 		await waitFor(() =>
 			expect(notifications.show).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: 'form.contacts.addNew.notifications.uploadFailed.title',
-					message: 'form.contacts.addNew.notifications.uploadFailed.message',
+					title: 'Upload failed',
+					message: "We couldn't upload your file. Please try again.",
 					color: 'red',
 				})
 			)
@@ -415,7 +413,7 @@ describe('AddNewContactList', () => {
 		await waitFor(() =>
 			expect(notifications.show).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: 'form.contacts.addNew.notifications.noFile.title',
+					title: 'No file selected',
 				})
 			)
 		);

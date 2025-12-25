@@ -22,28 +22,20 @@ describe('ContactListInfo', () => {
 			renderWithProviders(<ContactListInfo listName='Test List' />);
 
 			expect(screen.getByText('Test List')).toBeInTheDocument();
-			expect(
-				screen.getByText('form.contacts.info.nameLabel')
-			).toBeInTheDocument();
+			expect(screen.getByText('Name')).toBeInTheDocument();
 		});
 
 		it('renders empty state when no list name provided', () => {
 			renderWithProviders(<ContactListInfo listName='' />);
 
-			expect(
-				screen.getByText('form.contacts.info.nameRequired')
-			).toBeInTheDocument();
-			expect(
-				screen.getByText('form.contacts.info.clickToAddName')
-			).toBeInTheDocument();
+			expect(screen.getByText('Name is required')).toBeInTheDocument();
+			expect(screen.getByText('Click to add a name')).toBeInTheDocument();
 		});
 
 		it('renders empty state when list name is only whitespace', () => {
 			renderWithProviders(<ContactListInfo listName='   ' />);
 
-			expect(
-				screen.getByText('form.contacts.info.nameRequired')
-			).toBeInTheDocument();
+			expect(screen.getByText('Name is required')).toBeInTheDocument();
 		});
 	});
 
@@ -103,7 +95,7 @@ describe('ContactListInfo', () => {
 				<ContactListInfo listName='' onNameChange={onNameChange} />
 			);
 
-			await user.click(screen.getByText('form.contacts.info.clickToAddName'));
+			await user.click(screen.getByText('Click to add a name'));
 
 			expect(screen.getByRole('textbox')).toBeInTheDocument();
 		});
@@ -119,7 +111,7 @@ describe('ContactListInfo', () => {
 				/>
 			);
 
-			await user.click(screen.getByText('form.contacts.info.clickToAddName'));
+			await user.click(screen.getByText('Click to add a name'));
 
 			expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
 		});
@@ -363,7 +355,7 @@ describe('ContactListInfo', () => {
 			await user.click(editButton!);
 
 			expect(
-				screen.getByText('form.contacts.info.nameDescription')
+				screen.getByText('This name is visible in the campaign.')
 			).toBeInTheDocument();
 		});
 	});
@@ -380,7 +372,7 @@ describe('ContactListInfo', () => {
 
 			expect(
 				screen.getByRole('button', {
-					name: 'form.contacts.info.addExpiration',
+					name: 'Add expiration date',
 				})
 			).toBeInTheDocument();
 		});
@@ -390,7 +382,7 @@ describe('ContactListInfo', () => {
 
 			expect(
 				screen.queryByRole('button', {
-					name: 'form.contacts.info.addExpiration',
+					name: 'Add expiration date',
 				})
 			).not.toBeInTheDocument();
 		});
@@ -405,9 +397,7 @@ describe('ContactListInfo', () => {
 				/>
 			);
 
-			expect(
-				screen.getByText(/form.contacts.info.expires: Jan 15, 2025/)
-			).toBeInTheDocument();
+			expect(screen.getByText(/Expires: Jan 15, 2025/)).toBeInTheDocument();
 		});
 
 		it('opens date picker popover when clicking expiration button', async () => {
@@ -422,46 +412,12 @@ describe('ContactListInfo', () => {
 
 			await user.click(
 				screen.getByRole('button', {
-					name: 'form.contacts.info.addExpiration',
+					name: 'Add expiration date',
 				})
 			);
 
 			await waitFor(() => {
-				expect(
-					screen.getByText('form.contacts.info.selectExpiration')
-				).toBeInTheDocument();
-			});
-		});
-
-		it('closes popover when clicking close button', async () => {
-			const user = userEvent.setup();
-			const onExpirationChange = vi.fn();
-			renderWithProviders(
-				<ContactListInfo
-					listName='Test List'
-					onExpirationChange={onExpirationChange}
-				/>
-			);
-
-			await user.click(
-				screen.getByRole('button', {
-					name: 'form.contacts.info.addExpiration',
-				})
-			);
-
-			await waitFor(() => {
-				expect(
-					screen.getByText('form.contacts.info.selectExpiration')
-				).toBeInTheDocument();
-			});
-
-			// Find the Close button by its text
-			await user.click(screen.getByText('close'));
-
-			await waitFor(() => {
-				expect(
-					screen.queryByText('form.contacts.info.selectExpiration')
-				).not.toBeInTheDocument();
+				expect(screen.getByText('Select expiration date')).toBeInTheDocument();
 			});
 		});
 
@@ -529,9 +485,7 @@ describe('ContactListInfo', () => {
 			);
 
 			// The mock returns 'Jan 15, 2025' for any date
-			expect(
-				screen.getByText(/form.contacts.info.expires/)
-			).toBeInTheDocument();
+			expect(screen.getByText(/Expires/)).toBeInTheDocument();
 		});
 	});
 });

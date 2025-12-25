@@ -4,13 +4,6 @@ import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import { TableToolbar } from './TableToolbar';
 
-// Mock react-i18next
-vi.mock('react-i18next', () => ({
-	useTranslation: () => ({
-		t: (key: string) => key,
-	}),
-}));
-
 // Mock ExportToExcelModal to avoid testing its internals
 vi.mock('./ExportToExcelModal', () => ({
 	default: ({ opened, onClose }: { opened: boolean; onClose: () => void }) =>
@@ -33,7 +26,7 @@ describe('TableToolbar', () => {
 	it('renders search input with correct placeholder', () => {
 		renderWithProviders(<TableToolbar {...defaultProps} />);
 
-		const searchInput = screen.getByPlaceholderText('list.searchPlaceholder');
+		const searchInput = screen.getByPlaceholderText('Search conversations...');
 		expect(searchInput).toBeInTheDocument();
 	});
 
@@ -46,7 +39,7 @@ describe('TableToolbar', () => {
 			/>
 		);
 
-		const searchInput = screen.getByPlaceholderText('list.searchPlaceholder');
+		const searchInput = screen.getByPlaceholderText('Search conversations...');
 		await userEvent.type(searchInput, 'test search');
 
 		expect(onGlobalFilterChange).toHaveBeenCalled();

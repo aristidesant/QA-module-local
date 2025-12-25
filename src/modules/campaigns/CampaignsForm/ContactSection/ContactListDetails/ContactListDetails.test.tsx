@@ -105,17 +105,11 @@ describe('ContactListDetails', () => {
 			</MemoryRouter>
 		);
 
-		expect(
-			screen.getByText('form.contacts.details.actions.title')
-		).toBeInTheDocument();
+		expect(screen.getByText('Actions')).toBeInTheDocument();
 		expect(screen.getByText('Test list')).toBeInTheDocument();
 		expect(screen.getByText('Test description')).toBeInTheDocument();
-		expect(
-			screen.queryByLabelText('form.contacts.details.actions.extendWaves')
-		).not.toBeInTheDocument();
-		expect(
-			screen.queryByLabelText('form.contacts.details.actions.completeList')
-		).not.toBeInTheDocument();
+		expect(screen.queryByLabelText('Extend Waves')).not.toBeInTheDocument();
+		expect(screen.queryByLabelText('Complete List')).not.toBeInTheDocument();
 	});
 
 	it('hides actions card when permissions not available', () => {
@@ -133,9 +127,7 @@ describe('ContactListDetails', () => {
 			</MemoryRouter>
 		);
 
-		expect(
-			screen.queryByText('form.contacts.details.actions.title')
-		).not.toBeInTheDocument();
+		expect(screen.queryByText('Actions')).not.toBeInTheDocument();
 	});
 
 	it('disables toggle and clean queue when queue status is COMPLETED', () => {
@@ -155,12 +147,8 @@ describe('ContactListDetails', () => {
 			</MemoryRouter>
 		);
 
-		const toggle = screen.getByLabelText(
-			'form.contacts.details.actions.deactivate'
-		);
-		const clean = screen.getByLabelText(
-			'form.contacts.details.actions.cleanQueue'
-		);
+		const toggle = screen.getByLabelText('Deactivate');
+		const clean = screen.getByLabelText('Clean queue');
 
 		expect(toggle).toBeDisabled();
 		expect(clean).toBeDisabled();
@@ -196,9 +184,7 @@ describe('ContactListDetails', () => {
 			</MemoryRouter>
 		);
 
-		const extendBtn = screen.getByLabelText(
-			'form.contacts.details.actions.extendWaves'
-		);
+		const extendBtn = screen.getByLabelText('Extend Waves');
 		expect(extendBtn).toBeInTheDocument();
 
 		extendBtn.click();

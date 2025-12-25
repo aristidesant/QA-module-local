@@ -12,7 +12,7 @@ describe('SelectActiveContactList', () => {
 		renderWithProviders(<SelectActiveContactList {...defaultProps} />);
 
 		expect(
-			screen.getByText('form.contacts.list.selectActiveDescription')
+			screen.getByText('Select a contact list to activate for this campaign.')
 		).toBeInTheDocument();
 	});
 });

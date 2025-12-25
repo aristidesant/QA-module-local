@@ -4,22 +4,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import renderWithProviders from '~/test-utils/renderWithProviders';
 import PromptHistoryModal from './PromptHistoryModal';
 
-// Mock react-i18next
-vi.mock('react-i18next', () => ({
-	useTranslation: () => ({
-		t: (key: string, options?: any) => {
-			if (options) {
-				// Handle interpolation
-				return key.replace(
-					/\{\{(\w+)\}\}/g,
-					(match, p1) => options[p1] || match
-				);
-			}
-			return key;
-		},
-	}),
-}));
-
 const sampleItem = {
 	id: 1,
 	campaignId: 1,
@@ -49,7 +33,7 @@ describe('PromptHistoryModal', () => {
 		);
 
 		expect(screen.getByText('Old prompt text')).toBeInTheDocument();
-		expect(screen.getByText('promptHistory.modifiedBy')).toBeInTheDocument();
+		expect(screen.getByText('Modified By')).toBeInTheDocument();
 		expect(screen.getByText('Alice')).toBeInTheDocument();
 	});
 
@@ -63,9 +47,9 @@ describe('PromptHistoryModal', () => {
 			/>
 		);
 
-		expect(screen.getByText('promptHistory.noChanges')).toBeInTheDocument();
+		expect(screen.getByText('No Changes')).toBeInTheDocument();
 		expect(
-			screen.getByText(/promptHistory\.noChangesDesc/i)
+			screen.getByText('This version is identical to the current prompt.')
 		).toBeInTheDocument();
 	});
 
@@ -82,21 +66,15 @@ describe('PromptHistoryModal', () => {
 			/>
 		);
 
-		expect(
-			screen.getByText(/promptHistory\.previousVersion/)
-		).toBeInTheDocument();
-		expect(
-			screen.getByText(/promptHistory\.currentVersion/)
-		).toBeInTheDocument();
+		expect(screen.getByText('Previous Version (v2)')).toBeInTheDocument();
+		expect(screen.getByText('Current Version')).toBeInTheDocument();
 
 		const user = userEvent.setup();
-		await user.click(
-			screen.getByRole('button', { name: /promptHistory\.close/i })
-		);
+		await user.click(screen.getByRole('button', { name: 'Close' }));
 		expect(mockOnClose).toHaveBeenCalled();
 
 		await user.click(
-			screen.getByRole('button', { name: /promptHistory\.restoreVersion/i })
+			screen.getByRole('button', { name: 'Restore This Version' })
 		);
 		expect(mockOnRestore).toHaveBeenCalledWith(sampleItem.promptText);
 	});

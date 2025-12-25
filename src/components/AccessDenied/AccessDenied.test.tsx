@@ -22,9 +22,9 @@ describe('AccessDenied component', () => {
 		);
 		expect(descriptions).toHaveLength(2);
 
-		const goBackBtn = screen.getByRole('button', { name: /common\.goBack/i });
+		const goBackBtn = screen.getByRole('button', { name: 'Go back' });
 		const dashboardBtn = screen.getByRole('button', {
-			name: /common\.goToHome/i,
+			name: 'Go to home',
 		});
 
 		await userEvent.click(goBackBtn);

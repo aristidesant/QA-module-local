@@ -27,16 +27,14 @@ describe('StatusBreakdown', () => {
 	it('renders the title from translations', () => {
 		renderWithProviders(<StatusBreakdown />);
 
-		expect(
-			screen.getByText('form.contacts.statusBreakdown.title')
-		).toBeInTheDocument();
+		expect(screen.getByText('Status breakdown')).toBeInTheDocument();
 	});
 
 	it('renders the subtitle from translations', () => {
 		renderWithProviders(<StatusBreakdown />);
 
 		expect(
-			screen.getByText('form.contacts.statusBreakdown.subtitle')
+			screen.getByText('Contact distribution by status.')
 		).toBeInTheDocument();
 	});
 
@@ -69,8 +67,6 @@ describe('StatusBreakdown', () => {
 
 		renderWithProviders(<StatusBreakdown />);
 
-		expect(
-			screen.getByText('form.contacts.statusBreakdown.noData')
-		).toBeInTheDocument();
+		expect(screen.getByText('No data available')).toBeInTheDocument();
 	});
 });

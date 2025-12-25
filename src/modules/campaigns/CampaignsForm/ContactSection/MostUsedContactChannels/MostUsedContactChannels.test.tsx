@@ -18,17 +18,13 @@ describe('MostUsedContactChannels', () => {
 	it('displays the title from translations', () => {
 		renderWithProviders(<MostUsedContactChannels />);
 
-		expect(
-			screen.getByText('form.contacts.mostUsedChannels.title')
-		).toBeInTheDocument();
+		expect(screen.getByText('Most used channels')).toBeInTheDocument();
 	});
 
 	it('displays the subtitle from translations', () => {
 		renderWithProviders(<MostUsedContactChannels />);
 
-		expect(
-			screen.getByText('form.contacts.mostUsedChannels.subtitle')
-		).toBeInTheDocument();
+		expect(screen.getByText('Channel usage overview')).toBeInTheDocument();
 	});
 
 	it('renders the green indicator dot', () => {

@@ -4,18 +4,6 @@ import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import { useAgentVoicesColumns } from './useAgentVoicesColumns';
 import type { AgentVoiceModel } from '~/models/AgentVoiceModel';
 
-// Mock react-i18next
-vi.mock('react-i18next', () => ({
-	useTranslation: () => ({
-		t: (key: string, options?: any) => {
-			if (key === 'addNewCampaign.voices.age') {
-				return `Age: ${options.age}`;
-			}
-			return key;
-		},
-	}),
-}));
-
 // Mock agentUtils
 vi.mock('~/utils/agentUtils', () => ({
 	getLanguageFlagEmoji: vi.fn((lang: string) => `Emoji-${lang}`),
@@ -83,9 +71,7 @@ describe('useAgentVoicesColumns', () => {
 		renderCell('voice', sampleVoice);
 		expect(screen.getByText('Test Voice')).toBeInTheDocument();
 		expect(screen.getByText('Emoji-English English')).toBeInTheDocument();
-		expect(
-			screen.getByText('addNewCampaign.voices.female')
-		).toBeInTheDocument();
+		expect(screen.getByText('Female')).toBeInTheDocument();
 	});
 
 	it('renders unknown gender when gender is missing', () => {
@@ -97,21 +83,19 @@ describe('useAgentVoicesColumns', () => {
 			},
 		};
 		renderCell('voice', voiceWithoutGender);
-		expect(
-			screen.getByText('addNewCampaign.voices.unknown')
-		).toBeInTheDocument();
+		expect(screen.getByText('Unknown')).toBeInTheDocument();
 	});
 
 	it('renders controls column with play button', () => {
 		renderCell('controls', sampleVoice);
-		const playButton = screen.getByLabelText('addNewCampaign.voices.playAria');
+		const playButton = screen.getByLabelText('Play voice preview');
 		expect(playButton).toBeInTheDocument();
 		expect(playButton).not.toBeDisabled();
 	});
 
 	it('calls onPlayVoice when play button is clicked', () => {
 		renderCell('controls', sampleVoice);
-		const playButton = screen.getByLabelText('addNewCampaign.voices.playAria');
+		const playButton = screen.getByLabelText('Play voice preview');
 		fireEvent.click(playButton);
 		expect(mockOnPlayVoice).toHaveBeenCalledWith(
 			'voice-1',
@@ -125,9 +109,7 @@ describe('useAgentVoicesColumns', () => {
 			playingVoiceId: 'voice-1',
 		};
 		renderCell('controls', sampleVoice, playingProps);
-		expect(
-			screen.getByLabelText('addNewCampaign.voices.pauseAria')
-		).toBeInTheDocument();
+		expect(screen.getByLabelText('Pause voice preview')).toBeInTheDocument();
 	});
 
 	it('disables play button when previewUrl is missing', () => {
@@ -139,7 +121,7 @@ describe('useAgentVoicesColumns', () => {
 			},
 		};
 		renderCell('controls', voiceWithoutPreview);
-		const playButton = screen.getByLabelText('addNewCampaign.voices.playAria');
+		const playButton = screen.getByLabelText('Play voice preview');
 		expect(playButton).toBeDisabled();
 	});
 });

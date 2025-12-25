@@ -13,12 +13,6 @@ vi.mock('~/utils/agentUtils', () => ({
 	getLanguageFlagEmoji: () => '🇺🇸',
 }));
 
-vi.mock('react-i18next', () => ({
-	useTranslation: () => ({
-		t: (key: string) => key,
-	}),
-}));
-
 describe('VoiceList', () => {
 	const mockVoices: AgentVoiceModel[] = [
 		{
@@ -79,10 +73,8 @@ describe('VoiceList', () => {
 		expect(screen.getByText('Voice 1')).toBeInTheDocument();
 		expect(screen.getByText('Voice 2')).toBeInTheDocument();
 		expect(screen.getAllByTestId('voice-mini-player')).toHaveLength(2);
-		expect(screen.getByText('addNewCampaign.voices.male')).toBeInTheDocument();
-		expect(
-			screen.getByText('addNewCampaign.voices.female')
-		).toBeInTheDocument();
+		expect(screen.getByText('Male')).toBeInTheDocument();
+		expect(screen.getByText('Female')).toBeInTheDocument();
 	});
 
 	it('handles voice selection', () => {
@@ -97,8 +89,6 @@ describe('VoiceList', () => {
 
 	it('renders empty state', () => {
 		renderWithProviders(<VoiceList voices={[]} onVoiceSelect={vi.fn()} />);
-		expect(
-			screen.getByText('addNewCampaign.voices.noVoices')
-		).toBeInTheDocument();
+		expect(screen.getByText('No voices found')).toBeInTheDocument();
 	});
 });

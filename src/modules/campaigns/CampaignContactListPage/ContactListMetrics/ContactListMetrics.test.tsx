@@ -1,11 +1,10 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ContactListMetrics from './ContactListMetrics';
 import type { LiveMetricsResponse } from '~/models/LiveMetrics';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 // Mock scrollIntoView for Mantine Combobox
 Element.prototype.scrollIntoView = vi.fn();
@@ -66,27 +65,8 @@ const mockMetricsData: LiveMetricsResponse = {
 	},
 };
 
-const createQueryClient = () =>
-	new QueryClient({
-		defaultOptions: {
-			queries: { retry: false },
-			mutations: { retry: false },
-		},
-	});
-
-const renderWithProviders = (ui: React.ReactElement) => {
-	const queryClient = createQueryClient();
-	return {
-		queryClient,
-		...render(
-			<QueryClientProvider client={queryClient}>
-				<MantineProvider>
-					<ModalsProvider>{ui}</ModalsProvider>
-				</MantineProvider>
-			</QueryClientProvider>
-		),
-	};
-};
+const renderWithModalProviders = (ui: React.ReactElement) =>
+	renderWithProviders(<ModalsProvider>{ui}</ModalsProvider>);
 
 describe('ContactListMetrics', () => {
 	beforeEach(() => {
@@ -110,13 +90,13 @@ describe('ContactListMetrics', () => {
 				refetch: mockRefetch,
 			});
 
-			renderWithProviders(<ContactListMetrics contactGroupId={undefined} />);
+			renderWithModalProviders(
+				<ContactListMetrics contactGroupId={undefined} />
+			);
 
+			expect(screen.getByText('No Contact List Selected')).toBeInTheDocument();
 			expect(
-				screen.getByText('metrics.alerts.noSelection')
-			).toBeInTheDocument();
-			expect(
-				screen.getByText('metrics.alerts.noSelectionDesc')
+				screen.getByText('Provide a valid contact list to see live metrics.')
 			).toBeInTheDocument();
 		});
 
@@ -131,11 +111,9 @@ describe('ContactListMetrics', () => {
 				refetch: mockRefetch,
 			});
 
-			renderWithProviders(<ContactListMetrics contactGroupId={0} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={0} />);
 
-			expect(
-				screen.getByText('metrics.alerts.noSelection')
-			).toBeInTheDocument();
+			expect(screen.getByText('No Contact List Selected')).toBeInTheDocument();
 		});
 
 		it('renders alert when contactGroupId is an invalid string', () => {
@@ -149,11 +127,9 @@ describe('ContactListMetrics', () => {
 				refetch: mockRefetch,
 			});
 
-			renderWithProviders(<ContactListMetrics contactGroupId='invalid' />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId='invalid' />);
 
-			expect(
-				screen.getByText('metrics.alerts.noSelection')
-			).toBeInTheDocument();
+			expect(screen.getByText('No Contact List Selected')).toBeInTheDocument();
 		});
 	});
 
@@ -169,7 +145,7 @@ describe('ContactListMetrics', () => {
 				refetch: mockRefetch,
 			});
 
-			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={1} />);
 
 			// The skeleton has multiple skeleton elements
 			const skeletons = document.querySelectorAll(
@@ -191,13 +167,13 @@ describe('ContactListMetrics', () => {
 				refetch: mockRefetch,
 			});
 
-			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={1} />);
 
+			expect(screen.getByText('Unable to load metrics')).toBeInTheDocument();
 			expect(
-				screen.getByText('metrics.alerts.unableToLoad')
-			).toBeInTheDocument();
-			expect(
-				screen.getByText('metrics.alerts.unableToLoadDesc')
+				screen.getByText(
+					'Something went wrong while retrieving the latest metrics.'
+				)
 			).toBeInTheDocument();
 		});
 
@@ -212,10 +188,10 @@ describe('ContactListMetrics', () => {
 				refetch: mockRefetch,
 			});
 
-			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={1} />);
 
 			expect(
-				screen.getByRole('button', { name: /status.tryAgain/i })
+				screen.getByRole('button', { name: 'Try Again' })
 			).toBeInTheDocument();
 		});
 
@@ -231,11 +207,9 @@ describe('ContactListMetrics', () => {
 				refetch: mockRefetch,
 			});
 
-			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={1} />);
 
-			const tryAgainButton = screen.getByRole('button', {
-				name: /status.tryAgain/i,
-			});
+			const tryAgainButton = screen.getByRole('button', { name: 'Try Again' });
 			await user.click(tryAgainButton);
 
 			expect(mockRefetch).toHaveBeenCalled();
@@ -254,13 +228,13 @@ describe('ContactListMetrics', () => {
 				refetch: mockRefetch,
 			});
 
-			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={1} />);
 
+			expect(screen.getByText('Metrics not available yet')).toBeInTheDocument();
 			expect(
-				screen.getByText('metrics.alerts.notAvailable')
-			).toBeInTheDocument();
-			expect(
-				screen.getByText('metrics.alerts.notAvailableDesc')
+				screen.getByText(
+					'We have not received any metrics for this contact list in the selected range. Please check back later.'
+				)
 			).toBeInTheDocument();
 		});
 	});
@@ -279,61 +253,53 @@ describe('ContactListMetrics', () => {
 		});
 
 		it('renders section title', () => {
-			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={1} />);
 
-			expect(screen.getByText('metrics.title')).toBeInTheDocument();
+			expect(screen.getByText('Contact List Metrics')).toBeInTheDocument();
 		});
 
 		it('renders time range selector with default value', () => {
-			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={1} />);
 
-			expect(
-				screen.getByText('metrics.timeRanges.since_creation')
-			).toBeInTheDocument();
+			expect(screen.getByText('Since creation')).toBeInTheDocument();
 		});
 
 		it('renders Total Records stat card', () => {
-			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={1} />);
 
-			expect(
-				screen.getByText('metrics.stats.totalRecords')
-			).toBeInTheDocument();
+			expect(screen.getByText('Total Records')).toBeInTheDocument();
 			expect(screen.getByText('1,000')).toBeInTheDocument();
 		});
 
 		it('renders Contacted stat card', () => {
-			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={1} />);
 
-			expect(screen.getByText('metrics.stats.contacted')).toBeInTheDocument();
+			expect(screen.getByText('Contacted')).toBeInTheDocument();
 			expect(screen.getByText('750')).toBeInTheDocument();
 		});
 
 		it('renders AHT stat card when averageHandleTimeSeconds is available', () => {
-			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={1} />);
 
-			expect(screen.getByText('metrics.stats.aht')).toBeInTheDocument();
+			expect(screen.getByText('AHT')).toBeInTheDocument();
 			expect(screen.getByText('3.0 mins')).toBeInTheDocument();
 		});
 
 		it('renders overview highlights (contact rate, effectiveness rate, no contact rate)', () => {
-			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={1} />);
 
-			expect(screen.getByText('metrics.stats.contactRate')).toBeInTheDocument();
-			expect(
-				screen.getByText('metrics.stats.effectivenessRate')
-			).toBeInTheDocument();
-			expect(
-				screen.getByText('metrics.stats.noContactRate')
-			).toBeInTheDocument();
+			expect(screen.getByText('Contact rate')).toBeInTheDocument();
+			expect(screen.getByText('Effectiveness rate')).toBeInTheDocument();
+			expect(screen.getByText('No contact rate')).toBeInTheDocument();
 		});
 
 		it('renders quick stats (Effective, No Effective, No contact, DNC)', () => {
-			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={1} />);
 
-			expect(screen.getByText('metrics.stats.effective')).toBeInTheDocument();
-			expect(screen.getByText('metrics.stats.noEffective')).toBeInTheDocument();
-			expect(screen.getByText('metrics.stats.noContact')).toBeInTheDocument();
-			expect(screen.getByText('metrics.stats.dnc')).toBeInTheDocument();
+			expect(screen.getByText('Effective')).toBeInTheDocument();
+			expect(screen.getByText('No Effective')).toBeInTheDocument();
+			expect(screen.getByText('No contact')).toBeInTheDocument();
+			expect(screen.getByText('DNC')).toBeInTheDocument();
 		});
 	});
 
@@ -352,39 +318,35 @@ describe('ContactListMetrics', () => {
 
 		it('renders all time range options', async () => {
 			const user = userEvent.setup();
-			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={1} />);
 
 			// Click on the select to open dropdown
 			const select = screen.getByRole('textbox');
 			await user.click(select);
 
 			await waitFor(() => {
-				expect(screen.getByText('metrics.timeRanges.5m')).toBeInTheDocument();
-				expect(screen.getByText('metrics.timeRanges.15m')).toBeInTheDocument();
-				expect(screen.getByText('metrics.timeRanges.1h')).toBeInTheDocument();
-				expect(
-					screen.getByText('metrics.timeRanges.today')
-				).toBeInTheDocument();
+				expect(screen.getByText('Last 5 minutes')).toBeInTheDocument();
+				expect(screen.getByText('Last 15 minutes')).toBeInTheDocument();
+				expect(screen.getByText('Last hour')).toBeInTheDocument();
+				expect(screen.getByText('Today')).toBeInTheDocument();
 			});
 		});
 
 		it('changes time range when option is selected', async () => {
 			const user = userEvent.setup();
-			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={1} />);
 
 			const select = screen.getByRole('textbox');
 			await user.click(select);
 
 			await waitFor(() => {
-				expect(screen.getByText('metrics.timeRanges.5m')).toBeInTheDocument();
+				expect(screen.getByText('Last 5 minutes')).toBeInTheDocument();
 			});
 
-			await user.click(screen.getByText('metrics.timeRanges.5m'));
+			await user.click(screen.getByText('Last 5 minutes'));
 
 			await waitFor(() => {
-				expect(
-					screen.getByDisplayValue('metrics.timeRanges.5m')
-				).toBeInTheDocument();
+				expect(screen.getByDisplayValue('Last 5 minutes')).toBeInTheDocument();
 			});
 		});
 	});
@@ -404,7 +366,7 @@ describe('ContactListMetrics', () => {
 
 		it('calls refetch when refresh button is clicked', async () => {
 			const user = userEvent.setup();
-			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={1} />);
 
 			// Find refresh button by icon (it's an ActionIcon)
 			const refreshButtons = screen.getAllByRole('button');
@@ -434,7 +396,7 @@ describe('ContactListMetrics', () => {
 
 		it('opens SIP trunk modal when speakerphone button is clicked', async () => {
 			const user = userEvent.setup();
-			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={1} />);
 
 			// Find the SIP trunk button (ActionIcon with speakerphone icon)
 			const buttons = screen.getAllByRole('button');
@@ -447,7 +409,7 @@ describe('ContactListMetrics', () => {
 				await user.click(sipTrunkButton);
 
 				await waitFor(() => {
-					expect(screen.getByText('metrics.sipTrunkInfo')).toBeInTheDocument();
+					expect(screen.getByText('SIP Trunk Information')).toBeInTheDocument();
 				});
 			}
 		});
@@ -465,9 +427,9 @@ describe('ContactListMetrics', () => {
 				refetch: mockRefetch,
 			});
 
-			renderWithProviders(<ContactListMetrics contactGroupId={123} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={123} />);
 
-			expect(screen.getByText('metrics.title')).toBeInTheDocument();
+			expect(screen.getByText('Contact List Metrics')).toBeInTheDocument();
 		});
 
 		it('handles string contactGroupId correctly', () => {
@@ -481,9 +443,9 @@ describe('ContactListMetrics', () => {
 				refetch: mockRefetch,
 			});
 
-			renderWithProviders(<ContactListMetrics contactGroupId='456' />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId='456' />);
 
-			expect(screen.getByText('metrics.title')).toBeInTheDocument();
+			expect(screen.getByText('Contact List Metrics')).toBeInTheDocument();
 		});
 	});
 
@@ -512,9 +474,9 @@ describe('ContactListMetrics', () => {
 				refetch: mockRefetch,
 			});
 
-			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={1} />);
 
-			expect(screen.getByText('metrics.stats.contactRate')).toBeInTheDocument();
+			expect(screen.getByText('Contact rate')).toBeInTheDocument();
 		});
 
 		it('handles missing AHT metric gracefully', () => {
@@ -536,9 +498,9 @@ describe('ContactListMetrics', () => {
 				refetch: mockRefetch,
 			});
 
-			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={1} />);
 
-			expect(screen.queryByText('metrics.stats.aht')).not.toBeInTheDocument();
+			expect(screen.queryByText('AHT')).not.toBeInTheDocument();
 		});
 
 		it('handles zero values correctly', () => {
@@ -570,11 +532,9 @@ describe('ContactListMetrics', () => {
 				refetch: mockRefetch,
 			});
 
-			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={1} />);
 
-			expect(
-				screen.getByText('metrics.stats.totalRecords')
-			).toBeInTheDocument();
+			expect(screen.getByText('Total Records')).toBeInTheDocument();
 			// Zero values should be displayed
 			expect(screen.getAllByText('0').length).toBeGreaterThan(0);
 		});
@@ -604,7 +564,7 @@ describe('ContactListMetrics', () => {
 
 			// Should not throw an error
 			expect(() =>
-				renderWithProviders(<ContactListMetrics contactGroupId={1} />)
+				renderWithModalProviders(<ContactListMetrics contactGroupId={1} />)
 			).not.toThrow();
 		});
 	});
@@ -623,14 +583,14 @@ describe('ContactListMetrics', () => {
 		});
 
 		it('time range select is accessible', () => {
-			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={1} />);
 
 			const select = screen.getByRole('textbox');
 			expect(select).toBeInTheDocument();
 		});
 
 		it('action buttons are accessible', () => {
-			renderWithProviders(<ContactListMetrics contactGroupId={1} />);
+			renderWithModalProviders(<ContactListMetrics contactGroupId={1} />);
 
 			const buttons = screen.getAllByRole('button');
 			expect(buttons.length).toBeGreaterThan(0);

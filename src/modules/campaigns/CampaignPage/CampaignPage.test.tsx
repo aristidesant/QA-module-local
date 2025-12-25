@@ -27,12 +27,6 @@ vi.mock('~/stores/campaignsStore', () => ({
 	useCampaignsStore: vi.fn(),
 }));
 
-vi.mock('react-i18next', () => ({
-	useTranslation: () => ({
-		t: (key: string, _options?: any) => key,
-	}),
-}));
-
 vi.mock('../CampaignsForm/CampaignsForm', () => ({
 	CampaignsForm: ({ campaign, onBack }: any) => (
 		<div>
@@ -76,7 +70,7 @@ describe('CampaignPage', () => {
 		(useGetCampaign as any).mockReturnValue({ isLoading: true });
 		(mockUsePermissions as any).mockReturnValue(true);
 		renderWithProviders(<CampaignPage />);
-		expect(screen.getByText('page.loadingTitle')).toBeInTheDocument();
+		expect(screen.getByText('Loading Campaign...')).toBeInTheDocument();
 	});
 
 	it('renders error state', () => {
@@ -87,7 +81,7 @@ describe('CampaignPage', () => {
 		});
 		(mockUsePermissions as any).mockReturnValue(true);
 		renderWithProviders(<CampaignPage />);
-		expect(screen.getByText('page.errorTitle')).toBeInTheDocument();
+		expect(screen.getByText('Campaign Unavailable')).toBeInTheDocument();
 		expect(screen.getByText('Failed to fetch')).toBeInTheDocument();
 	});
 
@@ -163,11 +157,12 @@ describe('CampaignPage', () => {
 		renderWithProviders(<CampaignPage />);
 
 		expect(
-			screen.getAllByText('accessDenied.description', { ns: 'common' } as any)
+			screen.getAllByText('You do not have permission to access this page.')
 				.length
 		).toBeGreaterThan(0);
 		expect(
-			screen.getByRole('button', { name: /common.goToHome/i })
+			screen.getByRole('button', { name: 'Go to home' })
 		).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: 'Go back' })).toBeInTheDocument();
 	});
 });

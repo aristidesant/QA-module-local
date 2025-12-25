@@ -11,13 +11,6 @@ import {
 } from '~/queries/conversationsQueries';
 import type { PermissionEvaluator } from '~/hooks/usePermissions';
 
-// Mock react-i18next
-vi.mock('react-i18next', () => ({
-	useTranslation: () => ({
-		t: (key: string) => key,
-	}),
-}));
-
 const { mockUsePermissions } = vi.hoisted(() => ({
 	mockUsePermissions: vi.fn<() => PermissionEvaluator>(),
 }));
@@ -67,7 +60,7 @@ describe('ConversationDetails', () => {
 		);
 
 		// When loading, the Overview tab should not render yet
-		expect(screen.queryByText('details.tabs.overview')).not.toBeInTheDocument();
+		expect(screen.queryByText('Overview')).not.toBeInTheDocument();
 	});
 
 	it('shows AccessDenied when user cannot access module', () => {
@@ -88,7 +81,10 @@ describe('ConversationDetails', () => {
 			</MemoryRouter>
 		);
 
-		expect(screen.getAllByText('list.accessDenied').length).toBeGreaterThan(0);
+		expect(
+			screen.getAllByText('You do not have permission to view conversations.')
+				.length
+		).toBeGreaterThan(0);
 	});
 
 	it('renders ConversationOverview when authorized and conversation data present', () => {
@@ -126,7 +122,7 @@ describe('ConversationDetails', () => {
 			</MemoryRouter>
 		);
 
-		expect(screen.getByText('details.tabs.overview')).toBeInTheDocument();
+		expect(screen.getByText('Overview')).toBeInTheDocument();
 	});
 });
 

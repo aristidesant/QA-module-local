@@ -6,12 +6,6 @@ import { useExportConversationPdf } from '~/queries/conversationsQueries';
 import usePermissions from '~/hooks/usePermissions';
 import { notifications } from '@mantine/notifications';
 
-vi.mock('react-i18next', () => ({
-	useTranslation: () => ({
-		t: (key: string) => key,
-	}),
-}));
-
 vi.mock('~/queries/conversationsQueries', () => ({
 	useExportConversationPdf: vi.fn(),
 }));
@@ -54,16 +48,16 @@ describe('ConversationOverview', () => {
 
 		renderWithProviders(<ConversationOverview conversation={conversation} />);
 
-		expect(screen.getByText('overview.title')).toBeInTheDocument();
+		expect(screen.getByText('Conversation Overview')).toBeInTheDocument();
 		expect(screen.getByText('John Doe')).toBeInTheDocument();
 		expect(screen.getByText('+123456')).toBeInTheDocument();
 		expect(screen.getByText('Agent Smith')).toBeInTheDocument();
 		expect(screen.getByText('Campaign A')).toBeInTheDocument();
-		expect(screen.getByText('overview.termination.hangup')).toBeInTheDocument();
+		expect(screen.getByText('Hangup')).toBeInTheDocument();
 		// summary & download button
-		expect(screen.getByText('overview.summary.title')).toBeInTheDocument();
+		expect(screen.getByText('Conversation Summary')).toBeInTheDocument();
 		expect(
-			screen.getByRole('button', { name: /overview.downloadTranscript/i })
+			screen.getByRole('button', { name: /Download Full Transcript/i })
 		).toBeInTheDocument();
 		// player and disposition placeholders rendered
 		expect(screen.getByTestId('conversation-player')).toBeInTheDocument();
@@ -91,16 +85,14 @@ describe('ConversationOverview', () => {
 
 		renderWithProviders(<ConversationOverview conversation={conversation} />);
 
-		expect(screen.getByText('overview.demoContact')).toBeInTheDocument();
+		expect(screen.getByText('Demo')).toBeInTheDocument();
 		expect(screen.getByText('+198765')).toBeInTheDocument();
 		// No download button available when permission false
 		expect(
-			screen.queryByRole('button', { name: /overview.downloadTranscript/i })
+			screen.queryByRole('button', { name: /Download Full Transcript/i })
 		).not.toBeInTheDocument();
 		// Date duration should render N/A when no metadata available
-		expect(screen.getAllByText('overview.fallbacks.na').length).toBeGreaterThan(
-			0
-		);
+		expect(screen.getAllByText('N/A').length).toBeGreaterThan(0);
 	});
 
 	it('formats termination reason variants correctly', () => {
@@ -113,15 +105,15 @@ describe('ConversationOverview', () => {
 		const cases = [
 			{
 				val: 'terminated_by_agent',
-				expected: 'overview.termination.terminated',
+				expected: 'Terminated',
 			},
 			{
 				val: 'client disconnect',
-				expected: 'overview.termination.clientDisconnected',
+				expected: 'Client Disconnected',
 			},
-			{ val: 'hangup', expected: 'overview.termination.hangup' },
-			{ val: 'timeout', expected: 'overview.termination.timeout' },
-			{ val: 'error in pipeline', expected: 'overview.termination.error' },
+			{ val: 'hangup', expected: 'Hangup' },
+			{ val: 'timeout', expected: 'Timeout' },
+			{ val: 'error in pipeline', expected: 'Error' },
 			{ val: 'someReason', expected: 'SomeReason' },
 		];
 
@@ -139,7 +131,7 @@ describe('ConversationOverview', () => {
 				<ConversationOverview conversation={conversation} />
 			);
 			// expect termination label and value
-			expect(screen.getByText('overview.stats.endReason')).toBeInTheDocument();
+			expect(screen.getByText('End Reason')).toBeInTheDocument();
 			expect(screen.getByText(expected)).toBeInTheDocument();
 			unmount();
 		});
@@ -164,7 +156,9 @@ describe('ConversationOverview', () => {
 				<ConversationOverview conversation={conversation} />
 			);
 			// RightSectionCard presence asserts that getStatusIcon branch ran
-			expect(screen.getAllByText('overview.title').length).toBeGreaterThan(0);
+			expect(
+				screen.getAllByText('Conversation Overview').length
+			).toBeGreaterThan(0);
 			unmount();
 		});
 	});
@@ -198,15 +192,15 @@ describe('ConversationOverview', () => {
 
 		renderWithProviders(<ConversationOverview conversation={conversation} />);
 		const btn = screen.getByRole('button', {
-			name: /overview.downloadTranscript/i,
+			name: /Download Full Transcript/i,
 		});
 		fireEvent.click(btn);
 
 		await waitFor(() => expect(mutateAsync).toHaveBeenCalledWith('conv-3'));
 		await waitFor(() =>
 			expect(notificationsSpy).toHaveBeenCalledWith({
-				title: 'overview.notifications.exportSuccess',
-				message: 'overview.notifications.exportSuccessMsg',
+				title: 'Export Successful',
+				message: 'Conversation exported as PDF',
 				color: 'green',
 			})
 		);
@@ -238,9 +232,7 @@ describe('ConversationOverview', () => {
 		const { unmount } = renderWithProviders(
 			<ConversationOverview conversation={conversation} />
 		);
-		expect(
-			screen.getAllByText('overview.fallbacks.invalidDate').length
-		).toBeGreaterThan(0);
+		expect(screen.getAllByText('Invalid date').length).toBeGreaterThan(0);
 		unmount();
 		toLocaleSpy.mockRestore();
 	});
@@ -284,7 +276,7 @@ describe('ConversationOverview', () => {
 
 		renderWithProviders(<ConversationOverview conversation={conversation} />);
 		const btn = screen.getByRole('button', {
-			name: /overview.downloadTranscript/i,
+			name: /Download Full Transcript/i,
 		});
 		fireEvent.click(btn);
 
@@ -323,15 +315,15 @@ describe('ConversationOverview', () => {
 
 		renderWithProviders(<ConversationOverview conversation={conversation} />);
 		const btn = screen.getByRole('button', {
-			name: /overview.downloadTranscript/i,
+			name: /Download Full Transcript/i,
 		});
 		fireEvent.click(btn);
 
 		await waitFor(() => expect(mut).toHaveBeenCalledWith('conv-4'));
 		await waitFor(() =>
 			expect(notificationsSpy).toHaveBeenCalledWith({
-				title: 'overview.notifications.exportFailed',
-				message: 'overview.notifications.exportFailedMsg',
+				title: 'Export Failed',
+				message: 'Failed to export conversation. Please try again.',
 				color: 'red',
 			})
 		);

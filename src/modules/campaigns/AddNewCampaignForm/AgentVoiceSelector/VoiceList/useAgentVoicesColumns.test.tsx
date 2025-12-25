@@ -1,30 +1,27 @@
 import { renderHook } from '@testing-library/react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { MantineProvider } from '@mantine/core';
 import type { ColumnDef, CellContext, Row } from '@tanstack/react-table';
 import { useAgentVoicesColumns } from './useAgentVoicesColumns';
 import type { AgentVoiceModel } from '~/models/AgentVoiceModel';
+import {
+	renderWithProviders,
+	TestProviders,
+} from '~/test-utils/renderWithProviders';
 
 // Mock language flag util
 vi.mock('~/utils/agentUtils', () => ({
 	getLanguageFlagEmoji: () => '🇺🇸',
 }));
 
-// Mock react-i18next
-const tMock = (key: string) => key;
-vi.mock('react-i18next', () => ({
-	useTranslation: () => ({
-		t: tMock,
-	}),
-}));
+const wrapper = TestProviders;
 
 type ColumnWithAccessorKey = ColumnDef<AgentVoiceModel> & {
 	accessorKey?: string;
 };
 
 const renderCell = (cellContent: React.ReactNode) => {
-	return render(<MantineProvider>{cellContent}</MantineProvider>);
+	return renderWithProviders(cellContent);
 };
 
 const createMockRow = (
@@ -65,29 +62,33 @@ const createMockRow = (
 // previously removed helper
 describe('useAgentVoicesColumns', () => {
 	it('returns two columns with the expected headers', () => {
-		const { result } = renderHook(() =>
-			useAgentVoicesColumns({
-				onPlayVoice: vi.fn(),
-				playingVoiceId: null,
-				playProgress: 0,
-			})
+		const { result } = renderHook(
+			() =>
+				useAgentVoicesColumns({
+					onPlayVoice: vi.fn(),
+					playingVoiceId: null,
+					playProgress: 0,
+				}),
+			{ wrapper }
 		);
 
 		expect(result.current).toHaveLength(2);
 		const columns = result.current as ColumnWithAccessorKey[];
 		expect(columns[0].accessorKey).toBe('voice');
-		expect(columns[0].header).toBe('addNewCampaign.voices.voice');
+		expect(columns[0].header).toBe('Voice');
 		expect(columns[1].id).toBe('controls');
-		expect(columns[1].header).toBe('addNewCampaign.voices.preview');
+		expect(columns[1].header).toBe('Preview');
 	});
 
 	it('renders voice name, language and gender badge in the voice cell', () => {
-		const { result } = renderHook(() =>
-			useAgentVoicesColumns({
-				onPlayVoice: vi.fn(),
-				playingVoiceId: null,
-				playProgress: 0,
-			})
+		const { result } = renderHook(
+			() =>
+				useAgentVoicesColumns({
+					onPlayVoice: vi.fn(),
+					playingVoiceId: null,
+					playProgress: 0,
+				}),
+			{ wrapper }
 		);
 		const voiceColumn = result.current[0];
 		const row = createMockRow({});
@@ -105,7 +106,7 @@ describe('useAgentVoicesColumns', () => {
 		expect(screen.getByText('Test Voice')).toBeInTheDocument();
 		// The language and gender appear in the voice cell content
 		expect(container.textContent).toMatch(/English/);
-		expect(container.textContent).toMatch(/addNewCampaign.voices.male/);
+		expect(container.textContent).toMatch(/Male/);
 	});
 
 	it('calls onPlayVoice when play button clicked and shows progress when playing', () => {
@@ -115,7 +116,7 @@ describe('useAgentVoicesColumns', () => {
 		const { result, rerender } = renderHook(
 			({ playingVoiceId, playProgress }) =>
 				useAgentVoicesColumns({ onPlayVoice, playingVoiceId, playProgress }),
-			{ initialProps: { playingVoiceId: null, playProgress: 0 } }
+			{ initialProps: { playingVoiceId: null, playProgress: 0 }, wrapper }
 		);
 
 		const controlsColumn = result.current[1];
@@ -129,7 +130,7 @@ describe('useAgentVoicesColumns', () => {
 			cellFn({ row } as CellContext<AgentVoiceModel, unknown>)
 		);
 
-		const playButton = screen.getByLabelText('addNewCampaign.voices.playAria');
+		const playButton = screen.getByLabelText('Play voice preview');
 		fireEvent.click(playButton);
 		expect(onPlayVoice).toHaveBeenCalledWith(
 			'voice-1',
@@ -147,9 +148,7 @@ describe('useAgentVoicesColumns', () => {
 		) => React.ReactNode;
 		renderCell(playingCellFn({ row } as CellContext<AgentVoiceModel, unknown>));
 
-		const pauseButton = screen.getByLabelText(
-			'addNewCampaign.voices.pauseAria'
-		);
+		const pauseButton = screen.getByLabelText('Pause voice preview');
 		expect(pauseButton).toBeInTheDocument();
 
 		const progress = screen.getByRole('progressbar');
@@ -166,7 +165,7 @@ describe('useAgentVoicesColumns', () => {
 					playingVoiceId,
 					playProgress,
 				}),
-			{ initialProps: { playingVoiceId: null, playProgress: 0 } }
+			{ initialProps: { playingVoiceId: null, playProgress: 0 }, wrapper }
 		);
 
 		const first = result.current;
@@ -185,7 +184,7 @@ describe('useAgentVoicesColumns', () => {
 					playingVoiceId,
 					playProgress,
 				}),
-			{ initialProps: { playingVoiceId: null, playProgress: 0 } }
+			{ initialProps: { playingVoiceId: null, playProgress: 0 }, wrapper }
 		);
 
 		const first = result.current;

@@ -2,24 +2,14 @@ import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MantineProvider } from '@mantine/core';
 import type { AgentWithCampaignListItem } from '~/models/AgentListObject';
 import useAgentSelectionColumns from './useAgentSelectionColumns';
 import {
 	renderWithProviders,
-	testI18n,
-	queryClient,
+	TestProviders,
 } from '~/test-utils/renderWithProviders';
-import { I18nextProvider } from 'react-i18next';
-import { QueryClientProvider } from '@tanstack/react-query';
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-	<QueryClientProvider client={queryClient}>
-		<I18nextProvider i18n={testI18n}>
-			<MantineProvider>{children}</MantineProvider>
-		</I18nextProvider>
-	</QueryClientProvider>
-);
+const wrapper = TestProviders;
 
 const createMockAgent = (
 	overrides: Partial<AgentWithCampaignListItem> = {}

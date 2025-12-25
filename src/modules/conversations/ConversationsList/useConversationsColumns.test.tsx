@@ -1,27 +1,24 @@
-import { renderHook } from '@testing-library/react';
-import { render, screen } from '@testing-library/react';
+import { renderHook as rtlRenderHook, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import type { ColumnDef, CellContext, Row } from '@tanstack/react-table';
-import { MantineProvider } from '@mantine/core';
 import { useConversationsColumns } from './useConversationsColumns';
 import type { ConversationsModel } from '~/models/ConversationsModels';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import {
+	renderWithProviders,
+	TestProviders,
+} from '~/test-utils/renderWithProviders';
 
 // Extend dayjs with required plugins
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(relativeTime);
 
-const t = (key: string) => key;
-
-vi.mock('react-i18next', () => ({
-	useTranslation: () => ({
-		t: t,
-	}),
-}));
+const renderHook: typeof rtlRenderHook = (callback, options) =>
+	rtlRenderHook(callback, { wrapper: TestProviders, ...options });
 
 // Helper type to access accessorKey from column definitions
 type ColumnWithAccessorKey = ColumnDef<ConversationsModel> & {
@@ -30,7 +27,7 @@ type ColumnWithAccessorKey = ColumnDef<ConversationsModel> & {
 
 // Helper to render cell content with Mantine provider
 const renderCell = (cellContent: React.ReactNode) => {
-	return render(<MantineProvider>{cellContent}</MantineProvider>);
+	return renderWithProviders(<>{cellContent}</>);
 };
 
 // Create a mock row for testing cells
@@ -94,46 +91,52 @@ describe('useConversationsColumns', () => {
 			expect(result.current).toHaveLength(6);
 		});
 
-		it('has "list.columns.contactName" as the header for the first column', () => {
-			const { result } = renderHook(() =>
-				useConversationsColumns(userTimezone)
+		it('has "Contact Name" as the header for the first column', () => {
+			const { result } = renderHook(
+				() => useConversationsColumns(userTimezone),
+				{ wrapper: TestProviders }
 			);
-			expect(result.current[0].header).toBe('list.columns.contactName');
+			expect(result.current[0].header).toBe('Contact Name');
 		});
 
-		it('has "list.columns.phoneNumber" as the header for the second column', () => {
-			const { result } = renderHook(() =>
-				useConversationsColumns(userTimezone)
+		it('has "Phone Number" as the header for the second column', () => {
+			const { result } = renderHook(
+				() => useConversationsColumns(userTimezone),
+				{ wrapper: TestProviders }
 			);
-			expect(result.current[1].header).toBe('list.columns.phoneNumber');
+			expect(result.current[1].header).toBe('Phone Number');
 		});
 
-		it('has "list.columns.outcome" as the header for the third column', () => {
-			const { result } = renderHook(() =>
-				useConversationsColumns(userTimezone)
+		it('has "Outcome" as the header for the third column', () => {
+			const { result } = renderHook(
+				() => useConversationsColumns(userTimezone),
+				{ wrapper: TestProviders }
 			);
-			expect(result.current[2].header).toBe('list.columns.outcome');
+			expect(result.current[2].header).toBe('Outcome');
 		});
 
-		it('has "list.columns.status" as the header for the fourth column', () => {
-			const { result } = renderHook(() =>
-				useConversationsColumns(userTimezone)
+		it('has "Status" as the header for the fourth column', () => {
+			const { result } = renderHook(
+				() => useConversationsColumns(userTimezone),
+				{ wrapper: TestProviders }
 			);
-			expect(result.current[3].header).toBe('list.columns.status');
+			expect(result.current[3].header).toBe('Status');
 		});
 
-		it('has "list.columns.when" as the header for the fifth column', () => {
-			const { result } = renderHook(() =>
-				useConversationsColumns(userTimezone)
+		it('has "When" as the header for the fifth column', () => {
+			const { result } = renderHook(
+				() => useConversationsColumns(userTimezone),
+				{ wrapper: TestProviders }
 			);
-			expect(result.current[4].header).toBe('list.columns.when');
+			expect(result.current[4].header).toBe('When');
 		});
 
-		it('has "list.columns.duration" as the header for the sixth column', () => {
-			const { result } = renderHook(() =>
-				useConversationsColumns(userTimezone)
+		it('has "Duration" as the header for the sixth column', () => {
+			const { result } = renderHook(
+				() => useConversationsColumns(userTimezone),
+				{ wrapper: TestProviders }
 			);
-			expect(result.current[5].header).toBe('list.columns.duration');
+			expect(result.current[5].header).toBe('Duration');
 		});
 
 		it('has correct column IDs and accessorKeys', () => {
@@ -152,27 +155,29 @@ describe('useConversationsColumns', () => {
 
 	describe('column headers exact match validation', () => {
 		const expectedHeaders = [
-			'list.columns.contactName',
-			'list.columns.phoneNumber',
-			'list.columns.outcome',
-			'list.columns.status',
-			'list.columns.when',
-			'list.columns.duration',
+			'Contact Name',
+			'Phone Number',
+			'Outcome',
+			'Status',
+			'When',
+			'Duration',
 		];
 
 		it.each(expectedHeaders.map((header, index) => [index, header]))(
 			'column at index %i has exact header "%s"',
 			(index, expectedHeader) => {
-				const { result } = renderHook(() =>
-					useConversationsColumns(userTimezone)
+				const { result } = renderHook(
+					() => useConversationsColumns(userTimezone),
+					{ wrapper: TestProviders }
 				);
 				expect(result.current[index as number].header).toBe(expectedHeader);
 			}
 		);
 
 		it('all column headers match expected values in order', () => {
-			const { result } = renderHook(() =>
-				useConversationsColumns(userTimezone)
+			const { result } = renderHook(
+				() => useConversationsColumns(userTimezone),
+				{ wrapper: TestProviders }
 			);
 			const actualHeaders = result.current.map((col) => col.header);
 			expect(actualHeaders).toEqual(expectedHeaders);
@@ -181,23 +186,25 @@ describe('useConversationsColumns', () => {
 
 	describe('status column existence', () => {
 		it('has a status column with accessorKey', () => {
-			const { result } = renderHook(() =>
-				useConversationsColumns(userTimezone)
+			const { result } = renderHook(
+				() => useConversationsColumns(userTimezone),
+				{ wrapper: TestProviders }
 			);
 			const columns = result.current as ColumnWithAccessorKey[];
 			const statusColumn = columns.find((col) => col.accessorKey === 'status');
 			expect(statusColumn).toBeDefined();
-			expect(statusColumn?.header).toBe('list.columns.status');
+			expect(statusColumn?.header).toBe('Status');
 		});
 
 		it('has a startDate column with accessorKey', () => {
-			const { result } = renderHook(() =>
-				useConversationsColumns(userTimezone)
+			const { result } = renderHook(
+				() => useConversationsColumns(userTimezone),
+				{ wrapper: TestProviders }
 			);
 			const columns = result.current as ColumnWithAccessorKey[];
 			const whenColumn = columns.find((col) => col.accessorKey === 'startDate');
 			expect(whenColumn).toBeDefined();
-			expect(whenColumn?.header).toBe('list.columns.when');
+			expect(whenColumn?.header).toBe('When');
 		});
 	});
 
@@ -411,7 +418,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn({ row } as CellContext<ConversationsModel, unknown>));
 
-			expect(screen.getByText('overview.fallbacks.na')).toBeInTheDocument();
+			expect(screen.getByText('N/A')).toBeInTheDocument();
 		});
 
 		it('renders overview.fallbacks.na when disposition is undefined', () => {
@@ -426,7 +433,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn({ row } as CellContext<ConversationsModel, unknown>));
 
-			expect(screen.getByText('overview.fallbacks.na')).toBeInTheDocument();
+			expect(screen.getByText('N/A')).toBeInTheDocument();
 		});
 	});
 
@@ -444,7 +451,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn(context));
 
-			expect(screen.getByText('list.status.done')).toBeInTheDocument();
+			expect(screen.getByText('Done')).toBeInTheDocument();
 		});
 
 		it('renders green "list.status.done" badge for success status', () => {
@@ -460,7 +467,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn(context));
 
-			expect(screen.getByText('list.status.done')).toBeInTheDocument();
+			expect(screen.getByText('Done')).toBeInTheDocument();
 		});
 
 		it('renders green "list.status.done" badge for done status', () => {
@@ -476,7 +483,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn(context));
 
-			expect(screen.getByText('list.status.done')).toBeInTheDocument();
+			expect(screen.getByText('Done')).toBeInTheDocument();
 		});
 
 		it('renders blue "list.status.inProgress" badge for progress status', () => {
@@ -492,7 +499,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn(context));
 
-			expect(screen.getByText('list.status.inProgress')).toBeInTheDocument();
+			expect(screen.getByText('In Progress')).toBeInTheDocument();
 		});
 
 		it('renders blue "list.status.inProgress" badge for running status', () => {
@@ -508,7 +515,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn(context));
 
-			expect(screen.getByText('list.status.inProgress')).toBeInTheDocument();
+			expect(screen.getByText('In Progress')).toBeInTheDocument();
 		});
 
 		it('renders red "list.status.failed" badge for failed status', () => {
@@ -524,7 +531,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn(context));
 
-			expect(screen.getByText('list.status.failed')).toBeInTheDocument();
+			expect(screen.getByText('Failed')).toBeInTheDocument();
 		});
 
 		it('renders red "list.status.failed" badge for error status', () => {
@@ -540,7 +547,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn(context));
 
-			expect(screen.getByText('list.status.failed')).toBeInTheDocument();
+			expect(screen.getByText('Failed')).toBeInTheDocument();
 		});
 
 		it('renders red "list.status.failed" badge for cancelled status', () => {
@@ -556,7 +563,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn(context));
 
-			expect(screen.getByText('list.status.failed')).toBeInTheDocument();
+			expect(screen.getByText('Failed')).toBeInTheDocument();
 		});
 
 		it('renders yellow "list.status.pending" badge for pending status', () => {
@@ -572,7 +579,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn(context));
 
-			expect(screen.getByText('list.status.pending')).toBeInTheDocument();
+			expect(screen.getByText('Pending')).toBeInTheDocument();
 		});
 
 		it('renders yellow "list.status.pending" badge for queued status', () => {
@@ -588,7 +595,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn(context));
 
-			expect(screen.getByText('list.status.pending')).toBeInTheDocument();
+			expect(screen.getByText('Pending')).toBeInTheDocument();
 		});
 
 		it('renders yellow "list.status.pending" badge for waiting status', () => {
@@ -604,7 +611,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn(context));
 
-			expect(screen.getByText('list.status.pending')).toBeInTheDocument();
+			expect(screen.getByText('Pending')).toBeInTheDocument();
 		});
 
 		it('renders yellow "list.status.pending" badge for initiated status', () => {
@@ -620,7 +627,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn(context));
 
-			expect(screen.getByText('list.status.pending')).toBeInTheDocument();
+			expect(screen.getByText('Pending')).toBeInTheDocument();
 		});
 
 		it('renders gray "list.status.unknown" badge for unknown status', () => {
@@ -636,7 +643,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn(context));
 
-			expect(screen.getByText('list.status.unknown')).toBeInTheDocument();
+			expect(screen.getByText('Unknown')).toBeInTheDocument();
 		});
 
 		it('renders gray "list.status.unknown" badge when status is null', () => {
@@ -652,7 +659,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn(context));
 
-			expect(screen.getByText('list.status.unknown')).toBeInTheDocument();
+			expect(screen.getByText('Unknown')).toBeInTheDocument();
 		});
 	});
 
@@ -740,7 +747,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn({ row } as CellContext<ConversationsModel, unknown>));
 
-			expect(screen.getByText('5units.minute')).toBeInTheDocument();
+			expect(screen.getByText('5m')).toBeInTheDocument();
 		});
 
 		it('renders duration in seconds when less than a minute', () => {
@@ -757,7 +764,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn({ row } as CellContext<ConversationsModel, unknown>));
 
-			expect(screen.getByText('45units.second')).toBeInTheDocument();
+			expect(screen.getByText('45s')).toBeInTheDocument();
 		});
 
 		it('renders duration in hours and minutes', () => {
@@ -774,9 +781,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn({ row } as CellContext<ConversationsModel, unknown>));
 
-			expect(
-				screen.getByText('2units.hour 30units.minute')
-			).toBeInTheDocument();
+			expect(screen.getByText('2h 30m')).toBeInTheDocument();
 		});
 
 		it('renders duration in days, hours, and minutes', () => {
@@ -793,9 +798,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn({ row } as CellContext<ConversationsModel, unknown>));
 
-			expect(
-				screen.getByText('2units.day 2units.hour 30units.minute')
-			).toBeInTheDocument();
+			expect(screen.getByText('2d 2h 30m')).toBeInTheDocument();
 		});
 
 		it('renders dash when startDate is missing', () => {
@@ -866,7 +869,7 @@ describe('useConversationsColumns', () => {
 			renderCell(cellFn({ row } as CellContext<ConversationsModel, unknown>));
 
 			// Should show approximately 5 minutes
-			expect(screen.getByText('5units.minute')).toBeInTheDocument();
+			expect(screen.getByText('5m')).toBeInTheDocument();
 		});
 
 		it('renders with tooltip when endDate is provided', () => {
@@ -883,10 +886,10 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn({ row } as CellContext<ConversationsModel, unknown>));
 
-			expect(screen.getByText('10units.minute')).toBeInTheDocument();
+			expect(screen.getByText('10m')).toBeInTheDocument();
 		});
 
-		it('renders 0units.second when start and end dates are the same', () => {
+		it('renders 0s when start and end dates are the same', () => {
 			const { result } = renderHook(() =>
 				useConversationsColumns(userTimezone)
 			);
@@ -899,7 +902,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn({ row } as CellContext<ConversationsModel, unknown>));
 
-			expect(screen.getByText('0units.second')).toBeInTheDocument();
+			expect(screen.getByText('0s')).toBeInTheDocument();
 		});
 	});
 
@@ -917,7 +920,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn(context));
 
-			expect(screen.getByText('list.status.done')).toBeInTheDocument();
+			expect(screen.getByText('Done')).toBeInTheDocument();
 		});
 
 		it('handles partial status matches', () => {
@@ -933,7 +936,7 @@ describe('useConversationsColumns', () => {
 			) => React.ReactNode;
 			renderCell(cellFn(context));
 
-			expect(screen.getByText('list.status.done')).toBeInTheDocument();
+			expect(screen.getByText('Done')).toBeInTheDocument();
 		});
 
 		it('works with different timezones', () => {
