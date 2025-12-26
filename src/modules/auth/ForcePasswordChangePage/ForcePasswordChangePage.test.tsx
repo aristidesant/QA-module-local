@@ -80,22 +80,20 @@ describe('ForcePasswordChangePage', () => {
 		renderWithProviders(<ForcePasswordChangePage />);
 
 		expect(
-			screen.getByRole('heading', { name: /Update Your Password/i })
+			screen.getByRole('heading', { name: 'Update Your Password' })
 		).toBeInTheDocument();
-		expect(screen.getByText(/Security Check/i)).toBeInTheDocument();
+		expect(screen.getByText('Security Check')).toBeInTheDocument();
 		expect(
-			screen.getByRole('button', { name: /Return to login/i })
+			screen.getByRole('button', { name: 'Return to login' })
 		).toBeInTheDocument();
-		expect(
-			screen.getByText(/Sign-in Needed After Update/i)
-		).toBeInTheDocument();
+		expect(screen.getByText('Sign-in Needed After Update')).toBeInTheDocument();
 	});
 
 	it('calls logout and clears pending credentials when Return to login clicked', async () => {
 		renderWithProviders(<ForcePasswordChangePage />);
 		const user = userEvent.setup();
 
-		await user.click(screen.getByRole('button', { name: /Return to login/i }));
+		await user.click(screen.getByRole('button', { name: 'Return to login' }));
 
 		expect(mockClearPendingCredentials).toHaveBeenCalled();
 		expect(mockLogout).toHaveBeenCalledWith('/login');
@@ -115,7 +113,7 @@ describe('ForcePasswordChangePage', () => {
 		);
 
 		// Click the PasswordChangeSection mocked button
-		await userEvent.click(screen.getByText(/Save new password/i));
+		await userEvent.click(screen.getByText('Save new password'));
 
 		await waitFor(() => {
 			expect(mockLoginMutateAsync).toHaveBeenCalledWith({
@@ -140,9 +138,9 @@ describe('ForcePasswordChangePage', () => {
 		renderWithProviders(<ForcePasswordChangePage />);
 
 		await waitFor(() =>
-			expect(screen.getByText(/Save new password/i)).toBeInTheDocument()
+			expect(screen.getByText('Save new password')).toBeInTheDocument()
 		);
-		await userEvent.click(screen.getByText(/Save new password/i));
+		await userEvent.click(screen.getByText('Save new password'));
 
 		await waitFor(() => {
 			expect(screen.getByText(errorMessage)).toBeInTheDocument();

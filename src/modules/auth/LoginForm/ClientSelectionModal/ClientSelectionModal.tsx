@@ -15,6 +15,7 @@ import {
 	PinInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { useTranslation, Trans } from 'react-i18next';
 import {
 	IconAlertCircle,
 	IconBuilding,
@@ -28,13 +29,6 @@ import { useSelectClient } from '~/queries/authQueries';
 import { getErrorMessage } from '~/utils/httpClient';
 import EmptyState from '~/components/EmptyState';
 import classes from './ClientSelectionModal.module.css';
-
-export const validateOtpValue = (value: string) => {
-	if (!value.trim()) return 'OTP code is required';
-	if (value.length !== 6) return 'OTP code must be 6 digits';
-	if (!/^\d+$/.test(value)) return 'OTP code must contain only numbers';
-	return null;
-};
 
 interface ClientSelectionModalProps {
 	opened: boolean;
@@ -57,6 +51,7 @@ export default function ClientSelectionModal({
 	preAuthToken,
 	onSuccess,
 }: ClientSelectionModalProps) {
+	const { t } = useTranslation('auth');
 	const selectClientMutation = useSelectClient();
 	const [formError, setFormError] = useState<string | null>(null);
 	const [step, setStep] = useState<ModalStep>('select-client');
@@ -79,7 +74,12 @@ export default function ClientSelectionModal({
 			otp: '',
 		},
 		validate: {
-			otp: validateOtpValue,
+			otp: (value) => {
+				if (!value.trim()) return t('otp.required');
+				if (value.length !== 6) return t('otp.mustBeSixDigits');
+				if (!/^\d+$/.test(value)) return t('otp.mustBeNumeric');
+				return null;
+			},
 		},
 	});
 
@@ -154,14 +154,14 @@ export default function ClientSelectionModal({
 						<>
 							<IconBuilding size={16} />
 							<Text fw={600} size='sm'>
-								Select Organization
+								{t('clientSelection.title')}
 							</Text>
 						</>
 					) : (
 						<>
 							<IconShieldCheck size={16} />
 							<Text fw={600} size='sm'>
-								Two-Factor Authentication
+								{t('otp.title')}
 							</Text>
 						</>
 					)}
@@ -179,13 +179,12 @@ export default function ClientSelectionModal({
 			{step === 'select-client' ? (
 				<Stack gap='xs'>
 					<Text size='sm' c='dimmed'>
-						You have access to multiple organizations. Please select which one
-						you would like to sign in to.
+						{t('clientSelection.description')}
 					</Text>
 
 					{availableClients.length > 5 && (
 						<TextInput
-							placeholder='Search organizations...'
+							placeholder={t('clientSelection.searchPlaceholder')}
 							leftSection={<IconSearch size={14} />}
 							value={search}
 							onChange={(e) => setSearch(e.currentTarget.value)}
@@ -270,8 +269,8 @@ export default function ClientSelectionModal({
 							) : (
 								<EmptyState
 									icon={<IconBuilding size={32} />}
-									message='No organizations found'
-									description='Try adjusting your search to find what you are looking for.'
+									message={t('clientSelection.emptyState.title')}
+									description={t('clientSelection.emptyState.description')}
 								/>
 							)}
 						</Box>
@@ -281,7 +280,7 @@ export default function ClientSelectionModal({
 						<Alert
 							variant='light'
 							color='red'
-							title='Unable to select organization'
+							title={t('clientSelection.error')}
 							icon={<IconAlertCircle size={16} />}
 							radius='sm'
 						>
@@ -293,12 +292,14 @@ export default function ClientSelectionModal({
 				<form onSubmit={form.onSubmit(handleOTPSubmit)}>
 					<Stack gap='xs' style={{ minHeight: 450 }}>
 						<Text size='sm' c='dimmed'>
-							Please enter the 6-digit verification code sent to your email to
-							continue signing in to{' '}
-							<Text span fw={500} size='sm'>
-								{selectedClient?.clientName}
-							</Text>
-							.
+							<Trans
+								i18nKey='clientSelection.otpDescription'
+								ns='auth'
+								values={{ clientName: selectedClient?.clientName }}
+								components={{
+									bold: <Text span fw={500} size='sm' />,
+								}}
+							/>
 						</Text>
 
 						<Stack align='center' gap='md' py='md'>
@@ -310,7 +311,7 @@ export default function ClientSelectionModal({
 								disabled={isLoading}
 								{...form.getInputProps('otp')}
 								size='md'
-								aria-label='Verification code'
+								aria-label={t('otp.label')}
 								onComplete={(value) => {
 									form.setFieldValue('otp', value);
 									form.onSubmit(handleOTPSubmit)();
@@ -327,7 +328,7 @@ export default function ClientSelectionModal({
 							<Alert
 								variant='light'
 								color='red'
-								title='Verification failed'
+								title={t('otp.verificationFailed')}
 								icon={<IconAlertCircle size={16} />}
 								radius='sm'
 							>
@@ -342,7 +343,7 @@ export default function ClientSelectionModal({
 								disabled={isLoading}
 								size='sm'
 							>
-								Back
+								{t('actions.back')}
 							</Button>
 							<Group gap='xs'>
 								<Button
@@ -351,7 +352,7 @@ export default function ClientSelectionModal({
 									disabled={isLoading}
 									size='sm'
 								>
-									Cancel
+									{t('actions.cancel')}
 								</Button>
 								<Button
 									type='submit'
@@ -360,7 +361,7 @@ export default function ClientSelectionModal({
 									disabled={isLoading}
 									size='sm'
 								>
-									Verify
+									{t('actions.verify')}
 								</Button>
 							</Group>
 						</Group>
