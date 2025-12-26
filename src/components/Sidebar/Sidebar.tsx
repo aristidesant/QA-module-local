@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Text, Stack, Divider } from '@mantine/core';
+import { Text, Stack, Divider, Group } from '@mantine/core';
 import { menuItems, MenuItem } from './menuItems';
 import { Link, useLocation } from 'react-router';
 import styles from './Sidebar.module.css';
@@ -8,6 +8,7 @@ import Logo from '../Logo';
 import { APP_VERSION } from '~/version';
 import { usePermissions } from '~/hooks/usePermissions';
 import { useTranslation } from 'react-i18next';
+import LanguagePicker from '../LanguagePicker';
 
 // menuItems are now imported from menuItems.tsx
 
@@ -64,6 +65,12 @@ export const Sidebar: React.FC = () => {
 						</div>
 					)}
 				</Stack>
+				<div style={{ marginTop: 'auto' }}>
+					<Divider className={styles.divider} mb='xs' />
+					<Group justify='center' px='md'>
+						<LanguagePicker variant='subtle' size='sm' withLabel={true} />
+					</Group>
+				</div>
 			</Stack>
 		</nav>
 	);

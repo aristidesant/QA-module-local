@@ -34,6 +34,7 @@ import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import { usePasswordResetStore } from '~/stores/passwordResetStore';
 import { useEffect } from 'react';
 import { useSessionStore } from '~/stores/sessionStore';
+import LanguagePicker from '~/components/LanguagePicker';
 
 interface FormValues {
 	username: string;
@@ -127,6 +128,9 @@ export function LoginForm() {
 					<Box className={classes.logoContainer}>
 						<Logo />
 					</Box>
+					<div style={{ position: 'absolute', top: 16, right: 16 }}>
+						<LanguagePicker variant='subtle' size='sm' />
+					</div>
 					<div className={classes.headerText}>
 						<Title order={2} className={classes.title}>
 							Welcome back

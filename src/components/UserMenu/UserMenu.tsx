@@ -11,7 +11,6 @@ import {
 	IconUsers,
 	IconKey,
 	IconBuilding,
-	IconLanguage,
 } from '@tabler/icons-react';
 import styles from './UserMenu.module.css';
 import { useNavigate } from 'react-router';
@@ -25,17 +24,12 @@ import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 
 export const UserMenu: React.FC = () => {
-	const { t, i18n } = useTranslation();
+	const { t } = useTranslation();
 	const { user, targetClient } = useSessionStore();
 	const { isImpersonating } = useImpersonationState();
 	const { canAccessModule, canPerformAction } = usePermissions();
 	const isMasterClient = useIsMasterClient();
 	const navigate = useNavigate();
-
-	const toggleLanguage = () => {
-		const newLang = i18n.language === 'en' ? 'es' : 'en';
-		i18n.changeLanguage(newLang);
-	};
 
 	// Get user's full name or fallback to username
 	const userFullName =
@@ -286,13 +280,6 @@ export const UserMenu: React.FC = () => {
 
 						<Divider />
 						<Menu.Item
-							onClick={toggleLanguage}
-							leftSection={<IconLanguage size={16} />}
-							className={styles.categoryItem}
-						>
-							{i18n.language === 'en' ? 'Español' : 'English'}
-						</Menu.Item>
-						<Menu.Item
 							color='red'
 							onClick={handleLogout}
 							disabled={fetcher.state !== 'idle'}
@@ -354,13 +341,6 @@ export const UserMenu: React.FC = () => {
 						)}
 
 						<Divider />
-						<Menu.Item
-							onClick={toggleLanguage}
-							leftSection={<IconLanguage size={16} />}
-							className={styles.categoryItem}
-						>
-							{i18n.language === 'en' ? 'Español' : 'English'}
-						</Menu.Item>
 						<Menu.Item
 							color='red'
 							onClick={handleLogout}

@@ -104,5 +104,9 @@
 		"minute": "m",
 		"second": "s"
 	},
-	"currency": "$"
+	"currency": "$",
+	"languages": {
+		"en": "Inglés",
+		"es": "Español"
+	}
 }
