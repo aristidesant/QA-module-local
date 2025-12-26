@@ -1,4 +1,5 @@
 import { PasswordInput, Button } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { IconLock, IconX } from '@tabler/icons-react';
@@ -19,9 +20,10 @@ interface PasswordChangeSectionProps {
 export const PasswordChangeSection: React.FC<PasswordChangeSectionProps> = ({
 	onSuccess,
 	showCancelButton = true,
-	submitLabel = 'Change Password',
+	submitLabel,
 	processing = false,
 }) => {
+	const { t } = useTranslation('profile');
 	const changePasswordMutation = useChangePassword();
 
 	const form = useForm({
@@ -32,20 +34,24 @@ export const PasswordChangeSection: React.FC<PasswordChangeSectionProps> = ({
 		},
 		validate: {
 			currentPassword: (value) =>
-				value.length === 0 ? 'Current password is required' : null,
+				value.length === 0
+					? t('password_change.validation.current_required')
+					: null,
 			newPassword: (value, values) => {
 				if (value.length < 8) {
-					return 'New password must be at least 8 characters';
+					return t('password_change.validation.new_min_length');
 				}
 
 				if (value === values.currentPassword) {
-					return 'New password must be different from your current password';
+					return t('password_change.validation.new_different');
 				}
 
 				return null;
 			},
 			confirmPassword: (value, values) =>
-				value !== values.newPassword ? 'Passwords do not match' : null,
+				value !== values.newPassword
+					? t('password_change.validation.confirm_mismatch')
+					: null,
 		},
 		validateInputOnBlur: true,
 		validateInputOnChange: true,
@@ -53,14 +59,17 @@ export const PasswordChangeSection: React.FC<PasswordChangeSectionProps> = ({
 
 	const handleSubmit = form.onSubmit(async (values) => {
 		if (values.newPassword !== values.confirmPassword) {
-			form.setFieldError('confirmPassword', 'Passwords do not match');
+			form.setFieldError(
+				'confirmPassword',
+				t('password_change.validation.confirm_mismatch')
+			);
 			return;
 		}
 
 		if (values.newPassword === values.currentPassword) {
 			form.setFieldError(
 				'newPassword',
-				'New password must be different from your current password'
+				t('password_change.validation.new_different')
 			);
 			return;
 		}
@@ -72,9 +81,8 @@ export const PasswordChangeSection: React.FC<PasswordChangeSectionProps> = ({
 			});
 
 			notifications.show({
-				title: '✓ Password Successfully Updated',
-				message:
-					'Your password has been changed successfully. Make sure to use your new password the next time you sign in.',
+				title: t('password_change.success_title'),
+				message: t('password_change.success_message'),
 				color: 'green',
 				icon: <IconLock size={18} />,
 				autoClose: 6000,
@@ -90,10 +98,10 @@ export const PasswordChangeSection: React.FC<PasswordChangeSectionProps> = ({
 			form.reset();
 		} catch (error: any) {
 			notifications.show({
-				title: 'Password Change Failed',
+				title: t('password_change.error_title'),
 				message:
 					error?.response?.data?.message ||
-					'Unable to update your password. Please verify your current password is correct and ensure your new password meets the security requirements.',
+					t('password_change.error_default_message'),
 				color: 'red',
 				icon: <IconX size={18} />,
 				autoClose: 7000,
@@ -103,28 +111,28 @@ export const PasswordChangeSection: React.FC<PasswordChangeSectionProps> = ({
 
 	return (
 		<SectionCard
-			title='Change Password'
-			description='Keep your account secure by regularly updating your password. Use a strong, unique password with at least 8 characters that includes a mix of letters, numbers, and symbols.'
+			title={t('password_change.title')}
+			description={t('password_change.description')}
 			icon={IconLock}
 		>
 			<form onSubmit={handleSubmit} className={styles.form}>
 				<PasswordInput
-					label='Current Password'
-					placeholder='Enter your current password'
+					label={t('password_change.current_password_label')}
+					placeholder={t('password_change.current_password_placeholder')}
 					required
 					{...form.getInputProps('currentPassword')}
 				/>
 
 				<PasswordInput
-					label='New Password'
-					placeholder='Enter your new password'
+					label={t('password_change.new_password_label')}
+					placeholder={t('password_change.new_password_placeholder')}
 					required
 					{...form.getInputProps('newPassword')}
 				/>
 
 				<PasswordInput
-					label='Confirm New Password'
-					placeholder='Confirm your new password'
+					label={t('password_change.confirm_password_label')}
+					placeholder={t('password_change.confirm_password_placeholder')}
 					required
 					{...form.getInputProps('confirmPassword')}
 				/>
@@ -135,7 +143,7 @@ export const PasswordChangeSection: React.FC<PasswordChangeSectionProps> = ({
 						loading={changePasswordMutation.isPending || processing}
 						disabled={!form.isValid() || processing}
 					>
-						{submitLabel}
+						{submitLabel || t('password_change.submit_button')}
 					</Button>
 					{showCancelButton && (
 						<Button
@@ -144,7 +152,7 @@ export const PasswordChangeSection: React.FC<PasswordChangeSectionProps> = ({
 							onClick={() => form.reset()}
 							disabled={changePasswordMutation.isPending || processing}
 						>
-							Cancel
+							{t('password_change.cancel_button')}
 						</Button>
 					)}
 				</div>

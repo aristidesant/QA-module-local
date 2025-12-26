@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import { Button, TextInput, PasswordInput, Alert } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -20,6 +21,7 @@ import { SectionCard } from '~/components/SectionCard/SectionCard';
 import styles from '../ProfilePage.module.css';
 
 export const MFASection: React.FC = () => {
+	const { t } = useTranslation('profile');
 	const { user, setUser } = useSessionStore();
 	const [showDisableForm, setShowDisableForm] = useState(false);
 	const [showEnableForm, setShowEnableForm] = useState(false);
@@ -37,7 +39,8 @@ export const MFASection: React.FC = () => {
 			password: '',
 		},
 		validate: {
-			password: (value) => (value.length === 0 ? 'Password is required' : null),
+			password: (value) =>
+				value.length === 0 ? t('mfa.password_form.validation.required') : null,
 		},
 	});
 
@@ -46,7 +49,8 @@ export const MFASection: React.FC = () => {
 			code: '',
 		},
 		validate: {
-			code: (value) => (value.length !== 6 ? 'Code must be 6 digits' : null),
+			code: (value) =>
+				value.length !== 6 ? t('mfa.verify_form.validation.code_length') : null,
 		},
 	});
 
@@ -55,7 +59,8 @@ export const MFASection: React.FC = () => {
 			password: '',
 		},
 		validate: {
-			password: (value) => (value.length === 0 ? 'Password is required' : null),
+			password: (value) =>
+				value.length === 0 ? t('mfa.password_form.validation.required') : null,
 		},
 	});
 
@@ -66,8 +71,8 @@ export const MFASection: React.FC = () => {
 			});
 
 			notifications.show({
-				title: 'MFA Setup Enabled',
-				message: `Next time you log in, you'll need to enter a verification code from your email.`,
+				title: t('mfa.notifications.enabled_title'),
+				message: t('mfa.notifications.enabled_message'),
 				color: 'blue',
 				icon: <IconCheck size={18} />,
 				autoClose: 5000,
@@ -83,10 +88,10 @@ export const MFASection: React.FC = () => {
 			enableForm.reset();
 		} catch (error: any) {
 			notifications.show({
-				title: 'Authentication Failed',
+				title: t('mfa.notifications.auth_failed_title'),
 				message:
 					error?.response?.data?.message ||
-					'Unable to verify your password. Please check your password and try again.',
+					t('mfa.notifications.auth_failed_message'),
 				color: 'red',
 				icon: <IconX size={18} />,
 				autoClose: 7000,
@@ -99,9 +104,8 @@ export const MFASection: React.FC = () => {
 			await verifyMFAMutation.mutateAsync({ code: values.code });
 
 			notifications.show({
-				title: '✓ Two-Factor Authentication Enabled',
-				message:
-					"Success! Your account is now protected with two-factor authentication. You'll need to enter a verification code from your email each time you sign in.",
+				title: t('mfa.notifications.verified_title'),
+				message: t('mfa.notifications.verified_message'),
 				color: 'green',
 				icon: <IconShieldCheck size={18} />,
 				autoClose: 8000,
@@ -112,10 +116,10 @@ export const MFASection: React.FC = () => {
 			verifyForm.reset();
 		} catch (error: any) {
 			notifications.show({
-				title: 'Verification Failed',
+				title: t('mfa.notifications.verify_failed_title'),
 				message:
 					error?.response?.data?.message ||
-					'The verification code you entered is invalid or has expired. Please request a new code or check your email for the most recent one.',
+					t('mfa.notifications.verify_failed_message'),
 				color: 'red',
 				icon: <IconX size={18} />,
 				autoClose: 7000,
@@ -128,9 +132,8 @@ export const MFASection: React.FC = () => {
 			await disableMFAMutation.mutateAsync({ password: values.password });
 
 			notifications.show({
-				title: 'Two-Factor Authentication Disabled',
-				message:
-					'Two-factor authentication has been successfully turned off. Your account security has been reduced. We strongly recommend re-enabling MFA to protect your account.',
+				title: t('mfa.notifications.disabled_title'),
+				message: t('mfa.notifications.disabled_message'),
 				color: 'orange',
 				icon: <IconShieldOff size={18} />,
 				autoClose: 8000,
@@ -140,10 +143,10 @@ export const MFASection: React.FC = () => {
 			setShowDisableForm(false);
 		} catch (error: any) {
 			notifications.show({
-				title: 'Authentication Failed',
+				title: t('mfa.notifications.auth_failed_title'),
 				message:
 					error?.response?.data?.message ||
-					'Unable to disable two-factor authentication. Please verify your password is correct and try again.',
+					t('mfa.notifications.auth_failed_message'),
 				color: 'red',
 				icon: <IconX size={18} />,
 				autoClose: 7000,
@@ -168,8 +171,8 @@ export const MFASection: React.FC = () => {
 
 	return (
 		<SectionCard
-			title='Two-Factor Authentication (MFA)'
-			description='Enhance your account security by requiring both your password and a verification code sent to your email address when signing in. This significantly reduces the risk of unauthorized access.'
+			title={t('mfa.title')}
+			description={t('mfa.description')}
 			icon={IconShieldCheck}
 			headerActions={
 				<div
@@ -180,12 +183,12 @@ export const MFASection: React.FC = () => {
 					{isMFAEnabled ? (
 						<>
 							<IconShieldCheck size={16} />
-							<span>Enabled</span>
+							<span>{t('mfa.status_enabled')}</span>
 						</>
 					) : (
 						<>
 							<IconShieldOff size={16} />
-							<span>Disabled</span>
+							<span>{t('mfa.status_disabled')}</span>
 						</>
 					)}
 				</div>
@@ -195,25 +198,16 @@ export const MFASection: React.FC = () => {
 				<>
 					<Alert
 						icon={<IconInfoCircle size={16} />}
-						title='How Email-Based OTP Works'
+						title={t('mfa.how_it_works.title')}
 						color='blue'
 						variant='light'
 					>
 						<ol className={styles.stepList}>
-							<li>Click "Enable MFA" to start the setup process</li>
-							<li>Enter your password to confirm your identity</li>
-							<li>
-								A 6-digit verification code will be sent to your registered
-								email address
-							</li>
-							<li>
-								Enter the code from your email to complete the setup and
-								activate MFA
-							</li>
-							<li>
-								Future logins will require a code sent to your email for
-								verification
-							</li>
+							<li>{t('mfa.how_it_works.step1')}</li>
+							<li>{t('mfa.how_it_works.step2')}</li>
+							<li>{t('mfa.how_it_works.step3')}</li>
+							<li>{t('mfa.how_it_works.step4')}</li>
+							<li>{t('mfa.how_it_works.step5')}</li>
 						</ol>
 					</Alert>{' '}
 					<div className={styles.formActions}>
@@ -221,7 +215,7 @@ export const MFASection: React.FC = () => {
 							onClick={() => setShowEnableForm(true)}
 							leftSection={<IconShieldCheck size={18} />}
 						>
-							Enable MFA
+							{t('mfa.enable_button')}
 						</Button>
 					</div>
 				</>
@@ -230,18 +224,16 @@ export const MFASection: React.FC = () => {
 				<>
 					<Alert
 						icon={<IconInfoCircle size={16} />}
-						title='Confirm Your Identity'
+						title={t('mfa.confirm_identity.title')}
 						color='blue'
 						variant='light'
 					>
-						To enable two-factor authentication, please enter your current
-						password to confirm your identity. This is an important security
-						measure to ensure you're the account owner.
+						{t('mfa.confirm_identity.message')}
 					</Alert>{' '}
 					<form onSubmit={handleEnableMFA} className={styles.form}>
 						<PasswordInput
-							label='Password'
-							placeholder='Enter your password'
+							label={t('mfa.password_form.label')}
+							placeholder={t('mfa.password_form.placeholder')}
 							required
 							{...enableForm.getInputProps('password')}
 						/>
@@ -252,7 +244,7 @@ export const MFASection: React.FC = () => {
 								loading={enableMFAMutation.isPending}
 								disabled={!enableForm.isValid()}
 							>
-								Continue
+								{t('mfa.password_form.continue_button')}
 							</Button>
 							<Button
 								type='button'
@@ -260,7 +252,7 @@ export const MFASection: React.FC = () => {
 								onClick={handleCancelEnable}
 								disabled={enableMFAMutation.isPending}
 							>
-								Cancel
+								{t('mfa.password_form.cancel_button')}
 							</Button>
 						</div>
 					</form>
@@ -270,19 +262,21 @@ export const MFASection: React.FC = () => {
 				<>
 					<Alert
 						icon={<IconInfoCircle size={16} />}
-						title='Verification Code Sent'
+						title={t('mfa.code_sent.title')}
 						color='blue'
 						variant='light'
 					>
-						A 6-digit verification code has been sent to your email address{' '}
-						<strong>{user?.email}</strong>. Please check your inbox (and spam
-						folder) and enter the code below to complete the setup.
+						<Trans
+							i18nKey='mfa.code_sent.message'
+							values={{ email: user?.email }}
+							components={{ strong: <strong /> }}
+						/>
 					</Alert>
 
 					<form onSubmit={handleVerifyMFA} className={styles.form}>
 						<TextInput
-							label='Verification Code from Email'
-							placeholder='Enter 6-digit code from your email'
+							label={t('mfa.verify_form.code_label')}
+							placeholder={t('mfa.verify_form.code_placeholder')}
 							required
 							maxLength={6}
 							{...verifyForm.getInputProps('code')}
@@ -294,7 +288,7 @@ export const MFASection: React.FC = () => {
 								loading={verifyMFAMutation.isPending}
 								disabled={!verifyForm.isValid()}
 							>
-								Verify and Enable
+								{t('mfa.verify_form.verify_button')}
 							</Button>
 							<Button
 								type='button'
@@ -302,7 +296,7 @@ export const MFASection: React.FC = () => {
 								onClick={handleCancelSetup}
 								disabled={verifyMFAMutation.isPending}
 							>
-								Cancel
+								{t('mfa.verify_form.cancel_button')}
 							</Button>
 						</div>
 					</form>
@@ -312,13 +306,11 @@ export const MFASection: React.FC = () => {
 				<>
 					<Alert
 						icon={<IconShieldCheck size={16} />}
-						title='Protected and Secure'
+						title={t('mfa.protected.title')}
 						color='green'
 						variant='light'
 					>
-						Your account is currently protected with two-factor authentication.
-						Each time you sign in, a verification code will be sent to your
-						registered email address for added security.
+						{t('mfa.protected.message')}
 					</Alert>{' '}
 					<div className={styles.formActions}>
 						<Button
@@ -327,7 +319,7 @@ export const MFASection: React.FC = () => {
 							onClick={() => setShowDisableForm(true)}
 							leftSection={<IconShieldOff size={18} />}
 						>
-							Disable MFA
+							{t('mfa.disable_button')}
 						</Button>
 					</div>
 				</>
@@ -336,18 +328,16 @@ export const MFASection: React.FC = () => {
 				<>
 					<Alert
 						icon={<IconInfoCircle size={16} />}
-						title='Security Warning'
+						title={t('mfa.disable_warning.title')}
 						color='orange'
 						variant='light'
 					>
-						Disabling two-factor authentication will significantly reduce your
-						account's security. Your account will only be protected by your
-						password. Please enter your password to confirm this action.
+						{t('mfa.disable_warning.message')}
 					</Alert>{' '}
 					<form onSubmit={handleDisableMFA} className={styles.form}>
 						<PasswordInput
-							label='Password'
-							placeholder='Enter your password'
+							label={t('mfa.password_form.label')}
+							placeholder={t('mfa.password_form.placeholder')}
 							required
 							{...disableForm.getInputProps('password')}
 						/>
@@ -359,7 +349,7 @@ export const MFASection: React.FC = () => {
 								loading={disableMFAMutation.isPending}
 								disabled={!disableForm.isValid()}
 							>
-								Disable MFA
+								{t('mfa.password_form.disable_submit')}
 							</Button>
 							<Button
 								type='button'
@@ -367,7 +357,7 @@ export const MFASection: React.FC = () => {
 								onClick={handleCancelDisable}
 								disabled={disableMFAMutation.isPending}
 							>
-								Cancel
+								{t('mfa.password_form.cancel_button')}
 							</Button>
 						</div>
 					</form>

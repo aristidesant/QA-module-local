@@ -1,1 +1,121 @@
-{}
+{
+	"title": "Profile Settings",
+	"description": "Manage your account security and preferences",
+	"user_info": {
+		"title": "User Profile",
+		"account_details": "Account Details",
+		"client_id": "Client ID",
+		"member_since": "Member Since",
+		"security_status": "Security Status",
+		"mfa_enabled": "MFA Enabled",
+		"mfa_disabled": "MFA Disabled"
+	},
+	"name_change": {
+		"title": "Display Name",
+		"description": "Update your first and last name that others will see",
+		"first_name_label": "First Name",
+		"first_name_placeholder": "Enter your first name",
+		"last_name_label": "Last Name",
+		"last_name_placeholder": "Enter your last name",
+		"edit_button": "Edit Name",
+		"save_button": "Save Changes",
+		"cancel_button": "Cancel",
+		"success_title": "Success",
+		"success_message": "Your name has been updated successfully",
+		"error_title": "Error",
+		"error_message": "Failed to update name",
+		"validation": {
+			"first_name_required": "First name is required",
+			"first_name_min": "First name must be at least 2 characters",
+			"first_name_max": "First name must be less than 50 characters",
+			"last_name_required": "Last name is required",
+			"last_name_min": "Last name must be at least 2 characters",
+			"last_name_max": "Last name must be less than 50 characters"
+		}
+	},
+	"password_change": {
+		"title": "Change Password",
+		"description": "Keep your account secure by regularly updating your password. Use a strong, unique password with at least 8 characters that includes a mix of letters, numbers, and symbols.",
+		"current_password_label": "Current Password",
+		"current_password_placeholder": "Enter your current password",
+		"new_password_label": "New Password",
+		"new_password_placeholder": "Enter your new password",
+		"confirm_password_label": "Confirm New Password",
+		"confirm_password_placeholder": "Confirm your new password",
+		"submit_button": "Change Password",
+		"cancel_button": "Cancel",
+		"success_title": "Password Successfully Updated",
+		"success_message": "Your password has been changed successfully. Make sure to use your new password the next time you sign in.",
+		"error_title": "Password Change Failed",
+		"error_default_message": "Unable to update your password. Please verify your current password is correct and ensure your new password meets the security requirements.",
+		"validation": {
+			"current_required": "Current password is required",
+			"new_min_length": "New password must be at least 8 characters",
+			"new_different": "New password must be different from your current password",
+			"confirm_mismatch": "Passwords do not match"
+		}
+	},
+	"mfa": {
+		"title": "Two-Factor Authentication (MFA)",
+		"description": "Enhance your account security by requiring both your password and a verification code sent to your email address when signing in. This significantly reduces the risk of unauthorized access.",
+		"status_enabled": "Enabled",
+		"status_disabled": "Disabled",
+		"how_it_works": {
+			"title": "How Email-Based OTP Works",
+			"step1": "Click \"Enable MFA\" to start the setup process",
+			"step2": "Enter your password to confirm your identity",
+			"step3": "A 6-digit verification code will be sent to your registered email address",
+			"step4": "Enter the code from your email to complete the setup and activate MFA",
+			"step5": "Future logins will require a code sent to your email for verification"
+		},
+		"enable_button": "Enable MFA",
+		"disable_button": "Disable MFA",
+		"confirm_identity": {
+			"title": "Confirm Your Identity",
+			"message": "To enable two-factor authentication, please enter your current password to confirm your identity. This is an important security measure to ensure you're the account owner."
+		},
+		"code_sent": {
+			"title": "Verification Code Sent",
+			"message": "A 6-digit verification code has been sent to your email address <strong>{{email}}</strong>. Please check your inbox (and spam folder) and enter the code below to complete the setup."
+		},
+		"protected": {
+			"title": "Protected and Secure",
+			"message": "Your account is currently protected with two-factor authentication. Each time you sign in, a verification code will be sent to your registered email address for added security."
+		},
+		"disable_warning": {
+			"title": "Security Warning",
+			"message": "Disabling two-factor authentication will significantly reduce your account's security. Your account will only be protected by your password. Please enter your password to confirm this action."
+		},
+		"verify_form": {
+			"code_label": "Verification Code from Email",
+			"code_placeholder": "Enter 6-digit code from your email",
+			"verify_button": "Verify and Enable",
+			"cancel_button": "Cancel",
+			"validation": {
+				"code_length": "Code must be 6 digits"
+			}
+		},
+		"password_form": {
+			"label": "Password",
+			"placeholder": "Enter your password",
+			"continue_button": "Continue",
+			"cancel_button": "Cancel",
+			"disable_submit": "Disable MFA",
+			"validation": {
+				"required": "Password is required"
+			}
+		},
+		"notifications": {
+			"enabled_title": "MFA Setup Enabled",
+			"enabled_message": "Next time you log in, you'll need to enter a verification code from your email.",
+			"verified_title": "Two-Factor Authentication Enabled",
+			"verified_message": "Success! Your account is now protected with two-factor authentication. You'll need to enter a verification code from your email each time you sign in.",
+			"disabled_title": "Two-Factor Authentication Disabled",
+			"disabled_message": "Two-factor authentication has been successfully turned off. Your account security has been reduced. We strongly recommend re-enabling MFA to protect your account.",
+			"auth_failed_title": "Authentication Failed",
+			"auth_failed_message": "Unable to verify your password. Please check your password and try again.",
+			"verify_failed_title": "Verification Failed",
+			"verify_failed_message": "The verification code you entered is invalid or has expired. Please request a new code or check your email for the most recent one."
+		}
+	}
+}

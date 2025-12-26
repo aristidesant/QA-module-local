@@ -7,11 +7,13 @@ import {
 	IconShieldOff,
 } from '@tabler/icons-react';
 import { Stack, Text } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import { useSessionStore } from '~/stores/sessionStore';
 import { RightSectionCard } from '~/components/RightSectionCard/RightSectionCard';
 import styles from './UserInfoCard.module.css';
 
 export const UserInfoCard: React.FC = () => {
+	const { t, i18n } = useTranslation('profile');
 	const { user } = useSessionStore();
 
 	if (!user) {
@@ -37,7 +39,7 @@ export const UserInfoCard: React.FC = () => {
 	const formatDate = (date: string | Date | null | undefined) => {
 		if (!date) return 'N/A';
 		try {
-			return new Date(date).toLocaleDateString('en-US', {
+			return new Date(date).toLocaleDateString(i18n.language, {
 				year: 'numeric',
 				month: 'long',
 				day: 'numeric',
@@ -50,7 +52,7 @@ export const UserInfoCard: React.FC = () => {
 	return (
 		<Stack gap='md'>
 			<RightSectionCard
-				title='User Profile'
+				title={t('user_info.title')}
 				icon={IconUser}
 				iconColor='var(--mantine-color-indigo-6)'
 			>
@@ -70,7 +72,7 @@ export const UserInfoCard: React.FC = () => {
 			</RightSectionCard>
 
 			<RightSectionCard
-				title='Account Details'
+				title={t('user_info.account_details')}
 				icon={IconShieldCheck}
 				iconColor='var(--mantine-color-teal-6)'
 			>
@@ -81,7 +83,7 @@ export const UserInfoCard: React.FC = () => {
 						</div>
 						<div className={styles.detailContent}>
 							<Text size='xs' c='dimmed' fw={600} tt='uppercase'>
-								Client ID
+								{t('user_info.client_id')}
 							</Text>
 							<Text size='sm' fw={700} className={styles.clientIdText}>
 								#{user.clientId}
@@ -95,7 +97,7 @@ export const UserInfoCard: React.FC = () => {
 						</div>
 						<div className={styles.detailContent}>
 							<Text size='xs' c='dimmed' fw={600} tt='uppercase'>
-								Member Since
+								{t('user_info.member_since')}
 							</Text>
 							<Text size='sm' fw={500}>
 								{formatDate(user.createdAt)}
@@ -116,14 +118,16 @@ export const UserInfoCard: React.FC = () => {
 						</div>
 						<div className={styles.detailContent}>
 							<Text size='xs' c='dimmed' fw={600} tt='uppercase'>
-								Security Status
+								{t('user_info.security_status')}
 							</Text>
 							<div
 								className={`${styles.mfaBadge} ${
 									isMFAEnabled ? styles.mfaEnabled : styles.mfaDisabled
 								}`}
 							>
-								{isMFAEnabled ? 'MFA Enabled' : 'MFA Disabled'}
+								{isMFAEnabled
+									? t('user_info.mfa_enabled')
+									: t('user_info.mfa_disabled')}
 							</div>
 						</div>
 					</div>

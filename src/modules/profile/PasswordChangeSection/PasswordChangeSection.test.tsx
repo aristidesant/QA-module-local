@@ -1,7 +1,6 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { MantineProvider } from '@mantine/core';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { PasswordChangeSection } from './PasswordChangeSection';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useChangePassword } from '~/queries/userQueries';
 import { notifications } from '@mantine/notifications';
@@ -25,23 +24,6 @@ vi.mock('~/components/SectionCard/SectionCard', () => ({
 		</div>
 	),
 }));
-
-const createQueryClient = () =>
-	new QueryClient({
-		defaultOptions: {
-			queries: { retry: false },
-			mutations: { retry: false },
-		},
-	});
-
-const renderWithProviders = (ui: React.ReactElement) => {
-	const queryClient = createQueryClient();
-	return render(
-		<QueryClientProvider client={queryClient}>
-			<MantineProvider>{ui}</MantineProvider>
-		</QueryClientProvider>
-	);
-};
 
 describe('PasswordChangeSection', () => {
 	const mockMutateAsync = vi.fn();
@@ -153,7 +135,7 @@ describe('PasswordChangeSection', () => {
 			});
 			expect(notifications.show).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: '✓ Password Successfully Updated',
+					title: 'Password Successfully Updated',
 				})
 			);
 		});

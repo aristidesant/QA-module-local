@@ -1,1 +1,121 @@
-{}
+{
+	"title": "Configuración del Perfil",
+	"description": "Gestiona la seguridad y preferencias de tu cuenta",
+	"user_info": {
+		"title": "Perfil de Usuario",
+		"account_details": "Detalles de la Cuenta",
+		"client_id": "ID de Cliente",
+		"member_since": "Miembro Desde",
+		"security_status": "Estado de Seguridad",
+		"mfa_enabled": "MFA Habilitado",
+		"mfa_disabled": "MFA Deshabilitado"
+	},
+	"name_change": {
+		"title": "Nombre para Mostrar",
+		"description": "Actualiza tu nombre y apellido que otros verán",
+		"first_name_label": "Nombre",
+		"first_name_placeholder": "Ingresa tu nombre",
+		"last_name_label": "Apellido",
+		"last_name_placeholder": "Ingresa tu apellido",
+		"edit_button": "Editar Nombre",
+		"save_button": "Guardar Cambios",
+		"cancel_button": "Cancelar",
+		"success_title": "Éxito",
+		"success_message": "Tu nombre ha sido actualizado exitosamente",
+		"error_title": "Error",
+		"error_message": "Error al actualizar el nombre",
+		"validation": {
+			"first_name_required": "El nombre es requerido",
+			"first_name_min": "El nombre debe tener al menos 2 caracteres",
+			"first_name_max": "El nombre debe tener menos de 50 caracteres",
+			"last_name_required": "El apellido es requerido",
+			"last_name_min": "El apellido debe tener al menos 2 caracteres",
+			"last_name_max": "El apellido debe tener menos de 50 caracteres"
+		}
+	},
+	"password_change": {
+		"title": "Cambiar Contraseña",
+		"description": "Mantén tu cuenta segura actualizando regularmente tu contraseña. Usa una contraseña fuerte y única con al menos 8 caracteres que incluya una mezcla de letras, números y símbolos.",
+		"current_password_label": "Contraseña Actual",
+		"current_password_placeholder": "Ingresa tu contraseña actual",
+		"new_password_label": "Nueva Contraseña",
+		"new_password_placeholder": "Ingresa tu nueva contraseña",
+		"confirm_password_label": "Confirmar Nueva Contraseña",
+		"confirm_password_placeholder": "Confirma tu nueva contraseña",
+		"submit_button": "Cambiar Contraseña",
+		"cancel_button": "Cancelar",
+		"success_title": "Contraseña Actualizada Exitosamente",
+		"success_message": "Tu contraseña ha sido cambiada exitosamente. Asegúrate de usar tu nueva contraseña la próxima vez que inicies sesión.",
+		"error_title": "Error al Cambiar Contraseña",
+		"error_default_message": "No se pudo actualizar tu contraseña. Por favor verifica que tu contraseña actual sea correcta y asegúrate de que tu nueva contraseña cumpla con los requisitos de seguridad.",
+		"validation": {
+			"current_required": "La contraseña actual es requerida",
+			"new_min_length": "La nueva contraseña debe tener al menos 8 caracteres",
+			"new_different": "La nueva contraseña debe ser diferente de tu contraseña actual",
+			"confirm_mismatch": "Las contraseñas no coinciden"
+		}
+	},
+	"mfa": {
+		"title": "Autenticación de Dos Factores (MFA)",
+		"description": "Mejora la seguridad de tu cuenta requiriendo tanto tu contraseña como un código de verificación enviado a tu correo electrónico al iniciar sesión. Esto reduce significativamente el riesgo de acceso no autorizado.",
+		"status_enabled": "Habilitado",
+		"status_disabled": "Deshabilitado",
+		"how_it_works": {
+			"title": "Cómo Funciona OTP Basado en Email",
+			"step1": "Haz clic en \"Habilitar MFA\" para iniciar el proceso de configuración",
+			"step2": "Ingresa tu contraseña para confirmar tu identidad",
+			"step3": "Un código de verificación de 6 dígitos será enviado a tu correo electrónico registrado",
+			"step4": "Ingresa el código de tu correo para completar la configuración y activar MFA",
+			"step5": "Los futuros inicios de sesión requerirán un código enviado a tu correo para verificación"
+		},
+		"enable_button": "Habilitar MFA",
+		"disable_button": "Deshabilitar MFA",
+		"confirm_identity": {
+			"title": "Confirma Tu Identidad",
+			"message": "Para habilitar la autenticación de dos factores, por favor ingresa tu contraseña actual para confirmar tu identidad. Esta es una medida de seguridad importante para asegurar que eres el propietario de la cuenta."
+		},
+		"code_sent": {
+			"title": "Código de Verificación Enviado",
+			"message": "Un código de verificación de 6 dígitos ha sido enviado a tu dirección de correo <strong>{{email}}</strong>. Por favor revisa tu bandeja de entrada (y carpeta de spam) e ingresa el código abajo para completar la configuración."
+		},
+		"protected": {
+			"title": "Protegido y Seguro",
+			"message": "Tu cuenta está actualmente protegida con autenticación de dos factores. Cada vez que inicies sesión, se enviará un código de verificación a tu correo electrónico registrado para mayor seguridad."
+		},
+		"disable_warning": {
+			"title": "Advertencia de Seguridad",
+			"message": "Deshabilitar la autenticación de dos factores reducirá significativamente la seguridad de tu cuenta. Tu cuenta solo estará protegida por tu contraseña. Por favor ingresa tu contraseña para confirmar esta acción."
+		},
+		"verify_form": {
+			"code_label": "Código de Verificación del Email",
+			"code_placeholder": "Ingresa el código de 6 dígitos de tu email",
+			"verify_button": "Verificar y Habilitar",
+			"cancel_button": "Cancelar",
+			"validation": {
+				"code_length": "El código debe ser de 6 dígitos"
+			}
+		},
+		"password_form": {
+			"label": "Contraseña",
+			"placeholder": "Ingresa tu contraseña",
+			"continue_button": "Continuar",
+			"cancel_button": "Cancelar",
+			"disable_submit": "Deshabilitar MFA",
+			"validation": {
+				"required": "La contraseña es requerida"
+			}
+		},
+		"notifications": {
+			"enabled_title": "Configuración de MFA Habilitada",
+			"enabled_message": "La próxima vez que inicies sesión, necesitarás ingresar un código de verificación de tu correo electrónico.",
+			"verified_title": "Autenticación de Dos Factores Habilitada",
+			"verified_message": "¡Éxito! Tu cuenta ahora está protegida con autenticación de dos factores. Necesitarás ingresar un código de verificación de tu correo electrónico cada vez que inicies sesión.",
+			"disabled_title": "Autenticación de Dos Factores Deshabilitada",
+			"disabled_message": "La autenticación de dos factores ha sido desactivada exitosamente. La seguridad de tu cuenta se ha reducido. Recomendamos encarecidamente volver a habilitar MFA para proteger tu cuenta.",
+			"auth_failed_title": "Autenticación Fallida",
+			"auth_failed_message": "No se pudo verificar tu contraseña. Por favor revisa tu contraseña e inténtalo de nuevo.",
+			"verify_failed_title": "Verificación Fallida",
+			"verify_failed_message": "El código de verificación que ingresaste es inválido o ha expirado. Por favor solicita un nuevo código o revisa tu correo para el más reciente."
+		}
+	}
+}
