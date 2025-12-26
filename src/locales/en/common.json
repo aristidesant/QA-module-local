@@ -25,6 +25,10 @@
 		"noData": "No data available",
 		"nothingSelected": "Nothing selected"
 	},
+	"loading": {
+		"configurations": "Loading configurations...",
+		"clientConfigs": "Loading client configs..."
+	},
 	"sidebar": {
 		"ariaLabel": "Main navigation",
 		"menu": "MENU",

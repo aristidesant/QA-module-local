@@ -1,4 +1,54 @@
 {
+	"page": {
+		"title": "Client Configurations",
+		"description": "Manage client configuration settings",
+		"actions": {
+			"create": "Create Configuration"
+		}
+	},
+	"filters": {
+		"title": "Filters",
+		"active": "Active",
+		"search": {
+			"placeholder": "Search by name or description..."
+		},
+		"type": {
+			"placeholder": "All Types",
+			"options": {
+				"all": "All Types"
+			}
+		},
+		"sort": {
+			"placeholder": "Sort by",
+			"options": {
+				"nameAsc": "Name A-Z",
+				"nameDesc": "Name Z-A",
+				"descriptionAsc": "Description A-Z",
+				"descriptionDesc": "Description Z-A",
+				"typeAsc": "Type A-Z",
+				"typeDesc": "Type Z-A",
+				"updatedAtDesc": "Recently Updated",
+				"updatedAtAsc": "Oldest Updated"
+			}
+		},
+		"actions": {
+			"clear": "Clear all filters"
+		}
+	},
+	"table": {
+		"columns": {
+			"name": "Name",
+			"description": "Description",
+			"type": "Type",
+			"value": "Value",
+			"updatedAt": "Last Updated",
+			"actions": "Actions"
+		},
+		"tooltips": {
+			"edit": "Edit configuration",
+			"delete": "Delete configuration"
+		}
+	},
 	"content": {
 		"empty": {
 			"message": "No configurations found",

@@ -320,7 +320,7 @@ const router = createBrowserRouter([
 							>
 								<Suspense
 									fallback={
-										<SuspenseFallback message='Loading configurations...' />
+										<SuspenseFallback messageKey='loading.configurations' />
 									}
 								>
 									<ConfigurationsPage />
@@ -340,7 +340,7 @@ const router = createBrowserRouter([
 								element: (
 									<Suspense
 										fallback={
-											<SuspenseFallback message='Loading client configs...' />
+											<SuspenseFallback messageKey='loading.clientConfigs' />
 										}
 									>
 										<ClientConfigsPage />

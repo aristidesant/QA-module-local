@@ -1,4 +1,54 @@
 {
+	"page": {
+		"title": "Configuraciones del cliente",
+		"description": "Administra los ajustes de configuración del cliente",
+		"actions": {
+			"create": "Crear configuración"
+		}
+	},
+	"filters": {
+		"title": "Filtros",
+		"active": "Activos",
+		"search": {
+			"placeholder": "Buscar por nombre o descripción..."
+		},
+		"type": {
+			"placeholder": "Todos los tipos",
+			"options": {
+				"all": "Todos los tipos"
+			}
+		},
+		"sort": {
+			"placeholder": "Ordenar por",
+			"options": {
+				"nameAsc": "Nombre A-Z",
+				"nameDesc": "Nombre Z-A",
+				"descriptionAsc": "Descripción A-Z",
+				"descriptionDesc": "Descripción Z-A",
+				"typeAsc": "Tipo A-Z",
+				"typeDesc": "Tipo Z-A",
+				"updatedAtDesc": "Actualizadas recientemente",
+				"updatedAtAsc": "Actualizadas más antiguas"
+			}
+		},
+		"actions": {
+			"clear": "Limpiar filtros"
+		}
+	},
+	"table": {
+		"columns": {
+			"name": "Nombre",
+			"description": "Descripción",
+			"type": "Tipo",
+			"value": "Valor",
+			"updatedAt": "Última actualización",
+			"actions": "Acciones"
+		},
+		"tooltips": {
+			"edit": "Editar configuración",
+			"delete": "Eliminar configuración"
+		}
+	},
 	"content": {
 		"empty": {
 			"message": "No se encontraron configuraciones",
