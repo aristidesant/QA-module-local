@@ -1,1 +1,135 @@
-{}
+{
+	"page": {
+		"title": "Scheduler presets",
+		"description": "Manage predefined schedules for campaigns",
+		"descriptionLong": "Curate reusable schedules with consistent days and hours"
+	},
+	"actions": {
+		"createOverride": "Create override",
+		"deleteOverride": "Delete override",
+		"addSchedule": "Add schedule"
+	},
+	"noPermission": {
+		"title": "No permission to edit scheduler presets",
+		"description": "This area is limited to users with MANAGE access on the Settings module. Contact an administrator if you need to adjust scheduler templates.",
+		"actions": {
+			"backToConfigurations": "Back to configurations"
+		}
+	},
+	"globalNotice": {
+		"title": "Global configuration",
+		"description": {
+			"master": "Changes here update the global defaults for every client. Proceed carefully.",
+			"client": "These values are read-only for your client. Create an override to customize them."
+		}
+	},
+	"deleteSchedule": {
+		"title": "Delete schedule",
+		"description": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone."
+	},
+	"deleteOverride": {
+		"title": "Delete configuration",
+		"description": "Delete this client override to use the global scheduler presets?"
+	},
+	"formModal": {
+		"title": {
+			"edit": "Edit scheduler preset",
+			"create": "New scheduler preset"
+		}
+	},
+	"form": {
+		"name": {
+			"label": "Scheduler preset name",
+			"placeholder": "Example: Standard business hours"
+		},
+		"weeklyWindows": {
+			"title": "Weekly windows",
+			"description": "Activate days for this scheduler preset and set their start and end time. Everything stays on one line to scan quickly."
+		},
+		"daysHeader": {
+			"day": "Day",
+			"start": "Start",
+			"end": "End",
+			"status": "Status"
+		},
+		"status": {
+			"enabled": "Enabled",
+			"disabled": "Disabled"
+		},
+		"helper": {
+			"use24h": "Use 24h format"
+		},
+		"actions": {
+			"updatePreset": "Update preset",
+			"createPreset": "Create preset"
+		},
+		"validation": {
+			"nameRequired": "Name is required",
+			"nameUnique": "Preset name must be unique"
+		}
+	},
+	"list": {
+		"columns": {
+			"name": "Name",
+			"activeDays": "Active days",
+			"hoursWindow": "Hours window",
+			"actions": "Actions"
+		},
+		"badge": {
+			"preset": "Preset"
+		},
+		"actions": {
+			"deleteAria": "Delete schedule"
+		},
+		"emptyMessage": "No scheduler presets configured yet",
+		"noActiveDays": "No active days",
+		"noActiveHours": "No active hours"
+	},
+	"notifications": {
+		"configurationMissing": {
+			"title": "Configuration missing",
+			"message": "Client configuration could not be loaded."
+		},
+		"noActiveDays": {
+			"title": "Add at least one active day",
+			"message": "Select the days where calls are allowed."
+		},
+		"invalidHours": {
+			"title": "Check day hours",
+			"message": "Each active day needs a start and end hour, and end must be after start."
+		},
+		"presetNotFound": {
+			"title": "Preset not found",
+			"message": "The selected preset could not be located."
+		},
+		"saved": {
+			"updatedTitle": "Preset updated",
+			"createdTitle": "Preset created",
+			"message": "Scheduler preset saved successfully."
+		},
+		"saveFailed": {
+			"title": "Save failed",
+			"message": "We could not save this preset. Please retry."
+		}
+	},
+	"days": {
+		"full": {
+			"monday": "Monday",
+			"tuesday": "Tuesday",
+			"wednesday": "Wednesday",
+			"thursday": "Thursday",
+			"friday": "Friday",
+			"saturday": "Saturday",
+			"sunday": "Sunday"
+		},
+		"abbrev": {
+			"monday": "Mon",
+			"tuesday": "Tue",
+			"wednesday": "Wed",
+			"thursday": "Thu",
+			"friday": "Fri",
+			"saturday": "Sat",
+			"sunday": "Sun"
+		}
+	}
+}

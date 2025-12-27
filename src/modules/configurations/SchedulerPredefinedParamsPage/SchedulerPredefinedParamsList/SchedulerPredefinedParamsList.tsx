@@ -1,5 +1,6 @@
 import BaseTable from '~/components/BaseTable/BaseTable';
 import type { PredefinedScheduleConfig } from '~/models/PredefinedScheduleConfig';
+import { useTranslation } from 'react-i18next';
 import useSchedulerPredefinedParamsColumns from './useSchedulerPredefinedParamsColumns';
 
 interface SchedulerPredefinedParamsListProps {
@@ -11,6 +12,7 @@ interface SchedulerPredefinedParamsListProps {
 const SchedulerPredefinedParamsList: React.FC<
 	SchedulerPredefinedParamsListProps
 > = ({ data, onRowClick, onDelete }) => {
+	const { t } = useTranslation('scheduler-predefined-params');
 	const columns = useSchedulerPredefinedParamsColumns({ onDelete });
 
 	return (
@@ -20,7 +22,7 @@ const SchedulerPredefinedParamsList: React.FC<
 			onRowClick={onRowClick}
 			getRowId={(row) => row.name}
 			density='compact'
-			emptyMessage='No scheduler presets configured yet'
+			emptyMessage={t('list.emptyMessage')}
 		/>
 	);
 };

@@ -3,6 +3,17 @@
 		"title": "Configuraciones de comportamiento del agente",
 		"description": "Modifica los parámetros de comportamiento predeterminados del agente para campañas."
 	},
+	"list": {
+		"columns": {
+			"name": "Nombre",
+			"llmModel": "Modelo LLM",
+			"audioFormat": "Formato de audio",
+			"actions": "Acciones"
+		},
+		"actions": {
+			"deleteAria": "Eliminar parámetro"
+		}
+	},
 	"actions": {
 		"createOverride": "Crear sobrescritura",
 		"deleteOverride": "Eliminar sobrescritura",
@@ -22,6 +33,140 @@
 	"deleteOverride": {
 		"title": "Eliminar configuración",
 		"description": "¿Eliminar esta sobrescritura del cliente para usar los parámetros globales de campaña?"
+	},
+	"form": {
+		"menu": {
+			"general": "General",
+			"asr": "Reconocimiento de voz",
+			"tts": "Salida de voz",
+			"agent": "Personalidad del agente"
+		},
+		"sections": {
+			"general": {
+				"title": "General",
+				"description": "Nombra este preset y mantenlo fácil de encontrar para tu equipo."
+			},
+			"asr": {
+				"title": "Reconocimiento de voz",
+				"description": "Controla la calidad, palabras clave y formatos de entrada para llamadas."
+			},
+			"tts": {
+				"title": "Salida de voz",
+				"description": "Ajusta velocidad, claridad y latencia para el audio saliente."
+			},
+			"agent": {
+				"title": "Personalidad del agente",
+				"description": "Elige el modelo y el tono que representarán la marca."
+			}
+		},
+		"badge": {
+			"editingPreset": "Editando preset",
+			"newPreset": "Nuevo preset"
+		},
+		"footer": {
+			"editHint": "Los cambios actualizan este preset para todas las campañas que lo usan.",
+			"createHint": "Crear un preset nuevo lo agrega a los valores predeterminados de tu campaña."
+		},
+		"actions": {
+			"update": "Actualizar",
+			"create": "Crear"
+		},
+		"common": {
+			"selectFormatPlaceholder": "Selecciona un formato"
+		},
+		"general": {
+			"name": {
+				"label": "Nombre del parámetro",
+				"placeholder": "p. ej., Agente de respuesta rápida",
+				"description": {
+					"edit": "Cambiar el nombre creará un nuevo parámetro",
+					"create": "Identificador único para esta configuración"
+				}
+			}
+		},
+		"asr": {
+			"provider": {
+				"label": "Proveedor",
+				"placeholder": "Selecciona el proveedor de ASR"
+			},
+			"quality": {
+				"label": "Calidad",
+				"placeholder": "Selecciona la calidad",
+				"options": {
+					"high": "Alta",
+					"medium": "Media",
+					"low": "Baja"
+				}
+			},
+			"inputAudioFormat": {
+				"label": "Formato de audio de entrada"
+			},
+			"keywords": {
+				"label": "Palabras clave",
+				"placeholder": "Escribe y presiona Enter",
+				"description": "Agrega palabras clave para mejorar la precisión de la transcripción"
+			}
+		},
+		"tts": {
+			"model": {
+				"label": "Modelo",
+				"placeholder": "Selecciona el modelo de TTS"
+			},
+			"outputAudioFormat": {
+				"label": "Formato de audio de salida"
+			},
+			"speed": {
+				"label": "Velocidad",
+				"helper": "Velocidad del habla (0.25–4.0)"
+			},
+			"streamingLatency": {
+				"label": "Latencia de streaming",
+				"helper": "0 = mejor calidad, 4 = menor latencia"
+			},
+			"stability": {
+				"label": "Estabilidad",
+				"helper": "Consistencia de voz (0–1)"
+			},
+			"similarityBoost": {
+				"label": "Aumento de similitud",
+				"helper": "Coincidencia con la voz original (0–1)"
+			}
+		},
+		"agent": {
+			"llmModel": {
+				"label": "Modelo LLM",
+				"placeholder": "Selecciona el modelo LLM"
+			},
+			"temperature": {
+				"label": "Temperatura",
+				"helper": "Controla la aleatoriedad (0–2)"
+			}
+		},
+		"validation": {
+			"nameRequired": "El nombre es obligatorio",
+			"nameUnique": "Ya existe un parámetro con este nombre",
+			"asrQualityRequired": "La calidad de ASR es obligatoria",
+			"asrProviderRequired": "El proveedor de ASR es obligatorio",
+			"asrInputAudioFormatRequired": "El formato de audio de entrada es obligatorio",
+			"ttsModelRequired": "El modelo de TTS es obligatorio",
+			"ttsStabilityRange": "La estabilidad debe estar entre 0 y 1",
+			"ttsSpeedRange": "La velocidad debe estar entre 0.25 y 4.0",
+			"ttsSimilarityBoostRange": "El aumento de similitud debe estar entre 0 y 1",
+			"ttsStreamingLatencyRange": "La latencia de streaming debe estar entre 0 y 4",
+			"ttsOutputAudioFormatRequired": "El formato de audio de salida del agente es obligatorio",
+			"agentLlmRequired": "El modelo LLM es obligatorio",
+			"agentTemperatureRange": "La temperatura debe estar entre 0 y 2"
+		},
+		"notifications": {
+			"configNotFound": "No se encontró la configuración",
+			"parameterUpdated": "Parámetro actualizado correctamente",
+			"parameterCreated": "Parámetro creado correctamente",
+			"parameterUpdateFailed": "No se pudo actualizar el parámetro",
+			"parameterCreateFailed": "No se pudo crear el parámetro"
+		},
+		"errors": {
+			"parameterNotFound": "No se encontró el parámetro en la lista"
+		}
 	},
 	"formModal": {
 		"title": {

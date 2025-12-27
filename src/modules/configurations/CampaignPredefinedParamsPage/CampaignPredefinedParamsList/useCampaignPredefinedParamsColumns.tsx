@@ -1,6 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { ActionIcon } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import { CampaignPredefinedParam } from '~/modules/campaigns/CampaignsForm/useCampaignsPredefinedParams';
 
 interface UseCampaignPredefinedParamsColumnsProps {
@@ -10,27 +11,29 @@ interface UseCampaignPredefinedParamsColumnsProps {
 const useCampaignPredefinedParamsColumns = ({
 	onDelete,
 }: UseCampaignPredefinedParamsColumnsProps = {}) => {
+	const { t } = useTranslation('campaign-predefined-params');
+
 	const columns: ColumnDef<CampaignPredefinedParam>[] = [
 		{
 			accessorKey: 'name',
-			header: 'Name',
+			header: t('list.columns.name'),
 		},
 		{
 			accessorKey: 'params.conversationConfig.agent.prompt.llm',
-			header: 'LLM Model',
+			header: t('list.columns.llmModel'),
 		},
 		{
 			accessorKey: 'params.conversationConfig.tts.agentOutputAudioFormat',
-			header: 'Audio Format',
+			header: t('list.columns.audioFormat'),
 		},
 		{
 			id: 'actions',
-			header: 'Actions',
+			header: t('list.columns.actions'),
 			cell: ({ row }) => (
 				<ActionIcon
 					variant='subtle'
 					color='red'
-					aria-label='Delete parameter'
+					aria-label={t('list.actions.deleteAria')}
 					onClick={(e) => {
 						e.stopPropagation();
 						onDelete?.(row.original);

@@ -1,1 +1,25 @@
-{}
+{
+	"page": {
+		"title": "Regional Settings",
+		"description": "Configure the default regional settings"
+	},
+	"actions": {
+		"createOverride": "Create override",
+		"deleteOverride": "Delete override",
+		"editSettings": "Edit settings"
+	},
+	"globalNotice": {
+		"title": "Global configuration",
+		"description": {
+			"master": "Changes here update the global defaults for every client. Proceed carefully.",
+			"client": "These values are read-only for your client. Create an override to customize them."
+		}
+	},
+	"editModal": {
+		"title": "Edit regional settings"
+	},
+	"deleteOverride": {
+		"title": "Delete configuration",
+		"description": "Delete this client override to use the global regional settings?"
+	}
+}

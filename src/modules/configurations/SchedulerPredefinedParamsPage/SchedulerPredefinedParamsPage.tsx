@@ -17,6 +17,7 @@ import {
 	IconAlertTriangle,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import InlineNotice from '~/components/InlineNotice';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import {
@@ -36,6 +37,7 @@ import SchedulerPredefinedParamsForm from './SchedulerPredefinedParamsForm/Sched
 import SchedulerPredefinedParamsList from './SchedulerPredefinedParamsList/SchedulerPredefinedParamsList';
 
 const SchedulerPredefinedParamsPage = () => {
+	const { t } = useTranslation('scheduler-predefined-params');
 	const { canPerformAction } = usePermissions();
 	const navigate = useNavigate();
 	const canManageSettings = canPerformAction(
@@ -126,18 +128,16 @@ const SchedulerPredefinedParamsPage = () => {
 	if (!canManageSettings) {
 		return (
 			<ContentContainer
-				title='Scheduler presets'
-				description='Manage predefined schedules for campaigns'
+				title={t('page.title')}
+				description={t('page.description')}
 				titleIcon={<IconCalendarTime size={24} />}
 			>
 				<Stack gap='xs'>
 					<Text size='sm' fw={600}>
-						No permission to edit scheduler presets
+						{t('noPermission.title')}
 					</Text>
 					<Text size='xs' c='dimmed'>
-						This area is limited to users with MANAGE access on the Settings
-						module. Contact an administrator if you need to adjust scheduler
-						templates.
+						{t('noPermission.description')}
 					</Text>
 					<Button
 						variant='default'
@@ -145,7 +145,7 @@ const SchedulerPredefinedParamsPage = () => {
 						leftSection={<IconLock size={14} />}
 						onClick={() => navigate('/configurations/client-configs')}
 					>
-						Back to configurations
+						{t('noPermission.actions.backToConfigurations')}
 					</Button>
 				</Stack>
 			</ContentContainer>
@@ -154,18 +154,18 @@ const SchedulerPredefinedParamsPage = () => {
 
 	return (
 		<ContentContainer
-			title='Scheduler presets'
-			description='Curate reusable schedules with consistent days and hours'
+			title={t('page.title')}
+			description={t('page.descriptionLong')}
 			titleIcon={<IconCalendarTime size={24} />}
 			titleRight={
 				hasConfig ? (
 					<Group gap={'xs'}>
 						{canCreateOverride && (
-							<Tooltip label='Create override' withArrow>
+							<Tooltip label={t('actions.createOverride')} withArrow>
 								<ActionIcon
 									variant='light'
 									color='grape'
-									aria-label='Create override'
+									aria-label={t('actions.createOverride')}
 									onClick={async () => {
 										if (!data || !canCreateOverride) return;
 										try {
@@ -187,11 +187,11 @@ const SchedulerPredefinedParamsPage = () => {
 							</Tooltip>
 						)}
 						{canDeleteConfig && (
-							<Tooltip label='Delete override' withArrow>
+							<Tooltip label={t('actions.deleteOverride')} withArrow>
 								<ActionIcon
 									variant='light'
 									color='red'
-									aria-label='Delete override'
+									aria-label={t('actions.deleteOverride')}
 									onClick={() => setDeleteConfigModalOpen(true)}
 									loading={deleteMutation.isPending}
 									disabled={deleteMutation.isPending}
@@ -201,11 +201,11 @@ const SchedulerPredefinedParamsPage = () => {
 							</Tooltip>
 						)}
 						{(canEditConfig || (!isGlobalConfig && canCreateOverride)) && (
-							<Tooltip label='Add schedule' withArrow>
+							<Tooltip label={t('actions.addSchedule')} withArrow>
 								<ActionIcon
 									variant='filled'
 									color='blue'
-									aria-label='Add schedule'
+									aria-label={t('actions.addSchedule')}
 									onClick={handleAddNew}
 									disabled={
 										!hasConfig || (!canEditConfig && !canCreateOverride)
@@ -222,13 +222,13 @@ const SchedulerPredefinedParamsPage = () => {
 			<Stack gap={'xs'}>
 				{isGlobalConfig && (
 					<InlineNotice
-						title='Global configuration'
+						title={t('globalNotice.title')}
 						icon={<IconAlertTriangle size={16} />}
 						color='orange'
 						description={
 							isMasterClient
-								? 'Changes here update the global defaults for every client. Proceed carefully.'
-								: 'These values are read-only for your client. Create an override to customize them.'
+								? t('globalNotice.description.master')
+								: t('globalNotice.description.client')
 						}
 					/>
 				)}
@@ -243,13 +243,14 @@ const SchedulerPredefinedParamsPage = () => {
 			<Modal
 				opened={deleteModalOpen}
 				onClose={() => setDeleteModalOpen(false)}
-				title='Delete schedule'
+				title={t('deleteSchedule.title')}
 				centered
 				size='sm'
 			>
 				<Text size='sm' mb='md'>
-					Are you sure you want to delete &quot;{scheduleToDelete?.name}&quot;?
-					This action cannot be undone.
+					{t('deleteSchedule.description', {
+						name: scheduleToDelete?.name ?? '',
+					})}
 				</Text>
 				<div
 					style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}
@@ -259,7 +260,7 @@ const SchedulerPredefinedParamsPage = () => {
 						size='xs'
 						onClick={() => setDeleteModalOpen(false)}
 					>
-						Cancel
+						{t('actions.cancel', { ns: 'common' })}
 					</Button>
 					<Button
 						color='red'
@@ -267,7 +268,7 @@ const SchedulerPredefinedParamsPage = () => {
 						onClick={handleConfirmDelete}
 						loading={updateMutation.isPending}
 					>
-						Delete
+						{t('actions.delete', { ns: 'common' })}
 					</Button>
 				</div>
 			</Modal>
@@ -276,7 +277,9 @@ const SchedulerPredefinedParamsPage = () => {
 				opened={editorOpen}
 				onClose={closeEditor}
 				title={
-					selectedSchedule ? 'Edit scheduler preset' : 'New scheduler preset'
+					selectedSchedule
+						? t('formModal.title.edit')
+						: t('formModal.title.create')
 				}
 				size='lg'
 				centered
@@ -293,12 +296,12 @@ const SchedulerPredefinedParamsPage = () => {
 			<Modal
 				opened={deleteConfigModalOpen}
 				onClose={() => setDeleteConfigModalOpen(false)}
-				title='Delete configuration'
+				title={t('deleteOverride.title')}
 				centered
 				size='sm'
 			>
 				<Text size='sm' mb='md'>
-					Delete this client override to use the global scheduler presets?
+					{t('deleteOverride.description')}
 				</Text>
 				<Group gap='xs' justify='flex-end'>
 					<Button
@@ -306,7 +309,7 @@ const SchedulerPredefinedParamsPage = () => {
 						size='xs'
 						onClick={() => setDeleteConfigModalOpen(false)}
 					>
-						Cancel
+						{t('actions.cancel', { ns: 'common' })}
 					</Button>
 					<Button
 						color='red'
@@ -324,7 +327,7 @@ const SchedulerPredefinedParamsPage = () => {
 						}}
 						loading={deleteMutation.isPending}
 					>
-						Delete override
+						{t('actions.deleteOverride')}
 					</Button>
 				</Group>
 			</Modal>

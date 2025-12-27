@@ -1,1 +1,135 @@
-{}
+{
+	"page": {
+		"title": "Presets de horario",
+		"description": "Administra horarios predefinidos para campañas",
+		"descriptionLong": "Crea horarios reutilizables con días y horas consistentes"
+	},
+	"actions": {
+		"createOverride": "Crear sobrescritura",
+		"deleteOverride": "Eliminar sobrescritura",
+		"addSchedule": "Agregar horario"
+	},
+	"noPermission": {
+		"title": "Sin permisos para editar presets de horario",
+		"description": "Esta sección está limitada a usuarios con acceso MANAGE en el módulo Settings. Contacta a un administrador si necesitas ajustar plantillas de horario.",
+		"actions": {
+			"backToConfigurations": "Volver a configuraciones"
+		}
+	},
+	"globalNotice": {
+		"title": "Configuración global",
+		"description": {
+			"master": "Los cambios aquí actualizan los valores globales para todos los clientes. Procede con cuidado.",
+			"client": "Estos valores son de solo lectura para tu cliente. Crea una sobrescritura para personalizarlos."
+		}
+	},
+	"deleteSchedule": {
+		"title": "Eliminar horario",
+		"description": "¿Seguro que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer."
+	},
+	"deleteOverride": {
+		"title": "Eliminar configuración",
+		"description": "¿Eliminar esta sobrescritura del cliente para usar los presets globales de horario?"
+	},
+	"formModal": {
+		"title": {
+			"edit": "Editar preset de horario",
+			"create": "Nuevo preset de horario"
+		}
+	},
+	"form": {
+		"name": {
+			"label": "Nombre del preset de horario",
+			"placeholder": "Ejemplo: Horario comercial estándar"
+		},
+		"weeklyWindows": {
+			"title": "Ventanas semanales",
+			"description": "Activa los días para este preset y define su hora de inicio y fin. Todo queda en una sola línea para facilitar la lectura."
+		},
+		"daysHeader": {
+			"day": "Día",
+			"start": "Inicio",
+			"end": "Fin",
+			"status": "Estado"
+		},
+		"status": {
+			"enabled": "Habilitado",
+			"disabled": "Deshabilitado"
+		},
+		"helper": {
+			"use24h": "Usa formato 24h"
+		},
+		"actions": {
+			"updatePreset": "Actualizar preset",
+			"createPreset": "Crear preset"
+		},
+		"validation": {
+			"nameRequired": "El nombre es obligatorio",
+			"nameUnique": "El nombre del preset debe ser único"
+		}
+	},
+	"list": {
+		"columns": {
+			"name": "Nombre",
+			"activeDays": "Días activos",
+			"hoursWindow": "Rango de horas",
+			"actions": "Acciones"
+		},
+		"badge": {
+			"preset": "Preset"
+		},
+		"actions": {
+			"deleteAria": "Eliminar horario"
+		},
+		"emptyMessage": "Aún no hay presets de horario configurados",
+		"noActiveDays": "Sin días activos",
+		"noActiveHours": "Sin horas activas"
+	},
+	"notifications": {
+		"configurationMissing": {
+			"title": "Falta configuración",
+			"message": "No se pudo cargar la configuración del cliente."
+		},
+		"noActiveDays": {
+			"title": "Agrega al menos un día activo",
+			"message": "Selecciona los días en los que se permiten llamadas."
+		},
+		"invalidHours": {
+			"title": "Revisa las horas",
+			"message": "Cada día activo necesita hora de inicio y fin, y el fin debe ser posterior al inicio."
+		},
+		"presetNotFound": {
+			"title": "Preset no encontrado",
+			"message": "No se pudo localizar el preset seleccionado."
+		},
+		"saved": {
+			"updatedTitle": "Preset actualizado",
+			"createdTitle": "Preset creado",
+			"message": "El preset de horario se guardó correctamente."
+		},
+		"saveFailed": {
+			"title": "No se pudo guardar",
+			"message": "No pudimos guardar este preset. Inténtalo de nuevo."
+		}
+	},
+	"days": {
+		"full": {
+			"monday": "Lunes",
+			"tuesday": "Martes",
+			"wednesday": "Miércoles",
+			"thursday": "Jueves",
+			"friday": "Viernes",
+			"saturday": "Sábado",
+			"sunday": "Domingo"
+		},
+		"abbrev": {
+			"monday": "Lun",
+			"tuesday": "Mar",
+			"wednesday": "Mié",
+			"thursday": "Jue",
+			"friday": "Vie",
+			"saturday": "Sáb",
+			"sunday": "Dom"
+		}
+	}
+}

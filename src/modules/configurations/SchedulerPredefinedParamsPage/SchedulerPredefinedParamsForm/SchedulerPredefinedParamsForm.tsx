@@ -1,6 +1,7 @@
 import { Button, Group, Stack, Switch, Text, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
+import { useTranslation } from 'react-i18next';
 import type { DayConfig } from '~/api/campaignsApi';
 import type { ClientConfig } from '~/models/ClientConfig';
 import type { PredefinedScheduleConfig } from '~/models/PredefinedScheduleConfig';
@@ -11,7 +12,7 @@ import {
 import {
 	DEFAULT_END_HOUR,
 	DEFAULT_START_HOUR,
-	fullDayLabelMap,
+	getDayFullLabel,
 	normalizeDayConfigs,
 } from '../utils';
 import classes from './SchedulerPredefinedParamsForm.module.css';
@@ -81,6 +82,7 @@ const SchedulerPredefinedParamsForm: React.FC<
 	saveStrategy = 'update',
 	canSubmit = true,
 }) => {
+	const { t } = useTranslation('scheduler-predefined-params');
 	const isEditMode = !!schedule;
 	const updateMutation = useUpdateClientConfig();
 	const createMutation = useCreateClientConfig();
@@ -100,12 +102,12 @@ const SchedulerPredefinedParamsForm: React.FC<
 		validate: {
 			name: (value) => {
 				const trimmed = value.trim();
-				if (!trimmed) return 'Name is required';
+				if (!trimmed) return t('form.validation.nameRequired');
 				const isDuplicate = list.some((item) => {
 					if (isEditMode && item.name === schedule?.name) return false;
 					return item.name.toLowerCase() === trimmed.toLowerCase();
 				});
-				return isDuplicate ? 'Preset name must be unique' : null;
+				return isDuplicate ? t('form.validation.nameUnique') : null;
 			},
 		},
 	});
@@ -133,8 +135,8 @@ const SchedulerPredefinedParamsForm: React.FC<
 	const handleSubmit = async (values: FormValues) => {
 		if (!config) {
 			notifications.show({
-				title: 'Configuration missing',
-				message: 'Client configuration could not be loaded.',
+				title: t('notifications.configurationMissing.title'),
+				message: t('notifications.configurationMissing.message'),
 				color: 'red',
 			});
 			return;
@@ -155,8 +157,8 @@ const SchedulerPredefinedParamsForm: React.FC<
 		const activeDays = normalizedDayConfigs.filter((day) => day.isActive);
 		if (!activeDays.length) {
 			notifications.show({
-				title: 'Add at least one active day',
-				message: 'Select the days where calls are allowed.',
+				title: t('notifications.noActiveDays.title'),
+				message: t('notifications.noActiveDays.message'),
 				color: 'red',
 			});
 			return;
@@ -166,9 +168,8 @@ const SchedulerPredefinedParamsForm: React.FC<
 
 		if (invalidDay) {
 			notifications.show({
-				title: 'Check day hours',
-				message:
-					'Each active day needs a start and end hour, and end must be after start.',
+				title: t('notifications.invalidHours.title'),
+				message: t('notifications.invalidHours.message'),
 				color: 'red',
 			});
 			return;
@@ -197,8 +198,8 @@ const SchedulerPredefinedParamsForm: React.FC<
 			const index = list.findIndex((item) => item.name === schedule.name);
 			if (index === -1) {
 				notifications.show({
-					title: 'Preset not found',
-					message: 'The selected preset could not be located.',
+					title: t('notifications.presetNotFound.title'),
+					message: t('notifications.presetNotFound.message'),
 					color: 'red',
 				});
 				return;
@@ -229,8 +230,10 @@ const SchedulerPredefinedParamsForm: React.FC<
 			}
 
 			notifications.show({
-				title: isEditMode ? 'Preset updated' : 'Preset created',
-				message: 'Scheduler preset saved successfully.',
+				title: isEditMode
+					? t('notifications.saved.updatedTitle')
+					: t('notifications.saved.createdTitle'),
+				message: t('notifications.saved.message'),
 				color: 'green',
 			});
 
@@ -238,8 +241,8 @@ const SchedulerPredefinedParamsForm: React.FC<
 		} catch (error) {
 			console.error('Failed to save preset', error);
 			notifications.show({
-				title: 'Save failed',
-				message: 'We could not save this preset. Please retry.',
+				title: t('notifications.saveFailed.title'),
+				message: t('notifications.saveFailed.message'),
 				color: 'red',
 			});
 		}
@@ -249,33 +252,34 @@ const SchedulerPredefinedParamsForm: React.FC<
 		<form onSubmit={form.onSubmit(handleSubmit)} className={classes.form}>
 			<Stack gap='sm'>
 				<TextInput
-					label='Scheduler preset name'
-					placeholder='Example: Standard business hours'
+					label={t('form.name.label')}
+					placeholder={t('form.name.placeholder')}
 					required
 					size='sm'
 					{...form.getInputProps('name')}
 				/>
 
 				<div className={classes.sectionHeader}>
-					<Text className={classes.sectionTitle}>Weekly windows</Text>
+					<Text className={classes.sectionTitle}>
+						{t('form.weeklyWindows.title')}
+					</Text>
 					<Text className={classes.sectionDescription}>
-						Activate days for this scheduler preset and set their start and end
-						time. Everything stays on one line to scan quickly.
+						{t('form.weeklyWindows.description')}
 					</Text>
 				</div>
 
 				<div className={classes.daysHeader}>
 					<Text size='xs' fw={600}>
-						Day
+						{t('form.daysHeader.day')}
 					</Text>
 					<Text size='xs' fw={600}>
-						Start
+						{t('form.daysHeader.start')}
 					</Text>
 					<Text size='xs' fw={600}>
-						End
+						{t('form.daysHeader.end')}
 					</Text>
 					<Text size='xs' fw={600}>
-						Status
+						{t('form.daysHeader.status')}
 					</Text>
 				</div>
 
@@ -301,10 +305,12 @@ const SchedulerPredefinedParamsForm: React.FC<
 								/>
 								<div className={classes.dayTitleGroup}>
 									<Text fw={700} size='sm'>
-										{fullDayLabelMap[day.dayOfWeek]}
+										{getDayFullLabel(t, day.dayOfWeek)}
 									</Text>
 									<Text size='xs' className={classes.dayStatus}>
-										{day.isActive ? 'Enabled' : 'Disabled'}
+										{day.isActive
+											? t('form.status.enabled')
+											: t('form.status.disabled')}
 									</Text>
 								</div>
 							</div>
@@ -331,7 +337,7 @@ const SchedulerPredefinedParamsForm: React.FC<
 								className={classes.inlineInput}
 							/>
 							<Text size='xs' className={classes.helperText}>
-								Use 24h format
+								{t('form.helper.use24h')}
 							</Text>
 						</div>
 					))}
@@ -340,7 +346,7 @@ const SchedulerPredefinedParamsForm: React.FC<
 
 			<Group justify='flex-end' className={classes.actions}>
 				<Button variant='light' size='sm' onClick={onClose}>
-					Cancel
+					{t('actions.cancel', { ns: 'common' })}
 				</Button>
 				{canSubmit && (
 					<Button
@@ -348,7 +354,9 @@ const SchedulerPredefinedParamsForm: React.FC<
 						loading={updateMutation.isPending || createMutation.isPending}
 						size='sm'
 					>
-						{isEditMode ? 'Update preset' : 'Create preset'}
+						{isEditMode
+							? t('form.actions.updatePreset')
+							: t('form.actions.createPreset')}
 					</Button>
 				)}
 			</Group>
