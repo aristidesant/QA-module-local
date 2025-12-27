@@ -1,1 +1,32 @@
-{}
+{
+	"page": {
+		"title": "Configuraciones de comportamiento del agente",
+		"description": "Modifica los parámetros de comportamiento predeterminados del agente para campañas."
+	},
+	"actions": {
+		"createOverride": "Crear sobrescritura",
+		"deleteOverride": "Eliminar sobrescritura",
+		"addParameter": "Agregar parámetro"
+	},
+	"globalNotice": {
+		"title": "Configuración global",
+		"description": {
+			"master": "Los cambios aquí actualizan los valores globales para todos los clientes. Procede con cuidado.",
+			"client": "Estos valores son de solo lectura para tu cliente. Crea una sobrescritura para personalizarlos."
+		}
+	},
+	"deleteParameter": {
+		"title": "Eliminar parámetro",
+		"description": "¿Seguro que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer."
+	},
+	"deleteOverride": {
+		"title": "Eliminar configuración",
+		"description": "¿Eliminar esta sobrescritura del cliente para usar los parámetros globales de campaña?"
+	},
+	"formModal": {
+		"title": {
+			"edit": "Editar configuración de comportamiento del agente",
+			"create": "Crear configuración de comportamiento del agente"
+		}
+	}
+}

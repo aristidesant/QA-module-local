@@ -26,8 +26,10 @@ import {
 import CampaignPredefinedParamsForm from './CampaignPredefinedParamsForm';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import InlineNotice from '~/components/InlineNotice';
+import { useTranslation } from 'react-i18next';
 
 const CampaignPredefinedParamsPage = () => {
+	const { t } = useTranslation('campaign-predefined-params');
 	const isMasterClient = useIsMasterClient();
 	const { data } = useClientConfigByName('campaign_predefined_params');
 	const updateMutation = useUpdateClientConfig();
@@ -143,17 +145,17 @@ const CampaignPredefinedParamsPage = () => {
 
 	return (
 		<ContentContainer
-			title='Agent Behavior Configurations'
-			description='Modify the default agent behavior parameters for campaigns.'
+			title={t('page.title')}
+			description={t('page.description')}
 			titleRight={
 				hasConfig ? (
 					<Group gap={'xs'}>
 						{canCreateOverride && (
-							<Tooltip label='Create override' withArrow>
+							<Tooltip label={t('actions.createOverride')} withArrow>
 								<ActionIcon
 									variant='light'
 									color='grape'
-									aria-label='Create override'
+									aria-label={t('actions.createOverride')}
 									onClick={handleCreateOverride}
 									loading={isCreatingOverride}
 									disabled={isCreatingOverride}
@@ -163,11 +165,11 @@ const CampaignPredefinedParamsPage = () => {
 							</Tooltip>
 						)}
 						{canDeleteConfig && (
-							<Tooltip label='Delete override' withArrow>
+							<Tooltip label={t('actions.deleteOverride')} withArrow>
 								<ActionIcon
 									variant='light'
 									color='red'
-									aria-label='Delete override'
+									aria-label={t('actions.deleteOverride')}
 									onClick={() => setDeleteConfigModalOpen(true)}
 									loading={isDeletingOverride}
 									disabled={isDeletingOverride}
@@ -177,11 +179,11 @@ const CampaignPredefinedParamsPage = () => {
 							</Tooltip>
 						)}
 						{(canEditConfig || (!isGlobalConfig && canCreateOverride)) && (
-							<Tooltip label='Add parameter' withArrow>
+							<Tooltip label={t('actions.addParameter')} withArrow>
 								<ActionIcon
 									variant='filled'
 									color='blue'
-									aria-label='Add parameter'
+									aria-label={t('actions.addParameter')}
 									onClick={handleAddNew}
 									disabled={
 										!hasConfig || (!canEditConfig && !canCreateOverride)
@@ -198,13 +200,13 @@ const CampaignPredefinedParamsPage = () => {
 			<Stack gap={'xs'}>
 				{isGlobalConfig && (
 					<InlineNotice
-						title='Global configuration'
+						title={t('globalNotice.title')}
 						color='orange'
 						icon={<IconAlertTriangle size={16} />}
 						description={
 							isMasterClient
-								? 'Changes here update the global defaults for every client. Proceed carefully.'
-								: 'These values are read-only for your client. Create an override to customize them.'
+								? t('globalNotice.description.master')
+								: t('globalNotice.description.client')
 						}
 					/>
 				)}
@@ -219,13 +221,14 @@ const CampaignPredefinedParamsPage = () => {
 			<Modal
 				opened={deleteModalOpen}
 				onClose={() => setDeleteModalOpen(false)}
-				title='Delete Parameter'
+				title={t('deleteParameter.title')}
 				centered
 				size='sm'
 			>
 				<Text size='sm' mb='md'>
-					Are you sure you want to delete &quot;{paramToDelete?.name}&quot;?
-					This action cannot be undone.
+					{t('deleteParameter.description', {
+						name: paramToDelete?.name ?? '',
+					})}
 				</Text>
 				<Group gap='xs' justify='flex-end'>
 					<Button
@@ -233,7 +236,7 @@ const CampaignPredefinedParamsPage = () => {
 						size='xs'
 						onClick={() => setDeleteModalOpen(false)}
 					>
-						Cancel
+						{t('actions.cancel', { ns: 'common' })}
 					</Button>
 					<Button
 						color='red'
@@ -241,7 +244,7 @@ const CampaignPredefinedParamsPage = () => {
 						onClick={handleConfirmDelete}
 						loading={updateMutation.isPending}
 					>
-						Delete
+						{t('actions.delete', { ns: 'common' })}
 					</Button>
 				</Group>
 			</Modal>
@@ -249,12 +252,12 @@ const CampaignPredefinedParamsPage = () => {
 			<Modal
 				opened={deleteConfigModalOpen}
 				onClose={() => setDeleteConfigModalOpen(false)}
-				title='Delete configuration'
+				title={t('deleteOverride.title')}
 				centered
 				size='sm'
 			>
 				<Text size='sm' mb='md'>
-					Delete this client override to use the global campaign parameters?
+					{t('deleteOverride.description')}
 				</Text>
 				<Group gap='xs' justify='flex-end'>
 					<Button
@@ -262,7 +265,7 @@ const CampaignPredefinedParamsPage = () => {
 						size='xs'
 						onClick={() => setDeleteConfigModalOpen(false)}
 					>
-						Cancel
+						{t('actions.cancel', { ns: 'common' })}
 					</Button>
 					<Button
 						color='red'
@@ -270,7 +273,7 @@ const CampaignPredefinedParamsPage = () => {
 						onClick={handleConfirmDeleteConfig}
 						loading={deleteMutation.isPending}
 					>
-						Delete override
+						{t('actions.deleteOverride')}
 					</Button>
 				</Group>
 			</Modal>
@@ -279,8 +282,8 @@ const CampaignPredefinedParamsPage = () => {
 				onClose={handleCloseForm}
 				title={
 					mode === 'edit'
-						? 'Edit Agent Behavior Configuration'
-						: 'Create Agent Behavior Configuration'
+						? t('formModal.title.edit')
+						: t('formModal.title.create')
 				}
 				size='xl'
 				radius='md'

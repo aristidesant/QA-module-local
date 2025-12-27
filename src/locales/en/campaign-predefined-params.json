@@ -1,1 +1,32 @@
-{}
+{
+	"page": {
+		"title": "Agent Behavior Configurations",
+		"description": "Modify the default agent behavior parameters for campaigns."
+	},
+	"actions": {
+		"createOverride": "Create override",
+		"deleteOverride": "Delete override",
+		"addParameter": "Add parameter"
+	},
+	"globalNotice": {
+		"title": "Global configuration",
+		"description": {
+			"master": "Changes here update the global defaults for every client. Proceed carefully.",
+			"client": "These values are read-only for your client. Create an override to customize them."
+		}
+	},
+	"deleteParameter": {
+		"title": "Delete Parameter",
+		"description": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone."
+	},
+	"deleteOverride": {
+		"title": "Delete configuration",
+		"description": "Delete this client override to use the global campaign parameters?"
+	},
+	"formModal": {
+		"title": {
+			"edit": "Edit Agent Behavior Configuration",
+			"create": "Create Agent Behavior Configuration"
+		}
+	}
+}
