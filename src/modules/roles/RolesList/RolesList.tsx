@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Alert, Center, Loader, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import BaseTable from '~/components/BaseTable';
 import { useGetAllRoles } from '~/queries/roleQueries';
 import type { RoleModel } from '~/models/RoleModel';
@@ -20,6 +21,7 @@ const RolesList: React.FC<RolesListProps> = ({
 	onEdit,
 	onDelete,
 }) => {
+	const { t } = useTranslation('roles');
 	const { data, isLoading, isError, error } = useGetAllRoles();
 
 	const columns = useRolesColumns({ onView, onEdit, onDelete });
@@ -51,9 +53,9 @@ const RolesList: React.FC<RolesListProps> = ({
 			<Alert
 				icon={<IconInfoCircle size={18} />}
 				color='red'
-				title='Unable to load roles'
+				title={t('list.errorTitle')}
 			>
-				{error instanceof Error ? error.message : 'Unknown error'}
+				{error instanceof Error ? error.message : t('list.unknownError')}
 			</Alert>
 		);
 	}
@@ -62,7 +64,7 @@ const RolesList: React.FC<RolesListProps> = ({
 		return (
 			<Center>
 				<Text size='sm' c='dimmed'>
-					No roles found.
+					{t('list.empty')}
 				</Text>
 			</Center>
 		);

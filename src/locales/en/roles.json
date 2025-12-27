@@ -1,11 +1,182 @@
 {
+	"title": "Roles",
+	"description": "Create, update, and control access with roles and permissions.",
+	"searchPlaceholder": "Search roles",
 	"newRole": "New Role",
 	"editRole": "Edit Role",
-	"cannotDeleteSystem": "Cannot delete system role",
 	"deleteRole": "Delete Role",
-	"deleted": "Role deleted",
-	"unableToDelete": "Unable to delete role",
-	"updated": "Role updated",
-	"created": "Role created",
-	"requestFailed": "Request failed"
+	"columns": {
+		"name": "Name",
+		"code": "Code",
+		"status": "Status",
+		"updated": "Updated",
+		"actions": "Actions"
+	},
+	"status": {
+		"active": "Active",
+		"inactive": "Inactive"
+	},
+	"list": {
+		"errorTitle": "Unable to load roles",
+		"unknownError": "Unknown error",
+		"empty": "No roles found."
+	},
+	"table": {
+		"role": {
+			"codeLabel": "Code",
+			"descriptionLabel": "Description",
+			"createdLabel": "Created",
+			"systemBadge": "System"
+		},
+		"actions": {
+			"view": "View role",
+			"edit": "Edit role",
+			"delete": "Delete role",
+			"deleteDisabled": "System roles cannot be deleted"
+		}
+	},
+	"deleteModal": {
+		"confirmLabel": "Delete",
+		"body": "This will permanently delete <strong>{{name}}</strong>. This action cannot be undone."
+	},
+	"notifications": {
+		"cannotDeleteSystemTitle": "Cannot delete system role",
+		"cannotDeleteSystemMessage": "System roles are protected and cannot be deleted.",
+		"deletedTitle": "Role deleted",
+		"deletedMessage": "{{name}} was deleted.",
+		"deleteErrorTitle": "Unable to delete role",
+		"updatedTitle": "Role updated",
+		"updatedMessage": "{{name}} was updated.",
+		"createdTitle": "Role created",
+		"createdMessage": "{{name}} was created.",
+		"requestFailedTitle": "Request failed"
+	},
+	"form": {
+		"loadErrorTitle": "Unable to load role",
+		"validation": {
+			"nameRequired": "Name is required",
+			"codeRequired": "Code is required",
+			"codeFormat": "Code must be uppercase with underscores only",
+			"missingRoleId": "Missing role id"
+		},
+		"sections": {
+			"basics": {
+				"title": "Basics",
+				"description": "Define the role name and internal identifier."
+			},
+			"permissions": {
+				"title": "Permissions",
+				"description": "Choose which modules this role can access and what actions are allowed."
+			}
+		},
+		"fields": {
+			"name": {
+				"label": "Role name",
+				"placeholder": "e.g., Campaign Manager"
+			},
+			"code": {
+				"label": "Role code",
+				"placeholder": "e.g., CAMPAIGN_MANAGER"
+			},
+			"description": {
+				"label": "Description",
+				"placeholder": "Describe the purpose of this role"
+			},
+			"isActive": {
+				"label": "Active role",
+				"description": "Inactive roles can’t be assigned to users.",
+				"hint": "You can deactivate a role without deleting it."
+			}
+		},
+		"masterClientOnly": {
+			"tooltip": "Only available for the master client.",
+			"ariaLabel": "Master client only"
+		},
+		"permissions": {
+			"selectedCount": "{{selected}} of {{total}} selected",
+			"moduleNames": {
+				"DASHBOARD": "Dashboard",
+				"CAMPAIGNS": "Campaigns",
+				"CONTACTS": "Contacts",
+				"CONVERSATIONS": "Conversations",
+				"KNOWLEDGE_BASES": "Knowledge bases",
+				"TOOLS": "Tools",
+				"PROMPTS": "Prompts",
+				"SCHEDULES": "Schedules",
+				"USERS": "Users",
+				"SETTINGS": "Settings",
+				"REPORTS": "Reports",
+				"ROLES": "Roles"
+			},
+			"permissionLabels": {
+				"READ": "Read",
+				"CREATE": "Create",
+				"UPDATE": "Update",
+				"DELETE": "Delete",
+				"EXPORT": "Export",
+				"MANAGE": "Manage"
+			},
+			"actionLabels": {
+				"default": "{{permission}}",
+				"READ": "View",
+				"CREATE": "Create",
+				"UPDATE": "Update",
+				"DELETE": "Delete",
+				"EXPORT": "Export",
+				"MANAGE": "Manage"
+			},
+			"tooltips": {
+				"dashboard": {
+					"read": "Access the Overview dashboard (home page)."
+				},
+				"campaigns": {
+					"read": "View campaigns and related configuration.",
+					"create": "Create new campaigns.",
+					"update": "Edit existing campaigns.",
+					"delete": "Delete campaigns.",
+					"export": "Export campaign data."
+				},
+				"conversations": {
+					"read": "View conversations and transcripts.",
+					"export": "Export conversations."
+				},
+				"settings": {
+					"read": "View settings.",
+					"manage": "Manage global settings for this client."
+				},
+				"roles": {
+					"read": "View roles and permissions.",
+					"create": "Create new roles.",
+					"update": "Edit existing roles.",
+					"delete": "Delete roles."
+				},
+				"manage": "Full access to {{module}}.",
+				"generic": "{{action}} access for {{module}}."
+			}
+		},
+		"actions": {
+			"helperText": "Changes are applied immediately after saving.",
+			"saveChanges": "Save changes",
+			"createRole": "Create role"
+		}
+	},
+	"details": {
+		"title": "Role details",
+		"closeAriaLabel": "Close details",
+		"loadErrorTitle": "Unable to load role details",
+		"updatedRelative": "Updated {{relative}}",
+		"noPermissions": "No permissions assigned to this role",
+		"cards": {
+			"roleTitle": "Role",
+			"permissionsTitle": "Permissions",
+			"activityTitle": "Activity"
+		},
+		"activity": {
+			"created": "Created",
+			"lastUpdated": "Last updated"
+		},
+		"badges": {
+			"systemRole": "System role"
+		}
+	}
 }

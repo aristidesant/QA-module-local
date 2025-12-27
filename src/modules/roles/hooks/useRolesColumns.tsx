@@ -9,6 +9,7 @@ import {
 	Text,
 	Tooltip,
 } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import {
 	IconEye,
 	IconInfoCircle,
@@ -43,12 +44,14 @@ const useRolesColumns = ({
 	onView,
 	onEdit,
 	onDelete,
-}: UseRolesColumnsParams): ColumnDef<RoleModel>[] =>
-	useMemo(
+}: UseRolesColumnsParams): ColumnDef<RoleModel>[] => {
+	const { t } = useTranslation('roles');
+
+	return useMemo(
 		() => [
 			{
 				id: 'name',
-				header: 'Name',
+				header: t('columns.name'),
 				cell: ({ row }) => {
 					const role = row.original;
 
@@ -63,15 +66,17 @@ const useRolesColumns = ({
 								<HoverCard.Dropdown>
 									<Stack gap='xs'>
 										<Text fz='xs'>
-											<strong>Code:</strong> {role.code}
+											<strong>{t('table.role.codeLabel')}:</strong> {role.code}
 										</Text>
 										{role.description && (
 											<Text fz='xs'>
-												<strong>Description:</strong> {role.description}
+												<strong>{t('table.role.descriptionLabel')}:</strong>{' '}
+												{role.description}
 											</Text>
 										)}
 										<Text fz='xs'>
-											<strong>Created:</strong> {formatDateTime(role.createdAt)}
+											<strong>{t('table.role.createdLabel')}:</strong>{' '}
+											{formatDateTime(role.createdAt)}
 										</Text>
 									</Stack>
 								</HoverCard.Dropdown>
@@ -88,7 +93,7 @@ const useRolesColumns = ({
 										leftSection={<IconShield size={10} />}
 										className={classes.systemBadge}
 									>
-										System
+										{t('table.role.systemBadge')}
 									</Badge>
 								)}
 							</Group>
@@ -98,7 +103,7 @@ const useRolesColumns = ({
 			},
 			{
 				accessorKey: 'code',
-				header: 'Code',
+				header: t('columns.code'),
 				cell: ({ getValue }) => {
 					const value = getValue<string>();
 					return (
@@ -110,7 +115,7 @@ const useRolesColumns = ({
 			},
 			{
 				id: 'status',
-				header: 'Status',
+				header: t('columns.status'),
 				cell: ({ row }) => {
 					const role = row.original;
 					return (
@@ -120,14 +125,14 @@ const useRolesColumns = ({
 							size='sm'
 							className={classes.statusBadge}
 						>
-							{role.isActive ? 'Active' : 'Inactive'}
+							{role.isActive ? t('status.active') : t('status.inactive')}
 						</Badge>
 					);
 				},
 			},
 			{
 				accessorKey: 'updatedAt',
-				header: 'Updated',
+				header: t('columns.updated'),
 				cell: ({ getValue }) => {
 					const value = getValue<string | Date | null | undefined>();
 					return <Text fz='xs'>{value ? timeAgo(value) : '—'}</Text>;
@@ -135,7 +140,7 @@ const useRolesColumns = ({
 			},
 			{
 				id: 'actions',
-				header: 'Actions',
+				header: t('columns.actions'),
 				meta: {
 					headerClassName: classes.actionsHeader,
 					cellClassName: classes.actionsCell,
@@ -145,24 +150,24 @@ const useRolesColumns = ({
 
 					return (
 						<Group gap='xs' justify='flex-end' wrap='nowrap'>
-							<Tooltip label='View role' withArrow>
+							<Tooltip label={t('table.actions.view')} withArrow>
 								<ActionIcon
 									onClick={(event) => {
 										event.stopPropagation();
 										onView(role.id);
 									}}
-									aria-label='View role'
+									aria-label={t('table.actions.view')}
 								>
 									<IconEye size={16} />
 								</ActionIcon>
 							</Tooltip>
-							<Tooltip label='Edit role' withArrow>
+							<Tooltip label={t('table.actions.edit')} withArrow>
 								<ActionIcon
 									onClick={(event) => {
 										event.stopPropagation();
 										onEdit(role.id);
 									}}
-									aria-label='Edit role'
+									aria-label={t('table.actions.edit')}
 								>
 									<IconPencil size={16} />
 								</ActionIcon>
@@ -170,8 +175,8 @@ const useRolesColumns = ({
 							<Tooltip
 								label={
 									role.isSystem
-										? 'System roles cannot be deleted'
-										: 'Delete role'
+										? t('table.actions.deleteDisabled')
+										: t('table.actions.delete')
 								}
 								withArrow
 							>
@@ -181,7 +186,7 @@ const useRolesColumns = ({
 										event.stopPropagation();
 										onDelete(role);
 									}}
-									aria-label='Delete role'
+									aria-label={t('table.actions.delete')}
 									disabled={role.isSystem}
 								>
 									<IconTrash size={16} />
@@ -192,7 +197,7 @@ const useRolesColumns = ({
 				},
 			},
 		],
-		[onDelete, onEdit, onView]
+		[onDelete, onEdit, onView, t]
 	);
-
+};
 export default useRolesColumns;

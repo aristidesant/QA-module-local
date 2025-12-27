@@ -104,7 +104,7 @@ describe('RoleDetails', () => {
 
 		await waitFor(() => {
 			expect(screen.getByText('Active')).toBeInTheDocument();
-			expect(screen.getByText('System Role')).toBeInTheDocument();
+			expect(screen.getByText('System role')).toBeInTheDocument();
 		});
 	});
 
@@ -326,7 +326,7 @@ describe('RoleDetails', () => {
 		renderWithProviders(<RoleDetails roleId={1} />);
 
 		await waitFor(() => {
-			expect(screen.queryByText('System Role')).not.toBeInTheDocument();
+			expect(screen.queryByText('System role')).not.toBeInTheDocument();
 			expect(screen.getByText('Active')).toBeInTheDocument();
 		});
 	});
