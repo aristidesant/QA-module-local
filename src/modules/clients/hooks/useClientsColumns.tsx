@@ -2,6 +2,7 @@ import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { ClientModel } from '~/models/ClientModel';
 
 interface UseClientsColumnsProps {
@@ -13,11 +14,12 @@ const useClientsColumns = ({
 	onEdit,
 	onDelete,
 }: UseClientsColumnsProps): ColumnDef<ClientModel>[] => {
+	const { t } = useTranslation('clients');
 	const columns = useMemo<ColumnDef<ClientModel>[]>(
 		() => [
 			{
 				accessorKey: 'name',
-				header: 'Name',
+				header: t('table.columns.name'),
 				cell: ({ row }) => (
 					<Text size='sm' fw={500}>
 						{row.original.name}
@@ -26,7 +28,7 @@ const useClientsColumns = ({
 			},
 			{
 				accessorKey: 'email',
-				header: 'Email',
+				header: t('table.columns.email'),
 				cell: ({ row }) => (
 					<Text size='sm' c='dimmed'>
 						{row.original.email || '-'}
@@ -35,7 +37,7 @@ const useClientsColumns = ({
 			},
 			{
 				accessorKey: 'phone',
-				header: 'Phone',
+				header: t('table.columns.phone'),
 				cell: ({ row }) => (
 					<Text size='sm' c='dimmed'>
 						{row.original.phone || '-'}
@@ -44,10 +46,10 @@ const useClientsColumns = ({
 			},
 			{
 				id: 'actions',
-				header: 'Actions',
+				header: t('table.columns.actions'),
 				cell: ({ row }) => (
 					<Group gap={4} justify='flex-end' wrap='nowrap'>
-						<Tooltip label='Edit'>
+						<Tooltip label={t('actions.edit', { ns: 'common' })}>
 							<ActionIcon
 								variant='subtle'
 								color='blue'
@@ -59,7 +61,7 @@ const useClientsColumns = ({
 								<IconEdit size={16} />
 							</ActionIcon>
 						</Tooltip>
-						<Tooltip label='Delete'>
+						<Tooltip label={t('actions.delete', { ns: 'common' })}>
 							<ActionIcon
 								variant='subtle'
 								color='red'
@@ -78,7 +80,7 @@ const useClientsColumns = ({
 				},
 			},
 		],
-		[onEdit, onDelete]
+		[onEdit, onDelete, t]
 	);
 
 	return columns;

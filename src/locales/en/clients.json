@@ -1,1 +1,121 @@
-{}
+{
+	"page": {
+		"title": "Clients",
+		"description": "Manage clients and their configurations",
+		"search": {
+			"placeholder": "Search clients"
+		},
+		"actions": {
+			"newClient": "New Client"
+		},
+		"modals": {
+			"create": {
+				"title": "New Client"
+			},
+			"edit": {
+				"title": "Edit Client"
+			},
+			"delete": {
+				"title": "Delete Client",
+				"confirm": "Delete client",
+				"descriptionPrefix": "This action cannot be undone. Are you sure you want to delete",
+				"descriptionSuffix": "?"
+			}
+		}
+	},
+	"list": {
+		"error": {
+			"title": "Unable to load clients"
+		},
+		"empty": "No clients found."
+	},
+	"table": {
+		"columns": {
+			"name": "Name",
+			"email": "Email",
+			"phone": "Phone",
+			"actions": "Actions"
+		}
+	},
+	"form": {
+		"intro": "Keep contact, address, and billing details tidy so teams can move fast.",
+		"footerNote": "All changes are saved securely when you submit.",
+		"actions": {
+			"saveChanges": "Save changes",
+			"createClient": "Create client"
+		},
+		"errors": {
+			"missingClientId": "Missing client ID"
+		},
+		"loadError": {
+			"title": "Unable to load client"
+		},
+		"validation": {
+			"nameRequired": "Name is required",
+			"emailInvalid": "Invalid email format"
+		},
+		"sections": {
+			"profile": {
+				"title": "Profile",
+				"description": "Name and context for this client."
+			},
+			"contact": {
+				"title": "Contact",
+				"description": "Primary inbox and phone for outreach."
+			},
+			"locationTax": {
+				"title": "Location & Tax",
+				"description": "Where the client operates and how they bill."
+			}
+		},
+		"fields": {
+			"name": {
+				"label": "Name",
+				"placeholder": "Acme Corporation"
+			},
+			"description": {
+				"label": "Description",
+				"placeholder": "Short mission statement or notes"
+			},
+			"email": {
+				"label": "Email",
+				"placeholder": "team@acme.com"
+			},
+			"phone": {
+				"label": "Phone",
+				"placeholder": "+1 (555) 123-4567"
+			},
+			"address": {
+				"label": "Address",
+				"placeholder": "123 Market Street"
+			},
+			"rnc": {
+				"label": "RNC",
+				"placeholder": "Tax ID / RNC"
+			}
+		}
+	},
+	"notifications": {
+		"created": {
+			"title": "Client created",
+			"message": "New client has been added"
+		},
+		"updated": {
+			"title": "Client updated",
+			"message": "Client has been updated successfully"
+		},
+		"deleted": {
+			"title": "Client deleted",
+			"message": "{{name}} has been removed"
+		},
+		"deleteFailed": {
+			"title": "Unable to delete client"
+		},
+		"requestFailed": {
+			"title": "Request failed"
+		}
+	},
+	"errors": {
+		"unknownError": "Unknown error occurred"
+	}
+}

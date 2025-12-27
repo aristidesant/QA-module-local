@@ -270,11 +270,13 @@ const router = createBrowserRouter([
 								permission={PermissionEnum.MANAGE}
 								masterOnly
 							>
-								<Suspense
-									fallback={<SuspenseFallback message='Loading clients...' />}
-								>
-									<ClientsPage />
-								</Suspense>
+								<I18nNamespaceLoader>
+									<Suspense
+										fallback={<SuspenseFallback message='Loading clients...' />}
+									>
+										<ClientsPage />
+									</Suspense>
+								</I18nNamespaceLoader>
 							</ModuleGuard>
 						),
 					},

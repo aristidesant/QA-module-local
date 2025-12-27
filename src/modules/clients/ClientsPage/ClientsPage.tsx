@@ -3,6 +3,7 @@ import { Button, Group, TextInput, Text } from '@mantine/core';
 import { IconPlus, IconSearch } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
+import { useTranslation } from 'react-i18next';
 import classes from './ClientsPage.module.css';
 import ClientsList from '../ClientsList/ClientsList';
 import ClientForm from '../ClientForm/ClientForm';
@@ -11,6 +12,7 @@ import { useDeleteClient } from '~/queries/clientQueries';
 import type { ClientModel } from '~/models/ClientModel';
 
 const ClientsPage: React.FC = () => {
+	const { t } = useTranslation('clients');
 	const [search, setSearch] = useState('');
 	const deleteMutation = useDeleteClient();
 
@@ -27,7 +29,7 @@ const ClientsPage: React.FC = () => {
 
 	const openCreateModal = useCallback(() => {
 		modals.open({
-			title: 'New Client',
+			title: t('page.modals.create.title'),
 			fullScreen: false,
 			size: 'xl',
 			radius: 'lg',
@@ -42,12 +44,12 @@ const ClientsPage: React.FC = () => {
 			withCloseButton: true,
 			closeOnClickOutside: false,
 		});
-	}, [handleSuccess]);
+	}, [handleSuccess, t]);
 
 	const openEditModal = useCallback(
 		(clientId: number) => {
 			modals.open({
-				title: 'Edit Client',
+				title: t('page.modals.edit.title'),
 				fullScreen: false,
 				size: 'xl',
 				radius: 'lg',
@@ -64,55 +66,61 @@ const ClientsPage: React.FC = () => {
 				closeOnClickOutside: false,
 			});
 		},
-		[handleSuccess]
+		[handleSuccess, t]
 	);
 
 	const handleDelete = useCallback(
 		(client: ClientModel) => {
 			modals.openConfirmModal({
-				title: 'Delete Client',
+				title: t('page.modals.delete.title'),
 				centered: true,
-				labels: { confirm: 'Delete client', cancel: 'Cancel' },
+				labels: {
+					confirm: t('page.modals.delete.confirm'),
+					cancel: t('actions.cancel', { ns: 'common' }),
+				},
 				confirmProps: { color: 'red' },
 				children: (
 					<Text size='sm'>
-						This action cannot be undone. Are you sure you want to delete{' '}
-						<strong>{client.name}</strong>?
+						{t('page.modals.delete.descriptionPrefix')}{' '}
+						<strong>{client.name}</strong>
+						{t('page.modals.delete.descriptionSuffix')}
 					</Text>
 				),
 				onConfirm: async () => {
 					try {
 						await deleteMutation.mutateAsync(client.id);
 						notifications.show({
-							title: 'Client deleted',
-							message: `${client.name} has been removed`,
+							title: t('notifications.deleted.title'),
+							message: t('notifications.deleted.message', {
+								name: client.name,
+							}),
 							color: 'green',
 						});
 					} catch (error) {
 						notifications.show({
-							title: 'Unable to delete client',
+							title: t('notifications.deleteFailed.title'),
 							message:
 								error instanceof Error
 									? error.message
-									: 'Unknown error occurred',
+									: t('errors.unknownError'),
 							color: 'red',
 						});
 					}
 				},
 			});
 		},
-		[deleteMutation]
+		[deleteMutation, t]
 	);
 
 	return (
 		<ContentContainer
-			title='Clients'
-			description='Manage clients and their configurations'
+			title={t('page.title')}
+			description={t('page.description')}
 		>
 			<div className={classes.root}>
 				<Group className={classes.header} gap='sm'>
 					<TextInput
-						placeholder='Search clients'
+						placeholder={t('page.search.placeholder')}
 						leftSection={<IconSearch size={18} />}
 						value={search}
 						onChange={handleSearchChange}
@@ -123,7 +131,7 @@ const ClientsPage: React.FC = () => {
 						onClick={openCreateModal}
 						variant='light'
 					>
-						New Client
+						{t('page.actions.newClient')}
 					</Button>
 				</Group>
 				<ClientsList
