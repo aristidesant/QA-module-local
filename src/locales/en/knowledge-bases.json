@@ -2,10 +2,55 @@
 	"deleteKnowledgeBase": "Delete Knowledge Base",
 	"noKnowledgeBases": "No knowledge bases found",
 	"searchPlaceholder": "Search knowledge bases",
+	"page": {
+		"title": "Knowledge Bases",
+		"description": "Manage collections of documents used by your agents",
+		"actions": {
+			"new": "New Knowledge Base"
+		}
+	},
+	"list": {
+		"empty": {
+			"title": "No knowledge bases found",
+			"description": "Create your first knowledge base to surface documents to agents.",
+			"actions": {
+				"create": "Create Knowledge Base"
+			}
+		}
+	},
+	"filter": {
+		"search": {
+			"placeholder": "Search knowledge bases..."
+		},
+		"status": {
+			"placeholder": "All statuses",
+			"all": "All statuses"
+		},
+		"type": {
+			"placeholder": "All types",
+			"all": "All types"
+		},
+		"results": "{{count}} of {{total}} items",
+		"actions": {
+			"refresh": "Refresh"
+		}
+	},
 	"all": "All",
 	"url": "URL",
 	"text": "Text",
 	"file": "File",
+	"type": {
+		"FILE": "File",
+		"URL": "URL",
+		"TEXT": "Text"
+	},
+	"status": {
+		"PENDING": "Pending",
+		"UPLOADING": "Uploading",
+		"ACTIVE": "Active",
+		"FAILED": "Failed",
+		"INACTIVE": "Inactive"
+	},
 	"createNew": "Create new",
 	"selected": "{{count}} selected",
 	"saveSelections": "Save Selections",
@@ -13,7 +58,22 @@
 	"columns": {
 		"name": "Name",
 		"description": "Description",
-		"type": "Type"
+		"type": "Type",
+		"status": "Status",
+		"createdAt": "Created At",
+		"actions": "Actions"
+	},
+	"table": {
+		"actions": {
+			"openUrl": "Open URL",
+			"downloadFile": "Download file",
+			"retryUpload": "Retry upload",
+			"edit": "Edit knowledge base",
+			"delete": "Delete knowledge base"
+		}
+	},
+	"confirmDelete": {
+		"body": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone."
 	},
 	"fallbacks": {
 		"textSnippet": "Text snippet",

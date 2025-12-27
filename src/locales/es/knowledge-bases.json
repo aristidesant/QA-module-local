@@ -2,10 +2,55 @@
 	"deleteKnowledgeBase": "Eliminar base de conocimiento",
 	"noKnowledgeBases": "No se encontraron bases de conocimiento",
 	"searchPlaceholder": "Buscar bases de conocimiento",
+	"page": {
+		"title": "Bases de conocimiento",
+		"description": "Administra colecciones de documentos usados por tus agentes",
+		"actions": {
+			"new": "Nueva base de conocimiento"
+		}
+	},
+	"list": {
+		"empty": {
+			"title": "No se encontraron bases de conocimiento",
+			"description": "Crea tu primera base de conocimiento para que los agentes puedan consultar documentos.",
+			"actions": {
+				"create": "Crear base de conocimiento"
+			}
+		}
+	},
+	"filter": {
+		"search": {
+			"placeholder": "Buscar bases de conocimiento..."
+		},
+		"status": {
+			"placeholder": "Todos los estados",
+			"all": "Todos los estados"
+		},
+		"type": {
+			"placeholder": "Todos los tipos",
+			"all": "Todos los tipos"
+		},
+		"results": "{{count}} de {{total}} elementos",
+		"actions": {
+			"refresh": "Actualizar"
+		}
+	},
 	"all": "Todas",
 	"url": "URL",
 	"text": "Texto",
 	"file": "Archivo",
+	"type": {
+		"FILE": "Archivo",
+		"URL": "URL",
+		"TEXT": "Texto"
+	},
+	"status": {
+		"PENDING": "Pendiente",
+		"UPLOADING": "Subiendo",
+		"ACTIVE": "Activo",
+		"FAILED": "Fallido",
+		"INACTIVE": "Inactivo"
+	},
 	"createNew": "Crear nueva",
 	"selected": "{{count}} seleccionados",
 	"saveSelections": "Guardar selecciones",
@@ -13,7 +58,22 @@
 	"columns": {
 		"name": "Nombre",
 		"description": "Descripción",
-		"type": "Tipo"
+		"type": "Tipo",
+		"status": "Estado",
+		"createdAt": "Creado",
+		"actions": "Acciones"
+	},
+	"table": {
+		"actions": {
+			"openUrl": "Abrir URL",
+			"downloadFile": "Descargar archivo",
+			"retryUpload": "Reintentar subida",
+			"edit": "Editar base de conocimiento",
+			"delete": "Eliminar base de conocimiento"
+		}
+	},
+	"confirmDelete": {
+		"body": "¿Estás seguro de que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer."
 	},
 	"fallbacks": {
 		"textSnippet": "Fragmento de texto",

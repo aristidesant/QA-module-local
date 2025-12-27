@@ -7,6 +7,7 @@ import {
 	KnowledgeBaseType,
 } from '~/models/KnowledgeBaseModel';
 import classes from './KnowledgeBaseFilter.module.css';
+import { useTranslation } from 'react-i18next';
 
 interface FilterProps {
 	query: string;
@@ -31,11 +32,13 @@ const KnowledgeBaseFilter: React.FC<FilterProps> = ({
 	count,
 	refetch,
 }) => {
+	const { t } = useTranslation('knowledge-bases');
+
 	return (
 		<FilterContainer>
 			<TextInput
 				leftSection={<IconSearch size={16} />}
-				placeholder='Search knowledge bases...'
+				placeholder={t('filter.search.placeholder')}
 				value={query}
 				onChange={(e) => setQuery(e.currentTarget.value)}
 				size='sm'
@@ -43,12 +46,12 @@ const KnowledgeBaseFilter: React.FC<FilterProps> = ({
 			/>
 			<Group gap='xs' wrap='nowrap' className={classes.selectGroup}>
 				<Select
-					placeholder='All statuses'
+					placeholder={t('filter.status.placeholder')}
 					data={[
-						{ value: '', label: 'All statuses' },
+						{ value: '', label: t('filter.status.all') },
 						...Object.values(KnowledgeBaseStatus).map((s) => ({
 							value: s,
-							label: s,
+							label: t(`status.${s}`),
 						})),
 					]}
 					value={statusFilter ?? ''}
@@ -59,12 +62,12 @@ const KnowledgeBaseFilter: React.FC<FilterProps> = ({
 					checkIconPosition='right'
 				/>
 				<Select
-					placeholder='All types'
+					placeholder={t('filter.type.placeholder')}
 					data={[
-						{ value: '', label: 'All types' },
-						...Object.values(KnowledgeBaseType).map((t) => ({
-							value: t,
-							label: t,
+						{ value: '', label: t('filter.type.all') },
+						...Object.values(KnowledgeBaseType).map((typeValue) => ({
+							value: typeValue,
+							label: t(`type.${typeValue}`),
 						})),
 					]}
 					value={typeFilter ?? ''}
@@ -77,7 +80,7 @@ const KnowledgeBaseFilter: React.FC<FilterProps> = ({
 			</Group>
 			<Group gap='xs' wrap='nowrap' className={classes.toolbarActions}>
 				<Text size='sm' className={classes.resultsCounter}>
-					{count} of {total} items
+					{t('filter.results', { count, total })}
 				</Text>
 				<Button
 					onClick={() => refetch()}
@@ -86,7 +89,7 @@ const KnowledgeBaseFilter: React.FC<FilterProps> = ({
 					leftSection={<IconRefresh size={16} />}
 					className={classes.refreshButton}
 				>
-					Refresh
+					{t('filter.actions.refresh')}
 				</Button>
 			</Group>
 		</FilterContainer>
