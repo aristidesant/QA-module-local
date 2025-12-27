@@ -3,6 +3,7 @@ import { Button, TextInput, Group, Text } from '@mantine/core';
 import { IconPlus, IconSearch } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
+import { Trans, useTranslation } from 'react-i18next';
 import classes from './UsersPage.module.css';
 import UsersList from '../UsersList';
 import UserForm from '../UserForm';
@@ -13,6 +14,8 @@ import type { UserModel } from '~/models/UserModels';
 import useUsersPageStore from '../store/useUsersPageStore';
 
 const UsersPage: React.FC = () => {
+	const { t } = useTranslation('users');
+	const { t: tCommon } = useTranslation('common');
 	const [search, setSearch] = useState('');
 	const [refreshKey, setRefreshKey] = useState(0);
 	const deleteMutation = useDeleteUser();
@@ -62,19 +65,19 @@ const UsersPage: React.FC = () => {
 
 	const openCreateModal = useCallback(() => {
 		modals.open({
-			title: 'New User',
+			title: t('newUser'),
 			fullScreen: true,
 			children: <UserForm mode='create' onSuccess={handleModalSuccess} />,
 			centered: true,
 			withCloseButton: true,
 			closeOnClickOutside: false,
 		});
-	}, [handleModalSuccess]);
+	}, [handleModalSuccess, t]);
 
 	const openEditModal = useCallback(
 		(userId: number) => {
 			modals.open({
-				title: 'Edit User',
+				title: t('editUser'),
 				fullScreen: true,
 				styles: {
 					body: {
@@ -93,58 +96,63 @@ const UsersPage: React.FC = () => {
 				closeOnClickOutside: false,
 			});
 		},
-		[handleModalSuccess]
+		[handleModalSuccess, t]
 	);
 
 	const handleDelete = useCallback(
 		(user: UserModel) => {
 			modals.openConfirmModal({
-				title: 'Delete User',
+				title: t('deleteUser'),
 				centered: true,
-				labels: { confirm: 'Delete user', cancel: 'Cancel' },
+				labels: {
+					confirm: t('deleteModal.confirmLabel'),
+					cancel: tCommon('actions.cancel'),
+				},
 				confirmProps: { color: 'red' },
 				children: (
 					<Text size='sm'>
-						This action cannot be undone. Are you sure you want to delete{' '}
-						<strong>{user.email}</strong>?
+						<Trans
+							ns='users'
+							i18nKey='deleteModal.body'
+							values={{ email: user.email }}
+							components={{ strong: <strong /> }}
+						/>
 					</Text>
 				),
 				onConfirm: async () => {
 					try {
 						await deleteMutation.mutateAsync(user.id);
 						notifications.show({
-							title: 'User deleted',
-							message: `${user.email} has been removed`,
+							title: t('notifications.deletedTitle'),
+							message: t('notifications.deletedMessage', { email: user.email }),
 							color: 'green',
 						});
 						setRefreshKey((prev) => prev + 1);
 						clearRightComponent();
 					} catch (error) {
 						notifications.show({
-							title: 'Unable to delete user',
+							title: t('notifications.deleteErrorTitle'),
 							message:
-								error instanceof Error
-									? error.message
-									: 'Unknown error occurred',
+								error instanceof Error ? error.message : t('list.unknownError'),
 							color: 'red',
 						});
 					}
 				},
 			});
 		},
-		[clearRightComponent, deleteMutation]
+		[clearRightComponent, deleteMutation, t, tCommon]
 	);
 
 	return (
 		<ContentContainer
-			title='Users'
-			description='Manage user access and profiles'
+			title={t('title')}
+			description={t('description')}
 			rightSection={rightSectionContent}
 		>
 			<div className={classes.root}>
 				<Group className={classes.header} gap='sm'>
 					<TextInput
-						placeholder='Search users'
+						placeholder={t('searchPlaceholder')}
 						leftSection={<IconSearch size={18} />}
 						value={search}
 						onChange={handleSearchChange}
@@ -155,7 +163,7 @@ const UsersPage: React.FC = () => {
 						onClick={openCreateModal}
 						variant='light'
 					>
-						New User
+						{t('newUser')}
 					</Button>
 				</Group>
 				<UsersList

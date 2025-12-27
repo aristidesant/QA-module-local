@@ -17,6 +17,7 @@ import {
 	IconX,
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 import RightSectionCard from '~/components/RightSectionCard/RightSectionCard';
 import classes from './UserDetails.module.css';
 import { useGetUser } from '~/queries/userQueries';
@@ -56,6 +57,7 @@ const statusColors: Record<string, string> = {
 };
 
 const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
+	const { t } = useTranslation('users');
 	const { data: user, isLoading, isError, error } = useGetUser(userId);
 	const clearRightComponent = useUsersPageStore(
 		(state) => state.clearRightComponent
@@ -65,14 +67,14 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
 		return (
 			<Stack gap='md' className={classes.cards}>
 				<RightSectionCard
-					title='Profile'
+					title={t('details.sections.profile')}
 					icon={IconUser}
 					iconColor='var(--mantine-color-blue-6)'
 					rightSection={
 						<ActionIcon
 							variant='subtle'
 							color='gray'
-							aria-label='Close details'
+							aria-label={t('details.actions.close')}
 							onClick={clearRightComponent}
 							size='sm'
 						>
@@ -92,7 +94,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
 				</RightSectionCard>
 
 				<RightSectionCard
-					title='Account'
+					title={t('details.sections.account')}
 					icon={IconId}
 					iconColor='var(--mantine-color-indigo-6)'
 				>
@@ -105,7 +107,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
 				</RightSectionCard>
 
 				<RightSectionCard
-					title='Security'
+					title={t('details.sections.security')}
 					icon={IconLock}
 					iconColor='var(--mantine-color-cyan-6)'
 				>
@@ -115,7 +117,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
 				</RightSectionCard>
 
 				<RightSectionCard
-					title='Activity'
+					title={t('details.sections.activity')}
 					icon={IconTimeline}
 					iconColor='var(--mantine-color-grape-6)'
 				>
@@ -132,7 +134,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
 	if (isError || !user) {
 		return (
 			<RightSectionCard
-				title='User details'
+				title={t('details.title')}
 				icon={IconUser}
 				iconColor='var(--mantine-color-blue-6)'
 				style={{ height: '100%' }}
@@ -140,7 +142,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
 					<ActionIcon
 						variant='subtle'
 						color='gray'
-						aria-label='Close details'
+						aria-label={t('details.actions.close')}
 						onClick={clearRightComponent}
 						size='sm'
 					>
@@ -150,10 +152,10 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
 			>
 				<Alert
 					icon={<IconInfoCircle size={18} />}
-					title='Unable to load user details'
+					title={t('details.loadErrorTitle')}
 					color='red'
 				>
-					{error instanceof Error ? error.message : 'Unknown error'}
+					{error instanceof Error ? error.message : t('list.unknownError')}
 				</Alert>
 			</RightSectionCard>
 		);
@@ -166,39 +168,50 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
 	const accountDetails: Detail[] = [];
 
 	if (user.client?.name) {
-		accountDetails.push({ label: 'Client name', value: user.client.name });
+		accountDetails.push({
+			label: t('details.labels.clientName'),
+			value: user.client.name,
+		});
 	}
 
 	if (user.client?.identifier) {
 		accountDetails.push({
-			label: 'Client identifier',
+			label: t('details.labels.clientIdentifier'),
 			value: user.client.identifier,
 		});
 	}
 
 	if (user.client?.email) {
 		accountDetails.push({
-			label: 'Client email',
+			label: t('details.labels.clientEmail'),
 			value: user.client.email,
 		});
 	}
 
-	accountDetails.push({ label: 'Client ID', value: `#${user.clientId}` });
+	accountDetails.push({
+		label: t('details.labels.clientId'),
+		value: `#${user.clientId}`,
+	});
 
 	if (user.employeeId) {
-		accountDetails.push({ label: 'Employee ID', value: user.employeeId });
+		accountDetails.push({
+			label: t('details.labels.employeeId'),
+			value: user.employeeId,
+		});
 	}
 
 	const securityDetails: Detail[] = [
 		{
-			label: 'Multi-factor authentication',
-			value: user.mfaEnabled ? 'Enabled' : 'Disabled',
+			label: t('details.labels.mfa'),
+			value: user.mfaEnabled
+				? t('details.values.enabled')
+				: t('details.values.disabled'),
 		},
 	];
 
 	const activityDetails: Detail[] = [
 		{
-			label: 'Created',
+			label: t('details.labels.created'),
 			value: (
 				<Tooltip label={createdDate.absolute}>
 					<Text component='span' className={classes.link}>
@@ -208,7 +221,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
 			),
 		},
 		{
-			label: 'Last updated',
+			label: t('details.labels.updated'),
 			value: (
 				<Tooltip label={updatedDate.absolute}>
 					<Text component='span' className={classes.link}>
@@ -221,7 +234,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
 
 	if (user.deletedAt) {
 		activityDetails.push({
-			label: 'Deactivated',
+			label: t('details.labels.deactivated'),
 			value: (
 				<Tooltip label={deletedDate.absolute}>
 					<Text component='span' className={classes.link}>
@@ -234,7 +247,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
 
 	const updatedDescription =
 		updatedDate.relative !== '—'
-			? `Updated ${updatedDate.relative}`
+			? t('details.updatedDescription', { relative: updatedDate.relative })
 			: undefined;
 
 	const displayName =
@@ -243,7 +256,11 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
 			.join(' ')
 			.trim() || user.username;
 
-	const statusColor = statusColors[user.status?.toLowerCase() ?? ''] ?? 'gray';
+	const statusKey = user.status?.toLowerCase?.() ?? '';
+	const statusColor = statusColors[statusKey] ?? 'gray';
+	const statusLabel = statusKey
+		? t(`status.${statusKey}`, { defaultValue: user.status })
+		: user.status;
 
 	const renderDetails = (items: Detail[]) => (
 		<div className={classes.detailList}>
@@ -259,7 +276,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
 	return (
 		<Stack gap='md' className={classes.cards}>
 			<RightSectionCard
-				title='Profile'
+				title={t('details.sections.profile')}
 				icon={IconUser}
 				iconColor='var(--mantine-color-blue-6)'
 				description={updatedDescription}
@@ -267,7 +284,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
 					<ActionIcon
 						variant='subtle'
 						color='gray'
-						aria-label='Close details'
+						aria-label={t('details.actions.close')}
 						onClick={clearRightComponent}
 						size='sm'
 					>
@@ -285,11 +302,11 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
 							color={statusColor}
 							className={classes.badge}
 						>
-							{user.status}
+							{statusLabel}
 						</Badge>
 						{user.employeeId ? (
 							<Badge variant='light' color='blue' className={classes.badge}>
-								Employee #{user.employeeId}
+								{t('details.employeeBadge', { employeeId: user.employeeId })}
 							</Badge>
 						) : null}
 					</div>
@@ -297,7 +314,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
 			</RightSectionCard>
 
 			<RightSectionCard
-				title='Account'
+				title={t('details.sections.account')}
 				icon={IconId}
 				iconColor='var(--mantine-color-indigo-6)'
 			>
@@ -305,7 +322,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
 			</RightSectionCard>
 
 			<RightSectionCard
-				title='Security'
+				title={t('details.sections.security')}
 				icon={IconLock}
 				iconColor='var(--mantine-color-cyan-6)'
 			>
@@ -315,7 +332,11 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
 						value: (
 							<Badge
 								variant='light'
-								color={detail.value === 'Enabled' ? 'green' : 'gray'}
+								color={
+									detail.value === t('details.values.enabled')
+										? 'green'
+										: 'gray'
+								}
 								className={classes.badge}
 							>
 								{detail.value}
@@ -326,7 +347,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
 			</RightSectionCard>
 
 			<RightSectionCard
-				title='Activity'
+				title={t('details.sections.activity')}
 				icon={IconTimeline}
 				iconColor='var(--mantine-color-grape-6)'
 			>

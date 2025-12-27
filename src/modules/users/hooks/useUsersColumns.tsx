@@ -14,6 +14,7 @@ import {
 	IconPencil,
 	IconTrash,
 } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import { timeAgo } from '~/utils/dateUtils';
 import type { UserModel } from '~/models/UserModels';
 import classes from '../UsersList/UsersList.module.css';
@@ -41,12 +42,14 @@ const useUsersColumns = ({
 	onView,
 	onEdit,
 	onDelete,
-}: UseUsersColumnsParams): ColumnDef<UserModel>[] =>
-	useMemo(
+}: UseUsersColumnsParams): ColumnDef<UserModel>[] => {
+	const { t } = useTranslation('users');
+
+	return useMemo(
 		() => [
 			{
 				id: 'name',
-				header: 'Name',
+				header: t('columns.name'),
 				cell: ({ row }) => {
 					const user = row.original;
 					const firstName = user.firstName?.trim() || '';
@@ -62,9 +65,16 @@ const useUsersColumns = ({
 									</ActionIcon>
 								</HoverCard.Target>
 								<HoverCard.Dropdown>
-									<Text fz='xs'>Username: {user.username}</Text>
-									<Text fz='xs'>Email: {user.email}</Text>
-									<Text fz='xs'>Created: {formatDateTime(user.createdAt)}</Text>
+									<Text fz='xs'>
+										{t('table.user.usernameLabel')}: {user.username}
+									</Text>
+									<Text fz='xs'>
+										{t('table.user.emailLabel')}: {user.email}
+									</Text>
+									<Text fz='xs'>
+										{t('table.user.createdLabel')}:{' '}
+										{formatDateTime(user.createdAt)}
+									</Text>
 								</HoverCard.Dropdown>
 							</HoverCard>
 							<Text fz='xs'>{name}</Text>
@@ -74,7 +84,7 @@ const useUsersColumns = ({
 			},
 			{
 				id: 'client',
-				header: 'Client',
+				header: t('columns.client'),
 				cell: ({ row }) => {
 					const { client, clientId } = row.original;
 
@@ -91,9 +101,16 @@ const useUsersColumns = ({
 							</HoverCard.Target>
 							<HoverCard.Dropdown>
 								<Stack gap={4}>
-									<Text fz='xs'>ID: #{client.id}</Text>
-									<Text fz='xs'>Identifier: {client.identifier || '—'}</Text>
-									<Text fz='xs'>Email: {client.email || '—'}</Text>
+									<Text fz='xs'>
+										{t('table.client.idLabel')}: #{client.id}
+									</Text>
+									<Text fz='xs'>
+										{t('table.client.identifierLabel')}:{' '}
+										{client.identifier || '—'}
+									</Text>
+									<Text fz='xs'>
+										{t('table.client.emailLabel')}: {client.email || '—'}
+									</Text>
 								</Stack>
 							</HoverCard.Dropdown>
 						</HoverCard>
@@ -102,7 +119,7 @@ const useUsersColumns = ({
 			},
 			{
 				accessorKey: 'lastLogin',
-				header: 'Last Login',
+				header: t('columns.lastLogin'),
 				cell: ({ getValue }) => {
 					const value = getValue<string | Date | null | undefined>();
 					return <Text fz='xs'>{value ? timeAgo(value) : '—'}</Text>;
@@ -110,7 +127,7 @@ const useUsersColumns = ({
 			},
 			{
 				accessorKey: 'updatedAt',
-				header: 'Updated',
+				header: t('columns.updated'),
 				cell: ({ getValue }) => {
 					const value = getValue<string | Date | null | undefined>();
 					return <Text fz='xs'>{value ? timeAgo(value) : '—'}</Text>;
@@ -118,7 +135,7 @@ const useUsersColumns = ({
 			},
 			{
 				id: 'actions',
-				header: 'Actions',
+				header: t('columns.actions'),
 				meta: {
 					headerClassName: classes.actionsHeader,
 					cellClassName: classes.actionsCell,
@@ -128,31 +145,31 @@ const useUsersColumns = ({
 
 					return (
 						<Group gap='xs' justify='flex-end' wrap='nowrap'>
-							<Tooltip label='View user' withArrow>
+							<Tooltip label={t('table.actions.view')} withArrow>
 								<ActionIcon
 									variant='subtle'
 									onClick={(event) => {
 										event.stopPropagation();
 										onView(user.id);
 									}}
-									aria-label='View user'
+									aria-label={t('table.actions.view')}
 								>
 									<IconEye size={16} />
 								</ActionIcon>
 							</Tooltip>
-							<Tooltip label='Edit user' withArrow>
+							<Tooltip label={t('table.actions.edit')} withArrow>
 								<ActionIcon
 									variant='subtle'
 									onClick={(event) => {
 										event.stopPropagation();
 										onEdit(user.id);
 									}}
-									aria-label='Edit user'
+									aria-label={t('table.actions.edit')}
 								>
 									<IconPencil size={16} />
 								</ActionIcon>
 							</Tooltip>
-							<Tooltip label='Delete user' withArrow>
+							<Tooltip label={t('table.actions.delete')} withArrow>
 								<ActionIcon
 									variant='subtle'
 									color='red'
@@ -160,7 +177,7 @@ const useUsersColumns = ({
 										event.stopPropagation();
 										onDelete(user);
 									}}
-									aria-label='Delete user'
+									aria-label={t('table.actions.delete')}
 								>
 									<IconTrash size={16} />
 								</ActionIcon>
@@ -170,7 +187,8 @@ const useUsersColumns = ({
 				},
 			},
 		],
-		[onDelete, onEdit, onView]
+		[onDelete, onEdit, onView, t]
 	);
+};
 
 export default useUsersColumns;

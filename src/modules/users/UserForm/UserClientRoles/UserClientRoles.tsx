@@ -8,6 +8,7 @@ import {
 	Text,
 } from '@mantine/core';
 import { IconBuilding } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import { useGetAllClients } from '~/queries/clientQueries';
 import { useGetAllRoles } from '~/queries/roleQueries';
 import type { UserRoleModel } from '~/models/UserModels';
@@ -31,6 +32,7 @@ const UserClientRoles: React.FC<UserClientRolesProps> = ({
 	disabled = false,
 	userId,
 }) => {
+	const { t } = useTranslation('users');
 	const { data: clients = [], isLoading: isClientsLoading } =
 		useGetAllClients();
 	const { data: roles = [], isLoading: isRolesLoading } = useGetAllRoles();
@@ -120,9 +122,11 @@ const UserClientRoles: React.FC<UserClientRolesProps> = ({
 	const getClientName = useCallback(
 		(clientId: number) => {
 			const client = clients.find((c) => c.id === clientId);
-			return client?.name ?? `Client #${clientId}`;
+			return (
+				client?.name ?? t('clientRoles.fallbackClientName', { id: clientId })
+			);
 		},
-		[clients]
+		[clients, t]
 	);
 
 	// Get role count for a client
@@ -152,9 +156,11 @@ const UserClientRoles: React.FC<UserClientRolesProps> = ({
 		<div className={classes.container}>
 			<div className={classes.clientSidebar}>
 				<div className={classes.clientSidebarHeader}>
-					<Text className={classes.sidebarTitle}>Clients</Text>
+					<Text className={classes.sidebarTitle}>
+						{t('clientRoles.sidebar.title')}
+					</Text>
 					<Text className={classes.sidebarDescription}>
-						Select a client to assign roles
+						{t('clientRoles.sidebar.description')}
 					</Text>
 				</div>
 				<ScrollArea
@@ -194,7 +200,7 @@ const UserClientRoles: React.FC<UserClientRolesProps> = ({
 					<div className={classes.emptyStateInline}>
 						<IconBuilding size={16} />
 						<Text size='xs' c='dimmed'>
-							No clients available
+							{t('clientRoles.sidebar.emptyClients')}
 						</Text>
 					</div>
 				)}
@@ -209,11 +215,14 @@ const UserClientRoles: React.FC<UserClientRolesProps> = ({
 									{activeClientName}
 								</Text>
 								<Text className={classes.rolesPanelCount}>
-									{activeClientRoleIds.size} of {roles.length} roles assigned
+									{t('clientRoles.panel.assignedCount', {
+										assigned: activeClientRoleIds.size,
+										total: roles.length,
+									})}
 								</Text>
 							</div>
 							<Badge variant='light' color='gray' size='xs'>
-								{roles.length} total roles
+								{t('clientRoles.panel.totalRoles', { total: roles.length })}
 							</Badge>
 						</div>
 
@@ -221,7 +230,7 @@ const UserClientRoles: React.FC<UserClientRolesProps> = ({
 							<div className={classes.loadingState}>
 								<Loader size='sm' />
 								<Text size='xs' c='dimmed'>
-									Loading assignments
+									{t('clientRoles.panel.loading')}
 								</Text>
 							</div>
 						) : (
@@ -248,7 +257,7 @@ const UserClientRoles: React.FC<UserClientRolesProps> = ({
 								</div>
 								{roles.length === 0 && (
 									<Text size='xs' c='dimmed' ta='center' py='sm'>
-										No roles available in the system.
+										{t('clientRoles.panel.emptyRoles')}
 									</Text>
 								)}
 							</>
@@ -261,7 +270,7 @@ const UserClientRoles: React.FC<UserClientRolesProps> = ({
 							<IconBuilding size={28} stroke={1.4} />
 						</div>
 						<Text size='sm' c='dimmed'>
-							Client and role assignments will appear here once available.
+							{t('clientRoles.panel.emptyState')}
 						</Text>
 					</Stack>
 				)}

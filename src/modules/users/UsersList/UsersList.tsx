@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Alert, Center, Loader, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import BaseTable from '~/components/BaseTable';
 import PaginationControls from '~/components/PaginationControls';
 import { useGetAllUsers } from '~/queries/userQueries';
@@ -21,6 +22,7 @@ const UsersList: React.FC<UsersListProps> = ({
 	onEdit,
 	onDelete,
 }) => {
+	const { t } = useTranslation('users');
 	const [page, setPage] = useState(1);
 	const [limit, setLimit] = useState(10);
 
@@ -49,9 +51,9 @@ const UsersList: React.FC<UsersListProps> = ({
 			<Alert
 				icon={<IconInfoCircle size={18} />}
 				color='red'
-				title='Unable to load users'
+				title={t('list.errorTitle')}
 			>
-				{error instanceof Error ? error.message : 'Unknown error'}
+				{error instanceof Error ? error.message : t('list.unknownError')}
 			</Alert>
 		);
 	}
@@ -60,7 +62,7 @@ const UsersList: React.FC<UsersListProps> = ({
 		return (
 			<Center>
 				<Text size='sm' c='dimmed'>
-					No users found.
+					{t('list.empty')}
 				</Text>
 			</Center>
 		);
@@ -87,7 +89,7 @@ const UsersList: React.FC<UsersListProps> = ({
 					totalItems={data.total}
 					itemsPerPage={limit}
 					isLoading={isLoading}
-					itemLabel='users'
+					itemLabel={t('list.itemLabel')}
 				/>
 			)}
 		</div>

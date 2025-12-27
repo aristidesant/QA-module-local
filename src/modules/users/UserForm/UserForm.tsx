@@ -23,6 +23,7 @@ import {
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { getErrorMessage } from '~/utils/httpClient';
+import { useTranslation } from 'react-i18next';
 import classes from './UserForm.module.css';
 import {
 	useCreateUser,
@@ -56,6 +57,7 @@ interface UserFormValues {
 }
 
 const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
+	const { t } = useTranslation('users');
 	const isEditMode = mode === 'edit';
 	const [passwordStrength, setPasswordStrength] = useState({
 		minLength: false,
@@ -78,21 +80,24 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 		},
 		validate: {
 			email: (value) =>
-				/\S+@\S+/.test(value) ? null : 'Please enter a valid email address',
-			username: (value) => (value.trim() ? null : 'Username is required'),
-			firstName: (value) => (value.trim() ? null : 'First name is required'),
-			lastName: (value) => (value.trim() ? null : 'Last name is required'),
+				/\S+@\S+/.test(value) ? null : t('form.validation.invalidEmail'),
+			username: (value) =>
+				value.trim() ? null : t('form.validation.usernameRequired'),
+			firstName: (value) =>
+				value.trim() ? null : t('form.validation.firstNameRequired'),
+			lastName: (value) =>
+				value.trim() ? null : t('form.validation.lastNameRequired'),
 			clientId: (value) =>
 				value && Number(value) > 0
 					? null
-					: 'Client ID must be greater than zero',
+					: t('form.validation.clientIdInvalid'),
 			password: (value) => {
 				if (!isEditMode) {
 					if (!value || value.trim().length === 0) {
-						return 'Password is required';
+						return t('form.validation.passwordRequired');
 					}
 					if (value.length < 8) {
-						return 'Password must be at least 8 characters';
+						return t('form.validation.passwordMinLength');
 					}
 				}
 				return null;
@@ -185,7 +190,7 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 
 			if (isEditMode) {
 				if (!userId) {
-					throw new Error('Missing user identifier.');
+					throw new Error(t('form.validation.missingUserId'));
 				}
 				// In edit mode, do not send a password update
 				const updatePayload: UpdateUserPayload = {
@@ -199,8 +204,8 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 				};
 				await updateMutation.mutateAsync({ id: userId, data: updatePayload });
 				notifications.show({
-					title: 'User updated',
-					message: `${values.email} has been updated`,
+					title: t('notifications.updatedTitle'),
+					message: t('notifications.updatedMessage', { email: values.email }),
 					color: 'green',
 				});
 			} else {
@@ -217,8 +222,8 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 				};
 				await createMutation.mutateAsync(createPayload);
 				notifications.show({
-					title: 'User created',
-					message: `${values.email} has been added`,
+					title: t('notifications.createdTitle'),
+					message: t('notifications.createdMessage', { email: values.email }),
 					color: 'green',
 				});
 				form.reset();
@@ -226,7 +231,7 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 			onSuccess();
 		} catch (error) {
 			notifications.show({
-				title: 'Request failed',
+				title: t('notifications.requestFailedTitle'),
 				message: getErrorMessage(error),
 				color: 'red',
 			});
@@ -245,10 +250,12 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 		return (
 			<Alert
 				icon={<IconInfoCircle size={18} />}
-				title='Unable to load user'
+				title={t('form.loadErrorTitle')}
 				color='red'
 			>
-				{userError instanceof Error ? userError.message : 'Unknown error'}
+				{userError instanceof Error
+					? userError.message
+					: t('list.unknownError')}
 			</Alert>
 		);
 	}
@@ -278,44 +285,44 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 										className={classes.statusBadge}
 										size='sm'
 									>
-										{isEditMode ? 'Editing user' : 'Create user'}
+										{isEditMode
+											? t('form.badges.editing')
+											: t('form.badges.creating')}
 									</Badge>
 									{!isEditMode && (
 										<Badge variant='outline' color='gray' size='sm'>
-											Draft
+											{t('form.badges.draft')}
 										</Badge>
 									)}
 								</Group>
 								<Text size='xs' className={classes.metaHint}>
-									Keep credentials tidy and roles in sync.
+									{t('form.metaHint')}
 								</Text>
 							</Group>
-							<Text className={classes.subtitle}>
-								Manage account access, profile information, and security
-								settings in one place.
-							</Text>
+							<Text className={classes.subtitle}>{t('form.subtitle')}</Text>
 						</div>
 						<section className={classes.section}>
 							<div className={classes.sectionHeader}>
-								<Text className={classes.sectionTitle}>Account</Text>
+								<Text className={classes.sectionTitle}>
+									{t('form.sections.account.title')}
+								</Text>
 								<Text className={classes.sectionDescription}>
-									Access credentials and ownership details. Required fields are
-									marked with an asterisk.
+									{t('form.sections.account.description')}
 								</Text>
 							</div>
 							<div className={classes.row}>
 								<TextInput
 									required
-									label='Email'
-									placeholder='user@example.com'
+									label={t('form.fields.email.label')}
+									placeholder={t('form.fields.email.placeholder')}
 									size='sm'
 									className={classes.field}
 									{...form.getInputProps('email')}
 								/>
 								<TextInput
 									required
-									label='Username'
-									placeholder='work-user'
+									label={t('form.fields.username.label')}
+									placeholder={t('form.fields.username.placeholder')}
 									size='sm'
 									className={classes.field}
 									{...form.getInputProps('username')}
@@ -325,8 +332,8 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 								<div className={classes.helperRow}>
 									<div className={classes.field}>
 										<Select
-											label='Client'
-											placeholder='Assign client'
+											label={t('form.fields.client.label')}
+											placeholder={t('form.fields.client.placeholder')}
 											data={clientOptions}
 											size='sm'
 											value={form.values.clientId}
@@ -339,11 +346,10 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 									</div>
 									<div className={classes.helper}>
 										<Text size='xs' fw={600} c='var(--mantine-color-gray-8)'>
-											Client ownership
+											{t('form.fields.client.helperTitle')}
 										</Text>
 										<Text size='xs' c='dimmed'>
-											Pick the workspace that should own this account so roles
-											are applied correctly.
+											{t('form.fields.client.helperDescription')}
 										</Text>
 									</div>
 								</div>
@@ -353,8 +359,8 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 									<div className={classes.passwordField}>
 										<PasswordInput
 											required
-											label='Password'
-											placeholder='Enter password'
+											label={t('form.fields.password.label')}
+											placeholder={t('form.fields.password.placeholder')}
 											size='sm'
 											className={classes.field}
 											{...form.getInputProps('password')}
@@ -372,8 +378,7 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 												c='dimmed'
 												className={classes.passwordHint}
 											>
-												Use a unique passphrase to keep new accounts secure from
-												day one.
+												{t('form.fields.password.hint')}
 											</Text>
 										)}
 									</div>
@@ -392,10 +397,10 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 													className={classes.passwordStrengthLabel}
 												>
 													{passwordProgress === 100
-														? 'Strong'
+														? t('form.passwordStrength.strong')
 														: passwordProgress >= 60
-															? 'Medium'
-															: 'Weak'}
+															? t('form.passwordStrength.medium')
+															: t('form.passwordStrength.weak')}
 												</Text>
 											</Group>
 											<Stack gap={4}>
@@ -415,7 +420,7 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 														size='xs'
 														c={passwordStrength.minLength ? 'green' : 'dimmed'}
 													>
-														At least 8 characters
+														{t('form.passwordChecks.minLength')}
 													</Text>
 												</Group>
 												<Group gap='xs'>
@@ -436,7 +441,7 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 															passwordStrength.hasUppercase ? 'green' : 'dimmed'
 														}
 													>
-														At least 1 uppercase letter
+														{t('form.passwordChecks.uppercase')}
 													</Text>
 												</Group>
 												<Group gap='xs'>
@@ -457,7 +462,7 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 															passwordStrength.hasLowercase ? 'green' : 'dimmed'
 														}
 													>
-														At least 1 lowercase letter
+														{t('form.passwordChecks.lowercase')}
 													</Text>
 												</Group>
 												<Group gap='xs'>
@@ -476,7 +481,7 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 														size='xs'
 														c={passwordStrength.hasNumber ? 'green' : 'dimmed'}
 													>
-														At least 1 number
+														{t('form.passwordChecks.number')}
 													</Text>
 												</Group>
 												<Group gap='xs'>
@@ -495,7 +500,7 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 														size='xs'
 														c={passwordStrength.hasSymbol ? 'green' : 'dimmed'}
 													>
-														At least 1 special character (!@#$%^&*...)
+														{t('form.passwordChecks.symbol')}
 													</Text>
 												</Group>
 											</Stack>
@@ -517,10 +522,10 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 										</ThemeIcon>
 										<div className={classes.securityTitle}>
 											<Text size='sm' fw={600} lh={1.2}>
-												Multi-factor authentication
+												{t('form.mfa.title')}
 											</Text>
 											<Text size='xs' c='dimmed'>
-												Add a verification step on every new device.
+												{t('form.mfa.subtitle')}
 											</Text>
 										</div>
 									</Group>
@@ -530,13 +535,14 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 										variant='light'
 										className={classes.securityStatus}
 									>
-										{form.values.mfaEnabled ? 'Enabled' : 'Disabled'}
+										{form.values.mfaEnabled
+											? t('details.values.enabled')
+											: t('details.values.disabled')}
 									</Badge>
 								</div>
 								<div className={classes.securityControls}>
 									<Text size='xs' c='dimmed'>
-										Keep accounts safer with a one-time code after password
-										entry.
+										{t('form.mfa.description')}
 									</Text>
 									<Switch
 										size='sm'
@@ -548,7 +554,7 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 												event.currentTarget.checked
 											)
 										}
-										aria-label='Toggle multi-factor authentication'
+										aria-label={t('form.mfa.toggleAria')}
 									/>
 								</div>
 							</div>
@@ -556,24 +562,26 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 
 						<section className={classes.section}>
 							<div className={classes.sectionHeader}>
-								<Text className={classes.sectionTitle}>Profile</Text>
+								<Text className={classes.sectionTitle}>
+									{t('form.sections.profile.title')}
+								</Text>
 								<Text className={classes.sectionDescription}>
-									Basic details used across the app.
+									{t('form.sections.profile.description')}
 								</Text>
 							</div>
 							<div className={classes.rowTight}>
 								<TextInput
 									required
-									label='First name'
-									placeholder='First name'
+									label={t('form.fields.firstName.label')}
+									placeholder={t('form.fields.firstName.placeholder')}
 									size='sm'
 									className={classes.field}
 									{...form.getInputProps('firstName')}
 								/>
 								<TextInput
 									required
-									label='Last name'
-									placeholder='Last name'
+									label={t('form.fields.lastName.label')}
+									placeholder={t('form.fields.lastName.placeholder')}
 									size='sm'
 									className={classes.field}
 									{...form.getInputProps('lastName')}
@@ -584,9 +592,11 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 
 					<section className={`${classes.section} ${classes.rolesSection}`}>
 						<div className={classes.sectionHeader}>
-							<Text className={classes.sectionTitle}>Roles & Permissions</Text>
+							<Text className={classes.sectionTitle}>
+								{t('form.sections.roles.title')}
+							</Text>
 							<Text className={classes.sectionDescription}>
-								Assign roles per client to control access levels.
+								{t('form.sections.roles.description')}
 							</Text>
 						</div>
 						<UserClientRoles
@@ -606,7 +616,9 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 					disabled={isSubmitting}
 					size='sm'
 				>
-					{isEditMode ? 'Save changes' : 'Create user'}
+					{isEditMode
+						? t('form.actions.saveChanges')
+						: t('form.actions.createUser')}
 				</Button>
 			</Group>
 		</Paper>
