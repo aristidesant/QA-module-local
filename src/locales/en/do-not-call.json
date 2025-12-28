@@ -1,1 +1,114 @@
-{}
+{
+	"page": {
+		"title": "Do Not Call List",
+		"description": "Manage phone numbers that should not be contacted.",
+		"actions": {
+			"cleanExpired": "Clean Expired",
+			"addEntry": "Add Entry"
+		}
+	},
+	"filters": {
+		"title": "Filters",
+		"searchPlaceholder": "Search by phone number...",
+		"advanced": "Advanced",
+		"reason": {
+			"label": "Reason",
+			"placeholder": "All reasons"
+		},
+		"status": {
+			"label": "Status",
+			"placeholder": "All statuses"
+		},
+		"clearAll": "Clear all filters"
+	},
+	"reasons": {
+		"customerRequest": "Customer Request",
+		"dispositionOutcome": "Outcome",
+		"regulatoryCompliance": "Regulatory Compliance",
+		"manualAdminBlock": "Manual Admin Block"
+	},
+	"statuses": {
+		"active": "Active",
+		"expired": "Expired",
+		"all": "All"
+	},
+	"empty": {
+		"title": "No entries yet",
+		"description": "Add phone numbers to the Do Not Call list"
+	},
+	"table": {
+		"headers": {
+			"phoneNumber": "Phone Number",
+			"reason": "Reason",
+			"status": "Status",
+			"expiresAt": "Expires At",
+			"createdAt": "Created At",
+			"actions": "Actions"
+		},
+		"expiresAt": {
+			"never": "Never"
+		},
+		"actions": {
+			"edit": "Edit entry",
+			"delete": "Delete entry"
+		}
+	},
+	"dialogs": {
+		"create": {
+			"title": "Add Do Not Call Entry"
+		},
+		"edit": {
+			"title": "Edit Do Not Call Entry"
+		},
+		"delete": {
+			"title": "Delete Do Not Call Entry",
+			"description": "Are you sure you want to delete this Do Not Call entry for {{phoneNumber}}?"
+		},
+		"cleanExpired": {
+			"title": "Clean Expired Entries",
+			"description": "Are you sure you want to remove all expired Do Not Call entries? This action cannot be undone.",
+			"confirm": "Clean"
+		}
+	},
+	"form": {
+		"labels": {
+			"phoneNumber": "Phone Number",
+			"reason": "Reason",
+			"notes": "Notes",
+			"expiresAt": "Expires At"
+		},
+		"placeholders": {
+			"phoneNumber": "+1234567890",
+			"reason": "Select reason",
+			"notes": "Additional information...",
+			"expiresAt": "Select expiration date (optional)"
+		},
+		"actions": {
+			"update": "Update"
+		},
+		"validation": {
+			"phoneRequired": "Phone number is required",
+			"reasonRequired": "Reason is required"
+		}
+	},
+	"errors": {
+		"load": "Failed to load Do Not Call entries.",
+		"create": "Failed to create entry. Please try again.",
+		"update": "Failed to update entry. Please try again.",
+		"delete": "Failed to delete entry. Please try again.",
+		"cleanExpired": "Failed to clean expired entries. Please try again."
+	},
+	"toasts": {
+		"createdTitle": "Entry Created",
+		"createdMessage": "The Do Not Call entry has been successfully created.",
+		"updatedTitle": "Entry Updated",
+		"updatedMessage": "The Do Not Call entry has been successfully updated.",
+		"deletedTitle": "Entry Deleted",
+		"deletedMessage": "The Do Not Call entry has been successfully deleted.",
+		"cleanedTitle": "Cleanup Complete",
+		"cleanedMessage": "{{count}} expired entries have been removed."
+	},
+	"pagination": {
+		"entries": "entries"
+	}
+}

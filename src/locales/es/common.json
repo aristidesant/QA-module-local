@@ -59,11 +59,13 @@
 		"categories": {
 			"campaignManagement": "Gestión de campañas",
 			"configuration": "Configuración",
+			"compliance": "Cumplimiento",
 			"toolsAndResources": "Herramientas y recursos"
 		},
 		"items": {
 			"campaignManagement": "Gestión de campañas",
 			"configurations": "Configuraciones",
+			"doNotCall": "No llamar (DNC)",
 			"clients": "Clientes",
 			"knowledgeBases": "Bases de conocimiento",
 			"tools": "Herramientas",

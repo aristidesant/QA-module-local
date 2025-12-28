@@ -29,6 +29,8 @@ import BaseTable from '~/components/BaseTable';
 import { useDoNotCallColumns } from '../hooks/useDoNotCallColumns';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import DoNotCallForm from '../DoNotCallForm';
+import { useTranslation } from 'react-i18next';
+import type { DoNotCallCreateRequest } from '~/models/DoNotCallModel';
 
 interface DoNotCallFiltersType {
 	reason?: DoNotCallReason;
@@ -36,6 +38,8 @@ interface DoNotCallFiltersType {
 }
 
 export const DoNotCallContent: React.FC = () => {
+	const { t } = useTranslation('do-not-call');
+
 	const pagination = usePagination({
 		initialItemsPerPage: 10,
 		searchDebounceMs: 500,
@@ -79,7 +83,7 @@ export const DoNotCallContent: React.FC = () => {
 			setSelectedEntry(entry);
 			modals.open({
 				modalId: 'edit-dnc-entry',
-				title: 'Edit Do Not Call Entry',
+				title: t('dialogs.edit.title'),
 				children: (
 					<DoNotCallForm
 						entry={entry}
@@ -90,15 +94,14 @@ export const DoNotCallContent: React.FC = () => {
 								setSelectedEntry(null);
 								modals.close('edit-dnc-entry');
 								notifications.show({
-									title: 'Entry Updated',
-									message:
-										'The Do Not Call entry has been successfully updated.',
+									title: t('toasts.updatedTitle'),
+									message: t('toasts.updatedMessage'),
 									color: 'green',
 								});
-							} catch (error) {
+							} catch {
 								notifications.show({
-									title: 'Error',
-									message: 'Failed to update entry. Please try again.',
+									title: t('status.error', { ns: 'common' }),
+									message: t('errors.update'),
 									color: 'red',
 								});
 							}
@@ -115,14 +118,18 @@ export const DoNotCallContent: React.FC = () => {
 		},
 		onDelete: (entry) => {
 			modals.openConfirmModal({
-				title: 'Delete Do Not Call Entry',
+				title: t('dialogs.delete.title'),
 				children: (
 					<Text size='sm'>
-						Are you sure you want to delete this Do Not Call entry for{' '}
-						{entry.phoneNumber}?
+						{t('dialogs.delete.description', {
+							phoneNumber: entry.phoneNumber,
+						})}
 					</Text>
 				),
-				labels: { confirm: 'Delete', cancel: 'Cancel' },
+				labels: {
+					confirm: t('actions.delete', { ns: 'common' }),
+					cancel: t('actions.cancel', { ns: 'common' }),
+				},
 				confirmProps: { color: 'red' },
 				onConfirm: async () => {
 					try {
@@ -130,14 +137,14 @@ export const DoNotCallContent: React.FC = () => {
 						reloadDoNotCall();
 						setSelectedEntry(null);
 						notifications.show({
-							title: 'Entry Deleted',
-							message: 'The Do Not Call entry has been successfully deleted.',
+							title: t('toasts.deletedTitle'),
+							message: t('toasts.deletedMessage'),
 							color: 'green',
 						});
-					} catch (error) {
+					} catch {
 						notifications.show({
-							title: 'Error',
-							message: 'Failed to delete entry. Please try again.',
+							title: t('status.error', { ns: 'common' }),
+							message: t('errors.delete'),
 							color: 'red',
 						});
 					}
@@ -155,23 +162,26 @@ export const DoNotCallContent: React.FC = () => {
 	const handleShowAddNewModal = () => {
 		modals.open({
 			modalId: 'create-dnc-entry',
-			title: 'Add Do Not Call Entry',
+			title: t('dialogs.create.title'),
 			children: (
 				<DoNotCallForm
 					onSubmit={async (data) => {
 						try {
-							await createDoNotCall(data as any);
+							if (!('phoneNumber' in data)) {
+								throw new Error('Missing phoneNumber for create request');
+							}
+							await createDoNotCall(data as DoNotCallCreateRequest);
 							reloadDoNotCall();
 							modals.close('create-dnc-entry');
 							notifications.show({
-								title: 'Entry Created',
-								message: 'The Do Not Call entry has been successfully created.',
+								title: t('toasts.createdTitle'),
+								message: t('toasts.createdMessage'),
 								color: 'green',
 							});
-						} catch (error) {
+						} catch {
 							notifications.show({
-								title: 'Error',
-								message: 'Failed to create entry. Please try again.',
+								title: t('status.error', { ns: 'common' }),
+								message: t('errors.create'),
 								color: 'red',
 							});
 						}
@@ -188,28 +198,26 @@ export const DoNotCallContent: React.FC = () => {
 
 	const handleCleanExpired = async () => {
 		modals.openConfirmModal({
-			title: 'Clean Expired Entries',
-			children: (
-				<Text size='sm'>
-					Are you sure you want to remove all expired Do Not Call entries? This
-					action cannot be undone.
-				</Text>
-			),
-			labels: { confirm: 'Clean', cancel: 'Cancel' },
+			title: t('dialogs.cleanExpired.title'),
+			children: <Text size='sm'>{t('dialogs.cleanExpired.description')}</Text>,
+			labels: {
+				confirm: t('dialogs.cleanExpired.confirm'),
+				cancel: t('actions.cancel', { ns: 'common' }),
+			},
 			confirmProps: { color: 'red' },
 			onConfirm: async () => {
 				try {
 					const result = await cleanExpired();
 					reloadDoNotCall();
 					notifications.show({
-						title: 'Cleanup Complete',
-						message: `${result.cleaned} expired entries have been removed.`,
+						title: t('toasts.cleanedTitle'),
+						message: t('toasts.cleanedMessage', { count: result.cleaned }),
 						color: 'green',
 					});
-				} catch (error) {
+				} catch {
 					notifications.show({
-						title: 'Error',
-						message: 'Failed to clean expired entries. Please try again.',
+						title: t('status.error', { ns: 'common' }),
+						message: t('errors.cleanExpired'),
 						color: 'red',
 					});
 				}
@@ -219,8 +227,8 @@ export const DoNotCallContent: React.FC = () => {
 
 	return (
 		<ContentContainer
-			title='Do Not Call List'
-			description='Manage phone numbers that should not be contacted.'
+			title={t('page.title')}
+			description={t('page.description')}
 			titleRight={
 				<Group gap='xs'>
 					<Button
@@ -230,14 +238,14 @@ export const DoNotCallContent: React.FC = () => {
 						leftSection={<IconTrash size={14} />}
 						onClick={handleCleanExpired}
 					>
-						Clean Expired
+						{t('page.actions.cleanExpired')}
 					</Button>
 					<Button
 						size='xs'
 						leftSection={<IconPlus size={16} />}
 						onClick={handleShowAddNewModal}
 					>
-						Add Entry
+						{t('page.actions.addEntry')}
 					</Button>
 				</Group>
 			}
@@ -252,30 +260,28 @@ export const DoNotCallContent: React.FC = () => {
 			{isLoading || isFetching ? (
 				<Card mt='xs' withBorder>
 					<Text c='dimmed' ta='center' py='xl'>
-						Loading...
+						{t('status.loading', { ns: 'common' })}
 					</Text>
 				</Card>
 			) : isError ? (
 				<div className={styles.errorContainer}>
 					<IconAlertCircle size={32} color='red' />
 					<Text c='red' mt='sm'>
-						{error instanceof Error
-							? error.message
-							: 'Failed to load Do Not Call entries.'}
+						{error instanceof Error ? error.message : t('errors.load')}
 					</Text>
 				</div>
 			) : !doNotCallResponse?.data || doNotCallResponse.data.length === 0 ? (
 				<Card mt='xs' withBorder>
 					<EmptyState
 						icon={<IconPhoneOff size={64} stroke={1.2} />}
-						message='No entries yet'
-						description='Add phone numbers to the Do Not Call list'
+						message={t('empty.title')}
+						description={t('empty.description')}
 						action={
 							<Button
 								leftSection={<IconPlus size={18} />}
 								onClick={handleShowAddNewModal}
 							>
-								Add Entry
+								{t('page.actions.addEntry')}
 							</Button>
 						}
 					/>
@@ -298,7 +304,7 @@ export const DoNotCallContent: React.FC = () => {
 						onItemsPerPageChange={handleItemsPerPageChange}
 						searchTerm={pagination.debouncedSearch}
 						isLoading={isLoading}
-						itemLabel='entries'
+						itemLabel={t('pagination.entries')}
 					/>
 				</>
 			)}

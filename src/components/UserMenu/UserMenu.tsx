@@ -10,6 +10,7 @@ import {
 	IconUsers,
 	IconKey,
 	IconBuilding,
+	IconPhoneOff,
 } from '@tabler/icons-react';
 import styles from './UserMenu.module.css';
 import { useNavigate } from 'react-router';
@@ -108,6 +109,17 @@ export const UserMenu: React.FC = () => {
 					module: ModuleEnum.SETTINGS,
 					permission: PermissionEnum.MANAGE,
 					masterOnly: true,
+				},
+			],
+		},
+		{
+			category: t('userMenu.categories.compliance'),
+			items: [
+				{
+					label: t('userMenu.items.doNotCall'),
+					icon: <IconPhoneOff size={16} />,
+					path: '/do-not-call',
+					module: ModuleEnum.SETTINGS,
 				},
 			],
 		},

@@ -4,7 +4,6 @@ import {
 	IconSettings,
 	IconList,
 	IconGlobe,
-	IconPhoneOff,
 	IconClockHour4,
 } from '@tabler/icons-react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
@@ -33,7 +32,6 @@ export default function ConfigurationsPage() {
 			return 'campaign-predefined-params';
 		if (location.pathname.includes('regional-settings-params'))
 			return 'regional-settings-params';
-		if (location.pathname.includes('do-not-call')) return 'do-not-call';
 		return isMasterClient ? 'client-configs' : 'campaign-predefined-params';
 	};
 
@@ -98,13 +96,6 @@ export default function ConfigurationsPage() {
 							Scheduler
 						</Tabs.Tab>
 					)}
-					<Tabs.Tab
-						value='do-not-call'
-						leftSection={<IconPhoneOff size={16} />}
-						onClick={() => navigate('/configurations/do-not-call')}
-					>
-						Do Not Call
-					</Tabs.Tab>
 				</Tabs.List>
 
 				<Tabs.Panel value={getActiveTab()} py='xs'>

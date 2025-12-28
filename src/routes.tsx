@@ -383,20 +383,22 @@ const router = createBrowserRouter([
 									</Suspense>
 								),
 							},
-							{
-								path: 'do-not-call',
-								id: 'do-not-call',
-								element: (
-									<Suspense
-										fallback={
-											<SuspenseFallback message='Loading Do Not Call...' />
-										}
-									>
-										<DoNotCallPage />
-									</Suspense>
-								),
-							},
 						],
+					},
+					{
+						path: 'do-not-call',
+						id: 'do-not-call',
+						element: (
+							<ModuleGuard module={ModuleEnum.SETTINGS}>
+								<Suspense
+									fallback={
+										<SuspenseFallback message='Loading Do Not Call...' />
+									}
+								>
+									<DoNotCallPage />
+								</Suspense>
+							</ModuleGuard>
+						),
 					},
 					{
 						path: 'knowledge-bases',

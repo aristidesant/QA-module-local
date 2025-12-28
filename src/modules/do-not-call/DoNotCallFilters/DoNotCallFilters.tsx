@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { FilterContainer } from '~/components/FilterContainer';
 import styles from './DoNotCallFilters.module.css';
 import type { DoNotCallReason, DoNotCallStatus } from '~/models/DoNotCallModel';
+import { useTranslation } from 'react-i18next';
 
 interface DoNotCallFiltersProps {
 	searchValue: string;
@@ -25,26 +26,39 @@ interface DoNotCallFiltersProps {
 	onFiltersChange: (filters: DoNotCallFiltersProps['filters']) => void;
 }
 
-const reasonOptions = [
-	{ value: 'CUSTOMER_REQUEST', label: 'Customer Request' },
-	{ value: 'DISPOSITION_OUTCOME', label: 'Outcome' },
-	{ value: 'REGULATORY_COMPLIANCE', label: 'Regulatory Compliance' },
-	{ value: 'MANUAL_ADMIN_BLOCK', label: 'Manual Admin Block' },
-];
-
-const statusOptions = [
-	{ value: 'active', label: 'Active' },
-	{ value: 'expired', label: 'Expired' },
-	{ value: 'all', label: 'All' },
-];
-
 export default function DoNotCallFilters({
 	searchValue,
 	onSearchChange,
 	filters,
 	onFiltersChange,
 }: DoNotCallFiltersProps) {
+	const { t } = useTranslation('do-not-call');
 	const [opened, setOpened] = useState(false);
+
+	const reasonOptions = [
+		{
+			value: 'CUSTOMER_REQUEST',
+			label: t('reasons.customerRequest'),
+		},
+		{
+			value: 'DISPOSITION_OUTCOME',
+			label: t('reasons.dispositionOutcome'),
+		},
+		{
+			value: 'REGULATORY_COMPLIANCE',
+			label: t('reasons.regulatoryCompliance'),
+		},
+		{
+			value: 'MANUAL_ADMIN_BLOCK',
+			label: t('reasons.manualAdminBlock'),
+		},
+	];
+
+	const statusOptions = [
+		{ value: 'active', label: t('statuses.active') },
+		{ value: 'expired', label: t('statuses.expired') },
+		{ value: 'all', label: t('statuses.all') },
+	];
 
 	const activeFiltersCount = Object.entries(filters).filter(([_, value]) => {
 		return value !== undefined && value !== null;
@@ -68,7 +82,7 @@ export default function DoNotCallFilters({
 			<FilterContainer>
 				<Group gap='xs' className={styles.titleGroup}>
 					<IconFilter size={18} className={styles.titleIcon} />
-					<Text className={styles.title}>Filters</Text>
+					<Text className={styles.title}>{t('filters.title')}</Text>
 					{hasActiveFilters && (
 						<Badge size='sm' variant='light' className={styles.activeBadge}>
 							{activeFiltersCount}
@@ -78,7 +92,7 @@ export default function DoNotCallFilters({
 
 				<div className={styles.controlsWrapper}>
 					<TextInput
-						placeholder='Search by phone number...'
+						placeholder={t('filters.searchPlaceholder')}
 						value={searchValue}
 						onChange={(event) => onSearchChange(event.currentTarget.value)}
 						leftSection={<IconSearch size={16} className={styles.searchIcon} />}
@@ -102,7 +116,7 @@ export default function DoNotCallFilters({
 						onClick={() => setOpened((prev) => !prev)}
 						variant={opened ? 'light' : 'default'}
 					>
-						Advanced
+						{t('filters.advanced')}
 					</Button>
 				</div>
 			</FilterContainer>
@@ -112,8 +126,8 @@ export default function DoNotCallFilters({
 					<Stack gap='sm'>
 						<Group gap='sm' grow>
 							<Select
-								label='Reason'
-								placeholder='All reasons'
+								label={t('filters.reason.label')}
+								placeholder={t('filters.reason.placeholder')}
 								data={reasonOptions}
 								value={filters.reason}
 								onChange={(value) =>
@@ -123,8 +137,8 @@ export default function DoNotCallFilters({
 								size='sm'
 							/>
 							<Select
-								label='Status'
-								placeholder='All statuses'
+								label={t('filters.status.label')}
+								placeholder={t('filters.status.placeholder')}
 								data={statusOptions}
 								value={filters.status}
 								onChange={(value) =>
@@ -143,7 +157,7 @@ export default function DoNotCallFilters({
 								onClick={() => onFiltersChange({})}
 								disabled={!hasActiveFilters}
 							>
-								Clear all filters
+								{t('filters.clearAll')}
 							</Button>
 						</Group>
 					</Stack>
