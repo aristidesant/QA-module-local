@@ -25,7 +25,6 @@ import enKnowledgeBases from '~/locales/en/knowledge-bases.json';
 import enOutcomes from '~/locales/en/outcomes.json';
 import enOverview from '~/locales/en/overview.json';
 import enProfile from '~/locales/en/profile.json';
-import enPrompter from '~/locales/en/prompter.json';
 import enRegionalSettingsParams from '~/locales/en/regional-settings-params.json';
 import enRoles from '~/locales/en/roles.json';
 import enSchedulerPredefinedParams from '~/locales/en/scheduler-predefined-params.json';
@@ -50,7 +49,6 @@ import esKnowledgeBases from '~/locales/es/knowledge-bases.json';
 import esOutcomes from '~/locales/es/outcomes.json';
 import esOverview from '~/locales/es/overview.json';
 import esProfile from '~/locales/es/profile.json';
-import esPrompter from '~/locales/es/prompter.json';
 import esRegionalSettingsParams from '~/locales/es/regional-settings-params.json';
 import esRoles from '~/locales/es/roles.json';
 import esSchedulerPredefinedParams from '~/locales/es/scheduler-predefined-params.json';
@@ -90,7 +88,6 @@ testI18n.use(initReactI18next).init({
 		'outcomes',
 		'overview',
 		'profile',
-		'prompter',
 		'regional-settings-params',
 		'roles',
 		'scheduler-predefined-params',
@@ -117,7 +114,6 @@ testI18n.use(initReactI18next).init({
 			outcomes: enOutcomes,
 			overview: enOverview,
 			profile: enProfile,
-			prompter: enPrompter,
 			'regional-settings-params': enRegionalSettingsParams,
 			roles: enRoles,
 			'scheduler-predefined-params': enSchedulerPredefinedParams,
@@ -143,7 +139,6 @@ testI18n.use(initReactI18next).init({
 			outcomes: esOutcomes,
 			overview: esOverview,
 			profile: esProfile,
-			prompter: esPrompter,
 			'regional-settings-params': esRegionalSettingsParams,
 			roles: esRoles,
 			'scheduler-predefined-params': esSchedulerPredefinedParams,

@@ -40,11 +40,6 @@ const RolesPage = React.lazy(
 const ClientsPage = React.lazy(
 	() => import('./modules/clients/ClientsPage/ClientsPage')
 );
-const PrompterPage = React.lazy(() =>
-	import('./modules/prompter/PrompterPage').then((m) => ({
-		default: m.PrompterPage,
-	}))
-);
 const DispositionPage = React.lazy(
 	() => import('./modules/outcomes/DispositionPage')
 );
@@ -417,23 +412,6 @@ const router = createBrowserRouter([
 									}
 								>
 									<KnowledgeBasePage />
-								</Suspense>
-							</ModuleGuard>
-						),
-					},
-					{
-						path: 'prompter',
-						id: 'prompter',
-						element: (
-							<ModuleGuard
-								module={ModuleEnum.PROMPTS}
-								permission={PermissionEnum.MANAGE}
-								masterOnly
-							>
-								<Suspense
-									fallback={<SuspenseFallback message='Loading prompter...' />}
-								>
-									<PrompterPage />
 								</Suspense>
 							</ModuleGuard>
 						),
