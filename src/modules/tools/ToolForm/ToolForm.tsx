@@ -38,6 +38,7 @@ import type { ToolModel, ToolRequestBodyProperty } from '~/models/ToolModel';
 import type { ToolCategoryModel } from '~/models/ToolCategoryModel';
 import SectionCard from '~/components/SectionCard/SectionCard';
 import styles from './ToolForm.module.css';
+import { useTranslation } from 'react-i18next';
 
 interface ToolFormProps {
 	toolId?: string | number;
@@ -95,14 +96,6 @@ interface Section {
 	icon: React.ReactNode;
 }
 
-const SECTIONS: Section[] = [
-	{ id: 'general', label: 'General', icon: <IconSettings size={14} /> },
-	{ id: 'api', label: 'API Config', icon: <IconApi size={14} /> },
-	{ id: 'headers', label: 'Headers', icon: <IconKey size={14} /> },
-	{ id: 'parameters', label: 'Parameters', icon: <IconRoute size={14} /> },
-	{ id: 'body', label: 'Request Body', icon: <IconBraces size={14} /> },
-];
-
 const HTTP_METHODS = [
 	{ value: 'GET', label: 'GET' },
 	{ value: 'POST', label: 'POST' },
@@ -111,17 +104,48 @@ const HTTP_METHODS = [
 	{ value: 'DELETE', label: 'DELETE' },
 ];
 
-const PROPERTY_TYPES = [
-	{ value: 'string', label: 'String' },
-	{ value: 'number', label: 'Number' },
-	{ value: 'boolean', label: 'Boolean' },
-	{ value: 'array', label: 'Array' },
-	{ value: 'object', label: 'Object' },
-];
-
 function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
+	const { t } = useTranslation('tools');
 	const [isEdit, setIsEdit] = useState(!!toolId);
 	const [activeSection, setActiveSection] = useState<SectionId>('general');
+
+	const sections: Section[] = useMemo(
+		() => [
+			{
+				id: 'general',
+				label: t('form.sections.general'),
+				icon: <IconSettings size={14} />,
+			},
+			{ id: 'api', label: t('form.sections.api'), icon: <IconApi size={14} /> },
+			{
+				id: 'headers',
+				label: t('form.sections.headers'),
+				icon: <IconKey size={14} />,
+			},
+			{
+				id: 'parameters',
+				label: t('form.sections.parameters'),
+				icon: <IconRoute size={14} />,
+			},
+			{
+				id: 'body',
+				label: t('form.sections.body'),
+				icon: <IconBraces size={14} />,
+			},
+		],
+		[t]
+	);
+
+	const propertyTypeOptions = useMemo(
+		() => [
+			{ value: 'string', label: t('form.propertyTypes.string') },
+			{ value: 'number', label: t('form.propertyTypes.number') },
+			{ value: 'boolean', label: t('form.propertyTypes.boolean') },
+			{ value: 'array', label: t('form.propertyTypes.array') },
+			{ value: 'object', label: t('form.propertyTypes.object') },
+		],
+		[t]
+	);
 
 	// Queries
 	const {
@@ -152,16 +176,19 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 			authConnection: '',
 		},
 		validate: {
-			name: (value) => (value.trim() ? null : 'Name is required'),
-			description: (value) => (value.trim() ? null : 'Description is required'),
-			categoryId: (value) => (value ? null : 'Category is required'),
+			name: (value) =>
+				value.trim() ? null : t('form.validation.nameRequired'),
+			description: (value) =>
+				value.trim() ? null : t('form.validation.descriptionRequired'),
+			categoryId: (value) =>
+				value ? null : t('form.validation.categoryRequired'),
 			url: (value) => {
-				if (!value.trim()) return 'URL is required';
+				if (!value.trim()) return t('form.validation.urlRequired');
 				try {
 					new URL(value);
 					return null;
 				} catch {
-					return 'Please enter a valid URL';
+					return t('form.validation.urlInvalid');
 				}
 			},
 		},
@@ -316,16 +343,16 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 					data: toolData,
 				});
 				notifications.show({
-					title: 'Success',
-					message: 'Tool updated successfully!',
+					title: t('status.success', { ns: 'common' }),
+					message: t('notifications.updated'),
 					color: 'green',
 					icon: <IconDeviceFloppy size={18} />,
 				});
 			} else {
 				await createToolMutation.mutateAsync(toolData);
 				notifications.show({
-					title: 'Success',
-					message: 'Tool created successfully!',
+					title: t('status.success', { ns: 'common' }),
+					message: t('notifications.created'),
 					color: 'green',
 					icon: <IconDeviceFloppy size={18} />,
 				});
@@ -336,9 +363,13 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 			const errorMessage =
 				error instanceof Error
 					? error.message
-					: `Failed to ${isEdit ? 'update' : 'create'} tool`;
+					: t('notifications.failedGeneric', {
+							action: isEdit
+								? t('notifications.actions.update')
+								: t('notifications.actions.create'),
+						});
 			notifications.show({
-				title: 'Error',
+				title: t('status.error', { ns: 'common' }),
 				message: errorMessage,
 				color: 'red',
 				icon: <IconAlertCircle size={18} />,
@@ -402,7 +433,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 	}));
 
 	// Filter sections based on HTTP method
-	const visibleSections = SECTIONS.filter((section) => {
+	const visibleSections = sections.filter((section) => {
 		if (section.id === 'body') {
 			return ['POST', 'PUT', 'PATCH'].includes(form.values.method);
 		}
@@ -414,7 +445,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 			<div className={styles.loadingState}>
 				<Loader size='md' />
 				<Text size='sm' c='dimmed' mt='xs'>
-					Loading tool...
+					{t('state.loadingTool')}
 				</Text>
 			</div>
 		);
@@ -425,7 +456,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 			<div className={styles.errorState}>
 				<IconAlertCircle size={48} color='var(--mantine-color-red-5)' />
 				<Text size='md' fw={500} c='red'>
-					Error loading tool
+					{t('state.errorLoadingTool')}
 				</Text>
 				<Text size='sm' c='dimmed'>
 					{toolError.message}
@@ -440,31 +471,31 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 				return (
 					<Stack gap='xs'>
 						<TextInput
-							label='Name'
-							placeholder='e.g., Get Weather'
+							label={t('form.fields.name.label')}
+							placeholder={t('form.fields.name.placeholder')}
 							required
 							size='sm'
 							{...form.getInputProps('name')}
 						/>
 						<Textarea
-							label='Description'
-							placeholder='What does this tool do?'
+							label={t('form.fields.description.label')}
+							placeholder={t('form.fields.description.placeholder')}
 							required
 							size='sm'
 							minRows={2}
 							{...form.getInputProps('description')}
 						/>
 						<Textarea
-							label='Prompt Instruction'
-							placeholder='Instructions for the agent on how/when to use this tool'
+							label={t('form.fields.prompt.label')}
+							placeholder={t('form.fields.prompt.placeholder')}
 							size='sm'
 							minRows={2}
 							{...form.getInputProps('prompt')}
 						/>
 						<Group grow gap='xs'>
 							<Select
-								label='Category'
-								placeholder='Select category'
+								label={t('form.fields.category.label')}
+								placeholder={t('form.fields.category.placeholder')}
 								required
 								size='sm'
 								data={categoryOptions}
@@ -472,11 +503,11 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 								{...form.getInputProps('categoryId')}
 							/>
 							<Select
-								label='Status'
+								label={t('form.fields.status.label')}
 								size='sm'
 								data={[
-									{ value: 'active', label: 'Active' },
-									{ value: 'inactive', label: 'Inactive' },
+									{ value: 'active', label: t('status.active') },
+									{ value: 'inactive', label: t('status.inactive') },
 								]}
 								{...form.getInputProps('status')}
 							/>
@@ -489,15 +520,15 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 					<Stack gap='xs'>
 						<Group gap='xs' align='flex-start'>
 							<Select
-								label='Method'
+								label={t('form.fields.method.label')}
 								data={HTTP_METHODS}
 								size='sm'
 								w={100}
 								{...form.getInputProps('method')}
 							/>
 							<TextInput
-								label='Endpoint URL'
-								placeholder='https://api.example.com/v1/resource'
+								label={t('form.fields.url.label')}
+								placeholder={t('form.fields.url.placeholder')}
 								required
 								size='sm'
 								style={{ flex: 1 }}
@@ -506,14 +537,14 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 						</Group>
 						<Group grow gap='xs'>
 							<TextInput
-								label='Timeout (seconds)'
+								label={t('form.fields.timeout.label')}
 								type='number'
 								size='sm'
 								{...form.getInputProps('responseTimeoutSecs')}
 							/>
 							<TextInput
-								label='Auth Connection'
-								placeholder='e.g., github-oauth'
+								label={t('form.fields.authConnection.label')}
+								placeholder={t('form.fields.authConnection.placeholder')}
 								size='sm'
 								{...form.getInputProps('authConnection')}
 							/>
@@ -526,7 +557,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 					<Stack gap='xs'>
 						<Group justify='space-between' align='center'>
 							<Text size='sm' fw={500}>
-								Request Headers
+								{t('form.headers.title')}
 							</Text>
 							<Button
 								variant='subtle'
@@ -534,13 +565,13 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 								leftSection={<IconPlus size={12} />}
 								onClick={addHeader}
 							>
-								Add Header
+								{t('form.headers.add')}
 							</Button>
 						</Group>
 						{form.values.headers.length === 0 ? (
 							<div className={styles.emptyState}>
 								<Text size='xs' c='dimmed'>
-									No headers configured
+									{t('form.headers.empty')}
 								</Text>
 							</div>
 						) : (
@@ -548,13 +579,13 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 								{form.values.headers.map((_, index) => (
 									<div key={index} className={styles.parameterItem}>
 										<TextInput
-											placeholder='Header name'
+											placeholder={t('form.headers.fields.keyPlaceholder')}
 											size='xs'
 											style={{ flex: 1 }}
 											{...form.getInputProps(`headers.${index}.key`)}
 										/>
 										<TextInput
-											placeholder='Value'
+											placeholder={t('form.headers.fields.valuePlaceholder')}
 											size='xs'
 											style={{ flex: 1 }}
 											{...form.getInputProps(`headers.${index}.value`)}
@@ -582,7 +613,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 						<Stack gap='xs'>
 							<Group justify='space-between' align='center'>
 								<Text size='sm' fw={500}>
-									Path Parameters
+									{t('form.parameters.path.title')}
 								</Text>
 								<Button
 									variant='subtle'
@@ -590,13 +621,13 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 									leftSection={<IconPlus size={12} />}
 									onClick={addPathParameter}
 								>
-									Add
+									{t('form.parameters.add')}
 								</Button>
 							</Group>
 							{form.values.pathParameters.length === 0 ? (
 								<div className={styles.emptyState}>
 									<Text size='xs' c='dimmed'>
-										No path parameters
+										{t('form.parameters.path.empty')}
 									</Text>
 								</div>
 							) : (
@@ -604,13 +635,17 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 									{form.values.pathParameters.map((_, index) => (
 										<div key={index} className={styles.parameterItem}>
 											<TextInput
-												placeholder='Parameter name'
+												placeholder={t(
+													'form.parameters.path.fields.keyPlaceholder'
+												)}
 												size='xs'
 												style={{ flex: 1 }}
 												{...form.getInputProps(`pathParameters.${index}.key`)}
 											/>
 											<TextInput
-												placeholder='Description'
+												placeholder={t(
+													'form.parameters.path.fields.valuePlaceholder'
+												)}
 												size='xs'
 												style={{ flex: 1 }}
 												{...form.getInputProps(`pathParameters.${index}.value`)}
@@ -634,7 +669,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 						<Stack gap='xs'>
 							<Group justify='space-between' align='center'>
 								<Text size='sm' fw={500}>
-									Query Parameters
+									{t('form.parameters.query.title')}
 								</Text>
 								<Button
 									variant='subtle'
@@ -642,13 +677,13 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 									leftSection={<IconPlus size={12} />}
 									onClick={addQueryParameter}
 								>
-									Add
+									{t('form.parameters.add')}
 								</Button>
 							</Group>
 							{form.values.queryParameters.length === 0 ? (
 								<div className={styles.emptyState}>
 									<Text size='xs' c='dimmed'>
-										No query parameters
+										{t('form.parameters.query.empty')}
 									</Text>
 								</div>
 							) : (
@@ -656,13 +691,17 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 									{form.values.queryParameters.map((_, index) => (
 										<div key={index} className={styles.parameterItem}>
 											<TextInput
-												placeholder='Parameter name'
+												placeholder={t(
+													'form.parameters.query.fields.keyPlaceholder'
+												)}
 												size='xs'
 												style={{ flex: 1 }}
 												{...form.getInputProps(`queryParameters.${index}.key`)}
 											/>
 											<TextInput
-												placeholder='Description'
+												placeholder={t(
+													'form.parameters.query.fields.valuePlaceholder'
+												)}
 												size='xs'
 												style={{ flex: 1 }}
 												{...form.getInputProps(
@@ -691,7 +730,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 					<Stack gap='xs'>
 						<Group justify='space-between' align='center'>
 							<Text size='sm' fw={500}>
-								Request Body Properties
+								{t('form.body.title')}
 							</Text>
 							<Button
 								variant='subtle'
@@ -699,13 +738,13 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 								leftSection={<IconPlus size={12} />}
 								onClick={addRequestBodyProperty}
 							>
-								Add Property
+								{t('form.body.add')}
 							</Button>
 						</Group>
 						{form.values.requestBodyProperties.length === 0 ? (
 							<div className={styles.emptyState}>
 								<Text size='xs' c='dimmed'>
-									No body properties configured
+									{t('form.body.empty')}
 								</Text>
 							</div>
 						) : (
@@ -714,7 +753,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 									<div key={index} className={styles.bodyPropertyItem}>
 										<Group gap='xs' mb='xs'>
 											<TextInput
-												placeholder='Property name'
+												placeholder={t('form.body.fields.keyPlaceholder')}
 												size='xs'
 												style={{ flex: 1 }}
 												{...form.getInputProps(
@@ -722,8 +761,8 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 												)}
 											/>
 											<Select
-												placeholder='Type'
-												data={PROPERTY_TYPES}
+												placeholder={t('form.body.fields.typePlaceholder')}
+												data={propertyTypeOptions}
 												size='xs'
 												w={100}
 												{...form.getInputProps(
@@ -741,7 +780,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 											</ActionIcon>
 										</Group>
 										<Textarea
-											placeholder='Description'
+											placeholder={t('form.body.fields.descriptionPlaceholder')}
 											size='xs'
 											minRows={1}
 											mb='xs'
@@ -751,7 +790,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 										/>
 										<Group gap='xs'>
 											<TextInput
-												placeholder='Constant value'
+												placeholder={t('form.body.fields.constantPlaceholder')}
 												size='xs'
 												style={{ flex: 1 }}
 												{...form.getInputProps(
@@ -759,7 +798,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 												)}
 											/>
 											<TextInput
-												placeholder='Dynamic variable'
+												placeholder={t('form.body.fields.dynamicPlaceholder')}
 												size='xs'
 												style={{ flex: 1 }}
 												{...form.getInputProps(
@@ -782,8 +821,8 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 	return (
 		<SectionCard
 			icon={IconSettings}
-			title={isEdit ? 'Edit Tool' : 'Create New Tool'}
-			description='Configure your tool settings and API details'
+			title={isEdit ? t('form.title.edit') : t('form.title.create')}
+			description={t('form.description')}
 			className={styles.modalShell}
 			contentSpacing='xs'
 			padding='md'
@@ -814,7 +853,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 						<div className={styles.menuColumn}>
 							<div className={styles.menuHeader}>
 								<Text size='xs' fw={500} c='dimmed'>
-									Sections
+									{t('form.menu.sections')}
 								</Text>
 								<Badge size='xs' variant='light' color='gray' radius='sm'>
 									{visibleSections.length}
@@ -872,7 +911,9 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 										color={sectionStatus[activeSection] ? 'green' : 'gray'}
 										radius='sm'
 									>
-										{sectionStatus[activeSection] ? 'Configured' : 'Empty'}
+										{sectionStatus[activeSection]
+											? t('form.sectionStatus.configured')
+											: t('form.sectionStatus.empty')}
 									</Badge>
 								</div>
 								<div className={styles.editorContent}>
@@ -885,11 +926,11 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 					{/* Footer */}
 					<div className={styles.footer}>
 						<Text size='xs' c='dimmed'>
-							Fill in required fields to save
+							{t('form.footer.hint')}
 						</Text>
 						<Group gap='xs'>
 							<Button variant='subtle' size='xs' onClick={onCancel}>
-								Cancel
+								{t('actions.cancel', { ns: 'common' })}
 							</Button>
 							<Button
 								type='submit'
@@ -900,7 +941,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 								}
 								data-testid='submit-tool-btn'
 							>
-								{isEdit ? 'Save Changes' : 'Create Tool'}
+								{isEdit ? t('actions.saveChanges') : t('actions.createTool')}
 							</Button>
 						</Group>
 					</div>

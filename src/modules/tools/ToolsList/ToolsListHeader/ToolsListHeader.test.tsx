@@ -1,10 +1,10 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import ToolsListHeader from './ToolsListHeader';
-import { MantineProvider } from '@mantine/core';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 const renderWithProvider = (component: React.ReactNode) => {
-	return render(<MantineProvider>{component}</MantineProvider>);
+	return renderWithProviders(component);
 };
 
 import type { ToolCategoryModel } from '~/models/ToolCategoryModel';

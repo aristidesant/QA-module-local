@@ -8,6 +8,7 @@ import useToolsListColumns from './useToolsListColumns';
 import styles from './ToolsList.module.css';
 import ToolsListHeader from './ToolsListHeader';
 import EmptyState from '~/components/EmptyState';
+import { useTranslation } from 'react-i18next';
 
 interface ToolsListProps {
 	onCreate: () => void;
@@ -15,6 +16,7 @@ interface ToolsListProps {
 }
 
 function ToolsList({ onCreate, onEdit }: ToolsListProps) {
+	const { t } = useTranslation('tools');
 	const { selectedToolCategory } = useToolsStore();
 	const columns = useToolsListColumns();
 
@@ -35,10 +37,10 @@ function ToolsList({ onCreate, onEdit }: ToolsListProps) {
 					<Stack align='center' gap='md'>
 						<IconTool size={48} color='var(--mantine-color-gray-5)' />
 						<Text size='lg' fw={500} c='dimmed'>
-							Select a category first
+							{t('list.noCategory.title')}
 						</Text>
 						<Text size='sm' c='dimmed' ta='center'>
-							Choose a tool category from the sidebar to view its tools
+							{t('list.noCategory.description')}
 						</Text>
 					</Stack>
 				</Center>
@@ -51,7 +53,7 @@ function ToolsList({ onCreate, onEdit }: ToolsListProps) {
 					<Stack align='center' gap='md'>
 						<Loader size='lg' />
 						<Text size='sm' c='dimmed'>
-							Loading tools...
+							{t('state.loadingTools')}
 						</Text>
 					</Stack>
 				</Center>
@@ -64,7 +66,7 @@ function ToolsList({ onCreate, onEdit }: ToolsListProps) {
 					<Stack align='center' gap='md'>
 						<IconTool size={48} color='var(--mantine-color-red-5)' />
 						<Text size='lg' fw={500} c='red'>
-							Error loading tools
+							{t('state.errorLoadingTools')}
 						</Text>
 						<Text size='sm' c='dimmed' ta='center'>
 							{error.message}
@@ -86,13 +88,14 @@ function ToolsList({ onCreate, onEdit }: ToolsListProps) {
 
 					<EmptyState
 						icon={<IconTool size={48} color='var(--mantine-color-gray-5)' />}
-						message='No tools in this category'
+						message={t('list.empty.message')}
 						description={
 							<>
-								There are no tools under "{selectedToolCategory?.name}"
-								category.
+								{t('list.empty.descriptionLine1', {
+									categoryName: selectedToolCategory?.name,
+								})}
 								<br />
-								Add one to get started.
+								{t('list.empty.descriptionLine2')}
 							</>
 						}
 						className={styles.emptyState}

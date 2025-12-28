@@ -1,1 +1,165 @@
-{}
+{
+	"page": {
+		"title": "Herramientas",
+		"description": "Administra tus herramientas e integraciones"
+	},
+	"actions": {
+		"createTool": "Crear herramienta",
+		"createNewTool": "Crear nueva herramienta",
+		"saveChanges": "Guardar cambios"
+	},
+	"state": {
+		"loadingTools": "Cargando herramientas...",
+		"errorLoadingTools": "Error al cargar herramientas",
+		"loadingTool": "Cargando herramienta...",
+		"errorLoadingTool": "Error al cargar herramienta"
+	},
+	"list": {
+		"noCategory": {
+			"title": "Primero selecciona una categoría",
+			"description": "Elige una categoría de herramientas en la barra lateral para ver sus herramientas"
+		},
+		"header": {
+			"title": "Herramientas de {{categoryName}}",
+			"titleWithCount": "Herramientas de {{categoryName}} ({{count}})"
+		},
+		"empty": {
+			"message": "No hay herramientas en esta categoría",
+			"descriptionLine1": "No hay herramientas en la categoría \"{{categoryName}}\".",
+			"descriptionLine2": "Agrega una para comenzar."
+		}
+	},
+	"columns": {
+		"name": "Nombre",
+		"status": "Estado",
+		"createdBy": "Creado por",
+		"created": "Creado",
+		"unknownCreator": "Desconocido"
+	},
+	"status": {
+		"active": "Activo",
+		"inactive": "Inactivo"
+	},
+	"notifications": {
+		"created": "¡Herramienta creada correctamente!",
+		"updated": "¡Herramienta actualizada correctamente!",
+		"failedGeneric": "No se pudo {{action}} la herramienta",
+		"actions": {
+			"create": "crear",
+			"update": "actualizar"
+		}
+	},
+	"form": {
+		"title": {
+			"create": "Crear nueva herramienta",
+			"edit": "Editar herramienta"
+		},
+		"description": "Configura los ajustes de tu herramienta y los detalles de la API",
+		"menu": {
+			"sections": "Secciones"
+		},
+		"sections": {
+			"general": "General",
+			"api": "Configuración API",
+			"headers": "Encabezados",
+			"parameters": "Parámetros",
+			"body": "Cuerpo de la solicitud"
+		},
+		"sectionStatus": {
+			"configured": "Configurado",
+			"empty": "Vacío"
+		},
+		"footer": {
+			"hint": "Completa los campos obligatorios para guardar"
+		},
+		"validation": {
+			"nameRequired": "El nombre es obligatorio",
+			"descriptionRequired": "La descripción es obligatoria",
+			"categoryRequired": "La categoría es obligatoria",
+			"urlRequired": "La URL es obligatoria",
+			"urlInvalid": "Ingresa una URL válida"
+		},
+		"fields": {
+			"name": {
+				"label": "Nombre",
+				"placeholder": "p. ej., Obtener clima"
+			},
+			"description": {
+				"label": "Descripción",
+				"placeholder": "¿Qué hace esta herramienta?"
+			},
+			"prompt": {
+				"label": "Instrucción del prompt",
+				"placeholder": "Instrucciones para el agente sobre cómo/cuándo usar esta herramienta"
+			},
+			"category": {
+				"label": "Categoría",
+				"placeholder": "Selecciona una categoría"
+			},
+			"status": {
+				"label": "Estado"
+			},
+			"method": {
+				"label": "Método"
+			},
+			"url": {
+				"label": "URL del endpoint",
+				"placeholder": "https://api.ejemplo.com/v1/recurso"
+			},
+			"timeout": {
+				"label": "Tiempo de espera (segundos)"
+			},
+			"authConnection": {
+				"label": "Conexión de autenticación",
+				"placeholder": "p. ej., github-oauth"
+			}
+		},
+		"headers": {
+			"title": "Encabezados de la solicitud",
+			"add": "Agregar encabezado",
+			"empty": "No hay encabezados configurados",
+			"fields": {
+				"keyPlaceholder": "Nombre del encabezado",
+				"valuePlaceholder": "Valor"
+			}
+		},
+		"parameters": {
+			"add": "Agregar",
+			"path": {
+				"title": "Parámetros de ruta",
+				"empty": "No hay parámetros de ruta",
+				"fields": {
+					"keyPlaceholder": "Nombre del parámetro",
+					"valuePlaceholder": "Descripción"
+				}
+			},
+			"query": {
+				"title": "Parámetros de consulta",
+				"empty": "No hay parámetros de consulta",
+				"fields": {
+					"keyPlaceholder": "Nombre del parámetro",
+					"valuePlaceholder": "Descripción"
+				}
+			}
+		},
+		"body": {
+			"title": "Propiedades del cuerpo de la solicitud",
+			"add": "Agregar propiedad",
+			"empty": "No hay propiedades del cuerpo configuradas",
+			"fields": {
+				"keyPlaceholder": "Nombre de la propiedad",
+				"typePlaceholder": "Tipo",
+				"descriptionPlaceholder": "Descripción",
+				"constantPlaceholder": "Valor constante",
+				"dynamicPlaceholder": "Variable dinámica"
+			}
+		},
+		"propertyTypes": {
+			"string": "Cadena",
+			"number": "Número",
+			"boolean": "Booleano",
+			"array": "Arreglo",
+			"object": "Objeto"
+		}
+	}
+}

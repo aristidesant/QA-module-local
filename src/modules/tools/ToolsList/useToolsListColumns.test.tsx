@@ -1,11 +1,17 @@
-import { renderHook, render, screen } from '@testing-library/react';
+import { renderHook as rtlRenderHook, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import useToolsListColumns from './useToolsListColumns';
-import { MantineProvider } from '@mantine/core';
 import type { ToolModel } from '~/models/ToolModel';
+import {
+	renderWithProviders,
+	TestProviders,
+} from '~/test-utils/renderWithProviders';
+
+const renderHook: typeof rtlRenderHook = (callback, options) =>
+	rtlRenderHook(callback, { wrapper: TestProviders, ...options });
 
 const renderWithProvider = (component: React.ReactNode) => {
-	return render(<MantineProvider>{component}</MantineProvider>);
+	return renderWithProviders(<>{component}</>);
 };
 
 describe('useToolsListColumns', () => {
@@ -55,7 +61,7 @@ describe('useToolsListColumns', () => {
 
 		renderWithProvider(<StatusCell row={{ original: mockTool }} />);
 
-		expect(screen.getByText('active')).toBeInTheDocument();
+		expect(screen.getByText('Active')).toBeInTheDocument();
 	});
 
 	it('renders creator cell correctly', () => {

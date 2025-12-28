@@ -1,7 +1,7 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ToolsPage from './ToolsPage';
-import { MantineProvider } from '@mantine/core';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 // Mock child components
 vi.mock('../ToolsList', () => ({
@@ -60,17 +60,13 @@ vi.mock('~/stores/toolsStore', () => ({
 	})),
 }));
 
-const renderWithProvider = (component: React.ReactNode) => {
-	return render(<MantineProvider>{component}</MantineProvider>);
-};
-
 describe('ToolsPage', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
 
 	it('renders correctly and attempts to set default category', () => {
-		renderWithProvider(<ToolsPage />);
+		renderWithProviders(<ToolsPage />);
 
 		expect(screen.getByTestId('content-container')).toBeInTheDocument();
 		// Should attempt to set webhook category
@@ -80,7 +76,7 @@ describe('ToolsPage', () => {
 	});
 
 	it('opens modal when create is clicked', async () => {
-		renderWithProvider(<ToolsPage />);
+		renderWithProviders(<ToolsPage />);
 
 		fireEvent.click(screen.getByTestId('create-btn'));
 
@@ -91,7 +87,7 @@ describe('ToolsPage', () => {
 	});
 
 	it('opens modal with toolId when edit is clicked', async () => {
-		renderWithProvider(<ToolsPage />);
+		renderWithProviders(<ToolsPage />);
 
 		fireEvent.click(screen.getByTestId('edit-btn'));
 

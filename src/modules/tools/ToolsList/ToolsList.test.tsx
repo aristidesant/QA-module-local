@@ -1,9 +1,9 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ToolsList from './ToolsList';
 import useToolsStore from '~/stores/toolsStore';
 import { useToolsByCategory } from '~/queries/toolQueries';
-import { MantineProvider } from '@mantine/core';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 // Mock dependencies
 vi.mock('~/stores/toolsStore', () => ({
@@ -39,7 +39,7 @@ vi.mock('~/components/EmptyState', () => ({
 }));
 
 const renderWithProvider = (component: React.ReactNode) => {
-	return render(<MantineProvider>{component}</MantineProvider>);
+	return renderWithProviders(component);
 };
 
 describe('ToolsList', () => {
