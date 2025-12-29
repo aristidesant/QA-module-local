@@ -16,6 +16,7 @@ import {
 	IconX,
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 import RightSectionCard from '~/components/RightSectionCard/RightSectionCard';
 import classes from './RoleDetails.module.css';
 import { useGetRole } from '~/queries/roleQueries';
@@ -56,23 +57,34 @@ const formatModuleName = (module: string): string => {
 };
 
 const RoleDetails: React.FC<RoleDetailsProps> = ({ roleId }) => {
+	const { t } = useTranslation('roles');
 	const { data: role, isLoading, isError, error } = useGetRole(roleId);
 	const clearRightComponent = useRolesPageStore(
 		(state) => state.clearRightComponent
 	);
 
+	const getModuleLabel = (moduleKey: string) =>
+		t(`form.permissions.moduleNames.${moduleKey}`, {
+			defaultValue: formatModuleName(moduleKey),
+		});
+
+	const getPermissionLabel = (permissionKey: string) =>
+		t(`form.permissions.permissionLabels.${permissionKey}`, {
+			defaultValue: permissionKey,
+		});
+
 	if (isLoading) {
 		return (
 			<Stack gap='md' className={classes.cards}>
 				<RightSectionCard
-					title='Role'
+					title={t('details.cards.roleTitle')}
 					icon={IconShield}
 					iconColor='var(--mantine-color-grape-6)'
 					rightSection={
 						<ActionIcon
 							variant='subtle'
 							color='gray'
-							aria-label='Close details'
+							aria-label={t('details.closeAriaLabel')}
 							onClick={clearRightComponent}
 							size='sm'
 						>
@@ -92,7 +104,7 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleId }) => {
 				</RightSectionCard>
 
 				<RightSectionCard
-					title='Permissions'
+					title={t('details.cards.permissionsTitle')}
 					icon={IconKey}
 					iconColor='var(--mantine-color-blue-6)'
 				>
@@ -104,7 +116,7 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleId }) => {
 				</RightSectionCard>
 
 				<RightSectionCard
-					title='Activity'
+					title={t('details.cards.activityTitle')}
 					icon={IconTimeline}
 					iconColor='var(--mantine-color-cyan-6)'
 				>
@@ -120,7 +132,7 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleId }) => {
 	if (isError || !role) {
 		return (
 			<RightSectionCard
-				title='Role details'
+				title={t('details.title')}
 				icon={IconShield}
 				iconColor='var(--mantine-color-grape-6)'
 				style={{ height: '100%' }}
@@ -128,7 +140,7 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleId }) => {
 					<ActionIcon
 						variant='subtle'
 						color='gray'
-						aria-label='Close details'
+						aria-label={t('details.closeAriaLabel')}
 						onClick={clearRightComponent}
 						size='sm'
 					>
@@ -138,10 +150,10 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleId }) => {
 			>
 				<Alert
 					icon={<IconInfoCircle size={18} />}
-					title='Unable to load role details'
+					title={t('details.loadErrorTitle')}
 					color='red'
 				>
-					{error instanceof Error ? error.message : 'Unknown error'}
+					{error instanceof Error ? error.message : t('list.unknownError')}
 				</Alert>
 			</RightSectionCard>
 		);
@@ -152,7 +164,7 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleId }) => {
 
 	const activityDetails: Detail[] = [
 		{
-			label: 'Created',
+			label: t('details.activity.created'),
 			value: (
 				<Tooltip label={createdDate.absolute}>
 					<Text component='span' className={classes.link}>
@@ -162,7 +174,7 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleId }) => {
 			),
 		},
 		{
-			label: 'Last updated',
+			label: t('details.activity.lastUpdated'),
 			value: (
 				<Tooltip label={updatedDate.absolute}>
 					<Text component='span' className={classes.link}>
@@ -175,7 +187,7 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleId }) => {
 
 	const updatedDescription =
 		updatedDate.relative !== '—'
-			? `Updated ${updatedDate.relative}`
+			? t('details.updatedRelative', { relative: updatedDate.relative })
 			: undefined;
 
 	const renderDetails = (items: Detail[]) => (
@@ -206,7 +218,7 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleId }) => {
 	return (
 		<Stack gap='md' className={classes.cards}>
 			<RightSectionCard
-				title='Role'
+				title={t('details.cards.roleTitle')}
 				icon={IconShield}
 				iconColor='var(--mantine-color-grape-6)'
 				description={updatedDescription}
@@ -214,7 +226,7 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleId }) => {
 					<ActionIcon
 						variant='subtle'
 						color='gray'
-						aria-label='Close details'
+						aria-label={t('details.closeAriaLabel')}
 						onClick={clearRightComponent}
 						size='sm'
 					>
@@ -234,11 +246,11 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleId }) => {
 							color={role.isActive ? 'green' : 'gray'}
 							className={classes.badge}
 						>
-							{role.isActive ? 'Active' : 'Inactive'}
+							{role.isActive ? t('status.active') : t('status.inactive')}
 						</Badge>
 						{role.isSystem && (
 							<Badge variant='light' color='grape' className={classes.badge}>
-								System Role
+								{t('details.badges.systemRole')}
 							</Badge>
 						)}
 					</div>
@@ -246,7 +258,7 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleId }) => {
 			</RightSectionCard>
 
 			<RightSectionCard
-				title='Permissions'
+				title={t('details.cards.permissionsTitle')}
 				icon={IconKey}
 				iconColor='var(--mantine-color-blue-6)'
 			>
@@ -255,7 +267,7 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleId }) => {
 						{Object.entries(groupedPermissions).map(([module, permissions]) => (
 							<div key={module} className={classes.modulePermission}>
 								<Text className={classes.moduleName}>
-									{formatModuleName(module)}
+									{getModuleLabel(module)}
 								</Text>
 								<div className={classes.permissionBadges}>
 									{permissions.map((permission) => (
@@ -266,7 +278,7 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleId }) => {
 											size='xs'
 											className={classes.permissionBadge}
 										>
-											{permission}
+											{getPermissionLabel(permission)}
 										</Badge>
 									))}
 								</div>
@@ -275,13 +287,13 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleId }) => {
 					</div>
 				) : (
 					<Text className={classes.emptyPermissions}>
-						No permissions assigned to this role
+						{t('details.noPermissions')}
 					</Text>
 				)}
 			</RightSectionCard>
 
 			<RightSectionCard
-				title='Activity'
+				title={t('details.cards.activityTitle')}
 				icon={IconTimeline}
 				iconColor='var(--mantine-color-cyan-6)'
 			>

@@ -6,8 +6,10 @@ import ToolsList from '../ToolsList';
 import { useState, useCallback, useEffect } from 'react';
 import ToolsModal from './ToolsModal';
 import { useToolCategories } from '~/queries/toolCategoryQueries';
+import { useTranslation } from 'react-i18next';
 
 const ToolsPage = () => {
+	const { t } = useTranslation('tools');
 	// Local state for modal
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedToolId, setSelectedToolId] = useState<
@@ -56,7 +58,7 @@ const ToolsPage = () => {
 				<Stack align='center'>
 					<Loader size='sm' />
 					<Text size='sm' c='dimmed'>
-						Loading tools...
+						{t('state.loadingTools')}
 					</Text>
 				</Stack>
 			</Center>
@@ -66,8 +68,8 @@ const ToolsPage = () => {
 	return (
 		<>
 			<ContentContainer
-				title='Tools'
-				description='Manage your tools and integrations'
+				title={t('page.title')}
+				description={t('page.description')}
 				titleRight={
 					<Button
 						leftSection={<IconPlus size={16} />}
@@ -75,7 +77,7 @@ const ToolsPage = () => {
 						variant='filled'
 						size='xs'
 					>
-						Create Tool
+						{t('actions.createTool')}
 					</Button>
 				}
 			>

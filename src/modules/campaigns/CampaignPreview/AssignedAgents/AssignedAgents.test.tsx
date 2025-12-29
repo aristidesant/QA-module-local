@@ -40,7 +40,7 @@ describe('AssignedAgents', () => {
 			isLoading: true,
 		});
 		renderWithProviders(<AssignedAgents />);
-		expect(screen.getAllByText(/Loading agent/i).length).toBeGreaterThan(0);
+		expect(screen.getAllByText('Loading agent').length).toBeGreaterThan(0);
 	});
 
 	it('renders assigned agents when data is present', () => {

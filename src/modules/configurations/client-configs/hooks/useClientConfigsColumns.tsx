@@ -3,17 +3,20 @@ import { Badge, Button, Group, Text, Tooltip } from '@mantine/core';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import type { ColumnDef } from '@tanstack/react-table';
 import type { ClientConfig } from '~/models/ClientConfig';
+import { useTranslation } from 'react-i18next';
 import styles from '../ClientConfigsContent/ClientConfigsContent.module.css';
 
 export function useClientConfigsColumns(
 	onEdit: (config: ClientConfig) => void,
 	onDelete: (config: ClientConfig) => void
 ): ColumnDef<ClientConfig>[] {
+	const { t } = useTranslation('client-configs');
+
 	return useMemo(
 		() => [
 			{
 				accessorKey: 'name',
-				header: 'Name',
+				header: t('table.columns.name'),
 				cell: ({ row }) => (
 					<Text className={styles.configName} fw={500}>
 						{row.original.name}
@@ -22,14 +25,14 @@ export function useClientConfigsColumns(
 			},
 			{
 				accessorKey: 'description',
-				header: 'Description',
+				header: t('table.columns.description'),
 				cell: ({ row }) => (
 					<Text className={styles.description}>{row.original.description}</Text>
 				),
 			},
 			{
 				accessorKey: 'type',
-				header: 'Type',
+				header: t('table.columns.type'),
 				cell: ({ row }) => (
 					<Badge variant='light' size='sm'>
 						{row.original.type}
@@ -38,7 +41,7 @@ export function useClientConfigsColumns(
 			},
 			{
 				accessorKey: 'value',
-				header: 'Value',
+				header: t('table.columns.value'),
 				cell: ({ row }) => (
 					<Text className={styles.value} lineClamp={1}>
 						{row.original.value}
@@ -47,7 +50,7 @@ export function useClientConfigsColumns(
 			},
 			{
 				accessorKey: 'updatedAt',
-				header: 'Last Updated',
+				header: t('table.columns.updatedAt'),
 				cell: ({ row }) => (
 					<Text className={styles.dateText}>
 						{new Date(row.original.updatedAt).toLocaleDateString()}
@@ -56,10 +59,10 @@ export function useClientConfigsColumns(
 			},
 			{
 				id: 'actions',
-				header: 'Actions',
+				header: t('table.columns.actions'),
 				cell: ({ row }) => (
 					<Group gap='xs' className={styles.actionsGroup}>
-						<Tooltip label='Edit configuration' withArrow>
+						<Tooltip label={t('table.tooltips.edit')} withArrow>
 							<Button
 								size='xs'
 								variant='subtle'
@@ -69,7 +72,7 @@ export function useClientConfigsColumns(
 								<IconEdit size={14} />
 							</Button>
 						</Tooltip>
-						<Tooltip label='Delete configuration' withArrow>
+						<Tooltip label={t('table.tooltips.delete')} withArrow>
 							<Button
 								size='xs'
 								variant='subtle'
@@ -84,6 +87,6 @@ export function useClientConfigsColumns(
 				),
 			},
 		],
-		[onEdit, onDelete]
+		[onEdit, onDelete, t]
 	);
 }

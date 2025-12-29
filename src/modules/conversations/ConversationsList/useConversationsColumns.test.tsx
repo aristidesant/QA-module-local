@@ -1,19 +1,24 @@
-import { renderHook } from '@testing-library/react';
-import { render, screen } from '@testing-library/react';
+import { renderHook as rtlRenderHook, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import type { ColumnDef, CellContext, Row } from '@tanstack/react-table';
-import { MantineProvider } from '@mantine/core';
 import { useConversationsColumns } from './useConversationsColumns';
 import type { ConversationsModel } from '~/models/ConversationsModels';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import {
+	renderWithProviders,
+	TestProviders,
+} from '~/test-utils/renderWithProviders';
 
 // Extend dayjs with required plugins
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(relativeTime);
+
+const renderHook: typeof rtlRenderHook = (callback, options) =>
+	rtlRenderHook(callback, { wrapper: TestProviders, ...options });
 
 // Helper type to access accessorKey from column definitions
 type ColumnWithAccessorKey = ColumnDef<ConversationsModel> & {
@@ -22,7 +27,7 @@ type ColumnWithAccessorKey = ColumnDef<ConversationsModel> & {
 
 // Helper to render cell content with Mantine provider
 const renderCell = (cellContent: React.ReactNode) => {
-	return render(<MantineProvider>{cellContent}</MantineProvider>);
+	return renderWithProviders(<>{cellContent}</>);
 };
 
 // Create a mock row for testing cells
@@ -87,43 +92,49 @@ describe('useConversationsColumns', () => {
 		});
 
 		it('has "Contact Name" as the header for the first column', () => {
-			const { result } = renderHook(() =>
-				useConversationsColumns(userTimezone)
+			const { result } = renderHook(
+				() => useConversationsColumns(userTimezone),
+				{ wrapper: TestProviders }
 			);
 			expect(result.current[0].header).toBe('Contact Name');
 		});
 
 		it('has "Phone Number" as the header for the second column', () => {
-			const { result } = renderHook(() =>
-				useConversationsColumns(userTimezone)
+			const { result } = renderHook(
+				() => useConversationsColumns(userTimezone),
+				{ wrapper: TestProviders }
 			);
 			expect(result.current[1].header).toBe('Phone Number');
 		});
 
 		it('has "Outcome" as the header for the third column', () => {
-			const { result } = renderHook(() =>
-				useConversationsColumns(userTimezone)
+			const { result } = renderHook(
+				() => useConversationsColumns(userTimezone),
+				{ wrapper: TestProviders }
 			);
 			expect(result.current[2].header).toBe('Outcome');
 		});
 
 		it('has "Status" as the header for the fourth column', () => {
-			const { result } = renderHook(() =>
-				useConversationsColumns(userTimezone)
+			const { result } = renderHook(
+				() => useConversationsColumns(userTimezone),
+				{ wrapper: TestProviders }
 			);
 			expect(result.current[3].header).toBe('Status');
 		});
 
 		it('has "When" as the header for the fifth column', () => {
-			const { result } = renderHook(() =>
-				useConversationsColumns(userTimezone)
+			const { result } = renderHook(
+				() => useConversationsColumns(userTimezone),
+				{ wrapper: TestProviders }
 			);
 			expect(result.current[4].header).toBe('When');
 		});
 
 		it('has "Duration" as the header for the sixth column', () => {
-			const { result } = renderHook(() =>
-				useConversationsColumns(userTimezone)
+			const { result } = renderHook(
+				() => useConversationsColumns(userTimezone),
+				{ wrapper: TestProviders }
 			);
 			expect(result.current[5].header).toBe('Duration');
 		});
@@ -155,16 +166,18 @@ describe('useConversationsColumns', () => {
 		it.each(expectedHeaders.map((header, index) => [index, header]))(
 			'column at index %i has exact header "%s"',
 			(index, expectedHeader) => {
-				const { result } = renderHook(() =>
-					useConversationsColumns(userTimezone)
+				const { result } = renderHook(
+					() => useConversationsColumns(userTimezone),
+					{ wrapper: TestProviders }
 				);
 				expect(result.current[index as number].header).toBe(expectedHeader);
 			}
 		);
 
 		it('all column headers match expected values in order', () => {
-			const { result } = renderHook(() =>
-				useConversationsColumns(userTimezone)
+			const { result } = renderHook(
+				() => useConversationsColumns(userTimezone),
+				{ wrapper: TestProviders }
 			);
 			const actualHeaders = result.current.map((col) => col.header);
 			expect(actualHeaders).toEqual(expectedHeaders);
@@ -173,8 +186,9 @@ describe('useConversationsColumns', () => {
 
 	describe('status column existence', () => {
 		it('has a status column with accessorKey', () => {
-			const { result } = renderHook(() =>
-				useConversationsColumns(userTimezone)
+			const { result } = renderHook(
+				() => useConversationsColumns(userTimezone),
+				{ wrapper: TestProviders }
 			);
 			const columns = result.current as ColumnWithAccessorKey[];
 			const statusColumn = columns.find((col) => col.accessorKey === 'status');
@@ -183,8 +197,9 @@ describe('useConversationsColumns', () => {
 		});
 
 		it('has a startDate column with accessorKey', () => {
-			const { result } = renderHook(() =>
-				useConversationsColumns(userTimezone)
+			const { result } = renderHook(
+				() => useConversationsColumns(userTimezone),
+				{ wrapper: TestProviders }
 			);
 			const columns = result.current as ColumnWithAccessorKey[];
 			const whenColumn = columns.find((col) => col.accessorKey === 'startDate');
@@ -391,7 +406,7 @@ describe('useConversationsColumns', () => {
 			expect(badge).toBeInTheDocument();
 		});
 
-		it('renders N/A when disposition is null', () => {
+		it('renders overview.fallbacks.na when disposition is null', () => {
 			const { result } = renderHook(() =>
 				useConversationsColumns(userTimezone)
 			);
@@ -406,7 +421,7 @@ describe('useConversationsColumns', () => {
 			expect(screen.getByText('N/A')).toBeInTheDocument();
 		});
 
-		it('renders N/A when disposition is undefined', () => {
+		it('renders overview.fallbacks.na when disposition is undefined', () => {
 			const { result } = renderHook(() =>
 				useConversationsColumns(userTimezone)
 			);
@@ -423,7 +438,7 @@ describe('useConversationsColumns', () => {
 	});
 
 	describe('Status column cell rendering (resolveSimpleStatus)', () => {
-		it('renders green "Done" badge for completed status', () => {
+		it('renders green "list.status.done" badge for completed status', () => {
 			const { result } = renderHook(() =>
 				useConversationsColumns(userTimezone)
 			);
@@ -439,7 +454,7 @@ describe('useConversationsColumns', () => {
 			expect(screen.getByText('Done')).toBeInTheDocument();
 		});
 
-		it('renders green "Done" badge for success status', () => {
+		it('renders green "list.status.done" badge for success status', () => {
 			const { result } = renderHook(() =>
 				useConversationsColumns(userTimezone)
 			);
@@ -455,7 +470,7 @@ describe('useConversationsColumns', () => {
 			expect(screen.getByText('Done')).toBeInTheDocument();
 		});
 
-		it('renders green "Done" badge for done status', () => {
+		it('renders green "list.status.done" badge for done status', () => {
 			const { result } = renderHook(() =>
 				useConversationsColumns(userTimezone)
 			);
@@ -471,7 +486,7 @@ describe('useConversationsColumns', () => {
 			expect(screen.getByText('Done')).toBeInTheDocument();
 		});
 
-		it('renders blue "In Progress" badge for progress status', () => {
+		it('renders blue "list.status.inProgress" badge for progress status', () => {
 			const { result } = renderHook(() =>
 				useConversationsColumns(userTimezone)
 			);
@@ -487,7 +502,7 @@ describe('useConversationsColumns', () => {
 			expect(screen.getByText('In Progress')).toBeInTheDocument();
 		});
 
-		it('renders blue "In Progress" badge for running status', () => {
+		it('renders blue "list.status.inProgress" badge for running status', () => {
 			const { result } = renderHook(() =>
 				useConversationsColumns(userTimezone)
 			);
@@ -503,7 +518,7 @@ describe('useConversationsColumns', () => {
 			expect(screen.getByText('In Progress')).toBeInTheDocument();
 		});
 
-		it('renders red "Failed" badge for failed status', () => {
+		it('renders red "list.status.failed" badge for failed status', () => {
 			const { result } = renderHook(() =>
 				useConversationsColumns(userTimezone)
 			);
@@ -519,7 +534,7 @@ describe('useConversationsColumns', () => {
 			expect(screen.getByText('Failed')).toBeInTheDocument();
 		});
 
-		it('renders red "Failed" badge for error status', () => {
+		it('renders red "list.status.failed" badge for error status', () => {
 			const { result } = renderHook(() =>
 				useConversationsColumns(userTimezone)
 			);
@@ -535,7 +550,7 @@ describe('useConversationsColumns', () => {
 			expect(screen.getByText('Failed')).toBeInTheDocument();
 		});
 
-		it('renders red "Failed" badge for cancelled status', () => {
+		it('renders red "list.status.failed" badge for cancelled status', () => {
 			const { result } = renderHook(() =>
 				useConversationsColumns(userTimezone)
 			);
@@ -551,7 +566,7 @@ describe('useConversationsColumns', () => {
 			expect(screen.getByText('Failed')).toBeInTheDocument();
 		});
 
-		it('renders yellow "Pending" badge for pending status', () => {
+		it('renders yellow "list.status.pending" badge for pending status', () => {
 			const { result } = renderHook(() =>
 				useConversationsColumns(userTimezone)
 			);
@@ -567,7 +582,7 @@ describe('useConversationsColumns', () => {
 			expect(screen.getByText('Pending')).toBeInTheDocument();
 		});
 
-		it('renders yellow "Pending" badge for queued status', () => {
+		it('renders yellow "list.status.pending" badge for queued status', () => {
 			const { result } = renderHook(() =>
 				useConversationsColumns(userTimezone)
 			);
@@ -583,7 +598,7 @@ describe('useConversationsColumns', () => {
 			expect(screen.getByText('Pending')).toBeInTheDocument();
 		});
 
-		it('renders yellow "Pending" badge for waiting status', () => {
+		it('renders yellow "list.status.pending" badge for waiting status', () => {
 			const { result } = renderHook(() =>
 				useConversationsColumns(userTimezone)
 			);
@@ -599,7 +614,7 @@ describe('useConversationsColumns', () => {
 			expect(screen.getByText('Pending')).toBeInTheDocument();
 		});
 
-		it('renders yellow "Pending" badge for initiated status', () => {
+		it('renders yellow "list.status.pending" badge for initiated status', () => {
 			const { result } = renderHook(() =>
 				useConversationsColumns(userTimezone)
 			);
@@ -615,7 +630,7 @@ describe('useConversationsColumns', () => {
 			expect(screen.getByText('Pending')).toBeInTheDocument();
 		});
 
-		it('renders gray "Unknown" badge for unknown status', () => {
+		it('renders gray "list.status.unknown" badge for unknown status', () => {
 			const { result } = renderHook(() =>
 				useConversationsColumns(userTimezone)
 			);
@@ -631,7 +646,7 @@ describe('useConversationsColumns', () => {
 			expect(screen.getByText('Unknown')).toBeInTheDocument();
 		});
 
-		it('renders gray "Unknown" badge when status is null', () => {
+		it('renders gray "list.status.unknown" badge when status is null', () => {
 			const { result } = renderHook(() =>
 				useConversationsColumns(userTimezone)
 			);

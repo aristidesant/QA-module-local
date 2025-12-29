@@ -1,7 +1,7 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
 import { ColumnDef } from '@tanstack/react-table';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import BaseTable from './BaseTable';
 
 type TestData = {
@@ -16,7 +16,7 @@ const testData: TestData[] = [
 	{ id: '3', name: 'Bob Johnson', age: 35 },
 ];
 
-const testColumns: ColumnDef<TestData, any>[] = [
+const testColumns: ColumnDef<TestData, unknown>[] = [
 	{
 		accessorKey: 'name',
 		header: 'Name',
@@ -30,10 +30,8 @@ const testColumns: ColumnDef<TestData, any>[] = [
 const renderTable = (
 	props: Partial<Parameters<typeof BaseTable<TestData>>[0]> = {}
 ) => {
-	return render(
-		<MantineProvider>
-			<BaseTable<TestData> data={testData} columns={testColumns} {...props} />
-		</MantineProvider>
+	return renderWithProviders(
+		<BaseTable<TestData> data={testData} columns={testColumns} {...props} />
 	);
 };
 
@@ -142,19 +140,17 @@ describe('BaseTable', () => {
 			age: 20 + i,
 		}));
 
-		const { rerender } = render(
-			<MantineProvider>
-				<BaseTable<TestData>
-					columns={testColumns}
-					data={largeData}
-					filterMode='server'
-					enablePagination={true}
-					showPaginationControls={true}
-					pageCount={3}
-					pageIndex={0}
-					pageSize={10}
-				/>
-			</MantineProvider>
+		const { unmount } = renderWithProviders(
+			<BaseTable<TestData>
+				columns={testColumns}
+				data={largeData}
+				filterMode='server'
+				enablePagination={true}
+				showPaginationControls={true}
+				pageCount={3}
+				pageIndex={0}
+				pageSize={10}
+			/>
 		);
 
 		// Initial active page should be 1
@@ -162,20 +158,18 @@ describe('BaseTable', () => {
 			screen.getByRole('button', { name: '1' }).getAttribute('aria-current')
 		).toBe('page');
 
-		// Rerender with pageIndex 1
-		rerender(
-			<MantineProvider>
-				<BaseTable<TestData>
-					columns={testColumns}
-					data={largeData}
-					filterMode='server'
-					enablePagination={true}
-					showPaginationControls={true}
-					pageCount={3}
-					pageIndex={1}
-					pageSize={10}
-				/>
-			</MantineProvider>
+		unmount();
+		renderWithProviders(
+			<BaseTable<TestData>
+				columns={testColumns}
+				data={largeData}
+				filterMode='server'
+				enablePagination={true}
+				showPaginationControls={true}
+				pageCount={3}
+				pageIndex={1}
+				pageSize={10}
+			/>
 		);
 
 		expect(
@@ -404,7 +398,7 @@ describe('BaseTable', () => {
 
 	describe('Column Meta', () => {
 		it('applies headerClassName from column meta', () => {
-			const columnsWithMeta: ColumnDef<TestData, any>[] = [
+			const columnsWithMeta: ColumnDef<TestData, unknown>[] = [
 				{
 					accessorKey: 'name',
 					header: 'Name',
@@ -416,10 +410,8 @@ describe('BaseTable', () => {
 				},
 			];
 
-			render(
-				<MantineProvider>
-					<BaseTable<TestData> data={testData} columns={columnsWithMeta} />
-				</MantineProvider>
+			renderWithProviders(
+				<BaseTable<TestData> data={testData} columns={columnsWithMeta} />
 			);
 
 			const nameHeader = screen.getByText('Name').closest('th');
@@ -427,7 +419,7 @@ describe('BaseTable', () => {
 		});
 
 		it('applies cellClassName from column meta', () => {
-			const columnsWithMeta: ColumnDef<TestData, any>[] = [
+			const columnsWithMeta: ColumnDef<TestData, unknown>[] = [
 				{
 					accessorKey: 'name',
 					header: 'Name',
@@ -439,10 +431,8 @@ describe('BaseTable', () => {
 				},
 			];
 
-			render(
-				<MantineProvider>
-					<BaseTable<TestData> data={testData} columns={columnsWithMeta} />
-				</MantineProvider>
+			renderWithProviders(
+				<BaseTable<TestData> data={testData} columns={columnsWithMeta} />
 			);
 
 			const nameCell = screen.getByText('John Doe').closest('td');
@@ -452,7 +442,7 @@ describe('BaseTable', () => {
 
 	describe('Non-sortable Columns', () => {
 		it('does not render sort icon for non-sortable columns', () => {
-			const nonSortableColumns: ColumnDef<TestData, any>[] = [
+			const nonSortableColumns: ColumnDef<TestData, unknown>[] = [
 				{
 					accessorKey: 'name',
 					header: 'Name',
@@ -464,10 +454,8 @@ describe('BaseTable', () => {
 				},
 			];
 
-			render(
-				<MantineProvider>
-					<BaseTable<TestData> data={testData} columns={nonSortableColumns} />
-				</MantineProvider>
+			renderWithProviders(
+				<BaseTable<TestData> data={testData} columns={nonSortableColumns} />
 			);
 
 			const nameHeader = screen.getByText('Name').closest('th');
@@ -766,7 +754,7 @@ describe('BaseTable', () => {
 
 	describe('Placeholder Headers', () => {
 		it('renders placeholder headers correctly', () => {
-			const columnsWithPlaceholder: ColumnDef<TestData, any>[] = [
+			const columnsWithPlaceholder: ColumnDef<TestData, unknown>[] = [
 				{
 					id: 'placeholder',
 					header: () => null,
@@ -777,13 +765,8 @@ describe('BaseTable', () => {
 				},
 			];
 
-			render(
-				<MantineProvider>
-					<BaseTable<TestData>
-						data={testData}
-						columns={columnsWithPlaceholder}
-					/>
-				</MantineProvider>
+			renderWithProviders(
+				<BaseTable<TestData> data={testData} columns={columnsWithPlaceholder} />
 			);
 
 			expect(screen.getByText('Name')).toBeInTheDocument();

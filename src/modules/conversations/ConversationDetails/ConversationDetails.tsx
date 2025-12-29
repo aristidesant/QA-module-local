@@ -26,7 +26,7 @@ export function ConversationDetails({
 	id,
 	onReload,
 }: ConversationDetailsProps) {
-	const { t } = useTranslation();
+	const { t } = useTranslation(['conversations', 'common']);
 	const {
 		data: conversation,
 		refetch: reloadCurrent,
@@ -84,7 +84,7 @@ export function ConversationDetails({
 	}
 
 	if (!canViewConversations) {
-		return <AccessDenied description={t('conversations.list.accessDenied')} />;
+		return <AccessDenied description={t('list.accessDenied')} />;
 	}
 	const handleReload = () => {
 		onReload?.();
@@ -104,13 +104,13 @@ export function ConversationDetails({
 					<Tabs.Tab value='overview'>
 						<Box style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
 							<IconInfoCircle size={18} />
-							<span>{t('conversations.details.tabs.overview')}</span>
+							<span>{t('details.tabs.overview')}</span>
 						</Box>
 					</Tabs.Tab>
 					<Tabs.Tab value='transcript'>
 						<Box style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
 							<IconFileText size={18} />
-							<span>{t('conversations.details.tabs.transcript')}</span>
+							<span>{t('details.tabs.transcript')}</span>
 						</Box>
 					</Tabs.Tab>
 				</Tabs.List>

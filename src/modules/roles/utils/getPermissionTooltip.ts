@@ -1,5 +1,6 @@
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
+import type { TFunction } from 'i18next';
 
 const formatModuleName = (module: string): string => {
 	return module
@@ -32,31 +33,44 @@ const getDefaultActionLabel = (permission: PermissionEnum): string => {
 };
 
 export const getPermissionTooltip = (
+	t: TFunction<'roles'>,
 	module: string,
-	permission: string
+	permission: string,
+	options?: { moduleLabel?: string }
 ): string => {
 	const permissionEnum = permission as PermissionEnum;
 	const moduleEnum = module as ModuleEnum;
+	const moduleLabel = options?.moduleLabel ?? formatModuleName(module);
+	const defaultActionLabel =
+		permissionEnum in PermissionEnum
+			? getDefaultActionLabel(permissionEnum)
+			: 'perform actions';
+	const actionLabel = t(`form.permissions.actionLabels.${permission}`, {
+		defaultValue: t('form.permissions.actionLabels.default', {
+			permission,
+			defaultValue: defaultActionLabel,
+		}),
+	});
 
 	if (
 		moduleEnum === ModuleEnum.DASHBOARD &&
 		permissionEnum === PermissionEnum.READ
 	) {
-		return 'Access the Overview dashboard (home page).';
+		return t('form.permissions.tooltips.dashboard.read');
 	}
 
 	if (moduleEnum === ModuleEnum.CAMPAIGNS) {
 		switch (permissionEnum) {
 			case PermissionEnum.READ:
-				return 'View the campaigns list and campaign details (`/campaigns`, `/campaign/view/:id`).';
+				return t('form.permissions.tooltips.campaigns.read');
 			case PermissionEnum.CREATE:
-				return 'Create new campaigns and clone existing ones from the campaigns list.';
+				return t('form.permissions.tooltips.campaigns.create');
 			case PermissionEnum.UPDATE:
-				return 'Edit campaigns (`/campaign/:id`) and use edit actions in the campaigns list.';
+				return t('form.permissions.tooltips.campaigns.update');
 			case PermissionEnum.DELETE:
-				return 'Delete campaigns from the campaigns list.';
+				return t('form.permissions.tooltips.campaigns.delete');
 			case PermissionEnum.EXPORT:
-				return 'Export campaign-related data when export actions are available.';
+				return t('form.permissions.tooltips.campaigns.export');
 			default:
 				break;
 		}
@@ -65,9 +79,9 @@ export const getPermissionTooltip = (
 	if (moduleEnum === ModuleEnum.CONVERSATIONS) {
 		switch (permissionEnum) {
 			case PermissionEnum.READ:
-				return 'View the conversations list (`/conversations`).';
+				return t('form.permissions.tooltips.conversations.read');
 			case PermissionEnum.EXPORT:
-				return 'Export conversations and download transcripts (PDF).';
+				return t('form.permissions.tooltips.conversations.export');
 			default:
 				break;
 		}
@@ -76,7 +90,7 @@ export const getPermissionTooltip = (
 	if (moduleEnum === ModuleEnum.SETTINGS) {
 		switch (permissionEnum) {
 			case PermissionEnum.READ:
-				return 'Access Settings module features (for example, Campaign Management). Some configuration areas may require MANAGE.';
+				return t('form.permissions.tooltips.settings.read');
 			default:
 				break;
 		}
@@ -86,28 +100,32 @@ export const getPermissionTooltip = (
 		moduleEnum === ModuleEnum.SETTINGS &&
 		permissionEnum === PermissionEnum.MANAGE
 	) {
-		return 'Access configuration and administration pages (Configurations, Clients, and Scheduler).';
+		return t('form.permissions.tooltips.settings.manage');
 	}
 
 	if (moduleEnum === ModuleEnum.ROLES) {
 		switch (permissionEnum) {
 			case PermissionEnum.READ:
-				return 'View roles and their assigned permissions in the Roles module.';
+				return t('form.permissions.tooltips.roles.read');
 			case PermissionEnum.CREATE:
-				return 'Create new roles.';
+				return t('form.permissions.tooltips.roles.create');
 			case PermissionEnum.UPDATE:
-				return 'Edit existing roles and their permissions.';
+				return t('form.permissions.tooltips.roles.update');
 			case PermissionEnum.DELETE:
-				return 'Delete roles.';
+				return t('form.permissions.tooltips.roles.delete');
 			default:
 				break;
 		}
 	}
 
 	if (permissionEnum === PermissionEnum.MANAGE) {
-		return `Grants full access to ${formatModuleName(module)} (all actions), and makes the module visible in navigation.`;
+		return t('form.permissions.tooltips.manage', {
+			module: moduleLabel,
+		});
 	}
 
-	const actionLabel = getDefaultActionLabel(permissionEnum);
-	return `Allows the user to ${actionLabel} in ${formatModuleName(module)}.`;
+	return t('form.permissions.tooltips.generic', {
+		module: moduleLabel,
+		action: actionLabel,
+	});
 };

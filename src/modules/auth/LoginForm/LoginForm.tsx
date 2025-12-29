@@ -24,6 +24,7 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { useLogin } from '~/queries/authQueries';
 import { getErrorMessage } from '~/utils/httpClient';
+import { useTranslation } from 'react-i18next';
 import classes from './LoginForm.module.css';
 import Logo from '~/components/Logo';
 import { ClientSelectOption, MFALoginResponse } from '~/api/authApi';
@@ -34,6 +35,7 @@ import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import { usePasswordResetStore } from '~/stores/passwordResetStore';
 import { useEffect } from 'react';
 import { useSessionStore } from '~/stores/sessionStore';
+import LanguagePicker from '~/components/LanguagePicker';
 
 interface FormValues {
 	username: string;
@@ -46,6 +48,7 @@ export function LoginForm() {
 	const loginMutation = useLogin();
 	const navigate = useNavigate();
 	const location = useLocation();
+	const { t } = useTranslation('auth');
 	const { setToken, setUser, setTargetClient } = useSessionStore();
 	const { setPendingCredentials, clearPendingCredentials } =
 		usePasswordResetStore();
@@ -89,8 +92,8 @@ export function LoginForm() {
 		// Ensure the form never performs native submission
 		onSubmitPreventDefault: 'always',
 		validate: {
-			username: (value) => (!value.trim() ? 'Username is required' : null),
-			password: (value) => (!value ? 'Password is required' : null),
+			username: (value) => (!value.trim() ? t('username.required') : null),
+			password: (value) => (!value ? t('password.required') : null),
 		},
 	});
 
@@ -127,13 +130,14 @@ export function LoginForm() {
 					<Box className={classes.logoContainer}>
 						<Logo />
 					</Box>
+					<div style={{ position: 'absolute', top: 16, right: 16 }}>
+						<LanguagePicker variant='subtle' size='sm' />
+					</div>
 					<div className={classes.headerText}>
 						<Title order={2} className={classes.title}>
-							Welcome back
+							{t('welcome')}
 						</Title>
-						<Text className={classes.subtitle}>
-							Sign in to manage your agents and campaigns
-						</Text>
+						<Text className={classes.subtitle}>{t('subtitle')}</Text>
 					</div>
 				</div>
 
@@ -202,7 +206,7 @@ export function LoginForm() {
 							<Stack gap='sm' align='center'>
 								<Loader size='md' type='dots' color='blue' />
 								<Text size='sm' fw={600} c='blue.7'>
-									Signing in...
+									{t('actions.signingIn')}
 								</Text>
 							</Stack>
 						</div>
@@ -212,12 +216,12 @@ export function LoginForm() {
 							<Alert
 								variant='light'
 								color='red'
-								title='Session expired'
+								title={t('errors.sessionExpired.title')}
 								icon={<IconAlertCircle size={20} />}
 								radius='lg'
 								className={classes.errorMessage}
 							>
-								Please sign in again to continue.
+								{t('errors.sessionExpired.message')}
 							</Alert>
 						)}
 						<Box className={classes.segmentedWrapper}>
@@ -226,8 +230,8 @@ export function LoginForm() {
 								value={form.values.loginType}
 								onChange={(v) => form.setFieldValue('loginType', v as any)}
 								data={[
-									{ label: 'Credentials', value: 'USER_PASS' },
-									{ label: 'LDAP', value: 'LDAP' },
+									{ label: t('loginType.credentials'), value: 'USER_PASS' },
+									{ label: t('loginType.ldap'), value: 'LDAP' },
 								]}
 							/>
 						</Box>
@@ -235,11 +239,11 @@ export function LoginForm() {
 						<Stack gap='sm'>
 							<TextInput
 								required
-								label='Username'
+								label={t('username.label')}
 								placeholder={
 									form.values.loginType === 'USER_PASS'
-										? 'Enter your username'
-										: 'Enter your LDAP username'
+										? t('username.placeholder')
+										: t('username.ldapPlaceholder')
 								}
 								leftSection={
 									<IconUser className={classes.inputIcon} stroke={1.5} />
@@ -257,8 +261,8 @@ export function LoginForm() {
 
 							<PasswordInput
 								required
-								label='Password'
-								placeholder='Enter your password'
+								label={t('password.label')}
+								placeholder={t('password.placeholder')}
 								leftSection={
 									<IconLock className={classes.inputIcon} stroke={1.5} />
 								}
@@ -292,7 +296,9 @@ export function LoginForm() {
 								radius='lg'
 								className={classes.errorMessage}
 							>
-								{formError}
+								{formError === 'Unable to sign in'
+									? t('errors.unableToSignIn')
+									: formError}
 							</Alert>
 						)}
 
@@ -308,7 +314,7 @@ export function LoginForm() {
 							}
 							disabled={isLoading}
 						>
-							Sign in
+							{t('actions.signIn')}
 						</Button>
 					</Stack>
 				</form>

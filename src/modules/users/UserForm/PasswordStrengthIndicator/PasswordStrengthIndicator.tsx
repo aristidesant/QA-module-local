@@ -1,5 +1,6 @@
 import { Box, Text, Progress } from '@mantine/core';
 import { IconCheck, IconX } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import { validateStrongPassword } from '~/utils/passwordHelper';
 import classes from './PasswordStrengthIndicator.module.css';
 
@@ -10,6 +11,7 @@ interface PasswordStrengthIndicatorProps {
 const PasswordStrengthIndicator: React.FC<PasswordStrengthIndicatorProps> = ({
 	password,
 }) => {
+	const { t } = useTranslation('users');
 	if (!password || password.trim().length === 0) {
 		return null;
 	}
@@ -18,23 +20,23 @@ const PasswordStrengthIndicator: React.FC<PasswordStrengthIndicatorProps> = ({
 	const requirements = [
 		{
 			check: password.length >= 8,
-			label: 'At least 8 characters',
+			label: t('password.requirements.minLength'),
 		},
 		{
 			check: /[a-z]/.test(password),
-			label: 'Contains lowercase letter',
+			label: t('password.requirements.lowercase'),
 		},
 		{
 			check: /[A-Z]/.test(password),
-			label: 'Contains uppercase letter',
+			label: t('password.requirements.uppercase'),
 		},
 		{
 			check: /[0-9]/.test(password),
-			label: 'Contains number',
+			label: t('password.requirements.number'),
 		},
 		{
 			check: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
-			label: 'Contains special character',
+			label: t('password.requirements.symbol'),
 		},
 	];
 
@@ -76,7 +78,7 @@ const PasswordStrengthIndicator: React.FC<PasswordStrengthIndicatorProps> = ({
 
 			{validation.isValid && (
 				<Text className={classes.successMessage}>
-					Password meets all requirements
+					{t('password.requirements.metAll')}
 				</Text>
 			)}
 		</Box>

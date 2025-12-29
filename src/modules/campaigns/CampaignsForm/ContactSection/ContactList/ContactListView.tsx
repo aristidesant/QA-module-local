@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActionIcon, Modal, Tooltip, Group, Stack } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus, IconRefresh } from '@tabler/icons-react';
@@ -36,6 +37,7 @@ export const ContactListView = ({
 	isActive,
 	isLoading = false,
 }: ContactListViewProps) => {
+	const { t } = useTranslation('campaigns');
 	const navigate = useNavigate();
 	const [opened, { open, close }] = useDisclosure(false);
 	const [inactiveExpanded, { toggle: toggleInactiveExpanded }] =
@@ -81,25 +83,27 @@ export const ContactListView = ({
 
 	const title = (
 		<>
-			{isActive ? 'Contact lists' : 'Inactive Contact Lists'} ({activeCount}
-			){' '}
+			{isActive
+				? t('form.contacts.list.activeTitle')
+				: t('form.contacts.list.inactiveTitle')}{' '}
+			({activeCount}){' '}
 		</>
 	);
 	const description = isActive
-		? 'Displaying all active contact lists associated with this campaign.'
-		: 'Displaying all inactive contact lists associated with this campaign.';
+		? t('form.contacts.list.activeDescription')
+		: t('form.contacts.list.inactiveDescription');
 	const tooltipLabel = isActive
-		? 'Add new contact list'
-		: 'Add inactive contact list';
+		? t('form.contacts.list.addNewContactList')
+		: t('form.contacts.list.addInactiveContactList');
 	const modalTitle = isActive
-		? 'Contact List Configuration'
-		: 'Select Active Contact List';
+		? t('form.contacts.list.configuration')
+		: t('form.contacts.list.selectActive');
 	const modalDescription = isActive
-		? 'Browse your existing contact lists or upload a new one to start reaching out.'
-		: 'Select an active contact list to add as inactive for this campaign.';
+		? t('form.contacts.list.configurationDescription')
+		: t('form.contacts.list.selectActiveDescription');
 	const emptyMessage = isActive
-		? 'No contact lists available'
-		: 'No inactive contact lists available';
+		? t('form.contacts.list.emptyMessage')
+		: t('form.contacts.list.emptyInactiveMessage');
 
 	const isCollapsed = !isActive && !inactiveExpanded;
 
@@ -111,16 +115,18 @@ export const ContactListView = ({
 				description={description}
 				headerActions={
 					<Group gap='xs'>
-						<Tooltip label='Reload'>
+						<Tooltip label={t('form.contacts.list.reload')}>
 							<ActionIcon
 								color='gray'
 								size='sm'
 								variant='light'
 								onClick={onUpdateComplete}
-								aria-label='Reload contact lists'
+								aria-label={t('form.contacts.list.reload')}
 								disabled={isCollapsed}
 								title={
-									isCollapsed ? 'Reload unavailable while collapsed' : 'Reload'
+									isCollapsed
+										? t('form.contacts.list.reloadUnavailable')
+										: t('form.contacts.list.reload')
 								}
 							>
 								<IconRefresh size={18} />

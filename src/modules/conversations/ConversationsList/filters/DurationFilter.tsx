@@ -1,5 +1,6 @@
 import { NumberInput, Group, Text } from "@mantine/core";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface DurationFilterProps {
   onDurationRangeChange: (
@@ -9,6 +10,7 @@ interface DurationFilterProps {
 }
 
 export function DurationFilter({ onDurationRangeChange }: DurationFilterProps) {
+  const { t } = useTranslation();
   const [minDuration, setMinDuration] = useState<number | null>(null);
   const [maxDuration, setMaxDuration] = useState<number | null>(null);
 
@@ -32,7 +34,7 @@ export function DurationFilter({ onDurationRangeChange }: DurationFilterProps) {
         Duration (seconds):
       </Text>
       <NumberInput
-        placeholder="Min"
+        placeholder={t("filters.duration.min")}
         value={minDuration ?? ""}
         onChange={handleMinDurationChange}
         size="sm"
@@ -43,7 +45,7 @@ export function DurationFilter({ onDurationRangeChange }: DurationFilterProps) {
         to
       </Text>
       <NumberInput
-        placeholder="Max"
+        placeholder={t("filters.duration.max")}
         value={maxDuration ?? ""}
         onChange={handleMaxDurationChange}
         size="sm"

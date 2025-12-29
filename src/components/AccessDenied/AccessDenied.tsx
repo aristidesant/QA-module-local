@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { Button, Flex, Stack, Text, Title } from '@mantine/core';
 import { IconBan } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import styles from './AccessDenied.module.css';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 
@@ -13,12 +14,16 @@ export interface AccessDeniedProps {
 }
 
 const AccessDenied = ({
-	title = 'Access Denied',
-	description = 'You do not have permission to access this page.',
+	title,
+	description,
 	showBackButton = true,
 	onBackClick,
 }: AccessDeniedProps) => {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
+
+	const displayTitle = title ?? t('accessDenied.title');
+	const displayDescription = description ?? t('accessDenied.description');
 
 	const handleBack = useMemo(
 		() => onBackClick ?? (() => navigate(-1)),
@@ -27,8 +32,8 @@ const AccessDenied = ({
 
 	return (
 		<ContentContainer
-			title={title}
-			description={description}
+			title={displayTitle}
+			description={displayDescription}
 			showBackButton={showBackButton}
 			onBackClick={handleBack}
 		>
@@ -38,17 +43,17 @@ const AccessDenied = ({
 						<IconBan size={42} />
 					</div>
 					<Title order={4} c='dark'>
-						{title}
+						{displayTitle}
 					</Title>
 					<Text fz='sm' c='dimmed' ta='center' className={styles.description}>
-						{description}
+						{displayDescription}
 					</Text>
 					<Flex gap='xs'>
 						<Button size='sm' variant='outline' onClick={handleBack}>
-							Go Back
+							{t('common.goBack')}
 						</Button>
 						<Button size='sm' onClick={() => navigate('/')}>
-							Go to Home
+							{t('common.goToHome')}
 						</Button>
 					</Flex>
 				</Stack>

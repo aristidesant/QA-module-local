@@ -1,9 +1,8 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AddShedulerForm from './AddShedulerForm';
+import renderWithProviders from '~/test-utils/renderWithProviders';
 
 vi.mock('~/queries/campaignsQueries', () => ({
 	useCreateCampaignSchedule: vi.fn(() => ({
@@ -27,20 +26,6 @@ import type { DayConfig } from '~/api/campaignsApi';
 import { useCreateCampaignSchedule } from '~/queries/campaignsQueries';
 import { useGetClientConfig } from '~/queries/clientConfigQueries';
 import { notifications } from '@mantine/notifications';
-
-const createQueryClient = () =>
-	new QueryClient({
-		defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
-	});
-
-const renderWithProviders = (ui: React.ReactElement) => {
-	const queryClient = createQueryClient();
-	return render(
-		<QueryClientProvider client={queryClient}>
-			<MantineProvider>{ui}</MantineProvider>
-		</QueryClientProvider>
-	);
-};
 
 const sampleConfig = JSON.stringify([
 	{

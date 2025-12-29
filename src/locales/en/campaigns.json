@@ -1,0 +1,1178 @@
+{
+	"page": {
+		"title": "Campaign list",
+		"description": "Manage and monitor all your campaigns in one place."
+	},
+	"list": {
+		"createCampaign": "Create New Campaign",
+		"continueCampaignSetup": "Continue Campaign Setup",
+		"noCampaignsFound": "No campaigns found",
+		"noCampaignsFoundDesc": "Try adjusting your search terms or create a new campaign",
+		"noCampaignsYet": "No campaigns yet",
+		"noCampaignsYetDesc": "Launch your first campaign to reach your audience",
+		"createButton": "Create Campaign",
+		"testCallModal": "Test Campaign Call",
+		"noAgents": "No Agents",
+		"noAgentsMessage": "This campaign has no agents assigned.",
+		"savingDraft": "Saving draft...",
+		"discardChanges": "Discard changes?",
+		"discardMessage": "Any unsaved changes in {{step}} will be lost when you close this wizard.",
+		"discardConfirm": "Discard changes",
+		"keepEditing": "Keep editing",
+		"itemLabel": "campaigns",
+		"stepGeneral": "General",
+		"stepAgent": "Agent",
+		"stepOutcomes": "Outcomes",
+		"stepParameters": "Parameters",
+		"stepComplete": "Complete",
+		"tabs": {
+			"agents": "Agents",
+			"outcomes": "Outcomes",
+			"params": "Params",
+			"general": "General"
+		}
+	},
+	"columns": {
+		"campaign": "Campaign",
+		"type": "Type",
+		"lastUpdated": "Last Updated",
+		"campaignDetails": "Campaign Details",
+		"noDescription": "No description available.",
+		"setupIncomplete": "Setup incomplete - continue from step {{step}}",
+		"draft": "Draft",
+		"outbound": "Outbound",
+		"inbound": "Inbound",
+		"continueSetup": "Continue setup",
+		"completeSetupFirst": "Complete setup first",
+		"viewCampaign": "View campaign",
+		"editCampaign": "Edit campaign",
+		"testCall": "Test Call",
+		"cloneCampaign": "Clone campaign",
+		"deleteCampaign": "Delete campaign"
+	},
+	"filters": {
+		"title": "Filters",
+		"searchPlaceholder": "Search campaigns...",
+		"sortBy": "Sort by",
+		"type": "Type",
+		"allTypes": "All types",
+		"executionType": "Execution Type",
+		"allExecutionTypes": "All execution types",
+		"status": "Status",
+		"allStatuses": "All statuses",
+		"includeCompleted": "Include completed",
+		"advanced": "Advanced",
+		"clearFilters": "Clear filters",
+		"clearAllFilters": "Clear all filters",
+		"sortOptions": {
+			"createdAt": "Creation date",
+			"name": "Name",
+			"status": "Status",
+			"lastActivity": "Last activity"
+		},
+		"typeOptions": {
+			"outbound": "Outbound",
+			"inbound": "Inbound"
+		},
+		"executionTypeOptions": {
+			"timeBased": "Time Based"
+		}
+	},
+	"status": {
+		"PENDING": "Pending",
+		"RUNNING": "Running",
+		"PAUSED": "Paused",
+		"COMPLETED": "Completed",
+		"FAILED": "Failed",
+		"UNKNOWN": "Unknown",
+		"pending": "Pending",
+		"running": "Running",
+		"paused": "Paused",
+		"complete": "Complete",
+		"failed": "Failed",
+		"executed": "Executed"
+	},
+	"cloneCampaignForm": {
+		"title": "Clone campaign",
+		"adjustDetails": "Adjust details before cloning.",
+		"selectedCount": "selected",
+		"campaignName": "Campaign name",
+		"enterCampaignName": "Enter campaign name",
+		"description": "Description",
+		"describeYourCampaign": "Describe your campaign",
+		"agentsToClone": "Agents to clone",
+		"turnOffAgents": "Turn off agents you don't want to duplicate.",
+		"noAgentsLinked": "No agents linked",
+		"noAgentsDescription": "This campaign has no agents to duplicate.",
+		"toggleAgent": "Toggle {{name}}",
+		"createDedicatedCopy": "A dedicated copy will be created.",
+		"newAgentName": "New agent name",
+		"copyOf": "Copy of {{name}}",
+		"nameRequired": "Name is required",
+		"descriptionRequired": "Description is required",
+		"atLeastOneAgent": "At least one agent must be selected",
+		"allAgentsMustHaveName": "All selected agents must have a name",
+		"validationRequired": "Action required",
+		"cloneButton": "Clone campaign",
+		"success": "Campaign Cloned",
+		"successMessage": "The campaign has been successfully cloned.",
+		"error": "Error",
+		"errorMessage": "Failed to clone campaign"
+	},
+	"configuration": {
+		"editPrompt": "Edit prompt"
+	},
+	"scheduler": {
+		"schedulerBuilder": {
+			"days": {
+				"monday": "Monday",
+				"tuesday": "Tuesday",
+				"wednesday": "Wednesday",
+				"thursday": "Thursday",
+				"friday": "Friday",
+				"saturday": "Saturday",
+				"sunday": "Sunday"
+			},
+			"status": {
+				"off": "Off",
+				"noHours": "No hours",
+				"scheduleN": "Schedule {{index}}"
+			},
+			"curatedSchedules": "Curated schedules",
+			"curatedDescription": "Pick from prebuilt schedules or customize your own.",
+			"builder": "Scheduler builder",
+			"predefinedSchedule": "Predefined schedule",
+			"predefinedDescription": "Select a template to quickly set the schedule.",
+			"predefinedPlaceholder": "Select days and hours configuration",
+			"predefinedNoData": "No templates available",
+			"preview": "Preview",
+			"previewDescription": "Preview the selected schedule before creating it.",
+			"previewEmpty": "Select a template to preview its configured days.",
+			"details": "Schedule details",
+			"detailsDescription": "Name and describe the schedule you are creating.",
+			"name": "Schedule name",
+			"namePlaceholder": "Schedule name",
+			"description": "Schedule description",
+			"descriptionPlaceholder": "e.g. Monday to Friday from 08:00 to 17:00",
+			"humanEquivalent": "Human equivalent",
+			"cancel": "Cancel",
+			"create": "Create schedule",
+			"validation": {
+				"nameRequired": "Schedule name is required",
+				"scheduleRequired": "Please select a schedule template",
+				"humanEquivalentRequired": "Human equivalent is required",
+				"humanEquivalentNumber": "Human equivalent must be a number"
+			},
+			"notifications": {
+				"error": "Error",
+				"campaignIdRequired": "Campaign ID is required",
+				"success": "Success",
+				"created": "Schedule created successfully",
+				"failed": "Failed to create schedule",
+				"errorCreating": "Error Creating Schedule"
+			}
+		},
+		"card": {
+			"notifications": {
+				"fixTimeRanges": {
+					"title": "Fix schedule time ranges",
+					"message": "Update the time window for: {{days}}"
+				}
+			},
+			"delete": {
+				"title": "Delete Schedule",
+				"message": "Are you sure you want to delete this schedule?",
+				"confirm": "Delete",
+				"cancel": "Cancel"
+			},
+			"update": "Update Schedule",
+			"cancel": "Cancel"
+		},
+		"header": {
+			"metrics": {
+				"equivalents": "Equivalents",
+				"weekly": "Weekly",
+				"perAgent": "Per Agent"
+			},
+			"tooltip": {
+				"equivalents": "Human equivalents allocated to this schedule",
+				"weekly": "Projected weekly effort for the whole team",
+				"perAgent": "Hours per active agent each week"
+			},
+			"status": {
+				"active": "Active",
+				"paused": "Paused"
+			},
+			"activeDays": "{{count}} active day",
+			"activeDays_other": "{{count}} active days",
+			"noActiveDays": "No active days yet",
+			"actions": {
+				"view": "View schedule",
+				"edit": "Edit",
+				"close": "Close",
+				"delete": "Delete"
+			},
+			"untitled": "Untitled Schedule"
+		},
+		"add": {
+			"button": "Add Schedule",
+			"modalTitle": "Add Predefined Schedule"
+		},
+		"capacity": {
+			"title": "Capacity",
+			"infoTooltip": "Translate your schedule into realistic talk time based on 38.5 min/hour efficiency.",
+			"sliderLabel": "Human Equivalent (Agents)",
+			"metrics": {
+				"scheduled": {
+					"label": "Scheduled",
+					"tooltip": "{{count}} active day scheduled this week",
+					"tooltip_other": "{{count}} active days scheduled this week"
+				},
+				"perAgent": {
+					"label": "Per Agent",
+					"tooltip": "Talk time per person at 38.5 min/hour efficiency"
+				},
+				"teamTotal": {
+					"label": "Team Total",
+					"tooltip": "Combined talk time for {{count}} agent",
+					"tooltip_other": "Combined talk time for {{count}} agents"
+				}
+			},
+			"schedule": {
+				"title": "Schedule",
+				"activeBadge": "{{count}} active"
+			}
+		},
+		"calculator": {
+			"title": "Scheduler calculator",
+			"description": "Define the campaign parameters and project staffing or delivery time with confidence.",
+			"mode": {
+				"resources": "Resources",
+				"time": "Time"
+			},
+			"contactRates": "Contact rates",
+			"aht": "Average handling time (minutes)",
+			"calculate": "Calculate projection",
+			"fields": {
+				"totalRecords": "Total records",
+				"daysPlanned": "Days planned",
+				"agentsAllocated": "Agents allocated",
+				"contactability": "Contactability",
+				"effectiveness": "Effectiveness",
+				"ahtEffective": "AHT effective contact",
+				"ahtNoEffective": "AHT no effective contact",
+				"ahtNoContact": "AHT no contact"
+			},
+			"results": {
+				"title": "Projection summary",
+				"hint": "Compare campaign volume, effort, and daily capacity at a glance.",
+				"badge": {
+					"resource": "Resource projection",
+					"timeline": "Timeline projection"
+				},
+				"waveBreakdown": "WAVE BREAKDOWN",
+				"assumptions": {
+					"title": "Model assumptions",
+					"text": "{{phones}} phones per record · {{hours}} hours per agent day · {{minutesMan}} minutes per contact attempt."
+				},
+				"placeholder": {
+					"title": "Ready to run a projection",
+					"text": "Enter the campaign inputs above and select \"Calculate projection\" to review staffing and time estimates."
+				},
+				"metrics": {
+					"volume": "Campaign volume",
+					"agentsRequired": "Agents required",
+					"agentsAllocated": "Agents allocated",
+					"daysToComplete": "Days to complete",
+					"daysPlanned": "Days planned",
+					"totalTries": "Total tries",
+					"operationalHours": "Operational hours",
+					"teamHoursPerDay": "Team hours per day"
+				},
+				"waves": {
+					"wave1": "Wave 1",
+					"wave2": "Wave 2",
+					"wave3": "Wave 3"
+				}
+			}
+		},
+		"overview": {
+			"callsPerHour": {
+				"title": "Calls per hour",
+				"subtitle": "Hourly distribution of daily call capacity",
+				"label": "Calls per hour"
+			},
+			"completion": {
+				"title": "Estimated completion time",
+				"subtitle": "Projected timeline based on current capacity",
+				"unit": "days"
+			}
+		},
+		"daySchedule": {
+			"headers": {
+				"day": "Day",
+				"status": "Status",
+				"hours": "Hours",
+				"agent": "Agent",
+				"team": "Team"
+			},
+			"status": {
+				"open": "Open window",
+				"paused": "Paused",
+				"closed": "Closed"
+			},
+			"noHours": "No hours configured",
+			"metrics": {
+				"perAgent": "Per agent",
+				"teamTotal": "Team total"
+			},
+			"errors": {
+				"endTime": "End time must be later than start time."
+			}
+		},
+		"workingHours": {
+			"title": "Working Hours",
+			"description": "Define the days and time ranges during which your agents are allowed to make calls.",
+			"summary": {
+				"noActiveDays": "No active days",
+				"noTimeRange": "No time range set",
+				"everyDay": "Every day",
+				"weekdays": "Weekdays",
+				"weekends": "Weekends"
+			}
+		}
+	},
+	"addNewCampaign": {
+		"form": {
+			"campaignName": "Campaign Name",
+			"campaignNameDesc": "Give your campaign a descriptive name",
+			"campaignNamePlaceholder": "Enter campaign name",
+			"description": "Description",
+			"descriptionDesc": "Briefly describe the purpose of this campaign",
+			"descriptionPlaceholder": "Describe your campaign",
+			"campaignType": "Campaign Type",
+			"defaultWaves": "Default Waves",
+			"defaultWavesDesc": "How many waves to run for every new contact list created from this campaign",
+			"defaultWavesPlaceholder": "Number of waves",
+			"phoneNumber": "Phone Number",
+			"phoneNumberDesc": "Select the phone number for this campaign",
+			"phoneNumberPlaceholder": "Choose a phone number",
+			"agentName": "Agent Name",
+			"agentNameDesc": "Enter the name of the agent",
+			"agentNamePlaceholder": "Enter agent name",
+			"agentBehavior": "Agent Behavior",
+			"agentBehaviorDesc": "Select a predefined agent behavior configuration",
+			"agentBehaviorPlaceholder": "Choose an agent behavior",
+			"createButton": "Create Campaign",
+			"cancelButton": "Cancel",
+			"successMessage": "Campaign created successfully",
+			"errorMessage": "Error creating campaign",
+			"failedToCreate": "Failed to create campaign"
+		},
+		"validation": {
+			"nameRequired": "Campaign name is required",
+			"descriptionRequired": "Description is required",
+			"typeInvalid": "Type must be one of the following values: INBOUND, OUTBOUND",
+			"wavesMin": "Default waves must be at least 1",
+			"agentNameRequired": "Agent name is required",
+			"agentVoiceRequired": "Agent voice is required"
+		},
+		"voices": {
+			"title": "Choose AI voice",
+			"description": "Select the voice that will represent during customer interactions.",
+			"modalTitle": "Select AI Voice",
+			"loading": "Loading voices...",
+			"loadingDesc": "Fetching available voice options",
+			"error": "Failed to load voices",
+			"errorDesc": "There was an error fetching the voice options. Please try again.",
+			"noVoices": "No voices found",
+			"noVoicesDesc": "Try adjusting your filters or try again later.",
+			"selectVoice": "Select a voice for your campaign",
+			"changeVoice": "Change",
+			"unknown": "Unknown",
+			"preview": "Preview",
+			"voice": "Voice",
+			"noDescription": "This voice does not include a description yet.",
+			"previewHint": "🎵 Click the play button to preview this voice",
+			"pauseAria": "Pause voice preview",
+			"playAria": "Play voice preview",
+			"age": "Age: {{age}}",
+			"male": "Male",
+			"female": "Female"
+		}
+	},
+	"promptHistory": {
+		"failedToLoad": "Failed to load prompt history.",
+		"modalTitle": "Prompt History",
+		"itemLabel": "prompt versions",
+		"modifiedBy": "Modified By",
+		"dateModified": "Date Modified",
+		"dateFormat": "MMM DD, YYYY [at] hh:mm A",
+		"diffError": "Failed to generate diff view. Showing original text instead.",
+		"noChanges": "No Changes",
+		"noChangesDesc": "This version is identical to the current prompt.",
+		"previousVersion": "Previous Version (v{{version}})",
+		"currentVersion": "Current Version",
+		"close": "Close",
+		"restoreVersion": "Restore This Version",
+		"columns": {
+			"version": "Version",
+			"modified": "Modified",
+			"modifiedBy": "Modified By",
+			"promptPreview": "Prompt Preview",
+			"viewFullPrompt": "View full prompt",
+			"restoreVersion": "Restore this version"
+		}
+	},
+	"form": {
+		"title": {
+			"edit": "Edit {{name}}"
+		},
+		"description": "Configure and manage your campaign settings.",
+		"validation": {
+			"nameRequired": "Campaign name is required",
+			"typeRequired": "Campaign type is required",
+			"statusRequired": "Campaign status is required",
+			"budgetMin": "Budget must be at least 0",
+			"spentMin": "Spent amount must be at least 0",
+			"userIdMin": "User ID must be at least 0",
+			"clientIdMin": "Client ID must be at least 0",
+			"defaultWavesMin": "Default waves must be at least 1",
+			"objectiveRequired": "Campaign objective is required"
+		},
+		"notifications": {
+			"warningTitle": "Warning",
+			"objectiveAssignmentFailed": "Failed to assign objective to campaign",
+			"successUpdated": "Campaign Updated",
+			"successCreated": "Campaign Created",
+			"successUpdatedMessage": "Campaign has been updated successfully.",
+			"successCreatedMessage": "Campaign has been created successfully.",
+			"errorUpdate": "Failed to update campaign",
+			"errorCreate": "Failed to create campaign"
+		},
+		"schedulerCalculator": {
+			"title": "Scheduler Calculator"
+		},
+		"contacts": {
+			"addNew": {
+				"description": "Upload a CSV file to create a contact list.",
+				"uploadLabel": "Upload contact list",
+				"dragAndDrop": "Drag and drop your CSV file here or click to browse.",
+				"notifications": {
+					"noFile": {
+						"title": "No file selected",
+						"message": "Please select a CSV file to upload."
+					},
+					"invalidType": {
+						"title": "Invalid file type",
+						"message": "Only CSV files are supported."
+					},
+					"uploadFailed": {
+						"title": "Upload failed",
+						"message": "We couldn't upload your file. Please try again."
+					}
+				}
+			},
+			"controls": {
+				"start": "Start Campaign",
+				"resume": "Resume Campaign",
+				"pause": "Pause Campaign",
+				"completed": "Campaign Completed",
+				"failed": "Campaign Failed",
+				"requirementsNotMet": "Campaign requirements not met",
+				"allWavesDone": "All waves executed",
+				"notifications": {
+					"successTitle": "Success",
+					"errorTitle": "Error",
+					"unknownCampaign": "Unknown Campaign",
+					"running": "Campaign is now running",
+					"startError": "Error starting campaign",
+					"resumed": "Campaign resumed",
+					"resumeError": "Error resuming campaign",
+					"paused": "Campaign paused",
+					"pauseError": "Error pausing campaign"
+				}
+			},
+			"list": {
+				"activeTitle": "Active Contact Lists",
+				"inactiveTitle": "Inactive Contact Lists",
+				"activeDescription": "Manage your active contact lists and monitor their progress.",
+				"inactiveDescription": "View and manage contact lists that are currently inactive.",
+				"addNewContactList": "Add New Contact List",
+				"addInactiveContactList": "Add Inactive Contact List",
+				"configuration": "Contact List Configuration",
+				"configurationDescription": "Configure the settings for your new contact list.",
+				"selectActive": "Select Active Contact List",
+				"selectActiveDescription": "Select a contact list to activate for this campaign.",
+				"emptyMessage": "No active contact lists found.",
+				"emptyInactiveMessage": "No inactive contact lists found.",
+				"reload": "Reload",
+				"reloadUnavailable": "Reload unavailable while collapsed",
+				"columns": {
+					"name": "Name",
+					"total": "Total",
+					"assigned": "Assigned",
+					"status": "Status",
+					"actions": "Actions"
+				},
+				"capacity": {
+					"title": "Scheduler Capacity",
+					"used": "Used",
+					"remaining": "Remaining",
+					"total": "Total Capacity"
+				}
+			},
+			"mapping": {
+				"title": "Column Mapping",
+				"matchTitle": "Match Columns",
+				"clickToConfigure": "Click to configure",
+				"unmapped": "{{count}} unmapped"
+			},
+			"mostUsedChannels": {
+				"title": "Most used channels",
+				"subtitle": "Channel usage overview"
+			},
+			"qualityScore": {
+				"title": "Contact quality score",
+				"subtitle": "Quality score overview"
+			},
+			"statusBreakdown": {
+				"title": "Status breakdown",
+				"subtitle": "Contact distribution by status.",
+				"total": "Total",
+				"noData": "No data available"
+			},
+			"info": {
+				"nameLabel": "Name",
+				"nameRequired": "Name is required",
+				"namePlaceholder": "Enter contact list name",
+				"nameDescription": "This name is visible in the campaign.",
+				"editName": "Edit name",
+				"clickToAddName": "Click to add a name",
+				"expires": "Expires",
+				"addExpiration": "Add expiration date",
+				"selectExpiration": "Select expiration date",
+				"dateInPast": "Date cannot be in the past"
+			},
+			"limits": {
+				"maxWavesLabel": "Max waves",
+				"maxWavesDescription": "Maximum number of waves for this contact list.",
+				"humanEquivalentLabel": "Human equivalent",
+				"availableLabel": "Available",
+				"capacityFull": {
+					"title": "Scheduler capacity is full",
+					"message": "Reduce capacity or adjust schedules to continue."
+				},
+				"actions": {
+					"save": "Save",
+					"update": "Update"
+				},
+				"defaultName": "Contact List {{index}}",
+				"notifications": {
+					"invalidInput": "Invalid input",
+					"nameRequired": "Name is required",
+					"capacityExceeded": "Capacity exceeded",
+					"wavesMinimum": "Minimum of 1 wave required",
+					"schedulerFullTitle": "Scheduler full",
+					"schedulerFullMessage": "There is not enough capacity to schedule this list.",
+					"successTitle": "Success",
+					"saveSuccess": "Saved successfully",
+					"updateSuccess": "Updated successfully",
+					"errorTitle": "Error",
+					"saveError": "Failed to save changes"
+				}
+			},
+			"headerMapping": {
+				"title": "Header Mapping",
+				"description": "Map CSV columns to system fields.",
+				"mappedBadge": "Mapped ({{count}})",
+				"csvHeadersBadge": "CSV headers ({{count}})",
+				"dynamicFieldsRequired": "Dynamic fields are required for {{objective}}.",
+				"systemFields": "System Fields",
+				"selectObjective": "Select objective",
+				"addDynamicColumns": "Add dynamic columns",
+				"dynamicSetTitle": "Dynamic field set",
+				"version": "Version {{version}}",
+				"loadingColumns": "Loading columns...",
+				"allMapped": "All system fields are mapped",
+				"csvColumns": "CSV Columns",
+				"finishMultiSelect": "Finish selection",
+				"multiSelectDescription": "Select one or more CSV columns to map.",
+				"allCsvMapped": "All CSV columns are mapped",
+				"csvColumnLabel": "CSV Column",
+				"currentMappings": "Current mappings",
+				"clickToRemove": "Click to remove",
+				"noMappings": "No mappings yet",
+				"noMappingsDescription": "Map CSV columns to continue.",
+				"systemFieldLabel": "System field",
+				"multiSelectNote": "You can map multiple CSV columns.",
+				"pickSystemField": "Pick a system field",
+				"selectedCsvLabel": "Selected CSV columns",
+				"chooseMatchingCsv": "Choose matching CSV column(s)",
+				"clearSelection": "Clear selection",
+				"mappingsCreated": "Created {{count}} mappings",
+				"saveMappings": "Save mappings"
+			},
+			"details": {
+				"title": "Contact List Details",
+				"description": "Review contact list configuration and status.",
+				"configurations": "Configurations",
+				"meta": {
+					"listStatus": "Created",
+					"queueStatus": "Queue status",
+					"active": "Active",
+					"inactive": "Inactive",
+					"expirationDate": "Expiration date",
+					"scheduler": "Scheduler",
+					"schedulerStatus": "Scheduler status",
+					"notAssigned": "Not assigned"
+				},
+				"stats": {
+					"totalContacts": "Total contacts",
+					"maxCallsPerContact": "Max calls per contact",
+					"maxCallsPerList": "Max calls per list",
+					"humanEquivalent": "Human equivalent",
+					"waves": "Waves",
+					"notAvailable": "Not available",
+					"notSet": "Not set"
+				},
+				"operationalStatus": {
+					"title": "Operational status",
+					"description": "Readiness and delivery state."
+				},
+				"primaryPhone": "Primary phone number",
+				"phoneNumbers": "Phone Numbers ({{count}})",
+				"email": "Email",
+				"location": "Location",
+				"engagementLevel": {
+					"title": "Engagement Level",
+					"description": "Measures how engaged {{name}} is with your campaigns."
+				},
+				"reviewsQualification": {
+					"title": "Reviews qualification",
+					"description": "Measures how engaged {{name}} is with your campaigns."
+				},
+				"sentiment": {
+					"negative": "Negative",
+					"neutral": "Neutral",
+					"positive": "Positive"
+				},
+				"actions": {
+					"title": "Actions",
+					"description": "Manage this contact list.",
+					"activate": "Activate",
+					"deactivate": "Deactivate",
+					"extendWaves": "Extend Waves",
+					"completeList": "Complete List",
+					"editContactList": "Edit contact list",
+					"deleteContactList": "Delete contact list",
+					"cleanQueue": "Clean queue",
+					"openContactList": "Open contact list"
+				},
+				"dialogs": {
+					"activate": {
+						"title": "Activate contact list",
+						"message": "Activate this contact list for the campaign?",
+						"confirm": "Activate",
+						"available": "Available capacity: {{count}}",
+						"noCapacityTitle": "No scheduler capacity",
+						"capacityErrorTitle": "Not enough capacity",
+						"capacityErrorMessage": "Scheduler capacity is not sufficient to activate this contact list."
+					},
+					"cleanQueue": {
+						"title": "Clean queue",
+						"message": "Clear all queued contacts for this list?",
+						"confirm": "Clean queue"
+					},
+					"complete": {
+						"title": "Complete contact list",
+						"message": "Mark this contact list as completed?",
+						"success": "Completed",
+						"successMessage": "Contact list marked as completed.",
+						"error": "Error"
+					},
+					"deactivate": {
+						"title": "Deactivate contact list",
+						"message": "Deactivate this contact list?"
+					},
+					"delete": {
+						"title": "Delete contact list",
+						"message": "Delete this contact list? This action cannot be undone.",
+						"success": "Deleted",
+						"successMessage": "Contact list deleted successfully.",
+						"error": "Error",
+						"errorMessage": "Failed to delete contact list."
+					},
+					"extendWaves": {
+						"title": "Extend waves",
+						"success": "Waves Extended",
+						"error": "Error extending waves"
+					}
+				}
+			}
+		},
+		"agent": {
+			"add": {
+				"searchPlaceholder": "Search agents by name",
+				"loadError": "Failed to load agents",
+				"loadErrorDesc": "There was an error loading the agents list. Please try again.",
+				"tryAgain": "Try again",
+				"noAgents": "No available agents",
+				"noAgentsDesc": "There are no agents available to add to this campaign.",
+				"addError": "Failed to add agent",
+				"error": "Error",
+				"cloneTitle": "Clone Agent",
+				"cloneDesc": "Create a copy of this agent to use in your campaign.",
+				"cloneNameLabel": "Agent Name",
+				"cloneNamePlaceholder": "Enter agent name",
+				"cloneNameRequired": "Name is required",
+				"cloneNameDifferent": "The new name must be different from the original agent name",
+				"cloneSuccess": "Agent cloned successfully",
+				"cloneError": "Failed to clone agent",
+				"copySuffix": " Copy",
+				"cancel": "Cancel",
+				"cloneAction": "Clone"
+			},
+			"list": {
+				"addAgent": "Add Agent",
+				"addAgentTitle": "Add Agent to Campaign",
+				"noAgents": "No Agents Assigned",
+				"noAgentsDesc": "This campaign has no agents assigned."
+			},
+			"columns": {
+				"name": "Agent",
+				"type": "Type",
+				"voice": "Voice",
+				"actions": "Actions",
+				"noCampaign": "No campaign",
+				"playPreview": "Play preview",
+				"pausePreview": "Pause preview",
+				"clone": "Clone agent",
+				"add": "Add agent"
+			},
+			"basic": {
+				"title": "Agent basics",
+				"description": "Set the core language and opening message for the agent.",
+				"language": "Language",
+				"languagePlaceholder": "Select a language",
+				"languageDescription": "Choose the primary language for the agent.",
+				"noLanguageFound": "No languages found",
+				"languages": {
+					"en": "English",
+					"es": "Spanish"
+				},
+				"firstMessage": "Agent First Message",
+				"firstMessagePlaceholder": "Write the first message",
+				"firstMessageDescription": "This is the first message the agent will send."
+			},
+			"tools": {
+				"title": "Agent tools",
+				"description": "Select which tools the agent can use.",
+				"noTools": "No agent tools configured.",
+				"customIntegration": "Custom integration",
+				"toggleAria": "Toggle {{name}}",
+				"noDescription": "No description provided."
+			},
+			"systemTools": {
+				"title": "System Tools",
+				"description": "Configure system tools for the agent.",
+				"noTools": "No system tools available.",
+				"systemUtility": "System Utility",
+				"toggleAria": "Toggle {{name}}",
+				"configure": "Configure",
+				"enableToConfigure": "Enable to configure",
+				"noDescription": "No description available.",
+				"modal": {
+					"title": "Configure Tool",
+					"name": "Tool Name",
+					"description": {
+						"label": "Description",
+						"placeholder": "Leave blank to use the default optimized LLM prompt."
+					},
+					"interruptions": {
+						"label": "Disable interruptions",
+						"description": "Prevent the user from interrupting the agent while this tool is running."
+					},
+					"voicemail": {
+						"title": "Voicemail Configuration",
+						"description": "Configure the message to leave on voicemail.",
+						"messageLabel": "Voicemail Message",
+						"messagePlaceholder": "Hello, this is an automated call from...",
+						"hint": "This message will be spoken when voicemail is detected."
+					},
+					"actions": {
+						"cancel": "Cancel",
+						"save": "Save"
+					}
+				}
+			},
+			"preview": {
+				"title": "Agent preview",
+				"description": "Preview the assigned agent details.",
+				"voiceTitle": "Voice",
+				"voiceDescription": "Review the current voice settings.",
+				"editVoice": "Edit agent voice",
+				"changeVoiceTitle": "Change Agent Voice",
+				"unknownVoice": "Unknown",
+				"avatarAlt": "Agent avatar",
+				"online": "Online",
+				"offline": "Offline",
+				"unnamed": "Unnamed agent"
+			},
+			"voice": {
+				"selectHint": "Select a voice for your agent and click save to apply changes",
+				"save": "Save Agent",
+				"saving": "Saving...",
+				"pleaseSelectVoice": "Please select a voice",
+				"agentDataNotLoaded": "Agent data not loaded",
+				"success": "Agent voice updated successfully",
+				"error": "Failed to update agent voice",
+				"noVoices": "No voices available"
+			},
+			"knowledgeBase": {
+				"title": "Knowledge Base",
+				"description": "Manage knowledge bases for this agent.",
+				"loading": "Loading knowledge bases...",
+				"error": "Error loading knowledge bases",
+				"noSelection": "No knowledge bases selected",
+				"add": "Add Knowledge Base",
+				"remove": "Remove",
+				"removeAria": "Remove {{name}}",
+				"created": "Created: {{date}}",
+				"modal": {
+					"title": {
+						"select": "Select Knowledge Bases",
+						"create": "Create Knowledge Base"
+					},
+					"subtitle": "Select existing knowledge bases or create a new one.",
+					"backToList": "Back to list",
+					"noKnowledgeBases": "No knowledge bases found"
+				}
+			},
+			"prompt": {
+				"title": "Agent Prompt",
+				"description": "Define the instructions the agent will follow when speaking with contacts.",
+				"previewTitle": "Prompt preview",
+				"previewChars_one": "1 character",
+				"previewChars_other": "{{count}} characters",
+				"status": {
+					"empty": "Empty"
+				},
+				"placeholder": "No prompt has been added yet",
+				"keepConcise": "Keep it concise for clarity.",
+				"header": {
+					"editAria": "Edit prompt",
+					"expandAria": "Expand prompt",
+					"collapseAria": "Collapse prompt"
+				},
+				"modal": {
+					"types": "Types",
+					"selectPromptType": "Select a prompt type to start editing.",
+					"saveHint": "Save to apply prompts throughout this campaign."
+				},
+				"editor": {
+					"title": "Prompt Configuration",
+					"subtitle": "Configure prompts for each interaction type.",
+					"status": {
+						"empty": "Empty",
+						"drafted": "Drafted",
+						"saved": "Saved"
+					},
+					"lines_one": "({{count}} line)",
+					"lines_other": "({{count}} lines)",
+					"history": {
+						"tooltip": "Prompt history",
+						"aria": "Prompt history"
+					},
+					"reuse": {
+						"label": "Reuse prompt",
+						"placeholder": "Load prompt from another campaign"
+					},
+					"hint": "Keep it under eight lines",
+					"placeholder": "Enter your prompt here",
+					"variables": {
+						"hint": "You can use variables like {{contact_name}}, {{agent_name}}, etc.",
+						"popover": {
+							"title": "Variables",
+							"badge": "Tip",
+							"navigationHint": "Use arrows to navigate and Enter to insert",
+							"source": {
+								"dyn": "Dynamic",
+								"sys": "System"
+							},
+							"empty": "No variables found"
+						}
+					},
+					"diff": {
+						"modalTitle": "Review changes"
+					},
+					"ai": {
+						"button": {
+							"create": "Create with AI",
+							"improve": "Improve with AI",
+							"tooltip": {
+								"create": "Generate a new prompt from scratch",
+								"improve": "Refine the existing prompt"
+							}
+						},
+						"modal": {
+							"title": {
+								"create": "Create prompt with AI",
+								"improve": "Improve prompt with AI",
+								"review": "Review AI suggestions"
+							},
+							"errors": {
+								"emptyPrompt": "Please provide some instructions for the AI"
+							},
+							"compose": {
+								"instructions": {
+									"label": {
+										"create": "Instructions",
+										"improve": "Improvement Instructions"
+									},
+									"description": {
+										"create": "Describe what you want the AI to generate",
+										"improve": "Describe how you want to improve the prompt"
+									},
+									"placeholder": {
+										"create": "E.g., Create a friendly greeting for customers calling about billing inquiries",
+										"improve": "E.g., Make it more concise and professional"
+									}
+								},
+								"systemPrompt": {
+									"label": "System prompt",
+									"edit": "Edit system prompt",
+									"reset": "Reset",
+									"done": "Done"
+								},
+								"promptToImprove": {
+									"label": "Current Prompt",
+									"description": "The prompt you want to improve"
+								},
+								"actions": {
+									"cancel": "Cancel",
+									"generate": "Generate"
+								}
+							},
+							"review": {
+								"actions": {
+									"back": "Cancel",
+									"apply": "Apply changes"
+								},
+								"error": {
+									"title": "Error",
+									"description": "Failed to generate diff view. The AI suggestion may still be valid."
+								},
+								"noChanges": {
+									"title": "No Changes",
+									"description": "The AI suggestion is identical to your current prompt."
+								},
+								"diff": {
+									"old": "Current version",
+									"new": "AI suggestion"
+								}
+							}
+						}
+					}
+				}
+			},
+			"behavior": {
+				"title": "Agent Behavior",
+				"description": "Select a predefined agent behavior configuration",
+				"active": "Active configuration",
+				"change": "Change",
+				"noConfiguration": "No configuration applied",
+				"select": "Select Configuration",
+				"modal": {
+					"title": "Configuration Preview",
+					"label": "Select a predefined parameter set",
+					"placeholder": "Select configuration",
+					"actions": {
+						"cancel": "Cancel",
+						"apply": "Apply"
+					}
+				}
+			}
+		}
+	},
+	"wizard": {
+		"knowledgeBase": {
+			"form": {
+				"name": {
+					"label": "Name",
+					"placeholder": "e.g., Product FAQs",
+					"errorRequired": "Name is required"
+				},
+				"description": {
+					"label": "Description",
+					"placeholder": "Short internal note about this knowledge base"
+				},
+				"content": {
+					"label": "Content",
+					"placeholder": "Paste a URL or text content here...",
+					"description": "Paste a URL to fetch content from a webpage, or enter text directly",
+					"descriptionWithFile": "Remove the file above to enter text or URL instead"
+				},
+				"file": {
+					"label": "Or upload a file",
+					"placeholder": "Choose a PDF file or drop it here",
+					"description": "Supported: PDF. Max 25MB.",
+					"descriptionWithContent": "Clear the text above to upload a file instead"
+				}
+			},
+			"contentInfo": {
+				"fileLabel": "File",
+				"urlDetected": "URL detected",
+				"urlDescription": "Content will be fetched from the provided link",
+				"textLabel": "Text content",
+				"textDescription": "Will be used as-is"
+			},
+			"actions": {
+				"cancel": "Cancel",
+				"create": "Create Knowledge Base"
+			},
+			"notifications": {
+				"successTitle": "Success",
+				"successMessage": "Knowledge base created successfully",
+				"errorTitle": "Error",
+				"errorMessage": "Failed to create knowledge base"
+			}
+		}
+	},
+	"workingHours": {
+		"title": "Working Hours",
+		"description": "Configure the working hours for this campaign."
+	},
+	"general": {
+		"title": "General Information",
+		"description": "Basic campaign settings and configuration.",
+		"campaignName": "Campaign Name",
+		"enterCampaignName": "Enter campaign name",
+		"descriptionLabel": "Description",
+		"describeYourCampaign": "Describe your campaign",
+		"campaignObjective": "Campaign Objective",
+		"campaignObjectiveDesc": "Select the objective for this campaign",
+		"failedToLoadObjectives": "Failed to load objectives",
+		"loadingObjectives": "Loading objectives...",
+		"selectObjective": "Select an objective",
+		"createNewObjective": "Create new objective",
+		"defaultWaves": "Default Waves",
+		"defaultWavesDesc": "Number of waves to run for each contact list",
+		"enterNumberOfWaves": "Enter number of waves",
+		"createObjectiveTitle": "Create New Objective"
+	},
+	"disposition": {
+		"title": "Outcome Configuration",
+		"description": "Set up call outcomes for this campaign. Drag items from the catalog to build your outcome structure.",
+		"editOutcome": "Edit outcome",
+		"addOutcome": "Add outcome",
+		"noFlowConfigured": "No outcome flow configured",
+		"noFlowDescription": "Get started by adding a new outcome flow to track and manage call results effectively.",
+		"saveSuccess": "Outcome flow saved successfully.",
+		"catalog": {
+			"selectCatalog": "Select Catalog",
+			"catalogChangeDisabled": "Cannot change catalog when outcomes are already added",
+			"noDispositions": "No dispositions available in this catalog.",
+			"expand": "Expand",
+			"collapse": "Collapse",
+			"addAll": "Add all",
+			"addAllAria": "Add disposition and all children",
+			"addToFlow": "Add to flow",
+			"addToFlowAria": "Add disposition to flow"
+		},
+		"builder": {
+			"nameLabel": "Outcome Name",
+			"namePlaceholder": "Outcome Name",
+			"nameDescription": "Enter the name of the outcome",
+			"header": "Outcome flow",
+			"headerDescription": "Use the catalog to add outcomes. Select a node to edit or preview its group.",
+			"emptyTitle": "No outcomes selected yet",
+			"emptyDescription": "Add outcomes from the catalog to build this flow.",
+			"emptyRightPanel": "Select a node to edit its properties or preview a group",
+			"updateFlow": "Update Flow",
+			"createFlow": "Create Flow",
+			"previewTitle": "Outcome group preview",
+			"errors": {
+				"minNodes": "Please add at least one outcome node.",
+				"nameRequired": "Outcome name is required.",
+				"saveError": "An error occurred while saving the outcome flow."
+			}
+		},
+		"nodeEditor": {
+			"expand": "Expand node",
+			"collapse": "Collapse node",
+			"doNotCall": "Do not call",
+			"invalidatesNumber": "Invalidates number",
+			"requiresReschedule": "Requires reschedule",
+			"addSiblings": "Add {{count}} missing sibling",
+			"addSiblings_plural": "Add {{count}} missing siblings",
+			"addMissingSiblingsAria": "Add missing siblings",
+			"addChildren": "Add {{count}} missing child",
+			"addChildren_plural": "Add {{count}} missing children",
+			"addMissingChildrenAria": "Add missing children",
+			"remove": "Remove",
+			"removeAria": "Remove node"
+		},
+		"nodeForm": {
+			"editingTitle": "Editing outcome",
+			"rootLevel": "Root level outcome",
+			"descriptionLabel": "Description",
+			"noDescription": "This outcome does not include a description yet.",
+			"behaviorControls": "Behavior controls",
+			"invalidatesNumberTitle": "Invalidates number",
+			"invalidatesNumberDesc": "Prevent the dialer from retrying this phone number after the outcome is used.",
+			"doNotCallTitle": "Do not call",
+			"doNotCallDesc": "Mark this outcome as do not call so the contact is excluded from future dialing.",
+			"rescheduleTitle": "Requires reschedule",
+			"rescheduleDesc": "Flag this outcome so follow-up activities can be scheduled for the contact.",
+			"badges": {
+				"final": "Final outcome",
+				"reschedule": "Requires reschedule",
+				"noRetry": "Do not retry",
+				"doNotCall": "Do not call"
+			}
+		},
+		"groupPreview": {
+			"rootGroup": "Root group",
+			"level": "Level {{level}}",
+			"linkedOutcomes": "{{count}} linked outcome",
+			"linkedOutcomes_plural": "{{count}} linked outcomes",
+			"leafOutcome": "Leaf outcome",
+			"stats": {
+				"total": "Total nodes",
+				"final": "Final outcomes",
+				"reschedule": "Reschedule",
+				"noRetry": "Do not retry",
+				"summary": "{{count}} node across {{levels}} level.",
+				"summary_plural": "{{count}} nodes across {{levels}} levels."
+			}
+		},
+		"viewer": {
+			"group": "Group",
+			"outcome": "Outcome",
+			"nodeAria": "Outcome node: {{name}}",
+			"childOutcomes": "{{count}} child outcome",
+			"childOutcomes_plural": "{{count}} child outcomes",
+			"terminalOutcome": "Terminal outcome",
+			"noNodes": "No outcome nodes found.",
+			"nodesListAria": "Outcome nodes list",
+			"nameHeader": "NAME"
+		},
+		"detailPanel": {
+			"title": "Outcome Details",
+			"parent": "Parent",
+			"effectiveContact": "Effective Contact",
+			"noEffectiveContact": "No Effective Contact",
+			"noContact": "No Contact",
+			"default": "Default",
+			"effectiveDesc": "This node represents a successful contact outcome.",
+			"noEffectiveDesc": "This node represents an unsuccessful contact attempt.",
+			"noContactDesc": "This node represents no contact made.",
+			"defaultDesc": "This is a standard outcome node.",
+			"rescheduleCardTitle": "Requires Reschedule",
+			"rescheduleCardDesc": "This outcome requires the contact to be rescheduled for a future attempt.",
+			"invalidatesCardTitle": "Invalidates Number",
+			"invalidatesCardDesc": "This outcome marks the contact number as invalid and prevents future attempts."
+		}
+	}
+}

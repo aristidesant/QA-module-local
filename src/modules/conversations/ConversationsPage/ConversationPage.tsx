@@ -6,7 +6,7 @@ import ConversationsList from '~/modules/conversations/ConversationsList';
 import { useTranslation } from 'react-i18next';
 
 const ConversationsPage = () => {
-	const { t } = useTranslation();
+	const { t } = useTranslation(['conversations', 'common']);
 	const { selectionContent, clearSelection } = useConversationStore(
 		(state) => state
 	);
@@ -22,7 +22,8 @@ const ConversationsPage = () => {
 			rightSection={
 				selectionContent || (
 					<FallbackRightComponent
-						description={t('conversations.page.fallback')}
+						title={t('status.nothingSelected', { ns: 'common' })}
+						description={t('page.fallback')}
 					/>
 				)
 			}

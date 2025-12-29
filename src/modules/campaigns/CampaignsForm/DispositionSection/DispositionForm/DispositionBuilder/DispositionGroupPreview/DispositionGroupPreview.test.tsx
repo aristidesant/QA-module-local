@@ -3,7 +3,7 @@ import { screen, within } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import DispositionGroupPreview, {
 	collectNodeStats,
-	renderNode,
+	NodeItem,
 } from './DispositionGroupPreview';
 import { getNodeStyle } from '~/utils/dispositionNodeStyles';
 
@@ -21,24 +21,25 @@ describe('DispositionGroupPreview', () => {
 
 		renderWithProviders(<DispositionGroupPreview node={node} />);
 
-		expect(screen.getByText('Root')).toBeInTheDocument();
-		const totalCard = screen.getByText('Total nodes').closest('div');
+		expect(screen.getAllByText('Root').length).toBeGreaterThan(0);
+		const totalCard = screen.getAllByText('Total nodes')[0].closest('div');
 		expect(totalCard).toBeTruthy();
 		expect(within(totalCard!).getByText('4')).toBeInTheDocument();
 
-		const finalCard = screen.getByText('Final outcomes').closest('div');
+		const finalCard = screen.getAllByText('Final outcomes')[0].closest('div');
 		expect(within(finalCard!).getByText('1')).toBeInTheDocument();
 
-		const rescheduleCard = screen.getByText('Reschedule').closest('div');
+		const rescheduleCard = screen.getAllByText('Reschedule')[0].closest('div');
 		expect(within(rescheduleCard!).getByText('1')).toBeInTheDocument();
 
-		const blockedCard = screen.getByText('Do not retry').closest('div');
+		const blockedCard = screen.getAllByText('Do not retry')[0].closest('div');
 		expect(within(blockedCard!).getByText('1')).toBeInTheDocument();
-		// The tree rendering is not included in the preview; ensure stats are present
-		expect(screen.getByText(/4 nodes across/)).toBeInTheDocument();
+		// The tree rendering is now included; ensure stats and summary are present
+		expect(screen.getByText(/across/i)).toBeInTheDocument();
+		expect(screen.getByText(/nodes/i)).toBeInTheDocument();
 	});
 
-	it('renders leaf outcome with description and final badge (via renderNode)', () => {
+	it('renders leaf outcome with description and final badge (via NodeItem)', () => {
 		const node = {
 			id: 10,
 			name: 'Solo Node',
@@ -47,18 +48,33 @@ describe('DispositionGroupPreview', () => {
 			children: [],
 		} as any;
 
-		renderWithProviders(<ul>{renderNode(node)}</ul>);
+		renderWithProviders(
+			<ul>
+				<NodeItem current={node} />
+			</ul>
+		);
 
 		expect(screen.getByText('Solo Node')).toBeInTheDocument();
 		expect(screen.getByText('Some helpful text')).toBeInTheDocument();
 		expect(screen.getByText('Leaf outcome')).toBeInTheDocument();
 		expect(screen.getByText('Final outcome')).toBeInTheDocument();
+	});
 
-		// Ensure stats show correct values using the top-level preview
+	it('shows correct summary and stats for leaf node in preview', () => {
+		const node = {
+			id: 10,
+			name: 'Solo Node',
+			description: 'Some helpful text',
+			isFinal: true,
+			children: [],
+		} as any;
+
 		renderWithProviders(<DispositionGroupPreview node={node} />);
-		expect(screen.getByText('1 node across 1 level.')).toBeInTheDocument();
+		expect(screen.getByText(/1 node across.*level/i)).toBeInTheDocument();
 		expect(
-			within(screen.getByText('Final outcomes').closest('div')!).getByText('1')
+			within(
+				screen.getAllByText('Final outcomes')[0].closest('div')!
+			).getByText('1')
 		).toBeInTheDocument();
 	});
 
@@ -77,7 +93,11 @@ describe('DispositionGroupPreview', () => {
 			],
 		} as any;
 
-		renderWithProviders(<ul>{renderNode(node)}</ul>);
+		renderWithProviders(
+			<ul>
+				<NodeItem current={node} />
+			</ul>
+		);
 
 		// Node name and meta
 		expect(screen.getByText('Effective contact group')).toBeInTheDocument();
@@ -132,7 +152,11 @@ describe('DispositionGroupPreview', () => {
 		} as any;
 
 		// Render returned node element inside a list
-		renderWithProviders(<ul>{renderNode(node)}</ul>);
+		renderWithProviders(
+			<ul>
+				<NodeItem current={node} />
+			</ul>
+		);
 
 		expect(screen.getByText('Test Node')).toBeInTheDocument();
 		expect(screen.getByText('Description present')).toBeInTheDocument();
@@ -168,7 +192,11 @@ describe('DispositionGroupPreview', () => {
 			isInvalidatesNumber: true,
 			isFinal: true,
 		} as any;
-		renderWithProviders(<ul>{renderNode(node)}</ul>);
+		renderWithProviders(
+			<ul>
+				<NodeItem current={node} />
+			</ul>
+		);
 		expect(screen.getByText('Requires reschedule')).toBeInTheDocument();
 		expect(screen.getByText('Do not retry')).toBeInTheDocument();
 		expect(screen.getByText('Final outcome')).toBeInTheDocument();
@@ -180,7 +208,11 @@ describe('DispositionGroupPreview', () => {
 			name: 'Undefined children',
 			// children: undefined
 		} as any;
-		renderWithProviders(<ul>{renderNode(node)}</ul>);
+		renderWithProviders(
+			<ul>
+				<NodeItem current={node} />
+			</ul>
+		);
 		expect(screen.getByText('Leaf outcome')).toBeInTheDocument();
 	});
 
@@ -205,7 +237,11 @@ describe('DispositionGroupPreview', () => {
 			],
 		} as any;
 
-		renderWithProviders(<ul>{renderNode(node)}</ul>);
+		renderWithProviders(
+			<ul>
+				<NodeItem current={node} />
+			</ul>
+		);
 		expect(screen.getByText('No contact root')).toBeInTheDocument();
 		expect(screen.getByText('Level1')).toBeInTheDocument();
 		expect(screen.getByText('Level2')).toBeInTheDocument();

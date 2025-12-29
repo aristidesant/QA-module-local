@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/react';
-import { describe, it, beforeEach, vi } from 'vitest';
+import { describe, it, beforeEach, vi, expect } from 'vitest';
 import WelcomeCard from './WelcomeCard';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
@@ -64,7 +64,7 @@ describe('WelcomeCard', () => {
 		expect(screen.getByText('Welcome back, User!')).toBeInTheDocument();
 		expect(
 			screen.getByText(
-				/Scale your business with intelligent conversational agents/
+				'Scale your business with intelligent conversational agents that handle every interaction with human-like precision.'
 			)
 		).toBeInTheDocument();
 
@@ -111,7 +111,7 @@ describe('WelcomeCard', () => {
 		expect(screen.getByText('Welcome to Acme Corp')).toBeInTheDocument();
 		expect(
 			screen.getByText(
-				'Your AI-powered destination for seamless voice automation and customer engagement.'
+				'Your AI-powered destination for seamless voice automation and engagement.'
 			)
 		).toBeInTheDocument();
 	});

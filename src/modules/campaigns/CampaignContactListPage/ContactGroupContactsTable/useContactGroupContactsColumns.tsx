@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Badge, Stack, Text } from '@mantine/core';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 import type { Contact } from '~/models/ContactsModel';
 import { timeAgo } from '~/utils/dateUtils';
 
@@ -19,17 +20,21 @@ const STATUS_COLOR: Record<string, string> = {
 const getStatusColor = (status: string) =>
 	STATUS_COLOR[status] ?? STATUS_COLOR.INACTIVE;
 
-const formatFullName = (contact: Contact) => {
-	const parts = [contact.firstName, contact.lastName].filter(Boolean);
-	return parts.length > 0 ? parts.join(' ') : 'Unnamed contact';
-};
+const useContactGroupContactsColumns = (): ColumnDef<Contact>[] => {
+	const { t } = useTranslation('campaign.contact-list');
 
-const useContactGroupContactsColumns = (): ColumnDef<Contact>[] =>
-	useMemo(
+	const formatFullName = (contact: Contact) => {
+		const parts = [contact.firstName, contact.lastName].filter(Boolean);
+		return parts.length > 0
+			? parts.join(' ')
+			: t('contactsTable.unnamedContact');
+	};
+
+	return useMemo(
 		() => [
 			{
 				id: 'name',
-				header: 'Name',
+				header: t('contactsTable.columns.name'),
 				cell: ({ row }) => {
 					const contact = row.original;
 					return (
@@ -48,7 +53,7 @@ const useContactGroupContactsColumns = (): ColumnDef<Contact>[] =>
 			},
 			{
 				id: 'identifier',
-				header: 'Identifier',
+				header: t('contactsTable.columns.identifier'),
 				cell: ({ row }) => {
 					const contact = row.original;
 					if (!contact.identifier) {
@@ -66,7 +71,7 @@ const useContactGroupContactsColumns = (): ColumnDef<Contact>[] =>
 			},
 			{
 				id: 'status',
-				header: 'Status',
+				header: t('contactsTable.columns.status'),
 				cell: ({ row }) => {
 					const contact = row.original;
 					return (
@@ -82,7 +87,7 @@ const useContactGroupContactsColumns = (): ColumnDef<Contact>[] =>
 			},
 			{
 				id: 'phone',
-				header: 'Primary phone',
+				header: t('contactsTable.columns.primaryPhone'),
 				cell: ({ row }) => {
 					const contact = row.original;
 					const primaryPhone = contact.phoneNumbers?.[0]?.phoneNumber ?? '—';
@@ -91,7 +96,7 @@ const useContactGroupContactsColumns = (): ColumnDef<Contact>[] =>
 			},
 			{
 				id: 'updatedAt',
-				header: 'Last updated',
+				header: t('contactsTable.columns.lastUpdated'),
 				cell: ({ row }) => {
 					const contact = row.original;
 					const rawDate = contact.updatedAt ?? contact.createdAt;
@@ -109,7 +114,8 @@ const useContactGroupContactsColumns = (): ColumnDef<Contact>[] =>
 				},
 			},
 		],
-		[]
+		[t]
 	);
+};
 
 export default useContactGroupContactsColumns;

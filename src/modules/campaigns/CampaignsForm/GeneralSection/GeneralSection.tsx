@@ -19,10 +19,12 @@ import {
 	useGetCampaignObjectives,
 	useGetCampaignObjectiveById,
 } from '~/queries/campaignObjectivesQueries';
-import { CampaignObjectivesForm } from '~/modules/campaigns/CampaignManagementPage/Objectives/components/CampaignObjectivesForm/CampaignObjectivesForm';
+import { CampaignObjectivesForm } from '~/modules/campaign-management/campaign-objectives/components/CampaignObjectivesForm/CampaignObjectivesForm';
 import { useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
 const GeneralSection: React.FC = () => {
+	const { t } = useTranslation(['campaigns', 'campaign.detail', 'common']);
 	const form = useCampaignFormContext();
 	const [isObjectiveModalOpen, setIsObjectiveModalOpen] = useState(false);
 	const queryClient = useQueryClient();
@@ -83,30 +85,30 @@ const GeneralSection: React.FC = () => {
 	return (
 		<>
 			<SectionCard
-				title='Basic Information'
-				description='Define the core details of your campaign to ensure clarity and easy identification.'
+				title={t('general.title')}
+				description={t('general.description')}
 			>
 				<TextInput
-					label='Campaign Name'
-					placeholder='Enter campaign name'
+					label={t('general.campaignName')}
+					placeholder={t('general.enterCampaignName')}
 					required
 					{...form.getInputProps('name')}
 				/>
 
 				<Textarea
 					{...form.getInputProps('description')}
-					placeholder='Describe your campaign'
-					label='Description'
+					placeholder={t('general.describeYourCampaign')}
+					label={t('general.descriptionLabel')}
 					autosize
 					minRows={5}
 				/>
 
 				<Input.Wrapper
-					label='Campaign Objective'
-					description='Choose the main objective this campaign aims to achieve'
+					label={t('general.campaignObjective')}
+					description={t('general.campaignObjectiveDesc')}
 					error={
 						(form.errors.objectiveId as React.ReactNode) ||
-						(loadError ? 'Failed to load objectives' : undefined)
+						(loadError ? t('general.failedToLoadObjectives') : undefined)
 					}
 					withAsterisk
 				>
@@ -114,8 +116,8 @@ const GeneralSection: React.FC = () => {
 						<Select
 							placeholder={
 								objectivesLoading
-									? 'Loading objectives...'
-									: 'Select an objective for this campaign'
+									? t('general.loadingObjectives')
+									: t('general.selectObjective')
 							}
 							data={selectData}
 							value={form.values.objectiveId?.toString() || null}
@@ -127,7 +129,7 @@ const GeneralSection: React.FC = () => {
 							error={!!form.errors.objectiveId || !!loadError}
 							style={{ flex: 1 }}
 						/>
-						<Tooltip label='Create new objective'>
+						<Tooltip label={t('general.createNewObjective')}>
 							<ActionIcon
 								variant='light'
 								color='blue'
@@ -141,14 +143,14 @@ const GeneralSection: React.FC = () => {
 				</Input.Wrapper>
 
 				<NumberInput
-					label='Default Waves'
-					description='How many waves should each new contact list run before stopping'
+					label={t('general.defaultWaves')}
+					description={t('general.defaultWavesDesc')}
 					min={1}
 					clampBehavior='strict'
 					allowDecimal={false}
 					allowNegative={false}
 					step={1}
-					placeholder='Enter the number of waves'
+					placeholder={t('general.enterNumberOfWaves')}
 					withAsterisk
 					size='sm'
 					{...form.getInputProps('defaultMaxWaves')}
@@ -156,7 +158,7 @@ const GeneralSection: React.FC = () => {
 
 				<Flex justify={'end'}>
 					<Button leftSection={<IconDeviceFloppy />} type='submit'>
-						Save
+						{t('actions.save', { ns: 'common' })}
 					</Button>
 				</Flex>
 			</SectionCard>
@@ -164,7 +166,7 @@ const GeneralSection: React.FC = () => {
 			<Modal
 				opened={isObjectiveModalOpen}
 				onClose={() => setIsObjectiveModalOpen(false)}
-				title='Create Campaign Objective'
+				title={t('general.createObjectiveTitle')}
 				centered
 			>
 				<CampaignObjectivesForm

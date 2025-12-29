@@ -31,13 +31,9 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
 		<ScrollArea h='100%' type='scroll' offsetScrollbars>
 			<Stack gap='xs' p='xs'>
 				{campaign?.type === 'INBOUND' && <CampaignOverview {...{ campaign }} />}
-
 				<CampaignContactOutcomeSummary {...{ campaign }} />
-
 				<CampaignParameters />
-
 				<AssignedAgents />
-
 				<CleanQueueButton
 					campaignId={campaign.id}
 					contactGroupId={campaign.contactList?.id}

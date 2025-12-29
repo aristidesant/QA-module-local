@@ -5,15 +5,17 @@ import { IconLanguage, IconSettings } from '@tabler/icons-react';
 import { useCampaignFormContext } from '../../../campaignFormFunctions';
 import styles from './CampaignConfigurationBasic.module.css';
 import SectionCard from '~/components/SectionCard';
+import { useTranslation } from 'react-i18next';
 
 const CampaignConfigurationBasic: React.FC = () => {
+	const { t } = useTranslation(['campaigns', 'campaign.detail', 'common']);
 	const form = useCampaignFormContext();
 
 	const currentLanguage =
 		form.values.agentConfig?.conversationConfig?.agent?.language || '';
 	const languageOptions = [
-		{ value: 'en', label: 'English' },
-		{ value: 'es', label: 'Spanish' },
+		{ value: 'en', label: t('form.agent.basic.languages.en') },
+		{ value: 'es', label: t('form.agent.basic.languages.es') },
 	];
 
 	const handleLanguageChange = (value: string | null) => {
@@ -28,26 +30,26 @@ const CampaignConfigurationBasic: React.FC = () => {
 	return (
 		<SectionCard
 			icon={IconSettings}
-			title='Basic Configuration'
-			description='Configure the fundamental settings for your campaign agent'
+			title={t('form.agent.basic.title')}
+			description={t('form.agent.basic.description')}
 			className={styles.sectionCard}
 			contentSpacing='lg'
 		>
 			<Select
-				label='Language'
-				placeholder='Select language'
+				label={t('form.agent.basic.language')}
+				placeholder={t('form.agent.basic.languagePlaceholder')}
 				value={currentLanguage}
 				onChange={handleLanguageChange}
 				data={languageOptions}
-				description="Choose the language for the agent's responses"
+				description={t('form.agent.basic.languageDescription')}
 				searchable
-				nothingFoundMessage='No language found'
+				nothingFoundMessage={t('form.agent.basic.noLanguageFound')}
 				leftSection={<IconLanguage size={16} />}
 			/>
 			<Textarea
-				placeholder='Enter the first message your agent will send...'
+				placeholder={t('form.agent.basic.firstMessagePlaceholder')}
 				rows={4}
-				label='Agent First Message'
+				label={t('form.agent.basic.firstMessage')}
 				value={
 					form.values.agentConfig?.conversationConfig?.agent?.firstMessage ?? ''
 				}
@@ -57,7 +59,7 @@ const CampaignConfigurationBasic: React.FC = () => {
 						e.target.value
 					)
 				}
-				description='This greeting message will be the first thing users see when they interact with your agent'
+				description={t('form.agent.basic.firstMessageDescription')}
 			/>
 		</SectionCard>
 	);

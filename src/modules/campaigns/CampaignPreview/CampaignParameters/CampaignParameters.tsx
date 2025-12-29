@@ -9,6 +9,7 @@ import {
 	Tooltip,
 } from '@mantine/core';
 import { IconRefresh, IconMist } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import styles from './CampaignParameters.module.css';
 import { useGetCampaignScheduleSummary } from '~/queries/campaignsQueries';
 import { useCampaignsStore } from '~/stores/campaignsStore';
@@ -36,6 +37,7 @@ type ParameterItem =
 	  };
 
 const CampaignParameters: React.FC = () => {
+	const { t } = useTranslation('campaign.detail');
 	const selectedCampaign = useCampaignsStore((state) => state.selectedCampaign);
 
 	const {
@@ -110,8 +112,8 @@ const CampaignParameters: React.FC = () => {
 	if (!selectedCampaign) {
 		return (
 			<RightSectionCard
-				title='Schedule'
-				description='Active dialing windows and call handling limits.'
+				title={t('preview.parameters.title')}
+				description={t('preview.parameters.description')}
 				icon={IconMist}
 			>
 				<></>
@@ -125,28 +127,36 @@ const CampaignParameters: React.FC = () => {
 	const parameterItems: ParameterItem[] = [
 		parameters?.voicemailDetection !== undefined && {
 			key: 'voicemailDetection',
-			label: 'Voicemail detection',
+			label: t('preview.parameters.voicemailDetection'),
 			type: 'status',
-			display: parameters.voicemailDetection ? 'Enabled' : 'Disabled',
+			display: parameters.voicemailDetection
+				? t('preview.parameters.enabled')
+				: t('preview.parameters.disabled'),
 			color: parameters.voicemailDetection ? 'teal' : 'gray',
 		},
 		parameters?.callRetries !== undefined && {
 			key: 'callRetries',
-			label: 'Call retries',
+			label: t('preview.parameters.callRetries'),
 			type: 'text',
-			display: `Up to ${parameters.callRetries} times`,
+			display: t('preview.parameters.upToTimes', {
+				count: parameters.callRetries,
+			}),
 		},
 		parameters?.maxConcurrentCalls != null && {
 			key: 'maxConcurrentCalls',
-			label: 'Max concurrent calls',
+			label: t('preview.parameters.maxConcurrentCalls'),
 			type: 'text',
-			display: `${parameters.maxConcurrentCalls} calls`,
+			display: t('preview.parameters.calls', {
+				count: parameters.maxConcurrentCalls,
+			}),
 		},
 		parameters?.answerMachineDetection !== undefined && {
 			key: 'answerMachineDetection',
-			label: 'Answer machine detection',
+			label: t('preview.parameters.answerMachineDetection'),
 			type: 'status',
-			display: parameters.answerMachineDetection ? 'Enabled' : 'Disabled',
+			display: parameters.answerMachineDetection
+				? t('preview.parameters.enabled')
+				: t('preview.parameters.disabled'),
 			color: parameters.answerMachineDetection ? 'teal' : 'gray',
 		},
 	].filter(Boolean) as ParameterItem[];
@@ -154,12 +164,16 @@ const CampaignParameters: React.FC = () => {
 	if (isLoading) {
 		return (
 			<RightSectionCard
-				title='Schedule'
-				description='Active dialing windows and call handling limits.'
+				title={t('preview.parameters.title')}
+				description={t('preview.parameters.description')}
 				icon={IconMist}
 				rightSection={
 					<Tooltip
-						label={isCompleted ? 'Campaign is completed' : 'Refresh parameters'}
+						label={
+							isCompleted
+								? t('preview.parameters.campaignCompleted')
+								: t('preview.parameters.refreshParameters')
+						}
 						withArrow
 					>
 						<ActionIcon
@@ -168,7 +182,9 @@ const CampaignParameters: React.FC = () => {
 							size='sm'
 							onClick={handleRefetch}
 							aria-label={
-								isCompleted ? 'Campaign is completed' : 'Refresh parameters'
+								isCompleted
+									? t('preview.parameters.campaignCompleted')
+									: t('preview.parameters.refreshParameters')
 							}
 							disabled={isCompleted || isLoading}
 							className={styles.refetchButton}
@@ -189,12 +205,16 @@ const CampaignParameters: React.FC = () => {
 
 	return (
 		<RightSectionCard
-			title='Schedule'
-			description='Active dialing windows and call handling limits.'
+			title={t('preview.parameters.title')}
+			description={t('preview.parameters.description')}
 			icon={IconMist}
 			rightSection={
 				<Tooltip
-					label={isCompleted ? 'Campaign is completed' : 'Refresh parameters'}
+					label={
+						isCompleted
+							? t('preview.parameters.campaignCompleted')
+							: t('preview.parameters.refreshParameters')
+					}
 					withArrow
 				>
 					<ActionIcon
@@ -202,7 +222,9 @@ const CampaignParameters: React.FC = () => {
 						color='gray'
 						size='sm'
 						aria-label={
-							isCompleted ? 'Campaign is completed' : 'Refresh parameters'
+							isCompleted
+								? t('preview.parameters.campaignCompleted')
+								: t('preview.parameters.refreshParameters')
 						}
 						onClick={handleRefetch}
 						disabled={isCompleted || isLoading}
@@ -218,11 +240,11 @@ const CampaignParameters: React.FC = () => {
 					<div className={styles.section}>
 						<Group justify='space-between' align='center'>
 							<Text fw={600} size='sm' className={styles.sectionTitle}>
-								Active windows
+								{t('preview.parameters.activeWindows')}
 							</Text>
 							<Badge variant='light' color='blue' size='sm'>
 								{activeSchedules.length}{' '}
-								{activeSchedules.length === 1 ? 'day' : 'days'}
+								{t('preview.parameters.day', { count: activeSchedules.length })}
 							</Badge>
 						</Group>
 						<div className={styles.scheduleList}>
@@ -248,11 +270,13 @@ const CampaignParameters: React.FC = () => {
 					<div className={styles.section}>
 						<Group justify='space-between' align='center'>
 							<Text fw={600} size='sm' className={styles.sectionTitle}>
-								Call handling
+								{t('preview.parameters.callHandling')}
 							</Text>
 							<Badge variant='light' color='blue' size='sm'>
-								{parameterItems.length} setting
-								{parameterItems.length === 1 ? '' : 's'}
+								{parameterItems.length}{' '}
+								{t('preview.parameters.setting', {
+									count: parameterItems.length,
+								})}
 							</Badge>
 						</Group>
 						<div className={styles.parametersGrid}>
@@ -284,7 +308,7 @@ const CampaignParameters: React.FC = () => {
 
 				{activeSchedules.length === 0 && parameterItems.length === 0 && (
 					<Text size='sm' c='dimmed' ta='center' className={styles.emptyState}>
-						No schedules or call handling rules configured for this campaign.
+						{t('preview.parameters.noSchedules')}
 					</Text>
 				)}
 			</Stack>

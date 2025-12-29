@@ -18,6 +18,7 @@ import { useForm } from '@mantine/form';
 import { IconAlertCircle, IconInfoCircle } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { getErrorMessage } from '~/utils/httpClient';
+import { useTranslation } from 'react-i18next';
 import classes from './RoleForm.module.css';
 import {
 	useCreateRole,
@@ -60,7 +61,6 @@ const MASTER_CLIENT_ONLY_MODULES = new Set<string>([
 	ModuleEnum.TOOLS,
 	ModuleEnum.PROMPTS,
 ]);
-const MASTER_CLIENT_ONLY_TOOLTIP = 'Only available for the master client.';
 
 const formatModuleName = (module: string): string => {
 	return module
@@ -88,8 +88,18 @@ const normalizeModulePermissions = (
 };
 
 const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
+	const { t } = useTranslation('roles');
 	const isEditMode = mode === 'edit';
 	const [activeModule, setActiveModule] = useState<string>(MODULES[0] ?? '');
+
+	const getModuleLabel = (module: string) =>
+		t(`form.permissions.moduleNames.${module}`, {
+			defaultValue: formatModuleName(module),
+		});
+	const getPermissionLabel = (permission: string) =>
+		t(`form.permissions.permissionLabels.${permission}`, {
+			defaultValue: permission.charAt(0) + permission.slice(1).toLowerCase(),
+		});
 
 	const form = useForm<RoleFormValues>({
 		initialValues: {
@@ -101,11 +111,11 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 			modulePermissions: {},
 		},
 		validate: {
-			name: (value) => (value.trim() ? null : 'Role name is required'),
+			name: (value) =>
+				value.trim() ? null : t('form.validation.nameRequired'),
 			code: (value) => {
-				if (!value.trim()) return 'Role code is required';
-				if (!/^[A-Z_]+$/.test(value))
-					return 'Code must be uppercase with underscores only';
+				if (!value.trim()) return t('form.validation.codeRequired');
+				if (!/^[A-Z_]+$/.test(value)) return t('form.validation.codeFormat');
 				return null;
 			},
 		},
@@ -218,7 +228,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 
 			if (isEditMode) {
 				if (!roleId) {
-					throw new Error('Missing role identifier.');
+					throw new Error(t('form.validation.missingRoleId'));
 				}
 				const updatePayload: UpdateRolePayload = {
 					name: values.name,
@@ -229,8 +239,8 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 				};
 				await updateMutation.mutateAsync({ id: roleId, data: updatePayload });
 				notifications.show({
-					title: 'Role updated',
-					message: `${values.name} has been updated`,
+					title: t('notifications.updatedTitle'),
+					message: t('notifications.updatedMessage', { name: values.name }),
 					color: 'green',
 				});
 			} else {
@@ -244,8 +254,8 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 				};
 				await createMutation.mutateAsync(createPayload);
 				notifications.show({
-					title: 'Role created',
-					message: `${values.name} has been created`,
+					title: t('notifications.createdTitle'),
+					message: t('notifications.createdMessage', { name: values.name }),
 					color: 'green',
 				});
 				form.reset();
@@ -253,7 +263,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 			onSuccess();
 		} catch (error) {
 			notifications.show({
-				title: 'Request failed',
+				title: t('notifications.requestFailedTitle'),
 				message: getErrorMessage(error),
 				color: 'red',
 			});
@@ -272,10 +282,12 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 		return (
 			<Alert
 				icon={<IconInfoCircle size={18} />}
-				title='Unable to load role'
+				title={t('form.loadErrorTitle')}
 				color='red'
 			>
-				{roleError instanceof Error ? roleError.message : 'Unknown error'}
+				{roleError instanceof Error
+					? roleError.message
+					: t('list.unknownError')}
 			</Alert>
 		);
 	}
@@ -303,17 +315,18 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 				<div className={classes.layout}>
 					<section className={classes.sectionCard}>
 						<div className={classes.sectionHeader}>
-							<Text className={classes.sectionTitle}>Role basics</Text>
+							<Text className={classes.sectionTitle}>
+								{t('form.sections.basics.title')}
+							</Text>
 							<Text className={classes.sectionDescription}>
-								Keep identifiers concise so they fit well across the
-								application.
+								{t('form.sections.basics.description')}
 							</Text>
 						</div>
 						<div className={classes.row}>
 							<TextInput
 								required
-								label='Name'
-								placeholder='e.g., Campaign Manager'
+								label={t('form.fields.name.label')}
+								placeholder={t('form.fields.name.placeholder')}
 								className={classes.field}
 								size='sm'
 								disabled={isSystemRole}
@@ -321,8 +334,8 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 							/>
 							<TextInput
 								required
-								label='Code'
-								placeholder='e.g., CAMPAIGN_MANAGER'
+								label={t('form.fields.code.label')}
+								placeholder={t('form.fields.code.placeholder')}
 								className={classes.field}
 								size='sm'
 								disabled={isEditMode}
@@ -330,8 +343,8 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 							/>
 						</div>
 						<Textarea
-							label='Description'
-							placeholder='Describe the purpose and responsibilities of this role'
+							label={t('form.fields.description.label')}
+							placeholder={t('form.fields.description.placeholder')}
 							className={classes.field}
 							rows={3}
 							size='sm'
@@ -340,8 +353,8 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 						/>
 						<div className={classes.statusRow}>
 							<Switch
-								label='Active role'
-								description='Users assigned keep access enabled'
+								label={t('form.fields.isActive.label')}
+								description={t('form.fields.isActive.description')}
 								size='sm'
 								checked={form.values.isActive}
 								onChange={(event) =>
@@ -350,16 +363,18 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 								disabled={isSystemRole}
 							/>
 							<Text className={classes.hint}>
-								Status updates apply immediately after saving.
+								{t('form.fields.isActive.hint')}
 							</Text>
 						</div>
 					</section>
 
 					<section className={classes.sectionCard}>
 						<div className={classes.sectionHeader}>
-							<Text className={classes.sectionTitle}>Permissions</Text>
+							<Text className={classes.sectionTitle}>
+								{t('form.sections.permissions.title')}
+							</Text>
 							<Text className={classes.sectionDescription}>
-								Pick a module and toggle the actions this role can perform.
+								{t('form.sections.permissions.description')}
 							</Text>
 						</div>
 
@@ -386,18 +401,20 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 												>
 													<span className={classes.moduleTabLabelRow}>
 														<span className={classes.moduleTabLabelText}>
-															{formatModuleName(module)}
+															{getModuleLabel(module)}
 														</span>
 														{isMasterClientOnly && (
 															<Tooltip
-																label={MASTER_CLIENT_ONLY_TOOLTIP}
+																label={t('form.masterClientOnly.tooltip')}
 																withArrow
 																position='right'
 																offset={10}
 															>
 																<span
 																	role='img'
-																	aria-label='Master client only'
+																	aria-label={t(
+																		'form.masterClientOnly.ariaLabel'
+																	)}
 																	data-testid={`master-client-only-${module}`}
 																	className={classes.masterClientOnlyIcon}
 																	onClick={(event) => event.stopPropagation()}
@@ -428,18 +445,18 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 								<div className={classes.permissionsPanelHeader}>
 									<div className={classes.permissionsPanelTitleRow}>
 										<Text className={classes.permissionsPanelTitle}>
-											{formatModuleName(currentModule)}
+											{getModuleLabel(currentModule)}
 										</Text>
 										{isMasterClientOnlyModule && (
 											<Tooltip
-												label={MASTER_CLIENT_ONLY_TOOLTIP}
+												label={t('form.masterClientOnly.tooltip')}
 												withArrow
 												position='top'
 												offset={6}
 											>
 												<span
 													role='img'
-													aria-label='Master client only'
+													aria-label={t('form.masterClientOnly.ariaLabel')}
 													className={classes.masterClientOnlyIcon}
 												>
 													<IconAlertCircle size={14} />
@@ -448,8 +465,10 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 										)}
 									</div>
 									<Text className={classes.permissionsPanelCount}>
-										{modulePermissionCount(currentModule)} of{' '}
-										{PERMISSIONS.length} selected
+										{t('form.permissions.selectedCount', {
+											selected: modulePermissionCount(currentModule),
+											total: PERMISSIONS.length,
+										})}
 									</Text>
 								</div>
 								<div className={classes.permissionGrid}>
@@ -463,8 +482,10 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 											(isManageSelectedForCurrentModule &&
 												permission !== PermissionEnum.MANAGE);
 										const tooltipLabel = getPermissionTooltip(
+											t,
 											currentModule,
-											permission
+											permission,
+											{ moduleLabel: getModuleLabel(currentModule) }
 										);
 										return (
 											<Tooltip
@@ -481,10 +502,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 													className={`${classes.permissionItem} ${isChecked ? classes.permissionItemActive : ''}`}
 												>
 													<Checkbox
-														label={
-															permission.charAt(0) +
-															permission.slice(1).toLowerCase()
-														}
+														label={getPermissionLabel(permission)}
 														size='xs'
 														checked={isChecked}
 														onChange={() =>
@@ -505,8 +523,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 
 				<Group justify='space-between' className={classes.actions}>
 					<Text className={classes.helperText}>
-						Changes stay on this screen until you save. System roles cannot be
-						edited.
+						{t('form.actions.helperText')}
 					</Text>
 					<Button
 						type='submit'
@@ -514,7 +531,9 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 						disabled={isSubmitting || isSystemRole}
 						size='sm'
 					>
-						{isEditMode ? 'Save changes' : 'Create role'}
+						{isEditMode
+							? t('form.actions.saveChanges')
+							: t('form.actions.createRole')}
 					</Button>
 				</Group>
 			</Stack>

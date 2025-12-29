@@ -1,6 +1,7 @@
 import React from 'react';
 import { UnstyledButton, Text, Badge } from '@mantine/core';
 import styles from './CampaignConfigurationPromptEditModal.module.css';
+import { useTranslation } from 'react-i18next';
 
 interface PromptMenuItemProps {
 	typeId: number;
@@ -19,6 +20,7 @@ const PromptMenuItem: React.FC<PromptMenuItemProps> = ({
 	isDrafted,
 	hasValue,
 }) => {
+	const { t } = useTranslation('campaigns');
 	return (
 		<UnstyledButton
 			onClick={onClick}
@@ -40,7 +42,11 @@ const PromptMenuItem: React.FC<PromptMenuItemProps> = ({
 				radius='sm'
 				className={styles.menuStatusBadge}
 			>
-				{isDrafted ? 'DRAFTED' : hasValue ? 'Saved' : 'Empty'}
+				{isDrafted
+					? t('form.agent.prompt.editor.status.drafted')
+					: hasValue
+						? t('form.agent.prompt.editor.status.saved')
+						: t('form.agent.prompt.editor.status.empty')}
 			</Badge>
 		</UnstyledButton>
 	);

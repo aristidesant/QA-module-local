@@ -3,13 +3,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import ExportToExcelModal from './ExportToExcelModal';
 
-// Mock react-i18next
-vi.mock('react-i18next', () => ({
-	useTranslation: () => ({
-		t: (key: string) => key,
-	}),
-}));
-
 describe('ExportToExcelModal', () => {
 	const mockOnClose = vi.fn();
 
@@ -25,7 +18,7 @@ describe('ExportToExcelModal', () => {
 		expect(
 			await screen.findByTestId('export-to-excel-modal-content')
 		).toBeInTheDocument();
-		expect(screen.getByText('conversations.export.title')).toBeInTheDocument();
+		expect(screen.getByText('Export conversations')).toBeInTheDocument();
 	});
 
 	it('does not render when closed', () => {
@@ -43,7 +36,7 @@ describe('ExportToExcelModal', () => {
 			<ExportToExcelModal opened={true} onClose={mockOnClose} />
 		);
 
-		const cancelBtn = await screen.findByText(/conversations.export.cancel/i);
+		const cancelBtn = await screen.findByRole('button', { name: 'Cancel' });
 		fireEvent.click(cancelBtn);
 		expect(mockOnClose).toHaveBeenCalled();
 	});

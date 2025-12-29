@@ -1,3 +1,5 @@
+import type { TFunction } from 'i18next';
+
 export const AUDIO_FORMATS = [
 	{ value: 'pcm_16000', label: 'PCM 16000' },
 	{ value: 'pcm_22050', label: 'PCM 22050' },
@@ -25,8 +27,8 @@ export const TTS_MODELS = [
 
 export const ASR_PROVIDERS = [{ value: 'elevenlabs', label: 'ElevenLabs' }];
 
-export const ASR_QUALITY = [
-	{ value: 'high', label: 'High' },
-	{ value: 'medium', label: 'Medium' },
-	{ value: 'low', label: 'Low' },
+export const getAsrQualityOptions = (t: TFunction) => [
+	{ value: 'high', label: t('form.asr.quality.options.high') },
+	{ value: 'medium', label: t('form.asr.quality.options.medium') },
+	{ value: 'low', label: t('form.asr.quality.options.low') },
 ];

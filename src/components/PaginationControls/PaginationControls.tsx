@@ -1,4 +1,5 @@
 import { Group, Text, Pagination, Select } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import styles from './PaginationControls.module.css';
 
 interface PaginationControlsProps {
@@ -31,6 +32,7 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
 	isLoading = false,
 	itemLabel = 'items',
 }) => {
+	const { t } = useTranslation();
 	if (totalItems === 0 && !isLoading) {
 		return null;
 	}
@@ -47,15 +49,15 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
 			<div className={styles.summary}>
 				<Text size='sm' c='dimmed'>
 					{isLoading ? (
-						'Loading...'
+						t('status.loading')
 					) : (
 						<>
-							Showing {startItem}-{endItem} of {totalItems.toLocaleString()}{' '}
-							{itemLabel}
+							{t('pagination.showing')} {startItem}-{endItem}{' '}
+							{t('pagination.of')} {totalItems.toLocaleString()} {itemLabel}
 							{searchTerm && (
 								<Text component='span' size='sm' c='blue' fw={500}>
 									{' '}
-									(filtered by "{searchTerm}")
+									{t('pagination.filteredBy', { term: searchTerm })}
 								</Text>
 							)}
 						</>
@@ -69,7 +71,7 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
 				<div className={styles.leftControl}>
 					<Group gap='xs'>
 						<Text size='sm' c='dimmed'>
-							Show:
+							{t('pagination.show')}
 						</Text>
 						<Select
 							value={itemsPerPage.toString()}
@@ -99,7 +101,8 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
 				{/* Page info - Right */}
 				<div className={styles.rightControl}>
 					<Text size='xs' c='dimmed' className={styles.pageInfo}>
-						Page {currentPage} of {Math.max(totalPages, 1)}
+						{t('pagination.page')} {currentPage} {t('pagination.of')}{' '}
+						{Math.max(totalPages, 1)}
 					</Text>
 				</div>
 			</div>

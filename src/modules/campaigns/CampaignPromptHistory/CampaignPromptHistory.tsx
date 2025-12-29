@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Text, Group, Modal, Badge } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import {
 	useGetCampaignPromptHistory,
 	useGetCampaignPromptHistoryByPromptType,
@@ -25,6 +26,7 @@ const CampaignPromptHistory: React.FC<CampaignPromptHistoryProps> = ({
 	currentPromptText,
 	onSelect,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const [selectedItem, setSelectedItem] =
 		useState<CampaignPromptHistoryItem | null>(null);
 	const [modalOpen, setModalOpen] = useState(false);
@@ -89,7 +91,7 @@ const CampaignPromptHistory: React.FC<CampaignPromptHistoryProps> = ({
 				<Text c='red' size='sm'>
 					{error instanceof Error
 						? error.message
-						: 'Failed to load prompt history.'}
+						: t('promptHistory.failedToLoad')}
 				</Text>
 			</div>
 		);
@@ -114,7 +116,7 @@ const CampaignPromptHistory: React.FC<CampaignPromptHistoryProps> = ({
 						onPageChange={pagination.setCurrentPage}
 						onItemsPerPageChange={handleItemsPerPageChange}
 						isLoading={isLoading}
-						itemLabel='prompt versions'
+						itemLabel={t('promptHistory.itemLabel')}
 					/>
 				)}
 			</div>
@@ -125,7 +127,7 @@ const CampaignPromptHistory: React.FC<CampaignPromptHistoryProps> = ({
 					title={
 						<Group gap='sm'>
 							<Text fw={600} size='lg'>
-								Prompt History
+								{t('promptHistory.modalTitle')}
 							</Text>
 							<Badge variant='filled' color='blue' size='lg'>
 								v{selectedItem.version}

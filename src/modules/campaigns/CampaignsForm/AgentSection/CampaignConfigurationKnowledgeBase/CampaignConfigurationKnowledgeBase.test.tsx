@@ -1,5 +1,6 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import CampaignConfigurationKnowledgeBase from './CampaignConfigurationKnowledgeBase';
 
 const mockSetFieldValue = vi.fn();
@@ -111,7 +112,7 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 				error: null,
 			});
 
-			render(<CampaignConfigurationKnowledgeBase />);
+			renderWithProviders(<CampaignConfigurationKnowledgeBase />);
 
 			expect(screen.getByTestId('loader')).toBeInTheDocument();
 			expect(screen.getByText(/Loading knowledge bases/i)).toBeVisible();
@@ -126,7 +127,7 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 				error: new Error('Failed to load'),
 			});
 
-			render(<CampaignConfigurationKnowledgeBase />);
+			renderWithProviders(<CampaignConfigurationKnowledgeBase />);
 
 			expect(screen.getByText(/Error loading knowledge bases/i)).toBeVisible();
 		});
@@ -154,7 +155,7 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 				error: null,
 			});
 
-			render(<CampaignConfigurationKnowledgeBase />);
+			renderWithProviders(<CampaignConfigurationKnowledgeBase />);
 
 			expect(screen.getByText(/No knowledge bases selected/i)).toBeVisible();
 		});
@@ -169,7 +170,7 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 				error: null,
 			});
 
-			render(<CampaignConfigurationKnowledgeBase />);
+			renderWithProviders(<CampaignConfigurationKnowledgeBase />);
 
 			expect(screen.getByText(/No knowledge bases selected/i)).toBeVisible();
 		});
@@ -182,7 +183,7 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 				error: null,
 			});
 
-			render(<CampaignConfigurationKnowledgeBase />);
+			renderWithProviders(<CampaignConfigurationKnowledgeBase />);
 
 			expect(screen.getByText(/No knowledge bases selected/i)).toBeVisible();
 		});
@@ -215,7 +216,7 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 				error: null,
 			});
 
-			render(<CampaignConfigurationKnowledgeBase />);
+			renderWithProviders(<CampaignConfigurationKnowledgeBase />);
 			expect(screen.getByText('KB One')).toBeVisible();
 		});
 
@@ -244,7 +245,7 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 				error: null,
 			});
 
-			render(<CampaignConfigurationKnowledgeBase />);
+			renderWithProviders(<CampaignConfigurationKnowledgeBase />);
 			expect(screen.getByText('KB Two')).toBeVisible();
 		});
 
@@ -270,7 +271,7 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 				error: null,
 			});
 
-			render(<CampaignConfigurationKnowledgeBase />);
+			renderWithProviders(<CampaignConfigurationKnowledgeBase />);
 			expect(screen.getByText('KB One')).toBeVisible();
 			expect(screen.getByText('KB Two')).toBeVisible();
 		});
@@ -284,7 +285,7 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 				error: null,
 			});
 
-			render(<CampaignConfigurationKnowledgeBase />);
+			renderWithProviders(<CampaignConfigurationKnowledgeBase />);
 
 			expect(screen.getByText('active')).toBeVisible();
 		});
@@ -298,7 +299,7 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 				error: null,
 			});
 
-			render(<CampaignConfigurationKnowledgeBase />);
+			renderWithProviders(<CampaignConfigurationKnowledgeBase />);
 
 			expect(screen.getByText(/Created:/i)).toBeVisible();
 		});
@@ -310,7 +311,7 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 				error: null,
 			});
 
-			render(<CampaignConfigurationKnowledgeBase />);
+			renderWithProviders(<CampaignConfigurationKnowledgeBase />);
 
 			expect(screen.getByText('KB One')).toBeVisible();
 			expect(screen.queryByText(/Created:/i)).not.toBeInTheDocument();
@@ -346,7 +347,7 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 				error: null,
 			});
 
-			render(<CampaignConfigurationKnowledgeBase />);
+			renderWithProviders(<CampaignConfigurationKnowledgeBase />);
 
 			fireEvent.click(screen.getByRole('button', { name: /Remove KB Two/i }));
 
@@ -371,7 +372,7 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 				error: null,
 			});
 
-			render(<CampaignConfigurationKnowledgeBase />);
+			renderWithProviders(<CampaignConfigurationKnowledgeBase />);
 
 			expect(
 				screen.queryByTestId('knowledge-base-modal')
@@ -391,7 +392,7 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 				error: null,
 			});
 
-			render(<CampaignConfigurationKnowledgeBase />);
+			renderWithProviders(<CampaignConfigurationKnowledgeBase />);
 
 			fireEvent.click(
 				screen.getByRole('button', { name: /Add Knowledge Base/i })
@@ -426,7 +427,7 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 				error: null,
 			});
 
-			render(<CampaignConfigurationKnowledgeBase />);
+			renderWithProviders(<CampaignConfigurationKnowledgeBase />);
 
 			fireEvent.click(
 				screen.getByRole('button', { name: /Add Knowledge Base/i })
@@ -473,7 +474,7 @@ describe('CampaignConfigurationKnowledgeBase', () => {
 				error: null,
 			});
 
-			render(<CampaignConfigurationKnowledgeBase />);
+			renderWithProviders(<CampaignConfigurationKnowledgeBase />);
 
 			expect(screen.getByText(name)).toBeVisible();
 			expect(screen.getByText(status)).toBeVisible();

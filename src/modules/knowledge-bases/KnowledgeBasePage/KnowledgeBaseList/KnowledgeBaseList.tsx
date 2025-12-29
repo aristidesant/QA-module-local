@@ -18,9 +18,11 @@ import KnowledgeBaseFilter from './KnowledgeBaseFilter';
 import { usePermissions } from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
+import { useTranslation } from 'react-i18next';
 
 const KnowledgeBaseList = () => {
 	const setRight = useKnowledgeBaseStore((s) => s.setRightComponent);
+	const { t } = useTranslation('knowledge-bases');
 	const { canPerformAction } = usePermissions();
 	const canCreate = canPerformAction(
 		ModuleEnum.KNOWLEDGE_BASES,
@@ -108,10 +110,10 @@ const KnowledgeBaseList = () => {
 					<div className={styles.emptyContent}>
 						<IconFileText size={48} className={styles.emptyIcon} />
 						<Text fw={600} size='lg' className={styles.emptyTitle}>
-							No knowledge bases found
+							{t('list.empty.title')}
 						</Text>
 						<Text size='sm' c='dimmed' className={styles.emptyDescription}>
-							Create your first knowledge base to surface documents to agents.
+							{t('list.empty.description')}
 						</Text>
 						{canCreate ? (
 							<Button
@@ -120,7 +122,7 @@ const KnowledgeBaseList = () => {
 								leftSection={<IconPlus size={18} />}
 								size='md'
 							>
-								Create Knowledge Base
+								{t('list.empty.actions.create')}
 							</Button>
 						) : null}
 					</div>

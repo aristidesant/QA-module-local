@@ -1,93 +1,97 @@
-import { Group, ActionIcon, Tooltip, TextInput, Loader } from "@mantine/core";
+import { Group, ActionIcon, Tooltip, TextInput, Loader } from '@mantine/core';
 import {
-  IconRefresh,
-  IconSearch,
-  IconFileSpreadsheet,
-} from "@tabler/icons-react";
-import type { Table } from "@tanstack/react-table";
-import type { ConversationTableModel } from "~/models/ConversationsModels";
-import { useState } from "react";
-import ExportToExcelModal from "./ExportToExcelModal";
+	IconRefresh,
+	IconSearch,
+	IconFileSpreadsheet,
+} from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
+import type { Table } from '@tanstack/react-table';
+import type { ConversationTableModel } from '~/models/ConversationsModels';
+import { useState } from 'react';
+import ExportToExcelModal from './ExportToExcelModal';
 
 interface TableToolbarProps {
-  table: Table<ConversationTableModel>;
-  globalFilter: string;
-  onGlobalFilterChange: (value: string) => void;
-  onRefresh?: () => void;
-  isLoading?: boolean;
+	table: Table<ConversationTableModel>;
+	globalFilter: string;
+	onGlobalFilterChange: (value: string) => void;
+	onRefresh?: () => void;
+	isLoading?: boolean;
 }
 
 export function TableToolbar({
-  globalFilter,
-  onGlobalFilterChange,
-  onRefresh,
-  isLoading = false,
+	globalFilter,
+	onGlobalFilterChange,
+	onRefresh,
+	isLoading = false,
 }: TableToolbarProps) {
-  const [exportOpen, setExportOpen] = useState(false);
+	const { t } = useTranslation(['conversations', 'common']);
+	const [exportOpen, setExportOpen] = useState(false);
 
-  const toolbarStyle = {
-    borderBottom: "1px solid var(--mantine-color-gray-3)",
-    backgroundColor: "var(--mantine-color-gray-0)",
-    padding: "var(--mantine-spacing-md)",
-  };
+	const toolbarStyle = {
+		borderBottom: '1px solid var(--mantine-color-gray-3)',
+		backgroundColor: 'var(--mantine-color-gray-0)',
+		padding: 'var(--mantine-spacing-md)',
+	};
 
-  const searchInputStyle = {
-    width: "300px",
-    minWidth: "250px",
-  } as const;
+	const searchInputStyle = {
+		width: '300px',
+		minWidth: '250px',
+	} as const;
 
-  return (
-    <Group justify="space-between" style={toolbarStyle}>
-      <TextInput
-        placeholder="Search conversations..."
-        value={globalFilter ?? ""}
-        onChange={(e) => onGlobalFilterChange(e.target.value)}
-        leftSection={<IconSearch size={16} />}
-        style={searchInputStyle}
-      />
+	return (
+		<Group justify='space-between' style={toolbarStyle}>
+			<TextInput
+				placeholder={t('list.searchPlaceholder')}
+				value={globalFilter ?? ''}
+				onChange={(e) => onGlobalFilterChange(e.target.value)}
+				leftSection={<IconSearch size={16} />}
+				style={searchInputStyle}
+			/>
 
-      <Group gap="xs">
-        {isLoading && (
-          <Tooltip label="Loading data">
-            <ActionIcon
-              variant="subtle"
-              size="lg"
-              color="gray"
-              aria-label="loading"
-            >
-              <Loader size={18} color="gray" />
-            </ActionIcon>
-          </Tooltip>
-        )}
-        {onRefresh && (
-          <Tooltip label="Refresh data">
-            <ActionIcon
-              variant="subtle"
-              size="lg"
-              color="gray"
-              onClick={onRefresh}
-            >
-              <IconRefresh size={18} />
-            </ActionIcon>
-          </Tooltip>
-        )}
+			<Group gap='xs'>
+				{isLoading && (
+					<Tooltip label={t('list.loading')}>
+						<ActionIcon
+							variant='subtle'
+							size='lg'
+							color='gray'
+							aria-label='loading'
+						>
+							<Loader size={18} color='gray' />
+						</ActionIcon>
+					</Tooltip>
+				)}
+				{onRefresh && (
+					<Tooltip label={t('list.refresh')}>
+						<ActionIcon
+							variant='subtle'
+							size='lg'
+							color='gray'
+							onClick={onRefresh}
+							aria-label={t('list.refresh')}
+						>
+							<IconRefresh size={18} />
+						</ActionIcon>
+					</Tooltip>
+				)}
 
-        <Tooltip label="Export to Excel">
-          <ActionIcon
-            variant="subtle"
-            size="lg"
-            color="gray"
-            onClick={() => setExportOpen(true)}
-          >
-            <IconFileSpreadsheet size={18} />
-          </ActionIcon>
-        </Tooltip>
-      </Group>
+				<Tooltip label={t('list.export')}>
+					<ActionIcon
+						variant='subtle'
+						size='lg'
+						color='gray'
+						onClick={() => setExportOpen(true)}
+						aria-label={t('list.export')}
+					>
+						<IconFileSpreadsheet size={18} />
+					</ActionIcon>
+				</Tooltip>
+			</Group>
 
-      <ExportToExcelModal
-        opened={exportOpen}
-        onClose={() => setExportOpen(false)}
-      />
-    </Group>
-  );
+			<ExportToExcelModal
+				opened={exportOpen}
+				onClose={() => setExportOpen(false)}
+			/>
+		</Group>
+	);
 }

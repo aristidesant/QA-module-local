@@ -7,10 +7,12 @@ import KnowledgeBaseForm from './KnowledgeBaseForm/KnowledgeBaseForm';
 import { usePermissions } from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
+import { useTranslation } from 'react-i18next';
 
 const KnowledgeBasePage = () => {
 	const right = useKnowledgeBaseStore((s) => s.rightComponent);
 	const setRight = useKnowledgeBaseStore((s) => s.setRightComponent);
+	const { t } = useTranslation('knowledge-bases');
 	const { canPerformAction } = usePermissions();
 	const canCreate = canPerformAction(
 		ModuleEnum.KNOWLEDGE_BASES,
@@ -19,8 +21,8 @@ const KnowledgeBasePage = () => {
 
 	return (
 		<ContentContainer
-			title='Knowledge Bases'
-			description='Manage collections of documents used by your agents'
+			title={t('page.title')}
+			description={t('page.description')}
 			titleIcon={<IconBook size={20} />}
 			titleRight={
 				canCreate ? (
@@ -29,7 +31,7 @@ const KnowledgeBasePage = () => {
 						leftSection={<IconPlus size={16} />}
 						size='sm'
 					>
-						New Knowledge Base
+						{t('page.actions.new')}
 					</Button>
 				) : null
 			}

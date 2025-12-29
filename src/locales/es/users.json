@@ -1,0 +1,199 @@
+{
+	"title": "Usuarios",
+	"description": "Gestiona el acceso y los perfiles de usuario",
+	"searchPlaceholder": "Buscar usuarios...",
+	"newUser": "Nuevo usuario",
+	"editUser": "Editar usuario",
+	"deleteUser": "Eliminar usuario",
+	"deleteModal": {
+		"confirmLabel": "Eliminar usuario",
+		"body": "Esta acción no se puede deshacer. ¿Seguro que deseas eliminar a <strong>{{email}}</strong>?"
+	},
+	"list": {
+		"errorTitle": "No se pudieron cargar los usuarios",
+		"unknownError": "Error desconocido",
+		"empty": "No se encontraron usuarios.",
+		"itemLabel": "usuarios"
+	},
+	"status": {
+		"active": "Activo",
+		"inactive": "Inactivo"
+	},
+	"columns": {
+		"name": "Nombre",
+		"client": "Cliente",
+		"email": "Correo electrónico",
+		"role": "Rol",
+		"status": "Estado",
+		"lastLogin": "Última sesión",
+		"updated": "Actualizado",
+		"actions": "Acciones"
+	},
+	"table": {
+		"actions": {
+			"view": "Ver usuario",
+			"edit": "Editar usuario",
+			"delete": "Eliminar usuario"
+		},
+		"user": {
+			"usernameLabel": "Usuario",
+			"emailLabel": "Correo",
+			"createdLabel": "Creado"
+		},
+		"client": {
+			"idLabel": "ID",
+			"identifierLabel": "Identificador",
+			"emailLabel": "Correo"
+		}
+	},
+	"details": {
+		"title": "Detalles del usuario",
+		"loadErrorTitle": "No se pudieron cargar los detalles del usuario",
+		"actions": {
+			"close": "Cerrar detalles"
+		},
+		"sections": {
+			"profile": "Perfil",
+			"account": "Cuenta",
+			"security": "Seguridad",
+			"activity": "Actividad"
+		},
+		"labels": {
+			"clientName": "Nombre del cliente",
+			"clientIdentifier": "Identificador del cliente",
+			"clientEmail": "Correo del cliente",
+			"clientId": "ID del cliente",
+			"employeeId": "ID de empleado",
+			"mfa": "Autenticación multifactor",
+			"created": "Creado",
+			"updated": "Última actualización",
+			"deactivated": "Desactivado"
+		},
+		"values": {
+			"enabled": "Activado",
+			"disabled": "Desactivado"
+		},
+		"employeeBadge": "Empleado #{{employeeId}}",
+		"updatedDescription": "Actualizado {{relative}}"
+	},
+	"clientRoles": {
+		"fallbackClientName": "Cliente #{{id}}",
+		"sidebar": {
+			"title": "Clientes",
+			"description": "Selecciona un cliente para asignar roles",
+			"emptyClients": "No hay clientes disponibles"
+		},
+		"panel": {
+			"assignedCount": "{{assigned}} de {{total}} roles asignados",
+			"totalRoles": "{{total}} roles en total",
+			"loading": "Cargando asignaciones",
+			"emptyRoles": "No hay roles disponibles en el sistema.",
+			"emptyState": "Las asignaciones de clientes y roles aparecerán aquí cuando estén disponibles."
+		}
+	},
+	"password": {
+		"requirements": {
+			"minLength": "Al menos 8 caracteres",
+			"lowercase": "Incluye letra minúscula",
+			"uppercase": "Incluye letra mayúscula",
+			"number": "Incluye número",
+			"symbol": "Incluye carácter especial",
+			"metAll": "La contraseña cumple todos los requisitos"
+		}
+	},
+	"form": {
+		"loadErrorTitle": "No se pudo cargar el usuario",
+		"badges": {
+			"editing": "Editando usuario",
+			"creating": "Crear usuario",
+			"draft": "Borrador"
+		},
+		"metaHint": "Mantén las credenciales ordenadas y los roles sincronizados.",
+		"subtitle": "Gestiona el acceso, el perfil y la seguridad en un solo lugar.",
+		"sections": {
+			"account": {
+				"title": "Cuenta",
+				"description": "Credenciales de acceso y detalles de propiedad. Los campos obligatorios están marcados con un asterisco."
+			},
+			"profile": {
+				"title": "Perfil",
+				"description": "Detalles básicos usados en la aplicación."
+			},
+			"roles": {
+				"title": "Roles y permisos",
+				"description": "Asigna roles por cliente para controlar el nivel de acceso."
+			}
+		},
+		"fields": {
+			"email": {
+				"label": "Correo electrónico",
+				"placeholder": "usuario@ejemplo.com"
+			},
+			"username": {
+				"label": "Usuario",
+				"placeholder": "usuario-trabajo"
+			},
+			"client": {
+				"label": "Cliente",
+				"placeholder": "Asignar cliente",
+				"helperTitle": "Propiedad del cliente",
+				"helperDescription": "Elige el espacio de trabajo que debe ser propietario de esta cuenta para aplicar los roles correctamente."
+			},
+			"password": {
+				"label": "Contraseña",
+				"placeholder": "Ingresa la contraseña",
+				"hint": "Usa una frase única para mantener seguras las cuentas nuevas desde el primer día."
+			},
+			"firstName": {
+				"label": "Nombre",
+				"placeholder": "Nombre"
+			},
+			"lastName": {
+				"label": "Apellido",
+				"placeholder": "Apellido"
+			}
+		},
+		"passwordStrength": {
+			"weak": "Débil",
+			"medium": "Media",
+			"strong": "Fuerte"
+		},
+		"passwordChecks": {
+			"minLength": "Al menos 8 caracteres",
+			"uppercase": "Al menos 1 letra mayúscula",
+			"lowercase": "Al menos 1 letra minúscula",
+			"number": "Al menos 1 número",
+			"symbol": "Al menos 1 carácter especial (!@#$%^&*...)"
+		},
+		"mfa": {
+			"title": "Autenticación multifactor",
+			"subtitle": "Agrega un paso de verificación en cada dispositivo nuevo.",
+			"description": "Protege las cuentas con un código de un solo uso después de ingresar la contraseña.",
+			"toggleAria": "Alternar autenticación multifactor"
+		},
+		"actions": {
+			"saveChanges": "Guardar cambios",
+			"createUser": "Crear usuario"
+		},
+		"validation": {
+			"invalidEmail": "Por favor ingresa un correo electrónico válido",
+			"usernameRequired": "El usuario es obligatorio",
+			"firstNameRequired": "El nombre es obligatorio",
+			"lastNameRequired": "El apellido es obligatorio",
+			"clientIdInvalid": "El ID del cliente debe ser mayor que cero",
+			"passwordRequired": "La contraseña es obligatoria",
+			"passwordMinLength": "La contraseña debe tener al menos 8 caracteres",
+			"missingUserId": "Falta el identificador del usuario."
+		}
+	},
+	"notifications": {
+		"createdTitle": "Usuario creado",
+		"createdMessage": "Se agregó {{email}}",
+		"updatedTitle": "Usuario actualizado",
+		"updatedMessage": "Se actualizó {{email}}",
+		"deletedTitle": "Usuario eliminado",
+		"deletedMessage": "Se eliminó {{email}}",
+		"deleteErrorTitle": "No se pudo eliminar el usuario",
+		"requestFailedTitle": "La solicitud falló"
+	}
+}

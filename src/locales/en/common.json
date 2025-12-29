@@ -1,0 +1,117 @@
+{
+	"title": "Nai Agent Service",
+	"common": {
+		"goBack": "Go back",
+		"goToHome": "Go to home"
+	},
+	"actions": {
+		"save": "Save",
+		"cancel": "Cancel",
+		"delete": "Delete",
+		"edit": "Edit",
+		"create": "Create",
+		"search": "Search",
+		"close": "Close",
+		"confirm": "Confirm",
+		"export": "Export",
+		"back": "Back",
+		"next": "Next",
+		"finish": "Finish"
+	},
+	"status": {
+		"loading": "Loading...",
+		"success": "Success",
+		"error": "Error",
+		"noData": "No data available",
+		"nothingSelected": "Nothing selected"
+	},
+	"loading": {
+		"configurations": "Loading configurations...",
+		"clientConfigs": "Loading client configs..."
+	},
+	"sidebar": {
+		"ariaLabel": "Main navigation",
+		"menu": "MENU",
+		"noModules": "No modules available",
+		"requestAccess": "Request access to see navigation options.",
+		"version": "Version",
+		"items": {
+			"overview": "Overview",
+			"campaigns": "Campaigns",
+			"conversations": "Conversations"
+		}
+	},
+	"nav": {
+		"dashboard": "Dashboard",
+		"agents": "Agents",
+		"campaigns": "Campaigns",
+		"contacts": "Contacts",
+		"settings": "Settings",
+		"conversations": "Conversations"
+	},
+	"userMenu": {
+		"profile": "Profile",
+		"logout": "Logout",
+		"loggingOut": "Logging out...",
+		"impersonationMode": "Impersonation Mode",
+		"impersonatingClient": "You are impersonating a client",
+		"returnToMaster": "Use \"Return to Master Client\" to exit",
+		"categories": {
+			"campaignManagement": "Campaign Management",
+			"configuration": "Configuration",
+			"compliance": "Compliance",
+			"toolsAndResources": "Tools & Resources"
+		},
+		"items": {
+			"campaignManagement": "Campaign Management",
+			"configurations": "Configurations",
+			"doNotCall": "Do Not Call",
+			"clients": "Clients",
+			"knowledgeBases": "Knowledge Bases",
+			"tools": "Tools",
+			"users": "Users",
+			"roles": "Roles"
+		}
+	},
+	"accessDenied": {
+		"title": "Access Denied",
+		"description": "You do not have permission to access this page."
+	},
+	"pagination": {
+		"showing": "Showing",
+		"of": "of",
+		"filteredBy": "(filtered by \"{{term}}\")",
+		"show": "Show:",
+		"page": "Page"
+	},
+	"outboundCallForm": {
+		"agentCallTitle": "Agent Call",
+		"agentCallDesc": "Experience a live call from your AI agent.",
+		"customerName": "Customer name",
+		"customerId": "Customer ID",
+		"requestDemo": "Request demo call",
+		"calling": "Calling...",
+		"testCallSentTitle": "Test call requested",
+		"testCallSentMsg": "We are calling {{phone}} now.",
+		"startDemoErrorTitle": "Could not start demo",
+		"startDemoErrorMsg": "Please try again.",
+		"validation": {
+			"agentRequired": "Agent is required.",
+			"phoneInvalid": "Enter a valid phone number.",
+			"campaignRequired": "Campaign is required.",
+			"customerNameRequired": "Customer name is required.",
+			"customerIdRequired": "Customer ID is required."
+		}
+	},
+	"units": {
+		"day": "d",
+		"hour": "h",
+		"minute": "m",
+		"second": "s"
+	},
+	"currency": "$",
+	"languages": {
+		"en": "English",
+		"es": "Spanish"
+	}
+}

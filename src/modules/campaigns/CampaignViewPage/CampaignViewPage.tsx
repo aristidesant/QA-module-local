@@ -10,6 +10,7 @@ import {
 	Text,
 } from '@mantine/core';
 import { IconAlertCircle, IconEdit } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
@@ -23,6 +24,7 @@ import { ContactSection } from '../CampaignsForm/ContactSection';
 import CampaignHealth from '../CampaignHealth';
 
 const CampaignViewPage = () => {
+	const { t } = useTranslation(['campaign.view', 'common']);
 	const { campaignId } = useParams<{ campaignId: string }>();
 	const { data: requet } = useGetCampaignRequirements(campaignId ?? '');
 	const navigate = useNavigate();
@@ -54,18 +56,18 @@ const CampaignViewPage = () => {
 	if (!campaignId) {
 		return (
 			<ContentContainer
-				title='Campaign overview'
-				description='Review the latest performance and configuration details.'
+				title={t('index.title')}
+				description={t('index.description')}
 				showBackButton
 				onBackClick={() => navigate('/campaigns')}
 			>
 				<Alert
 					icon={<IconAlertCircle size={16} />}
-					title='Missing campaign'
+					title={t('index.missingId.title')}
 					color='red'
 					variant='light'
 				>
-					The campaign identifier is required to display this page.
+					{t('index.missingId.message')}
 				</Alert>
 			</ContentContainer>
 		);
@@ -74,8 +76,8 @@ const CampaignViewPage = () => {
 	if (isLoading) {
 		return (
 			<ContentContainer
-				title='Loading campaign...'
-				description='Please wait while we fetch the campaign overview.'
+				title={t('index.loading.title')}
+				description={t('index.loading.description')}
 				showBackButton
 				onBackClick={() => navigate('/campaigns')}
 			>
@@ -89,20 +91,20 @@ const CampaignViewPage = () => {
 	if (isError || !campaign) {
 		return (
 			<ContentContainer
-				title='Campaign unavailable'
-				description='We could not load the requested campaign.'
+				title={t('index.unavailable.title')}
+				description={t('index.unavailable.description')}
 				showBackButton
 				onBackClick={() => navigate('/campaigns')}
 			>
 				<Alert
 					icon={<IconAlertCircle size={16} />}
-					title='Error'
+					title={t('status.error', { ns: 'common' })}
 					color='red'
 					variant='light'
 				>
 					{error instanceof Error
 						? error.message
-						: 'Campaign not found or failed to load.'}
+						: t('index.unavailable.error.defaultMessage')}
 				</Alert>
 			</ContentContainer>
 		);
@@ -111,16 +113,16 @@ const CampaignViewPage = () => {
 	return (
 		<ContentContainer
 			title={campaign.name}
-			description='Review the latest performance and configuration details.'
+			description={t('index.description')}
 			showBackButton
 			onBackClick={() => navigate('/campaigns')}
 			titleRight={
 				canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.UPDATE) ? (
-					<Tooltip label='Edit Campaign' withArrow>
+					<Tooltip label={t('index.actions.edit')} withArrow>
 						<ActionIcon
 							variant='light'
 							size='lg'
-							aria-label='Edit Campaign'
+							aria-label={t('index.actions.edit')}
 							onClick={() => navigate(`/campaign/${campaign.id}`)}
 						>
 							<IconEdit size={20} />

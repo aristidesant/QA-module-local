@@ -7,31 +7,49 @@ import {
 	ActionIcon,
 } from '@mantine/core';
 import { IconSearch, IconFilter, IconFilterOff } from '@tabler/icons-react';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useClientConfigsStore } from '~/stores/clientConfigsStore';
 import styles from './ClientConfigsFilters.module.css';
 
-const CONFIG_TYPE_OPTIONS = [
-	{ value: '', label: 'All Types' },
-	{ value: 'string', label: 'String' },
-	{ value: 'number', label: 'Number' },
-	{ value: 'boolean', label: 'Boolean' },
-	{ value: 'json', label: 'JSON' },
-	{ value: 'array', label: 'Array' },
-];
-
-const SORT_OPTIONS = [
-	{ value: 'name-asc', label: 'Name A-Z' },
-	{ value: 'name-desc', label: 'Name Z-A' },
-	{ value: 'description-asc', label: 'Description A-Z' },
-	{ value: 'description-desc', label: 'Description Z-A' },
-	{ value: 'type-asc', label: 'Type A-Z' },
-	{ value: 'type-desc', label: 'Type Z-A' },
-	{ value: 'updatedAt-desc', label: 'Recently Updated' },
-	{ value: 'updatedAt-asc', label: 'Oldest Updated' },
-];
-
 export function ClientConfigsFilters() {
 	const { filters, setFilters, resetFilters } = useClientConfigsStore();
+	const { t } = useTranslation('client-configs');
+
+	const configTypeOptions = useMemo(
+		() => [
+			{ value: '', label: t('filters.type.options.all') },
+			{ value: 'string', label: t('form.fields.type.options.string') },
+			{ value: 'number', label: t('form.fields.type.options.number') },
+			{ value: 'boolean', label: t('form.fields.type.options.boolean') },
+			{ value: 'json', label: t('form.fields.type.options.json') },
+			{ value: 'array', label: t('form.fields.type.options.array') },
+		],
+		[t]
+	);
+
+	const sortOptions = useMemo(
+		() => [
+			{ value: 'name-asc', label: t('filters.sort.options.nameAsc') },
+			{ value: 'name-desc', label: t('filters.sort.options.nameDesc') },
+			{
+				value: 'description-asc',
+				label: t('filters.sort.options.descriptionAsc'),
+			},
+			{
+				value: 'description-desc',
+				label: t('filters.sort.options.descriptionDesc'),
+			},
+			{ value: 'type-asc', label: t('filters.sort.options.typeAsc') },
+			{ value: 'type-desc', label: t('filters.sort.options.typeDesc') },
+			{
+				value: 'updatedAt-desc',
+				label: t('filters.sort.options.updatedAtDesc'),
+			},
+			{ value: 'updatedAt-asc', label: t('filters.sort.options.updatedAtAsc') },
+		],
+		[t]
+	);
 
 	const hasActiveFilters =
 		filters.search !== '' ||
@@ -70,17 +88,17 @@ export function ClientConfigsFilters() {
 			<Group justify='space-between' className={styles.filtersHeader}>
 				<Group gap='xs' className={styles.titleGroup}>
 					<IconFilter className={styles.titleIcon} size={16} />
-					<Text className={styles.title}>Filters</Text>
+					<Text className={styles.title}>{t('filters.title')}</Text>
 					{hasActiveFilters && (
 						<Badge className={styles.activeBadge} size='xs'>
-							Active
+							{t('filters.active')}
 						</Badge>
 					)}
 				</Group>
 
 				<Group gap='md' className={styles.controlsWrapper}>
 					<TextInput
-						placeholder='Search by name or description...'
+						placeholder={t('filters.search.placeholder')}
 						value={filters.search}
 						onChange={(event) =>
 							handleFilterChange('search', event.currentTarget.value)
@@ -90,18 +108,18 @@ export function ClientConfigsFilters() {
 					/>
 
 					<Select
-						placeholder='All Types'
+						placeholder={t('filters.type.placeholder')}
 						value={filters.type || ''}
 						onChange={(value) => handleFilterChange('type', value || null)}
-						data={CONFIG_TYPE_OPTIONS}
+						data={configTypeOptions}
 						className={styles.typeSelect}
 					/>
 
 					<Select
-						placeholder='Sort by'
+						placeholder={t('filters.sort.placeholder')}
 						value={sortValue}
 						onChange={handleSortChange}
-						data={SORT_OPTIONS}
+						data={sortOptions}
 						className={styles.sortSelect}
 					/>
 
@@ -111,7 +129,7 @@ export function ClientConfigsFilters() {
 							color='gray'
 							onClick={resetFilters}
 							className={styles.clearButton}
-							title='Clear all filters'
+							title={t('filters.actions.clear')}
 						>
 							<IconFilterOff size={16} />
 						</ActionIcon>

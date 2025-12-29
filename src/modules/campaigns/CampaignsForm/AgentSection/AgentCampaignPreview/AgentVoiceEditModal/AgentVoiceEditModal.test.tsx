@@ -474,7 +474,7 @@ describe('AgentVoiceEditModal', () => {
 
 		expect(
 			screen.getByText(
-				/Select a voice for your agent and click save to apply the changes/i
+				/Select a voice for your agent and click save to apply changes/i
 			)
 		).toBeInTheDocument();
 	});

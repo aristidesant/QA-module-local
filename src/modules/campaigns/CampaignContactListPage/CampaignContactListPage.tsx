@@ -1,5 +1,6 @@
 import { useMemo, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import {
 	Badge,
 	Breadcrumbs,
@@ -49,6 +50,7 @@ import { getQueueStatusConfig } from '~/modules/campaigns/CampaignsForm/ContactS
 import { timeAgo } from '~/utils/dateUtils';
 
 const CampaignContactListPage = () => {
+	const { t } = useTranslation('campaign.contact-list');
 	const navigate = useNavigate();
 	const { contactGroupId, campaignId } = useParams<{
 		contactGroupId: string;
@@ -100,42 +102,42 @@ const CampaignContactListPage = () => {
 		}
 	> = {
 		PENDING: {
-			actionLabel: 'Start Campaign',
+			actionLabel: t('actions.start'),
 			actionIcon: <IconPlayerPlay size={16} />,
 			actionType: 'start',
 		},
 		RUNNING: {
-			actionLabel: 'Pause Campaign',
+			actionLabel: t('actions.pause'),
 			actionIcon: <IconPlayerPause size={16} />,
 			actionType: 'pause',
 		},
 		PAUSED: {
-			actionLabel: 'Resume Campaign',
+			actionLabel: t('actions.resume'),
 			actionIcon: <IconPlayerPlay size={16} />,
 			actionType: 'resume',
 		},
 		COMPLETE: {
-			actionLabel: 'No Actions Available',
+			actionLabel: t('actions.noActions'),
 			actionIcon: null,
 			actionType: null,
 		},
 		COMPLETED: {
-			actionLabel: 'No Actions Available',
+			actionLabel: t('actions.noActions'),
 			actionIcon: null,
 			actionType: null,
 		},
 		EXECUTED: {
-			actionLabel: 'All waves executed',
+			actionLabel: t('actions.allWavesExecuted'),
 			actionIcon: null,
 			actionType: null,
 		},
 		FAILED: {
-			actionLabel: 'Retry Not Available',
+			actionLabel: t('actions.retryNotAvailable'),
 			actionIcon: null,
 			actionType: null,
 		},
 		UNKNOWN: {
-			actionLabel: 'No Actions Available',
+			actionLabel: t('actions.noActions'),
 			actionIcon: null,
 			actionType: null,
 		},
@@ -162,21 +164,21 @@ const CampaignContactListPage = () => {
 
 		let confirmMessage = '';
 		if (status.actionType === 'start') {
-			confirmMessage =
-				'Starting the campaign will begin calling contacts in this list. This action cannot be undone immediately. Are you sure you want to start?';
+			confirmMessage = t('actions.confirmStart');
 		} else if (status.actionType === 'pause') {
-			confirmMessage =
-				'Pausing the campaign will stop all ongoing calls. You can resume later. Are you sure you want to pause?';
+			confirmMessage = t('actions.confirmPause');
 		} else if (status.actionType === 'resume') {
-			confirmMessage =
-				'Resuming the campaign will continue calling contacts from where it left off. Are you sure you want to resume?';
+			confirmMessage = t('actions.confirmResume');
 		}
 
 		const confirmed = await new Promise<boolean>((resolve) => {
 			modals.openConfirmModal({
-				title: 'Confirm Action',
+				title: t('actions.confirmTitle'),
 				children: confirmMessage,
-				labels: { confirm: 'Yes', cancel: 'No' },
+				labels: {
+					confirm: t('actions.yes'),
+					cancel: t('actions.no'),
+				},
 				onConfirm: () => resolve(true),
 				onCancel: () => resolve(false),
 			});
@@ -194,15 +196,17 @@ const CampaignContactListPage = () => {
 		const mutationOptions = {
 			onSuccess: () => {
 				notifications.show({
-					title: 'Success',
-					message: `Campaign ${status.actionType}d successfully`,
+					title: t('actions.success'),
+					message: t('actions.actionSuccess', {
+						action: status.actionType,
+					}),
 					color: 'green',
 				});
 				void contactGroupQuery.refetch();
 			},
 			onError: (error: Error) => {
 				notifications.show({
-					title: 'Error',
+					title: t('actions.error'),
 					message: getErrorMessage(error),
 					color: 'red',
 				});
@@ -233,17 +237,15 @@ const CampaignContactListPage = () => {
 		return (
 			<ContentContainer
 				{...commonContainerProps}
-				title='Contact List Not Found'
-				description='The contact list you are looking for could not be found.'
+				title={t('status.invalidId')}
+				description={t('status.invalidIdDesc')}
 			>
 				<EmptyState
 					icon={<IconAlertCircle size={48} />}
-					message='Invalid Contact List ID'
+					message={t('status.invalidId')}
 					description={
 						<Text size='sm' c='dimmed' ta='center'>
-							The contact list identifier in the URL is not valid. Please check
-							the URL and try again, or return to the campaign overview to
-							select a valid contact list.
+							{t('status.invalidIdDesc')}
 						</Text>
 					}
 					action={
@@ -252,7 +254,7 @@ const CampaignContactListPage = () => {
 							leftSection={<IconArrowLeft size={16} />}
 							onClick={() => navigate(`/campaign/view/${campaignId}`)}
 						>
-							Return to Campaign
+							{t('status.returnToCampaign')}
 						</Button>
 					}
 				/>
@@ -264,8 +266,8 @@ const CampaignContactListPage = () => {
 		return (
 			<ContentContainer
 				{...commonContainerProps}
-				title='Loading Contact List'
-				description='Fetching the latest information for this contact list.'
+				title={t('status.loading')}
+				description={t('status.loadingDesc')}
 			>
 				<Flex justify='center' align='center' style={{ minHeight: '320px' }}>
 					<Loader size='lg' />
@@ -280,16 +282,17 @@ const CampaignContactListPage = () => {
 		return (
 			<ContentContainer
 				{...commonContainerProps}
-				title='Contact List Unavailable'
-				description='We encountered an issue while loading this contact list.'
+				title={t('status.unavailable')}
+				description={t('status.unavailableDesc')}
 			>
 				<EmptyState
 					icon={<IconAlertCircle size={48} />}
-					message='Unable to Load Contact List'
+					message={t('status.unableToLoad')}
 					description={
 						<Text size='sm' c='dimmed' ta='center'>
-							{errorMessage}. This could be due to a network issue, server
-							problem, or the contact list may no longer exist.
+							{t('status.unableToLoadDesc', {
+								error: errorMessage,
+							})}
 						</Text>
 					}
 					action={
@@ -300,13 +303,13 @@ const CampaignContactListPage = () => {
 								try {
 									await contactGroupQuery.refetch();
 									notifications.show({
-										title: 'Success',
-										message: 'Contact list reloaded successfully',
+										title: t('actions.success'),
+										message: t('status.reloadSuccess'),
 										color: 'green',
 									});
 								} catch (error) {
 									notifications.show({
-										title: 'Error',
+										title: t('actions.error'),
 										message: getErrorMessage(error),
 										color: 'red',
 									});
@@ -314,7 +317,7 @@ const CampaignContactListPage = () => {
 							}}
 							loading={contactGroupQuery.isRefetching}
 						>
-							Try Again
+							{t('status.tryAgain')}
 						</Button>
 					}
 				/>
@@ -330,7 +333,7 @@ const CampaignContactListPage = () => {
 				onClick={() => navigate(`/campaign/view/${campaignId}`)}
 				style={{ cursor: 'pointer' }}
 			>
-				{campaign ? campaign.name : 'Unknown Campaign'}
+				{campaign ? campaign.name : t('status.unknownCampaign')}
 			</Anchor>
 			<Text size='sm' fw={500}>
 				{contactGroupQuery.data.name}
@@ -342,11 +345,13 @@ const CampaignContactListPage = () => {
 		<ContentContainer
 			{...commonContainerProps}
 			title={breadcrumbTitle}
-			description={`Created ${timeAgo(contactGroupQuery.data.createdAt)}`}
+			description={t('status.created', {
+				time: timeAgo(contactGroupQuery.data.createdAt),
+			})}
 			titleRight={
 				queueStatusConfig ? (
 					<Badge color={queueStatusConfig.color} variant='light' size='sm'>
-						{queueStatusConfig.label}
+						{t(queueStatusConfig.label)}
 					</Badge>
 				) : null
 			}
@@ -355,19 +360,19 @@ const CampaignContactListPage = () => {
 			<Tabs variant='outline' defaultValue='overview' keepMounted={false}>
 				<Tabs.List>
 					<Tabs.Tab value='overview' leftSection={<IconInfoCircle size={16} />}>
-						Overview
+						{t('tabs.overview')}
 					</Tabs.Tab>
 					{canViewConversations && (
 						<Tabs.Tab
 							value='conversations'
 							leftSection={<IconMessage size={16} />}
 						>
-							Conversations
+							{t('tabs.conversations')}
 						</Tabs.Tab>
 					)}
 					{canViewContacts && (
 						<Tabs.Tab value='contacts' leftSection={<IconUsers size={16} />}>
-							Contacts
+							{t('tabs.contacts')}
 						</Tabs.Tab>
 					)}
 				</Tabs.List>
@@ -375,8 +380,8 @@ const CampaignContactListPage = () => {
 				<Tabs.Panel value='overview' mb='md'>
 					<Stack gap='md'>
 						<SectionCard
-							title='Contact List Information'
-							description='View the status and metrics for this contact list.'
+							title={t('overview.title')}
+							description={t('overview.description')}
 							headerActions={
 								canExecuteCampaigns ? (
 									<Button
@@ -403,8 +408,8 @@ const CampaignContactListPage = () => {
 				{canViewConversations && (
 					<Tabs.Panel value='conversations' mb='md'>
 						<SectionCard
-							title='Conversations'
-							description='All conversations associated with this contact list.'
+							title={t('tabs.conversations')}
+							description={t('tabs.conversationsDesc')}
 						>
 							<ConversationsList
 								onConversationClick={(conversation) => {
@@ -421,8 +426,8 @@ const CampaignContactListPage = () => {
 				{canViewContacts && (
 					<Tabs.Panel value='contacts' mb='md'>
 						<SectionCard
-							title='Contacts'
-							description='All contacts associated with this list.'
+							title={t('tabs.contacts')}
+							description={t('tabs.contactsDesc')}
 						>
 							<FaultyPhonesAlert contactGroupId={contactGroupIdNumber} />
 							<ContactGroupContactsTable

@@ -1,6 +1,6 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import PaginationControls from './PaginationControls';
 
 const defaultProps = {
@@ -15,10 +15,8 @@ const defaultProps = {
 const renderPaginationControls = (
 	props: Partial<Parameters<typeof PaginationControls>[0]> = {}
 ) => {
-	return render(
-		<MantineProvider>
-			<PaginationControls {...defaultProps} {...props} />
-		</MantineProvider>
+	return renderWithProviders(
+		<PaginationControls {...defaultProps} {...props} />
 	);
 };
 

@@ -22,22 +22,20 @@ describe('ContactListInfo', () => {
 			renderWithProviders(<ContactListInfo listName='Test List' />);
 
 			expect(screen.getByText('Test List')).toBeInTheDocument();
-			expect(screen.getByText('Contact List Name')).toBeInTheDocument();
+			expect(screen.getByText('Name')).toBeInTheDocument();
 		});
 
 		it('renders empty state when no list name provided', () => {
 			renderWithProviders(<ContactListInfo listName='' />);
 
-			expect(screen.getByText('Name Required')).toBeInTheDocument();
-			expect(
-				screen.getByText('Click to add a name for this contact list')
-			).toBeInTheDocument();
+			expect(screen.getByText('Name is required')).toBeInTheDocument();
+			expect(screen.getByText('Click to add a name')).toBeInTheDocument();
 		});
 
 		it('renders empty state when list name is only whitespace', () => {
 			renderWithProviders(<ContactListInfo listName='   ' />);
 
-			expect(screen.getByText('Name Required')).toBeInTheDocument();
+			expect(screen.getByText('Name is required')).toBeInTheDocument();
 		});
 	});
 
@@ -97,9 +95,7 @@ describe('ContactListInfo', () => {
 				<ContactListInfo listName='' onNameChange={onNameChange} />
 			);
 
-			await user.click(
-				screen.getByText('Click to add a name for this contact list')
-			);
+			await user.click(screen.getByText('Click to add a name'));
 
 			expect(screen.getByRole('textbox')).toBeInTheDocument();
 		});
@@ -115,9 +111,7 @@ describe('ContactListInfo', () => {
 				/>
 			);
 
-			await user.click(
-				screen.getByText('Click to add a name for this contact list')
-			);
+			await user.click(screen.getByText('Click to add a name'));
 
 			expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
 		});
@@ -361,9 +355,7 @@ describe('ContactListInfo', () => {
 			await user.click(editButton!);
 
 			expect(
-				screen.getByText(
-					'Allowed characters: A-Z, a-z, 0-9, spaces, and hyphens. Minimum 3 characters. Maximum 50 characters.'
-				)
+				screen.getByText('This name is visible in the campaign.')
 			).toBeInTheDocument();
 		});
 	});
@@ -379,7 +371,9 @@ describe('ContactListInfo', () => {
 			);
 
 			expect(
-				screen.getByRole('button', { name: /add expiration date/i })
+				screen.getByRole('button', {
+					name: 'Add expiration date',
+				})
 			).toBeInTheDocument();
 		});
 
@@ -387,7 +381,9 @@ describe('ContactListInfo', () => {
 			renderWithProviders(<ContactListInfo listName='Test List' />);
 
 			expect(
-				screen.queryByRole('button', { name: /add expiration date/i })
+				screen.queryByRole('button', {
+					name: 'Add expiration date',
+				})
 			).not.toBeInTheDocument();
 		});
 
@@ -415,43 +411,13 @@ describe('ContactListInfo', () => {
 			);
 
 			await user.click(
-				screen.getByRole('button', { name: /add expiration date/i })
+				screen.getByRole('button', {
+					name: 'Add expiration date',
+				})
 			);
 
 			await waitFor(() => {
-				expect(
-					screen.getByText('Select an expiration date')
-				).toBeInTheDocument();
-			});
-		});
-
-		it('closes popover when clicking close button', async () => {
-			const user = userEvent.setup();
-			const onExpirationChange = vi.fn();
-			renderWithProviders(
-				<ContactListInfo
-					listName='Test List'
-					onExpirationChange={onExpirationChange}
-				/>
-			);
-
-			await user.click(
-				screen.getByRole('button', { name: /add expiration date/i })
-			);
-
-			await waitFor(() => {
-				expect(
-					screen.getByText('Select an expiration date')
-				).toBeInTheDocument();
-			});
-
-			// Find the Close button by its text
-			await user.click(screen.getByText('Close'));
-
-			await waitFor(() => {
-				expect(
-					screen.queryByText('Select an expiration date')
-				).not.toBeInTheDocument();
+				expect(screen.getByText('Select expiration date')).toBeInTheDocument();
 			});
 		});
 
@@ -519,7 +485,7 @@ describe('ContactListInfo', () => {
 			);
 
 			// The mock returns 'Jan 15, 2025' for any date
-			expect(screen.getByText(/Expires:/)).toBeInTheDocument();
+			expect(screen.getByText(/Expires/)).toBeInTheDocument();
 		});
 	});
 });

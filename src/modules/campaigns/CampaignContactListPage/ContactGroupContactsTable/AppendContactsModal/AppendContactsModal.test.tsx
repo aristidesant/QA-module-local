@@ -20,12 +20,16 @@ describe('AppendContactsModal', () => {
 		);
 
 		const file = new File(['csv'], 'contacts.csv', { type: 'text/csv' });
-		const input = screen.getByLabelText(/select csv file/i);
+		const input = screen.getByLabelText(/Select CSV File/i);
 		await user.upload(input, file);
 
-		await user.click(screen.getByRole('button', { name: 'Save File' }));
+		await user.click(
+			screen.getByRole('button', {
+				name: /Save File/i,
+			})
+		);
 		expect(onUpload).toHaveBeenCalledWith(file);
-		expect(screen.getByText(/File saved. ID: 7/)).toBeInTheDocument();
+		expect(screen.getByText(/File saved\. ID: 7/i)).toBeInTheDocument();
 	});
 
 	it('handles append action after upload', async () => {
@@ -45,10 +49,18 @@ describe('AppendContactsModal', () => {
 		);
 
 		const file = new File(['csv'], 'contacts.csv', { type: 'text/csv' });
-		await user.upload(screen.getByLabelText(/select csv file/i), file);
-		await user.click(screen.getByRole('button', { name: 'Save File' }));
+		await user.upload(screen.getByLabelText(/Select CSV File/i), file);
+		await user.click(
+			screen.getByRole('button', {
+				name: /Save File/i,
+			})
+		);
 
-		await user.click(screen.getByRole('button', { name: 'Append to List' }));
+		await user.click(
+			screen.getByRole('button', {
+				name: /Append to List/i,
+			})
+		);
 		expect(onAppend).toHaveBeenCalledWith(3);
 		expect(onClose).toHaveBeenCalled();
 	});
@@ -70,10 +82,14 @@ describe('AppendContactsModal', () => {
 		);
 
 		const file = new File(['csv'], 'contacts.csv', { type: 'text/csv' });
-		await user.upload(screen.getByLabelText(/select csv file/i), file);
-		await user.click(screen.getByRole('button', { name: 'Save File' }));
+		await user.upload(screen.getByLabelText(/Select CSV File/i), file);
+		await user.click(
+			screen.getByRole('button', {
+				name: /Save File/i,
+			})
+		);
 
-		expect(screen.getByText('Failed to upload file.')).toBeInTheDocument();
+		expect(screen.getByText(/Failed to upload file\./i)).toBeInTheDocument();
 	});
 
 	it('shows append errors', async () => {
@@ -94,11 +110,21 @@ describe('AppendContactsModal', () => {
 		);
 
 		const file = new File(['csv'], 'contacts.csv', { type: 'text/csv' });
-		await user.upload(screen.getByLabelText(/select csv file/i), file);
-		await user.click(screen.getByRole('button', { name: 'Save File' }));
-		await user.click(screen.getByRole('button', { name: 'Append to List' }));
+		await user.upload(screen.getByLabelText(/Select CSV File/i), file);
+		await user.click(
+			screen.getByRole('button', {
+				name: /Save File/i,
+			})
+		);
+		await user.click(
+			screen.getByRole('button', {
+				name: /Append to List/i,
+			})
+		);
 
-		expect(screen.getByText('Failed to append contacts.')).toBeInTheDocument();
+		expect(
+			screen.getByText(/Failed to append contacts\./i)
+		).toBeInTheDocument();
 	});
 
 	it('handles drag and drop selection', () => {
@@ -113,7 +139,7 @@ describe('AppendContactsModal', () => {
 		);
 
 		const file = new File(['data'], 'dropped.csv', { type: 'text/csv' });
-		const dropArea = screen.getByText(/drag & drop or click to browse/i)
+		const dropArea = screen.getByText(/Drag & drop or click to browse/i)
 			.parentElement as HTMLElement;
 
 		fireEvent.dragOver(dropArea, {
@@ -137,6 +163,10 @@ describe('AppendContactsModal', () => {
 			/>
 		);
 
-		expect(screen.getByRole('button', { name: 'Save File' })).toBeDisabled();
+		expect(
+			screen.getByRole('button', {
+				name: /Save File/i,
+			})
+		).toBeDisabled();
 	});
 });

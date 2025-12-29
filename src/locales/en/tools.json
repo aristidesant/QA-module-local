@@ -1,0 +1,165 @@
+{
+	"page": {
+		"title": "Tools",
+		"description": "Manage your tools and integrations"
+	},
+	"actions": {
+		"createTool": "Create Tool",
+		"createNewTool": "Create New Tool",
+		"saveChanges": "Save Changes"
+	},
+	"state": {
+		"loadingTools": "Loading tools...",
+		"errorLoadingTools": "Error loading tools",
+		"loadingTool": "Loading tool...",
+		"errorLoadingTool": "Error loading tool"
+	},
+	"list": {
+		"noCategory": {
+			"title": "Select a category first",
+			"description": "Choose a tool category from the sidebar to view its tools"
+		},
+		"header": {
+			"title": "{{categoryName}} Tools",
+			"titleWithCount": "{{categoryName}} Tools ({{count}})"
+		},
+		"empty": {
+			"message": "No tools in this category",
+			"descriptionLine1": "There are no tools under \"{{categoryName}}\" category.",
+			"descriptionLine2": "Add one to get started."
+		}
+	},
+	"columns": {
+		"name": "Name",
+		"status": "Status",
+		"createdBy": "Created by",
+		"created": "Created",
+		"unknownCreator": "Unknown"
+	},
+	"status": {
+		"active": "Active",
+		"inactive": "Inactive"
+	},
+	"notifications": {
+		"created": "Tool created successfully!",
+		"updated": "Tool updated successfully!",
+		"failedGeneric": "Failed to {{action}} tool",
+		"actions": {
+			"create": "create",
+			"update": "update"
+		}
+	},
+	"form": {
+		"title": {
+			"create": "Create New Tool",
+			"edit": "Edit Tool"
+		},
+		"description": "Configure your tool settings and API details",
+		"menu": {
+			"sections": "Sections"
+		},
+		"sections": {
+			"general": "General",
+			"api": "API Config",
+			"headers": "Headers",
+			"parameters": "Parameters",
+			"body": "Request Body"
+		},
+		"sectionStatus": {
+			"configured": "Configured",
+			"empty": "Empty"
+		},
+		"footer": {
+			"hint": "Fill in required fields to save"
+		},
+		"validation": {
+			"nameRequired": "Name is required",
+			"descriptionRequired": "Description is required",
+			"categoryRequired": "Category is required",
+			"urlRequired": "URL is required",
+			"urlInvalid": "Please enter a valid URL"
+		},
+		"fields": {
+			"name": {
+				"label": "Name",
+				"placeholder": "e.g., Get Weather"
+			},
+			"description": {
+				"label": "Description",
+				"placeholder": "What does this tool do?"
+			},
+			"prompt": {
+				"label": "Prompt Instruction",
+				"placeholder": "Instructions for the agent on how/when to use this tool"
+			},
+			"category": {
+				"label": "Category",
+				"placeholder": "Select category"
+			},
+			"status": {
+				"label": "Status"
+			},
+			"method": {
+				"label": "Method"
+			},
+			"url": {
+				"label": "Endpoint URL",
+				"placeholder": "https://api.example.com/v1/resource"
+			},
+			"timeout": {
+				"label": "Timeout (seconds)"
+			},
+			"authConnection": {
+				"label": "Auth Connection",
+				"placeholder": "e.g., github-oauth"
+			}
+		},
+		"headers": {
+			"title": "Request Headers",
+			"add": "Add Header",
+			"empty": "No headers configured",
+			"fields": {
+				"keyPlaceholder": "Header name",
+				"valuePlaceholder": "Value"
+			}
+		},
+		"parameters": {
+			"add": "Add",
+			"path": {
+				"title": "Path Parameters",
+				"empty": "No path parameters",
+				"fields": {
+					"keyPlaceholder": "Parameter name",
+					"valuePlaceholder": "Description"
+				}
+			},
+			"query": {
+				"title": "Query Parameters",
+				"empty": "No query parameters",
+				"fields": {
+					"keyPlaceholder": "Parameter name",
+					"valuePlaceholder": "Description"
+				}
+			}
+		},
+		"body": {
+			"title": "Request Body Properties",
+			"add": "Add Property",
+			"empty": "No body properties configured",
+			"fields": {
+				"keyPlaceholder": "Property name",
+				"typePlaceholder": "Type",
+				"descriptionPlaceholder": "Description",
+				"constantPlaceholder": "Constant value",
+				"dynamicPlaceholder": "Dynamic variable"
+			}
+		},
+		"propertyTypes": {
+			"string": "String",
+			"number": "Number",
+			"boolean": "Boolean",
+			"array": "Array",
+			"object": "Object"
+		}
+	}
+}

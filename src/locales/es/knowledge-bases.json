@@ -1,0 +1,142 @@
+{
+	"deleteKnowledgeBase": "Eliminar base de conocimiento",
+	"noKnowledgeBases": "No se encontraron bases de conocimiento",
+	"searchPlaceholder": "Buscar bases de conocimiento",
+	"page": {
+		"title": "Bases de conocimiento",
+		"description": "Administra colecciones de documentos usados por tus agentes",
+		"actions": {
+			"new": "Nueva base de conocimiento"
+		}
+	},
+	"list": {
+		"empty": {
+			"title": "No se encontraron bases de conocimiento",
+			"description": "Crea tu primera base de conocimiento para que los agentes puedan consultar documentos.",
+			"actions": {
+				"create": "Crear base de conocimiento"
+			}
+		}
+	},
+	"filter": {
+		"search": {
+			"placeholder": "Buscar bases de conocimiento..."
+		},
+		"status": {
+			"placeholder": "Todos los estados",
+			"all": "Todos los estados"
+		},
+		"type": {
+			"placeholder": "Todos los tipos",
+			"all": "Todos los tipos"
+		},
+		"results": "{{count}} de {{total}} elementos",
+		"actions": {
+			"refresh": "Actualizar"
+		}
+	},
+	"all": "Todas",
+	"url": "URL",
+	"text": "Texto",
+	"file": "Archivo",
+	"type": {
+		"FILE": "Archivo",
+		"URL": "URL",
+		"TEXT": "Texto"
+	},
+	"status": {
+		"PENDING": "Pendiente",
+		"UPLOADING": "Subiendo",
+		"ACTIVE": "Activo",
+		"FAILED": "Fallido",
+		"INACTIVE": "Inactivo"
+	},
+	"createNew": "Crear nueva",
+	"selected": "{{count}} seleccionados",
+	"saveSelections": "Guardar selecciones",
+	"cancel": "Cancelar",
+	"columns": {
+		"name": "Nombre",
+		"description": "Descripción",
+		"type": "Tipo",
+		"status": "Estado",
+		"createdAt": "Creado",
+		"actions": "Acciones"
+	},
+	"table": {
+		"actions": {
+			"openUrl": "Abrir URL",
+			"downloadFile": "Descargar archivo",
+			"retryUpload": "Reintentar subida",
+			"edit": "Editar base de conocimiento",
+			"delete": "Eliminar base de conocimiento"
+		}
+	},
+	"confirmDelete": {
+		"body": "¿Estás seguro de que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer."
+	},
+	"fallbacks": {
+		"textSnippet": "Fragmento de texto",
+		"file": "Archivo"
+	},
+	"form": {
+		"title": "Base de conocimiento",
+		"description": "Agrega o edita una base de conocimiento para tu agente.",
+		"alerts": {
+			"readOnly": "Tienes acceso de solo lectura a las bases de conocimiento.",
+			"saveError": "No se pudo guardar esta base de conocimiento. Inténtalo de nuevo."
+		},
+		"sections": {
+			"basics": {
+				"title": "Básico",
+				"description": "Nombra esta base de conocimiento. El tipo de contenido se detecta automáticamente."
+			},
+			"content": {
+				"divider": "Fuente de contenido",
+				"hint": "Ingresa una URL, pega texto o sube un archivo. El tipo se detecta automáticamente."
+			}
+		},
+		"typeIndicator": {
+			"file": "Archivo",
+			"url": "URL",
+			"text": "Texto",
+			"fileDetected": "Archivo detectado",
+			"urlDetected": "URL detectada",
+			"textDetected": "Texto detectado"
+		},
+		"fields": {
+			"name": {
+				"label": "Nombre",
+				"placeholder": "p. ej., Preguntas frecuentes del producto",
+				"required": "El nombre es obligatorio."
+			},
+			"description": {
+				"label": "Descripción",
+				"placeholder": "Nota interna breve sobre esta base de conocimiento"
+			},
+			"content": {
+				"label": "Contenido URL o texto",
+				"placeholder": "Pega una URL (https://...) o contenido de texto aquí...",
+				"description": "Ingresa una URL pública o pega contenido de texto para entrenar a tu agente.",
+				"descriptionWithFile": "Borra el archivo para ingresar texto o una URL en su lugar.",
+				"required": "Ingresa una URL, pega contenido de texto o sube un archivo.",
+				"invalidUrl": "Ingresa una URL válida (p. ej., https://example.com/docs)."
+			},
+			"file": {
+				"label": "O sube un archivo",
+				"placeholder": "Elige un archivo PDF, TXT o MD",
+				"description": "Compatible: PDF, TXT, MD. Máx. 25 MB.",
+				"descriptionWithContent": "Borra el texto para subir un archivo en su lugar."
+			}
+		},
+		"fileMeta": {
+			"selected": "Seleccionado: {{name}}",
+			"currentLabel": "Archivo actual",
+			"none": "No se ha subido ningún archivo"
+		},
+		"actions": {
+			"cancel": "Cancelar",
+			"save": "Guardar"
+		}
+	}
+}

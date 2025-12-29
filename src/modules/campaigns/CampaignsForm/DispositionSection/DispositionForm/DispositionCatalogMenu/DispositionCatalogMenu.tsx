@@ -2,6 +2,7 @@ import { useMemo, useEffect, useCallback, useState } from 'react';
 import styles from './DispositionCatalogMenu.module.css';
 import { useDispositionBuilderStore } from '../../dispositionStore';
 import { Select, Divider, Stack, Text, Box } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import { useDispositionCatalogs } from '~/queries/dispositionCatalogQueries';
 import type { DispositionNode } from '~/models/DispositionNodeModel';
 import DispositionCatalogMenuItem from './DispositionCatalogMenuItem';
@@ -158,12 +159,13 @@ const DispositionCatalogMenu: React.FC = () => {
 		]
 	);
 
+	const { t } = useTranslation('campaigns');
 	const hasNodesInFlow = (flowJson?.dispositionNodes?.length ?? 0) > 0;
 
 	return (
 		<div className={styles.container}>
 			<Select
-				label='Select Catalog'
+				label={t('disposition.catalog.selectCatalog')}
 				data={activeCatalogs.map((cat) => ({
 					value: String(cat.id),
 					label: cat.name,
@@ -177,7 +179,7 @@ const DispositionCatalogMenu: React.FC = () => {
 				disabled={isLoading || activeCatalogs.length === 0 || hasNodesInFlow}
 				description={
 					hasNodesInFlow
-						? 'Cannot change catalog when outcomes are already added'
+						? t('disposition.catalog.catalogChangeDisabled')
 						: undefined
 				}
 				size='xs'
@@ -186,7 +188,7 @@ const DispositionCatalogMenu: React.FC = () => {
 			<Box className={styles.menuListWrapper}>
 				{visibleNodes.length === 0 ? (
 					<Text c='dimmed' ta='center' size='xs'>
-						No dispositions available in this catalog.
+						{t('disposition.catalog.noDispositions')}
 					</Text>
 				) : (
 					<Stack gap={4}>

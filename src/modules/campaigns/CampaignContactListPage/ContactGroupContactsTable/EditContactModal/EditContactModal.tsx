@@ -1,7 +1,8 @@
 import { Modal, Title, Group } from '@mantine/core';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { IconPencil } from '@tabler/icons-react';
-import ContactsForm from '~/modules/contacts/ContactsForm/ContactsForm';
+import ContactsForm from './components/ContactsForm/ContactsForm';
 import { useQueryClient } from '@tanstack/react-query';
 import styles from './EditContactModal.module.css';
 import { useContactEditStore } from '~/stores/contactEditStore';
@@ -19,6 +20,7 @@ function EditContactModal({
 	contactId,
 	contactGroupId,
 }: EditContactModalProps) {
+	const { t } = useTranslation('campaign.contact-list');
 	const queryClient = useQueryClient();
 	const { setContext, clear } = useContactEditStore();
 
@@ -40,7 +42,7 @@ function EditContactModal({
 			title={
 				<Group gap='xs'>
 					<IconPencil size={18} />
-					<Title order={5}>Edit Contact</Title>
+					<Title order={5}>{t('contactsTable.editModal.title')}</Title>
 				</Group>
 			}
 		>

@@ -13,6 +13,7 @@ import type {
 	DoNotCallCreateRequest,
 	DoNotCallUpdateRequest,
 } from '~/models/DoNotCallModel';
+import { useTranslation } from 'react-i18next';
 
 interface DoNotCallFormProps {
 	entry?: DoNotCallModel;
@@ -20,18 +21,23 @@ interface DoNotCallFormProps {
 	onCancel: () => void;
 }
 
-const reasonOptions = [
-	{ value: 'CUSTOMER_REQUEST', label: 'Customer Request' },
-	{ value: 'DISPOSITION_OUTCOME', label: 'Outcome' },
-	{ value: 'REGULATORY_COMPLIANCE', label: 'Regulatory Compliance' },
-	{ value: 'MANUAL_ADMIN_BLOCK', label: 'Manual Admin Block' },
-];
-
 export default function DoNotCallForm({
 	entry,
 	onSubmit,
 	onCancel,
 }: DoNotCallFormProps) {
+	const { t } = useTranslation('do-not-call');
+
+	const reasonOptions = [
+		{ value: 'CUSTOMER_REQUEST', label: t('reasons.customerRequest') },
+		{ value: 'DISPOSITION_OUTCOME', label: t('reasons.dispositionOutcome') },
+		{
+			value: 'REGULATORY_COMPLIANCE',
+			label: t('reasons.regulatoryCompliance'),
+		},
+		{ value: 'MANUAL_ADMIN_BLOCK', label: t('reasons.manualAdminBlock') },
+	];
+
 	const form = useForm({
 		initialValues: {
 			phoneNumber: entry?.phoneNumber || '',
@@ -42,9 +48,9 @@ export default function DoNotCallForm({
 		validate: {
 			phoneNumber: (value) =>
 				!entry && (!value || value.trim() === '')
-					? 'Phone number is required'
+					? t('form.validation.phoneRequired')
 					: null,
-			reason: (value) => (!value ? 'Reason is required' : null),
+			reason: (value) => (!value ? t('form.validation.reasonRequired') : null),
 		},
 	});
 
@@ -67,36 +73,40 @@ export default function DoNotCallForm({
 			<Stack gap='md'>
 				{!entry && (
 					<TextInput
-						label='Phone Number'
-						placeholder='+1234567890'
+						label={t('form.labels.phoneNumber')}
+						placeholder={t('form.placeholders.phoneNumber')}
 						required
 						{...form.getInputProps('phoneNumber')}
 					/>
 				)}
 				<Select
-					label='Reason'
-					placeholder='Select reason'
+					label={t('form.labels.reason')}
+					placeholder={t('form.placeholders.reason')}
 					data={reasonOptions}
 					required
 					{...form.getInputProps('reason')}
-				/>{' '}
+				/>
 				<Textarea
-					label='Notes'
-					placeholder='Additional information...'
+					label={t('form.labels.notes')}
+					placeholder={t('form.placeholders.notes')}
 					rows={3}
 					{...form.getInputProps('notes')}
 				/>
 				<DateTimePicker
-					label='Expires At'
-					placeholder='Select expiration date (optional)'
+					label={t('form.labels.expiresAt')}
+					placeholder={t('form.placeholders.expiresAt')}
 					clearable
 					{...form.getInputProps('expiresAt')}
 				/>
 				<Group justify='flex-end' mt='md'>
 					<Button variant='subtle' onClick={onCancel} type='button'>
-						Cancel
+						{t('actions.cancel', { ns: 'common' })}
 					</Button>
-					<Button type='submit'>{entry ? 'Update' : 'Create'}</Button>
+					<Button type='submit'>
+						{entry
+							? t('form.actions.update')
+							: t('actions.create', { ns: 'common' })}
+					</Button>
 				</Group>
 			</Stack>
 		</form>

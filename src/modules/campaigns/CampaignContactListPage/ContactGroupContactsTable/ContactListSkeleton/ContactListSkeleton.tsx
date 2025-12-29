@@ -1,4 +1,5 @@
 import { Skeleton, Group, Table } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import styles from '../ContactGroupContactsTable.module.css';
 
 interface ContactListSkeletonProps {
@@ -8,14 +9,16 @@ interface ContactListSkeletonProps {
 export const ContactListSkeleton: React.FC<ContactListSkeletonProps> = ({
 	rows = 10,
 }) => {
+	const { t } = useTranslation('campaign.contact-list');
+
 	return (
 		<Table className={styles.table} striped>
 			<Table.Thead>
 				<Table.Tr>
-					<Table.Th>Contact</Table.Th>
-					<Table.Th>Phone</Table.Th>
-					<Table.Th>Email</Table.Th>
-					<Table.Th>Status</Table.Th>
+					<Table.Th>{t('contactsTable.columns.contact')}</Table.Th>
+					<Table.Th>{t('contactsTable.columns.phone')}</Table.Th>
+					<Table.Th>{t('contactsTable.columns.email')}</Table.Th>
+					<Table.Th>{t('contactsTable.columns.status')}</Table.Th>
 				</Table.Tr>
 			</Table.Thead>
 			<Table.Tbody>

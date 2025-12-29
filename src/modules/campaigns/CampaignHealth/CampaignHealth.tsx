@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Alert, Button, Group, Loader, Stack, Text } from '@mantine/core';
 import {
 	IconX,
@@ -20,6 +21,7 @@ interface CampaignHealthProps {
 }
 
 const CampaignHealth: React.FC<CampaignHealthProps> = ({ campaignId }) => {
+	const { t } = useTranslation('campaign.view');
 	const navigate = useNavigate();
 	const {
 		data: requirements,
@@ -35,17 +37,15 @@ const CampaignHealth: React.FC<CampaignHealthProps> = ({ campaignId }) => {
 		return (
 			<Group justify='center'>
 				<Loader size='sm' />
-				<Text className={classes.loadingText}>Loading campaign health...</Text>
+				<Text className={classes.loadingText}>{t('health.loading')}</Text>
 			</Group>
 		);
 	}
 
 	if (error) {
 		return (
-			<Alert color='red' variant='light' title='Error'>
-				<Text className={classes.loadingText}>
-					Failed to load campaign requirements.
-				</Text>
+			<Alert color='red' variant='light' title={t('health.error')}>
+				<Text className={classes.loadingText}>{t('health.failedToLoad')}</Text>
 			</Alert>
 		);
 	}
@@ -69,11 +69,15 @@ const CampaignHealth: React.FC<CampaignHealthProps> = ({ campaignId }) => {
 					<div className={classes.detailItem}>
 						<Group gap='xs'>
 							<IconAlertTriangle size={16} className={classes.iconWarning} />
-							<Text className={classes.detailLabel}>Disposition Flow</Text>
+							<Text className={classes.detailLabel}>
+								{t('health.dispositionFlow')}
+							</Text>
 						</Group>
 						<Group gap='xs'>
 							<IconX size={14} className={classes.iconError} />
-							<Text className={classes.detailValue}>Not configured</Text>
+							<Text className={classes.detailValue}>
+								{t('health.notConfigured')}
+							</Text>
 						</Group>
 					</div>
 				)}
@@ -81,11 +85,15 @@ const CampaignHealth: React.FC<CampaignHealthProps> = ({ campaignId }) => {
 					<div className={classes.detailItem}>
 						<Group gap='xs'>
 							<IconCalendarOff size={16} className={classes.iconWarning} />
-							<Text className={classes.detailLabel}>Active Schedule</Text>
+							<Text className={classes.detailLabel}>
+								{t('health.activeSchedule')}
+							</Text>
 						</Group>
 						<Group gap='xs'>
 							<IconX size={14} className={classes.iconError} />
-							<Text className={classes.detailValue}>Not active</Text>
+							<Text className={classes.detailValue}>
+								{t('health.notActive')}
+							</Text>
 						</Group>
 					</div>
 				)}
@@ -97,7 +105,7 @@ const CampaignHealth: React.FC<CampaignHealthProps> = ({ campaignId }) => {
 					onClick={() => navigate(`/campaign/${campaignId}`)}
 					className={classes.editButton}
 				>
-					Go to edit
+					{t('health.goToEdit')}
 				</Button>
 			)}
 		</Stack>

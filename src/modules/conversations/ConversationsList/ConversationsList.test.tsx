@@ -67,7 +67,9 @@ describe('ConversationsList - server-side sorting', () => {
 
 		// Click the Created At column header (assuming column labeled Created At)
 		// Fallback to generic 'Created' matching if exact label differs
-		const createdHeader = screen.getByRole('columnheader', { name: /when/i });
+		const createdHeader = screen.getByRole('columnheader', {
+			name: /When/i,
+		});
 		await user.click(createdHeader);
 
 		await waitFor(() => {

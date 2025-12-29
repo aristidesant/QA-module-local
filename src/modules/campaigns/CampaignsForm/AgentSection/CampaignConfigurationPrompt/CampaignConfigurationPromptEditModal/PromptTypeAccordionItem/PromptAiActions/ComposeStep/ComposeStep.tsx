@@ -19,13 +19,9 @@ import {
 	IconWritingSign,
 	IconSparkles,
 } from '@tabler/icons-react';
-import {
-	LABELS,
-	DESCRIPTIONS,
-	PLACEHOLDERS,
-	type PromptMode,
-} from '../constants';
+import { type PromptMode } from '../constants';
 import styles from '../PromptAiActions.module.css';
+import { useTranslation } from 'react-i18next';
 
 type ComposeStepProps = {
 	mode: PromptMode | null;
@@ -66,17 +62,27 @@ const ComposeStep: React.FC<ComposeStepProps> = ({
 	onGenerate,
 	onCancel,
 }) => {
-	const label = mode ? LABELS[mode] : LABELS.create;
-	const description = mode ? DESCRIPTIONS[mode] : DESCRIPTIONS.create;
-	const placeholder = mode ? PLACEHOLDERS[mode] : PLACEHOLDERS.create;
+	const { t } = useTranslation('campaigns');
+	const modeKey = mode || 'create';
+
+	const label = t(
+		`form.agent.prompt.editor.ai.modal.compose.instructions.label.${modeKey}`
+	);
+	const description = t(
+		`form.agent.prompt.editor.ai.modal.compose.instructions.description.${modeKey}`
+	);
+	const placeholder = t(
+		`form.agent.prompt.editor.ai.modal.compose.instructions.placeholder.${modeKey}`
+	);
 
 	return (
 		<Stack gap='md'>
 			{/* Collapsible System Prompt Section */}
 			<Box className={styles.systemPromptSection}>
-				<UnstyledButton
+				<Box
 					className={styles.systemPromptHeader}
 					onClick={onSystemPromptExpandToggle}
+					style={{ cursor: 'pointer' }}
 				>
 					<Group gap='xs'>
 						{systemPromptExpanded ? (
@@ -85,7 +91,9 @@ const ComposeStep: React.FC<ComposeStepProps> = ({
 							<IconChevronRight size={16} />
 						)}
 						<Text size='sm' fw={500}>
-							System prompt
+							{t(
+								'form.agent.prompt.editor.ai.modal.compose.systemPrompt.label'
+							)}
 						</Text>
 					</Group>
 					<Group gap='xs'>
@@ -95,7 +103,12 @@ const ComposeStep: React.FC<ComposeStepProps> = ({
 							</Text>
 						)}
 						{systemPromptExpanded && !systemPromptEditing && (
-							<Tooltip label='Edit system prompt' withArrow>
+							<Tooltip
+								label={t(
+									'form.agent.prompt.editor.ai.modal.compose.systemPrompt.edit'
+								)}
+								withArrow
+							>
 								<UnstyledButton
 									className={styles.editButton}
 									onClick={(e) => {
@@ -108,7 +121,7 @@ const ComposeStep: React.FC<ComposeStepProps> = ({
 							</Tooltip>
 						)}
 					</Group>
-				</UnstyledButton>
+				</Box>
 
 				<Collapse in={systemPromptExpanded}>
 					<Box className={styles.systemPromptContent}>
@@ -129,7 +142,9 @@ const ComposeStep: React.FC<ComposeStepProps> = ({
 										leftSection={<IconX size={14} />}
 										onClick={onSystemPromptReset}
 									>
-										Reset
+										{t(
+											'form.agent.prompt.editor.ai.modal.compose.systemPrompt.reset'
+										)}
 									</Button>
 									<Button
 										variant='light'
@@ -137,7 +152,9 @@ const ComposeStep: React.FC<ComposeStepProps> = ({
 										leftSection={<IconCheck size={14} />}
 										onClick={onSystemPromptEditEnd}
 									>
-										Done
+										{t(
+											'form.agent.prompt.editor.ai.modal.compose.systemPrompt.done'
+										)}
 									</Button>
 								</Group>
 							</Stack>
@@ -153,8 +170,12 @@ const ComposeStep: React.FC<ComposeStepProps> = ({
 			{/* Prompt to Improve - Only shown in improve mode */}
 			{mode === 'improve' && (
 				<Textarea
-					label='Prompt to improve'
-					description='This is your current prompt that will be enhanced by AI'
+					label={t(
+						'form.agent.prompt.editor.ai.modal.compose.promptToImprove.label'
+					)}
+					description={t(
+						'form.agent.prompt.editor.ai.modal.compose.promptToImprove.description'
+					)}
 					value={promptToImprove}
 					onChange={(e) => onPromptToImproveChange(e.currentTarget.value)}
 					minRows={6}
@@ -183,7 +204,7 @@ const ComposeStep: React.FC<ComposeStepProps> = ({
 					onClick={onCancel}
 					disabled={isPending}
 				>
-					Cancel
+					{t('form.agent.prompt.editor.ai.modal.compose.actions.cancel')}
 				</Button>
 				<Button
 					variant='filled'
@@ -192,7 +213,7 @@ const ComposeStep: React.FC<ComposeStepProps> = ({
 					onClick={onGenerate}
 					loading={isPending}
 				>
-					Generate
+					{t('form.agent.prompt.editor.ai.modal.compose.actions.generate')}
 				</Button>
 			</Group>
 		</Stack>

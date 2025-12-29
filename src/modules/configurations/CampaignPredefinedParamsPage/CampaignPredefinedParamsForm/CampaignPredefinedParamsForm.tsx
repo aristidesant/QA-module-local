@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Badge, Button, Group, Text as MantineText } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
+import { useTranslation } from 'react-i18next';
 import {
 	useCreateClientConfig,
 	useUpdateClientConfig,
@@ -38,34 +39,6 @@ interface CampaignPredefinedParamsFormProps {
 	onSuccess: () => void;
 	canSubmit?: boolean;
 }
-const menuItems = [
-	{ id: 'general', label: 'General', icon: IconInfoCircle },
-	{ id: 'asr', label: 'Speech Recognition', icon: IconMicrophone },
-	{ id: 'tts', label: 'Voice Output', icon: IconVolume },
-	{ id: 'agent', label: 'Agent Personality', icon: IconRobot },
-];
-
-const sectionCopy: Record<
-	'general' | 'asr' | 'tts' | 'agent',
-	{ title: string; description: string }
-> = {
-	general: {
-		title: 'General',
-		description: 'Name this preset and keep it discoverable for teammates.',
-	},
-	asr: {
-		title: 'Speech Recognition',
-		description: 'Control quality, keywords, and input formats for calls.',
-	},
-	tts: {
-		title: 'Voice Output',
-		description: 'Tune speed, clarity, and latency for outbound audio.',
-	},
-	agent: {
-		title: 'Agent Personality',
-		description: 'Pick the model and tone that will represent the brand.',
-	},
-};
 
 const CampaignPredefinedParamsForm: React.FC<
 	CampaignPredefinedParamsFormProps
@@ -79,10 +52,56 @@ const CampaignPredefinedParamsForm: React.FC<
 	onSuccess,
 	canSubmit = true,
 }) => {
+	const { t } = useTranslation('campaign-predefined-params');
 	const isEditMode = mode === 'edit' && !!param;
 	const createMutation = useCreateClientConfig();
 	const updateMutation = useUpdateClientConfig();
 	const [activeTab, setActiveTab] = useState<string>('general');
+
+	const menuItems = [
+		{
+			id: 'general',
+			label: t('form.menu.general'),
+			icon: IconInfoCircle,
+		},
+		{
+			id: 'asr',
+			label: t('form.menu.asr'),
+			icon: IconMicrophone,
+		},
+		{
+			id: 'tts',
+			label: t('form.menu.tts'),
+			icon: IconVolume,
+		},
+		{
+			id: 'agent',
+			label: t('form.menu.agent'),
+			icon: IconRobot,
+		},
+	];
+
+	const sectionCopy: Record<
+		'general' | 'asr' | 'tts' | 'agent',
+		{ title: string; description: string }
+	> = {
+		general: {
+			title: t('form.sections.general.title'),
+			description: t('form.sections.general.description'),
+		},
+		asr: {
+			title: t('form.sections.asr.title'),
+			description: t('form.sections.asr.description'),
+		},
+		tts: {
+			title: t('form.sections.tts.title'),
+			description: t('form.sections.tts.description'),
+		},
+		agent: {
+			title: t('form.sections.agent.title'),
+			description: t('form.sections.agent.description'),
+		},
+	};
 
 	const conversationConfig = param?.params.conversationConfig;
 
@@ -113,41 +132,45 @@ const CampaignPredefinedParamsForm: React.FC<
 		},
 		validate: {
 			name: (value) => {
-				if (!value) return 'Name is required';
+				if (!value) return t('form.validation.nameRequired');
 				// Check for duplicates only when creating or if name changed
 				if (!isEditMode || (isEditMode && param && value !== param.name)) {
 					const isDuplicate = list.some((p) => p.name === value);
-					if (isDuplicate) return 'A parameter with this name already exists';
+					if (isDuplicate) return t('form.validation.nameUnique');
 				}
 				return null;
 			},
 			// ASR validations
-			asrQuality: (value) => (!value ? 'ASR quality is required' : null),
-			asrProvider: (value) => (!value ? 'ASR provider is required' : null),
+			asrQuality: (value) =>
+				!value ? t('form.validation.asrQualityRequired') : null,
+			asrProvider: (value) =>
+				!value ? t('form.validation.asrProviderRequired') : null,
 			asrUserInputAudioFormat: (value) =>
-				!value ? 'User input audio format is required' : null,
+				!value ? t('form.validation.asrInputAudioFormatRequired') : null,
 			// TTS validations
-			ttsModelId: (value) => (!value ? 'TTS model ID is required' : null),
+			ttsModelId: (value) =>
+				!value ? t('form.validation.ttsModelRequired') : null,
 			ttsStability: (value) =>
-				value < 0 || value > 1 ? 'Stability must be between 0 and 1' : null,
+				value < 0 || value > 1 ? t('form.validation.ttsStabilityRange') : null,
 			ttsSpeed: (value) =>
-				value < 0.25 || value > 4.0
-					? 'Speed must be between 0.25 and 4.0'
-					: null,
+				value < 0.25 || value > 4.0 ? t('form.validation.ttsSpeedRange') : null,
 			ttsSimilarityBoost: (value) =>
 				value < 0 || value > 1
-					? 'Similarity boost must be between 0 and 1'
+					? t('form.validation.ttsSimilarityBoostRange')
 					: null,
 			ttsOptimizeStreamingLatency: (value) =>
 				value < 0 || value > 4
-					? 'Optimize streaming latency must be between 0 and 4'
+					? t('form.validation.ttsStreamingLatencyRange')
 					: null,
 			ttsAgentOutputAudioFormat: (value) =>
-				!value ? 'Agent output audio format is required' : null,
+				!value ? t('form.validation.ttsOutputAudioFormatRequired') : null,
 			// Agent validations
-			agentPromptLlm: (value) => (!value ? 'LLM model is required' : null),
+			agentPromptLlm: (value) =>
+				!value ? t('form.validation.agentLlmRequired') : null,
 			agentPromptTemperature: (value) =>
-				value < 0 || value > 2 ? 'Temperature must be between 0 and 2' : null,
+				value < 0 || value > 2
+					? t('form.validation.agentTemperatureRange')
+					: null,
 		},
 	});
 
@@ -204,8 +227,8 @@ const CampaignPredefinedParamsForm: React.FC<
 	const handleSubmit = async (values: typeof form.values) => {
 		if (!config) {
 			notifications.show({
-				title: 'Error',
-				message: 'Configuration not found',
+				title: t('status.error', { ns: 'common' }),
+				message: t('form.notifications.configNotFound'),
 				color: 'red',
 			});
 			return;
@@ -226,7 +249,7 @@ const CampaignPredefinedParamsForm: React.FC<
 				// Update existing param
 				const index = list.findIndex((p) => p.id === param.id);
 				if (index === -1) {
-					throw new Error('Parameter not found in list');
+					throw new Error(t('form.errors.parameterNotFound'));
 				}
 				updatedList = [...list];
 				updatedList[index] = newParam;
@@ -255,16 +278,20 @@ const CampaignPredefinedParamsForm: React.FC<
 			}
 
 			notifications.show({
-				title: 'Success',
-				message: `Parameter ${isEditMode ? 'updated' : 'created'} successfully`,
+				title: t('status.success', { ns: 'common' }),
+				message: isEditMode
+					? t('form.notifications.parameterUpdated')
+					: t('form.notifications.parameterCreated'),
 				color: 'green',
 			});
 
 			onSuccess();
 		} catch (error) {
 			notifications.show({
-				title: 'Error',
-				message: `Failed to ${isEditMode ? 'update' : 'create'} parameter`,
+				title: t('status.error', { ns: 'common' }),
+				message: isEditMode
+					? t('form.notifications.parameterUpdateFailed')
+					: t('form.notifications.parameterCreateFailed'),
 				color: 'red',
 			});
 		}
@@ -315,7 +342,9 @@ const CampaignPredefinedParamsForm: React.FC<
 										variant='light'
 										color={isEditMode ? 'blue' : 'green'}
 									>
-										{isEditMode ? 'Editing preset' : 'New preset'}
+										{isEditMode
+											? t('form.badge.editingPreset')
+											: t('form.badge.newPreset')}
 									</Badge>
 								</div>
 
@@ -328,13 +357,13 @@ const CampaignPredefinedParamsForm: React.FC<
 						<div className={styles.actionsLeft}>
 							<MantineText size='xs' c='dimmed'>
 								{isEditMode
-									? 'Changes update this preset for every campaign using it.'
-									: 'Creating a fresh preset adds it to your campaign defaults.'}
+									? t('form.footer.editHint')
+									: t('form.footer.createHint')}
 							</MantineText>
 						</div>
 						<Group justify='flex-end' gap='xs' className={styles.actionsRight}>
 							<Button variant='subtle' size='sm' onClick={onCancel}>
-								Cancel
+								{t('actions.cancel', { ns: 'common' })}
 							</Button>
 							{(canSubmit || !isEditMode) && (
 								<Button
@@ -342,7 +371,9 @@ const CampaignPredefinedParamsForm: React.FC<
 									size='sm'
 									loading={updateMutation.isPending || createMutation.isPending}
 								>
-									{isEditMode ? 'Update' : 'Create'}
+									{isEditMode
+										? t('form.actions.update')
+										: t('form.actions.create')}
 								</Button>
 							)}
 						</Group>

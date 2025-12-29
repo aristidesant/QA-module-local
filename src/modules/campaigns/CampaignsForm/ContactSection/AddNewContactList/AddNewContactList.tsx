@@ -1,4 +1,5 @@
 import { Button, Group, Stack, Text, Skeleton, Box } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import { IconUpload } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { useState } from 'react';
@@ -21,6 +22,7 @@ export const AddNewContactList = ({
 	campaignId,
 	objectiveId,
 }: AddNewContactListProps) => {
+	const { t } = useTranslation('campaigns');
 	const [summary, setSummary] = useState<ContactFileSummary | null>(null);
 	// Mutation to upload contact list file to backend
 	const uploadContactGroupFileMutation = useUploadContactGroupFile({});
@@ -29,8 +31,8 @@ export const AddNewContactList = ({
 	const uploadFile = async (file: File | null) => {
 		if (!file) {
 			notifications.show({
-				title: 'No file selected',
-				message: 'Please choose a CSV file to upload.',
+				title: t('form.contacts.addNew.notifications.noFile.title'),
+				message: t('form.contacts.addNew.notifications.noFile.message'),
 				color: 'yellow',
 			});
 			return;
@@ -40,8 +42,8 @@ export const AddNewContactList = ({
 		const isCsv = file.name.toLowerCase().endsWith('.csv');
 		if (!isCsv) {
 			notifications.show({
-				title: 'Invalid file type',
-				message: 'Only CSV files (.csv) are supported for upload.',
+				title: t('form.contacts.addNew.notifications.invalidType.title'),
+				message: t('form.contacts.addNew.notifications.invalidType.message'),
 				color: 'red',
 			});
 			return;
@@ -59,10 +61,10 @@ export const AddNewContactList = ({
 			const message =
 				error instanceof Error
 					? error.message
-					: 'Failed to upload contact list file';
+					: t('form.contacts.addNew.notifications.uploadFailed.message');
 
 			notifications.show({
-				title: 'Upload failed',
+				title: t('form.contacts.addNew.notifications.uploadFailed.title'),
 				message,
 				color: 'red',
 			});
@@ -114,7 +116,7 @@ export const AddNewContactList = ({
 				<Skeleton visible={uploadContactGroupFileMutation.isPending}>
 					<Stack gap='md'>
 						<Text size='sm' c='dimmed'>
-							Upload a new contact list file for this campaign.
+							{t('form.contacts.addNew.description')}
 						</Text>
 
 						<div
@@ -138,9 +140,9 @@ export const AddNewContactList = ({
 							>
 								<Stack align='center' gap='xs'>
 									<IconUpload size={24} />
-									<Text fw={500}>Upload Contact File</Text>
+									<Text fw={500}>{t('form.contacts.addNew.uploadLabel')}</Text>
 									<Text size='sm' c='dimmed'>
-										Drag and drop your Excel or CSV file here
+										{t('form.contacts.addNew.dragAndDrop')}
 									</Text>
 								</Stack>
 							</label>
@@ -148,7 +150,7 @@ export const AddNewContactList = ({
 
 						<Group justify='flex-end' mt='md'>
 							<Button variant='default' onClick={onClose}>
-								Cancel
+								{t('cancel', { ns: 'common' })}
 							</Button>
 						</Group>
 					</Stack>

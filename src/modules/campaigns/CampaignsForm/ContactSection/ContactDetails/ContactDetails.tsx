@@ -8,6 +8,7 @@ import {
 	Badge,
 	Tooltip,
 } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import {
 	IconMoodHappy,
 	IconMoodNeutral,
@@ -43,6 +44,7 @@ interface ContactDetailsProps {
 }
 
 export const ContactDetails = ({ contact }: ContactDetailsProps) => {
+	const { t } = useTranslation('campaigns');
 	const {
 		name,
 		phone,
@@ -103,7 +105,7 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
 			<Card className={styles.infoCard}>
 				<Group justify='space-between'>
 					<Text size='sm' c='dimmed'>
-						Primary phone number
+						{t('form.contacts.details.primaryPhone')}
 					</Text>
 					<Text size='sm' fw={500}>
 						{phone}
@@ -116,7 +118,9 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
 				<Card className={styles.infoCard}>
 					<Stack gap='xs'>
 						<Text size='sm' c='dimmed' fw={500}>
-							Phone Numbers ({phones.length})
+							{t('form.contacts.details.phoneNumbers', {
+								count: phones.length,
+							})}
 						</Text>
 						{phones.map((phoneEntry, index) => (
 							<div key={index} className={styles.phoneEntry}>
@@ -159,7 +163,7 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
 				<Card className={styles.infoCard}>
 					<Group justify='space-between'>
 						<Text size='sm' c='dimmed'>
-							Email
+							{t('form.contacts.details.email')}
 						</Text>
 						<Text size='sm' fw={500}>
 							{email}
@@ -173,7 +177,7 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
 				<Card className={styles.infoCard}>
 					<Group justify='space-between'>
 						<Text size='sm' c='dimmed'>
-							Location
+							{t('form.contacts.details.location')}
 						</Text>
 						<Text size='sm' fw={500}>
 							{location}
@@ -208,7 +212,7 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
 
 					<Stack gap='xs' align='center'>
 						<Text size='sm' fw={600}>
-							Engagement Level
+							{t('form.contacts.details.engagementLevel.title')}
 						</Text>
 						<Text
 							size='xs'
@@ -216,7 +220,9 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
 							ta='center'
 							className={styles.description}
 						>
-							Measures how engaged {name.split(' ')[0]} is with your campaigns.
+							{t('form.contacts.details.engagementLevel.description', {
+								name: name.split(' ')[0],
+							})}
 						</Text>
 					</Stack>
 				</Stack>
@@ -248,7 +254,7 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
 
 					<Stack gap='xs' align='center'>
 						<Text size='sm' fw={600}>
-							Reviews qualification
+							{t('form.contacts.details.reviewsQualification.title')}
 						</Text>
 						<Text
 							size='xs'
@@ -256,7 +262,9 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
 							ta='center'
 							className={styles.description}
 						>
-							Measures how engaged {name.split(' ')[0]} is with your campaigns.
+							{t('form.contacts.details.reviewsQualification.description', {
+								name: name.split(' ')[0],
+							})}
 						</Text>
 					</Stack>
 
@@ -264,13 +272,13 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
 					<Stack gap='sm' w='100%'>
 						<Group gap='sm' justify='space-between'>
 							<Text size='sm' c='dimmed'>
-								Negative
+								{t('form.contacts.details.sentiment.negative')}
 							</Text>
 							<Text size='sm' c='dimmed'>
-								Neutral
+								{t('form.contacts.details.sentiment.neutral')}
 							</Text>
 							<Text size='sm' c='dimmed'>
-								Positive
+								{t('form.contacts.details.sentiment.positive')}
 							</Text>
 						</Group>
 
@@ -302,3 +310,5 @@ export const ContactDetails = ({ contact }: ContactDetailsProps) => {
 		</Stack>
 	);
 };
+
+export default ContactDetails;

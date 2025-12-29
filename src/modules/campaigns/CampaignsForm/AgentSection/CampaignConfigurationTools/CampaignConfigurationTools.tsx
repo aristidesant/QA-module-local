@@ -11,6 +11,7 @@ import type {
 	ConversationConfigModel,
 } from '~/models/AgentListObject';
 import classes from './CampaignConfigurationTools.module.css';
+import { useTranslation } from 'react-i18next';
 
 /**
  * CampaignConfigurationTools Component
@@ -20,6 +21,7 @@ import classes from './CampaignConfigurationTools.module.css';
  * and full tool objects are stored in agentConfig.conversationConfig.agent.prompt.tools.
  */
 const CampaignConfigurationTools: React.FC = () => {
+	const { t } = useTranslation('campaigns');
 	const form = useCampaignFormContext();
 	const { data: toolCategories } = useToolCategories();
 	const { data: tools } = useToolsByCategory(
@@ -71,13 +73,13 @@ const CampaignConfigurationTools: React.FC = () => {
 
 	return (
 		<SectionCard
-			title='Custom Tools'
-			description='Tools to enhance agent functionality'
+			title={t('form.agent.tools.title')}
+			description={t('form.agent.tools.description')}
 		>
 			<Stack gap='xs'>
 				{!tools || tools.length === 0 ? (
 					<Text size='sm' c='dimmed'>
-						No agent tools configured.
+						{t('form.agent.tools.noTools')}
 					</Text>
 				) : (
 					tools.map((tool) => {
@@ -104,13 +106,15 @@ const CampaignConfigurationTools: React.FC = () => {
 												{tool.name}
 											</Text>
 											<Text size='xs' className={classes.toolMeta}>
-												Custom integration
+												{t('form.agent.tools.customIntegration')}
 											</Text>
 										</div>
 									</Group>
 
 									<Switch
-										aria-label={`Toggle ${tool.name}`}
+										aria-label={t('form.agent.tools.toggleAria', {
+											name: tool.name,
+										})}
 										checked={isSelected}
 										onChange={() => {
 											handleToolToggle(tool, isSelected);
@@ -120,7 +124,7 @@ const CampaignConfigurationTools: React.FC = () => {
 									/>
 								</Group>
 								<Text size='sm' c='dimmed' className={classes.toolDescription}>
-									{tool.description || 'No description available'}
+									{tool.description || t('form.agent.tools.noDescription')}
 								</Text>
 							</div>
 						);

@@ -134,7 +134,9 @@ describe('CampaignContactListPage', () => {
 	it('renders invalid ID state', () => {
 		(useParams as any).mockReturnValue({ contactGroupId: 'invalid' });
 		renderWithProviders(<CampaignContactListPage />);
-		expect(screen.getByText('Contact List Not Found')).toBeInTheDocument();
+		expect(
+			screen.getAllByText('Invalid Contact List ID').length
+		).toBeGreaterThan(0);
 	});
 
 	describe('Tabs visibility and navigation', () => {
@@ -150,15 +152,11 @@ describe('CampaignContactListPage', () => {
 		it('renders all tab headers', () => {
 			renderWithProviders(<CampaignContactListPage />);
 
+			expect(screen.getByRole('tab', { name: 'Overview' })).toBeInTheDocument();
 			expect(
-				screen.getByRole('tab', { name: /overview/i })
+				screen.getByRole('tab', { name: 'Conversations' })
 			).toBeInTheDocument();
-			expect(
-				screen.getByRole('tab', { name: /conversations/i })
-			).toBeInTheDocument();
-			expect(
-				screen.getByRole('tab', { name: /contacts/i })
-			).toBeInTheDocument();
+			expect(screen.getByRole('tab', { name: 'Contacts' })).toBeInTheDocument();
 		});
 
 		it('renders Overview tab content by default and hides other tabs content', () => {
@@ -182,7 +180,7 @@ describe('CampaignContactListPage', () => {
 			renderWithProviders(<CampaignContactListPage />);
 
 			const conversationsTab = screen.getByRole('tab', {
-				name: /conversations/i,
+				name: 'Conversations',
 			});
 			fireEvent.click(conversationsTab);
 
@@ -205,7 +203,9 @@ describe('CampaignContactListPage', () => {
 		it('shows Contacts tab content and hides others when clicking Contacts tab', () => {
 			renderWithProviders(<CampaignContactListPage />);
 
-			const contactsTab = screen.getByRole('tab', { name: /contacts/i });
+			const contactsTab = screen.getByRole('tab', {
+				name: 'Contacts',
+			});
 			fireEvent.click(contactsTab);
 
 			// Contacts tab content should be visible
@@ -231,19 +231,19 @@ describe('CampaignContactListPage', () => {
 			expect(screen.getByTestId('contact-list-info')).toBeInTheDocument();
 
 			// Navigate to Conversations
-			fireEvent.click(screen.getByRole('tab', { name: /conversations/i }));
+			fireEvent.click(screen.getByRole('tab', { name: 'Conversations' }));
 			expect(screen.getByTestId('conversations-list')).toBeInTheDocument();
 			expect(screen.queryByTestId('contact-list-info')).not.toBeInTheDocument();
 
 			// Navigate to Contacts
-			fireEvent.click(screen.getByRole('tab', { name: /contacts/i }));
+			fireEvent.click(screen.getByRole('tab', { name: 'Contacts' }));
 			expect(screen.getByTestId('contacts-table')).toBeInTheDocument();
 			expect(
 				screen.queryByTestId('conversations-list')
 			).not.toBeInTheDocument();
 
 			// Navigate back to Overview
-			fireEvent.click(screen.getByRole('tab', { name: /overview/i }));
+			fireEvent.click(screen.getByRole('tab', { name: 'Overview' }));
 			expect(screen.getByTestId('contact-list-info')).toBeInTheDocument();
 			expect(screen.queryByTestId('contacts-table')).not.toBeInTheDocument();
 		});

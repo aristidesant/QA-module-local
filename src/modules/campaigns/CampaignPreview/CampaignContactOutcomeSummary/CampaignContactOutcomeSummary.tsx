@@ -9,6 +9,7 @@ import {
 	Badge,
 } from '@mantine/core';
 import { IconRefresh, IconChartPie, IconX, IconEye } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { Campaign } from '~/models/CampaignsModel';
 import classes from './CampaignContactOutcomeSummary.module.css';
@@ -22,6 +23,7 @@ interface CCOSummaryProps {
 const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 	campaign,
 }) => {
+	const { t } = useTranslation('campaign.detail');
 	const [dispositionName, setDispositionName] = React.useState<
 		string | undefined
 	>(undefined);
@@ -141,8 +143,8 @@ const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 
 	return (
 		<RightSectionCard
-			title='Outcome Summary'
-			description='Contact distribution by result.'
+			title={t('preview.outcomeSummary.title')}
+			description={t('preview.outcomeSummary.description')}
 			icon={IconChartPie}
 			iconColor='var(--mantine-color-blue-6)'
 			rightSection={
@@ -152,7 +154,7 @@ const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 					size='sm'
 					onClick={() => refetch()}
 					disabled={isCompleted}
-					aria-label='Refresh data'
+					aria-label={t('preview.outcomeSummary.refreshData')}
 				>
 					<IconRefresh size={16} />
 				</ActionIcon>
@@ -250,7 +252,9 @@ const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 					</Stack>
 
 					<div className={classes.statsCard}>
-						<Text className={classes.statsLabel}>Today's calls</Text>
+						<Text className={classes.statsLabel}>
+							{t('preview.outcomeSummary.todaysCalls')}
+						</Text>
 						<Text className={classes.statsValue}>
 							{data?.totalCalls?.toLocaleString() || '0'}
 						</Text>
@@ -265,7 +269,7 @@ const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 							onClick={handleClearFilter}
 							fullWidth
 						>
-							Back to overview
+							{t('preview.outcomeSummary.backToOverview')}
 						</Button>
 					)}
 				</Stack>
@@ -274,10 +278,10 @@ const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 					<div className={classes.emptyState}>
 						<IconChartPie size={48} className={classes.emptyIcon} />
 						<Text className={classes.emptyStateText}>
-							No outcome data available
+							{t('preview.outcomeSummary.noData')}
 						</Text>
 						<Text className={classes.emptyStateSubtext}>
-							Data will appear here once calls are made
+							{t('preview.outcomeSummary.noDataDescription')}
 						</Text>
 					</div>
 
@@ -290,7 +294,7 @@ const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 							onClick={handleClearFilter}
 							fullWidth
 						>
-							Back to overview
+							{t('preview.outcomeSummary.backToOverview')}
 						</Button>
 					)}
 				</Stack>

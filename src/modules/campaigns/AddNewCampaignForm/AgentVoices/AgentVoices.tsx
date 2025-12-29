@@ -12,6 +12,7 @@ import {
 import { IconMicrophone, IconEdit, IconPlus } from '@tabler/icons-react';
 import { useDebouncedValue } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
+import { useTranslation } from 'react-i18next';
 
 import { useGetAllAgentVoices } from '~/queries/agentVoiceQueries';
 import SectionCard from '~/components/SectionCard';
@@ -39,6 +40,7 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
 	onVoiceSelect,
 	selectedVoiceId,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const [filters] = useState<AgentVoicesFilterValues>({
 		name: '',
 		gender: '',
@@ -133,7 +135,7 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
 	const openVoiceModal = useCallback(() => {
 		modals.open({
 			modalId: 'agent-voice-selection-modal',
-			title: 'Select AI Voice',
+			title: t('addNewCampaign.voices.modalTitle'),
 			size: 'xl',
 			centered: true,
 			children: (
@@ -149,13 +151,13 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
 									? classes.selectedRow
 									: ''
 							}
-							emptyMessage='No voices found'
+							emptyMessage={t('addNewCampaign.voices.noVoices')}
 						/>
 					</div>
 				</div>
 			),
 		});
-	}, [voices, columns, selectedVoiceId, handleVoiceSelection]);
+	}, [voices, columns, selectedVoiceId, handleVoiceSelection, t]);
 
 	let content: React.ReactNode = null;
 
@@ -164,10 +166,10 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
 			<div className={classes.stateCard}>
 				<Loader color='var(--mantine-color-blue-6)' size='lg' />
 				<Text size='lg' fw={600}>
-					Loading voices...
+					{t('addNewCampaign.voices.loading')}
 				</Text>
 				<Text size='sm' c='dimmed'>
-					Fetching available voice options
+					{t('addNewCampaign.voices.loadingDesc')}
 				</Text>
 			</div>
 		);
@@ -176,10 +178,10 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
 			<div className={classes.stateCard}>
 				<IconMicrophone className={classes.stateIcon} size={48} />
 				<Text size='lg' fw={600} c='red'>
-					Failed to load voices
+					{t('addNewCampaign.voices.error')}
 				</Text>
 				<Text size='sm' c='dimmed'>
-					There was an error fetching the voice options. Please try again.
+					{t('addNewCampaign.voices.errorDesc')}
 				</Text>
 			</div>
 		);
@@ -188,10 +190,10 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
 			<div className={classes.stateCard}>
 				<IconMicrophone className={classes.stateIcon} size={48} />
 				<Text size='lg' fw={600}>
-					No voices found
+					{t('addNewCampaign.voices.noVoices')}
 				</Text>
 				<Text size='sm' c='dimmed'>
-					Try adjusting your filters or try again later.
+					{t('addNewCampaign.voices.noVoicesDesc')}
 				</Text>
 			</div>
 		);
@@ -245,7 +247,11 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
 											: 'blue'
 									}
 								>
-									{selectedVoice.voice.gender ?? 'Unknown'}
+									{selectedVoice.voice.gender
+										? t(
+												`addNewCampaign.voices.${selectedVoice.voice.gender.toLowerCase()}`
+											)
+										: t('addNewCampaign.voices.unknown')}
 								</Badge>
 							</Group>
 						</Stack>
@@ -255,7 +261,7 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
 						color='blue'
 						size='lg'
 						radius='xl'
-						aria-label='Change voice'
+						aria-label={t('addNewCampaign.voices.changeVoice')}
 					>
 						<IconEdit size={18} />
 					</ActionIcon>
@@ -275,7 +281,7 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
 						style={{ color: 'var(--mantine-color-gray-5)' }}
 					/>
 					<Text size='md' c='dimmed' fw={500}>
-						Select a voice for your campaign
+						{t('addNewCampaign.voices.selectVoice')}
 					</Text>
 				</Group>
 			</Card>
@@ -285,8 +291,8 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
 	return (
 		<SectionCard
 			icon={IconMicrophone}
-			title='Choose AI voice'
-			description='Select the voice that will represent during customer interactions.'
+			title={t('addNewCampaign.voices.title')}
+			description={t('addNewCampaign.voices.description')}
 			contentSpacing='md'
 			id='agent-voices-section'
 		>

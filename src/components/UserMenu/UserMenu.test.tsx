@@ -144,6 +144,8 @@ describe('UserMenu', () => {
 			expect(screen.getByText('Users')).toBeInTheDocument();
 			expect(screen.getByText('Roles')).toBeInTheDocument();
 			expect(screen.getByText('Clients')).toBeInTheDocument();
+			expect(screen.getByText('Compliance')).toBeInTheDocument();
+			expect(screen.getByText('Do Not Call')).toBeInTheDocument();
 		});
 	});
 
@@ -284,6 +286,30 @@ describe('UserMenu', () => {
 			await userEvent.click(tools);
 		}
 		expect(mockNavigate).toHaveBeenCalledWith('/tools');
+	});
+
+	it('navigates to Do Not Call properly', async () => {
+		const { useSessionStore } = await import('~/stores/sessionStore');
+		(useSessionStore as any).mockReturnValue({
+			user: { username: 'janedoe', email: 'jane@example.com' },
+			targetClient: null,
+		});
+
+		renderComponent();
+
+		const trigger = screen.getByRole('button', { name: /user menu/i });
+		await userEvent.click(trigger);
+
+		const dncLabels = await screen.findAllByText('Do Not Call');
+		const dncItem = dncLabels.find(
+			(label) =>
+				label.closest('button')?.getAttribute('data-menu-item') === 'true'
+		);
+		expect(dncItem).toBeDefined();
+		if (dncItem) {
+			await userEvent.click(dncItem);
+		}
+		expect(mockNavigate).toHaveBeenCalledWith('/do-not-call');
 	});
 
 	it('shows impersonated email when impersonating and navigates to tools', async () => {

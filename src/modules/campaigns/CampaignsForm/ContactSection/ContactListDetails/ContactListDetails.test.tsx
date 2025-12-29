@@ -105,11 +105,11 @@ describe('ContactListDetails', () => {
 			</MemoryRouter>
 		);
 
-		expect(screen.getByText('Contact List')).toBeInTheDocument();
+		expect(screen.getByText('Actions')).toBeInTheDocument();
 		expect(screen.getByText('Test list')).toBeInTheDocument();
 		expect(screen.getByText('Test description')).toBeInTheDocument();
 		expect(screen.queryByLabelText('Extend Waves')).not.toBeInTheDocument();
-		expect(screen.queryByLabelText('Complete list')).not.toBeInTheDocument();
+		expect(screen.queryByLabelText('Complete List')).not.toBeInTheDocument();
 	});
 
 	it('hides actions card when permissions not available', () => {
@@ -147,7 +147,7 @@ describe('ContactListDetails', () => {
 			</MemoryRouter>
 		);
 
-		const toggle = screen.getByLabelText('Deactivate contact list');
+		const toggle = screen.getByLabelText('Deactivate');
 		const clean = screen.getByLabelText('Clean queue');
 
 		expect(toggle).toBeDisabled();

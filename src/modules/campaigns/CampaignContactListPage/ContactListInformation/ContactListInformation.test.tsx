@@ -9,17 +9,20 @@ import {
 } from '~/queries/contactGroupQueries';
 import { modals } from '@mantine/modals';
 
-vi.mock(
-	'~/modules/campaigns/CampaignLiveMetricPage/components/MetricInfoCard/MetricInfoCard',
-	() => ({
-		MetricInfoCard: ({ label, value }: { label: string; value: string }) => (
-			<div data-testid={`metric-${label.toLowerCase().replace(/\s+/g, '-')}`}>
-				<span data-testid='metric-label'>{label}</span>
-				<span data-testid='metric-value'>{value}</span>
-			</div>
-		),
-	})
-);
+vi.mock('~/components/MetricInfoCard', () => ({
+	MetricInfoCard: ({
+		label,
+		value,
+	}: {
+		label: string;
+		value: string | number;
+	}) => (
+		<div data-testid={`metric-${label.toLowerCase().replace(/\s+/g, '-')}`}>
+			<span data-testid='metric-label'>{label}</span>
+			<span data-testid='metric-value'>{value}</span>
+		</div>
+	),
+}));
 
 vi.mock('~/queries/contactGroupQueries', () => ({
 	useExtendContactGroupWaves: vi.fn(),
@@ -150,11 +153,7 @@ describe('ContactListInformation', () => {
 				/>
 			);
 			expect(screen.getByText('Executed')).toBeInTheDocument();
-			expect(
-				screen.getByText(
-					'All planned waves are done. Extend waves or mark the list complete.'
-				)
-			).toBeInTheDocument();
+			expect(screen.getByText('All waves executed')).toBeInTheDocument();
 		});
 
 		it('renders UNKNOWN status for unrecognized status', () => {
@@ -208,7 +207,7 @@ describe('ContactListInformation', () => {
 				/>
 			);
 			expect(
-				screen.getByTestId('metric-max-calls-/-contact')
+				screen.getByTestId('metric-max-calls-per-contact')
 			).toBeInTheDocument();
 		});
 
@@ -229,7 +228,7 @@ describe('ContactListInformation', () => {
 					onReload={mockOnReload}
 				/>
 			);
-			expect(screen.getByTestId('metric-expiration')).toBeInTheDocument();
+			expect(screen.getByTestId('metric-expiration-date')).toBeInTheDocument();
 		});
 
 		it('renders waves metric', () => {
@@ -250,8 +249,8 @@ describe('ContactListInformation', () => {
 					onReload={mockOnReload}
 				/>
 			);
-			expect(screen.queryByLabelText('Extend waves')).not.toBeInTheDocument();
-			expect(screen.queryByLabelText('Complete list')).not.toBeInTheDocument();
+			expect(screen.queryByLabelText('Extend Waves')).not.toBeInTheDocument();
+			expect(screen.queryByLabelText('Complete List')).not.toBeInTheDocument();
 		});
 
 		it('displays contact count of 0 when not set', () => {
@@ -274,7 +273,9 @@ describe('ContactListInformation', () => {
 					onReload={mockOnReload}
 				/>
 			);
-			expect(screen.getByTestId('metric-expiration')).toBeInTheDocument();
+			const expiration = screen.getByTestId('metric-expiration-date');
+			expect(expiration).toBeInTheDocument();
+			expect(screen.getByText('Not set')).toBeInTheDocument();
 		});
 
 		it('rounds human equivalent value', () => {
@@ -284,6 +285,7 @@ describe('ContactListInformation', () => {
 			);
 			// The component uses Math.round, so 12.8 becomes 13
 			expect(screen.getByTestId('metric-human-equivalent')).toBeInTheDocument();
+			expect(screen.getByText('13')).toBeInTheDocument();
 		});
 
 		it('shows extend/complete actions when EXECUTED and triggers extend', async () => {
@@ -306,7 +308,7 @@ describe('ContactListInformation', () => {
 				/>
 			);
 
-			const extendBtn = screen.getByLabelText('Extend waves');
+			const extendBtn = screen.getByLabelText('Extend Waves');
 			expect(extendBtn).toBeInTheDocument();
 			fireEvent.click(extendBtn);
 
@@ -323,7 +325,7 @@ describe('ContactListInformation', () => {
 				/>
 			);
 			expect(
-				screen.getByRole('button', { name: 'Reload contact list' })
+				screen.getByRole('button', { name: 'Reload' })
 			).toBeInTheDocument();
 		});
 
@@ -334,9 +336,7 @@ describe('ContactListInformation', () => {
 					onReload={mockOnReload}
 				/>
 			);
-			const reloadButton = screen.getByRole('button', {
-				name: 'Reload contact list',
-			});
+			const reloadButton = screen.getByRole('button', { name: 'Reload' });
 			fireEvent.click(reloadButton);
 			expect(mockOnReload).toHaveBeenCalledTimes(1);
 		});
@@ -349,9 +349,7 @@ describe('ContactListInformation', () => {
 					onReload={asyncReload}
 				/>
 			);
-			const reloadButton = screen.getByRole('button', {
-				name: 'Reload contact list',
-			});
+			const reloadButton = screen.getByRole('button', { name: 'Reload' });
 			fireEvent.click(reloadButton);
 			expect(asyncReload).toHaveBeenCalledTimes(1);
 		});

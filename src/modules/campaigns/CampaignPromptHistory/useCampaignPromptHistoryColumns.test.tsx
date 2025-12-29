@@ -1,14 +1,23 @@
+import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { useCampaignPromptHistoryColumns } from './useCampaignPromptHistoryColumns';
+import { TestProviders } from '~/test-utils/renderWithProviders';
+
+const wrapper = TestProviders;
 
 describe('useCampaignPromptHistoryColumns', () => {
 	it('returns expected column definitions', () => {
 		const mockOnSelect = vi.fn();
 		const mockOnView = vi.fn();
-		const columns = useCampaignPromptHistoryColumns({
-			onSelect: mockOnSelect,
-			onViewPrompt: mockOnView,
-		});
+		const { result } = renderHook(
+			() =>
+				useCampaignPromptHistoryColumns({
+					onSelect: mockOnSelect,
+					onViewPrompt: mockOnView,
+				}),
+			{ wrapper }
+		);
+		const columns = result.current;
 
 		// Expect columns for version, createdAt, user, prompt preview, and actions
 		expect(Array.isArray(columns)).toBe(true);

@@ -15,6 +15,7 @@ import { useState } from 'react';
 import { FilterContainer } from '~/components/FilterContainer';
 import styles from './CampaignFilters.module.css';
 import { CampaignStatus, CampaignStatusConfig } from '~/models/CampaignStatus';
+import { useTranslation } from 'react-i18next';
 
 interface CampaignFiltersProps {
 	searchValue: string;
@@ -35,22 +36,6 @@ interface CampaignFiltersProps {
 	onFiltersChange: (filters: CampaignFiltersProps['filters']) => void;
 }
 
-const sortOptions = [
-	{ value: 'createdAt', label: 'Creation date' },
-	{ value: 'name', label: 'Name' },
-	{ value: 'status', label: 'Status' },
-	{ value: 'lastActivity', label: 'Last activity' },
-];
-
-const typeOptions = [
-	{ value: 'OUTBOUND', label: 'Outbound' },
-	{ value: 'INBOUND', label: 'Inbound' },
-];
-
-const statusOptions = Object.values(CampaignStatus).map((status) => ({
-	value: status,
-	label: CampaignStatusConfig[status].label,
-}));
 export default function CampaignFilters({
 	searchValue,
 	onSearchChange,
@@ -59,7 +44,24 @@ export default function CampaignFilters({
 	filters,
 	onFiltersChange,
 }: CampaignFiltersProps) {
+	const { t } = useTranslation('campaigns');
 	const [opened, setOpened] = useState(false);
+
+	const sortOptions = [
+		{ value: 'createdAt', label: t('filters.sortOptions.createdAt') },
+		{ value: 'name', label: t('filters.sortOptions.name') },
+		{ value: 'status', label: t('filters.sortOptions.status') },
+		{ value: 'lastActivity', label: t('filters.sortOptions.lastActivity') },
+	];
+
+	const typeOptions = [
+		{ value: 'OUTBOUND', label: t('filters.typeOptions.outbound') },
+		{ value: 'INBOUND', label: t('filters.typeOptions.inbound') },
+	];
+
+	const executionTypeOptions = [
+		{ value: 'TIME_BASED', label: t('filters.executionTypeOptions.timeBased') },
+	];
 
 	const activeFiltersCount = Object.entries(filters).filter(([key, value]) => {
 		if (key === 'includeCompleted') {
@@ -69,7 +71,10 @@ export default function CampaignFilters({
 	}).length;
 	const hasActiveFilters = activeFiltersCount > 0;
 
-	const executionTypeOptions = [{ value: 'TIME_BASED', label: 'Time Based' }];
+	const statusOptions = Object.values(CampaignStatus).map((status) => ({
+		value: status,
+		label: t(CampaignStatusConfig[status].label),
+	}));
 
 	const handleFilterChange = <
 		Key extends keyof CampaignFiltersProps['filters'],
@@ -88,7 +93,7 @@ export default function CampaignFilters({
 			<FilterContainer>
 				<Group gap='xs' className={styles.titleGroup}>
 					<IconFilter size={18} className={styles.titleIcon} />
-					<Text className={styles.title}>Filters</Text>
+					<Text className={styles.title}>{t('filters.title')}</Text>
 					{hasActiveFilters && (
 						<Badge size='sm' variant='light' className={styles.activeBadge}>
 							{activeFiltersCount}
@@ -98,7 +103,7 @@ export default function CampaignFilters({
 
 				<div className={styles.controlsWrapper}>
 					<TextInput
-						placeholder='Search campaigns...'
+						placeholder={t('filters.searchPlaceholder')}
 						value={searchValue}
 						onChange={(event) => onSearchChange(event.currentTarget.value)}
 						leftSection={<IconSearch size={16} className={styles.searchIcon} />}
@@ -108,6 +113,7 @@ export default function CampaignFilters({
 									size='sm'
 									onClick={() => onSearchChange('')}
 									variant='subtle'
+									aria-label={t('actions.close', { ns: 'common' })}
 								/>
 							)
 						}
@@ -119,7 +125,7 @@ export default function CampaignFilters({
 						value={sortBy}
 						onChange={(value) => onSortChange(value || 'createdAt')}
 						data={sortOptions}
-						placeholder='Sort by'
+						placeholder={t('filters.sortBy')}
 						className={styles.sortSelect}
 						size='sm'
 						comboboxProps={{ withinPortal: true }}
@@ -132,7 +138,7 @@ export default function CampaignFilters({
 						onClick={() => setOpened((prev) => !prev)}
 						variant={opened ? 'light' : 'default'}
 					>
-						Advanced
+						{t('filters.advanced')}
 					</Button>
 				</div>
 			</FilterContainer>
@@ -142,8 +148,8 @@ export default function CampaignFilters({
 					<Stack gap='sm'>
 						<Group gap='sm' grow>
 							<Select
-								label='Type'
-								placeholder='All types'
+								label={t('filters.type')}
+								placeholder={t('filters.allTypes')}
 								data={typeOptions}
 								value={filters.type}
 								onChange={(value) => handleFilterChange('type', value)}
@@ -151,8 +157,8 @@ export default function CampaignFilters({
 								size='sm'
 							/>
 							<Select
-								label='Execution Type'
-								placeholder='All execution types'
+								label={t('filters.executionType')}
+								placeholder={t('filters.allExecutionTypes')}
 								data={executionTypeOptions}
 								value={filters.campaignExecutionType}
 								onChange={(value) =>
@@ -162,8 +168,8 @@ export default function CampaignFilters({
 								size='sm'
 							/>
 							<Select
-								label='Status'
-								placeholder='All statuses'
+								label={t('filters.status')}
+								placeholder={t('filters.allStatuses')}
 								data={statusOptions}
 								value={filters.status}
 								onChange={(value) =>
@@ -176,7 +182,7 @@ export default function CampaignFilters({
 
 						<Group>
 							<Switch
-								label='Include completed'
+								label={t('filters.includeCompleted')}
 								checked={filters.includeCompleted === true}
 								onChange={(event) =>
 									handleFilterChange(
@@ -196,7 +202,7 @@ export default function CampaignFilters({
 								onClick={() => onFiltersChange({})}
 								disabled={!hasActiveFilters}
 							>
-								Clear all filters
+								{t('filters.clearAllFilters')}
 							</Button>
 						</Group>
 					</Stack>

@@ -1,4 +1,5 @@
 import { Badge, HoverCard, Stack, Text, ThemeIcon } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import { IconInfoCircle } from '@tabler/icons-react';
 import type ContactGroup from '~/models/ContactGroup';
 
@@ -9,6 +10,7 @@ interface ContactListHoverCardProps {
 export const ContactListHoverCard = ({
 	contactGroup,
 }: ContactListHoverCardProps) => {
+	const { t } = useTranslation();
 	return (
 		<HoverCard shadow='md' radius='md' withArrow>
 			<HoverCard.Target>
@@ -29,26 +31,35 @@ export const ContactListHoverCard = ({
 						)}
 					</div>
 					<Text size='xs'>
-						<strong>Contacts:</strong> {contactGroup.contactCount}
+						<strong>{t('campaigns.form.contacts.list.columns.total')}:</strong>{' '}
+						{contactGroup.contactCount}
 					</Text>
 					<Text size='xs'>
-						<strong>Queue Status:</strong> {contactGroup.queueStatus}
+						<strong>{t('campaigns.form.contacts.list.columns.status')}:</strong>{' '}
+						{contactGroup.queueStatus}
 					</Text>
 					<Text size='xs'>
-						<strong>Waves:</strong>{' '}
+						<strong>{t('campaigns.form.contacts.details.stats.waves')}:</strong>{' '}
 						{contactGroup.maxWaves
 							? `${contactGroup.currentWave ?? 1} / ${contactGroup.maxWaves}`
-							: 'Not set'}
+							: t('campaigns.form.contacts.details.stats.notSet')}
 					</Text>
 					<Text size='xs'>
-						<strong>Max Calls per Contact:</strong>{' '}
+						<strong>
+							{t('campaigns.form.contacts.details.stats.maxCallsPerContact')}:
+						</strong>{' '}
 						{contactGroup.maxCallsPerContact}
 					</Text>
 					<Text size='xs'>
-						<strong>Max Calls per List:</strong> {contactGroup.maxCallsPerList}
+						<strong>
+							{t('campaigns.form.contacts.details.stats.maxCallsPerList')}:
+						</strong>{' '}
+						{contactGroup.maxCallsPerList}
 					</Text>
 					<Badge size='sm' variant='light'>
-						{contactGroup.isActive ? 'Active' : 'Inactive'}
+						{contactGroup.isActive
+							? t('campaigns.form.contacts.details.meta.active')
+							: t('campaigns.form.contacts.details.meta.inactive')}
 					</Badge>
 				</Stack>
 			</HoverCard.Dropdown>

@@ -1,88 +1,95 @@
-import React from "react";
-import { Box, Text, Group } from "@mantine/core";
-import { IconClock, IconCalendarClock } from "@tabler/icons-react";
-import styles from "./WorkingHoursSummary.module.css";
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Box, Text, Group } from '@mantine/core';
+import { IconClock, IconCalendarClock } from '@tabler/icons-react';
+import styles from './WorkingHoursSummary.module.css';
 
 interface DaySchedule {
-  enabled: boolean;
-  from: string;
-  to: string;
+	enabled: boolean;
+	from: string;
+	to: string;
 }
 
 interface WorkingHoursSummaryProps {
-  workingHours: Record<string, DaySchedule>;
+	workingHours: Record<string, DaySchedule>;
 }
 
 const DAYS = [
-  "monday",
-  "tuesday",
-  "wednesday",
-  "thursday",
-  "friday",
-  "saturday",
-  "sunday",
+	'monday',
+	'tuesday',
+	'wednesday',
+	'thursday',
+	'friday',
+	'saturday',
+	'sunday',
 ] as const;
 
 const formatDayName = (day: string) => {
-  return day.charAt(0).toUpperCase() + day.slice(1, 3);
+	return day.charAt(0).toUpperCase() + day.slice(1, 3);
 };
 
 export const WorkingHoursSummary: React.FC<WorkingHoursSummaryProps> = ({
-  workingHours,
+	workingHours,
 }) => {
-  // Get active days
-  const activeDays = DAYS.filter((day) => workingHours[day]?.enabled);
+	const { t } = useTranslation('campaigns');
 
-  // Get time range (assuming same time for all active days)
-  const getTimeRange = (): string => {
-    if (activeDays.length === 0) return "No active days";
+	// Get active days
+	const activeDays = DAYS.filter((day) => workingHours[day]?.enabled);
 
-    const firstActiveDay = activeDays[0];
-    const schedule = workingHours[firstActiveDay];
+	// Get time range (assuming same time for all active days)
+	const getTimeRange = (): string => {
+		if (activeDays.length === 0)
+			return t('scheduler.workingHours.summary.noActiveDays');
 
-    if (!schedule?.from || !schedule?.to) return "No time range set";
+		const firstActiveDay = activeDays[0];
+		const schedule = workingHours[firstActiveDay];
 
-    return `${schedule.from} - ${schedule.to}`;
-  };
+		if (!schedule?.from || !schedule?.to)
+			return t('scheduler.workingHours.summary.noTimeRange');
 
-  // Format active days text
-  const getActiveDaysText = (): string => {
-    if (activeDays.length === 0) return "No active days";
+		return `${schedule.from} - ${schedule.to}`;
+	};
 
-    const dayNames = activeDays.map(formatDayName);
+	// Format active days text
+	const getActiveDaysText = (): string => {
+		if (activeDays.length === 0)
+			return t('scheduler.workingHours.summary.noActiveDays');
 
-    if (dayNames.length === 7) return "Every day";
+		const dayNames = activeDays.map(formatDayName);
 
-    if (
-      dayNames.length === 5 &&
-      !dayNames.includes("Sat") &&
-      !dayNames.includes("Sun")
-    ) {
-      return "Weekdays";
-    }
+		if (dayNames.length === 7)
+			return t('scheduler.workingHours.summary.everyDay');
 
-    if (
-      dayNames.length === 2 &&
-      dayNames.includes("Sat") &&
-      dayNames.includes("Sun")
-    ) {
-      return "Weekends";
-    }
+		if (
+			dayNames.length === 5 &&
+			!dayNames.includes('Sat') &&
+			!dayNames.includes('Sun')
+		) {
+			return t('scheduler.workingHours.summary.weekdays');
+		}
 
-    return dayNames.join(", ");
-  };
+		if (
+			dayNames.length === 2 &&
+			dayNames.includes('Sat') &&
+			dayNames.includes('Sun')
+		) {
+			return t('scheduler.workingHours.summary.weekends');
+		}
 
-  return (
-    <Box className={styles.summary}>
-      <Group gap={4} c="dimmed" align="center" mb={2}>
-        <IconClock size={14} />
-        <Text size="xs">{getTimeRange()}</Text>
-      </Group>
+		return dayNames.join(', ');
+	};
 
-      <Group gap={4} c="dimmed" align="center">
-        <IconCalendarClock size={14} />
-        <Text size="xs">{getActiveDaysText()}</Text>
-      </Group>
-    </Box>
-  );
+	return (
+		<Box className={styles.summary}>
+			<Group gap={4} c='dimmed' align='center' mb={2}>
+				<IconClock size={14} />
+				<Text size='xs'>{getTimeRange()}</Text>
+			</Group>
+
+			<Group gap={4} c='dimmed' align='center'>
+				<IconCalendarClock size={14} />
+				<Text size='xs'>{getActiveDaysText()}</Text>
+			</Group>
+		</Box>
+	);
 };

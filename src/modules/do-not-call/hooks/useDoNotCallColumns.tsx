@@ -8,32 +8,36 @@ import {
 	IconShieldCheck,
 	IconBan,
 } from '@tabler/icons-react';
+import type { ComponentType } from 'react';
 import type { DoNotCallModel, DoNotCallReason } from '~/models/DoNotCallModel';
 import styles from './useDoNotCallColumns.module.css';
+import { useTranslation } from 'react-i18next';
+
+type IconComponent = ComponentType<{ size?: number }>;
 
 const reasonConfig: Record<
 	DoNotCallReason,
-	{ icon: any; color: string; label: string }
+	{ icon: IconComponent; color: string; labelKey: string }
 > = {
 	CUSTOMER_REQUEST: {
 		icon: IconUser,
 		color: 'blue',
-		label: 'Customer Request',
+		labelKey: 'reasons.customerRequest',
 	},
 	DISPOSITION_OUTCOME: {
 		icon: IconAlertCircle,
 		color: 'orange',
-		label: 'Outcome',
+		labelKey: 'reasons.dispositionOutcome',
 	},
 	REGULATORY_COMPLIANCE: {
 		icon: IconShieldCheck,
 		color: 'green',
-		label: 'Regulatory Compliance',
+		labelKey: 'reasons.regulatoryCompliance',
 	},
 	MANUAL_ADMIN_BLOCK: {
 		icon: IconBan,
 		color: 'red',
-		label: 'Manual Admin Block',
+		labelKey: 'reasons.manualAdminBlock',
 	},
 };
 
@@ -45,11 +49,13 @@ interface UseDoNotCallColumnsProps {
 export const useDoNotCallColumns = ({
 	onEdit,
 	onDelete,
-}: UseDoNotCallColumnsProps): ColumnDef<DoNotCallModel, any>[] => {
+}: UseDoNotCallColumnsProps): ColumnDef<DoNotCallModel, unknown>[] => {
+	const { t } = useTranslation('do-not-call');
+
 	return [
 		{
 			accessorKey: 'phoneNumber',
-			header: 'Phone Number',
+			header: t('table.headers.phoneNumber'),
 			cell: ({ row }) => {
 				const entry = row.original;
 				return (
@@ -69,7 +75,7 @@ export const useDoNotCallColumns = ({
 		},
 		{
 			accessorKey: 'reason',
-			header: 'Reason',
+			header: t('table.headers.reason'),
 			cell: ({ row }) => {
 				const entry = row.original;
 				const config = reasonConfig[entry.reason];
@@ -81,7 +87,7 @@ export const useDoNotCallColumns = ({
 						size='sm'
 						leftSection={<Icon size={14} />}
 					>
-						{config.label}
+						{t(config.labelKey)}
 					</Badge>
 				);
 			},
@@ -89,7 +95,7 @@ export const useDoNotCallColumns = ({
 		},
 		{
 			accessorKey: 'isActive',
-			header: 'Status',
+			header: t('table.headers.status'),
 			cell: ({ row }) => {
 				const entry = row.original;
 				return (
@@ -98,7 +104,7 @@ export const useDoNotCallColumns = ({
 						color={entry.isActive ? 'green' : 'gray'}
 						size='sm'
 					>
-						{entry.isActive ? 'Active' : 'Expired'}
+						{entry.isActive ? t('statuses.active') : t('statuses.expired')}
 					</Badge>
 				);
 			},
@@ -106,13 +112,13 @@ export const useDoNotCallColumns = ({
 		},
 		{
 			accessorKey: 'expiresAt',
-			header: 'Expires At',
+			header: t('table.headers.expiresAt'),
 			cell: ({ row }) => {
 				const entry = row.original;
 				if (!entry.expiresAt) {
 					return (
 						<Text size='sm' c='dimmed'>
-							Never
+							{t('table.expiresAt.never')}
 						</Text>
 					);
 				}
@@ -123,7 +129,7 @@ export const useDoNotCallColumns = ({
 		},
 		{
 			accessorKey: 'createdAt',
-			header: 'Created At',
+			header: t('table.headers.createdAt'),
 			cell: ({ row }) => {
 				const entry = row.original;
 				const createdAt = new Date(entry.createdAt);
@@ -133,15 +139,17 @@ export const useDoNotCallColumns = ({
 		},
 		{
 			id: 'actions',
-			header: 'Actions',
+			header: t('table.headers.actions'),
 			cell: ({ row }) => {
 				const entry = row.original;
 				return (
 					<Group gap='xs' className={styles.actionsGroup}>
-						<Tooltip label='Edit entry' withArrow>
+						<Tooltip label={t('table.actions.edit')} withArrow>
 							<Button
 								size='xs'
 								variant='subtle'
+								aria-label={t('table.actions.edit')}
+								title={t('table.actions.edit')}
 								onClick={(e) => {
 									e.stopPropagation();
 									onEdit(entry);
@@ -151,11 +159,13 @@ export const useDoNotCallColumns = ({
 								<IconEdit size={14} />
 							</Button>
 						</Tooltip>
-						<Tooltip label='Delete entry' withArrow>
+						<Tooltip label={t('table.actions.delete')} withArrow>
 							<Button
 								size='xs'
 								variant='subtle'
 								color='red'
+								aria-label={t('table.actions.delete')}
+								title={t('table.actions.delete')}
 								onClick={(e) => {
 									e.stopPropagation();
 									onDelete(entry);

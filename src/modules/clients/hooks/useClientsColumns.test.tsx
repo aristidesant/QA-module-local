@@ -1,14 +1,17 @@
 import { renderHook } from '@testing-library/react';
 import useClientsColumns from './useClientsColumns';
 import { vi } from 'vitest';
+import { TestProviders } from '~/test-utils/renderWithProviders';
 
 describe('useClientsColumns', () => {
 	const mockOnEdit = vi.fn();
 	const mockOnDelete = vi.fn();
+	const wrapper = TestProviders;
 
 	it('returns column definitions', () => {
-		const { result } = renderHook(() =>
-			useClientsColumns({ onEdit: mockOnEdit, onDelete: mockOnDelete })
+		const { result } = renderHook(
+			() => useClientsColumns({ onEdit: mockOnEdit, onDelete: mockOnDelete }),
+			{ wrapper }
 		);
 
 		expect(result.current).toBeDefined();
@@ -17,8 +20,9 @@ describe('useClientsColumns', () => {
 	});
 
 	it('includes name, email, phone, and actions columns', () => {
-		const { result } = renderHook(() =>
-			useClientsColumns({ onEdit: mockOnEdit, onDelete: mockOnDelete })
+		const { result } = renderHook(
+			() => useClientsColumns({ onEdit: mockOnEdit, onDelete: mockOnDelete }),
+			{ wrapper }
 		);
 
 		const columnIds = result.current.map(

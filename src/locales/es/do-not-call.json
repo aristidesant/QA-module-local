@@ -1,0 +1,114 @@
+{
+	"page": {
+		"title": "Lista de No Llamar",
+		"description": "Administra los números de teléfono que no deben ser contactados.",
+		"actions": {
+			"cleanExpired": "Limpiar vencidos",
+			"addEntry": "Agregar"
+		}
+	},
+	"filters": {
+		"title": "Filtros",
+		"searchPlaceholder": "Buscar por número de teléfono...",
+		"advanced": "Avanzado",
+		"reason": {
+			"label": "Motivo",
+			"placeholder": "Todos los motivos"
+		},
+		"status": {
+			"label": "Estado",
+			"placeholder": "Todos los estados"
+		},
+		"clearAll": "Limpiar filtros"
+	},
+	"reasons": {
+		"customerRequest": "Solicitud del cliente",
+		"dispositionOutcome": "Resultado",
+		"regulatoryCompliance": "Cumplimiento normativo",
+		"manualAdminBlock": "Bloqueo manual (admin)"
+	},
+	"statuses": {
+		"active": "Activo",
+		"expired": "Vencido",
+		"all": "Todos"
+	},
+	"empty": {
+		"title": "Aún no hay registros",
+		"description": "Agrega números de teléfono a la lista de No Llamar"
+	},
+	"table": {
+		"headers": {
+			"phoneNumber": "Número de teléfono",
+			"reason": "Motivo",
+			"status": "Estado",
+			"expiresAt": "Vence",
+			"createdAt": "Creado",
+			"actions": "Acciones"
+		},
+		"expiresAt": {
+			"never": "Nunca"
+		},
+		"actions": {
+			"edit": "Editar registro",
+			"delete": "Eliminar registro"
+		}
+	},
+	"dialogs": {
+		"create": {
+			"title": "Agregar registro de No Llamar"
+		},
+		"edit": {
+			"title": "Editar registro de No Llamar"
+		},
+		"delete": {
+			"title": "Eliminar registro de No Llamar",
+			"description": "¿Seguro que deseas eliminar este registro de No Llamar para {{phoneNumber}}?"
+		},
+		"cleanExpired": {
+			"title": "Limpiar registros vencidos",
+			"description": "¿Seguro que deseas eliminar todos los registros vencidos de No Llamar? Esta acción no se puede deshacer.",
+			"confirm": "Limpiar"
+		}
+	},
+	"form": {
+		"labels": {
+			"phoneNumber": "Número de teléfono",
+			"reason": "Motivo",
+			"notes": "Notas",
+			"expiresAt": "Vence"
+		},
+		"placeholders": {
+			"phoneNumber": "+1234567890",
+			"reason": "Selecciona un motivo",
+			"notes": "Información adicional...",
+			"expiresAt": "Selecciona una fecha de vencimiento (opcional)"
+		},
+		"actions": {
+			"update": "Actualizar"
+		},
+		"validation": {
+			"phoneRequired": "El número de teléfono es obligatorio",
+			"reasonRequired": "El motivo es obligatorio"
+		}
+	},
+	"errors": {
+		"load": "No se pudieron cargar los registros de No Llamar.",
+		"create": "No se pudo crear el registro. Inténtalo de nuevo.",
+		"update": "No se pudo actualizar el registro. Inténtalo de nuevo.",
+		"delete": "No se pudo eliminar el registro. Inténtalo de nuevo.",
+		"cleanExpired": "No se pudieron limpiar los registros vencidos. Inténtalo de nuevo."
+	},
+	"toasts": {
+		"createdTitle": "Registro creado",
+		"createdMessage": "El registro de No Llamar se creó correctamente.",
+		"updatedTitle": "Registro actualizado",
+		"updatedMessage": "El registro de No Llamar se actualizó correctamente.",
+		"deletedTitle": "Registro eliminado",
+		"deletedMessage": "El registro de No Llamar se eliminó correctamente.",
+		"cleanedTitle": "Limpieza completa",
+		"cleanedMessage": "Se eliminaron {{count}} registros vencidos."
+	},
+	"pagination": {
+		"entries": "registros"
+	}
+}

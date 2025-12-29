@@ -19,6 +19,7 @@ import {
 	normalizeUrl,
 	inferType,
 } from '~/modules/knowledge-bases/utils';
+import { useTranslation } from 'react-i18next';
 
 interface KnowledgeBaseWizardFormProps {
 	onSuccess: (createdKb: KnowledgeBaseModel) => void;
@@ -30,6 +31,7 @@ const KnowledgeBaseWizardForm: React.FC<KnowledgeBaseWizardFormProps> = ({
 	onCancel,
 }) => {
 	const createMutation = useCreateKnowledgeBase();
+	const { t } = useTranslation('campaigns');
 	const [file, setFile] = useState<File | null>(null);
 
 	const form = useForm({
@@ -39,7 +41,10 @@ const KnowledgeBaseWizardForm: React.FC<KnowledgeBaseWizardFormProps> = ({
 			content: '',
 		},
 		validate: {
-			name: (value) => (!value.trim() ? 'Name is required' : null),
+			name: (value) =>
+				!value.trim()
+					? t('wizard.knowledgeBase.form.name.errorRequired')
+					: null,
 		},
 	});
 
@@ -52,16 +57,25 @@ const KnowledgeBaseWizardForm: React.FC<KnowledgeBaseWizardFormProps> = ({
 	// Determine what the content represents based on inferred type
 	const contentInfo = useMemo(() => {
 		if (file) {
-			return { label: 'File selected', type: 'file' as const };
+			return {
+				label: t('wizard.knowledgeBase.contentInfo.fileLabel'),
+				type: 'file' as const,
+			};
 		}
 		if (isValidUrl(form.values.content)) {
-			return { label: 'URL detected', type: 'url' as const };
+			return {
+				label: t('wizard.knowledgeBase.contentInfo.urlDetected'),
+				type: 'url' as const,
+			};
 		}
 		if (form.values.content.trim()) {
-			return { label: 'Text content', type: 'text' as const };
+			return {
+				label: t('wizard.knowledgeBase.contentInfo.textLabel'),
+				type: 'text' as const,
+			};
 		}
 		return null;
-	}, [form.values.content, file]);
+	}, [form.values.content, file, t]);
 
 	const canSave = useMemo(() => {
 		if (!form.values.name.trim()) return false;
@@ -90,16 +104,16 @@ const KnowledgeBaseWizardForm: React.FC<KnowledgeBaseWizardFormProps> = ({
 			});
 
 			notifications.show({
-				title: 'Success',
-				message: 'Knowledge base created successfully',
+				title: t('wizard.knowledgeBase.notifications.successTitle'),
+				message: t('wizard.knowledgeBase.notifications.successMessage'),
 				color: 'green',
 			});
 
 			onSuccess(result);
 		} catch {
 			notifications.show({
-				title: 'Error',
-				message: 'Failed to create knowledge base',
+				title: t('wizard.knowledgeBase.notifications.errorTitle'),
+				message: t('wizard.knowledgeBase.notifications.errorMessage'),
 				color: 'red',
 			});
 		}
@@ -130,41 +144,44 @@ const KnowledgeBaseWizardForm: React.FC<KnowledgeBaseWizardFormProps> = ({
 				form.onSubmit((values) => handleFormSubmit(event, values))(event)
 			}
 		>
-			<Stack gap='sm'>
+			<Stack gap='xs'>
 				<TextInput
-					label='Name'
-					placeholder='e.g., Product FAQs'
+					label={t('wizard.knowledgeBase.form.name.label')}
+					placeholder={t('wizard.knowledgeBase.form.name.placeholder')}
 					{...form.getInputProps('name')}
 					required
 					disabled={isSaving}
+					size='sm'
 				/>
 
 				<Textarea
-					label='Description'
-					placeholder='Short internal note about this knowledge base'
+					label={t('wizard.knowledgeBase.form.description.label')}
+					placeholder={t('wizard.knowledgeBase.form.description.placeholder')}
 					{...form.getInputProps('description')}
 					autosize
 					minRows={2}
 					disabled={isSaving}
+					size='sm'
 				/>
 
 				<Textarea
-					label='Content'
-					placeholder='Paste a URL or text content here...'
+					label={t('wizard.knowledgeBase.form.content.label')}
+					placeholder={t('wizard.knowledgeBase.form.content.placeholder')}
 					{...form.getInputProps('content')}
 					autosize
 					minRows={4}
 					disabled={isSaving || !!file}
 					description={
 						file
-							? 'Remove the file above to enter text or URL instead'
-							: 'Paste a URL to fetch content from a webpage, or enter text directly'
+							? t('wizard.knowledgeBase.form.content.descriptionWithFile')
+							: t('wizard.knowledgeBase.form.content.description')
 					}
+					size='sm'
 				/>
 
 				<FileInput
-					label='Or upload a file'
-					placeholder='Choose a PDF file or drop it here'
+					label={t('wizard.knowledgeBase.form.file.label')}
+					placeholder={t('wizard.knowledgeBase.form.file.placeholder')}
 					value={file}
 					onChange={handleFileChange}
 					accept='.pdf,application/pdf'
@@ -173,40 +190,57 @@ const KnowledgeBaseWizardForm: React.FC<KnowledgeBaseWizardFormProps> = ({
 					clearable
 					description={
 						form.values.content.trim()
-							? 'Clear the text above to upload a file instead'
-							: 'Supported: PDF. Max 25MB.'
+							? t('wizard.knowledgeBase.form.file.descriptionWithContent')
+							: t('wizard.knowledgeBase.form.file.description')
 					}
 					disabled={isSaving || !!form.values.content.trim()}
+					size='sm'
 				/>
 
 				{contentInfo && (
 					<Text size='sm' c='dimmed'>
 						{contentInfo.type === 'file' && file && (
 							<>
-								📄 <strong>File:</strong> {file.name}
+								📄{' '}
+								<strong>
+									{t('wizard.knowledgeBase.contentInfo.fileLabel')}:
+								</strong>{' '}
+								{file.name}
 							</>
 						)}
 						{contentInfo.type === 'url' && (
 							<>
-								🔗 <strong>URL detected:</strong> Content will be fetched from
-								the provided link
+								🔗{' '}
+								<strong>
+									{t('wizard.knowledgeBase.contentInfo.urlDetected')}:
+								</strong>{' '}
+								{t('wizard.knowledgeBase.contentInfo.urlDescription')}
 							</>
 						)}
 						{contentInfo.type === 'text' && (
 							<>
-								📝 <strong>Text content:</strong> Will be used as-is
+								📝{' '}
+								<strong>
+									{t('wizard.knowledgeBase.contentInfo.textLabel')}:
+								</strong>{' '}
+								{t('wizard.knowledgeBase.contentInfo.textDescription')}
 							</>
 						)}
 					</Text>
 				)}
 			</Stack>
 
-			<Group justify='flex-end' mt='md'>
-				<Button variant='default' onClick={onCancel} disabled={isSaving}>
-					Cancel
+			<Group justify='flex-end' mt='sm' gap='xs'>
+				<Button
+					variant='default'
+					onClick={onCancel}
+					disabled={isSaving}
+					size='sm'
+				>
+					{t('wizard.knowledgeBase.actions.cancel')}
 				</Button>
-				<Button type='submit' loading={isSaving} disabled={!canSave}>
-					Create Knowledge Base
+				<Button type='submit' loading={isSaving} disabled={!canSave} size='sm'>
+					{t('wizard.knowledgeBase.actions.create')}
 				</Button>
 			</Group>
 		</form>

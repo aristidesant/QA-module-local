@@ -1,4 +1,5 @@
 import { Badge, Card, Group, Stack, Text } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import { modals } from '@mantine/modals';
 import {
 	IconAlertTriangle,
@@ -44,6 +45,7 @@ function ColumnMappingCard({
 	onSchemaSelected,
 	selectedSchemaId,
 }: ColumnMappingCardProps) {
+	const { t } = useTranslation('campaigns');
 	const mappedColumnsCount = Object.keys(columnMappings).length;
 	const totalColumns = headers.length;
 	const isAllMapped = mappedColumnsCount === totalColumns;
@@ -51,7 +53,7 @@ function ColumnMappingCard({
 	const openMappingModal = () => {
 		modals.open({
 			modalId: 'match-columns-modal',
-			title: 'Match Columns',
+			title: t('form.contacts.mapping.matchTitle'),
 			size: '90%',
 			children: (
 				<ContactHeaderMapping
@@ -71,7 +73,7 @@ function ColumnMappingCard({
 		<Stack gap='xs'>
 			<Group justify='space-between' align='center'>
 				<Text fw={500} size='sm'>
-					Column Mapping
+					{t('form.contacts.mapping.title')}
 				</Text>
 				<Badge
 					size='sm'
@@ -99,12 +101,13 @@ function ColumnMappingCard({
 				<Group justify='space-between' align='center'>
 					<Stack gap={4}>
 						<Text size='xs' c='dimmed'>
-							Click to configure field mappings
+							{t('form.contacts.mapping.clickToConfigure')}
 						</Text>
 						{!isAllMapped && (
 							<Text size='xs' c='orange' fw={500}>
-								{totalColumns - mappedColumnsCount} unmapped{' '}
-								{totalColumns - mappedColumnsCount === 1 ? 'column' : 'columns'}
+								{t('form.contacts.mapping.unmapped', {
+									count: totalColumns - mappedColumnsCount,
+								})}
 							</Text>
 						)}
 					</Stack>

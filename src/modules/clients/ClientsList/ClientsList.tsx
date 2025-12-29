@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Alert, Center, Loader, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import BaseTable from '~/components/BaseTable';
 import { useGetAllClients } from '~/queries/clientQueries';
 import type { ClientModel } from '~/models/ClientModel';
@@ -18,6 +19,7 @@ const ClientsList: React.FC<ClientsListProps> = ({
 	onEdit,
 	onDelete,
 }) => {
+	const { t } = useTranslation('clients');
 	const { data: clients, isLoading, isError, error } = useGetAllClients();
 
 	const columns = useClientsColumns({ onEdit, onDelete });
@@ -47,9 +49,9 @@ const ClientsList: React.FC<ClientsListProps> = ({
 			<Alert
 				icon={<IconInfoCircle size={18} />}
 				color='red'
-				title='Unable to load clients'
+				title={t('list.error.title')}
 			>
-				{error instanceof Error ? error.message : 'Unknown error'}
+				{error instanceof Error ? error.message : t('errors.unknownError')}
 			</Alert>
 		);
 	}
@@ -58,7 +60,7 @@ const ClientsList: React.FC<ClientsListProps> = ({
 		return (
 			<Center>
 				<Text size='sm' c='dimmed'>
-					No clients found.
+					{t('list.empty')}
 				</Text>
 			</Center>
 		);

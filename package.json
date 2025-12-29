@@ -13,8 +13,8 @@
 		"lint:fix": "prettier --write . && npm run typecheck",
 		"prepare": "husky",
 		"version:increment": "node scripts/increment-version.cjs",
-		"test": "vitest run --coverage --coverage.reporter=text-summary --silent",
-		"test:watch": "vitest --coverage --coverage.reporter=text-summary --silent",
+		"test": "vitest run --coverage --coverage.reporter=text-summary --silent=true",
+		"test:watch": "vitest --coverage --coverage.reporter=text-summary --silent=true",
 		"coverage:full": "vitest run --coverage",
 		"coverage:light": "vitest run --coverage --coverage.reporter=text-summary",
 		"coverage": "VALID_COVERAGE_ONLY=true vitest run --coverage --coverage.reporter=text"
@@ -39,6 +39,7 @@
 		"diff": "^8.0.2",
 		"i18next": "^25.7.3",
 		"i18next-browser-languagedetector": "^8.2.0",
+		"i18next-resources-to-backend": "^1.2.1",
 		"jwt-decode": "^4.0.0",
 		"react": "^19.2.1",
 		"react-arborist": "^3.4.3",

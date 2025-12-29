@@ -23,6 +23,7 @@ import dayjs from 'dayjs';
 import styles from './KnowledgeBaseList.module.css';
 import type { UseMutationResult } from '@tanstack/react-query';
 import type React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const truncate = (s: string | undefined, n = 80) =>
 	s && s.length > n ? s.slice(0, n - 1) + '…' : s || '';
@@ -50,13 +51,15 @@ export const useKnowledgeBaseColumns = (
 	refetch: () => Promise<unknown>,
 	{ canUpdate, canDelete }: PermissionFlags
 ) => {
+	const { t } = useTranslation('knowledge-bases');
+
 	const columnHelper = createColumnHelper<KnowledgeBaseModel>();
 
 	const columns = useMemo<Array<ColumnDef<KnowledgeBaseModel, unknown>>>(
 		() => [
 			columnHelper.accessor('name', {
 				id: 'name',
-				header: 'Name',
+				header: t('columns.name'),
 				cell: ({ row }) => {
 					const item = row.original;
 					const nameText = (
@@ -76,7 +79,7 @@ export const useKnowledgeBaseColumns = (
 			}),
 			columnHelper.accessor('type', {
 				id: 'type',
-				header: 'Type',
+				header: t('columns.type'),
 				cell: ({ getValue }) => {
 					const type = getValue() as KnowledgeBaseType;
 					return (
@@ -100,7 +103,7 @@ export const useKnowledgeBaseColumns = (
 								)
 							}
 						>
-							{type}
+							{t(`type.${type}`)}
 						</Badge>
 					);
 				},
@@ -108,7 +111,7 @@ export const useKnowledgeBaseColumns = (
 			}),
 			columnHelper.accessor('status', {
 				id: 'status',
-				header: 'Status',
+				header: t('columns.status'),
 				cell: ({ row }) => {
 					const item = row.original;
 					const status = item.status;
@@ -122,7 +125,7 @@ export const useKnowledgeBaseColumns = (
 								size='sm'
 								leftSection={<StatusIcon size={12} />}
 							>
-								{status}
+								{t(`status.${status}`)}
 							</Badge>
 							{item.uploadError && (
 								<Tooltip
@@ -152,7 +155,7 @@ export const useKnowledgeBaseColumns = (
 			}),
 			columnHelper.accessor('createdAt', {
 				id: 'createdAt',
-				header: 'Created At',
+				header: t('columns.createdAt'),
 				cell: ({ getValue }) => (
 					<Text size='sm' c='dimmed'>
 						{formatDate(getValue())}
@@ -162,7 +165,7 @@ export const useKnowledgeBaseColumns = (
 			}),
 			columnHelper.display({
 				id: 'actions',
-				header: 'Actions',
+				header: t('columns.actions'),
 				cell: ({ row }) => {
 					const item = row.original;
 					return (
@@ -175,8 +178,8 @@ export const useKnowledgeBaseColumns = (
 								<Tooltip
 									label={
 										item.type === KnowledgeBaseType.URL
-											? 'Open URL'
-											: 'Download file'
+											? t('table.actions.openUrl')
+											: t('table.actions.downloadFile')
 									}
 									position='top'
 								>
@@ -184,8 +187,8 @@ export const useKnowledgeBaseColumns = (
 										component='a'
 										aria-label={
 											item.type === KnowledgeBaseType.URL
-												? 'Open URL'
-												: 'Download file'
+												? t('table.actions.openUrl')
+												: t('table.actions.downloadFile')
 										}
 										href={
 											(item.file?.repositoryRoute as string) ||
@@ -207,10 +210,13 @@ export const useKnowledgeBaseColumns = (
 							{canUpdate &&
 								(item.status === KnowledgeBaseStatus.FAILED ||
 									!!item.uploadError) && (
-									<Tooltip label='Retry upload' position='top'>
+									<Tooltip
+										label={t('table.actions.retryUpload')}
+										position='top'
+									>
 										<ActionIcon
 											size='sm'
-											aria-label='Retry upload'
+											aria-label={t('table.actions.retryUpload')}
 											onClick={async () => {
 												try {
 													await retryMutation.mutateAsync(Number(item.id));
@@ -228,13 +234,13 @@ export const useKnowledgeBaseColumns = (
 								)}
 
 							{canUpdate && (
-								<Tooltip label='Edit knowledge base' position='top'>
+								<Tooltip label={t('table.actions.edit')} position='top'>
 									<ActionIcon
 										onClick={() =>
 											setRight(<KnowledgeBaseForm id={Number(item.id)} />)
 										}
 										size='sm'
-										aria-label='Edit knowledge base'
+										aria-label={t('table.actions.edit')}
 									>
 										<IconEdit size={16} />
 									</ActionIcon>
@@ -242,15 +248,18 @@ export const useKnowledgeBaseColumns = (
 							)}
 
 							{canDelete && (
-								<Tooltip label='Delete knowledge base' position='top'>
+								<Tooltip label={t('table.actions.delete')} position='top'>
 									<ActionIcon
 										color='red'
-										aria-label='Delete knowledge base'
+										aria-label={t('table.actions.delete')}
 										onClick={() =>
 											openConfirmModal({
-												title: 'Delete Knowledge Base',
-												children: `Are you sure you want to delete "${item.name}"? This action cannot be undone.`,
-												labels: { confirm: 'Delete', cancel: 'Cancel' },
+												title: t('deleteKnowledgeBase'),
+												children: t('confirmDelete.body', { name: item.name }),
+												labels: {
+													confirm: t('actions.delete', { ns: 'common' }),
+													cancel: t('actions.cancel', { ns: 'common' }),
+												},
 												confirmProps: { color: 'red' },
 												onConfirm: () => deleteMutation.mutate(Number(item.id)),
 											})
@@ -271,7 +280,7 @@ export const useKnowledgeBaseColumns = (
 				},
 			}),
 		],
-		[retryMutation, deleteMutation, setRight, refetch, canUpdate, canDelete]
+		[t, retryMutation, deleteMutation, setRight, refetch, canUpdate, canDelete]
 	);
 
 	return columns;

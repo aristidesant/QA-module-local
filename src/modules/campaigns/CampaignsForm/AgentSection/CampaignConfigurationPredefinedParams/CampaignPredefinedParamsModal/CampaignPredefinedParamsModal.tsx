@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Modal, Stack, Select, Group, Button } from '@mantine/core';
 import { CampaignPredefinedParam } from '../../../useCampaignsPredefinedParams';
+import { useTranslation } from 'react-i18next';
 
 interface CampaignPredefinedParamsModalProps {
 	opened: boolean;
@@ -13,6 +14,7 @@ interface CampaignPredefinedParamsModalProps {
 const CampaignPredefinedParamsModal: React.FC<
 	CampaignPredefinedParamsModalProps
 > = ({ opened, onClose, predefinedParams, initialSelectionName, onApply }) => {
+	const { t } = useTranslation('campaigns');
 	const [selectionName, setSelectionName] = useState<string | null>(
 		initialSelectionName
 	);
@@ -47,14 +49,14 @@ const CampaignPredefinedParamsModal: React.FC<
 		<Modal
 			opened={opened}
 			onClose={onClose}
-			title='Configuration Preview'
+			title={t('form.agent.behavior.modal.title')}
 			centered
 			size='xs'
 		>
 			<Stack gap='md'>
 				<Select
-					label='Select a predefined parameter set'
-					placeholder='Choose a configuration'
+					label={t('form.agent.behavior.modal.label')}
+					placeholder={t('form.agent.behavior.modal.placeholder')}
 					data={predefinedParams.map((param) => ({
 						value: param.name,
 						label: param.name,
@@ -67,10 +69,10 @@ const CampaignPredefinedParamsModal: React.FC<
 
 				<Group justify='flex-end' gap='sm'>
 					<Button variant='default' onClick={onClose}>
-						Cancel
+						{t('form.agent.behavior.modal.actions.cancel')}
 					</Button>
 					<Button onClick={handleApply} disabled={!previewConfig}>
-						Apply
+						{t('form.agent.behavior.modal.actions.apply')}
 					</Button>
 				</Group>
 			</Stack>

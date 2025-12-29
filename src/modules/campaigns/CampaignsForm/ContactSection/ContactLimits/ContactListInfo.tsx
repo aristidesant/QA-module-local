@@ -21,6 +21,7 @@ import {
 	IconAlertCircle,
 } from '@tabler/icons-react';
 import { DatePicker } from '@mantine/dates';
+import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import classes from './ContactListInfo.module.css';
 import dayjs from 'dayjs';
@@ -50,6 +51,7 @@ export function ContactListInfo({
 	onNameChange,
 	readonly = false,
 }: ContactListInfoProps) {
+	const { t } = useTranslation('campaigns');
 	const [opened, setOpened] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
 	const [editedName, setEditedName] = useState(listName);
@@ -81,10 +83,10 @@ export function ContactListInfo({
 		setIsEditing(false);
 	};
 
-	const handleKeyDown = (e: React.KeyboardEvent) => {
-		if (e.key === 'Enter') {
+	const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+		if (event.key === 'Enter') {
 			handleNameSave();
-		} else if (e.key === 'Escape') {
+		} else if (event.key === 'Escape') {
 			handleCancelEdit();
 		}
 	};
@@ -133,7 +135,9 @@ export function ContactListInfo({
 							fw={600}
 							lh={1.2}
 						>
-							{hasName ? 'Contact List Name' : 'Name Required'}
+							{hasName
+								? t('form.contacts.info.nameLabel')
+								: t('form.contacts.info.nameRequired')}
 						</Text>
 						{isEditing ? (
 							<Group gap='xs' align='center' mt={4}>
@@ -147,15 +151,15 @@ export function ContactListInfo({
 												.slice(0, 50)
 										)
 									}
-									onKeyDown={handleKeyDown}
-									placeholder='e.g. Q4 Marketing Leads, Support Follow-ups...'
-									description='Allowed characters: A-Z, a-z, 0-9, spaces, and hyphens. Minimum 3 characters. Maximum 50 characters.'
+									placeholder={t('form.contacts.info.namePlaceholder')}
+									description={t('form.contacts.info.nameDescription')}
 									autoFocus
 									size='sm'
+									onKeyDown={handleKeyDown}
 									className={classes.nameInput}
 									maxLength={50}
 								/>
-								<Tooltip label='Save'>
+								<Tooltip label={t('save', { ns: 'common' })}>
 									<ActionIcon
 										variant='light'
 										color='green'
@@ -168,7 +172,7 @@ export function ContactListInfo({
 										<IconCheck size={14} />
 									</ActionIcon>
 								</Tooltip>
-								<Tooltip label='Cancel'>
+								<Tooltip label={t('cancel', { ns: 'common' })}>
 									<ActionIcon
 										variant='light'
 										color='red'
@@ -185,7 +189,7 @@ export function ContactListInfo({
 									{listName}
 								</Text>
 								{onNameChange && !readonly && (
-									<Tooltip label='Edit name'>
+									<Tooltip label={t('form.contacts.info.editName')}>
 										<ActionIcon
 											variant='subtle'
 											size='xs'
@@ -204,7 +208,7 @@ export function ContactListInfo({
 								onClick={() => !readonly && onNameChange && setIsEditing(true)}
 							>
 								<Text className={classes.placeholderText}>
-									Click to add a name for this contact list
+									{t('form.contacts.info.clickToAddName')}
 								</Text>
 							</Box>
 						)}
@@ -241,8 +245,8 @@ export function ContactListInfo({
 								onClick={() => setOpened((o) => !o)}
 							>
 								{expirationDate
-									? `Expires: ${formatExpirationDate(expirationDate)}`
-									: 'Add expiration date'}
+									? `${t('form.contacts.info.expires')}: ${formatExpirationDate(expirationDate)}`
+									: t('form.contacts.info.addExpiration')}
 							</Button>
 						</Popover.Target>
 						<Popover.Dropdown>
@@ -272,15 +276,15 @@ export function ContactListInfo({
 								<Text size='xs' c='dimmed'>
 									{expirationDate &&
 									dayjs(expirationDate).isBefore(dayjs().startOf('day'), 'day')
-										? 'Selected date is in the past'
-										: 'Select an expiration date'}
+										? t('form.contacts.info.dateInPast')
+										: t('form.contacts.info.selectExpiration')}
 								</Text>
 								<Button
 									variant='subtle'
 									size='xs'
 									onClick={() => setOpened(false)}
 								>
-									Close
+									{t('actions.close', { ns: 'common' })}
 								</Button>
 							</Group>
 						</Popover.Dropdown>

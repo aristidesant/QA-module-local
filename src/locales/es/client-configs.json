@@ -1,0 +1,135 @@
+{
+	"page": {
+		"title": "Configuraciones del cliente",
+		"description": "Administra los ajustes de configuración del cliente",
+		"actions": {
+			"create": "Crear configuración"
+		}
+	},
+	"filters": {
+		"title": "Filtros",
+		"active": "Activos",
+		"search": {
+			"placeholder": "Buscar por nombre o descripción..."
+		},
+		"type": {
+			"placeholder": "Todos los tipos",
+			"options": {
+				"all": "Todos los tipos"
+			}
+		},
+		"sort": {
+			"placeholder": "Ordenar por",
+			"options": {
+				"nameAsc": "Nombre A-Z",
+				"nameDesc": "Nombre Z-A",
+				"descriptionAsc": "Descripción A-Z",
+				"descriptionDesc": "Descripción Z-A",
+				"typeAsc": "Tipo A-Z",
+				"typeDesc": "Tipo Z-A",
+				"updatedAtDesc": "Actualizadas recientemente",
+				"updatedAtAsc": "Actualizadas más antiguas"
+			}
+		},
+		"actions": {
+			"clear": "Limpiar filtros"
+		}
+	},
+	"table": {
+		"columns": {
+			"name": "Nombre",
+			"description": "Descripción",
+			"type": "Tipo",
+			"value": "Valor",
+			"updatedAt": "Última actualización",
+			"actions": "Acciones"
+		},
+		"tooltips": {
+			"edit": "Editar configuración",
+			"delete": "Eliminar configuración"
+		}
+	},
+	"content": {
+		"empty": {
+			"message": "No se encontraron configuraciones",
+			"description": "Comienza creando tu primera configuración de cliente",
+			"action": "Crear configuración",
+			"modalTitle": "Crear configuración de cliente"
+		},
+		"noResults": {
+			"title": "Ninguna configuración coincide con tus filtros",
+			"description": "Intenta ajustar tu búsqueda o filtros"
+		},
+		"modal": {
+			"createTitle": "Crear configuración de cliente",
+			"editTitle": "Editar configuración de cliente",
+			"deleteTitle": "Eliminar configuración",
+			"deleteConfirm": "¿Seguro que deseas eliminar la configuración {{name}}? Esta acción no se puede deshacer."
+		},
+		"notifications": {
+			"deleteSuccessTitle": "Éxito",
+			"deleteSuccessMessage": "Configuración eliminada correctamente",
+			"deleteErrorTitle": "Error",
+			"deleteErrorMessage": "No se pudo eliminar la configuración"
+		},
+		"paginationLabel": "configuraciones"
+	},
+	"form": {
+		"details": {
+			"title": "Detalles de configuración",
+			"description": "Configura la información básica de esta configuración"
+		},
+		"value": {
+			"title": "Valor de configuración",
+			"descriptionDefault": "Ingresa el valor de la configuración",
+			"descriptionJson": "Ingresa JSON válido que se autoformateará"
+		},
+		"fields": {
+			"name": {
+				"label": "Nombre",
+				"placeholder": "contact_columns",
+				"descriptionCreate": "Usa solo letras minúsculas, números y guiones bajos",
+				"descriptionEdit": "El nombre no se puede cambiar",
+				"required": "El nombre es obligatorio",
+				"invalid": "El nombre solo puede contener letras minúsculas, números y guiones bajos"
+			},
+			"description": {
+				"label": "Descripción",
+				"placeholder": "Breve descripción de la configuración",
+				"required": "La descripción es obligatoria"
+			},
+			"type": {
+				"label": "Tipo",
+				"placeholder": "Selecciona el tipo de configuración",
+				"required": "El tipo es obligatorio",
+				"options": {
+					"string": "Cadena",
+					"number": "Número",
+					"boolean": "Booleano",
+					"json": "JSON",
+					"array": "Arreglo"
+				}
+			},
+			"value": {
+				"label": "Valor",
+				"placeholderDefault": "Ingresa el valor de la configuración",
+				"placeholderJson": "{\"key\": \"value\"}",
+				"required": "El valor es obligatorio",
+				"invalidJson": "Formato JSON inválido"
+			}
+		},
+		"actions": {
+			"cancel": "Cancelar",
+			"create": "Crear configuración",
+			"update": "Actualizar configuración"
+		},
+		"notifications": {
+			"createSuccessTitle": "Éxito",
+			"createSuccessMessage": "Configuración creada correctamente",
+			"updateSuccessTitle": "Éxito",
+			"updateSuccessMessage": "Configuración actualizada correctamente",
+			"errorTitle": "Error",
+			"errorMessage": "No se pudo {{action}} la configuración"
+		}
+	}
+}

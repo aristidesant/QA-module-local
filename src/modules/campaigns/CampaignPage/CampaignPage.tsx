@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Alert, Flex, Loader } from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { CampaignsForm } from '../CampaignsForm/CampaignsForm';
 import { useGetCampaign } from '~/queries/campaignsQueries';
@@ -12,6 +13,7 @@ import AccessDenied from '~/components/AccessDenied';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 
 const CampaignPage = () => {
+	const { t } = useTranslation(['campaign.detail', 'common']);
 	const { campaignId } = useParams<{ campaignId: string }>();
 	const navigate = useNavigate();
 
@@ -74,8 +76,8 @@ const CampaignPage = () => {
 	if (isLoading) {
 		return (
 			<ContentContainer
-				title='Loading Campaign...'
-				description='Please wait while we fetch the campaign details.'
+				title={t('page.loadingTitle')}
+				description={t('page.loadingDescription')}
 			>
 				<Flex justify='center' align='center' style={{ minHeight: '400px' }}>
 					<Loader size='lg' />
@@ -87,20 +89,18 @@ const CampaignPage = () => {
 	if (isError || !campaign) {
 		return (
 			<ContentContainer
-				title='Campaign Unavailable'
-				description='We could not find the campaign you are looking for.'
+				title={t('page.errorTitle')}
+				description={t('page.errorDescription')}
 				showBackButton
 				onBackClick={() => navigate('/campaigns')}
 			>
 				<Alert
 					icon={<IconAlertCircle size={16} />}
-					title='Error'
+					title={t('status.error', { ns: 'common' })}
 					color='red'
 					variant='light'
 				>
-					{error instanceof Error
-						? error.message
-						: 'Campaign not found or failed to load.'}
+					{error instanceof Error ? error.message : t('page.notFound')}
 				</Alert>
 			</ContentContainer>
 		);

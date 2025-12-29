@@ -20,6 +20,7 @@ import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunction
 import ToolConfigModal from './ToolConfigModal';
 import classes from './CampaignConfigurationSystemTools.module.css';
 import { snakeToCamel } from '~/utils/stringUtils';
+import { useTranslation } from 'react-i18next';
 
 type ToolConfigModel = {
 	name: string;
@@ -29,6 +30,7 @@ type ToolConfigModel = {
 };
 
 const CampaignConfigurationSystemTools: React.FC = () => {
+	const { t } = useTranslation('campaigns');
 	const form = useCampaignFormContext();
 	const { data: systemToolsConfig } = useClientConfigByName('system_tools');
 	const [editingTool, setEditingTool] = useState<ToolConfigModel | null>(null);
@@ -168,13 +170,13 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 	return (
 		<>
 			<SectionCard
-				title='System Tools'
-				description='Configure system-related settings for the campaign.'
+				title={t('form.agent.systemTools.title')}
+				description={t('form.agent.systemTools.description')}
 			>
 				<Stack gap='xs'>
 					{configList.length === 0 ? (
 						<Text size='sm' c='dimmed'>
-							No system tools configured.
+							{t('form.agent.systemTools.noTools')}
 						</Text>
 					) : (
 						configList.map((toolConfig) => {
@@ -210,21 +212,25 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 													</Badge>
 												</Group>
 												<Text size='xs' className={classes.toolMeta}>
-													System utility
+													{t('form.agent.systemTools.systemUtility')}
 												</Text>
 											</div>
 										</Group>
 
 										<Group gap='xs' className={classes.toolActions}>
 											<Switch
-												aria-label={`Toggle ${toolConfig.name}`}
+												aria-label={t('form.agent.systemTools.toggleAria', {
+													name: toolConfig.name,
+												})}
 												checked={selected}
 												onChange={() => handleToggle(toolConfig, selected)}
 												size='sm'
 											/>
 											<Tooltip
 												label={
-													selected ? 'Configure tool' : 'Enable to configure'
+													selected
+														? t('form.agent.systemTools.configure')
+														: t('form.agent.systemTools.enableToConfigure')
 												}
 												withArrow
 											>
@@ -249,7 +255,8 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 										c='dimmed'
 										className={classes.toolDescription}
 									>
-										{toolConfig.description || 'No description available'}
+										{toolConfig.description ||
+											t('form.agent.systemTools.noDescription')}
 									</Text>
 								</div>
 							);

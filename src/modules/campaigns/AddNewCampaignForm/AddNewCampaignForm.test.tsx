@@ -6,8 +6,14 @@ import { AddNewCampaignForm } from './AddNewCampaignForm';
 import { notifications } from '@mantine/notifications';
 
 // Mock child components to isolate form logic
+
+type MockAgentVoiceSelectorProps = {
+	onSelect: (voice: { voice: { id: string } }) => void;
+	selectedVoiceId?: string;
+};
+
 vi.mock('./AgentVoiceSelector', () => ({
-	default: ({ onSelect, selectedVoiceId }: any) => (
+	default: ({ onSelect, selectedVoiceId }: MockAgentVoiceSelectorProps) => (
 		<div>
 			<button
 				type='button'
@@ -22,21 +28,26 @@ vi.mock('./AgentVoiceSelector', () => ({
 }));
 
 let autoSelectPhone = false;
+
+type MockPhoneNumberSelectorProps = {
+	onChange?: (value: number | null) => void;
+	value: number | null;
+};
+
 vi.mock('./PhoneNumberSelector', () => ({
-	default: ({ onChange, value }: any) => {
-		// Auto-select behavior for tests when asked to
-		if (autoSelectPhone && !value) {
-			// eslint-disable-next-line react-hooks/rules-of-hooks
-			React.useEffect(() => {
+	default: ({ onChange, value }: MockPhoneNumberSelectorProps) => {
+		React.useEffect(() => {
+			// Auto-select behavior for tests when asked to
+			if (autoSelectPhone && !value) {
 				onChange?.(10);
-			}, []);
-		}
+			}
+		}, [onChange, value]);
 		return (
 			<div>
 				<button
 					type='button'
 					data-testid='select-phone'
-					onClick={() => onChange(10)}
+					onClick={() => onChange?.(10)}
 				>
 					Select phone
 				</button>
@@ -124,7 +135,7 @@ describe('AddNewCampaignForm', () => {
 		const onCancel = vi.fn();
 		renderWithProviders(<AddNewCampaignForm onCancel={onCancel} />);
 
-		fireEvent.click(screen.getByRole('button', { name: /Cancel/i }));
+		fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
 		expect(onCancel).toHaveBeenCalled();
 	});
 
@@ -157,7 +168,9 @@ describe('AddNewCampaignForm', () => {
 		fireEvent.click(screen.getByTestId('select-phone'));
 
 		// Submit the form
-		const createBtn = screen.getByRole('button', { name: /Create Campaign/i });
+		const createBtn = screen.getByRole('button', {
+			name: 'Create Campaign',
+		});
 		await waitFor(() => expect(createBtn).not.toBeDisabled());
 		fireEvent.click(createBtn);
 
@@ -200,7 +213,9 @@ describe('AddNewCampaignForm', () => {
 		fireEvent.click(screen.getByTestId('select-voice'));
 		fireEvent.click(screen.getByTestId('select-phone'));
 
-		const createBtn = screen.getByRole('button', { name: /Create Campaign/i });
+		const createBtn = screen.getByRole('button', {
+			name: 'Create Campaign',
+		});
 		await waitFor(() => expect(createBtn).not.toBeDisabled());
 		fireEvent.click(createBtn);
 
@@ -235,7 +250,9 @@ describe('AddNewCampaignForm', () => {
 		fireEvent.click(screen.getByTestId('select-voice'));
 		fireEvent.click(screen.getByTestId('select-phone'));
 
-		const createBtn = screen.getByRole('button', { name: /Create Campaign/i });
+		const createBtn = screen.getByRole('button', {
+			name: 'Create Campaign',
+		});
 		await waitFor(() => expect(createBtn).not.toBeDisabled());
 		fireEvent.click(createBtn);
 
@@ -245,7 +262,9 @@ describe('AddNewCampaignForm', () => {
 	it('create button is disabled when no phone selected', () => {
 		renderWithProviders(<AddNewCampaignForm />);
 
-		const createBtn = screen.getByRole('button', { name: /Create Campaign/i });
+		const createBtn = screen.getByRole('button', {
+			name: 'Create Campaign',
+		});
 		expect(createBtn).toBeDisabled();
 	});
 
@@ -268,7 +287,9 @@ describe('AddNewCampaignForm', () => {
 		await waitFor(() =>
 			expect(screen.getByTestId('selected-phone-id')).toHaveTextContent('10')
 		);
-		const createBtn = screen.getByRole('button', { name: /Create Campaign/i });
+		const createBtn = screen.getByRole('button', {
+			name: 'Create Campaign',
+		});
 		await waitFor(() => expect(createBtn).not.toBeDisabled());
 	});
 
@@ -308,7 +329,9 @@ describe('AddNewCampaignForm', () => {
 		);
 
 		// Submit
-		const createBtn = screen.getByRole('button', { name: /Create Campaign/i });
+		const createBtn = screen.getByRole('button', {
+			name: 'Create Campaign',
+		});
 		await waitFor(() => expect(createBtn).not.toBeDisabled());
 		fireEvent.click(createBtn);
 
@@ -368,7 +391,9 @@ describe('AddNewCampaignForm', () => {
 		fireEvent.click(option);
 
 		// Submit
-		const createBtn = screen.getByRole('button', { name: /Create Campaign/i });
+		const createBtn = screen.getByRole('button', {
+			name: 'Create Campaign',
+		});
 		await waitFor(() => expect(createBtn).not.toBeDisabled());
 		fireEvent.click(createBtn);
 
@@ -405,7 +430,9 @@ describe('AddNewCampaignForm', () => {
 		fireEvent.click(screen.getByTestId('select-voice'));
 		fireEvent.click(screen.getByTestId('select-phone'));
 
-		const createBtn = screen.getByRole('button', { name: /Create Campaign/i });
+		const createBtn = screen.getByRole('button', {
+			name: 'Create Campaign',
+		});
 		await waitFor(() => expect(createBtn).not.toBeDisabled());
 		fireEvent.click(createBtn);
 
@@ -433,7 +460,9 @@ describe('AddNewCampaignForm', () => {
 			expect(screen.getByTestId('selected-phone-id')).toHaveTextContent('10')
 		);
 
-		const createBtn = screen.getByRole('button', { name: /Create Campaign/i });
+		const createBtn = screen.getByRole('button', {
+			name: 'Create Campaign',
+		});
 		expect(createBtn).toBeDisabled();
 
 		// validation messages

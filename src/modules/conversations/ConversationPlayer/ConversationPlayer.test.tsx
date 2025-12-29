@@ -66,7 +66,9 @@ describe('ConversationPlayer', () => {
 		const playButton = screen.getByLabelText('Play');
 		expect(playButton).toBeInTheDocument();
 
-		const download = screen.getByRole('button', { name: /download audio/i });
+		const download = screen.getByRole('button', {
+			name: 'Download Audio',
+		});
 		expect(download).toBeInTheDocument();
 	});
 });

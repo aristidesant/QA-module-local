@@ -1,0 +1,194 @@
+{
+	"page": {
+		"loadingTitle": "Loading Campaign...",
+		"loadingDescription": "Please wait while we fetch the campaign details.",
+		"errorTitle": "Campaign Unavailable",
+		"errorDescription": "We could not find the campaign you are looking for.",
+		"notFound": "Campaign not found or failed to load."
+	},
+	"general": {
+		"title": "Basic Information",
+		"description": "Define the core details of your campaign to ensure clarity and easy identification.",
+		"campaignName": "Campaign Name",
+		"enterCampaignName": "Enter campaign name",
+		"descriptionLabel": "Description",
+		"describeYourCampaign": "Describe your campaign",
+		"campaignObjective": "Campaign Objective",
+		"campaignObjectiveDesc": "Choose the main objective this campaign aims to achieve",
+		"loadingObjectives": "Loading objectives...",
+		"selectObjective": "Select an objective for this campaign",
+		"failedToLoadObjectives": "Failed to load objectives",
+		"createNewObjective": "Create new objective",
+		"createObjectiveTitle": "Create Campaign Objective",
+		"defaultWaves": "Default Waves",
+		"defaultWavesDesc": "How many waves should each new contact list run before stopping",
+		"enterNumberOfWaves": "Enter the number of waves"
+	},
+	"form": {
+		"title": {
+			"edit": "Editing Campaign: {{name}}"
+		},
+		"description": "Manage your campaign configuration and settings.",
+		"notifications": {
+			"warningTitle": "Warning",
+			"objectiveAssignmentFailed": "Campaign saved but objective assignment failed.",
+			"successCreated": "Campaign Created",
+			"successCreatedMessage": "Your campaign has been successfully created.",
+			"successUpdated": "Campaign Updated",
+			"successUpdatedMessage": "Your campaign has been successfully updated.",
+			"errorCreate": "Failed to create campaign. Please try again.",
+			"errorUpdate": "Failed to update campaign. Please try again."
+		},
+		"validation": {
+			"nameRequired": "Name is required",
+			"typeRequired": "Type is required",
+			"statusRequired": "Status is required",
+			"budgetMin": "Budget must be 0 or more",
+			"spentMin": "Spent must be 0 or more",
+			"userIdMin": "User ID must be 0 or more",
+			"clientIdMin": "Client ID must be 0 or more",
+			"defaultWavesMin": "Default waves must be at least 1",
+			"objectiveRequired": "Campaign Objective is required"
+		},
+		"agent": {
+			"prompt": {
+				"title": "Agent Prompt",
+				"description": "Define the instructions the agent will follow when speaking with contacts.",
+				"header": {
+					"editAria": "Edit prompt",
+					"collapseAria": "Collapse prompt",
+					"expandAria": "Expand prompt"
+				},
+				"previewTitle": "Prompt Preview",
+				"previewChars": "{{count}} characters",
+				"placeholder": "No prompt has been added yet. Edit to define agent tone, constraints, and example responses.",
+				"keepConcise": "Keep the prompt concise and actionable so the agent answers with confidence.",
+				"modal": {
+					"title": "Prompt Configuration",
+					"subtitle": "Configure prompts for each interaction type",
+					"types": "Types",
+					"selectPromptType": "Select a prompt type to start editing.",
+					"saveHint": "Save to apply prompts throughout this campaign.",
+					"editorDrafted": "Draft",
+					"editorNoChanges": "No changes"
+				},
+				"status": {
+					"drafted": "DRAFT",
+					"saved": "Saved",
+					"empty": "Empty"
+				}
+			},
+			"voice": {
+				"selectHint": "Select a voice for your agent and click save to apply changes.",
+				"noVoices": "No voices found",
+				"save": "Save Agent",
+				"saving": "Saving...",
+				"success": "Agent voice updated successfully",
+				"error": "Failed to update agent voice",
+				"pleaseSelectVoice": "Please select a voice",
+				"agentDataNotLoaded": "Agent data not loaded"
+			}
+		},
+		"contacts": {
+			"tabs": {
+				"active": "Active Lists",
+				"inactive": "Inactive Lists"
+			},
+			"title": "Contacts",
+			"description": "Information about the contacts in this campaign",
+			"list": {
+				"activeTitle": "Contact lists",
+				"inactiveTitle": "Inactive Contact Lists",
+				"activeDescription": "Displaying all active contact lists associated with this campaign.",
+				"inactiveDescription": "Displaying all inactive contact lists associated with this campaign.",
+				"addNewContactList": "Add new contact list",
+				"addInactiveContactList": "Add inactive contact list",
+				"reload": "Reload",
+				"reloadUnavailable": "Reload unavailable while collapsed",
+				"emptyMessage": "No contact lists available",
+				"emptyInactiveMessage": "No inactive contact lists available",
+				"configuration": "Contact List Configuration",
+				"configurationDescription": "Browse your existing contact lists or upload a new one to start reaching out.",
+				"selectActive": "Select Active Contact List",
+				"selectActiveDescription": "Select an active contact list to add as inactive for this campaign.",
+				"columns": {
+					"name": "Name",
+					"total": "Total",
+					"assigned": "Assigned",
+					"status": "Status",
+					"expiration": "Expiration",
+					"actions": "Actions"
+				}
+			}
+		}
+	},
+	"preview": {
+		"overview": {
+			"title": "Campaign overview",
+			"description": "Status and operational readiness",
+			"progress": "Progress",
+			"agent": "Agent",
+			"owner": "Owner",
+			"created": "Created",
+			"lastUpdated": "Last updated",
+			"notAssigned": "Not assigned",
+			"unknown": "Unknown",
+			"operationalHealth": "Operational Health",
+			"actions": {
+				"pause": "Pause",
+				"resume": "Resume",
+				"start": "Start",
+				"completed": "Completed",
+				"failed": "Failed"
+			},
+			"notifications": {
+				"success": "Success",
+				"campaignActioned": "Campaign {{action}} successfully",
+				"error": "Error",
+				"failedToAction": "Failed to {{action}} campaign",
+				"unavailable": "Unavailable",
+				"noContactList": "No contact list is available for this campaign. Add one before attempting to manage delivery."
+			}
+		},
+		"outcomeSummary": {
+			"title": "Outcome Summary",
+			"description": "Contact distribution by result.",
+			"refreshData": "Refresh data",
+			"backToOverview": "Back to overview",
+			"noData": "No outcome data available",
+			"noDataDescription": "Data will appear here once calls are made",
+			"todaysCalls": "Today's calls"
+		},
+		"parameters": {
+			"title": "Schedule",
+			"description": "Active dialing windows and call handling limits.",
+			"refreshParameters": "Refresh parameters",
+			"campaignCompleted": "Campaign is completed",
+			"activeWindows": "Active windows",
+			"day_one": "day",
+			"day_other": "days",
+			"callHandling": "Call handling",
+			"setting_one": "setting",
+			"setting_other": "settings",
+			"voicemailDetection": "Voicemail detection",
+			"callRetries": "Call retries",
+			"upToTimes": "Up to {{count}} times",
+			"maxConcurrentCalls": "Max concurrent calls",
+			"calls": "{{count}} calls",
+			"answerMachineDetection": "Answer machine detection",
+			"enabled": "Enabled",
+			"disabled": "Disabled",
+			"noSchedules": "No schedules or call handling rules configured for this campaign."
+		},
+		"assignedAgents": {
+			"title": "Assigned Agents",
+			"description": "These agents are currently linked to this campaign.",
+			"loadingAgent": "Loading agent",
+			"noAgents": "No agents assigned yet",
+			"noAgentsDescription": "Assign agents to start running campaigns"
+		},
+		"cleanQueue": {
+			"cleanQueueConfirm": "Clean Queue"
+		}
+	}
+}

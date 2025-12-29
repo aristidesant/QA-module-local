@@ -292,7 +292,7 @@ describe('PromptTypeAccordionItem', () => {
 				campaignId: 123,
 			});
 
-			expect(screen.getByText('3 lines)')).toBeInTheDocument();
+			expect(screen.getByText('(3 lines)')).toBeInTheDocument();
 		});
 
 		it('counts only non-empty lines', () => {
@@ -304,7 +304,7 @@ describe('PromptTypeAccordionItem', () => {
 				campaignId: 123,
 			});
 
-			expect(screen.getByText('3 lines)')).toBeInTheDocument();
+			expect(screen.getByText('(3 lines)')).toBeInTheDocument();
 		});
 
 		it('shows 0 lines when value is empty', () => {
@@ -315,7 +315,7 @@ describe('PromptTypeAccordionItem', () => {
 				campaignId: 123,
 			});
 
-			expect(screen.getByText('0 lines)')).toBeInTheDocument();
+			expect(screen.getByText('(0 lines)')).toBeInTheDocument();
 		});
 
 		it('shows 0 lines when value is undefined', () => {
@@ -326,7 +326,7 @@ describe('PromptTypeAccordionItem', () => {
 				campaignId: 123,
 			});
 
-			expect(screen.getByText('0 lines)')).toBeInTheDocument();
+			expect(screen.getByText('(0 lines)')).toBeInTheDocument();
 		});
 	});
 

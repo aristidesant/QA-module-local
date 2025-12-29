@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { Button, type ButtonProps } from '@mantine/core';
 import { IconRotateClockwise } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import { useCleanOutboundQueue } from '~/queries/outboundQueries';
 
 type CleanQueueButtonProps = {
@@ -32,6 +33,8 @@ const CleanQueueButton: React.FC<CleanQueueButtonProps> = ({
 		mutate({ campaignId, contactGroupId: contactGroupId! });
 	}, [campaignId, contactGroupId, isValid, mutate]);
 
+	const { t } = useTranslation('campaign.detail');
+
 	return (
 		<Button
 			leftSection={<IconRotateClockwise size={14} />}
@@ -43,7 +46,7 @@ const CleanQueueButton: React.FC<CleanQueueButtonProps> = ({
 			onClick={handleClick}
 			{...rest}
 		>
-			Clean Queue
+			{t('preview.cleanQueue.cleanQueueConfirm')}
 		</Button>
 	);
 };

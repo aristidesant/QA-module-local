@@ -9,6 +9,7 @@ import {
 	Title,
 } from '@mantine/core';
 import { IconPhone, IconX, IconStars } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import type AgentListObject from '~/models/AgentListObject';
 import { useStartDemoConversation } from '~/queries/conversationsQueries';
 import { notifications } from '@mantine/notifications';
@@ -38,6 +39,7 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
 	onClose,
 	loading = false,
 }) => {
+	const { t } = useTranslation();
 	const startDemoConversation = useStartDemoConversation();
 	const isSubmitting = startDemoConversation.isPending || loading;
 	const form = useForm<OutboundCallFormValues>({
@@ -51,23 +53,24 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
 			},
 		},
 		validate: {
-			agentId: (value) => (!value ? 'Agent is required' : null),
+			agentId: (value) =>
+				!value ? t('outboundCallForm.validation.agentRequired') : null,
 			phoneNumber: (value) => {
 				// Must start with +1, then 809, 829, or 849, then 7 digits
 				if (!/^\+1(809|829|849)\d{7}$/.test(value)) {
-					return 'Enter a valid number: +1 followed by 809, 829, or 849 and 7 digits (e.g., +18093336600)';
+					return t('outboundCallForm.validation.phoneInvalid');
 				}
 				return null;
 			},
 			...(campaignId && {
 				campaignId: (value: number | undefined) =>
-					!value ? 'Campaign is required' : null,
+					!value ? t('outboundCallForm.validation.campaignRequired') : null,
 			}),
 			dynamicVariables: {
 				customerName: (value: string) =>
-					!value ? 'Customer name is required' : null,
+					!value ? t('outboundCallForm.validation.customerNameRequired') : null,
 				customerId: (value: string) =>
-					!value ? 'Customer identifier is required' : null,
+					!value ? t('outboundCallForm.validation.customerIdRequired') : null,
 			},
 		},
 	});
@@ -84,15 +87,17 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
 				},
 			});
 			notifications.show({
-				title: 'Test Call Sent',
-				message: `A test call has been sent to ${values.phoneNumber}.`,
+				title: t('outboundCallForm.testCallSentTitle'),
+				message: t('outboundCallForm.testCallSentMsg', {
+					phone: values.phoneNumber,
+				}),
 				color: 'green',
 			});
 			onSuccess();
 		} catch (error) {
 			notifications.show({
-				title: 'Error',
-				message: 'Failed to start demo conversation. Please try again.',
+				title: t('outboundCallForm.startDemoErrorTitle'),
+				message: t('outboundCallForm.startDemoErrorMsg'),
 				color: 'red',
 			});
 			console.error('Error starting demo conversation:', error);
@@ -108,11 +113,9 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
 					<ThemeIcon radius={'lg'} variant='light' size={100}>
 						<IconStars size={60} />
 					</ThemeIcon>
-					<Title order={5}>Agent Call</Title>
+					<Title order={5}>{t('outboundCallForm.agentCallTitle')}</Title>
 					<Text ta={'center'} c='dimmed' size='sm'>
-						Experience a live call from your AI agent. Enter your phone number
-						and receive a demo to hear how your setup sounds in real
-						conversation.
+						{t('outboundCallForm.agentCallDesc')}
 					</Text>
 				</Stack>
 				<TextInput
@@ -128,7 +131,7 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
 					{...form.getInputProps('phoneNumber')}
 				/>
 				<TextInput
-					label='Customer Name'
+					label={t('outboundCallForm.customerName')}
 					placeholder='Lucas'
 					size='lg'
 					variant='filled'
@@ -136,7 +139,7 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
 					{...form.getInputProps('dynamicVariables.customerName')}
 				/>
 				<TextInput
-					label='Customer ID'
+					label={t('outboundCallForm.customerId')}
 					placeholder='1234'
 					size='lg'
 					variant='filled'
@@ -152,7 +155,9 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
 					disabled={!isValid || isSubmitting}
 					loading={isSubmitting}
 				>
-					{isSubmitting ? 'Calling...' : 'Request Demo Call'}
+					{isSubmitting
+						? t('outboundCallForm.calling')
+						: t('outboundCallForm.requestDemo')}
 				</Button>
 				<Button
 					variant='transparent'
@@ -162,7 +167,7 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
 					onClick={onClose}
 					type='button'
 				>
-					Cancel
+					{t('actions.cancel')}
 				</Button>
 			</Stack>
 		</form>

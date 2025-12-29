@@ -87,7 +87,11 @@ describe('FaultyPhonesAlert', () => {
 
 		expect(screen.getByText('Faulty Phone Numbers')).toBeInTheDocument();
 
-		await user.click(screen.getByRole('button', { name: 'View Details' }));
+		await user.click(
+			screen.getByRole('button', {
+				name: 'View Details',
+			})
+		);
 		expect(screen.getByTestId('faulty-modal')).toBeInTheDocument();
 	});
 
@@ -117,7 +121,11 @@ describe('FaultyPhonesAlert', () => {
 		const user = userEvent.setup();
 		renderWithProviders(<FaultyPhonesAlert contactGroupId={5} />);
 
-		await user.click(screen.getByRole('button', { name: 'View Details' }));
+		await user.click(
+			screen.getByRole('button', {
+				name: 'View Details',
+			})
+		);
 		expect(modalProps.opened).toBe(true);
 
 		await user.click(screen.getByRole('button', { name: 'AfterUpdate' }));

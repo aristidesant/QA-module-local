@@ -1,7 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
 import userEvent from '@testing-library/user-event';
 import KnowledgeBaseForm, {
 	isValidUrl,
@@ -9,6 +8,7 @@ import KnowledgeBaseForm, {
 	normalizeUrl,
 } from './KnowledgeBaseForm';
 import { KnowledgeBaseType } from '~/models/KnowledgeBaseModel';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 vi.mock('~/hooks/usePermissions', () => ({
 	usePermissions: () => ({
@@ -139,11 +139,7 @@ describe('KnowledgeBaseForm', () => {
 	});
 
 	const renderComponent = (props = {}) => {
-		return render(
-			<MantineProvider>
-				<KnowledgeBaseForm {...props} />
-			</MantineProvider>
-		);
+		return renderWithProviders(<KnowledgeBaseForm {...props} />);
 	};
 
 	// ===== Helper Functions Tests =====

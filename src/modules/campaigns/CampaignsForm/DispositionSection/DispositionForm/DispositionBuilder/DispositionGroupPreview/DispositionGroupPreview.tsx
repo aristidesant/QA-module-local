@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { Badge, Box, Group, Stack, Text } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import {
 	IconCircleOff,
 	IconFlag3,
@@ -50,13 +51,17 @@ export const collectNodeStats = (
 	return stats;
 };
 
-export const renderNode = (
-	current: DispositionNode,
-	level: number = 0
-): React.ReactNode => {
+export const NodeItem: React.FC<{
+	current: DispositionNode;
+	level?: number;
+}> = ({ current, level = 0 }) => {
+	const { t } = useTranslation('campaigns');
 	const nodeStyle = getNodeStyle(current, level);
 	const childCount = current.children?.length ?? 0;
-	const badgeLabel = level === 0 ? 'Root group' : `Level ${level}`;
+	const badgeLabel =
+		level === 0
+			? t('disposition.groupPreview.rootGroup')
+			: t('disposition.groupPreview.level', { level });
 
 	return (
 		<li key={current.id} className={styles.nodeItem}>
@@ -82,10 +87,10 @@ export const renderNode = (
 						</Text>
 						<Text size='xs' c='dimmed' className={styles.nodeMeta}>
 							{childCount > 0
-								? `${childCount} ${
-										childCount === 1 ? 'linked outcome' : 'linked outcomes'
-									}`
-								: 'Leaf outcome'}
+								? t('disposition.groupPreview.linkedOutcomes', {
+										count: childCount,
+									})
+								: t('disposition.groupPreview.leafOutcome')}
 						</Text>
 					</Box>
 					<Badge color='gray' variant='light' size='xs'>
@@ -102,17 +107,17 @@ export const renderNode = (
 				<Group gap='xs' wrap='wrap' className={styles.nodeBadges}>
 					{current.requiresReschedule ? (
 						<Badge color='orange' variant='light' size='xs'>
-							Requires reschedule
+							{t('disposition.nodeForm.badges.reschedule')}
 						</Badge>
 					) : null}
 					{current.isInvalidatesNumber ? (
 						<Badge color='red' variant='light' size='xs'>
-							Do not retry
+							{t('disposition.nodeForm.badges.noRetry')}
 						</Badge>
 					) : null}
 					{current.isFinal ? (
 						<Badge color='green' variant='light' size='xs'>
-							Final outcome
+							{t('disposition.nodeForm.badges.final')}
 						</Badge>
 					) : null}
 				</Group>
@@ -120,7 +125,9 @@ export const renderNode = (
 
 			{current.children && current.children.length > 0 ? (
 				<ul className={styles.nodeChildren}>
-					{current.children.map((child) => renderNode(child, level + 1))}
+					{current.children.map((child) => (
+						<NodeItem key={child.id} current={child} level={level + 1} />
+					))}
 				</ul>
 			) : null}
 		</li>
@@ -130,37 +137,36 @@ export const renderNode = (
 const DispositionGroupPreview: React.FC<DispositionGroupPreviewProps> = ({
 	node,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const stats = useMemo(() => collectNodeStats(node), [node]);
 	const totalLevels = stats.depth + 1;
 
 	const statItems = [
 		{
-			label: 'Total nodes',
+			label: t('disposition.groupPreview.stats.total'),
 			value: stats.total,
 			icon: <IconHierarchy3 size={16} stroke={1.6} />,
 			iconClassName: styles.statIconPrimary,
 		},
 		{
-			label: 'Final outcomes',
+			label: t('disposition.groupPreview.stats.final'),
 			value: stats.final,
 			icon: <IconFlag3 size={16} stroke={1.6} />,
 			iconClassName: styles.statIconSuccess,
 		},
 		{
-			label: 'Reschedule',
+			label: t('disposition.groupPreview.stats.reschedule'),
 			value: stats.reschedule,
 			icon: <IconRepeat size={16} stroke={1.6} />,
 			iconClassName: styles.statIconWarning,
 		},
 		{
-			label: 'Do not retry',
+			label: t('disposition.groupPreview.stats.noRetry'),
 			value: stats.blocked,
 			icon: <IconCircleOff size={16} stroke={1.6} />,
 			iconClassName: styles.statIconDanger,
 		},
 	];
-
-	// use top-level renderNode helper
 
 	return (
 		<Stack gap='sm' className={styles.previewContainer}>
@@ -172,9 +178,10 @@ const DispositionGroupPreview: React.FC<DispositionGroupPreviewProps> = ({
 					</Text>
 				</Group>
 				<Text size='xs' c='dimmed' className={styles.headerDescription}>
-					{`${stats.total} ${
-						stats.total === 1 ? 'node' : 'nodes'
-					} across ${totalLevels} ${totalLevels === 1 ? 'level' : 'levels'}.`}
+					{t('disposition.groupPreview.stats.summary', {
+						count: stats.total,
+						levels: totalLevels,
+					})}
 				</Text>
 			</div>
 
@@ -195,6 +202,10 @@ const DispositionGroupPreview: React.FC<DispositionGroupPreviewProps> = ({
 					</div>
 				))}
 			</div>
+
+			<ul className={styles.nodeList}>
+				<NodeItem current={node} level={0} />
+			</ul>
 		</Stack>
 	);
 };

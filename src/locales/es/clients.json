@@ -1,0 +1,121 @@
+{
+	"page": {
+		"title": "Clientes",
+		"description": "Administra clientes y sus configuraciones",
+		"search": {
+			"placeholder": "Buscar clientes"
+		},
+		"actions": {
+			"newClient": "Nuevo cliente"
+		},
+		"modals": {
+			"create": {
+				"title": "Nuevo cliente"
+			},
+			"edit": {
+				"title": "Editar cliente"
+			},
+			"delete": {
+				"title": "Eliminar cliente",
+				"confirm": "Eliminar cliente",
+				"descriptionPrefix": "Esta acción no se puede deshacer. ¿Seguro que deseas eliminar",
+				"descriptionSuffix": "?"
+			}
+		}
+	},
+	"list": {
+		"error": {
+			"title": "No se pudieron cargar los clientes"
+		},
+		"empty": "No se encontraron clientes."
+	},
+	"table": {
+		"columns": {
+			"name": "Nombre",
+			"email": "Correo",
+			"phone": "Teléfono",
+			"actions": "Acciones"
+		}
+	},
+	"form": {
+		"intro": "Mantén ordenados los datos de contacto, dirección y facturación para que los equipos avancen rápido.",
+		"footerNote": "Todos los cambios se guardan de forma segura cuando envías.",
+		"actions": {
+			"saveChanges": "Guardar cambios",
+			"createClient": "Crear cliente"
+		},
+		"errors": {
+			"missingClientId": "Falta el ID del cliente"
+		},
+		"loadError": {
+			"title": "No se pudo cargar el cliente"
+		},
+		"validation": {
+			"nameRequired": "El nombre es obligatorio",
+			"emailInvalid": "Formato de correo inválido"
+		},
+		"sections": {
+			"profile": {
+				"title": "Perfil",
+				"description": "Nombre y contexto de este cliente."
+			},
+			"contact": {
+				"title": "Contacto",
+				"description": "Bandeja de entrada principal y teléfono para contacto."
+			},
+			"locationTax": {
+				"title": "Ubicación e impuestos",
+				"description": "Dónde opera el cliente y cómo factura."
+			}
+		},
+		"fields": {
+			"name": {
+				"label": "Nombre",
+				"placeholder": "Acme Corporation"
+			},
+			"description": {
+				"label": "Descripción",
+				"placeholder": "Breve misión o notas"
+			},
+			"email": {
+				"label": "Correo",
+				"placeholder": "equipo@acme.com"
+			},
+			"phone": {
+				"label": "Teléfono",
+				"placeholder": "+1 (555) 123-4567"
+			},
+			"address": {
+				"label": "Dirección",
+				"placeholder": "123 Market Street"
+			},
+			"rnc": {
+				"label": "RNC",
+				"placeholder": "ID fiscal / RNC"
+			}
+		}
+	},
+	"notifications": {
+		"created": {
+			"title": "Cliente creado",
+			"message": "Se agregó un nuevo cliente"
+		},
+		"updated": {
+			"title": "Cliente actualizado",
+			"message": "El cliente se actualizó correctamente"
+		},
+		"deleted": {
+			"title": "Cliente eliminado",
+			"message": "{{name}} ha sido eliminado"
+		},
+		"deleteFailed": {
+			"title": "No se pudo eliminar el cliente"
+		},
+		"requestFailed": {
+			"title": "La solicitud falló"
+		}
+	},
+	"errors": {
+		"unknownError": "Ocurrió un error desconocido"
+	}
+}

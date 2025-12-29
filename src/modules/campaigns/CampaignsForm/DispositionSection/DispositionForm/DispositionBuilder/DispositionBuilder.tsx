@@ -13,7 +13,7 @@ import {
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import styles from './DispositionBuilder.module.css';
-import { useDispositionLabel } from '~/hooks/useDispositionLabel';
+import { useTranslation } from 'react-i18next';
 import {
 	useCreateDispositionFlow,
 	useUpdateDispositionFlow,
@@ -33,9 +33,9 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 	onComplete,
 	onCancel,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const createMutation = useCreateDispositionFlow();
 	const updateMutation = useUpdateDispositionFlow();
-	const dispositionLabel = useDispositionLabel();
 	const {
 		flowJson,
 		campaignId,
@@ -77,8 +77,8 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 			flowJson?.dispositionNodes?.length === 0
 		) {
 			notifications.show({
-				title: 'Error',
-				message: dispositionLabel('Please add at least one outcome node.'),
+				title: t('status.error', { ns: 'common' }),
+				message: t('disposition.builder.errors.minNodes'),
 				color: 'red',
 			});
 			return;
@@ -86,8 +86,8 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 
 		if (!flowJson.name || flowJson.name.trim() === '') {
 			notifications.show({
-				title: 'Error',
-				message: dispositionLabel('Outcome name is required.'),
+				title: t('status.error', { ns: 'common' }),
+				message: t('disposition.builder.errors.nameRequired'),
 				color: 'red',
 			});
 			return;
@@ -123,8 +123,8 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 			}
 		} catch (error) {
 			notifications.show({
-				title: 'Error',
-				message: 'An error occurred while saving the outcome flow.',
+				title: t('status.error', { ns: 'common' }),
+				message: t('disposition.builder.errors.saveError'),
 				color: 'red',
 			});
 		}
@@ -139,13 +139,13 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 			{null}
 			<Flex mb={4}>
 				<TextInput
-					label='Outcome Name'
+					label={t('disposition.builder.nameLabel')}
 					labelProps={{
 						title: `Campaign ID: ${campaignId || 'N/A'}`,
 					}}
 					w='50%'
-					placeholder='Outcome Name'
-					description='Enter the name of the outcome'
+					placeholder={t('disposition.builder.namePlaceholder')}
+					description={t('disposition.builder.nameDescription')}
 					value={flowJson.name || ''}
 					onChange={(event) =>
 						setFlowJson({ ...flowJson, name: event.currentTarget.value })
@@ -179,11 +179,10 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 							<Stack gap={4}>
 								<Box className={styles.leftPanelHeader}>
 									<Text fw={600} size='sm'>
-										Outcome flow
+										{t('disposition.builder.header')}
 									</Text>
 									<Text size='xs' c='dimmed'>
-										Use the catalog to add outcomes. Select a node to edit or
-										preview its group.
+										{t('disposition.builder.headerDescription')}
 									</Text>
 								</Box>
 								{flowJson?.dispositionNodes &&
@@ -207,10 +206,10 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 								) : (
 									<Box className={styles.emptyState}>
 										<Text fw={600} c='var(--mantine-color-gray-6)' size='xs'>
-											No outcomes selected yet
+											{t('disposition.builder.emptyTitle')}
 										</Text>
 										<Text size='xs' c='var(--mantine-color-gray-5)'>
-											Add outcomes from the catalog to build this flow.
+											{t('disposition.builder.emptyDescription')}
 										</Text>
 									</Box>
 								)}
@@ -257,7 +256,7 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 							) : (
 								<Box className={styles.emptyRightPanel}>
 									<div className={styles.emptyPanelText}>
-										Select a node to edit its properties or preview a group
+										{t('disposition.builder.emptyRightPanel')}
 									</div>
 								</Box>
 							)}
@@ -269,7 +268,7 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 				<Group justify='space-between'>
 					{onCancel && (
 						<Button onClick={onCancel} size='sm' variant='default'>
-							Cancel
+							{t('actions.cancel', { ns: 'common' })}
 						</Button>
 					)}
 					<Button
@@ -278,15 +277,17 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 						size='sm'
 						variant='filled'
 					>
-						{dispositionFlow?.id ? 'Update Flow' : 'Create Flow'}
+						{dispositionFlow?.id
+							? t('disposition.builder.updateFlow')
+							: t('disposition.builder.createFlow')}
 					</Button>
 				</Group>
-			</Paper>{' '}
+			</Paper>
 			<Modal
 				opened={Boolean(previewNode)}
 				onClose={handleClosePreview}
 				size='lg'
-				title='Outcome group preview'
+				title={t('disposition.builder.previewTitle')}
 				withinPortal={false}
 			>
 				{previewNode ? <DispositionGroupPreview node={previewNode} /> : null}

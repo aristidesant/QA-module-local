@@ -13,6 +13,7 @@ import { Diff } from 'react-diff-view';
 import 'react-diff-view/style/index.css';
 import type { DiffResult } from '../diffUtils';
 import styles from '../PromptAiActions.module.css';
+import { useTranslation } from 'react-i18next';
 
 type ReviewStepProps = {
 	diffData: DiffResult | null;
@@ -25,6 +26,8 @@ const ReviewStep: React.FC<ReviewStepProps> = ({
 	onApply,
 	onCancel,
 }) => {
+	const { t } = useTranslation('campaigns');
+
 	const renderDiffContent = () => {
 		if (!diffData) {
 			return null;
@@ -32,16 +35,22 @@ const ReviewStep: React.FC<ReviewStepProps> = ({
 
 		if (diffData.error) {
 			return (
-				<Alert color='red' title='Error'>
-					Failed to generate diff view.
+				<Alert
+					color='red'
+					title={t('form.agent.prompt.editor.ai.modal.review.error.title')}
+				>
+					{t('form.agent.prompt.editor.ai.modal.review.error.description')}
 				</Alert>
 			);
 		}
 
 		if (!diffData.hasChanges) {
 			return (
-				<Alert color='blue' title='No Changes'>
-					The AI suggestion is identical to your current prompt.
+				<Alert
+					color='blue'
+					title={t('form.agent.prompt.editor.ai.modal.review.noChanges.title')}
+				>
+					{t('form.agent.prompt.editor.ai.modal.review.noChanges.description')}
 				</Alert>
 			);
 		}
@@ -56,12 +65,12 @@ const ReviewStep: React.FC<ReviewStepProps> = ({
 					<Text
 						className={`${styles.versionLabel} ${styles.versionLabelOriginal}`}
 					>
-						Current version
+						{t('form.agent.prompt.editor.ai.modal.review.diff.old')}
 					</Text>
 					<Text
 						className={`${styles.versionLabel} ${styles.versionLabelImproved}`}
 					>
-						AI suggestion
+						{t('form.agent.prompt.editor.ai.modal.review.diff.new')}
 					</Text>
 				</Box>
 				<ScrollArea.Autosize mah='60vh'>
@@ -84,7 +93,7 @@ const ReviewStep: React.FC<ReviewStepProps> = ({
 			<Group justify='end' gap='xs'>
 				<Group gap='xs'>
 					<Button variant='subtle' size='sm' onClick={onCancel}>
-						Cancel
+						{t('form.agent.prompt.editor.ai.modal.review.actions.back')}
 					</Button>
 					<Button
 						variant='filled'
@@ -92,7 +101,7 @@ const ReviewStep: React.FC<ReviewStepProps> = ({
 						leftSection={<IconCheck size={14} />}
 						onClick={onApply}
 					>
-						Apply changes
+						{t('form.agent.prompt.editor.ai.modal.review.actions.apply')}
 					</Button>
 				</Group>
 			</Group>

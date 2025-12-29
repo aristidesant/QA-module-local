@@ -1,6 +1,6 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import {
 	useCampaignsColumns,
 	getCampaignStatusInfo,
@@ -80,11 +80,7 @@ describe('useCampaignsColumns', () => {
 			return <div>{(col as any).cell({ row: { original: campaign } })}</div>;
 		};
 
-		return render(
-			<MantineProvider>
-				<TestComponent />
-			</MantineProvider>
-		);
+		return renderWithProviders(<TestComponent />);
 	};
 
 	it('renders name cell with hover card details', () => {
@@ -141,11 +137,7 @@ describe('useCampaignsColumns', () => {
 			);
 		};
 
-		render(
-			<MantineProvider>
-				<TestComponent />
-			</MantineProvider>
-		);
+		renderWithProviders(<TestComponent />);
 
 		// Edit
 		fireEvent.click(screen.getByLabelText('Edit campaign'));
@@ -171,7 +163,7 @@ describe('useCampaignsColumns', () => {
 		expect(onDelete).toHaveBeenCalledWith(sampleCampaign);
 
 		// Continue Draft should NOT be visible for non-draft campaigns
-		expect(screen.queryByLabelText('Continue draft')).not.toBeInTheDocument();
+		expect(screen.queryByLabelText('Continue setup')).not.toBeInTheDocument();
 	});
 
 	it('renders Continue Draft button for draft campaigns', async () => {
@@ -191,11 +183,7 @@ describe('useCampaignsColumns', () => {
 			);
 		};
 
-		render(
-			<MantineProvider>
-				<TestComponent />
-			</MantineProvider>
-		);
+		renderWithProviders(<TestComponent />);
 
 		const continueDraftBtn = screen.getByLabelText('Continue setup');
 		expect(continueDraftBtn).toBeInTheDocument();
@@ -225,11 +213,7 @@ describe('useCampaignsColumns', () => {
 			);
 		};
 
-		render(
-			<MantineProvider>
-				<TestComponent />
-			</MantineProvider>
-		);
+		renderWithProviders(<TestComponent />);
 
 		const viewButton = screen.getByLabelText('View campaign');
 		const editButton = screen.getByLabelText('Edit campaign');
@@ -250,9 +234,9 @@ describe('useCampaignsColumns', () => {
 
 describe('getCampaignStatusInfo', () => {
 	it('returns proper info for known statuses', () => {
-		const info = getCampaignStatusInfo('ACTIVE');
+		const info = getCampaignStatusInfo('RUNNING');
 		expect(info).toBeDefined();
-		expect(info.label).toBeTruthy();
+		expect(info.label).toBe('status.RUNNING');
 		expect(info.color).toBeTruthy();
 	});
 
@@ -260,5 +244,10 @@ describe('getCampaignStatusInfo', () => {
 		const info = getCampaignStatusInfo('NON_EXISTENT' as any);
 		expect(info.label).toBe('NON_EXISTENT');
 		expect(info.color).toBe('gray');
+	});
+
+	it('returns status.UNKNOWN for empty status', () => {
+		const info = getCampaignStatusInfo('' as any);
+		expect(info.label).toBe('status.UNKNOWN');
 	});
 });

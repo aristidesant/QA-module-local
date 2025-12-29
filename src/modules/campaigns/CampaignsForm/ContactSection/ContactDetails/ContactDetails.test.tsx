@@ -1,6 +1,9 @@
 import { cleanup, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { renderWithProviders } from '~/test-utils/renderWithProviders';
+import {
+	renderWithProviders,
+	testI18n,
+} from '~/test-utils/renderWithProviders';
 import { ContactDetails } from './ContactDetails';
 
 const baseContact = {
@@ -10,6 +13,9 @@ const baseContact = {
 	language: 'Spanish',
 	initials: 'JD',
 };
+
+const tCampaigns = (key: string, options?: Record<string, unknown>) =>
+	testI18n.t(key, { ns: 'campaigns', ...options });
 
 describe('ContactDetails', () => {
 	it('renders primary information and metrics', () => {
@@ -28,14 +34,28 @@ describe('ContactDetails', () => {
 
 		expect(screen.getByText('John Doe')).toBeInTheDocument();
 		expect(screen.getByText('Spanish')).toBeInTheDocument();
-		expect(screen.getByText('Primary phone number')).toBeInTheDocument();
+		expect(
+			screen.getByText(tCampaigns('form.contacts.details.primaryPhone'))
+		).toBeInTheDocument();
 		expect(screen.getByText('+34 612 345 678')).toBeInTheDocument();
-		expect(screen.getByText('Email')).toBeInTheDocument();
+		expect(
+			screen.getByText(tCampaigns('form.contacts.details.email'))
+		).toBeInTheDocument();
 		expect(screen.getByText('john.doe@example.com')).toBeInTheDocument();
-		expect(screen.getByText('Location')).toBeInTheDocument();
+		expect(
+			screen.getByText(tCampaigns('form.contacts.details.location'))
+		).toBeInTheDocument();
 		expect(screen.getByText('Madrid, Spain')).toBeInTheDocument();
-		expect(screen.getByText('Engagement Level')).toBeInTheDocument();
-		expect(screen.getByText('Reviews qualification')).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				tCampaigns('form.contacts.details.engagementLevel.title')
+			)
+		).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				tCampaigns('form.contacts.details.reviewsQualification.title')
+			)
+		).toBeInTheDocument();
 		expect(screen.getByText('12')).toBeInTheDocument();
 		expect(screen.getByText('3')).toBeInTheDocument();
 		expect(screen.getByText('1')).toBeInTheDocument();
@@ -63,7 +83,11 @@ describe('ContactDetails', () => {
 			/>
 		);
 
-		expect(screen.getByText('Phone Numbers (2)')).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				tCampaigns('form.contacts.details.phoneNumbers', { count: 2 })
+			)
+		).toBeInTheDocument();
 		expect(screen.getByText('+34 600 111 222')).toBeInTheDocument();
 		expect(screen.getByText('+34 699 888 777')).toBeInTheDocument();
 		expect(screen.getByText('INVALID_NUMBER')).toBeInTheDocument();
@@ -73,16 +97,28 @@ describe('ContactDetails', () => {
 	it('does not render optional cards when data is missing', () => {
 		renderWithProviders(<ContactDetails contact={baseContact} />);
 
-		expect(screen.queryByText('Email')).not.toBeInTheDocument();
-		expect(screen.queryByText('Location')).not.toBeInTheDocument();
-		expect(screen.queryByText(/Phone Numbers/)).not.toBeInTheDocument();
+		expect(
+			screen.queryByText(tCampaigns('form.contacts.details.email'))
+		).not.toBeInTheDocument();
+		expect(
+			screen.queryByText(tCampaigns('form.contacts.details.location'))
+		).not.toBeInTheDocument();
+		expect(
+			screen.queryByText(
+				tCampaigns('form.contacts.details.phoneNumbers', { count: 1 })
+			)
+		).not.toBeInTheDocument();
 		expect(screen.getByText('87')).toBeInTheDocument();
 		expect(screen.getByText('75%')).toBeInTheDocument();
 		expect(screen.getByText('2113')).toBeInTheDocument();
 		expect(screen.getByText('45')).toBeInTheDocument();
 		expect(screen.getByText('16')).toBeInTheDocument();
 		expect(
-			screen.getAllByText('Measures how engaged John is with your campaigns.')
+			screen.getAllByText(
+				tCampaigns('form.contacts.details.engagementLevel.description', {
+					name: 'John',
+				})
+			)
 		).toHaveLength(2);
 	});
 

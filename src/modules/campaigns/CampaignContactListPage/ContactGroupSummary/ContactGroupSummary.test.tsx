@@ -116,6 +116,10 @@ describe('ContactGroupSummary', () => {
 			renderWithProviders(
 				<ContactGroupSummary contactGroup={mockContactGroup} />
 			);
+			// The mock for getQueueStatusConfig returns 'Running' or 'Pending'
+			// But the component uses t(config.label)
+			// So it should be 'Running' or 'Pending' if the mock returns those strings
+			// Wait, let's check the component.
 			expect(screen.getByText('Running')).toBeInTheDocument();
 		});
 

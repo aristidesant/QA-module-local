@@ -12,6 +12,7 @@ import {
 	NumberInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { useTranslation } from 'react-i18next';
 import { useCreateCampaignWithAgent } from '~/queries/campaignsQueries';
 import styles from './AddNewCampaignForm.module.css';
 import { notifications } from '@mantine/notifications';
@@ -40,6 +41,7 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 	onComplete,
 	onCancel,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const createCampaignWithAgent = useCreateCampaignWithAgent();
 
 	const form = useForm<CreateCampaignWithAgentDTO>({
@@ -67,23 +69,30 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 		validate: {
 			campaign: {
 				name: (value) =>
-					value.trim().length < 2 ? 'Campaign name is required' : null,
+					value.trim().length < 2
+						? t('addNewCampaign.validation.nameRequired')
+						: null,
 				description: (value) =>
-					value.trim().length < 2 ? 'Description is required' : null,
+					value.trim().length < 2
+						? t('addNewCampaign.validation.descriptionRequired')
+						: null,
 				type: (value) =>
 					value !== 'INBOUND' && value !== 'OUTBOUND'
-						? 'Type must be one of the following values: INBOUND, OUTBOUND'
+						? t('addNewCampaign.validation.typeInvalid')
 						: null,
 				defaultMaxWaves: (value) =>
-					!value || value < 1 ? 'Default waves must be at least 1' : null,
+					!value || value < 1 ? t('addNewCampaign.validation.wavesMin') : null,
 			},
 			agent: {
 				name: (value) =>
-					value.trim().length < 2 ? 'Agent name is required' : null,
-				voiceId: (value) => (!value ? 'Agent voice is required' : null),
+					value.trim().length < 2
+						? t('addNewCampaign.validation.agentNameRequired')
+						: null,
+				voiceId: (value) =>
+					!value ? t('addNewCampaign.validation.agentVoiceRequired') : null,
 				type: (value) =>
 					value !== 'INBOUND' && value !== 'OUTBOUND'
-						? 'Type must be one of the following values: INBOUND, OUTBOUND'
+						? t('addNewCampaign.validation.typeInvalid')
 						: null,
 			},
 		},
@@ -175,11 +184,11 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 			},
 			onError: (error) => {
 				notifications.show({
-					title: 'Error',
+					title: t('common:status.error'),
 					message:
 						error instanceof Error
 							? error.message
-							: 'Failed to create campaign',
+							: t('addNewCampaign.form.failedToCreate'),
 					color: 'red',
 				});
 			},
@@ -198,18 +207,18 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 			<form onSubmit={form.onSubmit(handleSubmit)}>
 				<Stack gap={'xs'}>
 					<TextInput
-						label='Campaign Name'
-						description='Give your campaign a descriptive name'
-						placeholder='Enter campaign name'
+						label={t('addNewCampaign.form.campaignName')}
+						description={t('addNewCampaign.form.campaignNameDesc')}
+						placeholder={t('addNewCampaign.form.campaignNamePlaceholder')}
 						withAsterisk
 						className={styles.field}
 						key={form.key('campaign.name')}
 						{...form.getInputProps('campaign.name')}
 					/>
 					<Textarea
-						label='Description'
-						description='Briefly describe the purpose of this campaign'
-						placeholder='Describe your campaign'
+						label={t('addNewCampaign.form.description')}
+						description={t('addNewCampaign.form.descriptionDesc')}
+						placeholder={t('addNewCampaign.form.descriptionPlaceholder')}
 						withAsterisk
 						className={styles.field}
 						key={form.key('campaign.description')}
@@ -220,13 +229,13 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 
 					<Box className={styles.field}>
 						<Text size='sm' fw={500} mb='xs'>
-							Campaign Type{' '}
+							{t('addNewCampaign.form.campaignType')}{' '}
 							<span style={{ color: 'var(--mantine-color-red-6)' }}>*</span>
 						</Text>
 						<SegmentedControl
 							data={[
-								{ value: 'INBOUND', label: 'Inbound' },
-								{ value: 'OUTBOUND', label: 'Outbound' },
+								{ value: 'INBOUND', label: t('columns.inbound') },
+								{ value: 'OUTBOUND', label: t('columns.outbound') },
 							]}
 							{...form.getInputProps('campaign.type')}
 							fullWidth
@@ -246,9 +255,9 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 						/>
 					</Box>
 					<NumberInput
-						label='Default Waves'
-						description='How many waves to run for every new contact list created from this campaign'
-						placeholder='Number of waves'
+						label={t('addNewCampaign.form.defaultWaves')}
+						description={t('addNewCampaign.form.defaultWavesDesc')}
+						placeholder={t('addNewCampaign.form.defaultWavesPlaceholder')}
 						min={1}
 						step={1}
 						size='sm'
@@ -262,15 +271,15 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 						campaignType={form.values.campaign.type}
 						value={selectedPhoneNumberId}
 						onChange={setSelectedPhoneNumberId}
-						label='Phone Number'
-						description='Select the phone number for this campaign'
-						placeholder='Choose a phone number'
+						label={t('addNewCampaign.form.phoneNumber')}
+						description={t('addNewCampaign.form.phoneNumberDesc')}
+						placeholder={t('addNewCampaign.form.phoneNumberPlaceholder')}
 						withAsterisk
 					/>
 					<TextInput
-						label='Agent Name'
-						description='Enter the name of the agent'
-						placeholder='Enter agent name'
+						label={t('addNewCampaign.form.agentName')}
+						description={t('addNewCampaign.form.agentNameDesc')}
+						placeholder={t('addNewCampaign.form.agentNamePlaceholder')}
 						withAsterisk
 						className={styles.field}
 						key={form.key('agent.name')}
@@ -281,9 +290,9 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 						selectedVoiceId={form.values.agent.voiceId}
 					/>
 					<Select
-						label='Agent Behavior'
-						description='Select a predefined agent behavior configuration'
-						placeholder='Choose an agent behavior'
+						label={t('addNewCampaign.form.agentBehavior')}
+						description={t('addNewCampaign.form.agentBehaviorDesc')}
+						placeholder={t('addNewCampaign.form.agentBehaviorPlaceholder')}
 						data={predefinedParams.map((param) => ({
 							value: param.name,
 							label: param.name,
@@ -311,12 +320,12 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 					<Text className={styles.error}>
 						{createCampaignWithAgent.error instanceof Error
 							? createCampaignWithAgent.error.message
-							: 'Error creating campaign'}
+							: t('addNewCampaign.form.errorMessage')}
 					</Text>
 				)}
 				<Group justify='flex-end' mt='md'>
 					<Button variant='default' onClick={() => onCancel?.()} size='sm'>
-						Cancel
+						{t('addNewCampaign.form.cancelButton')}
 					</Button>
 					<Button
 						leftSection={<IconDeviceFloppy />}
@@ -325,7 +334,7 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 						disabled={!form.isValid() || !selectedPhoneNumberId}
 						size='sm'
 					>
-						Create Campaign
+						{t('addNewCampaign.form.createButton')}
 					</Button>
 				</Group>
 			</form>

@@ -1,0 +1,117 @@
+{
+	"title": "Nai Agent Service",
+	"common": {
+		"goBack": "Volver",
+		"goToHome": "Ir al inicio"
+	},
+	"actions": {
+		"save": "Guardar",
+		"cancel": "Cancelar",
+		"delete": "Eliminar",
+		"edit": "Editar",
+		"create": "Crear",
+		"search": "Buscar",
+		"close": "Cerrar",
+		"confirm": "Confirmar",
+		"export": "Exportar",
+		"back": "Volver",
+		"next": "Siguiente",
+		"finish": "Finalizar"
+	},
+	"status": {
+		"loading": "Cargando...",
+		"success": "Éxito",
+		"error": "Error",
+		"noData": "No hay datos disponibles",
+		"nothingSelected": "Nada seleccionado"
+	},
+	"loading": {
+		"configurations": "Cargando configuraciones...",
+		"clientConfigs": "Cargando configuraciones del cliente..."
+	},
+	"sidebar": {
+		"ariaLabel": "Navegación principal",
+		"menu": "MENÚ",
+		"noModules": "No hay módulos disponibles",
+		"requestAccess": "Solicita acceso para ver las opciones de navegación.",
+		"version": "Versión",
+		"items": {
+			"overview": "Resumen",
+			"campaigns": "Campañas",
+			"conversations": "Conversaciones"
+		}
+	},
+	"nav": {
+		"dashboard": "Tablero",
+		"agents": "Agentes",
+		"campaigns": "Campañas",
+		"contacts": "Contactos",
+		"settings": "Configuración",
+		"conversations": "Conversaciones"
+	},
+	"userMenu": {
+		"profile": "Perfil",
+		"logout": "Cerrar sesión",
+		"loggingOut": "Cerrando sesión...",
+		"impersonationMode": "Modo de suplantación",
+		"impersonatingClient": "Estás suplantando a un cliente",
+		"returnToMaster": "Usa \"Volver al cliente maestro\" para salir",
+		"categories": {
+			"campaignManagement": "Gestión de campañas",
+			"configuration": "Configuración",
+			"compliance": "Cumplimiento",
+			"toolsAndResources": "Herramientas y recursos"
+		},
+		"items": {
+			"campaignManagement": "Gestión de campañas",
+			"configurations": "Configuraciones",
+			"doNotCall": "No llamar (DNC)",
+			"clients": "Clientes",
+			"knowledgeBases": "Bases de conocimiento",
+			"tools": "Herramientas",
+			"users": "Usuarios",
+			"roles": "Roles"
+		}
+	},
+	"accessDenied": {
+		"title": "Acceso Denegado",
+		"description": "No tienes permiso para acceder a esta página."
+	},
+	"pagination": {
+		"showing": "Mostrando",
+		"of": "de",
+		"filteredBy": "(filtrado por \"{{term}}\")",
+		"show": "Mostrar:",
+		"page": "Página"
+	},
+	"outboundCallForm": {
+		"agentCallTitle": "Llamada del agente",
+		"agentCallDesc": "Vive una llamada en vivo de tu agente de IA.",
+		"customerName": "Nombre del cliente",
+		"customerId": "ID del cliente",
+		"requestDemo": "Solicitar llamada demo",
+		"calling": "Llamando...",
+		"testCallSentTitle": "Llamada de prueba solicitada",
+		"testCallSentMsg": "Estamos llamando a {{phone}} ahora.",
+		"startDemoErrorTitle": "No se pudo iniciar la demo",
+		"startDemoErrorMsg": "Inténtalo de nuevo.",
+		"validation": {
+			"agentRequired": "El agente es obligatorio.",
+			"phoneInvalid": "Ingresa un número de teléfono válido.",
+			"campaignRequired": "La campaña es obligatoria.",
+			"customerNameRequired": "El nombre del cliente es obligatorio.",
+			"customerIdRequired": "El ID del cliente es obligatorio."
+		}
+	},
+	"units": {
+		"day": "d",
+		"hour": "h",
+		"minute": "m",
+		"second": "s"
+	},
+	"currency": "$",
+	"languages": {
+		"en": "Inglés",
+		"es": "Español"
+	}
+}

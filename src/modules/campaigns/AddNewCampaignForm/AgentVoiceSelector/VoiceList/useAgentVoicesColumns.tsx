@@ -16,6 +16,7 @@ import {
 	IconPlayerPlayFilled,
 	IconVolume,
 } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 
 import type { AgentVoiceModel } from '~/models/AgentVoiceModel';
 import { getLanguageFlagEmoji } from '~/utils/agentUtils';
@@ -32,11 +33,13 @@ export const useAgentVoicesColumns = ({
 	playingVoiceId,
 	playProgress,
 }: UseAgentVoicesColumnsParams): ColumnDef<AgentVoiceModel>[] => {
+	const { t } = useTranslation('campaigns');
+
 	return useMemo(
 		() => [
 			{
 				accessorKey: 'voice',
-				header: 'Voice',
+				header: t('addNewCampaign.voices.voice'),
 				cell: ({ row }) => {
 					const { voice } = row.original;
 					const gender = voice.gender?.toLowerCase() || 'unknown';
@@ -79,7 +82,7 @@ export const useAgentVoicesColumns = ({
 												variant='light'
 												color={gender === 'female' ? 'pink' : 'blue'}
 											>
-												{voice.gender ?? 'Unknown'}
+												{t(`addNewCampaign.voices.${gender}`)}
 											</Badge>
 										</Group>
 									</Stack>
@@ -111,14 +114,14 @@ export const useAgentVoicesColumns = ({
 											{voice.name}
 										</Text>
 										<Text size='xs' c='dimmed'>
-											{voice.language} • {voice.gender ?? 'Unknown'}
+											{voice.language} • {t(`addNewCampaign.voices.${gender}`)}
 										</Text>
 									</Stack>
 								</Group>
 								<Divider my='xs' />
 								<Text size='sm' c='dimmed' style={{ lineHeight: 1.4 }}>
 									{voice.description ||
-										'This voice does not include a description yet.'}
+										t('addNewCampaign.voices.noDescription')}
 								</Text>
 								<Group gap='xs' wrap='wrap' mt='xs'>
 									{voice.accent && (
@@ -128,7 +131,7 @@ export const useAgentVoicesColumns = ({
 									)}
 									{voice.age && (
 										<Badge size='xs' variant='dot' color='orange'>
-											Age: {voice.age}
+											{t('addNewCampaign.voices.age', { age: voice.age })}
 										</Badge>
 									)}
 									{voice.status && (
@@ -144,7 +147,7 @@ export const useAgentVoicesColumns = ({
 										mt='xs'
 										style={{ fontStyle: 'italic' }}
 									>
-										🎵 Click the play button to preview this voice
+										{t('addNewCampaign.voices.previewHint')}
 									</Text>
 								)}
 							</HoverCard.Dropdown>
@@ -154,7 +157,7 @@ export const useAgentVoicesColumns = ({
 			},
 			{
 				id: 'controls',
-				header: 'Preview',
+				header: t('addNewCampaign.voices.preview'),
 				cell: ({ row }) => {
 					const { voice } = row.original;
 					const previewUrl = voice.previewUrl || '';
@@ -168,7 +171,9 @@ export const useAgentVoicesColumns = ({
 								size='md'
 								radius='xl'
 								aria-label={
-									isPlaying ? 'Pause voice preview' : 'Play voice preview'
+									isPlaying
+										? t('addNewCampaign.voices.pauseAria')
+										: t('addNewCampaign.voices.playAria')
 								}
 								disabled={!previewUrl}
 								onClick={(event) => {
@@ -198,6 +203,6 @@ export const useAgentVoicesColumns = ({
 				},
 			},
 		],
-		[onPlayVoice, playingVoiceId, playProgress]
+		[onPlayVoice, playingVoiceId, playProgress, t]
 	);
 };

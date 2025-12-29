@@ -1,0 +1,54 @@
+{
+	"title": "Gestión de Campañas",
+	"description": "Gestione categorías de campañas, objetivos, esquemas, tipos de prompts y resultados",
+	"tabs": {
+		"setup": "Configuración de Campaña",
+		"outcomes": "Resultados",
+		"promptTypes": "Tipos de Prompt"
+	},
+	"setup": {
+		"catalog": "Catálogo",
+		"categories": {
+			"label": "Categorías",
+			"title": "Categorías de Campaña",
+			"description": "Organice y gestione categorías de campañas para estructurar mejor sus campañas",
+			"create": "Crear Categoría",
+			"edit": "Editar Categoría de Campaña",
+			"sectionCardDescription": "Organice las categorías utilizadas para clasificar campañas y aplicar filtros.",
+			"deleteSuccess": "Categoría de campaña eliminada exitosamente",
+			"deleteError": "Error al eliminar la categoría de campaña",
+			"noResults": "No se encontraron categorías",
+			"noResultsFilters": "No hay categorías que coincidan con sus filtros",
+			"getStarted": "Comience creando su primera categoría de campaña"
+		},
+		"objectives": {
+			"label": "Objetivos",
+			"title": "Objetivos de Campaña",
+			"description": "Defina y gestione objetivos para guiar sus estrategias de campaña y medir el éxito",
+			"create": "Crear Objetivo",
+			"edit": "Editar Objetivo de Campaña",
+			"sectionCardDescription": "Agregue y gestione objetivos de campaña para definir resultados esperados y seguimiento.",
+			"deleteSuccess": "Objetivo de campaña eliminado exitosamente",
+			"deleteError": "Error al eliminar el objetivo de campaña",
+			"noResults": "No se encontraron objetivos",
+			"noResultsFilters": "No hay objetivos que coincidan con sus filtros",
+			"noResultsFiltersDescription": "Intente ajustar su búsqueda o filtros",
+			"getStarted": "Comience creando su primer objetivo de campaña"
+		},
+		"schemas": {
+			"label": "Esquemas",
+			"title": "Esquemas de Campaña",
+			"description": "Defina y gestione esquemas de datos de contacto para sus campañas",
+			"create": "Crear Esquema",
+			"edit": "Editar Esquema de Campaña",
+			"sectionCardDescription": "Esquemas de Campaña a los que pertenecen los objetivos",
+			"deleteSuccess": "Esquema de campaña eliminado exitosamente",
+			"deleteError": "Error al eliminar el esquema de campaña",
+			"noResults": "No se encontraron esquemas",
+			"noResultsFilters": "No hay esquemas que coincidan con sus filtros",
+			"noResultsFiltersDescription": "Intente ajustar su búsqueda o filtros",
+			"clearFilters": "Limpiar filtros",
+			"getStarted": "Comience creando su primer esquema de campaña"
+		}
+	}
+}

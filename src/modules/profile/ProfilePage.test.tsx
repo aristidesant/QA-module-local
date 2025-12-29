@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react';
-import { MantineProvider } from '@mantine/core';
+import { screen } from '@testing-library/react';
 import { ProfilePage } from './ProfilePage';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import { describe, it, expect, vi } from 'vitest';
 
 // Mock child components
@@ -28,10 +28,6 @@ vi.mock('~/components/ContentContainer/ContentContainer', () => ({
 		</div>
 	),
 }));
-
-const renderWithProviders = (ui: React.ReactElement) => {
-	return render(<MantineProvider>{ui}</MantineProvider>);
-};
 
 describe('ProfilePage', () => {
 	it('renders correctly with all sections', () => {

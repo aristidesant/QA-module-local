@@ -22,8 +22,10 @@ describe('AccessDenied component', () => {
 		);
 		expect(descriptions).toHaveLength(2);
 
-		const goBackBtn = screen.getByRole('button', { name: /go back/i });
-		const dashboardBtn = screen.getByRole('button', { name: /go to home/i });
+		const goBackBtn = screen.getByRole('button', { name: 'Go back' });
+		const dashboardBtn = screen.getByRole('button', {
+			name: 'Go to home',
+		});
 
 		await userEvent.click(goBackBtn);
 		expect(mockNavigate).toHaveBeenCalledWith(-1);

@@ -161,7 +161,8 @@ describe('CampaignPage', () => {
 				.length
 		).toBeGreaterThan(0);
 		expect(
-			screen.getByRole('button', { name: /go to home|dashboard/i })
+			screen.getByRole('button', { name: 'Go to home' })
 		).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: 'Go back' })).toBeInTheDocument();
 	});
 });

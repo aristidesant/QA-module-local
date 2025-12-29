@@ -1,5 +1,11 @@
-import { createBrowserRouter, RouterProvider, Navigate } from 'react-router';
 import React, { Suspense } from 'react';
+import {
+	createBrowserRouter,
+	RouterProvider,
+	Navigate,
+	useMatches,
+} from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 // Route components (lazy-loaded where appropriate to split bundles)
 
@@ -18,18 +24,7 @@ const CampaignContactListPage = React.lazy(
 const ForcePasswordChangePage = React.lazy(
 	() => import('./modules/auth/ForcePasswordChangePage/ForcePasswordChangePage')
 );
-const CampaignCategoriesPage = React.lazy(
-	() =>
-		import('./modules/campaigns/CampaignManagementPage/Categories/CampaignCategoriesPage')
-);
-const CampaignObjectivesPage = React.lazy(
-	() =>
-		import('./modules/campaigns/CampaignManagementPage/Objectives/CampaignObjectivesPage')
-);
-const CampaignSchemasPage = React.lazy(
-	() =>
-		import('./modules/campaigns/CampaignManagementPage/Schemas/CampaignSchemasPage')
-);
+
 const ClientConfigsPage = React.lazy(
 	() => import('./modules/configurations/client-configs/ClientConfigsPage')
 );
@@ -45,14 +40,8 @@ const RolesPage = React.lazy(
 const ClientsPage = React.lazy(
 	() => import('./modules/clients/ClientsPage/ClientsPage')
 );
-const PrompterPage = React.lazy(() =>
-	import('./modules/prompter/PrompterPage').then((m) => ({
-		default: m.PrompterPage,
-	}))
-);
 const DispositionPage = React.lazy(
-	() =>
-		import('./modules/campaigns/CampaignManagementPage/Outcomes/DispositionPage')
+	() => import('./modules/outcomes/DispositionPage')
 );
 const ConversationPage = React.lazy(
 	() => import('./modules/conversations/ConversationsPage/ConversationPage')
@@ -62,7 +51,6 @@ const WelcomeCard = React.lazy(
 	() => import('./modules/overview/WelcomeCard/WelcomeCard')
 );
 import { LoginForm } from './modules/auth/LoginForm';
-import CampaignLiveMetricPage from './modules/campaigns/CampaignLiveMetricPage/CampaignLiveMetricPage';
 import { PermissionEnum } from './constants/PermissionEnum';
 const KnowledgeBasePage = React.lazy(
 	() => import('./modules/knowledge-bases/KnowledgeBasePage/KnowledgeBasePage')
@@ -87,7 +75,7 @@ const ConfigurationsPage = React.lazy(
 	() => import('./modules/configurations/ConfigurationsPage')
 );
 const CampaignManagementPage = React.lazy(
-	() => import('./modules/campaigns/CampaignManagementPage')
+	() => import('./modules/campaign-management/CampaignManagementPage')
 );
 const CampaignPage = React.lazy(
 	() => import('./modules/campaigns/CampaignPage/CampaignPage')
@@ -100,6 +88,26 @@ const CampaignsPage = React.lazy(
 	() => import('./modules/campaigns/CampaignsPage/CampaignsPage')
 );
 
+/**
+ * Automatically loads i18n namespaces based on the active route's ID.
+ */
+const I18nNamespaceLoader = ({ children }: { children: React.ReactNode }) => {
+	const matches = useMatches();
+	const lastMatch = matches[matches.length - 1];
+	// Derive namespace from route ID or path
+	const namespace = lastMatch?.id;
+
+	// Use useTranslation to ensure the namespace is loaded before rendering children.
+	// This will trigger suspension if the namespace is not yet available.
+	useTranslation(
+		namespace && namespace !== 'root' && !namespace.includes('/')
+			? namespace
+			: 'common'
+	);
+
+	return <>{children}</>;
+};
+
 const router = createBrowserRouter([
 	// Public routes
 	{ path: '/login', element: <LoginForm /> },
@@ -111,6 +119,7 @@ const router = createBrowserRouter([
 		children: [
 			{
 				path: 'force-password-change',
+				id: 'auth.force-password-change',
 				element: (
 					<Suspense
 						fallback={<SuspenseFallback message='Preparing security flow...' />}
@@ -128,16 +137,20 @@ const router = createBrowserRouter([
 				children: [
 					{
 						index: true,
+						id: 'overview',
 						element: (
-							<Suspense
-								fallback={<SuspenseFallback message='Loading dashboard...' />}
-							>
-								<WelcomeCard />
-							</Suspense>
+							<I18nNamespaceLoader>
+								<Suspense
+									fallback={<SuspenseFallback message='Loading dashboard...' />}
+								>
+									<WelcomeCard />
+								</Suspense>
+							</I18nNamespaceLoader>
 						),
 					},
 					{
 						path: 'campaign-management',
+						id: 'campaign-management',
 						element: (
 							<ModuleGuard module={ModuleEnum.SETTINGS}>
 								<Suspense fallback={<div>Loading campaign management...</div>}>
@@ -148,33 +161,44 @@ const router = createBrowserRouter([
 					},
 					{
 						path: 'campaigns',
+						id: 'campaigns',
 						element: (
 							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
-								<Suspense
-									fallback={<SuspenseFallback message='Loading campaigns...' />}
-								>
-									<CampaignsPage />
-								</Suspense>
+								<I18nNamespaceLoader>
+									<Suspense
+										fallback={
+											<SuspenseFallback message='Loading campaigns...' />
+										}
+									>
+										<CampaignsPage />
+									</Suspense>
+								</I18nNamespaceLoader>
 							</ModuleGuard>
 						),
 					},
 					{
 						path: 'campaign/:campaignId',
+						id: 'campaign.detail',
 						element: (
 							<ModuleGuard
 								module={ModuleEnum.CAMPAIGNS}
 								permission={PermissionEnum.UPDATE}
 							>
-								<Suspense
-									fallback={<SuspenseFallback message='Loading campaign...' />}
-								>
-									<CampaignPage />
-								</Suspense>
+								<I18nNamespaceLoader>
+									<Suspense
+										fallback={
+											<SuspenseFallback message='Loading campaign...' />
+										}
+									>
+										<CampaignPage />
+									</Suspense>
+								</I18nNamespaceLoader>
 							</ModuleGuard>
 						),
 					},
 					{
 						path: 'campaign/view/:campaignId',
+						id: 'campaign.view',
 						element: (
 							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
 								<Suspense
@@ -189,6 +213,7 @@ const router = createBrowserRouter([
 					},
 					{
 						path: 'campaign/:campaignId/contact-list/:contactGroupId',
+						id: 'campaign.contact-list',
 						element: (
 							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
 								<Suspense
@@ -202,21 +227,8 @@ const router = createBrowserRouter([
 						),
 					},
 					{
-						path: 'campaigns/metrics/:campaignId',
-						element: (
-							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
-								<Suspense
-									fallback={
-										<SuspenseFallback message='Loading campaign metrics...' />
-									}
-								>
-									<CampaignLiveMetricPage />
-								</Suspense>
-							</ModuleGuard>
-						),
-					},
-					{
 						path: 'users',
+						id: 'users',
 						element: (
 							<ModuleGuard
 								module={ModuleEnum.USERS}
@@ -233,6 +245,7 @@ const router = createBrowserRouter([
 					},
 					{
 						path: 'roles',
+						id: 'roles',
 						element: (
 							<ModuleGuard module={ModuleEnum.ROLES} masterOnly>
 								<Suspense
@@ -245,22 +258,26 @@ const router = createBrowserRouter([
 					},
 					{
 						path: 'clients',
+						id: 'clients',
 						element: (
 							<ModuleGuard
 								module={ModuleEnum.SETTINGS}
 								permission={PermissionEnum.MANAGE}
 								masterOnly
 							>
-								<Suspense
-									fallback={<SuspenseFallback message='Loading clients...' />}
-								>
-									<ClientsPage />
-								</Suspense>
+								<I18nNamespaceLoader>
+									<Suspense
+										fallback={<SuspenseFallback message='Loading clients...' />}
+									>
+										<ClientsPage />
+									</Suspense>
+								</I18nNamespaceLoader>
 							</ModuleGuard>
 						),
 					},
 					{
 						path: 'conversations',
+						id: 'conversations',
 						element: (
 							<ModuleGuard module={ModuleEnum.CONVERSATIONS}>
 								<Suspense
@@ -275,6 +292,7 @@ const router = createBrowserRouter([
 					},
 					{
 						path: 'outcomes',
+						id: 'outcomes',
 						element: (
 							<ModuleGuard
 								module={ModuleEnum.CAMPAIGNS}
@@ -288,59 +306,10 @@ const router = createBrowserRouter([
 							</ModuleGuard>
 						),
 					},
-					{
-						path: 'campaign-categories',
-						element: (
-							<ModuleGuard
-								module={ModuleEnum.CAMPAIGNS}
-								permission={PermissionEnum.MANAGE}
-							>
-								<Suspense
-									fallback={
-										<SuspenseFallback message='Loading campaign categories...' />
-									}
-								>
-									<CampaignCategoriesPage />
-								</Suspense>
-							</ModuleGuard>
-						),
-					},
-					{
-						path: 'campaign-objectives',
-						element: (
-							<ModuleGuard
-								module={ModuleEnum.CAMPAIGNS}
-								permission={PermissionEnum.MANAGE}
-							>
-								<Suspense
-									fallback={
-										<SuspenseFallback message='Loading campaign objectives...' />
-									}
-								>
-									<CampaignObjectivesPage />
-								</Suspense>
-							</ModuleGuard>
-						),
-					},
-					{
-						path: 'campaign-schemas',
-						element: (
-							<ModuleGuard
-								module={ModuleEnum.CAMPAIGNS}
-								permission={PermissionEnum.MANAGE}
-							>
-								<Suspense
-									fallback={
-										<SuspenseFallback message='Loading campaign schemas...' />
-									}
-								>
-									<CampaignSchemasPage />
-								</Suspense>
-							</ModuleGuard>
-						),
-					},
+
 					{
 						path: 'configurations',
+						id: 'configurations',
 						element: (
 							<ModuleGuard
 								module={ModuleEnum.SETTINGS}
@@ -348,7 +317,7 @@ const router = createBrowserRouter([
 							>
 								<Suspense
 									fallback={
-										<SuspenseFallback message='Loading configurations...' />
+										<SuspenseFallback messageKey='loading.configurations' />
 									}
 								>
 									<ConfigurationsPage />
@@ -364,10 +333,11 @@ const router = createBrowserRouter([
 							},
 							{
 								path: 'client-configs',
+								id: 'client-configs',
 								element: (
 									<Suspense
 										fallback={
-											<SuspenseFallback message='Loading client configs...' />
+											<SuspenseFallback messageKey='loading.clientConfigs' />
 										}
 									>
 										<ClientConfigsPage />
@@ -376,6 +346,7 @@ const router = createBrowserRouter([
 							},
 							{
 								path: 'campaign-predefined-params',
+								id: 'campaign-predefined-params',
 								element: (
 									<Suspense
 										fallback={
@@ -388,6 +359,7 @@ const router = createBrowserRouter([
 							},
 							{
 								path: 'scheduler-predefined-params',
+								id: 'scheduler-predefined-params',
 								element: (
 									<Suspense
 										fallback={
@@ -400,6 +372,7 @@ const router = createBrowserRouter([
 							},
 							{
 								path: 'regional-settings-params',
+								id: 'regional-settings-params',
 								element: (
 									<Suspense
 										fallback={
@@ -410,22 +383,26 @@ const router = createBrowserRouter([
 									</Suspense>
 								),
 							},
-							{
-								path: 'do-not-call',
-								element: (
-									<Suspense
-										fallback={
-											<SuspenseFallback message='Loading Do Not Call...' />
-										}
-									>
-										<DoNotCallPage />
-									</Suspense>
-								),
-							},
 						],
 					},
 					{
+						path: 'do-not-call',
+						id: 'do-not-call',
+						element: (
+							<ModuleGuard module={ModuleEnum.SETTINGS}>
+								<Suspense
+									fallback={
+										<SuspenseFallback message='Loading Do Not Call...' />
+									}
+								>
+									<DoNotCallPage />
+								</Suspense>
+							</ModuleGuard>
+						),
+					},
+					{
 						path: 'knowledge-bases',
+						id: 'knowledge-bases',
 						element: (
 							<ModuleGuard
 								module={ModuleEnum.KNOWLEDGE_BASES}
@@ -442,23 +419,8 @@ const router = createBrowserRouter([
 						),
 					},
 					{
-						path: 'prompter',
-						element: (
-							<ModuleGuard
-								module={ModuleEnum.PROMPTS}
-								permission={PermissionEnum.MANAGE}
-								masterOnly
-							>
-								<Suspense
-									fallback={<SuspenseFallback message='Loading prompter...' />}
-								>
-									<PrompterPage />
-								</Suspense>
-							</ModuleGuard>
-						),
-					},
-					{
 						path: 'tools',
+						id: 'tools',
 						element: (
 							<ModuleGuard
 								module={ModuleEnum.TOOLS}
@@ -475,6 +437,7 @@ const router = createBrowserRouter([
 					},
 					{
 						path: 'profile',
+						id: 'profile',
 						element: (
 							<Suspense
 								fallback={<SuspenseFallback message='Loading profile...' />}

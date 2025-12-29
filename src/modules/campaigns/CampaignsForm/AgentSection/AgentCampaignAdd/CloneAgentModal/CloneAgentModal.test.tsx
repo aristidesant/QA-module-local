@@ -19,7 +19,7 @@ vi.mock('@mantine/modals', () => ({
 const mutateAsyncMock = vi.fn();
 const defaultHookMock = {
 	mutateAsync: mutateAsyncMock,
-	isLoading: false,
+	isPending: false,
 	error: null,
 };
 
@@ -48,7 +48,7 @@ describe('CloneAgentModal', () => {
 		renderWithProviders(<CloneAgentModal agent={agent} onSuccess={vi.fn()} />);
 
 		// initial input contains "Copy"
-		expect(screen.getByDisplayValue('Agent One Copy')).toBeInTheDocument();
+		expect(screen.getByDisplayValue(/Agent One.*Copy/i)).toBeInTheDocument();
 		expect(screen.getByLabelText('Agent Name')).toBeInTheDocument();
 		expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
 		expect(screen.getByRole('button', { name: 'Clone' })).toBeInTheDocument();
@@ -137,7 +137,7 @@ describe('CloneAgentModal', () => {
 		};
 		(hook.useDuplicateAgent as any).mockReturnValue({
 			mutateAsync: vi.fn(),
-			isLoading: false,
+			isPending: false,
 			error: errorObj,
 		});
 
@@ -155,23 +155,20 @@ describe('CloneAgentModal', () => {
 		expect(mockClose).toHaveBeenCalledWith('clone-agent-modal');
 	});
 
-	it('disables input and buttons during submission', async () => {
-		const user = userEvent.setup();
-		// Mock loading state by making mutateAsync not resolve immediately
-		mutateAsyncMock.mockImplementation(() => new Promise(() => {})); // Never resolves
+	it('disables input and buttons when mutation is loading', async () => {
+		(agentQueries.useDuplicateAgent as any).mockReturnValue({
+			...defaultHookMock,
+			isPending: true,
+		});
 
 		renderWithProviders(<CloneAgentModal agent={agent} onSuccess={vi.fn()} />);
 
-		await user.click(screen.getByRole('button', { name: 'Clone' }));
-
-		await waitFor(() => {
-			expect(screen.getByLabelText('Agent Name')).toBeDisabled();
-			expect(screen.getByRole('button', { name: /Cancel/i })).toBeDisabled();
-			expect(screen.getByRole('button', { name: 'Clone' })).toHaveAttribute(
-				'data-loading',
-				'true'
-			);
-		});
+		expect(screen.getByLabelText('Agent Name')).toBeDisabled();
+		expect(screen.getByRole('button', { name: /Cancel/i })).toBeDisabled();
+		expect(screen.getByRole('button', { name: 'Clone' })).toHaveAttribute(
+			'data-loading',
+			'true'
+		);
 	});
 
 	it('submits with trimmed name and calls onSuccess', async () => {

@@ -187,7 +187,7 @@ describe('CampaignPromptHistory', () => {
 
 		// Click restore from the modal's restore button (restore button is present in PromptHistoryModal)
 		const restoreBtn = screen.getByRole('button', {
-			name: /Restore This Version/i,
+			name: 'Restore This Version',
 		});
 		await user.click(restoreBtn);
 		expect(mockOnSelect).toHaveBeenCalledWith('PREV');

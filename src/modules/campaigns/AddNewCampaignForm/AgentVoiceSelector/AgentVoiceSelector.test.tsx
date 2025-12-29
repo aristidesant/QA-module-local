@@ -1,8 +1,8 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
 import AgentVoiceSelector from './AgentVoiceSelector';
 import type { AgentVoiceModel } from '~/models/AgentVoiceModel';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 const mockUseGetAllAgentVoices = vi.fn();
 vi.mock('~/queries/agentVoiceQueries', () => ({
@@ -55,11 +55,7 @@ describe('AgentVoiceSelector', () => {
 			isError: false,
 		});
 
-		render(
-			<MantineProvider>
-				<AgentVoiceSelector onSelect={vi.fn()} />
-			</MantineProvider>
-		);
+		renderWithProviders(<AgentVoiceSelector onSelect={vi.fn()} />);
 
 		expect(screen.getByText('Loading voices...')).toBeInTheDocument();
 	});
@@ -71,11 +67,7 @@ describe('AgentVoiceSelector', () => {
 			isError: true,
 		});
 
-		render(
-			<MantineProvider>
-				<AgentVoiceSelector onSelect={vi.fn()} />
-			</MantineProvider>
-		);
+		renderWithProviders(<AgentVoiceSelector onSelect={vi.fn()} />);
 
 		expect(screen.getByText('Failed to load voices')).toBeInTheDocument();
 	});
@@ -112,14 +104,10 @@ describe('AgentVoiceSelector', () => {
 		});
 
 		const onSelect = vi.fn();
-		render(
-			<MantineProvider>
-				<AgentVoiceSelector onSelect={onSelect} />
-			</MantineProvider>
-		);
+		renderWithProviders(<AgentVoiceSelector onSelect={onSelect} />);
 
 		// Click the empty card to open the modal
-		fireEvent.click(screen.getByText('Select a voice'));
+		fireEvent.click(screen.getByText('Select a voice for your campaign'));
 
 		// Click the mocked voice list button
 		fireEvent.click(screen.getByText('Select Voice One'));
@@ -163,10 +151,8 @@ describe('AgentVoiceSelector', () => {
 		});
 
 		const onSelect = vi.fn();
-		render(
-			<MantineProvider>
-				<AgentVoiceSelector onSelect={onSelect} selectedVoiceId='voice-1' />
-			</MantineProvider>
+		renderWithProviders(
+			<AgentVoiceSelector onSelect={onSelect} selectedVoiceId='voice-1' />
 		);
 
 		expect(screen.getByText('Voice One')).toBeInTheDocument();

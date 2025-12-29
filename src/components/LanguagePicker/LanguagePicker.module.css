@@ -1,0 +1,88 @@
+.trigger {
+	display: inline-flex;
+	align-items: center;
+	padding: 6px 10px;
+	border-radius: 8px;
+	transition: all 0.2s ease;
+	cursor: pointer;
+	color: var(--mantine-color-gray-7);
+}
+
+.trigger:hover {
+	background-color: var(--mantine-color-gray-0);
+	color: var(--mantine-color-dark-8);
+}
+
+.default {
+	border: 1px solid var(--mantine-color-gray-3);
+	background-color: var(--mantine-color-white);
+}
+
+.default:hover {
+	border-color: var(--mantine-color-gray-4);
+	background-color: var(--mantine-color-gray-0);
+}
+
+.subtle {
+	background-color: transparent;
+}
+
+/* Sizes */
+.xs {
+	padding: 4px 6px;
+}
+
+.sm {
+	padding: 6px 10px;
+}
+
+.md {
+	padding: 8px 12px;
+}
+
+.icon {
+	opacity: 0.8;
+}
+
+.langValue {
+	font-size: 0.85rem;
+	letter-spacing: 0.2px;
+}
+
+.chevron {
+	opacity: 0.5;
+	transition: transform 0.2s ease;
+}
+
+[data-expanded] .chevron {
+	transform: rotate(180deg);
+}
+
+.dropdown {
+	padding: 4px;
+	border: 1px solid var(--mantine-color-gray-2);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.menuLabel {
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	color: var(--mantine-color-gray-5);
+	padding-bottom: 4px;
+}
+
+.menuItem {
+	border-radius: 6px;
+	padding: 8px 12px;
+	transition: all 0.15s ease;
+}
+
+.activeItem {
+	background-color: var(--mantine-color-blue-0) !important;
+	color: var(--mantine-color-blue-7);
+}
+
+.activeItem:hover {
+	background-color: var(--mantine-color-blue-1) !important;
+}

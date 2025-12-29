@@ -26,8 +26,10 @@ import RegionalSettingsParamsDetail from './RegionalSettingsParamsDetail';
 import RegionalSettingsParamsForm from './RegionalSettingsParamsForm';
 import InlineNotice from '~/components/InlineNotice';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
+import { useTranslation } from 'react-i18next';
 
 const RegionalSettingsParamsPage = () => {
+	const { t } = useTranslation('regional-settings-params');
 	const { data } = useClientConfigByName('regional_settings');
 	const { setMode } = useRegionalSettingsParamsStore();
 	const createMutation = useCreateClientConfig();
@@ -68,17 +70,17 @@ const RegionalSettingsParamsPage = () => {
 
 	return (
 		<ContentContainer
-			title='Regional Settings'
-			description='Configure the default regional settings'
+			title={t('page.title')}
+			description={t('page.description')}
 			titleRight={
 				hasConfig ? (
 					<Group gap={'xs'}>
 						{canCreateOverride && (
-							<Tooltip label='Create override' withArrow>
+							<Tooltip label={t('actions.createOverride')} withArrow>
 								<ActionIcon
 									variant='light'
 									color='grape'
-									aria-label='Create override'
+									aria-label={t('actions.createOverride')}
 									onClick={async () => {
 										if (!data || !canCreateOverride) return;
 										try {
@@ -100,11 +102,11 @@ const RegionalSettingsParamsPage = () => {
 							</Tooltip>
 						)}
 						{canDeleteConfig && (
-							<Tooltip label='Delete override' withArrow>
+							<Tooltip label={t('actions.deleteOverride')} withArrow>
 								<ActionIcon
 									variant='light'
 									color='red'
-									aria-label='Delete override'
+									aria-label={t('actions.deleteOverride')}
 									onClick={() => setDeleteConfigModalOpen(true)}
 									loading={deleteMutation.isPending}
 									disabled={deleteMutation.isPending}
@@ -114,11 +116,11 @@ const RegionalSettingsParamsPage = () => {
 							</Tooltip>
 						)}
 						{canEditConfig && (
-							<Tooltip label='Edit settings' withArrow>
+							<Tooltip label={t('actions.editSettings')} withArrow>
 								<ActionIcon
 									variant='filled'
 									color='blue'
-									aria-label='Edit settings'
+									aria-label={t('actions.editSettings')}
 									onClick={handleEdit}
 								>
 									<IconEdit size={16} />
@@ -132,13 +134,13 @@ const RegionalSettingsParamsPage = () => {
 			<Stack gap={'xs'}>
 				{isGlobalConfig && (
 					<InlineNotice
-						title='Global configuration'
+						title={t('globalNotice.title')}
 						icon={<IconAlertTriangle size={16} />}
 						color='orange'
 						description={
 							isMasterClient
-								? 'Changes here update the global defaults for every client. Proceed carefully.'
-								: 'These values are read-only for your client. Create an override to customize them.'
+								? t('globalNotice.description.master')
+								: t('globalNotice.description.client')
 						}
 					/>
 				)}
@@ -147,7 +149,7 @@ const RegionalSettingsParamsPage = () => {
 			<Modal
 				opened={editModalOpen}
 				onClose={handleCancel}
-				title='Edit regional settings'
+				title={t('editModal.title')}
 				centered
 				size='md'
 				overlayProps={{ opacity: 0.3, blur: 2 }}
@@ -177,12 +179,12 @@ const RegionalSettingsParamsPage = () => {
 			<Modal
 				opened={deleteConfigModalOpen}
 				onClose={() => setDeleteConfigModalOpen(false)}
-				title='Delete configuration'
+				title={t('deleteOverride.title')}
 				centered
 				size='sm'
 			>
 				<Text size='sm' mb='md'>
-					Delete this client override to use the global regional settings?
+					{t('deleteOverride.description')}
 				</Text>
 				<Group gap='xs' justify='flex-end'>
 					<Button
@@ -190,7 +192,7 @@ const RegionalSettingsParamsPage = () => {
 						size='xs'
 						onClick={() => setDeleteConfigModalOpen(false)}
 					>
-						Cancel
+						{t('actions.cancel', { ns: 'common' })}
 					</Button>
 					<Button
 						color='red'
@@ -208,7 +210,7 @@ const RegionalSettingsParamsPage = () => {
 						}}
 						loading={deleteMutation.isPending}
 					>
-						Delete override
+						{t('actions.deleteOverride')}
 					</Button>
 				</Group>
 			</Modal>

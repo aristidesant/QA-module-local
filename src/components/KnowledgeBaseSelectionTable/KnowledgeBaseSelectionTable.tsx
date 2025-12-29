@@ -11,6 +11,7 @@ import {
 	Box,
 	Tooltip,
 } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import { useDebouncedValue } from '@mantine/hooks';
 import {
 	IconFile,
@@ -93,9 +94,12 @@ const KnowledgeBaseSelectionTable: React.FC<
 	onCreateNew,
 	onCancel,
 	onSave,
-	emptyMessage = 'No knowledge bases found',
+	emptyMessage = '',
 	showFooter = true,
 }) => {
+	const { t } = useTranslation();
+	if (!emptyMessage)
+		emptyMessage = t('knowledgeBaseSelection.noKnowledgeBases');
 	const {
 		selectedIds,
 		searchTerm,
@@ -207,7 +211,7 @@ const KnowledgeBaseSelectionTable: React.FC<
 			},
 			{
 				id: 'name',
-				header: 'Name',
+				header: t('knowledgeBaseSelection.columns.name'),
 				accessorFn: (row) => row.name,
 				enableSorting: true,
 				cell: ({ row }) => {
@@ -223,7 +227,7 @@ const KnowledgeBaseSelectionTable: React.FC<
 			},
 			{
 				id: 'description',
-				header: 'Description',
+				header: t('knowledgeBaseSelection.columns.description'),
 				accessorFn: (row) => row.description ?? '',
 				enableSorting: true,
 				cell: ({ row }) => {
@@ -232,8 +236,8 @@ const KnowledgeBaseSelectionTable: React.FC<
 						kb.type === KnowledgeBaseType.URL
 							? kb.sourceUrl
 							: kb.type === KnowledgeBaseType.TEXT
-								? 'Text snippet'
-								: kb.file?.name || 'File';
+								? t('knowledgeBaseSelection.fallbacks.textSnippet')
+								: kb.file?.name || t('knowledgeBaseSelection.fallbacks.file');
 					return (
 						<Text
 							size='xs'
@@ -247,7 +251,7 @@ const KnowledgeBaseSelectionTable: React.FC<
 			},
 			{
 				id: 'type',
-				header: 'Type',
+				header: t('knowledgeBaseSelection.columns.type'),
 				accessorFn: (row) => row.type,
 				enableSorting: true,
 				cell: ({ row }) => <TypeBadge type={row.original.type} />,

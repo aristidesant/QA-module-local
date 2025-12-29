@@ -3,6 +3,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import CampaignContactOutcomeSummary from './CampaignContactOutcomeSummary';
 
+const REFRESH_DATA_LABEL = 'Refresh data';
+const BACK_TO_OVERVIEW_TEXT = 'Back to overview';
+const NO_DATA_TEXT = 'No outcome data available';
+const OUTCOME_SUMMARY_TITLE = 'Outcome Summary';
+const OUTCOME_SUMMARY_DESCRIPTION = 'Contact distribution by result.';
+
 const { mockUseGetCallDispositionReportParents } = vi.hoisted(() => ({
 	mockUseGetCallDispositionReportParents: vi.fn(),
 }));
@@ -26,11 +32,9 @@ describe('CampaignContactOutcomeSummary', () => {
 		renderWithProviders(
 			<CampaignContactOutcomeSummary campaign={{ id: 1 } as any} />
 		);
-		expect(screen.getByLabelText('Refresh data')).toBeInTheDocument();
+		expect(screen.getByLabelText(REFRESH_DATA_LABEL)).toBeInTheDocument();
 		// Ensure skeleton text is rendered by checking for no outcome text
-		expect(
-			screen.queryByText('No outcome data available')
-		).not.toBeInTheDocument();
+		expect(screen.queryByText(NO_DATA_TEXT)).not.toBeInTheDocument();
 	});
 
 	it('shows empty state when there is no data', () => {
@@ -43,7 +47,7 @@ describe('CampaignContactOutcomeSummary', () => {
 		renderWithProviders(
 			<CampaignContactOutcomeSummary campaign={{ id: 1 } as any} />
 		);
-		expect(screen.getByText('No outcome data available')).toBeInTheDocument();
+		expect(screen.getByText(NO_DATA_TEXT)).toBeInTheDocument();
 	});
 
 	it('renders legend and allows selecting dispositions', () => {
@@ -71,10 +75,10 @@ describe('CampaignContactOutcomeSummary', () => {
 			name: /View Effective Contact/i,
 		});
 		fireEvent.click(viewButton);
-		expect(screen.getByText('Back to overview')).toBeInTheDocument();
+		expect(screen.getByText(BACK_TO_OVERVIEW_TEXT)).toBeInTheDocument();
 
 		// Click refresh button to trigger refetch
-		const refreshButton = screen.getByLabelText('Refresh data');
+		const refreshButton = screen.getByLabelText(REFRESH_DATA_LABEL);
 		fireEvent.click(refreshButton);
 		expect(refetch).toHaveBeenCalled();
 	});
@@ -148,16 +152,16 @@ describe('CampaignContactOutcomeSummary', () => {
 			name: /View Effective Contact/i,
 		});
 		fireEvent.click(viewButton);
-		expect(screen.getByText('Back to overview')).toBeInTheDocument();
+		expect(screen.getByText(BACK_TO_OVERVIEW_TEXT)).toBeInTheDocument();
 
 		// Click back button
 		const backButton = screen.getByRole('button', {
-			name: /Back to overview/i,
+			name: BACK_TO_OVERVIEW_TEXT,
 		});
 		fireEvent.click(backButton);
 
 		// Should no longer show parent badge
-		expect(screen.queryByText(/Back to overview/)).not.toBeInTheDocument();
+		expect(screen.queryByText(BACK_TO_OVERVIEW_TEXT)).not.toBeInTheDocument();
 	});
 
 	it('disables refresh button when campaign is completed', () => {
@@ -177,7 +181,7 @@ describe('CampaignContactOutcomeSummary', () => {
 			/>
 		);
 
-		const refreshButton = screen.getByLabelText('Refresh data');
+		const refreshButton = screen.getByLabelText(REFRESH_DATA_LABEL);
 		expect(refreshButton).toBeDisabled();
 	});
 
@@ -249,7 +253,7 @@ describe('CampaignContactOutcomeSummary', () => {
 			refetch: vi.fn(),
 		});
 		renderWithProviders(<CampaignContactOutcomeSummary campaign={undefined} />);
-		expect(screen.getByLabelText('Refresh data')).toBeInTheDocument();
+		expect(screen.getByLabelText(REFRESH_DATA_LABEL)).toBeInTheDocument();
 	});
 
 	it('handles disposition selection and subsequent refetch correctly', () => {
@@ -273,7 +277,7 @@ describe('CampaignContactOutcomeSummary', () => {
 		});
 		fireEvent.click(viewButton);
 
-		const refreshButton = screen.getByLabelText('Refresh data');
+		const refreshButton = screen.getByLabelText(REFRESH_DATA_LABEL);
 		fireEvent.click(refreshButton);
 
 		expect(refetch).toHaveBeenCalled();
@@ -289,10 +293,8 @@ describe('CampaignContactOutcomeSummary', () => {
 			<CampaignContactOutcomeSummary campaign={{ id: 1 } as any} />
 		);
 
-		expect(screen.getByText('Outcome Summary')).toBeInTheDocument();
-		expect(
-			screen.getByText('Contact distribution by result.')
-		).toBeInTheDocument();
+		expect(screen.getByText(OUTCOME_SUMMARY_TITLE)).toBeInTheDocument();
+		expect(screen.getByText(OUTCOME_SUMMARY_DESCRIPTION)).toBeInTheDocument();
 	});
 });
 

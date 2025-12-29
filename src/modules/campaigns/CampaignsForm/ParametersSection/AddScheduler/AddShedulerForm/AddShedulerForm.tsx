@@ -16,6 +16,8 @@ import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { IconCalendarStats, IconCheck, IconGauge } from '@tabler/icons-react';
 import React, { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import type { DayConfig } from '~/api/campaignsApi';
 import { useGetClientConfig } from '~/queries/clientConfigQueries';
 import { useCreateCampaignSchedule } from '~/queries/campaignsQueries';
@@ -35,15 +37,17 @@ interface PredefinedScheduleFormValues {
 	predefinedScheduleId: string | null;
 }
 
-const dayLabelMap: Record<DayConfig['dayOfWeek'], string> = {
-	monday: 'Monday',
-	tuesday: 'Tuesday',
-	wednesday: 'Wednesday',
-	thursday: 'Thursday',
-	friday: 'Friday',
-	saturday: 'Saturday',
-	sunday: 'Sunday',
-};
+const getDayLabelMap = (
+	t: TFunction
+): Record<DayConfig['dayOfWeek'], string> => ({
+	monday: t('scheduler.schedulerBuilder.days.monday'),
+	tuesday: t('scheduler.schedulerBuilder.days.tuesday'),
+	wednesday: t('scheduler.schedulerBuilder.days.wednesday'),
+	thursday: t('scheduler.schedulerBuilder.days.thursday'),
+	friday: t('scheduler.schedulerBuilder.days.friday'),
+	saturday: t('scheduler.schedulerBuilder.days.saturday'),
+	sunday: t('scheduler.schedulerBuilder.days.sunday'),
+});
 
 const allDaysOfWeek: Array<DayConfig['dayOfWeek']> = [
 	'monday',
@@ -96,8 +100,11 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 	onCancel,
 	campaignId,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const createScheduleMutation = useCreateCampaignSchedule();
 	const clientConfigQuery = useGetClientConfig('scheduler_predefined_params');
+
+	const dayLabelMap = useMemo(() => getDayLabelMap(t), [t]);
 
 	// Parse predefined schedules from client config
 	const predefinedSchedules = useMemo<PredefinedScheduleConfig[]>(() => {
@@ -115,9 +122,13 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 		() =>
 			predefinedSchedules.map((schedule, index) => ({
 				value: String(index),
-				label: schedule.name || `Schedule ${index + 1}`,
+				label:
+					schedule.name ||
+					t('scheduler.schedulerBuilder.status.scheduleN', {
+						index: index + 1,
+					}),
 			})),
-		[predefinedSchedules]
+		[predefinedSchedules, t]
 	);
 
 	const form = useForm<PredefinedScheduleFormValues>({
@@ -128,15 +139,24 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 			predefinedScheduleId: null,
 		},
 		validate: {
-			name: (value) => (value.trim() ? null : 'Name is required'),
+			name: (value) =>
+				value.trim()
+					? null
+					: t('scheduler.schedulerBuilder.validation.nameRequired'),
 			predefinedScheduleId: (value) =>
-				value ? null : 'Please select a predefined schedule',
+				value
+					? null
+					: t('scheduler.schedulerBuilder.validation.scheduleRequired'),
 			humanEquivalent: (value) => {
 				if (value === undefined || value === null) {
-					return 'Human Equivalent is required';
+					return t(
+						'scheduler.schedulerBuilder.validation.humanEquivalentRequired'
+					);
 				}
 				if (typeof value !== 'number' || isNaN(value)) {
-					return 'Human Equivalent must be a number';
+					return t(
+						'scheduler.schedulerBuilder.validation.humanEquivalentNumber'
+					);
 				}
 
 				return null;
@@ -169,15 +189,18 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 		(dayOfWeek: DayConfig['dayOfWeek']) => {
 			const dayConfig = dayConfigMap.get(dayOfWeek);
 			if (!dayConfig || !dayConfig.isActive) {
-				return { isActive: false, times: 'Off' };
+				return {
+					isActive: false,
+					times: t('scheduler.schedulerBuilder.status.off'),
+				};
 			}
 			const times =
 				dayConfig.startHour && dayConfig.endHour
 					? `${dayConfig.startHour.slice(0, 5)} - ${dayConfig.endHour.slice(0, 5)}`
-					: 'No hours';
+					: t('scheduler.schedulerBuilder.status.noHours');
 			return { isActive: true, times };
 		},
-		[dayConfigMap]
+		[dayConfigMap, t]
 	);
 
 	const previewRow = useMemo(() => {
@@ -188,8 +211,10 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 	const handleSubmit = async (values: PredefinedScheduleFormValues) => {
 		if (!campaignId) {
 			notifications.show({
-				title: 'Error',
-				message: 'Campaign ID is required',
+				title: t('scheduler.schedulerBuilder.notifications.error'),
+				message: t(
+					'scheduler.schedulerBuilder.notifications.campaignIdRequired'
+				),
 				color: 'red',
 			});
 			return;
@@ -202,8 +227,8 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 		// Validate that we have dayConfigs
 		if (dayConfigs.length === 0) {
 			notifications.show({
-				title: 'Error',
-				message: 'Please select a predefined schedule',
+				title: t('scheduler.schedulerBuilder.notifications.error'),
+				message: t('scheduler.schedulerBuilder.validation.scheduleRequired'),
 				color: 'red',
 			});
 			return;
@@ -225,8 +250,8 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 			});
 
 			notifications.show({
-				title: 'Success',
-				message: 'Predefined schedule created successfully',
+				title: t('scheduler.schedulerBuilder.notifications.success'),
+				message: t('scheduler.schedulerBuilder.notifications.created'),
 				color: 'green',
 				icon: <IconCheck size={16} />,
 			});
@@ -238,7 +263,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 			console.error('Error creating predefined schedule:', error);
 
 			// Extract error message from API response
-			let errorMessage = 'Failed to create predefined schedule';
+			let errorMessage = t('scheduler.schedulerBuilder.notifications.failed');
 
 			if (error?.response?.data?.message) {
 				// API returned a specific error message
@@ -249,7 +274,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 			}
 
 			notifications.show({
-				title: 'Error Creating Schedule',
+				title: t('scheduler.schedulerBuilder.notifications.errorCreating'),
 				message: errorMessage,
 				color: 'red',
 				autoClose: 8000, // Keep notification visible longer for error messages
@@ -263,11 +288,10 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 				<Group justify='space-between' align='flex-start'>
 					<div>
 						<Text size='sm' fw={700}>
-							Curated schedules
+							{t('scheduler.schedulerBuilder.curatedSchedules')}
 						</Text>
 						<Text size='xs' c='dimmed'>
-							Pick a template, personalize the naming, and tune the human
-							equivalent you want to simulate.
+							{t('scheduler.schedulerBuilder.curatedDescription')}
 						</Text>
 					</div>
 					<Badge
@@ -275,7 +299,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 						size='sm'
 						leftSection={<IconCalendarStats size={14} />}
 					>
-						Schedule builder
+						{t('scheduler.schedulerBuilder.builder')}
 					</Badge>
 				</Group>
 
@@ -287,21 +311,24 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 							</ThemeIcon>
 							<div>
 								<Text size='sm' fw={600}>
-									Predefined schedule
+									{t('scheduler.schedulerBuilder.predefinedSchedule')}
 								</Text>
 								<Text size='xs' c='dimmed'>
-									Choose a schedule template with the working days and hours
-									already mapped.
+									{t('scheduler.schedulerBuilder.predefinedDescription')}
 								</Text>
 							</div>
 						</Group>
 						<Select
-							placeholder='Select days and hours configuration'
+							placeholder={t(
+								'scheduler.schedulerBuilder.predefinedPlaceholder'
+							)}
 							data={scheduleOptions}
 							searchable
 							required
 							size='sm'
-							nothingFoundMessage='No templates available'
+							nothingFoundMessage={t(
+								'scheduler.schedulerBuilder.predefinedNoData'
+							)}
 							className={classes.field}
 							{...form.getInputProps('predefinedScheduleId')}
 						/>
@@ -309,10 +336,10 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 							<Group justify='space-between' align='center' gap='xs'>
 								<div>
 									<Text size='xs' fw={600}>
-										Template preview
+										{t('scheduler.schedulerBuilder.preview')}
 									</Text>
 									<Text size='xs' c='dimmed'>
-										Working hours per weekday for the selected template.
+										{t('scheduler.schedulerBuilder.previewDescription')}
 									</Text>
 								</div>
 								{selectedSchedule && (
@@ -365,7 +392,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 								</Table>
 							) : (
 								<Text size='xs' c='dimmed'>
-									Select a template to preview its configured days.
+									{t('scheduler.schedulerBuilder.previewEmpty')}
 								</Text>
 							)}
 						</div>
@@ -380,25 +407,26 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 							</ThemeIcon>
 							<div>
 								<Text size='sm' fw={600}>
-									Schedule details
+									{t('scheduler.schedulerBuilder.details')}
 								</Text>
 								<Text size='xs' c='dimmed'>
-									Add a clear name, short description, and adjust the expected
-									human effort.
+									{t('scheduler.schedulerBuilder.detailsDescription')}
 								</Text>
 							</div>
 						</Group>
 						<TextInput
-							label='Schedule name'
-							placeholder='e.g. Standard Business Hours'
+							label={t('scheduler.schedulerBuilder.name')}
+							placeholder={t('scheduler.schedulerBuilder.namePlaceholder')}
 							required
 							size='sm'
 							className={classes.field}
 							{...form.getInputProps('name')}
 						/>
 						<Textarea
-							label='Description'
-							placeholder='e.g. Monday to Friday from 08:00 to 17:00'
+							label={t('scheduler.schedulerBuilder.description')}
+							placeholder={t(
+								'scheduler.schedulerBuilder.descriptionPlaceholder'
+							)}
 							minRows={3}
 							rows={3}
 							maxLength={250}
@@ -409,7 +437,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 						<Stack gap='xs' className={classes.field}>
 							<Group justify='space-between' align='center'>
 								<Text size='sm' fw={600}>
-									Human equivalent
+									{t('scheduler.schedulerBuilder.humanEquivalent')}
 								</Text>
 								<Badge size='sm' variant='outline' color='blue'>
 									{form.values.humanEquivalent}
@@ -439,7 +467,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 				<Group justify='flex-end' className={classes.actionBar}>
 					{onCancel && (
 						<Button variant='default' onClick={onCancel} size='sm'>
-							Cancel
+							{t('scheduler.schedulerBuilder.cancel')}
 						</Button>
 					)}
 					<Button
@@ -447,7 +475,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 						loading={createScheduleMutation.isPending}
 						size='sm'
 					>
-						Create schedule
+						{t('scheduler.schedulerBuilder.create')}
 					</Button>
 				</Group>
 			</Stack>

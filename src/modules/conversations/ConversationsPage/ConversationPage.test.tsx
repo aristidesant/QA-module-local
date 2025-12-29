@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/react';
-import { describe, it, beforeEach, vi } from 'vitest';
+import { describe, it, beforeEach, vi, expect } from 'vitest';
 import ConversationPage from './ConversationPage';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
@@ -30,8 +30,11 @@ describe('ConversationPage', () => {
 		renderWithProviders(<ConversationPage />);
 
 		expect(
-			screen.getByText(/No conversation selected. Choose a conversation/i)
+			screen.getByText(
+				'No conversation selected. Choose a conversation to view transcripts, notes, and associated actions.'
+			)
 		).toBeInTheDocument();
+		expect(screen.getByText('Nothing selected')).toBeInTheDocument();
 	});
 
 	it('renders selectionContent when provided', () => {
@@ -44,7 +47,9 @@ describe('ConversationPage', () => {
 
 		expect(screen.getByText('Selected Content')).toBeInTheDocument();
 		expect(
-			screen.queryByText(/No conversation selected. Choose a conversation/i)
+			screen.queryByText(
+				'No conversation selected. Choose a conversation to view transcripts, notes, and associated actions.'
+			)
 		).not.toBeInTheDocument();
 	});
 

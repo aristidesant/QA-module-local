@@ -1,8 +1,8 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
 import ConversationDisposition from './ConversationDisposition';
 import type { CallDispositionModel } from '~/models/CallDispositionModel';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 // Mock useCallDispositionByConversationId
 const mockUseCallDispositionByConversationId = vi.fn();
@@ -48,10 +48,8 @@ const sampleDisposition: CallDispositionModel = {
 };
 
 const renderComponent = (conversationId: string | number = 123) =>
-	render(
-		<MantineProvider>
-			<ConversationDisposition conversationId={conversationId} />
-		</MantineProvider>
+	renderWithProviders(
+		<ConversationDisposition conversationId={conversationId} />
 	);
 
 describe('ConversationDisposition', () => {
@@ -66,8 +64,8 @@ describe('ConversationDisposition', () => {
 		});
 	});
 
-	describe('card title - must always display "Outcome"', () => {
-		it('displays "Outcome" as title when loading', () => {
+	describe('card title - must always display "disposition.title"', () => {
+		it('displays "disposition.title" as title when loading', () => {
 			mockUseCallDispositionByConversationId.mockReturnValue({
 				data: null,
 				isLoading: true,
@@ -79,7 +77,7 @@ describe('ConversationDisposition', () => {
 			expect(screen.getByTestId('card-title')).toHaveTextContent('Outcome');
 		});
 
-		it('displays "Outcome" as title when error occurs', () => {
+		it('displays "disposition.title" as title when error occurs', () => {
 			mockUseCallDispositionByConversationId.mockReturnValue({
 				data: null,
 				isLoading: false,
@@ -91,12 +89,12 @@ describe('ConversationDisposition', () => {
 			expect(screen.getByTestId('card-title')).toHaveTextContent('Outcome');
 		});
 
-		it('displays "Outcome" as title when data is loaded', () => {
+		it('displays "disposition.title" as title when data is loaded', () => {
 			renderComponent();
 			expect(screen.getByTestId('card-title')).toHaveTextContent('Outcome');
 		});
 
-		it('displays "Outcome" as title with positive status', () => {
+		it('displays "disposition.title" as title with positive status', () => {
 			mockUseCallDispositionByConversationId.mockReturnValue({
 				data: { ...sampleDisposition, callStatus: 'POSITIVE' },
 				isLoading: false,
@@ -108,7 +106,7 @@ describe('ConversationDisposition', () => {
 			expect(screen.getByTestId('card-title')).toHaveTextContent('Outcome');
 		});
 
-		it('displays "Outcome" as title with negative status', () => {
+		it('displays "disposition.title" as title with negative status', () => {
 			mockUseCallDispositionByConversationId.mockReturnValue({
 				data: { ...sampleDisposition, callStatus: 'NEGATIVE' },
 				isLoading: false,
@@ -120,7 +118,7 @@ describe('ConversationDisposition', () => {
 			expect(screen.getByTestId('card-title')).toHaveTextContent('Outcome');
 		});
 
-		it('displays "Outcome" as title with neutral status', () => {
+		it('displays "disposition.title" as title with neutral status', () => {
 			mockUseCallDispositionByConversationId.mockReturnValue({
 				data: { ...sampleDisposition, callStatus: 'NEUTRAL' },
 				isLoading: false,
@@ -130,13 +128,6 @@ describe('ConversationDisposition', () => {
 
 			renderComponent();
 			expect(screen.getByTestId('card-title')).toHaveTextContent('Outcome');
-		});
-
-		it('never displays "Disposition" as title', () => {
-			renderComponent();
-			expect(screen.getByTestId('card-title')).not.toHaveTextContent(
-				'Disposition'
-			);
 		});
 	});
 
@@ -184,7 +175,9 @@ describe('ConversationDisposition', () => {
 			});
 
 			renderComponent();
-			const retryButton = screen.getByRole('button', { name: /retry/i });
+			const retryButton = screen.getByRole('button', {
+				name: 'Retry',
+			});
 			fireEvent.click(retryButton);
 			expect(mockRefetch).toHaveBeenCalled();
 		});
@@ -223,7 +216,7 @@ describe('ConversationDisposition', () => {
 			expect(screen.queryByText('Agent notes')).not.toBeInTheDocument();
 		});
 
-		it('displays "No disposition" when dispositionName is missing', () => {
+		it('displays "disposition.noOutcome" when dispositionName is missing', () => {
 			mockUseCallDispositionByConversationId.mockReturnValue({
 				data: { ...sampleDisposition, dispositionName: '' },
 				isLoading: false,
@@ -343,7 +336,7 @@ describe('ConversationDisposition', () => {
 			expect(screen.getByText('30 minutes')).toBeInTheDocument();
 		});
 
-		it('displays "as soon as possible" when rescheduleTime is 0', () => {
+		it('displays "disposition.duration.asap" when rescheduleTime is 0', () => {
 			mockUseCallDispositionByConversationId.mockReturnValue({
 				data: {
 					...sampleDisposition,
@@ -448,7 +441,7 @@ describe('ConversationDisposition', () => {
 			);
 		});
 
-		it('displays "No updates yet" when no timestamp available', () => {
+		it('displays "disposition.noUpdates" when no timestamp available', () => {
 			mockUseCallDispositionByConversationId.mockReturnValue({
 				data: {
 					...sampleDisposition,

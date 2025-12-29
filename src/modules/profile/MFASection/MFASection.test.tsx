@@ -1,7 +1,6 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { MantineProvider } from '@mantine/core';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { MFASection } from './MFASection';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useSessionStore } from '~/stores/sessionStore';
 import {
@@ -39,23 +38,6 @@ vi.mock('~/components/SectionCard/SectionCard', () => ({
 		</div>
 	),
 }));
-
-const createQueryClient = () =>
-	new QueryClient({
-		defaultOptions: {
-			queries: { retry: false },
-			mutations: { retry: false },
-		},
-	});
-
-const renderWithProviders = (ui: React.ReactElement) => {
-	const queryClient = createQueryClient();
-	return render(
-		<QueryClientProvider client={queryClient}>
-			<MantineProvider>{ui}</MantineProvider>
-		</QueryClientProvider>
-	);
-};
 
 describe('MFASection', () => {
 	const mockSetUser = vi.fn();
@@ -163,7 +145,7 @@ describe('MFASection', () => {
 			expect(mockVerifyMFA).toHaveBeenCalledWith({ code: '123456' });
 			expect(notifications.show).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: '✓ Two-Factor Authentication Enabled',
+					title: 'Two-Factor Authentication Enabled',
 				})
 			);
 		});

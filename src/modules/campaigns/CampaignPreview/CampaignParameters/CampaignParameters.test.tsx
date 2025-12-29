@@ -61,7 +61,7 @@ describe('CampaignParameters', () => {
 		renderWithProviders(<CampaignParameters />);
 		expect(screen.getByText('Active windows')).toBeInTheDocument();
 		expect(screen.getByText('Call handling')).toBeInTheDocument();
-		expect(screen.getByText(/Up to 3 times/)).toBeInTheDocument();
+		expect(screen.getByText('Up to 3 times')).toBeInTheDocument();
 		expect(screen.getByText('Enabled')).toBeInTheDocument();
 	});
 

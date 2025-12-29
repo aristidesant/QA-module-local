@@ -12,6 +12,7 @@ import {
 } from '@mantine/core';
 import type { DispositionNode } from '~/models/DispositionNodeModel';
 import styles from './DispositionNodeForm.module.css';
+import { useTranslation } from 'react-i18next';
 import { useDispositionBuilderStore } from '../../../dispositionStore';
 
 export type DispositionNodeFormProps = {
@@ -27,6 +28,7 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 	onCancel,
 	onSubmit,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const form = useForm<DispositionNode>({
 		initialValues: {
 			...node,
@@ -44,33 +46,33 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 			[
 				isFinal
 					? {
-							label: 'Final outcome',
+							label: t('disposition.nodeForm.badges.final'),
 							color: 'green',
 						}
 					: null,
 				requiresReschedule
 					? {
-							label: 'Requires reschedule',
+							label: t('disposition.nodeForm.badges.reschedule'),
 							color: 'orange',
 						}
 					: null,
 				isInvalidatesNumber
 					? {
-							label: 'Do not retry',
+							label: t('disposition.nodeForm.badges.noRetry'),
 							color: 'red',
 						}
 					: null,
 				doNotCall
 					? {
-							label: 'Do not call',
+							label: t('disposition.nodeForm.badges.doNotCall'),
 							color: 'red',
 						}
 					: null,
 			].filter(Boolean) as Array<{ label: string; color: string }>,
-		[doNotCall, isFinal, isInvalidatesNumber, requiresReschedule]
+		[doNotCall, isFinal, isInvalidatesNumber, requiresReschedule, t]
 	);
 
-	const parentLabel = parentNode?.name ?? 'Root level outcome';
+	const parentLabel = parentNode?.name ?? t('disposition.nodeForm.rootLevel');
 
 	return (
 		<Box className={styles.formContainer}>
@@ -88,7 +90,7 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 					<div className={styles.header}>
 						<div className={styles.headerDetails}>
 							<Text className={styles.headerEyebrow} size='xs'>
-								Editing outcome
+								{t('disposition.nodeForm.editingTitle')}
 							</Text>
 							<Text className={styles.headerTitle}>{form.values.name}</Text>
 						</div>
@@ -120,26 +122,27 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 
 					<div className={styles.infoCard}>
 						<Text className={styles.infoLabel} size='xs'>
-							Description
+							{t('disposition.nodeForm.descriptionLabel')}
 						</Text>
 						<Text size='sm' className={styles.infoValue}>
 							{form.values.description?.trim()
 								? form.values.description
-								: 'This outcome does not include a description yet.'}
+								: t('disposition.nodeForm.noDescription')}
 						</Text>
 					</div>
 
 					<div className={styles.toggleSection}>
 						<Text className={styles.sectionLabel} size='xs'>
-							Behavior controls
+							{t('disposition.nodeForm.behaviorControls')}
 						</Text>
 						<div className={styles.toggleGrid}>
 							<div className={styles.toggleCard}>
 								<div className={styles.toggleContent}>
-									<Text className={styles.toggleTitle}>Invalidates number</Text>
+									<Text className={styles.toggleTitle}>
+										{t('disposition.nodeForm.invalidatesNumberTitle')}
+									</Text>
 									<Text className={styles.toggleDescription} size='xs'>
-										Prevent the dialer from retrying this phone number after the
-										outcome is used.
+										{t('disposition.nodeForm.invalidatesNumberDesc')}
 									</Text>
 								</div>
 								<Switch
@@ -147,26 +150,7 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 									{...form.getInputProps('isInvalidatesNumber', {
 										type: 'checkbox',
 									})}
-									aria-label='Invalidates number'
-									size='sm'
-									color='blue'
-								/>
-							</div>
-
-							<div className={styles.toggleCard}>
-								<div className={styles.toggleContent}>
-									<Text className={styles.toggleTitle}>Do not call</Text>
-									<Text className={styles.toggleDescription} size='xs'>
-										Mark this outcome as do not call so the contact is excluded
-										from future dialing.
-									</Text>
-								</div>
-								<Switch
-									key={form.key('doNotCall')}
-									{...form.getInputProps('doNotCall', {
-										type: 'checkbox',
-									})}
-									aria-label='Do not call'
+									aria-label={t('disposition.nodeForm.invalidatesNumberTitle')}
 									size='sm'
 									color='blue'
 								/>
@@ -175,11 +159,30 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 							<div className={styles.toggleCard}>
 								<div className={styles.toggleContent}>
 									<Text className={styles.toggleTitle}>
-										Requires reschedule
+										{t('disposition.nodeForm.doNotCallTitle')}
 									</Text>
 									<Text className={styles.toggleDescription} size='xs'>
-										Flag this outcome so follow-up activities can be scheduled
-										for the contact.
+										{t('disposition.nodeForm.doNotCallDesc')}
+									</Text>
+								</div>
+								<Switch
+									key={form.key('doNotCall')}
+									{...form.getInputProps('doNotCall', {
+										type: 'checkbox',
+									})}
+									aria-label={t('disposition.nodeForm.doNotCallTitle')}
+									size='sm'
+									color='blue'
+								/>
+							</div>
+
+							<div className={styles.toggleCard}>
+								<div className={styles.toggleContent}>
+									<Text className={styles.toggleTitle}>
+										{t('disposition.nodeForm.rescheduleTitle')}
+									</Text>
+									<Text className={styles.toggleDescription} size='xs'>
+										{t('disposition.nodeForm.rescheduleDesc')}
 									</Text>
 								</div>
 								<Switch
@@ -187,7 +190,7 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 									{...form.getInputProps('requiresReschedule', {
 										type: 'checkbox',
 									})}
-									aria-label='Requires reschedule'
+									aria-label={t('disposition.nodeForm.rescheduleTitle')}
 									size='sm'
 									color='blue'
 								/>
@@ -200,10 +203,10 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 
 				<Group justify='flex-end' gap='xs' className={styles.actionGroup}>
 					<Button variant='default' onClick={onCancel} type='button' size='xs'>
-						Cancel
+						{t('actions.cancel', { ns: 'common' })}
 					</Button>
 					<Button type='submit' variant='filled' color='blue' size='xs'>
-						Save
+						{t('actions.save', { ns: 'common' })}
 					</Button>
 				</Group>
 			</form>

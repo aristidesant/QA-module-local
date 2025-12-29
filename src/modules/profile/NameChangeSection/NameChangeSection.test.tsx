@@ -1,7 +1,6 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { MantineProvider } from '@mantine/core';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { NameChangeSection } from './NameChangeSection';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
 	useCurrentUser,
@@ -29,23 +28,6 @@ vi.mock('~/components/SectionCard/SectionCard', () => ({
 		</div>
 	),
 }));
-
-const createQueryClient = () =>
-	new QueryClient({
-		defaultOptions: {
-			queries: { retry: false },
-			mutations: { retry: false },
-		},
-	});
-
-const renderWithProviders = (ui: React.ReactElement) => {
-	const queryClient = createQueryClient();
-	return render(
-		<QueryClientProvider client={queryClient}>
-			<MantineProvider>{ui}</MantineProvider>
-		</QueryClientProvider>
-	);
-};
 
 describe('NameChangeSection', () => {
 	const mockMutateAsync = vi.fn();

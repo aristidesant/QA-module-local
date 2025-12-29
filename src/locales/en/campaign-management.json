@@ -1,0 +1,54 @@
+{
+	"title": "Campaign Management",
+	"description": "Manage campaign categories, objectives, schemas, prompt types, and outcomes",
+	"tabs": {
+		"setup": "Campaign Setup",
+		"outcomes": "Outcomes",
+		"promptTypes": "Prompt Types"
+	},
+	"setup": {
+		"catalog": "Catalog",
+		"categories": {
+			"label": "Categories",
+			"title": "Campaign Categories",
+			"description": "Organize and manage campaign categories to better structure your campaigns",
+			"create": "Create Category",
+			"edit": "Edit Campaign Category",
+			"sectionCardDescription": "Organize categories used to classify campaigns and apply filters.",
+			"deleteSuccess": "Campaign category deleted successfully",
+			"deleteError": "Failed to delete campaign category",
+			"noResults": "No categories found",
+			"noResultsFilters": "No categories match your filters",
+			"getStarted": "Get started by creating your first campaign category"
+		},
+		"objectives": {
+			"label": "Objectives",
+			"title": "Campaign Objectives",
+			"description": "Define and manage objectives to guide your campaign strategies and measure success",
+			"create": "Create Objective",
+			"edit": "Edit Campaign Objective",
+			"sectionCardDescription": "Add and manage campaign objectives to define expected outcomes and tracking.",
+			"deleteSuccess": "Campaign objective deleted successfully",
+			"deleteError": "Failed to delete campaign objective",
+			"noResults": "No objectives found",
+			"noResultsFilters": "No objectives match your filters",
+			"noResultsFiltersDescription": "Try adjusting your search criteria or filters",
+			"getStarted": "Get started by creating your first campaign objective"
+		},
+		"schemas": {
+			"label": "Schemas",
+			"title": "Campaign Schemas",
+			"description": "Define and manage contact data schemas for your campaigns",
+			"create": "Create Schema",
+			"edit": "Edit Campaign Schema",
+			"sectionCardDescription": "Campaign Schemas where the objectives belong to",
+			"deleteSuccess": "Campaign schema deleted successfully",
+			"deleteError": "Failed to delete campaign schema",
+			"noResults": "No schemas found",
+			"noResultsFilters": "No schemas match your filters",
+			"noResultsFiltersDescription": "Try adjusting your search criteria or filters",
+			"clearFilters": "Clear Filters",
+			"getStarted": "Get started by creating your first campaign schema"
+		}
+	}
+}

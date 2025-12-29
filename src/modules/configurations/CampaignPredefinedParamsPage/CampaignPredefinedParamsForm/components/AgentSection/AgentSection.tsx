@@ -1,16 +1,18 @@
 import { Select, Slider, Stack, Text as MantineText } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import { useFormContext } from '../../CampaignPredefinedFormProvider';
 import { LLM_MODELS } from '../../formConfig';
 import styles from '../../CampaignPredefinedParamsForm.module.css';
 
 export const AgentSection: React.FC = () => {
 	const { form } = useFormContext();
+	const { t } = useTranslation('campaign-predefined-params');
 
 	return (
 		<Stack gap='lg' mt='md'>
 			<Select
-				label='LLM Model'
-				placeholder='Select LLM model'
+				label={t('form.agent.llmModel.label')}
+				placeholder={t('form.agent.llmModel.placeholder')}
 				required
 				data={LLM_MODELS}
 				{...form.getInputProps('agentPromptLlm')}
@@ -18,7 +20,7 @@ export const AgentSection: React.FC = () => {
 			/>
 			<div className={styles.sliderContainer}>
 				<div className={styles.sliderLabel}>
-					<label>Temperature</label>
+					<label>{t('form.agent.temperature.label')}</label>
 					<span className={styles.sliderValue}>
 						{form.values.agentPromptTemperature.toFixed(2)}
 					</span>
@@ -38,7 +40,7 @@ export const AgentSection: React.FC = () => {
 					]}
 				/>
 				<MantineText size='xs' c='dimmed'>
-					Controls randomness (0–2)
+					{t('form.agent.temperature.helper')}
 				</MantineText>
 			</div>
 		</Stack>

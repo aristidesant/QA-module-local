@@ -16,11 +16,13 @@ import {
 } from '@tabler/icons-react';
 import { useCampaignFormContext } from '../../../campaignFormFunctions';
 import SectionCard from '~/components/SectionCard';
+import { useTranslation } from 'react-i18next';
 import styles from './CampaignConfigurationPrompt.module.css';
 // History modal removed from this component; it's used elsewhere now.
 import CampaignConfigurationPromptEditModal from './CampaignConfigurationPromptEditModal';
 
 const CampaignConfigurationPrompt: React.FC = () => {
+	const { t } = useTranslation(['campaigns', 'campaign.detail', 'common']);
 	const form = useCampaignFormContext();
 	const [editModalOpen, setEditModalOpen] = useState(false);
 	const [expanded, setExpanded] = useState(false);
@@ -54,8 +56,8 @@ const CampaignConfigurationPrompt: React.FC = () => {
 		<>
 			<SectionCard
 				icon={IconBrain}
-				title='Agent Prompt'
-				description='Set the guidance the agent follows when speaking with contacts.'
+				title={t('form.agent.prompt.title')}
+				description={t('form.agent.prompt.description')}
 				className={styles.sectionCard}
 				contentSpacing='sm'
 				padding='md'
@@ -63,7 +65,7 @@ const CampaignConfigurationPrompt: React.FC = () => {
 					<Group gap='xs'>
 						<ActionIcon
 							variant='light'
-							aria-label='Edit prompt'
+							aria-label={t('form.agent.prompt.header.editAria')}
 							color='blue'
 							onClick={handleEdit}
 							size='sm'
@@ -72,7 +74,11 @@ const CampaignConfigurationPrompt: React.FC = () => {
 						</ActionIcon>
 						<ActionIcon
 							variant='light'
-							aria-label={expanded ? 'Collapse prompt' : 'Expand prompt'}
+							aria-label={
+								expanded
+									? t('form.agent.prompt.header.collapseAria')
+									: t('form.agent.prompt.header.expandAria')
+							}
 							color='blue'
 							onClick={toggleExpanded}
 							size='sm'
@@ -89,11 +95,15 @@ const CampaignConfigurationPrompt: React.FC = () => {
 				<Stack gap='xs' className={styles.promptStack}>
 					<Group justify='space-between' align='center'>
 						<Text size='sm' fw={600}>
-							Prompt preview
+							{t('form.agent.prompt.previewTitle')}
 						</Text>
 						<Group gap='xs'>
 							<Badge size='sm' variant='light' color='gray'>
-								{hasPrompt ? `${prompt.length} chars` : 'Empty'}
+								{hasPrompt
+									? t('form.agent.prompt.previewChars', {
+											count: prompt.length,
+										})
+									: t('form.agent.prompt.status.empty')}
 							</Badge>
 						</Group>
 					</Group>
@@ -119,16 +129,13 @@ const CampaignConfigurationPrompt: React.FC = () => {
 								}`}
 								aria-label='Agent prompt preview'
 							>
-								{hasPrompt
-									? prompt
-									: 'No prompt added yet. Edit to define the agent tone, constraints, and sample responses.'}
+								{hasPrompt ? prompt : t('form.agent.prompt.placeholder')}
 							</div>
 						</div>
 					</Paper>
 					<Group justify='space-between' align='center'>
 						<Text size='xs' c='dimmed'>
-							Keep the prompt concise and actionable so the agent responds
-							confidently.
+							{t('form.agent.prompt.keepConcise')}
 						</Text>
 						{expanded && (
 							<ActionIcon
@@ -136,7 +143,7 @@ const CampaignConfigurationPrompt: React.FC = () => {
 								size='sm'
 								color='blue'
 								onClick={toggleExpanded}
-								aria-label='Collapse prompt'
+								aria-label={t('form.agent.prompt.header.collapseAria')}
 							>
 								<IconArrowsMinimize size={16} />
 							</ActionIcon>
@@ -147,7 +154,7 @@ const CampaignConfigurationPrompt: React.FC = () => {
 			<Modal
 				opened={editModalOpen}
 				onClose={() => setEditModalOpen(false)}
-				title="Edit Agent's Prompt"
+				title={t('configuration.editPrompt')}
 				styles={{
 					body: {
 						height: '90%',

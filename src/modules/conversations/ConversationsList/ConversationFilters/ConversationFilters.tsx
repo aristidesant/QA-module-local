@@ -34,18 +34,18 @@ export default function ConversationFilters({
 	filters,
 	onFiltersChange,
 }: ConversationFiltersProps) {
-	const { t } = useTranslation();
+	const { t } = useTranslation(['conversations', 'common']);
 	const [opened, setOpened] = useState(false);
 
 	const statusOptions = useMemo(
 		() => [
-			{ value: 'initiated', label: t('conversations.list.status.pending') },
+			{ value: 'initiated', label: t('list.status.pending') },
 			{
 				value: 'in-progress',
-				label: t('conversations.list.status.inProgress'),
+				label: t('list.status.inProgress'),
 			},
-			{ value: 'done', label: t('conversations.list.status.done') },
-			{ value: 'failed', label: t('conversations.list.status.failed') },
+			{ value: 'done', label: t('list.status.done') },
+			{ value: 'failed', label: t('list.status.failed') },
 		],
 		[t]
 	);
@@ -134,9 +134,7 @@ export default function ConversationFilters({
 			<FilterContainer>
 				<Group gap='xs' className={styles.titleGroup}>
 					<IconFilter size={18} className={styles.titleIcon} />
-					<Text className={styles.title}>
-						{t('conversations.filters.title')}
-					</Text>
+					<Text className={styles.title}>{t('filters.title')}</Text>
 					{hasActiveFilters && (
 						<Badge size='sm' variant='light' className={styles.activeBadge}>
 							{activeFiltersCount}
@@ -146,7 +144,7 @@ export default function ConversationFilters({
 
 				<div className={styles.controlsWrapper}>
 					<TextInput
-						placeholder={t('conversations.filters.contactName')}
+						placeholder={t('filters.contactName')}
 						value={localContactName}
 						onChange={(event) => setLocalContactName(event.currentTarget.value)}
 						leftSection={<IconUser size={16} className={styles.searchIcon} />}
@@ -170,7 +168,7 @@ export default function ConversationFilters({
 						onClick={() => setOpened((prev) => !prev)}
 						variant={opened ? 'light' : 'default'}
 					>
-						{t('conversations.filters.advanced')}
+						{t('filters.advanced')}
 					</Button>
 				</div>
 			</FilterContainer>
@@ -180,8 +178,8 @@ export default function ConversationFilters({
 					<Stack gap='sm'>
 						<Group gap='sm' grow>
 							<TextInput
-								label={t('conversations.filters.phoneNumber')}
-								placeholder={t('conversations.filters.phoneNumberPlaceholder')}
+								label={t('filters.phoneNumber')}
+								placeholder={t('filters.phoneNumberPlaceholder')}
 								value={localPhoneNumber}
 								onChange={(event) =>
 									setLocalPhoneNumber(event.currentTarget.value)
@@ -189,8 +187,8 @@ export default function ConversationFilters({
 								size='sm'
 							/>
 							<TextInput
-								label={t('conversations.filters.outcome')}
-								placeholder={t('conversations.filters.outcomePlaceholder')}
+								label={t('filters.outcome')}
+								placeholder={t('filters.outcomePlaceholder')}
 								value={localDisposition}
 								onChange={(event) =>
 									setLocalDisposition(event.currentTarget.value)
@@ -198,8 +196,8 @@ export default function ConversationFilters({
 								size='sm'
 							/>
 							<Select
-								label={t('conversations.filters.status')}
-								placeholder={t('conversations.filters.allStatuses')}
+								label={t('filters.status')}
+								placeholder={t('filters.allStatuses')}
 								data={statusOptions}
 								value={filters.status || null}
 								onChange={handleStatusChange}
@@ -216,7 +214,7 @@ export default function ConversationFilters({
 								onClick={handleClearFilters}
 								disabled={!hasActiveFilters}
 							>
-								{t('conversations.filters.clear')}
+								{t('filters.clear')}
 							</Button>
 						</Group>
 					</Stack>

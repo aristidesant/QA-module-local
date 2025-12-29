@@ -24,7 +24,9 @@ describe('CleanQueueButton', () => {
 		const user = userEvent.setup();
 		renderWithProviders(<CleanQueueButton campaignId={5} />);
 
-		const button = screen.getByRole('button', { name: /clean queue/i });
+		const button = screen.getByRole('button', {
+			name: 'Clean Queue',
+		});
 		expect(button).toBeDisabled();
 
 		await user.click(button);
@@ -37,7 +39,11 @@ describe('CleanQueueButton', () => {
 			<CleanQueueButton campaignId={7} contactGroupId={11} />
 		);
 
-		await user.click(screen.getByRole('button', { name: /clean queue/i }));
+		await user.click(
+			screen.getByRole('button', {
+				name: 'Clean Queue',
+			})
+		);
 
 		expect(mutate).toHaveBeenCalledWith({
 			campaignId: 7,
@@ -55,6 +61,10 @@ describe('CleanQueueButton', () => {
 			<CleanQueueButton campaignId={7} contactGroupId={11} />
 		);
 
-		expect(screen.getByRole('button', { name: /clean queue/i })).toBeDisabled();
+		expect(
+			screen.getByRole('button', {
+				name: 'Clean Queue',
+			})
+		).toBeDisabled();
 	});
 });

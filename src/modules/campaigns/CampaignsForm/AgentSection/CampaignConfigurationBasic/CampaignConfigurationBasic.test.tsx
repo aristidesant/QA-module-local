@@ -1,6 +1,7 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import CampaignConfigurationBasic from './CampaignConfigurationBasic';
+import renderWithProviders from '~/test-utils/renderWithProviders';
 
 const mockSetFieldValue = vi.fn();
 const mockFormValues = {
@@ -71,7 +72,7 @@ describe('CampaignConfigurationBasic', () => {
 	});
 
 	it('updates language when a new option is selected', () => {
-		render(<CampaignConfigurationBasic />);
+		renderWithProviders(<CampaignConfigurationBasic />);
 
 		fireEvent.change(screen.getByLabelText('Language'), {
 			target: { value: 'es' },
@@ -84,7 +85,7 @@ describe('CampaignConfigurationBasic', () => {
 	});
 
 	it('updates first message when textarea changes', () => {
-		render(<CampaignConfigurationBasic />);
+		renderWithProviders(<CampaignConfigurationBasic />);
 
 		fireEvent.change(screen.getByLabelText('Agent First Message'), {
 			target: { value: 'New message' },

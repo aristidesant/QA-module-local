@@ -5,27 +5,29 @@ import {
 	Text as MantineText,
 	Group,
 } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import { useFormContext } from '../../CampaignPredefinedFormProvider';
 import { TTS_MODELS, AUDIO_FORMATS } from '../../formConfig';
 import styles from '../../CampaignPredefinedParamsForm.module.css';
 
 export const TTSSection: React.FC = () => {
 	const { form } = useFormContext();
+	const { t } = useTranslation('campaign-predefined-params');
 
 	return (
 		<Stack gap='lg' mt='md'>
 			<Group grow>
 				<Select
-					label='Model'
-					placeholder='Select TTS model'
+					label={t('form.tts.model.label')}
+					placeholder={t('form.tts.model.placeholder')}
 					required
 					data={TTS_MODELS}
 					{...form.getInputProps('ttsModelId')}
 					searchable
 				/>
 				<Select
-					label='Output Audio Format'
-					placeholder='Select format'
+					label={t('form.tts.outputAudioFormat.label')}
+					placeholder={t('form.common.selectFormatPlaceholder')}
 					required
 					data={AUDIO_FORMATS}
 					{...form.getInputProps('ttsAgentOutputAudioFormat')}
@@ -33,7 +35,7 @@ export const TTSSection: React.FC = () => {
 			</Group>
 			<div className={styles.sliderContainer}>
 				<div className={styles.sliderLabel}>
-					<label>Speed</label>
+					<label>{t('form.tts.speed.label')}</label>
 					<span className={styles.sliderValue}>
 						{form.values.ttsSpeed.toFixed(2)}
 					</span>
@@ -51,12 +53,12 @@ export const TTSSection: React.FC = () => {
 					]}
 				/>
 				<MantineText size='xs' c='dimmed'>
-					Speech rate (0.25–4.0)
+					{t('form.tts.speed.helper')}
 				</MantineText>
 			</div>
 			<div className={styles.sliderContainer}>
 				<div className={styles.sliderLabel}>
-					<label>Streaming Latency</label>
+					<label>{t('form.tts.streamingLatency.label')}</label>
 					<span className={styles.sliderValue}>
 						{form.values.ttsOptimizeStreamingLatency}
 					</span>
@@ -76,12 +78,12 @@ export const TTSSection: React.FC = () => {
 					]}
 				/>
 				<MantineText size='xs' c='dimmed'>
-					0 = best quality, 4 = lowest latency
+					{t('form.tts.streamingLatency.helper')}
 				</MantineText>
 			</div>
 			<div className={styles.sliderContainer}>
 				<div className={styles.sliderLabel}>
-					<label>Stability</label>
+					<label>{t('form.tts.stability.label')}</label>
 					<span className={styles.sliderValue}>
 						{form.values.ttsStability.toFixed(2)}
 					</span>
@@ -99,12 +101,12 @@ export const TTSSection: React.FC = () => {
 					]}
 				/>
 				<MantineText size='xs' c='dimmed'>
-					Voice consistency (0–1)
+					{t('form.tts.stability.helper')}
 				</MantineText>
 			</div>
 			<div className={styles.sliderContainer}>
 				<div className={styles.sliderLabel}>
-					<label>Similarity Boost</label>
+					<label>{t('form.tts.similarityBoost.label')}</label>
 					<span className={styles.sliderValue}>
 						{form.values.ttsSimilarityBoost.toFixed(2)}
 					</span>
@@ -122,7 +124,7 @@ export const TTSSection: React.FC = () => {
 					]}
 				/>
 				<MantineText size='xs' c='dimmed'>
-					Match to original voice (0–1)
+					{t('form.tts.similarityBoost.helper')}
 				</MantineText>
 			</div>
 		</Stack>

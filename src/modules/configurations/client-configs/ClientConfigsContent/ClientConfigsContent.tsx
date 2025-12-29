@@ -10,6 +10,7 @@ import { notifications } from '@mantine/notifications';
 import { useClientConfigsStore } from '~/stores/clientConfigsStore';
 import { useClientConfigsColumns, useFilteredClientConfigs } from '../hooks';
 import { ClientConfigsFilters } from '../ClientConfigsFilters';
+import { useTranslation } from 'react-i18next';
 
 import styles from './ClientConfigsContent.module.css';
 import { ClientConfigsForm } from '../ClientConfigsForm';
@@ -31,6 +32,7 @@ export function ClientConfigsContent({
 	const [configToDelete, setConfigToDelete] = useState<ClientConfig | null>(
 		null
 	);
+	const { t } = useTranslation('client-configs');
 
 	const { pagination, setPagination } = useClientConfigsStore();
 	const { configs, totalConfigs, allConfigsCount, isLoading } =
@@ -53,16 +55,16 @@ export function ClientConfigsContent({
 		try {
 			await deleteConfig.mutateAsync(configToDelete.name);
 			notifications.show({
-				title: 'Success',
-				message: 'Configuration deleted successfully',
+				title: t('content.notifications.deleteSuccessTitle'),
+				message: t('content.notifications.deleteSuccessMessage'),
 				color: 'green',
 			});
 			setDeleteModalOpened(false);
 			setConfigToDelete(null);
 		} catch (error) {
 			notifications.show({
-				title: 'Error',
-				message: 'Failed to delete configuration',
+				title: t('content.notifications.deleteErrorTitle'),
+				message: t('content.notifications.deleteErrorMessage'),
 				color: 'red',
 			});
 		}
@@ -78,15 +80,15 @@ export function ClientConfigsContent({
 			<div className={styles.container}>
 				<EmptyState
 					icon={<IconSettings size={48} />}
-					message='No configurations found'
-					description='Get started by creating your first client configuration'
+					message={t('content.empty.message')}
+					description={t('content.empty.description')}
 					action={
 						<Button
 							leftSection={<IconPlus size={16} />}
 							onClick={() => setCreateModalOpened(true)}
 							size='sm'
 						>
-							Create Configuration
+							{t('content.empty.action')}
 						</Button>
 					}
 				/>
@@ -94,7 +96,7 @@ export function ClientConfigsContent({
 				<Modal
 					opened={createModalOpened}
 					onClose={() => setCreateModalOpened(false)}
-					title='Create Client Configuration'
+					title={t('content.empty.modalTitle')}
 					size='lg'
 				>
 					<ClientConfigsForm
@@ -113,10 +115,10 @@ export function ClientConfigsContent({
 			{configs.length === 0 && !isLoading ? (
 				<div className={styles.noResultsContainer}>
 					<Text size='sm' fw={600} ta='center'>
-						No configurations match your filters
+						{t('content.noResults.title')}
 					</Text>
 					<Text size='sm' c='dimmed' ta='center'>
-						Try adjusting your search criteria or filters
+						{t('content.noResults.description')}
 					</Text>
 				</div>
 			) : (
@@ -144,7 +146,7 @@ export function ClientConfigsContent({
 							}
 						}}
 						isLoading={isLoading}
-						itemLabel='configurations'
+						itemLabel={t('content.paginationLabel')}
 					/>
 				</>
 			)}
@@ -153,7 +155,7 @@ export function ClientConfigsContent({
 			<Modal
 				opened={createModalOpened}
 				onClose={() => setCreateModalOpened(false)}
-				title='Create Client Configuration'
+				title={t('content.modal.createTitle')}
 				size='90%'
 			>
 				<ClientConfigsForm
@@ -169,7 +171,7 @@ export function ClientConfigsContent({
 					setEditModalOpened(false);
 					setSelectedConfig(null);
 				}}
-				title='Edit Client Configuration'
+				title={t('content.modal.editTitle')}
 				size='90%'
 			>
 				{selectedConfig && (
@@ -194,15 +196,13 @@ export function ClientConfigsContent({
 					setDeleteModalOpened(false);
 					setConfigToDelete(null);
 				}}
-				title='Delete Configuration'
+				title={t('content.modal.deleteTitle')}
 				size='sm'
 			>
 				<Text size='sm' mb='md'>
-					Are you sure you want to delete the configuration{' '}
-					<Text component='span' fw={700}>
-						{configToDelete?.name}
-					</Text>
-					? This action cannot be undone.
+					{t('content.modal.deleteConfirm', {
+						name: configToDelete?.name ?? '',
+					})}
 				</Text>
 				<Group justify='flex-end' gap='xs'>
 					<Button
@@ -213,7 +213,7 @@ export function ClientConfigsContent({
 						}}
 						size='sm'
 					>
-						Cancel
+						{t('actions.cancel', { ns: 'common' })}
 					</Button>
 					<Button
 						color='red'
@@ -221,7 +221,7 @@ export function ClientConfigsContent({
 						loading={deleteConfig.isPending}
 						size='sm'
 					>
-						Delete
+						{t('actions.delete', { ns: 'common' })}
 					</Button>
 				</Group>
 			</Modal>

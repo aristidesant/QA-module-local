@@ -2,7 +2,7 @@ import { screen, waitFor, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import renderWithProviders from '~/test-utils/renderWithProviders';
-import ClientSelectionModal, { validateOtpValue } from './ClientSelectionModal';
+import ClientSelectionModal from './ClientSelectionModal';
 
 vi.mock('~/queries/authQueries', () => ({
 	useSelectClient: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
@@ -19,26 +19,6 @@ const makeClients = (n = 3) =>
 		clientIdentifier: `client-${i}`,
 		roles: ['User'],
 	}));
-
-describe('validateOtpValue', () => {
-	test('returns required message when empty', () => {
-		expect(validateOtpValue('')).toBe('OTP code is required');
-	});
-
-	test('returns length message when not 6 digits', () => {
-		expect(validateOtpValue('12345')).toBe('OTP code must be 6 digits');
-	});
-
-	test('returns numeric message when non-numeric', () => {
-		expect(validateOtpValue('12ab56')).toBe(
-			'OTP code must contain only numbers'
-		);
-	});
-
-	test('returns null for valid code', () => {
-		expect(validateOtpValue('012345')).toBeNull();
-	});
-});
 
 describe('ClientSelectionModal', () => {
 	const defaultProps = {
@@ -223,7 +203,7 @@ describe('ClientSelectionModal', () => {
 		);
 
 		// find the pin inputs and type 6 digits
-		const pin = screen.getByLabelText('Verification code');
+		const pin = screen.getByLabelText('Verification Code');
 		const inputs = pin.querySelectorAll('input');
 		for (let i = 0; i < inputs.length; i++) {
 			await userEvent.type(inputs[i], String(i + 1));
@@ -269,7 +249,7 @@ describe('ClientSelectionModal', () => {
 			expect(screen.getByText('Two-Factor Authentication')).toBeInTheDocument()
 		);
 
-		const pin = screen.getByLabelText('Verification code');
+		const pin = screen.getByLabelText('Verification Code');
 		const inputs = pin.querySelectorAll('input');
 		for (let i = 0; i < inputs.length; i++) {
 			await userEvent.type(inputs[i], '9');

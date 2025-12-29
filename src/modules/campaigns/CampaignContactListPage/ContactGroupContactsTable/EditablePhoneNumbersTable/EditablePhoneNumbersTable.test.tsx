@@ -79,6 +79,7 @@ describe('EditablePhoneNumbersTable', () => {
 	beforeEach(() => {
 		mutateMock.mockReset();
 		deleteMutateMock.mockReset();
+		vi.clearAllMocks();
 	});
 
 	it('allows editing and saving a phone number', async () => {
@@ -103,7 +104,7 @@ describe('EditablePhoneNumbersTable', () => {
 		const editButton = within(row).getAllByRole('button')[0];
 		await user.click(editButton);
 
-		const input = screen.getByPlaceholderText('Enter phone');
+		const input = screen.getByPlaceholderText('Enter phone number');
 		await user.clear(input);
 		await user.type(input, '+18095559999');
 
@@ -176,6 +177,7 @@ describe('EditablePhoneNumbersTable', () => {
 		expect(notifications.show).toHaveBeenCalledWith(
 			expect.objectContaining({
 				title: 'Delete Failed',
+				message: 'Delete failed',
 				color: 'red',
 			})
 		);
@@ -193,7 +195,11 @@ describe('EditablePhoneNumbersTable', () => {
 			/>
 		);
 
-		await user.click(screen.getByRole('button', { name: 'Add' }));
+		await user.click(
+			screen.getByRole('button', {
+				name: 'Add',
+			})
+		);
 		expect(screen.getByTestId('add-modal')).toBeInTheDocument();
 	});
 });

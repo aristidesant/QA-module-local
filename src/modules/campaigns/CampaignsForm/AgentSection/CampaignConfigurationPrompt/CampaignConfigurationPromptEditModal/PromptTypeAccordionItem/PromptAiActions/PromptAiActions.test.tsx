@@ -43,7 +43,9 @@ describe('PromptAiActions', () => {
 				<PromptAiActions prompt='' onApply={mockOnApply} type={mockType} />
 			);
 
-			expect(screen.getByText(/Type/i)).toBeInTheDocument();
+			expect(
+				screen.getByText(/You can use variables like/i)
+			).toBeInTheDocument();
 			expect(screen.getByText('{{', { exact: false })).toBeInTheDocument();
 		});
 
@@ -246,7 +248,7 @@ describe('PromptAiActions', () => {
 
 			const modalContent = getModalContent();
 			const instructionsTextarea = within(modalContent).getByPlaceholderText(
-				/create a professional greeting/i
+				/Create a friendly greeting/i
 			);
 			await user.type(instructionsTextarea, 'Some instructions');
 
@@ -269,7 +271,7 @@ describe('PromptAiActions', () => {
 			});
 
 			const newTextarea = within(getModalContent()).getByPlaceholderText(
-				/create a professional greeting/i
+				/Create a friendly greeting/i
 			);
 			expect(newTextarea).toHaveValue('');
 		});
@@ -296,7 +298,7 @@ describe('PromptAiActions', () => {
 
 			const modalContent = getModalContent();
 			const instructionsTextarea = within(modalContent).getByPlaceholderText(
-				/create a professional greeting/i
+				/Create a friendly greeting/i
 			);
 			await user.type(instructionsTextarea, 'Make it professional');
 
@@ -339,7 +341,7 @@ describe('PromptAiActions', () => {
 
 			const modalContent = getModalContent();
 			const instructionsTextarea = within(modalContent).getByPlaceholderText(
-				/create a professional greeting/i
+				/Create a friendly greeting/i
 			);
 			await user.type(instructionsTextarea, 'Make it professional');
 
@@ -376,7 +378,7 @@ describe('PromptAiActions', () => {
 
 			const modalContent = getModalContent();
 			const instructionsTextarea = within(modalContent).getByPlaceholderText(
-				/create a professional greeting/i
+				/Create a friendly greeting/i
 			);
 			await user.type(instructionsTextarea, 'Make it professional');
 
@@ -683,7 +685,7 @@ describe('PromptAiActions', () => {
 
 			const modalContent = getModalContent();
 			const instructionsTextarea = within(modalContent).getByPlaceholderText(
-				/create a professional greeting/i
+				/Create a friendly greeting/i
 			);
 			await user.type(instructionsTextarea, 'Make it friendly and warm');
 
@@ -728,7 +730,7 @@ describe('PromptAiActions', () => {
 
 			const modalContent = getModalContent();
 			const instructionsTextarea = within(modalContent).getByPlaceholderText(
-				/create a professional greeting/i
+				/Create a friendly greeting/i
 			);
 			await user.type(instructionsTextarea, 'Some instructions');
 

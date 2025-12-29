@@ -1,0 +1,383 @@
+{
+	"actions": {
+		"start": "Start Campaign",
+		"pause": "Pause Campaign",
+		"resume": "Resume Campaign",
+		"noActions": "No Actions Available",
+		"allWavesExecuted": "All waves executed",
+		"retryNotAvailable": "Retry Not Available",
+		"confirmTitle": "Confirm Action",
+		"confirmStart": "Starting the campaign will begin calling contacts in this list. This action cannot be undone immediately. Are you sure you want to start?",
+		"confirmPause": "Pausing the campaign will stop all ongoing calls. You can resume later. Are you sure you want to pause?",
+		"confirmResume": "Resuming the campaign will continue calling contacts from where it left off. Are you sure you want to resume?",
+		"yes": "Yes",
+		"no": "No",
+		"success": "Success",
+		"actionSuccess": "Campaign {{action}}d successfully",
+		"error": "Error"
+	},
+	"status": {
+		"notFound": "Contact List Not Found",
+		"notFoundDesc": "The contact list you are looking for could not be found.",
+		"invalidId": "Invalid Contact List ID",
+		"invalidIdDesc": "The contact list identifier in the URL is not valid. Please check the URL and try again, or return to the campaign overview to select a valid contact list.",
+		"returnToCampaign": "Return to Campaign",
+		"loading": "Loading Contact List",
+		"loadingDesc": "Fetching the latest information for this contact list.",
+		"unavailable": "Contact List Unavailable",
+		"unavailableDesc": "We encountered an issue while loading this contact list.",
+		"unableToLoad": "Unable to Load Contact List",
+		"unableToLoadDesc": "{{error}}. This could be due to a network issue, server problem, or the contact list may no longer exist.",
+		"reloadSuccess": "Contact list reloaded successfully",
+		"tryAgain": "Try Again",
+		"unknownCampaign": "Unknown Campaign",
+		"created": "Created {{time}}",
+		"pending": "Pending",
+		"pendingDesc": "Waiting to start. Review settings before launching.",
+		"running": "Running",
+		"runningDesc": "Contacts are currently being dialed.",
+		"paused": "Paused",
+		"pausedDesc": "Processing halted. Resume when ready.",
+		"complete": "Complete",
+		"completeDesc": "All contacts processed for this list.",
+		"failed": "Failed",
+		"failedDesc": "An error stopped the campaign. Try restarting.",
+		"executed": "Executed",
+		"unknown": "Unknown",
+		"unknownDesc": "Status unavailable. Reload for the latest update.",
+		"confirmCompleteList": "Mark this contact list as completed? No additional waves will run."
+	},
+	"tabs": {
+		"overview": "Overview",
+		"conversations": "Conversations",
+		"contacts": "Contacts",
+		"conversationsDesc": "All conversations associated with this contact list.",
+		"contactsDesc": "All contacts associated with this list."
+	},
+	"overview": {
+		"title": "Contact List Information",
+		"description": "View the status and metrics for this contact list."
+	},
+	"summary": {
+		"details": "Details",
+		"metadata": "Contact list metadata",
+		"active": "Active",
+		"inactive": "Inactive",
+		"noDescription": "No description provided.",
+		"campaign": "Campaign",
+		"schedule": "Schedule",
+		"notSet": "Not set",
+		"expirationDate": "Expiration date",
+		"noExpiration": "No expiration defined",
+		"metrics": "Metrics",
+		"performanceMetrics": "Contact list performance metrics",
+		"contacts": "Contacts",
+		"maxCallsPerContact": "Max calls per contact",
+		"maxCallsPerList": "Max calls per list",
+		"humanEquivalent": "Human equivalent",
+		"waves": "Waves"
+	},
+	"metrics": {
+		"title": "Contact List Metrics",
+		"description": "Performance overview",
+		"timeRanges": {
+			"5m": "Last 5 minutes",
+			"15m": "Last 15 minutes",
+			"1h": "Last hour",
+			"today": "Today",
+			"since_creation": "Since creation"
+		},
+		"stats": {
+			"totalRecords": "Total Records",
+			"totalRecordsDesc": "Uploaded contacts",
+			"contacted": "Contacted",
+			"contactedDesc": "Reached",
+			"aht": "AHT",
+			"ahtDesc": "Avg handle time",
+			"contactRate": "Contact rate",
+			"contactRateDesc": "Reached vs total",
+			"effectivenessRate": "Effectiveness rate",
+			"effectivenessRateDesc": "Effective calls",
+			"noContactRate": "No contact rate",
+			"noContactRateDesc": "Never connected",
+			"effective": "Effective",
+			"effectiveDesc": "Successful",
+			"noEffective": "No Effective",
+			"noEffectiveDesc": "No outcome",
+			"noContact": "No contact",
+			"noContactDesc": "Not reached",
+			"dnc": "DNC",
+			"dncDesc": "Do-not-call"
+		},
+		"alerts": {
+			"noSelection": "No Contact List Selected",
+			"noSelectionDesc": "Provide a valid contact list to see live metrics.",
+			"unableToLoad": "Unable to load metrics",
+			"unableToLoadDesc": "Something went wrong while retrieving the latest metrics.",
+			"notAvailable": "Metrics not available yet",
+			"notAvailableDesc": "We have not received any metrics for this contact list in the selected range. Please check back later."
+		},
+		"sipTrunkInfo": "SIP Trunk Information"
+	},
+	"faultyPhones": {
+		"checking": "Checking for phone number validation errors...",
+		"refreshing": "Refreshing faulty phones…",
+		"title": "Faulty Phone Numbers",
+		"message": "{{total}} faulty phone {{unit}} across {{count}} contact{{plural}}. Calls are skipped until corrected.",
+		"unit_one": "number",
+		"unit_other": "numbers",
+		"viewDetails": "View Details",
+		"modal": {
+			"description": "The following phone numbers have validation errors and need attention. These contacts may not receive calls until the phone numbers are corrected.",
+			"export": "Export",
+			"total": "Total: {{count}} faulty phone {{unit}}",
+			"columns": {
+				"contact": "Contact",
+				"phoneNumber": "Phone Number",
+				"errorCode": "Error Code",
+				"errorMessage": "Error Message",
+				"actions": "Actions"
+			},
+			"tooltips": {
+				"edit": "Edit phone number"
+			},
+			"notifications": {
+				"updateSuccess": "Phone number updated successfully",
+				"updateFailed": "Update Failed",
+				"exportSuccess": "Faulty phone numbers exported successfully",
+				"exportFailed": "Export Failed"
+			},
+			"placeholders": {
+				"enterPhone": "Enter phone number"
+			}
+		}
+	},
+	"contactsTable": {
+		"notifications": {
+			"appended": "Contacts appended",
+			"appendedMessage": "New contacts were added to the list.",
+			"deleted": "Deleted",
+			"deletedMessage": "Contact deleted successfully.",
+			"exportSuccess": "Export Successful",
+			"exportSuccessMessage": "Contacts exported successfully"
+		},
+		"errors": {
+			"noFile": "No file provided",
+			"noPermissionImport": "You do not have permission to import contacts.",
+			"campaignIdRequired": "Campaign ID is required to upload file.",
+			"csvOnly": "Only CSV files are supported."
+		},
+		"deleteConfirm": {
+			"title": "Delete Contact",
+			"message": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+			"confirm": "Delete",
+			"cancel": "Cancel"
+		},
+		"empty": {
+			"noResults": "No contacts found matching the selected filters.",
+			"noContacts": "No contacts available in this group."
+		},
+		"columns": {
+			"name": "Name",
+			"identifier": "Identifier",
+			"status": "Status",
+			"primaryPhone": "Primary phone",
+			"lastUpdated": "Last updated",
+			"email": "Email",
+			"contact": "Contact",
+			"phone": "Phone",
+			"actions": "Actions"
+		},
+		"filters": {
+			"searchByName": "Search by name...",
+			"filterByPhone": "Filter by phone...",
+			"filterByEmail": "Filter by email..."
+		},
+		"tooltips": {
+			"append": "Append contacts",
+			"export": "Export contacts",
+			"faultyPhones": "{{count}} faulty phone number{{plural}}"
+		},
+		"status": {
+			"ACTIVE": "Active",
+			"INACTIVE": "Inactive",
+			"CONTACTED": "Contacted",
+			"DO_NOT_RESPOND": "Do not respond",
+			"VOICE_MAIL": "Voice mail",
+			"ON_CALL": "On call",
+			"INICATIVE": "Inactive",
+			"DECEASED": "Deceased"
+		},
+		"unnamedContact": "Unnamed contact",
+		"itemLabel": "contacts",
+		"noPhoneNumbers": "No phone numbers available",
+		"appendModal": {
+			"title": "Append Contacts via CSV",
+			"changeFile": "Change CSV File",
+			"selectFile": "Select CSV File",
+			"dropHint": "Drag & drop or click to browse",
+			"selected": "Selected: {{name}}",
+			"fileSaved": "File saved. ID: {{id}}",
+			"step2Title": "Step 2: Append to list",
+			"step2Desc": "Click \"Append to List\" to add these contacts to the current list.",
+			"saveFile": "Save File",
+			"appendToList": "Append to List"
+		},
+		"editModal": {
+			"title": "Edit Contact"
+		}
+	},
+	"phoneNumbersTable": {
+		"deleteConfirm": {
+			"title": "Delete Phone Number",
+			"message": "Are you sure you want to delete the phone number {{number}}? This action cannot be undone.",
+			"confirm": "Delete",
+			"cancel": "Cancel"
+		},
+		"notifications": {
+			"deleted": "Deleted",
+			"deletedMessage": "Phone number deleted successfully",
+			"deleteFailed": "Delete Failed",
+			"updated": "Updated",
+			"updatedMessage": "Phone number updated successfully"
+		},
+		"columns": {
+			"phoneNumber": "Phone Number",
+			"status": "Status",
+			"retries": "Retries",
+			"actions": "Actions"
+		},
+		"tooltips": {
+			"edit": "Edit phone number",
+			"delete": "Delete phone number",
+			"add": "Add phone numbers"
+		},
+		"add": "Add",
+		"empty": "No phone numbers available",
+		"addModal": {
+			"title": "Add Phone Numbers",
+			"hint": "Enter Dominican Republic numbers (+1 809/829/849 XXXXXXX).",
+			"invalidNumber": "Invalid DR number",
+			"duplicateNumbers": "Duplicate numbers detected.",
+			"invalidNumbersDetected": "{{count}} invalid Dominican Republic number{{plural}} detected.",
+			"save": "Save",
+			"cancel": "Cancel",
+			"tooltips": {
+				"save": "Save numbers",
+				"resolveErrors": "Resolve errors to save"
+			},
+			"notifications": {
+				"added": "{{count}} phone number(s) added successfully"
+			}
+		}
+	},
+	"contacts": {
+		"tabs": {
+			"active": "Active",
+			"inactive": "Inactive"
+		},
+		"list": {
+			"activeTitle": "Active Contact Lists",
+			"inactiveTitle": "Inactive Contact Lists",
+			"activeDescription": "Manage your active contact lists and monitor their progress.",
+			"inactiveDescription": "View and manage contact lists that are currently inactive.",
+			"addNewContactList": "Add New Contact List",
+			"addInactiveContactList": "Add Inactive Contact List",
+			"configuration": "Contact List Configuration",
+			"selectActive": "Select Active Contact List",
+			"configurationDescription": "Configure the settings for your new contact list.",
+			"selectActiveDescription": "Select a contact list to activate for this campaign.",
+			"emptyMessage": "No active contact lists found.",
+			"emptyInactiveMessage": "No inactive contact lists found.",
+			"reload": "Reload",
+			"reloadUnavailable": "Reload unavailable while collapsed",
+			"columns": {
+				"name": "Name",
+				"total": "Total",
+				"assigned": "Assigned",
+				"status": "Status",
+				"actions": "Actions"
+			},
+			"capacity": {
+				"title": "Scheduler Capacity",
+				"used": "Used",
+				"remaining": "Remaining",
+				"total": "Total Capacity"
+			}
+		},
+		"details": {
+			"meta": {
+				"listStatus": "Created"
+			},
+			"stats": {
+				"waves": "Waves"
+			},
+			"messages": {
+				"allWavesDone": "All waves executed"
+			},
+			"actions": {
+				"extendWaves": "Extend Waves",
+				"completeList": "Complete List",
+				"openContactList": "Open Contact List"
+			},
+			"primaryPhone": "Primary phone number",
+			"phoneNumbers": "Phone Numbers ({{count}})",
+			"email": "Email",
+			"location": "Location",
+			"engagementLevel": {
+				"title": "Engagement Level",
+				"description": "Measures how engaged {{name}} is with your campaigns."
+			},
+			"reviewsQualification": {
+				"title": "Reviews qualification",
+				"description": "Measures how engaged {{name}} is with your campaigns."
+			},
+			"sentiment": {
+				"negative": "Negative",
+				"neutral": "Neutral",
+				"positive": "Positive"
+			},
+			"mockData": {
+				"location": "N/A",
+				"language": "Spanish"
+			},
+			"notifications": {
+				"wavesExtended": {
+					"title": "Waves Extended",
+					"message": "Successfully added {{count}} waves to the contact list."
+				},
+				"completed": {
+					"title": "List Completed",
+					"message": "Contact list marked as completed."
+				}
+			},
+			"confirm": {
+				"complete": "Complete",
+				"cancel": "Cancel"
+			},
+			"controls": {
+				"allWavesDone": "All waves executed",
+				"start": "Start Campaign",
+				"resume": "Resume Campaign",
+				"pause": "Pause Campaign",
+				"completed": "Campaign Completed",
+				"failed": "Campaign Failed",
+				"requirementsNotMet": "Campaign requirements not met",
+				"notifications": {
+					"successTitle": "Success",
+					"errorTitle": "Error",
+					"unknownCampaign": "Unknown Campaign",
+					"running": "Campaign is now running",
+					"startError": "Error starting campaign",
+					"resumed": "Campaign resumed",
+					"resumeError": "Error resuming campaign",
+					"paused": "Campaign paused",
+					"pauseError": "Error pausing campaign"
+				}
+			}
+		},
+		"tooltips": {
+			"reload": "Reload"
+		}
+	}
+}

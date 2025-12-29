@@ -1,0 +1,199 @@
+{
+	"title": "Users",
+	"description": "Manage user access and profiles",
+	"searchPlaceholder": "Search users...",
+	"newUser": "New User",
+	"editUser": "Edit User",
+	"deleteUser": "Delete User",
+	"deleteModal": {
+		"confirmLabel": "Delete user",
+		"body": "This action cannot be undone. Are you sure you want to delete <strong>{{email}}</strong>?"
+	},
+	"list": {
+		"errorTitle": "Unable to load users",
+		"unknownError": "Unknown error",
+		"empty": "No users found.",
+		"itemLabel": "users"
+	},
+	"status": {
+		"active": "Active",
+		"inactive": "Inactive"
+	},
+	"columns": {
+		"name": "Name",
+		"client": "Client",
+		"email": "Email",
+		"role": "Role",
+		"status": "Status",
+		"lastLogin": "Last Login",
+		"updated": "Updated",
+		"actions": "Actions"
+	},
+	"table": {
+		"actions": {
+			"view": "View user",
+			"edit": "Edit user",
+			"delete": "Delete user"
+		},
+		"user": {
+			"usernameLabel": "Username",
+			"emailLabel": "Email",
+			"createdLabel": "Created"
+		},
+		"client": {
+			"idLabel": "ID",
+			"identifierLabel": "Identifier",
+			"emailLabel": "Email"
+		}
+	},
+	"details": {
+		"title": "User details",
+		"loadErrorTitle": "Unable to load user details",
+		"actions": {
+			"close": "Close details"
+		},
+		"sections": {
+			"profile": "Profile",
+			"account": "Account",
+			"security": "Security",
+			"activity": "Activity"
+		},
+		"labels": {
+			"clientName": "Client name",
+			"clientIdentifier": "Client identifier",
+			"clientEmail": "Client email",
+			"clientId": "Client ID",
+			"employeeId": "Employee ID",
+			"mfa": "Multi-factor authentication",
+			"created": "Created",
+			"updated": "Last updated",
+			"deactivated": "Deactivated"
+		},
+		"values": {
+			"enabled": "Enabled",
+			"disabled": "Disabled"
+		},
+		"employeeBadge": "Employee #{{employeeId}}",
+		"updatedDescription": "Updated {{relative}}"
+	},
+	"clientRoles": {
+		"fallbackClientName": "Client #{{id}}",
+		"sidebar": {
+			"title": "Clients",
+			"description": "Select a client to assign roles",
+			"emptyClients": "No clients available"
+		},
+		"panel": {
+			"assignedCount": "{{assigned}} of {{total}} roles assigned",
+			"totalRoles": "{{total}} total roles",
+			"loading": "Loading assignments",
+			"emptyRoles": "No roles available in the system.",
+			"emptyState": "Client and role assignments will appear here once available."
+		}
+	},
+	"password": {
+		"requirements": {
+			"minLength": "At least 8 characters",
+			"lowercase": "Contains lowercase letter",
+			"uppercase": "Contains uppercase letter",
+			"number": "Contains number",
+			"symbol": "Contains special character",
+			"metAll": "Password meets all requirements"
+		}
+	},
+	"form": {
+		"loadErrorTitle": "Unable to load user",
+		"badges": {
+			"editing": "Editing user",
+			"creating": "Create user",
+			"draft": "Draft"
+		},
+		"metaHint": "Keep credentials tidy and roles in sync.",
+		"subtitle": "Manage account access, profile information, and security settings in one place.",
+		"sections": {
+			"account": {
+				"title": "Account",
+				"description": "Access credentials and ownership details. Required fields are marked with an asterisk."
+			},
+			"profile": {
+				"title": "Profile",
+				"description": "Basic details used across the app."
+			},
+			"roles": {
+				"title": "Roles & Permissions",
+				"description": "Assign roles per client to control access levels."
+			}
+		},
+		"fields": {
+			"email": {
+				"label": "Email",
+				"placeholder": "user@example.com"
+			},
+			"username": {
+				"label": "Username",
+				"placeholder": "work-user"
+			},
+			"client": {
+				"label": "Client",
+				"placeholder": "Assign client",
+				"helperTitle": "Client ownership",
+				"helperDescription": "Pick the workspace that should own this account so roles are applied correctly."
+			},
+			"password": {
+				"label": "Password",
+				"placeholder": "Enter password",
+				"hint": "Use a unique passphrase to keep new accounts secure from day one."
+			},
+			"firstName": {
+				"label": "First name",
+				"placeholder": "First name"
+			},
+			"lastName": {
+				"label": "Last name",
+				"placeholder": "Last name"
+			}
+		},
+		"passwordStrength": {
+			"weak": "Weak",
+			"medium": "Medium",
+			"strong": "Strong"
+		},
+		"passwordChecks": {
+			"minLength": "At least 8 characters",
+			"uppercase": "At least 1 uppercase letter",
+			"lowercase": "At least 1 lowercase letter",
+			"number": "At least 1 number",
+			"symbol": "At least 1 special character (!@#$%^&*...)"
+		},
+		"mfa": {
+			"title": "Multi-factor authentication",
+			"subtitle": "Add a verification step on every new device.",
+			"description": "Keep accounts safer with a one-time code after password entry.",
+			"toggleAria": "Toggle multi-factor authentication"
+		},
+		"actions": {
+			"saveChanges": "Save changes",
+			"createUser": "Create user"
+		},
+		"validation": {
+			"invalidEmail": "Please enter a valid email address",
+			"usernameRequired": "Username is required",
+			"firstNameRequired": "First name is required",
+			"lastNameRequired": "Last name is required",
+			"clientIdInvalid": "Client ID must be greater than zero",
+			"passwordRequired": "Password is required",
+			"passwordMinLength": "Password must be at least 8 characters",
+			"missingUserId": "Missing user identifier."
+		}
+	},
+	"notifications": {
+		"createdTitle": "User created",
+		"createdMessage": "{{email}} has been added",
+		"updatedTitle": "User updated",
+		"updatedMessage": "{{email}} has been updated",
+		"deletedTitle": "User deleted",
+		"deletedMessage": "{{email}} has been removed",
+		"deleteErrorTitle": "Unable to delete user",
+		"requestFailedTitle": "Request failed"
+	}
+}

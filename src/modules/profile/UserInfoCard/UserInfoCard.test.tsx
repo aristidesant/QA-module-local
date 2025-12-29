@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react';
-import { MantineProvider } from '@mantine/core';
+import { screen } from '@testing-library/react';
 import { UserInfoCard } from './UserInfoCard';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useSessionStore } from '~/stores/sessionStore';
 
@@ -17,10 +17,6 @@ vi.mock('~/components/RightSectionCard/RightSectionCard', () => ({
 		</div>
 	),
 }));
-
-const renderWithProviders = (ui: React.ReactElement) => {
-	return render(<MantineProvider>{ui}</MantineProvider>);
-};
 
 describe('UserInfoCard', () => {
 	beforeEach(() => {

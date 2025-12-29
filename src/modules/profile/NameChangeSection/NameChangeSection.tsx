@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -11,6 +12,7 @@ import { SectionCard } from '~/components/SectionCard/SectionCard';
 import styles from './NameChangeSection.module.css';
 
 export const NameChangeSection: React.FC = () => {
+	const { t } = useTranslation('profile');
 	const { data: user } = useCurrentUser();
 	const updateNameMutation = useUpdateCurrentUserName();
 	const [isEditing, setIsEditing] = useState(false);
@@ -23,25 +25,25 @@ export const NameChangeSection: React.FC = () => {
 		validate: {
 			firstName: (value) => {
 				if (!value || value.trim().length === 0) {
-					return 'First name is required';
+					return t('name_change.validation.first_name_required');
 				}
 				if (value.trim().length < 2) {
-					return 'First name must be at least 2 characters';
+					return t('name_change.validation.first_name_min');
 				}
 				if (value.trim().length > 50) {
-					return 'First name must be less than 50 characters';
+					return t('name_change.validation.first_name_max');
 				}
 				return null;
 			},
 			lastName: (value) => {
 				if (!value || value.trim().length === 0) {
-					return 'Last name is required';
+					return t('name_change.validation.last_name_required');
 				}
 				if (value.trim().length < 2) {
-					return 'Last name must be at least 2 characters';
+					return t('name_change.validation.last_name_min');
 				}
 				if (value.trim().length > 50) {
-					return 'Last name must be less than 50 characters';
+					return t('name_change.validation.last_name_max');
 				}
 				return null;
 			},
@@ -55,16 +57,17 @@ export const NameChangeSection: React.FC = () => {
 				lastName: values.lastName.trim(),
 			});
 			notifications.show({
-				title: 'Success',
-				message: 'Your name has been updated successfully',
+				title: t('name_change.success_title'),
+				message: t('name_change.success_message'),
 				color: 'green',
 				icon: <IconCheck size={18} />,
 			});
 			setIsEditing(false);
 		} catch (error: any) {
 			notifications.show({
-				title: 'Error',
-				message: error.response?.data?.message || 'Failed to update name',
+				title: t('name_change.error_title'),
+				message:
+					error.response?.data?.message || t('name_change.error_message'),
 				color: 'red',
 				icon: <IconX size={18} />,
 			});
@@ -89,15 +92,15 @@ export const NameChangeSection: React.FC = () => {
 
 	return (
 		<SectionCard
-			title='Display Name'
-			description='Update your first and last name that others will see'
+			title={t('name_change.title')}
+			description={t('name_change.description')}
 			icon={IconUser}
 		>
 			<form onSubmit={handleSubmit} className={styles.form}>
 				<div className={styles.nameFields}>
 					<TextInput
-						label='First Name'
-						placeholder='Enter your first name'
+						label={t('name_change.first_name_label')}
+						placeholder={t('name_change.first_name_placeholder')}
 						disabled={!isEditing}
 						{...form.getInputProps('firstName')}
 						classNames={{
@@ -106,8 +109,8 @@ export const NameChangeSection: React.FC = () => {
 						}}
 					/>
 					<TextInput
-						label='Last Name'
-						placeholder='Enter your last name'
+						label={t('name_change.last_name_label')}
+						placeholder={t('name_change.last_name_placeholder')}
 						disabled={!isEditing}
 						{...form.getInputProps('lastName')}
 						classNames={{
@@ -124,7 +127,7 @@ export const NameChangeSection: React.FC = () => {
 							onClick={() => setIsEditing(true)}
 							className={styles.button}
 						>
-							Edit Name
+							{t('name_change.edit_button')}
 						</Button>
 					) : (
 						<>
@@ -134,14 +137,14 @@ export const NameChangeSection: React.FC = () => {
 								disabled={updateNameMutation.isPending}
 								className={styles.button}
 							>
-								Cancel
+								{t('name_change.cancel_button')}
 							</Button>
 							<Button
 								type='submit'
 								loading={updateNameMutation.isPending}
 								className={styles.button}
 							>
-								Save Changes
+								{t('name_change.save_button')}
 							</Button>
 						</>
 					)}

@@ -1,6 +1,6 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 import CampaignConfigurationPredefinedParams from './CampaignConfigurationPredefinedParams';
 import type { CampaignPredefinedParam } from '~/models/CampaignPredefinedParam';
 
@@ -131,11 +131,7 @@ vi.mock('~/utils/objectUtils', () => ({
 
 // Helper to render component
 const renderComponent = () =>
-	render(
-		<MantineProvider>
-			<CampaignConfigurationPredefinedParams />
-		</MantineProvider>
-	);
+	renderWithProviders(<CampaignConfigurationPredefinedParams />);
 
 describe('CampaignConfigurationPredefinedParams', () => {
 	beforeEach(() => {

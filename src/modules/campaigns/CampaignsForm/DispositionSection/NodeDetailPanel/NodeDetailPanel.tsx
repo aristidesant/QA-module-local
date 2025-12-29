@@ -20,7 +20,7 @@ import type { DispositionNode } from '~/models/DispositionNodeModel';
 import { getNodeStyle } from '~/utils/dispositionNodeStyles';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import styles from './NodeDetailPanel.module.css';
-import { useDispositionLabel } from '~/hooks/useDispositionLabel';
+import { useTranslation } from 'react-i18next';
 
 interface NodeDetailPanelProps {
 	node: DispositionNode;
@@ -31,6 +31,7 @@ const NodeDetailPanel: React.FC<NodeDetailPanelProps> = ({
 	node,
 	parentNode,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const { setRightComponent } = useCampaignsStore();
 	const nodeStyle = getNodeStyle(node, parentNode ? 1 : 0);
 
@@ -42,31 +43,31 @@ const NodeDetailPanel: React.FC<NodeDetailPanelProps> = ({
 		switch (style) {
 			case 'effective':
 				return {
-					label: 'Effective Contact',
+					label: t('disposition.detailPanel.effectiveContact'),
 					color: 'green',
 					icon: <IconCheck size={14} />,
-					description: 'This node represents a successful contact outcome.',
+					description: t('disposition.detailPanel.effectiveDesc'),
 				};
 			case 'noEffective':
 				return {
-					label: 'No Effective Contact',
+					label: t('disposition.detailPanel.noEffectiveContact'),
 					color: 'orange',
 					icon: <IconAlertTriangle size={14} />,
-					description: 'This node represents an unsuccessful contact attempt.',
+					description: t('disposition.detailPanel.noEffectiveDesc'),
 				};
 			case 'noContact':
 				return {
-					label: 'No Contact',
+					label: t('disposition.detailPanel.noContact'),
 					color: 'red',
 					icon: <IconAlertTriangle size={14} />,
-					description: 'This node represents no contact made.',
+					description: t('disposition.detailPanel.noContactDesc'),
 				};
 			default:
 				return {
-					label: 'Default',
+					label: t('disposition.detailPanel.default'),
 					color: 'gray',
 					icon: null,
-					description: 'This is a standard outcome node.',
+					description: t('disposition.detailPanel.defaultDesc'),
 				};
 		}
 	};
@@ -74,13 +75,12 @@ const NodeDetailPanel: React.FC<NodeDetailPanelProps> = ({
 	const nodeTypeInfo = getNodeTypeInfo(nodeStyle);
 	// Extract description if present
 	const description = node.description || nodeTypeInfo.description;
-	const dispositionLabel = useDispositionLabel();
 
 	return (
 		<Box className={styles.panel}>
 			<Group justify='space-between' className={styles.header}>
 				<Text size='lg' fw={600} className={styles.title}>
-					{dispositionLabel('Outcome Details')}
+					{t('disposition.detailPanel.title')}
 				</Text>
 				<ActionIcon
 					variant='subtle'
@@ -114,7 +114,7 @@ const NodeDetailPanel: React.FC<NodeDetailPanelProps> = ({
 							size='sm'
 							className={styles.parentBadge}
 						>
-							{dispositionLabel('Parent')}: {parentNode.name}
+							{t('disposition.detailPanel.parent')}: {parentNode.name}
 						</Badge>
 					</Group>
 				)}
@@ -125,13 +125,11 @@ const NodeDetailPanel: React.FC<NodeDetailPanelProps> = ({
 						<Group align='center' gap={8} mb={4}>
 							<IconClock size={18} color='var(--mantine-color-orange-6)' />
 							<Text size='sm' fw={600}>
-								{dispositionLabel('Requires Reschedule')}
+								{t('disposition.detailPanel.rescheduleCardTitle')}
 							</Text>
 						</Group>
 						<Text size='xs' c='dimmed'>
-							{dispositionLabel(
-								'This outcome requires the contact to be rescheduled for a future attempt.'
-							)}
+							{t('disposition.detailPanel.rescheduleCardDesc')}
 						</Text>
 					</Card>
 				)}
@@ -142,13 +140,11 @@ const NodeDetailPanel: React.FC<NodeDetailPanelProps> = ({
 						<Group align='center' gap={8} mb={4}>
 							<IconPhoneOff size={18} color='var(--mantine-color-red-6)' />
 							<Text size='sm' fw={600}>
-								{dispositionLabel('Invalidates Number')}
+								{t('disposition.detailPanel.invalidatesCardTitle')}
 							</Text>
 						</Group>
 						<Text size='xs' c='dimmed'>
-							{dispositionLabel(
-								'This outcome marks the contact number as invalid and prevents future attempts.'
-							)}
+							{t('disposition.detailPanel.invalidatesCardDesc')}
 						</Text>
 					</Card>
 				)}

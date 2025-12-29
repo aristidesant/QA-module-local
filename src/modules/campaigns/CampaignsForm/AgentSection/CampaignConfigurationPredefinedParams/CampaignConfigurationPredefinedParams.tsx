@@ -10,8 +10,10 @@ import type { CampaignPredefinedConversationConfig } from '~/models/CampaignPred
 import type { ConversationConfigModel } from '~/models/AgentListObject';
 import { IconCheck, IconSettings } from '@tabler/icons-react';
 import CampaignPredefinedParamsModal from './CampaignPredefinedParamsModal';
+import { useTranslation } from 'react-i18next';
 
 const CampaignConfigurationPredefinedParams: React.FC = () => {
+	const { t } = useTranslation('campaigns');
 	const predefinedParams = useCampaignsPredefinedParams();
 
 	const form = useCampaignFormContext();
@@ -86,8 +88,8 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 	return (
 		<>
 			<SectionCard
-				title='Agent Behavior'
-				description='Select and apply predefined conversation configurations for your campaign agent.'
+				title={t('form.agent.behavior.title')}
+				description={t('form.agent.behavior.description')}
 			>
 				{currentPredefinedParam ? (
 					<Paper withBorder p='md' radius='md' bg='var(--mantine-color-body)'>
@@ -101,7 +103,7 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 										{currentPredefinedParam.name}
 									</Text>
 									<Text size='xs' c='dimmed'>
-										Active configuration
+										{t('form.agent.behavior.active')}
 									</Text>
 								</div>
 							</Group>
@@ -111,7 +113,7 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 								onClick={handleOpenModal}
 								leftSection={<IconSettings size={14} />}
 							>
-								Change
+								{t('form.agent.behavior.change')}
 							</Button>
 						</Group>
 					</Paper>
@@ -125,7 +127,7 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 					>
 						<Stack align='center' gap='xs'>
 							<Text size='sm' c='dimmed'>
-								No configuration applied
+								{t('form.agent.behavior.noConfiguration')}
 							</Text>
 							<Button
 								variant='outline'
@@ -133,7 +135,7 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 								onClick={handleOpenModal}
 								leftSection={<IconSettings size={14} />}
 							>
-								Select Configuration
+								{t('form.agent.behavior.select')}
 							</Button>
 						</Stack>
 					</Paper>

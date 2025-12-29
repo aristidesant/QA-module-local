@@ -26,7 +26,7 @@ export function ConversationActions({
 	conversation,
 	onReload,
 }: ConversationActionsProps) {
-	const { t } = useTranslation();
+	const { t } = useTranslation(['conversations', 'common']);
 	const failAndPauseMutation = useFailAndPauseConversation();
 	const fetchAndProcessMutation = useFetchAndProcessConversation();
 	const { canPerformAction } = usePermissions();
@@ -41,11 +41,11 @@ export function ConversationActions({
 
 	const handleReprocessEvent = () => {
 		modals.openConfirmModal({
-			title: t('conversations.actions.confirmTitle'),
-			children: t('conversations.actions.reprocess.confirmMessage'),
+			title: t('actions.confirmTitle'),
+			children: t('actions.reprocess.confirmMessage'),
 			labels: {
-				confirm: t('conversations.actions.reprocess.confirmLabel'),
-				cancel: t('common.cancel'),
+				confirm: t('actions.reprocess.confirmLabel'),
+				cancel: t('actions.cancel', { ns: 'common' }),
 			},
 			onConfirm: () => {
 				failAndPauseMutation.mutate(`${conversation.id}`, {
@@ -61,11 +61,11 @@ export function ConversationActions({
 
 	const handleFetchAndProcess = () => {
 		modals.openConfirmModal({
-			title: t('conversations.actions.confirmTitle'),
-			children: t('conversations.actions.fetchAndProcess.confirmMessage'),
+			title: t('actions.confirmTitle'),
+			children: t('actions.fetchAndProcess.confirmMessage'),
 			labels: {
-				confirm: t('conversations.actions.fetchAndProcess.confirmLabel'),
-				cancel: t('common.cancel'),
+				confirm: t('actions.fetchAndProcess.confirmLabel'),
+				cancel: t('actions.cancel', { ns: 'common' }),
 			},
 			onConfirm: () => {
 				fetchAndProcessMutation.mutate(`${conversation.id}`, {
@@ -90,27 +90,27 @@ export function ConversationActions({
 		conversation.status === 'initiated'
 			? {
 					icon: IconArrowRight,
-					label: t('conversations.actions.reprocess.label'),
-					hint: t('conversations.actions.reprocess.hint'),
+					label: t('actions.reprocess.label'),
+					hint: t('actions.reprocess.hint'),
 					onClick: handleReprocessEvent,
 					loading: failAndPauseMutation.isPending,
-					tooltip: t('conversations.actions.reprocess.tooltip'),
+					tooltip: t('actions.reprocess.tooltip'),
 				}
 			: {
 					icon: IconRefresh,
-					label: t('conversations.actions.fetchAndProcess.label'),
-					hint: t('conversations.actions.fetchAndProcess.hint'),
+					label: t('actions.fetchAndProcess.label'),
+					hint: t('actions.fetchAndProcess.hint'),
 					onClick: handleFetchAndProcess,
 					loading: fetchAndProcessMutation.isPending,
-					tooltip: t('conversations.actions.fetchAndProcess.tooltip'),
+					tooltip: t('actions.fetchAndProcess.tooltip'),
 				};
 
 	const ActiveActionIcon = currentAction.icon;
 
 	return (
 		<RightSectionCard
-			title={t('conversations.actions.title')}
-			description={t('conversations.actions.description')}
+			title={t('actions.title')}
+			description={t('actions.description')}
 		>
 			<Center className={styles.actions}>
 				<div className={styles.actionItem}>

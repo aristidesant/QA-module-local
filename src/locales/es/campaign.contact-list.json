@@ -1,0 +1,382 @@
+{
+	"actions": {
+		"start": "Iniciar Campaña",
+		"pause": "Pausar Campaña",
+		"resume": "Reanudar Campaña",
+		"noActions": "No hay acciones disponibles",
+		"allWavesExecuted": "Todas las oleadas ejecutadas",
+		"retryNotAvailable": "Reintento no disponible",
+		"confirmTitle": "Confirmar Acción",
+		"confirmStart": "Iniciar la campaña comenzará a llamar a los contactos de esta lista. Esta acción no se puede deshacer de inmediato. ¿Estás seguro de que quieres comenzar?",
+		"confirmPause": "Pausar la campaña detendrá todas las llamadas en curso. Puedes reanudar más tarde. ¿Estás seguro de que quieres pausar?",
+		"confirmResume": "Reanudar la campaña continuará llamando a los contactos desde donde se quedó. ¿Estás seguro de que quieres reanudar?",
+		"yes": "Sí",
+		"no": "No",
+		"success": "Éxito",
+		"actionSuccess": "Campaña {{action}}da con éxito",
+		"error": "Error"
+	},
+	"status": {
+		"notFound": "Lista de contactos no encontrada",
+		"notFoundDesc": "No se pudo encontrar la lista de contactos que estás buscando.",
+		"invalidId": "ID de lista de contactos no válido",
+		"invalidIdDesc": "El identificador de la lista de contactos en la URL no es válido. Por favor, verifica la URL e inténtalo de nuevo, o regresa a la vista general de la campaña para seleccionar una lista de contactos válida.",
+		"returnToCampaign": "Regresar a la Campaña",
+		"loading": "Cargando lista de contactos",
+		"loadingDesc": "Obteniendo la información más reciente para esta lista de contactos.",
+		"unavailable": "Lista de contactos no disponible",
+		"unavailableDesc": "Encontramos un problema al cargar esta lista de contactos.",
+		"unableToLoad": "No se pudo cargar la lista de contactos",
+		"unableToLoadDesc": "{{error}}. Esto podría deberse a un problema de red, un problema del servidor o que la lista de contactos ya no exista.",
+		"reloadSuccess": "Lista de contactos recargada con éxito",
+		"tryAgain": "Intentar de nuevo",
+		"unknownCampaign": "Campaña desconocida",
+		"created": "Creada {{time}}",
+		"pending": "Pendiente",
+		"pendingDesc": "Esperando para comenzar. Revisa la configuración antes de lanzar.",
+		"running": "En curso",
+		"runningDesc": "Los contactos están siendo marcados actualmente.",
+		"paused": "Pausada",
+		"pausedDesc": "Procesamiento detenido. Reanuda cuando estés listo.",
+		"complete": "Completada",
+		"completeDesc": "Todos los contactos procesados para esta lista.",
+		"failed": "Fallida",
+		"failedDesc": "Un error detuvo la campaña. Intenta reiniciar.",
+		"executed": "Ejecutada",
+		"unknown": "Desconocido",
+		"unknownDesc": "Estado no disponible. Recarga para la última actualización.",
+		"confirmCompleteList": "¿Marcar esta lista de contactos como completada? No se ejecutarán oleadas adicionales."
+	},
+	"tabs": {
+		"overview": "Resumen",
+		"conversations": "Conversaciones",
+		"contacts": "Contactos",
+		"conversationsDesc": "Todas las conversaciones asociadas con esta lista de contactos.",
+		"contactsDesc": "Todos los contactos asociados con esta lista."
+	},
+	"overview": {
+		"title": "Información de la lista de contactos",
+		"description": "Ver el estado y las métricas de esta lista de contactos."
+	},
+	"summary": {
+		"details": "Detalles",
+		"metadata": "Metadatos de la lista de contactos",
+		"active": "Activa",
+		"inactive": "Inactiva",
+		"noDescription": "No se proporcionó descripción.",
+		"campaign": "Campaña",
+		"schedule": "Horario",
+		"notSet": "No establecido",
+		"expirationDate": "Fecha de expiración",
+		"noExpiration": "Sin expiración definida",
+		"metrics": "Métricas",
+		"performanceMetrics": "Métricas de rendimiento de la lista de contactos",
+		"contacts": "Contactos",
+		"maxCallsPerContact": "Máx. llamadas por contacto",
+		"maxCallsPerList": "Máx. llamadas por lista",
+		"humanEquivalent": "Equivalente humano",
+		"waves": "Oleadas"
+	},
+	"metrics": {
+		"title": "Métricas de la lista de contactos",
+		"description": "Resumen de rendimiento",
+		"timeRanges": {
+			"5m": "Últimos 5 minutos",
+			"15m": "Últimos 15 minutos",
+			"1h": "Última hora",
+			"today": "Hoy",
+			"since_creation": "Desde la creación"
+		},
+		"stats": {
+			"totalRecords": "Registros totales",
+			"totalRecordsDesc": "Contactos cargados",
+			"contacted": "Contactados",
+			"contactedDesc": "Alcanzados",
+			"aht": "AHT",
+			"ahtDesc": "Tiempo promedio de gestión",
+			"contactRate": "Tasa de contacto",
+			"contactRateDesc": "Alcanzados vs total",
+			"effectivenessRate": "Tasa de efectividad",
+			"effectivenessRateDesc": "Llamadas efectivas",
+			"noContactRate": "Tasa de no contacto",
+			"noContactRateDesc": "Nunca conectados",
+			"effective": "Efectivos",
+			"effectiveDesc": "Exitosos",
+			"noEffective": "No efectivos",
+			"noEffectiveDesc": "Sin resultado",
+			"noContact": "Sin contacto",
+			"noContactDesc": "No alcanzados",
+			"dnc": "DNC",
+			"dncDesc": "No llamar"
+		},
+		"alerts": {
+			"noSelection": "No se ha seleccionado ninguna lista de contactos",
+			"noSelectionDesc": "Proporciona una lista de contactos válida para ver las métricas en vivo.",
+			"unableToLoad": "No se pudieron cargar las métricas",
+			"unableToLoadDesc": "Algo salió mal al recuperar las métricas más recientes.",
+			"notAvailable": "Métricas no disponibles aún",
+			"notAvailableDesc": "No hemos recibido ninguna métrica para esta lista de contactos en el rango seleccionado. Por favor, vuelve más tarde."
+		},
+		"sipTrunkInfo": "Información del Troncal SIP"
+	},
+	"faultyPhones": {
+		"checking": "Buscando errores de validación de números de teléfono...",
+		"refreshing": "Actualizando teléfonos defectuosos...",
+		"title": "Números de teléfono defectuosos",
+		"message": "{{total}} número{{unit}} de teléfono defectuoso{{plural}} en {{count}} contacto{{plural}}. Las llamadas se omiten hasta que se corrijan.",
+		"unit_one": "",
+		"unit_other": "s",
+		"viewDetails": "Ver detalles",
+		"modal": {
+			"description": "Los siguientes números de teléfono tienen errores de validación y necesitan atención. Es posible que estos contactos no reciban llamadas hasta que se corrijan los números de teléfono.",
+			"export": "Exportar",
+			"total": "Total: {{count}} número{{unit}} de teléfono defectuoso{{plural}}",
+			"columns": {
+				"contact": "Contacto",
+				"phoneNumber": "Número de teléfono",
+				"errorCode": "Código de error",
+				"errorMessage": "Mensaje de error",
+				"actions": "Acciones"
+			},
+			"tooltips": {
+				"edit": "Editar número de teléfono"
+			},
+			"notifications": {
+				"updateSuccess": "Número de teléfono actualizado con éxito",
+				"updateFailed": "Error al actualizar",
+				"exportSuccess": "Números de teléfono defectuosos exportados con éxito",
+				"exportFailed": "Error al exportar"
+			},
+			"placeholders": {
+				"enterPhone": "Ingresa el número de teléfono"
+			}
+		}
+	},
+	"contactsTable": {
+		"notifications": {
+			"appended": "Contactos añadidos",
+			"appendedMessage": "Se añadieron nuevos contactos a la lista.",
+			"deleted": "Eliminado",
+			"deletedMessage": "Contacto eliminado con éxito.",
+			"exportSuccess": "Exportación exitosa",
+			"exportSuccessMessage": "Contactos exportados con éxito"
+		},
+		"errors": {
+			"noFile": "No se proporcionó ningún archivo",
+			"noPermissionImport": "No tienes permiso para importar contactos.",
+			"campaignIdRequired": "Se requiere el ID de la campaña para cargar el archivo.",
+			"csvOnly": "Solo se admiten archivos CSV."
+		},
+		"deleteConfirm": {
+			"title": "Eliminar contacto",
+			"message": "¿Estás seguro de que quieres eliminar a {{name}}? Esta acción no se puede deshacer.",
+			"confirm": "Eliminar",
+			"cancel": "Cancelar"
+		},
+		"empty": {
+			"noResults": "No se encontraron contactos que coincidan con los filtros seleccionados.",
+			"noContacts": "No hay contactos disponibles en este grupo."
+		},
+		"columns": {
+			"name": "Nombre",
+			"identifier": "Identificador",
+			"status": "Estado",
+			"primaryPhone": "Teléfono principal",
+			"lastUpdated": "Última actualización",
+			"email": "Correo electrónico",
+			"contact": "Contacto",
+			"phone": "Teléfono",
+			"actions": "Acciones"
+		},
+		"filters": {
+			"searchByName": "Buscar por nombre...",
+			"filterByPhone": "Filtrar por teléfono...",
+			"filterByEmail": "Filtrar por correo..."
+		},
+		"tooltips": {
+			"append": "Añadir contactos",
+			"export": "Exportar contactos"
+		},
+		"status": {
+			"ACTIVE": "Activo",
+			"INACTIVE": "Inactivo",
+			"CONTACTED": "Contactado",
+			"DO_NOT_RESPOND": "No responder",
+			"VOICE_MAIL": "Buzón de voz",
+			"ON_CALL": "En llamada",
+			"INICATIVE": "Inactivo",
+			"DECEASED": "Fallecido"
+		},
+		"unnamedContact": "Contacto sin nombre",
+		"itemLabel": "contactos",
+		"noPhoneNumbers": "No hay números de teléfono disponibles",
+		"appendModal": {
+			"title": "Añadir contactos mediante CSV",
+			"changeFile": "Cambiar archivo CSV",
+			"selectFile": "Seleccionar archivo CSV",
+			"dropHint": "Arrastra y suelta o haz clic para buscar",
+			"selected": "Seleccionado: {{name}}",
+			"fileSaved": "Archivo guardado. ID: {{id}}",
+			"step2Title": "Paso 2: Añadir a la lista",
+			"step2Desc": "Haz clic en \"Añadir a la lista\" para agregar estos contactos a la lista actual.",
+			"saveFile": "Guardar archivo",
+			"appendToList": "Añadir a la lista"
+		},
+		"editModal": {
+			"title": "Editar contacto"
+		}
+	},
+	"phoneNumbersTable": {
+		"deleteConfirm": {
+			"title": "Eliminar número de teléfono",
+			"message": "¿Estás seguro de que quieres eliminar el número de teléfono {{number}}? Esta acción no se puede deshacer.",
+			"confirm": "Eliminar",
+			"cancel": "Cancelar"
+		},
+		"notifications": {
+			"deleted": "Eliminado",
+			"deletedMessage": "Número de teléfono eliminado con éxito",
+			"deleteFailed": "Error al eliminar",
+			"updated": "Actualizado",
+			"updatedMessage": "Número de teléfono actualizado con éxito"
+		},
+		"columns": {
+			"phoneNumber": "Número de teléfono",
+			"status": "Estado",
+			"retries": "Reintentos",
+			"actions": "Acciones"
+		},
+		"tooltips": {
+			"edit": "Editar número de teléfono",
+			"delete": "Eliminar número de teléfono",
+			"add": "Añadir números de teléfono"
+		},
+		"add": "Añadir",
+		"empty": "No hay números de teléfono disponibles",
+		"addModal": {
+			"title": "Agregar números de teléfono",
+			"hint": "Ingrese números de República Dominicana (+1 809/829/849 XXXXXXX).",
+			"invalidNumber": "Número de RD inválido",
+			"duplicateNumbers": "Se detectaron números duplicados.",
+			"invalidNumbersDetected": "Se detectaron {{count}} número{{plural}} de República Dominicana inválido{{plural}}.",
+			"save": "Guardar",
+			"cancel": "Cancelar",
+			"tooltips": {
+				"save": "Guardar números",
+				"resolveErrors": "Resuelva los errores para guardar"
+			},
+			"notifications": {
+				"added": "{{count}} número(s) de teléfono agregado(s) con éxito"
+			}
+		}
+	},
+	"contacts": {
+		"tabs": {
+			"active": "Activos",
+			"inactive": "Inactivos"
+		},
+		"list": {
+			"activeTitle": "Listas de Contactos Activas",
+			"inactiveTitle": "Listas de Contactos Inactivas",
+			"activeDescription": "Administre sus listas de contactos activas y supervise su progreso.",
+			"inactiveDescription": "Vea y administre las listas de contactos que están actualmente inactivas.",
+			"addNewContactList": "Añadir Nueva Lista de Contactos",
+			"addInactiveContactList": "Añadir Lista de Contactos Inactiva",
+			"configuration": "Configuración de Lista de Contactos",
+			"selectActive": "Seleccionar Lista de Contactos Activa",
+			"configurationDescription": "Configure los ajustes para su nueva lista de contactos.",
+			"selectActiveDescription": "Seleccione una lista de contactos para activar para esta campaña.",
+			"emptyMessage": "No se encontraron listas de contactos activas.",
+			"emptyInactiveMessage": "No se encontraron listas de contactos inactivas.",
+			"reload": "Recargar",
+			"reloadUnavailable": "Recarga no disponible mientras está colapsado",
+			"columns": {
+				"name": "Nombre",
+				"total": "Total",
+				"assigned": "Asignado",
+				"status": "Estado",
+				"actions": "Acciones"
+			},
+			"capacity": {
+				"title": "Capacidad del Programador",
+				"used": "Usada",
+				"remaining": "Restante",
+				"total": "Capacidad Total"
+			}
+		},
+		"details": {
+			"meta": {
+				"listStatus": "Creado"
+			},
+			"stats": {
+				"waves": "Oleadas"
+			},
+			"messages": {
+				"allWavesDone": "Todas las oleadas ejecutadas"
+			},
+			"actions": {
+				"extendWaves": "Extender Oleadas",
+				"completeList": "Completar Lista",
+				"openContactList": "Abrir Lista de Contactos"
+			},
+			"primaryPhone": "Número de teléfono principal",
+			"phoneNumbers": "Números de teléfono ({{count}})",
+			"email": "Correo electrónico",
+			"location": "Ubicación",
+			"engagementLevel": {
+				"title": "Nivel de compromiso",
+				"description": "Mide qué tan comprometido está {{name}} con tus campañas."
+			},
+			"reviewsQualification": {
+				"title": "Calificación de reseñas",
+				"description": "Mide qué tan comprometido está {{name}} con tus campañas."
+			},
+			"sentiment": {
+				"negative": "Negativo",
+				"neutral": "Neutral",
+				"positive": "Positivo"
+			},
+			"mockData": {
+				"location": "N/A",
+				"language": "Español"
+			},
+			"notifications": {
+				"wavesExtended": {
+					"title": "Oleadas Extendidas",
+					"message": "Se añadieron con éxito {{count}} oleadas a la lista de contactos."
+				},
+				"completed": {
+					"title": "Lista Completada",
+					"message": "Lista de contactos marcada como completada."
+				}
+			},
+			"confirm": {
+				"complete": "Completar",
+				"cancel": "Cancelar"
+			},
+			"controls": {
+				"allWavesDone": "Todas las oleadas ejecutadas",
+				"start": "Iniciar Campaña",
+				"resume": "Reanudar Campaña",
+				"pause": "Pausar Campaña",
+				"completed": "Campaña Completada",
+				"failed": "Campaña Fallida",
+				"requirementsNotMet": "Requisitos de la campaña no cumplidos",
+				"notifications": {
+					"successTitle": "Éxito",
+					"errorTitle": "Error",
+					"unknownCampaign": "Campaña desconocida",
+					"running": "La campaña ahora está en ejecución",
+					"startError": "Error al iniciar la campaña",
+					"resumed": "Campaña reanudada",
+					"resumeError": "Error al reanudar la campaña",
+					"paused": "Campaña pausada",
+					"pauseError": "Error al pausar la campaña"
+				}
+			}
+		},
+		"tooltips": {
+			"reload": "Recargar"
+		}
+	}
+}

@@ -14,6 +14,7 @@ import {
 	IconPlayerPlay,
 	IconInfoCircle,
 } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import type { Campaign } from '../../../../models/CampaignsModel';
 import { CampaignStatus, CampaignStatusConfig } from '~/models/CampaignStatus';
 import {
@@ -59,6 +60,7 @@ const formatDate = (value?: string) => {
 };
 
 const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
+	const { t } = useTranslation('campaign.detail');
 	const {
 		data: campaignData,
 		refetch,
@@ -100,7 +102,7 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 		switch (status) {
 			case CampaignStatus.RUNNING:
 				return {
-					label: 'Pause',
+					label: t('preview.overview.actions.pause'),
 					color: 'red',
 					variant: 'light',
 					icon: IconPlayerPause,
@@ -108,7 +110,7 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 				};
 			case CampaignStatus.PAUSED:
 				return {
-					label: 'Resume',
+					label: t('preview.overview.actions.resume'),
 					color: 'green',
 					variant: 'filled',
 					icon: IconPlayerPlay,
@@ -116,7 +118,7 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 				};
 			case CampaignStatus.PENDING:
 				return {
-					label: 'Start',
+					label: t('preview.overview.actions.start'),
 					color: 'green',
 					variant: 'filled',
 					icon: IconPlayerPlay,
@@ -124,7 +126,7 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 				};
 			case CampaignStatus.COMPLETED:
 				return {
-					label: 'Completed',
+					label: t('preview.overview.actions.completed'),
 					color: 'gray',
 					variant: 'filled',
 					icon: IconPlayerPlay,
@@ -132,7 +134,7 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 				};
 			case CampaignStatus.FAILED:
 				return {
-					label: 'Failed',
+					label: t('preview.overview.actions.failed'),
 					color: 'gray',
 					variant: 'filled',
 					icon: IconPlayerPlay,
@@ -140,50 +142,57 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 				};
 			default:
 				return {
-					label: 'Start',
+					label: t('preview.overview.actions.start'),
 					color: 'gray',
 					variant: 'filled',
 					icon: IconPlayerPlay,
 					disabled: true,
 				};
 		}
-	}, [isStartDisabled, status]);
+	}, [isStartDisabled, status, t]);
 
 	const onSuccess = useCallback(
 		(action: string) => {
 			notifications.show({
-				title: 'Success',
-				message: `Campaign ${action} successfully`,
+				title: t('preview.overview.notifications.success'),
+				message: t('preview.overview.notifications.campaignActioned', {
+					action,
+				}),
 				color: 'green',
 			});
 			refetch();
 		},
-		[refetch]
+		[refetch, t]
 	);
 
-	const onError = useCallback((error: unknown, action: string) => {
-		const defaultMessage = `Failed to ${action} campaign`;
-		const apiMessage =
-			typeof error === 'object' && error !== null && 'response' in error
-				? // @ts-expect-error -- safe guarded access
-					(error.response?.data?.message ?? defaultMessage)
-				: defaultMessage;
+	const onError = useCallback(
+		(error: unknown, action: string) => {
+			const defaultMessage = t(
+				'preview.overview.notifications.failedToAction',
+				{ action }
+			);
+			const apiMessage =
+				typeof error === 'object' && error !== null && 'response' in error
+					? // @ts-expect-error -- safe guarded access
+						(error.response?.data?.message ?? defaultMessage)
+					: defaultMessage;
 
-		notifications.show({
-			title: 'Error',
-			message: apiMessage,
-			color: 'red',
-		});
-		console.error(`Error ${action} campaign:`, error);
-	}, []);
+			notifications.show({
+				title: t('preview.overview.notifications.error'),
+				message: apiMessage,
+				color: 'red',
+			});
+			console.error(`Error ${action} campaign:`, error);
+		},
+		[t]
+	);
 
 	const ensureContactGroup = useCallback(
 		(action: string) => {
 			if (!campaignNumericId || !contactGroupId) {
 				notifications.show({
-					title: 'Unavailable',
-					message:
-						'No contact list is available for this campaign. Add one before attempting to manage delivery.',
+					title: t('preview.overview.notifications.unavailable'),
+					message: t('preview.overview.notifications.noContactList'),
 					color: 'yellow',
 				});
 				console.error(
@@ -197,7 +206,7 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 			}
 			return true;
 		},
-		[campaignNumericId, contactGroupId]
+		[campaignNumericId, contactGroupId, t]
 	);
 
 	const handleToggle = useCallback(() => {
@@ -273,31 +282,31 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 
 	const typeLabel = useMemo(() => {
 		if (!displayCampaign?.type) {
-			return 'Unknown';
+			return t('preview.overview.unknown');
 		}
 
 		const label =
 			displayCampaign.type.charAt(0) +
 			displayCampaign.type.slice(1).toLowerCase();
 		return label;
-	}, [displayCampaign?.type]);
+	}, [displayCampaign?.type, t]);
 
 	const metaItems = useMemo(
 		() => [
 			{
-				label: 'Agent',
-				value: displayCampaign?.agentName ?? 'Not assigned',
+				label: t('preview.overview.agent'),
+				value: displayCampaign?.agentName ?? t('preview.overview.notAssigned'),
 			},
 			{
-				label: 'Owner',
+				label: t('preview.overview.owner'),
 				value: displayCampaign?.user?.username ?? '—',
 			},
 			{
-				label: 'Created',
+				label: t('preview.overview.created'),
 				value: formatDate(displayCampaign?.createdAt),
 			},
 			{
-				label: 'Last updated',
+				label: t('preview.overview.lastUpdated'),
 				value: formatDate(displayCampaign?.updatedAt),
 			},
 		],
@@ -306,6 +315,7 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 			displayCampaign?.createdAt,
 			displayCampaign?.updatedAt,
 			displayCampaign?.user?.username,
+			t,
 		]
 	);
 
@@ -317,8 +327,8 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 	if (isLoading) {
 		return (
 			<RightSectionCard
-				title='Campaign overview'
-				description='Status and operational readiness'
+				title={t('preview.overview.title')}
+				description={t('preview.overview.description')}
 				icon={IconInfoCircle}
 				iconColor='var(--mantine-color-blue-6)'
 			>
@@ -342,8 +352,8 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 
 	return (
 		<RightSectionCard
-			title='Campaign overview'
-			description='Status and operational readiness'
+			title={t('preview.overview.title')}
+			description={t('preview.overview.description')}
 			icon={IconInfoCircle}
 			iconColor='var(--mantine-color-blue-6)'
 		>
@@ -394,7 +404,9 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 				{progressValue !== null ? (
 					<div className={classes.progressSection}>
 						<Group justify='space-between' align='center' gap='xs'>
-							<Text className={classes.progressLabel}>Progress</Text>
+							<Text className={classes.progressLabel}>
+								{t('preview.overview.progress')}
+							</Text>
 							<Text className={classes.progressValue}>
 								{Math.round(progressValue)}%
 							</Text>
@@ -433,7 +445,9 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 
 				{/* Health Section */}
 				<div className={classes.healthSection}>
-					<Text className={classes.healthTitle}>Operational Health</Text>
+					<Text className={classes.healthTitle}>
+						{t('preview.overview.operationalHealth')}
+					</Text>
 					<CampaignHealth campaignId={campaignId} />
 				</div>
 			</Stack>

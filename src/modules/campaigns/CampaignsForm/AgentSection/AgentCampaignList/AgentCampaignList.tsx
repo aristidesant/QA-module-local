@@ -8,8 +8,10 @@ import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import AgentCampaignPreview from '../AgentCampaignPreview';
 import EmptyState from '~/components/EmptyState';
+import { useTranslation } from 'react-i18next';
 
 export const AgentCampaignList: React.FC = () => {
+	const { t } = useTranslation('campaigns');
 	const { selectedCampaign } = useCampaignsStore((state) => state);
 	const {
 		data: campaignAgents,
@@ -32,7 +34,7 @@ export const AgentCampaignList: React.FC = () => {
 
 		modals.open({
 			modalId: 'add-campaign-agent',
-			title: 'Add Agent to Campaign',
+			title: t('form.agent.list.addAgentTitle'),
 			centered: true,
 			size: 'xl',
 			children: (
@@ -65,24 +67,22 @@ export const AgentCampaignList: React.FC = () => {
 					radius='md'
 					onClick={handleAddAgent}
 				>
-					Add Agent
+					{t('form.agent.list.addAgent')}
 				</Button>
 			)}
 			{totalAgents === 0 && !isLoading ? (
 				<Card withBorder radius={'md'}>
 					<EmptyState
 						icon={<IconInfoCircle />}
-						message='No Agents Assigned'
-						description={
-							'There are no agents currently assigned to this campaign.'
-						}
+						message={t('form.agent.list.noAgents')}
+						description={t('form.agent.list.noAgentsDesc')}
 					/>
 				</Card>
 			) : null}
 
 			{campaignAgents?.map((campaignAgent) => {
 				return (
-					<>
+					<React.Fragment key={campaignAgent.id}>
 						{selectedCampaign?.id && (
 							<AgentCampaignPreview
 								agentId={campaignAgent.agentId}
@@ -90,7 +90,7 @@ export const AgentCampaignList: React.FC = () => {
 								campaignId={selectedCampaign.id}
 							/>
 						)}
-					</>
+					</React.Fragment>
 				);
 			})}
 		</section>

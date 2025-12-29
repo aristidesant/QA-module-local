@@ -1,0 +1,182 @@
+{
+	"title": "Roles",
+	"description": "Crea, actualiza y controla el acceso con roles y permisos.",
+	"searchPlaceholder": "Buscar roles",
+	"newRole": "Nuevo rol",
+	"editRole": "Editar rol",
+	"deleteRole": "Eliminar rol",
+	"columns": {
+		"name": "Nombre",
+		"code": "Código",
+		"status": "Estado",
+		"updated": "Actualizado",
+		"actions": "Acciones"
+	},
+	"status": {
+		"active": "Activo",
+		"inactive": "Inactivo"
+	},
+	"list": {
+		"errorTitle": "No se pudieron cargar los roles",
+		"unknownError": "Error desconocido",
+		"empty": "No se encontraron roles."
+	},
+	"table": {
+		"role": {
+			"codeLabel": "Código",
+			"descriptionLabel": "Descripción",
+			"createdLabel": "Creado",
+			"systemBadge": "Sistema"
+		},
+		"actions": {
+			"view": "Ver rol",
+			"edit": "Editar rol",
+			"delete": "Eliminar rol",
+			"deleteDisabled": "Los roles del sistema no se pueden eliminar"
+		}
+	},
+	"deleteModal": {
+		"confirmLabel": "Eliminar",
+		"body": "Esto eliminará permanentemente <strong>{{name}}</strong>. Esta acción no se puede deshacer."
+	},
+	"notifications": {
+		"cannotDeleteSystemTitle": "No se puede eliminar un rol del sistema",
+		"cannotDeleteSystemMessage": "Los roles del sistema están protegidos y no se pueden eliminar.",
+		"deletedTitle": "Rol eliminado",
+		"deletedMessage": "Se eliminó {{name}}.",
+		"deleteErrorTitle": "No se pudo eliminar el rol",
+		"updatedTitle": "Rol actualizado",
+		"updatedMessage": "Se actualizó {{name}}.",
+		"createdTitle": "Rol creado",
+		"createdMessage": "Se creó {{name}}.",
+		"requestFailedTitle": "La solicitud falló"
+	},
+	"form": {
+		"loadErrorTitle": "No se pudo cargar el rol",
+		"validation": {
+			"nameRequired": "El nombre es obligatorio",
+			"codeRequired": "El código es obligatorio",
+			"codeFormat": "El código debe estar en mayúsculas y usar solo guiones bajos",
+			"missingRoleId": "Falta el id del rol"
+		},
+		"sections": {
+			"basics": {
+				"title": "Datos básicos",
+				"description": "Define el nombre del rol y su identificador interno."
+			},
+			"permissions": {
+				"title": "Permisos",
+				"description": "Elige a qué módulos puede acceder este rol y qué acciones están permitidas."
+			}
+		},
+		"fields": {
+			"name": {
+				"label": "Nombre del rol",
+				"placeholder": "p. ej., Gestor de campañas"
+			},
+			"code": {
+				"label": "Código del rol",
+				"placeholder": "p. ej., GESTOR_DE_CAMPAÑAS"
+			},
+			"description": {
+				"label": "Descripción",
+				"placeholder": "Describe el propósito de este rol"
+			},
+			"isActive": {
+				"label": "Rol activo",
+				"description": "Los roles inactivos no se pueden asignar a usuarios.",
+				"hint": "Puedes desactivar un rol sin eliminarlo."
+			}
+		},
+		"masterClientOnly": {
+			"tooltip": "Solo disponible para el cliente maestro.",
+			"ariaLabel": "Solo para cliente maestro"
+		},
+		"permissions": {
+			"selectedCount": "{{selected}} de {{total}} seleccionados",
+			"moduleNames": {
+				"DASHBOARD": "Panel",
+				"CAMPAIGNS": "Campañas",
+				"CONTACTS": "Contactos",
+				"CONVERSATIONS": "Conversaciones",
+				"KNOWLEDGE_BASES": "Bases de conocimiento",
+				"TOOLS": "Herramientas",
+				"PROMPTS": "Prompts",
+				"SCHEDULES": "Horarios",
+				"USERS": "Usuarios",
+				"SETTINGS": "Configuración",
+				"REPORTS": "Reportes",
+				"ROLES": "Roles"
+			},
+			"permissionLabels": {
+				"READ": "Leer",
+				"CREATE": "Crear",
+				"UPDATE": "Actualizar",
+				"DELETE": "Eliminar",
+				"EXPORT": "Exportar",
+				"MANAGE": "Administrar"
+			},
+			"actionLabels": {
+				"default": "{{permission}}",
+				"READ": "Ver",
+				"CREATE": "Crear",
+				"UPDATE": "Actualizar",
+				"DELETE": "Eliminar",
+				"EXPORT": "Exportar",
+				"MANAGE": "Administrar"
+			},
+			"tooltips": {
+				"dashboard": {
+					"read": "Acceder al panel de Resumen (página de inicio)."
+				},
+				"campaigns": {
+					"read": "Ver campañas y su configuración relacionada.",
+					"create": "Crear nuevas campañas.",
+					"update": "Editar campañas existentes.",
+					"delete": "Eliminar campañas.",
+					"export": "Exportar datos de campañas."
+				},
+				"conversations": {
+					"read": "Ver conversaciones y transcripciones.",
+					"export": "Exportar conversaciones."
+				},
+				"settings": {
+					"read": "Ver la configuración.",
+					"manage": "Administrar la configuración global de este cliente."
+				},
+				"roles": {
+					"read": "Ver roles y permisos.",
+					"create": "Crear nuevos roles.",
+					"update": "Editar roles existentes.",
+					"delete": "Eliminar roles."
+				},
+				"manage": "Acceso completo a {{module}}.",
+				"generic": "Acceso de {{action}} para {{module}}."
+			}
+		},
+		"actions": {
+			"helperText": "Los cambios se aplican inmediatamente después de guardar.",
+			"saveChanges": "Guardar cambios",
+			"createRole": "Crear rol"
+		}
+	},
+	"details": {
+		"title": "Detalles del rol",
+		"closeAriaLabel": "Cerrar detalles",
+		"loadErrorTitle": "No se pudieron cargar los detalles del rol",
+		"updatedRelative": "Actualizado {{relative}}",
+		"noPermissions": "No hay permisos asignados a este rol",
+		"cards": {
+			"roleTitle": "Rol",
+			"permissionsTitle": "Permisos",
+			"activityTitle": "Actividad"
+		},
+		"activity": {
+			"created": "Creado",
+			"lastUpdated": "Última actualización"
+		},
+		"badges": {
+			"systemRole": "Rol del sistema"
+		}
+	}
+}

@@ -8,6 +8,7 @@ import { useKnowledgeBaseModalStore } from '~/stores/knowledgeBaseModalStore';
 import { useKnowledgeBaseSelectionStore } from '~/stores/knowledgeBaseSelectionStore';
 import KnowledgeBaseWizardForm from '~/modules/campaigns/CampaignWizard/StepTwoAgent/KnowledgeBaseSection/KnowledgeBaseWizardForm/KnowledgeBaseWizardForm';
 import classes from './CampaignConfigurationKnowledgeBaseAddModal.module.css';
+import { useTranslation } from 'react-i18next';
 
 interface CampaignConfigurationKnowledgeBaseAddModalProps {
 	opened: boolean;
@@ -19,6 +20,7 @@ interface CampaignConfigurationKnowledgeBaseAddModalProps {
 const CampaignConfigurationKnowledgeBaseAddModal: React.FC<
 	CampaignConfigurationKnowledgeBaseAddModalProps
 > = ({ opened, onClose, selectedIds, onSave }) => {
+	const { t } = useTranslation('campaigns');
 	const {
 		view,
 		showCreateView,
@@ -48,7 +50,9 @@ const CampaignConfigurationKnowledgeBaseAddModal: React.FC<
 	};
 
 	const modalTitle =
-		view === 'create' ? 'Create Knowledge Base' : 'Select Knowledge Bases';
+		view === 'create'
+			? t('form.agent.knowledgeBase.modal.title.create')
+			: t('form.agent.knowledgeBase.modal.title.select');
 
 	return (
 		<Modal opened={opened} onClose={onClose} title={modalTitle} size='xl'>
@@ -61,7 +65,7 @@ const CampaignConfigurationKnowledgeBaseAddModal: React.FC<
 							leftSection={<IconArrowLeft size={14} />}
 							onClick={showListView}
 						>
-							Back to list
+							{t('form.agent.knowledgeBase.modal.backToList')}
 						</Button>
 					</div>
 					<KnowledgeBaseWizardForm
@@ -73,8 +77,7 @@ const CampaignConfigurationKnowledgeBaseAddModal: React.FC<
 				<div className={classes.modalContent}>
 					<div className={classes.modalHeader}>
 						<Text className={classes.subtitle}>
-							Pick the knowledge bases that should power this agent. Click a row
-							or toggle the checkbox to select.
+							{t('form.agent.knowledgeBase.modal.subtitle')}
 						</Text>
 					</div>
 
@@ -84,7 +87,7 @@ const CampaignConfigurationKnowledgeBaseAddModal: React.FC<
 						onCreateNew={showCreateView}
 						onCancel={onClose}
 						onSave={handleSave}
-						emptyMessage='No knowledge bases available'
+						emptyMessage={t('form.agent.knowledgeBase.modal.noKnowledgeBases')}
 						showFooter
 					/>
 				</div>

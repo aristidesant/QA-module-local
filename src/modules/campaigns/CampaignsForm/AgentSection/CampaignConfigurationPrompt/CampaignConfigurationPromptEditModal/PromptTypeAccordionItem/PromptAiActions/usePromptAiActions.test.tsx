@@ -1,8 +1,7 @@
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { TestProviders } from '~/test-utils/renderWithProviders';
 import { usePromptAiActions } from './usePromptAiActions';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import type { ReactNode } from 'react';
 
 const mockMutateAsync = vi.fn();
 let mockIsPending = false;
@@ -13,18 +12,6 @@ vi.mock('~/queries/campaignPromptQueries', () => ({
 		isPending: mockIsPending,
 	}),
 }));
-
-const createWrapper = () => {
-	const queryClient = new QueryClient({
-		defaultOptions: {
-			queries: { retry: false },
-		},
-	});
-
-	return ({ children }: { children: ReactNode }) => (
-		<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-	);
-};
 
 describe('usePromptAiActions', () => {
 	const mockOnApply = vi.fn();
@@ -43,7 +30,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			expect(result.current.editorOpen).toBe(false);
@@ -61,7 +48,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			expect(result.current.hasContent).toBe(true);
@@ -76,7 +63,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			expect(result.current.hasContent).toBe(false);
@@ -93,7 +80,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			expect(result.current.buttonLabel).toBe('Create with AI');
@@ -108,7 +95,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			expect(result.current.buttonLabel).toBe('Improve with AI');
@@ -125,7 +112,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -143,7 +130,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -163,7 +150,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -189,7 +176,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -209,7 +196,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -229,7 +216,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -255,7 +242,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'CustomType',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -275,7 +262,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -299,7 +286,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -320,7 +307,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -333,7 +320,7 @@ describe('usePromptAiActions', () => {
 			});
 
 			expect(result.current.error).toBe(
-				'Add guidance before sending the request.'
+				'Please provide some instructions for the AI'
 			);
 			expect(mockMutateAsync).not.toHaveBeenCalled();
 		});
@@ -348,7 +335,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -377,7 +364,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -405,7 +392,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -430,7 +417,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -456,7 +443,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -481,7 +468,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -507,7 +494,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -534,7 +521,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -557,7 +544,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -588,7 +575,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -607,7 +594,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -631,7 +618,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -650,7 +637,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'CustomType',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -678,7 +665,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -699,7 +686,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -720,7 +707,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -740,7 +727,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			act(() => {
@@ -767,7 +754,7 @@ describe('usePromptAiActions', () => {
 						typeName: 'Greeting',
 						onApply: mockOnApply,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: TestProviders }
 			);
 
 			expect(result.current.isPending).toBe(true);

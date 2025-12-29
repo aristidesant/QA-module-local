@@ -15,6 +15,7 @@ import {
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { IconInfoCircle } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import { getErrorMessage } from '~/utils/httpClient';
 import classes from './ClientForm.module.css';
 import SectionCard from '~/components/SectionCard';
@@ -52,6 +53,7 @@ const ClientForm: React.FC<ClientFormProps> = ({
 	onSuccess,
 	onCancel,
 }) => {
+	const { t } = useTranslation('clients');
 	const isEditMode = mode === 'edit';
 
 	const form = useForm<ClientFormValues>({
@@ -67,13 +69,15 @@ const ClientForm: React.FC<ClientFormProps> = ({
 		},
 		validate: {
 			name: (value) =>
-				!value || value.trim().length === 0 ? 'Name is required' : null,
+				!value || value.trim().length === 0
+					? t('form.validation.nameRequired')
+					: null,
 			email: (value) => {
 				if (!value || value.trim().length === 0) {
 					return null; // Email is optional
 				}
 				if (!/^\S+@\S+$/.test(value)) {
-					return 'Invalid email format';
+					return t('form.validation.emailInvalid');
 				}
 				return null;
 			},
@@ -114,7 +118,7 @@ const ClientForm: React.FC<ClientFormProps> = ({
 	const handleSubmit = form.onSubmit(async (values) => {
 		try {
 			if (isEditMode) {
-				if (!clientId) throw new Error('Missing client ID');
+				if (!clientId) throw new Error(t('form.errors.missingClientId'));
 				const updatePayload: UpdateClientRequest = {
 					name: values.name,
 					description: values.description,
@@ -127,8 +131,8 @@ const ClientForm: React.FC<ClientFormProps> = ({
 				};
 				await updateMutation.mutateAsync({ id: clientId, data: updatePayload });
 				notifications.show({
-					title: 'Client updated',
-					message: 'Client has been updated successfully',
+					title: t('notifications.updated.title'),
+					message: t('notifications.updated.message'),
 					color: 'green',
 				});
 			} else {
@@ -144,8 +148,8 @@ const ClientForm: React.FC<ClientFormProps> = ({
 				};
 				await createMutation.mutateAsync(createPayload);
 				notifications.show({
-					title: 'Client created',
-					message: 'New client has been added',
+					title: t('notifications.created.title'),
+					message: t('notifications.created.message'),
 					color: 'green',
 				});
 				form.reset();
@@ -153,7 +157,7 @@ const ClientForm: React.FC<ClientFormProps> = ({
 			onSuccess();
 		} catch (error) {
 			notifications.show({
-				title: 'Request failed',
+				title: t('notifications.requestFailed.title'),
 				message: getErrorMessage(error),
 				color: 'red',
 			});
@@ -187,10 +191,12 @@ const ClientForm: React.FC<ClientFormProps> = ({
 		return (
 			<Alert
 				icon={<IconInfoCircle size={18} />}
-				title='Unable to load client'
+				title={t('form.loadError.title')}
 				color='red'
 			>
-				{clientError instanceof Error ? clientError.message : 'Unknown error'}
+				{clientError instanceof Error
+					? clientError.message
+					: t('errors.unknownError')}
 			</Alert>
 		);
 	}
@@ -206,8 +212,7 @@ const ClientForm: React.FC<ClientFormProps> = ({
 			<div className={classes.header}>
 				<Stack gap={4} className={classes.headerCopy}>
 					<Text size='sm' c='dimmed'>
-						Keep contact, address, and billing details tidy so teams can move
-						fast.
+						{t('form.intro')}
 					</Text>
 				</Stack>
 			</div>
@@ -219,21 +224,21 @@ const ClientForm: React.FC<ClientFormProps> = ({
 					<Grid gutter='sm'>
 						<Grid.Col span={{ base: 12, md: 6 }}>
 							<SectionCard
-								title='Profile'
-								description='Name and context for this client.'
+								title={t('form.sections.profile.title')}
+								description={t('form.sections.profile.description')}
 								contentSpacing='sm'
 								padding='md'
 							>
 								<TextInput
 									required
-									label='Name'
-									placeholder='Acme Corporation'
+									label={t('form.fields.name.label')}
+									placeholder={t('form.fields.name.placeholder')}
 									size='sm'
 									{...form.getInputProps('name')}
 								/>
 								<Textarea
-									label='Description'
-									placeholder='Short mission statement or notes'
+									label={t('form.fields.description.label')}
+									placeholder={t('form.fields.description.placeholder')}
 									size='sm'
 									minRows={3}
 									{...form.getInputProps('description')}
@@ -243,21 +248,21 @@ const ClientForm: React.FC<ClientFormProps> = ({
 
 						<Grid.Col span={{ base: 12, md: 6 }}>
 							<SectionCard
-								title='Contact'
-								description='Primary inbox and phone for outreach.'
+								title={t('form.sections.contact.title')}
+								description={t('form.sections.contact.description')}
 								contentSpacing='sm'
 								padding='md'
 							>
 								<div className={classes.row}>
 									<TextInput
-										label='Email'
-										placeholder='team@acme.com'
+										label={t('form.fields.email.label')}
+										placeholder={t('form.fields.email.placeholder')}
 										size='sm'
 										{...form.getInputProps('email')}
 									/>
 									<TextInput
-										label='Phone'
-										placeholder='+1 (555) 123-4567'
+										label={t('form.fields.phone.label')}
+										placeholder={t('form.fields.phone.placeholder')}
 										size='sm'
 										{...form.getInputProps('phone')}
 									/>
@@ -267,21 +272,21 @@ const ClientForm: React.FC<ClientFormProps> = ({
 					</Grid>
 
 					<SectionCard
-						title='Location & Tax'
-						description='Where the client operates and how they bill.'
+						title={t('form.sections.locationTax.title')}
+						description={t('form.sections.locationTax.description')}
 						contentSpacing='sm'
 						padding='md'
 					>
 						<div className={classes.row}>
 							<TextInput
-								label='Address'
-								placeholder='123 Market Street'
+								label={t('form.fields.address.label')}
+								placeholder={t('form.fields.address.placeholder')}
 								size='sm'
 								{...form.getInputProps('address')}
 							/>
 							<TextInput
-								label='RNC'
-								placeholder='Tax ID / RNC'
+								label={t('form.fields.rnc.label')}
+								placeholder={t('form.fields.rnc.placeholder')}
 								size='sm'
 								{...form.getInputProps('rnc')}
 							/>
@@ -292,7 +297,7 @@ const ClientForm: React.FC<ClientFormProps> = ({
 
 			<Group justify='space-between' className={classes.actions}>
 				<Text size='xs' c='dimmed'>
-					All changes are saved securely when you submit.
+					{t('form.footerNote')}
 				</Text>
 				<Group gap='xs'>
 					{onCancel && (
@@ -301,11 +306,13 @@ const ClientForm: React.FC<ClientFormProps> = ({
 							onClick={onCancel}
 							disabled={isSubmitting}
 						>
-							Cancel
+							{t('actions.cancel', { ns: 'common' })}
 						</Button>
 					)}
 					<Button type='submit' loading={isSubmitting}>
-						{isEditMode ? 'Save changes' : 'Create client'}
+						{isEditMode
+							? t('form.actions.saveChanges')
+							: t('form.actions.createClient')}
 					</Button>
 				</Group>
 			</Group>

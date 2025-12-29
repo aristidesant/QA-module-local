@@ -1,8 +1,8 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
 import ConversationFilters, { type ConversationFiltersType } from '.';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 // Mock useDebouncedValue to return values immediately for testing
 vi.mock('@mantine/hooks', () => ({
@@ -25,11 +25,7 @@ const renderComponent = (
 		...props,
 	};
 
-	return render(
-		<MantineProvider>
-			<ConversationFilters {...defaultProps} />
-		</MantineProvider>
-	);
+	return renderWithProviders(<ConversationFilters {...defaultProps} />);
 };
 
 describe('ConversationFilters', () => {
@@ -53,13 +49,15 @@ describe('ConversationFilters', () => {
 		it('renders Advanced button', () => {
 			renderComponent();
 			expect(
-				screen.getByRole('button', { name: /advanced/i })
+				screen.getByRole('button', { name: /Advanced/i })
 			).toBeInTheDocument();
 		});
 
 		it('renders Advanced button in default (closed) state', () => {
 			renderComponent();
-			const advancedButton = screen.getByRole('button', { name: /advanced/i });
+			const advancedButton = screen.getByRole('button', {
+				name: /Advanced/i,
+			});
 			expect(advancedButton).toHaveAttribute('data-variant', 'default');
 		});
 
@@ -91,7 +89,9 @@ describe('ConversationFilters', () => {
 	describe('Advanced Filters Toggle', () => {
 		it('shows advanced filters when Advanced button is clicked', async () => {
 			renderComponent();
-			const advancedButton = screen.getByRole('button', { name: /advanced/i });
+			const advancedButton = screen.getByRole('button', {
+				name: /Advanced/i,
+			});
 
 			await userEvent.click(advancedButton);
 
@@ -108,7 +108,9 @@ describe('ConversationFilters', () => {
 
 		it('toggles Advanced button variant when clicked', async () => {
 			renderComponent();
-			const advancedButton = screen.getByRole('button', { name: /advanced/i });
+			const advancedButton = screen.getByRole('button', {
+				name: /Advanced/i,
+			});
 
 			// Initially default variant
 			expect(advancedButton).toHaveAttribute('data-variant', 'default');
@@ -128,24 +130,28 @@ describe('ConversationFilters', () => {
 
 		it('renders Clear all filters button in advanced section', async () => {
 			renderComponent();
-			const advancedButton = screen.getByRole('button', { name: /advanced/i });
+			const advancedButton = screen.getByRole('button', {
+				name: /Advanced/i,
+			});
 			await userEvent.click(advancedButton);
 
 			await waitFor(() => {
 				expect(
-					screen.getByRole('button', { name: /clear all filters/i })
+					screen.getByRole('button', { name: /Clear all filters/i })
 				).toBeInTheDocument();
 			});
 		});
 
 		it('disables Clear all filters button when no filters are active', async () => {
 			renderComponent({ filters: {} });
-			const advancedButton = screen.getByRole('button', { name: /advanced/i });
+			const advancedButton = screen.getByRole('button', {
+				name: /Advanced/i,
+			});
 			await userEvent.click(advancedButton);
 
 			await waitFor(() => {
 				const clearButton = screen.getByRole('button', {
-					name: /clear all filters/i,
+					name: /Clear all filters/i,
 				});
 				expect(clearButton).toBeDisabled();
 			});
@@ -153,12 +159,14 @@ describe('ConversationFilters', () => {
 
 		it('enables Clear all filters button when filters are active', async () => {
 			renderComponent({ filters: { contactName: 'John' } });
-			const advancedButton = screen.getByRole('button', { name: /advanced/i });
+			const advancedButton = screen.getByRole('button', {
+				name: /Advanced/i,
+			});
 			await userEvent.click(advancedButton);
 
 			await waitFor(() => {
 				const clearButton = screen.getByRole('button', {
-					name: /clear all filters/i,
+					name: /Clear all filters/i,
 				});
 				expect(clearButton).not.toBeDisabled();
 			});
@@ -212,7 +220,9 @@ describe('ConversationFilters', () => {
 			renderComponent({ onFiltersChange: mockOnFiltersChange });
 
 			// Open advanced filters
-			const advancedButton = screen.getByRole('button', { name: /advanced/i });
+			const advancedButton = screen.getByRole('button', {
+				name: /Advanced/i,
+			});
 			await userEvent.click(advancedButton);
 
 			const input = await screen.findByPlaceholderText(
@@ -228,7 +238,9 @@ describe('ConversationFilters', () => {
 		it('displays existing phone number filter value', async () => {
 			renderComponent({ filters: { contactPhoneNumber: '+9876543210' } });
 
-			const advancedButton = screen.getByRole('button', { name: /advanced/i });
+			const advancedButton = screen.getByRole('button', {
+				name: /Advanced/i,
+			});
 			await userEvent.click(advancedButton);
 
 			const input = await screen.findByPlaceholderText(
@@ -244,7 +256,9 @@ describe('ConversationFilters', () => {
 			renderComponent({ onFiltersChange: mockOnFiltersChange });
 
 			// Open advanced filters
-			const advancedButton = screen.getByRole('button', { name: /advanced/i });
+			const advancedButton = screen.getByRole('button', {
+				name: /Advanced/i,
+			});
 			await userEvent.click(advancedButton);
 
 			const input = await screen.findByPlaceholderText('Filter by outcome');
@@ -258,7 +272,9 @@ describe('ConversationFilters', () => {
 		it('displays existing outcome filter value', async () => {
 			renderComponent({ filters: { dispositionName: 'Not Interested' } });
 
-			const advancedButton = screen.getByRole('button', { name: /advanced/i });
+			const advancedButton = screen.getByRole('button', {
+				name: /Advanced/i,
+			});
 			await userEvent.click(advancedButton);
 
 			const input = await screen.findByPlaceholderText('Filter by outcome');
@@ -270,7 +286,9 @@ describe('ConversationFilters', () => {
 		it('renders status select with all options', async () => {
 			renderComponent();
 
-			const advancedButton = screen.getByRole('button', { name: /advanced/i });
+			const advancedButton = screen.getByRole('button', {
+				name: /Advanced/i,
+			});
 			await userEvent.click(advancedButton);
 
 			// Find and click the status select to open dropdown
@@ -282,7 +300,9 @@ describe('ConversationFilters', () => {
 			const mockOnFiltersChange = vi.fn();
 			renderComponent({ onFiltersChange: mockOnFiltersChange });
 
-			const advancedButton = screen.getByRole('button', { name: /advanced/i });
+			const advancedButton = screen.getByRole('button', {
+				name: /Advanced/i,
+			});
 			await userEvent.click(advancedButton);
 
 			const statusSelect = await screen.findByPlaceholderText('All statuses');
@@ -302,7 +322,9 @@ describe('ConversationFilters', () => {
 		it('displays selected status value', async () => {
 			renderComponent({ filters: { status: 'in-progress' } });
 
-			const advancedButton = screen.getByRole('button', { name: /advanced/i });
+			const advancedButton = screen.getByRole('button', {
+				name: /Advanced/i,
+			});
 			await userEvent.click(advancedButton);
 
 			await waitFor(() => {
@@ -324,11 +346,13 @@ describe('ConversationFilters', () => {
 				onFiltersChange: mockOnFiltersChange,
 			});
 
-			const advancedButton = screen.getByRole('button', { name: /advanced/i });
+			const advancedButton = screen.getByRole('button', {
+				name: /Advanced/i,
+			});
 			await userEvent.click(advancedButton);
 
 			const clearButton = await screen.findByRole('button', {
-				name: /clear all filters/i,
+				name: /Clear all filters/i,
 			});
 			await userEvent.click(clearButton);
 
@@ -347,11 +371,13 @@ describe('ConversationFilters', () => {
 				onFiltersChange: mockOnFiltersChange,
 			});
 
-			const advancedButton = screen.getByRole('button', { name: /advanced/i });
+			const advancedButton = screen.getByRole('button', {
+				name: /Advanced/i,
+			});
 			await userEvent.click(advancedButton);
 
 			const clearButton = await screen.findByRole('button', {
-				name: /clear all filters/i,
+				name: /Clear all filters/i,
 			});
 			await userEvent.click(clearButton);
 
@@ -424,7 +450,9 @@ describe('ConversationFilters', () => {
 		it('has initiated option available', async () => {
 			renderComponent();
 
-			const advancedButton = screen.getByRole('button', { name: /advanced/i });
+			const advancedButton = screen.getByRole('button', {
+				name: /Advanced/i,
+			});
 			await userEvent.click(advancedButton);
 
 			const statusSelect = await screen.findByPlaceholderText('All statuses');
@@ -436,7 +464,9 @@ describe('ConversationFilters', () => {
 		it('has in-progress option available', async () => {
 			renderComponent();
 
-			const advancedButton = screen.getByRole('button', { name: /advanced/i });
+			const advancedButton = screen.getByRole('button', {
+				name: /Advanced/i,
+			});
 			await userEvent.click(advancedButton);
 
 			const statusSelect = await screen.findByPlaceholderText('All statuses');
@@ -448,7 +478,9 @@ describe('ConversationFilters', () => {
 		it('has done option available', async () => {
 			renderComponent();
 
-			const advancedButton = screen.getByRole('button', { name: /advanced/i });
+			const advancedButton = screen.getByRole('button', {
+				name: /Advanced/i,
+			});
 			await userEvent.click(advancedButton);
 
 			const statusSelect = await screen.findByPlaceholderText('All statuses');
@@ -460,7 +492,9 @@ describe('ConversationFilters', () => {
 		it('has failed option available', async () => {
 			renderComponent();
 
-			const advancedButton = screen.getByRole('button', { name: /advanced/i });
+			const advancedButton = screen.getByRole('button', {
+				name: /Advanced/i,
+			});
 			await userEvent.click(advancedButton);
 
 			const statusSelect = await screen.findByPlaceholderText('All statuses');
@@ -472,22 +506,18 @@ describe('ConversationFilters', () => {
 
 	describe('External Filter Sync', () => {
 		it('updates local contact name when filters prop changes', () => {
-			const { rerender } = render(
-				<MantineProvider>
-					<ConversationFilters filters={{}} onFiltersChange={vi.fn()} />
-				</MantineProvider>
+			const { rerender } = renderWithProviders(
+				<ConversationFilters filters={{}} onFiltersChange={vi.fn()} />
 			);
 
 			const input = screen.getByPlaceholderText('Filter by contact name...');
 			expect(input).toHaveValue('');
 
 			rerender(
-				<MantineProvider>
-					<ConversationFilters
-						filters={{ contactName: 'Updated Name' }}
-						onFiltersChange={vi.fn()}
-					/>
-				</MantineProvider>
+				<ConversationFilters
+					filters={{ contactName: 'Updated Name' }}
+					onFiltersChange={vi.fn()}
+				/>
 			);
 
 			expect(input).toHaveValue('Updated Name');

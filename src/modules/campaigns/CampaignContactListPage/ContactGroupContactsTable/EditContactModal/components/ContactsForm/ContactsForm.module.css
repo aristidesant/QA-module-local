@@ -1,0 +1,15 @@
+.formContainer {
+	max-width: 420px;
+	width: 100%;
+	margin: 0 auto;
+	box-shadow: var(--mantine-shadow-md);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-body);
+}
+
+.centerWrapper {
+	min-height: 60vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}

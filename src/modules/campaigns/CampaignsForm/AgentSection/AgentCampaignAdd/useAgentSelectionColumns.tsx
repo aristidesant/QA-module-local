@@ -17,6 +17,7 @@ import {
 	IconCopy,
 } from '@tabler/icons-react';
 import classes from './AgentCampaignAdd.module.css';
+import { useTranslation } from 'react-i18next';
 
 interface UseAgentSelectionColumnsOptions {
 	onAdd: (agent: AgentWithCampaignListItem) => void;
@@ -33,17 +34,22 @@ const useAgentSelectionColumns = ({
 	isDisabled,
 	isPlaying,
 }: UseAgentSelectionColumnsOptions): ColumnDef<AgentWithCampaignListItem>[] => {
+	const { t } = useTranslation('campaigns');
+
 	return useMemo(
 		() => [
 			{
 				accessorKey: 'name',
-				header: 'Agent',
+				header: t('form.agent.columns.name'),
 				cell: ({ row }) => {
 					const agent = row.original;
 
 					return (
 						<Group gap='sm' className={classes.agentCellContent}>
-							<Tooltip label={agent.campaignName || 'No campaign'} withArrow>
+							<Tooltip
+								label={agent.campaignName || t('form.agent.columns.noCampaign')}
+								withArrow
+							>
 								<ThemeIcon variant='subtle' size={20} radius='xl'>
 									<IconInfoCircle size={16} />
 								</ThemeIcon>
@@ -64,7 +70,7 @@ const useAgentSelectionColumns = ({
 
 			{
 				accessorKey: 'type',
-				header: 'Type',
+				header: t('form.agent.columns.type'),
 				cell: ({ row }) => (
 					<Badge
 						size='sm'
@@ -85,7 +91,7 @@ const useAgentSelectionColumns = ({
 
 			{
 				accessorKey: 'voiceName',
-				header: 'Voice',
+				header: t('form.agent.columns.voice'),
 				cell: ({ row }) => {
 					const voiceName = row.original.voiceName ?? '—';
 					const voiceLanguage = row.original.voiceLanguage;
@@ -108,14 +114,14 @@ const useAgentSelectionColumns = ({
 			},
 			{
 				id: 'actions',
-				header: 'Actions',
+				header: t('form.agent.columns.actions'),
 				cell: ({ row }) => (
 					<Group gap={'xs'}>
 						<Tooltip
 							label={
 								isPlaying(row.original)
-									? 'Pause voice preview'
-									: 'Play voice preview'
+									? t('form.agent.columns.pausePreview')
+									: t('form.agent.columns.playPreview')
 							}
 							withArrow
 						>
@@ -132,7 +138,7 @@ const useAgentSelectionColumns = ({
 								)}
 							</ActionIcon>
 						</Tooltip>
-						<Tooltip label='Clone agent' withArrow>
+						<Tooltip label={t('form.agent.columns.clone')} withArrow>
 							<ActionIcon
 								variant='subtle'
 								color='blue'
@@ -141,7 +147,7 @@ const useAgentSelectionColumns = ({
 								<IconCopy size={16} />
 							</ActionIcon>
 						</Tooltip>
-						<Tooltip label='Add agent' withArrow>
+						<Tooltip label={t('form.agent.columns.add')} withArrow>
 							<ActionIcon
 								variant='subtle'
 								color='blue'
@@ -159,7 +165,7 @@ const useAgentSelectionColumns = ({
 				},
 			},
 		],
-		[onAdd, onPlay, onClone, isDisabled, isPlaying]
+		[onAdd, onPlay, onClone, isDisabled, isPlaying, t]
 	);
 };
 

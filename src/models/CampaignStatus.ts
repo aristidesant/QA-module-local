@@ -25,27 +25,27 @@ export type CampaignStatusConfigType = {
 
 export const CampaignStatusConfig = {
 	[CampaignStatus.PENDING]: {
-		label: 'Pending',
+		label: 'status.PENDING',
 		color: 'gray',
 		icon: IconClock,
 	},
 	[CampaignStatus.RUNNING]: {
-		label: 'Running',
+		label: 'status.RUNNING',
 		color: 'blue',
 		icon: IconPlayerPlay,
 	},
 	[CampaignStatus.PAUSED]: {
-		label: 'Paused',
+		label: 'status.PAUSED',
 		color: 'yellow',
 		icon: IconPlayerPause,
 	},
 	[CampaignStatus.COMPLETED]: {
-		label: 'Completed',
+		label: 'status.COMPLETED',
 		color: 'green',
 		icon: IconCheck,
 	},
 	[CampaignStatus.FAILED]: {
-		label: 'Failed',
+		label: 'status.FAILED',
 		color: 'red',
 		icon: IconX,
 	},

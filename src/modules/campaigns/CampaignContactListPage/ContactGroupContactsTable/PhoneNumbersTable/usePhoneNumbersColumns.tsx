@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Text, Badge, Group, Tooltip } from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import type { PhoneValidationError } from '~/models/ContactsModel';
 
 interface PhoneNumber {
@@ -13,11 +14,13 @@ interface PhoneNumber {
 }
 
 export function usePhoneNumbersColumns() {
+	const { t } = useTranslation('campaign.contact-list');
+
 	return useMemo<ColumnDef<PhoneNumber>[]>(
 		() => [
 			{
 				accessorKey: 'phoneNumber',
-				header: 'Phone Number',
+				header: t('phoneNumbersTable.columns.phoneNumber'),
 				cell: (info) => {
 					const phoneNumber = info.getValue() as string;
 					const phoneEntry = info.row.original;
@@ -56,7 +59,7 @@ export function usePhoneNumbersColumns() {
 			},
 			{
 				accessorKey: 'status',
-				header: 'Status',
+				header: t('phoneNumbersTable.columns.status'),
 				cell: (info) => {
 					const status = info.getValue() as string;
 					return status ? (
@@ -72,13 +75,13 @@ export function usePhoneNumbersColumns() {
 			},
 			{
 				accessorKey: 'retryCounter',
-				header: 'Retries',
+				header: t('phoneNumbersTable.columns.retries'),
 				cell: (info) => {
 					const retries = info.getValue() as number;
 					return <Text size='xs'>{retries ?? 0}</Text>;
 				},
 			},
 		],
-		[]
+		[t]
 	);
 }

@@ -1,0 +1,40 @@
+{
+	"health": {
+		"loading": "Loading campaign health...",
+		"error": "Error",
+		"failedToLoad": "Failed to load campaign requirements.",
+		"dispositionFlow": "Disposition Flow",
+		"notConfigured": "Not configured",
+		"activeSchedule": "Active Schedule",
+		"notActive": "Not active",
+		"goToEdit": "Go to edit"
+	},
+	"index": {
+		"title": "Campaign overview",
+		"description": "Review the latest performance and configuration details.",
+		"missingId": {
+			"title": "Missing campaign",
+			"message": "The campaign identifier is required to display this page."
+		},
+		"loading": {
+			"title": "Loading campaign...",
+			"description": "Please wait while we fetch the campaign overview."
+		},
+		"unavailable": {
+			"title": "Campaign unavailable",
+			"description": "We could not load the requested campaign.",
+			"error": {
+				"defaultMessage": "Campaign not found or failed to load."
+			}
+		},
+		"actions": {
+			"edit": "Edit Campaign"
+		}
+	},
+	"contacts": {
+		"tabs": {
+			"active": "Active",
+			"inactive": "Inactive"
+		}
+	}
+}

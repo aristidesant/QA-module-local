@@ -1,4 +1,5 @@
 import { TextInput, ActionIcon, Tooltip } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import {
 	IconSearch,
 	IconMail,
@@ -34,12 +35,14 @@ export const ContactGroupContactsTableFilters: React.FC<
 	onAppend,
 	isAppending,
 }) => {
+	const { t } = useTranslation('campaign.contact-list');
+
 	return (
 		<FilterContainer>
 			<div className={styles.filtersContent}>
 				<div className={styles.searchFilters}>
 					<TextInput
-						placeholder='Search by name...'
+						placeholder={t('contactsTable.filters.searchByName')}
 						value={filters.name}
 						onChange={(event) =>
 							onFilterChange('name', event.currentTarget.value)
@@ -50,7 +53,7 @@ export const ContactGroupContactsTableFilters: React.FC<
 					/>
 
 					<TextInput
-						placeholder='Filter by phone...'
+						placeholder={t('contactsTable.filters.filterByPhone')}
 						value={filters.phone}
 						// Only allow digits: sanitize input by removing non-digit characters
 						onChange={(event) =>
@@ -68,7 +71,7 @@ export const ContactGroupContactsTableFilters: React.FC<
 					/>
 
 					<TextInput
-						placeholder='Filter by email...'
+						placeholder={t('contactsTable.filters.filterByEmail')}
 						value={filters.email}
 						onChange={(event) =>
 							onFilterChange('email', event.currentTarget.value)
@@ -81,7 +84,7 @@ export const ContactGroupContactsTableFilters: React.FC<
 
 				<div className={styles.selectFilters}>
 					{onAppend && (
-						<Tooltip label='Append contacts via CSV' withArrow>
+						<Tooltip label={t('contactsTable.tooltips.append')} withArrow>
 							<ActionIcon
 								variant='light'
 								color='blue'
@@ -94,7 +97,7 @@ export const ContactGroupContactsTableFilters: React.FC<
 						</Tooltip>
 					)}
 					{onExport && (
-						<Tooltip label='Export contact list' withArrow>
+						<Tooltip label={t('contactsTable.tooltips.export')} withArrow>
 							<ActionIcon
 								variant='light'
 								color='blue'

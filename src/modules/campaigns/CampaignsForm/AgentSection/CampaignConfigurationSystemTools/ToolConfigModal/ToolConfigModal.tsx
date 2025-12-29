@@ -1,8 +1,17 @@
 import React from 'react';
-import { Modal, Stack, Textarea, Checkbox } from '@mantine/core';
+import {
+	Modal,
+	Stack,
+	Textarea,
+	Checkbox,
+	Button,
+	Group,
+	Text,
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { SystemToolModel } from '~/models/AgentListObject';
 import classes from './ToolConfigModal.module.css';
+import { useTranslation } from 'react-i18next';
 
 interface ToolConfigModalProps {
 	opened: boolean;
@@ -19,6 +28,7 @@ const ToolConfigModal: React.FC<ToolConfigModalProps> = ({
 	toolConfig,
 	onSave,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const form = useForm({
 		initialValues: {
 			description: toolConfig.description || '',
@@ -53,7 +63,7 @@ const ToolConfigModal: React.FC<ToolConfigModalProps> = ({
 		<Modal
 			opened={opened}
 			onClose={onClose}
-			title='Configuration'
+			title={t('form.agent.systemTools.modal.title')}
 			size='lg'
 			classNames={{
 				title: classes.modalTitle,
@@ -61,14 +71,20 @@ const ToolConfigModal: React.FC<ToolConfigModalProps> = ({
 		>
 			<Stack gap='md'>
 				<div>
-					<h3 className={classes.sectionTitle}>Name</h3>
+					<Text fw={600} size='sm' mb={4}>
+						{t('form.agent.systemTools.modal.name')}
+					</Text>
 					<div className={classes.nameDisplay}>{toolName}</div>
 				</div>
 
 				<div>
-					<h3 className={classes.sectionTitle}>Description (optional)</h3>
+					<Text fw={600} size='sm' mb={4}>
+						{t('form.agent.systemTools.modal.description.label')}
+					</Text>
 					<Textarea
-						placeholder='Leave blank to use the default optimized LLM prompt.'
+						placeholder={t(
+							'form.agent.systemTools.modal.description.placeholder'
+						)}
 						minRows={4}
 						autosize
 						{...form.getInputProps('description')}
@@ -76,8 +92,10 @@ const ToolConfigModal: React.FC<ToolConfigModalProps> = ({
 				</div>
 
 				<Checkbox
-					label='Disable interruptions'
-					description='Select this box to disable interruptions while the tool is running.'
+					label={t('form.agent.systemTools.modal.interruptions.label')}
+					description={t(
+						'form.agent.systemTools.modal.interruptions.description'
+					)}
 					{...form.getInputProps('disableInterruptions', {
 						type: 'checkbox',
 					})}
@@ -85,46 +103,40 @@ const ToolConfigModal: React.FC<ToolConfigModalProps> = ({
 
 				{isVoicemailDetection && (
 					<div>
-						<h3 className={classes.sectionTitle}>Voicemail Configuration</h3>
-						<p className={classes.sectionDescription}>
-							Configure the message to leave when voicemail is detected.
-						</p>
+						<Text fw={600} size='sm' mb={4}>
+							{t('form.agent.systemTools.modal.voicemail.title')}
+						</Text>
+						<Text size='xs' c='dimmed' mb='xs'>
+							{t('form.agent.systemTools.modal.voicemail.description')}
+						</Text>
 
 						<div className={classes.voicemailSection}>
-							<h4 className={classes.voicemailLabel}>
-								Voicemail Message (optional)
-							</h4>
+							<Text fw={500} size='xs' mb={4}>
+								{t('form.agent.systemTools.modal.voicemail.messageLabel')}
+							</Text>
 							<Textarea
-								placeholder='Hello, this is an automated call from [Company Name]. Please call us back at your convenience. Thank you.'
+								placeholder={t(
+									'form.agent.systemTools.modal.voicemail.messagePlaceholder'
+								)}
 								minRows={4}
 								autosize
 								{...form.getInputProps('voicemailMessage')}
 							/>
-							<p className={classes.voicemailHint}>
-								Leave blank to end the call immediately when voicemail is
-								detected. If provided, this message will be played before ending
-								the call.
-							</p>
+							<Text size='xs' c='dimmed' mt={4}>
+								{t('form.agent.systemTools.modal.voicemail.hint')}
+							</Text>
 						</div>
 					</div>
 				)}
 
-				<div className={classes.buttonGroup}>
-					<button
-						type='button'
-						onClick={onClose}
-						className={classes.cancelButton}
-					>
-						Cancel
-					</button>
-					<button
-						type='button'
-						onClick={handleSave}
-						className={classes.saveButton}
-					>
-						Save
-					</button>
-				</div>
+				<Group justify='flex-end' mt='md'>
+					<Button variant='subtle' onClick={onClose} size='sm'>
+						{t('form.agent.systemTools.modal.actions.cancel')}
+					</Button>
+					<Button onClick={handleSave} size='sm'>
+						{t('form.agent.systemTools.modal.actions.save')}
+					</Button>
+				</Group>
 			</Stack>
 		</Modal>
 	);

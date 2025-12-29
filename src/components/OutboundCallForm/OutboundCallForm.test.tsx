@@ -1,10 +1,10 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { OutboundCallForm } from './OutboundCallForm';
 import type AgentListObject from '~/models/AgentListObject';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 // Mock notifications
 vi.mock('@mantine/notifications', async () => {
@@ -30,7 +30,7 @@ vi.mock('~/queries/conversationsQueries', () => ({
 const mockAgent: AgentListObject = {
 	id: 'agent-123',
 	name: 'Test Agent',
-	config: {} as any,
+	config: {} as unknown as AgentListObject['config'],
 	type: 'OUTBOUND',
 	status: 'ACTIVE',
 	clientId: 1,
@@ -52,11 +52,11 @@ const renderForm = (
 		onClose: vi.fn(),
 	};
 
-	return render(
-		<MantineProvider>
+	return renderWithProviders(
+		<>
 			<Notifications />
 			<OutboundCallForm {...defaultProps} {...props} />
-		</MantineProvider>
+		</>
 	);
 };
 

@@ -14,6 +14,7 @@ import {
 	IconPlus,
 	IconRefresh,
 } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import {
 	useDeleteCampaign,
 	useGetAllCampaignsPaginated,
@@ -57,6 +58,7 @@ interface CampaignFiltersType {
 }
 
 export const CampaignsList: React.FC = () => {
+	const { t } = useTranslation(['campaigns', 'common']);
 	const {
 		selectCampaign,
 		selectedCampaign,
@@ -130,8 +132,8 @@ export const CampaignsList: React.FC = () => {
 		// Check if campaign has agents
 		if (!campaign.agents || campaign.agents.length === 0) {
 			notifications.show({
-				title: 'No Agents',
-				message: 'This campaign has no agents assigned.',
+				title: t('list.noAgents'),
+				message: t('list.noAgentsMessage'),
 				color: 'yellow',
 			});
 			return;
@@ -168,7 +170,13 @@ export const CampaignsList: React.FC = () => {
 	);
 
 	// Step names for display (0-indexed)
-	const STEP_NAMES = ['General', 'Agent', 'Outcomes', 'Parameters', 'Complete'];
+	const STEP_NAMES = [
+		t('list.stepGeneral'),
+		t('list.stepAgent'),
+		t('list.stepOutcomes'),
+		t('list.stepParameters'),
+		t('list.stepComplete'),
+	];
 
 	// Step constants
 	const FIRST_STEP = 0;
@@ -182,14 +190,16 @@ export const CampaignsList: React.FC = () => {
 
 		if (shouldConfirmDiscard) {
 			modals.openConfirmModal({
-				title: 'Discard changes?',
+				title: t('list.discardChanges'),
 				children: (
 					<Text size='sm'>
-						Any unsaved changes in <strong>{STEP_NAMES[activeStep]}</strong>{' '}
-						will be lost when you close this wizard.
+						{t('list.discardMessage', { step: STEP_NAMES[activeStep] })}
 					</Text>
 				),
-				labels: { confirm: 'Discard changes', cancel: 'Keep editing' },
+				labels: {
+					confirm: t('list.discardConfirm'),
+					cancel: t('list.keepEditing'),
+				},
 				confirmProps: { color: 'red' },
 				onConfirm: () => {
 					resetWizard();
@@ -236,11 +246,12 @@ export const CampaignsList: React.FC = () => {
 		onTestCall: handleTestCall,
 		onDelete: (campaign) => {
 			modals.openConfirmModal({
-				title: 'Delete Campaign',
-				children: (
-					<Text size='sm'>Are you sure you want to delete this campaign?</Text>
-				),
-				labels: { confirm: 'Delete', cancel: 'Cancel' },
+				title: t('deleteModal.title'),
+				children: <Text size='sm'>{t('deleteModal.message')}</Text>,
+				labels: {
+					confirm: t('deleteModal.confirm'),
+					cancel: t('actions.cancel', { ns: 'common' }),
+				},
 				confirmProps: { color: 'red' },
 				onConfirm: async () => {
 					try {
@@ -248,14 +259,14 @@ export const CampaignsList: React.FC = () => {
 						reloadCampaigns();
 						selectCampaign(null);
 						notifications.show({
-							title: 'Campaign Deleted',
-							message: 'The campaign has been successfully deleted.',
+							title: t('deleteModal.success'),
+							message: t('deleteModal.successMessage'),
 							color: 'green',
 						});
 					} catch (error) {
 						notifications.show({
-							title: 'Error',
-							message: 'Failed to delete campaign. Please try again.',
+							title: t('deleteModal.error'),
+							message: t('deleteModal.errorMessage'),
 							color: 'red',
 						});
 					}
@@ -265,7 +276,7 @@ export const CampaignsList: React.FC = () => {
 		onClone: (campaign) => {
 			modals.open({
 				modalId: 'clone-campaign',
-				title: 'Clone Campaign',
+				title: t('clone.title'),
 				children: (
 					<CloneCampaignForm
 						campaign={campaign}
@@ -305,8 +316,8 @@ export const CampaignsList: React.FC = () => {
 	return (
 		<>
 			<ContentContainer
-				title='Campaign list'
-				description='Manage and monitor all your campaigns in one place.'
+				title={t('page.title')}
+				description={t('page.description')}
 				rightSection={rightComponent || <></>}
 				titleRight={
 					<Group gap='xs'>
@@ -314,7 +325,7 @@ export const CampaignsList: React.FC = () => {
 							<ActionIcon
 								onClick={handleShowAddNewCampaignModal}
 								data-testid='header-create-campaign-btn'
-								title='Create New Campaign'
+								title={t('list.createCampaign')}
 							>
 								<IconPlus size={16} />
 							</ActionIcon>
@@ -352,22 +363,22 @@ export const CampaignsList: React.FC = () => {
 					<Card mt='xs' withBorder>
 						<EmptyState
 							icon={<IconRocket size={64} stroke={1.2} />}
-							message='No campaigns found'
-							description='Try adjusting your search terms or create a new campaign'
+							message={t('list.noCampaignsFound')}
+							description={t('list.noCampaignsFoundDesc')}
 						/>
 					</Card>
 				) : !campaignsResponse?.data || campaignsResponse.data.length === 0 ? (
 					<Card mt='xs' withBorder>
 						<EmptyState
 							icon={<IconRocket size={64} stroke={1.2} />}
-							message='No campaigns yet'
-							description='Launch your first campaign to reach your audience'
+							message={t('list.noCampaignsYet')}
+							description={t('list.noCampaignsYetDesc')}
 							action={
 								<Button
 									leftSection={<IconPlus size={18} />}
 									onClick={handleShowAddNewCampaignModal}
 								>
-									Create Campaign
+									{t('list.createButton')}
 								</Button>
 							}
 						/>
@@ -391,7 +402,7 @@ export const CampaignsList: React.FC = () => {
 							onItemsPerPageChange={handleItemsPerPageChange}
 							searchTerm={pagination.debouncedSearch}
 							isLoading={isLoading}
-							itemLabel='campaigns'
+							itemLabel={t('list.itemLabel')}
 						/>
 					</>
 				)}
@@ -401,7 +412,7 @@ export const CampaignsList: React.FC = () => {
 			<Modal
 				opened={testCallModalOpened}
 				onClose={handleTestCallClose}
-				title='Test Campaign Call'
+				title={t('list.testCallModal')}
 				size='md'
 				centered
 			>
@@ -420,7 +431,9 @@ export const CampaignsList: React.FC = () => {
 				opened={addNewModalOpened}
 				onClose={handleWizardClose}
 				title={
-					isResumingDraft ? 'Continue Campaign Setup' : 'Create New Campaign'
+					isResumingDraft
+						? t('list.continueCampaignSetup')
+						: t('list.createCampaign')
 				}
 				size='1200px'
 				centered
@@ -429,7 +442,7 @@ export const CampaignsList: React.FC = () => {
 				<LoadingOverlay
 					visible={isDraftSaving}
 					overlayProps={{ blur: 2 }}
-					loaderProps={{ children: 'Saving draft...' }}
+					loaderProps={{ children: t('list.savingDraft') }}
 				/>
 				<CampaignWizard
 					onComplete={async () => {

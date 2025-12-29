@@ -1,0 +1,1178 @@
+{
+	"page": {
+		"title": "Lista de campañas",
+		"description": "Gestiona y monitorea todas tus campañas en un solo lugar."
+	},
+	"list": {
+		"createCampaign": "Crear Nueva Campaña",
+		"continueCampaignSetup": "Continuar Configuración de Campaña",
+		"noCampaignsFound": "No se encontraron campañas",
+		"noCampaignsFoundDesc": "Intenta ajustar tus términos de búsqueda o crea una nueva campaña",
+		"noCampaignsYet": "Aún no hay campañas",
+		"noCampaignsYetDesc": "Lanza tu primera campaña para llegar a tu audiencia",
+		"createButton": "Crear Campaña",
+		"testCallModal": "Llamada de Prueba de Campaña",
+		"noAgents": "Sin Agentes",
+		"noAgentsMessage": "Esta campaña no tiene agentes asignados.",
+		"savingDraft": "Guardando borrador...",
+		"discardChanges": "¿Descartar cambios?",
+		"discardMessage": "Los cambios no guardados en {{step}} se perderán cuando cierres este asistente.",
+		"discardConfirm": "Descartar cambios",
+		"keepEditing": "Seguir editando",
+		"itemLabel": "campañas",
+		"stepGeneral": "General",
+		"stepAgent": "Agente",
+		"stepOutcomes": "Resultados",
+		"stepParameters": "Parámetros",
+		"stepComplete": "Completar",
+		"tabs": {
+			"agents": "Agentes",
+			"outcomes": "Resultados",
+			"params": "Parámetros",
+			"general": "General"
+		}
+	},
+	"columns": {
+		"campaign": "Campaña",
+		"type": "Tipo",
+		"lastUpdated": "Última Actualización",
+		"campaignDetails": "Detalles de Campaña",
+		"noDescription": "Sin descripción disponible.",
+		"setupIncomplete": "Configuración incompleta - continúa desde el paso {{step}}",
+		"draft": "Borrador",
+		"outbound": "Outbound",
+		"inbound": "Inbound",
+		"continueSetup": "Continuar configuración",
+		"completeSetupFirst": "Completa la configuración primero",
+		"viewCampaign": "Ver campaña",
+		"editCampaign": "Editar campaña",
+		"testCall": "Llamada de Prueba",
+		"cloneCampaign": "Clonar campaña",
+		"deleteCampaign": "Eliminar campaña"
+	},
+	"filters": {
+		"title": "Filtros",
+		"searchPlaceholder": "Buscar campañas...",
+		"sortBy": "Ordenar por",
+		"type": "Tipo",
+		"allTypes": "Todos los tipos",
+		"executionType": "Tipo de Ejecución",
+		"allExecutionTypes": "Todos los tipos de ejecución",
+		"status": "Estado",
+		"allStatuses": "Todos los estados",
+		"includeCompleted": "Incluir completadas",
+		"advanced": "Avanzado",
+		"clearFilters": "Limpiar filtros",
+		"clearAllFilters": "Limpiar todos los filtros",
+		"sortOptions": {
+			"createdAt": "Fecha de creación",
+			"name": "Nombre",
+			"status": "Estado",
+			"lastActivity": "Última actividad"
+		},
+		"typeOptions": {
+			"outbound": "Saliente",
+			"inbound": "Entrante"
+		},
+		"executionTypeOptions": {
+			"timeBased": "Basado en Tiempo"
+		}
+	},
+	"status": {
+		"PENDING": "Pendiente",
+		"RUNNING": "En curso",
+		"PAUSED": "Pausada",
+		"COMPLETED": "Completada",
+		"FAILED": "Fallida",
+		"UNKNOWN": "Desconocido",
+		"pending": "Pendiente",
+		"running": "En curso",
+		"paused": "Pausada",
+		"complete": "Completada",
+		"failed": "Fallida",
+		"executed": "Ejecutada"
+	},
+	"cloneCampaignForm": {
+		"title": "Clonar campaña",
+		"adjustDetails": "Ajusta los detalles antes de clonar.",
+		"selectedCount": "seleccionados",
+		"campaignName": "Nombre de la campaña",
+		"enterCampaignName": "Ingresa el nombre de la campaña",
+		"description": "Descripción",
+		"describeYourCampaign": "Describe tu campaña",
+		"agentsToClone": "Agentes a clonar",
+		"turnOffAgents": "Desactiva los agentes que no quieras duplicar.",
+		"noAgentsLinked": "No hay agentes vinculados",
+		"noAgentsDescription": "Esta campaña no tiene agentes para duplicar.",
+		"toggleAgent": "Alternar {{name}}",
+		"createDedicatedCopy": "Se creará una copia dedicada.",
+		"newAgentName": "Nuevo nombre del agente",
+		"copyOf": "Copia de {{name}}",
+		"nameRequired": "El nombre es obligatorio",
+		"descriptionRequired": "La descripción es obligatoria",
+		"atLeastOneAgent": "Debe seleccionarse al menos un agente",
+		"allAgentsMustHaveName": "Todos los agentes seleccionados deben tener un nombre",
+		"validationRequired": "Acción requerida",
+		"cloneButton": "Clonar campaña",
+		"success": "Campaña clonada",
+		"successMessage": "La campaña se clonó correctamente.",
+		"error": "Error",
+		"errorMessage": "No se pudo clonar la campaña"
+	},
+	"configuration": {
+		"editPrompt": "Editar prompt"
+	},
+	"scheduler": {
+		"schedulerBuilder": {
+			"days": {
+				"monday": "Lunes",
+				"tuesday": "Martes",
+				"wednesday": "Miercoles",
+				"thursday": "Jueves",
+				"friday": "Viernes",
+				"saturday": "Sabado",
+				"sunday": "Domingo"
+			},
+			"status": {
+				"off": "Desactivado",
+				"noHours": "Sin horario",
+				"scheduleN": "Horario {{index}}"
+			},
+			"curatedSchedules": "Horarios recomendados",
+			"curatedDescription": "Elige un horario predefinido o personaliza el tuyo.",
+			"builder": "Constructor de horarios",
+			"predefinedSchedule": "Horario predefinido",
+			"predefinedDescription": "Selecciona una plantilla para configurar el horario.",
+			"predefinedPlaceholder": "Selecciona la configuracion de dias y horas",
+			"predefinedNoData": "No hay plantillas disponibles",
+			"preview": "Vista previa",
+			"previewDescription": "Vista previa del horario seleccionado antes de crearlo.",
+			"previewEmpty": "Selecciona una plantilla para ver sus dias configurados.",
+			"details": "Detalles del horario",
+			"detailsDescription": "Nombra y describe el horario que estas creando.",
+			"name": "Nombre del horario",
+			"namePlaceholder": "Nombre del horario",
+			"description": "Descripcion del horario",
+			"descriptionPlaceholder": "p. ej. De lunes a viernes de 08:00 a 17:00",
+			"humanEquivalent": "Equivalente humano",
+			"cancel": "Cancelar",
+			"create": "Crear horario",
+			"validation": {
+				"nameRequired": "El nombre del horario es obligatorio",
+				"scheduleRequired": "Selecciona una plantilla de horario",
+				"humanEquivalentRequired": "El equivalente humano es obligatorio",
+				"humanEquivalentNumber": "El equivalente humano debe ser un numero"
+			},
+			"notifications": {
+				"error": "Error",
+				"campaignIdRequired": "Se requiere el ID de la campana",
+				"success": "Exito",
+				"created": "Horario creado correctamente",
+				"failed": "No se pudo crear el horario",
+				"errorCreating": "Error al crear el horario"
+			}
+		},
+		"card": {
+			"notifications": {
+				"fixTimeRanges": {
+					"title": "Corregir rangos de horario",
+					"message": "Actualice la ventana de tiempo para: {{days}}"
+				}
+			},
+			"delete": {
+				"title": "Eliminar Horario",
+				"message": "¿Está seguro de que desea eliminar este horario?",
+				"confirm": "Eliminar",
+				"cancel": "Cancelar"
+			},
+			"update": "Actualizar Horario",
+			"cancel": "Cancelar"
+		},
+		"header": {
+			"metrics": {
+				"equivalents": "Equivalentes",
+				"weekly": "Semanal",
+				"perAgent": "Por Agente"
+			},
+			"tooltip": {
+				"equivalents": "Equivalentes humanos asignados a este horario",
+				"weekly": "Esfuerzo semanal proyectado para todo el equipo",
+				"perAgent": "Horas por agente activo cada semana"
+			},
+			"status": {
+				"active": "Activo",
+				"paused": "Pausado"
+			},
+			"activeDays": "{{count}} día activo",
+			"activeDays_other": "{{count}} días activos",
+			"noActiveDays": "Sin días activos aún",
+			"actions": {
+				"view": "Ver horario",
+				"edit": "Editar",
+				"close": "Cerrar",
+				"delete": "Eliminar"
+			},
+			"untitled": "Horario sin título"
+		},
+		"add": {
+			"button": "Agregar Horario",
+			"modalTitle": "Agregar Horario Predefinido"
+		},
+		"capacity": {
+			"title": "Capacidad",
+			"infoTooltip": "Traduzca su horario en tiempo de conversación realista basado en una eficiencia de 38.5 min/hora.",
+			"sliderLabel": "Equivalente Humano (Agentes)",
+			"metrics": {
+				"scheduled": {
+					"label": "Programado",
+					"tooltip": "{{count}} día activo programado esta semana",
+					"tooltip_other": "{{count}} días activos programados esta semana"
+				},
+				"perAgent": {
+					"label": "Por Agente",
+					"tooltip": "Tiempo de conversación por persona con eficiencia de 38.5 min/hora"
+				},
+				"teamTotal": {
+					"label": "Total del Equipo",
+					"tooltip": "Tiempo de conversación combinado para {{count}} agente",
+					"tooltip_other": "Tiempo de conversación combinado para {{count}} agentes"
+				}
+			},
+			"schedule": {
+				"title": "Horario",
+				"activeBadge": "{{count}} activos"
+			}
+		},
+		"calculator": {
+			"title": "Calculadora de Programador",
+			"description": "Defina los parámetros de la campaña y proyecte el personal o el tiempo de entrega con confianza.",
+			"mode": {
+				"resources": "Recursos",
+				"time": "Tiempo"
+			},
+			"contactRates": "Tasas de contacto",
+			"aht": "Tiempo promedio de manejo (minutos)",
+			"calculate": "Calcular proyección",
+			"fields": {
+				"totalRecords": "Registros totales",
+				"daysPlanned": "Días planeados",
+				"agentsAllocated": "Agentes asignados",
+				"contactability": "Contactabilidad",
+				"effectiveness": "Efectividad",
+				"ahtEffective": "AHT contacto efectivo",
+				"ahtNoEffective": "AHT no efectivo",
+				"ahtNoContact": "AHT no contacto"
+			},
+			"results": {
+				"title": "Resumen de proyección",
+				"hint": "Compare volumen de campaña, esfuerzo y capacidad diaria de un vistazo.",
+				"badge": {
+					"resource": "Proyección de recursos",
+					"timeline": "Proyección de tiempo"
+				},
+				"waveBreakdown": "DESGLOSE POR OLEADA",
+				"assumptions": {
+					"title": "Suposiciones del modelo",
+					"text": "{{phones}} teléfonos por registro · {{hours}} horas por día de agente · {{minutesMan}} minutos por intento de contacto."
+				},
+				"placeholder": {
+					"title": "Listo para ejecutar una proyección",
+					"text": "Ingrese los datos de la campaña arriba y seleccione \"Calcular proyección\" para revisar estimaciones."
+				},
+				"metrics": {
+					"volume": "Volumen de campaña",
+					"agentsRequired": "Agentes requeridos",
+					"agentsAllocated": "Agentes asignados",
+					"daysToComplete": "Días para completar",
+					"daysPlanned": "Días planeados",
+					"totalTries": "Intentos totales",
+					"operationalHours": "Horas operativas",
+					"teamHoursPerDay": "Horas de equipo por día"
+				},
+				"waves": {
+					"wave1": "Oleada 1",
+					"wave2": "Oleada 2",
+					"wave3": "Oleada 3"
+				}
+			}
+		},
+		"overview": {
+			"callsPerHour": {
+				"title": "Llamadas por hora",
+				"subtitle": "Distribución horaria de capacidad",
+				"label": "Llamadas por hora"
+			},
+			"completion": {
+				"title": "Tiempo estimado de finalización",
+				"subtitle": "Línea de tiempo proyectada basada en capacidad actual",
+				"unit": "días"
+			}
+		},
+		"daySchedule": {
+			"headers": {
+				"day": "Día",
+				"status": "Estado",
+				"hours": "Horas",
+				"agent": "Agente",
+				"team": "Equipo"
+			},
+			"status": {
+				"open": "Ventana abierta",
+				"paused": "Pausado",
+				"closed": "Cerrado"
+			},
+			"noHours": "Sin horas configuradas",
+			"metrics": {
+				"perAgent": "Por agente",
+				"teamTotal": "Total equipo"
+			},
+			"errors": {
+				"endTime": "La hora de fin debe ser posterior a la de inicio."
+			}
+		},
+		"workingHours": {
+			"title": "Horario de Trabajo",
+			"description": "Defina los días y rangos horarios en los que sus agentes pueden realizar llamadas.",
+			"summary": {
+				"noActiveDays": "Sin días activos",
+				"noTimeRange": "Sin rango horario",
+				"everyDay": "Todos los días",
+				"weekdays": "Días laborables",
+				"weekends": "Fines de semana"
+			}
+		}
+	},
+	"addNewCampaign": {
+		"form": {
+			"campaignName": "Nombre de la Campaña",
+			"campaignNameDesc": "Dale a tu campaña un nombre descriptivo",
+			"campaignNamePlaceholder": "Ingresa el nombre de la campaña",
+			"description": "Descripción",
+			"descriptionDesc": "Describe brevemente el propósito de esta campaña",
+			"descriptionPlaceholder": "Describe tu campaña",
+			"campaignType": "Tipo de Campaña",
+			"defaultWaves": "Oleadas Predeterminadas",
+			"defaultWavesDesc": "Cuántas oleadas ejecutar por cada nueva lista de contactos creada desde esta campaña",
+			"defaultWavesPlaceholder": "Número de oleadas",
+			"phoneNumber": "Número de Teléfono",
+			"phoneNumberDesc": "Selecciona el número de teléfono para esta campaña",
+			"phoneNumberPlaceholder": "Elige un número de teléfono",
+			"agentName": "Nombre del Agente",
+			"agentNameDesc": "Ingresa el nombre del agente",
+			"agentNamePlaceholder": "Ingresa el nombre del agente",
+			"agentBehavior": "Comportamiento del Agente",
+			"agentBehaviorDesc": "Selecciona una configuración de comportamiento de agente predefinida",
+			"agentBehaviorPlaceholder": "Elige un comportamiento de agente",
+			"createButton": "Crear Campaña",
+			"cancelButton": "Cancelar",
+			"successMessage": "Campaña creada con éxito",
+			"errorMessage": "Error al crear la campaña",
+			"failedToCreate": "No se pudo crear la campaña"
+		},
+		"validation": {
+			"nameRequired": "El nombre de la campaña es obligatorio",
+			"descriptionRequired": "La descripción es obligatoria",
+			"typeInvalid": "El tipo debe ser uno de los siguientes valores: INBOUND, OUTBOUND",
+			"wavesMin": "Las oleadas predeterminadas deben ser al menos 1",
+			"agentNameRequired": "El nombre del agente es obligatorio",
+			"agentVoiceRequired": "La voz del agente es obligatoria"
+		},
+		"voices": {
+			"title": "Elegir voz de IA",
+			"description": "Selecciona la voz que representará durante las interacciones con los clientes.",
+			"modalTitle": "Seleccionar Voz de IA",
+			"loading": "Cargando voces...",
+			"loadingDesc": "Obteniendo opciones de voz disponibles",
+			"error": "Error al cargar las voces",
+			"errorDesc": "Hubo un error al obtener las opciones de voz. Por favor, inténtalo de nuevo.",
+			"noVoices": "No se encontraron voces",
+			"noVoicesDesc": "Intenta ajustar tus filtros o inténtalo de nuevo más tarde.",
+			"selectVoice": "Selecciona una voz para tu campaña",
+			"changeVoice": "Cambiar",
+			"unknown": "Desconocido",
+			"preview": "Vista previa",
+			"voice": "Voz",
+			"noDescription": "Esta voz aún no incluye una descripción.",
+			"previewHint": "🎵 Haz clic en el botón de reproducción para escuchar esta voz",
+			"pauseAria": "Pausar vista previa de voz",
+			"playAria": "Reproducir vista previa de voz",
+			"age": "Edad: {{age}}",
+			"male": "Masculino",
+			"female": "Femenino"
+		}
+	},
+	"promptHistory": {
+		"failedToLoad": "Error al cargar el historial de prompts.",
+		"modalTitle": "Historial de Prompts",
+		"itemLabel": "versiones de prompt",
+		"modifiedBy": "Modificado Por",
+		"dateModified": "Fecha de Modificación",
+		"dateFormat": "DD MMM, YYYY [a las] hh:mm A",
+		"diffError": "Error al generar la vista de diferencias. Mostrando texto original en su lugar.",
+		"noChanges": "Sin Cambios",
+		"noChangesDesc": "Esta versión es idéntica al prompt actual.",
+		"previousVersion": "Versión Anterior (v{{version}})",
+		"currentVersion": "Versión Actual",
+		"close": "Cerrar",
+		"restoreVersion": "Restaurar Esta Versión",
+		"columns": {
+			"version": "Versión",
+			"modified": "Modificado",
+			"modifiedBy": "Modificado Por",
+			"promptPreview": "Vista Previa del Prompt",
+			"viewFullPrompt": "Ver prompt completo",
+			"restoreVersion": "Restaurar esta versión"
+		}
+	},
+	"form": {
+		"title": {
+			"edit": "Editar {{name}}"
+		},
+		"description": "Configura y gestiona los ajustes de tu campaña.",
+		"validation": {
+			"nameRequired": "El nombre de la campaña es obligatorio",
+			"typeRequired": "El tipo de campaña es obligatorio",
+			"statusRequired": "El estado de la campaña es obligatorio",
+			"budgetMin": "El presupuesto debe ser al menos 0",
+			"spentMin": "El monto gastado debe ser al menos 0",
+			"userIdMin": "El ID de usuario debe ser al menos 0",
+			"clientIdMin": "El ID de cliente debe ser al menos 0",
+			"defaultWavesMin": "Las oleadas predeterminadas deben ser al menos 1",
+			"objectiveRequired": "El objetivo de la campaña es obligatorio"
+		},
+		"notifications": {
+			"warningTitle": "Advertencia",
+			"objectiveAssignmentFailed": "No se pudo asignar el objetivo a la campaña",
+			"successUpdated": "Campaña Actualizada",
+			"successCreated": "Campaña Creada",
+			"successUpdatedMessage": "La campaña se ha actualizado correctamente.",
+			"successCreatedMessage": "La campaña se ha creado correctamente.",
+			"errorUpdate": "No se pudo actualizar la campaña",
+			"errorCreate": "No se pudo crear la campaña"
+		},
+		"schedulerCalculator": {
+			"title": "Calculadora de Programador"
+		},
+		"contacts": {
+			"addNew": {
+				"description": "Sube un archivo CSV para crear una lista de contactos.",
+				"uploadLabel": "Subir lista de contactos",
+				"dragAndDrop": "Arrastra y suelta tu archivo CSV aquí o haz clic para buscar.",
+				"notifications": {
+					"noFile": {
+						"title": "No se seleccionó archivo",
+						"message": "Selecciona un archivo CSV para subir."
+					},
+					"invalidType": {
+						"title": "Tipo de archivo inválido",
+						"message": "Solo se admiten archivos CSV."
+					},
+					"uploadFailed": {
+						"title": "Error al subir",
+						"message": "No pudimos subir tu archivo. Inténtalo de nuevo."
+					}
+				}
+			},
+			"controls": {
+				"start": "Iniciar Campaña",
+				"resume": "Reanudar Campaña",
+				"pause": "Pausar Campaña",
+				"completed": "Campaña Completada",
+				"failed": "Campaña Fallida",
+				"requirementsNotMet": "Requisitos de la campaña no cumplidos",
+				"allWavesDone": "Todas las oleadas ejecutadas",
+				"notifications": {
+					"successTitle": "Éxito",
+					"errorTitle": "Error",
+					"unknownCampaign": "Campaña desconocida",
+					"running": "La campaña ahora está en ejecución",
+					"startError": "Error al iniciar la campaña",
+					"resumed": "Campaña reanudada",
+					"resumeError": "Error al reanudar la campaña",
+					"paused": "Campaña pausada",
+					"pauseError": "Error al pausar la campaña"
+				}
+			},
+			"list": {
+				"activeTitle": "Listas de Contactos Activas",
+				"inactiveTitle": "Listas de Contactos Inactivas",
+				"activeDescription": "Administre sus listas de contactos activas y supervise su progreso.",
+				"inactiveDescription": "Vea y administre las listas de contactos que están actualmente inactivas.",
+				"addNewContactList": "Añadir Nueva Lista de Contactos",
+				"addInactiveContactList": "Añadir Lista de Contactos Inactiva",
+				"configuration": "Configuración de Lista de Contactos",
+				"configurationDescription": "Configure los ajustes para su nueva lista de contactos.",
+				"selectActive": "Seleccionar Lista de Contactos Activa",
+				"selectActiveDescription": "Seleccione una lista de contactos para activar para esta campaña.",
+				"emptyMessage": "No se encontraron listas de contactos activas.",
+				"emptyInactiveMessage": "No se encontraron listas de contactos inactivas.",
+				"reload": "Recargar",
+				"reloadUnavailable": "Recarga no disponible mientras está colapsado",
+				"columns": {
+					"name": "Nombre",
+					"total": "Total",
+					"assigned": "Asignado",
+					"status": "Estado",
+					"actions": "Acciones"
+				},
+				"capacity": {
+					"title": "Capacidad del Programador",
+					"used": "Usada",
+					"remaining": "Restante",
+					"total": "Capacidad Total"
+				}
+			},
+			"mapping": {
+				"title": "Mapeo de columnas",
+				"matchTitle": "Emparejar columnas",
+				"clickToConfigure": "Clic para configurar",
+				"unmapped": "{{count}} sin asignar"
+			},
+			"mostUsedChannels": {
+				"title": "Canales más usados",
+				"subtitle": "Resumen de uso de canales"
+			},
+			"qualityScore": {
+				"title": "Puntuación de calidad de contactos",
+				"subtitle": "Resumen de puntuación de calidad"
+			},
+			"statusBreakdown": {
+				"title": "Desglose de estado",
+				"subtitle": "Distribución de contactos por estado.",
+				"total": "Total",
+				"noData": "No hay datos disponibles"
+			},
+			"info": {
+				"nameLabel": "Nombre",
+				"nameRequired": "El nombre es obligatorio",
+				"namePlaceholder": "Ingresa el nombre de la lista de contactos",
+				"nameDescription": "Este nombre es visible en la campaña.",
+				"editName": "Editar nombre",
+				"clickToAddName": "Haz clic para agregar un nombre",
+				"expires": "Vence",
+				"addExpiration": "Agregar fecha de vencimiento",
+				"selectExpiration": "Seleccionar fecha de vencimiento",
+				"dateInPast": "La fecha no puede ser anterior a hoy"
+			},
+			"limits": {
+				"maxWavesLabel": "Máx. oleadas",
+				"maxWavesDescription": "Número máximo de oleadas para esta lista de contactos.",
+				"humanEquivalentLabel": "Equivalente humano",
+				"availableLabel": "Disponible",
+				"capacityFull": {
+					"title": "La capacidad del programador está llena",
+					"message": "Reduce la capacidad o ajusta los horarios para continuar."
+				},
+				"actions": {
+					"save": "Guardar",
+					"update": "Actualizar"
+				},
+				"defaultName": "Lista de contactos {{index}}",
+				"notifications": {
+					"invalidInput": "Entrada inválida",
+					"nameRequired": "El nombre es obligatorio",
+					"capacityExceeded": "Capacidad excedida",
+					"wavesMinimum": "Se requiere un mínimo de 1 oleada",
+					"schedulerFullTitle": "Programador lleno",
+					"schedulerFullMessage": "No hay suficiente capacidad para programar esta lista.",
+					"successTitle": "Éxito",
+					"saveSuccess": "Guardado con éxito",
+					"updateSuccess": "Actualizado con éxito",
+					"errorTitle": "Error",
+					"saveError": "No se pudieron guardar los cambios"
+				}
+			},
+			"headerMapping": {
+				"title": "Mapeo de encabezados",
+				"description": "Asocia columnas del CSV con campos del sistema.",
+				"mappedBadge": "Asignado ({{count}})",
+				"csvHeadersBadge": "Encabezados CSV ({{count}})",
+				"dynamicFieldsRequired": "Se requieren campos dinámicos para {{objective}}.",
+				"systemFields": "Campos del sistema",
+				"selectObjective": "Seleccionar objetivo",
+				"addDynamicColumns": "Agregar columnas dinámicas",
+				"dynamicSetTitle": "Conjunto de campos dinámicos",
+				"version": "Versión {{version}}",
+				"loadingColumns": "Cargando columnas...",
+				"allMapped": "Todos los campos del sistema están asignados",
+				"csvColumns": "Columnas CSV",
+				"finishMultiSelect": "Finalizar selección",
+				"multiSelectDescription": "Selecciona una o más columnas del CSV para asignar.",
+				"allCsvMapped": "Todas las columnas CSV están asignadas",
+				"csvColumnLabel": "Columna CSV",
+				"currentMappings": "Asignaciones actuales",
+				"clickToRemove": "Clic para quitar",
+				"noMappings": "Aún no hay asignaciones",
+				"noMappingsDescription": "Asocia columnas CSV para continuar.",
+				"systemFieldLabel": "Campo del sistema",
+				"multiSelectNote": "Puedes asignar múltiples columnas del CSV.",
+				"pickSystemField": "Elige un campo del sistema",
+				"selectedCsvLabel": "Columnas CSV seleccionadas",
+				"chooseMatchingCsv": "Elige la(s) columna(s) CSV correspondiente(s)",
+				"clearSelection": "Limpiar selección",
+				"mappingsCreated": "Se crearon {{count}} asignaciones",
+				"saveMappings": "Guardar asignaciones"
+			},
+			"details": {
+				"title": "Detalles de la lista de contactos",
+				"description": "Revisa la configuración y el estado de la lista de contactos.",
+				"configurations": "Configuraciones",
+				"meta": {
+					"listStatus": "Creado",
+					"queueStatus": "Estado de cola",
+					"active": "Activa",
+					"inactive": "Inactiva",
+					"expirationDate": "Fecha de vencimiento",
+					"scheduler": "Programador",
+					"schedulerStatus": "Estado del programador",
+					"notAssigned": "No asignado"
+				},
+				"stats": {
+					"totalContacts": "Total de contactos",
+					"maxCallsPerContact": "Máx. llamadas por contacto",
+					"maxCallsPerList": "Máx. llamadas por lista",
+					"humanEquivalent": "Equivalente humano",
+					"waves": "Oleadas",
+					"notAvailable": "No disponible",
+					"notSet": "No establecido"
+				},
+				"operationalStatus": {
+					"title": "Estado operativo",
+					"description": "Preparación y estado de entrega."
+				},
+				"primaryPhone": "Número de teléfono principal",
+				"phoneNumbers": "Números de teléfono ({{count}})",
+				"email": "Correo electrónico",
+				"location": "Ubicación",
+				"engagementLevel": {
+					"title": "Nivel de compromiso",
+					"description": "Mide qué tan comprometido está {{name}} con tus campañas."
+				},
+				"reviewsQualification": {
+					"title": "Calificación de reseñas",
+					"description": "Mide qué tan comprometido está {{name}} con tus campañas."
+				},
+				"sentiment": {
+					"negative": "Negativo",
+					"neutral": "Neutral",
+					"positive": "Positivo"
+				},
+				"actions": {
+					"title": "Acciones",
+					"description": "Gestiona esta lista de contactos.",
+					"activate": "Activar",
+					"deactivate": "Desactivar",
+					"extendWaves": "Extender Oleadas",
+					"completeList": "Completar Lista",
+					"editContactList": "Editar lista de contactos",
+					"deleteContactList": "Eliminar lista de contactos",
+					"cleanQueue": "Limpiar cola",
+					"openContactList": "Abrir lista de contactos"
+				},
+				"dialogs": {
+					"activate": {
+						"title": "Activar lista de contactos",
+						"message": "¿Activar esta lista de contactos para la campaña?",
+						"confirm": "Activar",
+						"available": "Capacidad disponible: {{count}}",
+						"noCapacityTitle": "Sin capacidad del programador",
+						"capacityErrorTitle": "Capacidad insuficiente",
+						"capacityErrorMessage": "La capacidad del programador no es suficiente para activar esta lista de contactos."
+					},
+					"cleanQueue": {
+						"title": "Limpiar cola",
+						"message": "¿Eliminar todos los contactos en cola para esta lista?",
+						"confirm": "Limpiar cola"
+					},
+					"complete": {
+						"title": "Completar lista de contactos",
+						"message": "¿Marcar esta lista de contactos como completada?",
+						"success": "Completada",
+						"successMessage": "Lista de contactos marcada como completada.",
+						"error": "Error"
+					},
+					"deactivate": {
+						"title": "Desactivar lista de contactos",
+						"message": "¿Desactivar esta lista de contactos?"
+					},
+					"delete": {
+						"title": "Eliminar lista de contactos",
+						"message": "¿Eliminar esta lista de contactos? Esta acción no se puede deshacer.",
+						"success": "Eliminada",
+						"successMessage": "Lista de contactos eliminada con éxito.",
+						"error": "Error",
+						"errorMessage": "No se pudo eliminar la lista de contactos."
+					},
+					"extendWaves": {
+						"title": "Extender oleadas",
+						"success": "Oleadas extendidas",
+						"error": "Error al extender oleadas"
+					}
+				}
+			}
+		},
+		"agent": {
+			"add": {
+				"searchPlaceholder": "Buscar agentes por nombre",
+				"loadError": "Error al cargar agentes",
+				"loadErrorDesc": "Hubo un error al cargar la lista de agentes. Por favor, inténtalo de nuevo.",
+				"tryAgain": "Intentar de nuevo",
+				"noAgents": "No hay agentes disponibles",
+				"noAgentsDesc": "No hay agentes disponibles para agregar a esta campaña.",
+				"addError": "Error al agregar agente",
+				"error": "Error",
+				"cloneTitle": "Clonar Agente",
+				"cloneDesc": "Crea una copia de este agente para usar en tu campaña.",
+				"cloneNameLabel": "Nombre del Agente",
+				"cloneNamePlaceholder": "Ingresa el nombre del agente",
+				"cloneNameRequired": "El nombre es obligatorio",
+				"cloneNameDifferent": "El nuevo nombre debe ser diferente al nombre original del agente",
+				"cloneSuccess": "Agente clonado exitosamente",
+				"cloneError": "Error al clonar el agente",
+				"copySuffix": " Copia",
+				"cancel": "Cancelar",
+				"cloneAction": "Clonar"
+			},
+			"list": {
+				"addAgent": "Agregar Agente",
+				"addAgentTitle": "Agregar Agente a la Campaña",
+				"noAgents": "No hay agentes asignados",
+				"noAgentsDesc": "Esta campaña no tiene agentes asignados."
+			},
+			"columns": {
+				"name": "Agente",
+				"type": "Tipo",
+				"voice": "Voz",
+				"actions": "Acciones",
+				"noCampaign": "Sin campaña",
+				"playPreview": "Reproducir vista previa",
+				"pausePreview": "Pausar vista previa",
+				"clone": "Clonar agente",
+				"add": "Agregar agente"
+			},
+			"basic": {
+				"title": "Aspectos basicos del agente",
+				"description": "Configura el idioma y el mensaje inicial del agente.",
+				"language": "Idioma",
+				"languagePlaceholder": "Selecciona un idioma",
+				"languageDescription": "Elige el idioma principal del agente.",
+				"noLanguageFound": "No se encontraron idiomas",
+				"languages": {
+					"en": "Ingles",
+					"es": "Espanol"
+				},
+				"firstMessage": "Primer mensaje del agente",
+				"firstMessagePlaceholder": "Escribe el primer mensaje",
+				"firstMessageDescription": "Este es el primer mensaje que enviara el agente."
+			},
+			"tools": {
+				"title": "Herramientas del agente",
+				"description": "Selecciona las herramientas que puede usar el agente.",
+				"noTools": "No hay herramientas del agente configuradas.",
+				"customIntegration": "Integracion personalizada",
+				"toggleAria": "Alternar {{name}}",
+				"noDescription": "Sin descripcion."
+			},
+			"systemTools": {
+				"title": "Herramientas del sistema",
+				"description": "Configura las herramientas del sistema para el agente.",
+				"noTools": "No hay herramientas del sistema disponibles.",
+				"systemUtility": "Utilidad del sistema",
+				"toggleAria": "Alternar {{name}}",
+				"configure": "Configurar",
+				"enableToConfigure": "Habilitar para configurar",
+				"noDescription": "Sin descripción disponible.",
+				"modal": {
+					"title": "Configurar Herramienta",
+					"name": "Nombre de la Herramienta",
+					"description": {
+						"label": "Descripción",
+						"placeholder": "Dejar en blanco para usar el prompt optimizado predeterminado del LLM."
+					},
+					"interruptions": {
+						"label": "Desactivar interrupciones",
+						"description": "Evita que el usuario interrumpa al agente mientras esta herramienta se está ejecutando."
+					},
+					"voicemail": {
+						"title": "Configuración de Correo de Voz",
+						"description": "Configura el mensaje para dejar en el correo de voz.",
+						"messageLabel": "Mensaje de Correo de Voz",
+						"messagePlaceholder": "Hola, esta es una llamada automatizada de...",
+						"hint": "Este mensaje se dirá cuando se detecte un correo de voz."
+					},
+					"actions": {
+						"cancel": "Cancelar",
+						"save": "Guardar"
+					}
+				}
+			},
+			"preview": {
+				"title": "Vista previa del agente",
+				"description": "Vista previa de los detalles del agente asignado.",
+				"voiceTitle": "Voz",
+				"voiceDescription": "Revisa la configuracion de voz actual.",
+				"editVoice": "Editar voz del agente",
+				"changeVoiceTitle": "Cambiar voz del agente",
+				"unknownVoice": "Desconocido",
+				"avatarAlt": "Avatar del agente",
+				"online": "En línea",
+				"offline": "Desconectado",
+				"unnamed": "Agente sin nombre"
+			},
+			"voice": {
+				"selectHint": "Selecciona una voz para tu agente y haz clic en guardar para aplicar los cambios",
+				"save": "Guardar Agente",
+				"saving": "Guardando...",
+				"pleaseSelectVoice": "Por favor selecciona una voz",
+				"agentDataNotLoaded": "Datos del agente no cargados",
+				"success": "Voz del agente actualizada exitosamente",
+				"error": "Error al actualizar la voz del agente",
+				"noVoices": "No hay voces disponibles"
+			},
+			"knowledgeBase": {
+				"title": "Base de Conocimiento",
+				"description": "Gestiona las bases de conocimiento para este agente.",
+				"loading": "Cargando bases de conocimiento...",
+				"error": "Error al cargar las bases de conocimiento",
+				"noSelection": "No hay bases de conocimiento seleccionadas",
+				"add": "Agregar Base de Conocimiento",
+				"remove": "Eliminar",
+				"removeAria": "Eliminar {{name}}",
+				"created": "Creado: {{date}}",
+				"modal": {
+					"title": {
+						"select": "Seleccionar Bases de Conocimiento",
+						"create": "Crear Base de Conocimiento"
+					},
+					"subtitle": "Selecciona bases de conocimiento existentes o crea una nueva.",
+					"backToList": "Volver a la lista",
+					"noKnowledgeBases": "No se encontraron bases de conocimiento"
+				}
+			},
+			"prompt": {
+				"title": "Prompt del agente",
+				"description": "Define las instrucciones que seguirá el agente al hablar con los contactos.",
+				"previewTitle": "Vista previa del prompt",
+				"previewChars_one": "1 carácter",
+				"previewChars_other": "{{count}} caracteres",
+				"status": {
+					"empty": "Vacío"
+				},
+				"placeholder": "Aún no se ha agregado un prompt",
+				"keepConcise": "Manténlo conciso para mayor claridad.",
+				"header": {
+					"editAria": "Editar prompt",
+					"expandAria": "Expandir prompt",
+					"collapseAria": "Contraer prompt"
+				},
+				"modal": {
+					"types": "Tipos",
+					"selectPromptType": "Selecciona un tipo de prompt para empezar a editar.",
+					"saveHint": "Guarda para aplicar los prompts en toda esta campaña."
+				},
+				"editor": {
+					"title": "Configuración del prompt",
+					"subtitle": "Configura los prompts para cada tipo de interacción.",
+					"status": {
+						"empty": "Vacío",
+						"drafted": "Borrador",
+						"saved": "Guardado"
+					},
+					"lines_one": "({{count}} línea)",
+					"lines_other": "({{count}} líneas)",
+					"history": {
+						"tooltip": "Historial de prompts",
+						"aria": "Historial de prompts"
+					},
+					"reuse": {
+						"label": "Reutilizar prompt",
+						"placeholder": "Cargar prompt de otra campaña"
+					},
+					"hint": "Mantenlo en menos de ocho líneas",
+					"placeholder": "Escribe tu prompt aquí",
+					"variables": {
+						"hint": "Puedes usar variables como {{contact_name}}, {{agent_name}}, etc.",
+						"popover": {
+							"title": "Variables",
+							"badge": "Tip",
+							"navigationHint": "Usa las flechas para navegar y Enter para insertar",
+							"source": {
+								"dyn": "Dinámica",
+								"sys": "Sistema"
+							},
+							"empty": "No se encontraron variables"
+						}
+					},
+					"diff": {
+						"modalTitle": "Revisar cambios"
+					},
+					"ai": {
+						"button": {
+							"create": "Crear con IA",
+							"improve": "Mejorar con IA",
+							"tooltip": {
+								"create": "Usar IA para generar un prompt desde cero",
+								"improve": "Usar IA para mejorar tu prompt actual"
+							}
+						},
+						"modal": {
+							"title": {
+								"create": "Crear prompt con IA",
+								"improve": "Mejorar prompt con IA",
+								"review": "Revisar sugerencias de IA"
+							},
+							"errors": {
+								"emptyPrompt": "Por favor, proporciona algunas instrucciones para la IA"
+							},
+							"compose": {
+								"instructions": {
+									"label": {
+										"create": "Instrucciones",
+										"improve": "Instrucciones de Mejora"
+									},
+									"description": {
+										"create": "Describe lo que quieres que genere la IA",
+										"improve": "Describe cómo quieres mejorar el prompt"
+									},
+									"placeholder": {
+										"create": "Ej., Crea un saludo amigable para clientes que llaman sobre consultas de facturación",
+										"improve": "Ej., Hazlo más conciso y profesional"
+									}
+								},
+								"systemPrompt": {
+									"label": "Prompt del sistema",
+									"edit": "Editar prompt del sistema",
+									"reset": "Restablecer",
+									"done": "Hecho"
+								},
+								"promptToImprove": {
+									"label": "Prompt Actual",
+									"description": "El prompt que quieres mejorar"
+								},
+								"actions": {
+									"cancel": "Cancelar",
+									"generate": "Generar"
+								}
+							},
+							"review": {
+								"actions": {
+									"back": "Cancelar",
+									"apply": "Aplicar cambios"
+								},
+								"error": {
+									"title": "Error",
+									"description": "Error al generar la vista de diferencias. La sugerencia de IA aún puede ser válida."
+								},
+								"noChanges": {
+									"title": "Sin Cambios",
+									"description": "La sugerencia de IA es idéntica a tu prompt actual."
+								},
+								"diff": {
+									"old": "Versión actual",
+									"new": "Sugerencia de IA"
+								}
+							}
+						}
+					}
+				}
+			},
+			"behavior": {
+				"title": "Comportamiento del Agente",
+				"description": "Seleccione una configuración de comportamiento de agente predefinida",
+				"active": "Configuración activa",
+				"change": "Cambiar",
+				"noConfiguration": "Ninguna configuración aplicada",
+				"select": "Seleccionar Configuración",
+				"modal": {
+					"title": "Vista previa de la configuración",
+					"label": "Seleccione un conjunto de parámetros predefinido",
+					"placeholder": "Seleccionar configuración",
+					"actions": {
+						"cancel": "Cancelar",
+						"apply": "Aplicar"
+					}
+				}
+			}
+		}
+	},
+	"disposition": {
+		"title": "Configuración de Resultados",
+		"description": "Configura los resultados de llamadas para esta campaña. Arrastra elementos del catálogo para construir tu estructura de resultados.",
+		"editOutcome": "Editar resultado",
+		"addOutcome": "Agregar resultado",
+		"noFlowConfigured": "No hay flujo de resultados configurado",
+		"noFlowDescription": "Comienza agregando un nuevo flujo de resultados para rastrear y gestionar los resultados de llamadas de manera efectiva.",
+		"saveSuccess": "Flujo de resultados guardado exitosamente.",
+		"catalog": {
+			"selectCatalog": "Seleccionar Catálogo",
+			"catalogChangeDisabled": "No se puede cambiar el catálogo cuando ya hay resultados agregados",
+			"noDispositions": "No hay disposiciones disponibles en este catálogo.",
+			"expand": "Expandir",
+			"collapse": "Contraer",
+			"addAll": "Agregar todo",
+			"addAllAria": "Agregar disposición y todos los hijos",
+			"addToFlow": "Agregar al flujo",
+			"addToFlowAria": "Agregar disposición al flujo"
+		},
+		"builder": {
+			"nameLabel": "Nombre del Resultado",
+			"namePlaceholder": "Nombre del Resultado",
+			"nameDescription": "Ingresa el nombre del resultado",
+			"header": "Flujo de resultados",
+			"headerDescription": "Usa el catálogo para agregar resultados. Selecciona un nodo para editar o previsualizar su grupo.",
+			"emptyTitle": "Aún no se han seleccionado resultados",
+			"emptyDescription": "Agrega resultados del catálogo para construir este flujo.",
+			"emptyRightPanel": "Selecciona un nodo para editar sus propiedades o previsualizar un grupo",
+			"updateFlow": "Actualizar Flujo",
+			"createFlow": "Crear Flujo",
+			"previewTitle": "Vista previa del grupo de resultados",
+			"errors": {
+				"minNodes": "Por favor, agrega al menos un nodo de resultado.",
+				"nameRequired": "El nombre del resultado es obligatorio.",
+				"saveError": "Ocurrió un error al guardar el flujo de resultados."
+			}
+		},
+		"nodeEditor": {
+			"expand": "Expandir nodo",
+			"collapse": "Contraer nodo",
+			"doNotCall": "No llamar",
+			"invalidatesNumber": "Invalida número",
+			"requiresReschedule": "Requiere reprogramación",
+			"addSiblings": "Agregar {{count}} hermano faltante",
+			"addSiblings_plural": "Agregar {{count}} hermanos faltantes",
+			"addMissingSiblingsAria": "Agregar hermanos faltantes",
+			"addChildren": "Agregar {{count}} hijo faltante",
+			"addChildren_plural": "Agregar {{count}} hijos faltantes",
+			"addMissingChildrenAria": "Agregar hijos faltantes",
+			"remove": "Eliminar",
+			"removeAria": "Eliminar nodo"
+		},
+		"nodeForm": {
+			"editingTitle": "Editando resultado",
+			"rootLevel": "Resultado de nivel raíz",
+			"descriptionLabel": "Descripción",
+			"noDescription": "Este resultado aún no incluye una descripción.",
+			"behaviorControls": "Controles de comportamiento",
+			"invalidatesNumberTitle": "Invalida número",
+			"invalidatesNumberDesc": "Evita que el marcador vuelva a intentar este número de teléfono después de que se use el resultado.",
+			"doNotCallTitle": "No llamar",
+			"doNotCallDesc": "Marca este resultado como no llamar para que el contacto sea excluido de futuras marcaciones.",
+			"rescheduleTitle": "Requiere reprogramación",
+			"rescheduleDesc": "Marca este resultado para que se puedan programar actividades de seguimiento para el contacto.",
+			"badges": {
+				"final": "Resultado final",
+				"reschedule": "Requiere reprogramación",
+				"noRetry": "No reintentar",
+				"doNotCall": "No llamar"
+			}
+		},
+		"groupPreview": {
+			"rootGroup": "Grupo raíz",
+			"level": "Nivel {{level}}",
+			"linkedOutcomes": "{{count}} resultado vinculado",
+			"linkedOutcomes_plural": "{{count}} resultados vinculados",
+			"leafOutcome": "Resultado hoja",
+			"stats": {
+				"total": "Total de nodos",
+				"final": "Resultados finales",
+				"reschedule": "Reprogramar",
+				"noRetry": "No reintentar",
+				"summary": "{{count}} nodo en {{levels}} nivel.",
+				"summary_plural": "{{count}} nodos en {{levels}} niveles."
+			}
+		},
+		"viewer": {
+			"group": "Grupo",
+			"outcome": "Resultado",
+			"nodeAria": "Nodo de resultado: {{name}}",
+			"childOutcomes": "{{count}} resultado hijo",
+			"childOutcomes_plural": "{{count}} resultados hijos",
+			"terminalOutcome": "Resultado terminal",
+			"noNodes": "No se encontraron nodos de resultado.",
+			"nodesListAria": "Lista de nodos de resultado",
+			"nameHeader": "NOMBRE"
+		},
+		"detailPanel": {
+			"title": "Detalles del Resultado",
+			"parent": "Padre",
+			"effectiveContact": "Contacto Efectivo",
+			"noEffectiveContact": "Sin Contacto Efectivo",
+			"noContact": "Sin Contacto",
+			"default": "Predeterminado",
+			"effectiveDesc": "Este nodo representa un resultado de contacto exitoso.",
+			"noEffectiveDesc": "Este nodo representa un intento de contacto fallido.",
+			"noContactDesc": "Este nodo representa que no se realizó contacto.",
+			"defaultDesc": "Este es un nodo de resultado estándar.",
+			"rescheduleCardTitle": "Requiere Reprogramación",
+			"rescheduleCardDesc": "Este resultado requiere que el contacto sea reprogramado para un intento futuro.",
+			"invalidatesCardTitle": "Invalida Número",
+			"invalidatesCardDesc": "Este resultado marca el número de contacto como inválido y evita futuros intentos."
+		}
+	},
+	"wizard": {
+		"knowledgeBase": {
+			"form": {
+				"name": {
+					"label": "Nombre",
+					"placeholder": "p. ej., Preguntas frecuentes del producto",
+					"errorRequired": "El nombre es obligatorio"
+				},
+				"description": {
+					"label": "Descripción",
+					"placeholder": "Nota interna breve sobre esta base de conocimiento"
+				},
+				"content": {
+					"label": "Contenido",
+					"placeholder": "Pega una URL o contenido de texto aquí...",
+					"description": "Pega una URL para obtener contenido de una página web o ingresa texto directamente",
+					"descriptionWithFile": "Elimina el archivo anterior para ingresar texto o una URL"
+				},
+				"file": {
+					"label": "O sube un archivo",
+					"placeholder": "Elige un archivo PDF o suéltalo aquí",
+					"description": "Compatible: PDF. Máx. 25 MB.",
+					"descriptionWithContent": "Borra el texto anterior para subir un archivo"
+				}
+			},
+			"contentInfo": {
+				"fileLabel": "Archivo",
+				"urlDetected": "URL detectada",
+				"urlDescription": "El contenido se obtendrá desde el enlace proporcionado",
+				"textLabel": "Contenido de texto",
+				"textDescription": "Se usará tal cual"
+			},
+			"actions": {
+				"cancel": "Cancelar",
+				"create": "Crear base de conocimiento"
+			},
+			"notifications": {
+				"successTitle": "Éxito",
+				"successMessage": "Base de conocimiento creada correctamente",
+				"errorTitle": "Error",
+				"errorMessage": "No se pudo crear la base de conocimiento"
+			}
+		}
+	},
+	"workingHours": {
+		"title": "Horario de Trabajo",
+		"description": "Configura el horario de trabajo para esta campaña."
+	},
+	"general": {
+		"title": "Información General",
+		"description": "Configuración básica de la campaña.",
+		"campaignName": "Nombre de la Campaña",
+		"enterCampaignName": "Ingresa el nombre de la campaña",
+		"descriptionLabel": "Descripción",
+		"describeYourCampaign": "Describe tu campaña",
+		"campaignObjective": "Objetivo de la Campaña",
+		"campaignObjectiveDesc": "Selecciona el objetivo para esta campaña",
+		"failedToLoadObjectives": "Error al cargar los objetivos",
+		"loadingObjectives": "Cargando objetivos...",
+		"selectObjective": "Selecciona un objetivo",
+		"createNewObjective": "Crear nuevo objetivo",
+		"defaultWaves": "Oleadas Predeterminadas",
+		"defaultWavesDesc": "Número de oleadas a ejecutar para cada lista de contactos",
+		"enterNumberOfWaves": "Ingresa el número de oleadas",
+		"createObjectiveTitle": "Crear Nuevo Objetivo"
+	}
+}

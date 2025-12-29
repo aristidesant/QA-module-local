@@ -1,5 +1,6 @@
 import React from 'react';
 import { ActionIcon, Box, Group, Paper, Text, Tooltip } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import {
 	IconFolder,
 	IconPlus,
@@ -29,6 +30,7 @@ const DispositionCatalogMenuItem: React.FC<Props> = ({
 	isCollapsed,
 	onToggleCollapse,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const hasChildren = Array.isArray(node.children) && node.children.length > 0;
 	const nodeStyle = getNodeStyle(node, 0);
 
@@ -42,7 +44,11 @@ const DispositionCatalogMenuItem: React.FC<Props> = ({
 							color='gray'
 							size='xs'
 							onClick={onToggleCollapse}
-							aria-label={isCollapsed ? 'Expand' : 'Collapse'}
+							aria-label={
+								isCollapsed
+									? t('disposition.catalog.expand')
+									: t('disposition.catalog.collapse')
+							}
 						>
 							{isCollapsed ? (
 								<IconChevronRight size={14} />
@@ -101,24 +107,24 @@ const DispositionCatalogMenuItem: React.FC<Props> = ({
 
 				<Group gap={4} wrap='nowrap' className={styles.actions}>
 					{hasChildren && onAddGroup ? (
-						<Tooltip label='Add all' withArrow>
+						<Tooltip label={t('disposition.catalog.addAll')} withArrow>
 							<ActionIcon
 								variant='subtle'
 								color='teal'
 								onClick={() => onAddGroup(node)}
-								aria-label='Add disposition and all children'
+								aria-label={t('disposition.catalog.addAllAria')}
 								size='sm'
 							>
 								<IconHierarchy3 size={14} />
 							</ActionIcon>
 						</Tooltip>
 					) : null}
-					<Tooltip label='Add to flow' withArrow>
+					<Tooltip label={t('disposition.catalog.addToFlow')} withArrow>
 						<ActionIcon
 							variant='filled'
 							color='blue'
 							onClick={() => onAdd(node)}
-							aria-label='Add disposition to flow'
+							aria-label={t('disposition.catalog.addToFlowAria')}
 							size='sm'
 						>
 							<IconPlus size={14} />

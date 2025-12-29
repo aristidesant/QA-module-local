@@ -1,16 +1,12 @@
-import { render, screen } from '@testing-library/react';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
+import { screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import { MantineProvider } from '@mantine/core';
 import SuspenseFallback from './SuspenseFallback';
 
 const renderSuspenseFallback = (
 	props: Parameters<typeof SuspenseFallback>[0]
 ) => {
-	return render(
-		<MantineProvider>
-			<SuspenseFallback {...props} />
-		</MantineProvider>
-	);
+	return renderWithProviders(<SuspenseFallback {...props} />);
 };
 
 describe('SuspenseFallback', () => {
@@ -44,6 +40,12 @@ describe('SuspenseFallback', () => {
 
 			const loader = container.querySelector('[class*="Loader"]');
 			expect(loader).toBeInTheDocument();
+		});
+
+		it('renders the message from a translation key', () => {
+			renderSuspenseFallback({ messageKey: 'status.loading', ns: 'common' });
+
+			expect(screen.getByText('Loading...')).toBeInTheDocument();
 		});
 	});
 

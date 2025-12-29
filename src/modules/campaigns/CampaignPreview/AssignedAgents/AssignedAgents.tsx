@@ -1,6 +1,7 @@
 import React from 'react';
 import { Stack, Skeleton } from '@mantine/core';
 import { IconUsers } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import styles from './AssignedAgents.module.css';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
@@ -13,6 +14,7 @@ interface AssignedAgentsProps {
 }
 
 const AssignedAgents: React.FC<AssignedAgentsProps> = () => {
+	const { t } = useTranslation('campaign.detail');
 	const selectedCampaign = useCampaignsStore((state) => state.selectedCampaign);
 	const { data, isLoading } = useGetCampaignAgents(
 		selectedCampaign?.id as number
@@ -20,8 +22,8 @@ const AssignedAgents: React.FC<AssignedAgentsProps> = () => {
 
 	return (
 		<RightSectionCard
-			title='Assigned Agents'
-			description='These agents are currently linked to this campaign.'
+			title={t('preview.assignedAgents.title')}
+			description={t('preview.assignedAgents.description')}
 			icon={IconUsers}
 		>
 			<Stack gap='xs' className={styles.agentsList}>
@@ -30,7 +32,7 @@ const AssignedAgents: React.FC<AssignedAgentsProps> = () => {
 					Array.from({ length: 3 }).map((_, index) => (
 						<RightSectionCard
 							key={`skeleton-${index}`}
-							title='Loading agent'
+							title={t('preview.assignedAgents.loadingAgent')}
 							description={<Skeleton height={12} width='40%' />}
 							rightSection={<Skeleton circle height={24} />}
 							style={{
@@ -47,8 +49,8 @@ const AssignedAgents: React.FC<AssignedAgentsProps> = () => {
 					))
 				) : (
 					<RightSectionCard
-						title='No agents assigned yet'
-						description='Assign agents to start running campaigns'
+						title={t('preview.assignedAgents.noAgents')}
+						description={t('preview.assignedAgents.noAgentsDescription')}
 						style={{
 							padding: 'var(--mantine-spacing-xs)',
 							backgroundColor: 'var(--mantine-color-red-0)',

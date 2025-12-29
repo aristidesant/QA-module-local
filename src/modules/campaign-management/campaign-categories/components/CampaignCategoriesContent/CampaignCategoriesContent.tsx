@@ -1,0 +1,218 @@
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Button, Modal, ActionIcon } from '@mantine/core';
+import { IconPlus, IconSearchOff, IconCategory } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
+import BaseTable from '~/components/BaseTable';
+import EmptyState from '~/components/EmptyState';
+import PaginationControls from '~/components/PaginationControls';
+import SectionCard from '~/components/SectionCard/SectionCard';
+import { useDeleteCampaignCategory } from '~/queries/campaignCategoriesQueries';
+import { CampaignCategory } from '~/models/CampaignCategoryModel';
+import { CampaignCategoriesForm } from '../CampaignCategoriesForm/CampaignCategoriesForm';
+import { CampaignCategoriesFilters } from '../CampaignCategoriesFilters';
+import { useCampaignCategoriesWithFilters } from '~/modules/campaigns/hooks/useFilteredCategories';
+import { useCampaignCategoriesColumns } from './useCampaignCategoriesColumns';
+import styles from './CampaignCategoriesContent.module.css';
+
+interface CampaignCategoriesContentProps {
+	createModalOpened: boolean;
+	setCreateModalOpened: (opened: boolean) => void;
+}
+
+const CampaignCategoriesContent: React.FC<CampaignCategoriesContentProps> = ({
+	createModalOpened,
+	setCreateModalOpened,
+}) => {
+	const { t } = useTranslation('campaign-management');
+	const [editModalOpened, setEditModalOpened] = useState(false);
+	const [selectedCategory, setSelectedCategory] =
+		useState<CampaignCategory | null>(null);
+
+	// Use the combined hook that handles both server and client filtering
+	const {
+		categories,
+		pagination,
+		filters,
+		setPagination,
+		setFilters,
+		isLoading,
+	} = useCampaignCategoriesWithFilters();
+
+	const deleteCategory = useDeleteCampaignCategory();
+
+	const handleEdit = (category: CampaignCategory) => {
+		setSelectedCategory(category);
+		setEditModalOpened(true);
+	};
+
+	const handleDelete = async (id: number) => {
+		try {
+			await deleteCategory.mutateAsync(id);
+			notifications.show({
+				title: 'Success',
+				message: t('setup.categories.deleteSuccess'),
+				color: 'green',
+			});
+		} catch (error) {
+			notifications.show({
+				title: 'Error',
+				message: t('setup.categories.deleteError'),
+				color: 'red',
+			});
+		}
+	};
+
+	const columns = useCampaignCategoriesColumns({
+		onEdit: handleEdit,
+		onDelete: handleDelete,
+		isDeletePending: deleteCategory.isPending,
+	});
+
+	// Show empty state only if no categories exist at all (not filtered)
+	const showEmptyState = categories.length === 0 && !isLoading;
+
+	if (showEmptyState) {
+		return (
+			<div className={styles.container}>
+				<EmptyState
+					icon={<IconPlus size={48} />}
+					message={t('setup.categories.noResults')}
+					description={t('setup.categories.getStarted')}
+					action={
+						<Button
+							leftSection={<IconPlus size={16} />}
+							onClick={() => setCreateModalOpened(true)}
+						>
+							{t('setup.categories.create')}
+						</Button>
+					}
+				/>
+
+				<Modal
+					opened={createModalOpened}
+					onClose={() => setCreateModalOpened(false)}
+					title={t('setup.categories.create')}
+					size='md'
+				>
+					<CampaignCategoriesForm
+						onSuccess={() => setCreateModalOpened(false)}
+						onCancel={() => setCreateModalOpened(false)}
+					/>
+				</Modal>
+			</div>
+		);
+	}
+
+	return (
+		<div className={styles.container}>
+			<SectionCard
+				icon={IconCategory}
+				title={t('setup.categories.title')}
+				description={t('setup.categories.sectionCardDescription')}
+				padding='lg'
+				headerActions={
+					<ActionIcon
+						variant='filled'
+						color='blue'
+						onClick={() => setCreateModalOpened(true)}
+					>
+						<IconPlus size={18} />
+					</ActionIcon>
+				}
+			>
+				<CampaignCategoriesFilters
+					filters={filters}
+					onFiltersChange={setFilters}
+				/>
+
+				{categories.length === 0 && !isLoading ? (
+					<div className={styles.noResultsContainer}>
+						<EmptyState
+							icon={<IconSearchOff size={48} />}
+							message={t('setup.categories.noResultsFilters')}
+							description='Try adjusting your search criteria or filters'
+							action={
+								<Button
+									leftSection={<IconPlus size={16} />}
+									onClick={() => setCreateModalOpened(true)}
+								>
+									{t('setup.categories.create')}
+								</Button>
+							}
+						/>
+					</div>
+				) : (
+					<>
+						<BaseTable
+							data={categories}
+							columns={columns}
+							isLoading={isLoading}
+							className={styles.table}
+							density='default'
+						/>
+
+						<PaginationControls
+							currentPage={pagination.page}
+							totalPages={Math.ceil(pagination.total / pagination.pageSize)}
+							itemsPerPage={pagination.pageSize}
+							totalItems={pagination.total}
+							onPageChange={(page) => setPagination({ ...pagination, page })}
+							onItemsPerPageChange={(value) => {
+								if (value) {
+									setPagination({
+										...pagination,
+										page: 1,
+										pageSize: parseInt(value, 10),
+									});
+								}
+							}}
+							isLoading={isLoading}
+							itemLabel='categories'
+						/>
+					</>
+				)}
+			</SectionCard>
+
+			{/* Create Modal */}
+			<Modal
+				opened={createModalOpened}
+				onClose={() => setCreateModalOpened(false)}
+				title={t('setup.categories.create')}
+				size='md'
+			>
+				<CampaignCategoriesForm
+					onSuccess={() => setCreateModalOpened(false)}
+					onCancel={() => setCreateModalOpened(false)}
+				/>
+			</Modal>
+
+			{/* Edit Modal */}
+			<Modal
+				opened={editModalOpened}
+				onClose={() => {
+					setEditModalOpened(false);
+					setSelectedCategory(null);
+				}}
+				title={t('setup.categories.edit')}
+				size='md'
+			>
+				{selectedCategory && (
+					<CampaignCategoriesForm
+						category={selectedCategory}
+						onSuccess={() => {
+							setEditModalOpened(false);
+							setSelectedCategory(null);
+						}}
+						onCancel={() => {
+							setEditModalOpened(false);
+							setSelectedCategory(null);
+						}}
+					/>
+				)}
+			</Modal>
+		</div>
+	);
+};
+
+export default CampaignCategoriesContent;

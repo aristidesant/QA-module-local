@@ -49,7 +49,7 @@ describe('PromptHistoryModal', () => {
 
 		expect(screen.getByText('No Changes')).toBeInTheDocument();
 		expect(
-			screen.getByText(/This version is identical to the current prompt/i)
+			screen.getByText('This version is identical to the current prompt.')
 		).toBeInTheDocument();
 	});
 
@@ -66,15 +66,15 @@ describe('PromptHistoryModal', () => {
 			/>
 		);
 
-		expect(screen.getByText(/Previous Version/)).toBeInTheDocument();
-		expect(screen.getByText(/Current Version/)).toBeInTheDocument();
+		expect(screen.getByText('Previous Version (v2)')).toBeInTheDocument();
+		expect(screen.getByText('Current Version')).toBeInTheDocument();
 
 		const user = userEvent.setup();
-		await user.click(screen.getByRole('button', { name: /Close/i }));
+		await user.click(screen.getByRole('button', { name: 'Close' }));
 		expect(mockOnClose).toHaveBeenCalled();
 
 		await user.click(
-			screen.getByRole('button', { name: /Restore This Version/i })
+			screen.getByRole('button', { name: 'Restore This Version' })
 		);
 		expect(mockOnRestore).toHaveBeenCalledWith(sampleItem.promptText);
 	});

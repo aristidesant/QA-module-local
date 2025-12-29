@@ -17,6 +17,7 @@ import { useSessionStore } from '~/stores/sessionStore';
 import { usePasswordResetStore } from '~/stores/passwordResetStore';
 import { getErrorMessage } from '~/utils/httpClient';
 import { logout } from '~/utils/logout';
+import { useTranslation } from 'react-i18next';
 import classes from './ForcePasswordChangePage.module.css';
 
 type RouteState = {
@@ -38,6 +39,7 @@ const ForcePasswordChangePage = () => {
 	const { user } = useSessionStore();
 	const { pendingUsername, pendingLoginType, clearPendingCredentials } =
 		usePasswordResetStore();
+	const { t } = useTranslation('auth');
 
 	const [reauthenticating, setReauthenticating] = useState(false);
 	const [reauthError, setReauthError] = useState<string | null>(null);
@@ -98,14 +100,15 @@ const ForcePasswordChangePage = () => {
 					<Group justify='space-between' align='flex-start'>
 						<div>
 							<Title order={2} className={classes.title}>
-								Update Your Password
+								{t('forcePasswordChange.title')}
 							</Title>
 							<Text c='dimmed' size='sm'>
-								For security reasons you must update your password before
-								continuing to the dashboard.
+								{t('forcePasswordChange.description')}
 							</Text>
 						</div>
-						<Badge className={classes.badge}>Security Check</Badge>
+						<Badge className={classes.badge}>
+							{t('forcePasswordChange.securityCheck')}
+						</Badge>
 					</Group>
 
 					{missingCredentials && (
@@ -113,10 +116,9 @@ const ForcePasswordChangePage = () => {
 							color='blue'
 							variant='light'
 							icon={<IconAlertCircle size={18} />}
-							title='Sign-in Needed After Update'
+							title={t('forcePasswordChange.signInNeeded.title')}
 						>
-							Finish updating your password, then return to the login screen to
-							sign in with your new credentials.
+							{t('forcePasswordChange.signInNeeded.description')}
 						</Alert>
 					)}
 
@@ -125,7 +127,7 @@ const ForcePasswordChangePage = () => {
 							color='red'
 							variant='light'
 							icon={<IconAlertCircle size={18} />}
-							title='Re-authentication Failed'
+							title={t('forcePasswordChange.reauthFailed.title')}
 						>
 							{reauthError}
 						</Alert>
@@ -135,7 +137,9 @@ const ForcePasswordChangePage = () => {
 						onSuccess={handlePasswordChanged}
 						showCancelButton={false}
 						submitLabel={
-							reauthenticating ? 'Updating password...' : 'Save new password'
+							reauthenticating
+								? t('forcePasswordChange.actions.updating')
+								: t('forcePasswordChange.actions.save')
 						}
 						processing={reauthenticating || loginMutation.isPending}
 					/>
@@ -146,7 +150,7 @@ const ForcePasswordChangePage = () => {
 						disabled={reauthenticating || loginMutation.isPending}
 						leftSection={<IconLockCheck size={18} />}
 					>
-						Return to login
+						{t('forcePasswordChange.actions.returnToLogin')}
 					</Button>
 				</Stack>
 			</Paper>

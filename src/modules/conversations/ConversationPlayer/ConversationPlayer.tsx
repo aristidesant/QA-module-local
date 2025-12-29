@@ -47,7 +47,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 	paramConversationId,
 	contactName,
 }) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation(['conversations', 'common']);
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [currentTime, setCurrentTime] = useState(0);
 	const [duration, setDuration] = useState(0);
@@ -63,9 +63,8 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 	);
 
 	// Default values from translations if not provided
-	const displayTitle = title || t('conversations.player.title');
-	const displayDescription =
-		description || t('conversations.player.description');
+	const displayTitle = title || t('player.title');
+	const displayDescription = description || t('player.description');
 
 	// Export audio mutation
 	const exportAudioMutation = useExportConversationAudio();
@@ -242,7 +241,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 					<Box className={classes.emptyState}>
 						<IconVolume size={32} className={classes.emptyIcon} />
 						<Text c='dimmed' ta='center' size='sm' mt='xs'>
-							{t('conversations.player.notAvailable')}
+							{t('player.notAvailable')}
 						</Text>
 					</Box>
 				</RightSection>
@@ -268,9 +267,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 			<Stack gap='xs'>
 				{Boolean(fileId) && (isPresignedLoading || isPresignedError) && (
 					<Text size='xs' c='dimmed' ta='center' fw={500}>
-						{isPresignedLoading
-							? t('conversations.player.loading')
-							: t('conversations.player.error')}
+						{isPresignedLoading ? t('player.loading') : t('player.error')}
 					</Text>
 				)}
 				{/* Progress Bar */}
@@ -300,8 +297,8 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 						color='gray'
 						size='lg'
 						onClick={() => seek(-10)}
-						aria-label={t('conversations.player.rewind')}
-						title={t('conversations.player.rewindShort')}
+						aria-label={t('player.rewind')}
+						title={t('player.rewindShort')}
 						className={classes.controlButton}
 					>
 						<IconPlayerSkipBack size={20} />
@@ -313,11 +310,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 						radius='xl'
 						size='xl'
 						onClick={togglePlayPause}
-						aria-label={
-							isPlaying
-								? t('conversations.player.pause')
-								: t('conversations.player.play')
-						}
+						aria-label={isPlaying ? t('player.pause') : t('player.play')}
 						className={classes.playButton}
 					>
 						{isPlaying ? (
@@ -332,8 +325,8 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 						color='gray'
 						size='lg'
 						onClick={() => seek(10)}
-						aria-label={t('conversations.player.forward')}
-						title={t('conversations.player.forwardShort')}
+						aria-label={t('player.forward')}
+						title={t('player.forwardShort')}
 						className={classes.controlButton}
 					>
 						<IconPlayerSkipForward size={20} />
@@ -370,27 +363,27 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 						data={[
 							{
 								value: '0.5',
-								label: t('conversations.playbackSpeed', { rate: '0.5' }),
+								label: t('playbackSpeed', { rate: '0.5' }),
 							},
 							{
 								value: '0.75',
-								label: t('conversations.playbackSpeed', { rate: '0.75' }),
+								label: t('playbackSpeed', { rate: '0.75' }),
 							},
 							{
 								value: '1',
-								label: t('conversations.playbackSpeed', { rate: '1.0' }),
+								label: t('playbackSpeed', { rate: '1.0' }),
 							},
 							{
 								value: '1.25',
-								label: t('conversations.playbackSpeed', { rate: '1.25' }),
+								label: t('playbackSpeed', { rate: '1.25' }),
 							},
 							{
 								value: '1.5',
-								label: t('conversations.playbackSpeed', { rate: '1.5' }),
+								label: t('playbackSpeed', { rate: '1.5' }),
 							},
 							{
 								value: '2',
-								label: t('conversations.playbackSpeed', { rate: '2.0' }),
+								label: t('playbackSpeed', { rate: '2.0' }),
 							},
 						]}
 						size='xs'
@@ -404,11 +397,11 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 						color='blue'
 						rightSection={<IconHeadphones size={16} />}
 						onClick={handleDownload}
-						aria-label={t('conversations.player.download')}
+						aria-label={t('player.download')}
 						loading={exportAudioMutation.isPending}
 						disabled={exportAudioMutation.isPending}
 					>
-						{t('conversations.player.download')}
+						{t('player.download')}
 					</Button>
 				)}
 			</Stack>

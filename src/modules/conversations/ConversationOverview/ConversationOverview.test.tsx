@@ -103,8 +103,14 @@ describe('ConversationOverview', () => {
 		(useExportConversationPdf as unknown as any).mockReturnValue(mockExport);
 
 		const cases = [
-			{ val: 'terminated_by_agent', expected: 'Terminated' },
-			{ val: 'client disconnect', expected: 'Client Disconnected' },
+			{
+				val: 'terminated_by_agent',
+				expected: 'Terminated',
+			},
+			{
+				val: 'client disconnect',
+				expected: 'Client Disconnected',
+			},
 			{ val: 'hangup', expected: 'Hangup' },
 			{ val: 'timeout', expected: 'Timeout' },
 			{ val: 'error in pipeline', expected: 'Error' },

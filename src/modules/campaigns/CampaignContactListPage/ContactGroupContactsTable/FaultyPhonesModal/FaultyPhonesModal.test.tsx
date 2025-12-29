@@ -181,7 +181,11 @@ describe('FaultyPhonesModal', () => {
 			screen.getByText('Total: 1 faulty phone number')
 		).toBeInTheDocument();
 
-		await user.click(screen.getByRole('button', { name: 'Export' }));
+		await user.click(
+			screen.getByRole('button', {
+				name: 'Export',
+			})
+		);
 		expect(exportRefetch).toHaveBeenCalled();
 	});
 
@@ -206,7 +210,7 @@ describe('FaultyPhonesModal', () => {
 		const editButton = within(row).getAllByRole('button')[0];
 		await user.click(editButton);
 
-		const input = screen.getByPlaceholderText('Enter phone');
+		const input = screen.getByPlaceholderText('Enter phone number');
 		await user.clear(input);
 		await user.type(input, '+18095551234');
 
@@ -233,7 +237,11 @@ describe('FaultyPhonesModal', () => {
 			/>
 		);
 
-		await user.click(screen.getByRole('button', { name: 'Export' }));
+		await user.click(
+			screen.getByRole('button', {
+				name: 'Export',
+			})
+		);
 		expect(notifications.show).toHaveBeenCalledWith(
 			expect.objectContaining({
 				title: 'Export Failed',
@@ -256,7 +264,7 @@ describe('FaultyPhonesModal', () => {
 		const row = screen.getByTestId('row-10');
 		await user.click(within(row).getAllByRole('button')[0]);
 
-		await user.type(screen.getByPlaceholderText('Enter phone'), '1');
+		await user.type(screen.getByPlaceholderText('Enter phone number'), '1');
 		await user.click(within(row).getAllByRole('button')[1]);
 
 		expect(updateMutate).not.toHaveBeenCalled();
@@ -489,7 +497,7 @@ describe('FaultyPhonesModal', () => {
 			expect(notifications.show).toHaveBeenCalledWith(
 				expect.objectContaining({
 					title: 'Update Failed',
-					message: 'Failed to update phone number',
+					message: 'Update Failed',
 					color: 'red',
 				})
 			);
@@ -510,12 +518,16 @@ describe('FaultyPhonesModal', () => {
 				/>
 			);
 
-			await user.click(screen.getByRole('button', { name: 'Export' }));
+			await user.click(
+				screen.getByRole('button', {
+					name: 'Export',
+				})
+			);
 
 			await waitFor(() => {
 				expect(notifications.show).toHaveBeenCalledWith(
 					expect.objectContaining({
-						title: 'Export Successful',
+						title: 'Faulty phone numbers exported successfully',
 						message: 'Faulty phone numbers exported successfully',
 						color: 'green',
 					})
@@ -540,7 +552,11 @@ describe('FaultyPhonesModal', () => {
 				/>
 			);
 
-			await user.click(screen.getByRole('button', { name: 'Export' }));
+			await user.click(
+				screen.getByRole('button', {
+					name: 'Export',
+				})
+			);
 
 			await waitFor(() => {
 				expect(mockCreateElement).toHaveBeenCalledWith('a');
@@ -566,13 +582,17 @@ describe('FaultyPhonesModal', () => {
 				/>
 			);
 
-			await user.click(screen.getByRole('button', { name: 'Export' }));
+			await user.click(
+				screen.getByRole('button', {
+					name: 'Export',
+				})
+			);
 
 			await waitFor(() => {
 				expect(notifications.show).toHaveBeenCalledWith(
 					expect.objectContaining({
 						title: 'Export Failed',
-						message: 'Failed to export faulty phone numbers',
+						message: 'Export Failed',
 						color: 'red',
 					})
 				);

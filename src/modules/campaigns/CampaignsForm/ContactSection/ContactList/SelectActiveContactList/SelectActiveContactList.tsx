@@ -1,4 +1,5 @@
 import { Text } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 
 interface SelectActiveContactListProps {
 	campaignId?: string | number;
@@ -8,8 +9,9 @@ interface SelectActiveContactListProps {
 }
 
 export const SelectActiveContactList = ({}: SelectActiveContactListProps) => {
+	const { t } = useTranslation('campaigns');
 	// TODO: Implement SelectActiveContactList component
-	return <Text>TODO: Implement SelectActiveContactList</Text>;
+	return <Text>{t('form.contacts.list.selectActiveDescription')}</Text>;
 };
 
 export default SelectActiveContactList;

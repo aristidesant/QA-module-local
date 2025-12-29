@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box, Switch, Text, Table, Group } from '@mantine/core';
 import { TimePicker } from '@mantine/dates';
 import { IconClock, IconClockOff } from '@tabler/icons-react';
@@ -40,6 +41,7 @@ const normalizeTimeValue = (value: TimeValue): string | null => {
 };
 
 export const DayScheduleCard: React.FC = () => {
+	const { t } = useTranslation('campaigns');
 	const form = useSchedulerFormContext();
 	const dayConfigs = (form.values.dayConfigs || []) as MaybeDayConfig[];
 	const humanEquivalent = Number(form.values.humanEquivalent || 1);
@@ -60,7 +62,7 @@ export const DayScheduleCard: React.FC = () => {
 		}
 
 		if (endMinutes <= startMinutes) {
-			return 'End time must be later than start time.';
+			return t('scheduler.daySchedule.errors.endTime');
 		}
 
 		return null;
@@ -78,11 +80,21 @@ export const DayScheduleCard: React.FC = () => {
 		>
 			<Table.Thead>
 				<Table.Tr>
-					<Table.Th className={styles.headerCell}>Day</Table.Th>
-					<Table.Th className={styles.headerCell}>Status</Table.Th>
-					<Table.Th className={styles.headerCell}>Hours</Table.Th>
-					<Table.Th className={styles.headerCell}>Agent</Table.Th>
-					<Table.Th className={styles.headerCell}>Team</Table.Th>
+					<Table.Th className={styles.headerCell}>
+						{t('scheduler.daySchedule.headers.day')}
+					</Table.Th>
+					<Table.Th className={styles.headerCell}>
+						{t('scheduler.daySchedule.headers.status')}
+					</Table.Th>
+					<Table.Th className={styles.headerCell}>
+						{t('scheduler.daySchedule.headers.hours')}
+					</Table.Th>
+					<Table.Th className={styles.headerCell}>
+						{t('scheduler.daySchedule.headers.agent')}
+					</Table.Th>
+					<Table.Th className={styles.headerCell}>
+						{t('scheduler.daySchedule.headers.team')}
+					</Table.Th>
 				</Table.Tr>
 			</Table.Thead>
 			<Table.Tbody>
@@ -175,7 +187,9 @@ export const DayScheduleCard: React.FC = () => {
 											{formatDayName(day.dayOfWeek)}
 										</Text>
 										<Text className={styles.daySubtle}>
-											{isActive ? 'Open window' : 'Paused'}
+											{isActive
+												? t('scheduler.daySchedule.status.open')
+												: t('scheduler.daySchedule.status.paused')}
 										</Text>
 									</div>
 									<div
@@ -195,7 +209,9 @@ export const DayScheduleCard: React.FC = () => {
 								) : (
 									<div className={styles.closedLabel}>
 										<IconClockOff size={12} />
-										<Text size='xs'>Closed</Text>
+										<Text size='xs'>
+											{t('scheduler.daySchedule.status.closed')}
+										</Text>
 									</div>
 								)}
 							</Table.Td>
@@ -257,14 +273,16 @@ export const DayScheduleCard: React.FC = () => {
 									</div>
 								) : (
 									<Text className={styles.inactiveHint}>
-										No hours configured
+										{t('scheduler.daySchedule.noHours')}
 									</Text>
 								)}
 							</Table.Td>
 
 							<Table.Td>
 								<div className={styles.metricCell}>
-									<Text className={styles.metricLabel}>Per agent</Text>
+									<Text className={styles.metricLabel}>
+										{t('scheduler.daySchedule.metrics.perAgent')}
+									</Text>
 									<Text
 										className={`${styles.metricValue} ${!isActive ? styles.metricValueInactive : ''}`}
 									>
@@ -275,7 +293,9 @@ export const DayScheduleCard: React.FC = () => {
 
 							<Table.Td>
 								<div className={styles.metricCell}>
-									<Text className={styles.metricLabel}>Team total</Text>
+									<Text className={styles.metricLabel}>
+										{t('scheduler.daySchedule.metrics.teamTotal')}
+									</Text>
 									<Text
 										className={`${styles.metricValue} ${!isActive ? styles.metricValueInactive : ''}`}
 									>

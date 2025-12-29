@@ -22,6 +22,7 @@ import { generateDiffData, type DiffResult } from './PromptAiActions/diffUtils';
 import ReviewStep from './PromptAiActions/ReviewStep';
 import MDEditor from '@uiw/react-md-editor';
 import { IconHistory, IconNotes } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import type { CampaignPromptTypeModel } from '~/models/CampaignPromptTypeModel';
 import { useGetCampaignPrompts } from '~/queries/campaignPromptQueries';
 import { usePromptVariables } from '~/hooks/usePromptVariables';
@@ -57,6 +58,8 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
 	const [diffData, setDiffData] = useState<DiffResult | null>(null);
 
 	const [historyModalOpen, setHistoryModalOpen] = useState(false);
+
+	const { t } = useTranslation('campaigns');
 
 	const { data: otherPrompts } = useGetCampaignPrompts({ typeId: type.id });
 	const allVariables = usePromptVariables(campaignId);
@@ -229,12 +232,12 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
 			<Stack gap={4} className={styles.editorStack}>
 				<Group justify='space-between' gap='xs'>
 					<div>{headerLeftSection}</div>
-					<Tooltip label='View prompt history' withArrow>
+					<Tooltip label={t('promptHistory.viewFullPrompt')} withArrow>
 						<ActionIcon
 							variant='light'
 							color='gray'
 							size='sm'
-							aria-label='Prompt history'
+							aria-label={t('promptHistory.modalTitle')}
 							onClick={() => setHistoryModalOpen(true)}
 						>
 							<IconHistory size={14} />
@@ -243,8 +246,8 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
 				</Group>
 				{promptOptions.length > 0 && (
 					<Select
-						label='Reuse from another campaign'
-						placeholder='Load prompt from another campaign...'
+						label={t('form.agent.prompt.editor.reuse.label')}
+						placeholder={t('form.agent.prompt.editor.reuse.placeholder')}
 						data={promptOptions}
 						onChange={handlePromptSelect}
 						searchable
@@ -267,8 +270,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
 					<Popover.Target>
 						<div data-color-mode='light' className={styles.editorWrapper}>
 							<Text c='dimmed' className={styles.editorHint}>
-								Keep it under eight lines; highlight tone, persona, and
-								constraints.
+								{t('form.agent.prompt.editor.variables.hint')}
 							</Text>
 							<MDEditor
 								value={value || ''}
@@ -278,7 +280,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
 								className={styles.mdEditor}
 								textareaProps={
 									{
-										placeholder: 'Enter your prompt here...',
+										placeholder: t('form.agent.prompt.editor.placeholder'),
 										ref: textareaRef,
 										onKeyUp: handleEditorKeyUp,
 										onKeyDown: handleEditorKeyDown,
@@ -295,14 +297,14 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
 						<Stack gap={4}>
 							<Group justify='space-between'>
 								<Text size='xs' fw={500}>
-									Variables
+									{t('form.agent.prompt.editor.variables.label')}
 								</Text>
 								<Badge size='xs' variant='light' color='gray' radius='sm'>
-									Dynamic & system
+									{t('form.agent.prompt.editor.variables.dynamicAndSystem')}
 								</Badge>
 							</Group>
 							<Text size='xs' c='dimmed'>
-								↑↓ to navigate, Enter to insert
+								{t('form.agent.prompt.editor.variables.popover.description')}
 							</Text>
 							<ScrollArea.Autosize mah={180}>
 								<Stack gap={2} className={styles.variableList}>
@@ -345,7 +347,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
 									))}
 									{filteredVariables.length === 0 && (
 										<Text size='xs' c='dimmed' ta='center' py='xs'>
-											No variables available.
+											{t('status.noData', { ns: 'common' })}
 										</Text>
 									)}
 								</Stack>
@@ -363,7 +365,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
 			<Modal
 				opened={showDiffPreview}
 				onClose={handleCancelDiffPreview}
-				title='Review changes before importing'
+				title={t('form.agent.prompt.editor.ai.modal.title.review')}
 				size='80%'
 				centered
 			>
