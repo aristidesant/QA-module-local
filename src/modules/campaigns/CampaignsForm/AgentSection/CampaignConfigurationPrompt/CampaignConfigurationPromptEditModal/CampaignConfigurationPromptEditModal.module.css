@@ -2,7 +2,7 @@
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	padding: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-xs);
 	background: var(--mantine-color-gray-0);
 	height: 100%;
 	width: 100%;
@@ -16,7 +16,7 @@
 	align-items: center;
 	justify-content: space-between;
 	gap: var(--mantine-spacing-xs);
-	padding-bottom: var(--mantine-spacing-xs);
+	padding-bottom: calc(var(--mantine-spacing-xs) - 2px);
 	border-bottom: 1px solid var(--mantine-color-gray-1);
 	min-height: 36px;
 }
@@ -37,7 +37,7 @@
 	font-weight: 600;
 	letter-spacing: -0.02em;
 	color: var(--mantine-color-dark-8);
-	font-size: 0.85rem;
+	font-size: 0.84rem;
 	line-height: 1.3;
 }
 
@@ -58,7 +58,7 @@
 
 .contentGrid {
 	display: grid;
-	grid-template-columns: 220px 1fr;
+	grid-template-columns: 230px 1fr;
 	gap: var(--mantine-spacing-xs);
 	height: 100%;
 	min-height: 0;
@@ -73,7 +73,7 @@
 	border: 1px solid var(--mantine-color-gray-2);
 	border-radius: var(--mantine-radius-sm);
 	background: var(--mantine-color-white);
-	padding: calc(var(--mantine-spacing-sm) - 2px);
+	padding: var(--mantine-spacing-xs);
 	min-height: 0;
 }
 
@@ -88,7 +88,7 @@
 .menuScroll {
 	flex: 1;
 	min-height: 0;
-	padding: var(--mantine-spacing-xs) 2px;
+	padding: 2px;
 }
 
 .menuItem {
@@ -98,14 +98,14 @@
 	justify-content: space-between;
 	gap: 6px;
 	width: 100%;
-	padding: 10px 12px;
+	padding: 8px 10px;
 	border-radius: calc(var(--mantine-radius-sm));
 	color: var(--mantine-color-text);
 	transition: background-color 100ms ease;
 	text-align: left;
-	border: 1px solid transparent;
+	border: 1px solid var(--mantine-color-gray-2);
 	background-color: var(--mantine-color-gray-0);
-	min-height: 42px;
+	min-height: 38px;
 }
 
 .menuItem:hover {
@@ -177,7 +177,7 @@
 .editorShell {
 	border: 1px solid var(--mantine-color-gray-2);
 	border-radius: var(--mantine-radius-sm);
-	padding: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-xs);
 	background: var(--mantine-color-white);
 	display: flex;
 	flex-direction: column;
@@ -194,7 +194,20 @@
 .editorHeaderText {
 	display: flex;
 	flex-direction: column;
-	gap: 1px;
+	gap: 2px;
+	min-width: 0;
+}
+
+.editorTitle {
+	letter-spacing: -0.01em;
+}
+
+.editorDescription {
+	line-height: 1.35;
+}
+
+.editorMeta {
+	align-items: center;
 }
 
 .editorContent {
@@ -209,7 +222,7 @@
 .emptyState {
 	border: 1px dashed var(--mantine-color-gray-2);
 	border-radius: var(--mantine-radius-sm);
-	padding: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-xs);
 	display: flex;
 	align-items: center;
 	justify-content: center;

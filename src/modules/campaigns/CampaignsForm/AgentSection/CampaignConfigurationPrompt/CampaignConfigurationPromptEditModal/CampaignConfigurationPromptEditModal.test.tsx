@@ -638,7 +638,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 			fireEvent.click(screen.getByTestId('prompt-menu-item-3'));
 
 			await waitFor(() => {
-				expect(screen.getByText('Empty')).toBeInTheDocument();
+				expect(screen.getAllByText('Empty').length).toBeGreaterThan(0);
 			});
 		});
 

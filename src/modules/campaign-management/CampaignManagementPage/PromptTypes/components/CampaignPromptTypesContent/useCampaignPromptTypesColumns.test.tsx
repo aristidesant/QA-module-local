@@ -2,8 +2,8 @@ import { renderHook, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useCampaignPromptTypesColumns } from './useCampaignPromptTypesColumns';
 import { CampaignPromptTypeModel } from '~/models/CampaignPromptTypeModel';
-import { MantineProvider } from '@mantine/core';
 import { vi } from 'vitest';
+import { TestProviders } from '~/test-utils/renderWithProviders';
 
 // Mock the styles to avoid issues with CSS modules in tests if not handled
 vi.mock('./CampaignPromptTypesContent.module.css', () => ({
@@ -14,6 +14,10 @@ vi.mock('./CampaignPromptTypesContent.module.css', () => ({
 		createdAt: 'createdAt',
 		actionsGroup: 'actionsGroup',
 		actionButton: 'actionButton',
+		infoButton: 'infoButton',
+		infoDropdown: 'infoDropdown',
+		infoRow: 'infoRow',
+		infoDescription: 'infoDescription',
 	},
 }));
 
@@ -23,7 +27,7 @@ describe('useCampaignPromptTypesColumns', () => {
 	const isDeletePending = false;
 
 	const wrapper = ({ children }: { children: React.ReactNode }) => (
-		<MantineProvider>{children}</MantineProvider>
+		<TestProviders>{children}</TestProviders>
 	);
 
 	it('should return the correct columns', () => {
@@ -38,12 +42,13 @@ describe('useCampaignPromptTypesColumns', () => {
 		);
 
 		const columns = result.current;
-		expect(columns).toHaveLength(5);
+		expect(columns).toHaveLength(6);
 		expect(columns[0].header).toBe('Order');
 		expect(columns[1].header).toBe('Name');
-		expect(columns[2].header).toBe('Icon');
-		expect(columns[3].header).toBe('Created');
-		expect(columns[4].header).toBe('Actions');
+		expect(columns[2].header).toBe('Info');
+		expect(columns[3].header).toBe('Icon');
+		expect(columns[4].header).toBe('Created');
+		expect(columns[5].header).toBe('Actions');
 	});
 
 	it('should render cell content correctly', () => {
@@ -63,6 +68,7 @@ describe('useCampaignPromptTypesColumns', () => {
 			name: 'Test Prompt',
 			order: 1,
 			icon: 'test-icon',
+			description: 'Short description',
 			createdAt: '2023-06-15T12:00:00Z',
 		};
 
@@ -73,9 +79,9 @@ describe('useCampaignPromptTypesColumns', () => {
 		) => {
 			const Cell = columns[columnIndex].cell as any;
 			return render(
-				<MantineProvider>
+				<TestProviders>
 					<Cell row={{ original: rowData }} />
-				</MantineProvider>
+				</TestProviders>
 			);
 		};
 
@@ -88,11 +94,11 @@ describe('useCampaignPromptTypesColumns', () => {
 		expect(getByTextName('Test Prompt')).toBeInTheDocument();
 
 		// Test Icon cell
-		const { getByText: getByTextIcon } = renderCell(2, mockData);
+		const { getByText: getByTextIcon } = renderCell(3, mockData);
 		expect(getByTextIcon('test-icon')).toBeInTheDocument();
 
 		// Test CreatedAt cell
-		const { getByText: getByTextDate } = renderCell(3, mockData);
+		const { getByText: getByTextDate } = renderCell(4, mockData);
 		// Date formatting might depend on locale, checking if it renders something
 		expect(getByTextDate(/2023/)).toBeInTheDocument();
 	});
@@ -114,14 +120,15 @@ describe('useCampaignPromptTypesColumns', () => {
 			name: 'Test Prompt',
 			order: 1,
 			icon: 'test-icon',
+			description: 'Short description',
 			createdAt: '2023-01-01T00:00:00Z',
 		};
 
-		const ActionsCell = columns[4].cell as any;
+		const ActionsCell = columns[5].cell as any;
 		const { getAllByRole } = render(
-			<MantineProvider>
+			<TestProviders>
 				<ActionsCell row={{ original: mockData }} />
-			</MantineProvider>
+			</TestProviders>
 		);
 
 		const buttons = getAllByRole('button');

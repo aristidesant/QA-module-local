@@ -873,6 +873,7 @@
 				"editor": {
 					"title": "Configuración del prompt",
 					"subtitle": "Configura los prompts para cada tipo de interacción.",
+					"descriptionFallback": "No hay descripción disponible.",
 					"status": {
 						"empty": "Vacío",
 						"drafted": "Borrador",

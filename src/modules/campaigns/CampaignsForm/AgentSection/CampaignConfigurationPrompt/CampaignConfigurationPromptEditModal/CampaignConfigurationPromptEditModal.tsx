@@ -174,6 +174,26 @@ const CampaignConfigurationPromptEditModal: React.FC<
 		return getPromptMeta(activeTypeId);
 	}, [activeTypeId, getPromptMeta]);
 
+	const activeStatus = useMemo(() => {
+		if (!activePromptMeta) return null;
+		if (!activePromptMeta.hasValue) {
+			return {
+				label: t('form.agent.prompt.editor.status.empty'),
+				color: 'gray' as const,
+			};
+		}
+		if (activePromptMeta.isDrafted) {
+			return {
+				label: t('form.agent.prompt.editor.status.drafted'),
+				color: 'blue' as const,
+			};
+		}
+		return {
+			label: t('form.agent.prompt.editor.status.saved'),
+			color: 'teal' as const,
+		};
+	}, [activePromptMeta, t]);
+
 	return (
 		<Paper radius='sm' className={styles.modalShell} withBorder>
 			<LoadingOverlay visible={isLoadingPrompts || isSaving} />
@@ -240,21 +260,30 @@ const CampaignConfigurationPromptEditModal: React.FC<
 									className={styles.editorHeader}
 								>
 									<Box className={styles.editorHeaderText}>
-										<Text fw={600} size='sm'>
+										<Text fw={600} size='sm' className={styles.editorTitle}>
 											{activeType.name}
 										</Text>
-									</Box>
-									{activePromptMeta && (
-										<Badge
+										<Text
 											size='xs'
-											variant='light'
-											color={activePromptMeta.isDrafted ? 'blue' : 'gray'}
-											radius='sm'
+											c='dimmed'
+											lineClamp={2}
+											className={styles.editorDescription}
 										>
-											{activePromptMeta.isDrafted
-												? t('form.agent.prompt.editor.status.drafted')
-												: t('form.agent.prompt.editor.status.saved')}
-										</Badge>
+											{activeType.description ??
+												t('form.agent.prompt.editor.descriptionFallback')}
+										</Text>
+									</Box>
+									{activeStatus && (
+										<Group gap='xs' className={styles.editorMeta}>
+											<Badge
+												size='xs'
+												variant='light'
+												color={activeStatus.color}
+												radius='sm'
+											>
+												{activeStatus.label}
+											</Badge>
+										</Group>
 									)}
 								</Group>
 								<Stack gap='xs' className={styles.editorContent}>

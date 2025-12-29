@@ -27,8 +27,8 @@ import type { CampaignPromptTypeModel } from '~/models/CampaignPromptTypeModel';
 import { useGetCampaignPrompts } from '~/queries/campaignPromptQueries';
 import { usePromptVariables } from '~/hooks/usePromptVariables';
 import CampaignConfigurationPromptHistoryModal from '~/modules/campaigns/CampaignsForm/AgentSection/CampaignConfigurationPrompt/CampaignConfigurationPromptHistoryModal';
-import styles from './PromptTypeAccordionItem.module.css';
 import '@uiw/react-md-editor/markdown-editor.css';
+import styles from './PromptEditor.module.css';
 import PromptAiActions from './PromptAiActions';
 
 type PromptEditorProps = {
@@ -230,14 +230,26 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
 	return (
 		<>
 			<Stack gap={4} className={styles.editorStack}>
-				<Group justify='space-between' gap='xs'>
-					<div>{headerLeftSection}</div>
-					<Tooltip label={t('promptHistory.viewFullPrompt')} withArrow>
+				<Group
+					justify='space-between'
+					gap='xs'
+					align='center'
+					className={styles.editorToolbar}
+				>
+					<Group gap='xs' align='center' className={styles.editorToolbarLeft}>
+						{headerLeftSection && (
+							<div className={styles.headerLeftSection}>
+								{headerLeftSection}
+							</div>
+						)}
+					</Group>
+					<Tooltip label={t('promptHistory.columns.viewFullPrompt')} withArrow>
 						<ActionIcon
 							variant='light'
 							color='gray'
 							size='sm'
 							aria-label={t('promptHistory.modalTitle')}
+							className={styles.historyAction}
 							onClick={() => setHistoryModalOpen(true)}
 						>
 							<IconHistory size={14} />
@@ -295,16 +307,16 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
 					</Popover.Target>
 					<Popover.Dropdown className={styles.variableDropdown}>
 						<Stack gap={4}>
-							<Group justify='space-between'>
-								<Text size='xs' fw={500}>
-									{t('form.agent.prompt.editor.variables.label')}
+							<Group justify='space-between' align='center'>
+								<Text size='xs' fw={600}>
+									{t('form.agent.prompt.editor.variables.popover.title')}
 								</Text>
 								<Badge size='xs' variant='light' color='gray' radius='sm'>
-									{t('form.agent.prompt.editor.variables.dynamicAndSystem')}
+									{t('form.agent.prompt.editor.variables.popover.badge')}
 								</Badge>
 							</Group>
 							<Text size='xs' c='dimmed'>
-								{t('form.agent.prompt.editor.variables.popover.description')}
+								{t('form.agent.prompt.editor.variables.popover.navigationHint')}
 							</Text>
 							<ScrollArea.Autosize mah={180}>
 								<Stack gap={2} className={styles.variableList}>
@@ -340,14 +352,20 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
 													color={variable.source === 'schema' ? 'blue' : 'gray'}
 													radius='sm'
 												>
-													{variable.source === 'schema' ? 'Dyn' : 'Sys'}
+													{variable.source === 'schema'
+														? t(
+																'form.agent.prompt.editor.variables.popover.source.dyn'
+															)
+														: t(
+																'form.agent.prompt.editor.variables.popover.source.sys'
+															)}
 												</Badge>
 											</Group>
 										</UnstyledButton>
 									))}
 									{filteredVariables.length === 0 && (
 										<Text size='xs' c='dimmed' ta='center' py='xs'>
-											{t('status.noData', { ns: 'common' })}
+											{t('form.agent.prompt.editor.variables.popover.empty')}
 										</Text>
 									)}
 								</Stack>

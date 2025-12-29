@@ -25,6 +25,7 @@ describe('CampaignPromptTypesForm', () => {
 		id: 1,
 		name: 'Test Prompt Type',
 		icon: 'IconSparkles',
+		description: 'Warm greeting prompt type',
 		order: 1,
 		createdAt: '2024-01-01T00:00:00.000Z',
 	};
@@ -60,6 +61,7 @@ describe('CampaignPromptTypesForm', () => {
 
 			expect(screen.getByLabelText(/Name/i)).toBeInTheDocument();
 			expect(screen.getByLabelText(/Icon/i)).toBeInTheDocument();
+			expect(screen.getByLabelText(/Description/i)).toBeInTheDocument();
 			expect(screen.queryByLabelText(/Order/i)).not.toBeInTheDocument();
 			expect(
 				screen.getByRole('button', { name: /Create/i })
@@ -80,6 +82,9 @@ describe('CampaignPromptTypesForm', () => {
 
 			expect(screen.getByLabelText(/Name/i)).toHaveValue('Test Prompt Type');
 			expect(screen.getByLabelText(/Icon/i)).toHaveValue('IconSparkles');
+			expect(screen.getByLabelText(/Description/i)).toHaveValue(
+				'Warm greeting prompt type'
+			);
 			expect(screen.getByLabelText(/Order/i)).toBeInTheDocument();
 			expect(
 				screen.getByRole('button', { name: /Update/i })
@@ -145,6 +150,10 @@ describe('CampaignPromptTypesForm', () => {
 
 			await user.type(screen.getByLabelText(/Name/i), 'New Prompt Type');
 			await user.type(screen.getByLabelText(/Icon/i), 'IconStar');
+			await user.type(
+				screen.getByLabelText(/Description/i),
+				'Short prompt type description'
+			);
 
 			await user.click(screen.getByRole('button', { name: /Create/i }));
 
@@ -152,6 +161,7 @@ describe('CampaignPromptTypesForm', () => {
 				expect(mockCreateMutateAsync).toHaveBeenCalledWith({
 					name: 'New Prompt Type',
 					icon: 'IconStar',
+					description: 'Short prompt type description',
 				});
 			});
 		});
@@ -260,6 +270,11 @@ describe('CampaignPromptTypesForm', () => {
 
 			await user.clear(screen.getByLabelText(/Name/i));
 			await user.type(screen.getByLabelText(/Name/i), 'Updated Name');
+			await user.clear(screen.getByLabelText(/Description/i));
+			await user.type(
+				screen.getByLabelText(/Description/i),
+				'Updated prompt type description'
+			);
 
 			await user.click(screen.getByRole('button', { name: /Update/i }));
 
@@ -269,6 +284,7 @@ describe('CampaignPromptTypesForm', () => {
 					data: {
 						name: 'Updated Name',
 						icon: 'IconSparkles',
+						description: 'Updated prompt type description',
 						order: 1,
 					},
 				});

@@ -714,9 +714,9 @@ describe('PromptEditor', () => {
 				expect(screen.getByText('customer_name')).toBeInTheDocument();
 			});
 
-			// Should see both Dyn (schema) and Sys (system) badges
-			expect(screen.getAllByText('Dyn').length).toBeGreaterThan(0);
-			expect(screen.getAllByText('Sys').length).toBeGreaterThan(0);
+			// Should see both Dynamic (schema) and System (system) badges
+			expect(screen.getAllByText('Dynamic').length).toBeGreaterThan(0);
+			expect(screen.getAllByText('System').length).toBeGreaterThan(0);
 		});
 
 		it('displays variable descriptions', async () => {

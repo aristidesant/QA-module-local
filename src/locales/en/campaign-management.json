@@ -49,6 +49,65 @@
 			"noResultsFiltersDescription": "Try adjusting your search criteria or filters",
 			"clearFilters": "Clear Filters",
 			"getStarted": "Get started by creating your first campaign schema"
+		},
+		"promptTypes": {
+			"form": {
+				"name": {
+					"label": "Name",
+					"placeholder": "Enter prompt type name"
+				},
+				"icon": {
+					"label": "Icon",
+					"placeholder": "Enter icon name (e.g., IconSparkles)"
+				},
+				"description": {
+					"label": "Description",
+					"placeholder": "Describe the prompt type (optional)"
+				},
+				"order": {
+					"label": "Order",
+					"placeholder": "1"
+				},
+				"actions": {
+					"cancel": "Cancel",
+					"create": "Create",
+					"update": "Update"
+				},
+				"validation": {
+					"nameRequired": "Name is required",
+					"iconRequired": "Icon is required",
+					"orderMin": "Order must be 1 or greater"
+				}
+			},
+			"notifications": {
+				"createSuccess": "Campaign prompt type created successfully",
+				"updateSuccess": "Campaign prompt type updated successfully"
+			},
+			"table": {
+				"headers": {
+					"order": "Order",
+					"name": "Name",
+					"info": "Info",
+					"icon": "Icon",
+					"created": "Created",
+					"actions": "Actions"
+				},
+				"empty": {
+					"icon": "Not set",
+					"created": "Not available",
+					"description": "No description provided.",
+					"order": "--"
+				},
+				"info": {
+					"aria": "View prompt type details",
+					"orderLabel": "Order: {{order}}",
+					"iconLabel": "Icon"
+				},
+				"actions": {
+					"edit": "Edit prompt type",
+					"delete": "Delete prompt type"
+				}
+			}
 		}
 	}
 }

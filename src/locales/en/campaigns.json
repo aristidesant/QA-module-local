@@ -873,6 +873,7 @@
 				"editor": {
 					"title": "Prompt Configuration",
 					"subtitle": "Configure prompts for each interaction type.",
+					"descriptionFallback": "No description available.",
 					"status": {
 						"empty": "Empty",
 						"drafted": "Drafted",

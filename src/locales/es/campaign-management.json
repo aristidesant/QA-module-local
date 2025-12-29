@@ -49,6 +49,65 @@
 			"noResultsFiltersDescription": "Intente ajustar su búsqueda o filtros",
 			"clearFilters": "Limpiar filtros",
 			"getStarted": "Comience creando su primer esquema de campaña"
+		},
+		"promptTypes": {
+			"form": {
+				"name": {
+					"label": "Nombre",
+					"placeholder": "Ingrese el nombre del tipo de prompt"
+				},
+				"icon": {
+					"label": "Icono",
+					"placeholder": "Ingrese el nombre del icono (p. ej., IconSparkles)"
+				},
+				"description": {
+					"label": "Descripción",
+					"placeholder": "Describa el tipo de prompt (opcional)"
+				},
+				"order": {
+					"label": "Orden",
+					"placeholder": "1"
+				},
+				"actions": {
+					"cancel": "Cancelar",
+					"create": "Crear",
+					"update": "Actualizar"
+				},
+				"validation": {
+					"nameRequired": "El nombre es obligatorio",
+					"iconRequired": "El icono es obligatorio",
+					"orderMin": "El orden debe ser 1 o mayor"
+				}
+			},
+			"notifications": {
+				"createSuccess": "Tipo de prompt de campaña creado exitosamente",
+				"updateSuccess": "Tipo de prompt de campaña actualizado exitosamente"
+			},
+			"table": {
+				"headers": {
+					"order": "Orden",
+					"name": "Nombre",
+					"info": "Info",
+					"icon": "Icono",
+					"created": "Creado",
+					"actions": "Acciones"
+				},
+				"empty": {
+					"icon": "No definido",
+					"created": "No disponible",
+					"description": "No hay descripción.",
+					"order": "--"
+				},
+				"info": {
+					"aria": "Ver detalles del tipo de prompt",
+					"orderLabel": "Orden: {{order}}",
+					"iconLabel": "Icono"
+				},
+				"actions": {
+					"edit": "Editar tipo de prompt",
+					"delete": "Eliminar tipo de prompt"
+				}
+			}
 		}
 	}
 }

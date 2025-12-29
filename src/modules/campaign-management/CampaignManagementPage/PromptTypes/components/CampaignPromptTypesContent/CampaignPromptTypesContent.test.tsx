@@ -3,6 +3,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { MantineProvider } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { I18nextProvider } from 'react-i18next';
+import { testI18n } from '~/test-utils/renderWithProviders';
 import type { CampaignPromptTypeModel } from '~/models/CampaignPromptTypeModel';
 import CampaignPromptTypesContent from './CampaignPromptTypesContent';
 
@@ -337,9 +339,11 @@ const renderWithProviders = (ui: React.ReactNode) => {
 	const queryClient = createTestQueryClient();
 	return render(
 		<QueryClientProvider client={queryClient}>
-			<MantineProvider>
-				<ModalsProvider>{ui}</ModalsProvider>
-			</MantineProvider>
+			<I18nextProvider i18n={testI18n}>
+				<MantineProvider>
+					<ModalsProvider>{ui}</ModalsProvider>
+				</MantineProvider>
+			</I18nextProvider>
 		</QueryClientProvider>
 	);
 };
@@ -916,9 +920,11 @@ describe('CampaignPromptTypesContent - Empty State', () => {
 		});
 		return render(
 			<QueryClientProvider client={queryClient}>
-				<MantineProvider>
-					<ModalsProvider>{ui}</ModalsProvider>
-				</MantineProvider>
+				<I18nextProvider i18n={testI18n}>
+					<MantineProvider>
+						<ModalsProvider>{ui}</ModalsProvider>
+					</MantineProvider>
+				</I18nextProvider>
 			</QueryClientProvider>
 		);
 	};
@@ -1065,9 +1071,11 @@ describe('useCampaignPromptTypesColumns hook integration', () => {
 		});
 		return render(
 			<QueryClientProvider client={queryClient}>
-				<MantineProvider>
-					<ModalsProvider>{ui}</ModalsProvider>
-				</MantineProvider>
+				<I18nextProvider i18n={testI18n}>
+					<MantineProvider>
+						<ModalsProvider>{ui}</ModalsProvider>
+					</MantineProvider>
+				</I18nextProvider>
 			</QueryClientProvider>
 		);
 	};
@@ -1076,12 +1084,13 @@ describe('useCampaignPromptTypesColumns hook integration', () => {
 		renderWithProviders(<CampaignPromptTypesContent {...defaultProps} />);
 
 		// Verify columns are captured and contain expected structure
-		expect(capturedColumns.length).toBe(5);
+		expect(capturedColumns.length).toBe(6);
 		expect(capturedColumns[0].accessorKey).toBe('order');
 		expect(capturedColumns[1].accessorKey).toBe('name');
-		expect(capturedColumns[2].accessorKey).toBe('icon');
-		expect(capturedColumns[3].accessorKey).toBe('createdAt');
-		expect(capturedColumns[4].id).toBe('actions');
+		expect(capturedColumns[2].id).toBe('info');
+		expect(capturedColumns[3].accessorKey).toBe('icon');
+		expect(capturedColumns[4].accessorKey).toBe('createdAt');
+		expect(capturedColumns[5].id).toBe('actions');
 	});
 
 	it('renders prompt type name with proper formatting', () => {
