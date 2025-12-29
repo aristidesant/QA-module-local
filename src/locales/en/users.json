@@ -81,12 +81,14 @@
 		"sidebar": {
 			"title": "Clients",
 			"description": "Select a client to assign roles",
+			"searchPlaceholder": "Search clients...",
 			"emptyClients": "No clients available"
 		},
 		"panel": {
+			"totalRolesLabel": "Total roles",
 			"assignedCount": "{{assigned}} of {{total}} roles assigned",
-			"totalRoles": "{{total}} total roles",
 			"loading": "Loading assignments",
+			"noDescription": "No description available",
 			"emptyRoles": "No roles available in the system.",
 			"emptyState": "Client and role assignments will appear here once available."
 		}

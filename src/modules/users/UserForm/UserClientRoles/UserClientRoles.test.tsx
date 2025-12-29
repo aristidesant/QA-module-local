@@ -311,10 +311,82 @@ describe('UserClientRoles', () => {
 		);
 	});
 
-	it('displays total roles count in badge', () => {
+	it('displays total roles count in the panel header', () => {
 		renderWithProviders(<UserClientRoles {...defaultProps} />);
 
-		expect(screen.getByText('2 total roles')).toBeInTheDocument();
+		expect(screen.getByText('2')).toBeInTheDocument();
+		expect(screen.getByText(/Total roles/i)).toBeInTheDocument();
+	});
+
+	describe('Filtering', () => {
+		it('renders search input', () => {
+			renderWithProviders(<UserClientRoles {...defaultProps} />);
+			expect(
+				screen.getByPlaceholderText(/Search clients.../i)
+			).toBeInTheDocument();
+		});
+
+		it('filters clients list based on search input', async () => {
+			const user = userEvent.setup();
+			renderWithProviders(<UserClientRoles {...defaultProps} />);
+
+			const searchInput = screen.getByPlaceholderText(/Search clients.../i);
+
+			// Initial state
+			expect(
+				screen.getByRole('button', { name: /Client Alpha/i })
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole('button', { name: /Client Beta/i })
+			).toBeInTheDocument();
+
+			// Type search query
+			await user.type(searchInput, 'Alpha');
+
+			expect(
+				screen.getByRole('button', { name: /Client Alpha/i })
+			).toBeInTheDocument();
+			expect(
+				screen.queryByRole('button', { name: /Client Beta/i })
+			).not.toBeInTheDocument();
+		});
+
+		it('clears filter when search is cleared', async () => {
+			const user = userEvent.setup();
+			renderWithProviders(<UserClientRoles {...defaultProps} />);
+
+			const searchInput = screen.getByPlaceholderText(/Search clients.../i);
+
+			await user.type(searchInput, 'Alpha');
+			expect(
+				screen.queryByRole('button', { name: /Client Beta/i })
+			).not.toBeInTheDocument();
+
+			await user.clear(searchInput);
+
+			expect(
+				screen.getByRole('button', { name: /Client Alpha/i })
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole('button', { name: /Client Beta/i })
+			).toBeInTheDocument();
+		});
+
+		it('shows no clients message when filter has no matches', async () => {
+			const user = userEvent.setup();
+			renderWithProviders(<UserClientRoles {...defaultProps} />);
+
+			const searchInput = screen.getByPlaceholderText(/Search clients.../i);
+
+			await user.type(searchInput, 'NonExistent');
+
+			expect(
+				screen.queryByRole('button', { name: /Client Alpha/i })
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole('button', { name: /Client Beta/i })
+			).not.toBeInTheDocument();
+		});
 	});
 });
 

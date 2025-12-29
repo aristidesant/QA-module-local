@@ -6,8 +6,16 @@ import {
 	ScrollArea,
 	Stack,
 	Text,
+	TextInput,
+	UnstyledButton,
+	Avatar,
 } from '@mantine/core';
-import { IconBuilding } from '@tabler/icons-react';
+import {
+	IconBuilding,
+	IconCheck,
+	IconSearch,
+	IconShieldLock,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { useGetAllClients } from '~/queries/clientQueries';
 import { useGetAllRoles } from '~/queries/roleQueries';
@@ -37,10 +45,20 @@ const UserClientRoles: React.FC<UserClientRolesProps> = ({
 		useGetAllClients();
 	const { data: roles = [], isLoading: isRolesLoading } = useGetAllRoles();
 	const [activeClientId, setActiveClientId] = useState<number | null>(null);
+	const [search, setSearch] = useState('');
+
 	const derivedUserId = useMemo(
 		() => userId ?? value.find((entry) => entry.userId)?.userId ?? 0,
 		[userId, value]
 	);
+
+	const filteredClients = useMemo(() => {
+		if (!search) return clients;
+		const query = search.toLowerCase();
+		return clients.filter((client) =>
+			client.name.toLowerCase().includes(query)
+		);
+	}, [clients, search]);
 
 	// Group current roles by client for quick lookups
 	const clientRoleEntries = useMemo<ClientRoleEntry[]>(() => {
@@ -58,25 +76,20 @@ const UserClientRoles: React.FC<UserClientRolesProps> = ({
 
 	// Set initial active client when data changes
 	useEffect(() => {
-		if (clients.length === 0) {
-			setActiveClientId(null);
+		if (filteredClients.length === 0) {
+			// Don't clear activeClientId if just filtered out,
+			// but we might want to select the first filtered if none is active
 			return;
 		}
 		if (activeClientId === null) {
 			const preferredClientId =
 				clientRoleEntries.find((entry) =>
-					clients.some((client) => client.id === entry.clientId)
-				)?.clientId ?? clients[0].id;
+					filteredClients.some((client) => client.id === entry.clientId)
+				)?.clientId ?? filteredClients[0].id;
 			setActiveClientId(preferredClientId);
 			return;
 		}
-		const existsInClients = clients.some(
-			(client) => client.id === activeClientId
-		);
-		if (!existsInClients) {
-			setActiveClientId(clients[0].id);
-		}
-	}, [activeClientId, clientRoleEntries, clients]);
+	}, [activeClientId, clientRoleEntries, filteredClients]);
 
 	// Toggle a role for the active client
 	const handleRoleToggle = useCallback(
@@ -156,54 +169,83 @@ const UserClientRoles: React.FC<UserClientRolesProps> = ({
 		<div className={classes.container}>
 			<div className={classes.clientSidebar}>
 				<div className={classes.clientSidebarHeader}>
-					<Text className={classes.sidebarTitle}>
+					<Text size='xs' className={classes.sidebarTitle}>
 						{t('clientRoles.sidebar.title')}
 					</Text>
-					<Text className={classes.sidebarDescription}>
-						{t('clientRoles.sidebar.description')}
-					</Text>
+
+					<div className={classes.searchContainer}>
+						<TextInput
+							size='sm'
+							placeholder={t('clientRoles.sidebar.searchPlaceholder')}
+							value={search}
+							onChange={(e) => setSearch(e.currentTarget.value)}
+							leftSection={<IconSearch size={14} />}
+							disabled={disabled || clients.length === 0}
+						/>
+					</div>
 				</div>
 				<ScrollArea
-					type='never'
+					type='auto'
 					offsetScrollbars
 					className={classes.clientScroll}
 				>
 					<div className={classes.clientList}>
-						{clients.map((client) => {
+						{filteredClients.map((client) => {
 							const count = getRoleCount(client.id);
 							const isActive = client.id === activeClientId;
 							return (
-								<button
+								<UnstyledButton
 									key={client.id}
-									type='button'
 									className={`${classes.clientTab} ${isActive ? classes.clientTabActive : ''}`}
 									onClick={() => setActiveClientId(client.id)}
 									disabled={disabled}
 								>
-									<span className={classes.clientTabLabel}>{client.name}</span>
-									{count > 0 && (
-										<Badge
-											color='blue'
+									<div className={classes.clientTabContent}>
+										<Avatar
+											size='sm'
+											radius='sm'
+											color={isActive ? 'blue' : 'gray'}
 											variant={isActive ? 'filled' : 'light'}
-											size='xs'
+											className={classes.clientAvatar}
+										>
+											<IconBuilding size={14} />
+										</Avatar>
+										<div className={classes.clientTabText}>
+											<Text size='sm' className={classes.clientTabLabel}>
+												{client.name}
+											</Text>
+										</div>
+									</div>
+									{isActive && (
+										<IconCheck size={18} className={classes.activeIcon} />
+									)}
+									{!isActive && count > 0 && (
+										<Badge
+											color='gray'
+											variant='light'
+											size='sm'
 											className={classes.clientCount}
 										>
 											{count}
 										</Badge>
 									)}
-								</button>
+								</UnstyledButton>
 							);
 						})}
+						{filteredClients.length === 0 && !isLoading && (
+							<div className={classes.emptyStateInline}>
+								<IconSearch
+									size={24}
+									stroke={1.5}
+									color='var(--mantine-color-gray-4)'
+								/>
+								<Text size='sm' fw={500} c='dimmed'>
+									{t('clientRoles.sidebar.emptyClients')}
+								</Text>
+							</div>
+						)}
 					</div>
 				</ScrollArea>
-				{clients.length === 0 && !isLoading && (
-					<div className={classes.emptyStateInline}>
-						<IconBuilding size={16} />
-						<Text size='xs' c='dimmed'>
-							{t('clientRoles.sidebar.emptyClients')}
-						</Text>
-					</div>
-				)}
 			</div>
 
 			<div className={classes.rolesPanel}>
@@ -211,67 +253,97 @@ const UserClientRoles: React.FC<UserClientRolesProps> = ({
 					<>
 						<div className={classes.rolesPanelHeader}>
 							<div className={classes.rolesPanelHeaderLeft}>
-								<Text className={classes.rolesPanelTitle}>
+								<Text size='xl' className={classes.rolesPanelTitle}>
 									{activeClientName}
 								</Text>
-								<Text className={classes.rolesPanelCount}>
+								<Text size='xs' className={classes.rolesPanelCount}>
 									{t('clientRoles.panel.assignedCount', {
 										assigned: activeClientRoleIds.size,
 										total: roles.length,
 									})}
 								</Text>
 							</div>
-							<Badge variant='light' color='gray' size='xs'>
-								{t('clientRoles.panel.totalRoles', { total: roles.length })}
-							</Badge>
-						</div>
-
-						{isLoading ? (
-							<div className={classes.loadingState}>
-								<Loader size='sm' />
-								<Text size='xs' c='dimmed'>
-									{t('clientRoles.panel.loading')}
+							<div className={classes.rolesPanelTotal}>
+								<Text size='xl' fw={700} ta='right' lh={1.2}>
+									{roles.length}
+								</Text>
+								<Text size='xs' c='dimmed' fw={600} tt='uppercase'>
+									{t('clientRoles.panel.totalRolesLabel')}
 								</Text>
 							</div>
-						) : (
-							<>
-								<div className={classes.rolesGrid}>
-									{roles.map((role) => {
-										const isChecked = activeClientRoleIds.has(role.id);
-										return (
-											<div
-												key={role.id}
-												className={`${classes.roleItem} ${isChecked ? classes.roleItemActive : ''}`}
-											>
+						</div>
+
+						<div className={classes.rolesPanelBody}>
+							{isLoading ? (
+								<div className={classes.loadingState}>
+									<Loader size='sm' />
+									<Text size='sm' c='dimmed' fw={500}>
+										{t('clientRoles.panel.loading')}
+									</Text>
+								</div>
+							) : (
+								<>
+									<div className={classes.rolesGrid}>
+										{roles.map((role) => {
+											const isChecked = activeClientRoleIds.has(role.id);
+											const roleDescription =
+												role.description?.trim() ||
+												t('clientRoles.panel.noDescription');
+											return (
 												<Checkbox
-													label={role.name}
-													size='xs'
+													key={role.id}
+													size='md'
 													checked={isChecked}
+													label={role.name}
+													description={roleDescription}
 													onChange={() => handleRoleToggle(role.id)}
 													disabled={disabled}
-													className={classes.roleCheckbox}
+													className={`${classes.roleItem} ${isChecked ? classes.roleItemActive : ''}`}
+													classNames={{
+														body: classes.roleCheckboxBody,
+														input: classes.roleCheckboxInput,
+														label: classes.roleCheckboxLabel,
+														description: classes.roleCheckboxDescription,
+													}}
 												/>
-											</div>
-										);
-									})}
-								</div>
-								{roles.length === 0 && (
-									<Text size='xs' c='dimmed' ta='center' py='sm'>
-										{t('clientRoles.panel.emptyRoles')}
-									</Text>
-								)}
-							</>
-						)}
+											);
+										})}
+									</div>
+									{roles.length === 0 && (
+										<Text
+											size='sm'
+											c='dimmed'
+											ta='center'
+											className={classes.rolesEmptyState}
+										>
+											{t('clientRoles.panel.emptyRoles')}
+										</Text>
+									)}
+								</>
+							)}
+						</div>
 					</>
 				)}
 				{activeClientId === null && (
 					<Stack align='center' gap='xs' className={classes.emptyState}>
 						<div className={classes.emptyStateIcon}>
-							<IconBuilding size={28} stroke={1.4} />
+							<IconShieldLock size={32} stroke={1.5} />
 						</div>
-						<Text size='sm' c='dimmed'>
-							{t('clientRoles.panel.emptyState')}
-						</Text>
+						<Stack gap='xs' align='center'>
+							<Text size='sm' fw={600} c='gray.8'>
+								{t('clientRoles.panel.emptyStateTitle', {
+									defaultValue: 'Select a Client',
+								})}
+							</Text>
+							<Text
+								size='xs'
+								c='dimmed'
+								ta='center'
+								className={classes.emptyStateDescription}
+							>
+								{t('clientRoles.panel.emptyState')}
+							</Text>
+						</Stack>
 					</Stack>
 				)}
 			</div>

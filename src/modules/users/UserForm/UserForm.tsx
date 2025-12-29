@@ -595,9 +595,7 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 							<Text className={classes.sectionTitle}>
 								{t('form.sections.roles.title')}
 							</Text>
-							<Text className={classes.sectionDescription}>
-								{t('form.sections.roles.description')}
-							</Text>
+							{/* Removed description to save space for the full-height layout */}
 						</div>
 						<UserClientRoles
 							value={form.values.userRoles}
