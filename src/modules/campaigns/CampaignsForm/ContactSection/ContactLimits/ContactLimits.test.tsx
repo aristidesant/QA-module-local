@@ -2,12 +2,106 @@ import { screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { ContactLimits } from './ContactLimits';
-import { MantineProvider } from '@mantine/core';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { renderWithProviders } from '~/test-utils/renderWithProviders';
-import { queryClient } from '~/test-utils/renderWithProviders';
-import type { ContactFileSummary } from '~/models/ContactFileSummary';
+import {
+	renderWithProviders,
+	testI18n,
+} from '~/test-utils/renderWithProviders';
+import type {
+	ContactFileSummary,
+	MappedResult,
+} from '~/models/ContactFileSummary';
 import type FileModel from '~/models/FileModel';
+import { useProcessContactGroupFile } from '~/queries/contactGroupFilesQueries';
+import {
+	useGetContactGroups,
+	useUpdateContactGroup,
+} from '~/queries/contactGroupQueries';
+import { useCampaignActiveSchedule } from '~/queries/schedulerQueries';
+import { useGetCampaign } from '~/queries/campaignsQueries';
+import type { Scheduler } from '~/models/SchedulerModel';
+
+type ProcessContactGroupFileResult = ReturnType<
+	typeof useProcessContactGroupFile
+>;
+type UpdateContactGroupResult = ReturnType<typeof useUpdateContactGroup>;
+type ContactGroupsResult = ReturnType<typeof useGetContactGroups>;
+type CampaignActiveScheduleResult = ReturnType<
+	typeof useCampaignActiveSchedule
+>;
+type GetCampaignResult = ReturnType<typeof useGetCampaign>;
+
+const tCampaigns = (key: string, options?: Record<string, unknown>) =>
+	testI18n.t(key, { ns: 'campaigns', ...options });
+const tCommon = (key: string) => testI18n.t(key, { ns: 'common' });
+
+const createProcessContactGroupFileResult = (
+	overrides?: Partial<ProcessContactGroupFileResult>
+): ProcessContactGroupFileResult =>
+	({
+		mutateAsync: vi.fn(),
+		isPending: false,
+		error: null,
+		...overrides,
+	}) as ProcessContactGroupFileResult;
+
+const createUpdateContactGroupResult = (
+	overrides?: Partial<UpdateContactGroupResult>
+): UpdateContactGroupResult =>
+	({
+		mutateAsync: vi.fn(),
+		isPending: false,
+		...overrides,
+	}) as UpdateContactGroupResult;
+
+const createContactGroupsResult = (
+	overrides?: Partial<ContactGroupsResult>
+): ContactGroupsResult =>
+	({
+		data: {
+			data: [
+				{ id: 1, name: 'Group 1', humanEquivalent: 5 },
+				{ id: 2, name: 'Group 2', humanEquivalent: 3 },
+			],
+		},
+		...overrides,
+	}) as ContactGroupsResult;
+
+const createCampaignActiveScheduleResult = (
+	overrides?: Partial<CampaignActiveScheduleResult>
+): CampaignActiveScheduleResult =>
+	({
+		data: undefined,
+		...overrides,
+	}) as CampaignActiveScheduleResult;
+
+const createScheduler = (overrides?: Partial<Scheduler>): Scheduler => ({
+	id: 1,
+	name: 'Default Schedule',
+	description: null,
+	campaignId: 1,
+	status: 'active',
+	humanEquivalent: 20,
+	callsPerHour: null,
+	estimatedCompletionDays: null,
+	totalWeekVolumes: null,
+	totalWeeklyHours: null,
+	userId: 1,
+	clientId: 1,
+	createdAt: '2025-01-01T00:00:00Z',
+	updatedAt: '2025-01-01T00:00:00Z',
+	deletedAt: null,
+	dayConfigs: [],
+	scheduleContactGroups: [],
+	...overrides,
+});
+
+const createGetCampaignResult = (
+	overrides?: Partial<GetCampaignResult>
+): GetCampaignResult =>
+	({
+		data: undefined,
+		...overrides,
+	}) as GetCampaignResult;
 
 // Helper to create a mock file summary
 const createMockFileSummary = (
@@ -49,21 +143,19 @@ vi.mock('~/queries/contactGroupQueries', () => ({
 		isPending: false,
 	})),
 	useGetContactGroups: vi.fn(() => ({
-		data: {
-			data: [
-				{ id: 1, name: 'Group 1', humanEquivalent: 5 },
-				{ id: 2, name: 'Group 2', humanEquivalent: 3 },
-			],
-		},
+		data: { data: [] },
 	})),
 }));
 
 vi.mock('~/queries/schedulerQueries', () => ({
 	useCampaignActiveSchedule: vi.fn(() => ({
-		data: {
-			id: 1,
-			humanEquivalent: 20,
-		},
+		data: undefined,
+	})),
+}));
+
+vi.mock('~/queries/campaignsQueries', () => ({
+	useGetCampaign: vi.fn(() => ({
+		data: undefined,
 	})),
 }));
 
@@ -75,8 +167,18 @@ vi.mock('@mantine/notifications', () => ({
 }));
 
 // Mock child components
+type ContactListInfoProps = {
+	listName?: string;
+	onNameChange?: (name: string) => void;
+};
+
+type ColumnMappingCardProps = {
+	headers?: string[];
+	onMappingChange?: (mappings: MappedResult) => void;
+};
+
 vi.mock('./ContactListInfo', () => ({
-	ContactListInfo: vi.fn(({ listName, onNameChange }) => (
+	ContactListInfo: vi.fn(({ listName, onNameChange }: ContactListInfoProps) => (
 		<div data-testid='contact-list-info'>
 			<span data-testid='list-name'>{listName}</span>
 			<button
@@ -90,7 +192,7 @@ vi.mock('./ContactListInfo', () => ({
 }));
 
 vi.mock('./ColumnMappingCard/ColumnMappingCard', () => ({
-	default: vi.fn(({ headers, onMappingChange }) => (
+	default: vi.fn(({ headers, onMappingChange }: ColumnMappingCardProps) => (
 		<div data-testid='column-mapping-card'>
 			<span data-testid='headers-count'>{headers?.length || 0}</span>
 			<button
@@ -112,6 +214,19 @@ vi.mock('../ContactList/CapacityProgress', () => ({
 describe('ContactLimits', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		vi.mocked(useProcessContactGroupFile).mockReturnValue(
+			createProcessContactGroupFileResult()
+		);
+		vi.mocked(useUpdateContactGroup).mockReturnValue(
+			createUpdateContactGroupResult()
+		);
+		vi.mocked(useGetContactGroups).mockReturnValue(createContactGroupsResult());
+		vi.mocked(useCampaignActiveSchedule).mockReturnValue(
+			createCampaignActiveScheduleResult({
+				data: createScheduler(),
+			})
+		);
+		vi.mocked(useGetCampaign).mockReturnValue(createGetCampaignResult());
 	});
 
 	describe('Basic rendering', () => {
@@ -128,7 +243,11 @@ describe('ContactLimits', () => {
 				<ContactLimits contactGroup={{ name: 'Test Group' }} campaignId={1} />
 			);
 
-			expect(screen.getByText(/Human equivalent/)).toBeInTheDocument();
+			expect(
+				screen.getByText(
+					`${tCampaigns('form.contacts.limits.humanEquivalentLabel')}: 1`
+				)
+			).toBeInTheDocument();
 			expect(screen.getByRole('slider')).toBeInTheDocument();
 		});
 
@@ -138,9 +257,13 @@ describe('ContactLimits', () => {
 			);
 
 			expect(
-				screen.getByRole('button', { name: 'Cancel' })
+				screen.getByRole('button', { name: tCommon('cancel') })
 			).toBeInTheDocument();
-			expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument();
+			expect(
+				screen.getByRole('button', {
+					name: tCampaigns('form.contacts.limits.actions.save'),
+				})
+			).toBeInTheDocument();
 		});
 
 		it('renders Update button when editing existing contact group', () => {
@@ -152,7 +275,9 @@ describe('ContactLimits', () => {
 			);
 
 			expect(
-				screen.getByRole('button', { name: 'Update' })
+				screen.getByRole('button', {
+					name: tCampaigns('form.contacts.limits.actions.update'),
+				})
 			).toBeInTheDocument();
 		});
 
@@ -215,7 +340,11 @@ describe('ContactLimits', () => {
 			);
 
 			// Total is 20, used is 5+3=8, so available is 12
-			expect(screen.getByText(/Available/)).toHaveTextContent(/12/);
+			expect(
+				screen.getByText(
+					`${tCampaigns('form.contacts.limits.availableLabel')}: 12`
+				)
+			).toBeInTheDocument();
 		});
 
 		it('uses contactGroup humanEquivalent as initial value', () => {
@@ -226,7 +355,11 @@ describe('ContactLimits', () => {
 				/>
 			);
 
-			expect(screen.getByText(/Human equivalent/)).toHaveTextContent(/5/);
+			expect(
+				screen.getByText(
+					`${tCampaigns('form.contacts.limits.humanEquivalentLabel')}: 5`
+				)
+			).toBeInTheDocument();
 		});
 
 		it('defaults to 1 when no humanEquivalent provided', () => {
@@ -234,7 +367,11 @@ describe('ContactLimits', () => {
 				<ContactLimits contactGroup={{ name: 'Test Group' }} campaignId={1} />
 			);
 
-			expect(screen.getByText(/Human equivalent/)).toHaveTextContent(/1/);
+			expect(
+				screen.getByText(
+					`${tCampaigns('form.contacts.limits.humanEquivalentLabel')}: 1`
+				)
+			).toBeInTheDocument();
 		});
 	});
 
@@ -251,7 +388,7 @@ describe('ContactLimits', () => {
 				/>
 			);
 
-			await user.click(screen.getByRole('button', { name: /cancel/i }));
+			await user.click(screen.getByRole('button', { name: tCommon('cancel') }));
 
 			expect(onComplete).toHaveBeenCalledTimes(1);
 		});
@@ -294,17 +431,14 @@ describe('ContactLimits', () => {
 				/>
 			);
 
-			const rerenderWithProviders = (ui: React.ReactNode) =>
-				rerender(
-					<QueryClientProvider client={queryClient}>
-						<MantineProvider>{ui}</MantineProvider>
-					</QueryClientProvider>
-				);
-
 			expect(screen.getByTestId('list-name')).toHaveTextContent('First Group');
-			expect(screen.getByText(/Human equivalent/)).toHaveTextContent(/2/);
+			expect(
+				screen.getByText(
+					`${tCampaigns('form.contacts.limits.humanEquivalentLabel')}: 2`
+				)
+			).toBeInTheDocument();
 
-			rerenderWithProviders(
+			rerender(
 				<ContactLimits
 					contactGroup={{ id: 2, name: 'Updated Group', humanEquivalent: 4 }}
 					campaignId={1}
@@ -314,15 +448,17 @@ describe('ContactLimits', () => {
 			expect(screen.getByTestId('list-name')).toHaveTextContent(
 				'Updated Group'
 			);
-			expect(screen.getByText(/Human equivalent/)).toHaveTextContent(/4/);
+			expect(
+				screen.getByText(
+					`${tCampaigns('form.contacts.limits.humanEquivalentLabel')}: 4`
+				)
+			).toBeInTheDocument();
 		});
 	});
 
 	describe('Scheduler capacity full alert', () => {
 		it('shows alert when scheduler is full for new contact group', async () => {
 			// Override mock to return full scheduler
-			const { useGetContactGroups } =
-				await import('~/queries/contactGroupQueries');
 			vi.mocked(useGetContactGroups).mockReturnValue({
 				data: {
 					data: [
@@ -330,21 +466,24 @@ describe('ContactLimits', () => {
 						{ id: 2, name: 'Group 2', humanEquivalent: 10 },
 					],
 				},
-			} as any);
+			} as ContactGroupsResult);
+			vi.mocked(useCampaignActiveSchedule).mockReturnValue(
+				createCampaignActiveScheduleResult({
+					data: createScheduler(),
+				})
+			);
 
 			renderWithProviders(
 				<ContactLimits contactGroup={{ name: 'Test Group' }} campaignId={1} />
 			);
 
 			expect(
-				screen.getByText('Scheduler capacity is full')
+				screen.getByText(tCampaigns('form.contacts.limits.capacityFull.title'))
 			).toBeInTheDocument();
 		});
 
 		it('disables Save button when scheduler is full', async () => {
 			// Override mock to return full scheduler
-			const { useGetContactGroups } =
-				await import('~/queries/contactGroupQueries');
 			vi.mocked(useGetContactGroups).mockReturnValue({
 				data: {
 					data: [
@@ -352,19 +491,26 @@ describe('ContactLimits', () => {
 						{ id: 2, name: 'Group 2', humanEquivalent: 10 },
 					],
 				},
-			} as any);
+			} as ContactGroupsResult);
+			vi.mocked(useCampaignActiveSchedule).mockReturnValue(
+				createCampaignActiveScheduleResult({
+					data: createScheduler(),
+				})
+			);
 
 			renderWithProviders(
 				<ContactLimits contactGroup={{ name: 'Test Group' }} campaignId={1} />
 			);
 
-			expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled();
+			expect(
+				screen.getByRole('button', {
+					name: tCampaigns('form.contacts.limits.actions.save'),
+				})
+			).toBeDisabled();
 		});
 
 		it('disables slider when scheduler is full', async () => {
 			// Override mock to return full scheduler
-			const { useGetContactGroups } =
-				await import('~/queries/contactGroupQueries');
 			vi.mocked(useGetContactGroups).mockReturnValue({
 				data: {
 					data: [
@@ -372,7 +518,12 @@ describe('ContactLimits', () => {
 						{ id: 2, name: 'Group 2', humanEquivalent: 10 },
 					],
 				},
-			} as any);
+			} as ContactGroupsResult);
+			vi.mocked(useCampaignActiveSchedule).mockReturnValue(
+				createCampaignActiveScheduleResult({
+					data: createScheduler(),
+				})
+			);
 
 			renderWithProviders(
 				<ContactLimits contactGroup={{ name: 'Test Group' }} campaignId={1} />
@@ -388,13 +539,9 @@ describe('ContactLimits', () => {
 
 	describe('Loading state', () => {
 		it('shows loading overlay when processing file', async () => {
-			const { useProcessContactGroupFile } =
-				await import('~/queries/contactGroupFilesQueries');
-			vi.mocked(useProcessContactGroupFile).mockReturnValue({
-				mutateAsync: vi.fn(),
-				isPending: true,
-				error: null,
-			} as any);
+			vi.mocked(useProcessContactGroupFile).mockReturnValue(
+				createProcessContactGroupFileResult({ isPending: true })
+			);
 
 			const { container } = renderWithProviders(
 				<ContactLimits contactGroup={{ name: 'Test Group' }} campaignId={1} />
@@ -406,12 +553,9 @@ describe('ContactLimits', () => {
 		});
 
 		it('shows loading overlay when updating contact group', async () => {
-			const { useUpdateContactGroup } =
-				await import('~/queries/contactGroupQueries');
-			vi.mocked(useUpdateContactGroup).mockReturnValue({
-				mutateAsync: vi.fn(),
-				isPending: true,
-			} as any);
+			vi.mocked(useUpdateContactGroup).mockReturnValue(
+				createUpdateContactGroupResult({ isPending: true })
+			);
 
 			const { container } = renderWithProviders(
 				<ContactLimits
@@ -426,30 +570,30 @@ describe('ContactLimits', () => {
 		});
 
 		it('disables buttons when loading', async () => {
-			const { useProcessContactGroupFile } =
-				await import('~/queries/contactGroupFilesQueries');
-			vi.mocked(useProcessContactGroupFile).mockReturnValue({
-				mutateAsync: vi.fn(),
-				isPending: true,
-				error: null,
-			} as any);
+			vi.mocked(useProcessContactGroupFile).mockReturnValue(
+				createProcessContactGroupFileResult({ isPending: true })
+			);
 
 			renderWithProviders(
 				<ContactLimits contactGroup={{ name: 'Test Group' }} campaignId={1} />
 			);
 
-			expect(screen.getByRole('button', { name: /cancel/i })).toBeDisabled();
-			expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled();
+			expect(
+				screen.getByRole('button', { name: tCommon('cancel') })
+			).toBeDisabled();
+			expect(
+				screen.getByRole('button', {
+					name: tCampaigns('form.contacts.limits.actions.save'),
+				})
+			).toBeDisabled();
 		});
 	});
 
 	describe('Without active scheduler', () => {
 		it('does not render CapacityProgress when no activeSchedule', async () => {
-			const { useCampaignActiveSchedule } =
-				await import('~/queries/schedulerQueries');
-			vi.mocked(useCampaignActiveSchedule).mockReturnValue({
-				data: null,
-			} as any);
+			vi.mocked(useCampaignActiveSchedule).mockReturnValue(
+				createCampaignActiveScheduleResult({ data: undefined })
+			);
 
 			renderWithProviders(
 				<ContactLimits contactGroup={{ name: 'Test Group' }} campaignId={1} />

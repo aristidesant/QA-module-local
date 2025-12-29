@@ -8,7 +8,6 @@ vi.mock('@mantine/notifications', () => ({
 	},
 }));
 import { notifications } from '@mantine/notifications';
-
 // Mock queries used in the component
 vi.mock('~/queries/contactGroupFilesQueries', () => ({
 	useUploadContactGroupFile: vi.fn(() => ({
@@ -44,11 +43,42 @@ vi.mock('../ContactLimits', () => ({
 }));
 
 import AddNewContactList from './AddNewContactList';
-import { renderWithProviders } from '~/test-utils/renderWithProviders';
+import {
+	renderWithProviders,
+	testI18n,
+} from '~/test-utils/renderWithProviders';
 import type { ContactFileSummary } from '~/models/ContactFileSummary';
 
 const onClose = vi.fn();
 const onRefresh = vi.fn();
+
+type UploadContactGroupFileResult = ReturnType<
+	typeof import('~/queries/contactGroupFilesQueries').useUploadContactGroupFile
+>;
+type CampaignSchedulesResult = ReturnType<
+	typeof import('~/queries/schedulerQueries').useCampaignSchedules
+>;
+
+const tCampaigns = (key: string, options?: Record<string, unknown>) =>
+	testI18n.t(key, { ns: 'campaigns', ...options });
+const tCommon = (key: string) => testI18n.t(key, { ns: 'common' });
+
+const createUploadContactGroupFileResult = (
+	overrides?: Partial<UploadContactGroupFileResult>
+): UploadContactGroupFileResult =>
+	({
+		mutateAsync: vi.fn(),
+		isPending: false,
+		...overrides,
+	}) as UploadContactGroupFileResult;
+
+const createCampaignSchedulesResult = (
+	overrides?: Partial<CampaignSchedulesResult>
+): CampaignSchedulesResult =>
+	({
+		refetch: vi.fn(),
+		...overrides,
+	}) as CampaignSchedulesResult;
 
 const createMockFileSummary = (
 	overrides?: Partial<ContactFileSummary>
@@ -90,8 +120,12 @@ describe('AddNewContactList', () => {
 			/>
 		);
 
-		expect(screen.getByText('Upload contact list')).toBeInTheDocument();
-		expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+		expect(
+			screen.getByText(tCampaigns('form.contacts.addNew.uploadLabel'))
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole('button', { name: tCommon('cancel') })
+		).toBeInTheDocument();
 	});
 
 	it('calls onClose when Cancel button clicked', async () => {
@@ -104,17 +138,16 @@ describe('AddNewContactList', () => {
 			/>
 		);
 
-		await user.click(screen.getByRole('button', { name: 'Cancel' }));
+		await user.click(screen.getByRole('button', { name: tCommon('cancel') }));
 		expect(onClose).toHaveBeenCalledTimes(1);
 	});
 
 	it('shows skeleton while uploading', async () => {
 		const { useUploadContactGroupFile } =
 			await import('~/queries/contactGroupFilesQueries');
-		vi.mocked(useUploadContactGroupFile).mockReturnValueOnce({
-			mutateAsync: vi.fn(),
-			isPending: true,
-		} as any);
+		vi.mocked(useUploadContactGroupFile).mockReturnValueOnce(
+			createUploadContactGroupFileResult({ isPending: true })
+		);
 
 		const { container } = renderWithProviders(
 			<AddNewContactList
@@ -146,7 +179,7 @@ describe('AddNewContactList', () => {
 		await waitFor(() =>
 			expect(notifications.show).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: 'No file selected',
+					title: tCampaigns('form.contacts.addNew.notifications.noFile.title'),
 				})
 			)
 		);
@@ -170,7 +203,9 @@ describe('AddNewContactList', () => {
 		await waitFor(() =>
 			expect(notifications.show).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: 'Invalid file type',
+					title: tCampaigns(
+						'form.contacts.addNew.notifications.invalidType.title'
+					),
 				})
 			)
 		);
@@ -182,10 +217,9 @@ describe('AddNewContactList', () => {
 		const { useUploadContactGroupFile } =
 			await import('~/queries/contactGroupFilesQueries');
 		const mutateAsync = vi.fn().mockResolvedValue(summary);
-		vi.mocked(useUploadContactGroupFile).mockReturnValue({
-			mutateAsync,
-			isPending: false,
-		} as any);
+		vi.mocked(useUploadContactGroupFile).mockReturnValue(
+			createUploadContactGroupFileResult({ mutateAsync })
+		);
 
 		const { container } = renderWithProviders(
 			<AddNewContactList
@@ -219,10 +253,9 @@ describe('AddNewContactList', () => {
 		const { useUploadContactGroupFile } =
 			await import('~/queries/contactGroupFilesQueries');
 		const mutateAsync = vi.fn().mockResolvedValue(createMockFileSummary());
-		vi.mocked(useUploadContactGroupFile).mockReturnValue({
-			mutateAsync,
-			isPending: false,
-		} as any);
+		vi.mocked(useUploadContactGroupFile).mockReturnValue(
+			createUploadContactGroupFileResult({ mutateAsync })
+		);
 
 		const { container } = renderWithProviders(
 			<AddNewContactList
@@ -250,10 +283,9 @@ describe('AddNewContactList', () => {
 			await import('~/queries/contactGroupFilesQueries');
 		const errorMessage = 'Network connection failed';
 		const mutateAsync = vi.fn().mockRejectedValue(new Error(errorMessage));
-		vi.mocked(useUploadContactGroupFile).mockReturnValue({
-			mutateAsync,
-			isPending: false,
-		} as any);
+		vi.mocked(useUploadContactGroupFile).mockReturnValue(
+			createUploadContactGroupFileResult({ mutateAsync })
+		);
 
 		const { container } = renderWithProviders(
 			<AddNewContactList
@@ -275,7 +307,9 @@ describe('AddNewContactList', () => {
 		await waitFor(() =>
 			expect(notifications.show).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: 'Upload failed',
+					title: tCampaigns(
+						'form.contacts.addNew.notifications.uploadFailed.title'
+					),
 					message: errorMessage,
 					color: 'red',
 				})
@@ -288,10 +322,9 @@ describe('AddNewContactList', () => {
 		const { useUploadContactGroupFile } =
 			await import('~/queries/contactGroupFilesQueries');
 		const mutateAsync = vi.fn().mockRejectedValue('string error');
-		vi.mocked(useUploadContactGroupFile).mockReturnValue({
-			mutateAsync,
-			isPending: false,
-		} as any);
+		vi.mocked(useUploadContactGroupFile).mockReturnValue(
+			createUploadContactGroupFileResult({ mutateAsync })
+		);
 
 		const { container } = renderWithProviders(
 			<AddNewContactList
@@ -313,8 +346,12 @@ describe('AddNewContactList', () => {
 		await waitFor(() =>
 			expect(notifications.show).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: 'Upload failed',
-					message: "We couldn't upload your file. Please try again.",
+					title: tCampaigns(
+						'form.contacts.addNew.notifications.uploadFailed.title'
+					),
+					message: tCampaigns(
+						'form.contacts.addNew.notifications.uploadFailed.message'
+					),
 					color: 'red',
 				})
 			)
@@ -361,10 +398,9 @@ describe('AddNewContactList', () => {
 		const { useUploadContactGroupFile } =
 			await import('~/queries/contactGroupFilesQueries');
 		const mutateAsync = vi.fn().mockResolvedValue(summary);
-		vi.mocked(useUploadContactGroupFile).mockReturnValue({
-			mutateAsync,
-			isPending: false,
-		} as any);
+		vi.mocked(useUploadContactGroupFile).mockReturnValue(
+			createUploadContactGroupFileResult({ mutateAsync })
+		);
 
 		const { container } = renderWithProviders(
 			<AddNewContactList
@@ -413,7 +449,7 @@ describe('AddNewContactList', () => {
 		await waitFor(() =>
 			expect(notifications.show).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: 'No file selected',
+					title: tCampaigns('form.contacts.addNew.notifications.noFile.title'),
 				})
 			)
 		);
@@ -425,16 +461,15 @@ describe('AddNewContactList', () => {
 		const { useUploadContactGroupFile } =
 			await import('~/queries/contactGroupFilesQueries');
 		const mutateAsync = vi.fn().mockResolvedValue(summary);
-		vi.mocked(useUploadContactGroupFile).mockReturnValue({
-			mutateAsync,
-			isPending: false,
-		} as any);
+		vi.mocked(useUploadContactGroupFile).mockReturnValue(
+			createUploadContactGroupFileResult({ mutateAsync })
+		);
 
 		const { useCampaignSchedules } = await import('~/queries/schedulerQueries');
 		const refetch = vi.fn();
-		vi.mocked(useCampaignSchedules).mockReturnValue({
-			refetch,
-		} as any);
+		vi.mocked(useCampaignSchedules).mockReturnValue(
+			createCampaignSchedulesResult({ refetch })
+		);
 
 		const { container } = renderWithProviders(
 			<AddNewContactList
@@ -473,10 +508,9 @@ describe('AddNewContactList', () => {
 		const { useUploadContactGroupFile } =
 			await import('~/queries/contactGroupFilesQueries');
 		const mutateAsync = vi.fn().mockResolvedValue(summary);
-		vi.mocked(useUploadContactGroupFile).mockReturnValue({
-			mutateAsync,
-			isPending: false,
-		} as any);
+		vi.mocked(useUploadContactGroupFile).mockReturnValue(
+			createUploadContactGroupFileResult({ mutateAsync })
+		);
 
 		const { container } = renderWithProviders(
 			<AddNewContactList
