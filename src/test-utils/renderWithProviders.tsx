@@ -22,6 +22,7 @@ import enConfigurations from '~/locales/en/configurations.json';
 import enConversations from '~/locales/en/conversations.json';
 import enDoNotCall from '~/locales/en/do-not-call.json';
 import enKnowledgeBases from '~/locales/en/knowledge-bases.json';
+import enKnowledgeBaseSelection from '~/locales/en/knowledgeBaseSelection.json';
 import enOutcomes from '~/locales/en/outcomes.json';
 import enOverview from '~/locales/en/overview.json';
 import enProfile from '~/locales/en/profile.json';
@@ -46,6 +47,7 @@ import esConfigurations from '~/locales/es/configurations.json';
 import esConversations from '~/locales/es/conversations.json';
 import esDoNotCall from '~/locales/es/do-not-call.json';
 import esKnowledgeBases from '~/locales/es/knowledge-bases.json';
+import esKnowledgeBaseSelection from '~/locales/es/knowledgeBaseSelection.json';
 import esOutcomes from '~/locales/es/outcomes.json';
 import esOverview from '~/locales/es/overview.json';
 import esProfile from '~/locales/es/profile.json';
@@ -85,6 +87,7 @@ testI18n.use(initReactI18next).init({
 		'conversations',
 		'do-not-call',
 		'knowledge-bases',
+		'knowledgeBaseSelection',
 		'outcomes',
 		'overview',
 		'profile',
@@ -111,6 +114,7 @@ testI18n.use(initReactI18next).init({
 			conversations: enConversations,
 			'do-not-call': enDoNotCall,
 			'knowledge-bases': enKnowledgeBases,
+			knowledgeBaseSelection: enKnowledgeBaseSelection,
 			outcomes: enOutcomes,
 			overview: enOverview,
 			profile: enProfile,
@@ -136,6 +140,7 @@ testI18n.use(initReactI18next).init({
 			conversations: esConversations,
 			'do-not-call': esDoNotCall,
 			'knowledge-bases': esKnowledgeBases,
+			knowledgeBaseSelection: esKnowledgeBaseSelection,
 			outcomes: esOutcomes,
 			overview: esOverview,
 			profile: esProfile,

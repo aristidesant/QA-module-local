@@ -33,27 +33,32 @@ type TypeFilter = 'ALL' | 'URL' | 'TEXT' | 'FILE';
 /** Type badge configuration */
 const typeConfig: Record<
 	KnowledgeBaseType,
-	{ color: string; label: string; icon: React.ComponentType<{ size?: number }> }
+	{
+		color: string;
+		labelKey: string;
+		icon: React.ComponentType<{ size?: number }>;
+	}
 > = {
 	[KnowledgeBaseType.FILE]: {
 		color: 'teal',
-		label: 'FILE',
+		labelKey: 'badges.file',
 		icon: IconFile,
 	},
 	[KnowledgeBaseType.URL]: {
 		color: 'blue',
-		label: 'URL',
+		labelKey: 'badges.url',
 		icon: IconLink,
 	},
 	[KnowledgeBaseType.TEXT]: {
 		color: 'orange',
-		label: 'TEXT',
+		labelKey: 'badges.text',
 		icon: IconTextRecognition,
 	},
 };
 
 /** Renders a type badge with icon */
 const TypeBadge: React.FC<{ type: KnowledgeBaseType }> = ({ type }) => {
+	const { t } = useTranslation('knowledgeBaseSelection');
 	const config = typeConfig[type] || typeConfig[KnowledgeBaseType.FILE];
 	const Icon = config.icon;
 	return (
@@ -64,7 +69,7 @@ const TypeBadge: React.FC<{ type: KnowledgeBaseType }> = ({ type }) => {
 			leftSection={<Icon size={12} />}
 			className={styles.typeBadge}
 		>
-			{config.label}
+			{t(config.labelKey)}
 		</Badge>
 	);
 };
@@ -97,9 +102,8 @@ const KnowledgeBaseSelectionTable: React.FC<
 	emptyMessage = '',
 	showFooter = true,
 }) => {
-	const { t } = useTranslation();
-	if (!emptyMessage)
-		emptyMessage = t('knowledgeBaseSelection.noKnowledgeBases');
+	const { t } = useTranslation('knowledgeBaseSelection');
+	const resolvedEmptyMessage = emptyMessage || t('noKnowledgeBases');
 	const {
 		selectedIds,
 		searchTerm,
@@ -191,7 +195,7 @@ const KnowledgeBaseSelectionTable: React.FC<
 								deselectAll(allIds);
 							}
 						}}
-						aria-label='Select all'
+						aria-label={t('aria.selectAll')}
 					/>
 				),
 				cell: ({ row }) => (
@@ -202,7 +206,7 @@ const KnowledgeBaseSelectionTable: React.FC<
 							onChange={(e) =>
 								setSelected(row.original.id, e.currentTarget.checked)
 							}
-							aria-label={`Select ${row.original.name}`}
+							aria-label={t('aria.selectItem', { name: row.original.name })}
 						/>
 					</div>
 				),
@@ -211,7 +215,7 @@ const KnowledgeBaseSelectionTable: React.FC<
 			},
 			{
 				id: 'name',
-				header: t('knowledgeBaseSelection.columns.name'),
+				header: t('columns.name'),
 				accessorFn: (row) => row.name,
 				enableSorting: true,
 				cell: ({ row }) => {
@@ -227,7 +231,7 @@ const KnowledgeBaseSelectionTable: React.FC<
 			},
 			{
 				id: 'description',
-				header: t('knowledgeBaseSelection.columns.description'),
+				header: t('columns.description'),
 				accessorFn: (row) => row.description ?? '',
 				enableSorting: true,
 				cell: ({ row }) => {
@@ -236,8 +240,8 @@ const KnowledgeBaseSelectionTable: React.FC<
 						kb.type === KnowledgeBaseType.URL
 							? kb.sourceUrl
 							: kb.type === KnowledgeBaseType.TEXT
-								? t('knowledgeBaseSelection.fallbacks.textSnippet')
-								: kb.file?.name || t('knowledgeBaseSelection.fallbacks.file');
+								? t('fallbacks.textSnippet')
+								: kb.file?.name || t('fallbacks.file');
 					return (
 						<Text
 							size='xs'
@@ -251,7 +255,7 @@ const KnowledgeBaseSelectionTable: React.FC<
 			},
 			{
 				id: 'type',
-				header: t('knowledgeBaseSelection.columns.type'),
+				header: t('columns.type'),
 				accessorFn: (row) => row.type,
 				enableSorting: true,
 				cell: ({ row }) => <TypeBadge type={row.original.type} />,
@@ -265,6 +269,7 @@ const KnowledgeBaseSelectionTable: React.FC<
 			selectAll,
 			deselectAll,
 			setSelected,
+			t,
 		]
 	);
 
@@ -283,7 +288,7 @@ const KnowledgeBaseSelectionTable: React.FC<
 					<TextInput
 						size='sm'
 						leftSection={<IconSearch size={14} />}
-						placeholder='Search knowledge bases'
+						placeholder={t('filters.search.placeholder')}
 						value={searchTerm}
 						onChange={(e) => setSearchTerm(e.currentTarget.value)}
 						className={styles.searchInput}
@@ -295,13 +300,17 @@ const KnowledgeBaseSelectionTable: React.FC<
 							onChange={(v) => setTypeFilter(v as TypeFilter)}
 							className={styles.typeFilter}
 							data={[
-								{ label: 'All', value: 'ALL' },
+								{ label: t('filters.types.all'), value: 'ALL' },
 								{
 									label: (
-										<Tooltip label='URL sources' withArrow position='top'>
+										<Tooltip
+											label={t('filters.tooltips.url')}
+											withArrow
+											position='top'
+										>
 											<Center>
 												<IconLink size={14} />
-												<Box ml={4}>URL</Box>
+												<Box ml={4}>{t('filters.types.url')}</Box>
 											</Center>
 										</Tooltip>
 									),
@@ -309,10 +318,14 @@ const KnowledgeBaseSelectionTable: React.FC<
 								},
 								{
 									label: (
-										<Tooltip label='Text snippets' withArrow position='top'>
+										<Tooltip
+											label={t('filters.tooltips.text')}
+											withArrow
+											position='top'
+										>
 											<Center>
 												<IconTextRecognition size={14} />
-												<Box ml={4}>Text</Box>
+												<Box ml={4}>{t('filters.types.text')}</Box>
 											</Center>
 										</Tooltip>
 									),
@@ -320,10 +333,14 @@ const KnowledgeBaseSelectionTable: React.FC<
 								},
 								{
 									label: (
-										<Tooltip label='Uploaded files' withArrow position='top'>
+										<Tooltip
+											label={t('filters.tooltips.file')}
+											withArrow
+											position='top'
+										>
 											<Center>
 												<IconFile size={14} />
-												<Box ml={4}>File</Box>
+												<Box ml={4}>{t('filters.types.file')}</Box>
 											</Center>
 										</Tooltip>
 									),
@@ -340,7 +357,7 @@ const KnowledgeBaseSelectionTable: React.FC<
 						leftSection={<IconPlus size={14} />}
 						onClick={onCreateNew}
 					>
-						Create new
+						{t('actions.createNew')}
 					</Button>
 				)}
 			</div>
@@ -351,7 +368,7 @@ const KnowledgeBaseSelectionTable: React.FC<
 					columns={columns}
 					density='compact'
 					isLoading={isLoading}
-					emptyMessage={emptyMessage}
+					emptyMessage={resolvedEmptyMessage}
 					filterMode='server'
 					initialSort={sorting}
 					onSortingChange={(newSorting) => {
@@ -373,17 +390,17 @@ const KnowledgeBaseSelectionTable: React.FC<
 			{showFooter && (
 				<div className={styles.footer}>
 					<Text className={styles.selectionCount}>
-						{selectedIds.size} selected
+						{t('selection.count', { count: selectedIds.size })}
 					</Text>
 					<div className={styles.actions}>
 						{onCancel && (
 							<Button variant='default' size='sm' onClick={onCancel}>
-								Cancel
+								{t('actions.cancel', { ns: 'common' })}
 							</Button>
 						)}
 						{onSave && (
 							<Button size='sm' onClick={handleSave}>
-								Save Selections
+								{t('actions.saveSelections')}
 							</Button>
 						)}
 					</div>

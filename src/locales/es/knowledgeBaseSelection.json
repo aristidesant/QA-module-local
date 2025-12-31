@@ -1,0 +1,44 @@
+{
+	"noKnowledgeBases": "No se encontraron bases de conocimiento",
+	"columns": {
+		"name": "Nombre",
+		"description": "Descripción",
+		"type": "Tipo"
+	},
+	"badges": {
+		"file": "ARCHIVO",
+		"url": "URL",
+		"text": "TEXTO"
+	},
+	"fallbacks": {
+		"textSnippet": "Fragmento de texto",
+		"file": "Archivo cargado"
+	},
+	"filters": {
+		"search": {
+			"placeholder": "Buscar bases de conocimiento"
+		},
+		"types": {
+			"all": "Todas",
+			"url": "URL",
+			"text": "Texto",
+			"file": "Archivo"
+		},
+		"tooltips": {
+			"url": "Fuentes URL",
+			"text": "Fragmentos de texto",
+			"file": "Archivos cargados"
+		}
+	},
+	"actions": {
+		"createNew": "Crear nuevo",
+		"saveSelections": "Guardar selecciones"
+	},
+	"selection": {
+		"count": "{{count}} seleccionadas"
+	},
+	"aria": {
+		"selectAll": "Seleccionar todo",
+		"selectItem": "Seleccionar {{name}}"
+	}
+}

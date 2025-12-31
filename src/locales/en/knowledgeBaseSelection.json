@@ -1,0 +1,44 @@
+{
+	"noKnowledgeBases": "No knowledge bases found",
+	"columns": {
+		"name": "Name",
+		"description": "Description",
+		"type": "Type"
+	},
+	"badges": {
+		"file": "FILE",
+		"url": "URL",
+		"text": "TEXT"
+	},
+	"fallbacks": {
+		"textSnippet": "Text snippet",
+		"file": "Uploaded file"
+	},
+	"filters": {
+		"search": {
+			"placeholder": "Search knowledge bases"
+		},
+		"types": {
+			"all": "All",
+			"url": "URL",
+			"text": "Text",
+			"file": "File"
+		},
+		"tooltips": {
+			"url": "URL sources",
+			"text": "Text snippets",
+			"file": "Uploaded files"
+		}
+	},
+	"actions": {
+		"createNew": "Create new",
+		"saveSelections": "Save Selections"
+	},
+	"selection": {
+		"count": "{{count}} selected"
+	},
+	"aria": {
+		"selectAll": "Select all",
+		"selectItem": "Select {{name}}"
+	}
+}
