@@ -1,0 +1,15 @@
+.dropdown {
+	background-color: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-3);
+	padding: var(--mantine-spacing-xs);
+	min-width: 260px;
+}
+
+.iconTarget {
+	cursor: pointer;
+}
+
+.statItem {
+	display: grid;
+	gap: 2px;
+}
