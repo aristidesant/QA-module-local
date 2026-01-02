@@ -83,9 +83,18 @@ describe('useCampaignsColumns', () => {
 		return renderWithProviders(<TestComponent />);
 	};
 
-	it('renders name cell with hover card details', () => {
+	it('renders name cell with hover card details', async () => {
 		renderCell('name', sampleCampaign);
 		expect(screen.getByText('Sample')).toBeInTheDocument();
+
+		const trigger = screen.getByTestId('campaign-info-trigger');
+		fireEvent.mouseEnter(trigger);
+
+		// HoverCard content should now be visible or at least in the DOM
+		expect(await screen.findByText('Campaign Details')).toBeInTheDocument();
+		expect(screen.getByText('ID: 123')).toBeInTheDocument();
+		expect(screen.getByText('Created by:')).toBeInTheDocument();
+		expect(screen.getByText('Created on:')).toBeInTheDocument();
 	});
 
 	it('renders draft badge for draft campaigns', () => {

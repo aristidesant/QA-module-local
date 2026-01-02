@@ -8,6 +8,7 @@ import {
 	ThemeIcon,
 	HoverCard,
 	Stack,
+	Divider,
 } from '@mantine/core';
 import {
 	IconTrash,
@@ -32,7 +33,7 @@ import {
 	CampaignStatusConfig,
 	CampaignStatusConfigType,
 } from '~/models/CampaignStatus';
-import { timeAgo } from '~/utils/dateUtils';
+import { timeAgo, formatExpirationDate as formatDate } from '~/utils/dateUtils';
 import { useTranslation } from 'react-i18next';
 
 // Helper to get status info
@@ -92,23 +93,68 @@ export const useCampaignsColumns = ({
 									color='blue'
 									size={'xs'}
 									style={{ cursor: 'pointer' }}
+									data-testid='campaign-info-trigger'
 								>
 									<IconInfoCircle size={16} />
 								</ThemeIcon>
 							</HoverCard.Target>
 							<HoverCard.Dropdown>
 								<Stack gap='xs'>
-									<Group justify='space-between'>
+									<Group justify='space-between' wrap='nowrap'>
 										<Text size='sm' fw={700}>
 											{t('columns.campaignDetails')}
 										</Text>
-										<Badge size='xs' variant='outline' color='gray'>
+										<Badge
+											size='xs'
+											variant='light'
+											color='blue'
+											radius='sm'
+											style={{ textTransform: 'none' }}
+										>
 											ID: {campaign.id}
 										</Badge>
 									</Group>
-									<Text size='xs' c='dimmed'>
+
+									<Text size='xs' c='dimmed' lineClamp={3}>
 										{campaign.description || t('columns.noDescription')}
 									</Text>
+
+									<Divider variant='dashed' />
+
+									<Stack gap={4}>
+										<Group gap={6} wrap='nowrap'>
+											<Text size='xs' fw={600} c='dimmed'>
+												{t('columns.createdBy')}:
+											</Text>
+											<Text size='xs' fw={500}>
+												{campaign.user?.username || t('columns.noUser')}
+											</Text>
+										</Group>
+
+										<Group gap={6} wrap='nowrap'>
+											<Text size='xs' fw={600} c='dimmed'>
+												{t('columns.createdOn')}:
+											</Text>
+											<Text size='xs' fw={500}>
+												{formatDate(campaign.createdAt)}
+											</Text>
+										</Group>
+
+										<Group gap={6} wrap='nowrap'>
+											<Text size='xs' fw={600} c='dimmed'>
+												{t('columns.type')}:
+											</Text>
+											<Badge
+												size='xs'
+												variant='dot'
+												color={campaign.type === 'OUTBOUND' ? 'teal' : 'violet'}
+											>
+												{campaign.type === 'OUTBOUND'
+													? t('columns.outbound')
+													: t('columns.inbound')}
+											</Badge>
+										</Group>
+									</Stack>
 								</Stack>
 							</HoverCard.Dropdown>
 						</HoverCard>

@@ -48,7 +48,10 @@
 		"editCampaign": "Editar campaña",
 		"testCall": "Llamada de Prueba",
 		"cloneCampaign": "Clonar campaña",
-		"deleteCampaign": "Eliminar campaña"
+		"deleteCampaign": "Eliminar campaña",
+		"createdBy": "Creado por",
+		"createdOn": "Creado el",
+		"noUser": "Sistema"
 	},
 	"filters": {
 		"title": "Filtros",

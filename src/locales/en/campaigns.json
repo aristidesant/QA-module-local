@@ -48,7 +48,10 @@
 		"editCampaign": "Edit campaign",
 		"testCall": "Test Call",
 		"cloneCampaign": "Clone campaign",
-		"deleteCampaign": "Delete campaign"
+		"deleteCampaign": "Delete campaign",
+		"createdBy": "Created by",
+		"createdOn": "Created on",
+		"noUser": "System"
 	},
 	"filters": {
 		"title": "Filters",
