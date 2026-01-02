@@ -43,6 +43,16 @@ vi.mock('react-router', () => ({
 	useParams: () => ({ campaignId: '123' }),
 }));
 
+const mockOpenConfirm = vi.fn();
+
+vi.mock('@mantine/modals', () => ({
+	modals: {
+		openConfirmModal: (args: any) => mockOpenConfirm(args),
+		open: vi.fn(),
+		close: vi.fn(),
+	},
+}));
+
 vi.mock('~/queries/campaignPromptTypeQueries', () => ({
 	useGetAllCampaignPromptTypes: () => ({
 		data: mockTypesData,
@@ -324,6 +334,10 @@ describe('CampaignConfigurationPromptEditModal', () => {
 
 			fireEvent.click(screen.getByRole('button', { name: /^Save$/i }));
 
+			// Trigger onConfirm from mock
+			const { onConfirm } = mockOpenConfirm.mock.calls[0][0];
+			onConfirm();
+
 			expect(mockSaveBatch).toHaveBeenCalledWith(
 				expect.objectContaining({
 					prompts: expect.arrayContaining([
@@ -362,6 +376,11 @@ describe('CampaignConfigurationPromptEditModal', () => {
 
 			fireEvent.click(screen.getByRole('button', { name: /^Save$/i }));
 
+			// Trigger onConfirm from mock
+			const { onConfirm } =
+				mockOpenConfirm.mock.calls[mockOpenConfirm.mock.calls.length - 1][0];
+			onConfirm();
+
 			expect(mockSaveBatch).toHaveBeenCalledWith(
 				expect.objectContaining({
 					prompts: expect.arrayContaining([
@@ -397,6 +416,11 @@ describe('CampaignConfigurationPromptEditModal', () => {
 
 			fireEvent.click(screen.getByRole('button', { name: /^Save$/i }));
 
+			// Trigger onConfirm from mock
+			const { onConfirm } =
+				mockOpenConfirm.mock.calls[mockOpenConfirm.mock.calls.length - 1][0];
+			onConfirm();
+
 			expect(mockSaveBatch).toHaveBeenCalledWith(
 				expect.objectContaining({
 					prompts: expect.arrayContaining([
@@ -427,6 +451,11 @@ describe('CampaignConfigurationPromptEditModal', () => {
 
 			fireEvent.click(screen.getByRole('button', { name: /^Save$/i }));
 
+			// Trigger onConfirm from mock
+			const { onConfirm } =
+				mockOpenConfirm.mock.calls[mockOpenConfirm.mock.calls.length - 1][0];
+			onConfirm();
+
 			const savedPrompts = mockSaveBatch.mock.calls[0][0].prompts;
 			expect(savedPrompts).not.toContainEqual(
 				expect.objectContaining({ typeId: 3 })
@@ -454,6 +483,11 @@ describe('CampaignConfigurationPromptEditModal', () => {
 
 			fireEvent.click(screen.getByRole('button', { name: /^Save$/i }));
 
+			// Trigger onConfirm from mock
+			const { onConfirm } =
+				mockOpenConfirm.mock.calls[mockOpenConfirm.mock.calls.length - 1][0];
+			onConfirm();
+
 			const savedPrompts = mockSaveBatch.mock.calls[0][0].prompts;
 			expect(savedPrompts).not.toContainEqual(
 				expect.objectContaining({ typeId: 3, prompt: '   ' })
@@ -480,6 +514,10 @@ describe('CampaignConfigurationPromptEditModal', () => {
 
 			fireEvent.click(screen.getByRole('button', { name: /^Save$/i }));
 
+			// Trigger onConfirm from mock
+			const { onConfirm } = mockOpenConfirm.mock.calls[0][0];
+			onConfirm();
+
 			expect(mockOnSave).toHaveBeenCalledTimes(1);
 			expect(mockOnClose).toHaveBeenCalledTimes(1);
 		});
@@ -502,6 +540,11 @@ describe('CampaignConfigurationPromptEditModal', () => {
 			});
 
 			fireEvent.click(screen.getByRole('button', { name: /^Save$/i }));
+
+			// Trigger onConfirm from mock
+			const { onConfirm } =
+				mockOpenConfirm.mock.calls[mockOpenConfirm.mock.calls.length - 1][0];
+			onConfirm();
 
 			expect(mockSaveBatch).toHaveBeenCalledWith(
 				expect.objectContaining({

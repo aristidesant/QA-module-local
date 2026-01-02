@@ -871,7 +871,11 @@
 				"modal": {
 					"types": "Tipos",
 					"selectPromptType": "Selecciona un tipo de prompt para empezar a editar.",
-					"saveHint": "Guarda para aplicar los prompts en toda esta campaña."
+					"saveHint": "Guarda para aplicar los prompts en toda esta campaña.",
+					"saveConfirmation": {
+						"title": "¿Aplicar Cambios?",
+						"message": "¿Estás seguro de que deseas guardar estos cambios? Esto actualizará la configuración de la campaña inmediatamente."
+					}
 				},
 				"editor": {
 					"title": "Configuración del prompt",

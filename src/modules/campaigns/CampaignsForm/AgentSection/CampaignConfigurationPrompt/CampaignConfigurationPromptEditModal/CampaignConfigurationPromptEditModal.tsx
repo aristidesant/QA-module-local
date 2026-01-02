@@ -26,6 +26,8 @@ import PromptEditor from './PromptTypeAccordionItem/PromptEditor';
 import PromptMenuItem from './PromptMenuItem';
 import { useTranslation } from 'react-i18next';
 
+import { modals } from '@mantine/modals';
+
 const normalizePromptValue = (value: string) =>
 	value.replace(/\r\n/g, '\n').trim();
 
@@ -154,15 +156,29 @@ const CampaignConfigurationPromptEditModal: React.FC<
 				};
 			});
 
-		saveBatch(
-			{ prompts: promptsList },
-			{
-				onSuccess: () => {
-					props.onSave();
-					props.onClose();
-				},
-			}
-		);
+		modals.openConfirmModal({
+			title: t('form.agent.prompt.modal.saveConfirmation.title'),
+			children: (
+				<Text size='sm'>
+					{t('form.agent.prompt.modal.saveConfirmation.message')}
+				</Text>
+			),
+			labels: {
+				confirm: t('actions.save', { ns: 'common' }),
+				cancel: t('actions.cancel', { ns: 'common' }),
+			},
+			onConfirm: () => {
+				saveBatch(
+					{ prompts: promptsList },
+					{
+						onSuccess: () => {
+							props.onSave();
+							props.onClose();
+						},
+					}
+				);
+			},
+		});
 	};
 
 	const activeType = useMemo(() => {

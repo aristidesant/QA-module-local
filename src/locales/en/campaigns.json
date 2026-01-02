@@ -871,7 +871,11 @@
 				"modal": {
 					"types": "Types",
 					"selectPromptType": "Select a prompt type to start editing.",
-					"saveHint": "Save to apply prompts throughout this campaign."
+					"saveHint": "Save to apply prompts throughout this campaign.",
+					"saveConfirmation": {
+						"title": "Apply Changes?",
+						"message": "Are you sure you want to save these changes? This will update the campaign configuration immediately."
+					}
 				},
 				"editor": {
 					"title": "Prompt Configuration",
