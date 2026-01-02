@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { ActionIcon, Button, Group, Text, Tooltip } from '@mantine/core';
 import { IconPlus, IconX } from '@tabler/icons-react';
 import type { ColumnDef } from '@tanstack/react-table';
+import { useTranslation } from 'react-i18next';
 import BaseTable from '~/components/BaseTable';
 import PaginationControls from '~/components/PaginationControls';
 import { useCampaignObjectivesWithFilters } from '~/modules/campaigns/hooks/useFilteredObjectives';
@@ -23,6 +24,7 @@ export default function ObjectivePickerPanel({
 	onSelect,
 	onClose,
 }: ObjectivePickerPanelProps) {
+	const { t } = useTranslation('campaign-management');
 	const [showCreate, setShowCreate] = useState(false);
 	const {
 		objectives,
@@ -37,7 +39,7 @@ export default function ObjectivePickerPanel({
 		() => [
 			{
 				accessorKey: 'name',
-				header: 'Objective',
+				header: t('setup.objectives.picker.table.headers.objective'),
 				cell: ({ row }) => (
 					<Text size='sm' fw={600}>
 						{row.original.name}
@@ -46,7 +48,7 @@ export default function ObjectivePickerPanel({
 			},
 			{
 				accessorKey: 'categoryName',
-				header: 'Category',
+				header: t('setup.objectives.picker.table.headers.category'),
 				size: 160,
 				cell: ({ row }) => (
 					<Text size='sm' c='dimmed'>
@@ -70,14 +72,18 @@ export default function ObjectivePickerPanel({
 									onSelect({ id: row.original.id, name: row.original.name })
 								}
 							>
-								{isSelected ? 'Selected' : 'Select'}
+								{t(
+									isSelected
+										? 'setup.objectives.picker.table.actions.selected'
+										: 'setup.objectives.picker.table.actions.select'
+								)}
 							</Button>
 						</Group>
 					);
 				},
 			},
 		],
-		[onSelect, selectedObjectiveId]
+		[onSelect, selectedObjectiveId, t]
 	);
 
 	return (
@@ -85,10 +91,10 @@ export default function ObjectivePickerPanel({
 			<div className={styles.header}>
 				<div className={styles.headerText}>
 					<Text size='xs' fw={600}>
-						Pick an objective
+						{t('setup.objectives.picker.title')}
 					</Text>
 					<Text size='xs' c='dimmed'>
-						Select an existing objective, or create a new one.
+						{t('setup.objectives.picker.description')}
 					</Text>
 				</div>
 				<Group gap='xs'>
@@ -99,10 +105,10 @@ export default function ObjectivePickerPanel({
 						type='button'
 						onClick={() => setShowCreate((v) => !v)}
 					>
-						New objective
+						{t('setup.objectives.picker.newButton')}
 					</Button>
 					{onClose && (
-						<Tooltip label='Close' withArrow>
+						<Tooltip label={t('setup.objectives.picker.closeLabel')} withArrow>
 							<ActionIcon
 								size='sm'
 								variant='subtle'
@@ -156,7 +162,7 @@ export default function ObjectivePickerPanel({
 					}
 				}}
 				isLoading={isLoading}
-				itemLabel='objectives'
+				itemLabel={t('setup.objectives.pagination.itemLabel')}
 			/>
 		</div>
 	);

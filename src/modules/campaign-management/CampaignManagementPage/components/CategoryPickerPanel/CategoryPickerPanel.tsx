@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { ActionIcon, Button, Group, Text, Tooltip } from '@mantine/core';
 import { IconPlus, IconX } from '@tabler/icons-react';
 import type { ColumnDef } from '@tanstack/react-table';
+import { useTranslation } from 'react-i18next';
 import BaseTable from '~/components/BaseTable';
 import PaginationControls from '~/components/PaginationControls';
 import { useCampaignCategoriesWithFilters } from '~/modules/campaigns/hooks/useFilteredCategories';
@@ -21,6 +22,7 @@ export default function CategoryPickerPanel({
 	onSelect,
 	onClose,
 }: CategoryPickerPanelProps) {
+	const { t } = useTranslation('campaign-management');
 	const [showCreate, setShowCreate] = useState(false);
 	const {
 		categories,
@@ -35,7 +37,7 @@ export default function CategoryPickerPanel({
 		() => [
 			{
 				accessorKey: 'name',
-				header: 'Category',
+				header: t('setup.categories.picker.table.headers.category'),
 				cell: ({ row }) => (
 					<Text size='sm' fw={600}>
 						{row.original.name}
@@ -44,7 +46,7 @@ export default function CategoryPickerPanel({
 			},
 			{
 				accessorKey: 'code',
-				header: 'Code',
+				header: t('setup.categories.picker.table.headers.code'),
 				size: 140,
 				cell: ({ row }) => (
 					<Text size='sm' c='dimmed'>
@@ -68,14 +70,18 @@ export default function CategoryPickerPanel({
 									onSelect({ id: row.original.id, name: row.original.name })
 								}
 							>
-								{isSelected ? 'Selected' : 'Select'}
+								{t(
+									isSelected
+										? 'setup.categories.picker.table.actions.selected'
+										: 'setup.categories.picker.table.actions.select'
+								)}
 							</Button>
 						</Group>
 					);
 				},
 			},
 		],
-		[onSelect, selectedCategoryId]
+		[onSelect, selectedCategoryId, t]
 	);
 
 	return (
@@ -83,10 +89,10 @@ export default function CategoryPickerPanel({
 			<div className={styles.header}>
 				<div className={styles.headerText}>
 					<Text size='xs' fw={600}>
-						Pick a category
+						{t('setup.categories.picker.title')}
 					</Text>
 					<Text size='xs' c='dimmed'>
-						Select an existing category, or create a new one.
+						{t('setup.categories.picker.description')}
 					</Text>
 				</div>
 				<Group gap='xs'>
@@ -97,10 +103,10 @@ export default function CategoryPickerPanel({
 						type='button'
 						onClick={() => setShowCreate((v) => !v)}
 					>
-						New category
+						{t('setup.categories.picker.newButton')}
 					</Button>
 					{onClose && (
-						<Tooltip label='Close' withArrow>
+						<Tooltip label={t('setup.categories.picker.closeLabel')} withArrow>
 							<ActionIcon
 								size='sm'
 								variant='subtle'
@@ -154,7 +160,7 @@ export default function CategoryPickerPanel({
 					}
 				}}
 				isLoading={isLoading}
-				itemLabel='categories'
+				itemLabel={t('setup.categories.pagination.itemLabel')}
 			/>
 		</div>
 	);

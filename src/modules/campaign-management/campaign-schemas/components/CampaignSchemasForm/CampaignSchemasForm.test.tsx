@@ -1,9 +1,8 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import CampaignSchemasForm from './CampaignSchemasForm';
 import { CampaignContactSchema } from '~/models/CampaignContactSchemaModel';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 vi.mock(
 	'~/modules/campaign-management/CampaignManagementPage/components/ObjectivePickerPanel',
@@ -55,22 +54,6 @@ vi.mock('~/queries/campaignObjectivesQueries', () => ({
 		},
 	}),
 }));
-
-const createTestQueryClient = () =>
-	new QueryClient({
-		defaultOptions: {
-			queries: { retry: false },
-		},
-	});
-
-const renderWithProviders = (ui: React.ReactNode) => {
-	const queryClient = createTestQueryClient();
-	return render(
-		<QueryClientProvider client={queryClient}>
-			<MantineProvider>{ui}</MantineProvider>
-		</QueryClientProvider>
-	);
-};
 
 const mockSchema: CampaignContactSchema = {
 	id: 1,

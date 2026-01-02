@@ -9,6 +9,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
+import { useTranslation } from 'react-i18next';
 import {
 	useCreateCampaignCategory,
 	useUpdateCampaignCategory,
@@ -33,6 +34,7 @@ export const CampaignCategoriesForm: React.FC<CampaignCategoriesFormProps> = ({
 	onCancel,
 	withinParentForm = false,
 }) => {
+	const { t } = useTranslation('campaign-management');
 	const isEditing = !!category;
 	const createCategory = useCreateCampaignCategory();
 	const updateCategory = useUpdateCampaignCategory();
@@ -40,22 +42,34 @@ export const CampaignCategoriesForm: React.FC<CampaignCategoriesFormProps> = ({
 	const form = useForm({
 		initialValues: {
 			name: category?.name || '',
-			code: category?.code || '',
 			description: category?.description || '',
 			active: category?.active ?? true,
 		},
 		validate: {
-			name: (value) => (!value ? 'Name is required' : null),
-			code: (value) => (!value ? 'Code is required' : null),
+			name: (value) =>
+				!value ? t('setup.categories.form.validation.nameRequired') : null,
 		},
 	});
+
+	const getErrorMessage = (error: unknown) => {
+		if (!error || typeof error !== 'object') return '';
+		const response = (error as { response?: { data?: { message?: string } } })
+			.response;
+		if (response?.data?.message) return response.data.message;
+		if (
+			'message' in error &&
+			typeof (error as { message?: string }).message === 'string'
+		) {
+			return (error as { message?: string }).message ?? '';
+		}
+		return '';
+	};
 
 	const handleSubmit = async (values: typeof form.values) => {
 		try {
 			if (isEditing) {
 				const updateData: UpdateCampaignCategoryRequest = {
 					name: values.name,
-					code: values.code,
 					description: values.description,
 					active: values.active,
 				};
@@ -64,33 +78,35 @@ export const CampaignCategoriesForm: React.FC<CampaignCategoriesFormProps> = ({
 					data: updateData,
 				});
 				notifications.show({
-					title: 'Success',
-					message: 'Campaign category updated successfully',
+					title: t('status.success', { ns: 'common' }),
+					message: t('setup.categories.notifications.updateSuccess'),
 					color: 'green',
 				});
 			} else {
 				const createData: CreateCampaignCategoryRequest = {
 					name: values.name,
-					code: values.code,
 					description: values.description,
 					active: values.active,
 				};
 				await createCategory.mutateAsync(createData);
 				notifications.show({
-					title: 'Success',
-					message: 'Campaign category created successfully',
+					title: t('status.success', { ns: 'common' }),
+					message: t('setup.categories.notifications.createSuccess'),
 					color: 'green',
 				});
 			}
 			onSuccess();
-		} catch (error: any) {
-			const errorMessage =
-				error?.response?.data?.message || error?.message || '';
+		} catch (error: unknown) {
+			const errorMessage = getErrorMessage(error);
 			notifications.show({
-				title: 'Error',
+				title: t('status.error', { ns: 'common' }),
 				message:
 					errorMessage ||
-					`Failed to ${isEditing ? 'update' : 'create'} campaign category`,
+					t(
+						isEditing
+							? 'setup.categories.notifications.updateError'
+							: 'setup.categories.notifications.createError'
+					),
 				color: 'red',
 			});
 		}
@@ -105,50 +121,52 @@ export const CampaignCategoriesForm: React.FC<CampaignCategoriesFormProps> = ({
 	};
 
 	const content = (
-		<Stack gap='md'>
+		<Stack gap='xs'>
 			<TextInput
-				label='Name'
-				placeholder='Enter category name'
+				size='sm'
+				label={t('setup.categories.form.name.label')}
+				placeholder={t('setup.categories.form.name.placeholder')}
 				required
 				{...form.getInputProps('name')}
 			/>
 
-			<TextInput
-				label='Code'
-				placeholder='Enter category code'
-				required
-				{...form.getInputProps('code')}
-			/>
-
 			<Textarea
-				label='Description'
-				placeholder='Enter category description (optional)'
+				size='sm'
+				label={t('setup.categories.form.description.label')}
+				placeholder={t('setup.categories.form.description.placeholder')}
 				rows={3}
 				{...form.getInputProps('description')}
 			/>
 
 			<Switch
-				label='Active'
-				description='When enabled, this category will be available for use'
+				size='sm'
+				label={t('setup.categories.form.active.label')}
+				description={t('setup.categories.form.active.description')}
 				{...form.getInputProps('active', { type: 'checkbox' })}
 			/>
 
-			<Group justify='flex-end' gap='sm' className={styles.actions}>
+			<Group justify='flex-end' gap='xs' className={styles.actions}>
 				<Button
+					size='sm'
 					variant='subtle'
 					type='button'
 					onClick={onCancel}
 					disabled={isLoading}
 				>
-					Cancel
+					{t('actions.cancel', { ns: 'common' })}
 				</Button>
 				<Button
+					size='sm'
 					type={withinParentForm ? 'button' : 'submit'}
 					loading={isLoading}
 					className={styles.submitButton}
 					onClick={withinParentForm ? handleClickSubmit : undefined}
 				>
-					{isEditing ? 'Update' : 'Create'}
+					{t(
+						isEditing
+							? 'setup.categories.form.actions.update'
+							: 'setup.categories.form.actions.create'
+					)}
 				</Button>
 			</Group>
 		</Stack>

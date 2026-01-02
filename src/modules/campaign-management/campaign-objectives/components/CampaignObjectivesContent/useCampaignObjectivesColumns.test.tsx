@@ -1,5 +1,11 @@
-import { useCampaignObjectivesColumns } from './useCampaignObjectivesColumns';
-import { vi } from 'vitest';
+import { renderHook } from '@testing-library/react';
+import type { ColumnDef } from '@tanstack/react-table';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { TestProviders } from '~/test-utils/renderWithProviders';
+import {
+	useCampaignObjectivesColumns,
+	type EnrichedObjective,
+} from './useCampaignObjectivesColumns';
 
 describe('useCampaignObjectivesColumns', () => {
 	const mockOnEdit = vi.fn();
@@ -10,99 +16,147 @@ describe('useCampaignObjectivesColumns', () => {
 	});
 
 	it('returns an array of column definitions', () => {
-		const columns = useCampaignObjectivesColumns({
-			onEdit: mockOnEdit,
-			onDelete: mockOnDelete,
-			isDeletePending: false,
-		});
+		const { result } = renderHook(
+			() =>
+				useCampaignObjectivesColumns({
+					onEdit: mockOnEdit,
+					onDelete: mockOnDelete,
+					isDeletePending: false,
+				}),
+			{ wrapper: TestProviders }
+		);
 
-		expect(Array.isArray(columns)).toBe(true);
-		expect(columns.length).toBeGreaterThan(0);
+		expect(Array.isArray(result.current)).toBe(true);
+		expect(result.current.length).toBeGreaterThan(0);
 	});
 
 	it('includes name column', () => {
-		const columns = useCampaignObjectivesColumns({
-			onEdit: mockOnEdit,
-			onDelete: mockOnDelete,
-			isDeletePending: false,
-		});
+		const { result } = renderHook(
+			() =>
+				useCampaignObjectivesColumns({
+					onEdit: mockOnEdit,
+					onDelete: mockOnDelete,
+					isDeletePending: false,
+				}),
+			{ wrapper: TestProviders }
+		);
 
-		const nameColumn = columns.find((col: any) => col.accessorKey === 'name');
+		const nameColumn = result.current.find(
+			(col): col is ColumnDef<EnrichedObjective> & { accessorKey: string } =>
+				(col as { accessorKey?: unknown }).accessorKey === 'name'
+		);
 		expect(nameColumn).toBeDefined();
 		expect(nameColumn?.header).toBe('Name');
 	});
 
 	it('includes categoryName column', () => {
-		const columns = useCampaignObjectivesColumns({
-			onEdit: mockOnEdit,
-			onDelete: mockOnDelete,
-			isDeletePending: false,
-		});
+		const { result } = renderHook(
+			() =>
+				useCampaignObjectivesColumns({
+					onEdit: mockOnEdit,
+					onDelete: mockOnDelete,
+					isDeletePending: false,
+				}),
+			{ wrapper: TestProviders }
+		);
 
-		const categoryColumn = columns.find(
-			(col: any) => col.accessorKey === 'categoryName'
+		const categoryColumn = result.current.find(
+			(col): col is ColumnDef<EnrichedObjective> & { accessorKey: string } =>
+				(col as { accessorKey?: unknown }).accessorKey === 'categoryName'
 		);
 		expect(categoryColumn).toBeDefined();
 		expect(categoryColumn?.header).toBe('Category');
 	});
 
 	it('includes description column', () => {
-		const columns = useCampaignObjectivesColumns({
-			onEdit: mockOnEdit,
-			onDelete: mockOnDelete,
-			isDeletePending: false,
-		});
+		const { result } = renderHook(
+			() =>
+				useCampaignObjectivesColumns({
+					onEdit: mockOnEdit,
+					onDelete: mockOnDelete,
+					isDeletePending: false,
+				}),
+			{ wrapper: TestProviders }
+		);
 
-		const descColumn = columns.find(
-			(col: any) => col.accessorKey === 'description'
+		const descColumn = result.current.find(
+			(col): col is ColumnDef<EnrichedObjective> & { accessorKey: string } =>
+				(col as { accessorKey?: unknown }).accessorKey === 'description'
 		);
 		expect(descColumn).toBeDefined();
 		expect(descColumn?.header).toBe('Description');
 	});
 
 	it('includes active status column', () => {
-		const columns = useCampaignObjectivesColumns({
-			onEdit: mockOnEdit,
-			onDelete: mockOnDelete,
-			isDeletePending: false,
-		});
+		const { result } = renderHook(
+			() =>
+				useCampaignObjectivesColumns({
+					onEdit: mockOnEdit,
+					onDelete: mockOnDelete,
+					isDeletePending: false,
+				}),
+			{ wrapper: TestProviders }
+		);
 
-		const activeColumn = columns.find(
-			(col: any) => col.accessorKey === 'active'
+		const activeColumn = result.current.find(
+			(col): col is ColumnDef<EnrichedObjective> & { accessorKey: string } =>
+				(col as { accessorKey?: unknown }).accessorKey === 'active'
 		);
 		expect(activeColumn).toBeDefined();
 		expect(activeColumn?.header).toBe('Status');
 	});
 
 	it('includes actions column', () => {
-		const columns = useCampaignObjectivesColumns({
-			onEdit: mockOnEdit,
-			onDelete: mockOnDelete,
-			isDeletePending: false,
-		});
+		const { result } = renderHook(
+			() =>
+				useCampaignObjectivesColumns({
+					onEdit: mockOnEdit,
+					onDelete: mockOnDelete,
+					isDeletePending: false,
+				}),
+			{ wrapper: TestProviders }
+		);
 
-		const actionsColumn = columns.find((col: any) => col.id === 'actions');
+		const actionsColumn = result.current.find(
+			(col): col is ColumnDef<EnrichedObjective> & { id: string } =>
+				(col as { id?: unknown }).id === 'actions'
+		);
 		expect(actionsColumn).toBeDefined();
 		expect(actionsColumn?.header).toBe('Actions');
 	});
 
 	it('returns the same columns reference for same inputs', () => {
-		const firstCall = useCampaignObjectivesColumns({
-			onEdit: mockOnEdit,
-			onDelete: mockOnDelete,
-			isDeletePending: false,
-		});
-
-		const secondCall = useCampaignObjectivesColumns({
-			onEdit: mockOnEdit,
-			onDelete: mockOnDelete,
-			isDeletePending: false,
-		});
-
-		// Note: This test verifies the function returns consistent structure
-		expect(firstCall.length).toBe(secondCall.length);
-		expect((firstCall[0] as any).accessorKey).toBe(
-			(secondCall[0] as any).accessorKey
+		const { result, rerender } = renderHook(
+			({ onEdit, onDelete, isDeletePending }) =>
+				useCampaignObjectivesColumns({ onEdit, onDelete, isDeletePending }),
+			{
+				initialProps: {
+					onEdit: mockOnEdit,
+					onDelete: mockOnDelete,
+					isDeletePending: false,
+				},
+				wrapper: TestProviders,
+			}
 		);
+
+		const firstResult = result.current.map((column) => ({
+			accessorKey: (column as { accessorKey?: unknown }).accessorKey,
+			id: (column as { id?: unknown }).id,
+			header: column.header,
+		}));
+
+		rerender({
+			onEdit: mockOnEdit,
+			onDelete: mockOnDelete,
+			isDeletePending: false,
+		});
+
+		expect(
+			result.current.map((column) => ({
+				accessorKey: (column as { accessorKey?: unknown }).accessorKey,
+				id: (column as { id?: unknown }).id,
+				header: column.header,
+			}))
+		).toEqual(firstResult);
 	});
 });

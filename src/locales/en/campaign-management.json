@@ -15,10 +15,92 @@
 			"create": "Create Category",
 			"edit": "Edit Campaign Category",
 			"sectionCardDescription": "Organize categories used to classify campaigns and apply filters.",
+			"form": {
+				"name": {
+					"label": "Name",
+					"placeholder": "Enter category name"
+				},
+				"description": {
+					"label": "Description",
+					"placeholder": "Enter category description (optional)"
+				},
+				"active": {
+					"label": "Active",
+					"description": "When enabled, this category will be available for use"
+				},
+				"actions": {
+					"create": "Create",
+					"update": "Update"
+				},
+				"validation": {
+					"nameRequired": "Name is required"
+				}
+			},
+			"notifications": {
+				"createSuccess": "Campaign category created successfully",
+				"createError": "Failed to create campaign category",
+				"updateSuccess": "Campaign category updated successfully",
+				"updateError": "Failed to update campaign category"
+			},
+			"table": {
+				"headers": {
+					"name": "Name",
+					"code": "Code",
+					"description": "Description",
+					"status": "Status",
+					"actions": "Actions"
+				},
+				"empty": {
+					"description": "No description"
+				},
+				"status": {
+					"active": "Active",
+					"inactive": "Inactive"
+				},
+				"actions": {
+					"edit": "Edit category",
+					"delete": "Delete category"
+				}
+			},
+			"filters": {
+				"title": "Filters",
+				"activeCount": "{{count}} active",
+				"searchPlaceholder": "Search by name, code, or description...",
+				"statusPlaceholder": "Status",
+				"statusOptions": {
+					"all": "All Status",
+					"active": "Active",
+					"inactive": "Inactive"
+				},
+				"clear": "Clear all filters"
+			},
+			"pagination": {
+				"showing": "Showing {{start}}-{{end}} of {{total}} categories",
+				"itemsPerPage": "Items per page:",
+				"readOnlyNote": "* Pagination is currently read-only. Live pagination will be available after backend updates.",
+				"itemLabel": "categories"
+			},
+			"picker": {
+				"title": "Pick a category",
+				"description": "Select an existing category, or create a new one.",
+				"newButton": "New category",
+				"closeLabel": "Close",
+				"table": {
+					"headers": {
+						"category": "Category",
+						"code": "Code"
+					},
+					"actions": {
+						"select": "Select",
+						"selected": "Selected"
+					}
+				}
+			},
 			"deleteSuccess": "Campaign category deleted successfully",
 			"deleteError": "Failed to delete campaign category",
 			"noResults": "No categories found",
 			"noResultsFilters": "No categories match your filters",
+			"noResultsFiltersDescription": "Try adjusting your search criteria or filters",
 			"getStarted": "Get started by creating your first campaign category"
 		},
 		"objectives": {
@@ -28,6 +110,94 @@
 			"create": "Create Objective",
 			"edit": "Edit Campaign Objective",
 			"sectionCardDescription": "Add and manage campaign objectives to define expected outcomes and tracking.",
+			"form": {
+				"name": {
+					"label": "Name",
+					"placeholder": "Enter objective name"
+				},
+				"category": {
+					"label": "Category",
+					"placeholder": "Select a category",
+					"browseAria": "Browse categories"
+				},
+				"description": {
+					"label": "Description",
+					"placeholder": "Enter objective description (optional)"
+				},
+				"active": {
+					"label": "Active",
+					"description": "When enabled, this objective will be available for use"
+				},
+				"actions": {
+					"create": "Create",
+					"update": "Update"
+				},
+				"validation": {
+					"nameRequired": "Name is required",
+					"categoryRequired": "Category is required"
+				}
+			},
+			"notifications": {
+				"createSuccess": "Campaign objective created successfully",
+				"createError": "Failed to create campaign objective",
+				"updateSuccess": "Campaign objective updated successfully",
+				"updateError": "Failed to update campaign objective"
+			},
+			"table": {
+				"headers": {
+					"name": "Name",
+					"category": "Category",
+					"description": "Description",
+					"status": "Status",
+					"actions": "Actions"
+				},
+				"empty": {
+					"description": "No description"
+				},
+				"status": {
+					"active": "Active",
+					"inactive": "Inactive"
+				},
+				"actions": {
+					"edit": "Edit objective",
+					"delete": "Delete objective"
+				}
+			},
+			"filters": {
+				"title": "Filters",
+				"activeCount": "{{count}} active",
+				"searchPlaceholder": "Search by name or description...",
+				"categoryPlaceholder": "Category",
+				"statusPlaceholder": "Status",
+				"statusOptions": {
+					"all": "All Status",
+					"active": "Active",
+					"inactive": "Inactive"
+				},
+				"categories": {
+					"all": "All Categories"
+				},
+				"clear": "Clear all filters"
+			},
+			"pagination": {
+				"itemLabel": "objectives"
+			},
+			"picker": {
+				"title": "Pick an objective",
+				"description": "Select an existing objective, or create a new one.",
+				"newButton": "New objective",
+				"closeLabel": "Close",
+				"table": {
+					"headers": {
+						"objective": "Objective",
+						"category": "Category"
+					},
+					"actions": {
+						"select": "Select",
+						"selected": "Selected"
+					}
+				}
+			},
 			"deleteSuccess": "Campaign objective deleted successfully",
 			"deleteError": "Failed to delete campaign objective",
 			"noResults": "No objectives found",
@@ -42,6 +212,111 @@
 			"create": "Create Schema",
 			"edit": "Edit Campaign Schema",
 			"sectionCardDescription": "Campaign Schemas where the objectives belong to",
+			"form": {
+				"name": {
+					"label": "Name",
+					"placeholder": "Enter schema name"
+				},
+				"icon": {
+					"label": "Icon",
+					"placeholder": "Enter icon name (e.g., credit-card)"
+				},
+				"objective": {
+					"label": "Objective",
+					"placeholder": "Select an objective",
+					"browseAria": "Browse objectives"
+				},
+				"description": {
+					"label": "Description",
+					"placeholder": "Enter schema description (optional)"
+				},
+				"fieldTypes": {
+					"text": "Text",
+					"number": "Number",
+					"boolean": "Boolean",
+					"date": "Date"
+				},
+				"fields": {
+					"title": "Schema Fields",
+					"add": "Add Field",
+					"name": {
+						"label": "Field Name",
+						"placeholder": "e.g., firstName",
+						"error": "Must be camelCase"
+					},
+					"label": {
+						"label": "Field Label",
+						"placeholder": "e.g., First Name"
+					},
+					"type": {
+						"label": "Type",
+						"ariaLabel": "Field type"
+					},
+					"isArray": "Is Array",
+					"removeField": "Remove field"
+				},
+				"actions": {
+					"create": "Create",
+					"update": "Update"
+				},
+				"validation": {
+					"nameRequired": "Name is required",
+					"objectiveRequired": "Objective is required",
+					"invalidFieldNamesTitle": "Invalid Field Names",
+					"fieldNameRequired": "Field {{index}}: Name is required",
+					"fieldNameFormat": "Field {{index}} ({{name}}): Must be camelCase (start with lowercase, use only letters/numbers)"
+				},
+				"versionModal": {
+					"title": "Schema In Use",
+					"description": "This schema is currently being used in an active campaign with assigned data and cannot be edited directly.",
+					"details": "We can create a new version of this schema with your changes. The new version will be available for use while the current version remains unchanged in the running campaign.",
+					"create": "Create New Version"
+				}
+			},
+			"notifications": {
+				"createSuccess": "Campaign schema created successfully",
+				"createError": "Failed to create campaign schema",
+				"updateSuccess": "Campaign schema updated successfully",
+				"updateError": "Failed to update campaign schema",
+				"versionSuccess": "New schema version created successfully",
+				"versionError": "Failed to create new schema version"
+			},
+			"table": {
+				"headers": {
+					"details": "Schema Details",
+					"code": "Code",
+					"objective": "Objective",
+					"status": "Status",
+					"actions": "Actions"
+				},
+				"empty": {
+					"description": "No description"
+				},
+				"status": {
+					"active": "Active",
+					"inactive": "Inactive"
+				},
+				"actions": {
+					"edit": "Edit schema",
+					"delete": "Delete schema",
+					"copyCode": "Copy code",
+					"copied": "Copied"
+				},
+				"info": {
+					"lastUpdated": "Last updated: {{date}}"
+				}
+			},
+			"filters": {
+				"title": "Filters",
+				"active": "Active",
+				"searchPlaceholder": "Search by name or code...",
+				"objectivePlaceholder": "All Objectives",
+				"objectiveAllLabel": "All Objectives",
+				"clear": "Clear all filters"
+			},
+			"pagination": {
+				"itemLabel": "schemas"
+			},
 			"deleteSuccess": "Campaign schema deleted successfully",
 			"deleteError": "Failed to delete campaign schema",
 			"noResults": "No schemas found",
@@ -51,6 +326,45 @@
 			"getStarted": "Get started by creating your first campaign schema"
 		},
 		"promptTypes": {
+			"title": "Prompt Types",
+			"description": "Label and organize the prompt templates used by campaigns.",
+			"actions": {
+				"create": "Create Prompt Type"
+			},
+			"emptyState": {
+				"message": "No prompt types found",
+				"description": "Define your first campaign prompt type to start organizing prompts."
+			},
+			"filteredEmpty": {
+				"message": "No prompt types match your filters",
+				"description": "Try adjusting your search or sorting options."
+			},
+			"filters": {
+				"title": "Filters",
+				"active": "Active",
+				"searchPlaceholder": "Search by name or icon...",
+				"sortPlaceholder": "Sort by",
+				"sortOptions": {
+					"orderAsc": "Order ascending",
+					"orderDesc": "Order descending",
+					"nameAsc": "Name A-Z",
+					"nameDesc": "Name Z-A",
+					"createdDesc": "Newest first",
+					"createdAsc": "Oldest first"
+				},
+				"clear": "Clear filters"
+			},
+			"pagination": {
+				"itemLabel": "prompt types"
+			},
+			"modals": {
+				"createTitle": "Create Campaign Prompt Type",
+				"editTitle": "Edit Campaign Prompt Type"
+			},
+			"confirmDelete": {
+				"title": "Confirm Delete",
+				"message": "Are you sure you want to delete this prompt type?"
+			},
 			"form": {
 				"name": {
 					"label": "Name",
@@ -81,7 +395,10 @@
 			},
 			"notifications": {
 				"createSuccess": "Campaign prompt type created successfully",
-				"updateSuccess": "Campaign prompt type updated successfully"
+				"updateSuccess": "Campaign prompt type updated successfully",
+				"deleteSuccess": "Campaign prompt type deleted successfully",
+				"deleteError": "Failed to delete campaign prompt type",
+				"usageError": "Failed to check prompt type usage"
 			},
 			"table": {
 				"headers": {
@@ -106,6 +423,37 @@
 				"actions": {
 					"edit": "Edit prompt type",
 					"delete": "Delete prompt type"
+				}
+			},
+			"reassign": {
+				"title": "Prompt Type in Use",
+				"description": "The prompt type {{name}} is currently assigned to {{count}} campaigns. Please reassign these prompts to a different type, or choose to delete them.",
+				"loading": "Checking campaign constraints...",
+				"confirmDelete": "Confirm & Delete Type",
+				"emptyPromptWarning": "Some reassigned prompts are empty.",
+				"promptContentTitle": "Prompt Content",
+				"editPromptTitle": "Edit Prompt Content",
+				"editPromptImport": "Import original prompt",
+				"editPromptDone": "Done",
+				"table": {
+					"headers": {
+						"campaign": "Campaign",
+						"currentType": "Current Type",
+						"newType": "New Type"
+					},
+					"actions": {
+						"viewPrompt": "View Prompt",
+						"placeholder": "Select action...",
+						"delete": "Delete Prompt (Do not reassign)",
+						"editPrompt": "Edit Prompt",
+						"addPrompt": "Add Prompt"
+					}
+				},
+				"notifications": {
+					"loadError": "Failed to load available prompt types",
+					"warningTitle": "Warning",
+					"stillUsed": "Some campaigns are still using this prompt type. Please refresh and try again.",
+					"processError": "Failed to process changes"
 				}
 			}
 		}

@@ -14,7 +14,7 @@ export interface CampaignCategory {
 
 export interface CreateCampaignCategoryRequest {
 	name: string;
-	code: string;
+	code?: string;
 	description?: string;
 	active?: boolean;
 	userId?: number;

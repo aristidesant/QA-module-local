@@ -1,9 +1,12 @@
-import { renderHook, render, screen } from '@testing-library/react';
+import { renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
 import { useCampaignSchemasColumns } from './useCampaignSchemasColumns';
 import { CampaignContactSchema } from '~/models/CampaignContactSchemaModel';
+import {
+	renderWithProviders,
+	TestProviders,
+} from '~/test-utils/renderWithProviders';
 
 const baseSchema: CampaignContactSchema = {
 	id: 1,
@@ -28,8 +31,9 @@ const renderCell = (
 	onDelete = vi.fn(),
 	isDeletePending = false
 ) => {
-	const { result } = renderHook(() =>
-		useCampaignSchemasColumns({ onEdit, onDelete, isDeletePending })
+	const { result } = renderHook(
+		() => useCampaignSchemasColumns({ onEdit, onDelete, isDeletePending }),
+		{ wrapper: TestProviders }
 	);
 
 	const column = result.current.find(
@@ -44,7 +48,7 @@ const renderCell = (
 	} as any);
 
 	return {
-		...render(<MantineProvider>{cell}</MantineProvider>),
+		...renderWithProviders(cell),
 		onEdit,
 		onDelete,
 	};

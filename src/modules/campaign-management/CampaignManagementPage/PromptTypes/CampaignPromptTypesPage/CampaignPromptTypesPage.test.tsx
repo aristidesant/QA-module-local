@@ -1,8 +1,7 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import CampaignPromptTypesPage from './CampaignPromptTypesPage';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 // Mock the child components
 vi.mock('../components/CampaignPromptTypesContent', () => ({
@@ -49,22 +48,6 @@ vi.mock('~/components/ContentContainer/ContentContainer', () => ({
 	),
 }));
 
-const createTestQueryClient = () =>
-	new QueryClient({
-		defaultOptions: {
-			queries: { retry: false },
-		},
-	});
-
-const renderWithProviders = (ui: React.ReactNode) => {
-	const queryClient = createTestQueryClient();
-	return render(
-		<QueryClientProvider client={queryClient}>
-			<MantineProvider>{ui}</MantineProvider>
-		</QueryClientProvider>
-	);
-};
-
 describe('CampaignPromptTypesPage', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -75,10 +58,10 @@ describe('CampaignPromptTypesPage', () => {
 			renderWithProviders(<CampaignPromptTypesPage />);
 
 			expect(screen.getByTestId('content-container')).toBeInTheDocument();
-			expect(screen.getByText('Campaign Prompt Types')).toBeInTheDocument();
+			expect(screen.getByText('Prompt Types')).toBeInTheDocument();
 			expect(
 				screen.getByText(
-					'Manage the prompt types that organize campaign prompts.'
+					'Label and organize the prompt templates used by campaigns.'
 				)
 			).toBeInTheDocument();
 		});
@@ -126,9 +109,7 @@ describe('CampaignPromptTypesPage', () => {
 		it('does not render title or description in embedded mode', () => {
 			renderWithProviders(<CampaignPromptTypesPage embedded />);
 
-			expect(
-				screen.queryByText('Campaign Prompt Types')
-			).not.toBeInTheDocument();
+			expect(screen.queryByText('Prompt Types')).not.toBeInTheDocument();
 		});
 	});
 

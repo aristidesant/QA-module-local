@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Text, Badge, Group, ActionIcon, Tooltip } from '@mantine/core';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import { CampaignCategory } from '~/models/CampaignCategoryModel';
 import styles from './CampaignCategoriesContent.module.css';
 
@@ -16,11 +17,12 @@ export const useCampaignCategoriesColumns = ({
 	onDelete,
 	isDeletePending,
 }: UseCampaignCategoriesColumnsProps) => {
+	const { t } = useTranslation('campaign-management');
 	const columns = useMemo<ColumnDef<CampaignCategory>[]>(
 		() => [
 			{
 				accessorKey: 'name',
-				header: 'Name',
+				header: t('setup.categories.table.headers.name'),
 				cell: ({ row }) => (
 					<Text fw={500} size='sm' className={styles.categoryName}>
 						{row.original.name}
@@ -29,7 +31,7 @@ export const useCampaignCategoriesColumns = ({
 			},
 			{
 				accessorKey: 'code',
-				header: 'Code',
+				header: t('setup.categories.table.headers.code'),
 				cell: ({ row }) => (
 					<Badge tt={'none'} variant='outline' color='green' size='sm'>
 						{row.original.code}
@@ -38,7 +40,7 @@ export const useCampaignCategoriesColumns = ({
 			},
 			{
 				accessorKey: 'description',
-				header: 'Description',
+				header: t('setup.categories.table.headers.description'),
 				cell: ({ row }) => (
 					<Tooltip
 						label={row.original.description}
@@ -47,14 +49,15 @@ export const useCampaignCategoriesColumns = ({
 						w={300}
 					>
 						<Text size='sm' c='dimmed' className={styles.categoryDescription}>
-							{row.original.description || 'No description'}
+							{row.original.description ||
+								t('setup.categories.table.empty.description')}
 						</Text>
 					</Tooltip>
 				),
 			},
 			{
 				accessorKey: 'active',
-				header: 'Status',
+				header: t('setup.categories.table.headers.status'),
 				cell: ({ row }) => (
 					<Badge
 						variant='dot'
@@ -62,16 +65,20 @@ export const useCampaignCategoriesColumns = ({
 						size='sm'
 						className={styles.statusBadge}
 					>
-						{row.original.active ? 'Active' : 'Inactive'}
+						{t(
+							row.original.active
+								? 'setup.categories.table.status.active'
+								: 'setup.categories.table.status.inactive'
+						)}
 					</Badge>
 				),
 			},
 			{
 				id: 'actions',
-				header: 'Actions',
+				header: t('setup.categories.table.headers.actions'),
 				cell: ({ row }) => (
 					<Group gap='xs' className={styles.actionsGroup}>
-						<Tooltip label='Edit category' withArrow>
+						<Tooltip label={t('setup.categories.table.actions.edit')} withArrow>
 							<ActionIcon
 								variant='subtle'
 								color='blue'
@@ -80,7 +87,10 @@ export const useCampaignCategoriesColumns = ({
 								<IconEdit size={16} />
 							</ActionIcon>
 						</Tooltip>
-						<Tooltip label='Delete category' withArrow>
+						<Tooltip
+							label={t('setup.categories.table.actions.delete')}
+							withArrow
+						>
 							<ActionIcon
 								variant='subtle'
 								color='red'
@@ -94,7 +104,7 @@ export const useCampaignCategoriesColumns = ({
 				),
 			},
 		],
-		[onEdit, onDelete, isDeletePending]
+		[onEdit, onDelete, isDeletePending, t]
 	);
 
 	return columns;

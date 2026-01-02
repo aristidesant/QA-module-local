@@ -3,6 +3,7 @@ import { useCampaignCategoriesColumns } from './useCampaignCategoriesColumns';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ColumnDef } from '@tanstack/react-table';
 import type { CampaignCategory } from '~/models/CampaignCategoryModel';
+import { TestProviders } from '~/test-utils/renderWithProviders';
 
 describe('useCampaignCategoriesColumns', () => {
 	const mockOnEdit = vi.fn();
@@ -13,12 +14,14 @@ describe('useCampaignCategoriesColumns', () => {
 	});
 
 	it('returns an array of column definitions', () => {
-		const { result } = renderHook(() =>
-			useCampaignCategoriesColumns({
-				onEdit: mockOnEdit,
-				onDelete: mockOnDelete,
-				isDeletePending: false,
-			})
+		const { result } = renderHook(
+			() =>
+				useCampaignCategoriesColumns({
+					onEdit: mockOnEdit,
+					onDelete: mockOnDelete,
+					isDeletePending: false,
+				}),
+			{ wrapper: TestProviders }
 		);
 
 		expect(Array.isArray(result.current)).toBe(true);
@@ -26,12 +29,14 @@ describe('useCampaignCategoriesColumns', () => {
 	});
 
 	it('includes name column', () => {
-		const { result } = renderHook(() =>
-			useCampaignCategoriesColumns({
-				onEdit: mockOnEdit,
-				onDelete: mockOnDelete,
-				isDeletePending: false,
-			})
+		const { result } = renderHook(
+			() =>
+				useCampaignCategoriesColumns({
+					onEdit: mockOnEdit,
+					onDelete: mockOnDelete,
+					isDeletePending: false,
+				}),
+			{ wrapper: TestProviders }
 		);
 
 		const nameColumn = result.current.find(
@@ -43,12 +48,14 @@ describe('useCampaignCategoriesColumns', () => {
 	});
 
 	it('includes code column', () => {
-		const { result } = renderHook(() =>
-			useCampaignCategoriesColumns({
-				onEdit: mockOnEdit,
-				onDelete: mockOnDelete,
-				isDeletePending: false,
-			})
+		const { result } = renderHook(
+			() =>
+				useCampaignCategoriesColumns({
+					onEdit: mockOnEdit,
+					onDelete: mockOnDelete,
+					isDeletePending: false,
+				}),
+			{ wrapper: TestProviders }
 		);
 
 		const codeColumn = result.current.find(
@@ -60,12 +67,14 @@ describe('useCampaignCategoriesColumns', () => {
 	});
 
 	it('includes description column', () => {
-		const { result } = renderHook(() =>
-			useCampaignCategoriesColumns({
-				onEdit: mockOnEdit,
-				onDelete: mockOnDelete,
-				isDeletePending: false,
-			})
+		const { result } = renderHook(
+			() =>
+				useCampaignCategoriesColumns({
+					onEdit: mockOnEdit,
+					onDelete: mockOnDelete,
+					isDeletePending: false,
+				}),
+			{ wrapper: TestProviders }
 		);
 
 		const descColumn = result.current.find(
@@ -77,12 +86,14 @@ describe('useCampaignCategoriesColumns', () => {
 	});
 
 	it('includes active status column', () => {
-		const { result } = renderHook(() =>
-			useCampaignCategoriesColumns({
-				onEdit: mockOnEdit,
-				onDelete: mockOnDelete,
-				isDeletePending: false,
-			})
+		const { result } = renderHook(
+			() =>
+				useCampaignCategoriesColumns({
+					onEdit: mockOnEdit,
+					onDelete: mockOnDelete,
+					isDeletePending: false,
+				}),
+			{ wrapper: TestProviders }
 		);
 
 		const activeColumn = result.current.find(
@@ -120,6 +131,7 @@ describe('useCampaignCategoriesColumns', () => {
 					onDelete: mockOnDelete,
 					isDeletePending: false,
 				},
+				wrapper: TestProviders,
 			}
 		);
 

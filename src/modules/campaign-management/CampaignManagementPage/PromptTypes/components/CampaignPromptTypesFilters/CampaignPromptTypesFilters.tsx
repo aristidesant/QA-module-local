@@ -13,6 +13,7 @@ import {
 	IconSearch,
 	IconArrowsSort,
 } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import styles from './CampaignPromptTypesFilters.module.css';
 
 export interface PromptTypeFilters {
@@ -30,6 +31,7 @@ const CampaignPromptTypesFilters: React.FC<CampaignPromptTypesFiltersProps> = ({
 	filters,
 	onFiltersChange,
 }) => {
+	const { t } = useTranslation('campaign-management');
 	const hasActiveFilters =
 		filters.search !== '' ||
 		filters.sortBy !== 'order' ||
@@ -49,18 +51,18 @@ const CampaignPromptTypesFilters: React.FC<CampaignPromptTypesFiltersProps> = ({
 				<Group gap='xs' className={styles.titleGroup}>
 					<IconFilter size={16} className={styles.titleIcon} />
 					<Text size='sm' fw={600} className={styles.title}>
-						Filters
+						{t('setup.promptTypes.filters.title')}
 					</Text>
 					{hasActiveFilters && (
 						<Badge size='sm' variant='light' className={styles.activeBadge}>
-							Active
+							{t('setup.promptTypes.filters.active')}
 						</Badge>
 					)}
 				</Group>
 
 				<Group gap='xs' className={styles.controlsWrapper}>
 					<TextInput
-						placeholder='Search by name or icon...'
+						placeholder={t('setup.promptTypes.filters.searchPlaceholder')}
 						value={filters.search}
 						onChange={(event) =>
 							onFiltersChange({ ...filters, search: event.currentTarget.value })
@@ -70,7 +72,7 @@ const CampaignPromptTypesFilters: React.FC<CampaignPromptTypesFiltersProps> = ({
 					/>
 
 					<Select
-						placeholder='Sort by'
+						placeholder={t('setup.promptTypes.filters.sortPlaceholder')}
 						value={`${filters.sortBy}-${filters.sortOrder}`}
 						onChange={(value) => {
 							if (value) {
@@ -82,12 +84,30 @@ const CampaignPromptTypesFilters: React.FC<CampaignPromptTypesFiltersProps> = ({
 							}
 						}}
 						data={[
-							{ value: 'order-asc', label: 'Order ascending' },
-							{ value: 'order-desc', label: 'Order descending' },
-							{ value: 'name-asc', label: 'Name A-Z' },
-							{ value: 'name-desc', label: 'Name Z-A' },
-							{ value: 'createdAt-desc', label: 'Newest first' },
-							{ value: 'createdAt-asc', label: 'Oldest first' },
+							{
+								value: 'order-asc',
+								label: t('setup.promptTypes.filters.sortOptions.orderAsc'),
+							},
+							{
+								value: 'order-desc',
+								label: t('setup.promptTypes.filters.sortOptions.orderDesc'),
+							},
+							{
+								value: 'name-asc',
+								label: t('setup.promptTypes.filters.sortOptions.nameAsc'),
+							},
+							{
+								value: 'name-desc',
+								label: t('setup.promptTypes.filters.sortOptions.nameDesc'),
+							},
+							{
+								value: 'createdAt-desc',
+								label: t('setup.promptTypes.filters.sortOptions.createdDesc'),
+							},
+							{
+								value: 'createdAt-asc',
+								label: t('setup.promptTypes.filters.sortOptions.createdAsc'),
+							},
 						]}
 						leftSection={<IconArrowsSort size={16} />}
 						className={styles.sortSelect}
@@ -99,7 +119,7 @@ const CampaignPromptTypesFilters: React.FC<CampaignPromptTypesFiltersProps> = ({
 							color='gray'
 							onClick={handleClearFilters}
 							className={styles.clearButton}
-							title='Clear filters'
+							title={t('setup.promptTypes.filters.clear')}
 						>
 							<IconFilterOff size={16} />
 						</ActionIcon>

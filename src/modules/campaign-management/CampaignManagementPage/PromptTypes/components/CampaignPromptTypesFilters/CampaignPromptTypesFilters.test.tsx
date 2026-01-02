@@ -1,9 +1,9 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
 import CampaignPromptTypesFilters, {
 	PromptTypeFilters,
 } from './CampaignPromptTypesFilters';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 describe('CampaignPromptTypesFilters', () => {
 	const defaultFilters: PromptTypeFilters = {
@@ -17,10 +17,6 @@ describe('CampaignPromptTypesFilters', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
-
-	const renderWithProviders = (ui: React.ReactNode) => {
-		return render(<MantineProvider>{ui}</MantineProvider>);
-	};
 
 	describe('Rendering', () => {
 		it('renders the filters container', () => {

@@ -1,10 +1,7 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { I18nextProvider } from 'react-i18next';
-import { testI18n } from '~/test-utils/renderWithProviders';
+import { renderWithProviders as renderWithAppProviders } from '~/test-utils/renderWithProviders';
 import type { CampaignPromptTypeModel } from '~/models/CampaignPromptTypeModel';
 import CampaignPromptTypesContent from './CampaignPromptTypesContent';
 
@@ -328,24 +325,8 @@ vi.mock('@mantine/modals', () => ({
 	},
 }));
 
-const createTestQueryClient = () =>
-	new QueryClient({
-		defaultOptions: {
-			queries: { retry: false },
-		},
-	});
-
 const renderWithProviders = (ui: React.ReactNode) => {
-	const queryClient = createTestQueryClient();
-	return render(
-		<QueryClientProvider client={queryClient}>
-			<I18nextProvider i18n={testI18n}>
-				<MantineProvider>
-					<ModalsProvider>{ui}</ModalsProvider>
-				</MantineProvider>
-			</I18nextProvider>
-		</QueryClientProvider>
-	);
+	return renderWithAppProviders(<ModalsProvider>{ui}</ModalsProvider>);
 };
 
 describe('CampaignPromptTypesContent', () => {
@@ -914,21 +895,6 @@ describe('CampaignPromptTypesContent', () => {
 });
 
 describe('CampaignPromptTypesContent - Empty State', () => {
-	const renderWithProviders = (ui: React.ReactNode) => {
-		const queryClient = new QueryClient({
-			defaultOptions: { queries: { retry: false } },
-		});
-		return render(
-			<QueryClientProvider client={queryClient}>
-				<I18nextProvider i18n={testI18n}>
-					<MantineProvider>
-						<ModalsProvider>{ui}</ModalsProvider>
-					</MantineProvider>
-				</I18nextProvider>
-			</QueryClientProvider>
-		);
-	};
-
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockDeletePromptType.mockReset();
@@ -1062,23 +1028,6 @@ describe('useCampaignPromptTypesColumns hook integration', () => {
 		mockPromptTypesData.data = mockPromptTypes;
 		mockPromptTypesData.isLoading = false;
 	});
-
-	const renderWithProviders = (ui: React.ReactNode) => {
-		const queryClient = new QueryClient({
-			defaultOptions: {
-				queries: { retry: false },
-			},
-		});
-		return render(
-			<QueryClientProvider client={queryClient}>
-				<I18nextProvider i18n={testI18n}>
-					<MantineProvider>
-						<ModalsProvider>{ui}</ModalsProvider>
-					</MantineProvider>
-				</I18nextProvider>
-			</QueryClientProvider>
-		);
-	};
 
 	it('renders all column headers correctly', () => {
 		renderWithProviders(<CampaignPromptTypesContent {...defaultProps} />);

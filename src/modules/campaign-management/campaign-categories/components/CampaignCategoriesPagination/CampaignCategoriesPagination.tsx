@@ -1,5 +1,6 @@
 import React from 'react';
 import { Group, Text, Select, Pagination } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import styles from './CampaignCategoriesPagination.module.css';
 
 export interface PaginationState {
@@ -17,6 +18,7 @@ interface CampaignCategoriesPaginationProps {
 export const CampaignCategoriesPagination: React.FC<
 	CampaignCategoriesPaginationProps
 > = ({ pagination, onPaginationChange, disabled = false }) => {
+	const { t } = useTranslation('campaign-management');
 	const { page, pageSize, total } = pagination;
 	const totalPages = Math.ceil(total / pageSize);
 	const startItem = total === 0 ? 0 : (page - 1) * pageSize + 1;
@@ -52,12 +54,16 @@ export const CampaignCategoriesPagination: React.FC<
 			>
 				<Group gap='sm' className={styles.info}>
 					<Text size='sm' c='dimmed' className={styles.itemsText}>
-						Showing {startItem}-{endItem} of {total} categories
+						{t('setup.categories.pagination.showing', {
+							start: startItem,
+							end: endItem,
+							total,
+						})}
 					</Text>
 
 					<Group gap='xs' className={styles.pageSizeGroup}>
 						<Text size='sm' c='dimmed'>
-							Items per page:
+							{t('setup.categories.pagination.itemsPerPage')}
 						</Text>
 						<Select
 							value={pageSize.toString()}
@@ -89,8 +95,7 @@ export const CampaignCategoriesPagination: React.FC<
 
 			{disabled && (
 				<Text size='xs' c='orange' className={styles.disabledNote}>
-					* Pagination is currently read-only. Live pagination will be available
-					after backend updates.
+					{t('setup.categories.pagination.readOnlyNote')}
 				</Text>
 			)}
 		</div>

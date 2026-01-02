@@ -3,6 +3,7 @@ import { ActionIcon, Button, Modal, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { IconPlus, IconSearchOff, IconSparkles } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
+import { useTranslation } from 'react-i18next';
 import BaseTable from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
 import PaginationControls from '~/components/PaginationControls';
@@ -42,6 +43,7 @@ const CampaignPromptTypesContent: React.FC<CampaignPromptTypesContentProps> = ({
 	createModalOpened,
 	setCreateModalOpened,
 }) => {
+	const { t } = useTranslation('campaign-management');
 	const { data: promptTypesData, isLoading } = useGetAllCampaignPromptTypes();
 	const deletePromptType = useDeleteCampaignPromptType();
 
@@ -119,14 +121,14 @@ const CampaignPromptTypesContent: React.FC<CampaignPromptTypesContentProps> = ({
 		try {
 			await deletePromptType.mutateAsync(id);
 			notifications.show({
-				title: 'Success',
-				message: 'Campaign prompt type deleted successfully',
+				title: t('status.success', { ns: 'common' }),
+				message: t('setup.promptTypes.notifications.deleteSuccess'),
 				color: 'green',
 			});
 		} catch (error) {
 			notifications.show({
-				title: 'Error',
-				message: 'Failed to delete campaign prompt type',
+				title: t('status.error', { ns: 'common' }),
+				message: t('setup.promptTypes.notifications.deleteError'),
 				color: 'red',
 			});
 			console.error(error);
@@ -146,13 +148,16 @@ const CampaignPromptTypesContent: React.FC<CampaignPromptTypesContentProps> = ({
 				}
 			} else {
 				modals.openConfirmModal({
-					title: 'Confirm Delete',
+					title: t('setup.promptTypes.confirmDelete.title'),
 					children: (
 						<Text size='sm'>
-							Are you sure you want to delete this prompt type?
+							{t('setup.promptTypes.confirmDelete.message')}
 						</Text>
 					),
-					labels: { confirm: 'Delete', cancel: 'Cancel' },
+					labels: {
+						confirm: t('actions.delete', { ns: 'common' }),
+						cancel: t('actions.cancel', { ns: 'common' }),
+					},
 					confirmProps: { color: 'red' },
 					onConfirm: () => performDelete(id),
 				});
@@ -160,8 +165,8 @@ const CampaignPromptTypesContent: React.FC<CampaignPromptTypesContentProps> = ({
 		} catch (error) {
 			console.error(error);
 			notifications.show({
-				title: 'Error',
-				message: 'Failed to check prompt type usage',
+				title: t('status.error', { ns: 'common' }),
+				message: t('setup.promptTypes.notifications.usageError'),
 				color: 'red',
 			});
 		}
@@ -196,14 +201,14 @@ const CampaignPromptTypesContent: React.FC<CampaignPromptTypesContentProps> = ({
 			<div className={styles.container}>
 				<EmptyState
 					icon={<IconSparkles size={48} />}
-					message='No prompt types found'
-					description='Define your first campaign prompt type to start organizing prompts.'
+					message={t('setup.promptTypes.emptyState.message')}
+					description={t('setup.promptTypes.emptyState.description')}
 					action={
 						<Button
 							leftSection={<IconPlus size={16} />}
 							onClick={() => setCreateModalOpened(true)}
 						>
-							Create Prompt Type
+							{t('setup.promptTypes.actions.create')}
 						</Button>
 					}
 				/>
@@ -211,7 +216,7 @@ const CampaignPromptTypesContent: React.FC<CampaignPromptTypesContentProps> = ({
 				<Modal
 					opened={createModalOpened}
 					onClose={() => setCreateModalOpened(false)}
-					title='Create Campaign Prompt Type'
+					title={t('setup.promptTypes.modals.createTitle')}
 					size='md'
 				>
 					<CampaignPromptTypesForm
@@ -227,8 +232,8 @@ const CampaignPromptTypesContent: React.FC<CampaignPromptTypesContentProps> = ({
 		<div className={styles.container}>
 			<SectionCard
 				icon={IconSparkles}
-				title='Prompt Types'
-				description='Label and organize the prompt templates used by campaigns.'
+				title={t('setup.promptTypes.title')}
+				description={t('setup.promptTypes.description')}
 				padding='lg'
 				headerActions={
 					<ActionIcon
@@ -249,14 +254,14 @@ const CampaignPromptTypesContent: React.FC<CampaignPromptTypesContentProps> = ({
 					<div className={styles.noResultsContainer}>
 						<EmptyState
 							icon={<IconSearchOff size={48} />}
-							message='No prompt types match your filters'
-							description='Try adjusting your search or sorting options.'
+							message={t('setup.promptTypes.filteredEmpty.message')}
+							description={t('setup.promptTypes.filteredEmpty.description')}
 							action={
 								<Button
 									leftSection={<IconPlus size={16} />}
 									onClick={() => setCreateModalOpened(true)}
 								>
-									Create Prompt Type
+									{t('setup.promptTypes.actions.create')}
 								</Button>
 							}
 						/>
@@ -283,7 +288,7 @@ const CampaignPromptTypesContent: React.FC<CampaignPromptTypesContentProps> = ({
 							onItemsPerPageChange={handleItemsPerPageChange}
 							searchTerm={filters.search}
 							isLoading={isLoading}
-							itemLabel='prompt types'
+							itemLabel={t('setup.promptTypes.pagination.itemLabel')}
 						/>
 					</>
 				)}
@@ -292,7 +297,7 @@ const CampaignPromptTypesContent: React.FC<CampaignPromptTypesContentProps> = ({
 			<Modal
 				opened={createModalOpened}
 				onClose={() => setCreateModalOpened(false)}
-				title='Create Campaign Prompt Type'
+				title={t('setup.promptTypes.modals.createTitle')}
 				size='md'
 			>
 				<CampaignPromptTypesForm
@@ -307,7 +312,7 @@ const CampaignPromptTypesContent: React.FC<CampaignPromptTypesContentProps> = ({
 					setEditModalOpened(false);
 					setSelectedPromptType(null);
 				}}
-				title='Edit Campaign Prompt Type'
+				title={t('setup.promptTypes.modals.editTitle')}
 				size='md'
 			>
 				{selectedPromptType && (

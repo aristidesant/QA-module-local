@@ -9,6 +9,7 @@ import {
 	CopyButton,
 } from '@mantine/core';
 import { IconEdit, IconTrash, IconCheck, IconCopy } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import { CampaignContactSchema } from '~/models/CampaignContactSchemaModel';
 import styles from './CampaignSchemasContent.module.css';
 
@@ -23,14 +24,18 @@ export const useCampaignSchemasColumns = ({
 	onDelete,
 	isDeletePending,
 }: UseCampaignSchemasColumnsProps) => {
+	const { t } = useTranslation('campaign-management');
 	return useMemo<ColumnDef<CampaignContactSchema>[]>(
 		() => [
 			{
 				accessorKey: 'name',
-				header: 'Schema Details',
+				header: t('setup.schemas.table.headers.details'),
 				cell: ({ row }) => (
 					<Tooltip
-						label={row.original.description || 'No description'}
+						label={
+							row.original.description ||
+							t('setup.schemas.table.empty.description')
+						}
 						withArrow
 					>
 						<Text fz='xs' fw={600}>
@@ -41,7 +46,7 @@ export const useCampaignSchemasColumns = ({
 			},
 			{
 				accessorKey: 'code',
-				header: 'Code',
+				header: t('setup.schemas.table.headers.code'),
 				size: 140,
 				cell: ({ row }) => (
 					<Group gap={8} wrap='nowrap'>
@@ -51,7 +56,11 @@ export const useCampaignSchemasColumns = ({
 						<CopyButton value={row.original.code} timeout={2000}>
 							{({ copied, copy }) => (
 								<Tooltip
-									label={copied ? 'Copied' : 'Copy code'}
+									label={t(
+										copied
+											? 'setup.schemas.table.actions.copied'
+											: 'setup.schemas.table.actions.copyCode'
+									)}
 									withArrow
 									position='right'
 								>
@@ -76,7 +85,7 @@ export const useCampaignSchemasColumns = ({
 			},
 			{
 				accessorKey: 'objective',
-				header: 'Objective',
+				header: t('setup.schemas.table.headers.objective'),
 				cell: ({ row }) =>
 					row.original.objective ? (
 						<Badge
@@ -98,17 +107,20 @@ export const useCampaignSchemasColumns = ({
 
 			{
 				accessorKey: 'isActive',
-				header: 'Status',
+				header: t('setup.schemas.table.headers.status'),
 				size: 100,
 				cell: ({ row }) => (
 					<Tooltip
-						label={`Last updated: ${new Date(
-							row.original.updatedAt
-						).toLocaleDateString(undefined, {
-							year: 'numeric',
-							month: 'short',
-							day: 'numeric',
-						})}`}
+						label={t('setup.schemas.table.info.lastUpdated', {
+							date: new Date(row.original.updatedAt).toLocaleDateString(
+								undefined,
+								{
+									year: 'numeric',
+									month: 'short',
+									day: 'numeric',
+								}
+							),
+						})}
 						withArrow
 					>
 						<Badge
@@ -118,18 +130,22 @@ export const useCampaignSchemasColumns = ({
 							tt='uppercase'
 							fw={600}
 						>
-							{row.original.isActive ? 'Active' : 'Inactive'}
+							{t(
+								row.original.isActive
+									? 'setup.schemas.table.status.active'
+									: 'setup.schemas.table.status.inactive'
+							)}
 						</Badge>
 					</Tooltip>
 				),
 			},
 			{
 				id: 'actions',
-				header: 'Actions',
+				header: t('setup.schemas.table.headers.actions'),
 				size: 100,
 				cell: ({ row }) => (
 					<Group gap={8} justify='flex-end' className={styles.actionsGroup}>
-						<Tooltip label='Edit schema' withArrow>
+						<Tooltip label={t('setup.schemas.table.actions.edit')} withArrow>
 							<ActionIcon
 								variant='light'
 								color='blue'
@@ -140,7 +156,7 @@ export const useCampaignSchemasColumns = ({
 								<IconEdit size={16} stroke={1.5} />
 							</ActionIcon>
 						</Tooltip>
-						<Tooltip label='Delete schema' withArrow>
+						<Tooltip label={t('setup.schemas.table.actions.delete')} withArrow>
 							<ActionIcon
 								variant='light'
 								color='red'
@@ -156,6 +172,6 @@ export const useCampaignSchemasColumns = ({
 				),
 			},
 		],
-		[onEdit, onDelete, isDeletePending]
+		[onEdit, onDelete, isDeletePending, t]
 	);
 };

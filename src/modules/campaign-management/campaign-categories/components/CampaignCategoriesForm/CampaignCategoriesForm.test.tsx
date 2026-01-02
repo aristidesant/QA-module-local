@@ -1,9 +1,8 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CampaignCategoriesForm } from './CampaignCategoriesForm';
 import { CampaignCategory } from '~/models/CampaignCategoryModel';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 // Mock notifications
 const mockNotificationsShow = vi.fn();
@@ -26,22 +25,6 @@ vi.mock('~/queries/campaignCategoriesQueries', () => ({
 		isPending: false,
 	}),
 }));
-
-const createTestQueryClient = () =>
-	new QueryClient({
-		defaultOptions: {
-			queries: { retry: false },
-		},
-	});
-
-const renderWithProviders = (ui: React.ReactNode) => {
-	const queryClient = createTestQueryClient();
-	return render(
-		<QueryClientProvider client={queryClient}>
-			<MantineProvider>{ui}</MantineProvider>
-		</QueryClientProvider>
-	);
-};
 
 const mockCategory: CampaignCategory = {
 	id: 1,
@@ -74,11 +57,11 @@ describe('CampaignCategoriesForm', () => {
 			expect(screen.getByPlaceholderText('Enter category name')).toHaveValue(
 				''
 			);
-			expect(screen.getByPlaceholderText('Enter category code')).toHaveValue(
-				''
-			);
 			expect(
-				screen.getByRole('button', { name: /create/i })
+				screen.getByPlaceholderText('Enter category description (optional)')
+			).toHaveValue('');
+			expect(
+				screen.getByRole('button', { name: 'Create' })
 			).toBeInTheDocument();
 		});
 
@@ -87,20 +70,20 @@ describe('CampaignCategoriesForm', () => {
 				<CampaignCategoriesForm onSuccess={onSuccess} onCancel={onCancel} />
 			);
 
-			const activeSwitch = screen.getByRole('switch', { name: /active/i });
+			const activeSwitch = screen.getByRole('switch', {
+				name: 'Active When enabled, this category will be available for use',
+			});
 			expect(activeSwitch).toBeChecked();
 		});
 
-		it('has required name and code fields', () => {
+		it('has required name field', () => {
 			renderWithProviders(
 				<CampaignCategoriesForm onSuccess={onSuccess} onCancel={onCancel} />
 			);
 
 			const nameInput = screen.getByPlaceholderText('Enter category name');
-			const codeInput = screen.getByPlaceholderText('Enter category code');
 
 			expect(nameInput).toBeInTheDocument();
-			expect(codeInput).toBeInTheDocument();
 		});
 
 		it('calls onCancel when cancel button is clicked', () => {
@@ -108,7 +91,7 @@ describe('CampaignCategoriesForm', () => {
 				<CampaignCategoriesForm onSuccess={onSuccess} onCancel={onCancel} />
 			);
 
-			const cancelButton = screen.getByRole('button', { name: /cancel/i });
+			const cancelButton = screen.getByRole('button', { name: 'Cancel' });
 			fireEvent.click(cancelButton);
 
 			expect(onCancel).toHaveBeenCalled();
@@ -123,18 +106,13 @@ describe('CampaignCategoriesForm', () => {
 			fireEvent.change(screen.getByPlaceholderText('Enter category name'), {
 				target: { value: 'New Category' },
 			});
-			fireEvent.change(screen.getByPlaceholderText('Enter category code'), {
-				target: { value: 'new-category' },
-			});
-
 			// Submit form
-			const submitButton = screen.getByRole('button', { name: /create/i });
+			const submitButton = screen.getByRole('button', { name: 'Create' });
 			fireEvent.click(submitButton);
 
 			await waitFor(() => {
 				expect(mockCreateCategory).toHaveBeenCalledWith({
 					name: 'New Category',
-					code: 'new-category',
 					description: '',
 					active: true,
 				});
@@ -150,12 +128,8 @@ describe('CampaignCategoriesForm', () => {
 			fireEvent.change(screen.getByPlaceholderText('Enter category name'), {
 				target: { value: 'New Category' },
 			});
-			fireEvent.change(screen.getByPlaceholderText('Enter category code'), {
-				target: { value: 'new-category' },
-			});
-
 			// Submit form
-			const submitButton = screen.getByRole('button', { name: /create/i });
+			const submitButton = screen.getByRole('button', { name: 'Create' });
 			fireEvent.click(submitButton);
 
 			await waitFor(() => {
@@ -177,11 +151,8 @@ describe('CampaignCategoriesForm', () => {
 			expect(screen.getByPlaceholderText('Enter category name')).toHaveValue(
 				'Test Category'
 			);
-			expect(screen.getByPlaceholderText('Enter category code')).toHaveValue(
-				'test-category'
-			);
 			expect(
-				screen.getByRole('button', { name: /update/i })
+				screen.getByRole('button', { name: 'Update' })
 			).toBeInTheDocument();
 		});
 
@@ -195,10 +166,10 @@ describe('CampaignCategoriesForm', () => {
 			);
 
 			expect(
-				screen.getByRole('button', { name: /update/i })
+				screen.getByRole('button', { name: 'Update' })
 			).toBeInTheDocument();
 			expect(
-				screen.queryByRole('button', { name: /^create$/i })
+				screen.queryByRole('button', { name: 'Create' })
 			).not.toBeInTheDocument();
 		});
 
@@ -211,7 +182,7 @@ describe('CampaignCategoriesForm', () => {
 				/>
 			);
 
-			const submitButton = screen.getByRole('button', { name: /update/i });
+			const submitButton = screen.getByRole('button', { name: 'Update' });
 			fireEvent.click(submitButton);
 
 			await waitFor(() => {
@@ -219,7 +190,6 @@ describe('CampaignCategoriesForm', () => {
 					id: 1,
 					data: {
 						name: 'Test Category',
-						code: 'test-category',
 						description: 'Test description',
 						active: true,
 					},
@@ -250,7 +220,9 @@ describe('CampaignCategoriesForm', () => {
 				/>
 			);
 
-			const activeSwitch = screen.getByRole('switch', { name: /active/i });
+			const activeSwitch = screen.getByRole('switch', {
+				name: 'Active When enabled, this category will be available for use',
+			});
 			expect(activeSwitch).toBeChecked();
 		});
 
@@ -264,7 +236,9 @@ describe('CampaignCategoriesForm', () => {
 				/>
 			);
 
-			const activeSwitch = screen.getByRole('switch', { name: /active/i });
+			const activeSwitch = screen.getByRole('switch', {
+				name: 'Active When enabled, this category will be available for use',
+			});
 			expect(activeSwitch).not.toBeChecked();
 		});
 	});
@@ -279,18 +253,15 @@ describe('CampaignCategoriesForm', () => {
 			fireEvent.change(screen.getByPlaceholderText('Enter category name'), {
 				target: { value: 'New Category' },
 			});
-			fireEvent.change(screen.getByPlaceholderText('Enter category code'), {
-				target: { value: 'new-category' },
-			});
-
 			// Submit form
-			const submitButton = screen.getByRole('button', { name: /create/i });
+			const submitButton = screen.getByRole('button', { name: 'Create' });
 			fireEvent.click(submitButton);
 
 			await waitFor(() => {
 				expect(mockNotificationsShow).toHaveBeenCalledWith(
 					expect.objectContaining({
 						title: 'Success',
+						message: 'Campaign category created successfully',
 						color: 'green',
 					})
 				);
@@ -308,18 +279,15 @@ describe('CampaignCategoriesForm', () => {
 			fireEvent.change(screen.getByPlaceholderText('Enter category name'), {
 				target: { value: 'New Category' },
 			});
-			fireEvent.change(screen.getByPlaceholderText('Enter category code'), {
-				target: { value: 'new-category' },
-			});
-
 			// Submit form
-			const submitButton = screen.getByRole('button', { name: /create/i });
+			const submitButton = screen.getByRole('button', { name: 'Create' });
 			fireEvent.click(submitButton);
 
 			await waitFor(() => {
 				expect(mockNotificationsShow).toHaveBeenCalledWith(
 					expect.objectContaining({
 						title: 'Error',
+						message: 'Failed to create',
 						color: 'red',
 					})
 				);
@@ -335,7 +303,7 @@ describe('CampaignCategoriesForm', () => {
 				/>
 			);
 
-			const submitButton = screen.getByRole('button', { name: /update/i });
+			const submitButton = screen.getByRole('button', { name: 'Update' });
 			fireEvent.click(submitButton);
 
 			await waitFor(() => {
@@ -356,7 +324,9 @@ describe('CampaignCategoriesForm', () => {
 				<CampaignCategoriesForm onSuccess={onSuccess} onCancel={onCancel} />
 			);
 
-			const activeSwitch = screen.getByRole('switch', { name: /active/i });
+			const activeSwitch = screen.getByRole('switch', {
+				name: 'Active When enabled, this category will be available for use',
+			});
 			expect(activeSwitch).toBeChecked();
 
 			fireEvent.click(activeSwitch);

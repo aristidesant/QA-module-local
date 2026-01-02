@@ -20,6 +20,7 @@ import {
 	IconAlertCircle,
 	IconChevronRight,
 } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import {
 	useCreateCampaignContactSchema,
 	useUpdateCampaignContactSchema,
@@ -53,13 +54,6 @@ interface SchemaField {
 	isArray: boolean;
 }
 
-const fieldTypeOptions = [
-	{ value: 'string', label: 'Text' },
-	{ value: 'number', label: 'Number' },
-	{ value: 'boolean', label: 'Boolean' },
-	{ value: 'date', label: 'Date' },
-];
-
 // Helper function to generate code from name
 const generateCode = (name: string) => {
 	return name
@@ -73,6 +67,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 	onSuccess,
 	onCancel,
 }) => {
+	const { t } = useTranslation('campaign-management');
 	const isEditing = !!schema;
 	const createSchema = useCreateCampaignContactSchema();
 	const updateSchema = useUpdateCampaignContactSchema();
@@ -103,6 +98,13 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 		]
 	);
 
+	const fieldTypeOptions = [
+		{ value: 'string', label: t('setup.schemas.form.fieldTypes.text') },
+		{ value: 'number', label: t('setup.schemas.form.fieldTypes.number') },
+		{ value: 'boolean', label: t('setup.schemas.form.fieldTypes.boolean') },
+		{ value: 'date', label: t('setup.schemas.form.fieldTypes.date') },
+	];
+
 	const form = useForm({
 		initialValues: {
 			name: schema?.name || '',
@@ -111,8 +113,10 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 			description: schema?.description || '',
 		},
 		validate: {
-			name: (value) => (!value ? 'Name is required' : null),
-			objectiveId: (value) => (!value ? 'Objective is required' : null),
+			name: (value) =>
+				!value ? t('setup.schemas.form.validation.nameRequired') : null,
+			objectiveId: (value) =>
+				!value ? t('setup.schemas.form.validation.objectiveRequired') : null,
 		},
 	});
 
@@ -122,10 +126,17 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 
 		schemaFields.forEach((field, index) => {
 			if (!field.name) {
-				invalidFields.push(`Field ${index + 1}: Name is required`);
+				invalidFields.push(
+					t('setup.schemas.form.validation.fieldNameRequired', {
+						index: index + 1,
+					})
+				);
 			} else if (!camelCaseRegex.test(field.name)) {
 				invalidFields.push(
-					`Field ${index + 1} (${field.name}): Must be camelCase (start with lowercase, use only letters/numbers)`
+					t('setup.schemas.form.validation.fieldNameFormat', {
+						index: index + 1,
+						name: field.name,
+					})
 				);
 			}
 		});
@@ -133,12 +144,26 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 		return invalidFields;
 	};
 
+	const getErrorMessage = (error: unknown) => {
+		if (!error || typeof error !== 'object') return '';
+		const response = (error as { response?: { data?: { message?: string } } })
+			.response;
+		if (response?.data?.message) return response.data.message;
+		if (
+			'message' in error &&
+			typeof (error as { message?: string }).message === 'string'
+		) {
+			return (error as { message?: string }).message ?? '';
+		}
+		return '';
+	};
+
 	const handleSubmit = async (values: typeof form.values) => {
 		// Validate field names before submission
 		const fieldNameErrors = validateFieldNames();
 		if (fieldNameErrors.length > 0) {
 			notifications.show({
-				title: 'Invalid Field Names',
+				title: t('setup.schemas.form.validation.invalidFieldNamesTitle'),
 				message: (
 					<div>
 						{fieldNameErrors.map((error, idx) => (
@@ -168,8 +193,8 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 					data: updateData,
 				});
 				notifications.show({
-					title: 'Success',
-					message: 'Campaign schema updated successfully',
+					title: t('status.success', { ns: 'common' }),
+					message: t('setup.schemas.notifications.updateSuccess'),
 					color: 'green',
 				});
 				onSuccess();
@@ -184,16 +209,15 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 				};
 				await createSchema.mutateAsync(createData);
 				notifications.show({
-					title: 'Success',
-					message: 'Campaign schema created successfully',
+					title: t('status.success', { ns: 'common' }),
+					message: t('setup.schemas.notifications.createSuccess'),
 					color: 'green',
 				});
 				onSuccess();
 			}
-		} catch (error: any) {
+		} catch (error: unknown) {
 			// Check if the error is due to schema being in use
-			const errorMessage =
-				error?.response?.data?.message || error?.message || '';
+			const errorMessage = getErrorMessage(error);
 			const isSchemaInUseError =
 				errorMessage.includes('in use') ||
 				errorMessage.includes('being used') ||
@@ -201,7 +225,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 				errorMessage.includes('cannot be edited') ||
 				errorMessage.includes('running campaign') ||
 				errorMessage.includes('existing contact data') ||
-				error?.response?.status === 409; // Conflict status
+				(error as { response?: { status?: number } })?.response?.status === 409; // Conflict status
 
 			if (isEditing && isSchemaInUseError) {
 				// Store the update data to use when creating new version
@@ -215,10 +239,14 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 				setShowVersionModal(true);
 			} else {
 				notifications.show({
-					title: 'Error',
+					title: t('status.error', { ns: 'common' }),
 					message:
 						errorMessage ||
-						`Failed to ${isEditing ? 'update' : 'create'} campaign schema`,
+						t(
+							isEditing
+								? 'setup.schemas.notifications.updateError'
+								: 'setup.schemas.notifications.createError'
+						),
 					color: 'red',
 				});
 			}
@@ -244,8 +272,8 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 			await createSchema.mutateAsync(newVersionData);
 
 			notifications.show({
-				title: 'Success',
-				message: 'New schema version created successfully',
+				title: t('status.success', { ns: 'common' }),
+				message: t('setup.schemas.notifications.versionSuccess'),
 				color: 'green',
 			});
 
@@ -254,8 +282,8 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 			onSuccess();
 		} catch (error) {
 			notifications.show({
-				title: 'Error',
-				message: 'Failed to create new schema version',
+				title: t('status.error', { ns: 'common' }),
+				message: t('setup.schemas.notifications.versionError'),
 				color: 'red',
 			});
 		}
@@ -302,21 +330,21 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 		<form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
 			<Stack gap='md'>
 				<TextInput
-					label='Name'
-					placeholder='Enter schema name'
+					label={t('setup.schemas.form.name.label')}
+					placeholder={t('setup.schemas.form.name.placeholder')}
 					required
 					{...form.getInputProps('name')}
 				/>
 
 				<TextInput
-					label='Icon'
-					placeholder='Enter icon name (e.g., credit-card)'
+					label={t('setup.schemas.form.icon.label')}
+					placeholder={t('setup.schemas.form.icon.placeholder')}
 					{...form.getInputProps('icon')}
 				/>
 
 				<TextInput
-					label='Objective'
-					placeholder='Select an objective'
+					label={t('setup.schemas.form.objective.label')}
+					placeholder={t('setup.schemas.form.objective.placeholder')}
 					required
 					readOnly
 					value={selectedObjectiveName}
@@ -326,7 +354,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 							variant='subtle'
 							size='sm'
 							type='button'
-							aria-label='Browse objectives'
+							aria-label={t('setup.schemas.form.objective.browseAria')}
 							onClick={() => setObjectivePickerOpen((v) => !v)}
 						>
 							<IconChevronRight size={16} />
@@ -351,8 +379,8 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 				</Collapse>
 
 				<Textarea
-					label='Description'
-					placeholder='Enter schema description (optional)'
+					label={t('setup.schemas.form.description.label')}
+					placeholder={t('setup.schemas.form.description.placeholder')}
 					rows={3}
 					{...form.getInputProps('description')}
 				/>
@@ -360,7 +388,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 				<div>
 					<Group justify='space-between' mb='sm'>
 						<Text fw={500} size='sm'>
-							Schema Fields
+							{t('setup.schemas.form.fields.title')}
 						</Text>
 						<Button
 							size='xs'
@@ -369,7 +397,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 							type='button'
 							onClick={addField}
 						>
-							Add Field
+							{t('setup.schemas.form.fields.add')}
 						</Button>
 					</Group>
 
@@ -379,8 +407,10 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 								<Group gap='sm' align='flex-start' wrap='nowrap'>
 									<div className={styles.fieldCol}>
 										<TextInput
-											label='Field Name'
-											placeholder='e.g., firstName'
+											label={t('setup.schemas.form.fields.name.label')}
+											placeholder={t(
+												'setup.schemas.form.fields.name.placeholder'
+											)}
 											required
 											value={field.name}
 											onChange={(event) =>
@@ -388,15 +418,17 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 											}
 											error={
 												field.name && !isFieldNameValid(field.name)
-													? 'Must be camelCase'
+													? t('setup.schemas.form.fields.name.error')
 													: undefined
 											}
 										/>
 									</div>
 									<div className={styles.fieldCol}>
 										<TextInput
-											label='Field Label'
-											placeholder='e.g., First Name'
+											label={t('setup.schemas.form.fields.label.label')}
+											placeholder={t(
+												'setup.schemas.form.fields.label.placeholder'
+											)}
 											required
 											value={field.label}
 											onChange={(event) =>
@@ -406,10 +438,10 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 									</div>
 									<div className={styles.typeSelect}>
 										<Select
-											label='Type'
+											label={t('setup.schemas.form.fields.type.label')}
 											data={fieldTypeOptions}
 											required
-											aria-label='Field type'
+											aria-label={t('setup.schemas.form.fields.type.ariaLabel')}
 											value={field.type}
 											onChange={(value) =>
 												updateField(index, { type: value as any })
@@ -418,7 +450,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 									</div>
 									<div className={styles.checkboxWrapper}>
 										<Checkbox
-											label='Is Array'
+											label={t('setup.schemas.form.fields.isArray')}
 											checked={field.isArray}
 											onChange={(event) =>
 												updateField(index, {
@@ -432,7 +464,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 											<ActionIcon
 												color='red'
 												variant='subtle'
-												aria-label='Remove field'
+												aria-label={t('setup.schemas.form.fields.removeField')}
 												onClick={() => removeField(index)}
 											>
 												<IconTrash size={16} />
@@ -452,14 +484,18 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 						onClick={onCancel}
 						disabled={isLoading}
 					>
-						Cancel
+						{t('actions.cancel', { ns: 'common' })}
 					</Button>
 					<Button
 						type='submit'
 						loading={isLoading}
 						className={styles.submitButton}
 					>
-						{isEditing ? 'Update' : 'Create'}
+						{t(
+							isEditing
+								? 'setup.schemas.form.actions.update'
+								: 'setup.schemas.form.actions.create'
+						)}
 					</Button>
 				</Group>
 			</Stack>
@@ -474,7 +510,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 				title={
 					<Group gap='xs'>
 						<IconAlertCircle size={20} color='var(--mantine-color-orange-6)' />
-						<Text fw={600}>Schema In Use</Text>
+						<Text fw={600}>{t('setup.schemas.form.versionModal.title')}</Text>
 					</Group>
 				}
 				size='md'
@@ -482,13 +518,10 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 			>
 				<Stack gap='md'>
 					<Text size='sm' c='dimmed'>
-						This schema is currently being used in an active campaign with
-						assigned data and cannot be edited directly.
+						{t('setup.schemas.form.versionModal.description')}
 					</Text>
 					<Text size='sm' fw={500}>
-						We can create a new version of this schema with your changes. The
-						new version will be available for use while the current version
-						remains unchanged in the running campaign.
+						{t('setup.schemas.form.versionModal.details')}
 					</Text>
 
 					<Group justify='flex-end' gap='sm' mt='md'>
@@ -501,14 +534,14 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 							}}
 							disabled={createSchema.isPending}
 						>
-							Cancel
+							{t('actions.cancel', { ns: 'common' })}
 						</Button>
 						<Button
 							type='button'
 							onClick={handleCreateNewVersion}
 							loading={createSchema.isPending}
 						>
-							Create New Version
+							{t('setup.schemas.form.versionModal.create')}
 						</Button>
 					</Group>
 				</Stack>

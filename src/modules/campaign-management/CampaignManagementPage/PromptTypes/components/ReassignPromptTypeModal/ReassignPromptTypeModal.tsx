@@ -22,6 +22,7 @@ import {
 	IconEdit,
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
+import { useTranslation } from 'react-i18next';
 import campaignPromptsApi from '~/api/campaignPromptApi';
 import campaignPromptTypeApi from '~/api/campaignPromptTypeApi';
 import PromptEditor from '~/modules/campaigns/CampaignsForm/AgentSection/CampaignConfigurationPrompt/CampaignConfigurationPromptEditModal/PromptTypeAccordionItem/PromptEditor';
@@ -57,11 +58,12 @@ const EditReassignmentPromptModal: React.FC<
 	currentCampaignId,
 	originalPrompt,
 }) => {
+	const { t } = useTranslation('campaign-management');
 	return (
 		<Modal
 			opened={opened}
 			onClose={onClose}
-			title='Edit Prompt Content'
+			title={t('setup.promptTypes.reassign.editPromptTitle')}
 			size='lg'
 		>
 			<Stack gap='md'>
@@ -81,14 +83,16 @@ const EditReassignmentPromptModal: React.FC<
 									fullWidth={false}
 									w='fit-content'
 								>
-									Import original prompt
+									{t('setup.promptTypes.reassign.editPromptImport')}
 								</Button>
 							)
 						}
 					/>
 				</div>
 				<Group justify='flex-end'>
-					<Button onClick={onClose}>Done</Button>
+					<Button onClick={onClose}>
+						{t('setup.promptTypes.reassign.editPromptDone')}
+					</Button>
 				</Group>
 			</Stack>
 		</Modal>
@@ -104,6 +108,7 @@ const ReassignPromptTypeModal: React.FC<ReassignPromptTypeModalProps> = ({
 	affectedCampaigns,
 	onDeleteType,
 }) => {
+	const { t } = useTranslation('campaign-management');
 	const [loadingDetails, setLoadingDetails] = useState(false);
 	const [processing, setProcessing] = useState(false);
 	const [availableTypesMap, setAvailableTypesMap] = useState<
@@ -150,8 +155,8 @@ const ReassignPromptTypeModal: React.FC<ReassignPromptTypeModalProps> = ({
 		} catch (error) {
 			console.error('Error fetching available types:', error);
 			notifications.show({
-				title: 'Error',
-				message: 'Failed to load available prompt types',
+				title: t('status.error', { ns: 'common' }),
+				message: t('setup.promptTypes.reassign.notifications.loadError'),
 				color: 'red',
 			});
 		} finally {
@@ -210,9 +215,8 @@ const ReassignPromptTypeModal: React.FC<ReassignPromptTypeModalProps> = ({
 				onClose();
 			} else {
 				notifications.show({
-					title: 'Warning',
-					message:
-						'Some campaigns are still using this prompt type. Please refresh and try again.',
+					title: t('setup.promptTypes.reassign.notifications.warningTitle'),
+					message: t('setup.promptTypes.reassign.notifications.stillUsed'),
 					color: 'yellow',
 				});
 				// Optionally refresh the list here
@@ -221,8 +225,8 @@ const ReassignPromptTypeModal: React.FC<ReassignPromptTypeModalProps> = ({
 		} catch (error) {
 			console.error('Error processing reassignment:', error);
 			notifications.show({
-				title: 'Error',
-				message: 'Failed to process changes',
+				title: t('status.error', { ns: 'common' }),
+				message: t('setup.promptTypes.reassign.notifications.processError'),
 				color: 'red',
 			});
 		} finally {
@@ -266,32 +270,39 @@ const ReassignPromptTypeModal: React.FC<ReassignPromptTypeModalProps> = ({
 			title={
 				<Group gap='xs'>
 					<IconAlertTriangle color='orange' size={20} />
-					<Text fw={600}>Prompt Type in Use</Text>
+					<Text fw={600}>{t('setup.promptTypes.reassign.title')}</Text>
 				</Group>
 			}
 			size='xl'
 		>
 			<Stack gap='md'>
 				<Alert color='yellow' variant='light'>
-					The prompt type <b>{typeToDelete.name}</b> is currently assigned to{' '}
-					<b>{affectedCampaigns.length}</b> campaigns. Please reassign these
-					prompts to a different type, or choose to delete them.
+					{t('setup.promptTypes.reassign.description', {
+						name: typeToDelete.name,
+						count: affectedCampaigns.length,
+					})}
 				</Alert>
 
 				{loadingDetails ? (
 					<Group justify='center' p='xl'>
 						<Loader size='sm' />
-						<Text size='sm'>Checking campaign constraints...</Text>
+						<Text size='sm'>{t('setup.promptTypes.reassign.loading')}</Text>
 					</Group>
 				) : (
 					<ScrollArea.Autosize style={{ maxHeight: 400 }}>
 						<Table>
 							<Table.Thead>
 								<Table.Tr>
-									<Table.Th>Campaign</Table.Th>
-									<Table.Th>Current Type</Table.Th>
+									<Table.Th>
+										{t('setup.promptTypes.reassign.table.headers.campaign')}
+									</Table.Th>
+									<Table.Th>
+										{t('setup.promptTypes.reassign.table.headers.currentType')}
+									</Table.Th>
 									<Table.Th></Table.Th>
-									<Table.Th>New Type</Table.Th>
+									<Table.Th>
+										{t('setup.promptTypes.reassign.table.headers.newType')}
+									</Table.Th>
 								</Table.Tr>
 							</Table.Thead>
 							<Table.Tbody>
@@ -312,7 +323,9 @@ const ReassignPromptTypeModal: React.FC<ReassignPromptTypeModalProps> = ({
 															variant='subtle'
 															size='sm'
 															onClick={() => setViewPrompt(campaign.prompt!)}
-															title='View Prompt'
+															title={t(
+																'setup.promptTypes.reassign.table.actions.viewPrompt'
+															)}
 														>
 															<IconEye size={14} />
 														</ActionIcon>
@@ -331,11 +344,15 @@ const ReassignPromptTypeModal: React.FC<ReassignPromptTypeModalProps> = ({
 												<Stack gap='xs'>
 													<Select
 														size='xs'
-														placeholder='Select action...'
+														placeholder={t(
+															'setup.promptTypes.reassign.table.actions.placeholder'
+														)}
 														data={[
 															{
 																value: DELETE_OPTION_VALUE,
-																label: 'Delete Prompt (Do not reassign)',
+																label: t(
+																	'setup.promptTypes.reassign.table.actions.delete'
+																),
 															},
 															...options,
 														]}
@@ -365,9 +382,11 @@ const ReassignPromptTypeModal: React.FC<ReassignPromptTypeModalProps> = ({
 																	setEditingPromptId(campaign.campaignPromptId)
 																}
 															>
-																{newPrompts[campaign.campaignPromptId]
-																	? 'Edit Prompt'
-																	: 'Add Prompt'}
+																{t(
+																	newPrompts[campaign.campaignPromptId]
+																		? 'setup.promptTypes.reassign.table.actions.editPrompt'
+																		: 'setup.promptTypes.reassign.table.actions.addPrompt'
+																)}
 															</Button>
 														</Group>
 													)}
@@ -387,13 +406,13 @@ const ReassignPromptTypeModal: React.FC<ReassignPromptTypeModalProps> = ({
 						variant='light'
 						icon={<IconAlertTriangle size={16} />}
 					>
-						Some reassigned prompts are empty.
+						{t('setup.promptTypes.reassign.emptyPromptWarning')}
 					</Alert>
 				)}
 
 				<Group justify='flex-end' mt='md'>
 					<Button variant='default' onClick={onClose} disabled={processing}>
-						Cancel
+						{t('actions.cancel', { ns: 'common' })}
 					</Button>
 					<Button
 						color='red'
@@ -401,7 +420,7 @@ const ReassignPromptTypeModal: React.FC<ReassignPromptTypeModalProps> = ({
 						loading={processing}
 						disabled={loadingDetails || !allAssigned}
 					>
-						Confirm & Delete Type
+						{t('setup.promptTypes.reassign.confirmDelete')}
 					</Button>
 				</Group>
 			</Stack>
@@ -409,7 +428,7 @@ const ReassignPromptTypeModal: React.FC<ReassignPromptTypeModalProps> = ({
 			<Modal
 				opened={!!viewPrompt}
 				onClose={() => setViewPrompt(null)}
-				title='Prompt Content'
+				title={t('setup.promptTypes.reassign.promptContentTitle')}
 				size='lg'
 			>
 				<Textarea
@@ -421,7 +440,7 @@ const ReassignPromptTypeModal: React.FC<ReassignPromptTypeModalProps> = ({
 				/>
 				<Group justify='flex-end' mt='md'>
 					<Button variant='default' onClick={() => setViewPrompt(null)}>
-						Close
+						{t('actions.close', { ns: 'common' })}
 					</Button>
 				</Group>
 			</Modal>

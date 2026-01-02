@@ -1,11 +1,10 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
-import { MantineProvider } from '@mantine/core';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import CampaignSchemasFilters, {
 	SchemaFilters,
 } from './CampaignSchemasFilters';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 // Mock scrollIntoView to avoid errors from Mantine Combobox
 beforeAll(() => {
@@ -23,22 +22,6 @@ vi.mock('~/queries/campaignObjectivesQueries', () => ({
 		},
 	}),
 }));
-
-const createTestQueryClient = () =>
-	new QueryClient({
-		defaultOptions: {
-			queries: { retry: false },
-		},
-	});
-
-const renderWithProviders = (ui: React.ReactNode) => {
-	const queryClient = createTestQueryClient();
-	return render(
-		<QueryClientProvider client={queryClient}>
-			<MantineProvider>{ui}</MantineProvider>
-		</QueryClientProvider>
-	);
-};
 
 describe('CampaignSchemasFilters', () => {
 	const defaultFilters: SchemaFilters = {

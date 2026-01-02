@@ -45,13 +45,13 @@ const CampaignSchemasContent: React.FC<CampaignSchemasContentProps> = ({
 		try {
 			await deleteSchema.mutateAsync(id);
 			notifications.show({
-				title: 'Success',
+				title: t('status.success', { ns: 'common' }),
 				message: t('setup.schemas.deleteSuccess'),
 				color: 'green',
 			});
 		} catch (error) {
 			notifications.show({
-				title: 'Error',
+				title: t('status.error', { ns: 'common' }),
 				message: t('setup.schemas.deleteError'),
 				color: 'red',
 			});
@@ -171,7 +171,7 @@ const CampaignSchemasContent: React.FC<CampaignSchemasContentProps> = ({
 								}
 							}}
 							isLoading={isLoading}
-							itemLabel='schemas'
+							itemLabel={t('setup.schemas.pagination.itemLabel')}
 						/>
 					</>
 				)}

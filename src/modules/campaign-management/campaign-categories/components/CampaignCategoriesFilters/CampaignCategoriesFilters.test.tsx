@@ -1,10 +1,10 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MantineProvider } from '@mantine/core';
 import {
 	CampaignCategoriesFilters,
 	CategoryFilters,
 } from './CampaignCategoriesFilters';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 describe('CampaignCategoriesFilters', () => {
 	const defaultFilters: CategoryFilters = {
@@ -19,10 +19,6 @@ describe('CampaignCategoriesFilters', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
-
-	const renderWithProviders = (ui: React.ReactNode) => {
-		return render(<MantineProvider>{ui}</MantineProvider>);
-	};
 
 	describe('Rendering', () => {
 		it('renders the filters container', () => {

@@ -12,6 +12,7 @@ import {
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { IconChevronRight } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import {
 	useCreateCampaignObjective,
 	useUpdateCampaignObjective,
@@ -38,6 +39,7 @@ export const CampaignObjectivesForm: React.FC<CampaignObjectivesFormProps> = ({
 	onCancel,
 	withinParentForm = false,
 }) => {
+	const { t } = useTranslation('campaign-management');
 	const isEditing = !!objective;
 	const [categoryPickerOpen, setCategoryPickerOpen] = React.useState(false);
 	const createObjective = useCreateCampaignObjective();
@@ -56,11 +58,27 @@ export const CampaignObjectivesForm: React.FC<CampaignObjectivesFormProps> = ({
 		},
 		validate: {
 			// @ts-ignore
-			name: (value) => (!value ? 'Name is required' : null),
+			name: (value) =>
+				!value ? t('setup.objectives.form.validation.nameRequired') : null,
 			// @ts-ignore
-			categoryId: (value) => (!value ? 'Category is required' : null),
+			categoryId: (value) =>
+				!value ? t('setup.objectives.form.validation.categoryRequired') : null,
 		},
 	});
+
+	const getErrorMessage = (error: unknown) => {
+		if (!error || typeof error !== 'object') return '';
+		const response = (error as { response?: { data?: { message?: string } } })
+			.response;
+		if (response?.data?.message) return response.data.message;
+		if (
+			'message' in error &&
+			typeof (error as { message?: string }).message === 'string'
+		) {
+			return (error as { message?: string }).message ?? '';
+		}
+		return '';
+	};
 
 	const handleSubmit = async (values: typeof form.values) => {
 		try {
@@ -76,8 +94,8 @@ export const CampaignObjectivesForm: React.FC<CampaignObjectivesFormProps> = ({
 					data: updateData,
 				});
 				notifications.show({
-					title: 'Success',
-					message: 'Campaign objective updated successfully',
+					title: t('status.success', { ns: 'common' }),
+					message: t('setup.objectives.notifications.updateSuccess'),
 					color: 'green',
 				});
 				onSuccess(updatedObjective);
@@ -90,21 +108,24 @@ export const CampaignObjectivesForm: React.FC<CampaignObjectivesFormProps> = ({
 				};
 				const createdObjective = await createObjective.mutateAsync(createData);
 				notifications.show({
-					title: 'Success',
-					message: 'Campaign objective created successfully',
+					title: t('status.success', { ns: 'common' }),
+					message: t('setup.objectives.notifications.createSuccess'),
 					color: 'green',
 				});
 				onSuccess(createdObjective);
 			}
 			// onSuccess call moved inside existing blocks to pass specific data
-		} catch (error: any) {
-			const errorMessage =
-				error?.response?.data?.message || error?.message || '';
+		} catch (error: unknown) {
+			const errorMessage = getErrorMessage(error);
 			notifications.show({
-				title: 'Error',
+				title: t('status.error', { ns: 'common' }),
 				message:
 					errorMessage ||
-					`Failed to ${isEditing ? 'update' : 'create'} campaign objective`,
+					t(
+						isEditing
+							? 'setup.objectives.notifications.updateError'
+							: 'setup.objectives.notifications.createError'
+					),
 				color: 'red',
 			});
 		}
@@ -126,15 +147,15 @@ export const CampaignObjectivesForm: React.FC<CampaignObjectivesFormProps> = ({
 	const content = (
 		<Stack gap='md'>
 			<TextInput
-				label='Name'
-				placeholder='Enter objective name'
+				label={t('setup.objectives.form.name.label')}
+				placeholder={t('setup.objectives.form.name.placeholder')}
 				required
 				{...form.getInputProps('name')}
 			/>
 
 			<TextInput
-				label='Category'
-				placeholder='Select a category'
+				label={t('setup.objectives.form.category.label')}
+				placeholder={t('setup.objectives.form.category.placeholder')}
 				required
 				readOnly
 				value={selectedCategoryName}
@@ -144,7 +165,7 @@ export const CampaignObjectivesForm: React.FC<CampaignObjectivesFormProps> = ({
 						variant='subtle'
 						size='sm'
 						type='button'
-						aria-label='Browse categories'
+						aria-label={t('setup.objectives.form.category.browseAria')}
 						onClick={() => setCategoryPickerOpen((v) => !v)}
 					>
 						<IconChevronRight size={16} />
@@ -167,15 +188,15 @@ export const CampaignObjectivesForm: React.FC<CampaignObjectivesFormProps> = ({
 			</Collapse>
 
 			<Textarea
-				label='Description'
-				placeholder='Enter objective description (optional)'
+				label={t('setup.objectives.form.description.label')}
+				placeholder={t('setup.objectives.form.description.placeholder')}
 				rows={3}
 				{...form.getInputProps('description')}
 			/>
 
 			<Switch
-				label='Active'
-				description='When enabled, this objective will be available for use'
+				label={t('setup.objectives.form.active.label')}
+				description={t('setup.objectives.form.active.description')}
 				{...form.getInputProps('active', { type: 'checkbox' })}
 			/>
 
@@ -186,7 +207,7 @@ export const CampaignObjectivesForm: React.FC<CampaignObjectivesFormProps> = ({
 					onClick={onCancel}
 					disabled={isLoading}
 				>
-					Cancel
+					{t('actions.cancel', { ns: 'common' })}
 				</Button>
 				<Button
 					type={withinParentForm ? 'button' : 'submit'}
@@ -194,7 +215,11 @@ export const CampaignObjectivesForm: React.FC<CampaignObjectivesFormProps> = ({
 					className={styles.submitButton}
 					onClick={withinParentForm ? handleClickSubmit : undefined}
 				>
-					{isEditing ? 'Update' : 'Create'}
+					{t(
+						isEditing
+							? 'setup.objectives.form.actions.update'
+							: 'setup.objectives.form.actions.create'
+					)}
 				</Button>
 			</Group>
 		</Stack>

@@ -1,6 +1,7 @@
 import { Group, Text, Badge, Tooltip, Button } from '@mantine/core';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { ColumnDef } from '@tanstack/react-table';
+import { useTranslation } from 'react-i18next';
 import {
 	CampaignObjective,
 	CampaignObjectiveWithCategoryName,
@@ -20,10 +21,11 @@ export const useCampaignObjectivesColumns = ({
 	onDelete,
 	isDeletePending,
 }: UseCampaignObjectivesColumnsProps): ColumnDef<EnrichedObjective>[] => {
+	const { t } = useTranslation('campaign-management');
 	return [
 		{
 			accessorKey: 'name',
-			header: 'Name',
+			header: t('setup.objectives.table.headers.name'),
 			cell: ({ row }) => (
 				<Text fw={600} className={styles.objectiveName}>
 					{row.original.name}
@@ -32,7 +34,7 @@ export const useCampaignObjectivesColumns = ({
 		},
 		{
 			accessorKey: 'categoryName',
-			header: 'Category',
+			header: t('setup.objectives.table.headers.category'),
 			cell: ({ row }) => (
 				<Badge size='xs' color='indigo' variant='light'>
 					{row.original.categoryName}
@@ -41,16 +43,17 @@ export const useCampaignObjectivesColumns = ({
 		},
 		{
 			accessorKey: 'description',
-			header: 'Description',
+			header: t('setup.objectives.table.headers.description'),
 			cell: ({ row }) => (
 				<Text size='sm' c='dimmed' className={styles.objectiveDescription}>
-					{row.original.description || 'No description'}
+					{row.original.description ||
+						t('setup.objectives.table.empty.description')}
 				</Text>
 			),
 		},
 		{
 			accessorKey: 'active',
-			header: 'Status',
+			header: t('setup.objectives.table.headers.status'),
 			cell: ({ row }) => (
 				<Badge
 					variant='dot'
@@ -58,16 +61,20 @@ export const useCampaignObjectivesColumns = ({
 					size='sm'
 					className={styles.statusBadge}
 				>
-					{row.original.active ? 'Active' : 'Inactive'}
+					{t(
+						row.original.active
+							? 'setup.objectives.table.status.active'
+							: 'setup.objectives.table.status.inactive'
+					)}
 				</Badge>
 			),
 		},
 		{
 			id: 'actions',
-			header: 'Actions',
+			header: t('setup.objectives.table.headers.actions'),
 			cell: ({ row }) => (
 				<Group gap='xs' className={styles.actionsGroup}>
-					<Tooltip label='Edit objective' withArrow>
+					<Tooltip label={t('setup.objectives.table.actions.edit')} withArrow>
 						<Button
 							size='xs'
 							variant='light'
@@ -77,7 +84,7 @@ export const useCampaignObjectivesColumns = ({
 							<IconEdit size={14} />
 						</Button>
 					</Tooltip>
-					<Tooltip label='Delete objective' withArrow>
+					<Tooltip label={t('setup.objectives.table.actions.delete')} withArrow>
 						<Button
 							size='xs'
 							variant='light'

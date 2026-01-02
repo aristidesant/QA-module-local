@@ -8,6 +8,7 @@ import {
 	ActionIcon,
 } from '@mantine/core';
 import { IconSearch, IconFilter, IconFilterOff } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import { useGetCampaignCategories } from '~/queries/campaignCategoriesQueries';
 import styles from './CampaignObjectivesFilters.module.css';
 
@@ -27,6 +28,7 @@ interface CampaignObjectivesFiltersProps {
 export const CampaignObjectivesFilters: React.FC<
 	CampaignObjectivesFiltersProps
 > = ({ filters, onFiltersChange }) => {
+	const { t } = useTranslation('campaign-management');
 	// Get categories for the category filter
 	const { data: categoriesResponse } = useGetCampaignCategories();
 	const categories = categoriesResponse?.data || [];
@@ -66,7 +68,7 @@ export const CampaignObjectivesFilters: React.FC<
 
 	// Transform categories for select options
 	const categoryOptions = [
-		{ value: '', label: 'All Categories' },
+		{ value: '', label: t('setup.objectives.filters.categories.all') },
 		...categories.map((category) => ({
 			value: category.id.toString(),
 			label: category.name,
@@ -79,18 +81,20 @@ export const CampaignObjectivesFilters: React.FC<
 				<Group gap='xs' className={styles.titleGroup}>
 					<IconFilter size={16} className={styles.titleIcon} />
 					<Text size='sm' fw={600} className={styles.title}>
-						Filters
+						{t('setup.objectives.filters.title')}
 					</Text>
 					{hasActiveFilters && (
 						<Badge size='sm' variant='light' className={styles.activeBadge}>
-							{getActiveFiltersCount()} active
+							{t('setup.objectives.filters.activeCount', {
+								count: getActiveFiltersCount(),
+							})}
 						</Badge>
 					)}
 				</Group>
 
 				<Group gap='md' className={styles.controlsWrapper}>
 					<TextInput
-						placeholder='Search by name or description...'
+						placeholder={t('setup.objectives.filters.searchPlaceholder')}
 						value={filters.search}
 						onChange={(event) =>
 							handleFilterChange('search', event.currentTarget.value)
@@ -100,7 +104,7 @@ export const CampaignObjectivesFilters: React.FC<
 					/>
 
 					<Select
-						placeholder='Category'
+						placeholder={t('setup.objectives.filters.categoryPlaceholder')}
 						value={filters.categoryId?.toString() || ''}
 						onChange={(value) =>
 							handleFilterChange('categoryId', value ? parseInt(value) : null)
@@ -110,13 +114,22 @@ export const CampaignObjectivesFilters: React.FC<
 					/>
 
 					<Select
-						placeholder='Status'
+						placeholder={t('setup.objectives.filters.statusPlaceholder')}
 						value={filters.status}
 						onChange={(value) => handleFilterChange('status', value || 'all')}
 						data={[
-							{ value: 'all', label: 'All Status' },
-							{ value: 'active', label: 'Active' },
-							{ value: 'inactive', label: 'Inactive' },
+							{
+								value: 'all',
+								label: t('setup.objectives.filters.statusOptions.all'),
+							},
+							{
+								value: 'active',
+								label: t('setup.objectives.filters.statusOptions.active'),
+							},
+							{
+								value: 'inactive',
+								label: t('setup.objectives.filters.statusOptions.inactive'),
+							},
 						]}
 						className={styles.statusSelect}
 					/>
@@ -127,7 +140,7 @@ export const CampaignObjectivesFilters: React.FC<
 							color='gray'
 							onClick={handleClearFilters}
 							className={styles.clearButton}
-							title='Clear all filters'
+							title={t('setup.objectives.filters.clear')}
 						>
 							<IconFilterOff size={16} />
 						</ActionIcon>

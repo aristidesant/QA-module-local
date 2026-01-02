@@ -15,10 +15,92 @@
 			"create": "Crear Categoría",
 			"edit": "Editar Categoría de Campaña",
 			"sectionCardDescription": "Organice las categorías utilizadas para clasificar campañas y aplicar filtros.",
+			"form": {
+				"name": {
+					"label": "Nombre",
+					"placeholder": "Ingrese el nombre de la categoría"
+				},
+				"description": {
+					"label": "Descripción",
+					"placeholder": "Ingrese la descripción de la categoría (opcional)"
+				},
+				"active": {
+					"label": "Activa",
+					"description": "Cuando está habilitada, esta categoría estará disponible para su uso"
+				},
+				"actions": {
+					"create": "Crear",
+					"update": "Actualizar"
+				},
+				"validation": {
+					"nameRequired": "El nombre es obligatorio"
+				}
+			},
+			"notifications": {
+				"createSuccess": "Categoría de campaña creada exitosamente",
+				"createError": "Error al crear la categoría de campaña",
+				"updateSuccess": "Categoría de campaña actualizada exitosamente",
+				"updateError": "Error al actualizar la categoría de campaña"
+			},
+			"table": {
+				"headers": {
+					"name": "Nombre",
+					"code": "Código",
+					"description": "Descripción",
+					"status": "Estado",
+					"actions": "Acciones"
+				},
+				"empty": {
+					"description": "Sin descripción"
+				},
+				"status": {
+					"active": "Activa",
+					"inactive": "Inactiva"
+				},
+				"actions": {
+					"edit": "Editar categoría",
+					"delete": "Eliminar categoría"
+				}
+			},
+			"filters": {
+				"title": "Filtros",
+				"activeCount": "{{count}} activas",
+				"searchPlaceholder": "Buscar por nombre, código o descripción...",
+				"statusPlaceholder": "Estado",
+				"statusOptions": {
+					"all": "Todos los estados",
+					"active": "Activa",
+					"inactive": "Inactiva"
+				},
+				"clear": "Limpiar todos los filtros"
+			},
+			"pagination": {
+				"showing": "Mostrando {{start}}-{{end}} de {{total}} categorías",
+				"itemsPerPage": "Elementos por página:",
+				"readOnlyNote": "* La paginación es solo de lectura por ahora. La paginación en vivo estará disponible después de las actualizaciones del backend.",
+				"itemLabel": "categorías"
+			},
+			"picker": {
+				"title": "Elegir una categoría",
+				"description": "Seleccione una categoría existente o cree una nueva.",
+				"newButton": "Nueva categoría",
+				"closeLabel": "Cerrar",
+				"table": {
+					"headers": {
+						"category": "Categoría",
+						"code": "Código"
+					},
+					"actions": {
+						"select": "Seleccionar",
+						"selected": "Seleccionada"
+					}
+				}
+			},
 			"deleteSuccess": "Categoría de campaña eliminada exitosamente",
 			"deleteError": "Error al eliminar la categoría de campaña",
 			"noResults": "No se encontraron categorías",
 			"noResultsFilters": "No hay categorías que coincidan con sus filtros",
+			"noResultsFiltersDescription": "Intente ajustar su búsqueda o filtros",
 			"getStarted": "Comience creando su primera categoría de campaña"
 		},
 		"objectives": {
@@ -28,6 +110,94 @@
 			"create": "Crear Objetivo",
 			"edit": "Editar Objetivo de Campaña",
 			"sectionCardDescription": "Agregue y gestione objetivos de campaña para definir resultados esperados y seguimiento.",
+			"form": {
+				"name": {
+					"label": "Nombre",
+					"placeholder": "Ingrese el nombre del objetivo"
+				},
+				"category": {
+					"label": "Categoría",
+					"placeholder": "Seleccione una categoría",
+					"browseAria": "Explorar categorías"
+				},
+				"description": {
+					"label": "Descripción",
+					"placeholder": "Ingrese la descripción del objetivo (opcional)"
+				},
+				"active": {
+					"label": "Activo",
+					"description": "Cuando está habilitado, este objetivo estará disponible para su uso"
+				},
+				"actions": {
+					"create": "Crear",
+					"update": "Actualizar"
+				},
+				"validation": {
+					"nameRequired": "El nombre es obligatorio",
+					"categoryRequired": "La categoría es obligatoria"
+				}
+			},
+			"notifications": {
+				"createSuccess": "Objetivo de campaña creado exitosamente",
+				"createError": "Error al crear el objetivo de campaña",
+				"updateSuccess": "Objetivo de campaña actualizado exitosamente",
+				"updateError": "Error al actualizar el objetivo de campaña"
+			},
+			"table": {
+				"headers": {
+					"name": "Nombre",
+					"category": "Categoría",
+					"description": "Descripción",
+					"status": "Estado",
+					"actions": "Acciones"
+				},
+				"empty": {
+					"description": "Sin descripción"
+				},
+				"status": {
+					"active": "Activo",
+					"inactive": "Inactivo"
+				},
+				"actions": {
+					"edit": "Editar objetivo",
+					"delete": "Eliminar objetivo"
+				}
+			},
+			"filters": {
+				"title": "Filtros",
+				"activeCount": "{{count}} activos",
+				"searchPlaceholder": "Buscar por nombre o descripción...",
+				"categoryPlaceholder": "Categoría",
+				"statusPlaceholder": "Estado",
+				"statusOptions": {
+					"all": "Todos los estados",
+					"active": "Activo",
+					"inactive": "Inactivo"
+				},
+				"categories": {
+					"all": "Todas las categorías"
+				},
+				"clear": "Limpiar todos los filtros"
+			},
+			"pagination": {
+				"itemLabel": "objetivos"
+			},
+			"picker": {
+				"title": "Elegir un objetivo",
+				"description": "Seleccione un objetivo existente o cree uno nuevo.",
+				"newButton": "Nuevo objetivo",
+				"closeLabel": "Cerrar",
+				"table": {
+					"headers": {
+						"objective": "Objetivo",
+						"category": "Categoría"
+					},
+					"actions": {
+						"select": "Seleccionar",
+						"selected": "Seleccionado"
+					}
+				}
+			},
 			"deleteSuccess": "Objetivo de campaña eliminado exitosamente",
 			"deleteError": "Error al eliminar el objetivo de campaña",
 			"noResults": "No se encontraron objetivos",
@@ -42,6 +212,111 @@
 			"create": "Crear Esquema",
 			"edit": "Editar Esquema de Campaña",
 			"sectionCardDescription": "Esquemas de Campaña a los que pertenecen los objetivos",
+			"form": {
+				"name": {
+					"label": "Nombre",
+					"placeholder": "Ingrese el nombre del esquema"
+				},
+				"icon": {
+					"label": "Icono",
+					"placeholder": "Ingrese el nombre del icono (p. ej., credit-card)"
+				},
+				"objective": {
+					"label": "Objetivo",
+					"placeholder": "Seleccione un objetivo",
+					"browseAria": "Explorar objetivos"
+				},
+				"description": {
+					"label": "Descripción",
+					"placeholder": "Ingrese la descripción del esquema (opcional)"
+				},
+				"fieldTypes": {
+					"text": "Texto",
+					"number": "Número",
+					"boolean": "Booleano",
+					"date": "Fecha"
+				},
+				"fields": {
+					"title": "Campos del esquema",
+					"add": "Agregar campo",
+					"name": {
+						"label": "Nombre del campo",
+						"placeholder": "p. ej., firstName",
+						"error": "Debe estar en camelCase"
+					},
+					"label": {
+						"label": "Etiqueta del campo",
+						"placeholder": "p. ej., Nombre"
+					},
+					"type": {
+						"label": "Tipo",
+						"ariaLabel": "Tipo de campo"
+					},
+					"isArray": "Es arreglo",
+					"removeField": "Eliminar campo"
+				},
+				"actions": {
+					"create": "Crear",
+					"update": "Actualizar"
+				},
+				"validation": {
+					"nameRequired": "El nombre es obligatorio",
+					"objectiveRequired": "El objetivo es obligatorio",
+					"invalidFieldNamesTitle": "Nombres de campos inválidos",
+					"fieldNameRequired": "Campo {{index}}: El nombre es obligatorio",
+					"fieldNameFormat": "Campo {{index}} ({{name}}): Debe estar en camelCase (comenzar con minúscula y usar solo letras/números)"
+				},
+				"versionModal": {
+					"title": "Esquema en uso",
+					"description": "Este esquema se está utilizando en una campaña activa con datos asignados y no puede editarse directamente.",
+					"details": "Podemos crear una nueva versión de este esquema con sus cambios. La nueva versión estará disponible para usar mientras que la versión actual permanecerá sin cambios en la campaña en ejecución.",
+					"create": "Crear nueva versión"
+				}
+			},
+			"notifications": {
+				"createSuccess": "Esquema de campaña creado exitosamente",
+				"createError": "Error al crear el esquema de campaña",
+				"updateSuccess": "Esquema de campaña actualizado exitosamente",
+				"updateError": "Error al actualizar el esquema de campaña",
+				"versionSuccess": "Nueva versión del esquema creada exitosamente",
+				"versionError": "Error al crear la nueva versión del esquema"
+			},
+			"table": {
+				"headers": {
+					"details": "Detalles del esquema",
+					"code": "Código",
+					"objective": "Objetivo",
+					"status": "Estado",
+					"actions": "Acciones"
+				},
+				"empty": {
+					"description": "Sin descripción"
+				},
+				"status": {
+					"active": "Activo",
+					"inactive": "Inactivo"
+				},
+				"actions": {
+					"edit": "Editar esquema",
+					"delete": "Eliminar esquema",
+					"copyCode": "Copiar código",
+					"copied": "Copiado"
+				},
+				"info": {
+					"lastUpdated": "Última actualización: {{date}}"
+				}
+			},
+			"filters": {
+				"title": "Filtros",
+				"active": "Activos",
+				"searchPlaceholder": "Buscar por nombre o código...",
+				"objectivePlaceholder": "Todos los objetivos",
+				"objectiveAllLabel": "Todos los objetivos",
+				"clear": "Limpiar todos los filtros"
+			},
+			"pagination": {
+				"itemLabel": "esquemas"
+			},
 			"deleteSuccess": "Esquema de campaña eliminado exitosamente",
 			"deleteError": "Error al eliminar el esquema de campaña",
 			"noResults": "No se encontraron esquemas",
@@ -51,6 +326,45 @@
 			"getStarted": "Comience creando su primer esquema de campaña"
 		},
 		"promptTypes": {
+			"title": "Tipos de Prompt",
+			"description": "Etiqueta y organiza las plantillas de prompt usadas por las campañas.",
+			"actions": {
+				"create": "Crear tipo de prompt"
+			},
+			"emptyState": {
+				"message": "No se encontraron tipos de prompt",
+				"description": "Defina su primer tipo de prompt de campaña para comenzar a organizar prompts."
+			},
+			"filteredEmpty": {
+				"message": "No hay tipos de prompt que coincidan con sus filtros",
+				"description": "Intente ajustar su búsqueda o las opciones de orden."
+			},
+			"filters": {
+				"title": "Filtros",
+				"active": "Activos",
+				"searchPlaceholder": "Buscar por nombre o icono...",
+				"sortPlaceholder": "Ordenar por",
+				"sortOptions": {
+					"orderAsc": "Orden ascendente",
+					"orderDesc": "Orden descendente",
+					"nameAsc": "Nombre A-Z",
+					"nameDesc": "Nombre Z-A",
+					"createdDesc": "Más recientes primero",
+					"createdAsc": "Más antiguos primero"
+				},
+				"clear": "Limpiar filtros"
+			},
+			"pagination": {
+				"itemLabel": "tipos de prompt"
+			},
+			"modals": {
+				"createTitle": "Crear tipo de prompt de campaña",
+				"editTitle": "Editar tipo de prompt de campaña"
+			},
+			"confirmDelete": {
+				"title": "Confirmar eliminación",
+				"message": "¿Está seguro de que desea eliminar este tipo de prompt?"
+			},
 			"form": {
 				"name": {
 					"label": "Nombre",
@@ -81,7 +395,10 @@
 			},
 			"notifications": {
 				"createSuccess": "Tipo de prompt de campaña creado exitosamente",
-				"updateSuccess": "Tipo de prompt de campaña actualizado exitosamente"
+				"updateSuccess": "Tipo de prompt de campaña actualizado exitosamente",
+				"deleteSuccess": "Tipo de prompt de campaña eliminado exitosamente",
+				"deleteError": "Error al eliminar el tipo de prompt de campaña",
+				"usageError": "Error al comprobar el uso del tipo de prompt"
 			},
 			"table": {
 				"headers": {
@@ -106,6 +423,37 @@
 				"actions": {
 					"edit": "Editar tipo de prompt",
 					"delete": "Eliminar tipo de prompt"
+				}
+			},
+			"reassign": {
+				"title": "Tipo de prompt en uso",
+				"description": "El tipo de prompt {{name}} está asignado actualmente a {{count}} campañas. Reasigne estos prompts a otro tipo o elija eliminarlos.",
+				"loading": "Verificando restricciones de campaña...",
+				"confirmDelete": "Confirmar y eliminar tipo",
+				"emptyPromptWarning": "Algunos prompts reasignados están vacíos.",
+				"promptContentTitle": "Contenido del prompt",
+				"editPromptTitle": "Editar contenido del prompt",
+				"editPromptImport": "Importar prompt original",
+				"editPromptDone": "Listo",
+				"table": {
+					"headers": {
+						"campaign": "Campaña",
+						"currentType": "Tipo actual",
+						"newType": "Nuevo tipo"
+					},
+					"actions": {
+						"viewPrompt": "Ver prompt",
+						"placeholder": "Seleccionar acción...",
+						"delete": "Eliminar prompt (no reasignar)",
+						"editPrompt": "Editar prompt",
+						"addPrompt": "Agregar prompt"
+					}
+				},
+				"notifications": {
+					"loadError": "Error al cargar los tipos de prompt disponibles",
+					"warningTitle": "Advertencia",
+					"stillUsed": "Algunas campañas todavía usan este tipo de prompt. Actualice e intente nuevamente.",
+					"processError": "Error al procesar los cambios"
 				}
 			}
 		}

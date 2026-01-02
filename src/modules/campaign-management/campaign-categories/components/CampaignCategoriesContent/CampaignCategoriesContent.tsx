@@ -50,13 +50,13 @@ const CampaignCategoriesContent: React.FC<CampaignCategoriesContentProps> = ({
 		try {
 			await deleteCategory.mutateAsync(id);
 			notifications.show({
-				title: 'Success',
+				title: t('status.success', { ns: 'common' }),
 				message: t('setup.categories.deleteSuccess'),
 				color: 'green',
 			});
 		} catch (error) {
 			notifications.show({
-				title: 'Error',
+				title: t('status.error', { ns: 'common' }),
 				message: t('setup.categories.deleteError'),
 				color: 'red',
 			});
@@ -131,7 +131,7 @@ const CampaignCategoriesContent: React.FC<CampaignCategoriesContentProps> = ({
 						<EmptyState
 							icon={<IconSearchOff size={48} />}
 							message={t('setup.categories.noResultsFilters')}
-							description='Try adjusting your search criteria or filters'
+							description={t('setup.categories.noResultsFiltersDescription')}
 							action={
 								<Button
 									leftSection={<IconPlus size={16} />}
@@ -168,7 +168,7 @@ const CampaignCategoriesContent: React.FC<CampaignCategoriesContentProps> = ({
 								}
 							}}
 							isLoading={isLoading}
-							itemLabel='categories'
+							itemLabel={t('setup.categories.pagination.itemLabel')}
 						/>
 					</>
 				)}

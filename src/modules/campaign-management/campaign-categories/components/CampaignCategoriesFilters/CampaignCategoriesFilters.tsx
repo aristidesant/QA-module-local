@@ -8,6 +8,7 @@ import {
 	ActionIcon,
 } from '@mantine/core';
 import { IconSearch, IconFilter, IconFilterOff } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import styles from './CampaignCategoriesFilters.module.css';
 
 export interface CategoryFilters {
@@ -25,6 +26,7 @@ interface CampaignCategoriesFiltersProps {
 export const CampaignCategoriesFilters: React.FC<
 	CampaignCategoriesFiltersProps
 > = ({ filters, onFiltersChange }) => {
+	const { t } = useTranslation('campaign-management');
 	const hasActiveFilters =
 		filters.search !== '' ||
 		filters.status !== 'all' ||
@@ -61,18 +63,20 @@ export const CampaignCategoriesFilters: React.FC<
 				<Group gap='xs' className={styles.titleGroup}>
 					<IconFilter size={16} className={styles.titleIcon} />
 					<Text size='sm' fw={600} className={styles.title}>
-						Filters
+						{t('setup.categories.filters.title')}
 					</Text>
 					{hasActiveFilters && (
 						<Badge size='sm' variant='light' className={styles.activeBadge}>
-							{getActiveFiltersCount()} active
+							{t('setup.categories.filters.activeCount', {
+								count: getActiveFiltersCount(),
+							})}
 						</Badge>
 					)}
 				</Group>
 
 				<Group gap='xs' className={styles.controlsWrapper}>
 					<TextInput
-						placeholder='Search by name, code, or description...'
+						placeholder={t('setup.categories.filters.searchPlaceholder')}
 						value={filters.search}
 						onChange={(event) =>
 							handleFilterChange('search', event.currentTarget.value)
@@ -82,13 +86,22 @@ export const CampaignCategoriesFilters: React.FC<
 					/>
 
 					<Select
-						placeholder='Status'
+						placeholder={t('setup.categories.filters.statusPlaceholder')}
 						value={filters.status}
 						onChange={(value) => handleFilterChange('status', value || 'all')}
 						data={[
-							{ value: 'all', label: 'All Status' },
-							{ value: 'active', label: 'Active' },
-							{ value: 'inactive', label: 'Inactive' },
+							{
+								value: 'all',
+								label: t('setup.categories.filters.statusOptions.all'),
+							},
+							{
+								value: 'active',
+								label: t('setup.categories.filters.statusOptions.active'),
+							},
+							{
+								value: 'inactive',
+								label: t('setup.categories.filters.statusOptions.inactive'),
+							},
 						]}
 						className={styles.statusSelect}
 					/>
@@ -99,7 +112,7 @@ export const CampaignCategoriesFilters: React.FC<
 							color='gray'
 							onClick={handleClearFilters}
 							className={styles.clearButton}
-							title='Clear all filters'
+							title={t('setup.categories.filters.clear')}
 						>
 							<IconFilterOff size={16} />
 						</ActionIcon>

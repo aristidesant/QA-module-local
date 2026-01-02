@@ -52,13 +52,13 @@ const CampaignObjectivesContent: React.FC<CampaignObjectivesContentProps> = ({
 		try {
 			await deleteObjective.mutateAsync(id);
 			notifications.show({
-				title: 'Success',
+				title: t('status.success', { ns: 'common' }),
 				message: t('setup.objectives.deleteSuccess'),
 				color: 'green',
 			});
 		} catch (error) {
 			notifications.show({
-				title: 'Error',
+				title: t('status.error', { ns: 'common' }),
 				message: t('setup.objectives.deleteError'),
 				color: 'red',
 			});
@@ -159,7 +159,7 @@ const CampaignObjectivesContent: React.FC<CampaignObjectivesContentProps> = ({
 								}
 							}}
 							isLoading={isLoading}
-							itemLabel='objectives'
+							itemLabel={t('setup.objectives.pagination.itemLabel')}
 						/>
 					</>
 				)}

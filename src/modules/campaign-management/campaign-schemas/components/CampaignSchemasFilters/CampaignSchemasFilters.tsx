@@ -8,6 +8,7 @@ import {
 	ActionIcon,
 } from '@mantine/core';
 import { IconSearch, IconFilter, IconFilterOff } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import { useGetCampaignObjectives } from '~/queries/campaignObjectivesQueries';
 import styles from './CampaignSchemasFilters.module.css';
 
@@ -27,6 +28,7 @@ const CampaignSchemasFilters: React.FC<CampaignSchemasFiltersProps> = ({
 	filters,
 	onFiltersChange,
 }) => {
+	const { t } = useTranslation('campaign-management');
 	// Get objectives for the filter
 	const { data: objectivesResponse } = useGetCampaignObjectives();
 	const objectives = objectivesResponse?.data || [];
@@ -63,17 +65,19 @@ const CampaignSchemasFilters: React.FC<CampaignSchemasFiltersProps> = ({
 			<Group justify='space-between' className={styles.filtersHeader}>
 				<Group gap='xs' className={styles.titleGroup}>
 					<IconFilter className={styles.titleIcon} size={16} />
-					<Text className={styles.title}>Filters</Text>
+					<Text className={styles.title}>
+						{t('setup.schemas.filters.title')}
+					</Text>
 					{hasActiveFilters && (
 						<Badge className={styles.activeBadge} size='xs'>
-							Active
+							{t('setup.schemas.filters.active')}
 						</Badge>
 					)}
 				</Group>
 
 				<Group gap='md' className={styles.controlsWrapper}>
 					<TextInput
-						placeholder='Search by name or code...'
+						placeholder={t('setup.schemas.filters.searchPlaceholder')}
 						value={filters.search}
 						onChange={(event) =>
 							handleFilterChange('search', event.currentTarget.value)
@@ -83,12 +87,18 @@ const CampaignSchemasFilters: React.FC<CampaignSchemasFiltersProps> = ({
 					/>
 
 					<Select
-						placeholder='All Objectives'
+						placeholder={t('setup.schemas.filters.objectivePlaceholder')}
 						value={filters.objectiveId?.toString() || null}
 						onChange={(value) =>
 							handleFilterChange('objectiveId', value ? parseInt(value) : null)
 						}
-						data={[{ value: '', label: 'All Objectives' }, ...objectiveOptions]}
+						data={[
+							{
+								value: '',
+								label: t('setup.schemas.filters.objectiveAllLabel'),
+							},
+							...objectiveOptions,
+						]}
 						className={styles.objectiveSelect}
 					/>
 
@@ -98,7 +108,7 @@ const CampaignSchemasFilters: React.FC<CampaignSchemasFiltersProps> = ({
 							color='gray'
 							onClick={handleClearFilters}
 							className={styles.clearButton}
-							title='Clear all filters'
+							title={t('setup.schemas.filters.clear')}
 						>
 							<IconFilterOff size={16} />
 						</ActionIcon>
