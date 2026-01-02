@@ -7,13 +7,13 @@ import {
 	Group,
 	LoadingOverlay,
 	Text,
-	ThemeIcon,
 	Stack,
 	Box,
 	Badge,
 	ScrollArea,
+	Modal,
 } from '@mantine/core';
-import { IconSparkles, IconDeviceFloppy } from '@tabler/icons-react';
+import { IconDeviceFloppy } from '@tabler/icons-react';
 import styles from './CampaignConfigurationPromptEditModal.module.css';
 import { useGetAllCampaignPromptTypes } from '~/queries/campaignPromptTypeQueries';
 import {
@@ -32,6 +32,7 @@ const normalizePromptValue = (value: string) =>
 	value.replace(/\r\n/g, '\n').trim();
 
 interface CampaignConfigurationPromptEditModalProps {
+	opened: boolean;
 	onClose: () => void;
 	onSave: () => void;
 	initialSchemaId?: number;
@@ -60,7 +61,7 @@ const CampaignConfigurationPromptEditModal: React.FC<
 	const [activeTypeId, setActiveTypeId] = useState<number | null>(null);
 
 	useEffect(() => {
-		if (types) {
+		if (types && props.opened) {
 			const initialPrompts: Record<number, CampaignPromptModel> = {};
 
 			if (existingPrompts) {
@@ -89,7 +90,7 @@ const CampaignConfigurationPromptEditModal: React.FC<
 			setPrompts(initialPrompts);
 			setOriginalPrompts({ ...initialPrompts });
 		}
-	}, [existingPrompts, types, campaignId]);
+	}, [existingPrompts, types, campaignId, props.opened]);
 
 	useEffect(() => {
 		if (!types || types.length === 0) return;
@@ -181,6 +182,37 @@ const CampaignConfigurationPromptEditModal: React.FC<
 		});
 	};
 
+	const hasChanges = useMemo(() => {
+		return Object.keys(prompts).some((typeId) => {
+			const id = Number(typeId);
+			return getPromptMeta(id).isDrafted;
+		});
+	}, [prompts, getPromptMeta]);
+
+	const handleClose = () => {
+		if (hasChanges) {
+			modals.openConfirmModal({
+				title: t('form.agent.prompt.modal.discardConfirmation.title'),
+				children: (
+					<Text size='sm'>
+						{t('form.agent.prompt.modal.discardConfirmation.message')}
+					</Text>
+				),
+				labels: {
+					confirm: t('form.agent.prompt.modal.discardConfirmation.confirm'),
+					cancel: t('form.agent.prompt.modal.discardConfirmation.cancel'),
+				},
+				confirmProps: { color: 'red' },
+				onConfirm: () => {
+					setPrompts({ ...originalPrompts });
+					props.onClose();
+				},
+			});
+			return;
+		}
+		props.onClose();
+	};
+
 	const activeType = useMemo(() => {
 		return types?.find((t) => t.id === activeTypeId);
 	}, [types, activeTypeId]);
@@ -211,136 +243,128 @@ const CampaignConfigurationPromptEditModal: React.FC<
 	}, [activePromptMeta, t]);
 
 	return (
-		<Paper radius='sm' className={styles.modalShell} withBorder>
-			<LoadingOverlay visible={isLoadingPrompts || isSaving} />
-			<div className={styles.mainContainer}>
-				<div className={styles.header}>
-					<Group align='center' gap={6} className={styles.headerMain}>
-						<ThemeIcon
-							color='blue'
-							variant='light'
-							size='sm'
-							radius='sm'
-							className={styles.pulseIcon}
-						>
-							<IconSparkles size={14} />
-						</ThemeIcon>
-						<div className={styles.headerContent}>
-							<Text className={styles.title}>
-								{t('form.agent.prompt.editor.title')}
-							</Text>
-							<Text c='dimmed' className={styles.subtitle}>
-								{t('form.agent.prompt.editor.subtitle')}
-							</Text>
-						</div>
-					</Group>
-				</div>
-
-				<div className={styles.contentGrid}>
-					<div className={styles.menuColumn}>
-						<div className={styles.menuHeader}>
-							<Text size='xs' fw={500} c='dimmed'>
-								{t('form.agent.prompt.modal.types')}
-							</Text>
-							<Badge size='xs' variant='light' color='gray' radius='sm'>
-								{types?.length ?? 0}
-							</Badge>
-						</div>
-						<ScrollArea className={styles.menuScroll} type='auto'>
-							<Stack gap={2}>
-								{types?.map((type) => {
-									const promptMeta = getPromptMeta(type.id);
-
-									return (
-										<PromptMenuItem
-											key={type.id}
-											typeId={type.id}
-											label={type.name}
-											isActive={activeTypeId === type.id}
-											onClick={() => setActiveTypeId(type.id)}
-											isDrafted={promptMeta.isDrafted}
-											hasValue={promptMeta.hasValue}
-										/>
-									);
-								})}
-							</Stack>
-						</ScrollArea>
-					</div>
-					<div className={styles.editorColumn}>
-						{activeType ? (
-							<div className={styles.editorShell}>
-								<Group
-									justify='space-between'
-									align='center'
-									gap='xs'
-									className={styles.editorHeader}
-								>
-									<Box className={styles.editorHeaderText}>
-										<Text fw={600} size='sm' className={styles.editorTitle}>
-											{activeType.name}
-										</Text>
-										<Text
-											size='xs'
-											c='dimmed'
-											lineClamp={2}
-											className={styles.editorDescription}
-										>
-											{activeType.description ??
-												t('form.agent.prompt.editor.descriptionFallback')}
-										</Text>
-									</Box>
-									{activeStatus && (
-										<Group gap='xs' className={styles.editorMeta}>
-											<Badge
-												size='xs'
-												variant='light'
-												color={activeStatus.color}
-												radius='sm'
-											>
-												{activeStatus.label}
-											</Badge>
-										</Group>
-									)}
-								</Group>
-								<Stack gap='xs' className={styles.editorContent}>
-									<PromptEditor
-										type={activeType}
-										value={prompts[activeType.id]?.prompt}
-										onChange={(val) => handleChange(activeType, val)}
-										campaignId={campaignId!}
-									/>
-								</Stack>
-							</div>
-						) : (
-							<div className={styles.emptyState}>
-								<Text size='xs' c='dimmed'>
-									{t('form.agent.prompt.modal.selectPromptType')}
+		<Modal
+			opened={props.opened}
+			onClose={handleClose}
+			title={t('form.agent.prompt.editor.title')}
+			fullScreen
+			centered
+			styles={{
+				body: {
+					height: '92dvh',
+					padding: 0,
+				},
+			}}
+		>
+			<Paper radius='sm' className={styles.modalShell} withBorder>
+				<LoadingOverlay visible={isLoadingPrompts || isSaving} />
+				<div className={styles.mainContainer}>
+					<div className={styles.contentGrid}>
+						<div className={styles.menuColumn}>
+							<div className={styles.menuHeader}>
+								<Text size='xs' fw={500} c='dimmed'>
+									{t('form.agent.prompt.modal.types')}
 								</Text>
+								<Badge size='xs' variant='light' color='gray' radius='sm'>
+									{types?.length ?? 0}
+								</Badge>
 							</div>
-						)}
+							<ScrollArea className={styles.menuScroll} type='auto'>
+								<Stack gap={2}>
+									{types?.map((type) => {
+										const promptMeta = getPromptMeta(type.id);
+
+										return (
+											<PromptMenuItem
+												key={type.id}
+												typeId={type.id}
+												label={type.name}
+												isActive={activeTypeId === type.id}
+												onClick={() => setActiveTypeId(type.id)}
+												isDrafted={promptMeta.isDrafted}
+												hasValue={promptMeta.hasValue}
+											/>
+										);
+									})}
+								</Stack>
+							</ScrollArea>
+						</div>
+						<div className={styles.editorColumn}>
+							{activeType ? (
+								<div className={styles.editorShell}>
+									<Group
+										justify='space-between'
+										align='center'
+										gap='xs'
+										className={styles.editorHeader}
+									>
+										<Box className={styles.editorHeaderText}>
+											<Text fw={600} size='sm' className={styles.editorTitle}>
+												{activeType.name}
+											</Text>
+											<Text
+												size='xs'
+												c='dimmed'
+												lineClamp={2}
+												className={styles.editorDescription}
+											>
+												{activeType.description ??
+													t('form.agent.prompt.editor.descriptionFallback')}
+											</Text>
+										</Box>
+										{activeStatus && (
+											<Group gap='xs' className={styles.editorMeta}>
+												<Badge
+													size='xs'
+													variant='light'
+													color={activeStatus.color}
+													radius='sm'
+												>
+													{activeStatus.label}
+												</Badge>
+											</Group>
+										)}
+									</Group>
+									<Stack gap='xs' className={styles.editorContent}>
+										<PromptEditor
+											type={activeType}
+											value={prompts[activeType.id]?.prompt}
+											onChange={(val) => handleChange(activeType, val)}
+											campaignId={campaignId!}
+										/>
+									</Stack>
+								</div>
+							) : (
+								<div className={styles.emptyState}>
+									<Text size='xs' c='dimmed'>
+										{t('form.agent.prompt.modal.selectPromptType')}
+									</Text>
+								</div>
+							)}
+						</div>
+					</div>
+
+					<div className={styles.footer}>
+						<Text size='xs' c='dimmed'>
+							{t('form.agent.prompt.modal.saveHint')}
+						</Text>
+						<Group gap='xs'>
+							<Button variant='subtle' size='xs' onClick={handleClose}>
+								{t('actions.cancel', { ns: 'common' })}
+							</Button>
+							<Button
+								onClick={handleSave}
+								loading={isSaving}
+								size='xs'
+								leftSection={<IconDeviceFloppy size={14} />}
+							>
+								{t('actions.save', { ns: 'common' })}
+							</Button>
+						</Group>
 					</div>
 				</div>
-
-				<div className={styles.footer}>
-					<Text size='xs' c='dimmed'>
-						{t('form.agent.prompt.modal.saveHint')}
-					</Text>
-					<Group gap='xs'>
-						<Button variant='subtle' size='xs' onClick={props.onClose}>
-							{t('actions.cancel', { ns: 'common' })}
-						</Button>
-						<Button
-							onClick={handleSave}
-							loading={isSaving}
-							size='xs'
-							leftSection={<IconDeviceFloppy size={14} />}
-						>
-							{t('actions.save', { ns: 'common' })}
-						</Button>
-					</Group>
-				</div>
-			</div>
-		</Paper>
+			</Paper>
+		</Modal>
 	);
 };
 

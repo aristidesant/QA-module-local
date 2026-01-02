@@ -1,4 +1,4 @@
-import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import renderWithProviders from '~/test-utils/renderWithProviders';
 import CampaignConfigurationPromptEditModal from './CampaignConfigurationPromptEditModal';
@@ -108,20 +108,21 @@ describe('CampaignConfigurationPromptEditModal', () => {
 		it('renders the modal with header content', () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
 			);
 
-			expect(screen.getByText('Prompt Configuration')).toBeInTheDocument();
 			expect(
-				screen.getByText(/Configure prompts for each interaction type/i)
-			).toBeInTheDocument();
+				screen.getAllByText('Prompt Configuration').length
+			).toBeGreaterThanOrEqual(1);
 		});
 
 		it('renders all prompt types in the navigation menu', () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -135,6 +136,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 		it('displays type names correctly', () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -154,6 +156,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 		it('renders cancel and save buttons', () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -170,6 +173,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 		it('renders footer text', () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -183,6 +187,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 		it('renders types count badge', () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -195,6 +200,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 		it('renders active type name in editor header', () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -212,6 +218,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -227,6 +234,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -242,6 +250,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 		it('populates inputs with existing prompts', async () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -268,6 +277,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 		it('allows editing prompts', async () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -284,6 +294,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 		it('updates existing prompt values', async () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -303,9 +314,10 @@ describe('CampaignConfigurationPromptEditModal', () => {
 	});
 
 	describe('Cancel Action', () => {
-		it('calls onClose when cancel is clicked', () => {
+		it('calls onClose immediately when cancel is clicked and there are no changes', () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -314,6 +326,58 @@ describe('CampaignConfigurationPromptEditModal', () => {
 			fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
 
 			expect(mockOnClose).toHaveBeenCalledTimes(1);
+			expect(mockOpenConfirm).not.toHaveBeenCalled();
+		});
+
+		it('opens discard confirmation when cancel is clicked and there are changes', async () => {
+			renderWithProviders(
+				<CampaignConfigurationPromptEditModal
+					opened={true}
+					onClose={mockOnClose}
+					onSave={mockOnSave}
+				/>
+			);
+
+			await waitFor(() => {
+				expect(screen.getByTestId('prompt-input-1')).toHaveValue(
+					'Hello! Welcome!'
+				);
+			});
+
+			const input = screen.getByTestId('prompt-input-1');
+			fireEvent.change(input, { target: { value: 'Updated greeting' } });
+
+			fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
+
+			expect(mockOpenConfirm).toHaveBeenCalledWith(
+				expect.objectContaining({
+					title: expect.stringContaining('Discard Changes?'),
+				})
+			);
+			expect(mockOnClose).not.toHaveBeenCalled();
+
+			// Confirm discard
+			const { onConfirm } = mockOpenConfirm.mock.calls[0][0];
+			onConfirm();
+			expect(mockOnClose).toHaveBeenCalledTimes(1);
+
+			// Cleanup the previous render to avoid duplicate IDs in the DOM
+			cleanup();
+
+			// Re-render and check value (simulating close and reopen)
+			renderWithProviders(
+				<CampaignConfigurationPromptEditModal
+					opened={true}
+					onClose={mockOnClose}
+					onSave={mockOnSave}
+				/>
+			);
+
+			await waitFor(() => {
+				expect(screen.getByTestId('prompt-input-1')).toHaveValue(
+					'Hello! Welcome!'
+				);
+			});
 		});
 	});
 
@@ -321,6 +385,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 		it('calls saveBatch with non-empty prompts when save is clicked', async () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -360,6 +425,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 		it('sets isChange to true when a prompt is modified', async () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -403,6 +469,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 		it('sets isChange to true for new prompts', async () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -438,6 +505,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 		it('filters out empty prompts when saving', async () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -465,6 +533,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 		it('filters out whitespace-only prompts when saving', async () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -501,6 +570,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -527,6 +597,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 		it('uses campaignId from props over route params', () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 					campaignId={456}
@@ -563,18 +634,22 @@ describe('CampaignConfigurationPromptEditModal', () => {
 		it('accepts initialSchemaId prop', () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 					initialSchemaId={789}
 				/>
 			);
 
-			expect(screen.getByText('Prompt Configuration')).toBeInTheDocument();
+			expect(
+				screen.getAllByText('Prompt Configuration').length
+			).toBeGreaterThanOrEqual(1);
 		});
 
 		it('uses initialSchemaId when it matches a valid type', () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 					initialSchemaId={2}
@@ -595,6 +670,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 		it('falls back to first type when initialSchemaId does not match any type', () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 					initialSchemaId={999}
@@ -615,6 +691,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -630,17 +707,21 @@ describe('CampaignConfigurationPromptEditModal', () => {
 
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
 			);
 
-			expect(screen.getByText('Prompt Configuration')).toBeInTheDocument();
+			expect(
+				screen.getAllByText('Prompt Configuration').length
+			).toBeGreaterThanOrEqual(1);
 		});
 
 		it('shows correct badge for menu items with content', () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -654,6 +735,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 		it('shows No changes badge in editor for unchanged prompts', async () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -672,6 +754,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 		it('shows Empty badge for prompts without content', async () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -688,6 +771,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 		it('allows clicking on different menu items to switch active type', () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>
@@ -716,6 +800,7 @@ describe('CampaignConfigurationPromptEditModal', () => {
 		it('updates prompt value when changed with long text', async () => {
 			renderWithProviders(
 				<CampaignConfigurationPromptEditModal
+					opened={true}
 					onClose={mockOnClose}
 					onSave={mockOnSave}
 				/>

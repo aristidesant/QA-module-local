@@ -875,6 +875,12 @@
 					"saveConfirmation": {
 						"title": "¿Aplicar Cambios?",
 						"message": "¿Estás seguro de que deseas guardar estos cambios? Esto actualizará la configuración de la campaña inmediatamente."
+					},
+					"discardConfirmation": {
+						"title": "¿Descartar Cambios?",
+						"message": "Tienes cambios sin guardar. ¿Estás seguro de que deseas salir? Todos los cambios se perderán.",
+						"confirm": "Descartar Cambios",
+						"cancel": "Seguir Editando"
 					}
 				},
 				"editor": {

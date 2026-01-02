@@ -69,35 +69,38 @@ const mockEditOnSave = vi.fn();
 
 vi.mock('./CampaignConfigurationPromptEditModal', () => ({
 	default: ({
+		opened,
 		onClose,
 		onSave,
 		initialSchemaId,
 	}: {
+		opened: boolean;
 		onClose: () => void;
 		onSave: () => void;
 		initialSchemaId?: number;
-	}) => (
-		<div data-testid='edit-modal-content'>
-			EditModalContent
-			<span data-testid='schema-id'>{initialSchemaId}</span>
-			<button
-				onClick={() => {
-					mockEditOnClose();
-					onClose();
-				}}
-			>
-				CloseEdit
-			</button>
-			<button
-				onClick={() => {
-					mockEditOnSave();
-					onSave();
-				}}
-			>
-				SaveEdit
-			</button>
-		</div>
-	),
+	}) =>
+		opened ? (
+			<div data-testid='edit-modal-content'>
+				EditModalContent
+				<span data-testid='schema-id'>{initialSchemaId}</span>
+				<button
+					onClick={() => {
+						mockEditOnClose();
+						onClose();
+					}}
+				>
+					CloseEdit
+				</button>
+				<button
+					onClick={() => {
+						mockEditOnSave();
+						onSave();
+					}}
+				>
+					SaveEdit
+				</button>
+			</div>
+		) : null,
 }));
 
 vi.mock('@mantine/core', async (importOriginal) => {

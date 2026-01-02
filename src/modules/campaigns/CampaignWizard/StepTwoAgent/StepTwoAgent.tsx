@@ -520,6 +520,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 				padding={0}
 			>
 				<CampaignConfigurationPromptEditModal
+					opened={promptEditorOpened}
 					campaignId={Number(campaignId)}
 					onClose={() => setPromptEditorOpened(false)}
 					onSave={() => {

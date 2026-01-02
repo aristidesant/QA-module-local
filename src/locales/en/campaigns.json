@@ -875,6 +875,12 @@
 					"saveConfirmation": {
 						"title": "Apply Changes?",
 						"message": "Are you sure you want to save these changes? This will update the campaign configuration immediately."
+					},
+					"discardConfirmation": {
+						"title": "Discard Changes?",
+						"message": "You have unsaved changes. Are you sure you want to exit? All changes will be lost.",
+						"confirm": "Discard Changes",
+						"cancel": "Keep Editing"
 					}
 				},
 				"editor": {

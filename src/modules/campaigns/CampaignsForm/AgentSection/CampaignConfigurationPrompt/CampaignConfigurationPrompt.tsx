@@ -1,13 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import {
-	ActionIcon,
-	Badge,
-	Group,
-	Modal,
-	Paper,
-	Stack,
-	Text,
-} from '@mantine/core';
+import { ActionIcon, Badge, Group, Paper, Stack, Text } from '@mantine/core';
 import {
 	IconArrowsMaximize,
 	IconArrowsMinimize,
@@ -151,27 +143,15 @@ const CampaignConfigurationPrompt: React.FC = () => {
 					</Group>
 				</Stack>
 			</SectionCard>
-			<Modal
+			<CampaignConfigurationPromptEditModal
 				opened={editModalOpen}
+				initialSchemaId={contactSchemaId}
 				onClose={() => setEditModalOpen(false)}
-				title={t('configuration.editPrompt')}
-				styles={{
-					body: {
-						height: '90%',
-					},
+				onSave={() => {
+					setEditModalOpen(false);
+					// Modal saves directly to backend, so we might need to refresh context or just close
 				}}
-				centered
-				fullScreen
-			>
-				<CampaignConfigurationPromptEditModal
-					initialSchemaId={contactSchemaId}
-					onClose={() => setEditModalOpen(false)}
-					onSave={() => {
-						setEditModalOpen(false);
-						// Modal saves directly to backend, so we might need to refresh context or just close
-					}}
-				/>
-			</Modal>
+			/>
 		</>
 	);
 };
