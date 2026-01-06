@@ -5,6 +5,14 @@ import type { ColumnDef } from '@tanstack/react-table';
 import type { CampaignCategory } from '~/models/CampaignCategoryModel';
 import { TestProviders } from '~/test-utils/renderWithProviders';
 
+// Mock usePermissions
+const mockCanPerformAction = vi.fn(() => true);
+vi.mock('~/hooks/usePermissions', () => ({
+	default: () => ({
+		canPerformAction: mockCanPerformAction,
+	}),
+}));
+
 describe('useCampaignCategoriesColumns', () => {
 	const mockOnEdit = vi.fn();
 	const mockOnDelete = vi.fn();

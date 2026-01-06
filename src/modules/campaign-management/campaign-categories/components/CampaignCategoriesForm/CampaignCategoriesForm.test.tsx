@@ -4,6 +4,14 @@ import { CampaignCategoriesForm } from './CampaignCategoriesForm';
 import { CampaignCategory } from '~/models/CampaignCategoryModel';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
+// Mock usePermissions
+const mockCanPerformAction = vi.fn(() => true);
+vi.mock('~/hooks/usePermissions', () => ({
+	default: () => ({
+		canPerformAction: mockCanPerformAction,
+	}),
+}));
+
 // Mock notifications
 const mockNotificationsShow = vi.fn();
 vi.mock('@mantine/notifications', () => ({

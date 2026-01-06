@@ -4,6 +4,16 @@ import type { ReactNode } from 'react';
 import renderWithProviders from '~/test-utils/renderWithProviders';
 import CampaignCategoriesPage from './CampaignCategoriesPage';
 
+// Mock usePermissions
+const mockCanPerformAction = vi.fn(() => true);
+const mockCanAccessModule = vi.fn(() => true);
+vi.mock('~/hooks/usePermissions', () => ({
+	default: () => ({
+		canPerformAction: mockCanPerformAction,
+		canAccessModule: mockCanAccessModule,
+	}),
+}));
+
 // Mock the child components
 vi.mock(
 	'~/modules/campaign-management/campaign-categories/components/CampaignCategoriesContent',

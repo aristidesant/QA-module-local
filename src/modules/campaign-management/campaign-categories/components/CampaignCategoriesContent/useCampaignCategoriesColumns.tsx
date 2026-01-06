@@ -4,6 +4,9 @@ import { Text, Badge, Group, ActionIcon, Tooltip } from '@mantine/core';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { CampaignCategory } from '~/models/CampaignCategoryModel';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import styles from './CampaignCategoriesContent.module.css';
 
 interface UseCampaignCategoriesColumnsProps {
@@ -18,6 +21,14 @@ export const useCampaignCategoriesColumns = ({
 	isDeletePending,
 }: UseCampaignCategoriesColumnsProps) => {
 	const { t } = useTranslation('campaign-management');
+	const { canPerformAction } = usePermissions();
+
+	const canEdit = canPerformAction(ModuleEnum.SETTINGS, PermissionEnum.UPDATE);
+	const canDelete = canPerformAction(
+		ModuleEnum.SETTINGS,
+		PermissionEnum.DELETE
+	);
+
 	const columns = useMemo<ColumnDef<CampaignCategory>[]>(
 		() => [
 			{
@@ -78,33 +89,40 @@ export const useCampaignCategoriesColumns = ({
 				header: t('setup.categories.table.headers.actions'),
 				cell: ({ row }) => (
 					<Group gap='xs' className={styles.actionsGroup}>
-						<Tooltip label={t('setup.categories.table.actions.edit')} withArrow>
-							<ActionIcon
-								variant='subtle'
-								color='blue'
-								onClick={() => onEdit(row.original)}
+						{canEdit && (
+							<Tooltip
+								label={t('setup.categories.table.actions.edit')}
+								withArrow
 							>
-								<IconEdit size={16} />
-							</ActionIcon>
-						</Tooltip>
-						<Tooltip
-							label={t('setup.categories.table.actions.delete')}
-							withArrow
-						>
-							<ActionIcon
-								variant='subtle'
-								color='red'
-								onClick={() => onDelete(row.original.id)}
-								loading={isDeletePending}
+								<ActionIcon
+									variant='subtle'
+									color='blue'
+									onClick={() => onEdit(row.original)}
+								>
+									<IconEdit size={16} />
+								</ActionIcon>
+							</Tooltip>
+						)}
+						{canDelete && (
+							<Tooltip
+								label={t('setup.categories.table.actions.delete')}
+								withArrow
 							>
-								<IconTrash size={16} />
-							</ActionIcon>
-						</Tooltip>
+								<ActionIcon
+									variant='subtle'
+									color='red'
+									onClick={() => onDelete(row.original.id)}
+									loading={isDeletePending}
+								>
+									<IconTrash size={16} />
+								</ActionIcon>
+							</Tooltip>
+						)}
 					</Group>
 				),
 			},
 		],
-		[onEdit, onDelete, isDeletePending, t]
+		[onEdit, onDelete, isDeletePending, t, canEdit, canDelete]
 	);
 
 	return columns;

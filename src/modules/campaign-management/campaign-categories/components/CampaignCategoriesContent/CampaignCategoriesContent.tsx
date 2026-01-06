@@ -3,6 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { Button, Modal, ActionIcon } from '@mantine/core';
 import { IconPlus, IconSearchOff, IconCategory } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import BaseTable from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
 import PaginationControls from '~/components/PaginationControls';
@@ -25,9 +28,16 @@ const CampaignCategoriesContent: React.FC<CampaignCategoriesContentProps> = ({
 	setCreateModalOpened,
 }) => {
 	const { t } = useTranslation('campaign-management');
+	const { canPerformAction, canAccessModule } = usePermissions();
 	const [editModalOpened, setEditModalOpened] = useState(false);
 	const [selectedCategory, setSelectedCategory] =
 		useState<CampaignCategory | null>(null);
+
+	const canCreate = canPerformAction(
+		ModuleEnum.SETTINGS,
+		PermissionEnum.CREATE
+	);
+	const canRead = canAccessModule(ModuleEnum.SETTINGS);
 
 	// Use the combined hook that handles both server and client filtering
 	const {
@@ -72,6 +82,8 @@ const CampaignCategoriesContent: React.FC<CampaignCategoriesContentProps> = ({
 	// Show empty state only if no categories exist at all (not filtered)
 	const showEmptyState = categories.length === 0 && !isLoading;
 
+	if (!canRead) return null;
+
 	if (showEmptyState) {
 		return (
 			<div className={styles.container}>
@@ -80,12 +92,14 @@ const CampaignCategoriesContent: React.FC<CampaignCategoriesContentProps> = ({
 					message={t('setup.categories.noResults')}
 					description={t('setup.categories.getStarted')}
 					action={
-						<Button
-							leftSection={<IconPlus size={16} />}
-							onClick={() => setCreateModalOpened(true)}
-						>
-							{t('setup.categories.create')}
-						</Button>
+						canCreate && (
+							<Button
+								leftSection={<IconPlus size={16} />}
+								onClick={() => setCreateModalOpened(true)}
+							>
+								{t('setup.categories.create')}
+							</Button>
+						)
 					}
 				/>
 
@@ -112,13 +126,15 @@ const CampaignCategoriesContent: React.FC<CampaignCategoriesContentProps> = ({
 				description={t('setup.categories.sectionCardDescription')}
 				padding='lg'
 				headerActions={
-					<ActionIcon
-						variant='filled'
-						color='blue'
-						onClick={() => setCreateModalOpened(true)}
-					>
-						<IconPlus size={18} />
-					</ActionIcon>
+					canCreate && (
+						<ActionIcon
+							variant='filled'
+							color='blue'
+							onClick={() => setCreateModalOpened(true)}
+						>
+							<IconPlus size={18} />
+						</ActionIcon>
+					)
 				}
 			>
 				<CampaignCategoriesFilters
@@ -133,12 +149,14 @@ const CampaignCategoriesContent: React.FC<CampaignCategoriesContentProps> = ({
 							message={t('setup.categories.noResultsFilters')}
 							description={t('setup.categories.noResultsFiltersDescription')}
 							action={
-								<Button
-									leftSection={<IconPlus size={16} />}
-									onClick={() => setCreateModalOpened(true)}
-								>
-									{t('setup.categories.create')}
-								</Button>
+								canCreate && (
+									<Button
+										leftSection={<IconPlus size={16} />}
+										onClick={() => setCreateModalOpened(true)}
+									>
+										{t('setup.categories.create')}
+									</Button>
+								)
 							}
 						/>
 					</div>

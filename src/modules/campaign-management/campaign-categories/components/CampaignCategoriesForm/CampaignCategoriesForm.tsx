@@ -14,6 +14,9 @@ import {
 	useCreateCampaignCategory,
 	useUpdateCampaignCategory,
 } from '~/queries/campaignCategoriesQueries';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import {
 	CampaignCategory,
 	CreateCampaignCategoryRequest,
@@ -38,6 +41,14 @@ export const CampaignCategoriesForm: React.FC<CampaignCategoriesFormProps> = ({
 	const isEditing = !!category;
 	const createCategory = useCreateCampaignCategory();
 	const updateCategory = useUpdateCampaignCategory();
+	const { canPerformAction } = usePermissions();
+
+	const canCreate = canPerformAction(
+		ModuleEnum.SETTINGS,
+		PermissionEnum.CREATE
+	);
+	const canEdit = canPerformAction(ModuleEnum.SETTINGS, PermissionEnum.UPDATE);
+	const isAllowed = isEditing ? canEdit : canCreate;
 
 	const form = useForm({
 		initialValues: {
@@ -159,6 +170,7 @@ export const CampaignCategoriesForm: React.FC<CampaignCategoriesFormProps> = ({
 					size='sm'
 					type={withinParentForm ? 'button' : 'submit'}
 					loading={isLoading}
+					disabled={!isAllowed}
 					className={styles.submitButton}
 					onClick={withinParentForm ? handleClickSubmit : undefined}
 				>

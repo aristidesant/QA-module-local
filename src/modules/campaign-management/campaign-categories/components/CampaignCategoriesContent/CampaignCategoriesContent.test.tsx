@@ -11,6 +11,8 @@ const {
 	mockSetPagination,
 	mockSetFilters,
 	mockCategoriesData,
+	mockCanPerformAction,
+	mockCanAccessModule,
 } = vi.hoisted(() => ({
 	mockNotificationsShow: vi.fn(),
 	mockDeleteCategory: vi.fn(),
@@ -30,6 +32,15 @@ const {
 		}>,
 		isLoading: false,
 	},
+	mockCanPerformAction: vi.fn(() => true),
+	mockCanAccessModule: vi.fn(() => true),
+}));
+
+vi.mock('~/hooks/usePermissions', () => ({
+	default: () => ({
+		canPerformAction: mockCanPerformAction,
+		canAccessModule: mockCanAccessModule,
+	}),
 }));
 
 vi.mock('@mantine/notifications', () => ({
