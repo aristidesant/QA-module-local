@@ -23,6 +23,9 @@ import {
 	CreateCampaignObjectiveRequest,
 	UpdateCampaignObjectiveRequest,
 } from '~/models/CampaignObjectiveModel';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import CategoryPickerPanel from '~/modules/campaign-management/CampaignManagementPage/components/CategoryPickerPanel';
 import styles from './CampaignObjectivesForm.module.css';
 
@@ -44,6 +47,14 @@ export const CampaignObjectivesForm: React.FC<CampaignObjectivesFormProps> = ({
 	const [categoryPickerOpen, setCategoryPickerOpen] = React.useState(false);
 	const createObjective = useCreateCampaignObjective();
 	const updateObjective = useUpdateCampaignObjective();
+	const { canPerformAction } = usePermissions();
+
+	const canCreate = canPerformAction(
+		ModuleEnum.SETTINGS,
+		PermissionEnum.CREATE
+	);
+	const canEdit = canPerformAction(ModuleEnum.SETTINGS, PermissionEnum.UPDATE);
+	const isAllowed = isEditing ? canEdit : canCreate;
 
 	// Get categories for the select
 	const { data: categoriesResponse } = useGetCampaignCategories();
@@ -214,6 +225,7 @@ export const CampaignObjectivesForm: React.FC<CampaignObjectivesFormProps> = ({
 					loading={isLoading}
 					className={styles.submitButton}
 					onClick={withinParentForm ? handleClickSubmit : undefined}
+					disabled={!isAllowed}
 				>
 					{t(
 						isEditing

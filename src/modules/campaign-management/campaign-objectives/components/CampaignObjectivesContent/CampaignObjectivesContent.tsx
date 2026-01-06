@@ -14,6 +14,9 @@ import PaginationControls from '~/components/PaginationControls';
 import { useCampaignObjectivesWithFilters } from '~/modules/campaigns/hooks/useFilteredObjectives';
 import styles from './CampaignObjectivesContent.module.css';
 import SectionCard from '~/components/SectionCard/SectionCard';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 
 // EnrichedObjective type is provided by the columns hook and the data hook
 
@@ -27,9 +30,15 @@ const CampaignObjectivesContent: React.FC<CampaignObjectivesContentProps> = ({
 	setCreateModalOpened,
 }) => {
 	const { t } = useTranslation('campaign-management');
+	const { canPerformAction } = usePermissions();
 	const [editModalOpened, setEditModalOpened] = useState(false);
 	const [selectedObjective, setSelectedObjective] =
 		useState<CampaignObjective | null>(null);
+
+	const canCreate = canPerformAction(
+		ModuleEnum.SETTINGS,
+		PermissionEnum.CREATE
+	);
 
 	// Use the combined hook that handles both server and client filtering
 	const {
@@ -87,13 +96,15 @@ const CampaignObjectivesContent: React.FC<CampaignObjectivesContentProps> = ({
 				description={t('setup.objectives.sectionCardDescription')}
 				padding='lg'
 				headerActions={
-					<ActionIcon
-						variant='filled'
-						color='blue'
-						onClick={() => setCreateModalOpened(true)}
-					>
-						<IconPlus size={18} />
-					</ActionIcon>
+					canCreate && (
+						<ActionIcon
+							variant='filled'
+							color='blue'
+							onClick={() => setCreateModalOpened(true)}
+						>
+							<IconPlus size={18} />
+						</ActionIcon>
+					)
 				}
 			>
 				<CampaignObjectivesFilters
@@ -108,12 +119,14 @@ const CampaignObjectivesContent: React.FC<CampaignObjectivesContentProps> = ({
 							message={t('setup.objectives.noResults')}
 							description={t('setup.objectives.getStarted')}
 							action={
-								<Button
-									leftSection={<IconPlus size={16} />}
-									onClick={() => setCreateModalOpened(true)}
-								>
-									{t('setup.objectives.create')}
-								</Button>
+								canCreate && (
+									<Button
+										leftSection={<IconPlus size={16} />}
+										onClick={() => setCreateModalOpened(true)}
+									>
+										{t('setup.objectives.create')}
+									</Button>
+								)
 							}
 						/>
 					</div>
@@ -124,12 +137,14 @@ const CampaignObjectivesContent: React.FC<CampaignObjectivesContentProps> = ({
 							message={t('setup.objectives.noResultsFilters')}
 							description={t('setup.objectives.noResultsFiltersDescription')}
 							action={
-								<Button
-									leftSection={<IconPlus size={16} />}
-									onClick={() => setCreateModalOpened(true)}
-								>
-									{t('setup.objectives.create')}
-								</Button>
+								canCreate && (
+									<Button
+										leftSection={<IconPlus size={16} />}
+										onClick={() => setCreateModalOpened(true)}
+									>
+										{t('setup.objectives.create')}
+									</Button>
+								)
 							}
 						/>
 					</div>

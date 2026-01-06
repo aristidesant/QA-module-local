@@ -4,6 +4,9 @@ import { Button } from '@mantine/core';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { IconDatabase, IconPlus } from '@tabler/icons-react';
 import CampaignSchemasContent from '~/modules/campaign-management/campaign-schemas/components/CampaignSchemasContent';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 
 interface CampaignSchemasPageProps {
 	embedded?: boolean;
@@ -15,6 +18,11 @@ export default function CampaignSchemasPage({
 	const [createModalOpened, setCreateModalOpened] = useState(false);
 
 	const { t } = useTranslation('campaign-management');
+	const { canPerformAction, canAccessModule } = usePermissions();
+
+	if (!canAccessModule(ModuleEnum.SETTINGS)) {
+		return null;
+	}
 
 	const content = (
 		<CampaignSchemasContent
@@ -33,12 +41,14 @@ export default function CampaignSchemasPage({
 			description={t('setup.schemas.description')}
 			titleIcon={<IconDatabase size={24} />}
 			titleRight={
-				<Button
-					leftSection={<IconPlus size={16} />}
-					onClick={() => setCreateModalOpened(true)}
-				>
-					{t('setup.schemas.create')}
-				</Button>
+				canPerformAction(ModuleEnum.SETTINGS, PermissionEnum.CREATE) && (
+					<Button
+						leftSection={<IconPlus size={16} />}
+						onClick={() => setCreateModalOpened(true)}
+					>
+						{t('setup.schemas.create')}
+					</Button>
+				)
 			}
 		>
 			{content}

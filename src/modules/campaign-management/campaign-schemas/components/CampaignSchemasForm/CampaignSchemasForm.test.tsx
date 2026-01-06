@@ -4,6 +4,14 @@ import CampaignSchemasForm from './CampaignSchemasForm';
 import { CampaignContactSchema } from '~/models/CampaignContactSchemaModel';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
+// Mock usePermissions
+const mockCanPerformAction = vi.fn(() => true);
+vi.mock('~/hooks/usePermissions', () => ({
+	default: () => ({
+		canPerformAction: mockCanPerformAction,
+	}),
+}));
+
 vi.mock(
 	'~/modules/campaign-management/CampaignManagementPage/components/ObjectivePickerPanel',
 	() => ({

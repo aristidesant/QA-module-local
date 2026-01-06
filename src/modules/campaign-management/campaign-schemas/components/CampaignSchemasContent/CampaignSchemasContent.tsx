@@ -15,6 +15,9 @@ import { useCampaignSchemasWithFilters } from '~/modules/campaigns/hooks/useFilt
 import CampaignSchemasFilters from '../CampaignSchemasFilters';
 import SectionCard from '~/components/SectionCard/SectionCard';
 import { useCampaignSchemasColumns } from './useCampaignSchemasColumns';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 
 interface CampaignSchemasContentProps {
 	createModalOpened: boolean;
@@ -26,9 +29,15 @@ const CampaignSchemasContent: React.FC<CampaignSchemasContentProps> = ({
 	setCreateModalOpened,
 }) => {
 	const { t } = useTranslation('campaign-management');
+	const { canPerformAction } = usePermissions();
 	const [editModalOpened, setEditModalOpened] = useState(false);
 	const [selectedSchema, setSelectedSchema] =
 		useState<CampaignContactSchema | null>(null);
+
+	const canCreate = canPerformAction(
+		ModuleEnum.SETTINGS,
+		PermissionEnum.CREATE
+	);
 
 	// Use the combined hook that handles both server and client filtering
 	const { schemas, pagination, filters, setPagination, setFilters, isLoading } =
@@ -79,12 +88,14 @@ const CampaignSchemasContent: React.FC<CampaignSchemasContentProps> = ({
 					message={t('setup.schemas.noResults')}
 					description={t('setup.schemas.getStarted')}
 					action={
-						<Button
-							leftSection={<IconPlus size={16} />}
-							onClick={() => setCreateModalOpened(true)}
-						>
-							{t('setup.schemas.create')}
-						</Button>
+						canCreate && (
+							<Button
+								leftSection={<IconPlus size={16} />}
+								onClick={() => setCreateModalOpened(true)}
+							>
+								{t('setup.schemas.create')}
+							</Button>
+						)
 					}
 				/>
 
@@ -111,15 +122,17 @@ const CampaignSchemasContent: React.FC<CampaignSchemasContentProps> = ({
 				description={t('setup.schemas.sectionCardDescription')}
 				padding='lg'
 				headerActions={
-					<Tooltip label={t('setup.schemas.create')} withArrow>
-						<ActionIcon
-							variant='filled'
-							onClick={() => setCreateModalOpened(true)}
-							size='xs'
-						>
-							<IconPlus size={16} />
-						</ActionIcon>
-					</Tooltip>
+					canCreate && (
+						<Tooltip label={t('setup.schemas.create')} withArrow>
+							<ActionIcon
+								variant='filled'
+								onClick={() => setCreateModalOpened(true)}
+								size='xs'
+							>
+								<IconPlus size={16} />
+							</ActionIcon>
+						</Tooltip>
+					)
 				}
 			>
 				<CampaignSchemasFilters

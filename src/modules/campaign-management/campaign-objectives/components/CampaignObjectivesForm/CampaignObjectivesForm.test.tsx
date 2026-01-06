@@ -5,6 +5,14 @@ import { notifications } from '@mantine/notifications';
 import { CampaignObjectivesForm } from './CampaignObjectivesForm';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
+// Mock usePermissions
+const mockCanPerformAction = vi.fn(() => true);
+vi.mock('~/hooks/usePermissions', () => ({
+	default: () => ({
+		canPerformAction: mockCanPerformAction,
+	}),
+}));
+
 const createMutateAsync = vi.fn();
 const updateMutateAsync = vi.fn();
 

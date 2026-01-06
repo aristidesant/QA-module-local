@@ -3,6 +3,16 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import CampaignObjectivesPage from './CampaignObjectivesPage';
 import renderWithProviders from '~/test-utils/renderWithProviders';
 
+// Mock usePermissions
+const mockCanPerformAction = vi.fn(() => true);
+const mockCanAccessModule = vi.fn(() => true);
+vi.mock('~/hooks/usePermissions', () => ({
+	default: () => ({
+		canPerformAction: mockCanPerformAction,
+		canAccessModule: mockCanAccessModule,
+	}),
+}));
+
 vi.mock('@mantine/core', async (importOriginal) => {
 	const actual = await importOriginal<typeof import('@mantine/core')>();
 	return {

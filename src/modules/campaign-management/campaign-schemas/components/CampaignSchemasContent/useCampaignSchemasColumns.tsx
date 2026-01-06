@@ -11,6 +11,9 @@ import {
 import { IconEdit, IconTrash, IconCheck, IconCopy } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { CampaignContactSchema } from '~/models/CampaignContactSchemaModel';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import styles from './CampaignSchemasContent.module.css';
 
 interface UseCampaignSchemasColumnsProps {
@@ -25,6 +28,17 @@ export const useCampaignSchemasColumns = ({
 	isDeletePending,
 }: UseCampaignSchemasColumnsProps) => {
 	const { t } = useTranslation('campaign-management');
+	const { canPerformAction } = usePermissions();
+
+	const canEdit = useMemo(
+		() => canPerformAction(ModuleEnum.SETTINGS, PermissionEnum.UPDATE),
+		[canPerformAction]
+	);
+	const canDelete = useMemo(
+		() => canPerformAction(ModuleEnum.SETTINGS, PermissionEnum.DELETE),
+		[canPerformAction]
+	);
+
 	return useMemo<ColumnDef<CampaignContactSchema>[]>(
 		() => [
 			{
@@ -145,33 +159,40 @@ export const useCampaignSchemasColumns = ({
 				size: 100,
 				cell: ({ row }) => (
 					<Group gap={8} justify='flex-end' className={styles.actionsGroup}>
-						<Tooltip label={t('setup.schemas.table.actions.edit')} withArrow>
-							<ActionIcon
-								variant='light'
-								color='blue'
-								size='md'
-								radius='md'
-								onClick={() => onEdit(row.original)}
+						{canEdit && (
+							<Tooltip label={t('setup.schemas.table.actions.edit')} withArrow>
+								<ActionIcon
+									variant='light'
+									color='blue'
+									size='md'
+									radius='md'
+									onClick={() => onEdit(row.original)}
+								>
+									<IconEdit size={16} stroke={1.5} />
+								</ActionIcon>
+							</Tooltip>
+						)}
+						{canDelete && (
+							<Tooltip
+								label={t('setup.schemas.table.actions.delete')}
+								withArrow
 							>
-								<IconEdit size={16} stroke={1.5} />
-							</ActionIcon>
-						</Tooltip>
-						<Tooltip label={t('setup.schemas.table.actions.delete')} withArrow>
-							<ActionIcon
-								variant='light'
-								color='red'
-								size='md'
-								radius='md'
-								onClick={() => onDelete(row.original.id)}
-								loading={isDeletePending}
-							>
-								<IconTrash size={16} stroke={1.5} />
-							</ActionIcon>
-						</Tooltip>
+								<ActionIcon
+									variant='light'
+									color='red'
+									size='md'
+									radius='md'
+									onClick={() => onDelete(row.original.id)}
+									loading={isDeletePending}
+								>
+									<IconTrash size={16} stroke={1.5} />
+								</ActionIcon>
+							</Tooltip>
+						)}
 					</Group>
 				),
 			},
 		],
-		[onEdit, onDelete, isDeletePending, t]
+		[onEdit, onDelete, isDeletePending, t, canEdit, canDelete]
 	);
 };

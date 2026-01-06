@@ -34,6 +34,16 @@ vi.mock('@mantine/core', async (importOriginal) => {
 	};
 });
 
+const mockCanPerformAction = vi.fn(() => true);
+const mockCanAccessModule = vi.fn(() => true);
+
+vi.mock('~/hooks/usePermissions', () => ({
+	default: () => ({
+		canPerformAction: mockCanPerformAction,
+		canAccessModule: mockCanAccessModule,
+	}),
+}));
+
 const mockUseObjectivesWithFilters = vi.hoisted(() => {
 	const baseValue = {
 		objectives: [

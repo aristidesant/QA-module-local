@@ -2,6 +2,14 @@ import { renderHook } from '@testing-library/react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TestProviders } from '~/test-utils/renderWithProviders';
+
+// Mock usePermissions
+const mockCanPerformAction = vi.fn(() => true);
+vi.mock('~/hooks/usePermissions', () => ({
+	default: () => ({
+		canPerformAction: mockCanPerformAction,
+	}),
+}));
 import {
 	useCampaignObjectivesColumns,
 	type EnrichedObjective,

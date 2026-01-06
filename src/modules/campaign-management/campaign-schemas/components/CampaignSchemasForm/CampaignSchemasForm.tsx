@@ -32,6 +32,9 @@ import {
 	UpdateCampaignContactSchemaRequest,
 } from '~/models/CampaignContactSchemaModel';
 import ObjectivePickerPanel from '~/modules/campaign-management/CampaignManagementPage/components/ObjectivePickerPanel';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import styles from './CampaignSchemasForm.module.css';
 
 interface CampaignSchemasFormProps {
@@ -72,6 +75,14 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 	const createSchema = useCreateCampaignContactSchema();
 	const updateSchema = useUpdateCampaignContactSchema();
 	const [objectivePickerOpen, setObjectivePickerOpen] = useState(false);
+	const { canPerformAction } = usePermissions();
+
+	const canCreate = canPerformAction(
+		ModuleEnum.SETTINGS,
+		PermissionEnum.CREATE
+	);
+	const canEdit = canPerformAction(ModuleEnum.SETTINGS, PermissionEnum.UPDATE);
+	const isAllowed = isEditing ? canEdit : canCreate;
 
 	// Get objectives for the select
 	const { data: objectivesResponse } = useGetCampaignObjectives();
@@ -490,6 +501,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 						type='submit'
 						loading={isLoading}
 						className={styles.submitButton}
+						disabled={!isAllowed}
 					>
 						{t(
 							isEditing

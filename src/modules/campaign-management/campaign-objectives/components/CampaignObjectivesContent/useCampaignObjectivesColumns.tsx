@@ -6,6 +6,9 @@ import {
 	CampaignObjective,
 	CampaignObjectiveWithCategoryName,
 } from '~/models/CampaignObjectiveModel';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import styles from './CampaignObjectivesContent.module.css';
 
 export type EnrichedObjective = CampaignObjectiveWithCategoryName;
@@ -22,6 +25,14 @@ export const useCampaignObjectivesColumns = ({
 	isDeletePending,
 }: UseCampaignObjectivesColumnsProps): ColumnDef<EnrichedObjective>[] => {
 	const { t } = useTranslation('campaign-management');
+	const { canPerformAction } = usePermissions();
+
+	const canEdit = canPerformAction(ModuleEnum.SETTINGS, PermissionEnum.UPDATE);
+	const canDelete = canPerformAction(
+		ModuleEnum.SETTINGS,
+		PermissionEnum.DELETE
+	);
+
 	return [
 		{
 			accessorKey: 'name',
@@ -74,28 +85,35 @@ export const useCampaignObjectivesColumns = ({
 			header: t('setup.objectives.table.headers.actions'),
 			cell: ({ row }) => (
 				<Group gap='xs' className={styles.actionsGroup}>
-					<Tooltip label={t('setup.objectives.table.actions.edit')} withArrow>
-						<Button
-							size='xs'
-							variant='light'
-							onClick={() => onEdit(row.original)}
-							className={styles.actionButton}
+					{canEdit && (
+						<Tooltip label={t('setup.objectives.table.actions.edit')} withArrow>
+							<Button
+								size='xs'
+								variant='light'
+								onClick={() => onEdit(row.original)}
+								className={styles.actionButton}
+							>
+								<IconEdit size={14} />
+							</Button>
+						</Tooltip>
+					)}
+					{canDelete && (
+						<Tooltip
+							label={t('setup.objectives.table.actions.delete')}
+							withArrow
 						>
-							<IconEdit size={14} />
-						</Button>
-					</Tooltip>
-					<Tooltip label={t('setup.objectives.table.actions.delete')} withArrow>
-						<Button
-							size='xs'
-							variant='light'
-							color='red'
-							onClick={() => onDelete(row.original.id)}
-							loading={isDeletePending}
-							className={styles.actionButton}
-						>
-							<IconTrash size={14} />
-						</Button>
-					</Tooltip>
+							<Button
+								size='xs'
+								variant='light'
+								color='red'
+								onClick={() => onDelete(row.original.id)}
+								loading={isDeletePending}
+								className={styles.actionButton}
+							>
+								<IconTrash size={14} />
+							</Button>
+						</Tooltip>
+					)}
 				</Group>
 			),
 		},

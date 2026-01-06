@@ -1,6 +1,15 @@
 import { renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+// Mock usePermissions
+const mockCanPerformAction = vi.fn(() => true);
+vi.mock('~/hooks/usePermissions', () => ({
+	default: () => ({
+		canPerformAction: mockCanPerformAction,
+	}),
+}));
+
 import { useCampaignSchemasColumns } from './useCampaignSchemasColumns';
 import { CampaignContactSchema } from '~/models/CampaignContactSchemaModel';
 import {

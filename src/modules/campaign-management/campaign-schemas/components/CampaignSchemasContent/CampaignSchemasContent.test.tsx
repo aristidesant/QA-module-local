@@ -37,6 +37,16 @@ vi.mock('@mantine/core', async (importOriginal) => {
 const mockUseDeleteMutateAsync = vi.fn();
 let mockDeleteIsPending = false;
 
+const mockCanPerformAction = vi.fn(() => true);
+const mockCanAccessModule = vi.fn(() => true);
+
+vi.mock('~/hooks/usePermissions', () => ({
+	default: () => ({
+		canPerformAction: mockCanPerformAction,
+		canAccessModule: mockCanAccessModule,
+	}),
+}));
+
 const mockUseFilteredSchemasModule = vi.hoisted(() => {
 	const baseValue = {
 		schemas: [
