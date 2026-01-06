@@ -1,7 +1,22 @@
 import { screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import CampaignPromptTypesPage from './CampaignPromptTypesPage';
+import React from 'react';
 import { renderWithProviders } from '~/test-utils/renderWithProviders';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
+import CampaignPromptTypesPage from './CampaignPromptTypesPage';
+
+const mockCanPerformAction = vi.fn(
+	(_module: ModuleEnum, _permission: PermissionEnum) => true
+);
+const mockCanAccessModule = vi.fn((_module: ModuleEnum) => true);
+
+vi.mock('~/hooks/usePermissions', () => ({
+	default: () => ({
+		canPerformAction: mockCanPerformAction,
+		canAccessModule: mockCanAccessModule,
+	}),
+}));
 
 // Mock the child components
 vi.mock('../components/CampaignPromptTypesContent', () => ({
@@ -51,6 +66,8 @@ vi.mock('~/components/ContentContainer/ContentContainer', () => ({
 describe('CampaignPromptTypesPage', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockCanPerformAction.mockReturnValue(true);
+		mockCanAccessModule.mockReturnValue(true);
 	});
 
 	describe('Non-embedded mode', () => {
@@ -66,12 +83,28 @@ describe('CampaignPromptTypesPage', () => {
 			).toBeInTheDocument();
 		});
 
-		it('renders Create Prompt Type button in title right section', () => {
+		it('renders Create Prompt Type button in title right section when user has CREATE permission', () => {
 			renderWithProviders(<CampaignPromptTypesPage />);
 
 			const titleRight = screen.getByTestId('title-right');
 			expect(titleRight).toBeInTheDocument();
 			expect(screen.getByText('Create Prompt Type')).toBeInTheDocument();
+		});
+
+		it('hides Create Prompt Type button in title right section when user lacks CREATE permission', () => {
+			mockCanPerformAction.mockImplementation(
+				(module: ModuleEnum, permission: PermissionEnum) => {
+					return !(
+						module === ModuleEnum.SETTINGS &&
+						permission === PermissionEnum.CREATE
+					);
+				}
+			);
+
+			renderWithProviders(<CampaignPromptTypesPage />);
+
+			expect(screen.queryByTestId('title-right')).not.toBeInTheDocument();
+			expect(screen.queryByText('Create Prompt Type')).not.toBeInTheDocument();
 		});
 
 		it('opens create modal when Create Prompt Type button is clicked', () => {

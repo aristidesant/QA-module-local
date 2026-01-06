@@ -25,12 +25,16 @@ interface UseCampaignPromptTypesColumnsProps {
 	onEdit: (promptType: CampaignPromptTypeModel) => void;
 	onDelete: (id: number) => void;
 	isDeletePending: boolean;
+	canUpdate: boolean;
+	canDelete: boolean;
 }
 
 export const useCampaignPromptTypesColumns = ({
 	onEdit,
 	onDelete,
 	isDeletePending,
+	canUpdate,
+	canDelete,
 }: UseCampaignPromptTypesColumnsProps) => {
 	const { t, i18n } = useTranslation('campaign-management');
 
@@ -157,38 +161,42 @@ export const useCampaignPromptTypesColumns = ({
 				header: t('setup.promptTypes.table.headers.actions'),
 				cell: ({ row }) => (
 					<Group gap='xs' className={styles.actionsGroup}>
-						<Tooltip
-							label={t('setup.promptTypes.table.actions.edit')}
-							withArrow
-						>
-							<Button
-								size='xs'
-								variant='light'
-								onClick={() => onEdit(row.original)}
-								className={styles.actionButton}
+						{canUpdate && (
+							<Tooltip
+								label={t('setup.promptTypes.table.actions.edit')}
+								withArrow
 							>
-								<IconEdit size={14} />
-							</Button>
-						</Tooltip>
-						<Tooltip
-							label={t('setup.promptTypes.table.actions.delete')}
-							withArrow
-						>
-							<Button
-								size='xs'
-								variant='light'
-								color='red'
-								onClick={() => onDelete(row.original.id)}
-								loading={isDeletePending}
-								className={styles.actionButton}
+								<Button
+									size='xs'
+									variant='light'
+									onClick={() => onEdit(row.original)}
+									className={styles.actionButton}
+								>
+									<IconEdit size={14} />
+								</Button>
+							</Tooltip>
+						)}
+						{canDelete && (
+							<Tooltip
+								label={t('setup.promptTypes.table.actions.delete')}
+								withArrow
 							>
-								<IconTrash size={14} />
-							</Button>
-						</Tooltip>
+								<Button
+									size='xs'
+									variant='light'
+									color='red'
+									onClick={() => onDelete(row.original.id)}
+									loading={isDeletePending}
+									className={styles.actionButton}
+								>
+									<IconTrash size={14} />
+								</Button>
+							</Tooltip>
+						)}
 					</Group>
 				),
 			},
 		],
-		[i18n.language, isDeletePending, onDelete, onEdit, t]
+		[canDelete, canUpdate, i18n.language, isDeletePending, onDelete, onEdit, t]
 	);
 };

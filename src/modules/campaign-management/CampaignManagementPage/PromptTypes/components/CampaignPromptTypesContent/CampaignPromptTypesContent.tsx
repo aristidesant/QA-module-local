@@ -8,6 +8,9 @@ import BaseTable from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
 import PaginationControls from '~/components/PaginationControls';
 import SectionCard from '~/components/SectionCard/SectionCard';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import {
 	useDeleteCampaignPromptType,
 	useGetAllCampaignPromptTypes,
@@ -44,8 +47,22 @@ const CampaignPromptTypesContent: React.FC<CampaignPromptTypesContentProps> = ({
 	setCreateModalOpened,
 }) => {
 	const { t } = useTranslation('campaign-management');
+	const { canPerformAction } = usePermissions();
 	const { data: promptTypesData, isLoading } = useGetAllCampaignPromptTypes();
 	const deletePromptType = useDeleteCampaignPromptType();
+
+	const canCreate = canPerformAction(
+		ModuleEnum.SETTINGS,
+		PermissionEnum.CREATE
+	);
+	const canUpdate = canPerformAction(
+		ModuleEnum.SETTINGS,
+		PermissionEnum.UPDATE
+	);
+	const canDelete = canPerformAction(
+		ModuleEnum.SETTINGS,
+		PermissionEnum.DELETE
+	);
 
 	const [editModalOpened, setEditModalOpened] = useState(false);
 	const [selectedPromptType, setSelectedPromptType] =
@@ -176,6 +193,8 @@ const CampaignPromptTypesContent: React.FC<CampaignPromptTypesContentProps> = ({
 		onEdit: handleEdit,
 		onDelete: handleDelete,
 		isDeletePending: deletePromptType.isPending,
+		canUpdate,
+		canDelete,
 	});
 
 	const handleFiltersChange = (nextFilters: PromptTypeFilters) => {
@@ -204,12 +223,14 @@ const CampaignPromptTypesContent: React.FC<CampaignPromptTypesContentProps> = ({
 					message={t('setup.promptTypes.emptyState.message')}
 					description={t('setup.promptTypes.emptyState.description')}
 					action={
-						<Button
-							leftSection={<IconPlus size={16} />}
-							onClick={() => setCreateModalOpened(true)}
-						>
-							{t('setup.promptTypes.actions.create')}
-						</Button>
+						canCreate && (
+							<Button
+								leftSection={<IconPlus size={16} />}
+								onClick={() => setCreateModalOpened(true)}
+							>
+								{t('setup.promptTypes.actions.create')}
+							</Button>
+						)
 					}
 				/>
 
@@ -236,13 +257,15 @@ const CampaignPromptTypesContent: React.FC<CampaignPromptTypesContentProps> = ({
 				description={t('setup.promptTypes.description')}
 				padding='lg'
 				headerActions={
-					<ActionIcon
-						variant='filled'
-						onClick={() => setCreateModalOpened(true)}
-						size='xs'
-					>
-						<IconPlus size={16} />
-					</ActionIcon>
+					canCreate && (
+						<ActionIcon
+							variant='filled'
+							onClick={() => setCreateModalOpened(true)}
+							size='xs'
+						>
+							<IconPlus size={16} />
+						</ActionIcon>
+					)
 				}
 			>
 				<CampaignPromptTypesFilters
@@ -257,12 +280,14 @@ const CampaignPromptTypesContent: React.FC<CampaignPromptTypesContentProps> = ({
 							message={t('setup.promptTypes.filteredEmpty.message')}
 							description={t('setup.promptTypes.filteredEmpty.description')}
 							action={
-								<Button
-									leftSection={<IconPlus size={16} />}
-									onClick={() => setCreateModalOpened(true)}
-								>
-									{t('setup.promptTypes.actions.create')}
-								</Button>
+								canCreate && (
+									<Button
+										leftSection={<IconPlus size={16} />}
+										onClick={() => setCreateModalOpened(true)}
+									>
+										{t('setup.promptTypes.actions.create')}
+									</Button>
+								)
 							}
 						/>
 					</div>

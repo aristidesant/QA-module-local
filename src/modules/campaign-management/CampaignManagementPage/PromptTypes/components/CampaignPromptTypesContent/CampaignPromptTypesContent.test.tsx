@@ -2,6 +2,8 @@ import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { ModalsProvider } from '@mantine/modals';
 import { renderWithProviders as renderWithAppProviders } from '~/test-utils/renderWithProviders';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import type { CampaignPromptTypeModel } from '~/models/CampaignPromptTypeModel';
 import CampaignPromptTypesContent from './CampaignPromptTypesContent';
 
@@ -27,6 +29,18 @@ vi.mock('@mantine/notifications', () => ({
 	notifications: {
 		show: mockNotificationsShow,
 	},
+}));
+
+const mockCanPerformAction = vi.fn(
+	(_module: ModuleEnum, _permission: PermissionEnum) => true
+);
+const mockCanAccessModule = vi.fn((_module: ModuleEnum) => true);
+
+vi.mock('~/hooks/usePermissions', () => ({
+	default: () => ({
+		canPerformAction: mockCanPerformAction,
+		canAccessModule: mockCanAccessModule,
+	}),
 }));
 
 // Store modal close handlers for testing
@@ -339,9 +353,10 @@ describe('CampaignPromptTypesContent', () => {
 		vi.clearAllMocks();
 		mockDeletePromptType.mockReset();
 		mockNotificationsShow.mockReset();
-		// Reset to default mock data with prompt types
 		mockPromptTypesData.data = mockPromptTypes;
 		mockPromptTypesData.isLoading = false;
+		mockCanPerformAction.mockReturnValue(true);
+		mockCanAccessModule.mockReturnValue(true);
 	});
 
 	describe('Rendering with data', () => {
@@ -375,10 +390,58 @@ describe('CampaignPromptTypesContent', () => {
 			expect(screen.getByTestId('pagination-controls')).toBeInTheDocument();
 		});
 
-		it('renders header actions with add button', () => {
+		it('renders header actions with add button when user has CREATE permission', () => {
 			renderWithProviders(<CampaignPromptTypesContent {...defaultProps} />);
 
 			expect(screen.getByTestId('header-actions')).toBeInTheDocument();
+		});
+
+		it('hides header actions when user lacks CREATE permission', () => {
+			mockCanPerformAction.mockImplementation(
+				(module: ModuleEnum, permission: PermissionEnum) => {
+					return !(
+						module === ModuleEnum.SETTINGS &&
+						permission === PermissionEnum.CREATE
+					);
+				}
+			);
+
+			renderWithProviders(<CampaignPromptTypesContent {...defaultProps} />);
+
+			expect(screen.queryByTestId('header-actions')).not.toBeInTheDocument();
+		});
+	});
+
+	describe('Initial Empty State', () => {
+		beforeEach(() => {
+			mockPromptTypesData.data = [];
+		});
+
+		it('renders empty state when no data is available', () => {
+			renderWithProviders(<CampaignPromptTypesContent {...defaultProps} />);
+
+			expect(screen.getByTestId('empty-state')).toBeInTheDocument();
+		});
+
+		it('renders create button in empty state when user has CREATE permission', () => {
+			renderWithProviders(<CampaignPromptTypesContent {...defaultProps} />);
+
+			expect(screen.getByText('Create Prompt Type')).toBeInTheDocument();
+		});
+
+		it('hides create button in empty state when user lacks CREATE permission', () => {
+			mockCanPerformAction.mockImplementation(
+				(module: ModuleEnum, permission: PermissionEnum) => {
+					return !(
+						module === ModuleEnum.SETTINGS &&
+						permission === PermissionEnum.CREATE
+					);
+				}
+			);
+
+			renderWithProviders(<CampaignPromptTypesContent {...defaultProps} />);
+
+			expect(screen.queryByText('Create Prompt Type')).not.toBeInTheDocument();
 		});
 	});
 
@@ -798,13 +861,10 @@ describe('CampaignPromptTypesContent', () => {
 		it('keeps current page size when value is null', () => {
 			renderWithProviders(<CampaignPromptTypesContent {...defaultProps} />);
 
-			const initialPageSize = screen.getByTestId('items-per-page').textContent;
-			const changePageSizeNullBtn = screen.getByTestId('change-page-size-null');
-			fireEvent.click(changePageSizeNullBtn);
+			const changePageSizeBtn = screen.getByTestId('change-page-size-null');
+			fireEvent.click(changePageSizeBtn);
 
-			expect(screen.getByTestId('items-per-page')).toHaveTextContent(
-				initialPageSize || '10'
-			);
+			expect(screen.getByTestId('items-per-page')).toHaveTextContent('10');
 		});
 
 		it('resets to page 1 when page size changes', () => {

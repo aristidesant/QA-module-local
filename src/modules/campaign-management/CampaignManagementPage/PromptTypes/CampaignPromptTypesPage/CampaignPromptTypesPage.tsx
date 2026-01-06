@@ -3,6 +3,9 @@ import { Button } from '@mantine/core';
 import { IconMessageChatbot, IconPlus } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import CampaignPromptTypesContent from '../components/CampaignPromptTypesContent';
 
 interface CampaignPromptTypesPageProps {
@@ -13,7 +16,13 @@ const CampaignPromptTypesPage: React.FC<CampaignPromptTypesPageProps> = ({
 	embedded = false,
 }) => {
 	const { t } = useTranslation('campaign-management');
+	const { canPerformAction } = usePermissions();
 	const [createModalOpened, setCreateModalOpened] = useState(false);
+
+	const canCreate = canPerformAction(
+		ModuleEnum.SETTINGS,
+		PermissionEnum.CREATE
+	);
 
 	const content = (
 		<CampaignPromptTypesContent
@@ -32,13 +41,15 @@ const CampaignPromptTypesPage: React.FC<CampaignPromptTypesPageProps> = ({
 			description={t('setup.promptTypes.description')}
 			titleIcon={<IconMessageChatbot size={24} />}
 			titleRight={
-				<Button
-					size='sm'
-					leftSection={<IconPlus size={16} />}
-					onClick={() => setCreateModalOpened(true)}
-				>
-					{t('setup.promptTypes.actions.create')}
-				</Button>
+				canCreate && (
+					<Button
+						size='sm'
+						leftSection={<IconPlus size={16} />}
+						onClick={() => setCreateModalOpened(true)}
+					>
+						{t('setup.promptTypes.actions.create')}
+					</Button>
+				)
 			}
 		>
 			{content}

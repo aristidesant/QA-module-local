@@ -1,8 +1,8 @@
-import { renderHook, render } from '@testing-library/react';
+import { renderHook, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useCampaignPromptTypesColumns } from './useCampaignPromptTypesColumns';
 import { CampaignPromptTypeModel } from '~/models/CampaignPromptTypeModel';
-import { vi } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 import { TestProviders } from '~/test-utils/renderWithProviders';
 
 // Mock the styles to avoid issues with CSS modules in tests if not handled
@@ -37,6 +37,8 @@ describe('useCampaignPromptTypesColumns', () => {
 					onEdit: mockOnEdit,
 					onDelete: mockOnDelete,
 					isDeletePending,
+					canUpdate: true,
+					canDelete: true,
 				}),
 			{ wrapper }
 		);
@@ -58,6 +60,8 @@ describe('useCampaignPromptTypesColumns', () => {
 					onEdit: mockOnEdit,
 					onDelete: mockOnDelete,
 					isDeletePending,
+					canUpdate: true,
+					canDelete: true,
 				}),
 			{ wrapper }
 		);
@@ -86,30 +90,31 @@ describe('useCampaignPromptTypesColumns', () => {
 		};
 
 		// Test Order cell
-		const { getByText: getByTextOrder } = renderCell(0, mockData);
-		expect(getByTextOrder('1')).toBeInTheDocument();
+		renderCell(0, mockData);
+		expect(screen.getByText('1')).toBeInTheDocument();
 
 		// Test Name cell
-		const { getByText: getByTextName } = renderCell(1, mockData);
-		expect(getByTextName('Test Prompt')).toBeInTheDocument();
+		renderCell(1, mockData);
+		expect(screen.getByText('Test Prompt')).toBeInTheDocument();
 
 		// Test Icon cell
-		const { getByText: getByTextIcon } = renderCell(3, mockData);
-		expect(getByTextIcon('test-icon')).toBeInTheDocument();
+		renderCell(3, mockData);
+		expect(screen.getByText('test-icon')).toBeInTheDocument();
 
 		// Test CreatedAt cell
-		const { getByText: getByTextDate } = renderCell(4, mockData);
-		// Date formatting might depend on locale, checking if it renders something
-		expect(getByTextDate(/2023/)).toBeInTheDocument();
+		renderCell(4, mockData);
+		expect(screen.getByText(/2023/)).toBeInTheDocument();
 	});
 
-	it('should call onEdit and onDelete when actions are clicked', async () => {
+	it('should call onEdit and onDelete when actions are clicked and user has permissions', async () => {
 		const { result } = renderHook(
 			() =>
 				useCampaignPromptTypesColumns({
 					onEdit: mockOnEdit,
 					onDelete: mockOnDelete,
 					isDeletePending,
+					canUpdate: true,
+					canDelete: true,
 				}),
 			{ wrapper }
 		);
@@ -125,13 +130,13 @@ describe('useCampaignPromptTypesColumns', () => {
 		};
 
 		const ActionsCell = columns[5].cell as any;
-		const { getAllByRole } = render(
+		render(
 			<TestProviders>
 				<ActionsCell row={{ original: mockData }} />
 			</TestProviders>
 		);
 
-		const buttons = getAllByRole('button');
+		const buttons = screen.getAllByRole('button');
 		// Edit button is usually the first one
 		await userEvent.click(buttons[0]);
 		expect(mockOnEdit).toHaveBeenCalledWith(mockData);
@@ -139,5 +144,108 @@ describe('useCampaignPromptTypesColumns', () => {
 		// Delete button is usually the second one
 		await userEvent.click(buttons[1]);
 		expect(mockOnDelete).toHaveBeenCalledWith(123);
+	});
+
+	it('should hide action buttons when user lacks permissions', () => {
+		const { result } = renderHook(
+			() =>
+				useCampaignPromptTypesColumns({
+					onEdit: mockOnEdit,
+					onDelete: mockOnDelete,
+					isDeletePending,
+					canUpdate: false,
+					canDelete: false,
+				}),
+			{ wrapper }
+		);
+
+		const columns = result.current;
+		const mockData: CampaignPromptTypeModel = {
+			id: 123,
+			name: 'Test Prompt',
+			order: 1,
+			icon: 'test-icon',
+			description: 'Short description',
+			createdAt: '2023-01-01T00:00:00Z',
+		};
+
+		const ActionsCell = columns[5].cell as any;
+		render(
+			<TestProviders>
+				<ActionsCell row={{ original: mockData }} />
+			</TestProviders>
+		);
+
+		expect(screen.queryByRole('button')).not.toBeInTheDocument();
+	});
+
+	it('should only show edit button when user only has UPDATE permission', () => {
+		const { result } = renderHook(
+			() =>
+				useCampaignPromptTypesColumns({
+					onEdit: mockOnEdit,
+					onDelete: mockOnDelete,
+					isDeletePending,
+					canUpdate: true,
+					canDelete: false,
+				}),
+			{ wrapper }
+		);
+
+		const columns = result.current;
+		const mockData: CampaignPromptTypeModel = {
+			id: 123,
+			name: 'Test Prompt',
+			order: 1,
+			icon: 'test-icon',
+			description: 'Short description',
+			createdAt: '2023-01-01T00:00:00Z',
+		};
+
+		const ActionsCell = columns[5].cell as any;
+		render(
+			<TestProviders>
+				<ActionsCell row={{ original: mockData }} />
+			</TestProviders>
+		);
+
+		const buttons = screen.getAllByRole('button');
+		expect(buttons).toHaveLength(1);
+		// Check if it's the edit button (usually by icon or tooltip label if mocked)
+		// For now we just verify count as per logic
+	});
+
+	it('should only show delete button when user only has DELETE permission', () => {
+		const { result } = renderHook(
+			() =>
+				useCampaignPromptTypesColumns({
+					onEdit: mockOnEdit,
+					onDelete: mockOnDelete,
+					isDeletePending,
+					canUpdate: false,
+					canDelete: true,
+				}),
+			{ wrapper }
+		);
+
+		const columns = result.current;
+		const mockData: CampaignPromptTypeModel = {
+			id: 123,
+			name: 'Test Prompt',
+			order: 1,
+			icon: 'test-icon',
+			description: 'Short description',
+			createdAt: '2023-01-01T00:00:00Z',
+		};
+
+		const ActionsCell = columns[5].cell as any;
+		render(
+			<TestProviders>
+				<ActionsCell row={{ original: mockData }} />
+			</TestProviders>
+		);
+
+		const buttons = screen.getAllByRole('button');
+		expect(buttons).toHaveLength(1);
 	});
 });
