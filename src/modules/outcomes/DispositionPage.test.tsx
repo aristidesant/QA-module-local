@@ -1,6 +1,9 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import React, { forwardRef, useImperativeHandle } from 'react';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import DispositionPage from './DispositionPage';
 
 const clearCatalog = vi.fn();
@@ -8,36 +11,16 @@ const clearCatalog = vi.fn();
 let openCreateForm: () => void;
 let onEditNodesFromProps: ((catalog: { id: number }) => void) | undefined;
 
-vi.mock('@mantine/core', () => ({
-	Button: ({
-		children,
-		onClick,
-	}: {
-		children: React.ReactNode;
-		onClick?: () => void;
-	}) => (
-		<button type='button' onClick={onClick}>
-			{children}
-		</button>
-	),
-	Modal: ({
-		children,
-		opened,
-		title,
-	}: {
-		children: React.ReactNode;
-		opened: boolean;
-		title?: React.ReactNode;
-	}) =>
-		opened ? (
-			<div data-testid='nodes-modal'>
-				<div data-testid='nodes-modal-title'>{title}</div>
-				{children}
-			</div>
-		) : null,
-	Text: ({ children }: { children: React.ReactNode }) => (
-		<span>{children}</span>
-	),
+const mockCanPerformAction = vi.fn(
+	(_module: ModuleEnum, _permission: PermissionEnum) => true
+);
+const mockCanAccessModule = vi.fn((_module: ModuleEnum) => true);
+
+vi.mock('~/hooks/usePermissions', () => ({
+	default: () => ({
+		canPerformAction: mockCanPerformAction,
+		canAccessModule: mockCanAccessModule,
+	}),
 }));
 
 vi.mock('./dispositionRightComponentStore', () => ({
@@ -96,30 +79,61 @@ vi.mock('./components/DispositionCatalogForm/DispositionCatalogNode', () => ({
 describe('DispositionPage', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockCanPerformAction.mockReturnValue(true);
+		mockCanAccessModule.mockReturnValue(true);
 	});
 
-	it('renders embedded content without container', () => {
-		render(<DispositionPage embedded />);
+	it('renders embedded content without container', async () => {
+		renderWithProviders(<DispositionPage embedded />);
 
 		expect(screen.getByTestId('catalog-list')).toBeInTheDocument();
 		fireEvent.click(screen.getByText('Open nodes'));
-		expect(screen.getByTestId('nodes-modal')).toBeInTheDocument();
-		expect(screen.getByTestId('catalog-node')).toHaveTextContent('Catalog 1');
+
+		expect(await screen.findByText('Edit outcomes')).toBeInTheDocument();
+		expect(await screen.findByText('Catalog 1')).toBeInTheDocument();
 		expect(screen.queryByTestId('content-container')).not.toBeInTheDocument();
 	});
 
-	it('renders container and triggers create action', () => {
-		render(<DispositionPage />);
+	it('renders container and triggers create action when user has CREATE permission', () => {
+		mockCanPerformAction.mockImplementation(
+			(module: ModuleEnum, permission: PermissionEnum) => {
+				return (
+					module === ModuleEnum.SETTINGS && permission === PermissionEnum.CREATE
+				);
+			}
+		);
+
+		renderWithProviders(<DispositionPage />);
 
 		expect(screen.getByTestId('content-container')).toBeInTheDocument();
+		expect(screen.getByText('Add New Catalog')).toBeInTheDocument();
 
 		fireEvent.click(screen.getByText('Add New Catalog'));
 
 		expect(openCreateForm).toHaveBeenCalled();
 	});
 
+	it('hides "Add New Catalog" button when user lacks CREATE permission', () => {
+		mockCanPerformAction.mockImplementation(
+			(module: ModuleEnum, permission: PermissionEnum) => {
+				if (
+					module === ModuleEnum.SETTINGS &&
+					permission === PermissionEnum.CREATE
+				) {
+					return false;
+				}
+				return true;
+			}
+		);
+
+		renderWithProviders(<DispositionPage />);
+
+		expect(screen.getByTestId('content-container')).toBeInTheDocument();
+		expect(screen.queryByText('Add New Catalog')).not.toBeInTheDocument();
+	});
+
 	it('clears selected catalog on unmount', () => {
-		const { unmount } = render(<DispositionPage />);
+		const { unmount } = renderWithProviders(<DispositionPage />);
 
 		unmount();
 

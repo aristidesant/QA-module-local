@@ -1,12 +1,9 @@
 import React from 'react';
-import {
-	render,
-	screen,
-	fireEvent,
-	within,
-	waitFor,
-} from '@testing-library/react';
+import { screen, fireEvent, within, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import DispositionCatalogNode from './DispositionCatalogNode';
 
 const createNode = { mutateAsync: vi.fn(), isPending: false };
@@ -93,7 +90,20 @@ const mockTreeHook = {
 	},
 };
 
-vi.mock('@mantine/core', () => {
+const mockCanPerformAction = vi.fn(
+	(_module: ModuleEnum, _permission: PermissionEnum) => true
+);
+const mockCanAccessModule = vi.fn((_module: ModuleEnum) => true);
+
+vi.mock('~/hooks/usePermissions', () => ({
+	default: () => ({
+		canPerformAction: mockCanPerformAction,
+		canAccessModule: mockCanAccessModule,
+	}),
+}));
+
+vi.mock('@mantine/core', async (importOriginal) => {
+	const actual = await importOriginal<any>();
 	const ActionIconComponent = ({
 		children,
 		onClick,
@@ -115,6 +125,7 @@ vi.mock('@mantine/core', () => {
 	}) => <div data-testid='action-icon-group'>{children}</div>;
 
 	return {
+		...actual,
 		Flex: ({ children }: { children: React.ReactNode }) => (
 			<div>{children}</div>
 		),
@@ -305,6 +316,8 @@ describe('DispositionCatalogNode', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockTreeHook.__reset();
+		mockCanPerformAction.mockReturnValue(true);
+		mockCanAccessModule.mockReturnValue(true);
 		createNode.mutateAsync.mockResolvedValue({});
 		updateNode.mutateAsync.mockResolvedValue({});
 		deleteNode.mutateAsync.mockResolvedValue({});
@@ -321,7 +334,7 @@ describe('DispositionCatalogNode', () => {
 			error: undefined,
 		});
 
-		render(<DispositionCatalogNode catalogId={1} />);
+		renderWithProviders(<DispositionCatalogNode catalogId={1} />);
 
 		expect(screen.getAllByTestId('skeleton')).toHaveLength(4);
 	});
@@ -335,13 +348,13 @@ describe('DispositionCatalogNode', () => {
 			error: new Error('network'),
 		});
 
-		render(<DispositionCatalogNode catalogId={1} />);
+		renderWithProviders(<DispositionCatalogNode catalogId={1} />);
 
 		expect(screen.getByTestId('alert')).toBeInTheDocument();
 	});
 
-	it('renders tree nodes and handles actions', async () => {
-		render(<DispositionCatalogNode catalogId={1} />);
+	it('renders tree nodes and handles actions when user has all permissions', async () => {
+		renderWithProviders(<DispositionCatalogNode catalogId={1} />);
 
 		expect(screen.getByTestId('tree-root')).toBeInTheDocument();
 		expect(screen.getByText('Root Node')).toBeInTheDocument();
@@ -381,8 +394,81 @@ describe('DispositionCatalogNode', () => {
 		expect(deactivateNode.mutateAsync).toHaveBeenCalledWith(1);
 	});
 
+	it('hides creation actions when user lacks CREATE permission', () => {
+		mockCanPerformAction.mockImplementation(
+			(module: ModuleEnum, permission: PermissionEnum) => {
+				if (
+					module === ModuleEnum.SETTINGS &&
+					permission === PermissionEnum.CREATE
+				) {
+					return false;
+				}
+				return true;
+			}
+		);
+
+		renderWithProviders(<DispositionCatalogNode catalogId={1} />);
+
+		expect(screen.queryByText('Add root outcome')).not.toBeInTheDocument();
+
+		const rootNode = screen.getByTestId('tree-node-1');
+		expect(
+			within(rootNode).queryByLabelText('Add child outcome')
+		).not.toBeInTheDocument();
+	});
+
+	it('hides update actions when user lacks UPDATE permission', () => {
+		mockCanPerformAction.mockImplementation(
+			(module: ModuleEnum, permission: PermissionEnum) => {
+				if (
+					module === ModuleEnum.SETTINGS &&
+					permission === PermissionEnum.UPDATE
+				) {
+					return false;
+				}
+				return true;
+			}
+		);
+
+		renderWithProviders(<DispositionCatalogNode catalogId={1} />);
+
+		const rootNode = screen.getByTestId('tree-node-1');
+		expect(
+			within(rootNode).queryByLabelText('Edit node')
+		).not.toBeInTheDocument();
+		expect(
+			within(rootNode).queryByLabelText('Deactivate node')
+		).not.toBeInTheDocument();
+
+		const childNode = screen.getByTestId('tree-node-2');
+		expect(
+			within(childNode).queryByLabelText('Reactivate node')
+		).not.toBeInTheDocument();
+	});
+
+	it('hides delete action when user lacks DELETE permission', () => {
+		mockCanPerformAction.mockImplementation(
+			(module: ModuleEnum, permission: PermissionEnum) => {
+				if (
+					module === ModuleEnum.SETTINGS &&
+					permission === PermissionEnum.DELETE
+				) {
+					return false;
+				}
+				return true;
+			}
+		);
+
+		renderWithProviders(<DispositionCatalogNode catalogId={1} />);
+
+		const childNode = screen.getByTestId('tree-node-2');
+		expect(
+			within(childNode).queryByLabelText('Delete node')
+		).not.toBeInTheDocument();
+	});
+
 	it('prevents editing protected outbound nodes', () => {
-		render(<DispositionCatalogNode catalogId={1} />);
+		renderWithProviders(<DispositionCatalogNode catalogId={1} />);
 
 		const protectedNode = screen.getByTestId('tree-node-3');
 		expect(within(protectedNode).queryByLabelText('Edit node')).toBeNull();

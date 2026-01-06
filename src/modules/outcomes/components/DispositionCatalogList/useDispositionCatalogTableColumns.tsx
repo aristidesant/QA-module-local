@@ -8,6 +8,9 @@ import {
 } from '@tabler/icons-react';
 import { type ColumnDef } from '@tanstack/react-table';
 import type { DispositionCatalogModel } from '~/models/DispositionCatalogModels';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import styles from './DispositionCatalogList.module.css';
 
 type UseDispositionCatalogTableColumnsProps = {
@@ -33,6 +36,13 @@ export const useDispositionCatalogTableColumns = ({
 	reactivateState,
 	deactivateState,
 }: UseDispositionCatalogTableColumnsProps) => {
+	const { canPerformAction } = usePermissions();
+
+	const canUpdate = useMemo(
+		() => canPerformAction(ModuleEnum.SETTINGS, PermissionEnum.UPDATE),
+		[canPerformAction]
+	);
+
 	return useMemo<ColumnDef<DispositionCatalogModel>[]>(
 		() => [
 			{
@@ -114,20 +124,22 @@ export const useDispositionCatalogTableColumns = ({
 								<IconListDetails size={16} />
 							</ActionIcon>
 						</Tooltip>
-						<Tooltip label='Edit details' withArrow>
-							<ActionIcon
-								variant='light'
-								size='sm'
-								onClick={(e) => {
-									e.stopPropagation();
-									onEditDetails(row.original);
-								}}
-								aria-label='Edit details'
-							>
-								<IconPencil size={16} />
-							</ActionIcon>
-						</Tooltip>
-						{!row.original.isActive && (
+						{canUpdate && (
+							<Tooltip label='Edit details' withArrow>
+								<ActionIcon
+									variant='light'
+									size='sm'
+									onClick={(e) => {
+										e.stopPropagation();
+										onEditDetails(row.original);
+									}}
+									aria-label='Edit details'
+								>
+									<IconPencil size={16} />
+								</ActionIcon>
+							</Tooltip>
+						)}
+						{canUpdate && !row.original.isActive && (
 							<Tooltip label='Reactivate' withArrow>
 								<ActionIcon
 									color='green'
@@ -147,7 +159,7 @@ export const useDispositionCatalogTableColumns = ({
 								</ActionIcon>
 							</Tooltip>
 						)}
-						{row.original.isActive && (
+						{canUpdate && row.original.isActive && (
 							<Tooltip label='Deactivate' withArrow>
 								<ActionIcon
 									color='orange'
@@ -179,6 +191,7 @@ export const useDispositionCatalogTableColumns = ({
 			onDeactivate,
 			reactivateState,
 			deactivateState,
+			canUpdate,
 		]
 	);
 };

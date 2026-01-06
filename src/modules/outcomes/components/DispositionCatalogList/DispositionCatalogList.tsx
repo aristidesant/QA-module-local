@@ -45,6 +45,9 @@ import type { DispositionCatalogModel } from '~/models/DispositionCatalogModels'
 import styles from './DispositionCatalogList.module.css';
 import BaseTable from '~/components/BaseTable';
 import SectionCard from '~/components/SectionCard/SectionCard';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import { useDispositionStore } from '../../dispositionRightComponentStore';
 import { useDispositionCatalogTableColumns } from './useDispositionCatalogTableColumns';
 
@@ -65,6 +68,12 @@ const DispositionCatalogList = forwardRef<
 	const [sorting, setSorting] = useState<SortingState>([
 		{ id: 'createdAt', desc: true },
 	]);
+
+	const { canPerformAction } = usePermissions();
+	const canCreate = canPerformAction(
+		ModuleEnum.SETTINGS,
+		PermissionEnum.CREATE
+	);
 
 	// Filter state
 	const [searchValue, setSearchValue] = useState('');
@@ -289,9 +298,11 @@ const DispositionCatalogList = forwardRef<
 				description='Create and manage outcome catalogs to group disposition nodes for campaigns.'
 				padding='md'
 				headerActions={
-					<ActionIcon variant='light' color='blue' onClick={handleCreate}>
-						<IconPlus size={18} />
-					</ActionIcon>
+					canCreate && (
+						<ActionIcon variant='light' color='blue' onClick={handleCreate}>
+							<IconPlus size={18} />
+						</ActionIcon>
+					)
 				}
 			>
 				<LoadingOverlay
@@ -384,12 +395,14 @@ const DispositionCatalogList = forwardRef<
 										Clear Filters
 									</Button>
 								) : (
-									<Button
-										leftSection={<IconPlus size={16} />}
-										onClick={handleCreate}
-									>
-										Create Catalog
-									</Button>
+									canCreate && (
+										<Button
+											leftSection={<IconPlus size={16} />}
+											onClick={handleCreate}
+										>
+											Create Catalog
+										</Button>
+									)
 								)
 							}
 						/>

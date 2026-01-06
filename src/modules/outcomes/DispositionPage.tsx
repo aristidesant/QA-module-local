@@ -8,6 +8,9 @@ import DispositionCatalogList, {
 	DispositionCatalogListHandles,
 } from './components/DispositionCatalogList';
 import DispositionCatalogNode from './components/DispositionCatalogForm/DispositionCatalogNode';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 
 interface DispositionPageProps {
 	embedded?: boolean;
@@ -19,7 +22,13 @@ const DispositionPage: React.FC<DispositionPageProps> = ({
 	const catalog = useDispositionStore((state) => state.catalog);
 	const clearCatalog = useDispositionStore((state) => state.clearCatalog);
 	const catalogListRef = useRef<DispositionCatalogListHandles>(null);
+	const { canPerformAction } = usePermissions();
 	const [nodesModalOpen, setNodesModalOpen] = useState(false);
+
+	const canCreate = canPerformAction(
+		ModuleEnum.SETTINGS,
+		PermissionEnum.CREATE
+	);
 
 	useEffect(() => {
 		return () => {
@@ -76,9 +85,11 @@ const DispositionPage: React.FC<DispositionPageProps> = ({
 			description='Manage all outcome catalogs.'
 			titleIcon={<IconOutbound />}
 			titleRight={
-				<Button onClick={handleAddNew} size='sm'>
-					Add New Catalog
-				</Button>
+				canCreate && (
+					<Button onClick={handleAddNew} size='sm'>
+						Add New Catalog
+					</Button>
+				)
 			}
 		>
 			{content}

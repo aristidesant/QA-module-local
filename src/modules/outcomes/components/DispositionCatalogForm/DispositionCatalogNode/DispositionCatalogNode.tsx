@@ -49,6 +49,9 @@ import {
 	OUTBOUND_PROTECTED_ROOT_NODE_NAMES,
 	OutboundProtectedRootNodeName,
 } from '../../../constants';
+import usePermissions from '~/hooks/usePermissions';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import { useDispositionStore } from '../../../dispositionRightComponentStore';
 
 type DispositionCatalogFormProps = {
@@ -108,6 +111,20 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 	const deleteNode = useDeleteDispositionNode();
 	const reactivateNode = useReactivateDispositionNode();
 	const deactivateNode = useDeactivateDispositionNode();
+
+	const { canPerformAction } = usePermissions();
+	const canCreate = canPerformAction(
+		ModuleEnum.SETTINGS,
+		PermissionEnum.CREATE
+	);
+	const canUpdate = canPerformAction(
+		ModuleEnum.SETTINGS,
+		PermissionEnum.UPDATE
+	);
+	const canDelete = canPerformAction(
+		ModuleEnum.SETTINGS,
+		PermissionEnum.DELETE
+	);
 
 	if (!catalogId) return null;
 	const treeData = data ? mapDispositionNodesToArborist(data) : [];
@@ -342,46 +359,50 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 						</div>
 
 						<div className={styles.nodeAside}>
-							<div
-								className={styles.dragHandle}
-								ref={dragHandle}
-								role='button'
-								tabIndex={-1}
-								aria-label='Drag to reorder'
-							>
-								<IconGripVertical size={16} />
-							</div>
+							{canUpdate && (
+								<div
+									className={styles.dragHandle}
+									ref={dragHandle}
+									role='button'
+									tabIndex={-1}
+									aria-label='Drag to reorder'
+								>
+									<IconGripVertical size={16} />
+								</div>
+							)}
 							<div className={styles.nodeActionsDesktop}>
 								<ActionIcon.Group>
-									{isInactive ? (
-										<Tooltip label='Reactivate node' withArrow>
-											<ActionIcon
-												size='sm'
-												variant='light'
-												color='green'
-												onClick={(event) => {
-													event.stopPropagation();
-													handleReactivateNode(nodeData);
-												}}
-											>
-												<IconRefresh size={16} />
-											</ActionIcon>
-										</Tooltip>
-									) : (
-										<Tooltip label='Deactivate node' withArrow>
-											<ActionIcon
-												size='sm'
-												variant='subtle'
-												onClick={(event) => {
-													event.stopPropagation();
-													handleDeactivateNode(nodeData);
-												}}
-											>
-												<IconBan size={16} />
-											</ActionIcon>
-										</Tooltip>
-									)}
-									{!isProtectedNode && (
+									{isInactive
+										? canUpdate && (
+												<Tooltip label='Reactivate node' withArrow>
+													<ActionIcon
+														size='sm'
+														variant='light'
+														color='green'
+														onClick={(event) => {
+															event.stopPropagation();
+															handleReactivateNode(nodeData);
+														}}
+													>
+														<IconRefresh size={16} />
+													</ActionIcon>
+												</Tooltip>
+											)
+										: canUpdate && (
+												<Tooltip label='Deactivate node' withArrow>
+													<ActionIcon
+														size='sm'
+														variant='subtle'
+														onClick={(event) => {
+															event.stopPropagation();
+															handleDeactivateNode(nodeData);
+														}}
+													>
+														<IconBan size={16} />
+													</ActionIcon>
+												</Tooltip>
+											)}
+									{!isProtectedNode && canUpdate && (
 										<Tooltip label='Edit node' withArrow>
 											<ActionIcon
 												size='sm'
@@ -395,19 +416,21 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 											</ActionIcon>
 										</Tooltip>
 									)}
-									<Tooltip label='Add child outcome' withArrow>
-										<ActionIcon
-											size='sm'
-											variant='subtle'
-											onClick={(event) => {
-												event.stopPropagation();
-												setModal({ open: true, parentId: nodeData.id });
-											}}
-										>
-											<IconPlus size={16} />
-										</ActionIcon>
-									</Tooltip>
-									{!isProtectedNode && (
+									{canCreate && (
+										<Tooltip label='Add child outcome' withArrow>
+											<ActionIcon
+												size='sm'
+												variant='subtle'
+												onClick={(event) => {
+													event.stopPropagation();
+													setModal({ open: true, parentId: nodeData.id });
+												}}
+											>
+												<IconPlus size={16} />
+											</ActionIcon>
+										</Tooltip>
+									)}
+									{!isProtectedNode && canDelete && (
 										<Tooltip label='Delete node' withArrow>
 											<ActionIcon
 												size='sm'
@@ -437,22 +460,24 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 									</ActionIcon>
 								</Menu.Target>
 								<Menu.Dropdown onClick={(event) => event.stopPropagation()}>
-									{isInactive ? (
-										<Menu.Item
-											leftSection={<IconRefresh size={16} />}
-											onClick={() => handleReactivateNode(nodeData)}
-										>
-											Reactivate
-										</Menu.Item>
-									) : (
-										<Menu.Item
-											leftSection={<IconBan size={16} />}
-											onClick={() => handleDeactivateNode(nodeData)}
-										>
-											Deactivate
-										</Menu.Item>
-									)}
-									{!isProtectedNode && (
+									{isInactive
+										? canUpdate && (
+												<Menu.Item
+													leftSection={<IconRefresh size={16} />}
+													onClick={() => handleReactivateNode(nodeData)}
+												>
+													Reactivate
+												</Menu.Item>
+											)
+										: canUpdate && (
+												<Menu.Item
+													leftSection={<IconBan size={16} />}
+													onClick={() => handleDeactivateNode(nodeData)}
+												>
+													Deactivate
+												</Menu.Item>
+											)}
+									{!isProtectedNode && canUpdate && (
 										<Menu.Item
 											leftSection={<IconPencil size={16} />}
 											onClick={() => handleEditNode(nodeData)}
@@ -460,15 +485,17 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 											Edit
 										</Menu.Item>
 									)}
-									<Menu.Item
-										leftSection={<IconPlus size={16} />}
-										onClick={() =>
-											setModal({ open: true, parentId: nodeData.id })
-										}
-									>
-										Add child
-									</Menu.Item>
-									{!isProtectedNode && (
+									{canCreate && (
+										<Menu.Item
+											leftSection={<IconPlus size={16} />}
+											onClick={() =>
+												setModal({ open: true, parentId: nodeData.id })
+											}
+										>
+											Add child
+										</Menu.Item>
+									)}
+									{!isProtectedNode && canDelete && (
 										<Menu.Item
 											leftSection={<IconTrash size={16} />}
 											color='red'
@@ -537,18 +564,20 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 					</div>
 				)}
 				<Flex justify='end' align='center' className={styles.addButtonRow}>
-					<Button
-						fullWidth
-						variant='light'
-						color='blue'
-						leftSection={<IconPlus size={18} />}
-						size='md'
-						className={styles.addButton}
-						onClick={() => setModal({ open: true })}
-						aria-label='Add outcome to catalog'
-					>
-						Add root outcome
-					</Button>
+					{canCreate && (
+						<Button
+							fullWidth
+							variant='light'
+							color='blue'
+							leftSection={<IconPlus size={18} />}
+							size='md'
+							className={styles.addButton}
+							onClick={() => setModal({ open: true })}
+							aria-label='Add outcome to catalog'
+						>
+							Add root outcome
+						</Button>
+					)}
 				</Flex>
 			</SectionCard>
 			<DispositionNodeForm

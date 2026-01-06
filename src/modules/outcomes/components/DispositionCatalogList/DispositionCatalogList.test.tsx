@@ -1,5 +1,8 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import DispositionCatalogList from './DispositionCatalogList';
 import { useDispositionCatalogsPaged } from '~/queries/dispositionCatalogQueries';
 
@@ -40,6 +43,18 @@ const mockDeactivateMutation = {
 
 const setCatalog = vi.fn();
 const clearCatalog = vi.fn();
+
+const mockCanPerformAction = vi.fn(
+	(_module: ModuleEnum, _permission: PermissionEnum) => true
+);
+const mockCanAccessModule = vi.fn((_module: ModuleEnum) => true);
+
+vi.mock('~/hooks/usePermissions', () => ({
+	default: () => ({
+		canPerformAction: mockCanPerformAction,
+		canAccessModule: mockCanAccessModule,
+	}),
+}));
 
 vi.mock('~/queries/dispositionCatalogQueries', () => ({
 	useDispositionCatalogsPaged: vi.fn(),
@@ -190,125 +205,131 @@ vi.mock('../../dispositionRightComponentStore', () => ({
 		}),
 }));
 
-vi.mock('@mantine/core', () => ({
-	Loader: () => <div data-testid='loader'>loading</div>,
-	Center: ({ children }: { children: React.ReactNode }) => (
-		<div data-testid='center'>{children}</div>
-	),
-	Text: ({ children }: { children: React.ReactNode }) => (
-		<span>{children}</span>
-	),
-	Group: ({ children }: { children: React.ReactNode }) => (
-		<div data-testid='group'>{children}</div>
-	),
-	ActionIcon: ({ children, onClick, 'aria-label': ariaLabel }: any) => (
-		<button type='button' onClick={onClick} aria-label={ariaLabel}>
-			{children}
-		</button>
-	),
-	Tooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-	Pagination: ({
-		value,
-		onChange,
-		total,
-	}: {
-		value: number;
-		onChange: (page: number) => void;
-		total: number;
-	}) => (
-		<div data-testid='pagination'>
-			<span data-testid='pagination-value'>{value}</span>
-			<span data-testid='pagination-total'>{total}</span>
-			<button type='button' onClick={() => onChange(value + 1)}>
-				Next
-			</button>
-		</div>
-	),
-	Badge: ({ children }: { children: React.ReactNode }) => (
-		<span data-testid='badge'>{children}</span>
-	),
-	Button: ({
-		children,
-		onClick,
-	}: {
-		children: React.ReactNode;
-		onClick?: () => void;
-	}) => (
-		<button type='button' onClick={onClick}>
-			{children}
-		</button>
-	),
-	LoadingOverlay: ({ visible }: { visible: boolean }) =>
-		visible ? <div data-testid='loading-overlay'>Loading...</div> : null,
-	TextInput: ({
-		value,
-		onChange,
-		placeholder,
-		rightSection,
-	}: {
-		value: string;
-		onChange: (e: any) => void;
-		placeholder: string;
-		rightSection?: React.ReactNode;
-	}) => (
-		<div data-testid='text-input-wrapper'>
-			<input
-				data-testid='search-input'
-				value={value}
-				onChange={onChange}
-				placeholder={placeholder}
-			/>
-			{rightSection && (
-				<div data-testid='search-clear-section'>{rightSection}</div>
-			)}
-		</div>
-	),
-	CloseButton: ({ onClick }: { onClick: () => void }) => (
-		<button data-testid='clear-search-button' onClick={onClick} type='button'>
-			Clear
-		</button>
-	),
-	SegmentedControl: ({
-		value,
-		onChange,
-		data,
-	}: {
-		value: string;
-		onChange: (val: string) => void;
-		data: { label: string; value: string }[];
-	}) => (
-		<div data-testid='segmented-control'>
-			{data.map((item) => (
-				<button
-					key={item.value}
-					onClick={() => onChange(item.value)}
-					data-active={value === item.value}
-				>
-					{item.label}
-				</button>
-			))}
-		</div>
-	),
-	Modal: ({
-		children,
-		opened,
-		onClose,
-	}: {
-		children: React.ReactNode;
-		opened: boolean;
-		onClose: () => void;
-	}) =>
-		opened ? (
-			<div data-testid='modal'>
-				<button onClick={onClose}>Close</button>
+vi.mock('@mantine/core', async (importOriginal) => {
+	const actual = await importOriginal<any>();
+	return {
+		...actual,
+		Loader: () => <div data-testid='loader'>loading</div>,
+		Center: ({ children }: { children: React.ReactNode }) => (
+			<div data-testid='center'>{children}</div>
+		),
+		Text: ({ children }: { children: React.ReactNode }) => (
+			<span>{children}</span>
+		),
+		Group: ({ children }: { children: React.ReactNode }) => (
+			<div data-testid='group'>{children}</div>
+		),
+		ActionIcon: ({ children, onClick, 'aria-label': ariaLabel }: any) => (
+			<button type='button' onClick={onClick} aria-label={ariaLabel}>
 				{children}
+			</button>
+		),
+		Tooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+		Pagination: ({
+			value,
+			onChange,
+			total,
+		}: {
+			value: number;
+			onChange: (page: number) => void;
+			total: number;
+		}) => (
+			<div data-testid='pagination'>
+				<span data-testid='pagination-value'>{value}</span>
+				<span data-testid='pagination-total'>{total}</span>
+				<button type='button' onClick={() => onChange(value + 1)}>
+					Next
+				</button>
 			</div>
-		) : null,
-}));
+		),
+		Badge: ({ children }: { children: React.ReactNode }) => (
+			<span data-testid='badge'>{children}</span>
+		),
+		Button: ({
+			children,
+			onClick,
+		}: {
+			children: React.ReactNode;
+			onClick?: () => void;
+		}) => (
+			<button type='button' onClick={onClick}>
+				{children}
+			</button>
+		),
+		LoadingOverlay: ({ visible }: { visible: boolean }) =>
+			visible ? <div data-testid='loading-overlay'>Loading...</div> : null,
+		TextInput: ({
+			value,
+			onChange,
+			placeholder,
+			rightSection,
+		}: {
+			value: string;
+			onChange: (e: any) => void;
+			placeholder: string;
+			rightSection?: React.ReactNode;
+		}) => (
+			<div data-testid='text-input-wrapper'>
+				<input
+					data-testid='search-input'
+					value={value}
+					onChange={onChange}
+					placeholder={placeholder}
+				/>
+				{rightSection && (
+					<div data-testid='search-clear-section'>{rightSection}</div>
+				)}
+			</div>
+		),
+		CloseButton: ({ onClick }: { onClick: () => void }) => (
+			<button data-testid='clear-search-button' onClick={onClick} type='button'>
+				Clear
+			</button>
+		),
+		SegmentedControl: ({
+			value,
+			onChange,
+			data,
+		}: {
+			value: string;
+			onChange: (val: string) => void;
+			data: { label: string; value: string }[];
+		}) => (
+			<div data-testid='segmented-control'>
+				{data.map((item) => (
+					<button
+						key={item.value}
+						onClick={() => onChange(item.value)}
+						data-active={value === item.value}
+					>
+						{item.label}
+					</button>
+				))}
+			</div>
+		),
+		Modal: ({
+			children,
+			opened,
+			onClose,
+		}: {
+			children: React.ReactNode;
+			opened: boolean;
+			onClose: () => void;
+		}) =>
+			opened ? (
+				<div data-testid='modal'>
+					<button onClick={onClose}>Close</button>
+					{children}
+				</div>
+			) : null,
+	};
+});
 
 describe('DispositionCatalogList', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockCanPerformAction.mockReturnValue(true);
+		mockCanAccessModule.mockReturnValue(true);
 		mockDispositionCatalogsPaged({
 			data: {
 				data: [
@@ -349,7 +370,7 @@ describe('DispositionCatalogList', () => {
 			isFetching: false,
 		});
 
-		render(<DispositionCatalogList />);
+		renderWithProviders(<DispositionCatalogList />);
 
 		expect(screen.getByTestId('loader')).toBeInTheDocument();
 	});
@@ -368,7 +389,7 @@ describe('DispositionCatalogList', () => {
 			isFetching: false,
 		});
 
-		render(<DispositionCatalogList />);
+		renderWithProviders(<DispositionCatalogList />);
 
 		expect(
 			screen.getByText('Failed to load disposition catalogs.')
@@ -389,7 +410,7 @@ describe('DispositionCatalogList', () => {
 			isFetching: false,
 		});
 
-		render(<DispositionCatalogList />);
+		renderWithProviders(<DispositionCatalogList />);
 
 		expect(screen.getByTestId('empty-state')).toBeInTheDocument();
 
@@ -401,7 +422,7 @@ describe('DispositionCatalogList', () => {
 
 	it('renders table rows and selects catalog on row click', () => {
 		const onEditNodes = vi.fn();
-		render(<DispositionCatalogList onEditNodes={onEditNodes} />);
+		renderWithProviders(<DispositionCatalogList onEditNodes={onEditNodes} />);
 
 		expect(screen.getByTestId('base-table')).toBeInTheDocument();
 		fireEvent.click(screen.getByTestId('row-0'));
@@ -416,7 +437,7 @@ describe('DispositionCatalogList', () => {
 	});
 
 	it('opens edit details form from action icon', () => {
-		render(<DispositionCatalogList />);
+		renderWithProviders(<DispositionCatalogList />);
 
 		fireEvent.click(screen.getByLabelText('Edit details'));
 
@@ -426,7 +447,7 @@ describe('DispositionCatalogList', () => {
 
 	it('selects catalog nodes from action icon', () => {
 		const onEditNodes = vi.fn();
-		render(<DispositionCatalogList onEditNodes={onEditNodes} />);
+		renderWithProviders(<DispositionCatalogList onEditNodes={onEditNodes} />);
 
 		fireEvent.click(screen.getByLabelText('Edit nodes'));
 
@@ -464,7 +485,7 @@ describe('DispositionCatalogList', () => {
 			isFetching: false,
 		});
 
-		const { unmount } = render(<DispositionCatalogList />);
+		const { unmount } = renderWithProviders(<DispositionCatalogList />);
 
 		fireEvent.click(screen.getByLabelText('Reactivate'));
 		expect(mockReactivateMutation.mutate).toHaveBeenCalledWith(
@@ -499,7 +520,7 @@ describe('DispositionCatalogList', () => {
 			isFetching: false,
 		});
 
-		render(<DispositionCatalogList />);
+		renderWithProviders(<DispositionCatalogList />);
 
 		fireEvent.click(screen.getByLabelText('Deactivate'));
 		expect(mockDeactivateMutation.mutate).toHaveBeenCalledWith(
@@ -510,7 +531,7 @@ describe('DispositionCatalogList', () => {
 
 	describe('Filters', () => {
 		it('renders filter container with search input and status toggle', () => {
-			render(<DispositionCatalogList />);
+			renderWithProviders(<DispositionCatalogList />);
 
 			expect(screen.getByTestId('filter-container')).toBeInTheDocument();
 			expect(screen.getByTestId('search-input')).toBeInTheDocument();
@@ -518,7 +539,7 @@ describe('DispositionCatalogList', () => {
 		});
 
 		it('renders search input with correct placeholder', () => {
-			render(<DispositionCatalogList />);
+			renderWithProviders(<DispositionCatalogList />);
 
 			const searchInput = screen.getByTestId('search-input');
 			expect(searchInput).toHaveAttribute(
@@ -528,7 +549,7 @@ describe('DispositionCatalogList', () => {
 		});
 
 		it('updates search value when typing', () => {
-			render(<DispositionCatalogList />);
+			renderWithProviders(<DispositionCatalogList />);
 
 			const searchInput = screen.getByTestId('search-input');
 			fireEvent.change(searchInput, { target: { value: 'test search' } });
@@ -537,7 +558,7 @@ describe('DispositionCatalogList', () => {
 		});
 
 		it('shows clear button when search has value', () => {
-			render(<DispositionCatalogList />);
+			renderWithProviders(<DispositionCatalogList />);
 
 			const searchInput = screen.getByTestId('search-input');
 
@@ -554,7 +575,7 @@ describe('DispositionCatalogList', () => {
 		});
 
 		it('clears search when clear button is clicked', () => {
-			render(<DispositionCatalogList />);
+			renderWithProviders(<DispositionCatalogList />);
 
 			const searchInput = screen.getByTestId('search-input');
 			fireEvent.change(searchInput, { target: { value: 'test' } });
@@ -566,7 +587,7 @@ describe('DispositionCatalogList', () => {
 		});
 
 		it('renders status filter with All, Active, and Inactive options', () => {
-			render(<DispositionCatalogList />);
+			renderWithProviders(<DispositionCatalogList />);
 
 			const segmentedControl = screen.getByTestId('segmented-control');
 			expect(segmentedControl).toHaveTextContent('All');
@@ -575,7 +596,7 @@ describe('DispositionCatalogList', () => {
 		});
 
 		it('has All status selected by default', () => {
-			render(<DispositionCatalogList />);
+			renderWithProviders(<DispositionCatalogList />);
 
 			const segmentedControl = screen.getByTestId('segmented-control');
 			const allButton = segmentedControl.querySelector(
@@ -585,7 +606,7 @@ describe('DispositionCatalogList', () => {
 		});
 
 		it('changes status filter when clicking on Active', () => {
-			render(<DispositionCatalogList />);
+			renderWithProviders(<DispositionCatalogList />);
 
 			const segmentedControl = screen.getByTestId('segmented-control');
 			const activeButton = segmentedControl.querySelector(
@@ -597,7 +618,7 @@ describe('DispositionCatalogList', () => {
 		});
 
 		it('changes status filter when clicking on Inactive', () => {
-			render(<DispositionCatalogList />);
+			renderWithProviders(<DispositionCatalogList />);
 
 			const segmentedControl = screen.getByTestId('segmented-control');
 			const inactiveButton = segmentedControl.querySelector(
@@ -609,7 +630,7 @@ describe('DispositionCatalogList', () => {
 		});
 
 		it('shows active filters badge when search has value', () => {
-			render(<DispositionCatalogList />);
+			renderWithProviders(<DispositionCatalogList />);
 
 			const filterContainer = screen.getByTestId('filter-container');
 
@@ -629,7 +650,7 @@ describe('DispositionCatalogList', () => {
 		});
 
 		it('shows active filters badge when status filter is not All', () => {
-			render(<DispositionCatalogList />);
+			renderWithProviders(<DispositionCatalogList />);
 
 			const filterContainer = screen.getByTestId('filter-container');
 
@@ -652,7 +673,7 @@ describe('DispositionCatalogList', () => {
 		});
 
 		it('shows badge with count 2 when both search and status filter are active', () => {
-			render(<DispositionCatalogList />);
+			renderWithProviders(<DispositionCatalogList />);
 
 			const filterContainer = screen.getByTestId('filter-container');
 			const searchInput = screen.getByTestId('search-input');
@@ -682,7 +703,7 @@ describe('DispositionCatalogList', () => {
 				isFetching: false,
 			});
 
-			render(<DispositionCatalogList />);
+			renderWithProviders(<DispositionCatalogList />);
 
 			// Apply a filter - status filter is synchronous
 			const segmentedControl = screen.getByTestId('segmented-control');
@@ -708,7 +729,7 @@ describe('DispositionCatalogList', () => {
 				isFetching: false,
 			});
 
-			render(<DispositionCatalogList />);
+			renderWithProviders(<DispositionCatalogList />);
 
 			// Apply filters
 			const searchInput = screen.getByTestId('search-input');
@@ -730,7 +751,7 @@ describe('DispositionCatalogList', () => {
 		});
 
 		it('calls query with search parameter when searching', () => {
-			render(<DispositionCatalogList />);
+			renderWithProviders(<DispositionCatalogList />);
 
 			const searchInput = screen.getByTestId('search-input');
 			fireEvent.change(searchInput, { target: { value: 'catalog name' } });
@@ -742,7 +763,7 @@ describe('DispositionCatalogList', () => {
 		});
 
 		it('calls query with isActive true when Active filter is selected', () => {
-			render(<DispositionCatalogList />);
+			renderWithProviders(<DispositionCatalogList />);
 
 			const segmentedControl = screen.getByTestId('segmented-control');
 			const activeButton = segmentedControl.querySelector(
@@ -758,7 +779,7 @@ describe('DispositionCatalogList', () => {
 		});
 
 		it('calls query with isActive false when Inactive filter is selected', () => {
-			render(<DispositionCatalogList />);
+			renderWithProviders(<DispositionCatalogList />);
 
 			const segmentedControl = screen.getByTestId('segmented-control');
 			const inactiveButton = segmentedControl.querySelector(
@@ -774,7 +795,7 @@ describe('DispositionCatalogList', () => {
 		});
 
 		it('calls query with isActive undefined when All filter is selected', () => {
-			render(<DispositionCatalogList />);
+			renderWithProviders(<DispositionCatalogList />);
 
 			const segmentedControl = screen.getByTestId('segmented-control');
 			// First select Active, then back to All
@@ -791,6 +812,88 @@ describe('DispositionCatalogList', () => {
 					isActive: undefined,
 				})
 			);
+		});
+	});
+
+	describe('Permissions', () => {
+		it('hides creation actions when user lacks CREATE permission', () => {
+			mockCanPerformAction.mockImplementation(
+				(module: ModuleEnum, permission: PermissionEnum) => {
+					if (
+						module === ModuleEnum.SETTINGS &&
+						permission === PermissionEnum.CREATE
+					) {
+						return false;
+					}
+					return true;
+				}
+			);
+
+			mockDispositionCatalogsPaged({
+				data: {
+					data: [],
+					total: 0,
+					limit: 10,
+					offset: 0,
+				},
+				isLoading: false,
+				isError: false,
+				error: null,
+				isFetching: false,
+			});
+
+			renderWithProviders(<DispositionCatalogList />);
+
+			// Should not show "Plus" icon in header
+			expect(screen.queryByLabelText('IconPlus')).not.toBeInTheDocument();
+			// Should not show "Create Catalog" button in EmptyState
+			expect(screen.queryByText('Create Catalog')).not.toBeInTheDocument();
+		});
+
+		it('hides update actions in table rows when user lacks UPDATE permission', () => {
+			mockCanPerformAction.mockImplementation(
+				(module: ModuleEnum, permission: PermissionEnum) => {
+					if (
+						module === ModuleEnum.SETTINGS &&
+						permission === PermissionEnum.UPDATE
+					) {
+						return false;
+					}
+					return true;
+				}
+			);
+
+			mockDispositionCatalogsPaged({
+				data: {
+					data: [
+						{
+							id: 1,
+							name: 'Catalog One',
+							description: 'Desc',
+							clientId: 1,
+							isDefault: false,
+							type: 'INBOUND',
+							createdAt: '2024-01-01T00:00:00Z',
+							updatedAt: '2024-01-01T00:00:00Z',
+							isActive: true,
+						},
+					],
+					total: 1,
+					limit: 10,
+					offset: 0,
+				},
+				isLoading: false,
+				isError: false,
+				error: null,
+				isFetching: false,
+			});
+
+			renderWithProviders(<DispositionCatalogList />);
+
+			// Should not show "Edit details" icon (Update)
+			expect(screen.queryByLabelText('Edit details')).not.toBeInTheDocument();
+			// Should not show "Deactivate" icon (Update)
+			expect(screen.queryByLabelText('Deactivate')).not.toBeInTheDocument();
 		});
 	});
 });

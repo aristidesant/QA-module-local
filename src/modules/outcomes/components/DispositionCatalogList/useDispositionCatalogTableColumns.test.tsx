@@ -3,12 +3,13 @@ import { renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { CellContext, Row } from '@tanstack/react-table';
 import type { ReactNode } from 'react';
-import { MantineProvider } from '@mantine/core';
-import { QueryClientProvider } from '@tanstack/react-query';
 import {
 	queryClient,
 	renderWithProviders,
+	TestProviders,
 } from '~/test-utils/renderWithProviders';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import { useDispositionCatalogTableColumns } from './useDispositionCatalogTableColumns';
 import type { DispositionCatalogModel } from '~/models/DispositionCatalogModels';
 
@@ -50,11 +51,17 @@ const createMockCellContext = <TValue,>(
 	} as CellContext<DispositionCatalogModel, TValue>;
 };
 
-const wrapper = ({ children }: { children: ReactNode }) => (
-	<QueryClientProvider client={queryClient}>
-		<MantineProvider>{children}</MantineProvider>
-	</QueryClientProvider>
+const mockCanPerformAction = vi.fn(
+	(_module: ModuleEnum, _permission: PermissionEnum) => true
 );
+const mockCanAccessModule = vi.fn((_module: ModuleEnum) => true);
+
+vi.mock('~/hooks/usePermissions', () => ({
+	default: () => ({
+		canPerformAction: mockCanPerformAction,
+		canAccessModule: mockCanAccessModule,
+	}),
+}));
 
 describe('useDispositionCatalogTableColumns', () => {
 	const onEditNodes = vi.fn();
@@ -64,6 +71,8 @@ describe('useDispositionCatalogTableColumns', () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockCanPerformAction.mockReturnValue(true);
+		mockCanAccessModule.mockReturnValue(true);
 	});
 
 	afterEach(() => {
@@ -81,7 +90,7 @@ describe('useDispositionCatalogTableColumns', () => {
 					reactivateState: { isPending: false, variables: undefined },
 					deactivateState: { isPending: false, variables: undefined },
 				}),
-			{ wrapper }
+			{ wrapper: TestProviders }
 		);
 
 		expect(result.current).toHaveLength(4);
@@ -113,7 +122,7 @@ describe('useDispositionCatalogTableColumns', () => {
 					reactivateState: { isPending: false, variables: undefined },
 					deactivateState: { isPending: false, variables: undefined },
 				}),
-			{ wrapper }
+			{ wrapper: TestProviders }
 		);
 
 		const columns = result.current as unknown as Array<{
@@ -147,9 +156,16 @@ describe('useDispositionCatalogTableColumns', () => {
 		toLocaleStringSpy.mockRestore();
 	});
 
-	it('renders active actions and triggers callbacks', async () => {
+	it('renders actions and triggers callbacks when user has UPDATE permission', async () => {
 		const user = userEvent.setup();
 		const row = createMockRow({ isActive: true });
+		mockCanPerformAction.mockImplementation(
+			(module: ModuleEnum, permission: PermissionEnum) => {
+				return (
+					module === ModuleEnum.SETTINGS && permission === PermissionEnum.UPDATE
+				);
+			}
+		);
 
 		const { result } = renderHook(
 			() =>
@@ -161,7 +177,7 @@ describe('useDispositionCatalogTableColumns', () => {
 					reactivateState: { isPending: false, variables: undefined },
 					deactivateState: { isPending: false, variables: undefined },
 				}),
-			{ wrapper }
+			{ wrapper: TestProviders }
 		);
 
 		const columns = result.current as unknown as Array<{
@@ -184,9 +200,9 @@ describe('useDispositionCatalogTableColumns', () => {
 		expect(onDeactivate).toHaveBeenCalledWith(row.original);
 	});
 
-	it('renders inactive actions and triggers reactivate callback', async () => {
-		const user = userEvent.setup();
-		const row = createMockRow({ isActive: false, id: 42 });
+	it('hides update actions when user lacks UPDATE permission', async () => {
+		const row = createMockRow({ isActive: true });
+		mockCanPerformAction.mockReturnValue(false);
 
 		const { result } = renderHook(
 			() =>
@@ -198,7 +214,40 @@ describe('useDispositionCatalogTableColumns', () => {
 					reactivateState: { isPending: false, variables: undefined },
 					deactivateState: { isPending: false, variables: undefined },
 				}),
-			{ wrapper }
+			{ wrapper: TestProviders }
+		);
+
+		const columns = result.current as unknown as Array<{
+			accessorKey?: string;
+			id?: string;
+			header?: unknown;
+			cell?: (context: { row: Row<DispositionCatalogModel> }) => ReactNode;
+		}>;
+
+		const actionsCell = columns[3].cell?.({ row });
+		renderWithProviders(<div>{actionsCell}</div>);
+
+		expect(screen.getByLabelText('Edit nodes')).toBeInTheDocument();
+		expect(screen.queryByLabelText('Edit details')).not.toBeInTheDocument();
+		expect(screen.queryByLabelText('Deactivate')).not.toBeInTheDocument();
+	});
+
+	it('renders reactivate action and triggers callback when user has UPDATE permission and catalog is inactive', async () => {
+		const user = userEvent.setup();
+		const row = createMockRow({ isActive: false, id: 42 });
+		mockCanPerformAction.mockReturnValue(true);
+
+		const { result } = renderHook(
+			() =>
+				useDispositionCatalogTableColumns({
+					onEditNodes,
+					onEditDetails,
+					onReactivate,
+					onDeactivate,
+					reactivateState: { isPending: false, variables: undefined },
+					deactivateState: { isPending: false, variables: undefined },
+				}),
+			{ wrapper: TestProviders }
 		);
 
 		const columns = result.current as unknown as Array<{
