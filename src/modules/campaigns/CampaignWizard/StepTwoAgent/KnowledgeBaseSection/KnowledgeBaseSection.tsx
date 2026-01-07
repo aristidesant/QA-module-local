@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	Box,
 	Text,
@@ -30,6 +31,7 @@ import styles from '../StepTwoAgent.module.css';
 import KnowledgeBaseWizardForm from './KnowledgeBaseWizardForm';
 
 const KnowledgeBaseSection: React.FC = () => {
+	const { t } = useTranslation('campaigns');
 	const { knowledgeBaseIds, setKnowledgeBaseIds } = useCampaignWizardStore();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -109,24 +111,25 @@ const KnowledgeBaseSection: React.FC = () => {
 			<Box className={styles.sectionCard}>
 				<div className={styles.sectionHeader}>
 					<IconDatabase size={20} className={styles.sectionIcon} />
-					<h3 className={styles.sectionTitle}>Knowledge Base</h3>
+					<h3 className={styles.sectionTitle}>
+						{t('form.agent.knowledgeBase.title')}
+					</h3>
 				</div>
 				<Text className={styles.sectionDescription}>
-					Provide your agent with essential information to handle questions
-					accurately and confidently during calls.
+					{t('form.agent.knowledgeBase.description')}
 				</Text>
 
 				{isLoading ? (
 					<Box className={styles.knowledgeBaseEmpty}>
 						<Loader size='sm' />
 						<Text size='sm' c='dimmed'>
-							Loading knowledge bases...
+							{t('form.agent.knowledgeBase.loading')}
 						</Text>
 					</Box>
 				) : error ? (
 					<Box className={styles.knowledgeBaseEmpty}>
 						<Text size='sm' c='red'>
-							Error loading knowledge bases
+							{t('form.agent.knowledgeBase.error')}
 						</Text>
 					</Box>
 				) : selectedKnowledgeBases.length > 0 ? (
@@ -150,13 +153,19 @@ const KnowledgeBaseSection: React.FC = () => {
 												>
 													{kb.status}
 												</Badge>
-												<Tooltip label='Remove knowledge base' position='left'>
+												<Tooltip
+													label={t('form.agent.knowledgeBase.remove')}
+													position='left'
+												>
 													<ActionIcon
 														variant='subtle'
 														color='red'
 														size='xs'
 														onClick={() => handleUnassignKnowledgeBase(kb.id)}
-														aria-label={`Remove ${kb.name}`}
+														aria-label={t(
+															'form.agent.knowledgeBase.removeAria',
+															{ name: kb.name }
+														)}
 													>
 														<IconFileXFilled size={14} />
 													</ActionIcon>
@@ -165,7 +174,9 @@ const KnowledgeBaseSection: React.FC = () => {
 										</div>
 										{kb.createdAt && (
 											<Text size='xs' c='dimmed'>
-												Created: {new Date(kb.createdAt).toLocaleDateString()}
+												{t('form.agent.knowledgeBase.created', {
+													date: new Date(kb.createdAt).toLocaleDateString(),
+												})}
 											</Text>
 										)}
 									</div>
@@ -176,7 +187,7 @@ const KnowledgeBaseSection: React.FC = () => {
 				) : (
 					<Box className={styles.knowledgeBaseEmpty}>
 						<Text size='sm' c='dimmed'>
-							No knowledge bases selected
+							{t('form.agent.knowledgeBase.noSelection')}
 						</Text>
 					</Box>
 				)}
@@ -187,16 +198,18 @@ const KnowledgeBaseSection: React.FC = () => {
 						variant='light'
 						onClick={handleAddKnowledgeBase}
 						flex={1}
+						size='sm'
 					>
-						Select Existing
+						{t('form.agent.knowledgeBase.add')}
 					</Button>
 					<Button
 						leftSection={<IconPlus size={16} />}
 						variant='outline'
 						onClick={handleCreateKnowledgeBase}
 						flex={1}
+						size='sm'
 					>
-						Create New
+						{t('wizard.knowledgeBase.actions.create')}
 					</Button>
 				</Group>
 			</Box>
@@ -205,7 +218,7 @@ const KnowledgeBaseSection: React.FC = () => {
 			<Modal
 				opened={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
-				title='Select Knowledge Bases'
+				title={t('form.agent.knowledgeBase.modal.title.select')}
 				size='xl'
 			>
 				<KnowledgeBaseSelector
@@ -219,7 +232,7 @@ const KnowledgeBaseSection: React.FC = () => {
 			<Modal
 				opened={isCreateModalOpen}
 				onClose={() => setIsCreateModalOpen(false)}
-				title='Create Knowledge Base'
+				title={t('form.agent.knowledgeBase.modal.title.create')}
 				size='lg'
 			>
 				<KnowledgeBaseWizardForm

@@ -4,16 +4,6 @@ import type { ReactNode } from 'react';
 import renderWithProviders from '~/test-utils/renderWithProviders';
 import CampaignCategoriesPage from './CampaignCategoriesPage';
 
-// Mock usePermissions
-const mockCanPerformAction = vi.fn(() => true);
-const mockCanAccessModule = vi.fn(() => true);
-vi.mock('~/hooks/usePermissions', () => ({
-	default: () => ({
-		canPerformAction: mockCanPerformAction,
-		canAccessModule: mockCanAccessModule,
-	}),
-}));
-
 // Mock the child components
 vi.mock(
 	'~/modules/campaign-management/campaign-categories/components/CampaignCategoriesContent',
@@ -40,6 +30,23 @@ vi.mock(
 	})
 );
 
+const mockCanAccessModule = vi.fn(() => true);
+const mockCanPerformAction = vi.fn(() => true);
+const mockHasAnyPermission = vi.fn(() => true);
+const mockHasAllPermissions = vi.fn(() => true);
+
+vi.mock('~/hooks/usePermissions', () => ({
+	__esModule: true,
+	default: () => ({
+		activeClientId: 1,
+		permissionMap: {},
+		canAccessModule: mockCanAccessModule,
+		canPerformAction: mockCanPerformAction,
+		hasAnyPermission: mockHasAnyPermission,
+		hasAllPermissions: mockHasAllPermissions,
+	}),
+}));
+
 vi.mock('~/components/ContentContainer/ContentContainer', () => ({
 	ContentContainer: ({
 		children,
@@ -65,6 +72,10 @@ vi.mock('~/components/ContentContainer/ContentContainer', () => ({
 describe('CampaignCategoriesPage', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockCanAccessModule.mockReturnValue(true);
+		mockCanPerformAction.mockReturnValue(true);
+		mockHasAnyPermission.mockReturnValue(true);
+		mockHasAllPermissions.mockReturnValue(true);
 	});
 
 	describe('Non-embedded mode', () => {

@@ -13,6 +13,7 @@ import {
 	ThemeIcon,
 	Tooltip,
 } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import {
 	IconCopy,
 	IconEye,
@@ -46,6 +47,7 @@ export function ImportFlowPicker({
 	onPreview,
 	onUseFlow,
 }: ImportFlowPickerProps) {
+	const { t } = useTranslation('campaigns');
 	const filteredCampaigns = campaignsWithFlows
 		?.filter((campaign) => campaign.flowId !== null)
 		.filter((campaign) =>
@@ -56,7 +58,7 @@ export function ImportFlowPicker({
 		<Stack gap='md'>
 			<Group gap='xs'>
 				<TextInput
-					placeholder='Search campaigns...'
+					placeholder={t('wizard.steps.outcomes.picker.searchPlaceholder')}
 					leftSection={<IconSearch size={16} />}
 					value={searchQuery}
 					onChange={(e) => onSearchQueryChange(e.target.value)}
@@ -71,7 +73,7 @@ export function ImportFlowPicker({
 					onClick={onRefresh}
 					leftSection={<IconRefresh size={16} />}
 				>
-					Refresh
+					{t('wizard.steps.outcomes.picker.refresh')}
 				</Button>
 			</Group>
 
@@ -96,7 +98,7 @@ export function ImportFlowPicker({
 										<Group gap='xs'>
 											{(campaign.flowId || campaign.dispositionFlow) && (
 												<Badge size='xs' variant='light' color='blue'>
-													Outcome Flow
+													{t('wizard.steps.outcomes.picker.outcomeFlow')}
 												</Badge>
 											)}
 											{campaign.dispositionCatalog?.type && (
@@ -107,12 +109,16 @@ export function ImportFlowPicker({
 										</Group>
 									</Stack>
 									<Group gap='xs'>
-										<Tooltip label='Preview flow'>
+										<Tooltip
+											label={t('wizard.steps.outcomes.picker.previewTooltip')}
+										>
 											<ActionIcon
 												size='sm'
 												variant='subtle'
 												color='gray'
-												aria-label='Preview flow'
+												aria-label={t(
+													'wizard.steps.outcomes.picker.previewTooltip'
+												)}
 												onClick={() => {
 													const flowId =
 														campaign.flowId ?? campaign.dispositionFlow?.id;
@@ -146,7 +152,7 @@ export function ImportFlowPicker({
 												}
 											}}
 										>
-											Use flow
+											{t('wizard.steps.outcomes.picker.useFlow')}
 										</Button>
 									</Group>
 								</Group>
@@ -162,8 +168,8 @@ export function ImportFlowPicker({
 						</ThemeIcon>
 						<Text size='sm' c='dimmed' ta='center'>
 							{searchQuery
-								? 'No campaigns match your search'
-								: 'No campaigns with outcome flows available'}
+								? t('wizard.steps.outcomes.picker.noMatches')
+								: t('wizard.steps.outcomes.picker.noFlows')}
 						</Text>
 					</Stack>
 				</Center>

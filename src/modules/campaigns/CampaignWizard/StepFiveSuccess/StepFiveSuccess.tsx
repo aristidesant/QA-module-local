@@ -8,6 +8,7 @@ import {
 	Card,
 	Center,
 } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import { IconCheck, IconEye, IconRocket } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
@@ -20,6 +21,7 @@ interface StepFiveSuccessProps {
 export const StepFiveSuccess: React.FC<StepFiveSuccessProps> = ({
 	onComplete,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const { createdCampaign } = useCampaignWizardStore();
 	const navigate = useNavigate();
 
@@ -47,13 +49,17 @@ export const StepFiveSuccess: React.FC<StepFiveSuccessProps> = ({
 				<div className={styles.header}>
 					<div>
 						<Badge variant='light' color='teal' size='sm'>
-							Step 5 · Completed
+							{t('wizard.steps.complete.eyebrow')}
 						</Badge>
-						<Text className={styles.title}>Campaign is live and ready</Text>
+						<Text className={styles.title}>
+							{t('wizard.steps.complete.title')}
+						</Text>
 						<Text className={styles.description}>
 							{createdCampaign?.name
-								? `“${createdCampaign.name}” is configured. Review the summary or jump straight to the campaign overview.`
-								: 'Your campaign is configured. Review the summary or jump straight to the campaign overview.'}
+								? t('wizard.steps.complete.descriptionNamed', {
+										name: createdCampaign.name,
+									})
+								: t('wizard.steps.complete.descriptionText')}
 						</Text>
 					</div>
 					<ThemeIcon
@@ -70,12 +76,12 @@ export const StepFiveSuccess: React.FC<StepFiveSuccessProps> = ({
 				<div className={styles.contentGrid}>
 					<Card withBorder radius='md' className={styles.summaryCard}>
 						<Text size='sm' fw={600} className={styles.cardTitle}>
-							Campaign snapshot
+							{t('wizard.steps.complete.snapshotTitle')}
 						</Text>
 						<div className={styles.summaryList}>
 							<div className={styles.summaryItem}>
 								<Text size='xs' c='dimmed'>
-									Name
+									{t('wizard.steps.complete.name')}
 								</Text>
 								<Text size='sm' fw={600}>
 									{createdCampaign?.name || '—'}
@@ -83,7 +89,7 @@ export const StepFiveSuccess: React.FC<StepFiveSuccessProps> = ({
 							</div>
 							<div className={styles.summaryItem}>
 								<Text size='xs' c='dimmed'>
-									Type
+									{t('wizard.steps.complete.type')}
 								</Text>
 								<Badge variant='light' color='blue' size='sm'>
 									{createdCampaign?.type || '—'}
@@ -91,7 +97,7 @@ export const StepFiveSuccess: React.FC<StepFiveSuccessProps> = ({
 							</div>
 							<div className={styles.summaryItem}>
 								<Text size='xs' c='dimmed'>
-									Status
+									{t('wizard.steps.complete.status')}
 								</Text>
 								<Badge variant='light' color='yellow' size='sm'>
 									{createdCampaign?.status || '—'}
@@ -99,7 +105,7 @@ export const StepFiveSuccess: React.FC<StepFiveSuccessProps> = ({
 							</div>
 							<div className={styles.summaryItem}>
 								<Text size='xs' c='dimmed'>
-									Budget
+									{t('wizard.steps.complete.budget')}
 								</Text>
 								<Text size='sm' fw={600}>
 									{budgetLabel}
@@ -110,35 +116,25 @@ export const StepFiveSuccess: React.FC<StepFiveSuccessProps> = ({
 
 					<Card withBorder radius='md' className={styles.nextCard}>
 						<Text size='sm' fw={600} className={styles.cardTitle}>
-							Keep the momentum
+							{t('wizard.steps.complete.momentumTitle')}
 						</Text>
 						<ul className={styles.nextList}>
-							<li>
-								<Text size='sm'>
-									Review dispositions and outcome automations.
-								</Text>
-							</li>
-							<li>
-								<Text size='sm'>
-									Upload your contact list or connect a segment.
-								</Text>
-							</li>
-							<li>
-								<Text size='sm'>
-									Schedule working hours and throttling rules.
-								</Text>
-							</li>
-							<li>
-								<Text size='sm'>Launch a test call to validate the flow.</Text>
-							</li>
+							{(
+								t('wizard.steps.complete.momentumList', {
+									returnObjects: true,
+								}) as string[]
+							).map((item, index) => (
+								<li key={index}>
+									<Text size='sm'>{item}</Text>
+								</li>
+							))}
 						</ul>
 						<Group gap='xs' mt='md'>
 							<ThemeIcon variant='light' color='blue' radius='md' size='lg'>
 								<IconRocket size={18} />
 							</ThemeIcon>
 							<Text size='xs' c='dimmed'>
-								Tip: monitor performance from the campaign dashboard once calls
-								start.
+								{t('wizard.steps.complete.tip')}
 							</Text>
 						</Group>
 					</Card>
@@ -150,10 +146,10 @@ export const StepFiveSuccess: React.FC<StepFiveSuccessProps> = ({
 						leftSection={<IconEye size={16} />}
 						onClick={handleViewCampaign}
 					>
-						View campaign
+						{t('wizard.steps.complete.viewCampaign')}
 					</Button>
 					<Button variant='default' onClick={handleComplete}>
-						Close wizard
+						{t('wizard.steps.complete.closeWizard')}
 					</Button>
 				</Group>
 			</div>

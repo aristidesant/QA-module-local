@@ -334,10 +334,18 @@ expect(
 
 ### Mocking
 
-- Use `vi` from vitest for mocks
-- Mock API calls and router hooks when needed
-- **NEVER mock `react-i18next`** - it's handled by `renderWithProviders`
 - Avoid `vi.mock` hoisting pitfalls: when using `vi.mock` with a factory, do not reference local variables declared later in the file because the factory runs during hoisting and will trigger TDZ errors. Instead, create `vi.fn()` inside the factory or mock the module and then use the imported mock to configure return values in tests.
+- **Mocking usePermissions**: Always mock `usePermissions` if a component uses it. Use a factory that returns standard mock functions.
+  ```tsx
+  const mockCanPerformAction = vi.fn(() => true);
+  const mockCanAccessModule = vi.fn(() => true);
+  vi.mock('~/hooks/usePermissions', () => ({
+  	default: () => ({
+  		canPerformAction: mockCanPerformAction,
+  		canAccessModule: mockCanAccessModule,
+  	}),
+  }));
+  ```
 
 ---
 
@@ -378,6 +386,9 @@ expect(
 - Determine the active client from `targetClient` (impersonation) or the user's own client.
 - Build permission maps only from roles that belong to the active client; merge permissions per module.
 - Treat `MANAGE` as elevated permission that grants full access for its module.
+- **Module Mapping**:
+  - **`ModuleEnum.SETTINGS`**: Use this for setup, taxonomy, and configurations (e.g., Campaign Categories, Objectives, Prompt Types, Taxonomy Setup).
+  - **`ModuleEnum.CAMPAIGNS`**: Use this for campaign-specific operations (Listing, Wizard, Campaign Detail).
 - Use `usePermissions` hook helpers for all UI checks:
   - `canAccessModule(module)` to decide nav visibility or route access.
   - `canPerformAction(module, permission)` for specific actions.

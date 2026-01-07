@@ -1,7 +1,10 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { StepFourParameters } from './StepFourParameters';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
-import { MantineProvider } from '@mantine/core';
+import {
+	renderWithProviders,
+	testI18n,
+} from '~/test-utils/renderWithProviders';
 
 // Mock stores and hooks
 vi.mock('~/stores/campaignWizardStore', () => ({
@@ -63,16 +66,18 @@ describe('StepFourParameters', () => {
 	});
 
 	const renderComponent = () => {
-		return render(
-			<MantineProvider>
-				<StepFourParameters onNext={mockOnNext} />
-			</MantineProvider>
-		);
+		return renderWithProviders(<StepFourParameters onNext={mockOnNext} />);
 	};
 
 	it('renders correctly', () => {
 		renderComponent();
-		expect(screen.getByText('Working Hours')).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				testI18n.t('wizard.steps.parameters.workingHoursTitle', {
+					ns: 'campaigns',
+				})
+			)
+		).toBeInTheDocument();
 		expect(screen.getByTestId('parameters-section')).toBeInTheDocument();
 	});
 
@@ -83,13 +88,19 @@ describe('StepFourParameters', () => {
 			createdCampaign: null,
 		});
 		renderComponent();
-		expect(screen.getByText('Loading campaign data...')).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				testI18n.t('wizard.steps.parameters.loading', { ns: 'campaigns' })
+			)
+		).toBeInTheDocument();
 	});
 
 	it('continues to next step on save', async () => {
 		renderComponent();
 
-		const saveButton = screen.getByText('Save & Continue');
+		const saveButton = screen.getByText(
+			testI18n.t('wizard.steps.parameters.submit', { ns: 'campaigns' })
+		);
 		fireEvent.click(saveButton);
 
 		await waitFor(() => {

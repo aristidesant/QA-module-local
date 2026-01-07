@@ -1,4 +1,5 @@
 import { Badge, Box, Button, Group, Text, ThemeIcon } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import { IconCheck, IconCopy, IconEye } from '@tabler/icons-react';
 import styles from '../StepThreeOutcomes.module.css';
 
@@ -24,12 +25,13 @@ export function FlowSummary({
 	onStartOver,
 	isDeleting,
 }: FlowSummaryProps) {
+	const { t } = useTranslation('campaigns');
 	const title =
 		origin === 'imported'
-			? 'Outcome flow imported successfully'
+			? t('wizard.steps.outcomes.summary.importedSuccess')
 			: origin === 'existing'
-				? 'Outcome flow already configured'
-				: 'Outcome flow created successfully';
+				? t('wizard.steps.outcomes.summary.existingConfigured')
+				: t('wizard.steps.outcomes.summary.createdSuccess');
 
 	return (
 		<Box className={styles.flowSummary}>
@@ -48,20 +50,27 @@ export function FlowSummary({
 						<Badge variant='light' color='violet'>
 							<Group gap={4}>
 								<IconCopy size={12} />
-								Imported
+								{t('wizard.steps.outcomes.summary.imported')}
 							</Group>
 						</Badge>
 						<Text size='xs' c='dimmed'>
-							From: {importSourceCampaignName || 'Unknown campaign'}
+							{t('wizard.steps.outcomes.summary.from', {
+								name:
+									importSourceCampaignName ||
+									t('wizard.steps.outcomes.summary.unknownCampaign'),
+							})}
 						</Text>
 					</>
 				) : (
 					<>
 						<Badge variant='light' color='blue'>
-							{nodeCount} {nodeCount === 1 ? 'outcome' : 'outcomes'}
+							{nodeCount}{' '}
+							{nodeCount === 1
+								? t('wizard.steps.outcomes.summary.outcome')
+								: t('wizard.steps.outcomes.summary.outcomes')}
 						</Badge>
 						<Text size='xs' c='dimmed'>
-							Flow ready for campaign
+							{t('wizard.steps.outcomes.summary.flowReady')}
 						</Text>
 					</>
 				)}
@@ -75,7 +84,7 @@ export function FlowSummary({
 						leftSection={<IconEye size={16} />}
 						onClick={onPreviewImported}
 					>
-						Preview Flow
+						{t('wizard.steps.outcomes.summary.previewFlow')}
 					</Button>
 				)}
 
@@ -86,7 +95,7 @@ export function FlowSummary({
 					loading={isDeleting}
 					onClick={onStartOver}
 				>
-					Start Over
+					{t('wizard.steps.outcomes.summary.startOver')}
 				</Button>
 			</Group>
 		</Box>

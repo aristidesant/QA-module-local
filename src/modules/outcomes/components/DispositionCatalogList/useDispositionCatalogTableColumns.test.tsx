@@ -190,7 +190,7 @@ describe('useDispositionCatalogTableColumns', () => {
 		const actionsCell = columns[3].cell?.({ row });
 		renderWithProviders(<div>{actionsCell}</div>);
 
-		await user.click(screen.getByLabelText('Edit nodes'));
+		await user.click(screen.getByLabelText('Edit outcomes'));
 		expect(onEditNodes).toHaveBeenCalledWith(row.original);
 
 		await user.click(screen.getByLabelText('Edit details'));
@@ -227,7 +227,7 @@ describe('useDispositionCatalogTableColumns', () => {
 		const actionsCell = columns[3].cell?.({ row });
 		renderWithProviders(<div>{actionsCell}</div>);
 
-		expect(screen.getByLabelText('Edit nodes')).toBeInTheDocument();
+		expect(screen.getByLabelText('Edit outcomes')).toBeInTheDocument();
 		expect(screen.queryByLabelText('Edit details')).not.toBeInTheDocument();
 		expect(screen.queryByLabelText('Deactivate')).not.toBeInTheDocument();
 	});

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { isAxiosError } from 'axios';
+import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
@@ -41,6 +42,7 @@ interface StepThreeOutcomesProps {
 export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 	onNext,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const { createdCampaign, setHasOutcomeFlow } = useCampaignWizardStore();
 
 	const [modalOpened, setModalOpened] = useState(false);
@@ -114,9 +116,8 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 		setCopiedFlowId(null);
 		setModalOpened(false);
 		notifications.show({
-			title: 'Outcome Flow Created',
-			message:
-				'Your outcome flow has been created successfully. Click "Save & Continue" to proceed.',
+			title: t('wizard.steps.outcomes.successCreatedTitle'),
+			message: t('wizard.steps.outcomes.successCreatedMessage'),
 			color: 'green',
 		});
 	};
@@ -124,8 +125,8 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 	const handleImportFlow = async (flowId: number, campaignName: string) => {
 		if (!createdCampaign?.id) {
 			notifications.show({
-				title: 'Error',
-				message: 'Campaign not found. Please start from step 1.',
+				title: t('common:status.error'),
+				message: t('wizard.steps.outcomes.errorCampaignNotFound'),
 				color: 'red',
 			});
 			return;
@@ -152,19 +153,21 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 			setHasOutcomeFlow(true); // Sync with wizard store
 
 			notifications.show({
-				title: 'Outcome Flow Imported',
-				message: `Successfully imported outcome flow from "${campaignName}".`,
+				title: t('wizard.steps.outcomes.successImportedTitle'),
+				message: t('wizard.steps.outcomes.successImportedMessage', {
+					name: campaignName,
+				}),
 				color: 'green',
 			});
 		} catch (error) {
-			let errorMessage = 'Failed to import outcome flow';
+			let errorMessage = t('wizard.steps.outcomes.errorImportFailed');
 			if (isAxiosError(error)) {
 				errorMessage = error.response?.data?.message || errorMessage;
 			} else if (error instanceof Error) {
 				errorMessage = error.message;
 			}
 			notifications.show({
-				title: 'Import Failed',
+				title: t('wizard.steps.outcomes.errorImportTitle'),
 				message: errorMessage,
 				color: 'red',
 			});
@@ -194,11 +197,11 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 			try {
 				await deleteDispositionFlow.mutateAsync(flowIdToDelete);
 				notifications.show({
-					title: 'Flow Removed',
+					title: t('wizard.steps.outcomes.flowRemovedTitle'),
 					message:
 						copiedFlowId || flowOrigin === 'imported'
-							? 'The imported flow has been removed.'
-							: 'The outcome flow has been removed from this campaign.',
+							? t('wizard.steps.outcomes.flowRemovedImported')
+							: t('wizard.steps.outcomes.flowRemovedCreated'),
 					color: 'blue',
 				});
 
@@ -212,19 +215,19 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 				});
 			} catch (error) {
 				notifications.show({
-					title: 'Error',
+					title: t('common:status.error'),
 					message:
 						copiedFlowId || flowOrigin === 'imported'
-							? 'Failed to remove the imported flow. Please try again.'
-							: 'Failed to remove the outcome flow. Please try again.',
+							? t('wizard.steps.outcomes.errorRemoveImportedFailed')
+							: t('wizard.steps.outcomes.errorRemoveFailed'),
 					color: 'red',
 				});
 				return;
 			}
 		} else {
 			notifications.show({
-				title: 'No Flow Found',
-				message: 'There is no outcome flow to remove for this campaign.',
+				title: t('wizard.steps.outcomes.noFlowFoundTitle'),
+				message: t('wizard.steps.outcomes.noFlowFoundMessage'),
 				color: 'orange',
 			});
 		}
@@ -240,8 +243,8 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 	const handleSubmit = async () => {
 		if (!createdCampaign?.id) {
 			notifications.show({
-				title: 'Error',
-				message: 'Campaign not found. Please start from step 1.',
+				title: t('common:status.error'),
+				message: t('wizard.steps.outcomes.errorCampaignNotFound'),
 				color: 'red',
 			});
 			return;
@@ -251,8 +254,8 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 		// The checking of flowJson is handled by the modal saving process.
 		if (!hasCreatedFlow && !existingFlow?.id) {
 			notifications.show({
-				title: 'No Outcome Flow',
-				message: 'Please create or import an outcome flow before continuing.',
+				title: t('wizard.steps.outcomes.noOutcomeFlowTitle'),
+				message: t('wizard.steps.outcomes.noOutcomeFlowMessage'),
 				color: 'orange',
 			});
 			return;
@@ -279,7 +282,7 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 			<Center py='xl'>
 				<Stack align='center' gap='md'>
 					<Loader size='lg' />
-					<Text c='dimmed'>Loading campaign data...</Text>
+					<Text c='dimmed'>{t('wizard.steps.outcomes.loading')}</Text>
 				</Stack>
 			</Center>
 		);
@@ -288,11 +291,14 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 		<>
 			<Stack gap='xl' className={sharedStyles.stepSurface}>
 				<Box className={sharedStyles.stepHeaderCard}>
-					<Text className={sharedStyles.stepEyebrow}>Outcome routing</Text>
-					<Text className={sharedStyles.stepTitle}>Design the flow</Text>
+					<Text className={sharedStyles.stepEyebrow}>
+						{t('wizard.steps.outcomes.eyebrow')}
+					</Text>
+					<Text className={sharedStyles.stepTitle}>
+						{t('wizard.steps.outcomes.title')}
+					</Text>
 					<Text className={sharedStyles.stepDescriptionText}>
-						Build a simple map that tells the system what to do after each
-						conversation. Keep the experience consistent for every contact.
+						{t('wizard.steps.outcomes.intro')}
 					</Text>
 				</Box>
 
@@ -300,12 +306,12 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 				<Box className={styles.sectionCard}>
 					<div className={styles.sectionHeader}>
 						<IconNetwork size={20} className={styles.sectionIcon} />
-						<h3 className={styles.sectionTitle}>Outcome Configuration</h3>
+						<h3 className={styles.sectionTitle}>
+							{t('wizard.steps.outcomes.configTitle')}
+						</h3>
 					</div>
 					<Text className={styles.sectionDescription}>
-						{dispositionLabel(
-							'Set up call outcomes for this campaign. Define how calls should be categorized and what actions to take based on different scenarios.'
-						)}
+						{dispositionLabel(t('wizard.steps.outcomes.configDesc'))}
 					</Text>
 
 					{hasCreatedFlow ? (
@@ -340,7 +346,7 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 										label: (
 											<Group gap='xs' justify='center'>
 												<IconPlus size={16} />
-												<span>Create New</span>
+												<span>{t('wizard.steps.outcomes.createNew')}</span>
 											</Group>
 										),
 										value: 'create',
@@ -349,7 +355,9 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 										label: (
 											<Group gap='xs' justify='center'>
 												<IconCopy size={16} />
-												<span>Import from Campaign</span>
+												<span>
+													{t('wizard.steps.outcomes.importFromCampaign')}
+												</span>
 											</Group>
 										),
 										value: 'import',
@@ -366,10 +374,11 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 												<IconNetwork size={32} />
 											</ThemeIcon>
 											<Stack align='center' gap='xs'>
-												<Text fw={500}>No outcome flow configured</Text>
+												<Text fw={500}>
+													{t('wizard.steps.outcomes.noFlowConfigured')}
+												</Text>
 												<Text size='sm' c='dimmed' ta='center'>
-													Create an outcome flow to define how calls should be
-													categorized and processed in your campaign.
+													{t('wizard.steps.outcomes.createFlowDesc')}
 												</Text>
 											</Stack>
 											<Button
@@ -377,7 +386,9 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 												onClick={handleOpenModal}
 												size='md'
 											>
-												{dispositionLabel('Create Outcome Flow')}
+												{dispositionLabel(
+													t('wizard.steps.outcomes.createFlowButton')
+												)}
 											</Button>
 										</Stack>
 									</Center>
@@ -409,7 +420,7 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 					disabled={!hasCreatedFlow || copyingFlowId !== null}
 					onClick={handleSubmit} // Unified handler
 				>
-					Continue
+					{t('wizard.steps.outcomes.submit')}
 				</Button>
 			</Group>
 
@@ -433,7 +444,7 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 				opened={previewModalOpened}
 				onClose={() => setPreviewModalOpened(false)}
 				size='xl'
-				title='Outcome Flow Preview'
+				title={t('wizard.steps.outcomes.previewTitle')}
 				centered
 				data-testid='modal-outcome-flow-preview'
 				closeButtonProps={{ ['data-testid' as string]: 'modal-close-btn' }}
@@ -454,7 +465,7 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 								}}
 								data-testid='modal-use-flow-btn'
 							>
-								Use flow
+								{t('wizard.steps.outcomes.useFlow')}
 							</Button>
 						</Group>
 					)}
@@ -466,7 +477,7 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 						<DispositionViewer flow={previewFlow} />
 					) : (
 						<Center py='xl'>
-							<Text c='dimmed'>No flow data available</Text>
+							<Text c='dimmed'>{t('wizard.steps.outcomes.noFlowData')}</Text>
 						</Center>
 					)}
 				</Stack>

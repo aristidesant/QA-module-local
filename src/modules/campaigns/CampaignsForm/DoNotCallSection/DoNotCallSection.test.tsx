@@ -188,9 +188,7 @@ describe('DoNotCallSection', () => {
 
 			expect(screen.getByText('Do Not Call List')).toBeInTheDocument();
 			expect(
-				screen.getByText(
-					'Manage phone numbers that should not be contacted for this campaign.'
-				)
+				screen.getByText('Manage phone numbers that should not be contacted.')
 			).toBeInTheDocument();
 		});
 

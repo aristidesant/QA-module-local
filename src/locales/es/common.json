@@ -19,11 +19,17 @@
 		"finish": "Finalizar"
 	},
 	"status": {
-		"loading": "Cargando...",
+		"loading": "Loading...",
 		"success": "Éxito",
 		"error": "Error",
 		"noData": "No hay datos disponibles",
-		"nothingSelected": "Nada seleccionado"
+		"nothingSelected": "Nada seleccionado",
+		"active": "Activo",
+		"inactive": "Inactivo"
+	},
+	"errors": {
+		"unknown": "Ocurrió un error inesperado",
+		"retry": "Por favor, inténtalo de nuevo más tarde"
 	},
 	"loading": {
 		"configurations": "Cargando configuraciones...",

@@ -6,6 +6,7 @@ import {
 	useEffect,
 	useRef,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	Loader,
 	Center,
@@ -30,7 +31,6 @@ import {
 import { notifications } from '@mantine/notifications';
 import { modals } from '@mantine/modals';
 import type { SortingState } from '@tanstack/react-table';
-import { useDispositionLabel } from '~/hooks/useDispositionLabel';
 import {
 	useDispositionCatalogsPaged,
 	useCreateDispositionCatalog,
@@ -69,6 +69,7 @@ const DispositionCatalogList = forwardRef<
 		{ id: 'createdAt', desc: true },
 	]);
 
+	const { t } = useTranslation('outcomes');
 	const { canPerformAction } = usePermissions();
 	const canCreate = canPerformAction(
 		ModuleEnum.SETTINGS,
@@ -113,7 +114,6 @@ const DispositionCatalogList = forwardRef<
 	const updateMutation = useUpdateDispositionCatalog();
 	const reactivateMutation = useReactivateDispositionCatalog();
 	const deactivateMutation = useDeactivateDispositionCatalog();
-	const dispositionLabel = useDispositionLabel();
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedCatalog, setSelectedCatalog] =
@@ -160,18 +160,12 @@ const DispositionCatalogList = forwardRef<
 	const handleReactivate = useCallback(
 		(catalog: DispositionCatalogModel) => {
 			modals.openConfirmModal({
-				title: dispositionLabel('Reactivate Outcome Catalog'),
+				title: t('list.modals.reactivate.title'),
 				labels: {
-					confirm: dispositionLabel('Reactivate'),
-					cancel: dispositionLabel('Cancel'),
+					confirm: t('list.modals.reactivate.confirm'),
+					cancel: t('actions.cancel', { ns: 'common' }),
 				},
-				children: (
-					<Text size='sm'>
-						{dispositionLabel(
-							'Are you sure you want to reactivate this outcome catalog? It will become available for campaign configuration again.'
-						)}
-					</Text>
-				),
+				children: <Text size='sm'>{t('list.modals.reactivate.message')}</Text>,
 				confirmProps: { color: 'green' },
 				onConfirm: () => {
 					reactivateMutation.mutate(
@@ -179,19 +173,16 @@ const DispositionCatalogList = forwardRef<
 						{
 							onSuccess: () => {
 								notifications.show({
-									title: dispositionLabel('Catalog reactivated'),
-									message: dispositionLabel(
-										'Outcome catalog was reactivated successfully.'
-									),
+									title: t('list.notifications.catalogReactivated'),
+									message: t('list.notifications.reactivateSuccess'),
 									color: 'green',
 								});
 							},
 							onError: (error: Error) => {
 								notifications.show({
-									title: dispositionLabel('Reactivation failed'),
-									message: dispositionLabel(
-										error?.message || 'Failed to reactivate outcome catalog.'
-									),
+									title: t('list.notifications.reactivationFailed'),
+									message:
+										error?.message || t('list.notifications.reactivateError'),
 									color: 'red',
 								});
 							},
@@ -200,24 +191,18 @@ const DispositionCatalogList = forwardRef<
 				},
 			});
 		},
-		[dispositionLabel, reactivateMutation]
+		[t, reactivateMutation]
 	);
 
 	const handleDeactivate = useCallback(
 		(catalog: DispositionCatalogModel) => {
 			modals.openConfirmModal({
-				title: dispositionLabel('Deactivate Outcome Catalog'),
+				title: t('list.modals.deactivate.title'),
 				labels: {
-					confirm: dispositionLabel('Deactivate'),
-					cancel: dispositionLabel('Cancel'),
+					confirm: t('list.modals.deactivate.confirm'),
+					cancel: t('actions.cancel', { ns: 'common' }),
 				},
-				children: (
-					<Text size='sm'>
-						{dispositionLabel(
-							'Are you sure you want to deactivate this outcome catalog and all its nodes? They will no longer be available for campaign configuration.'
-						)}
-					</Text>
-				),
+				children: <Text size='sm'>{t('list.modals.deactivate.message')}</Text>,
 				confirmProps: { color: 'red' },
 				onConfirm: () => {
 					deactivateMutation.mutate(
@@ -225,19 +210,16 @@ const DispositionCatalogList = forwardRef<
 						{
 							onSuccess: () => {
 								notifications.show({
-									title: dispositionLabel('Catalog deactivated'),
-									message: dispositionLabel(
-										'Outcome catalog was deactivated successfully.'
-									),
+									title: t('list.notifications.catalogDeactivated'),
+									message: t('list.notifications.deactivateSuccess'),
 									color: 'blue',
 								});
 							},
 							onError: (error: Error) => {
 								notifications.show({
-									title: dispositionLabel('Deactivation failed'),
-									message: dispositionLabel(
-										error?.message || 'Failed to deactivate outcome catalog.'
-									),
+									title: t('list.notifications.deactivationFailed'),
+									message:
+										error?.message || t('list.notifications.deactivateError'),
 									color: 'red',
 								});
 							},
@@ -246,7 +228,7 @@ const DispositionCatalogList = forwardRef<
 				},
 			});
 		},
-		[deactivateMutation, dispositionLabel]
+		[deactivateMutation, t]
 	);
 
 	// Table columns definition
@@ -285,7 +267,7 @@ const DispositionCatalogList = forwardRef<
 	if (isError) {
 		return (
 			<Center>
-				<Text c='red'>Failed to load disposition catalogs.</Text>
+				<Text c='red'>{t('catalog.errorBanner')}</Text>
 			</Center>
 		);
 	}
@@ -294,12 +276,17 @@ const DispositionCatalogList = forwardRef<
 		<div className={styles.root}>
 			<SectionCard
 				icon={IconDatabase}
-				title='Outcome Catalogs'
-				description='Create and manage outcome catalogs to group disposition nodes for campaigns.'
+				title={t('list.title')}
+				description={t('list.description')}
 				padding='md'
 				headerActions={
 					canCreate && (
-						<ActionIcon variant='light' color='blue' onClick={handleCreate}>
+						<ActionIcon
+							variant='light'
+							color='blue'
+							onClick={handleCreate}
+							aria-label={t('list.addCatalog')}
+						>
 							<IconPlus size={18} />
 						</ActionIcon>
 					)
@@ -316,7 +303,9 @@ const DispositionCatalogList = forwardRef<
 					<FilterContainer>
 						<Group gap='xs' className={styles.titleGroup}>
 							<IconFilter size={16} className={styles.titleIcon} />
-							<Text className={styles.title}>Filters</Text>
+							<Text className={styles.title}>
+								{t('filters.title', { ns: 'campaigns' })}
+							</Text>
 							{(searchValue || statusFilter !== 'all') && (
 								<Badge size='xs' variant='light' className={styles.activeBadge}>
 									{(searchValue ? 1 : 0) + (statusFilter !== 'all' ? 1 : 0)}
@@ -326,7 +315,7 @@ const DispositionCatalogList = forwardRef<
 
 						<div className={styles.controlsWrapper}>
 							<TextInput
-								placeholder='Search by name or description...'
+								placeholder={t('list.searchPlaceholder')}
 								leftSection={
 									<IconSearch size={14} className={styles.searchIcon} />
 								}
@@ -360,9 +349,18 @@ const DispositionCatalogList = forwardRef<
 								size='xs'
 								className={styles.statusToggle}
 								data={[
-									{ label: 'All', value: 'all' },
-									{ label: 'Active', value: 'active' },
-									{ label: 'Inactive', value: 'inactive' },
+									{
+										label: t('filters.allStatuses'),
+										value: 'all',
+									},
+									{
+										label: t('status.active', { ns: 'common' }),
+										value: 'active',
+									},
+									{
+										label: t('status.inactive', { ns: 'common' }),
+										value: 'inactive',
+									},
 								]}
 							/>
 						</div>
@@ -375,13 +373,13 @@ const DispositionCatalogList = forwardRef<
 							icon={<IconPlus size={48} />}
 							message={
 								debouncedSearch || statusFilter !== 'all'
-									? 'No matching catalogs found'
-									: 'No outcome catalogs found'
+									? t('list.noMatchingCatalogs')
+									: t('list.noCatalogsFound')
 							}
 							description={
 								debouncedSearch || statusFilter !== 'all'
-									? 'Try adjusting your search or filters'
-									: 'Get started by creating your first outcome catalog'
+									? t('list.adjustSearch')
+									: t('list.getStarted')
 							}
 							action={
 								debouncedSearch || statusFilter !== 'all' ? (
@@ -392,7 +390,7 @@ const DispositionCatalogList = forwardRef<
 											setStatusFilter('all');
 										}}
 									>
-										Clear Filters
+										{t('list.clearFilters')}
 									</Button>
 								) : (
 									canCreate && (
@@ -400,7 +398,7 @@ const DispositionCatalogList = forwardRef<
 											leftSection={<IconPlus size={16} />}
 											onClick={handleCreate}
 										>
-											Create Catalog
+											{t('list.addCatalog')}
 										</Button>
 									)
 								)
@@ -440,7 +438,11 @@ const DispositionCatalogList = forwardRef<
 			<Modal
 				opened={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
-				title={selectedCatalog ? 'Edit Catalog' : 'Create Catalog'}
+				title={
+					selectedCatalog
+						? t('list.modalEditTitle')
+						: t('list.modalCreateTitle')
+				}
 				size='lg'
 			>
 				{isModalOpen &&
@@ -458,10 +460,8 @@ const DispositionCatalogList = forwardRef<
 							}
 							onSuccess={() => {
 								notifications.show({
-									title: 'Catalog updated',
-									message: dispositionLabel(
-										'Outcome catalog was updated successfully.'
-									),
+									title: t('list.notifications.catalogUpdated'),
+									message: t('list.notifications.updateSuccess'),
 									color: 'teal',
 								});
 								setIsModalOpen(false);
@@ -472,10 +472,8 @@ const DispositionCatalogList = forwardRef<
 										? error.message
 										: (error as { message: string })?.message;
 								notifications.show({
-									title: 'Update failed',
-									message: dispositionLabel(
-										errorMessage || 'Failed to update outcome catalog.'
-									),
+									title: t('list.notifications.updateFailed'),
+									message: errorMessage || t('list.notifications.updateError'),
 									color: 'red',
 								});
 							}}
@@ -489,10 +487,8 @@ const DispositionCatalogList = forwardRef<
 							onSubmit={(values) => createMutation.mutateAsync(values)}
 							onSuccess={() => {
 								notifications.show({
-									title: 'Catalog created',
-									message: dispositionLabel(
-										'Outcome catalog was created successfully.'
-									),
+									title: t('list.notifications.catalogCreated'),
+									message: t('list.notifications.createSuccess'),
 									color: 'teal',
 								});
 								setIsModalOpen(false);
@@ -503,10 +499,8 @@ const DispositionCatalogList = forwardRef<
 										? error.message
 										: (error as { message: string })?.message;
 								notifications.show({
-									title: 'Create failed',
-									message: dispositionLabel(
-										errorMessage || 'Failed to create outcome catalog.'
-									),
+									title: t('list.notifications.createFailed'),
+									message: errorMessage || t('list.notifications.createError'),
 									color: 'red',
 								});
 							}}

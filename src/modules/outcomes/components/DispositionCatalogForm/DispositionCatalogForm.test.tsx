@@ -1,8 +1,9 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import DispositionCatalogForm from './DispositionCatalogForm';
 import { OUTBOUND_PROTECTED_ROOT_NODE_DEFAULTS } from '../../constants';
+import { renderWithProviders } from '~/test-utils/renderWithProviders';
 
 const createNodeMutateAsync = vi.fn();
 
@@ -137,7 +138,7 @@ describe('DispositionCatalogForm', () => {
 	});
 
 	it('submits create form for inbound catalog', async () => {
-		render(
+		renderWithProviders(
 			<DispositionCatalogForm
 				mode='create'
 				onSubmit={onSubmit}
@@ -169,7 +170,7 @@ describe('DispositionCatalogForm', () => {
 			type: 'OUTBOUND',
 		});
 
-		render(
+		renderWithProviders(
 			<DispositionCatalogForm
 				mode='create'
 				onSubmit={onSubmit}
@@ -221,7 +222,7 @@ describe('DispositionCatalogForm', () => {
 			type: 'OUTBOUND',
 		});
 
-		render(
+		renderWithProviders(
 			<DispositionCatalogForm
 				mode='create'
 				onSubmit={onSubmit}
@@ -244,7 +245,7 @@ describe('DispositionCatalogForm', () => {
 	});
 
 	it('updates catalog without creating default nodes', async () => {
-		render(
+		renderWithProviders(
 			<DispositionCatalogForm
 				mode='edit'
 				initialValues={

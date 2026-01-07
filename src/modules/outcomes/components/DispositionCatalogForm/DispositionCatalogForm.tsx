@@ -11,6 +11,7 @@ import {
 	Divider,
 	Alert,
 } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import type {
 	CreateDispositionCatalog,
 	DispositionCatalogModel,
@@ -19,6 +20,8 @@ import RightSectionCard from '~/components/RightSectionCard';
 import { IconForms, IconInfoCircle } from '@tabler/icons-react';
 import { useCreateDispositionNode } from '~/queries/dispositionNodesQueries';
 import { OUTBOUND_PROTECTED_ROOT_NODE_DEFAULTS } from '../../constants';
+
+import styles from './DispositionCatalogForm.module.css';
 
 type DispositionCatalogFormCoreProps = {
 	onSubmit: (
@@ -50,6 +53,7 @@ const DispositionCatalogForm: FC<DispositionCatalogFormProps> = ({
 	loading = false,
 	mode,
 }) => {
+	const { t } = useTranslation('outcomes');
 	const form = useForm<CreateDispositionCatalog>({
 		initialValues: {
 			name: initialValues?.name || '',
@@ -60,7 +64,7 @@ const DispositionCatalogForm: FC<DispositionCatalogFormProps> = ({
 				(initialValues as Partial<DispositionCatalogModel>)?.type || 'OUTBOUND',
 		},
 		validate: {
-			name: (value) => (!value ? 'Name is required' : null),
+			name: (value) => (!value ? t('formCatalog.nameRequired') : null),
 		},
 	});
 	const createNode = useCreateDispositionNode();
@@ -70,13 +74,13 @@ const DispositionCatalogForm: FC<DispositionCatalogFormProps> = ({
 			const catalog = await onSubmit(values);
 
 			// If we're creating an outbound catalog, create the protected default root nodes
-			if (mode === 'create' && (catalog as any)?.type === 'OUTBOUND') {
+			if (mode === 'create' && catalog.type === 'OUTBOUND') {
 				await Promise.all(
 					OUTBOUND_PROTECTED_ROOT_NODE_DEFAULTS.map((node) =>
 						createNode.mutateAsync({
 							data: {
 								...node,
-								catalogId: (catalog as any).id,
+								catalogId: catalog.id,
 								parentId: undefined,
 							},
 						})
@@ -97,32 +101,25 @@ const DispositionCatalogForm: FC<DispositionCatalogFormProps> = ({
 					<RightSectionCard
 						icon={IconForms}
 						iconColor='red'
-						title='Catalog Details'
-						description='Basic information about the catalog'
+						title={t('formCatalog.detailsTitle')}
+						description={t('formCatalog.detailsDescription')}
 					>
 						<Stack gap='sm'>
 							<TextInput
-								label='Name'
-								placeholder='Catalog name'
+								label={t('formCatalog.name')}
+								placeholder={t('formCatalog.namePlaceholder')}
 								required
 								{...form.getInputProps('name')}
 							/>
-							<div>
-								<label
-									style={{
-										display: 'block',
-										marginBottom: '8px',
-										fontSize: '14px',
-										fontWeight: 500,
-									}}
-								>
-									Type
+							<div className={styles.typeField}>
+								<label className={styles.typeLabel}>
+									{t('formCatalog.type')}
 								</label>
 								<SegmentedControl
 									fullWidth
 									data={[
-										{ value: 'INBOUND', label: 'Inbound' },
-										{ value: 'OUTBOUND', label: 'Outbound' },
+										{ value: 'INBOUND', label: t('formCatalog.typeInbound') },
+										{ value: 'OUTBOUND', label: t('formCatalog.typeOutbound') },
 									]}
 									{...form.getInputProps('type')}
 								/>
@@ -133,13 +130,12 @@ const DispositionCatalogForm: FC<DispositionCatalogFormProps> = ({
 									variant='light'
 									color='blue'
 								>
-									Default outcomes will be created automatically: Effective
-									Contact, No Effective Contact, and No Contact.
+									{t('formCatalog.outboundAlert')}
 								</Alert>
 							)}
 							<Textarea
-								label='Description'
-								placeholder='Catalog description'
+								label={t('formCatalog.descriptionLabel')}
+								placeholder={t('formCatalog.descriptionPlaceholder')}
 								autosize
 								minRows={4}
 								{...form.getInputProps('description')}
@@ -147,11 +143,13 @@ const DispositionCatalogForm: FC<DispositionCatalogFormProps> = ({
 							<Divider my='xs' />
 							<Group justify='space-between' align='center'>
 								<Switch
-									label='Default catalog'
+									label={t('formCatalog.defaultCatalog')}
 									{...form.getInputProps('isDefault', { type: 'checkbox' })}
 								/>
 								<Button type='submit' loading={loading || createNode.isPending}>
-									{mode === 'edit' ? 'Update Catalog' : 'Create Catalog'}
+									{mode === 'edit'
+										? t('formCatalog.submitEdit')
+										: t('formCatalog.submitCreate')}
 								</Button>
 							</Group>
 						</Stack>

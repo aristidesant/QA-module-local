@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	Select,
 	Textarea,
@@ -26,25 +27,15 @@ import KnowledgeBaseSection from './KnowledgeBaseSection';
 import useCampaignsPredefinedParams from '../../CampaignsForm/useCampaignsPredefinedParams';
 import styles from './StepTwoAgent.module.css';
 import sharedStyles from '../CampaignWizard.module.css';
-import {
-	useUpdateCampaign,
-	useGetCampaign,
-	useSetCampaignDraft,
-} from '~/queries/campaignsQueries';
+import type { Campaign } from '~/models/CampaignsModel';
+import { useUpdateCampaign, useGetCampaign } from '~/queries/campaignsQueries';
 import '@uiw/react-md-editor/markdown-editor.css';
 
 interface StepTwoAgentProps {
 	onNext: () => void;
 }
 
-const LANGUAGE_OPTIONS = [
-	{ value: 'es', label: 'Spanish' },
-	{ value: 'en', label: 'English' },
-	{ value: 'fr', label: 'French' },
-	{ value: 'de', label: 'German' },
-	{ value: 'it', label: 'Italian' },
-	{ value: 'pt', label: 'Portuguese' },
-];
+const LANGUAGE_OPTIONS_KEYS = ['es', 'en', 'fr', 'de', 'it', 'pt'];
 
 const areIdsEqual = (
 	idsA?: number[] | null,
@@ -76,6 +67,7 @@ const extractKnowledgeBaseIds = (
 };
 
 export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
+	const { t } = useTranslation('campaigns');
 	const {
 		agentBehaviorId,
 		language,
@@ -96,7 +88,6 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 
 	const predefinedParams = useCampaignsPredefinedParams();
 	const updateCampaign = useUpdateCampaign();
-	const { mutateAsync: setDraft } = useSetCampaignDraft();
 	const queryClient = useQueryClient();
 
 	// Get campaign ID for fetching (only if campaign exists)
@@ -108,12 +99,20 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 		refetch: reloadFreshCampaign,
 	} = useGetCampaign(campaignId);
 
-	// Update store with fresh campaign data when it loads
-	useEffect(() => {
+	React.useEffect(() => {
 		if (freshCampaign) {
 			setCreatedCampaign(freshCampaign);
 		}
 	}, [freshCampaign, setCreatedCampaign]);
+
+	const languageOptions = useMemo(
+		() =>
+			LANGUAGE_OPTIONS_KEYS.map((key) => ({
+				value: key,
+				label: t(`wizard.steps.agent.languages.${key}`),
+			})),
+		[t]
+	);
 
 	const form = useForm({
 		initialValues: {
@@ -123,9 +122,12 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 			agentPrompt,
 		},
 		validate: {
-			language: (value: string) => (!value ? 'Language is required' : null),
+			language: (value: string) =>
+				!value ? t('wizard.steps.agent.validation.languageRequired') : null,
 			agentPrompt: (value: string) =>
-				value.trim().length < 10 ? 'Agent prompt is required' : null,
+				value.trim().length < 10
+					? t('wizard.steps.agent.validation.promptRequired')
+					: null,
 		},
 		validateInputOnChange: true,
 	});
@@ -165,7 +167,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 			language:
 				conversationAgent?.language ??
 				currentFormValues.language ??
-				LANGUAGE_OPTIONS[0].value,
+				languageOptions[0].value,
 			// Preserve user's first message if server doesn't have one saved yet
 			firstMessage: hasServerFirstMessage
 				? serverFirstMessage
@@ -257,99 +259,86 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 			currentCampaign.id === null
 		) {
 			notifications.show({
-				title: 'Error',
-				message: 'Campaign not found. Please start from step 1.',
+				title: t('common:status.error'),
+				message: t('wizard.steps.agent.errorCampaignNotFound'),
 				color: 'red',
 			});
 			return;
 		}
 
 		setIsSubmitting(true);
-
 		try {
-			// Build the agent configuration update
-			const updatePayload: any = {
-				// Update campaign config if behavior is selected
-				...(values.agentBehaviorId && {
-					configId: String(values.agentBehaviorId),
-				}),
-			};
+			// Prepare updated prompt structure
+			const currentPrompt =
+				currentCampaign.agentConfig?.conversationConfig?.agent?.prompt || {};
 
-			// Always build agent configuration - even if agentConfig doesn't exist yet
-			// This ensures newly configured agent data is saved to the campaign
-			const existingAgentConfig = currentCampaign.agentConfig ?? {};
-			const existingConversationConfig =
-				(existingAgentConfig as any).conversationConfig ?? {};
-			const existingAgent = existingConversationConfig.agent ?? {};
-			// Clean up toolIds from prompt before sending
-			const { toolIds, ...existingPrompt } = existingAgent.prompt ?? {};
-
-			updatePayload.agentConfig = {
-				...existingAgentConfig,
-				// Save KB IDs to root path as required by backend
-				knowledgeBaseIds: currentKnowledgeBaseIds,
-				conversationConfig: {
-					...existingConversationConfig,
-					agent: {
-						...existingAgent,
-						language: values.language,
-						firstMessage: values.firstMessage,
-						prompt: {
-							...existingPrompt,
-							prompt: values.agentPrompt,
-							// Also save to deep path for frontend consistency (Wizard state)
-							knowledgeBase: currentKnowledgeBaseIds,
+			const payload = {
+				...currentCampaign,
+				configId: values.agentBehaviorId,
+				agentConfig: {
+					...currentCampaign.agentConfig,
+					knowledgeBaseIds: currentKnowledgeBaseIds,
+					conversationConfig: {
+						...currentCampaign.agentConfig?.conversationConfig,
+						agent: {
+							...currentCampaign.agentConfig?.conversationConfig?.agent,
+							language: values.language,
+							firstMessage: values.firstMessage,
+							prompt: {
+								...currentPrompt,
+								prompt: values.agentPrompt,
+								knowledgeBase: currentKnowledgeBaseIds,
+							},
 						},
 					},
 				},
 			};
 
-			// Update campaign with agent configuration
-			const updatedCampaign = await updateCampaign.mutateAsync({
+			// Remove toolIds from prompt if present, as it can interfere with knowledge base functionality
+			if (payload.agentConfig?.conversationConfig?.agent?.prompt) {
+				delete (payload.agentConfig.conversationConfig.agent.prompt as any)
+					.toolIds;
+			}
+
+			// Ensure configId is a string and convert id to string for API
+			const updatePayload = {
+				...payload,
+				configId: values.agentBehaviorId
+					? String(values.agentBehaviorId)
+					: currentCampaign.configId,
+			};
+
+			await updateCampaign.mutateAsync({
 				id: String(currentCampaign.id),
-				data: updatePayload,
+				data: updatePayload as unknown as Partial<Campaign>,
 			});
 
-			// Update store with fresh campaign data
+			const updatedCampaign = {
+				...currentCampaign,
+				...updatePayload,
+				configId: updatePayload.configId || currentCampaign.configId,
+			} as unknown as Campaign;
 			setCreatedCampaign(updatedCampaign);
-			setAgentBehaviorId(values.agentBehaviorId);
-			setLanguage(values.language);
-			setFirstMessage(values.firstMessage);
-			setAgentPrompt(values.agentPrompt);
-			setKnowledgeBaseIds(currentKnowledgeBaseIds);
-			setIsSubmitting(false);
-
-			// Invalidate campaign cache to ensure fresh data in edit form
-			queryClient.invalidateQueries({
-				queryKey: ['campaign', String(currentCampaign.id)],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ['campaigns'],
-			});
 
 			notifications.show({
-				title: 'Agent Configured',
-				message: 'Agent configuration saved successfully.',
+				title: t('wizard.steps.agent.successTitle'),
+				message: t('wizard.steps.agent.successMessage'),
 				color: 'green',
 			});
 
-			// Save draft step as 2 (Outcomes Step)
-			await setDraft({
-				campaignId: String(currentCampaign.id),
-				data: { isDraft: true, draftStep: 2 },
-			}).catch((err) => console.error('Failed to save draft step', err));
-
+			queryClient.invalidateQueries({
+				queryKey: ['campaign', currentCampaign.id],
+			});
 			onNext();
 		} catch (error) {
-			setIsSubmitting(false);
 			notifications.show({
-				title: 'Error',
+				title: t('common:status.error'),
 				message:
-					error instanceof Error
-						? error.message
-						: 'Failed to update campaign configuration',
+					error instanceof Error ? error.message : t('common:errors.unknown'),
 				color: 'red',
 			});
+		} finally {
+			setIsSubmitting(false);
 		}
 	};
 
@@ -363,7 +352,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 			<Center py='xl'>
 				<Stack align='center' gap='md'>
 					<Loader size='lg' />
-					<Text c='dimmed'>Loading campaign data...</Text>
+					<Text c='dimmed'>{t('wizard.steps.agent.loading')}</Text>
 				</Stack>
 			</Center>
 		);
@@ -375,13 +364,13 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 				<Stack gap='xl' className={sharedStyles.stepSurface}>
 					<Box className={sharedStyles.stepHeaderCard}>
 						<Text className={sharedStyles.stepEyebrow}>
-							Agent configuration
+							{t('wizard.steps.agent.eyebrow')}
 						</Text>
 						<Text className={sharedStyles.stepTitle}>
-							Shape the conversation
+							{t('wizard.steps.agent.title')}
 						</Text>
 						<Text className={sharedStyles.stepDescriptionText}>
-							Configure behavior, language, and prompt for the agent.
+							{t('wizard.steps.agent.intro')}
 						</Text>
 					</Box>
 
@@ -390,18 +379,19 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 							<Box className={styles.sectionCard}>
 								<div className={styles.sectionHeader}>
 									<IconSettings size={20} className={styles.sectionIcon} />
-									<h3 className={styles.sectionTitle}>Conversation Setup</h3>
+									<h3 className={styles.sectionTitle}>
+										{t('wizard.steps.agent.setupTitle')}
+									</h3>
 								</div>
 								<Text className={styles.sectionDescription}>
-									Select behavior, language, and greeting for conversation
-									start.
+									{t('wizard.steps.agent.setupDesc')}
 								</Text>
 
 								<div className={styles.fieldGrid}>
 									<Select
-										label='Agent Behavior'
-										description='Baseline configuration'
-										placeholder='Choose behavior'
+										label={t('wizard.steps.agent.behaviorLabel')}
+										description={t('wizard.steps.agent.behaviorDesc')}
+										placeholder={t('wizard.steps.agent.behaviorPlaceholder')}
 										size='sm'
 										data={predefinedParams
 											.filter((param) => param.id)
@@ -420,10 +410,10 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 									/>
 
 									<Select
-										label='Language'
-										description='Response language'
-										placeholder='Select language'
-										data={LANGUAGE_OPTIONS}
+										label={t('wizard.steps.agent.languageLabel')}
+										description={t('wizard.steps.agent.languageDesc')}
+										placeholder={t('wizard.steps.agent.languagePlaceholder')}
+										data={languageOptions}
 										{...form.getInputProps('language')}
 										withAsterisk
 										size='sm'
@@ -434,9 +424,9 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 								</div>
 
 								<Textarea
-									label='Agent First Message'
-									description='Initial greeting'
-									placeholder='Enter the first message your agent will send...'
+									label={t('wizard.steps.agent.firstMessageLabel')}
+									description={t('wizard.steps.agent.firstMessageDesc')}
+									placeholder={t('wizard.steps.agent.firstMessagePlaceholder')}
 									{...form.getInputProps('firstMessage')}
 									size='sm'
 									minRows={2}
@@ -450,18 +440,21 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 							<Box className={styles.sectionCard}>
 								<div className={styles.sectionHeader}>
 									<IconBrain size={20} className={styles.sectionIcon} />
-									<h3 className={styles.sectionTitle}>Agent Prompt</h3>
+									<h3 className={styles.sectionTitle}>
+										{t('wizard.steps.agent.promptTitle')}
+									</h3>
 								</div>
 								<Text className={styles.sectionDescription}>
-									Review the locked prompt. Use Edit to refine instructions.
+									{t('wizard.steps.agent.promptDesc')}
 								</Text>
 
 								<div className={styles.promptLayout}>
 									<div>
-										<Text className={styles.promptTitle}>Prompt content</Text>
+										<Text className={styles.promptTitle}>
+											{t('wizard.steps.agent.promptContent')}
+										</Text>
 										<Text className={styles.promptHint}>
-											This prompt is managed centrally. Edits will open the full
-											editor.
+											{t('wizard.steps.agent.promptHint')}
 										</Text>
 									</div>
 
@@ -471,13 +464,13 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 										leftSection={<IconEdit size={14} />}
 										onClick={handleEditPrompt}
 									>
-										Edit prompt
+										{t('wizard.steps.agent.editPrompt')}
 									</Button>
 								</div>
 
 								<Textarea
-									aria-label='Agent prompt'
-									placeholder='AI agent prompt'
+									aria-label={t('wizard.steps.agent.promptTitle')}
+									placeholder={t('wizard.steps.agent.promptPlaceholder')}
 									value={form.values.agentPrompt}
 									readOnly
 									disabled
@@ -499,7 +492,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 						disabled={!form.isValid()}
 						size='sm'
 					>
-						Save & Continue
+						{t('wizard.steps.agent.submit')}
 					</Button>
 				</Group>
 			</form>
@@ -527,8 +520,8 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 						setPromptEditorOpened(false);
 						reloadFreshCampaign();
 						notifications.show({
-							title: 'Prompt Updated',
-							message: 'Agent prompt has been updated',
+							title: t('wizard.steps.agent.promptUpdatedTitle'),
+							message: t('wizard.steps.agent.promptUpdatedMessage'),
 							color: 'green',
 						});
 					}}

@@ -23,7 +23,13 @@
 		"success": "Success",
 		"error": "Error",
 		"noData": "No data available",
-		"nothingSelected": "Nothing selected"
+		"nothingSelected": "Nothing selected",
+		"active": "Active",
+		"inactive": "Inactive"
+	},
+	"errors": {
+		"unknown": "An unexpected error occurred",
+		"retry": "Please try again later"
 	},
 	"loading": {
 		"configurations": "Loading configurations...",

@@ -391,9 +391,7 @@ describe('DispositionCatalogList', () => {
 
 		renderWithProviders(<DispositionCatalogList />);
 
-		expect(
-			screen.getByText('Failed to load disposition catalogs.')
-		).toBeInTheDocument();
+		expect(screen.getByText('Unable to load outcomes')).toBeInTheDocument();
 	});
 
 	it('renders empty state and triggers create flow', () => {
@@ -449,7 +447,7 @@ describe('DispositionCatalogList', () => {
 		const onEditNodes = vi.fn();
 		renderWithProviders(<DispositionCatalogList onEditNodes={onEditNodes} />);
 
-		fireEvent.click(screen.getByLabelText('Edit nodes'));
+		fireEvent.click(screen.getByLabelText('Edit outcomes'));
 
 		expect(setCatalog).toHaveBeenCalledWith(
 			expect.objectContaining({ id: 1, name: 'Catalog One' })
@@ -590,7 +588,7 @@ describe('DispositionCatalogList', () => {
 			renderWithProviders(<DispositionCatalogList />);
 
 			const segmentedControl = screen.getByTestId('segmented-control');
-			expect(segmentedControl).toHaveTextContent('All');
+			expect(segmentedControl).toHaveTextContent('All statuses');
 			expect(segmentedControl).toHaveTextContent('Active');
 			expect(segmentedControl).toHaveTextContent('Inactive');
 		});
@@ -602,7 +600,7 @@ describe('DispositionCatalogList', () => {
 			const allButton = segmentedControl.querySelector(
 				'button[data-active="true"]'
 			);
-			expect(allButton).toHaveTextContent('All');
+			expect(allButton).toHaveTextContent('All statuses');
 		});
 
 		it('changes status filter when clicking on Active', () => {

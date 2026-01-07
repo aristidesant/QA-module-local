@@ -2,6 +2,11 @@
 	"page": {
 		"fallback": "No hay ninguna conversación seleccionada. Elige una conversación para ver transcripciones, notas y acciones asociadas."
 	},
+	"section": {
+		"title": "Conversaciones",
+		"description": "Revisa las conversaciones generadas por esta campaña.",
+		"notSaved": "Guarda los detalles de la campaña para empezar a rastrear las conversaciones."
+	},
 	"list": {
 		"title": "Conversaciones",
 		"description": "Últimas conversaciones para esta campaña o grupo de contactos",

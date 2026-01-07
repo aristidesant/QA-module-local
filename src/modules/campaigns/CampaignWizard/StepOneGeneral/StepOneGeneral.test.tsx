@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { AxiosError } from 'axios';
 import { notifications } from '@mantine/notifications';
 import { StepOneGeneral } from './StepOneGeneral';
@@ -9,8 +9,10 @@ import {
 } from '~/queries/campaignsQueries';
 import { useGetCampaignObjectives } from '~/queries/campaignObjectivesQueries';
 import { useGetAllAgentVoices } from '~/queries/agentVoiceQueries';
-import { MantineProvider } from '@mantine/core';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+	renderWithProviders,
+	testI18n,
+} from '~/test-utils/renderWithProviders';
 
 // Mock stores and queries
 vi.mock('~/stores/campaignWizardStore', () => ({
@@ -72,7 +74,6 @@ describe('StepOneGeneral', () => {
 	const mockOnNext = vi.fn();
 	const mockOnCancel = vi.fn();
 	const mockMutate = vi.fn();
-	let queryClient: QueryClient;
 
 	const mockStore = {
 		campaignName: '',
@@ -93,14 +94,6 @@ describe('StepOneGeneral', () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
-		queryClient = new QueryClient({
-			defaultOptions: {
-				queries: {
-					retry: false,
-				},
-			},
-		});
-		vi.spyOn(queryClient, 'invalidateQueries');
 
 		(
 			useCampaignWizardStore as unknown as ReturnType<typeof vi.fn>
@@ -131,25 +124,44 @@ describe('StepOneGeneral', () => {
 	});
 
 	const renderComponent = () => {
-		return render(
-			<QueryClientProvider client={queryClient}>
-				<MantineProvider>
-					<StepOneGeneral onNext={mockOnNext} onCancel={mockOnCancel} />
-				</MantineProvider>
-			</QueryClientProvider>
+		return renderWithProviders(
+			<StepOneGeneral onNext={mockOnNext} onCancel={mockOnCancel} />
 		);
 	};
 
 	it('renders all form fields including objective creation button', () => {
 		renderComponent();
-		expect(screen.getByLabelText(/Campaign Name/i)).toBeInTheDocument();
-		expect(screen.getByLabelText(/Description/i)).toBeInTheDocument();
-		expect(screen.getByText(/Campaign Type/i)).toBeInTheDocument();
+		expect(
+			screen.getByLabelText(
+				testI18n.t('wizard.steps.general.campaignName', { ns: 'campaigns' }),
+				{ exact: false }
+			)
+		).toBeInTheDocument();
+		expect(
+			screen.getByLabelText(
+				testI18n.t('wizard.steps.general.description', { ns: 'campaigns' }),
+				{ exact: false }
+			)
+		).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				testI18n.t('wizard.steps.general.campaignType', { ns: 'campaigns' }),
+				{ exact: false }
+			)
+		).toBeInTheDocument();
 		expect(screen.getByTestId('phone-selector')).toBeInTheDocument();
-		expect(screen.getByTestId('phone-selector')).toBeInTheDocument();
-		// Find the Campaign Objective using regex to match potentially split label
-		expect(screen.getByText(/Campaign Objective/i)).toBeInTheDocument();
-		expect(screen.getByLabelText(/Default Waves/i)).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				testI18n.t('wizard.steps.general.objective', { ns: 'campaigns' }),
+				{ exact: false }
+			)
+		).toBeInTheDocument();
+		expect(
+			screen.getByLabelText(
+				testI18n.t('wizard.steps.general.defaultWaves', { ns: 'campaigns' }),
+				{ exact: false }
+			)
+		).toBeInTheDocument();
 		// Check for create button (icon only, normally found by role or label if available, here verify via icon presence indirectly or use tooltip)
 		// Since we don't have aria-label on ActionIcon in implementation, we check for the tooltip trigger or icon
 		// Adding aria-label or just checking if modal opens is better. Let's assume icon or tooltip.
@@ -159,17 +171,29 @@ describe('StepOneGeneral', () => {
 		renderComponent();
 
 		const submitButton = screen.getByRole('button', {
-			name: /Save & Continue/i,
+			name: testI18n.t('wizard.steps.general.submit', { ns: 'campaigns' }),
 		});
 		expect(submitButton).toBeDisabled();
 
 		// Fill other fields but leave objective empty
-		fireEvent.change(screen.getByLabelText(/Campaign Name/i), {
-			target: { value: 'Test Campaign' },
-		});
-		fireEvent.change(screen.getByLabelText(/Description/i), {
-			target: { value: 'Test Description' },
-		});
+		fireEvent.change(
+			screen.getByLabelText(
+				testI18n.t('wizard.steps.general.campaignName', { ns: 'campaigns' }),
+				{ exact: false }
+			),
+			{
+				target: { value: 'Test Campaign' },
+			}
+		);
+		fireEvent.change(
+			screen.getByLabelText(
+				testI18n.t('wizard.steps.general.description', { ns: 'campaigns' }),
+				{ exact: false }
+			),
+			{
+				target: { value: 'Test Description' },
+			}
+		);
 		fireEvent.change(screen.getByTestId('phone-selector'), {
 			target: { value: '10' },
 		});
@@ -187,20 +211,39 @@ describe('StepOneGeneral', () => {
 
 		renderComponent();
 
-		fireEvent.change(screen.getByLabelText(/Campaign Name/i), {
-			target: { value: 'Test Campaign' },
-		});
-		fireEvent.change(screen.getByLabelText(/Description/i), {
-			target: { value: 'Test Description' },
-		});
+		fireEvent.change(
+			screen.getByLabelText(
+				testI18n.t('wizard.steps.general.campaignName', { ns: 'campaigns' }),
+				{ exact: false }
+			),
+			{
+				target: { value: 'Test Campaign' },
+			}
+		);
+		fireEvent.change(
+			screen.getByLabelText(
+				testI18n.t('wizard.steps.general.description', { ns: 'campaigns' }),
+				{ exact: false }
+			),
+			{
+				target: { value: 'Test Description' },
+			}
+		);
 		fireEvent.change(screen.getByTestId('phone-selector'), {
 			target: { value: '10' },
 		});
 
-		// Simulate objective selection via store or form state.
 		// Since we mocked the store return value above, the form initialValue should pick it up.
-
-		const submitButton = screen.getByText('Save & Continue');
+		await waitFor(() =>
+			expect(
+				screen.getByText(
+					testI18n.t('wizard.steps.general.submit', { ns: 'campaigns' })
+				)
+			).toBeInTheDocument()
+		);
+		const submitButton = screen.getByText(
+			testI18n.t('wizard.steps.general.submit', { ns: 'campaigns' })
+		);
 		await waitFor(() => expect(submitButton).not.toBeDisabled());
 	});
 
@@ -219,8 +262,12 @@ describe('StepOneGeneral', () => {
 		// For now, let's find the button that isn't Cancel or Save
 		const createButton = createButtons.find(
 			(btn) =>
-				!btn.textContent?.includes('Cancel') &&
-				!btn.textContent?.includes('Save')
+				!btn.textContent?.includes(
+					testI18n.t('actions.cancel', { ns: 'common' })
+				) &&
+				!btn.textContent?.includes(
+					testI18n.t('wizard.steps.general.submit', { ns: 'campaigns' })
+				)
 		);
 		if (createButton) {
 			fireEvent.click(createButton);
@@ -239,8 +286,12 @@ describe('StepOneGeneral', () => {
 		const createButtons = screen.getAllByRole('button');
 		const createButton = createButtons.find(
 			(btn) =>
-				!btn.textContent?.includes('Cancel') &&
-				!btn.textContent?.includes('Save')
+				!btn.textContent?.includes(
+					testI18n.t('actions.cancel', { ns: 'common' })
+				) &&
+				!btn.textContent?.includes(
+					testI18n.t('wizard.steps.general.submit', { ns: 'campaigns' })
+				)
 		);
 
 		if (createButton) {
@@ -259,17 +310,31 @@ describe('StepOneGeneral', () => {
 
 			// The objectiveId should be set to 999.
 			// To verify, let's fill other required fields and check if the form is valid (submit button enabled)
-			fireEvent.change(screen.getByLabelText(/Campaign Name/i), {
-				target: { value: 'Test Campaign' },
-			});
-			fireEvent.change(screen.getByLabelText(/Description/i), {
-				target: { value: 'Test Description' },
-			});
+			fireEvent.change(
+				screen.getByLabelText(
+					testI18n.t('wizard.steps.general.campaignName', { ns: 'campaigns' }),
+					{ exact: false }
+				),
+				{
+					target: { value: 'Test Campaign' },
+				}
+			);
+			fireEvent.change(
+				screen.getByLabelText(
+					testI18n.t('wizard.steps.general.description', { ns: 'campaigns' }),
+					{ exact: false }
+				),
+				{
+					target: { value: 'Test Description' },
+				}
+			);
 			fireEvent.change(screen.getByTestId('phone-selector'), {
 				target: { value: '10' },
 			});
 
-			const submitButton = screen.getByText('Save & Continue');
+			const submitButton = screen.getByText(
+				testI18n.t('wizard.steps.general.submit', { ns: 'campaigns' })
+			);
 			await waitFor(() => expect(submitButton).not.toBeDisabled());
 		}
 	});
@@ -283,19 +348,33 @@ describe('StepOneGeneral', () => {
 
 		renderComponent();
 
-		fireEvent.change(screen.getByLabelText(/Campaign Name/i), {
-			target: { value: 'Test Campaign' },
-		});
-		fireEvent.change(screen.getByLabelText(/Description/i), {
-			target: { value: 'Test Description' },
-		});
+		fireEvent.change(
+			screen.getByLabelText(
+				testI18n.t('wizard.steps.general.campaignName', { ns: 'campaigns' }),
+				{ exact: false }
+			),
+			{
+				target: { value: 'Test Campaign' },
+			}
+		);
+		fireEvent.change(
+			screen.getByLabelText(
+				testI18n.t('wizard.steps.general.description', { ns: 'campaigns' }),
+				{ exact: false }
+			),
+			{
+				target: { value: 'Test Description' },
+			}
+		);
 
 		const phoneSelector = await screen.findByTestId('phone-selector');
 		fireEvent.change(phoneSelector, {
 			target: { value: '10' },
 		});
 
-		const submitButton = screen.getByText('Save & Continue');
+		const submitButton = screen.getByText(
+			testI18n.t('wizard.steps.general.submit', { ns: 'campaigns' })
+		);
 		await waitFor(() => expect(submitButton).not.toBeDisabled());
 		fireEvent.click(submitButton);
 
@@ -315,7 +394,11 @@ describe('StepOneGeneral', () => {
 		expect(phoneSelector.value).toBe('123');
 
 		// Change campaign type to OUTBOUND
-		const outboundRadio = screen.getByLabelText(/Outbound/i);
+		const outboundRadio = screen.getByLabelText(
+			testI18n.t('wizard.steps.general.campaignTypeOutbound', {
+				ns: 'campaigns',
+			})
+		);
 		fireEvent.click(outboundRadio);
 
 		// Verify phone number is cleared
@@ -364,24 +447,40 @@ describe('StepOneGeneral', () => {
 
 		renderComponent();
 
-		fireEvent.change(screen.getByLabelText(/Campaign Name/i), {
-			target: { value: 'Duplicate Campaign' },
-		});
-		fireEvent.change(screen.getByLabelText(/Description/i), {
-			target: { value: 'Test Description' },
-		});
+		fireEvent.change(
+			screen.getByLabelText(
+				testI18n.t('wizard.steps.general.campaignName', { ns: 'campaigns' }),
+				{ exact: false }
+			),
+			{
+				target: { value: 'Duplicate Campaign' },
+			}
+		);
+		fireEvent.change(
+			screen.getByLabelText(
+				testI18n.t('wizard.steps.general.description', { ns: 'campaigns' }),
+				{ exact: false }
+			),
+			{
+				target: { value: 'Test Description' },
+			}
+		);
 		fireEvent.change(screen.getByTestId('phone-selector'), {
 			target: { value: '10' },
 		});
 
-		const submitButton = screen.getByText('Save & Continue');
+		const submitButton = screen.getByText(
+			testI18n.t('wizard.steps.general.submit', { ns: 'campaigns' })
+		);
 		await waitFor(() => expect(submitButton).not.toBeDisabled());
 		fireEvent.click(submitButton);
 
 		// Verify notification is called with the specific message
 		expect(notifications.show).toHaveBeenCalledWith(
 			expect.objectContaining({
-				title: 'Error',
+				title: testI18n.t('wizard.steps.general.errorTitle', {
+					ns: 'campaigns',
+				}),
 				message: errorMessage,
 				color: 'red',
 			})
@@ -402,7 +501,9 @@ describe('StepOneGeneral', () => {
 		renderComponent();
 
 		expect(
-			screen.getByText(/Please check the notification for details/i)
+			screen.getByText(
+				testI18n.t('wizard.steps.general.alertMessage', { ns: 'campaigns' })
+			)
 		).toBeInTheDocument();
 	});
 });

@@ -5,17 +5,10 @@ import type { ColumnDef } from '@tanstack/react-table';
 import type { CampaignCategory } from '~/models/CampaignCategoryModel';
 import { TestProviders } from '~/test-utils/renderWithProviders';
 
-// Mock usePermissions
-const mockCanPerformAction = vi.fn(() => true);
-vi.mock('~/hooks/usePermissions', () => ({
-	default: () => ({
-		canPerformAction: mockCanPerformAction,
-	}),
-}));
-
 describe('useCampaignCategoriesColumns', () => {
 	const mockOnEdit = vi.fn();
 	const mockOnDelete = vi.fn();
+	const wrapper = TestProviders;
 
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -29,7 +22,7 @@ describe('useCampaignCategoriesColumns', () => {
 					onDelete: mockOnDelete,
 					isDeletePending: false,
 				}),
-			{ wrapper: TestProviders }
+			{ wrapper }
 		);
 
 		expect(Array.isArray(result.current)).toBe(true);
@@ -44,7 +37,7 @@ describe('useCampaignCategoriesColumns', () => {
 					onDelete: mockOnDelete,
 					isDeletePending: false,
 				}),
-			{ wrapper: TestProviders }
+			{ wrapper }
 		);
 
 		const nameColumn = result.current.find(
@@ -63,7 +56,7 @@ describe('useCampaignCategoriesColumns', () => {
 					onDelete: mockOnDelete,
 					isDeletePending: false,
 				}),
-			{ wrapper: TestProviders }
+			{ wrapper }
 		);
 
 		const codeColumn = result.current.find(
@@ -82,7 +75,7 @@ describe('useCampaignCategoriesColumns', () => {
 					onDelete: mockOnDelete,
 					isDeletePending: false,
 				}),
-			{ wrapper: TestProviders }
+			{ wrapper }
 		);
 
 		const descColumn = result.current.find(
@@ -101,7 +94,7 @@ describe('useCampaignCategoriesColumns', () => {
 					onDelete: mockOnDelete,
 					isDeletePending: false,
 				}),
-			{ wrapper: TestProviders }
+			{ wrapper }
 		);
 
 		const activeColumn = result.current.find(
@@ -113,12 +106,14 @@ describe('useCampaignCategoriesColumns', () => {
 	});
 
 	it('includes actions column', () => {
-		const { result } = renderHook(() =>
-			useCampaignCategoriesColumns({
-				onEdit: mockOnEdit,
-				onDelete: mockOnDelete,
-				isDeletePending: false,
-			})
+		const { result } = renderHook(
+			() =>
+				useCampaignCategoriesColumns({
+					onEdit: mockOnEdit,
+					onDelete: mockOnDelete,
+					isDeletePending: false,
+				}),
+			{ wrapper }
 		);
 
 		const actionsColumn = result.current.find(
@@ -139,7 +134,7 @@ describe('useCampaignCategoriesColumns', () => {
 					onDelete: mockOnDelete,
 					isDeletePending: false,
 				},
-				wrapper: TestProviders,
+				wrapper,
 			}
 		);
 

@@ -1,1 +1,144 @@
-{}
+{
+	"catalog": {
+		"title": "Resultados",
+		"description": "Gestiona los nodos de resultados y construye tu árbol de tipificaciones",
+		"errorBanner": "No se pudieron cargar los resultados",
+		"errorDescription": "Ocurrió un error inesperado al cargar el catálogo.",
+		"emptyState": "Aún no hay resultados. Comienza agregando un resultado raíz para este catálogo.",
+		"addRoot": "Agregar resultado raíz",
+		"nodeType": {
+			"group": "Grupo",
+			"outcome": "Resultado",
+			"terminal": "Resultado final",
+			"child": "resultado hijo",
+			"child_other": "resultados hijos"
+		},
+		"labels": {
+			"doNotCall": "No llamar",
+			"doNotCallTooltip": "No volver a llamar a este cliente después de este resultado"
+		},
+		"actions": {
+			"collapse": "Contraer nodo",
+			"expand": "Expandir nodo",
+			"reorder": "Arrastrar para reordenar",
+			"edit": "Editar nodo",
+			"delete": "Eliminar nodo",
+			"addChild": "Agregar resultado hijo",
+			"reactivate": "Reactivar nodo",
+			"deactivate": "Desactivar nodo"
+		},
+		"modals": {
+			"deactivate": {
+				"title": "Desactivar nodo de resultado",
+				"message": "¿Estás seguro de que deseas desactivar este nodo de resultado? Ya no estará disponible para la configuración de la campaña.",
+				"confirm": "Desactivar"
+			},
+			"reactivate": {
+				"title": "Reactivar nodo de resultado",
+				"message": "¿Estás seguro de que deseas reactivar este nodo de resultado? Volverá a estar disponible para la configuración de la campaña.",
+				"confirm": "Reactivar"
+			},
+			"delete": {
+				"title": "Confirmar eliminación",
+				"message": "¿Estás seguro de que deseas eliminar este nodo?",
+				"confirm": "Eliminar"
+			}
+		},
+		"notifications": {
+			"deactivateSuccess": "El nodo de resultado se desactivó con éxito.",
+			"deactivateError": "Error al desactivar el nodo de resultado.",
+			"reactivateSuccess": "El nodo de resultado se reactivó con éxito.",
+			"reactivateError": "Error al reactivar el nodo de resultado.",
+			"nodeDeactivated": "Nodo desactivado",
+			"nodeReactivated": "Nodo reactivado",
+			"deactivationFailed": "Error en la desactivación",
+			"reactivationFailed": "Error en la reactivación"
+		}
+	},
+	"list": {
+		"title": "Catálogos de resultados",
+		"description": "Crea y gestiona catálogos de resultados para agrupar nodos de tipificación para las campañas.",
+		"addCatalog": "Crear catálogo",
+		"searchPlaceholder": "Buscar por nombre o descripción...",
+		"noMatchingCatalogs": "No se encontraron catálogos coincidentes",
+		"noCatalogsFound": "No se encontraron catálogos de resultados",
+		"adjustSearch": "Intenta ajustar tu búsqueda o filtros",
+		"getStarted": "Comienza creando tu primer catálogo de resultados",
+		"clearFilters": "Limpiar filtros",
+		"modalCreateTitle": "Crear catálogo",
+		"modalEditTitle": "Editar catálogo",
+		"notifications": {
+			"createSuccess": "El catálogo de resultados se creó con éxito.",
+			"createError": "Error al crear el catálogo de resultados.",
+			"updateSuccess": "El catálogo de resultados se actualizó con éxito.",
+			"updateError": "Error al actualizar el catálogo de resultados.",
+			"catalogCreated": "Catálogo creado",
+			"catalogUpdated": "Catálogo actualizado",
+			"catalogReactivated": "Catálogo reactivado",
+			"catalogDeactivated": "Catálogo desactivado",
+			"createFailed": "Error en la creación",
+			"updateFailed": "Error en la actualización"
+		},
+		"modals": {
+			"reactivate": {
+				"title": "Reactivar catálogo de resultados",
+				"message": "¿Estás seguro de que deseas reactivar este catálogo de resultados? Volverá a estar disponible para la configuración de la campaña.",
+				"confirm": "Reactivar"
+			},
+			"deactivate": {
+				"title": "Desactivar catálogo de resultados",
+				"message": "¿Estás seguro de que deseas desactivar este catálogo de resultados y todos sus nodos? Ya no estarán disponibles para la configuración de la campaña.",
+				"confirm": "Desactivar"
+			}
+		}
+	},
+	"columns": {
+		"name": "Nombre",
+		"description": "Descripción",
+		"type": "Tipo",
+		"status": "Estado",
+		"createdAt": "Creado el",
+		"updatedAt": "Actualizado el",
+		"actions": "Acciones",
+		"isDefault": "Por defecto",
+		"editNodes": "Editar resultados",
+		"editDetails": "Editar detalles",
+		"reactivate": "Reactivar",
+		"deactivate": "Desactivar"
+	},
+	"form": {
+		"titleCreate": "Agregar resultado",
+		"titleEdit": "Editar resultado",
+		"defaultTitle": "Nodo de resultado",
+		"fields": {
+			"name": "Nombre",
+			"description": "Descripción",
+			"invalidatesNumber": "Invalida el número",
+			"doNotCall": "No llamar",
+			"doNotCallDescription": "Si se selecciona, no se debe volver a llamar a este cliente después de este resultado.",
+			"requiresReschedule": "Requiere re-programación",
+			"isFinal": "Es final",
+			"isVoiceMail": "Es buzón de voz"
+		}
+	},
+	"formCatalog": {
+		"detailsTitle": "Detalles del catálogo",
+		"detailsDescription": "Información básica sobre el catálogo",
+		"name": "Nombre",
+		"namePlaceholder": "Nombre del catálogo",
+		"nameRequired": "El nombre es obligatorio",
+		"type": "Tipo",
+		"typeInbound": "Entrante (Inbound)",
+		"typeOutbound": "Saliente (Outbound)",
+		"descriptionLabel": "Descripción",
+		"descriptionPlaceholder": "Descripción del catálogo",
+		"defaultCatalog": "Catálogo por defecto",
+		"submitCreate": "Crear catálogo",
+		"submitEdit": "Actualizar catálogo",
+		"outboundAlert": "Los resultados por defecto se crearán automáticamente: Contacto efectivo, Contacto no efectivo y Sin contacto."
+	},
+	"filters": {
+		"title": "Filtros",
+		"allStatuses": "Todos los estados"
+	}
+}

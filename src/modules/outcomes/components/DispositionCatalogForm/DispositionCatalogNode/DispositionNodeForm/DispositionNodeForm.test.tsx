@@ -3,6 +3,37 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import DispositionNodeForm from './DispositionNodeForm';
 
+const translations: Record<string, Record<string, string>> = {
+	outcomes: {
+		'form.fields.name': 'Name',
+		'form.fields.description': 'Description',
+		'form.fields.invalidatesNumber': 'Invalidates Number',
+		'form.fields.doNotCall': 'Do not call',
+		'form.fields.doNotCallDescription':
+			'If selected, this client should not be called again after this outcome.',
+		'form.fields.requiresReschedule': 'Requires Reschedule',
+		'form.fields.isFinal': 'Is Final',
+		'form.fields.isVoiceMail': 'Is Voice Mail',
+		'form.defaultTitle': 'Outcome Node',
+	},
+	common: {
+		'actions.cancel': 'Cancel',
+		'actions.save': 'Save',
+	},
+};
+
+vi.mock('react-i18next', () => ({
+	useTranslation: () => ({
+		t: (key: string, options?: { ns?: string }) => {
+			const namespace = options?.ns ?? 'outcomes';
+			return translations[namespace]?.[key] ?? key;
+		},
+		i18n: {
+			changeLanguage: vi.fn(),
+		},
+	}),
+}));
+
 vi.mock('@mantine/core', async (importOriginal) => {
 	const actual = await importOriginal<typeof import('@mantine/core')>();
 	return {

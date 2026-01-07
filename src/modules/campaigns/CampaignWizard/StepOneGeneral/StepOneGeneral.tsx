@@ -1,4 +1,5 @@
 import { isAxiosError } from 'axios';
+import { useTranslation } from 'react-i18next';
 import React, { useState } from 'react';
 import {
 	TextInput,
@@ -44,6 +45,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 	onNext,
 	onCancel,
 }) => {
+	const { t } = useTranslation('campaigns');
 	type CampaignTypeValue = 'INBOUND' | 'OUTBOUND';
 
 	const {
@@ -84,15 +86,21 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 		},
 		validate: {
 			campaignName: (value: string) =>
-				value.trim().length < 2 ? 'Campaign name is required' : null,
+				value.trim().length < 2
+					? t('wizard.steps.general.validation.nameRequired')
+					: null,
 			description: (value: string) =>
-				value.trim().length < 2 ? 'Description is required' : null,
+				value.trim().length < 2
+					? t('wizard.steps.general.validation.descriptionRequired')
+					: null,
 			phoneNumberId: (value: number | null) =>
-				!value ? 'Phone number is required' : null,
+				!value ? t('wizard.steps.general.validation.phoneIdRequired') : null,
 			defaultMaxWaves: (value: number) =>
-				!value || value < 1 ? 'Waves must be at least 1' : null,
+				!value || value < 1
+					? t('wizard.steps.general.validation.wavesRequired')
+					: null,
 			objectiveId: (value: number | null) =>
-				!value ? 'Campaign objective is required' : null,
+				!value ? t('wizard.steps.general.validation.objectiveRequired') : null,
 		},
 		validateInputOnChange: true,
 	});
@@ -109,10 +117,9 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 		if (!defaultVoiceId) {
 			setIsSubmitting(false);
 			notifications.show({
-				title: 'Error',
-				message: 'No agent voices available. Please contact support.',
+				title: t('common:status.error'),
+				message: t('wizard.steps.general.errorVoices'),
 				color: 'red',
-				// ...
 			});
 			return;
 		}
@@ -169,10 +176,11 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				setCreatedCampaign(campaign);
 				setIsSubmitting(false);
 
+				setIsSubmitting(false);
+
 				notifications.show({
-					title: 'Campaign Created',
-					message:
-						'Campaign created successfully. Continue to configure your agent.',
+					title: t('wizard.steps.general.successCreatedTitle'),
+					message: t('wizard.steps.general.successCreatedMessage'),
 					color: 'green',
 				});
 
@@ -188,7 +196,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 			onError: (error) => {
 				setIsSubmitting(false);
 
-				let errorMessage = 'Failed to create campaign';
+				let errorMessage = t('form.notifications.errorCreate');
 				if (isAxiosError(error) && error.response?.data?.message) {
 					errorMessage = error.response.data.message;
 				} else if (error instanceof Error) {
@@ -196,7 +204,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				}
 
 				notifications.show({
-					title: 'Error',
+					title: t('common:status.error'),
 					message: errorMessage,
 					color: 'red',
 				});
@@ -224,36 +232,43 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 			<form onSubmit={form.onSubmit(handleSubmit)}>
 				<Stack gap='xl' className={styles.stepSurface}>
 					<Box className={styles.stepHeaderCard}>
-						<Text className={styles.stepEyebrow}>General setup</Text>
-						<Text className={styles.stepTitle}>Campaign essentials</Text>
+						<Text className={styles.stepEyebrow}>
+							{t('wizard.steps.general.eyebrow')}
+						</Text>
+						<Text className={styles.stepTitle}>
+							{t('wizard.steps.general.title')}
+						</Text>
 						<Text className={styles.stepDescriptionText}>
-							Define how this campaign is presented to your team and contacts.
-							The name, description, and type keep everyone aligned.
+							{t('wizard.steps.general.intro')}
 						</Text>
 					</Box>
 
 					<div className={styles.sectionGrid}>
 						<Box className={styles.wizardCard}>
 							<div className={styles.sectionHeading}>
-								<Text className={styles.sectionHeadingTitle}>Identity</Text>
+								<Text className={styles.sectionHeadingTitle}>
+									{t('wizard.steps.general.identityTitle')}
+								</Text>
 								<Text className={styles.sectionHeadingDescription}>
-									Set the tone and structure for this campaign.
+									{t('wizard.steps.general.identityDesc')}
 								</Text>
 							</div>
 							<Stack gap='md'>
 								<TextInput
-									label='Campaign Name'
-									description='Give your campaign a descriptive name'
-									placeholder='Enter campaign name'
+									label={t('wizard.steps.general.campaignName')}
+									description={t('wizard.steps.general.campaignNameDesc')}
+									placeholder={t(
+										'wizard.steps.general.campaignNamePlaceholder'
+									)}
 									withAsterisk
 									className={styles.field}
 									{...form.getInputProps('campaignName')}
 								/>
 
 								<Textarea
-									label='Description'
-									description='Briefly describe the purpose of this campaign'
-									placeholder='Describe your campaign'
+									label={t('wizard.steps.general.description')}
+									description={t('wizard.steps.general.descriptionDesc')}
+									placeholder={t('wizard.steps.general.descriptionPlaceholder')}
 									withAsterisk
 									className={styles.field}
 									{...form.getInputProps('description')}
@@ -263,15 +278,16 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 
 								<Box className={styles.field}>
 									<Text className={styles.fieldLabel}>
-										Campaign Type <span className={styles.required}>*</span>
+										{t('wizard.steps.general.campaignType')}{' '}
+										<span className={styles.required}>*</span>
 									</Text>
 									<Text className={styles.fieldDescription}>
-										Choose how calls will be routed.
+										{t('wizard.steps.general.campaignTypeDesc')}
 									</Text>
 									<SegmentedControl
 										data={[
-											{ value: 'INBOUND', label: 'Inbound' },
-											{ value: 'OUTBOUND', label: 'Outbound' },
+											{ value: 'INBOUND', label: t('columns.inbound') },
+											{ value: 'OUTBOUND', label: t('columns.outbound') },
 										]}
 										value={form.values.campaignType}
 										onChange={handleCampaignTypeChange}
@@ -279,8 +295,8 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 										className={styles.segmentedControl}
 									/>
 									<NumberInput
-										label='Default Waves'
-										description='How many waves each new contact list should run before stopping'
+										label={t('wizard.steps.general.defaultWaves')}
+										description={t('wizard.steps.general.defaultWavesDesc')}
 										min={1}
 										step={1}
 										clampBehavior='strict'
@@ -296,9 +312,11 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 
 						<Box className={styles.wizardCard}>
 							<div className={styles.sectionHeading}>
-								<Text className={styles.sectionHeadingTitle}>Routing</Text>
+								<Text className={styles.sectionHeadingTitle}>
+									{t('wizard.steps.general.routingTitle')}
+								</Text>
 								<Text className={styles.sectionHeadingDescription}>
-									Match this campaign to the right number and objective.
+									{t('wizard.steps.general.routingDesc')}
 								</Text>
 							</div>
 							<Stack gap='md'>
@@ -308,22 +326,24 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 									onChange={(value) =>
 										form.setFieldValue('phoneNumberId', value)
 									}
-									label='Phone Number'
-									description='Select the phone number for this campaign'
-									placeholder='Choose a phone number'
+									label={t('wizard.steps.general.phoneNumber')}
+									description={t('wizard.steps.general.phoneNumberDesc')}
+									placeholder={t('wizard.steps.general.phoneNumberPlaceholder')}
 									withAsterisk
 								/>
 
 								<Input.Wrapper
-									label='Campaign Objective'
-									description='Choose the main objective this campaign aims to achieve'
+									label={t('wizard.steps.general.objective')}
+									description={t('wizard.steps.general.objectiveDesc')}
 									error={form.errors.objectiveId}
 									withAsterisk
 									className={styles.field}
 								>
 									<Group gap='xs'>
 										<Select
-											placeholder='Select an objective'
+											placeholder={t(
+												'wizard.steps.general.objectivePlaceholder'
+											)}
 											data={
 												objectivesResponse?.data?.map((obj) => ({
 													value: obj.id.toString(),
@@ -342,7 +362,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 											error={!!form.errors.objectiveId}
 											style={{ flex: 1 }}
 										/>
-										<Tooltip label='Create new objective'>
+										<Tooltip label={t('wizard.steps.general.createObjective')}>
 											<ActionIcon
 												variant='light'
 												color='blue'
@@ -362,24 +382,24 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 						<Alert
 							variant='light'
 							color='red'
-							title='Campaign Creation Failed'
+							title={t('wizard.steps.general.alertTitle')}
 							icon={<IconAlertCircle />}
 						>
-							Please check the notification for details.
+							{t('wizard.steps.general.alertMessage')}
 						</Alert>
 					)}
 				</Stack>
 
 				<Group className={styles.actions}>
 					<Button variant='default' onClick={onCancel}>
-						Cancel
+						{t('actions.cancel', { ns: 'common' })}
 					</Button>
 					<Button
 						type='submit'
 						loading={createCampaignWithAgent.isPending}
 						disabled={!form.isValid()}
 					>
-						Save & Continue
+						{t('wizard.steps.general.submit')}
 					</Button>
 				</Group>
 			</form>
@@ -387,7 +407,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 			<Modal
 				opened={isObjectiveModalOpen}
 				onClose={() => setIsObjectiveModalOpen(false)}
-				title='Create Campaign Objective'
+				title={t('wizard.steps.general.modalCreateObjective')}
 				centered
 				size='xl'
 			>

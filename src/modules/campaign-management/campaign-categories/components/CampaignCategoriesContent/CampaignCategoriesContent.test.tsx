@@ -11,8 +11,6 @@ const {
 	mockSetPagination,
 	mockSetFilters,
 	mockCategoriesData,
-	mockCanPerformAction,
-	mockCanAccessModule,
 } = vi.hoisted(() => ({
 	mockNotificationsShow: vi.fn(),
 	mockDeleteCategory: vi.fn(),
@@ -32,15 +30,6 @@ const {
 		}>,
 		isLoading: false,
 	},
-	mockCanPerformAction: vi.fn(() => true),
-	mockCanAccessModule: vi.fn(() => true),
-}));
-
-vi.mock('~/hooks/usePermissions', () => ({
-	default: () => ({
-		canPerformAction: mockCanPerformAction,
-		canAccessModule: mockCanAccessModule,
-	}),
 }));
 
 vi.mock('@mantine/notifications', () => ({
@@ -149,6 +138,24 @@ vi.mock('../CampaignCategoriesForm/CampaignCategoriesForm', () => ({
 			</button>
 		</div>
 	),
+}));
+
+// Permission helpers used by the component
+const mockCanAccessModule = vi.fn(() => true);
+const mockCanPerformAction = vi.fn(() => true);
+const mockHasAnyPermission = vi.fn(() => true);
+const mockHasAllPermissions = vi.fn(() => true);
+
+vi.mock('~/hooks/usePermissions', () => ({
+	__esModule: true,
+	default: () => ({
+		activeClientId: 1,
+		permissionMap: {},
+		canAccessModule: mockCanAccessModule,
+		canPerformAction: mockCanPerformAction,
+		hasAnyPermission: mockHasAnyPermission,
+		hasAllPermissions: mockHasAllPermissions,
+	}),
 }));
 
 // Store column handlers for testing
@@ -298,6 +305,10 @@ describe('CampaignCategoriesContent', () => {
 		mockNotificationsShow.mockReset();
 		mockSetPagination.mockReset();
 		mockSetFilters.mockReset();
+		mockCanAccessModule.mockReturnValue(true);
+		mockCanPerformAction.mockReturnValue(true);
+		mockHasAnyPermission.mockReturnValue(true);
+		mockHasAllPermissions.mockReturnValue(true);
 		// Reset to default mock data with categories
 		mockCategoriesData.categories = mockCategories;
 		mockCategoriesData.isLoading = false;

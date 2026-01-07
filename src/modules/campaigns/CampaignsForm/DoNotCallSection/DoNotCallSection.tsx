@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Text, Card, Button } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import { IconAlertCircle, IconPhoneOff, IconPlus } from '@tabler/icons-react';
 import {
 	useDoNotCallList,
@@ -33,6 +34,7 @@ interface DoNotCallFiltersType {
 }
 
 const DoNotCallSection: React.FC<DoNotCallSectionProps> = () => {
+	const { t } = useTranslation('do-not-call');
 	const pagination = usePagination({
 		initialItemsPerPage: 10,
 		searchDebounceMs: 500,
@@ -75,7 +77,7 @@ const DoNotCallSection: React.FC<DoNotCallSectionProps> = () => {
 			setSelectedEntry(entry);
 			modals.open({
 				modalId: 'edit-dnc-entry',
-				title: 'Edit Do Not Call Entry',
+				title: t('dialogs.edit.title'),
 				children: (
 					<DoNotCallForm
 						entry={entry}
@@ -86,15 +88,14 @@ const DoNotCallSection: React.FC<DoNotCallSectionProps> = () => {
 								setSelectedEntry(null);
 								modals.close('edit-dnc-entry');
 								notifications.show({
-									title: 'Entry Updated',
-									message:
-										'The Do Not Call entry has been successfully updated.',
+									title: t('toasts.updatedTitle'),
+									message: t('toasts.updatedMessage'),
 									color: 'green',
 								});
 							} catch (error) {
 								notifications.show({
-									title: 'Error',
-									message: 'Failed to update entry. Please try again.',
+									title: t('common:status.error'),
+									message: t('errors.update'),
 									color: 'red',
 								});
 							}
@@ -111,14 +112,18 @@ const DoNotCallSection: React.FC<DoNotCallSectionProps> = () => {
 		},
 		onDelete: (entry) => {
 			modals.openConfirmModal({
-				title: 'Delete Do Not Call Entry',
+				title: t('dialogs.delete.title'),
 				children: (
 					<Text size='sm'>
-						Are you sure you want to delete this Do Not Call entry for{' '}
-						{entry.phoneNumber}?
+						{t('dialogs.delete.description', {
+							phoneNumber: entry.phoneNumber,
+						})}
 					</Text>
 				),
-				labels: { confirm: 'Delete', cancel: 'Cancel' },
+				labels: {
+					confirm: t('common:actions.delete'),
+					cancel: t('common:actions.cancel'),
+				},
 				confirmProps: { color: 'red' },
 				onConfirm: async () => {
 					try {
@@ -126,14 +131,14 @@ const DoNotCallSection: React.FC<DoNotCallSectionProps> = () => {
 						reloadDoNotCall();
 						setSelectedEntry(null);
 						notifications.show({
-							title: 'Entry Deleted',
-							message: 'The Do Not Call entry has been successfully deleted.',
+							title: t('toasts.deletedTitle'),
+							message: t('toasts.deletedMessage'),
 							color: 'green',
 						});
 					} catch (error) {
 						notifications.show({
-							title: 'Error',
-							message: 'Failed to delete entry. Please try again.',
+							title: t('common:status.error'),
+							message: t('errors.delete'),
 							color: 'red',
 						});
 					}
@@ -151,7 +156,7 @@ const DoNotCallSection: React.FC<DoNotCallSectionProps> = () => {
 	const handleShowAddNewModal = () => {
 		modals.open({
 			modalId: 'create-dnc-entry',
-			title: 'Add Do Not Call Entry',
+			title: t('dialogs.create.title'),
 			children: (
 				<DoNotCallForm
 					onSubmit={async (data) => {
@@ -160,14 +165,14 @@ const DoNotCallSection: React.FC<DoNotCallSectionProps> = () => {
 							reloadDoNotCall();
 							modals.close('create-dnc-entry');
 							notifications.show({
-								title: 'Entry Created',
-								message: 'The Do Not Call entry has been successfully created.',
+								title: t('toasts.createdTitle'),
+								message: t('toasts.createdMessage'),
 								color: 'green',
 							});
 						} catch (error) {
 							notifications.show({
-								title: 'Error',
-								message: 'Failed to create entry. Please try again.',
+								title: t('common:status.error'),
+								message: t('errors.create'),
 								color: 'red',
 							});
 						}
@@ -184,15 +189,15 @@ const DoNotCallSection: React.FC<DoNotCallSectionProps> = () => {
 
 	return (
 		<SectionCard
-			title='Do Not Call List'
-			description='Manage phone numbers that should not be contacted for this campaign.'
+			title={t('page.title')}
+			description={t('page.description')}
 			headerActions={
 				<Button
 					size='xs'
 					leftSection={<IconPlus size={16} />}
 					onClick={handleShowAddNewModal}
 				>
-					Add Entry
+					{t('page.actions.addEntry')}
 				</Button>
 			}
 		>
@@ -206,7 +211,7 @@ const DoNotCallSection: React.FC<DoNotCallSectionProps> = () => {
 			{isLoading || isFetching ? (
 				<Card mt='xs' withBorder>
 					<Text c='dimmed' ta='center' py='xl'>
-						Loading...
+						{t('common:status.loading')}
 					</Text>
 				</Card>
 			) : isError ? (
@@ -220,10 +225,8 @@ const DoNotCallSection: React.FC<DoNotCallSectionProps> = () => {
 						}}
 					>
 						<IconAlertCircle size={32} color='red' />
-						<Text c='red' mt='sm'>
-							{error instanceof Error
-								? error.message
-								: 'Failed to load Do Not Call entries.'}
+						<Text size='sm' c='red' mt='sm' ta='center'>
+							{error instanceof Error ? error.message : t('errors.load')}
 						</Text>
 					</div>
 				</Card>
@@ -231,14 +234,14 @@ const DoNotCallSection: React.FC<DoNotCallSectionProps> = () => {
 				<Card mt='xs' withBorder>
 					<EmptyState
 						icon={<IconPhoneOff size={64} stroke={1.2} />}
-						message='No entries yet'
-						description='Add phone numbers to the Do Not Call list'
+						message={t('empty.title')}
+						description={t('empty.description')}
 						action={
 							<Button
 								leftSection={<IconPlus size={18} />}
 								onClick={handleShowAddNewModal}
 							>
-								Add Entry
+								{t('page.actions.addEntry')}
 							</Button>
 						}
 					/>
@@ -261,7 +264,7 @@ const DoNotCallSection: React.FC<DoNotCallSectionProps> = () => {
 						onItemsPerPageChange={handleItemsPerPageChange}
 						searchTerm={pagination.debouncedSearch}
 						isLoading={isLoading}
-						itemLabel='entries'
+						itemLabel={t('pagination.entries')}
 					/>
 				</>
 			)}

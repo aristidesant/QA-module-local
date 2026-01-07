@@ -9,6 +9,7 @@ import {
 	Loader,
 	Box,
 } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import { modals } from '@mantine/modals';
 import { IconCalculator } from '@tabler/icons-react';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
@@ -25,6 +26,7 @@ interface StepFourParametersProps {
 export const StepFourParameters: React.FC<StepFourParametersProps> = ({
 	onNext,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const { createdCampaign } = useCampaignWizardStore();
 	const { mutateAsync: setDraft } = useSetCampaignDraft();
 
@@ -49,7 +51,7 @@ export const StepFourParameters: React.FC<StepFourParametersProps> = ({
 			<Center py='xl'>
 				<Stack align='center' gap='md'>
 					<Loader size='lg' />
-					<Text c='dimmed'>Loading campaign data...</Text>
+					<Text c='dimmed'>{t('wizard.steps.parameters.loading')}</Text>
 				</Stack>
 			</Center>
 		);
@@ -59,27 +61,28 @@ export const StepFourParameters: React.FC<StepFourParametersProps> = ({
 		<>
 			<Stack gap='xl' className={sharedStyles.stepSurface}>
 				<Box className={sharedStyles.stepHeaderCard}>
-					<Text className={sharedStyles.stepEyebrow}>Scheduling</Text>
+					<Text className={sharedStyles.stepEyebrow}>
+						{t('wizard.steps.parameters.eyebrow')}
+					</Text>
 					<Text className={sharedStyles.stepTitle}>
-						Control your calling window
+						{t('wizard.steps.parameters.title')}
 					</Text>
 					<Text className={sharedStyles.stepDescriptionText}>
-						Keep outreach aligned with business hours and compliance. Copy
-						schedules across days or fine-tune each block.
+						{t('wizard.steps.parameters.intro')}
 					</Text>
 				</Box>
 
 				{/* Working Hours Configuration Section */}
 				<SectionCard
-					title='Working Hours'
-					description='Define the days and time ranges during which your agents are allowed to make calls.'
+					title={t('wizard.steps.parameters.workingHoursTitle')}
+					description={t('wizard.steps.parameters.workingHoursDesc')}
 					headerActions={
 						<ActionIcon
 							size='md'
 							variant='subtle'
 							onClick={() =>
 								modals.open({
-									title: 'Scheduler Calculator',
+									title: t('wizard.steps.parameters.schedulerCalculator'),
 									fullScreen: true,
 									children: <SchedulerCalculator />,
 								})
@@ -100,7 +103,7 @@ export const StepFourParameters: React.FC<StepFourParametersProps> = ({
 
 			<Group className={sharedStyles.actions} justify='flex-end'>
 				<Button type='button' onClick={handleSubmit}>
-					Save & Continue
+					{t('wizard.steps.parameters.submit')}
 				</Button>
 			</Group>
 		</>

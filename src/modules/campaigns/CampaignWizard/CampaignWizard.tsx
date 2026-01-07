@@ -1,5 +1,6 @@
 import React from 'react';
 import { Stepper } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import {
 	IconListDetails,
 	IconSettings,
@@ -24,6 +25,7 @@ export const CampaignWizard: React.FC<CampaignWizardProps> = ({
 	onComplete,
 	onCancel,
 }) => {
+	const { t } = useTranslation('campaigns');
 	const { activeStep, nextStep, reset } = useCampaignWizardStore();
 
 	const handleCancel = () => {
@@ -49,8 +51,8 @@ export const CampaignWizard: React.FC<CampaignWizardProps> = ({
 				}}
 			>
 				<Stepper.Step
-					label='General'
-					description='Campaign details'
+					label={t('wizard.steps.general.label')}
+					description={t('wizard.steps.general.description')}
 					icon={<IconListDetails size={18} />}
 				>
 					<div className={styles.stepContent}>
@@ -59,8 +61,8 @@ export const CampaignWizard: React.FC<CampaignWizardProps> = ({
 				</Stepper.Step>
 
 				<Stepper.Step
-					label='Agent'
-					description='Agent setup'
+					label={t('wizard.steps.agent.label')}
+					description={t('wizard.steps.agent.description')}
 					icon={<IconSettings size={18} />}
 				>
 					<div className={styles.stepContent}>
@@ -69,8 +71,8 @@ export const CampaignWizard: React.FC<CampaignWizardProps> = ({
 				</Stepper.Step>
 
 				<Stepper.Step
-					label='Outcomes'
-					description='Outcome configuration'
+					label={t('wizard.steps.outcomes.label')}
+					description={t('wizard.steps.outcomes.description')}
 					icon={<IconNetwork size={18} />}
 				>
 					<div className={styles.stepContent}>
@@ -79,8 +81,8 @@ export const CampaignWizard: React.FC<CampaignWizardProps> = ({
 				</Stepper.Step>
 
 				<Stepper.Step
-					label='Parameters'
-					description='Working hours & settings'
+					label={t('wizard.steps.parameters.label')}
+					description={t('wizard.steps.parameters.description')}
 					icon={<IconClock size={18} />}
 				>
 					<div className={styles.stepContent}>
@@ -89,8 +91,8 @@ export const CampaignWizard: React.FC<CampaignWizardProps> = ({
 				</Stepper.Step>
 
 				<Stepper.Step
-					label='Complete'
-					description='Campaign ready'
+					label={t('wizard.steps.complete.label')}
+					description={t('wizard.steps.complete.description')}
 					icon={<IconCheck size={18} />}
 				>
 					<div className={styles.stepContent}>

@@ -3,6 +3,7 @@ import { useDeleteDispositionNode } from '~/queries/dispositionNodesQueries';
 import { useCreateDispositionNode } from '~/queries/dispositionNodesQueries';
 import { useReactivateDispositionNode } from '~/queries/dispositionNodesQueries';
 import { useDeactivateDispositionNode } from '~/queries/dispositionNodesQueries';
+import { useTranslation } from 'react-i18next';
 
 import {
 	Flex,
@@ -112,6 +113,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 	const reactivateNode = useReactivateDispositionNode();
 	const deactivateNode = useDeactivateDispositionNode();
 
+	const { t } = useTranslation('outcomes');
 	const { canPerformAction } = usePermissions();
 	const canCreate = canPerformAction(
 		ModuleEnum.SETTINGS,
@@ -132,31 +134,27 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 	// Handler for deactivating node
 	const handleDeactivateNode = (nodeData: DispositionNode) => {
 		modals.openConfirmModal({
-			title: 'Deactivate Outcome Node',
+			title: t('catalog.modals.deactivate.title'),
 			labels: {
-				confirm: 'Deactivate',
-				cancel: 'Cancel',
+				confirm: t('catalog.modals.deactivate.confirm'),
+				cancel: t('actions.cancel', { ns: 'common' }),
 			},
-			children: (
-				<Text size='sm'>
-					Are you sure you want to deactivate this outcome node? It will no
-					longer be available for campaign configuration.
-				</Text>
-			),
+			children: <Text size='sm'>{t('catalog.modals.deactivate.message')}</Text>,
 			confirmProps: { color: 'red' },
 			onConfirm: async () => {
 				try {
 					await deactivateNode.mutateAsync(nodeData.id);
 					await reloadCatalogs();
 					notifications.show({
-						title: 'Node deactivated',
-						message: 'Outcome node was deactivated successfully.',
+						title: t('catalog.notifications.nodeDeactivated'),
+						message: t('catalog.notifications.deactivateSuccess'),
 						color: 'blue',
 					});
 				} catch (error: any) {
 					notifications.show({
-						title: 'Deactivation failed',
-						message: error?.message || 'Failed to deactivate outcome node.',
+						title: t('catalog.notifications.deactivationFailed'),
+						message:
+							error?.message || t('catalog.notifications.deactivateError'),
 						color: 'red',
 					});
 				}
@@ -167,31 +165,27 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 	// Handler for reactivating node
 	const handleReactivateNode = (nodeData: DispositionNode) => {
 		modals.openConfirmModal({
-			title: 'Reactivate Outcome Node',
+			title: t('catalog.modals.reactivate.title'),
 			labels: {
-				confirm: 'Reactivate',
-				cancel: 'Cancel',
+				confirm: t('catalog.modals.reactivate.confirm'),
+				cancel: t('actions.cancel', { ns: 'common' }),
 			},
-			children: (
-				<Text size='sm'>
-					Are you sure you want to reactivate this outcome node? It will become
-					available for campaign configuration again.
-				</Text>
-			),
+			children: <Text size='sm'>{t('catalog.modals.reactivate.message')}</Text>,
 			confirmProps: { color: 'green' },
 			onConfirm: async () => {
 				try {
 					await reactivateNode.mutateAsync(nodeData.id);
 					await reloadCatalogs();
 					notifications.show({
-						title: 'Node reactivated',
-						message: 'Outcome node was reactivated successfully.',
+						title: t('catalog.notifications.nodeReactivated'),
+						message: t('catalog.notifications.reactivateSuccess'),
 						color: 'green',
 					});
 				} catch (error: any) {
 					notifications.show({
-						title: 'Reactivation failed',
-						message: error?.message || 'Failed to reactivate outcome node.',
+						title: t('catalog.notifications.reactivationFailed'),
+						message:
+							error?.message || t('catalog.notifications.reactivateError'),
 						color: 'red',
 					});
 				}
@@ -212,14 +206,12 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 		}
 
 		modals.openConfirmModal({
-			title: 'Confirm Delete',
+			title: t('catalog.modals.delete.title'),
 			labels: {
-				confirm: 'Delete',
-				cancel: 'Cancel',
+				confirm: t('catalog.modals.delete.confirm'),
+				cancel: t('actions.cancel', { ns: 'common' }),
 			},
-			children: (
-				<Text size='sm'>Are you sure you want to delete this node?</Text>
-			),
+			children: <Text size='sm'>{t('catalog.modals.delete.message')}</Text>,
 			confirmProps: { color: 'red' },
 			onConfirm: async () => {
 				await deleteNode.mutateAsync(nodeData.id);
@@ -237,7 +229,9 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 		const isInactive = nodeData.isActive === false;
 		const isProtectedNode = isProtectedDefaultNode(nodeData, catalogType);
 		const isDoNotCall = Boolean(nodeData.doNotCall ?? nodeData.do_not_call);
-		const nodeTypeLabel = hasChildren ? 'Group' : 'Outcome';
+		const nodeTypeLabel = hasChildren
+			? t('catalog.nodeType.group')
+			: t('catalog.nodeType.outcome');
 		const levelIndent = node.level * 16;
 		const cardOffset = node.level > 0 ? Math.min(levelIndent, 80) : 0;
 		const cardStyle: NodeCardStyle = cardOffset
@@ -278,7 +272,11 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 										size='sm'
 										variant='subtle'
 										className={styles.chevronIcon}
-										aria-label={isOpen ? 'Collapse node' : 'Expand node'}
+										aria-label={
+											isOpen
+												? t('catalog.actions.collapse')
+												: t('catalog.actions.expand')
+										}
 										onClick={handleToggle}
 									>
 										{isOpen ? (
@@ -341,11 +339,11 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 									</Badge>
 									{isDoNotCall && (
 										<Tooltip
-											label='Do not call this client again after this outcome'
+											label={t('catalog.labels.doNotCallTooltip')}
 											withArrow
 										>
 											<Badge size='xs' variant='light' color='red' radius='sm'>
-												Do not call
+												{t('catalog.labels.doNotCall')}
 											</Badge>
 										</Tooltip>
 									)}
@@ -353,8 +351,8 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 							</div>
 							<Text className={styles.nodeMetaText} size='xs'>
 								{hasChildren
-									? `${childCount} ${childCount === 1 ? 'child outcome' : 'child outcomes'}`
-									: 'Terminal outcome'}
+									? t('catalog.nodeType.child', { count: childCount })
+									: t('catalog.nodeType.terminal')}
 							</Text>
 						</div>
 
@@ -365,7 +363,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 									ref={dragHandle}
 									role='button'
 									tabIndex={-1}
-									aria-label='Drag to reorder'
+									aria-label={t('catalog.actions.reorder')}
 								>
 									<IconGripVertical size={16} />
 								</div>
@@ -374,7 +372,10 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 								<ActionIcon.Group>
 									{isInactive
 										? canUpdate && (
-												<Tooltip label='Reactivate node' withArrow>
+												<Tooltip
+													label={t('catalog.actions.reactivate')}
+													withArrow
+												>
 													<ActionIcon
 														size='sm'
 														variant='light'
@@ -389,7 +390,10 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 												</Tooltip>
 											)
 										: canUpdate && (
-												<Tooltip label='Deactivate node' withArrow>
+												<Tooltip
+													label={t('catalog.actions.deactivate')}
+													withArrow
+												>
 													<ActionIcon
 														size='sm'
 														variant='subtle'
@@ -403,7 +407,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 												</Tooltip>
 											)}
 									{!isProtectedNode && canUpdate && (
-										<Tooltip label='Edit node' withArrow>
+										<Tooltip label={t('catalog.actions.edit')} withArrow>
 											<ActionIcon
 												size='sm'
 												variant='subtle'
@@ -417,7 +421,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 										</Tooltip>
 									)}
 									{canCreate && (
-										<Tooltip label='Add child outcome' withArrow>
+										<Tooltip label={t('catalog.actions.addChild')} withArrow>
 											<ActionIcon
 												size='sm'
 												variant='subtle'
@@ -431,7 +435,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 										</Tooltip>
 									)}
 									{!isProtectedNode && canDelete && (
-										<Tooltip label='Delete node' withArrow>
+										<Tooltip label={t('catalog.actions.delete')} withArrow>
 											<ActionIcon
 												size='sm'
 												variant='light'
@@ -466,7 +470,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 													leftSection={<IconRefresh size={16} />}
 													onClick={() => handleReactivateNode(nodeData)}
 												>
-													Reactivate
+													{t('catalog.actions.reactivate')}
 												</Menu.Item>
 											)
 										: canUpdate && (
@@ -474,7 +478,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 													leftSection={<IconBan size={16} />}
 													onClick={() => handleDeactivateNode(nodeData)}
 												>
-													Deactivate
+													{t('catalog.actions.deactivate')}
 												</Menu.Item>
 											)}
 									{!isProtectedNode && canUpdate && (
@@ -482,7 +486,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 											leftSection={<IconPencil size={16} />}
 											onClick={() => handleEditNode(nodeData)}
 										>
-											Edit
+											{t('actions.edit', { ns: 'common' })}
 										</Menu.Item>
 									)}
 									{canCreate && (
@@ -492,7 +496,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 												setModal({ open: true, parentId: nodeData.id })
 											}
 										>
-											Add child
+											{t('catalog.actions.addChild')}
 										</Menu.Item>
 									)}
 									{!isProtectedNode && canDelete && (
@@ -501,7 +505,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 											color='red'
 											onClick={() => handleDeleteNode(nodeData)}
 										>
-											Delete
+											{t('actions.delete', { ns: 'common' })}
 										</Menu.Item>
 									)}
 								</Menu.Dropdown>
@@ -517,21 +521,20 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 		<>
 			<SectionCard
 				icon={IconFolder}
-				title='Outcomes'
-				description='Manage outcome nodes and build your disposition tree'
+				title={t('catalog.title')}
+				description={t('catalog.description')}
 				contentSpacing='sm'
 				backgroundColor='var(--mantine-color-gray-0)'
 			>
 				{isError && (
 					<Alert
 						icon={<IconAlertCircle size={16} />}
-						title='Unable to load outcomes'
+						title={t('catalog.errorBanner')}
 						color='red'
 						variant='light'
 						className={styles.errorBanner}
 					>
-						{error?.message ??
-							'An unexpected error occurred while loading the catalog.'}
+						{error?.message ?? t('catalog.errorDescription')}
 					</Alert>
 				)}
 				{isLoading ? (
@@ -559,7 +562,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 				) : (
 					<div className={`${styles.treeWrapper} ${styles.emptyState}`}>
 						<Text size='sm' c='dimmed'>
-							No outcomes yet. Start by adding a root outcome for this catalog.
+							{t('catalog.emptyState')}
 						</Text>
 					</div>
 				)}
@@ -573,9 +576,9 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 							size='md'
 							className={styles.addButton}
 							onClick={() => setModal({ open: true })}
-							aria-label='Add outcome to catalog'
+							aria-label={t('catalog.addRoot')}
 						>
-							Add root outcome
+							{t('catalog.addRoot')}
 						</Button>
 					)}
 				</Flex>
@@ -604,7 +607,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 					}
 					setModal({ open: false });
 				}}
-				title={modal.editNode ? 'Edit Outcome' : 'Add Outcome'}
+				title={modal.editNode ? t('form.titleEdit') : t('form.titleCreate')}
 			/>
 		</>
 	);

@@ -1,5 +1,6 @@
 import { Modal, TextInput, Checkbox, Button, Group } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { useTranslation } from 'react-i18next';
 import type { DispositionNode } from '~/models/DispositionNodeModel';
 import { useEffect } from 'react';
 
@@ -26,8 +27,9 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 	onClose,
 	onSubmit,
 	initialValues,
-	title = 'Outcome Node',
+	title,
 }) => {
+	const { t } = useTranslation('outcomes');
 	const form = useForm<DispositionNodeFormValues>({
 		initialValues: {
 			name: '',
@@ -57,58 +59,63 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 	}, [initialValues]);
 
 	return (
-		<Modal opened={opened} onClose={onClose} title={title} centered>
+		<Modal
+			opened={opened}
+			onClose={onClose}
+			title={title || t('form.defaultTitle')}
+			centered
+		>
 			<form onSubmit={form.onSubmit(onSubmit)}>
 				<TextInput
-					label='Name'
+					label={t('form.fields.name')}
 					required
 					size='sm'
 					{...form.getInputProps('name')}
 					mb='sm'
 				/>
 				<TextInput
-					label='Description'
+					label={t('form.fields.description')}
 					size='sm'
 					{...form.getInputProps('description')}
 					mb='sm'
 				/>
 				<Checkbox
-					label='Invalidates Number'
+					label={t('form.fields.invalidatesNumber')}
 					size='sm'
 					{...form.getInputProps('isInvalidatesNumber', { type: 'checkbox' })}
 					mb='xs'
 				/>
 				<Checkbox
-					label='Do not call'
-					description='If selected, this client should not be called again after this outcome.'
+					label={t('form.fields.doNotCall')}
+					description={t('form.fields.doNotCallDescription')}
 					size='sm'
 					{...form.getInputProps('doNotCall', { type: 'checkbox' })}
 					mb='xs'
 				/>
 				<Checkbox
-					label='Requires Reschedule'
+					label={t('form.fields.requiresReschedule')}
 					size='sm'
 					{...form.getInputProps('requiresReschedule', { type: 'checkbox' })}
 					mb='xs'
 				/>
 				<Checkbox
-					label='Is Final'
+					label={t('form.fields.isFinal')}
 					size='sm'
 					{...form.getInputProps('isFinal', { type: 'checkbox' })}
 					mb='xs'
 				/>
 				<Checkbox
-					label='Is Voice Mail'
+					label={t('form.fields.isVoiceMail')}
 					size='sm'
 					{...form.getInputProps('isVoiceMail', { type: 'checkbox' })}
 					mb='md'
 				/>
 				<Group justify='flex-end' gap='xs'>
 					<Button size='sm' variant='default' onClick={onClose} type='button'>
-						Cancel
+						{t('actions.cancel', { ns: 'common' })}
 					</Button>
 					<Button size='sm' type='submit'>
-						Save
+						{t('actions.save', { ns: 'common' })}
 					</Button>
 				</Group>
 			</form>

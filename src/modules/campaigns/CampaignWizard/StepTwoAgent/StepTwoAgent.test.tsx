@@ -1,15 +1,14 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { StepTwoAgent } from './StepTwoAgent';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 import useCampaignsPredefinedParams from '../../CampaignsForm/useCampaignsPredefinedParams';
-import {
-	useUpdateCampaign,
-	useGetCampaign,
-	useSetCampaignDraft,
-} from '~/queries/campaignsQueries';
+import { useUpdateCampaign, useGetCampaign } from '~/queries/campaignsQueries';
 import { useQueryClient } from '@tanstack/react-query';
-import { MantineProvider } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
+import {
+	renderWithProviders,
+	testI18n,
+} from '~/test-utils/renderWithProviders';
 
 // Mock stores and hooks
 vi.mock('~/stores/campaignWizardStore', () => ({
@@ -23,12 +22,15 @@ vi.mock('../../CampaignsForm/useCampaignsPredefinedParams', () => ({
 vi.mock('~/queries/campaignsQueries', () => ({
 	useUpdateCampaign: vi.fn(),
 	useGetCampaign: vi.fn(),
-	useSetCampaignDraft: vi.fn(),
 }));
 
-vi.mock('@tanstack/react-query', () => ({
-	useQueryClient: vi.fn(),
-}));
+vi.mock('@tanstack/react-query', async (importOriginal) => {
+	const actual = await importOriginal<typeof import('@tanstack/react-query')>();
+	return {
+		...actual,
+		useQueryClient: vi.fn(),
+	};
+});
 
 vi.mock('@mantine/notifications', () => ({
 	notifications: {
@@ -60,7 +62,6 @@ describe('StepTwoAgent', () => {
 	const mockOnNext = vi.fn();
 
 	const mockMutateAsync = vi.fn();
-	const mockSetDraft = vi.fn();
 	const mockInvalidateQueries = vi.fn();
 	const mockReloadFreshCampaign = vi.fn();
 
@@ -105,10 +106,6 @@ describe('StepTwoAgent', () => {
 			isPending: false,
 		});
 
-		(useSetCampaignDraft as any).mockReturnValue({
-			mutateAsync: mockSetDraft.mockResolvedValue({}),
-		});
-
 		(useGetCampaign as any).mockReturnValue({
 			data: null,
 			isLoading: false,
@@ -121,21 +118,41 @@ describe('StepTwoAgent', () => {
 	});
 
 	const renderComponent = () => {
-		return render(
-			<MantineProvider>
-				<StepTwoAgent onNext={mockOnNext} />
-			</MantineProvider>
-		);
+		return renderWithProviders(<StepTwoAgent onNext={mockOnNext} />);
 	};
 
 	it('renders form fields', () => {
 		renderComponent();
-		expect(screen.getByText(/Conversation Setup/i)).toBeInTheDocument();
-		expect(screen.getByText(/Agent Behavior/i)).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				testI18n.t('wizard.steps.agent.setupTitle', { ns: 'campaigns' })
+			)
+		).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				testI18n.t('wizard.steps.agent.behaviorLabel', { ns: 'campaigns' }),
+				{ exact: false }
+			)
+		).toBeInTheDocument();
 		// Language appears multiple times (in text and as label), just verify it's present
-		expect(screen.getAllByText(/Language/i).length).toBeGreaterThan(0);
-		expect(screen.getByLabelText(/Agent First Message/i)).toBeInTheDocument();
-		expect(screen.getByLabelText(/Agent prompt/i)).toBeInTheDocument();
+		expect(
+			screen.getAllByText(
+				testI18n.t('wizard.steps.agent.languageLabel', { ns: 'campaigns' }),
+				{ exact: false }
+			).length
+		).toBeGreaterThan(0);
+		expect(
+			screen.getByLabelText(
+				testI18n.t('wizard.steps.agent.firstMessageLabel', { ns: 'campaigns' }),
+				{ exact: false }
+			)
+		).toBeInTheDocument();
+		expect(
+			screen.getByLabelText(
+				testI18n.t('wizard.steps.agent.promptTitle', { ns: 'campaigns' }),
+				{ exact: false }
+			)
+		).toBeInTheDocument();
 		expect(screen.getByTestId('knowledge-base-section')).toBeInTheDocument();
 	});
 
@@ -143,7 +160,7 @@ describe('StepTwoAgent', () => {
 		renderComponent();
 
 		const submitButton = screen.getByRole('button', {
-			name: /Save & Continue/i,
+			name: testI18n.t('wizard.steps.agent.submit', { ns: 'campaigns' }),
 		});
 		expect(submitButton).toBeDisabled();
 	});
@@ -162,7 +179,7 @@ describe('StepTwoAgent', () => {
 		renderComponent();
 
 		const submitButton = screen.getByRole('button', {
-			name: /Save & Continue/i,
+			name: testI18n.t('wizard.steps.agent.submit', { ns: 'campaigns' }),
 		});
 		await waitFor(() => expect(submitButton).not.toBeDisabled());
 	});
@@ -183,7 +200,7 @@ describe('StepTwoAgent', () => {
 		renderComponent();
 
 		const submitButton = screen.getByRole('button', {
-			name: /Save & Continue/i,
+			name: testI18n.t('wizard.steps.agent.submit', { ns: 'campaigns' }),
 		});
 		await waitFor(() => expect(submitButton).not.toBeDisabled());
 		fireEvent.click(submitButton);
@@ -209,7 +226,9 @@ describe('StepTwoAgent', () => {
 		expect(mockInvalidateQueries).toHaveBeenCalled();
 		expect(notifications.show).toHaveBeenCalledWith(
 			expect.objectContaining({
-				title: 'Agent Configured',
+				title: testI18n.t('wizard.steps.agent.successTitle', {
+					ns: 'campaigns',
+				}),
 				color: 'green',
 			})
 		);
@@ -231,7 +250,7 @@ describe('StepTwoAgent', () => {
 		renderComponent();
 
 		const submitButton = screen.getByRole('button', {
-			name: /Save & Continue/i,
+			name: testI18n.t('wizard.steps.agent.submit', { ns: 'campaigns' }),
 		});
 		await waitFor(() => expect(submitButton).not.toBeDisabled());
 		fireEvent.click(submitButton);
@@ -239,7 +258,9 @@ describe('StepTwoAgent', () => {
 		await waitFor(() => {
 			expect(notifications.show).toHaveBeenCalledWith(
 				expect.objectContaining({
-					title: 'Error',
+					title: testI18n.t('wizard.steps.general.errorTitle', {
+						ns: 'campaigns',
+					}),
 					message: 'Update failed',
 					color: 'red',
 				})
@@ -249,7 +270,9 @@ describe('StepTwoAgent', () => {
 
 	it('opens prompt editor modal', async () => {
 		renderComponent();
-		const editButton = screen.getByRole('button', { name: /Edit prompt/i });
+		const editButton = screen.getByRole('button', {
+			name: testI18n.t('wizard.steps.agent.editPrompt', { ns: 'campaigns' }),
+		});
 		fireEvent.click(editButton);
 		await waitFor(() => {
 			expect(screen.getByTestId('prompt-edit-modal')).toBeInTheDocument();
@@ -281,12 +304,19 @@ describe('StepTwoAgent', () => {
 		renderComponent();
 
 		// Fill in required valid data
-		fireEvent.change(screen.getByPlaceholderText(/Select language/i), {
-			target: { value: 'es' },
-		});
+		fireEvent.change(
+			screen.getByPlaceholderText(
+				testI18n.t('wizard.steps.agent.languagePlaceholder', {
+					ns: 'campaigns',
+				})
+			),
+			{
+				target: { value: 'en' },
+			}
+		);
 
 		const submitButton = screen.getByRole('button', {
-			name: /Save & Continue/i,
+			name: testI18n.t('wizard.steps.agent.submit', { ns: 'campaigns' }),
 		});
 		await waitFor(() => expect(submitButton).not.toBeDisabled());
 		fireEvent.click(submitButton);

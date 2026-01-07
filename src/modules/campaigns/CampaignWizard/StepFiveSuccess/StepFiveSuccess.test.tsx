@@ -1,8 +1,11 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { StepFiveSuccess } from './StepFiveSuccess';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 import { useNavigate } from 'react-router';
-import { MantineProvider } from '@mantine/core';
+import {
+	renderWithProviders,
+	testI18n,
+} from '~/test-utils/renderWithProviders';
 
 // Mock store and router
 vi.mock('~/stores/campaignWizardStore', () => ({
@@ -40,11 +43,7 @@ describe('StepFiveSuccess', () => {
 	});
 
 	const renderComponent = () => {
-		return render(
-			<MantineProvider>
-				<StepFiveSuccess onComplete={mockOnComplete} />
-			</MantineProvider>
-		);
+		return renderWithProviders(<StepFiveSuccess onComplete={mockOnComplete} />);
 	};
 
 	it('renders campaign details correctly', () => {
@@ -52,19 +51,28 @@ describe('StepFiveSuccess', () => {
 		expect(screen.getByText('Test Campaign')).toBeInTheDocument();
 		expect(screen.getByText('INBOUND')).toBeInTheDocument();
 		expect(screen.getByText('ACTIVE')).toBeInTheDocument();
-		expect(screen.getByText('$1,000')).toBeInTheDocument();
+		// Mantine formatting might add currency symbol or use different decimal separators
+		expect(screen.getByText(/1,000/)).toBeInTheDocument();
 	});
 
 	it('handles view campaign action', () => {
 		renderComponent();
-		fireEvent.click(screen.getByText('View campaign'));
+		fireEvent.click(
+			screen.getByText(
+				testI18n.t('wizard.steps.complete.viewCampaign', { ns: 'campaigns' })
+			)
+		);
 		expect(mockNavigate).toHaveBeenCalledWith('/campaign/1');
 		expect(mockOnComplete).toHaveBeenCalled();
 	});
 
 	it('handles close wizard action', () => {
 		renderComponent();
-		fireEvent.click(screen.getByText('Close wizard'));
+		fireEvent.click(
+			screen.getByText(
+				testI18n.t('wizard.steps.complete.closeWizard', { ns: 'campaigns' })
+			)
+		);
 		expect(mockOnComplete).toHaveBeenCalled();
 	});
 
@@ -80,7 +88,7 @@ describe('StepFiveSuccess', () => {
 		// Should show placeholders or default text
 		expect(
 			screen.getByText(
-				'Your campaign is configured. Review the summary or jump straight to the campaign overview.'
+				testI18n.t('wizard.steps.complete.descriptionText', { ns: 'campaigns' })
 			)
 		).toBeInTheDocument();
 

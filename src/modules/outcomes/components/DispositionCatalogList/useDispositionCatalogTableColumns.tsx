@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Text, Badge, Group, Tooltip, ActionIcon } from '@mantine/core';
 import {
 	IconListDetails,
@@ -36,6 +37,7 @@ export const useDispositionCatalogTableColumns = ({
 	reactivateState,
 	deactivateState,
 }: UseDispositionCatalogTableColumnsProps) => {
+	const { t } = useTranslation('outcomes');
 	const { canPerformAction } = usePermissions();
 
 	const canUpdate = useMemo(
@@ -48,7 +50,7 @@ export const useDispositionCatalogTableColumns = ({
 			{
 				id: 'name',
 				accessorKey: 'name',
-				header: 'Name',
+				header: t('columns.name'),
 				cell: ({ row }) => {
 					const name = row.original.name;
 					const description = row.original.description;
@@ -82,7 +84,7 @@ export const useDispositionCatalogTableColumns = ({
 			},
 			{
 				id: 'status',
-				header: 'Status',
+				header: t('columns.status'),
 				accessorKey: 'isActive',
 				enableSorting: false,
 				cell: ({ row }) => (
@@ -91,13 +93,15 @@ export const useDispositionCatalogTableColumns = ({
 						variant='dot'
 						color={row.original.isActive ? 'green' : 'gray'}
 					>
-						{row.original.isActive ? 'Active' : 'Inactive'}
+						{row.original.isActive
+							? t('status.active', { ns: 'common' })
+							: t('status.inactive', { ns: 'common' })}
 					</Badge>
 				),
 			},
 			{
 				accessorKey: 'createdAt',
-				header: 'Created At',
+				header: t('columns.createdAt'),
 				cell: (info) => (
 					<Text size='sm'>
 						{info.getValue()
@@ -108,10 +112,10 @@ export const useDispositionCatalogTableColumns = ({
 			},
 			{
 				id: 'actions',
-				header: 'Actions',
+				header: t('columns.actions'),
 				cell: ({ row }) => (
 					<Group gap='xs'>
-						<Tooltip label='Edit nodes' withArrow>
+						<Tooltip label={t('columns.editNodes')} withArrow>
 							<ActionIcon
 								variant='light'
 								size='sm'
@@ -119,13 +123,13 @@ export const useDispositionCatalogTableColumns = ({
 									e.stopPropagation();
 									onEditNodes(row.original);
 								}}
-								aria-label='Edit nodes'
+								aria-label={t('columns.editNodes')}
 							>
 								<IconListDetails size={16} />
 							</ActionIcon>
 						</Tooltip>
 						{canUpdate && (
-							<Tooltip label='Edit details' withArrow>
+							<Tooltip label={t('columns.editDetails')} withArrow>
 								<ActionIcon
 									variant='light'
 									size='sm'
@@ -133,14 +137,14 @@ export const useDispositionCatalogTableColumns = ({
 										e.stopPropagation();
 										onEditDetails(row.original);
 									}}
-									aria-label='Edit details'
+									aria-label={t('columns.editDetails')}
 								>
 									<IconPencil size={16} />
 								</ActionIcon>
 							</Tooltip>
 						)}
 						{canUpdate && !row.original.isActive && (
-							<Tooltip label='Reactivate' withArrow>
+							<Tooltip label={t('columns.reactivate')} withArrow>
 								<ActionIcon
 									color='green'
 									variant='light'
@@ -153,14 +157,14 @@ export const useDispositionCatalogTableColumns = ({
 										reactivateState.isPending &&
 										reactivateState.variables?.catalogId === row.original.id
 									}
-									aria-label='Reactivate'
+									aria-label={t('columns.reactivate')}
 								>
 									<IconRefresh size={16} />
 								</ActionIcon>
 							</Tooltip>
 						)}
 						{canUpdate && row.original.isActive && (
-							<Tooltip label='Deactivate' withArrow>
+							<Tooltip label={t('columns.deactivate')} withArrow>
 								<ActionIcon
 									color='orange'
 									variant='light'
@@ -173,7 +177,7 @@ export const useDispositionCatalogTableColumns = ({
 										deactivateState.isPending &&
 										deactivateState.variables?.catalogId === row.original.id
 									}
-									aria-label='Deactivate'
+									aria-label={t('columns.deactivate')}
 								>
 									<IconBan size={16} />
 								</ActionIcon>
@@ -192,6 +196,7 @@ export const useDispositionCatalogTableColumns = ({
 			reactivateState,
 			deactivateState,
 			canUpdate,
+			t,
 		]
 	);
 };
