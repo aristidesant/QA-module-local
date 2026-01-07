@@ -6,6 +6,7 @@ import ClientSelectionModal from './ClientSelectionModal';
 
 vi.mock('~/queries/authQueries', () => ({
 	useSelectClient: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
+	useVerifyOTP: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
 }));
 
 import * as authQueries from '~/queries/authQueries';
@@ -100,7 +101,9 @@ describe('ClientSelectionModal', () => {
 
 		await waitFor(() => expect(mutateAsync).toHaveBeenCalled());
 
-		expect(screen.getByText('Two-Factor Authentication')).toBeInTheDocument();
+		await waitFor(() =>
+			expect(screen.getByText('Two-Factor Authentication')).toBeInTheDocument()
+		);
 		expect(screen.getByText('Client 1')).toBeInTheDocument();
 	});
 

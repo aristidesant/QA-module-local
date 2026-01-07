@@ -1,25 +1,26 @@
 import {
 	Modal,
-	TextInput,
 	Button,
 	Stack,
 	Text,
 	Group,
 	Alert,
-} from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { IconAlertCircle, IconShieldCheck } from "@tabler/icons-react";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useVerifyOTP } from "~/queries/authQueries";
-import { getErrorMessage } from "~/utils/httpClient";
-import classes from "./OTPVerificationModal.module.css";
+	PinInput,
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { IconAlertCircle, IconShieldCheck } from '@tabler/icons-react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useVerifyOTP } from '~/queries/authQueries';
+import { getErrorMessage } from '~/utils/httpClient';
 
 interface OTPVerificationModalProps {
 	opened: boolean;
 	onClose: () => void;
-	userId: number;
+	userId?: number;
 	onSuccess?: () => void;
+	onSubmit?: (otp: string) => Promise<void>;
+	isLoading?: boolean;
 }
 
 interface FormValues {
@@ -31,20 +32,24 @@ export default function OTPVerificationModal({
 	onClose,
 	userId,
 	onSuccess,
+	onSubmit,
+	isLoading: externalLoading,
 }: OTPVerificationModalProps) {
-	const { t } = useTranslation();
+	const { t } = useTranslation('auth');
 	const verifyOTPMutation = useVerifyOTP();
 	const [formError, setFormError] = useState<string | null>(null);
 
+	const isLoading = externalLoading || verifyOTPMutation.isPending;
+
 	const form = useForm<FormValues>({
 		initialValues: {
-			otp: "",
+			otp: '',
 		},
 		validate: {
 			otp: (value) => {
-				if (!value.trim()) return t("auth.otp.required");
-				if (value.length !== 6) return t("auth.otp.mustBeSixDigits");
-				if (!/^\d+$/.test(value)) return t("auth.otp.mustBeNumeric");
+				if (!value.trim()) return t('otp.required');
+				if (value.length !== 6) return t('otp.mustBeSixDigits');
+				if (!/^\d+$/.test(value)) return t('otp.mustBeNumeric');
 				return null;
 			},
 		},
@@ -59,10 +64,16 @@ export default function OTPVerificationModal({
 	const handleSubmit = async (values: FormValues) => {
 		setFormError(null);
 		try {
-			await verifyOTPMutation.mutateAsync({
-				userId,
-				otp: values.otp,
-			});
+			if (onSubmit) {
+				await onSubmit(values.otp);
+			} else if (userId) {
+				await verifyOTPMutation.mutateAsync({
+					userId,
+					otp: values.otp,
+				});
+			} else {
+				throw new Error('Missing configuration for OTP verification');
+			}
 			handleClose();
 			onSuccess?.();
 		} catch (err: any) {
@@ -75,64 +86,68 @@ export default function OTPVerificationModal({
 			opened={opened}
 			onClose={handleClose}
 			title={
-				<Group gap="sm">
+				<Group gap='sm'>
 					<IconShieldCheck size={20} />
-					<Text fw={600}>{t("auth.otp.title")}</Text>
+					<Text fw={600}>{t('otp.title')}</Text>
 				</Group>
 			}
 			centered
-			size="sm"
-			withCloseButton={!verifyOTPMutation.isPending}
-			closeOnClickOutside={!verifyOTPMutation.isPending}
-			closeOnEscape={!verifyOTPMutation.isPending}
+			size='sm'
+			withCloseButton={!isLoading}
+			closeOnClickOutside={!isLoading}
+			closeOnEscape={!isLoading}
 		>
 			<form onSubmit={form.onSubmit(handleSubmit)}>
-				<Stack gap="md">
-					<Text size="sm" c="dimmed">
-						{t("auth.otp.description")}
+				<Stack gap='md'>
+					<Text size='sm' c='dimmed'>
+						{t('otp.description')}
 					</Text>
 
-					<TextInput
-						label={t("auth.otp.label")}
-						placeholder={t("auth.otp.placeholder")}
-						maxLength={6}
-						className={classes.otpInput}
-						{...form.getInputProps("otp")}
-						disabled={verifyOTPMutation.isPending}
-						autoComplete="one-time-code"
-						inputMode="numeric"
-						pattern="[0-9]*"
-					/>
+					<Group justify='center'>
+						<PinInput
+							length={6}
+							type='number'
+							oneTimeCode
+							autoFocus
+							disabled={isLoading}
+							{...form.getInputProps('otp')}
+							error={!!form.errors.otp}
+							aria-label={t('otp.label')}
+							onComplete={(value) => {
+								form.setFieldValue('otp', value);
+								form.onSubmit(handleSubmit)();
+							}}
+						/>
+					</Group>
+					{form.errors.otp && (
+						<Text size='xs' c='red' mt='xs' ta='center'>
+							{form.errors.otp}
+						</Text>
+					)}
 
 					{formError && (
 						<Alert
-							variant="light"
-							color="red"
-							title={t("auth.otp.verificationFailed")}
+							variant='light'
+							color='red'
+							title={t('otp.verificationFailed')}
 							icon={<IconAlertCircle size={18} />}
-							radius="md"
+							radius='md'
 						>
 							{formError}
 						</Alert>
 					)}
 
-					<Group justify="flex-end" mt="md">
-						<Button
-							variant="subtle"
-							onClick={handleClose}
-							disabled={verifyOTPMutation.isPending}
-						>
-							{t("common.cancel")}
+					<Group justify='flex-end' mt='md'>
+						<Button variant='subtle' onClick={handleClose} disabled={isLoading}>
+							{t('actions.cancel')}
 						</Button>
 						<Button
-							type="submit"
-							loading={verifyOTPMutation.isPending}
-							leftSection={
-								!verifyOTPMutation.isPending && <IconShieldCheck size={16} />
-							}
-							disabled={verifyOTPMutation.isPending}
+							type='submit'
+							loading={isLoading}
+							leftSection={!isLoading && <IconShieldCheck size={16} />}
+							disabled={isLoading}
 						>
-							Verify
+							{t('actions.verify')}
 						</Button>
 					</Group>
 				</Stack>

@@ -1,6 +1,5 @@
 import {
 	Modal,
-	Button,
 	Stack,
 	Text,
 	Group,
@@ -12,14 +11,11 @@ import {
 	Box,
 	ScrollArea,
 	SimpleGrid,
-	PinInput,
 } from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import {
 	IconAlertCircle,
 	IconBuilding,
-	IconShieldCheck,
 	IconCheck,
 	IconSearch,
 } from '@tabler/icons-react';
@@ -28,6 +24,7 @@ import { ClientSelectOption } from '~/api/authApi';
 import { useSelectClient } from '~/queries/authQueries';
 import { getErrorMessage } from '~/utils/httpClient';
 import EmptyState from '~/components/EmptyState';
+import OTPVerificationModal from '../OTPVerificationModal';
 import classes from './ClientSelectionModal.module.css';
 
 interface ClientSelectionModalProps {
@@ -36,12 +33,6 @@ interface ClientSelectionModalProps {
 	availableClients: ClientSelectOption[];
 	preAuthToken: string;
 	onSuccess?: () => void;
-}
-
-type ModalStep = 'select-client' | 'enter-otp';
-
-interface FormValues {
-	otp: string;
 }
 
 export default function ClientSelectionModal({
@@ -54,9 +45,9 @@ export default function ClientSelectionModal({
 	const { t } = useTranslation('auth');
 	const selectClientMutation = useSelectClient();
 	const [formError, setFormError] = useState<string | null>(null);
-	const [step, setStep] = useState<ModalStep>('select-client');
 	const [selectedClient, setSelectedClient] =
 		useState<ClientSelectOption | null>(null);
+	const [otpModalOpened, setOtpModalOpened] = useState(false);
 	const [search, setSearch] = useState('');
 
 	const filteredClients = useMemo(() => {
@@ -69,25 +60,10 @@ export default function ClientSelectionModal({
 		);
 	}, [availableClients, search]);
 
-	const form = useForm<FormValues>({
-		initialValues: {
-			otp: '',
-		},
-		validate: {
-			otp: (value) => {
-				if (!value.trim()) return t('otp.required');
-				if (value.length !== 6) return t('otp.mustBeSixDigits');
-				if (!/^\d+$/.test(value)) return t('otp.mustBeNumeric');
-				return null;
-			},
-		},
-	});
-
 	const handleClose = () => {
-		form.reset();
 		setFormError(null);
-		setStep('select-client');
 		setSelectedClient(null);
+		setOtpModalOpened(false);
 		onClose();
 	};
 
@@ -102,8 +78,8 @@ export default function ClientSelectionModal({
 			});
 
 			if (response.otpRequired) {
-				// MFA is enabled, need to show OTP input
-				setStep('enter-otp');
+				// Show OTP modal
+				setOtpModalOpened(true);
 			} else if (response.accessToken) {
 				// Login successful
 				handleClose();
@@ -115,68 +91,61 @@ export default function ClientSelectionModal({
 		}
 	};
 
-	const handleOTPSubmit = async (values: FormValues) => {
+	const handleOtpVerify = async (otp: string) => {
 		if (!selectedClient) return;
 
-		setFormError(null);
 		try {
 			const response = await selectClientMutation.mutateAsync({
 				preAuthToken,
 				clientId: selectedClient.clientId,
-				otp: values.otp,
+				otp,
 			});
 
 			if (response.accessToken) {
+				// Close both modals
+				setOtpModalOpened(false);
 				handleClose();
 				onSuccess?.();
 			}
-		} catch (err) {
-			setFormError(getErrorMessage(err));
+		} catch (err: any) {
+			// Throwing the error so OTPVerificationModal can catch it and display the error
+			throw err;
 		}
 	};
 
-	const handleBackToClientSelection = () => {
-		form.reset();
-		setFormError(null);
-		setStep('select-client');
+	const handleOtpModalClose = () => {
+		setOtpModalOpened(false);
+		// Do not clear selected client immediately so user can try selecting again if they want,
+		// but typically cancelling OTP means they might want to select another client or just cancelled the action.
+		// If we want to reset selection on cancel:
 		setSelectedClient(null);
+		setFormError(null);
 	};
 
 	const isLoading = selectClientMutation.isPending;
 
 	return (
-		<Modal
-			opened={opened}
-			onClose={handleClose}
-			title={
-				<Group gap='xs'>
-					{step === 'select-client' ? (
-						<>
-							<IconBuilding size={16} />
-							<Text fw={600} size='sm'>
-								{t('clientSelection.title')}
-							</Text>
-						</>
-					) : (
-						<>
-							<IconShieldCheck size={16} />
-							<Text fw={600} size='sm'>
-								{t('otp.title')}
-							</Text>
-						</>
-					)}
-				</Group>
-			}
-			centered
-			size='lg'
-			radius='sm'
-			padding='md'
-			overlayProps={{ backgroundOpacity: 0.55, blur: 3 }}
-			withCloseButton={!isLoading}
-			closeOnClickOutside={!isLoading}
-			closeOnEscape={!isLoading}
-		>
-			{step === 'select-client' ? (
+		<>
+			<Modal
+				opened={opened}
+				onClose={handleClose}
+				title={
+					<Group gap='xs'>
+						<IconBuilding size={16} />
+						<Text fw={600} size='sm'>
+							{t('clientSelection.title')}
+						</Text>
+					</Group>
+				}
+				centered
+				size='lg'
+				radius='sm'
+				padding='md'
+				overlayProps={{ backgroundOpacity: 0.55, blur: 3 }}
+				withCloseButton={!isLoading}
+				closeOnClickOutside={!isLoading}
+				closeOnEscape={!isLoading}
+			>
 				<Stack gap='xs'>
 					<Text size='sm' c='dimmed'>
 						{t('clientSelection.description')}
@@ -288,86 +257,14 @@ export default function ClientSelectionModal({
 						</Alert>
 					)}
 				</Stack>
-			) : (
-				<form onSubmit={form.onSubmit(handleOTPSubmit)}>
-					<Stack gap='xs' style={{ minHeight: 450 }}>
-						<Text size='sm' c='dimmed'>
-							<Trans
-								i18nKey='clientSelection.otpDescription'
-								ns='auth'
-								values={{ clientName: selectedClient?.clientName }}
-								components={{
-									bold: <Text span fw={500} size='sm' />,
-								}}
-							/>
-						</Text>
+			</Modal>
 
-						<Stack align='center' gap='md' py='md'>
-							<PinInput
-								length={6}
-								type='number'
-								oneTimeCode
-								autoFocus
-								disabled={isLoading}
-								{...form.getInputProps('otp')}
-								size='md'
-								aria-label={t('otp.label')}
-								onComplete={(value) => {
-									form.setFieldValue('otp', value);
-									form.onSubmit(handleOTPSubmit)();
-								}}
-							/>
-							{form.errors.otp && (
-								<Text size='xs' c='red'>
-									{form.errors.otp}
-								</Text>
-							)}
-						</Stack>
-
-						{formError && (
-							<Alert
-								variant='light'
-								color='red'
-								title={t('otp.verificationFailed')}
-								icon={<IconAlertCircle size={16} />}
-								radius='sm'
-							>
-								{formError}
-							</Alert>
-						)}
-
-						<Group justify='space-between' mt='auto' pt='md'>
-							<Button
-								variant='subtle'
-								onClick={handleBackToClientSelection}
-								disabled={isLoading}
-								size='sm'
-							>
-								{t('actions.back')}
-							</Button>
-							<Group gap='xs'>
-								<Button
-									variant='subtle'
-									onClick={handleClose}
-									disabled={isLoading}
-									size='sm'
-								>
-									{t('actions.cancel')}
-								</Button>
-								<Button
-									type='submit'
-									loading={isLoading}
-									leftSection={!isLoading && <IconShieldCheck size={14} />}
-									disabled={isLoading}
-									size='sm'
-								>
-									{t('actions.verify')}
-								</Button>
-							</Group>
-						</Group>
-					</Stack>
-				</form>
-			)}
-		</Modal>
+			<OTPVerificationModal
+				opened={otpModalOpened}
+				onClose={handleOtpModalClose}
+				onSubmit={handleOtpVerify}
+				isLoading={isLoading}
+			/>
+		</>
 	);
 }
