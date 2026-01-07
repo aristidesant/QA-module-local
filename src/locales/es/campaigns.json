@@ -95,6 +95,15 @@
 		"failed": "Fallida",
 		"executed": "Ejecutada"
 	},
+	"deleteModal": {
+		"title": "Eliminar Campaña",
+		"message": "¿Estás seguro de que deseas eliminar esta campaña? Esta acción no se puede deshacer.",
+		"confirm": "Eliminar",
+		"success": "Campaña Eliminada",
+		"successMessage": "La campaña se ha eliminado correctamente.",
+		"error": "Error",
+		"errorMessage": "No se pudo eliminar la campaña"
+	},
 	"cloneCampaignForm": {
 		"title": "Clonar campaña",
 		"adjustDetails": "Ajusta los detalles antes de clonar.",
