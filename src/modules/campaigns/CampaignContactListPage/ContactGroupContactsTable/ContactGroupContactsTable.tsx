@@ -190,8 +190,8 @@ export const ContactGroupContactsTable: React.FC<
 	const handleDeleteContact = useCallback(
 		(contact: Contact) => {
 			modals.openConfirmModal({
-				title: t('contactsTable.deleteModal.title'),
-				children: t('contactsTable.deleteModal.message', {
+				title: t('contactsTable.deleteConfirm.title'),
+				children: t('contactsTable.deleteConfirm.message', {
 					name: `${contact.firstName} ${contact.lastName}`,
 				}),
 				labels: {
