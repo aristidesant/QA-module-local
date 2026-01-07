@@ -31,7 +31,7 @@ const AgentSection: React.FC = () => {
 
 			<Flex>
 				<Button leftSection={<IconDeviceFloppy size={16} />} type='submit'>
-					{t('actions.save')}
+					{t('actions.save', { ns: 'common' })}
 				</Button>
 			</Flex>
 		</Stack>
