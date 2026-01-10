@@ -89,8 +89,7 @@ src/
 ### File Naming
 
 - Use **PascalCase** for component files: `UserCard.tsx`, `CampaignList.tsx`
-- For each .tsx or .ts component, create a test.
-- File should be name as the component file .test.tsx or .test.ts
+- **Do not create unit tests unless the user explicitly asks for them.**
 
 ### Folder Structure
 
@@ -100,7 +99,7 @@ Each component gets its own folder:
 components/
 └── UserCard/
     ├── UserCard.tsx        # Main component code
-    ├── UserCard.test.tsx   # Styles for this component
+    ├── UserCard.test.tsx   # Only when explicitly requested
     ├── UserCard.module.css # Styles for this component
     └── index.ts            # Export file
 ```
@@ -253,6 +252,8 @@ const CampaignsPage = () => {
 ---
 
 ## Testing
+
+**Do not write unit tests unless the user explicitly asks for them.** If asked, follow the rules below.
 
 ### Tools
 
