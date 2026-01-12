@@ -61,13 +61,26 @@ export const useConversationsColumns = (userTimezone: string) => {
 
 		const formatDuration = (
 			startDate?: string | null,
-			endDate?: string | null
+			endDate?: string | null,
+			status?: string | null
 		) => {
 			if (!startDate) return '—';
 
 			const start = dayjs.utc(startDate);
 			if (!start.isValid()) return '—';
 
+			// If no endDate and status is terminal (failed, error, cancelled), show N/A
+			const normalizedStatus = (status ?? '').toLowerCase();
+			const isTerminalStatus =
+				normalizedStatus.includes('failed') ||
+				normalizedStatus.includes('error') ||
+				normalizedStatus.includes('cancel');
+
+			if (!endDate && isTerminalStatus) {
+				return '—';
+			}
+
+			// Only use current time for in-progress conversations
 			const end = endDate ? dayjs.utc(endDate) : dayjs();
 			const diffSeconds = end.diff(start, 'second');
 
@@ -177,7 +190,8 @@ export const useConversationsColumns = (userTimezone: string) => {
 				cell: ({ row }) => {
 					const duration = formatDuration(
 						row.original.startDate,
-						row.original.endDate
+						row.original.endDate,
+						row.original.status
 					);
 					const endDate = row.original.endDate;
 
