@@ -67,6 +67,7 @@ export const useGetConversations = (params?: ConversationsQueryParams) => {
 		queryKey: [
 			'conversations',
 			campaignId ?? 'all',
+			contactGroupId ?? 'all',
 			{
 				limit,
 				offset,
