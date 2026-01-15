@@ -1,0 +1,79 @@
+{
+	"list": {
+		"title": "Phone Numbers",
+		"searchPlaceholder": "Search by label...",
+		"filterType": "Filter by Type",
+		"addPhoneNumber": "Add Phone Number",
+		"deleteModal": {
+			"title": "Delete Phone Number",
+			"message": "Are you sure you want to delete phone number <b>{{phoneNumber}}</b>?",
+			"cancel": "Cancel",
+			"confirm": "Delete"
+		},
+		"notifications": {
+			"deleteSuccess": "Phone number deleted successfully",
+			"deleteError": "Failed to delete phone number"
+		}
+	},
+	"form": {
+		"createTitle": "Create Phone Number",
+		"editTitle": "Edit Phone Number",
+		"provider": {
+			"twilio": "Twilio",
+			"sipTrunk": "SIP Trunk"
+		},
+		"fields": {
+			"phoneNumber": {
+				"label": "Phone Number",
+				"placeholder": "+1234567890",
+				"required": "Phone number is required",
+				"invalid": "Invalid format (e.g. +1809...)"
+			},
+			"label": {
+				"label": "Label",
+				"placeholder": "My Phone Number",
+				"required": "Label is required"
+			},
+			"sid": {
+				"label": "Account SID",
+				"required": "SID is required"
+			},
+			"token": {
+				"label": "Auth Token",
+				"required": "Token is required"
+			},
+			"type": "Type",
+			"terminationUri": {
+				"label": "Termination URI",
+				"required": "Termination URI is required"
+			},
+			"address": {
+				"label": "Address",
+				"required": "Address is required"
+			},
+			"transport": "Transport",
+			"mediaEncryption": "Media Encryption",
+			"inboundMediaEncryption": "Inbound Media Encryption",
+			"username": "Username",
+			"password": "Password"
+		},
+		"buttons": {
+			"cancel": "Cancel",
+			"create": "Create",
+			"update": "Update"
+		},
+		"notifications": {
+			"createSuccess": "Phone number created successfully",
+			"updateSuccess": "Phone number updated successfully",
+			"clientIdMissing": "Client ID missing"
+		}
+	},
+	"columns": {
+		"phoneNumber": "Phone Number",
+		"label": "Label",
+		"type": "Type",
+		"provider": "Provider",
+		"status": "Status",
+		"actions": "Actions"
+	}
+}

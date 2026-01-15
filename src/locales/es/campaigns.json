@@ -777,6 +777,18 @@
 				"firstMessagePlaceholder": "Escribe el primer mensaje",
 				"firstMessageDescription": "Este es el primer mensaje que enviara el agente."
 			},
+			"phoneNumber": {
+				"title": "Número de Teléfono",
+				"description": "Asigna un número de teléfono a este agente.",
+				"inbound": "Entrante",
+				"outbound": "Saliente",
+				"selectLabel": "Número de Teléfono",
+				"selectPlaceholder": "Selecciona un número de teléfono",
+				"assign": "Asignar",
+				"update": "Actualizar",
+				"assignSuccess": "Número de teléfono asignado con éxito",
+				"assignError": "Error al asignar el número de teléfono"
+			},
 			"tools": {
 				"title": "Herramientas del agente",
 				"description": "Selecciona las herramientas que puede usar el agente.",

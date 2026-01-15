@@ -1,1 +1,11 @@
-{}
+{
+	"title": "Configuraciones",
+	"description": "Gestionar configuraciones globales, de campaña, regionales y de no llamar",
+	"tabs": {
+		"global": "Global",
+		"campaign": "Campaña",
+		"regional": "Regional",
+		"scheduler": "Programador",
+		"phoneNumbers": "Números de Teléfono"
+	}
+}

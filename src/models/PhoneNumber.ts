@@ -11,4 +11,22 @@ export interface PhoneNumber {
 	createdAt: string;
 	updatedAt: string;
 	deletedAt: string | null;
+	// Twilio specific
+	sid?: string;
+	token?: string;
+	// SIP Trunk specific
+	terminationUri?: string;
+	address?: string;
+	transport?: 'auto' | 'udp' | 'tcp' | 'tls' | 'sctp';
+	mediaEncryption?: 'disabled' | 'sdes' | 'dtls' | 'allowed' | 'required';
+	inboundMediaEncryption?:
+		| 'disabled'
+		| 'sdes'
+		| 'dtls'
+		| 'allowed'
+		| 'required';
+	credentials?: {
+		username?: string;
+		password?: string;
+	};
 }

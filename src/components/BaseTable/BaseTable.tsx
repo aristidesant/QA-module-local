@@ -265,8 +265,7 @@ function BaseTable<TData>({
 
 	const hasData = data && data.length > 0;
 	const displayMessage = emptyMessage || t('status.noData');
-	const shouldShowPagination =
-		enablePagination && showPaginationControls && table.getPageCount() > 1;
+	const shouldShowPagination = enablePagination && showPaginationControls;
 
 	return (
 		<div className={`${styles.root} ${className ?? ''}`}>

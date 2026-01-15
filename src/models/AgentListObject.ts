@@ -14,6 +14,8 @@ export default interface AgentListObject {
 	deletedAt: string | null;
 	voiceId: string | null;
 	voice: Voice | null;
+	outboundPhoneNumberId: number | null;
+	inboundPhoneNumberId: number | null;
 }
 
 export type AgentUpdateModel = {
