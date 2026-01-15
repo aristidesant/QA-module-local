@@ -71,6 +71,9 @@ const SchedulerPredefinedParamsPage = React.lazy(
 	() =>
 		import('./modules/configurations/SchedulerPredefinedParamsPage/SchedulerPredefinedParamsPage')
 );
+const PhoneNumbersPage = React.lazy(
+	() => import('./modules/configurations/PhoneNumbers/PhoneNumbersPage')
+);
 const ConfigurationsPage = React.lazy(
 	() => import('./modules/configurations/ConfigurationsPage')
 );
@@ -381,6 +384,21 @@ const router = createBrowserRouter([
 									>
 										<RegionalSettingsParamsPage />
 									</Suspense>
+								),
+							},
+							{
+								path: 'phone-numbers',
+								id: 'phone-numbers',
+								element: (
+									<I18nNamespaceLoader>
+										<Suspense
+											fallback={
+												<SuspenseFallback message='Loading phone numbers...' />
+											}
+										>
+											<PhoneNumbersPage />
+										</Suspense>
+									</I18nNamespaceLoader>
 								),
 							},
 						],

@@ -1,1 +1,11 @@
-{}
+{
+	"title": "Configurations",
+	"description": "Manage global, campaign, regional, and do not call settings",
+	"tabs": {
+		"global": "Global",
+		"campaign": "Campaign",
+		"regional": "Regional",
+		"scheduler": "Scheduler",
+		"phoneNumbers": "Phone Numbers"
+	}
+}

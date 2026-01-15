@@ -1,4 +1,9 @@
-import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
+import {
+	useQuery,
+	useMutation,
+	useQueryClient,
+	type UseQueryOptions,
+} from '@tanstack/react-query';
 import {
 	getPhoneNumbers,
 	getSimplePhoneNumberList,
@@ -6,6 +11,13 @@ import {
 	type PhoneNumberListResponse,
 	type SimplePhoneNumberListParams,
 	type SimplePhoneNumber,
+	deletePhoneNumber,
+	createTwilioPhoneNumber,
+	createSipTrunkPhoneNumber,
+	updateTwilioPhoneNumber,
+	updateSipTrunkPhoneNumber,
+	type TwilioPhoneNumberParams,
+	type SipTrunkPhoneNumberParams,
 } from '~/api/phoneNumberApi';
 
 export const phoneNumberKeys = {
@@ -49,5 +61,89 @@ export const useSimplePhoneNumberList = (
 		queryKey: phoneNumberKeys.simpleList(params),
 		queryFn: () => getSimplePhoneNumberList(params),
 		...options,
+	});
+};
+
+/**
+ * Hook to delete a phone number
+ */
+export const useDeletePhoneNumber = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: (id: number) => deletePhoneNumber(id),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: phoneNumberKeys.all });
+		},
+	});
+};
+
+/**
+ * Hook to create a Twilio phone number
+ */
+export const useCreateTwilioPhoneNumber = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: (params: TwilioPhoneNumberParams) =>
+			createTwilioPhoneNumber(params),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: phoneNumberKeys.all });
+		},
+	});
+};
+
+/**
+ * Hook to create a SIP trunk phone number
+ */
+export const useCreateSipTrunkPhoneNumber = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: (params: SipTrunkPhoneNumberParams) =>
+			createSipTrunkPhoneNumber(params),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: phoneNumberKeys.all });
+		},
+	});
+};
+
+/**
+ * Hook to update a Twilio phone number
+ */
+export const useUpdateTwilioPhoneNumber = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: ({
+			id,
+			params,
+		}: {
+			id: number;
+			params: TwilioPhoneNumberParams;
+		}) => updateTwilioPhoneNumber(id, params),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: phoneNumberKeys.all });
+		},
+	});
+};
+
+/**
+ * Hook to update a SIP trunk phone number
+ */
+export const useUpdateSipTrunkPhoneNumber = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: ({
+			id,
+			params,
+		}: {
+			id: number;
+			params: SipTrunkPhoneNumberParams;
+		}) => updateSipTrunkPhoneNumber(id, params),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: phoneNumberKeys.all });
+		},
 	});
 };

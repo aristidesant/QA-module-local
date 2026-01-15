@@ -1,0 +1,79 @@
+{
+	"list": {
+		"title": "Números de Teléfono",
+		"searchPlaceholder": "Buscar por etiqueta...",
+		"filterType": "Filtrar por Tipo",
+		"addPhoneNumber": "Agregar Número",
+		"deleteModal": {
+			"title": "Eliminar Número de Teléfono",
+			"message": "¿Estás seguro de que deseas eliminar el número <b>{{phoneNumber}}</b>?",
+			"cancel": "Cancelar",
+			"confirm": "Eliminar"
+		},
+		"notifications": {
+			"deleteSuccess": "Número de teléfono eliminado exitosamente",
+			"deleteError": "Error al eliminar el número de teléfono"
+		}
+	},
+	"form": {
+		"createTitle": "Crear Número de Teléfono",
+		"editTitle": "Editar Número de Teléfono",
+		"provider": {
+			"twilio": "Twilio",
+			"sipTrunk": "Troncal SIP"
+		},
+		"fields": {
+			"phoneNumber": {
+				"label": "Número de Teléfono",
+				"placeholder": "+1234567890",
+				"required": "El número es obligatorio",
+				"invalid": "Formato inválido (e.j. +1809...)"
+			},
+			"label": {
+				"label": "Etiqueta",
+				"placeholder": "Mi Número de Teléfono",
+				"required": "La etiqueta es obligatoria"
+			},
+			"sid": {
+				"label": "SID de Cuenta",
+				"required": "El SID es obligatorio"
+			},
+			"token": {
+				"label": "Token de Autenticación",
+				"required": "El token es obligatorio"
+			},
+			"type": "Tipo",
+			"terminationUri": {
+				"label": "URI de Terminación",
+				"required": "La URI de terminación es obligatoria"
+			},
+			"address": {
+				"label": "Dirección",
+				"required": "La dirección es obligatoria"
+			},
+			"transport": "Transporte",
+			"mediaEncryption": "Encriptación de Medios",
+			"inboundMediaEncryption": "Encriptación de Medios Entrante",
+			"username": "Nombre de Usuario",
+			"password": "Contraseña"
+		},
+		"buttons": {
+			"cancel": "Cancelar",
+			"create": "Crear",
+			"update": "Actualizar"
+		},
+		"notifications": {
+			"createSuccess": "Número de teléfono creado exitosamente",
+			"updateSuccess": "Número de teléfono actualizado exitosamente",
+			"clientIdMissing": "Falta el ID del cliente"
+		}
+	},
+	"columns": {
+		"phoneNumber": "Número de Teléfono",
+		"label": "Etiqueta",
+		"type": "Tipo",
+		"provider": "Proveedor",
+		"status": "Estado",
+		"actions": "Acciones"
+	}
+}

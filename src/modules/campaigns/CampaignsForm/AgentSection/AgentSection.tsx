@@ -9,6 +9,7 @@ import CampaignConfigurationTools from './CampaignConfigurationTools';
 import CampaignConfigurationKnowledgeBase from './CampaignConfigurationKnowledgeBase';
 import CampaignConfigurationPredefinedParams from './CampaignConfigurationPredefinedParams';
 import CampaignConfigurationSystemTools from './CampaignConfigurationSystemTools';
+import CampaignConfigurationPhoneNumber from './CampaignConfigurationPhoneNumber/CampaignConfigurationPhoneNumber';
 import { useTranslation } from 'react-i18next';
 
 const AgentSection: React.FC = () => {
@@ -22,6 +23,7 @@ const AgentSection: React.FC = () => {
 	return (
 		<Stack>
 			<CampaignConfigurationBasic />
+			<CampaignConfigurationPhoneNumber />
 			<CampaignConfigurationPrompt />
 			<CampaignConfigurationTools />
 			<CampaignConfigurationSystemTools />

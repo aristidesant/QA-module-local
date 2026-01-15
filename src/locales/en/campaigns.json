@@ -777,6 +777,18 @@
 				"firstMessagePlaceholder": "Write the first message",
 				"firstMessageDescription": "This is the first message the agent will send."
 			},
+			"phoneNumber": {
+				"title": "Phone Number",
+				"description": "Assign a phone number to this agent.",
+				"inbound": "Inbound",
+				"outbound": "Outbound",
+				"selectLabel": "Phone Number",
+				"selectPlaceholder": "Select a phone number",
+				"assign": "Assign",
+				"update": "Update",
+				"assignSuccess": "Phone number assigned successfully",
+				"assignError": "Failed to assign phone number"
+			},
 			"tools": {
 				"title": "Agent tools",
 				"description": "Select which tools the agent can use.",

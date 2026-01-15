@@ -5,15 +5,18 @@ import {
 	IconList,
 	IconGlobe,
 	IconClockHour4,
+	IconPhone,
 } from '@tabler/icons-react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { usePermissions } from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import styles from './ConfigurationsPage.module.css';
 export default function ConfigurationsPage() {
+	const { t } = useTranslation('configurations');
 	const location = useLocation();
 	const navigate = useNavigate();
 	const isMasterClient = useIsMasterClient();
@@ -32,6 +35,7 @@ export default function ConfigurationsPage() {
 			return 'campaign-predefined-params';
 		if (location.pathname.includes('regional-settings-params'))
 			return 'regional-settings-params';
+		if (location.pathname.includes('phone-numbers')) return 'phone-numbers';
 		return isMasterClient ? 'client-configs' : 'campaign-predefined-params';
 	};
 
@@ -49,8 +53,8 @@ export default function ConfigurationsPage() {
 
 	return (
 		<ContentContainer
-			title='Configurations'
-			description='Manage global, campaign, regional, and do not call settings'
+			title={t('title')}
+			description={t('description')}
 			titleIcon={<IconSettings size={24} />}
 		>
 			<Tabs
@@ -66,7 +70,7 @@ export default function ConfigurationsPage() {
 							leftSection={<IconSettings size={16} />}
 							onClick={() => navigate('/configurations/client-configs')}
 						>
-							Global
+							{t('tabs.global')}
 						</Tabs.Tab>
 					)}
 					<Tabs.Tab
@@ -76,14 +80,14 @@ export default function ConfigurationsPage() {
 							navigate('/configurations/campaign-predefined-params')
 						}
 					>
-						Campaign
+						{t('tabs.campaign')}
 					</Tabs.Tab>
 					<Tabs.Tab
 						value='regional-settings-params'
 						leftSection={<IconGlobe size={16} />}
 						onClick={() => navigate('/configurations/regional-settings-params')}
 					>
-						Regional
+						{t('tabs.regional')}
 					</Tabs.Tab>
 					{canManageSettings && (
 						<Tabs.Tab
@@ -93,9 +97,16 @@ export default function ConfigurationsPage() {
 								navigate('/configurations/scheduler-predefined-params')
 							}
 						>
-							Scheduler
+							{t('tabs.scheduler')}
 						</Tabs.Tab>
 					)}
+					<Tabs.Tab
+						value='phone-numbers'
+						leftSection={<IconPhone size={16} />}
+						onClick={() => navigate('/configurations/phone-numbers')}
+					>
+						{t('tabs.phoneNumbers')}
+					</Tabs.Tab>
 				</Tabs.List>
 
 				<Tabs.Panel value={getActiveTab()} py='xs'>
