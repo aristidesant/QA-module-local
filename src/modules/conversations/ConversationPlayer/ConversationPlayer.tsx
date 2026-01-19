@@ -217,20 +217,24 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 		}
 	};
 
-	// Reset and (re)load audio when source changes
+	// Reset and (re)load audio when source or conversation changes
 	useEffect(() => {
 		setIsPlaying(false);
 		setCurrentTime(0);
 		setDuration(0);
 		setHasLoadError(false);
-		if (audioRef.current && audioSrc) {
-			// Ensure the new source is applied and loaded
-			audioRef.current.src = audioSrc;
-			audioRef.current.load();
-			audioRef.current.volume = volume;
-			audioRef.current.playbackRate = playbackRate;
+		if (audioRef.current) {
+			if (audioSrc) {
+				// Ensure the new source is applied and loaded
+				audioRef.current.src = audioSrc;
+				audioRef.current.load();
+				audioRef.current.volume = volume;
+				audioRef.current.playbackRate = playbackRate;
+			} else {
+				audioRef.current.src = '';
+			}
 		}
-	}, [audioSrc, volume, playbackRate, reloadToken]);
+	}, [audioSrc, conversationId, volume, playbackRate, reloadToken]);
 
 	// Keyboard controls
 	useEffect(() => {
