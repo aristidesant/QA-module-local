@@ -58,7 +58,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 
 	// Server-side sorting state (single-column sort)
 	const [sorting, setSorting] = useState<SortingState>([
-		{ id: 'startDate', desc: true },
+		{ id: 'createdAt', desc: true },
 	]);
 
 	const sortBy = sorting?.[0]?.id;
