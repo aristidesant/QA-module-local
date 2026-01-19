@@ -217,7 +217,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			});
 		} catch (error) {
 			notifications.show({
-				title: t('common.error'),
+				title: t('errors.unknown', { ns: 'common' }),
 				message: campaign?.id
 					? t('form.notifications.errorUpdate')
 					: t('form.notifications.errorCreate'),
