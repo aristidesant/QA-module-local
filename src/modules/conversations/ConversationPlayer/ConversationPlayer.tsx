@@ -17,10 +17,14 @@ import {
 	IconPlayerSkipForward,
 	IconVolume,
 	IconHeadphones,
+	IconRefresh,
 } from '@tabler/icons-react';
 import type { VoiceFileModel } from '~/models/ConversationsModels';
 import fileApi from '~/api/fileApi';
-import { useExportConversationAudio } from '~/queries/conversationsQueries';
+import {
+	useExportConversationAudio,
+	useReuploadConversationAudio,
+} from '~/queries/conversationsQueries';
 import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
@@ -53,6 +57,8 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 	const [duration, setDuration] = useState(0);
 	const [volume, setVolume] = useState(1);
 	const [playbackRate, setPlaybackRate] = useState(1);
+	const [hasLoadError, setHasLoadError] = useState(false);
+	const [reloadToken, setReloadToken] = useState(0);
 	const audioRef = useRef<HTMLAudioElement>(null);
 	const conversationId =
 		useConversationStore((state) => state.selectedId) || paramConversationId;
@@ -68,6 +74,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 
 	// Export audio mutation
 	const exportAudioMutation = useExportConversationAudio();
+	const reuploadAudioMutation = useReuploadConversationAudio();
 
 	// Determine the file id to use (prefer explicit prop, fallback to voiceFile.id)
 	const fileId = voiceFileId ?? voiceFile?.id ?? null;
@@ -77,6 +84,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 		data: presignedUrl,
 		isLoading: isPresignedLoading,
 		isError: isPresignedError,
+		refetch: refetchPresignedUrl,
 	} = useQuery({
 		queryKey: ['file-presigned-url', fileId],
 		queryFn: () => fileApi().getPresignedFileUrl(fileId as number | string),
@@ -86,6 +94,9 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 
 	// Decide which source to use: presigned URL if available, else repositoryRoute
 	const audioSrc = presignedUrl ?? voiceFile?.repositoryRoute ?? '';
+	const shouldShowRetry =
+		Boolean(conversationId) &&
+		(hasLoadError || (!audioSrc && !isPresignedLoading && !isPresignedError));
 
 	// Handle play/pause toggle
 	const togglePlayPause = () => {
@@ -140,6 +151,12 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 			audioRef.current.volume = volume;
 			audioRef.current.playbackRate = playbackRate;
 		}
+		setHasLoadError(false);
+	};
+
+	const handleAudioError = () => {
+		setHasLoadError(true);
+		setIsPlaying(false);
 	};
 
 	// Handle forward/rewind
@@ -187,11 +204,25 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 		}
 	};
 
+	const handleReuploadAudio = async () => {
+		if (!conversationId) return;
+
+		try {
+			await reuploadAudioMutation.mutateAsync(conversationId);
+			setHasLoadError(false);
+			await refetchPresignedUrl();
+			setReloadToken((previous) => previous + 1);
+		} catch (error) {
+			console.error('Error reuploading audio:', error);
+		}
+	};
+
 	// Reset and (re)load audio when source changes
 	useEffect(() => {
 		setIsPlaying(false);
 		setCurrentTime(0);
 		setDuration(0);
+		setHasLoadError(false);
 		if (audioRef.current && audioSrc) {
 			// Ensure the new source is applied and loaded
 			audioRef.current.src = audioSrc;
@@ -199,7 +230,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 			audioRef.current.volume = volume;
 			audioRef.current.playbackRate = playbackRate;
 		}
-	}, [audioSrc, volume, playbackRate]);
+	}, [audioSrc, volume, playbackRate, reloadToken]);
 
 	// Keyboard controls
 	useEffect(() => {
@@ -240,9 +271,22 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 				<RightSection title={displayTitle} description={displayDescription}>
 					<Box className={classes.emptyState}>
 						<IconVolume size={32} className={classes.emptyIcon} />
-						<Text c='dimmed' ta='center' size='sm' mt='xs'>
+						<Text c='dimmed' ta='center' size='sm' mt='xs' mb='md'>
 							{t('player.notAvailable')}
 						</Text>
+						{shouldShowRetry && (
+							<Button
+								size='xs'
+								variant='light'
+								leftSection={<IconRefresh size={14} />}
+								onClick={handleReuploadAudio}
+								loading={reuploadAudioMutation.isPending}
+								disabled={reuploadAudioMutation.isPending}
+								aria-label={t('player.retryLabel')}
+							>
+								{t('player.retryLabel')}
+							</Button>
+						)}
 					</Box>
 				</RightSection>
 			</Box>
@@ -260,15 +304,33 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 				src={audioSrc}
 				onTimeUpdate={handleTimeUpdate}
 				onLoadedMetadata={handleLoadedMetadata}
+				onError={handleAudioError}
 				onEnded={() => setIsPlaying(false)}
 				hidden
 			/>
-
 			<Stack gap='xs'>
 				{Boolean(fileId) && (isPresignedLoading || isPresignedError) && (
 					<Text size='xs' c='dimmed' ta='center' fw={500}>
 						{isPresignedLoading ? t('player.loading') : t('player.error')}
 					</Text>
+				)}
+				{shouldShowRetry && (
+					<Stack gap='xs' align='center'>
+						<Text size='xs' c='dimmed' ta='center' fw={500}>
+							{t('player.retryHint')}
+						</Text>
+						<Button
+							size='xs'
+							variant='light'
+							leftSection={<IconRefresh size={14} />}
+							onClick={handleReuploadAudio}
+							loading={reuploadAudioMutation.isPending}
+							disabled={reuploadAudioMutation.isPending}
+							aria-label={t('player.retryLabel')}
+						>
+							{t('player.retryLabel')}
+						</Button>
+					</Stack>
 				)}
 				{/* Progress Bar */}
 				<Box className={classes.progressSection}>
@@ -289,7 +351,6 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 						<Text className={classes.timeText}>{formatTime(duration)}</Text>
 					</Group>
 				</Box>
-
 				{/* Controls */}
 				<Group justify='center' gap='lg' className={classes.playbackControls}>
 					<ActionIcon
@@ -332,7 +393,6 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 						<IconPlayerSkipForward size={20} />
 					</ActionIcon>
 				</Group>
-
 				{/* Volume and Speed Controls */}
 				<Group gap='md' align='center'>
 					<Group

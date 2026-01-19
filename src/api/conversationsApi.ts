@@ -179,6 +179,14 @@ const conversationsApi = (_authHeader: Record<string, string> = {}) => {
 			return { blob: response.data, filename };
 		},
 
+		// Reupload a conversation audio file
+		reuploadConversationAudio: async (id: string | number) => {
+			const response = await axios.post<void>(
+				`${DEFAULT_API_URL}/conversations/${id}/reupload-audio`
+			);
+			return response.data;
+		},
+
 		// Export a single conversation as PDF
 		exportConversationPdf: async (id: string | number) => {
 			const response = await axios.get<Blob>(

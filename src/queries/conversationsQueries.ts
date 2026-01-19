@@ -213,6 +213,22 @@ export const useExportConversationAudio = () => {
 	});
 };
 
+// Reupload conversation audio
+export const useReuploadConversationAudio = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<void, unknown, string | number>({
+		mutationFn: async (id) => {
+			const api = getApi();
+			return api.reuploadConversationAudio(id);
+		},
+		onSuccess: (_, id) => {
+			queryClient.invalidateQueries({ queryKey: ['conversation', String(id)] });
+			queryClient.invalidateQueries({ queryKey: ['conversations'] });
+		},
+	});
+};
+
 // Export conversation as PDF (mutation for download actions)
 export const useExportConversationPdf = () => {
 	return useMutation<
