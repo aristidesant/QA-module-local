@@ -179,7 +179,9 @@
 		"forwardShort": "Adelantar 10s",
 		"play": "Reproducir",
 		"pause": "Pausar",
-		"download": "Descargar audio"
+		"download": "Descargar audio",
+		"retryLabel": "Reintentar audio",
+		"retryHint": "Grabación no disponible. Intenta recargar el audio."
 	},
 	"playbackSpeed": "{{rate}}×",
 	"disposition": {

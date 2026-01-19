@@ -179,7 +179,9 @@
 		"forwardShort": "Forward 10s",
 		"play": "Play",
 		"pause": "Pause",
-		"download": "Download Audio"
+		"download": "Download Audio",
+		"retryLabel": "Retry audio",
+		"retryHint": "Recording unavailable. Try reloading the audio."
 	},
 	"playbackSpeed": "{{rate}}×",
 	"disposition": {
