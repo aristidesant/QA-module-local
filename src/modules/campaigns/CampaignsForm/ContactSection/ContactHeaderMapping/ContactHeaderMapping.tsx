@@ -780,7 +780,7 @@ export function ContactHeaderMapping({
 						size='sm'
 						onClick={() => modals.close('match-columns-modal')}
 					>
-						{t('common.cancel')}
+						{t('actions.cancel', { ns: 'common' })}
 					</Button>
 					<Button
 						size='sm'
