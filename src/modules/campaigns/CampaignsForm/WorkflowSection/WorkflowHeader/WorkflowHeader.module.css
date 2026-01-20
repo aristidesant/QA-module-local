@@ -1,0 +1,10 @@
+.header {
+	width: 100%;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.controls {
+	flex-wrap: wrap;
+	justify-content: flex-end;
+}
