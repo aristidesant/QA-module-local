@@ -13,12 +13,22 @@ import {
 import { useCampaignFormContext } from '../../../campaignFormFunctions';
 import { useSimplePhoneNumberList } from '~/queries/phoneNumberQueries';
 import { useGetAgent } from '~/queries/agentQueries';
+import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
+import { useCampaignsStore } from '~/stores/campaignsStore';
 
 const CampaignConfigurationPhoneNumber: React.FC = () => {
 	const { t } = useTranslation(['campaigns', 'common']);
 	const form = useCampaignFormContext();
-	const agentId = form.values.agentConfig?.agentId;
+	const { selectedCampaign } = useCampaignsStore((state) => state);
 	const campaignType = form.values.type || 'OUTBOUND'; // Default to OUTBOUND if missing
+
+	// Fetch campaign agents to get the agentId
+	const { data: campaignAgents } = useGetCampaignAgents(
+		selectedCampaign?.id || 0
+	);
+
+	// Get the first agent's ID from campaign agents
+	const agentId = campaignAgents?.[0]?.agentId;
 
 	// Fetch phone numbers based on campaign type
 	const { data: phoneNumbers, isLoading: isLoadingNumbers } =
