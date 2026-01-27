@@ -159,11 +159,20 @@ export const useConversationsColumns = (userTimezone: string) => {
 				enableSorting: true,
 			},
 			{
-				accessorKey: 'startDate',
+				id: 'startDate',
 				header: t('list.columns.when'),
+				accessorFn: (row) => row.startDate || row.createdAt,
 				enableSorting: true,
-				cell: ({ getValue }) => {
-					const value = getValue<string>();
+				sortingFn: (rowA, rowB) => {
+					const rowADate = rowA.original.startDate || rowA.original.createdAt;
+					const rowBDate = rowB.original.startDate || rowB.original.createdAt;
+					if (!rowADate && !rowBDate) return 0;
+					if (!rowADate) return 1;
+					if (!rowBDate) return -1;
+					return dayjs.utc(rowADate).diff(dayjs.utc(rowBDate));
+				},
+				cell: ({ row }) => {
+					const value = row.original.startDate || row.original.createdAt;
 					if (!value) return <Text size='xs'>—</Text>;
 
 					const zoned = formatZonedDate(value);
@@ -188,12 +197,20 @@ export const useConversationsColumns = (userTimezone: string) => {
 				id: 'duration',
 				header: t('list.columns.duration'),
 				cell: ({ row }) => {
+					const originalStartDate = row.original.startDate;
+					const startDate = originalStartDate || row.original.createdAt;
+					const endDate = row.original.endDate;
+
+					// If no original startDate and no endDate, duration is not available
+					if (!originalStartDate && !endDate) {
+						return <Text size='xs'>—</Text>;
+					}
+
 					const duration = formatDuration(
-						row.original.startDate,
-						row.original.endDate,
+						startDate,
+						endDate,
 						row.original.status
 					);
-					const endDate = row.original.endDate;
 
 					if (!endDate) {
 						return <Text size='xs'>{duration}</Text>;
