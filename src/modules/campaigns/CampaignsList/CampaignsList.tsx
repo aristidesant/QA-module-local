@@ -276,7 +276,7 @@ export const CampaignsList: React.FC = () => {
 		onClone: (campaign) => {
 			modals.open({
 				modalId: 'clone-campaign',
-				title: t('clone.title'),
+				title: t('form.agent.columns.clone'),
 				children: (
 					<CloneCampaignForm
 						campaign={campaign}

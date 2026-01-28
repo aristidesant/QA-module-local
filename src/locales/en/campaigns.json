@@ -112,6 +112,7 @@
 		"enterCampaignName": "Enter campaign name",
 		"description": "Description",
 		"describeYourCampaign": "Describe your campaign",
+		"inboundPhoneNotice": "The phone number will not be cloned. You'll need to assign a new number to the cloned campaign.",
 		"agentsToClone": "Agents to clone",
 		"turnOffAgents": "Turn off agents you don't want to duplicate.",
 		"noAgentsLinked": "No agents linked",
@@ -759,7 +760,7 @@
 				"noCampaign": "No campaign",
 				"playPreview": "Play preview",
 				"pausePreview": "Pause preview",
-				"clone": "Clone agent",
+				"clone": "Clone campaign",
 				"add": "Add agent"
 			},
 			"basic": {
