@@ -34,7 +34,10 @@ import {
 	useUpdateTool,
 } from '~/queries/toolQueries';
 import { useToolCategories } from '~/queries/toolCategoryQueries';
-import type { ToolModel, ToolRequestBodyProperty } from '~/models/ToolModel';
+import type {
+	ToolRequestBodyProperty,
+	CreateToolDto,
+} from '~/models/ToolModel';
 import type { ToolCategoryModel } from '~/models/ToolCategoryModel';
 import SectionCard from '~/components/SectionCard/SectionCard';
 import styles from './ToolForm.module.css';
@@ -180,6 +183,8 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 				value.trim() ? null : t('form.validation.nameRequired'),
 			description: (value) =>
 				value.trim() ? null : t('form.validation.descriptionRequired'),
+			prompt: (value) =>
+				value.trim() ? null : t('form.validation.promptRequired'),
 			categoryId: (value) =>
 				value ? null : t('form.validation.categoryRequired'),
 			url: (value) => {
@@ -297,42 +302,35 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 				.filter((prop) => prop.required && prop.key)
 				.map((prop) => prop.key);
 
-			const toolData: Partial<ToolModel> = {
+			// Only include request body schema for methods that support it
+			const supportsRequestBody = ['POST', 'PUT', 'PATCH'].includes(
+				values.method
+			);
+
+			const toolData: CreateToolDto = {
 				name: values.name,
 				description: values.description,
 				prompt: values.prompt,
-				identifier: values.identifier,
 				categoryId: parseInt(values.categoryId),
 				status: values.status,
 				config: {
-					id: isEdit ? tool?.config?.id || '' : `tool-${Date.now()}`,
-					accessInfo: {
-						role: 'creator',
-						isCreator: true,
-						creatorName: 'Current User',
-						creatorEmail: 'user@example.com',
-					},
-					toolConfig: {
-						name: values.name,
-						type: 'http',
-						description: values.description,
-						responseTimeoutSecs: values.responseTimeoutSecs,
-						apiSchema: {
-							url: values.url,
-							method: values.method,
-							requestHeaders,
-							auth_connection: values.authConnection || null,
-							pathParamsSchema,
+					name:
+						values.identifier || values.name.toLowerCase().replace(/\s+/g, '_'),
+					description: values.description,
+					responseTimeoutSecs: values.responseTimeoutSecs,
+					type: 'webhook',
+					apiSchema: {
+						url: values.url,
+						method: values.method,
+						requestHeaders,
+						pathParamsSchema,
+						...(supportsRequestBody && {
 							requestBodySchema: {
 								type: 'object',
 								required: requiredFields,
 								properties: requestBodyProperties,
-								description: values.description,
 							},
-						},
-						dynamicVariables: {
-							dynamicVariablePlaceholders: {},
-						},
+						}),
 					},
 				},
 			};
@@ -407,7 +405,12 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 	const sectionStatus = useMemo(() => {
 		const values = form.values;
 		return {
-			general: !!(values.name && values.description && values.categoryId),
+			general: !!(
+				values.name &&
+				values.description &&
+				values.prompt &&
+				values.categoryId
+			),
 			api: !!(values.url && values.method),
 			headers: values.headers.length > 0,
 			parameters:
@@ -419,13 +422,74 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 	const sectionErrors = useMemo(() => {
 		const errors = form.errors;
 		return {
-			general: !!(errors.name || errors.description || errors.categoryId),
+			general: !!(
+				errors.name ||
+				errors.description ||
+				errors.prompt ||
+				errors.categoryId
+			),
 			api: !!errors.url,
 			headers: false,
 			parameters: false,
 			body: false,
 		};
 	}, [form.errors]);
+
+	// Map field names to their sections
+	const fieldToSectionMap: Record<string, SectionId> = useMemo(
+		() => ({
+			name: 'general',
+			description: 'general',
+			prompt: 'general',
+			categoryId: 'general',
+			url: 'api',
+			method: 'api',
+			responseTimeoutSecs: 'api',
+			authConnection: 'api',
+		}),
+		[]
+	);
+
+	// Handle validation errors on form submit
+	const handleValidationErrors = (errors: typeof form.errors) => {
+		const errorFields = Object.keys(errors);
+		if (errorFields.length === 0) return;
+
+		// Get unique sections with errors
+		const sectionsWithErrors = new Set<SectionId>();
+		errorFields.forEach((field) => {
+			const section = fieldToSectionMap[field];
+			if (section) {
+				sectionsWithErrors.add(section);
+			}
+		});
+
+		// Get section labels
+		const sectionLabels = Array.from(sectionsWithErrors)
+			.map((sectionId) => {
+				const section = sections.find((s) => s.id === sectionId);
+				return section?.label;
+			})
+			.filter(Boolean);
+
+		if (sectionLabels.length > 0) {
+			notifications.show({
+				title: t('form.validation.incompleteTitle'),
+				message: t('form.validation.incompleteMessage', {
+					sections: sectionLabels.join(', '),
+				}),
+				color: 'orange',
+				icon: <IconAlertCircle size={18} />,
+				autoClose: 5000,
+			});
+
+			// Navigate to the first section with errors
+			const firstSectionWithError = Array.from(sectionsWithErrors)[0];
+			if (firstSectionWithError && firstSectionWithError !== activeSection) {
+				setActiveSection(firstSectionWithError);
+			}
+		}
+	};
 
 	const categoryOptions = categories.map((cat: ToolCategoryModel) => ({
 		value: cat.id.toString(),
@@ -488,6 +552,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 						<Textarea
 							label={t('form.fields.prompt.label')}
 							placeholder={t('form.fields.prompt.placeholder')}
+							required
 							size='sm'
 							minRows={2}
 							{...form.getInputProps('prompt')}
@@ -845,7 +910,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 				/>
 				<form
 					id='tool-form'
-					onSubmit={form.onSubmit(handleSubmit)}
+					onSubmit={form.onSubmit(handleSubmit, handleValidationErrors)}
 					className={styles.formContent}
 				>
 					<div className={styles.contentGrid}>

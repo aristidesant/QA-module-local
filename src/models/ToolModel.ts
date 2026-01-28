@@ -77,3 +77,35 @@ export interface AssignedToolModel {
 	updatedAt: string;
 	userId: number;
 }
+
+// Request DTOs for creating/updating tools
+export type ToolConfigType = 'webhook' | 'client' | 'system';
+
+export interface WebhookToolConfigRequest {
+	type: 'webhook';
+	name: string;
+	description: string;
+	responseTimeoutSecs: number;
+	apiSchema: {
+		url: string;
+		method: string;
+		requestHeaders?: Record<string, string>;
+		pathParamsSchema?: Record<string, unknown>;
+		requestBodySchema?: {
+			type: string;
+			required?: string[];
+			properties?: Record<string, ToolRequestBodyProperty>;
+		};
+	};
+}
+
+export interface CreateToolDto {
+	name: string;
+	description: string;
+	prompt: string;
+	categoryId: number;
+	status: string;
+	config: WebhookToolConfigRequest;
+}
+
+export interface UpdateToolDto extends Partial<CreateToolDto> {}
