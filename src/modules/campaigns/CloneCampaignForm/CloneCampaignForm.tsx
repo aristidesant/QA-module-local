@@ -220,6 +220,17 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 					/>
 				</Stack>
 
+				{campaign.type === 'INBOUND' && (
+					<Alert
+						icon={<IconInfoCircle size={18} />}
+						color='blue'
+						variant='light'
+						className={styles.alert}
+					>
+						{t('inboundPhoneNotice')}
+					</Alert>
+				)}
+
 				<section className={styles.agentSection}>
 					<Box className={styles.sectionHeader}>
 						<Text className={styles.sectionTitle}>{t('agentsToClone')}</Text>
