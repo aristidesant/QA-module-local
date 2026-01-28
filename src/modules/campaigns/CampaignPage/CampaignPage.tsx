@@ -21,9 +21,6 @@ const CampaignPage = () => {
 	const resetView = useCampaignsStore((state) => state.resetView);
 	const setEditCampaign = useCampaignsStore((state) => state.setEditCampaign);
 	const setSelectedTab = useCampaignsStore((state) => state.setSelectedTab);
-	const setRightComponent = useCampaignsStore(
-		(state) => state.setRightComponent
-	);
 	const selectedCampaign = useCampaignsStore((state) => state.selectedCampaign);
 
 	const {
@@ -42,8 +39,7 @@ const CampaignPage = () => {
 
 	useEffect(() => {
 		setEditCampaign(true);
-		setSelectedTab('general');
-		setRightComponent(null);
+		setSelectedTab('agents');
 
 		return () => {
 			resetView();

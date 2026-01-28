@@ -15,6 +15,7 @@ import {
 import { notifications } from '@mantine/notifications';
 import {
 	CampaignFormProvider,
+	CampaignIdContext,
 	useCampaignForm,
 } from '../campaignFormFunctions';
 import CampaignTabs from '../CampaignTabs';
@@ -30,6 +31,7 @@ import { CampaignStatus } from '~/models/CampaignStatus';
 import { modals } from '@mantine/modals';
 import { IconCalculator, IconEye } from '@tabler/icons-react';
 import SchedulerCalculator from './ParametersSection/SchedulerCalculator';
+import AgentCampaignList from './AgentSection/AgentCampaignList';
 
 interface CampaignsFormProps {
 	campaign?: Partial<Campaign>;
@@ -46,6 +48,11 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	const { selectedTab, rightComponent, resetView } = useCampaignsStore(
 		(state) => state
 	);
+
+	// Determine the right section based on selected tab
+	// For 'agents' tab, always render AgentCampaignList directly to avoid timing issues
+	const effectiveRightSection =
+		selectedTab === 'agents' ? <AgentCampaignList /> : rightComponent || <></>;
 	const { mutateAsync: createCampaign, isPending: isCreating } =
 		useCreateCampaign();
 	const { mutateAsync: updateCampaign, isPending: isUpdating } =
@@ -227,98 +234,105 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	};
 
 	return (
-		<ContentContainer
-			rightSection={rightComponent || <></>}
-			onBackClick={() => {
-				resetView();
-				onBack?.();
-			}}
-			title={
-				campaign?.id
-					? t('form.title.edit', { name: campaign.name })
-					: t('list.createCampaign')
-			}
-			titleRight={
-				campaign?.id && (
-					<Tooltip label={t('columns.viewCampaign')} withArrow>
-						<ActionIcon
-							variant='light'
-							size='lg'
-							onClick={() => navigate(`/campaign/view/${campaign.id}`)}
-						>
-							<IconEye size={20} />
-						</ActionIcon>
-					</Tooltip>
-				)
-			}
-			description={t('form.description')}
-			showBackButton
-		>
-			<CampaignFormProvider form={form}>
-				<LoadingOverlay visible={isCreating || isUpdating || isUpdatingLight} />
-				<Stack gap='xs'>
-					<Box p='xs'>
-						<CampaignTabs />
-					</Box>
-					{selectedTab === 'general' && (
-						<form
-							onSubmit={form.onSubmit((values) => handleSubmit(values, true))}
-						>
-							<GeneralSection />
-							<div />
-						</form>
-					)}
-					{selectedTab === 'agents' && (
-						<form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
-							<AgentSection />
-						</form>
-					)}
-					{selectedTab === 'outcomes' && <DispositionSection />}
-					{selectedTab === 'do-not-call' && (
-						<DoNotCallSection campaignId={campaign?.id} />
-					)}
-					{selectedTab === 'params' && (
-						<SectionCard
-							title={t('workingHours.title')}
-							description={t('workingHours.description')}
-							headerActions={
-								<ActionIcon
-									size='md'
-									variant='subtle'
-									onClick={() =>
-										modals.open({
-											title: t('form.schedulerCalculator.title'),
-											fullScreen: true,
-											children: <SchedulerCalculator />,
-										})
-									}
-								>
-									<IconCalculator size={18} />
-								</ActionIcon>
-							}
-						>
-							<ParametersSection
-								workingHours={form.values.workingHours || {}}
-								onChange={(day, field, value) => {
-									const updatedHours = { ...form.values.workingHours };
-									updatedHours[day] = { ...updatedHours[day], [field]: value };
-									form.setFieldValue('workingHours', updatedHours);
-								}}
-								onCopyToAll={(sourceDay) => {
-									const sourceHours = form.values.workingHours?.[sourceDay];
-									if (!sourceHours) return;
+		<CampaignIdContext.Provider value={campaign?.id}>
+			<ContentContainer
+				rightSection={effectiveRightSection}
+				onBackClick={() => {
+					resetView();
+					onBack?.();
+				}}
+				title={
+					campaign?.id
+						? t('form.title.edit', { name: campaign.name })
+						: t('list.createCampaign')
+				}
+				titleRight={
+					campaign?.id && (
+						<Tooltip label={t('columns.viewCampaign')} withArrow>
+							<ActionIcon
+								variant='light'
+								size='lg'
+								onClick={() => navigate(`/campaign/view/${campaign.id}`)}
+							>
+								<IconEye size={20} />
+							</ActionIcon>
+						</Tooltip>
+					)
+				}
+				description={t('form.description')}
+				showBackButton
+			>
+				<CampaignFormProvider form={form}>
+					<LoadingOverlay
+						visible={isCreating || isUpdating || isUpdatingLight}
+					/>
+					<Stack gap='xs'>
+						<Box p='xs'>
+							<CampaignTabs />
+						</Box>
+						{selectedTab === 'general' && (
+							<form
+								onSubmit={form.onSubmit((values) => handleSubmit(values, true))}
+							>
+								<GeneralSection />
+								<div />
+							</form>
+						)}
+						{selectedTab === 'agents' && (
+							<form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+								<AgentSection />
+							</form>
+						)}
+						{selectedTab === 'outcomes' && <DispositionSection />}
+						{selectedTab === 'do-not-call' && (
+							<DoNotCallSection campaignId={campaign?.id} />
+						)}
+						{selectedTab === 'params' && (
+							<SectionCard
+								title={t('workingHours.title')}
+								description={t('workingHours.description')}
+								headerActions={
+									<ActionIcon
+										size='md'
+										variant='subtle'
+										onClick={() =>
+											modals.open({
+												title: t('form.schedulerCalculator.title'),
+												fullScreen: true,
+												children: <SchedulerCalculator />,
+											})
+										}
+									>
+										<IconCalculator size={18} />
+									</ActionIcon>
+								}
+							>
+								<ParametersSection
+									workingHours={form.values.workingHours || {}}
+									onChange={(day, field, value) => {
+										const updatedHours = { ...form.values.workingHours };
+										updatedHours[day] = {
+											...updatedHours[day],
+											[field]: value,
+										};
+										form.setFieldValue('workingHours', updatedHours);
+									}}
+									onCopyToAll={(sourceDay) => {
+										const sourceHours = form.values.workingHours?.[sourceDay];
+										if (!sourceHours) return;
 
-									const updatedHours = { ...form.values.workingHours };
-									Object.keys(updatedHours).forEach((day) => {
-										updatedHours[day] = { ...sourceHours };
-									});
-									form.setFieldValue('workingHours', updatedHours);
-								}}
-							/>
-						</SectionCard>
-					)}
-				</Stack>
-			</CampaignFormProvider>
-		</ContentContainer>
+										const updatedHours = { ...form.values.workingHours };
+										Object.keys(updatedHours).forEach((day) => {
+											updatedHours[day] = { ...sourceHours };
+										});
+										form.setFieldValue('workingHours', updatedHours);
+									}}
+								/>
+							</SectionCard>
+						)}
+					</Stack>
+				</CampaignFormProvider>
+			</ContentContainer>
+		</CampaignIdContext.Provider>
 	);
 };

@@ -10,22 +10,23 @@ import {
 	unlinkInboundPhoneNumber,
 	unlinkOutboundPhoneNumber,
 } from '~/api/phoneNumberApi';
-import { useCampaignFormContext } from '../../../campaignFormFunctions';
+import {
+	useCampaignFormContext,
+	useCampaignId,
+} from '../../../campaignFormFunctions';
 import { useSimplePhoneNumberList } from '~/queries/phoneNumberQueries';
 import { useGetAgent } from '~/queries/agentQueries';
 import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
-import { useCampaignsStore } from '~/stores/campaignsStore';
 
 const CampaignConfigurationPhoneNumber: React.FC = () => {
 	const { t } = useTranslation(['campaigns', 'common']);
 	const form = useCampaignFormContext();
-	const { selectedCampaign } = useCampaignsStore((state) => state);
+	const campaignId = useCampaignId();
 	const campaignType = form.values.type || 'OUTBOUND'; // Default to OUTBOUND if missing
 
 	// Fetch campaign agents to get the agentId
-	const { data: campaignAgents } = useGetCampaignAgents(
-		selectedCampaign?.id || 0
-	);
+	const { data: campaignAgents, isLoading: isLoadingCampaignAgents } =
+		useGetCampaignAgents(campaignId || 0);
 
 	// Get the first agent's ID from campaign agents
 	const agentId = campaignAgents?.[0]?.agentId;
@@ -146,7 +147,14 @@ const CampaignConfigurationPhoneNumber: React.FC = () => {
 			description={t('form.agent.phoneNumber.description', { ns: 'campaigns' })}
 		>
 			<Stack gap='md' pos='relative'>
-				<LoadingOverlay visible={isLoadingNumbers || isLoadingAgent} />
+				<LoadingOverlay
+					visible={
+						!campaignId ||
+						isLoadingNumbers ||
+						isLoadingAgent ||
+						isLoadingCampaignAgents
+					}
+				/>
 				<Group align='flex-end'>
 					<Select
 						label={t('form.agent.phoneNumber.selectLabel', { ns: 'campaigns' })}
