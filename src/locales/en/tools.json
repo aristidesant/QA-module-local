@@ -75,9 +75,12 @@
 		"validation": {
 			"nameRequired": "Name is required",
 			"descriptionRequired": "Description is required",
+			"promptRequired": "Prompt instruction is required",
 			"categoryRequired": "Category is required",
 			"urlRequired": "URL is required",
-			"urlInvalid": "Please enter a valid URL"
+			"urlInvalid": "Please enter a valid URL",
+			"incompleteTitle": "Required fields missing",
+			"incompleteMessage": "Please complete the required fields in: {{sections}}"
 		},
 		"fields": {
 			"name": {

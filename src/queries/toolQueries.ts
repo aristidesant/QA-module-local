@@ -1,6 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toolApi from '~/api/toolApi';
-import type { ToolModel, AssignedToolModel } from '~/models/ToolModel';
+import type {
+	ToolModel,
+	AssignedToolModel,
+	CreateToolDto,
+	UpdateToolDto,
+} from '~/models/ToolModel';
 
 /**
  * Hook to fetch all tools
@@ -41,12 +46,13 @@ export function useCreateTool() {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async (data: Partial<ToolModel>) => {
+		mutationFn: async (data: CreateToolDto) => {
 			const api = toolApi();
 			return api.createTool(data);
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['tools'] });
+			queryClient.invalidateQueries({ queryKey: ['toolsByCategory'] });
 		},
 	});
 }
@@ -64,13 +70,14 @@ export function useUpdateTool() {
 			data,
 		}: {
 			id: string | number;
-			data: Partial<ToolModel>;
+			data: UpdateToolDto;
 		}) => {
 			const api = toolApi();
 			return api.updateTool(id, data);
 		},
 		onSuccess: (_, variables) => {
 			queryClient.invalidateQueries({ queryKey: ['tools'] });
+			queryClient.invalidateQueries({ queryKey: ['toolsByCategory'] });
 			queryClient.invalidateQueries({ queryKey: ['tool', variables.id] });
 		},
 	});
@@ -90,6 +97,7 @@ export function useDeleteTool() {
 		},
 		onSuccess: (_, id) => {
 			queryClient.invalidateQueries({ queryKey: ['tools'] });
+			queryClient.invalidateQueries({ queryKey: ['toolsByCategory'] });
 			queryClient.invalidateQueries({ queryKey: ['tool', id] });
 		},
 	});
@@ -109,6 +117,7 @@ export function useCreateToolBulk() {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['tools'] });
+			queryClient.invalidateQueries({ queryKey: ['toolsByCategory'] });
 		},
 	});
 }
@@ -217,9 +226,8 @@ export function useUpdateAgentTools() {
 			newToolIds: string[];
 			currentAssignedTools: AssignedToolModel[];
 		}) => {
-			const { handleAgentToolsUpdate } = await import(
-				'~/utils/agentToolsUtils'
-			);
+			const { handleAgentToolsUpdate } =
+				await import('~/utils/agentToolsUtils');
 			return handleAgentToolsUpdate(agentId, newToolIds, currentAssignedTools);
 		},
 		onSuccess: (_, variables) => {
