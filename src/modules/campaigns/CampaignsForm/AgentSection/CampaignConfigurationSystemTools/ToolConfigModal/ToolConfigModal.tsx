@@ -86,6 +86,7 @@ const ToolConfigModal: React.FC<ToolConfigModalProps> = ({
 							'form.agent.systemTools.modal.description.placeholder'
 						)}
 						minRows={4}
+						maxRows={8}
 						autosize
 						{...form.getInputProps('description')}
 					/>
