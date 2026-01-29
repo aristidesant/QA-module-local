@@ -1,4 +1,4 @@
-import type { FC, ReactNode } from 'react';
+import { type FC, type ReactNode, useState } from 'react';
 import { Group, Text, Badge, Skeleton, Button, Divider } from '@mantine/core';
 import {
 	IconInfoCircle,
@@ -9,7 +9,10 @@ import {
 	IconRecordMail,
 	IconShieldCheck,
 } from '@tabler/icons-react';
-import { useCallDispositionByConversationId } from '~/queries/callDispositionQueries';
+import {
+	useCallDispositionByConversationId,
+	useCallDispositionWithAi,
+} from '~/queries/callDispositionQueries';
 import type { CallDispositionModel } from '~/models/CallDispositionModel';
 import styles from './ConversationDisposition.module.css';
 import RightSectionCard from '~/components/RightSectionCard';
@@ -25,6 +28,21 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 	const { t, i18n } = useTranslation(['conversations', 'common']);
 	const { data, isLoading, isError, refetch } =
 		useCallDispositionByConversationId(conversationId);
+
+	const { mutateAsync: callWithAi } = useCallDispositionWithAi();
+	const [isCallingAi, setIsCallingAi] = useState(false);
+
+	const handleRetry = async () => {
+		setIsCallingAi(true);
+		try {
+			await callWithAi(Number(conversationId));
+			await refetch();
+		} catch (err) {
+			// No-op: user can retry again
+		} finally {
+			setIsCallingAi(false);
+		}
+	};
 
 	const normalizeStatus = (raw?: string) => {
 		const v = (raw || '').toString().trim().toUpperCase();
@@ -120,7 +138,9 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 						color='gray'
 						size='xs'
 						leftSection={<IconRefresh size={14} />}
-						onClick={() => refetch()}
+						onClick={handleRetry}
+						loading={isCallingAi}
+						disabled={isCallingAi}
 						fullWidth
 					>
 						{t('disposition.retry')}

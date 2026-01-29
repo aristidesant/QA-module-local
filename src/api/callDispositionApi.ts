@@ -94,6 +94,15 @@ const callDispositionApi = (_authHeader?: Record<string, string>) => {
 			);
 			return response.data;
 		},
+
+		// WITH AI: request the server to generate or refresh a disposition using AI
+		withAi: async (conversationId: number) => {
+			const response = await axios.post(
+				`${DEFAULT_API_URL}/call-dispositions/with-ai`,
+				{ conversationId }
+			);
+			return response.data;
+		},
 	};
 };
 
