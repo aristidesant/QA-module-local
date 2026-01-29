@@ -584,6 +584,7 @@
 				"notifications": {
 					"invalidInput": "Invalid input",
 					"nameRequired": "Name is required",
+					"mappingRequired": "Please map the required fields: {{fields}}",
 					"capacityExceeded": "Capacity exceeded",
 					"wavesMinimum": "Minimum of 1 wave required",
 					"schedulerFullTitle": "Scheduler full",

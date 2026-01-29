@@ -20,7 +20,9 @@ import type {
 import { useProcessContactGroupFile } from '~/queries/contactGroupFilesQueries';
 import { ContactListInfo } from './ContactListInfo';
 import type ContactGroup from '~/models/ContactGroup';
-import ColumnMappingCard from './ColumnMappingCard/ColumnMappingCard';
+import ColumnMappingCard, {
+	REQUIRED_FIELDS,
+} from './ColumnMappingCard/ColumnMappingCard';
 import { transformFieldMapping } from '~/utils/fieldMappingTransformer';
 import { useUpdateContactGroup } from '~/queries/contactGroupQueries';
 import { useCampaignActiveSchedule } from '~/queries/schedulerQueries';
@@ -92,6 +94,9 @@ export const ContactLimits = ({
 	]);
 	const [maxWaves, setMaxWaves] = useState<number>(defaultWaves);
 
+	// Track whether mapping validation has failed (to show error styling)
+	const [showMappingError, setShowMappingError] = useState(false);
+
 	// Sync state when contactGroup prop changes
 	useEffect(() => {
 		setData((prev) => ({
@@ -130,6 +135,26 @@ export const ContactLimits = ({
 				color: 'red',
 			});
 			return false;
+		}
+
+		// Validate required column mappings when creating a new contact group
+		if (!contactGroup.id && fileSummary) {
+			const mappedFields = Object.keys(data.columnMappings || {});
+			const missingFields = REQUIRED_FIELDS.filter(
+				(field) => !mappedFields.includes(field)
+			);
+
+			if (missingFields.length > 0) {
+				setShowMappingError(true);
+				notifications.show({
+					title: t('form.contacts.limits.notifications.invalidInput'),
+					message: t('form.contacts.limits.notifications.mappingRequired', {
+						fields: missingFields.join(', '),
+					}),
+					color: 'red',
+				});
+				return false;
+			}
 		}
 
 		// Validate human equivalent doesn't exceed available capacity
@@ -318,6 +343,7 @@ export const ContactLimits = ({
 					<ColumnMappingCard
 						headers={fileSummary.headers || []}
 						onMappingChange={(columnMappings) => {
+							setShowMappingError(false);
 							handleChange('columnMappings', columnMappings);
 						}}
 						columnMappings={data?.columnMappings || {}}
@@ -325,6 +351,7 @@ export const ContactLimits = ({
 						onSchemaSelected={setSelectedSchemaId}
 						objectiveId={objectiveId}
 						selectedSchemaId={selectedSchemaId}
+						hasRequiredFieldsMissing={showMappingError}
 					/>
 				)}
 				<Group justify='flex-end' mt='md'>
