@@ -141,14 +141,14 @@ export function useCallDispositionWithAi() {
 	return useMutation({
 		mutationFn: async (conversationId: number | string) => {
 			const api = callDispositionApi();
+			// POST /call-dispositions/with-ai { conversationId }
 			return api.withAi(Number(conversationId));
 		},
 		onSuccess: (_data, conversationId) => {
-			// Invalidate the single conversation disposition so it is refetched
+			// Invalidate relevant queries so UI refreshes
 			queryClient.invalidateQueries({
 				queryKey: ['callDispositionByConversationId', String(conversationId)],
 			});
-			// Also invalidate generic dispositions list
 			queryClient.invalidateQueries({ queryKey: ['callDispositions'] });
 		},
 	});

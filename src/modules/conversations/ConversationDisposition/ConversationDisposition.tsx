@@ -29,16 +29,18 @@ const ConversationDisposition: FC<ConversationDispositionProps> = ({
 	const { data, isLoading, isError, refetch } =
 		useCallDispositionByConversationId(conversationId);
 
-	const { mutateAsync: callWithAi } = useCallDispositionWithAi();
+	const withAiMutation = useCallDispositionWithAi();
 	const [isCallingAi, setIsCallingAi] = useState(false);
 
 	const handleRetry = async () => {
 		setIsCallingAi(true);
 		try {
-			await callWithAi(Number(conversationId));
+			// First call AI generation endpoint
+			await withAiMutation.mutateAsync(Number(conversationId));
+			// Then refetch the disposition data to show updated outcome
 			await refetch();
-		} catch (err) {
-			// No-op: user can retry again
+		} catch (e) {
+			// Let UI show the error state; no further action
 		} finally {
 			setIsCallingAi(false);
 		}
