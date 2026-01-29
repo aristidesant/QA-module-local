@@ -52,6 +52,11 @@ const UserClientRoles: React.FC<UserClientRolesProps> = ({
 		[userId, value]
 	);
 
+	const filteredRoles = useMemo(
+		() => roles.filter((role) => role.isActive),
+		[roles]
+	);
+
 	const filteredClients = useMemo(() => {
 		if (!search) return clients;
 		const query = search.toLowerCase();
@@ -284,7 +289,7 @@ const UserClientRoles: React.FC<UserClientRolesProps> = ({
 							) : (
 								<>
 									<div className={classes.rolesGrid}>
-										{roles.map((role) => {
+										{filteredRoles.map((role) => {
 											const isChecked = activeClientRoleIds.has(role.id);
 											const roleDescription =
 												role.description?.trim() ||
