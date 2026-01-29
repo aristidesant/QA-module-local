@@ -584,6 +584,7 @@
 				"notifications": {
 					"invalidInput": "Entrada inválida",
 					"nameRequired": "El nombre es obligatorio",
+					"mappingRequired": "Por favor, mapea los campos obligatorios: {{fields}}",
 					"capacityExceeded": "Capacidad excedida",
 					"wavesMinimum": "Se requiere un mínimo de 1 oleada",
 					"schedulerFullTitle": "Programador lleno",

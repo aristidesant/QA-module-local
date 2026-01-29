@@ -34,6 +34,9 @@ interface ColumnMappingCardProps {
 
 	/** Currently selected schema ID for dynamic columns */
 	selectedSchemaId?: number;
+
+	/** Whether required fields are missing (shows error styling) */
+	hasRequiredFieldsMissing?: boolean;
 }
 
 function ColumnMappingCard({
@@ -44,6 +47,7 @@ function ColumnMappingCard({
 	objectiveId,
 	onSchemaSelected,
 	selectedSchemaId,
+	hasRequiredFieldsMissing,
 }: ColumnMappingCardProps) {
 	const { t } = useTranslation('campaigns');
 	const mappedColumnsCount = Object.keys(columnMappings).length;
@@ -94,7 +98,7 @@ function ColumnMappingCard({
 			<Card
 				withBorder
 				radius='md'
-				className={styles.matchCard}
+				className={`${styles.matchCard} ${hasRequiredFieldsMissing ? styles.matchCardError : ''}`}
 				onClick={openMappingModal}
 				p='sm'
 			>
