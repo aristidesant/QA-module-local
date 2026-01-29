@@ -60,6 +60,8 @@
 		"logout": "Cerrar sesión",
 		"loggingOut": "Cerrando sesión...",
 		"impersonationMode": "Modo de suplantación",
+		"noAccessibleModules": "No hay módulos accesibles",
+		"requestAccess": "Solicita acceso a un administrador para ver los módulos disponibles.",
 		"impersonatingClient": "Estás suplantando a un cliente",
 		"returnToMaster": "Usa \"Volver al cliente maestro\" para salir",
 		"categories": {
