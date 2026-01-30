@@ -135,3 +135,21 @@ export function useDeleteCallDisposition() {
 		},
 	});
 }
+
+export function useCallDispositionWithAi() {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async (conversationId: number | string) => {
+			const api = callDispositionApi();
+			// POST /call-dispositions/with-ai { conversationId }
+			return api.withAi(Number(conversationId));
+		},
+		onSuccess: (_data, conversationId) => {
+			// Invalidate relevant queries so UI refreshes
+			queryClient.invalidateQueries({
+				queryKey: ['callDispositionByConversationId', String(conversationId)],
+			});
+			queryClient.invalidateQueries({ queryKey: ['callDispositions'] });
+		},
+	});
+}

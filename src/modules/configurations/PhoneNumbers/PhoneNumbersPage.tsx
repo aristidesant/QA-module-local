@@ -33,7 +33,7 @@ export default function PhoneNumbersPage() {
 				opened={opened}
 				onClose={handleClose}
 				title={selectedPhone ? t('form.editTitle') : t('form.createTitle')}
-				size='lg'
+				size='80%'
 			>
 				<PhoneNumberForm
 					initialData={selectedPhone}

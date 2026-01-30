@@ -6,6 +6,7 @@ import {
 	IconMail,
 	IconPhone,
 	IconAlertCircle,
+	IconInfoCircle,
 	IconPencil,
 	IconTrash,
 } from '@tabler/icons-react';
@@ -26,6 +27,7 @@ import styles from './ContactGroupContactsTable.module.css';
 export const useContactColumns = (
 	onEdit?: (contact: Contact) => void,
 	onDelete?: (contact: Contact) => void,
+	onViewOutboundTasks?: (contact: Contact) => void,
 	isDeleting?: (contactId: number) => boolean
 ): ColumnDef<Contact, any>[] => {
 	const { t } = useTranslation('campaign.contact-list');
@@ -238,7 +240,7 @@ export const useContactColumns = (
 				size: 160,
 			},
 			// Actions column (optional)
-			...(onEdit || onDelete
+			...(onEdit || onDelete || onViewOutboundTasks
 				? [
 						{
 							id: 'actions',
@@ -246,8 +248,34 @@ export const useContactColumns = (
 							size: 110,
 							cell: ({ row }: any) => {
 								const contact = row.original;
+								const hasOutboundTasks =
+									(contact.outboundCallTasks?.length ?? 0) > 0;
 								return (
 									<Group gap={4} wrap='nowrap'>
+										{onViewOutboundTasks && (
+											<Tooltip
+												label={
+													hasOutboundTasks
+														? t('contactsTable.tooltips.viewOutboundTasks')
+														: t('contactsTable.tooltips.noOutboundTasks')
+												}
+												withArrow
+											>
+												<ActionIcon
+													variant='subtle'
+													color='gray'
+													size='sm'
+													disabled={!hasOutboundTasks}
+													onClick={(event) => {
+														event.stopPropagation();
+														if (!hasOutboundTasks) return;
+														onViewOutboundTasks(contact);
+													}}
+												>
+													<IconInfoCircle size={14} />
+												</ActionIcon>
+											</Tooltip>
+										)}
 										{onEdit && (
 											<ActionIcon
 												variant='subtle'
@@ -276,6 +304,6 @@ export const useContactColumns = (
 					]
 				: []),
 		],
-		[onEdit, onDelete, isDeleting, t]
+		[onEdit, onDelete, onViewOutboundTasks, isDeleting, t]
 	);
 };

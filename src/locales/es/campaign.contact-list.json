@@ -194,8 +194,22 @@
 			"filterByEmail": "Filtrar por correo..."
 		},
 		"tooltips": {
+			"reload": "Recargar contactos",
 			"append": "Añadir contactos",
-			"export": "Exportar contactos"
+			"export": "Exportar contactos",
+			"viewOutboundTasks": "Ver registros de llamadas",
+			"noOutboundTasks": "No hay registros de llamadas"
+		},
+		"outboundTasks": {
+			"title": "Registros de llamadas salientes",
+			"subtitle": "Contacto: {{name}}",
+			"empty": "No hay tareas de llamadas salientes disponibles.",
+			"noErrorMessage": "Sin mensaje de error",
+			"columns": {
+				"status": "Estado",
+				"wave": "Oleada",
+				"errorMessage": "Mensaje de error"
+			}
 		},
 		"status": {
 			"ACTIVE": "Activo",

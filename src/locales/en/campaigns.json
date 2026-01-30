@@ -442,6 +442,19 @@
 			"edit": "Edit {{name}}"
 		},
 		"description": "Configure and manage your campaign settings.",
+		"workflow": {
+			"header": {
+				"title": "Flow Builder",
+				"description": "Start connects to a Subagent. From there, add the next steps in the flow.",
+				"preventLoops": "Prevent subagent loops"
+			},
+			"layout": {
+				"label": "Layout",
+				"horizontal": "Horizontal",
+				"vertical": "Vertical",
+				"organize": "Organize"
+			}
+		},
 		"validation": {
 			"nameRequired": "Campaign name is required",
 			"typeRequired": "Campaign type is required",

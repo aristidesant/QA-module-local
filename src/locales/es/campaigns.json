@@ -442,6 +442,19 @@
 			"edit": "Editar {{name}}"
 		},
 		"description": "Configura y gestiona los ajustes de tu campaña.",
+		"workflow": {
+			"header": {
+				"title": "Constructor de flujo",
+				"description": "Inicio conecta con un subagente. Desde alli, agrega los siguientes pasos en el flujo.",
+				"preventLoops": "Evitar bucles de subagente"
+			},
+			"layout": {
+				"label": "Diseno",
+				"horizontal": "Horizontal",
+				"vertical": "Vertical",
+				"organize": "Organizar"
+			}
+		},
 		"validation": {
 			"nameRequired": "El nombre de la campaña es obligatorio",
 			"typeRequired": "El tipo de campaña es obligatorio",

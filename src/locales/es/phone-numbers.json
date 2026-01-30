@@ -18,6 +18,30 @@
 	"form": {
 		"createTitle": "Crear Número de Teléfono",
 		"editTitle": "Editar Número de Teléfono",
+		"sections": {
+			"core": {
+				"title": "Detalles principales",
+				"description": "Define el número de teléfono y su etiqueta."
+			},
+			"provider": {
+				"title": "Configuración del proveedor",
+				"description": "Elige un proveedor y configura sus requisitos."
+			},
+			"region": {
+				"toggle": "Habilitar configuración de región",
+				"description": "Agrega configuración regional solo cuando sea necesario en Twilio."
+			},
+			"sipInbound": {
+				"title": "Configuración entrante",
+				"description": "Controla los orígenes permitidos para llamadas entrantes.",
+				"toggle": "Habilitar configuración entrante"
+			},
+			"sipOutbound": {
+				"title": "Configuración saliente",
+				"description": "Configura el enrutamiento saliente y los headers.",
+				"toggle": "Habilitar configuración saliente"
+			}
+		},
 		"provider": {
 			"twilio": "Twilio",
 			"sipTrunk": "Troncal SIP"
@@ -27,8 +51,11 @@
 				"label": "Número de Teléfono",
 				"placeholder": "+1234567890",
 				"required": "El número es obligatorio",
-				"invalid": "Formato inválido (e.j. +1809...)"
+				"invalid": "Formato inválido (e.j. +1809...)",
+				"hint": "Use números telefónicos con formato dominicano."
 			},
+			"supportsInbound": "Soporta entrantes",
+			"supportsOutbound": "Soporta salientes",
 			"label": {
 				"label": "Etiqueta",
 				"placeholder": "Mi Número de Teléfono",
@@ -43,6 +70,12 @@
 				"required": "El token es obligatorio"
 			},
 			"type": "Tipo",
+			"regionConfig": {
+				"required": "Completa todos los campos de región",
+				"regionId": "Región",
+				"token": "Token de región",
+				"edgeLocation": "Ubicación edge"
+			},
 			"terminationUri": {
 				"label": "URI de Terminación",
 				"required": "La URI de terminación es obligatoria"
@@ -54,8 +87,29 @@
 			"transport": "Transporte",
 			"mediaEncryption": "Encriptación de Medios",
 			"inboundMediaEncryption": "Encriptación de Medios Entrante",
-			"username": "Nombre de Usuario",
-			"password": "Contraseña"
+			"inboundAllowedAddresses": {
+				"label": "Direcciones permitidas",
+				"placeholder": "Agrega IPs o rangos CIDR"
+			},
+			"inboundAllowedNumbers": {
+				"label": "Números permitidos",
+				"placeholder": "Agrega números permitidos"
+			},
+			"inboundUsername": "Usuario entrante",
+			"inboundPassword": "Contraseña entrante",
+			"outboundAddress": "Dirección saliente",
+			"outboundTransport": "Transporte saliente",
+			"outboundMediaEncryption": "Encriptación saliente",
+			"outboundHeaders": {
+				"label": "Headers salientes (JSON)",
+				"placeholder": "{\"X-Custom\": \"value\"}",
+				"invalid": "Ingresa un objeto JSON válido"
+			},
+			"outboundUsername": "Usuario saliente",
+			"outboundPassword": "Contraseña saliente"
+		},
+		"actions": {
+			"add": "Agregar"
 		},
 		"buttons": {
 			"cancel": "Cancelar",
