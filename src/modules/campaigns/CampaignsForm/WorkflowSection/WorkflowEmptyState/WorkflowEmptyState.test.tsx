@@ -41,9 +41,10 @@ describe('WorkflowEmptyState', () => {
 			</WorkflowStateContext.Provider>
 		);
 
+		expect(screen.getByText('No workflow configured')).toBeInTheDocument();
 		expect(
 			screen.getByText(
-				'No workflow configured yet. Add a start node to begin building the flow.'
+				'Create a workflow to define how your agent handles conversations with branching logic and tools.'
 			)
 		).toBeInTheDocument();
 	});

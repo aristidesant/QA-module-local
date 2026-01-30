@@ -1,4 +1,5 @@
 import type { Voice } from './AgentVoiceModel';
+import type { AgentWorkflow } from './AgentWorkflowModel';
 
 export default interface AgentListObject {
 	id: string;
@@ -36,6 +37,7 @@ export interface AgentConfigModel {
 		createdAtUnixSecs: number;
 	};
 	phoneNumbers: string[];
+	workflow?: AgentWorkflow;
 	platformSettings: {
 		ban: null;
 		auth: {
