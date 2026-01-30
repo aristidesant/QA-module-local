@@ -11,9 +11,25 @@ export interface PhoneNumber {
 	createdAt: string;
 	updatedAt: string;
 	deletedAt: string | null;
+	supportsInbound?: boolean;
+	supportsOutbound?: boolean;
 	// Twilio specific
 	sid?: string;
 	token?: string;
+	regionConfig?: {
+		regionId?: 'us1' | 'ie1' | 'au1';
+		token?: string;
+		edgeLocation?:
+			| 'ashburn'
+			| 'dublin'
+			| 'frankfurt'
+			| 'sao-paulo'
+			| 'singapore'
+			| 'sydney'
+			| 'tokyo'
+			| 'umatilla'
+			| 'roaming';
+	};
 	// SIP Trunk specific
 	terminationUri?: string;
 	address?: string;
@@ -28,5 +44,24 @@ export interface PhoneNumber {
 	credentials?: {
 		username?: string;
 		password?: string;
+	};
+	inboundTrunkConfig?: {
+		allowedAddresses?: string[];
+		allowedNumbers?: string[];
+		mediaEncryption?: 'disabled' | 'allowed' | 'required';
+		credentials?: {
+			username?: string;
+			password?: string;
+		};
+	};
+	outboundTrunkConfig?: {
+		address?: string;
+		transport?: 'auto' | 'udp' | 'tcp' | 'tls';
+		mediaEncryption?: 'disabled' | 'allowed' | 'required';
+		headers?: Record<string, string> | null;
+		credentials?: {
+			username?: string;
+			password?: string;
+		};
 	};
 }

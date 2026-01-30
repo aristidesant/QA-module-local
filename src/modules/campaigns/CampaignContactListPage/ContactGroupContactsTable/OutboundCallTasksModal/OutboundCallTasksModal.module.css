@@ -1,0 +1,14 @@
+.modalContent {
+	padding-top: var(--mantine-spacing-xs);
+}
+
+.errorMessage {
+	max-width: 260px;
+	line-height: 1.4;
+}
+
+.statusBadge {
+	font-size: 11px;
+	font-weight: 500;
+	letter-spacing: 0.2px;
+}

@@ -39,7 +39,9 @@ export interface LinkPhoneNumberParams {
 export interface SipTrunkPhoneNumberParams {
 	phoneNumber: string;
 	label: string;
-	terminationUri: string;
+	terminationUri?: string;
+	supportsInbound?: boolean;
+	supportsOutbound?: boolean;
 	type?: 'INBOUND' | 'OUTBOUND' | 'HYBRID';
 	address?: string;
 	transport?: 'auto' | 'udp' | 'tcp' | 'tls';
@@ -49,6 +51,25 @@ export interface SipTrunkPhoneNumberParams {
 	credentials?: {
 		username?: string;
 		password?: string;
+	} | null;
+	inboundTrunkConfig?: {
+		allowedAddresses?: string[];
+		allowedNumbers?: string[];
+		mediaEncryption?: 'disabled' | 'allowed' | 'required';
+		credentials?: {
+			username?: string;
+			password?: string;
+		} | null;
+	} | null;
+	outboundTrunkConfig?: {
+		address?: string;
+		transport?: 'auto' | 'udp' | 'tcp' | 'tls';
+		mediaEncryption?: 'disabled' | 'allowed' | 'required';
+		headers?: Record<string, string> | null;
+		credentials?: {
+			username?: string;
+			password?: string;
+		} | null;
 	} | null;
 	clientId: number;
 	agentId?: string;
@@ -121,6 +142,22 @@ export interface TwilioPhoneNumberParams {
 	label: string;
 	sid: string;
 	token: string;
+	supportsInbound?: boolean;
+	supportsOutbound?: boolean;
+	regionConfig?: {
+		regionId: 'us1' | 'ie1' | 'au1';
+		token: string;
+		edgeLocation:
+			| 'ashburn'
+			| 'dublin'
+			| 'frankfurt'
+			| 'sao-paulo'
+			| 'singapore'
+			| 'sydney'
+			| 'tokyo'
+			| 'umatilla'
+			| 'roaming';
+	};
 	provider?: 'twilio';
 	type?: 'INBOUND' | 'OUTBOUND' | 'HYBRID';
 	clientId: number;
