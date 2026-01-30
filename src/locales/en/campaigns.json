@@ -552,7 +552,9 @@
 				"title": "Column Mapping",
 				"matchTitle": "Match Columns",
 				"clickToConfigure": "Click to configure",
-				"unmapped": "{{count}} unmapped"
+				"unmapped": "{{count}} unmapped",
+				"totalMapped": "{{count}} columns mapped",
+				"requiredMissing": "Phone number is required"
 			},
 			"mostUsedChannels": {
 				"title": "Most used channels",
@@ -597,7 +599,7 @@
 				"notifications": {
 					"invalidInput": "Invalid input",
 					"nameRequired": "Name is required",
-					"mappingRequired": "Please map the required fields: {{fields}}",
+					"mappingRequired": "Please map the columns",
 					"capacityExceeded": "Capacity exceeded",
 					"wavesMinimum": "Minimum of 1 wave required",
 					"schedulerFullTitle": "Scheduler full",

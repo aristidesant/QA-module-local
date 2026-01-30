@@ -21,7 +21,7 @@ import { useProcessContactGroupFile } from '~/queries/contactGroupFilesQueries';
 import { ContactListInfo } from './ContactListInfo';
 import type ContactGroup from '~/models/ContactGroup';
 import ColumnMappingCard, {
-	REQUIRED_FIELDS,
+	areAllColumnsMapped,
 } from './ColumnMappingCard/ColumnMappingCard';
 import { transformFieldMapping } from '~/utils/fieldMappingTransformer';
 import { useUpdateContactGroup } from '~/queries/contactGroupQueries';
@@ -137,20 +137,15 @@ export const ContactLimits = ({
 			return false;
 		}
 
-		// Validate required column mappings when creating a new contact group
+		// Validate column mappings when creating a new contact group
+		// All CSV columns should be mapped to system fields
 		if (!contactGroup.id && fileSummary) {
-			const mappedFields = Object.keys(data.columnMappings || {});
-			const missingFields = REQUIRED_FIELDS.filter(
-				(field) => !mappedFields.includes(field)
-			);
-
-			if (missingFields.length > 0) {
+			const totalHeaders = fileSummary.headers?.length || 0;
+			if (!areAllColumnsMapped(data.columnMappings || {}, totalHeaders)) {
 				setShowMappingError(true);
 				notifications.show({
 					title: t('form.contacts.limits.notifications.invalidInput'),
-					message: t('form.contacts.limits.notifications.mappingRequired', {
-						fields: missingFields.join(', '),
-					}),
+					message: t('form.contacts.limits.notifications.mappingRequired'),
 					color: 'red',
 				});
 				return false;
@@ -351,7 +346,7 @@ export const ContactLimits = ({
 						onSchemaSelected={setSelectedSchemaId}
 						objectiveId={objectiveId}
 						selectedSchemaId={selectedSchemaId}
-						hasRequiredFieldsMissing={showMappingError}
+						showError={showMappingError}
 					/>
 				)}
 				<Group justify='flex-end' mt='md'>

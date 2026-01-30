@@ -552,7 +552,9 @@
 				"title": "Mapeo de columnas",
 				"matchTitle": "Emparejar columnas",
 				"clickToConfigure": "Clic para configurar",
-				"unmapped": "{{count}} sin asignar"
+				"unmapped": "{{count}} sin asignar",
+				"totalMapped": "{{count}} columnas mapeadas",
+				"requiredMissing": "El número de teléfono es obligatorio"
 			},
 			"mostUsedChannels": {
 				"title": "Canales más usados",
@@ -597,7 +599,7 @@
 				"notifications": {
 					"invalidInput": "Entrada inválida",
 					"nameRequired": "El nombre es obligatorio",
-					"mappingRequired": "Por favor, mapea los campos obligatorios: {{fields}}",
+					"mappingRequired": "Por favor, mapea las columnas",
 					"capacityExceeded": "Capacidad excedida",
 					"wavesMinimum": "Se requiere un mínimo de 1 oleada",
 					"schedulerFullTitle": "Programador lleno",

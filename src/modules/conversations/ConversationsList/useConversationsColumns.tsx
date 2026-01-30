@@ -1,12 +1,7 @@
 import { useMemo } from 'react';
-<<<<<<< HEAD
 import { Badge, Text, Tooltip } from '@mantine/core';
 import type { ColumnDef } from '@tanstack/react-table';
-=======
-import { Badge, Text, Tooltip, Group } from '@mantine/core';
-import type { ColumnDef } from '@tanstack/react-table';
-import { IconClock } from '@tabler/icons-react';
->>>>>>> f446b0c (Workflow initial work)
+// import { IconClock } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import timezone from 'dayjs/plugin/timezone';

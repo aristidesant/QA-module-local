@@ -1,17 +1,42 @@
+import { useMemo } from 'react';
 import { Badge, Card, Group, Stack, Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { modals } from '@mantine/modals';
-import {
-	IconAlertTriangle,
-	IconCheck,
-	IconChevronRight,
-} from '@tabler/icons-react';
+import { IconCheck, IconChevronRight } from '@tabler/icons-react';
 import { ContactHeaderMapping } from '../../ContactHeaderMapping/ContactHeaderMapping';
 import type { MappedResult } from '~/models/ContactFileSummary';
 import styles from '../ContactLimits.module.css';
 
-// Required fields that must be mapped for the form to be valid
-export const REQUIRED_FIELDS = ['phoneNumber', 'firstName', 'lastName'];
+/**
+ * Count how many CSV columns are mapped.
+ * This counts the actual CSV columns used, not the system fields.
+ */
+export function countMappedCsvColumns(columnMappings: MappedResult): number {
+	if (!columnMappings) return 0;
+
+	let count = 0;
+	for (const value of Object.values(columnMappings)) {
+		if (Array.isArray(value)) {
+			count += value.length;
+		} else if (value) {
+			count += 1;
+		}
+	}
+	return count;
+}
+
+/**
+ * Check if all CSV headers are mapped.
+ * This is the smart validation - it checks that all CSV columns from the file
+ * have been assigned to a system field. phoneNumber and other array fields
+ * don't cause issues because we're counting CSV columns, not system fields.
+ */
+export function areAllColumnsMapped(
+	columnMappings: MappedResult,
+	totalHeaders: number
+): boolean {
+	return countMappedCsvColumns(columnMappings) >= totalHeaders;
+}
 
 interface ColumnMappingCardProps {
 	/** Current column mappings */
@@ -35,8 +60,8 @@ interface ColumnMappingCardProps {
 	/** Currently selected schema ID for dynamic columns */
 	selectedSchemaId?: number;
 
-	/** Whether required fields are missing (shows error styling) */
-	hasRequiredFieldsMissing?: boolean;
+	/** Show error styling (red border) */
+	showError?: boolean;
 }
 
 function ColumnMappingCard({
@@ -47,12 +72,18 @@ function ColumnMappingCard({
 	objectiveId,
 	onSchemaSelected,
 	selectedSchemaId,
-	hasRequiredFieldsMissing,
+	showError,
 }: ColumnMappingCardProps) {
 	const { t } = useTranslation('campaigns');
-	const mappedColumnsCount = Object.keys(columnMappings).length;
-	const totalColumns = headers.length;
-	const isAllMapped = mappedColumnsCount === totalColumns;
+
+	// Count total mapped CSV columns
+	const totalMappedCsvColumns = useMemo(
+		() => countMappedCsvColumns(columnMappings),
+		[columnMappings]
+	);
+
+	// Valid when all CSV columns are mapped
+	const isValid = totalMappedCsvColumns >= headers.length;
 
 	const openMappingModal = () => {
 		modals.open({
@@ -82,23 +113,17 @@ function ColumnMappingCard({
 				<Badge
 					size='sm'
 					variant='light'
-					color={isAllMapped ? 'green' : 'orange'}
-					leftSection={
-						isAllMapped ? (
-							<IconCheck size={12} />
-						) : (
-							<IconAlertTriangle size={12} />
-						)
-					}
+					color={isValid ? 'green' : 'gray'}
+					leftSection={isValid ? <IconCheck size={12} /> : null}
 				>
-					{mappedColumnsCount}/{totalColumns}
+					{totalMappedCsvColumns}/{headers.length}
 				</Badge>
 			</Group>
 
 			<Card
 				withBorder
 				radius='md'
-				className={`${styles.matchCard} ${hasRequiredFieldsMissing ? styles.matchCardError : ''}`}
+				className={`${styles.matchCard} ${showError ? styles.matchCardError : ''}`}
 				onClick={openMappingModal}
 				p='sm'
 			>
@@ -107,10 +132,10 @@ function ColumnMappingCard({
 						<Text size='xs' c='dimmed'>
 							{t('form.contacts.mapping.clickToConfigure')}
 						</Text>
-						{!isAllMapped && (
-							<Text size='xs' c='orange' fw={500}>
-								{t('form.contacts.mapping.unmapped', {
-									count: totalColumns - mappedColumnsCount,
+						{isValid && (
+							<Text size='xs' c='green' fw={500}>
+								{t('form.contacts.mapping.totalMapped', {
+									count: totalMappedCsvColumns,
 								})}
 							</Text>
 						)}
