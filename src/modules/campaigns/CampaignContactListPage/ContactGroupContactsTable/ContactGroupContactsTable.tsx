@@ -25,6 +25,7 @@ import {
 } from '~/queries/contactGroupFilesQueries';
 import EditablePhoneNumbersTable from './EditablePhoneNumbersTable';
 import AppendContactsModal from './AppendContactsModal';
+import OutboundCallTasksModal from './OutboundCallTasksModal';
 import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
@@ -178,6 +179,8 @@ export const ContactGroupContactsTable: React.FC<
 
 	// Edit contact modal state
 	const [editContactId, setEditContactId] = useState<number | null>(null);
+	const [outboundTasksContact, setOutboundTasksContact] =
+		useState<Contact | null>(null);
 	const [deletingContactId, setDeletingContactId] = useState<number | null>(
 		null
 	);
@@ -226,9 +229,14 @@ export const ContactGroupContactsTable: React.FC<
 		[deleteContactMutation, groupContactsQuery, t]
 	);
 
+	const handleViewOutboundTasks = useCallback((contact: Contact) => {
+		setOutboundTasksContact(contact);
+	}, []);
+
 	const columns = useContactColumns(
 		canUpdateContacts ? handleEditContact : undefined,
 		canDeleteContacts ? handleDeleteContact : undefined,
+		handleViewOutboundTasks,
 		(contactId) =>
 			deleteContactMutation.isPending && deletingContactId === contactId
 	);
@@ -320,6 +328,10 @@ export const ContactGroupContactsTable: React.FC<
 		}
 	}, [exportQuery, contactGroupId, canExportContacts, t]);
 
+	const handleReloadContacts = useCallback(() => {
+		void groupContactsQuery.refetch();
+	}, [groupContactsQuery]);
+
 	// Cleanup right panel on unmount
 	useEffect(() => {
 		return () => {
@@ -335,6 +347,8 @@ export const ContactGroupContactsTable: React.FC<
 				onFilterChange={contactFilters.setFilter}
 				onClearFilters={contactFilters.clearFilters}
 				hasActiveFilters={contactFilters.hasActiveFilters}
+				onReload={handleReloadContacts}
+				isReloading={groupContactsQuery.isFetching}
 				onExport={canExportContacts ? handleExport : undefined}
 				isExporting={canExportContacts ? exportQuery.isFetching : false}
 				onAppend={canExportContacts ? handleOpenAppendModal : undefined}
@@ -420,6 +434,11 @@ export const ContactGroupContactsTable: React.FC<
 				onClose={() => setEditContactId(null)}
 				contactId={editContactId}
 				contactGroupId={contactGroupId}
+			/>
+			<OutboundCallTasksModal
+				opened={outboundTasksContact != null}
+				onClose={() => setOutboundTasksContact(null)}
+				contact={outboundTasksContact}
 			/>
 		</>
 	);

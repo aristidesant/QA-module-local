@@ -1,0 +1,37 @@
+.flowWrapper {
+	background: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-sm);
+	height: min(520px, 60vh);
+	min-height: 320px;
+	overflow: hidden;
+}
+
+.flowCanvas {
+	width: 100%;
+	height: 100%;
+	background: var(--mantine-color-gray-0);
+}
+
+.flowWrapper :global(.react-flow__edge-path) {
+	stroke: var(--mantine-color-gray-5);
+}
+
+.flowWrapper :global(.react-flow__edge-text) {
+	fill: var(--mantine-color-gray-6);
+	font-size: var(--mantine-font-size-xs);
+}
+
+.flowWrapper :global(.react-flow__controls) {
+	box-shadow: none;
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-sm);
+}
+
+.flowWrapper :global(.react-flow__controls-button) {
+	background: var(--mantine-color-white);
+}
+
+.flowWrapper :global(.react-flow__controls-button svg) {
+	stroke: var(--mantine-color-gray-7);
+}

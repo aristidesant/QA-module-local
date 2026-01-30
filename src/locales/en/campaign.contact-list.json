@@ -194,9 +194,23 @@
 			"filterByEmail": "Filter by email..."
 		},
 		"tooltips": {
+			"reload": "Reload contacts",
 			"append": "Append contacts",
 			"export": "Export contacts",
-			"faultyPhones": "{{count}} faulty phone number{{plural}}"
+			"faultyPhones": "{{count}} faulty phone number{{plural}}",
+			"viewOutboundTasks": "View call logs",
+			"noOutboundTasks": "No call logs available"
+		},
+		"outboundTasks": {
+			"title": "Outbound call logs",
+			"subtitle": "Contact: {{name}}",
+			"empty": "No outbound call tasks available.",
+			"noErrorMessage": "No error message",
+			"columns": {
+				"status": "Status",
+				"wave": "Wave",
+				"errorMessage": "Error message"
+			}
 		},
 		"status": {
 			"ACTIVE": "Active",
