@@ -5,13 +5,29 @@ import { modals } from '@mantine/modals';
 import { IconCheck, IconChevronRight } from '@tabler/icons-react';
 import { ContactHeaderMapping } from '../../ContactHeaderMapping/ContactHeaderMapping';
 import type { MappedResult } from '~/models/ContactFileSummary';
+import { useGetClientConfig } from '~/queries/clientConfigQueries';
 import styles from '../ContactLimits.module.css';
 
+interface SystemColumn {
+	name: string;
+	label: string;
+	type: string;
+	isArray: boolean;
+}
+
 /**
- * Count how many CSV columns are mapped.
- * This counts the actual CSV columns used, not the system fields.
+ * Fields that are excluded from the "required" validation.
+ * - phones: works differently (array field, always available for mapping)
  */
-export function countMappedCsvColumns(columnMappings: MappedResult): number {
+const EXCLUDED_FROM_REQUIRED = ['phones'];
+
+/**
+ * Count how many CSV columns are mapped in total.
+ * This counts the actual CSV columns used across all mappings.
+ */
+export function countTotalMappedCsvColumns(
+	columnMappings: MappedResult
+): number {
 	if (!columnMappings) return 0;
 
 	let count = 0;
@@ -26,16 +42,54 @@ export function countMappedCsvColumns(columnMappings: MappedResult): number {
 }
 
 /**
- * Check if all CSV headers are mapped.
- * This is the smart validation - it checks that all CSV columns from the file
- * have been assigned to a system field. phoneNumber and other array fields
- * don't cause issues because we're counting CSV columns, not system fields.
+ * Count how many required system fields are mapped.
+ * Only counts fields that are in the systemFields list and not excluded.
  */
-export function areAllColumnsMapped(
+export function countMappedRequiredFields(
 	columnMappings: MappedResult,
-	totalHeaders: number
+	systemFields: SystemColumn[]
+): number {
+	if (!columnMappings || !systemFields) return 0;
+
+	// Get required system fields (excluding phones and other excluded fields)
+	const requiredFields = systemFields.filter(
+		(field) => !EXCLUDED_FROM_REQUIRED.includes(field.name)
+	);
+
+	// Count how many required fields have mappings
+	return requiredFields.filter((field) => {
+		const mapping = columnMappings[field.name];
+		if (Array.isArray(mapping)) {
+			return mapping.length > 0;
+		}
+		return !!mapping;
+	}).length;
+}
+
+/**
+ * Check if all required system fields are mapped.
+ * Only system fields (non-dynamic) are required, except for phones.
+ * Dynamic fields from schemas are optional.
+ */
+export function areAllSystemFieldsMapped(
+	columnMappings: MappedResult,
+	systemFields: SystemColumn[]
 ): boolean {
-	return countMappedCsvColumns(columnMappings) >= totalHeaders;
+	if (!columnMappings || !systemFields) return false;
+
+	// Get required system fields (excluding phones and other excluded fields)
+	const requiredFields = systemFields.filter(
+		(field) => !EXCLUDED_FROM_REQUIRED.includes(field.name)
+	);
+
+	// Check that each required field has a mapping
+	return requiredFields.every((field) => {
+		const mapping = columnMappings[field.name];
+		if (Array.isArray(mapping)) {
+			return mapping.length > 0;
+		}
+		return !!mapping;
+	});
 }
 
 interface ColumnMappingCardProps {
@@ -76,14 +130,30 @@ function ColumnMappingCard({
 }: ColumnMappingCardProps) {
 	const { t } = useTranslation('campaigns');
 
-	// Count total mapped CSV columns
+	// Fetch system columns from client config
+	const { data: systemConfig } = useGetClientConfig('contact_columns');
+
+	// Parse system columns from config
+	const systemFields = useMemo<SystemColumn[]>(() => {
+		if (!systemConfig?.value) return [];
+		try {
+			return JSON.parse(systemConfig.value) as SystemColumn[];
+		} catch {
+			return [];
+		}
+	}, [systemConfig]);
+
+	// Count total CSV columns mapped (for badge display)
 	const totalMappedCsvColumns = useMemo(
-		() => countMappedCsvColumns(columnMappings),
+		() => countTotalMappedCsvColumns(columnMappings),
 		[columnMappings]
 	);
 
-	// Valid when all CSV columns are mapped
-	const isValid = totalMappedCsvColumns >= headers.length;
+	// Valid when all required system fields are mapped
+	const isValid = useMemo(
+		() => areAllSystemFieldsMapped(columnMappings, systemFields),
+		[columnMappings, systemFields]
+	);
 
 	const openMappingModal = () => {
 		modals.open({
