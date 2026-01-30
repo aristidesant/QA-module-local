@@ -137,6 +137,7 @@
 	},
 	"scheduler": {
 		"schedulerBuilder": {
+			"fieldsCount": "{{count}} campos",
 			"days": {
 				"monday": "Lunes",
 				"tuesday": "Martes",

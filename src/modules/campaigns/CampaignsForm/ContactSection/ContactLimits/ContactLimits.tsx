@@ -21,8 +21,9 @@ import { useProcessContactGroupFile } from '~/queries/contactGroupFilesQueries';
 import { ContactListInfo } from './ContactListInfo';
 import type ContactGroup from '~/models/ContactGroup';
 import ColumnMappingCard, {
-	areAllColumnsMapped,
+	areAllSystemFieldsMapped,
 } from './ColumnMappingCard/ColumnMappingCard';
+import { useGetClientConfig } from '~/queries/clientConfigQueries';
 import { transformFieldMapping } from '~/utils/fieldMappingTransformer';
 import { useUpdateContactGroup } from '~/queries/contactGroupQueries';
 import { useCampaignActiveSchedule } from '~/queries/schedulerQueries';
@@ -97,6 +98,24 @@ export const ContactLimits = ({
 	// Track whether mapping validation has failed (to show error styling)
 	const [showMappingError, setShowMappingError] = useState(false);
 
+	// Fetch system columns from client config for validation
+	const { data: systemConfig } = useGetClientConfig('contact_columns');
+
+	// Parse system columns from config
+	const systemFields = useMemo(() => {
+		if (!systemConfig?.value) return [];
+		try {
+			return JSON.parse(systemConfig.value) as Array<{
+				name: string;
+				label: string;
+				type: string;
+				isArray: boolean;
+			}>;
+		} catch {
+			return [];
+		}
+	}, [systemConfig]);
+
 	// Sync state when contactGroup prop changes
 	useEffect(() => {
 		setData((prev) => ({
@@ -138,10 +157,9 @@ export const ContactLimits = ({
 		}
 
 		// Validate column mappings when creating a new contact group
-		// All CSV columns should be mapped to system fields
+		// Only system fields are required (except phones), dynamic fields are optional
 		if (!contactGroup.id && fileSummary) {
-			const totalHeaders = fileSummary.headers?.length || 0;
-			if (!areAllColumnsMapped(data.columnMappings || {}, totalHeaders)) {
+			if (!areAllSystemFieldsMapped(data.columnMappings || {}, systemFields)) {
 				setShowMappingError(true);
 				notifications.show({
 					title: t('form.contacts.limits.notifications.invalidInput'),
