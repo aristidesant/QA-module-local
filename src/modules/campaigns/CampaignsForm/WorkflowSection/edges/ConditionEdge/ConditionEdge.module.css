@@ -26,6 +26,17 @@
 	font-weight: 600;
 }
 
+.labelClickable {
+	pointer-events: auto;
+	cursor: pointer;
+	transition: all 150ms ease-in-out;
+}
+
+.labelClickable:hover {
+	opacity: 0.85;
+	transform: scale(1.05);
+}
+
 .labelPrefix {
 	margin-right: 6px;
 	opacity: 0.8;

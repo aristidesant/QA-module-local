@@ -35,6 +35,9 @@ const ConditionEdge: FC<EdgeProps> = ({
 	const label =
 		typeof (data as any)?.label === 'string' ? (data as any).label : null;
 	const warningLevel = ((data as any)?.warningLevel ?? 'none') as WarningLevel;
+	const onEdgeClick = (data as any)?.onEdgeClick as
+		| ((edgeId: string) => void)
+		| undefined;
 
 	// Get stroke color based on warning level
 	const getStrokeColor = (): string => {
@@ -52,14 +55,15 @@ const ConditionEdge: FC<EdgeProps> = ({
 
 	// Get label style class based on warning level
 	const getLabelClassName = (): string => {
-		switch (warningLevel) {
-			case 'error':
-				return `${styles.label} ${styles.labelError}`;
-			case 'warning':
-				return `${styles.label} ${styles.labelWarning}`;
-			default:
-				return styles.label;
-		}
+		const baseClasses = `${styles.label}`;
+		const warningClasses =
+			warningLevel === 'error'
+				? styles.labelError
+				: warningLevel === 'warning'
+					? styles.labelWarning
+					: '';
+		const clickableClasses = onEdgeClick ? styles.labelClickable : '';
+		return `${baseClasses} ${warningClasses} ${clickableClasses}`.trim();
 	};
 
 	return (
@@ -80,6 +84,7 @@ const ConditionEdge: FC<EdgeProps> = ({
 						style={{
 							transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`,
 						}}
+						onClick={() => onEdgeClick?.(id)}
 					>
 						<span className={styles.labelPrefix}>&gt;&gt;</span>
 						{label}

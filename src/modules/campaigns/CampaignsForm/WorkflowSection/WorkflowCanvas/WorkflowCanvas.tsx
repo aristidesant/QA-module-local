@@ -19,7 +19,9 @@ import SubagentNodeComponent from '../nodes/SubagentNode';
 import WorkflowNodeWrapper from '../WorkflowNode';
 import { WORKFLOW_NODE_TYPES, createNodeTypes } from '../nodeTypes';
 import ConditionEdge from '../edges/ConditionEdge';
+import { EdgeConditionModal } from '../forms/EdgeConditionModal';
 import { getEdgeWarningLevel } from '../utils/workflowValidation';
+import { updateWorkflowEdge } from '../forms/nodeFormUtils';
 import type {
 	AgentWorkflow,
 	EndNode,
@@ -85,11 +87,64 @@ const WorkflowCanvas = ({
 	const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 	const [reactFlowInstance, setReactFlowInstance] =
 		useState<ReactFlowInstance | null>(null);
+	const [modalOpened, setModalOpened] = useState(false);
+	const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
 	const isApplyingWorkflowRef = useRef(false);
 	const lastAppliedWorkflowRef = useRef<string | null>(null);
 	const lastEmittedWorkflowRef = useRef<string | null>(null);
 	const lastWorkflowNodeCountRef = useRef<number>(0);
 	const hasAppliedInitialWorkflowRef = useRef(false);
+
+	// Get selected edge and its node labels for the modal
+	const selectedEdge =
+		selectedEdgeId && workflow?.edges[selectedEdgeId]
+			? workflow.edges[selectedEdgeId]
+			: undefined;
+
+	const sourceNode = selectedEdge
+		? workflow?.nodes[selectedEdge.source]
+		: undefined;
+	const targetNode = selectedEdge
+		? workflow?.nodes[selectedEdge.target]
+		: undefined;
+
+	const sourceLabel = sourceNode
+		? sourceNode.label || sourceNode.type
+		: 'Unknown';
+	const targetLabel = targetNode
+		? targetNode.label || targetNode.type
+		: 'Unknown';
+
+	// Modal handlers
+	const handleOpenEdgeModal = useCallback((edgeId: string) => {
+		setSelectedEdgeId(edgeId);
+		setModalOpened(true);
+	}, []);
+
+	const handleCloseModal = useCallback(() => {
+		setModalOpened(false);
+		setSelectedEdgeId(null);
+	}, []);
+
+	const handleSaveEdgeCondition = useCallback(
+		(edgeId: string, forwardCondition?: any, backwardCondition?: any) => {
+			if (!workflow) return;
+
+			const updates: any = {};
+			if (forwardCondition !== undefined) {
+				updates.forwardCondition = forwardCondition;
+			}
+			if (backwardCondition !== undefined) {
+				updates.backwardCondition = backwardCondition;
+			}
+
+			const nextWorkflow = updateWorkflowEdge(workflow, edgeId, updates);
+			if (nextWorkflow) {
+				onWorkflowChange?.(nextWorkflow);
+			}
+		},
+		[workflow, onWorkflowChange]
+	);
 
 	const edgeTypes = useMemo(
 		() => ({
@@ -461,13 +516,14 @@ const WorkflowCanvas = ({
 						forwardCondition: edge.forwardCondition,
 						backwardCondition: edge.backwardCondition,
 						warningLevel: getEdgeWarningLevel(id, workflowData),
+						onEdgeClick: handleOpenEdgeModal,
 					},
 				})
 			);
 
 			return { nodes: mappedNodes, edges: mappedEdges };
 		},
-		[t]
+		[t, handleOpenEdgeModal]
 	);
 
 	const buildWorkflowFromState = useCallback(
@@ -783,26 +839,38 @@ const WorkflowCanvas = ({
 	);
 
 	return (
-		<div className={styles.canvas}>
-			<ReactFlow
-				nodes={nodes}
-				edges={edges}
-				nodeTypes={nodeTypes}
-				edgeTypes={edgeTypes}
-				onNodesChange={onNodesChange}
-				onEdgesChange={onEdgesChange}
-				onNodeClick={(_, node) => onNodeSelect?.(node.id)}
-				onPaneClick={() => onNodeSelect?.(null)}
-				onInit={setReactFlowInstance}
-				isValidConnection={isValidConnection}
-				defaultEdgeOptions={defaultEdgeOptions}
-				fitView
-				className={styles.flow}
-			>
-				<Background variant={BackgroundVariant.Dots} gap={16} size={1} />
-				<Controls className={styles.controls} />
-			</ReactFlow>
-		</div>
+		<>
+			<div className={styles.canvas}>
+				<ReactFlow
+					nodes={nodes}
+					edges={edges}
+					nodeTypes={nodeTypes}
+					edgeTypes={edgeTypes}
+					onNodesChange={onNodesChange}
+					onEdgesChange={onEdgesChange}
+					onNodeClick={(_, node) => onNodeSelect?.(node.id)}
+					onPaneClick={() => onNodeSelect?.(null)}
+					onInit={setReactFlowInstance}
+					isValidConnection={isValidConnection}
+					defaultEdgeOptions={defaultEdgeOptions}
+					fitView
+					className={styles.flow}
+				>
+					<Background variant={BackgroundVariant.Dots} gap={16} size={1} />
+					<Controls className={styles.controls} />
+				</ReactFlow>
+			</div>
+
+			<EdgeConditionModal
+				opened={modalOpened}
+				edgeId={selectedEdgeId ?? undefined}
+				edge={selectedEdge}
+				sourceLabel={sourceLabel}
+				targetLabel={targetLabel}
+				onClose={handleCloseModal}
+				onSave={handleSaveEdgeCondition}
+			/>
+		</>
 	);
 };
 
