@@ -55,9 +55,15 @@ export const EdgeConditionModal: React.FC<EdgeConditionModalProps> = ({
 	);
 	const [forwardState, setForwardState] = useState<ConditionFormState>({
 		type: 'unconditional',
+		label: undefined,
+		llmCondition: undefined,
+		resultSuccessful: true,
 	});
 	const [backwardState, setBackwardState] = useState<ConditionFormState>({
 		type: 'unconditional',
+		label: undefined,
+		llmCondition: undefined,
+		resultSuccessful: true,
 	});
 
 	// Load existing conditions when modal opens
