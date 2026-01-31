@@ -329,6 +329,16 @@
 	text-overflow: ellipsis;
 }
 
+.edgeItemError {
+	background: var(--mantine-color-red-0);
+	border-color: var(--mantine-color-red-3);
+}
+
+.edgeItemError:hover {
+	background: var(--mantine-color-red-0);
+	border-color: var(--mantine-color-red-4);
+}
+
 .edgeItemWarning {
 	background: var(--mantine-color-yellow-0);
 	border-color: var(--mantine-color-yellow-3);

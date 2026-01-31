@@ -3,6 +3,7 @@ import {
 	IconGripVertical,
 	IconTrash,
 	IconAlertCircle,
+	IconAlertTriangle,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -18,7 +19,7 @@ import {
 	resolveNodeLabel,
 	updateWorkflowEdgeOrder,
 } from '../../../nodeFormUtils';
-import { hasEdgeCondition } from '~/modules/campaigns/CampaignsForm/WorkflowSection/utils/workflowValidation';
+import { getEdgeWarningLevel } from '~/modules/campaigns/CampaignsForm/WorkflowSection/utils/workflowValidation';
 import { useAgentForm } from '../../context';
 import mainStyles from '../../AgentForm.module.css';
 
@@ -28,9 +29,18 @@ const EdgesTab = () => {
 
 	const outgoingEdges = getOutgoingEdges(workflow, nodeId);
 
-	// Find edges without conditions for validation warning
-	const edgesWithoutConditions = outgoingEdges.filter(
-		({ id }) => !hasEdgeCondition(id, workflow)
+	// Find edges by warning level
+	const edgesByWarningLevel = outgoingEdges.reduce(
+		(acc, { id }) => {
+			const level = getEdgeWarningLevel(id, workflow);
+			if (level === 'error') {
+				acc.errors.push(id);
+			} else if (level === 'warning') {
+				acc.warnings.push(id);
+			}
+			return acc;
+		},
+		{ errors: [] as string[], warnings: [] as string[] }
 	);
 
 	if (outgoingEdges.length === 0) {
@@ -85,17 +95,33 @@ const EdgesTab = () => {
 				{t('form.workflow.forms.agent.edgesTab.description')}
 			</Text>
 
-			{edgesWithoutConditions.length > 0 && (
+			{edgesByWarningLevel.errors.length > 0 && (
 				<Alert
 					icon={<IconAlertCircle size={16} />}
+					title={t('form.workflow.forms.agent.edgesTab.error.title', {
+						defaultValue: 'Missing Edge Conditions',
+					})}
+					color='red'
+				>
+					<Text size='sm'>
+						{t('form.workflow.forms.agent.edgesTab.error.message', {
+							defaultValue: `${edgesByWarningLevel.errors.length} edge(s) are missing all conditions and must be configured`,
+						})}
+					</Text>
+				</Alert>
+			)}
+
+			{edgesByWarningLevel.warnings.length > 0 && (
+				<Alert
+					icon={<IconAlertTriangle size={16} />}
 					title={t('form.workflow.forms.agent.edgesTab.warning.title', {
-						defaultValue: 'Incomplete Edge Configuration',
+						defaultValue: 'Default Edge Configuration',
 					})}
 					color='yellow'
 				>
 					<Text size='sm'>
 						{t('form.workflow.forms.agent.edgesTab.warning.message', {
-							defaultValue: `${edgesWithoutConditions.length} edge(s) need condition configuration before saving`,
+							defaultValue: `${edgesByWarningLevel.warnings.length} edge(s) have default unconditional routing. Consider configuring specific conditions`,
 						})}
 					</Text>
 				</Alert>
@@ -119,7 +145,7 @@ const EdgesTab = () => {
 									edge,
 									t('form.workflow.forms.agent.edgesTab.unnamedCondition')
 								);
-								const isWithoutCondition = !hasEdgeCondition(id, workflow);
+								const warningLevel = getEdgeWarningLevel(id, workflow);
 
 								return (
 									<Draggable key={id} draggableId={id} index={index}>
@@ -129,7 +155,13 @@ const EdgesTab = () => {
 												{...providedDraggable.draggableProps}
 												className={`${mainStyles.edgeItem} ${
 													snapshot.isDragging ? mainStyles.edgeItemDragging : ''
-												} ${isWithoutCondition ? mainStyles.edgeItemWarning : ''}`}
+												} ${
+													warningLevel === 'error'
+														? mainStyles.edgeItemError
+														: warningLevel === 'warning'
+															? mainStyles.edgeItemWarning
+															: ''
+												}`}
 											>
 												<div
 													{...providedDraggable.dragHandleProps}
