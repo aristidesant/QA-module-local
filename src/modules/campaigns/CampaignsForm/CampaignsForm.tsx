@@ -1,7 +1,15 @@
 // Refactored to use Mantine's useForm for all form state and validation
 
 import React, { useEffect } from 'react';
-import { Stack, LoadingOverlay, Box, ActionIcon, Tooltip } from '@mantine/core';
+import {
+	Stack,
+	LoadingOverlay,
+	Box,
+	ActionIcon,
+	Tooltip,
+	Button,
+	Group,
+} from '@mantine/core';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
@@ -13,6 +21,7 @@ import {
 	useAssignCampaignObjective,
 } from '~/queries/campaignsQueries';
 import { notifications } from '@mantine/notifications';
+import { validateWorkflow } from './WorkflowSection/utils/workflowValidation';
 import {
 	CampaignFormProvider,
 	CampaignIdContext,
@@ -23,6 +32,7 @@ import { useCampaignsStore } from '~/stores/campaignsStore';
 import GeneralSection from './GeneralSection/GeneralSection';
 import SectionCard from '~/components/SectionCard';
 import ParametersSection from './ParametersSection';
+import WorkflowSection from './WorkflowSection/WorkflowSection';
 import AgentSection from './AgentSection';
 import DispositionSection from './DispositionSection';
 import DoNotCallSection from './DoNotCallSection';
@@ -73,6 +83,13 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 
 	const { t } = useTranslation(['campaigns', 'campaign.detail', 'common']);
 
+	// Check if we have the workflow data ready for existing campaigns
+	const isNewCampaign = !campaign?.id;
+	const hasWorkflowData =
+		campaign?.agentConfig?.workflow?.nodes &&
+		Object.keys(campaign.agentConfig.workflow.nodes).length > 0;
+	const isDataReady = isNewCampaign || hasWorkflowData;
+
 	const form = useCampaignForm({
 		initialValues: {
 			name: campaign?.name || '',
@@ -109,30 +126,40 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		},
 	});
 
-	// Update form values when campaign prop changes (e.g., after wizard updates)
+	// Update form values when campaign data changes
 	useEffect(() => {
-		if (campaign) {
-			form.setValues({
-				name: campaign.name || '',
-				agentName: campaign.agentName || '',
-				configId: campaign.configId || '',
-				description: campaign.description || '',
-				budget: campaign.budget ?? 0,
-				spent: campaign.spent ?? 0,
-				type: campaign.type || 'OUTBOUND',
-				status: campaign.status || CampaignStatus.PENDING,
-				userId: campaign.userId ?? 0,
-				promptId: campaign.promptId ?? undefined,
-				objectiveId: campaign.objectiveId ?? undefined,
-				voiceId: campaign.voiceId ?? undefined,
-				clientId: campaign.clientId ?? 0,
-				tags: campaign.tags || [],
-				workingHours: campaign.workingHours || defaultWorkingHours,
-				agentConfig: campaign.agentConfig || {},
-				defaultMaxWaves: campaign.defaultMaxWaves ?? 3,
-			});
-		}
-	}, [campaign]);
+		if (!campaign?.id) return; // Only for existing campaigns
+
+		form.setValues({
+			name: campaign.name || '',
+			agentName: campaign.agentName || '',
+			configId: campaign.configId || '',
+			description: campaign.description || '',
+			budget: campaign.budget ?? 0,
+			spent: campaign.spent ?? 0,
+			type: campaign.type || 'OUTBOUND',
+			status: campaign.status || CampaignStatus.PENDING,
+			userId: campaign.userId ?? 0,
+			promptId: campaign.promptId ?? undefined,
+			objectiveId: campaign.objectiveId ?? undefined,
+			voiceId: campaign.voiceId ?? undefined,
+			clientId: campaign.clientId ?? 0,
+			tags: campaign.tags || [],
+			workingHours: campaign.workingHours || defaultWorkingHours,
+			agentConfig: campaign.agentConfig || {},
+			defaultMaxWaves: campaign.defaultMaxWaves ?? 3,
+		});
+
+		const stateNodes = form.values.agentConfig?.workflow?.nodes;
+		const getterNodes = form.getValues().agentConfig?.workflow?.nodes;
+		const valuesFromState = stateNodes ? Object.keys(stateNodes).length : 0;
+		const valuesFromGetter = getterNodes ? Object.keys(getterNodes).length : 0;
+		console.log('[CampaignsForm] after setValues - workflow nodes:', {
+			campaignId: campaign.id,
+			valuesFromState,
+			valuesFromGetter,
+		});
+	}, [campaign?.id, campaign?.agentConfig?.workflow]);
 
 	// Reset view only on component unmount
 	useEffect(() => {
@@ -148,6 +175,28 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	) => {
 		if (form.validate().hasErrors) {
 			return;
+		}
+
+		// Validate workflow edge conditions before submitting
+		if (value.agentConfig?.workflow) {
+			const validationResult = validateWorkflow(value.agentConfig.workflow);
+			if (!validationResult.isValid) {
+				notifications.show({
+					title: t('form.validation.workflowInvalidTitle', {
+						defaultValue: 'Workflow Configuration Error',
+						ns: 'common',
+					}),
+					message:
+						validationResult.errorMessage ||
+						t('form.validation.workflowInvalidMessage', {
+							defaultValue:
+								'All edges must have at least one condition configured',
+							ns: 'common',
+						}),
+					color: 'red',
+				});
+				return;
+			}
 		}
 
 		try {
@@ -235,34 +284,34 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 
 	return (
 		<CampaignIdContext.Provider value={campaign?.id}>
-			<ContentContainer
-				rightSection={effectiveRightSection}
-				onBackClick={() => {
-					resetView();
-					onBack?.();
-				}}
-				title={
-					campaign?.id
-						? t('form.title.edit', { name: campaign.name })
-						: t('list.createCampaign')
-				}
-				titleRight={
-					campaign?.id && (
-						<Tooltip label={t('columns.viewCampaign')} withArrow>
-							<ActionIcon
-								variant='light'
-								size='lg'
-								onClick={() => navigate(`/campaign/view/${campaign.id}`)}
-							>
-								<IconEye size={20} />
-							</ActionIcon>
-						</Tooltip>
-					)
-				}
-				description={t('form.description')}
-				showBackButton
-			>
-				<CampaignFormProvider form={form}>
+			<CampaignFormProvider form={form}>
+				<ContentContainer
+					rightSection={effectiveRightSection}
+					onBackClick={() => {
+						resetView();
+						onBack?.();
+					}}
+					title={
+						campaign?.id
+							? t('form.title.edit', { name: campaign.name })
+							: t('list.createCampaign')
+					}
+					titleRight={
+						campaign?.id && (
+							<Tooltip label={t('columns.viewCampaign')} withArrow>
+								<ActionIcon
+									variant='light'
+									size='lg'
+									onClick={() => navigate(`/campaign/view/${campaign.id}`)}
+								>
+									<IconEye size={20} />
+								</ActionIcon>
+							</Tooltip>
+						)
+					}
+					description={t('form.description')}
+					showBackButton
+				>
 					<LoadingOverlay
 						visible={isCreating || isUpdating || isUpdatingLight}
 					/>
@@ -275,13 +324,73 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 								onSubmit={form.onSubmit((values) => handleSubmit(values, true))}
 							>
 								<GeneralSection />
-								<div />
+								<Group justify='flex-end' mt='md'>
+									<Button
+										type='submit'
+										disabled={!form.isDirty()}
+										loading={isUpdatingLight}
+									>
+										{isUpdatingLight
+											? t('form.actions.saving', { defaultValue: 'Saving...' })
+											: t('form.actions.save', {
+													defaultValue: 'Save changes',
+												})}
+									</Button>
+								</Group>
 							</form>
 						)}
 						{selectedTab === 'agents' && (
 							<form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
 								<AgentSection />
+								<Group justify='flex-end' mt='md'>
+									<Button
+										type='submit'
+										disabled={!form.isDirty()}
+										loading={isUpdating}
+									>
+										{isUpdating
+											? t('form.actions.saving', { defaultValue: 'Saving...' })
+											: t('form.actions.save', {
+													defaultValue: 'Save changes',
+												})}
+									</Button>
+								</Group>
 							</form>
+						)}
+						{selectedTab === 'workflow' && (
+							<>
+								{!isDataReady && campaign?.id ? (
+									<SectionCard
+										title={t('form.workflow.section.title')}
+										description={t('form.workflow.loadingDescription', {
+											defaultValue: 'Loading workflow data...',
+										})}
+									>
+										<LoadingOverlay visible />
+									</SectionCard>
+								) : (
+									<form
+										onSubmit={form.onSubmit((values) => handleSubmit(values))}
+									>
+										<WorkflowSection />
+										<Group justify='flex-end' mt='md'>
+											<Button
+												type='submit'
+												disabled={!form.isDirty()}
+												loading={isUpdating}
+											>
+												{isUpdating
+													? t('form.actions.saving', {
+															defaultValue: 'Saving...',
+														})
+													: t('form.actions.save', {
+															defaultValue: 'Save changes',
+														})}
+											</Button>
+										</Group>
+									</form>
+								)}
+							</>
 						)}
 						{selectedTab === 'outcomes' && <DispositionSection />}
 						{selectedTab === 'do-not-call' && (
@@ -331,8 +440,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 							</SectionCard>
 						)}
 					</Stack>
-				</CampaignFormProvider>
-			</ContentContainer>
+				</ContentContainer>
+			</CampaignFormProvider>
 		</CampaignIdContext.Provider>
 	);
 };

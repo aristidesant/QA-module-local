@@ -204,6 +204,17 @@ export interface OverrideAgentNode extends WorkflowNodeBase {
 	additionalPrompt: string;
 	additionalToolIds: string[];
 	additionalKnowledgeBase: string[];
+	subagent?: {
+		prompt?: string;
+		overridePrompt?: boolean;
+		voiceId?: string;
+		llmModel?: string;
+		eagerness?: string;
+		spellingPatience?: string;
+		inheritKnowledgeBase?: boolean;
+		knowledgeBaseIds?: string[];
+		toolIds?: string[];
+	};
 	/** Node-level partial overrides; shape depends on your app */
 	conversationConfig: Record<string, unknown>;
 }
@@ -212,10 +223,11 @@ export interface OverrideAgentNode extends WorkflowNodeBase {
 export interface PhoneNumberTransferNode extends WorkflowNodeBase {
 	type: 'phone_number';
 	transferType: 'conference' | 'blind' | 'sip_refer' | (string & {});
-	transferDestination: {
-		type: 'phone';
-		phoneNumber: string;
-	};
+	transferDestination:
+		| { type: 'phone'; phoneNumber: string }
+		| { type: 'sip_uri'; sipUri: string }
+		| { type: 'phone_dynamic_variable'; phoneNumber: string }
+		| { type: 'sip_uri_dynamic_variable'; sipUri: string };
 }
 
 /** standalone_agent transfer node */
@@ -225,6 +237,9 @@ export interface StandaloneAgentNode extends WorkflowNodeBase {
 	delayMs: number;
 	transferMessage?: string;
 	enableTransferredAgentFirstMessage: boolean;
+	additionalPrompt?: string;
+	additionalToolIds?: string[];
+	additionalKnowledgeBase?: string[];
 	/** Custom subagent configuration */
 	subagent?: {
 		prompt?: string;
@@ -232,6 +247,8 @@ export interface StandaloneAgentNode extends WorkflowNodeBase {
 		voiceId?: string;
 		llmModel?: string;
 		eagerness?: string;
+		spellingPatience?: string;
+		inheritKnowledgeBase?: boolean;
 		knowledgeBaseIds?: string[];
 		toolIds?: string[];
 	};

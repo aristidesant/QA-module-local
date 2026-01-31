@@ -37,7 +37,6 @@ export interface AgentConfigModel {
 		createdAtUnixSecs: number;
 	};
 	phoneNumbers: string[];
-	workflow?: AgentWorkflow;
 	platformSettings: {
 		ban: null;
 		auth: {
@@ -102,6 +101,7 @@ export interface AgentConfigModel {
 		webhooks: Record<string, any>;
 	};
 	conversationConfig: ConversationConfigModel;
+	workflow?: AgentWorkflow;
 }
 
 export interface ConversationConfigModel {

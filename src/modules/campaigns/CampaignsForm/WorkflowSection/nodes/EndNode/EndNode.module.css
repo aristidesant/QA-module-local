@@ -1,0 +1,17 @@
+.node {
+	background-color: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+	min-width: 120px;
+	text-align: center;
+	transition: border-color 0.2s ease;
+}
+
+.node:hover {
+	border-color: var(--mantine-color-gray-5);
+}
+
+.icon {
+	color: var(--mantine-color-red-6);
+}

@@ -1,0 +1,19 @@
+.list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.toolItem {
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	background: var(--mantine-color-white);
+}
+
+.empty {
+	border: 1px dashed var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-sm);
+	background: var(--mantine-color-gray-0);
+}

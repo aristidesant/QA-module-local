@@ -27,6 +27,7 @@
 		"stepComplete": "Complete",
 		"tabs": {
 			"agents": "Agents",
+			"workflow": "Workflow",
 			"outcomes": "Outcomes",
 			"params": "Params",
 			"general": "General"
@@ -444,16 +445,247 @@
 		},
 		"description": "Configure and manage your campaign settings.",
 		"workflow": {
+			"sidePanel": {
+				"close": "Close panel"
+			},
+			"forms": {
+				"agent": {
+					"title": "Agent settings",
+					"description": "Configure agent behavior for this node.",
+					"missingNode": "Agent node not found",
+					"missingNodeHint": "Select an agent node to edit its configuration.",
+					"tabs": {
+						"general": "General",
+						"knowledgeBase": "Knowledge Base",
+						"tools": "Tools",
+						"tests": "Tests",
+						"edges": "Edges"
+					},
+					"toolsTab": {
+						"builtIn": {
+							"title": "Built-in tools",
+							"endConversation": "End conversation",
+							"detectLanguage": "Detect language",
+							"skipTurn": "Skip turn",
+							"playKeypadTouchTone": "Play keypad touch tone",
+							"voicemailDetection": "Voicemail detection",
+							"configure": "Configure {{name}}",
+							"toggle": "Toggle {{name}}"
+						},
+						"inheritCustomTools": "Inherit custom tools",
+						"additionalCustomTools": "Additional custom tools",
+						"addTool": "Add tool",
+						"loading": "Loading tools...",
+						"error": "Failed to load tools.",
+						"empty": "No tools available.",
+						"emptyCustomTools": "No custom tools added.",
+						"removeCustomTool": "Remove {{name}}",
+						"noDescription": "No description provided.",
+						"customTool": {
+							"name": "capture_customer_address",
+							"type": "Webhook",
+							"description": "Use this tool when the agent needs to collect a customer address.",
+							"remove": "Remove custom tool"
+						}
+					},
+					"general": {
+						"prompt": {
+							"label": "Conversation goal",
+							"placeholder": "Describe the goal of this agent"
+						},
+						"overridePrompt": {
+							"label": "Override prompt"
+						},
+						"voice": {
+							"label": "Voice",
+							"placeholder": "Select a voice"
+						},
+						"llm": {
+							"label": "LLM",
+							"placeholder": "Select a model"
+						},
+						"eagerness": {
+							"label": "Eagerness",
+							"placeholder": "Select eagerness"
+						},
+						"spellingPatience": {
+							"label": "Spelling patience",
+							"placeholder": "Select patience"
+						},
+						"speculativeTurn": {
+							"label": "Speculative turn",
+							"enabled": "Enabled",
+							"disabled": "Disabled"
+						},
+						"usingDefault": "Using default",
+						"usingDefaultValue": "Using default: {{value}}",
+						"editOverride": "Edit override",
+						"resetToDefault": "Reset to default"
+					},
+					"placeholders": {
+						"knowledgeBase": "Knowledge Base form is coming next.",
+						"tools": "Tools form is coming next.",
+						"tests": "Tests form is coming next."
+					},
+					"edgesTab": {
+						"description": "Configure the order in which outgoing edges are evaluated. Edges higher in the list will be evaluated first.",
+						"empty": "No outgoing edges yet.",
+						"targetLabel": "→ {{target}}",
+						"unnamedCondition": "Unnamed condition",
+						"removeAria": "Remove edge to {{target}}"
+					}
+				},
+				"startEnd": {
+					"title": "Start/End node",
+					"description": "Review basic node details.",
+					"missingNode": "Node not found",
+					"missingNodeHint": "Select a node to view its details.",
+					"type": "Type",
+					"label": "Label",
+					"labelPlaceholder": "No label"
+				},
+				"tool": {
+					"title": "Tool node",
+					"description": "Review tools attached to this node.",
+					"missingNode": "Tool node not found",
+					"missingNodeHint": "Select a tool node to view its details.",
+					"empty": "No tools attached yet.",
+					"unknown": "Unknown tool"
+				},
+				"phone": {
+					"title": "Phone transfer",
+					"description": "Review transfer settings for this node.",
+					"missingNode": "Phone node not found",
+					"missingNodeHint": "Select a phone node to view its details.",
+					"transferType": "Transfer type",
+					"destination": "Destination",
+					"destinationEmpty": "Not configured",
+					"empty": "Configure a destination to enable transfers."
+				},
+				"override": {
+					"title": "Agent override",
+					"description": "Review override configuration for this node.",
+					"missingNode": "Override node not found",
+					"missingNodeHint": "Select an override node to view its details.",
+					"promptTitle": "Additional prompt",
+					"promptEmpty": "No additional prompt added.",
+					"toolsTitle": "Additional tools",
+					"toolsEmpty": "No additional tools attached.",
+					"knowledgeTitle": "Additional knowledge base",
+					"knowledgeEmpty": "No additional knowledge base attached.",
+					"itemFallback": "Unknown item"
+				}
+			},
+			"section": {
+				"title": "Workflow",
+				"description": "Build the agent flow and connect nodes based on the workflow schema."
+			},
+			"sync": {
+				"tooltip": "Sync from agent",
+				"noAgentsTooltip": "No agents assigned",
+				"selectAgentTooltip": "Select an agent",
+				"selectAgentTitle": "Select Agent to Sync",
+				"selectAgentDescription": "Multiple agents are assigned to this campaign. Select which agent to use for syncing the workflow.",
+				"continueButton": "Continue",
+				"confirmTitle": "Sync Workflow from Agent",
+				"confirmMessage": "This will reload the workflow configuration from the agent '{{agentName}}'. Any unsaved workflow changes will be lost.",
+				"unknownAgent": "Unknown Agent",
+				"confirmButton": "Sync",
+				"cancelButton": "Cancel",
+				"successTitle": "Workflow Synced",
+				"successMessage": "The workflow configuration has been updated from the agent.",
+				"errorTitle": "Sync Error",
+				"errorMessage": "Failed to sync workflow from agent. Please try again."
+			},
 			"header": {
 				"title": "Flow Builder",
 				"description": "Start connects to a Subagent. From there, add the next steps in the flow.",
-				"preventLoops": "Prevent subagent loops"
+				"preventLoops": "Prevent subagent loops",
+				"agentLabel": "Agent",
+				"agentPlaceholder": "Select agent"
 			},
 			"layout": {
 				"label": "Layout",
 				"horizontal": "Horizontal",
 				"vertical": "Vertical",
 				"organize": "Organize"
+			},
+			"empty": {
+				"message": "No workflow configured yet. Add a start node to begin building the flow.",
+				"addStart": "Add start node"
+			},
+			"subagent": {
+				"title": "Subagent settings",
+				"description": "Adjust the label and prompt for this subagent node.",
+				"tabs": {
+					"general": "General",
+					"knowledgeBase": "Knowledge Base",
+					"tools": "Tools",
+					"edges": "Edges"
+				},
+				"label": "Label",
+				"labelPlaceholder": "Enter a label",
+				"additionalPrompt": "Additional prompt",
+				"additionalPromptPlaceholder": "Add instructions for this subagent",
+				"promptPreviewPlaceholder": "No prompt added",
+				"toolsCount": "{{count}} tool",
+				"toolsCount_other": "{{count}} tools",
+				"knowledgeBaseCount": "{{count}} knowledge base",
+				"knowledgeBaseCount_other": "{{count}} knowledge bases",
+				"countBadge": "+{{count}}",
+				"conversationGoal": "Conversation goal",
+				"overridePrompt": "Override prompt",
+				"inheritKnowledgeBase": "Inherit knowledge base",
+				"additionalKnowledgeBase": "Additional knowledge base",
+				"addDocument": "Add document",
+				"knowledgeBaseLoading": "Loading knowledge base...",
+				"knowledgeBaseError": "Failed to load knowledge base.",
+				"knowledgeBaseEmpty": "No knowledge base attached.",
+				"knowledgeBaseId": "ID {{id}}",
+				"removeKnowledgeBase": "Remove {{name}}",
+				"inheritTools": "Inherit tools",
+				"additionalTools": "Additional tools",
+				"edges": {
+					"helper": "Configure the order in which outgoing edges are evaluated. Edit edge labels on the canvas.",
+					"defaultLabel": "Unnamed condition",
+					"target": "\u2192 {{target}}",
+					"empty": "No outgoing edges yet."
+				},
+				"invalidNode": "This node cannot be configured here."
+			},
+			"tools": {
+				"label": "Tools",
+				"description": "Choose which tools this node can call.",
+				"placeholder": "Select tools",
+				"loading": "Loading tools...",
+				"empty": "No tools available.",
+				"error": "Failed to load tools."
+			},
+			"edge": {
+				"title": "Edge configuration",
+				"description": "Review the connection details for this transition.",
+				"helper": "Edit edge conditions by selecting the connection label on the canvas.",
+				"notFound": "Edge not found.",
+				"configure": "Configure condition"
+			},
+			"nodeMenu": {
+				"subagent": "Subagent",
+				"overrideAgent": "Agent transfer",
+				"phoneNumber": "Phone number transfer",
+				"tool": "Tool",
+				"end": "End"
+			},
+			"actions": {
+				"copy": "Copy node",
+				"delete": "Delete node"
+			},
+			"nodes": {
+				"start": "Start",
+				"standalone_agent": "Subagent",
+				"override_agent": "Agent transfer",
+				"phone_number": "Phone number transfer",
+				"tool": "Tool",
+				"end": "End"
 			}
 		},
 		"validation": {
@@ -466,6 +698,10 @@
 			"clientIdMin": "Client ID must be at least 0",
 			"defaultWavesMin": "Default waves must be at least 1",
 			"objectiveRequired": "Campaign objective is required"
+		},
+		"actions": {
+			"save": "Save changes",
+			"saving": "Saving..."
 		},
 		"notifications": {
 			"warningTitle": "Warning",

@@ -4,6 +4,8 @@ import type {
 	PaginatedResponse,
 	SchedulerSummary,
 } from '~/models/CampaignsModel';
+import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
+import type { AgentWorkflowApi } from '~/models/AgentWorkflowApiModel';
 import type { CampaignRequirements } from '~/models/CampaignRequirementsModel';
 import type { CampaignLiveMetric } from '~/models/CampaignLiveMetricModel';
 import { DEFAULT_API_URL } from './config';
@@ -89,6 +91,7 @@ type AgentConfigPayload = {
 			prompt?: Record<string, unknown> | string;
 		};
 	};
+	workflow?: AgentWorkflow | AgentWorkflowApi | Record<string, unknown>;
 };
 
 const removePromptText = (agentConfig?: AgentConfigPayload) => {
@@ -310,6 +313,14 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 			const response = await axios.patch<Campaign>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}/draft`,
 				data
+			);
+			return response.data;
+		},
+
+		// SYNC campaign by agent
+		syncByAgent: async (agentId: string) => {
+			const response = await axios.post<Campaign>(
+				`${DEFAULT_API_URL}/campaigns/sync-by-agent/${agentId}`
 			);
 			return response.data;
 		},

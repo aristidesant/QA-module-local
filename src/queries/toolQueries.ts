@@ -1,4 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+	useQuery,
+	useMutation,
+	useQueryClient,
+	UseQueryOptions,
+} from '@tanstack/react-query';
 import toolApi from '~/api/toolApi';
 import type {
 	ToolModel,
@@ -11,13 +16,16 @@ import type {
  * Hook to fetch all tools
  * @returns Query result containing an array of ToolModel objects
  */
-export function useTools() {
+export function useTools(
+	options?: Omit<UseQueryOptions<ToolModel[], Error>, 'queryKey' | 'queryFn'>
+) {
 	return useQuery<ToolModel[], Error>({
 		queryKey: ['tools'],
 		queryFn: async () => {
 			const api = toolApi();
 			return api.getAllTools();
 		},
+		...options,
 	});
 }
 

@@ -2,6 +2,7 @@ import { Tabs } from '@mantine/core';
 import {
 	IconChecklist,
 	IconGalaxy,
+	IconRoute,
 	IconUser,
 	IconList,
 } from '@tabler/icons-react';
@@ -30,6 +31,9 @@ const CampaignTabs = () => {
 			<Tabs.List>
 				<Tabs.Tab leftSection={<IconUser />} value='agents'>
 					{t('list.tabs.agents')}
+				</Tabs.Tab>
+				<Tabs.Tab leftSection={<IconRoute />} value='workflow'>
+					{t('list.tabs.workflow')}
 				</Tabs.Tab>
 				<Tabs.Tab leftSection={<IconList />} value='outcomes'>
 					{dispositionLabel(t('list.tabs.outcomes'))}

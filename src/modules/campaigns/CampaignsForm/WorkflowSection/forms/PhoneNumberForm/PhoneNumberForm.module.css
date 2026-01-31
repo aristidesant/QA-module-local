@@ -1,0 +1,17 @@
+.summaryRow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.metaLabel {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+}
+
+.empty {
+	border: 1px dashed var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-sm);
+	background: var(--mantine-color-gray-0);
+}

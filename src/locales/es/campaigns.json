@@ -27,6 +27,7 @@
 		"stepComplete": "Completar",
 		"tabs": {
 			"agents": "Agentes",
+			"workflow": "Workflow",
 			"outcomes": "Resultados",
 			"params": "Parámetros",
 			"general": "General"
@@ -444,16 +445,241 @@
 		},
 		"description": "Configura y gestiona los ajustes de tu campaña.",
 		"workflow": {
+			"sidePanel": {
+				"close": "Cerrar panel"
+			},
+			"forms": {
+				"agent": {
+					"title": "Configuracion del agente",
+					"description": "Configura el comportamiento del agente para este nodo.",
+					"missingNode": "No se encontro el nodo del agente",
+					"missingNodeHint": "Selecciona un nodo de agente para editar su configuracion.",
+					"tabs": {
+						"general": "General",
+						"knowledgeBase": "Knowledge Base",
+						"tools": "Tools",
+						"tests": "Tests",
+						"edges": "Edges"
+					},
+					"toolsTab": {
+						"builtIn": {
+							"title": "Herramientas integradas",
+							"endConversation": "Finalizar conversacion",
+							"detectLanguage": "Detectar idioma",
+							"skipTurn": "Omitir turno",
+							"playKeypadTouchTone": "Reproducir tono de teclado",
+							"voicemailDetection": "Deteccion de buzon de voz",
+							"configure": "Configurar {{name}}",
+							"toggle": "Alternar {{name}}"
+						},
+						"inheritCustomTools": "Heredar herramientas personalizadas",
+						"additionalCustomTools": "Herramientas personalizadas adicionales",
+						"addTool": "Agregar herramienta",
+						"loading": "Cargando herramientas...",
+						"error": "No se pudieron cargar las herramientas.",
+						"empty": "No hay herramientas disponibles.",
+						"emptyCustomTools": "No hay herramientas personalizadas agregadas.",
+						"removeCustomTool": "Eliminar {{name}}",
+						"noDescription": "Sin descripcion.",
+						"customTool": {
+							"name": "capture_customer_address",
+							"type": "Webhook",
+							"description": "Usa esta herramienta cuando el agente necesite capturar una direccion del cliente.",
+							"remove": "Eliminar herramienta personalizada"
+						}
+					},
+					"general": {
+						"prompt": {
+							"label": "Objetivo de conversacion",
+							"placeholder": "Describe el objetivo de este agente"
+						},
+						"overridePrompt": {
+							"label": "Sobrescribir prompt"
+						},
+						"voice": {
+							"label": "Voz",
+							"placeholder": "Selecciona una voz"
+						},
+						"llm": {
+							"label": "LLM",
+							"placeholder": "Selecciona un modelo"
+						},
+						"eagerness": {
+							"label": "Eagerness",
+							"placeholder": "Selecciona eagerness"
+						},
+						"spellingPatience": {
+							"label": "Spelling patience",
+							"placeholder": "Selecciona paciencia"
+						},
+						"speculativeTurn": {
+							"label": "Especulación de turno",
+							"enabled": "Habilitado",
+							"disabled": "Deshabilitado"
+						},
+						"usingDefault": "Usando valor por defecto",
+						"usingDefaultValue": "Usando valor por defecto: {{value}}",
+						"editOverride": "Editar override",
+						"resetToDefault": "Restaurar valor por defecto"
+					},
+					"placeholders": {
+						"knowledgeBase": "El formulario de Knowledge Base viene despues.",
+						"tools": "El formulario de Tools viene despues.",
+						"tests": "El formulario de Tests viene despues.",
+						"edges": "El formulario de Edges viene despues."
+					}
+				},
+				"startEnd": {
+					"title": "Nodo inicio/fin",
+					"description": "Revisa los detalles basicos del nodo.",
+					"missingNode": "No se encontro el nodo",
+					"missingNodeHint": "Selecciona un nodo para ver sus detalles.",
+					"type": "Tipo",
+					"label": "Etiqueta",
+					"labelPlaceholder": "Sin etiqueta"
+				},
+				"tool": {
+					"title": "Nodo de herramientas",
+					"description": "Revisa las herramientas asociadas a este nodo.",
+					"missingNode": "No se encontro el nodo de herramientas",
+					"missingNodeHint": "Selecciona un nodo de herramientas para ver sus detalles.",
+					"empty": "Aun no hay herramientas asociadas.",
+					"unknown": "Herramienta desconocida"
+				},
+				"phone": {
+					"title": "Transferencia telefonica",
+					"description": "Revisa la configuracion de transferencia para este nodo.",
+					"missingNode": "No se encontro el nodo de telefono",
+					"missingNodeHint": "Selecciona un nodo de telefono para ver sus detalles.",
+					"transferType": "Tipo de transferencia",
+					"destination": "Destino",
+					"destinationEmpty": "No configurado",
+					"empty": "Configura un destino para habilitar transferencias."
+				},
+				"override": {
+					"title": "Sobrescritura de agente",
+					"description": "Revisa la configuracion de override para este nodo.",
+					"missingNode": "No se encontro el nodo de override",
+					"missingNodeHint": "Selecciona un nodo de override para ver sus detalles.",
+					"promptTitle": "Prompt adicional",
+					"promptEmpty": "No se agrego un prompt adicional.",
+					"toolsTitle": "Herramientas adicionales",
+					"toolsEmpty": "No hay herramientas adicionales.",
+					"knowledgeTitle": "Knowledge base adicional",
+					"knowledgeEmpty": "No hay knowledge base adicional.",
+					"itemFallback": "Elemento desconocido"
+				}
+			},
+			"section": {
+				"title": "Workflow",
+				"description": "Crea el flujo del agente y conecta nodos segun el esquema del workflow."
+			},
+			"sync": {
+				"tooltip": "Sincronizar desde agente",
+				"noAgentsTooltip": "No hay agentes asignados",
+				"selectAgentTooltip": "Selecciona un agente",
+				"selectAgentTitle": "Seleccionar Agente para Sincronizar",
+				"selectAgentDescription": "Hay multiples agentes asignados a esta campana. Seleccione cual agente usar para sincronizar el workflow.",
+				"continueButton": "Continuar",
+				"confirmTitle": "Sincronizar Workflow desde Agente",
+				"confirmMessage": "Esto recargara la configuracion del workflow desde el agente '{{agentName}}'. Cualquier cambio no guardado del workflow se perdera.",
+				"unknownAgent": "Agente Desconocido",
+				"confirmButton": "Sincronizar",
+				"cancelButton": "Cancelar",
+				"successTitle": "Workflow Sincronizado",
+				"successMessage": "La configuracion del workflow ha sido actualizada desde el agente.",
+				"errorTitle": "Error de Sincronizacion",
+				"errorMessage": "No se pudo sincronizar el workflow desde el agente. Por favor, intente de nuevo."
+			},
 			"header": {
 				"title": "Constructor de flujo",
 				"description": "Inicio conecta con un subagente. Desde alli, agrega los siguientes pasos en el flujo.",
-				"preventLoops": "Evitar bucles de subagente"
+				"preventLoops": "Evitar bucles de subagente",
+				"agentLabel": "Agente",
+				"agentPlaceholder": "Seleccionar agente"
 			},
 			"layout": {
 				"label": "Diseno",
 				"horizontal": "Horizontal",
 				"vertical": "Vertical",
 				"organize": "Organizar"
+			},
+			"empty": {
+				"message": "Todavia no hay un workflow configurado. Agrega un nodo de inicio para comenzar a construir el flujo.",
+				"addStart": "Agregar nodo de inicio"
+			},
+			"subagent": {
+				"title": "Ajustes de subagente",
+				"description": "Ajusta la etiqueta y el prompt para este nodo de subagente.",
+				"tabs": {
+					"general": "General",
+					"knowledgeBase": "Base de conocimiento",
+					"tools": "Herramientas",
+					"edges": "Bordes"
+				},
+				"label": "Etiqueta",
+				"labelPlaceholder": "Escribe una etiqueta",
+				"additionalPrompt": "Prompt adicional",
+				"additionalPromptPlaceholder": "Agrega instrucciones para este subagente",
+				"promptPreviewPlaceholder": "No hay prompt agregado",
+				"toolsCount": "{{count}} herramienta",
+				"toolsCount_other": "{{count}} herramientas",
+				"knowledgeBaseCount": "{{count}} base de conocimiento",
+				"knowledgeBaseCount_other": "{{count}} bases de conocimiento",
+				"countBadge": "+{{count}}",
+				"conversationGoal": "Objetivo de conversacion",
+				"overridePrompt": "Sobrescribir prompt",
+				"inheritKnowledgeBase": "Heredar base de conocimiento",
+				"additionalKnowledgeBase": "Base de conocimiento adicional",
+				"addDocument": "Agregar documento",
+				"knowledgeBaseLoading": "Cargando base de conocimiento...",
+				"knowledgeBaseError": "No se pudo cargar la base de conocimiento.",
+				"knowledgeBaseEmpty": "No hay base de conocimiento adjunta.",
+				"knowledgeBaseId": "ID {{id}}",
+				"removeKnowledgeBase": "Quitar {{name}}",
+				"inheritTools": "Heredar herramientas",
+				"additionalTools": "Herramientas adicionales",
+				"edges": {
+					"helper": "Configura el orden en que se evaluan los bordes salientes. Edita las etiquetas en el lienzo.",
+					"defaultLabel": "Condicion sin nombre",
+					"target": "\u2192 {{target}}",
+					"empty": "Aun no hay bordes salientes."
+				},
+				"invalidNode": "Este nodo no se puede configurar aqui."
+			},
+			"tools": {
+				"label": "Herramientas",
+				"description": "Elige las herramientas que este nodo puede usar.",
+				"placeholder": "Selecciona herramientas",
+				"loading": "Cargando herramientas...",
+				"empty": "No hay herramientas disponibles.",
+				"error": "No se pudieron cargar las herramientas."
+			},
+			"edge": {
+				"title": "Configuracion de la conexion",
+				"description": "Revisa los detalles de esta transicion.",
+				"helper": "Edita las condiciones desde la etiqueta de la conexion en el lienzo.",
+				"notFound": "Conexion no encontrada.",
+				"configure": "Configurar condición"
+			},
+			"nodeMenu": {
+				"subagent": "Subagente",
+				"overrideAgent": "Transferencia de agente",
+				"phoneNumber": "Transferencia a numero",
+				"tool": "Herramienta",
+				"end": "Fin"
+			},
+			"actions": {
+				"copy": "Copiar nodo",
+				"delete": "Eliminar nodo"
+			},
+			"nodes": {
+				"start": "Inicio",
+				"standalone_agent": "Subagente",
+				"override_agent": "Transferencia de agente",
+				"phone_number": "Transferencia a numero",
+				"tool": "Herramienta",
+				"end": "Fin"
 			}
 		},
 		"validation": {
@@ -466,6 +692,10 @@
 			"clientIdMin": "El ID de cliente debe ser al menos 0",
 			"defaultWavesMin": "Las oleadas predeterminadas deben ser al menos 1",
 			"objectiveRequired": "El objetivo de la campaña es obligatorio"
+		},
+		"actions": {
+			"save": "Guardar cambios",
+			"saving": "Guardando..."
 		},
 		"notifications": {
 			"warningTitle": "Advertencia",
