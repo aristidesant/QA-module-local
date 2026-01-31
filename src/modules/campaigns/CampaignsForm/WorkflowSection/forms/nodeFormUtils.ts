@@ -22,6 +22,24 @@ export const updateWorkflowNode = (
 	};
 };
 
+export const updateWorkflowEdge = (
+	workflow: AgentWorkflow | undefined,
+	edgeId: string,
+	updates: Partial<WorkflowEdge>
+): AgentWorkflow | null => {
+	if (!workflow) return null;
+	const currentEdge = workflow.edges[edgeId];
+	if (!currentEdge) return null;
+	const nextEdge = { ...currentEdge, ...updates } as WorkflowEdge;
+	return {
+		...workflow,
+		edges: {
+			...workflow.edges,
+			[edgeId]: nextEdge,
+		},
+	};
+};
+
 export const updateWorkflowNodeSubagent = (
 	workflow: AgentWorkflow | undefined,
 	nodeId: string,

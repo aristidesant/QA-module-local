@@ -527,6 +527,21 @@
 						"tools": "El formulario de Tools viene despues.",
 						"tests": "El formulario de Tests viene despues.",
 						"edges": "El formulario de Edges viene despues."
+					},
+					"edgesTab": {
+						"description": "Configura el orden en que se evalúan las conexiones salientes. Las conexiones más arriba en la lista se evaluarán primero.",
+						"empty": "Sin conexiones salientes aún.",
+						"targetLabel": "→ {{target}}",
+						"unnamedCondition": "Condición sin nombre",
+						"removeAria": "Eliminar conexión a {{target}}",
+						"error": {
+							"title": "Faltan condiciones de conexión",
+							"message": "{{count}} conexión(es) carecen de todas las condiciones y deben configurarse"
+						},
+						"warning": {
+							"title": "Configuración de conexión predeterminada",
+							"message": "{{count}} conexión(es) tienen enrutamiento incondicional predeterminado. Considere configurar condiciones específicas"
+						}
 					}
 				},
 				"startEnd": {
@@ -656,11 +671,32 @@
 				"error": "No se pudieron cargar las herramientas."
 			},
 			"edge": {
-				"title": "Configuracion de la conexion",
-				"description": "Revisa los detalles de esta transicion.",
-				"helper": "Edita las condiciones desde la etiqueta de la conexion en el lienzo.",
-				"notFound": "Conexion no encontrada.",
-				"configure": "Configurar condición"
+				"title": "Condición de la conexión",
+				"description": "Revisa los detalles de esta transición.",
+				"helper": "Edita las condiciones desde la etiqueta de la conexión en el lienzo.",
+				"notFound": "Conexión no encontrada.",
+				"configure": "Configurar condición",
+				"transitionType": "Tipo de transición",
+				"selectConditionType": "Selecciona el tipo de condición",
+				"types": {
+					"unconditional": "Siempre (Sin condición)",
+					"llm": "Condición LLM",
+					"result": "Resultado de herramienta",
+					"expression": "Expresión"
+				},
+				"label": "Etiqueta",
+				"labelPlaceholder": "Etiqueta opcional para esta condición",
+				"llmCondition": "Condición LLM",
+				"llmConditionPlaceholder": "Describe la condición para que el LLM evalúe (ej: \"usuario confirmó su identidad\")",
+				"resultType": "Resultado de la ejecución de la herramienta",
+				"selectResult": "Selecciona el tipo de resultado",
+				"results": {
+					"success": "Éxito",
+					"failure": "Fallo"
+				},
+				"expressionNote": "Constructor de expresiones próximamente",
+				"forward": "Adelante",
+				"backward": "Atrás"
 			},
 			"nodeMenu": {
 				"subagent": "Subagente",

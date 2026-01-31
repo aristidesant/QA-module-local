@@ -532,7 +532,15 @@
 						"empty": "No outgoing edges yet.",
 						"targetLabel": "→ {{target}}",
 						"unnamedCondition": "Unnamed condition",
-						"removeAria": "Remove edge to {{target}}"
+						"removeAria": "Remove edge to {{target}}",
+						"error": {
+							"title": "Missing Edge Conditions",
+							"message": "{{count}} edge(s) are missing all conditions and must be configured"
+						},
+						"warning": {
+							"title": "Default Edge Configuration",
+							"message": "{{count}} edge(s) have default unconditional routing. Consider configuring specific conditions"
+						}
 					}
 				},
 				"startEnd": {
@@ -662,11 +670,32 @@
 				"error": "Failed to load tools."
 			},
 			"edge": {
-				"title": "Edge configuration",
+				"title": "Edge condition",
 				"description": "Review the connection details for this transition.",
 				"helper": "Edit edge conditions by selecting the connection label on the canvas.",
 				"notFound": "Edge not found.",
-				"configure": "Configure condition"
+				"configure": "Configure condition",
+				"transitionType": "Transition type",
+				"selectConditionType": "Select condition type",
+				"types": {
+					"unconditional": "Always (Unconditional)",
+					"llm": "LLM Condition",
+					"result": "Tool Result",
+					"expression": "Expression"
+				},
+				"label": "Label",
+				"labelPlaceholder": "Optional label for this condition",
+				"llmCondition": "LLM condition",
+				"llmConditionPlaceholder": "Describe the condition for the LLM to evaluate (e.g., \"user confirmed their identity\")",
+				"resultType": "Tool execution result",
+				"selectResult": "Select result type",
+				"results": {
+					"success": "Success",
+					"failure": "Failure"
+				},
+				"expressionNote": "Expression builder coming soon",
+				"forward": "Forward",
+				"backward": "Backward"
 			},
 			"nodeMenu": {
 				"subagent": "Subagent",
