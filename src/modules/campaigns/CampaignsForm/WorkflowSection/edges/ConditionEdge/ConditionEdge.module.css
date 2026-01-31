@@ -14,6 +14,18 @@
 	transform-origin: center;
 }
 
+.labelError {
+	background-color: var(--mantine-color-red-6);
+	color: var(--mantine-color-white);
+	font-weight: 600;
+}
+
+.labelWarning {
+	background-color: var(--mantine-color-orange-6);
+	color: var(--mantine-color-white);
+	font-weight: 600;
+}
+
 .labelPrefix {
 	margin-right: 6px;
 	opacity: 0.8;

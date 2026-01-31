@@ -19,6 +19,7 @@ import SubagentNodeComponent from '../nodes/SubagentNode';
 import WorkflowNodeWrapper from '../WorkflowNode';
 import { WORKFLOW_NODE_TYPES, createNodeTypes } from '../nodeTypes';
 import ConditionEdge from '../edges/ConditionEdge';
+import { getEdgeWarningLevel } from '../utils/workflowValidation';
 import type {
 	AgentWorkflow,
 	EndNode,
@@ -459,6 +460,7 @@ const WorkflowCanvas = ({
 						label: getEdgeLabel(edge),
 						forwardCondition: edge.forwardCondition,
 						backwardCondition: edge.backwardCondition,
+						warningLevel: getEdgeWarningLevel(id, workflowData),
 					},
 				})
 			);
