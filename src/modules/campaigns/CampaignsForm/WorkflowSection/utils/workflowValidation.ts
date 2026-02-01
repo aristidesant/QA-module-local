@@ -40,6 +40,10 @@ export const validateWorkflowEdgeConditions = (
 
 	const invalidEdges = Object.entries(workflow.edges)
 		.filter(([, edge]) => {
+			// If the edge originates from a START node, skip validation for it
+			const sourceNode = workflow.nodes[edge.source];
+			if (sourceNode && sourceNode.type === 'start') return false;
+
 			// An edge must have at least one condition (forward or backward)
 			const hasForwardCondition = edge.forwardCondition !== undefined;
 			const hasBackwardCondition = edge.backwardCondition !== undefined;
@@ -116,6 +120,10 @@ export const getEdgeWarningLevel = (
 
 	const edge = workflow.edges[edgeId];
 	if (!edge) return 'none';
+
+	// If edge source is a START node, never warn about it
+	const sourceNode = workflow.nodes[edge.source];
+	if (sourceNode && sourceNode.type === 'start') return 'none';
 
 	// Check if edge has ANY condition
 	const hasForwardCondition = edge.forwardCondition !== undefined;
