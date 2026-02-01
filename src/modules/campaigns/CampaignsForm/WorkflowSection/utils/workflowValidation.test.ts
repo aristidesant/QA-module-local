@@ -223,6 +223,38 @@ describe('Workflow Edge Condition Validation', () => {
 	});
 
 	describe('getEdgeWarningLevel', () => {
+		it('should return none for edge originating from START node even if no conditions', () => {
+			const workflow: AgentWorkflow = {
+				preventSubagentLoops: false,
+				nodes: {
+					start_node: {
+						type: 'start',
+						position: { x: 0, y: 0 },
+						edgeOrder: [],
+						label: 'Start',
+					},
+					node1: {
+						type: 'standalone_agent',
+						position: { x: 0, y: 0 },
+						edgeOrder: [],
+						label: 'A',
+						agentId: 'agent-1',
+						delayMs: 0,
+						enableTransferredAgentFirstMessage: false,
+					},
+				},
+				edges: {
+					'edge-1': {
+						source: 'start_node',
+						target: 'node1',
+					},
+				},
+			};
+
+			const result = getEdgeWarningLevel('edge-1', workflow);
+
+			expect(result).toBe('none');
+		});
 		it('should return error for edge with no conditions', () => {
 			const workflow: AgentWorkflow = {
 				preventSubagentLoops: false,
