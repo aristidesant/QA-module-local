@@ -448,6 +448,16 @@
 			"sidePanel": {
 				"close": "Cerrar panel"
 			},
+			"edge": {
+				"configure": "Configurar condición",
+				"bothLabel": "{{forward}} / {{backward}}",
+				"conditions": {
+					"unconditional": "Incondicional",
+					"expression": "Condición de expresión",
+					"resultSuccess": "Resultado: éxito",
+					"resultFailure": "Resultado: fallo"
+				}
+			},
 			"forms": {
 				"agent": {
 					"title": "Configuracion del agente",

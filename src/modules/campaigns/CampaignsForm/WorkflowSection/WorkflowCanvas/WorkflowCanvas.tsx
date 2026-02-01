@@ -485,14 +485,48 @@ const WorkflowCanvas = ({
 				if (!condition) return null;
 				if ('label' in condition && condition.label) return condition.label;
 				if (condition.type === 'llm') return condition.condition;
+				if (condition.type === 'expression') {
+					return t('form.workflow.edge.conditions.expression', {
+						defaultValue: 'Expression condition',
+					});
+				}
+				if (condition.type === 'result') {
+					return condition.successful
+						? t('form.workflow.edge.conditions.resultSuccess', {
+								defaultValue: 'Result: success',
+							})
+						: t('form.workflow.edge.conditions.resultFailure', {
+								defaultValue: 'Result: failure',
+							});
+				}
+				if (condition.type === 'unconditional') {
+					return t('form.workflow.edge.conditions.unconditional', {
+						defaultValue: 'Unconditional',
+					});
+				}
 				return null;
 			};
 
-			const getEdgeLabel = (edge: WorkflowEdge): string | null => {
+			const getEdgeLabel = (
+				edge: WorkflowEdge
+			):
+				| string
+				| {
+						forwardLabel: string;
+						backwardLabel: string;
+				  }
+				| null => {
 				// Always provide a label for edges. Use condition labels when available,
 				// otherwise fall back to a generic prompt so the label is never missing.
 				const forwardLabel = getConditionLabel(edge.forwardCondition);
 				const backwardLabel = getConditionLabel(edge.backwardCondition);
+
+				if (forwardLabel && backwardLabel) {
+					return {
+						forwardLabel,
+						backwardLabel,
+					};
+				}
 
 				return (
 					forwardLabel ||

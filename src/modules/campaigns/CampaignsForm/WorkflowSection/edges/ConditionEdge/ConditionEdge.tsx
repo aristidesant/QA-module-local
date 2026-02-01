@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 import { BaseEdge, EdgeLabelRenderer, type EdgeProps } from '@xyflow/react';
+import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
 import styles from './ConditionEdge.module.css';
 
 type WarningLevel = 'error' | 'warning' | 'none';
@@ -77,6 +78,15 @@ const ConditionEdge: FC<EdgeProps> = ({
 
 	const label =
 		typeof (data as any)?.label === 'string' ? (data as any).label : null;
+	const structuredLabel =
+		(data as any)?.label && typeof (data as any).label === 'object'
+			? ((data as any).label as {
+					forwardLabel?: string;
+					backwardLabel?: string;
+				})
+			: null;
+	const hasStructuredLabel =
+		!!structuredLabel?.forwardLabel && !!structuredLabel?.backwardLabel;
 	const warningLevel = ((data as any)?.warningLevel ?? 'none') as WarningLevel;
 	const onEdgeClick = (data as any)?.onEdgeClick as
 		| ((edgeId: string) => void)
@@ -120,7 +130,7 @@ const ConditionEdge: FC<EdgeProps> = ({
 				}}
 				markerEnd={markerEnd}
 			/>
-			{label && (
+			{(label || hasStructuredLabel) && (
 				<EdgeLabelRenderer>
 					<div
 						className={getLabelClassName()}
@@ -132,8 +142,23 @@ const ConditionEdge: FC<EdgeProps> = ({
 						}}
 						onClick={() => onEdgeClick?.(id)}
 					>
-						<span className={styles.labelPrefix}>&gt;&gt;</span>
-						{label}
+						{hasStructuredLabel ? (
+							<div className={styles.labelStack}>
+								<div className={styles.labelRow}>
+									<IconArrowRight className={styles.labelIcon} size={12} />
+									<span>{structuredLabel?.forwardLabel}</span>
+								</div>
+								<div className={styles.labelRow}>
+									<IconArrowLeft className={styles.labelIcon} size={12} />
+									<span>{structuredLabel?.backwardLabel}</span>
+								</div>
+							</div>
+						) : (
+							<>
+								<span className={styles.labelPrefix}>&gt;&gt;</span>
+								{label}
+							</>
+						)}
 					</div>
 				</EdgeLabelRenderer>
 			)}

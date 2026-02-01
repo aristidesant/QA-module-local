@@ -448,6 +448,16 @@
 			"sidePanel": {
 				"close": "Close panel"
 			},
+			"edge": {
+				"configure": "Configure condition",
+				"bothLabel": "{{forward}} / {{backward}}",
+				"conditions": {
+					"unconditional": "Unconditional",
+					"expression": "Expression condition",
+					"resultSuccess": "Result: success",
+					"resultFailure": "Result: failure"
+				}
+			},
 			"forms": {
 				"agent": {
 					"title": "Agent settings",
