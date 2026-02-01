@@ -58,8 +58,10 @@ const ConditionEdge: FC<EdgeProps> = ({
 				const mag = Math.sqrt(tx * tx + ty * ty) || 1;
 				const nx = -ty / mag;
 				const ny = tx / mag;
-				// Negative offset pulls label towards the line, tune as needed
-				const offset = -8;
+				// Use exact midpoint on the path so the label is centered and never lost.
+				// Avoid an outward normal offset which may push the label off the visible canvas
+				// when paths are short or extreme. Keep a tiny offset of 0 to ensure centering.
+				const offset = 0;
 				labelX = mid.x + nx * offset;
 				labelY = mid.y + ny * offset;
 			}

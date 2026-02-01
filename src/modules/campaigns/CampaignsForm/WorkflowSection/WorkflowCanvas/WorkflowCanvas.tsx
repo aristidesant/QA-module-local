@@ -476,9 +476,8 @@ const WorkflowCanvas = ({
 				})
 			);
 
-			const nodeTypeById = Object.fromEntries(
-				Object.entries(workflowData.nodes).map(([id, node]) => [id, node.type])
-			);
+			// nodeTypeById previously used to hide labels for START nodes; labels are
+			// shown for all edges now, so this helper is no longer necessary.
 
 			const getConditionLabel = (
 				condition?: WorkflowEdge['forwardCondition']
@@ -490,9 +489,8 @@ const WorkflowCanvas = ({
 			};
 
 			const getEdgeLabel = (edge: WorkflowEdge): string | null => {
-				const sourceType = nodeTypeById[edge.source];
-				if (sourceType === WORKFLOW_NODE_TYPES.START) return null;
-
+				// Always provide a label for edges. Use condition labels when available,
+				// otherwise fall back to a generic prompt so the label is never missing.
 				const forwardLabel = getConditionLabel(edge.forwardCondition);
 				const backwardLabel = getConditionLabel(edge.backwardCondition);
 
