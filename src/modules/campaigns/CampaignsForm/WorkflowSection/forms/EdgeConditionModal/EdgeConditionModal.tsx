@@ -227,12 +227,14 @@ export const EdgeConditionModal: React.FC<EdgeConditionModalProps> = ({
 									defaultValue: 'Optional label for this condition',
 								})}
 								value={state.label || ''}
-								onChange={(e) =>
+								onChange={(e) => {
+									const nextValue =
+										typeof e === 'string' ? e : (e?.currentTarget?.value ?? '');
 									setState((prev) => ({
 										...prev,
-										label: e.currentTarget.value,
-									}))
-								}
+										label: nextValue,
+									}));
+								}}
 								size='sm'
 							/>
 						</div>
@@ -249,12 +251,14 @@ export const EdgeConditionModal: React.FC<EdgeConditionModalProps> = ({
 										'Describe the condition for the LLM to evaluate (e.g., "user confirmed their identity")',
 								})}
 								value={state.llmCondition || ''}
-								onChange={(e) =>
+								onChange={(e) => {
+									const nextValue =
+										typeof e === 'string' ? e : (e?.currentTarget?.value ?? '');
 									setState((prev) => ({
 										...prev,
-										llmCondition: e.currentTarget.value,
-									}))
-								}
+										llmCondition: nextValue,
+									}));
+								}}
 								minRows={10}
 								size='sm'
 							/>
@@ -309,9 +313,11 @@ export const EdgeConditionModal: React.FC<EdgeConditionModalProps> = ({
 								defaultValue: 'Optional label for this expression',
 							})}
 							value={state.label || ''}
-							onChange={(e) =>
-								setState((prev) => ({ ...prev, label: e.currentTarget.value }))
-							}
+							onChange={(e) => {
+								const nextValue =
+									typeof e === 'string' ? e : (e?.currentTarget?.value ?? '');
+								setState((prev) => ({ ...prev, label: nextValue }));
+							}}
 							size='sm'
 						/>
 						<Text size='xs' c='dimmed' mt='xs'>
