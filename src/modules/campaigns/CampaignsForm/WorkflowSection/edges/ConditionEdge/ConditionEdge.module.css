@@ -1,4 +1,5 @@
 .label {
+	position: absolute; /* allow translate3d positioning to be exact */
 	background-color: var(--mantine-color-dark-9);
 	border-radius: 999px;
 	color: var(--mantine-color-white);
