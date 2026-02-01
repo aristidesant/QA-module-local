@@ -37,37 +37,42 @@ const ConditionEdge: FC<EdgeProps> = ({
 	let labelX = sourceX + dx * 0.5;
 	let labelY = sourceY + dy * 0.5;
 
-	// Use an off-DOM SVG path to compute the midpoint and a small normal
-	// offset so the label sits close to (and slightly off) the path.
-	if (typeof document !== 'undefined' && edgePath) {
-		try {
-			const pathEl = document.createElementNS(
-				'http://www.w3.org/2000/svg',
-				'path'
-			);
-			pathEl.setAttribute('d', edgePath);
-			const total = pathEl.getTotalLength();
-			if (total && Number.isFinite(total)) {
-				const mid = pathEl.getPointAtLength(total * 0.5);
-				// sample two nearby points to compute tangent -> normal
-				const eps = Math.max(1, total * 0.001);
-				const p1 = pathEl.getPointAtLength(Math.max(0, total * 0.5 - eps));
-				const p2 = pathEl.getPointAtLength(Math.min(total, total * 0.5 + eps));
-				const tx = p2.x - p1.x;
-				const ty = p2.y - p1.y;
-				const mag = Math.sqrt(tx * tx + ty * ty) || 1;
-				const nx = -ty / mag;
-				const ny = tx / mag;
-				// Use exact midpoint on the path so the label is centered and never lost.
-				// Avoid an outward normal offset which may push the label off the visible canvas
-				// when paths are short or extreme. Keep a tiny offset of 0 to ensure centering.
-				const offset = 0;
-				labelX = mid.x + nx * offset;
-				labelY = mid.y + ny * offset;
-			}
-		} catch (err) {
-			// fallback to linear midpoint already set above
-		}
+	// Compute midpoint and tangent directly from cubic Bezier control points.
+	// This avoids any DOM/SVG coordinate mismatches and is deterministic.
+	try {
+		const t = 0.5;
+		const mt = 1 - t;
+
+		// Cubic Bezier point at t: B(t) = (1-t)^3 * P0 + 3(1-t)^2 t * P1 + 3(1-t)t^2 * P2 + t^3 * P3
+		const midX =
+			mt * mt * mt * sourceX +
+			3 * mt * mt * t * cx1 +
+			3 * mt * t * t * cx2 +
+			t * t * t * targetX;
+		const midY =
+			mt * mt * mt * sourceY +
+			3 * mt * mt * t * cy1 +
+			3 * mt * t * t * cy2 +
+			t * t * t * targetY;
+
+		// Derivative B'(t) gives tangent vector: B'(t) = 3(1-t)^2 (P1-P0) + 6(1-t)t (P2-P1) + 3 t^2 (P3-P2)
+		const tx =
+			3 * mt * mt * (cx1 - sourceX) +
+			6 * mt * t * (cx2 - cx1) +
+			3 * t * t * (targetX - cx2);
+		const ty =
+			3 * mt * mt * (cy1 - sourceY) +
+			6 * mt * t * (cy2 - cy1) +
+			3 * t * t * (targetY - cy2);
+		const mag = Math.sqrt(tx * tx + ty * ty) || 1;
+		const nx = -ty / mag;
+		const ny = tx / mag;
+
+		const offset = 0; // keep label exactly on the path midpoint
+		labelX = midX + nx * offset;
+		labelY = midY + ny * offset;
+	} catch (err) {
+		// fallback to linear midpoint already set above
 	}
 
 	const label =
