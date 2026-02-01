@@ -1,10 +1,5 @@
 import type { FC } from 'react';
-import {
-	BaseEdge,
-	EdgeLabelRenderer,
-	getSmoothStepPath,
-	type EdgeProps,
-} from '@xyflow/react';
+import { BaseEdge, EdgeLabelRenderer, type EdgeProps } from '@xyflow/react';
 import styles from './ConditionEdge.module.css';
 
 type WarningLevel = 'error' | 'warning' | 'none';
@@ -20,17 +15,58 @@ const ConditionEdge: FC<EdgeProps> = ({
 	data,
 	markerEnd,
 }) => {
-	const [edgePath] = getSmoothStepPath({
-		sourceX,
-		sourceY,
-		sourcePosition,
-		targetX,
-		targetY,
-		targetPosition,
-	});
-	const labelT = 0.35;
-	const labelX = sourceX + (targetX - sourceX) * labelT;
-	const labelY = sourceY + (targetY - sourceY) * labelT;
+	// Build a smooth cubic Bezier path between source and target.
+	// This keeps the edge visually smooth and lets us compute exact
+	// positions along the curve using the SVG path API.
+	const curvature = 0.5; // fraction of dx used for control points
+	const dx = targetX - sourceX;
+	const dy = targetY - sourceY;
+	// reference positions to satisfy linter (they may be useful later)
+	void sourcePosition;
+	void targetPosition;
+
+	const cx1 = sourceX + dx * curvature;
+	const cy1 = sourceY;
+	const cx2 = targetX - dx * curvature;
+	const cy2 = targetY;
+
+	const edgePath = `M ${sourceX},${sourceY} C ${cx1},${cy1} ${cx2},${cy2} ${targetX},${targetY}`;
+
+	// Default label position is the midpoint between source and target.
+	// We'll try to compute a better position using the path midpoint below.
+	let labelX = sourceX + dx * 0.5;
+	let labelY = sourceY + dy * 0.5;
+
+	// Use an off-DOM SVG path to compute the midpoint and a small normal
+	// offset so the label sits close to (and slightly off) the path.
+	if (typeof document !== 'undefined' && edgePath) {
+		try {
+			const pathEl = document.createElementNS(
+				'http://www.w3.org/2000/svg',
+				'path'
+			);
+			pathEl.setAttribute('d', edgePath);
+			const total = pathEl.getTotalLength();
+			if (total && Number.isFinite(total)) {
+				const mid = pathEl.getPointAtLength(total * 0.5);
+				// sample two nearby points to compute tangent -> normal
+				const eps = Math.max(1, total * 0.001);
+				const p1 = pathEl.getPointAtLength(Math.max(0, total * 0.5 - eps));
+				const p2 = pathEl.getPointAtLength(Math.min(total, total * 0.5 + eps));
+				const tx = p2.x - p1.x;
+				const ty = p2.y - p1.y;
+				const mag = Math.sqrt(tx * tx + ty * ty) || 1;
+				const nx = -ty / mag;
+				const ny = tx / mag;
+				// Negative offset pulls label towards the line, tune as needed
+				const offset = -8;
+				labelX = mid.x + nx * offset;
+				labelY = mid.y + ny * offset;
+			}
+		} catch (err) {
+			// fallback to linear midpoint already set above
+		}
+	}
 
 	const label =
 		typeof (data as any)?.label === 'string' ? (data as any).label : null;

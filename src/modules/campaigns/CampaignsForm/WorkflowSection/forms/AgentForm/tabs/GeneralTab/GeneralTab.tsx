@@ -163,14 +163,7 @@ const GeneralTab = () => {
 						<IconEdit size={16} />
 					</ActionIcon>
 				</Group>
-				<div
-					style={{
-						padding: 'var(--mantine-spacing-sm)',
-						border: '1px solid var(--mantine-color-gray-3)',
-						borderRadius: '10px',
-						backgroundColor: 'var(--mantine-color-gray-0)',
-					}}
-				>
+				<div className={mainStyles.inheritedFieldBox}>
 					<Text size='sm' c='dimmed'>
 						{hasValue
 							? t('form.workflow.forms.agent.general.usingDefaultValue', {
@@ -247,7 +240,7 @@ const GeneralTab = () => {
 						'form.workflow.forms.agent.general.prompt.placeholder'
 					)}
 					value={subagent?.prompt ?? ''}
-					minRows={10}
+					minRows={7}
 					onChange={(event) =>
 						handleSubagentChange({ prompt: event.currentTarget.value })
 					}
@@ -489,14 +482,7 @@ const GeneralTab = () => {
 							<IconEdit size={16} />
 						</ActionIcon>
 					</Group>
-					<div
-						style={{
-							padding: 'var(--mantine-spacing-sm)',
-							border: '1px solid var(--mantine-color-gray-3)',
-							borderRadius: '10px',
-							backgroundColor: 'var(--mantine-color-gray-0)',
-						}}
-					>
+					<div className={mainStyles.inheritedFieldBox}>
 						<Text size='sm' c='dimmed'>
 							{inheritedSpeculativeTurn !== undefined
 								? `${inheritedSpeculativeTurn ? t('form.workflow.forms.agent.general.speculativeTurn.enabled') : t('form.workflow.forms.agent.general.speculativeTurn.disabled')}`
