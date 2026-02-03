@@ -22,11 +22,18 @@
 }
 
 .header {
-	padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
 }
 
 .destination {
-	padding: 0 var(--mantine-spacing-md) var(--mantine-spacing-xs);
+	padding: 4px calc(var(--mantine-spacing-md) + 2px);
 	font-family: var(--mantine-font-family-monospace);
 	font-size: 11px;
+}
+
+.footer {
+	background-color: var(--mantine-color-gray-0);
+	border-top: 1px solid var(--mantine-color-gray-3);
+	padding: 4px calc(var(--mantine-spacing-md) + 2px);
+	display: flex;
+	justify-content: flex-end;
 }

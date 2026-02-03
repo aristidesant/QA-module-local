@@ -1,7 +1,8 @@
 .actions {
 	display: flex;
 	align-items: center;
-	gap: var(--mantine-spacing-xs);
+	gap: 4px;
+	flex-wrap: nowrap;
 }
 
 .actionButton {

@@ -9,10 +9,12 @@
 	background-color: var(--mantine-color-white);
 	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: var(--mantine-radius-md);
-	padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
 	min-width: 120px;
 	text-align: center;
 	transition: border-color 0.2s ease;
+	overflow: hidden;
+	padding: calc(var(--mantine-spacing-xs) + 2px)
+		calc(var(--mantine-spacing-md) + 2px);
 }
 
 .defaultNode:hover {

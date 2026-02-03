@@ -572,7 +572,15 @@
 					"missingNode": "Tool node not found",
 					"missingNodeHint": "Select a tool node to view its details.",
 					"empty": "No tools attached yet.",
-					"unknown": "Unknown tool"
+					"unknown": "Unknown tool",
+					"addTool": "Add tool",
+					"searchPlaceholder": "Search tools...",
+					"loading": "Loading tools...",
+					"error": "Failed to load tools.",
+					"emptyAvailable": "No tools available.",
+					"emptySearch": "No tools match your search.",
+					"noDescription": "No description provided.",
+					"removeTool": "Remove {{name}}"
 				},
 				"phone": {
 					"title": "Phone transfer",

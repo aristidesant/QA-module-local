@@ -17,5 +17,12 @@
 }
 
 .header {
-	padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+}
+
+.footer {
+	background-color: var(--mantine-color-gray-0);
+	border-top: 1px solid var(--mantine-color-gray-3);
+	padding: 4px calc(var(--mantine-spacing-md) + 2px);
+	display: flex;
+	justify-content: flex-end;
 }

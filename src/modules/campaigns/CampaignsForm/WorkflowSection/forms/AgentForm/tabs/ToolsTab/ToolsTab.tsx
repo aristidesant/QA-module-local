@@ -8,12 +8,14 @@ import {
 	Text,
 } from '@mantine/core';
 import { IconPencil, IconSettings, IconTrash } from '@tabler/icons-react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTools } from '~/queries/toolQueries';
 import type { ToolModel } from '~/models/ToolModel';
 import { useAgentForm } from '../../context';
 import { useBuiltInTools } from '../../hooks';
 import mainStyles from '../../AgentForm.module.css';
+import { updateWorkflowNodeSubagent } from '../../../nodeFormUtils';
 
 const BuiltInTools = () => {
 	const { t } = useTranslation('campaigns');
@@ -86,11 +88,21 @@ const CustomTools = () => {
 	const {
 		inheritCustomTools,
 		setInheritCustomTools,
-		customTools,
-		setCustomTools,
 		isToolMenuOpen,
 		setIsToolMenuOpen,
+		workflow,
+		nodeId,
+		onWorkflowChange,
 	} = useAgentForm();
+
+	const currentNode = workflow?.nodes[nodeId];
+	const subagent =
+		currentNode && 'subagent' in currentNode ? currentNode.subagent : undefined;
+	const legacyToolIds =
+		currentNode && 'additionalToolIds' in currentNode
+			? (currentNode.additionalToolIds ?? [])
+			: [];
+	const toolIds = subagent?.toolIds ?? legacyToolIds;
 
 	const {
 		data: tools,
@@ -99,21 +111,42 @@ const CustomTools = () => {
 		refetch: refetchTools,
 	} = useTools({ enabled: false });
 
+	const selectedTools = useMemo(() => {
+		return toolIds.map((toolId) => {
+			const matched = (tools ?? []).find((tool) => tool.identifier === toolId);
+			return {
+				id: toolId,
+				name: matched?.name,
+			};
+		});
+	}, [toolIds, tools]);
+
+	const availableTools = useMemo(() => {
+		const selectedSet = new Set(toolIds);
+		return (tools ?? []).filter((tool) => !selectedSet.has(tool.identifier));
+	}, [toolIds, tools]);
+
+	const handleSubagentChange = (updates: Record<string, unknown>) => {
+		const nextWorkflow = updateWorkflowNodeSubagent(workflow, nodeId, updates);
+		if (nextWorkflow) {
+			onWorkflowChange(nextWorkflow);
+		}
+	};
+
 	const handleAddToolClick = async () => {
 		setIsToolMenuOpen(true);
 		await refetchTools();
 	};
 
 	const handleSelectTool = (tool: ToolModel) => {
-		setCustomTools((current) => {
-			if (current.some((item) => item.id === tool.id)) return current;
-			return [...current, tool];
-		});
+		const nextToolIds = Array.from(new Set([...toolIds, tool.identifier]));
+		handleSubagentChange({ toolIds: nextToolIds });
 		setIsToolMenuOpen(false);
 	};
 
-	const handleRemoveTool = (toolId: number) => {
-		setCustomTools((current) => current.filter((tool) => tool.id !== toolId));
+	const handleRemoveTool = (toolId: string) => {
+		const nextToolIds = toolIds.filter((id) => id !== toolId);
+		handleSubagentChange({ toolIds: nextToolIds });
 	};
 
 	return (
@@ -169,29 +202,25 @@ const CustomTools = () => {
 									{t('form.workflow.forms.agent.toolsTab.empty')}
 								</Text>
 							)}
-						{(tools || [])
-							.filter(
-								(tool) => !customTools.some((item) => item.id === tool.id)
-							)
-							.map((tool) => (
-								<Menu.Item key={tool.id} onClick={() => handleSelectTool(tool)}>
-									{tool.name}
-								</Menu.Item>
-							))}
+						{availableTools.map((tool) => (
+							<Menu.Item key={tool.id} onClick={() => handleSelectTool(tool)}>
+								{tool.name}
+							</Menu.Item>
+						))}
 					</Menu.Dropdown>
 				</Menu>
 			</Group>
-			{customTools.length === 0 ? (
+			{selectedTools.length === 0 ? (
 				<div className={mainStyles.customToolsEmpty}>
 					<Text size='xs' c='dimmed'>
 						{t('form.workflow.forms.agent.toolsTab.emptyCustomTools')}
 					</Text>
 				</div>
 			) : (
-				customTools.map((tool) => (
+				selectedTools.map((tool) => (
 					<div key={tool.id} className={mainStyles.customToolRow}>
 						<Text size='sm' className={mainStyles.customToolName}>
-							{tool.name}
+							{tool.name || tool.id}
 						</Text>
 						<ActionIcon
 							variant='subtle'
@@ -200,7 +229,7 @@ const CustomTools = () => {
 							onClick={() => handleRemoveTool(tool.id)}
 							aria-label={t(
 								'form.workflow.forms.agent.toolsTab.removeCustomTool',
-								{ name: tool.name }
+								{ name: tool.name || tool.id }
 							)}
 						>
 							<IconTrash size={14} />

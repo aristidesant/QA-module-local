@@ -21,16 +21,16 @@ const StartNodeComponent = (props: NodeProps) => {
 			<div className={styles.node}>
 				<WorkflowNodeHeader
 					className={styles.header}
-					icon={<IconFlag size={18} className={styles.icon} />}
+					icon={<IconFlag size={16} className={styles.icon} />}
 					title={nodeData.label || fallbackLabel}
-					actions={
-						<WorkflowNodeActions
-							nodeId={props.id}
-							nodeData={props.data as WorkflowNodeData}
-							nodeType={nodeType}
-						/>
-					}
 				/>
+				<div className={styles.footer}>
+					<WorkflowNodeActions
+						nodeId={props.id}
+						nodeData={props.data as WorkflowNodeData}
+						nodeType={nodeType}
+					/>
+				</div>
 			</div>
 		</WorkflowNodeWrapper>
 	);

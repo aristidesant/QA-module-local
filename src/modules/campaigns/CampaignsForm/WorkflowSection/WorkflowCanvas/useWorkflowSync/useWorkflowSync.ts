@@ -305,6 +305,7 @@ const useWorkflowSync = ({
 		handleAddNodeWithVariant,
 		handleCopyNode,
 		handleDeleteNode,
+		nodes,
 		setNodes,
 	]);
 

@@ -32,21 +32,21 @@ const PhoneNumberNode = (props: NodeProps) => {
 			<Box className={`${styles.node} ${hasError ? styles.error : ''}`}>
 				<WorkflowNodeHeader
 					className={styles.header}
-					icon={<IconPhoneCall size={18} className={styles.icon} />}
+					icon={<IconPhoneCall size={16} className={styles.icon} />}
 					title={t('form.workflow.nodes.phone_number', {
 						defaultValue: 'Transfer',
 					})}
-					actions={
-						<WorkflowNodeActions
-							nodeId={props.id}
-							nodeData={props.data as WorkflowNodeData}
-							nodeType={nodeType}
-						/>
-					}
 				/>
 				<Text size='xs' c='dimmed' lineClamp={1} className={styles.destination}>
 					{value || t('form.workflow.forms.phone.destinationEmpty')}
 				</Text>
+				<div className={styles.footer}>
+					<WorkflowNodeActions
+						nodeId={props.id}
+						nodeData={props.data as WorkflowNodeData}
+						nodeType={nodeType}
+					/>
+				</div>
 			</Box>
 		</WorkflowNodeWrapper>
 	);

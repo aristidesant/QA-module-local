@@ -9,6 +9,49 @@
 	border-radius: var(--mantine-radius-md);
 	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
 	background: var(--mantine-color-white);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-xs);
+}
+
+.toolIcon {
+	width: 24px;
+	height: 24px;
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-3);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--mantine-color-gray-7);
+	flex-shrink: 0;
+}
+
+.toolDetails {
+	flex: 1;
+	min-width: 0;
+}
+
+.menuDropdown {
+	padding: 0;
+}
+
+.menuHeader {
+	padding: var(--mantine-spacing-xs);
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.menuSearch :global(input) {
+	background-color: var(--mantine-color-gray-0);
+}
+
+.menuList {
+	max-height: 240px;
+}
+
+.menuItem {
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
 }
 
 .empty {

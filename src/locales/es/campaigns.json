@@ -573,7 +573,15 @@
 					"missingNode": "No se encontro el nodo de herramientas",
 					"missingNodeHint": "Selecciona un nodo de herramientas para ver sus detalles.",
 					"empty": "Aun no hay herramientas asociadas.",
-					"unknown": "Herramienta desconocida"
+					"unknown": "Herramienta desconocida",
+					"addTool": "Agregar herramienta",
+					"searchPlaceholder": "Buscar herramientas...",
+					"loading": "Cargando herramientas...",
+					"error": "No se pudieron cargar las herramientas.",
+					"emptyAvailable": "No hay herramientas disponibles.",
+					"emptySearch": "No hay herramientas que coincidan con tu busqueda.",
+					"noDescription": "Sin descripcion.",
+					"removeTool": "Eliminar {{name}}"
 				},
 				"phone": {
 					"title": "Transferencia telefonica",

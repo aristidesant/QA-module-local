@@ -63,20 +63,13 @@ const SubagentNodeComponent = (props: NodeProps) => {
 					className={styles.header}
 					icon={
 						isOverride || isTransfer ? (
-							<IconPlugConnected size={18} className={styles.icon} />
+							<IconPlugConnected size={16} className={styles.icon} />
 						) : (
-							<IconUserCircle size={18} className={styles.icon} />
+							<IconUserCircle size={16} className={styles.icon} />
 						)
 					}
 					title={nodeData.label || fallbackLabel}
 					titleClassName={styles.title}
-					actions={
-						<WorkflowNodeActions
-							nodeId={props.id}
-							nodeData={props.data as WorkflowNodeData}
-							nodeType={nodeType}
-						/>
-					}
 				/>
 				{promptPreview && (
 					<div className={styles.promptSection}>
@@ -85,8 +78,8 @@ const SubagentNodeComponent = (props: NodeProps) => {
 						</Text>
 					</div>
 				)}
-				{hasMetadata && (
-					<div className={styles.metadataSection}>
+				<div className={styles.footer}>
+					{hasMetadata && (
 						<div className={styles.metadataList}>
 							{toolCount > 0 && (
 								<Tooltip
@@ -119,8 +112,15 @@ const SubagentNodeComponent = (props: NodeProps) => {
 								</Tooltip>
 							)}
 						</div>
+					)}
+					<div className={styles.footerActions}>
+						<WorkflowNodeActions
+							nodeId={props.id}
+							nodeData={props.data as WorkflowNodeData}
+							nodeType={nodeType}
+						/>
 					</div>
-				)}
+				</div>
 			</div>
 		</WorkflowNodeWrapper>
 	);

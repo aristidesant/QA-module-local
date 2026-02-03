@@ -25,7 +25,7 @@ const WorkflowNodeHeader = ({
 				wrap='nowrap'
 				className={styles.titleGroup}
 			>
-				{icon}
+				{icon && <span className={styles.iconWrapper}>{icon}</span>}
 				<Text size='sm' fw={500} lineClamp={1} className={titleClassName}>
 					{title}
 				</Text>

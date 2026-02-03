@@ -15,7 +15,6 @@
 
 .header {
 	align-items: center;
-	padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
 }
 
 .icon {
@@ -28,26 +27,40 @@
 }
 
 .promptSection {
-	padding: 0 var(--mantine-spacing-md) var(--mantine-spacing-xs);
+	padding: 4px calc(var(--mantine-spacing-md) + 2px);
 }
 
 .promptText {
 	color: var(--mantine-color-gray-6);
-	white-space: nowrap;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
-.metadataSection {
+.footer {
 	background-color: var(--mantine-color-gray-0);
 	border-top: 1px solid var(--mantine-color-gray-3);
-	padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+	padding: 4px calc(var(--mantine-spacing-md) + 2px);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-xs);
 }
 
 .metadataList {
 	display: flex;
 	flex-wrap: wrap;
 	gap: var(--mantine-spacing-xs);
+	flex: 1;
+	min-width: 0;
+}
+
+.footerActions {
+	flex-shrink: 0;
+	display: flex;
+	justify-content: flex-end;
 }
 
 .metadataBadge {

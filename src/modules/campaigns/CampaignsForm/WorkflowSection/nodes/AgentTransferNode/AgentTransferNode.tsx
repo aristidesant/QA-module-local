@@ -28,16 +28,9 @@ const AgentTransferNodeComponent = (props: NodeProps) => {
 			<div className={styles.node}>
 				<WorkflowNodeHeader
 					className={styles.header}
-					icon={<IconUserCog size={18} className={styles.icon} />}
+					icon={<IconUserCog size={16} className={styles.icon} />}
 					title={nodeData.label || fallbackLabel}
 					titleClassName={styles.title}
-					actions={
-						<WorkflowNodeActions
-							nodeId={props.id}
-							nodeData={props.data as WorkflowNodeData}
-							nodeType={nodeType}
-						/>
-					}
 				/>
 				<div className={styles.details}>
 					<div className={styles.detailRow}>
@@ -64,13 +57,20 @@ const AgentTransferNodeComponent = (props: NodeProps) => {
 						</Text>
 					</div>
 				</div>
-				{transferMessage && (
-					<div className={styles.message}>
-						<Text size='xs' lineClamp={2} className={styles.messageText}>
+				<div className={styles.footer}>
+					{transferMessage && (
+						<Text size='xs' lineClamp={2} className={styles.footerText}>
 							{transferMessage}
 						</Text>
+					)}
+					<div className={styles.footerActions}>
+						<WorkflowNodeActions
+							nodeId={props.id}
+							nodeData={props.data as WorkflowNodeData}
+							nodeType={nodeType}
+						/>
 					</div>
-				)}
+				</div>
 			</div>
 		</WorkflowNodeWrapper>
 	);
