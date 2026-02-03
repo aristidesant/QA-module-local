@@ -12,12 +12,108 @@ export const AUDIO_FORMATS = [
 ];
 
 export const LLM_MODELS = [
-	{ value: 'gpt-4o-mini-2024-07-18', label: 'GPT-4o Mini' },
-	{ value: 'gpt-4o-2024-08-06', label: 'GPT-4o' },
-	{ value: 'gpt-4-turbo', label: 'GPT-4 Turbo' },
-	{ value: 'qwen3-30b-a3b', label: 'Qwen 3 30B' },
-	{ value: 'claude-3-5-sonnet-20241022', label: 'Claude 3.5 Sonnet' },
+	{
+		modelName: 'GLM-4.5-Air',
+		modelCode: 'glm-45-air-fp8',
+		provider: 'ElevenLabs',
+	},
+	{
+		modelName: 'Qwen3-30B-A3B',
+		modelCode: 'qwen3-30b-a3b',
+		provider: 'ElevenLabs',
+	},
+	{
+		modelName: 'GPT-OSS-120B',
+		modelCode: 'gpt-oss-120b',
+		provider: 'ElevenLabs',
+	},
+	{
+		modelName: 'Gemini 3 Pro Preview',
+		modelCode: 'gemini-3-pro-preview',
+		provider: 'Google',
+	},
+	{
+		modelName: 'Gemini 2.5 Flash',
+		modelCode: 'gemini-2.5-flash',
+		provider: 'Google',
+	},
+	{
+		modelName: 'Gemini 2.5 Flash Lite',
+		modelCode: 'gemini-2.5-flash-lite',
+		provider: 'Google',
+	},
+	{
+		modelName: 'Gemini 2.0 Flash',
+		modelCode: 'gemini-2.0-flash',
+		provider: 'Google',
+	},
+	{
+		modelName: 'Gemini 2.0 Flash Lite',
+		modelCode: 'gemini-2.0-flash-lite',
+		provider: 'Google',
+	},
+	{ modelName: 'GPT-5', modelCode: 'gpt-5', provider: 'OpenAI' },
+	{ modelName: 'GPT-5 Mini', modelCode: 'gpt-5-mini', provider: 'OpenAI' },
+	{ modelName: 'GPT-5 Nano', modelCode: 'gpt-5-nano', provider: 'OpenAI' },
+	{ modelName: 'GPT-4.1', modelCode: 'gpt-4.1', provider: 'OpenAI' },
+	{ modelName: 'GPT-4.1 Mini', modelCode: 'gpt-4.1-mini', provider: 'OpenAI' },
+	{ modelName: 'GPT-4.1 Nano', modelCode: 'gpt-4.1-nano', provider: 'OpenAI' },
+	{ modelName: 'GPT-4o', modelCode: 'gpt-4o', provider: 'OpenAI' },
+	{ modelName: 'GPT-4o Mini', modelCode: 'gpt-4o-mini', provider: 'OpenAI' },
+	{ modelName: 'GPT-4 Turbo', modelCode: 'gpt-4-turbo', provider: 'OpenAI' },
+	{
+		modelName: 'GPT-3.5 Turbo',
+		modelCode: 'gpt-3.5-turbo',
+		provider: 'OpenAI',
+	},
+	{
+		modelName: 'Claude Sonnet 4.5',
+		modelCode: 'claude-sonnet-4-5',
+		provider: 'Anthropic',
+	},
+	{
+		modelName: 'Claude Sonnet 4',
+		modelCode: 'claude-sonnet-4',
+		provider: 'Anthropic',
+	},
+	{
+		modelName: 'Claude Haiku 4.5',
+		modelCode: 'claude-haiku-4-5',
+		provider: 'Anthropic',
+	},
+	{
+		modelName: 'Claude 3.7 Sonnet',
+		modelCode: 'claude-3-7-sonnet',
+		provider: 'Anthropic',
+	},
+	{
+		modelName: 'Claude 3.5 Sonnet',
+		modelCode: 'claude-3-5-sonnet',
+		provider: 'Anthropic',
+	},
+	{
+		modelName: 'Claude 3 Haiku',
+		modelCode: 'claude-3-haiku',
+		provider: 'Anthropic',
+	},
 ];
+
+export const DEFAULT_AGENT_LLM = 'gpt-4o-mini';
+
+export const getGroupedLlmOptions = () =>
+	LLM_MODELS.reduce<
+		{ group: string; items: { value: string; label: string }[] }[]
+	>((groups, model) => {
+		const existingGroup = groups.find(
+			(group) => group.group === model.provider
+		);
+		const option = { value: model.modelCode, label: model.modelName };
+		if (existingGroup) {
+			existingGroup.items.push(option);
+			return groups;
+		}
+		return [...groups, { group: model.provider, items: [option] }];
+	}, []);
 
 export const TTS_MODELS = [
 	{ value: 'eleven_turbo_v2_5', label: 'Eleven Turbo v2.5' },

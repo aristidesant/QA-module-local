@@ -13,37 +13,21 @@
 	gap: var(--mantine-spacing-xs);
 }
 
-.promptSurface {
+.promptSummary {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-xs);
+	padding: var(--mantine-spacing-xs);
 	border: 1px solid var(--mantine-color-gray-2);
 	border-radius: var(--mantine-radius-sm);
 	background: var(--mantine-color-gray-0);
-	padding: var(--mantine-spacing-sm);
 }
 
-.promptShell {
-	transition:
-		height 240ms ease-in-out,
-		opacity 180ms ease-in-out;
-	overflow: hidden;
-}
-.promptShellCompact {
-	height: 180px;
-	opacity: 0.96;
-	overflow-y: auto;
-}
-.promptShellExpanded {
-	opacity: 1;
-	overflow: visible;
-}
-
-.promptContent {
-	font-family: var(--mantine-font-family-monospace);
-	line-height: 1.45;
+.promptPreview {
 	color: var(--mantine-color-dark-6);
+	font-family: var(--mantine-font-family-monospace);
+	line-height: 1.4;
 	white-space: pre-wrap;
-	padding: 0.25rem 0.35rem;
-}
-
-.promptPlaceholder {
-	color: var(--mantine-color-gray-5);
+	flex: 1;
 }

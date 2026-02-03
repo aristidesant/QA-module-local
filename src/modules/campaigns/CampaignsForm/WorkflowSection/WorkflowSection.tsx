@@ -14,6 +14,7 @@ import { useCampaignsStore } from '~/stores/campaignsStore';
 import { WORKFLOW_NODE_TYPES } from './nodeTypes';
 import {
 	AgentForm,
+	AgentTransferForm,
 	PhoneNumberForm,
 	StartEndForm,
 	ToolNodeForm,
@@ -95,8 +96,16 @@ const WorkflowSection = () => {
 				onWorkflowChange: handleWorkflowChange,
 				campaignAgentConfig: form.values.agentConfig,
 			};
+			const isTransferNode =
+				selectedNode.type === WORKFLOW_NODE_TYPES.STANDALONE_AGENT &&
+				(selectedNode.uiMeta?.variant === 'transfer' || !!selectedNode.agentId);
 			switch (selectedNode.type) {
 				case WORKFLOW_NODE_TYPES.STANDALONE_AGENT:
+					return isTransferNode ? (
+						<AgentTransferForm {...commonProps} />
+					) : (
+						<AgentForm {...commonProps} />
+					);
 				case WORKFLOW_NODE_TYPES.OVERRIDE_AGENT:
 					return <AgentForm {...commonProps} />;
 				case WORKFLOW_NODE_TYPES.PHONE_NUMBER:

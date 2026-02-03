@@ -1,7 +1,7 @@
 import { Select, Slider, Stack, Text as MantineText } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { useFormContext } from '../../CampaignPredefinedFormProvider';
-import { LLM_MODELS } from '../../formConfig';
+import { getGroupedLlmOptions } from '../../formConfig';
 import styles from '../../CampaignPredefinedParamsForm.module.css';
 
 export const AgentSection: React.FC = () => {
@@ -14,7 +14,7 @@ export const AgentSection: React.FC = () => {
 				label={t('form.agent.llmModel.label')}
 				placeholder={t('form.agent.llmModel.placeholder')}
 				required
-				data={LLM_MODELS}
+				data={getGroupedLlmOptions()}
 				{...form.getInputProps('agentPromptLlm')}
 				searchable
 			/>

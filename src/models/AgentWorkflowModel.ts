@@ -176,6 +176,10 @@ export interface WorkflowNodeBase {
 	position: { x: number; y: number };
 	/** Ordering of outgoing edge keys (from workflow.edges) */
 	edgeOrder: string[];
+	uiMeta?: {
+		variant?: 'transfer' | 'subagent';
+		createdByUi?: boolean;
+	};
 }
 
 /** start node */
@@ -201,7 +205,7 @@ export interface ToolNode extends WorkflowNodeBase {
 export interface OverrideAgentNode extends WorkflowNodeBase {
 	type: 'override_agent';
 	label: string;
-	additionalPrompt: string;
+	additionalPrompt: string | null;
 	additionalToolIds: string[];
 	additionalKnowledgeBase: string[];
 	subagent?: {
@@ -228,6 +232,7 @@ export interface PhoneNumberTransferNode extends WorkflowNodeBase {
 		| { type: 'sip_uri'; sipUri: string }
 		| { type: 'phone_dynamic_variable'; phoneNumber: string }
 		| { type: 'sip_uri_dynamic_variable'; sipUri: string };
+	custom_sip_headers?: Array<{ name: string; value: string }>;
 }
 
 /** standalone_agent transfer node */
@@ -237,7 +242,7 @@ export interface StandaloneAgentNode extends WorkflowNodeBase {
 	delayMs: number;
 	transferMessage?: string;
 	enableTransferredAgentFirstMessage: boolean;
-	additionalPrompt?: string;
+	additionalPrompt?: string | null;
 	additionalToolIds?: string[];
 	additionalKnowledgeBase?: string[];
 	/** Custom subagent configuration */

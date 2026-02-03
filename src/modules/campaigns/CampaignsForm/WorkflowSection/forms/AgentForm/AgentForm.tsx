@@ -1,8 +1,9 @@
-import { Tabs, Text } from '@mantine/core';
+import { Stack, Tabs, Text, TextInput } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
 import type { AgentConfigModel } from '~/models/AgentListObject';
 import WorkflowNodeForm from '../WorkflowNodeForm';
+import { updateWorkflowNode } from '../nodeFormUtils';
 import { AgentFormProvider } from './context';
 import {
 	GeneralTab,
@@ -20,7 +21,11 @@ interface AgentFormProps {
 	campaignAgentConfig?: Partial<AgentConfigModel>;
 }
 
-const AgentFormContent = ({ nodeId, workflow }: AgentFormProps) => {
+const AgentFormContent = ({
+	nodeId,
+	workflow,
+	onWorkflowChange,
+}: AgentFormProps) => {
 	const { t } = useTranslation('campaigns');
 
 	const currentNode = workflow?.nodes[nodeId];
@@ -44,6 +49,24 @@ const AgentFormContent = ({ nodeId, workflow }: AgentFormProps) => {
 			title={t('form.workflow.forms.agent.title')}
 			description={t('form.workflow.forms.agent.description')}
 		>
+			<Stack gap='xs' mb='md'>
+				<TextInput
+					label={t('form.workflow.forms.agent.general.nodeName.label')}
+					placeholder={t(
+						'form.workflow.forms.agent.general.nodeName.placeholder'
+					)}
+					value={currentNode.label ?? ''}
+					onChange={(event) => {
+						const nextWorkflow = updateWorkflowNode(workflow, nodeId, {
+							label: event.currentTarget.value,
+						});
+						if (nextWorkflow) {
+							onWorkflowChange(nextWorkflow);
+						}
+					}}
+					size='sm'
+				/>
+			</Stack>
 			<Tabs
 				defaultValue='general'
 				classNames={{

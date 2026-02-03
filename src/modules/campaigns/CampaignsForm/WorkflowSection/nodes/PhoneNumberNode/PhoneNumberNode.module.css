@@ -1,0 +1,32 @@
+.node {
+	border-radius: var(--mantine-radius-md);
+	background-color: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-2);
+	min-width: 160px;
+	transition: border-color 0.2s ease;
+	overflow: hidden;
+	text-align: left;
+}
+
+.node:hover {
+	border-color: var(--mantine-color-gray-4);
+}
+
+.error {
+	border-color: var(--mantine-color-red-6);
+	box-shadow: 0 0 0 2px var(--mantine-color-red-1);
+}
+
+.icon {
+	color: var(--mantine-color-gray-7);
+}
+
+.header {
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+}
+
+.destination {
+	padding: 0 var(--mantine-spacing-md) var(--mantine-spacing-xs);
+	font-family: var(--mantine-font-family-monospace);
+	font-size: 11px;
+}

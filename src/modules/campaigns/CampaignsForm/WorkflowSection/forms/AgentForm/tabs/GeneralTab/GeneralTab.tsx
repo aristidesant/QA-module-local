@@ -14,7 +14,10 @@ import {
 	IconRotateClockwise,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
-import { LLM_MODELS } from '~/modules/configurations/CampaignPredefinedParamsPage/CampaignPredefinedParamsForm/formConfig';
+import {
+	LLM_MODELS,
+	getGroupedLlmOptions,
+} from '~/modules/configurations/CampaignPredefinedParamsPage/CampaignPredefinedParamsForm/formConfig';
 import {
 	updateWorkflowNodeSubagent,
 	updateWorkflowNode,
@@ -44,6 +47,21 @@ const GeneralTab = () => {
 	const agentConfig =
 		(conversationConfig as Record<string, unknown>).agent ?? {};
 	const promptConfig = (agentConfig as Record<string, unknown>).prompt ?? {};
+	const additionalPrompt = (currentNode as { additionalPrompt?: string | null })
+		?.additionalPrompt;
+	const overridePromptValue =
+		((promptConfig as Record<string, unknown>).prompt as string | null) ?? '';
+	const hasAdditionalPrompt = (additionalPrompt ?? '').trim().length > 0;
+	const hasOverridePrompt = (overridePromptValue ?? '').trim().length > 0;
+	const hasDefinedOverridePrompt =
+		typeof subagent?.overridePrompt === 'boolean';
+	const effectiveOverridePrompt = hasDefinedOverridePrompt
+		? (subagent?.overridePrompt as boolean)
+		: hasAdditionalPrompt
+			? false
+			: hasOverridePrompt
+				? true
+				: false;
 
 	// Inherited conversationConfig (from campaign agent)
 	const inheritedConversationConfig =
@@ -108,12 +126,22 @@ const GeneralTab = () => {
 		});
 	}, [voiceId, llmModel, eagerness, spellingPatience, speculativeTurn]);
 
-	const handleSubagentChange = (updates: Record<string, unknown>) => {
-		const nextWorkflow = updateWorkflowNodeSubagent(workflow, nodeId, updates);
+	useEffect(() => {
+		if (!currentNode || hasDefinedOverridePrompt) return;
+		const nextWorkflow = updateWorkflowNodeSubagent(workflow, nodeId, {
+			overridePrompt: effectiveOverridePrompt,
+		});
 		if (nextWorkflow) {
 			onWorkflowChange(nextWorkflow);
 		}
-	};
+	}, [
+		currentNode,
+		effectiveOverridePrompt,
+		hasDefinedOverridePrompt,
+		nodeId,
+		onWorkflowChange,
+		workflow,
+	]);
 
 	const handleConversationConfigChange = (
 		updates: Partial<Record<string, unknown>>
@@ -129,13 +157,16 @@ const GeneralTab = () => {
 		}
 	};
 
+	const llmOptions = getGroupedLlmOptions();
+
 	// Helper to get label for a value
 	const getValueLabel = (
 		value: string,
 		options: Array<{ value: string; label: string }>
-	) => {
-		return options.find((opt) => opt.value === value)?.label || value;
-	};
+	) => options.find((opt) => opt.value === value)?.label || value;
+
+	const getLlmLabel = (value: string) =>
+		LLM_MODELS.find((model) => model.modelCode === value)?.modelName || value;
 
 	// Helper to render inherited field
 	const renderInheritedField = (
@@ -221,12 +252,57 @@ const GeneralTab = () => {
 							{t('form.workflow.forms.agent.general.overridePrompt.label')}
 						</Text>
 						<Switch
-							checked={subagent?.overridePrompt ?? false}
-							onChange={(event) =>
-								handleSubagentChange({
-									overridePrompt: event.currentTarget.checked,
-								})
-							}
+							checked={effectiveOverridePrompt}
+							onChange={(event) => {
+								const isChecked = event.currentTarget.checked;
+								const currentAdditionalPrompt =
+									(currentNode as any)?.additionalPrompt ?? '';
+								const currentOverridePrompt = overridePromptValue ?? '';
+
+								const nodeUpdates: any = {
+									subagent: {
+										...subagent,
+										overridePrompt: isChecked,
+									},
+								};
+
+								if (isChecked) {
+									// Turning Override ON: Move additionalPrompt to conversationConfig
+									nodeUpdates.additionalPrompt = null;
+									nodeUpdates.conversationConfig = {
+										...(conversationConfig as Record<string, unknown>),
+										agent: {
+											...(agentConfig as Record<string, unknown>),
+											prompt: {
+												...(promptConfig as Record<string, unknown>),
+												prompt: currentAdditionalPrompt,
+											},
+										},
+									};
+								} else {
+									// Turning Override OFF: Move conversationConfig prompt to additionalPrompt
+									nodeUpdates.additionalPrompt = currentOverridePrompt;
+									nodeUpdates.conversationConfig = {
+										...(conversationConfig as Record<string, unknown>),
+										agent: {
+											...(agentConfig as Record<string, unknown>),
+											prompt: {
+												...(promptConfig as Record<string, unknown>),
+												prompt: null,
+											},
+										},
+									};
+								}
+
+								const nextWorkflow = updateWorkflowNode(
+									workflow,
+									nodeId,
+									nodeUpdates
+								);
+								if (nextWorkflow) {
+									onWorkflowChange(nextWorkflow);
+								}
+							}}
 							aria-label={t(
 								'form.workflow.forms.agent.general.overridePrompt.label'
 							)}
@@ -239,11 +315,33 @@ const GeneralTab = () => {
 					placeholder={t(
 						'form.workflow.forms.agent.general.prompt.placeholder'
 					)}
-					value={subagent?.prompt ?? ''}
-					minRows={7}
-					onChange={(event) =>
-						handleSubagentChange({ prompt: event.currentTarget.value })
+					value={
+						effectiveOverridePrompt
+							? overridePromptValue
+							: ((currentNode as any)?.additionalPrompt ?? '')
 					}
+					minRows={7}
+					onChange={(event) => {
+						const value = event.currentTarget.value;
+						if (effectiveOverridePrompt) {
+							handleConversationConfigChange({
+								agent: {
+									...(agentConfig as Record<string, unknown>),
+									prompt: {
+										...(promptConfig as Record<string, unknown>),
+										prompt: value,
+									},
+								},
+							});
+						} else {
+							const nextWorkflow = updateWorkflowNode(workflow, nodeId, {
+								additionalPrompt: value,
+							} as any);
+							if (nextWorkflow) {
+								onWorkflowChange(nextWorkflow);
+							}
+						}
+					}}
 					classNames={{
 						input: mainStyles.promptInput,
 					}}
@@ -320,7 +418,7 @@ const GeneralTab = () => {
 					</Group>
 					<Select
 						placeholder={t('form.workflow.forms.agent.general.llm.placeholder')}
-						data={LLM_MODELS}
+						data={llmOptions}
 						value={llmModel || null}
 						onChange={(value) =>
 							handleConversationConfigChange({
@@ -343,7 +441,7 @@ const GeneralTab = () => {
 			) : (
 				renderInheritedField(
 					t('form.workflow.forms.agent.general.llm.label'),
-					inheritedLlmModel && getValueLabel(inheritedLlmModel, LLM_MODELS),
+					inheritedLlmModel && getLlmLabel(inheritedLlmModel),
 					() => toggleEditMode('llm')
 				)
 			)}

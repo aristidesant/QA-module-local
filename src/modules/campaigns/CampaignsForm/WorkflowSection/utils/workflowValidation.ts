@@ -105,7 +105,7 @@ export const hasEdgeCondition = (
 /**
  * Determines the warning level for an edge
  * - 'error': Edge has no conditions at all (both forward and backward are undefined)
- * - 'warning': Edge has conditions but they might need configuration (e.g., only has default unconditional)
+ * - 'warning': Edge has conditions but they might need configuration
  * - 'none': Edge is properly configured
  *
  * @param edgeId - The edge ID to check
@@ -132,19 +132,6 @@ export const getEdgeWarningLevel = (
 	// ERROR: No conditions at all
 	if (!hasForwardCondition && !hasBackwardCondition) {
 		return 'error';
-	}
-
-	// WARNING: Has only unconditional condition (default added by system)
-	const isOnlyUnconditional =
-		(hasForwardCondition &&
-			edge.forwardCondition?.type === 'unconditional' &&
-			!hasBackwardCondition) ||
-		(hasBackwardCondition &&
-			edge.backwardCondition?.type === 'unconditional' &&
-			!hasForwardCondition);
-
-	if (isOnlyUnconditional) {
-		return 'warning';
 	}
 
 	// NONE: Has proper condition configuration

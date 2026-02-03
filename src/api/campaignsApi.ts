@@ -108,6 +108,19 @@ const removePromptText = (agentConfig?: AgentConfigPayload) => {
 	}
 };
 
+const stripWorkflowUiMeta = (agentConfig?: AgentConfigPayload) => {
+	const workflow = agentConfig?.workflow as
+		| { nodes?: Record<string, Record<string, unknown>> }
+		| undefined;
+	if (!workflow?.nodes) return;
+	Object.values(workflow.nodes).forEach((node) => {
+		if (!node || typeof node !== 'object') return;
+		if ('uiMeta' in node) {
+			delete node.uiMeta;
+		}
+	});
+};
+
 /**
  * Generic Campaigns API client (uses global axios interceptors for auth)
  */
@@ -210,6 +223,7 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 		// UPDATE campaign (PATCH)
 		updateCampaign: async (campaignId: string, data: Partial<Campaign>) => {
 			removePromptText(data.agentConfig);
+			stripWorkflowUiMeta(data.agentConfig);
 
 			const response = await axios.patch<Campaign>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}`,
@@ -223,6 +237,7 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 			data: Partial<Campaign>
 		) => {
 			removePromptText(data.agentConfig);
+			stripWorkflowUiMeta(data.agentConfig);
 
 			const response = await axios.patch<Campaign>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}/details`,

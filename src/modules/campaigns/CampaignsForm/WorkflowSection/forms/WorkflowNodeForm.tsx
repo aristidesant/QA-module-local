@@ -1,4 +1,5 @@
 import { ActionIcon } from '@mantine/core';
+import type { TablerIcon } from '@tabler/icons-react';
 import { IconX } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import RightSectionCard from '~/components/RightSectionCard';
@@ -7,6 +8,8 @@ import { useCampaignsStore } from '~/stores/campaignsStore';
 interface WorkflowNodeFormProps {
 	title: string;
 	description?: string;
+	icon?: TablerIcon;
+	iconColor?: string;
 	children: React.ReactNode;
 }
 
@@ -14,6 +17,8 @@ const WorkflowNodeForm = ({
 	title,
 	description,
 	children,
+	icon,
+	iconColor,
 }: WorkflowNodeFormProps) => {
 	const { t } = useTranslation('campaigns');
 	const { setRightComponent } = useCampaignsStore();
@@ -22,6 +27,8 @@ const WorkflowNodeForm = ({
 		<RightSectionCard
 			title={title}
 			description={description}
+			icon={icon}
+			iconColor={iconColor}
 			rightSection={
 				<ActionIcon
 					variant='subtle'

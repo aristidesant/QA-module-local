@@ -22,6 +22,7 @@ import {
 	CampaignPredefinedFormProvider,
 	type FormValues,
 } from './CampaignPredefinedFormProvider';
+import { DEFAULT_AGENT_LLM } from './formConfig';
 
 import styles from './CampaignPredefinedParamsForm.module.css';
 import GeneralSection from './components/GeneralSection';
@@ -126,7 +127,7 @@ const CampaignPredefinedParamsForm: React.FC<
 				conversationConfig?.tts?.agentOutputAudioFormat || 'pcm_16000',
 			// Agent
 			agentPromptLlm:
-				conversationConfig?.agent?.prompt?.llm || 'gpt-4o-mini-2024-07-18',
+				conversationConfig?.agent?.prompt?.llm || DEFAULT_AGENT_LLM,
 			agentPromptTemperature:
 				conversationConfig?.agent?.prompt?.temperature || 1.0,
 		},
@@ -193,7 +194,7 @@ const CampaignPredefinedParamsForm: React.FC<
 				ttsAgentOutputAudioFormat:
 					cfg?.tts?.agentOutputAudioFormat || 'pcm_16000',
 				// Agent
-				agentPromptLlm: cfg?.agent?.prompt?.llm || 'gpt-4o-mini-2024-07-18',
+				agentPromptLlm: cfg?.agent?.prompt?.llm || DEFAULT_AGENT_LLM,
 				agentPromptTemperature: cfg?.agent?.prompt?.temperature || 1.0,
 			});
 		}

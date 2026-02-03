@@ -1,0 +1,52 @@
+.node {
+	background-color: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	min-width: 200px;
+	max-width: 280px;
+	text-align: left;
+	transition: border-color 0.2s ease;
+	overflow: hidden;
+}
+
+.node:hover {
+	border-color: var(--mantine-color-gray-5);
+}
+
+.header {
+	align-items: center;
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+}
+
+.icon {
+	color: var(--mantine-color-gray-6);
+	flex-shrink: 0;
+}
+
+.title {
+	color: var(--mantine-color-gray-9);
+}
+
+.toolsSection {
+	background-color: var(--mantine-color-gray-0);
+	border-top: 1px solid var(--mantine-color-gray-3);
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+}
+
+.toolsList {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--mantine-spacing-xs);
+}
+
+.toolBadge {
+	display: inline-flex;
+	align-items: center;
+	padding: 4px 12px;
+	background-color: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-xl);
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-8);
+	white-space: nowrap;
+}

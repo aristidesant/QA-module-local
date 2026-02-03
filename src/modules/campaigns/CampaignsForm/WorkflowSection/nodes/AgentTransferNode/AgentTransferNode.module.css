@@ -1,0 +1,67 @@
+.node {
+	background-color: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	min-width: 220px;
+	max-width: 300px;
+	text-align: left;
+	transition: border-color 0.2s ease;
+	overflow: hidden;
+}
+
+.node:hover {
+	border-color: var(--mantine-color-gray-5);
+}
+
+.header {
+	align-items: center;
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+}
+
+.icon {
+	color: var(--mantine-color-gray-6);
+	flex-shrink: 0;
+}
+
+.title {
+	color: var(--mantine-color-gray-9);
+}
+
+.details {
+	padding: 0 var(--mantine-spacing-md) var(--mantine-spacing-xs);
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.detailRow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-xs);
+}
+
+.metaLabel {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+}
+
+.metaValue {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-9);
+	text-align: right;
+	max-width: 160px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.message {
+	background-color: var(--mantine-color-gray-0);
+	border-top: 1px solid var(--mantine-color-gray-3);
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+}
+
+.messageText {
+	color: var(--mantine-color-gray-7);
+}

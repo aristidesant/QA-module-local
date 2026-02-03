@@ -1,0 +1,17 @@
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-xs);
+}
+
+.titleGroup {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	min-width: 0;
+}
+
+.title {
+	color: var(--mantine-color-gray-9);
+}

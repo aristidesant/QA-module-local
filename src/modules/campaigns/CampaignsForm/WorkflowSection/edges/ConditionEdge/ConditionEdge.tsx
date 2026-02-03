@@ -140,7 +140,10 @@ const ConditionEdge: FC<EdgeProps> = ({
 							// transformed context which can push the label off the path.
 							transform: `translate3d(${Math.round(labelX)}px, ${Math.round(labelY)}px, 0) translate(-50%, -50%)`,
 						}}
-						onClick={() => onEdgeClick?.(id)}
+						onClick={(event) => {
+							event.stopPropagation();
+							onEdgeClick?.(id);
+						}}
 					>
 						{hasStructuredLabel ? (
 							<div className={styles.labelStack}>
@@ -154,10 +157,7 @@ const ConditionEdge: FC<EdgeProps> = ({
 								</div>
 							</div>
 						) : (
-							<>
-								<span className={styles.labelPrefix}>&gt;&gt;</span>
-								{label}
-							</>
+							<>{label}</>
 						)}
 					</div>
 				</EdgeLabelRenderer>

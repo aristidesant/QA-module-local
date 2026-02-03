@@ -1,9 +1,9 @@
 .canvas {
 	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: var(--mantine-radius-sm);
-	height: calc(100dvh - 360px);
-	max-height: calc(100dvh - 360px);
-	min-height: 400px;
+	height: calc(100dvh - 450px);
+	max-height: calc(100dvh - 450px);
+	min-height: 350px;
 	width: 100%;
 	overflow: auto;
 	background-color: var(--mantine-color-white);

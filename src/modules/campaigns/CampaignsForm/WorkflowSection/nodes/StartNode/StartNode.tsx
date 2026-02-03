@@ -1,26 +1,36 @@
 import { memo } from 'react';
 import type { NodeProps } from '@xyflow/react';
-import { Group, Text } from '@mantine/core';
+import type { WorkflowNodeType } from '../../nodeTypes';
 import { useTranslation } from 'react-i18next';
 import { IconFlag } from '@tabler/icons-react';
 import type { StartNode } from '~/models/AgentWorkflowModel';
+import WorkflowNodeActions from '../../WorkflowNodeActions';
+import WorkflowNodeHeader from '../../WorkflowNodeHeader';
 import WorkflowNodeWrapper from '../../WorkflowNode';
+import type { WorkflowNodeData } from '../../WorkflowNode/WorkflowNodeTypes';
 import styles from './StartNode.module.css';
 
 const StartNodeComponent = (props: NodeProps) => {
 	const nodeData = props.data as unknown as StartNode;
+	const nodeType = (props.type ?? nodeData.type) as WorkflowNodeType;
 	const { t } = useTranslation('campaigns');
 	const fallbackLabel = t('form.workflow.nodes.start');
 
 	return (
 		<WorkflowNodeWrapper {...props}>
 			<div className={styles.node}>
-				<Group gap='xs'>
-					<IconFlag size={18} className={styles.icon} />
-					<Text size='sm' fw={500}>
-						{nodeData.label || fallbackLabel}
-					</Text>
-				</Group>
+				<WorkflowNodeHeader
+					className={styles.header}
+					icon={<IconFlag size={18} className={styles.icon} />}
+					title={nodeData.label || fallbackLabel}
+					actions={
+						<WorkflowNodeActions
+							nodeId={props.id}
+							nodeData={props.data as WorkflowNodeData}
+							nodeType={nodeType}
+						/>
+					}
+				/>
 			</div>
 		</WorkflowNodeWrapper>
 	);

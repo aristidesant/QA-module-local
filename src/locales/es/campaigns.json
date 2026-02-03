@@ -499,6 +499,10 @@
 						}
 					},
 					"general": {
+						"nodeName": {
+							"label": "Nombre del nodo",
+							"placeholder": "Ingrese el nombre del nodo"
+						},
 						"prompt": {
 							"label": "Objetivo de conversacion",
 							"placeholder": "Describe el objetivo de este agente"
@@ -579,7 +583,38 @@
 					"transferType": "Tipo de transferencia",
 					"destination": "Destino",
 					"destinationEmpty": "No configurado",
-					"empty": "Configura un destino para habilitar transferencias."
+					"empty": "Configura un destino para habilitar transferencias.",
+					"typeOptions": {
+						"conference": "Conferencia",
+						"sip_refer": "SIP REFER"
+					},
+					"destType": {
+						"label": "Tipo de destino",
+						"options": {
+							"phone": "Número de teléfono",
+							"sip_uri": "SIP URI",
+							"phone_dynamic_variable": "Número de teléfono como variable dinámica",
+							"sip_uri_dynamic_variable": "SIP URI como variable dinámica"
+						}
+					},
+					"phoneNumber": {
+						"label": "Número de teléfono",
+						"placeholder": "+15551234567",
+						"dynamicPlaceholder": "nombre_variable_dinamica"
+					},
+					"sipUri": {
+						"label": "SIP URI",
+						"placeholder": "sip:1234567890@example.com",
+						"dynamicPlaceholder": "nombre_variable_dinamica"
+					},
+					"sipHeaders": {
+						"title": "Encabezados SIP personalizados (Opcional)",
+						"addHeader": "Agregar encabezado",
+						"nameLabel": "Nombre",
+						"valueLabel": "Valor",
+						"remove": "Eliminar encabezado"
+					},
+					"new": "Nuevo"
 				},
 				"override": {
 					"title": "Sobrescritura de agente",
@@ -593,6 +628,21 @@
 					"knowledgeTitle": "Knowledge base adicional",
 					"knowledgeEmpty": "No hay knowledge base adicional.",
 					"itemFallback": "Elemento desconocido"
+				},
+				"transfer": {
+					"title": "Transferencia de agente",
+					"description": "Configura como este nodo transfiere a otro agente.",
+					"missingNode": "No se encontro el nodo de transferencia",
+					"missingNodeHint": "Selecciona un nodo de transferencia para editar su configuracion.",
+					"agentLabel": "Transferir a",
+					"agentPlaceholder": "Selecciona un agente",
+					"agentLoading": "Cargando agentes...",
+					"agentEmpty": "No hay agentes disponibles.",
+					"delayLabel": "Retraso antes de transferir (milisegundos)",
+					"delayPlaceholder": "Ingresa el retraso en milisegundos",
+					"messageLabel": "Mensaje de transferencia",
+					"messagePlaceholder": "Escribe un mensaje para la transferencia",
+					"firstMessageLabel": "Habilitar primer mensaje"
 				}
 			},
 			"section": {
@@ -685,13 +735,15 @@
 				"description": "Revisa los detalles de esta transición.",
 				"helper": "Edita las condiciones desde la etiqueta de la conexión en el lienzo.",
 				"notFound": "Conexión no encontrada.",
+				"notConfigured": "Sin configurar",
 				"configure": "Configurar condición",
 				"transitionType": "Tipo de transición",
 				"selectConditionType": "Selecciona el tipo de condición",
 				"types": {
-					"unconditional": "Siempre (Sin condición)",
+					"none": "Ninguna",
+					"unconditional": "Sin condición",
 					"llm": "Condición LLM",
-					"result": "Resultado de herramienta",
+					"result": "Condición de resultado",
 					"expression": "Expresión"
 				},
 				"label": "Etiqueta",
@@ -710,22 +762,31 @@
 			},
 			"nodeMenu": {
 				"subagent": "Subagente",
-				"overrideAgent": "Transferencia de agente",
+				"agentTransfer": "Transferencia de agente",
 				"phoneNumber": "Transferencia a numero",
 				"tool": "Herramienta",
 				"end": "Fin"
 			},
 			"actions": {
+				"add": "Agregar nodo",
+				"clone": "Clonar nodo",
 				"copy": "Copiar nodo",
 				"delete": "Eliminar nodo"
 			},
 			"nodes": {
 				"start": "Inicio",
 				"standalone_agent": "Subagente",
+				"agent_transfer": "Transferencia de agente",
 				"override_agent": "Transferencia de agente",
 				"phone_number": "Transferencia a numero",
-				"tool": "Herramienta",
+				"tool": "Despachar herramienta",
 				"end": "Fin"
+			},
+			"transferNode": {
+				"to": "Transferir a",
+				"delay": "Retraso",
+				"delayValue": "{{value}} ms",
+				"emptyAgent": "Sin configurar"
 			}
 		},
 		"validation": {
@@ -1182,6 +1243,16 @@
 					"editAria": "Editar prompt",
 					"expandAria": "Expandir prompt",
 					"collapseAria": "Contraer prompt"
+				},
+				"simpleModal": {
+					"title": "Editar prompt del agente",
+					"description": "Actualiza el prompt principal que usa el agente en esta campaña.",
+					"placeholder": "Escribe el prompt del agente",
+					"helper": "Los cambios se guardan con la campaña.",
+					"chars_one": "1 carácter",
+					"chars_other": "{{count}} caracteres",
+					"saved": "Prompt listo",
+					"empty": "Aún no hay prompt agregado"
 				},
 				"modal": {
 					"types": "Tipos",

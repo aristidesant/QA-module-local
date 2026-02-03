@@ -7,7 +7,6 @@ import {
 	Box,
 	ActionIcon,
 	Tooltip,
-	Button,
 	Group,
 } from '@mantine/core';
 import { useQueryClient } from '@tanstack/react-query';
@@ -42,6 +41,7 @@ import { modals } from '@mantine/modals';
 import { IconCalculator, IconEye } from '@tabler/icons-react';
 import SchedulerCalculator from './ParametersSection/SchedulerCalculator';
 import AgentCampaignList from './AgentSection/AgentCampaignList';
+import FormSaveButton from '~/components/FormSaveButton';
 
 interface CampaignsFormProps {
 	campaign?: Partial<Campaign>;
@@ -324,37 +324,67 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 								onSubmit={form.onSubmit((values) => handleSubmit(values, true))}
 							>
 								<GeneralSection />
-								<Group justify='flex-end' mt='md'>
-									<Button
-										type='submit'
-										disabled={!form.isDirty()}
-										loading={isUpdatingLight}
-									>
-										{isUpdatingLight
-											? t('form.actions.saving', { defaultValue: 'Saving...' })
-											: t('form.actions.save', {
-													defaultValue: 'Save changes',
-												})}
-									</Button>
-								</Group>
+								<Box
+									pos='sticky'
+									bottom={-1}
+									bg='var(--mantine-color-body)'
+									py='md'
+									mt='md'
+									style={{
+										borderTop: '1px solid var(--mantine-color-gray-2)',
+										zIndex: 10,
+										marginRight: 'calc(var(--mantine-spacing-xs) * -1)',
+										marginLeft: 'calc(var(--mantine-spacing-xs) * -1)',
+										paddingRight: 'var(--mantine-spacing-xs)',
+										paddingLeft: 'var(--mantine-spacing-xs)',
+									}}
+								>
+									<Group justify='flex-end'>
+										<FormSaveButton
+											label={t('form.actions.save', {
+												defaultValue: 'Save changes',
+											})}
+											loadingLabel={t('form.actions.saving', {
+												defaultValue: 'Saving...',
+											})}
+											isLoading={isUpdatingLight}
+											disabled={!form.isDirty()}
+										/>
+									</Group>
+								</Box>
 							</form>
 						)}
 						{selectedTab === 'agents' && (
 							<form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
 								<AgentSection />
-								<Group justify='flex-end' mt='md'>
-									<Button
-										type='submit'
-										disabled={!form.isDirty()}
-										loading={isUpdating}
-									>
-										{isUpdating
-											? t('form.actions.saving', { defaultValue: 'Saving...' })
-											: t('form.actions.save', {
-													defaultValue: 'Save changes',
-												})}
-									</Button>
-								</Group>
+								<Box
+									pos='sticky'
+									bottom={-1}
+									bg='var(--mantine-color-body)'
+									py='md'
+									mt='md'
+									style={{
+										borderTop: '1px solid var(--mantine-color-gray-2)',
+										zIndex: 10,
+										marginRight: 'calc(var(--mantine-spacing-xs) * -1)',
+										marginLeft: 'calc(var(--mantine-spacing-xs) * -1)',
+										paddingRight: 'var(--mantine-spacing-xs)',
+										paddingLeft: 'var(--mantine-spacing-xs)',
+									}}
+								>
+									<Group justify='flex-end'>
+										<FormSaveButton
+											label={t('form.actions.save', {
+												defaultValue: 'Save changes',
+											})}
+											loadingLabel={t('form.actions.saving', {
+												defaultValue: 'Saving...',
+											})}
+											isLoading={isUpdating}
+											disabled={!form.isDirty()}
+										/>
+									</Group>
+								</Box>
 							</form>
 						)}
 						{selectedTab === 'workflow' && (
@@ -373,21 +403,34 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 										onSubmit={form.onSubmit((values) => handleSubmit(values))}
 									>
 										<WorkflowSection />
-										<Group justify='flex-end' mt='md'>
-											<Button
-												type='submit'
-												disabled={!form.isDirty()}
-												loading={isUpdating}
-											>
-												{isUpdating
-													? t('form.actions.saving', {
-															defaultValue: 'Saving...',
-														})
-													: t('form.actions.save', {
-															defaultValue: 'Save changes',
-														})}
-											</Button>
-										</Group>
+										<Box
+											pos='sticky'
+											bottom={-1}
+											bg='var(--mantine-color-body)'
+											py='md'
+											mt='md'
+											style={{
+												borderTop: '1px solid var(--mantine-color-gray-2)',
+												zIndex: 10,
+												marginRight: 'calc(var(--mantine-spacing-xs) * -1)',
+												marginLeft: 'calc(var(--mantine-spacing-xs) * -1)',
+												paddingRight: 'var(--mantine-spacing-xs)',
+												paddingLeft: 'var(--mantine-spacing-xs)',
+											}}
+										>
+											<Group justify='flex-end'>
+												<FormSaveButton
+													label={t('form.actions.save', {
+														defaultValue: 'Save changes',
+													})}
+													loadingLabel={t('form.actions.saving', {
+														defaultValue: 'Saving...',
+													})}
+													isLoading={isUpdating}
+													disabled={!form.isDirty()}
+												/>
+											</Group>
+										</Box>
 									</form>
 								)}
 							</>

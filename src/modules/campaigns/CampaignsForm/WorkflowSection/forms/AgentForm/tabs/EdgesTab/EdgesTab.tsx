@@ -46,6 +46,7 @@ const EdgesTab = () => {
 		sourceNode?.label ?? sourceNode?.type,
 		t('form.workflow.nodes.start')
 	);
+	const sourceNodeType = sourceNode?.type;
 	const targetNode = selectedEdge
 		? workflow?.nodes[selectedEdge.edge.target]
 		: undefined;
@@ -55,6 +56,7 @@ const EdgesTab = () => {
 				t('form.workflow.nodes.end')
 			)
 		: undefined;
+	const targetNodeType = targetNode?.type;
 
 	// Find edges by warning level
 	const edgesByWarningLevel = outgoingEdges.reduce(
@@ -100,13 +102,10 @@ const EdgesTab = () => {
 		forwardCondition?: any,
 		backwardCondition?: any
 	) => {
-		const updates: any = {};
-		if (forwardCondition !== undefined) {
-			updates.forwardCondition = forwardCondition;
-		}
-		if (backwardCondition !== undefined) {
-			updates.backwardCondition = backwardCondition;
-		}
+		const updates = {
+			forwardCondition,
+			backwardCondition,
+		};
 
 		const nextWorkflow = updateWorkflowEdge(workflow, edgeId, updates);
 
@@ -282,6 +281,8 @@ const EdgesTab = () => {
 				edge={selectedEdge?.edge}
 				sourceLabel={sourceLabel}
 				targetLabel={targetLabel}
+				sourceNodeType={sourceNodeType}
+				targetNodeType={targetNodeType}
 				onClose={handleCloseModal}
 				onSave={handleSaveEdgeCondition}
 			/>
