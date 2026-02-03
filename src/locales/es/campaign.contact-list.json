@@ -331,6 +331,7 @@
 			"actions": {
 				"extendWaves": "Extender Oleadas",
 				"completeList": "Completar Lista",
+				"downloadResults": "Descargar Resultados",
 				"openContactList": "Abrir Lista de Contactos"
 			},
 			"primaryPhone": "Número de teléfono principal",

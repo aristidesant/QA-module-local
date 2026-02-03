@@ -194,8 +194,8 @@ const WorkflowNodeActions = ({
 			{showActions && onDeleteNode && (
 				<Tooltip label={t('form.workflow.actions.delete')} withArrow>
 					<ActionIcon
-						size={18}
-						variant='outline'
+						size={'xs'}
+						variant='light'
 						color='red'
 						radius='md'
 						onClick={() => onDeleteNode(nodeId)}

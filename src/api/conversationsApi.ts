@@ -154,6 +154,32 @@ const conversationsApi = (_authHeader: Record<string, string> = {}) => {
 			return { blob: response.data, filename };
 		},
 
+		// Export call results as CSV file for a specific contact group
+		exportCallResultsCsv: async (contactGroupId: string | number) => {
+			const response = await axios.get<Blob>(
+				`${DEFAULT_API_URL}/conversations/export/call-results-csv`,
+				{
+					params: { contactGroupId },
+					responseType: 'blob',
+				}
+			);
+
+			// Try to extract filename from Content-Disposition; fall back to default
+			const contentDisposition = response.headers?.['content-disposition'] as
+				| string
+				| undefined;
+			let filename = `call-results-${contactGroupId}.csv`;
+			if (contentDisposition) {
+				const match = /filename\*=UTF-8''([^;]+)|filename="?([^";]+)"?/i.exec(
+					contentDisposition
+				);
+				const raw = decodeURIComponent(match?.[1] || match?.[2] || '');
+				if (raw) filename = raw;
+			}
+
+			return { blob: response.data, filename };
+		},
+
 		// Export conversation audio file
 		exportConversationAudio: async (id: string | number) => {
 			const response = await axios.get<Blob>(

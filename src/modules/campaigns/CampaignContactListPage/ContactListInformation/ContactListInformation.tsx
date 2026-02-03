@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import {
 	IconAlertTriangle,
 	IconCircleCheck,
+	IconDownload,
 	IconRefresh,
 	IconRepeat,
 } from '@tabler/icons-react';
@@ -15,6 +16,8 @@ import {
 	useCompleteContactGroup,
 	useExtendContactGroupWaves,
 } from '~/queries/contactGroupQueries';
+import { useExportCallResultsCsv } from '~/queries/conversationsQueries';
+import { downloadBlob } from '~/utils/fileUtils';
 import ExtendWavesModal from '~/modules/campaigns/components/ExtendWavesModal';
 import { getErrorMessage } from '~/utils/httpClient';
 
@@ -203,6 +206,28 @@ export const ContactListInformation = ({
 		});
 	};
 
+	const exportMutation = useExportCallResultsCsv();
+
+	const handleDownloadResults = async () => {
+		try {
+			const { blob, filename } = await exportMutation.mutateAsync(
+				contactGroup.id
+			);
+			downloadBlob(blob, filename);
+			notifications.show({
+				title: t('actions.success'),
+				message: t('contactsTable.notifications.exportSuccessMessage'),
+				color: 'green',
+			});
+		} catch (error) {
+			notifications.show({
+				title: t('actions.error'),
+				message: getErrorMessage(error),
+				color: 'red',
+			});
+		}
+	};
+
 	return (
 		<section className={classes.panel}>
 			<div className={classes.header}>
@@ -220,6 +245,23 @@ export const ContactListInformation = ({
 					</Text>
 				</div>
 				<Group gap='xs'>
+					<Tooltip
+						label={t('contacts.details.actions.downloadResults')}
+						withArrow
+						position='left'
+					>
+						<ActionIcon
+							variant='light'
+							color='blue'
+							size='sm'
+							aria-label={t('contacts.details.actions.downloadResults')}
+							onClick={handleDownloadResults}
+							loading={exportMutation.isPending}
+							disabled={isActionLoading}
+						>
+							<IconDownload size={16} strokeWidth={2} />
+						</ActionIcon>
+					</Tooltip>
 					{statusKey === 'EXECUTED' && (
 						<>
 							<Tooltip

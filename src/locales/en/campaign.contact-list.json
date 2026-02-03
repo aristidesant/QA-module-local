@@ -332,6 +332,7 @@
 			"actions": {
 				"extendWaves": "Extend Waves",
 				"completeList": "Complete List",
+				"downloadResults": "Download Results",
 				"openContactList": "Open Contact List"
 			},
 			"primaryPhone": "Primary phone number",
