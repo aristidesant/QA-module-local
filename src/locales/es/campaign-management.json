@@ -1,10 +1,9 @@
 {
 	"title": "Gestión de Campañas",
-	"description": "Gestione categorías de campañas, objetivos, esquemas, tipos de prompts y resultados",
+	"description": "Gestione categorías de campañas, objetivos, esquemas y resultados",
 	"tabs": {
 		"setup": "Configuración de Campaña",
-		"outcomes": "Resultados",
-		"promptTypes": "Tipos de Prompt"
+		"outcomes": "Resultados"
 	},
 	"setup": {
 		"catalog": "Catálogo",
@@ -324,138 +323,6 @@
 			"noResultsFiltersDescription": "Intente ajustar su búsqueda o filtros",
 			"clearFilters": "Limpiar filtros",
 			"getStarted": "Comience creando su primer esquema de campaña"
-		},
-		"promptTypes": {
-			"title": "Tipos de Prompt",
-			"description": "Etiqueta y organiza las plantillas de prompt usadas por las campañas.",
-			"actions": {
-				"create": "Crear tipo de prompt"
-			},
-			"emptyState": {
-				"message": "No se encontraron tipos de prompt",
-				"description": "Defina su primer tipo de prompt de campaña para comenzar a organizar prompts."
-			},
-			"filteredEmpty": {
-				"message": "No hay tipos de prompt que coincidan con sus filtros",
-				"description": "Intente ajustar su búsqueda o las opciones de orden."
-			},
-			"filters": {
-				"title": "Filtros",
-				"active": "Activos",
-				"searchPlaceholder": "Buscar por nombre o icono...",
-				"sortPlaceholder": "Ordenar por",
-				"sortOptions": {
-					"orderAsc": "Orden ascendente",
-					"orderDesc": "Orden descendente",
-					"nameAsc": "Nombre A-Z",
-					"nameDesc": "Nombre Z-A",
-					"createdDesc": "Más recientes primero",
-					"createdAsc": "Más antiguos primero"
-				},
-				"clear": "Limpiar filtros"
-			},
-			"pagination": {
-				"itemLabel": "tipos de prompt"
-			},
-			"modals": {
-				"createTitle": "Crear tipo de prompt de campaña",
-				"editTitle": "Editar tipo de prompt de campaña"
-			},
-			"confirmDelete": {
-				"title": "Confirmar eliminación",
-				"message": "¿Está seguro de que desea eliminar este tipo de prompt?"
-			},
-			"form": {
-				"name": {
-					"label": "Nombre",
-					"placeholder": "Ingrese el nombre del tipo de prompt"
-				},
-				"icon": {
-					"label": "Icono",
-					"placeholder": "Ingrese el nombre del icono (p. ej., IconSparkles)"
-				},
-				"description": {
-					"label": "Descripción",
-					"placeholder": "Describa el tipo de prompt (opcional)"
-				},
-				"order": {
-					"label": "Orden",
-					"placeholder": "1"
-				},
-				"actions": {
-					"cancel": "Cancelar",
-					"create": "Crear",
-					"update": "Actualizar"
-				},
-				"validation": {
-					"nameRequired": "El nombre es obligatorio",
-					"iconRequired": "El icono es obligatorio",
-					"orderMin": "El orden debe ser 1 o mayor"
-				}
-			},
-			"notifications": {
-				"createSuccess": "Tipo de prompt de campaña creado exitosamente",
-				"updateSuccess": "Tipo de prompt de campaña actualizado exitosamente",
-				"deleteSuccess": "Tipo de prompt de campaña eliminado exitosamente",
-				"deleteError": "Error al eliminar el tipo de prompt de campaña",
-				"usageError": "Error al comprobar el uso del tipo de prompt"
-			},
-			"table": {
-				"headers": {
-					"order": "Orden",
-					"name": "Nombre",
-					"info": "Info",
-					"icon": "Icono",
-					"created": "Creado",
-					"actions": "Acciones"
-				},
-				"empty": {
-					"icon": "No definido",
-					"created": "No disponible",
-					"description": "No hay descripción.",
-					"order": "--"
-				},
-				"info": {
-					"aria": "Ver detalles del tipo de prompt",
-					"orderLabel": "Orden: {{order}}",
-					"iconLabel": "Icono"
-				},
-				"actions": {
-					"edit": "Editar tipo de prompt",
-					"delete": "Eliminar tipo de prompt"
-				}
-			},
-			"reassign": {
-				"title": "Tipo de prompt en uso",
-				"description": "El tipo de prompt {{name}} está asignado actualmente a {{count}} campañas. Reasigne estos prompts a otro tipo o elija eliminarlos.",
-				"loading": "Verificando restricciones de campaña...",
-				"confirmDelete": "Confirmar y eliminar tipo",
-				"emptyPromptWarning": "Algunos prompts reasignados están vacíos.",
-				"promptContentTitle": "Contenido del prompt",
-				"editPromptTitle": "Editar contenido del prompt",
-				"editPromptImport": "Importar prompt original",
-				"editPromptDone": "Listo",
-				"table": {
-					"headers": {
-						"campaign": "Campaña",
-						"currentType": "Tipo actual",
-						"newType": "Nuevo tipo"
-					},
-					"actions": {
-						"viewPrompt": "Ver prompt",
-						"placeholder": "Seleccionar acción...",
-						"delete": "Eliminar prompt (no reasignar)",
-						"editPrompt": "Editar prompt",
-						"addPrompt": "Agregar prompt"
-					}
-				},
-				"notifications": {
-					"loadError": "Error al cargar los tipos de prompt disponibles",
-					"warningTitle": "Advertencia",
-					"stillUsed": "Algunas campañas todavía usan este tipo de prompt. Actualice e intente nuevamente.",
-					"processError": "Error al procesar los cambios"
-				}
-			}
 		}
 	}
 }

@@ -416,29 +416,6 @@
 			"female": "Female"
 		}
 	},
-	"promptHistory": {
-		"failedToLoad": "Failed to load prompt history.",
-		"modalTitle": "Prompt History",
-		"itemLabel": "prompt versions",
-		"modifiedBy": "Modified By",
-		"dateModified": "Date Modified",
-		"dateFormat": "MMM DD, YYYY [at] hh:mm A",
-		"diffError": "Failed to generate diff view. Showing original text instead.",
-		"noChanges": "No Changes",
-		"noChangesDesc": "This version is identical to the current prompt.",
-		"previousVersion": "Previous Version (v{{version}})",
-		"currentVersion": "Current Version",
-		"close": "Close",
-		"restoreVersion": "Restore This Version",
-		"columns": {
-			"version": "Version",
-			"modified": "Modified",
-			"modifiedBy": "Modified By",
-			"promptPreview": "Prompt Preview",
-			"viewFullPrompt": "View full prompt",
-			"restoreVersion": "Restore this version"
-		}
-	},
 	"form": {
 		"title": {
 			"edit": "Edit {{name}}"
@@ -1263,7 +1240,6 @@
 				},
 				"modal": {
 					"types": "Types",
-					"selectPromptType": "Select a prompt type to start editing.",
 					"saveHint": "Save to apply prompts throughout this campaign.",
 					"saveConfirmation": {
 						"title": "Apply Changes?",

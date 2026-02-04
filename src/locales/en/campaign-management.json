@@ -1,10 +1,9 @@
 {
 	"title": "Campaign Management",
-	"description": "Manage campaign categories, objectives, schemas, prompt types, and outcomes",
+	"description": "Manage campaign categories, objectives, schemas, and outcomes",
 	"tabs": {
 		"setup": "Campaign Setup",
-		"outcomes": "Outcomes",
-		"promptTypes": "Prompt Types"
+		"outcomes": "Outcomes"
 	},
 	"setup": {
 		"catalog": "Catalog",
@@ -324,138 +323,6 @@
 			"noResultsFiltersDescription": "Try adjusting your search criteria or filters",
 			"clearFilters": "Clear Filters",
 			"getStarted": "Get started by creating your first campaign schema"
-		},
-		"promptTypes": {
-			"title": "Prompt Types",
-			"description": "Label and organize the prompt templates used by campaigns.",
-			"actions": {
-				"create": "Create Prompt Type"
-			},
-			"emptyState": {
-				"message": "No prompt types found",
-				"description": "Define your first campaign prompt type to start organizing prompts."
-			},
-			"filteredEmpty": {
-				"message": "No prompt types match your filters",
-				"description": "Try adjusting your search or sorting options."
-			},
-			"filters": {
-				"title": "Filters",
-				"active": "Active",
-				"searchPlaceholder": "Search by name or icon...",
-				"sortPlaceholder": "Sort by",
-				"sortOptions": {
-					"orderAsc": "Order ascending",
-					"orderDesc": "Order descending",
-					"nameAsc": "Name A-Z",
-					"nameDesc": "Name Z-A",
-					"createdDesc": "Newest first",
-					"createdAsc": "Oldest first"
-				},
-				"clear": "Clear filters"
-			},
-			"pagination": {
-				"itemLabel": "prompt types"
-			},
-			"modals": {
-				"createTitle": "Create Campaign Prompt Type",
-				"editTitle": "Edit Campaign Prompt Type"
-			},
-			"confirmDelete": {
-				"title": "Confirm Delete",
-				"message": "Are you sure you want to delete this prompt type?"
-			},
-			"form": {
-				"name": {
-					"label": "Name",
-					"placeholder": "Enter prompt type name"
-				},
-				"icon": {
-					"label": "Icon",
-					"placeholder": "Enter icon name (e.g., IconSparkles)"
-				},
-				"description": {
-					"label": "Description",
-					"placeholder": "Describe the prompt type (optional)"
-				},
-				"order": {
-					"label": "Order",
-					"placeholder": "1"
-				},
-				"actions": {
-					"cancel": "Cancel",
-					"create": "Create",
-					"update": "Update"
-				},
-				"validation": {
-					"nameRequired": "Name is required",
-					"iconRequired": "Icon is required",
-					"orderMin": "Order must be 1 or greater"
-				}
-			},
-			"notifications": {
-				"createSuccess": "Campaign prompt type created successfully",
-				"updateSuccess": "Campaign prompt type updated successfully",
-				"deleteSuccess": "Campaign prompt type deleted successfully",
-				"deleteError": "Failed to delete campaign prompt type",
-				"usageError": "Failed to check prompt type usage"
-			},
-			"table": {
-				"headers": {
-					"order": "Order",
-					"name": "Name",
-					"info": "Info",
-					"icon": "Icon",
-					"created": "Created",
-					"actions": "Actions"
-				},
-				"empty": {
-					"icon": "Not set",
-					"created": "Not available",
-					"description": "No description provided.",
-					"order": "--"
-				},
-				"info": {
-					"aria": "View prompt type details",
-					"orderLabel": "Order: {{order}}",
-					"iconLabel": "Icon"
-				},
-				"actions": {
-					"edit": "Edit prompt type",
-					"delete": "Delete prompt type"
-				}
-			},
-			"reassign": {
-				"title": "Prompt Type in Use",
-				"description": "The prompt type {{name}} is currently assigned to {{count}} campaigns. Please reassign these prompts to a different type, or choose to delete them.",
-				"loading": "Checking campaign constraints...",
-				"confirmDelete": "Confirm & Delete Type",
-				"emptyPromptWarning": "Some reassigned prompts are empty.",
-				"promptContentTitle": "Prompt Content",
-				"editPromptTitle": "Edit Prompt Content",
-				"editPromptImport": "Import original prompt",
-				"editPromptDone": "Done",
-				"table": {
-					"headers": {
-						"campaign": "Campaign",
-						"currentType": "Current Type",
-						"newType": "New Type"
-					},
-					"actions": {
-						"viewPrompt": "View Prompt",
-						"placeholder": "Select action...",
-						"delete": "Delete Prompt (Do not reassign)",
-						"editPrompt": "Edit Prompt",
-						"addPrompt": "Add Prompt"
-					}
-				},
-				"notifications": {
-					"loadError": "Failed to load available prompt types",
-					"warningTitle": "Warning",
-					"stillUsed": "Some campaigns are still using this prompt type. Please refresh and try again.",
-					"processError": "Failed to process changes"
-				}
-			}
 		}
 	}
 }

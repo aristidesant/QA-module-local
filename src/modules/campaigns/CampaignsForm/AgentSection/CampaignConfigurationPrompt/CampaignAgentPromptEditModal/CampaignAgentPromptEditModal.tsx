@@ -273,7 +273,6 @@ const CampaignAgentPromptEditModal: React.FC<
 		<Modal
 			opened={opened}
 			onClose={onClose}
-			title={t('form.agent.prompt.simpleModal.title')}
 			fullScreen
 			centered
 			styles={{

@@ -67,7 +67,6 @@
 					"title": "Configuración de prompts",
 					"subtitle": "Configura los prompts para cada tipo de interacción",
 					"types": "Tipos",
-					"selectPromptType": "Selecciona un tipo de prompt para comenzar a editar.",
 					"saveHint": "Guarda para aplicar los prompts en toda esta campaña.",
 					"editorDrafted": "Borrador",
 					"editorNoChanges": "Sin cambios"

@@ -222,7 +222,6 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 
 		// UPDATE campaign (PATCH)
 		updateCampaign: async (campaignId: string, data: Partial<Campaign>) => {
-			removePromptText(data.agentConfig);
 			stripWorkflowUiMeta(data.agentConfig);
 
 			const response = await axios.patch<Campaign>(

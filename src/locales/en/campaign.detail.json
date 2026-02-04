@@ -67,7 +67,6 @@
 					"title": "Prompt Configuration",
 					"subtitle": "Configure prompts for each interaction type",
 					"types": "Types",
-					"selectPromptType": "Select a prompt type to start editing.",
 					"saveHint": "Save to apply prompts throughout this campaign.",
 					"editorDrafted": "Draft",
 					"editorNoChanges": "No changes"

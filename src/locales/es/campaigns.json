@@ -416,29 +416,6 @@
 			"female": "Femenino"
 		}
 	},
-	"promptHistory": {
-		"failedToLoad": "Error al cargar el historial de prompts.",
-		"modalTitle": "Historial de Prompts",
-		"itemLabel": "versiones de prompt",
-		"modifiedBy": "Modificado Por",
-		"dateModified": "Fecha de Modificación",
-		"dateFormat": "DD MMM, YYYY [a las] hh:mm A",
-		"diffError": "Error al generar la vista de diferencias. Mostrando texto original en su lugar.",
-		"noChanges": "Sin Cambios",
-		"noChangesDesc": "Esta versión es idéntica al prompt actual.",
-		"previousVersion": "Versión Anterior (v{{version}})",
-		"currentVersion": "Versión Actual",
-		"close": "Cerrar",
-		"restoreVersion": "Restaurar Esta Versión",
-		"columns": {
-			"version": "Versión",
-			"modified": "Modificado",
-			"modifiedBy": "Modificado Por",
-			"promptPreview": "Vista Previa del Prompt",
-			"viewFullPrompt": "Ver prompt completo",
-			"restoreVersion": "Restaurar esta versión"
-		}
-	},
 	"form": {
 		"title": {
 			"edit": "Editar {{name}}"
@@ -1264,7 +1241,6 @@
 				},
 				"modal": {
 					"types": "Tipos",
-					"selectPromptType": "Selecciona un tipo de prompt para empezar a editar.",
 					"saveHint": "Guarda para aplicar los prompts en toda esta campaña.",
 					"saveConfirmation": {
 						"title": "¿Aplicar Cambios?",

@@ -219,8 +219,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 
 			// Prepare data for light update (excludes agentConfig)
 			const dataToSend = isLight
-				? (({ agentConfig, ...rest }) => rest)(value)
-				: value;
+				? (({ agentConfig, ...rest }) => rest)(cleanedValue)
+				: cleanedValue;
 
 			let savedCampaign: Campaign;
 
@@ -242,7 +242,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 				});
 			} else {
 				// Create new campaign
-				savedCampaign = await createCampaign(value);
+				savedCampaign = await createCampaign(cleanedValue);
 			}
 
 			// Handle objective assignment if an objective is selected

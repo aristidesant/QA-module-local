@@ -104,6 +104,21 @@
 	background: var(--mantine-color-gray-0);
 }
 
+.promptModalBody {
+	padding: var(--mantine-spacing-md);
+}
+
+.promptModalContent {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+}
+
+.promptModalTextarea {
+	background: var(--mantine-color-gray-0);
+	border-color: var(--mantine-color-gray-3);
+}
+
 .knowledgeBaseContent {
 	display: flex;
 	align-items: flex-start;
