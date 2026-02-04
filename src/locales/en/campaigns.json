@@ -962,7 +962,8 @@
 				"chooseMatchingCsv": "Choose matching CSV column(s)",
 				"clearSelection": "Clear selection",
 				"mappingsCreated": "Created {{count}} mappings",
-				"saveMappings": "Save mappings"
+				"saveMappings": "Save mappings",
+				"dynamicColumnTooltip": "Dynamic column"
 			},
 			"details": {
 				"title": "Contact List Details",

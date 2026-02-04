@@ -963,7 +963,8 @@
 				"chooseMatchingCsv": "Elige la(s) columna(s) CSV correspondiente(s)",
 				"clearSelection": "Limpiar selección",
 				"mappingsCreated": "Se crearon {{count}} asignaciones",
-				"saveMappings": "Guardar asignaciones"
+				"saveMappings": "Guardar asignaciones",
+				"dynamicColumnTooltip": "Columna dinámica"
 			},
 			"details": {
 				"title": "Detalles de la lista de contactos",

@@ -15,6 +15,7 @@ const STANDARD_CONTACT_FIELDS = [
 	'email',
 	'address',
 	'identifier',
+	'identifierType',
 	'birthDate',
 ] as const;
 
