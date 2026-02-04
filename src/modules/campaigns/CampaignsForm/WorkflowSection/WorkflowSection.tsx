@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Checkbox, Group, Select } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
-import WorkflowSyncButton from './WorkflowSyncButton';
 import WorkflowCanvas from './WorkflowCanvas';
 import {
 	useCampaignFormContext,
@@ -25,9 +24,7 @@ const WorkflowSection = () => {
 	const { t } = useTranslation('campaigns');
 	const form = useCampaignFormContext();
 	const campaignId = useCampaignId();
-	const { data: campaignAgents, isLoading } = useGetCampaignAgents(
-		campaignId || 0
-	);
+	const { data: campaignAgents } = useGetCampaignAgents(campaignId || 0);
 	const { setRightComponent } = useCampaignsStore((state) => state);
 	const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
 	const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
@@ -212,11 +209,6 @@ const WorkflowSection = () => {
 						onChange={(event) =>
 							handlePreventLoopsChange(event.currentTarget.checked)
 						}
-					/>
-					<WorkflowSyncButton
-						agents={agents}
-						isLoading={isLoading}
-						selectedAgentId={selectedAgentId}
 					/>
 				</Group>
 			}

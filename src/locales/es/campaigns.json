@@ -634,23 +634,6 @@
 				"title": "Workflow",
 				"description": "Crea el flujo del agente y conecta nodos segun el esquema del workflow."
 			},
-			"sync": {
-				"tooltip": "Sincronizar desde agente",
-				"noAgentsTooltip": "No hay agentes asignados",
-				"selectAgentTooltip": "Selecciona un agente",
-				"selectAgentTitle": "Seleccionar Agente para Sincronizar",
-				"selectAgentDescription": "Hay multiples agentes asignados a esta campana. Seleccione cual agente usar para sincronizar el workflow.",
-				"continueButton": "Continuar",
-				"confirmTitle": "Sincronizar Workflow desde Agente",
-				"confirmMessage": "Esto recargara la configuracion del workflow desde el agente '{{agentName}}'. Cualquier cambio no guardado del workflow se perdera.",
-				"unknownAgent": "Agente Desconocido",
-				"confirmButton": "Sincronizar",
-				"cancelButton": "Cancelar",
-				"successTitle": "Workflow Sincronizado",
-				"successMessage": "La configuracion del workflow ha sido actualizada desde el agente.",
-				"errorTitle": "Error de Sincronizacion",
-				"errorMessage": "No se pudo sincronizar el workflow desde el agente. Por favor, intente de nuevo."
-			},
 			"header": {
 				"title": "Constructor de flujo",
 				"description": "Inicio conecta con un subagente. Desde alli, agrega los siguientes pasos en el flujo.",
@@ -773,6 +756,22 @@
 				"delayValue": "{{value}} ms",
 				"emptyAgent": "Sin configurar"
 			}
+		},
+		"campaignSync": {
+			"tooltip": "Sincronizar datos de campaña",
+			"noAgentsTooltip": "No hay agentes asignados",
+			"selectAgentTooltip": "Selecciona un agente",
+			"selectAgentTitle": "Seleccionar agente para sincronizar",
+			"selectAgentDescription": "Hay varios agentes asignados a esta campaña. Selecciona el agente del que deseas sincronizar.",
+			"continueButton": "Continuar",
+			"confirmTitle": "Sincronizar datos de campaña",
+			"confirmMessage": "Esto actualizara los datos de la campana desde el agente '{{agentName}}' usando ElevenLabs. Se perderan los cambios no guardados en esta campana.",
+			"confirmButton": "Sincronizar datos",
+			"cancelButton": "Cancelar",
+			"successTitle": "Datos de campana sincronizados",
+			"successMessage": "Los datos de la campana se actualizaron desde ElevenLabs.",
+			"errorTitle": "Error de sincronizacion",
+			"errorMessage": "No pudimos sincronizar los datos de la campana desde ElevenLabs. Intentelo de nuevo."
 		},
 		"validation": {
 			"nameRequired": "El nombre de la campaña es obligatorio",

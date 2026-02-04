@@ -22,17 +22,17 @@ export interface AgentInfo {
 	agentName: string;
 }
 
-interface WorkflowSyncButtonProps {
+interface CampaignSyncButtonProps {
 	agents?: AgentInfo[];
 	isLoading?: boolean;
 	selectedAgentId?: string | null;
 }
 
-export const WorkflowSyncButton = ({
+export const CampaignSyncButton = ({
 	agents: agentsProp,
 	isLoading: isLoadingProp,
 	selectedAgentId: selectedAgentIdProp,
-}: WorkflowSyncButtonProps) => {
+}: CampaignSyncButtonProps) => {
 	const { t } = useTranslation('campaigns');
 	const queryClient = useQueryClient();
 	const selectedCampaign = useCampaignsStore((state) => state.selectedCampaign);
@@ -82,11 +82,11 @@ export const WorkflowSyncButton = ({
 			const modalId = 'select-agent-for-sync';
 			modals.open({
 				modalId,
-				title: t('form.workflow.sync.selectAgentTitle'),
+				title: t('form.campaignSync.selectAgentTitle'),
 				children: (
 					<Stack>
 						<Text size='sm' mb='xs'>
-							{t('form.workflow.sync.selectAgentDescription')}
+							{t('form.campaignSync.selectAgentDescription')}
 						</Text>
 						<Radio.Group
 							value={selectedAgentId || ''}
@@ -110,7 +110,7 @@ export const WorkflowSyncButton = ({
 									modals.close(modalId);
 								}}
 							>
-								{t('form.workflow.sync.cancelButton')}
+								{t('form.campaignSync.cancelButton')}
 							</Button>
 							<Button
 								disabled={!selectedAgentId}
@@ -127,7 +127,7 @@ export const WorkflowSyncButton = ({
 									setSelectedAgentId(null);
 								}}
 							>
-								{t('form.workflow.sync.continueButton')}
+								{t('form.campaignSync.continueButton')}
 							</Button>
 						</Group>
 					</Stack>
@@ -137,14 +137,14 @@ export const WorkflowSyncButton = ({
 	};
 
 	const showConfirmModal = (agentId: string, agentName: string) => {
-		const confirmModalId = 'confirm-sync-workflow';
+		const confirmModalId = 'confirm-sync-campaign';
 		modals.open({
 			modalId: confirmModalId,
-			title: t('form.workflow.sync.confirmTitle'),
+			title: t('form.campaignSync.confirmTitle'),
 			children: (
 				<Stack>
 					<Text size='sm'>
-						{t('form.workflow.sync.confirmMessage', { agentName })}
+						{t('form.campaignSync.confirmMessage', { agentName })}
 					</Text>
 					<Group justify='flex-end' mt='md'>
 						<Button
@@ -152,7 +152,7 @@ export const WorkflowSyncButton = ({
 							onClick={() => modals.close(confirmModalId)}
 							disabled={isSyncing}
 						>
-							{t('form.workflow.sync.cancelButton')}
+							{t('form.campaignSync.cancelButton')}
 						</Button>
 						<Button
 							color='orange'
@@ -167,20 +167,20 @@ export const WorkflowSyncButton = ({
 									}
 									modals.close(confirmModalId);
 									notifications.show({
-										title: t('form.workflow.sync.successTitle'),
-										message: t('form.workflow.sync.successMessage'),
+										title: t('form.campaignSync.successTitle'),
+										message: t('form.campaignSync.successMessage'),
 										color: 'green',
 									});
 								} catch {
 									notifications.show({
-										title: t('form.workflow.sync.errorTitle'),
-										message: t('form.workflow.sync.errorMessage'),
+										title: t('form.campaignSync.errorTitle'),
+										message: t('form.campaignSync.errorMessage'),
 										color: 'red',
 									});
 								}
 							}}
 						>
-							{t('form.workflow.sync.confirmButton')}
+							{t('form.campaignSync.confirmButton')}
 						</Button>
 					</Group>
 				</Stack>
@@ -195,10 +195,10 @@ export const WorkflowSyncButton = ({
 		(isExternalSelection && agents.length > 1 && !resolvedSelectedAgentId);
 	const tooltipLabel =
 		isExternalSelection && agents.length > 1 && !resolvedSelectedAgentId
-			? t('form.workflow.sync.selectAgentTooltip')
+			? t('form.campaignSync.selectAgentTooltip')
 			: isDisabled
-				? t('form.workflow.sync.noAgentsTooltip')
-				: t('form.workflow.sync.tooltip');
+				? t('form.campaignSync.noAgentsTooltip')
+				: t('form.campaignSync.tooltip');
 
 	return (
 		<Tooltip label={tooltipLabel} withArrow>
@@ -215,4 +215,4 @@ export const WorkflowSyncButton = ({
 	);
 };
 
-export default WorkflowSyncButton;
+export default CampaignSyncButton;

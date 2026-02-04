@@ -42,6 +42,7 @@ import { IconCalculator, IconEye } from '@tabler/icons-react';
 import SchedulerCalculator from './ParametersSection/SchedulerCalculator';
 import AgentCampaignList from './AgentSection/AgentCampaignList';
 import FormSaveButton from '~/components/FormSaveButton';
+import CampaignSyncButton from './components/CampaignSyncButton';
 
 interface CampaignsFormProps {
 	campaign?: Partial<Campaign>;
@@ -298,15 +299,18 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 					}
 					titleRight={
 						campaign?.id && (
-							<Tooltip label={t('columns.viewCampaign')} withArrow>
-								<ActionIcon
-									variant='light'
-									size='lg'
-									onClick={() => navigate(`/campaign/view/${campaign.id}`)}
-								>
-									<IconEye size={20} />
-								</ActionIcon>
-							</Tooltip>
+							<Group gap='xs'>
+								<CampaignSyncButton />
+								<Tooltip label={t('columns.viewCampaign')} withArrow>
+									<ActionIcon
+										variant='light'
+										size='lg'
+										onClick={() => navigate(`/campaign/view/${campaign.id}`)}
+									>
+										<IconEye size={20} />
+									</ActionIcon>
+								</Tooltip>
+							</Group>
 						)
 					}
 					description={t('form.description')}

@@ -633,23 +633,6 @@
 				"title": "Workflow",
 				"description": "Build the agent flow and connect nodes based on the workflow schema."
 			},
-			"sync": {
-				"tooltip": "Sync from agent",
-				"noAgentsTooltip": "No agents assigned",
-				"selectAgentTooltip": "Select an agent",
-				"selectAgentTitle": "Select Agent to Sync",
-				"selectAgentDescription": "Multiple agents are assigned to this campaign. Select which agent to use for syncing the workflow.",
-				"continueButton": "Continue",
-				"confirmTitle": "Sync Workflow from Agent",
-				"confirmMessage": "This will reload the workflow configuration from the agent '{{agentName}}'. Any unsaved workflow changes will be lost.",
-				"unknownAgent": "Unknown Agent",
-				"confirmButton": "Sync",
-				"cancelButton": "Cancel",
-				"successTitle": "Workflow Synced",
-				"successMessage": "The workflow configuration has been updated from the agent.",
-				"errorTitle": "Sync Error",
-				"errorMessage": "Failed to sync workflow from agent. Please try again."
-			},
 			"header": {
 				"title": "Flow Builder",
 				"description": "Start connects to a Subagent. From there, add the next steps in the flow.",
@@ -772,6 +755,22 @@
 				"delayValue": "{{value}} ms",
 				"emptyAgent": "Not set"
 			}
+		},
+		"campaignSync": {
+			"tooltip": "Campaign Data Sync",
+			"noAgentsTooltip": "No agents assigned",
+			"selectAgentTooltip": "Select an agent",
+			"selectAgentTitle": "Select agent for campaign sync",
+			"selectAgentDescription": "Multiple agents are assigned to this campaign. Select which agent to sync from.",
+			"continueButton": "Continue",
+			"confirmTitle": "Sync campaign data",
+			"confirmMessage": "This will refresh campaign data from the agent '{{agentName}}' using ElevenLabs. Any unsaved campaign changes will be lost.",
+			"confirmButton": "Sync campaign data",
+			"cancelButton": "Cancel",
+			"successTitle": "Campaign data synced",
+			"successMessage": "Campaign data has been updated from ElevenLabs.",
+			"errorTitle": "Campaign sync failed",
+			"errorMessage": "We couldn't sync campaign data from ElevenLabs. Please try again."
 		},
 		"validation": {
 			"nameRequired": "Campaign name is required",
