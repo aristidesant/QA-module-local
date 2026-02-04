@@ -940,6 +940,7 @@
 				"csvHeadersBadge": "CSV headers ({{count}})",
 				"dynamicFieldsRequired": "Dynamic fields are required for {{objective}}.",
 				"systemFields": "System Fields",
+				"requiredBadge": "Required",
 				"selectObjective": "Select objective",
 				"addDynamicColumns": "Add dynamic columns",
 				"dynamicSetTitle": "Dynamic field set",

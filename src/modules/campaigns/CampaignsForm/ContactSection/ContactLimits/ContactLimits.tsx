@@ -105,12 +105,17 @@ export const ContactLimits = ({
 	const systemFields = useMemo(() => {
 		if (!systemConfig?.value) return [];
 		try {
-			return JSON.parse(systemConfig.value) as Array<{
+			const parsed = JSON.parse(systemConfig.value) as Array<{
 				name: string;
 				label: string;
 				type: string;
 				isArray: boolean;
+				required?: boolean;
 			}>;
+			return parsed.map((field) => ({
+				...field,
+				required: field.required ?? false,
+			}));
 		} catch {
 			return [];
 		}

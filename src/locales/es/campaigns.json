@@ -941,6 +941,7 @@
 				"csvHeadersBadge": "Encabezados CSV ({{count}})",
 				"dynamicFieldsRequired": "Se requieren campos dinámicos para {{objective}}.",
 				"systemFields": "Campos del sistema",
+				"requiredBadge": "Requerido",
 				"selectObjective": "Seleccionar objetivo",
 				"addDynamicColumns": "Agregar columnas dinámicas",
 				"dynamicSetTitle": "Conjunto de campos dinámicos",

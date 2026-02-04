@@ -13,13 +13,8 @@ interface SystemColumn {
 	label: string;
 	type: string;
 	isArray: boolean;
+	required?: boolean;
 }
-
-/**
- * Fields that are excluded from the "required" validation.
- * - phones: works differently (array field, always available for mapping)
- */
-const EXCLUDED_FROM_REQUIRED = ['phones'];
 
 /**
  * Count how many CSV columns are mapped in total.
@@ -51,10 +46,7 @@ export function countMappedRequiredFields(
 ): number {
 	if (!columnMappings || !systemFields) return 0;
 
-	// Get required system fields (excluding phones and other excluded fields)
-	const requiredFields = systemFields.filter(
-		(field) => !EXCLUDED_FROM_REQUIRED.includes(field.name)
-	);
+	const requiredFields = systemFields.filter((field) => field.required);
 
 	// Count how many required fields have mappings
 	return requiredFields.filter((field) => {
@@ -77,10 +69,7 @@ export function areAllSystemFieldsMapped(
 ): boolean {
 	if (!columnMappings || !systemFields) return false;
 
-	// Get required system fields (excluding phones and other excluded fields)
-	const requiredFields = systemFields.filter(
-		(field) => !EXCLUDED_FROM_REQUIRED.includes(field.name)
-	);
+	const requiredFields = systemFields.filter((field) => field.required);
 
 	// Check that each required field has a mapping
 	return requiredFields.every((field) => {
@@ -137,7 +126,11 @@ function ColumnMappingCard({
 	const systemFields = useMemo<SystemColumn[]>(() => {
 		if (!systemConfig?.value) return [];
 		try {
-			return JSON.parse(systemConfig.value) as SystemColumn[];
+			const parsed = JSON.parse(systemConfig.value) as SystemColumn[];
+			return parsed.map((field) => ({
+				...field,
+				required: field.required ?? false,
+			}));
 		} catch {
 			return [];
 		}
