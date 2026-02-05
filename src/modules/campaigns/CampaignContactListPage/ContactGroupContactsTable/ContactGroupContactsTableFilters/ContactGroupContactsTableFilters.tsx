@@ -7,6 +7,7 @@ import {
 	IconFilterOff,
 	IconDownload,
 	IconUpload,
+	IconRefresh,
 } from '@tabler/icons-react';
 import { FilterContainer } from '~/components/FilterContainer';
 import styles from './ContactGroupContactsTableFilters.module.css';
@@ -21,6 +22,8 @@ interface ContactGroupContactsTableFiltersProps {
 	isExporting?: boolean;
 	onAppend?: () => void;
 	isAppending?: boolean;
+	onReload?: () => void;
+	isReloading?: boolean;
 }
 
 export const ContactGroupContactsTableFilters: React.FC<
@@ -34,6 +37,8 @@ export const ContactGroupContactsTableFilters: React.FC<
 	isExporting,
 	onAppend,
 	isAppending,
+	onReload,
+	isReloading,
 }) => {
 	const { t } = useTranslation('campaign.contact-list');
 
@@ -83,6 +88,19 @@ export const ContactGroupContactsTableFilters: React.FC<
 				</div>
 
 				<div className={styles.selectFilters}>
+					{onReload && (
+						<Tooltip label={t('contactsTable.tooltips.reload')} withArrow>
+							<ActionIcon
+								variant='light'
+								color='gray'
+								size='lg'
+								onClick={onReload}
+								loading={isReloading}
+							>
+								<IconRefresh size={16} />
+							</ActionIcon>
+						</Tooltip>
+					)}
 					{onAppend && (
 						<Tooltip label={t('contactsTable.tooltips.append')} withArrow>
 							<ActionIcon

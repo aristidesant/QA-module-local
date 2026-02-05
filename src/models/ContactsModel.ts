@@ -20,6 +20,29 @@ export interface ContactPhoneNumber extends PhoneEntry {
 	id: number;
 }
 
+export interface OutboundCallTask {
+	id: number;
+	contactGroupId: number;
+	waveNumber: number;
+	contactId: number;
+	contactPhoneNumberId: number;
+	agentId: string;
+	conversationId: string | null;
+	status: string;
+	queueJobId: string;
+	scheduledAt: string;
+	startedAt: string | null;
+	completedAt: string | null;
+	pausedAt: string | null;
+	cancelledAt: string | null;
+	errorMessage: string | null;
+	orderIndex: number;
+	orderMode: string;
+	pauseReason: string | null;
+	createdAt: string;
+	updatedAt: string;
+}
+
 export interface Contact {
 	id: number;
 	firstName: string;
@@ -38,6 +61,7 @@ export interface Contact {
 	status: 'ACTIVE' | 'INACTIVE' | string;
 	createdAt: string; // ISO datetime string
 	updatedAt: string; // ISO datetime string
+	outboundCallTasks?: OutboundCallTask[];
 }
 
 // Represents variable, schema-driven data attached to a contact

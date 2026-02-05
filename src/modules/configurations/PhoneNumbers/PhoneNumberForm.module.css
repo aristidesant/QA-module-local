@@ -1,0 +1,16 @@
+.formRoot {
+	gap: var(--mantine-spacing-sm);
+}
+
+.providerControl {
+	min-width: 220px;
+}
+
+.toggleRow {
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+}
+
+.actions {
+	margin-top: var(--mantine-spacing-xs);
+}

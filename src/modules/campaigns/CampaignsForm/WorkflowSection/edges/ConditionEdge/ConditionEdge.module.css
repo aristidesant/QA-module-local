@@ -1,0 +1,61 @@
+.label {
+	position: absolute; /* allow translate3d positioning to be exact */
+	background-color: var(--mantine-color-dark-9);
+	border-radius: 999px;
+	color: var(--mantine-color-white);
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 500;
+	line-height: 1;
+	max-width: 160px;
+	overflow: hidden;
+	padding: 3px 8px; /* compact, with a bit more breathing room */
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	pointer-events: none;
+	transform-origin: center;
+}
+
+.labelError {
+	background-color: var(--mantine-color-red-6);
+	color: var(--mantine-color-white);
+	font-weight: 600;
+}
+
+.labelWarning {
+	background-color: var(--mantine-color-orange-6);
+	color: var(--mantine-color-white);
+	font-weight: 600;
+}
+
+.labelClickable {
+	pointer-events: auto;
+	cursor: pointer;
+	transition: all 150ms ease-in-out;
+}
+
+.labelClickable:hover {
+	opacity: 0.85;
+	transform: scale(1.05);
+}
+
+.labelPrefix {
+	margin-right: 6px;
+	opacity: 0.8;
+}
+
+.labelStack {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.labelRow {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	line-height: 1.1;
+}
+
+.labelIcon {
+	color: var(--mantine-color-gray-1);
+}

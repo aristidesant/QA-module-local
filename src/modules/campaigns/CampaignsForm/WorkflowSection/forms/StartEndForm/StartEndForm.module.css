@@ -1,0 +1,10 @@
+.metaRow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.metaLabel {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+}

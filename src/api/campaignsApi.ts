@@ -4,6 +4,8 @@ import type {
 	PaginatedResponse,
 	SchedulerSummary,
 } from '~/models/CampaignsModel';
+import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
+import type { AgentWorkflowApi } from '~/models/AgentWorkflowApiModel';
 import type { CampaignRequirements } from '~/models/CampaignRequirementsModel';
 import type { CampaignLiveMetric } from '~/models/CampaignLiveMetricModel';
 import { DEFAULT_API_URL } from './config';
@@ -89,6 +91,7 @@ type AgentConfigPayload = {
 			prompt?: Record<string, unknown> | string;
 		};
 	};
+	workflow?: AgentWorkflow | AgentWorkflowApi | Record<string, unknown>;
 };
 
 const removePromptText = (agentConfig?: AgentConfigPayload) => {
@@ -103,6 +106,19 @@ const removePromptText = (agentConfig?: AgentConfigPayload) => {
 			agentConversation.prompt as Record<string, unknown>;
 		agentConversation.prompt = restPrompt;
 	}
+};
+
+const stripWorkflowUiMeta = (agentConfig?: AgentConfigPayload) => {
+	const workflow = agentConfig?.workflow as
+		| { nodes?: Record<string, Record<string, unknown>> }
+		| undefined;
+	if (!workflow?.nodes) return;
+	Object.values(workflow.nodes).forEach((node) => {
+		if (!node || typeof node !== 'object') return;
+		if ('uiMeta' in node) {
+			delete node.uiMeta;
+		}
+	});
 };
 
 /**
@@ -206,7 +222,7 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 
 		// UPDATE campaign (PATCH)
 		updateCampaign: async (campaignId: string, data: Partial<Campaign>) => {
-			removePromptText(data.agentConfig);
+			stripWorkflowUiMeta(data.agentConfig);
 
 			const response = await axios.patch<Campaign>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}`,
@@ -220,6 +236,7 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 			data: Partial<Campaign>
 		) => {
 			removePromptText(data.agentConfig);
+			stripWorkflowUiMeta(data.agentConfig);
 
 			const response = await axios.patch<Campaign>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}/details`,
@@ -310,6 +327,14 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 			const response = await axios.patch<Campaign>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}/draft`,
 				data
+			);
+			return response.data;
+		},
+
+		// SYNC campaign by agent
+		syncByAgent: async (agentId: string) => {
+			const response = await axios.post<Campaign>(
+				`${DEFAULT_API_URL}/campaigns/sync-by-agent/${agentId}`
 			);
 			return response.data;
 		},

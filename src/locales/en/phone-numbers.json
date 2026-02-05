@@ -18,6 +18,30 @@
 	"form": {
 		"createTitle": "Create Phone Number",
 		"editTitle": "Edit Phone Number",
+		"sections": {
+			"core": {
+				"title": "Core details",
+				"description": "Set the phone number and its label."
+			},
+			"provider": {
+				"title": "Provider settings",
+				"description": "Choose a provider and configure its requirements."
+			},
+			"region": {
+				"toggle": "Enable region config",
+				"description": "Add region settings only when required by Twilio."
+			},
+			"sipInbound": {
+				"title": "Inbound configuration",
+				"description": "Control allowed sources for inbound calls.",
+				"toggle": "Enable inbound config"
+			},
+			"sipOutbound": {
+				"title": "Outbound configuration",
+				"description": "Configure outbound routing and headers.",
+				"toggle": "Enable outbound config"
+			}
+		},
 		"provider": {
 			"twilio": "Twilio",
 			"sipTrunk": "SIP Trunk"
@@ -27,8 +51,11 @@
 				"label": "Phone Number",
 				"placeholder": "+1234567890",
 				"required": "Phone number is required",
-				"invalid": "Invalid format (e.g. +1809...)"
+				"invalid": "Invalid format (e.g. +1809...)",
+				"hint": "Use phone numbers in Dominican format."
 			},
+			"supportsInbound": "Supports inbound",
+			"supportsOutbound": "Supports outbound",
 			"label": {
 				"label": "Label",
 				"placeholder": "My Phone Number",
@@ -43,6 +70,12 @@
 				"required": "Token is required"
 			},
 			"type": "Type",
+			"regionConfig": {
+				"required": "Complete all region fields",
+				"regionId": "Region",
+				"token": "Region token",
+				"edgeLocation": "Edge location"
+			},
 			"terminationUri": {
 				"label": "Termination URI",
 				"required": "Termination URI is required"
@@ -54,8 +87,29 @@
 			"transport": "Transport",
 			"mediaEncryption": "Media Encryption",
 			"inboundMediaEncryption": "Inbound Media Encryption",
-			"username": "Username",
-			"password": "Password"
+			"inboundAllowedAddresses": {
+				"label": "Allowed addresses",
+				"placeholder": "Add IPs or CIDR ranges"
+			},
+			"inboundAllowedNumbers": {
+				"label": "Allowed numbers",
+				"placeholder": "Add allowed phone numbers"
+			},
+			"inboundUsername": "Inbound username",
+			"inboundPassword": "Inbound password",
+			"outboundAddress": "Outbound address",
+			"outboundTransport": "Outbound transport",
+			"outboundMediaEncryption": "Outbound media encryption",
+			"outboundHeaders": {
+				"label": "Outbound headers (JSON)",
+				"placeholder": "{\"X-Custom\": \"value\"}",
+				"invalid": "Enter a valid JSON object"
+			},
+			"outboundUsername": "Outbound username",
+			"outboundPassword": "Outbound password"
+		},
+		"actions": {
+			"add": "Add"
 		},
 		"buttons": {
 			"cancel": "Cancel",

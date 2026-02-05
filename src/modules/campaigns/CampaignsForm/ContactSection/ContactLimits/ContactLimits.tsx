@@ -20,7 +20,10 @@ import type {
 import { useProcessContactGroupFile } from '~/queries/contactGroupFilesQueries';
 import { ContactListInfo } from './ContactListInfo';
 import type ContactGroup from '~/models/ContactGroup';
-import ColumnMappingCard from './ColumnMappingCard/ColumnMappingCard';
+import ColumnMappingCard, {
+	areAllSystemFieldsMapped,
+} from './ColumnMappingCard/ColumnMappingCard';
+import { useGetClientConfig } from '~/queries/clientConfigQueries';
 import { transformFieldMapping } from '~/utils/fieldMappingTransformer';
 import { useUpdateContactGroup } from '~/queries/contactGroupQueries';
 import { useCampaignActiveSchedule } from '~/queries/schedulerQueries';
@@ -92,6 +95,32 @@ export const ContactLimits = ({
 	]);
 	const [maxWaves, setMaxWaves] = useState<number>(defaultWaves);
 
+	// Track whether mapping validation has failed (to show error styling)
+	const [showMappingError, setShowMappingError] = useState(false);
+
+	// Fetch system columns from client config for validation
+	const { data: systemConfig } = useGetClientConfig('contact_columns');
+
+	// Parse system columns from config
+	const systemFields = useMemo(() => {
+		if (!systemConfig?.value) return [];
+		try {
+			const parsed = JSON.parse(systemConfig.value) as Array<{
+				name: string;
+				label: string;
+				type: string;
+				isArray: boolean;
+				required?: boolean;
+			}>;
+			return parsed.map((field) => ({
+				...field,
+				required: field.required ?? false,
+			}));
+		} catch {
+			return [];
+		}
+	}, [systemConfig]);
+
 	// Sync state when contactGroup prop changes
 	useEffect(() => {
 		setData((prev) => ({
@@ -130,6 +159,20 @@ export const ContactLimits = ({
 				color: 'red',
 			});
 			return false;
+		}
+
+		// Validate column mappings when creating a new contact group
+		// Only system fields are required (except phones), dynamic fields are optional
+		if (!contactGroup.id && fileSummary) {
+			if (!areAllSystemFieldsMapped(data.columnMappings || {}, systemFields)) {
+				setShowMappingError(true);
+				notifications.show({
+					title: t('form.contacts.limits.notifications.invalidInput'),
+					message: t('form.contacts.limits.notifications.mappingRequired'),
+					color: 'red',
+				});
+				return false;
+			}
 		}
 
 		// Validate human equivalent doesn't exceed available capacity
@@ -318,6 +361,7 @@ export const ContactLimits = ({
 					<ColumnMappingCard
 						headers={fileSummary.headers || []}
 						onMappingChange={(columnMappings) => {
+							setShowMappingError(false);
 							handleChange('columnMappings', columnMappings);
 						}}
 						columnMappings={data?.columnMappings || {}}
@@ -325,6 +369,7 @@ export const ContactLimits = ({
 						onSchemaSelected={setSelectedSchemaId}
 						objectiveId={objectiveId}
 						selectedSchemaId={selectedSchemaId}
+						showError={showMappingError}
 					/>
 				)}
 				<Group justify='flex-end' mt='md'>

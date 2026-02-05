@@ -11,6 +11,7 @@ import {
 	Loader,
 	Center,
 	Modal,
+	Badge,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -20,7 +21,6 @@ import {
 	IconBrain,
 	IconEdit,
 } from '@tabler/icons-react';
-import CampaignConfigurationPromptEditModal from '~/modules/campaigns/CampaignsForm/AgentSection/CampaignConfigurationPrompt/CampaignConfigurationPromptEditModal';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 import KnowledgeBaseSection from './KnowledgeBaseSection';
@@ -29,7 +29,6 @@ import styles from './StepTwoAgent.module.css';
 import sharedStyles from '../CampaignWizard.module.css';
 import type { Campaign } from '~/models/CampaignsModel';
 import { useUpdateCampaign, useGetCampaign } from '~/queries/campaignsQueries';
-import '@uiw/react-md-editor/markdown-editor.css';
 
 interface StepTwoAgentProps {
 	onNext: () => void;
@@ -85,6 +84,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 
 	// Modal state for prompt editor
 	const [promptEditorOpened, setPromptEditorOpened] = useState(false);
+	const [promptDraft, setPromptDraft] = useState(agentPrompt || '');
 
 	const predefinedParams = useCampaignsPredefinedParams();
 	const updateCampaign = useUpdateCampaign();
@@ -93,11 +93,8 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 	// Get campaign ID for fetching (only if campaign exists)
 	const campaignId = createdCampaign?.id ? String(createdCampaign.id) : '';
 
-	const {
-		data: freshCampaign,
-		isLoading: isFetchingCampaign,
-		refetch: reloadFreshCampaign,
-	} = useGetCampaign(campaignId);
+	const { data: freshCampaign, isLoading: isFetchingCampaign } =
+		useGetCampaign(campaignId);
 
 	React.useEffect(() => {
 		if (freshCampaign) {
@@ -131,6 +128,11 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 		},
 		validateInputOnChange: true,
 	});
+
+	useEffect(() => {
+		if (!promptEditorOpened) return;
+		setPromptDraft(form.values.agentPrompt || '');
+	}, [promptEditorOpened, form.values.agentPrompt]);
 
 	const lastSyncedCampaignRef = useRef<{
 		campaignId: number;
@@ -346,6 +348,12 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 		setPromptEditorOpened(true);
 	};
 
+	const handleSavePrompt = () => {
+		form.setFieldValue('agentPrompt', promptDraft);
+		setAgentPrompt(promptDraft);
+		setPromptEditorOpened(false);
+	};
+
 	// If we're still loading campaign data, show loading state
 	if (isFetchingCampaign && !createdCampaign) {
 		return (
@@ -501,31 +509,53 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 			<Modal
 				opened={promptEditorOpened}
 				onClose={() => setPromptEditorOpened(false)}
-				size='100%'
+				size='xl'
 				centered
-				styles={{
-					body: {
-						height: '90%',
-					},
-				}}
-				fullScreen
-				withCloseButton={false}
-				padding={0}
+				classNames={{ body: styles.promptModalBody }}
 			>
-				<CampaignConfigurationPromptEditModal
-					opened={promptEditorOpened}
-					campaignId={Number(campaignId)}
-					onClose={() => setPromptEditorOpened(false)}
-					onSave={() => {
-						setPromptEditorOpened(false);
-						reloadFreshCampaign();
-						notifications.show({
-							title: t('wizard.steps.agent.promptUpdatedTitle'),
-							message: t('wizard.steps.agent.promptUpdatedMessage'),
-							color: 'green',
-						});
-					}}
-				/>
+				<Stack gap='sm' className={styles.promptModalContent}>
+					<Group justify='space-between' align='center'>
+						<div>
+							<Text size='sm' fw={600}>
+								{t('form.agent.prompt.simpleModal.title')}
+							</Text>
+							<Text size='xs' c='dimmed'>
+								{t('form.agent.prompt.simpleModal.description')}
+							</Text>
+						</div>
+						<Badge size='sm' variant='light' color='gray'>
+							{t('form.agent.prompt.simpleModal.chars', {
+								count: promptDraft.length,
+							})}
+						</Badge>
+					</Group>
+					<Textarea
+						value={promptDraft}
+						onChange={(event) => setPromptDraft(event.currentTarget.value)}
+						placeholder={t('form.agent.prompt.simpleModal.placeholder')}
+						minRows={12}
+						autosize
+						size='sm'
+						className={styles.promptModalTextarea}
+					/>
+					<Group justify='space-between' align='center'>
+						<Text size='xs' c='dimmed'>
+							{t('form.agent.prompt.simpleModal.helper')}
+						</Text>
+						<Group gap='xs'>
+							<Button
+								variant='subtle'
+								size='xs'
+								onClick={() => setPromptEditorOpened(false)}
+							>
+								{t('actions.cancel', { ns: 'common' })}
+							</Button>
+							<Button size='xs' onClick={handleSavePrompt}>
+								{t('actions.save', { ns: 'common' })}
+							</Button>
+						</Group>
+					</Group>
+				</Stack>
 			</Modal>
 		</>
 	);

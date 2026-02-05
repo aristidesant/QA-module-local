@@ -199,6 +199,20 @@ export const useDeleteConversation = () => {
 	});
 };
 
+// Export call results CSV (mutation for download actions)
+export const useExportCallResultsCsv = () => {
+	return useMutation<
+		{ blob: Blob; filename: string },
+		unknown,
+		string | number
+	>({
+		mutationFn: async (contactGroupId) => {
+			const api = getApi();
+			return api.exportCallResultsCsv(contactGroupId);
+		},
+	});
+};
+
 // Export conversation audio (mutation for download actions)
 export const useExportConversationAudio = () => {
 	return useMutation<

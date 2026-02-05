@@ -1,0 +1,25 @@
+.canvas {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-sm);
+	height: calc(100dvh - 450px);
+	max-height: calc(100dvh - 450px);
+	min-height: 350px;
+	width: 100%;
+	overflow: auto;
+	background-color: var(--mantine-color-white);
+}
+
+.flow {
+	height: 100%;
+	width: 100%;
+}
+
+.miniMap {
+	border-radius: var(--mantine-radius-sm);
+	border: 1px solid var(--mantine-color-gray-3);
+}
+
+.controls {
+	border-radius: var(--mantine-radius-sm);
+	border: 1px solid var(--mantine-color-gray-3);
+}

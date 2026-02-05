@@ -27,6 +27,7 @@
 		"stepComplete": "Complete",
 		"tabs": {
 			"agents": "Agents",
+			"workflow": "Workflow",
 			"outcomes": "Outcomes",
 			"params": "Params",
 			"general": "General"
@@ -112,6 +113,7 @@
 		"enterCampaignName": "Enter campaign name",
 		"description": "Description",
 		"describeYourCampaign": "Describe your campaign",
+		"inboundPhoneNotice": "The phone number will not be cloned. You'll need to assign a new number to the cloned campaign.",
 		"agentsToClone": "Agents to clone",
 		"turnOffAgents": "Turn off agents you don't want to duplicate.",
 		"noAgentsLinked": "No agents linked",
@@ -136,6 +138,7 @@
 	},
 	"scheduler": {
 		"schedulerBuilder": {
+			"fieldsCount": "{{count}} fields",
 			"days": {
 				"monday": "Monday",
 				"tuesday": "Tuesday",
@@ -413,34 +416,362 @@
 			"female": "Female"
 		}
 	},
-	"promptHistory": {
-		"failedToLoad": "Failed to load prompt history.",
-		"modalTitle": "Prompt History",
-		"itemLabel": "prompt versions",
-		"modifiedBy": "Modified By",
-		"dateModified": "Date Modified",
-		"dateFormat": "MMM DD, YYYY [at] hh:mm A",
-		"diffError": "Failed to generate diff view. Showing original text instead.",
-		"noChanges": "No Changes",
-		"noChangesDesc": "This version is identical to the current prompt.",
-		"previousVersion": "Previous Version (v{{version}})",
-		"currentVersion": "Current Version",
-		"close": "Close",
-		"restoreVersion": "Restore This Version",
-		"columns": {
-			"version": "Version",
-			"modified": "Modified",
-			"modifiedBy": "Modified By",
-			"promptPreview": "Prompt Preview",
-			"viewFullPrompt": "View full prompt",
-			"restoreVersion": "Restore this version"
-		}
-	},
 	"form": {
 		"title": {
 			"edit": "Edit {{name}}"
 		},
 		"description": "Configure and manage your campaign settings.",
+		"workflow": {
+			"sidePanel": {
+				"close": "Close panel"
+			},
+			"edge": {
+				"configure": "Configure condition",
+				"bothLabel": "{{forward}} / {{backward}}",
+				"conditions": {
+					"unconditional": "Unconditional",
+					"expression": "Expression condition",
+					"resultSuccess": "Result: success",
+					"resultFailure": "Result: failure"
+				}
+			},
+			"forms": {
+				"agent": {
+					"title": "Agent settings",
+					"description": "Configure agent behavior for this node.",
+					"missingNode": "Agent node not found",
+					"missingNodeHint": "Select an agent node to edit its configuration.",
+					"tabs": {
+						"general": "General",
+						"knowledgeBase": "Knowledge Base",
+						"tools": "Tools",
+						"tests": "Tests",
+						"edges": "Edges"
+					},
+					"toolsTab": {
+						"builtIn": {
+							"title": "Built-in tools",
+							"endConversation": "End conversation",
+							"detectLanguage": "Detect language",
+							"skipTurn": "Skip turn",
+							"playKeypadTouchTone": "Play keypad touch tone",
+							"voicemailDetection": "Voicemail detection",
+							"configure": "Configure {{name}}",
+							"toggle": "Toggle {{name}}"
+						},
+						"inheritCustomTools": "Inherit custom tools",
+						"additionalCustomTools": "Additional custom tools",
+						"addTool": "Add tool",
+						"loading": "Loading tools...",
+						"error": "Failed to load tools.",
+						"empty": "No tools available.",
+						"emptyCustomTools": "No custom tools added.",
+						"removeCustomTool": "Remove {{name}}",
+						"noDescription": "No description provided.",
+						"customTool": {
+							"name": "capture_customer_address",
+							"type": "Webhook",
+							"description": "Use this tool when the agent needs to collect a customer address.",
+							"remove": "Remove custom tool"
+						}
+					},
+					"general": {
+						"nodeName": {
+							"label": "Node name",
+							"placeholder": "Enter node name"
+						},
+						"prompt": {
+							"label": "Conversation goal",
+							"placeholder": "Describe the goal of this agent"
+						},
+						"overridePrompt": {
+							"label": "Override prompt"
+						},
+						"voice": {
+							"label": "Voice",
+							"placeholder": "Select a voice"
+						},
+						"llm": {
+							"label": "LLM",
+							"placeholder": "Select a model"
+						},
+						"eagerness": {
+							"label": "Eagerness",
+							"placeholder": "Select eagerness"
+						},
+						"spellingPatience": {
+							"label": "Spelling patience",
+							"placeholder": "Select patience"
+						},
+						"speculativeTurn": {
+							"label": "Speculative turn",
+							"enabled": "Enabled",
+							"disabled": "Disabled"
+						},
+						"usingDefault": "Using default",
+						"usingDefaultValue": "Using default: {{value}}",
+						"editOverride": "Edit override",
+						"resetToDefault": "Reset to default"
+					},
+					"placeholders": {
+						"knowledgeBase": "Knowledge Base form is coming next.",
+						"tools": "Tools form is coming next.",
+						"tests": "Tests form is coming next."
+					},
+					"edgesTab": {
+						"description": "Configure the order in which outgoing edges are evaluated. Edges higher in the list will be evaluated first.",
+						"empty": "No outgoing edges yet.",
+						"targetLabel": "→ {{target}}",
+						"unnamedCondition": "Unnamed condition",
+						"removeAria": "Remove edge to {{target}}",
+						"error": {
+							"title": "Missing Edge Conditions",
+							"message": "{{count}} edge(s) are missing all conditions and must be configured"
+						},
+						"warning": {
+							"title": "Default Edge Configuration",
+							"message": "{{count}} edge(s) have default unconditional routing. Consider configuring specific conditions"
+						}
+					}
+				},
+				"startEnd": {
+					"title": "Start/End node",
+					"description": "Review basic node details.",
+					"missingNode": "Node not found",
+					"missingNodeHint": "Select a node to view its details.",
+					"type": "Type",
+					"label": "Label",
+					"labelPlaceholder": "No label"
+				},
+				"tool": {
+					"title": "Tool node",
+					"description": "Review tools attached to this node.",
+					"missingNode": "Tool node not found",
+					"missingNodeHint": "Select a tool node to view its details.",
+					"empty": "No tools attached yet.",
+					"unknown": "Unknown tool",
+					"addTool": "Add tool",
+					"searchPlaceholder": "Search tools...",
+					"loading": "Loading tools...",
+					"error": "Failed to load tools.",
+					"emptyAvailable": "No tools available.",
+					"emptySearch": "No tools match your search.",
+					"noDescription": "No description provided.",
+					"removeTool": "Remove {{name}}"
+				},
+				"phone": {
+					"title": "Phone transfer",
+					"description": "Review transfer settings for this node.",
+					"missingNode": "Phone node not found",
+					"missingNodeHint": "Select a phone node to view its details.",
+					"transferType": "Transfer type",
+					"destination": "Destination",
+					"destinationEmpty": "Not configured",
+					"empty": "Configure a destination to enable transfers.",
+					"typeOptions": {
+						"conference": "Conference",
+						"sip_refer": "SIP REFER"
+					},
+					"destType": {
+						"label": "Destination type",
+						"options": {
+							"phone": "Phone number",
+							"sip_uri": "SIP URI",
+							"phone_dynamic_variable": "Phone Number as Dynamic Variable",
+							"sip_uri_dynamic_variable": "SIP URI as Dynamic Variable"
+						}
+					},
+					"phoneNumber": {
+						"label": "Phone Number",
+						"placeholder": "+15551234567",
+						"dynamicPlaceholder": "dynamic_variable_name"
+					},
+					"sipUri": {
+						"label": "SIP URI",
+						"placeholder": "sip:1234567890@example.com",
+						"dynamicPlaceholder": "dynamic_variable_name"
+					},
+					"sipHeaders": {
+						"title": "Custom SIP Headers (Optional)",
+						"addHeader": "Add Header",
+						"nameLabel": "Name",
+						"valueLabel": "Value",
+						"remove": "Remove header"
+					},
+					"new": "New"
+				},
+				"override": {
+					"title": "Agent override",
+					"description": "Review override configuration for this node.",
+					"missingNode": "Override node not found",
+					"missingNodeHint": "Select an override node to view its details.",
+					"promptTitle": "Additional prompt",
+					"promptEmpty": "No additional prompt added.",
+					"toolsTitle": "Additional tools",
+					"toolsEmpty": "No additional tools attached.",
+					"knowledgeTitle": "Additional knowledge base",
+					"knowledgeEmpty": "No additional knowledge base attached.",
+					"itemFallback": "Unknown item"
+				},
+				"transfer": {
+					"title": "Agent transfer",
+					"description": "Configure how this node transfers to another agent.",
+					"missingNode": "Transfer node not found",
+					"missingNodeHint": "Select a transfer node to edit its settings.",
+					"agentLabel": "Transfer to",
+					"agentPlaceholder": "Select an agent",
+					"agentLoading": "Loading agents...",
+					"agentEmpty": "No agents available.",
+					"delayLabel": "Delay before transfer (milliseconds)",
+					"delayPlaceholder": "Enter delay in milliseconds",
+					"messageLabel": "Transfer message",
+					"messagePlaceholder": "Write a message for the agent transfer",
+					"firstMessageLabel": "Enable First Message"
+				}
+			},
+			"section": {
+				"title": "Workflow",
+				"description": "Build the agent flow and connect nodes based on the workflow schema."
+			},
+			"header": {
+				"title": "Flow Builder",
+				"description": "Start connects to a Subagent. From there, add the next steps in the flow.",
+				"preventLoops": "Prevent subagent loops",
+				"agentLabel": "Agent",
+				"agentPlaceholder": "Select agent"
+			},
+			"layout": {
+				"label": "Layout",
+				"horizontal": "Horizontal",
+				"vertical": "Vertical",
+				"organize": "Organize"
+			},
+			"empty": {
+				"message": "No workflow configured yet. Add a start node to begin building the flow.",
+				"addStart": "Add start node"
+			},
+			"subagent": {
+				"title": "Subagent settings",
+				"description": "Adjust the label and prompt for this subagent node.",
+				"tabs": {
+					"general": "General",
+					"knowledgeBase": "Knowledge Base",
+					"tools": "Tools",
+					"edges": "Edges"
+				},
+				"label": "Label",
+				"labelPlaceholder": "Enter a label",
+				"additionalPrompt": "Additional prompt",
+				"additionalPromptPlaceholder": "Add instructions for this subagent",
+				"promptPreviewPlaceholder": "No prompt added",
+				"toolsCount": "{{count}} tool",
+				"toolsCount_other": "{{count}} tools",
+				"knowledgeBaseCount": "{{count}} knowledge base",
+				"knowledgeBaseCount_other": "{{count}} knowledge bases",
+				"countBadge": "+{{count}}",
+				"conversationGoal": "Conversation goal",
+				"overridePrompt": "Override prompt",
+				"inheritKnowledgeBase": "Inherit knowledge base",
+				"additionalKnowledgeBase": "Additional knowledge base",
+				"addDocument": "Add document",
+				"knowledgeBaseLoading": "Loading knowledge base...",
+				"knowledgeBaseError": "Failed to load knowledge base.",
+				"knowledgeBaseEmpty": "No knowledge base attached.",
+				"knowledgeBaseId": "ID {{id}}",
+				"removeKnowledgeBase": "Remove {{name}}",
+				"inheritTools": "Inherit tools",
+				"additionalTools": "Additional tools",
+				"edges": {
+					"helper": "Configure the order in which outgoing edges are evaluated. Edit edge labels on the canvas.",
+					"defaultLabel": "Unnamed condition",
+					"target": "\u2192 {{target}}",
+					"empty": "No outgoing edges yet."
+				},
+				"invalidNode": "This node cannot be configured here."
+			},
+			"tools": {
+				"label": "Tools",
+				"description": "Choose which tools this node can call.",
+				"placeholder": "Select tools",
+				"loading": "Loading tools...",
+				"empty": "No tools available.",
+				"error": "Failed to load tools."
+			},
+			"edge": {
+				"title": "Edge condition",
+				"description": "Review the connection details for this transition.",
+				"helper": "Edit edge conditions by selecting the connection label on the canvas.",
+				"notFound": "Edge not found.",
+				"notConfigured": "Not configured",
+				"configure": "Configure condition",
+				"transitionType": "Transition type",
+				"selectConditionType": "Select condition type",
+				"types": {
+					"none": "None",
+					"unconditional": "Unconditional",
+					"llm": "LLM Condition",
+					"result": "Result condition",
+					"expression": "Expression"
+				},
+				"label": "Label",
+				"labelPlaceholder": "Optional label for this condition",
+				"llmCondition": "LLM condition",
+				"llmConditionPlaceholder": "Describe the condition for the LLM to evaluate (e.g., \"user confirmed their identity\")",
+				"resultType": "Tool execution result",
+				"selectResult": "Select result type",
+				"results": {
+					"success": "Success",
+					"failure": "Failure"
+				},
+				"expressionNote": "Expression builder coming soon",
+				"forward": "Forward",
+				"backward": "Backward"
+			},
+			"nodeMenu": {
+				"subagent": "Subagent",
+				"agentTransfer": "Agent transfer",
+				"phoneNumber": "Phone number transfer",
+				"tool": "Tool",
+				"end": "End"
+			},
+			"actions": {
+				"add": "Add node",
+				"clone": "Clone node",
+				"copy": "Copy node",
+				"delete": "Delete node"
+			},
+			"nodes": {
+				"start": "Start",
+				"standalone_agent": "Subagent",
+				"agent_transfer": "Agent transfer",
+				"override_agent": "Agent transfer",
+				"phone_number": "Phone number transfer",
+				"tool": "Dispatch tool",
+				"end": "End"
+			},
+			"transferNode": {
+				"to": "Transfer to",
+				"delay": "Delay",
+				"delayValue": "{{value}} ms",
+				"emptyAgent": "Not set"
+			}
+		},
+		"campaignSync": {
+			"tooltip": "Campaign Data Sync",
+			"noAgentsTooltip": "No agents assigned",
+			"selectAgentTooltip": "Select an agent",
+			"selectAgentTitle": "Select agent for campaign sync",
+			"selectAgentDescription": "Multiple agents are assigned to this campaign. Select which agent to sync from.",
+			"continueButton": "Continue",
+			"confirmTitle": "Sync campaign data",
+			"confirmMessage": "This will refresh campaign data from the agent '{{agentName}}' using ElevenLabs. Any unsaved campaign changes will be lost.",
+			"confirmButton": "Sync campaign data",
+			"cancelButton": "Cancel",
+			"successTitle": "Campaign data synced",
+			"successMessage": "Campaign data has been updated from ElevenLabs.",
+			"errorTitle": "Campaign sync failed",
+			"errorMessage": "We couldn't sync campaign data from ElevenLabs. Please try again."
+		},
 		"validation": {
 			"nameRequired": "Campaign name is required",
 			"typeRequired": "Campaign type is required",
@@ -451,6 +782,10 @@
 			"clientIdMin": "Client ID must be at least 0",
 			"defaultWavesMin": "Default waves must be at least 1",
 			"objectiveRequired": "Campaign objective is required"
+		},
+		"actions": {
+			"save": "Save changes",
+			"saving": "Saving..."
 		},
 		"notifications": {
 			"warningTitle": "Warning",
@@ -538,7 +873,9 @@
 				"title": "Column Mapping",
 				"matchTitle": "Match Columns",
 				"clickToConfigure": "Click to configure",
-				"unmapped": "{{count}} unmapped"
+				"unmapped": "{{count}} unmapped",
+				"totalMapped": "{{count}} columns mapped",
+				"requiredMissing": "Phone number is required"
 			},
 			"mostUsedChannels": {
 				"title": "Most used channels",
@@ -583,6 +920,7 @@
 				"notifications": {
 					"invalidInput": "Invalid input",
 					"nameRequired": "Name is required",
+					"mappingRequired": "Please map the columns",
 					"capacityExceeded": "Capacity exceeded",
 					"wavesMinimum": "Minimum of 1 wave required",
 					"schedulerFullTitle": "Scheduler full",
@@ -601,6 +939,7 @@
 				"csvHeadersBadge": "CSV headers ({{count}})",
 				"dynamicFieldsRequired": "Dynamic fields are required for {{objective}}.",
 				"systemFields": "System Fields",
+				"requiredBadge": "Required",
 				"selectObjective": "Select objective",
 				"addDynamicColumns": "Add dynamic columns",
 				"dynamicSetTitle": "Dynamic field set",
@@ -623,7 +962,8 @@
 				"chooseMatchingCsv": "Choose matching CSV column(s)",
 				"clearSelection": "Clear selection",
 				"mappingsCreated": "Created {{count}} mappings",
-				"saveMappings": "Save mappings"
+				"saveMappings": "Save mappings",
+				"dynamicColumnTooltip": "Dynamic column"
 			},
 			"details": {
 				"title": "Contact List Details",
@@ -759,7 +1099,7 @@
 				"noCampaign": "No campaign",
 				"playPreview": "Play preview",
 				"pausePreview": "Pause preview",
-				"clone": "Clone agent",
+				"clone": "Clone campaign",
 				"add": "Add agent"
 			},
 			"basic": {
@@ -889,9 +1229,18 @@
 					"expandAria": "Expand prompt",
 					"collapseAria": "Collapse prompt"
 				},
+				"simpleModal": {
+					"title": "Edit agent prompt",
+					"description": "Update the main prompt used by the agent for this campaign.",
+					"placeholder": "Write the agent prompt",
+					"helper": "Edits are saved with the campaign.",
+					"chars_one": "1 character",
+					"chars_other": "{{count}} characters",
+					"saved": "Prompt ready",
+					"empty": "No prompt added yet"
+				},
 				"modal": {
 					"types": "Types",
-					"selectPromptType": "Select a prompt type to start editing.",
 					"saveHint": "Save to apply prompts throughout this campaign.",
 					"saveConfirmation": {
 						"title": "Apply Changes?",

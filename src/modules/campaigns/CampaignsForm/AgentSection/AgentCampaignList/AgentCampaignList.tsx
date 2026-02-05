@@ -1,23 +1,24 @@
 import React from 'react';
-import { Card, Button, LoadingOverlay } from '@mantine/core';
+import { Card, Button } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { IconPlus, IconInfoCircle } from '@tabler/icons-react';
 import AgentCampaignAdd from '../AgentCampaignAdd';
 import classes from './AgentCampaignList.module.css';
 import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
-import { useCampaignsStore } from '~/stores/campaignsStore';
+import { useCampaignId } from '../../../campaignFormFunctions';
 import AgentCampaignPreview from '../AgentCampaignPreview';
 import EmptyState from '~/components/EmptyState';
 import { useTranslation } from 'react-i18next';
+import AgentListSkeleton from './AgentListSkeleton';
 
 export const AgentCampaignList: React.FC = () => {
 	const { t } = useTranslation('campaigns');
-	const { selectedCampaign } = useCampaignsStore((state) => state);
+	const campaignId = useCampaignId();
 	const {
 		data: campaignAgents,
 		refetch,
 		isLoading,
-	} = useGetCampaignAgents(selectedCampaign?.id || 0);
+	} = useGetCampaignAgents(campaignId || 0);
 
 	// Get assigned agent IDs for exclusion when opening the selector
 	const assignedAgentIds = Array.isArray(campaignAgents)
@@ -27,7 +28,7 @@ export const AgentCampaignList: React.FC = () => {
 	const totalAgents = campaignAgents?.length ?? 0;
 
 	const handleAddAgent = () => {
-		if (selectedCampaign?.id == null) {
+		if (campaignId == null) {
 			console.error('No campaign selected');
 			return;
 		}
@@ -39,7 +40,7 @@ export const AgentCampaignList: React.FC = () => {
 			size: 'xl',
 			children: (
 				<AgentCampaignAdd
-					campaignId={selectedCampaign.id}
+					campaignId={campaignId}
 					excludedAgents={assignedAgentIds}
 					onComplete={() => {
 						refetch();
@@ -50,13 +51,20 @@ export const AgentCampaignList: React.FC = () => {
 		});
 	};
 
+	// Show loading while campaign ID is not available yet
+	const isInitializing = !campaignId;
+	const showSkeleton = isLoading || isInitializing;
+
+	if (showSkeleton) {
+		return (
+			<section className={classes.wrapper}>
+				<AgentListSkeleton />
+			</section>
+		);
+	}
+
 	return (
 		<section className={classes.wrapper}>
-			<LoadingOverlay
-				visible={isLoading}
-				zIndex={100}
-				overlayProps={{ radius: 'md', blur: 2 }}
-			/>
 			{campaignAgents?.length === 0 && (
 				<Button
 					className={classes.addAgentBtn}
@@ -70,7 +78,7 @@ export const AgentCampaignList: React.FC = () => {
 					{t('form.agent.list.addAgent')}
 				</Button>
 			)}
-			{totalAgents === 0 && !isLoading ? (
+			{totalAgents === 0 ? (
 				<Card withBorder radius={'md'}>
 					<EmptyState
 						icon={<IconInfoCircle />}
@@ -83,11 +91,11 @@ export const AgentCampaignList: React.FC = () => {
 			{campaignAgents?.map((campaignAgent) => {
 				return (
 					<React.Fragment key={campaignAgent.id}>
-						{selectedCampaign?.id && (
+						{campaignId && (
 							<AgentCampaignPreview
 								agentId={campaignAgent.agentId}
 								campaignAgentId={campaignAgent.id}
-								campaignId={selectedCampaign.id}
+								campaignId={campaignId}
 							/>
 						)}
 					</React.Fragment>

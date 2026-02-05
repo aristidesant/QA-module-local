@@ -32,6 +32,7 @@ interface SystemColumn {
 	type: string;
 	isArray: boolean;
 	isDynamic?: boolean;
+	required?: boolean;
 }
 
 interface ContactHeaderMappingProps {
@@ -105,7 +106,13 @@ export function ContactHeaderMapping({
 		// Add system columns from config
 		if (systemConfig?.value) {
 			try {
-				baseColumns.push(...(JSON.parse(systemConfig.value) as SystemColumn[]));
+				const parsed = JSON.parse(systemConfig.value) as SystemColumn[];
+				baseColumns.push(
+					...parsed.map((field) => ({
+						...field,
+						required: field.required ?? false,
+					}))
+				);
 			} catch (error) {
 				console.error('Error parsing contact headers:', error);
 			}
@@ -117,6 +124,7 @@ export function ContactHeaderMapping({
 			label: field.label,
 			type: field.type,
 			isArray: field.isArray,
+			required: false,
 		}));
 
 		// Add additional schema fields as system columns
@@ -127,6 +135,7 @@ export function ContactHeaderMapping({
 				type: field.type,
 				isArray: field.isArray,
 				isDynamic: true,
+				required: false,
 			})
 		);
 
@@ -499,6 +508,13 @@ export function ContactHeaderMapping({
 																>
 																	{column.label || column.name}
 																</Text>
+																{column.required && (
+																	<Badge size='xs' variant='light' color='red'>
+																		{t(
+																			'form.contacts.headerMapping.requiredBadge'
+																		)}
+																	</Badge>
+																)}
 																{column.isDynamic && (
 																	<Tooltip
 																		label={t(
@@ -780,7 +796,7 @@ export function ContactHeaderMapping({
 						size='sm'
 						onClick={() => modals.close('match-columns-modal')}
 					>
-						{t('common.cancel')}
+						{t('actions.cancel', { ns: 'common' })}
 					</Button>
 					<Button
 						size='sm'

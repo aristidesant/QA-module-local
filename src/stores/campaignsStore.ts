@@ -22,7 +22,21 @@ export const useCampaignsStore = create<CampaignsStoreState>((set) => ({
 	setEditCampaign: (editCampaign) => set({ editCampaign }),
 	selectedCampaign: null,
 	selectCampaign: (campaign) => {
-		set({ selectedCampaign: campaign, selectedTab: 'agents' });
+		set((state) => {
+			if (!campaign) {
+				return { selectedCampaign: null, selectedTab: 'agents' };
+			}
+
+			const isSameCampaign =
+				state.selectedCampaign?.id &&
+				campaign?.id &&
+				state.selectedCampaign.id === campaign.id;
+
+			return {
+				selectedCampaign: campaign,
+				selectedTab: isSameCampaign ? state.selectedTab : 'agents',
+			};
+		});
 	},
 	selectedTab: 'agent',
 	rightComponent: null,

@@ -1,0 +1,19 @@
+.actions {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	flex-wrap: nowrap;
+}
+
+.actionButton {
+	background-color: var(--mantine-color-white);
+	border-color: var(--mantine-color-gray-3);
+}
+
+.actionButton:hover {
+	background-color: var(--mantine-color-gray-0);
+}
+
+.menuDropdown {
+	border-radius: var(--mantine-radius-md);
+}

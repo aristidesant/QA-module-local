@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { useCampaignFormContext } from '../../campaignFormFunctions';
 import {
-	Button,
-	Flex,
 	NumberInput,
 	Select,
 	Textarea,
@@ -13,7 +11,7 @@ import {
 	Input,
 	Group,
 } from '@mantine/core';
-import { IconDeviceFloppy, IconPlus } from '@tabler/icons-react';
+import { IconPlus } from '@tabler/icons-react';
 import SectionCard from '~/components/SectionCard';
 import {
 	useGetCampaignObjectives,
@@ -155,12 +153,6 @@ const GeneralSection: React.FC = () => {
 					size='sm'
 					{...form.getInputProps('defaultMaxWaves')}
 				/>
-
-				<Flex justify={'end'}>
-					<Button leftSection={<IconDeviceFloppy />} type='submit'>
-						{t('actions.save', { ns: 'common' })}
-					</Button>
-				</Flex>
 			</SectionCard>
 
 			<Modal

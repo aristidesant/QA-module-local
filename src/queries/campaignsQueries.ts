@@ -427,3 +427,25 @@ export const useSetCampaignDraft = () => {
 		},
 	});
 };
+
+// Sync campaign by agent
+export const useSyncCampaignByAgent = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async (agentId: string) => {
+			const api = campaignsApi();
+			return api.syncByAgent(agentId);
+		},
+		onSuccess: (updatedCampaign) => {
+			if (updatedCampaign?.id) {
+				queryClient.invalidateQueries({
+					queryKey: ['campaign', String(updatedCampaign.id)],
+				});
+			}
+		},
+		onError: (error) => {
+			// eslint-disable-next-line no-console
+			console.error('Error syncing campaign by agent:', error);
+		},
+	});
+};

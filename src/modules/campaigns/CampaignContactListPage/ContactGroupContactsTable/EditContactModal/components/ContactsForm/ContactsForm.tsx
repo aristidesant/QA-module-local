@@ -132,7 +132,7 @@ export default function ContactsForm({
 			form.reset();
 		} catch (error) {
 			notifications.show({
-				title: t('common.error'),
+				title: t('errors.unknown', { ns: 'common' }),
 				message:
 					error instanceof Error
 						? error.message

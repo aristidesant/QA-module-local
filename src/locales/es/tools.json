@@ -75,9 +75,12 @@
 		"validation": {
 			"nameRequired": "El nombre es obligatorio",
 			"descriptionRequired": "La descripción es obligatoria",
+			"promptRequired": "La instrucción del prompt es obligatoria",
 			"categoryRequired": "La categoría es obligatoria",
 			"urlRequired": "La URL es obligatoria",
-			"urlInvalid": "Ingresa una URL válida"
+			"urlInvalid": "Ingresa una URL válida",
+			"incompleteTitle": "Faltan campos obligatorios",
+			"incompleteMessage": "Por favor completa los campos requeridos en: {{sections}}"
 		},
 		"fields": {
 			"name": {

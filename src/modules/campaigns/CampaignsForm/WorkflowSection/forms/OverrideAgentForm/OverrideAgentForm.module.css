@@ -1,0 +1,27 @@
+.sectionTitle {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.chip {
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-sm);
+	padding: 2px 8px;
+	font-size: var(--mantine-font-size-xs);
+	background: var(--mantine-color-white);
+}
+
+.empty {
+	border: 1px dashed var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-sm);
+	background: var(--mantine-color-gray-0);
+}

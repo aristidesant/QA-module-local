@@ -1,7 +1,14 @@
 // Refactored to use Mantine's useForm for all form state and validation
 
 import React, { useEffect } from 'react';
-import { Stack, LoadingOverlay, Box, ActionIcon, Tooltip } from '@mantine/core';
+import {
+	Stack,
+	LoadingOverlay,
+	Box,
+	ActionIcon,
+	Tooltip,
+	Group,
+} from '@mantine/core';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
@@ -13,8 +20,10 @@ import {
 	useAssignCampaignObjective,
 } from '~/queries/campaignsQueries';
 import { notifications } from '@mantine/notifications';
+import { validateWorkflow } from './WorkflowSection/utils/workflowValidation';
 import {
 	CampaignFormProvider,
+	CampaignIdContext,
 	useCampaignForm,
 } from '../campaignFormFunctions';
 import CampaignTabs from '../CampaignTabs';
@@ -22,6 +31,7 @@ import { useCampaignsStore } from '~/stores/campaignsStore';
 import GeneralSection from './GeneralSection/GeneralSection';
 import SectionCard from '~/components/SectionCard';
 import ParametersSection from './ParametersSection';
+import WorkflowSection from './WorkflowSection/WorkflowSection';
 import AgentSection from './AgentSection';
 import DispositionSection from './DispositionSection';
 import DoNotCallSection from './DoNotCallSection';
@@ -30,6 +40,9 @@ import { CampaignStatus } from '~/models/CampaignStatus';
 import { modals } from '@mantine/modals';
 import { IconCalculator, IconEye } from '@tabler/icons-react';
 import SchedulerCalculator from './ParametersSection/SchedulerCalculator';
+import AgentCampaignList from './AgentSection/AgentCampaignList';
+import FormSaveButton from '~/components/FormSaveButton';
+import CampaignSyncButton from './components/CampaignSyncButton';
 
 interface CampaignsFormProps {
 	campaign?: Partial<Campaign>;
@@ -46,6 +59,11 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	const { selectedTab, rightComponent, resetView } = useCampaignsStore(
 		(state) => state
 	);
+
+	// Determine the right section based on selected tab
+	// For 'agents' tab, always render AgentCampaignList directly to avoid timing issues
+	const effectiveRightSection =
+		selectedTab === 'agents' ? <AgentCampaignList /> : rightComponent || <></>;
 	const { mutateAsync: createCampaign, isPending: isCreating } =
 		useCreateCampaign();
 	const { mutateAsync: updateCampaign, isPending: isUpdating } =
@@ -65,6 +83,13 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	};
 
 	const { t } = useTranslation(['campaigns', 'campaign.detail', 'common']);
+
+	// Check if we have the workflow data ready for existing campaigns
+	const isNewCampaign = !campaign?.id;
+	const hasWorkflowData =
+		campaign?.agentConfig?.workflow?.nodes &&
+		Object.keys(campaign.agentConfig.workflow.nodes).length > 0;
+	const isDataReady = isNewCampaign || hasWorkflowData;
 
 	const form = useCampaignForm({
 		initialValues: {
@@ -102,30 +127,40 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		},
 	});
 
-	// Update form values when campaign prop changes (e.g., after wizard updates)
+	// Update form values when campaign data changes
 	useEffect(() => {
-		if (campaign) {
-			form.setValues({
-				name: campaign.name || '',
-				agentName: campaign.agentName || '',
-				configId: campaign.configId || '',
-				description: campaign.description || '',
-				budget: campaign.budget ?? 0,
-				spent: campaign.spent ?? 0,
-				type: campaign.type || 'OUTBOUND',
-				status: campaign.status || CampaignStatus.PENDING,
-				userId: campaign.userId ?? 0,
-				promptId: campaign.promptId ?? undefined,
-				objectiveId: campaign.objectiveId ?? undefined,
-				voiceId: campaign.voiceId ?? undefined,
-				clientId: campaign.clientId ?? 0,
-				tags: campaign.tags || [],
-				workingHours: campaign.workingHours || defaultWorkingHours,
-				agentConfig: campaign.agentConfig || {},
-				defaultMaxWaves: campaign.defaultMaxWaves ?? 3,
-			});
-		}
-	}, [campaign]);
+		if (!campaign?.id) return; // Only for existing campaigns
+
+		form.setValues({
+			name: campaign.name || '',
+			agentName: campaign.agentName || '',
+			configId: campaign.configId || '',
+			description: campaign.description || '',
+			budget: campaign.budget ?? 0,
+			spent: campaign.spent ?? 0,
+			type: campaign.type || 'OUTBOUND',
+			status: campaign.status || CampaignStatus.PENDING,
+			userId: campaign.userId ?? 0,
+			promptId: campaign.promptId ?? undefined,
+			objectiveId: campaign.objectiveId ?? undefined,
+			voiceId: campaign.voiceId ?? undefined,
+			clientId: campaign.clientId ?? 0,
+			tags: campaign.tags || [],
+			workingHours: campaign.workingHours || defaultWorkingHours,
+			agentConfig: campaign.agentConfig || {},
+			defaultMaxWaves: campaign.defaultMaxWaves ?? 3,
+		});
+
+		const stateNodes = form.values.agentConfig?.workflow?.nodes;
+		const getterNodes = form.getValues().agentConfig?.workflow?.nodes;
+		const valuesFromState = stateNodes ? Object.keys(stateNodes).length : 0;
+		const valuesFromGetter = getterNodes ? Object.keys(getterNodes).length : 0;
+		console.log('[CampaignsForm] after setValues - workflow nodes:', {
+			campaignId: campaign.id,
+			valuesFromState,
+			valuesFromGetter,
+		});
+	}, [campaign?.id, campaign?.agentConfig?.workflow]);
 
 	// Reset view only on component unmount
 	useEffect(() => {
@@ -141,6 +176,28 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	) => {
 		if (form.validate().hasErrors) {
 			return;
+		}
+
+		// Validate workflow edge conditions before submitting
+		if (value.agentConfig?.workflow) {
+			const validationResult = validateWorkflow(value.agentConfig.workflow);
+			if (!validationResult.isValid) {
+				notifications.show({
+					title: t('form.validation.workflowInvalidTitle', {
+						defaultValue: 'Workflow Configuration Error',
+						ns: 'common',
+					}),
+					message:
+						validationResult.errorMessage ||
+						t('form.validation.workflowInvalidMessage', {
+							defaultValue:
+								'All edges must have at least one condition configured',
+							ns: 'common',
+						}),
+					color: 'red',
+				});
+				return;
+			}
 		}
 
 		try {
@@ -163,8 +220,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 
 			// Prepare data for light update (excludes agentConfig)
 			const dataToSend = isLight
-				? (({ agentConfig, ...rest }) => rest)(value)
-				: value;
+				? (({ agentConfig, ...rest }) => rest)(cleanedValue)
+				: cleanedValue;
 
 			let savedCampaign: Campaign;
 
@@ -186,7 +243,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 				});
 			} else {
 				// Create new campaign
-				savedCampaign = await createCampaign(value);
+				savedCampaign = await createCampaign(cleanedValue);
 			}
 
 			// Handle objective assignment if an objective is selected
@@ -217,7 +274,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			});
 		} catch (error) {
 			notifications.show({
-				title: t('common.error'),
+				title: t('errors.unknown', { ns: 'common' }),
 				message: campaign?.id
 					? t('form.notifications.errorUpdate')
 					: t('form.notifications.errorCreate'),
@@ -227,98 +284,211 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	};
 
 	return (
-		<ContentContainer
-			rightSection={rightComponent || <></>}
-			onBackClick={() => {
-				resetView();
-				onBack?.();
-			}}
-			title={
-				campaign?.id
-					? t('form.title.edit', { name: campaign.name })
-					: t('list.createCampaign')
-			}
-			titleRight={
-				campaign?.id && (
-					<Tooltip label={t('columns.viewCampaign')} withArrow>
-						<ActionIcon
-							variant='light'
-							size='lg'
-							onClick={() => navigate(`/campaign/view/${campaign.id}`)}
-						>
-							<IconEye size={20} />
-						</ActionIcon>
-					</Tooltip>
-				)
-			}
-			description={t('form.description')}
-			showBackButton
-		>
+		<CampaignIdContext.Provider value={campaign?.id}>
 			<CampaignFormProvider form={form}>
-				<LoadingOverlay visible={isCreating || isUpdating || isUpdatingLight} />
-				<Stack gap='xs'>
-					<Box p='xs'>
-						<CampaignTabs />
-					</Box>
-					{selectedTab === 'general' && (
-						<form
-							onSubmit={form.onSubmit((values) => handleSubmit(values, true))}
-						>
-							<GeneralSection />
-							<div />
-						</form>
-					)}
-					{selectedTab === 'agents' && (
-						<form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
-							<AgentSection />
-						</form>
-					)}
-					{selectedTab === 'outcomes' && <DispositionSection />}
-					{selectedTab === 'do-not-call' && (
-						<DoNotCallSection campaignId={campaign?.id} />
-					)}
-					{selectedTab === 'params' && (
-						<SectionCard
-							title={t('workingHours.title')}
-							description={t('workingHours.description')}
-							headerActions={
-								<ActionIcon
-									size='md'
-									variant='subtle'
-									onClick={() =>
-										modals.open({
-											title: t('form.schedulerCalculator.title'),
-											fullScreen: true,
-											children: <SchedulerCalculator />,
-										})
-									}
+				<ContentContainer
+					rightSection={effectiveRightSection}
+					onBackClick={() => {
+						resetView();
+						onBack?.();
+					}}
+					title={
+						campaign?.id
+							? t('form.title.edit', { name: campaign.name })
+							: t('list.createCampaign')
+					}
+					titleRight={
+						campaign?.id && (
+							<Group gap='xs'>
+								<CampaignSyncButton />
+								<Tooltip label={t('columns.viewCampaign')} withArrow>
+									<ActionIcon
+										variant='light'
+										size='lg'
+										onClick={() => navigate(`/campaign/view/${campaign.id}`)}
+									>
+										<IconEye size={20} />
+									</ActionIcon>
+								</Tooltip>
+							</Group>
+						)
+					}
+					description={t('form.description')}
+					showBackButton
+				>
+					<LoadingOverlay
+						visible={isCreating || isUpdating || isUpdatingLight}
+					/>
+					<Stack gap='xs'>
+						<Box p='xs'>
+							<CampaignTabs />
+						</Box>
+						{selectedTab === 'general' && (
+							<form
+								onSubmit={form.onSubmit((values) => handleSubmit(values, true))}
+							>
+								<GeneralSection />
+								<Box
+									pos='sticky'
+									bottom={-1}
+									bg='var(--mantine-color-body)'
+									py='md'
+									mt='md'
+									style={{
+										borderTop: '1px solid var(--mantine-color-gray-2)',
+										zIndex: 10,
+										marginRight: 'calc(var(--mantine-spacing-xs) * -1)',
+										marginLeft: 'calc(var(--mantine-spacing-xs) * -1)',
+										paddingRight: 'var(--mantine-spacing-xs)',
+										paddingLeft: 'var(--mantine-spacing-xs)',
+									}}
 								>
-									<IconCalculator size={18} />
-								</ActionIcon>
-							}
-						>
-							<ParametersSection
-								workingHours={form.values.workingHours || {}}
-								onChange={(day, field, value) => {
-									const updatedHours = { ...form.values.workingHours };
-									updatedHours[day] = { ...updatedHours[day], [field]: value };
-									form.setFieldValue('workingHours', updatedHours);
-								}}
-								onCopyToAll={(sourceDay) => {
-									const sourceHours = form.values.workingHours?.[sourceDay];
-									if (!sourceHours) return;
+									<Group justify='flex-end'>
+										<FormSaveButton
+											label={t('form.actions.save', {
+												defaultValue: 'Save changes',
+											})}
+											loadingLabel={t('form.actions.saving', {
+												defaultValue: 'Saving...',
+											})}
+											isLoading={isUpdatingLight}
+											disabled={!form.isDirty()}
+										/>
+									</Group>
+								</Box>
+							</form>
+						)}
+						{selectedTab === 'agents' && (
+							<form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+								<AgentSection />
+								<Box
+									pos='sticky'
+									bottom={-1}
+									bg='var(--mantine-color-body)'
+									py='md'
+									mt='md'
+									style={{
+										borderTop: '1px solid var(--mantine-color-gray-2)',
+										zIndex: 10,
+										marginRight: 'calc(var(--mantine-spacing-xs) * -1)',
+										marginLeft: 'calc(var(--mantine-spacing-xs) * -1)',
+										paddingRight: 'var(--mantine-spacing-xs)',
+										paddingLeft: 'var(--mantine-spacing-xs)',
+									}}
+								>
+									<Group justify='flex-end'>
+										<FormSaveButton
+											label={t('form.actions.save', {
+												defaultValue: 'Save changes',
+											})}
+											loadingLabel={t('form.actions.saving', {
+												defaultValue: 'Saving...',
+											})}
+											isLoading={isUpdating}
+											disabled={!form.isDirty()}
+										/>
+									</Group>
+								</Box>
+							</form>
+						)}
+						{selectedTab === 'workflow' && (
+							<>
+								{!isDataReady && campaign?.id ? (
+									<SectionCard
+										title={t('form.workflow.section.title')}
+										description={t('form.workflow.loadingDescription', {
+											defaultValue: 'Loading workflow data...',
+										})}
+									>
+										<LoadingOverlay visible />
+									</SectionCard>
+								) : (
+									<form
+										onSubmit={form.onSubmit((values) => handleSubmit(values))}
+									>
+										<WorkflowSection />
+										<Box
+											pos='sticky'
+											bottom={-1}
+											bg='var(--mantine-color-body)'
+											py='md'
+											mt='md'
+											style={{
+												borderTop: '1px solid var(--mantine-color-gray-2)',
+												zIndex: 10,
+												marginRight: 'calc(var(--mantine-spacing-xs) * -1)',
+												marginLeft: 'calc(var(--mantine-spacing-xs) * -1)',
+												paddingRight: 'var(--mantine-spacing-xs)',
+												paddingLeft: 'var(--mantine-spacing-xs)',
+											}}
+										>
+											<Group justify='flex-end'>
+												<FormSaveButton
+													label={t('form.actions.save', {
+														defaultValue: 'Save changes',
+													})}
+													loadingLabel={t('form.actions.saving', {
+														defaultValue: 'Saving...',
+													})}
+													isLoading={isUpdating}
+													disabled={!form.isDirty()}
+												/>
+											</Group>
+										</Box>
+									</form>
+								)}
+							</>
+						)}
+						{selectedTab === 'outcomes' && <DispositionSection />}
+						{selectedTab === 'do-not-call' && (
+							<DoNotCallSection campaignId={campaign?.id} />
+						)}
+						{selectedTab === 'params' && (
+							<SectionCard
+								title={t('workingHours.title')}
+								description={t('workingHours.description')}
+								headerActions={
+									<ActionIcon
+										size='md'
+										variant='subtle'
+										onClick={() =>
+											modals.open({
+												title: t('form.schedulerCalculator.title'),
+												fullScreen: true,
+												children: <SchedulerCalculator />,
+											})
+										}
+									>
+										<IconCalculator size={18} />
+									</ActionIcon>
+								}
+							>
+								<ParametersSection
+									workingHours={form.values.workingHours || {}}
+									onChange={(day, field, value) => {
+										const updatedHours = { ...form.values.workingHours };
+										updatedHours[day] = {
+											...updatedHours[day],
+											[field]: value,
+										};
+										form.setFieldValue('workingHours', updatedHours);
+									}}
+									onCopyToAll={(sourceDay) => {
+										const sourceHours = form.values.workingHours?.[sourceDay];
+										if (!sourceHours) return;
 
-									const updatedHours = { ...form.values.workingHours };
-									Object.keys(updatedHours).forEach((day) => {
-										updatedHours[day] = { ...sourceHours };
-									});
-									form.setFieldValue('workingHours', updatedHours);
-								}}
-							/>
-						</SectionCard>
-					)}
-				</Stack>
+										const updatedHours = { ...form.values.workingHours };
+										Object.keys(updatedHours).forEach((day) => {
+											updatedHours[day] = { ...sourceHours };
+										});
+										form.setFieldValue('workingHours', updatedHours);
+									}}
+								/>
+							</SectionCard>
+						)}
+					</Stack>
+				</ContentContainer>
 			</CampaignFormProvider>
-		</ContentContainer>
+		</CampaignIdContext.Provider>
 	);
 };

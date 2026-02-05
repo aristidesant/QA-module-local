@@ -1,48 +1,26 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActionIcon, Badge, Group, Paper, Stack, Text } from '@mantine/core';
-import {
-	IconArrowsMaximize,
-	IconArrowsMinimize,
-	IconBrain,
-	IconPencil,
-} from '@tabler/icons-react';
+import React, { useCallback, useState } from 'react';
+import { Badge, Button, Group, Stack, Text } from '@mantine/core';
+import { IconBrain, IconPencil } from '@tabler/icons-react';
 import { useCampaignFormContext } from '../../../campaignFormFunctions';
 import SectionCard from '~/components/SectionCard';
 import { useTranslation } from 'react-i18next';
 import styles from './CampaignConfigurationPrompt.module.css';
 // History modal removed from this component; it's used elsewhere now.
-import CampaignConfigurationPromptEditModal from './CampaignConfigurationPromptEditModal';
+import CampaignAgentPromptEditModal from './CampaignAgentPromptEditModal';
 
 const CampaignConfigurationPrompt: React.FC = () => {
 	const { t } = useTranslation(['campaigns', 'campaign.detail', 'common']);
 	const form = useCampaignFormContext();
 	const [editModalOpen, setEditModalOpen] = useState(false);
-	const [expanded, setExpanded] = useState(false);
-	const contentRef = useRef<HTMLDivElement | null>(null);
-	const [contentHeight, setContentHeight] = useState<number | undefined>();
 
 	const prompt =
 		form.values.agentConfig?.conversationConfig?.agent?.prompt?.prompt || '';
-	const contactSchemaId = (
-		form.values.agentConfig as { contactSchemaId?: number } | undefined
-	)?.contactSchemaId;
 
 	const handleEdit = useCallback(() => {
 		setEditModalOpen(true);
 	}, []);
 
-	const toggleExpanded = useCallback(() => {
-		setExpanded((prev) => !prev);
-	}, []);
-
 	const hasPrompt = prompt.trim().length > 0;
-	const compactHeight = 176;
-
-	useEffect(() => {
-		const node = contentRef.current;
-		if (!node) return;
-		setContentHeight(node.scrollHeight);
-	}, [prompt, expanded]);
 
 	return (
 		<>
@@ -55,102 +33,47 @@ const CampaignConfigurationPrompt: React.FC = () => {
 				padding='md'
 				headerActions={
 					<Group gap='xs'>
-						<ActionIcon
+						<Button
+							size='xs'
 							variant='light'
-							aria-label={t('form.agent.prompt.header.editAria')}
-							color='blue'
+							leftSection={<IconPencil size={14} />}
 							onClick={handleEdit}
-							size='sm'
 						>
-							<IconPencil size={16} />
-						</ActionIcon>
-						<ActionIcon
-							variant='light'
-							aria-label={
-								expanded
-									? t('form.agent.prompt.header.collapseAria')
-									: t('form.agent.prompt.header.expandAria')
-							}
-							color='blue'
-							onClick={toggleExpanded}
-							size='sm'
-						>
-							{expanded ? (
-								<IconArrowsMinimize size={16} />
-							) : (
-								<IconArrowsMaximize size={16} />
-							)}
-						</ActionIcon>
+							{t('configuration.editPrompt')}
+						</Button>
 					</Group>
 				}
 			>
 				<Stack gap='xs' className={styles.promptStack}>
 					<Group justify='space-between' align='center'>
-						<Text size='sm' fw={600}>
-							{t('form.agent.prompt.previewTitle')}
-						</Text>
-						<Group gap='xs'>
-							<Badge size='sm' variant='light' color='gray'>
-								{hasPrompt
-									? t('form.agent.prompt.previewChars', {
-											count: prompt.length,
-										})
-									: t('form.agent.prompt.status.empty')}
-							</Badge>
-						</Group>
-					</Group>
-					<Paper withBorder radius='sm' p='sm' className={styles.promptSurface}>
-						<div
-							className={`${styles.promptShell} ${
-								expanded
-									? styles.promptShellExpanded
-									: styles.promptShellCompact
-							}`}
-							style={{
-								height: expanded
-									? contentHeight
-										? `${contentHeight}px`
-										: 'auto'
-									: `${compactHeight}px`,
-							}}
-						>
-							<div
-								ref={contentRef}
-								className={`${styles.promptContent} ${
-									hasPrompt ? '' : styles.promptPlaceholder
-								}`}
-								aria-label='Agent prompt preview'
-							>
-								{hasPrompt ? prompt : t('form.agent.prompt.placeholder')}
-							</div>
+						<div>
+							<Text size='sm' fw={600}>
+								{t('form.agent.prompt.previewTitle')}
+							</Text>
+							<Text size='xs' c='dimmed'>
+								{t('form.agent.prompt.simpleModal.helper')}
+							</Text>
 						</div>
-					</Paper>
-					<Group justify='space-between' align='center'>
-						<Text size='xs' c='dimmed'>
-							{t('form.agent.prompt.keepConcise')}
-						</Text>
-						{expanded && (
-							<ActionIcon
-								variant='light'
-								size='sm'
-								color='blue'
-								onClick={toggleExpanded}
-								aria-label={t('form.agent.prompt.header.collapseAria')}
-							>
-								<IconArrowsMinimize size={16} />
-							</ActionIcon>
-						)}
+						<Badge size='sm' variant='light' color='gray'>
+							{hasPrompt
+								? t('form.agent.prompt.simpleModal.chars', {
+										count: prompt.length,
+									})
+								: t('form.agent.prompt.status.empty')}
+						</Badge>
 					</Group>
+					<div className={styles.promptSummary}>
+						<Text size='xs' className={styles.promptPreview} lineClamp={10}>
+							{hasPrompt ? prompt : t('form.agent.prompt.simpleModal.empty')}
+						</Text>
+					</div>
 				</Stack>
 			</SectionCard>
-			<CampaignConfigurationPromptEditModal
+			{/* TODO: Remove this logic later. Mini prompt preview is deprecated. */}
+			{false && null}
+			<CampaignAgentPromptEditModal
 				opened={editModalOpen}
-				initialSchemaId={contactSchemaId}
 				onClose={() => setEditModalOpen(false)}
-				onSave={() => {
-					setEditModalOpen(false);
-					// Modal saves directly to backend, so we might need to refresh context or just close
-				}}
 			/>
 		</>
 	);

@@ -1,0 +1,28 @@
+.node {
+	background-color: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	min-width: 140px;
+	text-align: left;
+	transition: border-color 0.2s ease;
+	overflow: hidden;
+}
+
+.node:hover {
+	border-color: var(--mantine-color-gray-5);
+}
+
+.icon {
+	color: var(--mantine-color-red-6);
+}
+
+.header {
+}
+
+.footer {
+	background-color: var(--mantine-color-gray-0);
+	border-top: 1px solid var(--mantine-color-gray-3);
+	padding: 4px calc(var(--mantine-spacing-md) + 2px);
+	display: flex;
+	justify-content: flex-end;
+}

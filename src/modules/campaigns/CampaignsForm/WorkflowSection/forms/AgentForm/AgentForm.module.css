@@ -1,0 +1,358 @@
+.tabs {
+	gap: var(--mantine-spacing-xs);
+}
+
+.tabList {
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+	gap: var(--mantine-spacing-sm);
+}
+
+.tab {
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 500;
+	padding: var(--mantine-spacing-xs) 0;
+	color: var(--mantine-color-gray-6);
+	border-bottom: 2px solid transparent;
+}
+
+.tab[data-active='true'] {
+	color: var(--mantine-color-gray-9);
+	border-bottom-color: var(--mantine-color-gray-9);
+}
+
+.tabPanel {
+	padding-top: var(--mantine-spacing-md);
+}
+
+.conversationSection {
+	display: flex;
+	flex-direction: column;
+	gap: 6px; /* compact vertical rhythm */
+	padding: var(--mantine-spacing-xs); /* reduced padding for compact layout */
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: 10px;
+	background: var(--mantine-color-white);
+}
+
+.conversationHeader {
+	padding-bottom: var(--mantine-spacing-xs);
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.sectionLabel {
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+}
+
+.inlineSwitch {
+	align-self: center;
+}
+
+.promptInput {
+	border: none;
+	padding: 0;
+	font-size: var(--mantine-font-size-xs);
+	min-height: 150px; /* lowered to reduce vertical footprint */
+}
+
+.promptInput:focus {
+	border: none;
+	box-shadow: none;
+}
+
+.fieldRow {
+	display: flex;
+	flex-direction: column;
+	gap: 6px; /* slightly tighter than default */
+}
+
+.fieldLabel {
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+}
+
+.helperText {
+	color: var(--mantine-color-gray-6);
+}
+
+.selectInput {
+	border-radius: 8px;
+	border: 1px solid var(--mantine-color-gray-3);
+	background: var(--mantine-color-white);
+	min-height: 32px; /* smaller control height for compact layout */
+}
+
+/* Reusable box for inherited/default value display (replaces inline styles) */
+.inheritedFieldBox {
+	padding: 6px 8px;
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: 8px;
+	background-color: var(--mantine-color-gray-0);
+}
+
+.voiceIcon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+	border-radius: 999px;
+	background: var(--mantine-color-gray-1);
+	color: var(--mantine-color-gray-7);
+}
+
+.knowledgeList {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.knowledgeItem {
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: 12px;
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+}
+
+.knowledgeIcon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 10px;
+	background: var(--mantine-color-gray-1);
+	color: var(--mantine-color-gray-6);
+}
+
+.knowledgeLabel {
+	color: var(--mantine-color-gray-9);
+}
+
+.emptyState {
+	border: 1px dashed var(--mantine-color-gray-3);
+	border-radius: 10px;
+	padding: var(--mantine-spacing-sm);
+	background: var(--mantine-color-gray-0);
+}
+
+.placeholderCard {
+	border: 1px dashed var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-sm);
+	background: var(--mantine-color-gray-0);
+}
+
+.toolsSection {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.toolList {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.toolRow {
+	display: grid;
+	grid-template-columns: auto 1fr auto auto;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	border-radius: 10px;
+}
+
+.toolRow:hover {
+	background: var(--mantine-color-gray-0);
+}
+
+.toolRowDisabled {
+	color: var(--mantine-color-gray-5);
+}
+
+.toolIcon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 10px;
+	background: var(--mantine-color-gray-1);
+	color: var(--mantine-color-gray-7);
+}
+
+.toolInfo {
+	display: flex;
+	align-items: center;
+}
+
+.toolLabel {
+	color: var(--mantine-color-gray-9);
+}
+
+.toolLabelText {
+	border-bottom: 1px dotted var(--mantine-color-gray-5);
+	padding-bottom: 1px;
+}
+
+.toolConfigSpacer {
+	width: 28px;
+	height: 28px;
+}
+
+.toolsDivider {
+	height: 1px;
+	width: 100%;
+	background: var(--mantine-color-gray-2);
+	margin: var(--mantine-spacing-xs) 0;
+}
+
+.customToolCard {
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: 12px;
+}
+
+.customToolsEmpty {
+	border: 1px dashed var(--mantine-color-gray-3);
+	border-radius: 10px;
+	padding: var(--mantine-spacing-sm);
+	background: var(--mantine-color-gray-0);
+}
+
+.customToolIcon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border-radius: 12px;
+	background: var(--mantine-color-gray-1);
+	color: var(--mantine-color-gray-7);
+}
+
+.customToolBody {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.customToolName {
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+}
+
+.customToolRow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-xs);
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: 10px;
+}
+
+.edgesList {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.edgeItem {
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: 10px;
+	background: var(--mantine-color-white);
+	transition: background-color 0.15s ease;
+}
+
+.edgeItem:hover {
+	background: var(--mantine-color-gray-0);
+}
+
+.edgeItemDragging {
+	background: var(--mantine-color-blue-0);
+	border-color: var(--mantine-color-blue-3);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.edgeDragHandle {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	cursor: grab;
+	color: var(--mantine-color-gray-5);
+	border-radius: 4px;
+	transition:
+		color 0.15s ease,
+		background-color 0.15s ease;
+}
+
+.edgeDragHandle:hover {
+	color: var(--mantine-color-gray-7);
+	background: var(--mantine-color-gray-1);
+}
+
+.edgeDragHandle:active {
+	cursor: grabbing;
+}
+
+.edgeGripIcon {
+	pointer-events: none;
+}
+
+.edgeInfo {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	overflow: hidden;
+}
+
+.edgeCondition {
+	font-weight: 500;
+	color: var(--mantine-color-gray-9);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.edgeTarget {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.edgeItemError {
+	background: var(--mantine-color-red-0);
+	border-color: var(--mantine-color-red-3);
+}
+
+.edgeItemError:hover {
+	background: var(--mantine-color-red-0);
+	border-color: var(--mantine-color-red-4);
+}
+
+.edgeItemWarning {
+	background: var(--mantine-color-yellow-0);
+	border-color: var(--mantine-color-yellow-3);
+}
+
+.edgeItemWarning:hover {
+	background: var(--mantine-color-yellow-0);
+	border-color: var(--mantine-color-yellow-4);
+}

@@ -1,4 +1,5 @@
 import type { Voice } from './AgentVoiceModel';
+import type { AgentWorkflow } from './AgentWorkflowModel';
 
 export default interface AgentListObject {
 	id: string;
@@ -100,6 +101,7 @@ export interface AgentConfigModel {
 		webhooks: Record<string, any>;
 	};
 	conversationConfig: ConversationConfigModel;
+	workflow?: AgentWorkflow;
 }
 
 export interface ConversationConfigModel {

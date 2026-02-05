@@ -1,5 +1,10 @@
 import axios from 'axios';
-import type { ToolModel, AssignedToolModel } from '~/models/ToolModel';
+import type {
+	ToolModel,
+	AssignedToolModel,
+	CreateToolDto,
+	UpdateToolDto,
+} from '~/models/ToolModel';
 import { DEFAULT_API_URL } from './config';
 
 /**
@@ -23,7 +28,7 @@ const toolApi = (_authHeader?: Record<string, string>) => {
 		},
 
 		// POST create tool
-		createTool: async (data: Partial<ToolModel>) => {
+		createTool: async (data: CreateToolDto) => {
 			const response = await axios.post<ToolModel>(
 				`${DEFAULT_API_URL}/tools`,
 				data
@@ -32,7 +37,7 @@ const toolApi = (_authHeader?: Record<string, string>) => {
 		},
 
 		// PUT update tool
-		updateTool: async (id: string | number, data: Partial<ToolModel>) => {
+		updateTool: async (id: string | number, data: UpdateToolDto) => {
 			const response = await axios.put<ToolModel>(
 				`${DEFAULT_API_URL}/tools/${id}`,
 				data
