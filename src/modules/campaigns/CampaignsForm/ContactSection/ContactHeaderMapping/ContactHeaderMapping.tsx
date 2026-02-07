@@ -16,7 +16,13 @@ import {
 } from '@mantine/core';
 import { useGetClientConfig } from '~/queries/clientConfigQueries';
 import { useGetSchemaByObjectiveId } from '~/queries/campaignContactSchemasQueries';
-import { IconPlus, IconCheck, IconLetterDSmall } from '@tabler/icons-react';
+import {
+	IconPlus,
+	IconCheck,
+	IconLetterDSmall,
+	IconRefresh,
+	IconX,
+} from '@tabler/icons-react';
 import styles from './ContactHeaderMapping.module.css';
 import { modals } from '@mantine/modals';
 import type { MappedResult } from '~/models/ContactFileSummary';
@@ -50,6 +56,12 @@ interface FieldMapping {
 	documentField: string;
 }
 
+interface SelectedDynamicSchema {
+	id: number;
+	name: string;
+	version: number;
+}
+
 export function ContactHeaderMapping({
 	documentColumns,
 	onMappingChange,
@@ -64,13 +76,13 @@ export function ContactHeaderMapping({
 	const { selectedCampaign } = useCampaignsStore();
 
 	// Determine the effective objective ID from multiple sources:
-	// 1. selectedCampaign.objectiveId (direct property)
-	// 2. selectedCampaign.objective.id (nested object)
-	// 3. objectiveId prop (fallback from parent component)
+	// 1. objectiveId prop (from current form state)
+	// 2. selectedCampaign.objectiveId (direct property)
+	// 3. selectedCampaign.objective.id (nested object)
 	const effectiveObjectiveId =
+		objectiveId ??
 		selectedCampaign?.objectiveId ??
-		selectedCampaign?.objective?.id ??
-		objectiveId;
+		selectedCampaign?.objective?.id;
 
 	const [selectedSystemField, setSelectedSystemField] = useState<string | null>(
 		null
@@ -85,6 +97,8 @@ export function ContactHeaderMapping({
 	const [additionalSchemaFields, setAdditionalSchemaFields] = useState<
 		CampaignContactSchemaField[]
 	>([]);
+	const [selectedDynamicSchemaState, setSelectedDynamicSchemaState] =
+		useState<SelectedDynamicSchema | null>(null);
 
 	const { data: systemConfig, isLoading: isLoadingSystemColumns } =
 		useGetClientConfig('contact_columns');
@@ -174,9 +188,17 @@ export function ContactHeaderMapping({
 
 	// Handler to add dynamic columns (single selection only)
 	const handleAddDynamicColumns = useCallback(
-		(schemaFieldsParam: CampaignContactSchemaField[], schemaId: number) => {
+		(schema: CampaignContactSchema) => {
+			const schemaFieldsParam = schema.schemaFields;
+			const schemaId = schema.id;
+
 			// Replace previously selected dynamic fields with the new selection
 			setAdditionalSchemaFields(() => schemaFieldsParam);
+			setSelectedDynamicSchemaState({
+				id: schema.id,
+				name: schema.name,
+				version: schema.version || 1,
+			});
 
 			// Compute allowed system field names: base + initial + newly selected dynamic fields
 			const prevAdditionalNames = new Set(
@@ -243,6 +265,11 @@ export function ContactHeaderMapping({
 			const selectedSchema = schemas.find((s) => s.id === selectedSchemaId);
 			if (selectedSchema) {
 				setAdditionalSchemaFields(selectedSchema.schemaFields);
+				setSelectedDynamicSchemaState({
+					id: selectedSchema.id,
+					name: selectedSchema.name,
+					version: selectedSchema.version || 1,
+				});
 			}
 		}
 	}, [selectedSchemaId, schemas]);
@@ -251,12 +278,23 @@ export function ContactHeaderMapping({
 	const { availableSystemFields, availableDocumentFields } = useMemo(() => {
 		const mappedSystemFields = new Set(mappings.map((m) => m.systemField));
 		const mappedDocumentFields = new Set(mappings.map((m) => m.documentField));
+		const filteredSystemFields = systemColumns.filter((field) => {
+			if (finalizedSystemFields.has(field.name)) return false;
+			return field.isArray ? true : !mappedSystemFields.has(field.name);
+		});
+
+		const prioritizedSystemFields = filteredSystemFields.filter(
+			(field) => field.isDynamic || field.required
+		);
+		const remainingSystemFields = filteredSystemFields.filter(
+			(field) => !field.isDynamic && !field.required
+		);
 
 		return {
-			availableSystemFields: systemColumns.filter((field) => {
-				if (finalizedSystemFields.has(field.name)) return false;
-				return field.isArray ? true : !mappedSystemFields.has(field.name);
-			}),
+			availableSystemFields: [
+				...prioritizedSystemFields,
+				...remainingSystemFields,
+			],
 			availableDocumentFields: documentColumns.filter(
 				(field) => !mappedDocumentFields.has(field)
 			),
@@ -271,6 +309,74 @@ export function ContactHeaderMapping({
 			}),
 		[systemColumns, mappings]
 	);
+
+	const hasSelectedDynamicSchema =
+		selectedDynamicSchemaState !== null ||
+		(selectedSchemaId !== undefined && selectedSchemaId > 0) ||
+		additionalSchemaFields.length > 0;
+
+	const selectedDynamicSchema = useMemo(() => {
+		if (selectedDynamicSchemaState) {
+			return selectedDynamicSchemaState;
+		}
+
+		const fallbackSchema = schemas.find(
+			(schema) => schema.id === selectedSchemaId
+		);
+		if (!fallbackSchema) {
+			return null;
+		}
+
+		return {
+			id: fallbackSchema.id,
+			name: fallbackSchema.name,
+			version: fallbackSchema.version || 1,
+		};
+	}, [schemas, selectedSchemaId, selectedDynamicSchemaState]);
+
+	const handleClearDynamicColumns = useCallback(() => {
+		const dynamicFieldNames = new Set(
+			additionalSchemaFields.map((field) => field.name)
+		);
+
+		if (dynamicFieldNames.size === 0 && selectedDynamicSchema) {
+			const fallbackSchema = schemas.find(
+				(schema) => schema.id === selectedDynamicSchema.id
+			);
+			fallbackSchema?.schemaFields.forEach((field) => {
+				dynamicFieldNames.add(field.name);
+			});
+		}
+
+		const clearedMappings = mappings.filter(
+			(mapping) => !dynamicFieldNames.has(mapping.systemField)
+		);
+
+		setAdditionalSchemaFields([]);
+		setSelectedDynamicSchemaState(null);
+		setMappings(clearedMappings);
+		setFinalizedSystemFields((prev) => {
+			const next = new Set(prev);
+			dynamicFieldNames.forEach((fieldName) => next.delete(fieldName));
+			return next;
+		});
+
+		if (selectedSystemField && dynamicFieldNames.has(selectedSystemField)) {
+			setSelectedSystemField(null);
+		}
+
+		onSchemaSelected?.(0);
+		onMappingChange(getMappedResult(clearedMappings));
+	}, [
+		additionalSchemaFields,
+		selectedDynamicSchema,
+		schemas,
+		mappings,
+		selectedSystemField,
+		onSchemaSelected,
+		onMappingChange,
+		getMappedResult,
+	]);
 
 	// Handle removing a mapping
 	const handleRemoveMapping = (mappingToRemove: FieldMapping) => {
@@ -384,6 +490,14 @@ export function ContactHeaderMapping({
 									count: unmappedDynamicColumns.length,
 								})}
 							</Text>
+							{selectedDynamicSchema && (
+								<Badge size='xs' color='red' variant='light'>
+									{t('form.contacts.headerMapping.selectedDynamicSet', {
+										name: selectedDynamicSchema.name,
+										version: selectedDynamicSchema.version || 1,
+									})}
+								</Badge>
+							)}
 						</Group>
 					</div>
 				)}
@@ -406,62 +520,98 @@ export function ContactHeaderMapping({
 											{t('form.contacts.headerMapping.selectObjective')}
 										</Badge>
 									) : schemas && schemas.length > 0 ? (
-										<Menu position='bottom-end' withArrow width={320}>
-											<Menu.Target>
-												<ActionIcon
-													variant='light'
-													size='sm'
-													color='blue'
-													title={t(
-														'form.contacts.headerMapping.addDynamicColumns'
+										<Group gap={4}>
+											<Menu position='bottom-end' withArrow width={320}>
+												<Menu.Target>
+													<Tooltip
+														label={
+															hasSelectedDynamicSchema
+																? t(
+																		'form.contacts.headerMapping.changeDynamicColumns'
+																	)
+																: t(
+																		'form.contacts.headerMapping.addDynamicColumns'
+																	)
+														}
+													>
+														<ActionIcon
+															variant='light'
+															size='sm'
+															color={
+																hasSelectedDynamicSchema ? 'orange' : 'blue'
+															}
+														>
+															{hasSelectedDynamicSchema ? (
+																<IconRefresh size={14} />
+															) : (
+																<IconPlus size={14} />
+															)}
+														</ActionIcon>
+													</Tooltip>
+												</Menu.Target>
+												<Menu.Dropdown>
+													<Menu.Label>
+														{t('form.contacts.headerMapping.dynamicSetTitle')}
+													</Menu.Label>
+													{schemas.map((schema, index) => (
+														<div key={schema.id}>
+															<Menu.Item
+																onClick={() => {
+																	handleAddDynamicColumns(schema);
+																}}
+																className={styles.dynamicMenuItem}
+															>
+																<Stack gap={4}>
+																	<Group gap={6} align='baseline'>
+																		<Text size='sm' fw={500}>
+																			{schema.name}
+																		</Text>
+																		<Badge size='xs' variant='light'>
+																			{t(
+																				'form.contacts.headerMapping.version',
+																				{
+																					version: schema.version || 1,
+																				}
+																			)}
+																		</Badge>
+																	</Group>
+																	{schema.description && (
+																		<Text size='xs' c='dimmed' lineClamp={2}>
+																			{schema.description}
+																		</Text>
+																	)}
+																	<Text size='xs' c='blue' fw={500}>
+																		{t(
+																			'scheduler.schedulerBuilder.fieldsCount',
+																			{
+																				count: schema.schemaFields.length,
+																			}
+																		)}
+																	</Text>
+																</Stack>
+															</Menu.Item>
+															{index < schemas.length - 1 && <Divider />}
+														</div>
+													))}
+												</Menu.Dropdown>
+											</Menu>
+											{hasSelectedDynamicSchema && (
+												<Tooltip
+													label={t(
+														'form.contacts.headerMapping.clearDynamicColumns'
 													)}
 												>
-													<IconPlus size={14} />
-												</ActionIcon>
-											</Menu.Target>
-											<Menu.Dropdown>
-												<Menu.Label>
-													{t('form.contacts.headerMapping.dynamicSetTitle')}
-												</Menu.Label>
-												{schemas.map((schema, index) => (
-													<div key={schema.id}>
-														<Menu.Item
-															onClick={() => {
-																handleAddDynamicColumns(
-																	schema.schemaFields,
-																	schema.id
-																);
-															}}
-															className={styles.dynamicMenuItem}
-														>
-															<Stack gap={4}>
-																<Group gap={6} align='baseline'>
-																	<Text size='sm' fw={500}>
-																		{schema.name}
-																	</Text>
-																	<Badge size='xs' variant='light'>
-																		{t('form.contacts.headerMapping.version', {
-																			version: schema.version || 1,
-																		})}
-																	</Badge>
-																</Group>
-																{schema.description && (
-																	<Text size='xs' c='dimmed' lineClamp={2}>
-																		{schema.description}
-																	</Text>
-																)}
-																<Text size='xs' c='blue' fw={500}>
-																	{t('scheduler.schedulerBuilder.fieldsCount', {
-																		count: schema.schemaFields.length,
-																	})}
-																</Text>
-															</Stack>
-														</Menu.Item>
-														{index < schemas.length - 1 && <Divider />}
-													</div>
-												))}
-											</Menu.Dropdown>
-										</Menu>
+													<ActionIcon
+														variant='light'
+														size='sm'
+														color='red'
+														onClick={handleClearDynamicColumns}
+													>
+														<IconX size={14} />
+													</ActionIcon>
+												</Tooltip>
+											)}
+										</Group>
 									) : null}
 								</Group>
 							</div>
