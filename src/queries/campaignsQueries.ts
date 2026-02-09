@@ -233,10 +233,6 @@ export const useStartOutboundCampaign = () => {
 			);
 			queryClient.invalidateQueries({ queryKey: ['contactGroups'] });
 		},
-		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error starting outbound campaign:', error);
-		},
 	});
 };
 
