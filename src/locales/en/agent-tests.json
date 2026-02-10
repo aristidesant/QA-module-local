@@ -22,17 +22,25 @@
 	"table": {
 		"title": "Tests list",
 		"description": "{{total}} tests found, {{selected}} selected",
+		"infoBanner": "Create tests from real or hypothetical conversations and run them anytime to ensure consistent quality.",
+		"searchPlaceholder": "Search tests...",
 		"selectAll": "Select all tests",
 		"selectRow": "Select {{name}}",
 		"notAvailable": "Not available",
 		"columns": {
 			"name": "Name",
+			"testType": "Test type",
+			"createdBy": "Created by",
 			"agent": "Agent",
 			"prompt": "Prompt",
 			"successCondition": "Success condition",
 			"expectedResponse": "Expected response",
 			"updatedAt": "Updated",
 			"actions": "Actions"
+		},
+		"type": {
+			"nextReply": "Next Reply",
+			"toolInvocation": "Tool Invocation"
 		},
 		"actions": {
 			"run": "Run test",
@@ -158,5 +166,17 @@
 		"dynamicVarsPreview": "Dynamic variables preview",
 		"agent": "Agent",
 		"user": "User"
+	},
+	"testStatus": {
+		"title": "Test Status for {{testName}}",
+		"failedTests": "Failed Tests ({{count}})",
+		"evaluation": "Evaluation",
+		"editTest": "Edit Test",
+		"expectedResponse": "Expected Response",
+		"actualResponse": "Actual Response",
+		"selectTest": "Select a test to view details",
+		"runningTests": "Running tests...",
+		"retryFailed": "Retry Failed",
+		"retryAll": "Retry All"
 	}
 }

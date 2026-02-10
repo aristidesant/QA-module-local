@@ -22,17 +22,25 @@
 	"table": {
 		"title": "Listado de pruebas",
 		"description": "{{total}} pruebas encontradas, {{selected}} seleccionadas",
+		"infoBanner": "Crea pruebas basadas en conversaciones reales o hipoteticas y ejecutalas cuando quieras para asegurar calidad constante.",
+		"searchPlaceholder": "Buscar pruebas...",
 		"selectAll": "Seleccionar todas las pruebas",
 		"selectRow": "Seleccionar {{name}}",
 		"notAvailable": "No disponible",
 		"columns": {
 			"name": "Nombre",
+			"testType": "Tipo de prueba",
+			"createdBy": "Creado por",
 			"agent": "Agente",
 			"prompt": "Prompt",
 			"successCondition": "Condicion de exito",
 			"expectedResponse": "Respuesta esperada",
 			"updatedAt": "Actualizado",
 			"actions": "Acciones"
+		},
+		"type": {
+			"nextReply": "Siguiente respuesta",
+			"toolInvocation": "Invocacion de herramienta"
 		},
 		"actions": {
 			"run": "Ejecutar prueba",
@@ -158,5 +166,17 @@
 		"dynamicVarsPreview": "Vista previa de variables dinamicas",
 		"agent": "Agente",
 		"user": "Usuario"
+	},
+	"testStatus": {
+		"title": "Estado de la prueba para {{testName}}",
+		"failedTests": "Pruebas fallidas ({{count}})",
+		"evaluation": "Evaluacion",
+		"editTest": "Editar prueba",
+		"expectedResponse": "Respuesta esperada",
+		"actualResponse": "Respuesta actual",
+		"selectTest": "Selecciona una prueba para ver los detalles",
+		"runningTests": "Ejecutando pruebas...",
+		"retryFailed": "Reintentar fallidas",
+		"retryAll": "Reintentar todas"
 	}
 }

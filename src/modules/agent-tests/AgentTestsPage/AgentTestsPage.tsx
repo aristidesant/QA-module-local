@@ -13,15 +13,27 @@ import {
 	useAgentTestsPage,
 } from './context/AgentTestsPageContext';
 import AgentTestsHeaderActions from './components/AgentTestsHeaderActions';
-import AgentTestsFiltersCard from './components/AgentTestsFiltersCard';
 import AgentTestsTableSection from './components/AgentTestsTableSection';
 import AgentSelectModal from './components/AgentSelectModal';
 import AgentTestStudioModal from './components/AgentTestStudioModal';
+import { TestStatusModal } from './components/TestStatusModal';
 
 const AgentTestsPageContent = () => {
 	const { t } = useTranslation('agent-tests');
 	const { canAccessModule, canPerformAction } = usePermissions();
-	const { page, limit, search, agentId } = useAgentTestsPage();
+	const { page, limit, search } = useAgentTestsPage();
+
+	// Get context values for test status modal
+	const {
+		isTestStatusModalOpen,
+		closeTestStatusModal,
+		testStatusJobId,
+		testStatusData,
+		testStatusRunTestIds,
+		testStatusAgentId,
+		runAgentTests,
+		runTests,
+	} = useAgentTestsPage();
 
 	const canRead = canAccessModule(ModuleEnum.CAMPAIGNS);
 	const canCreate = canPerformAction(
@@ -49,7 +61,6 @@ const AgentTestsPageContent = () => {
 		page,
 		limit,
 		search: search || undefined,
-		agentId: agentId || undefined,
 	});
 
 	const agentOptions = useMemo(
@@ -60,6 +71,35 @@ const AgentTestsPageContent = () => {
 			})),
 		[agentsQuery.data?.data]
 	);
+
+	// Get test name for modal title - from first test in the run
+	const testName = useMemo(() => {
+		if (testStatusRunTestIds.length === 0) return '';
+		const firstTest = testsQuery.data?.items.find(
+			(t) => t.id === testStatusRunTestIds[0]
+		);
+		if (!firstTest) return testStatusRunTestIds[0];
+
+		// Return only the test name, without the prompt
+		return firstTest.name;
+	}, [testStatusRunTestIds, testsQuery.data?.items]);
+
+	const handleRetryFailed = () => {
+		if (!testStatusAgentId || !testStatusData?.results) return;
+
+		const failedTestIds = testStatusData.results
+			.filter((r) => r.status === 'FAILED')
+			.map((r) => r.testId);
+
+		if (failedTestIds.length > 0) {
+			runTests(failedTestIds, testStatusAgentId);
+		}
+	};
+
+	const handleRetryAll = () => {
+		if (!testStatusAgentId) return;
+		runTests(testStatusRunTestIds, testStatusAgentId);
+	};
 
 	if (!canRead) {
 		return null;
@@ -74,17 +114,11 @@ const AgentTestsPageContent = () => {
 				titleRight={
 					<AgentTestsHeaderActions
 						canCreate={canCreate}
-						canRun={canRun}
-						tests={testsQuery.data?.items ?? []}
 						onRefetch={() => testsQuery.refetch()}
 					/>
 				}
 			>
 				<Stack gap='xs'>
-					<AgentTestsFiltersCard
-						agentOptions={agentOptions}
-						isLoadingAgents={agentsQuery.isLoading}
-					/>
 					<AgentTestsTableSection
 						tests={testsQuery.data?.items ?? []}
 						total={testsQuery.data?.total ?? 0}
@@ -104,6 +138,17 @@ const AgentTestsPageContent = () => {
 				isLoadingAgents={agentsQuery.isLoading}
 			/>
 			<AgentTestStudioModal />
+			<TestStatusModal
+				isOpen={isTestStatusModalOpen}
+				onClose={closeTestStatusModal}
+				testStatusData={testStatusData}
+				testList={testsQuery.data?.items ?? []}
+				isLoading={testStatusJobId !== null && testStatusData === null}
+				testName={testName}
+				onRetryFailed={handleRetryFailed}
+				onRetryAll={handleRetryAll}
+				isRetrying={runAgentTests.isPending}
+			/>
 		</>
 	);
 };

@@ -95,3 +95,29 @@ export const useRunAgentTests = () => {
 		},
 	});
 };
+
+export const useTestRunStatus = (jobId: string | null, enabled = true) => {
+	return useQuery<RunAgentTestsResponse>({
+		queryKey: ['agent-test-run-status', jobId],
+		queryFn: async () => {
+			const api = agentTestsApi();
+			return api.getTestRunStatus(jobId!);
+		},
+		enabled: Boolean(jobId) && enabled,
+		refetchInterval: (query) => {
+			const data = query.state.data;
+			// Stop polling when status is COMPLETED or FAILED
+			if (
+				data?.status === 'COMPLETED' ||
+				data?.status === 'FAILED' ||
+				(data?.status === 'STARTED') === false
+			) {
+				return false;
+			}
+			// Poll every 3 seconds while STARTED or PENDING
+			return 3000;
+		},
+		retry: true,
+		retryDelay: 1000,
+	});
+};

@@ -115,10 +115,16 @@ const normalizeExamples = (
 
 const normalizeSingleTest = (raw: unknown): AgentTest => {
 	const row = (raw ?? {}) as UnknownRecord;
+	const accessInfoRaw =
+		((row.accessInfo ?? row.access_info) as UnknownRecord | null) ?? null;
 	const prompt = String(row.prompt ?? '').trim();
 	const expectedResponse = String(
 		row.expectedResponse ?? row.success_condition ?? ''
 	).trim();
+	const createdAtUnixSecsRaw =
+		row.createdAtUnixSecs ?? row.created_at_unix_secs;
+	const lastUpdatedAtUnixSecsRaw =
+		row.lastUpdatedAtUnixSecs ?? row.last_updated_at_unix_secs;
 
 	return {
 		id: String(row.id ?? ''),
@@ -151,14 +157,59 @@ const normalizeSingleTest = (raw: unknown): AgentTest => {
 					: undefined,
 		toolCallParameters: (row.toolCallParameters ??
 			row.tool_call_parameters) as AgentTest['toolCallParameters'],
+		accessInfo:
+			accessInfoRaw && typeof accessInfoRaw === 'object'
+				? {
+						isCreator:
+							typeof accessInfoRaw.isCreator === 'boolean'
+								? accessInfoRaw.isCreator
+								: typeof accessInfoRaw.is_creator === 'boolean'
+									? (accessInfoRaw.is_creator as boolean)
+									: undefined,
+						creatorName:
+							typeof (
+								accessInfoRaw.creatorName ?? accessInfoRaw.creator_name
+							) === 'string'
+								? String(
+										accessInfoRaw.creatorName ?? accessInfoRaw.creator_name
+									)
+								: undefined,
+						creatorEmail:
+							typeof (
+								accessInfoRaw.creatorEmail ?? accessInfoRaw.creator_email
+							) === 'string'
+								? String(
+										accessInfoRaw.creatorEmail ?? accessInfoRaw.creator_email
+									)
+								: undefined,
+						role:
+							typeof accessInfoRaw.role === 'string'
+								? accessInfoRaw.role
+								: undefined,
+					}
+				: undefined,
+		createdAtUnixSecs:
+			typeof createdAtUnixSecsRaw === 'number'
+				? createdAtUnixSecsRaw
+				: undefined,
+		lastUpdatedAtUnixSecs:
+			typeof lastUpdatedAtUnixSecsRaw === 'number'
+				? lastUpdatedAtUnixSecsRaw
+				: undefined,
 
 		// legacy compatibility
 		prompt,
 		expectedResponse,
 		assertions: row.assertions as AgentTest['assertions'],
 		notes: typeof row.notes === 'string' ? row.notes : undefined,
-		createdAt: typeof row.createdAt === 'string' ? row.createdAt : undefined,
-		updatedAt: typeof row.updatedAt === 'string' ? row.updatedAt : undefined,
+		createdAt:
+			typeof (row.createdAt ?? row.created_at) === 'string'
+				? String(row.createdAt ?? row.created_at)
+				: undefined,
+		updatedAt:
+			typeof (row.updatedAt ?? row.updated_at) === 'string'
+				? String(row.updatedAt ?? row.updated_at)
+				: undefined,
 	};
 };
 
@@ -331,6 +382,13 @@ const agentTestsApi = () => {
 				}
 			);
 
+			return normalizeRunResponse(response.data);
+		},
+
+		getTestRunStatus: async (jobId: string) => {
+			const response = await axios.get(
+				`${DEFAULT_API_URL}/agent-test/run-status/${jobId}`
+			);
 			return normalizeRunResponse(response.data);
 		},
 	};
