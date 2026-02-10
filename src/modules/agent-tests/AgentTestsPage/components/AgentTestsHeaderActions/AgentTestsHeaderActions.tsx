@@ -1,55 +1,39 @@
-import { Button, Group } from '@mantine/core';
-import { IconPlayerPlay, IconPlus, IconRefresh } from '@tabler/icons-react';
+import { ActionIcon, Button, Group, Tooltip } from '@mantine/core';
+import { IconPlus, IconRefresh } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { useAgentTestsPage } from '../../context/AgentTestsPageContext';
-import type { AgentTest } from '~/models/AgentTestModel';
 
 interface AgentTestsHeaderActionsProps {
 	canCreate: boolean;
-	canRun: boolean;
-	tests: AgentTest[];
 	onRefetch: () => void;
+	isRefreshing: boolean;
 }
 
 const AgentTestsHeaderActions = ({
 	canCreate,
-	canRun,
-	tests,
 	onRefetch,
+	isRefreshing,
 }: AgentTestsHeaderActionsProps) => {
 	const { t } = useTranslation('agent-tests');
-	const { openCreateModal, handleRunSelected, selectedTestIds, runAgentTests } =
-		useAgentTestsPage();
-
-	const selectedTests = tests.filter((test) =>
-		selectedTestIds.includes(test.id)
-	);
+	const { openCreateModal } = useAgentTestsPage();
 
 	return (
 		<Group gap='xs'>
-			<Button
-				variant='default'
-				size='xs'
-				leftSection={<IconRefresh size={14} />}
-				onClick={onRefetch}
-			>
-				{t('actions.refresh')}
-			</Button>
-			{canRun && (
-				<Button
-					size='xs'
-					leftSection={<IconPlayerPlay size={14} />}
-					onClick={() => handleRunSelected(selectedTests)}
-					disabled={selectedTestIds.length === 0 || runAgentTests.isPending}
-					loading={runAgentTests.isPending}
+			<Tooltip label={t('actions.refresh')} withArrow>
+				<ActionIcon
+					variant='default'
+					size='lg'
+					onClick={onRefetch}
+					loading={isRefreshing}
+					disabled={isRefreshing}
 				>
-					{t('actions.runSelected')}
-				</Button>
-			)}
+					<IconRefresh size={16} />
+				</ActionIcon>
+			</Tooltip>
 			{canCreate && (
 				<Button
 					size='xs'
-					leftSection={<IconPlus size={14} />}
+					leftSection={<IconPlus size={13} />}
 					onClick={openCreateModal}
 				>
 					{t('actions.create')}

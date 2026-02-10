@@ -1,10 +1,8 @@
-import { Modal, Title, Text, Stack, Group, Badge } from '@mantine/core';
+import { Badge, Group, Modal, Stack, Text, Title } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { ColumnDef } from '@tanstack/react-table';
 import type { Contact, OutboundCallTask } from '~/models/ContactsModel';
-import BaseTable from '~/components/BaseTable';
 import { getFullName } from '../contactHelpers';
 import styles from './OutboundCallTasksModal.module.css';
 
@@ -26,44 +24,42 @@ const OutboundCallTasksModal = ({
 		? fullName || t('contactsTable.unnamedContact')
 		: '';
 
-	const columns = useMemo<ColumnDef<OutboundCallTask>[]>(
-		() => [
-			{
-				accessorKey: 'status',
-				header: t('contactsTable.outboundTasks.columns.status'),
-				size: 120,
-				cell: ({ getValue }) => (
-					<Badge size='sm' variant='light' className={styles.statusBadge}>
-						{getValue() as string}
-					</Badge>
-				),
-			},
-			{
-				accessorKey: 'waveNumber',
-				header: t('contactsTable.outboundTasks.columns.wave'),
-				size: 80,
-				cell: ({ getValue }) => (
-					<Text size='xs' fw={500}>
-						{getValue() as number}
-					</Text>
-				),
-			},
-			{
-				accessorKey: 'errorMessage',
-				header: t('contactsTable.outboundTasks.columns.errorMessage'),
-				size: 280,
-				cell: ({ getValue }) => {
-					const message = getValue() as string | null;
-					return (
-						<Text size='xs' c='dimmed' className={styles.errorMessage}>
-							{message || t('contactsTable.outboundTasks.noErrorMessage')}
-						</Text>
-					);
-				},
-			},
-		],
-		[t]
-	);
+	const formatEventDate = (date: string | null): string => {
+		if (!date) {
+			return t('contactsTable.outboundTasks.noEventDate');
+		}
+
+		const parsedDate = new Date(date);
+		if (Number.isNaN(parsedDate.getTime())) {
+			return t('contactsTable.outboundTasks.noEventDate');
+		}
+
+		return parsedDate.toLocaleString();
+	};
+
+	const getPrimaryEventDate = (task: OutboundCallTask): string | null => {
+		return (
+			task.completedAt ??
+			task.cancelledAt ??
+			task.pausedAt ??
+			task.startedAt ??
+			task.scheduledAt ??
+			task.createdAt ??
+			null
+		);
+	};
+
+	const sortedTasks = useMemo(() => {
+		return [...tasks].sort((a, b) => {
+			const aDate = getPrimaryEventDate(a);
+			const bDate = getPrimaryEventDate(b);
+
+			const aTime = aDate ? new Date(aDate).getTime() : 0;
+			const bTime = bDate ? new Date(bDate).getTime() : 0;
+
+			return bTime - aTime;
+		});
+	}, [tasks]);
 
 	return (
 		<Modal
@@ -86,13 +82,47 @@ const OutboundCallTasksModal = ({
 						})}
 					</Text>
 				)}
-				<BaseTable
-					data={tasks}
-					columns={columns}
-					emptyMessage={t('contactsTable.outboundTasks.empty')}
-					enablePagination={false}
-					density='compact'
-				/>
+				{tasks.length === 0 ? (
+					<Text size='sm' c='dimmed' className={styles.emptyState}>
+						{t('contactsTable.outboundTasks.empty')}
+					</Text>
+				) : (
+					<Stack gap='xs'>
+						{sortedTasks.map((task) => (
+							<div key={task.id} className={styles.taskCard}>
+								<Group justify='space-between' align='flex-start' gap='xs'>
+									<Group gap={6}>
+										<Badge
+											size='sm'
+											variant='light'
+											className={styles.statusBadge}
+										>
+											{task.status}
+										</Badge>
+										<Text size='xs' fw={500} c='dimmed'>
+											{t('contactsTable.outboundTasks.waveLabel', {
+												wave: task.waveNumber,
+											})}
+										</Text>
+									</Group>
+									<Stack gap={2} align='flex-end'>
+										<Text size='xs' c='dimmed'>
+											{t('contactsTable.outboundTasks.eventDate')}
+										</Text>
+										<Text size='xs' fw={600} className={styles.dateValue}>
+											{formatEventDate(getPrimaryEventDate(task))}
+										</Text>
+									</Stack>
+								</Group>
+
+								<Text size='xs' c='dimmed' className={styles.errorMessage}>
+									{task.errorMessage ||
+										t('contactsTable.outboundTasks.noErrorMessage')}
+								</Text>
+							</div>
+						))}
+					</Stack>
+				)}
 			</Stack>
 		</Modal>
 	);

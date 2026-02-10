@@ -1,5 +1,5 @@
-import { Button } from '@mantine/core';
-import { IconFlask } from '@tabler/icons-react';
+import { Alert, Button, TextInput } from '@mantine/core';
+import { IconFlask, IconInfoCircle } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import BaseTable from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
@@ -35,35 +35,71 @@ const AgentTestsTableSection = ({
 	onRefetch,
 }: AgentTestsTableSectionProps) => {
 	const { t } = useTranslation('agent-tests');
-	const { page, limit, setPage, setLimit, selectedTestIds, openCreateModal } =
-		useAgentTestsPage();
+	const {
+		page,
+		limit,
+		setPage,
+		setLimit,
+		search,
+		setSearch,
+		openCreateModal,
+		editingTestLoadingId,
+		runningTestIds,
+		createAgentTest,
+		updateAgentTest,
+		deleteAgentTest,
+		runAgentTests,
+	} = useAgentTestsPage();
 
 	const columns = useAgentTestsColumns({
 		canUpdate,
 		canDelete,
 		canRun,
 		agentOptions,
-		tests,
+		editingTestLoadingId,
+		runningTestIds,
 	});
+
+	const isAnyMutationPending =
+		createAgentTest.isPending ||
+		updateAgentTest.isPending ||
+		deleteAgentTest.isPending ||
+		runAgentTests.isPending;
 
 	const totalPages = Math.max(1, Math.ceil(total / limit));
 
 	return (
-		<SectionCard
-			title={t('table.title')}
-			description={t('table.description', {
-				total,
-				selected: selectedTestIds.length,
-			})}
-			padding='md'
-		>
+		<SectionCard padding='md' contentSpacing='xs'>
+			<Alert
+				variant='light'
+				color='gray'
+				icon={<IconInfoCircle size={16} />}
+				radius='md'
+			>
+				{t('table.infoBanner')}
+			</Alert>
+			<TextInput
+				placeholder={t('table.searchPlaceholder')}
+				value={search}
+				onChange={(event) => {
+					setSearch(event.currentTarget.value);
+					setPage(1);
+				}}
+				size='sm'
+			/>
 			{isError ? (
 				<EmptyState
 					icon={<IconFlask size={42} />}
 					message={t('state.errorTitle')}
 					description={t('state.errorDescription')}
 					action={
-						<Button size='xs' variant='light' onClick={onRefetch}>
+						<Button
+							size='xs'
+							variant='light'
+							onClick={onRefetch}
+							loading={isLoading}
+							disabled={isLoading}
+						>
 							{t('actions.retry')}
 						</Button>
 					}
@@ -75,7 +111,12 @@ const AgentTestsTableSection = ({
 					description={t('state.emptyDescription')}
 					action={
 						canCreate ? (
-							<Button size='xs' onClick={openCreateModal}>
+							<Button
+								size='xs'
+								onClick={openCreateModal}
+								loading={isAnyMutationPending}
+								disabled={isAnyMutationPending}
+							>
 								{t('actions.create')}
 							</Button>
 						) : undefined

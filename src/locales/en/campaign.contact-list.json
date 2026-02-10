@@ -205,7 +205,19 @@
 			"title": "Outbound call logs",
 			"subtitle": "Contact: {{name}}",
 			"empty": "No outbound call tasks available.",
+			"eventDate": "Event date",
+			"noEventDate": "No event date",
 			"noErrorMessage": "No error message",
+			"waveLabel": "Wave {{wave}}",
+			"dates": {
+				"scheduled": "Scheduled",
+				"started": "Started",
+				"completed": "Completed",
+				"paused": "Paused",
+				"cancelled": "Cancelled",
+				"created": "Created",
+				"updated": "Updated"
+			},
 			"columns": {
 				"status": "Status",
 				"wave": "Wave",

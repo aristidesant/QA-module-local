@@ -1,4 +1,13 @@
-import { Button, Group, Modal, Select, Stack, Text } from '@mantine/core';
+import {
+	Button,
+	Center,
+	Group,
+	Loader,
+	Modal,
+	Select,
+	Stack,
+	Text,
+} from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { notifications } from '@mantine/notifications';
 import { useAgentTestsPage } from '../../context/AgentTestsPageContext';
@@ -19,15 +28,28 @@ const AgentSelectModal = ({
 		setIsAgentSelectOpen,
 		selectedAgentForRun,
 		setSelectedAgentForRun,
+		agentSelectSource,
+		setAgentSelectSource,
+		setIsModalOpen,
+		isModalTransitioning,
 		pendingRunTests,
 		setPendingRunTests,
 		runTests,
+		runAgentTests,
 	} = useAgentTestsPage();
 
 	const handleClose = () => {
+		const wasOpenedFromStudio = agentSelectSource === 'studio';
 		setIsAgentSelectOpen(false);
 		setPendingRunTests(null);
 		setSelectedAgentForRun(null);
+		setAgentSelectSource(null);
+		if (isModalTransitioning) {
+			return;
+		}
+		if (wasOpenedFromStudio) {
+			setIsModalOpen(true);
+		}
 	};
 
 	const handleConfirm = () => {
@@ -40,8 +62,11 @@ const AgentSelectModal = ({
 			return;
 		}
 		if (pendingRunTests) {
+			setIsAgentSelectOpen(false);
+			setPendingRunTests(null);
+			setSelectedAgentForRun(null);
+			setAgentSelectSource(null);
 			runTests(pendingRunTests, selectedAgentForRun);
-			handleClose();
 		}
 	};
 
@@ -52,27 +77,48 @@ const AgentSelectModal = ({
 			title={t('run.selectAgentTitle')}
 			centered
 		>
-			<Stack gap='md'>
-				<Text size='sm'>{t('run.selectAgentDescription')}</Text>
-				<Select
-					label={t('run.selectAgentLabel')}
-					placeholder={t('run.selectAgentPlaceholder')}
-					data={agentOptions}
-					value={selectedAgentForRun}
-					onChange={setSelectedAgentForRun}
-					searchable
-					size='sm'
-					disabled={isLoadingAgents}
-				/>
-				<Group justify='flex-end' gap='xs'>
-					<Button variant='default' size='sm' onClick={handleClose}>
-						{tCommon('actions.cancel')}
-					</Button>
-					<Button size='sm' onClick={handleConfirm}>
-						{t('run.selectAgentConfirm')}
-					</Button>
-				</Group>
-			</Stack>
+			{isModalTransitioning ? (
+				<Center h={180}>
+					<Stack gap='xs' align='center'>
+						<Loader size='sm' />
+						<Text size='xs' c='dimmed'>
+							{t('run.preparingAgentSelection')}
+						</Text>
+					</Stack>
+				</Center>
+			) : (
+				<Stack gap='md'>
+					<Text size='sm'>{t('run.selectAgentDescription')}</Text>
+					<Select
+						label={t('run.selectAgentLabel')}
+						placeholder={t('run.selectAgentPlaceholder')}
+						data={agentOptions}
+						value={selectedAgentForRun}
+						onChange={setSelectedAgentForRun}
+						searchable
+						size='sm'
+						disabled={isLoadingAgents}
+					/>
+					<Group justify='flex-end' gap='xs'>
+						<Button
+							variant='default'
+							size='sm'
+							onClick={handleClose}
+							disabled={runAgentTests.isPending}
+						>
+							{tCommon('actions.cancel')}
+						</Button>
+						<Button
+							size='sm'
+							onClick={handleConfirm}
+							loading={runAgentTests.isPending}
+							disabled={runAgentTests.isPending}
+						>
+							{t('run.selectAgentConfirm')}
+						</Button>
+					</Group>
+				</Stack>
+			)}
 		</Modal>
 	);
 };

@@ -31,6 +31,17 @@ export type AgentTestExample = {
 
 export type AgentTestType = 'llm' | 'tool';
 
+export type AgentTestConfig = {
+	id: string;
+	name: string;
+	type: AgentTestType;
+	chatHistory: AgentTestChatMessage[];
+	failureExamples: AgentTestExample[];
+	successExamples: AgentTestExample[];
+	dynamicVariables: Record<string, AgentTestPrimitive>;
+	successCondition: string;
+};
+
 export type AgentTestToolCallParameterEval =
 	| { type: 'anything' }
 	| { type: 'exact'; expectedValue: string }
@@ -51,6 +62,11 @@ export type AgentTestToolCallParameters = {
 export type AgentTest = {
 	id: string;
 	name: string;
+	testId?: string;
+	identifier?: string;
+	clientId?: string | number;
+	campaignId?: string | number | null;
+	testConfig?: AgentTestConfig;
 	agentId?: string;
 	type?: AgentTestType;
 	chatHistory?: AgentTestChatMessage[];
@@ -60,6 +76,14 @@ export type AgentTest = {
 	dynamicVariables?: Record<string, AgentTestPrimitive>;
 	toolCallParameters?: AgentTestToolCallParameters;
 	checkAnyToolMatches?: boolean;
+	accessInfo?: {
+		isCreator?: boolean;
+		creatorName?: string;
+		creatorEmail?: string;
+		role?: string;
+	};
+	createdAtUnixSecs?: number;
+	lastUpdatedAtUnixSecs?: number;
 
 	// Legacy compatibility fields
 	prompt?: string;
@@ -107,7 +131,9 @@ export type CreateAgentTestDto = {
 	notes?: string;
 };
 
-export type UpdateAgentTestDto = Partial<CreateAgentTestDto>;
+export type UpdateAgentTestDto = Partial<CreateAgentTestDto> & {
+	id: string;
+};
 
 export type AgentTestRunConfig = {
 	voiceId?: string;
@@ -131,6 +157,9 @@ export type AgentTestRunItemResult = {
 	status: 'PASSED' | 'FAILED' | string;
 	expected?: string;
 	actual?: string;
+	testName?: string;
+	chatHistory?: AgentTestChatMessage[];
+	rationale?: string;
 };
 
 export type RunAgentTestsResponse = {

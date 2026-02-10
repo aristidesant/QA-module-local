@@ -3,6 +3,7 @@ import { DEFAULT_API_URL } from './config';
 import type {
 	AgentTest,
 	AgentTestChatMessage,
+	AgentTestConfig,
 	AgentTestExample,
 	AgentTestListParams,
 	AgentTestListResponse,
@@ -14,6 +15,16 @@ import type {
 } from '~/models/AgentTestModel';
 
 type UnknownRecord = Record<string, unknown>;
+
+const normalizeIdLike = (
+	value: unknown
+): string | number | null | undefined => {
+	if (value === null) return null;
+	if (typeof value === 'string' || typeof value === 'number') {
+		return value;
+	}
+	return undefined;
+};
 
 const normalizeChatHistory = (value: unknown): AgentTestChatMessage[] => {
 	if (!Array.isArray(value)) return [];
@@ -113,26 +124,19 @@ const normalizeExamples = (
 		.filter((item): item is AgentTestExample => Boolean(item));
 };
 
-const normalizeSingleTest = (raw: unknown): AgentTest => {
-	const row = (raw ?? {}) as UnknownRecord;
-	const accessInfoRaw =
-		((row.accessInfo ?? row.access_info) as UnknownRecord | null) ?? null;
-	const prompt = String(row.prompt ?? '').trim();
+const normalizeTestConfig = (value: unknown): AgentTestConfig | undefined => {
+	if (!value || typeof value !== 'object') {
+		return undefined;
+	}
+
+	const row = value as UnknownRecord;
 	const expectedResponse = String(
 		row.expectedResponse ?? row.success_condition ?? ''
 	).trim();
-	const createdAtUnixSecsRaw =
-		row.createdAtUnixSecs ?? row.created_at_unix_secs;
-	const lastUpdatedAtUnixSecsRaw =
-		row.lastUpdatedAtUnixSecs ?? row.last_updated_at_unix_secs;
 
 	return {
 		id: String(row.id ?? ''),
 		name: String(row.name ?? ''),
-		agentId:
-			(row.agentId ?? row.agent_id)
-				? String(row.agentId ?? row.agent_id)
-				: undefined,
 		type: row.type === 'tool' ? 'tool' : 'llm',
 		chatHistory: normalizeChatHistory(row.chatHistory ?? row.chat_history),
 		successCondition: String(
@@ -148,6 +152,62 @@ const normalizeSingleTest = (raw: unknown): AgentTest => {
 		),
 		dynamicVariables: (row.dynamicVariables ??
 			row.dynamic_variables ??
+			{}) as Record<string, string | number | boolean>,
+	};
+};
+
+const normalizeSingleTest = (raw: unknown): AgentTest => {
+	const row = (raw ?? {}) as UnknownRecord;
+	const accessInfoRaw =
+		((row.accessInfo ?? row.access_info) as UnknownRecord | null) ?? null;
+	const prompt = String(row.prompt ?? '').trim();
+	const expectedResponse = String(
+		row.expectedResponse ?? row.success_condition ?? ''
+	).trim();
+	const testConfig = normalizeTestConfig(row.testConfig ?? row.test_config);
+	const sourceRow = (
+		testConfig ? (row.testConfig ?? row.test_config) : row
+	) as UnknownRecord;
+	const createdAtUnixSecsRaw =
+		row.createdAtUnixSecs ?? row.created_at_unix_secs;
+	const lastUpdatedAtUnixSecsRaw =
+		row.lastUpdatedAtUnixSecs ?? row.last_updated_at_unix_secs;
+
+	return {
+		id: String(row.id ?? ''),
+		name: String(row.name ?? ''),
+		testId:
+			(row.testId ?? row.test_id)
+				? String(row.testId ?? row.test_id)
+				: undefined,
+		identifier:
+			typeof row.identifier === 'string' ? String(row.identifier) : undefined,
+		clientId: normalizeIdLike(row.clientId ?? row.client_id) ?? undefined,
+		campaignId: normalizeIdLike(row.campaignId ?? row.campaign_id) ?? null,
+		testConfig,
+		agentId:
+			(row.agentId ?? row.agent_id)
+				? String(row.agentId ?? row.agent_id)
+				: undefined,
+		type: sourceRow.type === 'tool' ? 'tool' : 'llm',
+		chatHistory: normalizeChatHistory(
+			sourceRow.chatHistory ?? sourceRow.chat_history
+		),
+		successCondition: String(
+			sourceRow.successCondition ??
+				sourceRow.success_condition ??
+				expectedResponse
+		).trim(),
+		successExamples: normalizeExamples(
+			sourceRow.successExamples ?? sourceRow.success_examples,
+			'success'
+		),
+		failureExamples: normalizeExamples(
+			sourceRow.failureExamples ?? sourceRow.failure_examples,
+			'failure'
+		),
+		dynamicVariables: (sourceRow.dynamicVariables ??
+			sourceRow.dynamic_variables ??
 			{}) as Record<string, string | number | boolean>,
 		checkAnyToolMatches:
 			typeof row.checkAnyToolMatches === 'boolean'
@@ -216,34 +276,36 @@ const normalizeSingleTest = (raw: unknown): AgentTest => {
 const toCreatePayload = (data: CreateAgentTestDto) => {
 	const payload = {
 		name: data.name,
-		type: data.type ?? 'llm',
-		chatHistory: data.chatHistory.map((item, index) => ({
-			role: item.role,
-			agentMetadata: item.agentMetadata
-				? {
-						agentId: item.agentMetadata.agentId ?? null,
-						branchId: item.agentMetadata.branchId ?? null,
-						workflowNodeId: item.agentMetadata.workflowNodeId ?? null,
-					}
-				: null,
-			message: item.message,
-			multivoiceMessage: item.multivoiceMessage ?? null,
-			toolCalls: item.toolCalls ?? [],
-			toolResults: item.toolResults ?? [],
-			feedback: item.feedback ?? null,
-			llmOverride: item.llmOverride ?? null,
-			timeInCallSecs: item.timeInCallSecs ?? index,
-			conversationTurnMetrics: item.conversationTurnMetrics ?? null,
-			ragRetrievalInfo: item.ragRetrievalInfo ?? null,
-			llmUsage: item.llmUsage ?? null,
-			interrupted: item.interrupted ?? false,
-			originalMessage: item.originalMessage ?? null,
-			sourceMedium: item.sourceMedium ?? null,
-		})),
-		successCondition: data.successCondition,
-		successExamples: data.successExamples,
-		failureExamples: data.failureExamples,
-		dynamicVariables: data.dynamicVariables ?? {},
+		testConfig: {
+			type: data.type ?? 'llm',
+			chatHistory: data.chatHistory.map((item, index) => ({
+				role: item.role,
+				agentMetadata: item.agentMetadata
+					? {
+							agentId: item.agentMetadata.agentId ?? null,
+							branchId: item.agentMetadata.branchId ?? null,
+							workflowNodeId: item.agentMetadata.workflowNodeId ?? null,
+						}
+					: null,
+				message: item.message,
+				multivoiceMessage: item.multivoiceMessage ?? null,
+				toolCalls: item.toolCalls ?? [],
+				toolResults: item.toolResults ?? [],
+				feedback: item.feedback ?? null,
+				llmOverride: item.llmOverride ?? null,
+				timeInCallSecs: item.timeInCallSecs ?? index,
+				conversationTurnMetrics: item.conversationTurnMetrics ?? null,
+				ragRetrievalInfo: item.ragRetrievalInfo ?? null,
+				llmUsage: item.llmUsage ?? null,
+				interrupted: item.interrupted ?? false,
+				originalMessage: item.originalMessage ?? null,
+				sourceMedium: item.sourceMedium ?? null,
+			})),
+			successCondition: data.successCondition,
+			successExamples: data.successExamples,
+			failureExamples: data.failureExamples,
+			dynamicVariables: data.dynamicVariables ?? {},
+		},
 		toolCallParameters: data.toolCallParameters,
 		checkAnyToolMatches: data.checkAnyToolMatches,
 		notes: data.notes,
@@ -284,19 +346,17 @@ const normalizeRunResponse = (raw: unknown): RunAgentTestsResponse => {
 	const testRuns = Array.isArray(row.testRuns ?? row.test_runs)
 		? ((row.testRuns ?? row.test_runs) as unknown[])
 		: [];
-	const passed = testRuns.filter((item) => {
-		const status = String((item as UnknownRecord).status ?? '').toLowerCase();
-		return status === 'passed';
-	}).length;
-	const failed = testRuns.filter((item) => {
-		const status = String((item as UnknownRecord).status ?? '').toLowerCase();
-		return status === 'failed';
-	}).length;
+	const statusList = testRuns.map((item) =>
+		String((item as UnknownRecord).status ?? '').toLowerCase()
+	);
+	const hasPending = statusList.some((status) => status === 'pending');
+	const passed = statusList.filter((status) => status === 'passed').length;
+	const failed = statusList.filter((status) => status === 'failed').length;
 
 	return {
-		jobId: String(row.jobId ?? row.id ?? ''),
-		testInvocationId: String(row.id ?? row.testInvocationId ?? ''),
-		status: String(row.status ?? (testRuns.length ? 'COMPLETED' : 'STARTED')),
+		jobId: String(row.jobId ?? row.id ?? row.testInvocationId ?? ''),
+		testInvocationId: String(row.testInvocationId ?? row.id ?? ''),
+		status: hasPending ? 'STARTED' : 'COMPLETED',
 		agentId:
 			(row.agentId ?? row.agent_id)
 				? String(row.agentId ?? row.agent_id)
@@ -310,19 +370,73 @@ const normalizeRunResponse = (raw: unknown): RunAgentTestsResponse => {
 			: undefined,
 		results: testRuns.map((item) => {
 			const run = item as UnknownRecord;
-			const condition = (run.condition_result as UnknownRecord) ?? {};
-			const resultState = String(condition.result ?? '').toLowerCase();
+			const runStatus = String(run.status ?? '').toLowerCase();
+			const conditionResult =
+				((run.conditionResult ??
+					run.condition_result) as UnknownRecord | null) ?? null;
+			const conditionRationale =
+				((conditionResult?.rationale as UnknownRecord | null)?.summary as
+					| string
+					| undefined) ?? undefined;
+			const conditionState = String(
+				conditionResult?.result ?? ''
+			).toLowerCase();
+			const testInfo = (run.testInfo ?? run.test_info) as
+				| UnknownRecord
+				| undefined;
+			const runChatHistory = normalizeChatHistory(
+				testInfo?.chatHistory ?? testInfo?.chat_history
+			);
+			const agentResponses = Array.isArray(
+				run.agentResponses ?? run.agent_responses
+			)
+				? ((run.agentResponses ?? run.agent_responses) as unknown[])
+				: [];
+			const lastAgentMessage = agentResponses
+				.slice()
+				.reverse()
+				.find((response) => {
+					if (!response || typeof response !== 'object') return false;
+					const responseRow = response as UnknownRecord;
+					return (
+						String(responseRow.role ?? '').toLowerCase() === 'agent' &&
+						typeof responseRow.message === 'string' &&
+						responseRow.message.trim().length > 0
+					);
+				});
+			const expectedResponse =
+				typeof testInfo?.successCondition === 'string'
+					? testInfo.successCondition
+					: typeof testInfo?.success_condition === 'string'
+						? String(testInfo.success_condition)
+						: undefined;
+			const actualResponse =
+				lastAgentMessage && typeof lastAgentMessage === 'object'
+					? String((lastAgentMessage as UnknownRecord).message)
+					: undefined;
 
 			return {
 				testId: String(run.test_id ?? run.testId ?? ''),
+				testName:
+					typeof (run.testName ?? run.test_name) === 'string'
+						? String(run.testName ?? run.test_name)
+						: undefined,
 				status:
-					resultState === 'success'
+					runStatus === 'passed'
 						? 'PASSED'
-						: resultState === 'failure'
+						: runStatus === 'failed'
 							? 'FAILED'
-							: String(run.status ?? ''),
-				expected: undefined,
-				actual: undefined,
+							: runStatus === 'pending'
+								? 'PENDING'
+								: conditionState === 'success'
+									? 'PASSED'
+									: conditionState === 'failure'
+										? 'FAILED'
+										: String(run.status ?? ''),
+				expected: expectedResponse,
+				actual: actualResponse,
+				chatHistory: runChatHistory,
+				rationale: conditionRationale,
 			};
 		}),
 	};
@@ -353,9 +467,10 @@ const agentTestsApi = () => {
 		},
 
 		updateAgentTest: async (testId: string, data: UpdateAgentTestDto) => {
-			const response = await axios.put(
+			const response = await axios.patch(
 				`${DEFAULT_API_URL}/agent-test/${testId}`,
 				{
+					id: data.id,
 					...toCreatePayload(data as CreateAgentTestDto),
 				}
 			);
@@ -387,7 +502,7 @@ const agentTestsApi = () => {
 
 		getTestRunStatus: async (jobId: string) => {
 			const response = await axios.get(
-				`${DEFAULT_API_URL}/agent-test/run-status/${jobId}`
+				`${DEFAULT_API_URL}/agent-test/test-invocations/${jobId}`
 			);
 			return normalizeRunResponse(response.data);
 		},

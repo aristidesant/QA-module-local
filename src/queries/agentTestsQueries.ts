@@ -49,15 +49,9 @@ export const useUpdateAgentTest = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async ({
-			testId,
-			data,
-		}: {
-			testId: string;
-			data: UpdateAgentTestDto;
-		}) => {
+		mutationFn: async (data: UpdateAgentTestDto) => {
 			const api = agentTestsApi();
-			return api.updateAgentTest(testId, data);
+			return api.updateAgentTest(data.id, data);
 		},
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({ queryKey: ['agent-tests'] });
@@ -96,25 +90,21 @@ export const useRunAgentTests = () => {
 	});
 };
 
-export const useTestRunStatus = (jobId: string | null, enabled = true) => {
+export const useTestRunStatus = (suiteId: string | null, enabled = true) => {
 	return useQuery<RunAgentTestsResponse>({
-		queryKey: ['agent-test-run-status', jobId],
+		queryKey: ['agent-test-invocation-status', suiteId],
 		queryFn: async () => {
 			const api = agentTestsApi();
-			return api.getTestRunStatus(jobId!);
+			return api.getTestRunStatus(suiteId!);
 		},
-		enabled: Boolean(jobId) && enabled,
+		enabled: Boolean(suiteId) && enabled,
 		refetchInterval: (query) => {
 			const data = query.state.data;
-			// Stop polling when status is COMPLETED or FAILED
-			if (
-				data?.status === 'COMPLETED' ||
-				data?.status === 'FAILED' ||
-				(data?.status === 'STARTED') === false
-			) {
+			// Keep polling while suite is in progress (has pending test runs)
+			if (data && data.status !== 'STARTED') {
 				return false;
 			}
-			// Poll every 3 seconds while STARTED or PENDING
+			// Poll every 3 seconds while in progress or until first response
 			return 3000;
 		},
 		retry: true,

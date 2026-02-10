@@ -6,10 +6,12 @@ import React, {
 	useCallback,
 	useEffect,
 } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from '@mantine/form';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { useTranslation } from 'react-i18next';
+import agentTestsApi from '~/api/agentTestsApi';
 import type {
 	AgentTest,
 	AgentTestChatMessage,
@@ -67,6 +69,8 @@ interface AgentTestsPageContextType {
 	editingTest: AgentTest | null;
 	setEditingTest: (test: AgentTest | null) => void;
 	editingTestLoading: boolean;
+	editingTestLoadingId: string | null;
+	isModalTransitioning: boolean;
 
 	// Selection & Run Results
 	selectedTestIds: string[];
@@ -77,14 +81,17 @@ interface AgentTestsPageContextType {
 	setSelectedAgentForRun: (agentId: string | null) => void;
 	isAgentSelectOpen: boolean;
 	setIsAgentSelectOpen: (open: boolean) => void;
+	agentSelectSource: 'studio' | 'table' | null;
+	setAgentSelectSource: (source: 'studio' | 'table' | null) => void;
 	pendingRunTests: string[] | null;
 	setPendingRunTests: (tests: string[] | null) => void;
+	openAgentSelectFromStudio: (testIds: string[]) => void;
 
 	// Test Status Modal
 	isTestStatusModalOpen: boolean;
 	setIsTestStatusModalOpen: (open: boolean) => void;
-	testStatusJobId: string | null;
-	setTestStatusJobId: (jobId: string | null) => void;
+	testStatusSuiteId: string | null;
+	setTestStatusSuiteId: (suiteId: string | null) => void;
 	testStatusAgentId: string | null;
 	setTestStatusAgentId: (agentId: string | null) => void;
 	testStatusData: RunAgentTestsResponse | null;
@@ -113,6 +120,7 @@ interface AgentTestsPageContextType {
 	openCreateModal: () => void;
 	openEditModal: (test: AgentTest) => void;
 	openEditModalWithReload: (testId: string) => void;
+	openEditFromStatus: (testId: string) => Promise<void>;
 	closeModal: () => void;
 	addSuccessExample: () => void;
 	addFailureExample: () => void;
@@ -124,6 +132,7 @@ interface AgentTestsPageContextType {
 	handleSubmit: (values: AgentTestFormValues) => Promise<void>;
 	handleDelete: (test: AgentTest) => void;
 	runTests: (testIds: string[], currentAgentId: string) => Promise<void>;
+	runningTestIds: string[];
 	handleRunSelected: (tests: AgentTest[]) => void;
 	toggleRowSelection: (testId: string, checked: boolean) => void;
 	toggleAllCurrentPage: (tests: AgentTest[], checked: boolean) => void;
@@ -149,6 +158,7 @@ export const AgentTestsPageProvider: React.FC<AgentTestsPageProviderProps> = ({
 }) => {
 	const { t } = useTranslation('agent-tests');
 	const { t: tCommon } = useTranslation('common');
+	const queryClient = useQueryClient();
 
 	// Pagination & Search
 	const [page, setPage] = useState(1);
@@ -160,6 +170,10 @@ export const AgentTestsPageProvider: React.FC<AgentTestsPageProviderProps> = ({
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [editingTest, setEditingTest] = useState<AgentTest | null>(null);
 	const [editingTestLoading, setEditingTestLoading] = useState(false);
+	const [editingTestLoadingId, setEditingTestLoadingId] = useState<
+		string | null
+	>(null);
+	const [isModalTransitioning, setIsModalTransitioning] = useState(false);
 	const [editingTestId, setEditingTestId] = useState<string | null>(null);
 
 	// Selection & Run
@@ -167,14 +181,20 @@ export const AgentTestsPageProvider: React.FC<AgentTestsPageProviderProps> = ({
 	const [lastRunResult, setLastRunResult] =
 		useState<RunAgentTestsResponse | null>(null);
 	const [isAgentSelectOpen, setIsAgentSelectOpen] = useState(false);
+	const [agentSelectSource, setAgentSelectSource] = useState<
+		'studio' | 'table' | null
+	>(null);
 	const [selectedAgentForRun, setSelectedAgentForRun] = useState<string | null>(
 		null
 	);
 	const [pendingRunTests, setPendingRunTests] = useState<string[] | null>(null);
+	const [runningTestIds, setRunningTestIds] = useState<string[]>([]);
 
 	// Test Status Modal
 	const [isTestStatusModalOpen, setIsTestStatusModalOpen] = useState(false);
-	const [testStatusJobId, setTestStatusJobId] = useState<string | null>(null);
+	const [testStatusSuiteId, setTestStatusSuiteId] = useState<string | null>(
+		null
+	);
 	const [testStatusAgentId, setTestStatusAgentId] = useState<string | null>(
 		null
 	);
@@ -216,7 +236,7 @@ export const AgentTestsPageProvider: React.FC<AgentTestsPageProviderProps> = ({
 		editingTestId ?? '',
 		Boolean(editingTestId)
 	);
-	const testStatusQuery = useTestRunStatus(testStatusJobId);
+	const testStatusQuery = useTestRunStatus(testStatusSuiteId);
 
 	// Derived State - Test Status Data
 	const testStatusData = testStatusQuery.data ?? null;
@@ -237,6 +257,7 @@ export const AgentTestsPageProvider: React.FC<AgentTestsPageProviderProps> = ({
 		setEditingTest(null);
 		setEditingTestLoading(false);
 		setEditingTestId(null);
+		setEditingTestLoadingId(null);
 		setShowSuccessExamples(false);
 		setShowFailureExamples(false);
 		form.setValues(DEFAULT_FORM_VALUES);
@@ -314,6 +335,7 @@ export const AgentTestsPageProvider: React.FC<AgentTestsPageProviderProps> = ({
 	const openEditModalWithReload = useCallback((testId: string) => {
 		setEditingTestLoading(true);
 		setEditingTestId(testId);
+		setEditingTestLoadingId(testId);
 	}, []);
 
 	// Handle reload query success
@@ -321,9 +343,18 @@ export const AgentTestsPageProvider: React.FC<AgentTestsPageProviderProps> = ({
 		if (editingTestQuery.data && editingTestLoading) {
 			setEditingTestLoading(false);
 			setEditingTestId(null);
+			setEditingTestLoadingId(null);
 			openEditModal(editingTestQuery.data);
 		}
 	}, [editingTestQuery.data, editingTestLoading, openEditModal]);
+
+	useEffect(() => {
+		if (editingTestQuery.isError && editingTestLoading) {
+			setEditingTestLoading(false);
+			setEditingTestId(null);
+			setEditingTestLoadingId(null);
+		}
+	}, [editingTestLoading, editingTestQuery.isError]);
 
 	const closeModal = useCallback(() => {
 		setIsModalOpen(false);
@@ -527,8 +558,8 @@ export const AgentTestsPageProvider: React.FC<AgentTestsPageProviderProps> = ({
 			try {
 				if (editingTest?.id) {
 					await updateAgentTest.mutateAsync({
-						testId: editingTest.id,
-						data: payload,
+						id: editingTest.id,
+						...payload,
 					});
 					notifications.show({
 						title: tCommon('status.success'),
@@ -607,11 +638,13 @@ export const AgentTestsPageProvider: React.FC<AgentTestsPageProviderProps> = ({
 
 			if (!currentAgentId) {
 				setPendingRunTests(testIds);
+				setAgentSelectSource('table');
 				setIsAgentSelectOpen(true);
 				return;
 			}
 
 			try {
+				setRunningTestIds(testIds);
 				const response = await runAgentTests.mutateAsync({
 					agentId: currentAgentId,
 					data: {
@@ -622,7 +655,8 @@ export const AgentTestsPageProvider: React.FC<AgentTestsPageProviderProps> = ({
 				setLastRunResult(response);
 
 				// Open test status modal for polling
-				setTestStatusJobId(response.jobId);
+				setIsModalOpen(false);
+				setTestStatusSuiteId(response.testInvocationId || response.jobId);
 				setTestStatusAgentId(currentAgentId);
 				setTestStatusRunTestIds(testIds);
 				setIsTestStatusModalOpen(true);
@@ -641,6 +675,8 @@ export const AgentTestsPageProvider: React.FC<AgentTestsPageProviderProps> = ({
 					message: getAxiosFriendlyError(error, t('notifications.runError')),
 					color: 'red',
 				});
+			} finally {
+				setRunningTestIds([]);
 			}
 		},
 		[runAgentTests, t, tCommon]
@@ -662,7 +698,8 @@ export const AgentTestsPageProvider: React.FC<AgentTestsPageProviderProps> = ({
 			);
 
 			if (uniqueAgentIds.length === 0) {
-				setPendingRunTests(tests.map((test) => test.id));
+				setPendingRunTests(tests.map((test) => test.testId || test.id));
+				setAgentSelectSource('table');
 				setIsAgentSelectOpen(true);
 				return;
 			}
@@ -687,7 +724,7 @@ export const AgentTestsPageProvider: React.FC<AgentTestsPageProviderProps> = ({
 			}
 
 			runTests(
-				tests.map((test) => test.id),
+				tests.map((test) => test.testId || test.id),
 				selectedAgentId
 			);
 		},
@@ -742,12 +779,62 @@ export const AgentTestsPageProvider: React.FC<AgentTestsPageProviderProps> = ({
 		setSelectedTestIds([]);
 	}, []);
 
+	const openAgentSelectFromStudio = useCallback((testIds: string[]) => {
+		setIsModalTransitioning(true);
+		setPendingRunTests(testIds);
+		setAgentSelectSource('studio');
+		setIsModalOpen(false);
+		setIsAgentSelectOpen(true);
+
+		window.setTimeout(() => {
+			setIsModalTransitioning(false);
+		}, 180);
+	}, []);
+
 	const closeTestStatusModal = useCallback(() => {
 		setIsTestStatusModalOpen(false);
-		setTestStatusJobId(null);
+		setTestStatusSuiteId(null);
 		setTestStatusAgentId(null);
 		setTestStatusRunTestIds([]);
 	}, []);
+
+	const openEditFromStatus = useCallback(
+		async (testId: string) => {
+			if (!testId || isModalTransitioning) {
+				return;
+			}
+
+			setIsModalTransitioning(true);
+			try {
+				const test = await queryClient.fetchQuery({
+					queryKey: ['agent-test', testId],
+					queryFn: async () => {
+						const api = agentTestsApi();
+						return api.getAgentTestById(testId);
+					},
+				});
+
+				openEditModal(test);
+				closeTestStatusModal();
+			} catch (error) {
+				notifications.show({
+					title: tCommon('status.error'),
+					message: getAxiosFriendlyError(error, t('notifications.saveError')),
+					color: 'red',
+				});
+			} finally {
+				setIsModalTransitioning(false);
+			}
+		},
+		[
+			closeTestStatusModal,
+			isModalTransitioning,
+			openEditModal,
+			queryClient,
+			t,
+			tCommon,
+		]
+	);
 
 	const value: AgentTestsPageContextType = {
 		page,
@@ -768,6 +855,8 @@ export const AgentTestsPageProvider: React.FC<AgentTestsPageProviderProps> = ({
 		editingTest,
 		setEditingTest,
 		editingTestLoading,
+		editingTestLoadingId,
+		isModalTransitioning,
 		selectedTestIds,
 		setSelectedTestIds,
 		lastRunResult,
@@ -776,12 +865,15 @@ export const AgentTestsPageProvider: React.FC<AgentTestsPageProviderProps> = ({
 		setSelectedAgentForRun,
 		isAgentSelectOpen,
 		setIsAgentSelectOpen,
+		agentSelectSource,
+		setAgentSelectSource,
 		pendingRunTests,
 		setPendingRunTests,
+		openAgentSelectFromStudio,
 		isTestStatusModalOpen,
 		setIsTestStatusModalOpen,
-		testStatusJobId,
-		setTestStatusJobId,
+		testStatusSuiteId,
+		setTestStatusSuiteId,
 		testStatusAgentId,
 		setTestStatusAgentId,
 		testStatusData,
@@ -802,6 +894,7 @@ export const AgentTestsPageProvider: React.FC<AgentTestsPageProviderProps> = ({
 		openCreateModal,
 		openEditModal,
 		openEditModalWithReload,
+		openEditFromStatus,
 		closeModal,
 		addSuccessExample,
 		addFailureExample,
@@ -813,6 +906,7 @@ export const AgentTestsPageProvider: React.FC<AgentTestsPageProviderProps> = ({
 		handleSubmit,
 		handleDelete,
 		runTests,
+		runningTestIds,
 		handleRunSelected,
 		toggleRowSelection,
 		toggleAllCurrentPage,

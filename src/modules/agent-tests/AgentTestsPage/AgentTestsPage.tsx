@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Stack } from '@mantine/core';
 import { IconFlask } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
@@ -17,17 +17,21 @@ import AgentTestsTableSection from './components/AgentTestsTableSection';
 import AgentSelectModal from './components/AgentSelectModal';
 import AgentTestStudioModal from './components/AgentTestStudioModal';
 import { TestStatusModal } from './components/TestStatusModal';
+import { formatAgentTestName } from './utils/formatAgentTestName';
 
 const AgentTestsPageContent = () => {
 	const { t } = useTranslation('agent-tests');
 	const { canAccessModule, canPerformAction } = usePermissions();
 	const { page, limit, search } = useAgentTestsPage();
+	const [isRefreshing, setIsRefreshing] = useState(false);
 
 	// Get context values for test status modal
 	const {
 		isTestStatusModalOpen,
 		closeTestStatusModal,
-		testStatusJobId,
+		openEditFromStatus,
+		isModalTransitioning,
+		testStatusSuiteId,
 		testStatusData,
 		testStatusRunTestIds,
 		testStatusAgentId,
@@ -63,6 +67,15 @@ const AgentTestsPageContent = () => {
 		search: search || undefined,
 	});
 
+	const handleRefetch = useCallback(async () => {
+		setIsRefreshing(true);
+		try {
+			await testsQuery.refetch();
+		} finally {
+			setIsRefreshing(false);
+		}
+	}, [testsQuery]);
+
 	const agentOptions = useMemo(
 		() =>
 			(agentsQuery.data?.data ?? []).map((agent) => ({
@@ -76,30 +89,36 @@ const AgentTestsPageContent = () => {
 	const testName = useMemo(() => {
 		if (testStatusRunTestIds.length === 0) return '';
 		const firstTest = testsQuery.data?.items.find(
-			(t) => t.id === testStatusRunTestIds[0]
+			(t) => (t.testId || t.id) === testStatusRunTestIds[0]
 		);
 		if (!firstTest) return testStatusRunTestIds[0];
 
-		// Return only the test name, without the prompt
-		return firstTest.name;
+		return formatAgentTestName(firstTest.name);
 	}, [testStatusRunTestIds, testsQuery.data?.items]);
 
-	const handleRetryFailed = () => {
-		if (!testStatusAgentId || !testStatusData?.results) return;
+	const handleRetryTest = useCallback(
+		(testId: string) => {
+			const fallbackAgentId = testsQuery.data?.items.find(
+				(test) => (test.testId || test.id) === testId
+			)?.agentId;
+			const retryAgentId = testStatusAgentId || fallbackAgentId;
 
-		const failedTestIds = testStatusData.results
-			.filter((r) => r.status === 'FAILED')
-			.map((r) => r.testId);
+			if (!retryAgentId) {
+				return;
+			}
 
-		if (failedTestIds.length > 0) {
-			runTests(failedTestIds, testStatusAgentId);
-		}
-	};
+			runTests([testId], retryAgentId);
+		},
+		[runTests, testStatusAgentId, testsQuery.data?.items]
+	);
 
-	const handleRetryAll = () => {
-		if (!testStatusAgentId) return;
-		runTests(testStatusRunTestIds, testStatusAgentId);
-	};
+	const handleEditTest = useCallback(
+		(testId: string) => {
+			if (!testId) return;
+			openEditFromStatus(testId);
+		},
+		[openEditFromStatus]
+	);
 
 	if (!canRead) {
 		return null;
@@ -114,7 +133,8 @@ const AgentTestsPageContent = () => {
 				titleRight={
 					<AgentTestsHeaderActions
 						canCreate={canCreate}
-						onRefetch={() => testsQuery.refetch()}
+						onRefetch={handleRefetch}
+						isRefreshing={isRefreshing}
 					/>
 				}
 			>
@@ -129,7 +149,7 @@ const AgentTestsPageContent = () => {
 						canDelete={canDelete}
 						canRun={canRun}
 						agentOptions={agentOptions}
-						onRefetch={() => testsQuery.refetch()}
+						onRefetch={handleRefetch}
 					/>
 				</Stack>
 			</ContentContainer>
@@ -143,10 +163,12 @@ const AgentTestsPageContent = () => {
 				onClose={closeTestStatusModal}
 				testStatusData={testStatusData}
 				testList={testsQuery.data?.items ?? []}
-				isLoading={testStatusJobId !== null && testStatusData === null}
+				runTestIds={testStatusRunTestIds}
+				isLoading={testStatusSuiteId !== null && testStatusData === null}
 				testName={testName}
-				onRetryFailed={handleRetryFailed}
-				onRetryAll={handleRetryAll}
+				onRetryTest={handleRetryTest}
+				onEditTest={handleEditTest}
+				isTransitioning={isModalTransitioning}
 				isRetrying={runAgentTests.isPending}
 			/>
 		</>

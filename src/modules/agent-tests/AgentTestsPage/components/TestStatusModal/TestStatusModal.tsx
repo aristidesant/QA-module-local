@@ -2,17 +2,23 @@ import { useEffect, useMemo, useState } from 'react';
 import {
 	Modal,
 	Group,
-	Button,
 	Stack,
 	Text,
 	SimpleGrid,
 	Loader,
 	Center,
 	ActionIcon,
+	Badge,
+	Tooltip,
 } from '@mantine/core';
-import { IconRefresh, IconCircleX } from '@tabler/icons-react';
+import { IconRefresh, IconCircleX, IconPencil } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
-import type { AgentTest, RunAgentTestsResponse } from '~/models/AgentTestModel';
+import type {
+	AgentTest,
+	AgentTestChatMessage,
+	RunAgentTestsResponse,
+} from '~/models/AgentTestModel';
+import { formatAgentTestName } from '../../utils/formatAgentTestName';
 import styles from '../../AgentTestsPage.module.css';
 
 interface TestStatusModalProps {
@@ -20,10 +26,12 @@ interface TestStatusModalProps {
 	onClose: () => void;
 	testStatusData: RunAgentTestsResponse | null;
 	testList: AgentTest[];
+	runTestIds: string[];
 	isLoading: boolean;
 	testName: string;
-	onRetryFailed: () => void;
-	onRetryAll: () => void;
+	onRetryTest: (testId: string) => void;
+	onEditTest: (testId: string) => void;
+	isTransitioning: boolean;
 	isRetrying: boolean;
 }
 
@@ -32,10 +40,12 @@ export const TestStatusModal: React.FC<TestStatusModalProps> = ({
 	onClose,
 	testStatusData,
 	testList,
+	runTestIds,
 	isLoading,
 	testName,
-	onRetryFailed,
-	onRetryAll,
+	onRetryTest,
+	onEditTest,
+	isTransitioning,
 	isRetrying,
 }) => {
 	const { t } = useTranslation('agent-tests');
@@ -49,12 +59,26 @@ export const TestStatusModal: React.FC<TestStatusModalProps> = ({
 		);
 	}, [testStatusData?.results]);
 
-	// Auto-select first failed test when modal opens or data updates
+	const completedTests = useMemo(() => {
+		if (!testStatusData?.results) return [];
+		return testStatusData.results.filter(
+			(result) => result.status !== 'PENDING'
+		);
+	}, [testStatusData?.results]);
+
+	// Auto-select first failed test, or first completed test
 	useEffect(() => {
-		if (failedTests.length > 0 && !selectedTestId) {
+		if (selectedTestId) return;
+
+		if (failedTests.length > 0) {
 			setSelectedTestId(failedTests[0].testId);
+			return;
 		}
-	}, [failedTests, selectedTestId]);
+
+		if (completedTests.length > 0) {
+			setSelectedTestId(completedTests[0].testId);
+		}
+	}, [completedTests, failedTests, selectedTestId]);
 
 	// Get selected test details
 	const selectedTest = useMemo(() => {
@@ -62,12 +86,86 @@ export const TestStatusModal: React.FC<TestStatusModalProps> = ({
 		const testResult = testStatusData?.results?.find(
 			(r) => r.testId === selectedTestId
 		);
-		const testMetadata = testList.find((t) => t.id === selectedTestId);
+		const testMetadata = testList.find(
+			(t) => (t.testId || t.id) === selectedTestId
+		);
 		return { result: testResult, metadata: testMetadata };
 	}, [selectedTestId, testStatusData?.results, testList]);
 
+	const selectedTestDisplayName = useMemo(() => {
+		if (!selectedTest) return '';
+		return formatAgentTestName(
+			selectedTest.metadata?.name ||
+				selectedTest.result?.testName ||
+				selectedTest.result?.testId ||
+				''
+		);
+	}, [selectedTest]);
+
+	const conversationMessages = useMemo(() => {
+		const invocationConversation = (
+			selectedTest?.result?.chatHistory ?? []
+		).filter((message) => message.message.trim().length > 0);
+		const metadataConversation = (
+			selectedTest?.metadata?.chatHistory ?? []
+		).filter((message) => message.message.trim().length > 0);
+		const baseConversation =
+			invocationConversation.length > 0
+				? invocationConversation
+				: metadataConversation;
+
+		const finalAgentReply = selectedTest?.result?.actual?.trim();
+		if (!finalAgentReply) {
+			return baseConversation;
+		}
+
+		const lastMessage = baseConversation[baseConversation.length - 1];
+		const lastMessageIsSameAgentReply =
+			lastMessage?.role === 'agent' &&
+			lastMessage.message.trim() === finalAgentReply;
+
+		if (lastMessageIsSameAgentReply) {
+			return baseConversation;
+		}
+
+		return [
+			...baseConversation,
+			{
+				role: 'agent',
+				message: finalAgentReply,
+			} as AgentTestChatMessage,
+		];
+	}, [
+		selectedTest?.metadata?.chatHistory,
+		selectedTest?.result?.actual,
+		selectedTest?.result?.chatHistory,
+	]);
+
 	const isCompleted = testStatusData?.status === 'COMPLETED';
 	const showLoadingState = isLoading || !isCompleted;
+	const selectedStatus = selectedTest?.result?.status || 'PENDING';
+	const selectedColor =
+		selectedStatus === 'PASSED'
+			? 'green'
+			: selectedStatus === 'FAILED'
+				? 'red'
+				: 'gray';
+
+	const runningTests = useMemo(() => {
+		const statusById = new Map(
+			(testStatusData?.results ?? []).map((result) => [result.testId, result])
+		);
+
+		return runTestIds.map((testId) => {
+			const result = statusById.get(testId);
+			const test = testList.find((item) => (item.testId || item.id) === testId);
+			return {
+				testId,
+				name: result?.testName || test?.name || formatAgentTestName(testId),
+				status: result?.status || 'PENDING',
+			};
+		});
+	}, [runTestIds, testList, testStatusData?.results]);
 
 	return (
 		<Modal
@@ -82,58 +180,76 @@ export const TestStatusModal: React.FC<TestStatusModalProps> = ({
 			}}
 		>
 			<Stack gap='xs' h='100%'>
-				{/* Header with buttons */}
-				<Group justify='space-between' mb='sm'>
-					<div />
-					<Group gap='xs'>
-						{isCompleted && (
-							<>
-								<Button
-									variant='light'
-									size='sm'
-									onClick={onRetryFailed}
-									disabled={failedTests.length === 0 || isRetrying}
-									loading={isRetrying}
-								>
-									{t('testStatus.retryFailed')}
-								</Button>
-								<Button
-									variant='light'
-									size='sm'
-									onClick={onRetryAll}
-									disabled={isRetrying}
-									loading={isRetrying}
-								>
-									{t('testStatus.retryAll')}
-								</Button>
-							</>
-						)}
-					</Group>
-				</Group>
-
 				{/* Two-pane layout */}
 				<SimpleGrid cols={2} spacing='xs' h='100%' style={{ minHeight: 0 }}>
 					{/* Left pane - Failed Tests List */}
 					<Stack gap='xs' style={{ minHeight: 0, overflow: 'auto' }}>
 						<Text fw={600} size='sm'>
-							{t('testStatus.failedTests', { count: failedTests.length })}
+							{showLoadingState
+								? t('testStatus.runningTestsTitle', {
+										count: runTestIds.length,
+									})
+								: t('testStatus.completedTests', {
+										count: completedTests.length,
+									})}
 						</Text>
 
 						{showLoadingState ? (
-							<Center h={300}>
-								<Loader size='sm' />
-							</Center>
-						) : failedTests.length === 0 ? (
+							<Stack gap='xs' style={{ overflow: 'auto', flex: 1 }}>
+								{runningTests.map((item) => (
+									<div
+										key={item.testId}
+										className={styles.testStatusListItem}
+										style={{
+											padding: 'var(--mantine-spacing-xs)',
+											border: '1px solid var(--mantine-color-gray-2)',
+											borderRadius: 'var(--mantine-radius-md)',
+											backgroundColor: 'var(--mantine-color-white)',
+										}}
+									>
+										<Group gap='xs' justify='space-between' wrap='nowrap'>
+											<div className={styles.testStatusListItemLabel}>
+												<Text size='sm' fw={500} truncate>
+													{formatAgentTestName(item.name)}
+												</Text>
+											</div>
+											<Badge
+												size='xs'
+												variant='light'
+												color={item.status === 'PENDING' ? 'gray' : 'blue'}
+											>
+												{item.status === 'PENDING'
+													? t('testStatus.pending')
+													: item.status}
+											</Badge>
+										</Group>
+									</div>
+								))}
+								{runningTests.length === 0 && (
+									<Center h={120}>
+										<Loader size='sm' />
+									</Center>
+								)}
+							</Stack>
+						) : completedTests.length === 0 ? (
 							<Center h={300}>
 								<Text size='sm' c='dimmed'>
-									All tests passed!
+									{t('testStatus.allPassed')}
 								</Text>
 							</Center>
 						) : (
 							<Stack gap='xs' style={{ overflow: 'auto', flex: 1 }}>
-								{failedTests.map((result) => {
-									const test = testList.find((t) => t.id === result.testId);
+								{completedTests.map((result) => {
+									const test = testList.find(
+										(t) => (t.testId || t.id) === result.testId
+									);
 									const isSelected = selectedTestId === result.testId;
+									const rowColor =
+										result.status === 'PASSED'
+											? 'green'
+											: result.status === 'FAILED'
+												? 'red'
+												: 'gray';
 
 									return (
 										<div
@@ -144,37 +260,63 @@ export const TestStatusModal: React.FC<TestStatusModalProps> = ({
 												border: '1px solid var(--mantine-color-gray-2)',
 												borderRadius: 'var(--mantine-radius-md)',
 												cursor: 'pointer',
-												backgroundColor: isSelected
-													? 'var(--mantine-color-blue-0)'
-													: 'var(--mantine-color-white)',
+												backgroundColor:
+													result.status === 'PASSED'
+														? 'var(--mantine-color-green-0)'
+														: result.status === 'FAILED'
+															? 'var(--mantine-color-red-0)'
+															: 'var(--mantine-color-white)',
 												borderColor: isSelected
 													? 'var(--mantine-color-blue-3)'
 													: 'var(--mantine-color-gray-2)',
 											}}
+											className={styles.testStatusListItem}
 										>
 											<Group gap='xs' wrap='nowrap'>
 												<IconCircleX
 													size={20}
 													style={{
-														color: 'var(--mantine-color-red-6)',
+														color:
+															rowColor === 'green'
+																? 'var(--mantine-color-green-6)'
+																: rowColor === 'red'
+																	? 'var(--mantine-color-red-6)'
+																	: 'var(--mantine-color-gray-6)',
 														flexShrink: 0,
 													}}
 												/>
-												<div style={{ flex: 1, minWidth: 0 }}>
+												<div className={styles.testStatusListItemLabel}>
 													<Text size='sm' fw={500} truncate>
-														{(test?.name || result.testId).split('##')[0]}
+														{formatAgentTestName(test?.name || result.testId)}
 													</Text>
 												</div>
+												<Badge size='xs' variant='light' color={rowColor}>
+													{result.status}
+												</Badge>
 												<ActionIcon
 													size='xs'
 													variant='subtle'
+													disabled={isRetrying}
 													onClick={(e) => {
 														e.stopPropagation();
-														// This will be handled by retry logic
+														onRetryTest(result.testId);
 													}}
 												>
 													<IconRefresh size={14} />
 												</ActionIcon>
+												<Tooltip label={t('testStatus.editTest')}>
+													<ActionIcon
+														size='xs'
+														variant='subtle'
+														disabled={isTransitioning}
+														onClick={(e) => {
+															e.stopPropagation();
+															onEditTest(test?.id || result.testId);
+														}}
+													>
+														<IconPencil size={14} />
+													</ActionIcon>
+												</Tooltip>
 											</Group>
 										</div>
 									);
@@ -197,17 +339,6 @@ export const TestStatusModal: React.FC<TestStatusModalProps> = ({
 							<Text fw={600} size='sm'>
 								{t('testStatus.evaluation')}
 							</Text>
-							{selectedTest?.metadata && (
-								<Button
-									variant='light'
-									size='xs'
-									onClick={() => {
-										// Will be implemented to open edit modal
-									}}
-								>
-									{t('testStatus.editTest')}
-								</Button>
-							)}
 						</Group>
 
 						{showLoadingState ? (
@@ -226,75 +357,93 @@ export const TestStatusModal: React.FC<TestStatusModalProps> = ({
 								</Text>
 							</Center>
 						) : (
-							<Stack gap='sm'>
-								{/* Test Name */}
-								<div
-									style={{
-										padding: 'var(--mantine-spacing-sm)',
-										border: '1px solid var(--mantine-color-gray-2)',
-										borderRadius: 'var(--mantine-radius-md)',
-										backgroundColor: 'var(--mantine-color-gray-0)',
-									}}
-								>
-									<Text size='xs' c='dimmed' mb='xs'>
-										Test Information
-									</Text>
-									<Text size='sm' fw={500}>
-										{selectedTest.metadata?.name?.split('##')[0]}
-									</Text>
-									<Text size='xs' c='dimmed' mt='xs'>
-										ID: {selectedTest.result?.testId}
-									</Text>
-								</div>
-
-								{/* Expected Response */}
-								<div
-									style={{
-										padding: 'var(--mantine-spacing-sm)',
-										border: '1px solid var(--mantine-color-gray-2)',
-										borderRadius: 'var(--mantine-radius-md)',
-										backgroundColor: 'var(--mantine-color-gray-0)',
-									}}
-								>
-									<Text size='xs' c='dimmed' mb='xs'>
-										{t('testStatus.expectedResponse')}
-									</Text>
-									<Text
-										size='sm'
-										style={{
-											whiteSpace: 'pre-wrap',
-											wordBreak: 'break-word',
-										}}
-									>
-										{selectedTest.metadata?.successCondition ||
-											selectedTest.metadata?.expectedResponse ||
-											'N/A'}
-									</Text>
-								</div>
-
-								{/* Actual Response */}
-								<div
-									style={{
-										padding: 'var(--mantine-spacing-sm)',
-										border: '1px solid var(--mantine-color-red-2)',
-										borderRadius: 'var(--mantine-radius-md)',
-										backgroundColor: 'var(--mantine-color-red-0)',
-									}}
-								>
-									<Text size='xs' c='red' mb='xs' fw={500}>
+							<Stack gap='xs' h='100%' style={{ minHeight: 0 }}>
+								<Group justify='space-between' align='center'>
+									<Group gap='xs'>
+										<Text size='xs' c='dimmed'>
+											{selectedTestDisplayName}
+										</Text>
+										<Tooltip label={t('testStatus.editTest')}>
+											<ActionIcon
+												size='xs'
+												variant='subtle'
+												disabled={isTransitioning || !selectedTest.metadata?.id}
+												onClick={() => {
+													if (selectedTest.metadata?.id) {
+														onEditTest(selectedTest.metadata.id);
+													}
+												}}
+											>
+												<IconPencil size={14} />
+											</ActionIcon>
+										</Tooltip>
+									</Group>
+									<Badge size='sm' variant='light' color={selectedColor}>
 										{t('testStatus.actualResponse')}
+									</Badge>
+								</Group>
+
+								{selectedTest.result?.rationale && (
+									<Text size='xs' c='dimmed'>
+										{selectedTest.result.rationale}
 									</Text>
-									<Text
-										size='sm'
-										c='red'
-										style={{
-											whiteSpace: 'pre-wrap',
-											wordBreak: 'break-word',
-										}}
-									>
-										{selectedTest.result?.actual || 'N/A'}
-									</Text>
-								</div>
+								)}
+
+								<Stack gap='xs' className={styles.testStatusConversationPane}>
+									{conversationMessages.map((message, index) => {
+										const isUser = message.role === 'user';
+										const isLastMessage =
+											index === conversationMessages.length - 1;
+										const isFinalActualAgentMessage =
+											!isUser &&
+											isLastMessage &&
+											Boolean(selectedTest.result?.actual?.trim());
+										const finalBubbleClass =
+											isFinalActualAgentMessage && selectedStatus === 'FAILED'
+												? styles.chatBubbleFailed
+												: isFinalActualAgentMessage &&
+													  selectedStatus === 'PASSED'
+													? styles.chatBubblePassed
+													: '';
+
+										return (
+											<div
+												key={`${message.role}-${index}-${message.message}`}
+												className={
+													isUser ? styles.chatRowUser : styles.chatRowAgent
+												}
+											>
+												<div
+													className={`${styles.chatBubble} ${
+														isUser
+															? styles.chatBubbleUser
+															: styles.chatBubbleAgent
+													} ${finalBubbleClass}`}
+												>
+													<Text size='xs' c='dimmed'>
+														{isUser
+															? t('simulation.user')
+															: t('simulation.agent')}
+													</Text>
+													<Text
+														size='sm'
+														className={styles.testStatusMessageText}
+													>
+														{message.message}
+													</Text>
+												</div>
+											</div>
+										);
+									})}
+
+									{conversationMessages.length === 0 && (
+										<Center h={160}>
+											<Text size='sm' c='dimmed'>
+												{t('testStatus.noConversation')}
+											</Text>
+										</Center>
+									)}
+								</Stack>
 							</Stack>
 						)}
 					</Stack>

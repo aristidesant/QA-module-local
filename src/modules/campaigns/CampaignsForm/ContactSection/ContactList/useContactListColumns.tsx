@@ -15,6 +15,7 @@ import {
 } from '~/queries/contactGroupQueries';
 import { useCampaignActiveSchedule } from '~/queries/schedulerQueries';
 import { getQueueStatusConfig } from './queueStatusConfig';
+import { useSessionStore } from '~/stores/sessionStore';
 
 interface UseContactListColumnsParams {
 	onUpdateComplete: () => void;
@@ -32,6 +33,7 @@ const useContactListColumns = ({
 	onNavigateToContactList,
 }: UseContactListColumnsParams): ColumnDef<ContactGroup>[] => {
 	const { t } = useTranslation('campaigns');
+	const { user, targetClient } = useSessionStore();
 	const toggleMutation = useToggleContactGroupStatus();
 	const updateMutation = useUpdateContactGroup();
 	const deleteMutation = useDeleteContactGroup();
@@ -40,6 +42,17 @@ const useContactListColumns = ({
 		isActive: true,
 		campaignId,
 	});
+
+	const activeClientId =
+		targetClient?.id ?? user?.clientId ?? user?.client?.id ?? null;
+	const isSuperAdmin =
+		activeClientId !== null &&
+		(user?.userRolesClient?.some(
+			(userRole) =>
+				userRole.clientId === activeClientId &&
+				userRole.role?.code === 'SUPER_ADMIN'
+		) ??
+			false);
 
 	return useMemo(
 		() => [
@@ -128,7 +141,7 @@ const useContactListColumns = ({
 
 					return (
 						<Group gap='xs' justify='flex-start' wrap='nowrap'>
-							{onNavigateToContactList && (
+							{onNavigateToContactList && isSuperAdmin && (
 								<Tooltip
 									label={t('form.contacts.details.actions.openContactList')}
 									withArrow
@@ -164,6 +177,7 @@ const useContactListColumns = ({
 			activeSchedule,
 			contactGroups,
 			onNavigateToContactList,
+			isSuperAdmin,
 			t,
 		]
 	);

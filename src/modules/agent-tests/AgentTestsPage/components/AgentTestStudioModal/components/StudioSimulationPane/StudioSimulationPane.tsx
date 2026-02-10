@@ -4,10 +4,11 @@ import {
 	Button,
 	Group,
 	Menu,
-	Stack,
 	Text,
 	Textarea,
+	ThemeIcon,
 } from '@mantine/core';
+import { useEffect, useState } from 'react';
 import {
 	IconPlayerPlay,
 	IconPlus,
@@ -25,7 +26,6 @@ const StudioSimulationPane = () => {
 	const { t: tCommon } = useTranslation('common');
 	const {
 		chatHistoryPreview,
-		dynamicVariablePreview,
 		editingTest,
 		lastRunResult,
 		runAgentTests,
@@ -34,13 +34,30 @@ const StudioSimulationPane = () => {
 		removeConversationTurn,
 		updateConversationTurnRole,
 		updateConversationTurnMessage,
-		setPendingRunTests,
-		setIsAgentSelectOpen,
-		closeModal,
+		openAgentSelectFromStudio,
 	} = useAgentTestsPage();
+	const [selectedMessageIndex, setSelectedMessageIndex] = useState<
+		number | null
+	>(null);
+
+	useEffect(() => {
+		if (chatHistoryPreview.length === 0) {
+			setSelectedMessageIndex(null);
+			return;
+		}
+
+		setSelectedMessageIndex((current) => {
+			if (current === null) {
+				return chatHistoryPreview.length - 1;
+			}
+			return current >= chatHistoryPreview.length
+				? chatHistoryPreview.length - 1
+				: current;
+		});
+	}, [chatHistoryPreview.length]);
 
 	const handleRunTest = () => {
-		const currentId = editingTest?.id;
+		const currentId = editingTest?.testId || editingTest?.id;
 		const testAgentId = editingTest?.agentId;
 		if (!currentId) {
 			notifications.show({
@@ -51,8 +68,7 @@ const StudioSimulationPane = () => {
 			return;
 		}
 		if (!testAgentId) {
-			setPendingRunTests([currentId]);
-			setIsAgentSelectOpen(true);
+			openAgentSelectFromStudio([currentId]);
 			return;
 		}
 		runTests([currentId], testAgentId);
@@ -60,9 +76,13 @@ const StudioSimulationPane = () => {
 
 	return (
 		<div className={styles.studioSimulationPane}>
-			<Stack gap='xs'>
-				<Group justify='space-between' align='center'>
-					<Text size='sm' fw={600}>
+			<div className={styles.studioSimulationContent}>
+				<Group
+					justify='space-between'
+					align='center'
+					className={styles.sectionHeader}
+				>
+					<Text size='xs' fw={700} className={styles.studioSectionTitle}>
 						{t('simulation.title')}
 					</Text>
 					<Button
@@ -88,7 +108,7 @@ const StudioSimulationPane = () => {
 									<Button
 										size='xs'
 										leftSection={<IconPlus size={12} />}
-										variant='default'
+										variant='subtle'
 									>
 										{t('simulation.addMessage')}
 									</Button>
@@ -110,124 +130,151 @@ const StudioSimulationPane = () => {
 							</Menu>
 						</div>
 					) : (
-						chatHistoryPreview.map((turn, index) => (
-							<div
-								key={`${turn.role}-${index}`}
-								className={
-									turn.role === 'agent'
-										? styles.messageRowAgent
-										: styles.messageRowUser
-								}
-							>
-								<div className={styles.messageMetaRow}>
-									<Menu shadow='sm' withArrow>
-										<Menu.Target>
-											<Button
-												size='compact-xs'
-												variant='subtle'
-												className={styles.messageRoleButton}
+						chatHistoryPreview.map((turn, index) => {
+							const isSelected = selectedMessageIndex === index;
+
+							return (
+								<div
+									key={`${turn.role}-${index}`}
+									className={
+										turn.role === 'agent'
+											? styles.chatRowAgent
+											: styles.chatRowUser
+									}
+									onClick={() => setSelectedMessageIndex(index)}
+								>
+									<div
+										className={
+											turn.role === 'agent'
+												? `${styles.chatBubble} ${styles.chatBubbleAgent} ${isSelected ? styles.chatBubbleSelected : ''}`
+												: `${styles.chatBubble} ${styles.chatBubbleUser} ${isSelected ? styles.chatBubbleSelected : ''}`
+										}
+									>
+										<Group justify='space-between' align='center' wrap='nowrap'>
+											<Badge
+												size='xs'
+												variant='light'
+												leftSection={
+													turn.role === 'agent' ? (
+														<IconRobot size={11} />
+													) : (
+														<IconUser size={11} />
+													)
+												}
 											>
 												{turn.role === 'agent'
 													? t('simulation.agent')
 													: t('simulation.user')}
-											</Button>
-										</Menu.Target>
-										<Menu.Dropdown>
-											<Menu.Item
-												leftSection={<IconUser size={14} />}
-												onClick={() =>
-													updateConversationTurnRole(index, 'user')
-												}
-											>
-												{t('simulation.user')}
-											</Menu.Item>
-											<Menu.Item
-												leftSection={<IconRobot size={14} />}
-												onClick={() =>
-													updateConversationTurnRole(index, 'agent')
-												}
-											>
-												{t('simulation.agent')}
-											</Menu.Item>
-										</Menu.Dropdown>
-									</Menu>
+											</Badge>
+											{isSelected && (
+												<Group gap={4} wrap='nowrap'>
+													<Menu shadow='sm' withArrow>
+														<Menu.Target>
+															<ActionIcon
+																size='sm'
+																variant='subtle'
+																aria-label={t('simulation.addMessage')}
+															>
+																<IconPlus size={14} />
+															</ActionIcon>
+														</Menu.Target>
+														<Menu.Dropdown>
+															<Menu.Item
+																leftSection={<IconUser size={14} />}
+																onClick={() =>
+																	addConversationTurn(index, 'user')
+																}
+															>
+																{t('simulation.addUserMessage')}
+															</Menu.Item>
+															<Menu.Item
+																leftSection={<IconRobot size={14} />}
+																onClick={() =>
+																	addConversationTurn(index, 'agent')
+																}
+															>
+																{t('simulation.addAgentMessage')}
+															</Menu.Item>
+														</Menu.Dropdown>
+													</Menu>
+													<Menu shadow='sm' withArrow>
+														<Menu.Target>
+															<ActionIcon
+																size='sm'
+																variant='subtle'
+																aria-label={t('simulation.user')}
+															>
+																<ThemeIcon
+																	size={14}
+																	variant='transparent'
+																	color='gray'
+																>
+																	{turn.role === 'agent' ? (
+																		<IconRobot size={12} />
+																	) : (
+																		<IconUser size={12} />
+																	)}
+																</ThemeIcon>
+															</ActionIcon>
+														</Menu.Target>
+														<Menu.Dropdown>
+															<Menu.Item
+																leftSection={<IconUser size={14} />}
+																onClick={() =>
+																	updateConversationTurnRole(index, 'user')
+																}
+															>
+																{t('simulation.user')}
+															</Menu.Item>
+															<Menu.Item
+																leftSection={<IconRobot size={14} />}
+																onClick={() =>
+																	updateConversationTurnRole(index, 'agent')
+																}
+															>
+																{t('simulation.agent')}
+															</Menu.Item>
+														</Menu.Dropdown>
+													</Menu>
+													<ActionIcon
+														size='sm'
+														variant='subtle'
+														color='red'
+														onClick={() => removeConversationTurn(index)}
+														aria-label={t('simulation.removeMessage')}
+													>
+														<IconTrash size={14} />
+													</ActionIcon>
+												</Group>
+											)}
+										</Group>
+										<Textarea
+											value={turn.message}
+											onFocus={() => setSelectedMessageIndex(index)}
+											onChange={(event) =>
+												updateConversationTurnMessage(
+													index,
+													event.currentTarget.value
+												)
+											}
+											autosize
+											minRows={1}
+											maxRows={8}
+											size='sm'
+											variant='unstyled'
+											className={styles.chatBubbleEditor}
+											placeholder={
+												turn.role === 'agent'
+													? t('simulation.agentMessagePlaceholder')
+													: t('simulation.userMessagePlaceholder')
+											}
+										/>
+									</div>
 								</div>
-								<Textarea
-									value={turn.message}
-									onChange={(event) =>
-										updateConversationTurnMessage(
-											index,
-											event.currentTarget.value
-										)
-									}
-									autosize
-									minRows={2}
-									maxRows={8}
-									size='sm'
-									variant='unstyled'
-									className={styles.messageBubbleEditor}
-									placeholder={
-										turn.role === 'agent'
-											? t('simulation.agentMessagePlaceholder')
-											: t('simulation.userMessagePlaceholder')
-									}
-								/>
-								<Group gap='xs' justify='flex-end'>
-									<ActionIcon
-										size='sm'
-										variant='subtle'
-										color='red'
-										onClick={() => removeConversationTurn(index)}
-										aria-label={t('simulation.removeMessage')}
-									>
-										<IconTrash size={14} />
-									</ActionIcon>
-									<Menu shadow='sm' position='bottom-end' withArrow>
-										<Menu.Target>
-											<ActionIcon
-												size='sm'
-												variant='default'
-												aria-label={t('simulation.addMessage')}
-											>
-												<IconPlus size={14} />
-											</ActionIcon>
-										</Menu.Target>
-										<Menu.Dropdown>
-											<Menu.Item
-												leftSection={<IconUser size={14} />}
-												onClick={() => addConversationTurn(index, 'user')}
-											>
-												{t('simulation.addUserMessage')}
-											</Menu.Item>
-											<Menu.Item
-												leftSection={<IconRobot size={14} />}
-												onClick={() => addConversationTurn(index, 'agent')}
-											>
-												{t('simulation.addAgentMessage')}
-											</Menu.Item>
-										</Menu.Dropdown>
-									</Menu>
-								</Group>
-							</div>
-						))
+							);
+						})
 					)}
 				</div>
-
-				{dynamicVariablePreview.length > 0 && (
-					<div className={styles.dynamicVarsBox}>
-						<Text size='xs' fw={600}>
-							{t('simulation.dynamicVarsPreview')}
-						</Text>
-						{dynamicVariablePreview.map((item) => (
-							<Group key={item.key} justify='space-between' gap='xs'>
-								<Text size='xs' c='dimmed'>
-									{item.key}
-								</Text>
-								<Text size='xs'>{item.value || '-'}</Text>
-							</Group>
-						))}
-					</div>
-				)}
 
 				{lastRunResult && (
 					<div className={styles.runResultBox}>
@@ -262,16 +309,7 @@ const StudioSimulationPane = () => {
 						)}
 					</div>
 				)}
-
-				<Group justify='space-between' mt='sm'>
-					<Button variant='default' size='sm' onClick={closeModal}>
-						{tCommon('actions.cancel')}
-					</Button>
-					<Button type='submit' size='sm' form='agent-test-form'>
-						{editingTest ? t('actions.saveChanges') : t('actions.create')}
-					</Button>
-				</Group>
-			</Stack>
+			</div>
 		</div>
 	);
 };
