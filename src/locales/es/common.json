@@ -44,7 +44,8 @@
 		"items": {
 			"overview": "Resumen",
 			"campaigns": "Campañas",
-			"conversations": "Conversaciones"
+			"conversations": "Conversaciones",
+			"agentTests": "Pruebas de agentes"
 		}
 	},
 	"nav": {
@@ -73,6 +74,7 @@
 		"items": {
 			"campaignManagement": "Gestión de campañas",
 			"configurations": "Configuraciones",
+			"agentTests": "Pruebas de agentes",
 			"doNotCall": "No llamar (DNC)",
 			"clients": "Clientes",
 			"knowledgeBases": "Bases de conocimiento",

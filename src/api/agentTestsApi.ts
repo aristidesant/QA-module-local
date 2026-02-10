@@ -1,0 +1,339 @@
+import axios from 'axios';
+import { DEFAULT_API_URL } from './config';
+import type {
+	AgentTest,
+	AgentTestChatMessage,
+	AgentTestExample,
+	AgentTestListParams,
+	AgentTestListResponse,
+	CreateAgentTestDto,
+	DeleteAgentTestResponse,
+	RunAgentTestsDto,
+	RunAgentTestsResponse,
+	UpdateAgentTestDto,
+} from '~/models/AgentTestModel';
+
+type UnknownRecord = Record<string, unknown>;
+
+const normalizeChatHistory = (value: unknown): AgentTestChatMessage[] => {
+	if (!Array.isArray(value)) return [];
+
+	return value
+		.map((item) => {
+			if (!item || typeof item !== 'object') return null;
+			const row = item as UnknownRecord;
+			const agentMetadataRaw =
+				((row.agentMetadata ?? row.agent_metadata) as UnknownRecord | null) ??
+				null;
+			const role: AgentTestChatMessage['role'] =
+				String(row.role ?? 'user').toLowerCase() === 'agent' ? 'agent' : 'user';
+			const message = String(row.message ?? '').trim();
+			if (!message) return null;
+			const timeInCallSecsRaw = row.timeInCallSecs ?? row.time_in_call_secs;
+
+			return {
+				role,
+				agentMetadata:
+					agentMetadataRaw && typeof agentMetadataRaw === 'object'
+						? {
+								agentId:
+									(agentMetadataRaw.agentId ?? agentMetadataRaw.agent_id)
+										? String(
+												agentMetadataRaw.agentId ?? agentMetadataRaw.agent_id
+											)
+										: null,
+								branchId:
+									(agentMetadataRaw.branchId ?? agentMetadataRaw.branch_id)
+										? String(
+												agentMetadataRaw.branchId ?? agentMetadataRaw.branch_id
+											)
+										: null,
+								workflowNodeId:
+									(agentMetadataRaw.workflowNodeId ??
+									agentMetadataRaw.workflow_node_id)
+										? String(
+												agentMetadataRaw.workflowNodeId ??
+													agentMetadataRaw.workflow_node_id
+											)
+										: null,
+							}
+						: null,
+				message,
+				multivoiceMessage:
+					typeof (row.multivoiceMessage ?? row.multivoice_message) === 'string'
+						? String(row.multivoiceMessage ?? row.multivoice_message)
+						: null,
+				toolCalls: Array.isArray(row.toolCalls ?? row.tool_calls)
+					? ((row.toolCalls ?? row.tool_calls) as unknown[])
+					: [],
+				toolResults: Array.isArray(row.toolResults ?? row.tool_results)
+					? ((row.toolResults ?? row.tool_results) as unknown[])
+					: [],
+				feedback: row.feedback ?? null,
+				llmOverride: row.llmOverride ?? row.llm_override ?? null,
+				timeInCallSecs:
+					typeof timeInCallSecsRaw === 'number' ? timeInCallSecsRaw : undefined,
+				conversationTurnMetrics:
+					row.conversationTurnMetrics ?? row.conversation_turn_metrics ?? null,
+				ragRetrievalInfo:
+					row.ragRetrievalInfo ?? row.rag_retrieval_info ?? null,
+				llmUsage: row.llmUsage ?? row.llm_usage ?? null,
+				interrupted:
+					typeof row.interrupted === 'boolean' ? row.interrupted : false,
+				originalMessage:
+					typeof (row.originalMessage ?? row.original_message) === 'string'
+						? String(row.originalMessage ?? row.original_message)
+						: null,
+				sourceMedium:
+					typeof (row.sourceMedium ?? row.source_medium) === 'string'
+						? String(row.sourceMedium ?? row.source_medium)
+						: null,
+			} as AgentTestChatMessage;
+		})
+		.filter((item): item is AgentTestChatMessage => item !== null);
+};
+
+const normalizeExamples = (
+	value: unknown,
+	type: AgentTestExample['type']
+): AgentTestExample[] => {
+	if (!Array.isArray(value)) return [];
+
+	return value
+		.map((item) => {
+			if (!item || typeof item !== 'object') return null;
+			const row = item as UnknownRecord;
+			const response = String(row.response ?? '').trim();
+			if (!response) return null;
+			return {
+				response,
+				type,
+			};
+		})
+		.filter((item): item is AgentTestExample => Boolean(item));
+};
+
+const normalizeSingleTest = (raw: unknown): AgentTest => {
+	const row = (raw ?? {}) as UnknownRecord;
+	const prompt = String(row.prompt ?? '').trim();
+	const expectedResponse = String(
+		row.expectedResponse ?? row.success_condition ?? ''
+	).trim();
+
+	return {
+		id: String(row.id ?? ''),
+		name: String(row.name ?? ''),
+		agentId:
+			(row.agentId ?? row.agent_id)
+				? String(row.agentId ?? row.agent_id)
+				: undefined,
+		type: row.type === 'tool' ? 'tool' : 'llm',
+		chatHistory: normalizeChatHistory(row.chatHistory ?? row.chat_history),
+		successCondition: String(
+			row.successCondition ?? row.success_condition ?? expectedResponse
+		).trim(),
+		successExamples: normalizeExamples(
+			row.successExamples ?? row.success_examples,
+			'success'
+		),
+		failureExamples: normalizeExamples(
+			row.failureExamples ?? row.failure_examples,
+			'failure'
+		),
+		dynamicVariables: (row.dynamicVariables ??
+			row.dynamic_variables ??
+			{}) as Record<string, string | number | boolean>,
+		checkAnyToolMatches:
+			typeof row.checkAnyToolMatches === 'boolean'
+				? row.checkAnyToolMatches
+				: typeof row.check_any_tool_matches === 'boolean'
+					? (row.check_any_tool_matches as boolean)
+					: undefined,
+		toolCallParameters: (row.toolCallParameters ??
+			row.tool_call_parameters) as AgentTest['toolCallParameters'],
+
+		// legacy compatibility
+		prompt,
+		expectedResponse,
+		assertions: row.assertions as AgentTest['assertions'],
+		notes: typeof row.notes === 'string' ? row.notes : undefined,
+		createdAt: typeof row.createdAt === 'string' ? row.createdAt : undefined,
+		updatedAt: typeof row.updatedAt === 'string' ? row.updatedAt : undefined,
+	};
+};
+
+const toCreatePayload = (data: CreateAgentTestDto) => {
+	const payload = {
+		name: data.name,
+		type: data.type ?? 'llm',
+		chatHistory: data.chatHistory.map((item, index) => ({
+			role: item.role,
+			agentMetadata: item.agentMetadata
+				? {
+						agentId: item.agentMetadata.agentId ?? null,
+						branchId: item.agentMetadata.branchId ?? null,
+						workflowNodeId: item.agentMetadata.workflowNodeId ?? null,
+					}
+				: null,
+			message: item.message,
+			multivoiceMessage: item.multivoiceMessage ?? null,
+			toolCalls: item.toolCalls ?? [],
+			toolResults: item.toolResults ?? [],
+			feedback: item.feedback ?? null,
+			llmOverride: item.llmOverride ?? null,
+			timeInCallSecs: item.timeInCallSecs ?? index,
+			conversationTurnMetrics: item.conversationTurnMetrics ?? null,
+			ragRetrievalInfo: item.ragRetrievalInfo ?? null,
+			llmUsage: item.llmUsage ?? null,
+			interrupted: item.interrupted ?? false,
+			originalMessage: item.originalMessage ?? null,
+			sourceMedium: item.sourceMedium ?? null,
+		})),
+		successCondition: data.successCondition,
+		successExamples: data.successExamples,
+		failureExamples: data.failureExamples,
+		dynamicVariables: data.dynamicVariables ?? {},
+		toolCallParameters: data.toolCallParameters,
+		checkAnyToolMatches: data.checkAnyToolMatches,
+		notes: data.notes,
+	};
+
+	return payload;
+};
+
+const normalizeListResponse = (
+	raw: unknown,
+	params?: AgentTestListParams
+): AgentTestListResponse => {
+	const row = (raw ?? {}) as UnknownRecord;
+	const list = Array.isArray(row.items)
+		? row.items
+		: Array.isArray(row.tests)
+			? row.tests
+			: [];
+
+	return {
+		items: list.map(normalizeSingleTest),
+		total:
+			typeof row.total === 'number'
+				? row.total
+				: Array.isArray(list)
+					? list.length
+					: 0,
+		page: params?.page ?? 1,
+		limit: params?.limit ?? params?.pageSize ?? 30,
+		nextCursor:
+			typeof row.next_cursor === 'string' ? row.next_cursor : undefined,
+		hasMore: typeof row.has_more === 'boolean' ? row.has_more : false,
+	};
+};
+
+const normalizeRunResponse = (raw: unknown): RunAgentTestsResponse => {
+	const row = (raw ?? {}) as UnknownRecord;
+	const testRuns = Array.isArray(row.testRuns ?? row.test_runs)
+		? ((row.testRuns ?? row.test_runs) as unknown[])
+		: [];
+	const passed = testRuns.filter((item) => {
+		const status = String((item as UnknownRecord).status ?? '').toLowerCase();
+		return status === 'passed';
+	}).length;
+	const failed = testRuns.filter((item) => {
+		const status = String((item as UnknownRecord).status ?? '').toLowerCase();
+		return status === 'failed';
+	}).length;
+
+	return {
+		jobId: String(row.jobId ?? row.id ?? ''),
+		testInvocationId: String(row.id ?? row.testInvocationId ?? ''),
+		status: String(row.status ?? (testRuns.length ? 'COMPLETED' : 'STARTED')),
+		agentId:
+			(row.agentId ?? row.agent_id)
+				? String(row.agentId ?? row.agent_id)
+				: undefined,
+		summary: testRuns.length
+			? {
+					total: testRuns.length,
+					passed,
+					failed,
+				}
+			: undefined,
+		results: testRuns.map((item) => {
+			const run = item as UnknownRecord;
+			const condition = (run.condition_result as UnknownRecord) ?? {};
+			const resultState = String(condition.result ?? '').toLowerCase();
+
+			return {
+				testId: String(run.test_id ?? run.testId ?? ''),
+				status:
+					resultState === 'success'
+						? 'PASSED'
+						: resultState === 'failure'
+							? 'FAILED'
+							: String(run.status ?? ''),
+				expected: undefined,
+				actual: undefined,
+			};
+		}),
+	};
+};
+
+const agentTestsApi = () => {
+	return {
+		listAgentTests: async (params?: AgentTestListParams) => {
+			const response = await axios.get(`${DEFAULT_API_URL}/agent-test`, {
+				params,
+			});
+			return normalizeListResponse(response.data, params);
+		},
+
+		getAgentTestById: async (testId: string) => {
+			const response = await axios.get(
+				`${DEFAULT_API_URL}/agent-test/${testId}`
+			);
+			return normalizeSingleTest(response.data);
+		},
+
+		createAgentTest: async (data: CreateAgentTestDto) => {
+			const response = await axios.post(
+				`${DEFAULT_API_URL}/agent-test`,
+				toCreatePayload(data)
+			);
+			return normalizeSingleTest(response.data);
+		},
+
+		updateAgentTest: async (testId: string, data: UpdateAgentTestDto) => {
+			const response = await axios.put(
+				`${DEFAULT_API_URL}/agent-test/${testId}`,
+				{
+					...toCreatePayload(data as CreateAgentTestDto),
+				}
+			);
+			return normalizeSingleTest(response.data);
+		},
+
+		deleteAgentTest: async (testId: string) => {
+			const response = await axios.delete<DeleteAgentTestResponse>(
+				`${DEFAULT_API_URL}/agent-test/${testId}`
+			);
+			return response.data;
+		},
+
+		runAgentTests: async (agentId: string, data: RunAgentTestsDto) => {
+			const response = await axios.post(
+				`${DEFAULT_API_URL}/agent-test/run/${agentId}`,
+				{
+					tests: data.tests.map((item) => ({
+						testId: item.testId,
+						workflowNodeId: item.workflowNodeId,
+					})),
+					branchId: data.branchId,
+					runConfig: data.runConfig,
+				}
+			);
+
+			return normalizeRunResponse(response.data);
+		},
+	};
+};
+
+export default agentTestsApi;

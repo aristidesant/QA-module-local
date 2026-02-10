@@ -1,5 +1,9 @@
 # Project Instructions
 
+## MUST DO ALWAYS
+
+We always have to see if there is a skill related to what we are doing, this is not optional, skill has high priorities in order to complete any task.
+
 ## ⚠️ CRITICAL: Language Rule
 
 **ALWAYS write code and comments in English.** Even if the user writes in Spanish or another language, your code and comments MUST be in English. No exceptions.

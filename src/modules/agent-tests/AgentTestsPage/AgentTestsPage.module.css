@@ -1,0 +1,242 @@
+.filterField {
+	min-width: 220px;
+	max-width: 280px;
+	flex: 1;
+}
+
+.nameCell {
+	max-width: 220px;
+}
+
+.textCell {
+	max-width: 260px;
+}
+
+.flexField {
+	flex: 1;
+}
+
+.halfField {
+	flex: 1;
+}
+
+.modalBody {
+	padding: var(--mantine-spacing-xs);
+}
+
+.studioLayout {
+	display: grid;
+	grid-template-columns: minmax(360px, 44%) minmax(420px, 56%);
+	gap: var(--mantine-spacing-xs);
+	min-height: 74vh;
+}
+
+.studioConfigPane,
+.studioSimulationPane {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-sm);
+	background: var(--mantine-color-white);
+	padding: var(--mantine-spacing-xs);
+	overflow: auto;
+}
+
+.studioSimulationPane {
+	display: flex;
+	flex-direction: column;
+}
+
+.conversationBox {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+	max-height: 42vh;
+	overflow: auto;
+	padding: var(--mantine-spacing-xs);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-sm);
+	background: var(--mantine-color-gray-0);
+}
+
+.messageRowAgent,
+.messageRowUser {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.messageRowUser {
+	align-items: flex-end;
+}
+
+.messageMetaRow {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+}
+
+.messageRowUser .messageMetaRow {
+	justify-content: flex-end;
+}
+
+.messageRoleButton {
+	color: var(--mantine-color-gray-6);
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 600;
+	padding: 0;
+	height: auto;
+	min-height: unset;
+}
+
+.messageBubbleEditor {
+	width: min(100%, 640px);
+	padding: var(--mantine-spacing-xs);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-sm);
+	background: var(--mantine-color-white);
+}
+
+.messageBubbleEditor textarea {
+	font-size: var(--mantine-font-size-sm);
+	line-height: 1.35;
+	padding: 0;
+	border: none;
+	background: transparent;
+}
+
+.messageRowUser .messageBubbleEditor {
+	background: var(--mantine-color-gray-1);
+}
+
+.conversationEmptyState {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: var(--mantine-spacing-xs);
+	min-height: 140px;
+}
+
+.dynamicVarsBox,
+.runResultBox {
+	padding: var(--mantine-spacing-xs);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-sm);
+	background: var(--mantine-color-white);
+}
+
+/* Dynamic Variables Table Styles */
+.dynamicVarsContainer {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.dynamicVarsHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	padding-bottom: var(--mantine-spacing-xs);
+}
+
+.dynamicVarsAddButton {
+	width: 100%;
+}
+
+.dynamicVarsTable {
+	display: flex;
+	flex-direction: column;
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-sm);
+	background: var(--mantine-color-white);
+	overflow: hidden;
+	max-height: 40vh;
+	overflow-y: auto;
+}
+
+.dynamicVarsTableHeader {
+	display: grid;
+	grid-template-columns: 1fr 1fr auto;
+	gap: 0;
+	background: var(--mantine-color-gray-0);
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+	padding: 0;
+	font-weight: 600;
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-7);
+	position: sticky;
+	top: 0;
+}
+
+.dynamicVarsCell {
+	padding: var(--mantine-spacing-xs);
+	display: flex;
+	align-items: center;
+}
+
+.dynamicVarsRow {
+	display: grid;
+	grid-template-columns: 1fr 1fr auto;
+	gap: 0;
+	padding: 0;
+	border-bottom: 1px solid var(--mantine-color-gray-1);
+	align-items: center;
+}
+
+.dynamicVarsRow:hover {
+	background: var(--mantine-color-gray-0);
+}
+
+.dynamicVarsRow:last-child {
+	border-bottom: none;
+}
+
+.dynamicVarsInputCell {
+	flex: 1;
+	padding: 0;
+	padding-left: var(--mantine-spacing-xs);
+	padding-right: var(--mantine-spacing-xs);
+}
+
+.dynamicVarsInputCell input {
+	border: none;
+	background: transparent;
+	padding: var(--mantine-spacing-xs) 0;
+	font-size: var(--mantine-font-size-sm);
+}
+
+.dynamicVarsInputCell input:focus {
+	outline: none;
+	background: transparent;
+}
+
+.dynamicVarsActionCell {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--mantine-spacing-xs);
+	min-width: 32px;
+}
+
+.dynamicVarsEmpty {
+	padding: var(--mantine-spacing-md);
+	text-align: center;
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-sm);
+	color: var(--mantine-color-gray-6);
+}
+
+@media (max-width: 1024px) {
+	.studioLayout {
+		grid-template-columns: 1fr;
+		min-height: auto;
+	}
+
+	.conversationBox {
+		max-height: 32vh;
+	}
+
+	.dynamicVarsTable {
+		max-height: 30vh;
+	}
+}
