@@ -14,11 +14,13 @@ export const theme = createTheme({
 			},
 			styles: {
 				root: {
+					cursor: 'pointer',
 					width: '38px',
 					height: '38px',
 					borderRadius: '12px',
 					'&:disabled': {
 						opacity: 0.6,
+						cursor: 'not-allowed',
 					},
 				},
 			},

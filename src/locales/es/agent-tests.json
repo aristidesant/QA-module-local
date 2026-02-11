@@ -6,7 +6,7 @@
 	"actions": {
 		"refresh": "Actualizar",
 		"runSelected": "Ejecutar seleccionados",
-		"create": "Crear prueba",
+		"create": "Crear",
 		"clearFilters": "Limpiar filtros",
 		"retry": "Reintentar",
 		"saveChanges": "Guardar cambios"
@@ -147,7 +147,7 @@
 			"duplicateDynamicVariable": "Las claves de variables dinamicas deben ser unicas.",
 			"expectedResponseRequired": "La respuesta esperada es obligatoria.",
 			"assertionsRequired": "Agrega al menos una asercion.",
-			"promptAndExpectedFromConversation": "El prompt y la respuesta esperada son obligatorios. Agrega al menos un mensaje de usuario y uno de agente en la simulacion."
+			"promptAndExpectedFromConversation": "El prompt es obligatorio. Agrega al menos un mensaje de usuario en la simulacion."
 		}
 	},
 	"simulation": {

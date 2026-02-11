@@ -539,7 +539,7 @@ export const AgentTestsPageProvider: React.FC<AgentTestsPageProviderProps> = ({
 				);
 			}
 
-			if (!payload.chatHistory.length || !hasUserTurn || !hasAgentTurn) {
+			if (!payload.chatHistory.length || !hasUserTurn) {
 				if (import.meta.env.DEV) {
 					console.warn(
 						'[AgentTests] blocked submit due to conversation validation',

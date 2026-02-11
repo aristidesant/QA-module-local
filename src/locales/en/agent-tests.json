@@ -6,7 +6,7 @@
 	"actions": {
 		"refresh": "Refresh",
 		"runSelected": "Run selected",
-		"create": "Create test",
+		"create": "Create",
 		"clearFilters": "Clear filters",
 		"retry": "Try again",
 		"saveChanges": "Save changes"
@@ -147,7 +147,7 @@
 			"duplicateDynamicVariable": "Dynamic variable keys must be unique.",
 			"expectedResponseRequired": "Expected response is required.",
 			"assertionsRequired": "Add at least one assertion.",
-			"promptAndExpectedFromConversation": "Prompt and expected response are required. Add at least one user and one agent message in the simulation."
+			"promptAndExpectedFromConversation": "Prompt is required. Add at least one user message in the simulation."
 		}
 	},
 	"simulation": {
