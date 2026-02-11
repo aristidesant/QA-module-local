@@ -65,22 +65,26 @@ export async function clientLoader(): Promise<LoaderData> {
 }
 
 export const RouteProtecter = () => {
-	const { token } = useLoaderData<typeof clientLoader>();
+	const { token: loaderToken } = useLoaderData<typeof clientLoader>();
 	const queryClient = useQueryClient();
 	const { setToken, token: storeToken, user, setUser } = useSessionStore();
 	const path = useLocation().pathname;
 
+	// Sync token from loader to store ONLY on initial load (when store is empty)
+	// The store is the source of truth during the session - don't overwrite it
 	useEffect(() => {
-		if (token !== storeToken) {
-			setToken(token);
-		}
-		if (!token) {
+		if (!storeToken && loaderToken) {
+			// Initial load: hydrate store from sessionStorage via loader
+			setToken(loaderToken);
+		} else if (!loaderToken && !storeToken) {
+			// No token anywhere - ensure user is cleared
 			setUser(null);
 			queryClient.removeQueries({ queryKey: ['currentUser'] });
 		}
-	}, [queryClient, setToken, setUser, storeToken, token]);
+	}, [queryClient, setToken, setUser, storeToken, loaderToken]);
 
-	const authToken = storeToken ?? token;
+	// Use store token as primary, fallback to loader token for initial render
+	const authToken = storeToken ?? loaderToken;
 
 	const meQuery = useQuery<UserModel>({
 		queryKey: ['currentUser'],

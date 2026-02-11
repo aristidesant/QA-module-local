@@ -55,12 +55,19 @@ axios.interceptors.response.use(
 	(response) => response,
 	(error) => {
 		const requestUrl = String(error?.config?.url ?? '');
-		const isAuthFailure =
+		// Skip auto-logout for auth endpoints and token-swap related calls
+		const isAuthEndpoint =
 			requestUrl.includes('/auth/login') ||
-			requestUrl.includes('/auth/verify-otp');
+			requestUrl.includes('/auth/verify-otp') ||
+			requestUrl.includes('/auth/change-client') ||
+			requestUrl.includes('/auth/select-client') ||
+			requestUrl.includes('/auth/impersonate-client') ||
+			requestUrl.includes('/auth/end-impersonation') ||
+			requestUrl.includes('/auth/available-clients') ||
+			requestUrl.endsWith('/users/me'); // Called during token swap
 
 		if (
-			!isAuthFailure &&
+			!isAuthEndpoint &&
 			error?.response?.status === 401 &&
 			typeof window !== 'undefined'
 		) {

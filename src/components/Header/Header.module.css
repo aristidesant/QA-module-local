@@ -68,8 +68,10 @@
 
 .headerContent {
 	height: 100%;
-	padding: 0 0.75rem; /* tighter horizontal padding */
-	padding-left: 0; /* ensure left-aligned content */
+	padding: 0 0.75rem;
+	/* tighter horizontal padding */
+	padding-left: 0;
+	/* ensure left-aligned content */
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -80,7 +82,8 @@
 	display: flex;
 	align-items: center;
 	height: 100%;
-	gap: var(--mantine-spacing-xs); /* small gap */
+	gap: var(--mantine-spacing-xs);
+	/* small gap */
 }
 
 .navigationButtons {
@@ -116,7 +119,8 @@
 .headerRight {
 	display: flex;
 	align-items: center;
-	gap: 0.75rem; /* reduce space between right-side items */
+	gap: 0.75rem;
+	/* reduce space between right-side items */
 	margin-left: auto;
 }
 
@@ -207,12 +211,33 @@
 .clientBadge {
 	display: flex;
 	align-items: center;
-	gap: 0.375rem; /* very compact */
-	padding: 4px 8px; /* tighter badge padding */
+	gap: 0.375rem;
+	/* very compact */
+	padding: 4px 8px;
+	/* tighter badge padding */
 	border-radius: 9999px;
 	background: rgba(241, 245, 249, 0.85);
 	border: 1px solid rgba(226, 232, 240, 0.85);
 	cursor: default;
+	transition: all 0.15s ease;
+}
+
+.clientBadgeClickable {
+	cursor: pointer;
+}
+
+.clientBadgeClickable:hover {
+	background: rgba(241, 245, 249, 1);
+	border-color: var(--mantine-color-blue-3);
+}
+
+.clientChevron {
+	color: var(--mantine-color-gray-5);
+	transition: color 0.15s ease;
+}
+
+.clientBadgeClickable:hover .clientChevron {
+	color: var(--mantine-color-blue-6);
 }
 
 .clientAvatar {
@@ -231,7 +256,8 @@
 .clientInfo {
 	display: flex;
 	flex-direction: column;
-	min-width: 0; /* prevent forcing extra space */
+	min-width: 0;
+	/* prevent forcing extra space */
 }
 
 .clientName {
@@ -240,7 +266,8 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	max-width: 12rem; /* limit the space used by long names */
+	max-width: 12rem;
+	/* limit the space used by long names */
 }
 
 .clientIdentifier {
