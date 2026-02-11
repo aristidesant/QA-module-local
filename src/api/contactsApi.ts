@@ -49,6 +49,8 @@ const contactsApi = (_authHeader?: Record<string, string>) => {
 				phone?: string;
 				status?: string;
 				excludeInvalid?: boolean;
+				sortBy?: string;
+				sortOrder?: 'asc' | 'desc';
 			}
 		) => {
 			const response = await axios.get<PaginatedResponse<Contact>>(

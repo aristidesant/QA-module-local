@@ -65,6 +65,10 @@ export const ContactGroupContactsTable: React.FC<
 	// Sorting state
 	const [sorting, setSorting] = useState<SortingState>([]);
 
+	// Extract sorting values for API
+	const sortBy = sorting?.[0]?.id;
+	const sortOrder = sorting?.[0]?.desc ? 'desc' : 'asc';
+
 	// Filter state
 	const contactFilters = useContactFilters({
 		debounceMs: 500,
@@ -142,6 +146,8 @@ export const ContactGroupContactsTable: React.FC<
 		name: contactFilters.debouncedFilters.name || undefined,
 		email: contactFilters.debouncedFilters.email || undefined,
 		phone: contactFilters.debouncedFilters.phone || undefined,
+		sortBy: sortBy || undefined,
+		sortOrder: sortBy ? sortOrder : undefined,
 	});
 
 	// Get contacts from query and filter out those with validation errors
@@ -373,6 +379,7 @@ export const ContactGroupContactsTable: React.FC<
 						columns={columns}
 						onRowClick={handleContactClick}
 						filterMode='server'
+						initialSort={sorting}
 						onSortingChange={setSorting}
 						enableExpanding={true}
 						renderExpandedRow={(contact) =>

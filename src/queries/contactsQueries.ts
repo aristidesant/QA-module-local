@@ -55,6 +55,8 @@ export const useGetContactGroupContacts = (
 		phone?: string;
 		status?: string;
 		excludeInvalid?: boolean;
+		sortBy?: string;
+		sortOrder?: 'asc' | 'desc';
 	}
 ) => {
 	return useQuery({
