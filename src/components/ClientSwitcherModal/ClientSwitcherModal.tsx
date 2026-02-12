@@ -21,6 +21,7 @@ import {
 	IconSearch,
 } from '@tabler/icons-react';
 import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router';
 import type { ClientSelectOption } from '~/api/authApi';
 import { useAvailableClients, useChangeClient } from '~/queries/authQueries';
 import { getErrorMessage } from '~/utils/httpClient';
@@ -39,6 +40,7 @@ export default function ClientSwitcherModal({
 	onClose,
 }: ClientSwitcherModalProps) {
 	const { t } = useTranslation();
+	const navigate = useNavigate();
 	const { user } = useSessionStore();
 	const currentClientId = user?.client?.id;
 	const {
@@ -93,6 +95,7 @@ export default function ClientSwitcherModal({
 				setOtpModalOpened(true);
 			} else if (response.accessToken) {
 				handleClose();
+				navigate('/');
 			}
 		} catch (err) {
 			setFormError(getErrorMessage(err));
@@ -112,6 +115,7 @@ export default function ClientSwitcherModal({
 			if (response.accessToken) {
 				setOtpModalOpened(false);
 				handleClose();
+				navigate('/');
 			}
 		} catch (err) {
 			throw err;
