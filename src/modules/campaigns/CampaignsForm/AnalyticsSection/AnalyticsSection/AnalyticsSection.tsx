@@ -2,9 +2,9 @@ import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
 import { useCampaignsStore } from '~/stores/campaignsStore';
-import { useCampaignFormContext } from '../../campaignFormFunctions';
-import AnalyticsVariableEditor from './AnalyticsVariableEditor';
-import AnalyticsVariablesTable from './AnalyticsVariablesTable';
+import { useCampaignFormContext } from '../../../campaignFormFunctions';
+import AnalyticsVariableEditor from '../AnalyticsVariableEditor';
+import AnalyticsVariablesTable from '../AnalyticsVariablesTable';
 import {
 	AnalyticsFormProvider,
 	createEmptyAnalyticsRow,
@@ -12,7 +12,7 @@ import {
 	mapRowsToDataCollection,
 	normalizeDataCollectionRows,
 	useAnalyticsForm,
-} from './analyticsFormContext';
+} from '../analyticsFormContext';
 
 const AnalyticsSection = () => {
 	const { t } = useTranslation('campaigns');

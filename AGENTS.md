@@ -4,6 +4,8 @@
 
 We always have to see if there is a skill related to what we are doing, this is not optional, skill has high priorities in order to complete any task.
 
+When creating a new component, ALWAYS read and follow the `creating-components` skill first.
+
 ## ⚠️ CRITICAL: Language Rule
 
 **ALWAYS write code and comments in English.** Even if the user writes in Spanish or another language, your code and comments MUST be in English. No exceptions.
@@ -113,6 +115,22 @@ The `index.ts` file must contain:
 ```ts
 export { default } from './UserCard';
 ```
+
+### Component Pattern (Mandatory)
+
+- Pattern name: **Component Folder Pattern with Colocation + Barrel Exports**
+- Every component must live in its own folder with colocated files.
+- Use explicit file naming conventions:
+  - `ComponentName.tsx` for the component
+  - `ComponentName.module.css` for styles (CSS Modules)
+  - `ComponentName.helper.ts` or `ComponentName.helpers.ts` for helpers
+  - `ComponentName.types.ts` for local types
+  - `ComponentName.constants.ts` for constants
+  - `index.ts` for barrel export
+- Barrel export is required for every component folder:
+  ```ts
+  export { default } from './ComponentName';
+  ```
 
 ### Creating New Components
 

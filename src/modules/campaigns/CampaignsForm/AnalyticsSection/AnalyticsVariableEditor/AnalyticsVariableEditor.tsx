@@ -19,7 +19,7 @@ import {
 	useAnalyticsFormContext,
 	type AnalyticsDataCollectionRow,
 	type DataCollectionType,
-} from './analyticsFormContext';
+} from '../analyticsFormContext';
 
 const AnalyticsVariableEditor = () => {
 	const { t } = useTranslation(['campaigns', 'common']);

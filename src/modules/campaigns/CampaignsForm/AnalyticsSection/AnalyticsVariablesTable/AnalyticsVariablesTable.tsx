@@ -2,8 +2,8 @@ import { Button, Group, Stack, Text } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import BaseTable from '~/components/BaseTable';
-import { useAnalyticsFormContext } from './analyticsFormContext';
-import useAnalyticsTableColumns from './useAnalyticsTableColumns';
+import { useAnalyticsFormContext } from '../analyticsFormContext';
+import useAnalyticsTableColumns from '../useAnalyticsTableColumns';
 
 interface AnalyticsVariablesTableProps {
 	onAddRow: () => void;
