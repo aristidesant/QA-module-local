@@ -1,6 +1,7 @@
 import { Tabs } from '@mantine/core';
 import {
 	IconChecklist,
+	IconChartBar,
 	IconGalaxy,
 	IconRoute,
 	IconUser,
@@ -40,6 +41,9 @@ const CampaignTabs = () => {
 				</Tabs.Tab>
 				<Tabs.Tab leftSection={<IconChecklist />} value='params'>
 					{t('list.tabs.params')}
+				</Tabs.Tab>
+				<Tabs.Tab leftSection={<IconChartBar />} value='analytics'>
+					{t('list.tabs.analytics')}
 				</Tabs.Tab>
 				<Tabs.Tab leftSection={<IconGalaxy />} value='general'>
 					{t('list.tabs.general')}

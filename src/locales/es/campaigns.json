@@ -30,6 +30,7 @@
 			"workflow": "Workflow",
 			"outcomes": "Resultados",
 			"params": "Parámetros",
+			"analytics": "Analytics",
 			"general": "General"
 		}
 	},
@@ -787,6 +788,61 @@
 		"actions": {
 			"save": "Guardar cambios",
 			"saving": "Guardando..."
+		},
+		"analytics": {
+			"title": "Recolección de datos de analytics",
+			"description": "Configura variables dinámicas de datos capturadas durante las conversaciones.",
+			"totalVariables": "{{count}} variable",
+			"totalVariables_other": "{{count}} variables",
+			"empty": "Aún no hay variables configuradas. Agrega tu primera variable para comenzar a recolectar datos de analytics.",
+			"variableCardTitle": "Variable",
+			"actions": {
+				"addVariable": "Agregar variable"
+			},
+			"fields": {
+				"identifier": "Identificador",
+				"type": "Tipo de dato",
+				"description": "Descripción",
+				"enumValues": "Valores enum (opcional)",
+				"enumValuesCount": "Valores enum ({{count}})",
+				"constantValue": "Valor constante",
+				"dynamicVariable": "Variable dinámica",
+				"isSystemProvided": "Provisto por sistema"
+			},
+			"types": {
+				"boolean": "Boolean",
+				"integer": "Integer",
+				"number": "Number",
+				"string": "String"
+			},
+			"placeholders": {
+				"identifier": "customer_city",
+				"description": "Describe cómo se debe extraer este valor.",
+				"enumValue": "Ingresa un valor enum",
+				"constantValue": "Valor fijo opcional",
+				"dynamicVariable": "Variable de origen opcional"
+			},
+			"descriptionHint": "Esta descripción se envía al LLM y debe explicar cómo extraer el valor desde la transcripción.",
+			"enumHint": "El LLM solo podrá seleccionar entre estos valores predefinidos.",
+			"validation": {
+				"identifierRequired": "El identificador es obligatorio",
+				"identifierUnique": "El identificador debe ser único"
+			},
+			"table": {
+				"identifier": "Identificador",
+				"type": "Tipo de dato",
+				"description": "Descripción",
+				"enum": "Enum",
+				"enumCount": "Enum ({{count}})",
+				"systemProvided": "Sistema",
+				"yes": "Sí",
+				"no": "No"
+			},
+			"editor": {
+				"title": "Detalle de variable",
+				"description": "Selecciona y edita una variable desde la tabla.",
+				"stringHint": "Para campos string, los enums ayudan a restringir la salida del modelo a valores validos."
+			}
 		},
 		"notifications": {
 			"warningTitle": "Advertencia",

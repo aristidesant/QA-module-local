@@ -31,6 +31,7 @@ import { useCampaignsStore } from '~/stores/campaignsStore';
 import GeneralSection from './GeneralSection/GeneralSection';
 import SectionCard from '~/components/SectionCard';
 import ParametersSection from './ParametersSection';
+import AnalyticsSection from './AnalyticsSection';
 import WorkflowSection from './WorkflowSection/WorkflowSection';
 import AgentSection from './AgentSection';
 import DispositionSection from './DispositionSection';
@@ -485,6 +486,39 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 									}}
 								/>
 							</SectionCard>
+						)}
+						{selectedTab === 'analytics' && (
+							<form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+								<AnalyticsSection />
+								<Box
+									pos='sticky'
+									bottom={-1}
+									bg='var(--mantine-color-body)'
+									py='md'
+									mt='md'
+									style={{
+										borderTop: '1px solid var(--mantine-color-gray-2)',
+										zIndex: 10,
+										marginRight: 'calc(var(--mantine-spacing-xs) * -1)',
+										marginLeft: 'calc(var(--mantine-spacing-xs) * -1)',
+										paddingRight: 'var(--mantine-spacing-xs)',
+										paddingLeft: 'var(--mantine-spacing-xs)',
+									}}
+								>
+									<Group justify='flex-end'>
+										<FormSaveButton
+											label={t('form.actions.save', {
+												defaultValue: 'Save changes',
+											})}
+											loadingLabel={t('form.actions.saving', {
+												defaultValue: 'Saving...',
+											})}
+											isLoading={isUpdating}
+											disabled={!form.isDirty()}
+										/>
+									</Group>
+								</Box>
+							</form>
 						)}
 					</Stack>
 				</ContentContainer>
