@@ -24,8 +24,12 @@ const useWorkflowNodes = ({
 	onOpenEdgeModal,
 }: UseWorkflowNodesOptions) => {
 	const cloneData = <T>(value: T): T => {
-		if (typeof structuredClone === 'function') {
-			return structuredClone(value);
+		try {
+			if (typeof structuredClone === 'function') {
+				return structuredClone(value);
+			}
+		} catch {
+			// Fallback to JSON cloning for non-serializable values.
 		}
 
 		return JSON.parse(JSON.stringify(value)) as T;
@@ -318,12 +322,21 @@ const useWorkflowNodes = ({
 					x: sourceNode.position.x + 40,
 					y: sourceNode.position.y + 40,
 				};
-				const data = cloneData(sourceNode.data as Record<string, unknown>);
-				delete data.onAddNode;
-				delete data.onAddNodeWithType;
-				delete data.onAddNodeWithVariant;
-				delete data.onDeleteNode;
-				delete data.onCopyNode;
+				const {
+					onAddNode,
+					onAddNodeWithType,
+					onAddNodeWithVariant,
+					onDeleteNode,
+					onCopyNode,
+					...serializableData
+				} = sourceNode.data as Record<string, unknown>;
+				void onAddNode;
+				void onAddNodeWithType;
+				void onAddNodeWithVariant;
+				void onDeleteNode;
+				void onCopyNode;
+
+				const data = cloneData(serializableData);
 
 				const copiedNode: Node = {
 					id: copyId,

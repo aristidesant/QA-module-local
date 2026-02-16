@@ -11,6 +11,7 @@ import type {
 	EdgeTypes,
 	Node,
 	NodeTypes,
+	OnConnect,
 	OnEdgesChange,
 	OnNodesChange,
 	ReactFlowInstance,
@@ -23,6 +24,7 @@ interface FlowViewProps {
 	edgeTypes: EdgeTypes;
 	onNodesChange: OnNodesChange<Node>;
 	onEdgesChange: OnEdgesChange<Edge>;
+	onConnect: OnConnect;
 	onNodeSelect?: (nodeId: string | null) => void;
 	onInit: (instance: ReactFlowInstance) => void;
 	isValidConnection: (connection: Connection | Edge) => boolean;
@@ -38,6 +40,7 @@ const FlowView = ({
 	edgeTypes,
 	onNodesChange,
 	onEdgesChange,
+	onConnect,
 	onNodeSelect,
 	onInit,
 	isValidConnection,
@@ -52,6 +55,7 @@ const FlowView = ({
 		edgeTypes={edgeTypes}
 		onNodesChange={onNodesChange}
 		onEdgesChange={onEdgesChange}
+		onConnect={onConnect}
 		onNodeClick={(_, node) => onNodeSelect?.(node.id)}
 		onPaneClick={() => onNodeSelect?.(null)}
 		onInit={onInit}
