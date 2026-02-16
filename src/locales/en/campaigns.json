@@ -625,8 +625,8 @@
 					"agentEmpty": "No agents available.",
 					"delayLabel": "Delay before transfer (milliseconds)",
 					"delayPlaceholder": "Enter delay in milliseconds",
-					"messageLabel": "Transfer message",
-					"messagePlaceholder": "Write a message for the agent transfer",
+					"messageLabel": "Transfer Message",
+					"messagePlaceholder": "Enter message to say during transfer (optional).",
 					"firstMessageLabel": "Enable First Message"
 				}
 			},
@@ -755,6 +755,15 @@
 				"delay": "Delay",
 				"delayValue": "{{value}} ms",
 				"emptyAgent": "Not set"
+			},
+			"nodeStatus": {
+				"destination": "Destination",
+				"transferTarget": "Target agent",
+				"subagentStyle": "Subagent",
+				"overrideStyle": "Override",
+				"transferStyle": "Transfer",
+				"toolsAttached": "{{count}} tool",
+				"toolsAttached_other": "{{count}} tools"
 			}
 		},
 		"campaignSync": {
@@ -797,6 +806,10 @@
 			"variableCardTitle": "Variable",
 			"actions": {
 				"addVariable": "Add variable"
+			},
+			"info": {
+				"title": "Automatic conversation capture",
+				"message": "Use this section to automatically capture values from the conversation. It is recommended when specific information needs to be extracted in a structured way."
 			},
 			"fields": {
 				"identifier": "Identifier",

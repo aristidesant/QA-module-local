@@ -30,16 +30,28 @@ const ToolNodeComponent = (props: NodeProps) => {
 	}, [tools]);
 
 	return (
-		<WorkflowNodeWrapper {...props}>
+		<WorkflowNodeWrapper
+			{...props}
+			sideActions={
+				<WorkflowNodeActions
+					nodeId={props.id}
+					nodeData={props.data as WorkflowNodeData}
+					nodeType={nodeType}
+				/>
+			}
+		>
 			<div className={styles.node}>
 				<WorkflowNodeHeader
 					className={styles.header}
 					icon={<IconTool size={16} className={styles.icon} />}
 					title={nodeData.label || fallbackLabel}
+					subtitle={t('form.workflow.nodeStatus.toolsAttached', {
+						count: toolCount,
+					})}
 					titleClassName={styles.title}
 				/>
-				<div className={styles.footer}>
-					{toolCount > 0 && (
+				{toolCount > 0 && (
+					<div className={styles.footer}>
 						<div className={styles.toolsList}>
 							{nodeData.tools.map((tool, index) => (
 								<span
@@ -50,15 +62,8 @@ const ToolNodeComponent = (props: NodeProps) => {
 								</span>
 							))}
 						</div>
-					)}
-					<div className={styles.footerActions}>
-						<WorkflowNodeActions
-							nodeId={props.id}
-							nodeData={props.data as WorkflowNodeData}
-							nodeType={nodeType}
-						/>
 					</div>
-				</div>
+				)}
 			</div>
 		</WorkflowNodeWrapper>
 	);

@@ -85,12 +85,6 @@ const AgentTransferForm = ({
 		);
 	}
 
-	const agentDescription = isLoading
-		? t('form.workflow.forms.transfer.agentLoading')
-		: agentOptions.length === 0
-			? t('form.workflow.forms.transfer.agentEmpty')
-			: undefined;
-
 	const handleUpdate = (updates: Partial<StandaloneAgentNode>) => {
 		const nextWorkflow = updateWorkflowNode(workflow, nodeId, updates);
 		if (nextWorkflow) {
@@ -115,7 +109,6 @@ const AgentTransferForm = ({
 				<Select
 					label={t('form.workflow.forms.transfer.agentLabel')}
 					placeholder={t('form.workflow.forms.transfer.agentPlaceholder')}
-					description={agentDescription}
 					data={agentOptions}
 					value={selectedTransferAgentId}
 					onChange={(value) => handleUpdate({ agentId: value || '' })}
@@ -147,7 +140,7 @@ const AgentTransferForm = ({
 					label={t('form.workflow.forms.transfer.messageLabel')}
 					placeholder={t('form.workflow.forms.transfer.messagePlaceholder')}
 					value={node.transferMessage ?? ''}
-					minRows={4}
+					minRows={3}
 					onChange={(event) =>
 						handleUpdate({ transferMessage: event.currentTarget.value })
 					}
@@ -160,14 +153,29 @@ const AgentTransferForm = ({
 				<Switch
 					label={t('form.workflow.forms.transfer.firstMessageLabel')}
 					checked={node.enableTransferredAgentFirstMessage ?? false}
+					labelPosition='left'
 					onChange={(event) =>
 						handleUpdate({
 							enableTransferredAgentFirstMessage: event.currentTarget.checked,
 						})
 					}
 					size='sm'
-					classNames={{ label: styles.label }}
+					classNames={{
+						root: styles.switchRoot,
+						body: styles.switchBody,
+						label: styles.label,
+					}}
 				/>
+				{isLoading && (
+					<Text size='xs' className={styles.description}>
+						{t('form.workflow.forms.transfer.agentLoading')}
+					</Text>
+				)}
+				{!isLoading && agentOptions.length === 0 && (
+					<Text size='xs' className={styles.description}>
+						{t('form.workflow.forms.transfer.agentEmpty')}
+					</Text>
+				)}
 			</Stack>
 		</WorkflowNodeForm>
 	);

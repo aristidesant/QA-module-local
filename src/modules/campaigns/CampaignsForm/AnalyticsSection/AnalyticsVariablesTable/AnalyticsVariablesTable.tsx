@@ -1,5 +1,5 @@
-import { Button, Group, Stack, Text } from '@mantine/core';
-import { IconPlus } from '@tabler/icons-react';
+import { Alert, Button, Group, Stack, Text } from '@mantine/core';
+import { IconInfoCircle, IconPlus } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import BaseTable from '~/components/BaseTable';
 import { useAnalyticsFormContext } from '../analyticsFormContext';
@@ -33,6 +33,15 @@ const AnalyticsVariablesTable = ({
 					{t('form.analytics.actions.addVariable')}
 				</Button>
 			</Group>
+
+			<Alert
+				icon={<IconInfoCircle size={16} />}
+				title={t('form.analytics.info.title')}
+				color='blue'
+				radius='sm'
+			>
+				<Text size='sm'>{t('form.analytics.info.message')}</Text>
+			</Alert>
 
 			<BaseTable
 				data={form.values.rows}

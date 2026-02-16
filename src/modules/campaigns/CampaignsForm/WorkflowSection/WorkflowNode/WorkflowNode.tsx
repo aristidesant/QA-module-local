@@ -7,11 +7,14 @@ import styles from './WorkflowNode.module.css';
 
 interface WorkflowNodeWrapperProps extends NodeProps {
 	children?: React.ReactNode;
+	sideActions?: React.ReactNode;
 }
 
 export const WorkflowNodeWrapper: React.FC<WorkflowNodeWrapperProps> = ({
 	children,
 	data,
+	selected,
+	sideActions,
 }) => {
 	const { t } = useTranslation('campaigns');
 
@@ -24,6 +27,9 @@ export const WorkflowNodeWrapper: React.FC<WorkflowNodeWrapperProps> = ({
 
 	return (
 		<div className={styles.nodeContainer}>
+			{selected && sideActions && (
+				<div className={styles.sideActions}>{sideActions}</div>
+			)}
 			<Handle
 				type='target'
 				position={Position.Top}

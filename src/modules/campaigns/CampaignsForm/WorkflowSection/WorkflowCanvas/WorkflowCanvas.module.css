@@ -6,7 +6,7 @@
 	min-height: 350px;
 	width: 100%;
 	overflow: auto;
-	background-color: var(--mantine-color-white);
+	background-color: var(--mantine-color-gray-0);
 }
 
 .flow {
@@ -22,4 +22,18 @@
 .controls {
 	border-radius: var(--mantine-radius-sm);
 	border: 1px solid var(--mantine-color-gray-3);
+	background-color: var(--mantine-color-white);
+}
+
+.flow :global(.react-flow__controls-button) {
+	width: 24px;
+	height: 24px;
+	border-color: var(--mantine-color-gray-3);
+	background-color: var(--mantine-color-white);
+	color: var(--mantine-color-gray-7);
+}
+
+.flow :global(.react-flow__controls-button:hover) {
+	background-color: var(--mantine-color-gray-0);
+	color: var(--mantine-color-gray-9);
 }

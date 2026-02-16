@@ -5,12 +5,14 @@
 	min-width: 200px;
 	max-width: 280px;
 	text-align: left;
-	transition: border-color 0.2s ease;
+	transition:
+		border-color 0.14s ease,
+		background-color 0.14s ease;
 	overflow: hidden;
 }
 
 .node:hover {
-	border-color: var(--mantine-color-gray-5);
+	border-color: var(--mantine-color-gray-4);
 }
 
 .header {
@@ -27,7 +29,9 @@
 }
 
 .promptSection {
-	padding: 4px calc(var(--mantine-spacing-md) + 2px);
+	padding: 4px var(--mantine-spacing-sm);
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--mantine-color-gray-0);
 }
 
 .promptText {
@@ -40,9 +44,9 @@
 }
 
 .footer {
-	background-color: var(--mantine-color-gray-0);
+	background-color: var(--mantine-color-white);
 	border-top: 1px solid var(--mantine-color-gray-3);
-	padding: 4px calc(var(--mantine-spacing-md) + 2px);
+	padding: 4px var(--mantine-spacing-sm);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -67,8 +71,8 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
-	padding: 4px 12px;
-	background-color: var(--mantine-color-white);
+	padding: 2px 8px;
+	background-color: var(--mantine-color-gray-0);
 	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: var(--mantine-radius-xl);
 	font-size: var(--mantine-font-size-xs);

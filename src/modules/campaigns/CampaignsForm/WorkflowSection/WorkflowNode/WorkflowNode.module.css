@@ -5,6 +5,28 @@
 	align-items: center;
 }
 
+.sideActions {
+	position: absolute;
+	right: -40px;
+	top: 50%;
+	transform: translateY(-50%);
+	z-index: 5;
+	padding-left: 2px;
+}
+
+.nodeContainer > :not(.sideActions):not(:global(.react-flow__handle)) {
+	transition:
+		border-color 140ms ease,
+		background-color 140ms ease;
+}
+
+:global(.react-flow__node.selected)
+	.nodeContainer
+	> :not(.sideActions):not(:global(.react-flow__handle)) {
+	border-color: var(--mantine-color-blue-5);
+	background-color: var(--mantine-color-blue-0);
+}
+
 .defaultNode {
 	background-color: var(--mantine-color-white);
 	border: 1px solid var(--mantine-color-gray-3);
@@ -22,10 +44,14 @@
 }
 
 .handle {
-	width: 10px;
-	height: 10px;
+	width: 9px;
+	height: 9px;
 	border: 1px solid var(--mantine-color-gray-4);
 	background-color: var(--mantine-color-white);
+	transition:
+		opacity 120ms ease,
+		border-color 120ms ease,
+		background-color 120ms ease;
 }
 
 .handleHidden {
@@ -33,6 +59,10 @@
 }
 
 .nodeContainer:hover .handleHidden {
+	opacity: 1;
+}
+
+:global(.react-flow__node.selected) .handleHidden {
 	opacity: 1;
 }
 
@@ -44,4 +74,13 @@
 .handleTarget {
 	border-color: var(--mantine-color-gray-5);
 	background-color: var(--mantine-color-white);
+}
+
+:global(.react-flow__node.selected) .handleSource {
+	border-color: var(--mantine-color-blue-6);
+	background-color: var(--mantine-color-blue-6);
+}
+
+:global(.react-flow__node.selected) .handleTarget {
+	border-color: var(--mantine-color-blue-5);
 }

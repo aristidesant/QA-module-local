@@ -627,7 +627,7 @@
 					"delayLabel": "Retraso antes de transferir (milisegundos)",
 					"delayPlaceholder": "Ingresa el retraso en milisegundos",
 					"messageLabel": "Mensaje de transferencia",
-					"messagePlaceholder": "Escribe un mensaje para la transferencia",
+					"messagePlaceholder": "Ingresa el mensaje que se dira durante la transferencia (opcional).",
 					"firstMessageLabel": "Habilitar primer mensaje"
 				}
 			},
@@ -756,6 +756,15 @@
 				"delay": "Retraso",
 				"delayValue": "{{value}} ms",
 				"emptyAgent": "Sin configurar"
+			},
+			"nodeStatus": {
+				"destination": "Destino",
+				"transferTarget": "Agente destino",
+				"subagentStyle": "Subagente",
+				"overrideStyle": "Sobrescritura",
+				"transferStyle": "Transferencia",
+				"toolsAttached": "{{count}} herramienta",
+				"toolsAttached_other": "{{count}} herramientas"
 			}
 		},
 		"campaignSync": {
@@ -798,6 +807,10 @@
 			"variableCardTitle": "Variable",
 			"actions": {
 				"addVariable": "Agregar variable"
+			},
+			"info": {
+				"title": "Captura automática de conversación",
+				"message": "Usa esta sección para capturar automáticamente valores de la conversación. Se recomienda cuando necesitas extraer información específica de forma estructurada."
 			},
 			"fields": {
 				"identifier": "Identificador",

@@ -17,20 +17,22 @@ const EndNodeComponent = (props: NodeProps) => {
 	const fallbackLabel = t('form.workflow.nodes.end');
 
 	return (
-		<WorkflowNodeWrapper {...props}>
+		<WorkflowNodeWrapper
+			{...props}
+			sideActions={
+				<WorkflowNodeActions
+					nodeId={props.id}
+					nodeData={props.data as WorkflowNodeData}
+					nodeType={nodeType}
+				/>
+			}
+		>
 			<div className={styles.node}>
 				<WorkflowNodeHeader
 					className={styles.header}
 					icon={<IconSquareRoundedCheck size={16} className={styles.icon} />}
 					title={nodeData.label || fallbackLabel}
 				/>
-				<div className={styles.footer}>
-					<WorkflowNodeActions
-						nodeId={props.id}
-						nodeData={props.data as WorkflowNodeData}
-						nodeType={nodeType}
-					/>
-				</div>
 			</div>
 		</WorkflowNodeWrapper>
 	);

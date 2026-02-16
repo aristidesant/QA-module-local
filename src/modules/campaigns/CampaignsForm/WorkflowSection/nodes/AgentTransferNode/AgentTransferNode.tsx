@@ -24,12 +24,22 @@ const AgentTransferNodeComponent = (props: NodeProps) => {
 	const targetLabel = agentId || t('form.workflow.transferNode.emptyAgent');
 
 	return (
-		<WorkflowNodeWrapper {...props}>
+		<WorkflowNodeWrapper
+			{...props}
+			sideActions={
+				<WorkflowNodeActions
+					nodeId={props.id}
+					nodeData={props.data as WorkflowNodeData}
+					nodeType={nodeType}
+				/>
+			}
+		>
 			<div className={styles.node}>
 				<WorkflowNodeHeader
 					className={styles.header}
 					icon={<IconUserCog size={16} className={styles.icon} />}
 					title={nodeData.label || fallbackLabel}
+					subtitle={t('form.workflow.nodeStatus.transferTarget')}
 					titleClassName={styles.title}
 				/>
 				<div className={styles.details}>
@@ -57,20 +67,13 @@ const AgentTransferNodeComponent = (props: NodeProps) => {
 						</Text>
 					</div>
 				</div>
-				<div className={styles.footer}>
-					{transferMessage && (
+				{transferMessage && (
+					<div className={styles.footer}>
 						<Text size='xs' lineClamp={2} className={styles.footerText}>
 							{transferMessage}
 						</Text>
-					)}
-					<div className={styles.footerActions}>
-						<WorkflowNodeActions
-							nodeId={props.id}
-							nodeData={props.data as WorkflowNodeData}
-							nodeType={nodeType}
-						/>
 					</div>
-				</div>
+				)}
 			</div>
 		</WorkflowNodeWrapper>
 	);

@@ -55,9 +55,23 @@ const SubagentNodeComponent = (props: NodeProps) => {
 	const promptPreview = effectiveOverridePrompt
 		? (overridePromptValue ?? '').trim()
 		: (additionalPrompt ?? '').trim();
+	const subtitle = isTransfer
+		? t('form.workflow.nodeStatus.transferStyle')
+		: isOverride
+			? t('form.workflow.nodeStatus.overrideStyle')
+			: t('form.workflow.nodeStatus.subagentStyle');
 
 	return (
-		<WorkflowNodeWrapper {...props}>
+		<WorkflowNodeWrapper
+			{...props}
+			sideActions={
+				<WorkflowNodeActions
+					nodeId={props.id}
+					nodeData={props.data as WorkflowNodeData}
+					nodeType={nodeType}
+				/>
+			}
+		>
 			<div className={styles.node}>
 				<WorkflowNodeHeader
 					className={styles.header}
@@ -69,6 +83,7 @@ const SubagentNodeComponent = (props: NodeProps) => {
 						)
 					}
 					title={nodeData.label || fallbackLabel}
+					subtitle={subtitle}
 					titleClassName={styles.title}
 				/>
 				{promptPreview && (
@@ -78,8 +93,8 @@ const SubagentNodeComponent = (props: NodeProps) => {
 						</Text>
 					</div>
 				)}
-				<div className={styles.footer}>
-					{hasMetadata && (
+				{hasMetadata && (
+					<div className={styles.footer}>
 						<div className={styles.metadataList}>
 							{toolCount > 0 && (
 								<Tooltip
@@ -112,15 +127,8 @@ const SubagentNodeComponent = (props: NodeProps) => {
 								</Tooltip>
 							)}
 						</div>
-					)}
-					<div className={styles.footerActions}>
-						<WorkflowNodeActions
-							nodeId={props.id}
-							nodeData={props.data as WorkflowNodeData}
-							nodeType={nodeType}
-						/>
 					</div>
-				</div>
+				)}
 			</div>
 		</WorkflowNodeWrapper>
 	);
