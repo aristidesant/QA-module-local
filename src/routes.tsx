@@ -31,6 +31,9 @@ const ClientConfigsPage = React.lazy(
 const ToolsPage = React.lazy(
 	() => import('./modules/tools/ToolsPage/ToolsPage')
 );
+const AgentTestsPage = React.lazy(
+	() => import('./modules/agent-tests/AgentTestsPage')
+);
 const UsersPage = React.lazy(
 	() => import('./modules/users/UsersPage/UsersPage')
 );
@@ -450,6 +453,23 @@ const router = createBrowserRouter([
 								>
 									<ToolsPage />
 								</Suspense>
+							</ModuleGuard>
+						),
+					},
+					{
+						path: 'agent-tests',
+						id: 'agent-tests',
+						element: (
+							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
+								<I18nNamespaceLoader>
+									<Suspense
+										fallback={
+											<SuspenseFallback message='Loading agent tests...' />
+										}
+									>
+										<AgentTestsPage />
+									</Suspense>
+								</I18nNamespaceLoader>
 							</ModuleGuard>
 						),
 					},

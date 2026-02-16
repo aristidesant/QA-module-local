@@ -3,6 +3,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import type { Edge, Node } from '@xyflow/react';
 import type { TFunction } from 'i18next';
 import { WORKFLOW_NODE_TYPES } from '../../nodeTypes';
+import { generateUUIDv4 } from '~/utils/uuidUtils';
 
 interface UseWorkflowNodesOptions {
 	setNodes: Dispatch<SetStateAction<Node[]>>;
@@ -22,6 +23,14 @@ const useWorkflowNodes = ({
 	t,
 	onOpenEdgeModal,
 }: UseWorkflowNodesOptions) => {
+	const cloneData = <T>(value: T): T => {
+		if (typeof structuredClone === 'function') {
+			return structuredClone(value);
+		}
+
+		return JSON.parse(JSON.stringify(value)) as T;
+	};
+
 	const handleAddNode = useCallback(
 		(parentNodeId: string, parentPosition: { x: number; y: number }) => {
 			const timestamp = Date.now();
@@ -304,26 +313,30 @@ const useWorkflowNodes = ({
 			setNodes((prev) => {
 				const sourceNode = prev.find((node) => node.id === nodeId);
 				if (!sourceNode) return prev;
-				const timestamp = Date.now();
-				const copyId = `node-${timestamp}`;
+				const copyId = `node-${generateUUIDv4()}`;
 				const copyPosition = {
 					x: sourceNode.position.x + 40,
 					y: sourceNode.position.y + 40,
 				};
-				const data = sourceNode.data as Record<string, unknown>;
-				return [
-					...prev,
-					{
-						...sourceNode,
-						id: copyId,
+				const data = cloneData(sourceNode.data as Record<string, unknown>);
+				delete data.onAddNode;
+				delete data.onAddNodeWithType;
+				delete data.onAddNodeWithVariant;
+				delete data.onDeleteNode;
+				delete data.onCopyNode;
+
+				const copiedNode: Node = {
+					id: copyId,
+					type: sourceNode.type,
+					position: copyPosition,
+					selected: false,
+					data: {
+						...data,
 						position: copyPosition,
-						data: {
-							...data,
-							position: copyPosition,
-							edgeOrder: [],
-						},
+						edgeOrder: [],
 					},
-				];
+				};
+				return [...prev, copiedNode];
 			});
 		},
 		[setNodes]

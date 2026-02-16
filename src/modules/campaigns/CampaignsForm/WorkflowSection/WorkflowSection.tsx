@@ -31,17 +31,6 @@ const WorkflowSection = () => {
 	const lastRightPanelSignature = useRef<string | null>(null);
 	const workflow = form.values.agentConfig?.workflow;
 	const preventSubagentLoops = workflow?.preventSubagentLoops ?? false;
-	const workflowFromGetter = form.getValues().agentConfig?.workflow;
-	const nodesFromState = workflow?.nodes
-		? Object.keys(workflow.nodes).length
-		: 0;
-	const nodesFromGetter = workflowFromGetter?.nodes
-		? Object.keys(workflowFromGetter.nodes).length
-		: 0;
-	console.log('[WorkflowSection] form values vs getValues:', {
-		nodesFromState,
-		nodesFromGetter,
-	});
 
 	const agents = useMemo(
 		() =>

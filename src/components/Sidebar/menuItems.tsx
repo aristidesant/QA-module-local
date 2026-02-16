@@ -2,6 +2,7 @@ import {
 	IconLayoutDashboard,
 	IconListDetails,
 	IconPhoneCall,
+	IconFlask,
 } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 import { ModuleEnum } from '~/constants/ModuleEnum';
@@ -39,5 +40,12 @@ export const menuItems: MenuItem[] = [
 		icon: <IconPhoneCall size={20} className={styles.menuIcon} />,
 		to: '/conversations',
 		module: ModuleEnum.CONVERSATIONS,
+	},
+	{
+		label: 'sidebar.items.agentTests',
+		icon: <IconFlask size={20} className={styles.menuIcon} />,
+		to: '/agent-tests',
+		module: ModuleEnum.CAMPAIGNS,
+		i18nNamespace: 'agent-tests',
 	},
 ];

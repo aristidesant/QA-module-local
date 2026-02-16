@@ -3,7 +3,9 @@
 	background-color: var(--mantine-color-white);
 	border: 1px solid var(--mantine-color-gray-2);
 	min-width: 160px;
-	transition: border-color 0.2s ease;
+	transition:
+		border-color 0.14s ease,
+		background-color 0.14s ease;
 	overflow: hidden;
 	text-align: left;
 }
@@ -14,26 +16,28 @@
 
 .error {
 	border-color: var(--mantine-color-red-6);
-	box-shadow: 0 0 0 2px var(--mantine-color-red-1);
+	background-color: var(--mantine-color-red-0);
 }
 
 .icon {
-	color: var(--mantine-color-gray-7);
+	color: var(--mantine-color-indigo-7);
 }
 
 .header {
 }
 
 .destination {
-	padding: 4px calc(var(--mantine-spacing-md) + 2px);
+	padding: 4px var(--mantine-spacing-sm);
 	font-family: var(--mantine-font-family-monospace);
 	font-size: 11px;
+	background-color: var(--mantine-color-gray-0);
+	border-bottom: 1px solid var(--mantine-color-gray-2);
 }
 
 .footer {
-	background-color: var(--mantine-color-gray-0);
+	background-color: var(--mantine-color-white);
 	border-top: 1px solid var(--mantine-color-gray-3);
-	padding: 4px calc(var(--mantine-spacing-md) + 2px);
+	padding: 4px var(--mantine-spacing-sm);
 	display: flex;
 	justify-content: flex-end;
 }

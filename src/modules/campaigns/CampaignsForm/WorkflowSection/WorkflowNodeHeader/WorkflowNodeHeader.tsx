@@ -5,6 +5,7 @@ import styles from './WorkflowNodeHeader.module.css';
 interface WorkflowNodeHeaderProps {
 	icon?: ReactNode;
 	title: string;
+	subtitle?: string;
 	actions?: ReactNode;
 	className?: string;
 	titleClassName?: string;
@@ -13,6 +14,7 @@ interface WorkflowNodeHeaderProps {
 const WorkflowNodeHeader = ({
 	icon,
 	title,
+	subtitle,
 	actions,
 	className,
 	titleClassName,
@@ -26,11 +28,18 @@ const WorkflowNodeHeader = ({
 				className={styles.titleGroup}
 			>
 				{icon && <span className={styles.iconWrapper}>{icon}</span>}
-				<Text size='sm' fw={500} lineClamp={1} className={titleClassName}>
-					{title}
-				</Text>
+				<div className={styles.titleCopy}>
+					<Text size='sm' fw={500} lineClamp={1} className={titleClassName}>
+						{title}
+					</Text>
+					{subtitle && (
+						<Text size='xs' className={styles.subtitle} lineClamp={1}>
+							{subtitle}
+						</Text>
+					)}
+				</div>
 			</Group>
-			{actions}
+			<div className={styles.rightSection}>{actions}</div>
 		</div>
 	);
 };

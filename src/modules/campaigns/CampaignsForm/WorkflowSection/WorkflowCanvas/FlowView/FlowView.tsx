@@ -58,9 +58,18 @@ const FlowView = ({
 		isValidConnection={isValidConnection}
 		defaultEdgeOptions={defaultEdgeOptions}
 		fitView
+		minZoom={0.4}
+		maxZoom={1.6}
+		snapToGrid
+		snapGrid={[16, 16]}
 		className={flowClassName}
 	>
-		<Background variant={BackgroundVariant.Dots} gap={16} size={1} />
+		<Background
+			variant={BackgroundVariant.Dots}
+			gap={16}
+			size={1}
+			color='var(--mantine-color-gray-4)'
+		/>
 		<Controls className={controlsClassName} />
 	</ReactFlow>
 );

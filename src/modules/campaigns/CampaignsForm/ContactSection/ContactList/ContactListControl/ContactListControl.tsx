@@ -47,6 +47,8 @@ export const ContactListControl = ({
 	};
 
 	const showErrorNotification = (error: unknown, fallbackMessage: string) => {
+		console.log({ error, fallbackMessage });
+
 		const apiMessage =
 			(error as { response?: { data?: { message?: string } } })?.response?.data
 				?.message || (error instanceof Error ? error.message : null);
@@ -76,7 +78,7 @@ export const ContactListControl = ({
 		requirements?.hasDispositionFlow && requirements?.hasActiveSchedule
 	);
 
-	const handleAction = () => {
+	const handleAction = async () => {
 		if (isDisabled || isLoading) {
 			return;
 		}
@@ -90,65 +92,50 @@ export const ContactListControl = ({
 		}
 
 		if (contactGroup.queueStatus === 'PENDING') {
-			startMutation.mutate(
-				{
+			try {
+				await startMutation.mutateAsync({
 					campaignId,
 					contactGroupId: contactGroup.id,
-				},
-				{
-					onSuccess: () => {
-						showSuccessNotification(
-							t('form.contacts.controls.notifications.running')
-						);
-					},
-					onError: (error) => {
-						showErrorNotification(
-							error,
-							t('form.contacts.controls.notifications.startError')
-						);
-					},
-				}
-			);
+				});
+				showSuccessNotification(
+					t('form.contacts.controls.notifications.running')
+				);
+			} catch (error) {
+				showErrorNotification(
+					error,
+					t('form.contacts.controls.notifications.startError')
+				);
+			}
 		} else if (contactGroup.queueStatus === 'PAUSED') {
-			resumeMutation.mutate(
-				{
+			try {
+				await resumeMutation.mutateAsync({
 					campaignId,
 					contactGroupId: contactGroup.id,
-				},
-				{
-					onSuccess: () => {
-						showSuccessNotification(
-							t('form.contacts.controls.notifications.resumed')
-						);
-					},
-					onError: (error) => {
-						showErrorNotification(
-							error,
-							t('form.contacts.controls.notifications.resumeError')
-						);
-					},
-				}
-			);
+				});
+				showSuccessNotification(
+					t('form.contacts.controls.notifications.resumed')
+				);
+			} catch (error) {
+				showErrorNotification(
+					error,
+					t('form.contacts.controls.notifications.resumeError')
+				);
+			}
 		} else if (contactGroup.queueStatus === 'RUNNING') {
-			pauseMutation.mutate(
-				{
+			try {
+				await pauseMutation.mutateAsync({
 					campaignId,
 					contactGroupId: contactGroup.id,
-				},
-				{
-					onSuccess: () => {
-						showSuccessNotification(
-							t('form.contacts.controls.notifications.paused')
-						);
-					},
-					onError: (error) => {
-						showErrorNotification(
-							error,
-							t('form.contacts.controls.notifications.pauseError')
-						);
-					},
-				}
-			);
+				});
+				showSuccessNotification(
+					t('form.contacts.controls.notifications.paused')
+				);
+			} catch (error) {
+				showErrorNotification(
+					error,
+					t('form.contacts.controls.notifications.pauseError')
+				);
+			}
 		}
 	};
 

@@ -28,7 +28,16 @@ const PhoneNumberNode = (props: NodeProps) => {
 	const hasError = !value || value.trim() === '';
 
 	return (
-		<WorkflowNodeWrapper {...props}>
+		<WorkflowNodeWrapper
+			{...props}
+			sideActions={
+				<WorkflowNodeActions
+					nodeId={props.id}
+					nodeData={props.data as WorkflowNodeData}
+					nodeType={nodeType}
+				/>
+			}
+		>
 			<Box className={`${styles.node} ${hasError ? styles.error : ''}`}>
 				<WorkflowNodeHeader
 					className={styles.header}
@@ -36,17 +45,11 @@ const PhoneNumberNode = (props: NodeProps) => {
 					title={t('form.workflow.nodes.phone_number', {
 						defaultValue: 'Transfer',
 					})}
+					subtitle={t('form.workflow.nodeStatus.destination')}
 				/>
 				<Text size='xs' c='dimmed' lineClamp={1} className={styles.destination}>
 					{value || t('form.workflow.forms.phone.destinationEmpty')}
 				</Text>
-				<div className={styles.footer}>
-					<WorkflowNodeActions
-						nodeId={props.id}
-						nodeData={props.data as WorkflowNodeData}
-						nodeType={nodeType}
-					/>
-				</div>
 			</Box>
 		</WorkflowNodeWrapper>
 	);

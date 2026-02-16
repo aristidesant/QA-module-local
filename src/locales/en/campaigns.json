@@ -30,6 +30,7 @@
 			"workflow": "Workflow",
 			"outcomes": "Outcomes",
 			"params": "Params",
+			"analytics": "Analytics",
 			"general": "General"
 		}
 	},
@@ -624,8 +625,8 @@
 					"agentEmpty": "No agents available.",
 					"delayLabel": "Delay before transfer (milliseconds)",
 					"delayPlaceholder": "Enter delay in milliseconds",
-					"messageLabel": "Transfer message",
-					"messagePlaceholder": "Write a message for the agent transfer",
+					"messageLabel": "Transfer Message",
+					"messagePlaceholder": "Enter message to say during transfer (optional).",
 					"firstMessageLabel": "Enable First Message"
 				}
 			},
@@ -754,6 +755,15 @@
 				"delay": "Delay",
 				"delayValue": "{{value}} ms",
 				"emptyAgent": "Not set"
+			},
+			"nodeStatus": {
+				"destination": "Destination",
+				"transferTarget": "Target agent",
+				"subagentStyle": "Subagent",
+				"overrideStyle": "Override",
+				"transferStyle": "Transfer",
+				"toolsAttached": "{{count}} tool",
+				"toolsAttached_other": "{{count}} tools"
 			}
 		},
 		"campaignSync": {
@@ -786,6 +796,65 @@
 		"actions": {
 			"save": "Save changes",
 			"saving": "Saving..."
+		},
+		"analytics": {
+			"title": "Analytics data collection",
+			"description": "Configure dynamic data variables captured during conversations.",
+			"totalVariables": "{{count}} variable",
+			"totalVariables_other": "{{count}} variables",
+			"empty": "No variables configured yet. Add your first variable to start collecting analytics data.",
+			"variableCardTitle": "Variable",
+			"actions": {
+				"addVariable": "Add variable"
+			},
+			"info": {
+				"title": "Automatic conversation capture",
+				"message": "Use this section to automatically capture values from the conversation. It is recommended when specific information needs to be extracted in a structured way."
+			},
+			"fields": {
+				"identifier": "Identifier",
+				"type": "Data type",
+				"description": "Description",
+				"enumValues": "Enum values (optional)",
+				"enumValuesCount": "Enum values ({{count}})",
+				"constantValue": "Constant value",
+				"dynamicVariable": "Dynamic variable",
+				"isSystemProvided": "System provided"
+			},
+			"types": {
+				"boolean": "Boolean",
+				"integer": "Integer",
+				"number": "Number",
+				"string": "String"
+			},
+			"placeholders": {
+				"identifier": "customer_city",
+				"description": "Describe how this value should be extracted.",
+				"enumValue": "Enter an enum value",
+				"constantValue": "Optional fixed value",
+				"dynamicVariable": "Optional source variable"
+			},
+			"descriptionHint": "This description is passed to the LLM and should explain how to extract the value from the transcript.",
+			"enumHint": "The LLM will only be able to select from these predefined values.",
+			"validation": {
+				"identifierRequired": "Identifier is required",
+				"identifierUnique": "Identifier must be unique"
+			},
+			"table": {
+				"identifier": "Identifier",
+				"type": "Data type",
+				"description": "Description",
+				"enum": "Enum",
+				"enumCount": "Enum ({{count}})",
+				"systemProvided": "System",
+				"yes": "Yes",
+				"no": "No"
+			},
+			"editor": {
+				"title": "Variable details",
+				"description": "Select and edit a variable from the table.",
+				"stringHint": "For string fields, enums help constrain model output to valid values."
+			}
 		},
 		"notifications": {
 			"warningTitle": "Warning",
@@ -937,11 +1006,15 @@
 				"description": "Map CSV columns to system fields.",
 				"mappedBadge": "Mapped ({{count}})",
 				"csvHeadersBadge": "CSV headers ({{count}})",
-				"dynamicFieldsRequired": "Dynamic fields are required for {{objective}}.",
+				"dynamicFieldsRequired": "Dynamic fields are required for {{count}}.",
+				"selectedObjective": "Objective: {{objective}}",
+				"selectedDynamicSet": "Dynamic set: {{name}} (Version {{version}})",
 				"systemFields": "System Fields",
 				"requiredBadge": "Required",
 				"selectObjective": "Select objective",
 				"addDynamicColumns": "Add dynamic columns",
+				"changeDynamicColumns": "Change dynamic columns",
+				"clearDynamicColumns": "Clear dynamic columns",
 				"dynamicSetTitle": "Dynamic field set",
 				"version": "Version {{version}}",
 				"loadingColumns": "Loading columns...",

@@ -30,6 +30,7 @@
 			"workflow": "Workflow",
 			"outcomes": "Resultados",
 			"params": "Parámetros",
+			"analytics": "Analytics",
 			"general": "General"
 		}
 	},
@@ -626,7 +627,7 @@
 					"delayLabel": "Retraso antes de transferir (milisegundos)",
 					"delayPlaceholder": "Ingresa el retraso en milisegundos",
 					"messageLabel": "Mensaje de transferencia",
-					"messagePlaceholder": "Escribe un mensaje para la transferencia",
+					"messagePlaceholder": "Ingresa el mensaje que se dira durante la transferencia (opcional).",
 					"firstMessageLabel": "Habilitar primer mensaje"
 				}
 			},
@@ -755,6 +756,15 @@
 				"delay": "Retraso",
 				"delayValue": "{{value}} ms",
 				"emptyAgent": "Sin configurar"
+			},
+			"nodeStatus": {
+				"destination": "Destino",
+				"transferTarget": "Agente destino",
+				"subagentStyle": "Subagente",
+				"overrideStyle": "Sobrescritura",
+				"transferStyle": "Transferencia",
+				"toolsAttached": "{{count}} herramienta",
+				"toolsAttached_other": "{{count}} herramientas"
 			}
 		},
 		"campaignSync": {
@@ -787,6 +797,65 @@
 		"actions": {
 			"save": "Guardar cambios",
 			"saving": "Guardando..."
+		},
+		"analytics": {
+			"title": "Recolección de datos de analytics",
+			"description": "Configura variables dinámicas de datos capturadas durante las conversaciones.",
+			"totalVariables": "{{count}} variable",
+			"totalVariables_other": "{{count}} variables",
+			"empty": "Aún no hay variables configuradas. Agrega tu primera variable para comenzar a recolectar datos de analytics.",
+			"variableCardTitle": "Variable",
+			"actions": {
+				"addVariable": "Agregar variable"
+			},
+			"info": {
+				"title": "Captura automática de conversación",
+				"message": "Usa esta sección para capturar automáticamente valores de la conversación. Se recomienda cuando necesitas extraer información específica de forma estructurada."
+			},
+			"fields": {
+				"identifier": "Identificador",
+				"type": "Tipo de dato",
+				"description": "Descripción",
+				"enumValues": "Valores enum (opcional)",
+				"enumValuesCount": "Valores enum ({{count}})",
+				"constantValue": "Valor constante",
+				"dynamicVariable": "Variable dinámica",
+				"isSystemProvided": "Provisto por sistema"
+			},
+			"types": {
+				"boolean": "Boolean",
+				"integer": "Integer",
+				"number": "Number",
+				"string": "String"
+			},
+			"placeholders": {
+				"identifier": "customer_city",
+				"description": "Describe cómo se debe extraer este valor.",
+				"enumValue": "Ingresa un valor enum",
+				"constantValue": "Valor fijo opcional",
+				"dynamicVariable": "Variable de origen opcional"
+			},
+			"descriptionHint": "Esta descripción se envía al LLM y debe explicar cómo extraer el valor desde la transcripción.",
+			"enumHint": "El LLM solo podrá seleccionar entre estos valores predefinidos.",
+			"validation": {
+				"identifierRequired": "El identificador es obligatorio",
+				"identifierUnique": "El identificador debe ser único"
+			},
+			"table": {
+				"identifier": "Identificador",
+				"type": "Tipo de dato",
+				"description": "Descripción",
+				"enum": "Enum",
+				"enumCount": "Enum ({{count}})",
+				"systemProvided": "Sistema",
+				"yes": "Sí",
+				"no": "No"
+			},
+			"editor": {
+				"title": "Detalle de variable",
+				"description": "Selecciona y edita una variable desde la tabla.",
+				"stringHint": "Para campos string, los enums ayudan a restringir la salida del modelo a valores validos."
+			}
 		},
 		"notifications": {
 			"warningTitle": "Advertencia",
@@ -938,11 +1007,15 @@
 				"description": "Asocia columnas del CSV con campos del sistema.",
 				"mappedBadge": "Asignado ({{count}})",
 				"csvHeadersBadge": "Encabezados CSV ({{count}})",
-				"dynamicFieldsRequired": "Se requieren campos dinámicos para {{objective}}.",
+				"dynamicFieldsRequired": "Se requieren campos dinámicos para {{count}}.",
+				"selectedObjective": "Objetivo: {{objective}}",
+				"selectedDynamicSet": "Conjunto dinámico: {{name}} (Versión {{version}})",
 				"systemFields": "Campos del sistema",
 				"requiredBadge": "Requerido",
 				"selectObjective": "Seleccionar objetivo",
 				"addDynamicColumns": "Agregar columnas dinámicas",
+				"changeDynamicColumns": "Cambiar columnas dinámicas",
+				"clearDynamicColumns": "Limpiar columnas dinámicas",
 				"dynamicSetTitle": "Conjunto de campos dinámicos",
 				"version": "Versión {{version}}",
 				"loadingColumns": "Cargando columnas...",

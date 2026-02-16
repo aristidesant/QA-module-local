@@ -44,7 +44,8 @@
 		"items": {
 			"overview": "Resumen",
 			"campaigns": "Campañas",
-			"conversations": "Conversaciones"
+			"conversations": "Conversaciones",
+			"agentTests": "Pruebas de agentes"
 		}
 	},
 	"nav": {
@@ -64,6 +65,16 @@
 		"requestAccess": "Solicita acceso a un administrador para ver los módulos disponibles.",
 		"impersonatingClient": "Estás suplantando a un cliente",
 		"returnToMaster": "Usa \"Volver al cliente maestro\" para salir",
+		"clientSwitcher": {
+			"title": "Cambiar cliente",
+			"description": "Selecciona un cliente para cambiar tu sesión activa. Tu token actual será reemplazado.",
+			"tooltip": "Cambiar cliente",
+			"currentClientTooltip": "Ya estás en este cliente",
+			"emptyState": {
+				"title": "No se encontraron clientes",
+				"description": "Ningún cliente coincide con los criterios de búsqueda."
+			}
+		},
 		"categories": {
 			"campaignManagement": "Gestión de campañas",
 			"configuration": "Configuración",
@@ -73,6 +84,7 @@
 		"items": {
 			"campaignManagement": "Gestión de campañas",
 			"configurations": "Configuraciones",
+			"agentTests": "Pruebas de agentes",
 			"doNotCall": "No llamar (DNC)",
 			"clients": "Clientes",
 			"knowledgeBases": "Bases de conocimiento",

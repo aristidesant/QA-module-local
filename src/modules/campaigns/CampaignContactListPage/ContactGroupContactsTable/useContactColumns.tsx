@@ -37,6 +37,7 @@ export const useContactColumns = (
 			{
 				accessorKey: 'id',
 				header: t('contactsTable.columns.contact'),
+				enableSorting: true,
 				cell: ({ row }) => {
 					const contact = row.original;
 					const fullName = getFullName(contact);
@@ -66,6 +67,7 @@ export const useContactColumns = (
 			{
 				accessorKey: 'phones',
 				header: t('contactsTable.columns.phone'),
+				enableSorting: false,
 				cell: ({ row }) => {
 					const contact = row.original;
 					const uniquePhones = getUniquePhones(contact);
@@ -164,6 +166,7 @@ export const useContactColumns = (
 			{
 				accessorKey: 'emails',
 				header: t('contactsTable.columns.email'),
+				enableSorting: false,
 				cell: ({ row }) => {
 					const contact = row.original;
 					const email = contact.emails?.[0] || '';
@@ -218,6 +221,7 @@ export const useContactColumns = (
 				id: 'status',
 				accessorFn: (contact) => getContactStatus(contact),
 				header: t('contactsTable.columns.status'),
+				enableSorting: true,
 				cell: ({ row }) => {
 					const contact = row.original;
 					const status = getContactStatus(contact);

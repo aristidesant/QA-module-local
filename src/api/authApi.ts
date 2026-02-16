@@ -170,6 +170,45 @@ export async function endImpersonation(
 	return response.data;
 }
 
+/** Response from GET /auth/available-clients */
+export interface AvailableClientsResponse {
+	availableClients: ClientSelectOption[];
+}
+
+/** Request payload for POST /auth/change-client */
+export interface ChangeClientRequest {
+	clientId: number;
+	otp?: string;
+}
+
+/** Response from POST /auth/change-client */
+export interface ChangeClientResponse {
+	message: string;
+	accessToken: string | null;
+	otpRequired?: boolean;
+	userId?: number;
+}
+
+export async function getAvailableClients(
+	apiUrl: string = DEFAULT_API_URL
+): Promise<AvailableClientsResponse> {
+	const response = await axios.get<AvailableClientsResponse>(
+		`${apiUrl}/auth/available-clients`
+	);
+	return response.data;
+}
+
+export async function changeClient(
+	payload: ChangeClientRequest,
+	apiUrl: string = DEFAULT_API_URL
+): Promise<ChangeClientResponse> {
+	const response = await axios.post<ChangeClientResponse>(
+		`${apiUrl}/auth/change-client`,
+		payload
+	);
+	return response.data;
+}
+
 // Password Change
 export interface ChangePasswordPayload {
 	currentPassword: string;

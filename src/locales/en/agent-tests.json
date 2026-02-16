@@ -1,0 +1,188 @@
+{
+	"page": {
+		"title": "Agent Tests",
+		"description": "Create and run tests for your existing agents."
+	},
+	"actions": {
+		"refresh": "Refresh",
+		"runSelected": "Run selected",
+		"create": "Create",
+		"clearFilters": "Clear filters",
+		"retry": "Try again",
+		"saveChanges": "Save changes"
+	},
+	"filters": {
+		"title": "Filters",
+		"description": "Filter tests by text or agent.",
+		"searchLabel": "Search",
+		"searchPlaceholder": "Search by name, prompt, expected response...",
+		"agentLabel": "Agent",
+		"agentPlaceholder": "Select an agent"
+	},
+	"table": {
+		"title": "Tests list",
+		"description": "{{total}} tests found, {{selected}} selected",
+		"infoBanner": "Create tests from real or hypothetical conversations and run them anytime to ensure consistent quality.",
+		"searchPlaceholder": "Search tests...",
+		"selectAll": "Select all tests",
+		"selectRow": "Select {{name}}",
+		"notAvailable": "Not available",
+		"columns": {
+			"name": "Name",
+			"testType": "Test type",
+			"createdBy": "Created by",
+			"agent": "Agent",
+			"prompt": "Prompt",
+			"successCondition": "Success condition",
+			"expectedResponse": "Expected response",
+			"updatedAt": "Updated",
+			"actions": "Actions"
+		},
+		"type": {
+			"nextReply": "Next Reply",
+			"toolInvocation": "Tool Invocation"
+		},
+		"actions": {
+			"run": "Run test",
+			"edit": "Edit",
+			"delete": "Delete"
+		}
+	},
+	"state": {
+		"errorTitle": "Could not load tests",
+		"errorDescription": "Try reloading the list.",
+		"emptyTitle": "No tests yet",
+		"emptyDescription": "Create your first test to validate your agents."
+	},
+	"pagination": {
+		"itemsLabel": "tests"
+	},
+	"run": {
+		"noSelection": "Select at least one test to run.",
+		"mixedAgentError": "Selected tests must belong to the same agent.",
+		"missingAgentError": "Selected test has no linked agent.",
+		"preparingAgentSelection": "Preparing agent selector...",
+		"selectAgentTitle": "Select agent",
+		"selectAgentDescription": "This test has no linked agent. Please select one to run the test.",
+		"selectAgentLabel": "Agent",
+		"selectAgentPlaceholder": "Choose an agent",
+		"selectAgentValidation": "Please select an agent.",
+		"selectAgentConfirm": "Run with agent",
+		"lastRunTitle": "Last run",
+		"lastRunDescription": "Latest execution for job {{jobId}}",
+		"summary": "Total: {{total}} | Passed: {{passed}} | Failed: {{failed}}",
+		"expectedActual": "Expected: {{expected}} | Actual: {{actual}}",
+		"noImmediateResults": "The run started. Results may arrive asynchronously."
+	},
+	"notifications": {
+		"created": "Test created successfully.",
+		"updated": "Test updated successfully.",
+		"saveError": "Could not save the test.",
+		"deleted": "Test deleted successfully.",
+		"deleteError": "Could not delete the test.",
+		"runStarted": "Run started successfully.",
+		"runCompleted": "Run completed.",
+		"runError": "Could not run selected tests."
+	},
+	"delete": {
+		"title": "Delete test",
+		"description": "Are you sure you want to delete \"{{name}}\"?"
+	},
+	"form": {
+		"createTitle": "Create test",
+		"editTitle": "Edit test",
+		"tabs": {
+			"nextReply": "Next reply test",
+			"toolInvocation": "Tool invocation test"
+		},
+		"toolInvocationHint": "Tool invocation test layout is available. Dedicated tool assertion fields will be enabled once backend fields are available.",
+		"actions": {
+			"showExamples": "Show",
+			"hideExamples": "Hide",
+			"addExample": "Add example",
+			"addVariable": "Add new"
+		},
+		"empty": {
+			"successExamples": "No success examples yet.",
+			"failureExamples": "No failure examples yet.",
+			"dynamicVariables": "No dynamic variables yet."
+		},
+		"fields": {
+			"name": "Name",
+			"agent": "Agent",
+			"prompt": "Prompt",
+			"successCondition": "Describe expected next message",
+			"expectedResponse": "Expected response",
+			"successExamples": "Success Examples (optional)",
+			"failureExamples": "Failure Examples (optional)",
+			"dynamicVariables": "Dynamic variables to use in the test run (optional)",
+			"variableKey": "Key",
+			"variableValue": "Value",
+			"dynamicVariablesHelp": "One key=value pair per line.",
+			"assertions": "Assertions",
+			"assertionsHelp": "One assertion per line. Format: type:value",
+			"internalNotes": "Internal notes"
+		},
+		"placeholders": {
+			"name": "Greeting test",
+			"agent": "Choose an agent",
+			"prompt": "Say hello in one sentence",
+			"successCondition": "Describe ideal behavior the agent should exhibit to pass this test.",
+			"expectedResponse": "Hello",
+			"assertions": "contains:hello",
+			"examples": "One example per line",
+			"example": "Type an example",
+			"dynamicVariables": "lastName=Mena",
+			"variableKey": "Variable key",
+			"variableValue": "Variable value",
+			"internalNotes": "Optional internal notes"
+		},
+		"validation": {
+			"nameRequired": "Name is required.",
+			"agentRequired": "Agent is required.",
+			"promptRequired": "Prompt is required.",
+			"successConditionRequired": "Success condition is required.",
+			"successExamplesRequired": "Add at least one success example.",
+			"failureExamplesRequired": "Add at least one failure example.",
+			"duplicateDynamicVariable": "Dynamic variable keys must be unique.",
+			"expectedResponseRequired": "Expected response is required.",
+			"assertionsRequired": "Add at least one assertion.",
+			"promptAndExpectedFromConversation": "Prompt is required. Add at least one user message in the simulation."
+		}
+	},
+	"simulation": {
+		"title": "Conversation simulation",
+		"run": "Run test",
+		"runSingleHint": "Save this test first before running from the studio.",
+		"empty": "Add conversation lines to preview the simulation.",
+		"addMessage": "Add message",
+		"addUserMessage": "User message",
+		"addAgentMessage": "Agent message",
+		"removeMessage": "Remove message",
+		"userMessagePlaceholder": "Write the user message",
+		"agentMessagePlaceholder": "Write the agent message",
+		"editorLabel": "Simulation script",
+		"editorHelp": "Use one line per message: agent: ... or user: ...",
+		"editorPlaceholder": "user: Hi\nagent: Hello, how can I help?",
+		"dynamicVarsPreview": "Dynamic variables preview",
+		"agent": "Agent",
+		"user": "User"
+	},
+	"testStatus": {
+		"title": "Test Status for {{testName}}",
+		"failedTests": "Failed Tests ({{count}})",
+		"completedTests": "Completed Tests ({{count}})",
+		"runningTestsTitle": "Running Tests ({{count}})",
+		"pending": "Pending",
+		"evaluation": "Evaluation",
+		"editTest": "Edit Test",
+		"expectedResponse": "Expected Response",
+		"actualResponse": "Actual Response",
+		"selectTest": "Select a test to view details",
+		"allPassed": "All tests passed.",
+		"noConversation": "No conversation available for this run.",
+		"runningTests": "Running tests...",
+		"retryFailed": "Retry Failed",
+		"retryAll": "Retry All"
+	}
+}

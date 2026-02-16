@@ -1,0 +1,188 @@
+{
+	"page": {
+		"title": "Pruebas de agentes",
+		"description": "Crea y ejecuta pruebas para tus agentes existentes."
+	},
+	"actions": {
+		"refresh": "Actualizar",
+		"runSelected": "Ejecutar seleccionados",
+		"create": "Crear",
+		"clearFilters": "Limpiar filtros",
+		"retry": "Reintentar",
+		"saveChanges": "Guardar cambios"
+	},
+	"filters": {
+		"title": "Filtros",
+		"description": "Filtra pruebas por texto o por agente.",
+		"searchLabel": "Buscar",
+		"searchPlaceholder": "Busca por nombre, prompt o respuesta esperada...",
+		"agentLabel": "Agente",
+		"agentPlaceholder": "Selecciona un agente"
+	},
+	"table": {
+		"title": "Listado de pruebas",
+		"description": "{{total}} pruebas encontradas, {{selected}} seleccionadas",
+		"infoBanner": "Crea pruebas basadas en conversaciones reales o hipoteticas y ejecutalas cuando quieras para asegurar calidad constante.",
+		"searchPlaceholder": "Buscar pruebas...",
+		"selectAll": "Seleccionar todas las pruebas",
+		"selectRow": "Seleccionar {{name}}",
+		"notAvailable": "No disponible",
+		"columns": {
+			"name": "Nombre",
+			"testType": "Tipo de prueba",
+			"createdBy": "Creado por",
+			"agent": "Agente",
+			"prompt": "Prompt",
+			"successCondition": "Condicion de exito",
+			"expectedResponse": "Respuesta esperada",
+			"updatedAt": "Actualizado",
+			"actions": "Acciones"
+		},
+		"type": {
+			"nextReply": "Siguiente respuesta",
+			"toolInvocation": "Invocacion de herramienta"
+		},
+		"actions": {
+			"run": "Ejecutar prueba",
+			"edit": "Editar",
+			"delete": "Eliminar"
+		}
+	},
+	"state": {
+		"errorTitle": "No se pudieron cargar las pruebas",
+		"errorDescription": "Intenta recargar el listado.",
+		"emptyTitle": "Aun no hay pruebas",
+		"emptyDescription": "Crea tu primera prueba para validar tus agentes."
+	},
+	"pagination": {
+		"itemsLabel": "pruebas"
+	},
+	"run": {
+		"noSelection": "Selecciona al menos una prueba para ejecutar.",
+		"mixedAgentError": "Las pruebas seleccionadas deben pertenecer al mismo agente.",
+		"missingAgentError": "La prueba seleccionada no tiene un agente vinculado.",
+		"preparingAgentSelection": "Preparando selector de agente...",
+		"selectAgentTitle": "Selecciona agente",
+		"selectAgentDescription": "Esta prueba no tiene un agente vinculado. Selecciona uno para ejecutar la prueba.",
+		"selectAgentLabel": "Agente",
+		"selectAgentPlaceholder": "Elige un agente",
+		"selectAgentValidation": "Por favor selecciona un agente.",
+		"selectAgentConfirm": "Ejecutar con agente",
+		"lastRunTitle": "Ultima ejecucion",
+		"lastRunDescription": "Ultima ejecucion para el job {{jobId}}",
+		"summary": "Total: {{total}} | Exitosas: {{passed}} | Fallidas: {{failed}}",
+		"expectedActual": "Esperado: {{expected}} | Actual: {{actual}}",
+		"noImmediateResults": "La ejecucion inicio. Los resultados pueden llegar de forma asincrona."
+	},
+	"notifications": {
+		"created": "Prueba creada correctamente.",
+		"updated": "Prueba actualizada correctamente.",
+		"saveError": "No se pudo guardar la prueba.",
+		"deleted": "Prueba eliminada correctamente.",
+		"deleteError": "No se pudo eliminar la prueba.",
+		"runStarted": "La ejecucion inicio correctamente.",
+		"runCompleted": "La ejecucion finalizo.",
+		"runError": "No se pudieron ejecutar las pruebas seleccionadas."
+	},
+	"delete": {
+		"title": "Eliminar prueba",
+		"description": "Estas seguro de que deseas eliminar \"{{name}}\"?"
+	},
+	"form": {
+		"createTitle": "Crear prueba",
+		"editTitle": "Editar prueba",
+		"tabs": {
+			"nextReply": "Prueba de siguiente respuesta",
+			"toolInvocation": "Prueba de invocacion de herramienta"
+		},
+		"toolInvocationHint": "El layout para pruebas de herramientas ya esta disponible. Los campos dedicados se habilitaran cuando el backend exponga esos datos.",
+		"actions": {
+			"showExamples": "Mostrar",
+			"hideExamples": "Ocultar",
+			"addExample": "Agregar ejemplo",
+			"addVariable": "Agregar nueva"
+		},
+		"empty": {
+			"successExamples": "Aun no hay ejemplos de exito.",
+			"failureExamples": "Aun no hay ejemplos de falla.",
+			"dynamicVariables": "Aun no hay variables dinamicas."
+		},
+		"fields": {
+			"name": "Nombre",
+			"agent": "Agente",
+			"prompt": "Prompt",
+			"successCondition": "Describe el siguiente mensaje esperado",
+			"expectedResponse": "Respuesta esperada",
+			"successExamples": "Ejemplos de exito (opcional)",
+			"failureExamples": "Ejemplos de falla (opcional)",
+			"dynamicVariables": "Variables dinamicas para la ejecucion (opcional)",
+			"variableKey": "Clave",
+			"variableValue": "Valor",
+			"dynamicVariablesHelp": "Un par clave=valor por linea.",
+			"assertions": "Aserciones",
+			"assertionsHelp": "Una asercion por linea. Formato: tipo:valor",
+			"internalNotes": "Notas internas"
+		},
+		"placeholders": {
+			"name": "Prueba de saludo",
+			"agent": "Elige un agente",
+			"prompt": "Di hola en una frase",
+			"successCondition": "Describe el comportamiento ideal que debe mostrar el agente para pasar esta prueba.",
+			"expectedResponse": "Hola",
+			"assertions": "contains:hola",
+			"examples": "Un ejemplo por linea",
+			"example": "Escribe un ejemplo",
+			"dynamicVariables": "lastName=Mena",
+			"variableKey": "Clave de variable",
+			"variableValue": "Valor de variable",
+			"internalNotes": "Notas internas opcionales"
+		},
+		"validation": {
+			"nameRequired": "El nombre es obligatorio.",
+			"agentRequired": "El agente es obligatorio.",
+			"promptRequired": "El prompt es obligatorio.",
+			"successConditionRequired": "La condicion de exito es obligatoria.",
+			"successExamplesRequired": "Agrega al menos un ejemplo de exito.",
+			"failureExamplesRequired": "Agrega al menos un ejemplo de falla.",
+			"duplicateDynamicVariable": "Las claves de variables dinamicas deben ser unicas.",
+			"expectedResponseRequired": "La respuesta esperada es obligatoria.",
+			"assertionsRequired": "Agrega al menos una asercion.",
+			"promptAndExpectedFromConversation": "El prompt es obligatorio. Agrega al menos un mensaje de usuario en la simulacion."
+		}
+	},
+	"simulation": {
+		"title": "Simulacion de conversacion",
+		"run": "Ejecutar prueba",
+		"runSingleHint": "Guarda esta prueba primero antes de ejecutarla desde el studio.",
+		"empty": "Agrega lineas de conversacion para previsualizar la simulacion.",
+		"addMessage": "Agregar mensaje",
+		"addUserMessage": "Mensaje de usuario",
+		"addAgentMessage": "Mensaje del agente",
+		"removeMessage": "Eliminar mensaje",
+		"userMessagePlaceholder": "Escribe el mensaje del usuario",
+		"agentMessagePlaceholder": "Escribe el mensaje del agente",
+		"editorLabel": "Guion de simulacion",
+		"editorHelp": "Usa una linea por mensaje: agent: ... o user: ...",
+		"editorPlaceholder": "user: Hola\nagent: Hola, en que puedo ayudarte?",
+		"dynamicVarsPreview": "Vista previa de variables dinamicas",
+		"agent": "Agente",
+		"user": "Usuario"
+	},
+	"testStatus": {
+		"title": "Estado de la prueba para {{testName}}",
+		"failedTests": "Pruebas fallidas ({{count}})",
+		"completedTests": "Pruebas completadas ({{count}})",
+		"runningTestsTitle": "Pruebas en ejecucion ({{count}})",
+		"pending": "Pendiente",
+		"evaluation": "Evaluacion",
+		"editTest": "Editar prueba",
+		"expectedResponse": "Respuesta esperada",
+		"actualResponse": "Respuesta actual",
+		"selectTest": "Selecciona una prueba para ver los detalles",
+		"allPassed": "Todas las pruebas pasaron.",
+		"noConversation": "No hay conversacion disponible para esta ejecucion.",
+		"runningTests": "Ejecutando pruebas...",
+		"retryFailed": "Reintentar fallidas",
+		"retryAll": "Reintentar todas"
+	}
+}

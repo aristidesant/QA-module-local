@@ -204,7 +204,19 @@
 			"title": "Registros de llamadas salientes",
 			"subtitle": "Contacto: {{name}}",
 			"empty": "No hay tareas de llamadas salientes disponibles.",
+			"eventDate": "Fecha del evento",
+			"noEventDate": "Sin fecha del evento",
 			"noErrorMessage": "Sin mensaje de error",
+			"waveLabel": "Oleada {{wave}}",
+			"dates": {
+				"scheduled": "Programado",
+				"started": "Iniciado",
+				"completed": "Completado",
+				"paused": "Pausado",
+				"cancelled": "Cancelado",
+				"created": "Creado",
+				"updated": "Actualizado"
+			},
 			"columns": {
 				"status": "Estado",
 				"wave": "Oleada",

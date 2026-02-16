@@ -11,6 +11,7 @@ import {
 	IconKey,
 	IconBuilding,
 	IconPhoneOff,
+	IconFlask,
 } from '@tabler/icons-react';
 import styles from './UserMenu.module.css';
 import { useNavigate } from 'react-router';
@@ -126,6 +127,13 @@ export const UserMenu: React.FC = () => {
 		{
 			category: t('userMenu.categories.toolsAndResources'),
 			items: [
+				{
+					label: t('userMenu.items.agentTests'),
+					icon: <IconFlask size={16} />,
+					path: '/agent-tests',
+					module: ModuleEnum.CAMPAIGNS,
+					permission: PermissionEnum.UPDATE,
+				},
 				{
 					label: t('userMenu.items.knowledgeBases'),
 					icon: <IconBook size={16} />,

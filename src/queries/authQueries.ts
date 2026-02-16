@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
 	authenticate,
 	MFALoginResponse,
@@ -15,9 +15,12 @@ import {
 	selectClient,
 	SelectClientRequest,
 	SelectClientResponse,
+	getAvailableClients,
+	changeClient,
+	ChangeClientRequest,
+	ChangeClientResponse,
 } from '~/api/authApi';
 import userApi from '~/api/userApi';
-import { jwtDecode } from 'jwt-decode';
 import { useSessionStore } from '~/stores/sessionStore';
 import { useImpersonationLoadingStore } from '~/stores/impersonationLoadingStore';
 import { getErrorMessage } from '~/utils/httpClient';
@@ -47,19 +50,10 @@ async function completeLoginFlow(
 		return;
 	}
 
-	// Otherwise, decode token for user id and fetch user data
-	let userId: number | undefined;
-	try {
-		const decoded: any = jwtDecode(accessToken);
-		userId = decoded?.userId ?? decoded?.id;
-	} catch {
-		// If decoding fails, we won't fetch user by id; try /users/me instead
-	}
-
-	// Fetch current user (prefer users/me, but keep fallback by id if present)
+	// Otherwise, fetch user data using /users/me endpoint (more reliable than decoding JWT)
 	try {
 		const api = userApi({ Authorization: `Bearer ${accessToken}` });
-		const user = await api.getUserById(Number(userId));
+		const user = await api.getCurrentUser();
 		setUser(user);
 		queryClient.setQueryData(['currentUser'], user);
 	} catch (err) {
@@ -253,6 +247,67 @@ export function useEndImpersonation() {
 		onError: (error: Error) => {
 			// eslint-disable-next-line no-console
 			console.error('End impersonation failed:', error.message);
+			setLoading(false);
+		},
+	});
+}
+
+/**
+ * Query to fetch the list of clients the current user can switch to.
+ * Only enabled when explicitly requested (enabled option).
+ */
+export function useAvailableClients(enabled = false) {
+	return useQuery({
+		queryKey: ['availableClients'],
+		queryFn: () => getAvailableClients(),
+		enabled,
+		staleTime: 30_000,
+	});
+}
+
+/**
+ * Mutation to switch the current session to a different client.
+ * Revokes the current token and issues a new one scoped to the selected client.
+ * If MFA is enabled, returns otpRequired and the caller must re-invoke with the OTP.
+ */
+export function useChangeClient() {
+	const queryClient = useQueryClient();
+	const { setToken, setUser } = useSessionStore();
+	const { setLoading } = useImpersonationLoadingStore.getState();
+
+	return useMutation<ChangeClientResponse, Error, ChangeClientRequest>({
+		mutationFn: async (payload: ChangeClientRequest) => {
+			if (!payload.otp) {
+				setLoading(true, 'Switching client...');
+			}
+			const res = await changeClient(payload);
+			return res;
+		},
+		onSuccess: async (data: ChangeClientResponse) => {
+			if (data.otpRequired || !data.accessToken) {
+				// MFA flow — caller handles OTP prompt
+				setLoading(false);
+				return;
+			}
+
+			// Use the EXACT same flow as impersonation:
+			// 1. Complete login flow (sets token + fetches user)
+			await completeLoginFlow(
+				data.accessToken,
+				queryClient,
+				setToken,
+				setUser
+				// Note: change-client doesn't return user data, so completeLoginFlow will fetch it
+			);
+
+			// 2. Invalidate all queries to refresh data for the new client context
+			queryClient.invalidateQueries();
+
+			// 3. Clear loading state
+			setLoading(false);
+		},
+		onError: (error: Error) => {
+			console.error('Client change failed:', error.message);
 			setLoading(false);
 		},
 	});

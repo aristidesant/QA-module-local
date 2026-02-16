@@ -44,7 +44,8 @@
 		"items": {
 			"overview": "Overview",
 			"campaigns": "Campaigns",
-			"conversations": "Conversations"
+			"conversations": "Conversations",
+			"agentTests": "Agent Tests"
 		}
 	},
 	"nav": {
@@ -64,6 +65,16 @@
 		"requestAccess": "Request access to an admin to see available modules.",
 		"impersonatingClient": "You are impersonating a client",
 		"returnToMaster": "Use \"Return to Master Client\" to exit",
+		"clientSwitcher": {
+			"title": "Switch Client",
+			"description": "Select a client to switch your active session. Your current token will be replaced.",
+			"tooltip": "Switch client",
+			"currentClientTooltip": "You are already in this client",
+			"emptyState": {
+				"title": "No clients found",
+				"description": "No clients match your search criteria."
+			}
+		},
 		"categories": {
 			"campaignManagement": "Campaign Management",
 			"configuration": "Configuration",
@@ -73,6 +84,7 @@
 		"items": {
 			"campaignManagement": "Campaign Management",
 			"configurations": "Configurations",
+			"agentTests": "Agent Tests",
 			"doNotCall": "Do Not Call",
 			"clients": "Clients",
 			"knowledgeBases": "Knowledge Bases",

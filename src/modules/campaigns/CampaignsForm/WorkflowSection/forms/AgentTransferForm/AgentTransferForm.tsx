@@ -6,19 +6,29 @@ import {
 	Text,
 	Textarea,
 } from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
 import { IconUserCog } from '@tabler/icons-react';
+import axios from 'axios';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
 import type {
 	AgentWorkflow,
 	StandaloneAgentNode,
 } from '~/models/AgentWorkflowModel';
 import type { AgentConfigModel } from '~/models/AgentListObject';
+import { DEFAULT_API_URL } from '~/api/config';
 import { useCampaignId } from '~/modules/campaigns/campaignFormFunctions';
 import WorkflowNodeForm from '../WorkflowNodeForm';
 import { updateWorkflowNode } from '../nodeFormUtils';
 import styles from './AgentTransferForm.module.css';
+
+type CampaignOtherAgentDto = {
+	id: string;
+	agentId: string;
+	identifier: string;
+	campaignId: number;
+	campaignName: string;
+};
 
 interface AgentTransferFormProps {
 	nodeId: string;
@@ -31,22 +41,36 @@ const AgentTransferForm = ({
 	nodeId,
 	workflow,
 	onWorkflowChange,
+	campaignAgentConfig,
 }: AgentTransferFormProps) => {
 	const { t } = useTranslation('campaigns');
 	const campaignId = useCampaignId();
-	const { data: campaignAgents, isLoading } = useGetCampaignAgents(
-		campaignId || 0
-	);
+	const { data: campaignAgents, isLoading } = useQuery({
+		queryKey: ['campaignOtherAgents', campaignId],
+		queryFn: async () => {
+			const { data } = await axios.get<CampaignOtherAgentDto[]>(
+				`${DEFAULT_API_URL}/campaigns/${campaignId}/agents/others`
+			);
+			return data;
+		},
+		enabled: !!campaignId,
+	});
 	const node = workflow?.nodes[nodeId] as StandaloneAgentNode | undefined;
+	const currentAgentId = campaignAgentConfig?.agentId;
 
 	const agentOptions = useMemo(
 		() =>
-			campaignAgents?.map((agent) => ({
-				value: agent.agentId,
-				label: agent.agent?.name || agent.agentId,
-			})) || [],
-		[campaignAgents]
+			campaignAgents
+				?.filter((agent) => agent.agentId !== currentAgentId)
+				.map((agent) => ({
+					value: agent.agentId,
+					label: agent.campaignName,
+				})) || [],
+		[campaignAgents, currentAgentId]
 	);
+
+	const selectedTransferAgentId =
+		node?.agentId && node.agentId !== currentAgentId ? node.agentId : null;
 
 	if (!node) {
 		return (
@@ -60,12 +84,6 @@ const AgentTransferForm = ({
 			</WorkflowNodeForm>
 		);
 	}
-
-	const agentDescription = isLoading
-		? t('form.workflow.forms.transfer.agentLoading')
-		: agentOptions.length === 0
-			? t('form.workflow.forms.transfer.agentEmpty')
-			: undefined;
 
 	const handleUpdate = (updates: Partial<StandaloneAgentNode>) => {
 		const nextWorkflow = updateWorkflowNode(workflow, nodeId, updates);
@@ -91,9 +109,8 @@ const AgentTransferForm = ({
 				<Select
 					label={t('form.workflow.forms.transfer.agentLabel')}
 					placeholder={t('form.workflow.forms.transfer.agentPlaceholder')}
-					description={agentDescription}
 					data={agentOptions}
-					value={node.agentId || null}
+					value={selectedTransferAgentId}
 					onChange={(value) => handleUpdate({ agentId: value || '' })}
 					searchable
 					disabled={isLoading || agentOptions.length === 0}
@@ -123,7 +140,7 @@ const AgentTransferForm = ({
 					label={t('form.workflow.forms.transfer.messageLabel')}
 					placeholder={t('form.workflow.forms.transfer.messagePlaceholder')}
 					value={node.transferMessage ?? ''}
-					minRows={4}
+					minRows={3}
 					onChange={(event) =>
 						handleUpdate({ transferMessage: event.currentTarget.value })
 					}
@@ -136,14 +153,29 @@ const AgentTransferForm = ({
 				<Switch
 					label={t('form.workflow.forms.transfer.firstMessageLabel')}
 					checked={node.enableTransferredAgentFirstMessage ?? false}
+					labelPosition='left'
 					onChange={(event) =>
 						handleUpdate({
 							enableTransferredAgentFirstMessage: event.currentTarget.checked,
 						})
 					}
 					size='sm'
-					classNames={{ label: styles.label }}
+					classNames={{
+						root: styles.switchRoot,
+						body: styles.switchBody,
+						label: styles.label,
+					}}
 				/>
+				{isLoading && (
+					<Text size='xs' className={styles.description}>
+						{t('form.workflow.forms.transfer.agentLoading')}
+					</Text>
+				)}
+				{!isLoading && agentOptions.length === 0 && (
+					<Text size='xs' className={styles.description}>
+						{t('form.workflow.forms.transfer.agentEmpty')}
+					</Text>
+				)}
 			</Stack>
 		</WorkflowNodeForm>
 	);

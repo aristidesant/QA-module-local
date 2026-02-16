@@ -128,18 +128,21 @@ const WorkflowNodeActions = ({
 					onClose={() => setIsMenuOpen(false)}
 				>
 					<Menu.Target>
-						<ActionIcon
-							size={18}
-							variant='outline'
-							color='gray'
-							radius='md'
-							title={t('form.workflow.actions.add')}
-							className={styles.actionButton}
-						>
-							<IconPlus size={12} />
-						</ActionIcon>
+						<Tooltip label={t('form.workflow.actions.add')} withArrow>
+							<ActionIcon
+								size='sm'
+								variant='light'
+								color='blue'
+								radius='sm'
+								title={t('form.workflow.actions.add')}
+								className={`${styles.actionButton} ${styles.actionButtonPrimary}`}
+							>
+								<IconPlus size={13} />
+							</ActionIcon>
+						</Tooltip>
 					</Menu.Target>
 					<Menu.Dropdown className={styles.menuDropdown}>
+						<Menu.Label>{t('form.workflow.actions.add')}</Menu.Label>
 						{menuItems.map((item) => (
 							<Menu.Item
 								key={`${item.type}-${item.label}`}
@@ -160,48 +163,50 @@ const WorkflowNodeActions = ({
 				</Menu>
 			)}
 			{showAddButton && canShowSingleAdd && (
-				<ActionIcon
-					size={18}
-					variant='outline'
-					color='gray'
-					radius='md'
-					title={t('form.workflow.actions.add')}
-					onClick={
-						isStartNode && onAddNodeWithType
-							? () =>
-									handleAddNodeWithType(WORKFLOW_NODE_TYPES.STANDALONE_AGENT)
-							: handleAddClick
-					}
-					className={styles.actionButton}
-				>
-					<IconPlus size={12} />
-				</ActionIcon>
+				<Tooltip label={t('form.workflow.actions.add')} withArrow>
+					<ActionIcon
+						size='sm'
+						variant='light'
+						color='blue'
+						radius='sm'
+						title={t('form.workflow.actions.add')}
+						onClick={
+							isStartNode && onAddNodeWithType
+								? () =>
+										handleAddNodeWithType(WORKFLOW_NODE_TYPES.STANDALONE_AGENT)
+								: handleAddClick
+						}
+						className={`${styles.actionButton} ${styles.actionButtonPrimary}`}
+					>
+						<IconPlus size={13} />
+					</ActionIcon>
+				</Tooltip>
 			)}
 			{showActions && onCopyNode && (
 				<Tooltip label={t('form.workflow.actions.clone')} withArrow>
 					<ActionIcon
-						size={18}
-						variant='outline'
+						size='sm'
+						variant='light'
 						color='gray'
-						radius='md'
+						radius='sm'
 						onClick={() => onCopyNode(nodeId)}
 						className={styles.actionButton}
 					>
-						<IconCopy size={12} />
+						<IconCopy size={13} />
 					</ActionIcon>
 				</Tooltip>
 			)}
 			{showActions && onDeleteNode && (
 				<Tooltip label={t('form.workflow.actions.delete')} withArrow>
 					<ActionIcon
-						size={'xs'}
+						size='sm'
 						variant='light'
 						color='red'
-						radius='md'
+						radius='sm'
 						onClick={() => onDeleteNode(nodeId)}
-						className={styles.actionButton}
+						className={`${styles.actionButton} ${styles.actionButtonDanger}`}
 					>
-						<IconTrash size={12} />
+						<IconTrash size={13} />
 					</ActionIcon>
 				</Tooltip>
 			)}
