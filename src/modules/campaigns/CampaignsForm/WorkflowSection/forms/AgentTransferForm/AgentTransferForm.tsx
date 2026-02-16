@@ -6,19 +6,29 @@ import {
 	Text,
 	Textarea,
 } from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
 import { IconUserCog } from '@tabler/icons-react';
+import axios from 'axios';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
 import type {
 	AgentWorkflow,
 	StandaloneAgentNode,
 } from '~/models/AgentWorkflowModel';
 import type { AgentConfigModel } from '~/models/AgentListObject';
+import { DEFAULT_API_URL } from '~/api/config';
 import { useCampaignId } from '~/modules/campaigns/campaignFormFunctions';
 import WorkflowNodeForm from '../WorkflowNodeForm';
 import { updateWorkflowNode } from '../nodeFormUtils';
 import styles from './AgentTransferForm.module.css';
+
+type CampaignOtherAgentDto = {
+	id: string;
+	agentId: string;
+	identifier: string;
+	campaignId: number;
+	campaignName: string;
+};
 
 interface AgentTransferFormProps {
 	nodeId: string;
@@ -31,22 +41,36 @@ const AgentTransferForm = ({
 	nodeId,
 	workflow,
 	onWorkflowChange,
+	campaignAgentConfig,
 }: AgentTransferFormProps) => {
 	const { t } = useTranslation('campaigns');
 	const campaignId = useCampaignId();
-	const { data: campaignAgents, isLoading } = useGetCampaignAgents(
-		campaignId || 0
-	);
+	const { data: campaignAgents, isLoading } = useQuery({
+		queryKey: ['campaignOtherAgents', campaignId],
+		queryFn: async () => {
+			const { data } = await axios.get<CampaignOtherAgentDto[]>(
+				`${DEFAULT_API_URL}/campaigns/${campaignId}/agents/others`
+			);
+			return data;
+		},
+		enabled: !!campaignId,
+	});
 	const node = workflow?.nodes[nodeId] as StandaloneAgentNode | undefined;
+	const currentAgentId = campaignAgentConfig?.agentId;
 
 	const agentOptions = useMemo(
 		() =>
-			campaignAgents?.map((agent) => ({
-				value: agent.agentId,
-				label: agent.agent?.name || agent.agentId,
-			})) || [],
-		[campaignAgents]
+			campaignAgents
+				?.filter((agent) => agent.agentId !== currentAgentId)
+				.map((agent) => ({
+					value: agent.agentId,
+					label: agent.campaignName,
+				})) || [],
+		[campaignAgents, currentAgentId]
 	);
+
+	const selectedTransferAgentId =
+		node?.agentId && node.agentId !== currentAgentId ? node.agentId : null;
 
 	if (!node) {
 		return (
@@ -93,7 +117,7 @@ const AgentTransferForm = ({
 					placeholder={t('form.workflow.forms.transfer.agentPlaceholder')}
 					description={agentDescription}
 					data={agentOptions}
-					value={node.agentId || null}
+					value={selectedTransferAgentId}
 					onChange={(value) => handleUpdate({ agentId: value || '' })}
 					searchable
 					disabled={isLoading || agentOptions.length === 0}
