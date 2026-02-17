@@ -96,8 +96,13 @@
 	},
 	"overview": {
 		"title": "Conversation Overview",
-		"description": "Define the conversation key details.",
 		"copyPhone": "Copy phone",
+		"status": {
+			"done": "Done",
+			"inProgress": "In Progress",
+			"failed": "Failed",
+			"pending": "Pending"
+		},
 		"copied": "Copied",
 		"demoContact": "Demo",
 		"stats": {
@@ -140,6 +145,9 @@
 		"roles": {
 			"agent": "Agent",
 			"user": "User"
+		},
+		"workflow": {
+			"changed": "Workflow route changed"
 		},
 		"interrupted": "Interrupted",
 		"technical": {

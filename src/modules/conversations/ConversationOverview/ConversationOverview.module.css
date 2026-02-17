@@ -1,135 +1,18 @@
 .container {
-	max-width: 400px;
-}
-
-.paper {
-	background-color: var(--mantine-color-white);
-	transition: border-color 0.2s ease;
-	position: relative;
-	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: var(--mantine-radius-md);
-	padding-top: calc(var(--mantine-spacing-md) - 2px);
-}
-
-.paper:hover {
-	border-color: var(--mantine-color-gray-4);
-}
-
-/* Status indicator dot */
-.statusDot {
-	display: inline-block;
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	margin-right: 6px;
-}
-
-.statusDot.completed {
-	background-color: var(--mantine-color-green-6);
-}
-
-.statusDot.in_progress {
-	background-color: var(--mantine-color-blue-6);
-}
-
-.statusDot.failed,
-.statusDot.error {
-	background-color: var(--mantine-color-red-6);
-}
-
-.statusDot.pending {
-	background-color: var(--mantine-color-yellow-6);
-}
-
-/* Header styles */
-.header {
-	margin-bottom: 0.5rem;
-	padding-bottom: 0.5rem;
-	border-bottom: 1px solid var(--mantine-color-gray-2);
-}
-
-.cardHeader {
-	margin-bottom: 0.25rem;
-}
-
-.accent {
-	width: 10px;
-	height: 10px;
-	border-radius: 2px;
-	display: inline-block;
-}
-
-.accent.completed {
-	background-color: var(--mantine-color-green-6);
-}
-
-.accent.in_progress {
-	background-color: var(--mantine-color-blue-6);
-}
-
-.accent.failed,
-.accent.error {
-	background-color: var(--mantine-color-red-6);
-}
-
-.accent.pending {
-	background-color: var(--mantine-color-yellow-6);
-}
-
-/* Text styles */
-.darkText {
-	color: var(--mantine-color-gray-9);
-}
-
-.lightText {
-	color: var(--mantine-color-gray-6);
-	font-size: 0.85rem;
-}
-
-.sectionTitle {
-	color: var(--mantine-color-gray-8);
-	letter-spacing: 0.2px;
-}
-
-/* Status badge */
-.statusBadge {
-	text-transform: capitalize;
-	font-weight: 500;
-	letter-spacing: 0.3px;
-}
-
-.statusBadge.completed {
-	color: var(--mantine-color-green-8);
-	background-color: var(--mantine-color-green-0);
-}
-
-.statusBadge.in_progress {
-	color: var(--mantine-color-blue-8);
-	background-color: var(--mantine-color-blue-0);
-}
-
-.statusBadge.failed,
-.statusBadge.error {
-	color: var(--mantine-color-red-8);
-	background-color: var(--mantine-color-red-0);
-}
-
-.statusBadge.pending {
-	color: var(--mantine-color-yellow-8);
-	background-color: var(--mantine-color-yellow-0);
+	max-width: 420px;
 }
 
 /* Contact Header Section */
 .contactHeader {
 	display: flex;
 	align-items: center;
-	gap: 14px;
-	padding: 2px 0;
+	gap: var(--mantine-spacing-xs);
+	padding: 0;
 }
 
 .avatar {
 	flex-shrink: 0;
-	border: 2px solid var(--mantine-color-blue-1);
+	border: 1px solid var(--mantine-color-blue-2);
 	background: var(--mantine-color-blue-0);
 	color: var(--mantine-color-blue-7);
 }
@@ -139,21 +22,33 @@
 	min-width: 0;
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: 2px;
+}
+
+.contactNameRow {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	min-width: 0;
 }
 
 .contactName {
-	font-size: 16px;
+	font-size: 13px;
 	font-weight: 700;
 	color: var(--mantine-color-gray-9);
-	line-height: 1.3;
+	line-height: 1.2;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
+.statusBadgeInline {
+	flex-shrink: 0;
+}
+
 .phoneGroup {
 	flex-wrap: nowrap;
+	min-width: 0;
 }
 
 .phoneIcon {
@@ -162,7 +57,7 @@
 }
 
 .phoneNumber {
-	font-size: 13px;
+	font-size: 11px;
 	color: var(--mantine-color-gray-7);
 	font-weight: 500;
 	overflow: hidden;
@@ -180,139 +75,104 @@
 	color: var(--mantine-color-blue-6);
 }
 
-/* Divider */
-.divider {
-	margin: 16px 0;
-	border-color: var(--mantine-color-gray-2);
+/* Flat key-value stats list */
+.statsList {
+	display: flex;
+	flex-direction: column;
+	margin-top: 4px;
 }
 
-/* Stats Grid */
-.statsGrid {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-	gap: var(--mantine-spacing-md);
-}
-
-@media (min-width: 768px) {
-	.statsGrid {
-		grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-	}
-}
-
-.statCard {
+.statRow {
 	display: flex;
 	align-items: flex-start;
-	gap: var(--mantine-spacing-sm);
-	padding: var(--mantine-spacing-md);
-	background: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: var(--mantine-radius-md);
-	transition: border-color 0.2s ease;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-xs);
+	padding: 7px 0;
+	border-bottom: 1px dashed var(--mantine-color-gray-2);
 }
 
-.statCard:hover {
-	border-color: var(--mantine-color-blue-3);
+.statRow:last-child {
+	border-bottom: none;
 }
 
-.statIconWrapper {
-	flex-shrink: 0;
-	width: 36px;
-	height: 36px;
+.statLabelGroup {
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	background: var(--mantine-color-gray-0);
-	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: var(--mantine-radius-md);
+	gap: 6px;
+	flex-shrink: 0;
 }
 
 .statIcon {
-	color: var(--mantine-color-gray-7);
-}
-
-.statContent {
-	flex: 1;
-	min-width: 0;
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
+	color: var(--mantine-color-gray-5);
+	flex-shrink: 0;
 }
 
 .statLabel {
-	font-size: 11px;
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: 0.5px;
+	font-size: 12px;
+	font-weight: 500;
 	color: var(--mantine-color-gray-6);
 	line-height: 1.2;
-}
-
-.statValue {
-	font-size: 16px;
-	font-weight: 700;
-	color: var(--mantine-color-gray-9);
-	line-height: 1.2;
-	overflow: hidden;
-	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
-.statSubtext {
-	font-size: 13px;
-	font-weight: 500;
-	color: var(--mantine-color-gray-6);
+.statValueSide {
+	flex: 1;
+	min-width: 0;
+	text-align: right;
+}
+
+.statValue {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
 	line-height: 1.3;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	cursor: default;
+}
+
+.valueHoverCard {
+	padding: var(--mantine-spacing-xs);
+	border: 1px solid var(--mantine-color-gray-3);
+	background: var(--mantine-color-white);
+}
+
+.valueHoverText {
+	color: var(--mantine-color-gray-8);
+	line-height: 1.35;
+	white-space: normal;
+	word-break: break-word;
 }
 
 /* Summary Section */
 .summaryText {
-	font-size: 14px;
-	line-height: 1.6;
-	color: var(--mantine-color-gray-8);
+	font-size: 13px;
+	line-height: 1.45;
+	color: var(--mantine-color-gray-7);
 	font-weight: 400;
 }
 
 /* Responsive adjustments */
 @media (max-width: 420px) {
-	.statsGrid {
-		grid-template-columns: 1fr;
-	}
-
 	.contactHeader {
-		gap: 12px;
+		gap: var(--mantine-spacing-xs);
 	}
 
 	.avatar {
-		width: 40px;
-		height: 40px;
+		width: 32px;
+		height: 32px;
 	}
 
 	.contactName {
-		font-size: 15px;
+		font-size: 12px;
 	}
 
-	.statCard {
-		padding: 10px;
+	.statLabel {
+		font-size: 11px;
 	}
-}
 
-.campaignBadge {
-	background: var(--mantine-color-gray-0);
-	color: var(--mantine-color-gray-8);
-	border: 1px solid var(--mantine-color-gray-2);
-}
-
-/* Subtle colored top border per status for visual flair */
-.paper.completed {
-	border-top: 3px solid var(--mantine-color-green-5);
-}
-.paper.in_progress {
-	border-top: 3px solid var(--mantine-color-blue-5);
-}
-.paper.failed,
-.paper.error {
-	border-top: 3px solid var(--mantine-color-red-5);
-}
-.paper.pending {
-	border-top: 3px solid var(--mantine-color-yellow-5);
+	.statValue {
+		font-size: 11px;
+	}
 }

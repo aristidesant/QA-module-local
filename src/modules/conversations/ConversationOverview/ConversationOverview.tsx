@@ -5,9 +5,9 @@ import {
 	Stack,
 	ActionIcon,
 	Tooltip,
-	Divider,
 	CopyButton,
 	Button,
+	Badge,
 } from '@mantine/core';
 import {
 	IconPhoneCall,
@@ -22,6 +22,7 @@ import {
 	IconClock,
 	IconMessages,
 	IconPdf,
+	IconRobot,
 } from '@tabler/icons-react';
 import { useExportConversationPdf } from '~/queries/conversationsQueries';
 import { notifications } from '@mantine/notifications';
@@ -37,11 +38,10 @@ import { useTranslation } from 'react-i18next';
 
 interface ConversationOverviewProps {
 	conversation: ConversationsModel;
-	status?: string; // Optional override for status
-	duration?: number; // Optional override for duration
+	status?: string;
+	duration?: number;
 }
 
-// get value or empty
 const getValueOrEmpty = (value: string | undefined | unknown) => {
 	return value || '';
 };
@@ -62,17 +62,9 @@ export function ConversationOverview({
 		transcriptContent,
 	} = conversation;
 
-	// Use overrides if provided, otherwise calculate from conversation data
 	const displayStatus = statusOverride || status;
 	const displayDuration =
 		durationOverride || transcriptContent?.metadata?.call_duration_secs || 0;
-	const formatDate = (dateString: string) => {
-		try {
-			return new Date(dateString).toLocaleString();
-		} catch (error) {
-			return t('overview.fallbacks.invalidDate');
-		}
-	};
 
 	const formatDateShort = (dateString: string) => {
 		try {
@@ -83,23 +75,21 @@ export function ConversationOverview({
 				hour: 'numeric',
 				minute: '2-digit',
 			});
-		} catch (error) {
+		} catch {
 			return t('overview.fallbacks.invalidDate');
 		}
 	};
 
 	const formatDuration = (seconds?: number) => {
-		if (!seconds) return t('overview.fallbacks.na');
+		if (!seconds) return '';
 		const minutes = Math.floor(seconds / 60);
 		const remainingSeconds = seconds % 60;
-		return `${minutes}${t('units.minute', { ns: 'common' })} ${remainingSeconds}${t('units.second', { ns: 'common' })}`;
+		return `${minutes}${t('units.minute', { ns: 'common' })}${remainingSeconds > 0 ? ` ${remainingSeconds}${t('units.second', { ns: 'common' })}` : ''}`;
 	};
 
 	const contactName = conversation?.externalPhoneNumber
 		? t('overview.demoContact')
-		: `${getValueOrEmpty(contact?.firstName)} ${getValueOrEmpty(
-				contact?.lastName
-			)}`;
+		: `${getValueOrEmpty(contact?.firstName)} ${getValueOrEmpty(contact?.lastName)}`;
 	const contactPhone = String(
 		contact?.phoneNumber ||
 			conversation?.contactPhoneNumber ||
@@ -113,7 +103,6 @@ export function ConversationOverview({
 		? String(campaign.name)
 		: t('overview.fallbacks.na');
 
-	// Extract metadata values
 	const metadata = transcriptContent?.metadata;
 	const terminationReason = metadata?.termination_reason;
 
@@ -127,16 +116,28 @@ export function ConversationOverview({
 		if (r.includes('hangup')) return t('overview.termination.hangup');
 		if (r.includes('timeout')) return t('overview.termination.timeout');
 		if (r.includes('error')) return t('overview.termination.error');
-		// Fallback: capitalize first letter
 		return reason.charAt(0).toUpperCase() + reason.slice(1);
 	};
 
-	const getStatusIcon = (status: string) => {
-		if (status.includes('done'))
+	const getStatusBadge = (statusValue: string) => {
+		if (statusValue.includes('done'))
+			return { color: 'green' as const, label: t('overview.status.done') };
+		if (statusValue.includes('progress'))
+			return {
+				color: 'blue' as const,
+				label: t('overview.status.inProgress'),
+			};
+		if (statusValue.includes('failed') || statusValue.includes('error'))
+			return { color: 'red' as const, label: t('overview.status.failed') };
+		return { color: 'gray' as const, label: t('overview.status.pending') };
+	};
+
+	const getStatusIcon = (statusValue: string) => {
+		if (statusValue.includes('done'))
 			return { icon: IconCheck, color: 'var(--mantine-color-green-6)' };
-		if (status.includes('progress'))
+		if (statusValue.includes('progress'))
 			return { icon: IconLoader, color: 'var(--mantine-color-blue-6)' };
-		if (status.includes('failed') || status.includes('error'))
+		if (statusValue.includes('failed') || statusValue.includes('error'))
 			return { icon: IconX, color: 'var(--mantine-color-red-6)' };
 		return { icon: IconClock, color: 'var(--mantine-color-gray-6)' };
 	};
@@ -146,6 +147,7 @@ export function ConversationOverview({
 
 	const { icon: StatusIcon, color: statusIconColor } =
 		getStatusIcon(displayStatus);
+	const statusBadge = getStatusBadge(displayStatus);
 
 	const exportConversationMutation = useExportConversationPdf();
 	const { canPerformAction } = usePermissions();
@@ -155,27 +157,21 @@ export function ConversationOverview({
 	);
 
 	const handleExportConversation = async () => {
-		if (!canExportConversations) {
-			return;
-		}
+		if (!canExportConversations) return;
 
 		try {
 			const result = await exportConversationMutation.mutateAsync(
 				conversation.id
 			);
-
-			// Create download link
 			const url = window.URL.createObjectURL(result.blob);
 			const link = document.createElement('a');
 			link.href = url;
-
 			const firstName = conversation.contact?.firstName || '';
 			const lastName = conversation.contact?.lastName || '';
 			const fullName = `${firstName} ${lastName}`.trim();
 			const filename = fullName
 				? `${fullName.toUpperCase()}.PDF`
 				: `conversation-${conversation.id}.pdf`;
-
 			link.download = filename;
 			document.body.appendChild(link);
 			link.click();
@@ -187,7 +183,7 @@ export function ConversationOverview({
 				message: t('overview.notifications.exportSuccessMsg'),
 				color: 'green',
 			});
-		} catch (error) {
+		} catch {
 			notifications.show({
 				title: t('overview.notifications.exportFailed'),
 				message: t('overview.notifications.exportFailedMsg'),
@@ -196,25 +192,46 @@ export function ConversationOverview({
 		}
 	};
 
+	// Build date value with inline duration
+	const dateValue = formatDateShort(startDate);
+	const durationStr = formatDuration(displayDuration as number);
+	const dateDisplay = durationStr ? `${dateValue} · ${durationStr}` : dateValue;
+
+	const StatValueWithHover = ({ value }: { value: string }) => (
+		<Tooltip label={value} position='top-start' withArrow openDelay={100}>
+			<Text className={styles.statValue}>{value}</Text>
+		</Tooltip>
+	);
+
 	return (
-		<Stack gap='md' className={styles.container}>
+		<Stack gap='xs' className={styles.container}>
 			{/* Contact & Quick Overview */}
 			<RightSectionCard
 				title={t('overview.title')}
-				description={t('overview.description')}
 				icon={StatusIcon}
 				iconColor={statusIconColor}
 			>
+				{/* Contact header with inline status badge */}
 				<div className={styles.contactHeader}>
-					<Avatar radius='xl' size={48} className={styles.avatar}>
-						<IconUser size={22} />
+					<Avatar radius='xl' size={36} className={styles.avatar}>
+						<IconUser size={16} />
 					</Avatar>
 					<div className={styles.contactInfo}>
-						<Text className={styles.contactName} title={contactName}>
-							{contactName}
-						</Text>
-						<Group gap={8} align='center' className={styles.phoneGroup}>
-							<IconPhoneCall size={14} className={styles.phoneIcon} />
+						<div className={styles.contactNameRow}>
+							<Text className={styles.contactName} title={contactName}>
+								{contactName}
+							</Text>
+							<Badge
+								size='xs'
+								variant='light'
+								color={statusBadge.color}
+								className={styles.statusBadgeInline}
+							>
+								{statusBadge.label}
+							</Badge>
+						</div>
+						<Group gap={6} align='center' className={styles.phoneGroup}>
+							<IconPhoneCall size={12} className={styles.phoneIcon} />
 							<Text className={styles.phoneNumber} title={contactPhone}>
 								{contactPhone}
 							</Text>
@@ -233,9 +250,9 @@ export function ConversationOverview({
 											className={styles.copyBtn}
 										>
 											{copied ? (
-												<IconCheck size={13} />
+												<IconCheck size={12} />
 											) : (
-												<IconCopy size={13} />
+												<IconCopy size={12} />
 											)}
 										</ActionIcon>
 									</Tooltip>
@@ -245,66 +262,56 @@ export function ConversationOverview({
 					</div>
 				</div>
 
-				<Divider className={styles.divider} />
-
-				<div className={styles.statsGrid}>
-					<div className={styles.statCard}>
-						<div className={styles.statIconWrapper}>
-							<IconCalendar size={16} className={styles.statIcon} />
-						</div>
-						<div className={styles.statContent}>
+				{/* Flat key-value stats list */}
+				<div className={styles.statsList}>
+					<div className={styles.statRow}>
+						<div className={styles.statLabelGroup}>
+							<IconCalendar size={13} className={styles.statIcon} />
 							<Text className={styles.statLabel}>
 								{t('overview.stats.dateTime')}
 							</Text>
-							<Text className={styles.statValue} title={formatDate(startDate)}>
-								{formatDateShort(startDate)}
-							</Text>
-							<Text className={styles.statSubtext}>
-								{formatDuration(displayDuration as number)}
-							</Text>
+						</div>
+						<div className={styles.statValueSide}>
+							<StatValueWithHover value={dateDisplay} />
 						</div>
 					</div>
 
-					<div className={styles.statCard}>
-						<div className={styles.statIconWrapper}>
-							<IconUser size={16} className={styles.statIcon} />
-						</div>
-						<div className={styles.statContent}>
+					<div className={styles.statRow}>
+						<div className={styles.statLabelGroup}>
+							<IconRobot size={13} className={styles.statIcon} />
 							<Text className={styles.statLabel}>
 								{t('overview.stats.agent')}
 							</Text>
-							<Text className={styles.statValue} title={agentName}>
-								{agentName}
-							</Text>
+						</div>
+						<div className={styles.statValueSide}>
+							<StatValueWithHover value={agentName} />
 						</div>
 					</div>
 
-					<div className={styles.statCard}>
-						<div className={styles.statIconWrapper}>
-							<IconInfoCircle size={16} className={styles.statIcon} />
-						</div>
-						<div className={styles.statContent}>
+					<div className={styles.statRow}>
+						<div className={styles.statLabelGroup}>
+							<IconInfoCircle size={13} className={styles.statIcon} />
 							<Text className={styles.statLabel}>
 								{t('overview.stats.campaign')}
 							</Text>
-							<Text className={styles.statValue} title={campaignName}>
-								{campaignName}
-							</Text>
+						</div>
+						<div className={styles.statValueSide}>
+							<StatValueWithHover value={campaignName} />
 						</div>
 					</div>
 
 					{terminationReason !== undefined && (
-						<div className={styles.statCard}>
-							<div className={styles.statIconWrapper}>
-								<IconAlertCircle size={16} className={styles.statIcon} />
-							</div>
-							<div className={styles.statContent}>
+						<div className={styles.statRow}>
+							<div className={styles.statLabelGroup}>
+								<IconAlertCircle size={13} className={styles.statIcon} />
 								<Text className={styles.statLabel}>
 									{t('overview.stats.endReason')}
 								</Text>
-								<Text className={styles.statValue} title={terminationReason}>
-									{formatTermination(terminationReason)}
-								</Text>
+							</div>
+							<div className={styles.statValueSide}>
+								<StatValueWithHover
+									value={formatTermination(terminationReason)}
+								/>
 							</div>
 						</div>
 					)}
@@ -327,7 +334,9 @@ export function ConversationOverview({
 					</Text>
 					{canExportConversations && (
 						<Button
-							rightSection={<IconPdf size={16} />}
+							size='xs'
+							variant='light'
+							rightSection={<IconPdf size={14} />}
 							fullWidth
 							loading={exportConversationMutation.isPending}
 							onClick={handleExportConversation}
@@ -342,9 +351,7 @@ export function ConversationOverview({
 				title={t('player.title')}
 				description={t('player.description')}
 				paramConversationId={conversation?.id}
-				contactName={`${getValueOrEmpty(contact?.firstName)} ${getValueOrEmpty(
-					contact?.lastName
-				)}`.trim()}
+				contactName={`${getValueOrEmpty(contact?.firstName)} ${getValueOrEmpty(contact?.lastName)}`.trim()}
 			/>
 		</Stack>
 	);
