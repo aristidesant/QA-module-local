@@ -1,6 +1,7 @@
-import { Center, ActionIcon, Tooltip, Text } from '@mantine/core';
+import { Button, Group, Text, Stack } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import {
+	IconAlertTriangle,
 	IconArrowRight,
 	IconRefresh,
 	type TablerIcon,
@@ -22,6 +23,17 @@ interface ConversationActionsProps {
 	onReload?: () => void;
 }
 
+type ConversationActionConfig = {
+	icon: TablerIcon;
+	label: string;
+	hint: string;
+	confirmMessage: string;
+	confirmLabel: string;
+	onConfirm: () => void;
+	loading: boolean;
+	notice: string;
+};
+
 export function ConversationActions({
 	conversation,
 	onReload,
@@ -39,70 +51,58 @@ export function ConversationActions({
 		return null;
 	}
 
-	const handleReprocessEvent = () => {
+	const handleMutationSuccess = () => {
+		onReload?.();
+	};
+
+	const openActionConfirm = ({
+		confirmMessage,
+		confirmLabel,
+		onConfirm,
+	}: Pick<
+		ConversationActionConfig,
+		'confirmMessage' | 'confirmLabel' | 'onConfirm'
+	>) => {
 		modals.openConfirmModal({
 			title: t('actions.confirmTitle'),
-			children: t('actions.reprocess.confirmMessage'),
+			children: confirmMessage,
 			labels: {
-				confirm: t('actions.reprocess.confirmLabel'),
+				confirm: confirmLabel,
 				cancel: t('actions.cancel', { ns: 'common' }),
 			},
-			onConfirm: () => {
-				failAndPauseMutation.mutate(`${conversation.id}`, {
-					onSuccess: () => {
-						if (onReload) {
-							onReload();
-						}
-					},
-				});
-			},
+			onConfirm,
 		});
 	};
 
-	const handleFetchAndProcess = () => {
-		modals.openConfirmModal({
-			title: t('actions.confirmTitle'),
-			children: t('actions.fetchAndProcess.confirmMessage'),
-			labels: {
-				confirm: t('actions.fetchAndProcess.confirmLabel'),
-				cancel: t('actions.cancel', { ns: 'common' }),
-			},
-			onConfirm: () => {
-				fetchAndProcessMutation.mutate(`${conversation.id}`, {
-					onSuccess: () => {
-						if (onReload) {
-							onReload();
-						}
-					},
-				});
-			},
-		});
-	};
-
-	const currentAction: {
-		icon: TablerIcon;
-		label: string;
-		hint: string;
-		onClick: () => void;
-		loading: boolean;
-		tooltip: string;
-	} =
+	const currentAction: ConversationActionConfig =
 		conversation.status === 'initiated'
 			? {
 					icon: IconArrowRight,
 					label: t('actions.reprocess.label'),
 					hint: t('actions.reprocess.hint'),
-					onClick: handleReprocessEvent,
+					confirmMessage: t('actions.reprocess.confirmMessage'),
+					confirmLabel: t('actions.reprocess.confirmLabel'),
+					onConfirm: () => {
+						failAndPauseMutation.mutate(`${conversation.id}`, {
+							onSuccess: handleMutationSuccess,
+						});
+					},
 					loading: failAndPauseMutation.isPending,
-					tooltip: t('actions.reprocess.tooltip'),
+					notice: t('actions.notice.irreversible'),
 				}
 			: {
 					icon: IconRefresh,
 					label: t('actions.fetchAndProcess.label'),
 					hint: t('actions.fetchAndProcess.hint'),
-					onClick: handleFetchAndProcess,
+					confirmMessage: t('actions.fetchAndProcess.confirmMessage'),
+					confirmLabel: t('actions.fetchAndProcess.confirmLabel'),
+					onConfirm: () => {
+						fetchAndProcessMutation.mutate(`${conversation.id}`, {
+							onSuccess: handleMutationSuccess,
+						});
+					},
 					loading: fetchAndProcessMutation.isPending,
-					tooltip: t('actions.fetchAndProcess.tooltip'),
+					notice: t('actions.notice.irreversible'),
 				};
 
 	const ActiveActionIcon = currentAction.icon;
@@ -112,26 +112,44 @@ export function ConversationActions({
 			title={t('actions.title')}
 			description={t('actions.description')}
 		>
-			<Center className={styles.actions}>
-				<div className={styles.actionItem}>
-					<Tooltip label={currentAction.tooltip} position='top'>
-						<ActionIcon
-							size='lg'
-							variant='light'
-							onClick={currentAction.onClick}
-							loading={currentAction.loading}
-							className={styles.actionIcon}
-							aria-label={currentAction.label}
-						>
-							<ActiveActionIcon size={20} />
-						</ActionIcon>
-					</Tooltip>
-					<div className={styles.copy}>
-						<Text className={styles.actionLabel}>{currentAction.label}</Text>
-						<Text className={styles.actionHint}>{currentAction.hint}</Text>
+			<div className={styles.panel}>
+				<Group
+					className={styles.cardHeader}
+					gap='xs'
+					align='flex-start'
+					wrap='nowrap'
+				>
+					<div className={styles.iconBadge}>
+						<ActiveActionIcon size={18} />
 					</div>
-				</div>
-			</Center>
+					<Stack gap='xs' className={styles.copy}>
+						<Text size='sm' fw={600} className={styles.label}>
+							{currentAction.label}
+						</Text>
+						<Text size='xs' c='dimmed' className={styles.hint}>
+							{currentAction.hint}
+						</Text>
+					</Stack>
+				</Group>
+				<Button
+					fullWidth
+					variant='filled'
+					color='blue'
+					size='sm'
+					leftSection={<ActiveActionIcon size={16} />}
+					onClick={() => openActionConfirm(currentAction)}
+					loading={currentAction.loading}
+					className={styles.cta}
+				>
+					{currentAction.label}
+				</Button>
+				<Group gap={6} className={styles.notice} wrap='nowrap'>
+					<IconAlertTriangle size={14} className={styles.noticeIcon} />
+					<Text size='xs' className={styles.noticeText}>
+						{currentAction.notice}
+					</Text>
+				</Group>
+			</div>
 		</RightSectionCard>
 	);
 }

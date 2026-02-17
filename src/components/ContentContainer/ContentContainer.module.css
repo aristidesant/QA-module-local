@@ -52,7 +52,7 @@
 	width: 380px;
 	background: var(--mantine-color-gray-1);
 	border-left: 1px solid var(--mantine-color-gray-3);
-	padding: 0;
+	padding: 0 var(--mantine-spacing-xs);
 	height: calc(100vh - 70px);
 	box-sizing: border-box;
 	display: flex;

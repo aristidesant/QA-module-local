@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from '@mantine/core';
+import { Stack, Text } from '@mantine/core';
 import classes from './FallbackRightComponent.module.css';
 import { IconInfoCircle } from '@tabler/icons-react';
 import EmptyState from '../EmptyState/EmptyState';
@@ -30,17 +30,19 @@ export const FallbackRightComponent: React.FC<FallbackRightComponentProps> = ({
 			icon={<IconComponent size={56} stroke={1.5} />}
 			message={title}
 			description={
-				typeof description === 'string' ? (
-					<Text size='sm' c='dimmed'>
-						{description}
-					</Text>
-				) : (
-					description
-				)
+				<Stack gap='xs' align='center' className={classes.contentGroup}>
+					{typeof description === 'string' ? (
+						<Text size='sm' c='dimmed' className={classes.descriptionText}>
+							{description}
+						</Text>
+					) : (
+						description
+					)}
+				</Stack>
 			}
 			action={
 				actionText && (
-					<Text size='sm' c='dimmed'>
+					<Text size='sm' c='blue.7' className={classes.actionText}>
 						{actionText}
 					</Text>
 				)
