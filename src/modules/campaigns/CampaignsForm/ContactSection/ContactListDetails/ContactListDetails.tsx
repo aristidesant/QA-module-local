@@ -6,6 +6,7 @@ import {
 	Alert,
 	Button,
 	Group,
+	LoadingOverlay,
 	Slider,
 	Stack,
 	Text,
@@ -51,6 +52,7 @@ import { useCleanOutboundQueue } from '~/queries/outboundQueries';
 import ContactLimits from '../ContactLimits';
 import { calculateHumanEquivalentValues } from '../ContactLimits/humanEquivalentCalculations';
 import { getQueueStatusConfig } from '../ContactList/queueStatusConfig';
+import { useCampaignsStore } from '~/stores/campaignsStore';
 import styles from './ContactListDetails.module.css';
 
 interface ContactListDetailsProps {
@@ -103,6 +105,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 	const { t } = useTranslation('campaigns');
 	const navigate = useNavigate();
 	const { canAccessModule, canPerformAction } = usePermissions();
+	const { setRightComponent } = useCampaignsStore();
 	const toggleMutation = useToggleContactGroupStatus();
 	const updateMutation = useUpdateContactGroup();
 	const deleteMutation = useDeleteContactGroup();
@@ -297,16 +300,14 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 	};
 
 	const handleToggleStatus = () => {
-		if (!canToggleContactList) {
+		if (!canToggleContactList || disableToggle || isActionsLoading) {
 			return;
 		}
 
-		if (disableToggle) {
-			return;
-		}
-
+		// Deactivate flow
 		if (contactGroup.isActive) {
 			modals.openConfirmModal({
+				modalId: 'toggle-contact-status',
 				title: t('form.contacts.details.dialogs.deactivate.title'),
 				children: (
 					<Text size='sm'>
@@ -321,12 +322,15 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 				},
 				confirmProps: { color: 'blue' },
 				onConfirm: async () => {
+					// Close modal immediately so the loading overlay on the card is visible
+					modals.close('toggle-contact-status');
 					try {
 						await toggleMutation.mutateAsync({
 							id: contactGroup.id,
 							isActive: false,
 						});
 						onUpdateComplete();
+						setRightComponent(null);
 					} catch (error) {
 						// eslint-disable-next-line no-console
 						console.error('Error toggling contact group status:', error);
@@ -336,6 +340,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 			return;
 		}
 
+		// Activate flow
 		const calculations = calculateHumanEquivalentValues(
 			contactGroups?.data || [],
 			activeSchedule,
@@ -367,6 +372,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 			const [selectedHumanEquivalent, setSelectedHumanEquivalent] = useState(
 				contactGroup.humanEquivalent || 1
 			);
+			const [isSubmitting, setIsSubmitting] = useState(false);
 
 			return (
 				<Stack gap='md'>
@@ -394,16 +400,24 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 							max={maxAvailableHumanEquivalent}
 							step={1}
 							label={(value) => `${value}`}
+							disabled={isSubmitting}
 						/>
 					</div>
 					<Group justify='flex-end' gap='sm'>
-						<Button variant='outline' onClick={() => modals.closeAll()}>
+						<Button
+							variant='outline'
+							onClick={() => modals.closeAll()}
+							disabled={isSubmitting}
+						>
 							{t('cancel', { ns: 'common' })}
 						</Button>
 						<Button
 							onClick={async () => {
+								if (isSubmitting) return;
+								setIsSubmitting(true);
 								try {
 									setIsEditingHumanEquivalent(true);
+									modals.closeAll();
 									await updateMutation.mutateAsync({
 										id: contactGroup.id,
 										updateData: {
@@ -412,7 +426,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 										},
 									});
 									onUpdateComplete();
-									modals.closeAll();
+									setRightComponent(null);
 								} catch (error) {
 									// eslint-disable-next-line no-console
 									console.error(
@@ -423,7 +437,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 									setIsEditingHumanEquivalent(false);
 								}
 							}}
-							loading={updateMutation.isPending}
+							loading={isSubmitting}
 						>
 							{t('form.contacts.details.dialogs.activate.confirm')}
 						</Button>
@@ -433,6 +447,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 		};
 
 		modals.open({
+			modalId: 'toggle-contact-status',
 			title: t('form.contacts.details.dialogs.activate.title'),
 			children: <ActivateModalContent />,
 			size: 'md',
@@ -638,7 +653,12 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 					icon={IconEdit}
 					iconColor='var(--mantine-color-orange-5)'
 				>
-					<Stack gap='md'>
+					<Stack gap='md' pos='relative'>
+						<LoadingOverlay
+							visible={toggleMutation.isPending || isEditingHumanEquivalent}
+							overlayProps={{ radius: 'sm', blur: 2 }}
+							loaderProps={{ size: 'sm' }}
+						/>
 						<Group gap='xs' justify='center' className={styles.actionsRow}>
 							{canToggleContactList && (
 								<Tooltip

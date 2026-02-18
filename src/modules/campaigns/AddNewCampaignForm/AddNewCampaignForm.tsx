@@ -53,7 +53,7 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 				spent: 0,
 				type: 'OUTBOUND',
 				campaignExecutionType: 'TIME_BASED',
-				status: CampaignStatus.PENDING,
+				status: CampaignStatus.INACTIVE,
 				promptId: undefined,
 				objectiveId: undefined,
 				defaultMaxWaves: 3,

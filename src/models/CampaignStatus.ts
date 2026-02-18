@@ -1,19 +1,15 @@
 // src/models/CampaignStatus.ts
 
 import {
-	IconClock,
-	IconPlayerPlay,
-	IconPlayerPause,
-	IconCheck,
+	IconCircleCheck,
+	IconCircleOff,
 	IconX,
 	TablerIcon,
 } from '@tabler/icons-react';
 
 export enum CampaignStatus {
-	PENDING = 'PENDING',
-	RUNNING = 'RUNNING',
-	PAUSED = 'PAUSED',
-	COMPLETED = 'COMPLETED',
+	ACTIVE = 'ACTIVE',
+	INACTIVE = 'INACTIVE',
 	FAILED = 'FAILED',
 }
 
@@ -24,25 +20,15 @@ export type CampaignStatusConfigType = {
 };
 
 export const CampaignStatusConfig = {
-	[CampaignStatus.PENDING]: {
-		label: 'status.PENDING',
-		color: 'gray',
-		icon: IconClock,
-	},
-	[CampaignStatus.RUNNING]: {
-		label: 'status.RUNNING',
-		color: 'blue',
-		icon: IconPlayerPlay,
-	},
-	[CampaignStatus.PAUSED]: {
-		label: 'status.PAUSED',
-		color: 'yellow',
-		icon: IconPlayerPause,
-	},
-	[CampaignStatus.COMPLETED]: {
-		label: 'status.COMPLETED',
+	[CampaignStatus.ACTIVE]: {
+		label: 'status.ACTIVE',
 		color: 'green',
-		icon: IconCheck,
+		icon: IconCircleCheck,
+	},
+	[CampaignStatus.INACTIVE]: {
+		label: 'status.INACTIVE',
+		color: 'gray',
+		icon: IconCircleOff,
 	},
 	[CampaignStatus.FAILED]: {
 		label: 'status.FAILED',

@@ -46,10 +46,10 @@ const CampaignParameters: React.FC = () => {
 		refetch,
 	} = useGetCampaignScheduleSummary(selectedCampaign?.id.toString() || '');
 
-	const isCompleted = selectedCampaign?.status === 'COMPLETED';
+	const isFailed = selectedCampaign?.status === 'FAILED';
 
 	const handleRefetch = () => {
-		if (!isCompleted) {
+		if (!isFailed) {
 			refetch();
 		}
 	};
@@ -170,7 +170,7 @@ const CampaignParameters: React.FC = () => {
 				rightSection={
 					<Tooltip
 						label={
-							isCompleted
+							isFailed
 								? t('preview.parameters.campaignCompleted')
 								: t('preview.parameters.refreshParameters')
 						}
@@ -182,11 +182,11 @@ const CampaignParameters: React.FC = () => {
 							size='sm'
 							onClick={handleRefetch}
 							aria-label={
-								isCompleted
+								isFailed
 									? t('preview.parameters.campaignCompleted')
 									: t('preview.parameters.refreshParameters')
 							}
-							disabled={isCompleted || isLoading}
+							disabled={isFailed || isLoading}
 							className={styles.refetchButton}
 						>
 							<IconRefresh size={14} />
@@ -211,7 +211,7 @@ const CampaignParameters: React.FC = () => {
 			rightSection={
 				<Tooltip
 					label={
-						isCompleted
+						isFailed
 							? t('preview.parameters.campaignCompleted')
 							: t('preview.parameters.refreshParameters')
 					}
@@ -222,12 +222,12 @@ const CampaignParameters: React.FC = () => {
 						color='gray'
 						size='sm'
 						aria-label={
-							isCompleted
+							isFailed
 								? t('preview.parameters.campaignCompleted')
 								: t('preview.parameters.refreshParameters')
 						}
 						onClick={handleRefetch}
-						disabled={isCompleted || isLoading}
+						disabled={isFailed || isLoading}
 						className={styles.refetchButton}
 					>
 						<IconRefresh size={14} />

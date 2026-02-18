@@ -54,7 +54,7 @@ interface CampaignFiltersType {
 	spentMin?: number;
 	spentMax?: number;
 	userId?: number;
-	includeCompleted?: boolean;
+	includeInactive?: boolean;
 }
 
 export const CampaignsList: React.FC = () => {
@@ -105,7 +105,7 @@ export const CampaignsList: React.FC = () => {
 
 	const [sortBy, setSortBy] = useState('createdAt');
 	const [filters, setFilters] = useState<CampaignFiltersType>({
-		includeCompleted: false,
+		includeInactive: true,
 	});
 
 	// Reset to first page when filters change
