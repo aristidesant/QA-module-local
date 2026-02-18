@@ -18,7 +18,6 @@ interface AgentTestsTableSectionProps {
 	canUpdate: boolean;
 	canDelete: boolean;
 	canRun: boolean;
-	agentOptions: Array<{ value: string; label: string }>;
 	onRefetch: () => void;
 }
 
@@ -31,7 +30,6 @@ const AgentTestsTableSection = ({
 	canUpdate,
 	canDelete,
 	canRun,
-	agentOptions,
 	onRefetch,
 }: AgentTestsTableSectionProps) => {
 	const { t } = useTranslation('agent-tests');
@@ -55,7 +53,6 @@ const AgentTestsTableSection = ({
 		canUpdate,
 		canDelete,
 		canRun,
-		agentOptions,
 		editingTestLoadingId,
 		runningTestIds,
 	});
