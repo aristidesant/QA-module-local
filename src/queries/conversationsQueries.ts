@@ -248,11 +248,11 @@ export const useExportConversationPdf = () => {
 	return useMutation<
 		{ blob: Blob; filename: string },
 		unknown,
-		string | number
+		{ id: string | number; language?: 'en' | 'es' }
 	>({
-		mutationFn: async (id) => {
+		mutationFn: async ({ id, language }) => {
 			const api = getApi();
-			return api.exportConversationPdf(id);
+			return api.exportConversationPdf(id, language);
 		},
 	});
 };
