@@ -1,54 +1,48 @@
 // CampaignConfigurationTools.tsx
-import { Group, Stack, Switch, Text } from '@mantine/core';
-import { useCallback } from 'react';
-import { IconPuzzle } from '@tabler/icons-react';
+import React, { useState, useCallback } from 'react';
+import { ThemeIcon, Text, ActionIcon, Tooltip, Loader } from '@mantine/core';
+import { IconPuzzle, IconTrash, IconPlus } from '@tabler/icons-react';
 import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
-import SectionCard from '~/components/SectionCard';
+import RightSectionCard from '~/components/RightSectionCard';
 import { useToolCategories } from '~/queries/toolCategoryQueries';
 import { useToolsByCategory } from '~/queries/toolQueries';
 import type {
 	AgentConfigModel,
 	ConversationConfigModel,
 } from '~/models/AgentListObject';
+import CampaignConfigurationToolsAddModal from './CampaignConfigurationToolsAddModal';
 import classes from './CampaignConfigurationTools.module.css';
 import { useTranslation } from 'react-i18next';
 
 /**
  * CampaignConfigurationTools Component
  *
- * This component allows users to select tools for the campaign agent.
- * Selected tool identifiers are stored in agentConfig.conversationConfig.agent.prompt.toolIds
- * and full tool objects are stored in agentConfig.conversationConfig.agent.prompt.tools.
+ * Displays only active (selected) tools as KB-style rows.
+ * Inactive tools can be added via the modal triggered by the "Add tool" button.
  */
 const CampaignConfigurationTools: React.FC = () => {
 	const { t } = useTranslation('campaigns');
 	const form = useCampaignFormContext();
+	const [isModalOpen, setIsModalOpen] = useState(false);
+
 	const { data: toolCategories } = useToolCategories();
-	const { data: tools } = useToolsByCategory(
+	const { data: tools, isLoading } = useToolsByCategory(
 		toolCategories?.find((cat) => cat.name === 'webhook')?.id
 	);
 
-	const selectedToolIds =
+	const selectedToolIds: string[] =
 		form.values.agentConfig?.conversationConfig?.agent?.prompt?.toolIds ?? [];
 
-	const isToolSelected = useCallback(
-		(toolIdentifier: string) => selectedToolIds.includes(toolIdentifier),
-		[selectedToolIds]
+	const activeTools = (tools ?? []).filter((tool) =>
+		selectedToolIds.includes(tool.identifier)
 	);
 
-	const handleToolToggle = useCallback(
-		(tool: any, isCurrentlySelected: boolean) => {
+	const updateToolIds = useCallback(
+		(newIds: string[]) => {
 			const currentAgentConfig = form.values.agentConfig || {};
 			const currentConversationConfig = currentAgentConfig.conversationConfig;
 			const currentAgent = currentConversationConfig?.agent;
 			const currentPrompt = currentAgent?.prompt;
-			const currentToolIds = currentPrompt?.toolIds || [];
-
-			const toolIdentifier = tool.identifier;
-
-			const updatedToolIds = isCurrentlySelected
-				? currentToolIds.filter((id: string) => id !== toolIdentifier)
-				: [...currentToolIds, toolIdentifier];
 
 			const updatedAgentConfig: Partial<AgentConfigModel> = {
 				...currentAgentConfig,
@@ -59,7 +53,7 @@ const CampaignConfigurationTools: React.FC = () => {
 								...currentAgent,
 								prompt: {
 									...currentPrompt,
-									toolIds: updatedToolIds,
+									toolIds: newIds,
 								},
 							},
 						} as ConversationConfigModel)
@@ -71,67 +65,97 @@ const CampaignConfigurationTools: React.FC = () => {
 		[form]
 	);
 
+	const handleRemoveTool = useCallback(
+		(identifier: string) => {
+			updateToolIds(selectedToolIds.filter((id) => id !== identifier));
+		},
+		[selectedToolIds, updateToolIds]
+	);
+
+	const handleSaveSelections = useCallback(
+		(newSelectedIds: string[]) => {
+			updateToolIds(newSelectedIds);
+			setIsModalOpen(false);
+		},
+		[updateToolIds]
+	);
+
 	return (
-		<SectionCard
+		<RightSectionCard
+			icon={IconPuzzle}
 			title={t('form.agent.tools.title')}
 			description={t('form.agent.tools.description')}
 		>
-			<Stack gap='xs'>
-				{!tools || tools.length === 0 ? (
-					<Text size='sm' c='dimmed'>
-						{t('form.agent.tools.noTools')}
-					</Text>
-				) : (
-					tools.map((tool) => {
-						const isSelected = isToolSelected(tool.identifier);
-						return (
-							<div
-								key={tool.identifier}
-								className={`${classes.toolRow} ${
-									isSelected ? classes.toolRowActive : ''
-								}`}
-							>
-								<Group
-									align='flex-start'
-									justify='space-between'
-									gap='sm'
-									className={classes.rowHeader}
-								>
-									<Group gap='xs' align='center' className={classes.toolTitle}>
-										<div className={classes.iconBadge}>
-											<IconPuzzle size={14} />
-										</div>
-										<div>
-											<Text fw={600} className={classes.toolName}>
-												{tool.name}
-											</Text>
-											<Text size='xs' className={classes.toolMeta}>
-												{t('form.agent.tools.customIntegration')}
-											</Text>
-										</div>
-									</Group>
-
-									<Switch
-										aria-label={t('form.agent.tools.toggleAria', {
-											name: tool.name,
-										})}
-										checked={isSelected}
-										onChange={() => {
-											handleToolToggle(tool, isSelected);
-										}}
-										size='sm'
-										className={classes.toolSwitch}
-									/>
-								</Group>
-								<Text size='sm' c='dimmed' className={classes.toolDescription}>
-									{tool.description || t('form.agent.tools.noDescription')}
-								</Text>
+			<div className={classes.container}>
+				{isLoading ? (
+					<div
+						style={{
+							display: 'flex',
+							alignItems: 'center',
+							gap: 6,
+							padding: '12px',
+							justifyContent: 'center',
+						}}
+					>
+						<Loader size='xs' />
+						<Text size='xs' c='dimmed'>
+							{t('form.agent.tools.noTools')}
+						</Text>
+					</div>
+				) : activeTools.length > 0 ? (
+					activeTools.map((tool) => (
+						<div key={tool.identifier} className={classes.item}>
+							<ThemeIcon variant='light' color='violet' size='md'>
+								<IconPuzzle size={16} />
+							</ThemeIcon>
+							<div className={classes.itemInfo}>
+								<div className={classes.itemName}>{tool.name}</div>
+								<div className={classes.itemMeta}>
+									<span className={classes.itemType}>
+										{t('form.agent.tools.customIntegration')}
+									</span>
+								</div>
 							</div>
-						);
-					})
+							<Tooltip label={t('form.agent.tools.remove')} position='left'>
+								<ActionIcon
+									variant='subtle'
+									color='red'
+									size='sm'
+									onClick={() => handleRemoveTool(tool.identifier)}
+									aria-label={t('form.agent.tools.removeAria', {
+										name: tool.name,
+									})}
+								>
+									<IconTrash size={15} />
+								</ActionIcon>
+							</Tooltip>
+						</div>
+					))
+				) : (
+					<Text size='xs' c='dimmed'>
+						{t('form.agent.tools.noSelection')}
+					</Text>
 				)}
-			</Stack>
-		</SectionCard>
+
+				<button
+					type='button'
+					className={classes.addButton}
+					onClick={() => setIsModalOpen(true)}
+				>
+					<IconPlus size={14} className={classes.plusIcon} />
+					<span>{t('form.agent.tools.add')}</span>
+				</button>
+			</div>
+
+			<CampaignConfigurationToolsAddModal
+				opened={isModalOpen}
+				onClose={() => setIsModalOpen(false)}
+				allTools={tools ?? []}
+				selectedIds={selectedToolIds}
+				isLoading={isLoading}
+				onSave={handleSaveSelections}
+			/>
+		</RightSectionCard>
 	);
 };
 

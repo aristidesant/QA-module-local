@@ -41,9 +41,10 @@ import { CampaignStatus } from '~/models/CampaignStatus';
 import { modals } from '@mantine/modals';
 import { IconCalculator, IconEye } from '@tabler/icons-react';
 import SchedulerCalculator from './ParametersSection/SchedulerCalculator';
-import AgentCampaignList from './AgentSection/AgentCampaignList';
 import FormSaveButton from '~/components/FormSaveButton';
 import CampaignSyncButton from './components/CampaignSyncButton';
+import AgentSectionRightPanel from './AgentSection/AgentSectionRightPanel';
+import GeneralSectionRightPanel from './GeneralSection/GeneralSectionRightPanel';
 
 interface CampaignsFormProps {
 	campaign?: Partial<Campaign>;
@@ -62,9 +63,15 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	);
 
 	// Determine the right section based on selected tab
-	// For 'agents' tab, always render AgentCampaignList directly to avoid timing issues
+	// For 'general' and 'agents' tabs, render fixed right panels directly
 	const effectiveRightSection =
-		selectedTab === 'agents' ? <AgentCampaignList /> : rightComponent || <></>;
+		selectedTab === 'general' ? (
+			<GeneralSectionRightPanel />
+		) : selectedTab === 'agents' ? (
+			<AgentSectionRightPanel />
+		) : (
+			rightComponent || <></>
+		);
 	const { mutateAsync: createCampaign, isPending: isCreating } =
 		useCreateCampaign();
 	const { mutateAsync: updateCampaign, isPending: isUpdating } =

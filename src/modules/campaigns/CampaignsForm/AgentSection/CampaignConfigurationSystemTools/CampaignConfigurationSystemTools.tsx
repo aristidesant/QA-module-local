@@ -1,15 +1,20 @@
+// CampaignConfigurationSystemTools.tsx
 import React, { useCallback, useMemo, useState } from 'react';
 import {
-	Stack,
-	Switch,
+	ThemeIcon,
 	Text,
-	Group,
 	ActionIcon,
 	Tooltip,
 	Badge,
+	Group,
 } from '@mantine/core';
-import { IconCpu, IconSettings } from '@tabler/icons-react';
-import SectionCard from '~/components/SectionCard';
+import {
+	IconCpu,
+	IconTrash,
+	IconPlus,
+	IconSettings,
+} from '@tabler/icons-react';
+import RightSectionCard from '~/components/RightSectionCard';
 import { useClientConfigByName } from '~/queries/useClientConfigs';
 import type {
 	AgentConfigModel,
@@ -18,6 +23,7 @@ import type {
 } from '~/models/AgentListObject';
 import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
 import ToolConfigModal from './ToolConfigModal';
+import CampaignConfigurationSystemToolsAddModal from './CampaignConfigurationSystemToolsAddModal';
 import classes from './CampaignConfigurationSystemTools.module.css';
 import { snakeToCamel } from '~/utils/stringUtils';
 import { useTranslation } from 'react-i18next';
@@ -34,7 +40,8 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 	const form = useCampaignFormContext();
 	const { data: systemToolsConfig } = useClientConfigByName('system_tools');
 	const [editingTool, setEditingTool] = useState<ToolConfigModel | null>(null);
-	const [modalOpened, setModalOpened] = useState(false);
+	const [configModalOpened, setConfigModalOpened] = useState(false);
+	const [addModalOpened, setAddModalOpened] = useState(false);
 
 	const configList = useMemo<ToolConfigModel[]>(() => {
 		if (!systemToolsConfig || !systemToolsConfig.value) return [];
@@ -84,21 +91,18 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 		[selectedTools]
 	);
 
-	const handleToggle = useCallback(
-		(toolConfig: ToolConfigModel, currentlySelected: boolean) => {
+	// Active tools: those present in configList that are selected
+	const activeTools = configList.filter((tool) =>
+		isToolSelected(tool.nameCode)
+	);
+	const activeNameCodes = activeTools.map((t) => t.nameCode);
+
+	const updateBuiltInTools = useCallback(
+		(updatedBuiltInTools: Record<string, SystemToolModel | null>) => {
 			const currentAgentConfig = form.values.agentConfig || {};
 			const currentConversationConfig = currentAgentConfig.conversationConfig;
 			const currentAgent = currentConversationConfig?.agent;
 			const currentPrompt = currentAgent?.prompt;
-			const currentBuiltInTools = currentPrompt?.builtInTools || {};
-
-			const nameCode = toolConfig.nameCode; // Already camelCase from configList
-
-			// Always include all tools, set to null when disabled
-			const updatedBuiltInTools = {
-				...currentBuiltInTools,
-				[nameCode]: currentlySelected ? null : toolConfig.value,
-			};
 
 			const updatedAgentConfig: Partial<AgentConfigModel> = {
 				...currentAgentConfig,
@@ -121,154 +125,152 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 		[form]
 	);
 
-	const handleOpenModal = useCallback((toolConfig: ToolConfigModel) => {
+	const handleRemoveTool = useCallback(
+		(toolConfig: ToolConfigModel) => {
+			const currentBuiltInTools =
+				form.values.agentConfig?.conversationConfig?.agent?.prompt
+					?.builtInTools || {};
+			const updated = { ...currentBuiltInTools, [toolConfig.nameCode]: null };
+			updateBuiltInTools(updated);
+		},
+		[form, updateBuiltInTools]
+	);
+
+	const handleAddTools = useCallback(
+		(selectedNameCodes: string[]) => {
+			const currentBuiltInTools =
+				form.values.agentConfig?.conversationConfig?.agent?.prompt
+					?.builtInTools || {};
+
+			const newEntries = selectedNameCodes.reduce<
+				Record<string, SystemToolModel>
+			>((acc, nameCode) => {
+				const toolConfig = configList.find((t) => t.nameCode === nameCode);
+				if (toolConfig) {
+					acc[nameCode] = toolConfig.value;
+				}
+				return acc;
+			}, {});
+
+			updateBuiltInTools({ ...currentBuiltInTools, ...newEntries });
+			setAddModalOpened(false);
+		},
+		[configList, form, updateBuiltInTools]
+	);
+
+	const handleOpenConfigModal = useCallback((toolConfig: ToolConfigModel) => {
 		setEditingTool(toolConfig);
-		setModalOpened(true);
+		setConfigModalOpened(true);
 	}, []);
 
-	const handleCloseModal = useCallback(() => {
-		setModalOpened(false);
+	const handleCloseConfigModal = useCallback(() => {
+		setConfigModalOpened(false);
 		setEditingTool(null);
 	}, []);
 
 	const handleSaveToolConfig = useCallback(
 		(updatedConfig: SystemToolModel) => {
-			const currentAgentConfig = form.values.agentConfig || {};
-			const currentConversationConfig = currentAgentConfig.conversationConfig;
-			const currentAgent = currentConversationConfig?.agent;
-			const currentPrompt = currentAgent?.prompt;
-			const currentBuiltInTools = currentPrompt?.builtInTools || {};
-
-			// Use camelCase for key, but keep original name in value
+			const currentBuiltInTools =
+				form.values.agentConfig?.conversationConfig?.agent?.prompt
+					?.builtInTools || {};
 			const nameCode = snakeToCamel(updatedConfig.name);
-			const updatedBuiltInTools = {
-				...currentBuiltInTools,
-				[nameCode]: updatedConfig,
-			};
-
-			const updatedAgentConfig: Partial<AgentConfigModel> = {
-				...currentAgentConfig,
-				conversationConfig: currentConversationConfig
-					? ({
-							...currentConversationConfig,
-							agent: {
-								...currentAgent,
-								prompt: {
-									...currentPrompt,
-									builtInTools: updatedBuiltInTools,
-								},
-							},
-						} as ConversationConfigModel)
-					: undefined,
-			};
-
-			form.setFieldValue('agentConfig', updatedAgentConfig);
+			updateBuiltInTools({ ...currentBuiltInTools, [nameCode]: updatedConfig });
 		},
-		[form]
+		[form, updateBuiltInTools]
 	);
 
 	return (
 		<>
-			<SectionCard
+			<RightSectionCard
+				icon={IconCpu}
 				title={t('form.agent.systemTools.title')}
 				description={t('form.agent.systemTools.description')}
 			>
-				<Stack gap='xs'>
-					{configList.length === 0 ? (
-						<Text size='sm' c='dimmed'>
-							{t('form.agent.systemTools.noTools')}
-						</Text>
-					) : (
-						configList.map((toolConfig) => {
-							const selected = isToolSelected(toolConfig.nameCode);
-							return (
-								<div
-									key={toolConfig.nameCode}
-									className={`${classes.toolRow} ${
-										selected ? classes.toolRowActive : ''
-									}`}
-								>
-									<Group
-										align='flex-start'
-										justify='space-between'
-										gap='sm'
-										className={classes.rowHeader}
-									>
-										<Group
-											gap='xs'
-											align='center'
-											className={classes.toolTitle}
-										>
-											<div className={classes.iconBadge}>
-												<IconCpu size={14} />
-											</div>
-											<div>
-												<Group gap={6} align='center'>
-													<Text fw={600} className={classes.toolName}>
-														{toolConfig.name}
-													</Text>
-													<Badge size='xs' variant='light'>
-														{toolConfig.value?.type || 'Custom'}
-													</Badge>
-												</Group>
-												<Text size='xs' className={classes.toolMeta}>
-													{t('form.agent.systemTools.systemUtility')}
-												</Text>
-											</div>
-										</Group>
-
-										<Group gap='xs' className={classes.toolActions}>
-											<Switch
-												aria-label={t('form.agent.systemTools.toggleAria', {
-													name: toolConfig.name,
-												})}
-												checked={selected}
-												onChange={() => handleToggle(toolConfig, selected)}
-												size='sm'
-											/>
-											<Tooltip
-												label={
-													selected
-														? t('form.agent.systemTools.configure')
-														: t('form.agent.systemTools.enableToConfigure')
-												}
-												withArrow
-											>
-												<ActionIcon
-													variant='subtle'
-													color='gray'
-													size='md'
-													disabled={!selected}
-													onClick={() => {
-														if (!selected) return;
-														handleOpenModal(toolConfig);
-													}}
-													className={classes.gearIcon}
-												>
-													<IconSettings size={16} />
-												</ActionIcon>
-											</Tooltip>
-										</Group>
+				<div className={classes.container}>
+					{activeTools.length > 0 ? (
+						activeTools.map((toolConfig) => (
+							<div key={toolConfig.nameCode} className={classes.item}>
+								<ThemeIcon variant='light' color='cyan' size='md'>
+									<IconCpu size={16} />
+								</ThemeIcon>
+								<div className={classes.itemInfo}>
+									<Group gap={6} align='center' wrap='nowrap'>
+										<div className={classes.itemName}>{toolConfig.name}</div>
+										{toolConfig.value?.type && (
+											<Badge size='xs' variant='light' color='cyan'>
+												{toolConfig.value.type}
+											</Badge>
+										)}
 									</Group>
-									<Text
-										size='sm'
-										c='dimmed'
-										className={classes.toolDescription}
-									>
-										{toolConfig.description ||
-											t('form.agent.systemTools.noDescription')}
-									</Text>
+									<div className={classes.itemMeta}>
+										<span className={classes.itemType}>
+											{t('form.agent.systemTools.systemUtility')}
+										</span>
+									</div>
 								</div>
-							);
-						})
+								<div className={classes.itemActions}>
+									<Tooltip
+										label={t('form.agent.systemTools.configure')}
+										position='left'
+									>
+										<ActionIcon
+											variant='subtle'
+											color='gray'
+											size='sm'
+											onClick={() => handleOpenConfigModal(toolConfig)}
+											aria-label={t('form.agent.systemTools.configure')}
+										>
+											<IconSettings size={14} />
+										</ActionIcon>
+									</Tooltip>
+									<Tooltip
+										label={t('form.agent.systemTools.remove')}
+										position='left'
+									>
+										<ActionIcon
+											variant='subtle'
+											color='red'
+											size='sm'
+											onClick={() => handleRemoveTool(toolConfig)}
+											aria-label={t('form.agent.systemTools.removeAria', {
+												name: toolConfig.name,
+											})}
+										>
+											<IconTrash size={15} />
+										</ActionIcon>
+									</Tooltip>
+								</div>
+							</div>
+						))
+					) : (
+						<Text size='xs' c='dimmed'>
+							{t('form.agent.systemTools.noSelection')}
+						</Text>
 					)}
-				</Stack>
-			</SectionCard>
+
+					<button
+						type='button'
+						className={classes.addButton}
+						onClick={() => setAddModalOpened(true)}
+					>
+						<IconPlus size={14} className={classes.plusIcon} />
+						<span>{t('form.agent.systemTools.add')}</span>
+					</button>
+				</div>
+			</RightSectionCard>
+
+			<CampaignConfigurationSystemToolsAddModal
+				opened={addModalOpened}
+				onClose={() => setAddModalOpened(false)}
+				allTools={configList}
+				activeNameCodes={activeNameCodes}
+				onSave={handleAddTools}
+			/>
 
 			{editingTool && (
 				<ToolConfigModal
-					opened={modalOpened}
-					onClose={handleCloseModal}
+					opened={configModalOpened}
+					onClose={handleCloseConfigModal}
 					toolName={editingTool.name}
 					toolConfig={
 						selectedTools[editingTool.nameCode]

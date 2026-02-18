@@ -1205,19 +1205,41 @@
 				"title": "Herramientas del agente",
 				"description": "Selecciona las herramientas que puede usar el agente.",
 				"noTools": "No hay herramientas del agente configuradas.",
+				"noSelection": "No hay herramientas seleccionadas.",
 				"customIntegration": "Integracion personalizada",
 				"toggleAria": "Alternar {{name}}",
-				"noDescription": "Sin descripcion."
+				"noDescription": "Sin descripcion.",
+				"add": "Agregar herramienta",
+				"remove": "Eliminar herramienta",
+				"removeAria": "Eliminar {{name}}",
+				"modal": {
+					"title": "Agregar herramientas",
+					"subtitle": "Selecciona las herramientas que quieres habilitar para este agente.",
+					"noTools": "No hay herramientas disponibles.",
+					"save": "Guardar",
+					"cancel": "Cancelar"
+				}
 			},
 			"systemTools": {
 				"title": "Herramientas del sistema",
 				"description": "Configura las herramientas del sistema para el agente.",
 				"noTools": "No hay herramientas del sistema disponibles.",
+				"noSelection": "No hay herramientas del sistema seleccionadas.",
 				"systemUtility": "Utilidad del sistema",
 				"toggleAria": "Alternar {{name}}",
 				"configure": "Configurar",
 				"enableToConfigure": "Habilitar para configurar",
 				"noDescription": "Sin descripción disponible.",
+				"add": "Agregar herramienta del sistema",
+				"remove": "Eliminar herramienta",
+				"removeAria": "Eliminar {{name}}",
+				"addModal": {
+					"title": "Agregar herramientas del sistema",
+					"subtitle": "Selecciona las herramientas del sistema que quieres habilitar para este agente.",
+					"noTools": "No hay herramientas del sistema disponibles.",
+					"save": "Guardar",
+					"cancel": "Cancelar"
+				},
 				"modal": {
 					"title": "Configurar Herramienta",
 					"name": "Nombre de la Herramienta",

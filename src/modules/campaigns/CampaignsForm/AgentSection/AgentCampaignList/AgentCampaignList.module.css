@@ -2,8 +2,7 @@
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	gap: var(--mantine-spacing-sm);
-	padding: var(--mantine-spacing-sm) 0;
+	gap: var(--mantine-spacing-xs);
 }
 
 .header {

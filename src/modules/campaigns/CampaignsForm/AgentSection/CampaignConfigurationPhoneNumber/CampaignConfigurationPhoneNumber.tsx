@@ -3,7 +3,7 @@ import { Button, Select, Stack, Group, LoadingOverlay } from '@mantine/core';
 import { IconPhone, IconCheck } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { notifications } from '@mantine/notifications';
-import SectionCard from '~/components/SectionCard';
+import RightSectionCard from '~/components/RightSectionCard';
 import {
 	linkInboundPhoneNumber,
 	linkOutboundPhoneNumber,
@@ -141,12 +141,12 @@ const CampaignConfigurationPhoneNumber: React.FC = () => {
 		})) || [];
 
 	return (
-		<SectionCard
+		<RightSectionCard
 			icon={IconPhone}
 			title={t('form.agent.phoneNumber.title', { ns: 'campaigns' })}
 			description={t('form.agent.phoneNumber.description', { ns: 'campaigns' })}
 		>
-			<Stack gap='md' pos='relative'>
+			<Stack gap='xs' pos='relative'>
 				<LoadingOverlay
 					visible={
 						!campaignId ||
@@ -155,7 +155,7 @@ const CampaignConfigurationPhoneNumber: React.FC = () => {
 						isLoadingCampaignAgents
 					}
 				/>
-				<Group align='flex-end'>
+				<Group align='flex-end' gap='xs' wrap='nowrap'>
 					<Select
 						label={t('form.agent.phoneNumber.selectLabel', { ns: 'campaigns' })}
 						placeholder={t('form.agent.phoneNumber.selectPlaceholder', {
@@ -167,17 +167,19 @@ const CampaignConfigurationPhoneNumber: React.FC = () => {
 						style={{ flex: 1 }}
 						searchable
 						clearable
+						size='sm'
 					/>
 					<Button
 						onClick={handleAssign}
 						loading={isAssigning}
 						disabled={isButtonDisabled}
+						size='sm'
 					>
 						{buttonLabel}
 					</Button>
 				</Group>
 			</Stack>
-		</SectionCard>
+		</RightSectionCard>
 	);
 };
 

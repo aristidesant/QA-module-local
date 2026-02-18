@@ -1204,19 +1204,41 @@
 				"title": "Agent tools",
 				"description": "Select which tools the agent can use.",
 				"noTools": "No agent tools configured.",
+				"noSelection": "No tools selected.",
 				"customIntegration": "Custom integration",
 				"toggleAria": "Toggle {{name}}",
-				"noDescription": "No description provided."
+				"noDescription": "No description provided.",
+				"add": "Add tool",
+				"remove": "Remove tool",
+				"removeAria": "Remove {{name}}",
+				"modal": {
+					"title": "Add tools",
+					"subtitle": "Select the tools you want to enable for this agent.",
+					"noTools": "No tools available.",
+					"save": "Save",
+					"cancel": "Cancel"
+				}
 			},
 			"systemTools": {
 				"title": "System Tools",
 				"description": "Configure system tools for the agent.",
 				"noTools": "No system tools available.",
+				"noSelection": "No system tools selected.",
 				"systemUtility": "System Utility",
 				"toggleAria": "Toggle {{name}}",
 				"configure": "Configure",
 				"enableToConfigure": "Enable to configure",
 				"noDescription": "No description available.",
+				"add": "Add system tool",
+				"remove": "Remove tool",
+				"removeAria": "Remove {{name}}",
+				"addModal": {
+					"title": "Add system tools",
+					"subtitle": "Select the system tools you want to enable for this agent.",
+					"noTools": "No system tools available.",
+					"save": "Save",
+					"cancel": "Cancel"
+				},
 				"modal": {
 					"title": "Configure Tool",
 					"name": "Tool Name",
