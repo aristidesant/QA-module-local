@@ -214,10 +214,14 @@ const conversationsApi = (_authHeader: Record<string, string> = {}) => {
 		},
 
 		// Export a single conversation as PDF
-		exportConversationPdf: async (id: string | number) => {
+		exportConversationPdf: async (
+			id: string | number,
+			language?: 'en' | 'es'
+		) => {
 			const response = await axios.get<Blob>(
-				`${DEFAULT_API_URL}/conversations/${id}/export?format=PDF`,
+				`${DEFAULT_API_URL}/conversations/${id}/export`,
 				{
+					params: { format: 'PDF', ...(language ? { language } : {}) },
 					responseType: 'blob',
 				}
 			);

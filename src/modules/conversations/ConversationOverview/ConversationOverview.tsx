@@ -51,7 +51,7 @@ export function ConversationOverview({
 	status: statusOverride,
 	duration: durationOverride,
 }: ConversationOverviewProps) {
-	const { t } = useTranslation(['conversations', 'common']);
+	const { t, i18n } = useTranslation(['conversations', 'common']);
 	const {
 		contact,
 		agent,
@@ -160,9 +160,11 @@ export function ConversationOverview({
 		if (!canExportConversations) return;
 
 		try {
-			const result = await exportConversationMutation.mutateAsync(
-				conversation.id
-			);
+			const language = i18n.language === 'es' ? 'es' : 'en';
+			const result = await exportConversationMutation.mutateAsync({
+				id: conversation.id,
+				language,
+			});
 			const url = window.URL.createObjectURL(result.blob);
 			const link = document.createElement('a');
 			link.href = url;
@@ -330,7 +332,10 @@ export function ConversationOverview({
 					description={t('overview.summary.description')}
 				>
 					<Text fz='xs' className={styles.summaryText}>
-						{summary?.es || summary?.en || transcriptSummary}
+						{(i18n.language === 'es' ? summary?.es : summary?.en) ||
+							summary?.en ||
+							summary?.es ||
+							transcriptSummary}
 					</Text>
 					{canExportConversations && (
 						<Button
