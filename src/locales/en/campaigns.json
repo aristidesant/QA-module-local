@@ -65,7 +65,7 @@
 		"allExecutionTypes": "All execution types",
 		"status": "Status",
 		"allStatuses": "All statuses",
-		"includeCompleted": "Include completed",
+		"includeInactive": "Include inactive",
 		"advanced": "Advanced",
 		"clearFilters": "Clear filters",
 		"clearAllFilters": "Clear all filters",
@@ -84,10 +84,8 @@
 		}
 	},
 	"status": {
-		"PENDING": "Pending",
-		"RUNNING": "Running",
-		"PAUSED": "Paused",
-		"COMPLETED": "Completed",
+		"ACTIVE": "Active",
+		"INACTIVE": "Inactive",
 		"FAILED": "Failed",
 		"UNKNOWN": "Unknown",
 		"pending": "Pending",

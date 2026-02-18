@@ -21,7 +21,6 @@ import {
 	useGetCampaign,
 	useGetCampaignRequirements,
 	usePauseOutboundCampaign,
-	useResumeOutboundCampaign,
 	useStartOutboundCampaign,
 } from '~/queries/campaignsQueries';
 import { notifications } from '@mantine/notifications';
@@ -68,8 +67,6 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 	} = useGetCampaign(`${campaign?.id}`);
 	const { mutate: pauseCampaign, isPending: isPausing } =
 		usePauseOutboundCampaign();
-	const { mutate: resumeCampaign, isPending: isResuming } =
-		useResumeOutboundCampaign();
 	const { mutate: startCampaign, isPending: isStarting } =
 		useStartOutboundCampaign();
 	const {
@@ -82,7 +79,7 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 	const status = (campaignData?.status ?? campaign.status) as
 		| CampaignStatus
 		| undefined;
-	const isActionMutating = isPausing || isResuming || isStarting;
+	const isActionMutating = isPausing || isStarting;
 	const campaignId = String(displayCampaign?.id ?? campaign.id);
 	const campaignNumericId = displayCampaign?.id ?? campaign.id;
 	const contactGroupId = displayCampaign?.contactList?.id;
@@ -100,7 +97,7 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 
 	const buttonConfig = useMemo<ButtonConfig>(() => {
 		switch (status) {
-			case CampaignStatus.RUNNING:
+			case CampaignStatus.ACTIVE:
 				return {
 					label: t('preview.overview.actions.pause'),
 					color: 'red',
@@ -108,29 +105,13 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 					icon: IconPlayerPause,
 					disabled: false,
 				};
-			case CampaignStatus.PAUSED:
-				return {
-					label: t('preview.overview.actions.resume'),
-					color: 'green',
-					variant: 'filled',
-					icon: IconPlayerPlay,
-					disabled: false,
-				};
-			case CampaignStatus.PENDING:
+			case CampaignStatus.INACTIVE:
 				return {
 					label: t('preview.overview.actions.start'),
 					color: 'green',
 					variant: 'filled',
 					icon: IconPlayerPlay,
 					disabled: isStartDisabled,
-				};
-			case CampaignStatus.COMPLETED:
-				return {
-					label: t('preview.overview.actions.completed'),
-					color: 'gray',
-					variant: 'filled',
-					icon: IconPlayerPlay,
-					disabled: true,
 				};
 			case CampaignStatus.FAILED:
 				return {
@@ -211,7 +192,7 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 
 	const handleToggle = useCallback(() => {
 		switch (status) {
-			case CampaignStatus.RUNNING:
+			case CampaignStatus.ACTIVE:
 				if (!ensureContactGroup('pause')) {
 					return;
 				}
@@ -226,22 +207,7 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 					}
 				);
 				break;
-			case CampaignStatus.PAUSED:
-				if (!ensureContactGroup('resume')) {
-					return;
-				}
-				resumeCampaign(
-					{
-						campaignId: campaignNumericId,
-						contactGroupId: contactGroupId!,
-					},
-					{
-						onSuccess: () => onSuccess('resumed'),
-						onError: (error) => onError(error, 'resume'),
-					}
-				);
-				break;
-			case CampaignStatus.PENDING:
+			case CampaignStatus.INACTIVE:
 				if (!ensureContactGroup('start')) {
 					return;
 				}
@@ -266,7 +232,6 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 		onError,
 		onSuccess,
 		pauseCampaign,
-		resumeCampaign,
 		startCampaign,
 		status,
 	]);

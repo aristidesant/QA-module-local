@@ -146,7 +146,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				spent: 0,
 				type: values.campaignType,
 				campaignExecutionType: 'TIME_BASED',
-				status: CampaignStatus.PENDING,
+				status: CampaignStatus.INACTIVE,
 				defaultMaxWaves: values.defaultMaxWaves || 3,
 				objectiveId: values.objectiveId!, // Guaranteed by validation
 			},
