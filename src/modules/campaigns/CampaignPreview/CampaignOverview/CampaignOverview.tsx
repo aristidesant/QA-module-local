@@ -244,6 +244,16 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 		} as const);
 
 	const StatusIcon = statusConfig.icon;
+	const statusLabel = useMemo(() => {
+		if (!statusConfig?.label) {
+			return t('status.UNKNOWN', { ns: 'campaigns' });
+		}
+
+		return t(statusConfig.label, {
+			ns: 'campaigns',
+			defaultValue: t('status.UNKNOWN', { ns: 'campaigns' }),
+		});
+	}, [statusConfig?.label, t]);
 
 	const typeLabel = useMemo(() => {
 		if (!displayCampaign?.type) {
@@ -350,7 +360,7 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 							>
 								<Group gap={3}>
 									<StatusIcon size={11} />
-									<span>{statusConfig.label}</span>
+									<span>{statusLabel}</span>
 								</Group>
 							</Badge>
 							<Badge

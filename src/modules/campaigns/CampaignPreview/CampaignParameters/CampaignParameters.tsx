@@ -96,17 +96,12 @@ const CampaignParameters: React.FC = () => {
 		return `${displayHour}:${minutes.padEnd(2, '0')} ${ampm}`;
 	};
 
-	const getDayAbbreviation = (day: string) => {
-		const dayMap: Record<string, string> = {
-			Monday: 'Mon',
-			Tuesday: 'Tue',
-			Wednesday: 'Wed',
-			Thursday: 'Thu',
-			Friday: 'Fri',
-			Saturday: 'Sat',
-			Sunday: 'Sun',
-		};
-		return dayMap[day] || day.slice(0, 3);
+	const getDayLabel = (day: string) => {
+		const normalized = day.trim().toLowerCase();
+		return t(`scheduler.schedulerBuilder.days.${normalized}`, {
+			ns: 'campaigns',
+			defaultValue: day,
+		});
 	};
 
 	if (!selectedCampaign) {
@@ -254,7 +249,7 @@ const CampaignParameters: React.FC = () => {
 									className={styles.scheduleChip}
 								>
 									<Text size='xs' fw={700} className={styles.dayLabel}>
-										{getDayAbbreviation(schedule.day)}
+										{getDayLabel(schedule.day)}
 									</Text>
 									<Text size='xs' c='dimmed' className={styles.timeRange}>
 										{formatTime(schedule.startHour)} -{' '}
