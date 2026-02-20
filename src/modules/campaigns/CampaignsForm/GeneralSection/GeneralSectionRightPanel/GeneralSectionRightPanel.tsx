@@ -31,6 +31,8 @@ const GeneralSectionRightPanel: React.FC = () => {
 	const queryClient = useQueryClient();
 	const [isObjectiveModalOpen, setIsObjectiveModalOpen] = useState(false);
 
+	const isOutbound = (form.values.type || 'OUTBOUND') !== 'INBOUND';
+
 	const currentLanguage =
 		form.values.agentConfig?.conversationConfig?.agent?.language || '';
 	const languageOptions = [
@@ -107,48 +109,50 @@ const GeneralSectionRightPanel: React.FC = () => {
 			<Stack gap='xs'>
 				<CampaignConfigurationPhoneNumber />
 
-				<RightSectionCard
-					title={t('general.campaignObjective')}
-					description={t('general.campaignObjectiveDesc')}
-					icon={IconTarget}
-					iconColor='orange'
-					rightSection={
-						<Tooltip label={t('general.createNewObjective')}>
-							<ActionIcon
-								variant='light'
-								color='orange'
-								size='sm'
-								onClick={() => setIsObjectiveModalOpen(true)}
-							>
-								<IconPlus size={16} />
-							</ActionIcon>
-						</Tooltip>
-					}
-				>
-					<Input.Wrapper
-						error={
-							(form.errors.objectiveId as React.ReactNode) ||
-							(loadError ? t('general.failedToLoadObjectives') : undefined)
+				{isOutbound && (
+					<RightSectionCard
+						title={t('general.campaignObjective')}
+						description={t('general.campaignObjectiveDesc')}
+						icon={IconTarget}
+						iconColor='orange'
+						rightSection={
+							<Tooltip label={t('general.createNewObjective')}>
+								<ActionIcon
+									variant='light'
+									color='orange'
+									size='sm'
+									onClick={() => setIsObjectiveModalOpen(true)}
+								>
+									<IconPlus size={16} />
+								</ActionIcon>
+							</Tooltip>
 						}
 					>
-						<Select
-							placeholder={
-								objectivesLoading
-									? t('general.loadingObjectives')
-									: t('general.selectObjective')
+						<Input.Wrapper
+							error={
+								(form.errors.objectiveId as React.ReactNode) ||
+								(loadError ? t('general.failedToLoadObjectives') : undefined)
 							}
-							data={objectiveSelectData}
-							value={form.values.objectiveId?.toString() || null}
-							onChange={handleObjectiveChange}
-							searchable
-							clearable
-							disabled={objectivesLoading}
-							readOnly={false}
-							error={!!form.errors.objectiveId || !!loadError}
-							size='sm'
-						/>
-					</Input.Wrapper>
-				</RightSectionCard>
+						>
+							<Select
+								placeholder={
+									objectivesLoading
+										? t('general.loadingObjectives')
+										: t('general.selectObjective')
+								}
+								data={objectiveSelectData}
+								value={form.values.objectiveId?.toString() || null}
+								onChange={handleObjectiveChange}
+								searchable
+								clearable
+								disabled={objectivesLoading}
+								readOnly={false}
+								error={!!form.errors.objectiveId || !!loadError}
+								size='sm'
+							/>
+						</Input.Wrapper>
+					</RightSectionCard>
+				)}
 
 				<RightSectionCard
 					title={t('general.settingsTitle', {
@@ -160,19 +164,21 @@ const GeneralSectionRightPanel: React.FC = () => {
 					icon={IconAdjustments}
 					iconColor='blue'
 				>
-					<NumberInput
-						label={t('general.defaultWaves')}
-						description={t('general.defaultWavesDesc')}
-						min={1}
-						clampBehavior='strict'
-						allowDecimal={false}
-						allowNegative={false}
-						step={1}
-						placeholder={t('general.enterNumberOfWaves')}
-						withAsterisk
-						size='sm'
-						{...form.getInputProps('defaultMaxWaves')}
-					/>
+					{isOutbound && (
+						<NumberInput
+							label={t('general.defaultWaves')}
+							description={t('general.defaultWavesDesc')}
+							min={1}
+							clampBehavior='strict'
+							allowDecimal={false}
+							allowNegative={false}
+							step={1}
+							placeholder={t('general.enterNumberOfWaves')}
+							withAsterisk
+							size='sm'
+							{...form.getInputProps('defaultMaxWaves')}
+						/>
+					)}
 
 					<Select
 						label={t('form.agent.basic.language')}
