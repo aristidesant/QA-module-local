@@ -4,6 +4,7 @@ import campaignsApi, {
 	type CreateCampaignWithAgentDTO,
 	type CreateCampaignScheduleDTO,
 	type SetDraftDto,
+	type ToggleCampaignAction,
 } from '~/api/campaignsApi';
 import type { Campaign } from '~/models/CampaignsModel';
 import type { CampaignLiveMetric } from '~/models/CampaignLiveMetricModel';
@@ -442,6 +443,36 @@ export const useSyncCampaignByAgent = () => {
 		onError: (error) => {
 			// eslint-disable-next-line no-console
 			console.error('Error syncing campaign by agent:', error);
+		},
+	});
+};
+
+// Toggle campaign status (activate/inactive)
+export const useToggleCampaignStatus = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async ({
+			campaignId,
+			action,
+		}: {
+			campaignId: number;
+			action: ToggleCampaignAction;
+		}) => {
+			const api = campaignsApi();
+			return api.toggleCampaignStatus(campaignId, action);
+		},
+		onSuccess: (data) => {
+			queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+			queryClient.invalidateQueries({ queryKey: ['campaigns-paginated'] });
+			if (data?.campaign?.id) {
+				queryClient.invalidateQueries({
+					queryKey: ['campaign', String(data.campaign.id)],
+				});
+			}
+		},
+		onError: (error) => {
+			// eslint-disable-next-line no-console
+			console.error('Error toggling campaign status:', error);
 		},
 	});
 };

@@ -37,6 +37,7 @@
 	"columns": {
 		"campaign": "Campaña",
 		"type": "Tipo",
+		"status": "Estado",
 		"lastUpdated": "Última Actualización",
 		"campaignDetails": "Detalles de Campaña",
 		"noDescription": "Sin descripción disponible.",
@@ -94,6 +95,18 @@
 		"complete": "Completada",
 		"failed": "Fallida",
 		"executed": "Ejecutada"
+	},
+	"toggleStatus": {
+		"activate": "Activar campaña",
+		"deactivate": "Desactivar campaña",
+		"confirmActivateTitle": "Activar Campaña",
+		"confirmDeactivateTitle": "Desactivar Campaña",
+		"confirmActivateMessage": "¿Estás seguro de que deseas activar esta campaña?",
+		"confirmDeactivateInbound": "Desactivar esta campaña inbound desvinculará los números de teléfono de ElevenLabs. Las asociaciones se mantendrán y se restaurarán automáticamente al reactivar.",
+		"confirmDeactivateOutbound": "Desactivar esta campaña outbound pausará todos los grupos de contacto en ejecución. Los grupos pausados no se reanudarán automáticamente al reactivar la campaña.",
+		"confirm": "Confirmar",
+		"error": "Error",
+		"errorMessage": "No se pudo cambiar el estado de la campaña"
 	},
 	"deleteModal": {
 		"title": "Eliminar Campaña",

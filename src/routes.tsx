@@ -367,13 +367,15 @@ const router = createBrowserRouter([
 								path: 'scheduler-predefined-params',
 								id: 'scheduler-predefined-params',
 								element: (
-									<Suspense
-										fallback={
-											<SuspenseFallback message='Loading scheduler presets...' />
-										}
-									>
-										<SchedulerPredefinedParamsPage />
-									</Suspense>
+									<I18nNamespaceLoader>
+										<Suspense
+											fallback={
+												<SuspenseFallback message='Loading scheduler presets...' />
+											}
+										>
+											<SchedulerPredefinedParamsPage />
+										</Suspense>
+									</I18nNamespaceLoader>
 								),
 							},
 							{
