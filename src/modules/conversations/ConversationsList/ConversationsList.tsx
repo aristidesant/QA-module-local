@@ -34,6 +34,7 @@ type ConversationsListProps = {
 	onConversationClick?: (conversation: ConversationsModel) => void;
 	selectedConversationId?: number | null;
 	className?: string;
+	hiddenColumns?: string[];
 };
 
 const ConversationsList: React.FC<ConversationsListProps> = ({
@@ -42,6 +43,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 	onConversationClick,
 	selectedConversationId,
 	className,
+	hiddenColumns,
 }) => {
 	const { t } = useTranslation(['conversations', 'common']);
 	const pagination = usePagination({
@@ -133,7 +135,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 		}
 	};
 
-	const columns = useConversationsColumns(userTimezone);
+	const columns = useConversationsColumns(userTimezone, hiddenColumns);
 
 	if (!canViewConversations) {
 		return <AccessDenied description={t('list.error')} />;

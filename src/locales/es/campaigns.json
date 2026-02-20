@@ -1612,6 +1612,7 @@
 				"identityDesc": "Establece el tono y la estructura para esta campaña.",
 				"routingTitle": "Enrutamiento",
 				"routingDesc": "Asocia esta campaña con el número y objetivo correctos.",
+				"routingDescInbound": "Asigna el número de teléfono que recibirá las llamadas entrantes.",
 				"campaignName": "Nombre de la Campaña",
 				"campaignNameDesc": "Dale a tu campaña un nombre descriptivo",
 				"campaignNamePlaceholder": "Ingresa el nombre de la campaña",

@@ -1497,6 +1497,7 @@
 				"identityDesc": "Set the tone and structure for this campaign.",
 				"routingTitle": "Routing",
 				"routingDesc": "Match this campaign to the right number and objective.",
+				"routingDescInbound": "Assign the phone number that will receive inbound calls.",
 				"campaignName": "Campaign Name",
 				"campaignNameDesc": "Give your campaign a descriptive name",
 				"campaignNamePlaceholder": "Enter campaign name",

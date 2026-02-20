@@ -21,6 +21,10 @@ const CampaignContactListPage = React.lazy(
 	() =>
 		import('./modules/campaigns/CampaignContactListPage/CampaignContactListPage')
 );
+const CampaignConversationsPage = React.lazy(
+	() =>
+		import('./modules/campaigns/CampaignConversationsPage/CampaignConversationsPage')
+);
 const ForcePasswordChangePage = React.lazy(
 	() => import('./modules/auth/ForcePasswordChangePage/ForcePasswordChangePage')
 );
@@ -229,6 +233,23 @@ const router = createBrowserRouter([
 								>
 									<CampaignContactListPage />
 								</Suspense>
+							</ModuleGuard>
+						),
+					},
+					{
+						path: 'campaign/:campaignId/conversations',
+						id: 'campaign.conversations',
+						element: (
+							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
+								<I18nNamespaceLoader>
+									<Suspense
+										fallback={
+											<SuspenseFallback message='Loading conversations...' />
+										}
+									>
+										<CampaignConversationsPage />
+									</Suspense>
+								</I18nNamespaceLoader>
 							</ModuleGuard>
 						),
 					},
