@@ -12,7 +12,7 @@ import ConversationsList from '~/modules/conversations/ConversationsList';
 import ConversationDetails from '~/modules/conversations/ConversationDetails';
 import { Button } from '@mantine/core';
 
-const HIDDEN_COLUMNS = ['dispositionName', 'status'];
+const HIDDEN_COLUMNS = ['contactName', 'phoneNumber'];
 
 const CampaignConversationsPage = () => {
 	const { t } = useTranslation('campaign.conversations');
