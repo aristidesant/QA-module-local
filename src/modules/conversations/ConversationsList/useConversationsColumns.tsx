@@ -10,7 +10,10 @@ import { useTranslation } from 'react-i18next';
 dayjs.extend(relativeTime);
 dayjs.extend(timezone);
 
-export const useConversationsColumns = (userTimezone: string) => {
+export const useConversationsColumns = (
+	userTimezone: string,
+	hiddenColumns?: string[]
+) => {
 	const { t } = useTranslation(['conversations', 'common']);
 
 	return useMemo<ColumnDef<ConversationsModel>[]>(() => {
@@ -102,7 +105,7 @@ export const useConversationsColumns = (userTimezone: string) => {
 			return parts.join(' ') || '—';
 		};
 
-		return [
+		const allColumns: ColumnDef<ConversationsModel>[] = [
 			{
 				id: 'contactName',
 				header: t('list.columns.contactName'),
@@ -232,5 +235,15 @@ export const useConversationsColumns = (userTimezone: string) => {
 				},
 			},
 		];
-	}, [userTimezone, t]);
+
+		if (!hiddenColumns || hiddenColumns.length === 0) return allColumns;
+
+		return allColumns.filter((col) => {
+			const colId =
+				(col as { id?: string }).id ??
+				(col as { accessorKey?: string }).accessorKey ??
+				'';
+			return !hiddenColumns.includes(colId);
+		});
+	}, [userTimezone, t, hiddenColumns]);
 };

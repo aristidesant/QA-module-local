@@ -1,0 +1,21 @@
+{
+	"page": {
+		"description": "View all conversations for this inbound campaign."
+	},
+	"breadcrumb": {
+		"campaigns": "Campaigns"
+	},
+	"section": {
+		"title": "Conversations",
+		"description": "Conversations received by this campaign."
+	},
+	"loading": {
+		"title": "Loading campaign…",
+		"description": "Fetching campaign conversations."
+	},
+	"unavailable": {
+		"title": "Campaign unavailable",
+		"description": "We could not load the requested campaign.",
+		"backToCampaigns": "Back to Campaigns"
+	}
+}

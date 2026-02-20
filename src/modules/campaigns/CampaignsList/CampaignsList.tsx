@@ -290,7 +290,11 @@ export const CampaignsList: React.FC = () => {
 			navigate(`/campaign/${campaign.id}`);
 		},
 		onView: (campaign) => {
-			navigate(`/campaign/view/${campaign.id}`);
+			if (campaign.type === 'INBOUND') {
+				navigate(`/campaign/${campaign.id}/conversations`);
+			} else {
+				navigate(`/campaign/view/${campaign.id}`);
+			}
 		},
 		onTestCall: handleTestCall,
 		onDelete: (campaign) => {

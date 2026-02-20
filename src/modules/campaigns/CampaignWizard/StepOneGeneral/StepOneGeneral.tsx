@@ -33,7 +33,12 @@ import styles from '../CampaignWizard.module.css';
 import { useGetCampaignObjectives } from '~/queries/campaignObjectivesQueries';
 import { useGetAllAgentVoices } from '~/queries/agentVoiceQueries';
 import { CampaignObjectivesForm } from '~/modules/campaign-management/campaign-objectives/components/CampaignObjectivesForm/CampaignObjectivesForm';
-import { IconPlus, IconAlertCircle } from '@tabler/icons-react';
+import {
+	IconPlus,
+	IconAlertCircle,
+	IconPhoneOutgoing,
+	IconPhoneIncoming,
+} from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
 
 interface StepOneGeneralProps {
@@ -95,12 +100,14 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 					: null,
 			phoneNumberId: (value: number | null) =>
 				!value ? t('wizard.steps.general.validation.phoneIdRequired') : null,
-			defaultMaxWaves: (value: number) =>
-				!value || value < 1
+			defaultMaxWaves: (value: number, values) =>
+				values.campaignType === 'OUTBOUND' && (!value || value < 1)
 					? t('wizard.steps.general.validation.wavesRequired')
 					: null,
-			objectiveId: (value: number | null) =>
-				!value ? t('wizard.steps.general.validation.objectiveRequired') : null,
+			objectiveId: (value: number | null, values) =>
+				values.campaignType === 'OUTBOUND' && !value
+					? t('wizard.steps.general.validation.objectiveRequired')
+					: null,
 		},
 		validateInputOnChange: true,
 	});
@@ -128,7 +135,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 		const agentName = values.campaignName;
 
 		// Build the conversationConfig.agent object with the phone number
-		const agentConfig: any = {};
+		const agentConfig: Record<string, unknown> = {};
 
 		if (values.phoneNumberId) {
 			if (values.campaignType === 'OUTBOUND') {
@@ -137,6 +144,8 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				agentConfig.inboundPhoneNumberId = values.phoneNumberId;
 			}
 		}
+
+		const isOutboundType = values.campaignType === 'OUTBOUND';
 
 		const dto: CreateCampaignWithAgentDTO = {
 			campaign: {
@@ -147,35 +156,35 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				type: values.campaignType,
 				campaignExecutionType: 'TIME_BASED',
 				status: CampaignStatus.INACTIVE,
-				defaultMaxWaves: values.defaultMaxWaves || 3,
-				objectiveId: values.objectiveId!, // Guaranteed by validation
+				...(isOutboundType && {
+					defaultMaxWaves: values.defaultMaxWaves || 3,
+					objectiveId: values.objectiveId!,
+				}),
 			},
 			agent: {
 				conversationConfig: {
 					agent: agentConfig,
 				},
 				platformSettings: {},
-				name: agentName, // Auto-generated from campaign name, hidden from user
+				name: agentName,
 				type: values.campaignType,
-				voiceId: defaultVoiceId, // Use first available voice
+				voiceId: defaultVoiceId,
 			},
 		};
 
 		createCampaignWithAgent.mutate(dto, {
-			onSuccess: (data: any) => {
-				// Extract campaign from response (API returns { campaign, agent, assignmentStatus })
-				const campaign = data?.campaign || data;
+			onSuccess: (data: unknown) => {
+				const response = data as { campaign?: Record<string, unknown> };
+				const campaign = response?.campaign || data;
 
 				// Update store with values and created campaign
 				setCampaignName(values.campaignName);
 				setDescription(values.description);
 				setCampaignType(values.campaignType);
 				setPhoneNumberId(values.phoneNumberId);
-				setObjectiveId(values.objectiveId);
-				setDefaultMaxWaves(values.defaultMaxWaves || 3);
-				setCreatedCampaign(campaign);
-				setIsSubmitting(false);
-
+				setObjectiveId(isOutboundType ? values.objectiveId : null);
+				setDefaultMaxWaves(isOutboundType ? values.defaultMaxWaves || 3 : 3);
+				setCreatedCampaign(campaign as any);
 				setIsSubmitting(false);
 
 				notifications.show({
@@ -186,7 +195,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 
 				// Save draft step as 1 (Agent Step)
 				setDraft({
-					campaignId: String(campaign.id),
+					campaignId: String((campaign as any).id),
 					data: { isDraft: true, draftStep: 1 },
 				}).catch((err) => console.error('Failed to save draft step', err));
 
@@ -225,7 +234,15 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 		const nextValue: CampaignTypeValue = value;
 		form.setFieldValue('campaignType', nextValue);
 		form.setFieldValue('phoneNumberId', null);
+		// Clear outbound-only fields when switching to inbound
+		if (nextValue === 'INBOUND') {
+			form.setFieldValue('objectiveId', null);
+			form.setFieldValue('defaultMaxWaves', 3);
+		}
+		setCampaignType(nextValue);
 	};
+
+	const isFormOutbound = form.values.campaignType === 'OUTBOUND';
 
 	return (
 		<>
@@ -244,6 +261,45 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 					</Box>
 
 					<div className={styles.sectionGrid}>
+						{/* Campaign Type Selector — top-level decision */}
+						<Box className={styles.campaignTypeCard}>
+							<div className={styles.sectionHeading}>
+								<Text className={styles.sectionHeadingTitle}>
+									{t('wizard.steps.general.campaignType')}
+								</Text>
+								<Text className={styles.sectionHeadingDescription}>
+									{t('wizard.steps.general.campaignTypeDesc')}
+								</Text>
+							</div>
+							<SegmentedControl
+								data={[
+									{
+										value: 'OUTBOUND',
+										label: (
+											<Group gap={6} justify='center'>
+												<IconPhoneOutgoing size={16} />
+												<span>{t('columns.outbound')}</span>
+											</Group>
+										),
+									},
+									{
+										value: 'INBOUND',
+										label: (
+											<Group gap={6} justify='center'>
+												<IconPhoneIncoming size={16} />
+												<span>{t('columns.inbound')}</span>
+											</Group>
+										),
+									},
+								]}
+								value={form.values.campaignType}
+								onChange={handleCampaignTypeChange}
+								fullWidth
+								className={styles.segmentedControl}
+							/>
+						</Box>
+
+						{/* Identity Card */}
 						<Box className={styles.wizardCard}>
 							<div className={styles.sectionHeading}>
 								<Text className={styles.sectionHeadingTitle}>
@@ -275,48 +331,19 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 									minRows={3}
 									rows={3}
 								/>
-
-								<Box className={styles.field}>
-									<Text className={styles.fieldLabel}>
-										{t('wizard.steps.general.campaignType')}{' '}
-										<span className={styles.required}>*</span>
-									</Text>
-									<Text className={styles.fieldDescription}>
-										{t('wizard.steps.general.campaignTypeDesc')}
-									</Text>
-									<SegmentedControl
-										data={[
-											{ value: 'INBOUND', label: t('columns.inbound') },
-											{ value: 'OUTBOUND', label: t('columns.outbound') },
-										]}
-										value={form.values.campaignType}
-										onChange={handleCampaignTypeChange}
-										fullWidth
-										className={styles.segmentedControl}
-									/>
-									<NumberInput
-										label={t('wizard.steps.general.defaultWaves')}
-										description={t('wizard.steps.general.defaultWavesDesc')}
-										min={1}
-										step={1}
-										clampBehavior='strict'
-										allowDecimal={false}
-										allowNegative={false}
-										withAsterisk
-										size='sm'
-										{...form.getInputProps('defaultMaxWaves')}
-									/>
-								</Box>
 							</Stack>
 						</Box>
 
-						<Box className={styles.wizardCard}>
+						{/* Routing Card */}
+						<Box className={styles.wizardCardRouting}>
 							<div className={styles.sectionHeading}>
 								<Text className={styles.sectionHeadingTitle}>
 									{t('wizard.steps.general.routingTitle')}
 								</Text>
 								<Text className={styles.sectionHeadingDescription}>
-									{t('wizard.steps.general.routingDesc')}
+									{isFormOutbound
+										? t('wizard.steps.general.routingDesc')
+										: t('wizard.steps.general.routingDescInbound')}
 								</Text>
 							</div>
 							<Stack gap='md'>
@@ -332,48 +359,67 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 									withAsterisk
 								/>
 
-								<Input.Wrapper
-									label={t('wizard.steps.general.objective')}
-									description={t('wizard.steps.general.objectiveDesc')}
-									error={form.errors.objectiveId}
-									withAsterisk
-									className={styles.field}
-								>
-									<Group gap='xs'>
-										<Select
-											placeholder={t(
-												'wizard.steps.general.objectivePlaceholder'
-											)}
-											data={
-												objectivesResponse?.data?.map((obj) => ({
-													value: obj.id.toString(),
-													label: obj.name,
-												})) || []
-											}
-											value={form.values.objectiveId?.toString() || null}
-											onChange={(value) =>
-												form.setFieldValue(
-													'objectiveId',
-													value ? parseInt(value, 10) : null
-												)
-											}
-											searchable
-											clearable
-											error={!!form.errors.objectiveId}
-											style={{ flex: 1 }}
+								{isFormOutbound && (
+									<>
+										<Input.Wrapper
+											label={t('wizard.steps.general.objective')}
+											description={t('wizard.steps.general.objectiveDesc')}
+											error={form.errors.objectiveId}
+											withAsterisk
+											className={styles.field}
+										>
+											<Group gap='xs'>
+												<Select
+													placeholder={t(
+														'wizard.steps.general.objectivePlaceholder'
+													)}
+													data={
+														objectivesResponse?.data?.map((obj) => ({
+															value: obj.id.toString(),
+															label: obj.name,
+														})) || []
+													}
+													value={form.values.objectiveId?.toString() || null}
+													onChange={(value) =>
+														form.setFieldValue(
+															'objectiveId',
+															value ? parseInt(value, 10) : null
+														)
+													}
+													searchable
+													clearable
+													error={!!form.errors.objectiveId}
+													style={{ flex: 1 }}
+												/>
+												<Tooltip
+													label={t('wizard.steps.general.createObjective')}
+												>
+													<ActionIcon
+														variant='light'
+														color='blue'
+														size='lg'
+														onClick={() => setIsObjectiveModalOpen(true)}
+													>
+														<IconPlus size={20} />
+													</ActionIcon>
+												</Tooltip>
+											</Group>
+										</Input.Wrapper>
+
+										<NumberInput
+											label={t('wizard.steps.general.defaultWaves')}
+											description={t('wizard.steps.general.defaultWavesDesc')}
+											min={1}
+											step={1}
+											clampBehavior='strict'
+											allowDecimal={false}
+											allowNegative={false}
+											withAsterisk
+											size='sm'
+											{...form.getInputProps('defaultMaxWaves')}
 										/>
-										<Tooltip label={t('wizard.steps.general.createObjective')}>
-											<ActionIcon
-												variant='light'
-												color='blue'
-												size='lg'
-												onClick={() => setIsObjectiveModalOpen(true)}
-											>
-												<IconPlus size={20} />
-											</ActionIcon>
-										</Tooltip>
-									</Group>
-								</Input.Wrapper>
+									</>
+								)}
 							</Stack>
 						</Box>
 					</div>
