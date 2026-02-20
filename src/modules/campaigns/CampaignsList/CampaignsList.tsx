@@ -19,6 +19,7 @@ import {
 	useDeleteCampaign,
 	useGetAllCampaignsPaginated,
 	useSetCampaignDraft,
+	useToggleCampaignStatus,
 } from '~/queries/campaignsQueries';
 import styles from './CampaignsList.module.css';
 import { modals } from '@mantine/modals';
@@ -127,6 +128,54 @@ export const CampaignsList: React.FC = () => {
 		sortBy,
 	});
 	const { mutateAsync: deleteCampaign } = useDeleteCampaign();
+	const { mutateAsync: toggleCampaignStatus } = useToggleCampaignStatus();
+
+	const handleToggleStatus = useCallback(
+		(campaign: Campaign) => {
+			const isActive = campaign.status === CampaignStatus.ACTIVE;
+			const action = isActive ? 'inactive' : 'activate';
+
+			const getConfirmMessage = () => {
+				if (!isActive) return t('toggleStatus.confirmActivateMessage');
+				return campaign.type === 'INBOUND'
+					? t('toggleStatus.confirmDeactivateInbound')
+					: t('toggleStatus.confirmDeactivateOutbound');
+			};
+
+			modals.openConfirmModal({
+				title: isActive
+					? t('toggleStatus.confirmDeactivateTitle')
+					: t('toggleStatus.confirmActivateTitle'),
+				children: <Text size='sm'>{getConfirmMessage()}</Text>,
+				labels: {
+					confirm: t('toggleStatus.confirm'),
+					cancel: t('actions.cancel', { ns: 'common' }),
+				},
+				confirmProps: { color: isActive ? 'red' : 'green' },
+				onConfirm: async () => {
+					try {
+						const result = await toggleCampaignStatus({
+							campaignId: campaign.id,
+							action,
+						});
+						notifications.show({
+							title: result.message,
+							message: '',
+							color: 'green',
+						});
+						reloadCampaigns();
+					} catch {
+						notifications.show({
+							title: t('toggleStatus.error'),
+							message: t('toggleStatus.errorMessage'),
+							color: 'red',
+						});
+					}
+				},
+			});
+		},
+		[t, toggleCampaignStatus, reloadCampaigns]
+	);
 
 	const handleTestCall = (campaign: Campaign) => {
 		// Check if campaign has agents
@@ -292,6 +341,7 @@ export const CampaignsList: React.FC = () => {
 			});
 		},
 		onContinueDraft: handleContinueDraft,
+		onToggleStatus: handleToggleStatus,
 	});
 
 	// Helper functions

@@ -22,6 +22,8 @@ import {
 	IconPencil,
 	IconFileDescription,
 	IconSettings,
+	IconPlayerPlay,
+	IconPlayerPause,
 } from '@tabler/icons-react';
 import type { Campaign } from '~/models/CampaignsModel';
 // useNavigate removed; no client-side navigation from columns
@@ -65,6 +67,7 @@ interface UseCampaignsColumnsProps {
 	onDelete: (campaign: Campaign) => void;
 	onClone: (campaign: Campaign) => void;
 	onContinueDraft?: (campaign: Campaign) => void;
+	onToggleStatus?: (campaign: Campaign) => void;
 }
 
 export const useCampaignsColumns = ({
@@ -74,6 +77,7 @@ export const useCampaignsColumns = ({
 	onDelete,
 	onClone,
 	onContinueDraft,
+	onToggleStatus,
 }: UseCampaignsColumnsProps): ColumnDef<Campaign, any>[] => {
 	const { t } = useTranslation('campaigns');
 	// navigate unused after removing Metrics navigation
@@ -207,6 +211,27 @@ export const useCampaignsColumns = ({
 				);
 			},
 			size: 140,
+		},
+		{
+			accessorKey: 'status',
+			header: t('columns.status'),
+			cell: ({ row }) => {
+				const campaign = row.original;
+				const statusInfo = getCampaignStatusInfo(campaign.status);
+				const StatusIcon = statusInfo.icon;
+				return (
+					<Badge
+						variant='light'
+						color={statusInfo.color}
+						size='md'
+						radius='sm'
+						leftSection={<StatusIcon size={14} />}
+					>
+						{t(statusInfo.label)}
+					</Badge>
+				);
+			},
+			size: 120,
 		},
 		{
 			accessorKey: 'updatedAt',
@@ -347,6 +372,41 @@ export const useCampaignsColumns = ({
 								</ActionIcon>
 							</Tooltip>
 						)}
+						{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.UPDATE) &&
+							onToggleStatus &&
+							!campaign.isDraft && (
+								<Tooltip
+									label={
+										campaign.status === CampaignStatus.ACTIVE
+											? t('toggleStatus.deactivate')
+											: t('toggleStatus.activate')
+									}
+								>
+									<ActionIcon
+										color={
+											campaign.status === CampaignStatus.ACTIVE
+												? 'gray'
+												: 'green'
+										}
+										radius='md'
+										aria-label={
+											campaign.status === CampaignStatus.ACTIVE
+												? t('toggleStatus.deactivate')
+												: t('toggleStatus.activate')
+										}
+										onClick={(e) => {
+											e.stopPropagation();
+											onToggleStatus(campaign);
+										}}
+									>
+										{campaign.status === CampaignStatus.ACTIVE ? (
+											<IconPlayerPause size={16} />
+										) : (
+											<IconPlayerPlay size={16} />
+										)}
+									</ActionIcon>
+								</Tooltip>
+							)}
 					</Group>
 				);
 			},

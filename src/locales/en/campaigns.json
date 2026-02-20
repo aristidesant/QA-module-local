@@ -37,6 +37,7 @@
 	"columns": {
 		"campaign": "Campaign",
 		"type": "Type",
+		"status": "Status",
 		"lastUpdated": "Last Updated",
 		"campaignDetails": "Campaign Details",
 		"noDescription": "No description available.",
@@ -94,6 +95,18 @@
 		"complete": "Complete",
 		"failed": "Failed",
 		"executed": "Executed"
+	},
+	"toggleStatus": {
+		"activate": "Activate campaign",
+		"deactivate": "Deactivate campaign",
+		"confirmActivateTitle": "Activate Campaign",
+		"confirmDeactivateTitle": "Deactivate Campaign",
+		"confirmActivateMessage": "Are you sure you want to activate this campaign?",
+		"confirmDeactivateInbound": "Deactivating this inbound campaign will unlink phone numbers from ElevenLabs. The associations will be preserved and automatically restored upon reactivation.",
+		"confirmDeactivateOutbound": "Deactivating this outbound campaign will pause all running contact groups. Paused groups will not resume automatically when the campaign is reactivated.",
+		"confirm": "Confirm",
+		"error": "Error",
+		"errorMessage": "Failed to toggle campaign status"
 	},
 	"deleteModal": {
 		"title": "Delete Campaign",
