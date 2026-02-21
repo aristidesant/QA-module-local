@@ -9,6 +9,7 @@ import {
 	HoverCard,
 	Stack,
 	Divider,
+	Menu,
 } from '@mantine/core';
 import {
 	IconTrash,
@@ -24,6 +25,7 @@ import {
 	IconSettings,
 	IconPlayerPlay,
 	IconPlayerPause,
+	IconDotsVertical,
 } from '@tabler/icons-react';
 import type { Campaign } from '~/models/CampaignsModel';
 // useNavigate removed; no client-side navigation from columns
@@ -251,36 +253,63 @@ export const useCampaignsColumns = ({
 			header: '',
 			cell: ({ row }) => {
 				const campaign = row.original;
+				const isDraft = campaign.isDraft;
+				const isActive = campaign.status === CampaignStatus.ACTIVE;
+
+				const canContinueDraft = isDraft && Boolean(onContinueDraft);
+				const canViewCampaign =
+					canAccessModule(ModuleEnum.CAMPAIGNS) && !isDraft;
+				const canEditCampaign =
+					canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.UPDATE) &&
+					!isDraft;
+				const canTestCallCampaign =
+					canAccessModule(ModuleEnum.CAMPAIGNS) && !isDraft;
+				const canCloneCampaign =
+					canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.CREATE) &&
+					!isDraft;
+				const canDeleteCampaign = canPerformAction(
+					ModuleEnum.CAMPAIGNS,
+					PermissionEnum.DELETE
+				);
+				const canToggleCampaignStatus =
+					canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.UPDATE) &&
+					Boolean(onToggleStatus) &&
+					!isDraft;
+
+				const hasMenuActions =
+					canEditCampaign ||
+					canTestCallCampaign ||
+					canCloneCampaign ||
+					canToggleCampaignStatus ||
+					canDeleteCampaign;
+
 				return (
 					<Group gap='xs' justify='end'>
-						{campaign.isDraft && onContinueDraft && (
+						{canContinueDraft && (
 							<Tooltip label={t('columns.continueSetup')}>
 								<ActionIcon
-									color='red'
+									variant='subtle'
+									color='gray'
 									radius='md'
 									aria-label={t('columns.continueSetup')}
+									visibleFrom='sm'
 									onClick={(e) => {
 										e.stopPropagation();
-										onContinueDraft(campaign);
+										onContinueDraft?.(campaign);
 									}}
 								>
 									<IconSettings size={16} />
 								</ActionIcon>
 							</Tooltip>
 						)}
-						{canAccessModule(ModuleEnum.CAMPAIGNS) && (
-							<Tooltip
-								label={
-									campaign.isDraft
-										? t('columns.completeSetupFirst')
-										: t('columns.viewCampaign')
-								}
-							>
+						{canViewCampaign && (
+							<Tooltip label={t('columns.viewCampaign')}>
 								<ActionIcon
-									color='teal'
+									variant='subtle'
+									color='gray'
 									radius='md'
 									aria-label={t('columns.viewCampaign')}
-									disabled={campaign.isDraft}
+									visibleFrom='sm'
 									onClick={(e) => {
 										e.stopPropagation();
 										onView(campaign);
@@ -290,127 +319,95 @@ export const useCampaignsColumns = ({
 								</ActionIcon>
 							</Tooltip>
 						)}
-						{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.UPDATE) && (
-							<Tooltip
-								label={
-									campaign.isDraft
-										? t('columns.completeSetupFirst')
-										: t('columns.editCampaign')
-								}
-							>
-								<ActionIcon
-									color='blue'
-									radius='md'
-									aria-label={t('columns.editCampaign')}
-									disabled={campaign.isDraft}
-									onClick={(e) => {
-										e.stopPropagation();
-										onEdit(campaign);
-									}}
-								>
-									<IconPencil size={16} />
-								</ActionIcon>
-							</Tooltip>
-						)}
-						{/* Inline action icons (replacing the 3-dot menu) */}
-						{canAccessModule(ModuleEnum.CAMPAIGNS) && (
-							<Tooltip
-								label={
-									campaign.isDraft
-										? t('columns.completeSetupFirst')
-										: t('columns.testCall')
-								}
-							>
-								<ActionIcon
-									color='green'
-									radius='md'
-									aria-label={t('columns.testCall')}
-									disabled={campaign.isDraft}
-									onClick={(e) => {
-										e.stopPropagation();
-										onTestCall(campaign);
-									}}
-								>
-									<IconPhone size={16} />
-								</ActionIcon>
-							</Tooltip>
-						)}
-						{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.CREATE) && (
-							<Tooltip
-								label={
-									campaign.isDraft
-										? t('columns.completeSetupFirst')
-										: t('columns.cloneCampaign')
-								}
-							>
-								<ActionIcon
-									color='orange'
-									radius='md'
-									aria-label={t('columns.cloneCampaign')}
-									disabled={campaign.isDraft}
-									onClick={(e) => {
-										e.stopPropagation();
-										onClone(campaign);
-									}}
-								>
-									<IconCopy size={16} />
-								</ActionIcon>
-							</Tooltip>
-						)}
-						{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.DELETE) && (
-							<Tooltip label={t('columns.deleteCampaign')}>
-								<ActionIcon
-									color='red'
-									radius='md'
-									aria-label={t('columns.deleteCampaign')}
-									onClick={(e) => {
-										e.stopPropagation();
-										onDelete(campaign);
-									}}
-								>
-									<IconTrash size={16} />
-								</ActionIcon>
-							</Tooltip>
-						)}
-						{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.UPDATE) &&
-							onToggleStatus &&
-							!campaign.isDraft && (
-								<Tooltip
-									label={
-										campaign.status === CampaignStatus.ACTIVE
-											? t('toggleStatus.deactivate')
-											: t('toggleStatus.activate')
-									}
-								>
+
+						{hasMenuActions && (
+							<Menu shadow='md' position='bottom-end' withinPortal>
+								<Menu.Target>
 									<ActionIcon
-										color={
-											campaign.status === CampaignStatus.ACTIVE
-												? 'gray'
-												: 'green'
-										}
+										variant='subtle'
+										color='gray'
 										radius='md'
-										aria-label={
-											campaign.status === CampaignStatus.ACTIVE
-												? t('toggleStatus.deactivate')
-												: t('toggleStatus.activate')
-										}
-										onClick={(e) => {
-											e.stopPropagation();
-											onToggleStatus(campaign);
-										}}
+										aria-label={t('columns.moreActions')}
+										onClick={(e) => e.stopPropagation()}
 									>
-										{campaign.status === CampaignStatus.ACTIVE ? (
-											<IconPlayerPause size={16} />
-										) : (
-											<IconPlayerPlay size={16} />
-										)}
+										<IconDotsVertical size={16} />
 									</ActionIcon>
-								</Tooltip>
-							)}
+								</Menu.Target>
+
+								<Menu.Dropdown onClick={(e) => e.stopPropagation()}>
+									{(canEditCampaign ||
+										canTestCallCampaign ||
+										canCloneCampaign) && (
+										<>
+											<Menu.Label>{t('columns.actionsGroupManage')}</Menu.Label>
+											{canEditCampaign && (
+												<Menu.Item
+													leftSection={<IconPencil size={14} />}
+													onClick={() => onEdit(campaign)}
+												>
+													{t('columns.editCampaign')}
+												</Menu.Item>
+											)}
+											{canTestCallCampaign && (
+												<Menu.Item
+													leftSection={<IconPhone size={14} />}
+													onClick={() => onTestCall(campaign)}
+												>
+													{t('columns.testCall')}
+												</Menu.Item>
+											)}
+											{canCloneCampaign && (
+												<Menu.Item
+													leftSection={<IconCopy size={14} />}
+													onClick={() => onClone(campaign)}
+												>
+													{t('columns.cloneCampaign')}
+												</Menu.Item>
+											)}
+										</>
+									)}
+
+									{canToggleCampaignStatus && (
+										<>
+											<Menu.Divider />
+											<Menu.Label>{t('columns.actionsGroupStatus')}</Menu.Label>
+											<Menu.Item
+												leftSection={
+													isActive ? (
+														<IconPlayerPause size={14} />
+													) : (
+														<IconPlayerPlay size={14} />
+													)
+												}
+												onClick={() => onToggleStatus?.(campaign)}
+											>
+												{isActive
+													? t('toggleStatus.deactivate')
+													: t('toggleStatus.activate')}
+											</Menu.Item>
+										</>
+									)}
+
+									{canDeleteCampaign && (
+										<>
+											<Menu.Divider />
+											<Menu.Label>{t('columns.actionsGroupDanger')}</Menu.Label>
+											<Menu.Item
+												color='red'
+												leftSection={<IconTrash size={14} />}
+												onClick={() => onDelete(campaign)}
+											>
+												{t('columns.deleteCampaign')}
+											</Menu.Item>
+										</>
+									)}
+								</Menu.Dropdown>
+							</Menu>
+						)}
 					</Group>
 				);
 			},
-			size: 100,
+			size: 120,
 			enableSorting: false,
 		},
 	];
