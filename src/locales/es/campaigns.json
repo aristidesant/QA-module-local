@@ -205,7 +205,8 @@
 				"nameRequired": "El nombre del horario es obligatorio",
 				"scheduleRequired": "Selecciona una plantilla de horario",
 				"humanEquivalentRequired": "El equivalente humano es obligatorio",
-				"humanEquivalentNumber": "El equivalente humano debe ser un numero"
+				"humanEquivalentNumber": "El equivalente humano debe ser un numero",
+				"outbound24x7NotAllowed": "Los horarios 24/7 no están disponibles para la dirección Saliente. Elija Entrante o Ambos."
 			},
 			"notifications": {
 				"error": "Error",

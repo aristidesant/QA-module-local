@@ -21,7 +21,7 @@ import {
 	IconGauge,
 	IconArrowsLeftRight,
 } from '@tabler/icons-react';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import type { DayConfig } from '~/api/campaignsApi';
@@ -323,6 +323,18 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 		}
 	};
 
+	const isOutbound = form.values.direction === ScheduleDirection.OUTBOUND;
+
+	// Outbound schedules cannot be 24/7 — auto-reset to CUSTOM
+	useEffect(() => {
+		if (
+			isOutbound &&
+			form.values.scheduleType === ScheduleType.ALWAYS_ON_24_7
+		) {
+			form.setFieldValue('scheduleType', ScheduleType.CUSTOM);
+		}
+	}, [isOutbound]);
+
 	const isAlwaysOn = form.values.scheduleType === ScheduleType.ALWAYS_ON_24_7;
 
 	return (
@@ -378,10 +390,18 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 										label: t(
 											'scheduler.schedulerBuilder.scheduleTypes.alwaysOn'
 										),
+										disabled: isOutbound,
 									},
 								]}
 								{...form.getInputProps('scheduleType')}
 							/>
+							{isOutbound && (
+								<Text size='xs' c='orange'>
+									{t(
+										'scheduler.schedulerBuilder.validation.outbound24x7NotAllowed'
+									)}
+								</Text>
+							)}
 						</Stack>
 						<Stack gap='xs'>
 							<Text size='sm' fw={600}>

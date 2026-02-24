@@ -205,7 +205,8 @@
 				"nameRequired": "Schedule name is required",
 				"scheduleRequired": "Please select a schedule template",
 				"humanEquivalentRequired": "Human equivalent is required",
-				"humanEquivalentNumber": "Human equivalent must be a number"
+				"humanEquivalentNumber": "Human equivalent must be a number",
+				"outbound24x7NotAllowed": "24/7 schedules are not available for Outbound direction. Choose Inbound or Both."
 			},
 			"notifications": {
 				"error": "Error",
