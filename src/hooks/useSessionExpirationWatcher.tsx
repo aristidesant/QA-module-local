@@ -62,6 +62,7 @@ export function useSessionExpirationWatcher() {
 					onCancel: () => {
 						isModalOpenRef.current = false;
 					},
+					centered: true,
 					closeOnClickOutside: false,
 					closeOnEscape: false,
 				});
