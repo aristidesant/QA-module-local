@@ -32,6 +32,37 @@ Both tokens are stored in `sessionStorage` (cleared when the browser tab is clos
 
 ---
 
+## Proactive Session Expiration Warning
+
+In addition to the silent reactive refresh (on 401), the app proactively warns the user when their session is about to expire.
+
+### Behavior
+
+- A background watcher polls the access token every **30 seconds**.
+- When the token has **≤ 2 minutes** remaining, a modal is shown:
+
+  > _"Your session is about to expire, please update your session."_
+
+- **Yes** — immediately calls `refreshAccessToken` and updates the store with the new token pair.
+- **No** — closes the modal; no refresh is performed.
+- If the user clicks **Yes** but the refresh fails, `logout()` is called and the user is redirected to `/login?reason=expired`.
+- A ref flag (`isModalOpenRef`) prevents duplicate modals from stacking if the poll fires again before the user responds.
+
+### Flow
+
+```
+Every 30s: decode accessToken
+         ↓
+  remaining ≤ 120s?
+  ├── No  → do nothing
+  └── Yes → show confirm modal
+              ├── Yes → POST /auth/refresh → update tokens
+              │         └── Failure → logout() → /login?reason=expired
+              └── No  → close modal (session will expire naturally)
+```
+
+---
+
 ## Files Changed
 
 ### `src/api/authApi.ts`
@@ -59,6 +90,23 @@ Both tokens are stored in `sessionStorage` (cleared when the browser tab is clos
 ### `src/utils/logout.ts`
 
 - `sessionStorage.removeItem('refreshToken')` is called alongside `accessToken` removal on logout.
+
+### `src/hooks/useSessionExpirationWatcher.tsx` _(new)_
+
+- Polls every 30 seconds using `setInterval`.
+- Decodes the access token with `jwt-decode` to compute remaining seconds.
+- Opens a Mantine `openConfirmModal` when ≤ 120 seconds remain.
+- On confirm: calls `refreshAccessToken`, then updates `sessionStore` via `setToken` / `setRefreshToken`.
+- On cancel: closes the modal with no side effects.
+- Uses a `useRef` guard to prevent duplicate modals.
+
+### `src/components/RouteProtecter/RouteProtecter.tsx`
+
+- Calls `useSessionExpirationWatcher()` to activate the proactive warning for all authenticated routes.
+
+### `src/locales/en/common.json` · `src/locales/es/common.json`
+
+- Added `sessionExpiration` key group: `title`, `message`, `confirm`, `cancel`.
 
 ---
 
