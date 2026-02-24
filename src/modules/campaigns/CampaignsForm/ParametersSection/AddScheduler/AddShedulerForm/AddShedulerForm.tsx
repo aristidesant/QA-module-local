@@ -11,10 +11,16 @@ import {
 	Badge,
 	ThemeIcon,
 	Table,
+	SegmentedControl,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { IconCalendarStats, IconCheck, IconGauge } from '@tabler/icons-react';
+import {
+	IconCalendarStats,
+	IconCheck,
+	IconGauge,
+	IconArrowsLeftRight,
+} from '@tabler/icons-react';
 import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
@@ -23,11 +29,14 @@ import { useGetClientConfig } from '~/queries/clientConfigQueries';
 import { useCreateCampaignSchedule } from '~/queries/campaignsQueries';
 import classes from './AddShedulerForm.module.css';
 import type { PredefinedScheduleConfig } from '~/models/PredefinedScheduleConfig';
+import { ScheduleType, ScheduleDirection } from '~/models/SchedulerModel';
 
 interface AddShedulerFormProps {
 	onSuccess?: () => void;
 	onCancel?: () => void;
 	campaignId?: string | number | null;
+	/** Campaign type used to determine the default schedule direction */
+	campaignType?: 'OUTBOUND' | 'INBOUND';
 }
 
 interface PredefinedScheduleFormValues {
@@ -35,6 +44,8 @@ interface PredefinedScheduleFormValues {
 	description: string;
 	humanEquivalent: number | '';
 	predefinedScheduleId: string | null;
+	scheduleType: ScheduleType;
+	direction: ScheduleDirection;
 }
 
 const getDayLabelMap = (
@@ -95,10 +106,25 @@ const normalizeDayConfigs = (dayConfigs: DayConfig[]): DayConfig[] => {
 	});
 };
 
+/** Maps a campaign type to the corresponding schedule direction */
+const mapCampaignTypeToDirection = (
+	campaignType?: string
+): ScheduleDirection => {
+	switch (campaignType) {
+		case 'INBOUND':
+			return ScheduleDirection.INBOUND;
+		case 'OUTBOUND':
+			return ScheduleDirection.OUTBOUND;
+		default:
+			return ScheduleDirection.BOTH;
+	}
+};
+
 const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 	onSuccess,
 	onCancel,
 	campaignId,
+	campaignType,
 }) => {
 	const { t } = useTranslation('campaigns');
 	const createScheduleMutation = useCreateCampaignSchedule();
@@ -131,23 +157,32 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 		[predefinedSchedules, t]
 	);
 
+	const defaultDirection = useMemo(
+		() => mapCampaignTypeToDirection(campaignType),
+		[campaignType]
+	);
+
 	const form = useForm<PredefinedScheduleFormValues>({
 		initialValues: {
 			name: '',
 			description: '',
 			humanEquivalent: 1,
 			predefinedScheduleId: null,
+			scheduleType: ScheduleType.CUSTOM,
+			direction: defaultDirection,
 		},
 		validate: {
 			name: (value) =>
 				value.trim()
 					? null
 					: t('scheduler.schedulerBuilder.validation.nameRequired'),
-			predefinedScheduleId: (value) =>
-				value
+			predefinedScheduleId: (value, values) =>
+				values.scheduleType === ScheduleType.ALWAYS_ON_24_7 || value
 					? null
 					: t('scheduler.schedulerBuilder.validation.scheduleRequired'),
-			humanEquivalent: (value) => {
+			humanEquivalent: (value, values) => {
+				if (values.scheduleType === ScheduleType.ALWAYS_ON_24_7) return null;
+
 				if (value === undefined || value === null) {
 					return t(
 						'scheduler.schedulerBuilder.validation.humanEquivalentRequired'
@@ -220,12 +255,16 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 			return;
 		}
 
+		const isAlwaysOn = values.scheduleType === ScheduleType.ALWAYS_ON_24_7;
+
 		// Get the selected predefined schedule's dayConfigs and ensure all days exist
 		const dayConfigs =
-			values.predefinedScheduleId !== null ? normalizedDayConfigs : [];
+			!isAlwaysOn && values.predefinedScheduleId !== null
+				? normalizedDayConfigs
+				: [];
 
-		// Validate that we have dayConfigs
-		if (dayConfigs.length === 0) {
+		// Validate that we have dayConfigs only for CUSTOM schedules
+		if (!isAlwaysOn && dayConfigs.length === 0) {
 			notifications.show({
 				title: t('scheduler.schedulerBuilder.notifications.error'),
 				message: t('scheduler.schedulerBuilder.validation.scheduleRequired'),
@@ -239,8 +278,10 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 			name: values.name.trim(),
 			description: values.description.trim(),
 			campaignId: Number(campaignId),
-			humanEquivalent: Number(values.humanEquivalent),
-			dayConfigs,
+			humanEquivalent: isAlwaysOn ? 0 : Number(values.humanEquivalent),
+			scheduleType: values.scheduleType,
+			direction: values.direction,
+			...(isAlwaysOn ? {} : { dayConfigs }),
 		};
 
 		try {
@@ -282,6 +323,8 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 		}
 	};
 
+	const isAlwaysOn = form.values.scheduleType === ScheduleType.ALWAYS_ON_24_7;
+
 	return (
 		<form onSubmit={form.onSubmit(handleSubmit)} className={classes.form}>
 			<Stack gap='md'>
@@ -303,101 +346,167 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 					</Badge>
 				</Group>
 
+				{/* Schedule Type & Direction */}
 				<Paper withBorder radius='md' className={classes.panel}>
 					<Stack gap='sm'>
 						<Group gap='xs' align='center'>
-							<ThemeIcon variant='light' color='blue' size='md' radius='md'>
-								<IconCalendarStats size={16} />
+							<ThemeIcon variant='light' color='grape' size='md' radius='md'>
+								<IconArrowsLeftRight size={16} />
 							</ThemeIcon>
 							<div>
 								<Text size='sm' fw={600}>
-									{t('scheduler.schedulerBuilder.predefinedSchedule')}
+									{t('scheduler.schedulerBuilder.typeAndDirection')}
 								</Text>
 								<Text size='xs' c='dimmed'>
-									{t('scheduler.schedulerBuilder.predefinedDescription')}
+									{t('scheduler.schedulerBuilder.typeAndDirectionDescription')}
 								</Text>
 							</div>
 						</Group>
-						<Select
-							placeholder={t(
-								'scheduler.schedulerBuilder.predefinedPlaceholder'
-							)}
-							data={scheduleOptions}
-							searchable
-							required
-							size='sm'
-							nothingFoundMessage={t(
-								'scheduler.schedulerBuilder.predefinedNoData'
-							)}
-							className={classes.field}
-							{...form.getInputProps('predefinedScheduleId')}
-						/>
-						<div className={classes.preview}>
-							<Group justify='space-between' align='center' gap='xs'>
-								<div>
-									<Text size='xs' fw={600}>
-										{t('scheduler.schedulerBuilder.preview')}
-									</Text>
-									<Text size='xs' c='dimmed'>
-										{t('scheduler.schedulerBuilder.previewDescription')}
-									</Text>
-								</div>
-								{selectedSchedule && (
-									<Badge size='sm' variant='light' color='blue'>
-										{selectedSchedule.name}
-									</Badge>
-								)}
-							</Group>
-							{selectedSchedule ? (
-								<Table
-									withRowBorders={false}
-									striped={false}
-									highlightOnHover={false}
-									className={classes.previewTable}
-								>
-									<Table.Thead>
-										<Table.Tr>
-											{allDaysOfWeek.map((dayOfWeek) => (
-												<Table.Th
-													key={dayOfWeek}
-													className={classes.previewHeaderCell}
-												>
-													{dayLabelMap[dayOfWeek]}
-												</Table.Th>
-											))}
-										</Table.Tr>
-									</Table.Thead>
-									<Table.Tbody>
-										<Table.Tr>
-											{previewRow?.map((value, index) => {
-												const isOff = value === 'Off';
-												return (
-													<Table.Td key={allDaysOfWeek[index]}>
-														<Text
-															size='xs'
-															fw={600}
-															c={
-																isOff
-																	? 'var(--mantine-color-gray-5)'
-																	: undefined
-															}
-														>
-															{value}
-														</Text>
-													</Table.Td>
-												);
-											})}
-										</Table.Tr>
-									</Table.Tbody>
-								</Table>
-							) : (
-								<Text size='xs' c='dimmed'>
-									{t('scheduler.schedulerBuilder.previewEmpty')}
-								</Text>
-							)}
-						</div>
+						<Stack gap='xs'>
+							<Text size='sm' fw={600}>
+								{t('scheduler.schedulerBuilder.scheduleType')}
+							</Text>
+							<SegmentedControl
+								size='sm'
+								data={[
+									{
+										value: ScheduleType.CUSTOM,
+										label: t('scheduler.schedulerBuilder.scheduleTypes.custom'),
+									},
+									{
+										value: ScheduleType.ALWAYS_ON_24_7,
+										label: t(
+											'scheduler.schedulerBuilder.scheduleTypes.alwaysOn'
+										),
+									},
+								]}
+								{...form.getInputProps('scheduleType')}
+							/>
+						</Stack>
+						<Stack gap='xs'>
+							<Text size='sm' fw={600}>
+								{t('scheduler.schedulerBuilder.directionLabel')}
+							</Text>
+							<SegmentedControl
+								size='sm'
+								data={[
+									{
+										value: ScheduleDirection.INBOUND,
+										label: t('scheduler.schedulerBuilder.directions.inbound'),
+									},
+									{
+										value: ScheduleDirection.OUTBOUND,
+										label: t('scheduler.schedulerBuilder.directions.outbound'),
+									},
+									{
+										value: ScheduleDirection.BOTH,
+										label: t('scheduler.schedulerBuilder.directions.both'),
+									},
+								]}
+								{...form.getInputProps('direction')}
+							/>
+						</Stack>
 					</Stack>
 				</Paper>
+
+				{/* Predefined schedule template - only for CUSTOM */}
+				{!isAlwaysOn && (
+					<Paper withBorder radius='md' className={classes.panel}>
+						<Stack gap='sm'>
+							<Group gap='xs' align='center'>
+								<ThemeIcon variant='light' color='blue' size='md' radius='md'>
+									<IconCalendarStats size={16} />
+								</ThemeIcon>
+								<div>
+									<Text size='sm' fw={600}>
+										{t('scheduler.schedulerBuilder.predefinedSchedule')}
+									</Text>
+									<Text size='xs' c='dimmed'>
+										{t('scheduler.schedulerBuilder.predefinedDescription')}
+									</Text>
+								</div>
+							</Group>
+							<Select
+								placeholder={t(
+									'scheduler.schedulerBuilder.predefinedPlaceholder'
+								)}
+								data={scheduleOptions}
+								searchable
+								required
+								size='sm'
+								nothingFoundMessage={t(
+									'scheduler.schedulerBuilder.predefinedNoData'
+								)}
+								className={classes.field}
+								{...form.getInputProps('predefinedScheduleId')}
+							/>
+							<div className={classes.preview}>
+								<Group justify='space-between' align='center' gap='xs'>
+									<div>
+										<Text size='xs' fw={600}>
+											{t('scheduler.schedulerBuilder.preview')}
+										</Text>
+										<Text size='xs' c='dimmed'>
+											{t('scheduler.schedulerBuilder.previewDescription')}
+										</Text>
+									</div>
+									{selectedSchedule && (
+										<Badge size='sm' variant='light' color='blue'>
+											{selectedSchedule.name}
+										</Badge>
+									)}
+								</Group>
+								{selectedSchedule ? (
+									<Table
+										withRowBorders={false}
+										striped={false}
+										highlightOnHover={false}
+										className={classes.previewTable}
+									>
+										<Table.Thead>
+											<Table.Tr>
+												{allDaysOfWeek.map((dayOfWeek) => (
+													<Table.Th
+														key={dayOfWeek}
+														className={classes.previewHeaderCell}
+													>
+														{dayLabelMap[dayOfWeek]}
+													</Table.Th>
+												))}
+											</Table.Tr>
+										</Table.Thead>
+										<Table.Tbody>
+											<Table.Tr>
+												{previewRow?.map((value, index) => {
+													const isOff = value === 'Off';
+													return (
+														<Table.Td key={allDaysOfWeek[index]}>
+															<Text
+																size='xs'
+																fw={600}
+																c={
+																	isOff
+																		? 'var(--mantine-color-gray-5)'
+																		: undefined
+																}
+															>
+																{value}
+															</Text>
+														</Table.Td>
+													);
+												})}
+											</Table.Tr>
+										</Table.Tbody>
+									</Table>
+								) : (
+									<Text size='xs' c='dimmed'>
+										{t('scheduler.schedulerBuilder.previewEmpty')}
+									</Text>
+								)}
+							</div>
+						</Stack>
+					</Paper>
+				)}
 
 				<Paper withBorder radius='md' pb={'xl'} className={classes.panel}>
 					<Stack gap='sm'>
@@ -434,33 +543,36 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 							className={classes.field}
 							{...form.getInputProps('description')}
 						/>
-						<Stack gap='xs' className={classes.field}>
-							<Group justify='space-between' align='center'>
-								<Text size='sm' fw={600}>
-									{t('scheduler.schedulerBuilder.humanEquivalent')}
-								</Text>
-								<Badge size='sm' variant='outline' color='blue'>
-									{form.values.humanEquivalent}
-								</Badge>
-							</Group>
-							<Slider
-								min={0}
-								max={150}
-								step={1}
-								value={form.values.humanEquivalent as number}
-								onChange={(value) =>
-									form.setFieldValue('humanEquivalent', value)
-								}
-								marks={humanEquivalentMarks}
-								size='sm'
-								label={null}
-							/>
-							{form.errors.humanEquivalent && (
-								<Text c='red' size='xs'>
-									{form.errors.humanEquivalent}
-								</Text>
-							)}
-						</Stack>
+						{/* Human equivalent slider - only for CUSTOM */}
+						{!isAlwaysOn && (
+							<Stack gap='xs' className={classes.field}>
+								<Group justify='space-between' align='center'>
+									<Text size='sm' fw={600}>
+										{t('scheduler.schedulerBuilder.humanEquivalent')}
+									</Text>
+									<Badge size='sm' variant='outline' color='blue'>
+										{form.values.humanEquivalent}
+									</Badge>
+								</Group>
+								<Slider
+									min={0}
+									max={150}
+									step={1}
+									value={form.values.humanEquivalent as number}
+									onChange={(value) =>
+										form.setFieldValue('humanEquivalent', value)
+									}
+									marks={humanEquivalentMarks}
+									size='sm'
+									label={null}
+								/>
+								{form.errors.humanEquivalent && (
+									<Text c='red' size='xs'>
+										{form.errors.humanEquivalent}
+									</Text>
+								)}
+							</Stack>
+						)}
 					</Stack>
 				</Paper>
 

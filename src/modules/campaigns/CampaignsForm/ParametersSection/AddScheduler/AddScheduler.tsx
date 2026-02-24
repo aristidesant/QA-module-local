@@ -30,6 +30,7 @@ const AddScheduler: React.FC<AddSchedulerProps> = ({
 			children: (
 				<AddShedulerForm
 					campaignId={campaignId}
+					campaignType={selectedCampaign?.type}
 					onSuccess={() => {
 						handleReload?.();
 						modals.close('add-schedule-modal');
