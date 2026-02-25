@@ -7,6 +7,7 @@ import AddShedulerForm from './AddShedulerForm';
 import styles from './AddScheduler.module.css';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import { useParams } from 'react-router';
+import { useGetCampaign } from '~/queries/campaignsQueries';
 
 interface AddSchedulerProps {
 	campaignId?: string | number;
@@ -21,6 +22,11 @@ const AddScheduler: React.FC<AddSchedulerProps> = ({
 	const { selectedCampaign } = useCampaignsStore((state) => state);
 	const { campaignId: paramCampaignId } = useParams<{ campaignId: string }>();
 	const campaignId = propCampaignId ?? selectedCampaign?.id ?? paramCampaignId;
+
+	// Fetch campaign data so the type is always available (even after hard reload)
+	const { data: campaignData } = useGetCampaign(String(campaignId ?? ''));
+	const campaignType = campaignData?.type ?? selectedCampaign?.type;
+
 	const handleClick = () => {
 		modals.open({
 			modalId: 'add-schedule-modal',
@@ -30,6 +36,7 @@ const AddScheduler: React.FC<AddSchedulerProps> = ({
 			children: (
 				<AddShedulerForm
 					campaignId={campaignId}
+					campaignType={campaignType}
 					onSuccess={() => {
 						handleReload?.();
 						modals.close('add-schedule-modal');

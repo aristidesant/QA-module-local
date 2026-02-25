@@ -23,6 +23,7 @@ import {
 } from '@tabler/icons-react';
 import styles from './ScheduleHeader.module.css';
 import type { Scheduler, DayConfig } from '~/models/SchedulerModel';
+import { ScheduleType } from '~/models/SchedulerModel';
 import ScheduleHoverItem from './ScheduleHoverItem';
 import SmallMetricCard from '~/components/SmallMetricCard/SmallMetricCard';
 
@@ -54,6 +55,7 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 	const { t } = useTranslation('campaigns');
 	const activeDays = (schedule?.dayConfigs ?? []).filter((d) => d.isActive);
 	const isActive = schedule?.status === 'active';
+	const isAlwaysOn = schedule?.scheduleType === ScheduleType.ALWAYS_ON_24_7;
 	const humanEquivalentValue =
 		typeof schedule?.humanEquivalent === 'number'
 			? schedule.humanEquivalent.toFixed(0)
@@ -140,18 +142,20 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 							</Badge>
 							<Box className={styles.metaDivider} />
 							<Text size='xs' c='dimmed' className={styles.metaText}>
-								{activeDays.length > 0
-									? t('scheduler.header.activeDays', {
-											count: activeDays.length,
-										})
-									: t('scheduler.header.noActiveDays')}
+								{isAlwaysOn
+									? t('scheduler.header.alwaysOnLabel')
+									: activeDays.length > 0
+										? t('scheduler.header.activeDays', {
+												count: activeDays.length,
+											})
+										: t('scheduler.header.noActiveDays')}
 							</Text>
 						</Group>
 					</Stack>
 				</Group>
 
 				<Group gap='xs' className={styles.actions}>
-					{sortedDayConfigs.length > 0 && (
+					{!isAlwaysOn && sortedDayConfigs.length > 0 && (
 						<HoverCard width={260} openDelay={120} withinPortal withArrow>
 							<HoverCard.Target>
 								<ActionIcon
@@ -220,25 +224,27 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 				</Group>
 			</Group>
 
-			<SimpleGrid
-				cols={{ base: 1, sm: 3 }}
-				spacing='xs'
-				className={styles.metricsRow}
-			>
-				{metrics.map((metric) => {
-					const Icon = metric.icon;
-					return (
-						<SmallMetricCard
-							key={metric.label}
-							icon={<Icon size={14} />}
-							value={metric.value}
-							label={metric.label}
-							color='blue'
-							tooltip={metric.tooltip}
-						/>
-					);
-				})}
-			</SimpleGrid>
+			{!isAlwaysOn && (
+				<SimpleGrid
+					cols={{ base: 1, sm: 3 }}
+					spacing='xs'
+					className={styles.metricsRow}
+				>
+					{metrics.map((metric) => {
+						const Icon = metric.icon;
+						return (
+							<SmallMetricCard
+								key={metric.label}
+								icon={<Icon size={14} />}
+								value={metric.value}
+								label={metric.label}
+								color='blue'
+								tooltip={metric.tooltip}
+							/>
+						);
+					})}
+				</SimpleGrid>
+			)}
 		</div>
 	);
 };
