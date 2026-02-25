@@ -8,7 +8,15 @@ import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
 import type { AgentWorkflowApi } from '~/models/AgentWorkflowApiModel';
 import type { CampaignRequirements } from '~/models/CampaignRequirementsModel';
 import type { CampaignLiveMetric } from '~/models/CampaignLiveMetricModel';
+import { ScheduleType, ScheduleDirection } from '~/models/SchedulerModel';
 import { DEFAULT_API_URL } from './config';
+
+export type ToggleCampaignAction = 'activate' | 'inactive';
+
+export interface ToggleCampaignStatusResponse {
+	campaign: Campaign;
+	message: string;
+}
 
 // import { getAuthorizationHeader } from "../utils/tokenUtils";
 
@@ -55,7 +63,9 @@ export interface CreateCampaignScheduleDTO {
 	name: string;
 	description: string;
 	humanEquivalent: number;
-	dayConfigs: DayConfig[];
+	scheduleType?: ScheduleType;
+	direction?: ScheduleDirection;
+	dayConfigs?: DayConfig[];
 }
 
 export interface CreateCampaignWithAgentDTO {
@@ -335,6 +345,18 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 		syncByAgent: async (agentId: string) => {
 			const response = await axios.post<Campaign>(
 				`${DEFAULT_API_URL}/campaigns/sync-by-agent/${agentId}`
+			);
+			return response.data;
+		},
+
+		// TOGGLE campaign status (activate/inactive)
+		toggleCampaignStatus: async (
+			campaignId: number,
+			action: ToggleCampaignAction
+		) => {
+			const response = await axios.patch<ToggleCampaignStatusResponse>(
+				`${DEFAULT_API_URL}/campaigns/${campaignId}/toggle-status`,
+				{ action }
 			);
 			return response.data;
 		},

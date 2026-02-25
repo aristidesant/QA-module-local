@@ -9,8 +9,14 @@ import {
 	Text,
 	TextInput,
 	CloseButton,
+	Tooltip,
 } from '@mantine/core';
-import { IconSearch, IconAdjustments, IconFilter } from '@tabler/icons-react';
+import {
+	IconSearch,
+	IconAdjustments,
+	IconFilter,
+	IconBug,
+} from '@tabler/icons-react';
 import { useState } from 'react';
 import { FilterContainer } from '~/components/FilterContainer';
 import styles from './CampaignFilters.module.css';
@@ -31,7 +37,7 @@ interface CampaignFiltersProps {
 		spentMin?: number;
 		spentMax?: number;
 		userId?: number;
-		includeCompleted?: boolean;
+		includeInactive?: boolean;
 	};
 	onFiltersChange: (filters: CampaignFiltersProps['filters']) => void;
 }
@@ -64,7 +70,7 @@ export default function CampaignFilters({
 	];
 
 	const activeFiltersCount = Object.entries(filters).filter(([key, value]) => {
-		if (key === 'includeCompleted') {
+		if (key === 'includeInactive') {
 			return value === true;
 		}
 		return value !== undefined && value !== null && value !== '';
@@ -140,6 +146,33 @@ export default function CampaignFilters({
 					>
 						{t('filters.advanced')}
 					</Button>
+
+					{/* DEV-ONLY: visible toggle to include inactive campaigns (localhost only) */}
+					{window.location.hostname === 'localhost' && (
+						<Tooltip
+							label='Dev purposes only — toggles includeInactive API param'
+							withArrow
+							position='bottom'
+						>
+							<Group gap={4} align='center' wrap='nowrap'>
+								<IconBug size={14} color='var(--mantine-color-orange-5)' />
+								<Switch
+									label='Include inactive'
+									checked={filters.includeInactive === true}
+									onChange={(event) =>
+										handleFilterChange(
+											'includeInactive',
+											event.currentTarget.checked ? true : false
+										)
+									}
+									size='xs'
+									styles={{
+										label: { fontSize: 'var(--mantine-font-size-xs)' },
+									}}
+								/>
+							</Group>
+						</Tooltip>
+					)}
 				</div>
 			</FilterContainer>
 
@@ -182,11 +215,11 @@ export default function CampaignFilters({
 
 						<Group>
 							<Switch
-								label={t('filters.includeCompleted')}
-								checked={filters.includeCompleted === true}
+								label={t('filters.includeInactive')}
+								checked={filters.includeInactive === true}
 								onChange={(event) =>
 									handleFilterChange(
-										'includeCompleted',
+										'includeInactive',
 										event.currentTarget.checked ? true : false
 									)
 								}

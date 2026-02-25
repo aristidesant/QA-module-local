@@ -12,7 +12,6 @@ import {
 import {
 	DEFAULT_END_HOUR,
 	DEFAULT_START_HOUR,
-	getDayFullLabel,
 	normalizeDayConfigs,
 } from '../utils';
 import classes from './SchedulerPredefinedParamsForm.module.css';
@@ -83,6 +82,7 @@ const SchedulerPredefinedParamsForm: React.FC<
 	canSubmit = true,
 }) => {
 	const { t } = useTranslation('scheduler-predefined-params');
+	const { i18n } = useTranslation();
 	const isEditMode = !!schedule;
 	const updateMutation = useUpdateClientConfig();
 	const createMutation = useCreateClientConfig();
@@ -305,7 +305,9 @@ const SchedulerPredefinedParamsForm: React.FC<
 								/>
 								<div className={classes.dayTitleGroup}>
 									<Text fw={700} size='sm'>
-										{getDayFullLabel(t, day.dayOfWeek)}
+										{t(`days.full.${day.dayOfWeek}`, {
+											lng: i18n.language,
+										})}
 									</Text>
 									<Text size='xs' className={classes.dayStatus}>
 										{day.isActive

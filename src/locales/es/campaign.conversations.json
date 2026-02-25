@@ -1,0 +1,21 @@
+{
+	"page": {
+		"description": "Ver todas las conversaciones de esta campaña entrante."
+	},
+	"breadcrumb": {
+		"campaigns": "Campañas"
+	},
+	"section": {
+		"title": "Conversaciones",
+		"description": "Conversaciones recibidas por esta campaña."
+	},
+	"loading": {
+		"title": "Cargando campaña…",
+		"description": "Obteniendo conversaciones de la campaña."
+	},
+	"unavailable": {
+		"title": "Campaña no disponible",
+		"description": "No pudimos cargar la campaña solicitada.",
+		"backToCampaigns": "Volver a Campañas"
+	}
+}

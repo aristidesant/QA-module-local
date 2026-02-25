@@ -92,7 +92,7 @@ export function ConversationDetails({
 	};
 
 	return (
-		<Box p='md' className={styles.container}>
+		<Box className={styles.container}>
 			<Tabs
 				defaultValue='overview'
 				classNames={{

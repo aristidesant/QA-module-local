@@ -66,6 +66,8 @@
 	box-shadow: none;
 	border: none;
 	background: transparent;
+	--md-editor-font-family: var(--mantine-font-family);
+	font-family: var(--mantine-font-family);
 }
 
 .mdEditor :global(.w-md-editor-toolbar) {
@@ -79,15 +81,29 @@
 	width: 24px;
 }
 
-.mdEditor :global(.w-md-editor-text-pre),
 .mdEditor :global(.w-md-editor-text) {
-	font-size: 0.78rem;
-	line-height: 1.5;
-	font-family: var(--mantine-font-family);
+	font-size: 0.78rem !important;
+	line-height: 1.5 !important;
+	font-family: var(--mantine-font-family) !important;
 }
 
 .mdEditor :global(.w-md-editor-text-pre) {
+	font-size: 0.78rem !important;
+	line-height: 1.5 !important;
+	font-family: var(--mantine-font-family) !important;
 	color: var(--mantine-color-dark-6);
+}
+
+.mdEditor :global(.w-md-editor-text-pre > code) {
+	font-size: 0.78rem !important;
+	line-height: 1.5 !important;
+	font-family: var(--mantine-font-family) !important;
+}
+
+.mdEditor :global(.w-md-editor-text-input) {
+	font-size: 0.78rem !important;
+	line-height: 1.5 !important;
+	font-family: var(--mantine-font-family) !important;
 }
 
 .mdEditor :global(.w-md-editor-content) {

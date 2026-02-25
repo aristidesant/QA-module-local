@@ -12,6 +12,7 @@ import {
 import {
 	IconAlertCircle,
 	IconCpu,
+	IconGitBranch,
 	IconMessageOff,
 	IconRobot,
 	IconTool,
@@ -42,6 +43,39 @@ export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
 		PermissionEnum.MANAGE
 	);
 
+	const visibleEntries = transcript.filter((entry) => {
+		const hasMessage = entry.message && entry.message.trim().length > 0;
+		const hasToolCalls = entry.tool_calls && entry.tool_calls.length > 0;
+		const hasToolResults = entry.tool_results && entry.tool_results.length > 0;
+		return hasMessage || hasToolCalls || hasToolResults;
+	});
+
+	let lastWorkflowNodeId: string | null = null;
+	const entriesWithWorkflowChanges = visibleEntries.map((entry) => {
+		const currentWorkflowNodeId =
+			entry.agent_metadata?.workflow_node_id ?? null;
+		const hasWorkflowChanged =
+			!!currentWorkflowNodeId &&
+			!!lastWorkflowNodeId &&
+			currentWorkflowNodeId !== lastWorkflowNodeId;
+
+		const workflowChange = hasWorkflowChanged
+			? {
+					from: lastWorkflowNodeId as string,
+					to: currentWorkflowNodeId,
+				}
+			: null;
+
+		if (currentWorkflowNodeId) {
+			lastWorkflowNodeId = currentWorkflowNodeId;
+		}
+
+		return {
+			entry,
+			workflowChange,
+		};
+	});
+
 	if (!transcript || transcript.length === 0) {
 		return (
 			<Paper p='xl' radius='md' className={styles.transcriptContainer}>
@@ -64,130 +98,169 @@ export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
 
 	return (
 		<Stack gap='xs' className={styles.transcriptContainer}>
-			{transcript
-				.filter((entry) => {
-					// Skip entries that have no message and no tool calls
-					const hasMessage = entry.message && entry.message.trim().length > 0;
-					const hasToolCalls = entry.tool_calls && entry.tool_calls.length > 0;
-					return hasMessage || hasToolCalls;
-				})
-				.map((entry, index) => {
-					const isAgent = entry.role.toLowerCase() === 'agent';
-					const isUser =
-						entry.role.toLowerCase() === 'user' ||
-						entry.role.toLowerCase() === 'human';
-					const isSystem = !isAgent && !isUser;
+			{entriesWithWorkflowChanges.map(({ entry, workflowChange }, index) => {
+				const isAgent = entry.role.toLowerCase() === 'agent';
+				const isUser =
+					entry.role.toLowerCase() === 'user' ||
+					entry.role.toLowerCase() === 'human';
+				const isSystem = !isAgent && !isUser;
+				const hasMessage = !!(entry.message && entry.message.trim().length > 0);
+				const visibleToolCalls = isAgent
+					? (entry.tool_calls || []).filter((tool) => tool.type !== 'workflow')
+					: [];
+				const hasVisibleToolCalls =
+					canViewTechnicalDetails && visibleToolCalls.length > 0;
+				const shouldRenderMessageBubble =
+					isSystem || hasMessage || hasVisibleToolCalls;
 
-					return (
-						<Box
-							key={`transcript-${index}`}
-							className={
-								`${styles.messageRow} ` +
-								(isSystem
-									? styles.centerAligned
-									: isAgent
-										? styles.rightAligned
-										: styles.leftAligned)
-							}
-						>
-							{isSystem ? (
-								<Paper radius='xl' p='xs' className={styles.systemBanner}>
-									<Group gap={6} justify='center'>
-										<Text size='xs' c='dimmed'>
-											{entry.message}
-										</Text>
-										{entry.time_in_call_secs !== undefined && (
-											<Text size='xs' c='dimmed' className={styles.timestamp}>
-												• {formatTime(entry.time_in_call_secs)}
+				if (!workflowChange && !shouldRenderMessageBubble) {
+					return null;
+				}
+
+				return (
+					<Stack key={`transcript-${index}`} gap='xs'>
+						{workflowChange && (
+							<WorkflowChangeBanner timeInCallSecs={entry.time_in_call_secs} />
+						)}
+						{shouldRenderMessageBubble && (
+							<Box
+								className={
+									`${styles.messageRow} ` +
+									(isSystem
+										? styles.centerAligned
+										: isAgent
+											? styles.rightAligned
+											: styles.leftAligned)
+								}
+							>
+								{isSystem ? (
+									<Paper radius='xl' p='xs' className={styles.systemBanner}>
+										<Group gap={6} justify='center'>
+											<Text size='xs' c='dimmed'>
+												{entry.message}
 											</Text>
-										)}
-									</Group>
-								</Paper>
-							) : (
-								<Box className={styles.messageGroup}>
-									<Box
-										className={`${styles.messageBubble} ${
-											isAgent ? styles.agentBubble : styles.userBubble
-										}`}
-									>
-										{/* Header with role and timestamp */}
-										<Group justify='space-between' className={styles.meta}>
-											<Group gap={6} align='center'>
-												<Avatar
-													size={20}
-													radius='xl'
-													color={isAgent ? 'blue' : 'green'}
-													variant='light'
-													className={styles.avatar}
-												>
-													{isAgent ? (
-														<IconRobot size={12} stroke={2} />
-													) : (
-														<IconUser size={12} stroke={2} />
-													)}
-												</Avatar>
-												<Text
-													size='xs'
-													fw={600}
-													c={isAgent ? 'blue.7' : 'green.7'}
-												>
-													{isAgent
-														? t('transcript.roles.agent')
-														: t('transcript.roles.user')}
-												</Text>
-											</Group>
 											{entry.time_in_call_secs !== undefined && (
-												<Text
-													size='xs'
-													c='dimmed'
-													fw={500}
-													className={styles.timestamp}
-												>
-													{formatTime(entry.time_in_call_secs)}
+												<Text size='xs' c='dimmed' className={styles.timestamp}>
+													• {formatTime(entry.time_in_call_secs)}
 												</Text>
 											)}
 										</Group>
-
-										{/* Message content */}
-										<Text size='sm' className={styles.message}>
-											{entry.message}
-										</Text>
-
-										{/* Interrupted indicator */}
-										{entry.interrupted && (
-											<Group gap={4} mt='xs' className={styles.interrupted}>
-												<IconAlertCircle
-													size={12}
-													color='var(--mantine-color-orange-6)'
-												/>
-												<Text size='xs' c='orange.6' fw={500}>
-													{t('transcript.interrupted')}
-												</Text>
+									</Paper>
+								) : (
+									<Box className={styles.messageGroup}>
+										<Box
+											className={`${styles.messageBubble} ${
+												isAgent ? styles.agentBubble : styles.userBubble
+											}`}
+										>
+											<Group justify='space-between' className={styles.meta}>
+												<Group gap={6} align='center'>
+													<Avatar
+														size={20}
+														radius='xl'
+														color={isAgent ? 'blue' : 'green'}
+														variant='light'
+														className={styles.avatar}
+													>
+														{isAgent ? (
+															<IconRobot size={12} stroke={2} />
+														) : (
+															<IconUser size={12} stroke={2} />
+														)}
+													</Avatar>
+													<Text
+														size='xs'
+														fw={600}
+														c={isAgent ? 'blue.7' : 'green.7'}
+													>
+														{isAgent
+															? t('transcript.roles.agent')
+															: t('transcript.roles.user')}
+													</Text>
+												</Group>
+												{entry.time_in_call_secs !== undefined && (
+													<Text
+														size='xs'
+														c='dimmed'
+														fw={500}
+														className={styles.timestamp}
+													>
+														{formatTime(entry.time_in_call_secs)}
+													</Text>
+												)}
 											</Group>
-										)}
 
-										{/* Tool calls section - only visible with MANAGE permission */}
-										{canViewTechnicalDetails &&
-											isAgent &&
-											entry.tool_calls &&
-											entry.tool_calls.length > 0 && (
-												<ToolCallsDisplay toolCalls={entry.tool_calls} />
+											{hasMessage && (
+												<Text size='sm' className={styles.message}>
+													{entry.message}
+												</Text>
 											)}
 
-										{/* Technical details section - only visible with MANAGE permission */}
-										{canViewTechnicalDetails && (
-											<TechnicalDetailsSection
-												entry={entry}
-												isAgent={isAgent}
-											/>
-										)}
+											{entry.interrupted && (
+												<Group gap={4} mt='xs' className={styles.interrupted}>
+													<IconAlertCircle
+														size={12}
+														color='var(--mantine-color-orange-6)'
+													/>
+													<Text size='xs' c='orange.6' fw={500}>
+														{t('transcript.interrupted')}
+													</Text>
+												</Group>
+											)}
+
+											{hasVisibleToolCalls && (
+												<ToolCallsDisplay toolCalls={visibleToolCalls} />
+											)}
+
+											{canViewTechnicalDetails && hasMessage && (
+												<TechnicalDetailsSection
+													entry={entry}
+													isAgent={isAgent}
+												/>
+											)}
+										</Box>
 									</Box>
-								</Box>
-							)}
-						</Box>
-					);
-				})}
+								)}
+							</Box>
+						)}
+					</Stack>
+				);
+			})}
 		</Stack>
+	);
+}
+
+interface WorkflowChangeBannerProps {
+	timeInCallSecs?: number;
+}
+
+function WorkflowChangeBanner({ timeInCallSecs }: WorkflowChangeBannerProps) {
+	const { t } = useTranslation(['conversations', 'common']);
+
+	return (
+		<Box className={`${styles.messageRow} ${styles.workflowChangeRow}`}>
+			<Paper radius='sm' p='xs' className={styles.workflowChangeBanner}>
+				<Stack gap={4}>
+					<Group gap={6} justify='space-between' wrap='nowrap'>
+						<Group gap={6} align='center' wrap='nowrap'>
+							<IconGitBranch
+								size={12}
+								color='var(--mantine-color-blue-6)'
+								stroke={2}
+							/>
+							<Text size='xs' fw={600} c='gray.8'>
+								{t('transcript.workflow.changed')}
+							</Text>
+						</Group>
+						{timeInCallSecs !== undefined && (
+							<Text size='xs' c='dimmed' className={styles.timestamp}>
+								• {formatTime(timeInCallSecs)}
+							</Text>
+						)}
+					</Group>
+				</Stack>
+			</Paper>
+		</Box>
 	);
 }
 

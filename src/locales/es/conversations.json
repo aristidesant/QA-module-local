@@ -78,6 +78,13 @@
 	"actions": {
 		"title": "Acciones",
 		"description": "Acciones que se pueden realizar en esta conversación.",
+		"context": {
+			"reprocessReady": "Listo para reprocesar",
+			"fetchReady": "Listo para obtener y procesar"
+		},
+		"notice": {
+			"irreversible": "Esta acción requiere confirmación y no se puede deshacer."
+		},
 		"confirmTitle": "Confirmar acción",
 		"reprocess": {
 			"label": "Reprocesar evento",
@@ -96,8 +103,13 @@
 	},
 	"overview": {
 		"title": "Resumen de la conversación",
-		"description": "Define los detalles clave de la conversación.",
 		"copyPhone": "Copiar teléfono",
+		"status": {
+			"done": "Completado",
+			"inProgress": "En progreso",
+			"failed": "Fallido",
+			"pending": "Pendiente"
+		},
 		"copied": "Copiado",
 		"demoContact": "Demo",
 		"stats": {
@@ -141,6 +153,9 @@
 			"agent": "Agente",
 			"user": "Usuario"
 		},
+		"workflow": {
+			"changed": "Cambio de ruta del workflow"
+		},
 		"interrupted": "Interrumpido",
 		"technical": {
 			"title": "Detalles técnicos",
@@ -179,6 +194,8 @@
 		"forwardShort": "Adelantar 10s",
 		"play": "Reproducir",
 		"pause": "Pausar",
+		"mute": "Silenciar",
+		"unmute": "Activar sonido",
 		"download": "Descargar audio",
 		"retryLabel": "Reintentar audio",
 		"retryHint": "Grabación no disponible. Intenta recargar el audio."

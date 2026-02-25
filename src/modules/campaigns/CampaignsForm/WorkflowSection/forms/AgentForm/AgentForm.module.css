@@ -160,11 +160,13 @@
 
 .toolRow {
 	display: grid;
-	grid-template-columns: auto 1fr auto auto;
+	grid-template-columns: 1fr auto auto;
 	align-items: center;
-	gap: var(--mantine-spacing-sm);
-	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	gap: var(--mantine-spacing-xs);
+	padding: 6px var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-2);
 	border-radius: 10px;
+	background: var(--mantine-color-white);
 }
 
 .toolRow:hover {
@@ -172,37 +174,24 @@
 }
 
 .toolRowDisabled {
-	color: var(--mantine-color-gray-5);
-}
-
-.toolIcon {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 28px;
-	height: 28px;
-	border-radius: 10px;
-	background: var(--mantine-color-gray-1);
-	color: var(--mantine-color-gray-7);
+	opacity: 0.72;
 }
 
 .toolInfo {
 	display: flex;
 	align-items: center;
+	min-width: 0;
 }
 
 .toolLabel {
+	font-weight: 500;
 	color: var(--mantine-color-gray-9);
-}
-
-.toolLabelText {
-	border-bottom: 1px dotted var(--mantine-color-gray-5);
-	padding-bottom: 1px;
+	line-height: 1.2;
 }
 
 .toolConfigSpacer {
-	width: 28px;
-	height: 28px;
+	width: 30px;
+	height: 30px;
 }
 
 .toolsDivider {

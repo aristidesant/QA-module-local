@@ -46,10 +46,10 @@ const CampaignParameters: React.FC = () => {
 		refetch,
 	} = useGetCampaignScheduleSummary(selectedCampaign?.id.toString() || '');
 
-	const isCompleted = selectedCampaign?.status === 'COMPLETED';
+	const isFailed = selectedCampaign?.status === 'FAILED';
 
 	const handleRefetch = () => {
-		if (!isCompleted) {
+		if (!isFailed) {
 			refetch();
 		}
 	};
@@ -96,17 +96,12 @@ const CampaignParameters: React.FC = () => {
 		return `${displayHour}:${minutes.padEnd(2, '0')} ${ampm}`;
 	};
 
-	const getDayAbbreviation = (day: string) => {
-		const dayMap: Record<string, string> = {
-			Monday: 'Mon',
-			Tuesday: 'Tue',
-			Wednesday: 'Wed',
-			Thursday: 'Thu',
-			Friday: 'Fri',
-			Saturday: 'Sat',
-			Sunday: 'Sun',
-		};
-		return dayMap[day] || day.slice(0, 3);
+	const getDayLabel = (day: string) => {
+		const normalized = day.trim().toLowerCase();
+		return t(`scheduler.schedulerBuilder.days.${normalized}`, {
+			ns: 'campaigns',
+			defaultValue: day,
+		});
 	};
 
 	if (!selectedCampaign) {
@@ -170,7 +165,7 @@ const CampaignParameters: React.FC = () => {
 				rightSection={
 					<Tooltip
 						label={
-							isCompleted
+							isFailed
 								? t('preview.parameters.campaignCompleted')
 								: t('preview.parameters.refreshParameters')
 						}
@@ -182,11 +177,11 @@ const CampaignParameters: React.FC = () => {
 							size='sm'
 							onClick={handleRefetch}
 							aria-label={
-								isCompleted
+								isFailed
 									? t('preview.parameters.campaignCompleted')
 									: t('preview.parameters.refreshParameters')
 							}
-							disabled={isCompleted || isLoading}
+							disabled={isFailed || isLoading}
 							className={styles.refetchButton}
 						>
 							<IconRefresh size={14} />
@@ -211,7 +206,7 @@ const CampaignParameters: React.FC = () => {
 			rightSection={
 				<Tooltip
 					label={
-						isCompleted
+						isFailed
 							? t('preview.parameters.campaignCompleted')
 							: t('preview.parameters.refreshParameters')
 					}
@@ -222,12 +217,12 @@ const CampaignParameters: React.FC = () => {
 						color='gray'
 						size='sm'
 						aria-label={
-							isCompleted
+							isFailed
 								? t('preview.parameters.campaignCompleted')
 								: t('preview.parameters.refreshParameters')
 						}
 						onClick={handleRefetch}
-						disabled={isCompleted || isLoading}
+						disabled={isFailed || isLoading}
 						className={styles.refetchButton}
 					>
 						<IconRefresh size={14} />
@@ -254,7 +249,7 @@ const CampaignParameters: React.FC = () => {
 									className={styles.scheduleChip}
 								>
 									<Text size='xs' fw={700} className={styles.dayLabel}>
-										{getDayAbbreviation(schedule.day)}
+										{getDayLabel(schedule.day)}
 									</Text>
 									<Text size='xs' c='dimmed' className={styles.timeRange}>
 										{formatTime(schedule.startHour)} -{' '}

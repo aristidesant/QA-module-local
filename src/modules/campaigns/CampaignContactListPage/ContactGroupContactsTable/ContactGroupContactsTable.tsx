@@ -320,8 +320,8 @@ export const ContactGroupContactsTable: React.FC<
 				URL.revokeObjectURL(url);
 
 				notifications.show({
-					title: t('contactsTable.notifications.exported.title'),
-					message: t('contactsTable.notifications.exported.message'),
+					title: t('contactsTable.notifications.exportSuccess'),
+					message: t('contactsTable.notifications.exportSuccessMessage'),
 					color: 'green',
 				});
 			}

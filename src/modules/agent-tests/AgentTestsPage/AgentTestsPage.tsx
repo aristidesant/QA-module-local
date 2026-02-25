@@ -6,7 +6,6 @@ import { ContentContainer } from '~/components/ContentContainer/ContentContainer
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import usePermissions from '~/hooks/usePermissions';
-import { useGetAllAgents } from '~/queries/agentQueries';
 import { useAgentTests } from '~/queries/agentTestsQueries';
 import {
 	AgentTestsPageProvider,
@@ -54,13 +53,6 @@ const AgentTestsPageContent = () => {
 	);
 	const canRun = canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.UPDATE);
 
-	const agentsQuery = useGetAllAgents({
-		page: 1,
-		limit: 200,
-		sortBy: 'name',
-		sortOrder: 'ASC',
-	});
-
 	const testsQuery = useAgentTests({
 		page,
 		limit,
@@ -76,15 +68,6 @@ const AgentTestsPageContent = () => {
 		}
 	}, [testsQuery]);
 
-	const agentOptions = useMemo(
-		() =>
-			(agentsQuery.data?.data ?? []).map((agent) => ({
-				value: agent.id,
-				label: agent.name,
-			})),
-		[agentsQuery.data?.data]
-	);
-
 	// Get test name for modal title - from first test in the run
 	const testName = useMemo(() => {
 		if (testStatusRunTestIds.length === 0) return '';
@@ -97,11 +80,12 @@ const AgentTestsPageContent = () => {
 	}, [testStatusRunTestIds, testsQuery.data?.items]);
 
 	const handleRetryTest = useCallback(
-		(testId: string) => {
+		(testId: string, selectedAgentId?: string) => {
 			const fallbackAgentId = testsQuery.data?.items.find(
 				(test) => (test.testId || test.id) === testId
 			)?.agentId;
-			const retryAgentId = testStatusAgentId || fallbackAgentId;
+			const retryAgentId =
+				selectedAgentId || testStatusAgentId || fallbackAgentId;
 
 			if (!retryAgentId) {
 				return;
@@ -148,15 +132,11 @@ const AgentTestsPageContent = () => {
 						canUpdate={canUpdate}
 						canDelete={canDelete}
 						canRun={canRun}
-						agentOptions={agentOptions}
 						onRefetch={handleRefetch}
 					/>
 				</Stack>
 			</ContentContainer>
-			<AgentSelectModal
-				agentOptions={agentOptions}
-				isLoadingAgents={agentsQuery.isLoading}
-			/>
+			<AgentSelectModal />
 			<AgentTestStudioModal />
 			<TestStatusModal
 				isOpen={isTestStatusModalOpen}
@@ -170,6 +150,7 @@ const AgentTestsPageContent = () => {
 				onEditTest={handleEditTest}
 				isTransitioning={isModalTransitioning}
 				isRetrying={runAgentTests.isPending}
+				testStatusAgentId={testStatusAgentId}
 			/>
 		</>
 	);

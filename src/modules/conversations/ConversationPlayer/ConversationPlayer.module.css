@@ -2,9 +2,14 @@
 	width: 100%;
 	max-width: 480px;
 	margin: 0 auto;
-	padding: 1rem;
+	padding: var(--mantine-spacing-xs);
 	background-color: var(--mantine-color-white);
 	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+}
+
+.playerRoot {
+	gap: var(--mantine-spacing-xs);
 }
 
 .emptyState {
@@ -12,75 +17,187 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	padding: 2rem 1rem;
+	padding: calc(var(--mantine-spacing-xl) + var(--mantine-spacing-xs))
+		var(--mantine-spacing-xs);
+	border: 1px dashed var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	background-color: var(--mantine-color-gray-0);
 }
 
 .emptyIcon {
-	color: var(--mantine-color-gray-4);
+	color: var(--mantine-color-gray-5);
+}
+
+.noticeText {
+	padding: 0 var(--mantine-spacing-xs);
+}
+
+.retryArea {
+	padding: var(--mantine-spacing-xs);
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--mantine-color-gray-0);
+}
+
+.visualizerPanel {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+	padding: var(--mantine-spacing-xs);
+	border: 1px solid var(--mantine-color-blue-1);
+	border-radius: var(--mantine-radius-md);
+	background-color: var(--mantine-color-blue-0);
+	transition:
+		border-color 200ms ease,
+		background-color 200ms ease;
+}
+
+.visualizerPanel[data-playing='true'] {
+	border-color: var(--mantine-color-blue-3);
+	background-color: var(--mantine-color-blue-0);
+}
+
+.playIndicator {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background-color: var(--mantine-color-gray-5);
+	transition:
+		background-color 150ms ease,
+		opacity 150ms ease;
+	opacity: 0.75;
+}
+
+.playIndicator[data-playing='true'] {
+	background-color: var(--mantine-color-blue-6);
+	opacity: 1;
+	animation: pulseIndicator 1.2s ease-in-out infinite;
+}
+
+.modeLabel {
+	line-height: 1;
+	color: var(--mantine-color-gray-7);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.speedBadge {
+	font-variant-numeric: tabular-nums;
+}
+
+.miniMeta {
+	font-variant-numeric: tabular-nums;
+}
+
+.miniPlayButton {
+	transition: background-color 150ms ease;
+}
+
+.miniPlayButton:hover {
+	background-color: var(--mantine-color-blue-1);
+}
+
+.waveform {
+	display: grid;
+	grid-template-columns: repeat(24, minmax(0, 1fr));
+	align-items: end;
+	gap: 4px;
+	height: 44px;
+	padding: 0 var(--mantine-spacing-xs);
+}
+
+.waveBar {
+	height: 20%;
+	border-radius: var(--mantine-radius-sm);
+	background-color: var(--mantine-color-blue-4);
+	opacity: 0.65;
+	animation: idleWave 2.2s ease-in-out infinite;
+}
+
+.waveform[data-playing='true'] .waveBar {
+	background-color: var(--mantine-color-blue-6);
+	opacity: 0.95;
+	animation-name: activeWave;
+	animation-duration: 820ms;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease-in-out;
+}
+
+.waveform[data-playing='true'][data-live='true'] .waveBar {
+	animation: none;
+	transition: height 90ms linear;
+}
+
+.waveBar:nth-child(2n) {
+	animation-delay: 80ms;
+}
+
+.waveBar:nth-child(3n) {
+	animation-delay: 140ms;
+}
+
+.waveBar:nth-child(4n) {
+	animation-delay: 220ms;
 }
 
 .progressSection {
 	width: 100%;
-	padding: 0.5rem 0;
+	padding-top: 2px;
+}
+
+.progressPreview {
+	margin-bottom: 6px;
+	opacity: 0.55;
 }
 
 .progressSlider {
 	width: 100%;
-	padding: 0.25rem 0;
 }
 
 .sliderTrack {
-	height: 6px;
+	height: 5px;
 	background-color: var(--mantine-color-gray-2);
-	border-radius: 3px;
+	border-radius: 999px;
 }
 
 .sliderBar {
+	height: 5px;
 	background-color: var(--mantine-color-blue-6);
-	height: 6px;
-	border-radius: 3px;
+	border-radius: 999px;
 }
 
 .sliderThumb {
-	width: 16px;
-	height: 16px;
-	background-color: var(--mantine-color-blue-7);
-	border: 3px solid var(--mantine-color-white);
-	border-radius: 50%;
-	transition: background-color 0.2s ease;
+	width: 14px;
+	height: 14px;
+	background-color: var(--mantine-color-white);
+	border: 2px solid var(--mantine-color-blue-6);
+	transition:
+		border-color 150ms ease,
+		background-color 150ms ease;
 }
 
 .sliderThumb:hover {
-	background-color: var(--mantine-color-blue-8);
+	border-color: var(--mantine-color-blue-7);
+	background-color: var(--mantine-color-blue-0);
 }
 
 .timeText {
 	font-family: var(--mantine-font-family-monospace);
-	font-weight: 600;
-	letter-spacing: 0.5px;
 	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.02em;
 	color: var(--mantine-color-gray-7);
 }
 
-.controlsGroup {
-	padding: 0.5rem 0;
-}
-
 .playbackControls {
-	padding: 0.5rem 0;
-}
-
-.playButton {
-	transition: background-color 0.2s ease;
-}
-
-.playButton:hover {
-	background-color: var(--mantine-color-blue-7);
+	padding: 2px 0;
 }
 
 .controlButton {
 	color: var(--mantine-color-gray-6);
-	transition: color 0.15s ease;
+	transition:
+		color 150ms ease,
+		background-color 150ms ease;
 }
 
 .controlButton:hover {
@@ -88,22 +205,40 @@
 	background-color: var(--mantine-color-blue-0);
 }
 
+.playButton {
+	transition: background-color 150ms ease;
+}
+
+.playButton:hover {
+	background-color: var(--mantine-color-blue-7);
+}
+
+.playIcon {
+	margin-left: 1px;
+}
+
+.utilityRow {
+	align-items: stretch;
+}
+
 .volumeGroup {
-	padding: 0.75rem 0;
-	flex: 1;
-	background-color: var(--mantine-color-gray-0);
+	padding: 6px var(--mantine-spacing-xs);
 	border-radius: var(--mantine-radius-md);
-	padding: 0.5rem 0.75rem;
+	border: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--mantine-color-gray-0);
 }
 
 .volumeIcon {
 	color: var(--mantine-color-blue-6);
 	flex-shrink: 0;
-	transition: color 0.2s ease;
 }
 
-.volumeIcon:hover {
-	color: var(--mantine-color-blue-7);
+.muteButton {
+	transition: background-color 150ms ease;
+}
+
+.muteButton:hover {
+	background-color: var(--mantine-color-blue-1);
 }
 
 .volumeSlider {
@@ -111,25 +246,75 @@
 }
 
 .speedSelect {
-	min-width: 80px;
-	border-radius: var(--mantine-radius-md);
+	min-width: 102px;
 }
 
-/* Responsive adjustments */
+.downloadButton {
+	margin-top: 2px;
+	transition:
+		background-color 150ms ease,
+		color 150ms ease;
+}
+
+.downloadButton:hover {
+	background-color: var(--mantine-color-blue-1);
+}
+
+@keyframes activeWave {
+	0%,
+	100% {
+		height: 20%;
+	}
+	30% {
+		height: 100%;
+	}
+	60% {
+		height: 45%;
+	}
+}
+
+@keyframes idleWave {
+	0%,
+	100% {
+		height: 20%;
+	}
+	50% {
+		height: 32%;
+	}
+}
+
+@keyframes pulseIndicator {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.35;
+	}
+}
+
 @media (max-width: 768px) {
 	.container {
 		max-width: 100%;
-		padding: 0.75rem;
-		border-radius: 0;
-		border-left: none;
-		border-right: none;
 	}
 
-	.controlsGroup {
-		gap: 0.5rem;
+	.waveform {
+		height: 38px;
+		gap: 3px;
 	}
 
-	.volumeGroup {
-		padding: 0.25rem 0;
+	.utilityRow {
+		flex-direction: column;
+	}
+
+	.speedSelect {
+		min-width: unset;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.waveBar,
+	.playIndicator[data-playing='true'] {
+		animation: none;
 	}
 }

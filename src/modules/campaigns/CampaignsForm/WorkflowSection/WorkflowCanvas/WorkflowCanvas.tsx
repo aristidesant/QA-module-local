@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { ReactFlowProvider, useEdgesState, useNodesState } from '@xyflow/react';
-import type { Edge, Node, ReactFlowInstance } from '@xyflow/react';
+import type { Connection, Edge, Node, ReactFlowInstance } from '@xyflow/react';
 import { useTranslation } from 'react-i18next';
 import StartNodeComponent from '../nodes/StartNode';
 import EndNodeComponent from '../nodes/EndNode';
@@ -22,6 +22,7 @@ import {
 	defaultEdgeOptions,
 	mapWorkflowToNodes,
 } from './WorkflowCanvas.helpers';
+import { generateUUIDv4 } from '~/utils/uuidUtils';
 import styles from './WorkflowCanvas.module.css';
 
 interface WorkflowCanvasProps {
@@ -159,6 +160,58 @@ const WorkflowCanvasInner = ({
 		[nodes]
 	);
 
+	const handleConnect = useCallback(
+		(connection: Connection) => {
+			if (!connection.source || !connection.target) return;
+			if (!isValidConnection(connection)) return;
+
+			const newEdgeId = `edge-${generateUUIDv4()}`;
+			const newEdge: Edge = {
+				id: newEdgeId,
+				source: connection.source,
+				target: connection.target,
+				sourceHandle: connection.sourceHandle,
+				targetHandle: connection.targetHandle,
+				type: 'condition',
+				data: {
+					label: t('form.workflow.edge.notConfigured', {
+						defaultValue: 'Not configured',
+					}),
+					onEdgeClick: handleOpenEdgeModal,
+				},
+			};
+
+			setNodes((prev) =>
+				prev.map((node) => {
+					if (node.id !== connection.source) return node;
+					const data = node.data as { edgeOrder?: string[] };
+					const edgeOrder = data.edgeOrder ?? [];
+					if (edgeOrder.includes(newEdgeId)) return node;
+					return {
+						...node,
+						data: {
+							...data,
+							edgeOrder: [...edgeOrder, newEdgeId],
+						},
+					};
+				})
+			);
+
+			setEdges((prev) => {
+				const edgeAlreadyExists = prev.some(
+					(edge) =>
+						edge.source === newEdge.source &&
+						edge.target === newEdge.target &&
+						edge.sourceHandle === newEdge.sourceHandle &&
+						edge.targetHandle === newEdge.targetHandle
+				);
+				if (edgeAlreadyExists) return prev;
+				return [...prev, newEdge];
+			});
+		},
+		[handleOpenEdgeModal, isValidConnection, setEdges, setNodes, t]
+	);
+
 	return (
 		<>
 			<div className={styles.canvas}>
@@ -169,6 +222,7 @@ const WorkflowCanvasInner = ({
 					edgeTypes={edgeTypes}
 					onNodesChange={onNodesChange}
 					onEdgesChange={onEdgesChange}
+					onConnect={handleConnect}
 					onNodeSelect={onNodeSelect}
 					onInit={setReactFlowInstance}
 					isValidConnection={isValidConnection}

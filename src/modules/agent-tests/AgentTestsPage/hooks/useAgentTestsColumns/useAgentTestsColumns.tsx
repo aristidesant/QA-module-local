@@ -18,7 +18,6 @@ interface UseAgentTestsColumnsProps {
 	canUpdate: boolean;
 	canDelete: boolean;
 	canRun: boolean;
-	agentOptions: Array<{ value: string; label: string }>;
 	editingTestLoadingId: string | null;
 	runningTestIds: string[];
 }
@@ -27,7 +26,6 @@ export const useAgentTestsColumns = ({
 	canUpdate,
 	canDelete,
 	canRun,
-	agentOptions,
 	editingTestLoadingId,
 	runningTestIds,
 }: UseAgentTestsColumnsProps) => {
@@ -81,14 +79,8 @@ export const useAgentTestsColumns = ({
 				header: t('table.columns.createdBy'),
 				cell: ({ row }) => {
 					const creatorName = row.original.accessInfo?.creatorName?.trim();
-					const option = agentOptions.find(
-						(agent) => agent.value === row.original.agentId
-					);
-
 					return (
-						<Text size='sm'>
-							{creatorName || option?.label || row.original.agentId || '-'}
-						</Text>
+						<Text size='sm'>{creatorName || row.original.agentId || '-'}</Text>
 					);
 				},
 			},
@@ -173,7 +165,6 @@ export const useAgentTestsColumns = ({
 			},
 		],
 		[
-			agentOptions,
 			canDelete,
 			canRun,
 			canUpdate,

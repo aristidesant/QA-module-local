@@ -1,16 +1,15 @@
 // CampaignConfigurationKnowledgeBase.tsx
 import React, { useState } from 'react';
-import { IconFileText, IconFileXFilled, IconPlus } from '@tabler/icons-react';
-import { useCampaignFormContext } from '../../../campaignFormFunctions';
-import SectionCard from '~/components/SectionCard';
 import {
-	ThemeIcon,
-	Loader,
-	Text,
-	Badge,
-	ActionIcon,
-	Tooltip,
-} from '@mantine/core';
+	IconFileText,
+	IconTrash,
+	IconPlus,
+	IconLink,
+	IconAlignLeft,
+} from '@tabler/icons-react';
+import { useCampaignFormContext } from '../../../campaignFormFunctions';
+import RightSectionCard from '~/components/RightSectionCard';
+import { ThemeIcon, Loader, Text, ActionIcon, Tooltip } from '@mantine/core';
 import {
 	useKnowledgeBases,
 	useKnowledgeBasesByIds,
@@ -18,7 +17,13 @@ import {
 import CampaignConfigurationKnowledgeBaseAddModal from './CampaignConfigurationKnowledgeBaseAddModal';
 import styles from './CampaignConfigurationKnowledgeBase.module.css';
 import type KnowledgeBaseModel from '~/models/KnowledgeBaseModel';
+import { KnowledgeBaseType } from '~/models/KnowledgeBaseModel';
 import { useTranslation } from 'react-i18next';
+import { timeAgo } from '~/utils/dateUtils';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 const CampaignConfigurationKnowledgeBase: React.FC = () => {
 	const { t } = useTranslation('campaigns');
@@ -53,8 +58,6 @@ const CampaignConfigurationKnowledgeBase: React.FC = () => {
 	const rootKbIds: number[] =
 		(form.values.agentConfig as any)?.knowledgeBaseIds || [];
 
-	console.log({ deepKbIds, rootKbIds });
-
 	// Merge both sources
 	const selectedKbIds = Array.from(new Set([...deepKbIds, ...rootKbIds]));
 
@@ -80,20 +83,27 @@ const CampaignConfigurationKnowledgeBase: React.FC = () => {
 
 	const isLoading = isLoadingAll || isLoadingMissing;
 
-	const getIconForKnowledgeBase = () => {
-		return <IconFileText size={20} />;
+	const getIconForKnowledgeBase = (type: KnowledgeBaseType) => {
+		switch (type) {
+			case KnowledgeBaseType.URL:
+				return <IconLink size={16} />;
+			case KnowledgeBaseType.TEXT:
+				return <IconAlignLeft size={16} />;
+			case KnowledgeBaseType.FILE:
+			default:
+				return <IconFileText size={16} />;
+		}
 	};
 
-	const getStatusColor = (status: string) => {
-		switch (status?.toLowerCase()) {
-			case 'active':
-				return 'green';
-			case 'pending':
-				return 'yellow';
-			case 'failed':
-				return 'red';
+	const getTypeColor = (type: KnowledgeBaseType) => {
+		switch (type) {
+			case KnowledgeBaseType.URL:
+				return 'teal';
+			case KnowledgeBaseType.TEXT:
+				return 'orange';
+			case KnowledgeBaseType.FILE:
 			default:
-				return 'gray';
+				return 'blue';
 		}
 	};
 
@@ -126,72 +136,83 @@ const CampaignConfigurationKnowledgeBase: React.FC = () => {
 	};
 
 	return (
-		<SectionCard
+		<RightSectionCard
+			icon={IconFileText}
 			title={t('form.agent.knowledgeBase.title')}
 			description={t('form.agent.knowledgeBase.description')}
 		>
 			<div className={styles.container}>
 				{isLoading ? (
 					<div className={styles.loadingContainer}>
-						<Loader size='sm' />
-						<Text size='sm' c='dimmed'>
+						<Loader size='xs' />
+						<Text size='xs' c='dimmed'>
 							{t('form.agent.knowledgeBase.loading')}
 						</Text>
 					</div>
 				) : error ? (
-					<Text size='sm' c='red'>
+					<Text size='xs' c='red'>
 						{t('form.agent.knowledgeBase.error')}
 					</Text>
 				) : selectedKnowledgeBases.length > 0 ? (
 					selectedKnowledgeBases.map((kb) => (
 						<div key={kb.id} className={styles.item}>
-							<div className={styles.itemContent}>
-								<ThemeIcon variant='subtle' color='gray'>
-									{getIconForKnowledgeBase()}
-								</ThemeIcon>
-								<div className={styles.itemInfo}>
-									<div className={styles.itemHeader}>
-										<div className={styles.label}>{kb.name}</div>
-										<div className={styles.itemActions}>
-											<Badge
-												size='sm'
-												color={getStatusColor(kb.status)}
-												variant='light'
-												className={styles.statusBadge}
-											>
-												{kb.status}
-											</Badge>
-											<Tooltip
-												label={t('form.agent.knowledgeBase.remove')}
-												position='left'
-											>
-												<ActionIcon
-													variant='subtle'
-													color='red'
-													size='md'
-													onClick={() => handleUnassignKnowledgeBase(kb.id)}
-													aria-label={t('form.agent.knowledgeBase.removeAria', {
-														name: kb.name,
-													})}
-												>
-													<IconFileXFilled size={18} />
-												</ActionIcon>
-											</Tooltip>
-										</div>
-									</div>
+							<ThemeIcon
+								variant='light'
+								color={getTypeColor(kb.type)}
+								size='md'
+							>
+								{getIconForKnowledgeBase(kb.type)}
+							</ThemeIcon>
+							<div className={styles.itemInfo}>
+								<div className={styles.itemName}>{kb.name}</div>
+								<div className={styles.itemMeta}>
+									<span
+										className={styles.itemType}
+										style={{
+											color: `var(--mantine-color-${getTypeColor(kb.type)}-6)`,
+										}}
+									>
+										{kb.type}
+									</span>
 									{kb.createdAt && (
-										<div className={styles.assignedDate}>
-											{t('form.agent.knowledgeBase.created', {
-												date: new Date(kb.createdAt).toLocaleDateString(),
-											})}
-										</div>
+										<>
+											<span className={styles.metaDot}>·</span>
+											<Tooltip
+												label={dayjs
+													.utc(kb.createdAt)
+													.local()
+													.format('MMM D, YYYY HH:mm')}
+												position='top'
+												withArrow
+											>
+												<span className={styles.itemDate}>
+													{timeAgo(kb.createdAt)}
+												</span>
+											</Tooltip>
+										</>
 									)}
 								</div>
 							</div>
+							<Tooltip
+								label={t('form.agent.knowledgeBase.remove')}
+								position='left'
+							>
+								<ActionIcon
+									variant='subtle'
+									color='red'
+									size='sm'
+									onClick={() => handleUnassignKnowledgeBase(kb.id)}
+									aria-label={t('form.agent.knowledgeBase.removeAria', {
+										name: kb.name,
+									})}
+								>
+									<IconTrash size={15} />
+								</ActionIcon>
+							</Tooltip>
 						</div>
 					))
 				) : (
-					<Text size='sm' c='dimmed'>
+					<Text size='xs' c='dimmed'>
 						{t('form.agent.knowledgeBase.noSelection')}
 					</Text>
 				)}
@@ -200,18 +221,17 @@ const CampaignConfigurationKnowledgeBase: React.FC = () => {
 					className={styles.addButton}
 					onClick={handleAddKnowledgeBase}
 				>
-					<IconPlus size={20} className={styles.plusIcon} />
+					<IconPlus size={14} className={styles.plusIcon} />
 					<span>{t('form.agent.knowledgeBase.add')}</span>
 				</button>
 			</div>
-
 			<CampaignConfigurationKnowledgeBaseAddModal
 				opened={isModalOpen}
 				onClose={handleCloseModal}
 				selectedIds={selectedKbIds}
 				onSave={handleSaveSelections}
 			/>
-		</SectionCard>
+		</RightSectionCard>
 	);
 };
 

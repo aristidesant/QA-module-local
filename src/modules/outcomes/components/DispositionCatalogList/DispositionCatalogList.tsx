@@ -303,9 +303,7 @@ const DispositionCatalogList = forwardRef<
 					<FilterContainer>
 						<Group gap='xs' className={styles.titleGroup}>
 							<IconFilter size={16} className={styles.titleIcon} />
-							<Text className={styles.title}>
-								{t('filters.title', { ns: 'campaigns' })}
-							</Text>
+							<Text className={styles.title}>{t('filters.title')}</Text>
 							{(searchValue || statusFilter !== 'all') && (
 								<Badge size='xs' variant='light' className={styles.activeBadge}>
 									{(searchValue ? 1 : 0) + (statusFilter !== 'all' ? 1 : 0)}

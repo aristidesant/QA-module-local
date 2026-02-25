@@ -10,6 +10,7 @@ import userApi from '~/api/userApi';
 import { logout } from '~/utils/logout';
 import { LoadingOverlay } from '@mantine/core';
 import classes from './RouteProtecter.module.css';
+import { useSessionExpirationWatcher } from '~/hooks/useSessionExpirationWatcher';
 
 type LoaderData = {
 	token: string | null;
@@ -69,6 +70,8 @@ export const RouteProtecter = () => {
 	const queryClient = useQueryClient();
 	const { setToken, token: storeToken, user, setUser } = useSessionStore();
 	const path = useLocation().pathname;
+
+	useSessionExpirationWatcher();
 
 	// Sync token from loader to store ONLY on initial load (when store is empty)
 	// The store is the source of truth during the session - don't overwrite it

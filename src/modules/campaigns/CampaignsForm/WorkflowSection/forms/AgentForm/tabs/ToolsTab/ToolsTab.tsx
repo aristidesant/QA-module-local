@@ -8,22 +8,15 @@ import {
 	Text,
 	Tooltip,
 } from '@mantine/core';
-import {
-	IconPencil,
-	IconSettings,
-	IconTrash,
-	IconPuzzle,
-} from '@tabler/icons-react';
+import { IconSettings, IconTrash } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTools, useToolsByCategory } from '~/queries/toolQueries';
-import { useToolCategories } from '~/queries/toolCategoryQueries';
+import { useTools } from '~/queries/toolQueries';
 import { useClientConfigByName } from '~/queries/useClientConfigs';
 import type { SystemToolModel } from '~/models/AgentListObject';
 import type { ToolModel } from '~/models/ToolModel';
 import { snakeToCamel } from '~/utils/stringUtils';
 import ToolConfigModal from '~/modules/campaigns/CampaignsForm/AgentSection/CampaignConfigurationSystemTools/ToolConfigModal/ToolConfigModal';
-import toolStyles from '~/modules/campaigns/CampaignsForm/AgentSection/CampaignConfigurationTools/CampaignConfigurationTools.module.css';
 import { useAgentForm } from '../../context';
 import { useBuiltInTools } from '../../hooks';
 import mainStyles from '../../AgentForm.module.css';
@@ -308,14 +301,9 @@ const BuiltInTools = () => {
 									tool.switchDisabled ? mainStyles.toolRowDisabled : ''
 								}`}
 							>
-								<div className={mainStyles.toolIcon}>
-									<IconPencil size={14} />
-								</div>
 								<div className={mainStyles.toolInfo}>
 									<Text size='sm' className={mainStyles.toolLabel}>
-										<span className={mainStyles.toolLabelText}>
-											{tool.label}
-										</span>
+										{tool.label}
 									</Text>
 								</div>
 								{tool.showSettings && !isEndConversation ? (
@@ -390,10 +378,6 @@ const CustomTools = () => {
 		nodeId,
 		onWorkflowChange,
 	} = useAgentForm();
-	const { data: toolCategories } = useToolCategories();
-	const { data: webhookTools } = useToolsByCategory(
-		toolCategories?.find((cat) => cat.name === 'webhook')?.id
-	);
 
 	const currentNode = workflow?.nodes[nodeId];
 	const subagent =
@@ -448,21 +432,6 @@ const CustomTools = () => {
 		const nextToolIds = toolIds.filter((id) => id !== toolId);
 		handleSubagentChange({ toolIds: nextToolIds });
 	};
-
-	const isWebhookToolSelected = useCallback(
-		(toolIdentifier: string) => toolIds.includes(toolIdentifier),
-		[toolIds]
-	);
-
-	const handleWebhookToolToggle = useCallback(
-		(tool: ToolModel, isCurrentlySelected: boolean) => {
-			const nextToolIds = isCurrentlySelected
-				? toolIds.filter((id) => id !== tool.identifier)
-				: Array.from(new Set([...toolIds, tool.identifier]));
-			handleSubagentChange({ toolIds: nextToolIds });
-		},
-		[handleSubagentChange, toolIds]
-	);
 
 	return (
 		<>
@@ -553,75 +522,6 @@ const CustomTools = () => {
 				))
 			)}
 			<div className={mainStyles.toolsDivider} />
-			<Text size='sm' className={mainStyles.sectionLabel}>
-				{t('form.agent.tools.title')}
-			</Text>
-			<Text size='xs' c='dimmed'>
-				{t('form.agent.tools.description')}
-			</Text>
-			<Stack gap='xs'>
-				{!webhookTools || webhookTools.length === 0 ? (
-					<Text size='sm' c='dimmed'>
-						{t('form.agent.tools.noTools')}
-					</Text>
-				) : (
-					webhookTools.map((tool) => {
-						const isSelected = isWebhookToolSelected(tool.identifier);
-						return (
-							<div
-								key={tool.identifier}
-								className={`${toolStyles.toolRow} ${
-									isSelected ? toolStyles.toolRowActive : ''
-								}`}
-							>
-								<Group
-									align='flex-start'
-									justify='space-between'
-									gap='sm'
-									className={toolStyles.rowHeader}
-								>
-									<Group
-										gap='xs'
-										align='center'
-										className={toolStyles.toolTitle}
-									>
-										<div className={toolStyles.iconBadge}>
-											<IconPuzzle size={14} />
-										</div>
-										<div>
-											<Text fw={600} className={toolStyles.toolName}>
-												{tool.name}
-											</Text>
-											<Text size='xs' className={toolStyles.toolMeta}>
-												{t('form.agent.tools.customIntegration')}
-											</Text>
-										</div>
-									</Group>
-
-									<Switch
-										aria-label={t('form.agent.tools.toggleAria', {
-											name: tool.name,
-										})}
-										checked={isSelected}
-										onChange={() => {
-											handleWebhookToolToggle(tool, isSelected);
-										}}
-										size='sm'
-										className={toolStyles.toolSwitch}
-									/>
-								</Group>
-								<Text
-									size='sm'
-									c='dimmed'
-									className={toolStyles.toolDescription}
-								>
-									{tool.description || t('form.agent.tools.noDescription')}
-								</Text>
-							</div>
-						);
-					})
-				)}
-			</Stack>
 		</>
 	);
 };

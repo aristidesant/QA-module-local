@@ -37,6 +37,7 @@
 	"columns": {
 		"campaign": "Campaign",
 		"type": "Type",
+		"status": "Status",
 		"lastUpdated": "Last Updated",
 		"campaignDetails": "Campaign Details",
 		"noDescription": "No description available.",
@@ -45,6 +46,10 @@
 		"outbound": "Outbound",
 		"inbound": "Inbound",
 		"continueSetup": "Continue setup",
+		"moreActions": "More actions",
+		"actionsGroupManage": "Manage",
+		"actionsGroupStatus": "Status",
+		"actionsGroupDanger": "Danger zone",
 		"completeSetupFirst": "Complete setup first",
 		"viewCampaign": "View campaign",
 		"editCampaign": "Edit campaign",
@@ -65,7 +70,7 @@
 		"allExecutionTypes": "All execution types",
 		"status": "Status",
 		"allStatuses": "All statuses",
-		"includeCompleted": "Include completed",
+		"includeInactive": "Include inactive",
 		"advanced": "Advanced",
 		"clearFilters": "Clear filters",
 		"clearAllFilters": "Clear all filters",
@@ -84,10 +89,8 @@
 		}
 	},
 	"status": {
-		"PENDING": "Pending",
-		"RUNNING": "Running",
-		"PAUSED": "Paused",
-		"COMPLETED": "Completed",
+		"ACTIVE": "Active",
+		"INACTIVE": "Inactive",
 		"FAILED": "Failed",
 		"UNKNOWN": "Unknown",
 		"pending": "Pending",
@@ -96,6 +99,18 @@
 		"complete": "Complete",
 		"failed": "Failed",
 		"executed": "Executed"
+	},
+	"toggleStatus": {
+		"activate": "Activate campaign",
+		"deactivate": "Deactivate campaign",
+		"confirmActivateTitle": "Activate Campaign",
+		"confirmDeactivateTitle": "Deactivate Campaign",
+		"confirmActivateMessage": "Are you sure you want to activate this campaign?",
+		"confirmDeactivateInbound": "Deactivating this inbound campaign will unlink phone numbers from ElevenLabs. The associations will be preserved and automatically restored upon reactivation.",
+		"confirmDeactivateOutbound": "Deactivating this outbound campaign will pause all running contact groups. Paused groups will not resume automatically when the campaign is reactivated.",
+		"confirm": "Confirm",
+		"error": "Error",
+		"errorMessage": "Failed to toggle campaign status"
 	},
 	"deleteModal": {
 		"title": "Delete Campaign",
@@ -171,13 +186,27 @@
 			"description": "Schedule description",
 			"descriptionPlaceholder": "e.g. Monday to Friday from 08:00 to 17:00",
 			"humanEquivalent": "Human equivalent",
+			"scheduleType": "Schedule Type",
+			"typeAndDirection": "Type & Direction",
+			"typeAndDirectionDescription": "Choose how the schedule operates and which call direction it applies to.",
+			"directionLabel": "Direction",
+			"scheduleTypes": {
+				"custom": "Custom Hours",
+				"alwaysOn": "Always On 24/7"
+			},
+			"directions": {
+				"inbound": "Inbound",
+				"outbound": "Outbound",
+				"both": "Both"
+			},
 			"cancel": "Cancel",
 			"create": "Create schedule",
 			"validation": {
 				"nameRequired": "Schedule name is required",
 				"scheduleRequired": "Please select a schedule template",
 				"humanEquivalentRequired": "Human equivalent is required",
-				"humanEquivalentNumber": "Human equivalent must be a number"
+				"humanEquivalentNumber": "Human equivalent must be a number",
+				"outbound24x7NotAllowed": "24/7 schedules are not available for Outbound direction. Choose Inbound or Both."
 			},
 			"notifications": {
 				"error": "Error",
@@ -219,6 +248,16 @@
 				"active": "Active",
 				"paused": "Paused"
 			},
+			"direction": {
+				"inbound": "Inbound",
+				"outbound": "Outbound",
+				"both": "Both"
+			},
+			"type": {
+				"alwaysOn": "24/7",
+				"custom": "Custom"
+			},
+			"alwaysOnLabel": "Always on — 24/7",
 			"activeDays": "{{count}} active day",
 			"activeDays_other": "{{count}} active days",
 			"noActiveDays": "No active days yet",
@@ -1206,19 +1245,41 @@
 				"title": "Agent tools",
 				"description": "Select which tools the agent can use.",
 				"noTools": "No agent tools configured.",
+				"noSelection": "No tools selected.",
 				"customIntegration": "Custom integration",
 				"toggleAria": "Toggle {{name}}",
-				"noDescription": "No description provided."
+				"noDescription": "No description provided.",
+				"add": "Add tool",
+				"remove": "Remove tool",
+				"removeAria": "Remove {{name}}",
+				"modal": {
+					"title": "Add tools",
+					"subtitle": "Select the tools you want to enable for this agent.",
+					"noTools": "No tools available.",
+					"save": "Save",
+					"cancel": "Cancel"
+				}
 			},
 			"systemTools": {
 				"title": "System Tools",
 				"description": "Configure system tools for the agent.",
 				"noTools": "No system tools available.",
+				"noSelection": "No system tools selected.",
 				"systemUtility": "System Utility",
 				"toggleAria": "Toggle {{name}}",
 				"configure": "Configure",
 				"enableToConfigure": "Enable to configure",
 				"noDescription": "No description available.",
+				"add": "Add system tool",
+				"remove": "Remove tool",
+				"removeAria": "Remove {{name}}",
+				"addModal": {
+					"title": "Add system tools",
+					"subtitle": "Select the system tools you want to enable for this agent.",
+					"noTools": "No system tools available.",
+					"save": "Save",
+					"cancel": "Cancel"
+				},
 				"modal": {
 					"title": "Configure Tool",
 					"name": "Tool Name",
@@ -1464,6 +1525,7 @@
 				"identityDesc": "Set the tone and structure for this campaign.",
 				"routingTitle": "Routing",
 				"routingDesc": "Match this campaign to the right number and objective.",
+				"routingDescInbound": "Assign the phone number that will receive inbound calls.",
 				"campaignName": "Campaign Name",
 				"campaignNameDesc": "Give your campaign a descriptive name",
 				"campaignNamePlaceholder": "Enter campaign name",

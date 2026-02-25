@@ -78,6 +78,13 @@
 	"actions": {
 		"title": "Actions",
 		"description": "Actions that can be performed on this conversation.",
+		"context": {
+			"reprocessReady": "Ready to reprocess",
+			"fetchReady": "Ready to fetch and process"
+		},
+		"notice": {
+			"irreversible": "This action requires confirmation and cannot be undone."
+		},
 		"confirmTitle": "Confirm Action",
 		"reprocess": {
 			"label": "Reprocess Event",
@@ -96,8 +103,13 @@
 	},
 	"overview": {
 		"title": "Conversation Overview",
-		"description": "Define the conversation key details.",
 		"copyPhone": "Copy phone",
+		"status": {
+			"done": "Done",
+			"inProgress": "In Progress",
+			"failed": "Failed",
+			"pending": "Pending"
+		},
 		"copied": "Copied",
 		"demoContact": "Demo",
 		"stats": {
@@ -141,6 +153,9 @@
 			"agent": "Agent",
 			"user": "User"
 		},
+		"workflow": {
+			"changed": "Workflow route changed"
+		},
 		"interrupted": "Interrupted",
 		"technical": {
 			"title": "Technical Details",
@@ -179,6 +194,8 @@
 		"forwardShort": "Forward 10s",
 		"play": "Play",
 		"pause": "Pause",
+		"mute": "Mute",
+		"unmute": "Unmute",
 		"download": "Download Audio",
 		"retryLabel": "Retry audio",
 		"retryHint": "Recording unavailable. Try reloading the audio."

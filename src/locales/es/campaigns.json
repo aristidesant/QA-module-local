@@ -37,6 +37,7 @@
 	"columns": {
 		"campaign": "Campaña",
 		"type": "Tipo",
+		"status": "Estado",
 		"lastUpdated": "Última Actualización",
 		"campaignDetails": "Detalles de Campaña",
 		"noDescription": "Sin descripción disponible.",
@@ -45,6 +46,10 @@
 		"outbound": "Outbound",
 		"inbound": "Inbound",
 		"continueSetup": "Continuar configuración",
+		"moreActions": "Más acciones",
+		"actionsGroupManage": "Gestionar",
+		"actionsGroupStatus": "Estado",
+		"actionsGroupDanger": "Zona de riesgo",
 		"completeSetupFirst": "Completa la configuración primero",
 		"viewCampaign": "Ver campaña",
 		"editCampaign": "Editar campaña",
@@ -65,7 +70,7 @@
 		"allExecutionTypes": "Todos los tipos de ejecución",
 		"status": "Estado",
 		"allStatuses": "Todos los estados",
-		"includeCompleted": "Incluir completadas",
+		"includeInactive": "Incluir inactivas",
 		"advanced": "Avanzado",
 		"clearFilters": "Limpiar filtros",
 		"clearAllFilters": "Limpiar todos los filtros",
@@ -84,10 +89,8 @@
 		}
 	},
 	"status": {
-		"PENDING": "Pendiente",
-		"RUNNING": "En curso",
-		"PAUSED": "Pausada",
-		"COMPLETED": "Completada",
+		"ACTIVE": "Activa",
+		"INACTIVE": "Inactiva",
 		"FAILED": "Fallida",
 		"UNKNOWN": "Desconocido",
 		"pending": "Pendiente",
@@ -96,6 +99,18 @@
 		"complete": "Completada",
 		"failed": "Fallida",
 		"executed": "Ejecutada"
+	},
+	"toggleStatus": {
+		"activate": "Activar campaña",
+		"deactivate": "Desactivar campaña",
+		"confirmActivateTitle": "Activar Campaña",
+		"confirmDeactivateTitle": "Desactivar Campaña",
+		"confirmActivateMessage": "¿Estás seguro de que deseas activar esta campaña?",
+		"confirmDeactivateInbound": "Desactivar esta campaña inbound desvinculará los números de teléfono de ElevenLabs. Las asociaciones se mantendrán y se restaurarán automáticamente al reactivar.",
+		"confirmDeactivateOutbound": "Desactivar esta campaña outbound pausará todos los grupos de contacto en ejecución. Los grupos pausados no se reanudarán automáticamente al reactivar la campaña.",
+		"confirm": "Confirmar",
+		"error": "Error",
+		"errorMessage": "No se pudo cambiar el estado de la campaña"
 	},
 	"deleteModal": {
 		"title": "Eliminar Campaña",
@@ -171,13 +186,27 @@
 			"description": "Descripcion del horario",
 			"descriptionPlaceholder": "p. ej. De lunes a viernes de 08:00 a 17:00",
 			"humanEquivalent": "Equivalente humano",
+			"scheduleType": "Tipo de horario",
+			"typeAndDirection": "Tipo y Dirección",
+			"typeAndDirectionDescription": "Elija cómo opera el horario y a qué dirección de llamadas aplica.",
+			"directionLabel": "Dirección",
+			"scheduleTypes": {
+				"custom": "Horas personalizadas",
+				"alwaysOn": "Siempre activo 24/7"
+			},
+			"directions": {
+				"inbound": "Entrante",
+				"outbound": "Saliente",
+				"both": "Ambos"
+			},
 			"cancel": "Cancelar",
 			"create": "Crear horario",
 			"validation": {
 				"nameRequired": "El nombre del horario es obligatorio",
 				"scheduleRequired": "Selecciona una plantilla de horario",
 				"humanEquivalentRequired": "El equivalente humano es obligatorio",
-				"humanEquivalentNumber": "El equivalente humano debe ser un numero"
+				"humanEquivalentNumber": "El equivalente humano debe ser un numero",
+				"outbound24x7NotAllowed": "Los horarios 24/7 no están disponibles para la dirección Saliente. Elija Entrante o Ambos."
 			},
 			"notifications": {
 				"error": "Error",
@@ -219,6 +248,16 @@
 				"active": "Activo",
 				"paused": "Pausado"
 			},
+			"direction": {
+				"inbound": "Entrante",
+				"outbound": "Saliente",
+				"both": "Ambos"
+			},
+			"type": {
+				"alwaysOn": "24/7",
+				"custom": "Personalizado"
+			},
+			"alwaysOnLabel": "Siempre activo — 24/7",
 			"activeDays": "{{count}} día activo",
 			"activeDays_other": "{{count}} días activos",
 			"noActiveDays": "Sin días activos aún",
@@ -1207,19 +1246,41 @@
 				"title": "Herramientas del agente",
 				"description": "Selecciona las herramientas que puede usar el agente.",
 				"noTools": "No hay herramientas del agente configuradas.",
+				"noSelection": "No hay herramientas seleccionadas.",
 				"customIntegration": "Integracion personalizada",
 				"toggleAria": "Alternar {{name}}",
-				"noDescription": "Sin descripcion."
+				"noDescription": "Sin descripcion.",
+				"add": "Agregar herramienta",
+				"remove": "Eliminar herramienta",
+				"removeAria": "Eliminar {{name}}",
+				"modal": {
+					"title": "Agregar herramientas",
+					"subtitle": "Selecciona las herramientas que quieres habilitar para este agente.",
+					"noTools": "No hay herramientas disponibles.",
+					"save": "Guardar",
+					"cancel": "Cancelar"
+				}
 			},
 			"systemTools": {
 				"title": "Herramientas del sistema",
 				"description": "Configura las herramientas del sistema para el agente.",
 				"noTools": "No hay herramientas del sistema disponibles.",
+				"noSelection": "No hay herramientas del sistema seleccionadas.",
 				"systemUtility": "Utilidad del sistema",
 				"toggleAria": "Alternar {{name}}",
 				"configure": "Configurar",
 				"enableToConfigure": "Habilitar para configurar",
 				"noDescription": "Sin descripción disponible.",
+				"add": "Agregar herramienta del sistema",
+				"remove": "Eliminar herramienta",
+				"removeAria": "Eliminar {{name}}",
+				"addModal": {
+					"title": "Agregar herramientas del sistema",
+					"subtitle": "Selecciona las herramientas del sistema que quieres habilitar para este agente.",
+					"noTools": "No hay herramientas del sistema disponibles.",
+					"save": "Guardar",
+					"cancel": "Cancelar"
+				},
 				"modal": {
 					"title": "Configurar Herramienta",
 					"name": "Nombre de la Herramienta",
@@ -1579,6 +1640,7 @@
 				"identityDesc": "Establece el tono y la estructura para esta campaña.",
 				"routingTitle": "Enrutamiento",
 				"routingDesc": "Asocia esta campaña con el número y objetivo correctos.",
+				"routingDescInbound": "Asigna el número de teléfono que recibirá las llamadas entrantes.",
 				"campaignName": "Nombre de la Campaña",
 				"campaignNameDesc": "Dale a tu campaña un nombre descriptivo",
 				"campaignNamePlaceholder": "Ingresa el nombre de la campaña",

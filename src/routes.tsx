@@ -21,6 +21,10 @@ const CampaignContactListPage = React.lazy(
 	() =>
 		import('./modules/campaigns/CampaignContactListPage/CampaignContactListPage')
 );
+const CampaignConversationsPage = React.lazy(
+	() =>
+		import('./modules/campaigns/CampaignConversationsPage/CampaignConversationsPage')
+);
 const ForcePasswordChangePage = React.lazy(
 	() => import('./modules/auth/ForcePasswordChangePage/ForcePasswordChangePage')
 );
@@ -233,6 +237,23 @@ const router = createBrowserRouter([
 						),
 					},
 					{
+						path: 'campaign/:campaignId/conversations',
+						id: 'campaign.conversations',
+						element: (
+							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
+								<I18nNamespaceLoader>
+									<Suspense
+										fallback={
+											<SuspenseFallback message='Loading conversations...' />
+										}
+									>
+										<CampaignConversationsPage />
+									</Suspense>
+								</I18nNamespaceLoader>
+							</ModuleGuard>
+						),
+					},
+					{
 						path: 'users',
 						id: 'users',
 						element: (
@@ -367,13 +388,15 @@ const router = createBrowserRouter([
 								path: 'scheduler-predefined-params',
 								id: 'scheduler-predefined-params',
 								element: (
-									<Suspense
-										fallback={
-											<SuspenseFallback message='Loading scheduler presets...' />
-										}
-									>
-										<SchedulerPredefinedParamsPage />
-									</Suspense>
+									<I18nNamespaceLoader>
+										<Suspense
+											fallback={
+												<SuspenseFallback message='Loading scheduler presets...' />
+											}
+										>
+											<SchedulerPredefinedParamsPage />
+										</Suspense>
+									</I18nNamespaceLoader>
 								),
 							},
 							{

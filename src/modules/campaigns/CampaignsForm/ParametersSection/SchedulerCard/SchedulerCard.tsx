@@ -4,6 +4,7 @@ import { Group, Stack, Button, LoadingOverlay, Box } from '@mantine/core';
 import { IconEdit, IconDeviceFloppy } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import type { Scheduler } from '~/models/SchedulerModel';
+import { ScheduleType } from '~/models/SchedulerModel';
 import {
 	useUpdateSchedule,
 	useActivateSchedule,
@@ -82,35 +83,40 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 	// Handle form submission
 	const handleSubmit = async (values: Partial<Scheduler>) => {
 		try {
-			const invalidDays = (values.dayConfigs || []).reduce<string[]>(
-				(list, dayConfig) => {
-					if (!dayConfig?.isActive) return list;
+			const isAlwaysOn = scheduler.scheduleType === ScheduleType.ALWAYS_ON_24_7;
 
-					const start = parseTimeToMinutes(dayConfig.startHour ?? undefined);
-					const end = parseTimeToMinutes(dayConfig.endHour ?? undefined);
+			// Skip day config validation for ALWAYS_ON schedules
+			if (!isAlwaysOn) {
+				const invalidDays = (values.dayConfigs || []).reduce<string[]>(
+					(list, dayConfig) => {
+						if (!dayConfig?.isActive) return list;
 
-					if (start === null || end === null || end <= start) {
-						const dayName = dayConfig.dayOfWeek
-							? `${dayConfig.dayOfWeek.charAt(0).toUpperCase()}${dayConfig.dayOfWeek.slice(1)}`
-							: 'Day';
-						return [...list, dayName];
-					}
+						const start = parseTimeToMinutes(dayConfig.startHour ?? undefined);
+						const end = parseTimeToMinutes(dayConfig.endHour ?? undefined);
 
-					return list;
-				},
-				[]
-			);
+						if (start === null || end === null || end <= start) {
+							const dayName = dayConfig.dayOfWeek
+								? `${dayConfig.dayOfWeek.charAt(0).toUpperCase()}${dayConfig.dayOfWeek.slice(1)}`
+								: 'Day';
+							return [...list, dayName];
+						}
 
-			if (invalidDays.length > 0) {
-				notifications.show({
-					title: t('scheduler.card.notifications.fixTimeRanges.title'),
-					message: t('scheduler.card.notifications.fixTimeRanges.message', {
-						days: invalidDays.join(', '),
-					}),
-					color: 'red',
-					withBorder: true,
-				});
-				return;
+						return list;
+					},
+					[]
+				);
+
+				if (invalidDays.length > 0) {
+					notifications.show({
+						title: t('scheduler.card.notifications.fixTimeRanges.title'),
+						message: t('scheduler.card.notifications.fixTimeRanges.message', {
+							days: invalidDays.join(', '),
+						}),
+						color: 'red',
+						withBorder: true,
+					});
+					return;
+				}
 			}
 
 			// Validate form data if needed
@@ -211,8 +217,10 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 					<SchedulerFormProvider form={form}>
 						<form onSubmit={form.onSubmit(handleSubmit)}>
 							<Stack gap='lg'>
-								{/* Capacity Call Section */}
-								<CapacityCall />
+								{/* Capacity Call Section - only for CUSTOM schedules */}
+								{scheduler.scheduleType !== ScheduleType.ALWAYS_ON_24_7 && (
+									<CapacityCall />
+								)}
 
 								{/* Update Schedule Button */}
 								<Group justify='flex-end'>

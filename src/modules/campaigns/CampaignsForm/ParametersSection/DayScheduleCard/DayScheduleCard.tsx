@@ -14,8 +14,20 @@ import {
 	type MaybeDayConfig,
 } from '../utils/schedulerMetrics';
 
-const formatDayName = (day?: string | null) => {
-	return day ? day.charAt(0).toUpperCase() + day.slice(1) : 'Day';
+/**
+ * Translate a day-of-week key (e.g. "monday") using the campaigns namespace.
+ * Falls back to capitalised raw string when translation is unavailable.
+ */
+const useTranslateDayName = () => {
+	const { t } = useTranslation('campaigns');
+	return (day?: string | null) => {
+		if (!day)
+			return t('scheduler.daySchedule.fallbackDay', { defaultValue: 'Day' });
+		const normalized = day.trim().toLowerCase();
+		return t(`scheduler.schedulerBuilder.days.${normalized}`, {
+			defaultValue: day.charAt(0).toUpperCase() + day.slice(1),
+		});
+	};
 };
 
 type TimeValue = string | Date | null;
@@ -42,6 +54,7 @@ const normalizeTimeValue = (value: TimeValue): string | null => {
 
 export const DayScheduleCard: React.FC = () => {
 	const { t } = useTranslation('campaigns');
+	const formatDayName = useTranslateDayName();
 	const form = useSchedulerFormContext();
 	const dayConfigs = (form.values.dayConfigs || []) as MaybeDayConfig[];
 	const humanEquivalent = Number(form.values.humanEquivalent || 1);

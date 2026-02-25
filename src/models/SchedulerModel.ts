@@ -1,5 +1,16 @@
 import type ContactGroup from './ContactGroup';
 
+export enum ScheduleType {
+	CUSTOM = 'CUSTOM',
+	ALWAYS_ON_24_7 = 'ALWAYS_ON_24_7',
+}
+
+export enum ScheduleDirection {
+	INBOUND = 'INBOUND',
+	OUTBOUND = 'OUTBOUND',
+	BOTH = 'BOTH',
+}
+
 export interface HourConfig {
 	id: number;
 	clientId: number;
@@ -46,6 +57,8 @@ export interface Scheduler {
 	description: string | null;
 	campaignId: number;
 	status: 'active' | 'paused' | 'completed' | 'draft' | string;
+	scheduleType: ScheduleType;
+	direction: ScheduleDirection;
 	humanEquivalent: number | null;
 	callsPerHour: string | null | number;
 	estimatedCompletionDays: number | null;

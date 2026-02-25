@@ -268,6 +268,101 @@
 	min-width: 0;
 }
 
+/* Progress bar for test run */
+.testStatusProgressBar {
+	height: 3px;
+	border-radius: 99px;
+	overflow: hidden;
+	background: var(--mantine-color-gray-2);
+}
+
+/* Summary row counts */
+.testStatusSummaryRow {
+	display: flex;
+	gap: var(--mantine-spacing-xs);
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+/* Selected item left-border accent */
+.testStatusItemSelected {
+	border-left: 3px solid var(--mantine-color-blue-5) !important;
+	padding-left: calc(var(--mantine-spacing-xs) - 2px) !important;
+}
+
+/* Hover-reveal action buttons */
+.testStatusItemHoverActions {
+	display: flex;
+	gap: 2px;
+	opacity: 0;
+	transition: opacity 120ms ease;
+}
+
+.testStatusListItem:hover .testStatusItemHoverActions {
+	opacity: 1;
+}
+
+.testStatusListItem:focus-within .testStatusItemHoverActions {
+	opacity: 1;
+}
+
+/* Empty/loading state for right pane */
+.testStatusEmptyLoading {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: var(--mantine-spacing-sm);
+	flex: 1;
+	min-height: 280px;
+}
+
+@keyframes testStatusPulse {
+	0%,
+	100% {
+		opacity: 0.4;
+		transform: scale(1);
+	}
+	50% {
+		opacity: 1;
+		transform: scale(1.08);
+	}
+}
+
+.testStatusEmptyLoadingIcon {
+	animation: testStatusPulse 1.6s ease-in-out infinite;
+}
+
+/* Success condition callout box */
+.testStatusSuccessCondition {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-blue-2);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-blue-0);
+}
+
+/* AI Judgment rationale box */
+.testStatusRationale {
+	display: flex;
+	gap: var(--mantine-spacing-xs);
+	align-items: flex-start;
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-yellow-3);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-yellow-0);
+}
+
+/* Skeleton loading row */
+.testStatusSkeletonRow {
+	padding: var(--mantine-spacing-xs);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-white);
+}
+
 .chatBubbleSelected {
 	border-color: var(--mantine-color-gray-5);
 }

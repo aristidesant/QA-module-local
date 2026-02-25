@@ -133,5 +133,11 @@
 	"languages": {
 		"en": "Inglés",
 		"es": "Español"
+	},
+	"sessionExpiration": {
+		"title": "Sesión por expirar",
+		"message": "Tu sesión está a punto de expirar, por favor actualiza tu sesión.",
+		"confirm": "Actualizar sesión",
+		"cancel": "No"
 	}
 }
