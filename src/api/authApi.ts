@@ -27,6 +27,7 @@ export interface ClientSelectOption {
 export interface MFALoginResponse {
 	message: string;
 	accessToken: any;
+	refreshToken?: string;
 	userId: number;
 	loginType: string;
 	otpEnabled: boolean;
@@ -38,6 +39,11 @@ export interface MFALoginResponse {
 	availableClients?: ClientSelectOption[];
 	/** Pre-auth token for client selection (valid for 10 minutes) */
 	preAuthToken?: string;
+}
+
+export interface RefreshTokenResponse {
+	accessToken: string;
+	refreshToken: string;
 }
 
 /** Request payload for selecting a client */
@@ -265,6 +271,17 @@ export async function disableMFA(
 	const response = await axios.post<{ message: string }>(
 		`${apiUrl}/auth/mfa/disable`,
 		payload
+	);
+	return response.data;
+}
+
+export async function refreshAccessToken(
+	refreshToken: string,
+	apiUrl: string = DEFAULT_API_URL
+): Promise<RefreshTokenResponse> {
+	const response = await axios.post<RefreshTokenResponse>(
+		`${apiUrl}/auth/refresh`,
+		{ refreshToken }
 	);
 	return response.data;
 }

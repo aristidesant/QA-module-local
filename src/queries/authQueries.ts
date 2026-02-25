@@ -33,15 +33,22 @@ async function completeLoginFlow(
 	queryClient: any,
 	setToken: (token: string | null) => void,
 	setUser: (user: any) => void,
-	userFromResponse?: any // Optional user data from API response
+	userFromResponse?: any, // Optional user data from API response
+	refreshToken?: string // Optional refresh token to persist
 ) {
-	// Persist token (sessionStorage only)
+	// Persist access token (sessionStorage only)
 	try {
 		window.sessionStorage.setItem('accessToken', accessToken);
 	} catch {}
 
-	// Put token in store
+	// Put access token in store
 	setToken(accessToken);
+
+	// Persist refresh token if provided
+	if (refreshToken) {
+		const { setRefreshToken } = useSessionStore.getState();
+		setRefreshToken(refreshToken);
+	}
 
 	// If user data is provided from API response, use it directly
 	if (userFromResponse) {
@@ -83,7 +90,8 @@ export function useLogin() {
 					queryClient,
 					setToken,
 					setUser,
-					data.user
+					data.user,
+					data.refreshToken
 				);
 			}
 			// For OTP-enabled users, just return the response data
