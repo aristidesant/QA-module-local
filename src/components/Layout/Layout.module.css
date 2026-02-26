@@ -1,5 +1,6 @@
 :root {
 	--sidebar-width: 240px;
+	--sidebar-width-collapsed: 72px;
 	--sidebar-width-mobile: 180px;
 }
 
@@ -15,13 +16,20 @@
 	max-width: var(--sidebar-width);
 	transition:
 		width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-		min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+		max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
 	background: var(--mantine-color-body, rgba(255, 255, 255, 0.95));
 	border-right: 1px solid var(--mantine-color-gray-2);
 	z-index: 100;
+}
+
+.navbarCollapsed {
+	width: var(--sidebar-width-collapsed);
+	min-width: var(--sidebar-width-collapsed);
+	max-width: var(--sidebar-width-collapsed);
 }
 
 @media (max-width: 768px) {
@@ -37,7 +45,8 @@
 	display: flex;
 	flex-direction: column;
 	min-width: 0;
-	height: 100vh; /* Full viewport height */
+	height: 100vh;
+	/* Full viewport height */
 	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -71,11 +80,14 @@
 	height: 1.5rem;
 	width: 100%;
 }
+
 .mainWrapper {
 	flex: 1;
 	height: calc(100vh - 70px);
-	overflow-y: hidden; /* Remove scroll, will be handled by inner components */
+	overflow-y: hidden;
+	/* Remove scroll, will be handled by inner components */
 }
+
 .layout {
 	min-height: 100vh;
 	background: white;
@@ -101,8 +113,10 @@
 	min-width: 0;
 	display: flex;
 	flex-direction: column;
-	height: 100%; /* Ensure it takes full height */
-	overflow: hidden; /* Prevent scrolling at this level */
+	height: 100%;
+	/* Ensure it takes full height */
+	overflow: hidden;
+	/* Prevent scrolling at this level */
 }
 
 .appFooter {
