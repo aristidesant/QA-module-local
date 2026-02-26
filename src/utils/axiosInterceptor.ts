@@ -1,5 +1,8 @@
 import axios from 'axios';
+import type { InternalAxiosRequestConfig } from 'axios';
 import { DEFAULT_API_URL } from '~/api/config';
+import { refreshAccessToken } from '~/api/authApi';
+import { useSessionStore } from '~/stores/sessionStore';
 
 // Configure global axios defaults
 axios.defaults.baseURL = DEFAULT_API_URL;
@@ -50,12 +53,35 @@ axios.interceptors.request.use(
 	(error) => Promise.reject(error)
 );
 
+// Concurrency state for refresh token flow
+let isRefreshing = false;
+type QueueEntry = {
+	resolve: (token: string) => void;
+	reject: (error: unknown) => void;
+};
+let pendingQueue: QueueEntry[] = [];
+
+function processQueue(error: unknown, token: string | null) {
+	pendingQueue.forEach((entry) => {
+		if (error) {
+			entry.reject(error);
+		} else {
+			entry.resolve(token as string);
+		}
+	});
+	pendingQueue = [];
+}
+
 // Handle 401 globally
 axios.interceptors.response.use(
 	(response) => response,
-	(error) => {
-		const requestUrl = String(error?.config?.url ?? '');
-		// Skip auto-logout for auth endpoints and token-swap related calls
+	async (error) => {
+		const originalRequest = error?.config as InternalAxiosRequestConfig & {
+			_retry?: boolean;
+		};
+		const requestUrl = String(originalRequest?.url ?? '');
+
+		// Skip refresh logic for auth endpoints and token-swap related calls
 		const isAuthEndpoint =
 			requestUrl.includes('/auth/login') ||
 			requestUrl.includes('/auth/verify-otp') ||
@@ -64,18 +90,67 @@ axios.interceptors.response.use(
 			requestUrl.includes('/auth/impersonate-client') ||
 			requestUrl.includes('/auth/end-impersonation') ||
 			requestUrl.includes('/auth/available-clients') ||
+			requestUrl.includes('/auth/refresh') ||
 			requestUrl.endsWith('/users/me'); // Called during token swap
 
 		if (
 			!isAuthEndpoint &&
 			error?.response?.status === 401 &&
+			!originalRequest?._retry &&
 			typeof window !== 'undefined'
 		) {
-			// Use centralized logout utility for authenticated requests only
-			import('~/utils/logout').then(({ logout }) =>
-				logout('/login', { reason: 'expired' })
-			);
+			const storedRefreshToken = window.sessionStorage?.getItem('refreshToken');
+
+			// No refresh token available — log out immediately
+			if (!storedRefreshToken) {
+				import('~/utils/logout').then(({ logout }) =>
+					logout('/login', { reason: 'expired' })
+				);
+				return Promise.reject(error);
+			}
+
+			// If a refresh is already in flight, queue this request
+			if (isRefreshing) {
+				return new Promise((resolve, reject) => {
+					pendingQueue.push({
+						resolve: (token) => {
+							originalRequest.headers['Authorization'] = `Bearer ${token}`;
+							resolve(axios(originalRequest));
+						},
+						reject,
+					});
+				});
+			}
+
+			// Mark this request so it won't be retried again on another 401
+			originalRequest._retry = true;
+			isRefreshing = true;
+
+			try {
+				const tokens = await refreshAccessToken(storedRefreshToken);
+
+				// Persist the new tokens
+				const { setToken, setRefreshToken } = useSessionStore.getState();
+				setToken(tokens.accessToken);
+				setRefreshToken(tokens.refreshToken);
+
+				// Update the Authorization header on the original request and retry
+				originalRequest.headers['Authorization'] =
+					`Bearer ${tokens.accessToken}`;
+
+				processQueue(null, tokens.accessToken);
+				return axios(originalRequest);
+			} catch (refreshError) {
+				processQueue(refreshError, null);
+				import('~/utils/logout').then(({ logout }) =>
+					logout('/login', { reason: 'expired' })
+				);
+				return Promise.reject(refreshError);
+			} finally {
+				isRefreshing = false;
+			}
 		}
+
 		return Promise.reject(error);
 	}
 );

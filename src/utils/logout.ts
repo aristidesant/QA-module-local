@@ -99,6 +99,9 @@ function resetAllStores() {
  * Safe no-op on server.
  */
 export function logout(redirectTo: string = '/login', options?: LogoutOptions) {
+	console.log(
+		'Logging out user, clearing session and redirecting to login page...'
+	);
 	if (typeof window === 'undefined') return;
 	if (logoutInProgress) return;
 	logoutInProgress = true;
@@ -106,8 +109,9 @@ export function logout(redirectTo: string = '/login', options?: LogoutOptions) {
 	const reason = options?.reason ?? 'manual';
 
 	try {
-		// Ensure token is removed even if clear() fails.
+		// Ensure tokens are removed even if clear() fails.
 		window.sessionStorage.removeItem('accessToken');
+		window.sessionStorage.removeItem('refreshToken');
 
 		// Clear all sessionStorage for a clean slate between users.
 		window.sessionStorage.clear();
