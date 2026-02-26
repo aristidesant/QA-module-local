@@ -1,5 +1,12 @@
 import React, { useMemo } from 'react';
-import { Text, Stack, Divider, Group } from '@mantine/core';
+import {
+	Text,
+	Stack,
+	Divider,
+	Group,
+	Tooltip,
+	ActionIcon,
+} from '@mantine/core';
 import { menuItems, MenuItem } from './menuItems';
 import { Link, useLocation } from 'react-router';
 import styles from './Sidebar.module.css';
@@ -9,12 +16,15 @@ import { APP_VERSION } from '~/version';
 import { usePermissions } from '~/hooks/usePermissions';
 import { useTranslation } from 'react-i18next';
 import LanguagePicker from '../LanguagePicker';
+import { IconChevronsLeft, IconChevronsRight } from '@tabler/icons-react';
+import { useSidebarStore } from '~/stores/sidebarStore';
 
 // menuItems are now imported from menuItems.tsx
 
 export const Sidebar: React.FC = () => {
 	const { canAccessModule, canPerformAction } = usePermissions();
 	const { t } = useTranslation();
+	const { collapsed, toggleCollapsed } = useSidebarStore();
 
 	const permittedMenuItems = useMemo(
 		() =>
@@ -28,47 +38,85 @@ export const Sidebar: React.FC = () => {
 	);
 
 	return (
-		<nav className={styles.sidebar} aria-label={t('sidebar.ariaLabel')}>
+		<nav
+			className={`${styles.sidebar} ${collapsed ? styles.sidebarCollapsed : ''}`}
+			aria-label={t('sidebar.ariaLabel')}
+		>
 			<Stack className={styles.menuList} gap='lg'>
 				<div className={styles.logoWrapper}>
-					<Logo />
+					<Logo compact={collapsed} />
 				</div>
-				<div className={styles.versionWrapper}>
-					<Text size='xs' c='dimmed'>
-						{t('sidebar.version')} {APP_VERSION}
-					</Text>
-				</div>
+				{!collapsed && (
+					<div className={styles.versionWrapper}>
+						<Text size='xs' c='dimmed'>
+							{t('sidebar.version')} {APP_VERSION}
+						</Text>
+					</div>
+				)}
 				<Divider className={styles.divider} />
 				<Stack gap='xs'>
-					<Text
-						size='xs'
-						fw={600}
-						c='dimmed'
+					<Group
+						justify={collapsed ? 'center' : 'space-between'}
 						px='md'
 						mb='xs'
-						className={styles.sectionHeader}
 					>
-						{t('sidebar.menu')}
-					</Text>
-					{permittedMenuItems.length > 0 ? (
-						permittedMenuItems.map((item) => (
-							<SidebarMenuItem key={item.label} item={item} />
-						))
-					) : (
-						<div className={styles.emptyState}>
-							<Text size='sm' c='dimmed' fw={600}>
-								{t('sidebar.noModules')}
+						{!collapsed && (
+							<Text
+								size='xs'
+								fw={600}
+								c='dimmed'
+								className={styles.sectionHeader}
+							>
+								{t('sidebar.menu')}
 							</Text>
-							<Text size='xs' c='dimmed'>
-								{t('sidebar.requestAccess')}
-							</Text>
-						</div>
-					)}
+						)}
+						<Tooltip
+							label={
+								collapsed
+									? t('sidebar.expand', { defaultValue: 'Expand sidebar' })
+									: t('sidebar.collapse', { defaultValue: 'Collapse sidebar' })
+							}
+							position='right'
+							withArrow
+						>
+							<ActionIcon
+								variant='subtle'
+								color='gray'
+								size='sm'
+								onClick={toggleCollapsed}
+								aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+							>
+								{collapsed ? (
+									<IconChevronsRight size={16} />
+								) : (
+									<IconChevronsLeft size={16} />
+								)}
+							</ActionIcon>
+						</Tooltip>
+					</Group>
+					{permittedMenuItems.length > 0
+						? permittedMenuItems.map((item) => (
+								<SidebarMenuItem
+									key={item.label}
+									item={item}
+									collapsed={collapsed}
+								/>
+							))
+						: !collapsed && (
+								<div className={styles.emptyState}>
+									<Text size='sm' c='dimmed' fw={600}>
+										{t('sidebar.noModules')}
+									</Text>
+									<Text size='xs' c='dimmed'>
+										{t('sidebar.requestAccess')}
+									</Text>
+								</div>
+							)}
 				</Stack>
-				<div style={{ marginTop: 'auto' }}>
+				<div className={styles.bottomSection}>
 					<Divider className={styles.divider} mb='xs' />
-					<Group justify='center' px='md'>
-						<LanguagePicker variant='subtle' size='sm' withLabel={true} />
+					<Group justify='center' px={collapsed ? 0 : 'md'}>
+						<LanguagePicker variant='subtle' size='sm' withLabel={!collapsed} />
 					</Group>
 				</div>
 			</Stack>
@@ -78,9 +126,13 @@ export const Sidebar: React.FC = () => {
 
 interface SidebarMenuItemProps {
 	item: MenuItem;
+	collapsed?: boolean;
 }
 
-const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item }) => {
+const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({
+	item,
+	collapsed = false,
+}) => {
 	const { label, icon, to, exact } = item;
 	const location = useLocation();
 	const { t } = useTranslation();
@@ -89,12 +141,13 @@ const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item }) => {
 		? location.pathname === to
 		: location.pathname.startsWith(to) && to !== '/';
 
-	return (
+	const linkContent = (
 		<Link
 			to={to}
 			className={[
 				styles.menuItem,
 				isSelected ? styles.menuItemSelected : '',
+				collapsed ? styles.menuItemCollapsed : '',
 			].join(' ')}
 			aria-current={isSelected ? 'page' : undefined}
 			tabIndex={0}
@@ -103,9 +156,19 @@ const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item }) => {
 			}
 		>
 			{icon}
-			<span className={styles.menuText}>{t(label)}</span>
+			{!collapsed && <span className={styles.menuText}>{t(label)}</span>}
 		</Link>
 	);
+
+	if (collapsed) {
+		return (
+			<Tooltip label={t(label)} position='right' withArrow>
+				{linkContent}
+			</Tooltip>
+		);
+	}
+
+	return linkContent;
 };
 
 /**
