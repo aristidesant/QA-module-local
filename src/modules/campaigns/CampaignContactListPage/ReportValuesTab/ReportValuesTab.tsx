@@ -385,6 +385,7 @@ const ReportValuesTab = ({
 				contactGroupId={contactGroupId}
 				campaignId={campaignId}
 				reportValue={editTarget}
+				existingColumns={columns}
 			/>
 		</Stack>
 	);

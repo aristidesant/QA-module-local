@@ -151,6 +151,7 @@ interface ReportValueFormModalProps {
 	contactGroupId: number;
 	campaignId: number;
 	reportValue?: ReportValue;
+	existingColumns?: ReportValue[];
 }
 
 interface FormValues {
@@ -168,6 +169,7 @@ const ReportValueFormModal = ({
 	contactGroupId,
 	campaignId,
 	reportValue,
+	existingColumns = [],
 }: ReportValueFormModalProps) => {
 	const { t } = useTranslation('campaign.contact-list');
 	const isEdit = !!reportValue;
@@ -193,20 +195,34 @@ const ReportValueFormModal = ({
 		[contactVariableDataFields]
 	);
 
-	const dynamicKeyOptions = useMemo(
-		() =>
-			mergedDynamicFields.map((f) => ({
+	/** Returns a Set of already-used keys for a given origin, excluding the record being edited */
+	const usedKeysFor = (origin: ReportValueOriginType): Set<string> =>
+		new Set(
+			existingColumns
+				.filter((c) => c.originType === origin && c.id !== reportValue?.id)
+				.map((c) => c.key)
+		);
+
+	const dynamicKeyOptions = useMemo(() => {
+		const used = usedKeysFor(ReportValueOriginType.DYNAMIC);
+		return mergedDynamicFields
+			.filter((f) => !used.has(f.name))
+			.map((f) => ({
 				value: f.name,
 				label: `${f.label} (${f.name})`,
-			})),
-		[mergedDynamicFields]
-	);
+			}));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [mergedDynamicFields, existingColumns, reportValue?.id]);
 
 	const objectKeyOptions = useMemo(() => {
 		if (!campaign?.agentConfig) return [];
 		const dc = getDataCollectionFromAgentConfig(campaign.agentConfig);
-		return Object.keys(dc).map((key) => ({ value: key, label: key }));
-	}, [campaign?.agentConfig]);
+		const used = usedKeysFor(ReportValueOriginType.OBJECT);
+		return Object.keys(dc)
+			.filter((key) => !used.has(key))
+			.map((key) => ({ value: key, label: key }));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [campaign?.agentConfig, existingColumns, reportValue?.id]);
 
 	// ── Form ─────────────────────────────────────────────────
 
@@ -261,7 +277,9 @@ const ReportValueFormModal = ({
 		},
 	];
 
-	const sqlKeyOptions = SQL_KEYS.map((k) => ({
+	const sqlKeyOptions = SQL_KEYS.filter(
+		(k) => !usedKeysFor(ReportValueOriginType.SQL).has(k)
+	).map((k) => ({
 		value: k,
 		label: `${t(`reportValues.sqlKeys.${k}`)} — ${k}`,
 	}));
