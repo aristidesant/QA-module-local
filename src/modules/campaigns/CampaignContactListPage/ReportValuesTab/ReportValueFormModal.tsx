@@ -5,7 +5,6 @@ import {
 	CloseButton,
 	Loader,
 	Modal,
-	NumberInput,
 	Select,
 	Text,
 	TextInput,
@@ -158,8 +157,7 @@ interface FormValues {
 	originType: ReportValueOriginType | '';
 	key: string;
 	label: string;
-	dataType: ReportValueDataType | '';
-	order: number | '';
+	dataType: ReportValueDataType | null;
 }
 
 // ─── Component ────────────────────────────────────────────────
@@ -217,14 +215,13 @@ const ReportValueFormModal = ({
 			originType: '',
 			key: '',
 			label: '',
-			dataType: '',
-			order: '',
+			dataType: null,
 		},
 		validate: {
 			originType: (v) => (!v ? 'Select a data source' : null),
 			key: (v) => (!v.trim() ? 'Field key is required' : null),
 			label: (v) => (!v.trim() ? 'Column label is required' : null),
-			dataType: (v) => (!v ? 'Select a data type' : null),
+			dataType: (v) => (v === null ? 'Select a data type' : null),
 		},
 	});
 
@@ -236,7 +233,6 @@ const ReportValueFormModal = ({
 					key: reportValue.key,
 					label: reportValue.label,
 					dataType: reportValue.dataType,
-					order: reportValue.order,
 				});
 			} else {
 				form.reset();
@@ -275,8 +271,12 @@ const ReportValueFormModal = ({
 	// ── Handlers ─────────────────────────────────────────────
 
 	const handleOriginSelect = (value: ReportValueOriginType) => {
-		form.setFieldValue('originType', value);
-		form.setFieldValue('key', '');
+		form.setValues({
+			originType: value,
+			key: '',
+			label: '',
+			dataType: null,
+		});
 		form.clearFieldError('originType');
 	};
 
@@ -292,41 +292,32 @@ const ReportValueFormModal = ({
 		form.setFieldValue('key', newKey);
 		if (!newKey) return;
 
-		// Auto-fill label only when blank
-		if (!form.values.label) {
-			form.setFieldValue('label', humanizeKey(newKey));
+		// Always overwrite label and dataType when a key is selected
+		form.setFieldValue('label', humanizeKey(newKey));
+
+		let inferred: ReportValueDataType | null = null;
+		if (origin === ReportValueOriginType.SQL) {
+			inferred = SQL_TYPE_MAP[newKey] ?? null;
+		} else if (origin === ReportValueOriginType.DYNAMIC) {
+			const field = mergedDynamicFields.find((f) => f.name === newKey);
+			inferred = field ? schemaTypeToDataType(field.type) : null;
+		} else if (origin === ReportValueOriginType.OBJECT) {
+			const dc = getDataCollectionFromAgentConfig(campaign?.agentConfig ?? {});
+			const item = dc[newKey] as DataCollectionItem | undefined;
+			inferred = item ? dcTypeToDataType(item.type) : null;
 		}
-
-		// Auto-detect data type only when blank
-		if (!form.values.dataType) {
-			let inferred: ReportValueDataType | null = null;
-
-			if (origin === ReportValueOriginType.SQL) {
-				inferred = SQL_TYPE_MAP[newKey] ?? null;
-			} else if (origin === ReportValueOriginType.DYNAMIC) {
-				const field = mergedDynamicFields.find((f) => f.name === newKey);
-				inferred = field ? schemaTypeToDataType(field.type) : null;
-			} else if (origin === ReportValueOriginType.OBJECT) {
-				const dc = getDataCollectionFromAgentConfig(
-					campaign?.agentConfig ?? {}
-				);
-				const item = dc[newKey] as DataCollectionItem | undefined;
-				inferred = item ? dcTypeToDataType(item.type) : null;
-			}
-
-			if (inferred) form.setFieldValue('dataType', inferred);
-		}
+		form.setFieldValue('dataType', inferred);
 	};
 
 	/** Handler for free-text key inputs — fires on blur to batch humanize/infer */
 	const handleKeyTextBlur = () => {
 		const key = form.values.key;
 		if (!key) return;
-		if (!form.values.label) form.setFieldValue('label', humanizeKey(key));
+		form.setFieldValue('label', humanizeKey(key));
 	};
 
 	const handleSubmit = async (values: FormValues) => {
-		if (!values.originType || !values.dataType) return;
+		if (!values.originType || values.dataType === null) return;
 
 		try {
 			if (isEdit && reportValue) {
@@ -337,7 +328,6 @@ const ReportValueFormModal = ({
 						key: values.key,
 						label: values.label,
 						dataType: values.dataType,
-						order: values.order === '' ? undefined : Number(values.order),
 					},
 				});
 				notifications.show({
@@ -350,7 +340,6 @@ const ReportValueFormModal = ({
 					key: values.key,
 					label: values.label,
 					dataType: values.dataType,
-					order: values.order === '' ? undefined : Number(values.order),
 					contactGroupId,
 				});
 				notifications.show({
@@ -580,21 +569,13 @@ const ReportValueFormModal = ({
 							{...form.getInputProps('label')}
 						/>
 
-						<div className={styles.fieldRow}>
-							<Select
-								label={t('reportValues.form.dataTypeLabel')}
-								data={dataTypeOptions}
-								required
-								size='sm'
-								{...form.getInputProps('dataType')}
-							/>
-							<NumberInput
-								label={t('reportValues.form.orderLabel')}
-								min={0}
-								size='sm'
-								{...form.getInputProps('order')}
-							/>
-						</div>
+						<Select
+							label={t('reportValues.form.dataTypeLabel')}
+							data={dataTypeOptions}
+							required
+							size='sm'
+							{...form.getInputProps('dataType')}
+						/>
 					</div>
 
 					{/* ── Footer ── */}
