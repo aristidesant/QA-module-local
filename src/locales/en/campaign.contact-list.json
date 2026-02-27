@@ -51,8 +51,10 @@
 		"overview": "Overview",
 		"conversations": "Conversations",
 		"contacts": "Contacts",
+		"report": "Report",
 		"conversationsDesc": "All conversations associated with this contact list.",
-		"contactsDesc": "All contacts associated with this list."
+		"contactsDesc": "All contacts associated with this list.",
+		"reportDesc": "Configure the columns included in the exported report for this contact list."
 	},
 	"overview": {
 		"title": "Contact List Information",
@@ -295,6 +297,68 @@
 			"notifications": {
 				"added": "{{count}} phone number(s) added successfully"
 			}
+		}
+	},
+	"reportValues": {
+		"addColumn": "Add Column",
+		"exportCsv": "Export CSV",
+		"noColumns": "No columns configured. Add a column to define the report structure.",
+		"noDataToExport": "No data to export for this contact list.",
+		"exportError": "Error exporting report.",
+		"deleteConfirm": {
+			"title": "Delete Column",
+			"message": "Are you sure you want to delete the column \"{{label}}\"?",
+			"confirm": "Delete",
+			"cancel": "Cancel"
+		},
+		"columns": {
+			"order": "Order",
+			"label": "Label",
+			"key": "Key",
+			"originType": "Origin",
+			"dataType": "Data Type",
+			"actions": "Actions"
+		},
+		"originType": {
+			"SQL": "System column",
+			"DYNAMIC": "Dynamic field",
+			"OBJECT": "Conversation data"
+		},
+		"dataType": {
+			"STRING": "Text",
+			"NUMBER": "Number",
+			"BOOLEAN": "Yes/No",
+			"DATE": "Date",
+			"DATETIME": "Date & time"
+		},
+		"sqlKeys": {
+			"first_name": "First name",
+			"last_name": "Last name",
+			"identifier": "ID (Cedula/RNC)",
+			"identifier_type": "ID type",
+			"birth_date": "Birth date",
+			"address": "Address",
+			"phone_number": "Phone number"
+		},
+		"form": {
+			"createTitle": "Add Report Column",
+			"editTitle": "Edit Report Column",
+			"originTypeLabel": "Origin type",
+			"keyLabel": "Key / Field",
+			"keyPlaceholderDynamic": "e.g. balance_deuda",
+			"keyPlaceholderObject": "e.g. city",
+			"labelLabel": "Column label",
+			"labelPlaceholder": "e.g. Outstanding Balance",
+			"dataTypeLabel": "Data type",
+			"orderLabel": "Order",
+			"save": "Save",
+			"cancel": "Cancel"
+		},
+		"notifications": {
+			"created": "Column created successfully",
+			"updated": "Column updated successfully",
+			"deleted": "Column deleted successfully",
+			"reorderError": "Error saving new order"
 		}
 	},
 	"contacts": {
