@@ -10,6 +10,7 @@
 .turbo/
 .cache/
 /.cache/
+/.claude/worktrees/
 /.env
 /.env.*
 /.idea/

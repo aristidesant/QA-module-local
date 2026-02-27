@@ -29,7 +29,7 @@ import {
 	useUpdateReportValue,
 } from '~/queries/reportValuesQueries';
 import { useGetCampaign } from '~/queries/campaignsQueries';
-import { useGetSchemaByObjectiveId } from '~/queries/campaignContactSchemasQueries';
+import { useGetContactVariableDataSchema } from '~/queries/contactVariableDataQueries';
 import {
 	getDataCollectionFromAgentConfig,
 	type DataCollectionItem,
@@ -183,25 +183,16 @@ const ReportValueFormModal = ({
 		String(campaignId)
 	);
 
-	// Fetch all schemas for the campaign's objective, then pick the active one
-	const { data: objectiveSchemasResponse, isLoading: isSchemasLoading } =
-		useGetSchemaByObjectiveId(
-			campaign?.objectiveId ?? 0,
-			opened && !!campaign?.objectiveId
-		);
+	// Fetch dynamic schema fields directly by contact group ID
+	const { data: contactVariableDataFields, isLoading: isSchemasLoading } =
+		useGetContactVariableDataSchema(contactGroupId, opened);
 
 	// ── Derived data ──────────────────────────────────────────
 
-	/** The active (enabled) schema from the objective's schema list */
-	const activeSchema = useMemo(
-		() => objectiveSchemasResponse?.data.find((s) => s.isActive),
-		[objectiveSchemasResponse]
-	);
-
-	/** Schema fields from the active schema (kept as full objects for type inference) */
+	/** Schema fields from the contact variable data schema */
 	const mergedDynamicFields = useMemo<CampaignContactSchemaField[]>(
-		() => activeSchema?.schemaFields ?? [],
-		[activeSchema]
+		() => contactVariableDataFields ?? [],
+		[contactVariableDataFields]
 	);
 
 	const dynamicKeyOptions = useMemo(
