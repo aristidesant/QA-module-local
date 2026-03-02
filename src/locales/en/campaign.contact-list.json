@@ -301,7 +301,10 @@
 	},
 	"reportValues": {
 		"addColumn": "Add Column",
-		"exportCsv": "Export CSV",
+		"export": "Export",
+		"exportFormatLabel": "Select format",
+		"exportFormatCsv": "CSV",
+		"exportFormatXlsx": "XLSX",
 		"noColumns": "No columns configured. Add a column to define the report structure.",
 		"noDataToExport": "No data to export for this contact list.",
 		"exportError": "Error exporting report.",

@@ -6,6 +6,8 @@ import type {
 } from '~/models/ReportValue';
 import { DEFAULT_API_URL } from './config';
 
+type ReportExportFormat = 'csv' | 'xlsx';
+
 const reportValuesApi = () => {
 	return {
 		getColumns: async (contactGroupId: number): Promise<ReportValue[]> => {
@@ -38,10 +40,17 @@ const reportValuesApi = () => {
 			await axios.delete(`${DEFAULT_API_URL}/report-values/${id}`);
 		},
 
-		exportCsv: async (contactGroupId: number) => {
+		exportReport: async (
+			contactGroupId: number,
+			format: ReportExportFormat = 'csv'
+		) => {
 			const response = await axios.get(
-				`${DEFAULT_API_URL}/report-values/export/csv/${contactGroupId}`,
-				{ responseType: 'blob', validateStatus: (status) => status < 500 }
+				`${DEFAULT_API_URL}/report-values/export/${contactGroupId}`,
+				{
+					params: { format },
+					responseType: 'blob',
+					validateStatus: (status) => status < 500,
+				}
 			);
 			return response;
 		},

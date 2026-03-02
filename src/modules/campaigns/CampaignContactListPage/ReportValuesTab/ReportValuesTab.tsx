@@ -8,6 +8,7 @@ import {
 	Flex,
 	Group,
 	Loader,
+	Menu,
 	Stack,
 	Text,
 	Tooltip,
@@ -22,8 +23,11 @@ import {
 	type DropResult,
 } from '@hello-pangea/dnd';
 import {
+	IconChevronDown,
 	IconDownload,
 	IconEdit,
+	IconFileSpreadsheet,
+	IconFileTypeCsv,
 	IconGripVertical,
 	IconPlus,
 	IconTrash,
@@ -56,6 +60,8 @@ const DATA_TYPE_COLORS: Record<string, string> = {
 	DATE: 'cyan',
 	DATETIME: 'indigo',
 };
+
+type ReportExportFormat = 'csv' | 'xlsx';
 
 const ReportValuesTab = ({
 	contactGroupId,
@@ -149,11 +155,11 @@ const ReportValuesTab = ({
 		}
 	};
 
-	const handleExportCsv = async () => {
+	const handleExport = async (format: ReportExportFormat) => {
 		setIsExporting(true);
 		try {
 			const api = reportValuesApi();
-			const response = await api.exportCsv(contactGroupId);
+			const response = await api.exportReport(contactGroupId, format);
 
 			if (response.status === 204) {
 				notifications.show({
@@ -171,11 +177,15 @@ const ReportValuesTab = ({
 				return;
 			}
 
-			const blob = new Blob([response.data as BlobPart], { type: 'text/csv' });
+			const mimeType =
+				format === 'xlsx'
+					? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+					: 'text/csv';
+			const blob = new Blob([response.data as BlobPart], { type: mimeType });
 			const url = window.URL.createObjectURL(blob);
 			const a = document.createElement('a');
 			a.href = url;
-			a.download = `report-${contactGroupId}.csv`;
+			a.download = `report-${contactGroupId}.${format}`;
 			document.body.appendChild(a);
 			a.click();
 			a.remove();
@@ -208,15 +218,37 @@ const ReportValuesTab = ({
 				>
 					{t('reportValues.addColumn')}
 				</Button>
-				<Button
-					leftSection={<IconDownload size={16} />}
-					variant='light'
-					onClick={() => void handleExportCsv()}
-					loading={isExporting}
-					size='sm'
-				>
-					{t('reportValues.exportCsv')}
-				</Button>
+				<Menu shadow='md' width={200} position='bottom-end' withArrow>
+					<Menu.Target>
+						<Button
+							leftSection={<IconDownload size={16} />}
+							rightSection={<IconChevronDown size={14} />}
+							variant='light'
+							loading={isExporting}
+							disabled={isExporting}
+							size='sm'
+						>
+							{t('reportValues.export')}
+						</Button>
+					</Menu.Target>
+					<Menu.Dropdown>
+						<Menu.Label>{t('reportValues.exportFormatLabel')}</Menu.Label>
+						<Menu.Item
+							leftSection={<IconFileTypeCsv size={14} />}
+							onClick={() => void handleExport('csv')}
+							disabled={isExporting}
+						>
+							{t('reportValues.exportFormatCsv')}
+						</Menu.Item>
+						<Menu.Item
+							leftSection={<IconFileSpreadsheet size={14} />}
+							onClick={() => void handleExport('xlsx')}
+							disabled={isExporting}
+						>
+							{t('reportValues.exportFormatXlsx')}
+						</Menu.Item>
+					</Menu.Dropdown>
+				</Menu>
 			</Group>
 
 			{columns.length === 0 ? (
