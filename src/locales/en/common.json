@@ -137,6 +137,7 @@
 	"sessionExpiration": {
 		"title": "Session Expiring Soon",
 		"message": "Your session is about to expire, please update your session.",
+		"timer": "{{time}} remaining",
 		"confirm": "Update Session",
 		"cancel": "No"
 	}

@@ -137,6 +137,7 @@
 	"sessionExpiration": {
 		"title": "Sesión por expirar",
 		"message": "Tu sesión está a punto de expirar, por favor actualiza tu sesión.",
+		"timer": "{{time}} restante",
 		"confirm": "Actualizar sesión",
 		"cancel": "No"
 	}

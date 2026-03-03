@@ -2,11 +2,11 @@ import { useEffect, useRef } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import dayjs from 'dayjs';
 import { modals } from '@mantine/modals';
-import { Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { refreshAccessToken } from '~/api/authApi';
 import { useSessionStore } from '~/stores/sessionStore';
 import { logout } from '~/utils/logout';
+import { SessionExpiringContent } from '~/components/SessionExpiringContent/SessionExpiringContent';
 
 const ACCESS_TOKEN_KEY = 'accessToken';
 const REFRESH_TOKEN_KEY = 'refreshToken';
@@ -36,9 +36,22 @@ export function useSessionExpirationWatcher() {
 
 				isModalOpenRef.current = true;
 
-				modals.openConfirmModal({
+				let currentModalId: string;
+
+				const handleExpire = () => {
+					modals.close(currentModalId);
+					isModalOpenRef.current = false;
+					logout('/login', { reason: 'expired' });
+				};
+
+				currentModalId = modals.openConfirmModal({
 					title: t('sessionExpiration.title'),
-					children: <Text size='sm'>{t('sessionExpiration.message')}</Text>,
+					children: (
+						<SessionExpiringContent
+							initialSeconds={remainingSeconds}
+							onExpire={handleExpire}
+						/>
+					),
 					labels: {
 						confirm: t('sessionExpiration.confirm'),
 						cancel: t('sessionExpiration.cancel'),
