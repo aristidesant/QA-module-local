@@ -122,6 +122,17 @@
 			"title": "Resumen de la conversación",
 			"description": "Generado automáticamente a partir de la transcripción de la llamada"
 		},
+		"capturedVariables": {
+			"title": "Variables capturadas",
+			"description": "Valores analíticos de esta conversación.",
+			"empty": "No se encontraron variables capturadas para esta conversación.",
+			"notCaptured": "No fue capturado",
+			"invalidValue": "Valor inválido",
+			"rationaleTooltip": "Ver rationale",
+			"noRationale": "No hay rationale disponible",
+			"count_one": "{{count}} variable",
+			"count_other": "{{count}} variables"
+		},
 		"downloadTranscript": "Descargar transcripción",
 		"notifications": {
 			"exportSuccess": "Exportación exitosa",

@@ -34,6 +34,7 @@ import styles from './ConversationOverview.module.css';
 import ConversationPlayer from '../ConversationPlayer';
 import ConversationDisposition from '../ConversationDisposition';
 import RightSectionCard from '~/components/RightSectionCard';
+import ConversationCapturedVariables from '../ConversationCapturedVariables';
 import { useTranslation } from 'react-i18next';
 
 interface ConversationOverviewProps {
@@ -144,6 +145,8 @@ export function ConversationOverview({
 
 	const transcriptSummary =
 		transcriptContent?.analysis?.transcript_summary || '';
+	const capturedVariables =
+		transcriptContent?.analysis?.data_collection_results;
 
 	const { icon: StatusIcon, color: statusIconColor } =
 		getStatusIcon(displayStatus);
@@ -350,7 +353,8 @@ export function ConversationOverview({
 						</Button>
 					)}
 				</RightSectionCard>
-			)}{' '}
+			)}
+			<ConversationCapturedVariables variables={capturedVariables} />
 			<ConversationPlayer
 				voiceFile={conversation?.voiceFile}
 				title={t('player.title')}
