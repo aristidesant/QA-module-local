@@ -10,6 +10,12 @@
 	width: 100%;
 	border-right: none;
 	padding: 1.5rem 1rem;
+	transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebarCollapsed {
+	padding: 1.5rem 0.5rem;
+	align-items: center;
 }
 
 .logoWrapper {
@@ -91,6 +97,32 @@
 	background: var(--mantine-color-gray-4);
 }
 
+.menuItemCollapsed {
+	justify-content: center;
+	padding: 12px;
+	gap: 0;
+}
+
+.menuItemCollapsed:hover {
+	border-radius: 8px;
+	margin-right: 0;
+	padding-right: 12px;
+}
+
+.menuItemCollapsed:hover::after {
+	display: none;
+}
+
+.menuItemCollapsed.menuItemSelected {
+	border-radius: 8px;
+	margin-right: 0;
+	padding-right: 12px;
+}
+
+.menuItemCollapsed.menuItemSelected::after {
+	display: none;
+}
+
 .menuItemSelected {
 	background: var(--mantine-color-blue-0);
 	color: var(--mantine-primary-color-filled);
@@ -135,4 +167,8 @@
 	background: var(--mantine-color-gray-0);
 	display: grid;
 	gap: 4px;
+}
+
+.bottomSection {
+	margin-top: auto;
 }

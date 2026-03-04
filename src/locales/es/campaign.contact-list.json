@@ -296,6 +296,71 @@
 			}
 		}
 	},
+	"reportValues": {
+		"addColumn": "Agregar columna",
+		"export": "Exportar",
+		"exportFormatLabel": "Selecciona formato",
+		"exportFormatCsv": "CSV",
+		"exportFormatXlsx": "XLSX",
+		"noColumns": "No hay columnas configuradas. Agrega una columna para definir la estructura del reporte.",
+		"noDataToExport": "No hay datos para exportar en esta lista de contactos.",
+		"exportError": "Error al exportar el reporte.",
+		"deleteConfirm": {
+			"title": "Eliminar columna",
+			"message": "¿Estás seguro de que quieres eliminar la columna \"{{label}}\"?",
+			"confirm": "Eliminar",
+			"cancel": "Cancelar"
+		},
+		"columns": {
+			"order": "Orden",
+			"label": "Etiqueta",
+			"key": "Clave",
+			"originType": "Origen",
+			"dataType": "Tipo de dato",
+			"actions": "Acciones"
+		},
+		"originType": {
+			"SQL": "Columna del sistema",
+			"DYNAMIC": "Campo dinámico",
+			"OBJECT": "Datos de conversación"
+		},
+		"dataType": {
+			"STRING": "Texto",
+			"NUMBER": "Número",
+			"BOOLEAN": "Sí/No",
+			"DATE": "Fecha",
+			"DATETIME": "Fecha y hora"
+		},
+		"sqlKeys": {
+			"first_name": "Nombre",
+			"last_name": "Apellido",
+			"identifier": "ID (Cédula/RNC)",
+			"identifier_type": "Tipo de ID",
+			"birth_date": "Fecha de nacimiento",
+			"address": "Dirección",
+			"phone_number": "Número de teléfono"
+		},
+		"form": {
+			"createTitle": "Agregar columna de reporte",
+			"editTitle": "Editar columna de reporte",
+			"originTypeLabel": "Tipo de origen",
+			"keyLabel": "Clave / Campo",
+			"keyPlaceholderDynamic": "p. ej. balance_deuda",
+			"keyPlaceholderObject": "p. ej. ciudad",
+			"labelLabel": "Etiqueta de columna",
+			"labelPlaceholder": "p. ej. Balance pendiente",
+			"dataTypeLabel": "Tipo de dato",
+			"orderLabel": "Orden",
+			"save": "Guardar",
+			"cancel": "Cancelar"
+		},
+		"notifications": {
+			"created": "Columna creada con éxito",
+			"updated": "Columna actualizada con éxito",
+			"deleted": "Columna eliminada con éxito",
+			"reorderError": "Error al guardar el nuevo orden"
+		}
+	},
 	"contacts": {
 		"tabs": {
 			"active": "Activos",

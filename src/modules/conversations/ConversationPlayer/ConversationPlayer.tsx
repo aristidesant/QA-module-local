@@ -600,7 +600,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 							disabled={reuploadAudioMutation.isPending}
 							aria-label={t('player.retryLabel')}
 						>
-							{t('player.retryLabel')}
+							{t('player.retryLabel')}22
 						</Button>
 					</Stack>
 				)}

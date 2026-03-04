@@ -20,6 +20,7 @@ import {
 	IconPlayerPause,
 	IconPlayerPlay,
 	IconRefresh,
+	IconTable,
 	IconUsers,
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
@@ -46,6 +47,7 @@ import ContactListMetrics from './ContactListMetrics';
 import ConversationsList from '~/modules/conversations/ConversationsList';
 import ConversationDetails from '~/modules/conversations/ConversationDetails';
 import FaultyPhonesAlert from './ContactGroupContactsTable/FaultyPhonesAlert';
+import ReportValuesTab from './ReportValuesTab/ReportValuesTab';
 import { getQueueStatusConfig } from '~/modules/campaigns/CampaignsForm/ContactSection/ContactList/queueStatusConfig';
 import { timeAgo } from '~/utils/dateUtils';
 
@@ -375,6 +377,9 @@ const CampaignContactListPage = () => {
 							{t('tabs.contacts')}
 						</Tabs.Tab>
 					)}
+					<Tabs.Tab value='report' leftSection={<IconTable size={16} />}>
+						{t('tabs.report')}
+					</Tabs.Tab>
 				</Tabs.List>
 
 				<Tabs.Panel value='overview' mb='md'>
@@ -437,6 +442,17 @@ const CampaignContactListPage = () => {
 						</SectionCard>
 					</Tabs.Panel>
 				)}
+				<Tabs.Panel value='report' mb='md'>
+					<SectionCard
+						title={t('tabs.report')}
+						description={t('tabs.reportDesc')}
+					>
+						<ReportValuesTab
+							contactGroupId={contactGroupIdNumber}
+							campaignId={campaignId ? Number(campaignId) : 0}
+						/>
+					</SectionCard>
+				</Tabs.Panel>
 			</Tabs>
 		</ContentContainer>
 	);
