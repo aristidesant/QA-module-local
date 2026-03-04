@@ -84,6 +84,8 @@ Design quality is mandatory: clean, modern, production-ready, light mode first.
 - Keep hover states stable (no layout shift).
 - Provide clear loading and error states.
 - Avoid shadows, gradients, and 3D effects.
+- Avoid flat, boring forms: group related fields into clear visual sections
+  (e.g. Basic Info, Configuration, Advanced) with explicit hierarchy.
 
 ### Shared UI primitives
 

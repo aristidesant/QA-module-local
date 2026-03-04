@@ -3,7 +3,8 @@
 	"description": "Gestione categorías de campañas, objetivos, esquemas y resultados",
 	"tabs": {
 		"setup": "Configuración de Campaña",
-		"outcomes": "Resultados"
+		"outcomes": "Resultados",
+		"customVariables": "Variables Personalizadas"
 	},
 	"setup": {
 		"catalog": "Catálogo",
@@ -323,6 +324,173 @@
 			"noResultsFiltersDescription": "Intente ajustar su búsqueda o filtros",
 			"clearFilters": "Limpiar filtros",
 			"getStarted": "Comience creando su primer esquema de campaña"
+		}
+	},
+	"customVariables": {
+		"catalog": "Catálogo de Variables Personalizadas",
+		"groups": {
+			"label": "Grupos",
+			"title": "Grupos de Variables",
+			"description": "Administre plantillas de variables personalizadas y su alcance.",
+			"create": "Crear Grupo",
+			"edit": "Editar Grupo",
+			"sectionCardDescription": "Las plantillas pueden ser globales, del cliente o clones asociados a campañas.",
+			"filters": {
+				"searchPlaceholder": "Buscar grupos por nombre..."
+			},
+			"pagination": {
+				"itemLabel": "grupos"
+			},
+			"table": {
+				"headers": {
+					"name": "Grupo",
+					"campaignId": "ID Campaña",
+					"sourceTemplateId": "Plantilla Origen",
+					"actions": "Acciones"
+				},
+				"actions": {
+					"select": "Seleccionar grupo",
+					"edit": "Editar grupo",
+					"delete": "Eliminar grupo",
+					"clone": "Clonar grupo",
+					"assignCampaign": "Asignar a campaña"
+				}
+			},
+			"badges": {
+				"global": "Global",
+				"campaignBound": "Campaña",
+				"cloned": "Clonado",
+				"selected": "Seleccionado"
+			},
+			"empty": {
+				"title": "No se encontraron grupos de variables",
+				"description": "Comience creando su primer grupo de variables."
+			},
+			"noResults": "No hay grupos que coincidan con su búsqueda",
+			"noResultsDescription": "Intente otro término o limpie los filtros.",
+			"assignCampaignTitle": "Asignar Grupo a Campaña",
+			"assignCampaignDescription": "Esto creará un clon independiente asociado a la campaña seleccionada.",
+			"form": {
+				"name": {
+					"label": "Nombre del grupo",
+					"placeholder": "Ingrese el nombre del grupo"
+				},
+				"campaign": {
+					"label": "Campaña",
+					"placeholder": "Seleccione una campaña"
+				},
+				"actions": {
+					"create": "Crear",
+					"update": "Actualizar",
+					"assignCampaign": "Asignar a Campaña"
+				},
+				"validation": {
+					"nameRequired": "El nombre del grupo es obligatorio"
+				}
+			},
+			"notifications": {
+				"createSuccess": "Grupo creado exitosamente",
+				"createError": "Error al crear el grupo",
+				"updateSuccess": "Grupo actualizado exitosamente",
+				"updateError": "Error al actualizar el grupo",
+				"deleteSuccess": "Grupo eliminado exitosamente",
+				"deleteError": "Error al eliminar el grupo",
+				"cloneSuccess": "Grupo clonado exitosamente",
+				"cloneError": "Error al clonar el grupo",
+				"assignSuccess": "Grupo asignado a campaña exitosamente",
+				"assignError": "Error al asignar el grupo a la campaña"
+			}
+		},
+		"variables": {
+			"label": "Variables",
+			"title": "Variables de Plantilla",
+			"description": "Administre las variables dentro de la plantilla seleccionada.",
+			"create": "Crear Variable",
+			"edit": "Editar Variable",
+			"sectionCardDescription": "Primero seleccione un grupo y luego administre sus variables.",
+			"templateSelect": {
+				"label": "Plantilla de grupo",
+				"placeholder": "Seleccione un grupo"
+			},
+			"emptySelectTemplate": {
+				"title": "Seleccione un grupo primero",
+				"description": "Elija una plantilla de grupo para listar y administrar variables."
+			},
+			"noResults": "No se encontraron variables",
+			"noResultsDescription": "Cree su primera variable para este grupo.",
+			"templateHint": "Trabajando sobre la plantilla #{{templateId}}",
+			"table": {
+				"headers": {
+					"label": "Etiqueta",
+					"name": "Variable",
+					"categoryId": "ID Categoría",
+					"type": "Tipo",
+					"valueType": "Tipo de Valor",
+					"actions": "Acciones"
+				},
+				"actions": {
+					"edit": "Editar variable",
+					"delete": "Eliminar variable"
+				}
+			},
+			"form": {
+				"label": {
+					"label": "Etiqueta",
+					"placeholder": "Ingrese la etiqueta de la variable"
+				},
+				"category": {
+					"label": "Categoría (opcional)",
+					"placeholder": "Seleccione categoría"
+				},
+				"value": {
+					"typeLabel": "Tipo de esquema",
+					"typePlaceholder": "ej. string",
+					"descriptionLabel": "Descripción",
+					"descriptionPlaceholder": "Describa esta variable",
+					"enumLabel": "Valores enum",
+					"enumPlaceholder": "Agregue valores permitidos",
+					"valueTypeLabel": "Tipo de valor",
+					"dynamicVariableLabel": "Variable dinámica",
+					"dynamicVariablePlaceholder": "ej. {{contact.city}}",
+					"constantValueLabel": "Valor constante",
+					"constantValuePlaceholder": "Valor fijo de respaldo",
+					"isSystemProvidedLabel": "Provista por el sistema",
+					"typeOptions": {
+						"string": "String",
+						"number": "Number",
+						"integer": "Integer",
+						"boolean": "Boolean"
+					}
+				},
+				"actions": {
+					"create": "Crear",
+					"update": "Actualizar"
+				},
+				"validation": {
+					"labelRequired": "La etiqueta es obligatoria",
+					"generatedNameInvalid": "La etiqueta debe contener al menos una letra o número",
+					"typeRequired": "El tipo de esquema es obligatorio"
+				},
+				"sections": {
+					"basicInfo": "Información Básica",
+					"llmSchema": "Esquema de Extracción LLM",
+					"enumValues": "Valores Enum (opcional)"
+				},
+				"hints": {
+					"description": "Este campo se envía al LLM y debe describir en detalle cómo extraer el valor desde la transcripción.",
+					"enum": "Agregue valores predefinidos que el LLM puede seleccionar. Si no se agregan, puede devolver cualquier valor válido."
+				},
+				"identifierPreview": "Identificador (autogenerado)",
+				"identifierEmpty": "--"
+			},
+			"notifications": {
+				"createSuccess": "Variable creada exitosamente",
+				"createError": "Error al crear la variable",
+				"updateSuccess": "Variable actualizada exitosamente",
+				"updateError": "Error al actualizar la variable",
+				"deleteSuccess": "Variable eliminada exitosamente",
+				"deleteError": "Error al eliminar la variable"
+			}
 		}
 	}
 }

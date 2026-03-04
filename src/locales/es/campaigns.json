@@ -466,14 +466,34 @@
 				"close": "Cerrar panel"
 			},
 			"edge": {
+				"title": "Condición de la conexión",
+				"description": "Revisa los detalles de esta transición.",
+				"helper": "Edita las condiciones desde la etiqueta de la conexión en el lienzo.",
+				"notFound": "Conexión no encontrada.",
+				"notConfigured": "Sin configurar",
 				"configure": "Configurar condición",
-				"bothLabel": "{{forward}} / {{backward}}",
-				"conditions": {
-					"unconditional": "Incondicional",
-					"expression": "Condición de expresión",
-					"resultSuccess": "Resultado: éxito",
-					"resultFailure": "Resultado: fallo"
-				}
+				"transitionType": "Tipo de transición",
+				"selectConditionType": "Selecciona el tipo de condición",
+				"types": {
+					"none": "Ninguna",
+					"unconditional": "Sin condición",
+					"llm": "Condición LLM",
+					"result": "Condición de resultado",
+					"expression": "Expresión"
+				},
+				"label": "Etiqueta",
+				"labelPlaceholder": "Etiqueta opcional para esta condición",
+				"llmCondition": "Condición LLM",
+				"llmConditionPlaceholder": "Describe la condición para que el LLM evalúe (ej: \"usuario confirmó su identidad\")",
+				"resultType": "Resultado de la ejecución de la herramienta",
+				"selectResult": "Selecciona el tipo de resultado",
+				"results": {
+					"success": "Éxito",
+					"failure": "Fallo"
+				},
+				"expressionNote": "Constructor de expresiones próximamente",
+				"forward": "Adelante",
+				"backward": "Atrás"
 			},
 			"forms": {
 				"agent": {
@@ -725,7 +745,7 @@
 				"edges": {
 					"helper": "Configura el orden en que se evaluan los bordes salientes. Edita las etiquetas en el lienzo.",
 					"defaultLabel": "Condicion sin nombre",
-					"target": "\u2192 {{target}}",
+					"target": "→ {{target}}",
 					"empty": "Aun no hay bordes salientes."
 				},
 				"invalidNode": "Este nodo no se puede configurar aqui."
@@ -737,36 +757,6 @@
 				"loading": "Cargando herramientas...",
 				"empty": "No hay herramientas disponibles.",
 				"error": "No se pudieron cargar las herramientas."
-			},
-			"edge": {
-				"title": "Condición de la conexión",
-				"description": "Revisa los detalles de esta transición.",
-				"helper": "Edita las condiciones desde la etiqueta de la conexión en el lienzo.",
-				"notFound": "Conexión no encontrada.",
-				"notConfigured": "Sin configurar",
-				"configure": "Configurar condición",
-				"transitionType": "Tipo de transición",
-				"selectConditionType": "Selecciona el tipo de condición",
-				"types": {
-					"none": "Ninguna",
-					"unconditional": "Sin condición",
-					"llm": "Condición LLM",
-					"result": "Condición de resultado",
-					"expression": "Expresión"
-				},
-				"label": "Etiqueta",
-				"labelPlaceholder": "Etiqueta opcional para esta condición",
-				"llmCondition": "Condición LLM",
-				"llmConditionPlaceholder": "Describe la condición para que el LLM evalúe (ej: \"usuario confirmó su identidad\")",
-				"resultType": "Resultado de la ejecución de la herramienta",
-				"selectResult": "Selecciona el tipo de resultado",
-				"results": {
-					"success": "Éxito",
-					"failure": "Fallo"
-				},
-				"expressionNote": "Constructor de expresiones próximamente",
-				"forward": "Adelante",
-				"backward": "Atrás"
 			},
 			"nodeMenu": {
 				"subagent": "Subagente",
@@ -845,7 +835,10 @@
 			"empty": "Aún no hay variables configuradas. Agrega tu primera variable para comenzar a recolectar datos de analytics.",
 			"variableCardTitle": "Variable",
 			"actions": {
-				"addVariable": "Agregar variable"
+				"addVariable": "Agregar variable",
+				"importVariable": "Importar variable",
+				"saveToGroup": "Guardar en grupo",
+				"saveAllToGroup": "Guardar todo en grupo"
 			},
 			"info": {
 				"title": "Captura automática de conversación",
@@ -884,16 +877,202 @@
 				"identifier": "Identificador",
 				"type": "Tipo de dato",
 				"description": "Descripción",
+				"descriptionTooltipLabel": "Descripción de la variable",
+				"descriptionEmpty": "No hay descripción disponible",
+				"descriptionIconAria": "Ver descripción de la variable",
 				"enum": "Enum",
 				"enumCount": "Enum ({{count}})",
 				"systemProvided": "Sistema",
 				"yes": "Sí",
-				"no": "No"
+				"no": "No",
+				"source": "Origen",
+				"sources": {
+					"manual": "Manual",
+					"customVariable": "Variable personalizada"
+				}
 			},
 			"editor": {
 				"title": "Detalle de variable",
 				"description": "Selecciona y edita una variable desde la tabla.",
 				"stringHint": "Para campos string, los enums ayudan a restringir la salida del modelo a valores validos."
+			},
+			"saveToGroup": {
+				"title": "Guardar Variable en Grupo",
+				"description": "Cree una nueva variable personalizada en el grupo seleccionado usando esta definición de analytics.",
+				"sections": {
+					"identity": "Identidad de la Variable",
+					"destination": "Destino"
+				},
+				"fields": {
+					"label": "Etiqueta",
+					"identifierPreview": "Identificador (técnico)",
+					"group": "Grupo",
+					"category": "Categoría de Campaña (opcional)"
+				},
+				"placeholders": {
+					"label": "Ingrese una etiqueta amigable",
+					"group": "Seleccione un grupo",
+					"category": "Seleccione categoría"
+				},
+				"hints": {
+					"label": "Este es el nombre visible que verán los usuarios para la variable.",
+					"identifier": "Nombre técnico autogenerado que se envía al API."
+				},
+				"actions": {
+					"save": "Guardar en Grupo"
+				},
+				"errors": {
+					"labelRequired": "La etiqueta es obligatoria.",
+					"invalidIdentifier": "El identificador es obligatorio para guardar esta variable."
+				},
+				"notifications": {
+					"success": "Variable guardada en el grupo exitosamente",
+					"error": "Error al guardar la variable en el grupo"
+				}
+			},
+			"import": {
+				"title": "Importar Variables Personalizadas",
+				"sections": {
+					"source": "Origen",
+					"table": "Variables"
+				},
+				"fields": {
+					"group": "Grupo",
+					"search": "Buscar"
+				},
+				"placeholders": {
+					"group": "Seleccione un grupo",
+					"search": "Buscar por nombre o descripción..."
+				},
+				"actions": {
+					"import": "Importar variable",
+					"close": "Cerrar"
+				},
+				"selection": {
+					"selectedCount": "{{count}} seleccionadas",
+					"clear": "Limpiar selección",
+					"importSelected": "Importar seleccionadas",
+					"selectAllVisible": "Seleccionar todas las filas visibles",
+					"selectRow": "Seleccionar {{identifier}}"
+				},
+				"table": {
+					"label": "Variable",
+					"identifier": "Identificador",
+					"type": "Tipo",
+					"description": "Descripción",
+					"actions": "Acciones"
+				},
+				"empty": {
+					"selectGroupTitle": "Seleccione un grupo para continuar",
+					"selectGroupDescription": "Elija un grupo de variables personalizadas para listar variables disponibles.",
+					"noVariablesTitle": "No se encontraron variables",
+					"noVariablesDescription": "Este grupo no tiene variables para importar.",
+					"noSearchResultsTitle": "No se encontraron coincidencias",
+					"noSearchResultsDescription": "Pruebe otro término de búsqueda para este grupo."
+				},
+				"notifications": {
+					"summarySuccess": "Importadas: {{importedCount}}, Reemplazadas: {{replacedCount}}, Duplicadas: {{duplicatedCount}}.",
+					"summaryWarning": "Importadas: {{importedCount}}, Reemplazadas: {{replacedCount}}, Duplicadas: {{duplicatedCount}}, Omitidas: {{skippedCount}}, Inválidas: {{invalidCount}}."
+				}
+			},
+			"conflict": {
+				"title": "Conflicto de Identificador",
+				"description": "Ya existe una variable con el identificador \"{{identifier}}\". Elija cómo continuar.",
+				"confirmAction": "Confirmar",
+				"replaceTitle": "Reemplazar existente",
+				"replaceDescription": "Sobrescribir \"{{identifier}}\" con los datos de la nueva variable.",
+				"replaceWarning": "Esta acción no se puede deshacer",
+				"duplicateTitle": "Crear duplicado con sufijo",
+				"duplicateDescription": "Agregar la nueva variable con un identificador único:",
+				"actions": {
+					"replace": "Reemplazar existente",
+					"duplicate": "Crear duplicado con sufijo",
+					"cancel": "Cancelar"
+				}
+			},
+			"bulkConflict": {
+				"title": "Resolver Conflictos de Importación",
+				"description": "Algunas variables ya existen en Analytics. Elija cómo aplicar cada variable entrante.",
+				"fields": {
+					"identifier": "Identificador",
+					"existingType": "Tipo existente",
+					"incomingType": "Tipo entrante",
+					"action": "Acción",
+					"duplicatePreview": "Vista previa duplicado"
+				},
+				"actions": {
+					"replace": "Reemplazar",
+					"duplicate": "Duplicar",
+					"skip": "Omitir",
+					"applyAll": "Aplicar acción a todos los conflictos",
+					"confirm": "Aplicar importación",
+					"cancel": "Cancelar"
+				},
+				"summary": {
+					"conflictCount": "{{count}} conflicto por resolver",
+					"conflictCount_other": "{{count}} conflictos por resolver"
+				}
+			},
+			"saveAllToGroup": {
+				"title": "Guardar Data Collection en Grupo",
+				"description": "Guarde todas las variables de analytics de este data collection en un grupo de variables personalizadas.",
+				"sections": {
+					"destination": "Destino",
+					"summary": "Resumen",
+					"conflicts": "Resolución de conflictos"
+				},
+				"modes": {
+					"existingGroup": "Usar grupo existente",
+					"newGroup": "Crear grupo nuevo"
+				},
+				"fields": {
+					"group": "Grupo",
+					"newGroupName": "Nombre del nuevo grupo",
+					"policy": "Política de conflictos"
+				},
+				"placeholders": {
+					"group": "Seleccione un grupo",
+					"newGroupName": "Ingrese nombre del grupo"
+				},
+				"policies": {
+					"skip": "Omitir variables existentes",
+					"replace": "Reemplazar variables existentes",
+					"duplicate": "Crear duplicados con sufijo"
+				},
+				"summary": {
+					"total": "Filas totales",
+					"valid": "Identificadores válidos",
+					"invalid": "Identificadores inválidos",
+					"conflicts": "{{count}} conflicto detectado",
+					"conflicts_other": "{{count}} conflictos detectados"
+				},
+				"hints": {
+					"mapping": "Cada variable usa una etiqueta humanizada del identificador y guarda el nombre técnico en snake_case.",
+					"replacePermissionRequired": "Necesita permiso de actualización en Settings para reemplazar variables existentes."
+				},
+				"table": {
+					"identifier": "Identificador",
+					"currentType": "Tipo actual",
+					"incomingType": "Tipo entrante"
+				},
+				"actions": {
+					"continue": "Continuar",
+					"save": "Guardar todo",
+					"cancel": "Cancelar",
+					"back": "Volver"
+				},
+				"errors": {
+					"noValidVariables": "No se encontraron identificadores válidos en el data collection.",
+					"groupRequired": "La selección de grupo es obligatoria.",
+					"newGroupNameRequired": "El nombre del nuevo grupo es obligatorio.",
+					"replacePermissionRequired": "No tiene permiso para reemplazar variables existentes."
+				},
+				"notifications": {
+					"success": "Data collection guardado exitosamente",
+					"warning": "Data collection guardado con advertencias",
+					"error": "Error al guardar el data collection",
+					"resultSummary": "Creadas: {{createdCount}}, Actualizadas: {{updatedCount}}, Duplicadas: {{duplicatedCount}}, Omitidas: {{skippedCount}}, Inválidas: {{invalidCount}}."
+				}
 			}
 		},
 		"notifications": {
@@ -1632,7 +1811,7 @@
 		"steps": {
 			"general": {
 				"label": "General",
-				"description": "Detalles de la campaña",
+				"description": "Descripción",
 				"eyebrow": "Configuración general",
 				"title": "Esenciales de la campaña",
 				"intro": "Define cómo se presenta esta campaña a tu equipo y contactos. El nombre, la descripción y el tipo mantienen a todos alineados.",
@@ -1644,7 +1823,6 @@
 				"campaignName": "Nombre de la Campaña",
 				"campaignNameDesc": "Dale a tu campaña un nombre descriptivo",
 				"campaignNamePlaceholder": "Ingresa el nombre de la campaña",
-				"description": "Descripción",
 				"descriptionDesc": "Describe brevemente el propósito de esta campaña",
 				"descriptionPlaceholder": "Describe tu campaña",
 				"campaignType": "Tipo de Campaña",

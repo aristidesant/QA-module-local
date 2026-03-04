@@ -14,7 +14,11 @@ import {
 import { IconPlus, IconTrash, IconX } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
+import usePermissions from '~/hooks/usePermissions';
 import RightSectionCard from '~/components/RightSectionCard';
+import SaveToGroupModal from '../components/SaveToGroupModal';
 import {
 	useAnalyticsFormContext,
 	type AnalyticsDataCollectionRow,
@@ -24,8 +28,10 @@ import {
 const AnalyticsVariableEditor = () => {
 	const { t } = useTranslation(['campaigns', 'common']);
 	const form = useAnalyticsFormContext();
+	const { canPerformAction } = usePermissions();
 	const [enumInputValue, setEnumInputValue] = useState('');
 	const [draft, setDraft] = useState<AnalyticsDataCollectionRow | null>(null);
+	const [saveToGroupOpened, setSaveToGroupOpened] = useState(false);
 
 	const selectedIndex = useMemo(
 		() =>
@@ -35,6 +41,10 @@ const AnalyticsVariableEditor = () => {
 
 	const selectedRow =
 		selectedIndex >= 0 ? form.values.rows[selectedIndex] : null;
+	const canSaveToGroup = canPerformAction(
+		ModuleEnum.SETTINGS,
+		PermissionEnum.CREATE
+	);
 
 	useEffect(() => {
 		setDraft(
@@ -142,6 +152,7 @@ const AnalyticsVariableEditor = () => {
 			...draft,
 			isNew: false,
 			enum: draft.type === 'string' ? (draft.enum ?? []) : [],
+			source: draft.source ?? 'manual',
 		});
 	};
 
@@ -299,6 +310,17 @@ const AnalyticsVariableEditor = () => {
 				</Text>
 
 				<Group justify='flex-end' gap='xs'>
+					{canSaveToGroup && (
+						<Button
+							size='sm'
+							variant='light'
+							color='grape'
+							onClick={() => setSaveToGroupOpened(true)}
+							disabled={hasIdentifierError}
+						>
+							{t('form.analytics.actions.saveToGroup', { ns: 'campaigns' })}
+						</Button>
+					)}
 					<Button size='sm' variant='default' onClick={handleCancel}>
 						{t('actions.cancel', { ns: 'common' })}
 					</Button>
@@ -311,6 +333,13 @@ const AnalyticsVariableEditor = () => {
 					</Button>
 				</Group>
 			</Stack>
+
+			<SaveToGroupModal
+				opened={saveToGroupOpened}
+				onClose={() => setSaveToGroupOpened(false)}
+				row={draft}
+				onSaved={() => setSaveToGroupOpened(false)}
+			/>
 		</RightSectionCard>
 	);
 };
