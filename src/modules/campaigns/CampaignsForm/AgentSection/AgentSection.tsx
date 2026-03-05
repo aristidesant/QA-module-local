@@ -1,12 +1,17 @@
+import type { ReactNode } from 'react';
 import { Stack } from '@mantine/core';
 import CampaignConfigurationBasic from './CampaignConfigurationBasic/CampaignConfigurationBasic';
 import CampaignConfigurationPrompt from './CampaignConfigurationPrompt/CampaignConfigurationPrompt';
 import CampaignConfigurationPredefinedParams from './CampaignConfigurationPredefinedParams';
 
-const AgentSection: React.FC = () => {
+interface AgentSectionProps {
+	headerActions?: ReactNode;
+}
+
+const AgentSection: React.FC<AgentSectionProps> = ({ headerActions }) => {
 	return (
 		<Stack>
-			<CampaignConfigurationPrompt />
+			<CampaignConfigurationPrompt headerActions={headerActions} />
 			<CampaignConfigurationBasic />
 			<CampaignConfigurationPredefinedParams />
 			{/* <CampaignConfigurationTemperatureControl /> */}

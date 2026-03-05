@@ -414,7 +414,6 @@ const ReportValuesTab = ({
 			<ReportValueFormModal
 				opened={modalOpened}
 				onClose={closeModal}
-				contactGroupId={contactGroupId}
 				campaignId={campaignId}
 				reportValue={editTarget}
 				existingColumns={columns}

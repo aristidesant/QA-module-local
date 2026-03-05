@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { type ReactNode, useCallback, useState } from 'react';
 import { Badge, Button, Group, Stack, Text } from '@mantine/core';
 import { IconBrain, IconPencil } from '@tabler/icons-react';
 import { useCampaignFormContext } from '../../../campaignFormFunctions';
@@ -8,7 +8,13 @@ import styles from './CampaignConfigurationPrompt.module.css';
 // History modal removed from this component; it's used elsewhere now.
 import CampaignAgentPromptEditModal from './CampaignAgentPromptEditModal';
 
-const CampaignConfigurationPrompt: React.FC = () => {
+interface CampaignConfigurationPromptProps {
+	headerActions?: ReactNode;
+}
+
+const CampaignConfigurationPrompt: React.FC<
+	CampaignConfigurationPromptProps
+> = ({ headerActions }) => {
 	const { t } = useTranslation(['campaigns', 'campaign.detail', 'common']);
 	const form = useCampaignFormContext();
 	const [editModalOpen, setEditModalOpen] = useState(false);
@@ -33,6 +39,7 @@ const CampaignConfigurationPrompt: React.FC = () => {
 				padding='md'
 				headerActions={
 					<Group gap='xs'>
+						{headerActions}
 						<Button
 							size='xs'
 							variant='light'

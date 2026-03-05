@@ -28,7 +28,7 @@ import {
 	useUpdateReportValue,
 } from '~/queries/reportValuesQueries';
 import { useGetCampaign } from '~/queries/campaignsQueries';
-import { useGetContactVariableDataSchema } from '~/queries/contactVariableDataQueries';
+import { useGetLatestSchemaByCampaignId } from '~/queries/campaignContactSchemasQueries';
 import {
 	getDataCollectionFromAgentConfig,
 	type DataCollectionItem,
@@ -145,7 +145,6 @@ interface ReportValueFormModalProps {
 	opened: boolean;
 	onClose: () => void;
 	campaignId: number;
-	contactGroupId?: number;
 	reportValue?: ReportValue;
 	existingColumns?: ReportValue[];
 }
@@ -163,7 +162,6 @@ const ReportValueFormModal = ({
 	opened,
 	onClose,
 	campaignId,
-	contactGroupId,
 	reportValue,
 	existingColumns = [],
 }: ReportValueFormModalProps) => {
@@ -179,16 +177,16 @@ const ReportValueFormModal = ({
 		String(campaignId)
 	);
 
-	// Fetch dynamic schema fields by contact group ID (optional — falls back to free-text if absent)
-	const { data: contactVariableDataFields, isLoading: isSchemasLoading } =
-		useGetContactVariableDataSchema(contactGroupId ?? 0, opened);
+	// Fetch latest dynamic schema fields by campaign ID (optional — falls back to free-text if absent)
+	const { data: latestSchema, isLoading: isSchemasLoading } =
+		useGetLatestSchemaByCampaignId(campaignId, opened);
 
 	// ── Derived data ──────────────────────────────────────────
 
 	/** Schema fields from the contact variable data schema */
 	const mergedDynamicFields = useMemo<CampaignContactSchemaField[]>(
-		() => contactVariableDataFields ?? [],
-		[contactVariableDataFields]
+		() => latestSchema?.schemaFields ?? [],
+		[latestSchema?.schemaFields]
 	);
 
 	/** Returns a Set of already-used keys for a given origin, excluding the record being edited */

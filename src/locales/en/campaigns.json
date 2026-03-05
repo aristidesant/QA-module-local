@@ -462,6 +462,10 @@
 			"edit": "Edit {{name}}"
 		},
 		"description": "Configure and manage your campaign settings.",
+		"settingsDrawer": {
+			"title": "Configuration",
+			"open": "Open configuration"
+		},
 		"workflow": {
 			"sidePanel": {
 				"close": "Close panel"

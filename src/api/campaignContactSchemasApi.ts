@@ -110,6 +110,18 @@ const campaignContactSchemasApi = (
 			);
 			return response.data;
 		},
+
+		/**
+		 * Get latest schema by campaign ID
+		 */
+		getLatestSchemaByCampaignId: async (
+			campaignId: number
+		): Promise<CampaignContactSchema> => {
+			const response = await axios.get<CampaignContactSchema>(
+				`${DEFAULT_API_URL}/campaign-contact-schemas/campaign/${campaignId}/latest`
+			);
+			return response.data;
+		},
 	};
 };
 

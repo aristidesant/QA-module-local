@@ -1,6 +1,6 @@
 // Refactored to use Mantine's useForm for all form state and validation
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	Stack,
 	LoadingOverlay,
@@ -8,6 +8,7 @@ import {
 	ActionIcon,
 	Tooltip,
 	Group,
+	Drawer,
 } from '@mantine/core';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -40,7 +41,7 @@ import ReportValuesSection from './ReportValuesSection/ReportValuesSection';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { CampaignStatus } from '~/models/CampaignStatus';
 import { modals } from '@mantine/modals';
-import { IconCalculator, IconEye } from '@tabler/icons-react';
+import { IconCalculator, IconEye, IconSettings } from '@tabler/icons-react';
 import SchedulerCalculator from './ParametersSection/SchedulerCalculator';
 import FormSaveButton from '~/components/FormSaveButton';
 import CampaignSyncButton from './components/CampaignSyncButton';
@@ -62,17 +63,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	const { selectedTab, rightComponent, resetView } = useCampaignsStore(
 		(state) => state
 	);
-
-	// Determine the right section based on selected tab
-	// For 'general' and 'agents' tabs, render fixed right panels directly
-	const effectiveRightSection =
-		selectedTab === 'general' ? (
-			<GeneralSectionRightPanel />
-		) : selectedTab === 'agents' ? (
-			<AgentSectionRightPanel />
-		) : (
-			rightComponent
-		);
+	const [isSettingsDrawerOpen, setIsSettingsDrawerOpen] = useState(false);
 	const { mutateAsync: createCampaign, isPending: isCreating } =
 		useCreateCampaign();
 	const { mutateAsync: updateCampaign, isPending: isUpdating } =
@@ -183,6 +174,26 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			resetView();
 		};
 	}, []);
+
+	useEffect(() => {
+		setIsSettingsDrawerOpen(false);
+	}, [selectedTab]);
+
+	useEffect(() => {
+		if (selectedTab !== 'workflow' && selectedTab !== 'outcomes') return;
+		setIsSettingsDrawerOpen(Boolean(rightComponent));
+	}, [selectedTab, rightComponent]);
+
+	const settingsDrawerTitle = t('form.settingsDrawer.title');
+
+	const settingsDrawerContent =
+		selectedTab === 'general' ? (
+			<GeneralSectionRightPanel />
+		) : selectedTab === 'agents' ? (
+			<AgentSectionRightPanel />
+		) : selectedTab === 'workflow' || selectedTab === 'outcomes' ? (
+			rightComponent
+		) : null;
 
 	const handleSubmit = async (
 		value: Omit<Campaign, 'id' | 'createdAt' | 'updatedAt'>,
@@ -301,7 +312,6 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		<CampaignIdContext.Provider value={campaign?.id}>
 			<CampaignFormProvider form={form}>
 				<ContentContainer
-					rightSection={effectiveRightSection}
 					onBackClick={() => {
 						resetView();
 						onBack?.();
@@ -341,7 +351,20 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 							<form
 								onSubmit={form.onSubmit((values) => handleSubmit(values, true))}
 							>
-								<GeneralSection />
+								<GeneralSection
+									headerActions={
+										<Tooltip label={t('form.settingsDrawer.open')} withArrow>
+											<ActionIcon
+												size='sm'
+												variant='light'
+												onClick={() => setIsSettingsDrawerOpen(true)}
+												aria-label={t('form.settingsDrawer.open')}
+											>
+												<IconSettings size={16} />
+											</ActionIcon>
+										</Tooltip>
+									}
+								/>
 								<Box
 									pos='sticky'
 									bottom={-1}
@@ -374,7 +397,20 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 						)}
 						{selectedTab === 'agents' && (
 							<form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
-								<AgentSection />
+								<AgentSection
+									headerActions={
+										<Tooltip label={t('form.settingsDrawer.open')} withArrow>
+											<ActionIcon
+												size='sm'
+												variant='light'
+												onClick={() => setIsSettingsDrawerOpen(true)}
+												aria-label={t('form.settingsDrawer.open')}
+											>
+												<IconSettings size={16} />
+											</ActionIcon>
+										</Tooltip>
+									}
+								/>
 								<Box
 									pos='sticky'
 									bottom={-1}
@@ -536,6 +572,15 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 						)}
 					</Stack>
 				</ContentContainer>
+				<Drawer
+					opened={isSettingsDrawerOpen && Boolean(settingsDrawerContent)}
+					onClose={() => setIsSettingsDrawerOpen(false)}
+					title={settingsDrawerTitle}
+					position='right'
+					size='lg'
+				>
+					{settingsDrawerContent}
+				</Drawer>
 			</CampaignFormProvider>
 		</CampaignIdContext.Provider>
 	);
