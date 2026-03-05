@@ -57,6 +57,7 @@ export interface SelectClientRequest {
 export interface SelectClientResponse {
 	message: string;
 	accessToken?: string;
+	refreshToken?: string;
 	otpRequired?: boolean;
 	userId?: number;
 }
@@ -191,6 +192,7 @@ export interface ChangeClientRequest {
 export interface ChangeClientResponse {
 	message: string;
 	accessToken: string | null;
+	refreshToken?: string;
 	otpRequired?: boolean;
 	userId?: number;
 }
