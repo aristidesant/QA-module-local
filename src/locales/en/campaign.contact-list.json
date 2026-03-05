@@ -325,7 +325,8 @@
 		"originType": {
 			"SQL": "System column",
 			"DYNAMIC": "Dynamic field",
-			"OBJECT": "Conversation data"
+			"OBJECT": "Conversation data",
+			"METADATA": "Conversation metadata"
 		},
 		"dataType": {
 			"STRING": "Text",
@@ -350,6 +351,7 @@
 			"keyLabel": "Key / Field",
 			"keyPlaceholderDynamic": "e.g. balance_deuda",
 			"keyPlaceholderObject": "e.g. city",
+			"keyPlaceholderMetadata": "e.g. duration",
 			"labelLabel": "Column label",
 			"labelPlaceholder": "e.g. Outstanding Balance",
 			"dataTypeLabel": "Data type",
@@ -362,13 +364,16 @@
 			},
 			"emptyState": {
 				"noSchemaFields": "No schema fields found - enter the field name manually.",
-				"noDataCollectionFields": "No data collection fields configured - enter the key manually."
+				"noDataCollectionFields": "No data collection fields configured - enter the key manually.",
+				"noMetadataFields": "No metadata fields available — enter the field name manually."
 			},
 			"placeholders": {
 				"loadingSchemaFields": "Loading schema fields...",
 				"selectSchemaField": "Select a schema field",
 				"loadingConversationFields": "Loading conversation fields...",
 				"selectConversationField": "Select a conversation field",
+				"loadingMetadataFields": "Loading metadata fields...",
+				"selectMetadataField": "Select a metadata field",
 				"selectSourceFirst": "Select a source first"
 			},
 			"sections": {
@@ -378,12 +383,14 @@
 			"originSub": {
 				"SQL": "Contact fields",
 				"DYNAMIC": "Schema variables",
-				"OBJECT": "Agent-collected fields"
+				"OBJECT": "Agent-collected fields",
+				"METADATA": "Call metadata fields"
 			},
 			"keyFieldLabels": {
 				"SQL": "Contact Field",
 				"DYNAMIC": "Schema Variable",
-				"OBJECT": "Conversation Key"
+				"OBJECT": "Conversation Key",
+				"METADATA": "Metadata Field"
 			},
 			"headerEyebrow": {
 				"new": "New column",

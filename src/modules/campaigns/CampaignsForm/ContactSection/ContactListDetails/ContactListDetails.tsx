@@ -267,6 +267,9 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 
 	const disableToggle = contactGroup.queueStatus === 'COMPLETED';
 	const disableCleanQueue = contactGroup.queueStatus === 'COMPLETED';
+	const isArchiveBlockedByQueueStatus = ['RUNNING', 'PAUSED'].includes(
+		(contactGroup.queueStatus ?? '').toUpperCase()
+	);
 
 	const handleEdit = () => {
 		if (!canEditContactList) {
@@ -306,6 +309,19 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 
 		// Deactivate flow
 		if (contactGroup.isActive) {
+			if (isArchiveBlockedByQueueStatus) {
+				notifications.show({
+					title: t('form.contacts.details.notifications.archiveBlocked.title'),
+					message: t(
+						'form.contacts.details.notifications.archiveBlocked.message'
+					),
+					color: 'orange',
+					icon: <IconInfoCircle size={18} />,
+					autoClose: 7000,
+				});
+				return;
+			}
+
 			modals.openConfirmModal({
 				modalId: 'toggle-contact-status',
 				title: t('form.contacts.details.dialogs.deactivate.title'),

@@ -12,7 +12,15 @@ export interface GetAllUsersParams {
 	limit?: number;
 	search?: string;
 	status?: string;
-	sortBy?: 'username' | 'email' | 'createdAt' | 'updatedAt';
+	sortBy?:
+		| 'id'
+		| 'username'
+		| 'email'
+		| 'firstName'
+		| 'lastName'
+		| 'status'
+		| 'createdAt'
+		| 'updatedAt';
 	sortOrder?: 'ASC' | 'DESC';
 }
 

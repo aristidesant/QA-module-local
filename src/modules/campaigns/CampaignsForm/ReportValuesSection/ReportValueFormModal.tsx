@@ -14,6 +14,7 @@ import { notifications } from '@mantine/notifications';
 import {
 	IconBraces,
 	IconDatabase,
+	IconFileAnalytics,
 	IconInfoCircle,
 	IconMessages,
 } from '@tabler/icons-react';
@@ -23,16 +24,13 @@ import {
 	type ReportValue,
 } from '~/models/ReportValue';
 import type { CampaignContactSchemaField } from '~/models/CampaignContactSchemaModel';
-import {
-	useCreateReportValue,
-	useUpdateReportValue,
-} from '~/queries/reportValuesQueries';
 import { useGetCampaign } from '~/queries/campaignsQueries';
 import { useGetLatestSchemaByCampaignId } from '~/queries/campaignContactSchemasQueries';
 import {
 	getDataCollectionFromAgentConfig,
 	type DataCollectionItem,
 } from '~/modules/campaigns/CampaignsForm/AnalyticsSection/analyticsFormContext';
+import { useGetClientConfig } from '~/queries/clientConfigQueries';
 import { getErrorMessage } from '~/utils/httpClient';
 import styles from './ReportValueFormModal.module.css';
 
@@ -67,13 +65,41 @@ const SQL_TYPE_MAP: Record<string, ReportValueDataType> = {
 	phone_number: ReportValueDataType.STRING,
 };
 
+const SUPPORTED_DATA_TYPES: ReportValueDataType[] = [
+	ReportValueDataType.STRING,
+	ReportValueDataType.NUMBER,
+	ReportValueDataType.BOOLEAN,
+	ReportValueDataType.DATE,
+	ReportValueDataType.DATETIME,
+];
+
+const SUPPORTED_DATA_TYPE_SET = new Set<ReportValueDataType>(
+	SUPPORTED_DATA_TYPES
+);
+
+const normalizeSupportedDataType = (
+	dataType: ReportValueDataType | string | null | undefined,
+	fallback: ReportValueDataType | null = ReportValueDataType.STRING
+): ReportValueDataType | null => {
+	if (
+		typeof dataType === 'string' &&
+		SUPPORTED_DATA_TYPE_SET.has(dataType as ReportValueDataType)
+	) {
+		return dataType as ReportValueDataType;
+	}
+
+	return fallback;
+};
+
 // ─── Type-inference helpers ────────────────────────────────────
 
 /** CampaignContactSchemaField.type → ReportValueDataType */
 const schemaTypeToDataType = (
 	type: CampaignContactSchemaField['type']
 ): ReportValueDataType | null => {
-	switch (type) {
+	const normalizedType = String(type).toLowerCase();
+
+	switch (normalizedType) {
 		case 'string':
 		case 'email':
 		case 'phone':
@@ -85,6 +111,9 @@ const schemaTypeToDataType = (
 			return ReportValueDataType.BOOLEAN;
 		case 'date':
 			return ReportValueDataType.DATE;
+		case 'datetime':
+		case 'timestamp':
+			return ReportValueDataType.DATETIME;
 		default:
 			return null;
 	}
@@ -94,7 +123,9 @@ const schemaTypeToDataType = (
 const dcTypeToDataType = (
 	type: DataCollectionItem['type']
 ): ReportValueDataType | null => {
-	switch (type) {
+	const normalizedType = String(type).toLowerCase();
+
+	switch (normalizedType) {
 		case 'string':
 			return ReportValueDataType.STRING;
 		case 'integer':
@@ -102,6 +133,47 @@ const dcTypeToDataType = (
 			return ReportValueDataType.NUMBER;
 		case 'boolean':
 			return ReportValueDataType.BOOLEAN;
+		case 'datetime':
+		case 'timestamp':
+			return ReportValueDataType.DATETIME;
+		default:
+			return null;
+	}
+};
+
+// ─── Conversation Metadata ───────────────────────────────────
+
+interface ConversationMetadataField {
+	label: string;
+	name: string;
+	type: string;
+}
+
+const DEFAULT_METADATA_FIELDS: ConversationMetadataField[] = [
+	{ label: 'Duration', name: 'duration', type: 'number' },
+	{ label: 'Start Date', name: 'start_date', type: 'string' },
+	{ label: 'End Date', name: 'end_date', type: 'string' },
+	{ label: 'Outcome', name: 'outcome', type: 'string' },
+];
+
+const METADATA_CONFIG_KEY = 'conversation_metadata_config';
+
+/** ConversationMetadataField.type → ReportValueDataType */
+const metadataTypeToDataType = (type: string): ReportValueDataType | null => {
+	const normalizedType = String(type).toLowerCase();
+
+	switch (normalizedType) {
+		case 'string':
+			return ReportValueDataType.STRING;
+		case 'number':
+			return ReportValueDataType.NUMBER;
+		case 'boolean':
+			return ReportValueDataType.BOOLEAN;
+		case 'date':
+			return ReportValueDataType.DATE;
+		case 'datetime':
+		case 'timestamp':
+			return ReportValueDataType.DATETIME;
 		default:
 			return null;
 	}
@@ -112,7 +184,7 @@ const dcTypeToDataType = (
 const ORIGIN_OPTIONS: {
 	value: ReportValueOriginType;
 	icon: React.ReactNode;
-	nameKey: keyof { SQL: string; DYNAMIC: string; OBJECT: string };
+	nameKey: string;
 }[] = [
 	{
 		value: ReportValueOriginType.SQL,
@@ -129,6 +201,11 @@ const ORIGIN_OPTIONS: {
 		icon: <IconMessages size={20} strokeWidth={1.5} />,
 		nameKey: 'OBJECT',
 	},
+	{
+		value: ReportValueOriginType.METADATA,
+		icon: <IconFileAnalytics size={20} strokeWidth={1.5} />,
+		nameKey: 'METADATA',
+	},
 ];
 
 // ─── Contextual key field labels ───────────────────────────────
@@ -137,6 +214,7 @@ const KEY_FIELD_LABELS: Record<ReportValueOriginType, string> = {
 	[ReportValueOriginType.SQL]: 'reportValues.form.keyFieldLabels.SQL',
 	[ReportValueOriginType.DYNAMIC]: 'reportValues.form.keyFieldLabels.DYNAMIC',
 	[ReportValueOriginType.OBJECT]: 'reportValues.form.keyFieldLabels.OBJECT',
+	[ReportValueOriginType.METADATA]: 'reportValues.form.keyFieldLabels.METADATA',
 };
 
 // ─── Props & form types ────────────────────────────────────────
@@ -147,9 +225,14 @@ interface ReportValueFormModalProps {
 	campaignId: number;
 	reportValue?: ReportValue;
 	existingColumns?: ReportValue[];
+	onSubmitDraft: (
+		values: FormValues,
+		reportValue?: ReportValue
+	) => Promise<void> | void;
+	isSubmittingDraft?: boolean;
 }
 
-interface FormValues {
+export interface FormValues {
 	originType: ReportValueOriginType | '';
 	key: string;
 	label: string;
@@ -164,13 +247,13 @@ const ReportValueFormModal = ({
 	campaignId,
 	reportValue,
 	existingColumns = [],
+	onSubmitDraft,
+	isSubmittingDraft = false,
 }: ReportValueFormModalProps) => {
 	const { t } = useTranslation('campaign.contact-list');
 	const isEdit = !!reportValue;
 
-	const createMutation = useCreateReportValue(campaignId);
-	const updateMutation = useUpdateReportValue(campaignId);
-	const isPending = createMutation.isPending || updateMutation.isPending;
+	const isPending = isSubmittingDraft;
 
 	// Fetch campaign for OBJECT keys (agentConfig.dataCollection)
 	const { data: campaign, isLoading: isCampaignLoading } = useGetCampaign(
@@ -180,6 +263,10 @@ const ReportValueFormModal = ({
 	// Fetch latest dynamic schema fields by campaign ID (optional — falls back to free-text if absent)
 	const { data: latestSchema, isLoading: isSchemasLoading } =
 		useGetLatestSchemaByCampaignId(campaignId, opened);
+
+	// Fetch conversation metadata config
+	const { data: metadataConfig, isLoading: isMetadataLoading } =
+		useGetClientConfig(METADATA_CONFIG_KEY);
 
 	// ── Derived data ──────────────────────────────────────────
 
@@ -218,6 +305,34 @@ const ReportValueFormModal = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [campaign?.agentConfig, existingColumns, reportValue?.id]);
 
+	/** Conversation metadata fields — parsed from config with fallback to defaults */
+	const conversationMetadataFields = useMemo<
+		ConversationMetadataField[]
+	>(() => {
+		if (!metadataConfig?.value) return DEFAULT_METADATA_FIELDS;
+		try {
+			const parsed = JSON.parse(
+				metadataConfig.value
+			) as ConversationMetadataField[];
+			return Array.isArray(parsed) && parsed.length > 0
+				? parsed
+				: DEFAULT_METADATA_FIELDS;
+		} catch {
+			return DEFAULT_METADATA_FIELDS;
+		}
+	}, [metadataConfig]);
+
+	const metadataKeyOptions = useMemo(() => {
+		const used = usedKeysFor(ReportValueOriginType.METADATA);
+		return conversationMetadataFields
+			.filter((f) => !used.has(f.name))
+			.map((f) => ({
+				value: f.name,
+				label: `${f.label} (${f.name})`,
+			}));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [conversationMetadataFields, existingColumns, reportValue?.id]);
+
 	// ── Form ─────────────────────────────────────────────────
 
 	const form = useForm<FormValues>({
@@ -246,7 +361,7 @@ const ReportValueFormModal = ({
 					originType: reportValue.originType,
 					key: reportValue.key,
 					label: reportValue.label,
-					dataType: reportValue.dataType,
+					dataType: normalizeSupportedDataType(reportValue.dataType),
 				});
 			} else {
 				form.reset();
@@ -255,25 +370,10 @@ const ReportValueFormModal = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [opened, reportValue]);
 
-	const dataTypeOptions = [
-		{
-			value: ReportValueDataType.STRING,
-			label: t('reportValues.dataType.STRING'),
-		},
-		{
-			value: ReportValueDataType.NUMBER,
-			label: t('reportValues.dataType.NUMBER'),
-		},
-		{
-			value: ReportValueDataType.BOOLEAN,
-			label: t('reportValues.dataType.BOOLEAN'),
-		},
-		{ value: ReportValueDataType.DATE, label: t('reportValues.dataType.DATE') },
-		{
-			value: ReportValueDataType.DATETIME,
-			label: t('reportValues.dataType.DATETIME'),
-		},
-	];
+	const dataTypeOptions = SUPPORTED_DATA_TYPES.map((dataType) => ({
+		value: dataType,
+		label: t(`reportValues.dataType.${dataType}`),
+	}));
 
 	const sqlKeyOptions = SQL_KEYS.filter(
 		(k) => !usedKeysFor(ReportValueOriginType.SQL).has(k)
@@ -308,8 +408,13 @@ const ReportValueFormModal = ({
 		form.setFieldValue('key', newKey);
 		if (!newKey) return;
 
-		// Always overwrite label and dataType when a key is selected
-		form.setFieldValue('label', humanizeKey(newKey));
+		// For conversation metadata, use the config's label directly
+		if (origin === ReportValueOriginType.METADATA) {
+			const field = conversationMetadataFields.find((f) => f.name === newKey);
+			form.setFieldValue('label', field?.label ?? humanizeKey(newKey));
+		} else {
+			form.setFieldValue('label', humanizeKey(newKey));
+		}
 
 		let inferred: ReportValueDataType | null = null;
 		if (origin === ReportValueOriginType.SQL) {
@@ -321,8 +426,14 @@ const ReportValueFormModal = ({
 			const dc = getDataCollectionFromAgentConfig(campaign?.agentConfig ?? {});
 			const item = dc[newKey] as DataCollectionItem | undefined;
 			inferred = item ? dcTypeToDataType(item.type) : null;
+		} else if (origin === ReportValueOriginType.METADATA) {
+			const field = conversationMetadataFields.find((f) => f.name === newKey);
+			inferred = field ? metadataTypeToDataType(field.type) : null;
 		}
-		form.setFieldValue('dataType', inferred);
+		form.setFieldValue(
+			'dataType',
+			normalizeSupportedDataType(inferred, ReportValueDataType.STRING)
+		);
 	};
 
 	/** Handler for free-text key inputs — fires on blur to batch humanize/infer */
@@ -333,36 +444,23 @@ const ReportValueFormModal = ({
 	};
 
 	const handleSubmit = async (values: FormValues) => {
-		if (!values.originType || values.dataType === null) return;
+		if (!values.originType) return;
+
+		const normalizedDataType = normalizeSupportedDataType(
+			values.dataType,
+			ReportValueDataType.STRING
+		);
+
+		if (!normalizedDataType) return;
 
 		try {
-			if (isEdit && reportValue) {
-				await updateMutation.mutateAsync({
-					id: reportValue.id,
-					dto: {
-						originType: values.originType,
-						key: values.key,
-						label: values.label,
-						dataType: values.dataType,
-					},
-				});
-				notifications.show({
-					message: t('reportValues.notifications.updated'),
-					color: 'green',
-				});
-			} else {
-				await createMutation.mutateAsync({
-					originType: values.originType,
-					key: values.key,
-					label: values.label,
-					dataType: values.dataType,
-					campaignId,
-				});
-				notifications.show({
-					message: t('reportValues.notifications.created'),
-					color: 'green',
-				});
-			}
+			await onSubmitDraft(
+				{
+					...values,
+					dataType: normalizedDataType,
+				},
+				reportValue
+			);
 			onClose();
 		} catch (error) {
 			notifications.show({
@@ -488,6 +586,56 @@ const ReportValueFormModal = ({
 					<TextInput
 						label={label}
 						placeholder={t('reportValues.form.keyPlaceholderObject')}
+						required
+						size='sm'
+						classNames={{ input: styles.keyInput }}
+						{...form.getInputProps('key')}
+						onBlur={handleKeyTextBlur}
+					/>
+				</>
+			);
+		}
+
+		if (selectedOrigin === ReportValueOriginType.METADATA) {
+			if (isMetadataLoading) {
+				return (
+					<TextInput
+						label={label}
+						disabled
+						size='sm'
+						rightSection={<Loader size={14} />}
+						placeholder={t(
+							'reportValues.form.placeholders.loadingMetadataFields'
+						)}
+					/>
+				);
+			}
+			if (metadataKeyOptions.length > 0) {
+				return (
+					<Select
+						label={label}
+						data={metadataKeyOptions}
+						required
+						size='sm'
+						searchable
+						placeholder={t(
+							'reportValues.form.placeholders.selectMetadataField'
+						)}
+						value={form.values.key || null}
+						onChange={(v) => handleKeySelect(v, ReportValueOriginType.METADATA)}
+						error={error}
+					/>
+				);
+			}
+			return (
+				<>
+					<div className={styles.emptyState}>
+						<IconInfoCircle size={13} className={styles.emptyStateIcon} />
+						<span>{t('reportValues.form.emptyState.noMetadataFields')}</span>
+					</div>
+					<TextInput
+						label={label}
+						placeholder={t('reportValues.form.keyPlaceholderMetadata')}
 						required
 						size='sm'
 						classNames={{ input: styles.keyInput }}

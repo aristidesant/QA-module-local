@@ -1,26 +1,19 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useMemo, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
 import {
 	ActionIcon,
 	Badge,
 	Box,
 	Button,
-	Flex,
 	Group,
-	Loader,
+	Paper,
 	Stack,
 	Text,
-	Tooltip,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import {
-	DragDropContext,
-	Draggable,
-	Droppable,
-	type DropResult,
-} from '@hello-pangea/dnd';
 import {
 	IconEdit,
 	IconGripVertical,
@@ -28,20 +21,30 @@ import {
 	IconTrash,
 } from '@tabler/icons-react';
 import {
+	useCreateReportValue,
+	useBulkUpdateReportValues,
 	useGetReportColumns,
-	useUpdateReportValue,
 	useDeleteReportValue,
 } from '~/queries/reportValuesQueries';
-import type { ReportValue } from '~/models/ReportValue';
+import type {
+	BulkUpdateReportValueItemDto,
+	ReportValue,
+} from '~/models/ReportValue';
 import { getErrorMessage } from '~/utils/httpClient';
 import { CampaignIdContext } from '~/modules/campaigns/campaignFormFunctions';
 import SectionCard from '~/components/SectionCard';
-import ReportValueFormModal from '~/modules/campaigns/CampaignContactListPage/ReportValuesTab/ReportValueFormModal';
+import BaseTable from '~/components/BaseTable';
+import type { BaseTableColumnDef } from '~/components/BaseTable/BaseTable';
+import ReportValueFormModal, {
+	type FormValues as ReportValueFormValues,
+} from './ReportValueFormModal';
+import styles from './ReportValuesSection.module.css';
 
 const ORIGIN_TYPE_COLORS: Record<string, string> = {
 	SQL: 'blue',
 	DYNAMIC: 'violet',
 	OBJECT: 'teal',
+	METADATA: 'orange',
 };
 
 const DATA_TYPE_COLORS: Record<string, string> = {
@@ -52,24 +55,84 @@ const DATA_TYPE_COLORS: Record<string, string> = {
 	DATETIME: 'indigo',
 };
 
+const normalizeColumns = (items: ReportValue[]): ReportValue[] =>
+	[...items]
+		.sort((a, b) => a.order - b.order)
+		.map((item, index) => ({
+			...item,
+			format: item.format ?? null,
+			order: index,
+		}));
+
+const toComparableColumn = (item: ReportValue) => ({
+	id: item.id,
+	originType: item.originType,
+	key: item.key,
+	label: item.label,
+	dataType: item.dataType,
+	format: item.format ?? null,
+	order: item.order,
+});
+
 const ReportValuesSection = () => {
 	const { t } = useTranslation(['campaigns', 'campaign.contact-list']);
 	const campaignId = useContext(CampaignIdContext);
+	const queryClient = useQueryClient();
 
 	const [modalOpened, { open: openModal, close: closeModal }] =
 		useDisclosure(false);
 	const [editTarget, setEditTarget] = useState<ReportValue | undefined>(
 		undefined
 	);
-	const [isReordering, setIsReordering] = useState(false);
+	const [initialColumns, setInitialColumns] = useState<ReportValue[]>([]);
+	const [draftColumns, setDraftColumns] = useState<ReportValue[]>([]);
+	const [pendingDeleteIds, setPendingDeleteIds] = useState<number[]>([]);
+	const [isSavingDraft, setIsSavingDraft] = useState(false);
+	const nextTempIdRef = useRef(-1);
+	const shouldSyncFromServerRef = useRef(false);
 
-	const {
-		data: columns = [],
-		isLoading,
-		refetch,
-	} = useGetReportColumns(campaignId ?? 0);
-	const updateMutation = useUpdateReportValue(campaignId ?? 0);
-	const deleteMutation = useDeleteReportValue(campaignId ?? 0);
+	const { data: columns = [], isLoading } = useGetReportColumns(
+		campaignId ?? 0
+	);
+	const createMutation = useCreateReportValue(campaignId ?? 0, {
+		invalidateOnSuccess: false,
+	});
+	const bulkUpdateMutation = useBulkUpdateReportValues(campaignId ?? 0, {
+		invalidateOnSuccess: false,
+	});
+	const deleteMutation = useDeleteReportValue(campaignId ?? 0, {
+		invalidateOnSuccess: false,
+	});
+
+	const hasPendingChanges = useMemo(() => {
+		const initialComparable = JSON.stringify(
+			initialColumns.filter((item) => item.id > 0).map(toComparableColumn)
+		);
+		const draftComparable = JSON.stringify(
+			draftColumns.filter((item) => item.id > 0).map(toComparableColumn)
+		);
+
+		return (
+			pendingDeleteIds.length > 0 ||
+			draftColumns.some((item) => item.id < 0) ||
+			initialComparable !== draftComparable
+		);
+	}, [draftColumns, initialColumns, pendingDeleteIds]);
+
+	useEffect(() => {
+		if (isSavingDraft) {
+			return;
+		}
+
+		const normalized = normalizeColumns(columns);
+
+		if (shouldSyncFromServerRef.current || !hasPendingChanges) {
+			setInitialColumns(normalized);
+			setDraftColumns(normalized);
+			setPendingDeleteIds([]);
+			shouldSyncFromServerRef.current = false;
+		}
+	}, [columns, hasPendingChanges, isSavingDraft]);
 
 	const handleAddClick = () => {
 		setEditTarget(undefined);
@@ -99,57 +162,178 @@ const ReportValuesSection = () => {
 				}),
 			},
 			confirmProps: { color: 'red' },
-			onConfirm: async () => {
-				try {
-					await deleteMutation.mutateAsync(reportValue.id);
-					notifications.show({
-						message: t('reportValues.notifications.deleted', {
-							ns: 'campaign.contact-list',
-						}),
-						color: 'green',
-					});
-				} catch (error) {
-					notifications.show({
-						message: getErrorMessage(error),
-						color: 'red',
-					});
+			onConfirm: () => {
+				setDraftColumns((prev) =>
+					prev
+						.filter((item) => item.id !== reportValue.id)
+						.map((item, index) => ({ ...item, order: index }))
+				);
+				if (reportValue.id > 0) {
+					setPendingDeleteIds((prev) =>
+						prev.includes(reportValue.id) ? prev : [...prev, reportValue.id]
+					);
 				}
 			},
 		});
 	};
 
-	const handleDragEnd = async (result: DropResult) => {
-		if (!result.destination) return;
-		const { source, destination } = result;
-		if (source.index === destination.index) return;
+	const handleRowReorder = async (
+		sourceIndex: number,
+		destinationIndex: number
+	) => {
+		if (sourceIndex === destinationIndex) return;
+		const reordered = Array.from(draftColumns);
+		const [moved] = reordered.splice(sourceIndex, 1);
+		reordered.splice(destinationIndex, 0, moved);
+		setDraftColumns(
+			reordered.map((item, index) => ({ ...item, order: index }))
+		);
+	};
 
-		const reordered = Array.from(columns);
-		const [moved] = reordered.splice(source.index, 1);
-		reordered.splice(destination.index, 0, moved);
+	const handleSubmitDraft = (
+		values: ReportValueFormValues,
+		reportValue?: ReportValue
+	) => {
+		const normalizedDataType = values.dataType;
+		if (!values.originType || !normalizedDataType) return;
+		const originType = values.originType;
 
-		const changed = reordered
-			.map((item, idx) => ({ item, newOrder: idx }))
-			.filter(({ item, newOrder }) => item.order !== newOrder);
+		setDraftColumns((prev) => {
+			if (reportValue) {
+				return prev.map((item) =>
+					item.id === reportValue.id
+						? {
+								...item,
+								originType,
+								key: values.key,
+								label: values.label,
+								dataType: normalizedDataType,
+							}
+						: item
+				);
+			}
 
-		if (changed.length === 0) return;
+			const timestamp = new Date().toISOString();
+			return [
+				...prev,
+				{
+					id: nextTempIdRef.current--,
+					originType,
+					key: values.key,
+					label: values.label,
+					dataType: normalizedDataType,
+					format: null,
+					order: prev.length,
+					campaignId: resolvedCampaignId,
+					userId: 0,
+					clientId: 0,
+					createdAt: timestamp,
+					updatedAt: timestamp,
+					deletedAt: null,
+				},
+			];
+		});
+	};
 
-		setIsReordering(true);
+	const handleDiscardChanges = () => {
+		setDraftColumns(initialColumns);
+		setPendingDeleteIds([]);
+	};
+
+	const handleSaveChanges = async () => {
+		if (!hasPendingChanges) return;
+
+		setIsSavingDraft(true);
+		const createdItemsMap = new Map<number, ReportValue>();
+		const deletedSucceededIds: number[] = [];
+
 		try {
-			await Promise.all(
-				changed.map(({ item, newOrder }) =>
-					updateMutation.mutateAsync({ id: item.id, dto: { order: newOrder } })
-				)
-			);
-		} catch {
+			const newItems = draftColumns.filter((item) => item.id < 0);
+
+			for (const item of newItems) {
+				const created = await createMutation.mutateAsync({
+					originType: item.originType,
+					key: item.key,
+					label: item.label,
+					dataType: item.dataType,
+					order: item.order,
+					campaignId: resolvedCampaignId,
+				});
+				createdItemsMap.set(item.id, {
+					...created,
+					format: created.format ?? item.format ?? null,
+				});
+			}
+
+			const persistedColumns = draftColumns
+				.map((item) => createdItemsMap.get(item.id) ?? item)
+				.map((item, index) => ({
+					...item,
+					order: index,
+				}));
+
+			setDraftColumns(persistedColumns);
+
+			const bulkItems: BulkUpdateReportValueItemDto[] = persistedColumns
+				.filter((item) => item.id > 0)
+				.map((item) => ({
+					id: item.id,
+					originType: item.originType,
+					key: item.key,
+					label: item.label,
+					dataType: item.dataType,
+					format: item.format ?? null,
+					order: item.order,
+				}));
+
+			if (bulkItems.length > 0) {
+				await bulkUpdateMutation.mutateAsync({
+					reportValues: bulkItems,
+				});
+			}
+
+			for (const id of pendingDeleteIds) {
+				await deleteMutation.mutateAsync(id);
+				deletedSucceededIds.push(id);
+			}
+
 			notifications.show({
-				message: t('reportValues.notifications.reorderError', {
-					ns: 'campaign.contact-list',
-				}),
+				message: t('form.reportValues.notifications.saved'),
+				color: 'green',
+			});
+			const syncedColumns = persistedColumns.filter((item) => item.id > 0);
+			setInitialColumns(syncedColumns);
+			setDraftColumns(syncedColumns);
+			setPendingDeleteIds([]);
+			shouldSyncFromServerRef.current = true;
+			queryClient.setQueryData(
+				['reportColumns', 'campaign', resolvedCampaignId],
+				syncedColumns
+			);
+			void queryClient.invalidateQueries({
+				queryKey: ['reportColumns', 'campaign', resolvedCampaignId],
+			});
+		} catch (error) {
+			if (createdItemsMap.size > 0) {
+				setDraftColumns((prev) =>
+					prev
+						.map((item) => createdItemsMap.get(item.id) ?? item)
+						.map((item, index) => ({ ...item, order: index }))
+				);
+			}
+
+			if (deletedSucceededIds.length > 0) {
+				setPendingDeleteIds((prev) =>
+					prev.filter((id) => !deletedSucceededIds.includes(id))
+				);
+			}
+
+			notifications.show({
+				message: getErrorMessage(error),
 				color: 'red',
 			});
-			void refetch();
 		} finally {
-			setIsReordering(false);
+			setIsSavingDraft(false);
 		}
 	};
 
@@ -157,226 +341,212 @@ const ReportValuesSection = () => {
 		return null;
 	}
 
+	const resolvedCampaignId = campaignId;
+
+	const columnCountLabel = t('form.reportValues.count', {
+		count: draftColumns.length,
+	});
+
+	const tableColumns = useMemo<BaseTableColumnDef<ReportValue>[]>(
+		() => [
+			{
+				id: 'label',
+				header: t('reportValues.columns.label', {
+					ns: 'campaign.contact-list',
+				}),
+				meta: {
+					headerClassName: styles.labelHeader,
+					cellClassName: styles.labelColumn,
+				},
+				cell: ({ row }) => (
+					<Group gap='sm' wrap='nowrap' className={styles.labelCell}>
+						<Box className={styles.gripIcon}>
+							<IconGripVertical size={16} />
+						</Box>
+						<Text size='xs' fw={700} c='dimmed' className={styles.orderPill}>
+							{row.index + 1}
+						</Text>
+						<Box className={styles.labelContent}>
+							<Text size='sm' fw={600} className={styles.labelValue}>
+								{row.original.label}
+							</Text>
+							<Text
+								size='xs'
+								c='dimmed'
+								ff='monospace'
+								className={styles.keyValue}
+							>
+								{row.original.key}
+							</Text>
+						</Box>
+					</Group>
+				),
+			},
+			{
+				id: 'originType',
+				header: t('reportValues.columns.originType', {
+					ns: 'campaign.contact-list',
+				}),
+				meta: {
+					headerClassName: styles.originHeader,
+					cellClassName: styles.originColumn,
+				},
+				cell: ({ row }) => (
+					<Badge
+						color={ORIGIN_TYPE_COLORS[row.original.originType] ?? 'gray'}
+						variant='light'
+						size='xs'
+					>
+						{t(`reportValues.originType.${row.original.originType}`, {
+							ns: 'campaign.contact-list',
+						})}
+					</Badge>
+				),
+			},
+			{
+				id: 'dataType',
+				header: t('reportValues.columns.dataType', {
+					ns: 'campaign.contact-list',
+				}),
+				meta: {
+					headerClassName: styles.dataTypeHeader,
+					cellClassName: styles.dataTypeColumn,
+				},
+				cell: ({ row }) => (
+					<Badge
+						color={DATA_TYPE_COLORS[row.original.dataType] ?? 'gray'}
+						variant='dot'
+						size='xs'
+					>
+						{t(`reportValues.dataType.${row.original.dataType}`, {
+							ns: 'campaign.contact-list',
+						})}
+					</Badge>
+				),
+			},
+			{
+				id: 'actions',
+				header: t('reportValues.columns.actions', {
+					ns: 'campaign.contact-list',
+				}),
+				meta: {
+					headerClassName: styles.actionsHeader,
+					cellClassName: styles.actionsColumn,
+				},
+				cell: ({ row }) => (
+					<Group
+						gap={4}
+						justify='flex-end'
+						wrap='nowrap'
+						className={styles.actionsGroup}
+					>
+						<ActionIcon
+							variant='subtle'
+							size='sm'
+							onClick={(event) => {
+								event.stopPropagation();
+								handleEditClick(row.original);
+							}}
+						>
+							<IconEdit size={14} />
+						</ActionIcon>
+						<ActionIcon
+							variant='subtle'
+							color='red'
+							size='sm'
+							onClick={(event) => {
+								event.stopPropagation();
+								handleDeleteClick(row.original);
+							}}
+							loading={
+								isSavingDraft &&
+								row.original.id > 0 &&
+								pendingDeleteIds.includes(row.original.id)
+							}
+						>
+							<IconTrash size={14} />
+						</ActionIcon>
+					</Group>
+				),
+			},
+		],
+		[t, isSavingDraft, pendingDeleteIds]
+	);
+
 	return (
 		<SectionCard
 			title={t('form.reportValues.title')}
 			description={t('form.reportValues.description')}
+			headerActions={
+				<Group gap='xs'>
+					<Badge variant='light' size='sm' className={styles.countBadge}>
+						{columnCountLabel}
+					</Badge>
+					<Button
+						leftSection={<IconPlus size={16} />}
+						onClick={handleAddClick}
+						size='sm'
+					>
+						{t('reportValues.addColumn', {
+							ns: 'campaign.contact-list',
+						})}
+					</Button>
+				</Group>
+			}
 		>
-			{isLoading ? (
-				<Flex justify='center' align='center' py='xl'>
-					<Loader size='md' />
-				</Flex>
-			) : (
-				<Stack gap='md'>
-					<Group justify='flex-end'>
-						<Button
-							leftSection={<IconPlus size={16} />}
-							onClick={handleAddClick}
-							size='sm'
-						>
-							{t('reportValues.addColumn', { ns: 'campaign.contact-list' })}
-						</Button>
-					</Group>
-
-					{columns.length === 0 ? (
-						<Text c='dimmed' ta='center' py='xl' size='sm'>
-							{t('reportValues.noColumns', { ns: 'campaign.contact-list' })}
+			<Stack gap='md'>
+				<BaseTable<ReportValue>
+					className={styles.table}
+					data={draftColumns}
+					columns={tableColumns}
+					density='compact'
+					isLoading={isLoading}
+					emptyMessage={t('reportValues.noColumns', {
+						ns: 'campaign.contact-list',
+					})}
+					enableRowReordering
+					onRowReorder={(sourceIndex, destinationIndex) =>
+						void handleRowReorder(sourceIndex, destinationIndex)
+					}
+					getRowId={(row) => row.id}
+				/>
+				<Paper withBorder p='sm' radius='md' className={styles.saveBar}>
+					<Group justify='space-between' align='center' gap='sm'>
+						<Text size='sm' c={hasPendingChanges ? 'dimmed' : 'gray'}>
+							{hasPendingChanges
+								? t('form.reportValues.pendingChanges')
+								: t('form.reportValues.noPendingChanges')}
 						</Text>
-					) : (
-						<DragDropContext onDragEnd={(result) => void handleDragEnd(result)}>
-							<Droppable droppableId='report-columns'>
-								{(provided) => (
-									<Stack
-										gap='xs'
-										ref={provided.innerRef}
-										{...provided.droppableProps}
-									>
-										{/* Header row */}
-										<Flex
-											px='sm'
-											py='xs'
-											style={{
-												borderBottom:
-													'1px solid var(--mantine-color-default-border)',
-											}}
-										>
-											<Box w={28} />
-											<Box w={40}>
-												<Text size='xs' fw={600} c='dimmed'>
-													{t('reportValues.columns.order', {
-														ns: 'campaign.contact-list',
-													})}
-												</Text>
-											</Box>
-											<Box flex={1}>
-												<Text size='xs' fw={600} c='dimmed'>
-													{t('reportValues.columns.label', {
-														ns: 'campaign.contact-list',
-													})}
-												</Text>
-											</Box>
-											<Box flex={1}>
-												<Text size='xs' fw={600} c='dimmed'>
-													{t('reportValues.columns.key', {
-														ns: 'campaign.contact-list',
-													})}
-												</Text>
-											</Box>
-											<Box w={130}>
-												<Text size='xs' fw={600} c='dimmed'>
-													{t('reportValues.columns.originType', {
-														ns: 'campaign.contact-list',
-													})}
-												</Text>
-											</Box>
-											<Box w={110}>
-												<Text size='xs' fw={600} c='dimmed'>
-													{t('reportValues.columns.dataType', {
-														ns: 'campaign.contact-list',
-													})}
-												</Text>
-											</Box>
-											<Box w={70} />
-										</Flex>
-
-										{columns.map((col, index) => (
-											<Draggable
-												key={col.id}
-												draggableId={String(col.id)}
-												index={index}
-												isDragDisabled={isReordering}
-											>
-												{(provided, snapshot) => (
-													<Flex
-														ref={provided.innerRef}
-														{...provided.draggableProps}
-														align='center'
-														px='sm'
-														py='xs'
-														style={{
-															borderRadius: 'var(--mantine-radius-sm)',
-															border: snapshot.isDragging
-																? '1px solid var(--mantine-color-blue-4)'
-																: '1px solid var(--mantine-color-default-border)',
-															background: snapshot.isDragging
-																? 'var(--mantine-color-blue-0)'
-																: 'var(--mantine-color-body)',
-															...provided.draggableProps.style,
-														}}
-													>
-														<Box
-															{...provided.dragHandleProps}
-															style={{
-																cursor: 'grab',
-																color: 'var(--mantine-color-dimmed)',
-																lineHeight: 0,
-															}}
-															mr={4}
-														>
-															<IconGripVertical size={16} />
-														</Box>
-
-														<Box w={40}>
-															<Text size='sm' c='dimmed'>
-																{index}
-															</Text>
-														</Box>
-
-														<Box flex={1}>
-															<Text size='sm' fw={500} truncate>
-																{col.label}
-															</Text>
-														</Box>
-
-														<Box flex={1}>
-															<Text
-																size='sm'
-																c='dimmed'
-																ff='monospace'
-																truncate
-															>
-																{col.key}
-															</Text>
-														</Box>
-
-														<Box w={130}>
-															<Badge
-																color={
-																	ORIGIN_TYPE_COLORS[col.originType] ?? 'gray'
-																}
-																variant='light'
-																size='sm'
-															>
-																{t(
-																	`reportValues.originType.${col.originType}`,
-																	{ ns: 'campaign.contact-list' }
-																)}
-															</Badge>
-														</Box>
-
-														<Box w={110}>
-															<Badge
-																color={DATA_TYPE_COLORS[col.dataType] ?? 'gray'}
-																variant='dot'
-																size='sm'
-															>
-																{t(`reportValues.dataType.${col.dataType}`, {
-																	ns: 'campaign.contact-list',
-																})}
-															</Badge>
-														</Box>
-
-														<Group
-															gap={4}
-															w={70}
-															justify='flex-end'
-															wrap='nowrap'
-														>
-															<Tooltip
-																label={t('reportValues.columns.actions', {
-																	ns: 'campaign.contact-list',
-																})}
-															>
-																<ActionIcon
-																	variant='subtle'
-																	size='sm'
-																	onClick={() => handleEditClick(col)}
-																>
-																	<IconEdit size={14} />
-																</ActionIcon>
-															</Tooltip>
-															<ActionIcon
-																variant='subtle'
-																color='red'
-																size='sm'
-																onClick={() => handleDeleteClick(col)}
-																loading={
-																	deleteMutation.isPending &&
-																	deleteMutation.variables === col.id
-																}
-															>
-																<IconTrash size={14} />
-															</ActionIcon>
-														</Group>
-													</Flex>
-												)}
-											</Draggable>
-										))}
-										{provided.placeholder}
-									</Stack>
-								)}
-							</Droppable>
-						</DragDropContext>
-					)}
-				</Stack>
-			)}
+						<Group gap='xs'>
+							<Button
+								variant='default'
+								size='sm'
+								onClick={handleDiscardChanges}
+								disabled={!hasPendingChanges || isSavingDraft}
+							>
+								{t('form.reportValues.discardChanges')}
+							</Button>
+							<Button
+								size='sm'
+								onClick={() => void handleSaveChanges()}
+								disabled={!hasPendingChanges}
+								loading={isSavingDraft}
+							>
+								{t('form.reportValues.saveChanges')}
+							</Button>
+						</Group>
+					</Group>
+				</Paper>
+			</Stack>
 
 			<ReportValueFormModal
 				opened={modalOpened}
 				onClose={closeModal}
-				campaignId={campaignId}
+				campaignId={resolvedCampaignId}
 				reportValue={editTarget}
-				existingColumns={columns}
+				existingColumns={draftColumns}
+				onSubmitDraft={handleSubmitDraft}
+				isSubmittingDraft={isSavingDraft}
 			/>
 		</SectionCard>
 	);

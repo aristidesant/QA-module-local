@@ -322,7 +322,8 @@
 		"originType": {
 			"SQL": "Columna del sistema",
 			"DYNAMIC": "Campo dinámico",
-			"OBJECT": "Datos de conversación"
+			"OBJECT": "Datos de conversación",
+			"METADATA": "Metadatos de conversación"
 		},
 		"dataType": {
 			"STRING": "Texto",

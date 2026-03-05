@@ -120,6 +120,7 @@ const useUsersColumns = ({
 			{
 				accessorKey: 'lastLogin',
 				header: t('columns.lastLogin'),
+				enableSorting: false,
 				cell: ({ getValue }) => {
 					const value = getValue<string | Date | null | undefined>();
 					return <Text fz='xs'>{value ? timeAgo(value) : '—'}</Text>;

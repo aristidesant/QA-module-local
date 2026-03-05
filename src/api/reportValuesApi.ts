@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type {
 	ReportValue,
+	BulkUpdateReportValuesDto,
 	CreateReportValueDto,
 	UpdateReportValueDto,
 } from '~/models/ReportValue';
@@ -31,6 +32,17 @@ const reportValuesApi = () => {
 		): Promise<ReportValue> => {
 			const response = await axios.patch<ReportValue>(
 				`${DEFAULT_API_URL}/report-values/${id}`,
+				dto
+			);
+			return response.data;
+		},
+
+		bulkUpdate: async (
+			campaignId: number,
+			dto: BulkUpdateReportValuesDto
+		): Promise<ReportValue[]> => {
+			const response = await axios.patch<ReportValue[]>(
+				`${DEFAULT_API_URL}/report-values/campaigns/${campaignId}`,
 				dto
 			);
 			return response.data;
