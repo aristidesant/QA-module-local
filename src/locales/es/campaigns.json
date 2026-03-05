@@ -31,6 +31,7 @@
 			"outcomes": "Resultados",
 			"params": "Parámetros",
 			"analytics": "Analytics",
+			"reportValues": "Columnas de reporte",
 			"general": "General"
 		}
 	},
@@ -827,6 +828,10 @@
 			"save": "Guardar cambios",
 			"saving": "Guardando..."
 		},
+		"reportValues": {
+			"title": "Columnas de reporte",
+			"description": "Configura las columnas que se incluirán en los exports de listas de contactos."
+		},
 		"analytics": {
 			"title": "Recolección de datos de analytics",
 			"description": "Configura variables dinámicas de datos capturadas durante las conversaciones.",
@@ -894,7 +899,13 @@
 			"editor": {
 				"title": "Detalle de variable",
 				"description": "Selecciona y edita una variable desde la tabla.",
-				"stringHint": "Para campos string, los enums ayudan a restringir la salida del modelo a valores validos."
+				"labels": {
+					"status": "Estado del borrador"
+				},
+				"states": {
+					"draft": "Cambios sin guardar",
+					"saved": "Actualizado"
+				}
 			},
 			"saveToGroup": {
 				"title": "Guardar Variable en Grupo",
@@ -932,6 +943,7 @@
 			},
 			"import": {
 				"title": "Importar Variables Personalizadas",
+				"subtitle": "Seleccione un grupo de variables e importe los registros que necesita en analytics.",
 				"sections": {
 					"source": "Origen",
 					"table": "Variables"

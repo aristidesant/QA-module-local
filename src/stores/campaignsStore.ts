@@ -38,7 +38,7 @@ export const useCampaignsStore = create<CampaignsStoreState>((set) => ({
 			};
 		});
 	},
-	selectedTab: 'agent',
+	selectedTab: 'agents',
 	rightComponent: null,
 	contactsVersion: 0,
 	selectedVoiceId: undefined,

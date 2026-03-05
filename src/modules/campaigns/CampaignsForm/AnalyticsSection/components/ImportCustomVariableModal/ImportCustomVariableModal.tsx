@@ -1,8 +1,10 @@
 import {
+	Badge,
 	Button,
 	Checkbox,
 	Divider,
 	Group,
+	HoverCard,
 	Modal,
 	Select,
 	Stack,
@@ -133,29 +135,37 @@ export default function ImportCustomVariableModal({
 		() => [
 			{
 				id: 'select',
+				meta: {
+					headerClassName: styles.selectColumn,
+					cellClassName: styles.selectColumn,
+				},
 				header: () => (
-					<Checkbox
-						size='sm'
-						aria-label={t('form.analytics.import.selection.selectAllVisible')}
-						checked={allVisibleSelected}
-						indeterminate={!allVisibleSelected && someVisibleSelected}
-						onChange={(event) =>
-							toggleSelectAllVisible(event.currentTarget.checked)
-						}
-						disabled={!templateId || filteredVariables.length === 0}
-					/>
+					<div className={styles.selectCell}>
+						<Checkbox
+							size='sm'
+							aria-label={t('form.analytics.import.selection.selectAllVisible')}
+							checked={allVisibleSelected}
+							indeterminate={!allVisibleSelected && someVisibleSelected}
+							onChange={(event) =>
+								toggleSelectAllVisible(event.currentTarget.checked)
+							}
+							disabled={!templateId || filteredVariables.length === 0}
+						/>
+					</div>
 				),
 				cell: ({ row }) => (
-					<Checkbox
-						size='sm'
-						checked={selectedIds.has(row.original.id)}
-						onChange={(event) =>
-							toggleSelected(row.original.id, event.currentTarget.checked)
-						}
-						aria-label={t('form.analytics.import.selection.selectRow', {
-							identifier: row.original.name,
-						})}
-					/>
+					<div className={styles.selectCell}>
+						<Checkbox
+							size='sm'
+							checked={selectedIds.has(row.original.id)}
+							onChange={(event) =>
+								toggleSelected(row.original.id, event.currentTarget.checked)
+							}
+							aria-label={t('form.analytics.import.selection.selectRow', {
+								identifier: row.original.name,
+							})}
+						/>
+					</div>
 				),
 			},
 			{
@@ -173,22 +183,59 @@ export default function ImportCustomVariableModal({
 			{
 				id: 'type',
 				header: t('form.analytics.import.table.type'),
+				meta: {
+					headerClassName: styles.typeColumn,
+					cellClassName: styles.typeColumn,
+				},
 				cell: ({ row }) => (
-					<Text size='sm'>
+					<Badge size='sm' variant='light' radius='sm'>
 						{t(
 							`form.analytics.types.${normalizeType(row.original.value.type)}`
 						)}
-					</Text>
+					</Badge>
 				),
 			},
 			{
 				id: 'description',
 				header: t('form.analytics.import.table.description'),
-				cell: ({ row }) => (
-					<Text size='sm' c='dimmed' lineClamp={1}>
-						{row.original.value.description || '-'}
-					</Text>
-				),
+				cell: ({ row }) => {
+					const description = row.original.value.description?.trim() || '';
+					if (!description) {
+						return (
+							<Text size='xs' c='dimmed' fs='italic'>
+								{t('form.analytics.table.descriptionEmpty')}
+							</Text>
+						);
+					}
+
+					return (
+						<HoverCard
+							width={420}
+							openDelay={120}
+							closeDelay={80}
+							shadow='sm'
+							radius='md'
+							position='top-start'
+							withArrow
+						>
+							<HoverCard.Target>
+								<Text
+									size='sm'
+									c='dimmed'
+									lineClamp={1}
+									className={styles.descriptionPreview}
+								>
+									{description}
+								</Text>
+							</HoverCard.Target>
+							<HoverCard.Dropdown className={styles.descriptionDropdown}>
+								<Text size='sm' className={styles.descriptionDropdownText}>
+									{description}
+								</Text>
+							</HoverCard.Dropdown>
+						</HoverCard>
+					);
+				},
 			},
 		],
 		[
@@ -210,52 +257,61 @@ export default function ImportCustomVariableModal({
 		<Modal
 			opened={opened}
 			onClose={onClose}
-			title={t('form.analytics.import.title')}
-			size='lg'
+			title={
+				<Stack gap={0}>
+					<Text size='sm' fw={600}>
+						{t('form.analytics.import.title')}
+					</Text>
+					<Text size='xs' c='dimmed'>
+						{t('form.analytics.import.subtitle')}
+					</Text>
+				</Stack>
+			}
+			size='xl'
 		>
-			<Stack gap='sm' className={styles.form}>
-				<div className={styles.section}>
-					<Text size='sm' fw={600} className={styles.sectionTitle}>
-						{t('form.analytics.import.sections.source')}
-					</Text>
-					<Group gap='xs' grow className={styles.toolbar}>
-						<Select
-							size='sm'
-							label={t('form.analytics.import.fields.group')}
-							placeholder={t('form.analytics.import.placeholders.group')}
-							data={templateOptions}
-							value={templateId}
-							onChange={handleTemplateChange}
-							searchable
-							disabled={templatesLoading}
-						/>
-						<TextInput
-							size='sm'
-							label={t('form.analytics.import.fields.search')}
-							placeholder={t('form.analytics.import.placeholders.search')}
-							value={search}
-							onChange={(event) => setSearch(event.currentTarget.value)}
-							leftSection={<IconSearch size={14} />}
-							disabled={!templateId}
-						/>
-					</Group>
-				</div>
+			<div className={styles.form}>
+				<div className={styles.content}>
+					<div className={styles.section}>
+						<Text size='sm' fw={600} className={styles.sectionTitle}>
+							{t('form.analytics.import.sections.source')}
+						</Text>
+						<Group gap='xs' grow className={styles.toolbar}>
+							<Select
+								size='sm'
+								label={t('form.analytics.import.fields.group')}
+								placeholder={t('form.analytics.import.placeholders.group')}
+								data={templateOptions}
+								value={templateId}
+								onChange={handleTemplateChange}
+								searchable
+								disabled={templatesLoading}
+							/>
+							<TextInput
+								size='sm'
+								label={t('form.analytics.import.fields.search')}
+								placeholder={t('form.analytics.import.placeholders.search')}
+								value={search}
+								onChange={(event) => setSearch(event.currentTarget.value)}
+								leftSection={<IconSearch size={14} />}
+								disabled={!templateId}
+							/>
+						</Group>
+					</div>
 
-				<Divider />
+					<Divider />
 
-				<div className={styles.section}>
-					<Text size='sm' fw={600} className={styles.sectionTitle}>
-						{t('form.analytics.import.sections.table')}
-					</Text>
+					<div className={styles.section}>
+						<Text size='sm' fw={600} className={styles.sectionTitle}>
+							{t('form.analytics.import.sections.table')}
+						</Text>
 
-					{selectedCount > 0 && (
-						<Group justify='space-between' className={styles.selectionBar}>
-							<Text size='sm' fw={500}>
-								{t('form.analytics.import.selection.selectedCount', {
-									count: selectedCount,
-								})}
-							</Text>
-							<Group gap='xs' className={styles.actions}>
+						{selectedCount > 0 && (
+							<Group justify='space-between' className={styles.selectionBar}>
+								<Text size='sm' fw={500}>
+									{t('form.analytics.import.selection.selectedCount', {
+										count: selectedCount,
+									})}
+								</Text>
 								<Button
 									size='sm'
 									variant='subtle'
@@ -263,51 +319,57 @@ export default function ImportCustomVariableModal({
 								>
 									{t('form.analytics.import.selection.clear')}
 								</Button>
-								<Button size='sm' onClick={handleImportSelected}>
-									{t('form.analytics.import.selection.importSelected')}
-								</Button>
 							</Group>
-						</Group>
-					)}
+						)}
 
-					{!templateId ? (
-						<EmptyState
-							message={t('form.analytics.import.empty.selectGroupTitle')}
-							description={t(
-								'form.analytics.import.empty.selectGroupDescription'
-							)}
-						/>
-					) : filteredVariables.length === 0 && !variablesLoading ? (
-						<EmptyState
-							message={
-								search.trim()
-									? t('form.analytics.import.empty.noSearchResultsTitle')
-									: t('form.analytics.import.empty.noVariablesTitle')
-							}
-							description={
-								search.trim()
-									? t('form.analytics.import.empty.noSearchResultsDescription')
-									: t('form.analytics.import.empty.noVariablesDescription')
-							}
-						/>
-					) : (
-						<div className={styles.tableWrap}>
-							<BaseTable
-								data={filteredVariables}
-								columns={columns}
-								isLoading={variablesLoading}
-								density='compact'
+						{!templateId ? (
+							<EmptyState
+								message={t('form.analytics.import.empty.selectGroupTitle')}
+								description={t(
+									'form.analytics.import.empty.selectGroupDescription'
+								)}
 							/>
-						</div>
-					)}
+						) : filteredVariables.length === 0 && !variablesLoading ? (
+							<EmptyState
+								message={
+									search.trim()
+										? t('form.analytics.import.empty.noSearchResultsTitle')
+										: t('form.analytics.import.empty.noVariablesTitle')
+								}
+								description={
+									search.trim()
+										? t(
+												'form.analytics.import.empty.noSearchResultsDescription'
+											)
+										: t('form.analytics.import.empty.noVariablesDescription')
+								}
+							/>
+						) : (
+							<div className={styles.tableWrap}>
+								<BaseTable
+									data={filteredVariables}
+									columns={columns}
+									isLoading={variablesLoading}
+									density='compact'
+								/>
+							</div>
+						)}
+					</div>
 				</div>
 
-				<Group justify='flex-end'>
+				<Group justify='flex-end' className={styles.footer}>
 					<Button size='sm' variant='default' onClick={onClose}>
 						{t('form.analytics.import.actions.close')}
 					</Button>
+					<Button
+						size='sm'
+						onClick={handleImportSelected}
+						disabled={selectedCount === 0}
+					>
+						{t('form.analytics.import.selection.importSelected')}
+					</Button>
 				</Group>
-			</Stack>
+			</div>
 		</Modal>
 	);
 }

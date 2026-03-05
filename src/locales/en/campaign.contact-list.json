@@ -354,6 +354,44 @@
 			"labelPlaceholder": "e.g. Outstanding Balance",
 			"dataTypeLabel": "Data type",
 			"orderLabel": "Order",
+			"validation": {
+				"originTypeRequired": "Select a data source",
+				"keyRequired": "Field key is required",
+				"labelRequired": "Column label is required",
+				"dataTypeRequired": "Select a data type"
+			},
+			"emptyState": {
+				"noSchemaFields": "No schema fields found - enter the field name manually.",
+				"noDataCollectionFields": "No data collection fields configured - enter the key manually."
+			},
+			"placeholders": {
+				"loadingSchemaFields": "Loading schema fields...",
+				"selectSchemaField": "Select a schema field",
+				"loadingConversationFields": "Loading conversation fields...",
+				"selectConversationField": "Select a conversation field",
+				"selectSourceFirst": "Select a source first"
+			},
+			"sections": {
+				"dataSource": "Data source",
+				"displaySettings": "Display settings"
+			},
+			"originSub": {
+				"SQL": "Contact fields",
+				"DYNAMIC": "Schema variables",
+				"OBJECT": "Agent-collected fields"
+			},
+			"keyFieldLabels": {
+				"SQL": "Contact Field",
+				"DYNAMIC": "Schema Variable",
+				"OBJECT": "Conversation Key"
+			},
+			"headerEyebrow": {
+				"new": "New column",
+				"edit": "Edit column"
+			},
+			"aria": {
+				"close": "Close"
+			},
 			"save": "Save",
 			"cancel": "Cancel"
 		},
@@ -363,6 +401,15 @@
 			"deleted": "Column deleted successfully",
 			"reorderError": "Error saving new order"
 		}
+	},
+	"exportCampaign": {
+		"title": "Export by date range",
+		"startDate": "Start date",
+		"endDate": "End date",
+		"export": "Export",
+		"datesRequired": "Please select both start and end dates before exporting.",
+		"noData": "No data found in the selected date range.",
+		"noColumns": "No report columns configured for this campaign."
 	},
 	"contacts": {
 		"tabs": {

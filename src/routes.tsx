@@ -226,13 +226,15 @@ const router = createBrowserRouter([
 						id: 'campaign.contact-list',
 						element: (
 							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
-								<Suspense
-									fallback={
-										<SuspenseFallback message='Loading contact list...' />
-									}
-								>
-									<CampaignContactListPage />
-								</Suspense>
+								<I18nNamespaceLoader>
+									<Suspense
+										fallback={
+											<SuspenseFallback message='Loading contact list...' />
+										}
+									>
+										<CampaignContactListPage />
+									</Suspense>
+								</I18nNamespaceLoader>
 							</ModuleGuard>
 						),
 					},

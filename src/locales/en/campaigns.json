@@ -31,6 +31,7 @@
 			"outcomes": "Outcomes",
 			"params": "Params",
 			"analytics": "Analytics",
+			"reportValues": "Report Values",
 			"general": "General"
 		}
 	},
@@ -826,6 +827,10 @@
 			"save": "Save changes",
 			"saving": "Saving..."
 		},
+		"reportValues": {
+			"title": "Report columns",
+			"description": "Configure the columns that will be included in contact list exports."
+		},
 		"analytics": {
 			"title": "Analytics data collection",
 			"description": "Configure dynamic data variables captured during conversations.",
@@ -893,7 +898,13 @@
 			"editor": {
 				"title": "Variable details",
 				"description": "Select and edit a variable from the table.",
-				"stringHint": "For string fields, enums help constrain model output to valid values."
+				"labels": {
+					"status": "Draft status"
+				},
+				"states": {
+					"draft": "Unsaved changes",
+					"saved": "Up to date"
+				}
 			},
 			"saveToGroup": {
 				"title": "Save Variable to Group",
@@ -931,6 +942,7 @@
 			},
 			"import": {
 				"title": "Import Custom Variables",
+				"subtitle": "Select a variable group and import the records you need into analytics.",
 				"sections": {
 					"source": "Source",
 					"table": "Variables"

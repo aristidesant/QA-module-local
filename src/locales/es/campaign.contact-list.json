@@ -351,6 +351,44 @@
 			"labelPlaceholder": "p. ej. Balance pendiente",
 			"dataTypeLabel": "Tipo de dato",
 			"orderLabel": "Orden",
+			"validation": {
+				"originTypeRequired": "Selecciona una fuente de datos",
+				"keyRequired": "La clave del campo es obligatoria",
+				"labelRequired": "La etiqueta de la columna es obligatoria",
+				"dataTypeRequired": "Selecciona un tipo de dato"
+			},
+			"emptyState": {
+				"noSchemaFields": "No se encontraron campos del esquema - ingresa el nombre del campo manualmente.",
+				"noDataCollectionFields": "No hay campos de data collection configurados - ingresa la clave manualmente."
+			},
+			"placeholders": {
+				"loadingSchemaFields": "Cargando campos del esquema...",
+				"selectSchemaField": "Selecciona un campo del esquema",
+				"loadingConversationFields": "Cargando campos de conversación...",
+				"selectConversationField": "Selecciona un campo de conversación",
+				"selectSourceFirst": "Selecciona una fuente primero"
+			},
+			"sections": {
+				"dataSource": "Fuente de datos",
+				"displaySettings": "Configuración de visualización"
+			},
+			"originSub": {
+				"SQL": "Campos de contacto",
+				"DYNAMIC": "Variables del esquema",
+				"OBJECT": "Campos recolectados por el agente"
+			},
+			"keyFieldLabels": {
+				"SQL": "Campo de contacto",
+				"DYNAMIC": "Variable del esquema",
+				"OBJECT": "Clave de conversación"
+			},
+			"headerEyebrow": {
+				"new": "Nueva columna",
+				"edit": "Editar columna"
+			},
+			"aria": {
+				"close": "Cerrar"
+			},
 			"save": "Guardar",
 			"cancel": "Cancelar"
 		},
@@ -360,6 +398,15 @@
 			"deleted": "Columna eliminada con éxito",
 			"reorderError": "Error al guardar el nuevo orden"
 		}
+	},
+	"exportCampaign": {
+		"title": "Exportar por rango de fechas",
+		"startDate": "Fecha inicio",
+		"endDate": "Fecha fin",
+		"export": "Exportar",
+		"datesRequired": "Por favor selecciona fecha de inicio y fin antes de exportar.",
+		"noData": "No se encontraron datos en el rango de fechas seleccionado.",
+		"noColumns": "La campaña no tiene columnas de reporte configuradas."
 	},
 	"contacts": {
 		"tabs": {

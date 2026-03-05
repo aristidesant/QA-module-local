@@ -36,5 +36,17 @@
 			"active": "Activos",
 			"inactive": "Inactivos"
 		}
+	},
+	"reportExport": {
+		"title": "Exportar reporte",
+		"description": "Descarga un reporte con las columnas configuradas para todas las conversaciones en un rango de fechas.",
+		"startDate": "Fecha inicio",
+		"endDate": "Fecha fin",
+		"export": "Exportar",
+		"formatLabel": "Seleccionar formato",
+		"datesRequired": "Por favor selecciona fecha de inicio y fin antes de exportar.",
+		"noData": "No se encontraron datos en el rango de fechas seleccionado.",
+		"noColumns": "La campaña no tiene columnas de reporte configuradas.",
+		"error": "Error al exportar el reporte."
 	}
 }

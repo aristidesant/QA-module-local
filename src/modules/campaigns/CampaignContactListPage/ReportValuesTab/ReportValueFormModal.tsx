@@ -113,34 +113,30 @@ const ORIGIN_OPTIONS: {
 	value: ReportValueOriginType;
 	icon: React.ReactNode;
 	nameKey: keyof { SQL: string; DYNAMIC: string; OBJECT: string };
-	sub: string;
 }[] = [
 	{
 		value: ReportValueOriginType.SQL,
 		icon: <IconDatabase size={20} strokeWidth={1.5} />,
 		nameKey: 'SQL',
-		sub: 'Contact fields',
 	},
 	{
 		value: ReportValueOriginType.DYNAMIC,
 		icon: <IconBraces size={20} strokeWidth={1.5} />,
 		nameKey: 'DYNAMIC',
-		sub: 'Schema variables',
 	},
 	{
 		value: ReportValueOriginType.OBJECT,
 		icon: <IconMessages size={20} strokeWidth={1.5} />,
 		nameKey: 'OBJECT',
-		sub: 'Agent-collected fields', // ← was "Conversation data" (redundant)
 	},
 ];
 
 // ─── Contextual key field labels ───────────────────────────────
 
 const KEY_FIELD_LABELS: Record<ReportValueOriginType, string> = {
-	[ReportValueOriginType.SQL]: 'Contact Field',
-	[ReportValueOriginType.DYNAMIC]: 'Schema Variable',
-	[ReportValueOriginType.OBJECT]: 'Conversation Key',
+	[ReportValueOriginType.SQL]: 'reportValues.form.keyFieldLabels.SQL',
+	[ReportValueOriginType.DYNAMIC]: 'reportValues.form.keyFieldLabels.DYNAMIC',
+	[ReportValueOriginType.OBJECT]: 'reportValues.form.keyFieldLabels.OBJECT',
 };
 
 // ─── Props & form types ────────────────────────────────────────
@@ -148,8 +144,8 @@ const KEY_FIELD_LABELS: Record<ReportValueOriginType, string> = {
 interface ReportValueFormModalProps {
 	opened: boolean;
 	onClose: () => void;
-	contactGroupId: number;
 	campaignId: number;
+	contactGroupId?: number;
 	reportValue?: ReportValue;
 	existingColumns?: ReportValue[];
 }
@@ -166,16 +162,16 @@ interface FormValues {
 const ReportValueFormModal = ({
 	opened,
 	onClose,
-	contactGroupId,
 	campaignId,
+	contactGroupId,
 	reportValue,
 	existingColumns = [],
 }: ReportValueFormModalProps) => {
 	const { t } = useTranslation('campaign.contact-list');
 	const isEdit = !!reportValue;
 
-	const createMutation = useCreateReportValue(contactGroupId);
-	const updateMutation = useUpdateReportValue(contactGroupId);
+	const createMutation = useCreateReportValue(campaignId);
+	const updateMutation = useUpdateReportValue(campaignId);
 	const isPending = createMutation.isPending || updateMutation.isPending;
 
 	// Fetch campaign for OBJECT keys (agentConfig.dataCollection)
@@ -183,9 +179,9 @@ const ReportValueFormModal = ({
 		String(campaignId)
 	);
 
-	// Fetch dynamic schema fields directly by contact group ID
+	// Fetch dynamic schema fields by contact group ID (optional — falls back to free-text if absent)
 	const { data: contactVariableDataFields, isLoading: isSchemasLoading } =
-		useGetContactVariableDataSchema(contactGroupId, opened);
+		useGetContactVariableDataSchema(contactGroupId ?? 0, opened);
 
 	// ── Derived data ──────────────────────────────────────────
 
@@ -234,10 +230,14 @@ const ReportValueFormModal = ({
 			dataType: null,
 		},
 		validate: {
-			originType: (v) => (!v ? 'Select a data source' : null),
-			key: (v) => (!v.trim() ? 'Field key is required' : null),
-			label: (v) => (!v.trim() ? 'Column label is required' : null),
-			dataType: (v) => (v === null ? 'Select a data type' : null),
+			originType: (v) =>
+				!v ? t('reportValues.form.validation.originTypeRequired') : null,
+			key: (v) =>
+				!v.trim() ? t('reportValues.form.validation.keyRequired') : null,
+			label: (v) =>
+				!v.trim() ? t('reportValues.form.validation.labelRequired') : null,
+			dataType: (v) =>
+				v === null ? t('reportValues.form.validation.dataTypeRequired') : null,
 		},
 	});
 
@@ -358,7 +358,7 @@ const ReportValueFormModal = ({
 					key: values.key,
 					label: values.label,
 					dataType: values.dataType,
-					contactGroupId,
+					campaignId,
 				});
 				notifications.show({
 					message: t('reportValues.notifications.created'),
@@ -380,7 +380,7 @@ const ReportValueFormModal = ({
 		/** Contextual label — changes with selected origin */
 		const label =
 			selectedOrigin && KEY_FIELD_LABELS[selectedOrigin]
-				? KEY_FIELD_LABELS[selectedOrigin]
+				? t(KEY_FIELD_LABELS[selectedOrigin])
 				: t('reportValues.form.keyLabel');
 
 		const { error } = form.getInputProps('key');
@@ -408,7 +408,9 @@ const ReportValueFormModal = ({
 						disabled
 						size='sm'
 						rightSection={<Loader size={14} />}
-						placeholder='Loading schema fields…'
+						placeholder={t(
+							'reportValues.form.placeholders.loadingSchemaFields'
+						)}
 					/>
 				);
 			}
@@ -420,7 +422,7 @@ const ReportValueFormModal = ({
 						required
 						size='sm'
 						searchable
-						placeholder='Select a schema field'
+						placeholder={t('reportValues.form.placeholders.selectSchemaField')}
 						value={form.values.key || null}
 						onChange={(v) => handleKeySelect(v, ReportValueOriginType.DYNAMIC)}
 						error={error}
@@ -431,7 +433,7 @@ const ReportValueFormModal = ({
 				<>
 					<div className={styles.emptyState}>
 						<IconInfoCircle size={13} className={styles.emptyStateIcon} />
-						<span>No schema fields found — enter the field name manually.</span>
+						<span>{t('reportValues.form.emptyState.noSchemaFields')}</span>
 					</div>
 					<TextInput
 						label={label}
@@ -454,7 +456,9 @@ const ReportValueFormModal = ({
 						disabled
 						size='sm'
 						rightSection={<Loader size={14} />}
-						placeholder='Loading conversation fields…'
+						placeholder={t(
+							'reportValues.form.placeholders.loadingConversationFields'
+						)}
 					/>
 				);
 			}
@@ -466,7 +470,9 @@ const ReportValueFormModal = ({
 						required
 						size='sm'
 						searchable
-						placeholder='Select a conversation field'
+						placeholder={t(
+							'reportValues.form.placeholders.selectConversationField'
+						)}
 						value={form.values.key || null}
 						onChange={(v) => handleKeySelect(v, ReportValueOriginType.OBJECT)}
 						error={error}
@@ -478,7 +484,7 @@ const ReportValueFormModal = ({
 					<div className={styles.emptyState}>
 						<IconInfoCircle size={13} className={styles.emptyStateIcon} />
 						<span>
-							No data collection fields configured — enter the key manually.
+							{t('reportValues.form.emptyState.noDataCollectionFields')}
 						</span>
 					</div>
 					<TextInput
@@ -500,7 +506,7 @@ const ReportValueFormModal = ({
 				label={t('reportValues.form.keyLabel')}
 				disabled
 				size='sm'
-				placeholder='Select a source first'
+				placeholder={t('reportValues.form.placeholders.selectSourceFirst')}
 			/>
 		);
 	};
@@ -520,7 +526,9 @@ const ReportValueFormModal = ({
 			<div className={styles.header}>
 				<div className={styles.headerMeta}>
 					<span className={styles.headerEyebrow}>
-						{isEdit ? 'Edit column' : 'New column'}
+						{isEdit
+							? t('reportValues.form.headerEyebrow.edit')
+							: t('reportValues.form.headerEyebrow.new')}
 					</span>
 					<h2 className={styles.headerTitle}>
 						{isEdit
@@ -532,7 +540,7 @@ const ReportValueFormModal = ({
 					className={styles.closeBtn}
 					onClick={onClose}
 					size='sm'
-					aria-label='Close'
+					aria-label={t('reportValues.form.aria.close')}
 				/>
 			</div>
 
@@ -541,7 +549,9 @@ const ReportValueFormModal = ({
 				<div className={styles.body}>
 					{/* Section 1: Data source */}
 					<div className={styles.section}>
-						<Text className={styles.sectionLabel}>Data source</Text>
+						<Text className={styles.sectionLabel}>
+							{t('reportValues.form.sections.dataSource')}
+						</Text>
 
 						{/* Origin type card picker */}
 						<div className={styles.originCards}>
@@ -559,7 +569,9 @@ const ReportValueFormModal = ({
 									<span className={styles.originCardLabel}>
 										{t(`reportValues.originType.${opt.nameKey}`)}
 									</span>
-									<span className={styles.originCardSub}>{opt.sub}</span>
+									<span className={styles.originCardSub}>
+										{t(`reportValues.form.originSub.${opt.nameKey}`)}
+									</span>
 								</button>
 							))}
 						</div>
@@ -577,7 +589,9 @@ const ReportValueFormModal = ({
 
 					{/* Section 2: Display settings */}
 					<div className={styles.section}>
-						<Text className={styles.sectionLabel}>Display settings</Text>
+						<Text className={styles.sectionLabel}>
+							{t('reportValues.form.sections.displaySettings')}
+						</Text>
 
 						<TextInput
 							label={t('reportValues.form.labelLabel')}

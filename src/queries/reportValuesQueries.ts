@@ -5,18 +5,18 @@ import type {
 	UpdateReportValueDto,
 } from '~/models/ReportValue';
 
-export const useGetReportColumns = (contactGroupId: number) => {
+export const useGetReportColumns = (campaignId: number) => {
 	return useQuery({
-		queryKey: ['reportColumns', contactGroupId],
+		queryKey: ['reportColumns', 'campaign', campaignId],
 		queryFn: async () => {
 			const api = reportValuesApi();
-			return api.getColumns(contactGroupId);
+			return api.getColumns(campaignId);
 		},
-		enabled: !!contactGroupId && !Number.isNaN(contactGroupId),
+		enabled: !!campaignId && !Number.isNaN(campaignId),
 	});
 };
 
-export const useCreateReportValue = (contactGroupId: number) => {
+export const useCreateReportValue = (campaignId: number) => {
 	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: async (dto: CreateReportValueDto) => {
@@ -25,13 +25,13 @@ export const useCreateReportValue = (contactGroupId: number) => {
 		},
 		onSuccess: () => {
 			void queryClient.invalidateQueries({
-				queryKey: ['reportColumns', contactGroupId],
+				queryKey: ['reportColumns', 'campaign', campaignId],
 			});
 		},
 	});
 };
 
-export const useUpdateReportValue = (contactGroupId: number) => {
+export const useUpdateReportValue = (campaignId: number) => {
 	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: async ({
@@ -46,13 +46,13 @@ export const useUpdateReportValue = (contactGroupId: number) => {
 		},
 		onSuccess: () => {
 			void queryClient.invalidateQueries({
-				queryKey: ['reportColumns', contactGroupId],
+				queryKey: ['reportColumns', 'campaign', campaignId],
 			});
 		},
 	});
 };
 
-export const useDeleteReportValue = (contactGroupId: number) => {
+export const useDeleteReportValue = (campaignId: number) => {
 	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: async (id: number) => {
@@ -61,7 +61,7 @@ export const useDeleteReportValue = (contactGroupId: number) => {
 		},
 		onSuccess: () => {
 			void queryClient.invalidateQueries({
-				queryKey: ['reportColumns', contactGroupId],
+				queryKey: ['reportColumns', 'campaign', campaignId],
 			});
 		},
 	});

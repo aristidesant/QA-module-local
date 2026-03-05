@@ -6,6 +6,7 @@ import {
 	IconRoute,
 	IconUser,
 	IconList,
+	IconTable,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { useDispositionLabel } from '~/hooks/useDispositionLabel';
@@ -23,7 +24,7 @@ const CampaignTabs = () => {
 			onChange={(v) => {
 				if (v) {
 					setSelectedTab(v);
-					setRightComponent?.(undefined);
+					setRightComponent?.(null);
 				}
 			}}
 			variant='default'
@@ -44,6 +45,9 @@ const CampaignTabs = () => {
 				</Tabs.Tab>
 				<Tabs.Tab leftSection={<IconChartBar />} value='analytics'>
 					{t('list.tabs.analytics')}
+				</Tabs.Tab>
+				<Tabs.Tab leftSection={<IconTable />} value='report-values'>
+					{t('list.tabs.reportValues')}
 				</Tabs.Tab>
 				<Tabs.Tab leftSection={<IconGalaxy />} value='general'>
 					{t('list.tabs.general')}

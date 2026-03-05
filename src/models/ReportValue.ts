@@ -19,7 +19,7 @@ export interface ReportValue {
 	label: string;
 	dataType: ReportValueDataType;
 	order: number;
-	contactGroupId: number;
+	campaignId: number;
 	userId: number;
 	clientId: number;
 	createdAt: string;
@@ -33,7 +33,7 @@ export interface CreateReportValueDto {
 	label: string;
 	dataType: ReportValueDataType;
 	order?: number;
-	contactGroupId: number;
+	campaignId: number;
 }
 
 export interface UpdateReportValueDto {

@@ -1,9 +1,14 @@
-import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
+import { useState } from 'react';
+import { ActionIcon, Button, Group, Menu, Text, Tooltip } from '@mantine/core';
+import { DateInput } from '@mantine/dates';
 import { useTranslation } from 'react-i18next';
 import {
 	IconAlertTriangle,
+	IconChevronDown,
 	IconCircleCheck,
 	IconDownload,
+	IconFileSpreadsheet,
+	IconFileTypeCsv,
 	IconRefresh,
 	IconRepeat,
 } from '@tabler/icons-react';
@@ -16,18 +21,21 @@ import {
 	useCompleteContactGroup,
 	useExtendContactGroupWaves,
 } from '~/queries/contactGroupQueries';
-import { useExportCallResultsCsv } from '~/queries/conversationsQueries';
-import { downloadBlob } from '~/utils/fileUtils';
-import ExtendWavesModal from '~/modules/campaigns/components/ExtendWavesModal';
+import reportValuesApi from '~/api/reportValuesApi';
 import { getErrorMessage } from '~/utils/httpClient';
+import ExtendWavesModal from '~/modules/campaigns/components/ExtendWavesModal';
+
+type ReportExportFormat = 'csv' | 'xlsx';
 
 interface ContactListInformationProps {
 	contactGroup: ContactGroup;
+	campaignId: number;
 	onReload: () => void | Promise<unknown>;
 }
 
 export const ContactListInformation = ({
 	contactGroup,
+	campaignId,
 	onReload,
 }: ContactListInformationProps) => {
 	const { t } = useTranslation('campaign.contact-list');
@@ -35,6 +43,13 @@ export const ContactListInformation = ({
 	const completeMutation = useCompleteContactGroup();
 	const isActionLoading =
 		extendMutation.isPending || completeMutation.isPending;
+
+	const [isExportingGroup, setIsExportingGroup] = useState(false);
+	const [isExportingCampaign, setIsExportingCampaign] = useState(false);
+	const [campaignStartDate, setCampaignStartDate] = useState<string | null>(
+		null
+	);
+	const [campaignEndDate, setCampaignEndDate] = useState<string | null>(null);
 
 	type StatusKey =
 		| 'PENDING'
@@ -206,25 +221,114 @@ export const ContactListInformation = ({
 		});
 	};
 
-	const exportMutation = useExportCallResultsCsv();
-
-	const handleDownloadResults = async () => {
+	const handleExportGroup = async (format: ReportExportFormat) => {
+		setIsExportingGroup(true);
 		try {
-			const { blob, filename } = await exportMutation.mutateAsync(
-				contactGroup.id
-			);
-			downloadBlob(blob, filename);
-			notifications.show({
-				title: t('actions.success'),
-				message: t('contactsTable.notifications.exportSuccessMessage'),
-				color: 'green',
-			});
+			const api = reportValuesApi();
+			const response = await api.exportReport(contactGroup.id, format);
+
+			if (response.status === 204) {
+				notifications.show({
+					message: t('reportValues.noDataToExport'),
+					color: 'yellow',
+				});
+				return;
+			}
+
+			if (response.status !== 200) {
+				notifications.show({
+					message: t('reportValues.exportError'),
+					color: 'red',
+				});
+				return;
+			}
+
+			const mimeType =
+				format === 'xlsx'
+					? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+					: 'text/csv';
+			const blob = new Blob([response.data as BlobPart], { type: mimeType });
+			const url = window.URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = `report-${contactGroup.id}.${format}`;
+			document.body.appendChild(a);
+			a.click();
+			a.remove();
+			window.URL.revokeObjectURL(url);
 		} catch (error) {
 			notifications.show({
-				title: t('actions.error'),
 				message: getErrorMessage(error),
 				color: 'red',
 			});
+		} finally {
+			setIsExportingGroup(false);
+		}
+	};
+
+	const handleExportCampaign = async (format: ReportExportFormat) => {
+		if (!campaignStartDate || !campaignEndDate) {
+			notifications.show({
+				message: t('exportCampaign.datesRequired'),
+				color: 'yellow',
+			});
+			return;
+		}
+
+		setIsExportingCampaign(true);
+		try {
+			const api = reportValuesApi();
+			const response = await api.exportCampaignReport(
+				campaignId,
+				new Date(campaignStartDate).toISOString(),
+				new Date(campaignEndDate).toISOString(),
+				format
+			);
+
+			if (response.status === 204) {
+				notifications.show({
+					message: t('exportCampaign.noData'),
+					color: 'yellow',
+				});
+				return;
+			}
+
+			if (response.status === 404) {
+				notifications.show({
+					message: t('exportCampaign.noColumns'),
+					color: 'red',
+				});
+				return;
+			}
+
+			if (response.status !== 200) {
+				notifications.show({
+					message: t('reportValues.exportError'),
+					color: 'red',
+				});
+				return;
+			}
+
+			const mimeType =
+				format === 'xlsx'
+					? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+					: 'text/csv';
+			const blob = new Blob([response.data as BlobPart], { type: mimeType });
+			const url = window.URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = `campaign-report-${campaignId}.${format}`;
+			document.body.appendChild(a);
+			a.click();
+			a.remove();
+			window.URL.revokeObjectURL(url);
+		} catch (error) {
+			notifications.show({
+				message: getErrorMessage(error),
+				color: 'red',
+			});
+		} finally {
+			setIsExportingCampaign(false);
 		}
 	};
 
@@ -245,23 +349,43 @@ export const ContactListInformation = ({
 					</Text>
 				</div>
 				<Group gap='xs'>
-					<Tooltip
-						label={t('contacts.details.actions.downloadResults')}
-						withArrow
-						position='left'
-					>
-						<ActionIcon
-							variant='light'
-							color='blue'
-							size='sm'
-							aria-label={t('contacts.details.actions.downloadResults')}
-							onClick={handleDownloadResults}
-							loading={exportMutation.isPending}
-							disabled={isActionLoading}
-						>
-							<IconDownload size={16} strokeWidth={2} />
-						</ActionIcon>
-					</Tooltip>
+					<Menu shadow='md' width={160} position='bottom-end' withArrow>
+						<Menu.Target>
+							<Tooltip
+								label={t('contacts.details.actions.downloadResults')}
+								withArrow
+								position='left'
+							>
+								<ActionIcon
+									variant='light'
+									color='blue'
+									size='sm'
+									aria-label={t('contacts.details.actions.downloadResults')}
+									loading={isExportingGroup}
+									disabled={isActionLoading || isExportingGroup}
+								>
+									<IconDownload size={16} strokeWidth={2} />
+								</ActionIcon>
+							</Tooltip>
+						</Menu.Target>
+						<Menu.Dropdown>
+							<Menu.Label>{t('reportValues.exportFormatLabel')}</Menu.Label>
+							<Menu.Item
+								leftSection={<IconFileTypeCsv size={14} />}
+								onClick={() => void handleExportGroup('csv')}
+								disabled={isExportingGroup}
+							>
+								{t('reportValues.exportFormatCsv')}
+							</Menu.Item>
+							<Menu.Item
+								leftSection={<IconFileSpreadsheet size={14} />}
+								onClick={() => void handleExportGroup('xlsx')}
+								disabled={isExportingGroup}
+							>
+								{t('reportValues.exportFormatXlsx')}
+							</Menu.Item>
+						</Menu.Dropdown>
+					</Menu>
 					{statusKey === 'EXECUTED' && (
 						<>
 							<Tooltip
@@ -335,6 +459,63 @@ export const ContactListInformation = ({
 					/>
 				))}
 			</div>
+
+			<div className={classes.divider} />
+
+			<Group align='flex-end' gap='sm' wrap='wrap'>
+				<Text size='xs' fw={600} c='dimmed' style={{ alignSelf: 'center' }}>
+					{t('exportCampaign.title')}
+				</Text>
+				<DateInput
+					placeholder={t('exportCampaign.startDate')}
+					value={campaignStartDate}
+					onChange={setCampaignStartDate}
+					size='xs'
+					clearable
+					maxDate={campaignEndDate ? new Date(campaignEndDate) : undefined}
+					style={{ width: 150 }}
+				/>
+				<DateInput
+					placeholder={t('exportCampaign.endDate')}
+					value={campaignEndDate}
+					onChange={setCampaignEndDate}
+					size='xs'
+					clearable
+					minDate={campaignStartDate ? new Date(campaignStartDate) : undefined}
+					style={{ width: 150 }}
+				/>
+				<Menu shadow='md' width={160} position='bottom-end' withArrow>
+					<Menu.Target>
+						<Button
+							leftSection={<IconDownload size={14} />}
+							rightSection={<IconChevronDown size={12} />}
+							variant='light'
+							size='xs'
+							loading={isExportingCampaign}
+							disabled={isExportingCampaign}
+						>
+							{t('exportCampaign.export')}
+						</Button>
+					</Menu.Target>
+					<Menu.Dropdown>
+						<Menu.Label>{t('reportValues.exportFormatLabel')}</Menu.Label>
+						<Menu.Item
+							leftSection={<IconFileTypeCsv size={14} />}
+							onClick={() => void handleExportCampaign('csv')}
+							disabled={isExportingCampaign}
+						>
+							{t('reportValues.exportFormatCsv')}
+						</Menu.Item>
+						<Menu.Item
+							leftSection={<IconFileSpreadsheet size={14} />}
+							onClick={() => void handleExportCampaign('xlsx')}
+							disabled={isExportingCampaign}
+						>
+							{t('reportValues.exportFormatXlsx')}
+						</Menu.Item>
+					</Menu.Dropdown>
+				</Menu>
+			</Group>
 		</section>
 	);
 };

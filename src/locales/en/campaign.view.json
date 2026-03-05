@@ -36,5 +36,17 @@
 			"active": "Active",
 			"inactive": "Inactive"
 		}
+	},
+	"reportExport": {
+		"title": "Export report",
+		"description": "Download a report with the configured columns for all conversations in a date range.",
+		"startDate": "Start date",
+		"endDate": "End date",
+		"export": "Export",
+		"formatLabel": "Select format",
+		"datesRequired": "Please select both start and end dates before exporting.",
+		"noData": "No data found in the selected date range.",
+		"noColumns": "No report columns configured for this campaign.",
+		"error": "Error exporting report."
 	}
 }

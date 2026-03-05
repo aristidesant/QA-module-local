@@ -22,6 +22,7 @@ import {
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import { ContactSection } from '../CampaignsForm/ContactSection';
 import CampaignHealth from '../CampaignHealth';
+import CampaignReportExport from './CampaignReportExport';
 
 const CampaignViewPage = () => {
 	const { t } = useTranslation(['campaign.view', 'common']);
@@ -138,7 +139,10 @@ const CampaignViewPage = () => {
 				</Stack>
 			}
 		>
-			<ContactSection />
+			<Stack gap='md'>
+				<CampaignReportExport campaignId={campaign.id} />
+				<ContactSection />
+			</Stack>
 		</ContentContainer>
 	);
 };

@@ -1,4 +1,4 @@
-import { Alert, Button, Group, Stack, Text } from '@mantine/core';
+import { Alert, Badge, Button, Group, Paper, Stack, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import {
 	IconDownload,
@@ -21,6 +21,7 @@ import ImportCustomVariableModal from '../components/ImportCustomVariableModal';
 import SaveDataCollectionToGroupModal from '../components/SaveDataCollectionToGroupModal';
 import { useAnalyticsFormContext } from '../analyticsFormContext';
 import useAnalyticsTableColumns from '../useAnalyticsTableColumns';
+import styles from './AnalyticsVariablesTable.module.css';
 
 interface AnalyticsVariablesTableProps {
 	onAddRow: () => void;
@@ -279,54 +280,63 @@ const AnalyticsVariablesTable = ({
 	};
 
 	return (
-		<Stack gap='xs'>
-			<Group justify='space-between' align='center'>
-				<Text size='sm'>
-					{t('form.analytics.totalVariables', {
-						count: form.values.rows.length,
-					})}
-				</Text>
-				<Group gap='xs'>
-					<Button
-						size='sm'
-						variant='light'
-						leftSection={<IconPlus size={14} />}
-						onClick={onAddRow}
-					>
-						{t('form.analytics.actions.addVariable')}
-					</Button>
-					{canImportVariables && (
+		<Stack gap='sm'>
+			<Paper withBorder radius='md' p='xs'>
+				<Group justify='space-between' align='center' gap='xs' wrap='wrap'>
+					<Group gap='xs' align='center'>
+						<Badge size='sm' variant='light' color='blue'>
+							{t('form.analytics.totalVariables', {
+								count: form.values.rows.length,
+							})}
+						</Badge>
+						<Text size='xs' c='dimmed'>
+							{t('form.analytics.editor.description')}
+						</Text>
+					</Group>
+					<Group gap='xs' className={styles.actionsGroup}>
 						<Button
 							size='sm'
-							variant='default'
-							leftSection={<IconDownload size={14} />}
-							onClick={() => setImportOpened(true)}
+							leftSection={<IconPlus size={14} />}
+							onClick={onAddRow}
 						>
-							{t('form.analytics.actions.importVariable')}
+							{t('form.analytics.actions.addVariable')}
 						</Button>
-					)}
-					{canSaveAllToGroup && (
-						<Button
-							size='sm'
-							variant='default'
-							color='grape'
-							leftSection={<IconUpload size={14} />}
-							onClick={() => setSaveAllOpened(true)}
-						>
-							{t('form.analytics.actions.saveAllToGroup')}
-						</Button>
-					)}
+						{canImportVariables && (
+							<Button
+								size='sm'
+								variant='default'
+								leftSection={<IconDownload size={14} />}
+								onClick={() => setImportOpened(true)}
+							>
+								{t('form.analytics.actions.importVariable')}
+							</Button>
+						)}
+						{canSaveAllToGroup && (
+							<Button
+								size='sm'
+								variant='default'
+								color='grape'
+								leftSection={<IconUpload size={14} />}
+								onClick={() => setSaveAllOpened(true)}
+							>
+								{t('form.analytics.actions.saveAllToGroup')}
+							</Button>
+						)}
+					</Group>
 				</Group>
-			</Group>
+			</Paper>
 
-			<Alert
-				icon={<IconInfoCircle size={16} />}
-				title={t('form.analytics.info.title')}
-				color='blue'
-				radius='sm'
-			>
-				<Text size='sm'>{t('form.analytics.info.message')}</Text>
-			</Alert>
+			{form.values.rows.length === 0 && (
+				<Alert
+					icon={<IconInfoCircle size={16} />}
+					title={t('form.analytics.info.title')}
+					color='blue'
+					variant='light'
+					radius='sm'
+				>
+					<Text size='sm'>{t('form.analytics.info.message')}</Text>
+				</Alert>
+			)}
 
 			<BaseTable
 				data={form.values.rows}

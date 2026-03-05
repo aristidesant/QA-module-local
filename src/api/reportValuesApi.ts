@@ -10,9 +10,9 @@ type ReportExportFormat = 'csv' | 'xlsx';
 
 const reportValuesApi = () => {
 	return {
-		getColumns: async (contactGroupId: number): Promise<ReportValue[]> => {
+		getColumns: async (campaignId: number): Promise<ReportValue[]> => {
 			const response = await axios.get<ReportValue[]>(
-				`${DEFAULT_API_URL}/report-values/columns/${contactGroupId}`
+				`${DEFAULT_API_URL}/report-values/columns/${campaignId}`
 			);
 			return response.data;
 		},
@@ -48,6 +48,24 @@ const reportValuesApi = () => {
 				`${DEFAULT_API_URL}/report-values/export/${contactGroupId}`,
 				{
 					params: { format },
+					responseType: 'blob',
+					validateStatus: (status) => status < 500,
+				}
+			);
+			return response;
+		},
+
+		exportCampaignReport: async (
+			campaignId: number,
+			startDate: string,
+			endDate: string,
+			format: ReportExportFormat = 'csv',
+			includeOutcome = true
+		) => {
+			const response = await axios.get(
+				`${DEFAULT_API_URL}/report-values/export/campaign/${campaignId}`,
+				{
+					params: { startDate, endDate, format, includeOutcome },
 					responseType: 'blob',
 					validateStatus: (status) => status < 500,
 				}

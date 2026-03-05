@@ -3,6 +3,7 @@
 	overflow: auto;
 	border: 1px solid var(--mantine-color-gray-2);
 	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-white);
 	margin: 0;
 	padding: 0;
 }
@@ -62,9 +63,20 @@
 	opacity: 1;
 }
 
-.selectedRow {
+.tbody tr td {
+	transition: background-color 0.15s ease;
+}
+
+.tbody tr:hover td {
+	background: var(--mantine-color-gray-0);
+}
+
+.selectedRow td {
 	background: var(--mantine-color-blue-0) !important;
-	border-left: 3px solid var(--mantine-color-blue-6);
+}
+
+.selectedRow td:first-child {
+	box-shadow: inset 3px 0 0 var(--mantine-color-blue-6);
 }
 
 .emptyRow {

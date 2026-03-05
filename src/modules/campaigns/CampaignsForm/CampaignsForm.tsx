@@ -36,6 +36,7 @@ import WorkflowSection from './WorkflowSection/WorkflowSection';
 import AgentSection from './AgentSection';
 import DispositionSection from './DispositionSection';
 import DoNotCallSection from './DoNotCallSection';
+import ReportValuesSection from './ReportValuesSection/ReportValuesSection';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { CampaignStatus } from '~/models/CampaignStatus';
 import { modals } from '@mantine/modals';
@@ -70,7 +71,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		) : selectedTab === 'agents' ? (
 			<AgentSectionRightPanel />
 		) : (
-			rightComponent || <></>
+			rightComponent
 		);
 	const { mutateAsync: createCampaign, isPending: isCreating } =
 		useCreateCampaign();
@@ -90,7 +91,12 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		sunday: { enabled: false, from: '09:00', to: '17:30' },
 	};
 
-	const { t } = useTranslation(['campaigns', 'campaign.detail', 'common']);
+	const { t } = useTranslation([
+		'campaigns',
+		'campaign.detail',
+		'campaign.contact-list',
+		'common',
+	]);
 
 	// Check if we have the workflow data ready for existing campaigns
 	const isNewCampaign = !campaign?.id;
@@ -494,6 +500,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 								/>
 							</SectionCard>
 						)}
+						{selectedTab === 'report-values' && <ReportValuesSection />}
 						{selectedTab === 'analytics' && (
 							<form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
 								<AnalyticsSection />
