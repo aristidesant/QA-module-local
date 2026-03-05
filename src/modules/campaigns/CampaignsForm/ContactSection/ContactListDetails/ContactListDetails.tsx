@@ -105,7 +105,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 	const { t } = useTranslation('campaigns');
 	const navigate = useNavigate();
 	const { canAccessModule, canPerformAction } = usePermissions();
-	const { setRightComponent } = useCampaignsStore();
+	const { setRightComponent, closeContactListDrawer } = useCampaignsStore();
 	const toggleMutation = useToggleContactGroupStatus();
 	const updateMutation = useUpdateContactGroup();
 	const deleteMutation = useDeleteContactGroup();
@@ -347,6 +347,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 						});
 						onUpdateComplete();
 						setRightComponent(null);
+						closeContactListDrawer();
 					} catch (error) {
 						// eslint-disable-next-line no-console
 						console.error('Error toggling contact group status:', error);
@@ -443,6 +444,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 									});
 									onUpdateComplete();
 									setRightComponent(null);
+									closeContactListDrawer();
 								} catch (error) {
 									// eslint-disable-next-line no-console
 									console.error(
@@ -501,6 +503,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 						color: 'green',
 					});
 					onUpdateComplete();
+					closeContactListDrawer();
 				} catch (error: any) {
 					const errorMessage =
 						error?.response?.data?.message ||

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActionIcon, Modal, Tooltip, Group, Stack } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -15,7 +14,6 @@ import type ContactGroup from '~/models/ContactGroup';
 import BaseTable from '~/components/BaseTable';
 import useContactListColumns from './useContactListColumns';
 import { useCampaignsStore } from '~/stores/campaignsStore';
-import ContactListDetails from '../ContactListDetails';
 import { PaginatedResponse } from '~/models/CampaignsModel';
 import CapacityProgress from './CapacityProgress';
 
@@ -42,11 +40,10 @@ export const ContactListView = ({
 	const [opened, { open, close }] = useDisclosure(false);
 	const [inactiveExpanded, { toggle: toggleInactiveExpanded }] =
 		useDisclosure(true);
-	const { setRightComponent } = useCampaignsStore();
+	const { openContactListDrawer, selectedContactList } = useCampaignsStore(
+		(state) => state
+	);
 	const { canPerformAction } = usePermissions();
-	const [selectedContactListId, setSelectedContactListId] = useState<
-		number | null
-	>(null);
 
 	const columns = useContactListColumns({
 		onUpdateComplete,
@@ -64,15 +61,7 @@ export const ContactListView = ({
 	};
 
 	const handleRowClick = (contactList: ContactGroup) => {
-		setSelectedContactListId(contactList.id);
-		setRightComponent(
-			<ContactListDetails
-				contactGroup={contactList}
-				onUpdateComplete={onUpdateComplete}
-				objectiveId={objectiveId}
-				campaignId={campaignId}
-			/>
-		);
+		openContactListDrawer(contactList);
 	};
 
 	const contactListsArray = Array.isArray(contactGroups)
@@ -113,6 +102,8 @@ export const ContactListView = ({
 			<SectionCard
 				title={title}
 				description={description}
+				padding='md'
+				contentSpacing='sm'
 				headerActions={
 					<Group gap='xs'>
 						<Tooltip label={t('form.contacts.list.reload')}>
@@ -160,7 +151,11 @@ export const ContactListView = ({
 							emptyMessage={emptyMessage}
 							onRowClick={handleRowClick}
 							isLoading={isLoading}
-							selectedRowId={selectedContactListId}
+							selectedRowId={
+								selectedContactList?.isActive === isActive
+									? selectedContactList.id
+									: undefined
+							}
 							getRowId={(row) => row.id}
 						/>
 						<Modal

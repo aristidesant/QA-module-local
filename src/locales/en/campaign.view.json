@@ -31,6 +31,11 @@
 			"edit": "Edit Campaign"
 		}
 	},
+	"drawer": {
+		"title": "List details",
+		"description": "Review campaign health and manage the selected contact list.",
+		"empty": "Select a contact list to review its details."
+	},
 	"contacts": {
 		"tabs": {
 			"active": "Active",
@@ -40,9 +45,14 @@
 	"reportExport": {
 		"title": "Export report",
 		"description": "Download a report with the configured columns for all conversations in a date range.",
+		"actionLabel": "Export report",
+		"modalTitle": "Export campaign report",
+		"modalDescription": "Choose the date range and download the report in the format you need.",
 		"startDate": "Start date",
 		"endDate": "End date",
 		"export": "Export",
+		"exportCsv": "Export CSV",
+		"exportXlsx": "Export XLSX",
 		"formatLabel": "Select format",
 		"datesRequired": "Please select both start and end dates before exporting.",
 		"noData": "No data found in the selected date range.",

@@ -1,39 +1,50 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
+import { useQueryClient } from '@tanstack/react-query';
 import {
 	Alert,
+	Drawer,
 	Flex,
 	Loader,
 	Stack,
 	ActionIcon,
 	Tooltip,
 	Text,
+	Group,
 } from '@mantine/core';
-import { IconAlertCircle, IconEdit } from '@tabler/icons-react';
+import {
+	IconAlertCircle,
+	IconEdit,
+	IconListDetails,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
-import {
-	useGetCampaign,
-	useGetCampaignRequirements,
-} from '~/queries/campaignsQueries';
+import { useGetCampaign } from '~/queries/campaignsQueries';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import { ContactSection } from '../CampaignsForm/ContactSection';
 import CampaignHealth from '../CampaignHealth';
 import CampaignReportExport from './CampaignReportExport';
+import SectionTitle from '~/components/SectionTitle';
+import ContactListDetails from '../CampaignsForm/ContactSection/ContactListDetails';
+import styles from './CampaignViewPage.module.css';
 
 const CampaignViewPage = () => {
 	const { t } = useTranslation(['campaign.view', 'common']);
 	const { campaignId } = useParams<{ campaignId: string }>();
-	const { data: requet } = useGetCampaignRequirements(campaignId ?? '');
 	const navigate = useNavigate();
+	const queryClient = useQueryClient();
 	const { canPerformAction } = usePermissions();
 
-	const { selectCampaign, resetView, rightComponent } = useCampaignsStore(
-		(state) => state
-	);
+	const {
+		selectCampaign,
+		resetView,
+		selectedContactList,
+		isContactListDrawerOpen,
+		closeContactListDrawer,
+	} = useCampaignsStore((state) => state);
 
 	const {
 		data: campaign,
@@ -112,38 +123,76 @@ const CampaignViewPage = () => {
 	}
 
 	return (
-		<ContentContainer
-			title={campaign.name}
-			description={t('index.description')}
-			showBackButton
-			onBackClick={() => navigate('/campaigns')}
-			titleRight={
-				canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.UPDATE) ? (
-					<Tooltip label={t('index.actions.edit')} withArrow>
-						<ActionIcon
-							variant='light'
-							size='lg'
-							aria-label={t('index.actions.edit')}
-							onClick={() => navigate(`/campaign/${campaign.id}`)}
-						>
-							<IconEdit size={20} />
-						</ActionIcon>
-					</Tooltip>
-				) : undefined
-			}
-			rightSection={
-				<Stack>
-					<Text>{requet?.canRun}</Text>
-					{campaign?.id && <CampaignHealth campaignId={`${campaign.id}`} />}
-					{rightComponent || <></>}
+		<>
+			<ContentContainer
+				title={campaign.name}
+				description={t('index.description')}
+				showBackButton
+				onBackClick={() => navigate('/campaigns')}
+				titleRight={
+					<Group gap='xs'>
+						<CampaignReportExport campaignId={campaign.id} />
+						{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.UPDATE) ? (
+							<Tooltip label={t('index.actions.edit')} withArrow>
+								<ActionIcon
+									variant='light'
+									size='lg'
+									aria-label={t('index.actions.edit')}
+									onClick={() => navigate(`/campaign/${campaign.id}`)}
+								>
+									<IconEdit size={20} />
+								</ActionIcon>
+							</Tooltip>
+						) : null}
+					</Group>
+				}
+			>
+				<Stack gap='sm' className={styles.contentStack}>
+					<div className={styles.contactsSection}>
+						<ContactSection />
+					</div>
 				</Stack>
-			}
-		>
-			<Stack gap='md'>
-				<CampaignReportExport campaignId={campaign.id} />
-				<ContactSection />
-			</Stack>
-		</ContentContainer>
+			</ContentContainer>
+			<Drawer
+				opened={isContactListDrawerOpen && Boolean(selectedContactList)}
+				onClose={closeContactListDrawer}
+				position='right'
+				size='lg'
+				classNames={{
+					body: styles.drawerBody,
+					header: styles.drawerHeader,
+				}}
+				title={
+					<SectionTitle
+						title={t('drawer.title')}
+						description={t('drawer.description')}
+						order={5}
+						icon={<IconListDetails size={18} />}
+					/>
+				}
+			>
+				{selectedContactList && (
+					<Stack gap='sm' className={styles.drawerContent}>
+						<CampaignHealth campaignId={`${campaign.id}`} />
+						<ContactListDetails
+							contactGroup={selectedContactList}
+							onUpdateComplete={() => {
+								void queryClient.invalidateQueries({
+									queryKey: ['contactGroups'],
+								});
+							}}
+							objectiveId={campaign.objectiveId}
+							campaignId={campaign.id}
+						/>
+					</Stack>
+				)}
+				{!selectedContactList && (
+					<Text size='sm' c='dimmed'>
+						{t('drawer.empty')}
+					</Text>
+				)}
+			</Drawer>
+		</>
 	);
 };
 

@@ -1,9 +1,16 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Group, Menu, Text } from '@mantine/core';
+import {
+	ActionIcon,
+	Button,
+	Group,
+	Modal,
+	Stack,
+	Text,
+	Tooltip,
+} from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import {
-	IconChevronDown,
 	IconDownload,
 	IconFileSpreadsheet,
 	IconFileTypeCsv,
@@ -11,7 +18,7 @@ import {
 import { notifications } from '@mantine/notifications';
 import reportValuesApi from '~/api/reportValuesApi';
 import { getErrorMessage } from '~/utils/httpClient';
-import SectionCard from '~/components/SectionCard';
+import styles from './CampaignReportExport.module.css';
 
 type ReportExportFormat = 'csv' | 'xlsx';
 
@@ -21,6 +28,7 @@ interface CampaignReportExportProps {
 
 const CampaignReportExport = ({ campaignId }: CampaignReportExportProps) => {
 	const { t } = useTranslation('campaign.view');
+	const [opened, setOpened] = useState(false);
 	const [startDate, setStartDate] = useState<string | null>(null);
 	const [endDate, setEndDate] = useState<string | null>(null);
 	const [isExporting, setIsExporting] = useState(false);
@@ -81,6 +89,7 @@ const CampaignReportExport = ({ campaignId }: CampaignReportExportProps) => {
 			a.click();
 			a.remove();
 			window.URL.revokeObjectURL(url);
+			setOpened(false);
 		} catch (error) {
 			notifications.show({
 				message: getErrorMessage(error),
@@ -92,72 +101,81 @@ const CampaignReportExport = ({ campaignId }: CampaignReportExportProps) => {
 	};
 
 	return (
-		<SectionCard
-			title={t('reportExport.title')}
-			description={t('reportExport.description')}
-		>
-			<Group align='flex-end' gap='sm' wrap='wrap'>
-				<div>
-					<Text size='xs' c='dimmed' mb={4}>
-						{t('reportExport.startDate')}
+		<>
+			<Tooltip label={t('reportExport.actionLabel')} withArrow>
+				<ActionIcon
+					variant='light'
+					size='lg'
+					aria-label={t('reportExport.actionLabel')}
+					onClick={() => setOpened(true)}
+				>
+					<IconDownload size={18} />
+				</ActionIcon>
+			</Tooltip>
+
+			<Modal
+				opened={opened}
+				onClose={() => setOpened(false)}
+				title={t('reportExport.modalTitle')}
+				centered
+				size='md'
+			>
+				<Stack gap='sm'>
+					<Text size='sm' c='dimmed'>
+						{t('reportExport.modalDescription')}
 					</Text>
-					<DateInput
-						placeholder={t('reportExport.startDate')}
-						value={startDate}
-						onChange={setStartDate}
-						size='sm'
-						clearable
-						maxDate={endDate ? new Date(endDate) : undefined}
-						style={{ width: 170 }}
-					/>
-				</div>
-				<div>
-					<Text size='xs' c='dimmed' mb={4}>
-						{t('reportExport.endDate')}
-					</Text>
-					<DateInput
-						placeholder={t('reportExport.endDate')}
-						value={endDate}
-						onChange={setEndDate}
-						size='sm'
-						clearable
-						minDate={startDate ? new Date(startDate) : undefined}
-						style={{ width: 170 }}
-					/>
-				</div>
-				<Menu shadow='md' width={160} position='bottom-end' withArrow>
-					<Menu.Target>
-						<Button
-							leftSection={<IconDownload size={16} />}
-							rightSection={<IconChevronDown size={14} />}
-							variant='light'
+					<div className={styles.field}>
+						<Text size='xs' c='dimmed' mb={4}>
+							{t('reportExport.startDate')}
+						</Text>
+						<DateInput
+							placeholder={t('reportExport.startDate')}
+							value={startDate}
+							onChange={setStartDate}
 							size='sm'
+							clearable
+							maxDate={endDate ? new Date(endDate) : undefined}
+							className={styles.dateInput}
+						/>
+					</div>
+					<div className={styles.field}>
+						<Text size='xs' c='dimmed' mb={4}>
+							{t('reportExport.endDate')}
+						</Text>
+						<DateInput
+							placeholder={t('reportExport.endDate')}
+							value={endDate}
+							onChange={setEndDate}
+							size='sm'
+							clearable
+							minDate={startDate ? new Date(startDate) : undefined}
+							className={styles.dateInput}
+						/>
+					</div>
+					<Group justify='flex-end' gap='xs' className={styles.actions}>
+						<Button
+							size='sm'
+							variant='default'
+							leftSection={<IconFileTypeCsv size={16} />}
+							onClick={() => void handleExport('csv')}
 							loading={isExporting}
 							disabled={isExporting}
 						>
-							{t('reportExport.export')}
+							{t('reportExport.exportCsv')}
 						</Button>
-					</Menu.Target>
-					<Menu.Dropdown>
-						<Menu.Label>{t('reportExport.formatLabel')}</Menu.Label>
-						<Menu.Item
-							leftSection={<IconFileTypeCsv size={14} />}
-							onClick={() => void handleExport('csv')}
-							disabled={isExporting}
-						>
-							CSV
-						</Menu.Item>
-						<Menu.Item
-							leftSection={<IconFileSpreadsheet size={14} />}
+						<Button
+							size='sm'
+							leftSection={<IconFileSpreadsheet size={16} />}
 							onClick={() => void handleExport('xlsx')}
+							loading={isExporting}
 							disabled={isExporting}
 						>
-							XLSX
-						</Menu.Item>
-					</Menu.Dropdown>
-				</Menu>
-			</Group>
-		</SectionCard>
+							{t('reportExport.exportXlsx')}
+						</Button>
+					</Group>
+				</Stack>
+			</Modal>
+		</>
 	);
 };
 
