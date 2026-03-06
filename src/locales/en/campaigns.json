@@ -35,6 +35,11 @@
 			"general": "General"
 		}
 	},
+	"detailsDrawer": {
+		"title": "Campaign details",
+		"description": "Review the selected campaign configuration and status.",
+		"empty": "Select a campaign to review its details."
+	},
 	"columns": {
 		"campaign": "Campaign",
 		"type": "Type",

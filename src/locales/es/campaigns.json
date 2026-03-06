@@ -35,6 +35,11 @@
 			"general": "General"
 		}
 	},
+	"detailsDrawer": {
+		"title": "Detalles de la campaña",
+		"description": "Revisa la configuración y el estado de la campaña seleccionada.",
+		"empty": "Selecciona una campaña para revisar sus detalles."
+	},
 	"columns": {
 		"campaign": "Campaña",
 		"type": "Tipo",

@@ -20,7 +20,7 @@ import {
 	IconEyeOff,
 	IconArrowRight,
 } from '@tabler/icons-react';
-import { useState } from 'react';
+import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { useLogin } from '~/queries/authQueries';
 import { getErrorMessage } from '~/utils/httpClient';
@@ -33,15 +33,15 @@ import OTPVerificationModal from './OTPVerificationModal';
 import ClientSelectionModal from './ClientSelectionModal';
 import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import { usePasswordResetStore } from '~/stores/passwordResetStore';
-import { useEffect } from 'react';
 import { useSessionStore } from '~/stores/sessionStore';
 import LanguagePicker from '~/components/LanguagePicker';
+
+type LoginType = 'USER_PASS' | 'LDAP';
 
 interface FormValues {
 	username: string;
 	password: string;
-	rememberMe: boolean;
-	loginType: 'USER_PASS' | 'LDAP';
+	loginType: LoginType;
 }
 
 export function LoginForm() {
@@ -56,6 +56,7 @@ export function LoginForm() {
 	const [otpModalOpened, setOtpModalOpened] = useState(false);
 	const [pendingLoginData, setPendingLoginData] =
 		useState<MFALoginResponse | null>(null);
+	const [passwordVisible, setPasswordVisible] = useState(false);
 	// Multi-client selection state
 	const [clientSelectionModalOpened, setClientSelectionModalOpened] =
 		useState(false);
@@ -68,6 +69,7 @@ export function LoginForm() {
 	const isRedirecting = false;
 	const isLoading = isSubmitting || isRedirecting;
 	const logoutReason = new URLSearchParams(location.search).get('reason');
+	const formErrorRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
 		// Defensive: ensure no stale token remains when landing on /login.
@@ -85,7 +87,6 @@ export function LoginForm() {
 		initialValues: {
 			username: '',
 			password: '',
-			rememberMe: false,
 			// default to USER_PASS so existing users keep normal behavior
 			loginType: 'USER_PASS',
 		},
@@ -97,7 +98,101 @@ export function LoginForm() {
 		},
 	});
 
-	// We'll set form-level errors from the submit handler directly
+	useEffect(() => {
+		if (formError) {
+			formErrorRef.current?.focus();
+		}
+	}, [formError]);
+
+	const handleValidationFailure = (
+		errors: Partial<Record<keyof FormValues, string>>
+	) => {
+		const firstInvalidField = (['username', 'password'] as const).find(
+			(field) => errors[field]
+		);
+		if (firstInvalidField) {
+			form.getInputNode(firstInvalidField)?.focus();
+		}
+	};
+
+	const handleSubmit = async (values: FormValues) => {
+		if (isLoading) {
+			return;
+		}
+
+		setFormError(null);
+		try {
+			const result: MFALoginResponse = await loginMutation.mutateAsync({
+				username: values.username,
+				password: values.password,
+				loginType: values.loginType,
+			});
+
+			// Case: User has access to multiple clients
+			if (result?.requiresClientSelection && result?.availableClients) {
+				setAvailableClients(result.availableClients);
+				setPreAuthToken(result.preAuthToken || null);
+				setClientSelectionModalOpened(true);
+				clearPendingCredentials();
+				return;
+			}
+
+			if (result?.otpEnabled) {
+				// Show OTP modal
+				setPendingLoginData(result);
+				setOtpModalOpened(true);
+				clearPendingCredentials();
+			} else {
+				const requiresPasswordUpdate =
+					result?.needToChangePassword ??
+					result?.user?.needToChangePassword ??
+					false;
+
+				if (requiresPasswordUpdate) {
+					setPendingCredentials(values.username, values.loginType);
+					navigate('/force-password-change', {
+						replace: true,
+						state: {
+							username: values.username,
+							loginType: values.loginType,
+						},
+					});
+				} else {
+					// Direct login success, navigate to dashboard
+					clearPendingCredentials();
+					navigate('/');
+				}
+			}
+		} catch (err: unknown) {
+			setFormError(getErrorMessage(err));
+		}
+	};
+
+	const clearFormError = () => {
+		if (formError) {
+			setFormError(null);
+		}
+	};
+
+	const handleFieldKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+		if (event.key !== 'Enter' || event.nativeEvent.isComposing || isLoading) {
+			return;
+		}
+
+		event.preventDefault();
+		event.currentTarget.form?.requestSubmit();
+	};
+
+	const usernameInputProps = form.getInputProps('username');
+	const passwordInputProps = form.getInputProps('password');
+
+	const handleLoginTypeChange = (value: string) => {
+		if (value !== 'USER_PASS' && value !== 'LDAP') {
+			return;
+		}
+		clearFormError();
+		form.setFieldValue('loginType', value);
+	};
 
 	const handleOTPSuccess = () => {
 		setOtpModalOpened(false);
@@ -143,62 +238,8 @@ export function LoginForm() {
 
 				<form
 					className={classes.formContainer}
-					onSubmit={(e) => {
-						// Extra safety: prevent native submit even if Mantine config changes
-						e.preventDefault();
-						return form.onSubmit(async (values) => {
-							setFormError(null);
-							try {
-								const result: MFALoginResponse =
-									await loginMutation.mutateAsync({
-										username: values.username,
-										password: values.password,
-										loginType: values.loginType,
-									});
-
-								// Case: User has access to multiple clients
-								if (
-									result?.requiresClientSelection &&
-									result?.availableClients
-								) {
-									setAvailableClients(result.availableClients);
-									setPreAuthToken(result.preAuthToken || null);
-									setClientSelectionModalOpened(true);
-									clearPendingCredentials();
-									return;
-								}
-
-								if (result?.otpEnabled) {
-									// Show OTP modal
-									setPendingLoginData(result);
-									setOtpModalOpened(true);
-									clearPendingCredentials();
-								} else {
-									const requiresPasswordUpdate =
-										result?.needToChangePassword ??
-										result?.user?.needToChangePassword ??
-										false;
-
-									if (requiresPasswordUpdate) {
-										setPendingCredentials(values.username, values.loginType);
-										navigate('/force-password-change', {
-											replace: true,
-											state: {
-												username: values.username,
-												loginType: values.loginType,
-											},
-										});
-									} else {
-										// Direct login success, navigate to dashboard
-										clearPendingCredentials();
-										navigate('/');
-									}
-								}
-							} catch (err: any) {
-								setFormError(getErrorMessage(err));
-							}
-						})(e);
-					}}
+					onSubmit={form.onSubmit(handleSubmit, handleValidationFailure)}
+					aria-busy={isLoading}
 				>
 					{/* Loading overlay */}
 					{(isSubmitting || isRedirecting) && (
@@ -228,7 +269,7 @@ export function LoginForm() {
 							<AppSegmentedControl
 								fullWidth
 								value={form.values.loginType}
-								onChange={(v) => form.setFieldValue('loginType', v as any)}
+								onChange={handleLoginTypeChange}
 								data={[
 									{ label: t('loginType.credentials'), value: 'USER_PASS' },
 									{ label: t('loginType.ldap'), value: 'LDAP' },
@@ -254,9 +295,15 @@ export function LoginForm() {
 									root: classes.inputRoot,
 									label: classes.inputLabel,
 								}}
-								{...form.getInputProps('username')}
+								{...usernameInputProps}
+								onChange={(event) => {
+									clearFormError();
+									usernameInputProps.onChange(event);
+								}}
+								onKeyDown={handleFieldKeyDown}
 								name='username'
 								autoComplete='username'
+								autoFocus
 							/>
 
 							<PasswordInput
@@ -280,21 +327,39 @@ export function LoginForm() {
 									label: classes.inputLabel,
 									visibilityToggle: classes.visibilityToggle,
 								}}
-								{...form.getInputProps('password')}
+								{...passwordInputProps}
+								onChange={(event) => {
+									clearFormError();
+									passwordInputProps.onChange(event);
+								}}
+								onKeyDown={handleFieldKeyDown}
+								visibilityToggleButtonProps={{
+									'aria-label': passwordVisible
+										? t('password.visibility.hide')
+										: t('password.visibility.show'),
+								}}
+								visible={passwordVisible}
+								onVisibilityChange={setPasswordVisible}
 								name='password'
 								autoComplete='current-password'
+								aria-describedby={formError ? 'login-form-error' : undefined}
 							/>
 						</Stack>
 
 						{/* Form error alert */}
 						{formError && (
 							<Alert
+								id='login-form-error'
 								variant='light'
 								color='red'
-								title='Unable to sign in'
+								title={t('errors.signInFailedTitle')}
 								icon={<IconAlertCircle size={20} />}
 								radius='lg'
 								className={classes.errorMessage}
+								role='alert'
+								aria-live='assertive'
+								tabIndex={-1}
+								ref={formErrorRef}
 							>
 								{formError === 'Unable to sign in'
 									? t('errors.unableToSignIn')

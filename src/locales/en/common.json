@@ -68,6 +68,10 @@
 		"clientSwitcher": {
 			"title": "Switch Client",
 			"description": "Select a client to switch your active session. Your current token will be replaced.",
+			"count_one": "{{count}} client",
+			"count_other": "{{count}} clients",
+			"selectedLabel": "Selected",
+			"currentClient": "Current",
 			"tooltip": "Switch client",
 			"currentClientTooltip": "You are already in this client",
 			"emptyState": {

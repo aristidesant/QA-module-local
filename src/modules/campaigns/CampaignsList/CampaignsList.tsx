@@ -45,6 +45,7 @@ import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
+import AppDrawer from '~/components/AppDrawer';
 
 interface CampaignFiltersType {
 	type?: string;
@@ -60,12 +61,9 @@ interface CampaignFiltersType {
 
 export const CampaignsList: React.FC = () => {
 	const { t } = useTranslation(['campaigns', 'common']);
-	const {
-		selectCampaign,
-		selectedCampaign,
-		setRightComponent,
-		rightComponent,
-	} = useCampaignsStore((state) => state);
+	const { selectCampaign, selectedCampaign } = useCampaignsStore(
+		(state) => state
+	);
 	const navigate = useNavigate();
 	const { canPerformAction } = usePermissions();
 
@@ -95,6 +93,7 @@ export const CampaignsList: React.FC = () => {
 	>(null);
 
 	const [addNewModalOpened, setAddNewModalOpened] = useState(false);
+	const [isDetailsDrawerOpen, setIsDetailsDrawerOpen] = useState(false);
 	const [campaignTestCallId, setCampaignTestCallId] = useState<number | null>(
 		null
 	);
@@ -363,8 +362,7 @@ export const CampaignsList: React.FC = () => {
 
 	const handleCampaignClick = (campaign: Campaign) => {
 		selectCampaign(campaign);
-
-		setRightComponent?.(<CampaignPreview {...{ campaign }} />);
+		setIsDetailsDrawerOpen(true);
 	};
 
 	return (
@@ -372,7 +370,6 @@ export const CampaignsList: React.FC = () => {
 			<ContentContainer
 				title={t('page.title')}
 				description={t('page.description')}
-				rightSection={rightComponent || <></>}
 				titleRight={
 					<Group gap='xs'>
 						{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.CREATE) && (
@@ -461,6 +458,19 @@ export const CampaignsList: React.FC = () => {
 					</>
 				)}
 			</ContentContainer>
+			<AppDrawer
+				opened={isDetailsDrawerOpen && Boolean(selectedCampaign)}
+				onClose={() => setIsDetailsDrawerOpen(false)}
+				title={t('detailsDrawer.title')}
+				size='xl'
+			>
+				{selectedCampaign && <CampaignPreview campaign={selectedCampaign} />}
+				{!selectedCampaign && (
+					<Text size='sm' c='dimmed'>
+						{t('detailsDrawer.empty')}
+					</Text>
+				)}
+			</AppDrawer>
 
 			{/* Test Call Modal */}
 			<Modal

@@ -8,7 +8,6 @@ import {
 	ActionIcon,
 	Tooltip,
 	Group,
-	Drawer,
 } from '@mantine/core';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -47,6 +46,7 @@ import FormSaveButton from '~/components/FormSaveButton';
 import CampaignSyncButton from './components/CampaignSyncButton';
 import AgentSectionRightPanel from './AgentSection/AgentSectionRightPanel';
 import GeneralSectionRightPanel from './GeneralSection/GeneralSectionRightPanel';
+import AppDrawer from '~/components/AppDrawer';
 
 interface CampaignsFormProps {
 	campaign?: Partial<Campaign>;
@@ -572,15 +572,14 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 						)}
 					</Stack>
 				</ContentContainer>
-				<Drawer
+				<AppDrawer
 					opened={isSettingsDrawerOpen && Boolean(settingsDrawerContent)}
 					onClose={() => setIsSettingsDrawerOpen(false)}
 					title={settingsDrawerTitle}
-					position='right'
 					size='lg'
 				>
 					{settingsDrawerContent}
-				</Drawer>
+				</AppDrawer>
 			</CampaignFormProvider>
 		</CampaignIdContext.Provider>
 	);

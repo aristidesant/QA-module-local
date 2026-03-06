@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import {
 	Alert,
-	Drawer,
 	Flex,
 	Loader,
 	Stack,
@@ -27,9 +26,9 @@ import { useCampaignsStore } from '~/stores/campaignsStore';
 import { ContactSection } from '../CampaignsForm/ContactSection';
 import CampaignHealth from '../CampaignHealth';
 import CampaignReportExport from './CampaignReportExport';
-import SectionTitle from '~/components/SectionTitle';
 import ContactListDetails from '../CampaignsForm/ContactSection/ContactListDetails';
 import styles from './CampaignViewPage.module.css';
+import AppDrawer from '~/components/AppDrawer';
 
 const CampaignViewPage = () => {
 	const { t } = useTranslation(['campaign.view', 'common']);
@@ -153,23 +152,13 @@ const CampaignViewPage = () => {
 					</div>
 				</Stack>
 			</ContentContainer>
-			<Drawer
+			<AppDrawer
 				opened={isContactListDrawerOpen && Boolean(selectedContactList)}
 				onClose={closeContactListDrawer}
-				position='right'
 				size='lg'
-				classNames={{
-					body: styles.drawerBody,
-					header: styles.drawerHeader,
-				}}
-				title={
-					<SectionTitle
-						title={t('drawer.title')}
-						description={t('drawer.description')}
-						order={5}
-						icon={<IconListDetails size={18} />}
-					/>
-				}
+				title={t('drawer.title')}
+				description={t('drawer.description')}
+				icon={<IconListDetails size={18} />}
 			>
 				{selectedContactList && (
 					<Stack gap='sm' className={styles.drawerContent}>
@@ -191,7 +180,7 @@ const CampaignViewPage = () => {
 						{t('drawer.empty')}
 					</Text>
 				)}
-			</Drawer>
+			</AppDrawer>
 		</>
 	);
 };

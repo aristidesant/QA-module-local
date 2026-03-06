@@ -90,7 +90,10 @@ Design quality is mandatory: clean, modern, production-ready, light mode first.
 ### Shared UI primitives
 
 - Use `SectionCard` from `src/components/SectionCard` for form/page sections.
+- Use `AppDrawer` from `src/components/AppDrawer` for app drawers.
 - For data tables, use `BaseTable` from `src/components/BaseTable/BaseTable` by default.
+
+Do not use Mantine `Drawer` directly unless there is a justified exception that `AppDrawer` cannot cover.
 
 ## 6) Data, Forms, State, API
 
