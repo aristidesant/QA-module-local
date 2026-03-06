@@ -54,6 +54,7 @@ import { calculateHumanEquivalentValues } from '../ContactLimits/humanEquivalent
 import { getQueueStatusConfig } from '../ContactList/queueStatusConfig';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import styles from './ContactListDetails.module.css';
+import { formatWaveDateTime, formatWaveDelaySeconds } from '~/utils/waveUtils';
 
 interface ContactListDetailsProps {
 	contactGroup: ContactGroup;
@@ -102,7 +103,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 	objectiveId,
 	campaignId,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t, i18n } = useTranslation(['campaigns', 'common']);
 	const navigate = useNavigate();
 	const { canAccessModule, canPerformAction } = usePermissions();
 	const { setRightComponent, closeContactListDrawer } = useCampaignsStore();
@@ -226,7 +227,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 			},
 			{
 				label: t('form.contacts.details.meta.expirationDate'),
-				value: formatDate(t, contactGroup.expirationDate),
+				value: formatDate(t, i18n.language, contactGroup.expirationDate),
 				accent: 'indigo',
 				icon: <IconCalendarTime size={14} />,
 			},
@@ -244,12 +245,60 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 				accent: 'teal',
 				icon: <IconInfoCircle size={14} />,
 			},
+			{
+				label: t('form.contacts.details.meta.waveDelay'),
+				value: formatWaveDelaySeconds(contactGroup.waveExecutionDelaySeconds, {
+					day: t('units.day', { ns: 'common' }),
+					hour: t('units.hour', { ns: 'common' }),
+					minute: t('units.minute', { ns: 'common' }),
+					second: t('units.second', { ns: 'common' }),
+					noDelay: t('form.contacts.limits.noWaveDelay'),
+					notSet: t('form.contacts.details.stats.notSet'),
+				}),
+				accent: 'orange',
+				icon: <IconRepeat size={14} />,
+			},
+			{
+				label: t('form.contacts.details.meta.lastWaveStarted'),
+				value: formatWaveDateTime(
+					contactGroup.lastWaveStartedAt,
+					i18n.language,
+					t('form.contacts.details.stats.notSet')
+				),
+				accent: 'blue',
+				icon: <IconRefresh size={14} />,
+			},
+			{
+				label: t('form.contacts.details.meta.lastWaveCompleted'),
+				value: formatWaveDateTime(
+					contactGroup.lastWaveCompletedAt,
+					i18n.language,
+					t('form.contacts.details.stats.notSet')
+				),
+				accent: 'teal',
+				icon: <IconCircleCheck size={14} />,
+			},
+			{
+				label: t('form.contacts.details.meta.nextWaveScheduled'),
+				value: formatWaveDateTime(
+					contactGroup.nextWaveScheduledAt,
+					i18n.language,
+					t('form.contacts.details.stats.notSet')
+				),
+				accent: 'grape',
+				icon: <IconCalendarTime size={14} />,
+			},
 		],
 		[
 			contactGroup.expirationDate,
 			contactGroup.isActive,
+			contactGroup.lastWaveCompletedAt,
+			contactGroup.lastWaveStartedAt,
+			contactGroup.nextWaveScheduledAt,
 			contactGroup.schedule?.name,
 			contactGroup.schedule?.status,
+			contactGroup.waveExecutionDelaySeconds,
+			i18n.language,
 			statusLabel,
 			statusConfig.color,
 			t,
@@ -267,9 +316,11 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 
 	const disableToggle = contactGroup.queueStatus === 'COMPLETED';
 	const disableCleanQueue = contactGroup.queueStatus === 'COMPLETED';
-	const isArchiveBlockedByQueueStatus = ['RUNNING', 'PAUSED'].includes(
-		(contactGroup.queueStatus ?? '').toUpperCase()
-	);
+	const isArchiveBlockedByQueueStatus = [
+		'RUNNING',
+		'WAITING',
+		'PAUSED',
+	].includes((contactGroup.queueStatus ?? '').toUpperCase());
 
 	const handleEdit = () => {
 		if (!canEditContactList) {

@@ -80,6 +80,7 @@ export interface CreateCampaignWithAgentDTO {
 		promptId?: number;
 		objectiveId?: number;
 		defaultMaxWaves?: number;
+		defaultWaveExecutionDelaySeconds?: number;
 	};
 	agent: {
 		conversationConfig?: ConversationConfigPayload;
@@ -93,6 +94,12 @@ export interface CreateCampaignWithAgentDTO {
 export interface SetDraftDto {
 	isDraft: boolean;
 	draftStep: number;
+}
+
+export interface ResumeOutboundCampaignPayload {
+	campaignId: number;
+	contactGroupId: number;
+	ignoreWaveDelay?: boolean;
 }
 
 type AgentConfigPayload = {
@@ -276,13 +283,15 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 			});
 			return response.data;
 		},
-		resumeOutboundCampaign: async (
-			campaignId: number,
-			contactGroupId: number
-		) => {
+		resumeOutboundCampaign: async ({
+			campaignId,
+			contactGroupId,
+			ignoreWaveDelay,
+		}: ResumeOutboundCampaignPayload) => {
 			const response = await axios.patch(`${DEFAULT_API_URL}/outbound/resume`, {
 				campaignId,
 				contactGroupId,
+				...(ignoreWaveDelay ? { ignoreWaveDelay } : {}),
 			});
 			return response.data;
 		},

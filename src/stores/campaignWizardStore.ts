@@ -10,6 +10,7 @@ interface CampaignWizardState {
 	phoneNumberId: number | null;
 	objectiveId: number | null;
 	defaultMaxWaves: number;
+	defaultWaveExecutionDelaySeconds: number;
 	createdCampaign: Campaign | null;
 	isSubmitting: boolean;
 	isResumingDraft: boolean; // Flag to indicate resuming a draft campaign
@@ -32,6 +33,7 @@ interface CampaignWizardState {
 	setPhoneNumberId: (id: number | null) => void;
 	setObjectiveId: (id: number | null) => void;
 	setDefaultMaxWaves: (waves: number) => void;
+	setDefaultWaveExecutionDelaySeconds: (seconds: number) => void;
 	setCreatedCampaign: (campaign: Campaign | null) => void;
 	setIsSubmitting: (isSubmitting: boolean) => void;
 	setAgentBehaviorId: (id: string | number | null) => void;
@@ -53,6 +55,7 @@ const initialState = {
 	phoneNumberId: null,
 	objectiveId: null,
 	defaultMaxWaves: 3,
+	defaultWaveExecutionDelaySeconds: 0,
 	createdCampaign: null,
 	isSubmitting: false,
 	isResumingDraft: false,
@@ -77,6 +80,8 @@ export const useCampaignWizardStore = create<CampaignWizardState>((set) => ({
 	setPhoneNumberId: (id) => set({ phoneNumberId: id }),
 	setObjectiveId: (id) => set({ objectiveId: id }),
 	setDefaultMaxWaves: (waves) => set({ defaultMaxWaves: waves }),
+	setDefaultWaveExecutionDelaySeconds: (seconds) =>
+		set({ defaultWaveExecutionDelaySeconds: seconds }),
 	setCreatedCampaign: (campaign) => {
 		set({ createdCampaign: campaign });
 		// Sync with campaigns store so AddScheduler has access to campaign ID
@@ -100,6 +105,8 @@ export const useCampaignWizardStore = create<CampaignWizardState>((set) => ({
 			campaignType: campaign.type,
 			objectiveId: campaign.objectiveId ?? null,
 			defaultMaxWaves: campaign.defaultMaxWaves ?? 3,
+			defaultWaveExecutionDelaySeconds:
+				campaign.defaultWaveExecutionDelaySeconds ?? 0,
 			activeStep: campaign.draftStep ?? 0,
 			isResumingDraft: true,
 		});

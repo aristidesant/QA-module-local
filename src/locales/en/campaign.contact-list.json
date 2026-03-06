@@ -36,6 +36,8 @@
 		"pendingDesc": "Waiting to start. Review settings before launching.",
 		"running": "Running",
 		"runningDesc": "Contacts are currently being dialed.",
+		"waiting": "Waiting for next wave",
+		"waitingDesc": "The previous wave finished and the next one is scheduled to run later.",
 		"paused": "Paused",
 		"pausedDesc": "Processing halted. Resume when ready.",
 		"complete": "Complete",
@@ -77,7 +79,23 @@
 		"maxCallsPerContact": "Max calls per contact",
 		"maxCallsPerList": "Max calls per list",
 		"humanEquivalent": "Human equivalent",
-		"waves": "Waves"
+		"waves": "Waves",
+		"delayBetweenWaves": "Delay between waves",
+		"noDelayBetweenWaves": "No delay between waves",
+		"lastWaveStarted": "Last wave started",
+		"lastWaveCompleted": "Last wave completed",
+		"nextWaveScheduled": "Next wave scheduled",
+		"compact": {
+			"contacts": "Contacts",
+			"maxCallsPerContact": "Max/contact",
+			"humanEquivalent": "Human eq.",
+			"waves": "Waves",
+			"expirationDate": "Expires",
+			"delayBetweenWaves": "Wave delay",
+			"lastWaveStarted": "Started",
+			"lastWaveCompleted": "Completed",
+			"nextWaveScheduled": "Next wave"
+		}
 	},
 	"metrics": {
 		"title": "Contact List Metrics",
@@ -466,7 +484,13 @@
 				"extendWaves": "Extend Waves",
 				"completeList": "Complete List",
 				"downloadResults": "Download Results",
-				"openContactList": "Open Contact List"
+				"openContactList": "Open Contact List",
+				"resumeWaiting": "Resume",
+				"resumeWaitingHelper": "Skip the configured wave delay",
+				"resumeWaitingConfirmTitle": "Resume next wave now?",
+				"resumeWaitingConfirmMessage": "This will skip the configured delay between waves for this contact list.",
+				"resumeWaitingScheduledFor": "Next wave scheduled for {{value}}.",
+				"resumeWaitingScheduleNotice": "Campaign schedule restrictions still apply, so calls may start now or at the next valid schedule window."
 			},
 			"primaryPhone": "Primary phone number",
 			"phoneNumbers": "Phone Numbers ({{count}})",
@@ -497,6 +521,10 @@
 				"completed": {
 					"title": "List Completed",
 					"message": "Contact list marked as completed."
+				},
+				"resumedIgnoringDelay": {
+					"title": "Resume Requested",
+					"message": "The contact list will resume without waiting for the configured wave delay."
 				}
 			},
 			"confirm": {

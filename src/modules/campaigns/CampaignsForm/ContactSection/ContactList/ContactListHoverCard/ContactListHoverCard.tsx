@@ -13,6 +13,7 @@ import { IconInfoCircle } from '@tabler/icons-react';
 import type ContactGroup from '~/models/ContactGroup';
 import { getQueueStatusConfig } from '../queueStatusConfig';
 import classes from './ContactListHoverCard.module.css';
+import { formatWaveDateTime, formatWaveDelaySeconds } from '~/utils/waveUtils';
 
 interface ContactListHoverCardProps {
 	contactGroup: ContactGroup;
@@ -21,8 +22,25 @@ interface ContactListHoverCardProps {
 export const ContactListHoverCard = ({
 	contactGroup,
 }: ContactListHoverCardProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t, i18n } = useTranslation(['campaigns', 'common']);
 	const statusConfig = getQueueStatusConfig(contactGroup.queueStatus);
+	const notSetLabel = t('form.contacts.details.stats.notSet');
+	const delayLabel = formatWaveDelaySeconds(
+		contactGroup.waveExecutionDelaySeconds,
+		{
+			day: t('units.day', { ns: 'common' }),
+			hour: t('units.hour', { ns: 'common' }),
+			minute: t('units.minute', { ns: 'common' }),
+			second: t('units.second', { ns: 'common' }),
+			noDelay: t('form.contacts.limits.noWaveDelay'),
+			notSet: notSetLabel,
+		}
+	);
+	const nextWaveLabel = formatWaveDateTime(
+		contactGroup.nextWaveScheduledAt,
+		i18n.language,
+		notSetLabel
+	);
 
 	return (
 		<HoverCard shadow='none' radius='md' withArrow>
@@ -96,6 +114,22 @@ export const ContactListHoverCard = ({
 							</Text>
 							<Text size='sm' fw={500}>
 								{contactGroup.maxCallsPerList}
+							</Text>
+						</div>
+						<div className={classes.statItem}>
+							<Text size='xs' c='dimmed'>
+								{t('form.contacts.details.meta.waveDelay')}
+							</Text>
+							<Text size='sm' fw={500}>
+								{delayLabel}
+							</Text>
+						</div>
+						<div className={classes.statItem}>
+							<Text size='xs' c='dimmed'>
+								{t('form.contacts.details.meta.nextWaveScheduled')}
+							</Text>
+							<Text size='sm' fw={500}>
+								{nextWaveLabel}
 							</Text>
 						</div>
 					</SimpleGrid>

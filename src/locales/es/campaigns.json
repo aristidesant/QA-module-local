@@ -101,10 +101,12 @@
 		"UNKNOWN": "Desconocido",
 		"pending": "Pendiente",
 		"running": "En curso",
+		"waiting": "Esperando próxima oleada",
 		"paused": "Pausada",
 		"complete": "Completada",
 		"failed": "Fallida",
-		"executed": "Ejecutada"
+		"executed": "Ejecutada",
+		"unknown": "Desconocido"
 	},
 	"toggleStatus": {
 		"activate": "Activar campaña",
@@ -831,6 +833,7 @@
 			"userIdMin": "El ID de usuario debe ser al menos 0",
 			"clientIdMin": "El ID de cliente debe ser al menos 0",
 			"defaultWavesMin": "Las oleadas predeterminadas deben ser al menos 1",
+			"defaultWaveDelayMin": "El retraso predeterminado entre oleadas debe ser 0 o mayor",
 			"objectiveRequired": "El objetivo de la campaña es obligatorio"
 		},
 		"actions": {
@@ -1144,11 +1147,18 @@
 			"controls": {
 				"start": "Iniciar Campaña",
 				"resume": "Reanudar Campaña",
+				"resumeIgnoreDelay": "Reanudar e ignorar retraso",
 				"pause": "Pausar Campaña",
 				"completed": "Campaña Completada",
 				"failed": "Campaña Fallida",
 				"requirementsNotMet": "Requisitos de la campaña no cumplidos",
 				"allWavesDone": "Todas las oleadas ejecutadas",
+				"resumeModal": {
+					"title": "Reanudar lista de contactos",
+					"message": "Esta lista está pausada mientras espera la próxima oleada.",
+					"scheduledFor": "Próxima oleada programada para {{value}}.",
+					"scheduleNotice": "Ignorar el retraso entre oleadas sigue respetando la ventana del horario de la campaña."
+				},
 				"notifications": {
 					"successTitle": "Éxito",
 					"errorTitle": "Error",
@@ -1156,6 +1166,8 @@
 					"running": "La campaña ahora está en ejecución",
 					"startError": "Error al iniciar la campaña",
 					"resumed": "Campaña reanudada",
+					"resumeRequested": "Se solicitó la reanudación. El estado se actualizará automáticamente.",
+					"resumeIgnoringDelay": "Se solicitó la reanudación sin retraso entre oleadas. El estado se actualizará automáticamente.",
 					"resumeError": "Error al reanudar la campaña",
 					"paused": "Campaña pausada",
 					"pauseError": "Error al pausar la campaña"
@@ -1176,6 +1188,7 @@
 				"emptyInactiveMessage": "No se encontraron listas de contactos inactivas.",
 				"reload": "Recargar",
 				"reloadUnavailable": "Recarga no disponible mientras está colapsado",
+				"nextWaveScheduled": "Próxima: {{value}}",
 				"columns": {
 					"name": "Nombre",
 					"total": "Total",
@@ -1227,6 +1240,11 @@
 			"limits": {
 				"maxWavesLabel": "Máx. oleadas",
 				"maxWavesDescription": "Número máximo de oleadas para esta lista de contactos.",
+				"maxWavesInherited": "Heredado del valor predeterminado de la campaña: {{value}}",
+				"waveDelayLabel": "Retraso entre oleadas (segundos)",
+				"waveDelayDescription": "Retraso entre oleadas para esta lista de contactos. Valor actual: {{value}}.",
+				"waveDelayInherited": "Heredado del valor predeterminado de la campaña: {{value}}",
+				"noWaveDelay": "Sin retraso entre oleadas",
 				"humanEquivalentLabel": "Equivalente humano",
 				"availableLabel": "Disponible",
 				"capacityFull": {
@@ -1244,6 +1262,7 @@
 					"mappingRequired": "Por favor, mapea las columnas",
 					"capacityExceeded": "Capacidad excedida",
 					"wavesMinimum": "Se requiere un mínimo de 1 oleada",
+					"waveDelayMinimum": "El retraso entre oleadas debe ser 0 o mayor",
 					"schedulerFullTitle": "Programador lleno",
 					"schedulerFullMessage": "No hay suficiente capacidad para programar esta lista.",
 					"successTitle": "Éxito",
@@ -1302,6 +1321,10 @@
 					"expirationDate": "Fecha de vencimiento",
 					"scheduler": "Programador",
 					"schedulerStatus": "Estado del programador",
+					"waveDelay": "Retraso entre oleadas",
+					"lastWaveStarted": "Última oleada iniciada",
+					"lastWaveCompleted": "Última oleada completada",
+					"nextWaveScheduled": "Próxima oleada programada",
 					"notAssigned": "No asignado"
 				},
 				"stats": {
@@ -1349,7 +1372,7 @@
 				"notifications": {
 					"archiveBlocked": {
 						"title": "Acción no disponible",
-						"message": "No se puede archivar esta lista de contactos mientras está en ejecución o pausada. Detén la ejecución primero e inténtalo de nuevo."
+						"message": "No se puede archivar esta lista de contactos mientras está en ejecución, esperando o pausada. Detén la ejecución primero e inténtalo de nuevo."
 					}
 				},
 				"dialogs": {
@@ -1870,6 +1893,8 @@
 				"campaignTypeInbound": "Entrante",
 				"defaultWaves": "Oleadas Predeterminadas",
 				"defaultWavesDesc": "Cuántas oleadas debe ejecutar cada lista de contactos antes de detenerse",
+				"defaultWaveDelay": "Retraso predeterminado entre oleadas (segundos)",
+				"defaultWaveDelayDesc": "Retraso entre oleadas para nuevas listas de contactos. Usa 0 para no agregar espera adicional.",
 				"phoneNumber": "Número de Teléfono",
 				"phoneNumberDesc": "Selecciona el número de teléfono para esta campaña",
 				"phoneNumberPlaceholder": "Elige un número de teléfono",
@@ -1890,6 +1915,7 @@
 					"descriptionRequired": "La descripción es obligatoria",
 					"phoneIdRequired": "El número de teléfono es obligatorio",
 					"wavesRequired": "Las oleadas deben ser al menos 1",
+					"waveDelayRequired": "El retraso entre oleadas debe ser 0 o mayor",
 					"objectiveRequired": "El objetivo de la campaña es obligatorio"
 				}
 			},
@@ -2092,6 +2118,9 @@
 		"createNewObjective": "Crear nuevo objetivo",
 		"defaultWaves": "Oleadas Predeterminadas",
 		"defaultWavesDesc": "Número de oleadas a ejecutar para cada lista de contactos",
+		"defaultWaveDelay": "Retraso predeterminado entre oleadas (segundos)",
+		"defaultWaveDelayDesc": "Retraso entre oleadas para nuevas listas de contactos. Usa 0 para no agregar espera adicional.",
+		"enterWaveDelaySeconds": "Ingresa el retraso en segundos",
 		"enterNumberOfWaves": "Ingresa el número de oleadas",
 		"createObjectiveTitle": "Crear Nuevo Objetivo"
 	}

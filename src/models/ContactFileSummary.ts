@@ -31,6 +31,7 @@ export interface ProcessContactGroupFileRequest {
 	schedulerId: number;
 	schemaId: number;
 	maxWaves: number;
+	waveExecutionDelaySeconds: number;
 }
 
 export interface ProcessContactGroupFileResponse {

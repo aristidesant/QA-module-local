@@ -115,6 +115,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			workingHours: campaign?.workingHours || defaultWorkingHours,
 			agentConfig: campaign?.agentConfig || {},
 			defaultMaxWaves: campaign?.defaultMaxWaves ?? 3,
+			defaultWaveExecutionDelaySeconds:
+				campaign?.defaultWaveExecutionDelaySeconds ?? 0,
 		},
 		validate: {
 			name: (value) => (value ? null : t('form.validation.nameRequired')),
@@ -127,6 +129,10 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 				value >= 0 ? null : t('form.validation.clientIdMin'),
 			defaultMaxWaves: (value) =>
 				value && value >= 1 ? null : t('form.validation.defaultWavesMin'),
+			defaultWaveExecutionDelaySeconds: (value) =>
+				value !== undefined && value >= 0
+					? null
+					: t('form.validation.defaultWaveDelayMin'),
 			objectiveId: (value) =>
 				value ? null : t('form.validation.objectiveRequired'),
 		},
@@ -154,6 +160,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			workingHours: campaign.workingHours || defaultWorkingHours,
 			agentConfig: campaign.agentConfig || {},
 			defaultMaxWaves: campaign.defaultMaxWaves ?? 3,
+			defaultWaveExecutionDelaySeconds:
+				campaign.defaultWaveExecutionDelaySeconds ?? 0,
 		});
 
 		const stateNodes = form.values.agentConfig?.workflow?.nodes;
@@ -241,6 +249,10 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 						},
 					},
 				};
+			}
+
+			if (cleanedValue.type === 'INBOUND') {
+				cleanedValue.defaultWaveExecutionDelaySeconds = undefined;
 			}
 
 			// Prepare data for light update (excludes agentConfig)

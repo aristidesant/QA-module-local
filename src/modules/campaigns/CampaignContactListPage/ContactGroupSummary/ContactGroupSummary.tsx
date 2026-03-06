@@ -7,13 +7,14 @@ import styles from './ContactGroupSummary.module.css';
 import type ContactGroup from '~/models/ContactGroup';
 import { formatExpirationDate } from '~/utils/dateUtils';
 import { getQueueStatusConfig } from '~/modules/campaigns/CampaignsForm/ContactSection/ContactList/queueStatusConfig';
+import { formatWaveDateTime, formatWaveDelaySeconds } from '~/utils/waveUtils';
 
 export interface ContactGroupSummaryProps {
 	contactGroup: ContactGroup;
 }
 
 const ContactGroupSummary = ({ contactGroup }: ContactGroupSummaryProps) => {
-	const { t } = useTranslation('campaign.contact-list');
+	const { t, i18n } = useTranslation(['campaign.contact-list', 'common']);
 	const statusConfig = useMemo(
 		() => getQueueStatusConfig(contactGroup.queueStatus),
 		[contactGroup.queueStatus]
@@ -128,6 +129,33 @@ const ContactGroupSummary = ({ contactGroup }: ContactGroupSummaryProps) => {
 							{contactGroup.expirationDate
 								? formatExpirationDate(contactGroup.expirationDate)
 								: t('summary.noExpiration')}
+						</Text>
+					</div>
+					<div>
+						<Text size='xs' c='dimmed'>
+							{t('summary.delayBetweenWaves')}
+						</Text>
+						<Text size='sm'>
+							{formatWaveDelaySeconds(contactGroup.waveExecutionDelaySeconds, {
+								day: t('units.day', { ns: 'common' }),
+								hour: t('units.hour', { ns: 'common' }),
+								minute: t('units.minute', { ns: 'common' }),
+								second: t('units.second', { ns: 'common' }),
+								noDelay: t('summary.noDelayBetweenWaves'),
+								notSet: t('summary.notSet'),
+							})}
+						</Text>
+					</div>
+					<div>
+						<Text size='xs' c='dimmed'>
+							{t('summary.nextWaveScheduled')}
+						</Text>
+						<Text size='sm'>
+							{formatWaveDateTime(
+								contactGroup.nextWaveScheduledAt,
+								i18n.language,
+								t('summary.notSet')
+							)}
 						</Text>
 					</div>
 					{/* removed source field; model doesn't have source */}

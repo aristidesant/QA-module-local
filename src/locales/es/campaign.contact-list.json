@@ -36,6 +36,8 @@
 		"pendingDesc": "Esperando para comenzar. Revisa la configuración antes de lanzar.",
 		"running": "En curso",
 		"runningDesc": "Los contactos están siendo marcados actualmente.",
+		"waiting": "Esperando próxima oleada",
+		"waitingDesc": "La oleada anterior terminó y la siguiente está programada para ejecutarse más tarde.",
 		"paused": "Pausada",
 		"pausedDesc": "Procesamiento detenido. Reanuda cuando estés listo.",
 		"complete": "Completada",
@@ -75,7 +77,23 @@
 		"maxCallsPerContact": "Máx. llamadas por contacto",
 		"maxCallsPerList": "Máx. llamadas por lista",
 		"humanEquivalent": "Equivalente humano",
-		"waves": "Oleadas"
+		"waves": "Oleadas",
+		"delayBetweenWaves": "Retraso entre oleadas",
+		"noDelayBetweenWaves": "Sin retraso entre oleadas",
+		"lastWaveStarted": "Última oleada iniciada",
+		"lastWaveCompleted": "Última oleada completada",
+		"nextWaveScheduled": "Próxima oleada programada",
+		"compact": {
+			"contacts": "Contactos",
+			"maxCallsPerContact": "Máx./contacto",
+			"humanEquivalent": "Eq. humano",
+			"waves": "Oleadas",
+			"expirationDate": "Expira",
+			"delayBetweenWaves": "Retraso",
+			"lastWaveStarted": "Iniciada",
+			"lastWaveCompleted": "Completada",
+			"nextWaveScheduled": "Próxima"
+		}
 	},
 	"metrics": {
 		"title": "Métricas de la lista de contactos",
@@ -457,7 +475,13 @@
 				"extendWaves": "Extender Oleadas",
 				"completeList": "Completar Lista",
 				"downloadResults": "Descargar Resultados",
-				"openContactList": "Abrir Lista de Contactos"
+				"openContactList": "Abrir Lista de Contactos",
+				"resumeWaiting": "Reanudar",
+				"resumeWaitingHelper": "Omitir el retraso configurado entre oleadas",
+				"resumeWaitingConfirmTitle": "¿Reanudar la próxima oleada ahora?",
+				"resumeWaitingConfirmMessage": "Esto omitirá el retraso configurado entre oleadas para esta lista de contactos.",
+				"resumeWaitingScheduledFor": "Próxima oleada programada para {{value}}.",
+				"resumeWaitingScheduleNotice": "Las restricciones del horario de la campaña siguen aplicando, por lo que las llamadas pueden iniciar ahora o en la próxima ventana válida."
 			},
 			"primaryPhone": "Número de teléfono principal",
 			"phoneNumbers": "Números de teléfono ({{count}})",
@@ -488,6 +512,10 @@
 				"completed": {
 					"title": "Lista Completada",
 					"message": "Lista de contactos marcada como completada."
+				},
+				"resumedIgnoringDelay": {
+					"title": "Reanudación solicitada",
+					"message": "La lista de contactos se reanudará sin esperar el retraso configurado entre oleadas."
 				}
 			},
 			"confirm": {

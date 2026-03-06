@@ -165,19 +165,34 @@ const GeneralSectionRightPanel: React.FC = () => {
 					iconColor='blue'
 				>
 					{isOutbound && (
-						<NumberInput
-							label={t('general.defaultWaves')}
-							description={t('general.defaultWavesDesc')}
-							min={1}
-							clampBehavior='strict'
-							allowDecimal={false}
-							allowNegative={false}
-							step={1}
-							placeholder={t('general.enterNumberOfWaves')}
-							withAsterisk
-							size='sm'
-							{...form.getInputProps('defaultMaxWaves')}
-						/>
+						<>
+							<NumberInput
+								label={t('general.defaultWaves')}
+								description={t('general.defaultWavesDesc')}
+								min={1}
+								clampBehavior='strict'
+								allowDecimal={false}
+								allowNegative={false}
+								step={1}
+								placeholder={t('general.enterNumberOfWaves')}
+								withAsterisk
+								size='sm'
+								{...form.getInputProps('defaultMaxWaves')}
+							/>
+
+							<NumberInput
+								label={t('general.defaultWaveDelay')}
+								description={t('general.defaultWaveDelayDesc')}
+								min={0}
+								clampBehavior='strict'
+								allowDecimal={false}
+								allowNegative={false}
+								step={30}
+								placeholder={t('general.enterWaveDelaySeconds')}
+								size='sm'
+								{...form.getInputProps('defaultWaveExecutionDelaySeconds')}
+							/>
+						</>
 					)}
 
 					<Select

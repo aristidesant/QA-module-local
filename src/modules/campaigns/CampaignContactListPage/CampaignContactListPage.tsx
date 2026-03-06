@@ -17,26 +17,17 @@ import {
 	IconArrowLeft,
 	IconInfoCircle,
 	IconMessage,
-	IconPlayerPause,
-	IconPlayerPlay,
 	IconRefresh,
 	IconUsers,
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
-import { modals } from '@mantine/modals';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import EmptyState from '~/components/EmptyState';
 import { useGetContactGroup } from '~/queries/contactGroupQueries';
-import {
-	useStartOutboundCampaign,
-	usePauseOutboundCampaign,
-	useResumeOutboundCampaign,
-	useGetCampaign,
-} from '~/queries/campaignsQueries';
+import { useGetCampaign } from '~/queries/campaignsQueries';
 import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
-import { PermissionEnum } from '~/constants/PermissionEnum';
 import { useCampaignContactListStore } from '~/stores/campaignContactListStore';
 import { getErrorMessage } from '~/utils/httpClient';
 import ContactGroupSummary from './ContactGroupSummary';
@@ -69,10 +60,7 @@ const CampaignContactListPage = () => {
 		Number.isNaN(contactGroupIdNumber) ? 0 : contactGroupIdNumber
 	);
 
-	const startMutation = useStartOutboundCampaign();
-	const pauseMutation = usePauseOutboundCampaign();
-	const resumeMutation = useResumeOutboundCampaign();
-	const { canPerformAction, canAccessModule } = usePermissions();
+	const { canAccessModule } = usePermissions();
 
 	const { setRightComponent, rightComponent } = useCampaignContactListStore();
 
@@ -86,144 +74,12 @@ const CampaignContactListPage = () => {
 		}
 	}, [contactGroupQuery.data, setRightComponent]);
 
-	const isLoadingMutations =
-		startMutation.isPending ||
-		pauseMutation.isPending ||
-		resumeMutation.isPending;
-
-	type ActionType = 'start' | 'resume' | 'pause' | null;
-
-	const statusConfig: Record<
-		string,
-		{
-			actionLabel: string;
-			actionIcon: React.ReactNode;
-			actionType: ActionType;
-		}
-	> = {
-		PENDING: {
-			actionLabel: t('actions.start'),
-			actionIcon: <IconPlayerPlay size={16} />,
-			actionType: 'start',
-		},
-		RUNNING: {
-			actionLabel: t('actions.pause'),
-			actionIcon: <IconPlayerPause size={16} />,
-			actionType: 'pause',
-		},
-		PAUSED: {
-			actionLabel: t('actions.resume'),
-			actionIcon: <IconPlayerPlay size={16} />,
-			actionType: 'resume',
-		},
-		COMPLETE: {
-			actionLabel: t('actions.noActions'),
-			actionIcon: null,
-			actionType: null,
-		},
-		COMPLETED: {
-			actionLabel: t('actions.noActions'),
-			actionIcon: null,
-			actionType: null,
-		},
-		EXECUTED: {
-			actionLabel: t('actions.allWavesExecuted'),
-			actionIcon: null,
-			actionType: null,
-		},
-		FAILED: {
-			actionLabel: t('actions.retryNotAvailable'),
-			actionIcon: null,
-			actionType: null,
-		},
-		UNKNOWN: {
-			actionLabel: t('actions.noActions'),
-			actionIcon: null,
-			actionType: null,
-		},
-	};
-
-	const statusKey = contactGroupQuery.data
-		? (contactGroupQuery.data.queueStatus?.toUpperCase() ?? 'UNKNOWN')
-		: 'UNKNOWN';
-	const status = statusConfig[statusKey] ?? statusConfig.UNKNOWN;
-
-	const canExecuteCampaigns = canPerformAction(
-		ModuleEnum.CAMPAIGNS,
-		PermissionEnum.EXECUTE
-	);
 	const canViewConversations = canAccessModule(ModuleEnum.CONVERSATIONS);
 	const canViewContacts = canAccessModule(ModuleEnum.CONTACTS);
 
 	const queueStatusConfig = contactGroupQuery.data
 		? getQueueStatusConfig(contactGroupQuery.data.queueStatus ?? '')
 		: null;
-
-	const handleAction = async () => {
-		if (!contactGroupQuery.data || !canExecuteCampaigns) return;
-
-		let confirmMessage = '';
-		if (status.actionType === 'start') {
-			confirmMessage = t('actions.confirmStart');
-		} else if (status.actionType === 'pause') {
-			confirmMessage = t('actions.confirmPause');
-		} else if (status.actionType === 'resume') {
-			confirmMessage = t('actions.confirmResume');
-		}
-
-		const confirmed = await new Promise<boolean>((resolve) => {
-			modals.openConfirmModal({
-				title: t('actions.confirmTitle'),
-				children: confirmMessage,
-				labels: {
-					confirm: t('actions.yes'),
-					cancel: t('actions.no'),
-				},
-				onConfirm: () => resolve(true),
-				onCancel: () => resolve(false),
-			});
-		});
-
-		if (!confirmed) {
-			return;
-		}
-
-		const payload = {
-			campaignId: contactGroupQuery.data.schedule?.campaignId || 0,
-			contactGroupId: contactGroupQuery.data.id,
-		};
-
-		const mutationOptions = {
-			onSuccess: () => {
-				notifications.show({
-					title: t('actions.success'),
-					message: t('actions.actionSuccess', {
-						action: status.actionType,
-					}),
-					color: 'green',
-				});
-				void contactGroupQuery.refetch();
-			},
-			onError: (error: Error) => {
-				notifications.show({
-					title: t('actions.error'),
-					message: getErrorMessage(error),
-					color: 'red',
-				});
-			},
-		};
-
-		if (status.actionType === 'start') {
-			startMutation.mutate(payload, mutationOptions);
-		} else if (status.actionType === 'resume') {
-			resumeMutation.mutate(payload, mutationOptions);
-		} else if (status.actionType === 'pause') {
-			pauseMutation.mutate(payload, mutationOptions);
-		}
-	};
-
-	const primaryActionDisabled =
-		status.actionType === null || isLoadingMutations || !canExecuteCampaigns;
 
 	const isLoading = contactGroupQuery.isLoading;
 	const hasInvalidId = Number.isNaN(contactGroupIdNumber);
@@ -382,19 +238,6 @@ const CampaignContactListPage = () => {
 						<SectionCard
 							title={t('overview.title')}
 							description={t('overview.description')}
-							headerActions={
-								canExecuteCampaigns ? (
-									<Button
-										variant='filled'
-										onClick={handleAction}
-										disabled={primaryActionDisabled}
-										loading={isLoadingMutations}
-										leftSection={status.actionIcon}
-									>
-										{status.actionLabel}
-									</Button>
-								) : null
-							}
 						>
 							<ContactListInformation
 								contactGroup={contactGroupQuery.data}

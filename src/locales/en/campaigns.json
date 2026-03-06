@@ -101,10 +101,12 @@
 		"UNKNOWN": "Unknown",
 		"pending": "Pending",
 		"running": "Running",
+		"waiting": "Waiting for next wave",
 		"paused": "Paused",
 		"complete": "Complete",
 		"failed": "Failed",
-		"executed": "Executed"
+		"executed": "Executed",
+		"unknown": "Unknown"
 	},
 	"toggleStatus": {
 		"activate": "Activate campaign",
@@ -830,6 +832,7 @@
 			"userIdMin": "User ID must be at least 0",
 			"clientIdMin": "Client ID must be at least 0",
 			"defaultWavesMin": "Default waves must be at least 1",
+			"defaultWaveDelayMin": "Default wave delay must be 0 or greater",
 			"objectiveRequired": "Campaign objective is required"
 		},
 		"actions": {
@@ -1143,11 +1146,18 @@
 			"controls": {
 				"start": "Start Campaign",
 				"resume": "Resume Campaign",
+				"resumeIgnoreDelay": "Resume and ignore delay",
 				"pause": "Pause Campaign",
 				"completed": "Campaign Completed",
 				"failed": "Campaign Failed",
 				"requirementsNotMet": "Campaign requirements not met",
 				"allWavesDone": "All waves executed",
+				"resumeModal": {
+					"title": "Resume contact list",
+					"message": "This contact list is paused while waiting for the next wave.",
+					"scheduledFor": "Next wave scheduled for {{value}}.",
+					"scheduleNotice": "Ignoring the wave delay still respects the campaign schedule window."
+				},
 				"notifications": {
 					"successTitle": "Success",
 					"errorTitle": "Error",
@@ -1155,6 +1165,8 @@
 					"running": "Campaign is now running",
 					"startError": "Error starting campaign",
 					"resumed": "Campaign resumed",
+					"resumeRequested": "Resume requested. Status will update automatically.",
+					"resumeIgnoringDelay": "Resume requested without wave delay. Status will update automatically.",
 					"resumeError": "Error resuming campaign",
 					"paused": "Campaign paused",
 					"pauseError": "Error pausing campaign"
@@ -1175,6 +1187,7 @@
 				"emptyInactiveMessage": "No inactive contact lists found.",
 				"reload": "Reload",
 				"reloadUnavailable": "Reload unavailable while collapsed",
+				"nextWaveScheduled": "Next: {{value}}",
 				"columns": {
 					"name": "Name",
 					"total": "Total",
@@ -1226,6 +1239,11 @@
 			"limits": {
 				"maxWavesLabel": "Max waves",
 				"maxWavesDescription": "Maximum number of waves for this contact list.",
+				"maxWavesInherited": "Inherited from campaign default: {{value}}",
+				"waveDelayLabel": "Delay between waves (seconds)",
+				"waveDelayDescription": "Delay between waves for this contact list. Current: {{value}}.",
+				"waveDelayInherited": "Inherited from campaign default: {{value}}",
+				"noWaveDelay": "No delay between waves",
 				"humanEquivalentLabel": "Human equivalent",
 				"availableLabel": "Available",
 				"capacityFull": {
@@ -1243,6 +1261,7 @@
 					"mappingRequired": "Please map the columns",
 					"capacityExceeded": "Capacity exceeded",
 					"wavesMinimum": "Minimum of 1 wave required",
+					"waveDelayMinimum": "Wave delay must be 0 or greater",
 					"schedulerFullTitle": "Scheduler full",
 					"schedulerFullMessage": "There is not enough capacity to schedule this list.",
 					"successTitle": "Success",
@@ -1301,6 +1320,10 @@
 					"expirationDate": "Expiration date",
 					"scheduler": "Scheduler",
 					"schedulerStatus": "Scheduler status",
+					"waveDelay": "Delay between waves",
+					"lastWaveStarted": "Last wave started",
+					"lastWaveCompleted": "Last wave completed",
+					"nextWaveScheduled": "Next wave scheduled",
 					"notAssigned": "Not assigned"
 				},
 				"stats": {
@@ -1348,7 +1371,7 @@
 				"notifications": {
 					"archiveBlocked": {
 						"title": "Action unavailable",
-						"message": "This contact list cannot be archived while it is running or paused. Stop execution first and try again."
+						"message": "This contact list cannot be archived while it is running, waiting, or paused. Stop execution first and try again."
 					}
 				},
 				"dialogs": {
@@ -1755,6 +1778,8 @@
 				"campaignTypeInbound": "Inbound",
 				"defaultWaves": "Default Waves",
 				"defaultWavesDesc": "How many waves each new contact list should run before stopping",
+				"defaultWaveDelay": "Default delay between waves (seconds)",
+				"defaultWaveDelayDesc": "Delay between waves for new contact lists. Use 0 for no additional wait.",
 				"phoneNumber": "Phone Number",
 				"phoneNumberDesc": "Select the phone number for this campaign",
 				"phoneNumberPlaceholder": "Choose a phone number",
@@ -1775,6 +1800,7 @@
 					"descriptionRequired": "Description is required",
 					"phoneIdRequired": "Phone number is required",
 					"wavesRequired": "Waves must be at least 1",
+					"waveDelayRequired": "Wave delay must be 0 or greater",
 					"objectiveRequired": "Campaign objective is required"
 				}
 			},
@@ -1977,6 +2003,9 @@
 		"createNewObjective": "Create new objective",
 		"defaultWaves": "Default Waves",
 		"defaultWavesDesc": "Number of waves to run for each contact list",
+		"defaultWaveDelay": "Default delay between waves (seconds)",
+		"defaultWaveDelayDesc": "Delay between waves for new contact lists. Use 0 for no additional wait.",
+		"enterWaveDelaySeconds": "Enter delay in seconds",
 		"enterNumberOfWaves": "Enter number of waves",
 		"createObjectiveTitle": "Create New Objective"
 	},

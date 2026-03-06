@@ -1,4 +1,4 @@
-import { ActionIcon, Tooltip } from '@mantine/core';
+import { ActionIcon, Button, Group, Stack, Text, Tooltip } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { notifications } from '@mantine/notifications';
 import {
@@ -8,6 +8,7 @@ import {
 	IconX,
 } from '@tabler/icons-react';
 import type ContactGroup from '~/models/ContactGroup';
+import type { ContactGroupQueueStatus } from '~/models/ContactGroup';
 import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
@@ -17,15 +18,21 @@ import {
 	useResumeOutboundCampaign,
 	useGetCampaignRequirements,
 } from '~/queries/campaignsQueries';
+import { modals } from '@mantine/modals';
+import { formatWaveDateTime } from '~/utils/waveUtils';
 
 interface ContactListControlProps {
 	contactGroup: ContactGroup;
+	display?: 'icon' | 'button';
+	onActionComplete?: () => void | Promise<unknown>;
 }
 
 export const ContactListControl = ({
 	contactGroup,
+	display = 'icon',
+	onActionComplete,
 }: ContactListControlProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t, i18n } = useTranslation(['campaigns', 'common']);
 	const startMutation = useStartOutboundCampaign();
 	const pauseMutation = usePauseOutboundCampaign();
 	const resumeMutation = useResumeOutboundCampaign();
@@ -78,6 +85,126 @@ export const ContactListControl = ({
 		requirements?.hasDispositionFlow && requirements?.hasActiveSchedule
 	);
 
+	const normalizedStatus = contactGroup.queueStatus?.toUpperCase() as
+		| ContactGroupQueueStatus
+		| 'UNKNOWN';
+
+	const handleActionSuccess = async (message: string) => {
+		showSuccessNotification(message);
+		await onActionComplete?.();
+	};
+
+	const requestStart = async () => {
+		try {
+			await startMutation.mutateAsync({
+				campaignId,
+				contactGroupId: contactGroup.id,
+			});
+			await handleActionSuccess(
+				t('form.contacts.controls.notifications.running')
+			);
+		} catch (error) {
+			showErrorNotification(
+				error,
+				t('form.contacts.controls.notifications.startError')
+			);
+		}
+	};
+
+	const requestPause = async () => {
+		try {
+			await pauseMutation.mutateAsync({
+				campaignId,
+				contactGroupId: contactGroup.id,
+			});
+			await handleActionSuccess(
+				t('form.contacts.controls.notifications.paused')
+			);
+		} catch (error) {
+			showErrorNotification(
+				error,
+				t('form.contacts.controls.notifications.pauseError')
+			);
+		}
+	};
+
+	const requestResume = async (ignoreWaveDelay?: boolean) => {
+		try {
+			await resumeMutation.mutateAsync({
+				campaignId,
+				contactGroupId: contactGroup.id,
+				...(ignoreWaveDelay ? { ignoreWaveDelay } : {}),
+			});
+			await handleActionSuccess(
+				ignoreWaveDelay
+					? t('form.contacts.controls.notifications.resumeIgnoringDelay')
+					: t('form.contacts.controls.notifications.resumeRequested')
+			);
+		} catch (error) {
+			showErrorNotification(
+				error,
+				t('form.contacts.controls.notifications.resumeError')
+			);
+		}
+	};
+
+	const openResumeOptionsModal = () => {
+		const nextWaveScheduledLabel = formatWaveDateTime(
+			contactGroup.nextWaveScheduledAt,
+			i18n.language,
+			t('form.contacts.details.stats.notSet')
+		);
+
+		modals.open({
+			modalId: `resume-contact-group-${contactGroup.id}`,
+			title: t('form.contacts.controls.resumeModal.title'),
+			centered: true,
+			children: (
+				<Stack gap='md'>
+					<Text size='sm'>
+						{t('form.contacts.controls.resumeModal.message')}
+					</Text>
+					<Text size='sm' c='dimmed'>
+						{t('form.contacts.controls.resumeModal.scheduledFor', {
+							value: nextWaveScheduledLabel,
+						})}
+					</Text>
+					<Text size='sm' c='dimmed'>
+						{t('form.contacts.controls.resumeModal.scheduleNotice')}
+					</Text>
+					<Group justify='flex-end'>
+						<Button
+							variant='default'
+							onClick={() => modals.closeAll()}
+							disabled={resumeMutation.isPending}
+						>
+							{t('cancel', { ns: 'common' })}
+						</Button>
+						<Button
+							variant='outline'
+							onClick={async () => {
+								modals.closeAll();
+								await requestResume();
+							}}
+							loading={resumeMutation.isPending}
+						>
+							{t('form.contacts.controls.resume')}
+						</Button>
+						<Button
+							onClick={async () => {
+								modals.closeAll();
+								await requestResume(true);
+							}}
+							loading={resumeMutation.isPending}
+						>
+							{t('form.contacts.controls.resumeIgnoreDelay')}
+						</Button>
+					</Group>
+				</Stack>
+			),
+		});
+	};
+
 	const handleAction = async () => {
 		if (isDisabled || isLoading) {
 			return;
@@ -91,62 +218,33 @@ export const ContactListControl = ({
 			return;
 		}
 
-		if (contactGroup.queueStatus === 'PENDING') {
-			try {
-				await startMutation.mutateAsync({
-					campaignId,
-					contactGroupId: contactGroup.id,
-				});
-				showSuccessNotification(
-					t('form.contacts.controls.notifications.running')
-				);
-			} catch (error) {
-				showErrorNotification(
-					error,
-					t('form.contacts.controls.notifications.startError')
-				);
+		if (normalizedStatus === 'PENDING') {
+			await requestStart();
+			return;
+		}
+
+		if (normalizedStatus === 'PAUSED') {
+			if (contactGroup.nextWaveScheduledAt) {
+				openResumeOptionsModal();
+				return;
 			}
-		} else if (contactGroup.queueStatus === 'PAUSED') {
-			try {
-				await resumeMutation.mutateAsync({
-					campaignId,
-					contactGroupId: contactGroup.id,
-				});
-				showSuccessNotification(
-					t('form.contacts.controls.notifications.resumed')
-				);
-			} catch (error) {
-				showErrorNotification(
-					error,
-					t('form.contacts.controls.notifications.resumeError')
-				);
-			}
-		} else if (contactGroup.queueStatus === 'RUNNING') {
-			try {
-				await pauseMutation.mutateAsync({
-					campaignId,
-					contactGroupId: contactGroup.id,
-				});
-				showSuccessNotification(
-					t('form.contacts.controls.notifications.paused')
-				);
-			} catch (error) {
-				showErrorNotification(
-					error,
-					t('form.contacts.controls.notifications.pauseError')
-				);
-			}
+
+			await requestResume();
+			return;
+		}
+
+		if (normalizedStatus === 'RUNNING' || normalizedStatus === 'WAITING') {
+			await requestPause();
 		}
 	};
 
 	const isStatusDisabled =
-		contactGroup.queueStatus === 'COMPLETED' ||
-		contactGroup.queueStatus === 'FAILED' ||
-		contactGroup.queueStatus === 'EXECUTED';
+		normalizedStatus === 'COMPLETED' ||
+		normalizedStatus === 'FAILED' ||
+		normalizedStatus === 'EXECUTED';
 
 	const isStartOrResumeAction =
-		contactGroup.queueStatus === 'PENDING' ||
-		contactGroup.queueStatus === 'PAUSED';
+		normalizedStatus === 'PENDING' || normalizedStatus === 'PAUSED';
 
 	const isDisabled =
 		isStatusDisabled || (isStartOrResumeAction && !canStartOrResume);
@@ -159,31 +257,58 @@ export const ContactListControl = ({
 	let tooltip = canStartOrResume
 		? t('form.contacts.controls.start')
 		: t('form.contacts.controls.requirementsNotMet');
+	let buttonLabel = t('form.contacts.controls.start');
 
-	if (contactGroup.queueStatus === 'PAUSED') {
+	if (normalizedStatus === 'PAUSED') {
 		icon = <IconPlayerPlay size={16} />;
 		tooltip = canStartOrResume
 			? t('form.contacts.controls.resume')
 			: t('form.contacts.controls.requirementsNotMet');
-	} else if (contactGroup.queueStatus === 'RUNNING') {
+		buttonLabel = t('form.contacts.controls.resume');
+	} else if (normalizedStatus === 'RUNNING' || normalizedStatus === 'WAITING') {
 		icon = <IconPlayerPause size={16} />;
 		tooltip = t('form.contacts.controls.pause');
-	} else if (contactGroup.queueStatus === 'COMPLETED') {
+		buttonLabel = t('form.contacts.controls.pause');
+	} else if (normalizedStatus === 'COMPLETED') {
 		icon = <IconPlayerPlay size={16} />;
 		tooltip = t('form.contacts.controls.completed');
-	} else if (contactGroup.queueStatus === 'FAILED') {
+		buttonLabel = t('form.contacts.controls.completed');
+	} else if (normalizedStatus === 'FAILED') {
 		icon = <IconPlayerPlay size={16} />;
 		tooltip = t('form.contacts.controls.failed');
-	} else if (contactGroup.queueStatus === 'EXECUTED') {
+		buttonLabel = t('form.contacts.controls.failed');
+	} else if (normalizedStatus === 'EXECUTED') {
 		icon = <IconPlayerPlay size={16} />;
 		tooltip = t('form.contacts.controls.allWavesDone');
+		buttonLabel = t('form.contacts.controls.allWavesDone');
+	} else if (normalizedStatus === 'UNKNOWN') {
+		tooltip = t('status.unknown');
+		buttonLabel = t('status.unknown');
+	}
+
+	if (display === 'button') {
+		return (
+			<Button
+				variant='filled'
+				onClick={() => {
+					void handleAction();
+				}}
+				leftSection={icon}
+				loading={isLoading}
+				disabled={isDisabled || isLoading}
+			>
+				{buttonLabel}
+			</Button>
+		);
 	}
 
 	return (
 		<Tooltip label={tooltip} withArrow>
 			<ActionIcon
 				variant='light'
-				onClick={handleAction}
+				onClick={() => {
+					void handleAction();
+				}}
 				aria-label={tooltip}
 				loading={isLoading}
 				disabled={isDisabled || isLoading}
