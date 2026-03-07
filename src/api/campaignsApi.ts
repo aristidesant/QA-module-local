@@ -111,6 +111,24 @@ type AgentConfigPayload = {
 	workflow?: AgentWorkflow | AgentWorkflowApi | Record<string, unknown>;
 };
 
+const getWorkflowCounts = (workflow?: AgentConfigPayload['workflow']) => {
+	const normalizedWorkflow = workflow as
+		| {
+				nodes?: Record<string, unknown>;
+				edges?: Record<string, unknown>;
+		  }
+		| undefined;
+
+	return {
+		nodes: normalizedWorkflow?.nodes
+			? Object.keys(normalizedWorkflow.nodes).length
+			: 0,
+		edges: normalizedWorkflow?.edges
+			? Object.keys(normalizedWorkflow.edges).length
+			: 0,
+	};
+};
+
 const removePromptText = (agentConfig?: AgentConfigPayload) => {
 	const agentConversation = agentConfig?.conversationConfig?.agent;
 
@@ -189,6 +207,17 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 			const response = await axios.get<Campaign>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}`
 			);
+
+			const workflowCounts = getWorkflowCounts(
+				response.data?.agentConfig?.workflow as AgentConfigPayload['workflow']
+			);
+			console.log('[campaignsApi.findCampaign] workflow payload', {
+				campaignId,
+				nodes: workflowCounts.nodes,
+				edges: workflowCounts.edges,
+				hasWorkflow: Boolean(response.data?.agentConfig?.workflow),
+			});
+
 			return response.data;
 		},
 

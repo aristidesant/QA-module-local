@@ -25,10 +25,17 @@ export const WorkflowNodeWrapper: React.FC<WorkflowNodeWrapperProps> = ({
 			defaultValue: nodeData.type as string,
 		});
 
+	const edgeOrder = (nodeData.edgeOrder as string[] | undefined) ?? [];
+	const isStartWithNoEdges =
+		nodeData.type === 'start' && edgeOrder.length === 0;
+	const isSourceConnectable = true;
+
 	return (
 		<div className={styles.nodeContainer}>
-			{selected && sideActions && (
-				<div className={styles.sideActions}>{sideActions}</div>
+			{(selected || isStartWithNoEdges) && sideActions && (
+				<div className={`${styles.sideActions} nodrag nopan`}>
+					{sideActions}
+				</div>
 			)}
 			<Handle
 				type='target'
@@ -55,7 +62,7 @@ export const WorkflowNodeWrapper: React.FC<WorkflowNodeWrapperProps> = ({
 				className={`${styles.handle} ${styles.handleTarget} ${styles.handleHidden}`}
 			/>
 			{children ?? (
-				<div className={styles.defaultNode}>
+				<div className={`${styles.defaultNode} nopan`}>
 					<Text size='sm' fw={500}>
 						{fallbackLabel}
 					</Text>
@@ -65,24 +72,28 @@ export const WorkflowNodeWrapper: React.FC<WorkflowNodeWrapperProps> = ({
 				type='source'
 				position={Position.Top}
 				id='source-top'
+				isConnectable={isSourceConnectable}
 				className={`${styles.handle} ${styles.handleSource} ${styles.handleHidden}`}
 			/>
 			<Handle
 				type='source'
 				position={Position.Right}
 				id='source-right'
+				isConnectable={isSourceConnectable}
 				className={`${styles.handle} ${styles.handleSource} ${styles.handleHidden}`}
 			/>
 			<Handle
 				type='source'
 				position={Position.Bottom}
 				id='source-bottom'
+				isConnectable={isSourceConnectable}
 				className={`${styles.handle} ${styles.handleSource}`}
 			/>
 			<Handle
 				type='source'
 				position={Position.Left}
 				id='source-left'
+				isConnectable={isSourceConnectable}
 				className={`${styles.handle} ${styles.handleSource} ${styles.handleHidden}`}
 			/>
 		</div>

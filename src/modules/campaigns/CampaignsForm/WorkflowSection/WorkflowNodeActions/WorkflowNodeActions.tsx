@@ -3,6 +3,7 @@ import { ActionIcon, Group, Menu, Tooltip } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import {
 	IconCopy,
+	IconPencil,
 	IconPhone,
 	IconPlus,
 	IconSquareRoundedCheck,
@@ -16,6 +17,8 @@ import {
 	WORKFLOW_NODE_TYPES,
 	type WorkflowNodeType,
 } from '../nodeTypes';
+import { useWorkflowNodeEditor } from '../WorkflowNodeEditorContext';
+import { useWorkflowCanvasActions } from '../WorkflowCanvas/WorkflowCanvasActionsContext';
 import type { WorkflowNodeData } from '../WorkflowNode/WorkflowNodeTypes';
 import styles from './WorkflowNodeActions.module.css';
 
@@ -32,48 +35,52 @@ const WorkflowNodeActions = ({
 }: WorkflowNodeActionsProps) => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const { t } = useTranslation('campaigns');
+	const {
+		addNode,
+		addNodeWithType,
+		addNodeWithVariant,
+		deleteNode,
+		copyNode,
+		clearEdgeActions,
+	} = useWorkflowCanvasActions();
+	const { openNodeDrawer } = useWorkflowNodeEditor();
 	const config = NODE_TYPE_CONFIG[nodeType];
 	const isTransferAgent =
 		nodeData.uiMeta?.variant === 'transfer' || !!nodeData.agentId;
 	const isPhoneTransfer = nodeType === WORKFLOW_NODE_TYPES.PHONE_NUMBER;
-	const onAddNode = nodeData.onAddNode;
-	const onAddNodeWithType = nodeData.onAddNodeWithType;
-	const onAddNodeWithVariant = nodeData.onAddNodeWithVariant;
-	const showActions =
-		nodeData.showActions ?? nodeType !== WORKFLOW_NODE_TYPES.START;
-	const onDeleteNode = nodeData.onDeleteNode;
-	const onCopyNode = nodeData.onCopyNode;
+	const showActions = nodeType !== WORKFLOW_NODE_TYPES.START;
+	const canEdit =
+		nodeType !== WORKFLOW_NODE_TYPES.START &&
+		nodeType !== WORKFLOW_NODE_TYPES.END;
+	const position = nodeData.position;
+	const isStartNode = nodeType === WORKFLOW_NODE_TYPES.START;
+	const edgeOrder = (nodeData.edgeOrder as string[] | undefined) ?? [];
+	const isStartConnected = isStartNode && edgeOrder.length > 0;
 	const showAddButton =
 		(config?.hasAddButton ?? false) &&
 		!isTransferAgent &&
 		!isPhoneTransfer &&
-		(!!onAddNode || !!onAddNodeWithType);
-	const position = nodeData.position;
-	const isStartNode = nodeType === WORKFLOW_NODE_TYPES.START;
+		!isStartConnected;
 
 	const handleAddClick = () => {
-		if (onAddNode && position) {
-			onAddNode(nodeId, position);
+		if (position) {
+			addNode(nodeId, position);
 		}
 	};
 
 	const handleAddNodeWithType = (type: WorkflowNodeType) => {
-		if (onAddNodeWithType && position) {
-			onAddNodeWithType(nodeId, position, type);
-			return;
+		if (position) {
+			addNodeWithType(nodeId, position, type);
 		}
-		handleAddClick();
 	};
 
 	const handleAddNodeWithVariant = (
 		type: WorkflowNodeType,
 		variant: 'transfer' | 'subagent'
 	) => {
-		if (onAddNodeWithVariant && position) {
-			onAddNodeWithVariant(nodeId, position, { type, variant });
-			return;
+		if (position) {
+			addNodeWithVariant(nodeId, position, { type, variant });
 		}
-		handleAddNodeWithType(type);
 	};
 
 	const menuItems = useMemo(() => {
@@ -113,12 +120,16 @@ const WorkflowNodeActions = ({
 		return items;
 	}, [nodeType, t]);
 
-	const canShowMenu = !!onAddNodeWithType && !isStartNode;
-	const canShowSingleAdd =
-		(!!onAddNode && !canShowMenu) || (isStartNode && !!onAddNodeWithType);
+	const canShowMenu = !isStartNode;
+	const canShowSingleAdd = isStartNode;
 
 	return (
-		<Group gap='xs' align='center' wrap='nowrap' className={styles.actions}>
+		<Group
+			gap='xs'
+			align='center'
+			wrap='nowrap'
+			className={`${styles.actions} nodrag nopan`}
+		>
 			{showAddButton && canShowMenu && (
 				<Menu
 					position='bottom'
@@ -171,7 +182,7 @@ const WorkflowNodeActions = ({
 						radius='sm'
 						title={t('form.workflow.actions.add')}
 						onClick={
-							isStartNode && onAddNodeWithType
+							isStartNode
 								? () =>
 										handleAddNodeWithType(WORKFLOW_NODE_TYPES.STANDALONE_AGENT)
 								: handleAddClick
@@ -182,28 +193,45 @@ const WorkflowNodeActions = ({
 					</ActionIcon>
 				</Tooltip>
 			)}
-			{showActions && onCopyNode && (
+			{canEdit && (
+				<Tooltip label={t('form.workflow.actions.edit')} withArrow>
+					<ActionIcon
+						size='sm'
+						variant='light'
+						color='gray'
+						radius='sm'
+						onClick={() => {
+							clearEdgeActions();
+							openNodeDrawer(nodeId);
+						}}
+						className={styles.actionButton}
+					>
+						<IconPencil size={13} />
+					</ActionIcon>
+				</Tooltip>
+			)}
+			{showActions && (
 				<Tooltip label={t('form.workflow.actions.clone')} withArrow>
 					<ActionIcon
 						size='sm'
 						variant='light'
 						color='gray'
 						radius='sm'
-						onClick={() => onCopyNode(nodeId)}
+						onClick={() => copyNode(nodeId)}
 						className={styles.actionButton}
 					>
 						<IconCopy size={13} />
 					</ActionIcon>
 				</Tooltip>
 			)}
-			{showActions && onDeleteNode && (
+			{showActions && (
 				<Tooltip label={t('form.workflow.actions.delete')} withArrow>
 					<ActionIcon
 						size='sm'
 						variant='light'
 						color='red'
 						radius='sm'
-						onClick={() => onDeleteNode(nodeId)}
+						onClick={() => deleteNode(nodeId)}
 						className={`${styles.actionButton} ${styles.actionButtonDanger}`}
 					>
 						<IconTrash size={13} />

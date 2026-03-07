@@ -24,12 +24,14 @@
 	text-align: left;
 	border-bottom: 1px solid var(--mantine-color-gray-2);
 	font-size: 14px;
+	vertical-align: middle;
 }
 
 .compactTh,
 .compactTd {
 	font-size: var(--mantine-font-size-xs);
-	padding: 10px 12px;
+	padding: 7px 10px;
+	line-height: 1.2;
 }
 
 .sortable {
@@ -80,7 +82,7 @@
 }
 
 .selectedRow td {
-	background: var(--mantine-color-blue-0) !important;
+	background: #f5f9ff !important;
 }
 
 .selectedRow td:first-child {
@@ -136,6 +138,19 @@
 	border-top: 1px solid var(--mantine-color-gray-2);
 	display: flex;
 	justify-content: center;
+}
+
+.th {
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	color: var(--mantine-color-gray-6);
+	background: #fafbfc;
+}
+
+.td {
+	color: var(--mantine-color-gray-8);
 }
 
 .droppableSpacer {

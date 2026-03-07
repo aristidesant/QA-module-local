@@ -1,9 +1,23 @@
-import type { FC } from 'react';
+import type { FC, MouseEvent as ReactMouseEvent } from 'react';
+import { ActionIcon, Group } from '@mantine/core';
 import { BaseEdge, EdgeLabelRenderer, type EdgeProps } from '@xyflow/react';
-import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
+import {
+	IconArrowLeft,
+	IconArrowRight,
+	IconPencil,
+	IconTrash,
+} from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
+import type {
+	ConditionEdgeData,
+	StructuredConditionEdgeLabel,
+	WarningLevel,
+} from './ConditionEdge.types';
+import {
+	useIsEdgeActionsOpen,
+	useWorkflowCanvasActions,
+} from '../../WorkflowCanvas/WorkflowCanvasActionsContext';
 import styles from './ConditionEdge.module.css';
-
-type WarningLevel = 'error' | 'warning' | 'none';
 
 const ConditionEdge: FC<EdgeProps> = ({
 	id,
@@ -16,6 +30,10 @@ const ConditionEdge: FC<EdgeProps> = ({
 	data,
 	markerEnd,
 }) => {
+	const { t } = useTranslation('campaigns');
+	const { openEdge, deleteEdge, toggleEdgeActions } =
+		useWorkflowCanvasActions();
+	const isActionsOpen = useIsEdgeActionsOpen(id);
 	// Build a smooth cubic Bezier path between source and target.
 	// This keeps the edge visually smooth and lets us compute exact
 	// positions along the curve using the SVG path API.
@@ -76,21 +94,23 @@ const ConditionEdge: FC<EdgeProps> = ({
 		// fallback to linear midpoint already set above
 	}
 
-	const label =
-		typeof (data as any)?.label === 'string' ? (data as any).label : null;
+	const edgeData = (data ?? {}) as ConditionEdgeData;
+	const label = typeof edgeData.label === 'string' ? edgeData.label : null;
 	const structuredLabel =
-		(data as any)?.label && typeof (data as any).label === 'object'
-			? ((data as any).label as {
-					forwardLabel?: string;
-					backwardLabel?: string;
-				})
+		edgeData.label && typeof edgeData.label === 'object'
+			? (edgeData.label as StructuredConditionEdgeLabel)
 			: null;
 	const hasStructuredLabel =
 		!!structuredLabel?.forwardLabel && !!structuredLabel?.backwardLabel;
-	const warningLevel = ((data as any)?.warningLevel ?? 'none') as WarningLevel;
-	const onEdgeClick = (data as any)?.onEdgeClick as
-		| ((edgeId: string) => void)
-		| undefined;
+	const warningLevel = (edgeData.warningLevel ?? 'none') as WarningLevel;
+	const isInteractive = true;
+
+	const handleEdgeClick = (
+		event: ReactMouseEvent<SVGPathElement | HTMLDivElement>
+	) => {
+		event.stopPropagation();
+		toggleEdgeActions(id);
+	};
 
 	// Get stroke color based on warning level
 	const getStrokeColor = (): string => {
@@ -115,12 +135,22 @@ const ConditionEdge: FC<EdgeProps> = ({
 				: warningLevel === 'warning'
 					? styles.labelWarning
 					: '';
-		const clickableClasses = onEdgeClick ? styles.labelClickable : '';
+		const clickableClasses = isInteractive ? styles.labelClickable : '';
 		return `${baseClasses} ${warningClasses} ${clickableClasses}`.trim();
 	};
 
 	return (
 		<>
+			{isInteractive && (
+				<path
+					d={edgePath}
+					fill='none'
+					stroke='transparent'
+					strokeWidth={16}
+					className={styles.edgeInteraction}
+					onClick={handleEdgeClick}
+				/>
+			)}
 			<BaseEdge
 				id={id}
 				path={edgePath}
@@ -130,6 +160,48 @@ const ConditionEdge: FC<EdgeProps> = ({
 				}}
 				markerEnd={markerEnd}
 			/>
+			{isActionsOpen && (
+				<EdgeLabelRenderer>
+					<Group
+						gap={4}
+						wrap='nowrap'
+						className={styles.actions}
+						style={{
+							transform: `translate3d(${Math.round(labelX)}px, ${Math.round(labelY)}px, 0) translate(-50%, calc(-100% - 8px))`,
+						}}
+						onClick={(event) => event.stopPropagation()}
+					>
+						<ActionIcon
+							size='sm'
+							variant='light'
+							color='gray'
+							radius='sm'
+							title={t('common:actions.edit', { defaultValue: 'Edit' })}
+							className={styles.actionButton}
+							onClick={(event) => {
+								event.stopPropagation();
+								openEdge(id);
+							}}
+						>
+							<IconPencil size={13} />
+						</ActionIcon>
+						<ActionIcon
+							size='sm'
+							variant='light'
+							color='red'
+							radius='sm'
+							title={t('common:actions.delete', { defaultValue: 'Delete' })}
+							className={styles.actionButton}
+							onClick={(event) => {
+								event.stopPropagation();
+								deleteEdge(id);
+							}}
+						>
+							<IconTrash size={13} />
+						</ActionIcon>
+					</Group>
+				</EdgeLabelRenderer>
+			)}
 			{(label || hasStructuredLabel) && (
 				<EdgeLabelRenderer>
 					<div
@@ -140,10 +212,7 @@ const ConditionEdge: FC<EdgeProps> = ({
 							// transformed context which can push the label off the path.
 							transform: `translate3d(${Math.round(labelX)}px, ${Math.round(labelY)}px, 0) translate(-50%, -50%)`,
 						}}
-						onClick={(event) => {
-							event.stopPropagation();
-							onEdgeClick?.(id);
-						}}
+						onClick={isInteractive ? handleEdgeClick : undefined}
 					>
 						{hasStructuredLabel ? (
 							<div className={styles.labelStack}>

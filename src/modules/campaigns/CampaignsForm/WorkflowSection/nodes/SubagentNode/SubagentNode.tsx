@@ -11,6 +11,7 @@ import {
 import type { StandaloneAgentNode } from '~/models/AgentWorkflowModel';
 import { WORKFLOW_NODE_TYPES, type WorkflowNodeType } from '../../nodeTypes';
 import WorkflowNodeActions from '../../WorkflowNodeActions';
+import WorkflowNodeDrawer from '../../WorkflowNodeDrawer';
 import WorkflowNodeHeader from '../../WorkflowNodeHeader';
 import WorkflowNodeWrapper from '../../WorkflowNode';
 import type { WorkflowNodeData } from '../../WorkflowNode/WorkflowNodeTypes';
@@ -62,75 +63,82 @@ const SubagentNodeComponent = (props: NodeProps) => {
 			: t('form.workflow.nodeStatus.subagentStyle');
 
 	return (
-		<WorkflowNodeWrapper
-			{...props}
-			sideActions={
-				<WorkflowNodeActions
-					nodeId={props.id}
-					nodeData={props.data as WorkflowNodeData}
-					nodeType={nodeType}
-				/>
-			}
-		>
-			<div className={styles.node}>
-				<WorkflowNodeHeader
-					className={styles.header}
-					icon={
-						isOverride || isTransfer ? (
-							<IconPlugConnected size={16} className={styles.icon} />
-						) : (
-							<IconUserCircle size={16} className={styles.icon} />
-						)
-					}
-					title={nodeData.label || fallbackLabel}
-					subtitle={subtitle}
-					titleClassName={styles.title}
-				/>
-				{promptPreview && (
-					<div className={styles.promptSection}>
-						<Text size='xs' className={styles.promptText} title={promptPreview}>
-							{promptPreview}
-						</Text>
-					</div>
-				)}
-				{hasMetadata && (
-					<div className={styles.footer}>
-						<div className={styles.metadataList}>
-							{toolCount > 0 && (
-								<Tooltip
-									label={t('form.workflow.subagent.toolsCount', {
-										count: toolCount,
-									})}
-									withArrow
-								>
-									<span className={styles.metadataBadge}>
-										<IconTool size={14} className={styles.metadataIcon} />
-										{t('form.workflow.subagent.countBadge', {
+		<>
+			<WorkflowNodeWrapper
+				{...props}
+				sideActions={
+					<WorkflowNodeActions
+						nodeId={props.id}
+						nodeData={props.data as WorkflowNodeData}
+						nodeType={nodeType}
+					/>
+				}
+			>
+				<div className={styles.node}>
+					<WorkflowNodeHeader
+						className={styles.header}
+						icon={
+							isOverride || isTransfer ? (
+								<IconPlugConnected size={18} className={styles.icon} />
+							) : (
+								<IconUserCircle size={18} className={styles.icon} />
+							)
+						}
+						title={nodeData.label || fallbackLabel}
+						subtitle={subtitle}
+						titleClassName={styles.title}
+					/>
+					{promptPreview && (
+						<div className={styles.promptSection}>
+							<Text
+								size='xs'
+								className={styles.promptText}
+								title={promptPreview}
+							>
+								{promptPreview}
+							</Text>
+						</div>
+					)}
+					{hasMetadata && (
+						<div className={styles.footer}>
+							<div className={styles.metadataList}>
+								{toolCount > 0 && (
+									<Tooltip
+										label={t('form.workflow.subagent.toolsCount', {
 											count: toolCount,
 										})}
-									</span>
-								</Tooltip>
-							)}
-							{knowledgeBaseCount > 0 && (
-								<Tooltip
-									label={t('form.workflow.subagent.knowledgeBaseCount', {
-										count: knowledgeBaseCount,
-									})}
-									withArrow
-								>
-									<span className={styles.metadataBadge}>
-										<IconBook size={14} className={styles.metadataIcon} />
-										{t('form.workflow.subagent.countBadge', {
+										withArrow
+									>
+										<span className={styles.metadataBadge}>
+											<IconTool size={14} className={styles.metadataIcon} />
+											{t('form.workflow.subagent.countBadge', {
+												count: toolCount,
+											})}
+										</span>
+									</Tooltip>
+								)}
+								{knowledgeBaseCount > 0 && (
+									<Tooltip
+										label={t('form.workflow.subagent.knowledgeBaseCount', {
 											count: knowledgeBaseCount,
 										})}
-									</span>
-								</Tooltip>
-							)}
+										withArrow
+									>
+										<span className={styles.metadataBadge}>
+											<IconBook size={14} className={styles.metadataIcon} />
+											{t('form.workflow.subagent.countBadge', {
+												count: knowledgeBaseCount,
+											})}
+										</span>
+									</Tooltip>
+								)}
+							</div>
 						</div>
-					</div>
-				)}
-			</div>
-		</WorkflowNodeWrapper>
+					)}
+				</div>
+			</WorkflowNodeWrapper>
+			<WorkflowNodeDrawer nodeId={props.id} />
+		</>
 	);
 };
 

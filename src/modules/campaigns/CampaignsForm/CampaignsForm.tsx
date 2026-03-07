@@ -54,6 +54,30 @@ interface CampaignsFormProps {
 	onBack?: () => void;
 }
 
+const getWorkflowCounts = (
+	workflow?: Partial<Campaign>['agentConfig'] extends infer T
+		? T extends { workflow?: infer W }
+			? W
+			: never
+		: never
+) => {
+	const normalizedWorkflow = workflow as
+		| {
+				nodes?: Record<string, unknown>;
+				edges?: Record<string, unknown>;
+		  }
+		| undefined;
+
+	return {
+		nodes: normalizedWorkflow?.nodes
+			? Object.keys(normalizedWorkflow.nodes).length
+			: 0,
+		edges: normalizedWorkflow?.edges
+			? Object.keys(normalizedWorkflow.edges).length
+			: 0,
+	};
+};
+
 export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	campaign,
 	onBack,
@@ -142,6 +166,16 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	useEffect(() => {
 		if (!campaign?.id) return; // Only for existing campaigns
 
+		const campaignWorkflowCounts = getWorkflowCounts(
+			campaign.agentConfig?.workflow
+		);
+		console.log('[CampaignsForm] incoming campaign workflow', {
+			campaignId: campaign.id,
+			nodes: campaignWorkflowCounts.nodes,
+			edges: campaignWorkflowCounts.edges,
+			hasWorkflow: Boolean(campaign.agentConfig?.workflow),
+		});
+
 		form.setValues({
 			name: campaign.name || '',
 			agentName: campaign.agentName || '',
@@ -164,14 +198,18 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 				campaign.defaultWaveExecutionDelaySeconds ?? 0,
 		});
 
-		const stateNodes = form.values.agentConfig?.workflow?.nodes;
-		const getterNodes = form.getValues().agentConfig?.workflow?.nodes;
-		const valuesFromState = stateNodes ? Object.keys(stateNodes).length : 0;
-		const valuesFromGetter = getterNodes ? Object.keys(getterNodes).length : 0;
-		console.log('[CampaignsForm] after setValues - workflow nodes:', {
+		const stateWorkflowCounts = getWorkflowCounts(
+			form.values.agentConfig?.workflow
+		);
+		const getterWorkflowCounts = getWorkflowCounts(
+			form.getValues().agentConfig?.workflow
+		);
+		console.log('[CampaignsForm] after setValues - workflow snapshot', {
 			campaignId: campaign.id,
-			valuesFromState,
-			valuesFromGetter,
+			stateNodes: stateWorkflowCounts.nodes,
+			stateEdges: stateWorkflowCounts.edges,
+			getterNodes: getterWorkflowCounts.nodes,
+			getterEdges: getterWorkflowCounts.edges,
 		});
 	}, [campaign?.id, campaign?.agentConfig?.workflow]);
 
@@ -188,7 +226,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	}, [selectedTab]);
 
 	useEffect(() => {
-		if (selectedTab !== 'workflow' && selectedTab !== 'outcomes') return;
+		if (selectedTab !== 'outcomes') return;
 		setIsSettingsDrawerOpen(Boolean(rightComponent));
 	}, [selectedTab, rightComponent]);
 
@@ -199,7 +237,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			<GeneralSectionRightPanel />
 		) : selectedTab === 'agents' ? (
 			<AgentSectionRightPanel />
-		) : selectedTab === 'workflow' || selectedTab === 'outcomes' ? (
+		) : selectedTab === 'outcomes' ? (
 			rightComponent
 		) : null;
 

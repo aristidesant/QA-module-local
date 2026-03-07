@@ -30,7 +30,7 @@ const StartNodeComponent = (props: NodeProps) => {
 			<div className={styles.node}>
 				<WorkflowNodeHeader
 					className={styles.header}
-					icon={<IconFlag size={16} className={styles.icon} />}
+					icon={<IconFlag size={18} className={styles.icon} />}
 					title={nodeData.label || fallbackLabel}
 				/>
 			</div>

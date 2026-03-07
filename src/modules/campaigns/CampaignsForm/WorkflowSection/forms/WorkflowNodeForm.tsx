@@ -3,7 +3,7 @@ import type { TablerIcon } from '@tabler/icons-react';
 import { IconX } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import RightSectionCard from '~/components/RightSectionCard';
-import { useCampaignsStore } from '~/stores/campaignsStore';
+import { useWorkflowNodeEditor } from '../WorkflowNodeEditorContext';
 
 interface WorkflowNodeFormProps {
 	title: string;
@@ -21,7 +21,7 @@ const WorkflowNodeForm = ({
 	iconColor,
 }: WorkflowNodeFormProps) => {
 	const { t } = useTranslation('campaigns');
-	const { setRightComponent } = useCampaignsStore();
+	const { closeNodeDrawer } = useWorkflowNodeEditor();
 
 	return (
 		<RightSectionCard
@@ -34,7 +34,7 @@ const WorkflowNodeForm = ({
 					variant='subtle'
 					color='gray'
 					size='sm'
-					onClick={() => setRightComponent(null)}
+					onClick={closeNodeDrawer}
 					aria-label={t('form.workflow.sidePanel.close')}
 				>
 					<IconX size={16} />

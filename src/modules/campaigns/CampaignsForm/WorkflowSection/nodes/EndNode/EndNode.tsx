@@ -30,7 +30,7 @@ const EndNodeComponent = (props: NodeProps) => {
 			<div className={styles.node}>
 				<WorkflowNodeHeader
 					className={styles.header}
-					icon={<IconSquareRoundedCheck size={16} className={styles.icon} />}
+					icon={<IconSquareRoundedCheck size={18} className={styles.icon} />}
 					title={nodeData.label || fallbackLabel}
 				/>
 			</div>

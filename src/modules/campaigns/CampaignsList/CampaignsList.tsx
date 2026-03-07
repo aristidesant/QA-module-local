@@ -441,6 +441,7 @@ export const CampaignsList: React.FC = () => {
 							columns={columns}
 							onRowClick={handleCampaignClick}
 							selectedRowId={selectedCampaign?.id?.toString()}
+							density='compact'
 						/>
 
 						{/* Pagination Controls */}

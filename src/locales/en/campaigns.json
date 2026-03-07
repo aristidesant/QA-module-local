@@ -778,6 +778,7 @@
 			},
 			"actions": {
 				"add": "Add node",
+				"edit": "Edit node",
 				"clone": "Clone node",
 				"copy": "Copy node",
 				"delete": "Delete node"

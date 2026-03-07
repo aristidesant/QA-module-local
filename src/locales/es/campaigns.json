@@ -779,6 +779,7 @@
 			},
 			"actions": {
 				"add": "Agregar nodo",
+				"edit": "Editar nodo",
 				"clone": "Clonar nodo",
 				"copy": "Copiar nodo",
 				"delete": "Eliminar nodo"

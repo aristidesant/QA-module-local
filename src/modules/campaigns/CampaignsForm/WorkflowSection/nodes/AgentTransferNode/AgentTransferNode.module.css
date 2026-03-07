@@ -1,18 +1,25 @@
 .node {
 	background-color: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: var(--mantine-radius-md);
-	min-width: 220px;
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-lg);
+	min-width: 230px;
 	max-width: 300px;
 	text-align: left;
 	transition:
 		border-color 0.14s ease,
-		background-color 0.14s ease;
+		background-color 0.14s ease,
+		box-shadow 0.14s ease;
 	overflow: hidden;
+	box-shadow:
+		0 1px 3px rgba(0, 0, 0, 0.07),
+		0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .node:hover {
 	border-color: var(--mantine-color-gray-4);
+	box-shadow:
+		0 4px 8px rgba(0, 0, 0, 0.09),
+		0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
 .header {
@@ -60,9 +67,9 @@
 }
 
 .footer {
-	background-color: var(--mantine-color-white);
-	border-top: 1px solid var(--mantine-color-gray-3);
-	padding: 4px var(--mantine-spacing-sm);
+	background-color: var(--mantine-color-gray-0);
+	border-top: 1px solid var(--mantine-color-gray-2);
+	padding: 6px var(--mantine-spacing-sm);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;

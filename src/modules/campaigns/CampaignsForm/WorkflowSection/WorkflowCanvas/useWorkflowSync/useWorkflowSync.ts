@@ -1,15 +1,14 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
-import type { Dispatch, SetStateAction } from 'react';
-import { useStore } from '@xyflow/react';
+import {
+	useEffect,
+	useMemo,
+	useRef,
+	type Dispatch,
+	type MutableRefObject,
+	type SetStateAction,
+} from 'react';
 import type { Edge, Node, ReactFlowInstance } from '@xyflow/react';
 import { calculateHandlePositionsFromPoints } from '../../utils/handlePositionCalculator';
-import type { Point } from '../../utils/handlePositionCalculator';
-import { WORKFLOW_NODE_TYPES } from '../../nodeTypes';
-import {
-	HANDLE_ID_MAP,
-	NodeInternalsMap,
-	serializeWorkflow,
-} from '../WorkflowCanvas.helpers';
+import { HANDLE_ID_MAP, serializeWorkflow } from '../WorkflowCanvas.helpers';
 import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
 
 interface UseWorkflowSyncOptions {
@@ -27,23 +26,352 @@ interface UseWorkflowSyncOptions {
 		edges: Edge[];
 	};
 	buildWorkflowFromState: (nodes: Node[], edges: Edge[]) => AgentWorkflow;
-	handleAddNode: (
-		parentNodeId: string,
-		parentPosition: { x: number; y: number }
-	) => void;
-	handleAddNodeWithType: (
-		parentNodeId: string,
-		parentPosition: { x: number; y: number },
-		nodeType: string
-	) => void;
-	handleAddNodeWithVariant: (
-		parentNodeId: string,
-		parentPosition: { x: number; y: number },
-		payload: { type: string; variant?: 'transfer' | 'subagent' }
-	) => void;
-	handleDeleteNode: (nodeId: string) => void;
-	handleCopyNode: (nodeId: string) => void;
 }
+
+interface WorkflowSyncRefs {
+	isHydratingRef: MutableRefObject<boolean>;
+	hasHydratedRef: MutableRefObject<boolean>;
+	lastAppliedWorkflowSignatureRef: MutableRefObject<string | null>;
+	lastEmittedCanvasSignatureRef: MutableRefObject<string | null>;
+	pendingCanvasSignaturesRef: MutableRefObject<string[]>;
+	pendingFitWorkflowSignatureRef: MutableRefObject<string | null>;
+	lastFittedWorkflowSignatureRef: MutableRefObject<string | null>;
+}
+
+interface NodeLayoutMeasurement {
+	id: string;
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+}
+
+type WorkflowHydrationMode = 'external' | 'default-init' | 'skip';
+
+const getWorkflowCounts = (workflow?: AgentWorkflow) => ({
+	nodes: workflow?.nodes ? Object.keys(workflow.nodes).length : 0,
+	edges: workflow?.edges ? Object.keys(workflow.edges).length : 0,
+});
+
+const getWorkflowHydrationMode = ({
+	workflow,
+	allowDefaultInit,
+}: Pick<
+	UseWorkflowSyncOptions,
+	'workflow' | 'allowDefaultInit'
+>): WorkflowHydrationMode => {
+	if (workflow) {
+		return 'external';
+	}
+
+	if (allowDefaultInit) {
+		return 'default-init';
+	}
+
+	return 'skip';
+};
+
+const buildCanvasSignature = (
+	buildWorkflowFromState: (nodes: Node[], edges: Edge[]) => AgentWorkflow,
+	nodes: Node[],
+	edges: Edge[]
+) => serializeWorkflow(buildWorkflowFromState(nodes, edges));
+
+const getNodeMeasurements = (nodes: Node[]): NodeLayoutMeasurement[] =>
+	nodes.map((node) => ({
+		id: node.id,
+		x: node.position.x,
+		y: node.position.y,
+		width: typeof node.width === 'number' ? node.width : 0,
+		height: typeof node.height === 'number' ? node.height : 0,
+	}));
+
+const buildLayoutSignature = (
+	nodeMeasurements: NodeLayoutMeasurement[],
+	edges: Edge[]
+) => {
+	const nodeSignature = nodeMeasurements
+		.map(({ id, x, y, width, height }) => `${id}:${x}:${y}:${width}:${height}`)
+		.sort()
+		.join('|');
+	const edgeSignature = edges
+		.map(({ id, source, target }) => `${id}:${source}:${target}`)
+		.sort()
+		.join('|');
+
+	return `${nodeSignature}::${edgeSignature}`;
+};
+
+const syncEdgeHandles = (
+	currentEdges: Edge[],
+	nodeMeasurements: NodeLayoutMeasurement[]
+) => {
+	const nodeMap = new Map(nodeMeasurements.map((node) => [node.id, node]));
+	let hasChanges = false;
+
+	const nextEdges = currentEdges.map((edge) => {
+		const sourceNode = nodeMap.get(edge.source);
+		const targetNode = nodeMap.get(edge.target);
+
+		if (!sourceNode || !targetNode) {
+			return edge;
+		}
+
+		const sourceCenter = {
+			x: sourceNode.x + sourceNode.width / 2,
+			y: sourceNode.y + sourceNode.height / 2,
+		};
+		const targetCenter = {
+			x: targetNode.x + targetNode.width / 2,
+			y: targetNode.y + targetNode.height / 2,
+		};
+		const { sourcePosition, targetPosition } =
+			calculateHandlePositionsFromPoints(sourceCenter, targetCenter);
+		const sourceHandle = HANDLE_ID_MAP.source[sourcePosition];
+		const targetHandle = HANDLE_ID_MAP.target[targetPosition];
+
+		if (
+			edge.sourceHandle === sourceHandle &&
+			edge.targetHandle === targetHandle
+		) {
+			return edge;
+		}
+
+		hasChanges = true;
+
+		return {
+			...edge,
+			sourceHandle,
+			targetHandle,
+		};
+	});
+
+	return hasChanges ? nextEdges : currentEdges;
+};
+
+const useWorkflowHydration = ({
+	workflow,
+	allowDefaultInit,
+	onWorkflowChange,
+	setNodes,
+	setEdges,
+	buildDefaultWorkflow,
+	mapWorkflowToNodes,
+	refs,
+}: Omit<
+	UseWorkflowSyncOptions,
+	'nodes' | 'edges' | 'buildWorkflowFromState'
+> & { refs: WorkflowSyncRefs }) => {
+	const workflowSignature = useMemo(() => {
+		if (!workflow) {
+			return null;
+		}
+
+		return serializeWorkflow(workflow);
+	}, [workflow]);
+
+	useEffect(() => {
+		const hydrationMode = getWorkflowHydrationMode({
+			workflow,
+			allowDefaultInit,
+		});
+
+		if (hydrationMode === 'skip') {
+			return;
+		}
+
+		const nextWorkflow =
+			hydrationMode === 'external' && workflow
+				? workflow
+				: buildDefaultWorkflow();
+		const nextWorkflowSignature = serializeWorkflow(nextWorkflow);
+		const nextWorkflowCounts = getWorkflowCounts(nextWorkflow);
+		const pendingCanvasSignatures = refs.pendingCanvasSignaturesRef.current;
+		const pendingCanvasSignatureIndex = pendingCanvasSignatures.indexOf(
+			nextWorkflowSignature
+		);
+
+		if (pendingCanvasSignatureIndex >= 0) {
+			refs.pendingCanvasSignaturesRef.current = pendingCanvasSignatures.slice(
+				pendingCanvasSignatureIndex + 1
+			);
+
+			if (pendingCanvasSignatureIndex !== pendingCanvasSignatures.length - 1) {
+				return;
+			}
+		}
+
+		if (
+			refs.lastAppliedWorkflowSignatureRef.current === nextWorkflowSignature
+		) {
+			return;
+		}
+
+		const { nodes: mappedNodes, edges: mappedEdges } =
+			mapWorkflowToNodes(nextWorkflow);
+
+		console.log('[useWorkflowSync] hydrating workflow', {
+			hydrationMode,
+			externalWorkflowSignature: workflowSignature,
+			nextWorkflowSignature,
+			workflowNodes: nextWorkflowCounts.nodes,
+			workflowEdges: nextWorkflowCounts.edges,
+			mappedNodes: mappedNodes.length,
+			mappedEdges: mappedEdges.length,
+		});
+
+		refs.isHydratingRef.current = true;
+		refs.hasHydratedRef.current = true;
+		refs.lastAppliedWorkflowSignatureRef.current = nextWorkflowSignature;
+		refs.lastEmittedCanvasSignatureRef.current = nextWorkflowSignature;
+		refs.pendingFitWorkflowSignatureRef.current = nextWorkflowSignature;
+
+		setNodes(mappedNodes);
+		setEdges(mappedEdges);
+
+		if (
+			hydrationMode === 'default-init' &&
+			onWorkflowChange &&
+			workflowSignature !== nextWorkflowSignature
+		) {
+			onWorkflowChange(nextWorkflow);
+		}
+	}, [
+		allowDefaultInit,
+		buildDefaultWorkflow,
+		mapWorkflowToNodes,
+		onWorkflowChange,
+		refs,
+		setEdges,
+		setNodes,
+		workflow,
+		workflowSignature,
+	]);
+};
+
+const useWorkflowEmission = ({
+	workflow,
+	nodes,
+	edges,
+	onWorkflowChange,
+	buildWorkflowFromState,
+	refs,
+}: Pick<
+	UseWorkflowSyncOptions,
+	'workflow' | 'nodes' | 'edges' | 'onWorkflowChange' | 'buildWorkflowFromState'
+> & { refs: WorkflowSyncRefs }) => {
+	const canvasSignature = useMemo(
+		() => buildCanvasSignature(buildWorkflowFromState, nodes, edges),
+		[buildWorkflowFromState, edges, nodes]
+	);
+
+	useEffect(() => {
+		if (!refs.hasHydratedRef.current || !onWorkflowChange) {
+			return;
+		}
+
+		if (refs.isHydratingRef.current) {
+			refs.isHydratingRef.current = false;
+			return;
+		}
+
+		if (refs.lastEmittedCanvasSignatureRef.current === canvasSignature) {
+			return;
+		}
+
+		const nextWorkflow = buildWorkflowFromState(nodes, edges);
+		const workflowSignature = workflow ? serializeWorkflow(workflow) : null;
+
+		refs.lastEmittedCanvasSignatureRef.current = canvasSignature;
+		refs.lastAppliedWorkflowSignatureRef.current = canvasSignature;
+		refs.pendingCanvasSignaturesRef.current = [
+			...refs.pendingCanvasSignaturesRef.current.filter(
+				(signature) => signature !== canvasSignature
+			),
+			canvasSignature,
+		];
+
+		if (workflowSignature === canvasSignature) {
+			return;
+		}
+
+		onWorkflowChange(nextWorkflow);
+	}, [
+		buildWorkflowFromState,
+		canvasSignature,
+		edges,
+		nodes,
+		onWorkflowChange,
+		refs,
+		workflow,
+	]);
+};
+
+const useWorkflowViewportFit = ({
+	reactFlowInstance,
+	nodes,
+	refs,
+}: Pick<UseWorkflowSyncOptions, 'reactFlowInstance' | 'nodes'> & {
+	refs: WorkflowSyncRefs;
+}) => {
+	useEffect(() => {
+		const pendingWorkflowSignature =
+			refs.pendingFitWorkflowSignatureRef.current;
+
+		if (!reactFlowInstance || !pendingWorkflowSignature) {
+			return;
+		}
+
+		if (
+			refs.lastFittedWorkflowSignatureRef.current === pendingWorkflowSignature
+		) {
+			refs.pendingFitWorkflowSignatureRef.current = null;
+			return;
+		}
+
+		if (nodes.length === 0) {
+			return;
+		}
+
+		refs.lastFittedWorkflowSignatureRef.current = pendingWorkflowSignature;
+		refs.pendingFitWorkflowSignatureRef.current = null;
+
+		setTimeout(() => {
+			try {
+				reactFlowInstance.fitView({
+					padding: 0.2,
+					includeHiddenNodes: true,
+				});
+			} catch {
+				// noop
+			}
+		}, 0);
+	}, [nodes.length, reactFlowInstance, refs]);
+};
+
+const useEdgeHandleSync = ({
+	nodes,
+	edges,
+	setEdges,
+}: Pick<UseWorkflowSyncOptions, 'nodes' | 'edges' | 'setEdges'>) => {
+	const nodeMeasurements = useMemo(() => getNodeMeasurements(nodes), [nodes]);
+	const layoutSignature = useMemo(
+		() => buildLayoutSignature(nodeMeasurements, edges),
+		[edges, nodeMeasurements]
+	);
+
+	useEffect(() => {
+		if (nodes.length === 0 || edges.length === 0) {
+			return;
+		}
+
+		const nextEdges = syncEdgeHandles(edges, nodeMeasurements);
+
+		if (nextEdges !== edges) {
+			setEdges(nextEdges);
+		}
+	}, [edges, layoutSignature, nodeMeasurements, nodes.length, setEdges]);
+};
 
 const useWorkflowSync = ({
 	workflow,
@@ -57,266 +385,49 @@ const useWorkflowSync = ({
 	buildDefaultWorkflow,
 	mapWorkflowToNodes,
 	buildWorkflowFromState,
-	handleAddNode,
-	handleAddNodeWithType,
-	handleAddNodeWithVariant,
-	handleDeleteNode,
-	handleCopyNode,
 }: UseWorkflowSyncOptions) => {
-	const isApplyingWorkflowRef = useRef(false);
-	const lastAppliedWorkflowRef = useRef<string | null>(null);
-	const lastEmittedWorkflowRef = useRef<string | null>(null);
-	const lastWorkflowNodeCountRef = useRef<number>(0);
-	const hasAppliedInitialWorkflowRef = useRef(false);
-	const edgesRef = useRef<Edge[]>(edges);
-	const nodeInternals = useStore((state) => {
-		const internals = (state as unknown as { nodeInternals?: NodeInternalsMap })
-			.nodeInternals;
-		return internals ?? new Map();
-	});
+	const refs = {
+		isHydratingRef: useRef(false),
+		hasHydratedRef: useRef(false),
+		lastAppliedWorkflowSignatureRef: useRef<string | null>(null),
+		lastEmittedCanvasSignatureRef: useRef<string | null>(null),
+		pendingCanvasSignaturesRef: useRef<string[]>([]),
+		pendingFitWorkflowSignatureRef: useRef<string | null>(null),
+		lastFittedWorkflowSignatureRef: useRef<string | null>(null),
+	};
 
-	const edgeSignature = useMemo(() => {
-		if (edges.length === 0) return '';
-		return edges
-			.map(({ id, source, target }) => `${id}:${source}:${target}`)
-			.sort()
-			.join('|');
-	}, [edges]);
-
-	useEffect(() => {
-		edgesRef.current = edges;
-	}, [edges]);
-
-	const getNodeCenter = useCallback(
-		(nodeId: string, node: Node | undefined): Point | null => {
-			if (!node) return null;
-			const internal = nodeInternals.get(nodeId);
-			if (
-				internal?.positionAbsolute &&
-				typeof internal.width === 'number' &&
-				typeof internal.height === 'number'
-			) {
-				return {
-					x: internal.positionAbsolute.x + internal.width / 2,
-					y: internal.positionAbsolute.y + internal.height / 2,
-				};
-			}
-			return {
-				x: node.position.x,
-				y: node.position.y,
-			};
-		},
-		[nodeInternals]
-	);
-
-	const updateEdgeHandles = useCallback(
-		(currentEdges: Edge[], currentNodes: Node[]) => {
-			const nodeMap = new Map(currentNodes.map((node) => [node.id, node]));
-			let hasChanges = false;
-			const nextEdges = currentEdges.map((edge) => {
-				const sourceNode = nodeMap.get(edge.source);
-				const targetNode = nodeMap.get(edge.target);
-				if (!sourceNode || !targetNode) return edge;
-
-				const sourceCenter = getNodeCenter(edge.source, sourceNode);
-				const targetCenter = getNodeCenter(edge.target, targetNode);
-				if (!sourceCenter || !targetCenter) return edge;
-
-				const { sourcePosition, targetPosition } =
-					calculateHandlePositionsFromPoints(sourceCenter, targetCenter);
-				const sourceHandle = HANDLE_ID_MAP.source[sourcePosition];
-				const targetHandle = HANDLE_ID_MAP.target[targetPosition];
-
-				if (
-					edge.sourceHandle === sourceHandle &&
-					edge.targetHandle === targetHandle
-				) {
-					return edge;
-				}
-
-				hasChanges = true;
-				return {
-					...edge,
-					sourceHandle,
-					targetHandle,
-				};
-			});
-
-			return hasChanges ? nextEdges : currentEdges;
-		},
-		[getNodeCenter]
-	);
-
-	useEffect(() => {
-		if (workflow && workflow.nodes) {
-			const currentNodeCount = Object.keys(workflow.nodes).length;
-			const previousNodeCount = lastWorkflowNodeCountRef.current;
-
-			if (
-				previousNodeCount > 0 &&
-				Math.abs(currentNodeCount - previousNodeCount) > 1
-			) {
-				lastAppliedWorkflowRef.current = null;
-				lastEmittedWorkflowRef.current = null;
-			}
-
-			lastWorkflowNodeCountRef.current = currentNodeCount;
-		}
-	}, [workflow]);
-
-	useEffect(() => {
-		const hasWorkflow = !!workflow;
-		const hasNodes = workflow && Object.keys(workflow.nodes || {}).length > 0;
-		if (!hasWorkflow && !allowDefaultInit) {
-			return;
-		}
-		const shouldInitDefault = !hasNodes;
-		const nextWorkflow = shouldInitDefault ? buildDefaultWorkflow() : workflow;
-		const nextSignature = serializeWorkflow(nextWorkflow);
-		if (lastAppliedWorkflowRef.current === nextSignature) {
-			return;
-		}
-		hasAppliedInitialWorkflowRef.current = false;
-		lastAppliedWorkflowRef.current = nextSignature;
-		const { nodes: mappedNodes, edges: mappedEdges } =
-			mapWorkflowToNodes(nextWorkflow);
-		isApplyingWorkflowRef.current = true;
-		setNodes(mappedNodes);
-		setEdges(mappedEdges);
-		hasAppliedInitialWorkflowRef.current = true;
-		if (reactFlowInstance) {
-			setTimeout(() => {
-				try {
-					reactFlowInstance.fitView({
-						padding: 0.2,
-						includeHiddenNodes: true,
-					});
-				} catch {
-					// noop
-				}
-			}, 0);
-		}
-		if (shouldInitDefault && onWorkflowChange) {
-			if (lastEmittedWorkflowRef.current !== nextSignature) {
-				lastEmittedWorkflowRef.current = nextSignature;
-				onWorkflowChange(nextWorkflow);
-			}
-		}
-	}, [
+	useWorkflowHydration({
+		workflow,
 		allowDefaultInit,
-		buildDefaultWorkflow,
-		mapWorkflowToNodes,
 		onWorkflowChange,
 		reactFlowInstance,
+		setNodes,
 		setEdges,
-		setNodes,
+		buildDefaultWorkflow,
+		mapWorkflowToNodes,
+		refs,
+	});
+
+	useWorkflowEmission({
 		workflow,
-	]);
-
-	useEffect(() => {
-		if (isApplyingWorkflowRef.current) {
-			isApplyingWorkflowRef.current = false;
-			return;
-		}
-		if (!hasAppliedInitialWorkflowRef.current) {
-			return;
-		}
-		const workflowNodeCount = workflow?.nodes
-			? Object.keys(workflow.nodes).length
-			: 0;
-		if (workflowNodeCount > 0 && nodes.length === 0 && edges.length === 0) {
-			return;
-		}
-		if (!onWorkflowChange) return;
-		const nextWorkflow = buildWorkflowFromState(nodes, edges);
-		const nextSignature = serializeWorkflow(nextWorkflow);
-		if (lastEmittedWorkflowRef.current === nextSignature) return;
-		lastEmittedWorkflowRef.current = nextSignature;
-		lastAppliedWorkflowRef.current = nextSignature;
-		onWorkflowChange(nextWorkflow);
-	}, [buildWorkflowFromState, edges, nodes, onWorkflowChange, workflow]);
-
-	useEffect(() => {
-		setNodes((prev) => {
-			const startNodeIds = new Set(
-				prev
-					.filter((node) => node.type === WORKFLOW_NODE_TYPES.START)
-					.map((node) => node.id)
-			);
-			const startNodesWithEdges = new Set(
-				edgesRef.current
-					.filter((edge) => startNodeIds.has(edge.source))
-					.map((edge) => edge.source)
-			);
-
-			let hasChanges = false;
-			const nextNodes = prev.map((node) => {
-				const isStartNode = node.type === WORKFLOW_NODE_TYPES.START;
-				const hasStartEdge = isStartNode && startNodesWithEdges.has(node.id);
-				const allowMultipleEdges = !isStartNode;
-				const onAddNodeValue =
-					isStartNode && !hasStartEdge ? handleAddNode : undefined;
-				const onAddNodeWithTypeValue = isStartNode
-					? hasStartEdge
-						? undefined
-						: handleAddNodeWithType
-					: handleAddNodeWithType;
-				const data = node.data as Record<string, unknown>;
-				const position = node.position;
-				const dataPosition = data.position as { x?: number; y?: number } | null;
-				const needsUpdate =
-					data.allowMultipleEdges !== allowMultipleEdges ||
-					data.showActions !== !isStartNode ||
-					data.onAddNode !== onAddNodeValue ||
-					data.onAddNodeWithType !== onAddNodeWithTypeValue ||
-					data.onAddNodeWithVariant !== handleAddNodeWithVariant ||
-					data.onDeleteNode !== handleDeleteNode ||
-					data.onCopyNode !== handleCopyNode ||
-					data.type !== node.type ||
-					!dataPosition ||
-					dataPosition.x !== position.x ||
-					dataPosition.y !== position.y;
-
-				if (!needsUpdate) return node;
-				hasChanges = true;
-				return {
-					...node,
-					data: {
-						...data,
-						type: node.type,
-						position: node.position,
-						allowMultipleEdges,
-						showActions: !isStartNode,
-						onAddNode: onAddNodeValue,
-						onAddNodeWithType: onAddNodeWithTypeValue,
-						onAddNodeWithVariant: handleAddNodeWithVariant,
-						onDeleteNode: handleDeleteNode,
-						onCopyNode: handleCopyNode,
-					},
-				};
-			});
-
-			return hasChanges ? nextNodes : prev;
-		});
-	}, [
-		edgeSignature,
-		handleAddNode,
-		handleAddNodeWithType,
-		handleAddNodeWithVariant,
-		handleCopyNode,
-		handleDeleteNode,
 		nodes,
-		setNodes,
-	]);
+		edges,
+		onWorkflowChange,
+		buildWorkflowFromState,
+		refs,
+	});
 
-	useEffect(() => {
-		if (nodes.length === 0) return;
-		const currentEdges = edgesRef.current;
-		const nextEdges = updateEdgeHandles(currentEdges, nodes);
-		if (nextEdges !== currentEdges) {
-			setEdges(nextEdges);
-		}
-	}, [nodes, setEdges, updateEdgeHandles]);
+	useWorkflowViewportFit({
+		reactFlowInstance,
+		nodes,
+		refs,
+	});
+
+	useEdgeHandleSync({
+		nodes,
+		edges,
+		setEdges,
+	});
 };
 
 export default useWorkflowSync;
