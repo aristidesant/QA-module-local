@@ -89,7 +89,8 @@ Design quality is mandatory: clean, modern, production-ready, light mode first.
   - Use consistent spacing with Mantine CSS variables
 - Keep hover states stable (no layout shift).
 - Provide clear loading and error states.
-- Avoid shadows, gradients, and 3D effects.
+- Avoid heavy shadows, gradients, and 3D effects.
+- Subtle elevation with soft borders and ultra-light shadows is allowed when it improves hierarchy, especially for navigation and cards.
 - Avoid flat, boring forms: group related fields into clear visual sections
   (e.g. Basic Info, Configuration, Advanced) with explicit hierarchy.
 
