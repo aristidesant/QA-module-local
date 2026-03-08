@@ -362,6 +362,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		<CampaignIdContext.Provider value={campaign?.id}>
 			<CampaignFormProvider form={form}>
 				<ContentContainer
+					contentWidth={selectedTab === 'workflow' ? 'full' : 'centered'}
 					onBackClick={() => {
 						resetView();
 						onBack?.();

@@ -8,6 +8,7 @@
 
 .contentContainerMain {
 	flex: 1 1 0;
+	--content-max-width: 1560px;
 	background: var(--mantine-color-body);
 	padding: var(--mantine-spacing-xs) var(--mantine-spacing-lg);
 	min-width: 0;
@@ -35,6 +36,28 @@
 	margin-top: var(--mantine-spacing-xs);
 	padding-left: var(--mantine-spacing-xs);
 	padding-right: var(--mantine-spacing-xs);
+}
+
+.contentContainerInner {
+	width: 100%;
+	min-width: 0;
+	margin-inline: auto;
+	transition: max-width 280ms ease-in-out;
+	will-change: max-width;
+}
+
+.contentWidthCentered {
+	max-width: var(--content-max-width);
+}
+
+.contentWidthFull {
+	max-width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.contentContainerInner {
+		transition: none;
+	}
 }
 
 .contentContainerNoMainScroll {

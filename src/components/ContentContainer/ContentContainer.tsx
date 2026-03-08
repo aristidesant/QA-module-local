@@ -13,6 +13,7 @@ export interface ContentContainerProps {
 	showBackButton?: boolean;
 	rightSectionTitle?: ReactNode;
 	mainScroll?: boolean; // new prop to control left/main scroll
+	contentWidth?: 'centered' | 'full';
 
 	onBackClick?: () => void;
 }
@@ -26,64 +27,78 @@ export const ContentContainer = ({
 	rightSectionTitle,
 	titleRight,
 	mainScroll = true,
+	contentWidth = 'centered',
 	titleIcon,
 	onBackClick,
-}: ContentContainerProps) => (
-	<div className={styles.contentContainer}>
-		<div className={styles.contentContainerMain}>
-			{(title || description || showBackButton) && (
-				<div className={styles.contentContainerHeader}>
-					<Flex gap={'xs'} align={'center'} justify={'space-between'}>
-						<Flex gap={'xs'} align={'center'}>
-							{showBackButton && (
-								<Tooltip label='Back' position='bottom' withArrow>
-									<ActionIcon
-										variant='light'
-										color='gray'
-										aria-label='Back'
-										onClick={onBackClick}
-										size='lg'
-									>
-										<IconArrowLeft size={20} />
-									</ActionIcon>
-								</Tooltip>
-							)}
-							{(title || description) && (
-								<Flex direction={'column'}>
-									{title && (
-										<Flex align='center' gap='xs'>
-											{titleIcon}
-											<Title c='dark' order={5}>
-												{title}
-											</Title>
+}: ContentContainerProps) => {
+	const widthClassName =
+		contentWidth === 'full'
+			? styles.contentWidthFull
+			: styles.contentWidthCentered;
+
+	return (
+		<div className={styles.contentContainer}>
+			<div className={styles.contentContainerMain}>
+				{(title || description || showBackButton) && (
+					<div className={styles.contentContainerHeader}>
+						<div
+							className={`${styles.contentContainerInner} ${widthClassName}`}
+						>
+							<Flex gap={'xs'} align={'center'} justify={'space-between'}>
+								<Flex gap={'xs'} align={'center'}>
+									{showBackButton && (
+										<Tooltip label='Back' position='bottom' withArrow>
+											<ActionIcon
+												variant='light'
+												color='gray'
+												aria-label='Back'
+												onClick={onBackClick}
+												size='lg'
+											>
+												<IconArrowLeft size={20} />
+											</ActionIcon>
+										</Tooltip>
+									)}
+									{(title || description) && (
+										<Flex direction={'column'}>
+											{title && (
+												<Flex align='center' gap='xs'>
+													{titleIcon}
+													<Title c='dark' order={5}>
+														{title}
+													</Title>
+												</Flex>
+											)}
+											{description && (
+												<Text fz='xs' c='dimmed'>
+													{description}
+												</Text>
+											)}
 										</Flex>
 									)}
-									{description && (
-										<Text fz='xs' c='dimmed'>
-											{description}
-										</Text>
-									)}
 								</Flex>
-							)}
-						</Flex>
-						{titleRight && titleRight}
-					</Flex>
-					<Divider mt='xs' className={styles.contentContainerDivider} />
+								{titleRight && titleRight}
+							</Flex>
+							<Divider mt='xs' className={styles.contentContainerDivider} />
+						</div>
+					</div>
+				)}
+				<div
+					className={`${styles.contentContainerContent} ${!mainScroll ? styles.contentContainerNoMainScroll : ''}`}
+				>
+					<div className={`${styles.contentContainerInner} ${widthClassName}`}>
+						{children}
+					</div>
 				</div>
-			)}
-			<div
-				className={`${styles.contentContainerContent} ${!mainScroll ? styles.contentContainerNoMainScroll : ''}`}
-			>
-				{children}
 			</div>
+			{rightSection && (
+				<aside className={styles.contentContainerRightSection}>
+					{rightSectionTitle && <div>{rightSectionTitle}</div>}
+					<div>{rightSection}</div>
+				</aside>
+			)}
 		</div>
-		{rightSection && (
-			<aside className={styles.contentContainerRightSection}>
-				{rightSectionTitle && <div>{rightSectionTitle}</div>}
-				<div>{rightSection}</div>
-			</aside>
-		)}
-	</div>
-);
+	);
+};
 
 export default ContentContainer;

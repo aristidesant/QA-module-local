@@ -14,6 +14,12 @@ If there is any conflict, use this precedence order:
 - Always write code and code comments in English.
 - Do not create tests unless the user explicitly asks for tests.
 
+## 1.1) Plan Mode Behavior
+
+- When operating in plan mode, prefer asking concise interactive questions whenever user input can meaningfully shape the plan.
+- In plan mode, try to gather decisions through interactive prompts as much as possible instead of open-ended questions.
+- Skip interactive questions only when the task is fully clear, trivial, or the repository context already determines the best path.
+
 ## 2) Stack And Source Of Truth
 
 - Routing: React Router v7 (`src/routes.tsx`)
