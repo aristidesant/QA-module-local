@@ -167,6 +167,7 @@ const ConditionEdge: FC<EdgeProps> = ({
 						wrap='nowrap'
 						className={styles.actions}
 						style={{
+							zIndex: 220,
 							transform: `translate3d(${Math.round(labelX)}px, ${Math.round(labelY)}px, 0) translate(-50%, calc(-100% - 8px))`,
 						}}
 						onClick={(event) => event.stopPropagation()}
@@ -207,6 +208,7 @@ const ConditionEdge: FC<EdgeProps> = ({
 					<div
 						className={getLabelClassName()}
 						style={{
+							zIndex: 160,
 							// Apply translation to coordinates first, then center the label element.
 							// Swapping the order avoids centering being applied in a different
 							// transformed context which can push the label off the path.

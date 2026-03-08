@@ -3,67 +3,88 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	isolation: isolate;
 }
 
 .sideActions {
 	position: absolute;
-	right: -40px;
+	right: -46px;
 	top: 50%;
 	transform: translateY(-50%);
-	z-index: 5;
-	padding-left: 2px;
+	z-index: 120;
+	padding-left: 4px;
 }
 
 .nodeContainer > :not(.sideActions):not(:global(.react-flow__handle)) {
 	transition:
 		border-color 140ms ease,
 		background-color 140ms ease,
-		box-shadow 140ms ease;
+		box-shadow 140ms ease,
+		transform 140ms ease;
 }
 
-:global(.react-flow__node.selected)
-	.nodeContainer
-	> :not(.sideActions):not(:global(.react-flow__handle)) {
-	border-color: var(--mantine-color-blue-4);
-	background-color: var(--mantine-color-blue-0);
+:global(.react-flow__node.selected) .nodeContainer > .nodeSurface {
+	border-color: var(
+		--workflow-node-selected-border,
+		var(--mantine-color-gray-5)
+	);
+	background-color: var(
+		--workflow-node-surface-selected,
+		var(--mantine-color-white)
+	);
 	box-shadow:
-		0 0 0 2px var(--mantine-color-blue-2),
-		0 2px 8px rgba(0, 0, 0, 0.06);
+		0 0 0 2px var(--workflow-node-selected-ring, rgba(148, 163, 184, 0.16)),
+		0 18px 34px rgba(15, 23, 42, 0.12);
+	transform: translateY(-1px);
 }
 
-.defaultNode {
+.nodeSurface {
+	--workflow-node-accent: var(--mantine-color-gray-7);
+	--workflow-node-selected-border: var(--mantine-color-gray-5);
+	--workflow-node-selected-ring: rgba(148, 163, 184, 0.16);
+	--workflow-node-header-bg: var(--mantine-color-gray-0);
+	--workflow-node-surface-selected: var(--mantine-color-white);
+	position: relative;
 	background-color: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: var(--mantine-radius-lg);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: calc(var(--mantine-radius-lg) + 2px);
 	min-width: 120px;
 	text-align: center;
 	transition:
 		border-color 0.14s ease,
+		transform 0.14s ease,
 		box-shadow 0.14s ease;
 	overflow: hidden;
-	padding: calc(var(--mantine-spacing-xs) + 2px)
-		calc(var(--mantine-spacing-md) + 2px);
 	box-shadow:
-		0 1px 3px rgba(0, 0, 0, 0.07),
-		0 1px 2px rgba(0, 0, 0, 0.05);
+		0 6px 16px rgba(15, 23, 42, 0.06),
+		0 1px 2px rgba(15, 23, 42, 0.08);
 }
 
-.defaultNode:hover {
+.defaultNode {
+	align-self: stretch;
+	padding: calc(var(--mantine-spacing-xs) + 2px)
+		calc(var(--mantine-spacing-md) + 2px);
+}
+
+.nodeSurface:hover {
 	border-color: var(--mantine-color-gray-4);
 	box-shadow:
-		0 4px 8px rgba(0, 0, 0, 0.09),
-		0 2px 4px rgba(0, 0, 0, 0.06);
+		0 14px 28px rgba(15, 23, 42, 0.08),
+		0 2px 4px rgba(15, 23, 42, 0.08);
+	transform: translateY(-1px);
 }
 
 .handle {
-	width: 9px;
-	height: 9px;
+	width: 10px;
+	height: 10px;
 	border: 1px solid var(--mantine-color-gray-4);
 	background-color: var(--mantine-color-white);
+	box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9);
 	transition:
 		opacity 120ms ease,
 		border-color 120ms ease,
-		background-color 120ms ease;
+		background-color 120ms ease,
+		transform 120ms ease;
 }
 
 .handleHidden {
@@ -78,6 +99,11 @@
 	opacity: 1;
 }
 
+.nodeContainer:hover .handle,
+:global(.react-flow__node.selected) .handle {
+	transform: scale(1.05);
+}
+
 .handleSource {
 	border-color: var(--mantine-color-gray-6);
 	background-color: var(--mantine-color-gray-6);
@@ -89,10 +115,10 @@
 }
 
 :global(.react-flow__node.selected) .handleSource {
-	border-color: var(--mantine-color-blue-6);
-	background-color: var(--mantine-color-blue-6);
+	border-color: var(--mantine-color-gray-7);
+	background-color: var(--mantine-color-gray-7);
 }
 
 :global(.react-flow__node.selected) .handleTarget {
-	border-color: var(--mantine-color-blue-5);
+	border-color: var(--mantine-color-gray-6);
 }

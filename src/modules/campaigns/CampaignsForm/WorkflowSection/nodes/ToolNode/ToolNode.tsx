@@ -10,6 +10,7 @@ import WorkflowNodeDrawer from '../../WorkflowNodeDrawer';
 import WorkflowNodeHeader from '../../WorkflowNodeHeader';
 import WorkflowNodeWrapper from '../../WorkflowNode';
 import type { WorkflowNodeData } from '../../WorkflowNode/WorkflowNodeTypes';
+import workflowNodeStyles from '../../WorkflowNode/WorkflowNode.module.css';
 import styles from './ToolNode.module.css';
 
 const ToolNodeComponent = (props: NodeProps) => {
@@ -42,7 +43,7 @@ const ToolNodeComponent = (props: NodeProps) => {
 					/>
 				}
 			>
-				<div className={styles.node}>
+				<div className={`${workflowNodeStyles.nodeSurface} ${styles.node}`}>
 					<WorkflowNodeHeader
 						className={styles.header}
 						icon={<IconTool size={18} className={styles.icon} />}

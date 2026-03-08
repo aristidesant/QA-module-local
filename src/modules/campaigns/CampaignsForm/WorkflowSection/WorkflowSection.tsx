@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Checkbox, Group, Select } from '@mantine/core';
+import { ActionIcon, Checkbox, Group, Select, Tooltip } from '@mantine/core';
+import { IconArrowsMaximize } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
 import WorkflowCanvas from './WorkflowCanvas';
+import WorkflowEditorFullscreen from './WorkflowEditorFullscreen';
 import { WorkflowNodeEditorProvider } from './WorkflowNodeEditorContext';
 import {
 	useCampaignFormContext,
@@ -18,6 +20,7 @@ const WorkflowSection = () => {
 	const campaignId = useCampaignId();
 	const { data: campaignAgents } = useGetCampaignAgents(campaignId || 0);
 	const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
+	const [isEditorExpanded, setIsEditorExpanded] = useState(false);
 	const workflow = form.values.agentConfig?.workflow;
 	const preventSubagentLoops = workflow?.preventSubagentLoops ?? false;
 
@@ -72,6 +75,15 @@ const WorkflowSection = () => {
 			onWorkflowChange={handleWorkflowChange}
 			campaignAgentConfig={form.values.agentConfig}
 		>
+			<WorkflowEditorFullscreen
+				opened={isEditorExpanded}
+				onClose={() => setIsEditorExpanded(false)}
+				workflow={workflow}
+				onWorkflowChange={handleWorkflowChange}
+				preventSubagentLoops={preventSubagentLoops}
+				allowDefaultInit={!campaignId}
+				onNodeSelect={handleNodeSelect}
+			/>
 			<SectionCard
 				title={t('form.workflow.section.title')}
 				description={t('form.workflow.section.description')}
@@ -79,6 +91,18 @@ const WorkflowSection = () => {
 				padding='sm'
 				headerActions={
 					<Group gap='xs' align='center'>
+						<Tooltip label={t('form.workflow.fullscreen.enter')} withArrow>
+							<ActionIcon
+								size='sm'
+								variant='light'
+								color='gray'
+								radius='sm'
+								onClick={() => setIsEditorExpanded(true)}
+								aria-label={t('form.workflow.fullscreen.enter')}
+							>
+								<IconArrowsMaximize size={15} />
+							</ActionIcon>
+						</Tooltip>
 						{agents.length > 1 && (
 							<Select
 								data={agents.map((agent) => ({

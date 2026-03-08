@@ -705,6 +705,13 @@
 				"title": "Workflow",
 				"description": "Build the agent flow and connect nodes based on the workflow schema."
 			},
+			"fullscreen": {
+				"enter": "Expand workflow editor",
+				"exit": "Exit expanded editor",
+				"eyebrow": "Expanded editor",
+				"title": "Workflow canvas",
+				"description": "Use the larger workspace to arrange nodes, reconnect edges, and keep the node drawer available while editing."
+			},
 			"header": {
 				"title": "Flow Builder",
 				"description": "Start connects to a Subagent. From there, add the next steps in the flow.",

@@ -10,6 +10,7 @@ import WorkflowNodeDrawer from '../../WorkflowNodeDrawer';
 import WorkflowNodeHeader from '../../WorkflowNodeHeader';
 import WorkflowNodeWrapper from '../../WorkflowNode';
 import type { WorkflowNodeData } from '../../WorkflowNode/WorkflowNodeTypes';
+import workflowNodeStyles from '../../WorkflowNode/WorkflowNode.module.css';
 import styles from './AgentTransferNode.module.css';
 
 const AgentTransferNodeComponent = (props: NodeProps) => {
@@ -36,7 +37,7 @@ const AgentTransferNodeComponent = (props: NodeProps) => {
 					/>
 				}
 			>
-				<div className={styles.node}>
+				<div className={`${workflowNodeStyles.nodeSurface} ${styles.node}`}>
 					<WorkflowNodeHeader
 						className={styles.header}
 						icon={<IconUserCog size={18} className={styles.icon} />}

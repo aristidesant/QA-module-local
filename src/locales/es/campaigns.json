@@ -706,6 +706,13 @@
 				"title": "Workflow",
 				"description": "Crea el flujo del agente y conecta nodos segun el esquema del workflow."
 			},
+			"fullscreen": {
+				"enter": "Expandir editor de workflow",
+				"exit": "Salir del editor expandido",
+				"eyebrow": "Editor expandido",
+				"title": "Lienzo del workflow",
+				"description": "Usa el area amplia para organizar nodos, reconectar bordes y mantener disponible el drawer del nodo mientras editas."
+			},
 			"header": {
 				"title": "Constructor de flujo",
 				"description": "Inicio conecta con un subagente. Desde alli, agrega los siguientes pasos en el flujo.",

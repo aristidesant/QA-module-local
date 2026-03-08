@@ -70,6 +70,7 @@ const WorkflowNodeDrawer = ({ nodeId }: WorkflowNodeDrawerProps) => {
 			title={t('form.settingsDrawer.title')}
 			keepMounted
 			size='lg'
+			zIndex={340}
 			transitionProps={{
 				transition: 'slide-left',
 				duration: 250,

@@ -43,6 +43,7 @@ interface WorkflowCanvasProps {
 	preventSubagentLoops?: boolean;
 	allowDefaultInit?: boolean;
 	onNodeSelect?: (nodeId: string | null) => void;
+	layoutMode?: 'compact' | 'fullscreen';
 }
 
 interface AddNodeVariantPayload {
@@ -61,6 +62,7 @@ const WorkflowCanvasInner = ({
 	preventSubagentLoops = false,
 	allowDefaultInit = true,
 	onNodeSelect,
+	layoutMode = 'compact',
 }: WorkflowCanvasProps) => {
 	const { t } = useTranslation('campaigns');
 	const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
@@ -526,7 +528,13 @@ const WorkflowCanvasInner = ({
 			selectedEdgeActionId={selectedEdgeActionId}
 			onSelectedEdgeActionChange={setSelectedEdgeActionId}
 		>
-			<div className={styles.canvas}>
+			<div
+				className={`${styles.canvas} ${
+					layoutMode === 'fullscreen'
+						? styles.canvasFullscreen
+						: styles.canvasCompact
+				}`}
+			>
 				<FlowView
 					nodes={nodes}
 					edges={edges}

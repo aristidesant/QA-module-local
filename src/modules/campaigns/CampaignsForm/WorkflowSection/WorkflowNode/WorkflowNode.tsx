@@ -62,7 +62,7 @@ export const WorkflowNodeWrapper: React.FC<WorkflowNodeWrapperProps> = ({
 				className={`${styles.handle} ${styles.handleTarget} ${styles.handleHidden}`}
 			/>
 			{children ?? (
-				<div className={`${styles.defaultNode} nopan`}>
+				<div className={`${styles.nodeSurface} ${styles.defaultNode} nopan`}>
 					<Text size='sm' fw={500}>
 						{fallbackLabel}
 					</Text>

@@ -8,6 +8,7 @@ import WorkflowNodeActions from '../../WorkflowNodeActions';
 import WorkflowNodeHeader from '../../WorkflowNodeHeader';
 import WorkflowNodeWrapper from '../../WorkflowNode';
 import type { WorkflowNodeData } from '../../WorkflowNode/WorkflowNodeTypes';
+import workflowNodeStyles from '../../WorkflowNode/WorkflowNode.module.css';
 import styles from './EndNode.module.css';
 
 const EndNodeComponent = (props: NodeProps) => {
@@ -27,7 +28,7 @@ const EndNodeComponent = (props: NodeProps) => {
 				/>
 			}
 		>
-			<div className={styles.node}>
+			<div className={`${workflowNodeStyles.nodeSurface} ${styles.node}`}>
 				<WorkflowNodeHeader
 					className={styles.header}
 					icon={<IconSquareRoundedCheck size={18} className={styles.icon} />}

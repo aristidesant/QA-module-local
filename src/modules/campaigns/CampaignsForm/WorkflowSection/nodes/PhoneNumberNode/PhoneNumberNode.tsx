@@ -10,6 +10,7 @@ import WorkflowNodeDrawer from '../../WorkflowNodeDrawer';
 import WorkflowNodeHeader from '../../WorkflowNodeHeader';
 import WorkflowNodeWrapper from '../../WorkflowNode';
 import type { WorkflowNodeData } from '../../WorkflowNode/WorkflowNodeTypes';
+import workflowNodeStyles from '../../WorkflowNode/WorkflowNode.module.css';
 import styles from './PhoneNumberNode.module.css';
 
 const PhoneNumberNode = (props: NodeProps) => {
@@ -40,7 +41,9 @@ const PhoneNumberNode = (props: NodeProps) => {
 					/>
 				}
 			>
-				<Box className={`${styles.node} ${hasError ? styles.error : ''}`}>
+				<Box
+					className={`${workflowNodeStyles.nodeSurface} ${styles.node} ${hasError ? styles.error : ''}`}
+				>
 					<WorkflowNodeHeader
 						className={styles.header}
 						icon={<IconPhoneCall size={18} className={styles.icon} />}

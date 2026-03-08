@@ -1,24 +1,7 @@
 .node {
-	background-color: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: var(--mantine-radius-lg);
+	--workflow-node-accent: var(--mantine-color-green-7);
 	min-width: 140px;
 	text-align: left;
-	transition:
-		border-color 0.14s ease,
-		background-color 0.14s ease,
-		box-shadow 0.14s ease;
-	overflow: hidden;
-	box-shadow:
-		0 1px 3px rgba(0, 0, 0, 0.07),
-		0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.node:hover {
-	border-color: var(--mantine-color-gray-4);
-	box-shadow:
-		0 4px 8px rgba(0, 0, 0, 0.09),
-		0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
 .icon {
@@ -26,6 +9,7 @@
 }
 
 .header {
+	min-height: 48px;
 }
 
 .footer {
