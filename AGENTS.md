@@ -91,6 +91,9 @@ Design quality is mandatory: clean, modern, production-ready, light mode first.
 - Provide clear loading and error states.
 - Avoid heavy shadows, gradients, and 3D effects.
 - Subtle elevation with soft borders and ultra-light shadows is allowed when it improves hierarchy, especially for navigation and cards.
+- Use Mantine shadow tokens for elevation instead of custom `box-shadow` values whenever possible.
+- Standard default elevation for cards, forms, and section containers is Mantine `md` (`shadow="md"` in Mantine components or `var(--mantine-shadow-md)` in CSS Modules).
+- Only use a custom shadow when there is a documented, component-specific exception.
 - Avoid flat, boring forms: group related fields into clear visual sections
   (e.g. Basic Info, Configuration, Advanced) with explicit hierarchy.
 
