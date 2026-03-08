@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { ActionIcon, Modal, Tooltip, Group, Stack } from '@mantine/core';
+import { Modal, Stack } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconPlus, IconRefresh } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
@@ -104,44 +103,28 @@ export const ContactListView = ({
 				description={description}
 				padding='md'
 				contentSpacing='sm'
-				headerActions={
-					<Group gap='xs'>
-						<Tooltip label={t('form.contacts.list.reload')}>
-							<ActionIcon
-								color='gray'
-								size='sm'
-								variant='light'
-								onClick={onUpdateComplete}
-								aria-label={t('form.contacts.list.reload')}
-								disabled={isCollapsed}
-								title={
-									isCollapsed
-										? t('form.contacts.list.reloadUnavailable')
-										: t('form.contacts.list.reload')
+				actions={{
+					primary:
+						isActive &&
+						canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.CREATE)
+							? {
+									kind: 'add',
+									label: tooltipLabel,
+									onClick: () =>
+										isCollapsed ? toggleInactiveExpanded() : open(),
+									ariaLabel: tooltipLabel,
 								}
-							>
-								<IconRefresh size={18} />
-							</ActionIcon>
-						</Tooltip>
-						{isActive &&
-							canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.CREATE) && (
-								<Tooltip label={tooltipLabel}>
-									<ActionIcon
-										color='blue'
-										size='sm'
-										variant='light'
-										onClick={() =>
-											isCollapsed ? toggleInactiveExpanded() : open()
-										}
-										aria-label={tooltipLabel}
-										data-testid='header-add-contact-list-btn'
-									>
-										<IconPlus size={18} />
-									</ActionIcon>
-								</Tooltip>
-							)}
-					</Group>
-				}
+							: undefined,
+					secondary: [
+						{
+							kind: 'refresh',
+							label: t('form.contacts.list.reload'),
+							onClick: onUpdateComplete,
+							ariaLabel: t('form.contacts.list.reload'),
+							disabled: isCollapsed,
+						},
+					],
+				}}
 			>
 				{!isCollapsed && (
 					<>

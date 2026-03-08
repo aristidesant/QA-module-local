@@ -14,12 +14,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import {
-	IconEdit,
-	IconGripVertical,
-	IconPlus,
-	IconTrash,
-} from '@tabler/icons-react';
+import { IconEdit, IconGripVertical, IconTrash } from '@tabler/icons-react';
 import {
 	useCreateReportValue,
 	useBulkUpdateReportValues,
@@ -477,21 +472,19 @@ const ReportValuesSection = () => {
 		<SectionCard
 			title={t('form.reportValues.title')}
 			description={t('form.reportValues.description')}
-			headerActions={
-				<Group gap='xs'>
-					<Badge variant='light' size='sm' className={styles.countBadge}>
-						{columnCountLabel}
-					</Badge>
-					<Button
-						leftSection={<IconPlus size={16} />}
-						onClick={handleAddClick}
-						size='sm'
-					>
-						{t('reportValues.addColumn', {
-							ns: 'campaign.contact-list',
-						})}
-					</Button>
-				</Group>
+			actions={{
+				primary: {
+					kind: 'add',
+					label: t('reportValues.addColumn', {
+						ns: 'campaign.contact-list',
+					}),
+					onClick: handleAddClick,
+				},
+			}}
+			headerExtras={
+				<Badge variant='light' size='sm' className={styles.countBadge}>
+					{columnCountLabel}
+				</Badge>
 			}
 		>
 			<Stack gap='md'>

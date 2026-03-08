@@ -1,20 +1,19 @@
-import React, { type ReactNode, useCallback, useState } from 'react';
-import { Badge, Button, Group, Stack, Text } from '@mantine/core';
-import { IconBrain, IconPencil } from '@tabler/icons-react';
+import React, { useCallback, useState } from 'react';
+import { Badge, Group, Stack, Text } from '@mantine/core';
+import { IconBrain } from '@tabler/icons-react';
 import { useCampaignFormContext } from '../../../campaignFormFunctions';
 import SectionCard from '~/components/SectionCard';
 import { useTranslation } from 'react-i18next';
 import styles from './CampaignConfigurationPrompt.module.css';
-// History modal removed from this component; it's used elsewhere now.
 import CampaignAgentPromptEditModal from './CampaignAgentPromptEditModal';
 
 interface CampaignConfigurationPromptProps {
-	headerActions?: ReactNode;
+	onOpenSettings?: () => void;
 }
 
 const CampaignConfigurationPrompt: React.FC<
 	CampaignConfigurationPromptProps
-> = ({ headerActions }) => {
+> = ({ onOpenSettings }) => {
 	const { t } = useTranslation(['campaigns', 'campaign.detail', 'common']);
 	const form = useCampaignFormContext();
 	const [editModalOpen, setEditModalOpen] = useState(false);
@@ -37,19 +36,8 @@ const CampaignConfigurationPrompt: React.FC<
 				className={styles.sectionCard}
 				contentSpacing='sm'
 				padding='md'
-				headerActions={
-					<Group gap='xs'>
-						{headerActions}
-						<Button
-							size='xs'
-							variant='light'
-							leftSection={<IconPencil size={14} />}
-							onClick={handleEdit}
-						>
-							{t('configuration.editPrompt')}
-						</Button>
-					</Group>
-				}
+				onEdit={handleEdit}
+				onOpenSettings={onOpenSettings}
 			>
 				<Stack gap='xs' className={styles.promptStack}>
 					<Group justify='space-between' align='center'>
@@ -76,7 +64,6 @@ const CampaignConfigurationPrompt: React.FC<
 					</div>
 				</Stack>
 			</SectionCard>
-			{/* TODO: Remove this logic later. Mini prompt preview is deprecated. */}
 			{false && null}
 			<CampaignAgentPromptEditModal
 				opened={editModalOpen}

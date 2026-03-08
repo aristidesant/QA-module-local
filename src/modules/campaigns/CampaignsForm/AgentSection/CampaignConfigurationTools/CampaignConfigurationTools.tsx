@@ -1,7 +1,7 @@
 // CampaignConfigurationTools.tsx
 import React, { useState, useCallback } from 'react';
 import { ThemeIcon, Text, ActionIcon, Tooltip, Loader } from '@mantine/core';
-import { IconPuzzle, IconTrash, IconPlus } from '@tabler/icons-react';
+import { IconPuzzle, IconTrash } from '@tabler/icons-react';
 import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
 import RightSectionCard from '~/components/RightSectionCard';
 import { useToolCategories } from '~/queries/toolCategoryQueries';
@@ -85,6 +85,13 @@ const CampaignConfigurationTools: React.FC = () => {
 			icon={IconPuzzle}
 			title={t('form.agent.tools.title')}
 			description={t('form.agent.tools.description')}
+			actions={{
+				primary: {
+					kind: 'add',
+					label: t('form.agent.tools.add'),
+					onClick: () => setIsModalOpen(true),
+				},
+			}}
 		>
 			<div className={classes.container}>
 				{isLoading ? (
@@ -136,15 +143,6 @@ const CampaignConfigurationTools: React.FC = () => {
 						{t('form.agent.tools.noSelection')}
 					</Text>
 				)}
-
-				<button
-					type='button'
-					className={classes.addButton}
-					onClick={() => setIsModalOpen(true)}
-				>
-					<IconPlus size={14} className={classes.plusIcon} />
-					<span>{t('form.agent.tools.add')}</span>
-				</button>
 			</div>
 
 			<CampaignConfigurationToolsAddModal

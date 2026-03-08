@@ -1,14 +1,6 @@
 import React, { useEffect } from 'react';
-import {
-	ActionIcon,
-	Flex,
-	Paper,
-	Stack,
-	Text,
-	ThemeIcon,
-	Tooltip,
-} from '@mantine/core';
-import { IconEdit, IconPlus, IconSitemap } from '@tabler/icons-react';
+import { Paper, Stack, Text, ThemeIcon } from '@mantine/core';
+import { IconSitemap } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
@@ -83,32 +75,16 @@ const DispositionSection: React.FC = () => {
 	return (
 		<SectionCard
 			title={t('disposition.title')}
-			headerActions={
-				<Flex>
-					{hasFlow ? (
-						<Tooltip label={t('disposition.editOutcome')}>
-							<ActionIcon
-								onClick={() => handleOpenModal(true)}
-								loading={isLoadingCurrentFlow}
-								variant='light'
-								size='lg'
-							>
-								<IconEdit size={20} />
-							</ActionIcon>
-						</Tooltip>
-					) : (
-						<Tooltip label={t('disposition.addOutcome')}>
-							<ActionIcon
-								onClick={() => handleOpenModal(false)}
-								variant='light'
-								size='lg'
-							>
-								<IconPlus size={20} />
-							</ActionIcon>
-						</Tooltip>
-					)}
-				</Flex>
-			}
+			actions={{
+				primary: {
+					kind: hasFlow ? 'edit' : 'add',
+					label: hasFlow
+						? t('disposition.editOutcome')
+						: t('disposition.addOutcome'),
+					onClick: () => handleOpenModal(hasFlow),
+					loading: hasFlow ? isLoadingCurrentFlow : false,
+				},
+			}}
 			description={t('disposition.description')}
 		>
 			{currentDispositionFlow ? (

@@ -191,15 +191,13 @@ const DoNotCallSection: React.FC<DoNotCallSectionProps> = () => {
 		<SectionCard
 			title={t('page.title')}
 			description={t('page.description')}
-			headerActions={
-				<Button
-					size='xs'
-					leftSection={<IconPlus size={16} />}
-					onClick={handleShowAddNewModal}
-				>
-					{t('page.actions.addEntry')}
-				</Button>
-			}
+			actions={{
+				primary: {
+					kind: 'add',
+					label: t('page.actions.addEntry'),
+					onClick: handleShowAddNewModal,
+				},
+			}}
 		>
 			<DoNotCallFilters
 				searchValue={pagination.searchValue}

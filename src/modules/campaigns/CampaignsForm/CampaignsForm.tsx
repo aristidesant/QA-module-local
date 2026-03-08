@@ -40,7 +40,7 @@ import ReportValuesSection from './ReportValuesSection/ReportValuesSection';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { CampaignStatus } from '~/models/CampaignStatus';
 import { modals } from '@mantine/modals';
-import { IconCalculator, IconEye, IconSettings } from '@tabler/icons-react';
+import { IconEye } from '@tabler/icons-react';
 import SchedulerCalculator from './ParametersSection/SchedulerCalculator';
 import FormSaveButton from '~/components/FormSaveButton';
 import CampaignSyncButton from './components/CampaignSyncButton';
@@ -231,6 +231,9 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	}, [selectedTab, rightComponent]);
 
 	const settingsDrawerTitle = t('form.settingsDrawer.title');
+	const openSettingsDrawer = () => {
+		setIsSettingsDrawerOpen(true);
+	};
 
 	const settingsDrawerContent =
 		selectedTab === 'general' ? (
@@ -402,20 +405,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 							<form
 								onSubmit={form.onSubmit((values) => handleSubmit(values, true))}
 							>
-								<GeneralSection
-									headerActions={
-										<Tooltip label={t('form.settingsDrawer.open')} withArrow>
-											<ActionIcon
-												size='sm'
-												variant='light'
-												onClick={() => setIsSettingsDrawerOpen(true)}
-												aria-label={t('form.settingsDrawer.open')}
-											>
-												<IconSettings size={16} />
-											</ActionIcon>
-										</Tooltip>
-									}
-								/>
+								<GeneralSection onOpenSettings={openSettingsDrawer} />
 								<Box
 									pos='sticky'
 									bottom={-1}
@@ -448,20 +438,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 						)}
 						{selectedTab === 'agents' && (
 							<form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
-								<AgentSection
-									headerActions={
-										<Tooltip label={t('form.settingsDrawer.open')} withArrow>
-											<ActionIcon
-												size='sm'
-												variant='light'
-												onClick={() => setIsSettingsDrawerOpen(true)}
-												aria-label={t('form.settingsDrawer.open')}
-											>
-												<IconSettings size={16} />
-											</ActionIcon>
-										</Tooltip>
-									}
-								/>
+								<AgentSection onOpenSettings={openSettingsDrawer} />
 								<Box
 									pos='sticky'
 									bottom={-1}
@@ -548,20 +525,12 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 							<SectionCard
 								title={t('workingHours.title')}
 								description={t('workingHours.description')}
-								headerActions={
-									<ActionIcon
-										size='md'
-										variant='subtle'
-										onClick={() =>
-											modals.open({
-												title: t('form.schedulerCalculator.title'),
-												fullScreen: true,
-												children: <SchedulerCalculator />,
-											})
-										}
-									>
-										<IconCalculator size={18} />
-									</ActionIcon>
+								onCalculate={() =>
+									modals.open({
+										title: t('form.schedulerCalculator.title'),
+										fullScreen: true,
+										children: <SchedulerCalculator />,
+									})
 								}
 							>
 								<ParametersSection

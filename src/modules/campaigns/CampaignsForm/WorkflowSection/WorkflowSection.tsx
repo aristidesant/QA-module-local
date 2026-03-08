@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActionIcon, Checkbox, Group, Select, Tooltip } from '@mantine/core';
-import { IconArrowsMaximize } from '@tabler/icons-react';
+import { Checkbox, Group, Select } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
 import WorkflowCanvas from './WorkflowCanvas';
@@ -89,20 +88,9 @@ const WorkflowSection = () => {
 				description={t('form.workflow.section.description')}
 				contentSpacing='xs'
 				padding='sm'
-				headerActions={
+				onExpand={() => setIsEditorExpanded(true)}
+				headerExtras={
 					<Group gap='xs' align='center'>
-						<Tooltip label={t('form.workflow.fullscreen.enter')} withArrow>
-							<ActionIcon
-								size='sm'
-								variant='light'
-								color='gray'
-								radius='sm'
-								onClick={() => setIsEditorExpanded(true)}
-								aria-label={t('form.workflow.fullscreen.enter')}
-							>
-								<IconArrowsMaximize size={15} />
-							</ActionIcon>
-						</Tooltip>
 						{agents.length > 1 && (
 							<Select
 								data={agents.map((agent) => ({

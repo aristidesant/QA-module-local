@@ -1,14 +1,13 @@
-import type { ReactNode } from 'react';
 import { useCampaignFormContext } from '../../campaignFormFunctions';
 import { Textarea, TextInput } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
 
 interface GeneralSectionProps {
-	headerActions?: ReactNode;
+	onOpenSettings?: () => void;
 }
 
-const GeneralSection: React.FC<GeneralSectionProps> = ({ headerActions }) => {
+const GeneralSection: React.FC<GeneralSectionProps> = ({ onOpenSettings }) => {
 	const { t } = useTranslation(['campaigns']);
 	const form = useCampaignFormContext();
 
@@ -16,7 +15,7 @@ const GeneralSection: React.FC<GeneralSectionProps> = ({ headerActions }) => {
 		<SectionCard
 			title={t('general.title')}
 			description={t('general.description')}
-			headerActions={headerActions}
+			onOpenSettings={onOpenSettings}
 		>
 			<TextInput
 				label={t('general.campaignName')}
