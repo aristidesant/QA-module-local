@@ -3,13 +3,23 @@
 	flex-direction: row;
 	width: 100%;
 	height: 100vh;
-	background: var(--mantine-color-body);
+	--content-canvas: color-mix(
+		in srgb,
+		var(--mantine-color-gray-1) 58%,
+		var(--mantine-color-white)
+	);
+	--content-panel-bg: color-mix(
+		in srgb,
+		var(--mantine-color-gray-1) 78%,
+		var(--mantine-color-white)
+	);
+	background: var(--content-canvas);
 }
 
 .contentContainerMain {
 	flex: 1 1 0;
 	--content-max-width: 1560px;
-	background: var(--mantine-color-body);
+	background: var(--content-canvas);
 	padding: var(--mantine-spacing-xs) var(--mantine-spacing-lg);
 	min-width: 0;
 	display: flex;
@@ -73,7 +83,7 @@
 
 .contentContainerRightSection {
 	width: 380px;
-	background: var(--mantine-color-gray-1);
+	background: var(--content-panel-bg);
 	border-left: 1px solid var(--mantine-color-gray-3);
 	padding: 0 var(--mantine-spacing-xs);
 	height: calc(100vh - 70px);
@@ -87,7 +97,7 @@
 .contentContainerRightSection > :first-child {
 	padding: 16px 16px;
 	flex-shrink: 0;
-	background: var(--mantine-color-gray-1);
+	background: var(--content-panel-bg);
 	border-bottom: 1px solid var(--mantine-color-gray-3);
 }
 
