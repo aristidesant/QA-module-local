@@ -5,8 +5,9 @@ import {
 	Modal,
 	NumberInput,
 	Select,
-	Tooltip,
 	Stack,
+	TagsInput,
+	Tooltip,
 } from '@mantine/core';
 import {
 	IconAdjustments,
@@ -35,10 +36,28 @@ const GeneralSectionRightPanel: React.FC = () => {
 
 	const currentLanguage =
 		form.values.agentConfig?.conversationConfig?.agent?.language || '';
+	const currentKeywords =
+		form.values.agentConfig?.conversationConfig?.asr?.keywords ?? [];
 	const languageOptions = [
 		{ value: 'en', label: t('form.agent.basic.languages.en') },
 		{ value: 'es', label: t('form.agent.basic.languages.es') },
 	];
+
+	const normalizeKeywords = (values: string[]) => {
+		const uniqueKeywords = new Set<string>();
+
+		values.forEach((value) => {
+			const normalizedValue = value.trim();
+
+			if (!normalizedValue) {
+				return;
+			}
+
+			uniqueKeywords.add(normalizedValue);
+		});
+
+		return Array.from(uniqueKeywords);
+	};
 
 	const handleLanguageChange = (value: string | null) => {
 		if (value) {
@@ -47,6 +66,13 @@ const GeneralSectionRightPanel: React.FC = () => {
 				value
 			);
 		}
+	};
+
+	const handleKeywordsChange = (values: string[]) => {
+		form.setFieldValue(
+			'agentConfig.conversationConfig.asr.keywords',
+			normalizeKeywords(values)
+		);
 	};
 
 	const {
@@ -205,6 +231,15 @@ const GeneralSectionRightPanel: React.FC = () => {
 						searchable
 						nothingFoundMessage={t('form.agent.basic.noLanguageFound')}
 						leftSection={<IconLanguage size={14} />}
+						size='sm'
+					/>
+
+					<TagsInput
+						label={t('general.asrKeywords')}
+						placeholder={t('general.asrKeywordsPlaceholder')}
+						description={t('general.asrKeywordsDesc')}
+						value={currentKeywords}
+						onChange={handleKeywordsChange}
 						size='sm'
 					/>
 				</RightSectionCard>

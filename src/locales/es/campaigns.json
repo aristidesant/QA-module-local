@@ -2130,6 +2130,9 @@
 		"defaultWaveDelayDesc": "Retraso entre oleadas para nuevas listas de contactos. Usa 0 para no agregar espera adicional.",
 		"enterWaveDelaySeconds": "Ingresa el retraso en segundos",
 		"enterNumberOfWaves": "Ingresa el número de oleadas",
+		"asrKeywords": "Palabras clave ASR",
+		"asrKeywordsDesc": "Agrega palabras a las que el motor de reconocimiento de voz debe prestar especial atención.",
+		"asrKeywordsPlaceholder": "Escribe una palabra y presiona Enter",
 		"createObjectiveTitle": "Crear Nuevo Objetivo"
 	}
 }
