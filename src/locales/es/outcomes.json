@@ -15,7 +15,8 @@
 		},
 		"labels": {
 			"doNotCall": "No llamar",
-			"doNotCallTooltip": "No volver a llamar a este cliente después de este resultado"
+			"doNotCallTooltip": "No volver a llamar a este cliente después de este resultado",
+			"inactive": "Inactivo"
 		},
 		"actions": {
 			"collapse": "Contraer nodo",

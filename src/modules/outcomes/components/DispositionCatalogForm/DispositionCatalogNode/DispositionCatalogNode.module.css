@@ -1,25 +1,210 @@
+/* Tree container */
 .treeWrapper {
 	width: 100%;
-	min-height: 220px;
-	background: var(--mantine-color-white);
-	border-radius: var(--mantine-radius-md);
-	border: 1px solid var(--mantine-color-gray-3);
-	margin-bottom: var(--mantine-spacing-md);
-	padding: calc(var(--mantine-spacing-xs) * 0.75);
-	display: flex;
-	flex-direction: column;
-	gap: var(--mantine-spacing-xs);
 }
 
 .treeRoot {
 	width: 100%;
-	height: 100%;
 }
 
 .skeletonStack {
 	display: flex;
 	flex-direction: column;
-	gap: calc(var(--mantine-spacing-xs) / 2);
+	gap: 4px;
+}
+
+/* --- Node row --- */
+
+.nodeRow {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding-top: 7px;
+	padding-bottom: 7px;
+	padding-right: 8px;
+	border-radius: 6px;
+	outline: none;
+	transition: background-color 100ms ease;
+	cursor: default;
+	user-select: none;
+	box-sizing: border-box;
+}
+
+.nodeRow:hover {
+	background-color: var(--mantine-color-gray-0);
+}
+
+.nodeRow:focus-visible {
+	box-shadow: inset 0 0 0 2px var(--mantine-color-blue-3);
+}
+
+/* Left accent bar */
+.nodeAccent {
+	position: absolute;
+	left: 0;
+	top: 8px;
+	bottom: 8px;
+	width: 3px;
+	border-radius: 2px;
+	background: var(--mantine-color-gray-3);
+	pointer-events: none;
+}
+
+.nodeAccent[data-active='true'] {
+	background: var(--mantine-color-green-5);
+}
+
+/* Connector lines for non-root nodes */
+.nodeRow:not([data-level='0'])::before {
+	content: '';
+	position: absolute;
+	left: var(--connector-x, 12px);
+	top: 0;
+	height: 50%;
+	width: 12px;
+	border-left: 1px solid var(--mantine-color-gray-2);
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+	border-bottom-left-radius: 3px;
+	pointer-events: none;
+}
+
+.nodeRow[data-is-last='false']:not([data-level='0'])::after {
+	content: '';
+	position: absolute;
+	left: var(--connector-x, 12px);
+	top: 50%;
+	bottom: 0;
+	border-left: 1px solid var(--mantine-color-gray-2);
+	pointer-events: none;
+}
+
+/* Inactive */
+.nodeRowInactive {
+	opacity: 0.5;
+}
+
+/* Toggle button area */
+.nodeToggle {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	flex-shrink: 0;
+}
+
+/* File / folder icon */
+.nodeIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	flex-shrink: 0;
+}
+
+/* Body */
+.nodeBody {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+}
+
+.nodeNameRow {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	min-width: 0;
+	flex-wrap: nowrap;
+}
+
+.nodeName {
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 500;
+	color: var(--mantine-color-gray-9);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	line-height: 1.3;
+	flex-shrink: 1;
+	min-width: 0;
+}
+
+.nodeBadges {
+	display: flex;
+	align-items: center;
+	gap: 3px;
+	flex-shrink: 0;
+}
+
+.nodeMeta {
+	font-size: 11px;
+	color: var(--mantine-color-gray-5);
+	line-height: 1.2;
+	white-space: nowrap;
+}
+
+/* Aside / actions */
+.nodeAside {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	flex-shrink: 0;
+}
+
+.dragHandle {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	color: var(--mantine-color-gray-4);
+	cursor: grab;
+	opacity: 0;
+	transition: opacity 100ms ease;
+}
+
+.nodeRow:hover .dragHandle {
+	opacity: 1;
+}
+
+.nodeActions {
+	display: flex;
+	align-items: center;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 100ms ease;
+}
+
+.nodeRow:hover .nodeActions {
+	opacity: 1;
+	pointer-events: all;
+}
+
+.nodeActionsMobile {
+	display: none;
+}
+
+/* Empty state */
+.emptyState {
+	padding: 28px 16px;
+	text-align: center;
+	border: 1px dashed var(--mantine-color-gray-3);
+	border-radius: 8px;
+	color: var(--mantine-color-gray-5);
+}
+
+@media (max-width: 768px) {
+	.nodeActions {
+		display: none;
+	}
+
+	.nodeActionsMobile {
+		display: inline-flex;
+	}
 }
 
 .nodeCard {

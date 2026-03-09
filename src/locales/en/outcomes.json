@@ -15,7 +15,8 @@
 		},
 		"labels": {
 			"doNotCall": "Do not call",
-			"doNotCallTooltip": "Do not call this client again after this outcome"
+			"doNotCallTooltip": "Do not call this client again after this outcome",
+			"inactive": "Inactive"
 		},
 		"actions": {
 			"collapse": "Collapse node",

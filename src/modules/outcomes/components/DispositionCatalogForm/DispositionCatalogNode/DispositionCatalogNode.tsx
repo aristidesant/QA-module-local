@@ -6,7 +6,7 @@ import { useDeactivateDispositionNode } from '~/queries/dispositionNodesQueries'
 import { useTranslation } from 'react-i18next';
 
 import {
-	Flex,
+	Stack,
 	Button,
 	ActionIcon,
 	Text,
@@ -31,12 +31,12 @@ import {
 	IconGripVertical,
 	IconAlertCircle,
 	IconHelpCircle,
+	IconLock,
 } from '@tabler/icons-react';
-import { useState, type MouseEvent, type CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 import styles from './DispositionCatalogNode.module.css';
 import DispositionNodeForm from './DispositionNodeForm';
 import { notifications } from '@mantine/notifications';
-import { SectionCard } from '~/components/SectionCard';
 // Types for modal state
 type ModalState = {
 	open: boolean;
@@ -82,8 +82,7 @@ type ArboristNode = {
 	original: DispositionNode;
 };
 
-type NodeInnerStyle = CSSProperties & { '--node-indent'?: string };
-type NodeCardStyle = CSSProperties & { '--node-offset'?: string };
+type NodeRowStyle = CSSProperties & { '--connector-x'?: string };
 
 const isProtectedDefaultNode = (
 	node: DispositionNode,
@@ -94,6 +93,12 @@ const isProtectedDefaultNode = (
 	OUTBOUND_PROTECTED_ROOT_NODE_NAMES.includes(
 		node.name as OutboundProtectedRootNodeName
 	);
+
+function countNodes(nodes: ArboristNode[]): number {
+	return nodes.reduce((acc, n) => acc + 1 + countNodes(n.children), 0);
+}
+
+const ROW_HEIGHT = 56;
 
 const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 	catalogId,
@@ -130,6 +135,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 
 	if (!catalogId) return null;
 	const treeData = data ? mapDispositionNodesToArborist(data) : [];
+	const treeHeight = Math.max(countNodes(treeData) * ROW_HEIGHT, ROW_HEIGHT);
 
 	// Handler for deactivating node
 	const handleDeactivateNode = (nodeData: DispositionNode) => {
@@ -232,285 +238,270 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 		const nodeTypeLabel = hasChildren
 			? t('catalog.nodeType.group')
 			: t('catalog.nodeType.outcome');
-		const levelIndent = node.level * 16;
-		const cardOffset = node.level > 0 ? Math.min(levelIndent, 80) : 0;
-		const cardStyle: NodeCardStyle = cardOffset
-			? { '--node-offset': `${cardOffset}px` }
-			: {};
-		const innerStyle: NodeInnerStyle = {
-			'--node-indent': `${Math.max(cardOffset - 12, 0)}px`,
-		};
-
-		const handleToggle = (event: MouseEvent<HTMLButtonElement>) => {
-			event.stopPropagation();
-			if (hasChildren) {
-				node.toggle();
-			}
+		const isLastChild = node.parent?.children
+			? node.parent.children[node.parent.children.length - 1]?.id === node.id
+			: true;
+		const indent = node.level * 24;
+		const connectorX = node.level > 0 ? (node.level - 1) * 24 + 12 : 0;
+		const rowStyle: NodeRowStyle = {
+			paddingLeft: `${12 + indent}px`,
+			'--connector-x': `${connectorX}px`,
 		};
 
 		return (
 			<div style={style}>
 				<div
-					className={`${styles.nodeCard} ${isInactive ? styles.inactiveNode : ''}`}
+					className={`${styles.nodeRow}${isInactive ? ` ${styles.nodeRowInactive}` : ''}`}
+					data-level={node.level}
+					data-is-last={isLastChild ? 'true' : 'false'}
+					style={rowStyle}
 					tabIndex={0}
 					aria-label={node.data.name}
-					data-has-children={hasChildren}
-					data-expanded={isOpen}
-					data-level={node.level}
-					style={cardStyle}
 				>
-					<div className={styles.nodeInner} style={innerStyle}>
-						<div className={styles.nodeLead}>
-							<span
-								className={styles.statusPill}
-								data-status={nodeData.isActive ? 'active' : 'inactive'}
-								aria-hidden='true'
-							/>
-							<div className={styles.nodeToggleArea}>
-								{hasChildren ? (
-									<ActionIcon
-										size='sm'
-										variant='subtle'
-										className={styles.chevronIcon}
-										aria-label={
-											isOpen
-												? t('catalog.actions.collapse')
-												: t('catalog.actions.expand')
-										}
-										onClick={handleToggle}
-									>
-										{isOpen ? (
-											<IconChevronDown size={18} />
-										) : (
-											<IconChevronRight size={18} />
-										)}
-									</ActionIcon>
+					<span
+						className={styles.nodeAccent}
+						data-active={nodeData.isActive !== false ? 'true' : 'false'}
+					/>
+					<span className={styles.nodeToggle}>
+						{hasChildren ? (
+							<ActionIcon
+								size='xs'
+								variant='subtle'
+								color='gray'
+								onClick={(event) => {
+									event.stopPropagation();
+									node.toggle();
+								}}
+								aria-label={
+									isOpen
+										? t('catalog.actions.collapse')
+										: t('catalog.actions.expand')
+								}
+							>
+								{isOpen ? (
+									<IconChevronDown size={14} />
 								) : (
-									<span className={styles.chevronPlaceholder} />
+									<IconChevronRight size={14} />
+								)}
+							</ActionIcon>
+						) : null}
+					</span>
+					<span className={styles.nodeIcon}>
+						{hasChildren ? (
+							<IconFolder
+								size={16}
+								color={
+									isInactive
+										? 'var(--mantine-color-gray-4)'
+										: 'var(--mantine-color-yellow-6)'
+								}
+							/>
+						) : (
+							<IconFileDescription
+								size={16}
+								color={
+									isInactive
+										? 'var(--mantine-color-gray-4)'
+										: 'var(--mantine-color-blue-5)'
+								}
+							/>
+						)}
+					</span>
+					<div className={styles.nodeBody}>
+						<div className={styles.nodeNameRow}>
+							<Text className={styles.nodeName} size='sm' fw={500}>
+								{node.data.name}
+							</Text>
+							{isProtectedNode && (
+								<IconLock
+									size={11}
+									color='var(--mantine-color-gray-4)'
+									aria-label='Protected'
+								/>
+							)}
+							{node.data.description && (
+								<Tooltip label={node.data.description} withArrow>
+									<span style={{ display: 'inline-flex', cursor: 'default' }}>
+										<IconHelpCircle
+											size={12}
+											color='var(--mantine-color-gray-4)'
+										/>
+									</span>
+								</Tooltip>
+							)}
+							<div className={styles.nodeBadges}>
+								<Badge size='xs' variant='light' color='blue' radius='sm'>
+									{nodeTypeLabel}
+								</Badge>
+								{isInactive && (
+									<Badge size='xs' variant='light' color='gray' radius='sm'>
+										{t('catalog.labels.inactive')}
+									</Badge>
+								)}
+								{isDoNotCall && (
+									<Tooltip
+										label={t('catalog.labels.doNotCallTooltip')}
+										withArrow
+									>
+										<Badge size='xs' variant='light' color='red' radius='sm'>
+											{t('catalog.labels.doNotCall')}
+										</Badge>
+									</Tooltip>
 								)}
 							</div>
 						</div>
-
-						<div className={styles.nodeContent}>
-							<div className={styles.nodeHeader}>
-								<div className={styles.nodeTitle}>
-									<span className={styles.nodeIcon} aria-hidden='true'>
-										{node.isLeaf ? (
-											<IconFileDescription
-												size={18}
-												color={
-													isInactive
-														? 'var(--mantine-color-gray-5)'
-														: 'var(--mantine-color-blue-6)'
-												}
-											/>
-										) : (
-											<IconFolder
-												size={18}
-												color={
-													isInactive
-														? 'var(--mantine-color-gray-5)'
-														: 'var(--mantine-color-yellow-7)'
-												}
-											/>
-										)}
-									</span>
-									<Text className={styles.nodeName} size='sm' fw={600}>
-										{node.data.name}
-									</Text>
-									{node.data.description && (
-										<Tooltip label={node.data.description} withArrow>
+						<Text className={styles.nodeMeta} size='xs'>
+							{hasChildren
+								? t('catalog.nodeType.child', { count: childCount })
+								: t('catalog.nodeType.terminal')}
+						</Text>
+					</div>
+					<div className={styles.nodeAside}>
+						{canUpdate && (
+							<div
+								className={styles.dragHandle}
+								ref={dragHandle}
+								role='button'
+								tabIndex={-1}
+								aria-label={t('catalog.actions.reorder')}
+							>
+								<IconGripVertical size={14} />
+							</div>
+						)}
+						<ActionIcon.Group className={styles.nodeActions}>
+							{isInactive
+								? canUpdate && (
+										<Tooltip label={t('catalog.actions.reactivate')} withArrow>
+											<ActionIcon
+												size='xs'
+												variant='light'
+												color='green'
+												onClick={(event) => {
+													event.stopPropagation();
+													handleReactivateNode(nodeData);
+												}}
+											>
+												<IconRefresh size={13} />
+											</ActionIcon>
+										</Tooltip>
+									)
+								: canUpdate && (
+										<Tooltip label={t('catalog.actions.deactivate')} withArrow>
 											<ActionIcon
 												size='xs'
 												variant='subtle'
-												className={styles.descriptionIcon}
-											>
-												<IconHelpCircle
-													size={14}
-													color='var(--mantine-color-gray-6)'
-												/>
-											</ActionIcon>
-										</Tooltip>
-									)}
-								</div>
-								<div className={styles.nodeBadges}>
-									<Badge size='xs' variant='light' color='blue' radius='sm'>
-										{nodeTypeLabel}
-									</Badge>
-									{isDoNotCall && (
-										<Tooltip
-											label={t('catalog.labels.doNotCallTooltip')}
-											withArrow
-										>
-											<Badge size='xs' variant='light' color='red' radius='sm'>
-												{t('catalog.labels.doNotCall')}
-											</Badge>
-										</Tooltip>
-									)}
-								</div>
-							</div>
-							<Text className={styles.nodeMetaText} size='xs'>
-								{hasChildren
-									? t('catalog.nodeType.child', { count: childCount })
-									: t('catalog.nodeType.terminal')}
-							</Text>
-						</div>
-
-						<div className={styles.nodeAside}>
-							{canUpdate && (
-								<div
-									className={styles.dragHandle}
-									ref={dragHandle}
-									role='button'
-									tabIndex={-1}
-									aria-label={t('catalog.actions.reorder')}
-								>
-									<IconGripVertical size={16} />
-								</div>
-							)}
-							<div className={styles.nodeActionsDesktop}>
-								<ActionIcon.Group>
-									{isInactive
-										? canUpdate && (
-												<Tooltip
-													label={t('catalog.actions.reactivate')}
-													withArrow
-												>
-													<ActionIcon
-														size='sm'
-														variant='light'
-														color='green'
-														onClick={(event) => {
-															event.stopPropagation();
-															handleReactivateNode(nodeData);
-														}}
-													>
-														<IconRefresh size={16} />
-													</ActionIcon>
-												</Tooltip>
-											)
-										: canUpdate && (
-												<Tooltip
-													label={t('catalog.actions.deactivate')}
-													withArrow
-												>
-													<ActionIcon
-														size='sm'
-														variant='subtle'
-														onClick={(event) => {
-															event.stopPropagation();
-															handleDeactivateNode(nodeData);
-														}}
-													>
-														<IconBan size={16} />
-													</ActionIcon>
-												</Tooltip>
-											)}
-									{!isProtectedNode && canUpdate && (
-										<Tooltip label={t('catalog.actions.edit')} withArrow>
-											<ActionIcon
-												size='sm'
-												variant='subtle'
 												onClick={(event) => {
 													event.stopPropagation();
-													handleEditNode(nodeData);
+													handleDeactivateNode(nodeData);
 												}}
 											>
-												<IconPencil size={16} />
+												<IconBan size={13} />
 											</ActionIcon>
 										</Tooltip>
 									)}
-									{canCreate && (
-										<Tooltip label={t('catalog.actions.addChild')} withArrow>
-											<ActionIcon
-												size='sm'
-												variant='subtle'
-												onClick={(event) => {
-													event.stopPropagation();
-													setModal({ open: true, parentId: nodeData.id });
-												}}
-											>
-												<IconPlus size={16} />
-											</ActionIcon>
-										</Tooltip>
-									)}
-									{!isProtectedNode && canDelete && (
-										<Tooltip label={t('catalog.actions.delete')} withArrow>
-											<ActionIcon
-												size='sm'
-												variant='light'
-												color='red'
-												onClick={(event) => {
-													event.stopPropagation();
-													handleDeleteNode(nodeData);
-												}}
-											>
-												<IconTrash size={16} />
-											</ActionIcon>
-										</Tooltip>
-									)}
-								</ActionIcon.Group>
-							</div>
-							<Menu shadow='md' width={180} withinPortal>
-								<Menu.Target>
+							{!isProtectedNode && canUpdate && (
+								<Tooltip label={t('catalog.actions.edit')} withArrow>
 									<ActionIcon
-										size='sm'
+										size='xs'
 										variant='subtle'
-										className={styles.nodeActionsMobile}
-										aria-label='Open node actions'
-										onClick={(event) => event.stopPropagation()}
+										onClick={(event) => {
+											event.stopPropagation();
+											handleEditNode(nodeData);
+										}}
 									>
-										<IconDotsVertical size={16} />
+										<IconPencil size={13} />
 									</ActionIcon>
-								</Menu.Target>
-								<Menu.Dropdown onClick={(event) => event.stopPropagation()}>
-									{isInactive
-										? canUpdate && (
-												<Menu.Item
-													leftSection={<IconRefresh size={16} />}
-													onClick={() => handleReactivateNode(nodeData)}
-												>
-													{t('catalog.actions.reactivate')}
-												</Menu.Item>
-											)
-										: canUpdate && (
-												<Menu.Item
-													leftSection={<IconBan size={16} />}
-													onClick={() => handleDeactivateNode(nodeData)}
-												>
-													{t('catalog.actions.deactivate')}
-												</Menu.Item>
-											)}
-									{!isProtectedNode && canUpdate && (
-										<Menu.Item
-											leftSection={<IconPencil size={16} />}
-											onClick={() => handleEditNode(nodeData)}
-										>
-											{t('actions.edit', { ns: 'common' })}
-										</Menu.Item>
-									)}
-									{canCreate && (
-										<Menu.Item
-											leftSection={<IconPlus size={16} />}
-											onClick={() =>
-												setModal({ open: true, parentId: nodeData.id })
-											}
-										>
-											{t('catalog.actions.addChild')}
-										</Menu.Item>
-									)}
-									{!isProtectedNode && canDelete && (
-										<Menu.Item
-											leftSection={<IconTrash size={16} />}
-											color='red'
-											onClick={() => handleDeleteNode(nodeData)}
-										>
-											{t('actions.delete', { ns: 'common' })}
-										</Menu.Item>
-									)}
-								</Menu.Dropdown>
-							</Menu>
-						</div>
+								</Tooltip>
+							)}
+							{canCreate && (
+								<Tooltip label={t('catalog.actions.addChild')} withArrow>
+									<ActionIcon
+										size='xs'
+										variant='subtle'
+										onClick={(event) => {
+											event.stopPropagation();
+											setModal({ open: true, parentId: nodeData.id });
+										}}
+									>
+										<IconPlus size={13} />
+									</ActionIcon>
+								</Tooltip>
+							)}
+							{!isProtectedNode && canDelete && (
+								<Tooltip label={t('catalog.actions.delete')} withArrow>
+									<ActionIcon
+										size='xs'
+										variant='light'
+										color='red'
+										onClick={(event) => {
+											event.stopPropagation();
+											handleDeleteNode(nodeData);
+										}}
+									>
+										<IconTrash size={13} />
+									</ActionIcon>
+								</Tooltip>
+							)}
+						</ActionIcon.Group>
+						<Menu shadow='md' width={180} withinPortal>
+							<Menu.Target>
+								<ActionIcon
+									size='xs'
+									variant='subtle'
+									className={styles.nodeActionsMobile}
+									aria-label='Open node actions'
+									onClick={(event) => event.stopPropagation()}
+								>
+									<IconDotsVertical size={14} />
+								</ActionIcon>
+							</Menu.Target>
+							<Menu.Dropdown onClick={(event) => event.stopPropagation()}>
+								{isInactive
+									? canUpdate && (
+											<Menu.Item
+												leftSection={<IconRefresh size={14} />}
+												onClick={() => handleReactivateNode(nodeData)}
+											>
+												{t('catalog.actions.reactivate')}
+											</Menu.Item>
+										)
+									: canUpdate && (
+											<Menu.Item
+												leftSection={<IconBan size={14} />}
+												onClick={() => handleDeactivateNode(nodeData)}
+											>
+												{t('catalog.actions.deactivate')}
+											</Menu.Item>
+										)}
+								{!isProtectedNode && canUpdate && (
+									<Menu.Item
+										leftSection={<IconPencil size={14} />}
+										onClick={() => handleEditNode(nodeData)}
+									>
+										{t('actions.edit', { ns: 'common' })}
+									</Menu.Item>
+								)}
+								{canCreate && (
+									<Menu.Item
+										leftSection={<IconPlus size={14} />}
+										onClick={() =>
+											setModal({ open: true, parentId: nodeData.id })
+										}
+									>
+										{t('catalog.actions.addChild')}
+									</Menu.Item>
+								)}
+								{!isProtectedNode && canDelete && (
+									<Menu.Item
+										leftSection={<IconTrash size={14} />}
+										color='red'
+										onClick={() => handleDeleteNode(nodeData)}
+									>
+										{t('actions.delete', { ns: 'common' })}
+									</Menu.Item>
+								)}
+							</Menu.Dropdown>
+						</Menu>
 					</div>
 				</div>
 			</div>
@@ -519,31 +510,22 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 
 	return (
 		<>
-			<SectionCard
-				icon={IconFolder}
-				title={t('catalog.title')}
-				description={t('catalog.description')}
-				contentSpacing='sm'
-				backgroundColor='var(--mantine-color-gray-0)'
-			>
+			<Stack gap='xs'>
 				{isError && (
 					<Alert
 						icon={<IconAlertCircle size={16} />}
 						title={t('catalog.errorBanner')}
 						color='red'
 						variant='light'
-						className={styles.errorBanner}
 					>
 						{error?.message ?? t('catalog.errorDescription')}
 					</Alert>
 				)}
 				{isLoading ? (
-					<div className={styles.treeWrapper}>
-						<div className={styles.skeletonStack}>
-							{Array.from({ length: 4 }).map((_, index) => (
-								<Skeleton key={index} height={88} radius='md' animate />
-							))}
-						</div>
+					<div className={styles.skeletonStack}>
+						{Array.from({ length: 4 }).map((_, index) => (
+							<Skeleton key={index} height={48} radius='sm' animate />
+						))}
 					</div>
 				) : treeData.length > 0 ? (
 					<div className={styles.treeWrapper}>
@@ -552,7 +534,8 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 							openByDefault={true}
 							childrenAccessor='children'
 							idAccessor='id'
-							rowHeight={84}
+							rowHeight={ROW_HEIGHT}
+							height={treeHeight}
 							width='100%'
 							className={styles.treeRoot}
 						>
@@ -560,29 +543,25 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 						</Tree>
 					</div>
 				) : (
-					<div className={`${styles.treeWrapper} ${styles.emptyState}`}>
+					<div className={styles.emptyState}>
 						<Text size='sm' c='dimmed'>
 							{t('catalog.emptyState')}
 						</Text>
 					</div>
 				)}
-				<Flex justify='end' align='center' className={styles.addButtonRow}>
-					{canCreate && (
-						<Button
-							fullWidth
-							variant='light'
-							color='blue'
-							leftSection={<IconPlus size={18} />}
-							size='md'
-							className={styles.addButton}
-							onClick={() => setModal({ open: true })}
-							aria-label={t('catalog.addRoot')}
-						>
-							{t('catalog.addRoot')}
-						</Button>
-					)}
-				</Flex>
-			</SectionCard>
+				{canCreate && (
+					<Button
+						fullWidth
+						variant='light'
+						color='blue'
+						leftSection={<IconPlus size={16} />}
+						size='sm'
+						onClick={() => setModal({ open: true })}
+					>
+						{t('catalog.addRoot')}
+					</Button>
+				)}
+			</Stack>
 			<DispositionNodeForm
 				opened={modal.open}
 				onClose={() => setModal({ open: false })}
