@@ -6,11 +6,11 @@ import {
 	Box,
 	Button,
 	Group,
-	Progress,
 	Select,
 	Slider,
 	Stack,
 	Text,
+	Tooltip,
 } from '@mantine/core';
 import {
 	IconHeadphones,
@@ -36,7 +36,6 @@ import {
 	useExportConversationAudio,
 	useReuploadConversationAudio,
 } from '~/queries/conversationsQueries';
-import { useConversationStore } from '~/stores/useConversationStore';
 import { useTranslation } from 'react-i18next';
 import classes from './ConversationPlayer.module.css';
 
@@ -91,8 +90,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 	const isReducedMotionRef = useRef(false);
 	const lastVolumeRef = useRef(1);
 
-	const conversationId =
-		useConversationStore((state) => state.selectedId) || paramConversationId;
+	const conversationId = paramConversationId;
 
 	const { canPerformAction } = usePermissions();
 	const canExportConversations = canPerformAction(
@@ -553,6 +551,24 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 			title={displayTitle}
 			icon={IconPlayerPlay}
 			description={displayDescription}
+			rightSection={
+				conversationId && canExportConversations ? (
+					<Tooltip label={t('player.download')} withArrow>
+						<ActionIcon
+							variant='default'
+							color='gray'
+							size='sm'
+							onClick={handleDownload}
+							aria-label={t('player.download')}
+							loading={exportAudioMutation.isPending}
+							disabled={exportAudioMutation.isPending}
+							className={classes.headerDownloadButton}
+						>
+							<IconHeadphones size={15} />
+						</ActionIcon>
+					</Tooltip>
+				) : undefined
+			}
 		>
 			<audio
 				ref={audioRef}
@@ -572,266 +588,251 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 					<Text
 						size='xs'
 						c='dimmed'
-						ta='center'
+						ta='left'
 						fw={500}
-						className={classes.noticeText}
+						className={classes.noticeBanner}
 					>
 						{isPresignedLoading ? t('player.loading') : t('player.error')}
 					</Text>
 				)}
 
 				{shouldShowRetry && (
-					<Stack gap='xs' align='center' className={classes.retryArea}>
-						<Text
-							size='xs'
-							c='dimmed'
-							ta='center'
-							fw={500}
-							className={classes.noticeText}
-						>
+					<Group
+						justify='space-between'
+						align='center'
+						className={classes.retryArea}
+					>
+						<Text size='xs' c='dimmed' fw={500} className={classes.retryText}>
 							{t('player.retryHint')}
 						</Text>
 						<Button
 							size='xs'
-							variant='light'
+							variant='default'
 							leftSection={<IconRefresh size={14} />}
 							onClick={handleReuploadAudio}
 							loading={reuploadAudioMutation.isPending}
 							disabled={reuploadAudioMutation.isPending}
 							aria-label={t('player.retryLabel')}
 						>
-							{t('player.retryLabel')}22
+							{t('player.retryLabel')}
 						</Button>
-					</Stack>
+					</Group>
 				)}
 
 				<Box
-					className={classes.visualizerPanel}
+					className={classes.playerShell}
 					data-playing={isPlaying ? 'true' : 'false'}
 				>
-					<Group justify='space-between' align='center' gap='xs'>
-						<Group gap='xs' align='center'>
-							<Box
-								className={classes.playIndicator}
-								data-playing={isPlaying ? 'true' : 'false'}
-							/>
-							<Text size='xs' fw={600} className={classes.modeLabel}>
-								{isPlaying ? t('player.pause') : t('player.play')}
-							</Text>
+					<Box className={classes.playerStage}>
+						<Group
+							justify='space-between'
+							align='center'
+							className={classes.stageMetaRow}
+						>
+							<Group gap={8} align='center' className={classes.stageStatus}>
+								<Box
+									className={classes.playIndicator}
+									data-playing={isPlaying ? 'true' : 'false'}
+								/>
+								<Text size='xs' fw={700} className={classes.statusLabel}>
+									{isPlaying ? t('player.pause') : t('player.play')}
+								</Text>
+							</Group>
+							<Group gap={6} align='center' className={classes.headerMeta}>
+								<Text size='xs' className={classes.headerTime}>
+									{formatTime(currentTime)}
+								</Text>
+								<Text size='xs' c='dimmed' className={classes.headerDivider}>
+									/
+								</Text>
+								<Text size='xs' className={classes.headerTime}>
+									{formatTime(duration)}
+								</Text>
+								<Badge
+									variant='default'
+									size='xs'
+									className={classes.speedBadge}
+								>
+									{t('playbackSpeed', { rate: formatSpeedLabel(playbackRate) })}
+								</Badge>
+							</Group>
 						</Group>
-						<Badge
-							variant='light'
-							color='blue'
-							size='sm'
-							className={classes.speedBadge}
-						>
-							{t('playbackSpeed', { rate: formatSpeedLabel(playbackRate) })}
-						</Badge>
-					</Group>
 
-					<Group justify='space-between' align='center' gap='xs'>
-						<Text size='xs' c='dimmed' className={classes.miniMeta}>
-							{formatTime(currentTime)} / {formatTime(duration)}
-						</Text>
-						<ActionIcon
-							variant='light'
-							color='blue'
-							radius='xl'
-							size='sm'
-							onClick={togglePlayPause}
-							aria-label={isPlaying ? t('player.pause') : t('player.play')}
-							className={classes.miniPlayButton}
-						>
-							{isPlaying ? (
-								<IconPlayerPause size={14} />
-							) : (
-								<IconPlayerPlay size={14} />
-							)}
-						</ActionIcon>
-					</Group>
-
-					<Box
-						className={classes.waveform}
-						data-playing={isPlaying ? 'true' : 'false'}
-						data-live={isVisualizerActive ? 'true' : 'false'}
-					>
-						{WAVE_BARS.map((barKey, index) => (
+						<Box className={classes.stageWaveformWrap}>
 							<Box
-								key={barKey}
-								className={classes.waveBar}
-								style={getWaveHeight(index)}
+								className={classes.waveform}
+								data-playing={isPlaying ? 'true' : 'false'}
+								data-live={isVisualizerActive ? 'true' : 'false'}
+							>
+								{WAVE_BARS.map((barKey, index) => (
+									<Box
+										key={barKey}
+										className={classes.waveBar}
+										style={getWaveHeight(index)}
+									/>
+								))}
+							</Box>
+							<ActionIcon
+								variant='filled'
+								color='dark'
+								radius='md'
+								size='xl'
+								onClick={togglePlayPause}
+								aria-label={isPlaying ? t('player.pause') : t('player.play')}
+								aria-pressed={isPlaying}
+								className={classes.stagePlayButton}
+							>
+								{isPlaying ? (
+									<IconPlayerPause size={20} />
+								) : (
+									<IconPlayerPlay size={20} className={classes.playIcon} />
+								)}
+							</ActionIcon>
+						</Box>
+
+						<Box className={classes.stageTimeline}>
+							<Slider
+								value={currentTime}
+								onChange={handleSeek}
+								max={duration || 100}
+								label={(value) => formatTime(Number(value))}
+								className={classes.progressSlider}
+								classNames={{
+									track: classes.sliderTrack,
+									bar: classes.sliderBar,
+									thumb: classes.sliderThumb,
+								}}
 							/>
-						))}
+							<Box
+								className={classes.timelineProgress}
+								style={{ width: `${progressPercent}%` }}
+								aria-hidden='true'
+							/>
+						</Box>
+					</Box>
+
+					<Box className={classes.playerFooter}>
+						<Group justify='center' gap='xs' className={classes.transportBar}>
+							<Group gap={6} align='center' className={classes.transportGroup}>
+								<ActionIcon
+									variant='default'
+									color='gray'
+									size='md'
+									onClick={jumpToStart}
+									aria-label={t('player.rewind')}
+									className={classes.controlButton}
+									disabled={!duration}
+								>
+									<IconPlayerTrackPrev size={15} />
+								</ActionIcon>
+
+								<ActionIcon
+									variant='default'
+									color='gray'
+									size='md'
+									onClick={() => handleSeekAndPlay(-10)}
+									aria-label={t('player.rewind')}
+									title={t('player.rewindShort')}
+									className={classes.controlButton}
+								>
+									<IconPlayerSkipBack size={17} />
+								</ActionIcon>
+
+								<ActionIcon
+									variant='default'
+									color='gray'
+									size='md'
+									onClick={() => handleSeekAndPlay(10)}
+									aria-label={t('player.forward')}
+									title={t('player.forwardShort')}
+									className={classes.controlButton}
+								>
+									<IconPlayerSkipForward size={17} />
+								</ActionIcon>
+
+								<ActionIcon
+									variant='default'
+									color='gray'
+									size='md'
+									onClick={jumpToEnd}
+									aria-label={t('player.forward')}
+									className={classes.controlButton}
+									disabled={!duration}
+								>
+									<IconPlayerTrackNext size={15} />
+								</ActionIcon>
+							</Group>
+						</Group>
+
+						<Group gap='xs' align='stretch' className={classes.utilityRail}>
+							<Group gap={6} align='center' className={classes.volumeGroup}>
+								<ActionIcon
+									variant='subtle'
+									color='gray'
+									size='sm'
+									onClick={handleToggleMute}
+									className={classes.muteButton}
+									aria-label={isMuted ? t('player.unmute') : t('player.mute')}
+									aria-pressed={isMuted}
+								>
+									{isMuted ? (
+										<IconVolumeOff size={15} className={classes.volumeIcon} />
+									) : (
+										<IconVolume3 size={15} className={classes.volumeIcon} />
+									)}
+								</ActionIcon>
+
+								<Slider
+									value={volume}
+									onChange={handleVolumeChange}
+									min={0}
+									max={1}
+									step={0.1}
+									className={classes.volumeSlider}
+									classNames={{
+										track: classes.sliderTrack,
+										bar: classes.sliderBar,
+										thumb: classes.sliderThumb,
+									}}
+								/>
+
+								<Text size='xs' className={classes.volumeValue}>
+									{Math.round(volume * 100)}%
+								</Text>
+							</Group>
+
+							<Select
+								value={playbackRate.toString()}
+								onChange={handlePlaybackRateChange}
+								flex={1}
+								data={[
+									{ value: '0.5', label: t('playbackSpeed', { rate: '0.5' }) },
+									{
+										value: '0.75',
+										label: t('playbackSpeed', { rate: '0.75' }),
+									},
+									{ value: '1', label: t('playbackSpeed', { rate: '1.0' }) },
+									{
+										value: '1.25',
+										label: t('playbackSpeed', { rate: '1.25' }),
+									},
+									{ value: '1.5', label: t('playbackSpeed', { rate: '1.5' }) },
+									{ value: '2', label: t('playbackSpeed', { rate: '2.0' }) },
+								]}
+								size='xs'
+								allowDeselect={false}
+								className={classes.speedSelect}
+								classNames={{
+									input: classes.speedSelectInput,
+									dropdown: classes.speedSelectDropdown,
+									option: classes.speedSelectOption,
+								}}
+								maxDropdownHeight={220}
+								checkIconPosition='right'
+							/>
+						</Group>
 					</Box>
 				</Box>
-
-				<Box className={classes.progressSection}>
-					<Progress
-						value={progressPercent}
-						size={3}
-						radius='xl'
-						color='blue'
-						className={classes.progressPreview}
-					/>
-					<Slider
-						value={currentTime}
-						onChange={handleSeek}
-						max={duration || 100}
-						label={(value) => formatTime(Number(value))}
-						className={classes.progressSlider}
-						classNames={{
-							track: classes.sliderTrack,
-							bar: classes.sliderBar,
-							thumb: classes.sliderThumb,
-						}}
-					/>
-					<Group justify='space-between' mt='xs'>
-						<Text className={classes.timeText}>{formatTime(currentTime)}</Text>
-						<Text className={classes.timeText}>{formatTime(duration)}</Text>
-					</Group>
-				</Box>
-
-				<Group justify='center' gap='xs' className={classes.playbackControls}>
-					<ActionIcon
-						variant='subtle'
-						color='gray'
-						size='md'
-						onClick={jumpToStart}
-						aria-label={t('player.rewind')}
-						className={classes.controlButton}
-						disabled={!duration}
-					>
-						<IconPlayerTrackPrev size={16} />
-					</ActionIcon>
-
-					<ActionIcon
-						variant='subtle'
-						color='gray'
-						size='md'
-						onClick={() => handleSeekAndPlay(-10)}
-						aria-label={t('player.rewind')}
-						title={t('player.rewindShort')}
-						className={classes.controlButton}
-					>
-						<IconPlayerSkipBack size={18} />
-					</ActionIcon>
-
-					<ActionIcon
-						variant='filled'
-						color='blue'
-						radius='xl'
-						size='lg'
-						onClick={togglePlayPause}
-						aria-label={isPlaying ? t('player.pause') : t('player.play')}
-						aria-pressed={isPlaying}
-						className={classes.playButton}
-					>
-						{isPlaying ? (
-							<IconPlayerPause size={20} />
-						) : (
-							<IconPlayerPlay size={20} className={classes.playIcon} />
-						)}
-					</ActionIcon>
-
-					<ActionIcon
-						variant='subtle'
-						color='gray'
-						size='md'
-						onClick={() => handleSeekAndPlay(10)}
-						aria-label={t('player.forward')}
-						title={t('player.forwardShort')}
-						className={classes.controlButton}
-					>
-						<IconPlayerSkipForward size={18} />
-					</ActionIcon>
-
-					<ActionIcon
-						variant='subtle'
-						color='gray'
-						size='md'
-						onClick={jumpToEnd}
-						aria-label={t('player.forward')}
-						className={classes.controlButton}
-						disabled={!duration}
-					>
-						<IconPlayerTrackNext size={16} />
-					</ActionIcon>
-				</Group>
-
-				<Group gap='xs' align='center' className={classes.utilityRow}>
-					<Group
-						flex={2}
-						gap='xs'
-						align='center'
-						className={classes.volumeGroup}
-					>
-						<ActionIcon
-							variant='subtle'
-							color='blue'
-							size='sm'
-							onClick={handleToggleMute}
-							className={classes.muteButton}
-							aria-label={isMuted ? t('player.unmute') : t('player.mute')}
-							aria-pressed={isMuted}
-						>
-							{isMuted ? (
-								<IconVolumeOff size={15} className={classes.volumeIcon} />
-							) : (
-								<IconVolume3 size={15} className={classes.volumeIcon} />
-							)}
-						</ActionIcon>
-
-						<Slider
-							value={volume}
-							onChange={handleVolumeChange}
-							min={0}
-							max={1}
-							step={0.1}
-							className={classes.volumeSlider}
-							classNames={{
-								track: classes.sliderTrack,
-								bar: classes.sliderBar,
-								thumb: classes.sliderThumb,
-							}}
-						/>
-
-						<IconWaveSine size={14} className={classes.volumeIcon} />
-					</Group>
-
-					<Select
-						value={playbackRate.toString()}
-						onChange={handlePlaybackRateChange}
-						flex={1}
-						data={[
-							{ value: '0.5', label: t('playbackSpeed', { rate: '0.5' }) },
-							{ value: '0.75', label: t('playbackSpeed', { rate: '0.75' }) },
-							{ value: '1', label: t('playbackSpeed', { rate: '1.0' }) },
-							{ value: '1.25', label: t('playbackSpeed', { rate: '1.25' }) },
-							{ value: '1.5', label: t('playbackSpeed', { rate: '1.5' }) },
-							{ value: '2', label: t('playbackSpeed', { rate: '2.0' }) },
-						]}
-						size='xs'
-						allowDeselect={false}
-						className={classes.speedSelect}
-					/>
-				</Group>
-
-				{conversationId && canExportConversations && (
-					<Button
-						size='sm'
-						fullWidth
-						color='blue'
-						variant='light'
-						rightSection={<IconHeadphones size={16} />}
-						onClick={handleDownload}
-						aria-label={t('player.download')}
-						loading={exportAudioMutation.isPending}
-						disabled={exportAudioMutation.isPending}
-						className={classes.downloadButton}
-					>
-						{t('player.download')}
-					</Button>
-				)}
 			</Stack>
 		</RightSectionCard>
 	);

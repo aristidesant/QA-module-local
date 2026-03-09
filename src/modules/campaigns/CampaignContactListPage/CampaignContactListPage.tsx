@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from 'react';
+import { useMemo, useState, type ComponentProps } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
@@ -23,22 +23,109 @@ import {
 import { notifications } from '@mantine/notifications';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
+import AppDrawer from '~/components/AppDrawer';
 import EmptyState from '~/components/EmptyState';
 import { useGetContactGroup } from '~/queries/contactGroupQueries';
 import { useGetCampaign } from '~/queries/campaignsQueries';
 import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
-import { useCampaignContactListStore } from '~/stores/campaignContactListStore';
 import { getErrorMessage } from '~/utils/httpClient';
-import ContactGroupSummary from './ContactGroupSummary';
 import ContactGroupContactsTable from './ContactGroupContactsTable';
 import ContactListInformation from './ContactListInformation';
 import ContactListMetrics from './ContactListMetrics';
 import ConversationsList from '~/modules/conversations/ConversationsList';
-import ConversationDetails from '~/modules/conversations/ConversationDetails';
 import FaultyPhonesAlert from './ContactGroupContactsTable/FaultyPhonesAlert';
 import { getQueueStatusConfig } from '~/modules/campaigns/CampaignsForm/ContactSection/ContactList/queueStatusConfig';
 import { timeAgo } from '~/utils/dateUtils';
+import { ContactDetails } from '~/modules/campaigns/CampaignsForm/ContactSection/ContactDetails';
+import type { Contact } from '~/models/ContactsModel';
+
+type ContactDetailsData = ComponentProps<typeof ContactDetails>['contact'];
+
+const getContactInitials = (firstName: string, lastName: string) => {
+	const firstInitial = firstName?.charAt(0) || '';
+	const lastInitial = lastName?.charAt(0) || '';
+	return `${firstInitial}${lastInitial}`.toUpperCase() || '??';
+};
+
+const mapContactToDetails = (
+	contact: Contact,
+	t: (key: string) => string
+): ContactDetailsData => {
+	const primaryPhone = contact.phoneNumbers?.[0]?.phoneNumber || '';
+	const primaryEmail = contact.emails?.[0] || '';
+
+	return {
+		id: contact.id.toString(),
+		name: `${contact.firstName || ''} ${contact.lastName || ''}`.trim(),
+		phone: primaryPhone,
+		email: primaryEmail,
+		location: t('contactDetails.mockData.location'),
+		language: t('contactDetails.mockData.language'),
+		initials: getContactInitials(
+			contact.firstName || '',
+			contact.lastName || ''
+		),
+		phones: contact.phoneNumbers || [],
+		engagementLevel: 87,
+		qualificationScore: 75,
+		sentiment: { positive: 2113, neutral: 45, negative: 16 },
+	};
+};
+
+const ConversationsTab = ({ contactGroupId }: { contactGroupId?: string }) => {
+	return <ConversationsList contactGroupId={contactGroupId} />;
+};
+
+const ContactsTab = ({
+	contactGroupId,
+	campaignId,
+	title,
+	description,
+	t,
+}: {
+	contactGroupId: number;
+	campaignId?: number;
+	title: string;
+	description: string;
+	t: (key: string) => string;
+}) => {
+	const [selectedContact, setSelectedContact] =
+		useState<ContactDetailsData | null>(null);
+	const [drawerOpened, setDrawerOpened] = useState(false);
+
+	const handleContactClick = (contact: Contact) => {
+		setSelectedContact(mapContactToDetails(contact, t));
+		setDrawerOpened(true);
+	};
+
+	const handleCloseDrawer = () => {
+		setDrawerOpened(false);
+		setSelectedContact(null);
+	};
+
+	return (
+		<>
+			<SectionCard title={title} description={description}>
+				<FaultyPhonesAlert contactGroupId={contactGroupId} />
+				<ContactGroupContactsTable
+					contactGroupId={contactGroupId}
+					campaignId={campaignId}
+					onContactClick={handleContactClick}
+				/>
+			</SectionCard>
+			<AppDrawer
+				opened={drawerOpened && selectedContact !== null}
+				onClose={handleCloseDrawer}
+				title={title}
+				description={description}
+				size='lg'
+			>
+				{selectedContact ? <ContactDetails contact={selectedContact} /> : null}
+			</AppDrawer>
+		</>
+	);
+};
 
 const CampaignContactListPage = () => {
 	const { t } = useTranslation('campaign.contact-list');
@@ -61,18 +148,6 @@ const CampaignContactListPage = () => {
 	);
 
 	const { canAccessModule } = usePermissions();
-
-	const { setRightComponent, rightComponent } = useCampaignContactListStore();
-
-	useEffect(() => {
-		if (contactGroupQuery.data) {
-			setRightComponent(
-				<ContactGroupSummary contactGroup={contactGroupQuery.data} />
-			);
-		} else {
-			setRightComponent(null);
-		}
-	}, [contactGroupQuery.data, setRightComponent]);
 
 	const canViewConversations = canAccessModule(ModuleEnum.CONVERSATIONS);
 	const canViewContacts = canAccessModule(ModuleEnum.CONTACTS);
@@ -211,7 +286,6 @@ const CampaignContactListPage = () => {
 					</Badge>
 				) : null
 			}
-			rightSection={rightComponent}
 		>
 			<Tabs variant='outline' defaultValue='overview' keepMounted={false}>
 				<Tabs.List>
@@ -251,34 +325,19 @@ const CampaignContactListPage = () => {
 
 				{canViewConversations && (
 					<Tabs.Panel value='conversations' mb='md'>
-						<SectionCard
-							title={t('tabs.conversations')}
-							description={t('tabs.conversationsDesc')}
-						>
-							<ConversationsList
-								onConversationClick={(conversation) => {
-									setRightComponent(
-										<ConversationDetails id={conversation?.id} />
-									);
-								}}
-								contactGroupId={contactGroupId}
-							/>
-						</SectionCard>
+						<ConversationsTab contactGroupId={contactGroupId} />
 					</Tabs.Panel>
 				)}
 
 				{canViewContacts && (
 					<Tabs.Panel value='contacts' mb='md'>
-						<SectionCard
+						<ContactsTab
+							contactGroupId={contactGroupIdNumber}
+							campaignId={campaignId ? Number(campaignId) : undefined}
 							title={t('tabs.contacts')}
 							description={t('tabs.contactsDesc')}
-						>
-							<FaultyPhonesAlert contactGroupId={contactGroupIdNumber} />
-							<ContactGroupContactsTable
-								contactGroupId={contactGroupIdNumber}
-								campaignId={campaignId ? Number(campaignId) : undefined}
-							/>
-						</SectionCard>
+							t={t}
+						/>
 					</Tabs.Panel>
 				)}
 			</Tabs>

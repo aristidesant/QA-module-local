@@ -14,22 +14,16 @@ import { TranscriptViewer } from '~/modules/conversations/TranscriptViewer';
 import styles from './ConversationDetails.module.css';
 import ConversationOverview from '../ConversationOverview';
 import { useGetConversation } from '~/queries/conversationsQueries';
-import ConversationActions from './ConversationActions';
 dayjs.extend(relativeTime);
 
 interface ConversationDetailsProps {
 	id: number;
-	onReload?: () => void;
 }
 
-export function ConversationDetails({
-	id,
-	onReload,
-}: ConversationDetailsProps) {
+export function ConversationDetails({ id }: ConversationDetailsProps) {
 	const { t } = useTranslation(['conversations', 'common']);
 	const {
 		data: conversation,
-		refetch: reloadCurrent,
 		isLoading,
 		isFetching,
 	} = useGetConversation(`${id}`);
@@ -86,10 +80,6 @@ export function ConversationDetails({
 	if (!canViewConversations) {
 		return <AccessDenied description={t('list.accessDenied')} />;
 	}
-	const handleReload = () => {
-		onReload?.();
-		reloadCurrent();
-	};
 
 	return (
 		<Box className={styles.container}>
@@ -118,10 +108,6 @@ export function ConversationDetails({
 				<Tabs.Panel value='overview' pt='md'>
 					{conversation ? (
 						<Stack>
-							<ConversationActions
-								conversation={conversation}
-								onReload={handleReload}
-							/>
 							<ConversationOverview
 								conversation={conversation}
 								status={safeStatus}

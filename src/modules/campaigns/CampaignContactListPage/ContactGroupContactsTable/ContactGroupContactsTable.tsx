@@ -3,8 +3,6 @@ import { LoadingOverlay, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useTranslation } from 'react-i18next';
 import styles from './ContactGroupContactsTable.module.css';
-import { useCampaignsStore } from '~/stores/campaignsStore';
-import { ContactDetails } from '~/modules/campaigns/CampaignsForm/ContactSection/ContactDetails';
 import { usePagination } from '~/hooks/usePagination';
 import PaginationControls from '~/components/PaginationControls';
 import BaseTable from '~/components/BaseTable';
@@ -34,13 +32,13 @@ import { getErrorMessage } from '~/utils/httpClient';
 interface ContactGroupContactsTableProps {
 	contactGroupId: number;
 	campaignId?: number; // needed to resolve active schema for append workflow
+	onContactClick?: (contact: Contact) => void;
 }
 
 export const ContactGroupContactsTable: React.FC<
 	ContactGroupContactsTableProps
-> = ({ contactGroupId, campaignId }) => {
+> = ({ contactGroupId, campaignId, onContactClick }) => {
 	const { t } = useTranslation('campaign.contact-list');
-	const { setRightComponent } = useCampaignsStore();
 	const { canPerformAction } = usePermissions();
 
 	const canExportContacts = canPerformAction(
@@ -247,38 +245,12 @@ export const ContactGroupContactsTable: React.FC<
 			deleteContactMutation.isPending && deletingContactId === contactId
 	);
 
-	// Helper to get contact initials
-	const getInitials = useCallback((firstName: string, lastName: string) => {
-		const firstInitial = firstName?.charAt(0) || '';
-		const lastInitial = lastName?.charAt(0) || '';
-		return `${firstInitial}${lastInitial}`.toUpperCase() || '??';
-	}, []);
-
-	// Handle contact row click - show details in right panel
+	// Handle contact row click
 	const handleContactClick = useCallback(
 		(contact: Contact) => {
-			const primaryPhone = contact.phoneNumbers?.[0]?.phoneNumber || '';
-			const primaryEmail = contact.emails?.[0] || '';
-
-			const contactDetails = {
-				id: contact.id.toString(),
-				name: `${contact.firstName || ''} ${contact.lastName || ''}`.trim(),
-				phone: primaryPhone,
-				email: primaryEmail,
-				location: t('contactDetails.mockData.location'),
-				language: t('contactDetails.mockData.language'),
-				initials: getInitials(contact.firstName || '', contact.lastName || ''),
-				phones: contact.phoneNumbers || [],
-				engagementLevel: 87,
-				qualificationScore: 75,
-				sentiment: { positive: 2113, neutral: 45, negative: 16 },
-			};
-
-			if (setRightComponent) {
-				setRightComponent(<ContactDetails contact={contactDetails} />);
-			}
+			onContactClick?.(contact);
 		},
-		[setRightComponent, getInitials]
+		[onContactClick]
 	);
 
 	// Handle items per page change
@@ -337,13 +309,6 @@ export const ContactGroupContactsTable: React.FC<
 	const handleReloadContacts = useCallback(() => {
 		void groupContactsQuery.refetch();
 	}, [groupContactsQuery]);
-
-	// Cleanup right panel on unmount
-	useEffect(() => {
-		return () => {
-			setRightComponent?.(null);
-		};
-	}, [setRightComponent]);
 
 	return (
 		<>

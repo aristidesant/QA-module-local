@@ -9,6 +9,7 @@ import {
 	useUpdateCurrentUserName,
 } from '~/queries/userQueries';
 import { SectionCard } from '~/components/SectionCard/SectionCard';
+import pageStyles from '../ProfilePage.module.css';
 import styles from './NameChangeSection.module.css';
 
 export const NameChangeSection: React.FC = () => {
@@ -95,6 +96,9 @@ export const NameChangeSection: React.FC = () => {
 			title={t('name_change.title')}
 			description={t('name_change.description')}
 			icon={IconUser}
+			className={pageStyles.settingsSurface}
+			padding='md'
+			contentSpacing='sm'
 		>
 			<form onSubmit={handleSubmit} className={styles.form}>
 				<div className={styles.nameFields}>

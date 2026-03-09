@@ -1,29 +1,5 @@
-import {
-	Group,
-	Text,
-	Avatar,
-	Stack,
-	ActionIcon,
-	Tooltip,
-	CopyButton,
-	Button,
-	Badge,
-} from '@mantine/core';
-import {
-	IconPhoneCall,
-	IconUser,
-	IconInfoCircle,
-	IconCalendar,
-	IconCopy,
-	IconCheck,
-	IconAlertCircle,
-	IconLoader,
-	IconX,
-	IconClock,
-	IconMessages,
-	IconPdf,
-	IconRobot,
-} from '@tabler/icons-react';
+import { Text, Stack, Button } from '@mantine/core';
+import { IconMessages, IconPdf } from '@tabler/icons-react';
 import { useExportConversationPdf } from '~/queries/conversationsQueries';
 import { notifications } from '@mantine/notifications';
 import type { ConversationsModel } from '~/models/ConversationsModels';
@@ -32,10 +8,11 @@ import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import styles from './ConversationOverview.module.css';
 import ConversationPlayer from '../ConversationPlayer';
-import ConversationDisposition from '../ConversationDisposition';
 import RightSectionCard from '~/components/RightSectionCard';
 import ConversationCapturedVariables from '../ConversationCapturedVariables';
 import { useTranslation } from 'react-i18next';
+import ConversationOverviewCard from '../ConversationOverviewCard';
+import ConversationDisposition from '../ConversationDisposition';
 
 interface ConversationOverviewProps {
 	conversation: ConversationsModel;
@@ -133,23 +110,11 @@ export function ConversationOverview({
 		return { color: 'gray' as const, label: t('overview.status.pending') };
 	};
 
-	const getStatusIcon = (statusValue: string) => {
-		if (statusValue.includes('done'))
-			return { icon: IconCheck, color: 'var(--mantine-color-green-6)' };
-		if (statusValue.includes('progress'))
-			return { icon: IconLoader, color: 'var(--mantine-color-blue-6)' };
-		if (statusValue.includes('failed') || statusValue.includes('error'))
-			return { icon: IconX, color: 'var(--mantine-color-red-6)' };
-		return { icon: IconClock, color: 'var(--mantine-color-gray-6)' };
-	};
-
 	const transcriptSummary =
 		transcriptContent?.analysis?.transcript_summary || '';
 	const capturedVariables =
 		transcriptContent?.analysis?.data_collection_results;
 
-	const { icon: StatusIcon, color: statusIconColor } =
-		getStatusIcon(displayStatus);
 	const statusBadge = getStatusBadge(displayStatus);
 
 	const exportConversationMutation = useExportConversationPdf();
@@ -202,130 +167,21 @@ export function ConversationOverview({
 	const durationStr = formatDuration(displayDuration as number);
 	const dateDisplay = durationStr ? `${dateValue} · ${durationStr}` : dateValue;
 
-	const StatValueWithHover = ({ value }: { value: string }) => (
-		<Tooltip label={value} position='top-start' withArrow openDelay={100}>
-			<Text className={styles.statValue}>{value}</Text>
-		</Tooltip>
-	);
+	const terminationLabel =
+		terminationReason !== undefined
+			? formatTermination(terminationReason)
+			: undefined;
 
 	return (
 		<Stack gap='xs' className={styles.container}>
-			{/* Contact & Quick Overview */}
-			<RightSectionCard
-				title={t('overview.title')}
-				icon={StatusIcon}
-				iconColor={statusIconColor}
-			>
-				{/* Contact header with inline status badge */}
-				<div className={styles.contactHeader}>
-					<Avatar radius='xl' size={36} className={styles.avatar}>
-						<IconUser size={16} />
-					</Avatar>
-					<div className={styles.contactInfo}>
-						<div className={styles.contactNameRow}>
-							<Text className={styles.contactName} title={contactName}>
-								{contactName}
-							</Text>
-							<Badge
-								size='xs'
-								variant='light'
-								color={statusBadge.color}
-								className={styles.statusBadgeInline}
-							>
-								{statusBadge.label}
-							</Badge>
-						</div>
-						<Group gap={6} align='center' className={styles.phoneGroup}>
-							<IconPhoneCall size={12} className={styles.phoneIcon} />
-							<Text className={styles.phoneNumber} title={contactPhone}>
-								{contactPhone}
-							</Text>
-							<CopyButton value={String(contactPhone)} timeout={1200}>
-								{({ copied, copy }) => (
-									<Tooltip
-										label={
-											copied ? t('overview.copied') : t('overview.copyPhone')
-										}
-									>
-										<ActionIcon
-											size='xs'
-											variant='subtle'
-											aria-label={t('overview.copyPhone')}
-											onClick={copy}
-											className={styles.copyBtn}
-										>
-											{copied ? (
-												<IconCheck size={12} />
-											) : (
-												<IconCopy size={12} />
-											)}
-										</ActionIcon>
-									</Tooltip>
-								)}
-							</CopyButton>
-						</Group>
-					</div>
-				</div>
-
-				{/* Flat key-value stats list */}
-				<div className={styles.statsList}>
-					<div className={styles.statRow}>
-						<div className={styles.statLabelGroup}>
-							<IconCalendar size={13} className={styles.statIcon} />
-							<Text className={styles.statLabel}>
-								{t('overview.stats.dateTime')}
-							</Text>
-						</div>
-						<div className={styles.statValueSide}>
-							<StatValueWithHover value={dateDisplay} />
-						</div>
-					</div>
-
-					<div className={styles.statRow}>
-						<div className={styles.statLabelGroup}>
-							<IconRobot size={13} className={styles.statIcon} />
-							<Text className={styles.statLabel}>
-								{t('overview.stats.agent')}
-							</Text>
-						</div>
-						<div className={styles.statValueSide}>
-							<StatValueWithHover value={agentName} />
-						</div>
-					</div>
-
-					<div className={styles.statRow}>
-						<div className={styles.statLabelGroup}>
-							<IconInfoCircle size={13} className={styles.statIcon} />
-							<Text className={styles.statLabel}>
-								{t('overview.stats.campaign')}
-							</Text>
-						</div>
-						<div className={styles.statValueSide}>
-							<StatValueWithHover value={campaignName} />
-						</div>
-					</div>
-
-					{terminationReason !== undefined && (
-						<div className={styles.statRow}>
-							<div className={styles.statLabelGroup}>
-								<IconAlertCircle size={13} className={styles.statIcon} />
-								<Text className={styles.statLabel}>
-									{t('overview.stats.endReason')}
-								</Text>
-							</div>
-							<div className={styles.statValueSide}>
-								<StatValueWithHover
-									value={formatTermination(terminationReason)}
-								/>
-							</div>
-						</div>
-					)}
-				</div>
-			</RightSectionCard>
-			<ConversationDisposition
-				key={conversation?.id}
-				conversationId={String(conversation?.id)}
+			<ConversationPlayer
+				voiceFile={conversation?.voiceFile}
+				title={t('player.title')}
+				description={t('player.description')}
+				paramConversationId={conversation?.id}
+				contactName={`${getValueOrEmpty(contact?.firstName)} ${getValueOrEmpty(contact?.lastName)}`.trim()}
 			/>
+
 			{/* Conversation Summary */}
 			{transcriptSummary && (
 				<RightSectionCard
@@ -354,14 +210,25 @@ export function ConversationOverview({
 					)}
 				</RightSectionCard>
 			)}
+
+			<div className={styles.detailGrid}>
+				<ConversationOverviewCard
+					contactName={contactName}
+					contactPhone={contactPhone}
+					statusLabel={statusBadge.label}
+					statusColor={statusBadge.color}
+					dateDisplay={dateDisplay}
+					agentName={agentName}
+					campaignName={campaignName}
+					terminationReasonLabel={terminationLabel}
+				/>
+				<ConversationDisposition
+					key={conversation.id}
+					conversationId={String(conversation.id)}
+				/>
+			</div>
+
 			<ConversationCapturedVariables variables={capturedVariables} />
-			<ConversationPlayer
-				voiceFile={conversation?.voiceFile}
-				title={t('player.title')}
-				description={t('player.description')}
-				paramConversationId={conversation?.id}
-				contactName={`${getValueOrEmpty(contact?.firstName)} ${getValueOrEmpty(contact?.lastName)}`.trim()}
-			/>
 		</Stack>
 	);
 }

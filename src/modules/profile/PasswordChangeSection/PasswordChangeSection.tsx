@@ -114,12 +114,16 @@ export const PasswordChangeSection: React.FC<PasswordChangeSectionProps> = ({
 			title={t('password_change.title')}
 			description={t('password_change.description')}
 			icon={IconLock}
+			className={styles.settingsSurface}
+			padding='md'
+			contentSpacing='sm'
 		>
 			<form onSubmit={handleSubmit} className={styles.form}>
 				<PasswordInput
 					label={t('password_change.current_password_label')}
 					placeholder={t('password_change.current_password_placeholder')}
 					required
+					size='sm'
 					{...form.getInputProps('currentPassword')}
 				/>
 
@@ -127,6 +131,7 @@ export const PasswordChangeSection: React.FC<PasswordChangeSectionProps> = ({
 					label={t('password_change.new_password_label')}
 					placeholder={t('password_change.new_password_placeholder')}
 					required
+					size='sm'
 					{...form.getInputProps('newPassword')}
 				/>
 
@@ -134,12 +139,14 @@ export const PasswordChangeSection: React.FC<PasswordChangeSectionProps> = ({
 					label={t('password_change.confirm_password_label')}
 					placeholder={t('password_change.confirm_password_placeholder')}
 					required
+					size='sm'
 					{...form.getInputProps('confirmPassword')}
 				/>
 
 				<div className={styles.formActions}>
 					<Button
 						type='submit'
+						size='sm'
 						loading={changePasswordMutation.isPending || processing}
 						disabled={!form.isValid() || processing}
 					>
@@ -149,6 +156,7 @@ export const PasswordChangeSection: React.FC<PasswordChangeSectionProps> = ({
 						<Button
 							type='button'
 							variant='outline'
+							size='sm'
 							onClick={() => form.reset()}
 							disabled={changePasswordMutation.isPending || processing}
 						>

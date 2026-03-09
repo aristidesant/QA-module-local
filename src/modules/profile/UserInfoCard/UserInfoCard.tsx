@@ -1,15 +1,15 @@
 import {
-	IconMail,
-	IconUser,
-	IconShieldCheck,
-	IconBuildingSkyscraper,
+	IconAt,
 	IconCalendar,
+	IconBuildingSkyscraper,
+	IconMail,
+	IconShieldCheck,
 	IconShieldOff,
 } from '@tabler/icons-react';
-import { Stack, Text } from '@mantine/core';
+import { Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { useSessionStore } from '~/stores/sessionStore';
-import { RightSectionCard } from '~/components/RightSectionCard/RightSectionCard';
+import MFASection from '../MFASection';
 import styles from './UserInfoCard.module.css';
 
 export const UserInfoCard: React.FC = () => {
@@ -50,89 +50,92 @@ export const UserInfoCard: React.FC = () => {
 	};
 
 	return (
-		<Stack gap='md'>
-			<RightSectionCard
-				title={t('user_info.title')}
-				icon={IconUser}
-				iconColor='var(--mantine-color-indigo-6)'
-			>
-				<div className={styles.profileContent}>
-					<div className={styles.avatarContainer}>
-						<div className={styles.avatar}>{initials}</div>
+		<section className={styles.summaryCard} aria-label={t('user_info.title')}>
+			<div className={styles.identityBlock}>
+				<div className={styles.avatarContainer}>
+					<div className={styles.avatar}>{initials}</div>
+				</div>
+				<div className={styles.userInfo}>
+					<div className={styles.identityHeading}>
+						<Text component='p' className={styles.sectionLabel}>
+							{t('user_info.title')}
+						</Text>
+						<h2 className={styles.userName}>{fullName}</h2>
 					</div>
-					<div className={styles.userInfo}>
-						<h3 className={styles.userName}>{fullName}</h3>
-						{hasName && <p className={styles.userUsername}>@{user.username}</p>}
-						<div className={styles.emailBadge}>
-							<IconMail size={14} />
+					{hasName && <p className={styles.userUsername}>@{user.username}</p>}
+					<div className={styles.contactList}>
+						<div className={styles.contactRow}>
+							<IconMail size={15} stroke={1.8} />
 							<span>{user.email}</span>
 						</div>
-					</div>
-				</div>
-			</RightSectionCard>
-
-			<RightSectionCard
-				title={t('user_info.account_details')}
-				icon={IconShieldCheck}
-				iconColor='var(--mantine-color-teal-6)'
-			>
-				<div className={styles.detailsList}>
-					<div className={styles.detailItem}>
-						<div className={styles.detailIcon}>
-							<IconBuildingSkyscraper size={16} />
-						</div>
-						<div className={styles.detailContent}>
-							<Text size='xs' c='dimmed' fw={600} tt='uppercase'>
-								{t('user_info.client_id')}
-							</Text>
-							<Text size='sm' fw={700} className={styles.clientIdText}>
-								#{user.clientId}
-							</Text>
-						</div>
-					</div>
-
-					<div className={styles.detailItem}>
-						<div className={styles.detailIcon}>
-							<IconCalendar size={16} />
-						</div>
-						<div className={styles.detailContent}>
-							<Text size='xs' c='dimmed' fw={600} tt='uppercase'>
-								{t('user_info.member_since')}
-							</Text>
-							<Text size='sm' fw={500}>
-								{formatDate(user.createdAt)}
-							</Text>
-						</div>
-					</div>
-
-					<div className={styles.detailItem}>
-						<div className={styles.detailIcon}>
-							{isMFAEnabled ? (
-								<IconShieldCheck
-									size={16}
-									color='var(--mantine-color-green-6)'
-								/>
-							) : (
-								<IconShieldOff size={16} color='var(--mantine-color-red-6)' />
-							)}
-						</div>
-						<div className={styles.detailContent}>
-							<Text size='xs' c='dimmed' fw={600} tt='uppercase'>
-								{t('user_info.security_status')}
-							</Text>
-							<div
-								className={`${styles.mfaBadge} ${
-									isMFAEnabled ? styles.mfaEnabled : styles.mfaDisabled
-								}`}
-							>
-								{isMFAEnabled
-									? t('user_info.mfa_enabled')
-									: t('user_info.mfa_disabled')}
-							</div>
+						<div className={styles.contactRow}>
+							<IconAt size={15} stroke={1.8} />
+							<span>
+								{t('user_info.username_label')}: {user.username}
+							</span>
 						</div>
 					</div>
 				</div>
-			</RightSectionCard>
-		</Stack>
+			</div>
+
+			<div className={styles.detailsGrid}>
+				<div className={styles.detailItem}>
+					<div className={styles.detailIcon}>
+						<IconBuildingSkyscraper size={16} stroke={1.8} />
+					</div>
+					<div className={styles.detailContent}>
+						<Text component='p' className={styles.detailLabel}>
+							{t('user_info.client_id')}
+						</Text>
+						<Text component='p' className={styles.detailValue}>
+							#{user.clientId}
+						</Text>
+					</div>
+				</div>
+
+				<div className={styles.detailItem}>
+					<div className={styles.detailIcon}>
+						<IconCalendar size={16} stroke={1.8} />
+					</div>
+					<div className={styles.detailContent}>
+						<Text component='p' className={styles.detailLabel}>
+							{t('user_info.member_since')}
+						</Text>
+						<Text component='p' className={styles.detailValue}>
+							{formatDate(user.createdAt)}
+						</Text>
+					</div>
+				</div>
+
+				<div className={styles.detailItem}>
+					<div className={styles.detailIcon}>
+						{isMFAEnabled ? (
+							<IconShieldCheck size={16} stroke={1.8} />
+						) : (
+							<IconShieldOff size={16} stroke={1.8} />
+						)}
+					</div>
+					<div className={styles.detailContent}>
+						<Text component='p' className={styles.detailLabel}>
+							{t('user_info.security_status')}
+						</Text>
+						<Text
+							component='p'
+							className={`${styles.detailValue} ${
+								isMFAEnabled ? styles.stateSecure : styles.stateMuted
+							}`}
+						>
+							{isMFAEnabled
+								? t('user_info.mfa_enabled')
+								: t('user_info.mfa_disabled')}
+						</Text>
+					</div>
+				</div>
+			</div>
+
+			<div className={styles.securityPanel}>
+				<MFASection />
+			</div>
+		</section>
 	);
 };

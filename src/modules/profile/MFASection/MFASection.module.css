@@ -1,0 +1,197 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.header {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: flex-start;
+	gap: 12px;
+}
+
+.headerMain {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	min-width: 0;
+}
+
+.headerTitleRow {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	min-width: 0;
+	flex: 1;
+}
+
+.iconShell {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	border-radius: 10px;
+	border: 1px solid
+		color-mix(
+			in srgb,
+			var(--mantine-color-gray-3) 65%,
+			var(--mantine-color-white)
+		);
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-gray-0) 72%,
+		var(--mantine-color-white)
+	);
+	color: var(--mantine-color-gray-7);
+	flex-shrink: 0;
+	transition:
+		background 140ms ease,
+		border-color 140ms ease,
+		color 140ms ease;
+}
+
+.iconShellEnabled {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-green-1) 60%,
+		var(--mantine-color-white)
+	);
+	border-color: var(--mantine-color-green-3);
+	color: var(--mantine-color-green-7);
+}
+
+.headerCopy {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	min-width: 0;
+}
+
+.label {
+	margin: 0;
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 600;
+	color: var(--mantine-color-gray-6);
+}
+
+.message {
+	margin: 0;
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 600;
+	line-height: 1.3;
+	color: var(--mantine-color-dark-9);
+}
+
+.statusBadge {
+	display: inline-flex;
+	align-items: center;
+	padding: 3px 8px;
+	border-radius: 6px;
+	border: 1px solid var(--mantine-color-gray-3);
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.01em;
+	line-height: 1;
+	margin-top: 2px;
+}
+
+.statusEnabled {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-green-0) 70%,
+		var(--mantine-color-white)
+	);
+	border-color: var(--mantine-color-green-2);
+	color: var(--mantine-color-green-8);
+}
+
+.statusDisabled {
+	background: var(--mantine-color-gray-0);
+	color: var(--mantine-color-gray-7);
+}
+
+.headerAction {
+	display: flex;
+	flex-shrink: 0;
+	align-self: center;
+}
+
+.expandedPanel {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 12px;
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: 12px;
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-gray-0) 48%,
+		var(--mantine-color-white)
+	);
+}
+
+.warningPanel {
+	border-color: var(--mantine-color-orange-2);
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-orange-0) 65%,
+		var(--mantine-color-white)
+	);
+}
+
+.expandedCopy {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.expandedTitle {
+	margin: 0;
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+}
+
+.expandedMessage {
+	margin: 0;
+	font-size: 0.82rem;
+	line-height: 1.4;
+	color: var(--mantine-color-gray-7);
+}
+
+.form {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.formActions {
+	display: flex;
+	gap: var(--mantine-spacing-sm);
+	flex-wrap: wrap;
+}
+
+@media (max-width: 48em) {
+	.header {
+		grid-template-columns: 1fr;
+	}
+
+	.headerAction {
+		width: 100%;
+	}
+
+	.headerAction :global(button) {
+		width: 100%;
+	}
+
+	.headerMain {
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.formActions {
+		flex-direction: column-reverse;
+	}
+}

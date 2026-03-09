@@ -1,7 +1,6 @@
 import React, { type ReactNode } from 'react';
 import { Drawer, Text, type DrawerProps } from '@mantine/core';
 import clsx from 'clsx';
-import SectionTitle from '~/components/SectionTitle';
 import styles from './AppDrawer.module.css';
 
 export interface AppDrawerProps extends Omit<DrawerProps, 'title'> {
@@ -21,22 +20,15 @@ export const AppDrawer: React.FC<AppDrawerProps> = ({
 	children,
 	...drawerProps
 }) => {
-	const hasRichTitle = Boolean(description || icon);
 	const hasHeaderContent = Boolean(title || headerActions);
 
 	const headerTitle = title ? (
-		hasRichTitle ? (
-			<SectionTitle
-				title={title}
-				description={description}
-				icon={icon}
-				order={5}
-			/>
-		) : (
+		<div className={styles.titleRow}>
+			{icon ? <span className={styles.iconBadge}>{icon}</span> : null}
 			<Text component='div' className={styles.titleOnly}>
 				{title}
 			</Text>
-		)
+		</div>
 	) : null;
 
 	return (
@@ -46,7 +38,9 @@ export const AppDrawer: React.FC<AppDrawerProps> = ({
 			title={
 				hasHeaderContent ? (
 					<div className={styles.headerContent}>
-						<div className={styles.headerMain}>{headerTitle}</div>
+						{headerTitle ? (
+							<div className={styles.headerMain}>{headerTitle}</div>
+						) : null}
 						{headerActions ? (
 							<div className={styles.headerActions}>{headerActions}</div>
 						) : null}
@@ -61,6 +55,11 @@ export const AppDrawer: React.FC<AppDrawerProps> = ({
 				body: clsx(styles.body, classNames?.body),
 			}}
 		>
+			{description ? (
+				<Text component='div' className={styles.description}>
+					{description}
+				</Text>
+			) : null}
 			{children}
 		</Drawer>
 	);

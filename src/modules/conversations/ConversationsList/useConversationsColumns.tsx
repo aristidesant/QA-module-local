@@ -1,18 +1,30 @@
-import { useMemo } from 'react';
-import { Badge, Text, Tooltip } from '@mantine/core';
+import { useMemo, type MouseEvent } from 'react';
+import { ActionIcon, Badge, Group, Loader, Text, Tooltip } from '@mantine/core';
 import type { ColumnDef } from '@tanstack/react-table';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import timezone from 'dayjs/plugin/timezone';
+import { IconPlayerTrackNext, IconRefresh } from '@tabler/icons-react';
 import type { ConversationsModel } from '~/models/ConversationsModels';
 import { useTranslation } from 'react-i18next';
+import { getConversationActionDefinition } from '../ConversationDetails/ConversationActions/ConversationActions.helpers';
 
 dayjs.extend(relativeTime);
 dayjs.extend(timezone);
 
+type ConversationColumnsOptions = {
+	canExecuteConversations?: boolean;
+	onActionClick?: (
+		event: MouseEvent<HTMLButtonElement>,
+		conversation: ConversationsModel
+	) => void;
+	isActionLoading?: (conversation: ConversationsModel) => boolean;
+};
+
 export const useConversationsColumns = (
 	userTimezone: string,
-	hiddenColumns?: string[]
+	hiddenColumns?: string[],
+	options?: ConversationColumnsOptions
 ) => {
 	const { t } = useTranslation(['conversations', 'common']);
 
@@ -236,6 +248,45 @@ export const useConversationsColumns = (
 			},
 		];
 
+		if (options?.canExecuteConversations && options.onActionClick) {
+			allColumns.push({
+				id: 'actions',
+				header: t('list.columns.actions', { defaultValue: 'Actions' }),
+				enableSorting: false,
+				size: 72,
+				cell: ({ row }) => {
+					const conversation = row.original;
+					const action = getConversationActionDefinition(conversation, t);
+					const isLoading = options.isActionLoading?.(conversation) ?? false;
+					const ActionIconComponent =
+						action.key === 'reprocess' ? IconPlayerTrackNext : IconRefresh;
+
+					return (
+						<Group gap={4} wrap='nowrap' justify='flex-end'>
+							<Tooltip label={action.hint} withArrow>
+								<ActionIcon
+									variant='subtle'
+									color={action.color}
+									size='sm'
+									aria-label={action.label}
+									disabled={isLoading}
+									onClick={(event) =>
+										options.onActionClick?.(event, conversation)
+									}
+								>
+									{isLoading ? (
+										<Loader size={14} />
+									) : (
+										<ActionIconComponent size={16} />
+									)}
+								</ActionIcon>
+							</Tooltip>
+						</Group>
+					);
+				},
+			});
+		}
+
 		if (!hiddenColumns || hiddenColumns.length === 0) return allColumns;
 
 		return allColumns.filter((col) => {
@@ -245,5 +296,5 @@ export const useConversationsColumns = (
 				'';
 			return !hiddenColumns.includes(colId);
 		});
-	}, [userTimezone, t, hiddenColumns]);
+	}, [userTimezone, t, hiddenColumns, options]);
 };

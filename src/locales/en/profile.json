@@ -4,6 +4,7 @@
 	"user_info": {
 		"title": "User Profile",
 		"account_details": "Account Details",
+		"username_label": "Username",
 		"client_id": "Client ID",
 		"member_since": "Member Since",
 		"security_status": "Security Status",
@@ -12,7 +13,7 @@
 	},
 	"name_change": {
 		"title": "Display Name",
-		"description": "Update your first and last name that others will see",
+		"description": "Update the name shown across your account.",
 		"first_name_label": "First Name",
 		"first_name_placeholder": "Enter your first name",
 		"last_name_label": "Last Name",
@@ -35,7 +36,7 @@
 	},
 	"password_change": {
 		"title": "Change Password",
-		"description": "Keep your account secure by regularly updating your password. Use a strong, unique password with at least 8 characters that includes a mix of letters, numbers, and symbols.",
+		"description": "Set a new password for your next sign-in.",
 		"current_password_label": "Current Password",
 		"current_password_placeholder": "Enter your current password",
 		"new_password_label": "New Password",
@@ -60,8 +61,18 @@
 		"description": "Enhance your account security by requiring both your password and a verification code sent to your email address when signing in. This significantly reduces the risk of unauthorized access.",
 		"status_enabled": "Enabled",
 		"status_disabled": "Disabled",
+		"inline": {
+			"enabled_message": "Email verification is active for future sign-ins.",
+			"disabled_message": "Add one more step to protect your account.",
+			"enable_prompt": "Confirm your password to start email verification.",
+			"disable_prompt": "Enter your password to remove the extra sign-in check."
+		},
+		"setup_guidance": {
+			"title": "Add a second verification step",
+			"description": "Enable email-based verification to protect sign-ins from password-only access. Setup takes a moment and stays tied to your current email address."
+		},
 		"how_it_works": {
-			"title": "How Email-Based OTP Works",
+			"title": "Setup steps",
 			"step1": "Click \"Enable MFA\" to start the setup process",
 			"step2": "Enter your password to confirm your identity",
 			"step3": "A 6-digit verification code will be sent to your registered email address",

@@ -1,15 +1,11 @@
-import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Breadcrumbs, Anchor, Flex, Loader, Text } from '@mantine/core';
 import { IconAlertCircle, IconArrowLeft } from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
-import SectionCard from '~/components/SectionCard';
 import EmptyState from '~/components/EmptyState';
 import { useGetCampaign } from '~/queries/campaignsQueries';
-import { useCampaignConversationsStore } from '~/stores/campaignConversationsStore';
 import ConversationsList from '~/modules/conversations/ConversationsList';
-import ConversationDetails from '~/modules/conversations/ConversationDetails';
 import { Button } from '@mantine/core';
 
 const HIDDEN_COLUMNS = ['contactName', 'phoneNumber'];
@@ -24,19 +20,6 @@ const CampaignConversationsPage = () => {
 		isLoading,
 		isError,
 	} = useGetCampaign(`${campaignId}`);
-	const {
-		rightComponent,
-		selectedConversationId,
-		setRightComponent,
-		setSelectedConversationId,
-		reset,
-	} = useCampaignConversationsStore();
-
-	// Reset store when mounting / unmounting
-	useEffect(() => {
-		reset();
-		return () => reset();
-	}, [reset]);
 
 	const commonContainerProps = {
 		showBackButton: true,
@@ -107,22 +90,11 @@ const CampaignConversationsPage = () => {
 			{...commonContainerProps}
 			title={breadcrumbTitle}
 			description={t('page.description')}
-			rightSection={rightComponent}
 		>
-			<SectionCard
-				title={t('section.title')}
-				description={t('section.description')}
-			>
-				<ConversationsList
-					campaignId={campaignId}
-					hiddenColumns={HIDDEN_COLUMNS}
-					selectedConversationId={selectedConversationId}
-					onConversationClick={(conversation) => {
-						setSelectedConversationId(conversation?.id ?? null);
-						setRightComponent(<ConversationDetails id={conversation?.id} />);
-					}}
-				/>
-			</SectionCard>
+			<ConversationsList
+				campaignId={campaignId}
+				hiddenColumns={HIDDEN_COLUMNS}
+			/>
 		</ContentContainer>
 	);
 };
