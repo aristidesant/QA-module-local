@@ -4,20 +4,16 @@
 	gap: var(--mantine-spacing-sm);
 }
 
-.tableRow {
-	cursor: pointer;
-}
-
-.tableRow:hover {
-	background-color: var(--mantine-color-gray-0);
-}
-
 .actionsCell {
-	display: flex;
-	justify-content: flex-end;
-	gap: var(--mantine-spacing-xs);
+	width: 96px;
+	min-width: 96px;
+	white-space: nowrap;
+	text-align: right;
 }
 
 .actionsHeader {
+	width: 96px;
+	min-width: 96px;
+	white-space: nowrap;
 	text-align: right;
 }

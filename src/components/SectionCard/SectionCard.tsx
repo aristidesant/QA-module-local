@@ -33,6 +33,7 @@ export const SectionCard: React.FC<SectionCardProps> = ({
 	headerExtras,
 	headerActions,
 	onAdd,
+	onDelete,
 	onEdit,
 	onChange,
 	onView,
@@ -77,6 +78,7 @@ export const SectionCard: React.FC<SectionCardProps> = ({
 		Boolean(headerExtras) ||
 		Boolean(actions) ||
 		Boolean(onAdd) ||
+		Boolean(onDelete) ||
 		Boolean(onEdit) ||
 		Boolean(onChange) ||
 		Boolean(onView) ||
@@ -125,6 +127,7 @@ export const SectionCard: React.FC<SectionCardProps> = ({
 									headerExtras={headerExtras}
 									headerActions={headerActions}
 									onAdd={onAdd}
+									onDelete={onDelete}
 									onEdit={onEdit}
 									onChange={onChange}
 									onView={onView}

@@ -3,6 +3,7 @@ import {
 	IconCalculator,
 	IconEye,
 	IconPlus,
+	IconTrash,
 	IconRefresh,
 	IconSettings,
 	IconArrowsMaximize,
@@ -19,6 +20,7 @@ import type {
 
 const PRIMARY_ACTION_ORDER: CardActionKind[] = [
 	'add',
+	'delete',
 	'edit',
 	'change',
 	'view',
@@ -30,6 +32,7 @@ const PRIMARY_ACTION_ORDER: CardActionKind[] = [
 ];
 
 const SECONDARY_ACTION_ORDER: CardActionKind[] = [
+	'delete',
 	'openSettings',
 	'refresh',
 	'view',
@@ -43,6 +46,7 @@ const SECONDARY_ACTION_ORDER: CardActionKind[] = [
 
 export const ACTION_ICON_MAP = {
 	add: IconPlus,
+	delete: IconTrash,
 	edit: IconPencil,
 	change: IconAdjustments,
 	view: IconEye,
@@ -59,6 +63,7 @@ export const getDefaultActionLabel = (
 ) => {
 	const keyMap: Record<CardActionKind, string> = {
 		add: 'actions.add',
+		delete: 'actions.delete',
 		edit: 'actions.edit',
 		change: 'actions.change',
 		view: 'actions.view',
@@ -100,6 +105,7 @@ export const resolveCardActions = (
 
 	const semanticActions: Partial<Record<CardActionKind, () => void>> = {
 		add: props.onAdd,
+		delete: props.onDelete,
 		edit: props.onEdit,
 		change: props.onChange,
 		view: props.onView,

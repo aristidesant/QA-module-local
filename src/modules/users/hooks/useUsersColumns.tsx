@@ -2,28 +2,29 @@ import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import {
 	ActionIcon,
+	Badge,
 	Group,
 	HoverCard,
-	Stack,
 	Text,
 	Tooltip,
 } from '@mantine/core';
-import {
-	IconEye,
-	IconInfoCircle,
-	IconPencil,
-	IconTrash,
-} from '@tabler/icons-react';
+import { IconInfoCircle, IconPencil, IconTrash } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { timeAgo } from '~/utils/dateUtils';
 import type { UserModel } from '~/models/UserModels';
 import classes from '../UsersList/UsersList.module.css';
 
 interface UseUsersColumnsParams {
-	onView: (userId: number) => void;
 	onEdit: (userId: number) => void;
 	onDelete: (user: UserModel) => void;
 }
+
+const statusColors: Record<string, string> = {
+	active: 'green',
+	inactive: 'gray',
+	pending: 'yellow',
+	suspended: 'red',
+};
 
 const formatDateTime = (value: string | Date | null | undefined) => {
 	if (!value) {
@@ -39,7 +40,6 @@ const formatDateTime = (value: string | Date | null | undefined) => {
 };
 
 const useUsersColumns = ({
-	onView,
 	onEdit,
 	onDelete,
 }: UseUsersColumnsParams): ColumnDef<UserModel>[] => {
@@ -83,37 +83,20 @@ const useUsersColumns = ({
 				},
 			},
 			{
-				id: 'client',
-				header: t('columns.client'),
-				cell: ({ row }) => {
-					const { client, clientId } = row.original;
-
-					if (!client) {
-						return <Text fz='xs'>#{clientId ?? '—'}</Text>;
-					}
-
-					const clientName = client.name || `Client #${client.id}`;
+				accessorKey: 'status',
+				header: t('columns.status'),
+				cell: ({ getValue }) => {
+					const value = getValue<string | null | undefined>();
+					const statusKey = value?.toLowerCase?.() ?? '';
+					const color = statusColors[statusKey] ?? 'gray';
+					const label = statusKey
+						? t(`status.${statusKey}`, { defaultValue: value })
+						: '—';
 
 					return (
-						<HoverCard width={280} shadow='none'>
-							<HoverCard.Target>
-								<Text fz='xs'>{clientName}</Text>
-							</HoverCard.Target>
-							<HoverCard.Dropdown>
-								<Stack gap={4}>
-									<Text fz='xs'>
-										{t('table.client.idLabel')}: #{client.id}
-									</Text>
-									<Text fz='xs'>
-										{t('table.client.identifierLabel')}:{' '}
-										{client.identifier || '—'}
-									</Text>
-									<Text fz='xs'>
-										{t('table.client.emailLabel')}: {client.email || '—'}
-									</Text>
-								</Stack>
-							</HoverCard.Dropdown>
-						</HoverCard>
+						<Badge variant='light' color={color} size='xs'>
+							{label}
+						</Badge>
 					);
 				},
 			},
@@ -145,22 +128,11 @@ const useUsersColumns = ({
 					const user = row.original;
 
 					return (
-						<Group gap='xs' justify='flex-end' wrap='nowrap'>
-							<Tooltip label={t('table.actions.view')} withArrow>
-								<ActionIcon
-									variant='subtle'
-									onClick={(event) => {
-										event.stopPropagation();
-										onView(user.id);
-									}}
-									aria-label={t('table.actions.view')}
-								>
-									<IconEye size={16} />
-								</ActionIcon>
-							</Tooltip>
+						<Group gap={4} justify='flex-end' wrap='nowrap'>
 							<Tooltip label={t('table.actions.edit')} withArrow>
 								<ActionIcon
-									variant='subtle'
+									variant='light'
+									size='sm'
 									onClick={(event) => {
 										event.stopPropagation();
 										onEdit(user.id);
@@ -172,8 +144,9 @@ const useUsersColumns = ({
 							</Tooltip>
 							<Tooltip label={t('table.actions.delete')} withArrow>
 								<ActionIcon
-									variant='subtle'
+									variant='light'
 									color='red'
+									size='sm'
 									onClick={(event) => {
 										event.stopPropagation();
 										onDelete(user);
@@ -188,7 +161,7 @@ const useUsersColumns = ({
 				},
 			},
 		],
-		[onDelete, onEdit, onView, t]
+		[onDelete, onEdit, t]
 	);
 };
 

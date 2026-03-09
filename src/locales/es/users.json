@@ -10,6 +10,7 @@
 		"body": "Esta acción no se puede deshacer. ¿Seguro que deseas eliminar a <strong>{{email}}</strong>?"
 	},
 	"list": {
+		"title": "Lista de Usuarios",
 		"errorTitle": "No se pudieron cargar los usuarios",
 		"unknownError": "Error desconocido",
 		"empty": "No se encontraron usuarios.",
@@ -21,7 +22,6 @@
 	},
 	"columns": {
 		"name": "Nombre",
-		"client": "Cliente",
 		"email": "Correo electrónico",
 		"role": "Rol",
 		"status": "Estado",
@@ -31,7 +31,6 @@
 	},
 	"table": {
 		"actions": {
-			"view": "Ver usuario",
 			"edit": "Editar usuario",
 			"delete": "Eliminar usuario"
 		},
@@ -39,42 +38,7 @@
 			"usernameLabel": "Usuario",
 			"emailLabel": "Correo",
 			"createdLabel": "Creado"
-		},
-		"client": {
-			"idLabel": "ID",
-			"identifierLabel": "Identificador",
-			"emailLabel": "Correo"
 		}
-	},
-	"details": {
-		"title": "Detalles del usuario",
-		"loadErrorTitle": "No se pudieron cargar los detalles del usuario",
-		"actions": {
-			"close": "Cerrar detalles"
-		},
-		"sections": {
-			"profile": "Perfil",
-			"account": "Cuenta",
-			"security": "Seguridad",
-			"activity": "Actividad"
-		},
-		"labels": {
-			"clientName": "Nombre del cliente",
-			"clientIdentifier": "Identificador del cliente",
-			"clientEmail": "Correo del cliente",
-			"clientId": "ID del cliente",
-			"employeeId": "ID de empleado",
-			"mfa": "Autenticación multifactor",
-			"created": "Creado",
-			"updated": "Última actualización",
-			"deactivated": "Desactivado"
-		},
-		"values": {
-			"enabled": "Activado",
-			"disabled": "Desactivado"
-		},
-		"employeeBadge": "Empleado #{{employeeId}}",
-		"updatedDescription": "Actualizado {{relative}}"
 	},
 	"clientRoles": {
 		"fallbackClientName": "Cliente #{{id}}",

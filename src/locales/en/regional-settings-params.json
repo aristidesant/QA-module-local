@@ -3,6 +3,10 @@
 		"title": "Regional Settings",
 		"description": "Configure the default regional settings"
 	},
+	"fields": {
+		"timezone": "Timezone",
+		"locale": "Locale"
+	},
 	"actions": {
 		"createOverride": "Create override",
 		"deleteOverride": "Delete override",

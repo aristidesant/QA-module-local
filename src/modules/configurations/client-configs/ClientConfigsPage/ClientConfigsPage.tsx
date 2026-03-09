@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { Button } from '@mantine/core';
-import { IconSettings, IconPlus } from '@tabler/icons-react';
-import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
+import { IconSettings } from '@tabler/icons-react';
+import SectionCard, { type CardActionsConfig } from '~/components/SectionCard';
 import { ClientConfigsContent } from '../ClientConfigsContent';
 import { useTranslation } from 'react-i18next';
 
@@ -9,24 +8,25 @@ export default function ClientConfigsPage() {
 	const [createModalOpened, setCreateModalOpened] = useState(false);
 	const { t } = useTranslation('client-configs');
 
+	const sectionActions: CardActionsConfig = {
+		primary: {
+			kind: 'add',
+			label: t('page.actions.create'),
+			onClick: () => setCreateModalOpened(true),
+		},
+	};
+
 	return (
-		<ContentContainer
+		<SectionCard
 			title={t('page.title')}
 			description={t('page.description')}
-			titleIcon={<IconSettings size={24} />}
-			titleRight={
-				<Button
-					leftSection={<IconPlus size={16} />}
-					onClick={() => setCreateModalOpened(true)}
-				>
-					{t('page.actions.create')}
-				</Button>
-			}
+			icon={IconSettings}
+			actions={sectionActions}
 		>
 			<ClientConfigsContent
 				createModalOpened={createModalOpened}
 				setCreateModalOpened={setCreateModalOpened}
 			/>
-		</ContentContainer>
+		</SectionCard>
 	);
 }

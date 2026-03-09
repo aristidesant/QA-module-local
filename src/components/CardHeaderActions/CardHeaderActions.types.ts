@@ -4,6 +4,7 @@ import type { TablerIcon } from '@tabler/icons-react';
 
 export type CardActionKind =
 	| 'add'
+	| 'delete'
 	| 'edit'
 	| 'change'
 	| 'view'
@@ -35,6 +36,7 @@ export interface CardActionProps {
 	headerExtras?: ReactNode;
 	headerActions?: ReactNode;
 	onAdd?: () => void;
+	onDelete?: () => void;
 	onEdit?: () => void;
 	onChange?: () => void;
 	onView?: () => void;

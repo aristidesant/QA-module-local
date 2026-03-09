@@ -125,8 +125,10 @@ export function ClientConfigsFilters() {
 
 					{hasActiveFilters && (
 						<ActionIcon
-							variant='subtle'
+							variant='light'
 							color='gray'
+							size='sm'
+							radius='md'
 							onClick={resetFilters}
 							className={styles.clearButton}
 							title={t('filters.actions.clear')}

@@ -5,26 +5,18 @@ import {
 	useDeleteClientConfig,
 } from '~/queries/useClientConfigs';
 import { RegionalSettings } from '~/models/RegionalSettingsParam';
-import ContentContainer from '~/components/ContentContainer';
-import {
-	Text,
-	Stack,
-	Modal,
-	ActionIcon,
-	Group,
-	Tooltip,
-	Button,
-} from '@mantine/core';
+import { Text, Stack, Modal, Button, Group } from '@mantine/core';
 import {
 	IconSettings,
-	IconTrash,
 	IconAlertTriangle,
 	IconEdit,
+	IconGlobe,
 } from '@tabler/icons-react';
 import useRegionalSettingsParamsStore from './store/useRegionalSettingsParamsStore';
 import RegionalSettingsParamsDetail from './RegionalSettingsParamsDetail';
 import RegionalSettingsParamsForm from './RegionalSettingsParamsForm';
 import InlineNotice from '~/components/InlineNotice';
+import SectionCard, { type CardActionsConfig } from '~/components/SectionCard';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import { useTranslation } from 'react-i18next';
 
@@ -68,68 +60,76 @@ const RegionalSettingsParamsPage = () => {
 		: 'update';
 	const canSubmitEdits = !(isGlobalConfig && !isMasterClient);
 
+	const sectionActions = useMemo<CardActionsConfig | undefined>(() => {
+		if (!hasConfig) {
+			return undefined;
+		}
+
+		const secondary = [] as NonNullable<CardActionsConfig['secondary']>;
+
+		if (canCreateOverride) {
+			secondary.push({
+				kind: 'configure',
+				icon: IconSettings,
+				label: t('actions.createOverride'),
+				color: 'grape',
+				onClick: async () => {
+					if (!data || !canCreateOverride) return;
+					try {
+						await createMutation.mutateAsync({
+							name: data.name,
+							description: data.description,
+							value: data.value,
+							type: data.type,
+						});
+					} catch (e) {
+						console.error('Failed to create override', e);
+					}
+				},
+				disabled: createMutation.isPending,
+				loading: createMutation.isPending,
+			});
+		}
+
+		if (canDeleteConfig) {
+			secondary.push({
+				kind: 'delete',
+				label: t('actions.deleteOverride'),
+				color: 'red',
+				onClick: () => setDeleteConfigModalOpen(true),
+				disabled: deleteMutation.isPending,
+				loading: deleteMutation.isPending,
+			});
+		}
+
+		return {
+			primary: canEditConfig
+				? {
+						kind: 'edit',
+						icon: IconEdit,
+						label: t('actions.editSettings'),
+						onClick: handleEdit,
+					}
+				: undefined,
+			secondary,
+		};
+	}, [
+		canCreateOverride,
+		canDeleteConfig,
+		canEditConfig,
+		createMutation.isPending,
+		data,
+		deleteMutation.isPending,
+		hasConfig,
+		t,
+	]);
+
 	return (
-		<ContentContainer
+		<SectionCard
 			title={t('page.title')}
 			description={t('page.description')}
-			titleRight={
-				hasConfig ? (
-					<Group gap={'xs'}>
-						{canCreateOverride && (
-							<Tooltip label={t('actions.createOverride')} withArrow>
-								<ActionIcon
-									variant='light'
-									color='grape'
-									aria-label={t('actions.createOverride')}
-									onClick={async () => {
-										if (!data || !canCreateOverride) return;
-										try {
-											await createMutation.mutateAsync({
-												name: data.name,
-												description: data.description,
-												value: data.value,
-												type: data.type,
-											});
-										} catch (e) {
-											console.error('Failed to create override', e);
-										}
-									}}
-									loading={createMutation.isPending}
-									disabled={createMutation.isPending}
-								>
-									<IconSettings size={16} />
-								</ActionIcon>
-							</Tooltip>
-						)}
-						{canDeleteConfig && (
-							<Tooltip label={t('actions.deleteOverride')} withArrow>
-								<ActionIcon
-									variant='light'
-									color='red'
-									aria-label={t('actions.deleteOverride')}
-									onClick={() => setDeleteConfigModalOpen(true)}
-									loading={deleteMutation.isPending}
-									disabled={deleteMutation.isPending}
-								>
-									<IconTrash size={16} />
-								</ActionIcon>
-							</Tooltip>
-						)}
-						{canEditConfig && (
-							<Tooltip label={t('actions.editSettings')} withArrow>
-								<ActionIcon
-									variant='filled'
-									color='blue'
-									aria-label={t('actions.editSettings')}
-									onClick={handleEdit}
-								>
-									<IconEdit size={16} />
-								</ActionIcon>
-							</Tooltip>
-						)}
-					</Group>
-				) : undefined
-			}
+			icon={IconGlobe}
+			actions={sectionActions}
 		>
 			<Stack gap={'xs'}>
 				{isGlobalConfig && (
@@ -214,7 +214,7 @@ const RegionalSettingsParamsPage = () => {
 					</Button>
 				</Group>
 			</Modal>
-		</ContentContainer>
+		</SectionCard>
 	);
 };
 
