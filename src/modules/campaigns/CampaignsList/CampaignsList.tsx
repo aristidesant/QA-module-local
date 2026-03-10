@@ -91,6 +91,8 @@ export const CampaignsList: React.FC = () => {
 	const [selectedAgentIdForCall, setSelectedAgentIdForCall] = useState<
 		string | null
 	>(null);
+	const [campaignNoiseCancellation, setCampaignNoiseCancellation] =
+		useState(false);
 
 	const [addNewModalOpened, setAddNewModalOpened] = useState(false);
 	const [isDetailsDrawerOpen, setIsDetailsDrawerOpen] = useState(false);
@@ -192,18 +194,23 @@ export const CampaignsList: React.FC = () => {
 		setSelectedAgentIdForCall(agentId);
 		setTestCallModalOpened(true);
 		setCampaignTestCallId(campaign.id);
+		setCampaignNoiseCancellation(
+			campaign.agentConfig?.conversationConfig?.noiseCancellation ?? false
+		);
 	};
 
 	const handleTestCallSuccess = () => {
 		setTestCallModalOpened(false);
 		setSelectedAgentIdForCall(null);
 		setCampaignTestCallId(null);
+		setCampaignNoiseCancellation(false);
 	};
 
 	const handleTestCallClose = () => {
 		setTestCallModalOpened(false);
 		setSelectedAgentIdForCall(null);
 		setCampaignTestCallId(null);
+		setCampaignNoiseCancellation(false);
 	};
 
 	// Handle continuing a draft campaign
@@ -486,6 +493,7 @@ export const CampaignsList: React.FC = () => {
 						onSuccess={handleTestCallSuccess}
 						campaignId={campaignTestCallId!}
 						onClose={handleTestCallClose}
+						noiseCancellationEnabled={campaignNoiseCancellation}
 					/>
 				)}
 			</Modal>

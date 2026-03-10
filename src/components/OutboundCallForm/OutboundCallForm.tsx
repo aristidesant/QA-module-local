@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from '@mantine/form';
 import {
 	Button,
@@ -7,8 +7,15 @@ import {
 	Stack,
 	ThemeIcon,
 	Title,
+	Switch,
+	Group,
 } from '@mantine/core';
-import { IconPhone, IconX, IconStars } from '@tabler/icons-react';
+import {
+	IconPhone,
+	IconX,
+	IconStars,
+	IconMicrophone,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type AgentListObject from '~/models/AgentListObject';
 import { useStartDemoConversation } from '~/queries/conversationsQueries';
@@ -30,6 +37,7 @@ export type OutboundCallFormProps = {
 	onClose: () => void;
 	loading?: boolean;
 	campaignId?: number;
+	noiseCancellationEnabled?: boolean;
 };
 
 export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
@@ -38,10 +46,14 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
 	onSuccess,
 	onClose,
 	loading = false,
+	noiseCancellationEnabled = false,
 }) => {
 	const { t } = useTranslation();
 	const startDemoConversation = useStartDemoConversation();
 	const isSubmitting = startDemoConversation.isPending || loading;
+	const [noiseCancellation, setNoiseCancellation] = useState(
+		noiseCancellationEnabled
+	);
 	const form = useForm<OutboundCallFormValues>({
 		initialValues: {
 			agentId: agent?.id,
@@ -76,6 +88,17 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
 	});
 
 	const handleSubmit = async (values: OutboundCallFormValues) => {
+		const noiseCancellationPayload = noiseCancellation
+			? {
+					noiseCancellation: true,
+					turnDetection: {
+						threshold: 0.5,
+						prefixPaddingMs: 300,
+						silenceDurationMs: 800,
+					},
+				}
+			: {};
+
 		try {
 			await startDemoConversation.mutateAsync({
 				agentId: agent.id,
@@ -85,6 +108,7 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
 					customerName: values.dynamicVariables.customerName,
 					customerId: values.dynamicVariables.customerId,
 				},
+				...noiseCancellationPayload,
 			});
 			notifications.show({
 				title: t('outboundCallForm.testCallSentTitle'),
@@ -146,6 +170,24 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
 					radius={'md'}
 					{...form.getInputProps('dynamicVariables.customerId')}
 				/>
+				<Group justify='space-between' align='center' wrap='nowrap'>
+					<Group gap='xs' align='center' wrap='nowrap'>
+						<IconMicrophone size={18} color='var(--mantine-color-dimmed)' />
+						<Stack gap={0}>
+							<Text size='sm' fw={500}>
+								{t('outboundCallForm.noiseCancellation')}
+							</Text>
+							<Text size='xs' c='dimmed'>
+								{t('outboundCallForm.noiseCancellationDesc')}
+							</Text>
+						</Stack>
+					</Group>
+					<Switch
+						checked={noiseCancellation}
+						onChange={(e) => setNoiseCancellation(e.currentTarget.checked)}
+						size='md'
+					/>
+				</Group>
 				<Button
 					type='submit'
 					size='lg'

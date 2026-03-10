@@ -1427,6 +1427,7 @@
 					"extendWaves": {
 						"title": "Extend waves",
 						"success": "Waves Extended",
+						"successMessage": "Successfully added {{count}} waves to the contact list.",
 						"error": "Error extending waves"
 					}
 				}
@@ -2027,6 +2028,8 @@
 		"asrKeywordsDesc": "Add words the speech recognition engine should pay special attention to.",
 		"asrKeywordsHelp": "Type a keyword and press Enter to add it.",
 		"asrKeywordsPlaceholder": "Type a keyword and press Enter",
+		"noiseCancellationLabel": "Noise cancellation",
+		"noiseCancellationDesc": "When enabled, applies noise suppression and voice activity detection tuning to outbound calls.",
 		"createObjectiveTitle": "Create New Objective"
 	},
 	"disposition": {

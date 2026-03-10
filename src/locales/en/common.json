@@ -127,6 +127,8 @@
 		"testCallSentMsg": "We are calling {{phone}} now.",
 		"startDemoErrorTitle": "Could not start demo",
 		"startDemoErrorMsg": "Please try again.",
+		"noiseCancellation": "Noise Cancellation",
+		"noiseCancellationDesc": "Reduce background noise during the call",
 		"validation": {
 			"agentRequired": "Agent is required.",
 			"phoneInvalid": "Enter a valid phone number.",

@@ -11,6 +11,12 @@ export type StartDemoParams = {
 		customerName: string;
 		customerId: string;
 	};
+	noiseCancellation?: boolean;
+	turnDetection?: {
+		threshold: number;
+		prefixPaddingMs: number;
+		silenceDurationMs: number;
+	};
 };
 
 export type Conversation = {
