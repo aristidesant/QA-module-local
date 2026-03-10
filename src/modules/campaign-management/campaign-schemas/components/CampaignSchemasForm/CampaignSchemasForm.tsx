@@ -191,8 +191,12 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 			description: schema?.description || '',
 		},
 		validate: {
-			name: (value) =>
-				!value ? t('setup.schemas.form.validation.nameRequired') : null,
+			name: (value) => {
+				if (!value) return t('setup.schemas.form.validation.nameRequired');
+				if (/[^a-zA-Z0-9\s]/.test(value))
+					return t('setup.schemas.form.validation.nameNoSpecialChars');
+				return null;
+			},
 			objectiveId: (value) =>
 				!value ? t('setup.schemas.form.validation.objectiveRequired') : null,
 		},
@@ -336,11 +340,14 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 
 		try {
 			// Create a new version with the updated data
+			// Strip special characters from the name to comply with backend validation
+			const baseName = pendingUpdateData.name
+				.replace(/[^a-zA-Z0-9\s]/g, '')
+				.trim();
+			const versionSuffix = `v${(schema.version || 1) + 1}`;
 			const newVersionData: CreateCampaignContactSchemaRequest = {
-				name: `${pendingUpdateData.name} (v${(schema.version || 1) + 1})`,
-				code:
-					generateCode(pendingUpdateData.name) +
-					`-v${(schema.version || 1) + 1}`,
+				name: `${baseName} ${versionSuffix}`,
+				code: generateCode(pendingUpdateData.name) + `-${versionSuffix}`,
 				icon: pendingUpdateData.icon,
 				objectiveId: parseInt(pendingUpdateData.objectiveId),
 				description: pendingUpdateData.description,

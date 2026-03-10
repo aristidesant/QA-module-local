@@ -267,6 +267,7 @@
 				},
 				"validation": {
 					"nameRequired": "Name is required",
+					"nameNoSpecialChars": "Name cannot contain special characters",
 					"objectiveRequired": "Objective is required",
 					"invalidFieldNamesTitle": "Invalid Field Names",
 					"fieldNameRequired": "Field {{index}}: Name is required",
