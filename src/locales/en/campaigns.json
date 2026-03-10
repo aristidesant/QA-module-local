@@ -2017,6 +2017,7 @@
 		"enterNumberOfWaves": "Enter number of waves",
 		"asrKeywords": "ASR keywords",
 		"asrKeywordsDesc": "Add words the speech recognition engine should pay special attention to.",
+		"asrKeywordsHelp": "Type a keyword and press Enter to add it.",
 		"asrKeywordsPlaceholder": "Type a keyword and press Enter",
 		"createObjectiveTitle": "Create New Objective"
 	},

@@ -2132,6 +2132,7 @@
 		"enterNumberOfWaves": "Ingresa el número de oleadas",
 		"asrKeywords": "Palabras clave ASR",
 		"asrKeywordsDesc": "Agrega palabras a las que el motor de reconocimiento de voz debe prestar especial atención.",
+		"asrKeywordsHelp": "Escribe una palabra y presiona Enter para agregarla.",
 		"asrKeywordsPlaceholder": "Escribe una palabra y presiona Enter",
 		"createObjectiveTitle": "Crear Nuevo Objetivo"
 	}

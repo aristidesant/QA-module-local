@@ -18,6 +18,7 @@ import {
 	LLM_MODELS,
 	getGroupedLlmOptions,
 } from '~/modules/configurations/CampaignPredefinedParamsPage/CampaignPredefinedParamsForm/formConfig';
+import type { SelectOption } from '../../types';
 import {
 	updateWorkflowNodeSubagent,
 	updateWorkflowNode,
@@ -49,6 +50,7 @@ const GeneralTab = () => {
 	const promptConfig = (agentConfig as Record<string, unknown>).prompt ?? {};
 	const additionalPrompt = (currentNode as { additionalPrompt?: string | null })
 		?.additionalPrompt;
+	const subagentLlmModel = subagent?.llmModel;
 	const overridePromptValue =
 		((promptConfig as Record<string, unknown>).prompt as string | null) ?? '';
 	const hasAdditionalPrompt = (additionalPrompt ?? '').trim().length > 0;
@@ -79,9 +81,9 @@ const GeneralTab = () => {
 	const voiceId = (ttsConfig as Record<string, unknown>).voiceId as
 		| string
 		| undefined;
-	const llmModel = (promptConfig as Record<string, unknown>).llm as
-		| string
-		| undefined;
+	const llmModel =
+		((promptConfig as Record<string, unknown>).llm as string | undefined) ||
+		subagentLlmModel;
 	const eagerness = (turnConfig as Record<string, unknown>).turnEagerness as
 		| string
 		| undefined;
@@ -157,13 +159,11 @@ const GeneralTab = () => {
 		}
 	};
 
-	const llmOptions = getGroupedLlmOptions();
+	const llmOptions = getGroupedLlmOptions().flatMap((group) => group.items);
 
 	// Helper to get label for a value
-	const getValueLabel = (
-		value: string,
-		options: Array<{ value: string; label: string }>
-	) => options.find((opt) => opt.value === value)?.label || value;
+	const getValueLabel = (value: string, options: SelectOption[]) =>
+		options.find((opt) => opt.value === value)?.label || value;
 
 	const getLlmLabel = (value: string) =>
 		LLM_MODELS.find((model) => model.modelCode === value)?.modelName || value;
@@ -223,6 +223,10 @@ const GeneralTab = () => {
 			updates.agent = {
 				...agentConfig,
 				prompt: { ...promptConfig, llm: undefined },
+			};
+			updates.subagent = {
+				...subagent,
+				llmModel: undefined,
 			};
 		} else if (field === 'eagerness') {
 			updates.turn = { ...turnConfig, turnEagerness: undefined };
@@ -420,17 +424,27 @@ const GeneralTab = () => {
 						placeholder={t('form.workflow.forms.agent.general.llm.placeholder')}
 						data={llmOptions}
 						value={llmModel || null}
-						onChange={(value) =>
-							handleConversationConfigChange({
-								agent: {
-									...(agentConfig as Record<string, unknown>),
-									prompt: {
-										...(promptConfig as Record<string, unknown>),
-										llm: value || undefined,
+						onChange={(value) => {
+							const nextWorkflow = updateWorkflowNode(workflow, nodeId, {
+								conversationConfig: {
+									...(conversationConfig as Record<string, unknown>),
+									agent: {
+										...(agentConfig as Record<string, unknown>),
+										prompt: {
+											...(promptConfig as Record<string, unknown>),
+											llm: value || undefined,
+										},
 									},
 								},
-							})
-						}
+								subagent: {
+									...subagent,
+									llmModel: value || undefined,
+								},
+							} as any);
+							if (nextWorkflow) {
+								onWorkflowChange(nextWorkflow);
+							}
+						}}
 						searchable
 						size='sm'
 						classNames={{
