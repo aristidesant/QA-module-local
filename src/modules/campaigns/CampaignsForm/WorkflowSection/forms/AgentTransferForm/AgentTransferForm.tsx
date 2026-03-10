@@ -18,6 +18,7 @@ import type {
 import type { AgentConfigModel } from '~/models/AgentListObject';
 import { DEFAULT_API_URL } from '~/api/config';
 import { useCampaignId } from '~/modules/campaigns/campaignFormFunctions';
+import { WORKFLOW_DRAWER_COMBOBOX_PROPS } from '../workflowDrawerComboboxProps';
 import WorkflowNodeForm from '../WorkflowNodeForm';
 import { updateWorkflowNode } from '../nodeFormUtils';
 import styles from './AgentTransferForm.module.css';
@@ -110,6 +111,7 @@ const AgentTransferForm = ({
 					label={t('form.workflow.forms.transfer.agentLabel')}
 					placeholder={t('form.workflow.forms.transfer.agentPlaceholder')}
 					data={agentOptions}
+					comboboxProps={WORKFLOW_DRAWER_COMBOBOX_PROPS}
 					value={selectedTransferAgentId}
 					onChange={(value) => handleUpdate({ agentId: value || '' })}
 					searchable

@@ -15,6 +15,7 @@ import type {
 	AgentWorkflow,
 	PhoneNumberTransferNode,
 } from '~/models/AgentWorkflowModel';
+import { WORKFLOW_DRAWER_COMBOBOX_PROPS } from '../workflowDrawerComboboxProps';
 import WorkflowNodeForm from '../WorkflowNodeForm';
 import { updateWorkflowNode } from '../nodeFormUtils';
 import styles from './PhoneNumberForm.module.css';
@@ -218,6 +219,7 @@ const PhoneNumberForm = ({
 				<Select
 					label={t('form.workflow.forms.phone.destType.label')}
 					data={filteredDestTypeOptions}
+					comboboxProps={WORKFLOW_DRAWER_COMBOBOX_PROPS}
 					value={node.transferDestination?.type || 'phone'}
 					onChange={handleDestinationTypeChange}
 					size='sm'

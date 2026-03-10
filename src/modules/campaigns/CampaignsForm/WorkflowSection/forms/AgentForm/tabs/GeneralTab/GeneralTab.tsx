@@ -29,6 +29,7 @@ import {
 	eagernessOptions,
 	spellingPatienceOptions,
 } from '../../hooks';
+import { WORKFLOW_DRAWER_COMBOBOX_PROPS } from '../../../workflowDrawerComboboxProps';
 import mainStyles from '../../AgentForm.module.css';
 
 const GeneralTab = () => {
@@ -373,6 +374,7 @@ const GeneralTab = () => {
 							'form.workflow.forms.agent.general.voice.placeholder'
 						)}
 						data={voiceOptions}
+						comboboxProps={WORKFLOW_DRAWER_COMBOBOX_PROPS}
 						value={voiceId || null}
 						onChange={(value) =>
 							handleConversationConfigChange({
@@ -423,6 +425,7 @@ const GeneralTab = () => {
 					<Select
 						placeholder={t('form.workflow.forms.agent.general.llm.placeholder')}
 						data={llmOptions}
+						comboboxProps={WORKFLOW_DRAWER_COMBOBOX_PROPS}
 						value={llmModel || null}
 						onChange={(value) => {
 							const nextWorkflow = updateWorkflowNode(workflow, nodeId, {
@@ -481,6 +484,7 @@ const GeneralTab = () => {
 							'form.workflow.forms.agent.general.eagerness.placeholder'
 						)}
 						data={eagernessOptions}
+						comboboxProps={WORKFLOW_DRAWER_COMBOBOX_PROPS}
 						value={eagerness || null}
 						onChange={(value) =>
 							handleConversationConfigChange({
@@ -526,6 +530,7 @@ const GeneralTab = () => {
 							'form.workflow.forms.agent.general.spellingPatience.placeholder'
 						)}
 						data={spellingPatienceOptions}
+						comboboxProps={WORKFLOW_DRAWER_COMBOBOX_PROPS}
 						value={spellingPatience || null}
 						onChange={(value) =>
 							handleConversationConfigChange({
