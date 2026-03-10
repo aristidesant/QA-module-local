@@ -267,6 +267,7 @@
 				},
 				"validation": {
 					"nameRequired": "El nombre es obligatorio",
+					"nameNoSpecialChars": "El nombre no puede contener caracteres especiales",
 					"objectiveRequired": "El objetivo es obligatorio",
 					"invalidFieldNamesTitle": "Nombres de campos inválidos",
 					"fieldNameRequired": "Campo {{index}}: El nombre es obligatorio",
