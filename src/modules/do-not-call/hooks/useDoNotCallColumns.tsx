@@ -1,5 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { Button, Text, Badge, Group, Tooltip } from '@mantine/core';
+import { ActionIcon, Text, Badge, Group, Tooltip } from '@mantine/core';
 import {
 	IconTrash,
 	IconEdit,
@@ -140,29 +140,31 @@ export const useDoNotCallColumns = ({
 		{
 			id: 'actions',
 			header: t('table.headers.actions'),
+			meta: {
+				cellClassName: styles.actionsCell,
+			},
 			cell: ({ row }) => {
 				const entry = row.original;
 				return (
-					<Group gap='xs' className={styles.actionsGroup}>
+					<Group gap='xs'>
 						<Tooltip label={t('table.actions.edit')} withArrow>
-							<Button
+							<ActionIcon
 								size='xs'
-								variant='subtle'
+								variant='light'
 								aria-label={t('table.actions.edit')}
 								title={t('table.actions.edit')}
 								onClick={(e) => {
 									e.stopPropagation();
 									onEdit(entry);
 								}}
-								className={styles.actionButton}
 							>
 								<IconEdit size={14} />
-							</Button>
+							</ActionIcon>
 						</Tooltip>
 						<Tooltip label={t('table.actions.delete')} withArrow>
-							<Button
+							<ActionIcon
 								size='xs'
-								variant='subtle'
+								variant='light'
 								color='red'
 								aria-label={t('table.actions.delete')}
 								title={t('table.actions.delete')}
@@ -170,10 +172,9 @@ export const useDoNotCallColumns = ({
 									e.stopPropagation();
 									onDelete(entry);
 								}}
-								className={styles.actionButton}
 							>
 								<IconTrash size={14} />
-							</Button>
+							</ActionIcon>
 						</Tooltip>
 					</Group>
 				);
