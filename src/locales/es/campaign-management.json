@@ -253,7 +253,13 @@
 						"ariaLabel": "Tipo de campo"
 					},
 					"isArray": "Es arreglo",
-					"removeField": "Eliminar campo"
+					"removeField": "Eliminar campo",
+					"matchPatterns": {
+						"toggle": "Patrones de coincidencia",
+						"label": "Patrones de coincidencia",
+						"description": "Lista separada por comas de patrones de nombres de columnas para auto-asignar columnas CSV",
+						"placeholder": "p. ej., monto_deuda, deuda, amount_due, balance"
+					}
 				},
 				"actions": {
 					"create": "Crear",

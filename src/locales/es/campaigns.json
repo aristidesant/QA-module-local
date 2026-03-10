@@ -1315,7 +1315,15 @@
 				"clearSelection": "Limpiar selección",
 				"mappingsCreated": "Se crearon {{count}} asignaciones",
 				"saveMappings": "Guardar asignaciones",
-				"dynamicColumnTooltip": "Columna dinámica"
+				"dynamicColumnTooltip": "Columna dinámica",
+				"autoMatch": {
+					"button": "Auto Asignar",
+					"tooltip": "Asignar automáticamente los campos del sistema a las columnas CSV usando reconocimiento de patrones",
+					"successTitle": "Auto asignación completada",
+					"successMessage": "Se asignaron {{count}} columna(s) exitosamente",
+					"noMatchTitle": "Sin coincidencias",
+					"noMatchMessage": "No se encontraron columnas CSV coincidentes para los campos del sistema restantes"
+				}
 			},
 			"details": {
 				"title": "Detalles de la lista de contactos",
@@ -2133,6 +2141,7 @@
 		"enterNumberOfWaves": "Ingresa el número de oleadas",
 		"asrKeywords": "Palabras clave ASR",
 		"asrKeywordsDesc": "Agrega palabras a las que el motor de reconocimiento de voz debe prestar especial atención.",
+		"asrKeywordsHelp": "Escribe una palabra y presiona Enter para agregarla.",
 		"asrKeywordsPlaceholder": "Escribe una palabra y presiona Enter",
 		"noiseCancellationLabel": "Cancelación de ruido",
 		"noiseCancellationDesc": "Cuando está activado, aplica supresión de ruido y ajuste de detección de actividad de voz en las llamadas salientes.",

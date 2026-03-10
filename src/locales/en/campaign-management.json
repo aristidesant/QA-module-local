@@ -253,7 +253,13 @@
 						"ariaLabel": "Field type"
 					},
 					"isArray": "Is Array",
-					"removeField": "Remove field"
+					"removeField": "Remove field",
+					"matchPatterns": {
+						"toggle": "Match patterns",
+						"label": "Match Patterns",
+						"description": "Comma-separated list of column name patterns for auto-matching CSV columns",
+						"placeholder": "e.g., monto_deuda, deuda, amount_due, balance"
+					}
 				},
 				"actions": {
 					"create": "Create",
