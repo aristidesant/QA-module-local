@@ -1,30 +1,21 @@
 import { useMemo, useState } from 'react';
-import {
-	Button,
-	Modal,
-	Stack,
-	Text,
-	Group,
-	ActionIcon,
-	Tooltip,
-} from '@mantine/core';
+import { Button, Group, Modal, Stack, Text } from '@mantine/core';
 import {
 	IconCalendarTime,
 	IconLock,
 	IconPlus,
 	IconSettings,
-	IconTrash,
 	IconAlertTriangle,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import InlineNotice from '~/components/InlineNotice';
+import SectionCard, { type CardActionsConfig } from '~/components/SectionCard';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import {
 	useCreateClientConfig,
 	useDeleteClientConfig,
 } from '~/queries/useClientConfigs';
-import ContentContainer from '~/components/ContentContainer';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import { usePermissions } from '~/hooks/usePermissions';
@@ -125,12 +116,81 @@ const SchedulerPredefinedParamsPage = () => {
 		setEditorOpen(false);
 	};
 
+	const sectionActions = useMemo<CardActionsConfig | undefined>(() => {
+		if (!hasConfig) {
+			return undefined;
+		}
+
+		const secondary = [] as NonNullable<CardActionsConfig['secondary']>;
+
+		if (canCreateOverride) {
+			secondary.push({
+				kind: 'configure',
+				icon: IconSettings,
+				label: t('actions.createOverride'),
+				color: 'grape',
+				onClick: async () => {
+					if (!data || !canCreateOverride) return;
+					try {
+						await createMutation.mutateAsync({
+							name: data.name,
+							description: data.description,
+							value: data.value,
+							type: data.type,
+						});
+					} catch (e) {
+						console.error('Failed to create override:', e);
+					}
+				},
+				disabled: createMutation.isPending,
+				loading: createMutation.isPending,
+			});
+		}
+
+		if (canDeleteConfig) {
+			secondary.push({
+				kind: 'delete',
+				label: t('actions.deleteOverride'),
+				color: 'red',
+				onClick: () => setDeleteConfigModalOpen(true),
+				disabled: deleteMutation.isPending,
+				loading: deleteMutation.isPending,
+			});
+		}
+
+		const canAddSchedule =
+			canEditConfig || (!isGlobalConfig && canCreateOverride);
+
+		return {
+			primary: canAddSchedule
+				? {
+						kind: 'add',
+						icon: IconPlus,
+						label: t('actions.addSchedule'),
+						onClick: handleAddNew,
+						disabled: !hasConfig || (!canEditConfig && !canCreateOverride),
+					}
+				: undefined,
+			secondary,
+		};
+	}, [
+		canCreateOverride,
+		canDeleteConfig,
+		canEditConfig,
+		createMutation.isPending,
+		data,
+		deleteMutation.isPending,
+		hasConfig,
+		isGlobalConfig,
+		t,
+	]);
+
 	if (!canManageSettings) {
 		return (
-			<ContentContainer
+			<SectionCard
 				title={t('page.title')}
 				description={t('page.description')}
-				titleIcon={<IconCalendarTime size={24} />}
+				icon={IconCalendarTime}
 			>
 				<Stack gap='xs'>
 					<Text size='sm' fw={600}>
@@ -148,76 +208,16 @@ const SchedulerPredefinedParamsPage = () => {
 						{t('noPermission.actions.backToConfigurations')}
 					</Button>
 				</Stack>
-			</ContentContainer>
+			</SectionCard>
 		);
 	}
 
 	return (
-		<ContentContainer
+		<SectionCard
 			title={t('page.title')}
 			description={t('page.descriptionLong')}
-			titleIcon={<IconCalendarTime size={24} />}
-			titleRight={
-				hasConfig ? (
-					<Group gap={'xs'}>
-						{canCreateOverride && (
-							<Tooltip label={t('actions.createOverride')} withArrow>
-								<ActionIcon
-									variant='light'
-									color='grape'
-									aria-label={t('actions.createOverride')}
-									onClick={async () => {
-										if (!data || !canCreateOverride) return;
-										try {
-											await createMutation.mutateAsync({
-												name: data.name,
-												description: data.description,
-												value: data.value,
-												type: data.type,
-											});
-										} catch (e) {
-											console.error('Failed to create override:', e);
-										}
-									}}
-									loading={createMutation.isPending}
-									disabled={createMutation.isPending}
-								>
-									<IconSettings size={16} />
-								</ActionIcon>
-							</Tooltip>
-						)}
-						{canDeleteConfig && (
-							<Tooltip label={t('actions.deleteOverride')} withArrow>
-								<ActionIcon
-									variant='light'
-									color='red'
-									aria-label={t('actions.deleteOverride')}
-									onClick={() => setDeleteConfigModalOpen(true)}
-									loading={deleteMutation.isPending}
-									disabled={deleteMutation.isPending}
-								>
-									<IconTrash size={16} />
-								</ActionIcon>
-							</Tooltip>
-						)}
-						{(canEditConfig || (!isGlobalConfig && canCreateOverride)) && (
-							<Tooltip label={t('actions.addSchedule')} withArrow>
-								<ActionIcon
-									variant='filled'
-									color='blue'
-									aria-label={t('actions.addSchedule')}
-									onClick={handleAddNew}
-									disabled={
-										!hasConfig || (!canEditConfig && !canCreateOverride)
-									}
-								>
-									<IconPlus size={16} />
-								</ActionIcon>
-							</Tooltip>
-						)}
-					</Group>
-				) : undefined
-			}
+			icon={IconCalendarTime}
+			actions={sectionActions}
 		>
 			<Stack gap={'xs'}>
 				{isGlobalConfig && (
@@ -331,7 +331,7 @@ const SchedulerPredefinedParamsPage = () => {
 					</Button>
 				</Group>
 			</Modal>
-		</ContentContainer>
+		</SectionCard>
 	);
 };
 

@@ -1,0 +1,35 @@
+.stickyActions {
+	position: sticky;
+	bottom: var(--mantine-spacing-xs);
+	margin-top: var(--mantine-spacing-md);
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	background: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-lg);
+	box-shadow: var(--mantine-shadow-md);
+	z-index: 10;
+	backdrop-filter: blur(8px);
+}
+
+.stickyActionsGroup {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	min-height: 2.25rem;
+}
+
+@media (max-width: 48em) {
+	.stickyActions {
+		bottom: 0;
+		padding: var(--mantine-spacing-sm);
+	}
+
+	.stickyActionsGroup {
+		justify-content: stretch;
+	}
+
+	.stickyActionsGroup :global(button) {
+		width: 100%;
+	}
+}

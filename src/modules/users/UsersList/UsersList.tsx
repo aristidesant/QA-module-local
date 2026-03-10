@@ -13,7 +13,6 @@ import classes from './UsersList.module.css';
 
 interface UsersListProps {
 	search: string;
-	onView: (userId: number) => void;
 	onEdit: (userId: number) => void;
 	onDelete: (user: UserModel) => void;
 }
@@ -38,12 +37,7 @@ const isUsersSortBy = (value: string): value is UsersSortBy => {
 	return USERS_SORTABLE_FIELDS.includes(value as UsersSortBy);
 };
 
-const UsersList: React.FC<UsersListProps> = ({
-	search,
-	onView,
-	onEdit,
-	onDelete,
-}) => {
+const UsersList: React.FC<UsersListProps> = ({ search, onEdit, onDelete }) => {
 	const { t } = useTranslation('users');
 	const [page, setPage] = useState(1);
 	const [limit, setLimit] = useState(10);
@@ -64,7 +58,7 @@ const UsersList: React.FC<UsersListProps> = ({
 		sortOrder,
 	});
 
-	const columns = useUsersColumns({ onView, onEdit, onDelete });
+	const columns = useUsersColumns({ onEdit, onDelete });
 
 	const filteredUsers = useMemo(() => {
 		return data?.data || [];
@@ -120,8 +114,6 @@ const UsersList: React.FC<UsersListProps> = ({
 			<BaseTable<UserModel>
 				data={filteredUsers}
 				columns={columns}
-				onRowClick={(user) => onView(user.id)}
-				getRowClassName={() => classes.tableRow}
 				filterMode='server'
 				initialSort={[{ id: DEFAULT_USERS_SORT_BY, desc: true }]}
 				onSortingChange={handleSortingChange}

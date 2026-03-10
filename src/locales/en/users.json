@@ -10,6 +10,7 @@
 		"body": "This action cannot be undone. Are you sure you want to delete <strong>{{email}}</strong>?"
 	},
 	"list": {
+		"title": "User List",
 		"errorTitle": "Unable to load users",
 		"unknownError": "Unknown error",
 		"empty": "No users found.",
@@ -21,7 +22,6 @@
 	},
 	"columns": {
 		"name": "Name",
-		"client": "Client",
 		"email": "Email",
 		"role": "Role",
 		"status": "Status",
@@ -31,7 +31,6 @@
 	},
 	"table": {
 		"actions": {
-			"view": "View user",
 			"edit": "Edit user",
 			"delete": "Delete user"
 		},
@@ -39,42 +38,7 @@
 			"usernameLabel": "Username",
 			"emailLabel": "Email",
 			"createdLabel": "Created"
-		},
-		"client": {
-			"idLabel": "ID",
-			"identifierLabel": "Identifier",
-			"emailLabel": "Email"
 		}
-	},
-	"details": {
-		"title": "User details",
-		"loadErrorTitle": "Unable to load user details",
-		"actions": {
-			"close": "Close details"
-		},
-		"sections": {
-			"profile": "Profile",
-			"account": "Account",
-			"security": "Security",
-			"activity": "Activity"
-		},
-		"labels": {
-			"clientName": "Client name",
-			"clientIdentifier": "Client identifier",
-			"clientEmail": "Client email",
-			"clientId": "Client ID",
-			"employeeId": "Employee ID",
-			"mfa": "Multi-factor authentication",
-			"created": "Created",
-			"updated": "Last updated",
-			"deactivated": "Deactivated"
-		},
-		"values": {
-			"enabled": "Enabled",
-			"disabled": "Disabled"
-		},
-		"employeeBadge": "Employee #{{employeeId}}",
-		"updatedDescription": "Updated {{relative}}"
 	},
 	"clientRoles": {
 		"fallbackClientName": "Client #{{id}}",

@@ -5,8 +5,8 @@ import {
 	Modal,
 	NumberInput,
 	Select,
-	Tooltip,
 	Stack,
+	Tooltip,
 } from '@mantine/core';
 import {
 	IconAdjustments,

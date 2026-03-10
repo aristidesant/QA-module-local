@@ -4,6 +4,14 @@
 		"searchPlaceholder": "Buscar por etiqueta...",
 		"filterType": "Filtrar por Tipo",
 		"addPhoneNumber": "Agregar Número",
+		"clearSearch": "Limpiar búsqueda",
+		"clearFilters": "Limpiar filtros",
+		"noActiveFilters": "Sin filtros activos",
+		"activeFilters_one": "{{count}} filtro activo",
+		"activeFilters_other": "{{count}} filtros activos",
+		"totalItems_one": "{{count}} número",
+		"totalItems_other": "{{count}} números",
+		"noDescription": "Sin descripción interna",
 		"deleteModal": {
 			"title": "Eliminar Número de Teléfono",
 			"message": "¿Estás seguro de que deseas eliminar el número <b>{{phoneNumber}}</b>?",
@@ -18,6 +26,25 @@
 	"form": {
 		"createTitle": "Crear Número de Teléfono",
 		"editTitle": "Editar Número de Teléfono",
+		"summary": {
+			"title": "Resumen de configuración",
+			"description": "Revisa la configuración actual antes de guardar este número.",
+			"provider": "Proveedor",
+			"type": "Tipo",
+			"inbound": "Entrante",
+			"outbound": "Saliente",
+			"network": "Configuración de red",
+			"region": "Región lista",
+			"creating": "Nuevo número",
+			"editing": "Editando"
+		},
+		"status": {
+			"enabled": "Habilitado",
+			"disabled": "Deshabilitado",
+			"configured": "Configurado",
+			"notConfigured": "No configurado",
+			"pending": "Pendiente"
+		},
 		"sections": {
 			"core": {
 				"title": "Detalles principales",

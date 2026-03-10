@@ -26,6 +26,7 @@ export const RightSectionCard: React.FC<RightSectionCardProps> = ({
 	rightSection,
 	headerActions,
 	onAdd,
+	onDelete,
 	onEdit,
 	onChange,
 	onView,
@@ -44,6 +45,7 @@ export const RightSectionCard: React.FC<RightSectionCardProps> = ({
 		Boolean(headerExtras) ||
 		Boolean(actions) ||
 		Boolean(onAdd) ||
+		Boolean(onDelete) ||
 		Boolean(onEdit) ||
 		Boolean(onChange) ||
 		Boolean(onView) ||
@@ -82,6 +84,7 @@ export const RightSectionCard: React.FC<RightSectionCardProps> = ({
 							headerExtras={headerExtras}
 							headerActions={headerActions}
 							onAdd={onAdd}
+							onDelete={onDelete}
 							onEdit={onEdit}
 							onChange={onChange}
 							onView={onView}

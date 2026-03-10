@@ -1,19 +1,10 @@
 import type { ReactNode } from 'react';
-import {
-	ActionIcon,
-	Alert,
-	Badge,
-	Skeleton,
-	Stack,
-	Text,
-	Tooltip,
-} from '@mantine/core';
+import { Alert, Badge, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import {
 	IconInfoCircle,
 	IconKey,
 	IconShield,
 	IconTimeline,
-	IconX,
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +12,6 @@ import RightSectionCard from '~/components/RightSectionCard/RightSectionCard';
 import classes from './RoleDetails.module.css';
 import { useGetRole } from '~/queries/roleQueries';
 import { timeAgo } from '~/utils/dateUtils';
-import useRolesPageStore from '../store/useRolesPageStore';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 
 interface RoleDetailsProps {
@@ -59,9 +49,6 @@ const formatModuleName = (module: string): string => {
 const RoleDetails: React.FC<RoleDetailsProps> = ({ roleId }) => {
 	const { t } = useTranslation('roles');
 	const { data: role, isLoading, isError, error } = useGetRole(roleId);
-	const clearRightComponent = useRolesPageStore(
-		(state) => state.clearRightComponent
-	);
 
 	const getModuleLabel = (moduleKey: string) =>
 		t(`form.permissions.moduleNames.${moduleKey}`, {
@@ -80,17 +67,6 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleId }) => {
 					title={t('details.cards.roleTitle')}
 					icon={IconShield}
 					iconColor='var(--mantine-color-grape-6)'
-					rightSection={
-						<ActionIcon
-							variant='subtle'
-							color='gray'
-							aria-label={t('details.closeAriaLabel')}
-							onClick={clearRightComponent}
-							size='sm'
-						>
-							<IconX size={14} />
-						</ActionIcon>
-					}
 				>
 					<div className={classes.identity}>
 						<Skeleton height={24} width='60%' />
@@ -136,17 +112,6 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleId }) => {
 				icon={IconShield}
 				iconColor='var(--mantine-color-grape-6)'
 				style={{ height: '100%' }}
-				rightSection={
-					<ActionIcon
-						variant='subtle'
-						color='gray'
-						aria-label={t('details.closeAriaLabel')}
-						onClick={clearRightComponent}
-						size='sm'
-					>
-						<IconX size={14} />
-					</ActionIcon>
-				}
 			>
 				<Alert
 					icon={<IconInfoCircle size={18} />}
@@ -222,17 +187,6 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleId }) => {
 				icon={IconShield}
 				iconColor='var(--mantine-color-grape-6)'
 				description={updatedDescription}
-				rightSection={
-					<ActionIcon
-						variant='subtle'
-						color='gray'
-						aria-label={t('details.closeAriaLabel')}
-						onClick={clearRightComponent}
-						size='sm'
-					>
-						<IconX size={14} />
-					</ActionIcon>
-				}
 			>
 				<div className={classes.identity}>
 					<Text className={classes.name}>{role.name}</Text>

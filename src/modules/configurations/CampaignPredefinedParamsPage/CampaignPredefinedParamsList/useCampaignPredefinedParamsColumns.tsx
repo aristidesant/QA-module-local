@@ -31,7 +31,7 @@ const useCampaignPredefinedParamsColumns = ({
 			header: t('list.columns.actions'),
 			cell: ({ row }) => (
 				<ActionIcon
-					variant='subtle'
+					variant='light'
 					color='red'
 					aria-label={t('list.actions.deleteAria')}
 					onClick={(e) => {
@@ -39,6 +39,7 @@ const useCampaignPredefinedParamsColumns = ({
 						onDelete?.(row.original);
 					}}
 					size='sm'
+					radius='md'
 					disabled={!onDelete}
 				>
 					<IconTrash size={14} />
