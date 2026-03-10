@@ -22,7 +22,9 @@ import {
 	IconLetterDSmall,
 	IconRefresh,
 	IconX,
+	IconWand,
 } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
 import styles from './ContactHeaderMapping.module.css';
 import { modals } from '@mantine/modals';
 import type { MappedResult } from '~/models/ContactFileSummary';
@@ -39,6 +41,7 @@ interface SystemColumn {
 	isArray: boolean;
 	isDynamic?: boolean;
 	required?: boolean;
+	matchPatterns?: string[];
 }
 
 interface ContactHeaderMappingProps {
@@ -256,8 +259,29 @@ export function ContactHeaderMapping({
 				}
 			);
 			setMappings(initialMappings);
+
+			// For isArray fields that already have mappings, mark them as finalized
+			// so they don't re-appear in the system fields list when the modal reopens
+			const mappedSystemFieldNames = new Set(
+				Object.keys(result).filter((key) => {
+					const value = result[key];
+					if (Array.isArray(value)) return value.length > 0;
+					return !!value;
+				})
+			);
+
+			setFinalizedSystemFields((prev) => {
+				const next = new Set(prev);
+				for (const fieldName of mappedSystemFieldNames) {
+					const column = systemColumns.find((c) => c.name === fieldName);
+					if (column?.isArray) {
+						next.add(fieldName);
+					}
+				}
+				return next;
+			});
 		}
-	}, [result]);
+	}, [result, systemColumns]);
 
 	// Restore selected schema fields when selectedSchemaId is provided
 	useEffect(() => {
@@ -378,6 +402,129 @@ export function ContactHeaderMapping({
 		getMappedResult,
 	]);
 
+	// Auto-match system columns to CSV columns using matchPatterns + fuzzy regex
+	const handleAutoMatch = useCallback(() => {
+		const currentMappedSystemFields = new Set(
+			mappings.map((m) => m.systemField)
+		);
+		const currentMappedDocFields = new Set(
+			mappings.map((m) => m.documentField)
+		);
+		const currentFinalizedFields = new Set(finalizedSystemFields);
+
+		// Columns eligible for auto-match: not yet mapped (or isArray and not finalized)
+		const unmappedColumns = systemColumns.filter((col) => {
+			if (currentFinalizedFields.has(col.name)) return false;
+			return col.isArray ? true : !currentMappedSystemFields.has(col.name);
+		});
+
+		const newMappings: FieldMapping[] = [];
+		const newFinalizedArrayFields: string[] = [];
+
+		/**
+		 * Normalize a string for comparison:
+		 * lowercase, trim, collapse whitespace, strip accents
+		 */
+		const normalize = (s: string) =>
+			s
+				.toLowerCase()
+				.trim()
+				.normalize('NFD')
+				.replace(/[\u0300-\u036f]/g, '')
+				.replace(/[\s_-]+/g, '');
+
+		for (const col of unmappedColumns) {
+			const patterns = col.matchPatterns ?? [];
+			const normalizedPatterns = patterns.map(normalize);
+
+			// Build a regex from the system field name + label for fuzzy fallback
+			const nameParts = [col.name, col.label].filter(Boolean);
+			const fuzzyRegex = new RegExp(
+				nameParts.map((p) => normalize(p)).join('|'),
+				'i'
+			);
+
+			// Get available CSV columns (not already mapped by previous iterations or existing mappings)
+			const availableCsvCols = documentColumns.filter(
+				(dc) => !currentMappedDocFields.has(dc)
+			);
+
+			const matched: string[] = [];
+
+			for (const csvCol of availableCsvCols) {
+				const normalizedCsv = normalize(csvCol);
+
+				// 1. Exact match against matchPatterns
+				const patternMatch = normalizedPatterns.some(
+					(p) =>
+						normalizedCsv === p ||
+						normalizedCsv.includes(p) ||
+						p.includes(normalizedCsv)
+				);
+
+				// 2. Fuzzy regex match against field name/label
+				const regexMatch = fuzzyRegex.test(normalizedCsv);
+
+				if (patternMatch || regexMatch) {
+					matched.push(csvCol);
+					if (!col.isArray) break; // For non-array fields, take first match
+				}
+			}
+
+			for (const csvCol of matched) {
+				newMappings.push({ systemField: col.name, documentField: csvCol });
+				currentMappedDocFields.add(csvCol);
+			}
+
+			if (matched.length > 0) {
+				currentMappedSystemFields.add(col.name);
+				if (col.isArray) {
+					newFinalizedArrayFields.push(col.name);
+				}
+			}
+		}
+
+		if (newMappings.length === 0) {
+			notifications.show({
+				title: t('form.contacts.headerMapping.autoMatch.noMatchTitle'),
+				message: t('form.contacts.headerMapping.autoMatch.noMatchMessage'),
+				color: 'yellow',
+			});
+			return;
+		}
+
+		const updatedMappings = [...mappings, ...newMappings];
+		setMappings(updatedMappings);
+
+		if (newFinalizedArrayFields.length > 0) {
+			setFinalizedSystemFields((prev) => {
+				const next = new Set(prev);
+				newFinalizedArrayFields.forEach((f) => next.add(f));
+				return next;
+			});
+		}
+
+		onMappingChange(getMappedResult(updatedMappings));
+		setSelectedSystemField(null);
+		setSelectedDocumentField(null);
+
+		notifications.show({
+			title: t('form.contacts.headerMapping.autoMatch.successTitle'),
+			message: t('form.contacts.headerMapping.autoMatch.successMessage', {
+				count: newMappings.length,
+			}),
+			color: 'green',
+		});
+	}, [
+		mappings,
+		finalizedSystemFields,
+		systemColumns,
+		documentColumns,
+		onMappingChange,
+		getMappedResult,
+		t,
+	]);
+
 	// Handle removing a mapping
 	const handleRemoveMapping = (mappingToRemove: FieldMapping) => {
 		const updatedMappings = mappings.filter(
@@ -387,6 +534,19 @@ export function ContactHeaderMapping({
 		);
 		setMappings(updatedMappings);
 		onMappingChange(getMappedResult(updatedMappings));
+
+		// If this was the last mapping for an array field, un-finalize it
+		// so it reappears in the system fields list for re-mapping
+		const remainingForField = updatedMappings.filter(
+			(m) => m.systemField === mappingToRemove.systemField
+		);
+		if (remainingForField.length === 0) {
+			setFinalizedSystemFields((prev) => {
+				const next = new Set(prev);
+				next.delete(mappingToRemove.systemField);
+				return next;
+			});
+		}
 	};
 
 	// Helper functions for UI
@@ -461,6 +621,16 @@ export function ContactHeaderMapping({
 						</Text>
 					</div>
 					<Group gap='xs'>
+						<Tooltip label={t('form.contacts.headerMapping.autoMatch.tooltip')}>
+							<Button
+								variant='light'
+								size='compact-xs'
+								leftSection={<IconWand size={13} />}
+								onClick={handleAutoMatch}
+							>
+								{t('form.contacts.headerMapping.autoMatch.button')}
+							</Button>
+						</Tooltip>
 						<Badge size='xs' variant='light' color='blue'>
 							{t('form.contacts.headerMapping.mappedBadge', {
 								count: mappings.length,
