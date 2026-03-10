@@ -1314,7 +1314,15 @@
 				"clearSelection": "Clear selection",
 				"mappingsCreated": "Created {{count}} mappings",
 				"saveMappings": "Save mappings",
-				"dynamicColumnTooltip": "Dynamic column"
+				"dynamicColumnTooltip": "Dynamic column",
+				"autoMatch": {
+					"button": "Auto Match",
+					"tooltip": "Automatically match system fields to CSV columns using pattern recognition",
+					"successTitle": "Auto Match Complete",
+					"successMessage": "Successfully matched {{count}} column(s)",
+					"noMatchTitle": "No Matches Found",
+					"noMatchMessage": "Could not find any matching CSV columns for the remaining system fields"
+				}
 			},
 			"details": {
 				"title": "Contact List Details",

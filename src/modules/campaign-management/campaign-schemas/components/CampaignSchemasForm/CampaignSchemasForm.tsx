@@ -11,6 +11,7 @@ import {
 	Checkbox,
 	Modal,
 	Collapse,
+	Tooltip,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -19,6 +20,7 @@ import {
 	IconTrash,
 	IconAlertCircle,
 	IconChevronRight,
+	IconTags,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -55,6 +57,49 @@ interface SchemaField {
 		| 'phone'
 		| 'address';
 	isArray: boolean;
+	matchPatterns?: string[];
+}
+
+/**
+ * Isolated textarea for match patterns.
+ * Keeps its own local state so keystrokes never re-render the parent form.
+ */
+function MatchPatternsTextarea({
+	initialValue,
+	onCommit,
+	label,
+	description,
+	placeholder,
+}: {
+	initialValue: string[];
+	onCommit: (patterns: string[] | undefined) => void;
+	label: string;
+	description: string;
+	placeholder: string;
+}) {
+	const [raw, setRaw] = useState(() =>
+		initialValue.length > 0 ? initialValue.join(', ') : ''
+	);
+
+	return (
+		<Textarea
+			mt='xs'
+			label={label}
+			description={description}
+			placeholder={placeholder}
+			rows={2}
+			value={raw}
+			onChange={(e) => setRaw(e.currentTarget.value)}
+			onBlur={() => {
+				const patterns = raw
+					.split(',')
+					.map((p) => p.trim())
+					.filter((p) => p !== '');
+				onCommit(patterns.length > 0 ? patterns : undefined);
+				setRaw(patterns.length > 0 ? patterns.join(', ') : '');
+			}}
+		/>
+	);
 }
 
 // Helper function to generate code from name
@@ -99,7 +144,13 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 	}>(null);
 
 	const [schemaFields, setSchemaFields] = useState<SchemaField[]>(
-		schema?.schemaFields || [
+		schema?.schemaFields?.map((f) => ({
+			name: f.name,
+			label: f.label,
+			type: f.type,
+			isArray: f.isArray,
+			matchPatterns: f.matchPatterns,
+		})) || [
 			{
 				name: '',
 				label: '',
@@ -108,6 +159,22 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 			},
 		]
 	);
+
+	// Track which field indexes have the match patterns panel expanded
+	const [expandedPatterns, setExpandedPatterns] = useState<Set<number>>(() => {
+		// Auto-expand fields that already have matchPatterns
+		const initial = new Set<number>();
+		schema?.schemaFields?.forEach((f, i) => {
+			if (
+				f.matchPatterns &&
+				f.matchPatterns.length > 0 &&
+				f.matchPatterns.some((p) => p !== '')
+			) {
+				initial.add(i);
+			}
+		});
+		return initial;
+	});
 
 	const fieldTypeOptions = [
 		{ value: 'string', label: t('setup.schemas.form.fieldTypes.text') },
@@ -322,6 +389,15 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 	const removeField = (index: number) => {
 		if (schemaFields.length > 1) {
 			setSchemaFields(schemaFields.filter((_, i) => i !== index));
+			// Re-index expanded patterns after removal
+			setExpandedPatterns((prev) => {
+				const next = new Set<number>();
+				for (const i of prev) {
+					if (i < index) next.add(i);
+					else if (i > index) next.add(i - 1);
+				}
+				return next;
+			});
 		}
 	};
 
@@ -470,19 +546,67 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 											}
 										/>
 									</div>
+									<div className={styles.actionButtonWrapper}>
+										<Tooltip
+											label={t(
+												'setup.schemas.form.fields.matchPatterns.toggle'
+											)}
+										>
+											<ActionIcon
+												variant={
+													expandedPatterns.has(index) ? 'filled' : 'light'
+												}
+												color='violet'
+												size='sm'
+												aria-label={t(
+													'setup.schemas.form.fields.matchPatterns.toggle'
+												)}
+												onClick={() => {
+													setExpandedPatterns((prev) => {
+														const next = new Set(prev);
+														if (next.has(index)) {
+															next.delete(index);
+														} else {
+															next.add(index);
+														}
+														return next;
+													});
+												}}
+											>
+												<IconTags size={14} />
+											</ActionIcon>
+										</Tooltip>
+									</div>
 									{schemaFields.length > 1 && (
-										<div className={styles.deleteButtonWrapper}>
+										<div className={styles.actionButtonWrapper}>
 											<ActionIcon
 												color='red'
 												variant='subtle'
+												size='sm'
 												aria-label={t('setup.schemas.form.fields.removeField')}
 												onClick={() => removeField(index)}
 											>
-												<IconTrash size={16} />
+												<IconTrash size={14} />
 											</ActionIcon>
 										</div>
 									)}
 								</Group>
+								<Collapse in={expandedPatterns.has(index)}>
+									<MatchPatternsTextarea
+										key={`patterns-${index}`}
+										initialValue={field.matchPatterns ?? []}
+										onCommit={(patterns) =>
+											updateField(index, { matchPatterns: patterns })
+										}
+										label={t('setup.schemas.form.fields.matchPatterns.label')}
+										description={t(
+											'setup.schemas.form.fields.matchPatterns.description'
+										)}
+										placeholder={t(
+											'setup.schemas.form.fields.matchPatterns.placeholder'
+										)}
+									/>
+								</Collapse>
 							</div>
 						))}
 					</Stack>

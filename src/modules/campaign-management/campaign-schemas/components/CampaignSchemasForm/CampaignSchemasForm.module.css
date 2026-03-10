@@ -44,6 +44,13 @@
 	/* Align with input fields that have labels */
 }
 
+.actionButtonWrapper {
+	display: flex;
+	align-items: center;
+	align-self: stretch;
+	padding-top: 0.8rem;
+}
+
 .fieldDescription {
 	margin-top: var(--mantine-spacing-xs);
 	font-size: var(--mantine-font-size-xs);
