@@ -12,6 +12,13 @@ import knowledgeBaseApi, {
 } from '~/api/knowledgeBaseApi';
 import type KnowledgeBaseModel from '~/models/KnowledgeBaseModel';
 
+const invalidateKnowledgeBaseLists = (
+	queryClient: ReturnType<typeof useQueryClient>
+) => {
+	queryClient.invalidateQueries({ queryKey: ['knowledgeBases'] });
+	queryClient.invalidateQueries({ queryKey: ['knowledgeBasesPaginated'] });
+};
+
 export const useCreateKnowledgeBase = () => {
 	const queryClient = useQueryClient();
 	return useMutation({
@@ -20,8 +27,7 @@ export const useCreateKnowledgeBase = () => {
 			return api.createKnowledgeBase(data);
 		},
 		onSuccess: (data) => {
-			// Invalidate any lists of knowledge bases so they refresh
-			queryClient.invalidateQueries({ queryKey: ['knowledgeBases'] });
+			invalidateKnowledgeBaseLists(queryClient);
 			// eslint-disable-next-line no-console
 			console.log('Knowledge base created successfully:', data);
 		},
@@ -104,8 +110,7 @@ export const useUpdateKnowledgeBase = () => {
 			return api.updateKnowledgeBase(id, data);
 		},
 		onSuccess: (updated: KnowledgeBaseModel) => {
-			// Refresh lists and the specific KB
-			queryClient.invalidateQueries({ queryKey: ['knowledgeBases'] });
+			invalidateKnowledgeBaseLists(queryClient);
 			queryClient.invalidateQueries({
 				queryKey: ['knowledgeBase', updated.id],
 			});
@@ -121,8 +126,7 @@ export const useDeleteKnowledgeBase = () => {
 			return api.deleteKnowledgeBase(id);
 		},
 		onSuccess: (_data, id) => {
-			// Invalidate lists and remove the specific KB from cache
-			queryClient.invalidateQueries({ queryKey: ['knowledgeBases'] });
+			invalidateKnowledgeBaseLists(queryClient);
 			queryClient.removeQueries({ queryKey: ['knowledgeBase', id] });
 		},
 	});
@@ -136,8 +140,7 @@ export const useRetryKnowledgeBase = () => {
 			return api.retryKnowledgeBase(id);
 		},
 		onSuccess: (_data, id) => {
-			// Refresh KB list and the specific KB
-			queryClient.invalidateQueries({ queryKey: ['knowledgeBases'] });
+			invalidateKnowledgeBaseLists(queryClient);
 			queryClient.invalidateQueries({ queryKey: ['knowledgeBase', id] });
 		},
 	});

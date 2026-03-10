@@ -1,40 +1,60 @@
 .form {
 	display: flex;
 	flex-direction: column;
-	gap: var(--mantine-spacing-md);
-	margin-top: var(--mantine-spacing-xs);
+	gap: 14px;
+	max-width: 100%;
+}
+
+.statusRow {
+	display: flex;
+	justify-content: flex-end;
+	margin-bottom: -2px;
 }
 
 .section {
 	display: flex;
 	flex-direction: column;
-	gap: var(--mantine-spacing-sm);
+	gap: 12px;
+}
+
+.sectionCard {
+	border-color: var(--mantine-color-gray-2);
+	background: var(--mantine-color-white);
+	box-shadow: var(--mantine-shadow-xs);
 }
 
 .sectionHeader {
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;
-	gap: var(--mantine-spacing-sm);
+	gap: 10px;
 }
 
 .sectionTitle {
-	font-size: 12px;
+	font-size: 13px;
 	font-weight: 700;
-	text-transform: uppercase;
-	letter-spacing: 0.02em;
-	color: var(--mantine-color-gray-7);
+	line-height: 1.3;
+	color: var(--mantine-color-gray-8);
 }
 
-.hint {
-	border: 1px solid var(--mantine-color-gray-3);
-	background-color: var(--mantine-color-gray-0);
-	border-radius: 10px;
-	padding: var(--mantine-spacing-sm);
+.sectionDescription {
+	font-size: 12px;
+	line-height: 1.5;
+	color: var(--mantine-color-gray-6);
+}
+
+.fieldGrid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 12px;
+}
+
+.descriptionField {
+	min-height: 0;
 }
 
 .divider {
-	margin: var(--mantine-spacing-xs) 0;
+	margin: 0;
 }
 
 .metaCard {
@@ -43,8 +63,9 @@
 	justify-content: space-between;
 	gap: var(--mantine-spacing-sm);
 	border: 1px dashed var(--mantine-color-gray-4);
-	border-radius: 10px;
-	padding: var(--mantine-spacing-sm);
+	border-radius: 12px;
+	padding: 10px 12px;
+	background: var(--mantine-color-gray-0);
 }
 
 .metaLabel {
@@ -59,12 +80,16 @@
 	color: var(--mantine-color-gray-8);
 }
 
+.fileMeta {
+	line-height: 1.4;
+}
+
 .actions {
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
 	gap: var(--mantine-spacing-sm);
-	margin-top: var(--mantine-spacing-sm);
+	padding-top: var(--mantine-spacing-xs);
 }
 
 .alert {
@@ -73,4 +98,16 @@
 
 .fullWidth {
 	width: 100%;
+}
+
+@media (max-width: 48em) {
+	.actions,
+	.sectionHeader,
+	.metaCard {
+		flex-direction: column;
+	}
+
+	.statusRow {
+		justify-content: flex-start;
+	}
 }

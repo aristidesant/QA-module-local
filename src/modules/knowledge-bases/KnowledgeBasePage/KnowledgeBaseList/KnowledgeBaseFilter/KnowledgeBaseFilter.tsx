@@ -1,6 +1,6 @@
 import React from 'react';
-import { TextInput, Select, Group, Text, Button } from '@mantine/core';
-import { IconSearch, IconRefresh } from '@tabler/icons-react';
+import { TextInput, Select, Group, Text } from '@mantine/core';
+import { IconSearch } from '@tabler/icons-react';
 import FilterContainer from '~/components/FilterContainer/FilterContainer';
 import {
 	KnowledgeBaseStatus,
@@ -18,7 +18,6 @@ interface FilterProps {
 	setTypeFilter: (value: string | null) => void;
 	total: number;
 	count: number;
-	refetch: () => void;
 }
 
 const KnowledgeBaseFilter: React.FC<FilterProps> = ({
@@ -30,7 +29,6 @@ const KnowledgeBaseFilter: React.FC<FilterProps> = ({
 	setTypeFilter,
 	total,
 	count,
-	refetch,
 }) => {
 	const { t } = useTranslation('knowledge-bases');
 
@@ -82,15 +80,6 @@ const KnowledgeBaseFilter: React.FC<FilterProps> = ({
 				<Text size='sm' className={classes.resultsCounter}>
 					{t('filter.results', { count, total })}
 				</Text>
-				<Button
-					onClick={() => refetch()}
-					variant='subtle'
-					size='sm'
-					leftSection={<IconRefresh size={16} />}
-					className={classes.refreshButton}
-				>
-					{t('filter.actions.refresh')}
-				</Button>
 			</Group>
 		</FilterContainer>
 	);

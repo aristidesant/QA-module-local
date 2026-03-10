@@ -1,34 +1,38 @@
-import { create, type StateCreator } from 'zustand';
-import type { ReactNode } from 'react';
+import { create } from 'zustand';
 
-export interface KnowledgeBaseItem {
-  id: string;
-  name: string;
-  description?: string;
-}
-
-type RightComponent = ReactNode | null;
+type KnowledgeBaseDrawerMode = 'create' | 'edit';
 
 interface KnowledgeBaseState {
-  items: KnowledgeBaseItem[];
-  selectedId?: string | null;
-  rightComponent: RightComponent;
-  addItem: (item: KnowledgeBaseItem) => void;
-  selectItem: (id?: string | null) => void;
-  setRightComponent: (c: RightComponent) => void;
-  clearRightComponent: () => void;
+	opened: boolean;
+	mode: KnowledgeBaseDrawerMode;
+	selectedId: number | null;
+	openCreate: () => void;
+	openEdit: (id: number) => void;
+	closeDrawer: () => void;
 }
-const storeCreator: StateCreator<KnowledgeBaseState> = (set) => ({
-  items: [],
-  selectedId: null,
-  rightComponent: null,
-  addItem: (item: KnowledgeBaseItem) =>
-    set((s: KnowledgeBaseState) => ({ items: [item, ...s.items], selectedId: item.id })),
-  selectItem: (id?: string | null) => set(() => ({ selectedId: id ?? null })),
-  setRightComponent: (c: RightComponent) => set(() => ({ rightComponent: c })),
-  clearRightComponent: () => set(() => ({ rightComponent: null })),
-});
 
-export const useKnowledgeBaseStore = create<KnowledgeBaseState>(storeCreator);
+export const useKnowledgeBaseStore = create<KnowledgeBaseState>((set) => ({
+	opened: false,
+	mode: 'create',
+	selectedId: null,
+	openCreate: () =>
+		set({
+			opened: true,
+			mode: 'create',
+			selectedId: null,
+		}),
+	openEdit: (id) =>
+		set({
+			opened: true,
+			mode: 'edit',
+			selectedId: id,
+		}),
+	closeDrawer: () =>
+		set({
+			opened: false,
+			mode: 'create',
+			selectedId: null,
+		}),
+}));
 
 export default useKnowledgeBaseStore;

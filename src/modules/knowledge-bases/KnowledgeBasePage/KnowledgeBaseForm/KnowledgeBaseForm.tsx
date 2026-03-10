@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import {
+	Paper,
 	TextInput,
 	Textarea,
 	Button,
@@ -17,7 +18,6 @@ import {
 	IconFile,
 	IconUpload,
 	IconWorldWww,
-	IconBook,
 	IconInfoCircle,
 	IconFileText,
 } from '@tabler/icons-react';
@@ -28,7 +28,6 @@ import {
 } from '~/queries/knowledgeBaseQueries';
 import { KnowledgeBaseType } from '~/models/KnowledgeBaseModel';
 import useKnowledgeBaseStore from '../store/knowledgeBaseStore';
-import RightSectionCard from '~/components/RightSectionCard/RightSectionCard';
 import { isValidUrl, normalizeUrl, inferType } from '../../utils';
 import styles from './KnowledgeBaseForm.module.css';
 import { usePermissions } from '~/hooks/usePermissions';
@@ -51,7 +50,7 @@ type FormValues = {
 };
 
 const KnowledgeBaseForm = ({ id }: Props = {}) => {
-	const clearRight = useKnowledgeBaseStore((s) => s.clearRightComponent);
+	const closeDrawer = useKnowledgeBaseStore((s) => s.closeDrawer);
 	const { t } = useTranslation('knowledge-bases');
 	const { canPerformAction } = usePermissions();
 	const createMutation = useCreateKnowledgeBase();
@@ -210,7 +209,7 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 			} else {
 				await createMutation.mutateAsync(payload);
 			}
-			clearRight();
+			closeDrawer();
 		} catch (err) {
 			// Errors handled via mutation state and alert
 		}
@@ -290,91 +289,86 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 	);
 
 	return (
-		<RightSectionCard
-			title={t('form.title')}
-			description={t('form.description')}
-			icon={IconBook}
-			rightSection={
-				<Badge color={headerStatus.color} size='sm'>
+		<form className={styles.form} onSubmit={handleSubmit}>
+			<div className={styles.statusRow}>
+				<Badge color={headerStatus.color} size='sm' variant='light'>
 					{headerStatus.label}
 				</Badge>
-			}
-		>
-			<form className={styles.form} onSubmit={handleSubmit}>
-				{mutationError && (
-					<Alert
-						color='red'
-						icon={<IconInfoCircle size={16} />}
-						className={styles.alert}
-					>
-						{mutationError}
-					</Alert>
-				)}
-				{isReadOnly && (
-					<Alert
-						color='gray'
-						icon={<IconInfoCircle size={16} />}
-						className={styles.alert}
-					>
-						{t('form.alerts.readOnly')}
-					</Alert>
-				)}
+			</div>
+			{mutationError && (
+				<Alert
+					color='red'
+					icon={<IconInfoCircle size={16} />}
+					className={styles.alert}
+				>
+					{mutationError}
+				</Alert>
+			)}
+			{isReadOnly && (
+				<Alert
+					color='gray'
+					icon={<IconInfoCircle size={16} />}
+					className={styles.alert}
+				>
+					{t('form.alerts.readOnly')}
+				</Alert>
+			)}
 
-				<Stack gap='xs' className={styles.section}>
+			<Paper withBorder radius='md' p='md' className={styles.sectionCard}>
+				<Stack gap='sm' className={styles.section}>
 					<div className={styles.sectionHeader}>
 						<Text className={styles.sectionTitle}>
 							{t('form.sections.basics.title')}
 						</Text>
-						<Text size='xs' c='dimmed'>
-							{t('form.sections.basics.description')}
-						</Text>
 					</div>
-					<TextInput
-						label={t('form.fields.name.label')}
-						placeholder={t('form.fields.name.placeholder')}
-						required
-						disabled={isLoading || isReadOnly}
-						withAsterisk
-						{...form.getInputProps('name')}
-						size='sm'
-					/>
-					<Textarea
-						label={t('form.fields.description.label')}
-						placeholder={t('form.fields.description.placeholder')}
-						autosize
-						minRows={3}
-						disabled={isLoading || isReadOnly}
-						{...form.getInputProps('description')}
-						size='sm'
-					/>
+					<Text className={styles.sectionDescription}>
+						{t('form.sections.basics.description')}
+					</Text>
+					<div className={styles.fieldGrid}>
+						<TextInput
+							label={t('form.fields.name.label')}
+							placeholder={t('form.fields.name.placeholder')}
+							required
+							disabled={isLoading || isReadOnly}
+							withAsterisk
+							{...form.getInputProps('name')}
+							size='sm'
+						/>
+						<Textarea
+							className={styles.descriptionField}
+							label={t('form.fields.description.label')}
+							placeholder={t('form.fields.description.placeholder')}
+							autosize
+							minRows={3}
+							disabled={isLoading || isReadOnly}
+							{...form.getInputProps('description')}
+							size='sm'
+						/>
+					</div>
 				</Stack>
+			</Paper>
 
-				<Divider
-					label={t('form.sections.content.divider')}
-					labelPosition='left'
-					className={styles.divider}
-				/>
+			<Paper withBorder radius='md' p='md' className={styles.sectionCard}>
+				<Stack gap='sm' className={styles.section}>
+					<div className={styles.sectionHeader}>
+						<Text className={styles.sectionTitle}>
+							{t('form.sections.content.divider')}
+						</Text>
+						{typeIndicator && (
+							<Badge
+								size='sm'
+								variant='light'
+								color={typeIndicator.color}
+								leftSection={<span>{typeIndicator.icon}</span>}
+							>
+								{typeIndicator.label}
+							</Badge>
+						)}
+					</div>
+					<Text className={styles.sectionDescription}>
+						{t('form.sections.content.hint')}
+					</Text>
 
-				<Stack gap='xs' className={styles.section}>
-					<Box className={styles.hint}>
-						<Group gap='xs' align='center'>
-							<Text size='xs' c='dimmed'>
-								{t('form.sections.content.hint')}
-							</Text>
-							{typeIndicator && (
-								<Badge
-									size='sm'
-									variant='light'
-									color={typeIndicator.color}
-									leftSection={<span>{typeIndicator.icon}</span>}
-								>
-									{typeIndicator.label}
-								</Badge>
-							)}
-						</Group>
-					</Box>
-
-					{/* Content textarea: URL or Text */}
 					<Textarea
 						label={t('form.fields.content.label')}
 						placeholder={t('form.fields.content.placeholder')}
@@ -399,7 +393,6 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 						size='sm'
 					/>
 
-					{/* File input: mutually exclusive with content */}
 					{!isEditMode && (
 						<Box>
 							<FileInput
@@ -421,7 +414,7 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 								size='sm'
 							/>
 							{form.values.file && (
-								<Text size='sm' mt='xs' c='dimmed'>
+								<Text size='sm' mt='xs' c='dimmed' className={styles.fileMeta}>
 									{t('form.fileMeta.selected', {
 										name: form.values.file.name,
 									})}
@@ -430,7 +423,6 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 						</Box>
 					)}
 
-					{/* Show existing file in edit mode */}
 					{isEditMode && kb?.type === KnowledgeBaseType.FILE && (
 						<Box className={styles.metaCard}>
 							<Text className={styles.metaLabel}>
@@ -442,29 +434,31 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 						</Box>
 					)}
 				</Stack>
+			</Paper>
 
-				<Group justify='flex-end' className={styles.actions} gap='xs'>
+			<Divider className={styles.divider} />
+
+			<Group justify='flex-end' className={styles.actions} gap='xs'>
+				<Button
+					variant='default'
+					onClick={closeDrawer}
+					disabled={isSaving}
+					size='sm'
+				>
+					{t('form.actions.cancel')}
+				</Button>
+				{!isReadOnly && (
 					<Button
-						variant='default'
-						onClick={() => clearRight()}
-						disabled={isSaving}
+						type='submit'
+						loading={isSaving}
+						disabled={!form.isValid() || isLoading}
 						size='sm'
 					>
-						{t('form.actions.cancel')}
+						{t('form.actions.save')}
 					</Button>
-					{!isReadOnly && (
-						<Button
-							type='submit'
-							loading={isSaving}
-							disabled={!form.isValid() || isLoading}
-							size='sm'
-						>
-							{t('form.actions.save')}
-						</Button>
-					)}
-				</Group>
-			</form>
-		</RightSectionCard>
+				)}
+			</Group>
+		</form>
 	);
 };
 

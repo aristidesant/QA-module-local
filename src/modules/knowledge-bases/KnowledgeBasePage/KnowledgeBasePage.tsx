@@ -1,44 +1,55 @@
+import { Modal, Text } from '@mantine/core';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
+import { IconBook } from '@tabler/icons-react';
 import KnowledgeBaseList from './KnowledgeBaseList/KnowledgeBaseList';
-import useKnowledgeBaseStore from './store/knowledgeBaseStore';
-import { Button } from '@mantine/core';
-import { IconPlus, IconBook } from '@tabler/icons-react';
 import KnowledgeBaseForm from './KnowledgeBaseForm/KnowledgeBaseForm';
-import { usePermissions } from '~/hooks/usePermissions';
-import { ModuleEnum } from '~/constants/ModuleEnum';
-import { PermissionEnum } from '~/constants/PermissionEnum';
+import useKnowledgeBaseStore from './store/knowledgeBaseStore';
 import { useTranslation } from 'react-i18next';
+import styles from './KnowledgeBasePage.module.css';
 
 const KnowledgeBasePage = () => {
-	const right = useKnowledgeBaseStore((s) => s.rightComponent);
-	const setRight = useKnowledgeBaseStore((s) => s.setRightComponent);
+	const drawerOpened = useKnowledgeBaseStore((s) => s.opened);
+	const drawerMode = useKnowledgeBaseStore((s) => s.mode);
+	const selectedId = useKnowledgeBaseStore((s) => s.selectedId);
+	const closeDrawer = useKnowledgeBaseStore((s) => s.closeDrawer);
 	const { t } = useTranslation('knowledge-bases');
-	const { canPerformAction } = usePermissions();
-	const canCreate = canPerformAction(
-		ModuleEnum.KNOWLEDGE_BASES,
-		PermissionEnum.CREATE
-	);
+	const modalTitle =
+		drawerMode === 'create' ? t('drawer.createTitle') : t('drawer.editTitle');
 
 	return (
-		<ContentContainer
-			title={t('page.title')}
-			description={t('page.description')}
-			titleIcon={<IconBook size={20} />}
-			titleRight={
-				canCreate ? (
-					<Button
-						onClick={() => setRight(<KnowledgeBaseForm />)}
-						leftSection={<IconPlus size={16} />}
-						size='sm'
-					>
-						{t('page.actions.new')}
-					</Button>
-				) : null
-			}
-			rightSection={right ?? <></>}
-		>
-			<KnowledgeBaseList />
-		</ContentContainer>
+		<>
+			<ContentContainer
+				title={t('page.title')}
+				description={t('page.description')}
+				titleIcon={<IconBook size={20} />}
+			>
+				<KnowledgeBaseList />
+			</ContentContainer>
+			<Modal
+				opened={drawerOpened}
+				onClose={closeDrawer}
+				centered
+				size='lg'
+				title={
+					<div className={styles.modalHeader}>
+						<Text className={styles.modalTitle}>{modalTitle}</Text>
+						<Text className={styles.modalDescription}>
+							{t('form.description')}
+						</Text>
+					</div>
+				}
+				classNames={{
+					content: styles.modalContent,
+					header: styles.modalHeaderShell,
+					title: styles.modalTitleShell,
+					body: styles.modalBody,
+				}}
+			>
+				<KnowledgeBaseForm
+					id={drawerMode === 'edit' ? (selectedId ?? undefined) : undefined}
+				/>
+			</Modal>
+		</>
 	);
 };
 

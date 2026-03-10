@@ -10,6 +10,7 @@
 		}
 	},
 	"list": {
+		"title": "Entries",
 		"empty": {
 			"title": "No knowledge bases found",
 			"description": "Create your first knowledge base to surface documents to agents.",
@@ -75,6 +76,10 @@
 	"confirmDelete": {
 		"body": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone."
 	},
+	"drawer": {
+		"createTitle": "New Knowledge Base",
+		"editTitle": "Knowledge Base"
+	},
 	"fallbacks": {
 		"textSnippet": "Text snippet",
 		"file": "File"
@@ -82,6 +87,7 @@
 	"form": {
 		"title": "Knowledge Base",
 		"description": "Add or edit a knowledge base entry for your agent.",
+		"modalNote": "Keep the setup concise and focused. Name the source clearly, then add a URL, text, or file.",
 		"alerts": {
 			"readOnly": "You have read-only access to knowledge bases.",
 			"saveError": "Unable to save this knowledge base. Please try again."
@@ -137,6 +143,7 @@
 		"actions": {
 			"cancel": "Cancel",
 			"save": "Save"
-		}
+		},
+		"footerNote": "Accepted sources: public URLs, plain text, PDF, TXT, and MD files."
 	}
 }
