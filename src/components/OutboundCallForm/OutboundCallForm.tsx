@@ -30,6 +30,7 @@ export type OutboundCallFormProps = {
 	onClose: () => void;
 	loading?: boolean;
 	campaignId?: number;
+	noiseCancellationEnabled?: boolean;
 };
 
 export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
@@ -38,6 +39,7 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
 	onSuccess,
 	onClose,
 	loading = false,
+	noiseCancellationEnabled = false,
 }) => {
 	const { t } = useTranslation();
 	const startDemoConversation = useStartDemoConversation();
@@ -76,6 +78,17 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
 	});
 
 	const handleSubmit = async (values: OutboundCallFormValues) => {
+		const noiseCancellationPayload = noiseCancellationEnabled
+			? {
+					noiseCancellation: true,
+					turnDetection: {
+						threshold: 0.5,
+						prefixPaddingMs: 300,
+						silenceDurationMs: 800,
+					},
+				}
+			: {};
+
 		try {
 			await startDemoConversation.mutateAsync({
 				agentId: agent.id,
@@ -85,6 +98,7 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
 					customerName: values.dynamicVariables.customerName,
 					customerId: values.dynamicVariables.customerId,
 				},
+				...noiseCancellationPayload,
 			});
 			notifications.show({
 				title: t('outboundCallForm.testCallSentTitle'),

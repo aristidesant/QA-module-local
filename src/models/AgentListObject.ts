@@ -160,6 +160,7 @@ export interface ConversationConfigModel {
 		maxDurationSeconds: number;
 	};
 	languagePresets: Record<string, any>;
+	noiseCancellation?: boolean;
 }
 
 export interface SystemToolModel {

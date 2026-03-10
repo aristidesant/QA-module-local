@@ -1420,6 +1420,7 @@
 					"extendWaves": {
 						"title": "Extender oleadas",
 						"success": "Oleadas extendidas",
+						"successMessage": "Se han añadido {{count}} oleadas a la lista de contactos.",
 						"error": "Error al extender oleadas"
 					}
 				}
@@ -2133,6 +2134,8 @@
 		"asrKeywords": "Palabras clave ASR",
 		"asrKeywordsDesc": "Agrega palabras a las que el motor de reconocimiento de voz debe prestar especial atención.",
 		"asrKeywordsPlaceholder": "Escribe una palabra y presiona Enter",
+		"noiseCancellationLabel": "Cancelación de ruido",
+		"noiseCancellationDesc": "Cuando está activado, aplica supresión de ruido y ajuste de detección de actividad de voz en las llamadas salientes.",
 		"createObjectiveTitle": "Crear Nuevo Objetivo"
 	}
 }

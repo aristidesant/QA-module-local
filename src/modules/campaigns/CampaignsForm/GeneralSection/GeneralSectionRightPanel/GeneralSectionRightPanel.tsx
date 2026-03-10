@@ -6,6 +6,7 @@ import {
 	NumberInput,
 	Select,
 	Stack,
+	Switch,
 	TagsInput,
 	Tooltip,
 } from '@mantine/core';
@@ -241,6 +242,22 @@ const GeneralSectionRightPanel: React.FC = () => {
 						value={currentKeywords}
 						onChange={handleKeywordsChange}
 						size='sm'
+					/>
+
+					<Switch
+						label={t('general.noiseCancellationLabel')}
+						description={t('general.noiseCancellationDesc')}
+						size='sm'
+						checked={
+							form.values.agentConfig?.conversationConfig?.noiseCancellation ??
+							false
+						}
+						onChange={(event) =>
+							form.setFieldValue(
+								'agentConfig.conversationConfig.noiseCancellation',
+								event.currentTarget.checked
+							)
+						}
 					/>
 				</RightSectionCard>
 			</Stack>
