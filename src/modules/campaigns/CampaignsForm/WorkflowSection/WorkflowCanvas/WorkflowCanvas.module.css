@@ -1,17 +1,44 @@
 .canvas {
 	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: var(--mantine-radius-sm);
-	height: calc(100dvh - 450px);
-	max-height: calc(100dvh - 450px);
-	min-height: 350px;
 	width: 100%;
 	overflow: auto;
 	background-color: var(--mantine-color-gray-0);
 }
 
+.canvasCompact {
+	height: calc(100dvh - 450px);
+	max-height: calc(100dvh - 450px);
+	min-height: 350px;
+}
+
+.canvasFullscreen {
+	height: calc(100dvh - 132px);
+	max-height: calc(100dvh - 132px);
+	min-height: 560px;
+	border-radius: var(--mantine-radius-md);
+}
+
 .flow {
 	height: 100%;
 	width: 100%;
+}
+
+.flow :global(.react-flow__edgelabel-renderer) {
+	z-index: 200;
+	pointer-events: none;
+}
+
+.flow :global(.react-flow__edgelabel-renderer > *) {
+	pointer-events: auto;
+}
+
+.flow :global(.react-flow__node) {
+	z-index: 1;
+}
+
+.flow :global(.react-flow__node.selected) {
+	z-index: 5;
 }
 
 .miniMap {
@@ -36,4 +63,12 @@
 .flow :global(.react-flow__controls-button:hover) {
 	background-color: var(--mantine-color-gray-0);
 	color: var(--mantine-color-gray-9);
+}
+
+@media (max-width: 48em) {
+	.canvasFullscreen {
+		height: calc(100dvh - 96px);
+		max-height: calc(100dvh - 96px);
+		min-height: 420px;
+	}
 }

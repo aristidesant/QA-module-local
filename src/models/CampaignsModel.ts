@@ -64,6 +64,7 @@ export interface Campaign {
 	workingHours?: WorkingHours;
 	progress?: number; // Campaign progress percentage
 	defaultMaxWaves?: number;
+	defaultWaveExecutionDelaySeconds?: number;
 	isDraft?: boolean; // Indicates if campaign is in draft state
 	draftStep?: number; // The wizard step where the draft was saved
 

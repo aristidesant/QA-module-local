@@ -3,7 +3,11 @@ import { Textarea, TextInput } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
 
-const GeneralSection: React.FC = () => {
+interface GeneralSectionProps {
+	onOpenSettings?: () => void;
+}
+
+const GeneralSection: React.FC<GeneralSectionProps> = ({ onOpenSettings }) => {
 	const { t } = useTranslation(['campaigns']);
 	const form = useCampaignFormContext();
 
@@ -11,6 +15,7 @@ const GeneralSection: React.FC = () => {
 		<SectionCard
 			title={t('general.title')}
 			description={t('general.description')}
+			onOpenSettings={onOpenSettings}
 		>
 			<TextInput
 				label={t('general.campaignName')}

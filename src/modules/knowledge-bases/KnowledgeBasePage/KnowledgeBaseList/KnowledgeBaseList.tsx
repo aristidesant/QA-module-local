@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styles from './KnowledgeBaseList.module.css';
 import { Button, Text, Skeleton, Stack } from '@mantine/core';
-import { IconPlus, IconFileText } from '@tabler/icons-react';
+import { IconFileText } from '@tabler/icons-react';
 import type { SortingState } from '@tanstack/react-table';
 import { useDebouncedValue } from '@mantine/hooks';
 import {
@@ -10,7 +10,6 @@ import {
 	useRetryKnowledgeBase,
 } from '~/queries/knowledgeBaseQueries';
 import useKnowledgeBaseStore from '../store/knowledgeBaseStore';
-import KnowledgeBaseForm from '../KnowledgeBaseForm/KnowledgeBaseForm';
 import { type KnowledgeBaseModel } from '~/models/KnowledgeBaseModel';
 import BaseTable from '~/components/BaseTable';
 import { useKnowledgeBaseColumns } from './useKnowledgeBaseColumns';
@@ -19,9 +18,11 @@ import { usePermissions } from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import { useTranslation } from 'react-i18next';
+import SectionCard from '~/components/SectionCard';
 
 const KnowledgeBaseList = () => {
-	const setRight = useKnowledgeBaseStore((s) => s.setRightComponent);
+	const openCreate = useKnowledgeBaseStore((s) => s.openCreate);
+	const openEdit = useKnowledgeBaseStore((s) => s.openEdit);
 	const { t } = useTranslation('knowledge-bases');
 	const { canPerformAction } = usePermissions();
 	const canCreate = canPerformAction(
@@ -77,8 +78,7 @@ const KnowledgeBaseList = () => {
 	const columns = useKnowledgeBaseColumns(
 		retryMutation,
 		deleteMutation,
-		setRight,
-		refetch,
+		openEdit,
 		{ canUpdate, canDelete }
 	);
 
@@ -86,62 +86,60 @@ const KnowledgeBaseList = () => {
 	const count = filtered.length; // items in current page
 
 	return (
-		<Stack gap={'xs'}>
-			<KnowledgeBaseFilter
-				query={query}
-				setQuery={setQuery}
-				statusFilter={statusFilter}
-				setStatusFilter={setStatusFilter}
-				typeFilter={typeFilter}
-				setTypeFilter={setTypeFilter}
-				total={total}
-				count={count}
-				refetch={refetch}
-			/>
+		<SectionCard
+			title={t('list.title')}
+			contentSpacing='sm'
+			onAdd={canCreate ? openCreate : undefined}
+			onRefresh={() => {
+				void refetch();
+			}}
+		>
+			<Stack gap='xs'>
+				<KnowledgeBaseFilter
+					query={query}
+					setQuery={setQuery}
+					statusFilter={statusFilter}
+					setStatusFilter={setStatusFilter}
+					typeFilter={typeFilter}
+					setTypeFilter={setTypeFilter}
+					total={total}
+					count={count}
+				/>
 
-			{isLoading ? (
-				<div className={styles.skeletonWrap}>
-					{Array.from({ length: 5 }).map((_, idx) => (
-						<Skeleton key={idx} height={64} mb={12} radius='md' />
-					))}
-				</div>
-			) : filtered.length === 0 ? (
-				<div className={styles.emptyState}>
-					<div className={styles.emptyContent}>
-						<IconFileText size={48} className={styles.emptyIcon} />
-						<Text fw={600} size='lg' className={styles.emptyTitle}>
-							{t('list.empty.title')}
-						</Text>
-						<Text size='sm' c='dimmed' className={styles.emptyDescription}>
-							{t('list.empty.description')}
-						</Text>
-						{canCreate ? (
-							<Button
-								mt='lg'
-								onClick={() => setRight(<KnowledgeBaseForm />)}
-								leftSection={<IconPlus size={18} />}
-								size='md'
-							>
-								{t('list.empty.actions.create')}
-							</Button>
-						) : null}
+				{isLoading ? (
+					<div className={styles.skeletonWrap}>
+						{Array.from({ length: 5 }).map((_, idx) => (
+							<Skeleton key={idx} height={64} mb={12} radius='md' />
+						))}
 					</div>
-				</div>
-			) : (
-				<div>
+				) : filtered.length === 0 ? (
+					<div className={styles.emptyState}>
+						<div className={styles.emptyContent}>
+							<IconFileText size={48} className={styles.emptyIcon} />
+							<Text fw={600} size='lg' className={styles.emptyTitle}>
+								{t('list.empty.title')}
+							</Text>
+							<Text size='sm' c='dimmed' className={styles.emptyDescription}>
+								{t('list.empty.description')}
+							</Text>
+							{canCreate ? (
+								<Button mt='lg' onClick={openCreate} size='md'>
+									{t('list.empty.actions.create')}
+								</Button>
+							) : null}
+						</div>
+					</div>
+				) : (
 					<BaseTable<KnowledgeBaseModel>
 						data={filtered}
 						columns={columns}
 						initialSort={sorting}
-						onRowClick={(row) =>
-							setRight(<KnowledgeBaseForm id={Number(row.id)} />)
-						}
+						onRowClick={(row) => openEdit(Number(row.id))}
 						density='default'
 						filterMode='server'
 						onSortingChange={(newSorting) => {
 							setSorting(newSorting);
 						}}
-						// Server-side pagination controls
 						enablePagination
 						showPaginationControls
 						pageCount={Math.max(1, Math.ceil((data?.total ?? 0) / pageSize))}
@@ -152,9 +150,9 @@ const KnowledgeBaseList = () => {
 							setPageSize(nextPageSize);
 						}}
 					/>
-				</div>
-			)}
-		</Stack>
+				)}
+			</Stack>
+		</SectionCard>
 	);
 };
 

@@ -1,6 +1,6 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
-import { Button, TextInput, Group, Text } from '@mantine/core';
-import { IconPlus, IconSearch } from '@tabler/icons-react';
+import { useState, useCallback, useEffect } from 'react';
+import { TextInput, Group, Text } from '@mantine/core';
+import { IconSearch } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { Trans, useTranslation } from 'react-i18next';
@@ -8,24 +8,22 @@ import classes from './RolesPage.module.css';
 import RolesList from '../RolesList';
 import RoleForm from '../RoleForm';
 import RoleDetails from '../RoleDetails';
+import AppDrawer from '~/components/AppDrawer';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
+import SectionCard from '~/components/SectionCard';
 import { useDeleteRole } from '~/queries/roleQueries';
 import type { RoleModel } from '~/models/RoleModel';
-import useRolesPageStore from '../store/useRolesPageStore';
+
+const ROLES_MODAL_WIDTH = 'min(90vw, 1560px)';
 
 const RolesPage: React.FC = () => {
 	const { t } = useTranslation('roles');
 	const { t: tCommon } = useTranslation('common');
 	const [search, setSearch] = useState('');
 	const [refreshKey, setRefreshKey] = useState(0);
+	const [selectedRoleId, setSelectedRoleId] = useState<number | null>(null);
+	const [drawerOpened, setDrawerOpened] = useState(false);
 	const deleteMutation = useDeleteRole();
-	const rightComponent = useRolesPageStore((state) => state.rightComponent);
-	const setRightComponent = useRolesPageStore(
-		(state) => state.setRightComponent
-	);
-	const clearRightComponent = useRolesPageStore(
-		(state) => state.clearRightComponent
-	);
 
 	const handleSearchChange = useCallback(
 		(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,24 +38,24 @@ const RolesPage: React.FC = () => {
 	}, []);
 
 	useEffect(() => {
-		clearRightComponent();
+		setDrawerOpened(false);
+		setSelectedRoleId(null);
 
 		return () => {
-			clearRightComponent();
+			setDrawerOpened(false);
+			setSelectedRoleId(null);
 		};
-	}, [clearRightComponent]);
+	}, []);
 
-	const handleView = useCallback(
-		(roleId: number) => {
-			setRightComponent(<RoleDetails key={roleId} roleId={roleId} />);
-		},
-		[setRightComponent]
-	);
+	const handleView = useCallback((roleId: number) => {
+		setSelectedRoleId(roleId);
+		setDrawerOpened(true);
+	}, []);
 
-	const rightSectionContent = useMemo(
-		() => rightComponent ?? <></>,
-		[rightComponent]
-	);
+	const handleCloseDrawer = useCallback(() => {
+		setDrawerOpened(false);
+		setSelectedRoleId(null);
+	}, []);
 
 	const handleModalSuccess = useCallback(() => {
 		handleSuccess();
@@ -68,7 +66,7 @@ const RolesPage: React.FC = () => {
 			title: t('newRole'),
 			children: <RoleForm mode='create' onSuccess={handleModalSuccess} />,
 			centered: true,
-			size: '90%',
+			size: ROLES_MODAL_WIDTH,
 			withCloseButton: true,
 			closeOnClickOutside: false,
 		});
@@ -86,7 +84,7 @@ const RolesPage: React.FC = () => {
 					/>
 				),
 				centered: true,
-				size: '90%',
+				size: ROLES_MODAL_WIDTH,
 				withCloseButton: true,
 				closeOnClickOutside: false,
 			});
@@ -132,7 +130,9 @@ const RolesPage: React.FC = () => {
 							color: 'green',
 						});
 						setRefreshKey((prev) => prev + 1);
-						clearRightComponent();
+						if (selectedRoleId === role.id) {
+							handleCloseDrawer();
+						}
 					} catch (error) {
 						notifications.show({
 							title: t('notifications.deleteErrorTitle'),
@@ -144,41 +144,41 @@ const RolesPage: React.FC = () => {
 				},
 			});
 		},
-		[clearRightComponent, deleteMutation, t, tCommon]
+		[deleteMutation, handleCloseDrawer, selectedRoleId, t, tCommon]
 	);
 
 	return (
-		<ContentContainer
-			title={t('title')}
-			description={t('description')}
-			rightSection={rightSectionContent}
-		>
+		<ContentContainer title={t('title')} description={t('description')}>
 			<div className={classes.root}>
-				<Group className={classes.header} gap='sm'>
-					<TextInput
-						placeholder={t('searchPlaceholder')}
-						leftSection={<IconSearch size={18} />}
-						value={search}
-						onChange={handleSearchChange}
-						className={classes.searchInput}
-						size='sm'
+				<SectionCard title={t('list.title')} onAdd={openCreateModal}>
+					<Group className={classes.header} gap='sm'>
+						<TextInput
+							placeholder={t('searchPlaceholder')}
+							leftSection={<IconSearch size={18} />}
+							value={search}
+							onChange={handleSearchChange}
+							className={classes.searchInput}
+							size='sm'
+						/>
+					</Group>
+					<RolesList
+						key={refreshKey}
+						search={search}
+						onView={handleView}
+						onEdit={openEditModal}
+						onDelete={handleDelete}
 					/>
-					<Button
-						leftSection={<IconPlus size={18} />}
-						onClick={openCreateModal}
-						variant='light'
-						size='sm'
-					>
-						{t('newRole')}
-					</Button>
-				</Group>
-				<RolesList
-					key={refreshKey}
-					search={search}
-					onView={handleView}
-					onEdit={openEditModal}
-					onDelete={handleDelete}
-				/>
+				</SectionCard>
+				<AppDrawer
+					opened={drawerOpened && selectedRoleId !== null}
+					onClose={handleCloseDrawer}
+					title={t('details.title')}
+					size='lg'
+				>
+					{selectedRoleId !== null ? (
+						<RoleDetails roleId={selectedRoleId} />
+					) : null}
+				</AppDrawer>
 			</div>
 		</ContentContainer>
 	);

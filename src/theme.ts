@@ -53,10 +53,18 @@ export const theme = createTheme({
 			},
 		},
 		Modal: {
+			defaultProps: {
+				radius: 'md',
+			},
 			styles: {
 				body: {
 					height: '90%',
 				},
+			},
+		},
+		Card: {
+			defaultProps: {
+				radius: 'md',
 			},
 		},
 	},

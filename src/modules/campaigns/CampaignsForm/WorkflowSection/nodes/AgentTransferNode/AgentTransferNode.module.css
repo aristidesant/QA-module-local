@@ -1,18 +1,8 @@
 .node {
-	background-color: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: var(--mantine-radius-md);
-	min-width: 220px;
+	--workflow-node-accent: var(--mantine-color-indigo-7);
+	min-width: 230px;
 	max-width: 300px;
 	text-align: left;
-	transition:
-		border-color 0.14s ease,
-		background-color 0.14s ease;
-	overflow: hidden;
-}
-
-.node:hover {
-	border-color: var(--mantine-color-gray-4);
 }
 
 .header {
@@ -29,11 +19,11 @@
 }
 
 .details {
-	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	padding: 8px var(--mantine-spacing-sm);
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
-	background-color: var(--mantine-color-gray-0);
+	background-color: var(--mantine-color-white);
 	border-bottom: 1px solid var(--mantine-color-gray-2);
 }
 
@@ -47,6 +37,7 @@
 .metaLabel {
 	font-size: var(--mantine-font-size-xs);
 	color: var(--mantine-color-gray-6);
+	font-weight: 500;
 }
 
 .metaValue {
@@ -60,9 +51,9 @@
 }
 
 .footer {
-	background-color: var(--mantine-color-white);
-	border-top: 1px solid var(--mantine-color-gray-3);
-	padding: 4px var(--mantine-spacing-sm);
+	background-color: var(--mantine-color-gray-0);
+	border-top: 1px solid var(--mantine-color-gray-2);
+	padding: 8px var(--mantine-spacing-sm);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -70,9 +61,10 @@
 }
 
 .footerText {
-	color: var(--mantine-color-gray-7);
+	color: var(--mantine-color-gray-8);
 	flex: 1;
 	min-width: 0;
+	line-height: 1.35;
 }
 
 .footerActions {

@@ -1,8 +1,7 @@
-import { Stack, Text } from '@mantine/core';
-import { IconGlobe } from '@tabler/icons-react';
+import { Text } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import type { RegionalSettings } from '~/models/RegionalSettingsParam';
 import styles from './RegionalSettingsParamsDetail.module.css';
-import SectionCard from '~/components/SectionCard';
 
 interface RegionalSettingsParamsDetailProps {
 	regionalSettings: RegionalSettings;
@@ -16,6 +15,8 @@ type Detail = {
 const RegionalSettingsParamsDetail: React.FC<
 	RegionalSettingsParamsDetailProps
 > = ({ regionalSettings }) => {
+	const { t } = useTranslation('regional-settings-params');
+
 	const renderDetails = (items: Detail[]) => (
 		<div className={styles.detailList}>
 			{items.map((detail) => (
@@ -28,18 +29,11 @@ const RegionalSettingsParamsDetail: React.FC<
 	);
 
 	const regionalDetails: Detail[] = [
-		{ label: 'Timezone', value: regionalSettings.timezone || '—' },
-		{ label: 'Locale', value: regionalSettings.locale || '—' },
+		{ label: t('fields.timezone'), value: regionalSettings.timezone || '-' },
+		{ label: t('fields.locale'), value: regionalSettings.locale || '-' },
 	];
 
-	return (
-		<Stack gap='xs' className={styles.cards}>
-			{/* Regional Settings */}
-			<SectionCard title='Configuration Details' icon={IconGlobe}>
-				{renderDetails(regionalDetails)}
-			</SectionCard>
-		</Stack>
-	);
+	return <div className={styles.cards}>{renderDetails(regionalDetails)}</div>;
 };
 
 export default RegionalSettingsParamsDetail;

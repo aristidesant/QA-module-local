@@ -139,3 +139,19 @@ export const useGetActiveSchemaByCampaignId = (
 		enabled: enabled && !!campaignId,
 	});
 };
+
+// Get latest schema by campaign ID
+export const useGetLatestSchemaByCampaignId = (
+	campaignId: number | undefined,
+	enabled = true
+) => {
+	return useQuery({
+		queryKey: ['campaign-contact-schema-latest-by-campaign', campaignId],
+		queryFn: async () => {
+			if (!campaignId) return undefined;
+			const api = campaignContactSchemasApi();
+			return api.getLatestSchemaByCampaignId(campaignId);
+		},
+		enabled: enabled && !!campaignId,
+	});
+};

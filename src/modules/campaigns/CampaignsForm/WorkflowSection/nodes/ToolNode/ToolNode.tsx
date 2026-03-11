@@ -6,9 +6,11 @@ import { IconTool } from '@tabler/icons-react';
 import type { ToolNode as ToolNodeModel } from '~/models/AgentWorkflowModel';
 import { useTools } from '~/queries/toolQueries';
 import WorkflowNodeActions from '../../WorkflowNodeActions';
+import WorkflowNodeDrawer from '../../WorkflowNodeDrawer';
 import WorkflowNodeHeader from '../../WorkflowNodeHeader';
 import WorkflowNodeWrapper from '../../WorkflowNode';
 import type { WorkflowNodeData } from '../../WorkflowNode/WorkflowNodeTypes';
+import workflowNodeStyles from '../../WorkflowNode/WorkflowNode.module.css';
 import styles from './ToolNode.module.css';
 
 const ToolNodeComponent = (props: NodeProps) => {
@@ -30,42 +32,45 @@ const ToolNodeComponent = (props: NodeProps) => {
 	}, [tools]);
 
 	return (
-		<WorkflowNodeWrapper
-			{...props}
-			sideActions={
-				<WorkflowNodeActions
-					nodeId={props.id}
-					nodeData={props.data as WorkflowNodeData}
-					nodeType={nodeType}
-				/>
-			}
-		>
-			<div className={styles.node}>
-				<WorkflowNodeHeader
-					className={styles.header}
-					icon={<IconTool size={16} className={styles.icon} />}
-					title={nodeData.label || fallbackLabel}
-					subtitle={t('form.workflow.nodeStatus.toolsAttached', {
-						count: toolCount,
-					})}
-					titleClassName={styles.title}
-				/>
-				{toolCount > 0 && (
-					<div className={styles.footer}>
-						<div className={styles.toolsList}>
-							{nodeData.tools.map((tool, index) => (
-								<span
-									key={`${tool.toolId}-${index}`}
-									className={styles.toolBadge}
-								>
-									{toolNameMap.get(tool.toolId) || tool.toolId}
-								</span>
-							))}
+		<>
+			<WorkflowNodeWrapper
+				{...props}
+				sideActions={
+					<WorkflowNodeActions
+						nodeId={props.id}
+						nodeData={props.data as WorkflowNodeData}
+						nodeType={nodeType}
+					/>
+				}
+			>
+				<div className={`${workflowNodeStyles.nodeSurface} ${styles.node}`}>
+					<WorkflowNodeHeader
+						className={styles.header}
+						icon={<IconTool size={18} className={styles.icon} />}
+						title={nodeData.label || fallbackLabel}
+						subtitle={t('form.workflow.nodeStatus.toolsAttached', {
+							count: toolCount,
+						})}
+						titleClassName={styles.title}
+					/>
+					{toolCount > 0 && (
+						<div className={styles.footer}>
+							<div className={styles.toolsList}>
+								{nodeData.tools.map((tool, index) => (
+									<span
+										key={`${tool.toolId}-${index}`}
+										className={styles.toolBadge}
+									>
+										{toolNameMap.get(tool.toolId) || tool.toolId}
+									</span>
+								))}
+							</div>
 						</div>
-					</div>
-				)}
-			</div>
-		</WorkflowNodeWrapper>
+					)}
+				</div>
+			</WorkflowNodeWrapper>
+			<WorkflowNodeDrawer nodeId={props.id} />
+		</>
 	);
 };
 

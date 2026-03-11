@@ -66,6 +66,8 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 		setObjectiveId,
 		defaultMaxWaves,
 		setDefaultMaxWaves,
+		defaultWaveExecutionDelaySeconds,
+		setDefaultWaveExecutionDelaySeconds,
 		setCreatedCampaign,
 		setIsSubmitting,
 	} = useCampaignWizardStore();
@@ -88,6 +90,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 			phoneNumberId,
 			objectiveId,
 			defaultMaxWaves,
+			defaultWaveExecutionDelaySeconds,
 		},
 		validate: {
 			campaignName: (value: string) =>
@@ -103,6 +106,10 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 			defaultMaxWaves: (value: number, values) =>
 				values.campaignType === 'OUTBOUND' && (!value || value < 1)
 					? t('wizard.steps.general.validation.wavesRequired')
+					: null,
+			defaultWaveExecutionDelaySeconds: (value: number, values) =>
+				values.campaignType === 'OUTBOUND' && value < 0
+					? t('wizard.steps.general.validation.waveDelayRequired')
 					: null,
 			objectiveId: (value: number | null, values) =>
 				values.campaignType === 'OUTBOUND' && !value
@@ -158,6 +165,8 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				status: CampaignStatus.INACTIVE,
 				...(isOutboundType && {
 					defaultMaxWaves: values.defaultMaxWaves || 3,
+					defaultWaveExecutionDelaySeconds:
+						values.defaultWaveExecutionDelaySeconds || 0,
 					objectiveId: values.objectiveId!,
 				}),
 			},
@@ -184,6 +193,9 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				setPhoneNumberId(values.phoneNumberId);
 				setObjectiveId(isOutboundType ? values.objectiveId : null);
 				setDefaultMaxWaves(isOutboundType ? values.defaultMaxWaves || 3 : 3);
+				setDefaultWaveExecutionDelaySeconds(
+					isOutboundType ? values.defaultWaveExecutionDelaySeconds || 0 : 0
+				);
 				setCreatedCampaign(campaign as any);
 				setIsSubmitting(false);
 
@@ -238,6 +250,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 		if (nextValue === 'INBOUND') {
 			form.setFieldValue('objectiveId', null);
 			form.setFieldValue('defaultMaxWaves', 3);
+			form.setFieldValue('defaultWaveExecutionDelaySeconds', 0);
 		}
 		setCampaignType(nextValue);
 	};
@@ -417,6 +430,22 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 											withAsterisk
 											size='sm'
 											{...form.getInputProps('defaultMaxWaves')}
+										/>
+
+										<NumberInput
+											label={t('wizard.steps.general.defaultWaveDelay')}
+											description={t(
+												'wizard.steps.general.defaultWaveDelayDesc'
+											)}
+											min={0}
+											step={30}
+											clampBehavior='strict'
+											allowDecimal={false}
+											allowNegative={false}
+											size='sm'
+											{...form.getInputProps(
+												'defaultWaveExecutionDelaySeconds'
+											)}
 										/>
 									</>
 								)}

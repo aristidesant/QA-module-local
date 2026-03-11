@@ -1,5 +1,14 @@
 import { Scheduler } from './SchedulerModel';
 
+export type ContactGroupQueueStatus =
+	| 'PENDING'
+	| 'RUNNING'
+	| 'WAITING'
+	| 'PAUSED'
+	| 'FAILED'
+	| 'EXECUTED'
+	| 'COMPLETED';
+
 /**
  * Represents a contact group in the system
  */
@@ -11,10 +20,12 @@ export default interface ContactGroup {
 	createdAt: string;
 	scheduleId: number;
 	schedule?: Scheduler;
-	queueStatus: string;
+	queueStatus: ContactGroupQueueStatus;
 	isActive: boolean;
 	currentWave?: number;
 	maxWaves?: number;
+	waveExecutionDelaySeconds?: number | null;
+	nextWaveScheduledAt?: string | null;
 	lastWaveStartedAt?: string | null;
 	lastWaveCompletedAt?: string | null;
 	contactCount: number;

@@ -1,18 +1,8 @@
 .node {
-	background-color: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: var(--mantine-radius-md);
-	min-width: 200px;
+	--workflow-node-accent: var(--mantine-color-cyan-7);
+	min-width: 210px;
 	max-width: 280px;
 	text-align: left;
-	transition:
-		border-color 0.14s ease,
-		background-color 0.14s ease;
-	overflow: hidden;
-}
-
-.node:hover {
-	border-color: var(--mantine-color-gray-4);
 }
 
 .header {
@@ -29,24 +19,25 @@
 }
 
 .promptSection {
-	padding: 4px var(--mantine-spacing-sm);
+	padding: 8px var(--mantine-spacing-sm);
 	border-bottom: 1px solid var(--mantine-color-gray-2);
-	background-color: var(--mantine-color-gray-0);
+	background-color: var(--mantine-color-white);
 }
 
 .promptText {
-	color: var(--mantine-color-gray-6);
+	color: var(--mantine-color-gray-7);
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	line-height: 1.35;
 }
 
 .footer {
-	background-color: var(--mantine-color-white);
-	border-top: 1px solid var(--mantine-color-gray-3);
-	padding: 4px var(--mantine-spacing-sm);
+	background-color: var(--mantine-color-gray-0);
+	border-top: 1px solid var(--mantine-color-gray-2);
+	padding: 8px var(--mantine-spacing-sm);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -71,16 +62,16 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
-	padding: 2px 8px;
-	background-color: var(--mantine-color-gray-0);
-	border: 1px solid var(--mantine-color-gray-3);
+	padding: 3px 9px;
+	background-color: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-2);
 	border-radius: var(--mantine-radius-xl);
-	font-size: var(--mantine-font-size-xs);
+	font-size: 11px;
 	color: var(--mantine-color-gray-8);
 	white-space: nowrap;
 }
 
 .metadataIcon {
-	color: var(--mantine-color-gray-6);
+	color: var(--workflow-node-accent);
 	flex-shrink: 0;
 }

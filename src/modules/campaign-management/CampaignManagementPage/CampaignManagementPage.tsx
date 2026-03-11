@@ -4,9 +4,11 @@ import {
 	IconSettings,
 	IconClipboardCheck,
 	IconAdjustments,
+	IconDatabase,
 } from '@tabler/icons-react';
 import DispositionPage from '~/modules/outcomes/DispositionPage';
 import CampaignTaxonomySetupTab from './Setup/CampaignTaxonomySetupTab';
+import CustomVariablesSetupTab from './Setup/CustomVariablesSetupTab';
 import { useTranslation } from 'react-i18next';
 import classes from './CampaignManagementPage.module.css';
 
@@ -30,6 +32,12 @@ export default function CampaignManagementPage() {
 						{t('tabs.setup')}
 					</Tabs.Tab>
 					<Tabs.Tab
+						value='custom-variables'
+						leftSection={<IconDatabase size={16} />}
+					>
+						{t('tabs.customVariables')}
+					</Tabs.Tab>
+					<Tabs.Tab
 						value='outcomes'
 						leftSection={<IconClipboardCheck size={16} />}
 					>
@@ -39,6 +47,10 @@ export default function CampaignManagementPage() {
 
 				<Tabs.Panel value='setup' py='xs'>
 					<CampaignTaxonomySetupTab />
+				</Tabs.Panel>
+
+				<Tabs.Panel value='custom-variables' py='xs'>
+					<CustomVariablesSetupTab />
 				</Tabs.Panel>
 
 				<Tabs.Panel value='outcomes' py='xs'>

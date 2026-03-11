@@ -1,5 +1,5 @@
 import React from 'react';
-import { Group, Loader, Tooltip, ActionIcon } from '@mantine/core';
+import { Group, Loader } from '@mantine/core';
 import { IconEdit, IconWaveSquare } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { useGetAgent } from '~/queries/agentQueries';
@@ -56,23 +56,14 @@ export const AgentCampaignPreview: React.FC<AgentCampaignPreviewProps> = ({
 			description={t('form.agent.preview.voiceDescription')}
 			icon={IconWaveSquare}
 			iconColor='var(--mantine-color-blue-6)'
-			rightSection={
-				<Tooltip
-					label={t('form.agent.preview.editVoice')}
-					position='right'
-					withArrow
-					openDelay={150}
-				>
-					<ActionIcon
-						aria-label={t('form.agent.preview.editVoice')}
-						onClick={openVoiceChangeModal}
-						variant='subtle'
-						size='lg'
-					>
-						<IconEdit size={16} />
-					</ActionIcon>
-				</Tooltip>
-			}
+			actions={{
+				primary: {
+					kind: 'edit',
+					label: t('form.agent.preview.editVoice'),
+					icon: IconEdit,
+					onClick: openVoiceChangeModal,
+				},
+			}}
 		>
 			<VoicePlayer
 				voiceName={agent?.voice?.name || t('form.agent.preview.unknownVoice')}

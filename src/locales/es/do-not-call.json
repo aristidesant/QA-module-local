@@ -1,11 +1,14 @@
 {
 	"page": {
-		"title": "Lista de No Llamar",
+		"title": "Do Not Call",
 		"description": "Administra los números de teléfono que no deben ser contactados.",
 		"actions": {
 			"cleanExpired": "Limpiar vencidos",
 			"addEntry": "Agregar"
 		}
+	},
+	"list": {
+		"title": "Entradas"
 	},
 	"filters": {
 		"title": "Filtros",

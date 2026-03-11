@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
+import { Modal, Stack, Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
 import { useCampaignsStore } from '~/stores/campaignsStore';
@@ -17,8 +18,9 @@ import {
 const AnalyticsSection = () => {
 	const { t } = useTranslation('campaigns');
 	const campaignForm = useCampaignFormContext();
-	const { setRightComponent } = useCampaignsStore((state) => state);
-	const lastRightPanelSignature = useRef<string | null>(null);
+	const setRightComponent = useCampaignsStore(
+		(state) => state.setRightComponent
+	);
 	const initialRows = normalizeDataCollectionRows(
 		getDataCollectionFromAgentConfig(campaignForm.values.agentConfig)
 	);
@@ -55,40 +57,21 @@ const AnalyticsSection = () => {
 	}, [form.values.rows]);
 
 	useEffect(() => {
-		const selectedRow = form.values.rows.find(
-			(row) => row.id === form.values.selectedRowId
-		);
-		const nextSignature = selectedRow
-			? `${selectedRow.id}-${JSON.stringify(selectedRow)}`
-			: null;
-
-		if (!selectedRow) {
-			if (lastRightPanelSignature.current !== null) {
-				lastRightPanelSignature.current = null;
-				setRightComponent(null);
-			}
-			return;
-		}
-
-		if (lastRightPanelSignature.current === nextSignature) {
-			return;
-		}
-
-		lastRightPanelSignature.current = nextSignature;
-
-		setRightComponent(
-			<AnalyticsFormProvider form={form}>
-				<AnalyticsVariableEditor />
-			</AnalyticsFormProvider>
-		);
-	}, [form.values.selectedRowId, form.values.rows, setRightComponent]);
-
-	useEffect(() => {
-		return () => {
-			lastRightPanelSignature.current = null;
-			setRightComponent(null);
-		};
+		setRightComponent(null);
+		return () => setRightComponent(null);
 	}, [setRightComponent]);
+
+	const handleEditorClose = () => {
+		const currentId = form.values.selectedRowId;
+		if (currentId) {
+			const selectedRow = form.values.rows.find((r) => r.id === currentId);
+			const selectedIdx = form.values.rows.findIndex((r) => r.id === currentId);
+			if (selectedRow?.isNew && selectedIdx >= 0) {
+				form.removeListItem('rows', selectedIdx);
+			}
+		}
+		form.setFieldValue('selectedRowId', null);
+	};
 
 	const handleAddRow = () => {
 		const newRow = createEmptyAnalyticsRow();
@@ -104,6 +87,24 @@ const AnalyticsSection = () => {
 			>
 				<AnalyticsVariablesTable onAddRow={handleAddRow} />
 			</SectionCard>
+
+			<Modal
+				opened={form.values.selectedRowId !== null}
+				onClose={handleEditorClose}
+				title={
+					<Stack gap={0}>
+						<Text size='sm' fw={600}>
+							{t('form.analytics.editor.title')}
+						</Text>
+						<Text size='xs' c='dimmed'>
+							{t('form.analytics.editor.description')}
+						</Text>
+					</Stack>
+				}
+				size='xl'
+			>
+				<AnalyticsVariableEditor onClose={handleEditorClose} />
+			</Modal>
 		</AnalyticsFormProvider>
 	);
 };

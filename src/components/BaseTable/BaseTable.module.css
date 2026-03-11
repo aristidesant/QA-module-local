@@ -3,6 +3,7 @@
 	overflow: auto;
 	border: 1px solid var(--mantine-color-gray-2);
 	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-white);
 	margin: 0;
 	padding: 0;
 }
@@ -23,12 +24,14 @@
 	text-align: left;
 	border-bottom: 1px solid var(--mantine-color-gray-2);
 	font-size: 14px;
+	vertical-align: middle;
 }
 
 .compactTh,
 .compactTd {
 	font-size: var(--mantine-font-size-xs);
-	padding: 10px 12px;
+	padding: 7px 10px;
+	line-height: 1.2;
 }
 
 .sortable {
@@ -62,9 +65,28 @@
 	opacity: 1;
 }
 
-.selectedRow {
+.tbody tr td {
+	transition: background-color 0.15s ease;
+}
+
+.tbody tr:hover td {
+	background: var(--mantine-color-gray-0);
+}
+
+.reorderingRow td {
 	background: var(--mantine-color-blue-0) !important;
-	border-left: 3px solid var(--mantine-color-blue-6);
+}
+
+.reorderingRow td:first-child {
+	box-shadow: inset 3px 0 0 var(--mantine-color-blue-6);
+}
+
+.selectedRow td {
+	background: #f5f9ff !important;
+}
+
+.selectedRow td:first-child {
+	box-shadow: inset 3px 0 0 var(--mantine-color-blue-6);
 }
 
 .emptyRow {
@@ -116,4 +138,27 @@
 	border-top: 1px solid var(--mantine-color-gray-2);
 	display: flex;
 	justify-content: center;
+}
+
+.th {
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	color: var(--mantine-color-gray-6);
+	background: #fafbfc;
+}
+
+.td {
+	color: var(--mantine-color-gray-8);
+}
+
+.droppableSpacer {
+	height: 0;
+}
+
+.droppableSpacerCell {
+	padding: 0 !important;
+	border: 0 !important;
+	height: 0;
 }

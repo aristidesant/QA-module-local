@@ -91,23 +91,30 @@ export const useCampaignsColumns = ({
 			cell: ({ row }) => {
 				const campaign = row.original;
 				return (
-					<Group gap='sm' wrap='nowrap'>
-						<HoverCard width={280} shadow='none' withArrow position='right'>
+					<Group gap={8} wrap='nowrap'>
+						<HoverCard
+							width={260}
+							shadow='sm'
+							withArrow
+							position='right'
+							openDelay={120}
+						>
 							<HoverCard.Target>
 								<ThemeIcon
 									variant='light'
 									color='blue'
-									size={'xs'}
+									size='sm'
+									radius='xl'
 									style={{ cursor: 'pointer' }}
 									data-testid='campaign-info-trigger'
 								>
-									<IconInfoCircle size={16} />
+									<IconInfoCircle size={14} />
 								</ThemeIcon>
 							</HoverCard.Target>
-							<HoverCard.Dropdown>
-								<Stack gap='xs'>
+							<HoverCard.Dropdown p='sm'>
+								<Stack gap={8}>
 									<Group justify='space-between' wrap='nowrap'>
-										<Text size='sm' fw={700}>
+										<Text size='xs' fw={700}>
 											{t('columns.campaignDetails')}
 										</Text>
 										<Badge
@@ -127,7 +134,7 @@ export const useCampaignsColumns = ({
 
 									<Divider variant='dashed' />
 
-									<Stack gap={4}>
+									<Stack gap={6}>
 										<Group gap={6} wrap='nowrap'>
 											<Text size='xs' fw={600} c='dimmed'>
 												{t('columns.createdBy')}:
@@ -164,9 +171,11 @@ export const useCampaignsColumns = ({
 								</Stack>
 							</HoverCard.Dropdown>
 						</HoverCard>
-						<Text size='sm' fw={500} lineClamp={1}>
-							{campaign.name}
-						</Text>
+						<Stack gap={2} style={{ minWidth: 0, flex: 1 }}>
+							<Text size='sm' fw={600} lineClamp={1}>
+								{campaign.name}
+							</Text>
+						</Stack>
 						{campaign.isDraft && (
 							<Tooltip
 								label={t('columns.setupIncomplete', {
@@ -176,8 +185,9 @@ export const useCampaignsColumns = ({
 								<Badge
 									variant='light'
 									color='red'
-									size='md'
-									leftSection={<IconFileDescription size={12} />}
+									size='sm'
+									radius='sm'
+									leftSection={<IconFileDescription size={10} />}
 								>
 									{t('columns.draft')}
 								</Badge>
@@ -198,13 +208,13 @@ export const useCampaignsColumns = ({
 					<Badge
 						variant='light'
 						color={isOutbound ? 'teal' : 'violet'}
-						size='md'
+						size='sm'
 						radius='sm'
 						leftSection={
 							isOutbound ? (
-								<IconArrowUpRight size={14} />
+								<IconArrowUpRight size={12} />
 							) : (
-								<IconArrowDownLeft size={14} />
+								<IconArrowDownLeft size={12} />
 							)
 						}
 					>
@@ -225,9 +235,9 @@ export const useCampaignsColumns = ({
 					<Badge
 						variant='light'
 						color={statusInfo.color}
-						size='md'
+						size='sm'
 						radius='sm'
-						leftSection={<StatusIcon size={14} />}
+						leftSection={<StatusIcon size={12} />}
 					>
 						{t(statusInfo.label)}
 					</Badge>
@@ -241,7 +251,7 @@ export const useCampaignsColumns = ({
 			cell: ({ row }) => {
 				const campaign = row.original;
 				return (
-					<Text size='sm' c='dimmed'>
+					<Text size='xs' c='dimmed' fw={500}>
 						{timeAgo(campaign.updatedAt)}
 					</Text>
 				);
@@ -277,20 +287,20 @@ export const useCampaignsColumns = ({
 					!isDraft;
 
 				const hasMenuActions =
-					canEditCampaign ||
 					canTestCallCampaign ||
 					canCloneCampaign ||
 					canToggleCampaignStatus ||
 					canDeleteCampaign;
 
 				return (
-					<Group gap='xs' justify='end'>
+					<Group gap={4} justify='end' wrap='nowrap'>
 						{canContinueDraft && (
 							<Tooltip label={t('columns.continueSetup')}>
 								<ActionIcon
 									variant='subtle'
 									color='gray'
-									radius='md'
+									radius='xl'
+									size='sm'
 									aria-label={t('columns.continueSetup')}
 									visibleFrom='sm'
 									onClick={(e) => {
@@ -298,7 +308,7 @@ export const useCampaignsColumns = ({
 										onContinueDraft?.(campaign);
 									}}
 								>
-									<IconSettings size={16} />
+									<IconSettings size={14} />
 								</ActionIcon>
 							</Tooltip>
 						)}
@@ -307,7 +317,8 @@ export const useCampaignsColumns = ({
 								<ActionIcon
 									variant='subtle'
 									color='gray'
-									radius='md'
+									radius='xl'
+									size='sm'
 									aria-label={t('columns.viewCampaign')}
 									visibleFrom='sm'
 									onClick={(e) => {
@@ -315,7 +326,25 @@ export const useCampaignsColumns = ({
 										onView(campaign);
 									}}
 								>
-									<IconEye size={16} />
+									<IconEye size={14} />
+								</ActionIcon>
+							</Tooltip>
+						)}
+						{canEditCampaign && (
+							<Tooltip label={t('columns.editCampaign')}>
+								<ActionIcon
+									variant='subtle'
+									color='gray'
+									radius='xl'
+									size='sm'
+									aria-label={t('columns.editCampaign')}
+									visibleFrom='sm'
+									onClick={(e) => {
+										e.stopPropagation();
+										onEdit(campaign);
+									}}
+								>
+									<IconPencil size={14} />
 								</ActionIcon>
 							</Tooltip>
 						)}
@@ -326,28 +355,19 @@ export const useCampaignsColumns = ({
 									<ActionIcon
 										variant='subtle'
 										color='gray'
-										radius='md'
+										radius='xl'
+										size='sm'
 										aria-label={t('columns.moreActions')}
 										onClick={(e) => e.stopPropagation()}
 									>
-										<IconDotsVertical size={16} />
+										<IconDotsVertical size={14} />
 									</ActionIcon>
 								</Menu.Target>
 
 								<Menu.Dropdown onClick={(e) => e.stopPropagation()}>
-									{(canEditCampaign ||
-										canTestCallCampaign ||
-										canCloneCampaign) && (
+									{(canTestCallCampaign || canCloneCampaign) && (
 										<>
 											<Menu.Label>{t('columns.actionsGroupManage')}</Menu.Label>
-											{canEditCampaign && (
-												<Menu.Item
-													leftSection={<IconPencil size={14} />}
-													onClick={() => onEdit(campaign)}
-												>
-													{t('columns.editCampaign')}
-												</Menu.Item>
-											)}
 											{canTestCallCampaign && (
 												<Menu.Item
 													leftSection={<IconPhone size={14} />}
@@ -407,7 +427,7 @@ export const useCampaignsColumns = ({
 					</Group>
 				);
 			},
-			size: 120,
+			size: 108,
 			enableSorting: false,
 		},
 	];

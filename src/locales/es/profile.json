@@ -4,6 +4,7 @@
 	"user_info": {
 		"title": "Perfil de Usuario",
 		"account_details": "Detalles de la Cuenta",
+		"username_label": "Usuario",
 		"client_id": "ID de Cliente",
 		"member_since": "Miembro Desde",
 		"security_status": "Estado de Seguridad",
@@ -12,7 +13,7 @@
 	},
 	"name_change": {
 		"title": "Nombre para Mostrar",
-		"description": "Actualiza tu nombre y apellido que otros verán",
+		"description": "Actualiza el nombre que se muestra en tu cuenta.",
 		"first_name_label": "Nombre",
 		"first_name_placeholder": "Ingresa tu nombre",
 		"last_name_label": "Apellido",
@@ -35,7 +36,7 @@
 	},
 	"password_change": {
 		"title": "Cambiar Contraseña",
-		"description": "Mantén tu cuenta segura actualizando regularmente tu contraseña. Usa una contraseña fuerte y única con al menos 8 caracteres que incluya una mezcla de letras, números y símbolos.",
+		"description": "Define una nueva contraseña para tu próximo acceso.",
 		"current_password_label": "Contraseña Actual",
 		"current_password_placeholder": "Ingresa tu contraseña actual",
 		"new_password_label": "Nueva Contraseña",
@@ -60,8 +61,18 @@
 		"description": "Mejora la seguridad de tu cuenta requiriendo tanto tu contraseña como un código de verificación enviado a tu correo electrónico al iniciar sesión. Esto reduce significativamente el riesgo de acceso no autorizado.",
 		"status_enabled": "Habilitado",
 		"status_disabled": "Deshabilitado",
+		"inline": {
+			"enabled_message": "La verificación por correo está activa para los próximos accesos.",
+			"disabled_message": "Agrega un paso extra para proteger tu cuenta.",
+			"enable_prompt": "Confirma tu contraseña para iniciar la verificación por correo.",
+			"disable_prompt": "Ingresa tu contraseña para quitar la validación adicional al iniciar sesión."
+		},
+		"setup_guidance": {
+			"title": "Agrega un segundo paso de verificación",
+			"description": "Activa la verificación por correo para proteger el inicio de sesión más allá de la contraseña. La configuración toma poco tiempo y se mantiene vinculada a tu correo actual."
+		},
 		"how_it_works": {
-			"title": "Cómo Funciona OTP Basado en Email",
+			"title": "Pasos de configuración",
 			"step1": "Haz clic en \"Habilitar MFA\" para iniciar el proceso de configuración",
 			"step2": "Ingresa tu contraseña para confirmar tu identidad",
 			"step3": "Un código de verificación de 6 dígitos será enviado a tu correo electrónico registrado",

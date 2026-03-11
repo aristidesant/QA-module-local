@@ -1,18 +1,8 @@
 .node {
-	background-color: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: var(--mantine-radius-md);
+	--workflow-node-accent: var(--mantine-color-blue-7);
 	min-width: 200px;
 	max-width: 280px;
 	text-align: left;
-	transition:
-		border-color 0.14s ease,
-		background-color 0.14s ease;
-	overflow: hidden;
-}
-
-.node:hover {
-	border-color: var(--mantine-color-gray-4);
 }
 
 .header {
@@ -29,9 +19,9 @@
 }
 
 .footer {
-	background-color: var(--mantine-color-white);
-	border-top: 1px solid var(--mantine-color-gray-3);
-	padding: 4px var(--mantine-spacing-sm);
+	background-color: var(--mantine-color-gray-0);
+	border-top: 1px solid var(--mantine-color-gray-2);
+	padding: 8px var(--mantine-spacing-sm);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -55,11 +45,11 @@
 .toolBadge {
 	display: inline-flex;
 	align-items: center;
-	padding: 2px 8px;
-	background-color: var(--mantine-color-gray-0);
-	border: 1px solid var(--mantine-color-gray-3);
+	padding: 3px 9px;
+	background-color: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-2);
 	border-radius: var(--mantine-radius-xl);
-	font-size: var(--mantine-font-size-xs);
+	font-size: 11px;
 	color: var(--mantine-color-gray-8);
 	white-space: nowrap;
 }

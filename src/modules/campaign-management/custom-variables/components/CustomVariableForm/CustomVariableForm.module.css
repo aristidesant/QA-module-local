@@ -1,0 +1,56 @@
+.form {
+	width: 100%;
+}
+
+.section {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-sm);
+	background: var(--mantine-color-white);
+}
+
+.sectionTitle {
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
+.sectionHint {
+	margin-top: 6px;
+	line-height: 1.45;
+}
+
+.gridTwo {
+	align-items: flex-end;
+}
+
+.identifierBlock {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
+.identifierLabel {
+	line-height: 1.25;
+}
+
+.identifierValue {
+	display: inline-block;
+	max-width: 100%;
+	overflow-wrap: anywhere;
+	border-radius: var(--mantine-radius-sm);
+	background-color: var(--mantine-color-blue-0);
+	color: var(--mantine-color-gray-8);
+	padding: 4px 10px;
+	line-height: 1.35;
+	font-family:
+		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+		'Courier New', monospace;
+}
+
+.identifierEmpty {
+	color: var(--mantine-color-gray-6);
+}
+
+.actions {
+	padding-top: var(--mantine-spacing-xs);
+}

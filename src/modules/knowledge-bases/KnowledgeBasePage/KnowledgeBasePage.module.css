@@ -1,0 +1,51 @@
+.modalContent {
+	border-radius: 16px;
+	overflow: hidden;
+}
+
+.modalHeaderShell {
+	padding: 20px 24px 0;
+	align-items: flex-start;
+}
+
+.modalTitleShell {
+	flex: 1;
+}
+
+.modalHeader {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding-right: 24px;
+}
+
+.modalTitle {
+	font-size: 18px;
+	line-height: 1.2;
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+}
+
+.modalDescription {
+	font-size: 13px;
+	line-height: 1.45;
+	color: var(--mantine-color-gray-6);
+}
+
+.modalBody {
+	padding: 18px 24px 24px;
+}
+
+@media (max-width: 48em) {
+	.modalHeaderShell {
+		padding: 18px 18px 0;
+	}
+
+	.modalBody {
+		padding: 16px 18px 18px;
+	}
+
+	.modalHeader {
+		padding-right: 12px;
+	}
+}

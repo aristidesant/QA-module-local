@@ -1,7 +1,8 @@
 import {
-	ActionIcon,
+	Badge,
 	Button,
 	Group,
+	Paper,
 	Pill,
 	PillGroup,
 	Select,
@@ -14,18 +15,28 @@ import {
 import { IconPlus, IconTrash, IconX } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import RightSectionCard from '~/components/RightSectionCard';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
+import usePermissions from '~/hooks/usePermissions';
+import SaveToGroupModal from '../components/SaveToGroupModal';
 import {
 	useAnalyticsFormContext,
 	type AnalyticsDataCollectionRow,
 	type DataCollectionType,
 } from '../analyticsFormContext';
+import styles from './AnalyticsVariableEditor.module.css';
 
-const AnalyticsVariableEditor = () => {
+interface AnalyticsVariableEditorProps {
+	onClose: () => void;
+}
+
+const AnalyticsVariableEditor = ({ onClose }: AnalyticsVariableEditorProps) => {
 	const { t } = useTranslation(['campaigns', 'common']);
 	const form = useAnalyticsFormContext();
+	const { canPerformAction } = usePermissions();
 	const [enumInputValue, setEnumInputValue] = useState('');
 	const [draft, setDraft] = useState<AnalyticsDataCollectionRow | null>(null);
+	const [saveToGroupOpened, setSaveToGroupOpened] = useState(false);
 
 	const selectedIndex = useMemo(
 		() =>
@@ -35,6 +46,10 @@ const AnalyticsVariableEditor = () => {
 
 	const selectedRow =
 		selectedIndex >= 0 ? form.values.rows[selectedIndex] : null;
+	const canSaveToGroup = canPerformAction(
+		ModuleEnum.SETTINGS,
+		PermissionEnum.CREATE
+	);
 
 	useEffect(() => {
 		setDraft(
@@ -129,10 +144,8 @@ const AnalyticsVariableEditor = () => {
 		);
 	};
 
-	const handleCancel = () => {
-		if (selectedRow.isNew) {
-			form.removeListItem('rows', selectedIndex);
-		}
+	const handleDelete = () => {
+		form.removeListItem('rows', selectedIndex);
 		form.setFieldValue('selectedRowId', null);
 	};
 
@@ -142,176 +155,224 @@ const AnalyticsVariableEditor = () => {
 			...draft,
 			isNew: false,
 			enum: draft.type === 'string' ? (draft.enum ?? []) : [],
+			source: draft.source ?? 'manual',
 		});
+		form.setFieldValue('selectedRowId', null);
 	};
 
 	return (
-		<RightSectionCard
-			title={t('form.analytics.editor.title', { ns: 'campaigns' })}
-			description={t('form.analytics.editor.description', { ns: 'campaigns' })}
-			rightSection={
-				<ActionIcon
-					size='sm'
-					variant='subtle'
-					color='red'
-					onClick={() => {
-						form.removeListItem('rows', selectedIndex);
-						form.setFieldValue('selectedRowId', null);
-					}}
-				>
-					<IconTrash size={14} />
-				</ActionIcon>
-			}
-		>
-			<Stack gap='xs'>
-				<SimpleGrid cols={{ base: 1, sm: 2 }} spacing='xs'>
-					<Select
-						size='sm'
-						label={t('form.analytics.fields.type', { ns: 'campaigns' })}
-						data={dataTypeOptions}
-						value={draft.type}
-						onChange={(value) => {
-							if (!value) return;
-							setDraft((current) =>
-								current
-									? {
-											...current,
-											type: value as DataCollectionType,
-											enum: value === 'string' ? (current.enum ?? []) : [],
-										}
-									: current
-							);
-						}}
-					/>
-					<TextInput
-						size='sm'
-						label={t('form.analytics.fields.identifier', { ns: 'campaigns' })}
-						placeholder={t('form.analytics.placeholders.identifier', {
-							ns: 'campaigns',
-						})}
-						error={
-							!draft.identifier.trim()
-								? t('form.analytics.validation.identifierRequired', {
-										ns: 'campaigns',
-									})
-								: hasDuplicateIdentifier
-									? t('form.analytics.validation.identifierUnique', {
-											ns: 'campaigns',
-										})
-									: undefined
-						}
-						value={draft.identifier}
-						onChange={(event) => {
-							const nextIdentifier = event.currentTarget.value;
-							return setDraft((current) =>
-								current ? { ...current, identifier: nextIdentifier } : current
-							);
-						}}
-					/>
-				</SimpleGrid>
-
-				<Textarea
-					size='sm'
-					label={t('form.analytics.fields.description', { ns: 'campaigns' })}
-					placeholder={t('form.analytics.placeholders.description', {
-						ns: 'campaigns',
-					})}
-					autosize
-					minRows={3}
-					maxRows={5}
-					value={draft.description}
-					onChange={(event) => {
-						const nextDescription = event.currentTarget.value;
-						return setDraft((current) =>
-							current ? { ...current, description: nextDescription } : current
-						);
-					}}
-				/>
-
-				<Text size='xs' c='dimmed'>
-					{t('form.analytics.descriptionHint', { ns: 'campaigns' })}
-				</Text>
-
-				{draft.type === 'string' && (
-					<Stack gap='xs'>
-						<Text size='sm' fw={600}>
-							{t('form.analytics.fields.enumValues', { ns: 'campaigns' })}
-						</Text>
-						<Group gap='xs' align='flex-end' wrap='nowrap'>
+		<>
+			<div className={styles.editorRoot}>
+				<div className={styles.editorContent}>
+					<Paper withBorder radius='md' p='sm'>
+						<SimpleGrid cols={{ base: 1, sm: 2 }} spacing='xs'>
+							<Select
+								size='sm'
+								label={t('form.analytics.fields.type', { ns: 'campaigns' })}
+								data={dataTypeOptions}
+								value={draft.type}
+								onChange={(value) => {
+									if (!value) return;
+									setDraft((current) =>
+										current
+											? {
+													...current,
+													type: value as DataCollectionType,
+													enum: value === 'string' ? (current.enum ?? []) : [],
+												}
+											: current
+									);
+								}}
+							/>
 							<TextInput
 								size='sm'
-								placeholder={t('form.analytics.placeholders.enumValue', {
+								label={t('form.analytics.fields.identifier', {
 									ns: 'campaigns',
 								})}
-								value={enumInputValue}
-								onChange={(event) =>
-									setEnumInputValue(event.currentTarget.value)
+								placeholder={t('form.analytics.placeholders.identifier', {
+									ns: 'campaigns',
+								})}
+								error={
+									!draft.identifier.trim()
+										? t('form.analytics.validation.identifierRequired', {
+												ns: 'campaigns',
+											})
+										: hasDuplicateIdentifier
+											? t('form.analytics.validation.identifierUnique', {
+													ns: 'campaigns',
+												})
+											: undefined
 								}
-								onKeyDown={(event) => {
-									if (event.key === 'Enter') {
-										event.preventDefault();
-										addEnumValue();
-									}
+								value={draft.identifier}
+								onChange={(event) => {
+									const nextIdentifier = event.currentTarget.value;
+									return setDraft((current) =>
+										current
+											? { ...current, identifier: nextIdentifier }
+											: current
+									);
 								}}
-								style={{ flex: 1 }}
 							/>
+						</SimpleGrid>
+					</Paper>
+
+					<Paper withBorder radius='md' p='sm'>
+						<Stack gap='xs'>
+							<Group justify='space-between' align='center'>
+								<Text size='sm' fw={600}>
+									{t('form.analytics.fields.description', { ns: 'campaigns' })}
+								</Text>
+								<Badge
+									size='sm'
+									variant='light'
+									color={isDraftDirty ? 'yellow' : 'green'}
+								>
+									{isDraftDirty
+										? t('form.analytics.editor.states.draft', {
+												ns: 'campaigns',
+											})
+										: t('form.analytics.editor.states.saved', {
+												ns: 'campaigns',
+											})}
+								</Badge>
+							</Group>
+							<Textarea
+								size='sm'
+								placeholder={t('form.analytics.placeholders.description', {
+									ns: 'campaigns',
+								})}
+								autosize
+								minRows={8}
+								maxRows={14}
+								value={draft.description}
+								onChange={(event) => {
+									const nextDescription = event.currentTarget.value;
+									return setDraft((current) =>
+										current
+											? { ...current, description: nextDescription }
+											: current
+									);
+								}}
+							/>
+							<Text size='xs' c='dimmed'>
+								{t('form.analytics.descriptionHint', { ns: 'campaigns' })}
+							</Text>
+						</Stack>
+					</Paper>
+
+					{draft.type === 'string' && (
+						<Paper withBorder radius='md' p='sm'>
+							<Stack gap='xs'>
+								<Group justify='space-between' align='center'>
+									<Text size='sm' fw={600}>
+										{t('form.analytics.fields.enumValues', { ns: 'campaigns' })}
+									</Text>
+									<Badge size='sm' variant='light' color='violet'>
+										{t('form.analytics.fields.enumValuesCount', {
+											ns: 'campaigns',
+											count: enumValues.length,
+										})}
+									</Badge>
+								</Group>
+								<Group gap='xs' align='flex-end' wrap='nowrap'>
+									<TextInput
+										size='sm'
+										className={styles.enumInput}
+										placeholder={t('form.analytics.placeholders.enumValue', {
+											ns: 'campaigns',
+										})}
+										value={enumInputValue}
+										onChange={(event) =>
+											setEnumInputValue(event.currentTarget.value)
+										}
+										onKeyDown={(event) => {
+											if (event.key === 'Enter') {
+												event.preventDefault();
+												addEnumValue();
+											}
+										}}
+										aria-label={t('form.analytics.fields.enumValues', {
+											ns: 'campaigns',
+										})}
+									/>
+									<Button
+										size='sm'
+										variant='default'
+										onClick={addEnumValue}
+										px='xs'
+										aria-label={t('form.analytics.fields.enumValues', {
+											ns: 'campaigns',
+										})}
+									>
+										<IconPlus size={14} />
+									</Button>
+								</Group>
+
+								{enumValues.length > 0 && (
+									<PillGroup>
+										{enumValues.map((value) => (
+											<Pill
+												key={value}
+												withRemoveButton
+												onRemove={() => removeEnumValue(value)}
+												removeButtonProps={{ icon: <IconX size={10} /> }}
+											>
+												{value}
+											</Pill>
+										))}
+									</PillGroup>
+								)}
+							</Stack>
+						</Paper>
+					)}
+				</div>
+
+				<Paper withBorder radius='md' p='sm'>
+					<Group justify='space-between' align='center' wrap='wrap' gap='xs'>
+						<Button
+							size='sm'
+							variant='subtle'
+							color='red'
+							leftSection={<IconTrash size={14} />}
+							onClick={handleDelete}
+						>
+							{t('actions.delete', { ns: 'common' })}
+						</Button>
+
+						<Group gap='xs' className={styles.footerActions}>
+							{canSaveToGroup && (
+								<Button
+									size='sm'
+									variant='light'
+									color='grape'
+									onClick={() => setSaveToGroupOpened(true)}
+									disabled={hasIdentifierError}
+								>
+									{t('form.analytics.actions.saveToGroup', { ns: 'campaigns' })}
+								</Button>
+							)}
+							<Button size='sm' variant='default' onClick={onClose}>
+								{t('actions.cancel', { ns: 'common' })}
+							</Button>
 							<Button
 								size='sm'
-								variant='default'
-								onClick={addEnumValue}
-								px='xs'
+								onClick={handleSave}
+								disabled={hasIdentifierError || !isDraftDirty}
 							>
-								<IconPlus size={14} />
+								{t('form.actions.save', { ns: 'campaigns' })}
 							</Button>
 						</Group>
+					</Group>
+				</Paper>
+			</div>
 
-						{enumValues.length > 0 && (
-							<Stack gap='xs'>
-								<Text size='sm' fw={500}>
-									{t('form.analytics.fields.enumValuesCount', {
-										ns: 'campaigns',
-										count: enumValues.length,
-									})}
-								</Text>
-								<PillGroup>
-									{enumValues.map((value) => (
-										<Pill
-											key={value}
-											withRemoveButton
-											onRemove={() => removeEnumValue(value)}
-											removeButtonProps={{ icon: <IconX size={10} /> }}
-										>
-											{value}
-										</Pill>
-									))}
-								</PillGroup>
-							</Stack>
-						)}
-
-						<Text size='xs' c='dimmed'>
-							{t('form.analytics.enumHint', { ns: 'campaigns' })}
-						</Text>
-					</Stack>
-				)}
-
-				<Text size='xs' c='dimmed'>
-					{t('form.analytics.editor.stringHint', { ns: 'campaigns' })}
-				</Text>
-
-				<Group justify='flex-end' gap='xs'>
-					<Button size='sm' variant='default' onClick={handleCancel}>
-						{t('actions.cancel', { ns: 'common' })}
-					</Button>
-					<Button
-						size='sm'
-						onClick={handleSave}
-						disabled={hasIdentifierError || !isDraftDirty}
-					>
-						{t('form.actions.save', { ns: 'campaigns' })}
-					</Button>
-				</Group>
-			</Stack>
-		</RightSectionCard>
+			<SaveToGroupModal
+				opened={saveToGroupOpened}
+				onClose={() => setSaveToGroupOpened(false)}
+				row={draft}
+				onSaved={() => setSaveToGroupOpened(false)}
+			/>
+		</>
 	);
 };
 

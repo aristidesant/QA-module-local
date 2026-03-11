@@ -2,6 +2,7 @@ export enum ReportValueOriginType {
 	SQL = 'SQL',
 	DYNAMIC = 'DYNAMIC',
 	OBJECT = 'OBJECT',
+	METADATA = 'METADATA',
 }
 
 export enum ReportValueDataType {
@@ -18,8 +19,9 @@ export interface ReportValue {
 	key: string;
 	label: string;
 	dataType: ReportValueDataType;
+	format?: string | null;
 	order: number;
-	contactGroupId: number;
+	campaignId: number;
 	userId: number;
 	clientId: number;
 	createdAt: string;
@@ -33,7 +35,7 @@ export interface CreateReportValueDto {
 	label: string;
 	dataType: ReportValueDataType;
 	order?: number;
-	contactGroupId: number;
+	campaignId: number;
 }
 
 export interface UpdateReportValueDto {
@@ -41,5 +43,20 @@ export interface UpdateReportValueDto {
 	key?: string;
 	label?: string;
 	dataType?: ReportValueDataType;
+	format?: string | null;
 	order?: number;
+}
+
+export interface BulkUpdateReportValueItemDto {
+	id: number;
+	originType?: ReportValueOriginType;
+	key?: string;
+	label?: string;
+	dataType?: ReportValueDataType;
+	format?: string | null;
+	order?: number;
+}
+
+export interface BulkUpdateReportValuesDto {
+	reportValues: BulkUpdateReportValueItemDto[];
 }

@@ -1,5 +1,13 @@
 import React from 'react';
 import {
+	DragDropContext,
+	Draggable,
+	Droppable,
+	type DraggableProvidedDragHandleProps,
+	type DraggableProvidedDraggableProps,
+	type DropResult,
+} from '@hello-pangea/dnd';
+import {
 	ColumnDef,
 	ColumnFiltersState,
 	ColumnMeta,
@@ -117,6 +125,8 @@ export type BaseTableProps<TData> = {
 	 * Render built-in pagination controls (client/server)
 	 */
 	showPaginationControls?: boolean;
+	enableRowReordering?: boolean;
+	onRowReorder?: (sourceIndex: number, destinationIndex: number) => void;
 };
 
 function BaseTable<TData>({
@@ -146,6 +156,8 @@ function BaseTable<TData>({
 	onExpandedChange,
 	initialExpandedRows = [],
 	showPaginationControls = false,
+	enableRowReordering = false,
+	onRowReorder,
 }: BaseTableProps<TData>) {
 	const { t } = useTranslation();
 	const [sorting, setSorting] = React.useState<SortingState>(initialSort);
@@ -233,9 +245,31 @@ function BaseTable<TData>({
 		[onExpandedChange, expanded]
 	);
 
+	const rowIdGetter = React.useCallback(
+		(originalRow: TData, index: number) =>
+			String(getRowId?.(originalRow) ?? index),
+		[getRowId]
+	);
+
+	const handleRowReorder = React.useCallback(
+		(result: DropResult) => {
+			if (!result.destination || !onRowReorder) return;
+			if (result.source.index === result.destination.index) return;
+			onRowReorder(result.source.index, result.destination.index);
+		},
+		[onRowReorder]
+	);
+
+	if (enableRowReordering && !getRowId) {
+		throw new Error(
+			'BaseTable requires getRowId when enableRowReordering is true'
+		);
+	}
+
 	const table = useReactTable<TData>({
 		data,
 		columns,
+		getRowId: rowIdGetter,
 		state: {
 			sorting,
 			...(filterMode === 'client' && enableFiltering ? { columnFilters } : {}),
@@ -266,6 +300,100 @@ function BaseTable<TData>({
 	const hasData = data && data.length > 0;
 	const displayMessage = emptyMessage || t('status.noData');
 	const shouldShowPagination = enablePagination && showPaginationControls;
+
+	const renderTableRow = (
+		row: Row<TData>,
+		options?: {
+			draggableProps?: DraggableProvidedDraggableProps;
+			dragHandleProps?: DraggableProvidedDragHandleProps | null;
+			innerRef?: (element: HTMLTableRowElement | null) => void;
+			isDragging?: boolean;
+		}
+	) => {
+		const rowId = getRowId?.(row.original);
+		const isSelected =
+			selectedRowId != null && rowId != null && rowId === selectedRowId;
+
+		return (
+			<React.Fragment key={row.id}>
+				<Table.Tr
+					ref={options?.innerRef}
+					{...(options?.draggableProps ?? {})}
+					{...(options?.dragHandleProps ?? {})}
+					onClick={() => {
+						if (enableExpanding && renderExpandedRow) {
+							row.toggleExpanded();
+						}
+						onRowClick?.(row.original);
+					}}
+					className={[
+						getRowClassName?.(row),
+						isSelected ? styles.selectedRow : '',
+						enableExpanding && renderExpandedRow ? styles.expandableRow : '',
+						options?.isDragging ? styles.reorderingRow : '',
+					]
+						.filter(Boolean)
+						.join(' ')}
+					style={
+						(options?.draggableProps?.style as React.CSSProperties) ?? undefined
+					}
+				>
+					{enableExpanding && renderExpandedRow && (
+						<Table.Td
+							className={[
+								styles.td,
+								styles.expandCell,
+								density === 'compact' ? styles.compactTd : '',
+							]
+								.filter(Boolean)
+								.join(' ')}
+							onClick={(e) => {
+								e.stopPropagation();
+								row.toggleExpanded();
+							}}
+						>
+							<div className={styles.expandIcon}>
+								<IconChevronRight
+									size={16}
+									className={
+										row.getIsExpanded() ? styles.expandIconRotated : ''
+									}
+								/>
+							</div>
+						</Table.Td>
+					)}
+					{row.getVisibleCells().map((cell) => (
+						<Table.Td
+							key={cell.id}
+							className={[
+								styles.td,
+								density === 'compact' ? styles.compactTd : '',
+								(
+									cell.column.columnDef.meta as
+										| BaseTableColumnMeta<TData>
+										| undefined
+								)?.cellClassName || '',
+							]
+								.filter(Boolean)
+								.join(' ')}
+						>
+							{flexRender(cell.column.columnDef.cell, cell.getContext())}
+						</Table.Td>
+					))}
+				</Table.Tr>
+				{enableExpanding && renderExpandedRow && row.getIsExpanded() && (
+					<Table.Tr className={styles.expandedRow}>
+						<Table.Td
+							colSpan={table.getAllColumns().length + 1}
+							className={styles.expandedContent}
+						>
+							{renderExpandedRow(row.original)}
+						</Table.Td>
+					</Table.Tr>
+				)}
+			</React.Fragment>
+		);
+	};
 
 	return (
 		<div className={`${styles.root} ${className ?? ''}`}>
@@ -329,128 +457,73 @@ function BaseTable<TData>({
 						</Table.Tr>
 					))}
 				</Table.Thead>
-				<Table.Tbody className={styles.tbody}>
-					{isLoading ? (
-						Array.from({ length: skeletonRowsCount }).map((_, index) => (
-							<Table.Tr key={`skeleton-${index}`}>
-								{table.getAllColumns().map((column) => (
-									<Table.Td
-										key={`skeleton-${index}-${column.id}`}
-										className={[
-											styles.td,
-											density === 'compact' ? styles.compactTd : '',
-										]
-											.filter(Boolean)
-											.join(' ')}
-									>
-										<Skeleton height={20} />
-									</Table.Td>
-								))}
-							</Table.Tr>
-						))
-					) : !hasData ? (
-						<Table.Tr>
-							<Table.Td
-								colSpan={
-									table.getAllColumns().length +
-									(enableExpanding && renderExpandedRow ? 1 : 0)
-								}
-								className={styles.emptyRow}
-							>
-								{displayMessage}
-							</Table.Td>
-						</Table.Tr>
-					) : (
-						table.getRowModel().rows.map((row) => {
-							const rowId = getRowId?.(row.original);
-							const isSelected =
-								selectedRowId != null &&
-								rowId != null &&
-								rowId === selectedRowId;
-							return (
-								<React.Fragment key={row.id}>
-									<Table.Tr
-										onClick={() => {
-											if (enableExpanding && renderExpandedRow) {
-												row.toggleExpanded();
+				{enableRowReordering && !isLoading && hasData ? (
+					<DragDropContext onDragEnd={handleRowReorder}>
+						<Droppable droppableId='base-table-rows'>
+							{(droppableProvided) => (
+								<Table.Tbody
+									ref={droppableProvided.innerRef}
+									{...droppableProvided.droppableProps}
+									className={styles.tbody}
+								>
+									{table.getRowModel().rows.map((row, index) => (
+										<Draggable key={row.id} draggableId={row.id} index={index}>
+											{(draggableProvided, snapshot) =>
+												renderTableRow(row, {
+													draggableProps: draggableProvided.draggableProps,
+													dragHandleProps: draggableProvided.dragHandleProps,
+													innerRef: draggableProvided.innerRef,
+													isDragging: snapshot.isDragging,
+												})
 											}
-											onRowClick?.(row.original);
-										}}
-										className={[
-											getRowClassName?.(row),
-											isSelected ? styles.selectedRow : '',
-											enableExpanding && renderExpandedRow
-												? styles.expandableRow
-												: '',
-										]
-											.filter(Boolean)
-											.join(' ')}
-									>
-										{enableExpanding && renderExpandedRow && (
-											<Table.Td
-												className={[
-													styles.td,
-													styles.expandCell,
-													density === 'compact' ? styles.compactTd : '',
-												]
-													.filter(Boolean)
-													.join(' ')}
-												onClick={(e) => {
-													e.stopPropagation();
-													row.toggleExpanded();
-												}}
-											>
-												<div className={styles.expandIcon}>
-													<IconChevronRight
-														size={16}
-														className={
-															row.getIsExpanded()
-																? styles.expandIconRotated
-																: ''
-														}
-													/>
-												</div>
-											</Table.Td>
-										)}
-										{row.getVisibleCells().map((cell) => (
-											<Table.Td
-												key={cell.id}
-												className={[
-													styles.td,
-													density === 'compact' ? styles.compactTd : '',
-													(
-														cell.column.columnDef.meta as
-															| BaseTableColumnMeta<TData>
-															| undefined
-													)?.cellClassName || '',
-												]
-													.filter(Boolean)
-													.join(' ')}
-											>
-												{flexRender(
-													cell.column.columnDef.cell,
-													cell.getContext()
-												)}
-											</Table.Td>
-										))}
+										</Draggable>
+									))}
+									<Table.Tr className={styles.droppableSpacer}>
+										<Table.Td className={styles.droppableSpacerCell}>
+											{droppableProvided.placeholder}
+										</Table.Td>
 									</Table.Tr>
-									{enableExpanding &&
-										renderExpandedRow &&
-										row.getIsExpanded() && (
-											<Table.Tr className={styles.expandedRow}>
-												<Table.Td
-													colSpan={table.getAllColumns().length + 1}
-													className={styles.expandedContent}
-												>
-													{renderExpandedRow(row.original)}
-												</Table.Td>
-											</Table.Tr>
-										)}
-								</React.Fragment>
-							);
-						})
-					)}
-				</Table.Tbody>
+								</Table.Tbody>
+							)}
+						</Droppable>
+					</DragDropContext>
+				) : (
+					<Table.Tbody className={styles.tbody}>
+						{isLoading ? (
+							Array.from({ length: skeletonRowsCount }).map((_, index) => (
+								<Table.Tr key={`skeleton-${index}`}>
+									{table.getAllColumns().map((column) => (
+										<Table.Td
+											key={`skeleton-${index}-${column.id}`}
+											className={[
+												styles.td,
+												density === 'compact' ? styles.compactTd : '',
+											]
+												.filter(Boolean)
+												.join(' ')}
+										>
+											<Skeleton height={20} />
+										</Table.Td>
+									))}
+								</Table.Tr>
+							))
+						) : !hasData ? (
+							<Table.Tr>
+								<Table.Td
+									colSpan={
+										table.getAllColumns().length +
+										(enableExpanding && renderExpandedRow ? 1 : 0)
+									}
+									className={styles.emptyRow}
+								>
+									{displayMessage}
+								</Table.Td>
+							</Table.Tr>
+						) : (
+							table.getRowModel().rows.map((row) => renderTableRow(row))
+						)}
+					</Table.Tbody>
+				)}
 			</Table>
 			{shouldShowPagination ? (
 				<Group

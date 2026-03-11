@@ -1,0 +1,112 @@
+.countBadge {
+	border: 1px solid
+		color-mix(in srgb, var(--mantine-color-blue-4) 30%, transparent);
+	background: var(--mantine-color-white);
+}
+
+.table {
+	overflow: hidden;
+	border-radius: var(--mantine-radius-md);
+}
+
+.labelHeader {
+	width: 48%;
+}
+
+.originHeader {
+	width: 180px;
+	white-space: nowrap;
+}
+
+.dataTypeHeader {
+	width: 150px;
+	white-space: nowrap;
+}
+
+.actionsHeader {
+	width: 96px;
+	text-align: right;
+}
+
+.labelColumn {
+	min-width: 360px;
+}
+
+.originColumn {
+	width: 180px;
+	white-space: nowrap;
+}
+
+.dataTypeColumn {
+	width: 150px;
+	white-space: nowrap;
+}
+
+.actionsColumn {
+	width: 96px;
+	text-align: right;
+}
+
+.labelCell {
+	min-width: 0;
+	align-items: flex-start;
+}
+
+.gripIcon {
+	flex-shrink: 0;
+	margin-top: 2px;
+	color: var(--mantine-color-gray-4);
+}
+
+.labelContent {
+	min-width: 0;
+}
+
+.labelValue {
+	margin-bottom: 2px;
+	line-height: 1.2;
+	word-break: break-word;
+}
+
+.keyValue {
+	display: block;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.orderPill {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 24px;
+	height: 24px;
+	padding: 0 6px;
+	border-radius: 999px;
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
+}
+
+.actionsGroup {
+	width: 100%;
+	justify-content: flex-end;
+}
+
+.saveBar {
+	background: color-mix(in srgb, var(--mantine-color-gray-0) 70%, white);
+}
+
+@media (max-width: 48em) {
+	.labelColumn {
+		min-width: 280px;
+	}
+
+	.labelCell {
+		gap: var(--mantine-spacing-xs);
+	}
+
+	.keyValue {
+		max-width: 220px;
+	}
+}

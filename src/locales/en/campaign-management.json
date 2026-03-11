@@ -3,7 +3,8 @@
 	"description": "Manage campaign categories, objectives, schemas, and outcomes",
 	"tabs": {
 		"setup": "Campaign Setup",
-		"outcomes": "Outcomes"
+		"outcomes": "Outcomes",
+		"customVariables": "Custom Variables"
 	},
 	"setup": {
 		"catalog": "Catalog",
@@ -252,7 +253,13 @@
 						"ariaLabel": "Field type"
 					},
 					"isArray": "Is Array",
-					"removeField": "Remove field"
+					"removeField": "Remove field",
+					"matchPatterns": {
+						"toggle": "Match patterns",
+						"label": "Match Patterns",
+						"description": "Comma-separated list of column name patterns for auto-matching CSV columns",
+						"placeholder": "e.g., monto_deuda, deuda, amount_due, balance"
+					}
 				},
 				"actions": {
 					"create": "Create",
@@ -260,6 +267,7 @@
 				},
 				"validation": {
 					"nameRequired": "Name is required",
+					"nameNoSpecialChars": "Name cannot contain special characters",
 					"objectiveRequired": "Objective is required",
 					"invalidFieldNamesTitle": "Invalid Field Names",
 					"fieldNameRequired": "Field {{index}}: Name is required",
@@ -323,6 +331,173 @@
 			"noResultsFiltersDescription": "Try adjusting your search criteria or filters",
 			"clearFilters": "Clear Filters",
 			"getStarted": "Get started by creating your first campaign schema"
+		}
+	},
+	"customVariables": {
+		"catalog": "Custom Variables Catalog",
+		"groups": {
+			"label": "Groups",
+			"title": "Variable Groups",
+			"description": "Manage custom variable templates and their ownership scope.",
+			"create": "Create Group",
+			"edit": "Edit Group",
+			"sectionCardDescription": "Templates can be global, client-owned, or campaign-bound clones.",
+			"filters": {
+				"searchPlaceholder": "Search groups by name..."
+			},
+			"pagination": {
+				"itemLabel": "groups"
+			},
+			"table": {
+				"headers": {
+					"name": "Group",
+					"campaignId": "Campaign ID",
+					"sourceTemplateId": "Source Template",
+					"actions": "Actions"
+				},
+				"actions": {
+					"select": "Select group",
+					"edit": "Edit group",
+					"delete": "Delete group",
+					"clone": "Clone group",
+					"assignCampaign": "Assign to campaign"
+				}
+			},
+			"badges": {
+				"global": "Global",
+				"campaignBound": "Campaign",
+				"cloned": "Cloned",
+				"selected": "Selected"
+			},
+			"empty": {
+				"title": "No variable groups found",
+				"description": "Get started by creating your first variable group."
+			},
+			"noResults": "No groups match your search",
+			"noResultsDescription": "Try a different term or clear the filters.",
+			"assignCampaignTitle": "Assign Group to Campaign",
+			"assignCampaignDescription": "This will create an independent clone associated with the selected campaign.",
+			"form": {
+				"name": {
+					"label": "Group name",
+					"placeholder": "Enter group name"
+				},
+				"campaign": {
+					"label": "Campaign",
+					"placeholder": "Select a campaign"
+				},
+				"actions": {
+					"create": "Create",
+					"update": "Update",
+					"assignCampaign": "Assign to Campaign"
+				},
+				"validation": {
+					"nameRequired": "Group name is required"
+				}
+			},
+			"notifications": {
+				"createSuccess": "Group created successfully",
+				"createError": "Failed to create group",
+				"updateSuccess": "Group updated successfully",
+				"updateError": "Failed to update group",
+				"deleteSuccess": "Group deleted successfully",
+				"deleteError": "Failed to delete group",
+				"cloneSuccess": "Group cloned successfully",
+				"cloneError": "Failed to clone group",
+				"assignSuccess": "Group assigned to campaign successfully",
+				"assignError": "Failed to assign group to campaign"
+			}
+		},
+		"variables": {
+			"label": "Variables",
+			"title": "Template Variables",
+			"description": "Manage variables inside the selected template.",
+			"create": "Create Variable",
+			"edit": "Edit Variable",
+			"sectionCardDescription": "Pick a group first and manage variables for that template.",
+			"templateSelect": {
+				"label": "Group template",
+				"placeholder": "Select a group"
+			},
+			"emptySelectTemplate": {
+				"title": "Select a group first",
+				"description": "Choose a group template to list and manage variables."
+			},
+			"noResults": "No variables found",
+			"noResultsDescription": "Create your first variable for this group.",
+			"templateHint": "Working on template #{{templateId}}",
+			"table": {
+				"headers": {
+					"label": "Label",
+					"name": "Variable",
+					"categoryId": "Category ID",
+					"type": "Type",
+					"valueType": "Value Type",
+					"actions": "Actions"
+				},
+				"actions": {
+					"edit": "Edit variable",
+					"delete": "Delete variable"
+				}
+			},
+			"form": {
+				"label": {
+					"label": "Label",
+					"placeholder": "Enter variable label"
+				},
+				"category": {
+					"label": "Category (optional)",
+					"placeholder": "Select category"
+				},
+				"value": {
+					"typeLabel": "Schema type",
+					"typePlaceholder": "e.g. string",
+					"descriptionLabel": "Description",
+					"descriptionPlaceholder": "Describe this variable",
+					"enumLabel": "Enum values",
+					"enumPlaceholder": "Add allowed values",
+					"valueTypeLabel": "Value type",
+					"dynamicVariableLabel": "Dynamic variable",
+					"dynamicVariablePlaceholder": "e.g. {{contact.city}}",
+					"constantValueLabel": "Constant value",
+					"constantValuePlaceholder": "Fixed fallback value",
+					"isSystemProvidedLabel": "System provided",
+					"typeOptions": {
+						"string": "String",
+						"number": "Number",
+						"integer": "Integer",
+						"boolean": "Boolean"
+					}
+				},
+				"actions": {
+					"create": "Create",
+					"update": "Update"
+				},
+				"validation": {
+					"labelRequired": "Label is required",
+					"generatedNameInvalid": "Label must contain at least one letter or number",
+					"typeRequired": "Schema type is required"
+				},
+				"sections": {
+					"basicInfo": "Basic Info",
+					"llmSchema": "LLM Extraction Schema",
+					"enumValues": "Enum Values (optional)"
+				},
+				"hints": {
+					"description": "This field is passed to the LLM and should describe in detail how to extract the value from the transcript.",
+					"enum": "Add predefined values that the LLM can select from. If none are provided, any valid value can be returned."
+				},
+				"identifierPreview": "Identifier (auto-generated)",
+				"identifierEmpty": "--"
+			},
+			"notifications": {
+				"createSuccess": "Variable created successfully",
+				"createError": "Failed to create variable",
+				"updateSuccess": "Variable updated successfully",
+				"updateError": "Failed to update variable",
+				"deleteSuccess": "Variable deleted successfully",
+				"deleteError": "Failed to delete variable"
+			}
 		}
 	}
 }

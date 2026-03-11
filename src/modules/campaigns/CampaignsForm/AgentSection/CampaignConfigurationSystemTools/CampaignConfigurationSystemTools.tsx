@@ -8,12 +8,7 @@ import {
 	Badge,
 	Group,
 } from '@mantine/core';
-import {
-	IconCpu,
-	IconTrash,
-	IconPlus,
-	IconSettings,
-} from '@tabler/icons-react';
+import { IconCpu, IconTrash, IconSettings } from '@tabler/icons-react';
 import RightSectionCard from '~/components/RightSectionCard';
 import { useClientConfigByName } from '~/queries/useClientConfigs';
 import type {
@@ -185,6 +180,13 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 				icon={IconCpu}
 				title={t('form.agent.systemTools.title')}
 				description={t('form.agent.systemTools.description')}
+				actions={{
+					primary: {
+						kind: 'add',
+						label: t('form.agent.systemTools.add'),
+						onClick: () => setAddModalOpened(true),
+					},
+				}}
 			>
 				<div className={classes.container}>
 					{activeTools.length > 0 ? (
@@ -247,15 +249,6 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 							{t('form.agent.systemTools.noSelection')}
 						</Text>
 					)}
-
-					<button
-						type='button'
-						className={classes.addButton}
-						onClick={() => setAddModalOpened(true)}
-					>
-						<IconPlus size={14} className={classes.plusIcon} />
-						<span>{t('form.agent.systemTools.add')}</span>
-					</button>
 				</div>
 			</RightSectionCard>
 

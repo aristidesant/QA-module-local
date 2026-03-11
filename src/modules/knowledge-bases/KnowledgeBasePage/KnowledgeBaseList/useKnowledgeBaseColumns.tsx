@@ -16,13 +16,11 @@ import {
 	KnowledgeBaseType,
 	KnowledgeBaseStatus,
 } from '~/models/KnowledgeBaseModel';
-import KnowledgeBaseForm from '../KnowledgeBaseForm/KnowledgeBaseForm';
 import { createColumnHelper, type ColumnDef } from '@tanstack/react-table';
 import type { KnowledgeBaseModel } from '~/models/KnowledgeBaseModel';
 import dayjs from 'dayjs';
 import styles from './KnowledgeBaseList.module.css';
 import type { UseMutationResult } from '@tanstack/react-query';
-import type React from 'react';
 import { useTranslation } from 'react-i18next';
 
 const truncate = (s: string | undefined, n = 80) =>
@@ -47,15 +45,14 @@ type PermissionFlags = {
 export const useKnowledgeBaseColumns = (
 	retryMutation: UseMutationResult<unknown, unknown, number, unknown>,
 	deleteMutation: UseMutationResult<unknown, unknown, number, unknown>,
-	setRight: (node: React.ReactNode) => void,
-	refetch: () => Promise<unknown>,
+	openEdit: (id: number) => void,
 	{ canUpdate, canDelete }: PermissionFlags
 ) => {
 	const { t } = useTranslation('knowledge-bases');
 
 	const columnHelper = createColumnHelper<KnowledgeBaseModel>();
 
-	const columns = useMemo<Array<ColumnDef<KnowledgeBaseModel, unknown>>>(
+	const columns = useMemo(
 		() => [
 			columnHelper.accessor('name', {
 				id: 'name',
@@ -184,6 +181,7 @@ export const useKnowledgeBaseColumns = (
 									position='top'
 								>
 									<ActionIcon
+										variant='light'
 										component='a'
 										aria-label={
 											item.type === KnowledgeBaseType.URL
@@ -215,12 +213,12 @@ export const useKnowledgeBaseColumns = (
 										position='top'
 									>
 										<ActionIcon
+											variant='light'
 											size='sm'
 											aria-label={t('table.actions.retryUpload')}
 											onClick={async () => {
 												try {
 													await retryMutation.mutateAsync(Number(item.id));
-													refetch();
 												} catch (_) {
 													// handled by mutation
 												}
@@ -236,9 +234,8 @@ export const useKnowledgeBaseColumns = (
 							{canUpdate && (
 								<Tooltip label={t('table.actions.edit')} position='top'>
 									<ActionIcon
-										onClick={() =>
-											setRight(<KnowledgeBaseForm id={Number(item.id)} />)
-										}
+										variant='light'
+										onClick={() => openEdit(Number(item.id))}
 										size='sm'
 										aria-label={t('table.actions.edit')}
 									>
@@ -250,6 +247,7 @@ export const useKnowledgeBaseColumns = (
 							{canDelete && (
 								<Tooltip label={t('table.actions.delete')} position='top'>
 									<ActionIcon
+										variant='light'
 										color='red'
 										aria-label={t('table.actions.delete')}
 										onClick={() =>
@@ -280,8 +278,8 @@ export const useKnowledgeBaseColumns = (
 				},
 			}),
 		],
-		[t, retryMutation, deleteMutation, setRight, refetch, canUpdate, canDelete]
+		[t, retryMutation, deleteMutation, openEdit, canUpdate, canDelete]
 	);
 
-	return columns;
+	return columns as ColumnDef<KnowledgeBaseModel, unknown>[];
 };

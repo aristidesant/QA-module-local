@@ -10,18 +10,16 @@ import {
 	Group,
 	Divider,
 	Alert,
+	Text,
 } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import type {
 	CreateDispositionCatalog,
 	DispositionCatalogModel,
 } from '~/models/DispositionCatalogModels';
-import RightSectionCard from '~/components/RightSectionCard';
-import { IconForms, IconInfoCircle } from '@tabler/icons-react';
+import { IconInfoCircle } from '@tabler/icons-react';
 import { useCreateDispositionNode } from '~/queries/dispositionNodesQueries';
 import { OUTBOUND_PROTECTED_ROOT_NODE_DEFAULTS } from '../../constants';
-
-import styles from './DispositionCatalogForm.module.css';
 
 type DispositionCatalogFormCoreProps = {
 	onSubmit: (
@@ -95,68 +93,62 @@ const DispositionCatalogForm: FC<DispositionCatalogFormProps> = ({
 	};
 
 	return (
-		<>
-			<Stack gap='sm'>
-				<form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
-					<RightSectionCard
-						icon={IconForms}
-						iconColor='red'
-						title={t('formCatalog.detailsTitle')}
-						description={t('formCatalog.detailsDescription')}
-					>
-						<Stack gap='sm'>
-							<TextInput
-								label={t('formCatalog.name')}
-								placeholder={t('formCatalog.namePlaceholder')}
-								required
-								{...form.getInputProps('name')}
-							/>
-							<div className={styles.typeField}>
-								<label className={styles.typeLabel}>
-									{t('formCatalog.type')}
-								</label>
-								<SegmentedControl
-									fullWidth
-									data={[
-										{ value: 'INBOUND', label: t('formCatalog.typeInbound') },
-										{ value: 'OUTBOUND', label: t('formCatalog.typeOutbound') },
-									]}
-									{...form.getInputProps('type')}
-								/>
-							</div>
-							{mode === 'create' && form.values.type === 'OUTBOUND' && (
-								<Alert
-									icon={<IconInfoCircle size={16} />}
-									variant='light'
-									color='blue'
-								>
-									{t('formCatalog.outboundAlert')}
-								</Alert>
-							)}
-							<Textarea
-								label={t('formCatalog.descriptionLabel')}
-								placeholder={t('formCatalog.descriptionPlaceholder')}
-								autosize
-								minRows={4}
-								{...form.getInputProps('description')}
-							/>
-							<Divider my='xs' />
-							<Group justify='space-between' align='center'>
-								<Switch
-									label={t('formCatalog.defaultCatalog')}
-									{...form.getInputProps('isDefault', { type: 'checkbox' })}
-								/>
-								<Button type='submit' loading={loading || createNode.isPending}>
-									{mode === 'edit'
-										? t('formCatalog.submitEdit')
-										: t('formCatalog.submitCreate')}
-								</Button>
-							</Group>
-						</Stack>
-					</RightSectionCard>
-				</form>
+		<form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+			<Stack gap='md'>
+				<Stack gap='xs'>
+					<TextInput
+						label={t('formCatalog.name')}
+						placeholder={t('formCatalog.namePlaceholder')}
+						required
+						{...form.getInputProps('name')}
+					/>
+					<div>
+						<Text size='sm' fw={500} mb={6}>
+							{t('formCatalog.type')}
+						</Text>
+						<SegmentedControl
+							fullWidth
+							data={[
+								{ value: 'INBOUND', label: t('formCatalog.typeInbound') },
+								{ value: 'OUTBOUND', label: t('formCatalog.typeOutbound') },
+							]}
+							{...form.getInputProps('type')}
+						/>
+					</div>
+					{mode === 'create' && form.values.type === 'OUTBOUND' && (
+						<Alert
+							icon={<IconInfoCircle size={16} />}
+							variant='light'
+							color='blue'
+						>
+							{t('formCatalog.outboundAlert')}
+						</Alert>
+					)}
+				</Stack>
+				<Divider />
+				<Stack gap='xs'>
+					<Textarea
+						label={t('formCatalog.descriptionLabel')}
+						placeholder={t('formCatalog.descriptionPlaceholder')}
+						autosize
+						minRows={3}
+						{...form.getInputProps('description')}
+					/>
+					<Switch
+						label={t('formCatalog.defaultCatalog')}
+						{...form.getInputProps('isDefault', { type: 'checkbox' })}
+					/>
+				</Stack>
+				<Divider />
+				<Group justify='flex-end'>
+					<Button type='submit' loading={loading || createNode.isPending}>
+						{mode === 'edit'
+							? t('formCatalog.submitEdit')
+							: t('formCatalog.submitCreate')}
+					</Button>
+				</Group>
 			</Stack>
-		</>
+		</form>
 	);
 };
 

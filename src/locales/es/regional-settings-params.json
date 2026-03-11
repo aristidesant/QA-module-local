@@ -3,6 +3,10 @@
 		"title": "Configuración regional",
 		"description": "Configura la configuración regional predeterminada"
 	},
+	"fields": {
+		"timezone": "Zona horaria",
+		"locale": "Configuración regional"
+	},
 	"actions": {
 		"createOverride": "Crear sobrescritura",
 		"deleteOverride": "Eliminar sobrescritura",

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { ActionIcon, Badge, Group, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Badge, Group, Stack, Text, Tooltip } from '@mantine/core';
 import { IconArrowUpRight } from '@tabler/icons-react';
 import type ContactGroup from '~/models/ContactGroup';
 import { timeAgo } from '~/utils/dateUtils';
@@ -16,6 +16,7 @@ import {
 import { useCampaignActiveSchedule } from '~/queries/schedulerQueries';
 import { getQueueStatusConfig } from './queueStatusConfig';
 import { useSessionStore } from '~/stores/sessionStore';
+import { formatWaveDateTime } from '~/utils/waveUtils';
 
 interface UseContactListColumnsParams {
 	onUpdateComplete: () => void;
@@ -32,7 +33,7 @@ const useContactListColumns = ({
 	campaignId,
 	onNavigateToContactList,
 }: UseContactListColumnsParams): ColumnDef<ContactGroup>[] => {
-	const { t } = useTranslation('campaigns');
+	const { t, i18n } = useTranslation(['campaigns', 'common']);
 	const { user, targetClient } = useSessionStore();
 	const toggleMutation = useToggleContactGroupStatus();
 	const updateMutation = useUpdateContactGroup();
@@ -123,10 +124,30 @@ const useContactListColumns = ({
 				header: t('form.contacts.list.columns.status'),
 				cell: ({ row }) => {
 					const statusConfig = getQueueStatusConfig(row.original.queueStatus);
+					const shouldShowNextWave = ['WAITING', 'PAUSED'].includes(
+						row.original.queueStatus
+					);
+					const nextWaveScheduledAt =
+						shouldShowNextWave && row.original.nextWaveScheduledAt
+							? formatWaveDateTime(
+									row.original.nextWaveScheduledAt,
+									i18n.language,
+									t('form.contacts.details.stats.notSet')
+								)
+							: null;
 					return (
-						<Badge variant='light' color={statusConfig.color} size='sm'>
-							{t(statusConfig.label)}
-						</Badge>
+						<Stack gap={2} align='flex-start'>
+							<Badge variant='light' color={statusConfig.color} size='sm'>
+								{t(statusConfig.label)}
+							</Badge>
+							{nextWaveScheduledAt && (
+								<Text size='xs' c='dimmed'>
+									{t('form.contacts.list.nextWaveScheduled', {
+										value: nextWaveScheduledAt,
+									})}
+								</Text>
+							)}
+						</Stack>
 					);
 				},
 			},

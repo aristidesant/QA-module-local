@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
 	Text,
-	Card,
 	Button,
 	Modal,
 	ActionIcon,
@@ -45,6 +44,8 @@ import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
+import AppDrawer from '~/components/AppDrawer';
+import SectionCard from '~/components/SectionCard';
 
 interface CampaignFiltersType {
 	type?: string;
@@ -60,12 +61,9 @@ interface CampaignFiltersType {
 
 export const CampaignsList: React.FC = () => {
 	const { t } = useTranslation(['campaigns', 'common']);
-	const {
-		selectCampaign,
-		selectedCampaign,
-		setRightComponent,
-		rightComponent,
-	} = useCampaignsStore((state) => state);
+	const { selectCampaign, selectedCampaign } = useCampaignsStore(
+		(state) => state
+	);
 	const navigate = useNavigate();
 	const { canPerformAction } = usePermissions();
 
@@ -93,8 +91,11 @@ export const CampaignsList: React.FC = () => {
 	const [selectedAgentIdForCall, setSelectedAgentIdForCall] = useState<
 		string | null
 	>(null);
+	const [campaignNoiseCancellation, setCampaignNoiseCancellation] =
+		useState(false);
 
 	const [addNewModalOpened, setAddNewModalOpened] = useState(false);
+	const [isDetailsDrawerOpen, setIsDetailsDrawerOpen] = useState(false);
 	const [campaignTestCallId, setCampaignTestCallId] = useState<number | null>(
 		null
 	);
@@ -193,18 +194,23 @@ export const CampaignsList: React.FC = () => {
 		setSelectedAgentIdForCall(agentId);
 		setTestCallModalOpened(true);
 		setCampaignTestCallId(campaign.id);
+		setCampaignNoiseCancellation(
+			campaign.agentConfig?.conversationConfig?.noiseCancellation ?? false
+		);
 	};
 
 	const handleTestCallSuccess = () => {
 		setTestCallModalOpened(false);
 		setSelectedAgentIdForCall(null);
 		setCampaignTestCallId(null);
+		setCampaignNoiseCancellation(false);
 	};
 
 	const handleTestCallClose = () => {
 		setTestCallModalOpened(false);
 		setSelectedAgentIdForCall(null);
 		setCampaignTestCallId(null);
+		setCampaignNoiseCancellation(false);
 	};
 
 	// Handle continuing a draft campaign
@@ -363,8 +369,7 @@ export const CampaignsList: React.FC = () => {
 
 	const handleCampaignClick = (campaign: Campaign) => {
 		selectCampaign(campaign);
-
-		setRightComponent?.(<CampaignPreview {...{ campaign }} />);
+		setIsDetailsDrawerOpen(true);
 	};
 
 	return (
@@ -372,7 +377,6 @@ export const CampaignsList: React.FC = () => {
 			<ContentContainer
 				title={t('page.title')}
 				description={t('page.description')}
-				rightSection={rightComponent || <></>}
 				titleRight={
 					<Group gap='xs'>
 						{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.CREATE) && (
@@ -393,36 +397,36 @@ export const CampaignsList: React.FC = () => {
 					</Group>
 				}
 			>
-				<CampaignFilters
-					searchValue={pagination.searchValue}
-					onSearchChange={pagination.setSearchValue}
-					sortBy={sortBy}
-					onSortChange={setSortBy}
-					filters={filters}
-					onFiltersChange={setFilters}
-				/>
+				<SectionCard>
+					<CampaignFilters
+						searchValue={pagination.searchValue}
+						onSearchChange={pagination.setSearchValue}
+						sortBy={sortBy}
+						onSortChange={setSortBy}
+						filters={filters}
+						onFiltersChange={setFilters}
+					/>
 
-				{isLoading || isFetching ? (
-					<CampaignsListSkeleton />
-				) : isError ? (
-					<div className={styles.errorContainer}>
-						<IconAlertCircle size={32} color='red' />
-						<Text c='red' mt='sm'>
-							{error instanceof Error
-								? error.message
-								: 'Failed to load campaigns.'}
-						</Text>
-					</div>
-				) : campaignsResponse?.data?.length === 0 && pagination.searchValue ? (
-					<Card mt='xs' withBorder>
+					{isLoading || isFetching ? (
+						<CampaignsListSkeleton />
+					) : isError ? (
+						<div className={styles.errorContainer}>
+							<IconAlertCircle size={32} color='red' />
+							<Text c='red' mt='sm'>
+								{error instanceof Error
+									? error.message
+									: 'Failed to load campaigns.'}
+							</Text>
+						</div>
+					) : campaignsResponse?.data?.length === 0 &&
+					  pagination.searchValue ? (
 						<EmptyState
 							icon={<IconRocket size={64} stroke={1.2} />}
 							message={t('list.noCampaignsFound')}
 							description={t('list.noCampaignsFoundDesc')}
 						/>
-					</Card>
-				) : !campaignsResponse?.data || campaignsResponse.data.length === 0 ? (
-					<Card mt='xs' withBorder>
+					) : !campaignsResponse?.data ||
+					  campaignsResponse.data.length === 0 ? (
 						<EmptyState
 							icon={<IconRocket size={64} stroke={1.2} />}
 							message={t('list.noCampaignsYet')}
@@ -436,31 +440,44 @@ export const CampaignsList: React.FC = () => {
 								</Button>
 							}
 						/>
-					</Card>
-				) : (
-					<>
-						<BaseTable
-							data={campaignsResponse?.data || []}
-							columns={columns}
-							onRowClick={handleCampaignClick}
-							selectedRowId={selectedCampaign?.id?.toString()}
-						/>
+					) : (
+						<>
+							<BaseTable
+								data={campaignsResponse?.data || []}
+								columns={columns}
+								onRowClick={handleCampaignClick}
+								selectedRowId={selectedCampaign?.id?.toString()}
+								density='compact'
+							/>
 
-						{/* Pagination Controls */}
-						<PaginationControls
-							currentPage={pagination.currentPage}
-							totalPages={totalPages}
-							itemsPerPage={pagination.itemsPerPage}
-							totalItems={campaignsResponse?.total || 0}
-							onPageChange={pagination.setCurrentPage}
-							onItemsPerPageChange={handleItemsPerPageChange}
-							searchTerm={pagination.debouncedSearch}
-							isLoading={isLoading}
-							itemLabel={t('list.itemLabel')}
-						/>
-					</>
-				)}
+							<PaginationControls
+								currentPage={pagination.currentPage}
+								totalPages={totalPages}
+								itemsPerPage={pagination.itemsPerPage}
+								totalItems={campaignsResponse?.total || 0}
+								onPageChange={pagination.setCurrentPage}
+								onItemsPerPageChange={handleItemsPerPageChange}
+								searchTerm={pagination.debouncedSearch}
+								isLoading={isLoading}
+								itemLabel={t('list.itemLabel')}
+							/>
+						</>
+					)}
+				</SectionCard>
 			</ContentContainer>
+			<AppDrawer
+				opened={isDetailsDrawerOpen && Boolean(selectedCampaign)}
+				onClose={() => setIsDetailsDrawerOpen(false)}
+				title={t('detailsDrawer.title')}
+				size='xl'
+			>
+				{selectedCampaign && <CampaignPreview campaign={selectedCampaign} />}
+				{!selectedCampaign && (
+					<Text size='sm' c='dimmed'>
+						{t('detailsDrawer.empty')}
+					</Text>
+				)}
+			</AppDrawer>
 
 			{/* Test Call Modal */}
 			<Modal
@@ -476,6 +493,7 @@ export const CampaignsList: React.FC = () => {
 						onSuccess={handleTestCallSuccess}
 						campaignId={campaignTestCallId!}
 						onClose={handleTestCallClose}
+						noiseCancellationEnabled={campaignNoiseCancellation}
 					/>
 				)}
 			</Modal>

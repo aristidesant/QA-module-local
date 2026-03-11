@@ -31,10 +31,32 @@
 			"edit": "Editar campaña"
 		}
 	},
+	"drawer": {
+		"title": "Detalle de lista",
+		"description": "Revisa la salud de la campaña y administra la lista de contactos seleccionada.",
+		"empty": "Selecciona una lista de contactos para revisar sus detalles."
+	},
 	"contacts": {
 		"tabs": {
 			"active": "Activos",
 			"inactive": "Inactivos"
 		}
+	},
+	"reportExport": {
+		"title": "Exportar reporte",
+		"description": "Descarga un reporte con las columnas configuradas para todas las conversaciones en un rango de fechas.",
+		"actionLabel": "Exportar reporte",
+		"modalTitle": "Exportar reporte de campana",
+		"modalDescription": "Selecciona el rango de fechas y descarga el reporte en el formato que necesites.",
+		"startDate": "Fecha inicio",
+		"endDate": "Fecha fin",
+		"export": "Exportar",
+		"exportCsv": "Exportar CSV",
+		"exportXlsx": "Exportar XLSX",
+		"formatLabel": "Seleccionar formato",
+		"datesRequired": "Por favor selecciona fecha de inicio y fin antes de exportar.",
+		"noData": "No se encontraron datos en el rango de fechas seleccionado.",
+		"noColumns": "La campaña no tiene columnas de reporte configuradas.",
+		"error": "Error al exportar el reporte."
 	}
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, Card, Button, Group } from '@mantine/core';
+import { Text, Card, Button } from '@mantine/core';
 import {
 	IconAlertCircle,
 	IconPhoneOff,
@@ -31,6 +31,7 @@ import { ContentContainer } from '~/components/ContentContainer/ContentContainer
 import DoNotCallForm from '../DoNotCallForm';
 import { useTranslation } from 'react-i18next';
 import type { DoNotCallCreateRequest } from '~/models/DoNotCallModel';
+import SectionCard from '~/components/SectionCard';
 
 interface DoNotCallFiltersType {
 	reason?: DoNotCallReason;
@@ -229,85 +230,89 @@ export const DoNotCallContent: React.FC = () => {
 		<ContentContainer
 			title={t('page.title')}
 			description={t('page.description')}
-			titleRight={
-				<Group gap='xs'>
-					<Button
-						size='xs'
-						variant='subtle'
-						color='red'
-						leftSection={<IconTrash size={14} />}
-						onClick={handleCleanExpired}
-					>
-						{t('page.actions.cleanExpired')}
-					</Button>
-					<Button
-						size='xs'
-						leftSection={<IconPlus size={16} />}
-						onClick={handleShowAddNewModal}
-					>
-						{t('page.actions.addEntry')}
-					</Button>
-				</Group>
-			}
 		>
-			<DoNotCallFilters
-				searchValue={pagination.searchValue}
-				onSearchChange={pagination.setSearchValue}
-				filters={filters}
-				onFiltersChange={setFilters}
-			/>
-
-			{isLoading || isFetching ? (
-				<Card mt='xs' withBorder>
-					<Text c='dimmed' ta='center' py='xl'>
-						{t('status.loading', { ns: 'common' })}
-					</Text>
-				</Card>
-			) : isError ? (
-				<div className={styles.errorContainer}>
-					<IconAlertCircle size={32} color='red' />
-					<Text c='red' mt='sm'>
-						{error instanceof Error ? error.message : t('errors.load')}
-					</Text>
-				</div>
-			) : !doNotCallResponse?.data || doNotCallResponse.data.length === 0 ? (
-				<Card mt='xs' withBorder>
-					<EmptyState
-						icon={<IconPhoneOff size={64} stroke={1.2} />}
-						message={t('empty.title')}
-						description={t('empty.description')}
-						action={
-							<Button
-								leftSection={<IconPlus size={18} />}
-								onClick={handleShowAddNewModal}
-							>
-								{t('page.actions.addEntry')}
-							</Button>
-						}
-					/>
-				</Card>
-			) : (
-				<>
-					<BaseTable
-						data={doNotCallResponse?.data || []}
-						columns={columns}
-						onRowClick={(entry) => setSelectedEntry(entry)}
-						selectedRowId={selectedEntry?.id?.toString()}
+			<div className={styles.root}>
+				<SectionCard
+					title={t('list.title')}
+					contentSpacing='sm'
+					actions={{
+						primary: {
+							kind: 'add',
+							label: t('page.actions.addEntry'),
+							onClick: handleShowAddNewModal,
+						},
+						secondary: [
+							{
+								kind: 'delete',
+								icon: IconTrash,
+								label: t('page.actions.cleanExpired'),
+								color: 'red',
+								onClick: handleCleanExpired,
+							},
+						],
+					}}
+				>
+					<DoNotCallFilters
+						searchValue={pagination.searchValue}
+						onSearchChange={pagination.setSearchValue}
+						filters={filters}
+						onFiltersChange={setFilters}
 					/>
 
-					<PaginationControls
-						currentPage={pagination.currentPage}
-						totalPages={totalPages}
-						itemsPerPage={pagination.itemsPerPage}
-						totalItems={doNotCallResponse?.total || 0}
-						onPageChange={pagination.setCurrentPage}
-						onItemsPerPageChange={handleItemsPerPageChange}
-						searchTerm={pagination.debouncedSearch}
-						isLoading={isLoading}
-						itemLabel={t('pagination.entries')}
-					/>
-				</>
-			)}
+					{isLoading || isFetching ? (
+						<Card mt='xs' withBorder>
+							<Text c='dimmed' ta='center' py='xl'>
+								{t('status.loading', { ns: 'common' })}
+							</Text>
+						</Card>
+					) : isError ? (
+						<div className={styles.errorContainer}>
+							<IconAlertCircle size={32} color='red' />
+							<Text c='red' mt='sm'>
+								{error instanceof Error ? error.message : t('errors.load')}
+							</Text>
+						</div>
+					) : !doNotCallResponse?.data ||
+					  doNotCallResponse.data.length === 0 ? (
+						<Card mt='xs' withBorder>
+							<EmptyState
+								icon={<IconPhoneOff size={64} stroke={1.2} />}
+								message={t('empty.title')}
+								description={t('empty.description')}
+								action={
+									<Button
+										leftSection={<IconPlus size={18} />}
+										onClick={handleShowAddNewModal}
+									>
+										{t('page.actions.addEntry')}
+									</Button>
+								}
+							/>
+						</Card>
+					) : (
+						<>
+							<BaseTable
+								data={doNotCallResponse?.data || []}
+								columns={columns}
+								onRowClick={(entry) => setSelectedEntry(entry)}
+								selectedRowId={selectedEntry?.id?.toString()}
+							/>
+
+							<PaginationControls
+								currentPage={pagination.currentPage}
+								totalPages={totalPages}
+								itemsPerPage={pagination.itemsPerPage}
+								totalItems={doNotCallResponse?.total || 0}
+								onPageChange={pagination.setCurrentPage}
+								onItemsPerPageChange={handleItemsPerPageChange}
+								searchTerm={pagination.debouncedSearch}
+								isLoading={isLoading}
+								itemLabel={t('pagination.entries')}
+							/>
+						</>
+					)}
+				</SectionCard>
+			</div>
 		</ContentContainer>
 	);
 };

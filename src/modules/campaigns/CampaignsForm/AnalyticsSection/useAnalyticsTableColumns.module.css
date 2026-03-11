@@ -1,0 +1,22 @@
+.typeColumn {
+	width: 180px;
+	min-width: 180px;
+	max-width: 180px;
+}
+
+.descriptionPreview {
+	cursor: help;
+}
+
+.descriptionDropdown {
+	padding: var(--mantine-spacing-sm);
+	max-height: 220px;
+	overflow-y: auto;
+	max-width: min(420px, 75vw);
+}
+
+.descriptionDropdownText {
+	line-height: 1.45;
+	white-space: pre-wrap;
+	word-break: break-word;
+}

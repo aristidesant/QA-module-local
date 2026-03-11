@@ -13,6 +13,13 @@ If there is any conflict, use this precedence order:
 - If no relevant skill exists, proceed with these project conventions.
 - Always write code and code comments in English.
 - Do not create tests unless the user explicitly asks for tests.
+- Whenever user input is needed, ask using interactive prompts only. This is mandatory for both broad and highly specific questions; do not use plain open-ended questions when an interactive prompt can be used.
+
+## 1.1) Plan Mode Behavior
+
+- When operating in plan mode, ask concise interactive questions whenever user input can meaningfully shape the plan.
+- In plan mode, gather decisions through interactive prompts instead of open-ended questions.
+- Skip questions only when the task is fully clear, trivial, or the repository context already determines the best path.
 
 ## 2) Stack And Source Of Truth
 
@@ -83,12 +90,21 @@ Design quality is mandatory: clean, modern, production-ready, light mode first.
   - Use consistent spacing with Mantine CSS variables
 - Keep hover states stable (no layout shift).
 - Provide clear loading and error states.
-- Avoid shadows, gradients, and 3D effects.
+- Avoid heavy shadows, gradients, and 3D effects.
+- Subtle elevation with soft borders and ultra-light shadows is allowed when it improves hierarchy, especially for navigation and cards.
+- Use Mantine shadow tokens for elevation instead of custom `box-shadow` values whenever possible.
+- Standard default elevation for cards, forms, and section containers is Mantine `md` (`shadow="md"` in Mantine components or `var(--mantine-shadow-md)` in CSS Modules).
+- Only use a custom shadow when there is a documented, component-specific exception.
+- Avoid flat, boring forms: group related fields into clear visual sections
+  (e.g. Basic Info, Configuration, Advanced) with explicit hierarchy.
 
 ### Shared UI primitives
 
 - Use `SectionCard` from `src/components/SectionCard` for form/page sections.
+- Use `AppDrawer` from `src/components/AppDrawer` for app drawers.
 - For data tables, use `BaseTable` from `src/components/BaseTable/BaseTable` by default.
+
+Do not use Mantine `Drawer` directly unless there is a justified exception that `AppDrawer` cannot cover.
 
 ## 6) Data, Forms, State, API
 

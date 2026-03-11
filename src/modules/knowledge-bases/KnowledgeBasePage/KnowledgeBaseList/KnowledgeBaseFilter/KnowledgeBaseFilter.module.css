@@ -15,22 +15,13 @@
 .toolbarActions {
 	display: flex;
 	align-items: center;
-	gap: 16px;
+	gap: 12px;
 }
 
 .resultsCounter {
 	color: var(--mantine-color-gray-6);
 	font-weight: 500;
 	white-space: nowrap;
-}
-
-.refreshButton {
-	color: var(--mantine-color-gray-7);
-	transition: all 0.2s ease;
-}
-
-.refreshButton:hover {
-	color: var(--mantine-color-blue-6);
 }
 
 @media (max-width: 1024px) {

@@ -31,8 +31,14 @@
 			"outcomes": "Resultados",
 			"params": "Parámetros",
 			"analytics": "Analytics",
+			"reportValues": "Columnas de reporte",
 			"general": "General"
 		}
+	},
+	"detailsDrawer": {
+		"title": "Detalles de la campaña",
+		"description": "Revisa la configuración y el estado de la campaña seleccionada.",
+		"empty": "Selecciona una campaña para revisar sus detalles."
 	},
 	"columns": {
 		"campaign": "Campaña",
@@ -95,10 +101,12 @@
 		"UNKNOWN": "Desconocido",
 		"pending": "Pendiente",
 		"running": "En curso",
+		"waiting": "Esperando próxima oleada",
 		"paused": "Pausada",
 		"complete": "Completada",
 		"failed": "Fallida",
-		"executed": "Ejecutada"
+		"executed": "Ejecutada",
+		"unknown": "Desconocido"
 	},
 	"toggleStatus": {
 		"activate": "Activar campaña",
@@ -461,19 +469,43 @@
 			"edit": "Editar {{name}}"
 		},
 		"description": "Configura y gestiona los ajustes de tu campaña.",
+		"settingsDrawer": {
+			"title": "Configuración",
+			"open": "Abrir configuración"
+		},
 		"workflow": {
 			"sidePanel": {
 				"close": "Cerrar panel"
 			},
 			"edge": {
+				"title": "Condición de la conexión",
+				"description": "Revisa los detalles de esta transición.",
+				"helper": "Edita las condiciones desde la etiqueta de la conexión en el lienzo.",
+				"notFound": "Conexión no encontrada.",
+				"notConfigured": "Sin configurar",
 				"configure": "Configurar condición",
-				"bothLabel": "{{forward}} / {{backward}}",
-				"conditions": {
-					"unconditional": "Incondicional",
-					"expression": "Condición de expresión",
-					"resultSuccess": "Resultado: éxito",
-					"resultFailure": "Resultado: fallo"
-				}
+				"transitionType": "Tipo de transición",
+				"selectConditionType": "Selecciona el tipo de condición",
+				"types": {
+					"none": "Ninguna",
+					"unconditional": "Sin condición",
+					"llm": "Condición LLM",
+					"result": "Condición de resultado",
+					"expression": "Expresión"
+				},
+				"label": "Etiqueta",
+				"labelPlaceholder": "Etiqueta opcional para esta condición",
+				"llmCondition": "Condición LLM",
+				"llmConditionPlaceholder": "Describe la condición para que el LLM evalúe (ej: \"usuario confirmó su identidad\")",
+				"resultType": "Resultado de la ejecución de la herramienta",
+				"selectResult": "Selecciona el tipo de resultado",
+				"results": {
+					"success": "Éxito",
+					"failure": "Fallo"
+				},
+				"expressionNote": "Constructor de expresiones próximamente",
+				"forward": "Adelante",
+				"backward": "Atrás"
 			},
 			"forms": {
 				"agent": {
@@ -674,6 +706,13 @@
 				"title": "Workflow",
 				"description": "Crea el flujo del agente y conecta nodos segun el esquema del workflow."
 			},
+			"fullscreen": {
+				"enter": "Expandir editor de workflow",
+				"exit": "Salir del editor expandido",
+				"eyebrow": "Editor expandido",
+				"title": "Lienzo del workflow",
+				"description": "Usa el area amplia para organizar nodos, reconectar bordes y mantener disponible el drawer del nodo mientras editas."
+			},
 			"header": {
 				"title": "Constructor de flujo",
 				"description": "Inicio conecta con un subagente. Desde alli, agrega los siguientes pasos en el flujo.",
@@ -725,7 +764,7 @@
 				"edges": {
 					"helper": "Configura el orden en que se evaluan los bordes salientes. Edita las etiquetas en el lienzo.",
 					"defaultLabel": "Condicion sin nombre",
-					"target": "\u2192 {{target}}",
+					"target": "→ {{target}}",
 					"empty": "Aun no hay bordes salientes."
 				},
 				"invalidNode": "Este nodo no se puede configurar aqui."
@@ -738,36 +777,6 @@
 				"empty": "No hay herramientas disponibles.",
 				"error": "No se pudieron cargar las herramientas."
 			},
-			"edge": {
-				"title": "Condición de la conexión",
-				"description": "Revisa los detalles de esta transición.",
-				"helper": "Edita las condiciones desde la etiqueta de la conexión en el lienzo.",
-				"notFound": "Conexión no encontrada.",
-				"notConfigured": "Sin configurar",
-				"configure": "Configurar condición",
-				"transitionType": "Tipo de transición",
-				"selectConditionType": "Selecciona el tipo de condición",
-				"types": {
-					"none": "Ninguna",
-					"unconditional": "Sin condición",
-					"llm": "Condición LLM",
-					"result": "Condición de resultado",
-					"expression": "Expresión"
-				},
-				"label": "Etiqueta",
-				"labelPlaceholder": "Etiqueta opcional para esta condición",
-				"llmCondition": "Condición LLM",
-				"llmConditionPlaceholder": "Describe la condición para que el LLM evalúe (ej: \"usuario confirmó su identidad\")",
-				"resultType": "Resultado de la ejecución de la herramienta",
-				"selectResult": "Selecciona el tipo de resultado",
-				"results": {
-					"success": "Éxito",
-					"failure": "Fallo"
-				},
-				"expressionNote": "Constructor de expresiones próximamente",
-				"forward": "Adelante",
-				"backward": "Atrás"
-			},
 			"nodeMenu": {
 				"subagent": "Subagente",
 				"agentTransfer": "Transferencia de agente",
@@ -777,6 +786,7 @@
 			},
 			"actions": {
 				"add": "Agregar nodo",
+				"edit": "Editar nodo",
 				"clone": "Clonar nodo",
 				"copy": "Copiar nodo",
 				"delete": "Eliminar nodo"
@@ -831,11 +841,28 @@
 			"userIdMin": "El ID de usuario debe ser al menos 0",
 			"clientIdMin": "El ID de cliente debe ser al menos 0",
 			"defaultWavesMin": "Las oleadas predeterminadas deben ser al menos 1",
+			"defaultWaveDelayMin": "El retraso predeterminado entre oleadas debe ser 0 o mayor",
 			"objectiveRequired": "El objetivo de la campaña es obligatorio"
 		},
 		"actions": {
 			"save": "Guardar cambios",
 			"saving": "Guardando..."
+		},
+		"reportValues": {
+			"title": "Columnas de reporte",
+			"description": "Configura las columnas que se incluirán en los exports de listas de contactos.",
+			"summaryEyebrow": "Estructura del export",
+			"summaryTitle": "Estas columnas aparecerán en el reporte en el mismo orden mostrado abajo.",
+			"summaryDescription": "Arrastra para reordenar, deja solo los campos necesarios y confirma que la secuencia coincida con la forma en que el usuario leerá el export.",
+			"count_one": "{{count}} columna en el reporte",
+			"count_other": "{{count}} columnas en el reporte",
+			"pendingChanges": "Tienes cambios sin guardar en esta estructura de reporte.",
+			"noPendingChanges": "Todos los cambios están guardados.",
+			"saveChanges": "Guardar cambios",
+			"discardChanges": "Descartar cambios",
+			"notifications": {
+				"saved": "Las columnas del reporte se guardaron correctamente"
+			}
 		},
 		"analytics": {
 			"title": "Recolección de datos de analytics",
@@ -845,7 +872,10 @@
 			"empty": "Aún no hay variables configuradas. Agrega tu primera variable para comenzar a recolectar datos de analytics.",
 			"variableCardTitle": "Variable",
 			"actions": {
-				"addVariable": "Agregar variable"
+				"addVariable": "Agregar variable",
+				"importVariable": "Importar variable",
+				"saveToGroup": "Guardar en grupo",
+				"saveAllToGroup": "Guardar todo en grupo"
 			},
 			"info": {
 				"title": "Captura automática de conversación",
@@ -884,16 +914,209 @@
 				"identifier": "Identificador",
 				"type": "Tipo de dato",
 				"description": "Descripción",
+				"descriptionTooltipLabel": "Descripción de la variable",
+				"descriptionEmpty": "No hay descripción disponible",
+				"descriptionIconAria": "Ver descripción de la variable",
 				"enum": "Enum",
 				"enumCount": "Enum ({{count}})",
 				"systemProvided": "Sistema",
 				"yes": "Sí",
-				"no": "No"
+				"no": "No",
+				"source": "Origen",
+				"sources": {
+					"manual": "Manual",
+					"customVariable": "Variable personalizada"
+				}
 			},
 			"editor": {
 				"title": "Detalle de variable",
 				"description": "Selecciona y edita una variable desde la tabla.",
-				"stringHint": "Para campos string, los enums ayudan a restringir la salida del modelo a valores validos."
+				"labels": {
+					"status": "Estado del borrador"
+				},
+				"states": {
+					"draft": "Cambios sin guardar",
+					"saved": "Actualizado"
+				}
+			},
+			"saveToGroup": {
+				"title": "Guardar Variable en Grupo",
+				"description": "Cree una nueva variable personalizada en el grupo seleccionado usando esta definición de analytics.",
+				"sections": {
+					"identity": "Identidad de la Variable",
+					"destination": "Destino"
+				},
+				"fields": {
+					"label": "Etiqueta",
+					"identifierPreview": "Identificador (técnico)",
+					"group": "Grupo",
+					"category": "Categoría de Campaña (opcional)"
+				},
+				"placeholders": {
+					"label": "Ingrese una etiqueta amigable",
+					"group": "Seleccione un grupo",
+					"category": "Seleccione categoría"
+				},
+				"hints": {
+					"label": "Este es el nombre visible que verán los usuarios para la variable.",
+					"identifier": "Nombre técnico autogenerado que se envía al API."
+				},
+				"actions": {
+					"save": "Guardar en Grupo"
+				},
+				"errors": {
+					"labelRequired": "La etiqueta es obligatoria.",
+					"invalidIdentifier": "El identificador es obligatorio para guardar esta variable."
+				},
+				"notifications": {
+					"success": "Variable guardada en el grupo exitosamente",
+					"error": "Error al guardar la variable en el grupo"
+				}
+			},
+			"import": {
+				"title": "Importar Variables Personalizadas",
+				"subtitle": "Seleccione un grupo de variables e importe los registros que necesita en analytics.",
+				"sections": {
+					"source": "Origen",
+					"table": "Variables"
+				},
+				"fields": {
+					"group": "Grupo",
+					"search": "Buscar"
+				},
+				"placeholders": {
+					"group": "Seleccione un grupo",
+					"search": "Buscar por nombre o descripción..."
+				},
+				"actions": {
+					"import": "Importar variable",
+					"close": "Cerrar"
+				},
+				"selection": {
+					"selectedCount": "{{count}} seleccionadas",
+					"clear": "Limpiar selección",
+					"importSelected": "Importar seleccionadas",
+					"selectAllVisible": "Seleccionar todas las filas visibles",
+					"selectRow": "Seleccionar {{identifier}}"
+				},
+				"table": {
+					"label": "Variable",
+					"identifier": "Identificador",
+					"type": "Tipo",
+					"description": "Descripción",
+					"actions": "Acciones"
+				},
+				"empty": {
+					"selectGroupTitle": "Seleccione un grupo para continuar",
+					"selectGroupDescription": "Elija un grupo de variables personalizadas para listar variables disponibles.",
+					"noVariablesTitle": "No se encontraron variables",
+					"noVariablesDescription": "Este grupo no tiene variables para importar.",
+					"noSearchResultsTitle": "No se encontraron coincidencias",
+					"noSearchResultsDescription": "Pruebe otro término de búsqueda para este grupo."
+				},
+				"notifications": {
+					"summarySuccess": "Importadas: {{importedCount}}, Reemplazadas: {{replacedCount}}, Duplicadas: {{duplicatedCount}}.",
+					"summaryWarning": "Importadas: {{importedCount}}, Reemplazadas: {{replacedCount}}, Duplicadas: {{duplicatedCount}}, Omitidas: {{skippedCount}}, Inválidas: {{invalidCount}}."
+				}
+			},
+			"conflict": {
+				"title": "Conflicto de Identificador",
+				"description": "Ya existe una variable con el identificador \"{{identifier}}\". Elija cómo continuar.",
+				"confirmAction": "Confirmar",
+				"replaceTitle": "Reemplazar existente",
+				"replaceDescription": "Sobrescribir \"{{identifier}}\" con los datos de la nueva variable.",
+				"replaceWarning": "Esta acción no se puede deshacer",
+				"duplicateTitle": "Crear duplicado con sufijo",
+				"duplicateDescription": "Agregar la nueva variable con un identificador único:",
+				"actions": {
+					"replace": "Reemplazar existente",
+					"duplicate": "Crear duplicado con sufijo",
+					"cancel": "Cancelar"
+				}
+			},
+			"bulkConflict": {
+				"title": "Resolver Conflictos de Importación",
+				"description": "Algunas variables ya existen en Analytics. Elija cómo aplicar cada variable entrante.",
+				"fields": {
+					"identifier": "Identificador",
+					"existingType": "Tipo existente",
+					"incomingType": "Tipo entrante",
+					"action": "Acción",
+					"duplicatePreview": "Vista previa duplicado"
+				},
+				"actions": {
+					"replace": "Reemplazar",
+					"duplicate": "Duplicar",
+					"skip": "Omitir",
+					"applyAll": "Aplicar acción a todos los conflictos",
+					"confirm": "Aplicar importación",
+					"cancel": "Cancelar"
+				},
+				"summary": {
+					"conflictCount": "{{count}} conflicto por resolver",
+					"conflictCount_other": "{{count}} conflictos por resolver"
+				}
+			},
+			"saveAllToGroup": {
+				"title": "Guardar Data Collection en Grupo",
+				"description": "Guarde todas las variables de analytics de este data collection en un grupo de variables personalizadas.",
+				"sections": {
+					"destination": "Destino",
+					"summary": "Resumen",
+					"conflicts": "Resolución de conflictos"
+				},
+				"modes": {
+					"existingGroup": "Usar grupo existente",
+					"newGroup": "Crear grupo nuevo"
+				},
+				"fields": {
+					"group": "Grupo",
+					"newGroupName": "Nombre del nuevo grupo",
+					"policy": "Política de conflictos"
+				},
+				"placeholders": {
+					"group": "Seleccione un grupo",
+					"newGroupName": "Ingrese nombre del grupo"
+				},
+				"policies": {
+					"skip": "Omitir variables existentes",
+					"replace": "Reemplazar variables existentes",
+					"duplicate": "Crear duplicados con sufijo"
+				},
+				"summary": {
+					"total": "Filas totales",
+					"valid": "Identificadores válidos",
+					"invalid": "Identificadores inválidos",
+					"conflicts": "{{count}} conflicto detectado",
+					"conflicts_other": "{{count}} conflictos detectados"
+				},
+				"hints": {
+					"mapping": "Cada variable usa una etiqueta humanizada del identificador y guarda el nombre técnico en snake_case.",
+					"replacePermissionRequired": "Necesita permiso de actualización en Settings para reemplazar variables existentes."
+				},
+				"table": {
+					"identifier": "Identificador",
+					"currentType": "Tipo actual",
+					"incomingType": "Tipo entrante"
+				},
+				"actions": {
+					"continue": "Continuar",
+					"save": "Guardar todo",
+					"cancel": "Cancelar",
+					"back": "Volver"
+				},
+				"errors": {
+					"noValidVariables": "No se encontraron identificadores válidos en el data collection.",
+					"groupRequired": "La selección de grupo es obligatoria.",
+					"newGroupNameRequired": "El nombre del nuevo grupo es obligatorio.",
+					"replacePermissionRequired": "No tiene permiso para reemplazar variables existentes."
+				},
+				"notifications": {
+					"success": "Data collection guardado exitosamente",
+					"warning": "Data collection guardado con advertencias",
+					"error": "Error al guardar el data collection",
+					"resultSummary": "Creadas: {{createdCount}}, Actualizadas: {{updatedCount}}, Duplicadas: {{duplicatedCount}}, Omitidas: {{skippedCount}}, Inválidas: {{invalidCount}}."
+				}
 			}
 		},
 		"notifications": {
@@ -932,11 +1155,18 @@
 			"controls": {
 				"start": "Iniciar Campaña",
 				"resume": "Reanudar Campaña",
+				"resumeIgnoreDelay": "Reanudar e ignorar retraso",
 				"pause": "Pausar Campaña",
 				"completed": "Campaña Completada",
 				"failed": "Campaña Fallida",
 				"requirementsNotMet": "Requisitos de la campaña no cumplidos",
 				"allWavesDone": "Todas las oleadas ejecutadas",
+				"resumeModal": {
+					"title": "Reanudar lista de contactos",
+					"message": "Esta lista está pausada mientras espera la próxima oleada.",
+					"scheduledFor": "Próxima oleada programada para {{value}}.",
+					"scheduleNotice": "Ignorar el retraso entre oleadas sigue respetando la ventana del horario de la campaña."
+				},
 				"notifications": {
 					"successTitle": "Éxito",
 					"errorTitle": "Error",
@@ -944,6 +1174,8 @@
 					"running": "La campaña ahora está en ejecución",
 					"startError": "Error al iniciar la campaña",
 					"resumed": "Campaña reanudada",
+					"resumeRequested": "Se solicitó la reanudación. El estado se actualizará automáticamente.",
+					"resumeIgnoringDelay": "Se solicitó la reanudación sin retraso entre oleadas. El estado se actualizará automáticamente.",
 					"resumeError": "Error al reanudar la campaña",
 					"paused": "Campaña pausada",
 					"pauseError": "Error al pausar la campaña"
@@ -964,6 +1196,7 @@
 				"emptyInactiveMessage": "No se encontraron listas de contactos inactivas.",
 				"reload": "Recargar",
 				"reloadUnavailable": "Recarga no disponible mientras está colapsado",
+				"nextWaveScheduled": "Próxima: {{value}}",
 				"columns": {
 					"name": "Nombre",
 					"total": "Total",
@@ -1015,6 +1248,11 @@
 			"limits": {
 				"maxWavesLabel": "Máx. oleadas",
 				"maxWavesDescription": "Número máximo de oleadas para esta lista de contactos.",
+				"maxWavesInherited": "Heredado del valor predeterminado de la campaña: {{value}}",
+				"waveDelayLabel": "Retraso entre oleadas (segundos)",
+				"waveDelayDescription": "Retraso entre oleadas para esta lista de contactos. Valor actual: {{value}}.",
+				"waveDelayInherited": "Heredado del valor predeterminado de la campaña: {{value}}",
+				"noWaveDelay": "Sin retraso entre oleadas",
 				"humanEquivalentLabel": "Equivalente humano",
 				"availableLabel": "Disponible",
 				"capacityFull": {
@@ -1032,6 +1270,7 @@
 					"mappingRequired": "Por favor, mapea las columnas",
 					"capacityExceeded": "Capacidad excedida",
 					"wavesMinimum": "Se requiere un mínimo de 1 oleada",
+					"waveDelayMinimum": "El retraso entre oleadas debe ser 0 o mayor",
 					"schedulerFullTitle": "Programador lleno",
 					"schedulerFullMessage": "No hay suficiente capacidad para programar esta lista.",
 					"successTitle": "Éxito",
@@ -1076,7 +1315,15 @@
 				"clearSelection": "Limpiar selección",
 				"mappingsCreated": "Se crearon {{count}} asignaciones",
 				"saveMappings": "Guardar asignaciones",
-				"dynamicColumnTooltip": "Columna dinámica"
+				"dynamicColumnTooltip": "Columna dinámica",
+				"autoMatch": {
+					"button": "Auto Asignar",
+					"tooltip": "Asignar automáticamente los campos del sistema a las columnas CSV usando reconocimiento de patrones",
+					"successTitle": "Auto asignación completada",
+					"successMessage": "Se asignaron {{count}} columna(s) exitosamente",
+					"noMatchTitle": "Sin coincidencias",
+					"noMatchMessage": "No se encontraron columnas CSV coincidentes para los campos del sistema restantes"
+				}
 			},
 			"details": {
 				"title": "Detalles de la lista de contactos",
@@ -1090,6 +1337,10 @@
 					"expirationDate": "Fecha de vencimiento",
 					"scheduler": "Programador",
 					"schedulerStatus": "Estado del programador",
+					"waveDelay": "Retraso entre oleadas",
+					"lastWaveStarted": "Última oleada iniciada",
+					"lastWaveCompleted": "Última oleada completada",
+					"nextWaveScheduled": "Próxima oleada programada",
 					"notAssigned": "No asignado"
 				},
 				"stats": {
@@ -1134,6 +1385,12 @@
 					"cleanQueue": "Limpiar cola",
 					"openContactList": "Abrir lista de contactos"
 				},
+				"notifications": {
+					"archiveBlocked": {
+						"title": "Acción no disponible",
+						"message": "No se puede archivar esta lista de contactos mientras está en ejecución, esperando o pausada. Detén la ejecución primero e inténtalo de nuevo."
+					}
+				},
 				"dialogs": {
 					"activate": {
 						"title": "Activar lista de contactos",
@@ -1171,6 +1428,7 @@
 					"extendWaves": {
 						"title": "Extender oleadas",
 						"success": "Oleadas extendidas",
+						"successMessage": "Se han añadido {{count}} oleadas a la lista de contactos.",
 						"error": "Error al extender oleadas"
 					}
 				}
@@ -1632,7 +1890,7 @@
 		"steps": {
 			"general": {
 				"label": "General",
-				"description": "Detalles de la campaña",
+				"description": "Descripción",
 				"eyebrow": "Configuración general",
 				"title": "Esenciales de la campaña",
 				"intro": "Define cómo se presenta esta campaña a tu equipo y contactos. El nombre, la descripción y el tipo mantienen a todos alineados.",
@@ -1644,7 +1902,6 @@
 				"campaignName": "Nombre de la Campaña",
 				"campaignNameDesc": "Dale a tu campaña un nombre descriptivo",
 				"campaignNamePlaceholder": "Ingresa el nombre de la campaña",
-				"description": "Descripción",
 				"descriptionDesc": "Describe brevemente el propósito de esta campaña",
 				"descriptionPlaceholder": "Describe tu campaña",
 				"campaignType": "Tipo de Campaña",
@@ -1653,6 +1910,8 @@
 				"campaignTypeInbound": "Entrante",
 				"defaultWaves": "Oleadas Predeterminadas",
 				"defaultWavesDesc": "Cuántas oleadas debe ejecutar cada lista de contactos antes de detenerse",
+				"defaultWaveDelay": "Retraso predeterminado entre oleadas (segundos)",
+				"defaultWaveDelayDesc": "Retraso entre oleadas para nuevas listas de contactos. Usa 0 para no agregar espera adicional.",
 				"phoneNumber": "Número de Teléfono",
 				"phoneNumberDesc": "Selecciona el número de teléfono para esta campaña",
 				"phoneNumberPlaceholder": "Elige un número de teléfono",
@@ -1673,6 +1932,7 @@
 					"descriptionRequired": "La descripción es obligatoria",
 					"phoneIdRequired": "El número de teléfono es obligatorio",
 					"wavesRequired": "Las oleadas deben ser al menos 1",
+					"waveDelayRequired": "El retraso entre oleadas debe ser 0 o mayor",
 					"objectiveRequired": "El objetivo de la campaña es obligatorio"
 				}
 			},
@@ -1875,7 +2135,16 @@
 		"createNewObjective": "Crear nuevo objetivo",
 		"defaultWaves": "Oleadas Predeterminadas",
 		"defaultWavesDesc": "Número de oleadas a ejecutar para cada lista de contactos",
+		"defaultWaveDelay": "Retraso predeterminado entre oleadas (segundos)",
+		"defaultWaveDelayDesc": "Retraso entre oleadas para nuevas listas de contactos. Usa 0 para no agregar espera adicional.",
+		"enterWaveDelaySeconds": "Ingresa el retraso en segundos",
 		"enterNumberOfWaves": "Ingresa el número de oleadas",
+		"asrKeywords": "Palabras clave ASR",
+		"asrKeywordsDesc": "Agrega palabras a las que el motor de reconocimiento de voz debe prestar especial atención.",
+		"asrKeywordsHelp": "Escribe una palabra y presiona Enter para agregarla.",
+		"asrKeywordsPlaceholder": "Escribe una palabra y presiona Enter",
+		"noiseCancellationLabel": "Cancelación de ruido",
+		"noiseCancellationDesc": "Cuando está activado, aplica supresión de ruido y ajuste de detección de actividad de voz en las llamadas salientes.",
 		"createObjectiveTitle": "Crear Nuevo Objetivo"
 	}
 }

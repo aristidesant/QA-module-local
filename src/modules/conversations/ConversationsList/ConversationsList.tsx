@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActionIcon, Center, Group, Text, Tooltip } from '@mantine/core';
 import SectionCard from '~/components/SectionCard';
+import AppDrawer from '~/components/AppDrawer';
+import { modals } from '@mantine/modals';
 import { IconMessages as IconMessagesTabler } from '@tabler/icons-react';
 import {
 	IconMessagesOff,
@@ -11,10 +13,12 @@ import BaseTable from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
 import PaginationControls from '~/components/PaginationControls';
 import { usePagination } from '~/hooks/usePagination';
-import { useGetConversations } from '~/queries/conversationsQueries';
-import { useConversationStore } from '~/stores/useConversationStore';
+import {
+	useFailAndPauseConversation,
+	useFetchAndProcessConversation,
+	useGetConversations,
+} from '~/queries/conversationsQueries';
 import ConversationDetails from '~/modules/conversations/ConversationDetails';
-import type { ConversationsModel } from '~/models/ConversationsModels';
 import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
@@ -27,12 +31,15 @@ import AccessDenied from '~/components/AccessDenied';
 import styles from './ConversationsList.module.css';
 import type { SortingState } from '@tanstack/react-table';
 import { useTranslation } from 'react-i18next';
+import type { ConversationsModel } from '~/models/ConversationsModels';
+import {
+	type ConversationActionKey,
+	getConversationActionDefinition,
+} from '../ConversationDetails/ConversationActions/ConversationActions.helpers';
 
 type ConversationsListProps = {
 	campaignId?: number | string;
 	contactGroupId?: number | string;
-	onConversationClick?: (conversation: ConversationsModel) => void;
-	selectedConversationId?: number | null;
 	className?: string;
 	hiddenColumns?: string[];
 };
@@ -40,8 +47,6 @@ type ConversationsListProps = {
 const ConversationsList: React.FC<ConversationsListProps> = ({
 	campaignId,
 	contactGroupId,
-	onConversationClick,
-	selectedConversationId,
 	className,
 	hiddenColumns,
 }) => {
@@ -55,24 +60,41 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 		ModuleEnum.CONVERSATIONS,
 		PermissionEnum.EXPORT
 	);
+	const canExecuteConversations = canPerformAction(
+		ModuleEnum.CONVERSATIONS,
+		PermissionEnum.EXECUTE
+	);
 
 	const { limit, offset } = pagination.getApiParams();
 
-	// Server-side sorting state (single-column sort)
 	const [sorting, setSorting] = useState<SortingState>([
 		{ id: 'createdAt', desc: true },
 	]);
-
 	const sortBy = sorting?.[0]?.id;
 	const sortOrder = sorting?.[0]?.desc ? 'DESC' : 'ASC';
 
-	// Filter state
 	const [filters, setFilters] = useState<ConversationFiltersType>({});
+	const [selectedConversationId, setSelectedConversationId] = useState<
+		number | null
+	>(null);
+	const [drawerOpened, setDrawerOpened] = useState(false);
+	const [exportModalOpened, setExportModalOpened] = useState(false);
+	const [pendingAction, setPendingAction] = useState<{
+		id: number;
+		key: ConversationActionKey;
+	} | null>(null);
 
-	// Reset to first page when filters change
+	const failAndPauseMutation = useFailAndPauseConversation();
+	const fetchAndProcessMutation = useFetchAndProcessConversation();
+
 	useEffect(() => {
 		pagination.setCurrentPage(1);
 	}, [filters]);
+
+	useEffect(() => {
+		setSelectedConversationId(null);
+		setDrawerOpened(false);
+	}, [campaignId, contactGroupId]);
 
 	const { data, isLoading, isFetching, isError, error, refetch } =
 		useGetConversations({
@@ -85,16 +107,6 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 			sortOrder,
 		});
 
-	const { selectedId, setSelection } = useConversationStore();
-	const [internalSelectedId, setInternalSelectedId] = useState<number | null>(
-		null
-	);
-	const [exportModalOpened, setExportModalOpened] = useState(false);
-
-	useEffect(() => {
-		setInternalSelectedId(null);
-	}, [campaignId]);
-
 	const conversations = data?.data ?? [];
 	const totalItems = data?.total ?? 0;
 
@@ -104,29 +116,75 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 
 	const isTableLoading = isLoading || isFetching;
 
-	const effectiveSelectedId =
-		selectedConversationId ??
-		(onConversationClick ? internalSelectedId : selectedId);
-
 	const userTimezone = useMemo(() => {
-		// Hardcode to AST (Atlantic Standard Time, UTC-4) as requested
 		return 'America/Puerto_Rico';
 	}, []);
 
-	const handleRowClick = useCallback(
-		(conversation: ConversationsModel) => {
-			if (onConversationClick) {
-				setInternalSelectedId(conversation.id);
-				onConversationClick(conversation);
-				return;
-			}
+	const handleRowClick = useCallback((conversation: { id: number }) => {
+		setSelectedConversationId(conversation.id);
+		setDrawerOpened(true);
+	}, []);
 
-			setSelection(
-				conversation.id,
-				<ConversationDetails onReload={refetch} id={conversation.id} />
-			);
+	const handleCloseDrawer = useCallback(() => {
+		setDrawerOpened(false);
+		setSelectedConversationId(null);
+	}, []);
+
+	const runConversationAction = useCallback(
+		(conversation: ConversationsModel) => {
+			const action = getConversationActionDefinition(conversation, t);
+			const mutation =
+				action.key === 'reprocess'
+					? failAndPauseMutation
+					: fetchAndProcessMutation;
+
+			setPendingAction({ id: conversation.id, key: action.key });
+			mutation.mutate(`${conversation.id}`, {
+				onSuccess: () => {
+					void refetch();
+				},
+				onSettled: () => {
+					setPendingAction((current) =>
+						current?.id === conversation.id ? null : current
+					);
+				},
+			});
 		},
-		[onConversationClick, setSelection]
+		[failAndPauseMutation, fetchAndProcessMutation, refetch, t]
+	);
+
+	const handleActionClick = useCallback(
+		(
+			event: React.MouseEvent<HTMLButtonElement>,
+			conversation: ConversationsModel
+		) => {
+			event.stopPropagation();
+			const action = getConversationActionDefinition(conversation, t);
+
+			modals.openConfirmModal({
+				title: t('actions.confirmTitle'),
+				children: action.confirmMessage,
+				labels: {
+					confirm: action.confirmLabel,
+					cancel: t('actions.cancel', { ns: 'common' }),
+				},
+				onConfirm: () => runConversationAction(conversation),
+			});
+		},
+		[runConversationAction, t]
+	);
+
+	const isActionLoading = useCallback(
+		(conversation: ConversationsModel) =>
+			pendingAction?.id === conversation.id &&
+			(pendingAction.key === 'reprocess'
+				? failAndPauseMutation.isPending
+				: fetchAndProcessMutation.isPending),
+		[
+			pendingAction,
+			failAndPauseMutation.isPending,
+			fetchAndProcessMutation.isPending,
+		]
 	);
 
 	const handleItemsPerPageChange = (value: string | null) => {
@@ -135,7 +193,11 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 		}
 	};
 
-	const columns = useConversationsColumns(userTimezone, hiddenColumns);
+	const columns = useConversationsColumns(userTimezone, hiddenColumns, {
+		canExecuteConversations,
+		onActionClick: handleActionClick,
+		isActionLoading,
+	});
 
 	if (!canViewConversations) {
 		return <AccessDenied description={t('list.error')} />;
@@ -219,12 +281,11 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 							initialSort={sorting}
 							onSortingChange={(newSorting) => {
 								setSorting(newSorting);
-								// Reset to first page when sorting changes
 								pagination.setCurrentPage(1);
 							}}
 							getRowClassName={(row) => {
 								const classes = [styles.tableRow];
-								if (row.original.id === effectiveSelectedId) {
+								if (row.original.id === selectedConversationId) {
 									classes.push(styles.selectedRow);
 								}
 								return classes.join(' ');
@@ -233,6 +294,17 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 					</div>
 				)}
 			</SectionCard>
+
+			<AppDrawer
+				opened={drawerOpened && selectedConversationId !== null}
+				onClose={handleCloseDrawer}
+				title={t('details.title')}
+				size='lg'
+			>
+				{selectedConversationId !== null ? (
+					<ConversationDetails id={selectedConversationId} />
+				) : null}
+			</AppDrawer>
 
 			{canExportConversations && (
 				<ExportToExcelModal

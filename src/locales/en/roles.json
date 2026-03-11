@@ -17,6 +17,7 @@
 		"inactive": "Inactive"
 	},
 	"list": {
+		"title": "Role list",
 		"errorTitle": "Unable to load roles",
 		"unknownError": "Unknown error",
 		"empty": "No roles found."

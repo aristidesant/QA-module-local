@@ -1,0 +1,20 @@
+.form {
+	width: 100%;
+}
+
+.section {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.sectionTitle {
+	line-height: 1.2;
+}
+
+.metricCard {
+	padding: 8px 10px;
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-sm);
+	background: var(--mantine-color-gray-0);
+}

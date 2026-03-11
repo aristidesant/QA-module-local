@@ -5,7 +5,6 @@ import { useImpersonationLoadingStore } from '~/stores/impersonationLoadingStore
 import { useAgentStore } from '~/stores/agentStore';
 import { useClientStore } from '~/stores/clientStore';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
-import { useCampaignContactListStore } from '~/stores/campaignContactListStore';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import { useClientConfigsStore } from '~/stores/clientConfigsStore';
 import { useContactEditStore } from '~/stores/contactEditStore';
@@ -14,7 +13,6 @@ import { useKnowledgeBaseSelectionStore } from '~/stores/knowledgeBaseSelectionS
 import { useOverviewStore } from '~/stores/overviewStore';
 import { useSchedulerCalculatorStore } from '~/stores/schedulerCalculatorStore';
 import useToolsStore from '~/stores/toolsStore';
-import { useConversationStore } from '~/stores/useConversationStore';
 
 type LogoutReason = 'manual' | 'expired';
 
@@ -56,9 +54,6 @@ function resetAllStores() {
 		useCampaignWizardStore.getState().reset();
 	} catch {}
 	try {
-		useCampaignContactListStore.getState().setRightComponent(null);
-	} catch {}
-	try {
 		useCampaignsStore.getState().resetView();
 	} catch {}
 	try {
@@ -88,9 +83,6 @@ function resetAllStores() {
 	} catch {}
 	try {
 		useToolsStore.getState().setToolsCategory(null);
-	} catch {}
-	try {
-		useConversationStore.getState().clearSelection();
 	} catch {}
 }
 

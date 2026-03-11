@@ -35,6 +35,7 @@ import {
 } from './humanEquivalentCalculations';
 import CapacityProgress from '../ContactList/CapacityProgress';
 import { useCampaignsStore } from '~/stores/campaignsStore';
+import { formatWaveDelaySeconds } from '~/utils/waveUtils';
 
 type ContactLimitsProps = {
 	fileSummary?: ContactFileSummary;
@@ -51,7 +52,7 @@ export const ContactLimits = ({
 	objectiveId,
 	campaignId,
 }: ContactLimitsProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaigns', 'common']);
 	const processFileMutation = useProcessContactGroupFile();
 	const { setRightComponent, selectedCampaign } = useCampaignsStore(
 		(state) => state
@@ -94,6 +95,22 @@ export const ContactLimits = ({
 		selectedCampaign?.defaultMaxWaves,
 	]);
 	const [maxWaves, setMaxWaves] = useState<number>(defaultWaves);
+	const defaultWaveExecutionDelaySeconds = useMemo(() => {
+		return (
+			contactGroup.waveExecutionDelaySeconds ??
+			selectedCampaign?.defaultWaveExecutionDelaySeconds ??
+			campaign?.defaultWaveExecutionDelaySeconds ??
+			0
+		);
+	}, [
+		campaign?.defaultWaveExecutionDelaySeconds,
+		contactGroup.waveExecutionDelaySeconds,
+		selectedCampaign?.defaultWaveExecutionDelaySeconds,
+	]);
+	const [waveExecutionDelaySeconds, setWaveExecutionDelaySeconds] =
+		useState<number>(defaultWaveExecutionDelaySeconds);
+	const [hasEditedMaxWaves, setHasEditedMaxWaves] = useState(false);
+	const [hasEditedWaveDelay, setHasEditedWaveDelay] = useState(false);
 
 	// Track whether mapping validation has failed (to show error styling)
 	const [showMappingError, setShowMappingError] = useState(false);
@@ -137,6 +154,19 @@ export const ContactLimits = ({
 	useEffect(() => {
 		setMaxWaves(defaultWaves);
 	}, [defaultWaves]);
+
+	useEffect(() => {
+		setWaveExecutionDelaySeconds(defaultWaveExecutionDelaySeconds);
+	}, [defaultWaveExecutionDelaySeconds]);
+
+	useEffect(() => {
+		setHasEditedMaxWaves(false);
+		setHasEditedWaveDelay(false);
+	}, [
+		contactGroup.id,
+		contactGroup.maxWaves,
+		contactGroup.waveExecutionDelaySeconds,
+	]);
 
 	// Handle form field changes
 	const handleChange = <K extends keyof typeof data>(
@@ -189,6 +219,15 @@ export const ContactLimits = ({
 			notifications.show({
 				title: t('form.contacts.limits.notifications.invalidInput'),
 				message: t('form.contacts.limits.notifications.wavesMinimum'),
+				color: 'red',
+			});
+			return false;
+		}
+
+		if (waveExecutionDelaySeconds < 0) {
+			notifications.show({
+				title: t('form.contacts.limits.notifications.invalidInput'),
+				message: t('form.contacts.limits.notifications.waveDelayMinimum'),
 				color: 'red',
 			});
 			return false;
@@ -249,6 +288,7 @@ export const ContactLimits = ({
 					schedulerId: activeSchedule?.id || 0,
 					schemaId: selectedSchemaId,
 					maxWaves,
+					waveExecutionDelaySeconds,
 				});
 
 				notifications.show({
@@ -265,6 +305,7 @@ export const ContactLimits = ({
 						description: data.description,
 						humanEquivalent,
 						maxWaves,
+						waveExecutionDelaySeconds,
 					},
 				});
 
@@ -288,6 +329,21 @@ export const ContactLimits = ({
 		}
 	};
 
+	const shouldShowInheritedWavesHelper =
+		!contactGroup.id && contactGroup.maxWaves == null && !hasEditedMaxWaves;
+	const shouldShowInheritedWaveDelayHelper =
+		!contactGroup.id &&
+		contactGroup.waveExecutionDelaySeconds == null &&
+		!hasEditedWaveDelay;
+	const waveDelayDisplay = formatWaveDelaySeconds(waveExecutionDelaySeconds, {
+		day: t('units.day', { ns: 'common' }),
+		hour: t('units.hour', { ns: 'common' }),
+		minute: t('units.minute', { ns: 'common' }),
+		second: t('units.second', { ns: 'common' }),
+		noDelay: t('form.contacts.limits.noWaveDelay'),
+		notSet: t('form.contacts.details.stats.notSet'),
+	});
+
 	return (
 		<Box pos='relative'>
 			<LoadingOverlay
@@ -308,11 +364,25 @@ export const ContactLimits = ({
 				/>
 				<NumberInput
 					label={t('form.contacts.limits.maxWavesLabel')}
-					description={t('form.contacts.limits.maxWavesDescription')}
-					value={maxWaves}
-					onChange={(value) =>
-						setMaxWaves(typeof value === 'number' ? value : 0)
+					description={
+						<Stack gap={2}>
+							<Text size='xs' c='dimmed'>
+								{t('form.contacts.limits.maxWavesDescription')}
+							</Text>
+							{shouldShowInheritedWavesHelper && (
+								<Text size='xs' c='blue'>
+									{t('form.contacts.limits.maxWavesInherited', {
+										value: defaultWaves,
+									})}
+								</Text>
+							)}
+						</Stack>
 					}
+					value={maxWaves}
+					onChange={(value) => {
+						setHasEditedMaxWaves(true);
+						setMaxWaves(typeof value === 'number' ? value : 0);
+					}}
 					min={1}
 					step={1}
 					clampBehavior='strict'
@@ -320,6 +390,46 @@ export const ContactLimits = ({
 					allowDecimal={false}
 					size='sm'
 					withAsterisk
+				/>
+				<NumberInput
+					label={t('form.contacts.limits.waveDelayLabel')}
+					description={
+						<Stack gap={2}>
+							<Text size='xs' c='dimmed'>
+								{t('form.contacts.limits.waveDelayDescription', {
+									value: waveDelayDisplay,
+								})}
+							</Text>
+							{shouldShowInheritedWaveDelayHelper && (
+								<Text size='xs' c='blue'>
+									{t('form.contacts.limits.waveDelayInherited', {
+										value: formatWaveDelaySeconds(
+											defaultWaveExecutionDelaySeconds,
+											{
+												day: t('units.day', { ns: 'common' }),
+												hour: t('units.hour', { ns: 'common' }),
+												minute: t('units.minute', { ns: 'common' }),
+												second: t('units.second', { ns: 'common' }),
+												noDelay: t('form.contacts.limits.noWaveDelay'),
+												notSet: t('form.contacts.details.stats.notSet'),
+											}
+										),
+									})}
+								</Text>
+							)}
+						</Stack>
+					}
+					value={waveExecutionDelaySeconds}
+					onChange={(value) => {
+						setHasEditedWaveDelay(true);
+						setWaveExecutionDelaySeconds(typeof value === 'number' ? value : 0);
+					}}
+					min={0}
+					step={30}
+					clampBehavior='strict'
+					allowNegative={false}
+					allowDecimal={false}
+					size='sm'
 				/>
 				{/* Human Equivalent Slider */}
 				{isCreatingAndFull && (

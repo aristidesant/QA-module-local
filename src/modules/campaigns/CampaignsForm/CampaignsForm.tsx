@@ -1,6 +1,6 @@
 // Refactored to use Mantine's useForm for all form state and validation
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	Stack,
 	LoadingOverlay,
@@ -36,21 +36,73 @@ import WorkflowSection from './WorkflowSection/WorkflowSection';
 import AgentSection from './AgentSection';
 import DispositionSection from './DispositionSection';
 import DoNotCallSection from './DoNotCallSection';
+import ReportValuesSection from './ReportValuesSection/ReportValuesSection';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { CampaignStatus } from '~/models/CampaignStatus';
 import { modals } from '@mantine/modals';
-import { IconCalculator, IconEye } from '@tabler/icons-react';
+import { IconEye } from '@tabler/icons-react';
 import SchedulerCalculator from './ParametersSection/SchedulerCalculator';
 import FormSaveButton from '~/components/FormSaveButton';
 import CampaignSyncButton from './components/CampaignSyncButton';
 import AgentSectionRightPanel from './AgentSection/AgentSectionRightPanel';
 import GeneralSectionRightPanel from './GeneralSection/GeneralSectionRightPanel';
+import AppDrawer from '~/components/AppDrawer';
+import styles from './CampaignsForm.module.css';
 
 interface CampaignsFormProps {
 	campaign?: Partial<Campaign>;
 	loading?: boolean;
 	onBack?: () => void;
 }
+
+const getWorkflowCounts = (
+	workflow?: Partial<Campaign>['agentConfig'] extends infer T
+		? T extends { workflow?: infer W }
+			? W
+			: never
+		: never
+) => {
+	const normalizedWorkflow = workflow as
+		| {
+				nodes?: Record<string, unknown>;
+				edges?: Record<string, unknown>;
+		  }
+		| undefined;
+
+	return {
+		nodes: normalizedWorkflow?.nodes
+			? Object.keys(normalizedWorkflow.nodes).length
+			: 0,
+		edges: normalizedWorkflow?.edges
+			? Object.keys(normalizedWorkflow.edges).length
+			: 0,
+	};
+};
+
+interface StickySaveActionsProps {
+	isLoading: boolean;
+	disabled: boolean;
+	label: string;
+	loadingLabel: string;
+}
+
+const StickySaveActions: React.FC<StickySaveActionsProps> = ({
+	isLoading,
+	disabled,
+	label,
+	loadingLabel,
+}) => (
+	<Box className={styles.stickyActions}>
+		<Group className={styles.stickyActionsGroup}>
+			<FormSaveButton
+				label={label}
+				loadingLabel={loadingLabel}
+				isLoading={isLoading}
+				disabled={disabled}
+			/>
+		</Group>
+	</Box>
+);
 
 export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	campaign,
@@ -61,17 +113,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	const { selectedTab, rightComponent, resetView } = useCampaignsStore(
 		(state) => state
 	);
-
-	// Determine the right section based on selected tab
-	// For 'general' and 'agents' tabs, render fixed right panels directly
-	const effectiveRightSection =
-		selectedTab === 'general' ? (
-			<GeneralSectionRightPanel />
-		) : selectedTab === 'agents' ? (
-			<AgentSectionRightPanel />
-		) : (
-			rightComponent || <></>
-		);
+	const [isSettingsDrawerOpen, setIsSettingsDrawerOpen] = useState(false);
 	const { mutateAsync: createCampaign, isPending: isCreating } =
 		useCreateCampaign();
 	const { mutateAsync: updateCampaign, isPending: isUpdating } =
@@ -90,7 +132,19 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		sunday: { enabled: false, from: '09:00', to: '17:30' },
 	};
 
-	const { t } = useTranslation(['campaigns', 'campaign.detail', 'common']);
+	const { t } = useTranslation([
+		'campaigns',
+		'campaign.detail',
+		'campaign.contact-list',
+		'common',
+	]);
+
+	const saveLabel = t('form.actions.save', {
+		defaultValue: 'Save changes',
+	});
+	const savingLabel = t('form.actions.saving', {
+		defaultValue: 'Saving...',
+	});
 
 	// Check if we have the workflow data ready for existing campaigns
 	const isNewCampaign = !campaign?.id;
@@ -118,6 +172,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			workingHours: campaign?.workingHours || defaultWorkingHours,
 			agentConfig: campaign?.agentConfig || {},
 			defaultMaxWaves: campaign?.defaultMaxWaves ?? 3,
+			defaultWaveExecutionDelaySeconds:
+				campaign?.defaultWaveExecutionDelaySeconds ?? 0,
 		},
 		validate: {
 			name: (value) => (value ? null : t('form.validation.nameRequired')),
@@ -130,6 +186,10 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 				value >= 0 ? null : t('form.validation.clientIdMin'),
 			defaultMaxWaves: (value) =>
 				value && value >= 1 ? null : t('form.validation.defaultWavesMin'),
+			defaultWaveExecutionDelaySeconds: (value) =>
+				value !== undefined && value >= 0
+					? null
+					: t('form.validation.defaultWaveDelayMin'),
 			objectiveId: (value) =>
 				value ? null : t('form.validation.objectiveRequired'),
 		},
@@ -138,6 +198,16 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	// Update form values when campaign data changes
 	useEffect(() => {
 		if (!campaign?.id) return; // Only for existing campaigns
+
+		const campaignWorkflowCounts = getWorkflowCounts(
+			campaign.agentConfig?.workflow
+		);
+		console.log('[CampaignsForm] incoming campaign workflow', {
+			campaignId: campaign.id,
+			nodes: campaignWorkflowCounts.nodes,
+			edges: campaignWorkflowCounts.edges,
+			hasWorkflow: Boolean(campaign.agentConfig?.workflow),
+		});
 
 		form.setValues({
 			name: campaign.name || '',
@@ -157,16 +227,22 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			workingHours: campaign.workingHours || defaultWorkingHours,
 			agentConfig: campaign.agentConfig || {},
 			defaultMaxWaves: campaign.defaultMaxWaves ?? 3,
+			defaultWaveExecutionDelaySeconds:
+				campaign.defaultWaveExecutionDelaySeconds ?? 0,
 		});
 
-		const stateNodes = form.values.agentConfig?.workflow?.nodes;
-		const getterNodes = form.getValues().agentConfig?.workflow?.nodes;
-		const valuesFromState = stateNodes ? Object.keys(stateNodes).length : 0;
-		const valuesFromGetter = getterNodes ? Object.keys(getterNodes).length : 0;
-		console.log('[CampaignsForm] after setValues - workflow nodes:', {
+		const stateWorkflowCounts = getWorkflowCounts(
+			form.values.agentConfig?.workflow
+		);
+		const getterWorkflowCounts = getWorkflowCounts(
+			form.getValues().agentConfig?.workflow
+		);
+		console.log('[CampaignsForm] after setValues - workflow snapshot', {
 			campaignId: campaign.id,
-			valuesFromState,
-			valuesFromGetter,
+			stateNodes: stateWorkflowCounts.nodes,
+			stateEdges: stateWorkflowCounts.edges,
+			getterNodes: getterWorkflowCounts.nodes,
+			getterEdges: getterWorkflowCounts.edges,
 		});
 	}, [campaign?.id, campaign?.agentConfig?.workflow]);
 
@@ -177,6 +253,29 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			resetView();
 		};
 	}, []);
+
+	useEffect(() => {
+		setIsSettingsDrawerOpen(false);
+	}, [selectedTab]);
+
+	useEffect(() => {
+		if (selectedTab !== 'outcomes') return;
+		setIsSettingsDrawerOpen(Boolean(rightComponent));
+	}, [selectedTab, rightComponent]);
+
+	const settingsDrawerTitle = t('form.settingsDrawer.title');
+	const openSettingsDrawer = () => {
+		setIsSettingsDrawerOpen(true);
+	};
+
+	const settingsDrawerContent =
+		selectedTab === 'general' ? (
+			<GeneralSectionRightPanel />
+		) : selectedTab === 'agents' ? (
+			<AgentSectionRightPanel />
+		) : selectedTab === 'outcomes' ? (
+			rightComponent
+		) : null;
 
 	const handleSubmit = async (
 		value: Omit<Campaign, 'id' | 'createdAt' | 'updatedAt'>,
@@ -224,6 +323,10 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 						},
 					},
 				};
+			}
+
+			if (cleanedValue.type === 'INBOUND') {
+				cleanedValue.defaultWaveExecutionDelaySeconds = undefined;
 			}
 
 			// Prepare data for light update (excludes agentConfig)
@@ -295,7 +398,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		<CampaignIdContext.Provider value={campaign?.id}>
 			<CampaignFormProvider form={form}>
 				<ContentContainer
-					rightSection={effectiveRightSection}
+					contentWidth={selectedTab === 'workflow' ? 'full' : 'centered'}
 					onBackClick={() => {
 						resetView();
 						onBack?.();
@@ -335,68 +438,24 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 							<form
 								onSubmit={form.onSubmit((values) => handleSubmit(values, true))}
 							>
-								<GeneralSection />
-								<Box
-									pos='sticky'
-									bottom={-1}
-									bg='var(--mantine-color-body)'
-									py='md'
-									mt='md'
-									style={{
-										borderTop: '1px solid var(--mantine-color-gray-2)',
-										zIndex: 10,
-										marginRight: 'calc(var(--mantine-spacing-xs) * -1)',
-										marginLeft: 'calc(var(--mantine-spacing-xs) * -1)',
-										paddingRight: 'var(--mantine-spacing-xs)',
-										paddingLeft: 'var(--mantine-spacing-xs)',
-									}}
-								>
-									<Group justify='flex-end'>
-										<FormSaveButton
-											label={t('form.actions.save', {
-												defaultValue: 'Save changes',
-											})}
-											loadingLabel={t('form.actions.saving', {
-												defaultValue: 'Saving...',
-											})}
-											isLoading={isUpdatingLight}
-											disabled={!form.isDirty()}
-										/>
-									</Group>
-								</Box>
+								<GeneralSection onOpenSettings={openSettingsDrawer} />
+								<StickySaveActions
+									label={saveLabel}
+									loadingLabel={savingLabel}
+									isLoading={isUpdatingLight}
+									disabled={!form.isDirty()}
+								/>
 							</form>
 						)}
 						{selectedTab === 'agents' && (
 							<form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
-								<AgentSection />
-								<Box
-									pos='sticky'
-									bottom={-1}
-									bg='var(--mantine-color-body)'
-									py='md'
-									mt='md'
-									style={{
-										borderTop: '1px solid var(--mantine-color-gray-2)',
-										zIndex: 10,
-										marginRight: 'calc(var(--mantine-spacing-xs) * -1)',
-										marginLeft: 'calc(var(--mantine-spacing-xs) * -1)',
-										paddingRight: 'var(--mantine-spacing-xs)',
-										paddingLeft: 'var(--mantine-spacing-xs)',
-									}}
-								>
-									<Group justify='flex-end'>
-										<FormSaveButton
-											label={t('form.actions.save', {
-												defaultValue: 'Save changes',
-											})}
-											loadingLabel={t('form.actions.saving', {
-												defaultValue: 'Saving...',
-											})}
-											isLoading={isUpdating}
-											disabled={!form.isDirty()}
-										/>
-									</Group>
-								</Box>
+								<AgentSection onOpenSettings={openSettingsDrawer} />
+								<StickySaveActions
+									label={saveLabel}
+									loadingLabel={savingLabel}
+									isLoading={isUpdating}
+									disabled={!form.isDirty()}
+								/>
 							</form>
 						)}
 						{selectedTab === 'workflow' && (
@@ -415,34 +474,12 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 										onSubmit={form.onSubmit((values) => handleSubmit(values))}
 									>
 										<WorkflowSection />
-										<Box
-											pos='sticky'
-											bottom={-1}
-											bg='var(--mantine-color-body)'
-											py='md'
-											mt='md'
-											style={{
-												borderTop: '1px solid var(--mantine-color-gray-2)',
-												zIndex: 10,
-												marginRight: 'calc(var(--mantine-spacing-xs) * -1)',
-												marginLeft: 'calc(var(--mantine-spacing-xs) * -1)',
-												paddingRight: 'var(--mantine-spacing-xs)',
-												paddingLeft: 'var(--mantine-spacing-xs)',
-											}}
-										>
-											<Group justify='flex-end'>
-												<FormSaveButton
-													label={t('form.actions.save', {
-														defaultValue: 'Save changes',
-													})}
-													loadingLabel={t('form.actions.saving', {
-														defaultValue: 'Saving...',
-													})}
-													isLoading={isUpdating}
-													disabled={!form.isDirty()}
-												/>
-											</Group>
-										</Box>
+										<StickySaveActions
+											label={saveLabel}
+											loadingLabel={savingLabel}
+											isLoading={isUpdating}
+											disabled={!form.isDirty()}
+										/>
 									</form>
 								)}
 							</>
@@ -455,20 +492,12 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 							<SectionCard
 								title={t('workingHours.title')}
 								description={t('workingHours.description')}
-								headerActions={
-									<ActionIcon
-										size='md'
-										variant='subtle'
-										onClick={() =>
-											modals.open({
-												title: t('form.schedulerCalculator.title'),
-												fullScreen: true,
-												children: <SchedulerCalculator />,
-											})
-										}
-									>
-										<IconCalculator size={18} />
-									</ActionIcon>
+								onCalculate={() =>
+									modals.open({
+										title: t('form.schedulerCalculator.title'),
+										fullScreen: true,
+										children: <SchedulerCalculator />,
+									})
 								}
 							>
 								<ParametersSection
@@ -494,41 +523,28 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 								/>
 							</SectionCard>
 						)}
+						{selectedTab === 'report-values' && <ReportValuesSection />}
 						{selectedTab === 'analytics' && (
 							<form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
 								<AnalyticsSection />
-								<Box
-									pos='sticky'
-									bottom={-1}
-									bg='var(--mantine-color-body)'
-									py='md'
-									mt='md'
-									style={{
-										borderTop: '1px solid var(--mantine-color-gray-2)',
-										zIndex: 10,
-										marginRight: 'calc(var(--mantine-spacing-xs) * -1)',
-										marginLeft: 'calc(var(--mantine-spacing-xs) * -1)',
-										paddingRight: 'var(--mantine-spacing-xs)',
-										paddingLeft: 'var(--mantine-spacing-xs)',
-									}}
-								>
-									<Group justify='flex-end'>
-										<FormSaveButton
-											label={t('form.actions.save', {
-												defaultValue: 'Save changes',
-											})}
-											loadingLabel={t('form.actions.saving', {
-												defaultValue: 'Saving...',
-											})}
-											isLoading={isUpdating}
-											disabled={!form.isDirty()}
-										/>
-									</Group>
-								</Box>
+								<StickySaveActions
+									label={saveLabel}
+									loadingLabel={savingLabel}
+									isLoading={isUpdating}
+									disabled={!form.isDirty()}
+								/>
 							</form>
 						)}
 					</Stack>
 				</ContentContainer>
+				<AppDrawer
+					opened={isSettingsDrawerOpen && Boolean(settingsDrawerContent)}
+					onClose={() => setIsSettingsDrawerOpen(false)}
+					title={settingsDrawerTitle}
+					size='lg'
+				>
+					{settingsDrawerContent}
+				</AppDrawer>
 			</CampaignFormProvider>
 		</CampaignIdContext.Provider>
 	);

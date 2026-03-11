@@ -12,16 +12,6 @@
 	background-color: var(--mantine-color-gray-0);
 }
 
-.actionsCell {
-	display: flex;
-	justify-content: flex-end;
-	gap: var(--mantine-spacing-xs);
-}
-
-.actionsHeader {
-	text-align: right;
-}
-
 .statusBadge {
 	text-transform: capitalize;
 	font-weight: 500;

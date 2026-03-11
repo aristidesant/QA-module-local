@@ -1,0 +1,118 @@
+.list {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	min-width: 0;
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: 8px;
+	overflow: hidden;
+	background: var(--mantine-color-white);
+}
+
+.row {
+	display: grid;
+	grid-template-columns: minmax(120px, 156px) minmax(0, 1fr);
+	align-items: center;
+	width: 100%;
+	min-width: 0;
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.row:last-child {
+	border-bottom: none;
+}
+
+.labelCell {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	min-width: 0;
+	padding: 5px 8px;
+	background: var(--mantine-color-gray-0);
+	border-right: 1px solid var(--mantine-color-gray-2);
+}
+
+.labelIcon {
+	flex-shrink: 0;
+	color: var(--mantine-color-gray-5);
+}
+
+.labelIconSpacer {
+	width: 13px;
+	height: 13px;
+	flex-shrink: 0;
+}
+
+.labelText {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 10px;
+	font-weight: 500;
+	line-height: 1.2;
+	color: var(--mantine-color-gray-6);
+}
+
+.valueCell {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	min-width: 0;
+	padding: 5px 8px;
+}
+
+.valueMain {
+	flex: 1;
+	min-width: 0;
+}
+
+.valueText {
+	display: block;
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 10px;
+	font-weight: 600;
+	line-height: 1.2;
+	color: var(--mantine-color-gray-9);
+	cursor: default;
+}
+
+.valueMissing {
+	display: block;
+	font-size: 10px;
+	font-style: italic;
+	line-height: 1.2;
+	color: var(--mantine-color-gray-5);
+}
+
+.endSection {
+	display: flex;
+	align-items: center;
+	flex-shrink: 0;
+}
+
+@media (max-width: 520px) {
+	.row {
+		grid-template-columns: 1fr;
+		align-items: stretch;
+	}
+
+	.labelCell {
+		border-right: none;
+		border-bottom: 1px solid var(--mantine-color-gray-2);
+		padding-bottom: 4px;
+	}
+
+	.valueCell {
+		padding-top: 4px;
+	}
+
+	.valueText,
+	.valueMissing {
+		white-space: normal;
+		word-break: break-word;
+	}
+}

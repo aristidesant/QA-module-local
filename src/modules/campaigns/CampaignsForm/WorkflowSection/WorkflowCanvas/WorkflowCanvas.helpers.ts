@@ -26,6 +26,8 @@ export const defaultEdgeOptions = {
 	},
 };
 
+export const WORKFLOW_NODE_DRAG_HANDLE_SELECTOR = '.workflowNodeDragHandle';
+
 export const HANDLE_ID_MAP = {
 	source: {
 		[Position.Top]: 'source-top',
@@ -81,8 +83,7 @@ export const buildDefaultWorkflow = (
 
 export const mapWorkflowToNodes = (
 	workflowData: AgentWorkflow,
-	t: TFunction,
-	onOpenEdgeModal: (edgeId: string) => void
+	t: TFunction
 ): { nodes: Node[]; edges: Edge[] } => {
 	const normalizeSubagent = (node: OverrideAgentNode | StandaloneAgentNode) => {
 		const legacyPrompt =
@@ -117,10 +118,18 @@ export const mapWorkflowToNodes = (
 		return existing;
 	};
 
+	const NON_SELECTABLE_TYPES = [
+		WORKFLOW_NODE_TYPES.START,
+		WORKFLOW_NODE_TYPES.END,
+	];
+
 	const mappedNodes = Object.entries(workflowData.nodes).map(([id, node]) => ({
 		id,
 		type: node.type,
 		position: node.position,
+		dragHandle: WORKFLOW_NODE_DRAG_HANDLE_SELECTOR,
+		selectable: !NON_SELECTABLE_TYPES.includes(node.type as any),
+		focusable: !NON_SELECTABLE_TYPES.includes(node.type as any),
 		data: {
 			...node,
 			type: node.type,
@@ -200,7 +209,6 @@ export const mapWorkflowToNodes = (
 			forwardCondition: edge.forwardCondition,
 			backwardCondition: edge.backwardCondition,
 			warningLevel: getEdgeWarningLevel(id, workflowData),
-			onEdgeClick: onOpenEdgeModal,
 		},
 	}));
 

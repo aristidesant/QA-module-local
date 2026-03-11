@@ -1,6 +1,7 @@
 import React from 'react';
-import { Button, Group, Modal, Stack } from '@mantine/core';
+import { Button, Group, Stack } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
+import AppDrawer from '~/components/AppDrawer';
 import type {
 	ForwardCondition,
 	WorkflowEdge,
@@ -58,15 +59,21 @@ export const EdgeConditionModal: React.FC<EdgeConditionModalProps> = (
 
 	return (
 		<EdgeConditionModalProvider {...props}>
-			<Modal
+			<AppDrawer
 				opened={props.opened}
 				onClose={props.onClose}
 				title={edgeTitle}
 				size='lg'
-				centered
+				keepMounted
+				zIndex={330}
+				transitionProps={{
+					transition: 'slide-left',
+					duration: 250,
+					timingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+				}}
 			>
 				<ModalContent />
-			</Modal>
+			</AppDrawer>
 		</EdgeConditionModalProvider>
 	);
 };

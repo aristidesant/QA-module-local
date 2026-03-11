@@ -7,25 +7,12 @@ import {
 } from '~/queries/useClientConfigs';
 import CampaignPredefinedParamsList from './CampaignPredefinedParamsList';
 import { CampaignPredefinedParam } from '~/modules/campaigns/CampaignsForm/useCampaignsPredefinedParams';
-import ContentContainer from '~/components/ContentContainer';
-import {
-	ActionIcon,
-	Button,
-	Group,
-	Modal,
-	Stack,
-	Text,
-	Tooltip,
-} from '@mantine/core';
-import {
-	IconAlertTriangle,
-	IconPlus,
-	IconSettings,
-	IconTrash,
-} from '@tabler/icons-react';
+import { Button, Group, Modal, Stack, Text } from '@mantine/core';
+import { IconAlertTriangle, IconPlus, IconSettings } from '@tabler/icons-react';
 import CampaignPredefinedParamsForm from './CampaignPredefinedParamsForm';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import InlineNotice from '~/components/InlineNotice';
+import SectionCard, { type CardActionsConfig } from '~/components/SectionCard';
 import { useTranslation } from 'react-i18next';
 
 const CampaignPredefinedParamsPage = () => {
@@ -143,59 +130,68 @@ const CampaignPredefinedParamsPage = () => {
 		setSelectedParam(null);
 	};
 
+	const sectionActions = useMemo<CardActionsConfig | undefined>(() => {
+		if (!hasConfig) {
+			return undefined;
+		}
+
+		const secondary = [] as NonNullable<CardActionsConfig['secondary']>;
+
+		if (canCreateOverride) {
+			secondary.push({
+				kind: 'configure',
+				icon: IconSettings,
+				label: t('actions.createOverride'),
+				color: 'grape',
+				onClick: handleCreateOverride,
+				disabled: isCreatingOverride,
+				loading: isCreatingOverride,
+			});
+		}
+
+		if (canDeleteConfig) {
+			secondary.push({
+				kind: 'delete',
+				label: t('actions.deleteOverride'),
+				color: 'red',
+				onClick: () => setDeleteConfigModalOpen(true),
+				disabled: isDeletingOverride,
+				loading: isDeletingOverride,
+			});
+		}
+
+		const canAddParameter =
+			canEditConfig || (!isGlobalConfig && canCreateOverride);
+
+		return {
+			primary: canAddParameter
+				? {
+						kind: 'add',
+						icon: IconPlus,
+						label: t('actions.addParameter'),
+						onClick: handleAddNew,
+						disabled: !hasConfig || (!canEditConfig && !canCreateOverride),
+					}
+				: undefined,
+			secondary,
+		};
+	}, [
+		canCreateOverride,
+		canDeleteConfig,
+		canEditConfig,
+		hasConfig,
+		handleCreateOverride,
+		isCreatingOverride,
+		isDeletingOverride,
+		isGlobalConfig,
+		t,
+	]);
+
 	return (
-		<ContentContainer
+		<SectionCard
 			title={t('page.title')}
 			description={t('page.description')}
-			titleRight={
-				hasConfig ? (
-					<Group gap={'xs'}>
-						{canCreateOverride && (
-							<Tooltip label={t('actions.createOverride')} withArrow>
-								<ActionIcon
-									variant='light'
-									color='grape'
-									aria-label={t('actions.createOverride')}
-									onClick={handleCreateOverride}
-									loading={isCreatingOverride}
-									disabled={isCreatingOverride}
-								>
-									<IconSettings size={16} />
-								</ActionIcon>
-							</Tooltip>
-						)}
-						{canDeleteConfig && (
-							<Tooltip label={t('actions.deleteOverride')} withArrow>
-								<ActionIcon
-									variant='light'
-									color='red'
-									aria-label={t('actions.deleteOverride')}
-									onClick={() => setDeleteConfigModalOpen(true)}
-									loading={isDeletingOverride}
-									disabled={isDeletingOverride}
-								>
-									<IconTrash size={16} />
-								</ActionIcon>
-							</Tooltip>
-						)}
-						{(canEditConfig || (!isGlobalConfig && canCreateOverride)) && (
-							<Tooltip label={t('actions.addParameter')} withArrow>
-								<ActionIcon
-									variant='filled'
-									color='blue'
-									aria-label={t('actions.addParameter')}
-									onClick={handleAddNew}
-									disabled={
-										!hasConfig || (!canEditConfig && !canCreateOverride)
-									}
-								>
-									<IconPlus size={16} />
-								</ActionIcon>
-							</Tooltip>
-						)}
-					</Group>
-				) : undefined
-			}
+			actions={sectionActions}
 		>
 			<Stack gap={'xs'}>
 				{isGlobalConfig && (
@@ -328,7 +324,7 @@ const CampaignPredefinedParamsPage = () => {
 					canSubmit={canSubmitEdits}
 				/>
 			</Modal>
-		</ContentContainer>
+		</SectionCard>
 	);
 };
 

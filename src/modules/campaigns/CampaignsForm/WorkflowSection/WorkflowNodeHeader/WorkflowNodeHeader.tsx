@@ -20,7 +20,16 @@ const WorkflowNodeHeader = ({
 	titleClassName,
 }: WorkflowNodeHeaderProps) => {
 	return (
-		<div className={[styles.header, className].filter(Boolean).join(' ')}>
+		<div
+			className={[
+				styles.header,
+				styles.dragHandle,
+				'workflowNodeDragHandle',
+				className,
+			]
+				.filter(Boolean)
+				.join(' ')}
+		>
 			<Group
 				gap='xs'
 				align='center'

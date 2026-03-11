@@ -130,6 +130,10 @@ const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 
 	const hasData = data?.dispositions && data.dispositions.length > 0;
 
+	if (!isLoading && !hasData) {
+		return null;
+	}
+
 	const handleSelectDisposition = (name: string) => {
 		const color = getColorForDisposition(name, false);
 		setParentColor(color);

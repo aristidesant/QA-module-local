@@ -5,8 +5,9 @@ import {
 	Modal,
 	NumberInput,
 	Select,
-	Tooltip,
 	Stack,
+	Switch,
+	Tooltip,
 } from '@mantine/core';
 import {
 	IconAdjustments,
@@ -165,19 +166,34 @@ const GeneralSectionRightPanel: React.FC = () => {
 					iconColor='blue'
 				>
 					{isOutbound && (
-						<NumberInput
-							label={t('general.defaultWaves')}
-							description={t('general.defaultWavesDesc')}
-							min={1}
-							clampBehavior='strict'
-							allowDecimal={false}
-							allowNegative={false}
-							step={1}
-							placeholder={t('general.enterNumberOfWaves')}
-							withAsterisk
-							size='sm'
-							{...form.getInputProps('defaultMaxWaves')}
-						/>
+						<>
+							<NumberInput
+								label={t('general.defaultWaves')}
+								description={t('general.defaultWavesDesc')}
+								min={1}
+								clampBehavior='strict'
+								allowDecimal={false}
+								allowNegative={false}
+								step={1}
+								placeholder={t('general.enterNumberOfWaves')}
+								withAsterisk
+								size='sm'
+								{...form.getInputProps('defaultMaxWaves')}
+							/>
+
+							<NumberInput
+								label={t('general.defaultWaveDelay')}
+								description={t('general.defaultWaveDelayDesc')}
+								min={0}
+								clampBehavior='strict'
+								allowDecimal={false}
+								allowNegative={false}
+								step={30}
+								placeholder={t('general.enterWaveDelaySeconds')}
+								size='sm'
+								{...form.getInputProps('defaultWaveExecutionDelaySeconds')}
+							/>
+						</>
 					)}
 
 					<Select
@@ -191,6 +207,22 @@ const GeneralSectionRightPanel: React.FC = () => {
 						nothingFoundMessage={t('form.agent.basic.noLanguageFound')}
 						leftSection={<IconLanguage size={14} />}
 						size='sm'
+					/>
+
+					<Switch
+						label={t('general.noiseCancellationLabel')}
+						description={t('general.noiseCancellationDesc')}
+						size='sm'
+						checked={
+							form.values.agentConfig?.conversationConfig?.noiseCancellation ??
+							false
+						}
+						onChange={(event) =>
+							form.setFieldValue(
+								'agentConfig.conversationConfig.noiseCancellation',
+								event.currentTarget.checked
+							)
+						}
 					/>
 				</RightSectionCard>
 			</Stack>

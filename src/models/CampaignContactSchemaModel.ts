@@ -15,6 +15,7 @@ export interface CampaignContactSchemaField {
 	required?: boolean;
 	description?: string;
 	defaultValue?: string | number | boolean;
+	matchPatterns?: string[];
 	validation?: {
 		pattern?: string;
 		minLength?: number;

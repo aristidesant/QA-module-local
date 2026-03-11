@@ -95,6 +95,26 @@ Files:
 - `src/modules/campaigns/CampaignsForm/WorkflowSection/edges/ConditionEdge/ConditionEdge.tsx`
 - `src/modules/campaigns/CampaignsForm/WorkflowSection/edges/ConditionEdge/ConditionEdge.module.css`
 
+## Edge Connection Rules
+
+The current edge connection behavior is validated in:
+
+- `src/modules/campaigns/CampaignsForm/WorkflowSection/docs/edge-connection-rules.md`
+
+Current enforced rules:
+
+- every connection must resolve to an existing source node and target node;
+- `start` can only connect to `standalone_agent`;
+- `start` can only keep one outgoing edge;
+- reconnect keeps the same edge id and updates source-node `edgeOrder` when the source changes;
+- deleting or abandoning an edge cleans `edgeOrder`;
+- exact duplicate edges are skipped.
+
+Implementation references:
+
+- `src/modules/campaigns/CampaignsForm/WorkflowSection/WorkflowCanvas/WorkflowCanvas.tsx`
+- `src/modules/campaigns/CampaignsForm/WorkflowSection/WorkflowNode/WorkflowNode.tsx`
+
 ## Label Precedence
 
 Node labels and edge labels follow these priorities:

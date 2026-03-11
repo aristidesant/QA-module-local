@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import {
 	IconFileText,
 	IconTrash,
-	IconPlus,
 	IconLink,
 	IconAlignLeft,
 } from '@tabler/icons-react';
@@ -140,6 +139,13 @@ const CampaignConfigurationKnowledgeBase: React.FC = () => {
 			icon={IconFileText}
 			title={t('form.agent.knowledgeBase.title')}
 			description={t('form.agent.knowledgeBase.description')}
+			actions={{
+				primary: {
+					kind: 'add',
+					label: t('form.agent.knowledgeBase.add'),
+					onClick: handleAddKnowledgeBase,
+				},
+			}}
 		>
 			<div className={styles.container}>
 				{isLoading ? (
@@ -216,14 +222,6 @@ const CampaignConfigurationKnowledgeBase: React.FC = () => {
 						{t('form.agent.knowledgeBase.noSelection')}
 					</Text>
 				)}
-				<button
-					type='button'
-					className={styles.addButton}
-					onClick={handleAddKnowledgeBase}
-				>
-					<IconPlus size={14} className={styles.plusIcon} />
-					<span>{t('form.agent.knowledgeBase.add')}</span>
-				</button>
 			</div>
 			<CampaignConfigurationKnowledgeBaseAddModal
 				opened={isModalOpen}

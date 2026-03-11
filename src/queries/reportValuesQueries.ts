@@ -1,37 +1,47 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import reportValuesApi from '~/api/reportValuesApi';
 import type {
+	BulkUpdateReportValuesDto,
 	CreateReportValueDto,
 	UpdateReportValueDto,
 } from '~/models/ReportValue';
 
-export const useGetReportColumns = (contactGroupId: number) => {
+type ReportValueMutationOptions = {
+	invalidateOnSuccess?: boolean;
+};
+
+export const useGetReportColumns = (campaignId: number) => {
 	return useQuery({
-		queryKey: ['reportColumns', contactGroupId],
+		queryKey: ['reportColumns', 'campaign', campaignId],
 		queryFn: async () => {
 			const api = reportValuesApi();
-			return api.getColumns(contactGroupId);
+			return api.getColumns(campaignId);
 		},
-		enabled: !!contactGroupId && !Number.isNaN(contactGroupId),
+		enabled: !!campaignId && !Number.isNaN(campaignId),
 	});
 };
 
-export const useCreateReportValue = (contactGroupId: number) => {
+export const useCreateReportValue = (
+	campaignId: number,
+	options: ReportValueMutationOptions = {}
+) => {
 	const queryClient = useQueryClient();
+	const { invalidateOnSuccess = true } = options;
 	return useMutation({
 		mutationFn: async (dto: CreateReportValueDto) => {
 			const api = reportValuesApi();
 			return api.create(dto);
 		},
 		onSuccess: () => {
+			if (!invalidateOnSuccess) return;
 			void queryClient.invalidateQueries({
-				queryKey: ['reportColumns', contactGroupId],
+				queryKey: ['reportColumns', 'campaign', campaignId],
 			});
 		},
 	});
 };
 
-export const useUpdateReportValue = (contactGroupId: number) => {
+export const useUpdateReportValue = (campaignId: number) => {
 	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: async ({
@@ -46,22 +56,47 @@ export const useUpdateReportValue = (contactGroupId: number) => {
 		},
 		onSuccess: () => {
 			void queryClient.invalidateQueries({
-				queryKey: ['reportColumns', contactGroupId],
+				queryKey: ['reportColumns', 'campaign', campaignId],
 			});
 		},
 	});
 };
 
-export const useDeleteReportValue = (contactGroupId: number) => {
+export const useDeleteReportValue = (
+	campaignId: number,
+	options: ReportValueMutationOptions = {}
+) => {
 	const queryClient = useQueryClient();
+	const { invalidateOnSuccess = true } = options;
 	return useMutation({
 		mutationFn: async (id: number) => {
 			const api = reportValuesApi();
 			return api.remove(id);
 		},
 		onSuccess: () => {
+			if (!invalidateOnSuccess) return;
 			void queryClient.invalidateQueries({
-				queryKey: ['reportColumns', contactGroupId],
+				queryKey: ['reportColumns', 'campaign', campaignId],
+			});
+		},
+	});
+};
+
+export const useBulkUpdateReportValues = (
+	campaignId: number,
+	options: ReportValueMutationOptions = {}
+) => {
+	const queryClient = useQueryClient();
+	const { invalidateOnSuccess = true } = options;
+	return useMutation({
+		mutationFn: async (dto: BulkUpdateReportValuesDto) => {
+			const api = reportValuesApi();
+			return api.bulkUpdate(campaignId, dto);
+		},
+		onSuccess: () => {
+			if (!invalidateOnSuccess) return;
+			void queryClient.invalidateQueries({
+				queryKey: ['reportColumns', 'campaign', campaignId],
 			});
 		},
 	});

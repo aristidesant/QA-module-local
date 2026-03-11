@@ -1,23 +1,24 @@
-.panel {
-	position: relative;
-	padding: var(--mantine-spacing-sm);
-	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: var(--mantine-radius-sm);
-	background-color: var(--mantine-color-white);
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
 }
 
-.header {
+/* ─── Header Row ─────────────────────────────────────────────── */
+
+.headerRow {
 	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	gap: var(--mantine-spacing-xs);
-	margin-bottom: var(--mantine-spacing-xs);
+	align-items: flex-start;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-xs) 0 var(--mantine-spacing-sm);
+	border-bottom: 1px solid var(--mantine-color-gray-2);
 }
 
-.statusSection {
+.statusStrip {
 	display: flex;
 	align-items: center;
-	gap: var(--mantine-spacing-xs);
+	flex-wrap: wrap;
+	gap: var(--mantine-spacing-sm);
 	flex: 1;
 	min-width: 0;
 }
@@ -25,18 +26,19 @@
 .statusBadge {
 	display: inline-flex;
 	align-items: center;
-	gap: 4px;
-	border-radius: var(--mantine-radius-sm);
-	padding: 2px 8px;
-	width: fit-content;
+	gap: 6px;
+	border-radius: 999px;
+	padding: 4px 9px;
+	flex-shrink: 0;
 }
 
 .statusLabel {
-	letter-spacing: 0.3px;
+	letter-spacing: 0.01em;
 }
 
 .statusDescription {
-	max-width: 400px;
+	flex: 1 1 240px;
+	min-width: 0;
 	line-height: 1.4;
 	white-space: nowrap;
 	overflow: hidden;
@@ -61,6 +63,12 @@
 	border: 1px solid var(--mantine-color-blue-2);
 }
 
+.statusWaiting {
+	background-color: var(--mantine-color-orange-0);
+	color: var(--mantine-color-orange-8);
+	border: 1px solid var(--mantine-color-orange-2);
+}
+
 .statusComplete {
 	background-color: var(--mantine-color-teal-0);
 	color: var(--mantine-color-teal-8);
@@ -79,24 +87,204 @@
 	border: 1px solid var(--mantine-color-gray-3);
 }
 
-.reloadButton {
-	transition:
-		background-color 200ms ease,
-		transform 150ms ease;
+/* ─── Stats Strip ────────────────────────────────────────────── */
+
+.statsStrip {
+	display: flex;
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-gray-0);
+	overflow: hidden;
 }
 
-.reloadButton:hover {
-	transform: rotate(45deg);
+.statCell {
+	flex: 1 1 0;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	padding: 10px 14px;
+	border-right: 1px solid var(--mantine-color-gray-2);
 }
 
-.divider {
-	height: 1px;
-	background-color: var(--mantine-color-gray-2);
-	margin: var(--mantine-spacing-xs) 0;
+.statCellEmphasized {
+	background: var(--mantine-color-blue-0);
 }
 
-.metricsGrid {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-	gap: var(--mantine-spacing-xs);
+.statValue {
+	font-size: 15px;
+	font-weight: 700;
+	color: var(--mantine-color-dark-8);
+	line-height: 1.2;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.statCellEmphasized .statValue {
+	font-size: 16px;
+	color: var(--mantine-color-blue-7);
+}
+
+.statLabel {
+	font-size: 11px;
+	font-weight: 500;
+	color: var(--mantine-color-gray-5);
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	line-height: 1.2;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* ─── Schedule Row ───────────────────────────────────────────── */
+
+.scheduleRow {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+	padding-top: var(--mantine-spacing-xs);
+	border-top: 1px solid var(--mantine-color-gray-1);
+}
+
+.scheduleItem {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 5px;
+	white-space: nowrap;
+}
+
+.separator {
+	color: var(--mantine-color-gray-3);
+	user-select: none;
+	font-size: 14px;
+	line-height: 1;
+}
+
+.scheduleLabel {
+	font-size: 11px;
+	font-weight: 500;
+	color: var(--mantine-color-gray-5);
+}
+
+.scheduleValue {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--mantine-color-dark-7);
+}
+
+/* ─── Responsive ─────────────────────────────────────────────── */
+
+@media (max-width: 75em) {
+	.statsStrip {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		overflow: visible;
+	}
+
+	/* Row 1: cells 1–3; Row 2: cells 4–5 */
+	.statCell {
+		border-bottom: 1px solid var(--mantine-color-gray-2);
+	}
+
+	.statCell:nth-child(4),
+	.statCell:nth-child(5) {
+		border-bottom: none;
+	}
+
+	.statCell:nth-child(3),
+	.statCell:nth-child(5) {
+		border-right: none;
+	}
+}
+
+@media (max-width: 62em) {
+	.headerRow {
+	}
+
+	.statsStrip {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	/* Row 1: 1–2 | Row 2: 3–4 | Row 3: 5 */
+	.statCell:nth-child(3) {
+		border-bottom: 1px solid var(--mantine-color-gray-2);
+	}
+
+	.statCell:nth-child(4),
+	.statCell:nth-child(5) {
+		border-bottom: none;
+	}
+
+	.statCell:nth-child(2),
+	.statCell:nth-child(4),
+	.statCell:nth-child(5) {
+		border-right: none;
+	}
+
+	/* reset 3-col rule for cell 3 */
+	.statCell:nth-child(3) {
+		border-right: 1px solid var(--mantine-color-gray-2);
+	}
+}
+
+@media (max-width: 48em) {
+	.scheduleRow {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: var(--mantine-spacing-xs);
+		border-top: none;
+	}
+
+	.separator {
+		display: none;
+	}
+
+	.scheduleItem {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 2px;
+		padding: 7px 9px;
+		background: var(--mantine-color-gray-0);
+		border-radius: var(--mantine-radius-sm);
+		border: 1px solid var(--mantine-color-gray-1);
+		white-space: normal;
+	}
+
+	.scheduleLabel {
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
+		font-size: 10px;
+	}
+
+	.scheduleValue {
+		font-size: 12px;
+	}
+}
+
+@media (max-width: 36em) {
+	.statsStrip {
+		grid-template-columns: 1fr;
+	}
+
+	.statCell {
+		border-right: none;
+		border-bottom: 1px solid var(--mantine-color-gray-2);
+	}
+
+	.statCell:last-child {
+		border-bottom: none;
+	}
+
+	.statusStrip {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 6px;
+	}
+
+	.statusDescription {
+		white-space: normal;
+	}
 }

@@ -2,100 +2,143 @@
 	background: var(--mantine-color-white);
 	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: var(--mantine-radius-lg);
+	box-shadow: var(--mantine-shadow-md);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	transition:
+		border-color 140ms ease,
+		background-color 140ms ease,
+		box-shadow 140ms ease;
+}
+
+.sectionShell {
 	display: flex;
 	flex-direction: column;
 	gap: var(--mantine-spacing-sm);
-	transition:
-		border-color 120ms ease,
-		background-color 120ms ease;
+	min-width: 0;
 }
 
 .sectionHeader {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-	gap: var(--mantine-spacing-md);
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: start;
+	gap: var(--mantine-spacing-sm);
 	padding-bottom: var(--mantine-spacing-xs);
-	border-bottom: 1px solid var(--mantine-color-gray-3);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-width: 0 0 1px;
+}
+
+.sectionHeaderMain {
+	display: flex;
+	min-width: 0;
 }
 
 .sectionTitleContent {
 	display: flex;
+	flex: 1;
 	flex-direction: column;
-	gap: calc(var(--mantine-spacing-xs) / 1.5);
+	gap: 4px;
+	min-width: 0;
+	padding: 2px 0 0;
 }
 
 .sectionTitleRow {
 	display: flex;
 	align-items: center;
-	gap: var(--mantine-spacing-sm);
+	gap: 8px;
+	min-width: 0;
 }
 
 .iconBadge {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 2rem;
-	height: 2rem;
-	border-radius: var(--mantine-radius-md);
-	background: var(--mantine-color-blue-0);
-	color: var(--mantine-color-blue-6);
-	border: 1px solid var(--mantine-color-blue-2);
+	width: 1.625rem;
+	height: 1.625rem;
+	border-radius: calc(var(--mantine-radius-sm) + 1px);
+	background: var(--mantine-color-white);
+	color: var(--mantine-color-gray-7);
+	border: 1px solid var(--mantine-color-gray-2);
+	flex-shrink: 0;
 }
 
 .sectionTitle {
 	margin: 0;
+	min-width: 0;
 	color: var(--mantine-color-gray-9);
-	letter-spacing: -0.01em;
+	font-size: 0.95rem;
+	font-weight: 600;
+	letter-spacing: -0.02em;
+	line-height: 1.15;
 }
 
 .sectionDescription {
 	margin: 0;
+	max-width: 72ch;
 	color: var(--mantine-color-gray-6);
-	font-size: 0.95rem;
-	line-height: 1.5;
+	font-size: 0.82rem;
+	line-height: 1.35;
 }
 
 .headerActions {
 	display: inline-flex;
 	align-items: center;
-	gap: var(--mantine-spacing-xs);
-	margin-left: auto;
+	align-content: center;
+	justify-content: flex-end;
+	gap: 6px;
+	row-gap: 4px;
 	flex-wrap: wrap;
-	padding: calc(var(--mantine-spacing-xs) * 0.75) var(--mantine-spacing-sm);
-	border-radius: var(--mantine-radius-md);
-	background: var(--mantine-color-gray-0);
+	min-width: 0;
+	padding-top: 1px;
+}
+
+.sectionBody {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	min-width: 0;
 }
 
 .content {
 	display: flex;
 	flex-direction: column;
 	gap: var(--mantine-spacing-md);
+	min-width: 0;
+}
+
+.footerShell {
+	margin-top: var(--mantine-spacing-sm);
+	padding-top: var(--mantine-spacing-xs);
+	border-top: 1px solid var(--mantine-color-gray-2);
 }
 
 .footer {
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
-	gap: var(--mantine-spacing-sm);
+	gap: var(--mantine-spacing-xs);
 	flex-wrap: wrap;
-	padding-top: var(--mantine-spacing-md);
-	border-top: 1px solid var(--mantine-color-gray-3);
+	padding-top: 2px;
 }
 
 .sectionCard:hover {
-	/* background: var(--mantine-color-gray-0); */
 	border-color: var(--mantine-color-gray-4);
 }
 
 @media (max-width: 48em) {
+	.sectionShell {
+		gap: var(--mantine-spacing-xs);
+	}
+
 	.sectionHeader {
-		flex-direction: column;
-		gap: var(--mantine-spacing-sm);
+		grid-template-columns: 1fr;
+		gap: var(--mantine-spacing-xs);
 	}
 
 	.headerActions {
 		width: 100%;
 		justify-content: flex-start;
+		padding-top: 0;
 	}
 }

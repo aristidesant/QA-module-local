@@ -1,11 +1,14 @@
 {
 	"page": {
-		"title": "Do Not Call List",
+		"title": "Do Not Call",
 		"description": "Manage phone numbers that should not be contacted.",
 		"actions": {
 			"cleanExpired": "Clean Expired",
 			"addEntry": "Add Entry"
 		}
+	},
+	"list": {
+		"title": "Entries"
 	},
 	"filters": {
 		"title": "Filters",

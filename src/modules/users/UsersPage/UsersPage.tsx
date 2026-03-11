@@ -1,17 +1,16 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
-import { Button, TextInput, Group, Text } from '@mantine/core';
-import { IconPlus, IconSearch } from '@tabler/icons-react';
+import { useState, useCallback } from 'react';
+import { TextInput, Group, Text } from '@mantine/core';
+import { IconSearch } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { Trans, useTranslation } from 'react-i18next';
 import classes from './UsersPage.module.css';
 import UsersList from '../UsersList';
 import UserForm from '../UserForm';
-import UserDetails from '../UserDetails';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
+import SectionCard from '~/components/SectionCard';
 import { useDeleteUser } from '~/queries/userQueries';
 import type { UserModel } from '~/models/UserModels';
-import useUsersPageStore from '../store/useUsersPageStore';
 
 const UsersPage: React.FC = () => {
 	const { t } = useTranslation('users');
@@ -19,13 +18,6 @@ const UsersPage: React.FC = () => {
 	const [search, setSearch] = useState('');
 	const [refreshKey, setRefreshKey] = useState(0);
 	const deleteMutation = useDeleteUser();
-	const rightComponent = useUsersPageStore((state) => state.rightComponent);
-	const setRightComponent = useUsersPageStore(
-		(state) => state.setRightComponent
-	);
-	const clearRightComponent = useUsersPageStore(
-		(state) => state.clearRightComponent
-	);
 
 	const handleSearchChange = useCallback(
 		(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,26 +30,6 @@ const UsersPage: React.FC = () => {
 		modals.closeAll();
 		setRefreshKey((prev) => prev + 1);
 	}, []);
-
-	useEffect(() => {
-		clearRightComponent();
-
-		return () => {
-			clearRightComponent();
-		};
-	}, [clearRightComponent]);
-
-	const handleView = useCallback(
-		(userId: number) => {
-			setRightComponent(<UserDetails key={userId} userId={userId} />);
-		},
-		[setRightComponent]
-	);
-
-	const rightSectionContent = useMemo(
-		() => rightComponent ?? <></>,
-		[rightComponent]
-	);
 
 	const handleModalSuccess = useCallback(() => {
 		handleSuccess();
@@ -128,7 +100,6 @@ const UsersPage: React.FC = () => {
 							color: 'green',
 						});
 						setRefreshKey((prev) => prev + 1);
-						clearRightComponent();
 					} catch (error) {
 						notifications.show({
 							title: t('notifications.deleteErrorTitle'),
@@ -140,39 +111,29 @@ const UsersPage: React.FC = () => {
 				},
 			});
 		},
-		[clearRightComponent, deleteMutation, t, tCommon]
+		[deleteMutation, t, tCommon]
 	);
 
 	return (
-		<ContentContainer
-			title={t('title')}
-			description={t('description')}
-			rightSection={rightSectionContent}
-		>
+		<ContentContainer title={t('title')} description={t('description')}>
 			<div className={classes.root}>
-				<Group className={classes.header} gap='sm'>
-					<TextInput
-						placeholder={t('searchPlaceholder')}
-						leftSection={<IconSearch size={18} />}
-						value={search}
-						onChange={handleSearchChange}
-						className={classes.searchInput}
+				<SectionCard title={t('list.title')} onAdd={openCreateModal}>
+					<Group className={classes.header} gap='sm'>
+						<TextInput
+							placeholder={t('searchPlaceholder')}
+							leftSection={<IconSearch size={18} />}
+							value={search}
+							onChange={handleSearchChange}
+							className={classes.searchInput}
+						/>
+					</Group>
+					<UsersList
+						key={refreshKey}
+						search={search}
+						onEdit={openEditModal}
+						onDelete={handleDelete}
 					/>
-					<Button
-						leftSection={<IconPlus size={18} />}
-						onClick={openCreateModal}
-						variant='light'
-					>
-						{t('newUser')}
-					</Button>
-				</Group>
-				<UsersList
-					key={refreshKey}
-					search={search}
-					onView={handleView}
-					onEdit={openEditModal}
-					onDelete={handleDelete}
-				/>
+				</SectionCard>
 			</div>
 		</ContentContainer>
 	);

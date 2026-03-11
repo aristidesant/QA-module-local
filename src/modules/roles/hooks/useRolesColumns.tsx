@@ -141,17 +141,15 @@ const useRolesColumns = ({
 			{
 				id: 'actions',
 				header: t('columns.actions'),
-				meta: {
-					headerClassName: classes.actionsHeader,
-					cellClassName: classes.actionsCell,
-				},
 				cell: ({ row }) => {
 					const role = row.original;
 
 					return (
-						<Group gap='xs' justify='flex-end' wrap='nowrap'>
+						<Group gap='xs' wrap='nowrap'>
 							<Tooltip label={t('table.actions.view')} withArrow>
 								<ActionIcon
+									variant='light'
+									size='sm'
 									onClick={(event) => {
 										event.stopPropagation();
 										onView(role.id);
@@ -163,6 +161,8 @@ const useRolesColumns = ({
 							</Tooltip>
 							<Tooltip label={t('table.actions.edit')} withArrow>
 								<ActionIcon
+									variant='light'
+									size='sm'
 									onClick={(event) => {
 										event.stopPropagation();
 										onEdit(role.id);
@@ -181,6 +181,8 @@ const useRolesColumns = ({
 								withArrow
 							>
 								<ActionIcon
+									variant='light'
+									size='sm'
 									color='red'
 									onClick={(event) => {
 										event.stopPropagation();

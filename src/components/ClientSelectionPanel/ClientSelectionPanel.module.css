@@ -1,0 +1,126 @@
+.hero {
+	padding: 0;
+}
+
+.title {
+	font-size: 1.02rem;
+	font-weight: 700;
+	line-height: 1.2;
+	letter-spacing: -0.02em;
+	color: var(--mantine-color-dark-8);
+}
+
+.description {
+	max-width: 44ch;
+	line-height: 1.4;
+	color: var(--mantine-color-gray-6);
+}
+
+.countBadge {
+	flex-shrink: 0;
+	text-transform: none;
+	font-weight: 700;
+	letter-spacing: -0.01em;
+	padding-inline: 8px;
+}
+
+.searchInput {
+	border-width: 1px;
+}
+
+.gridShell {
+	min-height: 180px;
+	padding-right: 4px;
+}
+
+.clientCard {
+	cursor: pointer;
+	position: relative;
+	border-color: var(--mantine-color-gray-2);
+	background-color: var(--mantine-color-white);
+	transition:
+		border-color 0.16s ease,
+		background-color 0.16s ease,
+		transform 0.16s ease,
+		box-shadow 0.16s ease;
+}
+
+.clientCard:hover:not([data-disabled='true']) {
+	border-color: color-mix(in srgb, var(--mantine-color-blue-6) 35%, white);
+	background-color: var(--mantine-color-blue-0);
+	box-shadow: 0 8px 18px -14px
+		color-mix(in srgb, var(--mantine-color-blue-7) 32%, transparent);
+}
+
+.clientCard:focus-visible {
+	outline: 2px solid color-mix(in srgb, var(--mantine-color-blue-6) 38%, white);
+	outline-offset: 2px;
+}
+
+.clientCard[data-selected='true'] {
+	border-color: var(--mantine-color-blue-5);
+	background-color: color-mix(in srgb, var(--mantine-color-blue-0) 65%, white);
+	box-shadow: 0 0 0 1px
+		color-mix(in srgb, var(--mantine-color-blue-5) 12%, transparent);
+}
+
+.clientCard[data-current='true'] {
+	border-color: var(--mantine-color-gray-3);
+	background-color: var(--mantine-color-gray-0);
+}
+
+.clientCard[data-current='true']:hover {
+	transform: none;
+	border-color: var(--mantine-color-gray-3);
+	background-color: var(--mantine-color-gray-0);
+}
+
+.clientCard[data-disabled='true'] {
+	cursor: not-allowed;
+}
+
+.iconShell {
+	width: 34px;
+	height: 34px;
+	border-radius: var(--mantine-radius-md);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: var(--mantine-color-gray-1);
+	color: var(--mantine-color-gray-7);
+	border: 1px solid var(--mantine-color-gray-2);
+	flex-shrink: 0;
+}
+
+.clientCard:hover:not([data-disabled='true']) .iconShell,
+.clientCard[data-selected='true'] .iconShell {
+	background-color: var(--mantine-color-blue-0);
+	color: var(--mantine-color-blue-7);
+	border-color: color-mix(in srgb, var(--mantine-color-blue-6) 22%, white);
+}
+
+.clientMeta {
+	min-width: 0;
+}
+
+.clientName {
+	font-size: 0.92rem;
+	font-weight: 700;
+	line-height: 1.25;
+	color: var(--mantine-color-dark-8);
+}
+
+.clientSubtitle {
+	color: var(--mantine-color-gray-6);
+	line-height: 1.35;
+}
+
+.stateBadge {
+	text-transform: none;
+	font-weight: 700;
+	flex-shrink: 0;
+}
+
+.emptyState {
+	padding-inline: 0;
+}

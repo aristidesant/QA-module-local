@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Badge, Button, Group, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Badge, Group, Text, Tooltip } from '@mantine/core';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import type { ColumnDef } from '@tanstack/react-table';
 import type { ClientConfig } from '~/models/ClientConfig';
@@ -63,25 +63,30 @@ export function useClientConfigsColumns(
 				cell: ({ row }) => (
 					<Group gap='xs' className={styles.actionsGroup}>
 						<Tooltip label={t('table.tooltips.edit')} withArrow>
-							<Button
-								size='xs'
-								variant='subtle'
+							<ActionIcon
+								variant='light'
+								color='blue'
+								size='sm'
+								radius='md'
 								onClick={() => onEdit(row.original)}
+								aria-label={t('table.tooltips.edit')}
 								className={styles.actionButton}
 							>
 								<IconEdit size={14} />
-							</Button>
+							</ActionIcon>
 						</Tooltip>
 						<Tooltip label={t('table.tooltips.delete')} withArrow>
-							<Button
-								size='xs'
-								variant='subtle'
+							<ActionIcon
+								variant='light'
 								color='red'
+								size='sm'
+								radius='md'
 								onClick={() => onDelete(row.original)}
+								aria-label={t('table.tooltips.delete')}
 								className={styles.actionButton}
 							>
 								<IconTrash size={14} />
-							</Button>
+							</ActionIcon>
 						</Tooltip>
 					</Group>
 				),

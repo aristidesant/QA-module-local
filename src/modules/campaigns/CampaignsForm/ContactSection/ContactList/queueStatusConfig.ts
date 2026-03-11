@@ -5,10 +5,12 @@
 export type QueueStatus =
 	| 'PENDING'
 	| 'RUNNING'
+	| 'WAITING'
 	| 'PAUSED'
 	| 'FAILED'
 	| 'EXECUTED'
-	| 'COMPLETED';
+	| 'COMPLETED'
+	| 'UNKNOWN';
 
 export interface QueueStatusConfig {
 	label: string;
@@ -23,6 +25,10 @@ export const QUEUE_STATUS_CONFIG: Record<QueueStatus, QueueStatusConfig> = {
 	RUNNING: {
 		label: 'status.running',
 		color: 'blue',
+	},
+	WAITING: {
+		label: 'status.waiting',
+		color: 'orange',
 	},
 	PAUSED: {
 		label: 'status.paused',
@@ -40,9 +46,16 @@ export const QUEUE_STATUS_CONFIG: Record<QueueStatus, QueueStatusConfig> = {
 		label: 'status.complete',
 		color: 'green',
 	},
+	UNKNOWN: {
+		label: 'status.unknown',
+		color: 'gray',
+	},
 };
 
 export const getQueueStatusConfig = (status: string): QueueStatusConfig => {
-	const config = QUEUE_STATUS_CONFIG[status as QueueStatus];
-	return config || QUEUE_STATUS_CONFIG.PENDING;
+	const normalizedStatus = status?.toUpperCase() as QueueStatus | undefined;
+	const config = normalizedStatus
+		? QUEUE_STATUS_CONFIG[normalizedStatus]
+		: undefined;
+	return config || QUEUE_STATUS_CONFIG.UNKNOWN;
 };

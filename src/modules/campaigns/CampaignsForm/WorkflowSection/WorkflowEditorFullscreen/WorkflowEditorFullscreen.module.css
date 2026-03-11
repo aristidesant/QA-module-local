@@ -1,0 +1,69 @@
+.modalContent {
+	background: var(--mantine-color-gray-0);
+}
+
+.modalBody {
+	padding: var(--mantine-spacing-md);
+	height: 100dvh;
+	overflow: hidden;
+}
+
+.shell {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	gap: var(--mantine-spacing-md);
+	min-height: 0;
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: var(--mantine-spacing-md);
+	padding: var(--mantine-spacing-md);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-white);
+	flex-shrink: 0;
+}
+
+.headerMain {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.eyebrow {
+	letter-spacing: 0.08em;
+	color: var(--mantine-color-blue-6);
+}
+
+.title {
+	color: var(--mantine-color-gray-9);
+	line-height: 1.2;
+}
+
+.description {
+	color: var(--mantine-color-gray-6);
+	max-width: 720px;
+}
+
+.canvasArea {
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+@media (max-width: 48em) {
+	.modalBody {
+		padding: var(--mantine-spacing-sm);
+	}
+
+	.header {
+		padding: var(--mantine-spacing-sm);
+		flex-direction: column;
+	}
+}

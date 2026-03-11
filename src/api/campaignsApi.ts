@@ -80,6 +80,7 @@ export interface CreateCampaignWithAgentDTO {
 		promptId?: number;
 		objectiveId?: number;
 		defaultMaxWaves?: number;
+		defaultWaveExecutionDelaySeconds?: number;
 	};
 	agent: {
 		conversationConfig?: ConversationConfigPayload;
@@ -95,6 +96,12 @@ export interface SetDraftDto {
 	draftStep: number;
 }
 
+export interface ResumeOutboundCampaignPayload {
+	campaignId: number;
+	contactGroupId: number;
+	ignoreWaveDelay?: boolean;
+}
+
 type AgentConfigPayload = {
 	conversationConfig?: {
 		agent?: {
@@ -102,6 +109,24 @@ type AgentConfigPayload = {
 		};
 	};
 	workflow?: AgentWorkflow | AgentWorkflowApi | Record<string, unknown>;
+};
+
+const getWorkflowCounts = (workflow?: AgentConfigPayload['workflow']) => {
+	const normalizedWorkflow = workflow as
+		| {
+				nodes?: Record<string, unknown>;
+				edges?: Record<string, unknown>;
+		  }
+		| undefined;
+
+	return {
+		nodes: normalizedWorkflow?.nodes
+			? Object.keys(normalizedWorkflow.nodes).length
+			: 0,
+		edges: normalizedWorkflow?.edges
+			? Object.keys(normalizedWorkflow.edges).length
+			: 0,
+	};
 };
 
 const removePromptText = (agentConfig?: AgentConfigPayload) => {
@@ -182,6 +207,17 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 			const response = await axios.get<Campaign>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}`
 			);
+
+			const workflowCounts = getWorkflowCounts(
+				response.data?.agentConfig?.workflow as AgentConfigPayload['workflow']
+			);
+			console.log('[campaignsApi.findCampaign] workflow payload', {
+				campaignId,
+				nodes: workflowCounts.nodes,
+				edges: workflowCounts.edges,
+				hasWorkflow: Boolean(response.data?.agentConfig?.workflow),
+			});
+
 			return response.data;
 		},
 
@@ -276,13 +312,15 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 			});
 			return response.data;
 		},
-		resumeOutboundCampaign: async (
-			campaignId: number,
-			contactGroupId: number
-		) => {
+		resumeOutboundCampaign: async ({
+			campaignId,
+			contactGroupId,
+			ignoreWaveDelay,
+		}: ResumeOutboundCampaignPayload) => {
 			const response = await axios.patch(`${DEFAULT_API_URL}/outbound/resume`, {
 				campaignId,
 				contactGroupId,
+				...(ignoreWaveDelay ? { ignoreWaveDelay } : {}),
 			});
 			return response.data;
 		},

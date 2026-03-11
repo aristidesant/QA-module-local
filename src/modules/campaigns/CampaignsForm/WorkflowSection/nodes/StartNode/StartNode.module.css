@@ -1,17 +1,7 @@
 .node {
-	background-color: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: var(--mantine-radius-md);
+	--workflow-node-accent: var(--mantine-color-green-7);
 	min-width: 140px;
 	text-align: left;
-	transition:
-		border-color 0.14s ease,
-		background-color 0.14s ease;
-	overflow: hidden;
-}
-
-.node:hover {
-	border-color: var(--mantine-color-gray-4);
 }
 
 .icon {
@@ -19,6 +9,7 @@
 }
 
 .header {
+	min-height: 48px;
 }
 
 .footer {

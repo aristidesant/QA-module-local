@@ -22,6 +22,7 @@ import {
 	useGetCampaignRequirements,
 	usePauseOutboundCampaign,
 	useStartOutboundCampaign,
+	useToggleCampaignStatus,
 } from '~/queries/campaignsQueries';
 import { notifications } from '@mantine/notifications';
 import RightSectionCard from '~/components/RightSectionCard';
@@ -69,6 +70,8 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 		usePauseOutboundCampaign();
 	const { mutate: startCampaign, isPending: isStarting } =
 		useStartOutboundCampaign();
+	const { mutate: toggleCampaignStatus, isPending: isToggling } =
+		useToggleCampaignStatus();
 	const {
 		data: requirements,
 		isLoading: isLoadingRequirements,
@@ -79,7 +82,8 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 	const status = (campaignData?.status ?? campaign.status) as
 		| CampaignStatus
 		| undefined;
-	const isActionMutating = isPausing || isStarting;
+	const isInbound = displayCampaign?.type === 'INBOUND';
+	const isActionMutating = isPausing || isStarting || isToggling;
 	const campaignId = String(displayCampaign?.id ?? campaign.id);
 	const campaignNumericId = displayCampaign?.id ?? campaign.id;
 	const contactGroupId = displayCampaign?.contactList?.id;
@@ -191,6 +195,22 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 	);
 
 	const handleToggle = useCallback(() => {
+		// Inbound campaigns don't use contact lists, use toggle-status API
+		if (isInbound) {
+			const action = status === CampaignStatus.ACTIVE ? 'inactive' : 'activate';
+			const actionLabel =
+				status === CampaignStatus.ACTIVE ? 'paused' : 'started';
+			toggleCampaignStatus(
+				{ campaignId: campaignNumericId, action },
+				{
+					onSuccess: () => onSuccess(actionLabel),
+					onError: (error) => onError(error, actionLabel),
+				}
+			);
+			return;
+		}
+
+		// Outbound campaigns require a contact list
 		switch (status) {
 			case CampaignStatus.ACTIVE:
 				if (!ensureContactGroup('pause')) {
@@ -229,11 +249,13 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 		campaignNumericId,
 		contactGroupId,
 		ensureContactGroup,
+		isInbound,
 		onError,
 		onSuccess,
 		pauseCampaign,
 		startCampaign,
 		status,
+		toggleCampaignStatus,
 	]);
 	const statusConfig =
 		(status && CampaignStatusConfig[status]) ??

@@ -6,12 +6,19 @@ export interface DataCollectionItem {
 	type: DataCollectionType;
 	description: string;
 	enum?: string[];
+	value_type?: string;
+	constant_value?: string;
+	dynamic_variable?: string;
+	is_system_provided?: boolean;
 }
 
 export interface AnalyticsDataCollectionRow extends DataCollectionItem {
 	id: string;
 	identifier: string;
 	isNew: boolean;
+	source?: 'manual' | 'custom-variable';
+	linkedCustomVariableId?: number;
+	linkedTemplateId?: number;
 }
 
 export interface AnalyticsFormValues {
@@ -32,6 +39,7 @@ export const createEmptyAnalyticsRow = (): AnalyticsDataCollectionRow => ({
 	description: '',
 	enum: [],
 	isNew: true,
+	source: 'manual',
 });
 
 export const getDataCollectionFromAgentConfig = (
@@ -100,7 +108,12 @@ export const normalizeDataCollectionRows = (
 							(entry): entry is string => typeof entry === 'string'
 						)
 					: [],
+				value_type: item.value_type,
+				constant_value: item.constant_value,
+				dynamic_variable: item.dynamic_variable,
+				is_system_provided: item.is_system_provided,
 				isNew: false,
+				source: 'manual',
 			};
 		}
 	);
@@ -122,6 +135,16 @@ export const mapRowsToDataCollection = (
 				row.type === 'string' && Array.isArray(row.enum)
 					? row.enum.filter((entry) => entry.trim().length > 0)
 					: undefined,
+			...(row.value_type !== undefined && { value_type: row.value_type }),
+			...(row.constant_value !== undefined && {
+				constant_value: row.constant_value,
+			}),
+			...(row.dynamic_variable !== undefined && {
+				dynamic_variable: row.dynamic_variable,
+			}),
+			...(row.is_system_provided !== undefined && {
+				is_system_provided: row.is_system_provided,
+			}),
 		};
 
 		return acc;

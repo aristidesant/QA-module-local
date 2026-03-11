@@ -1,44 +1,29 @@
-import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
+import { Fragment, useMemo } from 'react';
+import { Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
-import {
-	IconAlertTriangle,
-	IconCircleCheck,
-	IconDownload,
-	IconRefresh,
-	IconRepeat,
-} from '@tabler/icons-react';
-import { modals } from '@mantine/modals';
-import { notifications } from '@mantine/notifications';
+import { IconAlertTriangle, IconCircleCheck } from '@tabler/icons-react';
 import type ContactGroup from '~/models/ContactGroup';
-import { MetricInfoCard } from '~/components/MetricInfoCard';
 import classes from './ContactListInformation.module.css';
-import {
-	useCompleteContactGroup,
-	useExtendContactGroupWaves,
-} from '~/queries/contactGroupQueries';
-import { useExportCallResultsCsv } from '~/queries/conversationsQueries';
-import { downloadBlob } from '~/utils/fileUtils';
-import ExtendWavesModal from '~/modules/campaigns/components/ExtendWavesModal';
-import { getErrorMessage } from '~/utils/httpClient';
+import { formatWaveDateTime, formatWaveDelaySeconds } from '~/utils/waveUtils';
+import ContactListActions from '../ContactListActions';
 
 interface ContactListInformationProps {
 	contactGroup: ContactGroup;
+	campaignId: number;
 	onReload: () => void | Promise<unknown>;
 }
 
 export const ContactListInformation = ({
 	contactGroup,
+	campaignId,
 	onReload,
 }: ContactListInformationProps) => {
-	const { t } = useTranslation('campaign.contact-list');
-	const extendMutation = useExtendContactGroupWaves();
-	const completeMutation = useCompleteContactGroup();
-	const isActionLoading =
-		extendMutation.isPending || completeMutation.isPending;
+	const { t, i18n } = useTranslation(['campaign.contact-list', 'common']);
 
 	type StatusKey =
 		| 'PENDING'
 		| 'RUNNING'
+		| 'WAITING'
 		| 'PAUSED'
 		| 'EXECUTED'
 		| 'COMPLETED'
@@ -65,6 +50,12 @@ export const ContactListInformation = ({
 			description: t('status.runningDesc'),
 			accentClass: 'statusRunning',
 			StatusIcon: IconCircleCheck,
+		},
+		WAITING: {
+			label: t('status.waiting'),
+			description: t('status.waitingDesc'),
+			accentClass: 'statusWaiting',
+			StatusIcon: IconAlertTriangle,
 		},
 		PAUSED: {
 			label: t('status.paused'),
@@ -102,237 +93,157 @@ export const ContactListInformation = ({
 		(contactGroup.queueStatus?.toUpperCase() as StatusKey) ?? 'UNKNOWN';
 	const status = statusConfig[statusKey] ?? statusConfig.UNKNOWN;
 
-	const metrics = [
-		{
-			label: t('summary.contacts'),
-			value: contactGroup.contactCount || 0,
-		},
-		{
-			label: t('summary.maxCallsPerContact'),
-			value: contactGroup.maxCallsPerContact,
-		},
-		{
-			label: t('summary.waves'),
-			value:
-				contactGroup.maxWaves && contactGroup.maxWaves > 0
-					? `${Math.max(contactGroup.currentWave ?? 1, 1)} / ${
-							contactGroup.maxWaves
-						}`
+	const quickMetrics = useMemo(
+		() => [
+			{
+				label: t('summary.compact.contacts'),
+				value: (contactGroup.contactCount || 0).toLocaleString(),
+				emphasized: false,
+			},
+			{
+				label: t('summary.compact.maxCallsPerContact'),
+				value:
+					contactGroup.maxCallsPerContact?.toLocaleString() ??
+					t('summary.notSet'),
+			},
+			{
+				label: t('summary.compact.waves'),
+				value:
+					contactGroup.maxWaves && contactGroup.maxWaves > 0
+						? `${Math.max(contactGroup.currentWave ?? 1, 1)} / ${
+								contactGroup.maxWaves
+							}`
+						: t('summary.notSet'),
+			},
+			{
+				label: t('summary.compact.humanEquivalent'),
+				value: Math.round(contactGroup.humanEquivalent).toLocaleString(),
+			},
+			{
+				label: t('summary.compact.expirationDate'),
+				value: contactGroup.expirationDate
+					? new Date(contactGroup.expirationDate).toLocaleDateString()
 					: t('summary.notSet'),
-		},
+			},
+		],
+		[
+			contactGroup.contactCount,
+			contactGroup.maxCallsPerContact,
+			contactGroup.maxWaves,
+			contactGroup.currentWave,
+			contactGroup.humanEquivalent,
+			contactGroup.expirationDate,
+			t,
+		]
+	);
 
-		{
-			label: t('summary.humanEquivalent'),
-			value: Math.round(contactGroup.humanEquivalent),
-		},
-		{
-			label: t('summary.expirationDate'),
-			value: contactGroup.expirationDate
-				? new Date(contactGroup.expirationDate).toLocaleDateString()
-				: t('summary.notSet'),
-		},
-	];
+	const scheduleMetrics = useMemo(
+		() => [
+			{
+				label: t('summary.compact.delayBetweenWaves'),
+				value: formatWaveDelaySeconds(contactGroup.waveExecutionDelaySeconds, {
+					day: t('units.day', { ns: 'common' }),
+					hour: t('units.hour', { ns: 'common' }),
+					minute: t('units.minute', { ns: 'common' }),
+					second: t('units.second', { ns: 'common' }),
+					noDelay: t('summary.noDelayBetweenWaves'),
+					notSet: t('summary.notSet'),
+				}),
+			},
+			{
+				label: t('summary.compact.lastWaveStarted'),
+				value: formatWaveDateTime(
+					contactGroup.lastWaveStartedAt,
+					i18n.language,
+					t('summary.notSet')
+				),
+			},
+			{
+				label: t('summary.compact.lastWaveCompleted'),
+				value: formatWaveDateTime(
+					contactGroup.lastWaveCompletedAt,
+					i18n.language,
+					t('summary.notSet')
+				),
+			},
+			{
+				label: t('summary.compact.nextWaveScheduled'),
+				value: formatWaveDateTime(
+					contactGroup.nextWaveScheduledAt,
+					i18n.language,
+					t('summary.notSet')
+				),
+			},
+		],
+		[
+			contactGroup.waveExecutionDelaySeconds,
+			contactGroup.lastWaveStartedAt,
+			contactGroup.lastWaveCompletedAt,
+			contactGroup.nextWaveScheduledAt,
+			i18n.language,
+			t,
+		]
+	);
 
 	const StatusIcon = status.StatusIcon;
 
-	const handleExtendWaves = () => {
-		if (statusKey !== 'EXECUTED') return;
-
-		modals.open({
-			title: t('contacts.details.actions.extendWaves'),
-			centered: true,
-			withCloseButton: false,
-			children: (
-				<ExtendWavesModal
-					onSubmit={async (wavesToAdd) => {
-						try {
-							await extendMutation.mutateAsync({
-								id: contactGroup.id,
-								additionalWaves: wavesToAdd,
-							});
-							notifications.show({
-								title: t('contacts.details.notifications.wavesExtended.title'),
-								message: t(
-									'contacts.details.notifications.wavesExtended.message',
-									{ count: wavesToAdd }
-								),
-								color: 'green',
-							});
-							onReload();
-							modals.closeAll();
-						} catch (error) {
-							notifications.show({
-								title: t('actions.error'),
-								message: getErrorMessage(error),
-								color: 'red',
-							});
-						}
-					}}
-					onCancel={() => modals.closeAll()}
-					loading={extendMutation.isPending}
-				/>
-			),
-		});
-	};
-
-	const handleCompleteList = () => {
-		if (statusKey !== 'EXECUTED') return;
-
-		modals.openConfirmModal({
-			title: t('contacts.details.actions.completeList'),
-			children: <Text size='sm'>{t('status.confirmCompleteList')}</Text>,
-			labels: {
-				confirm: t('contacts.details.confirm.complete'),
-				cancel: t('contacts.details.confirm.cancel'),
-			},
-			confirmProps: { color: 'green', loading: completeMutation.isPending },
-			onConfirm: async () => {
-				try {
-					await completeMutation.mutateAsync(contactGroup.id);
-					notifications.show({
-						title: t('contacts.details.notifications.completed.title'),
-						message: t('contacts.details.notifications.completed.message'),
-						color: 'green',
-					});
-					onReload();
-				} catch (error) {
-					notifications.show({
-						title: t('actions.error'),
-						message: getErrorMessage(error),
-						color: 'red',
-					});
-				}
-			},
-		});
-	};
-
-	const exportMutation = useExportCallResultsCsv();
-
-	const handleDownloadResults = async () => {
-		try {
-			const { blob, filename } = await exportMutation.mutateAsync(
-				contactGroup.id
-			);
-			downloadBlob(blob, filename);
-			notifications.show({
-				title: t('actions.success'),
-				message: t('contactsTable.notifications.exportSuccessMessage'),
-				color: 'green',
-			});
-		} catch (error) {
-			notifications.show({
-				title: t('actions.error'),
-				message: getErrorMessage(error),
-				color: 'red',
-			});
-		}
-	};
-
 	return (
-		<section className={classes.panel}>
-			<div className={classes.header}>
-				<div className={classes.statusSection}>
+		<section className={classes.root}>
+			<div className={classes.headerRow}>
+				<div className={classes.statusStrip}>
 					<div
 						className={`${classes.statusBadge} ${classes[status.accentClass]}`}
 					>
-						<StatusIcon size={14} strokeWidth={2.5} />
-						<Text size='xs' fw={600} className={classes.statusLabel}>
+						<StatusIcon size={14} strokeWidth={2.4} />
+						<Text size='xs' fw={700} className={classes.statusLabel}>
 							{status.label}
 						</Text>
 					</div>
-					<Text size='xs' c='dimmed' className={classes.statusDescription}>
+					<Text
+						size='sm'
+						c='dimmed'
+						className={classes.statusDescription}
+						title={status.description}
+					>
 						{status.description}
 					</Text>
 				</div>
-				<Group gap='xs'>
-					<Tooltip
-						label={t('contacts.details.actions.downloadResults')}
-						withArrow
-						position='left'
-					>
-						<ActionIcon
-							variant='light'
-							color='blue'
-							size='sm'
-							aria-label={t('contacts.details.actions.downloadResults')}
-							onClick={handleDownloadResults}
-							loading={exportMutation.isPending}
-							disabled={isActionLoading}
-						>
-							<IconDownload size={16} strokeWidth={2} />
-						</ActionIcon>
-					</Tooltip>
-					{statusKey === 'EXECUTED' && (
-						<>
-							<Tooltip
-								label={t('contacts.details.actions.extendWaves')}
-								withArrow
-								position='left'
-							>
-								<ActionIcon
-									variant='light'
-									color='blue'
-									size='sm'
-									aria-label={t('contacts.details.actions.extendWaves')}
-									onClick={handleExtendWaves}
-									loading={extendMutation.isPending}
-									disabled={isActionLoading}
-								>
-									<IconRepeat size={16} strokeWidth={2} />
-								</ActionIcon>
-							</Tooltip>
-							<Tooltip
-								label={t('contacts.details.actions.completeList')}
-								withArrow
-								position='left'
-							>
-								<ActionIcon
-									variant='light'
-									color='green'
-									size='sm'
-									aria-label={t('contacts.details.actions.completeList')}
-									onClick={handleCompleteList}
-									loading={completeMutation.isPending}
-									disabled={isActionLoading}
-								>
-									<IconCircleCheck size={16} strokeWidth={2} />
-								</ActionIcon>
-							</Tooltip>
-						</>
-					)}
-					<Tooltip
-						label={t('contacts.tooltips.reload')}
-						withArrow
-						position='left'
-					>
-						<ActionIcon
-							variant='light'
-							color='gray'
-							size='sm'
-							aria-label={t('contacts.tooltips.reload')}
-							onClick={() => {
-								void onReload();
-							}}
-						>
-							<IconRefresh size={16} strokeWidth={2} />
-						</ActionIcon>
-					</Tooltip>
-				</Group>
 			</div>
 
-			<div className={classes.divider} />
+			<ContactListActions
+				contactGroup={contactGroup}
+				campaignId={campaignId}
+				onActionComplete={onReload}
+			/>
 
-			<div className={classes.metricsGrid}>
-				{metrics.map((metric) => (
-					<MetricInfoCard
+			<div className={classes.statsStrip}>
+				{quickMetrics.map((metric) => (
+					<div
 						key={metric.label}
-						label={metric.label}
-						value={
-							typeof metric.value === 'number'
-								? metric.value.toLocaleString()
-								: metric.value
-						}
-					/>
+						title={metric.value}
+						className={`${classes.statCell} ${
+							metric.emphasized ? classes.statCellEmphasized : ''
+						}`}
+					>
+						<span className={classes.statValue}>{metric.value}</span>
+						<span className={classes.statLabel}>{metric.label}</span>
+					</div>
+				))}
+			</div>
+
+			<div className={classes.scheduleRow}>
+				{scheduleMetrics.map((metric, i) => (
+					<Fragment key={metric.label}>
+						{i > 0 && (
+							<span aria-hidden='true' className={classes.separator}>
+								·
+							</span>
+						)}
+						<div className={classes.scheduleItem}>
+							<span className={classes.scheduleLabel}>{metric.label}:</span>
+							<span className={classes.scheduleValue}>{metric.value}</span>
+						</div>
+					</Fragment>
 				))}
 			</div>
 		</section>

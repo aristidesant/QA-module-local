@@ -10,6 +10,7 @@
 		}
 	},
 	"list": {
+		"title": "Entradas",
 		"empty": {
 			"title": "No se encontraron bases de conocimiento",
 			"description": "Crea tu primera base de conocimiento para que los agentes puedan consultar documentos.",
@@ -75,6 +76,10 @@
 	"confirmDelete": {
 		"body": "¿Estás seguro de que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer."
 	},
+	"drawer": {
+		"createTitle": "Nueva base de conocimiento",
+		"editTitle": "Base de conocimiento"
+	},
 	"fallbacks": {
 		"textSnippet": "Fragmento de texto",
 		"file": "Archivo"
@@ -82,6 +87,7 @@
 	"form": {
 		"title": "Base de conocimiento",
 		"description": "Agrega o edita una base de conocimiento para tu agente.",
+		"modalNote": "Mantén la configuración breve y clara. Nombra bien la fuente y luego agrega una URL, texto o archivo.",
 		"alerts": {
 			"readOnly": "Tienes acceso de solo lectura a las bases de conocimiento.",
 			"saveError": "No se pudo guardar esta base de conocimiento. Inténtalo de nuevo."
@@ -137,6 +143,7 @@
 		"actions": {
 			"cancel": "Cancelar",
 			"save": "Guardar"
-		}
+		},
+		"footerNote": "Fuentes admitidas: URLs públicas, texto plano y archivos PDF, TXT y MD."
 	}
 }

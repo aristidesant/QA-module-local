@@ -6,9 +6,11 @@ import { useTranslation } from 'react-i18next';
 import { IconUserCog } from '@tabler/icons-react';
 import type { StandaloneAgentNode } from '~/models/AgentWorkflowModel';
 import WorkflowNodeActions from '../../WorkflowNodeActions';
+import WorkflowNodeDrawer from '../../WorkflowNodeDrawer';
 import WorkflowNodeHeader from '../../WorkflowNodeHeader';
 import WorkflowNodeWrapper from '../../WorkflowNode';
 import type { WorkflowNodeData } from '../../WorkflowNode/WorkflowNodeTypes';
+import workflowNodeStyles from '../../WorkflowNode/WorkflowNode.module.css';
 import styles from './AgentTransferNode.module.css';
 
 const AgentTransferNodeComponent = (props: NodeProps) => {
@@ -24,58 +26,61 @@ const AgentTransferNodeComponent = (props: NodeProps) => {
 	const targetLabel = agentId || t('form.workflow.transferNode.emptyAgent');
 
 	return (
-		<WorkflowNodeWrapper
-			{...props}
-			sideActions={
-				<WorkflowNodeActions
-					nodeId={props.id}
-					nodeData={props.data as WorkflowNodeData}
-					nodeType={nodeType}
-				/>
-			}
-		>
-			<div className={styles.node}>
-				<WorkflowNodeHeader
-					className={styles.header}
-					icon={<IconUserCog size={16} className={styles.icon} />}
-					title={nodeData.label || fallbackLabel}
-					subtitle={t('form.workflow.nodeStatus.transferTarget')}
-					titleClassName={styles.title}
-				/>
-				<div className={styles.details}>
-					<div className={styles.detailRow}>
-						<Text size='xs' className={styles.metaLabel}>
-							{t('form.workflow.transferNode.to')}
-						</Text>
-						<Text
-							size='xs'
-							fw={500}
-							className={styles.metaValue}
-							title={targetLabel}
-						>
-							{targetLabel}
-						</Text>
+		<>
+			<WorkflowNodeWrapper
+				{...props}
+				sideActions={
+					<WorkflowNodeActions
+						nodeId={props.id}
+						nodeData={props.data as WorkflowNodeData}
+						nodeType={nodeType}
+					/>
+				}
+			>
+				<div className={`${workflowNodeStyles.nodeSurface} ${styles.node}`}>
+					<WorkflowNodeHeader
+						className={styles.header}
+						icon={<IconUserCog size={18} className={styles.icon} />}
+						title={nodeData.label || fallbackLabel}
+						subtitle={t('form.workflow.nodeStatus.transferTarget')}
+						titleClassName={styles.title}
+					/>
+					<div className={styles.details}>
+						<div className={styles.detailRow}>
+							<Text size='xs' className={styles.metaLabel}>
+								{t('form.workflow.transferNode.to')}
+							</Text>
+							<Text
+								size='xs'
+								fw={500}
+								className={styles.metaValue}
+								title={targetLabel}
+							>
+								{targetLabel}
+							</Text>
+						</div>
+						<div className={styles.detailRow}>
+							<Text size='xs' className={styles.metaLabel}>
+								{t('form.workflow.transferNode.delay')}
+							</Text>
+							<Text size='xs' fw={500} className={styles.metaValue}>
+								{t('form.workflow.transferNode.delayValue', {
+									value: delayMs,
+								})}
+							</Text>
+						</div>
 					</div>
-					<div className={styles.detailRow}>
-						<Text size='xs' className={styles.metaLabel}>
-							{t('form.workflow.transferNode.delay')}
-						</Text>
-						<Text size='xs' fw={500} className={styles.metaValue}>
-							{t('form.workflow.transferNode.delayValue', {
-								value: delayMs,
-							})}
-						</Text>
-					</div>
+					{transferMessage && (
+						<div className={styles.footer}>
+							<Text size='xs' lineClamp={2} className={styles.footerText}>
+								{transferMessage}
+							</Text>
+						</div>
+					)}
 				</div>
-				{transferMessage && (
-					<div className={styles.footer}>
-						<Text size='xs' lineClamp={2} className={styles.footerText}>
-							{transferMessage}
-						</Text>
-					</div>
-				)}
-			</div>
-		</WorkflowNodeWrapper>
+			</WorkflowNodeWrapper>
+			<WorkflowNodeDrawer nodeId={props.id} />
+		</>
 	);
 };
 

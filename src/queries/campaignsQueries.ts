@@ -3,12 +3,12 @@ import type { UseQueryOptions } from '@tanstack/react-query';
 import campaignsApi, {
 	type CreateCampaignWithAgentDTO,
 	type CreateCampaignScheduleDTO,
+	type ResumeOutboundCampaignPayload,
 	type SetDraftDto,
 	type ToggleCampaignAction,
 } from '~/api/campaignsApi';
 import type { Campaign } from '~/models/CampaignsModel';
 import type { CampaignLiveMetric } from '~/models/CampaignLiveMetricModel';
-import type ContactGroup from '~/models/ContactGroup';
 
 // Create campaign
 export const useCreateCampaign = () => {
@@ -223,16 +223,14 @@ export const useStartOutboundCampaign = () => {
 			const api = campaignsApi();
 			return api.startOutboundCampaign(campaignId, contactGroupId);
 		},
-		onSuccess: (_, { contactGroupId }) => {
-			// Update contact group status
-			queryClient.setQueryData(
-				['contactGroup', contactGroupId],
-				(oldData: ContactGroup | undefined) => {
-					if (!oldData) return oldData;
-					return { ...oldData, queueStatus: 'RUNNING' };
-				}
-			);
+		onSuccess: (_, { campaignId, contactGroupId }) => {
+			queryClient.invalidateQueries({
+				queryKey: ['contactGroup', contactGroupId],
+			});
 			queryClient.invalidateQueries({ queryKey: ['contactGroups'] });
+			queryClient.invalidateQueries({
+				queryKey: ['campaign', String(campaignId)],
+			});
 		},
 	});
 };
@@ -250,16 +248,14 @@ export const usePauseOutboundCampaign = () => {
 			const api = campaignsApi();
 			return api.pauseOutboundCampaign(campaignId, contactGroupId);
 		},
-		onSuccess: (_, { contactGroupId }) => {
-			// Update contact group status
-			queryClient.setQueryData(
-				['contactGroup', contactGroupId],
-				(oldData: ContactGroup | undefined) => {
-					if (!oldData) return oldData;
-					return { ...oldData, queueStatus: 'PAUSED' };
-				}
-			);
+		onSuccess: (_, { campaignId, contactGroupId }) => {
+			queryClient.invalidateQueries({
+				queryKey: ['contactGroup', contactGroupId],
+			});
 			queryClient.invalidateQueries({ queryKey: ['contactGroups'] });
+			queryClient.invalidateQueries({
+				queryKey: ['campaign', String(campaignId)],
+			});
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console
@@ -274,23 +270,23 @@ export const useResumeOutboundCampaign = () => {
 		mutationFn: async ({
 			campaignId,
 			contactGroupId,
-		}: {
-			campaignId: number;
-			contactGroupId: number;
-		}) => {
+			ignoreWaveDelay,
+		}: ResumeOutboundCampaignPayload) => {
 			const api = campaignsApi();
-			return api.resumeOutboundCampaign(campaignId, contactGroupId);
+			return api.resumeOutboundCampaign({
+				campaignId,
+				contactGroupId,
+				ignoreWaveDelay,
+			});
 		},
-		onSuccess: (_, { contactGroupId }) => {
-			// Update contact group status
-			queryClient.setQueryData(
-				['contactGroup', contactGroupId],
-				(oldData: ContactGroup | undefined) => {
-					if (!oldData) return oldData;
-					return { ...oldData, queueStatus: 'RUNNING' };
-				}
-			);
+		onSuccess: (_, { campaignId, contactGroupId }) => {
+			queryClient.invalidateQueries({
+				queryKey: ['contactGroup', contactGroupId],
+			});
 			queryClient.invalidateQueries({ queryKey: ['contactGroups'] });
+			queryClient.invalidateQueries({
+				queryKey: ['campaign', String(campaignId)],
+			});
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console

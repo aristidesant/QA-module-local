@@ -168,7 +168,9 @@ export function useSelectClient() {
 					data.accessToken,
 					queryClient,
 					setToken,
-					setUser
+					setUser,
+					undefined,
+					data.refreshToken
 				);
 			}
 		},
@@ -304,7 +306,9 @@ export function useChangeClient() {
 				data.accessToken,
 				queryClient,
 				setToken,
-				setUser
+				setUser,
+				undefined,
+				data.refreshToken
 				// Note: change-client doesn't return user data, so completeLoginFlow will fetch it
 			);
 

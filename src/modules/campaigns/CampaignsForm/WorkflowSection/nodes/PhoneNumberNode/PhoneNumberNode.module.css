@@ -1,22 +1,13 @@
 .node {
-	border-radius: var(--mantine-radius-md);
-	background-color: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-2);
+	--workflow-node-accent: var(--mantine-color-indigo-7);
 	min-width: 160px;
-	transition:
-		border-color 0.14s ease,
-		background-color 0.14s ease;
-	overflow: hidden;
 	text-align: left;
 }
 
-.node:hover {
-	border-color: var(--mantine-color-gray-4);
-}
-
 .error {
-	border-color: var(--mantine-color-red-6);
-	background-color: var(--mantine-color-red-0);
+	--workflow-node-accent: var(--mantine-color-red-7);
+	border-color: var(--mantine-color-red-4);
+	background-color: var(--mantine-color-white);
 }
 
 .icon {
@@ -27,17 +18,18 @@
 }
 
 .destination {
-	padding: 4px var(--mantine-spacing-sm);
+	padding: 8px var(--mantine-spacing-sm);
 	font-family: var(--mantine-font-family-monospace);
 	font-size: 11px;
-	background-color: var(--mantine-color-gray-0);
+	background-color: var(--mantine-color-white);
 	border-bottom: 1px solid var(--mantine-color-gray-2);
+	color: var(--mantine-color-gray-8);
 }
 
 .footer {
-	background-color: var(--mantine-color-white);
-	border-top: 1px solid var(--mantine-color-gray-3);
-	padding: 4px var(--mantine-spacing-sm);
+	background-color: var(--mantine-color-gray-0);
+	border-top: 1px solid var(--mantine-color-gray-2);
+	padding: 6px var(--mantine-spacing-sm);
 	display: flex;
 	justify-content: flex-end;
 }

@@ -5,15 +5,23 @@
 		"goToHome": "Ir al inicio"
 	},
 	"actions": {
+		"add": "Agregar",
 		"save": "Guardar",
 		"cancel": "Cancelar",
 		"delete": "Eliminar",
 		"edit": "Editar",
+		"change": "Cambiar",
 		"create": "Crear",
 		"search": "Buscar",
 		"close": "Cerrar",
 		"confirm": "Confirmar",
 		"export": "Exportar",
+		"view": "Ver",
+		"configure": "Configurar",
+		"settings": "Configuración",
+		"expand": "Expandir",
+		"calculate": "Calcular",
+		"refresh": "Recargar",
 		"back": "Volver",
 		"next": "Siguiente",
 		"finish": "Finalizar"
@@ -68,6 +76,10 @@
 		"clientSwitcher": {
 			"title": "Cambiar cliente",
 			"description": "Selecciona un cliente para cambiar tu sesión activa. Tu token actual será reemplazado.",
+			"count_one": "{{count}} cliente",
+			"count_other": "{{count}} clientes",
+			"selectedLabel": "Seleccionado",
+			"currentClient": "Actual",
 			"tooltip": "Cambiar cliente",
 			"currentClientTooltip": "Ya estás en este cliente",
 			"emptyState": {
@@ -115,6 +127,8 @@
 		"testCallSentMsg": "Estamos llamando a {{phone}} ahora.",
 		"startDemoErrorTitle": "No se pudo iniciar la demo",
 		"startDemoErrorMsg": "Inténtalo de nuevo.",
+		"noiseCancellation": "Cancelación de ruido",
+		"noiseCancellationDesc": "Reduce el ruido de fondo durante la llamada",
 		"validation": {
 			"agentRequired": "El agente es obligatorio.",
 			"phoneInvalid": "Ingresa un número de teléfono válido.",

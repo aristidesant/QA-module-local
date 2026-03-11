@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { Button, TextInput, PasswordInput, Alert } from '@mantine/core';
+import { Button, TextInput, PasswordInput, Text } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import {
 	IconShieldCheck,
 	IconCheck,
 	IconX,
-	IconInfoCircle,
 	IconShieldOff,
 } from '@tabler/icons-react';
 import {
@@ -17,8 +16,7 @@ import {
 	useCurrentUser,
 } from '~/queries/userQueries';
 import { useSessionStore } from '~/stores/sessionStore';
-import { SectionCard } from '~/components/SectionCard/SectionCard';
-import styles from '../ProfilePage.module.css';
+import styles from './MFASection.module.css';
 
 export const MFASection: React.FC = () => {
 	const { t } = useTranslation('profile');
@@ -169,78 +167,88 @@ export const MFASection: React.FC = () => {
 		disableForm.reset();
 	};
 
+	const showSetupForm = !isMFAEnabled && showEnableForm && !qrCodeUrl;
+	const showVerifyForm = Boolean(qrCodeUrl);
+	const showDisableFormState = isMFAEnabled && showDisableForm;
+
 	return (
-		<SectionCard
-			title={t('mfa.title')}
-			description={t('mfa.description')}
-			icon={IconShieldCheck}
-			headerActions={
-				<div
-					className={`${styles.statusBadge} ${
-						isMFAEnabled ? styles.enabled : styles.disabled
-					}`}
-				>
-					{isMFAEnabled ? (
-						<>
-							<IconShieldCheck size={16} />
-							<span>{t('mfa.status_enabled')}</span>
-						</>
-					) : (
-						<>
-							<IconShieldOff size={16} />
-							<span>{t('mfa.status_disabled')}</span>
-						</>
-					)}
-				</div>
-			}
-		>
-			{!isMFAEnabled && !qrCodeUrl && !showEnableForm && (
-				<>
-					<Alert
-						icon={<IconInfoCircle size={16} />}
-						title={t('mfa.how_it_works.title')}
-						color='blue'
-						variant='light'
+		<div className={styles.root}>
+			<div className={styles.header}>
+				<div className={styles.headerMain}>
+					<div className={styles.headerTitleRow}>
+						<div
+							className={`${styles.iconShell} ${isMFAEnabled ? styles.iconShellEnabled : ''}`}
+						>
+							{isMFAEnabled ? (
+								<IconShieldCheck size={16} stroke={1.8} />
+							) : (
+								<IconShieldOff size={16} stroke={1.8} />
+							)}
+						</div>
+						<div className={styles.headerCopy}>
+							<Text component='p' className={styles.label}>
+								{t('mfa.title')}
+							</Text>
+							<Text component='p' className={styles.message}>
+								{isMFAEnabled
+									? t('mfa.inline.enabled_message')
+									: t('mfa.inline.disabled_message')}
+							</Text>
+						</div>
+					</div>
+					<div
+						className={`${styles.statusBadge} ${
+							isMFAEnabled ? styles.statusEnabled : styles.statusDisabled
+						}`}
 					>
-						<ol className={styles.stepList}>
-							<li>{t('mfa.how_it_works.step1')}</li>
-							<li>{t('mfa.how_it_works.step2')}</li>
-							<li>{t('mfa.how_it_works.step3')}</li>
-							<li>{t('mfa.how_it_works.step4')}</li>
-							<li>{t('mfa.how_it_works.step5')}</li>
-						</ol>
-					</Alert>{' '}
-					<div className={styles.formActions}>
+						{isMFAEnabled ? t('mfa.status_enabled') : t('mfa.status_disabled')}
+					</div>
+				</div>
+				<div className={styles.headerAction}>
+					{isMFAEnabled ? (
 						<Button
+							variant='default'
+							size='sm'
+							onClick={() => setShowDisableForm(true)}
+							disabled={showDisableFormState}
+						>
+							{t('mfa.disable_button')}
+						</Button>
+					) : (
+						<Button
+							size='sm'
 							onClick={() => setShowEnableForm(true)}
-							leftSection={<IconShieldCheck size={18} />}
+							disabled={showSetupForm || showVerifyForm}
 						>
 							{t('mfa.enable_button')}
 						</Button>
+					)}
+				</div>
+			</div>
+
+			{showSetupForm && (
+				<div className={styles.expandedPanel}>
+					<div className={styles.expandedCopy}>
+						<Text component='p' className={styles.expandedTitle}>
+							{t('mfa.confirm_identity.title')}
+						</Text>
+						<Text component='p' className={styles.expandedMessage}>
+							{t('mfa.inline.enable_prompt')}
+						</Text>
 					</div>
-				</>
-			)}
-			{!isMFAEnabled && showEnableForm && !qrCodeUrl && (
-				<>
-					<Alert
-						icon={<IconInfoCircle size={16} />}
-						title={t('mfa.confirm_identity.title')}
-						color='blue'
-						variant='light'
-					>
-						{t('mfa.confirm_identity.message')}
-					</Alert>{' '}
 					<form onSubmit={handleEnableMFA} className={styles.form}>
 						<PasswordInput
 							label={t('mfa.password_form.label')}
 							placeholder={t('mfa.password_form.placeholder')}
 							required
+							size='sm'
 							{...enableForm.getInputProps('password')}
 						/>
 
 						<div className={styles.formActions}>
 							<Button
 								type='submit'
+								size='sm'
 								loading={enableMFAMutation.isPending}
 								disabled={!enableForm.isValid()}
 							>
@@ -248,7 +256,8 @@ export const MFASection: React.FC = () => {
 							</Button>
 							<Button
 								type='button'
-								variant='outline'
+								variant='default'
+								size='sm'
 								onClick={handleCancelEnable}
 								disabled={enableMFAMutation.isPending}
 							>
@@ -256,28 +265,29 @@ export const MFASection: React.FC = () => {
 							</Button>
 						</div>
 					</form>
-				</>
-			)}{' '}
-			{qrCodeUrl && (
-				<>
-					<Alert
-						icon={<IconInfoCircle size={16} />}
-						title={t('mfa.code_sent.title')}
-						color='blue'
-						variant='light'
-					>
-						<Trans
-							i18nKey='mfa.code_sent.message'
-							values={{ email: user?.email }}
-							components={{ strong: <strong /> }}
-						/>
-					</Alert>
+				</div>
+			)}
 
+			{showVerifyForm && (
+				<div className={styles.expandedPanel}>
+					<div className={styles.expandedCopy}>
+						<Text component='p' className={styles.expandedTitle}>
+							{t('mfa.code_sent.title')}
+						</Text>
+						<Text component='div' className={styles.expandedMessage}>
+							<Trans
+								i18nKey='mfa.code_sent.message'
+								values={{ email: user?.email }}
+								components={{ strong: <strong /> }}
+							/>
+						</Text>
+					</div>
 					<form onSubmit={handleVerifyMFA} className={styles.form}>
 						<TextInput
 							label={t('mfa.verify_form.code_label')}
 							placeholder={t('mfa.verify_form.code_placeholder')}
 							required
+							size='sm'
 							maxLength={6}
 							{...verifyForm.getInputProps('code')}
 						/>
@@ -285,6 +295,7 @@ export const MFASection: React.FC = () => {
 						<div className={styles.formActions}>
 							<Button
 								type='submit'
+								size='sm'
 								loading={verifyMFAMutation.isPending}
 								disabled={!verifyForm.isValid()}
 							>
@@ -292,7 +303,8 @@ export const MFASection: React.FC = () => {
 							</Button>
 							<Button
 								type='button'
-								variant='outline'
+								variant='default'
+								size='sm'
 								onClick={handleCancelSetup}
 								disabled={verifyMFAMutation.isPending}
 							>
@@ -300,45 +312,25 @@ export const MFASection: React.FC = () => {
 							</Button>
 						</div>
 					</form>
-				</>
+				</div>
 			)}
-			{isMFAEnabled && !showDisableForm && (
-				<>
-					<Alert
-						icon={<IconShieldCheck size={16} />}
-						title={t('mfa.protected.title')}
-						color='green'
-						variant='light'
-					>
-						{t('mfa.protected.message')}
-					</Alert>{' '}
-					<div className={styles.formActions}>
-						<Button
-							variant='outline'
-							color='red'
-							onClick={() => setShowDisableForm(true)}
-							leftSection={<IconShieldOff size={18} />}
-						>
-							{t('mfa.disable_button')}
-						</Button>
+
+			{showDisableFormState && (
+				<div className={`${styles.expandedPanel} ${styles.warningPanel}`}>
+					<div className={styles.expandedCopy}>
+						<Text component='p' className={styles.expandedTitle}>
+							{t('mfa.disable_warning.title')}
+						</Text>
+						<Text component='p' className={styles.expandedMessage}>
+							{t('mfa.inline.disable_prompt')}
+						</Text>
 					</div>
-				</>
-			)}
-			{isMFAEnabled && showDisableForm && (
-				<>
-					<Alert
-						icon={<IconInfoCircle size={16} />}
-						title={t('mfa.disable_warning.title')}
-						color='orange'
-						variant='light'
-					>
-						{t('mfa.disable_warning.message')}
-					</Alert>{' '}
 					<form onSubmit={handleDisableMFA} className={styles.form}>
 						<PasswordInput
 							label={t('mfa.password_form.label')}
 							placeholder={t('mfa.password_form.placeholder')}
 							required
+							size='sm'
 							{...disableForm.getInputProps('password')}
 						/>
 
@@ -346,6 +338,7 @@ export const MFASection: React.FC = () => {
 							<Button
 								type='submit'
 								color='red'
+								size='sm'
 								loading={disableMFAMutation.isPending}
 								disabled={!disableForm.isValid()}
 							>
@@ -353,7 +346,8 @@ export const MFASection: React.FC = () => {
 							</Button>
 							<Button
 								type='button'
-								variant='outline'
+								variant='default'
+								size='sm'
 								onClick={handleCancelDisable}
 								disabled={disableMFAMutation.isPending}
 							>
@@ -361,8 +355,10 @@ export const MFASection: React.FC = () => {
 							</Button>
 						</div>
 					</form>
-				</>
+				</div>
 			)}
-		</SectionCard>
+		</div>
 	);
 };
+
+export default MFASection;

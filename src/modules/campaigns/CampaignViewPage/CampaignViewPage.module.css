@@ -1,0 +1,11 @@
+.contentStack {
+	padding-bottom: var(--mantine-spacing-md);
+}
+
+.contactsSection {
+	min-width: 0;
+}
+
+.drawerContent {
+	min-height: 100%;
+}

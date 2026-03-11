@@ -4,8 +4,11 @@ import { CampaignsForm } from '../CampaignsForm/CampaignsForm';
 import { Campaign } from '~/models/CampaignsModel';
 import { useGetCampaign } from '~/queries/campaignsQueries';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function CampaignsPage() {
+	useTranslation(['campaigns', 'campaign.detail']);
+
 	const { selectedCampaign, editCampaign, resetView, selectCampaign } =
 		useCampaignsStore((state) => state);
 

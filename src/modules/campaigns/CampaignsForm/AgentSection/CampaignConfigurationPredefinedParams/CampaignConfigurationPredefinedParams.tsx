@@ -3,12 +3,12 @@ import SectionCard from '~/components/SectionCard';
 import useCampaignsPredefinedParams, {
 	CampaignPredefinedParam,
 } from '../../useCampaignsPredefinedParams';
-import { Stack, Text, Group, Button, Paper, ThemeIcon } from '@mantine/core';
+import { Stack, Text, Group, Paper, ThemeIcon } from '@mantine/core';
 import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
 import { deepMergeConfig } from '~/utils/objectUtils';
 import type { CampaignPredefinedConversationConfig } from '~/models/CampaignPredefinedParam';
 import type { ConversationConfigModel } from '~/models/AgentListObject';
-import { IconCheck, IconSettings } from '@tabler/icons-react';
+import { IconCheck } from '@tabler/icons-react';
 import CampaignPredefinedParamsModal from './CampaignPredefinedParamsModal';
 import { useTranslation } from 'react-i18next';
 
@@ -85,36 +85,37 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 		return predefinedParams.find((param) => param.id === form.values.configId);
 	}, [predefinedParams, form.values.configId]);
 
+	const behaviorActionLabel = currentPredefinedParam
+		? t('form.agent.behavior.change')
+		: t('form.agent.behavior.select');
+
 	return (
-		<>
+		<React.Fragment>
 			<SectionCard
 				title={t('form.agent.behavior.title')}
 				description={t('form.agent.behavior.description')}
+				actions={{
+					primary: {
+						kind: currentPredefinedParam ? 'change' : 'configure',
+						label: behaviorActionLabel,
+						onClick: handleOpenModal,
+					},
+				}}
 			>
 				{currentPredefinedParam ? (
 					<Paper withBorder p='md' radius='md' bg='var(--mantine-color-body)'>
-						<Group justify='space-between' align='center'>
-							<Group gap='sm'>
-								<ThemeIcon size='lg' radius='xl' color='teal' variant='light'>
-									<IconCheck size={20} />
-								</ThemeIcon>
-								<div>
-									<Text fw={600} size='sm'>
-										{currentPredefinedParam.name}
-									</Text>
-									<Text size='xs' c='dimmed'>
-										{t('form.agent.behavior.active')}
-									</Text>
-								</div>
-							</Group>
-							<Button
-								variant='light'
-								size='xs'
-								onClick={handleOpenModal}
-								leftSection={<IconSettings size={14} />}
-							>
-								{t('form.agent.behavior.change')}
-							</Button>
+						<Group align='center' gap='sm' wrap='nowrap'>
+							<ThemeIcon size='lg' radius='xl' color='teal' variant='light'>
+								<IconCheck size={20} />
+							</ThemeIcon>
+							<div>
+								<Text fw={600} size='sm'>
+									{currentPredefinedParam.name}
+								</Text>
+								<Text size='xs' c='dimmed'>
+									{t('form.agent.behavior.active')}
+								</Text>
+							</div>
 						</Group>
 					</Paper>
 				) : (
@@ -129,19 +130,10 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 							<Text size='sm' c='dimmed'>
 								{t('form.agent.behavior.noConfiguration')}
 							</Text>
-							<Button
-								variant='outline'
-								size='xs'
-								onClick={handleOpenModal}
-								leftSection={<IconSettings size={14} />}
-							>
-								{t('form.agent.behavior.select')}
-							</Button>
 						</Stack>
 					</Paper>
 				)}
 			</SectionCard>
-
 			<CampaignPredefinedParamsModal
 				opened={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
@@ -149,7 +141,7 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 				initialSelectionName={appliedParam?.name ?? null}
 				onApply={handleApplyFromModal}
 			/>
-		</>
+		</React.Fragment>
 	);
 };
 

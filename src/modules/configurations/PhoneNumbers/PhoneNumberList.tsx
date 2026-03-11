@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
+	Badge,
 	Group,
 	Button,
+	CloseButton,
 	TextInput,
 	Select,
 	Stack,
@@ -10,7 +12,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { IconSearch, IconPlus } from '@tabler/icons-react';
+import { IconFilter, IconSearch } from '@tabler/icons-react';
 import { useTranslation, Trans } from 'react-i18next';
 import BaseTable from '~/components/BaseTable/BaseTable';
 import {
@@ -19,18 +21,23 @@ import {
 } from '~/queries/phoneNumberQueries';
 import { usePhoneNumberTableColumns } from './usePhoneNumberTableColumns';
 import { PhoneNumber } from '~/models/PhoneNumber';
+import styles from './PhoneNumberList.module.css';
 
 interface PhoneNumberListProps {
-	onCreate: () => void;
 	onEdit: (phoneNumber: PhoneNumber) => void;
 }
 
-export function PhoneNumberList({ onCreate, onEdit }: PhoneNumberListProps) {
+const PHONE_TYPE_OPTIONS = ['INBOUND', 'OUTBOUND', 'HYBRID'];
+
+export function PhoneNumberList({ onEdit }: PhoneNumberListProps) {
 	const { t } = useTranslation('phone-numbers');
 	const [page, setPage] = useState(1);
 	const [limit, setLimit] = useState(10);
 	const [search, setSearch] = useState('');
 	const [typeFilter, setTypeFilter] = useState<string | null>(null);
+
+	const activeFiltersCount = (search ? 1 : 0) + (typeFilter ? 1 : 0);
+	const hasActiveFilters = activeFiltersCount > 0;
 
 	// Filter out empty params
 	const queryParams = {
@@ -82,44 +89,97 @@ export function PhoneNumberList({ onCreate, onEdit }: PhoneNumberListProps) {
 		onDelete: handleDelete,
 	});
 
+	const totalCount = data?.total ?? 0;
+	const tableData = useMemo(() => data?.data || [], [data?.data]);
+
 	return (
-		<Stack>
-			<Group justify='space-between'>
-				<Group>
+		<Stack className={styles.listRoot}>
+			<div className={styles.toolbar}>
+				<div className={styles.toolbarMain}>
 					<TextInput
+						className={styles.searchInput}
 						placeholder={t('list.searchPlaceholder')}
 						leftSection={<IconSearch size={16} />}
 						value={search}
-						onChange={(event) => setSearch(event.currentTarget.value)}
+						rightSection={
+							search ? (
+								<CloseButton
+									size='sm'
+									onClick={() => setSearch('')}
+									aria-label={t('list.clearSearch')}
+								/>
+							) : null
+						}
+						onChange={(event) => {
+							setSearch(event.currentTarget.value);
+							setPage(1);
+						}}
+						size='sm'
+						radius='md'
 					/>
 					<Select
+						className={styles.typeSelect}
 						placeholder={t('list.filterType')}
-						data={['INBOUND', 'OUTBOUND', 'HYBRID']}
+						data={PHONE_TYPE_OPTIONS}
 						value={typeFilter}
-						onChange={setTypeFilter}
+						onChange={(value) => {
+							setTypeFilter(value);
+							setPage(1);
+						}}
 						clearable
+						size='sm'
+						radius='md'
 					/>
-				</Group>
-				<Button leftSection={<IconPlus size={16} />} onClick={onCreate}>
-					{t('list.addPhoneNumber')}
-				</Button>
-			</Group>
+				</div>
+				<div className={styles.toolbarMeta}>
+					<Badge
+						leftSection={<IconFilter size={12} />}
+						variant='light'
+						color={hasActiveFilters ? 'blue' : 'gray'}
+						radius='sm'
+						className={styles.badge}
+					>
+						{hasActiveFilters
+							? t('list.activeFilters', { count: activeFiltersCount })
+							: t('list.noActiveFilters')}
+					</Badge>
+					<Badge variant='dot' color='gray' radius='sm'>
+						{t('list.totalItems', { count: totalCount })}
+					</Badge>
+					{hasActiveFilters ? (
+						<Button
+							variant='subtle'
+							size='compact-sm'
+							className={styles.clearButton}
+							onClick={() => {
+								setSearch('');
+								setTypeFilter(null);
+								setPage(1);
+							}}
+						>
+							{t('list.clearFilters')}
+						</Button>
+					) : null}
+				</div>
+			</div>
 
-			<BaseTable
-				data={data?.data || []}
-				columns={columns}
-				isLoading={isLoading}
-				pageIndex={page - 1} // BaseTable uses 0-indexed pageIndex
-				pageSize={limit} // BaseTable uses pageSize
-				onPaginationChange={(idx, size) => {
-					setPage(idx + 1);
-					setLimit(size);
-				}}
-				pageCount={data?.totalPages || 0}
-				filterMode='server' // Explicitly set filterMode to server since we manage pagination manually
-				enablePagination
-				showPaginationControls
-			/>
+			<div className={styles.tableFrame}>
+				<BaseTable
+					data={tableData}
+					columns={columns}
+					isLoading={isLoading}
+					pageIndex={page - 1} // BaseTable uses 0-indexed pageIndex
+					pageSize={limit} // BaseTable uses pageSize
+					onPaginationChange={(idx, size) => {
+						setPage(idx + 1);
+						setLimit(size);
+					}}
+					pageCount={data?.totalPages || 0}
+					filterMode='server' // Explicitly set filterMode to server since we manage pagination manually
+					enablePagination
+					showPaginationControls
+				/>
+			</div>
 
 			<Modal
 				opened={deleteModalOpen}

@@ -70,6 +70,7 @@
 		}
 	},
 	"details": {
+		"title": "Detalles de la conversación",
 		"tabs": {
 			"overview": "Resumen",
 			"transcript": "Transcripción"

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type {
 	ReportValue,
+	BulkUpdateReportValuesDto,
 	CreateReportValueDto,
 	UpdateReportValueDto,
 } from '~/models/ReportValue';
@@ -10,9 +11,9 @@ type ReportExportFormat = 'csv' | 'xlsx';
 
 const reportValuesApi = () => {
 	return {
-		getColumns: async (contactGroupId: number): Promise<ReportValue[]> => {
+		getColumns: async (campaignId: number): Promise<ReportValue[]> => {
 			const response = await axios.get<ReportValue[]>(
-				`${DEFAULT_API_URL}/report-values/columns/${contactGroupId}`
+				`${DEFAULT_API_URL}/report-values/columns/${campaignId}`
 			);
 			return response.data;
 		},
@@ -36,6 +37,17 @@ const reportValuesApi = () => {
 			return response.data;
 		},
 
+		bulkUpdate: async (
+			campaignId: number,
+			dto: BulkUpdateReportValuesDto
+		): Promise<ReportValue[]> => {
+			const response = await axios.patch<ReportValue[]>(
+				`${DEFAULT_API_URL}/report-values/campaigns/${campaignId}`,
+				dto
+			);
+			return response.data;
+		},
+
 		remove: async (id: number): Promise<void> => {
 			await axios.delete(`${DEFAULT_API_URL}/report-values/${id}`);
 		},
@@ -48,6 +60,24 @@ const reportValuesApi = () => {
 				`${DEFAULT_API_URL}/report-values/export/${contactGroupId}`,
 				{
 					params: { format },
+					responseType: 'blob',
+					validateStatus: (status) => status < 500,
+				}
+			);
+			return response;
+		},
+
+		exportCampaignReport: async (
+			campaignId: number,
+			startDate: string,
+			endDate: string,
+			format: ReportExportFormat = 'csv',
+			includeOutcome = true
+		) => {
+			const response = await axios.get(
+				`${DEFAULT_API_URL}/report-values/export/campaign/${campaignId}`,
+				{
+					params: { startDate, endDate, format, includeOutcome },
 					responseType: 'blob',
 					validateStatus: (status) => status < 500,
 				}

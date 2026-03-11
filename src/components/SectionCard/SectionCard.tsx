@@ -2,8 +2,10 @@ import React, { type ReactNode } from 'react';
 import { Card, Text, Title } from '@mantine/core';
 import type { TablerIcon } from '@tabler/icons-react';
 import styles from './SectionCard.module.css';
+import CardHeaderActions from '~/components/CardHeaderActions';
+import type { CardActionProps } from '~/components/CardHeaderActions';
 
-export interface SectionCardProps {
+export interface SectionCardProps extends CardActionProps {
 	icon?: TablerIcon;
 	title?: string | ReactNode;
 	description?: string;
@@ -27,7 +29,19 @@ export const SectionCard: React.FC<SectionCardProps> = ({
 	description,
 	children,
 	footer,
+	actions,
+	headerExtras,
 	headerActions,
+	onAdd,
+	onDelete,
+	onEdit,
+	onChange,
+	onView,
+	onConfigure,
+	onOpenSettings,
+	onExpand,
+	onCalculate,
+	onRefresh,
 	contentSpacing = 'md',
 	backgroundColor,
 	id,
@@ -59,6 +73,21 @@ export const SectionCard: React.FC<SectionCardProps> = ({
 		.filter(Boolean)
 		.join(' ');
 
+	const hasHeaderActions =
+		Boolean(headerActions) ||
+		Boolean(headerExtras) ||
+		Boolean(actions) ||
+		Boolean(onAdd) ||
+		Boolean(onDelete) ||
+		Boolean(onEdit) ||
+		Boolean(onChange) ||
+		Boolean(onView) ||
+		Boolean(onConfigure) ||
+		Boolean(onOpenSettings) ||
+		Boolean(onExpand) ||
+		Boolean(onCalculate) ||
+		Boolean(onRefresh);
+
 	return (
 		<Card
 			id={id}
@@ -67,34 +96,62 @@ export const SectionCard: React.FC<SectionCardProps> = ({
 			style={backgroundColor ? { backgroundColor } : undefined}
 			data-testid='section-card'
 		>
-			{(title || description || Icon || headerActions) && (
-				<div className={styles.sectionHeader}>
-					<div className={styles.sectionTitleContent}>
-						<div className={styles.sectionTitleRow}>
-							{Icon && (
-								<span className={styles.iconBadge}>
-									<Icon size={18} />
-								</span>
-							)}
-							{title && (
-								<Title order={5} className={styles.sectionTitle}>
-									{title}
-								</Title>
-							)}
+			<div className={styles.sectionShell}>
+				{(title || description || Icon || hasHeaderActions) && (
+					<div className={styles.sectionHeader}>
+						<div className={styles.sectionHeaderMain}>
+							<div className={styles.sectionTitleContent}>
+								<div className={styles.sectionTitleRow}>
+									{Icon && (
+										<span className={styles.iconBadge}>
+											<Icon size={16} />
+										</span>
+									)}
+									{title && (
+										<Title order={5} className={styles.sectionTitle}>
+											{title}
+										</Title>
+									)}
+								</div>
+								{description && (
+									<Text className={styles.sectionDescription}>
+										{description}
+									</Text>
+								)}
+							</div>
 						</div>
-						{description && (
-							<Text className={styles.sectionDescription}>{description}</Text>
+						{hasHeaderActions && (
+							<div className={styles.headerActions}>
+								<CardHeaderActions
+									actions={actions}
+									headerExtras={headerExtras}
+									headerActions={headerActions}
+									onAdd={onAdd}
+									onDelete={onDelete}
+									onEdit={onEdit}
+									onChange={onChange}
+									onView={onView}
+									onConfigure={onConfigure}
+									onOpenSettings={onOpenSettings}
+									onExpand={onExpand}
+									onCalculate={onCalculate}
+									onRefresh={onRefresh}
+								/>
+							</div>
 						)}
 					</div>
-					{headerActions && (
-						<div className={styles.headerActions}>{headerActions}</div>
+				)}
+				<div className={styles.sectionBody}>
+					<div className={styles.content} style={contentStyle}>
+						{children}
+					</div>
+					{footer && (
+						<div className={styles.footerShell}>
+							<div className={styles.footer}>{footer}</div>
+						</div>
 					)}
 				</div>
-			)}
-			<div className={styles.content} style={contentStyle}>
-				{children}
 			</div>
-			{footer && <div className={styles.footer}>{footer}</div>}
 		</Card>
 	);
 };

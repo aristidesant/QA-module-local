@@ -36,6 +36,8 @@
 		"pendingDesc": "Esperando para comenzar. Revisa la configuración antes de lanzar.",
 		"running": "En curso",
 		"runningDesc": "Los contactos están siendo marcados actualmente.",
+		"waiting": "Esperando próxima oleada",
+		"waitingDesc": "La oleada anterior terminó y la siguiente está programada para ejecutarse más tarde.",
 		"paused": "Pausada",
 		"pausedDesc": "Procesamiento detenido. Reanuda cuando estés listo.",
 		"complete": "Completada",
@@ -75,7 +77,23 @@
 		"maxCallsPerContact": "Máx. llamadas por contacto",
 		"maxCallsPerList": "Máx. llamadas por lista",
 		"humanEquivalent": "Equivalente humano",
-		"waves": "Oleadas"
+		"waves": "Oleadas",
+		"delayBetweenWaves": "Retraso entre oleadas",
+		"noDelayBetweenWaves": "Sin retraso entre oleadas",
+		"lastWaveStarted": "Última oleada iniciada",
+		"lastWaveCompleted": "Última oleada completada",
+		"nextWaveScheduled": "Próxima oleada programada",
+		"compact": {
+			"contacts": "Contactos",
+			"maxCallsPerContact": "Máx./contacto",
+			"humanEquivalent": "Eq. humano",
+			"waves": "Oleadas",
+			"expirationDate": "Expira",
+			"delayBetweenWaves": "Retraso",
+			"lastWaveStarted": "Iniciada",
+			"lastWaveCompleted": "Completada",
+			"nextWaveScheduled": "Próxima"
+		}
 	},
 	"metrics": {
 		"title": "Métricas de la lista de contactos",
@@ -322,7 +340,8 @@
 		"originType": {
 			"SQL": "Columna del sistema",
 			"DYNAMIC": "Campo dinámico",
-			"OBJECT": "Datos de conversación"
+			"OBJECT": "Datos de conversación",
+			"METADATA": "Metadatos de conversación"
 		},
 		"dataType": {
 			"STRING": "Texto",
@@ -351,6 +370,44 @@
 			"labelPlaceholder": "p. ej. Balance pendiente",
 			"dataTypeLabel": "Tipo de dato",
 			"orderLabel": "Orden",
+			"validation": {
+				"originTypeRequired": "Selecciona una fuente de datos",
+				"keyRequired": "La clave del campo es obligatoria",
+				"labelRequired": "La etiqueta de la columna es obligatoria",
+				"dataTypeRequired": "Selecciona un tipo de dato"
+			},
+			"emptyState": {
+				"noSchemaFields": "No se encontraron campos del esquema - ingresa el nombre del campo manualmente.",
+				"noDataCollectionFields": "No hay campos de data collection configurados - ingresa la clave manualmente."
+			},
+			"placeholders": {
+				"loadingSchemaFields": "Cargando campos del esquema...",
+				"selectSchemaField": "Selecciona un campo del esquema",
+				"loadingConversationFields": "Cargando campos de conversación...",
+				"selectConversationField": "Selecciona un campo de conversación",
+				"selectSourceFirst": "Selecciona una fuente primero"
+			},
+			"sections": {
+				"dataSource": "Fuente de datos",
+				"displaySettings": "Configuración de visualización"
+			},
+			"originSub": {
+				"SQL": "Campos de contacto",
+				"DYNAMIC": "Variables del esquema",
+				"OBJECT": "Campos recolectados por el agente"
+			},
+			"keyFieldLabels": {
+				"SQL": "Campo de contacto",
+				"DYNAMIC": "Variable del esquema",
+				"OBJECT": "Clave de conversación"
+			},
+			"headerEyebrow": {
+				"new": "Nueva columna",
+				"edit": "Editar columna"
+			},
+			"aria": {
+				"close": "Cerrar"
+			},
 			"save": "Guardar",
 			"cancel": "Cancelar"
 		},
@@ -360,6 +417,15 @@
 			"deleted": "Columna eliminada con éxito",
 			"reorderError": "Error al guardar el nuevo orden"
 		}
+	},
+	"exportCampaign": {
+		"title": "Exportar por rango de fechas",
+		"startDate": "Fecha inicio",
+		"endDate": "Fecha fin",
+		"export": "Exportar",
+		"datesRequired": "Por favor selecciona fecha de inicio y fin antes de exportar.",
+		"noData": "No se encontraron datos en el rango de fechas seleccionado.",
+		"noColumns": "La campaña no tiene columnas de reporte configuradas."
 	},
 	"contacts": {
 		"tabs": {
@@ -409,7 +475,13 @@
 				"extendWaves": "Extender Oleadas",
 				"completeList": "Completar Lista",
 				"downloadResults": "Descargar Resultados",
-				"openContactList": "Abrir Lista de Contactos"
+				"openContactList": "Abrir Lista de Contactos",
+				"resumeWaiting": "Reanudar",
+				"resumeWaitingHelper": "Omitir el retraso configurado entre oleadas",
+				"resumeWaitingConfirmTitle": "¿Reanudar la próxima oleada ahora?",
+				"resumeWaitingConfirmMessage": "Esto omitirá el retraso configurado entre oleadas para esta lista de contactos.",
+				"resumeWaitingScheduledFor": "Próxima oleada programada para {{value}}.",
+				"resumeWaitingScheduleNotice": "Las restricciones del horario de la campaña siguen aplicando, por lo que las llamadas pueden iniciar ahora o en la próxima ventana válida."
 			},
 			"primaryPhone": "Número de teléfono principal",
 			"phoneNumbers": "Números de teléfono ({{count}})",
@@ -440,6 +512,10 @@
 				"completed": {
 					"title": "Lista Completada",
 					"message": "Lista de contactos marcada como completada."
+				},
+				"resumedIgnoringDelay": {
+					"title": "Reanudación solicitada",
+					"message": "La lista de contactos se reanudará sin esperar el retraso configurado entre oleadas."
 				}
 			},
 			"confirm": {

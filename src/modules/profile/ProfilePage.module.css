@@ -1,48 +1,54 @@
-.sections {
+.page {
 	display: flex;
 	flex-direction: column;
-	gap: var(--mantine-spacing-xl);
+	gap: var(--mantine-spacing-lg);
+	padding-bottom: var(--mantine-spacing-lg);
+}
+
+.settingsGrid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--mantine-spacing-md);
+	align-items: start;
+}
+
+.primarySection {
+	min-width: 0;
+}
+
+.settingsSurface {
+	border-color: var(--mantine-color-gray-2);
+	border-radius: 14px;
+	box-shadow:
+		0 1px 2px rgba(15, 23, 42, 0.03),
+		0 8px 20px rgba(15, 23, 42, 0.04);
 }
 
 .form {
 	display: flex;
 	flex-direction: column;
-	gap: var(--mantine-spacing-md);
+	gap: var(--mantine-spacing-sm);
 }
 
 .formActions {
 	display: flex;
 	gap: var(--mantine-spacing-sm);
-	margin-top: var(--mantine-spacing-md);
+	margin-top: var(--mantine-spacing-sm);
 }
 
-.statusBadge {
-	display: inline-flex;
-	align-items: center;
-	gap: var(--mantine-spacing-xs);
-	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
-	border-radius: var(--mantine-radius-sm);
-	font-size: var(--mantine-font-size-sm);
-	font-weight: 500;
+@media (max-width: 62em) {
+	.settingsGrid {
+		grid-template-columns: 1fr;
+	}
 }
 
-.statusBadge.enabled {
-	background: var(--mantine-color-green-0);
-	color: var(--mantine-color-green-7);
-}
+@media (max-width: 48em) {
+	.page {
+		gap: var(--mantine-spacing-md);
+	}
 
-.statusBadge.disabled {
-	background: var(--mantine-color-gray-1);
-	color: var(--mantine-color-gray-7);
-}
-
-.stepList {
-	margin: var(--mantine-spacing-md) 0;
-	padding-left: var(--mantine-spacing-xl);
-}
-
-.stepList li {
-	margin-bottom: var(--mantine-spacing-xs);
-	font-size: var(--mantine-font-size-sm);
-	color: var(--mantine-color-text);
+	.formActions {
+		flex-direction: column-reverse;
+		align-items: stretch;
+	}
 }

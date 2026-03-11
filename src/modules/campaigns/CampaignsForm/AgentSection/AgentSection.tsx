@@ -3,10 +3,14 @@ import CampaignConfigurationBasic from './CampaignConfigurationBasic/CampaignCon
 import CampaignConfigurationPrompt from './CampaignConfigurationPrompt/CampaignConfigurationPrompt';
 import CampaignConfigurationPredefinedParams from './CampaignConfigurationPredefinedParams';
 
-const AgentSection: React.FC = () => {
+interface AgentSectionProps {
+	onOpenSettings?: () => void;
+}
+
+const AgentSection: React.FC<AgentSectionProps> = ({ onOpenSettings }) => {
 	return (
 		<Stack>
-			<CampaignConfigurationPrompt />
+			<CampaignConfigurationPrompt onOpenSettings={onOpenSettings} />
 			<CampaignConfigurationBasic />
 			<CampaignConfigurationPredefinedParams />
 			{/* <CampaignConfigurationTemperatureControl /> */}

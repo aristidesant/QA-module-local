@@ -17,6 +17,20 @@
 	gap: var(--mantine-spacing-sm);
 }
 
+.summaryPanel {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-body);
+}
+
+.summaryBadges {
+	align-items: center;
+}
+
 .section {
 	display: flex;
 	flex-direction: column;
@@ -31,20 +45,20 @@
 
 .scheduleList {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 	gap: var(--mantine-spacing-xs);
-	margin-top: calc(var(--mantine-spacing-xs) / 2);
 }
 
 .scheduleChip {
-	display: inline-flex;
-	align-items: center;
-	justify-content: space-between;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 2px;
 	padding: var(--mantine-spacing-xs) var(--mantine-spacing-xs);
 	border: 1px solid var(--mantine-color-gray-3);
 	background: var(--mantine-color-gray-0);
 	border-radius: var(--mantine-radius-md);
-	min-height: 32px;
+	min-height: 52px;
 }
 
 .dayLabel {
@@ -54,40 +68,74 @@
 }
 
 .timeRange {
-	margin-left: var(--mantine-spacing-sm);
+	margin-left: 0;
 }
 
-.parametersGrid {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+.parametersList {
+	display: flex;
+	flex-direction: column;
 	gap: var(--mantine-spacing-xs);
 }
 
-.parameterCard {
+.parameterRow {
 	display: flex;
-	flex-direction: column;
-	gap: 6px;
-	padding: var(--mantine-spacing-sm);
-	border-radius: var(--mantine-radius-md);
-	border: 1px solid var(--mantine-color-gray-3);
-	background: var(--mantine-color-body);
-	min-height: 70px;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-xs) 0;
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+	min-height: 34px;
 }
 
-.parameterLabel {
-	font-weight: 500;
+.parameterRow:last-child {
+	border-bottom: none;
+	padding-bottom: 0;
+}
+
+.parameterRow:first-child {
+	padding-top: 0;
+}
+
+.parameterBadge {
+	flex-shrink: 0;
+	align-self: center;
 }
 
 .parameterValue {
 	color: var(--mantine-color-dark-6);
+	text-align: right;
+	flex-shrink: 0;
 }
 
-.parameterBadge {
-	align-self: flex-start;
+.parameterLabel {
+	font-weight: 500;
+	flex: 1;
+	min-width: 0;
 }
 
 .emptyState {
 	text-align: center !important;
 	display: block;
 	width: 100%;
+	padding: var(--mantine-spacing-xs) 0;
+}
+
+@media (max-width: 48em) {
+	.scheduleList {
+		grid-template-columns: 1fr;
+	}
+
+	.parameterRow {
+		align-items: flex-start;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	.parameterValue {
+		text-align: left;
+	}
+
+	.summaryBadges {
+		flex-wrap: wrap;
+	}
 }
