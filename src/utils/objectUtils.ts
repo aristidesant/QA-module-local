@@ -1,12 +1,19 @@
 /**
  * Check if a value is valid for merging
+ *
+ * A value is considered invalid (and therefore skipped during merge) if it is:
+ * - null or undefined
+ * - an empty string
+ * - NaN
+ * - an empty array (prevents overwriting existing non-empty arrays with empty defaults)
  */
 const isValidValue = (value: unknown): boolean => {
 	return (
 		value !== null &&
 		value !== undefined &&
 		(typeof value !== 'string' || value.length > 0) &&
-		(typeof value !== 'number' || !isNaN(value))
+		(typeof value !== 'number' || !isNaN(value)) &&
+		(!Array.isArray(value) || value.length > 0)
 	);
 };
 
