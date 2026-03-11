@@ -170,6 +170,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			clientId: campaign?.clientId ?? 0,
 			tags: campaign?.tags || [],
 			workingHours: campaign?.workingHours || defaultWorkingHours,
+			noiseCancellation: campaign?.noiseCancellation,
 			agentConfig: campaign?.agentConfig || {},
 			defaultMaxWaves: campaign?.defaultMaxWaves ?? 3,
 			defaultWaveExecutionDelaySeconds:
@@ -225,11 +226,15 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			clientId: campaign.clientId ?? 0,
 			tags: campaign.tags || [],
 			workingHours: campaign.workingHours || defaultWorkingHours,
+			noiseCancellation: campaign.noiseCancellation,
 			agentConfig: campaign.agentConfig || {},
 			defaultMaxWaves: campaign.defaultMaxWaves ?? 3,
 			defaultWaveExecutionDelaySeconds:
 				campaign.defaultWaveExecutionDelaySeconds ?? 0,
 		});
+		// Sync the snapshot so dirty detection is always relative to the
+		// latest backend state, not a stale cached version.
+		form.resetDirty();
 
 		const stateWorkflowCounts = getWorkflowCounts(
 			form.values.agentConfig?.workflow
@@ -383,6 +388,11 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 					: t('form.notifications.successCreatedMessage'),
 				color: 'green',
 			});
+			// Mark the form as clean so the Save button disables after a
+			// successful save. The snapshot is updated to the current values,
+			// which will match the data returned by the subsequent React Query
+			// refetch triggered by invalidateQueries above.
+			form.resetDirty();
 		} catch (error) {
 			notifications.show({
 				title: t('errors.unknown', { ns: 'common' }),

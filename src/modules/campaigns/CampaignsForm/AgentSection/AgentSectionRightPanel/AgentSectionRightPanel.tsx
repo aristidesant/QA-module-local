@@ -25,15 +25,9 @@ const AgentSectionRightPanel: React.FC = () => {
 				<Switch
 					label={t('general.noiseCancellationLabel')}
 					size='sm'
-					checked={
-						form.values.agentConfig?.conversationConfig?.noiseCancellation ??
-						false
-					}
+					checked={form.values.noiseCancellation ?? false}
 					onChange={(event) =>
-						form.setFieldValue(
-							'agentConfig.conversationConfig.noiseCancellation',
-							event.currentTarget.checked
-						)
+						form.setFieldValue('noiseCancellation', event.currentTarget.checked)
 					}
 				/>
 			</RightSectionCard>
