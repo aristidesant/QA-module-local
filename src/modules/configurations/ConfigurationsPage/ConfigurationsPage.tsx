@@ -9,6 +9,7 @@ import {
 	IconChartBar,
 	IconBook2,
 	IconChartBar,
+	IconBook2,
 } from '@tabler/icons-react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import { useEffect } from 'react';
