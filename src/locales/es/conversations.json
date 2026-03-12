@@ -71,6 +71,7 @@
 	},
 	"details": {
 		"title": "Detalles de la conversación",
+		"backToTop": "Volver arriba",
 		"tabs": {
 			"overview": "Resumen",
 			"transcript": "Transcripción"

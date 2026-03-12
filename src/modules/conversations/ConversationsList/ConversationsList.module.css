@@ -124,3 +124,17 @@
 .durationContext {
 	text-transform: capitalize;
 }
+
+.detailsDrawerContent {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.detailsDrawerBody {
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}

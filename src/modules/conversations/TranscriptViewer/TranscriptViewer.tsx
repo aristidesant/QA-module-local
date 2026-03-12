@@ -18,6 +18,7 @@ import {
 	IconTool,
 	IconUser,
 } from '@tabler/icons-react';
+import { useMemo, useRef, useEffect } from 'react';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import { usePermissions } from '~/hooks/usePermissions';
@@ -33,9 +34,17 @@ import type { TFunction } from 'i18next';
 
 interface TranscriptViewerProps {
 	transcript: TranscriptEntry[];
+	audioCurrentTime?: number;
+	isAudioPlaying?: boolean;
+	onSeekToTime?: (time: number) => void;
 }
 
-export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
+export function TranscriptViewer({
+	transcript,
+	audioCurrentTime,
+	isAudioPlaying,
+	onSeekToTime,
+}: TranscriptViewerProps) {
 	const { t } = useTranslation(['conversations', 'common']);
 	const { canPerformAction } = usePermissions();
 	const canViewTechnicalDetails = canPerformAction(
@@ -75,6 +84,28 @@ export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
 			workflowChange,
 		};
 	});
+
+	const activeEntryIndex = useMemo(() => {
+		if (audioCurrentTime === undefined || audioCurrentTime < 0) return -1;
+		let lastIndex = -1;
+		for (let i = 0; i < visibleEntries.length; i++) {
+			if (visibleEntries[i].time_in_call_secs <= audioCurrentTime) {
+				lastIndex = i;
+			}
+		}
+		return lastIndex;
+	}, [audioCurrentTime, visibleEntries]);
+
+	const activeEntryRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (isAudioPlaying && activeEntryRef.current) {
+			activeEntryRef.current.scrollIntoView({
+				behavior: 'smooth',
+				block: 'nearest',
+			});
+		}
+	}, [activeEntryIndex, isAudioPlaying]);
 
 	if (!transcript || transcript.length === 0) {
 		return (
@@ -124,13 +155,27 @@ export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
 						)}
 						{shouldRenderMessageBubble && (
 							<Box
+								ref={
+									visibleEntries.indexOf(entry) === activeEntryIndex
+										? activeEntryRef
+										: undefined
+								}
 								className={
 									`${styles.messageRow} ` +
 									(isSystem
 										? styles.centerAligned
 										: isAgent
 											? styles.rightAligned
-											: styles.leftAligned)
+											: styles.leftAligned) +
+									(visibleEntries.indexOf(entry) === activeEntryIndex
+										? ` ${styles.activeEntry}`
+										: '') +
+									(onSeekToTime && !isSystem ? ` ${styles.seekableEntry}` : '')
+								}
+								onClick={
+									onSeekToTime && !isSystem
+										? () => onSeekToTime(entry.time_in_call_secs)
+										: undefined
 								}
 							>
 								{isSystem ? (

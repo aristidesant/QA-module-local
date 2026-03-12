@@ -1,0 +1,42 @@
+.playerBar {
+	flex-shrink: 0;
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	background-color: var(--mantine-color-white);
+	border-top: 1px solid var(--mantine-color-gray-3);
+}
+
+.controls {
+	width: 100%;
+}
+
+.playButton {
+	flex-shrink: 0;
+}
+
+.time {
+	flex-shrink: 0;
+	font-variant-numeric: tabular-nums;
+	min-width: 32px;
+	text-align: center;
+}
+
+.progressSlider {
+	flex: 1;
+	min-width: 0;
+}
+
+.sliderTrack {
+	height: 4px;
+	background-color: var(--mantine-color-gray-2);
+}
+
+.sliderBar {
+	background-color: var(--mantine-primary-color-filled);
+}
+
+.sliderThumb {
+	width: 12px;
+	height: 12px;
+	border: 2px solid var(--mantine-primary-color-filled);
+	background-color: var(--mantine-color-white);
+}
