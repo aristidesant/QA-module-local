@@ -26,6 +26,13 @@
 	padding-top: var(--mantine-spacing-md);
 }
 
+.transcriptPanelLayout {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+}
+
 .paper {
 	background-color: var(--mantine-color-white);
 	transition: box-shadow 0.2s ease;
