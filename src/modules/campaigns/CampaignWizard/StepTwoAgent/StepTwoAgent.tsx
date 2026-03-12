@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	Select,
@@ -12,6 +12,7 @@ import {
 	Center,
 	Modal,
 	Badge,
+	Switch,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -20,6 +21,7 @@ import {
 	IconMessageCircle,
 	IconBrain,
 	IconEdit,
+	IconMicrophoneOff,
 } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
@@ -72,12 +74,14 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 		language,
 		firstMessage,
 		agentPrompt,
+		noiseCancellation,
 		createdCampaign,
 		setAgentBehaviorId,
 		setLanguage,
 		setFirstMessage,
 		setAgentPrompt,
 		setKnowledgeBaseIds,
+		setNoiseCancellation,
 		setIsSubmitting,
 		setCreatedCampaign,
 	} = useCampaignWizardStore();
@@ -117,6 +121,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 			language,
 			firstMessage,
 			agentPrompt,
+			noiseCancellation,
 		},
 		validate: {
 			language: (value: string) =>
@@ -178,6 +183,10 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 				typeof promptFromCampaign === 'string'
 					? promptFromCampaign
 					: currentFormValues.agentPrompt,
+			noiseCancellation:
+				createdCampaign.noiseCancellation ??
+				currentFormValues.noiseCancellation ??
+				false,
 		};
 
 		const lastSynced = lastSyncedCampaignRef.current;
@@ -213,6 +222,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 		setLanguage(nextValues.language);
 		setFirstMessage(nextValues.firstMessage);
 		setAgentPrompt(nextValues.agentPrompt);
+		setNoiseCancellation(nextValues.noiseCancellation);
 
 		if (hasKbIds) {
 			setKnowledgeBaseIds(knowledgeBaseIdsFromCampaign);
@@ -235,6 +245,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 		setFirstMessage,
 		setKnowledgeBaseIds,
 		setLanguage,
+		setNoiseCancellation,
 	]);
 
 	const handleBehaviorChange = (value: string | null) => {
@@ -277,6 +288,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 			const payload = {
 				...currentCampaign,
 				configId: values.agentBehaviorId,
+				noiseCancellation: values.noiseCancellation,
 				agentConfig: {
 					...currentCampaign.agentConfig,
 					knowledgeBaseIds: currentKnowledgeBaseIds,
@@ -441,6 +453,32 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 									className={sharedStyles.field}
 								/>
 							</Box>
+
+							<Box className={styles.sectionCard}>
+								<div className={styles.sectionHeader}>
+									<IconMicrophoneOff size={20} className={styles.sectionIcon} />
+									<h3 className={styles.sectionTitle}>
+										{t('wizard.steps.agent.audioTitle')}
+									</h3>
+								</div>
+								<Text className={styles.sectionDescription}>
+									{t('wizard.steps.agent.audioDesc')}
+								</Text>
+								<Switch
+									label={t('wizard.steps.agent.noiseCancellationLabel')}
+									description={t('wizard.steps.agent.noiseCancellationDesc')}
+									size='sm'
+									checked={form.values.noiseCancellation}
+									onChange={(event) => {
+										form.setFieldValue(
+											'noiseCancellation',
+											event.currentTarget.checked
+										);
+										setNoiseCancellation(event.currentTarget.checked);
+									}}
+								/>
+							</Box>
+
 							<KnowledgeBaseSection />
 						</div>
 

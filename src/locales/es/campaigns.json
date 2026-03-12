@@ -1970,6 +1970,10 @@
 					"languageRequired": "El idioma es obligatorio",
 					"promptRequired": "El prompt del agente es obligatorio"
 				},
+				"audioTitle": "Configuración de Audio",
+				"audioDesc": "Ajusta las opciones de procesamiento de audio para esta campaña.",
+				"noiseCancellationLabel": "Cancelación de ruido",
+				"noiseCancellationDesc": "Suprime el ruido de fondo y aplica ajuste de detección de actividad de voz en las llamadas salientes.",
 				"languages": {
 					"es": "Español",
 					"en": "Inglés",

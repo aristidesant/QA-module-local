@@ -22,6 +22,7 @@ interface CampaignWizardState {
 	firstMessage: string;
 	agentPrompt: string;
 	knowledgeBaseIds: number[];
+	noiseCancellation: boolean;
 
 	// Actions
 	setActiveStep: (step: number) => void;
@@ -41,6 +42,7 @@ interface CampaignWizardState {
 	setFirstMessage: (message: string) => void;
 	setAgentPrompt: (prompt: string) => void;
 	setKnowledgeBaseIds: (ids: number[]) => void;
+	setNoiseCancellation: (value: boolean) => void;
 	setIsResumingDraft: (isResumingDraft: boolean) => void;
 	setHasOutcomeFlow: (hasOutcomeFlow: boolean) => void;
 	initializeFromDraft: (campaign: Campaign) => void;
@@ -65,6 +67,7 @@ const initialState = {
 	firstMessage: '',
 	agentPrompt: '',
 	knowledgeBaseIds: [],
+	noiseCancellation: false,
 };
 
 export const useCampaignWizardStore = create<CampaignWizardState>((set) => ({
@@ -95,6 +98,7 @@ export const useCampaignWizardStore = create<CampaignWizardState>((set) => ({
 	setFirstMessage: (message) => set({ firstMessage: message }),
 	setAgentPrompt: (prompt) => set({ agentPrompt: prompt }),
 	setKnowledgeBaseIds: (ids) => set({ knowledgeBaseIds: ids }),
+	setNoiseCancellation: (value) => set({ noiseCancellation: value }),
 	setIsResumingDraft: (isResumingDraft) => set({ isResumingDraft }),
 	setHasOutcomeFlow: (hasOutcomeFlow) => set({ hasOutcomeFlow }),
 	initializeFromDraft: (campaign) => {
@@ -109,6 +113,7 @@ export const useCampaignWizardStore = create<CampaignWizardState>((set) => ({
 				campaign.defaultWaveExecutionDelaySeconds ?? 0,
 			activeStep: campaign.draftStep ?? 0,
 			isResumingDraft: true,
+			noiseCancellation: campaign.noiseCancellation ?? false,
 		});
 		// Sync with campaigns store
 		useCampaignsStore.getState().selectCampaign(campaign);

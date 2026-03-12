@@ -1855,6 +1855,10 @@
 					"languageRequired": "Language is required",
 					"promptRequired": "Agent prompt is required"
 				},
+				"audioTitle": "Audio Settings",
+				"audioDesc": "Adjust audio processing options for this campaign.",
+				"noiseCancellationLabel": "Noise cancellation",
+				"noiseCancellationDesc": "Suppress background noise and apply voice activity detection tuning on outbound calls.",
 				"languages": {
 					"es": "Spanish",
 					"en": "English",
