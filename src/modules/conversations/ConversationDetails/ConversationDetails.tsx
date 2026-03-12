@@ -18,6 +18,7 @@ import AccessDenied from '~/components/AccessDenied';
 import { useTranslation } from 'react-i18next';
 
 import { TranscriptViewer } from '~/modules/conversations/TranscriptViewer';
+import TranscriptPlayerBar from '~/modules/conversations/TranscriptViewer/TranscriptPlayerBar';
 import styles from './ConversationDetails.module.css';
 import ConversationOverview from '../ConversationOverview';
 import { useGetConversation } from '~/queries/conversationsQueries';
@@ -40,7 +41,10 @@ export function ConversationDetails({ id }: ConversationDetailsProps) {
 
 	const [activeTab, setActiveTab] = useState<string | null>('overview');
 	const [showBackToTop, setShowBackToTop] = useState(false);
+	const [audioCurrentTime, setAudioCurrentTime] = useState(0);
+	const [isAudioPlaying, setIsAudioPlaying] = useState(false);
 	const transcriptPanelRef = useRef<HTMLDivElement>(null);
+	const seekToRef = useRef<((time: number) => void) | null>(null);
 
 	const handlePanelScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
 		setShowBackToTop(e.currentTarget.scrollTop > 200);
@@ -48,6 +52,10 @@ export function ConversationDetails({ id }: ConversationDetailsProps) {
 
 	const scrollToTop = useCallback(() => {
 		transcriptPanelRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+	}, []);
+
+	const handleSeekToTime = useCallback((time: number) => {
+		seekToRef.current?.(time);
 	}, []);
 
 	const duration = useMemo(() => {
@@ -141,24 +149,41 @@ export function ConversationDetails({ id }: ConversationDetailsProps) {
 				)}
 
 				{activeTab === 'transcript' && (
-					<div
-						ref={transcriptPanelRef}
-						className={styles.panelWrapper}
-						onScroll={handlePanelScroll}
-					>
-						<TranscriptViewer transcript={safeTranscriptContent.transcript} />
-						<Tooltip label={t('details.backToTop')} position='left'>
-							<ActionIcon
-								variant='filled'
-								size='lg'
-								radius='xl'
-								aria-label={t('details.backToTop')}
-								onClick={scrollToTop}
-								className={`${styles.backToTop} ${showBackToTop ? styles.backToTopVisible : ''}`}
-							>
-								<IconArrowUp size={18} />
-							</ActionIcon>
-						</Tooltip>
+					<div className={styles.transcriptPanelLayout}>
+						<div
+							ref={transcriptPanelRef}
+							className={styles.panelWrapper}
+							onScroll={handlePanelScroll}
+						>
+							<TranscriptViewer
+								transcript={safeTranscriptContent.transcript}
+								audioCurrentTime={audioCurrentTime}
+								isAudioPlaying={isAudioPlaying}
+								onSeekToTime={handleSeekToTime}
+							/>
+							{!isAudioPlaying && (
+								<Tooltip label={t('details.backToTop')} position='left'>
+									<ActionIcon
+										variant='filled'
+										size='lg'
+										radius='xl'
+										aria-label={t('details.backToTop')}
+										onClick={scrollToTop}
+										className={`${styles.backToTop} ${showBackToTop ? styles.backToTopVisible : ''}`}
+									>
+										<IconArrowUp size={18} />
+									</ActionIcon>
+								</Tooltip>
+							)}
+						</div>
+						{conversation?.voiceFile && (
+							<TranscriptPlayerBar
+								voiceFile={conversation.voiceFile}
+								onTimeUpdate={setAudioCurrentTime}
+								onPlayStateChange={setIsAudioPlaying}
+								seekToRef={seekToRef}
+							/>
+						)}
 					</div>
 				)}
 			</Tabs>
