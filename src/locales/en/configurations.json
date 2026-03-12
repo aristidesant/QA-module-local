@@ -6,6 +6,7 @@
 		"campaign": "Campaign",
 		"regional": "Regional",
 		"scheduler": "Scheduler",
-		"phoneNumbers": "Phone Numbers"
+		"phoneNumbers": "Phone Numbers",
+		"dictionaryRules": "Dictionary Rules"
 	}
 }

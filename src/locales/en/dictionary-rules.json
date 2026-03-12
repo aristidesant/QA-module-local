@@ -1,0 +1,146 @@
+{
+	"title": "Dictionary Rules",
+	"description": "Manage pronunciation dictionaries and rules for ElevenLabs TTS",
+	"noDictionaries": "No pronunciation dictionaries yet",
+	"noDictionariesDescription": "Create a dictionary to start adding pronunciation rules for your agents.",
+	"dictionary": {
+		"title": "Dictionaries",
+		"listDescription": "Manage your pronunciation dictionaries. Open a dictionary to view and edit its rules.",
+		"create": "New Dictionary",
+		"name": "Dictionary Name",
+		"namePlaceholder": "e.g. Spanish Names",
+		"nameRequired": "Name is required",
+		"descriptionLabel": "Description",
+		"descriptionPlaceholder": "Optional description for this dictionary",
+		"backToList": "Back to dictionaries",
+		"viewRules": "View rules",
+		"createdAt": "Created",
+		"sync": "Sync to ElevenLabs",
+		"delete": "Delete Dictionary",
+		"deleteModal": {
+			"title": "Delete Dictionary",
+			"message": "Are you sure you want to delete dictionary <b>{{name}}</b>? This will soft-delete it from the database. Agents that already use it will not be affected in ElevenLabs.",
+			"cancel": "Cancel",
+			"confirm": "Delete"
+		},
+		"notifications": {
+			"createSuccess": "Dictionary created successfully",
+			"createError": "Failed to create dictionary",
+			"deleteSuccess": "Dictionary deleted successfully",
+			"deleteError": "Failed to delete dictionary",
+			"syncSuccess": "Dictionary synced to ElevenLabs successfully",
+			"syncError": "Failed to sync dictionary"
+		}
+	},
+	"rules": {
+		"title": "Pronunciation Rules",
+		"addRule": "Add Rule",
+		"noRules": "No rules yet",
+		"noRulesDescription": "Add pronunciation rules to control how ElevenLabs pronounces specific words.",
+		"searchPlaceholder": "Search by word...",
+		"filterType": "Filter by type",
+		"clearSearch": "Clear search",
+		"clearFilters": "Clear filters",
+		"noActiveFilters": "No active filters",
+		"activeFilters_one": "{{count}} active filter",
+		"activeFilters_other": "{{count}} active filters",
+		"totalItems_one": "{{count}} rule",
+		"totalItems_other": "{{count}} rules",
+		"deleteModal": {
+			"title": "Delete Rule",
+			"message": "Are you sure you want to delete the rule for <b>{{grapheme}}</b>? It will be removed from ElevenLabs immediately.",
+			"cancel": "Cancel",
+			"confirm": "Delete"
+		},
+		"notifications": {
+			"createSuccess": "Rule created successfully",
+			"createError": "Failed to create rule",
+			"updateSuccess": "Rule updated successfully",
+			"updateError": "Failed to update rule",
+			"deleteSuccess": "Rule deleted successfully",
+			"deleteError": "Failed to delete rule"
+		}
+	},
+	"form": {
+		"createTitle": "Add Pronunciation Rule",
+		"editTitle": "Edit Pronunciation Rule",
+		"sections": {
+			"word": {
+				"title": "Word",
+				"description": "The word whose pronunciation you want to override."
+			},
+			"pronunciation": {
+				"title": "Pronunciation",
+				"description": "Choose how ElevenLabs should pronounce this word."
+			},
+			"metadata": {
+				"title": "Metadata",
+				"description": "Optional locale and description for reference."
+			}
+		},
+		"fields": {
+			"grapheme": {
+				"label": "Word (grapheme)",
+				"placeholder": "e.g. José",
+				"required": "Word is required"
+			},
+			"ruleType": {
+				"label": "Rule Type",
+				"alias": "Alias",
+				"phoneme": "Phoneme (CMU Arpabet)"
+			},
+			"alias": {
+				"label": "Alias (phonetic spelling)",
+				"placeholder": "e.g. Ho-seh",
+				"required": "Alias is required for ALIAS rules"
+			},
+			"phoneme": {
+				"label": "Phoneme (CMU Arpabet)",
+				"placeholder": "e.g. HH OW0 Z EY1",
+				"required": "Phoneme is required for PHONEME rules"
+			},
+			"locale": {
+				"label": "Locale",
+				"placeholder": "e.g. es-MX, en-US"
+			},
+			"description": {
+				"label": "Description",
+				"placeholder": "Optional note about this rule"
+			}
+		},
+		"hints": {
+			"alias": "Works on all ElevenLabs models. Best for multilingual agents.",
+			"phoneme": "CMU Arpabet. Only works with Flash v2, Turbo v2, and English v1.",
+			"caseSensitive": "Rules are case-sensitive."
+		},
+		"arpabet": {
+			"triggerLabel": "About ARPABET",
+			"title": "What is ARPABET?",
+			"description": "ARPABET is a phonetic notation used to describe pronunciation with uppercase sound codes.",
+			"items": {
+				"stress": "Vowels can include stress markers like `AH0`, `EH1`, or `IY2`.",
+				"spacing": "Write each sound separated by spaces, in the order the word is spoken.",
+				"example": "Example: `JOSÉ` can be approximated as `HH OW0 Z EY1`."
+			},
+			"reference": "Tip: start with a simple English approximation, then refine the sounds if the result still feels off."
+		},
+		"buttons": {
+			"cancel": "Cancel",
+			"create": "Create Rule",
+			"update": "Update Rule"
+		}
+	},
+	"columns": {
+		"grapheme": "Word",
+		"ruleType": "Type",
+		"pronunciation": "Pronunciation",
+		"locale": "Locale",
+		"description": "Description",
+		"actions": "Actions"
+	},
+	"dictionaryColumns": {
+		"name": "Name",
+		"createdAt": "Created",
+		"actions": "Actions"
+	}
+}

@@ -1859,6 +1859,18 @@
 				"audioDesc": "Adjust audio processing options for this campaign.",
 				"noiseCancellationLabel": "Noise cancellation",
 				"noiseCancellationDesc": "Suppress background noise and apply voice activity detection tuning on outbound calls.",
+				"dictionary": {
+					"title": "Pronunciation Dictionary",
+					"description": "Assign a pronunciation dictionary so the agent pronounces specific words correctly during calls.",
+					"selectPlaceholder": "Choose a dictionary",
+					"noDictionary": "None (no dictionary)",
+					"noDictionariesHint": "No dictionaries available. Create one in Settings → Dictionary Rules.",
+					"save": "Save",
+					"detach": "Detach dictionary from agent",
+					"saveSuccess": "Dictionary attached to agent successfully",
+					"saveError": "Failed to update pronunciation dictionary",
+					"detachSuccess": "Dictionary detached from agent successfully"
+				},
 				"languages": {
 					"es": "Spanish",
 					"en": "English",
@@ -2034,6 +2046,20 @@
 		"asrKeywordsPlaceholder": "Type a keyword and press Enter",
 		"noiseCancellationLabel": "Noise cancellation",
 		"noiseCancellationDesc": "When enabled, applies noise suppression and voice activity detection tuning to outbound calls.",
+		"pronunciationDictionary": {
+			"title": "Pronunciation Dictionary",
+			"description": "Assign a dictionary so the agent pronounces specific words correctly.",
+			"selectPlaceholder": "Choose a dictionary",
+			"noDictionary": "None (no dictionary)",
+			"noDictionariesHint": "No dictionaries available. Create one in Settings → Dictionary Rules.",
+			"save": "Save",
+			"detachTooltip": "Detach dictionary from agent",
+			"notifications": {
+				"saveSuccess": "Dictionary attached to agent successfully",
+				"saveError": "Failed to update pronunciation dictionary",
+				"detachSuccess": "Dictionary detached from agent successfully"
+			}
+		},
 		"createObjectiveTitle": "Create New Objective"
 	},
 	"disposition": {

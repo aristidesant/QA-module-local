@@ -81,6 +81,9 @@ const SchedulerPredefinedParamsPage = React.lazy(
 const PhoneNumbersPage = React.lazy(
 	() => import('./modules/configurations/PhoneNumbers/PhoneNumbersPage')
 );
+const DictionaryRulesPage = React.lazy(
+	() => import('./modules/configurations/DictionaryRules/DictionaryRulesPage')
+);
 const ConfigurationsPage = React.lazy(
 	() => import('./modules/configurations/ConfigurationsPage')
 );
@@ -425,6 +428,21 @@ const router = createBrowserRouter([
 											}
 										>
 											<PhoneNumbersPage />
+										</Suspense>
+									</I18nNamespaceLoader>
+								),
+							},
+							{
+								path: 'dictionary-rules',
+								id: 'dictionary-rules',
+								element: (
+									<I18nNamespaceLoader>
+										<Suspense
+											fallback={
+												<SuspenseFallback message='Loading dictionary rules...' />
+											}
+										>
+											<DictionaryRulesPage />
 										</Suspense>
 									</I18nNamespaceLoader>
 								),

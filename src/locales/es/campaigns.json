@@ -1974,6 +1974,18 @@
 				"audioDesc": "Ajusta las opciones de procesamiento de audio para esta campaña.",
 				"noiseCancellationLabel": "Cancelación de ruido",
 				"noiseCancellationDesc": "Suprime el ruido de fondo y aplica ajuste de detección de actividad de voz en las llamadas salientes.",
+				"dictionary": {
+					"title": "Diccionario de Pronunciación",
+					"description": "Asigna un diccionario de pronunciación para que el agente pronuncie correctamente palabras específicas durante las llamadas.",
+					"selectPlaceholder": "Elige un diccionario",
+					"noDictionary": "Ninguno (sin diccionario)",
+					"noDictionariesHint": "No hay diccionarios disponibles. Crea uno en Configuración → Reglas de Diccionario.",
+					"save": "Guardar",
+					"detach": "Desvincular diccionario del agente",
+					"saveSuccess": "Diccionario asignado al agente exitosamente",
+					"saveError": "Error al actualizar el diccionario de pronunciación",
+					"detachSuccess": "Diccionario desvinculado del agente exitosamente"
+				},
 				"languages": {
 					"es": "Español",
 					"en": "Inglés",
@@ -2149,6 +2161,20 @@
 		"asrKeywordsPlaceholder": "Escribe una palabra y presiona Enter",
 		"noiseCancellationLabel": "Cancelación de ruido",
 		"noiseCancellationDesc": "Cuando está activado, aplica supresión de ruido y ajuste de detección de actividad de voz en las llamadas salientes.",
+		"pronunciationDictionary": {
+			"title": "Diccionario de Pronunciación",
+			"description": "Asigna un diccionario para que el agente pronuncie correctamente palabras específicas.",
+			"selectPlaceholder": "Elige un diccionario",
+			"noDictionary": "Ninguno (sin diccionario)",
+			"noDictionariesHint": "No hay diccionarios disponibles. Crea uno en Configuración → Reglas de Diccionario.",
+			"save": "Guardar",
+			"detachTooltip": "Desvincular diccionario del agente",
+			"notifications": {
+				"saveSuccess": "Diccionario asignado al agente exitosamente",
+				"saveError": "Error al actualizar el diccionario de pronunciación",
+				"detachSuccess": "Diccionario desvinculado del agente exitosamente"
+			}
+		},
 		"createObjectiveTitle": "Crear Nuevo Objetivo"
 	}
 }
