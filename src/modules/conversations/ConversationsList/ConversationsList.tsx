@@ -300,6 +300,10 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 				onClose={handleCloseDrawer}
 				title={t('details.title')}
 				size='lg'
+				classNames={{
+					content: styles.detailsDrawerContent,
+					body: styles.detailsDrawerBody,
+				}}
 			>
 				{selectedConversationId !== null ? (
 					<ConversationDetails id={selectedConversationId} />

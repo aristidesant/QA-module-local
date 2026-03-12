@@ -1,6 +1,14 @@
-import { Box, Tabs, Loader, Center, Stack } from '@mantine/core';
-import { IconInfoCircle, IconFileText } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import {
+	Box,
+	Tabs,
+	Loader,
+	Center,
+	Stack,
+	ActionIcon,
+	Tooltip,
+} from '@mantine/core';
+import { IconInfoCircle, IconFileText, IconArrowUp } from '@tabler/icons-react';
+import { useMemo, useState, useCallback, useRef } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import type { TranscriptContent } from '~/models/ConversationsModels';
@@ -10,7 +18,6 @@ import AccessDenied from '~/components/AccessDenied';
 import { useTranslation } from 'react-i18next';
 
 import { TranscriptViewer } from '~/modules/conversations/TranscriptViewer';
-// Analysis and Metadata panels removed from tabs — components may be deleted if unused elsewhere.
 import styles from './ConversationDetails.module.css';
 import ConversationOverview from '../ConversationOverview';
 import { useGetConversation } from '~/queries/conversationsQueries';
@@ -30,6 +37,18 @@ export function ConversationDetails({ id }: ConversationDetailsProps) {
 
 	const { canAccessModule } = usePermissions();
 	const canViewConversations = canAccessModule(ModuleEnum.CONVERSATIONS);
+
+	const [activeTab, setActiveTab] = useState<string | null>('overview');
+	const [showBackToTop, setShowBackToTop] = useState(false);
+	const transcriptPanelRef = useRef<HTMLDivElement>(null);
+
+	const handlePanelScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+		setShowBackToTop(e.currentTarget.scrollTop > 200);
+	}, []);
+
+	const scrollToTop = useCallback(() => {
+		transcriptPanelRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+	}, []);
 
 	const duration = useMemo(() => {
 		const duration =
@@ -84,10 +103,12 @@ export function ConversationDetails({ id }: ConversationDetailsProps) {
 	return (
 		<Box className={styles.container}>
 			<Tabs
-				defaultValue='overview'
+				value={activeTab}
+				onChange={setActiveTab}
 				classNames={{
 					tab: styles.tab,
 					list: styles.tabList,
+					root: styles.tabsRoot,
 				}}
 			>
 				<Tabs.List grow>
@@ -105,21 +126,41 @@ export function ConversationDetails({ id }: ConversationDetailsProps) {
 					</Tabs.Tab>
 				</Tabs.List>
 
-				<Tabs.Panel value='overview' pt='md'>
-					{conversation ? (
-						<Stack>
-							<ConversationOverview
-								conversation={conversation}
-								status={safeStatus}
-								duration={duration}
-							/>
-						</Stack>
-					) : null}
-				</Tabs.Panel>
+				{activeTab === 'overview' && (
+					<div className={styles.panelWrapper}>
+						{conversation ? (
+							<Stack>
+								<ConversationOverview
+									conversation={conversation}
+									status={safeStatus}
+									duration={duration}
+								/>
+							</Stack>
+						) : null}
+					</div>
+				)}
 
-				<Tabs.Panel value='transcript' pt='md'>
-					<TranscriptViewer transcript={safeTranscriptContent.transcript} />
-				</Tabs.Panel>
+				{activeTab === 'transcript' && (
+					<div
+						ref={transcriptPanelRef}
+						className={styles.panelWrapper}
+						onScroll={handlePanelScroll}
+					>
+						<TranscriptViewer transcript={safeTranscriptContent.transcript} />
+						<Tooltip label={t('details.backToTop')} position='left'>
+							<ActionIcon
+								variant='filled'
+								size='lg'
+								radius='xl'
+								aria-label={t('details.backToTop')}
+								onClick={scrollToTop}
+								className={`${styles.backToTop} ${showBackToTop ? styles.backToTopVisible : ''}`}
+							>
+								<IconArrowUp size={18} />
+							</ActionIcon>
+						</Tooltip>
+					</div>
+				)}
 			</Tabs>
 		</Box>
 	);
