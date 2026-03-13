@@ -33,7 +33,7 @@ export const CampaignSyncButton = ({
 	isLoading: isLoadingProp,
 	selectedAgentId: selectedAgentIdProp,
 }: CampaignSyncButtonProps) => {
-	const { t } = useTranslation(['campaign.form.sync', 'common']);
+	const { t } = useTranslation(['campaign.form.shared', 'common']);
 	const queryClient = useQueryClient();
 	const selectedCampaign = useCampaignsStore((state) => state.selectedCampaign);
 	const shouldFetchAgents = !agentsProp;

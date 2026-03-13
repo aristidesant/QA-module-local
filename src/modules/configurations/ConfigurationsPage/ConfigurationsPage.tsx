@@ -8,6 +8,7 @@ import {
 	IconPhone,
 	IconChartBar,
 	IconBook2,
+	IconChartBar,
 } from '@tabler/icons-react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import { useEffect } from 'react';
