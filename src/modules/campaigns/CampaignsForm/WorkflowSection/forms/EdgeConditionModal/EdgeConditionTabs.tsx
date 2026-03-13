@@ -4,7 +4,11 @@ import { useEdgeConditionModal } from './EdgeConditionModalContext';
 import ConditionFields from './ConditionFields';
 
 const EdgeConditionTabs = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const { activeTab, setActiveTab } = useEdgeConditionModal();
 
 	return (

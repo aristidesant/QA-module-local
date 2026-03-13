@@ -4,6 +4,7 @@
 	"tabs": {
 		"global": "Global",
 		"campaign": "Campaign",
+		"metricCatalog": "Metric Catalog",
 		"regional": "Regional",
 		"scheduler": "Scheduler",
 		"phoneNumbers": "Phone Numbers"

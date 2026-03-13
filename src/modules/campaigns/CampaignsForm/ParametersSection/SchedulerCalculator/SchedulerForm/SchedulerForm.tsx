@@ -79,7 +79,7 @@ const initialFormValues: EstimationCalculationFormData = {
 };
 
 const SchedulerForm: React.FC = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.params', 'common']);
 	const { mode, setMode, setFormValues, calculate } =
 		useSchedulerCalculatorStore();
 

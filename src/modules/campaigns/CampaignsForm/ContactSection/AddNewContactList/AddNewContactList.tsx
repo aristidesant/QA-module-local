@@ -22,7 +22,7 @@ export const AddNewContactList = ({
 	campaignId,
 	objectiveId,
 }: AddNewContactListProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.contacts', 'common']);
 	const [summary, setSummary] = useState<ContactFileSummary | null>(null);
 	// Mutation to upload contact list file to backend
 	const uploadContactGroupFileMutation = useUploadContactGroupFile({});

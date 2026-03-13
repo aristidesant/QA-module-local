@@ -14,7 +14,11 @@ import workflowNodeStyles from '../../WorkflowNode/WorkflowNode.module.css';
 import styles from './PhoneNumberNode.module.css';
 
 const PhoneNumberNode = (props: NodeProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const nodeData = props.data as unknown as PhoneNumberTransferNode;
 	const nodeType = (props.type ?? nodeData.type) as WorkflowNodeType;
 

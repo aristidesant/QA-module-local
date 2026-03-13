@@ -1,0 +1,28 @@
+/* Match the new floating card style of active dashboard items */
+.dashboardCard {
+	border-radius: 8px;
+	padding: 9px 10px;
+	background: rgba(0, 0, 0, 0.025);
+}
+
+.headerRow {
+	display: flex;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-sm);
+	align-items: flex-start;
+}
+
+.skeletonContent {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+}
+
+.skeletonActions {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	flex-shrink: 0;
+}

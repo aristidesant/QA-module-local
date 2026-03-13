@@ -21,7 +21,11 @@ import { useTranslation } from 'react-i18next';
  * Inactive tools can be added via the modal triggered by the "Add tool" button.
  */
 const CampaignConfigurationTools: React.FC = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 	const form = useCampaignFormContext();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 

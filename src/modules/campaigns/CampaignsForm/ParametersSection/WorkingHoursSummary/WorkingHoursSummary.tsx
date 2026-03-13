@@ -31,7 +31,7 @@ const formatDayName = (day: string) => {
 export const WorkingHoursSummary: React.FC<WorkingHoursSummaryProps> = ({
 	workingHours,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.params', 'common']);
 
 	// Get active days
 	const activeDays = DAYS.filter((day) => workingHours[day]?.enabled);

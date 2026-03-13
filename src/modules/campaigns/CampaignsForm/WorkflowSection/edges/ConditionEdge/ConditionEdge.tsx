@@ -30,7 +30,11 @@ const ConditionEdge: FC<EdgeProps> = ({
 	data,
 	markerEnd,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const { openEdge, deleteEdge, toggleEdgeActions } =
 		useWorkflowCanvasActions();
 	const isActionsOpen = useIsEdgeActionsOpen(id);

@@ -28,7 +28,11 @@ const ToolConfigModal: React.FC<ToolConfigModalProps> = ({
 	toolConfig,
 	onSave,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 	const form = useForm({
 		initialValues: {
 			description: toolConfig.description || '',

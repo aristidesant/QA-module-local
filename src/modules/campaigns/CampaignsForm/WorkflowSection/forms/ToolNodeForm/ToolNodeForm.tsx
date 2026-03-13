@@ -29,7 +29,11 @@ const ToolNodeForm = ({
 	workflow,
 	onWorkflowChange,
 }: ToolNodeFormProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const node = workflow?.nodes[nodeId] as ToolNode | undefined;
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [searchValue, setSearchValue] = useState('');

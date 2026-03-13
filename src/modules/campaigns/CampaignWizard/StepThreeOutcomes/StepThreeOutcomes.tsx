@@ -42,7 +42,11 @@ interface StepThreeOutcomesProps {
 export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 	onNext,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaigns.wizard',
+		'campaign.form.shared',
+		'common',
+	]);
 	const { createdCampaign, setHasOutcomeFlow } = useCampaignWizardStore();
 
 	const [modalOpened, setModalOpened] = useState(false);

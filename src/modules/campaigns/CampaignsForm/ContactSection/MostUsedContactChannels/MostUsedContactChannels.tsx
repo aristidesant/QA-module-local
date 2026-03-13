@@ -11,7 +11,7 @@ export const MostUsedContactChannels = ({
 	score = 82,
 	maxScore = 100,
 }: MostUsedContactChannelsProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.contacts', 'common']);
 	return (
 		<Card className={styles.card}>
 			<Group gap='xs' mb='xs'>

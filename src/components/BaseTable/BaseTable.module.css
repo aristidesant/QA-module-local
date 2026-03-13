@@ -3,7 +3,7 @@
 	overflow: auto;
 	border: 1px solid var(--mantine-color-gray-2);
 	border-radius: var(--mantine-radius-md);
-	background: var(--mantine-color-white);
+	background: color-mix(in srgb, var(--mantine-color-white) 94%, #f8f5ee);
 	margin: 0;
 	padding: 0;
 }
@@ -15,7 +15,7 @@
 }
 
 .thead {
-	background: var(--mantine-color-gray-0);
+	background: color-mix(in srgb, var(--mantine-color-gray-0) 84%, #f1ece2);
 }
 
 .th,
@@ -56,12 +56,12 @@
 }
 
 .sortable:hover .sortIcon {
-	color: var(--mantine-color-blue-6);
+	color: var(--mantine-color-gray-7);
 	opacity: 1;
 }
 
 .th[data-sorted] .sortIcon {
-	color: var(--mantine-color-blue-6);
+	color: var(--mantine-color-gray-8);
 	opacity: 1;
 }
 
@@ -70,23 +70,19 @@
 }
 
 .tbody tr:hover td {
-	background: var(--mantine-color-gray-0);
+	background: color-mix(in srgb, var(--mantine-color-gray-0) 74%, #f3eee4);
 }
 
 .reorderingRow td {
-	background: var(--mantine-color-blue-0) !important;
-}
-
-.reorderingRow td:first-child {
-	box-shadow: inset 3px 0 0 var(--mantine-color-blue-6);
+	background: var(--mantine-color-gray-0) !important;
 }
 
 .selectedRow td {
-	background: #f5f9ff !important;
-}
-
-.selectedRow td:first-child {
-	box-shadow: inset 3px 0 0 var(--mantine-color-blue-6);
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-white) 72%,
+		#efe6da
+	) !important;
 }
 
 .emptyRow {
@@ -141,12 +137,11 @@
 }
 
 .th {
-	font-size: 11px;
+	font-size: 12px;
 	font-weight: 600;
-	letter-spacing: 0.03em;
-	text-transform: uppercase;
-	color: var(--mantine-color-gray-6);
-	background: #fafbfc;
+	letter-spacing: -0.01em;
+	color: var(--mantine-color-gray-7);
+	background: color-mix(in srgb, var(--mantine-color-gray-0) 84%, #f1ece2);
 }
 
 .td {

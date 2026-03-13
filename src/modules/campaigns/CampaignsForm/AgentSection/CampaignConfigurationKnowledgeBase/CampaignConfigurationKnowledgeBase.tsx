@@ -25,7 +25,11 @@ import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 
 const CampaignConfigurationKnowledgeBase: React.FC = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 	const form = useCampaignFormContext();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const {

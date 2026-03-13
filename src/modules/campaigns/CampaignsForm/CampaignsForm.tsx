@@ -47,6 +47,7 @@ import CampaignSyncButton from './components/CampaignSyncButton';
 import AgentSectionRightPanel from './AgentSection/AgentSectionRightPanel';
 import GeneralSectionRightPanel from './GeneralSection/GeneralSectionRightPanel';
 import AppDrawer from '~/components/AppDrawer';
+import DashboardSection from './DashboardSection';
 import styles from './CampaignsForm.module.css';
 
 interface CampaignsFormProps {
@@ -54,6 +55,18 @@ interface CampaignsFormProps {
 	loading?: boolean;
 	onBack?: () => void;
 }
+
+const campaignFormTabNamespaces: Record<string, string> = {
+	general: 'campaign.form.general',
+	agents: 'campaign.form.agents',
+	workflow: 'campaign.form.workflow',
+	outcomes: 'campaign.form.outcomes',
+	'do-not-call': 'campaign.form.do-not-call',
+	params: 'campaign.form.params',
+	analytics: 'campaign.form.analytics',
+	dashboards: 'campaign.form.dashboards',
+	'report-values': 'campaign.form.report-values',
+};
 
 const getWorkflowCounts = (
 	workflow?: Partial<Campaign>['agentConfig'] extends infer T
@@ -132,10 +145,15 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		sunday: { enabled: false, from: '09:00', to: '17:30' },
 	};
 
+	const activeFormNamespace =
+		campaignFormTabNamespaces[selectedTab] ?? 'campaign.form.shared';
+
 	const { t } = useTranslation([
-		'campaigns',
+		'campaign.form.shared',
+		activeFormNamespace,
 		'campaign.detail',
 		'campaign.contact-list',
+		'do-not-call',
 		'common',
 	]);
 
@@ -297,14 +315,12 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 				notifications.show({
 					title: t('form.validation.workflowInvalidTitle', {
 						defaultValue: 'Workflow Configuration Error',
-						ns: 'common',
 					}),
 					message:
 						validationResult.errorMessage ||
 						t('form.validation.workflowInvalidMessage', {
 							defaultValue:
 								'All edges must have at least one condition configured',
-							ns: 'common',
 						}),
 					color: 'red',
 				});
@@ -416,13 +432,13 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 					title={
 						campaign?.id
 							? t('form.title.edit', { name: campaign.name })
-							: t('list.createCampaign')
+							: t('form.title.create')
 					}
 					titleRight={
 						campaign?.id && (
 							<Group gap='xs'>
 								<CampaignSyncButton />
-								<Tooltip label={t('columns.viewCampaign')} withArrow>
+								<Tooltip label={t('form.actions.viewCampaign')} withArrow>
 									<ActionIcon
 										variant='light'
 										size='lg'
@@ -544,6 +560,9 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 									disabled={!form.isDirty()}
 								/>
 							</form>
+						)}
+						{selectedTab === 'dashboards' && (
+							<DashboardSection campaignId={campaign?.id} />
 						)}
 					</Stack>
 				</ContentContainer>

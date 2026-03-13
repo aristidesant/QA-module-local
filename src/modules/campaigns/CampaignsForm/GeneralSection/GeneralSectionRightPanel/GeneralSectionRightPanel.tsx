@@ -26,7 +26,12 @@ import { useCampaignFormContext } from '../../../campaignFormFunctions';
 import CampaignConfigurationPhoneNumber from '../../AgentSection/CampaignConfigurationPhoneNumber/CampaignConfigurationPhoneNumber';
 
 const GeneralSectionRightPanel: React.FC = () => {
-	const { t } = useTranslation(['campaigns', 'campaign.detail', 'common']);
+	const { t } = useTranslation([
+		'campaign.form.general',
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 	const form = useCampaignFormContext();
 	const queryClient = useQueryClient();
 	const [isObjectiveModalOpen, setIsObjectiveModalOpen] = useState(false);

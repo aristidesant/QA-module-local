@@ -117,7 +117,7 @@ function ColumnMappingCard({
 	selectedSchemaId,
 	showError,
 }: ColumnMappingCardProps) {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.contacts', 'common']);
 
 	// Fetch system columns from client config
 	const { data: systemConfig } = useGetClientConfig('contact_columns');

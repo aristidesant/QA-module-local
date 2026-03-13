@@ -1,0 +1,232 @@
+{
+	"wizard": {
+		"steps": {
+			"general": {
+				"label": "General",
+				"description": "Description",
+				"eyebrow": "General setup",
+				"title": "Campaign essentials",
+				"intro": "Define how this campaign is presented to your team and contacts. The name, description, and type keep everyone aligned.",
+				"identityTitle": "Identity",
+				"identityDesc": "Set the tone and structure for this campaign.",
+				"routingTitle": "Routing",
+				"routingDesc": "Match this campaign to the right number and objective.",
+				"routingDescInbound": "Assign the phone number that will receive inbound calls.",
+				"campaignName": "Campaign Name",
+				"campaignNameDesc": "Give your campaign a descriptive name",
+				"campaignNamePlaceholder": "Enter campaign name",
+				"descriptionDesc": "Briefly describe the purpose of this campaign",
+				"descriptionPlaceholder": "Describe your campaign",
+				"campaignType": "Campaign Type",
+				"campaignTypeDesc": "Choose how calls will be routed.",
+				"campaignTypeOutbound": "Outbound",
+				"campaignTypeInbound": "Inbound",
+				"defaultWaves": "Default Waves",
+				"defaultWavesDesc": "How many waves each new contact list should run before stopping",
+				"defaultWaveDelay": "Default delay between waves (seconds)",
+				"defaultWaveDelayDesc": "Delay between waves for new contact lists. Use 0 for no additional wait.",
+				"phoneNumber": "Phone Number",
+				"phoneNumberDesc": "Select the phone number for this campaign",
+				"phoneNumberPlaceholder": "Choose a phone number",
+				"objective": "Campaign Objective",
+				"objectiveDesc": "Choose the main objective this campaign aims to achieve",
+				"objectivePlaceholder": "Select an objective",
+				"createObjective": "Create new objective",
+				"modalCreateObjective": "Create Campaign Objective",
+				"errorVoices": "No agent voices available. Please contact support.",
+				"successCreatedTitle": "Campaign Created",
+				"successCreatedMessage": "Campaign created successfully. Continue to configure your agent.",
+				"errorTitle": "Error",
+				"alertTitle": "Campaign Creation Failed",
+				"alertMessage": "Please check the notification for details.",
+				"submit": "Save & Continue",
+				"validation": {
+					"nameRequired": "Campaign name is required",
+					"descriptionRequired": "Description is required",
+					"phoneIdRequired": "Phone number is required",
+					"wavesRequired": "Waves must be at least 1",
+					"waveDelayRequired": "Wave delay must be 0 or greater",
+					"objectiveRequired": "Campaign objective is required"
+				}
+			},
+			"agent": {
+				"label": "Agent",
+				"description": "Agent setup",
+				"eyebrow": "Agent configuration",
+				"title": "Shape the conversation",
+				"intro": "Configure behavior, language, and prompt for the agent.",
+				"setupTitle": "Conversation Setup",
+				"setupDesc": "Select behavior, language, and greeting for conversation start.",
+				"behaviorLabel": "Agent Behavior",
+				"behaviorDesc": "Baseline configuration",
+				"behaviorPlaceholder": "Choose behavior",
+				"languageLabel": "Language",
+				"languageDesc": "Response language",
+				"languagePlaceholder": "Select language",
+				"firstMessageLabel": "Agent First Message",
+				"firstMessageDesc": "Initial greeting",
+				"firstMessagePlaceholder": "Enter the first message your agent will send...",
+				"promptTitle": "Agent Prompt",
+				"promptDesc": "Review the locked prompt. Use Edit to refine instructions.",
+				"promptContent": "Prompt content",
+				"promptHint": "This prompt is managed centrally. Edits will open the full editor.",
+				"editPrompt": "Edit prompt",
+				"promptPlaceholder": "AI agent prompt",
+				"loading": "Loading campaign data...",
+				"errorCampaignNotFound": "Campaign not found. Please start from step 1.",
+				"successTitle": "Agent Configured",
+				"successMessage": "Agent configuration saved successfully.",
+				"promptUpdatedTitle": "Prompt Updated",
+				"promptUpdatedMessage": "Agent prompt has been updated",
+				"submit": "Save & Continue",
+				"validation": {
+					"languageRequired": "Language is required",
+					"promptRequired": "Agent prompt is required"
+				},
+				"languages": {
+					"es": "Spanish",
+					"en": "English",
+					"fr": "French",
+					"de": "German",
+					"it": "Italian",
+					"pt": "Portuguese"
+				}
+			},
+			"outcomes": {
+				"label": "Outcomes",
+				"description": "Outcome configuration",
+				"eyebrow": "Outcome routing",
+				"title": "Design the flow",
+				"intro": "Build a simple map that tells the system what to do after each conversation. Keep the experience consistent for every contact.",
+				"configTitle": "Outcome Configuration",
+				"configDesc": "Set up call outcomes for this campaign. Define how calls should be categorized and what actions to take based on different scenarios.",
+				"importFromCampaign": "Import from Campaign",
+				"createNew": "Create New",
+				"noFlowConfigured": "No outcome flow configured",
+				"createFlowDesc": "Create an outcome flow to define how calls should be categorized and processed in your campaign.",
+				"createFlowButton": "Create Outcome Flow",
+				"importTitle": "Import Flow",
+				"successCreatedTitle": "Outcome Flow Created",
+				"successCreatedMessage": "Your outcome flow has been created successfully. Click \"Save & Continue\" to proceed.",
+				"successImportedTitle": "Outcome Flow Imported",
+				"successImportedMessage": "Successfully imported outcome flow from \"{{name}}\".",
+				"errorCampaignNotFound": "Campaign not found. Please start from step 1.",
+				"errorImportFailed": "Failed to import outcome flow",
+				"errorImportTitle": "Import Failed",
+				"flowRemovedTitle": "Flow Removed",
+				"flowRemovedImported": "The imported flow has been removed.",
+				"flowRemovedCreated": "The outcome flow has been removed from this campaign.",
+				"errorRemoveFailed": "Failed to remove the outcome flow. Please try again.",
+				"errorRemoveImportedFailed": "Failed to remove the imported flow. Please try again.",
+				"noFlowFoundTitle": "No Flow Found",
+				"noFlowFoundMessage": "There is no outcome flow to remove for this campaign.",
+				"noOutcomeFlowTitle": "No Outcome Flow",
+				"noOutcomeFlowMessage": "Please create or import an outcome flow before continuing.",
+				"loading": "Loading campaign data...",
+				"previewTitle": "Outcome Flow Preview",
+				"noFlowData": "No flow data available",
+				"useFlow": "Use flow",
+				"submit": "Continue",
+				"picker": {
+					"searchPlaceholder": "Search campaigns...",
+					"refresh": "Refresh",
+					"outcomeFlow": "Outcome Flow",
+					"previewTooltip": "Preview flow",
+					"useFlow": "Use flow",
+					"noMatches": "No campaigns match your search",
+					"noFlows": "No campaigns with outcome flows available"
+				},
+				"summary": {
+					"importedSuccess": "Outcome flow imported successfully",
+					"existingConfigured": "Outcome flow already configured",
+					"createdSuccess": "Outcome flow created successfully",
+					"imported": "Imported",
+					"from": "From: {{name}}",
+					"unknownCampaign": "Unknown campaign",
+					"outcome": "outcome",
+					"outcomes": "outcomes",
+					"flowReady": "Flow ready for campaign",
+					"previewFlow": "Preview Flow",
+					"startOver": "Start Over"
+				}
+			},
+			"parameters": {
+				"label": "Parameters",
+				"description": "Working hours & settings",
+				"eyebrow": "Scheduling",
+				"title": "Control your calling window",
+				"intro": "Keep outreach aligned with business hours and compliance. Copy schedules across days or fine-tune each block.",
+				"workingHoursTitle": "Working Hours",
+				"workingHoursDesc": "Define the days and time ranges during which your agents are allowed to make calls.",
+				"schedulerCalculator": "Scheduler Calculator",
+				"loading": "Loading campaign data...",
+				"submit": "Save & Continue"
+			},
+			"complete": {
+				"label": "Complete",
+				"description": "Campaign ready",
+				"eyebrow": "Step 5 · Completed",
+				"title": "Campaign is live and ready",
+				"descriptionText": "Your campaign is configured. Review the summary or jump straight to the campaign overview.",
+				"descriptionNamed": "“{{name}}” is configured. Review the summary or jump straight to the campaign overview.",
+				"snapshotTitle": "Campaign snapshot",
+				"name": "Name",
+				"type": "Type",
+				"status": "Status",
+				"budget": "Budget",
+				"momentumTitle": "Keep the momentum",
+				"momentumList": [
+					"Review dispositions and outcome automations.",
+					"Upload your contact list or connect a segment.",
+					"Schedule working hours and throttling rules.",
+					"Launch a test call to validate the flow."
+				],
+				"tip": "Tip: monitor performance from the campaign dashboard once calls start.",
+				"viewCampaign": "View campaign",
+				"closeWizard": "Close wizard"
+			}
+		},
+		"knowledgeBase": {
+			"form": {
+				"name": {
+					"label": "Name",
+					"placeholder": "e.g., Product FAQs",
+					"errorRequired": "Name is required"
+				},
+				"description": {
+					"label": "Description",
+					"placeholder": "Short internal note about this knowledge base"
+				},
+				"content": {
+					"label": "Content",
+					"placeholder": "Paste a URL or text content here...",
+					"description": "Paste a URL to fetch content from a webpage, or enter text directly",
+					"descriptionWithFile": "Remove the file above to enter text or URL instead"
+				},
+				"file": {
+					"label": "Or upload a file",
+					"placeholder": "Choose a PDF file or drop it here",
+					"description": "Supported: PDF. Max 25MB.",
+					"descriptionWithContent": "Clear the text above to upload a file instead"
+				}
+			},
+			"contentInfo": {
+				"fileLabel": "File",
+				"urlDetected": "URL detected",
+				"urlDescription": "Content will be fetched from the provided link",
+				"textLabel": "Text content",
+				"textDescription": "Will be used as-is"
+			},
+			"actions": {
+				"cancel": "Cancel",
+				"create": "Create Knowledge Base"
+			},
+			"notifications": {
+				"successTitle": "Success",
+				"successMessage": "Knowledge base created successfully",
+				"errorTitle": "Error",
+				"errorMessage": "Failed to create knowledge base"
+			}
+		}
+	}
+}

@@ -1,0 +1,31 @@
+{
+	"general": {
+		"title": "General Information",
+		"description": "Basic campaign settings and configuration.",
+		"campaignName": "Campaign Name",
+		"enterCampaignName": "Enter campaign name",
+		"descriptionLabel": "Description",
+		"describeYourCampaign": "Describe your campaign",
+		"campaignObjective": "Campaign Objective",
+		"campaignObjectiveDesc": "Select the objective for this campaign",
+		"failedToLoadObjectives": "Failed to load objectives",
+		"loadingObjectives": "Loading objectives...",
+		"selectObjective": "Select an objective",
+		"createNewObjective": "Create new objective",
+		"defaultWaves": "Default Waves",
+		"defaultWavesDesc": "Number of waves to run for each contact list",
+		"defaultWaveDelay": "Default delay between waves (seconds)",
+		"defaultWaveDelayDesc": "Delay between waves for new contact lists. Use 0 for no additional wait.",
+		"enterWaveDelaySeconds": "Enter delay in seconds",
+		"enterNumberOfWaves": "Enter number of waves",
+		"asrKeywords": "ASR keywords",
+		"asrKeywordsDesc": "Add words the speech recognition engine should pay special attention to.",
+		"asrKeywordsHelp": "Type a keyword and press Enter to add it.",
+		"asrKeywordsPlaceholder": "Type a keyword and press Enter",
+		"noiseCancellationLabel": "Noise cancellation",
+		"noiseCancellationDesc": "When enabled, applies noise suppression and voice activity detection tuning to outbound calls.",
+		"createObjectiveTitle": "Create New Objective",
+		"settingsTitle": "Campaign settings",
+		"settingsDescription": "Define language and wave limits"
+	}
+}

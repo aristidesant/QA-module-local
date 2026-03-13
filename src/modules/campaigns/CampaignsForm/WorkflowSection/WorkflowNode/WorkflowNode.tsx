@@ -16,7 +16,11 @@ export const WorkflowNodeWrapper: React.FC<WorkflowNodeWrapperProps> = ({
 	selected,
 	sideActions,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 
 	const nodeData = data as unknown as WorkflowNodeData;
 	const fallbackLabel =

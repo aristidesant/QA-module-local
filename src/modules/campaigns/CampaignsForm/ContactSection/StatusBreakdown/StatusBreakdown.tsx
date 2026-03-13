@@ -8,7 +8,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export const StatusBreakdown = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.contacts', 'common']);
 	const selectedCampaign = useCampaignsStore((state) => state.selectedCampaign);
 
 	const { data: summaryData, isLoading } = useGetContactSummaryGroups(

@@ -17,7 +17,11 @@ interface AgentCampaignPreviewProps {
 export const AgentCampaignPreview: React.FC<AgentCampaignPreviewProps> = ({
 	agentId,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 	const { data: agent, isLoading, refetch } = useGetAgent(agentId);
 
 	const openVoiceChangeModal = () => {

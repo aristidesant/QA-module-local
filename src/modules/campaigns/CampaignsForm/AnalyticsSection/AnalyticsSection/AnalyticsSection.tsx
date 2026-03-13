@@ -16,7 +16,7 @@ import {
 } from '../analyticsFormContext';
 
 const AnalyticsSection = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.analytics', 'common']);
 	const campaignForm = useCampaignFormContext();
 	const setRightComponent = useCampaignsStore(
 		(state) => state.setRightComponent

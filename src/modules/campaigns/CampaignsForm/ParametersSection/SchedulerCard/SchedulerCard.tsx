@@ -34,7 +34,7 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 	campaignId,
 	handleReload,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.params', 'common']);
 	const { setRightComponent } = useCampaignsStore((state) => state);
 	const [opened, { open, close }] = useDisclosure(false);
 

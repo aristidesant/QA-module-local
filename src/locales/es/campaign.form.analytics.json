@@ -1,0 +1,259 @@
+{
+	"form": {
+		"analytics": {
+			"title": "Recolección de datos de analytics",
+			"description": "Configura variables dinámicas de datos capturadas durante las conversaciones.",
+			"totalVariables": "{{count}} variable",
+			"totalVariables_other": "{{count}} variables",
+			"empty": "Aún no hay variables configuradas. Agrega tu primera variable para comenzar a recolectar datos de analytics.",
+			"variableCardTitle": "Variable",
+			"actions": {
+				"addVariable": "Agregar variable",
+				"importVariable": "Importar variable",
+				"saveToGroup": "Guardar en grupo",
+				"saveAllToGroup": "Guardar todo en grupo"
+			},
+			"info": {
+				"title": "Captura automática de conversación",
+				"message": "Usa esta sección para capturar automáticamente valores de la conversación. Se recomienda cuando necesitas extraer información específica de forma estructurada."
+			},
+			"fields": {
+				"identifier": "Identificador",
+				"type": "Tipo de dato",
+				"description": "Descripción",
+				"enumValues": "Valores enum (opcional)",
+				"enumValuesCount": "Valores enum ({{count}})",
+				"constantValue": "Valor constante",
+				"dynamicVariable": "Variable dinámica",
+				"isSystemProvided": "Provisto por sistema"
+			},
+			"types": {
+				"boolean": "Boolean",
+				"integer": "Integer",
+				"number": "Number",
+				"string": "String"
+			},
+			"placeholders": {
+				"identifier": "customer_city",
+				"description": "Describe cómo se debe extraer este valor.",
+				"enumValue": "Ingresa un valor enum",
+				"constantValue": "Valor fijo opcional",
+				"dynamicVariable": "Variable de origen opcional"
+			},
+			"descriptionHint": "Esta descripción se envía al LLM y debe explicar cómo extraer el valor desde la transcripción.",
+			"enumHint": "El LLM solo podrá seleccionar entre estos valores predefinidos.",
+			"validation": {
+				"identifierRequired": "El identificador es obligatorio",
+				"identifierUnique": "El identificador debe ser único"
+			},
+			"table": {
+				"identifier": "Identificador",
+				"type": "Tipo de dato",
+				"description": "Descripción",
+				"descriptionTooltipLabel": "Descripción de la variable",
+				"descriptionEmpty": "No hay descripción disponible",
+				"descriptionIconAria": "Ver descripción de la variable",
+				"enum": "Enum",
+				"enumCount": "Enum ({{count}})",
+				"systemProvided": "Sistema",
+				"yes": "Sí",
+				"no": "No",
+				"source": "Origen",
+				"sources": {
+					"manual": "Manual",
+					"customVariable": "Variable personalizada"
+				}
+			},
+			"editor": {
+				"title": "Detalle de variable",
+				"description": "Selecciona y edita una variable desde la tabla.",
+				"labels": {
+					"status": "Estado del borrador"
+				},
+				"states": {
+					"draft": "Cambios sin guardar",
+					"saved": "Actualizado"
+				}
+			},
+			"saveToGroup": {
+				"title": "Guardar Variable en Grupo",
+				"description": "Cree una nueva variable personalizada en el grupo seleccionado usando esta definición de analytics.",
+				"sections": {
+					"identity": "Identidad de la Variable",
+					"destination": "Destino"
+				},
+				"fields": {
+					"label": "Etiqueta",
+					"identifierPreview": "Identificador (técnico)",
+					"group": "Grupo",
+					"category": "Categoría de Campaña (opcional)"
+				},
+				"placeholders": {
+					"label": "Ingrese una etiqueta amigable",
+					"group": "Seleccione un grupo",
+					"category": "Seleccione categoría"
+				},
+				"hints": {
+					"label": "Este es el nombre visible que verán los usuarios para la variable.",
+					"identifier": "Nombre técnico autogenerado que se envía al API."
+				},
+				"actions": {
+					"save": "Guardar en Grupo"
+				},
+				"errors": {
+					"labelRequired": "La etiqueta es obligatoria.",
+					"invalidIdentifier": "El identificador es obligatorio para guardar esta variable."
+				},
+				"notifications": {
+					"success": "Variable guardada en el grupo exitosamente",
+					"error": "Error al guardar la variable en el grupo"
+				}
+			},
+			"import": {
+				"title": "Importar Variables Personalizadas",
+				"subtitle": "Seleccione un grupo de variables e importe los registros que necesita en analytics.",
+				"sections": {
+					"source": "Origen",
+					"table": "Variables"
+				},
+				"fields": {
+					"group": "Grupo",
+					"search": "Buscar"
+				},
+				"placeholders": {
+					"group": "Seleccione un grupo",
+					"search": "Buscar por nombre o descripción..."
+				},
+				"actions": {
+					"import": "Importar variable",
+					"close": "Cerrar"
+				},
+				"selection": {
+					"selectedCount": "{{count}} seleccionadas",
+					"clear": "Limpiar selección",
+					"importSelected": "Importar seleccionadas",
+					"selectAllVisible": "Seleccionar todas las filas visibles",
+					"selectRow": "Seleccionar {{identifier}}"
+				},
+				"table": {
+					"label": "Variable",
+					"identifier": "Identificador",
+					"type": "Tipo",
+					"description": "Descripción",
+					"actions": "Acciones"
+				},
+				"empty": {
+					"selectGroupTitle": "Seleccione un grupo para continuar",
+					"selectGroupDescription": "Elija un grupo de variables personalizadas para listar variables disponibles.",
+					"noVariablesTitle": "No se encontraron variables",
+					"noVariablesDescription": "Este grupo no tiene variables para importar.",
+					"noSearchResultsTitle": "No se encontraron coincidencias",
+					"noSearchResultsDescription": "Pruebe otro término de búsqueda para este grupo."
+				},
+				"notifications": {
+					"summarySuccess": "Importadas: {{importedCount}}, Reemplazadas: {{replacedCount}}, Duplicadas: {{duplicatedCount}}.",
+					"summaryWarning": "Importadas: {{importedCount}}, Reemplazadas: {{replacedCount}}, Duplicadas: {{duplicatedCount}}, Omitidas: {{skippedCount}}, Inválidas: {{invalidCount}}."
+				}
+			},
+			"conflict": {
+				"title": "Conflicto de Identificador",
+				"description": "Ya existe una variable con el identificador \"{{identifier}}\". Elija cómo continuar.",
+				"confirmAction": "Confirmar",
+				"replaceTitle": "Reemplazar existente",
+				"replaceDescription": "Sobrescribir \"{{identifier}}\" con los datos de la nueva variable.",
+				"replaceWarning": "Esta acción no se puede deshacer",
+				"duplicateTitle": "Crear duplicado con sufijo",
+				"duplicateDescription": "Agregar la nueva variable con un identificador único:",
+				"actions": {
+					"replace": "Reemplazar existente",
+					"duplicate": "Crear duplicado con sufijo",
+					"cancel": "Cancelar"
+				}
+			},
+			"bulkConflict": {
+				"title": "Resolver Conflictos de Importación",
+				"description": "Algunas variables ya existen en Analytics. Elija cómo aplicar cada variable entrante.",
+				"fields": {
+					"identifier": "Identificador",
+					"existingType": "Tipo existente",
+					"incomingType": "Tipo entrante",
+					"action": "Acción",
+					"duplicatePreview": "Vista previa duplicado"
+				},
+				"actions": {
+					"replace": "Reemplazar",
+					"duplicate": "Duplicar",
+					"skip": "Omitir",
+					"applyAll": "Aplicar acción a todos los conflictos",
+					"confirm": "Aplicar importación",
+					"cancel": "Cancelar"
+				},
+				"summary": {
+					"conflictCount": "{{count}} conflicto por resolver",
+					"conflictCount_other": "{{count}} conflictos por resolver"
+				}
+			},
+			"saveAllToGroup": {
+				"title": "Guardar Data Collection en Grupo",
+				"description": "Guarde todas las variables de analytics de este data collection en un grupo de variables personalizadas.",
+				"sections": {
+					"destination": "Destino",
+					"summary": "Resumen",
+					"conflicts": "Resolución de conflictos"
+				},
+				"modes": {
+					"existingGroup": "Usar grupo existente",
+					"newGroup": "Crear grupo nuevo"
+				},
+				"fields": {
+					"group": "Grupo",
+					"newGroupName": "Nombre del nuevo grupo",
+					"policy": "Política de conflictos"
+				},
+				"placeholders": {
+					"group": "Seleccione un grupo",
+					"newGroupName": "Ingrese nombre del grupo"
+				},
+				"policies": {
+					"skip": "Omitir variables existentes",
+					"replace": "Reemplazar variables existentes",
+					"duplicate": "Crear duplicados con sufijo"
+				},
+				"summary": {
+					"total": "Filas totales",
+					"valid": "Identificadores válidos",
+					"invalid": "Identificadores inválidos",
+					"conflicts": "{{count}} conflicto detectado",
+					"conflicts_other": "{{count}} conflictos detectados"
+				},
+				"hints": {
+					"mapping": "Cada variable usa una etiqueta humanizada del identificador y guarda el nombre técnico en snake_case.",
+					"replacePermissionRequired": "Necesita permiso de actualización en Settings para reemplazar variables existentes."
+				},
+				"table": {
+					"identifier": "Identificador",
+					"currentType": "Tipo actual",
+					"incomingType": "Tipo entrante"
+				},
+				"actions": {
+					"continue": "Continuar",
+					"save": "Guardar todo",
+					"cancel": "Cancelar",
+					"back": "Volver"
+				},
+				"errors": {
+					"noValidVariables": "No se encontraron identificadores válidos en el data collection.",
+					"groupRequired": "La selección de grupo es obligatoria.",
+					"newGroupNameRequired": "El nombre del nuevo grupo es obligatorio.",
+					"replacePermissionRequired": "No tiene permiso para reemplazar variables existentes."
+				},
+				"notifications": {
+					"success": "Data collection guardado exitosamente",
+					"warning": "Data collection guardado con advertencias",
+					"error": "Error al guardar el data collection",
+					"resultSummary": "Creadas: {{createdCount}}, Actualizadas: {{updatedCount}}, Duplicadas: {{duplicatedCount}}, Omitidas: {{skippedCount}}, Inválidas: {{invalidCount}}."
+				}
+			}
+		}
+	}
+}

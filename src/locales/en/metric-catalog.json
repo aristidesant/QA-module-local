@@ -1,0 +1,142 @@
+{
+	"title": "Metric Catalog",
+	"description": "Manage reusable semantic metrics for campaign dashboards and widgets.",
+	"actions": {
+		"create": "New metric"
+	},
+	"filters": {
+		"scope": "Scope",
+		"source": "Source",
+		"campaignLabel": "Campaign",
+		"allScopes": "All scopes",
+		"allSources": "All sources",
+		"global": "Global",
+		"campaign": "Campaign",
+		"anyCampaign": "Any campaign",
+		"timeSeries": {
+			"label": "Time series",
+			"all": "All",
+			"supported": "Supported",
+			"unsupported": "Not supported"
+		}
+	},
+	"options": {
+		"sourceType": {
+			"CONVERSATION": "Conversation",
+			"ATTRIBUTE": "Attribute",
+			"DISPOSITION": "Disposition"
+		},
+		"aggregationType": {
+			"COUNT": "Count",
+			"SUM": "Sum",
+			"AVG": "Average",
+			"MIN": "Min",
+			"MAX": "Max",
+			"DISTINCT_COUNT": "Distinct count"
+		},
+		"resultType": {
+			"NUMBER": "Number",
+			"BOOLEAN": "Boolean",
+			"STRING": "String"
+		},
+		"valueField": {
+			"VALUE_STRING": "String",
+			"VALUE_NUMBER": "Number",
+			"VALUE_BOOLEAN": "Boolean",
+			"VALUE_JSON": "JSON"
+		}
+	},
+	"table": {
+		"columns": {
+			"name": "Metric",
+			"scope": "Scope",
+			"source": "Source",
+			"aggregation": "Aggregation",
+			"resultType": "Result type",
+			"features": "Capabilities"
+		},
+		"actions": {
+			"edit": "Edit metric",
+			"delete": "Delete metric"
+		},
+		"scope": {
+			"global": "Global",
+			"campaign": "Campaign"
+		},
+		"features": {
+			"groupBy": "Group by",
+			"timeSeries": "Time series"
+		},
+		"empty": "No metrics match the current filters."
+	},
+	"form": {
+		"createTitle": "Create metric",
+		"editTitle": "Edit metric",
+		"description": "Configure the semantic metric that future widgets will consume.",
+		"scope": {
+			"global": "Global",
+			"campaign": "Campaign"
+		},
+		"scopeNote": "This metric will be available at {{scope}} scope.",
+		"fields": {
+			"scope": "Availability",
+			"campaign": "Campaign",
+			"name": "Name",
+			"key": "Key",
+			"description": "Description",
+			"sourceType": "Source type",
+			"aggregationType": "Aggregation",
+			"fieldName": "Field name",
+			"metricKey": "Metric key",
+			"valueField": "Value field",
+			"resultType": "Result type",
+			"supportsGroupBy": "Supports grouped output",
+			"supportsTimeSeries": "Supports time series output",
+			"defaultFilter": "Default filter JSON",
+			"defaultFilterDescription": "Optional JSON array of runtime filters applied by default.",
+			"defaultFilterHint": "Use the backend filter format shown in the analytics dashboard spec."
+		},
+		"sections": {
+			"identification": "Identification",
+			"scope": "Scope",
+			"sourceConfig": "Source configuration",
+			"capabilities": "Capabilities"
+		},
+		"placeholders": {
+			"campaign": "Select campaign",
+			"valueField": "Select typed value field",
+			"selectVariable": "Select a variable",
+			"selectCampaignFirst": "Select a campaign first",
+			"loadingVariables": "Loading variables…"
+		},
+		"actions": {
+			"cancel": "Cancel",
+			"create": "Create metric",
+			"save": "Save metric"
+		},
+		"validation": {
+			"keyRequired": "Metric key is required.",
+			"nameRequired": "Metric name is required.",
+			"campaignRequired": "Campaign is required for campaign-scoped metrics.",
+			"fieldNameRequired": "Field name is required for this source.",
+			"metricKeyRequired": "Metric key is required for attribute metrics.",
+			"valueFieldRequired": "Value field is required for this aggregation.",
+			"defaultFilterInvalid": "Default filter must be valid JSON."
+		}
+	},
+	"delete": {
+		"title": "Delete metric",
+		"message": "Delete {{name}}? This metric will no longer be available for dashboards.",
+		"confirm": "Delete",
+		"cancel": "Cancel"
+	},
+	"notifications": {
+		"createdTitle": "Metric created",
+		"createdMessage": "The metric definition is now available to dashboards.",
+		"updatedTitle": "Metric updated",
+		"updatedMessage": "The metric definition has been updated.",
+		"deletedTitle": "Metric deleted",
+		"deletedMessage": "The metric definition has been removed.",
+		"errorTitle": "Unable to save metric"
+	}
+}

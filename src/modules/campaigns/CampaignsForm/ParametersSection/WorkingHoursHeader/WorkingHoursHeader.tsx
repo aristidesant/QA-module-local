@@ -13,7 +13,7 @@ export const WorkingHoursHeader: React.FC<WorkingHoursHeaderProps> = ({
 	title,
 	description,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.params', 'common']);
 
 	const displayTitle = title || t('scheduler.workingHours.title');
 	const displayDescription =

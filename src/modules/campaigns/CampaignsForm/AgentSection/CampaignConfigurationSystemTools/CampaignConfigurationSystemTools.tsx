@@ -31,7 +31,11 @@ type ToolConfigModel = {
 };
 
 const CampaignConfigurationSystemTools: React.FC = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 	const form = useCampaignFormContext();
 	const { data: systemToolsConfig } = useClientConfigByName('system_tools');
 	const [editingTool, setEditingTool] = useState<ToolConfigModel | null>(null);

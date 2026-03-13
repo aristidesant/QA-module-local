@@ -25,7 +25,11 @@ export const CampaignWizard: React.FC<CampaignWizardProps> = ({
 	onComplete,
 	onCancel,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaigns.wizard',
+		'campaign.form.shared',
+		'common',
+	]);
 	const { activeStep, nextStep, reset } = useCampaignWizardStore();
 
 	const handleCancel = () => {

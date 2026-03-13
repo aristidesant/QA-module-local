@@ -34,7 +34,7 @@ interface PendingConflict extends BulkImportConflictItem {
 const AnalyticsVariablesTable = ({
 	onAddRow,
 }: AnalyticsVariablesTableProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.analytics', 'common']);
 	const form = useAnalyticsFormContext();
 	const { canAccessModule, canPerformAction } = usePermissions();
 	const columns = useAnalyticsTableColumns();

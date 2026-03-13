@@ -51,7 +51,7 @@ export function ContactListInfo({
 	onNameChange,
 	readonly = false,
 }: ContactListInfoProps) {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.contacts', 'common']);
 	const [opened, setOpened] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
 	const [editedName, setEditedName] = useState(listName);

@@ -16,7 +16,11 @@ interface WorkflowNodeDrawerProps {
 }
 
 const WorkflowNodeDrawer = ({ nodeId }: WorkflowNodeDrawerProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const {
 		workflow,
 		onWorkflowChange,

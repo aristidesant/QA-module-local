@@ -44,7 +44,7 @@ export default function ImportCustomVariableModal({
 	onClose,
 	onImportMany,
 }: ImportCustomVariableModalProps) {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.analytics', 'common']);
 	const [templateId, setTemplateId] = useState<string | null>(null);
 	const [search, setSearch] = useState('');
 	const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());

@@ -1,0 +1,249 @@
+{
+	"dashboardBuilder": {
+		"title": "Dashboard builder",
+		"description": "Create campaign dashboards and attach widgets to reusable metric definitions.",
+		"dashboardsTitle": "Dashboards",
+		"dashboardsDescription": "Manage the dashboard list for this campaign.",
+		"widgetsTitle": "Widgets",
+		"widgetsDescription": "Widgets configured for {{dashboard}}.",
+		"widgetsPlaceholderDescription": "Select a dashboard to manage its widgets.",
+		"defaultBadge": "Default",
+		"noDescription": "No description yet.",
+		"enabled": "Enabled",
+		"disabled": "Disabled",
+		"dashboard": {
+			"name": "Name",
+			"description": "Description",
+			"standard": "Standard"
+		},
+		"metricScope": {
+			"global": "global",
+			"campaign": "campaign"
+		},
+		"widgetMeta": {
+			"metric": "Metric",
+			"size": "Size",
+			"sizeValue": "{{preset}} ({{width}} x {{height}})",
+			"position": "Position",
+			"positionValue": "Column {{column}}, row {{row}}",
+			"status": "Status",
+			"groupBy": "Group by",
+			"limit": "Limit"
+		},
+		"widgetTypes": {
+			"KPI": "KPI",
+			"LINE_CHART": "Line chart",
+			"BAR_CHART": "Bar chart",
+			"PIE_CHART": "Pie chart",
+			"DONUT_CHART": "Donut chart",
+			"TABLE": "Table",
+			"FUNNEL": "Funnel"
+		},
+		"metricCapabilities": {
+			"groupByEnabled": "Grouped output enabled",
+			"groupByDisabled": "Grouped output unavailable",
+			"timeSeriesEnabled": "Time series enabled",
+			"timeSeriesDisabled": "Time series unavailable"
+		},
+		"groupBySuggestions": {
+			"conversationField": "Conversation field",
+			"dispositionField": "Disposition field",
+			"attributeTypedField": "Typed attribute column",
+			"attributeSemanticField": "Analytics variable"
+		},
+		"actions": {
+			"newDashboard": "New dashboard",
+			"newWidget": "New widget",
+			"editDashboard": "Edit dashboard",
+			"deleteDashboard": "Delete dashboard",
+			"editWidget": "Edit widget",
+			"deleteWidget": "Delete widget"
+		},
+		"drawer": {
+			"dashboardKicker": "Dashboard details",
+			"createDashboardTitle": "Create dashboard",
+			"editDashboardTitle": "Edit dashboard",
+			"dashboardDescription": "Configure dashboard metadata for this campaign.",
+			"widgetKicker": "Widget setup",
+			"createWidgetTitle": "Create widget",
+			"editWidgetTitle": "Edit widget",
+			"widgetDescription": "Choose type and metric."
+		},
+		"form": {
+			"sections": {
+				"dashboardTitle": "Dashboard details",
+				"dashboardDescription": "Use a short name and a clear description so this dashboard is easy to recognize later.",
+				"basicsTitle": "Basics",
+				"basicsDescription": "",
+				"dataTitle": "Data settings",
+				"dataDescription": "",
+				"layoutTitle": "Layout",
+				"layoutDescription": "Choose a standard size and let the dashboard place the widget automatically.",
+				"statusTitle": "Availability",
+				"statusDescription": ""
+			},
+			"fields": {
+				"dashboardName": "Dashboard name",
+				"dashboardDescription": "Dashboard description",
+				"isDefault": "Use as default dashboard",
+				"widgetTitle": "Widget title",
+				"widgetDescription": "Widget description",
+				"widgetDescriptionShort": "Description",
+				"widgetType": "Widget type",
+				"metricDefinition": "Metric definition",
+				"groupBy": "Group by field",
+				"groupByDescription": "",
+				"groupByDescriptionAttribute": "Use a field or variable key.",
+				"limit": "Row limit",
+				"limitDescription": "",
+				"widgetSize": "Widget size",
+				"widgetSizeDescription": "Use standardized spans to keep the dashboard organized.",
+				"width": "Width",
+				"height": "Height",
+				"enabled": "Widget enabled"
+			},
+			"sizePresets": {
+				"SMALL": "Small",
+				"MEDIUM": "Medium",
+				"LARGE": "Large",
+				"FULL": "Full width",
+				"CUSTOM": "Custom"
+			},
+			"placeholders": {
+				"metricDefinition": "Select a metric definition",
+				"groupBy": "e.g. call_status",
+				"groupByAttribute": "e.g. province or value_string",
+				"limit": "Optional"
+			},
+			"layoutPlacement": "Placed automatically at column {{column}}, row {{row}}.",
+			"layoutSummary": "{{width}} x {{height}} spans across {{columns}} columns. It starts at column {{startColumn}} and row {{startRow}}, ending at column {{endColumn}} and row {{endRow}}.",
+			"hints": {
+				"groupByStandard": "",
+				"groupByAttribute": "",
+				"groupByAttribute_other": ""
+			},
+			"compatibility": {
+				"groupByRequired": "Selected metric must support grouped output.",
+				"timeSeriesRequired": "Selected metric must support time series.",
+				"lineChartPending": "Line chart widgets still depend on future backend time series support."
+			},
+			"actions": {
+				"cancel": "Cancel",
+				"createDashboard": "Create dashboard",
+				"saveDashboard": "Save dashboard",
+				"createWidget": "Create widget",
+				"saveWidget": "Save widget"
+			},
+			"validation": {
+				"dashboardName": "Dashboard name is required.",
+				"widgetTitle": "Widget title is required.",
+				"metricRequired": "Select a metric definition.",
+				"groupByRequired": "Group by is required for this widget type.",
+				"metricMustSupportGroupBy": "The selected metric does not support grouped output.",
+				"metricMustSupportTimeSeries": "The selected metric does not support time series output.",
+				"minSize": "Value must be at least 1."
+			}
+		},
+		"deleteDashboard": {
+			"title": "Delete dashboard",
+			"message": "Delete {{name}}? All its widgets will be removed.",
+			"confirm": "Delete",
+			"cancel": "Cancel"
+		},
+		"deleteWidget": {
+			"title": "Delete widget",
+			"message": "Delete {{name}} from this dashboard?",
+			"confirm": "Delete",
+			"cancel": "Cancel"
+		},
+		"notifications": {
+			"dashboardCreatedTitle": "Dashboard created",
+			"dashboardCreatedMessage": "The dashboard is now available for this campaign.",
+			"dashboardUpdatedTitle": "Dashboard updated",
+			"dashboardUpdatedMessage": "The dashboard changes were saved.",
+			"dashboardDeletedTitle": "Dashboard deleted",
+			"dashboardDeletedMessage": "The dashboard was removed.",
+			"widgetCreatedTitle": "Widget created",
+			"widgetCreatedMessage": "The widget was added to the dashboard.",
+			"widgetUpdatedTitle": "Widget updated",
+			"widgetUpdatedMessage": "The widget changes were saved.",
+			"widgetDeletedTitle": "Widget deleted",
+			"widgetDeletedMessage": "The widget was removed from the dashboard.",
+			"errorTitle": "Unable to save dashboard changes"
+		},
+		"widget": {
+			"name": "Name",
+			"type": "Type",
+			"metric": "Metric",
+			"size": "Size",
+			"status": "Status"
+		},
+		"mode": {
+			"manage": "Manage",
+			"preview": "Preview"
+		},
+		"previewDivider": "Live preview",
+		"emptyDraftTitle": "Save the campaign first",
+		"emptyDraftDescription": "Dashboards belong to persisted campaigns.",
+		"emptyDraftMessage": "Create the campaign before configuring dashboards and widgets.",
+		"emptyDashboardTitle": "No dashboards yet",
+		"emptyDashboardDescription": "Create the first dashboard to start organizing campaign widgets.",
+		"emptyWidgetTitle": "No widgets yet",
+		"emptyWidgetDescription": "Add widgets to this dashboard using the metric catalog definitions.",
+		"selectDashboardTitle": "Select a dashboard",
+		"selectDashboardDescription": "Choose a dashboard on the left to manage its widgets."
+	},
+	"dashboard": {
+		"title": "Dashboard",
+		"description": "Review the current dashboard configured for this campaign.",
+		"refresh": "Refresh dashboard",
+		"emptyTitle": "No dashboards configured",
+		"emptyDescription": "Open campaign edit mode to create the first dashboard for this campaign.",
+		"unsupportedBadge": "Coming soon",
+		"liveBadge": "Live",
+		"unsupportedMessage": "This widget type is not supported by the metric engine yet.",
+		"metricMeta": "Metric key: {{metricKey}}",
+		"layoutMeta": "Layout {{width}} x {{height}}",
+		"renderError": "Unable to render the selected dashboard.",
+		"emptyWidgetData": "No data returned for this widget in the selected range.",
+		"unknownLabel": "No data",
+		"donutTotal": "Total",
+		"layoutEditor": {
+			"edit": "Edit layout",
+			"save": "Save layout",
+			"cancel": "Cancel",
+			"editingBadge": "Editing layout",
+			"dragHandle": "Drag and resize",
+			"mobileUnavailable": "Layout editing is available on larger screens.",
+			"notifications": {
+				"savedTitle": "Layout updated",
+				"savedMessage": "The dashboard layout was saved successfully.",
+				"errorTitle": "Unable to save layout",
+				"overlapMessage": "Widgets cannot overlap. Move or resize the conflicting widget and try again."
+			}
+		},
+		"table": {
+			"label": "Label",
+			"value": "Value"
+		},
+		"timeRange": {
+			"label": "Time range",
+			"all": "All time",
+			"TODAY": "Today",
+			"WEEK": "This week",
+			"MONTH": "This month",
+			"YEAR": "This year"
+		},
+		"period": "{{start}} – {{end}}",
+		"comparisonPeriod": "{{currentStart}} – {{currentEnd}} vs {{previousStart}} – {{previousEnd}}",
+		"comparison": {
+			"toggle": "Compare to previous period",
+			"trend": {
+				"UP": "Up",
+				"DOWN": "Down",
+				"FLAT": "No change",
+				"UNAVAILABLE": "—"
+			}
+		}
+	}
+}

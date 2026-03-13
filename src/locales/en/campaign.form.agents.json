@@ -1,0 +1,344 @@
+{
+	"form": {
+		"agent": {
+			"add": {
+				"searchPlaceholder": "Search agents by name",
+				"loadError": "Failed to load agents",
+				"loadErrorDesc": "There was an error loading the agents list. Please try again.",
+				"tryAgain": "Try again",
+				"noAgents": "No available agents",
+				"noAgentsDesc": "There are no agents available to add to this campaign.",
+				"addError": "Failed to add agent",
+				"error": "Error",
+				"cloneTitle": "Clone Agent",
+				"cloneDesc": "Create a copy of this agent to use in your campaign.",
+				"cloneNameLabel": "Agent Name",
+				"cloneNamePlaceholder": "Enter agent name",
+				"cloneNameRequired": "Name is required",
+				"cloneNameDifferent": "The new name must be different from the original agent name",
+				"cloneSuccess": "Agent cloned successfully",
+				"cloneError": "Failed to clone agent",
+				"copySuffix": " Copy",
+				"cancel": "Cancel",
+				"cloneAction": "Clone"
+			},
+			"list": {
+				"addAgent": "Add Agent",
+				"addAgentTitle": "Add Agent to Campaign",
+				"noAgents": "No Agents Assigned",
+				"noAgentsDesc": "This campaign has no agents assigned."
+			},
+			"columns": {
+				"name": "Agent",
+				"type": "Type",
+				"voice": "Voice",
+				"actions": "Actions",
+				"noCampaign": "No campaign",
+				"playPreview": "Play preview",
+				"pausePreview": "Pause preview",
+				"clone": "Clone campaign",
+				"add": "Add agent"
+			},
+			"basic": {
+				"title": "Agent basics",
+				"description": "Set the core language and opening message for the agent.",
+				"language": "Language",
+				"languagePlaceholder": "Select a language",
+				"languageDescription": "Choose the primary language for the agent.",
+				"noLanguageFound": "No languages found",
+				"languages": {
+					"en": "English",
+					"es": "Spanish"
+				},
+				"firstMessage": "Agent First Message",
+				"firstMessagePlaceholder": "Write the first message",
+				"firstMessageDescription": "This is the first message the agent will send."
+			},
+			"phoneNumber": {
+				"title": "Phone Number",
+				"description": "Assign a phone number to this agent.",
+				"inbound": "Inbound",
+				"outbound": "Outbound",
+				"selectLabel": "Phone Number",
+				"selectPlaceholder": "Select a phone number",
+				"assign": "Assign",
+				"update": "Update",
+				"assignSuccess": "Phone number assigned successfully",
+				"assignError": "Failed to assign phone number"
+			},
+			"tools": {
+				"title": "Agent tools",
+				"description": "Select which tools the agent can use.",
+				"noTools": "No agent tools configured.",
+				"noSelection": "No tools selected.",
+				"customIntegration": "Custom integration",
+				"toggleAria": "Toggle {{name}}",
+				"noDescription": "No description provided.",
+				"add": "Add tool",
+				"remove": "Remove tool",
+				"removeAria": "Remove {{name}}",
+				"modal": {
+					"title": "Add tools",
+					"subtitle": "Select the tools you want to enable for this agent.",
+					"noTools": "No tools available.",
+					"save": "Save",
+					"cancel": "Cancel"
+				}
+			},
+			"systemTools": {
+				"title": "System Tools",
+				"description": "Configure system tools for the agent.",
+				"noTools": "No system tools available.",
+				"noSelection": "No system tools selected.",
+				"systemUtility": "System Utility",
+				"toggleAria": "Toggle {{name}}",
+				"configure": "Configure",
+				"enableToConfigure": "Enable to configure",
+				"noDescription": "No description available.",
+				"add": "Add system tool",
+				"remove": "Remove tool",
+				"removeAria": "Remove {{name}}",
+				"addModal": {
+					"title": "Add system tools",
+					"subtitle": "Select the system tools you want to enable for this agent.",
+					"noTools": "No system tools available.",
+					"save": "Save",
+					"cancel": "Cancel"
+				},
+				"modal": {
+					"title": "Configure Tool",
+					"name": "Tool Name",
+					"description": {
+						"label": "Description",
+						"placeholder": "Leave blank to use the default optimized LLM prompt."
+					},
+					"interruptions": {
+						"label": "Disable interruptions",
+						"description": "Prevent the user from interrupting the agent while this tool is running."
+					},
+					"voicemail": {
+						"title": "Voicemail Configuration",
+						"description": "Configure the message to leave on voicemail.",
+						"messageLabel": "Voicemail Message",
+						"messagePlaceholder": "Hello, this is an automated call from...",
+						"hint": "This message will be spoken when voicemail is detected."
+					},
+					"actions": {
+						"cancel": "Cancel",
+						"save": "Save"
+					}
+				}
+			},
+			"preview": {
+				"title": "Agent preview",
+				"description": "Preview the assigned agent details.",
+				"voiceTitle": "Voice",
+				"voiceDescription": "Review the current voice settings.",
+				"editVoice": "Edit agent voice",
+				"changeVoiceTitle": "Change Agent Voice",
+				"unknownVoice": "Unknown",
+				"avatarAlt": "Agent avatar",
+				"online": "Online",
+				"offline": "Offline",
+				"unnamed": "Unnamed agent"
+			},
+			"voice": {
+				"selectHint": "Select a voice for your agent and click save to apply changes",
+				"save": "Save Agent",
+				"saving": "Saving...",
+				"pleaseSelectVoice": "Please select a voice",
+				"agentDataNotLoaded": "Agent data not loaded",
+				"success": "Agent voice updated successfully",
+				"error": "Failed to update agent voice",
+				"noVoices": "No voices available"
+			},
+			"knowledgeBase": {
+				"title": "Knowledge Base",
+				"description": "Manage knowledge bases for this agent.",
+				"loading": "Loading knowledge bases...",
+				"error": "Error loading knowledge bases",
+				"noSelection": "No knowledge bases selected",
+				"add": "Add Knowledge Base",
+				"remove": "Remove",
+				"removeAria": "Remove {{name}}",
+				"created": "Created: {{date}}",
+				"modal": {
+					"title": {
+						"select": "Select Knowledge Bases",
+						"create": "Create Knowledge Base"
+					},
+					"subtitle": "Select existing knowledge bases or create a new one.",
+					"backToList": "Back to list",
+					"noKnowledgeBases": "No knowledge bases found"
+				}
+			},
+			"prompt": {
+				"title": "Agent Prompt",
+				"description": "Define the instructions the agent will follow when speaking with contacts.",
+				"previewTitle": "Prompt preview",
+				"previewChars_one": "1 character",
+				"previewChars_other": "{{count}} characters",
+				"status": {
+					"empty": "Empty"
+				},
+				"placeholder": "No prompt has been added yet",
+				"keepConcise": "Keep it concise for clarity.",
+				"header": {
+					"editAria": "Edit prompt",
+					"expandAria": "Expand prompt",
+					"collapseAria": "Collapse prompt"
+				},
+				"simpleModal": {
+					"title": "Edit agent prompt",
+					"description": "Update the main prompt used by the agent for this campaign.",
+					"placeholder": "Write the agent prompt",
+					"helper": "Edits are saved with the campaign.",
+					"chars_one": "1 character",
+					"chars_other": "{{count}} characters",
+					"saved": "Prompt ready",
+					"empty": "No prompt added yet"
+				},
+				"modal": {
+					"types": "Types",
+					"saveHint": "Save to apply prompts throughout this campaign.",
+					"saveConfirmation": {
+						"title": "Apply Changes?",
+						"message": "Are you sure you want to save these changes? This will update the campaign configuration immediately."
+					},
+					"discardConfirmation": {
+						"title": "Discard Changes?",
+						"message": "You have unsaved changes. Are you sure you want to exit? All changes will be lost.",
+						"confirm": "Discard Changes",
+						"cancel": "Keep Editing"
+					}
+				},
+				"editor": {
+					"title": "Prompt Configuration",
+					"subtitle": "Configure prompts for each interaction type.",
+					"descriptionFallback": "No description available.",
+					"status": {
+						"empty": "Empty",
+						"drafted": "Drafted",
+						"saved": "Saved"
+					},
+					"lines_one": "({{count}} line)",
+					"lines_other": "({{count}} lines)",
+					"history": {
+						"tooltip": "Prompt history",
+						"aria": "Prompt history"
+					},
+					"reuse": {
+						"label": "Reuse prompt",
+						"placeholder": "Load prompt from another campaign"
+					},
+					"hint": "Keep it under eight lines",
+					"placeholder": "Enter your prompt here",
+					"variables": {
+						"hint": "You can use variables like {{contact_name}}, {{agent_name}}, etc.",
+						"popover": {
+							"title": "Variables",
+							"badge": "Tip",
+							"navigationHint": "Use arrows to navigate and Enter to insert",
+							"source": {
+								"dyn": "Dynamic",
+								"sys": "System"
+							},
+							"empty": "No variables found"
+						}
+					},
+					"diff": {
+						"modalTitle": "Review changes"
+					},
+					"ai": {
+						"button": {
+							"create": "Create with AI",
+							"improve": "Improve with AI",
+							"tooltip": {
+								"create": "Generate a new prompt from scratch",
+								"improve": "Refine the existing prompt"
+							}
+						},
+						"modal": {
+							"title": {
+								"create": "Create prompt with AI",
+								"improve": "Improve prompt with AI",
+								"review": "Review AI suggestions"
+							},
+							"errors": {
+								"emptyPrompt": "Please provide some instructions for the AI"
+							},
+							"compose": {
+								"instructions": {
+									"label": {
+										"create": "Instructions",
+										"improve": "Improvement Instructions"
+									},
+									"description": {
+										"create": "Describe what you want the AI to generate",
+										"improve": "Describe how you want to improve the prompt"
+									},
+									"placeholder": {
+										"create": "E.g., Create a friendly greeting for customers calling about billing inquiries",
+										"improve": "E.g., Make it more concise and professional"
+									}
+								},
+								"systemPrompt": {
+									"label": "System prompt",
+									"edit": "Edit system prompt",
+									"reset": "Reset",
+									"done": "Done"
+								},
+								"promptToImprove": {
+									"label": "Current Prompt",
+									"description": "The prompt you want to improve"
+								},
+								"actions": {
+									"cancel": "Cancel",
+									"generate": "Generate"
+								}
+							},
+							"review": {
+								"actions": {
+									"back": "Cancel",
+									"apply": "Apply changes"
+								},
+								"error": {
+									"title": "Error",
+									"description": "Failed to generate diff view. The AI suggestion may still be valid."
+								},
+								"noChanges": {
+									"title": "No Changes",
+									"description": "The AI suggestion is identical to your current prompt."
+								},
+								"diff": {
+									"old": "Current version",
+									"new": "AI suggestion"
+								}
+							}
+						}
+					}
+				}
+			},
+			"behavior": {
+				"title": "Agent Behavior",
+				"description": "Select a predefined agent behavior configuration",
+				"active": "Active configuration",
+				"change": "Change",
+				"noConfiguration": "No configuration applied",
+				"select": "Select Configuration",
+				"modal": {
+					"title": "Configuration Preview",
+					"label": "Select a predefined parameter set",
+					"placeholder": "Select configuration",
+					"actions": {
+						"cancel": "Cancel",
+						"apply": "Apply"
+					}
+				}
+			}
+		}
+	},
+	"configuration": {
+		"editPrompt": "Edit prompt"
+	}
+}

@@ -1,0 +1,27 @@
+.modalForm {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+}
+
+.formSection {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-sm) 0;
+}
+
+.sectionLabel {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.formFooter {
+	position: sticky;
+	bottom: 0;
+	padding: var(--mantine-spacing-md) 0 0;
+	background: var(--mantine-color-white);
+	border-top: 1px solid var(--mantine-color-gray-2);
+	margin-top: auto;
+}

@@ -19,7 +19,11 @@ import { useKnowledgeBasesLogic } from '../../hooks';
 import mainStyles from '../../AgentForm.module.css';
 
 const KnowledgeBaseTab = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const {
 		workflow,
 		nodeId,

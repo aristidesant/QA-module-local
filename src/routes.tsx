@@ -14,6 +14,7 @@ import RouteProtecter, {
 } from './components/RouteProtecter/RouteProtecter';
 import ModuleGuard from './components/RouteGuards/ModuleGuard';
 import { ModuleEnum } from '~/constants/ModuleEnum';
+import { campaignRouteNamespaces } from '~/modules/campaigns/campaignNamespaces';
 import SuspenseFallback from './components/SuspenseFallback';
 const Layout = React.lazy(() => import('./components/Layout'));
 
@@ -81,6 +82,9 @@ const SchedulerPredefinedParamsPage = React.lazy(
 const PhoneNumbersPage = React.lazy(
 	() => import('./modules/configurations/PhoneNumbers/PhoneNumbersPage')
 );
+const MetricCatalogPage = React.lazy(
+	() => import('./modules/configurations/MetricCatalogPage')
+);
 const ConfigurationsPage = React.lazy(
 	() => import('./modules/configurations/ConfigurationsPage')
 );
@@ -106,14 +110,14 @@ const I18nNamespaceLoader = ({ children }: { children: React.ReactNode }) => {
 	const lastMatch = matches[matches.length - 1];
 	// Derive namespace from route ID or path
 	const namespace = lastMatch?.id;
+	const resolvedNamespace =
+		namespace && namespace !== 'root' && !namespace.includes('/')
+			? (campaignRouteNamespaces[namespace] ?? namespace)
+			: 'common';
 
 	// Use useTranslation to ensure the namespace is loaded before rendering children.
 	// This will trigger suspension if the namespace is not yet available.
-	useTranslation(
-		namespace && namespace !== 'root' && !namespace.includes('/')
-			? namespace
-			: 'common'
-	);
+	useTranslation(resolvedNamespace);
 
 	return <>{children}</>;
 };
@@ -397,6 +401,21 @@ const router = createBrowserRouter([
 											}
 										>
 											<SchedulerPredefinedParamsPage />
+										</Suspense>
+									</I18nNamespaceLoader>
+								),
+							},
+							{
+								path: 'metric-catalog',
+								id: 'metric-catalog',
+								element: (
+									<I18nNamespaceLoader>
+										<Suspense
+											fallback={
+												<SuspenseFallback message='Loading metric catalog...' />
+											}
+										>
+											<MetricCatalogPage />
 										</Suspense>
 									</I18nNamespaceLoader>
 								),

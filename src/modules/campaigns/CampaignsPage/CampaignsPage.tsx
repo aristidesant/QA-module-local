@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function CampaignsPage() {
-	useTranslation(['campaigns', 'campaign.detail']);
+	useTranslation(['campaigns.list', 'campaign.detail']);
 
 	const { selectedCampaign, editCampaign, resetView, selectCampaign } =
 		useCampaignsStore((state) => state);

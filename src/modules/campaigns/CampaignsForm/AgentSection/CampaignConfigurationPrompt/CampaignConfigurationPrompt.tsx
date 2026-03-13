@@ -14,7 +14,11 @@ interface CampaignConfigurationPromptProps {
 const CampaignConfigurationPrompt: React.FC<
 	CampaignConfigurationPromptProps
 > = ({ onOpenSettings }) => {
-	const { t } = useTranslation(['campaigns', 'campaign.detail', 'common']);
+	const { t } = useTranslation([
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 	const form = useCampaignFormContext();
 	const [editModalOpen, setEditModalOpen] = useState(false);
 

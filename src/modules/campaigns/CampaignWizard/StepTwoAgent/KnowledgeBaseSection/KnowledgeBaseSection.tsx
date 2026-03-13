@@ -31,7 +31,11 @@ import styles from '../StepTwoAgent.module.css';
 import KnowledgeBaseWizardForm from './KnowledgeBaseWizardForm';
 
 const KnowledgeBaseSection: React.FC = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaigns.wizard',
+		'campaign.form.shared',
+		'common',
+	]);
 	const { knowledgeBaseIds, setKnowledgeBaseIds } = useCampaignWizardStore();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);

@@ -25,7 +25,11 @@ export function FlowSummary({
 	onStartOver,
 	isDeleting,
 }: FlowSummaryProps) {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaigns.wizard',
+		'campaign.form.shared',
+		'common',
+	]);
 	const title =
 		origin === 'imported'
 			? t('wizard.steps.outcomes.summary.importedSuccess')

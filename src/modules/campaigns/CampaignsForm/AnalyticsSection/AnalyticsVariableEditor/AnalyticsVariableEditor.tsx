@@ -31,7 +31,7 @@ interface AnalyticsVariableEditorProps {
 }
 
 const AnalyticsVariableEditor = ({ onClose }: AnalyticsVariableEditorProps) => {
-	const { t } = useTranslation(['campaigns', 'common']);
+	const { t } = useTranslation(['campaign.form.analytics', 'common']);
 	const form = useAnalyticsFormContext();
 	const { canPerformAction } = usePermissions();
 	const [enumInputValue, setEnumInputValue] = useState('');
@@ -64,19 +64,27 @@ const AnalyticsVariableEditor = ({ onClose }: AnalyticsVariableEditorProps) => {
 		() => [
 			{
 				value: 'boolean',
-				label: t('form.analytics.types.boolean', { ns: 'campaigns' }),
+				label: t('form.analytics.types.boolean', {
+					ns: 'campaign.form.analytics',
+				}),
 			},
 			{
 				value: 'integer',
-				label: t('form.analytics.types.integer', { ns: 'campaigns' }),
+				label: t('form.analytics.types.integer', {
+					ns: 'campaign.form.analytics',
+				}),
 			},
 			{
 				value: 'number',
-				label: t('form.analytics.types.number', { ns: 'campaigns' }),
+				label: t('form.analytics.types.number', {
+					ns: 'campaign.form.analytics',
+				}),
 			},
 			{
 				value: 'string',
-				label: t('form.analytics.types.string', { ns: 'campaigns' }),
+				label: t('form.analytics.types.string', {
+					ns: 'campaign.form.analytics',
+				}),
 			},
 		],
 		[t]
@@ -168,7 +176,9 @@ const AnalyticsVariableEditor = ({ onClose }: AnalyticsVariableEditorProps) => {
 						<SimpleGrid cols={{ base: 1, sm: 2 }} spacing='xs'>
 							<Select
 								size='sm'
-								label={t('form.analytics.fields.type', { ns: 'campaigns' })}
+								label={t('form.analytics.fields.type', {
+									ns: 'campaign.form.analytics',
+								})}
 								data={dataTypeOptions}
 								value={draft.type}
 								onChange={(value) => {
@@ -187,19 +197,19 @@ const AnalyticsVariableEditor = ({ onClose }: AnalyticsVariableEditorProps) => {
 							<TextInput
 								size='sm'
 								label={t('form.analytics.fields.identifier', {
-									ns: 'campaigns',
+									ns: 'campaign.form.analytics',
 								})}
 								placeholder={t('form.analytics.placeholders.identifier', {
-									ns: 'campaigns',
+									ns: 'campaign.form.analytics',
 								})}
 								error={
 									!draft.identifier.trim()
 										? t('form.analytics.validation.identifierRequired', {
-												ns: 'campaigns',
+												ns: 'campaign.form.analytics',
 											})
 										: hasDuplicateIdentifier
 											? t('form.analytics.validation.identifierUnique', {
-													ns: 'campaigns',
+													ns: 'campaign.form.analytics',
 												})
 											: undefined
 								}
@@ -220,7 +230,9 @@ const AnalyticsVariableEditor = ({ onClose }: AnalyticsVariableEditorProps) => {
 						<Stack gap='xs'>
 							<Group justify='space-between' align='center'>
 								<Text size='sm' fw={600}>
-									{t('form.analytics.fields.description', { ns: 'campaigns' })}
+									{t('form.analytics.fields.description', {
+										ns: 'campaign.form.analytics',
+									})}
 								</Text>
 								<Badge
 									size='sm'
@@ -229,17 +241,17 @@ const AnalyticsVariableEditor = ({ onClose }: AnalyticsVariableEditorProps) => {
 								>
 									{isDraftDirty
 										? t('form.analytics.editor.states.draft', {
-												ns: 'campaigns',
+												ns: 'campaign.form.analytics',
 											})
 										: t('form.analytics.editor.states.saved', {
-												ns: 'campaigns',
+												ns: 'campaign.form.analytics',
 											})}
 								</Badge>
 							</Group>
 							<Textarea
 								size='sm'
 								placeholder={t('form.analytics.placeholders.description', {
-									ns: 'campaigns',
+									ns: 'campaign.form.analytics',
 								})}
 								autosize
 								minRows={8}
@@ -255,7 +267,9 @@ const AnalyticsVariableEditor = ({ onClose }: AnalyticsVariableEditorProps) => {
 								}}
 							/>
 							<Text size='xs' c='dimmed'>
-								{t('form.analytics.descriptionHint', { ns: 'campaigns' })}
+								{t('form.analytics.descriptionHint', {
+									ns: 'campaign.form.analytics',
+								})}
 							</Text>
 						</Stack>
 					</Paper>
@@ -265,11 +279,13 @@ const AnalyticsVariableEditor = ({ onClose }: AnalyticsVariableEditorProps) => {
 							<Stack gap='xs'>
 								<Group justify='space-between' align='center'>
 									<Text size='sm' fw={600}>
-										{t('form.analytics.fields.enumValues', { ns: 'campaigns' })}
+										{t('form.analytics.fields.enumValues', {
+											ns: 'campaign.form.analytics',
+										})}
 									</Text>
 									<Badge size='sm' variant='light' color='violet'>
 										{t('form.analytics.fields.enumValuesCount', {
-											ns: 'campaigns',
+											ns: 'campaign.form.analytics',
 											count: enumValues.length,
 										})}
 									</Badge>
@@ -279,7 +295,7 @@ const AnalyticsVariableEditor = ({ onClose }: AnalyticsVariableEditorProps) => {
 										size='sm'
 										className={styles.enumInput}
 										placeholder={t('form.analytics.placeholders.enumValue', {
-											ns: 'campaigns',
+											ns: 'campaign.form.analytics',
 										})}
 										value={enumInputValue}
 										onChange={(event) =>
@@ -292,7 +308,7 @@ const AnalyticsVariableEditor = ({ onClose }: AnalyticsVariableEditorProps) => {
 											}
 										}}
 										aria-label={t('form.analytics.fields.enumValues', {
-											ns: 'campaigns',
+											ns: 'campaign.form.analytics',
 										})}
 									/>
 									<Button
@@ -301,7 +317,7 @@ const AnalyticsVariableEditor = ({ onClose }: AnalyticsVariableEditorProps) => {
 										onClick={addEnumValue}
 										px='xs'
 										aria-label={t('form.analytics.fields.enumValues', {
-											ns: 'campaigns',
+											ns: 'campaign.form.analytics',
 										})}
 									>
 										<IconPlus size={14} />
@@ -348,7 +364,9 @@ const AnalyticsVariableEditor = ({ onClose }: AnalyticsVariableEditorProps) => {
 									onClick={() => setSaveToGroupOpened(true)}
 									disabled={hasIdentifierError}
 								>
-									{t('form.analytics.actions.saveToGroup', { ns: 'campaigns' })}
+									{t('form.analytics.actions.saveToGroup', {
+										ns: 'campaign.form.analytics',
+									})}
 								</Button>
 							)}
 							<Button size='sm' variant='default' onClick={onClose}>
@@ -359,7 +377,7 @@ const AnalyticsVariableEditor = ({ onClose }: AnalyticsVariableEditorProps) => {
 								onClick={handleSave}
 								disabled={hasIdentifierError || !isDraftDirty}
 							>
-								{t('form.actions.save', { ns: 'campaigns' })}
+								{t('form.actions.save', { ns: 'campaign.form.analytics' })}
 							</Button>
 						</Group>
 					</Group>

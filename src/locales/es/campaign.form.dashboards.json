@@ -1,0 +1,249 @@
+{
+	"dashboardBuilder": {
+		"title": "Constructor de dashboards",
+		"description": "Crea dashboards de campaña y vincula widgets a métricas reutilizables.",
+		"dashboardsTitle": "Dashboards",
+		"dashboardsDescription": "Administra la lista de dashboards de esta campaña.",
+		"widgetsTitle": "Widgets",
+		"widgetsDescription": "Widgets configurados para {{dashboard}}.",
+		"widgetsPlaceholderDescription": "Selecciona un dashboard para administrar sus widgets.",
+		"defaultBadge": "Predeterminado",
+		"noDescription": "Sin descripción.",
+		"enabled": "Habilitado",
+		"disabled": "Deshabilitado",
+		"dashboard": {
+			"name": "Nombre",
+			"description": "Descripción",
+			"standard": "Estándar"
+		},
+		"metricScope": {
+			"global": "global",
+			"campaign": "campaña"
+		},
+		"widgetMeta": {
+			"metric": "Métrica",
+			"size": "Tamaño",
+			"sizeValue": "{{preset}} ({{width}} x {{height}})",
+			"position": "Posición",
+			"positionValue": "Columna {{column}}, fila {{row}}",
+			"status": "Estado",
+			"groupBy": "Agrupar por",
+			"limit": "Límite"
+		},
+		"widgetTypes": {
+			"KPI": "KPI",
+			"LINE_CHART": "Gráfico de líneas",
+			"BAR_CHART": "Gráfico de barras",
+			"PIE_CHART": "Gráfico de pastel",
+			"DONUT_CHART": "Gráfico de dona",
+			"TABLE": "Tabla",
+			"FUNNEL": "Embudo"
+		},
+		"metricCapabilities": {
+			"groupByEnabled": "Salida agrupada habilitada",
+			"groupByDisabled": "Salida agrupada no disponible",
+			"timeSeriesEnabled": "Serie temporal habilitada",
+			"timeSeriesDisabled": "Serie temporal no disponible"
+		},
+		"groupBySuggestions": {
+			"conversationField": "Campo de conversación",
+			"dispositionField": "Campo de disposición",
+			"attributeTypedField": "Columna tipada de atributo",
+			"attributeSemanticField": "Variable analítica"
+		},
+		"actions": {
+			"newDashboard": "Nuevo dashboard",
+			"newWidget": "Nuevo widget",
+			"editDashboard": "Editar dashboard",
+			"deleteDashboard": "Eliminar dashboard",
+			"editWidget": "Editar widget",
+			"deleteWidget": "Eliminar widget"
+		},
+		"drawer": {
+			"dashboardKicker": "Detalles del dashboard",
+			"createDashboardTitle": "Crear dashboard",
+			"editDashboardTitle": "Editar dashboard",
+			"dashboardDescription": "Configura los metadatos del dashboard para esta campaña.",
+			"widgetKicker": "Configuración del widget",
+			"createWidgetTitle": "Crear widget",
+			"editWidgetTitle": "Editar widget",
+			"widgetDescription": "Elige tipo y métrica."
+		},
+		"form": {
+			"sections": {
+				"dashboardTitle": "Detalles del dashboard",
+				"dashboardDescription": "Usa un nombre corto y una descripción clara para reconocer este dashboard más tarde.",
+				"basicsTitle": "Datos básicos",
+				"basicsDescription": "",
+				"dataTitle": "Configuración de datos",
+				"dataDescription": "",
+				"layoutTitle": "Distribución",
+				"layoutDescription": "Elige un tamaño estándar y deja que el dashboard ubique el widget automáticamente.",
+				"statusTitle": "Disponibilidad",
+				"statusDescription": ""
+			},
+			"fields": {
+				"dashboardName": "Nombre del dashboard",
+				"dashboardDescription": "Descripción del dashboard",
+				"isDefault": "Usar como dashboard predeterminado",
+				"widgetTitle": "Título del widget",
+				"widgetDescription": "Descripción del widget",
+				"widgetDescriptionShort": "Descripción",
+				"widgetType": "Tipo de widget",
+				"metricDefinition": "Definición de métrica",
+				"groupBy": "Campo para agrupar",
+				"groupByDescription": "",
+				"groupByDescriptionAttribute": "Usa un campo o una variable.",
+				"limit": "Límite de filas",
+				"limitDescription": "",
+				"widgetSize": "Tamaño del widget",
+				"widgetSizeDescription": "Usa tamaños estandarizados para mantener el dashboard organizado.",
+				"width": "Ancho",
+				"height": "Alto",
+				"enabled": "Widget habilitado"
+			},
+			"sizePresets": {
+				"SMALL": "Pequeño",
+				"MEDIUM": "Mediano",
+				"LARGE": "Grande",
+				"FULL": "Ancho completo",
+				"CUSTOM": "Personalizado"
+			},
+			"placeholders": {
+				"metricDefinition": "Selecciona una definición de métrica",
+				"groupBy": "ej. call_status",
+				"groupByAttribute": "ej. province o value_string",
+				"limit": "Opcional"
+			},
+			"layoutPlacement": "Se ubicará automáticamente en la columna {{column}} y fila {{row}}.",
+			"layoutSummary": "{{width}} x {{height}} ocupa una grilla de {{columns}} columnas. Comienza en la columna {{startColumn}} y la fila {{startRow}}, y termina en la columna {{endColumn}} y la fila {{endRow}}.",
+			"hints": {
+				"groupByStandard": "",
+				"groupByAttribute": "",
+				"groupByAttribute_other": ""
+			},
+			"compatibility": {
+				"groupByRequired": "La métrica debe soportar salida agrupada.",
+				"timeSeriesRequired": "La métrica debe soportar series temporales.",
+				"lineChartPending": "Los widgets de líneas todavía dependen del soporte backend futuro para series temporales."
+			},
+			"actions": {
+				"cancel": "Cancelar",
+				"createDashboard": "Crear dashboard",
+				"saveDashboard": "Guardar dashboard",
+				"createWidget": "Crear widget",
+				"saveWidget": "Guardar widget"
+			},
+			"validation": {
+				"dashboardName": "El nombre del dashboard es obligatorio.",
+				"widgetTitle": "El título del widget es obligatorio.",
+				"metricRequired": "Selecciona una definición de métrica.",
+				"groupByRequired": "Agrupar por es obligatorio para este tipo de widget.",
+				"metricMustSupportGroupBy": "La métrica seleccionada no soporta salida agrupada.",
+				"metricMustSupportTimeSeries": "La métrica seleccionada no soporta salida de serie temporal.",
+				"minSize": "El valor debe ser al menos 1."
+			}
+		},
+		"deleteDashboard": {
+			"title": "Eliminar dashboard",
+			"message": "¿Eliminar {{name}}? Todos sus widgets serán eliminados.",
+			"confirm": "Eliminar",
+			"cancel": "Cancelar"
+		},
+		"deleteWidget": {
+			"title": "Eliminar widget",
+			"message": "¿Eliminar {{name}} de este dashboard?",
+			"confirm": "Eliminar",
+			"cancel": "Cancelar"
+		},
+		"notifications": {
+			"dashboardCreatedTitle": "Dashboard creado",
+			"dashboardCreatedMessage": "El dashboard ya está disponible para esta campaña.",
+			"dashboardUpdatedTitle": "Dashboard actualizado",
+			"dashboardUpdatedMessage": "Se guardaron los cambios del dashboard.",
+			"dashboardDeletedTitle": "Dashboard eliminado",
+			"dashboardDeletedMessage": "El dashboard fue eliminado.",
+			"widgetCreatedTitle": "Widget creado",
+			"widgetCreatedMessage": "El widget fue agregado al dashboard.",
+			"widgetUpdatedTitle": "Widget actualizado",
+			"widgetUpdatedMessage": "Se guardaron los cambios del widget.",
+			"widgetDeletedTitle": "Widget eliminado",
+			"widgetDeletedMessage": "El widget fue eliminado del dashboard.",
+			"errorTitle": "No fue posible guardar los cambios del dashboard"
+		},
+		"widget": {
+			"name": "Nombre",
+			"type": "Tipo",
+			"metric": "Métrica",
+			"size": "Tamaño",
+			"status": "Estado"
+		},
+		"mode": {
+			"manage": "Gestionar",
+			"preview": "Vista previa"
+		},
+		"previewDivider": "Vista previa en vivo",
+		"emptyDraftTitle": "Guarda la campaña primero",
+		"emptyDraftDescription": "Los dashboards pertenecen a campañas persistidas.",
+		"emptyDraftMessage": "Crea la campaña antes de configurar dashboards y widgets.",
+		"emptyDashboardTitle": "Aún no hay dashboards",
+		"emptyDashboardDescription": "Crea el primer dashboard para organizar widgets de campaña.",
+		"emptyWidgetTitle": "Aún no hay widgets",
+		"emptyWidgetDescription": "Agrega widgets a este dashboard usando las definiciones del catálogo de métricas.",
+		"selectDashboardTitle": "Selecciona un dashboard",
+		"selectDashboardDescription": "Elige un dashboard a la izquierda para administrar sus widgets."
+	},
+	"dashboard": {
+		"title": "Dashboard",
+		"description": "Revisa el dashboard actual configurado para esta campaña.",
+		"refresh": "Actualizar dashboard",
+		"emptyTitle": "No hay dashboards configurados",
+		"emptyDescription": "Abre el modo edición de la campaña para crear el primer dashboard.",
+		"unsupportedBadge": "Próximamente",
+		"liveBadge": "Activo",
+		"unsupportedMessage": "Este tipo de widget aún no está soportado por el motor de métricas.",
+		"metricMeta": "Clave de métrica: {{metricKey}}",
+		"layoutMeta": "Layout {{width}} x {{height}}",
+		"renderError": "No fue posible renderizar el dashboard seleccionado.",
+		"emptyWidgetData": "Este widget no devolvió datos en el rango seleccionado.",
+		"unknownLabel": "Sin datos",
+		"donutTotal": "Total",
+		"layoutEditor": {
+			"edit": "Editar layout",
+			"save": "Guardar layout",
+			"cancel": "Cancelar",
+			"editingBadge": "Editando layout",
+			"dragHandle": "Mover y redimensionar",
+			"mobileUnavailable": "La edición del layout está disponible en pantallas más grandes.",
+			"notifications": {
+				"savedTitle": "Layout actualizado",
+				"savedMessage": "El layout del dashboard se guardó correctamente.",
+				"errorTitle": "No se pudo guardar el layout",
+				"overlapMessage": "Los widgets no pueden solaparse. Mueve o redimensiona el widget en conflicto e inténtalo de nuevo."
+			}
+		},
+		"table": {
+			"label": "Etiqueta",
+			"value": "Valor"
+		},
+		"timeRange": {
+			"label": "Período",
+			"all": "Todo el tiempo",
+			"TODAY": "Hoy",
+			"WEEK": "Esta semana",
+			"MONTH": "Este mes",
+			"YEAR": "Este año"
+		},
+		"period": "{{start}} – {{end}}",
+		"comparisonPeriod": "{{currentStart}} – {{currentEnd}} vs {{previousStart}} – {{previousEnd}}",
+		"comparison": {
+			"toggle": "Comparar con período anterior",
+			"trend": {
+				"UP": "Subida",
+				"DOWN": "Bajada",
+				"FLAT": "Sin cambio",
+				"UNAVAILABLE": "—"
+			}
+		}
+	}
+}

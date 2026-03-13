@@ -10,7 +10,11 @@ interface StartEndFormProps {
 }
 
 const StartEndForm = ({ nodeId, workflow }: StartEndFormProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const node = workflow?.nodes[nodeId];
 
 	if (!node) {

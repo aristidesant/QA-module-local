@@ -7,7 +7,7 @@ import styles from './useAnalyticsTableColumns.module.css';
 
 const useAnalyticsTableColumns =
 	(): BaseTableColumnDef<AnalyticsDataCollectionRow>[] => {
-		const { t } = useTranslation('campaigns');
+		const { t } = useTranslation(['campaign.form.analytics', 'common']);
 
 		return useMemo(
 			() => [

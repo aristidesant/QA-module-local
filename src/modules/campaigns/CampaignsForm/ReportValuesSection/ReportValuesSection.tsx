@@ -70,7 +70,11 @@ const toComparableColumn = (item: ReportValue) => ({
 });
 
 const ReportValuesSection = () => {
-	const { t } = useTranslation(['campaigns', 'campaign.contact-list']);
+	const { t } = useTranslation([
+		'campaign.form.report-values',
+		'campaign.contact-list',
+		'common',
+	]);
 	const campaignId = useContext(CampaignIdContext);
 	const queryClient = useQueryClient();
 

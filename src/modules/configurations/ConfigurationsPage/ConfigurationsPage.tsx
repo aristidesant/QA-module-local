@@ -6,6 +6,7 @@ import {
 	IconGlobe,
 	IconClockHour4,
 	IconPhone,
+	IconChartBar,
 } from '@tabler/icons-react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import { useEffect } from 'react';
@@ -33,6 +34,7 @@ export default function ConfigurationsPage() {
 			return 'scheduler-predefined-params';
 		if (location.pathname.includes('campaign-predefined-params'))
 			return 'campaign-predefined-params';
+		if (location.pathname.includes('metric-catalog')) return 'metric-catalog';
 		if (location.pathname.includes('regional-settings-params'))
 			return 'regional-settings-params';
 		if (location.pathname.includes('phone-numbers')) return 'phone-numbers';
@@ -81,6 +83,13 @@ export default function ConfigurationsPage() {
 						}
 					>
 						{t('tabs.campaign')}
+					</Tabs.Tab>
+					<Tabs.Tab
+						value='metric-catalog'
+						leftSection={<IconChartBar size={16} />}
+						onClick={() => navigate('/configurations/metric-catalog')}
+					>
+						{t('tabs.metricCatalog')}
 					</Tabs.Tab>
 					<Tabs.Tab
 						value='regional-settings-params'

@@ -55,7 +55,11 @@ export const NodeItem: React.FC<{
 	current: DispositionNode;
 	level?: number;
 }> = ({ current, level = 0 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.outcomes',
+		'campaign.detail',
+		'common',
+	]);
 	const nodeStyle = getNodeStyle(current, level);
 	const childCount = current.children?.length ?? 0;
 	const badgeLabel =
@@ -137,7 +141,11 @@ export const NodeItem: React.FC<{
 const DispositionGroupPreview: React.FC<DispositionGroupPreviewProps> = ({
 	node,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.outcomes',
+		'campaign.detail',
+		'common',
+	]);
 	const stats = useMemo(() => collectNodeStats(node), [node]);
 	const totalLevels = stats.depth + 1;
 

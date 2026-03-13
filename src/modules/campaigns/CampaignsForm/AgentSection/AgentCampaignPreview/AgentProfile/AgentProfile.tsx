@@ -38,7 +38,11 @@ const AgentProfile: React.FC<AgentProfileProps> = ({
 	size = 'md',
 	onClick,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 	const avatarSize = avatarSizes[size];
 	const isOnline = agent?.status === 'ACTIVE';
 	const language = getAgentLanguage(agent as unknown as AgentListObject);

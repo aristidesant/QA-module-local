@@ -1,0 +1,81 @@
+.panel {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	height: 100%;
+}
+
+.panelHeader {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-sm);
+	padding: 0 2px;
+}
+
+.panelHeading {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.panelTitle {
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+	line-height: 1.25;
+}
+
+.panelDescription {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+	line-height: 1.4;
+}
+
+.table {
+	flex: 1;
+	min-height: 14rem;
+	background: color-mix(in srgb, var(--mantine-color-white) 88%, #f8f2e8);
+}
+
+.actionsHeader {
+	width: 5.5rem;
+}
+
+.actionsCell {
+	width: 5.5rem;
+}
+
+.selectedDashboardRow td {
+	font-weight: 500;
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-white) 72%,
+		#f3ebe0
+	) !important;
+}
+
+.emptyState {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: var(--mantine-spacing-sm);
+	min-height: 14rem;
+	padding: var(--mantine-spacing-lg);
+	border: 1px dashed var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	background: color-mix(in srgb, var(--mantine-color-gray-0) 54%, #f5eee3);
+}
+
+.emptyStateIcon {
+	color: var(--mantine-color-gray-5);
+}
+
+@media (max-width: 48rem) {
+	.panelHeader {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}

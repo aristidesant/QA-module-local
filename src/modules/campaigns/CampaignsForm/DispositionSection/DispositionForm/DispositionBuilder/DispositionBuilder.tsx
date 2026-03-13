@@ -33,7 +33,11 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 	onComplete,
 	onCancel,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.outcomes',
+		'campaign.detail',
+		'common',
+	]);
 	const createMutation = useCreateDispositionFlow();
 	const updateMutation = useUpdateDispositionFlow();
 	const {

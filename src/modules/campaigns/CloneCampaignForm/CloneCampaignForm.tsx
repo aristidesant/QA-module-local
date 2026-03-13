@@ -37,7 +37,9 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 	campaign,
 	onComplete,
 }) => {
-	const { t } = useTranslation('campaigns', { keyPrefix: 'cloneCampaignForm' });
+	const { t } = useTranslation('campaigns.clone-form', {
+		keyPrefix: 'cloneCampaignForm',
+	});
 	const cloneCampaign = useCloneCampaign();
 
 	const [agentsToDuplicate, setAgentsToDuplicate] = useState<

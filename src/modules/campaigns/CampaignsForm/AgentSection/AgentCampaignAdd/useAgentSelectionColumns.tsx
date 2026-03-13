@@ -34,7 +34,11 @@ const useAgentSelectionColumns = ({
 	isDisabled,
 	isPlaying,
 }: UseAgentSelectionColumnsOptions): ColumnDef<AgentWithCampaignListItem>[] => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 
 	return useMemo(
 		() => [

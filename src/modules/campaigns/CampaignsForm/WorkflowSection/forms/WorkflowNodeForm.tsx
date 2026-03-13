@@ -20,7 +20,11 @@ const WorkflowNodeForm = ({
 	icon,
 	iconColor,
 }: WorkflowNodeFormProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const { closeNodeDrawer } = useWorkflowNodeEditor();
 
 	return (

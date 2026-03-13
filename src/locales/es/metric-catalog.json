@@ -1,0 +1,142 @@
+{
+	"title": "Catálogo de Métricas",
+	"description": "Administra métricas semánticas reutilizables para dashboards y widgets de campaña.",
+	"actions": {
+		"create": "Nueva métrica"
+	},
+	"filters": {
+		"scope": "Alcance",
+		"source": "Fuente",
+		"campaignLabel": "Campaña",
+		"allScopes": "Todos los alcances",
+		"allSources": "Todas las fuentes",
+		"global": "Global",
+		"campaign": "Campaña",
+		"anyCampaign": "Cualquier campaña",
+		"timeSeries": {
+			"label": "Series temporales",
+			"all": "Todas",
+			"supported": "Soportado",
+			"unsupported": "No soportado"
+		}
+	},
+	"options": {
+		"sourceType": {
+			"CONVERSATION": "Conversación",
+			"ATTRIBUTE": "Atributo",
+			"DISPOSITION": "Disposición"
+		},
+		"aggregationType": {
+			"COUNT": "Conteo",
+			"SUM": "Suma",
+			"AVG": "Promedio",
+			"MIN": "Mínimo",
+			"MAX": "Máximo",
+			"DISTINCT_COUNT": "Conteo distinto"
+		},
+		"resultType": {
+			"NUMBER": "Número",
+			"BOOLEAN": "Booleano",
+			"STRING": "Texto"
+		},
+		"valueField": {
+			"VALUE_STRING": "Texto",
+			"VALUE_NUMBER": "Número",
+			"VALUE_BOOLEAN": "Booleano",
+			"VALUE_JSON": "JSON"
+		}
+	},
+	"table": {
+		"columns": {
+			"name": "Métrica",
+			"scope": "Alcance",
+			"source": "Fuente",
+			"aggregation": "Agregación",
+			"resultType": "Tipo de resultado",
+			"features": "Capacidades"
+		},
+		"actions": {
+			"edit": "Editar métrica",
+			"delete": "Eliminar métrica"
+		},
+		"scope": {
+			"global": "Global",
+			"campaign": "Campaña"
+		},
+		"features": {
+			"groupBy": "Agrupar",
+			"timeSeries": "Serie temporal"
+		},
+		"empty": "No hay métricas que coincidan con los filtros actuales."
+	},
+	"form": {
+		"createTitle": "Crear métrica",
+		"editTitle": "Editar métrica",
+		"description": "Configura la métrica semántica que consumirán los widgets.",
+		"scope": {
+			"global": "Global",
+			"campaign": "Campaña"
+		},
+		"scopeNote": "Esta métrica estará disponible a nivel {{scope}}.",
+		"fields": {
+			"scope": "Disponibilidad",
+			"campaign": "Campaña",
+			"name": "Nombre",
+			"key": "Clave",
+			"description": "Descripción",
+			"sourceType": "Tipo de fuente",
+			"aggregationType": "Agregación",
+			"fieldName": "Nombre del campo",
+			"metricKey": "Clave de métrica",
+			"valueField": "Campo de valor",
+			"resultType": "Tipo de resultado",
+			"supportsGroupBy": "Soporta salida agrupada",
+			"supportsTimeSeries": "Soporta serie temporal",
+			"defaultFilter": "JSON de filtro por defecto",
+			"defaultFilterDescription": "Arreglo JSON opcional de filtros aplicados por defecto.",
+			"defaultFilterHint": "Usa el formato de filtros del backend descrito en la especificación."
+		},
+		"sections": {
+			"identification": "Identificación",
+			"scope": "Alcance",
+			"sourceConfig": "Configuración de fuente",
+			"capabilities": "Capacidades"
+		},
+		"placeholders": {
+			"campaign": "Selecciona campaña",
+			"valueField": "Selecciona el campo tipado",
+			"selectVariable": "Selecciona una variable",
+			"selectCampaignFirst": "Selecciona una campaña primero",
+			"loadingVariables": "Cargando variables…"
+		},
+		"actions": {
+			"cancel": "Cancelar",
+			"create": "Crear métrica",
+			"save": "Guardar métrica"
+		},
+		"validation": {
+			"keyRequired": "La clave de la métrica es obligatoria.",
+			"nameRequired": "El nombre de la métrica es obligatorio.",
+			"campaignRequired": "La campaña es obligatoria para métricas de campaña.",
+			"fieldNameRequired": "El nombre del campo es obligatorio para esta fuente.",
+			"metricKeyRequired": "La clave de métrica es obligatoria para métricas de atributo.",
+			"valueFieldRequired": "El campo de valor es obligatorio para esta agregación.",
+			"defaultFilterInvalid": "El filtro por defecto debe ser JSON válido."
+		}
+	},
+	"delete": {
+		"title": "Eliminar métrica",
+		"message": "¿Eliminar {{name}}? Esta métrica dejará de estar disponible para dashboards.",
+		"confirm": "Eliminar",
+		"cancel": "Cancelar"
+	},
+	"notifications": {
+		"createdTitle": "Métrica creada",
+		"createdMessage": "La definición de métrica ya está disponible para dashboards.",
+		"updatedTitle": "Métrica actualizada",
+		"updatedMessage": "La definición de métrica fue actualizada.",
+		"deletedTitle": "Métrica eliminada",
+		"deletedMessage": "La definición de métrica fue eliminada.",
+		"errorTitle": "No fue posible guardar la métrica"
+	}
+}

@@ -41,7 +41,7 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 	onComplete,
 	onCancel,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaigns.create', 'common']);
 	const createCampaignWithAgent = useCreateCampaignWithAgent();
 
 	const form = useForm<CreateCampaignWithAgentDTO>({

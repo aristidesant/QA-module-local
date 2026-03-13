@@ -1,0 +1,232 @@
+{
+	"wizard": {
+		"steps": {
+			"general": {
+				"label": "General",
+				"description": "Descripción",
+				"eyebrow": "Configuración general",
+				"title": "Esenciales de la campaña",
+				"intro": "Define cómo se presenta esta campaña a tu equipo y contactos. El nombre, la descripción y el tipo mantienen a todos alineados.",
+				"identityTitle": "Identidad",
+				"identityDesc": "Establece el tono y la estructura para esta campaña.",
+				"routingTitle": "Enrutamiento",
+				"routingDesc": "Asocia esta campaña con el número y objetivo correctos.",
+				"routingDescInbound": "Asigna el número de teléfono que recibirá las llamadas entrantes.",
+				"campaignName": "Nombre de la Campaña",
+				"campaignNameDesc": "Dale a tu campaña un nombre descriptivo",
+				"campaignNamePlaceholder": "Ingresa el nombre de la campaña",
+				"descriptionDesc": "Describe brevemente el propósito de esta campaña",
+				"descriptionPlaceholder": "Describe tu campaña",
+				"campaignType": "Tipo de Campaña",
+				"campaignTypeDesc": "Elige cómo se enrutarán las llamadas.",
+				"campaignTypeOutbound": "Saliente",
+				"campaignTypeInbound": "Entrante",
+				"defaultWaves": "Oleadas Predeterminadas",
+				"defaultWavesDesc": "Cuántas oleadas debe ejecutar cada lista de contactos antes de detenerse",
+				"defaultWaveDelay": "Retraso predeterminado entre oleadas (segundos)",
+				"defaultWaveDelayDesc": "Retraso entre oleadas para nuevas listas de contactos. Usa 0 para no agregar espera adicional.",
+				"phoneNumber": "Número de Teléfono",
+				"phoneNumberDesc": "Selecciona el número de teléfono para esta campaña",
+				"phoneNumberPlaceholder": "Elige un número de teléfono",
+				"objective": "Objetivo de la Campaña",
+				"objectiveDesc": "Elige el objetivo principal que esta campaña pretende lograr",
+				"objectivePlaceholder": "Selecciona un objetivo",
+				"createObjective": "Crear nuevo objetivo",
+				"modalCreateObjective": "Crear Objetivo de Campaña",
+				"errorVoices": "No hay voces de agente disponibles. Por favor, contacta a soporte.",
+				"successCreatedTitle": "Campaña Creada",
+				"successCreatedMessage": "Campaña creada con éxito. Continúa para configurar tu agente.",
+				"errorTitle": "Error",
+				"alertTitle": "Error al Crear la Campaña",
+				"alertMessage": "Por favor, revisa la notificación para más detalles.",
+				"submit": "Guardar y Continuar",
+				"validation": {
+					"nameRequired": "El nombre de la campaña es obligatorio",
+					"descriptionRequired": "La descripción es obligatoria",
+					"phoneIdRequired": "El número de teléfono es obligatorio",
+					"wavesRequired": "Las oleadas deben ser al menos 1",
+					"waveDelayRequired": "El retraso entre oleadas debe ser 0 o mayor",
+					"objectiveRequired": "El objetivo de la campaña es obligatorio"
+				}
+			},
+			"agent": {
+				"label": "Agente",
+				"description": "Configuración del agente",
+				"eyebrow": "Configuración del agente",
+				"title": "Da forma a la conversación",
+				"intro": "Configura el comportamiento, el idioma y el prompt para el agente.",
+				"setupTitle": "Configuración de la Conversación",
+				"setupDesc": "Selecciona el comportamiento, el idioma y el saludo para el inicio de la conversación.",
+				"behaviorLabel": "Comportamiento del Agente",
+				"behaviorDesc": "Configuración base",
+				"behaviorPlaceholder": "Elegir comportamiento",
+				"languageLabel": "Idioma",
+				"languageDesc": "Idioma de respuesta",
+				"languagePlaceholder": "Seleccionar idioma",
+				"firstMessageLabel": "Primer Mensaje del Agente",
+				"firstMessageDesc": "Saludo inicial",
+				"firstMessagePlaceholder": "Ingresa el primer mensaje que enviará tu agente...",
+				"promptTitle": "Prompt del Agente",
+				"promptDesc": "Revisa el prompt bloqueado. Usa Editar para refinar las instrucciones.",
+				"promptContent": "Contenido del prompt",
+				"promptHint": "Este prompt se gestiona de forma centralizada. Las ediciones abrirán el editor completo.",
+				"editPrompt": "Editar prompt",
+				"promptPlaceholder": "Prompt del agente de IA",
+				"loading": "Cargando datos de la campaña...",
+				"errorCampaignNotFound": "Campaña no encontrada. Por favor, comienza desde el paso 1.",
+				"successTitle": "Agente Configurado",
+				"successMessage": "Configuración del agente guardada con éxito.",
+				"promptUpdatedTitle": "Prompt Actualizado",
+				"promptUpdatedMessage": "El prompt del agente ha sido actualizado",
+				"submit": "Guardar y Continuar",
+				"validation": {
+					"languageRequired": "El idioma es obligatorio",
+					"promptRequired": "El prompt del agente es obligatorio"
+				},
+				"languages": {
+					"es": "Español",
+					"en": "Inglés",
+					"fr": "Francés",
+					"de": "Alemán",
+					"it": "Italiano",
+					"pt": "Portugués"
+				}
+			},
+			"outcomes": {
+				"label": "Resultados",
+				"description": "Configuración de resultados",
+				"eyebrow": "Enrutamiento de resultados",
+				"title": "Diseña el flujo",
+				"intro": "Crea un mapa sencillo que le indique al sistema qué hacer después de cada conversación. Mantén la experiencia consistente para cada contacto.",
+				"configTitle": "Configuración de Resultados",
+				"configDesc": "Configura los resultados de las llamadas para esta campaña. Define cómo deben categorizarse las llamadas y qué acciones tomar basándose en diferentes escenarios.",
+				"importFromCampaign": "Importar de Campaña",
+				"createNew": "Crear Nuevo",
+				"noFlowConfigured": "No hay flujo de resultados configurado",
+				"createFlowDesc": "Crea un flujo de resultados para definir cómo deben categorizarse y procesarse las llamadas en tu campaña.",
+				"createFlowButton": "Crear Flujo de Resultados",
+				"importTitle": "Importar Flujo",
+				"successCreatedTitle": "Flujo de Resultados Creado",
+				"successCreatedMessage": "Tu flujo de resultados se ha creado con éxito. Haz clic en \"Guardar y Continuar\" para proceder.",
+				"successImportedTitle": "Flujo de Resultados Importado",
+				"successImportedMessage": "Se ha importado con éxito el flujo de resultados de \"{{name}}\".",
+				"errorCampaignNotFound": "Campaña no encontrada. Por favor, comienza desde el paso 1.",
+				"errorImportFailed": "Error al importar el flujo de resultados",
+				"errorImportTitle": "Importación Fallida",
+				"flowRemovedTitle": "Flujo Eliminado",
+				"flowRemovedImported": "El flujo importado ha sido eliminado.",
+				"flowRemovedCreated": "El flujo de resultados ha sido eliminado de esta campaña.",
+				"errorRemoveFailed": "Error al eliminar el flujo de resultados. Por favor, inténtalo de nuevo.",
+				"errorRemoveImportedFailed": "Error al eliminar el flujo importado. Por favor, inténtalo de nuevo.",
+				"noFlowFoundTitle": "No se Encontró Flujo",
+				"noFlowFoundMessage": "No hay flujo de resultados para eliminar en esta campaña.",
+				"noOutcomeFlowTitle": "Sin Flujo de Resultados",
+				"noOutcomeFlowMessage": "Por favor, crea o importa un flujo de resultados antes de continuar.",
+				"loading": "Cargando datos de la campaña...",
+				"previewTitle": "Vista Previa del Flujo de Resultados",
+				"noFlowData": "No hay datos de flujo disponibles",
+				"useFlow": "Usar flujo",
+				"submit": "Continuar",
+				"picker": {
+					"searchPlaceholder": "Buscar campañas...",
+					"refresh": "Refrescar",
+					"outcomeFlow": "Flujo de Resultados",
+					"previewTooltip": "Vista previa del flujo",
+					"useFlow": "Usar flujo",
+					"noMatches": "Ninguna campaña coincide con tu búsqueda",
+					"noFlows": "No hay campañas con flujos de resultados disponibles"
+				},
+				"summary": {
+					"importedSuccess": "Flujo de resultados importado con éxito",
+					"existingConfigured": "Flujo de resultados ya configurado",
+					"createdSuccess": "Flujo de resultados creado con éxito",
+					"imported": "Importado",
+					"from": "De: {{name}}",
+					"unknownCampaign": "Campaña desconocida",
+					"outcome": "resultado",
+					"outcomes": "resultados",
+					"flowReady": "Flujo listo para la campaña",
+					"previewFlow": "Vista Previa del Flujo",
+					"startOver": "Empezar de Nuevo"
+				}
+			},
+			"parameters": {
+				"label": "Parámetros",
+				"description": "Horarios y ajustes",
+				"eyebrow": "Programación",
+				"title": "Controla tu ventana de llamadas",
+				"intro": "Mantén el alcance alineado con las horas de oficina y el cumplimiento normativo. Copia horarios entre días o ajusta cada bloque.",
+				"workingHoursTitle": "Horario de Trabajo",
+				"workingHoursDesc": "Define los días y rangos horarios en los que tus agentes pueden realizar llamadas.",
+				"schedulerCalculator": "Calculadora de Programador",
+				"loading": "Cargando datos de la campaña...",
+				"submit": "Guardar y Continuar"
+			},
+			"complete": {
+				"label": "Completar",
+				"description": "Campaña lista",
+				"eyebrow": "Paso 5 · Completado",
+				"title": "La campaña está activa y lista",
+				"descriptionText": "Tu campaña está configurada. Revisa el resumen o ve directamente a la vista general de la campaña.",
+				"descriptionNamed": "“{{name}}” está configurada. Revisa el resumen o ve directamente a la vista general de la campaña.",
+				"snapshotTitle": "Resumen de la campaña",
+				"name": "Nombre",
+				"type": "Tipo",
+				"status": "Estado",
+				"budget": "Presupuesto",
+				"momentumTitle": "Mantén el impulso",
+				"momentumList": [
+					"Revisa las disposiciones y la automatización de resultados.",
+					"Sube tu lista de contactos o conecta un segmento.",
+					"Programa horarios de trabajo y reglas de limitación.",
+					"Realiza una llamada de prueba para validar el flujo."
+				],
+				"tip": "Consejo: monitorea el rendimiento desde el panel de la campaña una vez que comiencen las llamadas.",
+				"viewCampaign": "Ver campaña",
+				"closeWizard": "Cerrar asistente"
+			}
+		},
+		"knowledgeBase": {
+			"form": {
+				"name": {
+					"label": "Nombre",
+					"placeholder": "p. ej., Preguntas frecuentes del producto",
+					"errorRequired": "El nombre es obligatorio"
+				},
+				"description": {
+					"label": "Descripción",
+					"placeholder": "Nota interna breve sobre esta base de conocimiento"
+				},
+				"content": {
+					"label": "Contenido",
+					"placeholder": "Pega una URL o contenido de texto aquí...",
+					"description": "Pega una URL para obtener contenido de una página web o ingresa texto directamente",
+					"descriptionWithFile": "Elimina el archivo anterior para ingresar texto o una URL"
+				},
+				"file": {
+					"label": "O sube un archivo",
+					"placeholder": "Elige un archivo PDF o suéltalo aquí",
+					"description": "Compatible: PDF. Máx. 25 MB.",
+					"descriptionWithContent": "Borra el texto anterior para subir un archivo"
+				}
+			},
+			"contentInfo": {
+				"fileLabel": "Archivo",
+				"urlDetected": "URL detectada",
+				"urlDescription": "El contenido se obtendrá desde el enlace proporcionado",
+				"textLabel": "Contenido de texto",
+				"textDescription": "Se usará tal cual"
+			},
+			"actions": {
+				"cancel": "Cancelar",
+				"create": "Crear base de conocimiento"
+			},
+			"notifications": {
+				"successTitle": "Éxito",
+				"successMessage": "Base de conocimiento creada correctamente",
+				"errorTitle": "Error",
+				"errorMessage": "No se pudo crear la base de conocimiento"
+			}
+		}
+	}
+}

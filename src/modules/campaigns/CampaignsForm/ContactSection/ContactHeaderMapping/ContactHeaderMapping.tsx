@@ -74,7 +74,7 @@ export function ContactHeaderMapping({
 	objectiveId,
 	selectedSchemaId,
 }: ContactHeaderMappingProps) {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.contacts', 'common']);
 	// Read from campaign store and prefer store value (objectiveId or objective.id)
 	const { selectedCampaign } = useCampaignsStore();
 

@@ -1,0 +1,88 @@
+.manageLayout {
+	display: grid;
+	grid-template-columns: minmax(22rem, 27rem) minmax(0, 1fr);
+	margin: 0 calc(-1 * var(--mantine-spacing-lg))
+		calc(-1 * var(--mantine-spacing-lg));
+	min-height: 27rem;
+	background: linear-gradient(
+		180deg,
+		color-mix(in srgb, var(--mantine-color-white) 82%, #f7f3eb) 0%,
+		var(--mantine-color-white) 100%
+	);
+	border-top: 1px solid
+		color-mix(in srgb, var(--mantine-color-gray-2) 88%, #ece5d8);
+}
+
+.sidebar {
+	background: color-mix(in srgb, var(--mantine-color-gray-0) 82%, #f2eee6);
+	padding: 18px 14px;
+	overflow-y: auto;
+	border-right: 1px solid var(--mantine-color-gray-2);
+}
+
+.main {
+	background: color-mix(in srgb, var(--mantine-color-white) 90%, #f6f4ef);
+	padding: 18px;
+	min-width: 0;
+	overflow: auto;
+}
+
+.previewSwitch {
+	display: flex;
+	align-items: center;
+}
+
+.previewSwitchBody {
+	align-items: center;
+	gap: 8px;
+}
+
+.previewSwitchLabel {
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 600;
+	color: var(--mantine-color-gray-7);
+}
+
+.previewSwitchTrack {
+	background: color-mix(in srgb, var(--mantine-color-gray-1) 74%, #ede8dd);
+	border: 1px solid var(--mantine-color-gray-2);
+}
+
+.previewSwitchThumb {
+	border: 1px solid
+		color-mix(in srgb, var(--mantine-color-gray-3) 80%, transparent);
+}
+
+.previewDivider {
+	margin: var(--mantine-spacing-lg) 0 var(--mantine-spacing-md);
+}
+
+.previewDivider :global(.mantine-Divider-label) {
+	padding: 0 12px;
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: color-mix(in srgb, var(--mantine-color-gray-7) 82%, #7a6652);
+	background: color-mix(in srgb, var(--mantine-color-body) 86%, #f7f1e6);
+}
+
+.previewDivider :global(.mantine-Divider-root::before),
+.previewDivider :global(.mantine-Divider-root::after) {
+	border-top-color: color-mix(
+		in srgb,
+		var(--mantine-color-gray-3) 80%,
+		#d8cdbb
+	);
+}
+
+@media (max-width: 62rem) {
+	.manageLayout {
+		grid-template-columns: 1fr;
+	}
+
+	.sidebar {
+		border-bottom: 1px solid var(--mantine-color-gray-2);
+		border-right: 0;
+	}
+}

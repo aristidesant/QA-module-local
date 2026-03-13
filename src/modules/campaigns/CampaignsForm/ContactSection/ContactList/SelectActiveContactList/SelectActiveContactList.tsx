@@ -9,7 +9,7 @@ interface SelectActiveContactListProps {
 }
 
 export const SelectActiveContactList = ({}: SelectActiveContactListProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.contacts', 'common']);
 	// TODO: Implement SelectActiveContactList component
 	return <Text>{t('form.contacts.list.selectActiveDescription')}</Text>;
 };
