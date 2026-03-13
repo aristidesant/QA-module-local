@@ -85,6 +85,9 @@ const PhoneNumbersPage = React.lazy(
 const MetricCatalogPage = React.lazy(
 	() => import('./modules/configurations/MetricCatalogPage')
 );
+const DictionaryRulesPage = React.lazy(
+	() => import('./modules/configurations/DictionaryRules/DictionaryRulesPage')
+);
 const ConfigurationsPage = React.lazy(
 	() => import('./modules/configurations/ConfigurationsPage')
 );
@@ -444,6 +447,21 @@ const router = createBrowserRouter([
 											}
 										>
 											<PhoneNumbersPage />
+										</Suspense>
+									</I18nNamespaceLoader>
+								),
+							},
+							{
+								path: 'dictionary-rules',
+								id: 'dictionary-rules',
+								element: (
+									<I18nNamespaceLoader>
+										<Suspense
+											fallback={
+												<SuspenseFallback message='Loading dictionary rules...' />
+											}
+										>
+											<DictionaryRulesPage />
 										</Suspense>
 									</I18nNamespaceLoader>
 								),

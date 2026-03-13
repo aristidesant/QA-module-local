@@ -26,6 +26,7 @@ import {
 import { useQueryClient } from '@tanstack/react-query';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 import KnowledgeBaseSection from './KnowledgeBaseSection';
+import WizardDictionarySection from './WizardDictionarySection';
 import useCampaignsPredefinedParams from '../../CampaignsForm/useCampaignsPredefinedParams';
 import styles from './StepTwoAgent.module.css';
 import sharedStyles from '../CampaignWizard.module.css';
@@ -487,7 +488,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 						</div>
 
 						<div className={styles.secondaryColumn}>
-							<Box className={styles.sectionCard}>
+							<Box className={`${styles.sectionCard} ${styles.promptCard}`}>
 								<div className={styles.sectionHeader}>
 									<IconBrain size={20} className={styles.sectionIcon} />
 									<h3 className={styles.sectionTitle}>
@@ -525,12 +526,18 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 									readOnly
 									disabled
 									withAsterisk
-									rows={16}
+									rows={11}
 									size='sm'
-									className={sharedStyles.field}
-									classNames={{ input: styles.promptTextarea }}
+									className={styles.promptPreviewField}
+									classNames={{
+										root: styles.promptTextareaRoot,
+										wrapper: styles.promptTextareaWrapper,
+										input: styles.promptTextarea,
+									}}
 								/>
 							</Box>
+
+							<WizardDictionarySection />
 						</div>
 					</div>
 				</Stack>
