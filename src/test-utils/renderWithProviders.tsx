@@ -61,10 +61,12 @@ import esCampaignFormOutcomes from '~/locales/es/campaign.form.outcomes.json';
 import esCampaignFormParams from '~/locales/es/campaign.form.params.json';
 import esCampaignFormReportValues from '~/locales/es/campaign.form.report-values.json';
 import esCampaignFormShared from '~/locales/es/campaign.form.shared.json';
+import enCampaignFormSync from '~/locales/en/campaign.form.sync.json';
 import esCampaignFormContacts from '~/locales/es/campaign.form.contacts.json';
 import esCampaignFormWorkflow from '~/locales/es/campaign.form.workflow.json';
 import esCampaignView from '~/locales/es/campaign.view.json';
 import esCampaignsCloneForm from '~/locales/es/campaigns.clone-form.json';
+import esCampaignFormSync from '~/locales/es/campaign.form.sync.json';
 import esCampaignsCreate from '~/locales/es/campaigns.create.json';
 import esCampaignsList from '~/locales/es/campaigns.list.json';
 import esCampaignsWizard from '~/locales/es/campaigns.wizard.json';
@@ -116,6 +118,7 @@ testI18n.use(initReactI18next).init({
 		'campaign.form.params',
 		'campaign.form.report-values',
 		'campaign.form.shared',
+		'campaign.form.sync',
 		'campaign.form.workflow',
 		'campaign.view',
 		'campaigns.clone-form',
@@ -157,6 +160,7 @@ testI18n.use(initReactI18next).init({
 			'campaign.form.params': enCampaignFormParams,
 			'campaign.form.report-values': enCampaignFormReportValues,
 			'campaign.form.shared': enCampaignFormShared,
+			'campaign.form.sync': enCampaignFormSync,
 			'campaign.form.workflow': enCampaignFormWorkflow,
 			'campaign.view': enCampaignView,
 			'campaigns.clone-form': enCampaignsCloneForm,
@@ -197,6 +201,7 @@ testI18n.use(initReactI18next).init({
 			'campaign.form.params': esCampaignFormParams,
 			'campaign.form.report-values': esCampaignFormReportValues,
 			'campaign.form.shared': esCampaignFormShared,
+			'campaign.form.sync': esCampaignFormSync,
 			'campaign.form.workflow': esCampaignFormWorkflow,
 			'campaign.view': esCampaignView,
 			'campaigns.clone-form': esCampaignsCloneForm,
