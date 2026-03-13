@@ -54,26 +54,42 @@
 }
 
 .previewDivider {
-	margin: var(--mantine-spacing-lg) 0 var(--mantine-spacing-md);
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	margin: var(--mantine-spacing-xl) 0 var(--mantine-spacing-lg);
+	padding: 0 var(--mantine-spacing-md);
 }
 
-.previewDivider :global(.mantine-Divider-label) {
-	padding: 0 12px;
+.previewDividerLine {
+	flex: 1;
+	height: 1px;
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		color-mix(in srgb, var(--mantine-color-gray-3) 75%, #c9bba8) 40%,
+		color-mix(in srgb, var(--mantine-color-gray-3) 75%, #c9bba8) 60%,
+		transparent 100%
+	);
+}
+
+.previewDividerLabel {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex-shrink: 0;
+	padding: 5px 14px;
+	border-radius: 20px;
+	border: 1px solid color-mix(in srgb, var(--mantine-color-gray-2) 80%, #ece5d8);
+	background: color-mix(in srgb, var(--mantine-color-body) 88%, #f5efe6);
+	box-shadow:
+		0 1px 4px rgba(0, 0, 0, 0.05),
+		0 0 0 3px color-mix(in srgb, var(--mantine-color-gray-1) 60%, transparent);
 	font-size: var(--mantine-font-size-xs);
 	font-weight: 700;
-	letter-spacing: 0.04em;
+	letter-spacing: 0.07em;
 	text-transform: uppercase;
-	color: color-mix(in srgb, var(--mantine-color-gray-7) 82%, #7a6652);
-	background: color-mix(in srgb, var(--mantine-color-body) 86%, #f7f1e6);
-}
-
-.previewDivider :global(.mantine-Divider-root::before),
-.previewDivider :global(.mantine-Divider-root::after) {
-	border-top-color: color-mix(
-		in srgb,
-		var(--mantine-color-gray-3) 80%,
-		#d8cdbb
-	);
+	color: color-mix(in srgb, var(--mantine-color-gray-6) 80%, #7a6652);
 }
 
 @media (max-width: 62rem) {

@@ -30,6 +30,7 @@ interface CampaignDashboardViewerToolbarProps {
 	period?: DashboardPeriod;
 	comparisonPeriod?: { current: DashboardPeriod; previous: DashboardPeriod };
 	comparisonEnabled: boolean;
+	allowLayoutEditing: boolean;
 	onCancelEditing: () => void;
 	onRefresh: () => void;
 	onSaveLayout: () => void;
@@ -59,6 +60,7 @@ const CampaignDashboardViewerToolbar = ({
 	period,
 	comparisonPeriod,
 	comparisonEnabled,
+	allowLayoutEditing,
 	onCancelEditing,
 	onRefresh,
 	onSaveLayout,
@@ -151,13 +153,13 @@ const CampaignDashboardViewerToolbar = ({
 
 				<div className={styles.actionsSlot}>
 					<Group gap='xs' wrap='wrap' justify='flex-end'>
-						{isEditingLayout ? (
+						{allowLayoutEditing && isEditingLayout ? (
 							<Badge size='sm' variant='light' color='blue'>
 								{t('dashboard.layoutEditor.editingBadge')}
 							</Badge>
 						) : null}
 
-						{isEditingLayout ? (
+						{allowLayoutEditing && isEditingLayout ? (
 							<>
 								<Button
 									size='sm'
@@ -178,7 +180,7 @@ const CampaignDashboardViewerToolbar = ({
 									{t('dashboard.layoutEditor.save')}
 								</Button>
 							</>
-						) : (
+						) : allowLayoutEditing ? (
 							<Tooltip
 								label={
 									isMobile
@@ -198,7 +200,7 @@ const CampaignDashboardViewerToolbar = ({
 									</Button>
 								</span>
 							</Tooltip>
-						)}
+						) : null}
 
 						<Tooltip label={t('dashboard.refresh')}>
 							<ActionIcon

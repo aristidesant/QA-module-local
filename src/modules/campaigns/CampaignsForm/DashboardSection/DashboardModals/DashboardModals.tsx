@@ -10,8 +10,12 @@ import DashboardWidgetForm from '../DashboardWidgetForm';
 
 const DashboardModals = () => {
 	const { t } = useTranslation(['campaign.form.dashboards', 'common']);
-	const { campaignId, selectedDashboardId, setSelectedDashboardId } =
-		useDashboardSectionSelection();
+	const {
+		campaignId,
+		attributeMetricKeys,
+		selectedDashboardId,
+		setSelectedDashboardId,
+	} = useDashboardSectionSelection();
 	const {
 		dashboardModalOpened,
 		widgetModalOpened,
@@ -72,6 +76,7 @@ const DashboardModals = () => {
 				{selectedDashboardId && (
 					<DashboardWidgetForm
 						campaignId={campaignId}
+						attributeMetricKeys={attributeMetricKeys}
 						dashboardId={selectedDashboardId}
 						widget={editingWidget}
 						onCancel={closeWidgetModal}

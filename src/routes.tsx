@@ -55,8 +55,11 @@ const ConversationPage = React.lazy(
 	() => import('./modules/conversations/ConversationsPage/ConversationPage')
 );
 
-const WelcomeCard = React.lazy(
-	() => import('./modules/overview/WelcomeCard/WelcomeCard')
+const OverviewDashboardPage = React.lazy(
+	() => import('./modules/overview/OverviewDashboardPage/OverviewDashboardPage')
+);
+const DashboardsPage = React.lazy(
+	() => import('./modules/dashboards/DashboardsPage/DashboardsPage')
 );
 import { LoginForm } from './modules/auth/LoginForm';
 import { PermissionEnum } from './constants/PermissionEnum';
@@ -160,9 +163,26 @@ const router = createBrowserRouter([
 								<Suspense
 									fallback={<SuspenseFallback message='Loading dashboard...' />}
 								>
-									<WelcomeCard />
+									<OverviewDashboardPage />
 								</Suspense>
 							</I18nNamespaceLoader>
+						),
+					},
+					{
+						path: 'dashboards',
+						id: 'dashboards',
+						element: (
+							<ModuleGuard module={ModuleEnum.DASHBOARD}>
+								<I18nNamespaceLoader>
+									<Suspense
+										fallback={
+											<SuspenseFallback message='Loading dashboards...' />
+										}
+									>
+										<DashboardsPage />
+									</Suspense>
+								</I18nNamespaceLoader>
+							</ModuleGuard>
 						),
 					},
 					{

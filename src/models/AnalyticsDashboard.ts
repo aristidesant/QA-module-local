@@ -98,7 +98,7 @@ export interface UpdateMetricDefinitionDto extends Partial<CreateMetricDefinitio
 export interface DashboardDefinition {
 	id: number;
 	clientId: number;
-	campaignId: number;
+	campaignId: number | null;
 	userId: number;
 	name: string;
 	description: string | null;
@@ -110,7 +110,7 @@ export interface DashboardDefinition {
 }
 
 export interface CreateDashboardDto {
-	campaignId: number;
+	campaignId?: number | null;
 	name: string;
 	description?: string;
 	isDefault?: boolean;
@@ -162,7 +162,7 @@ export interface SingleValueMetricResult {
 	metricKey: string;
 	value: string | number | boolean | null;
 	meta: {
-		campaignId: number;
+		campaignId: number | null;
 		sourceType: MetricSourceType;
 		aggregationType: MetricAggregationType;
 	};
@@ -179,7 +179,7 @@ export interface GroupedMetricResult {
 	metricKey: string;
 	rows: GroupedMetricRow[];
 	meta: {
-		campaignId: number;
+		campaignId: number | null;
 		sourceType: MetricSourceType;
 		aggregationType: MetricAggregationType;
 		groupBy: string;
@@ -215,7 +215,7 @@ export interface DashboardPeriod {
 
 export interface DashboardRenderResponse {
 	dashboardId: number;
-	campaignId: number;
+	campaignId: number | null;
 	name: string;
 	timeRange?: AnalyticsTimeRange;
 	period?: DashboardPeriod;
@@ -248,7 +248,7 @@ export interface DashboardComparisonWidget {
 
 export interface DashboardRenderComparisonResponse {
 	dashboardId: number;
-	campaignId: number;
+	campaignId: number | null;
 	name: string;
 	timeRange?: AnalyticsTimeRange;
 	comparisonMode?: AnalyticsComparisonMode;

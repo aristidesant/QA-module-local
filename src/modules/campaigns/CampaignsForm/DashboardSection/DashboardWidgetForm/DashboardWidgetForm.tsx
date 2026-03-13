@@ -16,7 +16,6 @@ import {
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useTranslation } from 'react-i18next';
-import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
 import type {
 	CreateDashboardWidgetDto,
 	DashboardWidget,
@@ -27,7 +26,6 @@ import {
 	findNextAvailableWidgetLayout,
 	normalizeWidgetLayout,
 } from '~/modules/campaigns/dashboardLayout';
-import { getDataCollectionFromAgentConfig } from '../../AnalyticsSection/analyticsFormContext';
 import {
 	useCreateDashboardWidget,
 	useDashboardWidgets,
@@ -46,7 +44,8 @@ import type { WidgetFormValues } from '../DashboardSection.types';
 import styles from './DashboardWidgetForm.module.css';
 
 type DashboardWidgetFormProps = {
-	campaignId: number;
+	campaignId: number | null;
+	attributeMetricKeys?: string[];
 	dashboardId: number;
 	widget?: DashboardWidget | null;
 	onCancel: () => void;
@@ -55,13 +54,13 @@ type DashboardWidgetFormProps = {
 
 const DashboardWidgetForm = ({
 	campaignId,
+	attributeMetricKeys = [],
 	dashboardId,
 	widget,
 	onCancel,
 	onSuccess,
 }: DashboardWidgetFormProps) => {
 	const { t } = useTranslation(['campaign.form.dashboards', 'common']);
-	const campaignForm = useCampaignFormContext();
 	const createDashboardWidget = useCreateDashboardWidget();
 	const updateDashboardWidget = useUpdateDashboardWidget();
 	const { data: metricDefinitions = [] } = useMetricDefinitions();
@@ -84,10 +83,11 @@ const DashboardWidgetForm = ({
 	const eligibleMetricOptions = useMemo(
 		() =>
 			metricDefinitions
-				.filter(
-					(metricDefinition) =>
-						metricDefinition.campaignId === null ||
-						metricDefinition.campaignId === campaignId
+				.filter((metricDefinition) =>
+					campaignId === null
+						? metricDefinition.campaignId === null
+						: metricDefinition.campaignId === null ||
+							metricDefinition.campaignId === campaignId
 				)
 				.map((metricDefinition) => ({
 					value: String(metricDefinition.id),
@@ -129,16 +129,6 @@ const DashboardWidgetForm = ({
 			) ?? null,
 		[form.values.metricDefinitionId, metricDefinitions]
 	);
-
-	const attributeMetricKeys = useMemo(() => {
-		const dataCollection = getDataCollectionFromAgentConfig(
-			campaignForm.values.agentConfig
-		);
-
-		return Object.keys(dataCollection)
-			.filter((key) => key.trim().length > 0)
-			.sort((left, right) => left.localeCompare(right));
-	}, [campaignForm.values.agentConfig]);
 
 	const groupBySuggestions = useMemo(
 		() =>

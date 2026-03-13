@@ -49,6 +49,7 @@ import GeneralSectionRightPanel from './GeneralSection/GeneralSectionRightPanel'
 import AppDrawer from '~/components/AppDrawer';
 import DashboardSection from './DashboardSection';
 import styles from './CampaignsForm.module.css';
+import { getDataCollectionFromAgentConfig } from './AnalyticsSection/analyticsFormContext';
 
 interface CampaignsFormProps {
 	campaign?: Partial<Campaign>;
@@ -213,6 +214,15 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 				value ? null : t('form.validation.objectiveRequired'),
 		},
 	});
+	const attributeMetricKeys = React.useMemo(() => {
+		const dataCollection = getDataCollectionFromAgentConfig(
+			form.values.agentConfig
+		);
+
+		return Object.keys(dataCollection)
+			.filter((key) => key.trim().length > 0)
+			.sort((left, right) => left.localeCompare(right));
+	}, [form.values.agentConfig]);
 
 	// Update form values when campaign data changes
 	useEffect(() => {
@@ -562,7 +572,10 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 							</form>
 						)}
 						{selectedTab === 'dashboards' && (
-							<DashboardSection campaignId={campaign?.id} />
+							<DashboardSection
+								campaignId={campaign?.id}
+								attributeMetricKeys={attributeMetricKeys}
+							/>
 						)}
 					</Stack>
 				</ContentContainer>

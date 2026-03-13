@@ -8,6 +8,13 @@
 	"welcomeBackHeading": "¡Bienvenido de nuevo, {{name}}!",
 	"masterSubheading": "Obtén una visión estratégica de todo tu ecosistema conversacional.",
 	"enterpriseHeading": "Resumen Empresarial",
+	"dashboardOverview": {
+		"title": "Resumen de dashboards",
+		"description": "Revisa dashboards que no están asociados a una campaña.",
+		"emptyTitle": "Aún no hay dashboards globales",
+		"emptyDescription": "Crea un dashboard sin campaña para mostrarlo aquí en la página principal.",
+		"emptyAction": "Abrir dashboards"
+	},
 	"features": {
 		"smartCampaigns": {
 			"title": "Campañas Inteligentes",

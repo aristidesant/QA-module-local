@@ -45,9 +45,11 @@ import styles from './CampaignDashboardViewer.module.css';
 const CampaignDashboardViewer = ({
 	campaignId,
 	initialDashboardId,
+	allowLayoutEditing = true,
 }: {
-	campaignId: number;
+	campaignId?: number | null;
 	initialDashboardId?: number;
+	allowLayoutEditing?: boolean;
 }) => {
 	const [isSavingLayoutTransition, setIsSavingLayoutTransition] =
 		useState(false);
@@ -260,9 +262,14 @@ const CampaignDashboardViewer = ({
 
 	const isSavingLayout =
 		updateDashboardWidgetLayouts.isPending || isSavingLayoutTransition;
-	const isLayoutEditingAvailable = !isMobile && widgets.length > 0;
+	const isLayoutEditingAvailable =
+		allowLayoutEditing && !isMobile && widgets.length > 0;
 
 	const handleStartEditing = () => {
+		if (!allowLayoutEditing) {
+			return;
+		}
+
 		startEditing(persistedLayouts);
 	};
 
@@ -448,6 +455,7 @@ const CampaignDashboardViewer = ({
 					period={renderResult?.period}
 					comparisonPeriod={comparisonResult?.period}
 					comparisonEnabled={comparisonEnabled}
+					allowLayoutEditing={allowLayoutEditing}
 					onCancelEditing={handleCancelEditing}
 					onRefresh={() => void refetchRenderResult()}
 					onSaveLayout={() => void handleSaveLayout()}

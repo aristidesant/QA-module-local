@@ -12,6 +12,7 @@ import {
 	IconBuilding,
 	IconPhoneOff,
 	IconFlask,
+	IconLayoutDashboard,
 } from '@tabler/icons-react';
 import styles from './UserMenu.module.css';
 import { useNavigate } from 'react-router';
@@ -121,6 +122,17 @@ export const UserMenu: React.FC = () => {
 					icon: <IconPhoneOff size={16} />,
 					path: '/do-not-call',
 					module: ModuleEnum.SETTINGS,
+				},
+			],
+		},
+		{
+			category: t('userMenu.categories.dashboards'),
+			items: [
+				{
+					label: t('userMenu.items.dashboards'),
+					icon: <IconLayoutDashboard size={16} />,
+					path: '/dashboards',
+					module: ModuleEnum.DASHBOARD,
 				},
 			],
 		},

@@ -13,7 +13,8 @@ import type {
 } from '~/models/AnalyticsDashboard';
 
 type DashboardSectionSelectionContextValue = {
-	campaignId: number;
+	campaignId: number | null;
+	attributeMetricKeys: string[];
 	selectedDashboardId: number | null;
 	setSelectedDashboardId: Dispatch<SetStateAction<number | null>>;
 	isPreviewOpen: boolean;
@@ -40,8 +41,12 @@ const DashboardSectionModalContext =
 
 export const DashboardSectionProvider = ({
 	campaignId,
+	attributeMetricKeys = [],
 	children,
-}: PropsWithChildren<{ campaignId: number }>) => {
+}: PropsWithChildren<{
+	campaignId: number | null;
+	attributeMetricKeys?: string[];
+}>) => {
 	const [selectedDashboardId, setSelectedDashboardId] = useState<number | null>(
 		null
 	);
@@ -57,12 +62,13 @@ export const DashboardSectionProvider = ({
 	const selectionValue = useMemo(
 		() => ({
 			campaignId,
+			attributeMetricKeys,
 			selectedDashboardId,
 			setSelectedDashboardId,
 			isPreviewOpen,
 			setIsPreviewOpen,
 		}),
-		[campaignId, isPreviewOpen, selectedDashboardId]
+		[attributeMetricKeys, campaignId, isPreviewOpen, selectedDashboardId]
 	);
 
 	const modalValue = useMemo(

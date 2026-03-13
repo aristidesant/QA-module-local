@@ -1,4 +1,4 @@
-import { Collapse, Divider, Switch, Text } from '@mantine/core';
+import { Collapse, Switch, Text } from '@mantine/core';
 import { IconLayoutDashboard } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
@@ -51,11 +51,14 @@ const DashboardSectionContent = () => {
 			</SectionCard>
 
 			<Collapse in={isPreviewOpen}>
-				<Divider
-					className={styles.previewDivider}
-					label={t('dashboardBuilder.previewDivider')}
-					labelPosition='center'
-				/>
+				<div className={styles.previewDivider}>
+					<div className={styles.previewDividerLine} />
+					<div className={styles.previewDividerLabel}>
+						<IconLayoutDashboard size={11} stroke={2} />
+						<span>{t('dashboardBuilder.previewDivider')}</span>
+					</div>
+					<div className={styles.previewDividerLine} />
+				</div>
 				<CampaignDashboardViewer
 					campaignId={campaignId}
 					initialDashboardId={selectedDashboardId ?? undefined}
@@ -67,10 +70,18 @@ const DashboardSectionContent = () => {
 	);
 };
 
-const DashboardSection = ({ campaignId }: { campaignId?: number }) => {
+const DashboardSection = ({
+	campaignId,
+	attributeMetricKeys = [],
+	allowGlobal = false,
+}: {
+	campaignId?: number | null;
+	attributeMetricKeys?: string[];
+	allowGlobal?: boolean;
+}) => {
 	const { t } = useTranslation(['campaign.form.dashboards', 'common']);
 
-	if (!campaignId) {
+	if (!campaignId && !allowGlobal) {
 		return (
 			<SectionCard
 				title={t('dashboardBuilder.emptyDraftTitle')}
@@ -85,7 +96,10 @@ const DashboardSection = ({ campaignId }: { campaignId?: number }) => {
 	}
 
 	return (
-		<DashboardSectionProvider campaignId={campaignId}>
+		<DashboardSectionProvider
+			campaignId={campaignId ?? null}
+			attributeMetricKeys={attributeMetricKeys}
+		>
 			<DashboardSectionContent />
 		</DashboardSectionProvider>
 	);

@@ -26,7 +26,7 @@ import type { DashboardFormValues } from '../DashboardSection.types';
 import styles from './DashboardDefinitionForm.module.css';
 
 type DashboardDefinitionFormProps = {
-	campaignId: number;
+	campaignId: number | null;
 	dashboard?: DashboardDefinition | null;
 	onCancel: () => void;
 	onSuccess: (dashboardId?: number) => void;
