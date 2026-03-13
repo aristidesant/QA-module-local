@@ -50,7 +50,11 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 	onNext,
 	onCancel,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaigns.wizard',
+		'campaign.form.shared',
+		'common',
+	]);
 	type CampaignTypeValue = 'INBOUND' | 'OUTBOUND';
 
 	const {

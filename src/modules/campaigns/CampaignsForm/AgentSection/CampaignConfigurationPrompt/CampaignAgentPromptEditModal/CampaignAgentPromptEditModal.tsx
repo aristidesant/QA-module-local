@@ -33,7 +33,11 @@ interface CampaignAgentPromptEditModalProps {
 const CampaignAgentPromptEditModal: React.FC<
 	CampaignAgentPromptEditModalProps
 > = ({ opened, onClose }) => {
-	const { t } = useTranslation(['campaigns', 'common']);
+	const { t } = useTranslation([
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 	const { campaignId: routeCampaignId } = useParams();
 	const form = useCampaignFormContext();
 	const campaignId =

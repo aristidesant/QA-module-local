@@ -1,0 +1,20 @@
+{
+	"form": {
+		"reportValues": {
+			"title": "Columnas de reporte",
+			"description": "Configura las columnas que se incluirán en los exports de listas de contactos.",
+			"summaryEyebrow": "Estructura del export",
+			"summaryTitle": "Estas columnas aparecerán en el reporte en el mismo orden mostrado abajo.",
+			"summaryDescription": "Arrastra para reordenar, deja solo los campos necesarios y confirma que la secuencia coincida con la forma en que el usuario leerá el export.",
+			"count_one": "{{count}} columna en el reporte",
+			"count_other": "{{count}} columnas en el reporte",
+			"pendingChanges": "Tienes cambios sin guardar en esta estructura de reporte.",
+			"noPendingChanges": "Todos los cambios están guardados.",
+			"saveChanges": "Guardar cambios",
+			"discardChanges": "Descartar cambios",
+			"notifications": {
+				"saved": "Las columnas del reporte se guardaron correctamente"
+			}
+		}
+	}
+}

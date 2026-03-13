@@ -60,7 +60,11 @@ interface CampaignFiltersType {
 }
 
 export const CampaignsList: React.FC = () => {
-	const { t } = useTranslation(['campaigns', 'common']);
+	const { t } = useTranslation([
+		'campaigns.list',
+		'campaign.form.agents',
+		'common',
+	]);
 	const { selectCampaign, selectedCampaign } = useCampaignsStore(
 		(state) => state
 	);

@@ -31,7 +31,11 @@ const KnowledgeBaseWizardForm: React.FC<KnowledgeBaseWizardFormProps> = ({
 	onCancel,
 }) => {
 	const createMutation = useCreateKnowledgeBase();
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaigns.wizard',
+		'campaign.form.shared',
+		'common',
+	]);
 	const [file, setFile] = useState<File | null>(null);
 
 	const form = useForm({

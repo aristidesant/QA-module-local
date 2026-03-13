@@ -28,7 +28,11 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 	onCancel,
 	onSubmit,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.outcomes',
+		'campaign.detail',
+		'common',
+	]);
 	const form = useForm<DispositionNode>({
 		initialValues: {
 			...node,

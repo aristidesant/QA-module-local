@@ -1,0 +1,20 @@
+{
+	"form": {
+		"reportValues": {
+			"title": "Report columns",
+			"description": "Configure the columns that will be included in contact list exports.",
+			"summaryEyebrow": "Export structure",
+			"summaryTitle": "These columns appear in the report in the same order shown below.",
+			"summaryDescription": "Drag to reorder, keep only the fields you need, and make sure the sequence matches how users should read the export.",
+			"count_one": "{{count}} column in report",
+			"count_other": "{{count}} columns in report",
+			"pendingChanges": "You have unsaved changes in this report layout.",
+			"noPendingChanges": "All changes are saved.",
+			"saveChanges": "Save changes",
+			"discardChanges": "Discard changes",
+			"notifications": {
+				"saved": "Report columns saved successfully"
+			}
+		}
+	}
+}

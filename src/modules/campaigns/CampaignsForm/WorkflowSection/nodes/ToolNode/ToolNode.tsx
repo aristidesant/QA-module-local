@@ -16,7 +16,11 @@ import styles from './ToolNode.module.css';
 const ToolNodeComponent = (props: NodeProps) => {
 	const nodeData = props.data as unknown as ToolNodeModel;
 	const nodeType = (props.type ?? nodeData.type) as WorkflowNodeType;
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const fallbackLabel = t('form.workflow.nodes.tool');
 	const toolCount = nodeData.tools?.length ?? 0;
 	const { data: tools } = useTools();

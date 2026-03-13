@@ -1,0 +1,251 @@
+{
+	"scheduler": {
+		"schedulerBuilder": {
+			"fieldsCount": "{{count}} fields",
+			"days": {
+				"monday": "Monday",
+				"tuesday": "Tuesday",
+				"wednesday": "Wednesday",
+				"thursday": "Thursday",
+				"friday": "Friday",
+				"saturday": "Saturday",
+				"sunday": "Sunday"
+			},
+			"status": {
+				"off": "Off",
+				"noHours": "No hours",
+				"scheduleN": "Schedule {{index}}"
+			},
+			"curatedSchedules": "Curated schedules",
+			"curatedDescription": "Pick from prebuilt schedules or customize your own.",
+			"builder": "Scheduler builder",
+			"predefinedSchedule": "Predefined schedule",
+			"predefinedDescription": "Select a template to quickly set the schedule.",
+			"predefinedPlaceholder": "Select days and hours configuration",
+			"predefinedNoData": "No templates available",
+			"preview": "Preview",
+			"previewDescription": "Preview the selected schedule before creating it.",
+			"previewEmpty": "Select a template to preview its configured days.",
+			"details": "Schedule details",
+			"detailsDescription": "Name and describe the schedule you are creating.",
+			"name": "Schedule name",
+			"namePlaceholder": "Schedule name",
+			"description": "Schedule description",
+			"descriptionPlaceholder": "e.g. Monday to Friday from 08:00 to 17:00",
+			"humanEquivalent": "Human equivalent",
+			"scheduleType": "Schedule Type",
+			"typeAndDirection": "Type & Direction",
+			"typeAndDirectionDescription": "Choose how the schedule operates and which call direction it applies to.",
+			"directionLabel": "Direction",
+			"scheduleTypes": {
+				"custom": "Custom Hours",
+				"alwaysOn": "Always On 24/7"
+			},
+			"directions": {
+				"inbound": "Inbound",
+				"outbound": "Outbound",
+				"both": "Both"
+			},
+			"cancel": "Cancel",
+			"create": "Create schedule",
+			"validation": {
+				"nameRequired": "Schedule name is required",
+				"scheduleRequired": "Please select a schedule template",
+				"humanEquivalentRequired": "Human equivalent is required",
+				"humanEquivalentNumber": "Human equivalent must be a number",
+				"outbound24x7NotAllowed": "24/7 schedules are not available for Outbound direction. Choose Inbound or Both."
+			},
+			"notifications": {
+				"error": "Error",
+				"campaignIdRequired": "Campaign ID is required",
+				"success": "Success",
+				"created": "Schedule created successfully",
+				"failed": "Failed to create schedule",
+				"errorCreating": "Error Creating Schedule"
+			}
+		},
+		"card": {
+			"notifications": {
+				"fixTimeRanges": {
+					"title": "Fix schedule time ranges",
+					"message": "Update the time window for: {{days}}"
+				}
+			},
+			"delete": {
+				"title": "Delete Schedule",
+				"message": "Are you sure you want to delete this schedule?",
+				"confirm": "Delete",
+				"cancel": "Cancel"
+			},
+			"update": "Update Schedule",
+			"cancel": "Cancel"
+		},
+		"header": {
+			"metrics": {
+				"equivalents": "Equivalents",
+				"weekly": "Weekly",
+				"perAgent": "Per Agent"
+			},
+			"tooltip": {
+				"equivalents": "Human equivalents allocated to this schedule",
+				"weekly": "Projected weekly effort for the whole team",
+				"perAgent": "Hours per active agent each week"
+			},
+			"status": {
+				"active": "Active",
+				"paused": "Paused"
+			},
+			"direction": {
+				"inbound": "Inbound",
+				"outbound": "Outbound",
+				"both": "Both"
+			},
+			"type": {
+				"alwaysOn": "24/7",
+				"custom": "Custom"
+			},
+			"alwaysOnLabel": "Always on — 24/7",
+			"activeDays": "{{count}} active day",
+			"activeDays_other": "{{count}} active days",
+			"noActiveDays": "No active days yet",
+			"actions": {
+				"view": "View schedule",
+				"edit": "Edit",
+				"close": "Close",
+				"delete": "Delete"
+			},
+			"untitled": "Untitled Schedule"
+		},
+		"add": {
+			"button": "Add Schedule",
+			"modalTitle": "Add Predefined Schedule"
+		},
+		"capacity": {
+			"title": "Capacity",
+			"infoTooltip": "Translate your schedule into realistic talk time based on 38.5 min/hour efficiency.",
+			"sliderLabel": "Human Equivalent (Agents)",
+			"metrics": {
+				"scheduled": {
+					"label": "Scheduled",
+					"tooltip": "{{count}} active day scheduled this week",
+					"tooltip_other": "{{count}} active days scheduled this week"
+				},
+				"perAgent": {
+					"label": "Per Agent",
+					"tooltip": "Talk time per person at 38.5 min/hour efficiency"
+				},
+				"teamTotal": {
+					"label": "Team Total",
+					"tooltip": "Combined talk time for {{count}} agent",
+					"tooltip_other": "Combined talk time for {{count}} agents"
+				}
+			},
+			"schedule": {
+				"title": "Schedule",
+				"activeBadge": "{{count}} active"
+			}
+		},
+		"calculator": {
+			"title": "Scheduler calculator",
+			"description": "Define the campaign parameters and project staffing or delivery time with confidence.",
+			"mode": {
+				"resources": "Resources",
+				"time": "Time"
+			},
+			"contactRates": "Contact rates",
+			"aht": "Average handling time (minutes)",
+			"calculate": "Calculate projection",
+			"fields": {
+				"totalRecords": "Total records",
+				"daysPlanned": "Days planned",
+				"agentsAllocated": "Agents allocated",
+				"contactability": "Contactability",
+				"effectiveness": "Effectiveness",
+				"ahtEffective": "AHT effective contact",
+				"ahtNoEffective": "AHT no effective contact",
+				"ahtNoContact": "AHT no contact"
+			},
+			"results": {
+				"title": "Projection summary",
+				"hint": "Compare campaign volume, effort, and daily capacity at a glance.",
+				"badge": {
+					"resource": "Resource projection",
+					"timeline": "Timeline projection"
+				},
+				"waveBreakdown": "WAVE BREAKDOWN",
+				"assumptions": {
+					"title": "Model assumptions",
+					"text": "{{phones}} phones per record · {{hours}} hours per agent day · {{minutesMan}} minutes per contact attempt."
+				},
+				"placeholder": {
+					"title": "Ready to run a projection",
+					"text": "Enter the campaign inputs above and select \"Calculate projection\" to review staffing and time estimates."
+				},
+				"metrics": {
+					"volume": "Campaign volume",
+					"agentsRequired": "Agents required",
+					"agentsAllocated": "Agents allocated",
+					"daysToComplete": "Days to complete",
+					"daysPlanned": "Days planned",
+					"totalTries": "Total tries",
+					"operationalHours": "Operational hours",
+					"teamHoursPerDay": "Team hours per day"
+				},
+				"waves": {
+					"wave1": "Wave 1",
+					"wave2": "Wave 2",
+					"wave3": "Wave 3"
+				}
+			}
+		},
+		"overview": {
+			"callsPerHour": {
+				"title": "Calls per hour",
+				"subtitle": "Hourly distribution of daily call capacity",
+				"label": "Calls per hour"
+			},
+			"completion": {
+				"title": "Estimated completion time",
+				"subtitle": "Projected timeline based on current capacity",
+				"unit": "days"
+			}
+		},
+		"daySchedule": {
+			"headers": {
+				"day": "Day",
+				"status": "Status",
+				"hours": "Hours",
+				"agent": "Agent",
+				"team": "Team"
+			},
+			"status": {
+				"open": "Open window",
+				"paused": "Paused",
+				"closed": "Closed"
+			},
+			"noHours": "No hours configured",
+			"metrics": {
+				"perAgent": "Per agent",
+				"teamTotal": "Team total"
+			},
+			"errors": {
+				"endTime": "End time must be later than start time."
+			}
+		},
+		"workingHours": {
+			"title": "Working Hours",
+			"description": "Define the days and time ranges during which your agents are allowed to make calls.",
+			"summary": {
+				"noActiveDays": "No active days",
+				"noTimeRange": "No time range set",
+				"everyDay": "Every day",
+				"weekdays": "Weekdays",
+				"weekends": "Weekends"
+			}
+		}
+	},
+	"workingHours": {
+		"title": "Working Hours",
+		"description": "Configure the working hours for this campaign."
+	}
+}

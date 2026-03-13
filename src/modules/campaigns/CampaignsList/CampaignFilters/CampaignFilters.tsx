@@ -50,7 +50,7 @@ export default function CampaignFilters({
 	filters,
 	onFiltersChange,
 }: CampaignFiltersProps) {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation('campaigns.list');
 	const [opened, setOpened] = useState(false);
 
 	const sortOptions = [

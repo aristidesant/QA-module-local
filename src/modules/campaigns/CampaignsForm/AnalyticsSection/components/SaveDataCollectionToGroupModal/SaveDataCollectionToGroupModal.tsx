@@ -115,7 +115,7 @@ export default function SaveDataCollectionToGroupModal({
 	rows,
 	onCompleted,
 }: SaveDataCollectionToGroupModalProps) {
-	const { t } = useTranslation(['campaigns', 'common']);
+	const { t } = useTranslation(['campaign.form.analytics', 'common']);
 	const { canPerformAction } = usePermissions();
 	const canReplace = canPerformAction(
 		ModuleEnum.SETTINGS,

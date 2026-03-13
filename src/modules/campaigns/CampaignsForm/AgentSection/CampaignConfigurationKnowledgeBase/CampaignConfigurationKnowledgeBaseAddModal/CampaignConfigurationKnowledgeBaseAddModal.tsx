@@ -20,7 +20,11 @@ interface CampaignConfigurationKnowledgeBaseAddModalProps {
 const CampaignConfigurationKnowledgeBaseAddModal: React.FC<
 	CampaignConfigurationKnowledgeBaseAddModalProps
 > = ({ opened, onClose, selectedIds, onSave }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 	const {
 		view,
 		showCreateView,

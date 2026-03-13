@@ -81,7 +81,7 @@ export const useCampaignsColumns = ({
 	onContinueDraft,
 	onToggleStatus,
 }: UseCampaignsColumnsProps): ColumnDef<Campaign, any>[] => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation('campaigns.list');
 	// navigate unused after removing Metrics navigation
 	const { canAccessModule, canPerformAction } = usePermissions();
 	return [

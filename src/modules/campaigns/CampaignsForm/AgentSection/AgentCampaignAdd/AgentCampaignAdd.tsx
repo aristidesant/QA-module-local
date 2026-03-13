@@ -32,7 +32,11 @@ export const AgentCampaignAdd: React.FC<AgentCampaignAddProps> = ({
 	excludedAgents,
 	onComplete,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 	const [searchTerm, setSearchTerm] = useState('');
 	const [debouncedSearch] = useDebouncedValue(searchTerm, 400);
 	const [page, setPage] = useState(1);

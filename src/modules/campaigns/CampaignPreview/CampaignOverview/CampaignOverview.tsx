@@ -60,7 +60,7 @@ const formatDate = (value?: string) => {
 };
 
 const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
-	const { t } = useTranslation('campaign.detail');
+	const { t } = useTranslation(['campaign.detail', 'campaigns.list']);
 	const {
 		data: campaignData,
 		refetch,
@@ -268,12 +268,12 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 	const StatusIcon = statusConfig.icon;
 	const statusLabel = useMemo(() => {
 		if (!statusConfig?.label) {
-			return t('status.UNKNOWN', { ns: 'campaigns' });
+			return t('status.UNKNOWN', { ns: 'campaigns.list' });
 		}
 
 		return t(statusConfig.label, {
-			ns: 'campaigns',
-			defaultValue: t('status.UNKNOWN', { ns: 'campaigns' }),
+			ns: 'campaigns.list',
+			defaultValue: t('status.UNKNOWN', { ns: 'campaigns.list' }),
 		});
 	}, [statusConfig?.label, t]);
 

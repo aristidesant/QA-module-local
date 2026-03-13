@@ -31,7 +31,11 @@ import styles from './CampaignViewPage.module.css';
 import AppDrawer from '~/components/AppDrawer';
 
 const CampaignViewPage = () => {
-	const { t } = useTranslation(['campaign.view', 'common']);
+	const { t } = useTranslation([
+		'campaign.view',
+		'campaign.form.dashboards',
+		'common',
+	]);
 	const { campaignId } = useParams<{ campaignId: string }>();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();

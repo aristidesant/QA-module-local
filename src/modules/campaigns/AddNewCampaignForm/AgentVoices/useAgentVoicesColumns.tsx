@@ -33,7 +33,7 @@ export const useAgentVoicesColumns = ({
 	playingVoiceId,
 	playProgress,
 }: UseAgentVoicesColumnsParams): ColumnDef<AgentVoiceModel>[] => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaigns.create', 'common']);
 
 	return useMemo(
 		() => [

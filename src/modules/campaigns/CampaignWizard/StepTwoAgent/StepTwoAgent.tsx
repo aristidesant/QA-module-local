@@ -69,7 +69,11 @@ const extractKnowledgeBaseIds = (
 };
 
 export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaigns.wizard',
+		'campaign.form.shared',
+		'common',
+	]);
 	const {
 		agentBehaviorId,
 		language,

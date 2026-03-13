@@ -14,7 +14,11 @@ import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
 import '@xyflow/react/dist/style.css';
 
 const WorkflowSection = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const form = useCampaignFormContext();
 	const campaignId = useCampaignId();
 	const { data: campaignAgents } = useGetCampaignAgents(campaignId || 0);

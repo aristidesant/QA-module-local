@@ -88,7 +88,7 @@ const formatTime = (time: string) => {
 };
 
 const CampaignParameters: React.FC = () => {
-	const { t } = useTranslation('campaign.detail');
+	const { t } = useTranslation(['campaign.detail', 'campaign.form.params']);
 	const selectedCampaign = useCampaignsStore((state) => state.selectedCampaign);
 
 	const {
@@ -112,7 +112,7 @@ const CampaignParameters: React.FC = () => {
 	const getDayLabel = (day: string) => {
 		const normalized = day.trim().toLowerCase();
 		return t(`scheduler.schedulerBuilder.days.${normalized}`, {
-			ns: 'campaigns',
+			ns: 'campaign.form.params',
 			defaultValue: day,
 		});
 	};

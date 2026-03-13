@@ -57,7 +57,7 @@ export const useGetCampaign = (
 	id: string,
 	options?: Omit<
 		UseQueryOptions<Campaign, unknown, Campaign, ['campaign', string]>,
-		'queryKey' | 'queryFn' | 'enabled'
+		'queryKey' | 'queryFn'
 	>
 ) => {
 	return useQuery<Campaign, unknown, Campaign, ['campaign', string]>({
@@ -66,7 +66,7 @@ export const useGetCampaign = (
 			const api = campaignsApi();
 			return api.findCampaign(id);
 		},
-		enabled: !!id,
+		enabled: options?.enabled ?? !!id,
 		...options,
 	});
 };

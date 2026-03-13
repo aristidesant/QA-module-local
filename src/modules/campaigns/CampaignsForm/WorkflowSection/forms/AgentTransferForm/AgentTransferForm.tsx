@@ -44,7 +44,11 @@ const AgentTransferForm = ({
 	onWorkflowChange,
 	campaignAgentConfig,
 }: AgentTransferFormProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const campaignId = useCampaignId();
 	const { data: campaignAgents, isLoading } = useQuery({
 		queryKey: ['campaignOtherAgents', campaignId],

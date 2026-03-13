@@ -52,7 +52,7 @@ export const ContactLimits = ({
 	objectiveId,
 	campaignId,
 }: ContactLimitsProps) => {
-	const { t } = useTranslation(['campaigns', 'common']);
+	const { t } = useTranslation(['campaign.form.contacts', 'common']);
 	const processFileMutation = useProcessContactGroupFile();
 	const { setRightComponent, selectedCampaign } = useCampaignsStore(
 		(state) => state

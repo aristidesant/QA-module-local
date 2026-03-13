@@ -29,7 +29,7 @@ const AgentVoiceSelector: React.FC<AgentVoiceSelectorProps> = ({
 	onSelect,
 	selectedVoiceId,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaigns.create', 'common']);
 	const { data: elevenLabsVoices, isLoading, isError } = useGetAllAgentVoices();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 

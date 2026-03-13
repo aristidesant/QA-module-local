@@ -32,7 +32,7 @@ export const ContactListControl = ({
 	display = 'icon',
 	onActionComplete,
 }: ContactListControlProps) => {
-	const { t, i18n } = useTranslation(['campaigns', 'common']);
+	const { t, i18n } = useTranslation(['campaign.form.contacts', 'common']);
 	const startMutation = useStartOutboundCampaign();
 	const pauseMutation = usePauseOutboundCampaign();
 	const resumeMutation = useResumeOutboundCampaign();

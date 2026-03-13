@@ -33,7 +33,11 @@ import { WORKFLOW_DRAWER_COMBOBOX_PROPS } from '../../../workflowDrawerComboboxP
 import mainStyles from '../../AgentForm.module.css';
 
 const GeneralTab = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const { workflow, nodeId, onWorkflowChange, campaignAgentConfig } =
 		useAgentForm();
 

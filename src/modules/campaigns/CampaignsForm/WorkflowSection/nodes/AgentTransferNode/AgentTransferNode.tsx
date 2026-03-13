@@ -16,7 +16,11 @@ import styles from './AgentTransferNode.module.css';
 const AgentTransferNodeComponent = (props: NodeProps) => {
 	const nodeData = props.data as unknown as StandaloneAgentNode;
 	const nodeType = (props.type ?? nodeData.type) as WorkflowNodeType;
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const fallbackLabel = t('form.workflow.nodes.agent_transfer', {
 		defaultValue: t('form.workflow.nodes.standalone_agent'),
 	});

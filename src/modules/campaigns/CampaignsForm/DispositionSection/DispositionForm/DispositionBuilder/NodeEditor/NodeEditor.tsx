@@ -42,7 +42,11 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 	onAddMissingSiblings,
 	catalogNodes,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.outcomes',
+		'campaign.detail',
+		'common',
+	]);
 	const [collapsed, setCollapsed] = useState(false);
 	const { flowJson } = useDispositionBuilderStore();
 

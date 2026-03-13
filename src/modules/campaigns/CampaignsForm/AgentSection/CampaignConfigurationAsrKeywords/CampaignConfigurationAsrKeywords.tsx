@@ -20,7 +20,11 @@ const normalizeKeywords = (values: string[]) => {
 };
 
 const CampaignConfigurationAsrKeywords: React.FC = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 	const form = useCampaignFormContext();
 
 	const currentKeywords =

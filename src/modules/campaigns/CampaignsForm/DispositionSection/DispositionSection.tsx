@@ -12,7 +12,11 @@ import { notifications } from '@mantine/notifications';
 import DispositionViewer from './DispositionViewer';
 
 const DispositionSection: React.FC = () => {
-	const { t } = useTranslation(['campaigns', 'campaign.detail', 'common']);
+	const { t } = useTranslation([
+		'campaign.form.outcomes',
+		'campaign.detail',
+		'common',
+	]);
 	const { selectedCampaign, setRightComponent } = useCampaignsStore();
 
 	const {

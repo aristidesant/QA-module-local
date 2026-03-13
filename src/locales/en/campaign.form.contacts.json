@@ -1,0 +1,306 @@
+{
+	"form": {
+		"contacts": {
+			"addNew": {
+				"description": "Upload a CSV file to create a contact list.",
+				"uploadLabel": "Upload contact list",
+				"dragAndDrop": "Drag and drop your CSV file here or click to browse.",
+				"notifications": {
+					"noFile": {
+						"title": "No file selected",
+						"message": "Please select a CSV file to upload."
+					},
+					"invalidType": {
+						"title": "Invalid file type",
+						"message": "Only CSV files are supported."
+					},
+					"uploadFailed": {
+						"title": "Upload failed",
+						"message": "We couldn't upload your file. Please try again."
+					}
+				}
+			},
+			"controls": {
+				"start": "Start Campaign",
+				"resume": "Resume Campaign",
+				"resumeIgnoreDelay": "Resume and ignore delay",
+				"pause": "Pause Campaign",
+				"completed": "Campaign Completed",
+				"failed": "Campaign Failed",
+				"requirementsNotMet": "Campaign requirements not met",
+				"allWavesDone": "All waves executed",
+				"resumeModal": {
+					"title": "Resume contact list",
+					"message": "This contact list is paused while waiting for the next wave.",
+					"scheduledFor": "Next wave scheduled for {{value}}.",
+					"scheduleNotice": "Ignoring the wave delay still respects the campaign schedule window."
+				},
+				"notifications": {
+					"successTitle": "Success",
+					"errorTitle": "Error",
+					"unknownCampaign": "Unknown Campaign",
+					"running": "Campaign is now running",
+					"startError": "Error starting campaign",
+					"resumed": "Campaign resumed",
+					"resumeRequested": "Resume requested. Status will update automatically.",
+					"resumeIgnoringDelay": "Resume requested without wave delay. Status will update automatically.",
+					"resumeError": "Error resuming campaign",
+					"paused": "Campaign paused",
+					"pauseError": "Error pausing campaign"
+				}
+			},
+			"list": {
+				"activeTitle": "Active Contact Lists",
+				"inactiveTitle": "Inactive Contact Lists",
+				"activeDescription": "Manage your active contact lists and monitor their progress.",
+				"inactiveDescription": "View and manage contact lists that are currently inactive.",
+				"addNewContactList": "Add New Contact List",
+				"addInactiveContactList": "Add Inactive Contact List",
+				"configuration": "Contact List Configuration",
+				"configurationDescription": "Configure the settings for your new contact list.",
+				"selectActive": "Select Active Contact List",
+				"selectActiveDescription": "Select a contact list to activate for this campaign.",
+				"emptyMessage": "No active contact lists found.",
+				"emptyInactiveMessage": "No inactive contact lists found.",
+				"reload": "Reload",
+				"reloadUnavailable": "Reload unavailable while collapsed",
+				"nextWaveScheduled": "Next: {{value}}",
+				"columns": {
+					"name": "Name",
+					"total": "Total",
+					"assigned": "Assigned",
+					"status": "Status",
+					"actions": "Actions"
+				},
+				"capacity": {
+					"title": "Scheduler Capacity",
+					"used": "Used",
+					"remaining": "Remaining",
+					"total": "Total Capacity"
+				}
+			},
+			"mapping": {
+				"title": "Column Mapping",
+				"matchTitle": "Match Columns",
+				"clickToConfigure": "Click to configure",
+				"unmapped": "{{count}} unmapped",
+				"totalMapped": "{{count}} columns mapped",
+				"requiredMissing": "Phone number is required"
+			},
+			"mostUsedChannels": {
+				"title": "Most used channels",
+				"subtitle": "Channel usage overview"
+			},
+			"qualityScore": {
+				"title": "Contact quality score",
+				"subtitle": "Quality score overview"
+			},
+			"statusBreakdown": {
+				"title": "Status breakdown",
+				"subtitle": "Contact distribution by status.",
+				"total": "Total",
+				"noData": "No data available"
+			},
+			"info": {
+				"nameLabel": "Name",
+				"nameRequired": "Name is required",
+				"namePlaceholder": "Enter contact list name",
+				"nameDescription": "This name is visible in the campaign.",
+				"editName": "Edit name",
+				"clickToAddName": "Click to add a name",
+				"expires": "Expires",
+				"addExpiration": "Add expiration date",
+				"selectExpiration": "Select expiration date",
+				"dateInPast": "Date cannot be in the past"
+			},
+			"limits": {
+				"maxWavesLabel": "Max waves",
+				"maxWavesDescription": "Maximum number of waves for this contact list.",
+				"maxWavesInherited": "Inherited from campaign default: {{value}}",
+				"waveDelayLabel": "Delay between waves (seconds)",
+				"waveDelayDescription": "Delay between waves for this contact list. Current: {{value}}.",
+				"waveDelayInherited": "Inherited from campaign default: {{value}}",
+				"noWaveDelay": "No delay between waves",
+				"humanEquivalentLabel": "Human equivalent",
+				"availableLabel": "Available",
+				"capacityFull": {
+					"title": "Scheduler capacity is full",
+					"message": "Reduce capacity or adjust schedules to continue."
+				},
+				"actions": {
+					"save": "Save",
+					"update": "Update"
+				},
+				"defaultName": "Contact List {{index}}",
+				"notifications": {
+					"invalidInput": "Invalid input",
+					"nameRequired": "Name is required",
+					"mappingRequired": "Please map the columns",
+					"capacityExceeded": "Capacity exceeded",
+					"wavesMinimum": "Minimum of 1 wave required",
+					"waveDelayMinimum": "Wave delay must be 0 or greater",
+					"schedulerFullTitle": "Scheduler full",
+					"schedulerFullMessage": "There is not enough capacity to schedule this list.",
+					"successTitle": "Success",
+					"saveSuccess": "Saved successfully",
+					"updateSuccess": "Updated successfully",
+					"errorTitle": "Error",
+					"saveError": "Failed to save changes"
+				}
+			},
+			"headerMapping": {
+				"title": "Header Mapping",
+				"description": "Map CSV columns to system fields.",
+				"mappedBadge": "Mapped ({{count}})",
+				"csvHeadersBadge": "CSV headers ({{count}})",
+				"dynamicFieldsRequired": "Dynamic fields are required for {{count}}.",
+				"selectedObjective": "Objective: {{objective}}",
+				"selectedDynamicSet": "Dynamic set: {{name}} (Version {{version}})",
+				"systemFields": "System Fields",
+				"requiredBadge": "Required",
+				"selectObjective": "Select objective",
+				"addDynamicColumns": "Add dynamic columns",
+				"changeDynamicColumns": "Change dynamic columns",
+				"clearDynamicColumns": "Clear dynamic columns",
+				"dynamicSetTitle": "Dynamic field set",
+				"version": "Version {{version}}",
+				"loadingColumns": "Loading columns...",
+				"allMapped": "All system fields are mapped",
+				"csvColumns": "CSV Columns",
+				"finishMultiSelect": "Finish selection",
+				"multiSelectDescription": "Select one or more CSV columns to map.",
+				"allCsvMapped": "All CSV columns are mapped",
+				"csvColumnLabel": "CSV Column",
+				"currentMappings": "Current mappings",
+				"clickToRemove": "Click to remove",
+				"noMappings": "No mappings yet",
+				"noMappingsDescription": "Map CSV columns to continue.",
+				"systemFieldLabel": "System field",
+				"multiSelectNote": "You can map multiple CSV columns.",
+				"pickSystemField": "Pick a system field",
+				"selectedCsvLabel": "Selected CSV columns",
+				"chooseMatchingCsv": "Choose matching CSV column(s)",
+				"clearSelection": "Clear selection",
+				"mappingsCreated": "Created {{count}} mappings",
+				"saveMappings": "Save mappings",
+				"dynamicColumnTooltip": "Dynamic column",
+				"autoMatch": {
+					"button": "Auto Match",
+					"tooltip": "Automatically match system fields to CSV columns using pattern recognition",
+					"successTitle": "Auto Match Complete",
+					"successMessage": "Successfully matched {{count}} column(s)",
+					"noMatchTitle": "No Matches Found",
+					"noMatchMessage": "Could not find any matching CSV columns for the remaining system fields"
+				}
+			},
+			"details": {
+				"title": "Contact List Details",
+				"description": "Review contact list configuration and status.",
+				"configurations": "Configurations",
+				"meta": {
+					"listStatus": "Created",
+					"queueStatus": "Queue status",
+					"active": "Active",
+					"inactive": "Inactive",
+					"expirationDate": "Expiration date",
+					"scheduler": "Scheduler",
+					"schedulerStatus": "Scheduler status",
+					"waveDelay": "Delay between waves",
+					"lastWaveStarted": "Last wave started",
+					"lastWaveCompleted": "Last wave completed",
+					"nextWaveScheduled": "Next wave scheduled",
+					"notAssigned": "Not assigned"
+				},
+				"stats": {
+					"totalContacts": "Total contacts",
+					"maxCallsPerContact": "Max calls per contact",
+					"maxCallsPerList": "Max calls per list",
+					"humanEquivalent": "Human equivalent",
+					"waves": "Waves",
+					"notAvailable": "Not available",
+					"notSet": "Not set"
+				},
+				"operationalStatus": {
+					"title": "Operational status",
+					"description": "Readiness and delivery state."
+				},
+				"primaryPhone": "Primary phone number",
+				"phoneNumbers": "Phone Numbers ({{count}})",
+				"email": "Email",
+				"location": "Location",
+				"engagementLevel": {
+					"title": "Engagement Level",
+					"description": "Measures how engaged {{name}} is with your campaigns."
+				},
+				"reviewsQualification": {
+					"title": "Reviews qualification",
+					"description": "Measures how engaged {{name}} is with your campaigns."
+				},
+				"sentiment": {
+					"negative": "Negative",
+					"neutral": "Neutral",
+					"positive": "Positive"
+				},
+				"actions": {
+					"title": "Actions",
+					"description": "Manage this contact list.",
+					"activate": "Activate",
+					"deactivate": "Deactivate",
+					"extendWaves": "Extend Waves",
+					"completeList": "Complete List",
+					"editContactList": "Edit contact list",
+					"deleteContactList": "Delete contact list",
+					"cleanQueue": "Clean queue",
+					"openContactList": "Open contact list"
+				},
+				"notifications": {
+					"archiveBlocked": {
+						"title": "Action unavailable",
+						"message": "This contact list cannot be archived while it is running, waiting, or paused. Stop execution first and try again."
+					}
+				},
+				"dialogs": {
+					"activate": {
+						"title": "Activate contact list",
+						"message": "Activate this contact list for the campaign?",
+						"confirm": "Activate",
+						"available": "Available capacity: {{count}}",
+						"noCapacityTitle": "No scheduler capacity",
+						"capacityErrorTitle": "Not enough capacity",
+						"capacityErrorMessage": "Scheduler capacity is not sufficient to activate this contact list."
+					},
+					"cleanQueue": {
+						"title": "Clean queue",
+						"message": "Clear all queued contacts for this list?",
+						"confirm": "Clean queue"
+					},
+					"complete": {
+						"title": "Complete contact list",
+						"message": "Mark this contact list as completed?",
+						"success": "Completed",
+						"successMessage": "Contact list marked as completed.",
+						"error": "Error"
+					},
+					"deactivate": {
+						"title": "Deactivate contact list",
+						"message": "Deactivate this contact list?"
+					},
+					"delete": {
+						"title": "Delete contact list",
+						"message": "Delete this contact list? This action cannot be undone.",
+						"success": "Deleted",
+						"successMessage": "Contact list deleted successfully.",
+						"error": "Error",
+						"errorMessage": "Failed to delete contact list."
+					},
+					"extendWaves": {
+						"title": "Extend waves",
+						"success": "Waves Extended",
+						"successMessage": "Successfully added {{count}} waves to the contact list.",
+						"error": "Error extending waves"
+					}
+				}
+			}
+		}
+	}
+}

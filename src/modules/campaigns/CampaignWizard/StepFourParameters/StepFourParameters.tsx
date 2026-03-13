@@ -26,7 +26,11 @@ interface StepFourParametersProps {
 export const StepFourParameters: React.FC<StepFourParametersProps> = ({
 	onNext,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaigns.wizard',
+		'campaign.form.shared',
+		'common',
+	]);
 	const { createdCampaign } = useCampaignWizardStore();
 	const { mutateAsync: setDraft } = useSetCampaignDraft();
 

@@ -6,7 +6,7 @@ import styles from './CallsOverview.module.css';
 import { useSchedulerFormContext } from '../SchedulerCard/schedulerFormProvider';
 
 export const CallsOverview: React.FC = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.params', 'common']);
 	const form = useSchedulerFormContext();
 	return (
 		<div className={styles.container}>

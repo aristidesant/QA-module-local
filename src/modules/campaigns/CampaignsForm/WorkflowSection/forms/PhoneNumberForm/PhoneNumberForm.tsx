@@ -31,7 +31,11 @@ const PhoneNumberForm = ({
 	workflow,
 	onWorkflowChange,
 }: PhoneNumberFormProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const node = workflow?.nodes[nodeId] as PhoneNumberTransferNode | undefined;
 
 	if (!node) {

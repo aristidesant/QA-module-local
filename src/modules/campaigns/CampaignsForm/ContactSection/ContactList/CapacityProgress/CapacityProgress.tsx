@@ -11,7 +11,7 @@ export interface CapacityProgressProps {
 }
 
 const CapacityProgress = ({ campaignId }: CapacityProgressProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.contacts', 'common']);
 	const { data: activeSchedule } = useCampaignActiveSchedule(campaignId);
 	const { data: contactGroupsData } = useGetContactGroups({
 		isActive: true,

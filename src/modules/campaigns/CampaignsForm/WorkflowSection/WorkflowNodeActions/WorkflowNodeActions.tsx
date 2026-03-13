@@ -34,7 +34,11 @@ const WorkflowNodeActions = ({
 	nodeType,
 }: WorkflowNodeActionsProps) => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const {
 		addNode,
 		addNodeWithType,

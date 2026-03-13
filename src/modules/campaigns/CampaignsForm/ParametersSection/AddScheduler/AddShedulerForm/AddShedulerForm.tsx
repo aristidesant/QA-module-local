@@ -126,7 +126,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 	campaignId,
 	campaignType,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.params', 'common']);
 	const createScheduleMutation = useCreateCampaignSchedule();
 	const clientConfigQuery = useGetClientConfig('scheduler_predefined_params');
 

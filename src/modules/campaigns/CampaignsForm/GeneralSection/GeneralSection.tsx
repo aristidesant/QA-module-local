@@ -8,7 +8,12 @@ interface GeneralSectionProps {
 }
 
 const GeneralSection: React.FC<GeneralSectionProps> = ({ onOpenSettings }) => {
-	const { t } = useTranslation(['campaigns']);
+	const { t } = useTranslation([
+		'campaign.form.general',
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 	const form = useCampaignFormContext();
 
 	return (

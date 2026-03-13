@@ -1,0 +1,259 @@
+{
+	"form": {
+		"analytics": {
+			"title": "Analytics data collection",
+			"description": "Configure dynamic data variables captured during conversations.",
+			"totalVariables": "{{count}} variable",
+			"totalVariables_other": "{{count}} variables",
+			"empty": "No variables configured yet. Add your first variable to start collecting analytics data.",
+			"variableCardTitle": "Variable",
+			"actions": {
+				"addVariable": "Add variable",
+				"importVariable": "Import variable",
+				"saveToGroup": "Save to group",
+				"saveAllToGroup": "Save all to group"
+			},
+			"info": {
+				"title": "Automatic conversation capture",
+				"message": "Use this section to automatically capture values from the conversation. It is recommended when specific information needs to be extracted in a structured way."
+			},
+			"fields": {
+				"identifier": "Identifier",
+				"type": "Data type",
+				"description": "Description",
+				"enumValues": "Enum values (optional)",
+				"enumValuesCount": "Enum values ({{count}})",
+				"constantValue": "Constant value",
+				"dynamicVariable": "Dynamic variable",
+				"isSystemProvided": "System provided"
+			},
+			"types": {
+				"boolean": "Boolean",
+				"integer": "Integer",
+				"number": "Number",
+				"string": "String"
+			},
+			"placeholders": {
+				"identifier": "customer_city",
+				"description": "Describe how this value should be extracted.",
+				"enumValue": "Enter an enum value",
+				"constantValue": "Optional fixed value",
+				"dynamicVariable": "Optional source variable"
+			},
+			"descriptionHint": "This description is passed to the LLM and should explain how to extract the value from the transcript.",
+			"enumHint": "The LLM will only be able to select from these predefined values.",
+			"validation": {
+				"identifierRequired": "Identifier is required",
+				"identifierUnique": "Identifier must be unique"
+			},
+			"table": {
+				"identifier": "Identifier",
+				"type": "Data type",
+				"description": "Description",
+				"descriptionTooltipLabel": "Variable description",
+				"descriptionEmpty": "No description available",
+				"descriptionIconAria": "View variable description",
+				"enum": "Enum",
+				"enumCount": "Enum ({{count}})",
+				"systemProvided": "System",
+				"yes": "Yes",
+				"no": "No",
+				"source": "Source",
+				"sources": {
+					"manual": "Manual",
+					"customVariable": "Custom variable"
+				}
+			},
+			"editor": {
+				"title": "Variable details",
+				"description": "Select and edit a variable from the table.",
+				"labels": {
+					"status": "Draft status"
+				},
+				"states": {
+					"draft": "Unsaved changes",
+					"saved": "Up to date"
+				}
+			},
+			"saveToGroup": {
+				"title": "Save Variable to Group",
+				"description": "Create a new custom variable in the selected group from this analytics definition.",
+				"sections": {
+					"identity": "Variable Identity",
+					"destination": "Destination"
+				},
+				"fields": {
+					"label": "Label",
+					"identifierPreview": "Identifier (technical)",
+					"group": "Group",
+					"category": "Campaign Category (optional)"
+				},
+				"placeholders": {
+					"label": "Enter a human-friendly label",
+					"group": "Select a group",
+					"category": "Select category"
+				},
+				"hints": {
+					"label": "This is the display name users will see for the variable.",
+					"identifier": "Auto-generated technical name sent to the API."
+				},
+				"actions": {
+					"save": "Save to Group"
+				},
+				"errors": {
+					"labelRequired": "Label is required.",
+					"invalidIdentifier": "Identifier is required to save this variable."
+				},
+				"notifications": {
+					"success": "Variable saved to group successfully",
+					"error": "Failed to save variable to group"
+				}
+			},
+			"import": {
+				"title": "Import Custom Variables",
+				"subtitle": "Select a variable group and import the records you need into analytics.",
+				"sections": {
+					"source": "Source",
+					"table": "Variables"
+				},
+				"fields": {
+					"group": "Group",
+					"search": "Search"
+				},
+				"placeholders": {
+					"group": "Select a group",
+					"search": "Search by name or description..."
+				},
+				"actions": {
+					"import": "Import variable",
+					"close": "Close"
+				},
+				"selection": {
+					"selectedCount": "{{count}} selected",
+					"clear": "Clear selection",
+					"importSelected": "Import selected",
+					"selectAllVisible": "Select all visible rows",
+					"selectRow": "Select {{identifier}}"
+				},
+				"table": {
+					"label": "Variable",
+					"identifier": "Identifier",
+					"type": "Type",
+					"description": "Description",
+					"actions": "Actions"
+				},
+				"empty": {
+					"selectGroupTitle": "Select a group to continue",
+					"selectGroupDescription": "Choose a custom variable group to list available variables.",
+					"noVariablesTitle": "No variables found",
+					"noVariablesDescription": "This group has no variables that can be imported.",
+					"noSearchResultsTitle": "No matches found",
+					"noSearchResultsDescription": "Try another search term for this group."
+				},
+				"notifications": {
+					"summarySuccess": "Imported: {{importedCount}}, Replaced: {{replacedCount}}, Duplicated: {{duplicatedCount}}.",
+					"summaryWarning": "Imported: {{importedCount}}, Replaced: {{replacedCount}}, Duplicated: {{duplicatedCount}}, Skipped: {{skippedCount}}, Invalid: {{invalidCount}}."
+				}
+			},
+			"conflict": {
+				"title": "Identifier Conflict",
+				"description": "A variable with identifier \"{{identifier}}\" already exists. Choose how to continue.",
+				"confirmAction": "Confirm",
+				"replaceTitle": "Replace existing",
+				"replaceDescription": "Overwrite \"{{identifier}}\" with the new variable data.",
+				"replaceWarning": "This action cannot be undone",
+				"duplicateTitle": "Create duplicate with suffix",
+				"duplicateDescription": "Add the new variable with a unique identifier:",
+				"actions": {
+					"replace": "Replace existing",
+					"duplicate": "Create duplicate with suffix",
+					"cancel": "Cancel"
+				}
+			},
+			"bulkConflict": {
+				"title": "Resolve Import Conflicts",
+				"description": "Some variables already exist in Analytics. Choose how to apply each incoming variable.",
+				"fields": {
+					"identifier": "Identifier",
+					"existingType": "Existing type",
+					"incomingType": "Incoming type",
+					"action": "Action",
+					"duplicatePreview": "Duplicate preview"
+				},
+				"actions": {
+					"replace": "Replace",
+					"duplicate": "Duplicate",
+					"skip": "Skip",
+					"applyAll": "Apply action to all conflicts",
+					"confirm": "Apply import",
+					"cancel": "Cancel"
+				},
+				"summary": {
+					"conflictCount": "{{count}} conflict to resolve",
+					"conflictCount_other": "{{count}} conflicts to resolve"
+				}
+			},
+			"saveAllToGroup": {
+				"title": "Save Data Collection to Group",
+				"description": "Store all analytics variables from this data collection into a custom variable group.",
+				"sections": {
+					"destination": "Destination",
+					"summary": "Summary",
+					"conflicts": "Conflict resolution"
+				},
+				"modes": {
+					"existingGroup": "Use existing group",
+					"newGroup": "Create new group"
+				},
+				"fields": {
+					"group": "Group",
+					"newGroupName": "New group name",
+					"policy": "Conflict policy"
+				},
+				"placeholders": {
+					"group": "Select a group",
+					"newGroupName": "Enter group name"
+				},
+				"policies": {
+					"skip": "Skip existing variables",
+					"replace": "Replace existing variables",
+					"duplicate": "Create duplicates with suffix"
+				},
+				"summary": {
+					"total": "Total rows",
+					"valid": "Valid identifiers",
+					"invalid": "Invalid identifiers",
+					"conflicts": "{{count}} conflicts detected",
+					"conflicts_other": "{{count}} conflicts detected"
+				},
+				"hints": {
+					"mapping": "Each variable uses a humanized label from identifier and stores the technical name in snake_case.",
+					"replacePermissionRequired": "You need update permission in Settings to replace existing variables."
+				},
+				"table": {
+					"identifier": "Identifier",
+					"currentType": "Current type",
+					"incomingType": "Incoming type"
+				},
+				"actions": {
+					"continue": "Continue",
+					"save": "Save all",
+					"cancel": "Cancel",
+					"back": "Back"
+				},
+				"errors": {
+					"noValidVariables": "No valid identifiers found in data collection.",
+					"groupRequired": "Group selection is required.",
+					"newGroupNameRequired": "New group name is required.",
+					"replacePermissionRequired": "You do not have permission to replace existing variables."
+				},
+				"notifications": {
+					"success": "Data collection saved successfully",
+					"warning": "Data collection saved with warnings",
+					"error": "Failed to save data collection",
+					"resultSummary": "Created: {{createdCount}}, Updated: {{updatedCount}}, Duplicated: {{duplicatedCount}}, Skipped: {{skippedCount}}, Invalid: {{invalidCount}}."
+				}
+			}
+		}
+	}
+}

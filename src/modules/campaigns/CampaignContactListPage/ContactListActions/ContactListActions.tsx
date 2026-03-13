@@ -52,7 +52,7 @@ const ContactListActions = ({
 }: ContactListActionsProps) => {
 	const { t, i18n } = useTranslation([
 		'campaign.contact-list',
-		'campaigns',
+		'campaign.form.contacts',
 		'common',
 	]);
 	const { canPerformAction } = usePermissions();
@@ -91,7 +91,7 @@ const ContactListActions = ({
 	const showSuccessNotification = (message: string) => {
 		notifications.show({
 			title: t('form.contacts.controls.notifications.successTitle', {
-				ns: 'campaigns',
+				ns: 'campaign.form.contacts',
 			}),
 			message,
 			color: 'green',
@@ -107,7 +107,7 @@ const ContactListActions = ({
 
 		notifications.show({
 			title: t('form.contacts.controls.notifications.errorTitle', {
-				ns: 'campaigns',
+				ns: 'campaign.form.contacts',
 			}),
 			message: apiMessage || fallbackMessage,
 			color: 'red',
@@ -129,14 +129,14 @@ const ContactListActions = ({
 			});
 			await handleActionSuccess(
 				t('form.contacts.controls.notifications.running', {
-					ns: 'campaigns',
+					ns: 'campaign.form.contacts',
 				})
 			);
 		} catch (error) {
 			showErrorNotification(
 				error,
 				t('form.contacts.controls.notifications.startError', {
-					ns: 'campaigns',
+					ns: 'campaign.form.contacts',
 				})
 			);
 		}
@@ -150,14 +150,14 @@ const ContactListActions = ({
 			});
 			await handleActionSuccess(
 				t('form.contacts.controls.notifications.paused', {
-					ns: 'campaigns',
+					ns: 'campaign.form.contacts',
 				})
 			);
 		} catch (error) {
 			showErrorNotification(
 				error,
 				t('form.contacts.controls.notifications.pauseError', {
-					ns: 'campaigns',
+					ns: 'campaign.form.contacts',
 				})
 			);
 		}
@@ -173,17 +173,17 @@ const ContactListActions = ({
 			await handleActionSuccess(
 				ignoreWaveDelay
 					? t('form.contacts.controls.notifications.resumeIgnoringDelay', {
-							ns: 'campaigns',
+							ns: 'campaign.form.contacts',
 						})
 					: t('form.contacts.controls.notifications.resumeRequested', {
-							ns: 'campaigns',
+							ns: 'campaign.form.contacts',
 						})
 			);
 		} catch (error) {
 			showErrorNotification(
 				error,
 				t('form.contacts.controls.notifications.resumeError', {
-					ns: 'campaigns',
+					ns: 'campaign.form.contacts',
 				})
 			);
 		}
@@ -198,24 +198,26 @@ const ContactListActions = ({
 
 		modals.open({
 			modalId: `resume-contact-group-${contactGroup.id}`,
-			title: t('form.contacts.controls.resumeModal.title', { ns: 'campaigns' }),
+			title: t('form.contacts.controls.resumeModal.title', {
+				ns: 'campaign.form.contacts',
+			}),
 			centered: true,
 			children: (
 				<Stack gap='md'>
 					<Text size='sm'>
 						{t('form.contacts.controls.resumeModal.message', {
-							ns: 'campaigns',
+							ns: 'campaign.form.contacts',
 						})}
 					</Text>
 					<Text size='sm' c='dimmed'>
 						{t('form.contacts.controls.resumeModal.scheduledFor', {
-							ns: 'campaigns',
+							ns: 'campaign.form.contacts',
 							value: nextWaveScheduledLabel,
 						})}
 					</Text>
 					<Text size='sm' c='dimmed'>
 						{t('form.contacts.controls.resumeModal.scheduleNotice', {
-							ns: 'campaigns',
+							ns: 'campaign.form.contacts',
 						})}
 					</Text>
 					<Group justify='flex-end'>
@@ -234,7 +236,9 @@ const ContactListActions = ({
 							}}
 							loading={resumeMutation.isPending}
 						>
-							{t('form.contacts.controls.resume', { ns: 'campaigns' })}
+							{t('form.contacts.controls.resume', {
+								ns: 'campaign.form.contacts',
+							})}
 						</Button>
 						<Button
 							onClick={() => {
@@ -244,7 +248,7 @@ const ContactListActions = ({
 							loading={resumeMutation.isPending}
 						>
 							{t('form.contacts.controls.resumeIgnoreDelay', {
-								ns: 'campaigns',
+								ns: 'campaign.form.contacts',
 							})}
 						</Button>
 					</Group>
@@ -262,7 +266,7 @@ const ContactListActions = ({
 			showErrorNotification(
 				null,
 				t('form.contacts.controls.notifications.unknownCampaign', {
-					ns: 'campaigns',
+					ns: 'campaign.form.contacts',
 				})
 			);
 			return;
@@ -519,18 +523,24 @@ const ContactListActions = ({
 	const executionTooltip = (() => {
 		if (normalizedStatus === 'PAUSED') {
 			return canStartOrResume
-				? t('form.contacts.controls.resume', { ns: 'campaigns' })
-				: t('form.contacts.controls.requirementsNotMet', { ns: 'campaigns' });
+				? t('form.contacts.controls.resume', { ns: 'campaign.form.contacts' })
+				: t('form.contacts.controls.requirementsNotMet', {
+						ns: 'campaign.form.contacts',
+					});
 		}
 
 		if (normalizedStatus === 'PENDING') {
 			return canStartOrResume
-				? t('form.contacts.controls.start', { ns: 'campaigns' })
-				: t('form.contacts.controls.requirementsNotMet', { ns: 'campaigns' });
+				? t('form.contacts.controls.start', { ns: 'campaign.form.contacts' })
+				: t('form.contacts.controls.requirementsNotMet', {
+						ns: 'campaign.form.contacts',
+					});
 		}
 
 		if (normalizedStatus === 'RUNNING' || normalizedStatus === 'WAITING') {
-			return t('form.contacts.controls.pause', { ns: 'campaigns' });
+			return t('form.contacts.controls.pause', {
+				ns: 'campaign.form.contacts',
+			});
 		}
 
 		return '';
@@ -582,7 +592,7 @@ const ContactListActions = ({
 				<div className={classes.action}>
 					<ResumeWaitingNowAction
 						tooltip={t('form.contacts.controls.resumeIgnoreDelay', {
-							ns: 'campaigns',
+							ns: 'campaign.form.contacts',
 						})}
 						onClick={handleResumeWaitingNow}
 						loading={resumeMutation.isPending}

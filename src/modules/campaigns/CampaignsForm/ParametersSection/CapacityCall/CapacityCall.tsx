@@ -36,7 +36,7 @@ const formatHours = (hours: number): string => {
 };
 
 const CapacityCall: React.FC = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.params', 'common']);
 	const form = useSchedulerFormContext();
 	const humanEquivalent = Number(form.values.humanEquivalent || 1);
 	const dayConfigs = (form.values.dayConfigs || []) as MaybeDayConfig[];

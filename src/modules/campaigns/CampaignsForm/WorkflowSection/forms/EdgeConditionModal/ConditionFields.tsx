@@ -11,7 +11,11 @@ interface ConditionFieldsProps {
 }
 
 const ConditionFields = ({ direction }: ConditionFieldsProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const {
 		isToolEdge,
 		forwardState,

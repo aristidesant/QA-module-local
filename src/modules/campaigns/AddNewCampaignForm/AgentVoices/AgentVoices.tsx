@@ -40,7 +40,7 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
 	onVoiceSelect,
 	selectedVoiceId,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaigns.create', 'common']);
 	const [filters] = useState<AgentVoicesFilterValues>({
 		name: '',
 		gender: '',

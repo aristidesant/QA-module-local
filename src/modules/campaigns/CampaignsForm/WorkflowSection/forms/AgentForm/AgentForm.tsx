@@ -26,7 +26,11 @@ const AgentFormContent = ({
 	workflow,
 	onWorkflowChange,
 }: AgentFormProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 
 	const currentNode = workflow?.nodes[nodeId];
 	const isSubagentNode = currentNode && 'subagent' in currentNode;
