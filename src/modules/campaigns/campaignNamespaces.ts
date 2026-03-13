@@ -1,6 +1,7 @@
 export const campaignDetailNamespaces = [
 	'campaign.detail',
 	'campaign.form.shared',
+	'campaign.form.sync',
 	'campaign.form.general',
 	'campaign.form.agents',
 	'campaign.form.workflow',
