@@ -88,12 +88,6 @@ const MetricCatalogPage = React.lazy(
 const DictionaryRulesPage = React.lazy(
 	() => import('./modules/configurations/DictionaryRules/DictionaryRulesPage')
 );
-const MetricCatalogPage = React.lazy(
-	() => import('./modules/configurations/MetricCatalogPage')
-);
-const DictionaryRulesPage = React.lazy(
-	() => import('./modules/configurations/DictionaryRules/DictionaryRulesPage')
-);
 const ConfigurationsPage = React.lazy(
 	() => import('./modules/configurations/ConfigurationsPage')
 );
