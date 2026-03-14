@@ -1,21 +1,25 @@
 import type {
+	AnalyticsTimeRange,
 	DashboardRenderWidget,
-	MetricComparison,
 } from '~/models/AnalyticsDashboard';
-import type { ViewerWidgetLayout } from '../types';
+import type { ViewerWidgetLayout, WidgetComparisonData } from '../types';
 import CampaignDashboardViewerWidget from '../CampaignDashboardViewerWidget';
 import styles from './CampaignDashboardViewerGrid.module.css';
 
 interface CampaignDashboardViewerGridProps {
 	widgets: DashboardRenderWidget[];
 	activeLayoutMap: Map<number, ViewerWidgetLayout>;
-	comparisonMap?: Map<number, MetricComparison>;
+	comparisonMap?: Map<number, WidgetComparisonData>;
+	comparisonPeriodLabel?: string;
+	selectedTimeRange?: AnalyticsTimeRange | null;
 }
 
 const CampaignDashboardViewerGrid = ({
 	widgets,
 	activeLayoutMap,
 	comparisonMap,
+	comparisonPeriodLabel,
+	selectedTimeRange,
 }: CampaignDashboardViewerGridProps) => {
 	return (
 		<div className={styles.grid}>
@@ -25,7 +29,9 @@ const CampaignDashboardViewerGrid = ({
 					widget={widget}
 					index={index}
 					layout={activeLayoutMap.get(widget.widgetId)}
-					comparison={comparisonMap?.get(widget.widgetId)}
+					comparisonData={comparisonMap?.get(widget.widgetId)}
+					comparisonPeriodLabel={comparisonPeriodLabel}
+					selectedTimeRange={selectedTimeRange}
 				/>
 			))}
 		</div>

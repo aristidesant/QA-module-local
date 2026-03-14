@@ -1,13 +1,13 @@
 import type {
+	AnalyticsTimeRange,
 	DashboardRenderWidget,
-	MetricComparison,
 } from '~/models/AnalyticsDashboard';
 import {
 	ACCENT_COLORS,
 	getWidgetClassName,
 	getWidgetStyle,
 } from '../CampaignDashboardViewer.helpers';
-import type { ViewerWidgetLayout } from '../types';
+import type { ViewerWidgetLayout, WidgetComparisonData } from '../types';
 import CampaignDashboardViewerWidgetContent from '../CampaignDashboardViewerWidgetContent';
 import styles from './CampaignDashboardViewerWidget.module.css';
 
@@ -16,7 +16,9 @@ interface CampaignDashboardViewerWidgetProps {
 	index: number;
 	layout?: ViewerWidgetLayout;
 	isEditing?: boolean;
-	comparison?: MetricComparison;
+	comparisonData?: WidgetComparisonData;
+	comparisonPeriodLabel?: string;
+	selectedTimeRange?: AnalyticsTimeRange | null;
 }
 
 const CampaignDashboardViewerWidget = ({
@@ -24,7 +26,9 @@ const CampaignDashboardViewerWidget = ({
 	index,
 	layout,
 	isEditing = false,
-	comparison,
+	comparisonData,
+	comparisonPeriodLabel,
+	selectedTimeRange,
 }: CampaignDashboardViewerWidgetProps) => {
 	const accentColor = ACCENT_COLORS[index % ACCENT_COLORS.length];
 
@@ -39,7 +43,9 @@ const CampaignDashboardViewerWidget = ({
 					accentColor={accentColor}
 					layout={layout}
 					noDragClassName={styles.widgetNoDrag}
-					comparison={comparison}
+					comparisonData={comparisonData}
+					comparisonPeriodLabel={comparisonPeriodLabel}
+					selectedTimeRange={selectedTimeRange}
 				/>
 			</div>
 		</div>

@@ -37,7 +37,9 @@ const MetricCatalogPage = () => {
 
 	const deleteMetricDefinition = useDeleteMetricDefinition();
 	const { data: metrics = [], isLoading } = useMetricDefinitions();
-	const { data: campaigns = [] } = useGetAllCampaigns();
+	const { data: campaigns = [] } = useGetAllCampaigns({
+		includeInactive: true,
+	});
 
 	const selectedMetric = useMemo(
 		() => metrics.find((metric) => metric.id === selectedMetricId) ?? null,

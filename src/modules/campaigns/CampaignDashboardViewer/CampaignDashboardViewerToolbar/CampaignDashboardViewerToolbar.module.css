@@ -1,30 +1,29 @@
 .card {
 	width: 100%;
 	min-width: 0;
-	background: color-mix(in srgb, var(--mantine-color-white) 92%, #f5f1e8);
-	border: 1px solid color-mix(in srgb, var(--mantine-color-gray-2) 80%, #e0d5c4);
-	box-shadow:
-		0 1px 3px rgba(0, 0, 0, 0.06),
-		0 1px 0 rgba(255, 255, 255, 0.8) inset;
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-white) 96%,
+		var(--mantine-color-gray-0)
+	);
+	border: 1px solid
+		color-mix(in srgb, var(--mantine-color-gray-2) 82%, transparent);
+	box-shadow: var(--mantine-shadow-sm);
 }
 
 .toolbar {
 	display: grid;
-	grid-template-columns: minmax(220px, 320px) minmax(0, 1fr) auto;
+	grid-template-columns: minmax(0, 1fr) auto;
 	align-items: center;
 	gap: var(--mantine-spacing-sm);
 	width: 100%;
 	min-width: 0;
 }
 
-.filterSlot {
-	min-width: 0;
-}
-
-.middleSlot {
+.controlsSlot {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: var(--mantine-spacing-xs);
 	min-width: 0;
 	flex-wrap: wrap;
 }
@@ -36,136 +35,155 @@
 	width: 100%;
 }
 
-/* ── Time range pill row ─────────────────────────── */
-
-.timeRangePicker {
-	display: inline-flex;
-	align-items: center;
-	gap: 2px;
-	background: var(--mantine-color-gray-1);
-	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: 999px;
-	padding: 3px;
-	flex-shrink: 0;
-}
-
-.rangeBtn {
-	font-size: 12px;
-	font-weight: 500;
-	font-family: inherit;
-	line-height: 1;
-	padding: 5px 11px;
-	border-radius: 999px;
-	border: none;
-	background: transparent;
-	color: var(--mantine-color-gray-6);
-	cursor: pointer;
-	white-space: nowrap;
-	transition: color 0.12s ease;
-	outline: none;
-}
-
-.rangeBtn:disabled {
-	opacity: 0.45;
-	cursor: not-allowed;
-}
-
-.rangeBtn:hover:not(:disabled):not(.rangeBtn--active) {
-	color: var(--mantine-color-gray-8);
-}
-
-.rangeBtn--active {
-	background: var(--mantine-color-white);
+.triggerButton {
+	max-width: min(100%, 280px);
+	border-radius: 8px;
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-gray-3) 60%,
+		transparent
+	);
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-white) 92%,
+		var(--mantine-color-gray-0)
+	);
 	color: var(--mantine-color-gray-9);
+	box-shadow: none;
+}
+
+.triggerButton:hover:not(:disabled) {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-white) 84%,
+		var(--mantine-color-gray-0)
+	);
+}
+
+.triggerLabel {
+	display: inline-block;
+	max-width: 180px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.menuDropdown {
+	border-radius: 10px;
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-gray-2) 85%,
+		transparent
+	);
+	box-shadow: var(--mantine-shadow-md);
+}
+
+.compareButton {
+	max-width: min(100%, 280px);
+	border-radius: 8px;
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-gray-3) 60%,
+		transparent
+	);
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-white) 92%,
+		var(--mantine-color-gray-0)
+	);
+	color: var(--mantine-color-gray-9);
+	box-shadow: none;
 	font-weight: 600;
-	box-shadow:
-		0 1px 3px rgba(0, 0, 0, 0.1),
-		0 0 0 1px rgba(0, 0, 0, 0.05);
-}
-
-/* ── Period chip ─────────────────────────────────── */
-
-.periodChip {
-	display: inline-flex;
-	align-items: center;
-	gap: 4px;
-	font-size: 11px;
-	font-weight: 500;
-	color: var(--mantine-color-gray-6);
-	background: var(--mantine-color-gray-0);
-	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: 999px;
-	padding: 4px 10px;
-	white-space: nowrap;
 	flex-shrink: 0;
 }
 
-/* ── Comparison chip ─────────────────────────────── */
-
-.compareBtn {
-	display: inline-flex;
-	align-items: center;
-	gap: 5px;
-	font-size: 12px;
-	font-weight: 500;
-	font-family: inherit;
-	line-height: 1;
-	padding: 5px 11px;
-	border-radius: 999px;
-	border: 1px solid var(--mantine-color-gray-3);
-	background: transparent;
-	color: var(--mantine-color-gray-6);
-	cursor: pointer;
-	white-space: nowrap;
-	transition:
-		border-color 0.12s ease,
-		background 0.12s ease,
-		color 0.12s ease;
-	outline: none;
-	flex-shrink: 0;
+.compareButton:hover:not(:disabled) {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-white) 84%,
+		var(--mantine-color-gray-0)
+	);
 }
 
-.compareBtn:disabled {
-	opacity: 0.45;
-	cursor: not-allowed;
+.compareButton--active {
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-dark-4) 45%,
+		var(--mantine-color-gray-3)
+	);
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-dark-0) 10%,
+		var(--mantine-color-white)
+	);
 }
 
-.compareBtn:hover:not(:disabled):not(.compareBtn--active) {
-	border-color: var(--mantine-color-gray-4);
-	color: var(--mantine-color-gray-8);
+.editingBadge {
+	border-radius: 8px;
 }
 
-.compareBtn--active {
-	background: var(--mantine-color-teal-0);
-	border-color: var(--mantine-color-teal-4);
-	color: var(--mantine-color-teal-7);
+.secondaryAction,
+.primaryAction,
+.refreshAction {
+	border-radius: 8px;
 }
 
-/* ── Responsive ──────────────────────────────────── */
+.secondaryAction {
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-gray-3) 60%,
+		transparent
+	);
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-white) 94%,
+		var(--mantine-color-gray-0)
+	);
+}
+
+.primaryAction {
+	background: var(--mantine-color-dark-8);
+	color: var(--mantine-color-white);
+}
+
+.primaryAction:hover:not(:disabled) {
+	background: var(--mantine-color-dark-7);
+}
+
+.refreshAction {
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-gray-3) 60%,
+		transparent
+	);
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-white) 94%,
+		var(--mantine-color-gray-0)
+	);
+}
 
 @media (max-width: 64rem) {
-	.toolbar {
-		grid-template-columns: minmax(220px, 320px) auto;
-	}
-
-	.middleSlot {
-		grid-column: 1 / -1;
-		order: 3;
-	}
-
-	.actionsSlot {
-		justify-content: flex-end;
-	}
-}
-
-@media (max-width: 48rem) {
 	.toolbar {
 		grid-template-columns: 1fr;
 	}
 
-	.middleSlot {
-		grid-column: auto;
-		order: unset;
+	.actionsSlot {
+		justify-content: flex-start;
+	}
+}
+
+@media (max-width: 48rem) {
+	.triggerButton {
+		max-width: 100%;
+	}
+
+	.compareButton {
+		max-width: 100%;
+	}
+
+	.triggerLabel {
+		max-width: 132px;
 	}
 
 	.actionsSlot {

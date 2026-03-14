@@ -14,13 +14,9 @@ import {
 	hasOverlappingWidgetLayouts,
 	normalizeWidgetLayoutForType,
 } from '~/modules/campaigns/dashboardLayout';
-import type {
-	AnalyticsTimeRange,
-	MetricComparison,
-} from '~/models/AnalyticsDashboard';
+import type { AnalyticsTimeRange } from '~/models/AnalyticsDashboard';
 import {
-	useDashboardRender,
-	useDashboardRenderComparison,
+	useDashboardRenderUnified,
 	useDashboards,
 	useDashboardWidgets,
 	useUpdateDashboardWidgetLayouts,
@@ -33,6 +29,7 @@ import {
 	createWidgetTypeMap,
 	EMPTY_DASHBOARDS,
 	EMPTY_WIDGETS,
+	formatDashboardPeriod,
 	fromGridLayout,
 	getWidgetRenderLayout,
 	toGridLayout,
@@ -40,14 +37,17 @@ import {
 import CampaignDashboardViewerContent from './CampaignDashboardViewerContent';
 import CampaignDashboardViewerToolbar from './CampaignDashboardViewerToolbar';
 import useCampaignDashboardViewerStore from './store/useCampaignDashboardViewerStore';
+import type { WidgetComparisonData } from './types';
 import styles from './CampaignDashboardViewer.module.css';
 
 const CampaignDashboardViewer = ({
 	campaignId,
+	contactGroupId,
 	initialDashboardId,
 	allowLayoutEditing = true,
 }: {
 	campaignId?: number | null;
+	contactGroupId?: number | null;
 	initialDashboardId?: number;
 	allowLayoutEditing?: boolean;
 }) => {
@@ -103,7 +103,7 @@ const CampaignDashboardViewer = ({
 
 	useEffect(() => {
 		resetStore(initialDashboardId ? String(initialDashboardId) : null);
-	}, [campaignId, initialDashboardId, resetStore]);
+	}, [campaignId, contactGroupId, initialDashboardId, resetStore]);
 
 	const { data: dashboardsData, isLoading: dashboardsLoading } = useDashboards({
 		campaignId,
@@ -144,36 +144,45 @@ const CampaignDashboardViewer = ({
 		: undefined;
 
 	const renderPayload = useMemo(
-		() => (selectedTimeRange ? { timeRange: selectedTimeRange } : {}),
-		[selectedTimeRange]
+		() => ({
+			...(selectedTimeRange ? { timeRange: selectedTimeRange } : {}),
+			...(contactGroupId != null ? { contactGroupId } : {}),
+		}),
+		[selectedTimeRange, contactGroupId]
 	);
+	const isComparisonActive = Boolean(comparisonEnabled && selectedTimeRange);
 
 	const {
-		data: renderResult,
+		data: unifiedRenderResult,
 		isLoading: renderLoading,
 		isError,
 		error,
 		refetch: refetchRenderResult,
 		isFetching,
-	} = useDashboardRender(numericDashboardId, renderPayload);
-
-	const { data: comparisonResult } = useDashboardRenderComparison(
+	} = useDashboardRenderUnified(
 		numericDashboardId,
-		{
-			timeRange: selectedTimeRange ?? undefined,
-			comparisonMode: 'PREVIOUS_PERIOD',
-		},
-		Boolean(comparisonEnabled && selectedTimeRange)
+		renderPayload,
+		isComparisonActive
 	);
+	const renderResult = unifiedRenderResult?.renderResult;
 
-	const comparisonMap = useMemo((): Map<number, MetricComparison> => {
-		if (!comparisonResult) return new Map();
-		return new Map(
-			comparisonResult.widgets
-				.filter((w) => w.comparison)
-				.map((w) => [w.widgetId, w.comparison!])
-		);
-	}, [comparisonResult]);
+	const comparisonMap = useMemo((): Map<number, WidgetComparisonData> => {
+		return unifiedRenderResult?.comparisonMap ?? new Map();
+	}, [unifiedRenderResult]);
+	const comparisonPeriodLabel = useMemo(() => {
+		if (!unifiedRenderResult?.comparisonPeriod) {
+			return undefined;
+		}
+
+		return t('dashboard.comparisonPeriod', {
+			currentPeriod: formatDashboardPeriod(
+				unifiedRenderResult.comparisonPeriod.current
+			),
+			previousPeriod: formatDashboardPeriod(
+				unifiedRenderResult.comparisonPeriod.previous
+			),
+		});
+	}, [t, unifiedRenderResult]);
 	const { data: widgetsData, refetch: refetchWidgets } =
 		useDashboardWidgets(numericDashboardId);
 	const widgets = widgetsData ?? EMPTY_WIDGETS;
@@ -453,7 +462,7 @@ const CampaignDashboardViewer = ({
 					renderLoading={renderLoading}
 					selectedTimeRange={selectedTimeRange}
 					period={renderResult?.period}
-					comparisonPeriod={comparisonResult?.period}
+					comparisonPeriod={unifiedRenderResult?.comparisonPeriod}
 					comparisonEnabled={comparisonEnabled}
 					allowLayoutEditing={allowLayoutEditing}
 					onCancelEditing={handleCancelEditing}
@@ -488,6 +497,8 @@ const CampaignDashboardViewer = ({
 									: undefined
 							}
 							comparisonMap={comparisonMap}
+							comparisonPeriodLabel={comparisonPeriodLabel}
+							selectedTimeRange={selectedTimeRange}
 							widgetsCount={widgets.length}
 							onLayoutChange={handleLayoutChange}
 						/>

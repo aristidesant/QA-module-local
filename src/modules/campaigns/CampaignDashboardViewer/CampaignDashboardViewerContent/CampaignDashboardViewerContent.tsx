@@ -3,13 +3,13 @@ import { IconAlertCircle } from '@tabler/icons-react';
 import type { Layout } from 'react-grid-layout/legacy';
 import { useTranslation } from 'react-i18next';
 import type {
+	AnalyticsTimeRange,
 	DashboardRenderResponse,
-	MetricComparison,
 } from '~/models/AnalyticsDashboard';
 import CampaignDashboardViewerGrid from '../CampaignDashboardViewerGrid';
 import CampaignDashboardViewerLayoutEditor from '../CampaignDashboardViewerLayoutEditor';
 import useCampaignDashboardViewerStore from '../store/useCampaignDashboardViewerStore';
-import type { ViewerWidgetLayout } from '../types';
+import type { ViewerWidgetLayout, WidgetComparisonData } from '../types';
 import styles from './CampaignDashboardViewerContent.module.css';
 
 interface CampaignDashboardViewerContentProps {
@@ -22,7 +22,9 @@ interface CampaignDashboardViewerContentProps {
 	isSavingLayout: boolean;
 	renderLoading: boolean;
 	renderResult: DashboardRenderResponse | undefined;
-	comparisonMap?: Map<number, MetricComparison>;
+	comparisonMap?: Map<number, WidgetComparisonData>;
+	comparisonPeriodLabel?: string;
+	selectedTimeRange?: AnalyticsTimeRange | null;
 	widgetsCount: number;
 	onLayoutChange: (layout: Layout) => void;
 }
@@ -38,6 +40,8 @@ const CampaignDashboardViewerContent = ({
 	renderLoading,
 	renderResult,
 	comparisonMap,
+	comparisonPeriodLabel,
+	selectedTimeRange,
 	widgetsCount,
 	onLayoutChange,
 }: CampaignDashboardViewerContentProps) => {
@@ -94,6 +98,8 @@ const CampaignDashboardViewerContent = ({
 							widgets={renderResult.widgets}
 							activeLayoutMap={activeLayoutMap}
 							comparisonMap={comparisonMap}
+							comparisonPeriodLabel={comparisonPeriodLabel}
+							selectedTimeRange={selectedTimeRange}
 						/>
 					)
 				) : null}

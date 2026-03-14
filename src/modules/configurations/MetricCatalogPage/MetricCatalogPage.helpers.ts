@@ -35,6 +35,7 @@ export const getMetricResultTypeOptions = (
 	{ value: 'NUMBER', label: t('options.resultType.NUMBER') },
 	{ value: 'BOOLEAN', label: t('options.resultType.BOOLEAN') },
 	{ value: 'STRING', label: t('options.resultType.STRING') },
+	{ value: 'TIME', label: t('options.resultType.TIME') },
 ];
 
 export const getMetricValueFieldOptions = (
@@ -100,6 +101,7 @@ export const getMetricResultTypeBadgeColor = (
 		NUMBER: 'blue',
 		BOOLEAN: 'green',
 		STRING: 'orange',
+		TIME: 'violet',
 	};
 	return colors[value] ?? 'gray';
 };

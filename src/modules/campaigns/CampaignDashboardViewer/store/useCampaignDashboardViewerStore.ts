@@ -25,7 +25,7 @@ const initialState = {
 	isEditingLayout: false,
 	draftLayouts: [] as ViewerWidgetLayout[],
 	selectedTimeRange: 'WEEK' as AnalyticsTimeRange,
-	comparisonEnabled: false,
+	comparisonEnabled: true,
 };
 
 export const useCampaignDashboardViewerStore =
@@ -71,7 +71,7 @@ export const useCampaignDashboardViewerStore =
 			set(
 				timeRange === null
 					? { selectedTimeRange: null, comparisonEnabled: false }
-					: { selectedTimeRange: timeRange }
+					: { selectedTimeRange: timeRange, comparisonEnabled: true }
 			),
 		setComparisonEnabled: (enabled) => set({ comparisonEnabled: enabled }),
 	}));

@@ -1,16 +1,18 @@
 import type {
+	AnalyticsTimeRange,
 	DashboardRenderWidget,
 	GroupedMetricResult,
-	MetricComparison,
 } from '~/models/AnalyticsDashboard';
-import type { ViewerWidgetLayout } from '../../types';
+import type { ViewerWidgetLayout, WidgetComparisonData } from '../../types';
 
 export interface WidgetContentBaseProps {
 	widget: DashboardRenderWidget;
 	accentColor: string;
 	layout?: ViewerWidgetLayout;
 	noDragClassName: string;
-	comparison?: MetricComparison;
+	comparisonData?: WidgetComparisonData;
+	comparisonPeriodLabel?: string;
+	selectedTimeRange?: AnalyticsTimeRange | null;
 }
 
 export interface WidgetChartDatum {
@@ -21,7 +23,7 @@ export interface WidgetChartDatum {
 
 export interface GroupedWidgetContentProps extends Omit<
 	WidgetContentBaseProps,
-	'comparison'
+	'comparisonData' | 'comparisonPeriodLabel'
 > {
 	widget: DashboardRenderWidget & { result: GroupedMetricResult };
 	chartData: WidgetChartDatum[];

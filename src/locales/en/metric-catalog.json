@@ -37,7 +37,8 @@
 		"resultType": {
 			"NUMBER": "Number",
 			"BOOLEAN": "Boolean",
-			"STRING": "String"
+			"STRING": "String",
+			"TIME": "Time"
 		},
 		"valueField": {
 			"VALUE_STRING": "String",

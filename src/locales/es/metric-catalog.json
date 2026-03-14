@@ -37,7 +37,8 @@
 		"resultType": {
 			"NUMBER": "Número",
 			"BOOLEAN": "Booleano",
-			"STRING": "Texto"
+			"STRING": "Texto",
+			"TIME": "Tiempo"
 		},
 		"valueField": {
 			"VALUE_STRING": "Texto",

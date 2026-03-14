@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import type {
+	AnalyticsTimeRange,
 	DashboardRenderWidget,
-	MetricComparison,
 } from '~/models/AnalyticsDashboard';
 import { isGroupedMetricResult } from '../CampaignDashboardViewer.helpers';
-import type { ViewerWidgetLayout } from '../types';
+import type { ViewerWidgetLayout, WidgetComparisonData } from '../types';
 import BarChartWidgetContent from './components/BarChartWidgetContent';
 import DashboardWidgetCard from './components/DashboardWidgetCard';
 import DonutChartWidgetContent from './components/DonutChartWidgetContent';
@@ -21,7 +21,9 @@ interface CampaignDashboardViewerWidgetContentProps {
 	accentColor: string;
 	layout?: ViewerWidgetLayout;
 	noDragClassName: string;
-	comparison?: MetricComparison;
+	comparisonData?: WidgetComparisonData;
+	comparisonPeriodLabel?: string;
+	selectedTimeRange?: AnalyticsTimeRange | null;
 }
 
 const CampaignDashboardViewerWidgetContent = ({
@@ -29,7 +31,9 @@ const CampaignDashboardViewerWidgetContent = ({
 	accentColor,
 	layout,
 	noDragClassName,
-	comparison,
+	comparisonData,
+	comparisonPeriodLabel,
+	selectedTimeRange,
 }: CampaignDashboardViewerWidgetContentProps) => {
 	const { t } = useTranslation('campaign.form.dashboards');
 
@@ -40,7 +44,9 @@ const CampaignDashboardViewerWidgetContent = ({
 				accentColor={accentColor}
 				layout={layout}
 				noDragClassName={noDragClassName}
-				comparison={comparison}
+				comparisonData={comparisonData}
+				comparisonPeriodLabel={comparisonPeriodLabel}
+				selectedTimeRange={selectedTimeRange}
 			/>
 		);
 	}

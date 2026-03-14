@@ -4,11 +4,12 @@ import type {
 	CreateDashboardDto,
 	CreateDashboardWidgetDto,
 	CreateMetricDefinitionDto,
+	DashboardListParams,
 	DashboardDefinition,
-	DashboardRenderComparisonRequest,
 	DashboardRenderComparisonResponse,
 	DashboardRenderRequest,
 	DashboardRenderResponse,
+	DashboardRenderUnifiedResponse,
 	DashboardWidget,
 	MetricDefinition,
 	UpdateDashboardDto,
@@ -17,6 +18,51 @@ import type {
 } from '~/models/AnalyticsDashboard';
 
 type ListParams = Record<string, string | number | boolean | null | undefined>;
+
+const toUnifiedRenderResponse = (
+	response: DashboardRenderResponse
+): DashboardRenderUnifiedResponse => ({
+	renderResult: response,
+});
+
+const toUnifiedComparisonResponse = (
+	response: DashboardRenderComparisonResponse
+): DashboardRenderUnifiedResponse => {
+	const comparisonMap = new Map(
+		response.widgets
+			.filter(
+				(widget) => widget.comparison || widget.previous || widget.current
+			)
+			.map((widget) => [
+				widget.widgetId,
+				{
+					comparison: widget.comparison,
+					previous: widget.previous,
+					current: widget.current,
+				},
+			])
+	);
+
+	return {
+		renderResult: {
+			dashboardId: response.dashboardId,
+			campaignId: response.campaignId,
+			name: response.name,
+			timeRange: response.timeRange,
+			period: response.period?.current,
+			widgets: response.widgets.map((widget) => ({
+				widgetId: widget.widgetId,
+				widgetType: widget.widgetType,
+				title: widget.title,
+				status: widget.status,
+				result: widget.current ?? null,
+				message: widget.message,
+			})),
+		},
+		comparisonMap: comparisonMap.size ? comparisonMap : undefined,
+		comparisonPeriod: response.period,
+	};
+};
 
 export const useMetricDefinitions = (params?: ListParams) => {
 	return useQuery({
@@ -92,7 +138,7 @@ export const useDeleteMetricDefinition = () => {
 	});
 };
 
-export const useDashboards = (params?: ListParams) => {
+export const useDashboards = (params?: DashboardListParams) => {
 	return useQuery<DashboardDefinition[]>({
 		queryKey: ['dashboards', params],
 		queryFn: async () => {
@@ -150,7 +196,7 @@ export const useUpdateDashboard = () => {
 			queryClient.invalidateQueries({
 				queryKey: ['dashboard', variables.id],
 			});
-			queryClient.invalidateQueries({ queryKey: ['dashboard-render'] });
+			queryClient.invalidateQueries({ queryKey: ['dashboard-render-unified'] });
 		},
 	});
 };
@@ -167,7 +213,7 @@ export const useDeleteDashboard = () => {
 			queryClient.invalidateQueries({ queryKey: ['dashboards'] });
 			queryClient.invalidateQueries({ queryKey: ['dashboard', id] });
 			queryClient.invalidateQueries({ queryKey: ['dashboard-widgets'] });
-			queryClient.invalidateQueries({ queryKey: ['dashboard-render'] });
+			queryClient.invalidateQueries({ queryKey: ['dashboard-render-unified'] });
 		},
 	});
 };
@@ -196,7 +242,7 @@ export const useCreateDashboardWidget = () => {
 			queryClient.invalidateQueries({
 				queryKey: ['dashboard-widgets', widget.dashboardId],
 			});
-			queryClient.invalidateQueries({ queryKey: ['dashboard-render'] });
+			queryClient.invalidateQueries({ queryKey: ['dashboard-render-unified'] });
 		},
 	});
 };
@@ -219,7 +265,7 @@ export const useUpdateDashboardWidget = () => {
 			queryClient.invalidateQueries({
 				queryKey: ['dashboard-widgets', widget.dashboardId],
 			});
-			queryClient.invalidateQueries({ queryKey: ['dashboard-render'] });
+			queryClient.invalidateQueries({ queryKey: ['dashboard-render-unified'] });
 		},
 	});
 };
@@ -251,7 +297,7 @@ export const useUpdateDashboardWidgetLayouts = () => {
 			queryClient.invalidateQueries({
 				queryKey: ['dashboard-widgets', dashboardId],
 			});
-			queryClient.invalidateQueries({ queryKey: ['dashboard-render'] });
+			queryClient.invalidateQueries({ queryKey: ['dashboard-render-unified'] });
 		},
 	});
 };
@@ -275,38 +321,39 @@ export const useDeleteDashboardWidget = () => {
 			queryClient.invalidateQueries({
 				queryKey: ['dashboard-widgets', dashboardId],
 			});
-			queryClient.invalidateQueries({ queryKey: ['dashboard-render'] });
+			queryClient.invalidateQueries({ queryKey: ['dashboard-render-unified'] });
 		},
 	});
 };
 
-export const useDashboardRender = (
+export const useDashboardRenderUnified = (
 	dashboardId?: number | string,
-	payload: DashboardRenderRequest = {}
+	payload: DashboardRenderRequest = {},
+	comparisonEnabled = false
 ) => {
-	return useQuery<DashboardRenderResponse>({
-		queryKey: ['dashboard-render', dashboardId, payload],
+	return useQuery<DashboardRenderUnifiedResponse>({
+		queryKey: [
+			'dashboard-render-unified',
+			comparisonEnabled ? 'comparison' : 'default',
+			dashboardId,
+			payload,
+		],
 		queryFn: async () => {
 			const api = analyticsDashboardsApi();
 			if (!dashboardId) throw new Error('Dashboard id is required');
-			return api.renderDashboard(dashboardId, payload);
+			if (comparisonEnabled) {
+				const comparisonResponse = await api.renderDashboardComparison(
+					dashboardId,
+					{
+						...payload,
+						comparisonMode: 'PREVIOUS_PERIOD',
+					}
+				);
+				return toUnifiedComparisonResponse(comparisonResponse);
+			}
+			const renderResponse = await api.renderDashboard(dashboardId, payload);
+			return toUnifiedRenderResponse(renderResponse);
 		},
 		enabled: Boolean(dashboardId),
-	});
-};
-
-export const useDashboardRenderComparison = (
-	dashboardId?: number | string,
-	payload: DashboardRenderComparisonRequest = {},
-	enabled = true
-) => {
-	return useQuery<DashboardRenderComparisonResponse>({
-		queryKey: ['dashboard-render-comparison', dashboardId, payload],
-		queryFn: async () => {
-			const api = analyticsDashboardsApi();
-			if (!dashboardId) throw new Error('Dashboard id is required');
-			return api.renderDashboardComparison(dashboardId, payload);
-		},
-		enabled: Boolean(dashboardId) && enabled,
 	});
 };

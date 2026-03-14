@@ -4,6 +4,7 @@ import type {
 	CreateDashboardDto,
 	CreateDashboardWidgetDto,
 	CreateMetricDefinitionDto,
+	DashboardListParams,
 	DashboardDefinition,
 	DashboardRenderComparisonRequest,
 	DashboardRenderComparisonResponse,
@@ -17,6 +18,17 @@ import type {
 } from '~/models/AnalyticsDashboard';
 
 type ListParams = Record<string, string | number | boolean | null | undefined>;
+
+const normalizeDashboardListParams = (params?: DashboardListParams) => {
+	if (!params || params.campaignId == null) {
+		return {
+			...params,
+			global: true,
+		};
+	}
+
+	return params;
+};
 
 const extractArray = <T>(payload: unknown): T[] => {
 	if (Array.isArray(payload)) {
@@ -82,10 +94,12 @@ const analyticsDashboardsApi = () => {
 			return response.data;
 		},
 
-		getDashboards: async (params?: ListParams) => {
+		getDashboards: async (params?: DashboardListParams) => {
 			const response = await axios.get<
 				DashboardDefinition[] | { data: DashboardDefinition[] }
-			>(`${DEFAULT_API_URL}/analytics-dashboards/dashboards`, { params });
+			>(`${DEFAULT_API_URL}/analytics-dashboards/dashboards`, {
+				params: normalizeDashboardListParams(params),
+			});
 			return extractArray<DashboardDefinition>(response.data);
 		},
 

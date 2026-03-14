@@ -29,7 +29,7 @@ export type MetricValueField =
 	| 'VALUE_BOOLEAN'
 	| 'VALUE_JSON';
 
-export type MetricResultType = 'NUMBER' | 'BOOLEAN' | 'STRING';
+export type MetricResultType = 'NUMBER' | 'BOOLEAN' | 'STRING' | 'TIME';
 
 export type RuntimeFilterOperator =
 	| 'eq'
@@ -99,6 +99,7 @@ export interface DashboardDefinition {
 	id: number;
 	clientId: number;
 	campaignId: number | null;
+	contactGroupId?: number | null;
 	userId: number;
 	name: string;
 	description: string | null;
@@ -109,8 +110,16 @@ export interface DashboardDefinition {
 	deletedAt: string | null;
 }
 
+export interface DashboardListParams {
+	campaignId?: number | string | null;
+	contactGroupId?: number | string | null;
+	global?: boolean;
+	[key: string]: string | number | boolean | null | undefined;
+}
+
 export interface CreateDashboardDto {
 	campaignId?: number | null;
+	contactGroupId?: number | null;
 	name: string;
 	description?: string;
 	isDefault?: boolean;
@@ -161,6 +170,7 @@ export interface SingleValueMetricResult {
 	metricDefinitionId: number;
 	metricKey: string;
 	value: string | number | boolean | null;
+	valueFormat?: string | number | boolean | null;
 	meta: {
 		campaignId: number | null;
 		sourceType: MetricSourceType;
@@ -206,6 +216,7 @@ export interface DashboardRenderRequest {
 	endDate?: string;
 	timeRange?: AnalyticsTimeRange;
 	filters?: RuntimeFilter[];
+	contactGroupId?: number | null;
 }
 
 export interface DashboardPeriod {
@@ -233,6 +244,7 @@ export interface DashboardRenderComparisonRequest {
 	endDate?: string;
 	timeRange?: AnalyticsTimeRange;
 	comparisonMode?: AnalyticsComparisonMode;
+	contactGroupId?: number | null;
 }
 
 export interface DashboardComparisonWidget {
@@ -257,4 +269,19 @@ export interface DashboardRenderComparisonResponse {
 		previous: DashboardPeriod;
 	};
 	widgets: DashboardComparisonWidget[];
+}
+
+export interface DashboardWidgetComparisonData {
+	comparison?: MetricComparison;
+	previous?: DashboardMetricResult;
+	current?: DashboardMetricResult;
+}
+
+export interface DashboardRenderUnifiedResponse {
+	renderResult: DashboardRenderResponse;
+	comparisonMap?: Map<number, DashboardWidgetComparisonData>;
+	comparisonPeriod?: {
+		current: DashboardPeriod;
+		previous: DashboardPeriod;
+	};
 }

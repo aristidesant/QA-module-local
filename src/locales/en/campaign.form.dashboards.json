@@ -234,10 +234,24 @@
 			"MONTH": "This month",
 			"YEAR": "This year"
 		},
-		"period": "{{start}} – {{end}}",
-		"comparisonPeriod": "{{currentStart}} – {{currentEnd}} vs {{previousStart}} – {{previousEnd}}",
+		"menu": {
+			"dashboardLabel": "Dashboard",
+			"timeRangeLabel": "Time range",
+			"selectDashboard": "Select dashboard"
+		},
+		"period": "{{period}}",
+		"comparisonPeriod": "{{currentPeriod}} vs {{previousPeriod}}",
 		"comparison": {
 			"toggle": "Compare to previous period",
+			"shortToggle": "Compare",
+			"vsPreviousDay": "vs previous day",
+			"vsPreviousWeek": "vs previous week",
+			"vsPreviousMonth": "vs previous month",
+			"vsPreviousYear": "vs previous year",
+			"yesterdayValue": "Yesterday: {{value}}",
+			"previousWeekValue": "Last week: {{value}}",
+			"previousMonthValue": "Last month: {{value}}",
+			"previousYearValue": "Last year: {{value}}",
 			"trend": {
 				"UP": "Up",
 				"DOWN": "Down",

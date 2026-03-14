@@ -33,6 +33,7 @@ import { getErrorMessage } from '~/utils/httpClient';
 import ContactGroupContactsTable from './ContactGroupContactsTable';
 import ContactListInformation from './ContactListInformation';
 import ContactListMetrics from './ContactListMetrics';
+import CampaignDashboardViewer from '~/modules/campaigns/CampaignDashboardViewer';
 import ConversationsList from '~/modules/conversations/ConversationsList';
 import FaultyPhonesAlert from './ContactGroupContactsTable/FaultyPhonesAlert';
 import { getQueueStatusConfig } from '~/modules/campaigns/CampaignsForm/ContactSection/ContactList/queueStatusConfig';
@@ -320,6 +321,11 @@ const CampaignContactListPage = () => {
 							/>
 						</SectionCard>
 						<ContactListMetrics contactGroupId={contactGroupId} />
+						<CampaignDashboardViewer
+							campaignId={campaignId ? Number(campaignId) : null}
+							contactGroupId={contactGroupIdNumber}
+							allowLayoutEditing={false}
+						/>
 					</Stack>
 				</Tabs.Panel>
 

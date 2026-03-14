@@ -1,4 +1,5 @@
 import type {
+	DashboardWidgetComparisonData,
 	DashboardDefinition,
 	DashboardWidget,
 } from '~/models/AnalyticsDashboard';
@@ -18,3 +19,4 @@ export type DashboardOption = {
 
 export type DashboardWidgetType = DashboardWidget['widgetType'];
 export type DashboardList = DashboardDefinition[];
+export type WidgetComparisonData = DashboardWidgetComparisonData;

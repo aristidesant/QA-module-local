@@ -1,6 +1,7 @@
 import type { LayoutItem } from 'react-grid-layout/legacy';
 import type {
 	DashboardDefinition,
+	DashboardPeriod,
 	DashboardRenderWidget,
 	DashboardWidget,
 	GroupedMetricResult,
@@ -35,6 +36,36 @@ export const formatMetricValue = (
 	if (typeof value === 'boolean') return value ? 'True' : 'False';
 	if (value === null || value === undefined || value === '') return '-';
 	return String(value);
+};
+
+export const formatPeriodDate = (iso: string): string =>
+	new Date(iso).toLocaleDateString(undefined, {
+		month: 'short',
+		day: 'numeric',
+	});
+
+export const isSameCalendarDay = (
+	startIso: string,
+	endIso: string
+): boolean => {
+	const start = new Date(startIso);
+	const end = new Date(endIso);
+
+	return (
+		start.getFullYear() === end.getFullYear() &&
+		start.getMonth() === end.getMonth() &&
+		start.getDate() === end.getDate()
+	);
+};
+
+export const formatDashboardPeriod = (period: DashboardPeriod): string => {
+	const startLabel = formatPeriodDate(period.start);
+
+	if (isSameCalendarDay(period.start, period.end)) {
+		return startLabel;
+	}
+
+	return `${startLabel} – ${formatPeriodDate(period.end)}`;
 };
 
 export const getNumericValue = (value: string | number | boolean | null) => {
