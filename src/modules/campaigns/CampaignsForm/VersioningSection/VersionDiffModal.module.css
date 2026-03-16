@@ -64,8 +64,20 @@
 	color: var(--mantine-color-dark-7);
 }
 
+.addedCell {
+	background: rgba(46, 160, 67, 0.1);
+}
+
+.removedCell {
+	background: rgba(218, 54, 51, 0.1);
+}
+
+.emptyCell {
+	background: var(--mantine-color-gray-0);
+}
+
 .wordHighlight {
-	background: rgba(218, 54, 51, 0.18);
+	background: rgba(218, 54, 51, 0.28);
 	border-radius: 3px;
 	padding: 0 2px;
 	font: inherit;

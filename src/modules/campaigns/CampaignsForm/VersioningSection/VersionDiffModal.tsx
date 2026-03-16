@@ -187,10 +187,32 @@ const VersionDiffModal = ({
 										}
 										return [
 											<div key={`row-${index}`} className={classes.diffRow}>
-												<div className={classes.diffCell}>
+												<div
+													className={[
+														classes.diffCell,
+														row.left.kind === 'removed'
+															? classes.removedCell
+															: row.left.kind === 'empty'
+																? classes.emptyCell
+																: '',
+													]
+														.filter(Boolean)
+														.join(' ')}
+												>
 													{renderLine(row.left)}
 												</div>
-												<div className={classes.diffCell}>
+												<div
+													className={[
+														classes.diffCell,
+														row.right.kind === 'added'
+															? classes.addedCell
+															: row.right.kind === 'empty'
+																? classes.emptyCell
+																: '',
+													]
+														.filter(Boolean)
+														.join(' ')}
+												>
 													{renderLine(row.right)}
 												</div>
 											</div>,
