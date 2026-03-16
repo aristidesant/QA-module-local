@@ -1,0 +1,107 @@
+.metaGrid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--mantine-spacing-sm);
+}
+
+.metaCard {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-sm);
+	background: var(--mantine-color-white);
+}
+
+.diffShell {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	overflow: hidden;
+	background: var(--mantine-color-white);
+}
+
+.diffScroll {
+	max-height: 60vh;
+}
+
+.splitDiff {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.diffHeaderRow,
+.diffRow {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.diffHeaderCell {
+	padding: var(--mantine-spacing-sm);
+	border-bottom: 1px solid var(--mantine-color-gray-3);
+	background: var(--mantine-color-gray-0);
+}
+
+.diffHeaderCell + .diffHeaderCell {
+	border-left: 1px solid var(--mantine-color-gray-3);
+}
+
+.diffCell {
+	display: grid;
+	grid-template-columns: 3rem minmax(0, 1fr);
+	align-items: start;
+	gap: var(--mantine-spacing-xs);
+	padding: 0.35rem 0.5rem;
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+	font-family:
+		ui-monospace, SFMono-Regular, SFMono-Regular, Menlo, Monaco, Consolas,
+		'Liberation Mono', 'Courier New', monospace;
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.diffCell + .diffCell {
+	border-left: 1px solid var(--mantine-color-gray-3);
+}
+
+.contextCell {
+	background: var(--mantine-color-white);
+}
+
+.addedCell {
+	background: rgba(46, 160, 67, 0.12);
+}
+
+.removedCell {
+	background: rgba(218, 54, 51, 0.12);
+}
+
+.emptyCell {
+	background: var(--mantine-color-gray-0);
+}
+
+.lineNumber {
+	color: var(--mantine-color-dimmed);
+	text-align: right;
+	user-select: none;
+}
+
+.lineContent {
+	margin: 0;
+	white-space: pre-wrap;
+	word-break: break-word;
+	font: inherit;
+}
+
+.emptyDiff {
+	padding: var(--mantine-spacing-md);
+}
+
+@media (max-width: 768px) {
+	.diffHeaderRow,
+	.diffRow {
+		grid-template-columns: 1fr;
+	}
+
+	.diffCell + .diffCell,
+	.diffHeaderCell + .diffHeaderCell {
+		border-left: none;
+	}
+}

@@ -48,6 +48,7 @@ import AgentSectionRightPanel from './AgentSection/AgentSectionRightPanel';
 import GeneralSectionRightPanel from './GeneralSection/GeneralSectionRightPanel';
 import AppDrawer from '~/components/AppDrawer';
 import DashboardSection from './DashboardSection';
+import VersioningSection from './VersioningSection';
 import styles from './CampaignsForm.module.css';
 import { getDataCollectionFromAgentConfig } from './AnalyticsSection/analyticsFormContext';
 
@@ -67,6 +68,7 @@ const campaignFormTabNamespaces: Record<string, string> = {
 	analytics: 'campaign.form.analytics',
 	dashboards: 'campaign.form.dashboards',
 	'report-values': 'campaign.form.report-values',
+	versioning: 'campaign.form.versioning',
 };
 
 const getWorkflowCounts = (
@@ -576,6 +578,9 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 								campaignId={campaign?.id}
 								attributeMetricKeys={attributeMetricKeys}
 							/>
+						)}
+						{selectedTab === 'versioning' && (
+							<VersioningSection campaign={campaign} />
 						)}
 					</Stack>
 				</ContentContainer>

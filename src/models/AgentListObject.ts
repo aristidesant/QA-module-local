@@ -5,6 +5,7 @@ export default interface AgentListObject {
 	id: string;
 	name: string;
 	config: AgentConfigModel;
+	versioningEnabled?: boolean;
 	type: 'INBOUND' | 'OUTBOUND';
 	status: 'ACTIVE' | 'INACTIVE';
 	clientId: number;

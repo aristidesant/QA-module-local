@@ -10,6 +10,7 @@ export const campaignDetailNamespaces = [
 	'campaign.form.analytics',
 	'campaign.form.dashboards',
 	'campaign.form.report-values',
+	'campaign.form.versioning',
 	'campaign.form.contacts',
 	'campaign.form.do-not-call',
 	'campaign.contact-list',

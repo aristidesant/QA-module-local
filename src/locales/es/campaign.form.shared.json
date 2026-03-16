@@ -50,6 +50,7 @@
 		"analytics": "Analytics",
 		"dashboards": "Dashboards",
 		"reportValues": "Valores de Reporte",
-		"general": "General"
+		"general": "General",
+		"versioning": "Versionado"
 	}
 }
