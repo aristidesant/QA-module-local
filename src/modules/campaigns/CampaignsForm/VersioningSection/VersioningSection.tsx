@@ -26,13 +26,17 @@ import {
 	useEnableAgentVersioning,
 	useGetAgentBranchDetails,
 	useGetAgentBranches,
+	useGetAgentVersionCommits,
 	useGetAgentVersionSnapshot,
 	useGetAgentVersioningStatus,
 	useRevertAgentVersion,
 } from '~/queries/agentVersioningQueries';
 import type { CampaignAgent } from '~/models/CampaignAgentModel';
 import type { Campaign } from '~/models/CampaignsModel';
-import type { AgentVersionSummary } from '~/models/AgentVersioningModel';
+import type {
+	AgentVersionCommit,
+	AgentVersionSummary,
+} from '~/models/AgentVersioningModel';
 import useVersionHistoryColumns from './useVersionHistoryColumns';
 import VersionDiffModal from './VersionDiffModal';
 import {
@@ -109,6 +113,13 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 	);
 	const { data: branchDetails, isLoading: isLoadingBranchDetails } =
 		useGetAgentBranchDetails(agentId, mainBranch?.id);
+	const { data: versionCommitsData } = useGetAgentVersionCommits(
+		agentId,
+		mainBranch?.id,
+		Boolean(agentId && mainBranch?.id)
+	);
+	const versionCommits: AgentVersionCommit[] =
+		versionCommitsData?.results ?? [];
 	const { data: currentSnapshot, isLoading: isLoadingCurrentSnapshot } =
 		useGetAgentVersionSnapshot(
 			agentId,
@@ -283,6 +294,7 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 		onRevert: handleRevert,
 		isReverting,
 		activeVersionId: selectedVersion?.id,
+		versionCommits,
 	});
 
 	if (!campaign?.id) {

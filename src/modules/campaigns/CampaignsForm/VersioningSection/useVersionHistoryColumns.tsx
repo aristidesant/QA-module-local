@@ -3,7 +3,10 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { ActionIcon, Badge, Group, Stack, Text, Tooltip } from '@mantine/core';
 import { IconGitCompare, IconRotate2 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
-import type { AgentVersionSummary } from '~/models/AgentVersioningModel';
+import type {
+	AgentVersionCommit,
+	AgentVersionSummary,
+} from '~/models/AgentVersioningModel';
 import {
 	formatCommittedAgo,
 	formatCommittedAt,
@@ -15,6 +18,28 @@ interface UseVersionHistoryColumnsOptions {
 	onRevert: (version: AgentVersionSummary) => void;
 	isReverting: boolean;
 	activeVersionId?: string | null;
+	versionCommits: AgentVersionCommit[];
+}
+
+const MATCH_TOLERANCE_MS = 2 * 60 * 1000;
+
+function findCommitForVersion(
+	version: AgentVersionSummary,
+	commits: AgentVersionCommit[]
+): AgentVersionCommit | undefined {
+	const versionTimeMs = version.timeCommittedSecs * 1000;
+	let best: AgentVersionCommit | undefined;
+	let bestDiff = MATCH_TOLERANCE_MS + 1;
+
+	for (const commit of commits) {
+		const diff = Math.abs(new Date(commit.createdAt).getTime() - versionTimeMs);
+		if (diff < bestDiff) {
+			bestDiff = diff;
+			best = commit;
+		}
+	}
+
+	return best;
 }
 
 const useVersionHistoryColumns = ({
@@ -22,6 +47,7 @@ const useVersionHistoryColumns = ({
 	onRevert,
 	isReverting,
 	activeVersionId,
+	versionCommits,
 }: UseVersionHistoryColumnsOptions): ColumnDef<AgentVersionSummary>[] => {
 	const { t } = useTranslation('campaign.form.versioning');
 
@@ -52,17 +78,27 @@ const useVersionHistoryColumns = ({
 			{
 				id: 'author',
 				header: t('history.columns.author'),
-				cell: ({ row }) => (
-					<Stack gap={2}>
-						<Text size='sm'>
-							{row.original.accessInfo?.creatorName ||
-								t('history.unknownAuthor')}
-						</Text>
-						<Text size='xs' c='dimmed'>
-							{row.original.accessInfo?.creatorEmail || '—'}
-						</Text>
-					</Stack>
-				),
+				cell: ({ row }) => {
+					const commit = findCommitForVersion(row.original, versionCommits);
+					const name =
+						commit?.userName ||
+						commit?.userEmail ||
+						row.original.accessInfo?.creatorName ||
+						t('history.unknownAuthor');
+					const email =
+						commit?.userEmail || row.original.accessInfo?.creatorEmail;
+
+					return (
+						<Stack gap={2}>
+							<Text size='sm'>{name}</Text>
+							{email ? (
+								<Text size='xs' c='dimmed'>
+									{email}
+								</Text>
+							) : null}
+						</Stack>
+					);
+				},
 			},
 			{
 				id: 'committedAt',
@@ -110,7 +146,7 @@ const useVersionHistoryColumns = ({
 				},
 			},
 		],
-		[activeVersionId, isReverting, onCompare, onRevert, t]
+		[activeVersionId, isReverting, onCompare, onRevert, t, versionCommits]
 	);
 };
 

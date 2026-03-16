@@ -63,6 +63,22 @@ export type AgentVersionSnapshot = Partial<
 	name?: string;
 };
 
+export interface AgentVersionCommit {
+	id: number;
+	agentId: string;
+	branchId: string;
+	versionId: string | null;
+	commitType: 'CREATE_BRANCH' | 'BRANCH_UPDATE' | 'MERGE';
+	userId: number;
+	userName: string;
+	userEmail: string;
+	createdAt: string;
+}
+
+export interface AgentVersionCommitListResponse {
+	results: AgentVersionCommit[];
+}
+
 export type AgentVersionUpdatePayload = Partial<
 	Pick<
 		AgentConfigModel,

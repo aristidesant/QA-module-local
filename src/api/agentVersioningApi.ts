@@ -3,6 +3,7 @@ import type AgentListObject from '~/models/AgentListObject';
 import type {
 	AgentBranchDetails,
 	AgentBranchListResponse,
+	AgentVersionCommitListResponse,
 	AgentVersionQueryParams,
 	AgentVersionSnapshot,
 	EnableAgentVersioningResponse,
@@ -53,6 +54,15 @@ const agentVersioningApi = () => {
 				{
 					params,
 				}
+			);
+
+			return response.data;
+		},
+
+		listVersionCommits: async (agentId: string, branchId?: string) => {
+			const response = await axios.get<AgentVersionCommitListResponse>(
+				`${DEFAULT_API_URL}/agents/${agentId}/version-commits`,
+				{ params: branchId ? { branchId } : undefined }
 			);
 
 			return response.data;

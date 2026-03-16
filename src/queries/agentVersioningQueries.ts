@@ -4,6 +4,7 @@ import type AgentListObject from '~/models/AgentListObject';
 import type {
 	AgentBranchDetails,
 	AgentBranchListResponse,
+	AgentVersionCommitListResponse,
 	AgentVersionQueryParams,
 	AgentVersionSnapshot,
 	EnableAgentVersioningResponse,
@@ -80,6 +81,21 @@ export const useGetAgentVersionSnapshot = (
 		},
 		enabled:
 			enabled && Boolean(agentId && (params.branchId || params.versionId)),
+	});
+};
+
+export const useGetAgentVersionCommits = (
+	agentId: string,
+	branchId?: string,
+	enabled = true
+) => {
+	return useQuery<AgentVersionCommitListResponse>({
+		queryKey: ['agent-versioning', agentId, 'version-commits', branchId],
+		queryFn: async () => {
+			const api = agentVersioningApi();
+			return api.listVersionCommits(agentId, branchId);
+		},
+		enabled: enabled && Boolean(agentId),
 	});
 };
 
