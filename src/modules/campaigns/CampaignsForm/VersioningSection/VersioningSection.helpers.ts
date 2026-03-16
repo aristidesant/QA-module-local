@@ -4,7 +4,7 @@ import type {
 	AgentVersionSummary,
 } from '~/models/AgentVersioningModel';
 import { normalizeAgentVersionSnapshot } from '~/utils/agentVersioning';
-import { diffLines } from 'diff';
+import { diffLines, diffWords } from 'diff';
 
 export const getMainBranch = (branchDetails?: AgentBranchDetails) =>
 	branchDetails;
@@ -47,10 +47,16 @@ export const stringifySnapshot = (snapshot?: AgentVersionSnapshot | null) =>
 
 export type SplitDiffLineKind = 'context' | 'added' | 'removed' | 'empty';
 
+export interface WordSegment {
+	text: string;
+	changed: boolean;
+}
+
 export interface SplitDiffLine {
 	lineNumber: number | null;
 	text: string;
 	kind: SplitDiffLineKind;
+	wordSegments?: WordSegment[];
 }
 
 export interface SplitDiffRow {
@@ -67,6 +73,7 @@ export type SplitDiffDisplayRow =
 	| {
 			type: 'separator';
 			hiddenLineCount: number;
+			rowRange: { start: number; end: number };
 	  };
 
 const toDisplayLines = (value: string) => {
@@ -112,6 +119,17 @@ export const buildSplitDiffRows = (
 				const removedLine = removedLines[lineIndex];
 				const addedLine = addedLines[lineIndex];
 
+				let leftWordSegments;
+				let rightWordSegments;
+				if (removedLine !== undefined && addedLine !== undefined) {
+					const wordChanges = diffWords(removedLine, addedLine);
+					leftWordSegments = wordChanges
+						.filter((c) => !c.added)
+						.map((c) => ({ text: c.value, changed: !!c.removed }));
+					rightWordSegments = wordChanges
+						.filter((c) => !c.removed)
+						.map((c) => ({ text: c.value, changed: !!c.added }));
+				}
 				rows.push({
 					left:
 						removedLine !== undefined
@@ -119,6 +137,7 @@ export const buildSplitDiffRows = (
 									lineNumber: leftLineNumber++,
 									text: removedLine,
 									kind: 'removed',
+									wordSegments: leftWordSegments,
 								}
 							: createEmptyLine(),
 					right:
@@ -127,6 +146,7 @@ export const buildSplitDiffRows = (
 									lineNumber: rightLineNumber++,
 									text: addedLine,
 									kind: 'added',
+									wordSegments: rightWordSegments,
 								}
 							: createEmptyLine(),
 				});
@@ -176,11 +196,9 @@ export const buildSplitDiffRows = (
 };
 
 export const buildDisplayDiffRows = (
-	currentSnapshot?: AgentVersionSnapshot | null,
-	selectedSnapshot?: AgentVersionSnapshot | null,
+	rows: SplitDiffRow[],
 	contextLines = 3
 ): SplitDiffDisplayRow[] => {
-	const rows = buildSplitDiffRows(currentSnapshot, selectedSnapshot);
 	const changedIndexes = rows
 		.map((row, index) =>
 			row.left.kind !== 'context' || row.right.kind !== 'context' ? index : -1
@@ -216,6 +234,7 @@ export const buildDisplayDiffRows = (
 			displayRows.push({
 				type: 'separator',
 				hiddenLineCount: range.start - currentIndex,
+				rowRange: { start: currentIndex, end: range.start - 1 },
 			});
 		}
 
@@ -233,6 +252,7 @@ export const buildDisplayDiffRows = (
 		displayRows.push({
 			type: 'separator',
 			hiddenLineCount: rows.length - currentIndex,
+			rowRange: { start: currentIndex, end: rows.length - 1 },
 		});
 	}
 

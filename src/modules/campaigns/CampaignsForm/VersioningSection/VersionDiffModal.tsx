@@ -1,23 +1,24 @@
 import {
 	Alert,
+	Badge,
 	Button,
 	Group,
 	Loader,
 	Modal,
 	ScrollArea,
-	Stack,
 	Text,
 } from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type {
 	AgentVersionSnapshot,
 	AgentVersionSummary,
 } from '~/models/AgentVersioningModel';
+import type { SplitDiffLine } from './VersioningSection.helpers';
 import {
 	buildDisplayDiffRows,
-	formatCommittedAt,
+	buildSplitDiffRows,
 	stringifySnapshot,
 } from './VersioningSection.helpers';
 import classes from './VersionDiffModal.module.css';
@@ -33,6 +34,22 @@ interface VersionDiffModalProps {
 	onRevert: () => void;
 }
 
+const renderLine = (line: SplitDiffLine) => (
+	<pre className={classes.lineContent}>
+		{line.wordSegments
+			? line.wordSegments.map((seg, i) =>
+					seg.changed ? (
+						<mark key={i} className={classes.wordHighlight}>
+							{seg.text}
+						</mark>
+					) : (
+						seg.text
+					)
+				)
+			: line.text}
+	</pre>
+);
+
 const VersionDiffModal = ({
 	opened,
 	onClose,
@@ -44,17 +61,38 @@ const VersionDiffModal = ({
 	onRevert,
 }: VersionDiffModalProps) => {
 	const { t } = useTranslation('campaign.form.versioning');
+	const [expandedSeparators, setExpandedSeparators] = useState<Set<number>>(
+		new Set()
+	);
 
-	const diffRows = useMemo(() => {
-		if (!currentSnapshot || !selectedSnapshot || !selectedVersion) {
-			return [];
-		}
+	useEffect(() => {
+		setExpandedSeparators(new Set());
+	}, [selectedVersion?.id]);
 
-		return buildDisplayDiffRows(currentSnapshot, selectedSnapshot);
-	}, [currentSnapshot, selectedSnapshot, selectedVersion]);
+	const allRows = useMemo(() => {
+		if (!currentSnapshot || !selectedSnapshot) return [];
+		return buildSplitDiffRows(currentSnapshot, selectedSnapshot);
+	}, [currentSnapshot, selectedSnapshot]);
+
+	const baseDisplayRows = useMemo(
+		() => buildDisplayDiffRows(allRows),
+		[allRows]
+	);
 
 	const hasChanges =
 		stringifySnapshot(currentSnapshot) !== stringifySnapshot(selectedSnapshot);
+
+	const toggleExpand = (index: number) => {
+		setExpandedSeparators((prev) => {
+			const next = new Set(prev);
+			if (next.has(index)) {
+				next.delete(index);
+			} else {
+				next.add(index);
+			}
+			return next;
+		});
+	};
 
 	return (
 		<Modal
@@ -63,38 +101,9 @@ const VersionDiffModal = ({
 			title={t('diff.title')}
 			size='90%'
 			centered
+			padding='lg'
 		>
-			<Stack gap='sm'>
-				{selectedVersion ? (
-					<div className={classes.metaGrid}>
-						<div className={classes.metaCard}>
-							<Text size='xs' c='dimmed'>
-								{t('diff.selectedVersion')}
-							</Text>
-							<Text size='sm' fw={600}>
-								{t('history.versionBadge', {
-									version: selectedVersion.seqNoInBranch,
-								})}
-							</Text>
-							<Text size='xs' c='dimmed'>
-								{formatCommittedAt(selectedVersion.timeCommittedSecs)}
-							</Text>
-						</div>
-						<div className={classes.metaCard}>
-							<Text size='xs' c='dimmed'>
-								{t('diff.createdBy')}
-							</Text>
-							<Text size='sm' fw={600}>
-								{selectedVersion.accessInfo?.creatorName ||
-									t('history.unknownAuthor')}
-							</Text>
-							<Text size='xs' c='dimmed'>
-								{selectedVersion.accessInfo?.creatorEmail || '—'}
-							</Text>
-						</div>
-					</div>
-				) : null}
-
+			<div className={classes.modalBody}>
 				{isLoading ? (
 					<Group justify='center' py='xl'>
 						<Loader size='sm' />
@@ -114,86 +123,79 @@ const VersionDiffModal = ({
 								<div className={classes.splitDiff}>
 									<div className={classes.diffHeaderRow}>
 										<div className={classes.diffHeaderCell}>
-											<Text size='xs' c='dimmed' fw={600}>
+											<Text size='sm' c='dimmed'>
 												{t('diff.currentLabel')}
 											</Text>
+											<Badge
+												variant='outline'
+												color='gray'
+												size='sm'
+												radius='sm'
+											>
+												Main
+											</Badge>
 										</div>
 										<div className={classes.diffHeaderCell}>
-											<Text size='xs' c='dimmed' fw={600}>
-												{t('diff.selectedLabel', {
-													version: selectedVersion?.seqNoInBranch,
-												})}
+											<Text size='sm' c='dimmed'>
+												{t('diff.selectedLabel')}
 											</Text>
+											<Badge
+												variant='outline'
+												color='gray'
+												size='sm'
+												radius='sm'
+											>
+												Main
+											</Badge>
 										</div>
 									</div>
-									{diffRows.map((row, index) =>
-										row.type === 'separator' ? (
-											<div
-												className={classes.separatorRow}
-												key={`diff-gap-${index}`}
-											>
-												<Text size='xs' c='dimmed'>
-													{t('diff.hiddenLines', {
-														count: row.hiddenLineCount,
-													})}
-												</Text>
-											</div>
-										) : (
-											<div
-												className={classes.diffRow}
-												key={`diff-row-${index}`}
-											>
+									{baseDisplayRows.flatMap((row, index) => {
+										if (row.type === 'separator') {
+											if (expandedSeparators.has(index)) {
+												return allRows
+													.slice(row.rowRange.start, row.rowRange.end + 1)
+													.map((expandedRow, j) => (
+														<div
+															key={`exp-${index}-${j}`}
+															className={classes.diffRow}
+														>
+															<div className={classes.diffCell}>
+																{renderLine(expandedRow.left)}
+															</div>
+															<div className={classes.diffCell}>
+																{renderLine(expandedRow.right)}
+															</div>
+														</div>
+													));
+											}
+											return [
 												<div
-													className={[
-														classes.diffCell,
-														row.left.kind === 'removed'
-															? classes.removedCell
-															: row.left.kind === 'context'
-																? classes.contextCell
-																: classes.emptyCell,
-													].join(' ')}
+													key={`sep-${index}`}
+													className={classes.separatorRow}
 												>
-													<span className={classes.lineMarker}>
-														{row.left.kind === 'removed'
-															? '-'
-															: row.left.kind === 'context'
-																? ' '
-																: ''}
-													</span>
-													<span className={classes.lineNumber}>
-														{row.left.lineNumber ?? ''}
-													</span>
-													<pre className={classes.lineContent}>
-														{row.left.text}
-													</pre>
+													<button
+														type='button'
+														className={classes.expandLink}
+														onClick={() => toggleExpand(index)}
+													>
+														{t('diff.hiddenLines', {
+															count: row.hiddenLineCount,
+														})}
+													</button>
+												</div>,
+											];
+										}
+										return [
+											<div key={`row-${index}`} className={classes.diffRow}>
+												<div className={classes.diffCell}>
+													{renderLine(row.left)}
 												</div>
-												<div
-													className={[
-														classes.diffCell,
-														row.right.kind === 'added'
-															? classes.addedCell
-															: row.right.kind === 'context'
-																? classes.contextCell
-																: classes.emptyCell,
-													].join(' ')}
-												>
-													<span className={classes.lineMarker}>
-														{row.right.kind === 'added'
-															? '+'
-															: row.right.kind === 'context'
-																? ' '
-																: ''}
-													</span>
-													<span className={classes.lineNumber}>
-														{row.right.lineNumber ?? ''}
-													</span>
-													<pre className={classes.lineContent}>
-														{row.right.text}
-													</pre>
+												<div className={classes.diffCell}>
+													{renderLine(row.right)}
 												</div>
-											</div>
-										)
-									)}
+											</div>,
+										];
+									})}
 								</div>
 							) : (
 								<div className={classes.emptyDiff}>
@@ -207,24 +209,19 @@ const VersionDiffModal = ({
 				)}
 
 				<Group justify='space-between'>
-					<Text size='xs' c='dimmed'>
-						{t('diff.footerHint')}
-					</Text>
-					<Group gap='xs'>
-						<Button variant='default' onClick={onClose}>
-							{t('actions.close')}
-						</Button>
-						<Button
-							color='orange'
-							onClick={onRevert}
-							loading={isReverting}
-							disabled={!selectedVersion}
-						>
-							{t('actions.revertVersion')}
-						</Button>
-					</Group>
+					<Button variant='default' onClick={onClose}>
+						{t('actions.close')}
+					</Button>
+					<Button
+						color='dark'
+						onClick={onRevert}
+						loading={isReverting}
+						disabled={!selectedVersion}
+					>
+						{t('actions.revertVersion')}
+					</Button>
 				</Group>
-			</Stack>
+			</div>
 		</Modal>
 	);
 };

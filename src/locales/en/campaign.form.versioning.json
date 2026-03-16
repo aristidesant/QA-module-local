@@ -41,15 +41,15 @@
 		"errorMessage": "The agent versioning setting could not be enabled."
 	},
 	"diff": {
-		"title": "Version diff",
-		"currentLabel": "Current main branch",
-		"selectedLabel": "Selected version {{version}}",
+		"title": "Version History",
+		"currentLabel": "Current published version",
+		"selectedLabel": "Historical version",
 		"selectedVersion": "Selected snapshot",
 		"createdBy": "Created by",
 		"snapshotUnavailable": "The selected version could not be loaded for comparison.",
 		"noChanges": "No config changes were detected between the current state and the selected version.",
 		"footerHint": "Reverting will create a new immutable version on the main branch.",
-		"hiddenLines": "{{count}} unchanged lines hidden"
+		"hiddenLines": "Expand {{count}} lines ..."
 	},
 	"revert": {
 		"confirmTitle": "Revert version?",
@@ -81,7 +81,7 @@
 	"actions": {
 		"close": "Close",
 		"cancel": "Cancel",
-		"revertVersion": "Revert this version",
+		"revertVersion": "Revert",
 		"revertLatest": "Revert latest changes",
 		"retry": "Try again"
 	}

@@ -41,15 +41,15 @@
 		"errorMessage": "No se pudo habilitar la configuración de versionado del agente."
 	},
 	"diff": {
-		"title": "Diff de versión",
-		"currentLabel": "Main branch actual",
-		"selectedLabel": "Versión seleccionada {{version}}",
+		"title": "Historial de versiones",
+		"currentLabel": "Versión publicada actual",
+		"selectedLabel": "Versión histórica",
 		"selectedVersion": "Snapshot seleccionado",
 		"createdBy": "Creado por",
 		"snapshotUnavailable": "No se pudo cargar la versión seleccionada para compararla.",
 		"noChanges": "No se detectaron cambios de configuración entre el estado actual y la versión seleccionada.",
 		"footerHint": "Revertir creará una nueva versión inmutable en la rama main.",
-		"hiddenLines": "{{count}} líneas sin cambios ocultas"
+		"hiddenLines": "Expandir {{count}} líneas ..."
 	},
 	"revert": {
 		"confirmTitle": "¿Revertir versión?",
@@ -81,7 +81,7 @@
 	"actions": {
 		"close": "Cerrar",
 		"cancel": "Cancelar",
-		"revertVersion": "Revertir esta versión",
+		"revertVersion": "Revertir",
 		"revertLatest": "Revertir últimos cambios",
 		"retry": "Intentar de nuevo"
 	}
