@@ -5,42 +5,10 @@ import type {
 	AgentBranchListResponse,
 	AgentVersionQueryParams,
 	AgentVersionSnapshot,
-	AgentVersionUpdatePayload,
 	EnableAgentVersioningResponse,
 } from '~/models/AgentVersioningModel';
+import { normalizeAgentVersionSnapshot } from '~/utils/agentVersioning';
 import { DEFAULT_API_URL } from './config';
-
-const toVersionUpdatePayload = (
-	snapshot: AgentVersionSnapshot
-): AgentVersionUpdatePayload => {
-	const {
-		name,
-		tags,
-		phoneNumbers,
-		platformSettings,
-		privacy,
-		overrides,
-		callLimits,
-		evaluation,
-		dataCollection,
-		workspaceOverrides,
-		conversationConfig,
-	} = snapshot;
-
-	return {
-		...(name ? { name } : {}),
-		...(tags ? { tags } : {}),
-		...(phoneNumbers ? { phoneNumbers } : {}),
-		...(platformSettings ? { platformSettings } : {}),
-		...(privacy ? { privacy } : {}),
-		...(overrides ? { overrides } : {}),
-		...(callLimits ? { callLimits } : {}),
-		...(evaluation ? { evaluation } : {}),
-		...(dataCollection ? { dataCollection } : {}),
-		...(workspaceOverrides ? { workspaceOverrides } : {}),
-		...(conversationConfig ? { conversationConfig } : {}),
-	};
-};
 
 const agentVersioningApi = () => {
 	return {
@@ -97,7 +65,7 @@ const agentVersioningApi = () => {
 		) => {
 			const response = await axios.patch<AgentVersionSnapshot>(
 				`${DEFAULT_API_URL}/agents/${agentId}`,
-				toVersionUpdatePayload(snapshot),
+				normalizeAgentVersionSnapshot(snapshot),
 				{
 					params: { branchId },
 				}

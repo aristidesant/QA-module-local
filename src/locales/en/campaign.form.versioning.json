@@ -48,7 +48,8 @@
 		"createdBy": "Created by",
 		"snapshotUnavailable": "The selected version could not be loaded for comparison.",
 		"noChanges": "No config changes were detected between the current state and the selected version.",
-		"footerHint": "Reverting will create a new immutable version on the main branch."
+		"footerHint": "Reverting will create a new immutable version on the main branch.",
+		"hiddenLines": "{{count}} unchanged lines hidden"
 	},
 	"revert": {
 		"confirmTitle": "Revert version?",

@@ -16,7 +16,7 @@ import type {
 	AgentVersionSummary,
 } from '~/models/AgentVersioningModel';
 import {
-	buildSplitDiffRows,
+	buildDisplayDiffRows,
 	formatCommittedAt,
 	stringifySnapshot,
 } from './VersioningSection.helpers';
@@ -50,7 +50,7 @@ const VersionDiffModal = ({
 			return [];
 		}
 
-		return buildSplitDiffRows(currentSnapshot, selectedSnapshot);
+		return buildDisplayDiffRows(currentSnapshot, selectedSnapshot);
 	}, [currentSnapshot, selectedSnapshot, selectedVersion]);
 
 	const hasChanges =
@@ -126,44 +126,74 @@ const VersionDiffModal = ({
 											</Text>
 										</div>
 									</div>
-									{diffRows.map((row, index) => (
-										<div className={classes.diffRow} key={`diff-row-${index}`}>
+									{diffRows.map((row, index) =>
+										row.type === 'separator' ? (
 											<div
-												className={[
-													classes.diffCell,
-													row.left.kind === 'removed'
-														? classes.removedCell
-														: row.left.kind === 'context'
-															? classes.contextCell
-															: classes.emptyCell,
-												].join(' ')}
+												className={classes.separatorRow}
+												key={`diff-gap-${index}`}
 											>
-												<span className={classes.lineNumber}>
-													{row.left.lineNumber ?? ''}
-												</span>
-												<pre className={classes.lineContent}>
-													{row.left.text}
-												</pre>
+												<Text size='xs' c='dimmed'>
+													{t('diff.hiddenLines', {
+														count: row.hiddenLineCount,
+													})}
+												</Text>
 											</div>
+										) : (
 											<div
-												className={[
-													classes.diffCell,
-													row.right.kind === 'added'
-														? classes.addedCell
-														: row.right.kind === 'context'
-															? classes.contextCell
-															: classes.emptyCell,
-												].join(' ')}
+												className={classes.diffRow}
+												key={`diff-row-${index}`}
 											>
-												<span className={classes.lineNumber}>
-													{row.right.lineNumber ?? ''}
-												</span>
-												<pre className={classes.lineContent}>
-													{row.right.text}
-												</pre>
+												<div
+													className={[
+														classes.diffCell,
+														row.left.kind === 'removed'
+															? classes.removedCell
+															: row.left.kind === 'context'
+																? classes.contextCell
+																: classes.emptyCell,
+													].join(' ')}
+												>
+													<span className={classes.lineMarker}>
+														{row.left.kind === 'removed'
+															? '-'
+															: row.left.kind === 'context'
+																? ' '
+																: ''}
+													</span>
+													<span className={classes.lineNumber}>
+														{row.left.lineNumber ?? ''}
+													</span>
+													<pre className={classes.lineContent}>
+														{row.left.text}
+													</pre>
+												</div>
+												<div
+													className={[
+														classes.diffCell,
+														row.right.kind === 'added'
+															? classes.addedCell
+															: row.right.kind === 'context'
+																? classes.contextCell
+																: classes.emptyCell,
+													].join(' ')}
+												>
+													<span className={classes.lineMarker}>
+														{row.right.kind === 'added'
+															? '+'
+															: row.right.kind === 'context'
+																? ' '
+																: ''}
+													</span>
+													<span className={classes.lineNumber}>
+														{row.right.lineNumber ?? ''}
+													</span>
+													<pre className={classes.lineContent}>
+														{row.right.text}
+													</pre>
+												</div>
 											</div>
-										</div>
-									))}
+										)
+									)}
 								</div>
 							) : (
 								<div className={classes.emptyDiff}>

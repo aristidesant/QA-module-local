@@ -37,6 +37,9 @@
 	padding: var(--mantine-spacing-sm);
 	border-bottom: 1px solid var(--mantine-color-gray-3);
 	background: var(--mantine-color-gray-0);
+	position: sticky;
+	top: 0;
+	z-index: 1;
 }
 
 .diffHeaderCell + .diffHeaderCell {
@@ -45,7 +48,7 @@
 
 .diffCell {
 	display: grid;
-	grid-template-columns: 3rem minmax(0, 1fr);
+	grid-template-columns: 1rem 3rem minmax(0, 1fr);
 	align-items: start;
 	gap: var(--mantine-spacing-xs);
 	padding: 0.35rem 0.5rem;
@@ -83,6 +86,13 @@
 	user-select: none;
 }
 
+.lineMarker {
+	color: var(--mantine-color-dimmed);
+	text-align: center;
+	user-select: none;
+	font-weight: 700;
+}
+
 .lineContent {
 	margin: 0;
 	white-space: pre-wrap;
@@ -92,6 +102,15 @@
 
 .emptyDiff {
 	padding: var(--mantine-spacing-md);
+}
+
+.separatorRow {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 0.45rem;
+	border-bottom: 1px solid var(--mantine-color-gray-3);
+	background: var(--mantine-color-gray-0);
 }
 
 @media (max-width: 768px) {

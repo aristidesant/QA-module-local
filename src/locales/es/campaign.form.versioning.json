@@ -48,7 +48,8 @@
 		"createdBy": "Creado por",
 		"snapshotUnavailable": "No se pudo cargar la versión seleccionada para compararla.",
 		"noChanges": "No se detectaron cambios de configuración entre el estado actual y la versión seleccionada.",
-		"footerHint": "Revertir creará una nueva versión inmutable en la rama main."
+		"footerHint": "Revertir creará una nueva versión inmutable en la rama main.",
+		"hiddenLines": "{{count}} líneas sin cambios ocultas"
 	},
 	"revert": {
 		"confirmTitle": "¿Revertir versión?",

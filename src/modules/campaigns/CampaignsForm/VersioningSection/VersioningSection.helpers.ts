@@ -3,6 +3,7 @@ import type {
 	AgentVersionSnapshot,
 	AgentVersionSummary,
 } from '~/models/AgentVersioningModel';
+import { normalizeAgentVersionSnapshot } from '~/utils/agentVersioning';
 import { diffLines } from 'diff';
 
 export const getMainBranch = (branchDetails?: AgentBranchDetails) =>
@@ -38,7 +39,11 @@ const sortJsonValue = (value: unknown): unknown => {
 };
 
 export const stringifySnapshot = (snapshot?: AgentVersionSnapshot | null) =>
-	JSON.stringify(sortJsonValue(snapshot ?? {}), null, 2);
+	JSON.stringify(
+		sortJsonValue(normalizeAgentVersionSnapshot(snapshot)),
+		null,
+		2
+	);
 
 export type SplitDiffLineKind = 'context' | 'added' | 'removed' | 'empty';
 
@@ -52,6 +57,17 @@ export interface SplitDiffRow {
 	left: SplitDiffLine;
 	right: SplitDiffLine;
 }
+
+export type SplitDiffDisplayRow =
+	| {
+			type: 'line';
+			left: SplitDiffLine;
+			right: SplitDiffLine;
+	  }
+	| {
+			type: 'separator';
+			hiddenLineCount: number;
+	  };
 
 const toDisplayLines = (value: string) => {
 	const normalized = value.replace(/\r\n/g, '\n');
@@ -157,6 +173,70 @@ export const buildSplitDiffRows = (
 	}
 
 	return rows;
+};
+
+export const buildDisplayDiffRows = (
+	currentSnapshot?: AgentVersionSnapshot | null,
+	selectedSnapshot?: AgentVersionSnapshot | null,
+	contextLines = 3
+): SplitDiffDisplayRow[] => {
+	const rows = buildSplitDiffRows(currentSnapshot, selectedSnapshot);
+	const changedIndexes = rows
+		.map((row, index) =>
+			row.left.kind !== 'context' || row.right.kind !== 'context' ? index : -1
+		)
+		.filter((index) => index >= 0);
+
+	if (changedIndexes.length === 0) {
+		return rows.map((row) => ({ type: 'line', ...row }));
+	}
+
+	const ranges: Array<{ start: number; end: number }> = [];
+
+	for (const changedIndex of changedIndexes) {
+		const nextRange = {
+			start: Math.max(0, changedIndex - contextLines),
+			end: Math.min(rows.length - 1, changedIndex + contextLines),
+		};
+		const previousRange = ranges.at(-1);
+
+		if (!previousRange || nextRange.start > previousRange.end + 1) {
+			ranges.push(nextRange);
+			continue;
+		}
+
+		previousRange.end = Math.max(previousRange.end, nextRange.end);
+	}
+
+	const displayRows: SplitDiffDisplayRow[] = [];
+	let currentIndex = 0;
+
+	for (const range of ranges) {
+		if (range.start > currentIndex) {
+			displayRows.push({
+				type: 'separator',
+				hiddenLineCount: range.start - currentIndex,
+			});
+		}
+
+		for (let index = range.start; index <= range.end; index += 1) {
+			displayRows.push({
+				type: 'line',
+				...rows[index],
+			});
+		}
+
+		currentIndex = range.end + 1;
+	}
+
+	if (currentIndex < rows.length) {
+		displayRows.push({
+			type: 'separator',
+			hiddenLineCount: rows.length - currentIndex,
+		});
+	}
+
+	return displayRows;
 };
 
 export const formatCommittedAt = (timestampSecs: number) =>
