@@ -22,6 +22,7 @@ import BaseTable from '~/components/BaseTable/BaseTable';
 import PaginationControls from '~/components/PaginationControls';
 import SectionCard from '~/components/SectionCard';
 import { usePagination } from '~/hooks/usePagination';
+import { useCampaignsStore } from '~/stores/campaignsStore';
 import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
 import { useSyncCampaignByAgent } from '~/queries/campaignsQueries';
 import {
@@ -54,6 +55,7 @@ interface VersioningSectionProps {
 
 const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 	const { t } = useTranslation(['campaign.form.versioning', 'common']);
+	const { setSelectedTab } = useCampaignsStore((state) => state);
 	const [selectedVersion, setSelectedVersion] =
 		useState<AgentVersionSummary | null>(null);
 	const [selectedCampaignAgentId, setSelectedCampaignAgentId] = useState<
@@ -286,6 +288,7 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 									await syncCampaignByAgent(agentId);
 									modals.close(modalId);
 									setSelectedVersion(null);
+									setSelectedTab('agents');
 									notifications.show({
 										title: t('revert.successTitle'),
 										message: t('revert.successMessage'),

@@ -279,7 +279,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			getterNodes: getterWorkflowCounts.nodes,
 			getterEdges: getterWorkflowCounts.edges,
 		});
-	}, [campaign?.id, campaign?.agentConfig?.workflow]);
+	}, [campaign?.id, campaign?.agentConfig?.workflow, campaign?.updatedAt]);
 
 	// Reset view only on component unmount
 	useEffect(() => {
