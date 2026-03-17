@@ -21,15 +21,23 @@ interface UseVersionHistoryColumnsOptions {
 	versionCommits: AgentVersionCommit[];
 }
 
-const MATCH_TOLERANCE_MS = 2 * 60 * 1000;
-
 function findCommitForVersion(
 	version: AgentVersionSummary,
 	commits: AgentVersionCommit[]
 ): AgentVersionCommit | undefined {
+	if (commits.length === 0) return undefined;
+
+	// Prefer explicit versionId match when available
+	const byId = commits.find(
+		(c) => c.versionId != null && c.versionId === version.id
+	);
+	if (byId) return byId;
+
+	// Fall back to closest timestamp match (no hard tolerance — system clock skew
+	// between ElevenLabs and our backend can exceed 2 minutes)
 	const versionTimeMs = version.timeCommittedSecs * 1000;
 	let best: AgentVersionCommit | undefined;
-	let bestDiff = MATCH_TOLERANCE_MS + 1;
+	let bestDiff = Infinity;
 
 	for (const commit of commits) {
 		const diff = Math.abs(new Date(commit.createdAt).getTime() - versionTimeMs);
