@@ -49,50 +49,44 @@ export interface RuntimeFilter {
 	value?: string | number | boolean | string[] | number[] | boolean[] | null;
 }
 
-export interface DashboardWidgetConfig {
+export interface DashboardWidgetQueryConfig {
 	groupBy?: string;
 	limit?: number;
-	[key: string]: unknown;
 }
 
-export interface MetricDefinition {
-	id: number;
-	clientId: number;
-	campaignId: number | null;
-	userId: number;
-	key: string;
-	name: string;
-	description: string | null;
-	sourceType: MetricSourceType;
-	aggregationType: MetricAggregationType;
-	fieldName: string | null;
-	metricKey: string | null;
-	valueField: MetricValueField | null;
-	defaultFilter: RuntimeFilter[] | Record<string, unknown> | null;
-	supportsGroupBy: boolean;
-	supportsTimeSeries: boolean;
-	resultType: MetricResultType;
-	createdAt: string;
-	updatedAt: string;
-	deletedAt: string | null;
-}
+export type DashboardWidgetFilterValue = string | number | boolean | null;
 
-export interface CreateMetricDefinitionDto {
-	campaignId?: number | null;
-	name: string;
-	description?: string;
+export type DashboardWidgetDefaultFilter = Record<
+	string,
+	DashboardWidgetFilterValue
+>;
+
+export interface DashboardWidgetMetricConfig {
+	key?: string | null;
+	name?: string;
+	description?: string | null;
 	sourceType: MetricSourceType;
 	aggregationType: MetricAggregationType;
-	fieldName?: string;
-	metricKey?: string;
-	valueField?: MetricValueField;
-	defaultFilter?: RuntimeFilter[] | Record<string, unknown> | null;
+	fieldName?: string | null;
+	metricKey?: string | null;
+	valueField?: MetricValueField | null;
+	defaultFilter?: DashboardWidgetDefaultFilter | null;
 	supportsGroupBy?: boolean;
 	supportsTimeSeries?: boolean;
 	resultType: MetricResultType;
 }
 
-export interface UpdateMetricDefinitionDto extends Partial<CreateMetricDefinitionDto> {}
+export interface DashboardWidgetDataConfig {
+	metric: DashboardWidgetMetricConfig;
+	query?: DashboardWidgetQueryConfig | null;
+}
+
+export interface DashboardWidgetViewConfig {
+	color?: string;
+	legend?: boolean;
+	valueFormat?: string;
+	[key: string]: unknown;
+}
 
 export interface DashboardDefinition {
 	id: number;
@@ -131,7 +125,6 @@ export interface DashboardWidget {
 	id: number;
 	clientId: number;
 	dashboardId: number;
-	metricDefinitionId: number;
 	userId: number;
 	widgetType: DashboardWidgetType;
 	title: string;
@@ -140,17 +133,16 @@ export interface DashboardWidget {
 	positionY: number;
 	width: number;
 	height: number;
-	config: DashboardWidgetConfig | null;
+	dataConfig: DashboardWidgetDataConfig;
+	viewConfig: DashboardWidgetViewConfig | null;
 	enabled: boolean;
 	createdAt: string;
 	updatedAt: string;
 	deletedAt: string | null;
-	metricDefinition?: MetricDefinition;
 }
 
 export interface CreateDashboardWidgetDto {
 	dashboardId: number;
-	metricDefinitionId: number;
 	widgetType: DashboardWidgetType;
 	title: string;
 	description?: string;
@@ -158,15 +150,26 @@ export interface CreateDashboardWidgetDto {
 	positionY?: number;
 	width?: number;
 	height?: number;
-	config?: DashboardWidgetConfig | null;
+	dataConfig: DashboardWidgetDataConfig;
+	viewConfig?: DashboardWidgetViewConfig | null;
 	enabled?: boolean;
 }
 
 export interface UpdateDashboardWidgetDto extends Partial<CreateDashboardWidgetDto> {}
 
+export interface PreviewDashboardWidgetDto {
+	campaignId?: number | null;
+	widgetType: DashboardWidgetType;
+	width?: number;
+	height?: number;
+	dataConfig: DashboardWidgetDataConfig;
+	viewConfig?: Pick<DashboardWidgetViewConfig, 'legend' | 'valueFormat'> | null;
+	timeRange?: AnalyticsTimeRange;
+	comparisonMode?: AnalyticsComparisonMode;
+}
+
 export interface SingleValueMetricResult {
 	kind: 'single_value';
-	metricDefinitionId: number;
 	metricKey: string;
 	value: string | number | boolean | null;
 	valueFormat?: string | number | boolean | null;
@@ -184,7 +187,6 @@ export interface GroupedMetricRow {
 
 export interface GroupedMetricResult {
 	kind: 'grouped';
-	metricDefinitionId: number;
 	metricKey: string;
 	rows: GroupedMetricRow[];
 	meta: {
@@ -274,6 +276,15 @@ export interface DashboardWidgetComparisonData {
 	comparison?: MetricComparison;
 	previous?: DashboardMetricResult;
 	current?: DashboardMetricResult;
+}
+
+export interface DashboardWidgetPreviewResponse {
+	widget: DashboardRenderWidget;
+	comparison?: DashboardWidgetComparisonData;
+	period?: {
+		current: DashboardPeriod;
+		previous: DashboardPeriod;
+	};
 }
 
 export interface DashboardRenderUnifiedResponse {

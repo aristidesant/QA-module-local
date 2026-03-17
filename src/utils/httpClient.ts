@@ -44,10 +44,6 @@ export function createHttpClient(
 		(error) => {
 			// Handle 401 Unauthorized errors
 			if (error.response?.status === 401) {
-				console.warn(
-					'HTTP 401: Authentication failed, redirecting to logout...'
-				);
-
 				// Only handle redirect on client side
 				if (typeof window !== 'undefined') {
 					// Use centralized logout utility

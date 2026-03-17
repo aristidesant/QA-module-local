@@ -38,12 +38,10 @@ export const useCreateClient = () => {
 		},
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({ queryKey: ['clients'] });
-			// eslint-disable-next-line no-console
-			console.log('Client created successfully:', data);
+			void data;
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error creating client:', error);
+			void error;
 		},
 	});
 };
@@ -67,12 +65,10 @@ export const useUpdateClient = () => {
 			if (data?.id) {
 				queryClient.invalidateQueries({ queryKey: ['client', data.id] });
 			}
-			// eslint-disable-next-line no-console
-			console.log('Client updated successfully:', data);
+			void data;
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error updating client:', error);
+			void error;
 		},
 	});
 };
@@ -88,12 +84,9 @@ export const useDeleteClient = () => {
 		onSuccess: (_, id) => {
 			queryClient.invalidateQueries({ queryKey: ['clients'] });
 			queryClient.invalidateQueries({ queryKey: ['client', id] });
-			// eslint-disable-next-line no-console
-			console.log('Client deleted successfully:', id);
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error deleting client:', error);
+			void error;
 		},
 	});
 };

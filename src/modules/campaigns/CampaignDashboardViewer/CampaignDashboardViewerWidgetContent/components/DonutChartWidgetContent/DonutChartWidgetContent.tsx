@@ -1,4 +1,4 @@
-import { PieChart } from '@mantine/charts';
+import { DonutChart } from '@mantine/charts';
 import { Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { getWidgetChartMetrics } from '../../../CampaignDashboardViewer.helpers';
@@ -24,8 +24,9 @@ const DonutChartWidgetContent = ({
 		: `${styles.legendList} ${noDragClassName}`;
 	const total = chartData.reduce((sum, item) => sum + item.value, 0);
 	const chartSize = isLongLegend
-		? Math.max(metrics.pieSize - 20, 110)
+		? Math.max(metrics.pieSize - 12, 104)
 		: metrics.pieSize;
+	const chartThickness = Math.max(24, Math.round(chartSize * 0.24));
 
 	return (
 		<DashboardWidgetCard
@@ -36,25 +37,17 @@ const DonutChartWidgetContent = ({
 		>
 			<div className={pieLayoutClass}>
 				<div className={styles.pieChartWrapper}>
-					<div className={styles.donutCenterWrapper}>
-						<PieChart
-							data={chartData}
-							size={chartSize}
-							withTooltip
-							tooltipDataSource='segment'
-							strokeWidth={1}
-							strokeColor='rgba(255,255,255,0.9)'
-							paddingAngle={2}
-						/>
-						<div className={styles.donutStat}>
-							<span className={styles.donutStatValue}>
-								{total.toLocaleString()}
-							</span>
-							<span className={styles.donutStatLabel}>
-								{t('dashboard.donutTotal')}
-							</span>
-						</div>
-					</div>
+					<DonutChart
+						data={chartData}
+						size={chartSize}
+						thickness={chartThickness}
+						withTooltip
+						tooltipDataSource='segment'
+						strokeWidth={1}
+						strokeColor='rgba(255,255,255,0.9)'
+						paddingAngle={1}
+						chartLabel={total.toLocaleString()}
+					/>
 				</div>
 				<div className={legendClass}>
 					{chartData.map((item) => {

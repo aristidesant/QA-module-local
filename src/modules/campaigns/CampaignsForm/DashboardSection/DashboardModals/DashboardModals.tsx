@@ -67,11 +67,16 @@ const DashboardModals = () => {
 				opened={widgetModalOpened}
 				onClose={closeWidgetModal}
 				centered
-				size='xl'
+				size='74rem'
 				radius='md'
 				padding='xl'
 				overlayProps={{ backgroundOpacity: 0.35 }}
-				title={<DashboardModalHeader title={widgetModalTitle} />}
+				title={
+					<DashboardModalHeader
+						title={widgetModalTitle}
+						description={t('dashboardBuilder.drawer.widgetDescription')}
+					/>
+				}
 			>
 				{selectedDashboardId && (
 					<DashboardWidgetForm

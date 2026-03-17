@@ -50,8 +50,7 @@ export const usePromptVariables = (campaignId: number) => {
 				source: 'system' as const,
 			}));
 		} catch (error) {
-			// eslint-disable-next-line no-console
-			console.error('Unable to parse contact columns config:', error);
+			void error;
 			return [];
 		}
 	}, [contactColumnsConfig]);

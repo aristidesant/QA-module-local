@@ -109,7 +109,7 @@ export const CampaignsList: React.FC = () => {
 		selectedAgentIdForCall || ''
 	);
 
-	const [sortBy, setSortBy] = useState('createdAt');
+	const [sortBy, setSortBy] = useState('updatedAt');
 	const [filters, setFilters] = useState<CampaignFiltersType>({
 		includeInactive: true,
 	});
@@ -530,8 +530,7 @@ export const CampaignsList: React.FC = () => {
 									data: { isDraft: false, draftStep: 0 },
 								});
 							} catch (error) {
-								// eslint-disable-next-line no-console
-								console.error('Failed to clear draft status:', error);
+								void error;
 							}
 						}
 						reloadCampaigns();

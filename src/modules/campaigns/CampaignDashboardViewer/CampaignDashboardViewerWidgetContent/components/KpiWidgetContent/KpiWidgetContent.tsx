@@ -23,6 +23,8 @@ const RANGE_KEYS: Record<string, { detailKey: string; labelKey: string }> = {
 	},
 };
 
+const DEFAULT_SELECTED_TIME_RANGE: keyof typeof RANGE_KEYS = 'WEEK';
+
 const KpiWidgetContent = ({
 	widget,
 	accentColor,
@@ -62,7 +64,8 @@ const KpiWidgetContent = ({
 		? t(`dashboard.timeRange.${selectedTimeRange}`)
 		: undefined;
 	const rangeKeys =
-		(selectedTimeRange && RANGE_KEYS[selectedTimeRange]) ?? RANGE_KEYS.TODAY;
+		(selectedTimeRange && RANGE_KEYS[selectedTimeRange]) ??
+		RANGE_KEYS[DEFAULT_SELECTED_TIME_RANGE];
 	const comparisonDetail =
 		previousDisplayValue !== undefined
 			? t(rangeKeys.detailKey, {
@@ -79,11 +82,9 @@ const KpiWidgetContent = ({
 			subtitle={subtitle}
 			value={currentValue}
 			accentColor={accentColor}
-			isLive={widget.status === 'SUCCESS'}
+			isLive={Boolean(widget.result)}
 			liveLabel={t('dashboard.liveBadge')}
-			isUnsupported={
-				widget.status !== 'SUCCESS' || widget.result?.kind !== 'single_value'
-			}
+			isUnsupported={widget.result?.kind !== 'single_value'}
 			unsupportedMessage={widget.message || t('dashboard.unsupportedMessage')}
 			className={styles.kpiCard}
 			comparison={comparisonData?.comparison}

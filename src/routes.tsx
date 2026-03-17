@@ -85,9 +85,6 @@ const SchedulerPredefinedParamsPage = React.lazy(
 const PhoneNumbersPage = React.lazy(
 	() => import('./modules/configurations/PhoneNumbers/PhoneNumbersPage')
 );
-const MetricCatalogPage = React.lazy(
-	() => import('./modules/configurations/MetricCatalogPage')
-);
 const DictionaryRulesPage = React.lazy(
 	() => import('./modules/configurations/DictionaryRules/DictionaryRulesPage')
 );
@@ -424,21 +421,6 @@ const router = createBrowserRouter([
 											}
 										>
 											<SchedulerPredefinedParamsPage />
-										</Suspense>
-									</I18nNamespaceLoader>
-								),
-							},
-							{
-								path: 'metric-catalog',
-								id: 'metric-catalog',
-								element: (
-									<I18nNamespaceLoader>
-										<Suspense
-											fallback={
-												<SuspenseFallback message='Loading metric catalog...' />
-											}
-										>
-											<MetricCatalogPage />
 										</Suspense>
 									</I18nNamespaceLoader>
 								),

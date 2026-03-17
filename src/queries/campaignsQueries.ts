@@ -23,8 +23,7 @@ export const useCreateCampaign = () => {
 			queryClient.invalidateQueries({ queryKey: ['campaigns-paginated'] });
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error creating campaign:', error);
+			void error;
 		},
 	});
 };
@@ -115,8 +114,7 @@ export const useCreateCampaignSchedule = () => {
 			});
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error creating campaign schedule:', error);
+			void error;
 		},
 	});
 };
@@ -176,8 +174,7 @@ export const useUpdateCampaign = () => {
 			}
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error updating campaign:', error);
+			void error;
 		},
 	});
 };
@@ -204,8 +201,7 @@ export const useUpdateCampaignLight = () => {
 			}
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error updating campaign (light):', error);
+			void error;
 		},
 	});
 };
@@ -258,8 +254,7 @@ export const usePauseOutboundCampaign = () => {
 			});
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error pausing outbound campaign:', error);
+			void error;
 		},
 	});
 };
@@ -289,8 +284,7 @@ export const useResumeOutboundCampaign = () => {
 			});
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error resuming outbound campaign:', error);
+			void error;
 		},
 	});
 };
@@ -309,8 +303,7 @@ export const useDeleteCampaign = () => {
 			queryClient.invalidateQueries({ queryKey: ['campaign', id] });
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error deleting campaign:', error);
+			void error;
 		},
 	});
 };
@@ -338,8 +331,7 @@ export const useCloneCampaign = () => {
 			queryClient.invalidateQueries({ queryKey: ['campaigns-paginated'] });
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error cloning campaign:', error);
+			void error;
 		},
 	});
 };
@@ -366,8 +358,7 @@ export const useAssignCampaignObjective = () => {
 			}
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error assigning objective to campaign:', error);
+			void error;
 		},
 	});
 };
@@ -385,8 +376,7 @@ export const useCreateCampaignWithAgent = () => {
 			queryClient.invalidateQueries({ queryKey: ['campaigns-paginated'] });
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error creating campaign with agent:', error);
+			void error;
 		},
 	});
 };
@@ -415,8 +405,7 @@ export const useSetCampaignDraft = () => {
 			}
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error setting campaign draft status:', error);
+			void error;
 		},
 	});
 };
@@ -437,8 +426,7 @@ export const useSyncCampaignByAgent = () => {
 			}
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error syncing campaign by agent:', error);
+			void error;
 		},
 	});
 };
@@ -467,8 +455,7 @@ export const useToggleCampaignStatus = () => {
 			}
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error toggling campaign status:', error);
+			void error;
 		},
 	});
 };

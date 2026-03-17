@@ -12,12 +12,10 @@ export const useCreateContact = () => {
 		},
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({ queryKey: ['contacts'] });
-			// eslint-disable-next-line no-console
-			console.log('Contact created successfully:', data);
+			void data;
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error creating contact:', error);
+			void error;
 		},
 	});
 };
@@ -92,12 +90,9 @@ export const useUpdateContactPhoneNumber = () => {
 					queryKey: ['contact', String(variables.contactId)],
 				});
 			}
-			// eslint-disable-next-line no-console
-			console.log('Contact phone number updated successfully');
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error updating contact phone number:', error);
+			void error;
 		},
 	});
 };
@@ -121,12 +116,9 @@ export const useDeleteContactPhoneNumber = () => {
 			queryClient.invalidateQueries({
 				queryKey: ['contact', String(contactId)],
 			});
-			// eslint-disable-next-line no-console
-			console.log('Contact phone number deleted successfully');
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error deleting contact phone number:', error);
+			void error;
 		},
 	});
 };
@@ -151,12 +143,9 @@ export const useCreateContactPhoneNumbers = () => {
 					queryKey: ['contact', String(variables.contactId)],
 				});
 			}
-			// eslint-disable-next-line no-console
-			console.log('Contact phone numbers added successfully');
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error adding contact phone numbers:', error);
+			void error;
 		},
 	});
 };
@@ -225,12 +214,10 @@ export const useUpdateContact = () => {
 			if (data?.id) {
 				queryClient.invalidateQueries({ queryKey: ['contact', data.id] });
 			}
-			// eslint-disable-next-line no-console
-			console.log('Contact updated successfully:', data);
+			void data;
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error updating contact:', error);
+			void error;
 		},
 	});
 };
@@ -246,12 +233,9 @@ export const useDeleteContact = () => {
 		onSuccess: (_, id) => {
 			queryClient.invalidateQueries({ queryKey: ['contacts'] });
 			queryClient.invalidateQueries({ queryKey: ['contact', id] });
-			// eslint-disable-next-line no-console
-			console.log('Contact deleted successfully:', id);
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error deleting contact:', error);
+			void error;
 		},
 	});
 };

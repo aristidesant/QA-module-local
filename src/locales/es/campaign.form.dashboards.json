@@ -1,7 +1,7 @@
 {
 	"dashboardBuilder": {
 		"title": "Constructor de dashboards",
-		"description": "Crea dashboards de campaña y vincula widgets a métricas reutilizables.",
+		"description": "Crea dashboards de campaña y configura cada widget directamente en la misma pantalla.",
 		"dashboardsTitle": "Dashboards",
 		"dashboardsDescription": "Administra la lista de dashboards de esta campaña.",
 		"widgetsTitle": "Widgets",
@@ -67,20 +67,35 @@
 			"widgetKicker": "Configuración del widget",
 			"createWidgetTitle": "Crear widget",
 			"editWidgetTitle": "Editar widget",
-			"widgetDescription": "Elige tipo y métrica."
+			"widgetDescription": "Configura los datos, la consulta y la presentación del widget."
 		},
 		"form": {
+			"comingSoon": "Próximamente",
 			"sections": {
 				"dashboardTitle": "Detalles del dashboard",
 				"dashboardDescription": "Usa un nombre corto y una descripción clara para reconocer este dashboard más tarde.",
 				"basicsTitle": "Datos básicos",
 				"basicsDescription": "",
+				"metricTitle": "Configuración de métrica",
+				"filtersTitle": "Filtros predeterminados",
 				"dataTitle": "Configuración de datos",
 				"dataDescription": "",
+				"viewTitle": "Configuración visual",
 				"layoutTitle": "Distribución",
 				"layoutDescription": "Elige un tamaño estándar y deja que el dashboard ubique el widget automáticamente.",
 				"statusTitle": "Disponibilidad",
 				"statusDescription": ""
+			},
+			"guidedSections": {
+				"widgetTitle": "1. Elige el widget",
+				"widgetDescription": "Comienza por la visualización que mejor responda la pregunta que quieres resolver.",
+				"metricTitle": "2. Elige la métrica",
+				"metricDescription": "Define de dónde salen los datos y cuál es la métrica principal del widget.",
+				"breakdownTitle": "3. Configura el desglose",
+				"breakdownDescription": "Estos widgets necesitan un campo para agrupar y dividir el resultado en categorías.",
+				"advancedTitle": "4. Ajustes opcionales",
+				"advancedDescription": "Mantén el flujo principal simple y abre esta sección solo cuando necesites más control.",
+				"filtersDescription": "Los filtros predeterminados se aplican automáticamente cada vez que se carga este widget."
 			},
 			"fields": {
 				"dashboardName": "Nombre del dashboard",
@@ -90,17 +105,45 @@
 				"widgetDescription": "Descripción del widget",
 				"widgetDescriptionShort": "Descripción",
 				"widgetType": "Tipo de widget",
-				"metricDefinition": "Definición de métrica",
+				"sourceType": "Tipo de fuente",
+				"sourceTypeDescriptionGlobal": "Las métricas de atributos solo están disponibles en dashboards de campaña.",
+				"aggregationType": "Agregación",
+				"resultType": "Tipo de resultado",
+				"metricKey": "Clave de atributo",
+				"fieldName": "Campo origen",
+				"valueField": "Campo de valor del atributo",
+				"supportsGroupBy": "Soporta salida agrupada",
+				"supportsTimeSeries": "Soporta series temporales",
+				"defaultFilterKey": "Campo del filtro",
+				"defaultFilterType": "Tipo de valor",
+				"defaultFilterValue": "Valor del filtro",
 				"groupBy": "Campo para agrupar",
 				"groupByDescription": "",
 				"groupByDescriptionAttribute": "Usa un campo o una variable.",
 				"limit": "Límite de filas",
 				"limitDescription": "",
+				"viewColor": "Color de acento",
+				"viewValueFormat": "Formato de valor",
+				"viewLegend": "Mostrar leyenda",
 				"widgetSize": "Tamaño del widget",
 				"widgetSizeDescription": "Usa tamaños estandarizados para mantener el dashboard organizado.",
 				"width": "Ancho",
 				"height": "Alto",
 				"enabled": "Widget habilitado"
+			},
+			"sourceTypeDescriptions": {
+				"CONVERSATION": "Usa campos de conversación como estado, fechas o duración.",
+				"ATTRIBUTE": "Usa atributos de campaña recolectados por el agente analítico.",
+				"DISPOSITION": "Usa resultados de disposición y campos de seguimiento."
+			},
+			"widgetTypeDescriptions": {
+				"KPI": "Muestra un solo valor que cambia con el rango seleccionado.",
+				"LINE_CHART": "Muestra cómo cambia una métrica a lo largo del tiempo.",
+				"BAR_CHART": "Compara valores entre categorías con un desglose agrupado.",
+				"PIE_CHART": "Muestra cómo se distribuye un resultado agrupado entre categorías.",
+				"DONUT_CHART": "Usa un desglose circular compacto para resultados agrupados.",
+				"TABLE": "Lista valores agrupados en una tabla compacta.",
+				"FUNNEL": "Muestra etapas secuenciales de conversión."
 			},
 			"sizePresets": {
 				"SMALL": "Pequeño",
@@ -110,7 +153,14 @@
 				"CUSTOM": "Personalizado"
 			},
 			"placeholders": {
-				"metricDefinition": "Selecciona una definición de métrica",
+				"metricKey": "Selecciona una clave de atributo",
+				"metricKeyUnavailable": "Las métricas de atributos requieren un dashboard de campaña",
+				"loadingMetricKeys": "Cargando claves de métricas...",
+				"fieldName": "Selecciona un campo origen",
+				"defaultFilterKey": "ej. status",
+				"defaultFilterValue": "ej. active",
+				"viewColor": "#2563eb",
+				"viewValueFormat": "Selecciona un formato",
 				"groupBy": "ej. call_status",
 				"groupByAttribute": "ej. province o value_string",
 				"limit": "Opcional"
@@ -122,22 +172,102 @@
 				"groupByAttribute": "",
 				"groupByAttribute_other": ""
 			},
+			"titleTemplates": {
+				"countSource": "Conteo de {{source}}",
+				"aggregatedMetric": "{{aggregation}} de {{metric}}",
+				"grouped": "{{metric}} por {{groupBy}}"
+			},
+			"autoTitleHint": "Título sugerido: {{title}}",
 			"compatibility": {
 				"groupByRequired": "La métrica debe soportar salida agrupada.",
 				"timeSeriesRequired": "La métrica debe soportar series temporales.",
 				"lineChartPending": "Los widgets de líneas todavía dependen del soporte backend futuro para series temporales."
 			},
+			"preview": {
+				"title": "Vista previa",
+				"description": "Una vista previa ligera se actualiza mientras defines el widget.",
+				"untitled": "Widget sin título",
+				"emptyMetricTitle": "Elige una métrica para iniciar la vista previa",
+				"emptyMetricDescription": "Selecciona una fuente y una métrica para sugerir el título y la estructura del widget.",
+				"emptyGroupByTitle": "Selecciona un campo para agrupar",
+				"emptyGroupByDescription": "Los widgets agrupados necesitan un campo de agrupación antes de mostrar el desglose.",
+				"emptyWidgetTitle": "Vista previa no disponible",
+				"emptyWidgetDescription": "Este tipo de widget todavía depende de capacidades que no están disponibles.",
+				"statusIncomplete": "Completa la configuración de la métrica para pedir data real.",
+				"statusLocal": "Mostrando la vista previa local mientras se prepara la consulta.",
+				"statusLoading": "Cargando data real para la vista previa...",
+				"statusRefreshing": "Actualizando la data de la vista previa...",
+				"statusLive": "Mostrando data real de esta semana.",
+				"statusError": "No fue posible cargar la data de la vista previa.",
+				"statusStale": "Mostrando la última vista previa exitosa. La actualización falló.",
+				"requestError": "No se pudo renderizar la vista previa con la configuración actual.",
+				"samples": {
+					"firstLabel": "Contactado",
+					"secondLabel": "Sin respuesta",
+					"thirdLabel": "Buzón de voz"
+				}
+			},
 			"actions": {
 				"cancel": "Cancelar",
 				"createDashboard": "Crear dashboard",
 				"saveDashboard": "Guardar dashboard",
+				"addFilter": "Agregar filtro",
+				"removeFilter": "Eliminar filtro",
+				"showAdvanced": "Mostrar avanzados",
+				"hideAdvanced": "Ocultar avanzados",
 				"createWidget": "Crear widget",
 				"saveWidget": "Guardar widget"
+			},
+			"options": {
+				"sourceType": {
+					"CONVERSATION": "Conversación",
+					"ATTRIBUTE": "Atributo",
+					"DISPOSITION": "Disposición"
+				},
+				"aggregationType": {
+					"COUNT": "Conteo",
+					"SUM": "Suma",
+					"AVG": "Promedio",
+					"MIN": "Mínimo",
+					"MAX": "Máximo",
+					"DISTINCT_COUNT": "Conteo distinto"
+				},
+				"resultType": {
+					"EMPTY": "Vacío",
+					"NUMBER": "Número",
+					"BOOLEAN": "Booleano",
+					"STRING": "Texto",
+					"TIME": "Tiempo"
+				},
+				"valueField": {
+					"VALUE_STRING": "Valor texto",
+					"VALUE_NUMBER": "Valor numérico",
+					"VALUE_BOOLEAN": "Valor booleano",
+					"VALUE_JSON": "Valor JSON"
+				},
+				"filterValueType": {
+					"string": "Texto",
+					"number": "Número",
+					"boolean": "Booleano",
+					"null": "Nulo"
+				},
+				"valueFormat": {
+					"compact": "Compacto",
+					"standard": "Estándar"
+				},
+				"boolean": {
+					"true": "Verdadero",
+					"false": "Falso"
+				}
 			},
 			"validation": {
 				"dashboardName": "El nombre del dashboard es obligatorio.",
 				"widgetTitle": "El título del widget es obligatorio.",
-				"metricRequired": "Selecciona una definición de métrica.",
+				"fieldNameRequired": "Selecciona un campo origen.",
+				"metricKeyRequired": "Selecciona una clave de atributo.",
+				"valueFieldRequired": "Selecciona un campo de valor del atributo.",
+				"attributeNotAvailable": "Las métricas de atributos no están disponibles para dashboards globales.",
+				"defaultFilterInvalid": "Revisa los filtros predeterminados. Cada fila necesita un campo y un valor tipado válido.",
 				"groupByRequired": "Agrupar por es obligatorio para este tipo de widget.",
 				"metricMustSupportGroupBy": "La métrica seleccionada no soporta salida agrupada.",
 				"metricMustSupportTimeSeries": "La métrica seleccionada no soporta salida de serie temporal.",
@@ -189,7 +319,7 @@
 		"emptyDashboardTitle": "Aún no hay dashboards",
 		"emptyDashboardDescription": "Crea el primer dashboard para organizar widgets de campaña.",
 		"emptyWidgetTitle": "Aún no hay widgets",
-		"emptyWidgetDescription": "Agrega widgets a este dashboard usando las definiciones del catálogo de métricas.",
+		"emptyWidgetDescription": "Agrega widgets a este dashboard y define sus métricas directamente aquí.",
 		"selectDashboardTitle": "Selecciona un dashboard",
 		"selectDashboardDescription": "Elige un dashboard a la izquierda para administrar sus widgets."
 	},
@@ -202,6 +332,7 @@
 		"unsupportedBadge": "Próximamente",
 		"liveBadge": "Activo",
 		"unsupportedMessage": "Este tipo de widget aún no está soportado por el motor de métricas.",
+		"comparisonUnavailableTooltip": "La comparación no está disponible para este widget. Se muestra solo el período seleccionado.",
 		"metricMeta": "Clave de métrica: {{metricKey}}",
 		"layoutMeta": "Layout {{width}} x {{height}}",
 		"renderError": "No fue posible renderizar el dashboard seleccionado.",

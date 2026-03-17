@@ -18,8 +18,7 @@ export const useCreateCampaignContactSchema = () => {
 			queryClient.invalidateQueries({ queryKey: ['campaign-contact-schemas'] });
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error creating campaign contact schema:', error);
+			void error;
 		},
 	});
 };
@@ -72,8 +71,7 @@ export const useUpdateCampaignContactSchema = () => {
 			});
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error updating campaign contact schema:', error);
+			void error;
 		},
 	});
 };
@@ -91,8 +89,7 @@ export const useDeleteCampaignContactSchema = () => {
 			queryClient.removeQueries({ queryKey: ['campaign-contact-schema', id] });
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error deleting campaign contact schema:', error);
+			void error;
 		},
 	});
 };

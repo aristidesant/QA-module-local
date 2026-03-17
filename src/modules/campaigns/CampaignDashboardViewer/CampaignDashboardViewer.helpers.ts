@@ -88,7 +88,7 @@ export const getNumericValue = (value: string | number | boolean | null) => {
 export const isGroupedMetricResult = (
 	widget: DashboardRenderWidget
 ): widget is DashboardRenderWidget & { result: GroupedMetricResult } =>
-	widget.status === 'SUCCESS' && widget.result?.kind === 'grouped';
+	widget.result?.kind === 'grouped';
 
 export const getWidgetRenderLayout = (
 	widget: DashboardWidget
