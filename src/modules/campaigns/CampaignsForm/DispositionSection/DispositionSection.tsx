@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Paper, Stack, Text, ThemeIcon } from '@mantine/core';
+import { Group, Paper, Skeleton, Stack, Text, ThemeIcon } from '@mantine/core';
 import { IconSitemap } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +10,7 @@ import { useDispositionBuilderStore } from './dispositionStore';
 import { useDispositionFlowsByCampaignPath } from '~/queries/dispositionFlowQueries';
 import { notifications } from '@mantine/notifications';
 import DispositionViewer from './DispositionViewer';
+import { useCampaignId } from '~/modules/campaigns/campaignFormFunctions';
 
 const DispositionSection: React.FC = () => {
 	const { t } = useTranslation([
@@ -17,13 +18,16 @@ const DispositionSection: React.FC = () => {
 		'campaign.detail',
 		'common',
 	]);
-	const { selectedCampaign, setRightComponent } = useCampaignsStore();
+	const campaignId = useCampaignId();
+	const { setRightComponent } = useCampaignsStore();
 
 	const {
 		data: currentDispositionFlow,
 		isLoading: isLoadingCurrentFlow,
+		isError: isCurrentFlowError,
+		error: currentFlowError,
 		refetch: refetchCurrentFlow,
-	} = useDispositionFlowsByCampaignPath(selectedCampaign?.id);
+	} = useDispositionFlowsByCampaignPath(campaignId);
 
 	const { setDispositionFlow, setFlowJson, setCampaignId } =
 		useDispositionBuilderStore((s) => s);
@@ -40,11 +44,11 @@ const DispositionSection: React.FC = () => {
 				setDispositionFlow(currentDispositionFlow);
 				setFlowJson(currentDispositionFlow.flowJson || {});
 			}
-			setCampaignId(selectedCampaign?.id);
+			setCampaignId(campaignId);
 		} else {
 			setDispositionFlow({});
 			setFlowJson({});
-			setCampaignId(selectedCampaign?.id);
+			setCampaignId(campaignId);
 		}
 
 		modals.open({
@@ -86,12 +90,52 @@ const DispositionSection: React.FC = () => {
 						? t('disposition.editOutcome')
 						: t('disposition.addOutcome'),
 					onClick: () => handleOpenModal(hasFlow),
-					loading: hasFlow ? isLoadingCurrentFlow : false,
+					loading: isLoadingCurrentFlow,
 				},
 			}}
 			description={t('disposition.description')}
 		>
-			{currentDispositionFlow ? (
+			{isLoadingCurrentFlow ? (
+				<Paper
+					withBorder
+					p='xl'
+					radius='md'
+					bg='var(--mantine-color-gray-0)'
+					style={{ borderStyle: 'dashed' }}
+				>
+					<Stack gap='md'>
+						<Group justify='space-between' align='center'>
+							<Stack gap={6} style={{ flex: 1 }}>
+								<Skeleton height={16} width='28%' radius='sm' />
+								<Skeleton height={10} width='52%' radius='sm' />
+							</Stack>
+							<Skeleton height={32} width={104} radius='sm' />
+						</Group>
+						<Skeleton height={220} radius='md' />
+						<Group grow>
+							<Skeleton height={68} radius='md' />
+							<Skeleton height={68} radius='md' />
+						</Group>
+					</Stack>
+				</Paper>
+			) : isCurrentFlowError ? (
+				<Paper
+					withBorder
+					p='xl'
+					radius='md'
+					bg='var(--mantine-color-red-0)'
+					style={{ borderStyle: 'dashed' }}
+				>
+					<Stack align='center' gap='xs'>
+						<Text size='sm' fw={500} c='red'>
+							{t('status.error', { ns: 'common', defaultValue: 'Error' })}
+						</Text>
+						<Text size='xs' c='dimmed' ta='center' maw={460}>
+							{currentFlowError?.message ?? t('disposition.noFlowDescription')}
+						</Text>
+					</Stack>
+				</Paper>
+			) : currentDispositionFlow ? (
 				<DispositionViewer flow={currentDispositionFlow} />
 			) : (
 				<Paper

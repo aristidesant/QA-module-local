@@ -79,7 +79,6 @@ export interface MetricDefinition {
 
 export interface CreateMetricDefinitionDto {
 	campaignId?: number | null;
-	key: string;
 	name: string;
 	description?: string;
 	sourceType: MetricSourceType;

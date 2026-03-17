@@ -2,6 +2,16 @@ import { createTheme } from '@mantine/core';
 
 export const theme = createTheme({
 	components: {
+		Combobox: {
+			defaultProps: {
+				zIndex: 400,
+			},
+		},
+		Popover: {
+			defaultProps: {
+				zIndex: 400,
+			},
+		},
 		Button: {
 			defaultProps: {
 				radius: 'md',

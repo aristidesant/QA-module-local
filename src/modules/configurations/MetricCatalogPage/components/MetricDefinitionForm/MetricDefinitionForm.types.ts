@@ -7,10 +7,20 @@ import type {
 } from '~/models/AnalyticsDashboard';
 import type { MetricCatalogOption } from '../../MetricCatalogPage.types';
 
+export type MetricColumnConfigEntry = {
+	label: string;
+	value: string;
+	type: string;
+};
+
+export type MetricColumnsConfig = {
+	disposition: MetricColumnConfigEntry[];
+	conversation: MetricColumnConfigEntry[];
+};
+
 export type MetricDefinitionFormValues = {
 	scope: 'global' | 'campaign';
 	campaignId: string;
-	key: string;
 	name: string;
 	description: string;
 	sourceType: MetricSourceType;

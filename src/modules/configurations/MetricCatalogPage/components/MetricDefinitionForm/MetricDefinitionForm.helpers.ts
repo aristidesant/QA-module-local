@@ -5,11 +5,22 @@ import type {
 	UpdateMetricDefinitionDto,
 } from '~/models/AnalyticsDashboard';
 import { EMPTY_FORM_VALUES } from './MetricDefinitionForm.constants';
-import type { MetricDefinitionFormValues } from './MetricDefinitionForm.types';
+import type {
+	MetricColumnsConfig,
+	MetricDefinitionFormValues,
+} from './MetricDefinitionForm.types';
 
 export const isAttributeMetricSource = (
 	sourceType: MetricDefinitionFormValues['sourceType']
 ): boolean => sourceType === 'ATTRIBUTE';
+
+export const isDispositionMetricSource = (
+	sourceType: MetricDefinitionFormValues['sourceType']
+): boolean => sourceType === 'DISPOSITION';
+
+export const isCampaignDependentSource = (
+	sourceType: MetricDefinitionFormValues['sourceType']
+): boolean => isAttributeMetricSource(sourceType);
 
 export const requiresMetricValueField = (
 	sourceType: MetricDefinitionFormValues['sourceType'],
@@ -25,6 +36,56 @@ export const parseDefaultFilterJson = (
 		: null;
 };
 
+const isMetricColumnConfigEntry = (
+	value: unknown
+): value is MetricColumnsConfig['conversation'][number] => {
+	if (!value || typeof value !== 'object') {
+		return false;
+	}
+
+	const entry = value as Record<string, unknown>;
+
+	return (
+		typeof entry.label === 'string' &&
+		entry.label.trim().length > 0 &&
+		typeof entry.value === 'string' &&
+		entry.value.trim().length > 0 &&
+		typeof entry.type === 'string' &&
+		entry.type.trim().length > 0
+	);
+};
+
+export const parseMetricColumnsConfig = (
+	configValue?: string | null
+): MetricColumnsConfig => {
+	if (!configValue?.trim()) {
+		return {
+			disposition: [],
+			conversation: [],
+		};
+	}
+
+	try {
+		const parsed = JSON.parse(configValue) as Record<string, unknown>;
+		const disposition = Array.isArray(parsed.disposition)
+			? parsed.disposition.filter(isMetricColumnConfigEntry)
+			: [];
+		const conversation = Array.isArray(parsed.conversation)
+			? parsed.conversation.filter(isMetricColumnConfigEntry)
+			: [];
+
+		return {
+			disposition,
+			conversation,
+		};
+	} catch {
+		return {
+			disposition: [],
+			conversation: [],
+		};
+	}
+};
+
 export const toFormValues = (
 	metric?: MetricDefinition | null
 ): MetricDefinitionFormValues => {
@@ -35,7 +96,6 @@ export const toFormValues = (
 	return {
 		scope: metric.campaignId ? 'campaign' : 'global',
 		campaignId: metric.campaignId ? String(metric.campaignId) : '',
-		key: metric.key,
 		name: metric.name,
 		description: metric.description ?? '',
 		sourceType: metric.sourceType,
@@ -63,7 +123,6 @@ export const buildMetricDefinitionPayload = (
 
 	return {
 		campaignId: values.scope === 'campaign' ? Number(values.campaignId) : null,
-		key: values.key.trim(),
 		name: values.name.trim(),
 		description: values.description.trim() || undefined,
 		sourceType: values.sourceType,

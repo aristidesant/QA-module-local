@@ -3,7 +3,6 @@ import type { MetricDefinitionFormValues } from './MetricDefinitionForm.types';
 export const EMPTY_FORM_VALUES: MetricDefinitionFormValues = {
 	scope: 'global',
 	campaignId: '',
-	key: '',
 	name: '',
 	description: '',
 	sourceType: 'CONVERSATION',
