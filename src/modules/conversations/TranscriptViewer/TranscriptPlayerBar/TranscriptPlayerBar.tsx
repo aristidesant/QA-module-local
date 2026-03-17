@@ -50,9 +50,7 @@ export function TranscriptPlayerBar({
 		if (isPlaying) {
 			audioRef.current.pause();
 		} else {
-			audioRef.current.play().catch((error) => {
-				console.error('Error playing audio:', error);
-			});
+			audioRef.current.play().catch(() => undefined);
 		}
 	}, [isPlaying]);
 
@@ -126,7 +124,7 @@ export function TranscriptPlayerBar({
 
 				if (pendingPlayAfterSeekRef.current) {
 					pendingPlayAfterSeekRef.current = false;
-					audioRef.current.play().catch(console.error);
+					audioRef.current.play().catch(() => undefined);
 				}
 			}
 		}
@@ -182,11 +180,11 @@ export function TranscriptPlayerBar({
 				// Wait for the seek to complete before playing to avoid delay
 				const onSeeked = () => {
 					audio.removeEventListener('seeked', onSeeked);
-					audio.play().catch(console.error);
+					audio.play().catch(() => undefined);
 				};
 				// If already at that position, play immediately
 				if (!audio.seeking) {
-					audio.play().catch(console.error);
+					audio.play().catch(() => undefined);
 				} else {
 					audio.addEventListener('seeked', onSeeked, { once: true });
 				}

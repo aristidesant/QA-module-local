@@ -82,8 +82,8 @@ const RegionalSettingsParamsPage = () => {
 							value: data.value,
 							type: data.type,
 						});
-					} catch (e) {
-						console.error('Failed to create override', e);
+					} catch (error) {
+						void error;
 					}
 				},
 				disabled: createMutation.isPending,
@@ -204,8 +204,8 @@ const RegionalSettingsParamsPage = () => {
 								setDeleteConfigModalOpen(false);
 								setEditModalOpen(false);
 								setMode('view');
-							} catch (e) {
-								console.error('Failed to delete configuration:', e);
+							} catch (error) {
+								void error;
 							}
 						}}
 						loading={deleteMutation.isPending}

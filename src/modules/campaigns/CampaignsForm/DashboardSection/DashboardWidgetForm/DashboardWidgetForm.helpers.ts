@@ -1003,24 +1003,6 @@ export const buildPreviewModelFromResponse = (
 				? widget.widgetType
 				: 'BAR_CHART';
 
-	if (import.meta.env.DEV) {
-		console.groupCollapsed('[Dashboard preview] grouped rows', {
-			widgetId: widget.widgetId,
-			widgetType: widget.widgetType,
-			sourceType: widget.result.meta.sourceType,
-			aggregationType: widget.result.meta.aggregationType,
-			groupBy: widget.result.meta.groupBy,
-		});
-		widget.result.rows.forEach((row, index) => {
-			console.log(`[row ${index}]`, {
-				label: row.label,
-				value: row.value,
-				valueType: typeof row.value,
-			});
-		});
-		console.groupEnd();
-	}
-
 	return {
 		kind: 'grouped',
 		title:

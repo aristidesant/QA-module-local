@@ -33,7 +33,6 @@ export const AgentCampaignList: React.FC = () => {
 
 	const handleAddAgent = () => {
 		if (campaignId == null) {
-			console.error('No campaign selected');
 			return;
 		}
 

@@ -70,7 +70,7 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 			}
 			return [];
 		} catch (error) {
-			console.error('Error parsing system tools config:', error);
+			void error;
 			return [];
 		}
 	}, [systemToolsConfig]);

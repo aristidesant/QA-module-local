@@ -15,15 +15,7 @@ const EdgeConditionTabs = () => {
 		<Tabs
 			value={activeTab}
 			onChange={(value: string | null) =>
-				setActiveTab((prev) => {
-					if (import.meta.env.DEV) {
-						console.debug('[EdgeConditionModal] tab change', {
-							from: prev,
-							to: value,
-						});
-					}
-					return value as 'forward' | 'backward';
-				})
+				setActiveTab(() => value as 'forward' | 'backward')
 			}
 		>
 			<Tabs.List>

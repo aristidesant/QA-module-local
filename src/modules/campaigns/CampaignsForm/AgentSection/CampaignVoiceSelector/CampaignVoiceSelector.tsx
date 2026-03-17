@@ -95,7 +95,7 @@ const CampaignVoiceSelector: React.FC = () => {
 					.then(() => {
 						setPlayingVoiceId(voiceId);
 					})
-					.catch(console.error);
+					.catch(() => undefined);
 			}
 		},
 		[playingVoiceId]

@@ -129,7 +129,7 @@ const CampaignConfigurationPhoneNumber: React.FC = () => {
 				icon: <IconCheck size={16} />,
 			});
 		} catch (error) {
-			console.error('Error assigning phone number:', error);
+			void error;
 			notifications.show({
 				title: t('errors.unknown', { ns: 'common' }),
 				message: t('form.agent.phoneNumber.assignError', {

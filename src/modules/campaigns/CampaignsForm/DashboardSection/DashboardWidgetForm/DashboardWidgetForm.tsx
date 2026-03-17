@@ -744,25 +744,6 @@ const DashboardWidgetForm = ({
 		}
 
 		const nextSourceType = value as WidgetFormValues['sourceType'];
-		if (import.meta.env.DEV) {
-			console.groupCollapsed('[Dashboard widget form] source type changed');
-			console.log('sourceType:', nextSourceType);
-			console.log('previous values:', {
-				sourceType: form.values.sourceType,
-				fieldName: form.values.fieldName,
-				metricKey: form.values.metricKey,
-				valueField: form.values.valueField,
-				resultType: form.values.resultType,
-				groupBy: form.values.groupBy,
-				limit: form.values.limit,
-				viewColor: form.values.viewColor,
-				viewValueFormat: form.values.viewValueFormat,
-				supportsGroupBy: form.values.supportsGroupBy,
-				supportsTimeSeries: form.values.supportsTimeSeries,
-				defaultFilters: form.values.defaultFilters,
-			});
-			console.groupEnd();
-		}
 		const nextValues: WidgetFormValues = {
 			...form.values,
 			sourceType: nextSourceType,

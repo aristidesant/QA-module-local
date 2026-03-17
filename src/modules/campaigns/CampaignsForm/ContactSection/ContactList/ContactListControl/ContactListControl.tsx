@@ -54,7 +54,8 @@ export const ContactListControl = ({
 	};
 
 	const showErrorNotification = (error: unknown, fallbackMessage: string) => {
-		console.log({ error, fallbackMessage });
+		void error;
+		void fallbackMessage;
 
 		const apiMessage =
 			(error as { response?: { data?: { message?: string } } })?.response?.data

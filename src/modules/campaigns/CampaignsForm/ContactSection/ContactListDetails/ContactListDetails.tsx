@@ -400,8 +400,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 						setRightComponent(null);
 						closeContactListDrawer();
 					} catch (error) {
-						// eslint-disable-next-line no-console
-						console.error('Error toggling contact group status:', error);
+						void error;
 					}
 				},
 			});
@@ -497,11 +496,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 									setRightComponent(null);
 									closeContactListDrawer();
 								} catch (error) {
-									// eslint-disable-next-line no-console
-									console.error(
-										'Error activating contact group with human equivalent:',
-										error
-									);
+									void error;
 								} finally {
 									setIsEditingHumanEquivalent(false);
 								}
@@ -564,8 +559,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 						message: errorMessage,
 						color: 'red',
 					});
-					// eslint-disable-next-line no-console
-					console.error('Error deleting contact group:', error);
+					void error;
 				}
 			},
 		});
@@ -603,8 +597,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 					});
 					onUpdateComplete();
 				} catch (error) {
-					// eslint-disable-next-line no-console
-					console.error('Error cleaning queue:', error);
+					void error;
 				}
 			},
 		});

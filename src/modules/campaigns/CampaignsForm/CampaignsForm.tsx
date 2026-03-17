@@ -233,12 +233,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		const campaignWorkflowCounts = getWorkflowCounts(
 			campaign.agentConfig?.workflow
 		);
-		console.log('[CampaignsForm] incoming campaign workflow', {
-			campaignId: campaign.id,
-			nodes: campaignWorkflowCounts.nodes,
-			edges: campaignWorkflowCounts.edges,
-			hasWorkflow: Boolean(campaign.agentConfig?.workflow),
-		});
+		void campaignWorkflowCounts;
 
 		form.setValues({
 			name: campaign.name || '',
@@ -272,14 +267,9 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		const getterWorkflowCounts = getWorkflowCounts(
 			form.getValues().agentConfig?.workflow
 		);
-		console.log('[CampaignsForm] after setValues - workflow snapshot', {
-			campaignId: campaign.id,
-			stateNodes: stateWorkflowCounts.nodes,
-			stateEdges: stateWorkflowCounts.edges,
-			getterNodes: getterWorkflowCounts.nodes,
-			getterEdges: getterWorkflowCounts.edges,
-		});
-	}, [campaign?.id, campaign?.agentConfig?.workflow, campaign?.updatedAt]);
+		void stateWorkflowCounts;
+		void getterWorkflowCounts;
+	}, [campaign?.id, campaign?.agentConfig?.workflow]);
 
 	// Reset view only on component unmount
 	useEffect(() => {

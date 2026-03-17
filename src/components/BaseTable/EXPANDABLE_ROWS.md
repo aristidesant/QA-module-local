@@ -151,7 +151,6 @@ When `enableExpanding` is enabled, clicking a row will:
 	enableExpanding={true}
 	renderExpandedRow={(row) => <DetailView data={row} />}
 	onRowClick={(row) => {
-		console.log('Row clicked:', row);
 		// You can still perform other actions when a row is clicked
 	}}
 />

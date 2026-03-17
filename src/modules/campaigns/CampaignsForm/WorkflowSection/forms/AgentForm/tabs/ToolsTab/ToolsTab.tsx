@@ -115,7 +115,7 @@ const BuiltInTools = () => {
 				};
 			});
 		} catch (error) {
-			console.error('Error parsing system tools config:', error);
+			void error;
 			return [];
 		}
 	}, [systemToolsConfig]);
