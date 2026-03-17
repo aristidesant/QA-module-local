@@ -5,6 +5,79 @@ import dispositionFlowApi, {
 	type CopyDispositionFlowResponse,
 } from '~/api/dispositionFlowApi';
 import type { DispositionFlowModel } from '~/models/DispositionFlowModel';
+import { validateAndNormalizeDispositionFlow } from '~/utils/dispositionFlowUtils';
+
+const normalizeDispositionFlowPayload = (
+	payload: unknown
+): DispositionFlowModel | null => {
+	if (!payload) {
+		return null;
+	}
+
+	const queue: unknown[] = [payload];
+	const visitedObjects = new Set<object>();
+	let fallbackCandidate: DispositionFlowModel | null = null;
+
+	while (queue.length > 0) {
+		const current = queue.shift();
+		if (!current || typeof current !== 'object') {
+			continue;
+		}
+
+		const currentObject = current as Record<string, unknown>;
+		if (visitedObjects.has(currentObject)) {
+			continue;
+		}
+		visitedObjects.add(currentObject);
+
+		const hasFlowJson = 'flowJson' in currentObject;
+		const hasId = typeof currentObject.id === 'number';
+		if (hasFlowJson && hasId) {
+			const candidate = currentObject as unknown as DispositionFlowModel;
+			try {
+				return validateAndNormalizeDispositionFlow(candidate);
+			} catch {
+				fallbackCandidate = fallbackCandidate ?? candidate;
+			}
+		}
+
+		if (Array.isArray(currentObject.data)) {
+			queue.push(...currentObject.data);
+		}
+		if (Array.isArray(currentObject.items)) {
+			queue.push(...currentObject.items);
+		}
+
+		const nestedKeys = ['data', 'item', 'result', 'flow', 'dispositionFlow'];
+		nestedKeys.forEach((key) => {
+			if (key in currentObject && currentObject[key] != null) {
+				queue.push(currentObject[key]);
+			}
+		});
+	}
+
+	if (fallbackCandidate) {
+		const fallbackFlowJson = fallbackCandidate.flowJson as unknown;
+		const fallbackFlowJsonRecord =
+			fallbackFlowJson && typeof fallbackFlowJson === 'object'
+				? (fallbackFlowJson as Record<string, unknown>)
+				: {};
+
+		return {
+			...fallbackCandidate,
+			flowJson: {
+				...fallbackFlowJsonRecord,
+				dispositionNodes: Array.isArray(
+					fallbackFlowJsonRecord?.dispositionNodes
+				)
+					? fallbackFlowJsonRecord.dispositionNodes
+					: [],
+			} as DispositionFlowModel['flowJson'],
+		};
+	}
+
+	return null;
+};
 
 /**
  * Hook to fetch all disposition flows
@@ -65,18 +138,25 @@ export function useDispositionFlowsByCampaign(campaignId?: string | number) {
  * @returns Query result containing an array of DispositionFlowModel objects
  */
 export function useDispositionFlowsByCampaignPath(
-	campaignId?: string | number
+	campaignId?: string | number,
+	options?: {
+		enabled?: boolean;
+	}
 ) {
-	return useQuery<DispositionFlowModel, Error>({
+	const isEnabled = (options?.enabled ?? true) && !!campaignId;
+
+	return useQuery<DispositionFlowModel | null, Error>({
 		queryKey: ['dispositionFlows', 'campaignPath', campaignId],
 		queryFn: async () => {
 			if (!campaignId) {
 				throw new Error('Campaign ID is required');
 			}
 			const api = dispositionFlowApi();
-			return api.getDispositionFlowsByCampaignPath(campaignId);
+			const response = await api.getDispositionFlowsByCampaignPath(campaignId);
+			return normalizeDispositionFlowPayload(response);
 		},
-		enabled: !!campaignId,
+		enabled: isEnabled,
+		retry: false,
 	});
 }
 

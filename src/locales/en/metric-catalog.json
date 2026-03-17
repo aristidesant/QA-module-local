@@ -83,12 +83,15 @@
 			"scope": "Availability",
 			"campaign": "Campaign",
 			"name": "Name",
-			"key": "Key",
 			"description": "Description",
 			"sourceType": "Source type",
 			"aggregationType": "Aggregation",
 			"fieldName": "Field name",
+			"conversationField": "Conversation field",
+			"conversationFieldDescription": "Select the conversation field this metric should read from.",
 			"metricKey": "Metric key",
+			"dispositionFieldDescription": "Select the disposition field this metric should read from.",
+			"metricColumnsUnavailableDescription": "The metric_columns client config is missing or invalid for this source.",
 			"valueField": "Value field",
 			"resultType": "Result type",
 			"supportsGroupBy": "Supports grouped output",
@@ -108,7 +111,10 @@
 			"valueField": "Select typed value field",
 			"selectVariable": "Select a variable",
 			"selectCampaignFirst": "Select a campaign first",
-			"loadingVariables": "Loading variables…"
+			"loadingVariables": "Loading variables…",
+			"loadingMetricColumns": "Loading metric columns…",
+			"selectConversationField": "Select a conversation field",
+			"metricColumnsUnavailable": "Metric columns configuration unavailable"
 		},
 		"actions": {
 			"cancel": "Cancel",
@@ -116,7 +122,6 @@
 			"save": "Save metric"
 		},
 		"validation": {
-			"keyRequired": "Metric key is required.",
 			"nameRequired": "Metric name is required.",
 			"campaignRequired": "Campaign is required for campaign-scoped metrics.",
 			"fieldNameRequired": "Field name is required for this source.",

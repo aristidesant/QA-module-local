@@ -83,12 +83,15 @@
 			"scope": "Disponibilidad",
 			"campaign": "Campaña",
 			"name": "Nombre",
-			"key": "Clave",
 			"description": "Descripción",
 			"sourceType": "Tipo de fuente",
 			"aggregationType": "Agregación",
 			"fieldName": "Nombre del campo",
+			"conversationField": "Campo de conversación",
+			"conversationFieldDescription": "Selecciona el campo de conversación que usará esta métrica.",
 			"metricKey": "Clave de métrica",
+			"dispositionFieldDescription": "Selecciona el campo de disposición que usará esta métrica.",
+			"metricColumnsUnavailableDescription": "La configuración de cliente metric_columns falta o no es válida para esta fuente.",
 			"valueField": "Campo de valor",
 			"resultType": "Tipo de resultado",
 			"supportsGroupBy": "Soporta salida agrupada",
@@ -108,7 +111,10 @@
 			"valueField": "Selecciona el campo tipado",
 			"selectVariable": "Selecciona una variable",
 			"selectCampaignFirst": "Selecciona una campaña primero",
-			"loadingVariables": "Cargando variables…"
+			"loadingVariables": "Cargando variables…",
+			"loadingMetricColumns": "Cargando columnas de métrica…",
+			"selectConversationField": "Selecciona un campo de conversación",
+			"metricColumnsUnavailable": "La configuración de columnas de métrica no está disponible"
 		},
 		"actions": {
 			"cancel": "Cancelar",
@@ -116,7 +122,6 @@
 			"save": "Guardar métrica"
 		},
 		"validation": {
-			"keyRequired": "La clave de la métrica es obligatoria.",
 			"nameRequired": "El nombre de la métrica es obligatorio.",
 			"campaignRequired": "La campaña es obligatoria para métricas de campaña.",
 			"fieldNameRequired": "El nombre del campo es obligatorio para esta fuente.",

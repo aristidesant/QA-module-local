@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react';
+import { memo, useEffect, useMemo, useRef } from 'react';
 import {
 	Badge,
 	Button,
@@ -19,6 +19,7 @@ import {
 	useUpdateMetricDefinition,
 } from '~/queries/analyticsDashboardsQueries';
 import { useGetCampaign } from '~/queries/campaignsQueries';
+import { useGetClientConfig } from '~/queries/clientConfigQueries';
 import type { CreateMetricDefinitionDto } from '~/models/AnalyticsDashboard';
 import { getErrorMessage } from '~/utils/httpClient';
 import { getDataCollectionFromAgentConfig } from '~/modules/campaigns/CampaignsForm/AnalyticsSection/analyticsFormContext';
@@ -31,12 +32,18 @@ import {
 import {
 	buildMetricDefinitionPayload,
 	isAttributeMetricSource,
+	isCampaignDependentSource,
+	isDispositionMetricSource,
+	parseMetricColumnsConfig,
 	toFormValues,
 } from './MetricDefinitionForm.helpers';
 import type {
+	MetricColumnConfigEntry,
 	MetricDefinitionFormProps,
 	MetricDefinitionFormValues,
 } from './MetricDefinitionForm.types';
+
+const METRIC_COLUMNS_CONFIG_KEY = 'metric_columns';
 
 const SectionLabel = ({ children }: { children: string }) => (
 	<Divider
@@ -48,6 +55,11 @@ const SectionLabel = ({ children }: { children: string }) => (
 		}
 	/>
 );
+
+const buildMetricColumnOption = (entry: MetricColumnConfigEntry) => ({
+	value: entry.value,
+	label: `${entry.label} (${entry.value})`,
+});
 
 const MetricDefinitionForm = ({
 	metric,
@@ -62,14 +74,15 @@ const MetricDefinitionForm = ({
 
 	const initialValues = useMemo(() => toFormValues(metric), [metric]);
 	const scopeOptions = useMemo(() => getMetricScopeOptions(t), [t]);
-	const sourceOptions = useMemo(() => getMetricSourceOptions(t), [t]);
+	const allSourceOptions = useMemo(() => getMetricSourceOptions(t), [t]);
 	const aggregationOptions = useMemo(() => getMetricAggregationOptions(t), [t]);
 	const resultTypeOptions = useMemo(() => getMetricResultTypeOptions(t), [t]);
+	const { data: metricColumnsConfig, isLoading: isMetricColumnsLoading } =
+		useGetClientConfig(METRIC_COLUMNS_CONFIG_KEY);
 
 	const form = useForm<MetricDefinitionFormValues>({
 		initialValues,
 		validate: {
-			key: (value) => (value.trim() ? null : t('form.validation.keyRequired')),
 			name: (value) =>
 				value.trim() ? null : t('form.validation.nameRequired'),
 			campaignId: (value, values) =>
@@ -97,9 +110,106 @@ const MetricDefinitionForm = ({
 			},
 		},
 	});
+	const sourceOptions = useMemo(
+		() =>
+			form.values.scope === 'campaign'
+				? allSourceOptions
+				: allSourceOptions.filter((option) => option.value !== 'ATTRIBUTE'),
+		[allSourceOptions, form.values.scope]
+	);
 
 	const isAttributeSource = isAttributeMetricSource(form.values.sourceType);
+	const isDispositionSource = isDispositionMetricSource(form.values.sourceType);
 	const hasCampaignSelected = !!form.values.campaignId;
+	const hasCampaignDependentSource = isCampaignDependentSource(
+		form.values.sourceType
+	);
+	const parsedMetricColumns = useMemo(
+		() => parseMetricColumnsConfig(metricColumnsConfig?.value),
+		[metricColumnsConfig?.value]
+	);
+	const conversationFieldOptions = useMemo(
+		() => parsedMetricColumns.conversation.map(buildMetricColumnOption),
+		[parsedMetricColumns.conversation]
+	);
+	const dispositionFieldOptions = useMemo(
+		() => parsedMetricColumns.disposition.map(buildMetricColumnOption),
+		[parsedMetricColumns.disposition]
+	);
+	const hasMetricColumnsForConversation = conversationFieldOptions.length > 0;
+	const hasMetricColumnsForDisposition = dispositionFieldOptions.length > 0;
+
+	useEffect(() => {
+		if (form.values.scope !== 'global') {
+			return;
+		}
+
+		if (hasCampaignDependentSource) {
+			form.setFieldValue('sourceType', 'CONVERSATION');
+		}
+
+		if (form.values.campaignId) {
+			form.setFieldValue('campaignId', '');
+		}
+
+		if (form.values.metricKey) {
+			form.setFieldValue('metricKey', '');
+		}
+	}, [
+		form,
+		form.values.scope,
+		form.values.campaignId,
+		form.values.metricKey,
+		hasCampaignDependentSource,
+	]);
+
+	useEffect(() => {
+		if (isAttributeSource) {
+			if (form.values.fieldName) {
+				form.setFieldValue('fieldName', '');
+			}
+			return;
+		}
+
+		const supportedOptions = isDispositionSource
+			? dispositionFieldOptions
+			: conversationFieldOptions;
+		const currentFieldName = form.values.fieldName;
+		const hasCurrentField = supportedOptions.some(
+			(option) => option.value === currentFieldName
+		);
+
+		if (currentFieldName && !hasCurrentField) {
+			form.setFieldValue('fieldName', '');
+		}
+	}, [
+		conversationFieldOptions,
+		dispositionFieldOptions,
+		form,
+		form.values.fieldName,
+		isAttributeSource,
+		isDispositionSource,
+	]);
+
+	const previousCampaignIdRef = useRef<string | null>(null);
+
+	useEffect(() => {
+		const currentCampaignId = form.values.campaignId || null;
+		const previousCampaignId = previousCampaignIdRef.current;
+		const hasCampaignChanged =
+			previousCampaignId !== null && previousCampaignId !== currentCampaignId;
+
+		if (
+			hasCampaignChanged &&
+			form.values.scope === 'campaign' &&
+			isDispositionSource &&
+			form.values.fieldName
+		) {
+			form.setFieldValue('fieldName', '');
+		}
+
+		previousCampaignIdRef.current = currentCampaignId;
+	}, [form, form.values.campaignId, form.values.fieldName, form.values.scope]);
 
 	// Fetch selected campaign to extract dataCollection keys for the metricKey dropdown
 	const { data: selectedCampaign, isLoading: isCampaignLoading } =
@@ -160,13 +270,8 @@ const MetricDefinitionForm = ({
 				<Group gap='sm' align='flex-start' wrap='nowrap'>
 					<TextInput
 						label={t('form.fields.name')}
-						style={{ flex: 2 }}
-						{...form.getInputProps('name')}
-					/>
-					<TextInput
-						label={t('form.fields.key')}
 						style={{ flex: 1 }}
-						{...form.getInputProps('key')}
+						{...form.getInputProps('name')}
 					/>
 				</Group>
 
@@ -243,9 +348,52 @@ const MetricDefinitionForm = ({
 						}
 						{...form.getInputProps('metricKey')}
 					/>
-				) : (
-					<TextInput
+				) : isDispositionSource ? (
+					<Select
 						label={t('form.fields.fieldName')}
+						data={dispositionFieldOptions}
+						searchable
+						clearable
+						disabled={isMetricColumnsLoading || !hasMetricColumnsForDisposition}
+						placeholder={
+							isMetricColumnsLoading
+								? t('form.placeholders.loadingMetricColumns')
+								: t('form.placeholders.metricColumnsUnavailable')
+						}
+						description={
+							hasMetricColumnsForDisposition
+								? t('form.fields.dispositionFieldDescription')
+								: t('form.fields.metricColumnsUnavailableDescription')
+						}
+						nothingFoundMessage={t(
+							'form.placeholders.metricColumnsUnavailable'
+						)}
+						{...form.getInputProps('fieldName')}
+					/>
+				) : (
+					<Select
+						label={t('form.fields.conversationField')}
+						data={conversationFieldOptions}
+						searchable
+						clearable
+						disabled={
+							isMetricColumnsLoading || !hasMetricColumnsForConversation
+						}
+						placeholder={
+							isMetricColumnsLoading
+								? t('form.placeholders.loadingMetricColumns')
+								: hasMetricColumnsForConversation
+									? t('form.placeholders.selectConversationField')
+									: t('form.placeholders.metricColumnsUnavailable')
+						}
+						nothingFoundMessage={t(
+							'form.placeholders.metricColumnsUnavailable'
+						)}
+						description={
+							hasMetricColumnsForConversation
+								? t('form.fields.conversationFieldDescription')
+								: t('form.fields.metricColumnsUnavailableDescription')
+						}
 						{...form.getInputProps('fieldName')}
 					/>
 				)}

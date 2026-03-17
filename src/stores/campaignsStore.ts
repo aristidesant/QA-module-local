@@ -30,7 +30,10 @@ export const useCampaignsStore = create<CampaignsStoreState>((set) => ({
 	selectCampaign: (campaign) => {
 		set((state) => {
 			if (!campaign) {
-				return { selectedCampaign: null, selectedTab: 'agents' };
+				return {
+					selectedCampaign: null,
+					selectedTab: 'agents',
+				};
 			}
 
 			const isSameCampaign =
