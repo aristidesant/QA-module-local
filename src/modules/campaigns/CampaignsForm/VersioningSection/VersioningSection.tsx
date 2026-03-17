@@ -19,7 +19,9 @@ import {
 import { isAxiosError } from 'axios';
 import { useTranslation } from 'react-i18next';
 import BaseTable from '~/components/BaseTable/BaseTable';
+import PaginationControls from '~/components/PaginationControls';
 import SectionCard from '~/components/SectionCard';
+import { usePagination } from '~/hooks/usePagination';
 import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
 import { useSyncCampaignByAgent } from '~/queries/campaignsQueries';
 import {
@@ -57,6 +59,7 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 	const [selectedCampaignAgentId, setSelectedCampaignAgentId] = useState<
 		string | null
 	>(null);
+	const versionPagination = usePagination({ initialItemsPerPage: 10 });
 
 	const campaignId = campaign?.id ?? 0;
 	const {
@@ -152,6 +155,20 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 		isLoadingBranches ||
 		(isVersioningEnabled && isLoadingBranchDetails);
 
+	const { limit: versionPageLimit, offset: versionPageOffset } =
+		versionPagination.getApiParams();
+	const paginatedVersions = historicalVersions.slice(
+		versionPageOffset,
+		versionPageOffset + versionPageLimit
+	);
+	const totalVersionPages = versionPagination.calculateTotalPages(
+		historicalVersions.length
+	);
+
+	const handleVersionPageSizeChange = (value: string | null) => {
+		if (value) versionPagination.setItemsPerPage(Number(value));
+	};
+
 	useEffect(() => {
 		if (
 			selectedCampaignAgentId &&
@@ -167,6 +184,11 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 	useEffect(() => {
 		setSelectedVersion(null);
 	}, [effectiveSelectedCampaignAgentId]);
+
+	useEffect(() => {
+		versionPagination.setCurrentPage(1);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [agentId, selectedCampaignAgentId]);
 
 	const getApiErrorMessage = (error: unknown, fallback: string) => {
 		if (isAxiosError(error)) {
@@ -496,10 +518,19 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 							) : (
 								<div className={classes.tableWrap}>
 									<BaseTable<AgentVersionSummary>
-										data={historicalVersions}
+										data={paginatedVersions}
 										columns={columns}
 										density='compact'
 										emptyMessage={t('history.empty')}
+									/>
+									<PaginationControls
+										currentPage={versionPagination.currentPage}
+										totalPages={totalVersionPages}
+										itemsPerPage={versionPagination.itemsPerPage}
+										totalItems={historicalVersions.length}
+										onPageChange={versionPagination.setCurrentPage}
+										onItemsPerPageChange={handleVersionPageSizeChange}
+										itemLabel={t('history.itemLabel')}
 									/>
 								</div>
 							)}

@@ -16,6 +16,7 @@
 		"empty": "Aún no hay versiones anteriores disponibles. Guarda nuevos cambios del agente para crear historial.",
 		"descriptionFallback": "Snapshot de versión",
 		"unknownAuthor": "Autor desconocido",
+		"itemLabel": "versiones",
 		"versionBadge": "Versión {{version}}",
 		"columns": {
 			"version": "Versión",

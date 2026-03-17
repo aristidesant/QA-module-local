@@ -16,6 +16,7 @@
 		"empty": "No previous versions are available yet. Save new agent changes to create history.",
 		"descriptionFallback": "Version snapshot",
 		"unknownAuthor": "Unknown author",
+		"itemLabel": "versions",
 		"versionBadge": "Version {{version}}",
 		"columns": {
 			"version": "Version",
