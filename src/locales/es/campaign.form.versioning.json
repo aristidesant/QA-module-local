@@ -1,0 +1,89 @@
+{
+	"section": {
+		"title": "Versionado",
+		"description": "Revisa snapshots inmutables recientes de la rama main, compara cambios y revierte de forma segura."
+	},
+	"summary": {
+		"branch": "Rama",
+		"currentVersion": "Versión actual",
+		"lastCommit": "Último commit",
+		"liveTraffic": "{{percentage}}% de tráfico en vivo",
+		"notAvailable": "No disponible"
+	},
+	"history": {
+		"title": "Historial de la rama",
+		"description": "Snapshots recientes confirmados en la rama main.",
+		"empty": "Aún no hay versiones anteriores disponibles. Guarda nuevos cambios del agente para crear historial.",
+		"descriptionFallback": "Snapshot de versión",
+		"unknownAuthor": "Autor desconocido",
+		"itemLabel": "versiones",
+		"versionBadge": "Versión {{version}}",
+		"columns": {
+			"version": "Versión",
+			"author": "Autor",
+			"committedAt": "Commit",
+			"actions": "Acciones"
+		},
+		"actions": {
+			"compare": "Comparar con la actual",
+			"revert": "Revertir a esta versión"
+		}
+	},
+	"enable": {
+		"title": "Habilitar versionado del agente",
+		"description": "Una vez habilitado, cada futura actualización del agente en la rama main creará una nueva versión inmutable.",
+		"action": "Habilitar versionado",
+		"confirmTitle": "¿Habilitar versionado?",
+		"confirmMessage": "Esta operación es permanente. Una vez que el versionado esté habilitado para este agente, no se puede desactivar.",
+		"confirmAction": "Habilitar ahora",
+		"successTitle": "Versionado habilitado",
+		"successMessage": "El versionado del agente ya está habilitado para el agente de esta campaña.",
+		"errorTitle": "No se pudo habilitar el versionado",
+		"errorMessage": "No se pudo habilitar la configuración de versionado del agente."
+	},
+	"diff": {
+		"title": "Historial de versiones",
+		"currentLabel": "Versión publicada actual",
+		"selectedLabel": "Versión histórica",
+		"selectedVersion": "Snapshot seleccionado",
+		"createdBy": "Creado por",
+		"snapshotUnavailable": "No se pudo cargar la versión seleccionada para compararla.",
+		"noChanges": "No se detectaron cambios de configuración entre el estado actual y la versión seleccionada.",
+		"footerHint": "Revertir creará una nueva versión inmutable en la rama main.",
+		"hiddenLines": "Expandir {{count}} líneas ..."
+	},
+	"revert": {
+		"confirmTitle": "¿Revertir versión?",
+		"confirmMessage": "Esto restaurará la configuración seleccionada de la versión {{version}} en la rama main y creará una nueva versión inmutable.",
+		"successTitle": "Versión revertida",
+		"successMessage": "La versión seleccionada fue restaurada y sincronizada nuevamente con la campaña.",
+		"errorTitle": "No se pudo revertir la versión",
+		"errorMessage": "No se pudo restaurar la versión seleccionada."
+	},
+	"errors": {
+		"mainBranchMissing": "El versionado está habilitado, pero no se pudo resolver la rama main para este agente.",
+		"agentLoadFailed": "No se pudieron cargar los agentes asignados a la campaña."
+	},
+	"empty": {
+		"unsavedCampaign": "Guarda la campaña primero para acceder al historial de versiones del agente.",
+		"noAgent": "Asigna un agente a esta campaña antes de usar el historial de versiones.",
+		"noAssignedAgents": "Actualmente no hay agentes asignados a esta campaña.",
+		"selectAgent": "Selecciona un agente asignado para cargar su historial de versiones."
+	},
+	"selector": {
+		"title": "Alcance del agente",
+		"descriptionSingle": "El historial de versiones está asociado al único agente asignado a esta campaña.",
+		"descriptionMulti": "Selecciona qué agente asignado quieres inspeccionar antes de cargar el historial de versiones.",
+		"label": "Agente de campaña",
+		"placeholder": "Selecciona un agente",
+		"agentId": "ID del agente: {{agentId}}",
+		"fallbackAgentLabel": "Agente {{agentId}}"
+	},
+	"actions": {
+		"close": "Cerrar",
+		"cancel": "Cancelar",
+		"revertVersion": "Revertir",
+		"revertLatest": "Revertir últimos cambios",
+		"retry": "Intentar de nuevo"
+	}
+}

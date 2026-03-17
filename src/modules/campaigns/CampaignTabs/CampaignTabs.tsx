@@ -3,6 +3,7 @@ import {
 	IconChecklist,
 	IconChartBar,
 	IconGalaxy,
+	IconGitBranch,
 	IconRoute,
 	IconUser,
 	IconList,
@@ -55,6 +56,9 @@ const CampaignTabs = () => {
 				</Tabs.Tab>
 				<Tabs.Tab leftSection={<IconGalaxy />} value='general'>
 					{t('tabs.general')}
+				</Tabs.Tab>
+				<Tabs.Tab leftSection={<IconGitBranch />} value='versioning'>
+					{t('tabs.versioning')}
 				</Tabs.Tab>
 			</Tabs.List>
 		</Tabs>

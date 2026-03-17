@@ -1,0 +1,89 @@
+{
+	"section": {
+		"title": "Versioning",
+		"description": "Review recent immutable snapshots from the main branch, compare changes, and revert safely."
+	},
+	"summary": {
+		"branch": "Branch",
+		"currentVersion": "Current version",
+		"lastCommit": "Last commit",
+		"liveTraffic": "{{percentage}}% live traffic",
+		"notAvailable": "Not available"
+	},
+	"history": {
+		"title": "Branch history",
+		"description": "Recent snapshots committed on the main branch.",
+		"empty": "No previous versions are available yet. Save new agent changes to create history.",
+		"descriptionFallback": "Version snapshot",
+		"unknownAuthor": "Unknown author",
+		"itemLabel": "versions",
+		"versionBadge": "Version {{version}}",
+		"columns": {
+			"version": "Version",
+			"author": "Author",
+			"committedAt": "Committed",
+			"actions": "Actions"
+		},
+		"actions": {
+			"compare": "Compare with current",
+			"revert": "Revert to this version"
+		}
+	},
+	"enable": {
+		"title": "Enable agent versioning",
+		"description": "Once enabled, every future agent update on the main branch creates a new immutable version.",
+		"action": "Enable versioning",
+		"confirmTitle": "Enable versioning?",
+		"confirmMessage": "This operation is permanent. Once versioning is enabled for this agent, it cannot be disabled.",
+		"confirmAction": "Enable now",
+		"successTitle": "Versioning enabled",
+		"successMessage": "Agent versioning is now enabled for this campaign agent.",
+		"errorTitle": "Could not enable versioning",
+		"errorMessage": "The agent versioning setting could not be enabled."
+	},
+	"diff": {
+		"title": "Version History",
+		"currentLabel": "Current published version",
+		"selectedLabel": "Historical version",
+		"selectedVersion": "Selected snapshot",
+		"createdBy": "Created by",
+		"snapshotUnavailable": "The selected version could not be loaded for comparison.",
+		"noChanges": "No config changes were detected between the current state and the selected version.",
+		"footerHint": "Reverting will create a new immutable version on the main branch.",
+		"hiddenLines": "Expand {{count}} lines ..."
+	},
+	"revert": {
+		"confirmTitle": "Revert version?",
+		"confirmMessage": "This will restore the selected configuration from version {{version}} on the main branch and create a new immutable version.",
+		"successTitle": "Version reverted",
+		"successMessage": "The selected version was restored and synced back to the campaign.",
+		"errorTitle": "Could not revert version",
+		"errorMessage": "The selected version could not be restored."
+	},
+	"errors": {
+		"mainBranchMissing": "Versioning is enabled, but the main branch could not be resolved for this agent.",
+		"agentLoadFailed": "The assigned campaign agents could not be loaded."
+	},
+	"empty": {
+		"unsavedCampaign": "Save the campaign first to access agent version history.",
+		"noAgent": "Attach an agent to this campaign before using version history.",
+		"noAssignedAgents": "No agents are currently assigned to this campaign.",
+		"selectAgent": "Select an assigned agent to load its version history."
+	},
+	"selector": {
+		"title": "Agent scope",
+		"descriptionSingle": "Version history is scoped to the only agent assigned to this campaign.",
+		"descriptionMulti": "Select which assigned agent you want to inspect before loading version history.",
+		"label": "Campaign agent",
+		"placeholder": "Select an agent",
+		"agentId": "Agent ID: {{agentId}}",
+		"fallbackAgentLabel": "Agent {{agentId}}"
+	},
+	"actions": {
+		"close": "Close",
+		"cancel": "Cancel",
+		"revertVersion": "Revert",
+		"revertLatest": "Revert latest changes",
+		"retry": "Try again"
+	}
+}
