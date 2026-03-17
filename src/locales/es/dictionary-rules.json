@@ -35,10 +35,12 @@
 	"rules": {
 		"title": "Reglas de Pronunciación",
 		"addRule": "Agregar Regla",
+		"uploadCsv": "Subir CSV",
 		"noRules": "Aún no hay reglas",
 		"noRulesDescription": "Agrega reglas de pronunciación para controlar cómo ElevenLabs pronuncia palabras específicas.",
 		"searchPlaceholder": "Buscar por palabra...",
 		"filterType": "Filtrar por tipo",
+		"filterCategory": "Filtrar por categoría",
 		"clearSearch": "Limpiar búsqueda",
 		"clearFilters": "Limpiar filtros",
 		"noActiveFilters": "Sin filtros activos",
@@ -106,6 +108,17 @@
 			"description": {
 				"label": "Descripción",
 				"placeholder": "Nota opcional sobre esta regla"
+			},
+			"category": {
+				"label": "Categoría",
+				"placeholder": "Selecciona una categoría",
+				"options": {
+					"CITY": "Ciudad",
+					"PROVINCE": "Provincia / Estado",
+					"NAME": "Nombre",
+					"LAST_NAME": "Apellido",
+					"GENERAL": "General"
+				}
 			}
 		},
 		"hints": {
@@ -133,6 +146,7 @@
 	"columns": {
 		"grapheme": "Palabra",
 		"ruleType": "Tipo",
+		"category": "Categoría",
 		"pronunciation": "Pronunciación",
 		"locale": "Locale",
 		"description": "Descripción",
@@ -142,5 +156,46 @@
 		"name": "Nombre",
 		"createdAt": "Creado",
 		"actions": "Acciones"
+	},
+	"upload": {
+		"buttonLabel": "Subir CSV",
+		"createTitle": "Crear Diccionario desde CSV",
+		"uploadTitle": "Subir Reglas desde CSV",
+		"dictionarySection": "Detalles del Diccionario",
+		"fileSection": "Archivo CSV",
+		"fileLabel": "Archivo CSV",
+		"filePlaceholder": "Selecciona un archivo CSV",
+		"fileDescription": "Formato aceptado: .csv — máx 5 MB",
+		"fileRequired": "Por favor selecciona un archivo CSV",
+		"downloadTemplate": "Descargar plantilla CSV",
+		"formatHint": "Columnas obligatorias: grapheme, ruleType. Opcionales: alias, phoneme, locale, description, category.",
+		"cancel": "Cancelar",
+		"submit": "Subir",
+		"createAndUpload": "Crear y Subir",
+		"uploading": "Subiendo…",
+		"notifications": {
+			"createError": "Error al crear el diccionario antes de la carga",
+			"uploadError": "Error al subir. Verifica tu CSV e intenta de nuevo."
+		}
+	},
+	"results": {
+		"title": "Resultados de la Carga",
+		"summary": "{{processed}} filas procesadas",
+		"succeeded": "Exitosas",
+		"failed": "Fallidas",
+		"noErrors": "Todas las filas se importaron correctamente.",
+		"errorsTitle": "Errores por Fila",
+		"tableRow": "Fila",
+		"tableGrapheme": "Palabra",
+		"tableError": "Error",
+		"close": "Cerrar",
+		"goToDictionary": "Ir al Diccionario"
+	},
+	"categories": {
+		"CITY": "Ciudad",
+		"PROVINCE": "Provincia / Estado",
+		"NAME": "Nombre",
+		"LAST_NAME": "Apellido",
+		"GENERAL": "General"
 	}
 }

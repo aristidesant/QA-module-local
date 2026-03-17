@@ -11,6 +11,7 @@ import type {
 	CreateRuleParams,
 	UpdateRuleParams,
 	BulkUpsertRulesParams,
+	BulkUploadCsvResult,
 } from '~/models/PronunciationDictionaryModel';
 import type { PaginatedResponse } from '~/models/CampaignsModel';
 import {
@@ -23,6 +24,7 @@ import {
 	updateRule,
 	deleteRule,
 	bulkUpsertRules,
+	bulkUploadCsvRules,
 	syncDictionary,
 	attachDictionaryToAgent,
 	detachDictionaryFromAgent,
@@ -197,6 +199,22 @@ export const useBulkUpsertRules = (dictionaryId: number) => {
 	return useMutation({
 		mutationFn: (params: BulkUpsertRulesParams) =>
 			bulkUpsertRules(dictionaryId, params),
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: pronunciationDictionaryKeys.rules(dictionaryId),
+			});
+		},
+	});
+};
+
+/**
+ * Bulk upload rules from a CSV file.
+ */
+export const useBulkUploadCsvRules = (dictionaryId: number) => {
+	const queryClient = useQueryClient();
+
+	return useMutation<BulkUploadCsvResult, Error, File>({
+		mutationFn: (file: File) => bulkUploadCsvRules(dictionaryId, file),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
 				queryKey: pronunciationDictionaryKeys.rules(dictionaryId),

@@ -6,6 +6,7 @@ import type {
 	CreateRuleParams,
 	UpdateRuleParams,
 	BulkUpsertRulesParams,
+	BulkUploadCsvResult,
 } from '~/models/PronunciationDictionaryModel';
 import type { PaginatedResponse } from '~/models/CampaignsModel';
 import { DEFAULT_API_URL } from './config';
@@ -135,6 +136,24 @@ export const bulkUpsertRules = async (
 	const response = await axios.post<PronunciationRule[]>(
 		`${apiUrl}${BASE_PATH}/${dictionaryId}/rules/bulk`,
 		params
+	);
+	return response.data;
+};
+
+/**
+ * Bulk upload rules from a CSV file (create or update by grapheme match).
+ */
+export const bulkUploadCsvRules = async (
+	dictionaryId: number,
+	file: File,
+	apiUrl: string = DEFAULT_API_URL
+): Promise<BulkUploadCsvResult> => {
+	const formData = new FormData();
+	formData.append('file', file);
+	const response = await axios.post<BulkUploadCsvResult>(
+		`${apiUrl}${BASE_PATH}/${dictionaryId}/rules/bulk/csv`,
+		formData,
+		{ headers: { 'Content-Type': 'multipart/form-data' } }
 	);
 	return response.data;
 };

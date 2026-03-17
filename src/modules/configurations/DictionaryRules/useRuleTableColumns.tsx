@@ -47,6 +47,30 @@ export function useRuleTableColumns({
 				},
 			},
 			{
+				accessorKey: 'category',
+				header: t('columns.category'),
+				cell: ({ row }) => {
+					const categoryColorMap: Record<string, string> = {
+						CITY: 'teal',
+						PROVINCE: 'cyan',
+						NAME: 'grape',
+						LAST_NAME: 'indigo',
+						GENERAL: 'gray',
+					};
+					const category = row.original.category ?? 'GENERAL';
+					return (
+						<Badge
+							variant='light'
+							color={categoryColorMap[category] ?? 'gray'}
+							radius='sm'
+							size='sm'
+						>
+							{t(`categories.${category}`)}
+						</Badge>
+					);
+				},
+			},
+			{
 				id: 'pronunciation',
 				header: t('columns.pronunciation'),
 				cell: ({ row }) => {

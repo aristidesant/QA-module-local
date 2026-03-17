@@ -7,6 +7,7 @@ import {
 	LoadingOverlay,
 	Popover,
 	SegmentedControl,
+	Select,
 	SimpleGrid,
 	Stack,
 	Text,
@@ -19,6 +20,7 @@ import { notifications } from '@mantine/notifications';
 import { useTranslation } from 'react-i18next';
 import type {
 	PronunciationRule,
+	RuleCategory,
 	RuleType,
 } from '~/models/PronunciationDictionaryModel';
 import {
@@ -41,6 +43,7 @@ interface RuleFormValues {
 	phoneme: string;
 	locale: string;
 	description: string;
+	category: RuleCategory;
 }
 
 const DEFAULT_VALUES: RuleFormValues = {
@@ -50,6 +53,7 @@ const DEFAULT_VALUES: RuleFormValues = {
 	phoneme: '',
 	locale: '',
 	description: '',
+	category: 'GENERAL',
 };
 
 export function RuleForm({
@@ -95,6 +99,7 @@ export function RuleForm({
 			phoneme: initialData.phoneme || '',
 			locale: initialData.locale || '',
 			description: initialData.description || '',
+			category: initialData.category ?? 'GENERAL',
 		});
 		form.clearErrors();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -133,6 +138,7 @@ export function RuleForm({
 				...(values.description
 					? { description: values.description.trim() }
 					: {}),
+				category: values.category,
 			};
 
 			if (isEdit && initialData) {
@@ -320,6 +326,36 @@ export function RuleForm({
 							radius='md'
 							key={form.key('locale')}
 							{...form.getInputProps('locale')}
+						/>
+						<Select
+							label={t('form.fields.category.label')}
+							placeholder={t('form.fields.category.placeholder')}
+							size='sm'
+							radius='md'
+							data={[
+								{
+									value: 'GENERAL',
+									label: t('form.fields.category.options.GENERAL'),
+								},
+								{
+									value: 'NAME',
+									label: t('form.fields.category.options.NAME'),
+								},
+								{
+									value: 'LAST_NAME',
+									label: t('form.fields.category.options.LAST_NAME'),
+								},
+								{
+									value: 'CITY',
+									label: t('form.fields.category.options.CITY'),
+								},
+								{
+									value: 'PROVINCE',
+									label: t('form.fields.category.options.PROVINCE'),
+								},
+							]}
+							key={form.key('category')}
+							{...form.getInputProps('category')}
 						/>
 					</SimpleGrid>
 

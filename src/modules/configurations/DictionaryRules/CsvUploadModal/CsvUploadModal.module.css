@@ -1,0 +1,6 @@
+.templateLink {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	color: var(--mantine-color-blue-6);
+}
