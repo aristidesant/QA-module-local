@@ -32,7 +32,7 @@ export interface GroupedWidgetContentProps extends Omit<
 
 export interface TimeSeriesWidgetContentProps extends Omit<
 	WidgetContentBaseProps,
-	'comparisonData' | 'comparisonPeriodLabel'
+	'comparisonPeriodLabel'
 > {
 	widget: DashboardRenderWidget & { result: TimeSeriesMetricResult };
 }

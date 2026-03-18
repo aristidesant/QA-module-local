@@ -111,7 +111,30 @@
 		inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
+.tooltipSeriesList {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
 .tooltipLabel {
+	line-height: 1.2;
+}
+
+.tooltipSeriesRow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	min-width: 0;
+}
+
+.tooltipSeriesMeta {
+	min-width: 0;
+}
+
+.tooltipSeriesName {
+	color: var(--mantine-color-gray-8);
 	line-height: 1.2;
 }
 

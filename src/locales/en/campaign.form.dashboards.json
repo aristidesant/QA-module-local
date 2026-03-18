@@ -373,7 +373,9 @@
 		},
 		"lineChart": {
 			"latest": "Latest",
-			"delta": "Change"
+			"delta": "Change",
+			"current": "Current",
+			"previous": "Previous"
 		},
 		"timeRange": {
 			"label": "Time range",
