@@ -26,7 +26,7 @@ import {
 	bulkUpsertRules,
 	bulkUploadCsvRules,
 	syncDictionary,
-	attachDictionaryToAgent,
+	bulkAttachDictionariesToAgent,
 	detachDictionaryFromAgent,
 } from '~/api/pronunciationDictionaryApi';
 
@@ -241,20 +241,21 @@ export const useSyncDictionary = () => {
 	});
 };
 
-// ── Agent attachment hook ──
+// ── Agent attachment hooks ──
 
 /**
- * Attach a dictionary to an agent.
+ * Attach multiple dictionaries to an agent in a single call.
+ * The provided list replaces the agent's complete set of attached dictionaries.
  */
-export const useAttachDictionaryToAgent = () => {
+export const useBulkAttachDictionariesToAgent = () => {
 	return useMutation({
 		mutationFn: ({
-			dictionaryId,
+			dictionaryIds,
 			agentId,
 		}: {
-			dictionaryId: number;
+			dictionaryIds: number[];
 			agentId: string;
-		}) => attachDictionaryToAgent(dictionaryId, agentId),
+		}) => bulkAttachDictionariesToAgent(dictionaryIds, agentId),
 	});
 };
 

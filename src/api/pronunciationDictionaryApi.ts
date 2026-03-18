@@ -198,14 +198,18 @@ export const syncDictionary = async (
 // ── Agent attachment ──
 
 /**
- * Attach a pronunciation dictionary to an ElevenLabs agent.
+ * Attach multiple pronunciation dictionaries to an agent in a single call.
+ * The provided list replaces the agent's complete set of attached dictionaries.
+ * Requires at least one dictionaryId.
  */
-export const attachDictionaryToAgent = async (
-	dictionaryId: number,
+export const bulkAttachDictionariesToAgent = async (
+	dictionaryIds: number[],
 	agentId: string,
 	apiUrl: string = DEFAULT_API_URL
 ): Promise<void> => {
-	await axios.put(`${apiUrl}${BASE_PATH}/${dictionaryId}/agents/${agentId}`);
+	await axios.put(`${apiUrl}${BASE_PATH}/bulk-attach/agents/${agentId}`, {
+		dictionaryIds,
+	});
 };
 
 /**
