@@ -371,6 +371,10 @@
 			"label": "Etiqueta",
 			"value": "Valor"
 		},
+		"lineChart": {
+			"latest": "Último",
+			"delta": "Cambio"
+		},
 		"timeRange": {
 			"label": "Período",
 			"all": "Todo el tiempo",

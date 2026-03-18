@@ -371,6 +371,10 @@
 			"label": "Label",
 			"value": "Value"
 		},
+		"lineChart": {
+			"latest": "Latest",
+			"delta": "Change"
+		},
 		"timeRange": {
 			"label": "Time range",
 			"all": "All time",
