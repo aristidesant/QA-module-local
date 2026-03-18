@@ -5,6 +5,7 @@ import type {
 	DashboardRenderWidget,
 	DashboardWidget,
 	GroupedMetricResult,
+	TimeSeriesMetricResult,
 } from '~/models/AnalyticsDashboard';
 import {
 	DASHBOARD_LAYOUT_COLUMNS,
@@ -92,6 +93,11 @@ export const isGroupedMetricResult = (
 	widget: DashboardRenderWidget
 ): widget is DashboardRenderWidget & { result: GroupedMetricResult } =>
 	widget.result?.kind === 'grouped';
+
+export const isTimeSeriesMetricResult = (
+	widget: DashboardRenderWidget
+): widget is DashboardRenderWidget & { result: TimeSeriesMetricResult } =>
+	widget.result?.kind === 'time_series';
 
 export const getWidgetRenderLayout = (
 	widget: DashboardWidget

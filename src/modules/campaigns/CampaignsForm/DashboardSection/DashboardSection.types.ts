@@ -10,6 +10,7 @@ import type {
 	MetricResultType,
 	MetricSourceType,
 	MetricValueField,
+	TimeSeriesPoint,
 } from '~/models/AnalyticsDashboard';
 import type { DashboardWidgetSizePreset } from '~/modules/campaigns/dashboardLayout';
 
@@ -120,6 +121,15 @@ export type WidgetPreviewModel =
 			groupByLabel: string;
 			rows: WidgetPreviewRow[];
 			showLegend: boolean;
+	  }
+	| {
+			kind: 'line_chart';
+			title: string;
+			subtitle?: string;
+			description?: string;
+			sizePreset: DashboardWidgetSizePreset;
+			accentColor: string;
+			points: TimeSeriesPoint[];
 	  };
 
 export type WidgetCompatibilityState = {

@@ -60,7 +60,7 @@ const DashboardWidgetPreview = ({
 		);
 	}
 
-	if (widgetType === 'LINE_CHART') {
+	if (preview.kind === 'line_chart') {
 		return (
 			<DashboardWidgetPreviewLineChart
 				preview={preview}

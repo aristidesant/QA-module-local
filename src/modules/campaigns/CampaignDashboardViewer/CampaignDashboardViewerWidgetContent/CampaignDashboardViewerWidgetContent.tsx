@@ -3,12 +3,16 @@ import type {
 	AnalyticsTimeRange,
 	DashboardRenderWidget,
 } from '~/models/AnalyticsDashboard';
-import { isGroupedMetricResult } from '../CampaignDashboardViewer.helpers';
+import {
+	isGroupedMetricResult,
+	isTimeSeriesMetricResult,
+} from '../CampaignDashboardViewer.helpers';
 import type { ViewerWidgetLayout, WidgetComparisonData } from '../types';
 import BarChartWidgetContent from './components/BarChartWidgetContent';
 import DashboardWidgetCard from './components/DashboardWidgetCard';
 import DonutChartWidgetContent from './components/DonutChartWidgetContent';
 import KpiWidgetContent from './components/KpiWidgetContent';
+import LineChartWidgetContent from './components/LineChartWidgetContent';
 import PendingLineChartWidgetContent from './components/PendingLineChartWidgetContent';
 import PieChartWidgetContent from './components/PieChartWidgetContent';
 import TableWidgetContent from './components/TableWidgetContent';
@@ -52,6 +56,17 @@ const CampaignDashboardViewerWidgetContent = ({
 	}
 
 	if (widget.widgetType === 'LINE_CHART') {
+		if (isTimeSeriesMetricResult(widget)) {
+			return (
+				<LineChartWidgetContent
+					widget={widget}
+					accentColor={accentColor}
+					layout={layout}
+					noDragClassName={noDragClassName}
+				/>
+			);
+		}
+
 		return (
 			<PendingLineChartWidgetContent
 				widget={widget}
