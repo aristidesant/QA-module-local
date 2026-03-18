@@ -17,6 +17,7 @@ import type {
 	MetricSourceType,
 	MetricValueField,
 	PreviewDashboardWidgetDto,
+	TimeSeriesPoint,
 } from '~/models/AnalyticsDashboard';
 import {
 	DEFAULT_WIDGET_LAYOUT,
@@ -492,6 +493,18 @@ const buildPreviewModel = (
 		};
 	}
 
+	if (supportsTimeSeriesWidget(values.widgetType)) {
+		return {
+			kind: 'line_chart',
+			title,
+			subtitle,
+			description: trimText(values.description) || undefined,
+			sizePreset,
+			accentColor,
+			points: [] as TimeSeriesPoint[],
+		};
+	}
+
 	if (!supportsGroupedWidget(values.widgetType)) {
 		return {
 			kind: 'empty',
@@ -726,9 +739,8 @@ export const getWidgetTypeOptions = (t: TFunction): WidgetTypeOption[] => [
 	},
 	{
 		value: 'LINE_CHART',
-		label: `${t('dashboardBuilder.widgetTypes.LINE_CHART')} · ${t('dashboardBuilder.form.comingSoon')}`,
+		label: t('dashboardBuilder.widgetTypes.LINE_CHART'),
 		description: t('dashboardBuilder.form.widgetTypeDescriptions.LINE_CHART'),
-		disabled: true,
 	},
 	{
 		value: 'BAR_CHART',
@@ -1079,6 +1091,27 @@ export const buildPreviewModelFromResponse = (
 					: t('dashboard.comparison.previousWeekValue', {
 							value: formatMetricValue(previousValue),
 						}),
+		};
+	}
+
+	if (widget.result.kind === 'time_series') {
+		return {
+			kind: 'line_chart',
+			title:
+				fallbackPreview.kind === 'line_chart'
+					? fallbackPreview.title
+					: widget.title,
+			subtitle:
+				fallbackPreview.kind === 'line_chart'
+					? fallbackPreview.subtitle
+					: undefined,
+			description:
+				fallbackPreview.kind === 'line_chart'
+					? fallbackPreview.description
+					: undefined,
+			sizePreset: fallbackPreview.sizePreset,
+			accentColor: fallbackPreview.accentColor,
+			points: widget.result.points,
 		};
 	}
 

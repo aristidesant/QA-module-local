@@ -197,9 +197,30 @@ export interface GroupedMetricResult {
 	};
 }
 
+export interface TimeSeriesPoint {
+	bucketStart: string;
+	bucketEnd: string;
+	label: string;
+	value: number;
+	valueFormat: number;
+}
+
+export interface TimeSeriesMetricResult {
+	kind: 'time_series';
+	metricKey: string;
+	points: TimeSeriesPoint[];
+	meta: {
+		campaignId: number | null;
+		sourceType: MetricSourceType;
+		aggregationType: MetricAggregationType;
+		granularity: 'hour' | 'day' | 'week' | 'month';
+	};
+}
+
 export type DashboardMetricResult =
 	| SingleValueMetricResult
-	| GroupedMetricResult;
+	| GroupedMetricResult
+	| TimeSeriesMetricResult;
 
 export type DashboardRenderWidgetStatus = 'SUCCESS' | 'UNSUPPORTED' | 'ERROR';
 
