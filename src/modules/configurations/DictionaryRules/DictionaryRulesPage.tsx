@@ -488,6 +488,12 @@ export default function DictionaryRulesPage() {
 
 			{createDictModal}
 			{deleteDictModal}
+			<CsvUploadModal
+				mode='create-and-upload'
+				opened={csvUploadOpened && csvUploadMode === 'create-and-upload'}
+				onClose={closeCsvUpload}
+				onSuccess={handleCsvUploadSuccess}
+			/>
 		</Stack>
 	);
 }
