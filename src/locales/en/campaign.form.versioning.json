@@ -1,7 +1,7 @@
 {
 	"section": {
 		"title": "Versioning",
-		"description": "Review recent immutable snapshots from the main branch, compare changes, and revert safely."
+		"description": "Review recent immutable snapshots from the Agent configuration, compare changes, and revert safely."
 	},
 	"summary": {
 		"branch": "Branch",
@@ -11,8 +11,8 @@
 		"notAvailable": "Not available"
 	},
 	"history": {
-		"title": "Branch history",
-		"description": "Recent snapshots committed on the main branch.",
+		"title": "Agent history",
+		"description": "Recent snapshots committed on the Agent.",
 		"empty": "No previous versions are available yet. Save new agent changes to create history.",
 		"descriptionFallback": "Version snapshot",
 		"unknownAuthor": "Unknown author",

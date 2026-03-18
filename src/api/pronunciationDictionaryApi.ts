@@ -6,6 +6,7 @@ import type {
 	CreateRuleParams,
 	UpdateRuleParams,
 	BulkUpsertRulesParams,
+	BulkUploadCsvResult,
 } from '~/models/PronunciationDictionaryModel';
 import type { PaginatedResponse } from '~/models/CampaignsModel';
 import { DEFAULT_API_URL } from './config';
@@ -83,6 +84,28 @@ export const getRules = async (
 };
 
 /**
+ * Fetch ALL rules for a dictionary by paginating until exhausted.
+ * Used for CSV export where a single unbounded request is not available.
+ */
+export const exportAllRules = async (
+	dictionaryId: number,
+	apiUrl: string = DEFAULT_API_URL
+): Promise<PronunciationRule[]> => {
+	const all: PronunciationRule[] = [];
+	const limit = 200;
+	let offset = 0;
+
+	while (true) {
+		const page = await getRules(dictionaryId, { limit, offset }, apiUrl);
+		all.push(...page.data);
+		if (page.data.length < limit) break;
+		offset += limit;
+	}
+
+	return all;
+};
+
+/**
  * Add a single rule to a dictionary.
  */
 export const createRule = async (
@@ -139,6 +162,24 @@ export const bulkUpsertRules = async (
 	return response.data;
 };
 
+/**
+ * Bulk upload rules from a CSV file (create or update by grapheme match).
+ */
+export const bulkUploadCsvRules = async (
+	dictionaryId: number,
+	file: File,
+	apiUrl: string = DEFAULT_API_URL
+): Promise<BulkUploadCsvResult> => {
+	const formData = new FormData();
+	formData.append('file', file);
+	const response = await axios.post<BulkUploadCsvResult>(
+		`${apiUrl}${BASE_PATH}/${dictionaryId}/rules/bulk/csv`,
+		formData,
+		{ headers: { 'Content-Type': 'multipart/form-data' } }
+	);
+	return response.data;
+};
+
 // ── Sync ──
 
 /**
@@ -157,14 +198,18 @@ export const syncDictionary = async (
 // ── Agent attachment ──
 
 /**
- * Attach a pronunciation dictionary to an ElevenLabs agent.
+ * Attach multiple pronunciation dictionaries to an agent in a single call.
+ * The provided list replaces the agent's complete set of attached dictionaries.
+ * Requires at least one dictionaryId.
  */
-export const attachDictionaryToAgent = async (
-	dictionaryId: number,
+export const bulkAttachDictionariesToAgent = async (
+	dictionaryIds: number[],
 	agentId: string,
 	apiUrl: string = DEFAULT_API_URL
 ): Promise<void> => {
-	await axios.put(`${apiUrl}${BASE_PATH}/${dictionaryId}/agents/${agentId}`);
+	await axios.put(`${apiUrl}${BASE_PATH}/bulk-attach/agents/${agentId}`, {
+		dictionaryIds,
+	});
 };
 
 /**

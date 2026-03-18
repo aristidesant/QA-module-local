@@ -11,7 +11,13 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { IconArrowLeft, IconBook2, IconPlus } from '@tabler/icons-react';
+import {
+	IconArrowLeft,
+	IconBook2,
+	IconDownload,
+	IconPlus,
+	IconUpload,
+} from '@tabler/icons-react';
 import { Trans, useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
 import AppDrawer from '~/components/AppDrawer';
@@ -28,9 +34,12 @@ import {
 	useDeleteDictionary,
 	useSyncDictionary,
 } from '~/queries/pronunciationDictionaryQueries';
+import { exportAllRules } from '~/api/pronunciationDictionaryApi';
+import { downloadDictionaryAsCsv } from './dictionaryExport';
 import { useDictionaryTableColumns } from './useDictionaryTableColumns';
 import { RuleList } from './RuleList';
 import { RuleForm } from './RuleForm';
+import CsvUploadModal from './CsvUploadModal';
 import styles from './DictionaryRulesPage.module.css';
 
 export default function DictionaryRulesPage() {
@@ -75,6 +84,16 @@ export default function DictionaryRulesPage() {
 	const [selectedRule, setSelectedRule] = useState<PronunciationRule | null>(
 		null
 	);
+
+	// ── CSV upload modal ──
+	const [csvUploadOpened, { open: openCsvUpload, close: closeCsvUpload }] =
+		useDisclosure(false);
+	const [csvUploadMode, setCsvUploadMode] = useState<
+		'create-and-upload' | 'upload-only'
+	>('create-and-upload');
+
+	// ── Export state ──
+	const [isExporting, setIsExporting] = useState(false);
 
 	// ── Create dictionary form ──
 	const dictForm = useForm({
@@ -185,12 +204,62 @@ export default function DictionaryRulesPage() {
 		setSelectedRule(null);
 	};
 
+	// ── CSV upload handlers ──
+
+	const handleOpenCsvCreate = () => {
+		setCsvUploadMode('create-and-upload');
+		openCsvUpload();
+	};
+
+	const handleOpenCsvUpload = () => {
+		setCsvUploadMode('upload-only');
+		openCsvUpload();
+	};
+
+	const handleCsvUploadSuccess = (createdId?: number) => {
+		if (createdId) {
+			// Navigate to the newly created dictionary
+			const found = dictionariesResponse?.data.find((d) => d.id === createdId);
+			if (found) setActiveDictionary(found);
+		}
+	};
+
+	// ── Export handler ──
+
+	const handleExport = async (dict: PronunciationDictionary) => {
+		setIsExporting(true);
+		try {
+			const rules = await exportAllRules(dict.id);
+			if (rules.length === 0) {
+				notifications.show({
+					message: t('export.emptyNotification'),
+					color: 'yellow',
+				});
+				return;
+			}
+			downloadDictionaryAsCsv(dict.name, rules);
+			notifications.show({
+				message: t('export.successNotification'),
+				color: 'green',
+			});
+		} catch {
+			notifications.show({
+				message: t('export.errorNotification'),
+				color: 'red',
+			});
+		} finally {
+			setIsExporting(false);
+		}
+	};
+
 	// ── Dictionary table columns ──
 	const dictionaryColumns = useDictionaryTableColumns({
 		onOpen: setActiveDictionary,
 		onSync: handleSync,
 		onDelete: handleOpenDeleteDict,
+		onExport: handleExport,
 		isSyncing: syncDictionary.isPending,
+		isExporting,
 	});
 
 	// ── Create dictionary modal (shared between views) ──
@@ -298,6 +367,27 @@ export default function DictionaryRulesPage() {
 							onClick: handleCreateRule,
 						},
 					}}
+					headerActions={
+						<Group gap='xs'>
+							<Button
+								leftSection={<IconDownload size={16} />}
+								variant='default'
+								size='sm'
+								loading={isExporting}
+								onClick={() => handleExport(activeDictionary)}
+							>
+								{t('export.buttonLabel')}
+							</Button>
+							<Button
+								leftSection={<IconUpload size={16} />}
+								variant='default'
+								size='sm'
+								onClick={handleOpenCsvUpload}
+							>
+								{t('upload.buttonLabel')}
+							</Button>
+						</Group>
+					}
 				>
 					<RuleList
 						dictionaryId={activeDictionary.id}
@@ -318,6 +408,14 @@ export default function DictionaryRulesPage() {
 						onSuccess={handleRuleDrawerClose}
 					/>
 				</AppDrawer>
+
+				<CsvUploadModal
+					mode='upload-only'
+					dictionaryId={activeDictionary.id}
+					opened={csvUploadOpened && csvUploadMode === 'upload-only'}
+					onClose={closeCsvUpload}
+					onSuccess={handleCsvUploadSuccess}
+				/>
 
 				{deleteDictModal}
 			</Stack>
@@ -346,6 +444,16 @@ export default function DictionaryRulesPage() {
 						onClick: openCreateDict,
 					},
 				}}
+				headerActions={
+					<Button
+						leftSection={<IconUpload size={16} />}
+						variant='default'
+						size='sm'
+						onClick={handleOpenCsvCreate}
+					>
+						{t('upload.buttonLabel')}
+					</Button>
+				}
 			>
 				<div className={styles.emptyState}>
 					<IconBook2
@@ -369,6 +477,12 @@ export default function DictionaryRulesPage() {
 					</Button>
 				</div>
 				{createDictModal}
+				<CsvUploadModal
+					mode='create-and-upload'
+					opened={csvUploadOpened && csvUploadMode === 'create-and-upload'}
+					onClose={closeCsvUpload}
+					onSuccess={handleCsvUploadSuccess}
+				/>
 			</SectionCard>
 		);
 	}
@@ -388,6 +502,16 @@ export default function DictionaryRulesPage() {
 						onClick: openCreateDict,
 					},
 				}}
+				headerActions={
+					<Button
+						leftSection={<IconUpload size={16} />}
+						variant='default'
+						size='sm'
+						onClick={handleOpenCsvCreate}
+					>
+						{t('upload.buttonLabel')}
+					</Button>
+				}
 			>
 				<BaseTable
 					data={dictionaries}
@@ -411,6 +535,12 @@ export default function DictionaryRulesPage() {
 
 			{createDictModal}
 			{deleteDictModal}
+			<CsvUploadModal
+				mode='create-and-upload'
+				opened={csvUploadOpened && csvUploadMode === 'create-and-upload'}
+				onClose={closeCsvUpload}
+				onSuccess={handleCsvUploadSuccess}
+			/>
 		</Stack>
 	);
 }

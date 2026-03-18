@@ -7,6 +7,7 @@ import {
 	LoadingOverlay,
 	Popover,
 	SegmentedControl,
+	Select,
 	SimpleGrid,
 	Stack,
 	Text,
@@ -17,12 +18,15 @@ import { IconInfoCircle } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useTranslation } from 'react-i18next';
+import type { AxiosError } from 'axios';
 import type {
 	PronunciationRule,
+	RuleCategory,
 	RuleType,
 } from '~/models/PronunciationDictionaryModel';
 import {
 	useCreateRule,
+	useSyncDictionary,
 	useUpdateRule,
 } from '~/queries/pronunciationDictionaryQueries';
 import styles from './RuleForm.module.css';
@@ -41,6 +45,7 @@ interface RuleFormValues {
 	phoneme: string;
 	locale: string;
 	description: string;
+	category: RuleCategory;
 }
 
 const DEFAULT_VALUES: RuleFormValues = {
@@ -50,6 +55,7 @@ const DEFAULT_VALUES: RuleFormValues = {
 	phoneme: '',
 	locale: '',
 	description: '',
+	category: 'GENERAL',
 };
 
 export function RuleForm({
@@ -63,6 +69,7 @@ export function RuleForm({
 
 	const createRule = useCreateRule(dictionaryId);
 	const updateRule = useUpdateRule(dictionaryId);
+	const syncMutation = useSyncDictionary();
 	const isLoading = createRule.isPending || updateRule.isPending;
 
 	const form = useForm<RuleFormValues>({
@@ -95,6 +102,7 @@ export function RuleForm({
 			phoneme: initialData.phoneme || '',
 			locale: initialData.locale || '',
 			description: initialData.description || '',
+			category: initialData.category ?? 'GENERAL',
 		});
 		form.clearErrors();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -111,15 +119,22 @@ export function RuleForm({
 		onSuccess();
 	}, [isEdit, onSuccess, t]);
 
-	const handleError = useCallback(() => {
-		notifications.show({
-			title: 'Error',
-			message: isEdit
+	const handleError = useCallback(
+		(error: unknown) => {
+			const fallback = isEdit
 				? t('rules.notifications.updateError')
-				: t('rules.notifications.createError'),
-			color: 'red',
-		});
-	}, [isEdit, t]);
+				: t('rules.notifications.createError');
+			const apiMessage =
+				(error as AxiosError<{ message?: string }>)?.response?.data?.message ??
+				fallback;
+			notifications.show({
+				title: 'Error',
+				message: apiMessage,
+				color: 'red',
+			});
+		},
+		[isEdit, t]
+	);
 
 	const handleSubmit = useCallback(
 		(values: RuleFormValues) => {
@@ -133,12 +148,35 @@ export function RuleForm({
 				...(values.description
 					? { description: values.description.trim() }
 					: {}),
+				category: values.category,
 			};
 
 			if (isEdit && initialData) {
 				updateRule.mutate(
 					{ ruleId: initialData.id, params: payload },
-					{ onSuccess: handleSuccess, onError: handleError }
+					{
+						onSuccess: () => {
+							handleSuccess();
+							// Fire-and-forget sync so all attached agents get the new versionId
+							syncMutation.mutate(dictionaryId, {
+								onSuccess: () => {
+									notifications.show({
+										title: t('dictionary.notifications.syncSuccess'),
+										message: t('dictionary.notifications.syncSuccess'),
+										color: 'teal',
+									});
+								},
+								onError: () => {
+									notifications.show({
+										title: t('dictionary.notifications.syncError'),
+										message: t('dictionary.notifications.syncError'),
+										color: 'orange',
+									});
+								},
+							});
+						},
+						onError: handleError,
+					}
 				);
 			} else {
 				createRule.mutate(payload, {
@@ -147,7 +185,17 @@ export function RuleForm({
 				});
 			}
 		},
-		[isEdit, initialData, createRule, updateRule, handleSuccess, handleError]
+		[
+			isEdit,
+			initialData,
+			createRule,
+			updateRule,
+			syncMutation,
+			dictionaryId,
+			handleSuccess,
+			handleError,
+			t,
+		]
 	);
 
 	const ruleTypeOptions = [
@@ -320,6 +368,36 @@ export function RuleForm({
 							radius='md'
 							key={form.key('locale')}
 							{...form.getInputProps('locale')}
+						/>
+						<Select
+							label={t('form.fields.category.label')}
+							placeholder={t('form.fields.category.placeholder')}
+							size='sm'
+							radius='md'
+							data={[
+								{
+									value: 'GENERAL',
+									label: t('form.fields.category.options.GENERAL'),
+								},
+								{
+									value: 'NAME',
+									label: t('form.fields.category.options.NAME'),
+								},
+								{
+									value: 'LAST_NAME',
+									label: t('form.fields.category.options.LAST_NAME'),
+								},
+								{
+									value: 'CITY',
+									label: t('form.fields.category.options.CITY'),
+								},
+								{
+									value: 'PROVINCE',
+									label: t('form.fields.category.options.PROVINCE'),
+								},
+							]}
+							key={form.key('category')}
+							{...form.getInputProps('category')}
 						/>
 					</SimpleGrid>
 

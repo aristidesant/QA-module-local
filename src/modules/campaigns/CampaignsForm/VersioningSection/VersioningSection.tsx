@@ -1,21 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
-import {
-	Alert,
-	Button,
-	Group,
-	Loader,
-	Select,
-	Stack,
-	Text,
-} from '@mantine/core';
+﻿import { useEffect, useMemo, useState } from 'react';
+import { Alert, Button, Group, Loader, Stack, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import {
-	IconAlertCircle,
-	IconGitBranch,
-	IconHistory,
-	IconRotate2,
-} from '@tabler/icons-react';
+import { IconAlertCircle, IconHistory, IconRotate2 } from '@tabler/icons-react';
 import { isAxiosError } from 'axios';
 import { useTranslation } from 'react-i18next';
 import BaseTable from '~/components/BaseTable/BaseTable';
@@ -70,19 +57,6 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 		isError: isCampaignAgentsError,
 		refetch: refetchCampaignAgents,
 	} = useGetCampaignAgents(campaignId);
-
-	const agentOptions = useMemo(
-		() =>
-			campaignAgents.map((campaignAgent: CampaignAgent) => ({
-				value: campaignAgent.agentId,
-				label:
-					campaignAgent.agent?.name?.trim() ||
-					t('selector.fallbackAgentLabel', {
-						agentId: campaignAgent.agentId,
-					}),
-			})),
-		[campaignAgents, t]
-	);
 
 	const effectiveSelectedCampaignAgentId =
 		selectedCampaignAgentId ??
@@ -363,41 +337,6 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 						</Alert>
 					) : null}
 
-					{campaignAgents.length > 0 ? (
-						<div className={classes.selectorCard}>
-							<Stack gap='xs'>
-								<Text size='sm' fw={600}>
-									{t('selector.title')}
-								</Text>
-								<Text size='sm' c='dimmed'>
-									{isMultiAgentCampaign
-										? t('selector.descriptionMulti')
-										: t('selector.descriptionSingle')}
-								</Text>
-								<Group gap='sm' align='end' className={classes.selectorRow}>
-									<Select
-										label={t('selector.label')}
-										placeholder={t('selector.placeholder')}
-										data={agentOptions}
-										value={effectiveSelectedCampaignAgentId}
-										onChange={setSelectedCampaignAgentId}
-										size='sm'
-										className={classes.selectorControl}
-										allowDeselect={false}
-										disabled={campaignAgents.length === 1}
-									/>
-									{selectedCampaignAgent ? (
-										<Text size='sm' c='dimmed'>
-											{t('selector.agentId', {
-												agentId: selectedCampaignAgent.agentId,
-											})}
-										</Text>
-									) : null}
-								</Group>
-							</Stack>
-						</div>
-					) : null}
-
 					{isBusy ? (
 						<Group justify='center' py='xl'>
 							<Loader size='sm' />
@@ -437,22 +376,6 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 					) : (
 						<>
 							<div className={classes.summaryGrid}>
-								<div className={classes.summaryCard}>
-									<Group gap='xs' mb={4}>
-										<IconGitBranch size={16} />
-										<Text size='xs' c='dimmed'>
-											{t('summary.branch')}
-										</Text>
-									</Group>
-									<Text size='sm' fw={600}>
-										{mainBranch.name}
-									</Text>
-									<Text size='xs' c='dimmed'>
-										{t('summary.liveTraffic', {
-											percentage: mainBranch.currentLivePercentage,
-										})}
-									</Text>
-								</div>
 								<div className={classes.summaryCard}>
 									<Group gap='xs' mb={4}>
 										<IconHistory size={16} />

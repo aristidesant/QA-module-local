@@ -1,7 +1,7 @@
 {
 	"section": {
 		"title": "Versionado",
-		"description": "Revisa snapshots inmutables recientes de la rama main, compara cambios y revierte de forma segura."
+		"description": "Revisa snapshots inmutables recientes de la configuración del Agente, compara cambios y revierte de forma segura."
 	},
 	"summary": {
 		"branch": "Rama",
@@ -11,8 +11,8 @@
 		"notAvailable": "No disponible"
 	},
 	"history": {
-		"title": "Historial de la rama",
-		"description": "Snapshots recientes confirmados en la rama main.",
+		"title": "Historial del agente",
+		"description": "Snapshots recientes confirmados en el Agente.",
 		"empty": "Aún no hay versiones anteriores disponibles. Guarda nuevos cambios del agente para crear historial.",
 		"descriptionFallback": "Snapshot de versión",
 		"unknownAuthor": "Autor desconocido",

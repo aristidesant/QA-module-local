@@ -11,6 +11,13 @@ export interface PronunciationDictionary {
 
 export type RuleType = 'ALIAS' | 'PHONEME';
 
+export type RuleCategory =
+	| 'CITY'
+	| 'PROVINCE'
+	| 'NAME'
+	| 'LAST_NAME'
+	| 'GENERAL';
+
 export interface PronunciationRule {
 	id: number;
 	dictionaryId: number;
@@ -21,6 +28,7 @@ export interface PronunciationRule {
 	phoneme: string | null;
 	locale: string | null;
 	description: string | null;
+	category: RuleCategory;
 	createdAt: string;
 }
 
@@ -36,6 +44,7 @@ export interface CreateRuleParams {
 	phoneme?: string;
 	locale?: string;
 	description?: string;
+	category?: RuleCategory;
 }
 
 export interface UpdateRuleParams {
@@ -45,8 +54,22 @@ export interface UpdateRuleParams {
 	phoneme?: string;
 	locale?: string;
 	description?: string;
+	category?: RuleCategory;
 }
 
 export interface BulkUpsertRulesParams {
 	rules: CreateRuleParams[];
+}
+
+export interface BulkUploadCsvError {
+	row: number;
+	grapheme: string;
+	error: string;
+}
+
+export interface BulkUploadCsvResult {
+	processed: number;
+	succeeded: number;
+	failed: number;
+	errors: BulkUploadCsvError[];
 }

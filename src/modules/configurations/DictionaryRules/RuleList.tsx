@@ -5,6 +5,7 @@ import {
 	CloseButton,
 	Group,
 	Modal,
+	MultiSelect,
 	Select,
 	Stack,
 	Text,
@@ -39,8 +40,12 @@ export function RuleList({ dictionaryId, onEdit }: RuleListProps) {
 	const { t } = useTranslation('dictionary-rules');
 	const [search, setSearch] = useState('');
 	const [typeFilter, setTypeFilter] = useState<string | null>(null);
+	const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
 
-	const activeFiltersCount = (search ? 1 : 0) + (typeFilter ? 1 : 0);
+	const activeFiltersCount =
+		(search ? 1 : 0) +
+		(typeFilter ? 1 : 0) +
+		(categoryFilter.length > 0 ? 1 : 0);
 	const hasActiveFilters = activeFiltersCount > 0;
 
 	const pagination = usePagination({ initialItemsPerPage: 10 });
@@ -92,6 +97,14 @@ export function RuleList({ dictionaryId, onEdit }: RuleListProps) {
 		}
 	};
 
+	const CATEGORY_OPTIONS = [
+		{ value: 'CITY', label: t('categories.CITY') },
+		{ value: 'PROVINCE', label: t('categories.PROVINCE') },
+		{ value: 'NAME', label: t('categories.NAME') },
+		{ value: 'LAST_NAME', label: t('categories.LAST_NAME') },
+		{ value: 'GENERAL', label: t('categories.GENERAL') },
+	];
+
 	const columns = useRuleTableColumns({ onEdit, onDelete: handleDelete });
 
 	// Client-side filtering
@@ -113,8 +126,14 @@ export function RuleList({ dictionaryId, onEdit }: RuleListProps) {
 			result = result.filter((r) => r.ruleType === typeFilter);
 		}
 
+		if (categoryFilter.length > 0) {
+			result = result.filter((r) =>
+				categoryFilter.includes(r.category ?? 'GENERAL')
+			);
+		}
+
 		return result;
-	}, [rules, search, typeFilter]);
+	}, [rules, search, typeFilter, categoryFilter]);
 
 	const totalCount = totalRules;
 
@@ -149,6 +168,16 @@ export function RuleList({ dictionaryId, onEdit }: RuleListProps) {
 						clearable
 						size='sm'
 						radius='md'
+					/>
+					<MultiSelect
+						placeholder={t('rules.filterCategory')}
+						data={CATEGORY_OPTIONS}
+						value={categoryFilter}
+						onChange={setCategoryFilter}
+						clearable
+						size='sm'
+						radius='md'
+						maxDropdownHeight={200}
 					/>
 				</div>
 				<div className={styles.toolbarMeta}>
