@@ -1,4 +1,4 @@
-import { AreaChart } from '@mantine/charts';
+import { LineChart } from '@mantine/charts';
 import { Group, Text } from '@mantine/core';
 import {
 	IconChartLine,
@@ -17,68 +17,17 @@ import type { TimeSeriesWidgetContentProps } from '../widgetContent.types';
 import sharedStyles from '../../CampaignDashboardViewerWidgetContent.module.css';
 import styles from './LineChartWidgetContent.module.css';
 
+type TimeSeriesChartDatum = {
+	label: string;
+	currentValue: number | null;
+	currentDisplayValue: number | null;
+	previousValue: number | null;
+};
+
 const toTimestamp = (value: string) => {
 	const timestamp = new Date(value).getTime();
 
 	return Number.isFinite(timestamp) ? timestamp : 0;
-};
-
-const formatAxisLabel = (
-	bucketStart: string,
-	granularity: 'hour' | 'day' | 'week' | 'month',
-	locale?: string
-) => {
-	const date = new Date(bucketStart);
-
-	if (!Number.isFinite(date.getTime())) {
-		return bucketStart;
-	}
-
-	if (granularity === 'hour') {
-		return date.toLocaleTimeString(locale, {
-			hour: 'numeric',
-			minute: '2-digit',
-		});
-	}
-
-	if (granularity === 'month') {
-		return date.toLocaleDateString(locale, {
-			month: 'short',
-		});
-	}
-
-	return date.toLocaleDateString(locale, {
-		month: 'short',
-		day: 'numeric',
-	});
-};
-
-const formatTooltipLabel = (
-	bucketStart: string,
-	bucketEnd: string,
-	locale?: string
-) => {
-	const start = new Date(bucketStart);
-	const end = new Date(bucketEnd);
-
-	if (!Number.isFinite(start.getTime())) {
-		return bucketStart;
-	}
-
-	if (!Number.isFinite(end.getTime()) || start.getTime() === end.getTime()) {
-		return start.toLocaleString(locale, {
-			dateStyle: 'medium',
-			timeStyle: 'short',
-		});
-	}
-
-	return `${start.toLocaleString(locale, {
-		dateStyle: 'medium',
-		timeStyle: 'short',
-	})} - ${end.toLocaleString(locale, {
-		dateStyle: 'medium',
-		timeStyle: 'short',
-	})}`;
 };
 
 const formatSignedMetricValue = (value: number) => {
@@ -97,44 +46,68 @@ const getDeltaTone = (delta: number) => {
 	return 'flat';
 };
 
+const isValueDefined = (value: number | null | undefined): value is number =>
+	value !== null && value !== undefined;
+
+const formatPointValue = (value: number | null | undefined) =>
+	isValueDefined(value) ? formatMetricValue(value) : '-';
+
 const LineChartWidgetContent = ({
 	widget,
 	accentColor,
 	layout,
+	comparisonData,
 	selectedTimeRange,
 }: TimeSeriesWidgetContentProps) => {
-	const { t, i18n } = useTranslation('campaign.form.dashboards');
+	const { t } = useTranslation('campaign.form.dashboards');
 	const metrics = getWidgetChartMetrics(layout);
-	const locale = i18n.language;
 
-	const sortedPoints = [...widget.result.points].sort(
+	const currentPoints = [...widget.result.points].sort(
 		(left, right) =>
 			toTimestamp(left.bucketStart) - toTimestamp(right.bucketStart)
 	);
-	const data = sortedPoints.map((point) => ({
-		axisLabel: formatAxisLabel(
-			point.bucketStart,
-			widget.result.meta.granularity,
-			locale
-		),
-		tooltipLabel: formatTooltipLabel(
-			point.bucketStart,
-			point.bucketEnd,
-			locale
-		),
-		value: point.value,
-	}));
-	const latestPoint = data[data.length - 1];
-	const previousPoint = data[data.length - 2];
-	const change = previousPoint ? latestPoint.value - previousPoint.value : null;
+	const previousPoints =
+		comparisonData?.previous?.kind === 'time_series'
+			? [...comparisonData.previous.points].sort(
+					(left, right) =>
+						toTimestamp(left.bucketStart) - toTimestamp(right.bucketStart)
+				)
+			: [];
+	const hasComparisonSeries = previousPoints.length > 0;
+	const chartData = Array.from(
+		{ length: Math.max(currentPoints.length, previousPoints.length) },
+		(_, index): TimeSeriesChartDatum => {
+			const currentPoint = currentPoints[index];
+			const previousPoint = previousPoints[index];
+
+			return {
+				label: currentPoint?.label ?? previousPoint?.label ?? String(index + 1),
+				currentValue: currentPoint?.value ?? null,
+				currentDisplayValue:
+					currentPoint?.valueFormat ?? currentPoint?.value ?? null,
+				previousValue: previousPoint?.value ?? null,
+			};
+		}
+	).filter(
+		(point) =>
+			point.label.length > 0 ||
+			isValueDefined(point.currentValue) ||
+			isValueDefined(point.previousValue)
+	);
+	const currentLatestPoint = currentPoints.at(-1);
+	const previousCurrentPoint = currentPoints.at(-2);
+	const change =
+		currentLatestPoint && previousCurrentPoint
+			? currentLatestPoint.value - previousCurrentPoint.value
+			: null;
 	const changeTone = change !== null ? getDeltaTone(change) : 'flat';
 	const rangeLabel = selectedTimeRange
 		? t(`dashboard.timeRange.${selectedTimeRange}`)
 		: null;
 	const chartHeight = Math.max(metrics.chartHeight - 8, 72);
-	const showDelta = data.length > 1;
-	const showDots = data.length <= 10;
-	const showAllTicks = data.length <= 8;
+	const showDelta = currentPoints.length > 1;
+	const showDots = chartData.length <= 10;
+	const showAllTicks = chartData.length <= 8;
 
 	const renderTooltip: NonNullable<TooltipProps<number, string>['content']> = ({
 		active,
@@ -143,31 +116,60 @@ const LineChartWidgetContent = ({
 	}) => {
 		if (!active || !payload?.length) return null;
 
-		const point = payload[0]?.payload as
-			| { axisLabel: string; tooltipLabel: string; value: number }
-			| undefined;
+		const point = payload[0]?.payload as TimeSeriesChartDatum | undefined;
 
 		if (!point) return null;
 
 		return (
 			<div className={styles.tooltip}>
 				<Text size='xs' c='dimmed' className={styles.tooltipLabel}>
-					{point.tooltipLabel || String(label ?? point.axisLabel)}
+					{String(label ?? point.label)}
 				</Text>
-				<Group gap={6} wrap='nowrap'>
-					<span
-						className={styles.tooltipSwatch}
-						style={{ backgroundColor: accentColor }}
-					/>
-					<Text fw={700} size='sm' className={styles.tooltipValue}>
-						{formatMetricValue(point.value)}
-					</Text>
-				</Group>
+
+				<div className={styles.tooltipSeriesList}>
+					{point.currentValue !== null && point.currentValue !== undefined ? (
+						<div className={styles.tooltipSeriesRow}>
+							<Group gap={6} wrap='nowrap' className={styles.tooltipSeriesMeta}>
+								<span
+									className={styles.tooltipSwatch}
+									style={{ backgroundColor: accentColor }}
+								/>
+								<Text size='xs' fw={600} className={styles.tooltipSeriesName}>
+									{t('dashboard.lineChart.current')}
+								</Text>
+							</Group>
+							<Text fw={700} size='sm' className={styles.tooltipValue}>
+								{formatPointValue(point.currentDisplayValue)}
+							</Text>
+						</div>
+					) : null}
+
+					{hasComparisonSeries &&
+					point.previousValue !== null &&
+					point.previousValue !== undefined ? (
+						<div className={styles.tooltipSeriesRow}>
+							<Group gap={6} wrap='nowrap' className={styles.tooltipSeriesMeta}>
+								<span
+									className={styles.tooltipSwatch}
+									style={{
+										backgroundColor: 'var(--mantine-color-gray-5)',
+									}}
+								/>
+								<Text size='xs' fw={600} className={styles.tooltipSeriesName}>
+									{t('dashboard.lineChart.previous')}
+								</Text>
+							</Group>
+							<Text fw={700} size='sm' className={styles.tooltipValue}>
+								{formatPointValue(point.previousValue)}
+							</Text>
+						</div>
+					) : null}
+				</div>
 			</div>
 		);
 	};
 
-	if (data.length === 0) {
+	if (currentPoints.length === 0) {
 		return (
 			<DashboardWidgetCard title={widget.title} accentColor={accentColor}>
 				<div className={styles.emptyState}>
@@ -201,7 +203,9 @@ const LineChartWidgetContent = ({
 						</Text>
 						<Group gap={8} wrap='nowrap' justify='flex-end'>
 							<Text fw={800} size='xl' className={styles.latestValue}>
-								{formatMetricValue(latestPoint.value)}
+								{formatPointValue(
+									currentLatestPoint?.valueFormat ?? currentLatestPoint?.value
+								)}
 							</Text>
 							{showDelta ? (
 								<span
@@ -224,10 +228,21 @@ const LineChartWidgetContent = ({
 				<div
 					className={`${sharedStyles.chartWrapper} ${styles.lineChartChartWrapper}`}
 				>
-					<AreaChart
-						data={data}
-						dataKey='axisLabel'
-						series={[{ name: 'value', color: accentColor }]}
+					<LineChart
+						data={chartData}
+						dataKey='label'
+						series={[
+							{ name: 'currentValue', color: accentColor },
+							...(hasComparisonSeries
+								? [
+										{
+											name: 'previousValue',
+											color: 'gray.5',
+											strokeDasharray: '6 4',
+										},
+									]
+								: []),
+						]}
 						type='default'
 						withLegend={false}
 						withTooltip
@@ -254,10 +269,6 @@ const LineChartWidgetContent = ({
 							width: 36,
 							tickMargin: 6,
 						}}
-						areaProps={{
-							strokeLinecap: 'round',
-							strokeLinejoin: 'round',
-						}}
 						tooltipProps={{
 							content: renderTooltip,
 							cursor: {
@@ -268,7 +279,9 @@ const LineChartWidgetContent = ({
 						}}
 						h={chartHeight}
 						valueFormatter={(value) =>
-							Number.isFinite(value) ? value.toLocaleString() : '0'
+							typeof value === 'number' && Number.isFinite(value)
+								? formatMetricValue(value)
+								: '-'
 						}
 					/>
 				</div>

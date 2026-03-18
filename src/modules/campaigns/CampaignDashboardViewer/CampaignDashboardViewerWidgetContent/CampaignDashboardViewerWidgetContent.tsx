@@ -63,6 +63,8 @@ const CampaignDashboardViewerWidgetContent = ({
 					accentColor={accentColor}
 					layout={layout}
 					noDragClassName={noDragClassName}
+					comparisonData={comparisonData}
+					selectedTimeRange={selectedTimeRange}
 				/>
 			);
 		}
