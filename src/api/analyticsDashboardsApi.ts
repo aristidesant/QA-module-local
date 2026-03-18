@@ -3,21 +3,18 @@ import { DEFAULT_API_URL } from './config';
 import type {
 	CreateDashboardDto,
 	CreateDashboardWidgetDto,
-	CreateMetricDefinitionDto,
 	DashboardListParams,
 	DashboardDefinition,
+	DashboardWidgetPreviewResponse,
 	DashboardRenderComparisonRequest,
 	DashboardRenderComparisonResponse,
 	DashboardRenderRequest,
 	DashboardRenderResponse,
 	DashboardWidget,
-	MetricDefinition,
+	PreviewDashboardWidgetDto,
 	UpdateDashboardDto,
 	UpdateDashboardWidgetDto,
-	UpdateMetricDefinitionDto,
 } from '~/models/AnalyticsDashboard';
-
-type ListParams = Record<string, string | number | boolean | null | undefined>;
 
 const normalizeDashboardListParams = (params?: DashboardListParams) => {
 	if (!params || params.campaignId == null) {
@@ -52,48 +49,6 @@ const extractArray = <T>(payload: unknown): T[] => {
 
 const analyticsDashboardsApi = () => {
 	return {
-		getMetricDefinitions: async (params?: ListParams) => {
-			const response = await axios.get<
-				MetricDefinition[] | { data: MetricDefinition[] }
-			>(`${DEFAULT_API_URL}/analytics-dashboards/metric-definitions`, {
-				params,
-			});
-			return extractArray<MetricDefinition>(response.data);
-		},
-
-		getMetricDefinitionById: async (id: number | string) => {
-			const response = await axios.get<MetricDefinition>(
-				`${DEFAULT_API_URL}/analytics-dashboards/metric-definitions/${id}`
-			);
-			return response.data;
-		},
-
-		createMetricDefinition: async (data: CreateMetricDefinitionDto) => {
-			const response = await axios.post<MetricDefinition>(
-				`${DEFAULT_API_URL}/analytics-dashboards/metric-definitions`,
-				data
-			);
-			return response.data;
-		},
-
-		updateMetricDefinition: async (
-			id: number | string,
-			data: UpdateMetricDefinitionDto
-		) => {
-			const response = await axios.patch<MetricDefinition>(
-				`${DEFAULT_API_URL}/analytics-dashboards/metric-definitions/${id}`,
-				data
-			);
-			return response.data;
-		},
-
-		deleteMetricDefinition: async (id: number | string) => {
-			const response = await axios.delete(
-				`${DEFAULT_API_URL}/analytics-dashboards/metric-definitions/${id}`
-			);
-			return response.data;
-		},
-
 		getDashboards: async (params?: DashboardListParams) => {
 			const response = await axios.get<
 				DashboardDefinition[] | { data: DashboardDefinition[] }
@@ -164,6 +119,18 @@ const analyticsDashboardsApi = () => {
 		deleteDashboardWidget: async (id: number | string) => {
 			const response = await axios.delete(
 				`${DEFAULT_API_URL}/analytics-dashboards/widgets/${id}`
+			);
+			return response.data;
+		},
+
+		previewDashboardWidget: async (
+			data: PreviewDashboardWidgetDto,
+			signal?: AbortSignal
+		) => {
+			const response = await axios.post<DashboardWidgetPreviewResponse>(
+				`${DEFAULT_API_URL}/analytics-dashboards/widgets/preview`,
+				data,
+				{ signal }
 			);
 			return response.data;
 		},

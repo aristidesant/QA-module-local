@@ -76,7 +76,7 @@ export const AgentVoiceEditModal: React.FC<AgentVoiceEditModalProps> = ({
 					.then(() => {
 						setPlayingVoiceId(voiceId);
 					})
-					.catch(console.error);
+					.catch(() => undefined);
 			}
 		},
 		[playingVoiceId]

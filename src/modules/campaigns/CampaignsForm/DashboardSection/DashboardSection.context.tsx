@@ -50,7 +50,7 @@ export const DashboardSectionProvider = ({
 	const [selectedDashboardId, setSelectedDashboardId] = useState<number | null>(
 		null
 	);
-	const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+	const [isPreviewOpen, setIsPreviewOpen] = useState(true);
 	const [dashboardModalOpened, setDashboardModalOpened] = useState(false);
 	const [widgetModalOpened, setWidgetModalOpened] = useState(false);
 	const [editingDashboard, setEditingDashboard] =

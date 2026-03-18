@@ -178,7 +178,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 			setIsVisualizerActive(true);
 			return true;
 		} catch (error) {
-			console.error('Error initializing visualizer:', error);
+			void error;
 			setIsVisualizerActive(false);
 			return false;
 		}
@@ -257,9 +257,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 		}
 
 		initializeVisualizer().finally(() => {
-			audioRef.current?.play().catch((error) => {
-				console.error('Error playing audio:', error);
-			});
+			audioRef.current?.play().catch(() => undefined);
 		});
 	};
 
@@ -399,7 +397,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 			document.body.removeChild(link);
 			URL.revokeObjectURL(url);
 		} catch (error) {
-			console.error('Error downloading audio:', error);
+			void error;
 		}
 	};
 
@@ -412,7 +410,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 			await refetchPresignedUrl();
 			setReloadToken((previous) => previous + 1);
 		} catch (error) {
-			console.error('Error reuploading audio:', error);
+			void error;
 		}
 	};
 

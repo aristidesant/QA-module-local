@@ -42,8 +42,7 @@ export const StepFourParameters: React.FC<StepFourParametersProps> = ({
 					data: { isDraft: true, draftStep: 4 }, // Save as Step 4 (Success Step)
 				});
 			} catch (error) {
-				// eslint-disable-next-line no-console
-				console.error('Failed to save draft step:', error);
+				void error;
 			}
 		}
 		onNext();

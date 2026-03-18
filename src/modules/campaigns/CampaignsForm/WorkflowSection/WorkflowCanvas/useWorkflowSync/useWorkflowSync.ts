@@ -48,11 +48,6 @@ interface NodeLayoutMeasurement {
 
 type WorkflowHydrationMode = 'external' | 'default-init' | 'skip';
 
-const getWorkflowCounts = (workflow?: AgentWorkflow) => ({
-	nodes: workflow?.nodes ? Object.keys(workflow.nodes).length : 0,
-	edges: workflow?.edges ? Object.keys(workflow.edges).length : 0,
-});
-
 const getWorkflowHydrationMode = ({
 	workflow,
 	allowDefaultInit,
@@ -185,7 +180,6 @@ const useWorkflowHydration = ({
 				? workflow
 				: buildDefaultWorkflow();
 		const nextWorkflowSignature = serializeWorkflow(nextWorkflow);
-		const nextWorkflowCounts = getWorkflowCounts(nextWorkflow);
 		const pendingCanvasSignatures = refs.pendingCanvasSignaturesRef.current;
 		const pendingCanvasSignatureIndex = pendingCanvasSignatures.indexOf(
 			nextWorkflowSignature
@@ -209,16 +203,6 @@ const useWorkflowHydration = ({
 
 		const { nodes: mappedNodes, edges: mappedEdges } =
 			mapWorkflowToNodes(nextWorkflow);
-
-		console.log('[useWorkflowSync] hydrating workflow', {
-			hydrationMode,
-			externalWorkflowSignature: workflowSignature,
-			nextWorkflowSignature,
-			workflowNodes: nextWorkflowCounts.nodes,
-			workflowEdges: nextWorkflowCounts.edges,
-			mappedNodes: mappedNodes.length,
-			mappedEdges: mappedEdges.length,
-		});
 
 		refs.isHydratingRef.current = true;
 		refs.hasHydratedRef.current = true;

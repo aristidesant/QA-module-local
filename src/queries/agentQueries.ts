@@ -28,7 +28,7 @@ export const useDuplicateAgent = () => {
 			queryClient.invalidateQueries({ queryKey: ['agents'] });
 		},
 		onError: (error) => {
-			console.error('Error duplicating agent:', error);
+			void error;
 		},
 	});
 };
@@ -105,7 +105,7 @@ export const useUpdateAgent = () => {
 			}
 		},
 		onError: (error) => {
-			console.error('Error updating agent:', error);
+			void error;
 		},
 	});
 };
@@ -123,7 +123,7 @@ export const useDeleteAgent = () => {
 			queryClient.invalidateQueries({ queryKey: ['agent', id] });
 		},
 		onError: (error) => {
-			console.error('Error deleting agent:', error);
+			void error;
 		},
 	});
 };

@@ -18,12 +18,10 @@ export const useCreateContactGroup = () => {
 		},
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({ queryKey: ['contactGroups'] });
-			// eslint-disable-next-line no-console
-			console.log('Contact group created successfully:', data);
+			void data;
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error creating contact group:', error);
+			void error;
 		},
 	});
 };
@@ -75,12 +73,10 @@ export const useUpdateContactGroup = () => {
 			if (data?.id) {
 				queryClient.invalidateQueries({ queryKey: ['contactGroup', data.id] });
 			}
-			// eslint-disable-next-line no-console
-			console.log('Contact group updated successfully:', data);
+			void data;
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error updating contact group:', error);
+			void error;
 		},
 	});
 };
@@ -96,12 +92,9 @@ export const useDeleteContactGroup = () => {
 		onSuccess: (_, id) => {
 			queryClient.invalidateQueries({ queryKey: ['contactGroups'] });
 			queryClient.invalidateQueries({ queryKey: ['contactGroup', id] });
-			// eslint-disable-next-line no-console
-			console.log('Contact group deleted successfully:', id);
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error deleting contact group:', error);
+			void error;
 		},
 	});
 };
@@ -124,12 +117,10 @@ export const useAddContactToGroup = () => {
 			queryClient.invalidateQueries({
 				queryKey: ['groupContacts', variables.groupId],
 			});
-			// eslint-disable-next-line no-console
-			console.log('Contact added to group successfully:', variables);
+			void variables;
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error adding contact to group:', error);
+			void error;
 		},
 	});
 };
@@ -152,12 +143,10 @@ export const useRemoveContactFromGroup = () => {
 			queryClient.invalidateQueries({
 				queryKey: ['groupContacts', variables.groupId],
 			});
-			// eslint-disable-next-line no-console
-			console.log('Contact removed from group successfully:', variables);
+			void variables;
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error removing contact from group:', error);
+			void error;
 		},
 	});
 };
@@ -180,12 +169,10 @@ export const useAddContactsToGroupBulk = () => {
 			queryClient.invalidateQueries({
 				queryKey: ['groupContacts', variables.groupId],
 			});
-			// eslint-disable-next-line no-console
-			console.log('Contacts added to group in bulk successfully:', variables);
+			void variables;
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error adding contacts to group in bulk:', error);
+			void error;
 		},
 	});
 };
@@ -203,15 +190,10 @@ export const useToggleContactGroupStatus = () => {
 			if (data?.id) {
 				queryClient.invalidateQueries({ queryKey: ['contactGroup', data.id] });
 			}
-			// eslint-disable-next-line no-console
-			console.log(
-				`Contact group ${data?.isActive ? 'activated' : 'deactivated'} successfully:`,
-				data
-			);
+			void data;
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error toggling contact group status:', error);
+			void error;
 		},
 	});
 };

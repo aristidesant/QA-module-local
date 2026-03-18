@@ -103,7 +103,7 @@ const AgentVoices: React.FC<AgentVoicesProps> = ({
 					.then(() => {
 						setPlayingVoiceId(voiceId);
 					})
-					.catch(console.error);
+					.catch(() => undefined);
 			}
 		},
 		[playingVoiceId]

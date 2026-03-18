@@ -124,7 +124,7 @@ export const OutboundCallForm: React.FC<OutboundCallFormProps> = ({
 				message: t('outboundCallForm.startDemoErrorMsg'),
 				color: 'red',
 			});
-			console.error('Error starting demo conversation:', error);
+			void error;
 		}
 	};
 

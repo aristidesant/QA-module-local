@@ -91,9 +91,6 @@ function resetAllStores() {
  * Safe no-op on server.
  */
 export function logout(redirectTo: string = '/login', options?: LogoutOptions) {
-	console.log(
-		'Logging out user, clearing session and redirecting to login page...'
-	);
 	if (typeof window === 'undefined') return;
 	if (logoutInProgress) return;
 	logoutInProgress = true;

@@ -3,7 +3,6 @@ import analyticsDashboardsApi from '~/api/analyticsDashboardsApi';
 import type {
 	CreateDashboardDto,
 	CreateDashboardWidgetDto,
-	CreateMetricDefinitionDto,
 	DashboardListParams,
 	DashboardDefinition,
 	DashboardRenderComparisonResponse,
@@ -11,13 +10,11 @@ import type {
 	DashboardRenderResponse,
 	DashboardRenderUnifiedResponse,
 	DashboardWidget,
-	MetricDefinition,
+	DashboardWidgetPreviewResponse,
+	PreviewDashboardWidgetDto,
 	UpdateDashboardDto,
 	UpdateDashboardWidgetDto,
-	UpdateMetricDefinitionDto,
 } from '~/models/AnalyticsDashboard';
-
-type ListParams = Record<string, string | number | boolean | null | undefined>;
 
 const toUnifiedRenderResponse = (
 	response: DashboardRenderResponse
@@ -62,80 +59,6 @@ const toUnifiedComparisonResponse = (
 		comparisonMap: comparisonMap.size ? comparisonMap : undefined,
 		comparisonPeriod: response.period,
 	};
-};
-
-export const useMetricDefinitions = (params?: ListParams) => {
-	return useQuery({
-		queryKey: ['metric-definitions', params],
-		queryFn: async () => {
-			const api = analyticsDashboardsApi();
-			return api.getMetricDefinitions(params);
-		},
-	});
-};
-
-export const useMetricDefinition = (id?: number | string) => {
-	return useQuery<MetricDefinition>({
-		queryKey: ['metric-definition', id],
-		queryFn: async () => {
-			const api = analyticsDashboardsApi();
-			if (!id) throw new Error('Metric definition id is required');
-			return api.getMetricDefinitionById(id);
-		},
-		enabled: Boolean(id),
-	});
-};
-
-export const useCreateMetricDefinition = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation({
-		mutationFn: async (data: CreateMetricDefinitionDto) => {
-			const api = analyticsDashboardsApi();
-			return api.createMetricDefinition(data);
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['metric-definitions'] });
-		},
-	});
-};
-
-export const useUpdateMetricDefinition = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation({
-		mutationFn: async ({
-			id,
-			data,
-		}: {
-			id: number | string;
-			data: UpdateMetricDefinitionDto;
-		}) => {
-			const api = analyticsDashboardsApi();
-			return api.updateMetricDefinition(id, data);
-		},
-		onSuccess: (_, variables) => {
-			queryClient.invalidateQueries({ queryKey: ['metric-definitions'] });
-			queryClient.invalidateQueries({
-				queryKey: ['metric-definition', variables.id],
-			});
-		},
-	});
-};
-
-export const useDeleteMetricDefinition = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation({
-		mutationFn: async (id: number | string) => {
-			const api = analyticsDashboardsApi();
-			return api.deleteMetricDefinition(id);
-		},
-		onSuccess: (_, id) => {
-			queryClient.invalidateQueries({ queryKey: ['metric-definitions'] });
-			queryClient.invalidateQueries({ queryKey: ['metric-definition', id] });
-		},
-	});
 };
 
 export const useDashboards = (params?: DashboardListParams) => {
@@ -326,6 +249,63 @@ export const useDeleteDashboardWidget = () => {
 	});
 };
 
+const normalizePreviewPayload = (
+	payload: PreviewDashboardWidgetDto
+): PreviewDashboardWidgetDto => ({
+	...(payload.campaignId == null ? {} : { campaignId: payload.campaignId }),
+	widgetType: payload.widgetType,
+	...(payload.width == null ? {} : { width: payload.width }),
+	...(payload.height == null ? {} : { height: payload.height }),
+	dataConfig: {
+		metric: {
+			sourceType: payload.dataConfig.metric.sourceType,
+			aggregationType: payload.dataConfig.metric.aggregationType,
+			...(payload.dataConfig.metric.fieldName
+				? { fieldName: payload.dataConfig.metric.fieldName }
+				: {}),
+			...(payload.dataConfig.metric.metricKey
+				? { metricKey: payload.dataConfig.metric.metricKey }
+				: {}),
+			...(payload.dataConfig.metric.valueField
+				? { valueField: payload.dataConfig.metric.valueField }
+				: {}),
+			...(payload.dataConfig.metric.defaultFilter
+				? { defaultFilter: payload.dataConfig.metric.defaultFilter }
+				: {}),
+			...(payload.dataConfig.metric.supportsGroupBy === undefined
+				? {}
+				: { supportsGroupBy: payload.dataConfig.metric.supportsGroupBy }),
+			...(payload.dataConfig.metric.supportsTimeSeries === undefined
+				? {}
+				: { supportsTimeSeries: payload.dataConfig.metric.supportsTimeSeries }),
+			resultType: payload.dataConfig.metric.resultType,
+		},
+		...(payload.dataConfig.query ? { query: payload.dataConfig.query } : {}),
+	},
+	...(payload.viewConfig ? { viewConfig: payload.viewConfig } : {}),
+	...(payload.timeRange ? { timeRange: payload.timeRange } : {}),
+	...(payload.comparisonMode ? { comparisonMode: payload.comparisonMode } : {}),
+});
+
+export const useDashboardWidgetPreview = (
+	payload?: PreviewDashboardWidgetDto | null,
+	enabled = true
+) => {
+	return useQuery<DashboardWidgetPreviewResponse>({
+		queryKey: ['dashboard-widget-preview', payload ?? null],
+		queryFn: async ({ signal }) => {
+			const api = analyticsDashboardsApi();
+			if (!payload) throw new Error('Preview payload is required');
+			return api.previewDashboardWidget(payload, signal);
+		},
+		enabled: enabled && Boolean(payload),
+		retry: false,
+		staleTime: 15000,
+		gcTime: 300000,
+		refetchOnWindowFocus: false,
+	});
+};
+
 export const useDashboardRenderUnified = (
 	dashboardId?: number | string,
 	payload: DashboardRenderRequest = {},
@@ -357,3 +337,5 @@ export const useDashboardRenderUnified = (
 		enabled: Boolean(dashboardId),
 	});
 };
+
+export { normalizePreviewPayload };

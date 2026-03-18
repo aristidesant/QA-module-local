@@ -1,0 +1,55 @@
+.previewFrame {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+	min-height: 0;
+}
+
+.previewFrame[data-loading] {
+	opacity: 0.88;
+}
+
+.previewFrame[data-size='SMALL'] {
+	min-height: 9.5rem;
+}
+
+.previewFrame[data-size='MEDIUM'] {
+	min-height: 11rem;
+}
+
+.previewFrame[data-size='LARGE'] {
+	min-height: 12rem;
+}
+
+.previewFrame[data-size='FULL'] {
+	min-height: 12.75rem;
+}
+
+.previewFrame[data-size='CUSTOM'] {
+	min-height: 11rem;
+}
+
+.kpiWrapper {
+	min-height: 0;
+}
+
+.loadingCard {
+	min-height: 100%;
+	border: 1px solid var(--mantine-color-gray-2);
+	box-shadow: var(--mantine-shadow-md);
+}
+
+.loadingStack {
+	min-height: 100%;
+	justify-content: space-between;
+}
+
+.statusText {
+	margin-top: auto;
+}
+
+@media (max-width: 62rem) {
+	.previewFrame {
+		min-height: 0;
+	}
+}

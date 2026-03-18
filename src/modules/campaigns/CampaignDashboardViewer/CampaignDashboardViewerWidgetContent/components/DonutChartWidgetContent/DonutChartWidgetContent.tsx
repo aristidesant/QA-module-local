@@ -1,6 +1,5 @@
-import { PieChart } from '@mantine/charts';
+import { DonutChart } from '@mantine/charts';
 import { Text } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
 import { getWidgetChartMetrics } from '../../../CampaignDashboardViewer.helpers';
 import DashboardWidgetCard from '../DashboardWidgetCard';
 import type { GroupedWidgetContentProps } from '../widgetContent.types';
@@ -14,7 +13,6 @@ const DonutChartWidgetContent = ({
 	chartData,
 }: GroupedWidgetContentProps) => {
 	const metrics = getWidgetChartMetrics(layout);
-	const { t } = useTranslation('campaign.form.dashboards');
 	const isLongLegend = chartData.length > 6;
 	const pieLayoutClass = isLongLegend
 		? `${styles.pieLayout} ${styles['pieLayout--wideLegend']}`
@@ -24,37 +22,29 @@ const DonutChartWidgetContent = ({
 		: `${styles.legendList} ${noDragClassName}`;
 	const total = chartData.reduce((sum, item) => sum + item.value, 0);
 	const chartSize = isLongLegend
-		? Math.max(metrics.pieSize - 20, 110)
+		? Math.max(metrics.pieSize - 12, 104)
 		: metrics.pieSize;
+	const chartThickness = Math.max(24, Math.round(chartSize * 0.24));
 
 	return (
 		<DashboardWidgetCard
 			title={widget.title}
 			accentColor={accentColor}
-			liveLabel={t('dashboard.liveBadge')}
 			groupByLabel={widget.result.meta.groupBy}
 		>
 			<div className={pieLayoutClass}>
 				<div className={styles.pieChartWrapper}>
-					<div className={styles.donutCenterWrapper}>
-						<PieChart
-							data={chartData}
-							size={chartSize}
-							withTooltip
-							tooltipDataSource='segment'
-							strokeWidth={1}
-							strokeColor='rgba(255,255,255,0.9)'
-							paddingAngle={2}
-						/>
-						<div className={styles.donutStat}>
-							<span className={styles.donutStatValue}>
-								{total.toLocaleString()}
-							</span>
-							<span className={styles.donutStatLabel}>
-								{t('dashboard.donutTotal')}
-							</span>
-						</div>
-					</div>
+					<DonutChart
+						data={chartData}
+						size={chartSize}
+						thickness={chartThickness}
+						withTooltip
+						tooltipDataSource='segment'
+						strokeWidth={1}
+						strokeColor='rgba(255,255,255,0.9)'
+						paddingAngle={1}
+						chartLabel={total.toLocaleString()}
+					/>
 				</div>
 				<div className={legendClass}>
 					{chartData.map((item) => {

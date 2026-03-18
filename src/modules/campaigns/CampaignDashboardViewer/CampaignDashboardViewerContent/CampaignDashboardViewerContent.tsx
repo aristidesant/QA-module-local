@@ -1,6 +1,5 @@
 import { Alert, Box, Card, Group, Loader, LoadingOverlay } from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
-import type { Layout } from 'react-grid-layout/legacy';
 import { useTranslation } from 'react-i18next';
 import type {
 	AnalyticsTimeRange,
@@ -14,7 +13,6 @@ import styles from './CampaignDashboardViewerContent.module.css';
 
 interface CampaignDashboardViewerContentProps {
 	activeLayoutMap: Map<number, ViewerWidgetLayout>;
-	editableGridLayout: Layout;
 	editorWidth: number;
 	errorMessage?: string;
 	isError: boolean;
@@ -26,12 +24,11 @@ interface CampaignDashboardViewerContentProps {
 	comparisonPeriodLabel?: string;
 	selectedTimeRange?: AnalyticsTimeRange | null;
 	widgetsCount: number;
-	onLayoutChange: (layout: Layout) => void;
+	onLayoutChange: (layout: ViewerWidgetLayout[]) => void;
 }
 
 const CampaignDashboardViewerContent = ({
 	activeLayoutMap,
-	editableGridLayout,
 	editorWidth,
 	errorMessage,
 	isError,
@@ -88,7 +85,6 @@ const CampaignDashboardViewerContent = ({
 						<CampaignDashboardViewerLayoutEditor
 							widgets={renderResult.widgets}
 							activeLayoutMap={activeLayoutMap}
-							editableGridLayout={editableGridLayout}
 							editorWidth={editorWidth}
 							isInteractionDisabled={isSavingLayout}
 							onLayoutChange={onLayoutChange}

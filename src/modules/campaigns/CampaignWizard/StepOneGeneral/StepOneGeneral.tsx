@@ -213,7 +213,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				setDraft({
 					campaignId: String((campaign as any).id),
 					data: { isDraft: true, draftStep: 1 },
-				}).catch((err) => console.error('Failed to save draft step', err));
+				}).catch(() => undefined);
 
 				// Proceed to next step
 				onNext();

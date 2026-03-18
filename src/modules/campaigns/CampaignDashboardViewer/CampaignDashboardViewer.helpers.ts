@@ -29,6 +29,9 @@ export const GRID_ROW_GAP = GRID_MARGIN[1];
 export const EMPTY_DASHBOARDS: DashboardDefinition[] = [];
 export const EMPTY_WIDGETS: DashboardWidget[] = [];
 
+export const getVisibleDashboardWidgets = (widgets: DashboardWidget[]) =>
+	widgets.filter((widget) => widget.enabled);
+
 export const formatMetricValue = (
 	value: string | number | boolean | null | undefined
 ) => {
@@ -88,7 +91,7 @@ export const getNumericValue = (value: string | number | boolean | null) => {
 export const isGroupedMetricResult = (
 	widget: DashboardRenderWidget
 ): widget is DashboardRenderWidget & { result: GroupedMetricResult } =>
-	widget.status === 'SUCCESS' && widget.result?.kind === 'grouped';
+	widget.result?.kind === 'grouped';
 
 export const getWidgetRenderLayout = (
 	widget: DashboardWidget

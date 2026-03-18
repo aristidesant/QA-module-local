@@ -28,12 +28,10 @@ export const useCreateKnowledgeBase = () => {
 		},
 		onSuccess: (data) => {
 			invalidateKnowledgeBaseLists(queryClient);
-			// eslint-disable-next-line no-console
-			console.log('Knowledge base created successfully:', data);
+			void data;
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error creating knowledge base:', error);
+			void error;
 		},
 	});
 };

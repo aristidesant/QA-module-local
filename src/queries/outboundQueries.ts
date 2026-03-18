@@ -39,7 +39,7 @@ export const useCleanOutboundQueue = () => {
 				message: apiMessage,
 				color: 'red',
 			});
-			console.error('Error cleaning outbound queue:', error);
+			void error;
 		},
 	});
 };

@@ -41,7 +41,7 @@ const VoicePlayer: React.FC<VoicePlayerProps> = ({ voiceName, previewUrl }) => {
 		audio.addEventListener('error', (e) => {
 			setIsLoading(false);
 			setIsPlaying(false);
-			console.error('Error loading audio:', e);
+			void e;
 		});
 
 		return audio;
@@ -49,7 +49,6 @@ const VoicePlayer: React.FC<VoicePlayerProps> = ({ voiceName, previewUrl }) => {
 
 	const handlePlay = async () => {
 		if (!previewUrl) {
-			console.warn('No preview URL provided');
 			return;
 		}
 
@@ -79,7 +78,7 @@ const VoicePlayer: React.FC<VoicePlayerProps> = ({ voiceName, previewUrl }) => {
 			setIsPlaying(true);
 			setIsLoading(false);
 		} catch (error) {
-			console.error('Error playing audio:', error);
+			void error;
 			setIsLoading(false);
 			setIsPlaying(false);
 		}

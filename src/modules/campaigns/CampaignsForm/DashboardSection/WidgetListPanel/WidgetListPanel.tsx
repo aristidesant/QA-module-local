@@ -1,5 +1,13 @@
-import { useCallback, useMemo } from 'react';
-import { ActionIcon, Group, Stack, Text, Tooltip } from '@mantine/core';
+import { useCallback, useMemo, useState } from 'react';
+import {
+	ActionIcon,
+	Group,
+	Loader,
+	Stack,
+	Switch,
+	Text,
+	Tooltip,
+} from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import {
@@ -16,6 +24,7 @@ import {
 	useDashboards,
 	useDashboardWidgets,
 	useDeleteDashboardWidget,
+	useUpdateDashboardWidget,
 } from '~/queries/analyticsDashboardsQueries';
 import { getErrorMessage } from '~/utils/httpClient';
 import { getWidgetTypeLabel } from '../DashboardSection.helpers';
@@ -34,6 +43,10 @@ const WidgetListPanel = () => {
 		selectedDashboardId ?? undefined
 	);
 	const deleteDashboardWidget = useDeleteDashboardWidget();
+	const updateDashboardWidget = useUpdateDashboardWidget();
+	const [pendingWidgetIds, setPendingWidgetIds] = useState<
+		Record<number, boolean>
+	>({});
 
 	const selectedDashboard =
 		dashboards.find((dashboard) => dashboard.id === selectedDashboardId) ??
@@ -80,6 +93,100 @@ const WidgetListPanel = () => {
 		[deleteDashboardWidget, t]
 	);
 
+	const handleToggleEnabled = useCallback(
+		async (widget: DashboardWidget, enabled: boolean) => {
+			await updateDashboardWidget.mutateAsync({
+				id: widget.id,
+				data: { enabled },
+			});
+		},
+		[updateDashboardWidget]
+	);
+
+	const handleToggleEnabledRequest = useCallback(
+		(widget: DashboardWidget, enabled: boolean) => {
+			const isEnabling = enabled;
+			const modalId = `toggle-widget-status-${widget.id}`;
+
+			modals.openConfirmModal({
+				modalId,
+				closeOnConfirm: false,
+				title: isEnabling
+					? t('dashboardBuilder.toggleWidgetStatus.enableTitle')
+					: t('dashboardBuilder.toggleWidgetStatus.disableTitle'),
+				children: (
+					<Text size='sm'>
+						{isEnabling
+							? t('dashboardBuilder.toggleWidgetStatus.enableMessage', {
+									name: widget.title,
+								})
+							: t('dashboardBuilder.toggleWidgetStatus.disableMessage', {
+									name: widget.title,
+								})}
+					</Text>
+				),
+				labels: {
+					confirm: isEnabling
+						? t('dashboardBuilder.toggleWidgetStatus.enableConfirm')
+						: t('dashboardBuilder.toggleWidgetStatus.disableConfirm'),
+					cancel: t('common:actions.cancel'),
+				},
+				confirmProps: { color: isEnabling ? 'green' : 'red' },
+				onConfirm: async () => {
+					let shouldResetModalState = true;
+
+					setPendingWidgetIds((current) => ({
+						...current,
+						[widget.id]: true,
+					}));
+					modals.updateModal({
+						modalId,
+						confirmProps: {
+							color: isEnabling ? 'green' : 'red',
+							loading: true,
+						},
+						cancelProps: { disabled: true },
+					});
+
+					try {
+						await handleToggleEnabled(widget, enabled);
+						notifications.show({
+							title: t('dashboardBuilder.notifications.widgetUpdatedTitle'),
+							message: isEnabling
+								? t('dashboardBuilder.notifications.widgetEnabledMessage')
+								: t('dashboardBuilder.notifications.widgetDisabledMessage'),
+							color: 'green',
+						});
+						shouldResetModalState = false;
+						modals.close(modalId);
+					} catch (error) {
+						notifications.show({
+							title: t('dashboardBuilder.notifications.errorTitle'),
+							message: getErrorMessage(error),
+							color: 'red',
+						});
+					} finally {
+						setPendingWidgetIds((current) => {
+							const { [widget.id]: _removed, ...rest } = current;
+							return rest;
+						});
+						if (shouldResetModalState) {
+							modals.updateModal({
+								modalId,
+								confirmProps: {
+									color: isEnabling ? 'green' : 'red',
+									loading: false,
+								},
+								cancelProps: { disabled: false },
+							});
+						}
+					}
+				},
+			});
+		},
+		[handleToggleEnabled, t]
+	);
+
 	const columns = useMemo<BaseTableColumnDef<DashboardWidget>[]>(
 		() => [
 			{
@@ -109,11 +216,23 @@ const WidgetListPanel = () => {
 				id: 'status',
 				header: t('dashboardBuilder.widget.status'),
 				cell: ({ row }) => (
-					<Text size='sm' c={row.original.enabled ? 'gray.8' : 'dimmed'}>
-						{row.original.enabled
-							? t('dashboardBuilder.enabled')
-							: t('dashboardBuilder.disabled')}
-					</Text>
+					<div className={styles.statusCell}>
+						<Switch
+							size='xs'
+							checked={row.original.enabled}
+							disabled={Boolean(pendingWidgetIds[row.original.id])}
+							onChange={(event) =>
+								handleToggleEnabledRequest(
+									row.original,
+									event.currentTarget.checked
+								)
+							}
+							aria-label={t('dashboardBuilder.actions.toggleEnabled')}
+						/>
+						<span className={styles.statusLoadingSlot}>
+							{pendingWidgetIds[row.original.id] ? <Loader size='xs' /> : null}
+						</span>
+					</div>
 				),
 			},
 			{
@@ -155,7 +274,7 @@ const WidgetListPanel = () => {
 				),
 			},
 		],
-		[handleDeleteWidget, openEditWidget, t]
+		[handleDeleteWidget, handleToggleEnabledRequest, openEditWidget, t]
 	);
 
 	return (
@@ -194,7 +313,19 @@ const WidgetListPanel = () => {
 
 			{selectedDashboard ? (
 				<>
-					{!isLoading && orderedWidgets.length === 0 ? (
+					{isLoading && orderedWidgets.length === 0 ? (
+						<div className={styles.emptyState}>
+							<Loader size='sm' />
+							<Stack gap={2} align='center'>
+								<Text size='sm' fw={600} c='gray.9'>
+									{t('dashboardBuilder.loadingWidgetTitle')}
+								</Text>
+								<Text size='xs' c='dimmed' ta='center'>
+									{t('dashboardBuilder.loadingWidgetDescription')}
+								</Text>
+							</Stack>
+						</div>
+					) : !isLoading && orderedWidgets.length === 0 ? (
 						<div className={styles.emptyState}>
 							<IconSquarePlus
 								size={20}

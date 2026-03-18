@@ -72,6 +72,7 @@
 		"clearFilters": "Limpiar filtros",
 		"clearAllFilters": "Limpiar todos los filtros",
 		"sortOptions": {
+			"updatedAt": "Última actualización",
 			"createdAt": "Fecha de creación",
 			"name": "Nombre",
 			"status": "Estado",

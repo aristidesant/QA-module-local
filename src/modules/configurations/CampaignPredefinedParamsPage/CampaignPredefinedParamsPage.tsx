@@ -93,7 +93,7 @@ const CampaignPredefinedParamsPage = () => {
 			setFormModalOpen(false);
 			setSelectedParam(null);
 		} catch (error) {
-			console.error('Failed to delete parameter:', error);
+			void error;
 		}
 	};
 
@@ -108,7 +108,7 @@ const CampaignPredefinedParamsPage = () => {
 				type: data.type,
 			});
 		} catch (error) {
-			console.error('Failed to create override:', error);
+			void error;
 		}
 	};
 
@@ -121,7 +121,7 @@ const CampaignPredefinedParamsPage = () => {
 			setFormModalOpen(false);
 			setSelectedParam(null);
 		} catch (error) {
-			console.error('Failed to delete configuration:', error);
+			void error;
 		}
 	};
 

@@ -107,7 +107,7 @@ const SchedulerPredefinedParamsPage = () => {
 			setScheduleToDelete(null);
 			setEditorOpen(false);
 		} catch (error) {
-			console.error('Failed to delete schedule:', error);
+			void error;
 		}
 	};
 
@@ -138,8 +138,8 @@ const SchedulerPredefinedParamsPage = () => {
 							value: data.value,
 							type: data.type,
 						});
-					} catch (e) {
-						console.error('Failed to create override:', e);
+					} catch (error) {
+						void error;
 					}
 				},
 				disabled: createMutation.isPending,
@@ -321,8 +321,8 @@ const SchedulerPredefinedParamsPage = () => {
 								setDeleteConfigModalOpen(false);
 								setEditorOpen(false);
 								setSelectedSchedule(null);
-							} catch (e) {
-								console.error('Failed to delete configuration:', e);
+							} catch (error) {
+								void error;
 							}
 						}}
 						loading={deleteMutation.isPending}

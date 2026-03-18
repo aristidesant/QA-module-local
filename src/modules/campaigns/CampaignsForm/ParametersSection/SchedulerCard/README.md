@@ -16,16 +16,9 @@ The `SchedulerCard` component is a comprehensive UI component designed to displa
 ## Usage
 
 ```tsx
-import { SchedulerCard } from "~/modules/campaigns/CampaignsForm/ParametersSection/SchedulerCard";
+import { SchedulerCard } from '~/modules/campaigns/CampaignsForm/ParametersSection/SchedulerCard';
 
-<SchedulerCard
-  scheduler={schedulerData}
-  campaignId={campaignId}
-  onUpdate={(updatedScheduler) => console.log("Updated:", updatedScheduler)}
-  onDelete={(schedulerId) => console.log("Deleted:", schedulerId)}
-  onActivate={(schedulerId) => console.log("Activated:", schedulerId)}
-  onDeactivate={(schedulerId) => console.log("Deactivated:", schedulerId)}
-/>;
+<SchedulerCard scheduler={schedulerData} campaignId={campaignId} />;
 ```
 
 ## Props

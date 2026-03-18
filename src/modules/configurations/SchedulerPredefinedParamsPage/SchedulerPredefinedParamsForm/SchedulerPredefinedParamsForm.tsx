@@ -239,7 +239,7 @@ const SchedulerPredefinedParamsForm: React.FC<
 
 			onClose();
 		} catch (error) {
-			console.error('Failed to save preset', error);
+			void error;
 			notifications.show({
 				title: t('notifications.saveFailed.title'),
 				message: t('notifications.saveFailed.message'),

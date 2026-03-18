@@ -23,7 +23,6 @@ import {
 import userApi from '~/api/userApi';
 import { useSessionStore } from '~/stores/sessionStore';
 import { useImpersonationLoadingStore } from '~/stores/impersonationLoadingStore';
-import { getErrorMessage } from '~/utils/httpClient';
 
 /**
  * Helper function to complete the login flow after token is received
@@ -64,8 +63,7 @@ async function completeLoginFlow(
 		setUser(user);
 		queryClient.setQueryData(['currentUser'], user);
 	} catch (err) {
-		// eslint-disable-next-line no-console
-		console.warn('Failed to fetch user after login:', getErrorMessage(err));
+		void err;
 	}
 }
 
@@ -98,8 +96,7 @@ export function useLogin() {
 			// The component will handle showing the OTP modal
 		},
 		onError: (error: Error) => {
-			// Handle error if needed, e.g., show notification
-			console.log('Login mutation failed:', error.message);
+			void error;
 		},
 	});
 }
@@ -115,17 +112,10 @@ export function useSignUp() {
 				return res;
 			},
 			onSuccess: (data) => {
-				// Handle successful registration, e.g., show notification
-				console.log(
-					'Sign up successful:',
-					data.message,
-					'User ID:',
-					data.userId
-				);
+				void data;
 			},
 			onError: (error: Error) => {
-				// Handle error if needed, e.g., show notification
-				console.log('Sign up mutation failed:', error.message);
+				void error;
 			},
 		}
 	);
@@ -175,7 +165,7 @@ export function useSelectClient() {
 			}
 		},
 		onError: (error: Error) => {
-			console.error('Client selection failed:', error.message);
+			void error;
 		},
 	});
 }
@@ -216,8 +206,7 @@ export function useImpersonateClient() {
 			setLoading(false);
 		},
 		onError: (error: Error) => {
-			// eslint-disable-next-line no-console
-			console.error('Client impersonation failed:', error.message);
+			void error;
 			setLoading(false);
 		},
 	});
@@ -255,8 +244,7 @@ export function useEndImpersonation() {
 			setLoading(false);
 		},
 		onError: (error: Error) => {
-			// eslint-disable-next-line no-console
-			console.error('End impersonation failed:', error.message);
+			void error;
 			setLoading(false);
 		},
 	});
@@ -319,7 +307,7 @@ export function useChangeClient() {
 			setLoading(false);
 		},
 		onError: (error: Error) => {
-			console.error('Client change failed:', error.message);
+			void error;
 			setLoading(false);
 		},
 	});

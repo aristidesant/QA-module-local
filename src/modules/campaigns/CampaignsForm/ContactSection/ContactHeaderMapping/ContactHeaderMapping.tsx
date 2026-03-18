@@ -131,7 +131,7 @@ export function ContactHeaderMapping({
 					}))
 				);
 			} catch (error) {
-				console.error('Error parsing contact headers:', error);
+				void error;
 			}
 		}
 

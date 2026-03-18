@@ -97,20 +97,10 @@ const ConditionFields = ({ direction }: ConditionFieldsProps) => {
 					data={selectData}
 					value={state.type}
 					onChange={(value) =>
-						setState((prev) => {
-							const nextType = (value as ConditionType) || 'none';
-							if (import.meta.env.DEV) {
-								console.debug('[EdgeConditionModal] type change', {
-									direction,
-									from: prev.type,
-									to: nextType,
-								});
-							}
-							return {
-								...prev,
-								type: nextType,
-							};
-						})
+						setState((prev) => ({
+							...prev,
+							type: (value as ConditionType) || 'none',
+						}))
 					}
 					searchable
 					clearable={false}
@@ -131,12 +121,6 @@ const ConditionFields = ({ direction }: ConditionFieldsProps) => {
 							onChange={(e) => {
 								const nextValue =
 									typeof e === 'string' ? e : (e?.currentTarget?.value ?? '');
-								if (import.meta.env.DEV) {
-									console.debug('[EdgeConditionModal] label change', {
-										direction,
-										value: nextValue,
-									});
-								}
 								setState((prev) => ({
 									...prev,
 									label: nextValue,
@@ -161,12 +145,6 @@ const ConditionFields = ({ direction }: ConditionFieldsProps) => {
 							onChange={(e) => {
 								const nextValue =
 									typeof e === 'string' ? e : (e?.currentTarget?.value ?? '');
-								if (import.meta.env.DEV) {
-									console.debug('[EdgeConditionModal] llm condition change', {
-										direction,
-										value: nextValue,
-									});
-								}
 								setState((prev) => ({
 									...prev,
 									llmCondition: nextValue,
@@ -206,19 +184,10 @@ const ConditionFields = ({ direction }: ConditionFieldsProps) => {
 						]}
 						value={state.resultSuccessful ? 'true' : 'false'}
 						onChange={(value) =>
-							setState((prev) => {
-								const nextValue = value === 'true';
-								if (import.meta.env.DEV) {
-									console.debug('[EdgeConditionModal] result change', {
-										direction,
-										value: nextValue,
-									});
-								}
-								return {
-									...prev,
-									resultSuccessful: nextValue,
-								};
-							})
+							setState((prev) => ({
+								...prev,
+								resultSuccessful: value === 'true',
+							}))
 						}
 						clearable={false}
 					/>
@@ -238,12 +207,6 @@ const ConditionFields = ({ direction }: ConditionFieldsProps) => {
 						onChange={(e) => {
 							const nextValue =
 								typeof e === 'string' ? e : (e?.currentTarget?.value ?? '');
-							if (import.meta.env.DEV) {
-								console.debug('[EdgeConditionModal] expression label change', {
-									direction,
-									value: nextValue,
-								});
-							}
 							setState((prev) => ({ ...prev, label: nextValue }));
 						}}
 						size='sm'
