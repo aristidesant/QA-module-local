@@ -58,6 +58,19 @@ export const DASHBOARD_WIDGET_MIN_DIMENSIONS: Record<
 	FUNNEL: { width: 2, height: 1 },
 };
 
+const DASHBOARD_WIDGET_AUTO_DIMENSIONS: Record<
+	DashboardWidgetType,
+	Pick<WidgetLayout, 'width' | 'height'>
+> = {
+	KPI: { width: 3, height: 2 },
+	LINE_CHART: { width: 6, height: 3 },
+	BAR_CHART: { width: 6, height: 3 },
+	PIE_CHART: { width: 5, height: 3 },
+	DONUT_CHART: { width: 5, height: 3 },
+	TABLE: { width: 6, height: 4 },
+	FUNNEL: { width: 6, height: 3 },
+};
+
 const clamp = (value: number, min: number, max: number) =>
 	Math.min(Math.max(value, min), max);
 
@@ -95,6 +108,22 @@ export const getMaxWidgetPositionX = (
 export const getMinimumDimensionsForWidgetType = (
 	widgetType: DashboardWidgetType
 ) => DASHBOARD_WIDGET_MIN_DIMENSIONS[widgetType];
+
+export const getRecommendedDimensionsForWidgetType = (
+	widgetType: DashboardWidgetType
+) => DASHBOARD_WIDGET_AUTO_DIMENSIONS[widgetType];
+
+const getWidgetAutoLayoutPriority = (widgetType: DashboardWidgetType) => {
+	if (widgetType === 'KPI') {
+		return 0;
+	}
+
+	if (widgetType === 'TABLE') {
+		return 2;
+	}
+
+	return 1;
+};
 
 export const applyWidgetMinimumDimensions = <T extends WidgetLayout>(
 	layout: T,
@@ -229,4 +258,92 @@ export const findNextAvailableWidgetLayout = (
 		width: normalizedDimensions.width,
 		height: normalizedDimensions.height,
 	};
+};
+
+export const autoOrganizeWidgetLayouts = <
+	T extends { widgetId: number; width: number; height: number },
+>(
+	layouts: T[],
+	widgetTypeMap: Map<number, DashboardWidgetType>,
+	totalColumns = DASHBOARD_LAYOUT_COLUMNS
+): Array<{
+	widgetId: number;
+	positionX: number;
+	positionY: number;
+	width: number;
+	height: number;
+}> => {
+	const orderedLayouts = layouts
+		.map((layout, order) => {
+			const widgetType = widgetTypeMap.get(layout.widgetId) ?? 'KPI';
+
+			return {
+				...layout,
+				order,
+				recommendedDimensions:
+					getRecommendedDimensionsForWidgetType(widgetType),
+				widgetType,
+			};
+		})
+		.sort((left, right) => {
+			const leftPriority = getWidgetAutoLayoutPriority(left.widgetType);
+			const rightPriority = getWidgetAutoLayoutPriority(right.widgetType);
+
+			if (leftPriority !== rightPriority) {
+				return leftPriority - rightPriority;
+			}
+
+			const leftArea =
+				left.recommendedDimensions.width * left.recommendedDimensions.height;
+			const rightArea =
+				right.recommendedDimensions.width * right.recommendedDimensions.height;
+
+			if (leftArea !== rightArea) {
+				return rightArea - leftArea;
+			}
+
+			return left.order - right.order;
+		});
+
+	const placed: DashboardLayoutItem[] = [];
+	const result: Array<{
+		widgetId: number;
+		positionX: number;
+		positionY: number;
+		width: number;
+		height: number;
+	}> = [];
+
+	for (const widget of orderedLayouts) {
+		const position = findNextAvailableWidgetLayout(
+			placed,
+			widget.recommendedDimensions,
+			{ totalColumns }
+		);
+
+		const entry = normalizeWidgetLayoutForType(
+			{
+				widgetId: widget.widgetId,
+				positionX: position.positionX,
+				positionY: position.positionY,
+				width: position.width,
+				height: position.height,
+			},
+			widget.widgetType,
+			totalColumns
+		);
+
+		const normalizedEntry = {
+			widgetId: widget.widgetId,
+			positionX: entry.positionX,
+			positionY: entry.positionY,
+			width: entry.width,
+			height: entry.height,
+		};
+
+		placed.push({ ...normalizedEntry, id: widget.widgetId });
+		result.push(normalizedEntry);
+	}
+
+	return result;
 };

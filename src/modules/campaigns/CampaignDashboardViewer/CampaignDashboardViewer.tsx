@@ -10,6 +10,7 @@ import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import {
 	applyWidgetMinimumDimensions,
+	autoOrganizeWidgetLayouts,
 	compareWidgetLayouts,
 	hasOverlappingWidgetLayouts,
 	normalizeWidgetLayoutForType,
@@ -32,6 +33,7 @@ import {
 	formatDashboardPeriod,
 	fromGridLayout,
 	getWidgetRenderLayout,
+	getVisibleDashboardWidgets,
 	toGridLayout,
 } from './CampaignDashboardViewer.helpers';
 import CampaignDashboardViewerContent from './CampaignDashboardViewerContent';
@@ -186,15 +188,27 @@ const CampaignDashboardViewer = ({
 	const { data: widgetsData, refetch: refetchWidgets } =
 		useDashboardWidgets(numericDashboardId);
 	const widgets = widgetsData ?? EMPTY_WIDGETS;
-
-	const widgetTypeMap = useMemo(() => createWidgetTypeMap(widgets), [widgets]);
-	const persistedLayouts = useMemo(
-		() => [...widgets].sort(compareWidgetLayouts).map(getWidgetRenderLayout),
+	const visibleWidgets = useMemo(
+		() => getVisibleDashboardWidgets(widgets),
 		[widgets]
+	);
+
+	const widgetTypeMap = useMemo(
+		() => createWidgetTypeMap(visibleWidgets),
+		[visibleWidgets]
+	);
+	const persistedLayouts = useMemo(
+		() =>
+			[...visibleWidgets].sort(compareWidgetLayouts).map(getWidgetRenderLayout),
+		[visibleWidgets]
 	);
 	const persistedLayoutMap = useMemo(
 		() => createLayoutMap(persistedLayouts),
 		[persistedLayouts]
+	);
+	const visibleWidgetIdSet = useMemo(
+		() => new Set(visibleWidgets.map((widget) => widget.id)),
+		[visibleWidgets]
 	);
 
 	useEffect(() => {
@@ -232,25 +246,27 @@ const CampaignDashboardViewer = ({
 			return [];
 		}
 
-		return [...renderResult.widgets].sort((left, right) => {
-			const leftLayout = activeLayoutMap.get(left.widgetId);
-			const rightLayout = activeLayoutMap.get(right.widgetId);
+		return renderResult.widgets
+			.filter((widget) => visibleWidgetIdSet.has(widget.widgetId))
+			.sort((left, right) => {
+				const leftLayout = activeLayoutMap.get(left.widgetId);
+				const rightLayout = activeLayoutMap.get(right.widgetId);
 
-			if (leftLayout && rightLayout) {
-				return compareWidgetLayouts(leftLayout, rightLayout);
-			}
+				if (leftLayout && rightLayout) {
+					return compareWidgetLayouts(leftLayout, rightLayout);
+				}
 
-			if (leftLayout) {
-				return -1;
-			}
+				if (leftLayout) {
+					return -1;
+				}
 
-			if (rightLayout) {
-				return 1;
-			}
+				if (rightLayout) {
+					return 1;
+				}
 
-			return left.widgetId - right.widgetId;
-		});
-	}, [activeLayoutMap, renderResult]);
+				return left.widgetId - right.widgetId;
+			});
+	}, [activeLayoutMap, renderResult, visibleWidgetIdSet]);
 
 	const editableGridLayout = useMemo(
 		() =>
@@ -260,19 +276,10 @@ const CampaignDashboardViewer = ({
 		[draftLayouts, widgetTypeMap]
 	);
 
-	const hasDraftChanges = useMemo(
-		() =>
-			draftLayouts.some(
-				(layout) =>
-					!areLayoutsEqual(layout, persistedLayoutMap.get(layout.widgetId))
-			),
-		[draftLayouts, persistedLayoutMap]
-	);
-
 	const isSavingLayout =
 		updateDashboardWidgetLayouts.isPending || isSavingLayoutTransition;
 	const isLayoutEditingAvailable =
-		allowLayoutEditing && !isMobile && widgets.length > 0;
+		allowLayoutEditing && !isMobile && visibleWidgets.length > 0;
 
 	const handleStartEditing = () => {
 		if (!allowLayoutEditing) {
@@ -284,6 +291,11 @@ const CampaignDashboardViewer = ({
 
 	const handleCancelEditing = () => {
 		cancelEditing(persistedLayouts);
+	};
+
+	const handleAutoOrganize = () => {
+		const organized = autoOrganizeWidgetLayouts(draftLayouts, widgetTypeMap);
+		setDraftLayouts(organized);
 	};
 
 	const handleLayoutChange = (nextLayout: Layout) => {
@@ -370,7 +382,9 @@ const CampaignDashboardViewer = ({
 
 			for (let attempt = 0; attempt < 5; attempt += 1) {
 				const widgetsResponse = await refetchWidgets();
-				refreshedLayouts = (widgetsResponse.data ?? EMPTY_WIDGETS)
+				refreshedLayouts = getVisibleDashboardWidgets(
+					widgetsResponse.data ?? EMPTY_WIDGETS
+				)
 					.sort(compareWidgetLayouts)
 					.map(getWidgetRenderLayout);
 
@@ -405,7 +419,7 @@ const CampaignDashboardViewer = ({
 			const widgetsResponse = await refetchWidgets();
 			await refetchRenderResult();
 			syncDraftLayouts(
-				(widgetsResponse.data ?? EMPTY_WIDGETS)
+				getVisibleDashboardWidgets(widgetsResponse.data ?? EMPTY_WIDGETS)
 					.sort(compareWidgetLayouts)
 					.map(getWidgetRenderLayout)
 			);
@@ -458,13 +472,13 @@ const CampaignDashboardViewer = ({
 					isLayoutEditingAvailable={isLayoutEditingAvailable}
 					isMobile={Boolean(isMobile)}
 					isSavingLayout={isSavingLayout}
-					hasDraftChanges={hasDraftChanges}
 					renderLoading={renderLoading}
 					selectedTimeRange={selectedTimeRange}
 					period={renderResult?.period}
 					comparisonPeriod={unifiedRenderResult?.comparisonPeriod}
 					comparisonEnabled={comparisonEnabled}
 					allowLayoutEditing={allowLayoutEditing}
+					onAutoOrganize={handleAutoOrganize}
 					onCancelEditing={handleCancelEditing}
 					onRefresh={() => void refetchRenderResult()}
 					onSaveLayout={() => void handleSaveLayout()}
@@ -499,7 +513,7 @@ const CampaignDashboardViewer = ({
 							comparisonMap={comparisonMap}
 							comparisonPeriodLabel={comparisonPeriodLabel}
 							selectedTimeRange={selectedTimeRange}
-							widgetsCount={widgets.length}
+							widgetsCount={visibleWidgets.length}
 							onLayoutChange={handleLayoutChange}
 						/>
 					</div>

@@ -14,6 +14,7 @@ import {
 	IconDeviceFloppy,
 	IconEdit,
 	IconLayoutDashboard,
+	IconLayoutGrid,
 	IconRefresh,
 	IconTimeline,
 	IconX,
@@ -34,13 +35,13 @@ interface CampaignDashboardViewerToolbarProps {
 	isLayoutEditingAvailable: boolean;
 	isMobile: boolean;
 	isSavingLayout: boolean;
-	hasDraftChanges: boolean;
 	renderLoading: boolean;
 	selectedTimeRange: AnalyticsTimeRange | null;
 	period?: DashboardPeriod;
 	comparisonPeriod?: { current: DashboardPeriod; previous: DashboardPeriod };
 	comparisonEnabled: boolean;
 	allowLayoutEditing: boolean;
+	onAutoOrganize: () => void;
 	onCancelEditing: () => void;
 	onRefresh: () => void;
 	onSaveLayout: () => void;
@@ -85,13 +86,13 @@ const CampaignDashboardViewerToolbar = ({
 	isLayoutEditingAvailable,
 	isMobile,
 	isSavingLayout,
-	hasDraftChanges,
 	renderLoading,
 	selectedTimeRange,
 	period,
 	comparisonPeriod,
 	comparisonEnabled,
 	allowLayoutEditing,
+	onAutoOrganize,
 	onCancelEditing,
 	onRefresh,
 	onSaveLayout,
@@ -284,6 +285,18 @@ const CampaignDashboardViewerToolbar = ({
 
 						{allowLayoutEditing && isEditingLayout ? (
 							<>
+								<Tooltip label={t('dashboard.layoutEditor.autoOrganize')}>
+									<Button
+										size='sm'
+										variant='default'
+										className={styles.secondaryAction}
+										leftSection={<IconLayoutGrid size={16} />}
+										onClick={onAutoOrganize}
+										disabled={isSavingLayout}
+									>
+										{t('dashboard.layoutEditor.autoOrganize')}
+									</Button>
+								</Tooltip>
 								<Button
 									size='sm'
 									variant='default'
@@ -300,7 +313,6 @@ const CampaignDashboardViewerToolbar = ({
 									leftSection={<IconDeviceFloppy size={16} />}
 									onClick={onSaveLayout}
 									loading={isSavingLayout}
-									disabled={!hasDraftChanges}
 								>
 									{t('dashboard.layoutEditor.save')}
 								</Button>

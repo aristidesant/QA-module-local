@@ -57,7 +57,8 @@
 			"editDashboard": "Editar dashboard",
 			"deleteDashboard": "Eliminar dashboard",
 			"editWidget": "Editar widget",
-			"deleteWidget": "Eliminar widget"
+			"deleteWidget": "Eliminar widget",
+			"toggleEnabled": "Cambiar estado del widget"
 		},
 		"drawer": {
 			"dashboardKicker": "Detalles del dashboard",
@@ -286,6 +287,14 @@
 			"confirm": "Eliminar",
 			"cancel": "Cancelar"
 		},
+		"toggleWidgetStatus": {
+			"enableTitle": "Habilitar widget",
+			"disableTitle": "Deshabilitar widget",
+			"enableMessage": "¿Habilitar {{name}} para que aparezca en el dashboard?",
+			"disableMessage": "¿Deshabilitar {{name}} para que ya no aparezca en el dashboard?",
+			"enableConfirm": "Habilitar",
+			"disableConfirm": "Deshabilitar"
+		},
 		"notifications": {
 			"dashboardCreatedTitle": "Dashboard creado",
 			"dashboardCreatedMessage": "El dashboard ya está disponible para esta campaña.",
@@ -297,6 +306,8 @@
 			"widgetCreatedMessage": "El widget fue agregado al dashboard.",
 			"widgetUpdatedTitle": "Widget actualizado",
 			"widgetUpdatedMessage": "Se guardaron los cambios del widget.",
+			"widgetEnabledMessage": "El widget ahora está habilitado.",
+			"widgetDisabledMessage": "El widget ahora está deshabilitado.",
 			"widgetDeletedTitle": "Widget eliminado",
 			"widgetDeletedMessage": "El widget fue eliminado del dashboard.",
 			"errorTitle": "No fue posible guardar los cambios del dashboard"
@@ -320,6 +331,8 @@
 		"emptyDashboardDescription": "Crea el primer dashboard para organizar widgets de campaña.",
 		"emptyWidgetTitle": "Aún no hay widgets",
 		"emptyWidgetDescription": "Agrega widgets a este dashboard y define sus métricas directamente aquí.",
+		"loadingWidgetTitle": "Cargando widgets",
+		"loadingWidgetDescription": "Obteniendo los widgets configurados para este dashboard.",
 		"selectDashboardTitle": "Selecciona un dashboard",
 		"selectDashboardDescription": "Elige un dashboard a la izquierda para administrar sus widgets."
 	},
@@ -343,6 +356,7 @@
 			"edit": "Editar layout",
 			"save": "Guardar layout",
 			"cancel": "Cancelar",
+			"autoOrganize": "Auto-organizar",
 			"editingBadge": "Editando layout",
 			"dragHandle": "Mover y redimensionar",
 			"mobileUnavailable": "La edición del layout está disponible en pantallas más grandes.",

@@ -1,4 +1,4 @@
-import type { DashboardWidgetType } from '~/models/AnalyticsDashboard';
+import { memo } from 'react';
 import type {
 	WidgetFormValues,
 	WidgetPreviewModel,
@@ -12,17 +12,16 @@ import useDashboardWidgetPreviewController from './useDashboardWidgetPreviewCont
 
 type DashboardWidgetPreviewProps = {
 	campaignId: number | null;
-	fallbackPreview: WidgetPreviewModel;
 	values: WidgetFormValues;
-	widgetType: DashboardWidgetType;
+	fallbackPreview: WidgetPreviewModel;
 };
 
 const DashboardWidgetPreview = ({
 	campaignId,
-	fallbackPreview,
 	values,
-	widgetType,
+	fallbackPreview,
 }: DashboardWidgetPreviewProps) => {
+	const widgetType = values.widgetType;
 	const { preview, isLoading, isRefreshing, statusMessage, statusTone } =
 		useDashboardWidgetPreviewController({
 			values,
@@ -96,4 +95,4 @@ const DashboardWidgetPreview = ({
 	);
 };
 
-export default DashboardWidgetPreview;
+export default memo(DashboardWidgetPreview);

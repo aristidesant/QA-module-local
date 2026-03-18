@@ -29,6 +29,9 @@ export const GRID_ROW_GAP = GRID_MARGIN[1];
 export const EMPTY_DASHBOARDS: DashboardDefinition[] = [];
 export const EMPTY_WIDGETS: DashboardWidget[] = [];
 
+export const getVisibleDashboardWidgets = (widgets: DashboardWidget[]) =>
+	widgets.filter((widget) => widget.enabled);
+
 export const formatMetricValue = (
 	value: string | number | boolean | null | undefined
 ) => {

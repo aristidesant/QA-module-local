@@ -59,7 +59,7 @@ const CONVERSATION_FIELDS_FALLBACK: MetricColumnConfigEntry[] = [
 	{ label: 'Created At', value: 'createdAt', type: 'date' },
 	{ label: 'Start Date', value: 'startDate', type: 'date' },
 	{ label: 'End Date', value: 'endDate', type: 'date' },
-	{ label: 'Duration', value: 'duration', type: 'number' },
+	{ label: 'Duration', value: 'duration', type: 'time' },
 ];
 
 const DISPOSITION_FIELDS_FALLBACK: MetricColumnConfigEntry[] = [
@@ -110,6 +110,90 @@ const DEFAULT_SIZE_PRESET_BY_WIDGET: Record<
 
 const trimText = (value: string | null | undefined) =>
 	typeof value === 'string' ? value.trim() : '';
+
+export const resetWidgetFilterRow = (
+	row: WidgetFilterFormRow
+): WidgetFilterFormRow => ({
+	...row,
+	key: null,
+	value: null,
+	valueType: null,
+});
+
+export const getWidgetActiveSourceField = (
+	values: Pick<WidgetFormValues, 'sourceType' | 'fieldName' | 'metricKey'>
+) => (values.sourceType === 'ATTRIBUTE' ? values.metricKey : values.fieldName);
+
+export const normalizeWidgetFilterValueForType = (
+	valueType: WidgetFilterFormRow['valueType'],
+	value: string | null
+) => {
+	if (valueType === 'boolean') {
+		return value === 'true' || value === 'false' ? value : 'true';
+	}
+
+	if (valueType === 'number') {
+		return value && value.trim() && Number.isFinite(Number(value)) ? value : '';
+	}
+
+	if (valueType === 'null') {
+		return '';
+	}
+
+	return value;
+};
+
+export const sanitizeWidgetDefaultFilters = (
+	nextValues: WidgetFormValues,
+	metricKeyOptions: WidgetMetricOption[],
+	conversationFields: MetricColumnConfigEntry[],
+	dispositionFields: MetricColumnConfigEntry[]
+): WidgetFilterFormRow[] => {
+	const allowedFilterKeys = new Set(
+		getFilterKeySuggestions(
+			nextValues,
+			metricKeyOptions,
+			conversationFields,
+			dispositionFields
+		)
+	);
+
+	return nextValues.defaultFilters.map((row) => {
+		const trimmedKey = typeof row.key === 'string' ? row.key.trim() : '';
+
+		if (!trimmedKey) {
+			return row.value || row.valueType !== 'string'
+				? resetWidgetFilterRow(row)
+				: row;
+		}
+
+		if (!allowedFilterKeys.has(trimmedKey)) {
+			return resetWidgetFilterRow(row);
+		}
+
+		const inferredValueType = inferFilterValueType(
+			nextValues,
+			trimmedKey,
+			metricKeyOptions,
+			conversationFields,
+			dispositionFields
+		);
+
+		if (!inferredValueType || row.valueType === inferredValueType) {
+			return {
+				...row,
+				key: trimmedKey,
+			};
+		}
+
+		return {
+			...row,
+			key: trimmedKey,
+			valueType: inferredValueType,
+			value: normalizeWidgetFilterValueForType(inferredValueType, row.value),
+		};
+	});
+};
 
 export const isGroupByDerivedFromSourceField = (values: WidgetFormValues) =>
 	supportsGroupedWidget(values.widgetType) && values.sourceType !== 'ATTRIBUTE';
@@ -164,7 +248,7 @@ const parseFilterValue = (
 	return row.value;
 };
 
-const getSourceFieldEntries = (
+export const getSourceFieldEntries = (
 	sourceType: MetricSourceType,
 	conversationFields: MetricColumnConfigEntry[],
 	dispositionFields: MetricColumnConfigEntry[]
@@ -272,12 +356,21 @@ const getMetricLabel = (
 
 const RESULT_TYPE_BY_FIELD_TYPE: Record<string, MetricResultType> = {
 	number: 'NUMBER',
+	integer: 'NUMBER',
+	int: 'NUMBER',
+	float: 'NUMBER',
+	decimal: 'NUMBER',
+	bigint: 'NUMBER',
 	boolean: 'BOOLEAN',
+	bool: 'BOOLEAN',
 	date: 'TIME',
 	datetime: 'TIME',
+	timestamp: 'TIME',
 	time: 'TIME',
 	string: 'STRING',
 	text: 'STRING',
+	varchar: 'STRING',
+	char: 'STRING',
 	url: 'STRING',
 };
 
@@ -522,11 +615,15 @@ export const parseMetricColumnsConfig = (
 		return {
 			disposition: disposition.filter(
 				(entry) =>
-					typeof entry?.label === 'string' && typeof entry?.value === 'string'
+					typeof entry?.label === 'string' &&
+					typeof entry?.value === 'string' &&
+					typeof entry?.type === 'string'
 			),
 			conversation: conversation.filter(
 				(entry) =>
-					typeof entry?.label === 'string' && typeof entry?.value === 'string'
+					typeof entry?.label === 'string' &&
+					typeof entry?.value === 'string' &&
+					typeof entry?.type === 'string'
 			),
 		};
 	} catch {

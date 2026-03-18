@@ -57,7 +57,8 @@
 			"editDashboard": "Edit dashboard",
 			"deleteDashboard": "Delete dashboard",
 			"editWidget": "Edit widget",
-			"deleteWidget": "Delete widget"
+			"deleteWidget": "Delete widget",
+			"toggleEnabled": "Toggle widget status"
 		},
 		"drawer": {
 			"dashboardKicker": "Dashboard details",
@@ -286,6 +287,14 @@
 			"confirm": "Delete",
 			"cancel": "Cancel"
 		},
+		"toggleWidgetStatus": {
+			"enableTitle": "Enable widget",
+			"disableTitle": "Disable widget",
+			"enableMessage": "Enable {{name}} so it appears on the dashboard?",
+			"disableMessage": "Disable {{name}} so it no longer appears on the dashboard?",
+			"enableConfirm": "Enable",
+			"disableConfirm": "Disable"
+		},
 		"notifications": {
 			"dashboardCreatedTitle": "Dashboard created",
 			"dashboardCreatedMessage": "The dashboard is now available for this campaign.",
@@ -297,6 +306,8 @@
 			"widgetCreatedMessage": "The widget was added to the dashboard.",
 			"widgetUpdatedTitle": "Widget updated",
 			"widgetUpdatedMessage": "The widget changes were saved.",
+			"widgetEnabledMessage": "The widget is now enabled.",
+			"widgetDisabledMessage": "The widget is now disabled.",
 			"widgetDeletedTitle": "Widget deleted",
 			"widgetDeletedMessage": "The widget was removed from the dashboard.",
 			"errorTitle": "Unable to save dashboard changes"
@@ -320,6 +331,8 @@
 		"emptyDashboardDescription": "Create the first dashboard to start organizing campaign widgets.",
 		"emptyWidgetTitle": "No widgets yet",
 		"emptyWidgetDescription": "Add widgets to this dashboard and define their metrics directly here.",
+		"loadingWidgetTitle": "Loading widgets",
+		"loadingWidgetDescription": "Fetching the widgets configured for this dashboard.",
 		"selectDashboardTitle": "Select a dashboard",
 		"selectDashboardDescription": "Choose a dashboard on the left to manage its widgets."
 	},
@@ -343,6 +356,7 @@
 			"edit": "Edit layout",
 			"save": "Save layout",
 			"cancel": "Cancel",
+			"autoOrganize": "Auto-organize",
 			"editingBadge": "Editing layout",
 			"dragHandle": "Drag and resize",
 			"mobileUnavailable": "Layout editing is available on larger screens.",
