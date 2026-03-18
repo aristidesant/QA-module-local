@@ -71,59 +71,6 @@
 	flex-wrap: wrap;
 }
 
-/* ── Live indicator ───────────────────────────────── */
-
-.liveIndicator {
-	display: inline-flex;
-	align-items: center;
-	gap: 5px;
-	padding: 2px 7px 2px 5px;
-	border-radius: 20px;
-	background: rgba(34, 197, 94, 0.08);
-	border: 1px solid rgba(34, 197, 94, 0.18);
-	flex-shrink: 0;
-}
-
-.liveDot {
-	width: 6px;
-	height: 6px;
-	border-radius: 50%;
-	background: #22c55e;
-	position: relative;
-	flex-shrink: 0;
-}
-
-.liveDot::after {
-	content: '';
-	position: absolute;
-	inset: -3px;
-	border-radius: 50%;
-	background: #22c55e;
-	opacity: 0.3;
-	animation: chartLivePulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes chartLivePulse {
-	0%,
-	100% {
-		transform: scale(0.8);
-		opacity: 0.3;
-	}
-	50% {
-		transform: scale(1.9);
-		opacity: 0;
-	}
-}
-
-.liveLabel {
-	color: #16a34a;
-	font-size: 10px;
-	font-weight: 500;
-	font-family: inherit;
-	text-transform: uppercase;
-	letter-spacing: 0.01em;
-}
-
 /* ── GroupBy pill ─────────────────────────────────── */
 
 .groupByLabel {
@@ -317,17 +264,69 @@
 	overflow-x: auto;
 	overflow-y: auto;
 	min-height: 0;
+	padding-bottom: 2px;
+}
+
+.tableShell {
+	border: 1px solid rgba(15, 23, 42, 0.08);
+	border-radius: 14px;
+	overflow: hidden;
+	background: rgba(255, 255, 255, 0.72);
+}
+
+.table {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+}
+
+.table :global(thead th),
+.table :global(tbody td) {
+	padding-left: 14px;
+	padding-right: 14px;
 }
 
 .tableWrapper :global(thead th) {
-	font-size: 11px;
+	font-size: 10px;
 	font-weight: 600;
 	text-transform: uppercase;
-	letter-spacing: 0.05em;
-	color: var(--mantine-color-gray-6);
-	background: var(--mantine-color-gray-0);
-	padding-top: 8px;
-	padding-bottom: 8px;
+	letter-spacing: 0.04em;
+	color: #64748b;
+	background: linear-gradient(
+		180deg,
+		rgba(248, 250, 252, 0.96) 0%,
+		rgba(241, 245, 249, 0.94) 100%
+	);
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.tableWrapper :global(thead th:last-child) {
+	text-align: right;
+}
+
+.tableWrapper :global(tbody td) {
+	padding-top: 9px;
+	padding-bottom: 9px;
+	color: #475569;
+	font-size: 12px;
+	border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+}
+
+.tableWrapper :global(tbody td:last-child) {
+	font-size: 13px;
+	font-weight: 700;
+	color: #0f172a;
+	text-align: right;
+}
+
+.tableWrapper :global(tbody tr:last-child td) {
+	border-bottom: 0;
+}
+
+.tableWrapper :global(tbody tr:hover td) {
+	background: rgba(59, 130, 246, 0.03);
 }
 
 /* ── Empty state ──────────────────────────────────── */

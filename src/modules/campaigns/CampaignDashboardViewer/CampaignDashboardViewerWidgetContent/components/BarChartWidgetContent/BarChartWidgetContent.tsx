@@ -1,5 +1,4 @@
 import { BarChart } from '@mantine/charts';
-import { useTranslation } from 'react-i18next';
 import DashboardWidgetCard from '../DashboardWidgetCard';
 import { getWidgetChartMetrics } from '../../../CampaignDashboardViewer.helpers';
 import type { GroupedWidgetContentProps } from '../widgetContent.types';
@@ -12,13 +11,11 @@ const BarChartWidgetContent = ({
 	chartData,
 }: GroupedWidgetContentProps) => {
 	const metrics = getWidgetChartMetrics(layout);
-	const { t } = useTranslation('campaign.form.dashboards');
 
 	return (
 		<DashboardWidgetCard
 			title={widget.title}
 			accentColor={accentColor}
-			liveLabel={t('dashboard.liveBadge')}
 			groupByLabel={widget.result.meta.groupBy}
 		>
 			<div className={styles.chartWrapper}>

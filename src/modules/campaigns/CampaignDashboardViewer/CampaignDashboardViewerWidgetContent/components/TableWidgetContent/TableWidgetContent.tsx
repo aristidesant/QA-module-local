@@ -19,28 +19,29 @@ const TableWidgetContent = ({
 		<DashboardWidgetCard
 			title={widget.title}
 			accentColor={accentColor}
-			liveLabel={t('dashboard.liveBadge')}
 			groupByLabel={widget.result.meta.groupBy}
 		>
 			<div className={`${styles.tableWrapper} ${noDragClassName}`}>
-				<Table striped highlightOnHover stickyHeader>
-					<Table.Thead>
-						<Table.Tr>
-							<Table.Th>{t('dashboard.table.label')}</Table.Th>
-							<Table.Th>{t('dashboard.table.value')}</Table.Th>
-						</Table.Tr>
-					</Table.Thead>
-					<Table.Tbody>
-						{widget.result.rows.map((row, rowIndex) => (
-							<Table.Tr key={`${widget.widgetId}-${rowIndex}`}>
-								<Table.Td>
-									{resolveLabel(row.label, t('dashboard.unknownLabel'))}
-								</Table.Td>
-								<Table.Td>{formatMetricValue(row.value)}</Table.Td>
+				<div className={styles.tableShell}>
+					<Table striped highlightOnHover stickyHeader className={styles.table}>
+						<Table.Thead>
+							<Table.Tr>
+								<Table.Th>{t('dashboard.table.label')}</Table.Th>
+								<Table.Th>{t('dashboard.table.value')}</Table.Th>
 							</Table.Tr>
-						))}
-					</Table.Tbody>
-				</Table>
+						</Table.Thead>
+						<Table.Tbody>
+							{widget.result.rows.map((row, rowIndex) => (
+								<Table.Tr key={`${widget.widgetId}-${rowIndex}`}>
+									<Table.Td>
+										{resolveLabel(row.label, t('dashboard.unknownLabel'))}
+									</Table.Td>
+									<Table.Td>{formatMetricValue(row.value)}</Table.Td>
+								</Table.Tr>
+							))}
+						</Table.Tbody>
+					</Table>
+				</div>
 			</div>
 		</DashboardWidgetCard>
 	);

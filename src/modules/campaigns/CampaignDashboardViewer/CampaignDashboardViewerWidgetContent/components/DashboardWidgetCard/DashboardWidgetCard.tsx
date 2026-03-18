@@ -6,7 +6,6 @@ interface DashboardWidgetCardProps {
 	accentColor: string;
 	children: React.ReactNode;
 	groupByLabel?: string;
-	liveLabel?: string;
 }
 
 const DashboardWidgetCard = ({
@@ -14,7 +13,6 @@ const DashboardWidgetCard = ({
 	accentColor,
 	children,
 	groupByLabel,
-	liveLabel,
 }: DashboardWidgetCardProps) => (
 	<Card
 		radius='lg'
@@ -27,14 +25,8 @@ const DashboardWidgetCard = ({
 				<Text fw={700} size='sm' className={styles.widgetTitle}>
 					{title}
 				</Text>
-				{liveLabel || groupByLabel ? (
+				{groupByLabel ? (
 					<div className={styles.widgetMeta}>
-						{liveLabel ? (
-							<div className={styles.liveIndicator}>
-								<div className={styles.liveDot} />
-								<span className={styles.liveLabel}>{liveLabel}</span>
-							</div>
-						) : null}
 						{groupByLabel ? (
 							<span className={styles.groupByLabel}>{groupByLabel}</span>
 						) : null}

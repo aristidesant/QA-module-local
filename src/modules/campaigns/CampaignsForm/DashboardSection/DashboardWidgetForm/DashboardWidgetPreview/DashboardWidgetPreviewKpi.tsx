@@ -1,5 +1,4 @@
 import { Text } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
 import KpiCard from '~/components/KpiCard';
 import styles from './DashboardWidgetPreview.module.css';
 import type { DashboardWidgetPreviewKpiProps } from './DashboardWidgetPreview.types';
@@ -9,7 +8,6 @@ const DashboardWidgetPreviewKpi = ({
 	statusMessage,
 	statusTone = 'muted',
 }: DashboardWidgetPreviewKpiProps) => {
-	const { t } = useTranslation('campaign.form.dashboards');
 	const statusColor = statusTone === 'danger' ? 'red' : 'dimmed';
 	const comparisonVariant =
 		preview.comparison && preview.comparisonDetail
@@ -26,8 +24,6 @@ const DashboardWidgetPreviewKpi = ({
 					subtitle={preview.subtitle}
 					value={preview.value}
 					accentColor={preview.accentColor}
-					isLive
-					liveLabel={t('dashboard.liveBadge')}
 					comparison={preview.comparison}
 					comparisonLabel={preview.comparisonLabel}
 					comparisonDetail={preview.comparisonDetail}

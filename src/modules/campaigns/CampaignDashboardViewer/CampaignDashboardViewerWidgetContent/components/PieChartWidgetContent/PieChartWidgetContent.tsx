@@ -1,6 +1,5 @@
 import { PieChart } from '@mantine/charts';
 import { Text } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
 import { getWidgetChartMetrics } from '../../../CampaignDashboardViewer.helpers';
 import DashboardWidgetCard from '../DashboardWidgetCard';
 import type { GroupedWidgetContentProps } from '../widgetContent.types';
@@ -14,7 +13,6 @@ const PieChartWidgetContent = ({
 	chartData,
 }: GroupedWidgetContentProps) => {
 	const metrics = getWidgetChartMetrics(layout);
-	const { t } = useTranslation('campaign.form.dashboards');
 	const isLongLegend = chartData.length > 6;
 	const pieLayoutClass = isLongLegend
 		? `${styles.pieLayout} ${styles['pieLayout--wideLegend']}`
@@ -31,7 +29,6 @@ const PieChartWidgetContent = ({
 		<DashboardWidgetCard
 			title={widget.title}
 			accentColor={accentColor}
-			liveLabel={t('dashboard.liveBadge')}
 			groupByLabel={widget.result.meta.groupBy}
 		>
 			<div className={pieLayoutClass}>
