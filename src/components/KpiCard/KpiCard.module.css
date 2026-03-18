@@ -99,58 +99,6 @@
 	color: #64748b;
 }
 
-.liveIndicator {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	flex-shrink: 0;
-	padding: 7px 14px 7px 12px;
-	border-radius: 999px;
-	background: rgba(236, 253, 245, 0.84);
-	border: 1px solid rgba(167, 243, 208, 0.95);
-	box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
-}
-
-.liveDot {
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	background: #10b981;
-	position: relative;
-	flex-shrink: 0;
-}
-
-.liveDot::after {
-	content: '';
-	position: absolute;
-	inset: -4px;
-	border-radius: 50%;
-	background: #10b981;
-	opacity: 0.35;
-	animation: kpiPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes kpiPulse {
-	0%,
-	100% {
-		transform: scale(0.8);
-		opacity: 0.35;
-	}
-	50% {
-		transform: scale(1.9);
-		opacity: 0;
-	}
-}
-
-.liveLabel {
-	color: #1f7a4c;
-	letter-spacing: 0.16em;
-	text-transform: uppercase;
-	font-size: 0.72rem;
-	font-weight: 700;
-	font-family: inherit;
-}
-
 .value {
 	font-size: clamp(1.65rem, 2.4vw, 2.85rem);
 	line-height: 0.88;
@@ -235,7 +183,7 @@
 }
 
 .card--comparisonCompact .sparklineLayer {
-	opacity: 0.45;
+	opacity: 0.02;
 	height: 45%;
 }
 
@@ -249,7 +197,8 @@
 	height: 38%;
 	pointer-events: none;
 	z-index: 0;
-	opacity: 0.58;
+	opacity: 0.02;
+	animation: sparkPulse 1.8s ease-in-out infinite alternate;
 }
 
 .sparklineSvg {
@@ -291,6 +240,15 @@
 	to {
 		stroke-dashoffset: 0;
 		opacity: 0.72;
+	}
+}
+
+@keyframes sparkPulse {
+	from {
+		opacity: 0.02;
+	}
+	to {
+		opacity: 0.05;
 	}
 }
 
@@ -428,28 +386,21 @@
 		border-radius: 1.25rem;
 	}
 
-	.liveLabel {
-		display: none;
-	}
-
-	.liveIndicator {
-		padding: 5px 8px 5px 7px;
-		gap: 5px;
-	}
-
-	.liveDot {
-		width: 7px;
-		height: 7px;
-	}
-
 	.value {
 		margin: auto 0;
 		font-size: clamp(1.4rem, 2vw, 2.2rem);
 	}
 
 	.comparisonMeta,
-	.comparisonCompactMeta,
 	.comparisonHeroMeta {
+		display: none;
+	}
+
+	.comparisonCompactMeta {
+		justify-content: flex-end;
+	}
+
+	.comparisonCompactCopy {
 		display: none;
 	}
 }

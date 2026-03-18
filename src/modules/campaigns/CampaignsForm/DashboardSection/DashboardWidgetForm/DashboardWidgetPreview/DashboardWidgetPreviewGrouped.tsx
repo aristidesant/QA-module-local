@@ -75,7 +75,6 @@ const DashboardWidgetPreviewGrouped = ({
 				<DashboardWidgetCard
 					title={preview.title}
 					accentColor={preview.accentColor}
-					liveLabel={t('dashboard.liveBadge')}
 					groupByLabel={preview.groupByLabel}
 				>
 					<div className={viewerStyles.tableWrapper}>
@@ -125,7 +124,6 @@ const DashboardWidgetPreviewGrouped = ({
 				<DashboardWidgetCard
 					title={preview.title}
 					accentColor={preview.accentColor}
-					liveLabel={t('dashboard.liveBadge')}
 					groupByLabel={preview.groupByLabel}
 				>
 					<div className={pieLayoutClass}>
@@ -220,7 +218,6 @@ const DashboardWidgetPreviewGrouped = ({
 			<DashboardWidgetCard
 				title={preview.title}
 				accentColor={preview.accentColor}
-				liveLabel={t('dashboard.liveBadge')}
 				groupByLabel={preview.groupByLabel}
 			>
 				<div className={viewerStyles.chartWrapper}>

@@ -80,7 +80,6 @@ const CampaignDashboardViewerWidgetContent = ({
 			<DashboardWidgetCard
 				title={widget.title}
 				accentColor={accentColor}
-				liveLabel={t('dashboard.liveBadge')}
 				groupByLabel={widget.result.meta.groupBy}
 			>
 				<div className={styles.emptyWidgetState}>

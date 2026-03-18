@@ -60,6 +60,8 @@ const KpiWidgetContent = ({
 			? 'comparison-hero'
 			: 'comparison-compact'
 		: 'default';
+	const showCompactComparisonTooltip =
+		variant === 'comparison-compact' && layout?.height === 1;
 	const subtitle = selectedTimeRange
 		? t(`dashboard.timeRange.${selectedTimeRange}`)
 		: undefined;
@@ -82,8 +84,6 @@ const KpiWidgetContent = ({
 			subtitle={subtitle}
 			value={currentValue}
 			accentColor={accentColor}
-			isLive={Boolean(widget.result)}
-			liveLabel={t('dashboard.liveBadge')}
 			isUnsupported={widget.result?.kind !== 'single_value'}
 			unsupportedMessage={widget.message || t('dashboard.unsupportedMessage')}
 			className={styles.kpiCard}
@@ -91,6 +91,7 @@ const KpiWidgetContent = ({
 			variant={variant}
 			comparisonLabel={comparisonLabel}
 			comparisonDetail={comparisonDetail}
+			showCompactComparisonTooltip={showCompactComparisonTooltip}
 		/>
 	);
 };

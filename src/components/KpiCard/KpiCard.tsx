@@ -4,7 +4,7 @@ import {
 	IconTrendingDown,
 	IconTrendingUp,
 } from '@tabler/icons-react';
-import { Text } from '@mantine/core';
+import { Text, Tooltip } from '@mantine/core';
 import type {
 	MetricComparison,
 	MetricTrend,
@@ -33,7 +33,7 @@ const SPARKLINE_RED = '#ef4444';
 const UP_PATH =
 	'M0 50 Q 15 45 30 48 T 60 38 T 90 40 T 120 28 T 150 20 T 180 12 Q 190 8 200 5';
 const DOWN_PATH =
-	'M0 8 Q 15 10 30 14 T 60 22 T 90 30 T 120 38 T 150 48 T 180 54 Q 190 57 200 60';
+	'M0 10 Q 12 8 24 12 T 48 18 Q 60 22 72 20 T 96 30 Q 108 34 120 32 T 144 42 Q 156 46 168 44 T 192 56 Q 196 58 200 60';
 
 const TREND_CONFIG: Record<
 	MetricTrend,
@@ -59,8 +59,6 @@ export interface KpiCardProps {
 	subtitle?: string;
 	value?: string | number | boolean | null;
 	accentColor?: string;
-	isLive?: boolean;
-	liveLabel?: string;
 	isUnsupported?: boolean;
 	unsupportedMessage?: string;
 	className?: string;
@@ -68,6 +66,7 @@ export interface KpiCardProps {
 	variant?: 'default' | 'comparison-hero' | 'comparison-compact';
 	comparisonLabel?: string;
 	comparisonDetail?: string;
+	showCompactComparisonTooltip?: boolean;
 }
 
 export const KpiCard = ({
@@ -75,8 +74,6 @@ export const KpiCard = ({
 	subtitle,
 	value,
 	accentColor,
-	isLive = false,
-	liveLabel = 'Live',
 	isUnsupported = false,
 	unsupportedMessage,
 	className,
@@ -84,6 +81,7 @@ export const KpiCard = ({
 	variant = 'default',
 	comparisonLabel,
 	comparisonDetail,
+	showCompactComparisonTooltip = false,
 }: KpiCardProps) => {
 	const trendConfig =
 		comparison && comparison.trend !== 'UNAVAILABLE'
@@ -96,6 +94,10 @@ export const KpiCard = ({
 		hasComparisonContent && variant === 'comparison-hero';
 	const isComparisonCompact =
 		hasComparisonContent && variant === 'comparison-compact';
+	const comparisonCompactTooltipLabel = showCompactComparisonTooltip
+		? [comparisonDetail, comparisonLabel].filter(Boolean).join(' • ') ||
+			undefined
+		: undefined;
 	const sparklineTrend =
 		comparison?.trend === 'UP' ||
 		comparison?.trend === 'DOWN' ||
@@ -171,12 +173,6 @@ export const KpiCard = ({
 							<span className={styles.subtitle}>{subtitle}</span>
 						) : null}
 					</div>
-					{isLive && !isUnsupported && (
-						<div className={styles.liveIndicator}>
-							<div className={styles.liveDot} />
-							<span className={styles.liveLabel}>{liveLabel}</span>
-						</div>
-					)}
 				</div>
 
 				{isUnsupported ? (
@@ -231,12 +227,35 @@ export const KpiCard = ({
 									) : null}
 								</div>
 								{trendConfig ? (
-									<div className={`${styles.trend} ${trendConfig.className}`}>
-										<span className={styles.trendIcon}>{trendConfig.icon}</span>
-										<span className={styles.trendPct}>
-											{formatPct(comparison!.percentageChange)}
-										</span>
-									</div>
+									comparisonCompactTooltipLabel ? (
+										<Tooltip
+											label={comparisonCompactTooltipLabel}
+											withArrow
+											multiline
+											maw={220}
+											position='top-end'
+										>
+											<div
+												className={`${styles.trend} ${trendConfig.className}`}
+											>
+												<span className={styles.trendIcon}>
+													{trendConfig.icon}
+												</span>
+												<span className={styles.trendPct}>
+													{formatPct(comparison!.percentageChange)}
+												</span>
+											</div>
+										</Tooltip>
+									) : (
+										<div className={`${styles.trend} ${trendConfig.className}`}>
+											<span className={styles.trendIcon}>
+												{trendConfig.icon}
+											</span>
+											<span className={styles.trendPct}>
+												{formatPct(comparison!.percentageChange)}
+											</span>
+										</div>
+									)
 								) : null}
 							</div>
 						) : null}
