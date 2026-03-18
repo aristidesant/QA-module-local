@@ -1,5 +1,5 @@
 import { ThemeIcon, Tooltip } from '@mantine/core';
-import { IconExclamationCircle } from '@tabler/icons-react';
+import { IconExclamationCircle, IconGripHorizontal } from '@tabler/icons-react';
 import type {
 	AnalyticsTimeRange,
 	DashboardRenderWidget,
@@ -64,6 +64,11 @@ const CampaignDashboardViewerWidget = ({
 					</Tooltip>
 				</div>
 			) : null}
+			{isEditing && (
+				<div className={styles.widgetDragHandle}>
+					<IconGripHorizontal size={14} stroke={1.5} />
+				</div>
+			)}
 			<div className={styles.widgetContent}>
 				<CampaignDashboardViewerWidgetContent
 					widget={widget}
