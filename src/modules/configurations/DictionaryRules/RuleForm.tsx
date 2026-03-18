@@ -26,6 +26,7 @@ import type {
 } from '~/models/PronunciationDictionaryModel';
 import {
 	useCreateRule,
+	useSyncDictionary,
 	useUpdateRule,
 } from '~/queries/pronunciationDictionaryQueries';
 import styles from './RuleForm.module.css';
@@ -68,6 +69,7 @@ export function RuleForm({
 
 	const createRule = useCreateRule(dictionaryId);
 	const updateRule = useUpdateRule(dictionaryId);
+	const syncMutation = useSyncDictionary();
 	const isLoading = createRule.isPending || updateRule.isPending;
 
 	const form = useForm<RuleFormValues>({
@@ -152,7 +154,29 @@ export function RuleForm({
 			if (isEdit && initialData) {
 				updateRule.mutate(
 					{ ruleId: initialData.id, params: payload },
-					{ onSuccess: handleSuccess, onError: handleError }
+					{
+						onSuccess: () => {
+							handleSuccess();
+							// Fire-and-forget sync so all attached agents get the new versionId
+							syncMutation.mutate(dictionaryId, {
+								onSuccess: () => {
+									notifications.show({
+										title: t('dictionary.notifications.syncSuccess'),
+										message: t('dictionary.notifications.syncSuccess'),
+										color: 'teal',
+									});
+								},
+								onError: () => {
+									notifications.show({
+										title: t('dictionary.notifications.syncError'),
+										message: t('dictionary.notifications.syncError'),
+										color: 'orange',
+									});
+								},
+							});
+						},
+						onError: handleError,
+					}
 				);
 			} else {
 				createRule.mutate(payload, {
@@ -161,7 +185,17 @@ export function RuleForm({
 				});
 			}
 		},
-		[isEdit, initialData, createRule, updateRule, handleSuccess, handleError]
+		[
+			isEdit,
+			initialData,
+			createRule,
+			updateRule,
+			syncMutation,
+			dictionaryId,
+			handleSuccess,
+			handleError,
+			t,
+		]
 	);
 
 	const ruleTypeOptions = [
