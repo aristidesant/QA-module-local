@@ -5,7 +5,6 @@ import { IconLayoutDashboard } from '@tabler/icons-react';
 import { useContainerWidth } from 'react-grid-layout/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { Layout } from 'react-grid-layout/legacy';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import {
@@ -24,22 +23,19 @@ import {
 } from '~/queries/analyticsDashboardsQueries';
 import { getErrorMessage } from '~/utils/httpClient';
 import {
-	areLayoutCollectionsEqual,
 	areLayoutsEqual,
 	createLayoutMap,
 	createWidgetTypeMap,
 	EMPTY_DASHBOARDS,
 	EMPTY_WIDGETS,
 	formatDashboardPeriod,
-	fromGridLayout,
 	getWidgetRenderLayout,
 	getVisibleDashboardWidgets,
-	toGridLayout,
 } from './CampaignDashboardViewer.helpers';
 import CampaignDashboardViewerContent from './CampaignDashboardViewerContent';
 import CampaignDashboardViewerToolbar from './CampaignDashboardViewerToolbar';
 import useCampaignDashboardViewerStore from './store/useCampaignDashboardViewerStore';
-import type { WidgetComparisonData } from './types';
+import type { ViewerWidgetLayout, WidgetComparisonData } from './types';
 import styles from './CampaignDashboardViewer.module.css';
 
 const CampaignDashboardViewer = ({
@@ -268,14 +264,6 @@ const CampaignDashboardViewer = ({
 			});
 	}, [activeLayoutMap, renderResult, visibleWidgetIdSet]);
 
-	const editableGridLayout = useMemo(
-		() =>
-			draftLayouts.map((layout) =>
-				toGridLayout(layout, widgetTypeMap.get(layout.widgetId) ?? 'KPI')
-			),
-		[draftLayouts, widgetTypeMap]
-	);
-
 	const isSavingLayout =
 		updateDashboardWidgetLayouts.isPending || isSavingLayoutTransition;
 	const isLayoutEditingAvailable =
@@ -298,27 +286,8 @@ const CampaignDashboardViewer = ({
 		setDraftLayouts(organized);
 	};
 
-	const handleLayoutChange = (nextLayout: Layout) => {
-		const currentLayoutMap = createLayoutMap(draftLayouts);
-		const normalizedLayouts = nextLayout
-			.map((item) => {
-				const normalizedLayout = fromGridLayout(
-					item,
-					widgetTypeMap.get(Number(item.i)) ?? 'KPI'
-				);
-				const currentLayout = currentLayoutMap.get(normalizedLayout.widgetId);
-
-				return currentLayout
-					? { ...currentLayout, ...normalizedLayout }
-					: normalizedLayout;
-			})
-			.sort(compareWidgetLayouts);
-
-		setDraftLayouts(
-			areLayoutCollectionsEqual(draftLayouts, normalizedLayouts)
-				? draftLayouts
-				: normalizedLayouts
-		);
+	const handleLayoutChange = (nextLayout: ViewerWidgetLayout[]) => {
+		setDraftLayouts(nextLayout);
 	};
 
 	const handleSaveLayout = async () => {
@@ -495,7 +464,6 @@ const CampaignDashboardViewer = ({
 					<div className={styles.canvasMeasure} ref={editorContainerRef}>
 						<CampaignDashboardViewerContent
 							activeLayoutMap={activeLayoutMap}
-							editableGridLayout={editableGridLayout}
 							editorWidth={editorWidth}
 							errorMessage={error instanceof Error ? error.message : undefined}
 							isError={isError}

@@ -42,3 +42,32 @@
 .widgetNoDrag {
 	cursor: default;
 }
+
+.widgetDragHandle {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 22px;
+	z-index: 3;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: grab;
+	color: var(--mantine-color-blue-4);
+	border-radius: var(--mantine-radius-lg) var(--mantine-radius-lg) 0 0;
+	background: rgba(99, 102, 241, 0.06);
+	transition:
+		background 120ms,
+		color 120ms;
+}
+
+.widgetDragHandle:active {
+	cursor: grabbing;
+	background: rgba(99, 102, 241, 0.14);
+}
+
+.widgetItem:hover .widgetDragHandle {
+	background: rgba(99, 102, 241, 0.1);
+	color: var(--mantine-color-blue-5);
+}
