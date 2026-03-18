@@ -18,6 +18,7 @@ import { IconInfoCircle } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useTranslation } from 'react-i18next';
+import type { AxiosError } from 'axios';
 import type {
 	PronunciationRule,
 	RuleCategory,
@@ -116,15 +117,22 @@ export function RuleForm({
 		onSuccess();
 	}, [isEdit, onSuccess, t]);
 
-	const handleError = useCallback(() => {
-		notifications.show({
-			title: 'Error',
-			message: isEdit
+	const handleError = useCallback(
+		(error: unknown) => {
+			const fallback = isEdit
 				? t('rules.notifications.updateError')
-				: t('rules.notifications.createError'),
-			color: 'red',
-		});
-	}, [isEdit, t]);
+				: t('rules.notifications.createError');
+			const apiMessage =
+				(error as AxiosError<{ message?: string }>)?.response?.data?.message ??
+				fallback;
+			notifications.show({
+				title: 'Error',
+				message: apiMessage,
+				color: 'red',
+			});
+		},
+		[isEdit, t]
+	);
 
 	const handleSubmit = useCallback(
 		(values: RuleFormValues) => {

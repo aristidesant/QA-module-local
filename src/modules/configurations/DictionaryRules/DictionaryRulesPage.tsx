@@ -14,6 +14,7 @@ import { notifications } from '@mantine/notifications';
 import {
 	IconArrowLeft,
 	IconBook2,
+	IconDownload,
 	IconPlus,
 	IconUpload,
 } from '@tabler/icons-react';
@@ -33,6 +34,8 @@ import {
 	useDeleteDictionary,
 	useSyncDictionary,
 } from '~/queries/pronunciationDictionaryQueries';
+import { exportAllRules } from '~/api/pronunciationDictionaryApi';
+import { downloadDictionaryAsCsv } from './dictionaryExport';
 import { useDictionaryTableColumns } from './useDictionaryTableColumns';
 import { RuleList } from './RuleList';
 import { RuleForm } from './RuleForm';
@@ -88,6 +91,9 @@ export default function DictionaryRulesPage() {
 	const [csvUploadMode, setCsvUploadMode] = useState<
 		'create-and-upload' | 'upload-only'
 	>('create-and-upload');
+
+	// ── Export state ──
+	const [isExporting, setIsExporting] = useState(false);
 
 	// ── Create dictionary form ──
 	const dictForm = useForm({
@@ -218,12 +224,42 @@ export default function DictionaryRulesPage() {
 		}
 	};
 
+	// ── Export handler ──
+
+	const handleExport = async (dict: PronunciationDictionary) => {
+		setIsExporting(true);
+		try {
+			const rules = await exportAllRules(dict.id);
+			if (rules.length === 0) {
+				notifications.show({
+					message: t('export.emptyNotification'),
+					color: 'yellow',
+				});
+				return;
+			}
+			downloadDictionaryAsCsv(dict.name, rules);
+			notifications.show({
+				message: t('export.successNotification'),
+				color: 'green',
+			});
+		} catch {
+			notifications.show({
+				message: t('export.errorNotification'),
+				color: 'red',
+			});
+		} finally {
+			setIsExporting(false);
+		}
+	};
+
 	// ── Dictionary table columns ──
 	const dictionaryColumns = useDictionaryTableColumns({
 		onOpen: setActiveDictionary,
 		onSync: handleSync,
 		onDelete: handleOpenDeleteDict,
+		onExport: handleExport,
 		isSyncing: syncDictionary.isPending,
+		isExporting,
 	});
 
 	// ── Create dictionary modal (shared between views) ──
@@ -332,14 +368,25 @@ export default function DictionaryRulesPage() {
 						},
 					}}
 					headerActions={
-						<Button
-							leftSection={<IconUpload size={16} />}
-							variant='default'
-							size='sm'
-							onClick={handleOpenCsvUpload}
-						>
-							{t('upload.buttonLabel')}
-						</Button>
+						<Group gap='xs'>
+							<Button
+								leftSection={<IconDownload size={16} />}
+								variant='default'
+								size='sm'
+								loading={isExporting}
+								onClick={() => handleExport(activeDictionary)}
+							>
+								{t('export.buttonLabel')}
+							</Button>
+							<Button
+								leftSection={<IconUpload size={16} />}
+								variant='default'
+								size='sm'
+								onClick={handleOpenCsvUpload}
+							>
+								{t('upload.buttonLabel')}
+							</Button>
+						</Group>
 					}
 				>
 					<RuleList

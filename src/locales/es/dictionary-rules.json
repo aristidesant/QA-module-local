@@ -167,6 +167,8 @@
 		"filePlaceholder": "Selecciona un archivo CSV",
 		"fileDescription": "Formato aceptado: .csv — máx 5 MB",
 		"fileRequired": "Por favor selecciona un archivo CSV",
+		"dropzoneTitle": "Subir reglas CSV",
+		"dropzoneSubtitle": "Arrastra y suelta tu archivo CSV aquí o haz clic para buscar.",
 		"downloadTemplate": "Descargar plantilla CSV",
 		"formatHint": "Columnas obligatorias: grapheme, ruleType. Opcionales: alias, phoneme, locale, description, category.",
 		"cancel": "Cancelar",
@@ -197,5 +199,12 @@
 		"NAME": "Nombre",
 		"LAST_NAME": "Apellido",
 		"GENERAL": "General"
+	},
+	"export": {
+		"buttonLabel": "Descargar CSV",
+		"downloading": "Descargando…",
+		"emptyNotification": "Este diccionario no tiene reglas para exportar.",
+		"successNotification": "Diccionario exportado exitosamente.",
+		"errorNotification": "Error al exportar el diccionario."
 	}
 }

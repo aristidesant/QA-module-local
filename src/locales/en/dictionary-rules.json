@@ -167,6 +167,8 @@
 		"filePlaceholder": "Select a CSV file",
 		"fileDescription": "Accepted format: .csv — max 5 MB",
 		"fileRequired": "Please select a CSV file",
+		"dropzoneTitle": "Upload rules CSV",
+		"dropzoneSubtitle": "Drag and drop your CSV file here or click to browse.",
 		"downloadTemplate": "Download CSV template",
 		"formatHint": "Required columns: grapheme, ruleType. Optional: alias, phoneme, locale, description, category.",
 		"cancel": "Cancel",
@@ -197,5 +199,12 @@
 		"NAME": "First Name",
 		"LAST_NAME": "Last Name",
 		"GENERAL": "General"
+	},
+	"export": {
+		"buttonLabel": "Download CSV",
+		"downloading": "Downloading…",
+		"emptyNotification": "This dictionary has no rules to export.",
+		"successNotification": "Dictionary exported successfully.",
+		"errorNotification": "Failed to export dictionary."
 	}
 }

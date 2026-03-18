@@ -1,7 +1,12 @@
 import { useMemo } from 'react';
 import { type ColumnDef } from '@tanstack/react-table';
 import { ActionIcon, Group, Stack, Text, Tooltip } from '@mantine/core';
-import { IconChevronRight, IconRefresh, IconTrash } from '@tabler/icons-react';
+import {
+	IconChevronRight,
+	IconDownload,
+	IconRefresh,
+	IconTrash,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { PronunciationDictionary } from '~/models/PronunciationDictionaryModel';
 
@@ -9,14 +14,18 @@ interface UseDictionaryTableColumnsProps {
 	onOpen: (dictionary: PronunciationDictionary) => void;
 	onSync: (dictionary: PronunciationDictionary) => void;
 	onDelete: (dictionary: PronunciationDictionary) => void;
+	onExport: (dictionary: PronunciationDictionary) => void;
 	isSyncing: boolean;
+	isExporting: boolean;
 }
 
 export function useDictionaryTableColumns({
 	onOpen,
 	onSync,
 	onDelete,
+	onExport,
 	isSyncing,
+	isExporting,
 }: UseDictionaryTableColumnsProps) {
 	const { t } = useTranslation('dictionary-rules');
 
@@ -82,6 +91,21 @@ export function useDictionaryTableColumns({
 								<IconTrash size={16} />
 							</ActionIcon>
 						</Tooltip>
+						<Tooltip label={t('export.buttonLabel')}>
+							<ActionIcon
+								variant='light'
+								color='teal'
+								radius='md'
+								size='sm'
+								loading={isExporting}
+								onClick={(e) => {
+									e.stopPropagation();
+									onExport(row.original);
+								}}
+							>
+								<IconDownload size={16} />
+							</ActionIcon>
+						</Tooltip>
 						<Tooltip label={t('dictionary.viewRules')}>
 							<ActionIcon
 								variant='light'
@@ -97,6 +121,6 @@ export function useDictionaryTableColumns({
 				),
 			},
 		],
-		[onOpen, onSync, onDelete, isSyncing, t]
+		[onOpen, onSync, onDelete, onExport, isSyncing, isExporting, t]
 	);
 }

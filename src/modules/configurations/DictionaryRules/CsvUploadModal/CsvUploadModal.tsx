@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
 import {
+	ActionIcon,
 	Anchor,
 	Button,
-	FileInput,
 	Group,
 	Modal,
 	Stack,
@@ -12,9 +12,8 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { IconDownload, IconUpload } from '@tabler/icons-react';
+import { IconDownload, IconFile, IconUpload, IconX } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
-import SectionCard from '~/components/SectionCard';
 import type {
 	BulkUploadCsvResult,
 	CreateDictionaryParams,
@@ -70,11 +69,13 @@ export default function CsvUploadModal({
 	const { t } = useTranslation('dictionary-rules');
 	const createDictionary = useCreateDictionary();
 	const [isUploading, setIsUploading] = useState(false);
+	const [isDragOver, setIsDragOver] = useState(false);
 	const [uploadResult, setUploadResult] = useState<BulkUploadCsvResult | null>(
 		null
 	);
 	const [resultsOpened, setResultsOpened] = useState(false);
 	const createdDictionaryIdRef = useRef<number | undefined>(undefined);
+	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const form = useForm<UploadFormValues>({
 		initialValues: { name: '', description: '', file: null },
@@ -86,6 +87,41 @@ export default function CsvUploadModal({
 			file: (value) => (!value ? t('upload.fileRequired') : null),
 		},
 	});
+
+	// ── Dropzone handlers ──
+
+	const handleDropzoneClick = () => fileInputRef.current?.click();
+
+	const handleDragOver = (e: React.DragEvent) => {
+		e.preventDefault();
+		setIsDragOver(true);
+	};
+
+	const handleDragLeave = () => setIsDragOver(false);
+
+	const handleDrop = (e: React.DragEvent) => {
+		e.preventDefault();
+		setIsDragOver(false);
+		const file = e.dataTransfer.files[0];
+		if (file) {
+			form.setFieldValue('file', file);
+			form.clearFieldError('file');
+		}
+	};
+
+	const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0] ?? null;
+		form.setFieldValue('file', file);
+		if (file) form.clearFieldError('file');
+		if (fileInputRef.current) fileInputRef.current.value = '';
+	};
+
+	const handleClearFile = (e: React.MouseEvent) => {
+		e.stopPropagation();
+		form.setFieldValue('file', null);
+	};
+
+	// ── Form handlers ──
 
 	const handleClose = () => {
 		form.reset();
@@ -155,65 +191,114 @@ export default function CsvUploadModal({
 		? t('upload.createAndUpload')
 		: t('upload.submit');
 
+	const dropzoneClass = [
+		styles.dropzone,
+		isDragOver ? styles.dropzoneDragOver : '',
+		form.errors.file ? styles.dropzoneError : '',
+	]
+		.filter(Boolean)
+		.join(' ');
+
 	return (
 		<>
 			<Modal opened={opened} onClose={handleClose} title={title} size='md'>
 				<form onSubmit={form.onSubmit(handleSubmit)}>
 					<Stack gap='sm'>
 						{isCreateMode && (
-							<SectionCard title={t('upload.dictionarySection')}>
-								<Stack gap='xs'>
-									<TextInput
-										label={t('dictionary.name')}
-										placeholder={t('dictionary.namePlaceholder')}
-										required
-										size='sm'
-										key={form.key('name')}
-										{...form.getInputProps('name')}
-									/>
-									<Textarea
-										label={t('dictionary.descriptionLabel')}
-										placeholder={t('dictionary.descriptionPlaceholder')}
-										size='sm'
-										autosize
-										minRows={2}
-										key={form.key('description')}
-										{...form.getInputProps('description')}
-									/>
-								</Stack>
-							</SectionCard>
-						)}
-
-						<SectionCard title={t('upload.fileSection')}>
-							<Stack gap='xs'>
-								<FileInput
-									label={t('upload.fileLabel')}
-									placeholder={t('upload.filePlaceholder')}
-									description={t('upload.fileDescription')}
-									accept='.csv'
-									leftSection={<IconUpload size={16} />}
+							<>
+								<TextInput
+									label={t('dictionary.name')}
+									placeholder={t('dictionary.namePlaceholder')}
 									required
 									size='sm'
-									key={form.key('file')}
-									{...form.getInputProps('file')}
+									key={form.key('name')}
+									{...form.getInputProps('name')}
 								/>
-								<Text size='xs' c='dimmed'>
-									{t('upload.formatHint')}
-								</Text>
-								<Anchor
-									component='button'
-									type='button'
-									size='xs'
-									className={styles.templateLink}
-									onClick={downloadCsvTemplate}
-								>
-									<Group gap={4} align='center'>
-										<IconDownload size={12} />
-										{t('upload.downloadTemplate')}
-									</Group>
-								</Anchor>
-							</Stack>
-						</SectionCard>
+								<Textarea
+									label={t('dictionary.descriptionLabel')}
+									placeholder={t('dictionary.descriptionPlaceholder')}
+									size='sm'
+									autosize
+									minRows={2}
+									key={form.key('description')}
+									{...form.getInputProps('description')}
+								/>
+							</>
+						)}
+
+						{/* Dropzone */}
+						<input
+							ref={fileInputRef}
+							type='file'
+							accept='.csv'
+							className={styles.hiddenInput}
+							onChange={handleFileInputChange}
+						/>
+						<div
+							className={dropzoneClass}
+							onClick={handleDropzoneClick}
+							onDragOver={handleDragOver}
+							onDragEnter={handleDragOver}
+							onDragLeave={handleDragLeave}
+							onDrop={handleDrop}
+							role='button'
+							tabIndex={0}
+							onKeyDown={(e) => e.key === 'Enter' && handleDropzoneClick()}
+						>
+							{form.values.file ? (
+								<div className={styles.selectedFile}>
+									<IconFile size={20} color='var(--mantine-color-blue-6)' />
+									<Text size='sm' fw={500}>
+										{form.values.file.name}
+									</Text>
+									<ActionIcon
+										variant='subtle'
+										color='gray'
+										size='sm'
+										onClick={handleClearFile}
+										aria-label='Remove file'
+									>
+										<IconX size={14} />
+									</ActionIcon>
+								</div>
+							) : (
+								<div className={styles.dropzoneInner}>
+									<IconUpload
+										size={32}
+										stroke={1.5}
+										color='var(--mantine-color-gray-6)'
+									/>
+									<Text size='sm' fw={600} c='dark'>
+										{t('upload.dropzoneTitle')}
+									</Text>
+									<Text size='xs' c='dimmed'>
+										{t('upload.dropzoneSubtitle')}
+									</Text>
+								</div>
+							)}
+						</div>
+						{form.errors.file && (
+							<Text size='xs' c='red'>
+								{form.errors.file}
+							</Text>
+						)}
+
+						{/* Hints */}
+						<Text size='xs' c='dimmed'>
+							{t('upload.formatHint')}
+						</Text>
+						<Anchor
+							component='button'
+							type='button'
+							size='xs'
+							className={styles.templateLink}
+							onClick={downloadCsvTemplate}
+						>
+							<Group gap={4} align='center'>
+								<IconDownload size={12} />
+								{t('upload.downloadTemplate')}
+							</Group>
+						</Anchor>
 
 						<Group justify='flex-end' mt='xs'>
 							<Button

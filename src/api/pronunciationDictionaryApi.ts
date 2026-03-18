@@ -84,6 +84,28 @@ export const getRules = async (
 };
 
 /**
+ * Fetch ALL rules for a dictionary by paginating until exhausted.
+ * Used for CSV export where a single unbounded request is not available.
+ */
+export const exportAllRules = async (
+	dictionaryId: number,
+	apiUrl: string = DEFAULT_API_URL
+): Promise<PronunciationRule[]> => {
+	const all: PronunciationRule[] = [];
+	const limit = 200;
+	let offset = 0;
+
+	while (true) {
+		const page = await getRules(dictionaryId, { limit, offset }, apiUrl);
+		all.push(...page.data);
+		if (page.data.length < limit) break;
+		offset += limit;
+	}
+
+	return all;
+};
+
+/**
  * Add a single rule to a dictionary.
  */
 export const createRule = async (
