@@ -35,7 +35,7 @@
 		"pending": "Pending",
 		"pendingDesc": "Waiting to start. Review settings before launching.",
 		"running": "Running",
-		"runningDesc": "Contacts are currently being dialed.",
+		"runningDesc": "Contacts are currently being called.",
 		"waiting": "Waiting for next wave",
 		"waitingDesc": "The previous wave finished and the next one is scheduled to run later.",
 		"paused": "Paused",
@@ -45,6 +45,7 @@
 		"failed": "Failed",
 		"failedDesc": "An error stopped the campaign. Try restarting.",
 		"executed": "Executed",
+		"executedDesc": "Wave has been executed. Waiting for next wave or completion.",
 		"unknown": "Unknown",
 		"unknownDesc": "Status unavailable. Reload for the latest update.",
 		"confirmCompleteList": "Mark this contact list as completed? No additional waves will run."

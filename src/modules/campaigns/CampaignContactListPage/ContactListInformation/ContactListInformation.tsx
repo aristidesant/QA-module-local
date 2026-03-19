@@ -77,7 +77,7 @@ export const ContactListInformation = ({
 		},
 		EXECUTED: {
 			label: t('status.executed'),
-			description: t('contacts.details.messages.allWavesDone'),
+			description: t('status.executedDesc'),
 			accentClass: 'statusComplete',
 			StatusIcon: IconAlertTriangle,
 		},
