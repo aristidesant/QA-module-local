@@ -40,7 +40,7 @@ const getWaveLabels = (t: any) => ({
 });
 
 const SchedulerResults: React.FC = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.params', 'common']);
 	const { summary, mode, formValues } = useSchedulerCalculatorStore();
 
 	const summaryColumns = useSummaryColumns();

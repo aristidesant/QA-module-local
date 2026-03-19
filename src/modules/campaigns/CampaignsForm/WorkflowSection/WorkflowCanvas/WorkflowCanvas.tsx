@@ -64,7 +64,11 @@ const WorkflowCanvasInner = ({
 	onNodeSelect,
 	layoutMode = 'compact',
 }: WorkflowCanvasProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
 	const [edges, setEdges] = useEdgesState<Edge>([]);
 	const [reactFlowInstance, setReactFlowInstance] =

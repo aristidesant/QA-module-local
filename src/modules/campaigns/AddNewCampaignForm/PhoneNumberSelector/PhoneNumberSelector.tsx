@@ -25,7 +25,7 @@ const PhoneNumberSelector: React.FC<PhoneNumberSelectorProps> = ({
 	withAsterisk = false,
 	error,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaigns.create', 'common']);
 	const params: SimplePhoneNumberListParams = {
 		type: campaignType,
 	};

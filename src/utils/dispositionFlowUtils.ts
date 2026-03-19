@@ -8,13 +8,6 @@ import type { DispositionCatalogModel } from '~/models/DispositionCatalogModels'
 export function validateAndNormalizeDispositionFlow(
 	flow: DispositionFlowModel
 ): DispositionFlowModel {
-	console.log('Validating disposition flow:', {
-		id: flow.id,
-		campaignId: flow.campaignId,
-		hasFlowJson: !!flow.flowJson,
-		flowJsonType: typeof flow.flowJson,
-	});
-
 	if (!flow.flowJson) {
 		throw new Error('DispositionFlowModel is missing flowJson property');
 	}
@@ -31,10 +24,6 @@ export function validateAndNormalizeDispositionFlow(
 		normalizedCatalog.flowJson &&
 		unwrapCount < maxUnwraps
 	) {
-		console.warn(
-			`Unwrapping nested flowJson (attempt ${unwrapCount + 1})`,
-			normalizedCatalog
-		);
 		normalizedCatalog = (normalizedCatalog as any).flowJson;
 		unwrapCount++;
 	}
@@ -54,7 +43,6 @@ export function validateAndNormalizeDispositionFlow(
 
 	// Check for dispositionNodes (new structure)
 	if (!('dispositionNodes' in normalizedCatalog)) {
-		console.warn('No dispositionNodes found in catalog, creating empty array');
 		normalizedCatalog = {
 			...normalizedCatalog,
 			dispositionNodes: [],
@@ -83,11 +71,6 @@ export function validateAndNormalizeDispositionFlow(
 		createdAt: catalog.createdAt || new Date().toISOString(),
 		updatedAt: catalog.updatedAt || new Date().toISOString(),
 	};
-
-	console.log('Validated disposition catalog:', {
-		name: validatedCatalog.name,
-		nodesCount: validatedCatalog.dispositionNodes?.length || 0,
-	});
 
 	return {
 		...flow,

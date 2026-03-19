@@ -126,7 +126,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 	campaignId,
 	campaignType,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.params', 'common']);
 	const createScheduleMutation = useCreateCampaignSchedule();
 	const clientConfigQuery = useGetClientConfig('scheduler_predefined_params');
 
@@ -138,7 +138,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 			if (!clientConfigQuery.data?.value) return [];
 			return JSON.parse(clientConfigQuery.data.value);
 		} catch (error) {
-			console.error('Error parsing predefined schedules:', error);
+			void error;
 			return [];
 		}
 	}, [clientConfigQuery.data?.value]);
@@ -301,7 +301,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 				onSuccess();
 			}
 		} catch (error: any) {
-			console.error('Error creating predefined schedule:', error);
+			void error;
 
 			// Extract error message from API response
 			let errorMessage = t('scheduler.schedulerBuilder.notifications.failed');

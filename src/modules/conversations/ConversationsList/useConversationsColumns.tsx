@@ -1,13 +1,27 @@
 import { useMemo, type MouseEvent } from 'react';
-import { ActionIcon, Badge, Group, Loader, Text, Tooltip } from '@mantine/core';
+import {
+	ActionIcon,
+	Badge,
+	CopyButton,
+	Group,
+	Loader,
+	Text,
+	Tooltip,
+} from '@mantine/core';
 import type { ColumnDef } from '@tanstack/react-table';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import timezone from 'dayjs/plugin/timezone';
-import { IconPlayerTrackNext, IconRefresh } from '@tabler/icons-react';
+import {
+	IconCheck,
+	IconCopy,
+	IconPlayerTrackNext,
+	IconRefresh,
+} from '@tabler/icons-react';
 import type { ConversationsModel } from '~/models/ConversationsModels';
 import { useTranslation } from 'react-i18next';
 import { getConversationActionDefinition } from '../ConversationDetails/ConversationActions/ConversationActions.helpers';
+import styles from './ConversationsList.module.css';
 
 dayjs.extend(relativeTime);
 dayjs.extend(timezone);
@@ -34,6 +48,86 @@ export const useConversationsColumns = (
 			const parsed = dayjs.utc(value);
 			if (!parsed.isValid()) return null;
 			return parsed.tz(userTimezone);
+		};
+
+		const normalizeConversationIdentifier = (
+			value?: string | null
+		): string | null => {
+			if (!value) return null;
+
+			const normalized = value.trim();
+			if (!normalized || normalized === '-' || normalized === '—') {
+				return null;
+			}
+
+			return normalized;
+		};
+
+		const renderConversationIdentifier = (
+			conversationIdentifier?: string | null
+		) => {
+			const normalizedIdentifier = normalizeConversationIdentifier(
+				conversationIdentifier
+			);
+
+			if (!normalizedIdentifier) {
+				return <Text size='xs'>—</Text>;
+			}
+
+			const visibleIdentifier =
+				normalizedIdentifier.length > 6
+					? `${normalizedIdentifier.slice(0, 6)}...`
+					: normalizedIdentifier;
+
+			return (
+				<Group gap={4} wrap='nowrap' className={styles.identifierCell}>
+					<Tooltip
+						label={normalizedIdentifier}
+						withArrow
+						position='top-start'
+						openDelay={100}
+						withinPortal
+					>
+						<Text
+							component='span'
+							size='xs'
+							fw={500}
+							className={styles.identifierValue}
+							tabIndex={0}
+							title={normalizedIdentifier}
+						>
+							{visibleIdentifier}
+						</Text>
+					</Tooltip>
+					<CopyButton value={normalizedIdentifier} timeout={1200}>
+						{({ copied, copy }) => (
+							<Tooltip
+								label={
+									copied ? t('list.columns.copiedId') : t('list.columns.copyId')
+								}
+								withArrow
+								position='top'
+								openDelay={100}
+								withinPortal
+							>
+								<ActionIcon
+									variant='subtle'
+									color={copied ? 'teal' : 'gray'}
+									size='xs'
+									aria-label={t('list.columns.copyId')}
+									className={styles.identifierCopyButton}
+									onClick={(event) => {
+										event.stopPropagation();
+										copy();
+									}}
+								>
+									{copied ? <IconCheck size={12} /> : <IconCopy size={12} />}
+								</ActionIcon>
+							</Tooltip>
+						)}
+					</CopyButton>
+				</Group>
+			);
 		};
 
 		const resolveSimpleStatus = (status?: string | null) => {
@@ -118,6 +212,16 @@ export const useConversationsColumns = (
 		};
 
 		const allColumns: ColumnDef<ConversationsModel>[] = [
+			{
+				id: 'conversationIdentifier',
+				header: t('list.columns.conversationIdentifier'),
+				size: 100,
+				accessorFn: (row) =>
+					normalizeConversationIdentifier(row.conversationIdentifier) ?? '',
+				enableSorting: true,
+				cell: ({ row }) =>
+					renderConversationIdentifier(row.original.conversationIdentifier),
+			},
 			{
 				id: 'contactName',
 				header: t('list.columns.contactName'),

@@ -58,6 +58,24 @@
 	letter-spacing: 0.02em;
 }
 
+.identifierCell {
+	width: 100%;
+	min-width: 0;
+}
+
+.identifierValue {
+	flex: 1 1 auto;
+	min-width: 0;
+	max-width: 100%;
+	font-family: var(--mantine-font-family-monospace);
+	color: var(--mantine-color-gray-7);
+	letter-spacing: 0.01em;
+}
+
+.identifierCopyButton {
+	flex-shrink: 0;
+}
+
 .agentName {
 	text-transform: capitalize;
 }
@@ -123,4 +141,18 @@
 
 .durationContext {
 	text-transform: capitalize;
+}
+
+.detailsDrawerContent {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.detailsDrawerBody {
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
 }

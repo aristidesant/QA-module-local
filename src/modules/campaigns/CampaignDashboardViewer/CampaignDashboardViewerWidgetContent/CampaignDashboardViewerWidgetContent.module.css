@@ -1,0 +1,377 @@
+.widgetCard {
+	position: relative;
+	height: 100%;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	padding: 12px !important;
+	background: rgba(255, 255, 255, 0.72);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border: 1px solid rgba(255, 255, 255, 0.6);
+	box-shadow:
+		0 2px 12px rgba(0, 0, 0, 0.06),
+		0 1px 3px rgba(0, 0, 0, 0.04),
+		inset 0 1px 0 rgba(255, 255, 255, 0.8);
+	transition: border-color 0.18s ease;
+}
+
+.widgetCard::after {
+	content: '';
+	position: absolute;
+	bottom: -32px;
+	right: -32px;
+	width: 160px;
+	height: 160px;
+	border-radius: 50%;
+	background: var(--widget-accent, #6366f1);
+	opacity: 0.04;
+	filter: blur(32px);
+	pointer-events: none;
+	transition: opacity 0.3s ease;
+}
+
+.widgetCard:hover {
+	border-color: color-mix(
+		in srgb,
+		var(--widget-accent, #6366f1) 28%,
+		rgba(255, 255, 255, 0.6)
+	);
+}
+
+/* ── Header ───────────────────────────────────────── */
+
+.widgetCardHeader {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+	padding-bottom: 8px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+	margin-bottom: 8px;
+	flex-shrink: 0;
+}
+
+.widgetHeaderCopy {
+	flex: 1;
+	min-width: 0;
+}
+
+.widgetTitle {
+	color: #1e293b;
+	letter-spacing: -0.015em;
+	line-height: 1.4;
+}
+
+.widgetMeta {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin-top: 3px;
+	flex-wrap: wrap;
+}
+
+/* ── GroupBy pill ─────────────────────────────────── */
+
+.groupByLabel {
+	font-size: 11px;
+	font-weight: 500;
+	color: var(--mantine-color-gray-5);
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: 999px;
+	padding: 2px 8px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 140px;
+}
+
+/* ── KPI card wrapper ─────────────────────────────── */
+
+.kpiCard {
+	height: 100%;
+	min-height: 0;
+}
+
+/* ── Bar chart ────────────────────────────────────── */
+
+.chartWrapper {
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	overflow: hidden;
+}
+
+/* ── Pie / Donut layout ───────────────────────────── */
+
+.pieLayout {
+	flex: 1;
+	min-height: 0;
+	display: grid;
+	grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+	gap: var(--mantine-spacing-md);
+	align-items: center;
+	overflow: hidden;
+}
+
+.pieLayout--wideLegend {
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+}
+
+.pieChartWrapper {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-width: 0;
+	min-height: 0;
+}
+
+.donutCenterWrapper {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.donutStat {
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+	gap: 1px;
+}
+
+.donutStatValue {
+	font-size: 1.25rem;
+	font-weight: 800;
+	line-height: 1.1;
+	color: #1e293b;
+	letter-spacing: -0.03em;
+}
+
+.donutStatLabel {
+	font-size: 0.65rem;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: #94a3b8;
+}
+
+/* ── Legend ───────────────────────────────────────── */
+
+.legendList {
+	min-width: 0;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	overflow: auto;
+}
+
+.legendList--twoCol {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	column-gap: var(--mantine-spacing-lg);
+	row-gap: 6px;
+	align-items: start;
+	overflow: visible;
+}
+
+.legendRow {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 3px 4px;
+	border-radius: var(--mantine-radius-sm);
+	transition: background 0.15s ease;
+	cursor: default;
+}
+
+.legendRow:hover {
+	background: rgba(0, 0, 0, 0.03);
+}
+
+.legendRowTop {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-xs);
+	min-width: 0;
+}
+
+.legendRowLeft {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	min-width: 0;
+	flex: 1;
+}
+
+.legendName {
+	color: #374151;
+	min-width: 0;
+}
+
+.legendMeta {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex-shrink: 0;
+}
+
+.legendPct {
+	min-width: 28px;
+	text-align: right;
+}
+
+.legendValue {
+	min-width: 36px;
+	text-align: right;
+	color: #1e293b;
+}
+
+.legendBar {
+	height: 3px;
+	background: rgba(0, 0, 0, 0.06);
+	border-radius: 999px;
+	overflow: hidden;
+}
+
+.legendBarFill {
+	height: 100%;
+	border-radius: 999px;
+	opacity: 0.9;
+	transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.legendDot {
+	width: 9px;
+	height: 9px;
+	border-radius: 3px;
+	flex-shrink: 0;
+	display: inline-block;
+}
+
+/* ── Table ────────────────────────────────────────── */
+
+.tableWrapper {
+	flex: 1;
+	overflow-x: auto;
+	overflow-y: auto;
+	min-height: 0;
+	padding-bottom: 2px;
+}
+
+.tableShell {
+	border: 1px solid rgba(15, 23, 42, 0.08);
+	border-radius: 14px;
+	overflow: hidden;
+	background: rgba(255, 255, 255, 0.72);
+}
+
+.table {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+}
+
+.table :global(thead th),
+.table :global(tbody td) {
+	padding-left: 14px;
+	padding-right: 14px;
+}
+
+.tableWrapper :global(thead th) {
+	font-size: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: #64748b;
+	background: linear-gradient(
+		180deg,
+		rgba(248, 250, 252, 0.96) 0%,
+		rgba(241, 245, 249, 0.94) 100%
+	);
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.tableWrapper :global(thead th:last-child) {
+	text-align: right;
+}
+
+.tableWrapper :global(tbody td) {
+	padding-top: 9px;
+	padding-bottom: 9px;
+	color: #475569;
+	font-size: 12px;
+	border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+}
+
+.tableWrapper :global(tbody td:last-child) {
+	font-size: 13px;
+	font-weight: 700;
+	color: #0f172a;
+	text-align: right;
+}
+
+.tableWrapper :global(tbody tr:last-child td) {
+	border-bottom: 0;
+}
+
+.tableWrapper :global(tbody tr:hover td) {
+	background: rgba(59, 130, 246, 0.03);
+}
+
+/* ── Empty state ──────────────────────────────────── */
+
+.emptyWidgetState {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--mantine-spacing-sm);
+	border: 1px dashed var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-gray-0);
+	flex: 1;
+}
+
+@media (max-width: 48rem) {
+	.pieLayout {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* ── Line chart pending state ─────────────────────── */
+
+.lineChartPending {
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 14px;
+	padding: 16px 8px;
+}
+
+.lineChartGhost {
+	width: 100%;
+	max-width: 240px;
+	height: 52px;
+	color: var(--widget-accent, #6366f1);
+	opacity: 0.18;
+	flex-shrink: 0;
+}
+
+.lineChartPendingText {
+	text-align: center;
+	max-width: 220px;
+	line-height: 1.5;
+}

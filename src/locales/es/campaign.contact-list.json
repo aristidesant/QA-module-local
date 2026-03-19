@@ -35,7 +35,7 @@
 		"pending": "Pendiente",
 		"pendingDesc": "Esperando para comenzar. Revisa la configuración antes de lanzar.",
 		"running": "En curso",
-		"runningDesc": "Los contactos están siendo marcados actualmente.",
+		"runningDesc": "Los contactos se están llamando actualmente.",
 		"waiting": "Esperando próxima oleada",
 		"waitingDesc": "La oleada anterior terminó y la siguiente está programada para ejecutarse más tarde.",
 		"paused": "Pausada",
@@ -45,6 +45,7 @@
 		"failed": "Fallida",
 		"failedDesc": "Un error detuvo la campaña. Intenta reiniciar.",
 		"executed": "Ejecutada",
+		"executedDesc": "La oleada ha sido ejecutada. Esperando la siguiente oleada o finalización.",
 		"unknown": "Desconocido",
 		"unknownDesc": "Estado no disponible. Recarga para la última actualización.",
 		"confirmCompleteList": "¿Marcar esta lista de contactos como completada? No se ejecutarán oleadas adicionales."

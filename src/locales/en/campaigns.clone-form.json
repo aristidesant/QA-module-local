@@ -1,0 +1,30 @@
+{
+	"cloneCampaignForm": {
+		"title": "Clone campaign",
+		"adjustDetails": "Adjust details before cloning.",
+		"selectedCount": "selected",
+		"campaignName": "Campaign name",
+		"enterCampaignName": "Enter campaign name",
+		"description": "Description",
+		"describeYourCampaign": "Describe your campaign",
+		"inboundPhoneNotice": "The phone number will not be cloned. You'll need to assign a new number to the cloned campaign.",
+		"agentsToClone": "Agents to clone",
+		"turnOffAgents": "Turn off agents you don't want to duplicate.",
+		"noAgentsLinked": "No agents linked",
+		"noAgentsDescription": "This campaign has no agents to duplicate.",
+		"toggleAgent": "Toggle {{name}}",
+		"createDedicatedCopy": "A dedicated copy will be created.",
+		"newAgentName": "New agent name",
+		"copyOf": "Copy of {{name}}",
+		"nameRequired": "Name is required",
+		"descriptionRequired": "Description is required",
+		"atLeastOneAgent": "At least one agent must be selected",
+		"allAgentsMustHaveName": "All selected agents must have a name",
+		"validationRequired": "Action required",
+		"cloneButton": "Clone campaign",
+		"success": "Campaign Cloned",
+		"successMessage": "The campaign has been successfully cloned.",
+		"error": "Error",
+		"errorMessage": "Failed to clone campaign"
+	}
+}

@@ -24,7 +24,11 @@ const WorkflowEditorFullscreen = ({
 	allowDefaultInit,
 	onNodeSelect,
 }: WorkflowEditorFullscreenProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 
 	return (
 		<Modal

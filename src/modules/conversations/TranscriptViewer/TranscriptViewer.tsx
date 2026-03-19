@@ -11,31 +11,65 @@ import {
 } from '@mantine/core';
 import {
 	IconAlertCircle,
-	IconCpu,
+	IconArrowRight,
 	IconGitBranch,
 	IconMessageOff,
 	IconRobot,
 	IconTool,
 	IconUser,
 } from '@tabler/icons-react';
+import { useEffect, useMemo, useRef } from 'react';
+import type { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import { usePermissions } from '~/hooks/usePermissions';
 import type {
 	AgentMetadata,
+	ConversationTurnMetrics,
 	LlmUsage,
 	ToolCall,
 	TranscriptEntry,
 } from '~/models/ConversationsModels';
 import styles from './TranscriptViewer.module.css';
-import { useTranslation } from 'react-i18next';
-import type { TFunction } from 'i18next';
 
 interface TranscriptViewerProps {
 	transcript: TranscriptEntry[];
+	audioCurrentTime?: number;
+	isAudioPlaying?: boolean;
+	onSeekToTime?: (time: number) => void;
 }
 
-export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
+interface WorkflowTransition {
+	from: AgentMetadata;
+	to: AgentMetadata;
+}
+
+interface VisibleTranscriptEntry {
+	entry: TranscriptEntry;
+	workflowTransition: WorkflowTransition | null;
+}
+
+type FooterMetricKind = 'llm' | 'tts' | 'asr';
+
+interface FooterMetricItem {
+	kind: FooterMetricKind;
+	label: string;
+	latencySeconds: number;
+	modelLabel: string;
+	costLabel: string;
+	details?: {
+		name: string;
+		cost: string;
+	}[];
+}
+
+export function TranscriptViewer({
+	transcript,
+	audioCurrentTime,
+	isAudioPlaying,
+	onSeekToTime,
+}: TranscriptViewerProps) {
 	const { t } = useTranslation(['conversations', 'common']);
 	const { canPerformAction } = usePermissions();
 	const canViewTechnicalDetails = canPerformAction(
@@ -43,38 +77,65 @@ export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
 		PermissionEnum.MANAGE
 	);
 
-	const visibleEntries = transcript.filter((entry) => {
-		const hasMessage = entry.message && entry.message.trim().length > 0;
-		const hasToolCalls = entry.tool_calls && entry.tool_calls.length > 0;
-		const hasToolResults = entry.tool_results && entry.tool_results.length > 0;
-		return hasMessage || hasToolCalls || hasToolResults;
-	});
+	const visibleEntries = useMemo(
+		() =>
+			transcript
+				.map<VisibleTranscriptEntry | null>((entry, index, allEntries) => {
+					const hasMessage = Boolean(entry.message?.trim().length);
+					const hasToolCalls = Boolean(entry.tool_calls?.length);
+					const hasToolResults = Boolean(entry.tool_results?.length);
+					const previousMetadata = findPreviousAgentMetadata(allEntries, index);
+					const currentMetadata = sanitizeAgentMetadata(entry.agent_metadata);
+					const workflowTransition =
+						canViewTechnicalDetails &&
+						previousMetadata &&
+						currentMetadata &&
+						hasAgentContextChanged(previousMetadata, currentMetadata)
+							? {
+									from: previousMetadata,
+									to: currentMetadata,
+								}
+							: null;
 
-	let lastWorkflowNodeId: string | null = null;
-	const entriesWithWorkflowChanges = visibleEntries.map((entry) => {
-		const currentWorkflowNodeId =
-			entry.agent_metadata?.workflow_node_id ?? null;
-		const hasWorkflowChanged =
-			!!currentWorkflowNodeId &&
-			!!lastWorkflowNodeId &&
-			currentWorkflowNodeId !== lastWorkflowNodeId;
+					if (
+						!hasMessage &&
+						!hasToolCalls &&
+						!hasToolResults &&
+						!workflowTransition
+					) {
+						return null;
+					}
 
-		const workflowChange = hasWorkflowChanged
-			? {
-					from: lastWorkflowNodeId as string,
-					to: currentWorkflowNodeId,
-				}
-			: null;
+					return {
+						entry,
+						workflowTransition,
+					};
+				})
+				.filter((item): item is VisibleTranscriptEntry => item !== null),
+		[canViewTechnicalDetails, transcript]
+	);
 
-		if (currentWorkflowNodeId) {
-			lastWorkflowNodeId = currentWorkflowNodeId;
+	const activeEntryIndex = useMemo(() => {
+		if (audioCurrentTime === undefined || audioCurrentTime < 0) return -1;
+		let lastIndex = -1;
+		for (let i = 0; i < visibleEntries.length; i++) {
+			if (visibleEntries[i].entry.time_in_call_secs <= audioCurrentTime) {
+				lastIndex = i;
+			}
 		}
+		return lastIndex;
+	}, [audioCurrentTime, visibleEntries]);
 
-		return {
-			entry,
-			workflowChange,
-		};
-	});
+	const activeEntryRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (isAudioPlaying && activeEntryRef.current) {
+			activeEntryRef.current.scrollIntoView({
+				behavior: 'smooth',
+				block: 'nearest',
+			});
+		}
+	}, [activeEntryIndex, isAudioPlaying]);
 
 	if (!transcript || transcript.length === 0) {
 		return (
@@ -98,39 +159,53 @@ export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
 
 	return (
 		<Stack gap='xs' className={styles.transcriptContainer}>
-			{entriesWithWorkflowChanges.map(({ entry, workflowChange }, index) => {
+			{visibleEntries.map(({ entry, workflowTransition }, index) => {
 				const isAgent = entry.role.toLowerCase() === 'agent';
 				const isUser =
 					entry.role.toLowerCase() === 'user' ||
 					entry.role.toLowerCase() === 'human';
 				const isSystem = !isAgent && !isUser;
-				const hasMessage = !!(entry.message && entry.message.trim().length > 0);
+				const hasMessage = Boolean(entry.message?.trim().length);
 				const visibleToolCalls = isAgent
 					? (entry.tool_calls || []).filter((tool) => tool.type !== 'workflow')
+					: [];
+				const footerMetrics = canViewTechnicalDetails
+					? buildFooterMetrics(entry, isAgent, t)
 					: [];
 				const hasVisibleToolCalls =
 					canViewTechnicalDetails && visibleToolCalls.length > 0;
 				const shouldRenderMessageBubble =
 					isSystem || hasMessage || hasVisibleToolCalls;
 
-				if (!workflowChange && !shouldRenderMessageBubble) {
+				if (!workflowTransition && !shouldRenderMessageBubble) {
 					return null;
 				}
 
 				return (
 					<Stack key={`transcript-${index}`} gap='xs'>
-						{workflowChange && (
-							<WorkflowChangeBanner timeInCallSecs={entry.time_in_call_secs} />
+						{workflowTransition && (
+							<WorkflowChangeBanner
+								timeInCallSecs={entry.time_in_call_secs}
+								transition={workflowTransition}
+							/>
 						)}
 						{shouldRenderMessageBubble && (
 							<Box
+								ref={index === activeEntryIndex ? activeEntryRef : undefined}
 								className={
 									`${styles.messageRow} ` +
 									(isSystem
 										? styles.centerAligned
 										: isAgent
 											? styles.rightAligned
-											: styles.leftAligned)
+											: styles.leftAligned) +
+									(index === activeEntryIndex ? ` ${styles.activeEntry}` : '') +
+									(onSeekToTime && !isSystem ? ` ${styles.seekableEntry}` : '')
+								}
+								onClick={
+									onSeekToTime && !isSystem
+										? () => onSeekToTime(entry.time_in_call_secs)
+										: undefined
 								}
 							>
 								{isSystem ? (
@@ -212,11 +287,8 @@ export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
 												<ToolCallsDisplay toolCalls={visibleToolCalls} />
 											)}
 
-											{canViewTechnicalDetails && hasMessage && (
-												<TechnicalDetailsSection
-													entry={entry}
-													isAgent={isAgent}
-												/>
+											{canViewTechnicalDetails && footerMetrics.length > 0 && (
+												<MessageFooterMetrics metrics={footerMetrics} />
 											)}
 										</Box>
 									</Box>
@@ -230,17 +302,113 @@ export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
 	);
 }
 
-interface WorkflowChangeBannerProps {
-	timeInCallSecs?: number;
+interface MessageFooterMetricsProps {
+	metrics: FooterMetricItem[];
 }
 
-function WorkflowChangeBanner({ timeInCallSecs }: WorkflowChangeBannerProps) {
+function MessageFooterMetrics({ metrics }: MessageFooterMetricsProps) {
+	return (
+		<Group gap={6} mt='xs' className={styles.messageFooterMetrics}>
+			{metrics.map((metric) => (
+				<FooterMetricChip key={metric.kind} metric={metric} />
+			))}
+		</Group>
+	);
+}
+
+interface FooterMetricChipProps {
+	metric: FooterMetricItem;
+}
+
+function FooterMetricChip({ metric }: FooterMetricChipProps) {
+	const { t } = useTranslation(['conversations', 'common']);
+
+	const metricColor = getFooterMetricColor(metric.kind);
+
+	return (
+		<HoverCard width={300} position='top' radius='lg' openDelay={100}>
+			<HoverCard.Target>
+				<Badge
+					size='sm'
+					variant='light'
+					color={metricColor}
+					className={styles.metricChip}
+				>
+					{metric.label}: {formatFooterLatency(metric.latencySeconds)}
+				</Badge>
+			</HoverCard.Target>
+			<HoverCard.Dropdown className={styles.metricHoverCard}>
+				<div className={styles.hoverCardHeader}>
+					<Box
+						className={styles.hoverCardDot}
+						style={{
+							backgroundColor: `var(--mantine-color-${metricColor}-5)`,
+						}}
+					/>
+					<Text size='xs' fw={600} c='gray.8'>
+						{metric.label}
+					</Text>
+					<span className={styles.hoverCardLatency}>
+						{formatFooterLatency(metric.latencySeconds)}
+					</span>
+				</div>
+				<Stack gap={8}>
+					<DetailRow
+						label={
+							metric.kind === 'asr'
+								? t('transcript.footer.provider')
+								: t('transcript.footer.model')
+						}
+						value={<Text size='xs'>{metric.modelLabel}</Text>}
+					/>
+					<DetailRow
+						label={t('transcript.footer.cost')}
+						value={
+							<Text size='xs' className={styles.monoText}>
+								{metric.costLabel}
+							</Text>
+						}
+					/>
+				</Stack>
+				{metric.details && metric.details.length > 0 && (
+					<Box className={styles.breakdownBlock}>
+						<span className={styles.breakdownLabel}>
+							{t('transcript.footer.breakdown')}
+						</span>
+						<Stack gap={4}>
+							{metric.details.map((detail) => (
+								<Group key={detail.name} justify='space-between' gap='xs'>
+									<Text size='10px' className={styles.footerMetricName}>
+										{detail.name}
+									</Text>
+									<Text size='10px' className={styles.monoText}>
+										{detail.cost}
+									</Text>
+								</Group>
+							))}
+						</Stack>
+					</Box>
+				)}
+			</HoverCard.Dropdown>
+		</HoverCard>
+	);
+}
+
+interface WorkflowChangeBannerProps {
+	timeInCallSecs?: number;
+	transition: WorkflowTransition;
+}
+
+function WorkflowChangeBanner({
+	timeInCallSecs,
+	transition,
+}: WorkflowChangeBannerProps) {
 	const { t } = useTranslation(['conversations', 'common']);
 
 	return (
 		<Box className={`${styles.messageRow} ${styles.workflowChangeRow}`}>
 			<Paper radius='sm' p='xs' className={styles.workflowChangeBanner}>
-				<Stack gap={4}>
+				<Stack gap={6}>
 					<Group gap={6} justify='space-between' wrap='nowrap'>
 						<Group gap={6} align='center' wrap='nowrap'>
 							<IconGitBranch
@@ -258,9 +426,76 @@ function WorkflowChangeBanner({ timeInCallSecs }: WorkflowChangeBannerProps) {
 							</Text>
 						)}
 					</Group>
+
+					<Group gap='xs' align='stretch' wrap='nowrap'>
+						<WorkflowContextCard
+							title={t('transcript.workflow.from')}
+							metadata={transition.from}
+						/>
+						<Box className={styles.workflowArrow}>
+							<IconArrowRight size={14} />
+						</Box>
+						<WorkflowContextCard
+							title={t('transcript.workflow.to')}
+							metadata={transition.to}
+						/>
+					</Group>
 				</Stack>
 			</Paper>
 		</Box>
+	);
+}
+
+interface WorkflowContextCardProps {
+	title: string;
+	metadata: AgentMetadata;
+}
+
+function WorkflowContextCard({ title, metadata }: WorkflowContextCardProps) {
+	const { t } = useTranslation(['conversations', 'common']);
+
+	return (
+		<Box className={styles.workflowContextCard}>
+			<Text size='xs' fw={600} c='gray.7'>
+				{title}
+			</Text>
+			<Stack gap={2}>
+				<WorkflowContextRow
+					label={t('transcript.technical.agentId')}
+					value={metadata.agent_id}
+				/>
+				{metadata.workflow_node_id && (
+					<WorkflowContextRow
+						label={t('transcript.technical.workflowNode')}
+						value={metadata.workflow_node_id}
+					/>
+				)}
+				{metadata.branch_id && (
+					<WorkflowContextRow
+						label={t('transcript.technical.branchId')}
+						value={metadata.branch_id}
+					/>
+				)}
+			</Stack>
+		</Box>
+	);
+}
+
+interface WorkflowContextRowProps {
+	label: string;
+	value: string;
+}
+
+function WorkflowContextRow({ label, value }: WorkflowContextRowProps) {
+	return (
+		<Group gap={6} wrap='nowrap' align='flex-start'>
+			<Text size='xs' c='dimmed' className={styles.workflowLabel}>
+				{label}
+			</Text>
+			<Text size='xs' className={styles.workflowNodeText}>
+				{value}
+			</Text>
+		</Group>
 	);
 }
 
@@ -293,7 +528,7 @@ interface ToolCallBadgeProps {
 
 function ToolCallBadge({ tool }: ToolCallBadgeProps) {
 	const { t } = useTranslation(['conversations', 'common']);
-	const formattedParams = formatParams(tool.params_as_json);
+	const formattedParams = formatJsonDisplay(tool.params_as_json);
 
 	return (
 		<Popover width={380} position='top' withArrow radius='md'>
@@ -364,266 +599,205 @@ function ToolCallBadge({ tool }: ToolCallBadgeProps) {
 	);
 }
 
-interface TechnicalDetailsSectionProps {
-	entry: TranscriptEntry;
-	isAgent: boolean;
+interface DetailRowProps {
+	label: string;
+	value: React.ReactNode;
 }
 
-function TechnicalDetailsSection({
-	entry,
-	isAgent,
-}: TechnicalDetailsSectionProps) {
-	const { t } = useTranslation(['conversations', 'common']);
-	// Check if there's any technical data to show
-	const hasLlmUsage = !!(
-		entry.llm_usage && Object.keys(entry.llm_usage.model_usage || {}).length > 0
+function DetailRow({ label, value }: DetailRowProps) {
+	return (
+		<Box className={styles.detailRow}>
+			<span className={styles.detailLabel}>{label}</span>
+			<Box className={styles.detailValue}>{value}</Box>
+		</Box>
 	);
-	const hasSourceMedium = !!entry.source_medium;
-	const hasAgentMetadata = !!(
-		entry.agent_metadata &&
-		(entry.agent_metadata.agent_id ||
-			entry.agent_metadata.branch_id ||
-			entry.agent_metadata.workflow_node_id)
-	);
-	const hasOriginalMessage = !!(
-		entry.original_message && entry.original_message !== entry.message
-	);
-	const hasRagInfo = !!(
-		entry.rag_retrieval_info &&
-		Object.keys(entry.rag_retrieval_info as object).length > 0
-	);
-	const hasTurnMetrics = !!(
-		entry.conversation_turn_metrics &&
-		Object.keys(entry.conversation_turn_metrics).length > 0
-	);
+}
 
-	const hasTechnicalData =
-		hasLlmUsage ||
-		hasSourceMedium ||
-		hasAgentMetadata ||
-		hasOriginalMessage ||
-		hasRagInfo ||
-		hasTurnMetrics;
+function findPreviousAgentMetadata(
+	entries: TranscriptEntry[],
+	currentIndex: number
+): AgentMetadata | null {
+	for (let index = currentIndex - 1; index >= 0; index -= 1) {
+		const metadata = sanitizeAgentMetadata(entries[index].agent_metadata);
+		if (metadata) {
+			return metadata;
+		}
+	}
 
-	// Only show for agent messages with technical data
-	if (!isAgent || !hasTechnicalData) {
+	return null;
+}
+
+function sanitizeAgentMetadata(metadata?: AgentMetadata): AgentMetadata | null {
+	if (!metadata) {
 		return null;
 	}
 
+	const normalized: AgentMetadata = {
+		agent_id: metadata.agent_id ?? '',
+		branch_id: metadata.branch_id ?? null,
+		workflow_node_id: metadata.workflow_node_id ?? null,
+	};
+
+	return normalized.agent_id ||
+		normalized.branch_id ||
+		normalized.workflow_node_id
+		? normalized
+		: null;
+}
+
+function hasAgentContextChanged(
+	previous: AgentMetadata,
+	current: AgentMetadata
+): boolean {
 	return (
-		<Box className={styles.technicalDetails}>
-			<HoverCard width={400} position='left' withArrow shadow='md' radius='md'>
-				<HoverCard.Target>
-					<Group
-						gap={4}
-						align='center'
-						className={styles.technicalDetailsHeader}
-					>
-						<IconCpu size={12} color='var(--mantine-color-gray-6)' />
-						<Text size='xs' c='dimmed' fw={500}>
-							{t('transcript.technical.title')}
-						</Text>
-						{hasLlmUsage && (
-							<Badge
-								size='xs'
-								variant='light'
-								color='cyan'
-								className={styles.costBadge}
-							>
-								{formatTotalCost(entry.llm_usage!, t)}
-							</Badge>
-						)}
-					</Group>
-				</HoverCard.Target>
-				<HoverCard.Dropdown className={styles.technicalDetailsContent}>
-					<Stack gap='xs'>
-						{/* LLM Usage */}
-						{hasLlmUsage && <LlmUsageDisplay llmUsage={entry.llm_usage!} />}
-
-						{/* Source Medium */}
-						{hasSourceMedium && (
-							<Box className={styles.detailRow}>
-								<Text
-									size='xs'
-									c='dimmed'
-									fw={500}
-									className={styles.detailLabel}
-								>
-									{t('transcript.technical.sourceMedium')}
-								</Text>
-								<Badge size='xs' variant='light' color='gray'>
-									{entry.source_medium}
-								</Badge>
-							</Box>
-						)}
-
-						{/* Agent Metadata */}
-						{hasAgentMetadata && (
-							<AgentMetadataDisplay metadata={entry.agent_metadata!} />
-						)}
-
-						{/* Original Message */}
-						{hasOriginalMessage && (
-							<Box>
-								<Text size='xs' c='dimmed' fw={500} mb={4}>
-									{t('transcript.technical.originalMessage')}
-								</Text>
-								<Text size='xs' c='gray.7' className={styles.monoText}>
-									{entry.original_message}
-								</Text>
-							</Box>
-						)}
-
-						{/* RAG Retrieval Info */}
-						{hasRagInfo && (
-							<Box>
-								<Text size='xs' c='dimmed' fw={500} mb={4}>
-									{t('transcript.technical.ragInfo')}
-								</Text>
-								<Box className={styles.toolDetailsCode}>
-									{JSON.stringify(entry.rag_retrieval_info, null, 2)}
-								</Box>
-							</Box>
-						)}
-
-						{/* Conversation Turn Metrics */}
-						{hasTurnMetrics && (
-							<Box>
-								<Text size='xs' c='dimmed' fw={500} mb={4}>
-									{t('transcript.technical.turnMetrics')}
-								</Text>
-								<Box className={styles.toolDetailsCode}>
-									{JSON.stringify(entry.conversation_turn_metrics, null, 2)}
-								</Box>
-							</Box>
-						)}
-					</Stack>
-				</HoverCard.Dropdown>
-			</HoverCard>
-		</Box>
+		previous.agent_id !== current.agent_id ||
+		(previous.branch_id ?? null) !== (current.branch_id ?? null) ||
+		(previous.workflow_node_id ?? null) !== (current.workflow_node_id ?? null)
 	);
 }
 
-interface LlmUsageDisplayProps {
-	llmUsage: LlmUsage;
-}
+function buildFooterMetrics(
+	entry: TranscriptEntry,
+	isAgent: boolean,
+	t: TFunction
+): FooterMetricItem[] {
+	const items: FooterMetricItem[] = [];
 
-function LlmUsageDisplay({ llmUsage }: LlmUsageDisplayProps) {
-	const { t } = useTranslation(['conversations', 'common']);
-	const models = Object.entries(llmUsage.model_usage || {});
+	if (isAgent) {
+		const llmMetric = buildLlmFooterMetric(entry, t);
+		if (llmMetric) {
+			items.push(llmMetric);
+		}
 
-	if (models.length === 0) return null;
+		const ttsMetric = buildSpeechFooterMetric(
+			'tts',
+			entry.conversation_turn_metrics,
+			t
+		);
+		if (ttsMetric) {
+			items.push(ttsMetric);
+		}
 
-	return (
-		<Box>
-			<Text size='xs' c='dimmed' fw={500} mb={4}>
-				{t('transcript.technical.llmUsage')}
-			</Text>
-			<Stack gap={4}>
-				{models.map(([modelName, usage]) => (
-					<Box key={modelName} className={styles.llmUsageCard}>
-						<Text size='xs' fw={600} c='gray.7' mb={4}>
-							{modelName}
-						</Text>
-						<Box className={styles.llmUsageGrid}>
-							<Box className={styles.llmUsageItem}>
-								<Text size='xs' c='dimmed'>
-									{t('transcript.technical.inputTokens')}
-								</Text>
-								<Text size='xs' fw={500}>
-									{usage.input.tokens.toLocaleString()}
-								</Text>
-							</Box>
-							<Box className={styles.llmUsageItem}>
-								<Text size='xs' c='dimmed'>
-									{t('transcript.technical.outputTokens')}
-								</Text>
-								<Text size='xs' fw={500}>
-									{usage.output_total.tokens.toLocaleString()}
-								</Text>
-							</Box>
-							<Box className={styles.llmUsageItem}>
-								<Text size='xs' c='dimmed'>
-									{t('transcript.technical.cacheRead')}
-								</Text>
-								<Text size='xs' fw={500}>
-									{usage.input_cache_read.tokens.toLocaleString()}
-								</Text>
-							</Box>
-							<Box className={styles.llmUsageItem}>
-								<Text size='xs' c='dimmed'>
-									{t('transcript.technical.cacheWrite')}
-								</Text>
-								<Text size='xs' fw={500}>
-									{usage.input_cache_write.tokens.toLocaleString()}
-								</Text>
-							</Box>
-						</Box>
-						<Group gap='xs' mt={4}>
-							<Text size='xs' c='dimmed'>
-								{t('transcript.technical.totalCost')}
-							</Text>
-							<Badge
-								size='xs'
-								variant='light'
-								color='green'
-								className={styles.costBadge}
-							>
-								${calculateModelCost(usage).toFixed(6)}
-							</Badge>
-						</Group>
-					</Box>
-				))}
-			</Stack>
-		</Box>
+		return items;
+	}
+
+	const asrMetric = buildSpeechFooterMetric(
+		'asr',
+		entry.conversation_turn_metrics,
+		t
 	);
+	if (asrMetric) {
+		items.push(asrMetric);
+	}
+
+	return items;
 }
 
-interface AgentMetadataDisplayProps {
-	metadata: AgentMetadata;
-}
-
-function AgentMetadataDisplay({ metadata }: AgentMetadataDisplayProps) {
-	const { t } = useTranslation(['conversations', 'common']);
-	return (
-		<Box>
-			<Text size='xs' c='dimmed' fw={500} mb={4}>
-				{t('transcript.technical.agentMetadata')}
-			</Text>
-			<Stack gap={2}>
-				{metadata.agent_id && (
-					<Group gap='xs'>
-						<Text size='xs' c='dimmed' w={80}>
-							{t('transcript.technical.agentId')}
-						</Text>
-						<Text size='xs' className={styles.monoText}>
-							{metadata.agent_id}
-						</Text>
-					</Group>
-				)}
-				{metadata.branch_id && (
-					<Group gap='xs'>
-						<Text size='xs' c='dimmed' w={80}>
-							{t('transcript.technical.branchId')}
-						</Text>
-						<Text size='xs' className={styles.monoText}>
-							{metadata.branch_id}
-						</Text>
-					</Group>
-				)}
-				{metadata.workflow_node_id && (
-					<Group gap='xs'>
-						<Text size='xs' c='dimmed' w={80}>
-							{t('transcript.technical.workflowNode')}
-						</Text>
-						<Text size='xs' className={styles.monoText}>
-							{metadata.workflow_node_id}
-						</Text>
-					</Group>
-				)}
-			</Stack>
-		</Box>
+function buildLlmFooterMetric(
+	entry: TranscriptEntry,
+	t: TFunction
+): FooterMetricItem | null {
+	const llmUsage = entry.llm_usage;
+	const latencySeconds = getMetricLatency(
+		entry.conversation_turn_metrics,
+		'convai_llm_service_ttfb',
+		'convai_llm_'
 	);
+
+	if (!llmUsage || latencySeconds === null) {
+		return null;
+	}
+
+	const modelEntries = Object.entries(llmUsage.model_usage || {});
+	const primaryModelName =
+		entry.llm_override ??
+		entry.conversation_turn_metrics?.convai_llm_model ??
+		modelEntries[0]?.[0] ??
+		t('transcript.footer.unknownModel');
+
+	return {
+		kind: 'llm',
+		label: entry.llm_override
+			? t('transcript.footer.override')
+			: t('transcript.footer.llm'),
+		latencySeconds,
+		modelLabel: primaryModelName,
+		costLabel: formatCurrency(getTotalLlmCost(llmUsage), t),
+		details: modelEntries.map(([name, usage]) => ({
+			name,
+			cost: formatCurrency(calculateModelCost(usage), t),
+		})),
+	};
+}
+
+function buildSpeechFooterMetric(
+	kind: 'tts' | 'asr',
+	metrics: ConversationTurnMetrics | null,
+	t: TFunction
+): FooterMetricItem | null {
+	const config =
+		kind === 'tts'
+			? {
+					metricKey: 'convai_tts_service_ttfb',
+					prefix: 'convai_tts_',
+					label: t('transcript.footer.tts'),
+					modelLabel:
+						metrics?.convai_tts_model ?? t('transcript.footer.unknownModel'),
+				}
+			: {
+					metricKey: 'convai_asr_trailing_service_latency',
+					prefix: 'convai_asr_',
+					label: t('transcript.footer.asr'),
+					modelLabel:
+						metrics?.convai_asr_provider ??
+						t('transcript.footer.unknownProvider'),
+				};
+
+	const latencySeconds = getMetricLatency(
+		metrics,
+		config.metricKey,
+		config.prefix
+	);
+
+	if (latencySeconds === null) {
+		return null;
+	}
+
+	return {
+		kind,
+		label: config.label,
+		latencySeconds,
+		modelLabel: config.modelLabel,
+		costLabel: t('transcript.footer.notAvailable'),
+	};
+}
+
+function getMetricLatency(
+	metrics: ConversationTurnMetrics | null,
+	preferredKey: string,
+	fallbackPrefix: string
+): number | null {
+	const metricMap = metrics?.metrics;
+
+	if (!metricMap) {
+		return null;
+	}
+
+	const preferredMetric = metricMap[preferredKey];
+	if (typeof preferredMetric?.elapsed_time === 'number') {
+		return preferredMetric.elapsed_time;
+	}
+
+	for (const [key, value] of Object.entries(metricMap)) {
+		if (
+			key.startsWith(fallbackPrefix) &&
+			typeof value?.elapsed_time === 'number'
+		) {
+			return value.elapsed_time;
+		}
+	}
+
+	return null;
 }
 
 function formatTime(seconds: number): string {
@@ -632,13 +806,33 @@ function formatTime(seconds: number): string {
 	return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 }
 
-function formatParams(paramsJson: string | null): string | null {
-	if (!paramsJson) return null;
+function formatFooterLatency(seconds: number): string {
+	if (seconds < 1) {
+		return `${Math.round(seconds * 1000)}ms`;
+	}
+
+	const rounded = Number(seconds.toFixed(1));
+	return `${rounded}s`;
+}
+
+function formatJsonDisplay(value: unknown): string | null {
+	if (value === null || value === undefined) {
+		return null;
+	}
+
+	if (typeof value === 'string') {
+		try {
+			const parsed = JSON.parse(value);
+			return JSON.stringify(parsed, null, 2);
+		} catch {
+			return value;
+		}
+	}
+
 	try {
-		const parsed = JSON.parse(paramsJson);
-		return JSON.stringify(parsed, null, 2);
+		return JSON.stringify(value, null, 2);
 	} catch {
-		return paramsJson;
+		return String(value);
 	}
 }
 
@@ -656,12 +850,26 @@ function calculateModelCost(usage: {
 	);
 }
 
-function formatTotalCost(llmUsage: LlmUsage, t: TFunction): string {
-	const totalCost = Object.values(llmUsage.model_usage || {}).reduce(
+function getTotalLlmCost(llmUsage: LlmUsage): number {
+	return Object.values(llmUsage.model_usage || {}).reduce(
 		(sum, usage) => sum + calculateModelCost(usage),
 		0
 	);
-	return `${t('currency', { ns: 'common' })}${totalCost.toFixed(4)}`;
+}
+
+function formatCurrency(value: number, t: TFunction): string {
+	return `${t('currency', { ns: 'common' })}${value.toFixed(6)}`;
+}
+
+function getFooterMetricColor(kind: FooterMetricKind): string {
+	switch (kind) {
+		case 'llm':
+			return 'cyan';
+		case 'tts':
+			return 'grape';
+		case 'asr':
+			return 'teal';
+	}
 }
 
 export default TranscriptViewer;

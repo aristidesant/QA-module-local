@@ -17,7 +17,11 @@ const CloneAgentModal: React.FC<CloneAgentModalProps> = ({
 	agent,
 	onSuccess,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const duplicateMutation = useDuplicateAgent();
 

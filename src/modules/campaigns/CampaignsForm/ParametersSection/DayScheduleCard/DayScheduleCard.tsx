@@ -19,7 +19,7 @@ import {
  * Falls back to capitalised raw string when translation is unavailable.
  */
 const useTranslateDayName = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.params', 'common']);
 	return (day?: string | null) => {
 		if (!day)
 			return t('scheduler.daySchedule.fallbackDay', { defaultValue: 'Day' });
@@ -53,7 +53,7 @@ const normalizeTimeValue = (value: TimeValue): string | null => {
 };
 
 export const DayScheduleCard: React.FC = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.params', 'common']);
 	const formatDayName = useTranslateDayName();
 	const form = useSchedulerFormContext();
 	const dayConfigs = (form.values.dayConfigs || []) as MaybeDayConfig[];

@@ -42,7 +42,11 @@ interface StepThreeOutcomesProps {
 export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 	onNext,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaigns.wizard',
+		'campaign.form.shared',
+		'common',
+	]);
 	const { createdCampaign, setHasOutcomeFlow } = useCampaignWizardStore();
 
 	const [modalOpened, setModalOpened] = useState(false);
@@ -268,7 +272,7 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 		await setDraft({
 			campaignId: String(createdCampaign.id),
 			data: { isDraft: true, draftStep: 3 },
-		}).catch((err) => console.error('Failed to save draft step', err));
+		}).catch(() => undefined);
 
 		onNext();
 	};

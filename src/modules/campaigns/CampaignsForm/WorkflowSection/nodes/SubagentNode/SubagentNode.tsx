@@ -24,7 +24,11 @@ const SubagentNodeComponent = (props: NodeProps) => {
 	const isOverride = nodeType === WORKFLOW_NODE_TYPES.OVERRIDE_AGENT;
 	const isTransfer =
 		nodeType === WORKFLOW_NODE_TYPES.STANDALONE_AGENT && !!nodeData.agentId;
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const fallbackLabel = t(`form.workflow.nodes.${nodeData.type}`, {
 		defaultValue: t('form.workflow.nodes.standalone_agent'),
 	});

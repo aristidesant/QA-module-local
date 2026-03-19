@@ -28,12 +28,10 @@ export const useCreateCampaignObjective = () => {
 					queryKey: ['campaign-objectives-by-category-active', data.categoryId],
 				});
 			}
-			// eslint-disable-next-line no-console
-			console.log('Campaign objective created successfully:', data);
+			void data;
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error creating campaign objective:', error);
+			void error;
 		},
 	});
 };
@@ -94,12 +92,10 @@ export const useUpdateCampaignObjective = () => {
 					queryKey: ['campaign-objectives-by-category-active', data.categoryId],
 				});
 			}
-			// eslint-disable-next-line no-console
-			console.log('Campaign objective updated successfully:', data);
+			void data;
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error updating campaign objective:', error);
+			void error;
 		},
 	});
 };
@@ -125,12 +121,9 @@ export const useDeleteCampaignObjective = () => {
 			queryClient.invalidateQueries({
 				queryKey: ['campaign-objectives-by-category-active'],
 			});
-			// eslint-disable-next-line no-console
-			console.log('Campaign objective deleted successfully');
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error deleting campaign objective:', error);
+			void error;
 		},
 	});
 };

@@ -19,12 +19,10 @@ export const useCreateCampaignCategory = () => {
 			queryClient.invalidateQueries({
 				queryKey: ['campaign-categories-active'],
 			});
-			// eslint-disable-next-line no-console
-			console.log('Campaign category created successfully:', data);
+			void data;
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error creating campaign category:', error);
+			void error;
 		},
 	});
 };
@@ -76,12 +74,10 @@ export const useUpdateCampaignCategory = () => {
 			queryClient.invalidateQueries({
 				queryKey: ['campaign-category', variables.id],
 			});
-			// eslint-disable-next-line no-console
-			console.log('Campaign category updated successfully:', data);
+			void data;
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error updating campaign category:', error);
+			void error;
 		},
 	});
 };
@@ -100,12 +96,9 @@ export const useDeleteCampaignCategory = () => {
 				queryKey: ['campaign-categories-active'],
 			});
 			queryClient.removeQueries({ queryKey: ['campaign-category', id] });
-			// eslint-disable-next-line no-console
-			console.log('Campaign category deleted successfully');
 		},
 		onError: (error) => {
-			// eslint-disable-next-line no-console
-			console.error('Error deleting campaign category:', error);
+			void error;
 		},
 	});
 };

@@ -13,8 +13,22 @@ import enCampaignManagement from '~/locales/en/campaign-management.json';
 import enCampaignPredefinedParams from '~/locales/en/campaign-predefined-params.json';
 import enCampaignContactList from '~/locales/en/campaign.contact-list.json';
 import enCampaignDetail from '~/locales/en/campaign.detail.json';
+import enCampaignFormAgents from '~/locales/en/campaign.form.agents.json';
+import enCampaignFormAnalytics from '~/locales/en/campaign.form.analytics.json';
+import enCampaignFormDashboards from '~/locales/en/campaign.form.dashboards.json';
+import enCampaignFormDoNotCall from '~/locales/en/campaign.form.do-not-call.json';
+import enCampaignFormGeneral from '~/locales/en/campaign.form.general.json';
+import enCampaignFormOutcomes from '~/locales/en/campaign.form.outcomes.json';
+import enCampaignFormParams from '~/locales/en/campaign.form.params.json';
+import enCampaignFormReportValues from '~/locales/en/campaign.form.report-values.json';
+import enCampaignFormShared from '~/locales/en/campaign.form.shared.json';
+import enCampaignFormContacts from '~/locales/en/campaign.form.contacts.json';
+import enCampaignFormWorkflow from '~/locales/en/campaign.form.workflow.json';
 import enCampaignView from '~/locales/en/campaign.view.json';
-import enCampaigns from '~/locales/en/campaigns.json';
+import enCampaignsCloneForm from '~/locales/en/campaigns.clone-form.json';
+import enCampaignsCreate from '~/locales/en/campaigns.create.json';
+import enCampaignsList from '~/locales/en/campaigns.list.json';
+import enCampaignsWizard from '~/locales/en/campaigns.wizard.json';
 import enClientConfigs from '~/locales/en/client-configs.json';
 import enClients from '~/locales/en/clients.json';
 import enCommon from '~/locales/en/common.json';
@@ -38,8 +52,24 @@ import esCampaignManagement from '~/locales/es/campaign-management.json';
 import esCampaignPredefinedParams from '~/locales/es/campaign-predefined-params.json';
 import esCampaignContactList from '~/locales/es/campaign.contact-list.json';
 import esCampaignDetail from '~/locales/es/campaign.detail.json';
+import esCampaignFormAgents from '~/locales/es/campaign.form.agents.json';
+import esCampaignFormAnalytics from '~/locales/es/campaign.form.analytics.json';
+import esCampaignFormDashboards from '~/locales/es/campaign.form.dashboards.json';
+import esCampaignFormDoNotCall from '~/locales/es/campaign.form.do-not-call.json';
+import esCampaignFormGeneral from '~/locales/es/campaign.form.general.json';
+import esCampaignFormOutcomes from '~/locales/es/campaign.form.outcomes.json';
+import esCampaignFormParams from '~/locales/es/campaign.form.params.json';
+import esCampaignFormReportValues from '~/locales/es/campaign.form.report-values.json';
+import esCampaignFormShared from '~/locales/es/campaign.form.shared.json';
+import enCampaignFormSync from '~/locales/en/campaign.form.sync.json';
+import esCampaignFormContacts from '~/locales/es/campaign.form.contacts.json';
+import esCampaignFormWorkflow from '~/locales/es/campaign.form.workflow.json';
 import esCampaignView from '~/locales/es/campaign.view.json';
-import esCampaigns from '~/locales/es/campaigns.json';
+import esCampaignsCloneForm from '~/locales/es/campaigns.clone-form.json';
+import esCampaignFormSync from '~/locales/es/campaign.form.sync.json';
+import esCampaignsCreate from '~/locales/es/campaigns.create.json';
+import esCampaignsList from '~/locales/es/campaigns.list.json';
+import esCampaignsWizard from '~/locales/es/campaigns.wizard.json';
 import esClientConfigs from '~/locales/es/client-configs.json';
 import esClients from '~/locales/es/clients.json';
 import esCommon from '~/locales/es/common.json';
@@ -78,8 +108,23 @@ testI18n.use(initReactI18next).init({
 		'campaign-predefined-params',
 		'campaign.contact-list',
 		'campaign.detail',
+		'campaign.form.agents',
+		'campaign.form.analytics',
+		'campaign.form.contacts',
+		'campaign.form.dashboards',
+		'campaign.form.do-not-call',
+		'campaign.form.general',
+		'campaign.form.outcomes',
+		'campaign.form.params',
+		'campaign.form.report-values',
+		'campaign.form.shared',
+		'campaign.form.sync',
+		'campaign.form.workflow',
 		'campaign.view',
-		'campaigns',
+		'campaigns.clone-form',
+		'campaigns.create',
+		'campaigns.list',
+		'campaigns.wizard',
 		'client-configs',
 		'clients',
 		'common',
@@ -105,8 +150,23 @@ testI18n.use(initReactI18next).init({
 			'campaign-predefined-params': enCampaignPredefinedParams,
 			'campaign.contact-list': enCampaignContactList,
 			'campaign.detail': enCampaignDetail,
+			'campaign.form.agents': enCampaignFormAgents,
+			'campaign.form.analytics': enCampaignFormAnalytics,
+			'campaign.form.contacts': enCampaignFormContacts,
+			'campaign.form.dashboards': enCampaignFormDashboards,
+			'campaign.form.do-not-call': enCampaignFormDoNotCall,
+			'campaign.form.general': enCampaignFormGeneral,
+			'campaign.form.outcomes': enCampaignFormOutcomes,
+			'campaign.form.params': enCampaignFormParams,
+			'campaign.form.report-values': enCampaignFormReportValues,
+			'campaign.form.shared': enCampaignFormShared,
+			'campaign.form.sync': enCampaignFormSync,
+			'campaign.form.workflow': enCampaignFormWorkflow,
 			'campaign.view': enCampaignView,
-			campaigns: enCampaigns,
+			'campaigns.clone-form': enCampaignsCloneForm,
+			'campaigns.create': enCampaignsCreate,
+			'campaigns.list': enCampaignsList,
+			'campaigns.wizard': enCampaignsWizard,
 			'client-configs': enClientConfigs,
 			clients: enClients,
 			common: enCommon,
@@ -131,8 +191,23 @@ testI18n.use(initReactI18next).init({
 			'campaign-predefined-params': esCampaignPredefinedParams,
 			'campaign.contact-list': esCampaignContactList,
 			'campaign.detail': esCampaignDetail,
+			'campaign.form.agents': esCampaignFormAgents,
+			'campaign.form.analytics': esCampaignFormAnalytics,
+			'campaign.form.contacts': esCampaignFormContacts,
+			'campaign.form.dashboards': esCampaignFormDashboards,
+			'campaign.form.do-not-call': esCampaignFormDoNotCall,
+			'campaign.form.general': esCampaignFormGeneral,
+			'campaign.form.outcomes': esCampaignFormOutcomes,
+			'campaign.form.params': esCampaignFormParams,
+			'campaign.form.report-values': esCampaignFormReportValues,
+			'campaign.form.shared': esCampaignFormShared,
+			'campaign.form.sync': esCampaignFormSync,
+			'campaign.form.workflow': esCampaignFormWorkflow,
 			'campaign.view': esCampaignView,
-			campaigns: esCampaigns,
+			'campaigns.clone-form': esCampaignsCloneForm,
+			'campaigns.create': esCampaignsCreate,
+			'campaigns.list': esCampaignsList,
+			'campaigns.wizard': esCampaignsWizard,
 			'client-configs': esClientConfigs,
 			clients: esClients,
 			common: esCommon,

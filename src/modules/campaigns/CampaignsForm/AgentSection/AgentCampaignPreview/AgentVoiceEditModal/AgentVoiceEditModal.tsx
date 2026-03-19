@@ -23,7 +23,11 @@ export const AgentVoiceEditModal: React.FC<AgentVoiceEditModalProps> = ({
 	onClose,
 	onSuccess,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 	const [selectedVoiceId, setSelectedVoiceId] =
 		useState<string>(currentVoiceId);
 	const [playingVoiceId, setPlayingVoiceId] = useState<string | null>(null);
@@ -72,7 +76,7 @@ export const AgentVoiceEditModal: React.FC<AgentVoiceEditModalProps> = ({
 					.then(() => {
 						setPlayingVoiceId(voiceId);
 					})
-					.catch(console.error);
+					.catch(() => undefined);
 			}
 		},
 		[playingVoiceId]

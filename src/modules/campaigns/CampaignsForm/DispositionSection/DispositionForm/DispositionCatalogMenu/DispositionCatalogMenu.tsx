@@ -159,7 +159,11 @@ const DispositionCatalogMenu: React.FC = () => {
 		]
 	);
 
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.outcomes',
+		'campaign.detail',
+		'common',
+	]);
 	const hasNodesInFlow = (flowJson?.dispositionNodes?.length ?? 0) > 0;
 
 	return (

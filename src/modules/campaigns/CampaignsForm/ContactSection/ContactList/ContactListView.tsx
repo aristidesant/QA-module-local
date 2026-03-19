@@ -34,7 +34,7 @@ export const ContactListView = ({
 	isActive,
 	isLoading = false,
 }: ContactListViewProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.contacts', 'common']);
 	const navigate = useNavigate();
 	const [opened, { open, close }] = useDisclosure(false);
 	const [inactiveExpanded, { toggle: toggleInactiveExpanded }] =

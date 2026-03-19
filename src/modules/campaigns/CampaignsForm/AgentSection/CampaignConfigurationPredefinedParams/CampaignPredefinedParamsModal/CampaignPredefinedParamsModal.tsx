@@ -14,7 +14,11 @@ interface CampaignPredefinedParamsModalProps {
 const CampaignPredefinedParamsModal: React.FC<
 	CampaignPredefinedParamsModalProps
 > = ({ opened, onClose, predefinedParams, initialSelectionName, onApply }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 	const [selectionName, setSelectionName] = useState<string | null>(
 		initialSelectionName
 	);

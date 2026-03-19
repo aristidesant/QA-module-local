@@ -11,9 +11,10 @@ import { PermissionEnum } from '~/constants/PermissionEnum';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import AccessDenied from '~/components/AccessDenied';
 import { useCampaignsStore } from '~/stores/campaignsStore';
+import { campaignDetailNamespaces } from '../campaignNamespaces';
 
 const CampaignPage = () => {
-	const { t } = useTranslation(['campaign.detail', 'common']);
+	const { t } = useTranslation(campaignDetailNamespaces);
 	const { campaignId } = useParams<{ campaignId: string }>();
 	const navigate = useNavigate();
 

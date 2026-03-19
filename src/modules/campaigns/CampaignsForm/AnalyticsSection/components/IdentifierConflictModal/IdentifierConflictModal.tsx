@@ -33,7 +33,7 @@ export default function IdentifierConflictModal({
 	onReplace,
 	onDuplicate,
 }: IdentifierConflictModalProps) {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.analytics', 'common']);
 	const [selected, setSelected] = useState<ConflictAction | null>(null);
 
 	const handleClose = () => {

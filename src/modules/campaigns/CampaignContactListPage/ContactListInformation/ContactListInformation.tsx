@@ -6,6 +6,10 @@ import type ContactGroup from '~/models/ContactGroup';
 import classes from './ContactListInformation.module.css';
 import { formatWaveDateTime, formatWaveDelaySeconds } from '~/utils/waveUtils';
 import ContactListActions from '../ContactListActions';
+import {
+	getTranslatedQueueStatus,
+	type QueueStatus,
+} from '~/modules/campaigns/CampaignsForm/ContactSection/ContactList/queueStatusConfig';
 
 interface ContactListInformationProps {
 	contactGroup: ContactGroup;
@@ -20,78 +24,51 @@ export const ContactListInformation = ({
 }: ContactListInformationProps) => {
 	const { t, i18n } = useTranslation(['campaign.contact-list', 'common']);
 
-	type StatusKey =
-		| 'PENDING'
-		| 'RUNNING'
-		| 'WAITING'
-		| 'PAUSED'
-		| 'EXECUTED'
-		| 'COMPLETED'
-		| 'FAILED'
-		| 'UNKNOWN';
-
 	const statusConfig: Record<
-		StatusKey,
+		QueueStatus,
 		{
-			label: string;
-			description: string;
 			accentClass: string;
 			StatusIcon: typeof IconCircleCheck;
 		}
 	> = {
 		PENDING: {
-			label: t('status.pending'),
-			description: t('status.pendingDesc'),
 			accentClass: 'statusPending',
 			StatusIcon: IconAlertTriangle,
 		},
 		RUNNING: {
-			label: t('status.running'),
-			description: t('status.runningDesc'),
 			accentClass: 'statusRunning',
 			StatusIcon: IconCircleCheck,
 		},
 		WAITING: {
-			label: t('status.waiting'),
-			description: t('status.waitingDesc'),
 			accentClass: 'statusWaiting',
 			StatusIcon: IconAlertTriangle,
 		},
 		PAUSED: {
-			label: t('status.paused'),
-			description: t('status.pausedDesc'),
 			accentClass: 'statusPaused',
 			StatusIcon: IconAlertTriangle,
 		},
 		COMPLETED: {
-			label: t('status.complete'),
-			description: t('status.completeDesc'),
 			accentClass: 'statusComplete',
 			StatusIcon: IconCircleCheck,
 		},
 		FAILED: {
-			label: t('status.failed'),
-			description: t('status.failedDesc'),
 			accentClass: 'statusFailed',
 			StatusIcon: IconAlertTriangle,
 		},
 		EXECUTED: {
-			label: t('status.executed'),
-			description: t('contacts.details.messages.allWavesDone'),
 			accentClass: 'statusComplete',
 			StatusIcon: IconAlertTriangle,
 		},
 		UNKNOWN: {
-			label: t('status.unknown'),
-			description: t('status.unknownDesc'),
 			accentClass: 'statusUnknown',
 			StatusIcon: IconAlertTriangle,
 		},
 	};
 
 	const statusKey =
-		(contactGroup.queueStatus?.toUpperCase() as StatusKey) ?? 'UNKNOWN';
-	const status = statusConfig[statusKey] ?? statusConfig.UNKNOWN;
+		(contactGroup.queueStatus?.toUpperCase() as QueueStatus) ?? 'UNKNOWN';
+	const statusVisualConfig = statusConfig[statusKey] ?? statusConfig.UNKNOWN;
+	const status = getTranslatedQueueStatus(t, contactGroup.queueStatus);
 
 	const quickMetrics = useMemo(
 		() => [
@@ -185,14 +162,14 @@ export const ContactListInformation = ({
 		]
 	);
 
-	const StatusIcon = status.StatusIcon;
+	const StatusIcon = statusVisualConfig.StatusIcon;
 
 	return (
 		<section className={classes.root}>
 			<div className={classes.headerRow}>
 				<div className={classes.statusStrip}>
 					<div
-						className={`${classes.statusBadge} ${classes[status.accentClass]}`}
+						className={`${classes.statusBadge} ${classes[statusVisualConfig.accentClass]}`}
 					>
 						<StatusIcon size={14} strokeWidth={2.4} />
 						<Text size='xs' fw={700} className={classes.statusLabel}>

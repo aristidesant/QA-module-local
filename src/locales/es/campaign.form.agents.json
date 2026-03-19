@@ -1,0 +1,344 @@
+{
+	"form": {
+		"agent": {
+			"add": {
+				"searchPlaceholder": "Buscar agentes por nombre",
+				"loadError": "Error al cargar agentes",
+				"loadErrorDesc": "Hubo un error al cargar la lista de agentes. Por favor, inténtalo de nuevo.",
+				"tryAgain": "Intentar de nuevo",
+				"noAgents": "No hay agentes disponibles",
+				"noAgentsDesc": "No hay agentes disponibles para agregar a esta campaña.",
+				"addError": "Error al agregar agente",
+				"error": "Error",
+				"cloneTitle": "Clonar Agente",
+				"cloneDesc": "Crea una copia de este agente para usar en tu campaña.",
+				"cloneNameLabel": "Nombre del Agente",
+				"cloneNamePlaceholder": "Ingresa el nombre del agente",
+				"cloneNameRequired": "El nombre es obligatorio",
+				"cloneNameDifferent": "El nuevo nombre debe ser diferente al nombre original del agente",
+				"cloneSuccess": "Agente clonado exitosamente",
+				"cloneError": "Error al clonar el agente",
+				"copySuffix": " Copia",
+				"cancel": "Cancelar",
+				"cloneAction": "Clonar"
+			},
+			"list": {
+				"addAgent": "Agregar Agente",
+				"addAgentTitle": "Agregar Agente a la Campaña",
+				"noAgents": "No hay agentes asignados",
+				"noAgentsDesc": "Esta campaña no tiene agentes asignados."
+			},
+			"columns": {
+				"name": "Agente",
+				"type": "Tipo",
+				"voice": "Voz",
+				"actions": "Acciones",
+				"noCampaign": "Sin campaña",
+				"playPreview": "Reproducir vista previa",
+				"pausePreview": "Pausar vista previa",
+				"clone": "Clonar campaña",
+				"add": "Agregar agente"
+			},
+			"basic": {
+				"title": "Aspectos basicos del agente",
+				"description": "Configura el idioma y el mensaje inicial del agente.",
+				"language": "Idioma",
+				"languagePlaceholder": "Selecciona un idioma",
+				"languageDescription": "Elige el idioma principal del agente.",
+				"noLanguageFound": "No se encontraron idiomas",
+				"languages": {
+					"en": "Ingles",
+					"es": "Espanol"
+				},
+				"firstMessage": "Primer mensaje del agente",
+				"firstMessagePlaceholder": "Escribe el primer mensaje",
+				"firstMessageDescription": "Este es el primer mensaje que enviara el agente."
+			},
+			"phoneNumber": {
+				"title": "Número de Teléfono",
+				"description": "Asigna un número de teléfono a este agente.",
+				"inbound": "Entrante",
+				"outbound": "Saliente",
+				"selectLabel": "Número de Teléfono",
+				"selectPlaceholder": "Selecciona un número de teléfono",
+				"assign": "Asignar",
+				"update": "Actualizar",
+				"assignSuccess": "Número de teléfono asignado con éxito",
+				"assignError": "Error al asignar el número de teléfono"
+			},
+			"tools": {
+				"title": "Herramientas del agente",
+				"description": "Selecciona las herramientas que puede usar el agente.",
+				"noTools": "No hay herramientas del agente configuradas.",
+				"noSelection": "No hay herramientas seleccionadas.",
+				"customIntegration": "Integracion personalizada",
+				"toggleAria": "Alternar {{name}}",
+				"noDescription": "Sin descripcion.",
+				"add": "Agregar herramienta",
+				"remove": "Eliminar herramienta",
+				"removeAria": "Eliminar {{name}}",
+				"modal": {
+					"title": "Agregar herramientas",
+					"subtitle": "Selecciona las herramientas que quieres habilitar para este agente.",
+					"noTools": "No hay herramientas disponibles.",
+					"save": "Guardar",
+					"cancel": "Cancelar"
+				}
+			},
+			"systemTools": {
+				"title": "Herramientas del sistema",
+				"description": "Configura las herramientas del sistema para el agente.",
+				"noTools": "No hay herramientas del sistema disponibles.",
+				"noSelection": "No hay herramientas del sistema seleccionadas.",
+				"systemUtility": "Utilidad del sistema",
+				"toggleAria": "Alternar {{name}}",
+				"configure": "Configurar",
+				"enableToConfigure": "Habilitar para configurar",
+				"noDescription": "Sin descripción disponible.",
+				"add": "Agregar herramienta del sistema",
+				"remove": "Eliminar herramienta",
+				"removeAria": "Eliminar {{name}}",
+				"addModal": {
+					"title": "Agregar herramientas del sistema",
+					"subtitle": "Selecciona las herramientas del sistema que quieres habilitar para este agente.",
+					"noTools": "No hay herramientas del sistema disponibles.",
+					"save": "Guardar",
+					"cancel": "Cancelar"
+				},
+				"modal": {
+					"title": "Configurar Herramienta",
+					"name": "Nombre de la Herramienta",
+					"description": {
+						"label": "Descripción",
+						"placeholder": "Dejar en blanco para usar el prompt optimizado predeterminado del LLM."
+					},
+					"interruptions": {
+						"label": "Desactivar interrupciones",
+						"description": "Evita que el usuario interrumpa al agente mientras esta herramienta se está ejecutando."
+					},
+					"voicemail": {
+						"title": "Configuración de Correo de Voz",
+						"description": "Configura el mensaje para dejar en el correo de voz.",
+						"messageLabel": "Mensaje de Correo de Voz",
+						"messagePlaceholder": "Hola, esta es una llamada automatizada de...",
+						"hint": "Este mensaje se dirá cuando se detecte un correo de voz."
+					},
+					"actions": {
+						"cancel": "Cancelar",
+						"save": "Guardar"
+					}
+				}
+			},
+			"preview": {
+				"title": "Vista previa del agente",
+				"description": "Vista previa de los detalles del agente asignado.",
+				"voiceTitle": "Voz",
+				"voiceDescription": "Revisa la configuracion de voz actual.",
+				"editVoice": "Editar voz del agente",
+				"changeVoiceTitle": "Cambiar voz del agente",
+				"unknownVoice": "Desconocido",
+				"avatarAlt": "Avatar del agente",
+				"online": "En línea",
+				"offline": "Desconectado",
+				"unnamed": "Agente sin nombre"
+			},
+			"voice": {
+				"selectHint": "Selecciona una voz para tu agente y haz clic en guardar para aplicar los cambios",
+				"save": "Guardar Agente",
+				"saving": "Guardando...",
+				"pleaseSelectVoice": "Por favor selecciona una voz",
+				"agentDataNotLoaded": "Datos del agente no cargados",
+				"success": "Voz del agente actualizada exitosamente",
+				"error": "Error al actualizar la voz del agente",
+				"noVoices": "No hay voces disponibles"
+			},
+			"knowledgeBase": {
+				"title": "Base de Conocimiento",
+				"description": "Gestiona las bases de conocimiento para este agente.",
+				"loading": "Cargando bases de conocimiento...",
+				"error": "Error al cargar las bases de conocimiento",
+				"noSelection": "No hay bases de conocimiento seleccionadas",
+				"add": "Agregar Base de Conocimiento",
+				"remove": "Eliminar",
+				"removeAria": "Eliminar {{name}}",
+				"created": "Creado: {{date}}",
+				"modal": {
+					"title": {
+						"select": "Seleccionar Bases de Conocimiento",
+						"create": "Crear Base de Conocimiento"
+					},
+					"subtitle": "Selecciona bases de conocimiento existentes o crea una nueva.",
+					"backToList": "Volver a la lista",
+					"noKnowledgeBases": "No se encontraron bases de conocimiento"
+				}
+			},
+			"prompt": {
+				"title": "Prompt del agente",
+				"description": "Define las instrucciones que seguirá el agente al hablar con los contactos.",
+				"previewTitle": "Vista previa del prompt",
+				"previewChars_one": "1 carácter",
+				"previewChars_other": "{{count}} caracteres",
+				"status": {
+					"empty": "Vacío"
+				},
+				"placeholder": "Aún no se ha agregado un prompt",
+				"keepConcise": "Manténlo conciso para mayor claridad.",
+				"header": {
+					"editAria": "Editar prompt",
+					"expandAria": "Expandir prompt",
+					"collapseAria": "Contraer prompt"
+				},
+				"simpleModal": {
+					"title": "Editar prompt del agente",
+					"description": "Actualiza el prompt principal que usa el agente en esta campaña.",
+					"placeholder": "Escribe el prompt del agente",
+					"helper": "Los cambios se guardan con la campaña.",
+					"chars_one": "1 carácter",
+					"chars_other": "{{count}} caracteres",
+					"saved": "Prompt listo",
+					"empty": "Aún no hay prompt agregado"
+				},
+				"modal": {
+					"types": "Tipos",
+					"saveHint": "Guarda para aplicar los prompts en toda esta campaña.",
+					"saveConfirmation": {
+						"title": "¿Aplicar Cambios?",
+						"message": "¿Estás seguro de que deseas guardar estos cambios? Esto actualizará la configuración de la campaña inmediatamente."
+					},
+					"discardConfirmation": {
+						"title": "¿Descartar Cambios?",
+						"message": "Tienes cambios sin guardar. ¿Estás seguro de que deseas salir? Todos los cambios se perderán.",
+						"confirm": "Descartar Cambios",
+						"cancel": "Seguir Editando"
+					}
+				},
+				"editor": {
+					"title": "Configuración del prompt",
+					"subtitle": "Configura los prompts para cada tipo de interacción.",
+					"descriptionFallback": "No hay descripción disponible.",
+					"status": {
+						"empty": "Vacío",
+						"drafted": "Borrador",
+						"saved": "Guardado"
+					},
+					"lines_one": "({{count}} línea)",
+					"lines_other": "({{count}} líneas)",
+					"history": {
+						"tooltip": "Historial de prompts",
+						"aria": "Historial de prompts"
+					},
+					"reuse": {
+						"label": "Reutilizar prompt",
+						"placeholder": "Cargar prompt de otra campaña"
+					},
+					"hint": "Mantenlo en menos de ocho líneas",
+					"placeholder": "Escribe tu prompt aquí",
+					"variables": {
+						"hint": "Puedes usar variables como {{contact_name}}, {{agent_name}}, etc.",
+						"popover": {
+							"title": "Variables",
+							"badge": "Tip",
+							"navigationHint": "Usa las flechas para navegar y Enter para insertar",
+							"source": {
+								"dyn": "Dinámica",
+								"sys": "Sistema"
+							},
+							"empty": "No se encontraron variables"
+						}
+					},
+					"diff": {
+						"modalTitle": "Revisar cambios"
+					},
+					"ai": {
+						"button": {
+							"create": "Crear con IA",
+							"improve": "Mejorar con IA",
+							"tooltip": {
+								"create": "Usar IA para generar un prompt desde cero",
+								"improve": "Usar IA para mejorar tu prompt actual"
+							}
+						},
+						"modal": {
+							"title": {
+								"create": "Crear prompt con IA",
+								"improve": "Mejorar prompt con IA",
+								"review": "Revisar sugerencias de IA"
+							},
+							"errors": {
+								"emptyPrompt": "Por favor, proporciona algunas instrucciones para la IA"
+							},
+							"compose": {
+								"instructions": {
+									"label": {
+										"create": "Instrucciones",
+										"improve": "Instrucciones de Mejora"
+									},
+									"description": {
+										"create": "Describe lo que quieres que genere la IA",
+										"improve": "Describe cómo quieres mejorar el prompt"
+									},
+									"placeholder": {
+										"create": "Ej., Crea un saludo amigable para clientes que llaman sobre consultas de facturación",
+										"improve": "Ej., Hazlo más conciso y profesional"
+									}
+								},
+								"systemPrompt": {
+									"label": "Prompt del sistema",
+									"edit": "Editar prompt del sistema",
+									"reset": "Restablecer",
+									"done": "Hecho"
+								},
+								"promptToImprove": {
+									"label": "Prompt Actual",
+									"description": "El prompt que quieres mejorar"
+								},
+								"actions": {
+									"cancel": "Cancelar",
+									"generate": "Generar"
+								}
+							},
+							"review": {
+								"actions": {
+									"back": "Cancelar",
+									"apply": "Aplicar cambios"
+								},
+								"error": {
+									"title": "Error",
+									"description": "Error al generar la vista de diferencias. La sugerencia de IA aún puede ser válida."
+								},
+								"noChanges": {
+									"title": "Sin Cambios",
+									"description": "La sugerencia de IA es idéntica a tu prompt actual."
+								},
+								"diff": {
+									"old": "Versión actual",
+									"new": "Sugerencia de IA"
+								}
+							}
+						}
+					}
+				}
+			},
+			"behavior": {
+				"title": "Comportamiento del Agente",
+				"description": "Seleccione una configuración de comportamiento de agente predefinida",
+				"active": "Configuración activa",
+				"change": "Cambiar",
+				"noConfiguration": "Ninguna configuración aplicada",
+				"select": "Seleccionar Configuración",
+				"modal": {
+					"title": "Vista previa de la configuración",
+					"label": "Seleccione un conjunto de parámetros predefinido",
+					"placeholder": "Seleccionar configuración",
+					"actions": {
+						"cancel": "Cancelar",
+						"apply": "Aplicar"
+					}
+				}
+			}
+		}
+	},
+	"configuration": {
+		"editPrompt": "Editar prompt"
+	}
+}

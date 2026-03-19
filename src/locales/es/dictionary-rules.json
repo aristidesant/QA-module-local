@@ -1,0 +1,210 @@
+{
+	"title": "Reglas de Diccionario",
+	"description": "Gestionar diccionarios de pronunciación y reglas para ElevenLabs TTS",
+	"noDictionaries": "Aún no hay diccionarios de pronunciación",
+	"noDictionariesDescription": "Crea un diccionario para comenzar a agregar reglas de pronunciación para tus agentes.",
+	"dictionary": {
+		"title": "Diccionarios",
+		"listDescription": "Administra tus diccionarios de pronunciación. Abre un diccionario para ver y editar sus reglas.",
+		"create": "Nuevo Diccionario",
+		"name": "Nombre del Diccionario",
+		"namePlaceholder": "ej. Nombres en Español",
+		"nameRequired": "El nombre es obligatorio",
+		"descriptionLabel": "Descripción",
+		"descriptionPlaceholder": "Descripción opcional para este diccionario",
+		"backToList": "Volver a diccionarios",
+		"viewRules": "Ver reglas",
+		"createdAt": "Creado",
+		"sync": "Sincronizar con ElevenLabs",
+		"delete": "Eliminar Diccionario",
+		"deleteModal": {
+			"title": "Eliminar Diccionario",
+			"message": "¿Estás seguro de que deseas eliminar el diccionario <b>{{name}}</b>? Esto lo eliminará de la base de datos. Los agentes que ya lo usan no se verán afectados en ElevenLabs.",
+			"cancel": "Cancelar",
+			"confirm": "Eliminar"
+		},
+		"notifications": {
+			"createSuccess": "Diccionario creado exitosamente",
+			"createError": "Error al crear el diccionario",
+			"deleteSuccess": "Diccionario eliminado exitosamente",
+			"deleteError": "Error al eliminar el diccionario",
+			"syncSuccess": "Diccionario sincronizado con ElevenLabs exitosamente",
+			"syncError": "Error al sincronizar el diccionario"
+		}
+	},
+	"rules": {
+		"title": "Reglas de Pronunciación",
+		"addRule": "Agregar Regla",
+		"uploadCsv": "Subir CSV",
+		"noRules": "Aún no hay reglas",
+		"noRulesDescription": "Agrega reglas de pronunciación para controlar cómo ElevenLabs pronuncia palabras específicas.",
+		"searchPlaceholder": "Buscar por palabra...",
+		"filterType": "Filtrar por tipo",
+		"filterCategory": "Filtrar por categoría",
+		"clearSearch": "Limpiar búsqueda",
+		"clearFilters": "Limpiar filtros",
+		"noActiveFilters": "Sin filtros activos",
+		"activeFilters_one": "{{count}} filtro activo",
+		"activeFilters_other": "{{count}} filtros activos",
+		"totalItems_one": "{{count}} regla",
+		"totalItems_other": "{{count}} reglas",
+		"deleteModal": {
+			"title": "Eliminar Regla",
+			"message": "¿Estás seguro de que deseas eliminar la regla para <b>{{grapheme}}</b>? Se eliminará de ElevenLabs inmediatamente.",
+			"cancel": "Cancelar",
+			"confirm": "Eliminar"
+		},
+		"notifications": {
+			"createSuccess": "Regla creada exitosamente",
+			"createError": "Error al crear la regla",
+			"updateSuccess": "Regla actualizada exitosamente",
+			"updateError": "Error al actualizar la regla",
+			"deleteSuccess": "Regla eliminada exitosamente",
+			"deleteError": "Error al eliminar la regla"
+		}
+	},
+	"form": {
+		"createTitle": "Agregar Regla de Pronunciación",
+		"editTitle": "Editar Regla de Pronunciación",
+		"sections": {
+			"word": {
+				"title": "Palabra",
+				"description": "La palabra cuya pronunciación deseas sobrescribir."
+			},
+			"pronunciation": {
+				"title": "Pronunciación",
+				"description": "Elige cómo ElevenLabs debe pronunciar esta palabra."
+			},
+			"metadata": {
+				"title": "Metadatos",
+				"description": "Locale y descripción opcionales para referencia."
+			}
+		},
+		"fields": {
+			"grapheme": {
+				"label": "Palabra (grafema)",
+				"placeholder": "ej. José",
+				"required": "La palabra es obligatoria"
+			},
+			"ruleType": {
+				"label": "Tipo de Regla",
+				"alias": "Alias",
+				"phoneme": "Fonema (CMU Arpabet)"
+			},
+			"alias": {
+				"label": "Alias (deletreo fonético)",
+				"placeholder": "ej. Ho-seh",
+				"required": "El alias es obligatorio para reglas ALIAS"
+			},
+			"phoneme": {
+				"label": "Fonema (CMU Arpabet)",
+				"placeholder": "ej. HH OW0 Z EY1",
+				"required": "El fonema es obligatorio para reglas PHONEME"
+			},
+			"locale": {
+				"label": "Locale",
+				"placeholder": "ej. es-MX, en-US"
+			},
+			"description": {
+				"label": "Descripción",
+				"placeholder": "Nota opcional sobre esta regla"
+			},
+			"category": {
+				"label": "Categoría",
+				"placeholder": "Selecciona una categoría",
+				"options": {
+					"CITY": "Ciudad",
+					"PROVINCE": "Provincia / Estado",
+					"NAME": "Nombre",
+					"LAST_NAME": "Apellido",
+					"GENERAL": "General"
+				}
+			}
+		},
+		"hints": {
+			"alias": "Funciona en todos los modelos de ElevenLabs. Ideal para agentes multilingües.",
+			"phoneme": "CMU Arpabet. Solo funciona con Flash v2, Turbo v2 y English v1.",
+			"caseSensitive": "Las reglas distinguen entre mayúsculas y minúsculas."
+		},
+		"arpabet": {
+			"triggerLabel": "Información sobre ARPABET",
+			"title": "¿Qué es ARPABET?",
+			"description": "ARPABET es una notación fonética que describe la pronunciación usando códigos de sonidos en mayúsculas.",
+			"items": {
+				"stress": "Las vocales pueden incluir marcas de acento como `AH0`, `EH1` o `IY2`.",
+				"spacing": "Escribe cada sonido separado por espacios y en el orden en que se pronuncia la palabra.",
+				"example": "Ejemplo: `JOSÉ` se puede aproximar como `HH OW0 Z EY1`."
+			},
+			"reference": "Consejo: empieza con una aproximación simple en inglés y luego ajusta los sonidos si el resultado aún no suena bien."
+		},
+		"buttons": {
+			"cancel": "Cancelar",
+			"create": "Crear Regla",
+			"update": "Actualizar Regla"
+		}
+	},
+	"columns": {
+		"grapheme": "Palabra",
+		"ruleType": "Tipo",
+		"category": "Categoría",
+		"pronunciation": "Pronunciación",
+		"locale": "Locale",
+		"description": "Descripción",
+		"actions": "Acciones"
+	},
+	"dictionaryColumns": {
+		"name": "Nombre",
+		"createdAt": "Creado",
+		"actions": "Acciones"
+	},
+	"upload": {
+		"buttonLabel": "Subir CSV",
+		"createTitle": "Crear Diccionario desde CSV",
+		"uploadTitle": "Subir Reglas desde CSV",
+		"dictionarySection": "Detalles del Diccionario",
+		"fileSection": "Archivo CSV",
+		"fileLabel": "Archivo CSV",
+		"filePlaceholder": "Selecciona un archivo CSV",
+		"fileDescription": "Formato aceptado: .csv — máx 5 MB",
+		"fileRequired": "Por favor selecciona un archivo CSV",
+		"dropzoneTitle": "Subir reglas CSV",
+		"dropzoneSubtitle": "Arrastra y suelta tu archivo CSV aquí o haz clic para buscar.",
+		"downloadTemplate": "Descargar plantilla CSV",
+		"formatHint": "Columnas obligatorias: grapheme, ruleType. Opcionales: alias, phoneme, locale, description, category.",
+		"cancel": "Cancelar",
+		"submit": "Subir",
+		"createAndUpload": "Crear y Subir",
+		"uploading": "Subiendo…",
+		"notifications": {
+			"createError": "Error al crear el diccionario antes de la carga",
+			"uploadError": "Error al subir. Verifica tu CSV e intenta de nuevo."
+		}
+	},
+	"results": {
+		"title": "Resultados de la Carga",
+		"summary": "{{processed}} filas procesadas",
+		"succeeded": "Exitosas",
+		"failed": "Fallidas",
+		"noErrors": "Todas las filas se importaron correctamente.",
+		"errorsTitle": "Errores por Fila",
+		"tableRow": "Fila",
+		"tableGrapheme": "Palabra",
+		"tableError": "Error",
+		"close": "Cerrar",
+		"goToDictionary": "Ir al Diccionario"
+	},
+	"categories": {
+		"CITY": "Ciudad",
+		"PROVINCE": "Provincia / Estado",
+		"NAME": "Nombre",
+		"LAST_NAME": "Apellido",
+		"GENERAL": "General"
+	},
+	"export": {
+		"buttonLabel": "Descargar CSV",
+		"downloading": "Descargando…",
+		"emptyNotification": "Este diccionario no tiene reglas para exportar.",
+		"successNotification": "Diccionario exportado exitosamente.",
+		"errorNotification": "Error al exportar el diccionario."
+	}
+}

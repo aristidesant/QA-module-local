@@ -34,7 +34,7 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 	campaignId,
 	handleReload,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.params', 'common']);
 	const { setRightComponent } = useCampaignsStore((state) => state);
 	const [opened, { open, close }] = useDisclosure(false);
 
@@ -76,7 +76,7 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 				handleReload?.();
 			}
 		} catch (error) {
-			console.error('Failed to toggle scheduler status:', error);
+			void error;
 		}
 	};
 
@@ -148,7 +148,7 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 			// Close the form
 			close();
 		} catch (error) {
-			console.error('Failed to update scheduler:', error);
+			void error;
 		}
 	};
 
@@ -168,7 +168,7 @@ export const SchedulerCard: React.FC<SchedulerCardProps> = ({
 					});
 					handleReload?.();
 				} catch (error) {
-					console.error('Failed to delete scheduler:', error);
+					void error;
 					handleReload?.();
 				}
 			},

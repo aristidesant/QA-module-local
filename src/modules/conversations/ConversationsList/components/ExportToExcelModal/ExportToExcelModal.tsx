@@ -56,7 +56,9 @@ export default function ExportToExcelModal({
 
 	const handleSubmit = () => {
 		const { from, to, direction } = form.values;
-		console.log('Form values', { from, to, direction });
+		void from;
+		void to;
+		void direction;
 		if (!from || !to || !direction) return;
 		// If parent provided a handler, delegate to it
 		if (onSubmit) {
@@ -92,8 +94,7 @@ export default function ExportToExcelModal({
 				window.URL.revokeObjectURL(url);
 			})
 			.catch((err) => {
-				// eslint-disable-next-line no-console
-				console.error('Failed to export conversations CSV', err);
+				void err;
 			})
 			.finally(() => {
 				setLoading(false);

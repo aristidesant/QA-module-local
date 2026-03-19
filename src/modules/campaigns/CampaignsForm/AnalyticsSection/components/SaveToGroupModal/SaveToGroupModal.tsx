@@ -55,7 +55,7 @@ export default function SaveToGroupModal({
 	row,
 	onSaved,
 }: SaveToGroupModalProps) {
-	const { t } = useTranslation(['campaigns', 'common']);
+	const { t } = useTranslation(['campaign.form.analytics', 'common']);
 	const [templateId, setTemplateId] = useState<string | null>(null);
 	const [categorySearch, setCategorySearch] = useState('');
 	const [categoryId, setCategoryId] = useState<string | null>(null);

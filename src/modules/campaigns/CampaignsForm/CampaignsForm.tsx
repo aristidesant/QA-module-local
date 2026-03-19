@@ -13,6 +13,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import type { Campaign } from '../../../models/CampaignsModel';
+import campaignAgentsApi from '~/api/campaignAgentsApi';
+import knowledgeBaseApi from '~/api/knowledgeBaseApi';
 import {
 	useCreateCampaign,
 	useUpdateCampaign,
@@ -47,13 +49,30 @@ import CampaignSyncButton from './components/CampaignSyncButton';
 import AgentSectionRightPanel from './AgentSection/AgentSectionRightPanel';
 import GeneralSectionRightPanel from './GeneralSection/GeneralSectionRightPanel';
 import AppDrawer from '~/components/AppDrawer';
+import DashboardSection from './DashboardSection';
+import VersioningSection from './VersioningSection';
+import i18n from '~/locales/i18n';
 import styles from './CampaignsForm.module.css';
+import { getDataCollectionFromAgentConfig } from './AnalyticsSection/analyticsFormContext';
 
 interface CampaignsFormProps {
 	campaign?: Partial<Campaign>;
 	loading?: boolean;
 	onBack?: () => void;
 }
+
+const campaignFormTabNamespaces: Record<string, string> = {
+	general: 'campaign.form.general',
+	agents: 'campaign.form.agents',
+	workflow: 'campaign.form.workflow',
+	outcomes: 'campaign.form.outcomes',
+	'do-not-call': 'campaign.form.do-not-call',
+	params: 'campaign.form.params',
+	analytics: 'campaign.form.analytics',
+	dashboards: 'campaign.form.dashboards',
+	'report-values': 'campaign.form.report-values',
+	versioning: 'campaign.form.versioning',
+};
 
 const getWorkflowCounts = (
 	workflow?: Partial<Campaign>['agentConfig'] extends infer T
@@ -132,10 +151,15 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		sunday: { enabled: false, from: '09:00', to: '17:30' },
 	};
 
+	const activeFormNamespace =
+		campaignFormTabNamespaces[selectedTab] ?? 'campaign.form.shared';
+
 	const { t } = useTranslation([
-		'campaigns',
+		'campaign.form.shared',
+		activeFormNamespace,
 		'campaign.detail',
 		'campaign.contact-list',
+		'do-not-call',
 		'common',
 	]);
 
@@ -170,6 +194,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			clientId: campaign?.clientId ?? 0,
 			tags: campaign?.tags || [],
 			workingHours: campaign?.workingHours || defaultWorkingHours,
+			noiseCancellation: campaign?.noiseCancellation,
 			agentConfig: campaign?.agentConfig || {},
 			defaultMaxWaves: campaign?.defaultMaxWaves ?? 3,
 			defaultWaveExecutionDelaySeconds:
@@ -194,6 +219,15 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 				value ? null : t('form.validation.objectiveRequired'),
 		},
 	});
+	const attributeMetricKeys = React.useMemo(() => {
+		const dataCollection = getDataCollectionFromAgentConfig(
+			form.values.agentConfig
+		);
+
+		return Object.keys(dataCollection)
+			.filter((key) => key.trim().length > 0)
+			.sort((left, right) => left.localeCompare(right));
+	}, [form.values.agentConfig]);
 
 	// Update form values when campaign data changes
 	useEffect(() => {
@@ -202,12 +236,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		const campaignWorkflowCounts = getWorkflowCounts(
 			campaign.agentConfig?.workflow
 		);
-		console.log('[CampaignsForm] incoming campaign workflow', {
-			campaignId: campaign.id,
-			nodes: campaignWorkflowCounts.nodes,
-			edges: campaignWorkflowCounts.edges,
-			hasWorkflow: Boolean(campaign.agentConfig?.workflow),
-		});
+		void campaignWorkflowCounts;
 
 		form.setValues({
 			name: campaign.name || '',
@@ -225,11 +254,15 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			clientId: campaign.clientId ?? 0,
 			tags: campaign.tags || [],
 			workingHours: campaign.workingHours || defaultWorkingHours,
+			noiseCancellation: campaign.noiseCancellation,
 			agentConfig: campaign.agentConfig || {},
 			defaultMaxWaves: campaign.defaultMaxWaves ?? 3,
 			defaultWaveExecutionDelaySeconds:
 				campaign.defaultWaveExecutionDelaySeconds ?? 0,
 		});
+		// Sync the snapshot so dirty detection is always relative to the
+		// latest backend state, not a stale cached version.
+		form.resetDirty();
 
 		const stateWorkflowCounts = getWorkflowCounts(
 			form.values.agentConfig?.workflow
@@ -237,13 +270,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		const getterWorkflowCounts = getWorkflowCounts(
 			form.getValues().agentConfig?.workflow
 		);
-		console.log('[CampaignsForm] after setValues - workflow snapshot', {
-			campaignId: campaign.id,
-			stateNodes: stateWorkflowCounts.nodes,
-			stateEdges: stateWorkflowCounts.edges,
-			getterNodes: getterWorkflowCounts.nodes,
-			getterEdges: getterWorkflowCounts.edges,
-		});
+		void stateWorkflowCounts;
+		void getterWorkflowCounts;
 	}, [campaign?.id, campaign?.agentConfig?.workflow]);
 
 	// Reset view only on component unmount
@@ -263,9 +291,69 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		setIsSettingsDrawerOpen(Boolean(rightComponent));
 	}, [selectedTab, rightComponent]);
 
+	useEffect(() => {
+		if (selectedTab !== 'agents') return;
+
+		void i18n.loadNamespaces([
+			'campaigns',
+			'knowledgeBaseSelection',
+			'campaigns.wizard',
+		]);
+
+		void queryClient.prefetchQuery({
+			queryKey: ['knowledgeBases', {}],
+			queryFn: async () => {
+				const api = knowledgeBaseApi();
+				return api.getKnowledgeBases();
+			},
+			staleTime: 1000 * 60,
+		});
+
+		void queryClient.prefetchQuery({
+			queryKey: [
+				'knowledgeBasesPaginated',
+				{
+					limit: 10,
+					offset: 0,
+					sortBy: 'name',
+					sortOrder: 'asc',
+				},
+			],
+			queryFn: async () => {
+				const api = knowledgeBaseApi();
+				return api.getKnowledgeBasesPaginated({
+					limit: 10,
+					offset: 0,
+					sortBy: 'name',
+					sortOrder: 'asc',
+				});
+			},
+			staleTime: 1000 * 60,
+		});
+
+		if (!campaign?.id) return;
+
+		void queryClient.prefetchQuery({
+			queryKey: ['campaignAgents', campaign.id],
+			queryFn: async () => {
+				const api = campaignAgentsApi();
+				return api.getCampaignAgents(campaign.id as number);
+			},
+			staleTime: 1000 * 60,
+		});
+	}, [campaign?.id, queryClient, selectedTab]);
+
 	const settingsDrawerTitle = t('form.settingsDrawer.title');
 	const openSettingsDrawer = () => {
-		setIsSettingsDrawerOpen(true);
+		void i18n
+			.loadNamespaces([
+				'campaigns',
+				'knowledgeBaseSelection',
+				'campaigns.wizard',
+			])
+			.finally(() => {
+				setIsSettingsDrawerOpen(true);
+			});
 	};
 
 	const settingsDrawerContent =
@@ -292,14 +380,12 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 				notifications.show({
 					title: t('form.validation.workflowInvalidTitle', {
 						defaultValue: 'Workflow Configuration Error',
-						ns: 'common',
 					}),
 					message:
 						validationResult.errorMessage ||
 						t('form.validation.workflowInvalidMessage', {
 							defaultValue:
 								'All edges must have at least one condition configured',
-							ns: 'common',
 						}),
 					color: 'red',
 				});
@@ -383,6 +469,11 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 					: t('form.notifications.successCreatedMessage'),
 				color: 'green',
 			});
+			// Mark the form as clean so the Save button disables after a
+			// successful save. The snapshot is updated to the current values,
+			// which will match the data returned by the subsequent React Query
+			// refetch triggered by invalidateQueries above.
+			form.resetDirty();
 		} catch (error) {
 			notifications.show({
 				title: t('errors.unknown', { ns: 'common' }),
@@ -406,13 +497,13 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 					title={
 						campaign?.id
 							? t('form.title.edit', { name: campaign.name })
-							: t('list.createCampaign')
+							: t('form.title.create')
 					}
 					titleRight={
 						campaign?.id && (
 							<Group gap='xs'>
 								<CampaignSyncButton />
-								<Tooltip label={t('columns.viewCampaign')} withArrow>
+								<Tooltip label={t('form.actions.viewCampaign')} withArrow>
 									<ActionIcon
 										variant='light'
 										size='lg'
@@ -535,6 +626,15 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 								/>
 							</form>
 						)}
+						{selectedTab === 'dashboards' && (
+							<DashboardSection
+								campaignId={campaign?.id}
+								attributeMetricKeys={attributeMetricKeys}
+							/>
+						)}
+						{selectedTab === 'versioning' && (
+							<VersioningSection campaign={campaign} />
+						)}
 					</Stack>
 				</ContentContainer>
 				<AppDrawer
@@ -542,6 +642,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 					onClose={() => setIsSettingsDrawerOpen(false)}
 					title={settingsDrawerTitle}
 					size='lg'
+					keepMounted
 				>
 					{settingsDrawerContent}
 				</AppDrawer>

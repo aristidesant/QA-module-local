@@ -50,10 +50,11 @@ export default function CampaignFilters({
 	filters,
 	onFiltersChange,
 }: CampaignFiltersProps) {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation('campaigns.list');
 	const [opened, setOpened] = useState(false);
 
 	const sortOptions = [
+		{ value: 'updatedAt', label: t('filters.sortOptions.updatedAt') },
 		{ value: 'createdAt', label: t('filters.sortOptions.createdAt') },
 		{ value: 'name', label: t('filters.sortOptions.name') },
 		{ value: 'status', label: t('filters.sortOptions.status') },
@@ -129,7 +130,7 @@ export default function CampaignFilters({
 
 					<Select
 						value={sortBy}
-						onChange={(value) => onSortChange(value || 'createdAt')}
+						onChange={(value) => onSortChange(value || 'updatedAt')}
 						data={sortOptions}
 						placeholder={t('filters.sortBy')}
 						className={styles.sortSelect}
@@ -146,8 +147,6 @@ export default function CampaignFilters({
 					>
 						{t('filters.advanced')}
 					</Button>
-
-					{/* DEV-ONLY: visible toggle to include inactive campaigns (localhost only) */}
 					{window.location.hostname === 'localhost' && (
 						<Tooltip
 							label='Dev purposes only — toggles includeInactive API param'

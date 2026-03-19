@@ -6,6 +6,7 @@ import {
 	IconGlobe,
 	IconClockHour4,
 	IconPhone,
+	IconBook2,
 } from '@tabler/icons-react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import { useEffect } from 'react';
@@ -36,6 +37,8 @@ export default function ConfigurationsPage() {
 		if (location.pathname.includes('regional-settings-params'))
 			return 'regional-settings-params';
 		if (location.pathname.includes('phone-numbers')) return 'phone-numbers';
+		if (location.pathname.includes('dictionary-rules'))
+			return 'dictionary-rules';
 		return isMasterClient ? 'client-configs' : 'campaign-predefined-params';
 	};
 
@@ -106,6 +109,13 @@ export default function ConfigurationsPage() {
 						onClick={() => navigate('/configurations/phone-numbers')}
 					>
 						{t('tabs.phoneNumbers')}
+					</Tabs.Tab>
+					<Tabs.Tab
+						value='dictionary-rules'
+						leftSection={<IconBook2 size={16} />}
+						onClick={() => navigate('/configurations/dictionary-rules')}
+					>
+						{t('tabs.dictionaryRules')}
 					</Tabs.Tab>
 				</Tabs.List>
 

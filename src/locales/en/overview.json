@@ -8,6 +8,13 @@
 	"welcomeBackHeading": "Welcome back, {{name}}!",
 	"masterSubheading": "Gain a strategic snapshot of your entire conversational ecosystem.",
 	"enterpriseHeading": "Enterprise Overview",
+	"dashboardOverview": {
+		"title": "Dashboard overview",
+		"description": "Review dashboards that are not attached to a campaign.",
+		"emptyTitle": "No global dashboards yet",
+		"emptyDescription": "Create a dashboard without a campaign to show it here on the overview page.",
+		"emptyAction": "Open dashboards"
+	},
 	"features": {
 		"smartCampaigns": {
 			"title": "Smart Campaigns",

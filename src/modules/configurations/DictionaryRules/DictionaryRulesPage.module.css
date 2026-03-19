@@ -1,0 +1,15 @@
+.pageRoot {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+}
+
+.emptyState {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: var(--mantine-spacing-xl) var(--mantine-spacing-md);
+	gap: var(--mantine-spacing-sm);
+	text-align: center;
+}

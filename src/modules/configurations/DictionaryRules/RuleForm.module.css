@@ -1,0 +1,58 @@
+.formRoot {
+	display: flex;
+	flex-direction: column;
+}
+
+.formElement {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+}
+
+.section {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+}
+
+.sectionHeader {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-sm);
+}
+
+.sectionHeaderText {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.hintText {
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	border-radius: var(--mantine-radius-sm);
+	background-color: var(--mantine-color-gray-0);
+	border-left: 3px solid var(--mantine-color-blue-4);
+}
+
+.infoIcon {
+	color: var(--mantine-color-blue-6);
+	cursor: pointer;
+	flex-shrink: 0;
+}
+
+.arpabetList {
+	color: var(--mantine-color-gray-7);
+}
+
+.arpabetExample {
+	padding: var(--mantine-spacing-xs);
+	border-radius: var(--mantine-radius-sm);
+	background-color: var(--mantine-color-gray-0);
+	font-family: var(--mantine-font-family-monospace);
+	white-space: pre-wrap;
+}
+
+.actions {
+	padding-top: var(--mantine-spacing-sm);
+}

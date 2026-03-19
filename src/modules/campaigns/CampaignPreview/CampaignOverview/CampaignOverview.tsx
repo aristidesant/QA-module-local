@@ -54,13 +54,13 @@ const formatDate = (value?: string) => {
 			timeStyle: 'short',
 		}).format(new Date(value));
 	} catch (error) {
-		console.error('Date formatting error:', error);
+		void error;
 		return value;
 	}
 };
 
 const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
-	const { t } = useTranslation('campaign.detail');
+	const { t } = useTranslation(['campaign.detail', 'campaigns.list']);
 	const {
 		data: campaignData,
 		refetch,
@@ -167,7 +167,7 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 				message: apiMessage,
 				color: 'red',
 			});
-			console.error(`Error ${action} campaign:`, error);
+			void error;
 		},
 		[t]
 	);
@@ -180,13 +180,7 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 					message: t('preview.overview.notifications.noContactList'),
 					color: 'yellow',
 				});
-				console.error(
-					`Cannot ${action} campaign without an associated contact list.`,
-					{
-						campaignId: campaignNumericId,
-						contactGroupId,
-					}
-				);
+				void action;
 				return false;
 			}
 			return true;
@@ -268,12 +262,12 @@ const CampaignOverview: React.FC<CampaignOverviewProps> = ({ campaign }) => {
 	const StatusIcon = statusConfig.icon;
 	const statusLabel = useMemo(() => {
 		if (!statusConfig?.label) {
-			return t('status.UNKNOWN', { ns: 'campaigns' });
+			return t('status.UNKNOWN', { ns: 'campaigns.list' });
 		}
 
 		return t(statusConfig.label, {
-			ns: 'campaigns',
-			defaultValue: t('status.UNKNOWN', { ns: 'campaigns' }),
+			ns: 'campaigns.list',
+			defaultValue: t('status.UNKNOWN', { ns: 'campaigns.list' }),
 		});
 	}, [statusConfig?.label, t]);
 

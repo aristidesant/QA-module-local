@@ -1,0 +1,1133 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useForm } from '@mantine/form';
+import { notifications } from '@mantine/notifications';
+import { useTranslation } from 'react-i18next';
+import type {
+	CreateDashboardWidgetDto,
+	DashboardWidget,
+	UpdateDashboardWidgetDto,
+} from '~/models/AnalyticsDashboard';
+import {
+	findNextAvailableWidgetLayout,
+	getWidgetDimensionsForPreset,
+	type DashboardWidgetSizePreset,
+	normalizeWidgetLayout,
+} from '~/modules/campaigns/dashboardLayout';
+import { getDataCollectionFromAgentConfig } from '~/modules/campaigns/CampaignsForm/AnalyticsSection/analyticsFormContext';
+import { useGetCampaign } from '~/queries/campaignsQueries';
+import { useGetClientConfig } from '~/queries/clientConfigQueries';
+import {
+	useCreateDashboardWidget,
+	useDashboardWidgets,
+	useUpdateDashboardWidget,
+} from '~/queries/analyticsDashboardsQueries';
+import { getErrorMessage } from '~/utils/httpClient';
+import type {
+	WidgetFilterFormRow,
+	WidgetFormValues,
+} from '../DashboardSection.types';
+import {
+	type DashboardWidgetFormCompatibility,
+	type DashboardWidgetFormState,
+} from './DashboardWidgetForm.context';
+import {
+	buildFieldOptions,
+	buildGroupBySuggestions,
+	buildGuidedState,
+	buildMetricPayload,
+	buildQueryPayload,
+	buildViewConfigPayload,
+	createEmptyFilterRow,
+	getAggregationOptions,
+	getDefaultWidgetSizePreset,
+	getFilterKeySuggestions,
+	getFilterValueTypeOptions,
+	getInitialSizePreset,
+	getMetricSourceOptions,
+	getResultTypeOptions,
+	getSizePresetOptions,
+	getValueFieldOptions,
+	getViewValueFormatOptions,
+	getWidgetTypeOptions,
+	hasInvalidDefaultFilterRows,
+	inferFilterValueType,
+	isGroupByDerivedFromSourceField,
+	isMetricSelectionReady,
+	parseMetricColumnsConfig,
+	requiresValueField,
+	sanitizeWidgetDefaultFilters,
+	getResolvedGroupBy,
+	getSourceFieldEntries,
+	normalizeWidgetFilterValueForType,
+	resetWidgetFilterRow,
+	supportsGroupedWidget,
+	supportsTimeSeriesWidget,
+	widgetFormValues,
+} from './DashboardWidgetForm.helpers';
+
+const METRIC_COLUMNS_CONFIG_KEY = 'metric_columns';
+
+type DashboardWidgetFormControllerProps = {
+	campaignId: number | null;
+	attributeMetricKeys?: string[];
+	dashboardId: number;
+	widget?: DashboardWidget | null;
+	onCancel: () => void;
+	onSuccess: () => void;
+};
+
+const useDashboardWidgetFormController = ({
+	campaignId,
+	attributeMetricKeys = [],
+	dashboardId,
+	widget,
+	onCancel,
+	onSuccess,
+}: DashboardWidgetFormControllerProps) => {
+	const { t } = useTranslation(['campaign.form.dashboards', 'common']);
+	const createDashboardWidget = useCreateDashboardWidget();
+	const updateDashboardWidget = useUpdateDashboardWidget();
+	const { data: existingWidgets = [] } = useDashboardWidgets(dashboardId);
+	const { data: metricColumnsConfig, isLoading: isMetricColumnsLoading } =
+		useGetClientConfig(METRIC_COLUMNS_CONFIG_KEY);
+	const isEditing = Boolean(widget?.id);
+	const isGlobalDashboard = campaignId === null;
+	const initialValues = widgetFormValues(widget);
+	const [values, setValues] = useState<WidgetFormValues>(initialValues);
+	const [titleTouched, setTitleTouched] = useState(
+		Boolean(widget?.title?.trim())
+	);
+	const [titleInputRevision, setTitleInputRevision] = useState(0);
+	const [advancedOpened, setAdvancedOpened] = useState(false);
+	const [sizePreset, setSizePreset] = useState<DashboardWidgetSizePreset>(
+		getInitialSizePreset(widget)
+	);
+	const [sizePresetTouched, setSizePresetTouched] = useState(Boolean(widget));
+	const [manualCompatibility, setManualCompatibility] =
+		useState<DashboardWidgetFormCompatibility>({
+			resultType: Boolean(widget),
+			supportsGroupBy: Boolean(widget),
+			supportsTimeSeries: Boolean(widget),
+		});
+
+	const form = useForm<WidgetFormValues>({
+		mode: 'uncontrolled',
+		initialValues,
+		validate: {
+			title: (value) =>
+				value.trim() ? null : t('dashboardBuilder.form.validation.widgetTitle'),
+			fieldName: (value, currentValues) =>
+				currentValues.sourceType !== 'ATTRIBUTE' &&
+				!(typeof value === 'string' ? value.trim() : '')
+					? t('dashboardBuilder.form.validation.fieldNameRequired')
+					: null,
+			metricKey: (value, currentValues) =>
+				currentValues.sourceType === 'ATTRIBUTE' &&
+				!(typeof value === 'string' ? value.trim() : '')
+					? t('dashboardBuilder.form.validation.metricKeyRequired')
+					: null,
+			valueField: (value, currentValues) =>
+				requiresValueField(
+					currentValues.sourceType,
+					currentValues.aggregationType
+				) && !value
+					? t('dashboardBuilder.form.validation.valueFieldRequired')
+					: null,
+			groupBy: (value, currentValues) =>
+				supportsGroupedWidget(currentValues.widgetType) &&
+				!getResolvedGroupBy({ ...currentValues, groupBy: value })
+					? t('dashboardBuilder.form.validation.groupByRequired')
+					: null,
+			limit: (value) =>
+				value === '' || value >= 1
+					? null
+					: t('dashboardBuilder.form.validation.minSize'),
+			width: (value) =>
+				value >= 1 ? null : t('dashboardBuilder.form.validation.minSize'),
+			height: (value) =>
+				value >= 1 ? null : t('dashboardBuilder.form.validation.minSize'),
+		},
+		onValuesChange: setValues,
+	});
+
+	const sourceFieldSnapshotRef = useRef({
+		sourceType: values.sourceType,
+		fieldName: values.fieldName,
+		metricKey: values.metricKey,
+	});
+
+	const parsedMetricColumns = useMemo(
+		() => parseMetricColumnsConfig(metricColumnsConfig?.value),
+		[metricColumnsConfig?.value]
+	);
+
+	const conversationFieldOptions = useMemo(
+		() => buildFieldOptions(parsedMetricColumns.conversation),
+		[parsedMetricColumns.conversation]
+	);
+	const dispositionFieldOptions = useMemo(
+		() => buildFieldOptions(parsedMetricColumns.disposition),
+		[parsedMetricColumns.disposition]
+	);
+	const conversationFieldValues = useMemo(
+		() => conversationFieldOptions.map((option) => option.value),
+		[conversationFieldOptions]
+	);
+	const dispositionFieldValues = useMemo(
+		() => dispositionFieldOptions.map((option) => option.value),
+		[dispositionFieldOptions]
+	);
+
+	const { data: selectedCampaign, isLoading: isCampaignLoading } =
+		useGetCampaign(String(campaignId ?? ''), {
+			enabled: Boolean(campaignId) && values.sourceType === 'ATTRIBUTE',
+		});
+
+	const metricKeyOptions = useMemo(() => {
+		const campaignMetricKeys = selectedCampaign
+			? Object.keys(
+					getDataCollectionFromAgentConfig(selectedCampaign.agentConfig)
+				)
+			: [];
+
+		return [...new Set([...campaignMetricKeys, ...attributeMetricKeys])]
+			.filter((key) => key.trim().length > 0)
+			.sort()
+			.map((key) => ({
+				value: key,
+				label: key,
+			}));
+	}, [attributeMetricKeys, selectedCampaign]);
+
+	const widgetTypeOptions = useMemo(() => getWidgetTypeOptions(t), [t]);
+	const metricSourceOptions = useMemo(
+		() => getMetricSourceOptions(t, isGlobalDashboard),
+		[isGlobalDashboard, t]
+	);
+	const aggregationOptions = useMemo(() => getAggregationOptions(t), [t]);
+	const resultTypeOptions = useMemo(() => getResultTypeOptions(t), [t]);
+	const valueFieldOptions = useMemo(() => getValueFieldOptions(t), [t]);
+	const filterValueTypeOptions = useMemo(
+		() => getFilterValueTypeOptions(t),
+		[t]
+	);
+	const viewValueFormatOptions = useMemo(
+		() => getViewValueFormatOptions(t),
+		[t]
+	);
+	const sizePresetOptions = useMemo(
+		() => getSizePresetOptions(t, sizePreset),
+		[sizePreset, t]
+	);
+	const widgetTypeControlOptions = useMemo(
+		() =>
+			widgetTypeOptions.map((option) => ({
+				value: option.value,
+				label: t(`dashboardBuilder.widgetTypes.${option.value}`),
+				disabled: option.disabled,
+			})),
+		[t, widgetTypeOptions]
+	);
+	const sourceTypeControlOptions = useMemo(
+		() =>
+			metricSourceOptions.map((option) => ({
+				value: option.value,
+				label: t(`dashboardBuilder.form.options.sourceType.${option.value}`),
+				disabled: option.disabled,
+			})),
+		[metricSourceOptions, t]
+	);
+
+	const guidedState = useMemo(
+		() =>
+			buildGuidedState(values, {
+				metricKeyOptions,
+				conversationFields: parsedMetricColumns.conversation,
+				dispositionFields: parsedMetricColumns.disposition,
+				sizePreset,
+				isGlobalDashboard,
+				t,
+			}),
+		[
+			values,
+			isGlobalDashboard,
+			metricKeyOptions,
+			parsedMetricColumns.conversation,
+			parsedMetricColumns.disposition,
+			sizePreset,
+			t,
+		]
+	);
+
+	const groupBySuggestions = useMemo(
+		() =>
+			buildGroupBySuggestions(
+				{
+					sourceType: values.sourceType,
+					aggregationType: values.aggregationType,
+					fieldName: values.fieldName,
+					metricKey: values.metricKey,
+					supportsGroupBy: values.supportsGroupBy,
+					supportsTimeSeries: values.supportsTimeSeries,
+				},
+				metricKeyOptions.map((option) => option.value),
+				conversationFieldValues,
+				dispositionFieldValues
+			),
+		[
+			conversationFieldValues,
+			dispositionFieldValues,
+			metricKeyOptions,
+			values.aggregationType,
+			values.fieldName,
+			values.metricKey,
+			values.sourceType,
+			values.supportsGroupBy,
+			values.supportsTimeSeries,
+		]
+	);
+
+	const filterKeySuggestions = useMemo(
+		() =>
+			getFilterKeySuggestions(
+				values,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
+		[
+			values,
+			metricKeyOptions,
+			parsedMetricColumns.conversation,
+			parsedMetricColumns.disposition,
+		]
+	);
+
+	const needsGroupedConfig = guidedState.compatibility.isGroupedWidget;
+	const needsTimeSeriesMetric = supportsTimeSeriesWidget(values.widgetType);
+	const needsValueField = guidedState.compatibility.requiresValueField;
+	const groupByIsDerived = isGroupByDerivedFromSourceField(values);
+	const isAttributeMetric = values.sourceType === 'ATTRIBUTE';
+	const fieldNameOptions = isAttributeMetric
+		? []
+		: values.sourceType === 'DISPOSITION'
+			? dispositionFieldOptions
+			: conversationFieldOptions;
+
+	const placementLayout = useMemo(
+		() =>
+			findNextAvailableWidgetLayout(
+				existingWidgets.map((item) => ({
+					id: item.id,
+					positionX: item.positionX,
+					positionY: item.positionY,
+					width: item.width,
+					height: item.height,
+				})),
+				{ width: values.width, height: values.height },
+				widget?.id ? { excludeId: widget.id } : undefined
+			),
+		[existingWidgets, values.height, values.width, widget?.id]
+	);
+
+	const advancedSettingsCount = useMemo(() => {
+		let count = 0;
+		if (typeof values.viewColor === 'string' && values.viewColor.trim()) {
+			count += 1;
+		}
+		if (
+			typeof values.viewValueFormat === 'string' &&
+			values.viewValueFormat.trim()
+		) {
+			count += 1;
+		}
+		if (!values.enabled) count += 1;
+		if (
+			manualCompatibility.resultType &&
+			values.resultType !== guidedState.compatibility.inferredResultType
+		) {
+			count += 1;
+		}
+		if (
+			manualCompatibility.supportsGroupBy &&
+			values.supportsGroupBy !==
+				guidedState.compatibility.inferredSupportsGroupBy
+		) {
+			count += 1;
+		}
+		if (
+			manualCompatibility.supportsTimeSeries &&
+			values.supportsTimeSeries !==
+				guidedState.compatibility.inferredSupportsTimeSeries
+		) {
+			count += 1;
+		}
+		count += values.defaultFilters.filter(
+			(row) => (row.key ?? '').trim().length > 0
+		).length;
+		return count;
+	}, [manualCompatibility, guidedState.compatibility, values]);
+
+	useEffect(() => {
+		const nextValues = widgetFormValues(widget);
+		const shouldApplyTitleSuggestion =
+			!Boolean(widget?.title?.trim()) && Boolean(guidedState.titleSuggestion);
+
+		if (shouldApplyTitleSuggestion) {
+			nextValues.title = guidedState.titleSuggestion;
+		}
+
+		form.setValues(nextValues);
+		form.resetDirty(nextValues);
+		setTitleTouched(Boolean(widget?.title?.trim()));
+		setTitleInputRevision((current) => current + 1);
+		setAdvancedOpened(false);
+		setSizePreset(getInitialSizePreset(widget));
+		setSizePresetTouched(Boolean(widget));
+		setManualCompatibility({
+			resultType: Boolean(widget),
+			supportsGroupBy: Boolean(widget),
+			supportsTimeSeries: Boolean(widget),
+		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [widget]);
+
+	useEffect(() => {
+		if (sizePresetTouched) {
+			return;
+		}
+
+		const nextPreset = getDefaultWidgetSizePreset(values.widgetType);
+		const nextDimensions = getWidgetDimensionsForPreset(nextPreset);
+
+		if (sizePreset !== nextPreset) {
+			setSizePreset(nextPreset);
+		}
+
+		if (
+			values.width !== nextDimensions.width ||
+			values.height !== nextDimensions.height
+		) {
+			form.setValues({
+				...values,
+				width: nextDimensions.width,
+				height: nextDimensions.height,
+			});
+		}
+	}, [
+		form,
+		sizePreset,
+		sizePresetTouched,
+		values,
+		values.height,
+		values.widgetType,
+		values.width,
+	]);
+
+	useEffect(() => {
+		const previousSnapshot = sourceFieldSnapshotRef.current;
+		const currentSnapshot = {
+			sourceType: values.sourceType,
+			fieldName: values.fieldName,
+			metricKey: values.metricKey,
+		};
+		const sourceFieldChanged =
+			previousSnapshot.sourceType !== currentSnapshot.sourceType ||
+			previousSnapshot.fieldName !== currentSnapshot.fieldName ||
+			previousSnapshot.metricKey !== currentSnapshot.metricKey;
+
+		if (!sourceFieldChanged) {
+			return;
+		}
+
+		sourceFieldSnapshotRef.current = currentSnapshot;
+	}, [values.fieldName, values.metricKey, values.sourceType]);
+
+	useEffect(() => {
+		const nextValues: Partial<WidgetFormValues> = {};
+		const effectiveSourceType =
+			isGlobalDashboard && values.sourceType === 'ATTRIBUTE'
+				? 'CONVERSATION'
+				: values.sourceType;
+
+		if (effectiveSourceType !== values.sourceType) {
+			nextValues.sourceType = effectiveSourceType;
+			nextValues.defaultFilters = [createEmptyFilterRow()];
+		}
+
+		if (effectiveSourceType === 'ATTRIBUTE') {
+			if (values.fieldName !== null) {
+				nextValues.fieldName = null;
+			}
+		} else if (values.metricKey !== null) {
+			nextValues.metricKey = null;
+		}
+
+		if (!needsValueField && values.valueField !== null) {
+			nextValues.valueField = null;
+		}
+
+		if (needsGroupedConfig) {
+			const resolvedGroupBy = getResolvedGroupBy(values);
+			const currentGroupBy =
+				typeof values.groupBy === 'string' ? values.groupBy.trim() : '';
+
+			if (currentGroupBy !== resolvedGroupBy) {
+				nextValues.groupBy = resolvedGroupBy;
+			}
+		} else if (values.groupBy !== null) {
+			nextValues.groupBy = null;
+		}
+
+		if (!needsGroupedConfig) {
+			if (values.limit !== '') {
+				nextValues.limit = '';
+			}
+
+			if (!values.viewLegend) {
+				nextValues.viewLegend = true;
+			}
+		}
+
+		if (
+			!manualCompatibility.supportsGroupBy &&
+			values.supportsGroupBy !==
+				guidedState.compatibility.inferredSupportsGroupBy
+		) {
+			nextValues.supportsGroupBy =
+				guidedState.compatibility.inferredSupportsGroupBy;
+		}
+
+		if (
+			!manualCompatibility.supportsTimeSeries &&
+			values.supportsTimeSeries !==
+				guidedState.compatibility.inferredSupportsTimeSeries
+		) {
+			nextValues.supportsTimeSeries =
+				guidedState.compatibility.inferredSupportsTimeSeries;
+		}
+
+		if (
+			!manualCompatibility.resultType &&
+			isMetricSelectionReady(values) &&
+			values.resultType !== guidedState.compatibility.inferredResultType
+		) {
+			nextValues.resultType = guidedState.compatibility.inferredResultType;
+		}
+
+		if (
+			!titleTouched &&
+			guidedState.titleSuggestion &&
+			values.title !== guidedState.titleSuggestion
+		) {
+			nextValues.title = guidedState.titleSuggestion;
+			setTitleInputRevision((current) => current + 1);
+		}
+
+		if (Object.keys(nextValues).length === 0) {
+			return;
+		}
+
+		form.setValues({
+			...values,
+			...nextValues,
+		});
+	}, [
+		form,
+		guidedState.compatibility.inferredResultType,
+		guidedState.compatibility.inferredSupportsGroupBy,
+		guidedState.compatibility.inferredSupportsTimeSeries,
+		guidedState.titleSuggestion,
+		isGlobalDashboard,
+		manualCompatibility.resultType,
+		manualCompatibility.supportsGroupBy,
+		manualCompatibility.supportsTimeSeries,
+		needsGroupedConfig,
+		needsValueField,
+		titleTouched,
+		values,
+	]);
+
+	const updateFormValues = (patch: Partial<WidgetFormValues>) => {
+		form.setValues({
+			...form.getValues(),
+			...patch,
+		});
+	};
+
+	const handleSubmit = form.onSubmit(async (submitValues) => {
+		if (isGlobalDashboard && submitValues.sourceType === 'ATTRIBUTE') {
+			form.setFieldError(
+				'sourceType',
+				t('dashboardBuilder.form.validation.attributeNotAvailable')
+			);
+			return;
+		}
+
+		if (needsGroupedConfig && !submitValues.supportsGroupBy) {
+			form.setFieldError(
+				'groupBy',
+				t('dashboardBuilder.form.validation.metricMustSupportGroupBy')
+			);
+			return;
+		}
+
+		if (needsTimeSeriesMetric && !submitValues.supportsTimeSeries) {
+			form.setFieldError(
+				'widgetType',
+				t('dashboardBuilder.form.validation.metricMustSupportTimeSeries')
+			);
+			return;
+		}
+
+		if (hasInvalidDefaultFilterRows(submitValues.defaultFilters)) {
+			notifications.show({
+				title: t('dashboardBuilder.notifications.errorTitle'),
+				message: t('dashboardBuilder.form.validation.defaultFilterInvalid'),
+				color: 'red',
+			});
+			return;
+		}
+
+		const payload: CreateDashboardWidgetDto | UpdateDashboardWidgetDto = {
+			...normalizeWidgetLayout({
+				positionX: placementLayout.positionX,
+				positionY: placementLayout.positionY,
+				width: submitValues.width,
+				height: submitValues.height,
+			}),
+			dashboardId,
+			widgetType: submitValues.widgetType,
+			title: submitValues.title.trim(),
+			description: submitValues.description.trim() || undefined,
+			enabled: submitValues.enabled,
+			dataConfig: {
+				metric: buildMetricPayload(submitValues, {
+					conversationFields: parsedMetricColumns.conversation,
+					dispositionFields: parsedMetricColumns.disposition,
+				}),
+				query: buildQueryPayload(submitValues),
+			},
+			viewConfig: buildViewConfigPayload(submitValues),
+		};
+
+		try {
+			if (isEditing && widget) {
+				await updateDashboardWidget.mutateAsync({
+					id: widget.id,
+					data: payload,
+				});
+			} else {
+				await createDashboardWidget.mutateAsync(
+					payload as CreateDashboardWidgetDto
+				);
+			}
+
+			notifications.show({
+				title: isEditing
+					? t('dashboardBuilder.notifications.widgetUpdatedTitle')
+					: t('dashboardBuilder.notifications.widgetCreatedTitle'),
+				message: isEditing
+					? t('dashboardBuilder.notifications.widgetUpdatedMessage')
+					: t('dashboardBuilder.notifications.widgetCreatedMessage'),
+				color: 'green',
+			});
+
+			onSuccess();
+		} catch (error) {
+			notifications.show({
+				title: t('dashboardBuilder.notifications.errorTitle'),
+				message: getErrorMessage(error),
+				color: 'red',
+			});
+		}
+	});
+
+	const handleWidgetTypeChange = (value: string | null) => {
+		if (!value) {
+			return;
+		}
+
+		const nextWidgetType = value as WidgetFormValues['widgetType'];
+		const nextValues: WidgetFormValues = {
+			...form.getValues(),
+			widgetType: nextWidgetType,
+		};
+
+		if (!supportsGroupedWidget(nextWidgetType)) {
+			nextValues.groupBy = null;
+			nextValues.limit = '';
+		}
+
+		updateFormValues(nextValues);
+	};
+
+	const handleSourceTypeChange = (value: string | null) => {
+		if (!value) {
+			return;
+		}
+
+		const nextSourceType = value as WidgetFormValues['sourceType'];
+		const nextValues: WidgetFormValues = {
+			...form.getValues(),
+			sourceType: nextSourceType,
+			fieldName: null,
+			metricKey: null,
+			valueField: null,
+			resultType: null,
+			groupBy: null,
+			limit: '',
+			viewColor: '',
+			viewValueFormat: null,
+			supportsGroupBy: false,
+			supportsTimeSeries: true,
+			defaultFilters: [createEmptyFilterRow()],
+		};
+
+		updateFormValues(nextValues);
+		setManualCompatibility({
+			resultType: false,
+			supportsGroupBy: false,
+			supportsTimeSeries: false,
+		});
+	};
+
+	const handleAggregationTypeChange = (value: string | null) => {
+		if (!value) {
+			return;
+		}
+
+		const nextAggregationType = value as WidgetFormValues['aggregationType'];
+		const nextValues: WidgetFormValues = {
+			...form.getValues(),
+			aggregationType: nextAggregationType,
+		};
+
+		if (!requiresValueField(nextValues.sourceType, nextAggregationType)) {
+			nextValues.valueField = null;
+		}
+
+		updateFormValues({
+			...nextValues,
+			defaultFilters: sanitizeWidgetDefaultFilters(
+				nextValues,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
+		});
+		setManualCompatibility((current) => ({ ...current, resultType: false }));
+	};
+
+	const handleMetricKeyChange = (value: string | null) => {
+		const nextMetricKey = value ?? null;
+		const nextValues: WidgetFormValues = {
+			...form.getValues(),
+			metricKey: nextMetricKey,
+		};
+
+		updateFormValues({
+			...nextValues,
+			defaultFilters: sanitizeWidgetDefaultFilters(
+				nextValues,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
+		});
+		setManualCompatibility((current) => ({ ...current, resultType: false }));
+	};
+
+	const handleFieldNameChange = (value: string | null) => {
+		const nextFieldName = value ?? null;
+		const nextValues: WidgetFormValues = {
+			...form.getValues(),
+			fieldName: nextFieldName,
+		};
+
+		const selectedEntry = getSourceFieldEntries(
+			nextValues.sourceType,
+			parsedMetricColumns.conversation,
+			parsedMetricColumns.disposition
+		).find((e) => e.value === nextFieldName);
+
+		const isTimeField =
+			selectedEntry !== undefined &&
+			['time', 'datetime', 'timestamp', 'date'].includes(
+				selectedEntry.type.toLowerCase()
+			);
+
+		const aggregationOverridesToNumber =
+			nextValues.aggregationType === 'COUNT' ||
+			nextValues.aggregationType === 'DISTINCT_COUNT';
+
+		if (isTimeField && aggregationOverridesToNumber) {
+			nextValues.aggregationType = 'MIN';
+		}
+
+		updateFormValues({
+			...nextValues,
+			defaultFilters: sanitizeWidgetDefaultFilters(
+				nextValues,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
+		});
+		setManualCompatibility((current) => ({ ...current, resultType: false }));
+	};
+
+	const handleValueFieldChange = (value: string | null) => {
+		updateFormValues({
+			valueField: (value ?? null) as WidgetFormValues['valueField'],
+		});
+		setManualCompatibility((current) => ({ ...current, resultType: false }));
+	};
+
+	const handleGroupByChange = (value: string | null) => {
+		updateFormValues({
+			groupBy: value ?? null,
+		});
+	};
+
+	const handleResultTypeChange = (value: string | null) => {
+		if (!value) {
+			setManualCompatibility((current) => ({ ...current, resultType: false }));
+			updateFormValues({
+				resultType: null,
+			});
+			return;
+		}
+
+		setManualCompatibility((current) => ({ ...current, resultType: true }));
+		updateFormValues({
+			resultType: value as WidgetFormValues['resultType'],
+		});
+	};
+
+	const handleViewValueFormatChange = (value: string | null) => {
+		updateFormValues({
+			viewValueFormat: value ?? null,
+		});
+	};
+
+	const handleDefaultFilterKeyChange = (
+		index: number,
+		value: string | null
+	) => {
+		const nextKey = typeof value === 'string' ? value.trim() || null : null;
+		const nextDefaultFilters = values.defaultFilters.map((row, rowIndex) => {
+			if (rowIndex !== index) {
+				return row;
+			}
+
+			if (!nextKey) {
+				return resetWidgetFilterRow(row);
+			}
+
+			return {
+				...row,
+				key: nextKey,
+			};
+		});
+
+		const nextValues: WidgetFormValues = {
+			...form.getValues(),
+			defaultFilters: nextDefaultFilters,
+		};
+		const inferredValueType = nextKey
+			? inferFilterValueType(
+					nextValues,
+					nextKey,
+					metricKeyOptions,
+					parsedMetricColumns.conversation,
+					parsedMetricColumns.disposition
+				)
+			: null;
+
+		if (inferredValueType) {
+			nextDefaultFilters[index] = {
+				...nextDefaultFilters[index],
+				valueType: inferredValueType,
+				value: normalizeWidgetFilterValueForType(
+					inferredValueType,
+					nextDefaultFilters[index].value
+				),
+			};
+		}
+
+		updateFormValues({
+			defaultFilters: nextDefaultFilters,
+		});
+	};
+
+	const handleDefaultFilterTypeChange = (
+		index: number,
+		value: string | null
+	) => {
+		const nextValueType = value as WidgetFilterFormRow['valueType'] | null;
+		const nextDefaultFilters = values.defaultFilters.map((row, rowIndex) => {
+			if (rowIndex !== index) {
+				return row;
+			}
+
+			if (nextValueType === null) {
+				return resetWidgetFilterRow(row);
+			}
+
+			if (nextValueType === 'boolean') {
+				return {
+					...row,
+					valueType: nextValueType,
+					value: 'true',
+				};
+			}
+
+			if (nextValueType === 'null') {
+				return {
+					...row,
+					valueType: nextValueType,
+					value: '',
+				};
+			}
+
+			return {
+				...row,
+				valueType: nextValueType,
+				value: normalizeWidgetFilterValueForType(nextValueType, row.value),
+			};
+		});
+
+		updateFormValues({
+			defaultFilters: nextDefaultFilters,
+		});
+	};
+
+	const handleDefaultFilterValueChange = (
+		index: number,
+		value: string | null
+	) => {
+		const nextDefaultFilters = values.defaultFilters.map((row, rowIndex) => {
+			if (rowIndex !== index) {
+				return row;
+			}
+
+			return {
+				...row,
+				value: value ?? null,
+			};
+		});
+
+		updateFormValues({
+			defaultFilters: nextDefaultFilters,
+		});
+	};
+
+	const handleSizePresetChange = (nextPreset: string | null) => {
+		if (!nextPreset) {
+			return;
+		}
+
+		setSizePreset(nextPreset as DashboardWidgetSizePreset);
+		setSizePresetTouched(true);
+
+		if (nextPreset === 'CUSTOM') {
+			return;
+		}
+
+		const nextDimensions = getWidgetDimensionsForPreset(
+			nextPreset as DashboardWidgetSizePreset
+		);
+
+		form.setValues({
+			...form.getValues(),
+			width: nextDimensions.width,
+			height: nextDimensions.height,
+		});
+	};
+
+	const handleEnabledChange = (checked: boolean) => {
+		form.setFieldValue('enabled', checked);
+	};
+
+	const handleSupportsGroupByChange = (checked: boolean) => {
+		setManualCompatibility((current) => ({
+			...current,
+			supportsGroupBy: true,
+		}));
+		form.setFieldValue('supportsGroupBy', checked);
+	};
+
+	const handleSupportsTimeSeriesChange = (checked: boolean) => {
+		setManualCompatibility((current) => ({
+			...current,
+			supportsTimeSeries: true,
+		}));
+		form.setFieldValue('supportsTimeSeries', checked);
+	};
+
+	const handleViewLegendChange = (checked: boolean) => {
+		form.setFieldValue('viewLegend', checked);
+	};
+
+	const handleTitleChange = (value: string) => {
+		setTitleTouched(true);
+		form.setFieldValue('title', value);
+	};
+
+	const state = useMemo<DashboardWidgetFormState>(
+		() => ({
+			campaignId,
+			dashboardId,
+			attributeMetricKeys,
+			isEditing,
+			isGlobalDashboard,
+			isAttributeMetric,
+			needsGroupedConfig,
+			needsTimeSeriesMetric,
+			needsValueField,
+			groupByIsDerived,
+			titleTouched,
+			titleInputRevision,
+			advancedOpened,
+			sizePreset,
+			sizePresetTouched,
+			manualCompatibility,
+			values,
+			parsedMetricColumns,
+			isCampaignLoading,
+			isMetricColumnsLoading,
+			conversationFieldOptions,
+			dispositionFieldOptions,
+			conversationFieldValues,
+			dispositionFieldValues,
+			metricKeyOptions,
+			fieldNameOptions,
+			widgetTypeOptions,
+			metricSourceOptions,
+			aggregationOptions,
+			resultTypeOptions,
+			valueFieldOptions,
+			filterValueTypeOptions,
+			viewValueFormatOptions,
+			sizePresetOptions,
+			widgetTypeControlOptions,
+			sourceTypeControlOptions,
+			guidedState,
+			groupBySuggestions,
+			filterKeySuggestions,
+			placementLayout,
+			advancedSettingsCount,
+			handlers: {
+				setAdvancedOpened,
+				setTitleTouched,
+				handleWidgetTypeChange,
+				handleSourceTypeChange,
+				handleAggregationTypeChange,
+				handleMetricKeyChange,
+				handleFieldNameChange,
+				handleValueFieldChange,
+				handleGroupByChange,
+				handleResultTypeChange,
+				handleViewValueFormatChange,
+				handleDefaultFilterKeyChange,
+				handleDefaultFilterTypeChange,
+				handleDefaultFilterValueChange,
+				handleSizePresetChange,
+				addDefaultFilterRow: () => {
+					form.insertListItem('defaultFilters', createEmptyFilterRow());
+				},
+				removeDefaultFilterRow: (index: number) => {
+					if (values.defaultFilters.length === 1) {
+						form.replaceListItem(
+							'defaultFilters',
+							index,
+							createEmptyFilterRow()
+						);
+						return;
+					}
+
+					form.removeListItem('defaultFilters', index);
+				},
+				handleEnabledChange,
+				handleSupportsGroupByChange,
+				handleSupportsTimeSeriesChange,
+				handleViewLegendChange,
+				handleTitleChange,
+			},
+		}),
+		[
+			advancedOpened,
+			advancedSettingsCount,
+			aggregationOptions,
+			attributeMetricKeys,
+			campaignId,
+			conversationFieldOptions,
+			conversationFieldValues,
+			dashboardId,
+			dispositionFieldOptions,
+			dispositionFieldValues,
+			fieldNameOptions,
+			filterKeySuggestions,
+			filterValueTypeOptions,
+			guidedState,
+			handleAggregationTypeChange,
+			handleDefaultFilterKeyChange,
+			handleDefaultFilterTypeChange,
+			handleDefaultFilterValueChange,
+			handleEnabledChange,
+			handleFieldNameChange,
+			handleGroupByChange,
+			handleMetricKeyChange,
+			handleResultTypeChange,
+			handleSizePresetChange,
+			handleSourceTypeChange,
+			handleSupportsGroupByChange,
+			handleSupportsTimeSeriesChange,
+			handleTitleChange,
+			handleValueFieldChange,
+			handleViewLegendChange,
+			handleViewValueFormatChange,
+			handleWidgetTypeChange,
+			isAttributeMetric,
+			isCampaignLoading,
+			isEditing,
+			isGlobalDashboard,
+			isMetricColumnsLoading,
+			groupByIsDerived,
+			groupBySuggestions,
+			manualCompatibility,
+			metricKeyOptions,
+			metricSourceOptions,
+			needsGroupedConfig,
+			needsTimeSeriesMetric,
+			needsValueField,
+			parsedMetricColumns,
+			placementLayout,
+			resultTypeOptions,
+			sizePreset,
+			sizePresetOptions,
+			sizePresetTouched,
+			sourceTypeControlOptions,
+			titleTouched,
+			titleInputRevision,
+			valueFieldOptions,
+			values,
+			viewValueFormatOptions,
+			widgetTypeControlOptions,
+			widgetTypeOptions,
+		]
+	);
+
+	return {
+		form,
+		state,
+		handleSubmit,
+		isSubmitting:
+			createDashboardWidget.isPending || updateDashboardWidget.isPending,
+		isEditing,
+		onCancel,
+	};
+};
+
+export default useDashboardWidgetFormController;

@@ -13,7 +13,11 @@ import CampaignPredefinedParamsModal from './CampaignPredefinedParamsModal';
 import { useTranslation } from 'react-i18next';
 
 const CampaignConfigurationPredefinedParams: React.FC = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 	const predefinedParams = useCampaignsPredefinedParams();
 
 	const form = useCampaignFormContext();

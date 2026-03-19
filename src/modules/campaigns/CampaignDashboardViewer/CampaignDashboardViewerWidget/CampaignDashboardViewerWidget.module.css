@@ -1,0 +1,73 @@
+.widgetItem {
+	position: relative;
+	height: 100%;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.widgetWarningBadge {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	z-index: 2;
+	pointer-events: auto;
+}
+
+.widgetWarningButton {
+	box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+
+.widgetItemEditing {
+	border-radius: var(--mantine-radius-lg);
+	background: rgba(240, 249, 255, 0.22);
+	box-shadow:
+		inset 0 0 0 1px var(--mantine-color-blue-3),
+		0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+
+.widgetItem--kpi,
+.widgetItem--chart,
+.widgetItem--table {
+	min-height: 0;
+}
+
+.widgetContent {
+	height: 100%;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.widgetNoDrag {
+	cursor: default;
+}
+
+.widgetDragHandle {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 22px;
+	z-index: 3;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: grab;
+	color: var(--mantine-color-blue-4);
+	border-radius: var(--mantine-radius-lg) var(--mantine-radius-lg) 0 0;
+	background: rgba(99, 102, 241, 0.06);
+	transition:
+		background 120ms,
+		color 120ms;
+}
+
+.widgetDragHandle:active {
+	cursor: grabbing;
+	background: rgba(99, 102, 241, 0.14);
+}
+
+.widgetItem:hover .widgetDragHandle {
+	background: rgba(99, 102, 241, 0.1);
+	color: var(--mantine-color-blue-5);
+}

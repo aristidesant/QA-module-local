@@ -1,0 +1,56 @@
+{
+	"form": {
+		"title": {
+			"edit": "Editar {{name}}",
+			"create": "Crear Nueva Campaña"
+		},
+		"description": "Configura y gestiona los ajustes de tu campaña.",
+		"settingsDrawer": {
+			"title": "Configuración",
+			"open": "Abrir configuración"
+		},
+		"validation": {
+			"nameRequired": "El nombre de la campaña es obligatorio",
+			"typeRequired": "El tipo de campaña es obligatorio",
+			"statusRequired": "El estado de la campaña es obligatorio",
+			"budgetMin": "El presupuesto debe ser al menos 0",
+			"spentMin": "El monto gastado debe ser al menos 0",
+			"userIdMin": "El ID de usuario debe ser al menos 0",
+			"clientIdMin": "El ID de cliente debe ser al menos 0",
+			"defaultWavesMin": "Las oleadas predeterminadas deben ser al menos 1",
+			"defaultWaveDelayMin": "El retraso predeterminado entre oleadas debe ser 0 o mayor",
+			"objectiveRequired": "El objetivo de la campaña es obligatorio",
+			"workflowInvalidTitle": "Error de configuracion del flujo",
+			"workflowInvalidMessage": "Todas las conexiones deben tener al menos una condicion configurada"
+		},
+		"actions": {
+			"save": "Guardar cambios",
+			"saving": "Guardando...",
+			"viewCampaign": "Ver campaña"
+		},
+		"notifications": {
+			"warningTitle": "Advertencia",
+			"objectiveAssignmentFailed": "No se pudo asignar el objetivo a la campaña",
+			"successUpdated": "Campaña Actualizada",
+			"successCreated": "Campaña Creada",
+			"successUpdatedMessage": "La campaña se ha actualizado correctamente.",
+			"successCreatedMessage": "La campaña se ha creado correctamente.",
+			"errorUpdate": "No se pudo actualizar la campaña",
+			"errorCreate": "No se pudo crear la campaña"
+		},
+		"schedulerCalculator": {
+			"title": "Calculadora de Programador"
+		}
+	},
+	"tabs": {
+		"agents": "Agentes",
+		"workflow": "Workflow",
+		"outcomes": "Resultados",
+		"params": "Parametros",
+		"analytics": "Analytics",
+		"dashboards": "Dashboards",
+		"reportValues": "Valores de Reporte",
+		"general": "General",
+		"versioning": "Versionado"
+	}
+}

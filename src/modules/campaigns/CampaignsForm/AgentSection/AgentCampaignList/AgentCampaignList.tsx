@@ -12,7 +12,11 @@ import { useTranslation } from 'react-i18next';
 import AgentListSkeleton from './AgentListSkeleton';
 
 export const AgentCampaignList: React.FC = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 	const campaignId = useCampaignId();
 	const {
 		data: campaignAgents,
@@ -29,7 +33,6 @@ export const AgentCampaignList: React.FC = () => {
 
 	const handleAddAgent = () => {
 		if (campaignId == null) {
-			console.error('No campaign selected');
 			return;
 		}
 

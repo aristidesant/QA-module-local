@@ -16,7 +16,7 @@ const VoiceList: React.FC<VoiceListProps> = ({
 	selectedVoiceId,
 	onVoiceSelect,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaigns.create', 'common']);
 
 	if (!voices.length) {
 		return (

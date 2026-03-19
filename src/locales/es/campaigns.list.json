@@ -1,0 +1,124 @@
+{
+	"page": {
+		"title": "Lista de campañas",
+		"description": "Gestiona y monitorea todas tus campañas en un solo lugar."
+	},
+	"list": {
+		"createCampaign": "Crear Nueva Campaña",
+		"continueCampaignSetup": "Continuar Configuración de Campaña",
+		"noCampaignsFound": "No se encontraron campañas",
+		"noCampaignsFoundDesc": "Intenta ajustar tus términos de búsqueda o crea una nueva campaña",
+		"noCampaignsYet": "Aún no hay campañas",
+		"noCampaignsYetDesc": "Lanza tu primera campaña para llegar a tu audiencia",
+		"createButton": "Crear Campaña",
+		"testCallModal": "Llamada de Prueba de Campaña",
+		"noAgents": "Sin Agentes",
+		"noAgentsMessage": "Esta campaña no tiene agentes asignados.",
+		"savingDraft": "Guardando borrador...",
+		"discardChanges": "¿Descartar cambios?",
+		"discardMessage": "Los cambios no guardados en {{step}} se perderán cuando cierres este asistente.",
+		"discardConfirm": "Descartar cambios",
+		"keepEditing": "Seguir editando",
+		"itemLabel": "campañas",
+		"stepGeneral": "General",
+		"stepAgent": "Agente",
+		"stepOutcomes": "Resultados",
+		"stepParameters": "Parámetros",
+		"stepComplete": "Completar"
+	},
+	"detailsDrawer": {
+		"title": "Detalles de la campaña",
+		"description": "Revisa la configuración y el estado de la campaña seleccionada.",
+		"empty": "Selecciona una campaña para revisar sus detalles."
+	},
+	"columns": {
+		"campaign": "Campaña",
+		"type": "Tipo",
+		"status": "Estado",
+		"lastUpdated": "Última Actualización",
+		"campaignDetails": "Detalles de Campaña",
+		"noDescription": "Sin descripción disponible.",
+		"setupIncomplete": "Configuración incompleta - continúa desde el paso {{step}}",
+		"draft": "Borrador",
+		"outbound": "Outbound",
+		"inbound": "Inbound",
+		"continueSetup": "Continuar configuración",
+		"moreActions": "Más acciones",
+		"actionsGroupManage": "Gestionar",
+		"actionsGroupStatus": "Estado",
+		"actionsGroupDanger": "Zona de riesgo",
+		"completeSetupFirst": "Completa la configuración primero",
+		"viewCampaign": "Ver campaña",
+		"editCampaign": "Editar campaña",
+		"testCall": "Llamada de Prueba",
+		"cloneCampaign": "Clonar campaña",
+		"deleteCampaign": "Eliminar campaña",
+		"createdBy": "Creado por",
+		"createdOn": "Creado el",
+		"noUser": "Sistema"
+	},
+	"filters": {
+		"title": "Filtros",
+		"searchPlaceholder": "Buscar campañas...",
+		"sortBy": "Ordenar por",
+		"type": "Tipo",
+		"allTypes": "Todos los tipos",
+		"executionType": "Tipo de Ejecución",
+		"allExecutionTypes": "Todos los tipos de ejecución",
+		"status": "Estado",
+		"allStatuses": "Todos los estados",
+		"includeInactive": "Incluir inactivas",
+		"advanced": "Avanzado",
+		"clearFilters": "Limpiar filtros",
+		"clearAllFilters": "Limpiar todos los filtros",
+		"sortOptions": {
+			"updatedAt": "Última actualización",
+			"createdAt": "Fecha de creación",
+			"name": "Nombre",
+			"status": "Estado",
+			"lastActivity": "Última actividad"
+		},
+		"typeOptions": {
+			"outbound": "Saliente",
+			"inbound": "Entrante"
+		},
+		"executionTypeOptions": {
+			"timeBased": "Basado en Tiempo"
+		}
+	},
+	"status": {
+		"ACTIVE": "Activa",
+		"INACTIVE": "Inactiva",
+		"FAILED": "Fallida",
+		"UNKNOWN": "Desconocido",
+		"pending": "Pendiente",
+		"running": "En curso",
+		"waiting": "Esperando próxima oleada",
+		"paused": "Pausada",
+		"complete": "Completada",
+		"failed": "Fallida",
+		"executed": "Ejecutada",
+		"unknown": "Desconocido"
+	},
+	"toggleStatus": {
+		"activate": "Activar campaña",
+		"deactivate": "Desactivar campaña",
+		"confirmActivateTitle": "Activar Campaña",
+		"confirmDeactivateTitle": "Desactivar Campaña",
+		"confirmActivateMessage": "¿Estás seguro de que deseas activar esta campaña?",
+		"confirmDeactivateInbound": "Desactivar esta campaña inbound desvinculará los números de teléfono de ElevenLabs. Las asociaciones se mantendrán y se restaurarán automáticamente al reactivar.",
+		"confirmDeactivateOutbound": "Desactivar esta campaña outbound pausará todos los grupos de contacto en ejecución. Los grupos pausados no se reanudarán automáticamente al reactivar la campaña.",
+		"confirm": "Confirmar",
+		"error": "Error",
+		"errorMessage": "No se pudo cambiar el estado de la campaña"
+	},
+	"deleteModal": {
+		"title": "Eliminar Campaña",
+		"message": "¿Estás seguro de que deseas eliminar esta campaña? Esta acción no se puede deshacer.",
+		"confirm": "Eliminar",
+		"success": "Campaña Eliminada",
+		"successMessage": "La campaña se ha eliminado correctamente.",
+		"error": "Error",
+		"errorMessage": "No se pudo eliminar la campaña"
+	}
+}

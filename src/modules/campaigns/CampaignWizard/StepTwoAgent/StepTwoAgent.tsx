@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	Select,
@@ -12,6 +12,7 @@ import {
 	Center,
 	Modal,
 	Badge,
+	Switch,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -20,10 +21,12 @@ import {
 	IconMessageCircle,
 	IconBrain,
 	IconEdit,
+	IconMicrophoneOff,
 } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 import KnowledgeBaseSection from './KnowledgeBaseSection';
+import WizardDictionarySection from './WizardDictionarySection';
 import useCampaignsPredefinedParams from '../../CampaignsForm/useCampaignsPredefinedParams';
 import styles from './StepTwoAgent.module.css';
 import sharedStyles from '../CampaignWizard.module.css';
@@ -66,18 +69,25 @@ const extractKnowledgeBaseIds = (
 };
 
 export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaigns.wizard',
+		'campaign.form.agents',
+		'campaign.form.shared',
+		'common',
+	]);
 	const {
 		agentBehaviorId,
 		language,
 		firstMessage,
 		agentPrompt,
+		noiseCancellation,
 		createdCampaign,
 		setAgentBehaviorId,
 		setLanguage,
 		setFirstMessage,
 		setAgentPrompt,
 		setKnowledgeBaseIds,
+		setNoiseCancellation,
 		setIsSubmitting,
 		setCreatedCampaign,
 	} = useCampaignWizardStore();
@@ -117,6 +127,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 			language,
 			firstMessage,
 			agentPrompt,
+			noiseCancellation,
 		},
 		validate: {
 			language: (value: string) =>
@@ -178,6 +189,10 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 				typeof promptFromCampaign === 'string'
 					? promptFromCampaign
 					: currentFormValues.agentPrompt,
+			noiseCancellation:
+				createdCampaign.noiseCancellation ??
+				currentFormValues.noiseCancellation ??
+				false,
 		};
 
 		const lastSynced = lastSyncedCampaignRef.current;
@@ -213,6 +228,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 		setLanguage(nextValues.language);
 		setFirstMessage(nextValues.firstMessage);
 		setAgentPrompt(nextValues.agentPrompt);
+		setNoiseCancellation(nextValues.noiseCancellation);
 
 		if (hasKbIds) {
 			setKnowledgeBaseIds(knowledgeBaseIdsFromCampaign);
@@ -235,6 +251,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 		setFirstMessage,
 		setKnowledgeBaseIds,
 		setLanguage,
+		setNoiseCancellation,
 	]);
 
 	const handleBehaviorChange = (value: string | null) => {
@@ -277,6 +294,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 			const payload = {
 				...currentCampaign,
 				configId: values.agentBehaviorId,
+				noiseCancellation: values.noiseCancellation,
 				agentConfig: {
 					...currentCampaign.agentConfig,
 					knowledgeBaseIds: currentKnowledgeBaseIds,
@@ -441,11 +459,37 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 									className={sharedStyles.field}
 								/>
 							</Box>
+
+							<Box className={styles.sectionCard}>
+								<div className={styles.sectionHeader}>
+									<IconMicrophoneOff size={20} className={styles.sectionIcon} />
+									<h3 className={styles.sectionTitle}>
+										{t('wizard.steps.agent.audioTitle')}
+									</h3>
+								</div>
+								<Text className={styles.sectionDescription}>
+									{t('wizard.steps.agent.audioDesc')}
+								</Text>
+								<Switch
+									label={t('wizard.steps.agent.noiseCancellationLabel')}
+									description={t('wizard.steps.agent.noiseCancellationDesc')}
+									size='sm'
+									checked={form.values.noiseCancellation}
+									onChange={(event) => {
+										form.setFieldValue(
+											'noiseCancellation',
+											event.currentTarget.checked
+										);
+										setNoiseCancellation(event.currentTarget.checked);
+									}}
+								/>
+							</Box>
+
 							<KnowledgeBaseSection />
 						</div>
 
 						<div className={styles.secondaryColumn}>
-							<Box className={styles.sectionCard}>
+							<Box className={`${styles.sectionCard} ${styles.promptCard}`}>
 								<div className={styles.sectionHeader}>
 									<IconBrain size={20} className={styles.sectionIcon} />
 									<h3 className={styles.sectionTitle}>
@@ -483,12 +527,18 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 									readOnly
 									disabled
 									withAsterisk
-									rows={16}
+									rows={11}
 									size='sm'
-									className={sharedStyles.field}
-									classNames={{ input: styles.promptTextarea }}
+									className={styles.promptPreviewField}
+									classNames={{
+										root: styles.promptTextareaRoot,
+										wrapper: styles.promptTextareaWrapper,
+										input: styles.promptTextarea,
+									}}
 								/>
 							</Box>
+
+							<WizardDictionarySection />
 						</div>
 					</div>
 				</Stack>
@@ -517,14 +567,14 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 					<Group justify='space-between' align='center'>
 						<div>
 							<Text size='sm' fw={600}>
-								{t('form.agent.prompt.simpleModal.title')}
+								{t('wizard.steps.agent.promptModal.title')}
 							</Text>
 							<Text size='xs' c='dimmed'>
-								{t('form.agent.prompt.simpleModal.description')}
+								{t('wizard.steps.agent.promptModal.description')}
 							</Text>
 						</div>
 						<Badge size='sm' variant='light' color='gray'>
-							{t('form.agent.prompt.simpleModal.chars', {
+							{t('wizard.steps.agent.promptModal.chars', {
 								count: promptDraft.length,
 							})}
 						</Badge>
@@ -532,7 +582,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 					<Textarea
 						value={promptDraft}
 						onChange={(event) => setPromptDraft(event.currentTarget.value)}
-						placeholder={t('form.agent.prompt.simpleModal.placeholder')}
+						placeholder={t('wizard.steps.agent.promptModal.placeholder')}
 						minRows={12}
 						autosize
 						size='sm'
@@ -540,7 +590,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 					/>
 					<Group justify='space-between' align='center'>
 						<Text size='xs' c='dimmed'>
-							{t('form.agent.prompt.simpleModal.helper')}
+							{t('wizard.steps.agent.promptModal.helper')}
 						</Text>
 						<Group gap='xs'>
 							<Button

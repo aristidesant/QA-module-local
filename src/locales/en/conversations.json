@@ -22,12 +22,15 @@
 			"description": "We will display conversations as soon as they are available."
 		},
 		"columns": {
+			"conversationIdentifier": "ID",
 			"contactName": "Contact Name",
 			"phoneNumber": "Phone Number",
 			"outcome": "Outcome",
 			"status": "Status",
 			"when": "When",
 			"duration": "Duration",
+			"copyId": "Copy ID",
+			"copiedId": "Copied",
 			"endedAt": "ended at {{date}} ({{timezone}})",
 			"ended": "ended"
 		},
@@ -41,7 +44,10 @@
 	},
 	"filters": {
 		"title": "Filters",
-		"contactName": "Filter by contact name...",
+		"conversationIdentifier": "Conversation ID",
+		"conversationIdentifierPlaceholder": "Search by conversation ID...",
+		"contactName": "Contact Name",
+		"contactNamePlaceholder": "Filter by contact name...",
 		"advanced": "Advanced",
 		"phoneNumber": "Phone Number",
 		"phoneNumberPlaceholder": "Filter by phone number",
@@ -71,6 +77,7 @@
 	},
 	"details": {
 		"title": "Conversation details",
+		"backToTop": "Back to top",
 		"tabs": {
 			"overview": "Overview",
 			"transcript": "Transcript"
@@ -166,12 +173,29 @@
 			"user": "User"
 		},
 		"workflow": {
-			"changed": "Workflow route changed"
+			"changed": "Workflow route changed",
+			"from": "From",
+			"to": "To"
+		},
+		"footer": {
+			"llm": "LLM",
+			"override": "OVERRIDE",
+			"tts": "TTS",
+			"asr": "ASR",
+			"model": "Model",
+			"provider": "Provider",
+			"cost": "Cost",
+			"breakdown": "Breakdown",
+			"notAvailable": "N/A",
+			"unknownModel": "Unknown model",
+			"unknownProvider": "Unknown provider"
 		},
 		"interrupted": "Interrupted",
 		"technical": {
 			"title": "Technical Details",
 			"toolCalls": "Tool calls:",
+			"toolCallsCount": "{{count}} tool calls",
+			"toolCallsExecuted": "{{count}} executed",
 			"toolName": "Tool Name",
 			"called": "Called",
 			"pending": "Pending",
@@ -179,19 +203,36 @@
 			"parameters": "Parameters",
 			"requestId": "Request ID",
 			"llmUsage": "LLM Usage",
+			"overrideModel": "Override",
 			"inputTokens": "Input Tokens",
 			"outputTokens": "Output Tokens",
 			"cacheRead": "Cache Read",
 			"cacheWrite": "Cache Write",
-			"totalCost": "Total Cost:",
+			"totalCost": "Total Cost",
 			"sourceMedium": "Source Medium",
 			"agentMetadata": "Agent Metadata",
 			"agentId": "Agent ID",
 			"branchId": "Branch ID",
 			"workflowNode": "Workflow Node",
+			"executionSummary": "Execution Summary",
+			"toolResults": "Tool Results",
+			"toolResultsCount": "{{count}} tool results",
+			"toolErrorsCount": "{{count}} errors",
+			"resultValue": "Result Value",
+			"resultPayload": "Result Payload",
+			"resultFallback": "Tool result",
+			"success": "Success",
+			"error": "Error",
+			"latency": "Latency",
+			"errorType": "Error Type",
+			"rawError": "Raw Error",
 			"originalMessage": "Original Message",
 			"ragInfo": "RAG Retrieval Info",
-			"turnMetrics": "Turn Metrics"
+			"turnMetrics": "Turn Metrics",
+			"turnLlmModel": "Turn LLM Model",
+			"turnTtsModel": "TTS Model",
+			"turnAsrProvider": "ASR Provider",
+			"rawMetrics": "Raw Metrics"
 		}
 	},
 	"player": {

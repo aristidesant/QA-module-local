@@ -1,0 +1,6 @@
+.tableWrapper {
+	max-height: 260px;
+	overflow-y: auto;
+	border-radius: var(--mantine-radius-sm);
+	border: 1px solid var(--mantine-color-gray-3);
+}

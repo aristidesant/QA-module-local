@@ -1,0 +1,192 @@
+.card {
+	width: 100%;
+	min-width: 0;
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-white) 96%,
+		var(--mantine-color-gray-0)
+	);
+	border: 1px solid
+		color-mix(in srgb, var(--mantine-color-gray-2) 82%, transparent);
+	box-shadow: var(--mantine-shadow-sm);
+}
+
+.toolbar {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+	width: 100%;
+	min-width: 0;
+}
+
+.controlsSlot {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	min-width: 0;
+	flex-wrap: wrap;
+}
+
+.actionsSlot {
+	display: flex;
+	justify-content: flex-end;
+	min-width: 0;
+	width: 100%;
+}
+
+.triggerButton {
+	max-width: min(100%, 280px);
+	border-radius: 8px;
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-gray-3) 60%,
+		transparent
+	);
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-white) 92%,
+		var(--mantine-color-gray-0)
+	);
+	color: var(--mantine-color-gray-9);
+	box-shadow: none;
+}
+
+.triggerButton:hover:not(:disabled) {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-white) 84%,
+		var(--mantine-color-gray-0)
+	);
+}
+
+.triggerLabel {
+	display: inline-block;
+	max-width: 180px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.menuDropdown {
+	border-radius: 10px;
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-gray-2) 85%,
+		transparent
+	);
+	box-shadow: var(--mantine-shadow-md);
+}
+
+.compareButton {
+	max-width: min(100%, 280px);
+	border-radius: 8px;
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-gray-3) 60%,
+		transparent
+	);
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-white) 92%,
+		var(--mantine-color-gray-0)
+	);
+	color: var(--mantine-color-gray-9);
+	box-shadow: none;
+	font-weight: 600;
+	flex-shrink: 0;
+}
+
+.compareButton:hover:not(:disabled) {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-white) 84%,
+		var(--mantine-color-gray-0)
+	);
+}
+
+.compareButton--active {
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-dark-4) 45%,
+		var(--mantine-color-gray-3)
+	);
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-dark-0) 10%,
+		var(--mantine-color-white)
+	);
+}
+
+.editingBadge {
+	border-radius: 8px;
+}
+
+.secondaryAction,
+.primaryAction,
+.refreshAction {
+	border-radius: 8px;
+}
+
+.secondaryAction {
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-gray-3) 60%,
+		transparent
+	);
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-white) 94%,
+		var(--mantine-color-gray-0)
+	);
+}
+
+.primaryAction {
+	background: var(--mantine-color-dark-8);
+	color: var(--mantine-color-white);
+}
+
+.primaryAction:hover:not(:disabled) {
+	background: var(--mantine-color-dark-7);
+}
+
+.refreshAction {
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-gray-3) 60%,
+		transparent
+	);
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-white) 94%,
+		var(--mantine-color-gray-0)
+	);
+}
+
+@media (max-width: 64rem) {
+	.toolbar {
+		grid-template-columns: 1fr;
+	}
+
+	.actionsSlot {
+		justify-content: flex-start;
+	}
+}
+
+@media (max-width: 48rem) {
+	.triggerButton {
+		max-width: 100%;
+	}
+
+	.compareButton {
+		max-width: 100%;
+	}
+
+	.triggerLabel {
+		max-width: 132px;
+	}
+
+	.actionsSlot {
+		justify-content: flex-start;
+	}
+}

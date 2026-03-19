@@ -1,0 +1,88 @@
+.listRoot {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+}
+
+.toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-lg);
+	background: linear-gradient(
+		180deg,
+		rgba(255, 255, 255, 0.98) 0%,
+		rgba(248, 249, 250, 0.95) 100%
+	);
+	box-shadow: var(--mantine-shadow-xs);
+}
+
+.toolbarMain {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+	flex: 1;
+	min-width: min(100%, 36rem);
+	flex-wrap: wrap;
+}
+
+.searchInput {
+	flex: 1 1 18rem;
+	min-width: 14rem;
+}
+
+.typeSelect {
+	width: 12rem;
+	min-width: 11rem;
+}
+
+.toolbarMeta {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	flex-wrap: wrap;
+	justify-content: flex-end;
+}
+
+.badge {
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	font-weight: 600;
+}
+
+.clearButton {
+	padding-inline: calc(var(--mantine-spacing-xs) + 2px);
+}
+
+.tableFrame :global(.mantine-Table-table) {
+	border-spacing: 0;
+}
+
+.tableFrame :global(.mantine-LoadingOverlay-root) {
+	border-radius: var(--mantine-radius-lg);
+}
+
+@media (max-width: 48em) {
+	.toolbar {
+		padding: var(--mantine-spacing-xs);
+	}
+
+	.toolbarMain {
+		min-width: 100%;
+	}
+
+	.searchInput,
+	.typeSelect {
+		width: 100%;
+		min-width: 100%;
+	}
+
+	.toolbarMeta {
+		width: 100%;
+		justify-content: flex-start;
+	}
+}

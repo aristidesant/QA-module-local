@@ -14,7 +14,11 @@ import styles from './StartNode.module.css';
 const StartNodeComponent = (props: NodeProps) => {
 	const nodeData = props.data as unknown as StartNode;
 	const nodeType = (props.type ?? nodeData.type) as WorkflowNodeType;
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const fallbackLabel = t('form.workflow.nodes.start');
 
 	return (

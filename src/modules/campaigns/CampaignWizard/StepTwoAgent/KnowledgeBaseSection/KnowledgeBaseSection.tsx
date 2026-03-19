@@ -31,7 +31,11 @@ import styles from '../StepTwoAgent.module.css';
 import KnowledgeBaseWizardForm from './KnowledgeBaseWizardForm';
 
 const KnowledgeBaseSection: React.FC = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaigns.wizard',
+		'knowledge-bases',
+		'common',
+	]);
 	const { knowledgeBaseIds, setKnowledgeBaseIds } = useCampaignWizardStore();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -112,24 +116,24 @@ const KnowledgeBaseSection: React.FC = () => {
 				<div className={styles.sectionHeader}>
 					<IconDatabase size={20} className={styles.sectionIcon} />
 					<h3 className={styles.sectionTitle}>
-						{t('form.agent.knowledgeBase.title')}
+						{t('wizard.knowledgeBase.section.title')}
 					</h3>
 				</div>
 				<Text className={styles.sectionDescription}>
-					{t('form.agent.knowledgeBase.description')}
+					{t('wizard.knowledgeBase.section.description')}
 				</Text>
 
 				{isLoading ? (
 					<Box className={styles.knowledgeBaseEmpty}>
 						<Loader size='sm' />
 						<Text size='sm' c='dimmed'>
-							{t('form.agent.knowledgeBase.loading')}
+							{t('wizard.knowledgeBase.section.loading')}
 						</Text>
 					</Box>
 				) : error ? (
 					<Box className={styles.knowledgeBaseEmpty}>
 						<Text size='sm' c='red'>
-							{t('form.agent.knowledgeBase.error')}
+							{t('wizard.knowledgeBase.section.error')}
 						</Text>
 					</Box>
 				) : selectedKnowledgeBases.length > 0 ? (
@@ -151,10 +155,13 @@ const KnowledgeBaseSection: React.FC = () => {
 													color={getStatusColor(kb.status)}
 													variant='light'
 												>
-													{kb.status}
+													{t(`status.${kb.status}`, {
+														ns: 'knowledge-bases',
+														defaultValue: kb.status,
+													})}
 												</Badge>
 												<Tooltip
-													label={t('form.agent.knowledgeBase.remove')}
+													label={t('wizard.knowledgeBase.section.remove')}
 													position='left'
 												>
 													<ActionIcon
@@ -163,7 +170,7 @@ const KnowledgeBaseSection: React.FC = () => {
 														size='xs'
 														onClick={() => handleUnassignKnowledgeBase(kb.id)}
 														aria-label={t(
-															'form.agent.knowledgeBase.removeAria',
+															'wizard.knowledgeBase.section.removeAria',
 															{ name: kb.name }
 														)}
 													>
@@ -174,7 +181,7 @@ const KnowledgeBaseSection: React.FC = () => {
 										</div>
 										{kb.createdAt && (
 											<Text size='xs' c='dimmed'>
-												{t('form.agent.knowledgeBase.created', {
+												{t('wizard.knowledgeBase.section.created', {
 													date: new Date(kb.createdAt).toLocaleDateString(),
 												})}
 											</Text>
@@ -187,7 +194,7 @@ const KnowledgeBaseSection: React.FC = () => {
 				) : (
 					<Box className={styles.knowledgeBaseEmpty}>
 						<Text size='sm' c='dimmed'>
-							{t('form.agent.knowledgeBase.noSelection')}
+							{t('wizard.knowledgeBase.section.noSelection')}
 						</Text>
 					</Box>
 				)}
@@ -200,7 +207,7 @@ const KnowledgeBaseSection: React.FC = () => {
 						flex={1}
 						size='sm'
 					>
-						{t('form.agent.knowledgeBase.add')}
+						{t('wizard.knowledgeBase.section.add')}
 					</Button>
 					<Button
 						leftSection={<IconPlus size={16} />}
@@ -218,7 +225,7 @@ const KnowledgeBaseSection: React.FC = () => {
 			<Modal
 				opened={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
-				title={t('form.agent.knowledgeBase.modal.title.select')}
+				title={t('wizard.knowledgeBase.section.modal.selectTitle')}
 				size='xl'
 			>
 				<KnowledgeBaseSelector
@@ -232,7 +239,7 @@ const KnowledgeBaseSection: React.FC = () => {
 			<Modal
 				opened={isCreateModalOpen}
 				onClose={() => setIsCreateModalOpen(false)}
-				title={t('form.agent.knowledgeBase.modal.title.create')}
+				title={t('wizard.knowledgeBase.section.modal.createTitle')}
 				size='lg'
 			>
 				<KnowledgeBaseWizardForm

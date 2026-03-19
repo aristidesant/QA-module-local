@@ -1,0 +1,56 @@
+{
+	"form": {
+		"title": {
+			"edit": "Edit {{name}}",
+			"create": "Create New Campaign"
+		},
+		"description": "Configure and manage your campaign settings.",
+		"settingsDrawer": {
+			"title": "Configuration",
+			"open": "Open configuration"
+		},
+		"validation": {
+			"nameRequired": "Campaign name is required",
+			"typeRequired": "Campaign type is required",
+			"statusRequired": "Campaign status is required",
+			"budgetMin": "Budget must be at least 0",
+			"spentMin": "Spent amount must be at least 0",
+			"userIdMin": "User ID must be at least 0",
+			"clientIdMin": "Client ID must be at least 0",
+			"defaultWavesMin": "Default waves must be at least 1",
+			"defaultWaveDelayMin": "Default wave delay must be 0 or greater",
+			"objectiveRequired": "Campaign objective is required",
+			"workflowInvalidTitle": "Workflow Configuration Error",
+			"workflowInvalidMessage": "All edges must have at least one condition configured"
+		},
+		"actions": {
+			"save": "Save changes",
+			"saving": "Saving...",
+			"viewCampaign": "View campaign"
+		},
+		"notifications": {
+			"warningTitle": "Warning",
+			"objectiveAssignmentFailed": "Failed to assign objective to campaign",
+			"successUpdated": "Campaign Updated",
+			"successCreated": "Campaign Created",
+			"successUpdatedMessage": "Campaign has been updated successfully.",
+			"successCreatedMessage": "Campaign has been created successfully.",
+			"errorUpdate": "Failed to update campaign",
+			"errorCreate": "Failed to create campaign"
+		},
+		"schedulerCalculator": {
+			"title": "Scheduler Calculator"
+		}
+	},
+	"tabs": {
+		"agents": "Agents",
+		"workflow": "Workflow",
+		"outcomes": "Outcomes",
+		"params": "Params",
+		"analytics": "Analytics",
+		"dashboards": "Dashboards",
+		"reportValues": "Report Values",
+		"general": "General",
+		"versioning": "Versioning"
+	}
+}

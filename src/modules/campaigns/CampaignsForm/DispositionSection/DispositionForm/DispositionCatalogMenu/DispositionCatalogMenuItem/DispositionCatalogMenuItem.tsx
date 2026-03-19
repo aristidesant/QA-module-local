@@ -30,7 +30,11 @@ const DispositionCatalogMenuItem: React.FC<Props> = ({
 	isCollapsed,
 	onToggleCollapse,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.outcomes',
+		'campaign.detail',
+		'common',
+	]);
 	const hasChildren = Array.isArray(node.children) && node.children.length > 0;
 	const nodeStyle = getNodeStyle(node, 0);
 

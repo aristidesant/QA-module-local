@@ -1,0 +1,20 @@
+{
+	"form": {
+		"campaignSync": {
+			"tooltip": "Sincronizar datos de campaña",
+			"noAgentsTooltip": "No hay agentes asignados",
+			"selectAgentTooltip": "Selecciona un agente",
+			"selectAgentTitle": "Seleccionar agente para sincronizar",
+			"selectAgentDescription": "Hay varios agentes asignados a esta campaña. Selecciona el agente del que deseas sincronizar.",
+			"continueButton": "Continuar",
+			"confirmTitle": "Sincronizar datos de campaña",
+			"confirmMessage": "Esto actualizara los datos de la campana desde el agente '{{agentName}}' usando ElevenLabs. Se perderan los cambios no guardados en esta campana.",
+			"confirmButton": "Sincronizar datos",
+			"cancelButton": "Cancelar",
+			"successTitle": "Datos de campana sincronizados",
+			"successMessage": "Los datos de la campana se actualizaron desde ElevenLabs.",
+			"errorTitle": "Error de sincronizacion",
+			"errorMessage": "No pudimos sincronizar los datos de la campana desde ElevenLabs. Intentelo de nuevo."
+		}
+	}
+}

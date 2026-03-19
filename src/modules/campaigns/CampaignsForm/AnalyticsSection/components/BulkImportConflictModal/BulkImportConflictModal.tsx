@@ -47,7 +47,7 @@ export default function BulkImportConflictModal({
 	conflicts,
 	onConfirm,
 }: BulkImportConflictModalProps) {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.analytics', 'common']);
 	const [resolutions, setResolutions] = useState<
 		Record<number, BulkConflictResolution>
 	>({});

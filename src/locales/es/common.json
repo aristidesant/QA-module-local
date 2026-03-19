@@ -91,11 +91,13 @@
 			"campaignManagement": "Gestión de campañas",
 			"configuration": "Configuración",
 			"compliance": "Cumplimiento",
+			"dashboards": "Dashboards",
 			"toolsAndResources": "Herramientas y recursos"
 		},
 		"items": {
 			"campaignManagement": "Gestión de campañas",
 			"configurations": "Configuraciones",
+			"dashboards": "Dashboards",
 			"agentTests": "Pruebas de agentes",
 			"doNotCall": "No llamar (DNC)",
 			"clients": "Clientes",

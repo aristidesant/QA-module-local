@@ -27,7 +27,11 @@ import { useAgentForm } from '../../context';
 import mainStyles from '../../AgentForm.module.css';
 
 const EdgesTab = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const { workflow, nodeId, onWorkflowChange } = useAgentForm();
 
 	const [modalOpened, setModalOpened] = useState(false);

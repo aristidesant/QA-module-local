@@ -1,0 +1,306 @@
+{
+	"form": {
+		"contacts": {
+			"addNew": {
+				"description": "Sube un archivo CSV para crear una lista de contactos.",
+				"uploadLabel": "Subir lista de contactos",
+				"dragAndDrop": "Arrastra y suelta tu archivo CSV aquí o haz clic para buscar.",
+				"notifications": {
+					"noFile": {
+						"title": "No se seleccionó archivo",
+						"message": "Selecciona un archivo CSV para subir."
+					},
+					"invalidType": {
+						"title": "Tipo de archivo inválido",
+						"message": "Solo se admiten archivos CSV."
+					},
+					"uploadFailed": {
+						"title": "Error al subir",
+						"message": "No pudimos subir tu archivo. Inténtalo de nuevo."
+					}
+				}
+			},
+			"controls": {
+				"start": "Iniciar Campaña",
+				"resume": "Reanudar Campaña",
+				"resumeIgnoreDelay": "Reanudar e ignorar retraso",
+				"pause": "Pausar Campaña",
+				"completed": "Campaña Completada",
+				"failed": "Campaña Fallida",
+				"requirementsNotMet": "Requisitos de la campaña no cumplidos",
+				"allWavesDone": "Todas las oleadas ejecutadas",
+				"resumeModal": {
+					"title": "Reanudar lista de contactos",
+					"message": "Esta lista está pausada mientras espera la próxima oleada.",
+					"scheduledFor": "Próxima oleada programada para {{value}}.",
+					"scheduleNotice": "Ignorar el retraso entre oleadas sigue respetando la ventana del horario de la campaña."
+				},
+				"notifications": {
+					"successTitle": "Éxito",
+					"errorTitle": "Error",
+					"unknownCampaign": "Campaña desconocida",
+					"running": "La campaña ahora está en ejecución",
+					"startError": "Error al iniciar la campaña",
+					"resumed": "Campaña reanudada",
+					"resumeRequested": "Se solicitó la reanudación. El estado se actualizará automáticamente.",
+					"resumeIgnoringDelay": "Se solicitó la reanudación sin retraso entre oleadas. El estado se actualizará automáticamente.",
+					"resumeError": "Error al reanudar la campaña",
+					"paused": "Campaña pausada",
+					"pauseError": "Error al pausar la campaña"
+				}
+			},
+			"list": {
+				"activeTitle": "Listas de Contactos Activas",
+				"inactiveTitle": "Listas de Contactos Inactivas",
+				"activeDescription": "Administre sus listas de contactos activas y supervise su progreso.",
+				"inactiveDescription": "Vea y administre las listas de contactos que están actualmente inactivas.",
+				"addNewContactList": "Añadir Nueva Lista de Contactos",
+				"addInactiveContactList": "Añadir Lista de Contactos Inactiva",
+				"configuration": "Configuración de Lista de Contactos",
+				"configurationDescription": "Configure los ajustes para su nueva lista de contactos.",
+				"selectActive": "Seleccionar Lista de Contactos Activa",
+				"selectActiveDescription": "Seleccione una lista de contactos para activar para esta campaña.",
+				"emptyMessage": "No se encontraron listas de contactos activas.",
+				"emptyInactiveMessage": "No se encontraron listas de contactos inactivas.",
+				"reload": "Recargar",
+				"reloadUnavailable": "Recarga no disponible mientras está colapsado",
+				"nextWaveScheduled": "Próxima: {{value}}",
+				"columns": {
+					"name": "Nombre",
+					"total": "Total",
+					"assigned": "Asignado",
+					"status": "Estado",
+					"actions": "Acciones"
+				},
+				"capacity": {
+					"title": "Capacidad del Programador",
+					"used": "Usada",
+					"remaining": "Restante",
+					"total": "Capacidad Total"
+				}
+			},
+			"mapping": {
+				"title": "Mapeo de columnas",
+				"matchTitle": "Emparejar columnas",
+				"clickToConfigure": "Clic para configurar",
+				"unmapped": "{{count}} sin asignar",
+				"totalMapped": "{{count}} columnas mapeadas",
+				"requiredMissing": "El número de teléfono es obligatorio"
+			},
+			"mostUsedChannels": {
+				"title": "Canales más usados",
+				"subtitle": "Resumen de uso de canales"
+			},
+			"qualityScore": {
+				"title": "Puntuación de calidad de contactos",
+				"subtitle": "Resumen de puntuación de calidad"
+			},
+			"statusBreakdown": {
+				"title": "Desglose de estado",
+				"subtitle": "Distribución de contactos por estado.",
+				"total": "Total",
+				"noData": "No hay datos disponibles"
+			},
+			"info": {
+				"nameLabel": "Nombre",
+				"nameRequired": "El nombre es obligatorio",
+				"namePlaceholder": "Ingresa el nombre de la lista de contactos",
+				"nameDescription": "Este nombre es visible en la campaña.",
+				"editName": "Editar nombre",
+				"clickToAddName": "Haz clic para agregar un nombre",
+				"expires": "Vence",
+				"addExpiration": "Agregar fecha de vencimiento",
+				"selectExpiration": "Seleccionar fecha de vencimiento",
+				"dateInPast": "La fecha no puede ser anterior a hoy"
+			},
+			"limits": {
+				"maxWavesLabel": "Máx. oleadas",
+				"maxWavesDescription": "Número máximo de oleadas para esta lista de contactos.",
+				"maxWavesInherited": "Heredado del valor predeterminado de la campaña: {{value}}",
+				"waveDelayLabel": "Retraso entre oleadas (segundos)",
+				"waveDelayDescription": "Retraso entre oleadas para esta lista de contactos. Valor actual: {{value}}.",
+				"waveDelayInherited": "Heredado del valor predeterminado de la campaña: {{value}}",
+				"noWaveDelay": "Sin retraso entre oleadas",
+				"humanEquivalentLabel": "Equivalente humano",
+				"availableLabel": "Disponible",
+				"capacityFull": {
+					"title": "La capacidad del programador está llena",
+					"message": "Reduce la capacidad o ajusta los horarios para continuar."
+				},
+				"actions": {
+					"save": "Guardar",
+					"update": "Actualizar"
+				},
+				"defaultName": "Lista de contactos {{index}}",
+				"notifications": {
+					"invalidInput": "Entrada inválida",
+					"nameRequired": "El nombre es obligatorio",
+					"mappingRequired": "Por favor, mapea las columnas",
+					"capacityExceeded": "Capacidad excedida",
+					"wavesMinimum": "Se requiere un mínimo de 1 oleada",
+					"waveDelayMinimum": "El retraso entre oleadas debe ser 0 o mayor",
+					"schedulerFullTitle": "Programador lleno",
+					"schedulerFullMessage": "No hay suficiente capacidad para programar esta lista.",
+					"successTitle": "Éxito",
+					"saveSuccess": "Guardado con éxito",
+					"updateSuccess": "Actualizado con éxito",
+					"errorTitle": "Error",
+					"saveError": "No se pudieron guardar los cambios"
+				}
+			},
+			"headerMapping": {
+				"title": "Mapeo de encabezados",
+				"description": "Asocia columnas del CSV con campos del sistema.",
+				"mappedBadge": "Asignado ({{count}})",
+				"csvHeadersBadge": "Encabezados CSV ({{count}})",
+				"dynamicFieldsRequired": "Se requieren campos dinámicos para {{count}}.",
+				"selectedObjective": "Objetivo: {{objective}}",
+				"selectedDynamicSet": "Conjunto dinámico: {{name}} (Versión {{version}})",
+				"systemFields": "Campos del sistema",
+				"requiredBadge": "Requerido",
+				"selectObjective": "Seleccionar objetivo",
+				"addDynamicColumns": "Agregar columnas dinámicas",
+				"changeDynamicColumns": "Cambiar columnas dinámicas",
+				"clearDynamicColumns": "Limpiar columnas dinámicas",
+				"dynamicSetTitle": "Conjunto de campos dinámicos",
+				"version": "Versión {{version}}",
+				"loadingColumns": "Cargando columnas...",
+				"allMapped": "Todos los campos del sistema están asignados",
+				"csvColumns": "Columnas CSV",
+				"finishMultiSelect": "Finalizar selección",
+				"multiSelectDescription": "Selecciona una o más columnas del CSV para asignar.",
+				"allCsvMapped": "Todas las columnas CSV están asignadas",
+				"csvColumnLabel": "Columna CSV",
+				"currentMappings": "Asignaciones actuales",
+				"clickToRemove": "Clic para quitar",
+				"noMappings": "Aún no hay asignaciones",
+				"noMappingsDescription": "Asocia columnas CSV para continuar.",
+				"systemFieldLabel": "Campo del sistema",
+				"multiSelectNote": "Puedes asignar múltiples columnas del CSV.",
+				"pickSystemField": "Elige un campo del sistema",
+				"selectedCsvLabel": "Columnas CSV seleccionadas",
+				"chooseMatchingCsv": "Elige la(s) columna(s) CSV correspondiente(s)",
+				"clearSelection": "Limpiar selección",
+				"mappingsCreated": "Se crearon {{count}} asignaciones",
+				"saveMappings": "Guardar asignaciones",
+				"dynamicColumnTooltip": "Columna dinámica",
+				"autoMatch": {
+					"button": "Auto Asignar",
+					"tooltip": "Asignar automáticamente los campos del sistema a las columnas CSV usando reconocimiento de patrones",
+					"successTitle": "Auto asignación completada",
+					"successMessage": "Se asignaron {{count}} columna(s) exitosamente",
+					"noMatchTitle": "Sin coincidencias",
+					"noMatchMessage": "No se encontraron columnas CSV coincidentes para los campos del sistema restantes"
+				}
+			},
+			"details": {
+				"title": "Detalles de la lista de contactos",
+				"description": "Revisa la configuración y el estado de la lista de contactos.",
+				"configurations": "Configuraciones",
+				"meta": {
+					"listStatus": "Creado",
+					"queueStatus": "Estado de cola",
+					"active": "Activa",
+					"inactive": "Inactiva",
+					"expirationDate": "Fecha de vencimiento",
+					"scheduler": "Programador",
+					"schedulerStatus": "Estado del programador",
+					"waveDelay": "Retraso entre oleadas",
+					"lastWaveStarted": "Última oleada iniciada",
+					"lastWaveCompleted": "Última oleada completada",
+					"nextWaveScheduled": "Próxima oleada programada",
+					"notAssigned": "No asignado"
+				},
+				"stats": {
+					"totalContacts": "Total de contactos",
+					"maxCallsPerContact": "Máx. llamadas por contacto",
+					"maxCallsPerList": "Máx. llamadas por lista",
+					"humanEquivalent": "Equivalente humano",
+					"waves": "Oleadas",
+					"notAvailable": "No disponible",
+					"notSet": "No establecido"
+				},
+				"operationalStatus": {
+					"title": "Estado operativo",
+					"description": "Preparación y estado de entrega."
+				},
+				"primaryPhone": "Número de teléfono principal",
+				"phoneNumbers": "Números de teléfono ({{count}})",
+				"email": "Correo electrónico",
+				"location": "Ubicación",
+				"engagementLevel": {
+					"title": "Nivel de compromiso",
+					"description": "Mide qué tan comprometido está {{name}} con tus campañas."
+				},
+				"reviewsQualification": {
+					"title": "Calificación de reseñas",
+					"description": "Mide qué tan comprometido está {{name}} con tus campañas."
+				},
+				"sentiment": {
+					"negative": "Negativo",
+					"neutral": "Neutral",
+					"positive": "Positivo"
+				},
+				"actions": {
+					"title": "Acciones",
+					"description": "Gestiona esta lista de contactos.",
+					"activate": "Activar",
+					"deactivate": "Desactivar",
+					"extendWaves": "Extender Oleadas",
+					"completeList": "Completar Lista",
+					"editContactList": "Editar lista de contactos",
+					"deleteContactList": "Eliminar lista de contactos",
+					"cleanQueue": "Limpiar cola",
+					"openContactList": "Abrir lista de contactos"
+				},
+				"notifications": {
+					"archiveBlocked": {
+						"title": "Acción no disponible",
+						"message": "No se puede archivar esta lista de contactos mientras está en ejecución, esperando o pausada. Detén la ejecución primero e inténtalo de nuevo."
+					}
+				},
+				"dialogs": {
+					"activate": {
+						"title": "Activar lista de contactos",
+						"message": "¿Activar esta lista de contactos para la campaña?",
+						"confirm": "Activar",
+						"available": "Capacidad disponible: {{count}}",
+						"noCapacityTitle": "Sin capacidad del programador",
+						"capacityErrorTitle": "Capacidad insuficiente",
+						"capacityErrorMessage": "La capacidad del programador no es suficiente para activar esta lista de contactos."
+					},
+					"cleanQueue": {
+						"title": "Limpiar cola",
+						"message": "¿Eliminar todos los contactos en cola para esta lista?",
+						"confirm": "Limpiar cola"
+					},
+					"complete": {
+						"title": "Completar lista de contactos",
+						"message": "¿Marcar esta lista de contactos como completada?",
+						"success": "Completada",
+						"successMessage": "Lista de contactos marcada como completada.",
+						"error": "Error"
+					},
+					"deactivate": {
+						"title": "Desactivar lista de contactos",
+						"message": "¿Desactivar esta lista de contactos?"
+					},
+					"delete": {
+						"title": "Eliminar lista de contactos",
+						"message": "¿Eliminar esta lista de contactos? Esta acción no se puede deshacer.",
+						"success": "Eliminada",
+						"successMessage": "Lista de contactos eliminada con éxito.",
+						"error": "Error",
+						"errorMessage": "No se pudo eliminar la lista de contactos."
+					},
+					"extendWaves": {
+						"title": "Extender oleadas",
+						"success": "Oleadas extendidas",
+						"successMessage": "Se han añadido {{count}} oleadas a la lista de contactos.",
+						"error": "Error al extender oleadas"
+					}
+				}
+			}
+		}
+	}
+}

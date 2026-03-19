@@ -42,7 +42,11 @@ const NodeViewer: React.FC<NodeViewerProps> = ({
 	parentNode,
 	level = 0,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.outcomes',
+		'campaign.detail',
+		'common',
+	]);
 	const { setRightComponent } = useCampaignsStore();
 	const [isExpanded, setIsExpanded] = useState(true);
 	const isLeaf = isLeafNode(node);
@@ -222,7 +226,11 @@ const NodeViewer: React.FC<NodeViewerProps> = ({
 };
 
 const DispositionViewer: React.FC<DispositionViewerProps> = ({ flow }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.outcomes',
+		'campaign.detail',
+		'common',
+	]);
 	const nodes = flow?.flowJson?.dispositionNodes ?? [];
 
 	if (!nodes || nodes.length === 0) {

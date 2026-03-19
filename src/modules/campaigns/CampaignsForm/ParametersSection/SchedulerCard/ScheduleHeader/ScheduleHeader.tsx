@@ -52,7 +52,7 @@ export const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({
 	onDelete,
 	isOpened = false,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.params', 'common']);
 	const activeDays = (schedule?.dayConfigs ?? []).filter((d) => d.isActive);
 	const isActive = schedule?.status === 'active';
 	const isAlwaysOn = schedule?.scheduleType === ScheduleType.ALWAYS_ON_24_7;

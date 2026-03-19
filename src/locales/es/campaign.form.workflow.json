@@ -1,0 +1,347 @@
+{
+	"form": {
+		"workflow": {
+			"sidePanel": {
+				"close": "Cerrar panel"
+			},
+			"edge": {
+				"title": "Condición de la conexión",
+				"description": "Revisa los detalles de esta transición.",
+				"helper": "Edita las condiciones desde la etiqueta de la conexión en el lienzo.",
+				"notFound": "Conexión no encontrada.",
+				"notConfigured": "Sin configurar",
+				"configure": "Configurar condición",
+				"transitionType": "Tipo de transición",
+				"selectConditionType": "Selecciona el tipo de condición",
+				"types": {
+					"none": "Ninguna",
+					"unconditional": "Sin condición",
+					"llm": "Condición LLM",
+					"result": "Condición de resultado",
+					"expression": "Expresión"
+				},
+				"label": "Etiqueta",
+				"labelPlaceholder": "Etiqueta opcional para esta condición",
+				"llmCondition": "Condición LLM",
+				"llmConditionPlaceholder": "Describe la condición para que el LLM evalúe (ej: \"usuario confirmó su identidad\")",
+				"resultType": "Resultado de la ejecución de la herramienta",
+				"selectResult": "Selecciona el tipo de resultado",
+				"results": {
+					"success": "Éxito",
+					"failure": "Fallo"
+				},
+				"expressionNote": "Constructor de expresiones próximamente",
+				"forward": "Adelante",
+				"backward": "Atrás"
+			},
+			"forms": {
+				"agent": {
+					"title": "Configuracion del agente",
+					"description": "Configura el comportamiento del agente para este nodo.",
+					"missingNode": "No se encontro el nodo del agente",
+					"missingNodeHint": "Selecciona un nodo de agente para editar su configuracion.",
+					"tabs": {
+						"general": "General",
+						"knowledgeBase": "Knowledge Base",
+						"tools": "Tools",
+						"tests": "Tests",
+						"edges": "Edges"
+					},
+					"toolsTab": {
+						"builtIn": {
+							"title": "Herramientas integradas",
+							"endConversation": "Finalizar conversacion",
+							"detectLanguage": "Detectar idioma",
+							"skipTurn": "Omitir turno",
+							"playKeypadTouchTone": "Reproducir tono de teclado",
+							"voicemailDetection": "Deteccion de buzon de voz",
+							"configure": "Configurar {{name}}",
+							"toggle": "Alternar {{name}}"
+						},
+						"inheritCustomTools": "Heredar herramientas personalizadas",
+						"additionalCustomTools": "Herramientas personalizadas adicionales",
+						"addTool": "Agregar herramienta",
+						"loading": "Cargando herramientas...",
+						"error": "No se pudieron cargar las herramientas.",
+						"empty": "No hay herramientas disponibles.",
+						"emptyCustomTools": "No hay herramientas personalizadas agregadas.",
+						"removeCustomTool": "Eliminar {{name}}",
+						"noDescription": "Sin descripcion.",
+						"customTool": {
+							"name": "capture_customer_address",
+							"type": "Webhook",
+							"description": "Usa esta herramienta cuando el agente necesite capturar una direccion del cliente.",
+							"remove": "Eliminar herramienta personalizada"
+						}
+					},
+					"general": {
+						"nodeName": {
+							"label": "Nombre del nodo",
+							"placeholder": "Ingrese el nombre del nodo"
+						},
+						"prompt": {
+							"label": "Objetivo de conversacion",
+							"placeholder": "Describe el objetivo de este agente"
+						},
+						"overridePrompt": {
+							"label": "Sobrescribir prompt"
+						},
+						"voice": {
+							"label": "Voz",
+							"placeholder": "Selecciona una voz"
+						},
+						"llm": {
+							"label": "LLM",
+							"placeholder": "Selecciona un modelo"
+						},
+						"eagerness": {
+							"label": "Eagerness",
+							"placeholder": "Selecciona eagerness"
+						},
+						"spellingPatience": {
+							"label": "Spelling patience",
+							"placeholder": "Selecciona paciencia"
+						},
+						"speculativeTurn": {
+							"label": "Especulación de turno",
+							"enabled": "Habilitado",
+							"disabled": "Deshabilitado"
+						},
+						"usingDefault": "Usando valor por defecto",
+						"usingDefaultValue": "Usando valor por defecto: {{value}}",
+						"editOverride": "Editar override",
+						"resetToDefault": "Restaurar valor por defecto"
+					},
+					"placeholders": {
+						"knowledgeBase": "El formulario de Knowledge Base viene despues.",
+						"tools": "El formulario de Tools viene despues.",
+						"tests": "El formulario de Tests viene despues.",
+						"edges": "El formulario de Edges viene despues."
+					},
+					"edgesTab": {
+						"description": "Configura el orden en que se evalúan las conexiones salientes. Las conexiones más arriba en la lista se evaluarán primero.",
+						"empty": "Sin conexiones salientes aún.",
+						"targetLabel": "→ {{target}}",
+						"unnamedCondition": "Condición sin nombre",
+						"removeAria": "Eliminar conexión a {{target}}",
+						"error": {
+							"title": "Faltan condiciones de conexión",
+							"message": "{{count}} conexión(es) carecen de todas las condiciones y deben configurarse"
+						},
+						"warning": {
+							"title": "Configuración de conexión predeterminada",
+							"message": "{{count}} conexión(es) tienen enrutamiento incondicional predeterminado. Considere configurar condiciones específicas"
+						}
+					}
+				},
+				"startEnd": {
+					"title": "Nodo inicio/fin",
+					"description": "Revisa los detalles basicos del nodo.",
+					"missingNode": "No se encontro el nodo",
+					"missingNodeHint": "Selecciona un nodo para ver sus detalles.",
+					"type": "Tipo",
+					"label": "Etiqueta",
+					"labelPlaceholder": "Sin etiqueta"
+				},
+				"tool": {
+					"title": "Nodo de herramientas",
+					"description": "Revisa las herramientas asociadas a este nodo.",
+					"missingNode": "No se encontro el nodo de herramientas",
+					"missingNodeHint": "Selecciona un nodo de herramientas para ver sus detalles.",
+					"empty": "Aun no hay herramientas asociadas.",
+					"unknown": "Herramienta desconocida",
+					"addTool": "Agregar herramienta",
+					"searchPlaceholder": "Buscar herramientas...",
+					"loading": "Cargando herramientas...",
+					"error": "No se pudieron cargar las herramientas.",
+					"emptyAvailable": "No hay herramientas disponibles.",
+					"emptySearch": "No hay herramientas que coincidan con tu busqueda.",
+					"noDescription": "Sin descripcion.",
+					"removeTool": "Eliminar {{name}}"
+				},
+				"phone": {
+					"title": "Transferencia telefonica",
+					"description": "Revisa la configuracion de transferencia para este nodo.",
+					"missingNode": "No se encontro el nodo de telefono",
+					"missingNodeHint": "Selecciona un nodo de telefono para ver sus detalles.",
+					"transferType": "Tipo de transferencia",
+					"destination": "Destino",
+					"destinationEmpty": "No configurado",
+					"empty": "Configura un destino para habilitar transferencias.",
+					"typeOptions": {
+						"conference": "Conferencia",
+						"sip_refer": "SIP REFER"
+					},
+					"destType": {
+						"label": "Tipo de destino",
+						"options": {
+							"phone": "Número de teléfono",
+							"sip_uri": "SIP URI",
+							"phone_dynamic_variable": "Número de teléfono como variable dinámica",
+							"sip_uri_dynamic_variable": "SIP URI como variable dinámica"
+						}
+					},
+					"phoneNumber": {
+						"label": "Número de teléfono",
+						"placeholder": "+15551234567",
+						"dynamicPlaceholder": "nombre_variable_dinamica"
+					},
+					"sipUri": {
+						"label": "SIP URI",
+						"placeholder": "sip:1234567890@example.com",
+						"dynamicPlaceholder": "nombre_variable_dinamica"
+					},
+					"sipHeaders": {
+						"title": "Encabezados SIP personalizados (Opcional)",
+						"addHeader": "Agregar encabezado",
+						"nameLabel": "Nombre",
+						"valueLabel": "Valor",
+						"remove": "Eliminar encabezado"
+					},
+					"new": "Nuevo"
+				},
+				"override": {
+					"title": "Sobrescritura de agente",
+					"description": "Revisa la configuracion de override para este nodo.",
+					"missingNode": "No se encontro el nodo de override",
+					"missingNodeHint": "Selecciona un nodo de override para ver sus detalles.",
+					"promptTitle": "Prompt adicional",
+					"promptEmpty": "No se agrego un prompt adicional.",
+					"toolsTitle": "Herramientas adicionales",
+					"toolsEmpty": "No hay herramientas adicionales.",
+					"knowledgeTitle": "Knowledge base adicional",
+					"knowledgeEmpty": "No hay knowledge base adicional.",
+					"itemFallback": "Elemento desconocido"
+				},
+				"transfer": {
+					"title": "Transferencia de agente",
+					"description": "Configura como este nodo transfiere a otro agente.",
+					"missingNode": "No se encontro el nodo de transferencia",
+					"missingNodeHint": "Selecciona un nodo de transferencia para editar su configuracion.",
+					"agentLabel": "Transferir a",
+					"agentPlaceholder": "Selecciona un agente",
+					"agentLoading": "Cargando agentes...",
+					"agentEmpty": "No hay agentes disponibles.",
+					"delayLabel": "Retraso antes de transferir (milisegundos)",
+					"delayPlaceholder": "Ingresa el retraso en milisegundos",
+					"messageLabel": "Mensaje de transferencia",
+					"messagePlaceholder": "Ingresa el mensaje que se dira durante la transferencia (opcional).",
+					"firstMessageLabel": "Habilitar primer mensaje"
+				}
+			},
+			"section": {
+				"title": "Workflow",
+				"description": "Crea el flujo del agente y conecta nodos segun el esquema del workflow."
+			},
+			"fullscreen": {
+				"enter": "Expandir editor de workflow",
+				"exit": "Salir del editor expandido",
+				"eyebrow": "Editor expandido",
+				"title": "Lienzo del workflow",
+				"description": "Usa el area amplia para organizar nodos, reconectar bordes y mantener disponible el drawer del nodo mientras editas."
+			},
+			"header": {
+				"title": "Constructor de flujo",
+				"description": "Inicio conecta con un subagente. Desde alli, agrega los siguientes pasos en el flujo.",
+				"preventLoops": "Evitar bucles de subagente",
+				"agentLabel": "Agente",
+				"agentPlaceholder": "Seleccionar agente"
+			},
+			"layout": {
+				"label": "Diseno",
+				"horizontal": "Horizontal",
+				"vertical": "Vertical",
+				"organize": "Organizar"
+			},
+			"empty": {
+				"message": "Todavia no hay un workflow configurado. Agrega un nodo de inicio para comenzar a construir el flujo.",
+				"addStart": "Agregar nodo de inicio"
+			},
+			"subagent": {
+				"title": "Ajustes de subagente",
+				"description": "Ajusta la etiqueta y el prompt para este nodo de subagente.",
+				"tabs": {
+					"general": "General",
+					"knowledgeBase": "Base de conocimiento",
+					"tools": "Herramientas",
+					"edges": "Bordes"
+				},
+				"label": "Etiqueta",
+				"labelPlaceholder": "Escribe una etiqueta",
+				"additionalPrompt": "Prompt adicional",
+				"additionalPromptPlaceholder": "Agrega instrucciones para este subagente",
+				"promptPreviewPlaceholder": "No hay prompt agregado",
+				"toolsCount": "{{count}} herramienta",
+				"toolsCount_other": "{{count}} herramientas",
+				"knowledgeBaseCount": "{{count}} base de conocimiento",
+				"knowledgeBaseCount_other": "{{count}} bases de conocimiento",
+				"countBadge": "+{{count}}",
+				"conversationGoal": "Objetivo de conversacion",
+				"overridePrompt": "Sobrescribir prompt",
+				"inheritKnowledgeBase": "Heredar base de conocimiento",
+				"additionalKnowledgeBase": "Base de conocimiento adicional",
+				"addDocument": "Agregar documento",
+				"knowledgeBaseLoading": "Cargando base de conocimiento...",
+				"knowledgeBaseError": "No se pudo cargar la base de conocimiento.",
+				"knowledgeBaseEmpty": "No hay base de conocimiento adjunta.",
+				"knowledgeBaseId": "ID {{id}}",
+				"removeKnowledgeBase": "Quitar {{name}}",
+				"inheritTools": "Heredar herramientas",
+				"additionalTools": "Herramientas adicionales",
+				"edges": {
+					"helper": "Configura el orden en que se evaluan los bordes salientes. Edita las etiquetas en el lienzo.",
+					"defaultLabel": "Condicion sin nombre",
+					"target": "→ {{target}}",
+					"empty": "Aun no hay bordes salientes."
+				},
+				"invalidNode": "Este nodo no se puede configurar aqui."
+			},
+			"tools": {
+				"label": "Herramientas",
+				"description": "Elige las herramientas que este nodo puede usar.",
+				"placeholder": "Selecciona herramientas",
+				"loading": "Cargando herramientas...",
+				"empty": "No hay herramientas disponibles.",
+				"error": "No se pudieron cargar las herramientas."
+			},
+			"nodeMenu": {
+				"subagent": "Subagente",
+				"agentTransfer": "Transferencia de agente",
+				"phoneNumber": "Transferencia a numero",
+				"tool": "Herramienta",
+				"end": "Fin"
+			},
+			"actions": {
+				"add": "Agregar nodo",
+				"edit": "Editar nodo",
+				"clone": "Clonar nodo",
+				"copy": "Copiar nodo",
+				"delete": "Eliminar nodo"
+			},
+			"nodes": {
+				"start": "Inicio",
+				"standalone_agent": "Subagente",
+				"agent_transfer": "Transferencia de agente",
+				"override_agent": "Transferencia de agente",
+				"phone_number": "Transferencia a numero",
+				"tool": "Despachar herramienta",
+				"end": "Fin"
+			},
+			"transferNode": {
+				"to": "Transferir a",
+				"delay": "Retraso",
+				"delayValue": "{{value}} ms",
+				"emptyAgent": "Sin configurar"
+			},
+			"nodeStatus": {
+				"destination": "Destino",
+				"transferTarget": "Agente destino",
+				"subagentStyle": "Subagente",
+				"overrideStyle": "Sobrescritura",
+				"transferStyle": "Transferencia",
+				"toolsAttached": "{{count}} herramienta",
+				"toolsAttached_other": "{{count}} herramientas"
+			}
+		}
+	}
+}

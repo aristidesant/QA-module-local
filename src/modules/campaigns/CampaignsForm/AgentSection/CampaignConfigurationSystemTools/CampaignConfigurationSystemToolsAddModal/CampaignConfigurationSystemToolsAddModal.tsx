@@ -32,7 +32,11 @@ interface CampaignConfigurationSystemToolsAddModalProps {
 const CampaignConfigurationSystemToolsAddModal: React.FC<
 	CampaignConfigurationSystemToolsAddModalProps
 > = ({ opened, onClose, allTools, activeNameCodes, onSave }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 
 	// Only show tools that are NOT currently active
 	const availableTools = allTools.filter(

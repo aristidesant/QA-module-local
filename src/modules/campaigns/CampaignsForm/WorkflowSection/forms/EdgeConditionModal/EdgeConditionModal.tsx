@@ -30,7 +30,11 @@ interface EdgeConditionModalProps {
 }
 
 const ModalContent = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const { handleSave, onClose } = useEdgeConditionModal();
 
 	return (
@@ -51,7 +55,11 @@ const ModalContent = () => {
 export const EdgeConditionModal: React.FC<EdgeConditionModalProps> = (
 	props
 ) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const edgeTitle =
 		props.sourceLabel && props.targetLabel
 			? `${props.sourceLabel} → ${props.targetLabel}`

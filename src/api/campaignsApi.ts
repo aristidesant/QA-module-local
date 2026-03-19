@@ -211,12 +211,7 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 			const workflowCounts = getWorkflowCounts(
 				response.data?.agentConfig?.workflow as AgentConfigPayload['workflow']
 			);
-			console.log('[campaignsApi.findCampaign] workflow payload', {
-				campaignId,
-				nodes: workflowCounts.nodes,
-				edges: workflowCounts.edges,
-				hasWorkflow: Boolean(response.data?.agentConfig?.workflow),
-			});
+			void workflowCounts;
 
 			return response.data;
 		},

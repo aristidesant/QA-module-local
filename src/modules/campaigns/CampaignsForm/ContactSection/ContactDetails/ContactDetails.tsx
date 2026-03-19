@@ -44,7 +44,7 @@ interface ContactDetailsProps {
 }
 
 export const ContactDetails = ({ contact }: ContactDetailsProps) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.contacts', 'common']);
 	const {
 		name,
 		phone,

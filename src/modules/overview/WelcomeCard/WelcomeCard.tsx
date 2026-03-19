@@ -19,6 +19,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import { useImpersonationState } from '~/hooks/useImpersonationState';
+import { useDashboards } from '~/queries/analyticsDashboardsQueries';
 import { useSessionStore } from '~/stores/sessionStore';
 import classes from './WelcomeCard.module.css';
 
@@ -74,6 +75,8 @@ export default function WelcomeCard({
 	const isMasterClient = useIsMasterClient();
 	const impersonationState = useImpersonationState();
 	const { user, targetClient } = useSessionStore();
+
+	useDashboards({ campaignId: null });
 
 	let heading = propHeading || t('defaultHeading');
 	let subheading = propSubheading || t('defaultSubheading');

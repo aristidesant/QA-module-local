@@ -18,7 +18,7 @@ const AddScheduler: React.FC<AddSchedulerProps> = ({
 	campaignId: propCampaignId,
 	handleReload,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaign.form.params', 'common']);
 	const { selectedCampaign } = useCampaignsStore((state) => state);
 	const { campaignId: paramCampaignId } = useParams<{ campaignId: string }>();
 	const campaignId = propCampaignId ?? selectedCampaign?.id ?? paramCampaignId;

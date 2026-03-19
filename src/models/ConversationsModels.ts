@@ -1,6 +1,7 @@
 // Lightweight model for table display
 export type ConversationTableModel = {
 	id: number;
+	conversationIdentifier?: string | null;
 	agentName: string;
 	agentVoiceLanguage: string;
 	contactName?: string;
@@ -34,7 +35,7 @@ export type ConversationDemoModel = {
 };
 export interface ConversationsModel {
 	id: number;
-	identifier: string;
+	conversationIdentifier?: string | null;
 	agentId: string;
 	agentName?: string;
 	campaignId: number;
@@ -98,15 +99,15 @@ export interface TranscriptEntry {
 	llm_usage: LlmUsage | null;
 	tool_calls: ToolCall[];
 	interrupted: boolean;
-	llm_override: unknown | null;
-	tool_results: unknown[];
+	llm_override: string | null;
+	tool_results: ToolResult[];
 	source_medium: string | null;
 	agent_metadata?: AgentMetadata;
 	original_message: string | null;
 	time_in_call_secs: number;
 	multivoice_message: unknown | null;
-	rag_retrieval_info: unknown | null;
-	conversation_turn_metrics: Record<string, unknown> | null;
+	rag_retrieval_info: Record<string, unknown> | null;
+	conversation_turn_metrics: ConversationTurnMetrics | null;
 }
 
 export interface AgentMetadata {
@@ -122,6 +123,21 @@ export interface ToolCall {
 	tool_details: unknown | null;
 	params_as_json: string;
 	tool_has_been_called: boolean;
+}
+
+export interface ToolResult {
+	type?: string;
+	tool_name?: string;
+	request_id?: string;
+	result_value?: string;
+	raw_error_message?: string;
+	error_type?: string;
+	is_error?: boolean;
+	tool_has_been_called?: boolean;
+	tool_latency_secs?: number;
+	result?: Record<string, unknown> | null;
+	dynamic_variable_updates?: unknown[];
+	[key: string]: unknown;
 }
 
 export interface LlmUsage {
@@ -146,6 +162,32 @@ export interface LlmUsage {
 			};
 		}
 	>;
+}
+
+export interface ConversationTurnMetrics {
+	metrics?: Record<
+		string,
+		{
+			elapsed_time?: number;
+			[key: string]: unknown;
+		}
+	>;
+	convai_llm_service_ttfb?: {
+		elapsed_time?: number;
+		[key: string]: unknown;
+	};
+	convai_tts_service_ttfb?: {
+		elapsed_time?: number;
+		[key: string]: unknown;
+	};
+	convai_asr_trailing_service_latency?: {
+		elapsed_time?: number;
+		[key: string]: unknown;
+	};
+	convai_tts_model?: string | null;
+	convai_asr_provider?: string | null;
+	convai_llm_model?: string | null;
+	[key: string]: unknown;
 }
 
 export interface ClientData {

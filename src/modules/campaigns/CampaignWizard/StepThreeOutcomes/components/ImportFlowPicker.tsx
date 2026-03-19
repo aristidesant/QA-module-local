@@ -47,7 +47,11 @@ export function ImportFlowPicker({
 	onPreview,
 	onUseFlow,
 }: ImportFlowPickerProps) {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaigns.wizard',
+		'campaign.form.shared',
+		'common',
+	]);
 	const filteredCampaigns = campaignsWithFlows
 		?.filter((campaign) => campaign.flowId !== null)
 		.filter((campaign) =>

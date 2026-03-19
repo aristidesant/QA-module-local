@@ -14,7 +14,7 @@ import {
 	useDeleteContactGroup,
 } from '~/queries/contactGroupQueries';
 import { useCampaignActiveSchedule } from '~/queries/schedulerQueries';
-import { getQueueStatusConfig } from './queueStatusConfig';
+import { getTranslatedQueueStatus } from './queueStatusConfig';
 import { useSessionStore } from '~/stores/sessionStore';
 import { formatWaveDateTime } from '~/utils/waveUtils';
 
@@ -33,7 +33,11 @@ const useContactListColumns = ({
 	campaignId,
 	onNavigateToContactList,
 }: UseContactListColumnsParams): ColumnDef<ContactGroup>[] => {
-	const { t, i18n } = useTranslation(['campaigns', 'common']);
+	const { t, i18n } = useTranslation([
+		'campaign.form.contacts',
+		'campaign.contact-list',
+		'common',
+	]);
 	const { user, targetClient } = useSessionStore();
 	const toggleMutation = useToggleContactGroupStatus();
 	const updateMutation = useUpdateContactGroup();
@@ -123,7 +127,10 @@ const useContactListColumns = ({
 				id: 'queueStatus',
 				header: t('form.contacts.list.columns.status'),
 				cell: ({ row }) => {
-					const statusConfig = getQueueStatusConfig(row.original.queueStatus);
+					const statusConfig = getTranslatedQueueStatus(
+						t,
+						row.original.queueStatus
+					);
 					const shouldShowNextWave = ['WAITING', 'PAUSED'].includes(
 						row.original.queueStatus
 					);
@@ -138,7 +145,7 @@ const useContactListColumns = ({
 					return (
 						<Stack gap={2} align='flex-start'>
 							<Badge variant='light' color={statusConfig.color} size='sm'>
-								{t(statusConfig.label)}
+								{statusConfig.label}
 							</Badge>
 							{nextWaveScheduledAt && (
 								<Text size='xs' c='dimmed'>

@@ -1,0 +1,29 @@
+.surface {
+	position: relative;
+	padding: 0;
+	background: transparent;
+	min-height: 0;
+}
+
+.gridCell {
+	height: 100%;
+	min-width: 0;
+}
+
+:global(.react-grid-layout) {
+	min-height: inherit;
+}
+
+:global(.react-grid-item.react-grid-placeholder) {
+	background: rgba(59, 130, 246, 0.12);
+	border: 1px dashed var(--mantine-color-blue-4);
+	border-radius: var(--mantine-radius-lg);
+}
+
+:global(.react-resizable-handle) {
+	opacity: 0.85;
+}
+
+:global(.react-resizable-handle::after) {
+	border-color: var(--mantine-color-gray-6);
+}

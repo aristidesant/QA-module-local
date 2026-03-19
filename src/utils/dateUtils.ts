@@ -76,7 +76,8 @@ export function formatExpirationDate(dateString?: string | null): string {
 		}
 		return '';
 	} catch (e) {
-		console.error('Error formatting expiration date:', e, dateString);
+		void e;
+		void dateString;
 		return '';
 	}
 }

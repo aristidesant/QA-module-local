@@ -36,7 +36,11 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === 'object' && value !== null;
 
 const BuiltInTools = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const {
 		builtInToolsState,
 		setBuiltInToolsState,
@@ -111,7 +115,7 @@ const BuiltInTools = () => {
 				};
 			});
 		} catch (error) {
-			console.error('Error parsing system tools config:', error);
+			void error;
 			return [];
 		}
 	}, [systemToolsConfig]);
@@ -368,7 +372,11 @@ const BuiltInTools = () => {
 };
 
 const CustomTools = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 	const {
 		inheritCustomTools,
 		setInheritCustomTools,

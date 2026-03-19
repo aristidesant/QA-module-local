@@ -412,7 +412,6 @@ export const useDispositionBuilderStore = create<DispositionBuilderState>(
 
 			// Check if node already exists to prevent duplicates
 			if (existingIds.has(node.id)) {
-				console.log('Node already exists in builder');
 				return;
 			}
 
@@ -430,8 +429,6 @@ export const useDispositionBuilderStore = create<DispositionBuilderState>(
 
 			// Recursively sort all nodes after addition
 			const sortedNodes = sortNodesByOrder(updatedNodes);
-
-			console.log('Adding node to builder:', { id: node.id, name: node.name });
 
 			set({
 				flowJson: {

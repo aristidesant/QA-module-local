@@ -100,6 +100,7 @@ export interface Campaign {
 		updatedAt: string;
 	}>;
 
+	noiseCancellation?: boolean;
 	agentConfig?: Partial<AgentConfigModel>;
 	// Stats and performance
 	stats?: {

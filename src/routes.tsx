@@ -14,6 +14,7 @@ import RouteProtecter, {
 } from './components/RouteProtecter/RouteProtecter';
 import ModuleGuard from './components/RouteGuards/ModuleGuard';
 import { ModuleEnum } from '~/constants/ModuleEnum';
+import { campaignRouteNamespaces } from '~/modules/campaigns/campaignNamespaces';
 import SuspenseFallback from './components/SuspenseFallback';
 const Layout = React.lazy(() => import('./components/Layout'));
 
@@ -54,8 +55,11 @@ const ConversationPage = React.lazy(
 	() => import('./modules/conversations/ConversationsPage/ConversationPage')
 );
 
-const WelcomeCard = React.lazy(
-	() => import('./modules/overview/WelcomeCard/WelcomeCard')
+const OverviewDashboardPage = React.lazy(
+	() => import('./modules/overview/OverviewDashboardPage/OverviewDashboardPage')
+);
+const DashboardsPage = React.lazy(
+	() => import('./modules/dashboards/DashboardsPage/DashboardsPage')
 );
 import { LoginForm } from './modules/auth/LoginForm';
 import { PermissionEnum } from './constants/PermissionEnum';
@@ -80,6 +84,9 @@ const SchedulerPredefinedParamsPage = React.lazy(
 );
 const PhoneNumbersPage = React.lazy(
 	() => import('./modules/configurations/PhoneNumbers/PhoneNumbersPage')
+);
+const DictionaryRulesPage = React.lazy(
+	() => import('./modules/configurations/DictionaryRules/DictionaryRulesPage')
 );
 const ConfigurationsPage = React.lazy(
 	() => import('./modules/configurations/ConfigurationsPage')
@@ -106,14 +113,14 @@ const I18nNamespaceLoader = ({ children }: { children: React.ReactNode }) => {
 	const lastMatch = matches[matches.length - 1];
 	// Derive namespace from route ID or path
 	const namespace = lastMatch?.id;
+	const resolvedNamespace =
+		namespace && namespace !== 'root' && !namespace.includes('/')
+			? (campaignRouteNamespaces[namespace] ?? namespace)
+			: 'common';
 
 	// Use useTranslation to ensure the namespace is loaded before rendering children.
 	// This will trigger suspension if the namespace is not yet available.
-	useTranslation(
-		namespace && namespace !== 'root' && !namespace.includes('/')
-			? namespace
-			: 'common'
-	);
+	useTranslation(resolvedNamespace);
 
 	return <>{children}</>;
 };
@@ -153,9 +160,26 @@ const router = createBrowserRouter([
 								<Suspense
 									fallback={<SuspenseFallback message='Loading dashboard...' />}
 								>
-									<WelcomeCard />
+									<OverviewDashboardPage />
 								</Suspense>
 							</I18nNamespaceLoader>
+						),
+					},
+					{
+						path: 'dashboards',
+						id: 'dashboards',
+						element: (
+							<ModuleGuard module={ModuleEnum.DASHBOARD}>
+								<I18nNamespaceLoader>
+									<Suspense
+										fallback={
+											<SuspenseFallback message='Loading dashboards...' />
+										}
+									>
+										<DashboardsPage />
+									</Suspense>
+								</I18nNamespaceLoader>
+							</ModuleGuard>
 						),
 					},
 					{
@@ -425,6 +449,21 @@ const router = createBrowserRouter([
 											}
 										>
 											<PhoneNumbersPage />
+										</Suspense>
+									</I18nNamespaceLoader>
+								),
+							},
+							{
+								path: 'dictionary-rules',
+								id: 'dictionary-rules',
+								element: (
+									<I18nNamespaceLoader>
+										<Suspense
+											fallback={
+												<SuspenseFallback message='Loading dictionary rules...' />
+											}
+										>
+											<DictionaryRulesPage />
 										</Suspense>
 									</I18nNamespaceLoader>
 								),

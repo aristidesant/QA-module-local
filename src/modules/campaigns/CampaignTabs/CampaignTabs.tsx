@@ -3,10 +3,12 @@ import {
 	IconChecklist,
 	IconChartBar,
 	IconGalaxy,
+	IconGitBranch,
 	IconRoute,
 	IconUser,
 	IconList,
 	IconTable,
+	IconLayoutDashboard,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { useDispositionLabel } from '~/hooks/useDispositionLabel';
@@ -16,7 +18,7 @@ const CampaignTabs = () => {
 	const { selectedTab, setSelectedTab, setRightComponent } = useCampaignsStore(
 		(state) => state
 	);
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation('campaign.form.shared');
 	const dispositionLabel = useDispositionLabel();
 	return (
 		<Tabs
@@ -32,25 +34,31 @@ const CampaignTabs = () => {
 		>
 			<Tabs.List>
 				<Tabs.Tab leftSection={<IconUser />} value='agents'>
-					{t('list.tabs.agents')}
+					{t('tabs.agents')}
 				</Tabs.Tab>
 				<Tabs.Tab leftSection={<IconRoute />} value='workflow'>
-					{t('list.tabs.workflow')}
+					{t('tabs.workflow')}
 				</Tabs.Tab>
 				<Tabs.Tab leftSection={<IconList />} value='outcomes'>
-					{dispositionLabel(t('list.tabs.outcomes'))}
+					{dispositionLabel(t('tabs.outcomes'))}
 				</Tabs.Tab>
 				<Tabs.Tab leftSection={<IconChecklist />} value='params'>
-					{t('list.tabs.params')}
+					{t('tabs.params')}
 				</Tabs.Tab>
 				<Tabs.Tab leftSection={<IconChartBar />} value='analytics'>
-					{t('list.tabs.analytics')}
+					{t('tabs.analytics')}
+				</Tabs.Tab>
+				<Tabs.Tab leftSection={<IconLayoutDashboard />} value='dashboards'>
+					{t('tabs.dashboards')}
 				</Tabs.Tab>
 				<Tabs.Tab leftSection={<IconTable />} value='report-values'>
-					{t('list.tabs.reportValues')}
+					{t('tabs.reportValues')}
 				</Tabs.Tab>
 				<Tabs.Tab leftSection={<IconGalaxy />} value='general'>
-					{t('list.tabs.general')}
+					{t('tabs.general')}
+				</Tabs.Tab>
+				<Tabs.Tab leftSection={<IconGitBranch />} value='versioning'>
+					{t('tabs.versioning')}
 				</Tabs.Tab>
 			</Tabs.List>
 		</Tabs>

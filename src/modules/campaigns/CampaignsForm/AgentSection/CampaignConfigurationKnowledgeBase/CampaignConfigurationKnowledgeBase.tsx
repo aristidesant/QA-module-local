@@ -1,5 +1,6 @@
 // CampaignConfigurationKnowledgeBase.tsx
 import React, { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import {
 	IconFileText,
 	IconTrash,
@@ -13,11 +14,13 @@ import {
 	useKnowledgeBases,
 	useKnowledgeBasesByIds,
 } from '~/queries/knowledgeBaseQueries';
+import knowledgeBaseApi from '~/api/knowledgeBaseApi';
 import CampaignConfigurationKnowledgeBaseAddModal from './CampaignConfigurationKnowledgeBaseAddModal';
 import styles from './CampaignConfigurationKnowledgeBase.module.css';
 import type KnowledgeBaseModel from '~/models/KnowledgeBaseModel';
 import { KnowledgeBaseType } from '~/models/KnowledgeBaseModel';
 import { useTranslation } from 'react-i18next';
+import i18n from '~/locales/i18n';
 import { timeAgo } from '~/utils/dateUtils';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -25,8 +28,13 @@ import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 
 const CampaignConfigurationKnowledgeBase: React.FC = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 	const form = useCampaignFormContext();
+	const queryClient = useQueryClient();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const {
 		data: allKnowledgeBases,
@@ -107,7 +115,33 @@ const CampaignConfigurationKnowledgeBase: React.FC = () => {
 	};
 
 	const handleAddKnowledgeBase = () => {
-		setIsModalOpen(true);
+		void queryClient.prefetchQuery({
+			queryKey: [
+				'knowledgeBasesPaginated',
+				{
+					limit: 10,
+					offset: 0,
+					sortBy: 'name',
+					sortOrder: 'asc',
+				},
+			],
+			queryFn: async () => {
+				const api = knowledgeBaseApi();
+				return api.getKnowledgeBasesPaginated({
+					limit: 10,
+					offset: 0,
+					sortBy: 'name',
+					sortOrder: 'asc',
+				});
+			},
+			staleTime: 1000 * 60,
+		});
+
+		void i18n
+			.loadNamespaces(['knowledgeBaseSelection', 'campaigns.wizard'])
+			.finally(() => {
+				setIsModalOpen(true);
+			});
 	};
 
 	const handleCloseModal = () => {

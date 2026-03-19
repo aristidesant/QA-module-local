@@ -31,7 +31,11 @@ const NodeDetailPanel: React.FC<NodeDetailPanelProps> = ({
 	node,
 	parentNode,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.outcomes',
+		'campaign.detail',
+		'common',
+	]);
 	const { setRightComponent } = useCampaignsStore();
 	const nodeStyle = getNodeStyle(node, parentNode ? 1 : 0);
 

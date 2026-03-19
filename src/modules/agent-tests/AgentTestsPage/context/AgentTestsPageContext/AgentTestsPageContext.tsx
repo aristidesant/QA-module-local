@@ -518,35 +518,8 @@ export const AgentTestsPageProvider: React.FC<AgentTestsPageProviderProps> = ({
 			const hasUserTurn = parsedConversation.some(
 				(item) => item.role === 'user'
 			);
-			const hasAgentTurn = parsedConversation.some(
-				(item) => item.role === 'agent'
-			);
-			const validationDiagnostics = {
-				chatHistoryLength: payload.chatHistory.length,
-				parsedConversationLength: parsedConversation.length,
-				hasUserTurn,
-				hasAgentTurn,
-				promptLength: payload.prompt.trim().length,
-				expectedResponseLength: payload.expectedResponse.trim().length,
-				roles: parsedConversation.map((item) => item.role),
-				messages: parsedConversation.map((item) => item.message),
-			};
-
-			if (import.meta.env.DEV) {
-				console.debug(
-					'[AgentTests] handleSubmit validation diagnostics',
-					validationDiagnostics
-				);
-			}
 
 			if (!payload.chatHistory.length || !hasUserTurn) {
-				if (import.meta.env.DEV) {
-					console.warn(
-						'[AgentTests] blocked submit due to conversation validation',
-						validationDiagnostics
-					);
-				}
-
 				notifications.show({
 					title: tCommon('status.error'),
 					message: t('form.validation.promptAndExpectedFromConversation'),

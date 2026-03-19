@@ -17,7 +17,11 @@ export const useVoiceOptions = (): SelectOption[] => {
 };
 
 export const useBuiltInTools = (): BuiltInTool[] => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 
 	return useMemo(
 		() => [

@@ -19,7 +19,11 @@ import { useGetAgent } from '~/queries/agentQueries';
 import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
 
 const CampaignConfigurationPhoneNumber: React.FC = () => {
-	const { t } = useTranslation(['campaigns', 'common']);
+	const { t } = useTranslation([
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 	const form = useCampaignFormContext();
 	const campaignId = useCampaignId();
 	const campaignType = form.values.type || 'OUTBOUND'; // Default to OUTBOUND if missing
@@ -65,8 +69,8 @@ const CampaignConfigurationPhoneNumber: React.FC = () => {
 
 	const isUpdateMode = !!currentLinkedId;
 	const buttonLabel = isUpdateMode
-		? t('form.agent.phoneNumber.update', { ns: 'campaigns' })
-		: t('form.agent.phoneNumber.assign', { ns: 'campaigns' });
+		? t('form.agent.phoneNumber.update', { ns: 'campaign.form.agents' })
+		: t('form.agent.phoneNumber.assign', { ns: 'campaign.form.agents' });
 
 	// Find current phone object based on selected ID
 	const currentPhone = phoneNumbers?.find(
@@ -118,15 +122,19 @@ const CampaignConfigurationPhoneNumber: React.FC = () => {
 
 			notifications.show({
 				title: t('status.success', { ns: 'common' }),
-				message: t('form.agent.phoneNumber.assignSuccess', { ns: 'campaigns' }),
+				message: t('form.agent.phoneNumber.assignSuccess', {
+					ns: 'campaign.form.agents',
+				}),
 				color: 'green',
 				icon: <IconCheck size={16} />,
 			});
 		} catch (error) {
-			console.error('Error assigning phone number:', error);
+			void error;
 			notifications.show({
 				title: t('errors.unknown', { ns: 'common' }),
-				message: t('form.agent.phoneNumber.assignError', { ns: 'campaigns' }),
+				message: t('form.agent.phoneNumber.assignError', {
+					ns: 'campaign.form.agents',
+				}),
 				color: 'red',
 			});
 		} finally {
@@ -143,8 +151,10 @@ const CampaignConfigurationPhoneNumber: React.FC = () => {
 	return (
 		<RightSectionCard
 			icon={IconPhone}
-			title={t('form.agent.phoneNumber.title', { ns: 'campaigns' })}
-			description={t('form.agent.phoneNumber.description', { ns: 'campaigns' })}
+			title={t('form.agent.phoneNumber.title', { ns: 'campaign.form.agents' })}
+			description={t('form.agent.phoneNumber.description', {
+				ns: 'campaign.form.agents',
+			})}
 		>
 			<Stack gap='xs' pos='relative'>
 				<LoadingOverlay
@@ -157,9 +167,11 @@ const CampaignConfigurationPhoneNumber: React.FC = () => {
 				/>
 				<Group align='flex-end' gap='xs' wrap='nowrap'>
 					<Select
-						label={t('form.agent.phoneNumber.selectLabel', { ns: 'campaigns' })}
+						label={t('form.agent.phoneNumber.selectLabel', {
+							ns: 'campaign.form.agents',
+						})}
 						placeholder={t('form.agent.phoneNumber.selectPlaceholder', {
-							ns: 'campaigns',
+							ns: 'campaign.form.agents',
 						})}
 						data={selectData}
 						value={selectedId}

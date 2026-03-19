@@ -3,7 +3,11 @@ import { useTranslation } from 'react-i18next';
 import mainStyles from '../../AgentForm.module.css';
 
 const TestsTab = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaign.form.workflow',
+		'campaign.form.agents',
+		'common',
+	]);
 
 	return (
 		<div className={mainStyles.placeholderCard}>

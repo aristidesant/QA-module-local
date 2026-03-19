@@ -1,0 +1,406 @@
+.cardWrapper {
+	container-type: size;
+	container-name: kpi;
+	height: 100%;
+}
+
+.card {
+	position: relative;
+	height: 100%;
+	background: linear-gradient(
+		180deg,
+		rgba(255, 255, 255, 0.98) 0%,
+		rgba(248, 250, 252, 0.96) 100%
+	);
+	border-radius: 2rem;
+	border: 1px solid rgba(226, 232, 240, 0.85);
+	padding: 22px;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	overflow: hidden;
+	transition:
+		border-color 0.18s ease,
+		background-color 0.18s ease,
+		transform 0.18s ease,
+		box-shadow 0.18s ease;
+	box-shadow:
+		0 1px 3px rgba(15, 23, 42, 0.06),
+		0 4px 12px rgba(15, 23, 42, 0.07),
+		inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+.card::after {
+	content: '';
+	position: absolute;
+	inset: -42px -42px auto auto;
+	width: 168px;
+	height: 168px;
+	border-radius: 50%;
+	background: var(--kpi-accent, #6366f1);
+	opacity: 0.08;
+	filter: blur(54px);
+	pointer-events: none;
+	transition: opacity 0.18s ease;
+	z-index: 0;
+}
+
+.card:hover {
+	border-color: color-mix(
+		in srgb,
+		var(--kpi-accent, #6366f1) 22%,
+		rgba(15, 23, 42, 0.08)
+	);
+	transform: translateY(-1px);
+	box-shadow:
+		0 2px 6px rgba(15, 23, 42, 0.07),
+		0 8px 20px rgba(15, 23, 42, 0.09),
+		inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+.card:hover::after {
+	opacity: 0.11;
+}
+
+.card > * {
+	position: relative;
+	z-index: 1;
+}
+
+.header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 2px;
+}
+
+.headerCopy {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	flex: 1;
+	min-width: 0;
+}
+
+.title {
+	color: #1e293b;
+	letter-spacing: -0.03em;
+	line-height: 1.08;
+	font-size: 1.1rem;
+}
+
+.subtitle {
+	font-size: 0.7rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.16em;
+	color: #64748b;
+}
+
+.value {
+	font-size: clamp(1.65rem, 2.4vw, 2.85rem);
+	line-height: 0.88;
+	font-weight: 900;
+	letter-spacing: -0.065em;
+	color: #0f172a;
+	margin: auto 0 0;
+	padding: 0;
+}
+
+.comparisonMeta {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.trend {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 7px 11px;
+	border-radius: 0.9rem;
+	font-size: 0.88rem;
+	font-weight: 700;
+	width: fit-content;
+	white-space: nowrap;
+	box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.trendIcon {
+	display: flex;
+	align-items: center;
+}
+
+.trendPct {
+	line-height: 1;
+}
+
+.previousValue {
+	font-size: 11px;
+	font-weight: 600;
+	color: #64748b;
+	line-height: 1.1;
+}
+
+.trend--up {
+	background: rgba(220, 252, 231, 0.92);
+	color: #166534;
+	border: 1px solid rgba(187, 247, 208, 0.95);
+}
+
+.trend--down {
+	background: rgba(254, 242, 242, 0.92);
+	color: #b91c1c;
+	border: 1px solid rgba(254, 202, 202, 0.9);
+}
+
+.trend--flat {
+	background: rgba(241, 245, 249, 0.95);
+	color: #475569;
+	border: 1px solid rgba(226, 232, 240, 0.95);
+}
+
+.card--comparisonHero {
+	padding-bottom: 24px;
+}
+
+.card--comparisonHero::after {
+	opacity: 0.12;
+}
+
+.card--comparisonHero .value {
+	font-size: clamp(3.4rem, 6vw, 5.9rem);
+	margin-top: 12px;
+}
+
+.card--comparisonCompact {
+	padding: 18px;
+	gap: 12px;
+	border-radius: 1.5rem;
+}
+
+.card--comparisonCompact .sparklineLayer {
+	opacity: 0.02;
+	height: 45%;
+}
+
+.card--comparisonCompact .value {
+	font-size: clamp(2.2rem, 3vw, 3.2rem);
+}
+
+.sparklineLayer {
+	position: absolute;
+	inset: auto -5% -4% -5%;
+	height: 38%;
+	pointer-events: none;
+	z-index: 0;
+	opacity: 0.02;
+	animation: sparkPulse 1.8s ease-in-out infinite alternate;
+}
+
+.sparklineSvg {
+	width: 100%;
+	height: 100%;
+	display: block;
+}
+
+.sparklineArea {
+	animation: sparkFade 0.85s ease-out both;
+}
+
+.sparklinePath {
+	stroke-width: 1.5;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-dasharray: 240;
+	stroke-dashoffset: 240;
+	opacity: 0.7;
+	animation: sparkDraw 1.1s ease-out 0.18s forwards;
+}
+
+@keyframes sparkFade {
+	from {
+		opacity: 0;
+		transform: translateY(6px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes sparkDraw {
+	from {
+		stroke-dashoffset: 240;
+		opacity: 0;
+	}
+	to {
+		stroke-dashoffset: 0;
+		opacity: 0.72;
+	}
+}
+
+@keyframes sparkPulse {
+	from {
+		opacity: 0.02;
+	}
+	to {
+		opacity: 0.05;
+	}
+}
+
+.divider {
+	height: 1px;
+	background: rgba(226, 232, 240, 0.9);
+	margin-top: 2px;
+}
+
+.comparisonHeroMeta {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	margin-top: auto;
+}
+
+.comparisonHeroLead {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+
+.comparisonLabel {
+	font-size: 0.95rem;
+	font-weight: 600;
+	color: #475569;
+	line-height: 1.2;
+}
+
+.infoPanel {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	padding: 14px 15px;
+	max-width: min(100%, 420px);
+	border-radius: 1rem;
+	background: rgba(248, 250, 252, 0.9);
+	border: 1px solid rgba(226, 232, 240, 0.92);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.infoIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #94a3b8;
+	flex-shrink: 0;
+	padding-top: 1px;
+}
+
+.infoText {
+	font-size: 0.82rem;
+	font-weight: 600;
+	color: #475569;
+	line-height: 1.45;
+}
+
+.comparisonCompactMeta {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	margin-top: auto;
+}
+
+.comparisonCompactCopy {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	min-width: 0;
+}
+
+.yesterdayLabel {
+	font-size: 0.84rem;
+	font-weight: 700;
+	color: #334155;
+	line-height: 1.2;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.comparisonInlineLabel {
+	font-size: 0.73rem;
+	font-weight: 600;
+	color: #64748b;
+	line-height: 1.1;
+}
+
+.card--comparisonCompact .trend {
+	flex-shrink: 0;
+	padding: 5px 9px;
+	font-size: 0.78rem;
+}
+
+.unsupported {
+	opacity: 0.55;
+}
+
+.unsupportedMessage {
+	margin-top: auto;
+}
+
+/* ─── Container query: small (1–2 rows, < 250px) ─────────────────────────── */
+@container kpi (max-height: 249px) {
+	.card {
+		padding: 16px;
+		gap: 10px;
+		border-radius: 1.5rem;
+	}
+
+	.subtitle {
+		display: none;
+	}
+
+	.divider {
+		display: none;
+	}
+
+	.infoPanel {
+		display: none;
+	}
+
+	.comparisonHeroMeta {
+		gap: 8px;
+	}
+}
+
+/* ─── Container query: very small (1 row, < 165px) ───────────────────────── */
+@container kpi (max-height: 164px) {
+	.card {
+		padding: 14px;
+		gap: 8px;
+		border-radius: 1.25rem;
+	}
+
+	.value {
+		margin: auto 0;
+		font-size: clamp(1.4rem, 2vw, 2.2rem);
+	}
+
+	.comparisonMeta,
+	.comparisonHeroMeta {
+		display: none;
+	}
+
+	.comparisonCompactMeta {
+		justify-content: flex-end;
+	}
+
+	.comparisonCompactCopy {
+		display: none;
+	}
+}

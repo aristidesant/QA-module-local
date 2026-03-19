@@ -9,6 +9,7 @@ import {
 } from '@tabler/icons-react';
 import type ContactGroup from '~/models/ContactGroup';
 import type { ContactGroupQueueStatus } from '~/models/ContactGroup';
+import { getTranslatedQueueStatus } from '../queueStatusConfig';
 import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
@@ -32,7 +33,7 @@ export const ContactListControl = ({
 	display = 'icon',
 	onActionComplete,
 }: ContactListControlProps) => {
-	const { t, i18n } = useTranslation(['campaigns', 'common']);
+	const { t, i18n } = useTranslation(['campaign.form.contacts', 'common']);
 	const startMutation = useStartOutboundCampaign();
 	const pauseMutation = usePauseOutboundCampaign();
 	const resumeMutation = useResumeOutboundCampaign();
@@ -54,7 +55,8 @@ export const ContactListControl = ({
 	};
 
 	const showErrorNotification = (error: unknown, fallbackMessage: string) => {
-		console.log({ error, fallbackMessage });
+		void error;
+		void fallbackMessage;
 
 		const apiMessage =
 			(error as { response?: { data?: { message?: string } } })?.response?.data
@@ -84,6 +86,7 @@ export const ContactListControl = ({
 	const canStartOrResume = Boolean(
 		requirements?.hasDispositionFlow && requirements?.hasActiveSchedule
 	);
+	const unknownStatusLabel = getTranslatedQueueStatus(t, 'UNKNOWN').label;
 
 	const normalizedStatus = contactGroup.queueStatus?.toUpperCase() as
 		| ContactGroupQueueStatus
@@ -282,8 +285,8 @@ export const ContactListControl = ({
 		tooltip = t('form.contacts.controls.allWavesDone');
 		buttonLabel = t('form.contacts.controls.allWavesDone');
 	} else if (normalizedStatus === 'UNKNOWN') {
-		tooltip = t('status.unknown');
-		buttonLabel = t('status.unknown');
+		tooltip = unknownStatusLabel;
+		buttonLabel = unknownStatusLabel;
 	}
 
 	if (display === 'button') {

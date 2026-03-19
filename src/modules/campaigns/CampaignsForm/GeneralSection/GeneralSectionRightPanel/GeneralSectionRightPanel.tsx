@@ -6,7 +6,6 @@ import {
 	NumberInput,
 	Select,
 	Stack,
-	Switch,
 	Tooltip,
 } from '@mantine/core';
 import {
@@ -27,7 +26,12 @@ import { useCampaignFormContext } from '../../../campaignFormFunctions';
 import CampaignConfigurationPhoneNumber from '../../AgentSection/CampaignConfigurationPhoneNumber/CampaignConfigurationPhoneNumber';
 
 const GeneralSectionRightPanel: React.FC = () => {
-	const { t } = useTranslation(['campaigns', 'campaign.detail', 'common']);
+	const { t } = useTranslation([
+		'campaign.form.general',
+		'campaign.form.agents',
+		'campaign.detail',
+		'common',
+	]);
 	const form = useCampaignFormContext();
 	const queryClient = useQueryClient();
 	const [isObjectiveModalOpen, setIsObjectiveModalOpen] = useState(false);
@@ -207,22 +211,6 @@ const GeneralSectionRightPanel: React.FC = () => {
 						nothingFoundMessage={t('form.agent.basic.noLanguageFound')}
 						leftSection={<IconLanguage size={14} />}
 						size='sm'
-					/>
-
-					<Switch
-						label={t('general.noiseCancellationLabel')}
-						description={t('general.noiseCancellationDesc')}
-						size='sm'
-						checked={
-							form.values.agentConfig?.conversationConfig?.noiseCancellation ??
-							false
-						}
-						onChange={(event) =>
-							form.setFieldValue(
-								'agentConfig.conversationConfig.noiseCancellation',
-								event.currentTarget.checked
-							)
-						}
 					/>
 				</RightSectionCard>
 			</Stack>

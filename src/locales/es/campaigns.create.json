@@ -1,0 +1,61 @@
+{
+	"addNewCampaign": {
+		"form": {
+			"campaignName": "Nombre de la Campaña",
+			"campaignNameDesc": "Dale a tu campaña un nombre descriptivo",
+			"campaignNamePlaceholder": "Ingresa el nombre de la campaña",
+			"description": "Descripción",
+			"descriptionDesc": "Describe brevemente el propósito de esta campaña",
+			"descriptionPlaceholder": "Describe tu campaña",
+			"campaignType": "Tipo de Campaña",
+			"defaultWaves": "Oleadas Predeterminadas",
+			"defaultWavesDesc": "Cuántas oleadas ejecutar por cada nueva lista de contactos creada desde esta campaña",
+			"defaultWavesPlaceholder": "Número de oleadas",
+			"phoneNumber": "Número de Teléfono",
+			"phoneNumberDesc": "Selecciona el número de teléfono para esta campaña",
+			"phoneNumberPlaceholder": "Elige un número de teléfono",
+			"agentName": "Nombre del Agente",
+			"agentNameDesc": "Ingresa el nombre del agente",
+			"agentNamePlaceholder": "Ingresa el nombre del agente",
+			"agentBehavior": "Comportamiento del Agente",
+			"agentBehaviorDesc": "Selecciona una configuración de comportamiento de agente predefinida",
+			"agentBehaviorPlaceholder": "Elige un comportamiento de agente",
+			"createButton": "Crear Campaña",
+			"cancelButton": "Cancelar",
+			"successMessage": "Campaña creada con éxito",
+			"errorMessage": "Error al crear la campaña",
+			"failedToCreate": "No se pudo crear la campaña"
+		},
+		"validation": {
+			"nameRequired": "El nombre de la campaña es obligatorio",
+			"descriptionRequired": "La descripción es obligatoria",
+			"typeInvalid": "El tipo debe ser uno de los siguientes valores: INBOUND, OUTBOUND",
+			"wavesMin": "Las oleadas predeterminadas deben ser al menos 1",
+			"agentNameRequired": "El nombre del agente es obligatorio",
+			"agentVoiceRequired": "La voz del agente es obligatoria"
+		},
+		"voices": {
+			"title": "Elegir voz de IA",
+			"description": "Selecciona la voz que representará durante las interacciones con los clientes.",
+			"modalTitle": "Seleccionar Voz de IA",
+			"loading": "Cargando voces...",
+			"loadingDesc": "Obteniendo opciones de voz disponibles",
+			"error": "Error al cargar las voces",
+			"errorDesc": "Hubo un error al obtener las opciones de voz. Por favor, inténtalo de nuevo.",
+			"noVoices": "No se encontraron voces",
+			"noVoicesDesc": "Intenta ajustar tus filtros o inténtalo de nuevo más tarde.",
+			"selectVoice": "Selecciona una voz para tu campaña",
+			"changeVoice": "Cambiar",
+			"unknown": "Desconocido",
+			"preview": "Vista previa",
+			"voice": "Voz",
+			"noDescription": "Esta voz aún no incluye una descripción.",
+			"previewHint": "🎵 Haz clic en el botón de reproducción para escuchar esta voz",
+			"pauseAria": "Pausar vista previa de voz",
+			"playAria": "Reproducir vista previa de voz",
+			"age": "Edad: {{age}}",
+			"male": "Masculino",
+			"female": "Femenino"
+		}
+	}
+}

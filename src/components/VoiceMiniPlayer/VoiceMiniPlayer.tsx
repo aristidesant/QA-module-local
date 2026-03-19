@@ -80,7 +80,7 @@ export function VoiceMiniPlayer({
 			setIsPlaying(true);
 			setIsLoading(false);
 		} catch (error) {
-			console.error('Error playing audio:', error);
+			void error;
 			setIsLoading(false);
 			setIsPlaying(false);
 		}

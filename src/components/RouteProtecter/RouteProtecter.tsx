@@ -48,7 +48,6 @@ export async function clientLoader(): Promise<LoaderData> {
 			dayjs(expMillis).isBefore(now) ||
 			dayjs(expMillis).isSame(now)
 		) {
-			console.debug('JWT token expired');
 			try {
 				window.sessionStorage.removeItem(ACCESS_TOKEN_KEY);
 			} catch {}

@@ -50,7 +50,11 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 	onNext,
 	onCancel,
 }) => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation([
+		'campaigns.wizard',
+		'campaign.form.shared',
+		'common',
+	]);
 	type CampaignTypeValue = 'INBOUND' | 'OUTBOUND';
 
 	const {
@@ -209,7 +213,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				setDraft({
 					campaignId: String((campaign as any).id),
 					data: { isDraft: true, draftStep: 1 },
-				}).catch((err) => console.error('Failed to save draft step', err));
+				}).catch(() => undefined);
 
 				// Proceed to next step
 				onNext();
@@ -291,7 +295,9 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 										label: (
 											<Group gap={6} justify='center'>
 												<IconPhoneOutgoing size={16} />
-												<span>{t('columns.outbound')}</span>
+												<span>
+													{t('wizard.steps.general.campaignTypeOutbound')}
+												</span>
 											</Group>
 										),
 									},
@@ -300,7 +306,9 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 										label: (
 											<Group gap={6} justify='center'>
 												<IconPhoneIncoming size={16} />
-												<span>{t('columns.inbound')}</span>
+												<span>
+													{t('wizard.steps.general.campaignTypeInbound')}
+												</span>
 											</Group>
 										),
 									},

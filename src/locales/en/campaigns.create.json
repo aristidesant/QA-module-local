@@ -1,0 +1,61 @@
+{
+	"addNewCampaign": {
+		"form": {
+			"campaignName": "Campaign Name",
+			"campaignNameDesc": "Give your campaign a descriptive name",
+			"campaignNamePlaceholder": "Enter campaign name",
+			"description": "Description",
+			"descriptionDesc": "Briefly describe the purpose of this campaign",
+			"descriptionPlaceholder": "Describe your campaign",
+			"campaignType": "Campaign Type",
+			"defaultWaves": "Default Waves",
+			"defaultWavesDesc": "How many waves to run for every new contact list created from this campaign",
+			"defaultWavesPlaceholder": "Number of waves",
+			"phoneNumber": "Phone Number",
+			"phoneNumberDesc": "Select the phone number for this campaign",
+			"phoneNumberPlaceholder": "Choose a phone number",
+			"agentName": "Agent Name",
+			"agentNameDesc": "Enter the name of the agent",
+			"agentNamePlaceholder": "Enter agent name",
+			"agentBehavior": "Agent Behavior",
+			"agentBehaviorDesc": "Select a predefined agent behavior configuration",
+			"agentBehaviorPlaceholder": "Choose an agent behavior",
+			"createButton": "Create Campaign",
+			"cancelButton": "Cancel",
+			"successMessage": "Campaign created successfully",
+			"errorMessage": "Error creating campaign",
+			"failedToCreate": "Failed to create campaign"
+		},
+		"validation": {
+			"nameRequired": "Campaign name is required",
+			"descriptionRequired": "Description is required",
+			"typeInvalid": "Type must be one of the following values: INBOUND, OUTBOUND",
+			"wavesMin": "Default waves must be at least 1",
+			"agentNameRequired": "Agent name is required",
+			"agentVoiceRequired": "Agent voice is required"
+		},
+		"voices": {
+			"title": "Choose AI voice",
+			"description": "Select the voice that will represent during customer interactions.",
+			"modalTitle": "Select AI Voice",
+			"loading": "Loading voices...",
+			"loadingDesc": "Fetching available voice options",
+			"error": "Failed to load voices",
+			"errorDesc": "There was an error fetching the voice options. Please try again.",
+			"noVoices": "No voices found",
+			"noVoicesDesc": "Try adjusting your filters or try again later.",
+			"selectVoice": "Select a voice for your campaign",
+			"changeVoice": "Change",
+			"unknown": "Unknown",
+			"preview": "Preview",
+			"voice": "Voice",
+			"noDescription": "This voice does not include a description yet.",
+			"previewHint": "🎵 Click the play button to preview this voice",
+			"pauseAria": "Pause voice preview",
+			"playAria": "Play voice preview",
+			"age": "Age: {{age}}",
+			"male": "Male",
+			"female": "Female"
+		}
+	}
+}

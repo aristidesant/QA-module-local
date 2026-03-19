@@ -22,12 +22,15 @@
 			"description": "Mostraremos las conversaciones tan pronto como estén disponibles."
 		},
 		"columns": {
+			"conversationIdentifier": "ID",
 			"contactName": "Nombre del contacto",
 			"phoneNumber": "Número de teléfono",
 			"outcome": "Resultado",
 			"status": "Estado",
 			"when": "Cuándo",
 			"duration": "Duración",
+			"copyId": "Copiar ID",
+			"copiedId": "Copiado",
 			"endedAt": "finalizó el {{date}} ({{timezone}})",
 			"ended": "finalizó"
 		},
@@ -41,7 +44,10 @@
 	},
 	"filters": {
 		"title": "Filtros",
-		"contactName": "Filtrar por nombre de contacto...",
+		"conversationIdentifier": "ID de conversación",
+		"conversationIdentifierPlaceholder": "Buscar por ID de conversación...",
+		"contactName": "Nombre del contacto",
+		"contactNamePlaceholder": "Filtrar por nombre de contacto...",
 		"advanced": "Avanzado",
 		"phoneNumber": "Número de teléfono",
 		"phoneNumberPlaceholder": "Filtrar por número de teléfono",
@@ -71,6 +77,7 @@
 	},
 	"details": {
 		"title": "Detalles de la conversación",
+		"backToTop": "Volver arriba",
 		"tabs": {
 			"overview": "Resumen",
 			"transcript": "Transcripción"
@@ -166,12 +173,29 @@
 			"user": "Usuario"
 		},
 		"workflow": {
-			"changed": "Cambio de ruta del workflow"
+			"changed": "Cambio de ruta del workflow",
+			"from": "Desde",
+			"to": "Hacia"
+		},
+		"footer": {
+			"llm": "LLM",
+			"override": "OVERRIDE",
+			"tts": "TTS",
+			"asr": "ASR",
+			"model": "Modelo",
+			"provider": "Proveedor",
+			"cost": "Costo",
+			"breakdown": "Desglose",
+			"notAvailable": "N/A",
+			"unknownModel": "Modelo desconocido",
+			"unknownProvider": "Proveedor desconocido"
 		},
 		"interrupted": "Interrumpido",
 		"technical": {
 			"title": "Detalles técnicos",
 			"toolCalls": "Llamadas a herramientas:",
+			"toolCallsCount": "{{count}} llamadas a herramientas",
+			"toolCallsExecuted": "{{count}} ejecutadas",
 			"toolName": "Nombre de la herramienta",
 			"called": "Llamada",
 			"pending": "Pendiente",
@@ -179,19 +203,36 @@
 			"parameters": "Parámetros",
 			"requestId": "ID de solicitud",
 			"llmUsage": "Uso de LLM",
+			"overrideModel": "Override",
 			"inputTokens": "Tokens de entrada",
 			"outputTokens": "Tokens de salida",
 			"cacheRead": "Lectura de caché",
 			"cacheWrite": "Escritura de caché",
-			"totalCost": "Costo total:",
+			"totalCost": "Costo total",
 			"sourceMedium": "Medio de origen",
 			"agentMetadata": "Metadatos del agente",
 			"agentId": "ID del agente",
 			"branchId": "ID de la rama",
 			"workflowNode": "Nodo de flujo de trabajo",
+			"executionSummary": "Resumen de ejecución",
+			"toolResults": "Resultados de herramientas",
+			"toolResultsCount": "{{count}} resultados",
+			"toolErrorsCount": "{{count}} errores",
+			"resultValue": "Valor del resultado",
+			"resultPayload": "Payload del resultado",
+			"resultFallback": "Resultado de herramienta",
+			"success": "Éxito",
+			"error": "Error",
+			"latency": "Latencia",
+			"errorType": "Tipo de error",
+			"rawError": "Error crudo",
 			"originalMessage": "Mensaje original",
 			"ragInfo": "Información de recuperación RAG",
-			"turnMetrics": "Métricas de turno"
+			"turnMetrics": "Métricas de turno",
+			"turnLlmModel": "Modelo LLM del turno",
+			"turnTtsModel": "Modelo TTS",
+			"turnAsrProvider": "Proveedor ASR",
+			"rawMetrics": "Métricas crudas"
 		}
 	},
 	"player": {
