@@ -51,7 +51,7 @@ import { useCampaignActiveSchedule } from '~/queries/schedulerQueries';
 import { useCleanOutboundQueue } from '~/queries/outboundQueries';
 import ContactLimits from '../ContactLimits';
 import { calculateHumanEquivalentValues } from '../ContactLimits/humanEquivalentCalculations';
-import { getQueueStatusConfig } from '../ContactList/queueStatusConfig';
+import { getTranslatedQueueStatus } from '../ContactList/queueStatusConfig';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import styles from './ContactListDetails.module.css';
 import { formatWaveDateTime, formatWaveDelaySeconds } from '~/utils/waveUtils';
@@ -158,13 +158,13 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 		useState(false);
 
 	const statusConfig = useMemo(
-		() => getQueueStatusConfig(contactGroup.queueStatus),
-		[contactGroup.queueStatus]
+		() => getTranslatedQueueStatus(t, contactGroup.queueStatus),
+		[contactGroup.queueStatus, t]
 	);
 
 	const statusLabel = useMemo(() => {
-		return t(statusConfig.label);
-	}, [statusConfig.label, t]);
+		return statusConfig.label;
+	}, [statusConfig.label]);
 
 	const stats = useMemo(
 		() => [

@@ -295,7 +295,9 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 										label: (
 											<Group gap={6} justify='center'>
 												<IconPhoneOutgoing size={16} />
-												<span>{t('columns.outbound')}</span>
+												<span>
+													{t('wizard.steps.general.campaignTypeOutbound')}
+												</span>
 											</Group>
 										),
 									},
@@ -304,7 +306,9 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 										label: (
 											<Group gap={6} justify='center'>
 												<IconPhoneIncoming size={16} />
-												<span>{t('columns.inbound')}</span>
+												<span>
+													{t('wizard.steps.general.campaignTypeInbound')}
+												</span>
 											</Group>
 										),
 									},

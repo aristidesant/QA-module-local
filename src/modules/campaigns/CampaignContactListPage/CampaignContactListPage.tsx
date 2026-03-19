@@ -36,7 +36,7 @@ import ContactListMetrics from './ContactListMetrics';
 import CampaignDashboardViewer from '~/modules/campaigns/CampaignDashboardViewer';
 import ConversationsList from '~/modules/conversations/ConversationsList';
 import FaultyPhonesAlert from './ContactGroupContactsTable/FaultyPhonesAlert';
-import { getQueueStatusConfig } from '~/modules/campaigns/CampaignsForm/ContactSection/ContactList/queueStatusConfig';
+import { getTranslatedQueueStatus } from '~/modules/campaigns/CampaignsForm/ContactSection/ContactList/queueStatusConfig';
 import { timeAgo } from '~/utils/dateUtils';
 import { ContactDetails } from '~/modules/campaigns/CampaignsForm/ContactSection/ContactDetails';
 import type { Contact } from '~/models/ContactsModel';
@@ -154,7 +154,7 @@ const CampaignContactListPage = () => {
 	const canViewContacts = canAccessModule(ModuleEnum.CONTACTS);
 
 	const queueStatusConfig = contactGroupQuery.data
-		? getQueueStatusConfig(contactGroupQuery.data.queueStatus ?? '')
+		? getTranslatedQueueStatus(t, contactGroupQuery.data.queueStatus)
 		: null;
 
 	const isLoading = contactGroupQuery.isLoading;
@@ -283,7 +283,7 @@ const CampaignContactListPage = () => {
 			titleRight={
 				queueStatusConfig ? (
 					<Badge color={queueStatusConfig.color} variant='light' size='sm'>
-						{t(queueStatusConfig.label)}
+						{queueStatusConfig.label}
 					</Badge>
 				) : null
 			}

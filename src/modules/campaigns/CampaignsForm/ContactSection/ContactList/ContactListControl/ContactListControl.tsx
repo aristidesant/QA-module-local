@@ -9,6 +9,7 @@ import {
 } from '@tabler/icons-react';
 import type ContactGroup from '~/models/ContactGroup';
 import type { ContactGroupQueueStatus } from '~/models/ContactGroup';
+import { getTranslatedQueueStatus } from '../queueStatusConfig';
 import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
@@ -85,6 +86,7 @@ export const ContactListControl = ({
 	const canStartOrResume = Boolean(
 		requirements?.hasDispositionFlow && requirements?.hasActiveSchedule
 	);
+	const unknownStatusLabel = getTranslatedQueueStatus(t, 'UNKNOWN').label;
 
 	const normalizedStatus = contactGroup.queueStatus?.toUpperCase() as
 		| ContactGroupQueueStatus
@@ -283,8 +285,8 @@ export const ContactListControl = ({
 		tooltip = t('form.contacts.controls.allWavesDone');
 		buttonLabel = t('form.contacts.controls.allWavesDone');
 	} else if (normalizedStatus === 'UNKNOWN') {
-		tooltip = t('status.unknown');
-		buttonLabel = t('status.unknown');
+		tooltip = unknownStatusLabel;
+		buttonLabel = unknownStatusLabel;
 	}
 
 	if (display === 'button') {

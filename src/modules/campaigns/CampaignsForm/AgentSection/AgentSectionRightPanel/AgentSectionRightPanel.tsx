@@ -15,7 +15,7 @@ import {
 import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
 
 const AgentSectionRightPanel: React.FC = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaigns', 'campaign.form.agents']);
 	const form = useCampaignFormContext();
 	const campaignId = useCampaignId();
 	const { data: campaignAgents } = useGetCampaignAgents(campaignId || 0);

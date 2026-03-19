@@ -66,6 +66,10 @@
 				"firstMessageLabel": "Agent First Message",
 				"firstMessageDesc": "Initial greeting",
 				"firstMessagePlaceholder": "Enter the first message your agent will send...",
+				"audioTitle": "Audio Settings",
+				"audioDesc": "Configure noise handling for this campaign.",
+				"noiseCancellationLabel": "Noise cancellation",
+				"noiseCancellationDesc": "When enabled, applies noise suppression and voice activity detection tuning to outbound calls.",
 				"promptTitle": "Agent Prompt",
 				"promptDesc": "Review the locked prompt. Use Edit to refine instructions.",
 				"promptContent": "Prompt content",
@@ -79,9 +83,26 @@
 				"promptUpdatedTitle": "Prompt Updated",
 				"promptUpdatedMessage": "Agent prompt has been updated",
 				"submit": "Save & Continue",
+				"promptModal": {
+					"title": "Edit agent prompt",
+					"description": "Update the main prompt used by the agent for this campaign.",
+					"placeholder": "Write the agent prompt",
+					"helper": "Edits are saved with the campaign.",
+					"chars_one": "1 character",
+					"chars_other": "{{count}} characters"
+				},
 				"validation": {
 					"languageRequired": "Language is required",
 					"promptRequired": "Agent prompt is required"
+				},
+				"dictionary": {
+					"title": "Pronunciation dictionaries",
+					"description": "Attach dictionaries to improve pronunciation and recognition for critical terms during calls.",
+					"selectPlaceholder": "Select one or more dictionaries",
+					"noDictionariesHint": "No pronunciation dictionaries are available yet.",
+					"save": "Save dictionaries",
+					"saveSuccess": "Pronunciation dictionaries updated successfully",
+					"saveError": "Failed to update pronunciation dictionaries"
 				},
 				"languages": {
 					"es": "Spanish",
@@ -187,6 +208,21 @@
 			}
 		},
 		"knowledgeBase": {
+			"section": {
+				"title": "Knowledge Base",
+				"description": "Manage knowledge bases for this agent.",
+				"loading": "Loading knowledge bases...",
+				"error": "Error loading knowledge bases",
+				"noSelection": "No knowledge bases selected",
+				"add": "Add Knowledge Base",
+				"remove": "Remove",
+				"removeAria": "Remove {{name}}",
+				"created": "Created: {{date}}",
+				"modal": {
+					"selectTitle": "Select Knowledge Bases",
+					"createTitle": "Create Knowledge Base"
+				}
+			},
 			"form": {
 				"name": {
 					"label": "Name",

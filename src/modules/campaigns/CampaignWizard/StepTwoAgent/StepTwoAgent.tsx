@@ -71,6 +71,7 @@ const extractKnowledgeBaseIds = (
 export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 	const { t } = useTranslation([
 		'campaigns.wizard',
+		'campaign.form.agents',
 		'campaign.form.shared',
 		'common',
 	]);
@@ -566,14 +567,14 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 					<Group justify='space-between' align='center'>
 						<div>
 							<Text size='sm' fw={600}>
-								{t('form.agent.prompt.simpleModal.title')}
+								{t('wizard.steps.agent.promptModal.title')}
 							</Text>
 							<Text size='xs' c='dimmed'>
-								{t('form.agent.prompt.simpleModal.description')}
+								{t('wizard.steps.agent.promptModal.description')}
 							</Text>
 						</div>
 						<Badge size='sm' variant='light' color='gray'>
-							{t('form.agent.prompt.simpleModal.chars', {
+							{t('wizard.steps.agent.promptModal.chars', {
 								count: promptDraft.length,
 							})}
 						</Badge>
@@ -581,7 +582,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 					<Textarea
 						value={promptDraft}
 						onChange={(event) => setPromptDraft(event.currentTarget.value)}
-						placeholder={t('form.agent.prompt.simpleModal.placeholder')}
+						placeholder={t('wizard.steps.agent.promptModal.placeholder')}
 						minRows={12}
 						autosize
 						size='sm'
@@ -589,7 +590,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 					/>
 					<Group justify='space-between' align='center'>
 						<Text size='xs' c='dimmed'>
-							{t('form.agent.prompt.simpleModal.helper')}
+							{t('wizard.steps.agent.promptModal.helper')}
 						</Text>
 						<Group gap='xs'>
 							<Button
