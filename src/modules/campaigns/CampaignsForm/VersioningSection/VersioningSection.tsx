@@ -32,7 +32,6 @@ import VersionDiffModal from './VersionDiffModal';
 import {
 	formatCommittedAgo,
 	formatCommittedAt,
-	getHistoricalVersions,
 } from './VersioningSection.helpers';
 import classes from './VersioningSection.module.css';
 
@@ -90,8 +89,25 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 			),
 		[branches]
 	);
-	const { data: branchDetails, isLoading: isLoadingBranchDetails } =
-		useGetAgentBranchDetails(agentId, mainBranch?.id);
+	const { limit: versionPageLimit, offset: versionPageOffset } =
+		versionPagination.getApiParams();
+	const historyApiOffset = 1 + versionPageOffset;
+
+	// Lightweight call: fetches the two most recent versions for the summary card
+	// and the "Revert Latest" button — cached independently from the history table.
+	const { data: summaryBranchDetails, isLoading: isLoadingSummaryBranch } =
+		useGetAgentBranchDetails(agentId, mainBranch?.id, { limit: 2, offset: 0 });
+
+	// Paginated call: drives the history table with backend pagination (offset=1
+	// to skip the current version which is already shown in the summary card).
+	const {
+		data: historyBranchDetails,
+		isLoading: isLoadingHistoryBranch,
+		isFetching: isFetchingHistoryBranch,
+	} = useGetAgentBranchDetails(agentId, mainBranch?.id, {
+		limit: versionPageLimit,
+		offset: historyApiOffset,
+	});
 	const { data: versionCommitsData } = useGetAgentVersionCommits(
 		agentId,
 		mainBranch?.id,
@@ -118,28 +134,23 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 		useRevertAgentVersion();
 	const { mutateAsync: syncCampaignByAgent } = useSyncCampaignByAgent();
 
-	const historicalVersions = useMemo(
-		() => getHistoricalVersions(branchDetails),
-		[branchDetails]
-	);
-	const latestCurrentVersion = branchDetails?.mostRecentVersions?.[0];
-	const latestRevertTarget = historicalVersions[0];
+	const historicalVersions: AgentVersionSummary[] =
+		historyBranchDetails?.mostRecentVersions.data ?? [];
+	const latestCurrentVersion = summaryBranchDetails?.mostRecentVersions.data[0];
+	const latestRevertTarget = summaryBranchDetails?.mostRecentVersions.data[1];
 	const isVersioningEnabled = Boolean(agentRecord?.versioningEnabled);
 	const isBusy =
 		isLoadingCampaignAgents ||
 		(!requiresAgentSelection && isLoadingAgentRecord) ||
 		isLoadingBranches ||
-		(isVersioningEnabled && isLoadingBranchDetails);
+		(isVersioningEnabled && isLoadingSummaryBranch);
 
-	const { limit: versionPageLimit, offset: versionPageOffset } =
-		versionPagination.getApiParams();
-	const paginatedVersions = historicalVersions.slice(
-		versionPageOffset,
-		versionPageOffset + versionPageLimit
+	const totalHistoricalItems = Math.max(
+		0,
+		(summaryBranchDetails?.mostRecentVersions.total ?? 0) - 1
 	);
-	const totalVersionPages = versionPagination.calculateTotalPages(
-		historicalVersions.length
-	);
+	const totalVersionPages =
+		versionPagination.calculateTotalPages(totalHistoricalItems);
 
 	const handleVersionPageSizeChange = (value: string | null) => {
 		if (value) versionPagination.setItemsPerPage(Number(value));
@@ -437,23 +448,24 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 								</Button>
 							</div>
 
-							{historicalVersions.length === 0 ? (
+							{historicalVersions.length === 0 && !isLoadingHistoryBranch ? (
 								<div className={classes.emptyState}>
 									<Text size='sm'>{t('history.empty')}</Text>
 								</div>
 							) : (
 								<div className={classes.tableWrap}>
 									<BaseTable<AgentVersionSummary>
-										data={paginatedVersions}
+										data={historicalVersions}
 										columns={columns}
 										density='compact'
 										emptyMessage={t('history.empty')}
+										isLoading={isFetchingHistoryBranch}
 									/>
 									<PaginationControls
 										currentPage={versionPagination.currentPage}
 										totalPages={totalVersionPages}
 										itemsPerPage={versionPagination.itemsPerPage}
-										totalItems={historicalVersions.length}
+										totalItems={totalHistoricalItems}
 										onPageChange={versionPagination.setCurrentPage}
 										onItemsPerPageChange={handleVersionPageSizeChange}
 										itemLabel={t('history.itemLabel')}

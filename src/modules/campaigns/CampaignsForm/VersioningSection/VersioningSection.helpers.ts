@@ -12,11 +12,11 @@ export const getMainBranch = (branchDetails?: AgentBranchDetails) =>
 export const getHistoricalVersions = (
 	branchDetails?: AgentBranchDetails
 ): AgentVersionSummary[] => {
-	if (!branchDetails?.mostRecentVersions?.length) {
+	if (!branchDetails?.mostRecentVersions?.data?.length) {
 		return [];
 	}
 
-	return branchDetails.mostRecentVersions.slice(1);
+	return branchDetails.mostRecentVersions.data.slice(1);
 };
 
 const sortJsonValue = (value: unknown): unknown => {
