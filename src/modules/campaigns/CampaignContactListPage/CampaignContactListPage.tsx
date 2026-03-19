@@ -1,4 +1,4 @@
-import { useMemo, useState, type ComponentProps } from 'react';
+import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
@@ -23,7 +23,6 @@ import {
 import { notifications } from '@mantine/notifications';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
-import AppDrawer from '~/components/AppDrawer';
 import EmptyState from '~/components/EmptyState';
 import { useGetContactGroup } from '~/queries/contactGroupQueries';
 import { useGetCampaign } from '~/queries/campaignsQueries';
@@ -38,41 +37,6 @@ import ConversationsList from '~/modules/conversations/ConversationsList';
 import FaultyPhonesAlert from './ContactGroupContactsTable/FaultyPhonesAlert';
 import { getTranslatedQueueStatus } from '~/modules/campaigns/CampaignsForm/ContactSection/ContactList/queueStatusConfig';
 import { timeAgo } from '~/utils/dateUtils';
-import { ContactDetails } from '~/modules/campaigns/CampaignsForm/ContactSection/ContactDetails';
-import type { Contact } from '~/models/ContactsModel';
-
-type ContactDetailsData = ComponentProps<typeof ContactDetails>['contact'];
-
-const getContactInitials = (firstName: string, lastName: string) => {
-	const firstInitial = firstName?.charAt(0) || '';
-	const lastInitial = lastName?.charAt(0) || '';
-	return `${firstInitial}${lastInitial}`.toUpperCase() || '??';
-};
-
-const mapContactToDetails = (
-	contact: Contact,
-	t: (key: string) => string
-): ContactDetailsData => {
-	const primaryPhone = contact.phoneNumbers?.[0]?.phoneNumber || '';
-	const primaryEmail = contact.emails?.[0] || '';
-
-	return {
-		id: contact.id.toString(),
-		name: `${contact.firstName || ''} ${contact.lastName || ''}`.trim(),
-		phone: primaryPhone,
-		email: primaryEmail,
-		location: t('contactDetails.mockData.location'),
-		language: t('contactDetails.mockData.language'),
-		initials: getContactInitials(
-			contact.firstName || '',
-			contact.lastName || ''
-		),
-		phones: contact.phoneNumbers || [],
-		engagementLevel: 87,
-		qualificationScore: 75,
-		sentiment: { positive: 2113, neutral: 45, negative: 16 },
-	};
-};
 
 const ConversationsTab = ({ contactGroupId }: { contactGroupId?: string }) => {
 	return <ConversationsList contactGroupId={contactGroupId} />;
@@ -83,48 +47,20 @@ const ContactsTab = ({
 	campaignId,
 	title,
 	description,
-	t,
 }: {
 	contactGroupId: number;
 	campaignId?: number;
 	title: string;
 	description: string;
-	t: (key: string) => string;
 }) => {
-	const [selectedContact, setSelectedContact] =
-		useState<ContactDetailsData | null>(null);
-	const [drawerOpened, setDrawerOpened] = useState(false);
-
-	const handleContactClick = (contact: Contact) => {
-		setSelectedContact(mapContactToDetails(contact, t));
-		setDrawerOpened(true);
-	};
-
-	const handleCloseDrawer = () => {
-		setDrawerOpened(false);
-		setSelectedContact(null);
-	};
-
 	return (
-		<>
-			<SectionCard title={title} description={description}>
-				<FaultyPhonesAlert contactGroupId={contactGroupId} />
-				<ContactGroupContactsTable
-					contactGroupId={contactGroupId}
-					campaignId={campaignId}
-					onContactClick={handleContactClick}
-				/>
-			</SectionCard>
-			<AppDrawer
-				opened={drawerOpened && selectedContact !== null}
-				onClose={handleCloseDrawer}
-				title={title}
-				description={description}
-				size='lg'
-			>
-				{selectedContact ? <ContactDetails contact={selectedContact} /> : null}
-			</AppDrawer>
-		</>
+		<SectionCard title={title} description={description}>
+			<FaultyPhonesAlert contactGroupId={contactGroupId} />
+			<ContactGroupContactsTable
+				contactGroupId={contactGroupId}
+				campaignId={campaignId}
+			/>
+		</SectionCard>
 	);
 };
 
@@ -342,7 +278,6 @@ const CampaignContactListPage = () => {
 							campaignId={campaignId ? Number(campaignId) : undefined}
 							title={t('tabs.contacts')}
 							description={t('tabs.contactsDesc')}
-							t={t}
 						/>
 					</Tabs.Panel>
 				)}
