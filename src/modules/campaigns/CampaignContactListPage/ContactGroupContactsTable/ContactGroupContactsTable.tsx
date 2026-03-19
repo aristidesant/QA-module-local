@@ -32,12 +32,11 @@ import { getErrorMessage } from '~/utils/httpClient';
 interface ContactGroupContactsTableProps {
 	contactGroupId: number;
 	campaignId?: number; // needed to resolve active schema for append workflow
-	onContactClick?: (contact: Contact) => void;
 }
 
 export const ContactGroupContactsTable: React.FC<
 	ContactGroupContactsTableProps
-> = ({ contactGroupId, campaignId, onContactClick }) => {
+> = ({ contactGroupId, campaignId }) => {
 	const { t } = useTranslation('campaign.contact-list');
 	const { canPerformAction } = usePermissions();
 
@@ -245,14 +244,6 @@ export const ContactGroupContactsTable: React.FC<
 			deleteContactMutation.isPending && deletingContactId === contactId
 	);
 
-	// Handle contact row click
-	const handleContactClick = useCallback(
-		(contact: Contact) => {
-			onContactClick?.(contact);
-		},
-		[onContactClick]
-	);
-
 	// Handle items per page change
 	const handleItemsPerPageChange = useCallback(
 		(value: string | null) => {
@@ -342,7 +333,6 @@ export const ContactGroupContactsTable: React.FC<
 					<BaseTable
 						data={contacts}
 						columns={columns}
-						onRowClick={handleContactClick}
 						filterMode='server'
 						initialSort={sorting}
 						onSortingChange={setSorting}

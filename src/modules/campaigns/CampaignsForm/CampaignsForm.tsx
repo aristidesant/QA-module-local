@@ -13,6 +13,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import type { Campaign } from '../../../models/CampaignsModel';
+import campaignAgentsApi from '~/api/campaignAgentsApi';
+import knowledgeBaseApi from '~/api/knowledgeBaseApi';
 import {
 	useCreateCampaign,
 	useUpdateCampaign,
@@ -49,6 +51,7 @@ import GeneralSectionRightPanel from './GeneralSection/GeneralSectionRightPanel'
 import AppDrawer from '~/components/AppDrawer';
 import DashboardSection from './DashboardSection';
 import VersioningSection from './VersioningSection';
+import i18n from '~/locales/i18n';
 import styles from './CampaignsForm.module.css';
 import { getDataCollectionFromAgentConfig } from './AnalyticsSection/analyticsFormContext';
 
@@ -288,9 +291,69 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		setIsSettingsDrawerOpen(Boolean(rightComponent));
 	}, [selectedTab, rightComponent]);
 
+	useEffect(() => {
+		if (selectedTab !== 'agents') return;
+
+		void i18n.loadNamespaces([
+			'campaigns',
+			'knowledgeBaseSelection',
+			'campaigns.wizard',
+		]);
+
+		void queryClient.prefetchQuery({
+			queryKey: ['knowledgeBases', {}],
+			queryFn: async () => {
+				const api = knowledgeBaseApi();
+				return api.getKnowledgeBases();
+			},
+			staleTime: 1000 * 60,
+		});
+
+		void queryClient.prefetchQuery({
+			queryKey: [
+				'knowledgeBasesPaginated',
+				{
+					limit: 10,
+					offset: 0,
+					sortBy: 'name',
+					sortOrder: 'asc',
+				},
+			],
+			queryFn: async () => {
+				const api = knowledgeBaseApi();
+				return api.getKnowledgeBasesPaginated({
+					limit: 10,
+					offset: 0,
+					sortBy: 'name',
+					sortOrder: 'asc',
+				});
+			},
+			staleTime: 1000 * 60,
+		});
+
+		if (!campaign?.id) return;
+
+		void queryClient.prefetchQuery({
+			queryKey: ['campaignAgents', campaign.id],
+			queryFn: async () => {
+				const api = campaignAgentsApi();
+				return api.getCampaignAgents(campaign.id as number);
+			},
+			staleTime: 1000 * 60,
+		});
+	}, [campaign?.id, queryClient, selectedTab]);
+
 	const settingsDrawerTitle = t('form.settingsDrawer.title');
 	const openSettingsDrawer = () => {
-		setIsSettingsDrawerOpen(true);
+		void i18n
+			.loadNamespaces([
+				'campaigns',
+				'knowledgeBaseSelection',
+				'campaigns.wizard',
+			])
+			.finally(() => {
+				setIsSettingsDrawerOpen(true);
+			});
 	};
 
 	const settingsDrawerContent =
@@ -579,6 +642,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 					onClose={() => setIsSettingsDrawerOpen(false)}
 					title={settingsDrawerTitle}
 					size='lg'
+					keepMounted
 				>
 					{settingsDrawerContent}
 				</AppDrawer>

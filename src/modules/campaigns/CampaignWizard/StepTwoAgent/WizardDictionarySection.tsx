@@ -13,7 +13,7 @@ import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 import styles from './StepTwoAgent.module.css';
 
 const WizardDictionarySection: React.FC = () => {
-	const { t } = useTranslation('campaigns');
+	const { t } = useTranslation(['campaigns.wizard', 'common']);
 	const { createdCampaign } = useCampaignWizardStore();
 
 	const agentId =

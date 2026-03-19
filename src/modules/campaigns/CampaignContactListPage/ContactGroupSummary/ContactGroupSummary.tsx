@@ -6,7 +6,7 @@ import RightSectionCard from '~/components/RightSectionCard';
 import styles from './ContactGroupSummary.module.css';
 import type ContactGroup from '~/models/ContactGroup';
 import { formatExpirationDate } from '~/utils/dateUtils';
-import { getQueueStatusConfig } from '~/modules/campaigns/CampaignsForm/ContactSection/ContactList/queueStatusConfig';
+import { getTranslatedQueueStatus } from '~/modules/campaigns/CampaignsForm/ContactSection/ContactList/queueStatusConfig';
 import { formatWaveDateTime, formatWaveDelaySeconds } from '~/utils/waveUtils';
 
 export interface ContactGroupSummaryProps {
@@ -16,8 +16,8 @@ export interface ContactGroupSummaryProps {
 const ContactGroupSummary = ({ contactGroup }: ContactGroupSummaryProps) => {
 	const { t, i18n } = useTranslation(['campaign.contact-list', 'common']);
 	const statusConfig = useMemo(
-		() => getQueueStatusConfig(contactGroup.queueStatus),
-		[contactGroup.queueStatus]
+		() => getTranslatedQueueStatus(t, contactGroup.queueStatus),
+		[contactGroup.queueStatus, t]
 	);
 
 	const metrics = useMemo(
@@ -81,7 +81,7 @@ const ContactGroupSummary = ({ contactGroup }: ContactGroupSummaryProps) => {
 							size='sm'
 							className={styles.badge}
 						>
-							{t(statusConfig.label)}
+							{statusConfig.label}
 						</Badge>
 					</div>
 				}

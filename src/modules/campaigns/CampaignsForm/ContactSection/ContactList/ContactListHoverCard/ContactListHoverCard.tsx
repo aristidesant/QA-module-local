@@ -11,7 +11,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { IconInfoCircle } from '@tabler/icons-react';
 import type ContactGroup from '~/models/ContactGroup';
-import { getQueueStatusConfig } from '../queueStatusConfig';
+import { getTranslatedQueueStatus } from '../queueStatusConfig';
 import classes from './ContactListHoverCard.module.css';
 import { formatWaveDateTime, formatWaveDelaySeconds } from '~/utils/waveUtils';
 
@@ -22,8 +22,12 @@ interface ContactListHoverCardProps {
 export const ContactListHoverCard = ({
 	contactGroup,
 }: ContactListHoverCardProps) => {
-	const { t, i18n } = useTranslation(['campaign.form.contacts', 'common']);
-	const statusConfig = getQueueStatusConfig(contactGroup.queueStatus);
+	const { t, i18n } = useTranslation([
+		'campaign.form.contacts',
+		'campaign.contact-list',
+		'common',
+	]);
+	const statusConfig = getTranslatedQueueStatus(t, contactGroup.queueStatus);
 	const notSetLabel = t('form.contacts.details.stats.notSet');
 	const delayLabel = formatWaveDelaySeconds(
 		contactGroup.waveExecutionDelaySeconds,
@@ -78,7 +82,7 @@ export const ContactListHoverCard = ({
 							{t('form.contacts.list.columns.status')}
 						</Text>
 						<Badge size='sm' variant='light' color={statusConfig.color}>
-							{t(statusConfig.label)}
+							{statusConfig.label}
 						</Badge>
 					</Group>
 					<SimpleGrid cols={2} spacing='xs'>

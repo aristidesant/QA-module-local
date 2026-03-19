@@ -66,6 +66,10 @@
 				"firstMessageLabel": "Primer Mensaje del Agente",
 				"firstMessageDesc": "Saludo inicial",
 				"firstMessagePlaceholder": "Ingresa el primer mensaje que enviará tu agente...",
+				"audioTitle": "Configuración de audio",
+				"audioDesc": "Configura el manejo de ruido para esta campaña.",
+				"noiseCancellationLabel": "Cancelación de ruido",
+				"noiseCancellationDesc": "Cuando está activado, aplica supresión de ruido y ajuste de detección de actividad de voz en las llamadas salientes.",
 				"promptTitle": "Prompt del Agente",
 				"promptDesc": "Revisa el prompt bloqueado. Usa Editar para refinar las instrucciones.",
 				"promptContent": "Contenido del prompt",
@@ -79,9 +83,26 @@
 				"promptUpdatedTitle": "Prompt Actualizado",
 				"promptUpdatedMessage": "El prompt del agente ha sido actualizado",
 				"submit": "Guardar y Continuar",
+				"promptModal": {
+					"title": "Editar prompt del agente",
+					"description": "Actualiza el prompt principal que usa el agente en esta campaña.",
+					"placeholder": "Escribe el prompt del agente",
+					"helper": "Los cambios se guardan con la campaña.",
+					"chars_one": "1 carácter",
+					"chars_other": "{{count}} caracteres"
+				},
 				"validation": {
 					"languageRequired": "El idioma es obligatorio",
 					"promptRequired": "El prompt del agente es obligatorio"
+				},
+				"dictionary": {
+					"title": "Diccionarios de pronunciación",
+					"description": "Asocia diccionarios para mejorar la pronunciación y el reconocimiento de términos críticos durante las llamadas.",
+					"selectPlaceholder": "Selecciona uno o más diccionarios",
+					"noDictionariesHint": "Aún no hay diccionarios de pronunciación disponibles.",
+					"save": "Guardar diccionarios",
+					"saveSuccess": "Los diccionarios de pronunciación se actualizaron correctamente",
+					"saveError": "No se pudieron actualizar los diccionarios de pronunciación"
 				},
 				"languages": {
 					"es": "Español",
@@ -187,6 +208,21 @@
 			}
 		},
 		"knowledgeBase": {
+			"section": {
+				"title": "Base de Conocimiento",
+				"description": "Gestiona las bases de conocimiento para este agente.",
+				"loading": "Cargando bases de conocimiento...",
+				"error": "Error al cargar las bases de conocimiento",
+				"noSelection": "No hay bases de conocimiento seleccionadas",
+				"add": "Agregar Base de Conocimiento",
+				"remove": "Eliminar",
+				"removeAria": "Eliminar {{name}}",
+				"created": "Creado: {{date}}",
+				"modal": {
+					"selectTitle": "Seleccionar Bases de Conocimiento",
+					"createTitle": "Crear Base de Conocimiento"
+				}
+			},
 			"form": {
 				"name": {
 					"label": "Nombre",
