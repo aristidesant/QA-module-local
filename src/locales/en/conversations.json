@@ -22,7 +22,7 @@
 			"description": "We will display conversations as soon as they are available."
 		},
 		"columns": {
-			"conversationIdentifier": "ID",
+			"identifier": "ID",
 			"contactName": "Contact Name",
 			"phoneNumber": "Phone Number",
 			"outcome": "Outcome",
@@ -44,8 +44,8 @@
 	},
 	"filters": {
 		"title": "Filters",
-		"conversationIdentifier": "Conversation ID",
-		"conversationIdentifierPlaceholder": "Search by conversation ID...",
+		"identifier": "Conversation ID",
+		"identifierPlaceholder": "Search by conversation ID...",
 		"contactName": "Contact Name",
 		"contactNamePlaceholder": "Filter by contact name...",
 		"advanced": "Advanced",

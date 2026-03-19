@@ -63,12 +63,8 @@ export const useConversationsColumns = (
 			return normalized;
 		};
 
-		const renderConversationIdentifier = (
-			conversationIdentifier?: string | null
-		) => {
-			const normalizedIdentifier = normalizeConversationIdentifier(
-				conversationIdentifier
-			);
+		const renderIdentifier = (identifier?: string | null) => {
+			const normalizedIdentifier = normalizeConversationIdentifier(identifier);
 
 			if (!normalizedIdentifier) {
 				return <Text size='xs'>—</Text>;
@@ -213,14 +209,13 @@ export const useConversationsColumns = (
 
 		const allColumns: ColumnDef<ConversationsModel>[] = [
 			{
-				id: 'conversationIdentifier',
-				header: t('list.columns.conversationIdentifier'),
+				id: 'identifier',
+				header: t('list.columns.identifier'),
 				size: 100,
 				accessorFn: (row) =>
-					normalizeConversationIdentifier(row.conversationIdentifier) ?? '',
+					normalizeConversationIdentifier(row.identifier) ?? '',
 				enableSorting: true,
-				cell: ({ row }) =>
-					renderConversationIdentifier(row.original.conversationIdentifier),
+				cell: ({ row }) => renderIdentifier(row.original.identifier),
 			},
 			{
 				id: 'contactName',

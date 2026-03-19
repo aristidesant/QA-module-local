@@ -22,7 +22,7 @@ import styles from './ConversationFilters.module.css';
 import { useTranslation } from 'react-i18next';
 
 export interface ConversationFiltersType {
-	conversationIdentifier?: string;
+	identifier?: string;
 	contactName?: string;
 	contactPhoneNumber?: string;
 	dispositionName?: string;
@@ -56,8 +56,9 @@ export default function ConversationFilters({
 		[t]
 	);
 
-	const [localConversationIdentifier, setLocalConversationIdentifier] =
-		useState(filters.conversationIdentifier || '');
+	const [localIdentifier, setLocalIdentifier] = useState(
+		filters.identifier || ''
+	);
 	const [localContactName, setLocalContactName] = useState(
 		filters.contactName || ''
 	);
@@ -68,10 +69,7 @@ export default function ConversationFilters({
 		filters.dispositionName || ''
 	);
 
-	const [debouncedConversationIdentifier] = useDebouncedValue(
-		localConversationIdentifier,
-		DEBOUNCE_MS
-	);
+	const [debouncedIdentifier] = useDebouncedValue(localIdentifier, DEBOUNCE_MS);
 	const [debouncedContactName] = useDebouncedValue(
 		localContactName,
 		DEBOUNCE_MS
@@ -88,21 +86,21 @@ export default function ConversationFilters({
 	useEffect(() => {
 		onFiltersChange({
 			...filters,
-			conversationIdentifier: debouncedConversationIdentifier || undefined,
+			identifier: debouncedIdentifier || undefined,
 			contactName: debouncedContactName || undefined,
 			contactPhoneNumber: debouncedPhoneNumber || undefined,
 			dispositionName: debouncedDisposition || undefined,
 		});
 	}, [
-		debouncedConversationIdentifier,
+		debouncedIdentifier,
 		debouncedContactName,
 		debouncedPhoneNumber,
 		debouncedDisposition,
 	]);
 
 	useEffect(() => {
-		setLocalConversationIdentifier(filters.conversationIdentifier || '');
-	}, [filters.conversationIdentifier]);
+		setLocalIdentifier(filters.identifier || '');
+	}, [filters.identifier]);
 
 	useEffect(() => {
 		setLocalContactName(filters.contactName || '');
@@ -129,7 +127,7 @@ export default function ConversationFilters({
 	};
 
 	const handleClearFilters = () => {
-		setLocalConversationIdentifier('');
+		setLocalIdentifier('');
 		setLocalContactName('');
 		setLocalPhoneNumber('');
 		setLocalDisposition('');
@@ -151,18 +149,16 @@ export default function ConversationFilters({
 
 				<div className={styles.controlsWrapper}>
 					<TextInput
-						placeholder={t('filters.conversationIdentifierPlaceholder')}
-						aria-label={t('filters.conversationIdentifier')}
-						value={localConversationIdentifier}
-						onChange={(event) =>
-							setLocalConversationIdentifier(event.currentTarget.value)
-						}
+						placeholder={t('filters.identifierPlaceholder')}
+						aria-label={t('filters.identifier')}
+						value={localIdentifier}
+						onChange={(event) => setLocalIdentifier(event.currentTarget.value)}
 						leftSection={<IconSearch size={16} className={styles.searchIcon} />}
 						rightSection={
-							localConversationIdentifier && (
+							localIdentifier && (
 								<CloseButton
 									size='sm'
-									onClick={() => setLocalConversationIdentifier('')}
+									onClick={() => setLocalIdentifier('')}
 									variant='subtle'
 									aria-label={t('actions.close', { ns: 'common' })}
 								/>

@@ -224,7 +224,7 @@ const CampaignContactListPage = () => {
 				) : null
 			}
 		>
-			<Tabs variant='outline' defaultValue='overview' keepMounted={false}>
+			<Tabs defaultValue='overview' keepMounted={false}>
 				<Tabs.List>
 					<Tabs.Tab value='overview' leftSection={<IconInfoCircle size={16} />}>
 						{t('tabs.overview')}
