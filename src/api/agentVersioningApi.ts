@@ -40,9 +40,14 @@ const agentVersioningApi = () => {
 			return response.data;
 		},
 
-		getBranchDetails: async (agentId: string, branchId: string) => {
+		getBranchDetails: async (
+			agentId: string,
+			branchId: string,
+			params?: { limit?: number; offset?: number }
+		) => {
 			const response = await axios.get<AgentBranchDetails>(
-				`${DEFAULT_API_URL}/agents/${agentId}/branches/${branchId}`
+				`${DEFAULT_API_URL}/agents/${agentId}/branches/${branchId}`,
+				{ params }
 			);
 
 			return response.data;
