@@ -18,6 +18,7 @@ interface WorkflowNodeDrawerProps {
 const WorkflowNodeDrawer = ({ nodeId }: WorkflowNodeDrawerProps) => {
 	const { t } = useTranslation([
 		'campaign.form.workflow',
+		'campaign.form.shared',
 		'campaign.form.agents',
 		'common',
 	]);
@@ -71,7 +72,7 @@ const WorkflowNodeDrawer = ({ nodeId }: WorkflowNodeDrawerProps) => {
 		<AppDrawer
 			opened={opened}
 			onClose={closeNodeDrawer}
-			title={t('form.settingsDrawer.title')}
+			title={t('form.settingsDrawer.title', { ns: 'campaign.form.shared' })}
 			keepMounted
 			size='lg'
 			zIndex={340}
