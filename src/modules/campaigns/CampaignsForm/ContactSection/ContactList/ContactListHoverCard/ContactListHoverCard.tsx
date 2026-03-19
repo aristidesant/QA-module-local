@@ -22,7 +22,11 @@ interface ContactListHoverCardProps {
 export const ContactListHoverCard = ({
 	contactGroup,
 }: ContactListHoverCardProps) => {
-	const { t, i18n } = useTranslation(['campaign.form.contacts', 'common']);
+	const { t, i18n } = useTranslation([
+		'campaign.form.contacts',
+		'campaign.contact-list',
+		'common',
+	]);
 	const statusConfig = getQueueStatusConfig(contactGroup.queueStatus);
 	const notSetLabel = t('form.contacts.details.stats.notSet');
 	const delayLabel = formatWaveDelaySeconds(

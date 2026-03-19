@@ -103,7 +103,11 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 	objectiveId,
 	campaignId,
 }) => {
-	const { t, i18n } = useTranslation(['campaign.form.contacts', 'common']);
+	const { t, i18n } = useTranslation([
+		'campaign.form.contacts',
+		'campaign.contact-list',
+		'common',
+	]);
 	const navigate = useNavigate();
 	const { canAccessModule, canPerformAction } = usePermissions();
 	const { setRightComponent, closeContactListDrawer } = useCampaignsStore();
