@@ -7,6 +7,7 @@
 		"branch": "Rama",
 		"currentVersion": "Versión actual",
 		"lastCommit": "Último commit",
+		"author": "Autor",
 		"liveTraffic": "{{percentage}}% de tráfico en vivo",
 		"notAvailable": "No disponible"
 	},

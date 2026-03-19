@@ -87,14 +87,24 @@ const useVersionHistoryColumns = ({
 				id: 'author',
 				header: t('history.columns.author'),
 				cell: ({ row }) => {
-					const commit = findCommitForVersion(row.original, versionCommits);
+					const { appUser, accessInfo } = row.original;
+
+					// Prefer the embedded app user (internal DB record), fall back to
+					// a versionCommits timestamp match, then ElevenLabs accessInfo.
+					const commit = !appUser
+						? findCommitForVersion(row.original, versionCommits)
+						: undefined;
+
 					const name =
+						appUser?.userName ||
+						appUser?.userEmail ||
 						commit?.userName ||
 						commit?.userEmail ||
-						row.original.accessInfo?.creatorName ||
+						accessInfo?.creatorName ||
 						t('history.unknownAuthor');
+
 					const email =
-						commit?.userEmail || row.original.accessInfo?.creatorEmail;
+						appUser?.userEmail || commit?.userEmail || accessInfo?.creatorEmail;
 
 					return (
 						<Stack gap={2}>

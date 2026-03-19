@@ -13,6 +13,12 @@ export interface AgentVersionAccessInfo {
 	role?: string;
 }
 
+export interface AgentVersionAppUser {
+	userId: number;
+	userName?: string;
+	userEmail: string;
+}
+
 export interface AgentBranchSummary {
 	id: string;
 	name: string;
@@ -36,6 +42,7 @@ export interface AgentVersionSummary {
 		inBranchParentId?: string;
 	};
 	accessInfo?: AgentVersionAccessInfo;
+	appUser?: AgentVersionAppUser;
 }
 
 export interface AgentVersionPaginatedList {
