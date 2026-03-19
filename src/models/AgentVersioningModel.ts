@@ -38,6 +38,13 @@ export interface AgentVersionSummary {
 	accessInfo?: AgentVersionAccessInfo;
 }
 
+export interface AgentVersionPaginatedList {
+	data: AgentVersionSummary[];
+	total: number;
+	limit: number;
+	offset: number;
+}
+
 export interface AgentBranchDetails extends AgentBranchSummary {
 	protectionStatus?: string;
 	accessInfo?: AgentVersionAccessInfo;
@@ -45,7 +52,7 @@ export interface AgentBranchDetails extends AgentBranchSummary {
 		id: string;
 		name: string;
 	};
-	mostRecentVersions: AgentVersionSummary[];
+	mostRecentVersions: AgentVersionPaginatedList;
 }
 
 export interface AgentBranchListResponse {

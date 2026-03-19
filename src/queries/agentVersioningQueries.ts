@@ -56,13 +56,14 @@ export const useGetAgentBranches = (
 
 export const useGetAgentBranchDetails = (
 	agentId: string,
-	branchId?: string
+	branchId?: string,
+	params?: { limit?: number; offset?: number }
 ) => {
 	return useQuery<AgentBranchDetails>({
-		queryKey: ['agent-versioning', agentId, 'branch', branchId],
+		queryKey: ['agent-versioning', agentId, 'branch', branchId, params],
 		queryFn: async () => {
 			const api = agentVersioningApi();
-			return api.getBranchDetails(agentId, branchId as string);
+			return api.getBranchDetails(agentId, branchId as string, params);
 		},
 		enabled: Boolean(agentId && branchId),
 	});
