@@ -65,22 +65,21 @@ const useVersionHistoryColumns = ({
 				id: 'version',
 				header: t('history.columns.version'),
 				cell: ({ row }) => (
-					<Group gap='xs' wrap='nowrap'>
-						<Badge variant='light' color='blue' radius='sm'>
-							{t('history.versionBadge', {
-								version: row.original.seqNoInBranch,
-							})}
-						</Badge>
-						<Stack gap={2}>
-							<Text size='sm' fw={500}>
-								{row.original.versionDescription ||
-									t('history.descriptionFallback')}
-							</Text>
-							<Text size='xs' c='dimmed'>
-								{row.original.id}
-							</Text>
-						</Stack>
-					</Group>
+					<Badge variant='light' color='blue' radius='sm'>
+						{t('history.versionBadge', {
+							version: row.original.seqNoInBranch,
+						})}
+					</Badge>
+				),
+				size: 80,
+			},
+			{
+				id: 'commit',
+				header: t('history.columns.commit'),
+				cell: ({ row }) => (
+					<Text size='xs' c='dimmed' style={{ fontFamily: 'monospace' }}>
+						{row.original.id}
+					</Text>
 				),
 			},
 			{
@@ -134,7 +133,7 @@ const useVersionHistoryColumns = ({
 			},
 			{
 				id: 'actions',
-				header: t('history.columns.actions'),
+				header: '',
 				cell: ({ row }) => (
 					<Group gap='xs' justify='flex-end' wrap='nowrap'>
 						<Tooltip label={t('history.actions.compare')} withArrow>
@@ -162,6 +161,7 @@ const useVersionHistoryColumns = ({
 					cellClassName: classes.actionsCell,
 					headerClassName: classes.actionsCell,
 				},
+				size: 80,
 			},
 		],
 		[activeVersionId, isReverting, onCompare, onRevert, t, versionCommits]
