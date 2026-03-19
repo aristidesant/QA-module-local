@@ -81,7 +81,11 @@
 						},
 						"prompt": {
 							"label": "Conversation goal",
-							"placeholder": "Describe the goal of this agent"
+							"placeholder": "Describe the goal of this agent",
+							"expand": "Expand editor",
+							"modalTitle": "Edit conversation goal",
+							"modalDescription": "Use the full editor to write and refine the conversation goal for this node.",
+							"modalHelper": "Changes are applied when you save."
 						},
 						"overridePrompt": {
 							"label": "Override prompt"

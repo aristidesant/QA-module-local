@@ -81,7 +81,11 @@
 						},
 						"prompt": {
 							"label": "Objetivo de conversacion",
-							"placeholder": "Describe el objetivo de este agente"
+							"placeholder": "Describe el objetivo de este agente",
+							"expand": "Expandir editor",
+							"modalTitle": "Editar objetivo de conversación",
+							"modalDescription": "Usa el editor completo para escribir y refinar el objetivo de conversación de este nodo.",
+							"modalHelper": "Los cambios se aplican al guardar."
 						},
 						"overridePrompt": {
 							"label": "Sobrescribir prompt"
