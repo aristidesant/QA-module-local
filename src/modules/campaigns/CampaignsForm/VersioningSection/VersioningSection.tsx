@@ -2,7 +2,12 @@
 import { Alert, Button, Group, Loader, Stack, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import { IconAlertCircle, IconHistory, IconRotate2 } from '@tabler/icons-react';
+import {
+	IconAlertCircle,
+	IconHistory,
+	IconRotate2,
+	IconUser,
+} from '@tabler/icons-react';
 import { isAxiosError } from 'axios';
 import { useTranslation } from 'react-i18next';
 import BaseTable from '~/components/BaseTable/BaseTable';
@@ -139,6 +144,18 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 	const latestCurrentVersion = summaryBranchDetails?.mostRecentVersions.data[0];
 	const latestRevertTarget = summaryBranchDetails?.mostRecentVersions.data[1];
 	const isVersioningEnabled = Boolean(agentRecord?.versioningEnabled);
+	const latestVersionAuthor = useMemo(() => {
+		if (!latestCurrentVersion) return null;
+		const { appUser, accessInfo } = latestCurrentVersion;
+		const name =
+			appUser?.userName ||
+			appUser?.userEmail ||
+			accessInfo?.creatorName ||
+			t('history.unknownAuthor');
+		const email = appUser?.userEmail || accessInfo?.creatorEmail;
+		return { name, email };
+	}, [latestCurrentVersion, t]);
+
 	const isBusy =
 		isLoadingCampaignAgents ||
 		(!requiresAgentSelection && isLoadingAgentRecord) ||
@@ -422,6 +439,22 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 									<Text size='xs' c='dimmed'>
 										{formatCommittedAt(mainBranch.lastCommittedAt)}
 									</Text>
+								</div>
+								<div className={classes.summaryCard}>
+									<Group gap='xs' mb={4}>
+										<IconUser size={16} />
+										<Text size='xs' c='dimmed'>
+											{t('summary.author')}
+										</Text>
+									</Group>
+									<Text size='sm' fw={600}>
+										{latestVersionAuthor?.name ?? '—'}
+									</Text>
+									{latestVersionAuthor?.email ? (
+										<Text size='xs' c='dimmed'>
+											{latestVersionAuthor.email}
+										</Text>
+									) : null}
 								</div>
 							</div>
 

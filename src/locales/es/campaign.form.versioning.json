@@ -7,6 +7,7 @@
 		"branch": "Rama",
 		"currentVersion": "Versión actual",
 		"lastCommit": "Último commit",
+		"author": "Autor",
 		"liveTraffic": "{{percentage}}% de tráfico en vivo",
 		"notAvailable": "No disponible"
 	},
@@ -17,12 +18,13 @@
 		"descriptionFallback": "Snapshot de versión",
 		"unknownAuthor": "Autor desconocido",
 		"itemLabel": "versiones",
-		"versionBadge": "Versión {{version}}",
+		"versionBadge": "v{{version}}",
 		"columns": {
-			"version": "Versión",
-			"author": "Autor",
-			"committedAt": "Commit",
-			"actions": "Acciones"
+			"version": "VERSIÓN",
+			"commit": "COMMIT",
+			"author": "AUTOR",
+			"committedAt": "COMMIT",
+			"actions": ""
 		},
 		"actions": {
 			"compare": "Comparar con la actual",

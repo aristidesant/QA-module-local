@@ -7,6 +7,7 @@
 		"branch": "Branch",
 		"currentVersion": "Current version",
 		"lastCommit": "Last commit",
+		"author": "Author",
 		"liveTraffic": "{{percentage}}% live traffic",
 		"notAvailable": "Not available"
 	},
@@ -17,12 +18,13 @@
 		"descriptionFallback": "Version snapshot",
 		"unknownAuthor": "Unknown author",
 		"itemLabel": "versions",
-		"versionBadge": "Version {{version}}",
+		"versionBadge": "v{{version}}",
 		"columns": {
-			"version": "Version",
-			"author": "Author",
-			"committedAt": "Committed",
-			"actions": "Actions"
+			"version": "VERSION",
+			"commit": "COMMIT",
+			"author": "AUTHOR",
+			"committedAt": "COMMITTED",
+			"actions": ""
 		},
 		"actions": {
 			"compare": "Compare with current",
