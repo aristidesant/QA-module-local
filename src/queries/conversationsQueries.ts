@@ -23,6 +23,7 @@ type ConversationsQueryParams = {
 	limit?: number;
 	offset?: number;
 	search?: string;
+	conversationIdentifier?: string;
 	contactName?: string;
 	contactPhoneNumber?: string;
 	dispositionName?: string;
@@ -55,6 +56,7 @@ export const useGetConversations = (params?: ConversationsQueryParams) => {
 		limit,
 		offset,
 		search,
+		conversationIdentifier,
 		contactName,
 		contactPhoneNumber,
 		dispositionName,
@@ -72,6 +74,7 @@ export const useGetConversations = (params?: ConversationsQueryParams) => {
 				limit,
 				offset,
 				search,
+				conversationIdentifier,
 				contactName,
 				contactPhoneNumber,
 				dispositionName,
@@ -89,6 +92,7 @@ export const useGetConversations = (params?: ConversationsQueryParams) => {
 					limit,
 					offset,
 					search,
+					conversationIdentifier,
 					contactName,
 					contactPhoneNumber,
 					dispositionName,

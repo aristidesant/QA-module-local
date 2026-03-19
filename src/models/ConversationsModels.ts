@@ -1,6 +1,7 @@
 // Lightweight model for table display
 export type ConversationTableModel = {
 	id: number;
+	conversationIdentifier?: string | null;
 	agentName: string;
 	agentVoiceLanguage: string;
 	contactName?: string;
@@ -34,7 +35,7 @@ export type ConversationDemoModel = {
 };
 export interface ConversationsModel {
 	id: number;
-	identifier: string;
+	conversationIdentifier?: string | null;
 	agentId: string;
 	agentName?: string;
 	campaignId: number;

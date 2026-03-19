@@ -22,12 +22,15 @@
 			"description": "Mostraremos las conversaciones tan pronto como estén disponibles."
 		},
 		"columns": {
+			"conversationIdentifier": "ID",
 			"contactName": "Nombre del contacto",
 			"phoneNumber": "Número de teléfono",
 			"outcome": "Resultado",
 			"status": "Estado",
 			"when": "Cuándo",
 			"duration": "Duración",
+			"copyId": "Copiar ID",
+			"copiedId": "Copiado",
 			"endedAt": "finalizó el {{date}} ({{timezone}})",
 			"ended": "finalizó"
 		},
@@ -41,7 +44,10 @@
 	},
 	"filters": {
 		"title": "Filtros",
-		"contactName": "Filtrar por nombre de contacto...",
+		"conversationIdentifier": "ID de conversación",
+		"conversationIdentifierPlaceholder": "Buscar por ID de conversación...",
+		"contactName": "Nombre del contacto",
+		"contactNamePlaceholder": "Filtrar por nombre de contacto...",
 		"advanced": "Avanzado",
 		"phoneNumber": "Número de teléfono",
 		"phoneNumberPlaceholder": "Filtrar por número de teléfono",

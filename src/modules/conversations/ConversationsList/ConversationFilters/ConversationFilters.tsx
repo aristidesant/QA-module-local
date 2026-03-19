@@ -2,21 +2,27 @@ import {
 	Badge,
 	Button,
 	Collapse,
+	CloseButton,
 	Group,
 	Select,
 	Stack,
 	Text,
 	TextInput,
-	CloseButton,
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
-import { IconUser, IconAdjustments, IconFilter } from '@tabler/icons-react';
-import { useState, useEffect, useMemo } from 'react';
+import {
+	IconAdjustments,
+	IconFilter,
+	IconSearch,
+	IconUser,
+} from '@tabler/icons-react';
+import { useEffect, useMemo, useState } from 'react';
 import { FilterContainer } from '~/components/FilterContainer';
 import styles from './ConversationFilters.module.css';
 import { useTranslation } from 'react-i18next';
 
 export interface ConversationFiltersType {
+	conversationIdentifier?: string;
 	contactName?: string;
 	contactPhoneNumber?: string;
 	dispositionName?: string;
@@ -50,7 +56,8 @@ export default function ConversationFilters({
 		[t]
 	);
 
-	// Local state for text inputs (to allow immediate UI updates)
+	const [localConversationIdentifier, setLocalConversationIdentifier] =
+		useState(filters.conversationIdentifier || '');
 	const [localContactName, setLocalContactName] = useState(
 		filters.contactName || ''
 	);
@@ -61,7 +68,10 @@ export default function ConversationFilters({
 		filters.dispositionName || ''
 	);
 
-	// Debounced values
+	const [debouncedConversationIdentifier] = useDebouncedValue(
+		localConversationIdentifier,
+		DEBOUNCE_MS
+	);
 	const [debouncedContactName] = useDebouncedValue(
 		localContactName,
 		DEBOUNCE_MS
@@ -75,29 +85,25 @@ export default function ConversationFilters({
 		DEBOUNCE_MS
 	);
 
-	// Sync debounced values to filters
 	useEffect(() => {
 		onFiltersChange({
 			...filters,
+			conversationIdentifier: debouncedConversationIdentifier || undefined,
 			contactName: debouncedContactName || undefined,
-		});
-	}, [debouncedContactName]);
-
-	useEffect(() => {
-		onFiltersChange({
-			...filters,
 			contactPhoneNumber: debouncedPhoneNumber || undefined,
-		});
-	}, [debouncedPhoneNumber]);
-
-	useEffect(() => {
-		onFiltersChange({
-			...filters,
 			dispositionName: debouncedDisposition || undefined,
 		});
-	}, [debouncedDisposition]);
+	}, [
+		debouncedConversationIdentifier,
+		debouncedContactName,
+		debouncedPhoneNumber,
+		debouncedDisposition,
+	]);
 
-	// Sync external filter changes to local state
+	useEffect(() => {
+		setLocalConversationIdentifier(filters.conversationIdentifier || '');
+	}, [filters.conversationIdentifier]);
+
 	useEffect(() => {
 		setLocalContactName(filters.contactName || '');
 	}, [filters.contactName]);
@@ -123,6 +129,7 @@ export default function ConversationFilters({
 	};
 
 	const handleClearFilters = () => {
+		setLocalConversationIdentifier('');
 		setLocalContactName('');
 		setLocalPhoneNumber('');
 		setLocalDisposition('');
@@ -144,16 +151,20 @@ export default function ConversationFilters({
 
 				<div className={styles.controlsWrapper}>
 					<TextInput
-						placeholder={t('filters.contactName')}
-						value={localContactName}
-						onChange={(event) => setLocalContactName(event.currentTarget.value)}
-						leftSection={<IconUser size={16} className={styles.searchIcon} />}
+						placeholder={t('filters.conversationIdentifierPlaceholder')}
+						aria-label={t('filters.conversationIdentifier')}
+						value={localConversationIdentifier}
+						onChange={(event) =>
+							setLocalConversationIdentifier(event.currentTarget.value)
+						}
+						leftSection={<IconSearch size={16} className={styles.searchIcon} />}
 						rightSection={
-							localContactName && (
+							localConversationIdentifier && (
 								<CloseButton
 									size='sm'
-									onClick={() => setLocalContactName('')}
+									onClick={() => setLocalConversationIdentifier('')}
 									variant='subtle'
+									aria-label={t('actions.close', { ns: 'common' })}
 								/>
 							)
 						}
@@ -178,6 +189,28 @@ export default function ConversationFilters({
 					<Stack gap='sm'>
 						<Group gap='sm' grow>
 							<TextInput
+								label={t('filters.contactName')}
+								placeholder={t('filters.contactNamePlaceholder')}
+								value={localContactName}
+								onChange={(event) =>
+									setLocalContactName(event.currentTarget.value)
+								}
+								leftSection={
+									<IconUser size={16} className={styles.searchIcon} />
+								}
+								rightSection={
+									localContactName && (
+										<CloseButton
+											size='sm'
+											onClick={() => setLocalContactName('')}
+											variant='subtle'
+											aria-label={t('actions.close', { ns: 'common' })}
+										/>
+									)
+								}
+								size='sm'
+							/>
+							<TextInput
 								label={t('filters.phoneNumber')}
 								placeholder={t('filters.phoneNumberPlaceholder')}
 								value={localPhoneNumber}
@@ -186,6 +219,9 @@ export default function ConversationFilters({
 								}
 								size='sm'
 							/>
+						</Group>
+
+						<Group gap='sm' grow>
 							<TextInput
 								label={t('filters.outcome')}
 								placeholder={t('filters.outcomePlaceholder')}
@@ -203,6 +239,7 @@ export default function ConversationFilters({
 								onChange={handleStatusChange}
 								clearable
 								size='sm'
+								comboboxProps={{ withinPortal: true }}
 							/>
 						</Group>
 

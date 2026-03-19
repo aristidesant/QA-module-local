@@ -300,6 +300,9 @@ function BaseTable<TData>({
 	const hasData = data && data.length > 0;
 	const displayMessage = emptyMessage || t('status.noData');
 	const shouldShowPagination = enablePagination && showPaginationControls;
+	const hasSizedColumns = columns.some(
+		(column) => typeof column.size === 'number'
+	);
 
 	const renderTableRow = (
 		row: Row<TData>,
@@ -376,6 +379,10 @@ function BaseTable<TData>({
 							]
 								.filter(Boolean)
 								.join(' ')}
+							style={{
+								width: cell.column.getSize(),
+								maxWidth: cell.column.getSize(),
+							}}
 						>
 							{flexRender(cell.column.columnDef.cell, cell.getContext())}
 						</Table.Td>
@@ -398,7 +405,12 @@ function BaseTable<TData>({
 	return (
 		<div className={`${styles.root} ${className ?? ''}`}>
 			<LoadingOverlay visible={isLoading} />
-			<Table className={styles.table} striped highlightOnHover>
+			<Table
+				className={styles.table}
+				striped
+				highlightOnHover
+				style={hasSizedColumns ? { tableLayout: 'fixed' } : undefined}
+			>
 				<Table.Thead className={styles.thead}>
 					{table.getHeaderGroups().map((headerGroup) => (
 						<Table.Tr key={headerGroup.id}>
@@ -432,6 +444,10 @@ function BaseTable<TData>({
 										.join(' ')}
 									data-sorted={header.column.getIsSorted() ? 'true' : undefined}
 									onClick={header.column.getToggleSortingHandler()}
+									style={{
+										width: header.column.getSize(),
+										maxWidth: header.column.getSize(),
+									}}
 								>
 									{header.isPlaceholder ? null : (
 										<div className={styles.headerContent}>
@@ -501,6 +517,10 @@ function BaseTable<TData>({
 											]
 												.filter(Boolean)
 												.join(' ')}
+											style={{
+												width: column.getSize(),
+												maxWidth: column.getSize(),
+											}}
 										>
 											<Skeleton height={20} />
 										</Table.Td>
