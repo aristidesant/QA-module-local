@@ -33,7 +33,11 @@ const useContactListColumns = ({
 	campaignId,
 	onNavigateToContactList,
 }: UseContactListColumnsParams): ColumnDef<ContactGroup>[] => {
-	const { t, i18n } = useTranslation(['campaign.form.contacts', 'common']);
+	const { t, i18n } = useTranslation([
+		'campaign.form.contacts',
+		'campaign.contact-list',
+		'common',
+	]);
 	const { user, targetClient } = useSessionStore();
 	const toggleMutation = useToggleContactGroupStatus();
 	const updateMutation = useUpdateContactGroup();
