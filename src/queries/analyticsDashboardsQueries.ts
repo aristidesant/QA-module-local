@@ -281,6 +281,9 @@ const normalizePreviewPayload = (
 			resultType: payload.dataConfig.metric.resultType,
 		},
 		...(payload.dataConfig.query ? { query: payload.dataConfig.query } : {}),
+		...(payload.dataConfig.runtimeFilters?.length
+			? { runtimeFilters: payload.dataConfig.runtimeFilters }
+			: {}),
 	},
 	...(payload.viewConfig ? { viewConfig: payload.viewConfig } : {}),
 	...(payload.timeRange ? { timeRange: payload.timeRange } : {}),

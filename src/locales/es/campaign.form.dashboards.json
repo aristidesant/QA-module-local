@@ -47,7 +47,7 @@
 		},
 		"groupBySuggestions": {
 			"conversationField": "Campo de conversación",
-			"dispositionField": "Campo de disposición",
+			"dispositionField": "Campo de resultado",
 			"attributeTypedField": "Columna tipada de atributo",
 			"attributeSemanticField": "Variable analítica"
 		},
@@ -79,6 +79,7 @@
 				"basicsDescription": "",
 				"metricTitle": "Configuración de métrica",
 				"filtersTitle": "Filtros predeterminados",
+				"runtimeFiltersTitle": "Filtros de ejecución",
 				"dataTitle": "Configuración de datos",
 				"dataDescription": "",
 				"viewTitle": "Configuración visual",
@@ -96,7 +97,8 @@
 				"breakdownDescription": "Estos widgets necesitan un campo para agrupar y dividir el resultado en categorías.",
 				"advancedTitle": "4. Ajustes opcionales",
 				"advancedDescription": "Mantén el flujo principal simple y abre esta sección solo cuando necesites más control.",
-				"filtersDescription": "Los filtros predeterminados se aplican automáticamente cada vez que se carga este widget."
+				"filtersDescription": "Los filtros predeterminados se aplican automáticamente cada vez que se carga este widget.",
+				"runtimeFiltersDescription": "Los filtros de ejecución se guardan con el widget y se aplican automáticamente en la vista previa y en el render."
 			},
 			"fields": {
 				"dashboardName": "Nombre del dashboard",
@@ -118,6 +120,9 @@
 				"defaultFilterKey": "Campo del filtro",
 				"defaultFilterType": "Tipo de valor",
 				"defaultFilterValue": "Valor del filtro",
+				"runtimeFilterField": "Campo de ejecución",
+				"runtimeFilterOperator": "Operador",
+				"runtimeFilterValue": "Valor",
 				"groupBy": "Campo para agrupar",
 				"groupByDescription": "",
 				"groupByDescriptionAttribute": "Usa un campo o una variable.",
@@ -135,7 +140,7 @@
 			"sourceTypeDescriptions": {
 				"CONVERSATION": "Usa campos de conversación como estado, fechas o duración.",
 				"ATTRIBUTE": "Usa atributos de campaña recolectados por el agente analítico.",
-				"DISPOSITION": "Usa resultados de disposición y campos de seguimiento."
+				"DISPOSITION": "Usa campos de resultado y campos de seguimiento."
 			},
 			"widgetTypeDescriptions": {
 				"KPI": "Muestra un solo valor que cambia con el rango seleccionado.",
@@ -160,6 +165,12 @@
 				"fieldName": "Selecciona un campo origen",
 				"defaultFilterKey": "ej. status",
 				"defaultFilterValue": "ej. active",
+				"runtimeFilterField": "ej. status",
+				"runtimeFilterOperator": "Selecciona un operador",
+				"runtimeFilterValue": "ej. DONE",
+				"runtimeFilterValues": "Agrega uno o más valores",
+				"runtimeFilterValueNumber": "ej. 42",
+				"runtimeFilterValueDisabled": "Selecciona primero un operador",
 				"viewColor": "#2563eb",
 				"viewValueFormat": "Selecciona un formato",
 				"groupBy": "ej. call_status",
@@ -213,6 +224,7 @@
 				"createDashboard": "Crear dashboard",
 				"saveDashboard": "Guardar dashboard",
 				"addFilter": "Agregar filtro",
+				"addRuntimeFilter": "Agregar filtro de ejecución",
 				"removeFilter": "Eliminar filtro",
 				"showAdvanced": "Mostrar avanzados",
 				"hideAdvanced": "Ocultar avanzados",
@@ -223,7 +235,7 @@
 				"sourceType": {
 					"CONVERSATION": "Conversación",
 					"ATTRIBUTE": "Atributo",
-					"DISPOSITION": "Disposición"
+					"DISPOSITION": "Resultado"
 				},
 				"aggregationType": {
 					"COUNT": "Conteo",
@@ -252,6 +264,18 @@
 					"boolean": "Booleano",
 					"null": "Nulo"
 				},
+				"runtimeFilterOperator": {
+					"eq": "Es igual",
+					"neq": "No es igual",
+					"in": "Está en la lista",
+					"not_in": "No está en la lista",
+					"gt": "Mayor que",
+					"gte": "Mayor o igual que",
+					"lt": "Menor que",
+					"lte": "Menor o igual que",
+					"is_null": "Está vacío",
+					"is_not_null": "No está vacío"
+				},
 				"valueFormat": {
 					"compact": "Compacto",
 					"standard": "Estándar"
@@ -269,6 +293,7 @@
 				"valueFieldRequired": "Selecciona un campo de valor del atributo.",
 				"attributeNotAvailable": "Las métricas de atributos no están disponibles para dashboards globales.",
 				"defaultFilterInvalid": "Revisa los filtros predeterminados. Cada fila necesita un campo y un valor tipado válido.",
+				"runtimeFilterInvalid": "Revisa los filtros de ejecución. Cada fila necesita un campo, un operador y un valor compatible.",
 				"groupByRequired": "Agrupar por es obligatorio para este tipo de widget.",
 				"metricMustSupportGroupBy": "La métrica seleccionada no soporta salida agrupada.",
 				"metricMustSupportTimeSeries": "La métrica seleccionada no soporta salida de serie temporal.",

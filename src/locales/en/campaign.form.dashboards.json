@@ -47,7 +47,7 @@
 		},
 		"groupBySuggestions": {
 			"conversationField": "Conversation field",
-			"dispositionField": "Disposition field",
+			"dispositionField": "Outcome field",
 			"attributeTypedField": "Typed attribute column",
 			"attributeSemanticField": "Analytics variable"
 		},
@@ -79,6 +79,7 @@
 				"basicsDescription": "",
 				"metricTitle": "Metric configuration",
 				"filtersTitle": "Default filters",
+				"runtimeFiltersTitle": "Runtime filters",
 				"dataTitle": "Data settings",
 				"dataDescription": "",
 				"viewTitle": "View settings",
@@ -96,7 +97,8 @@
 				"breakdownDescription": "These widgets need a grouping field to split the results into categories.",
 				"advancedTitle": "4. Optional settings",
 				"advancedDescription": "Keep the main flow simple and open this section only when you need finer control.",
-				"filtersDescription": "Default filters are applied automatically whenever this widget loads."
+				"filtersDescription": "Default filters are applied automatically whenever this widget loads.",
+				"runtimeFiltersDescription": "Runtime filters are saved with the widget and applied automatically in preview and render."
 			},
 			"fields": {
 				"dashboardName": "Dashboard name",
@@ -118,6 +120,9 @@
 				"defaultFilterKey": "Filter field",
 				"defaultFilterType": "Value type",
 				"defaultFilterValue": "Filter value",
+				"runtimeFilterField": "Runtime field",
+				"runtimeFilterOperator": "Operator",
+				"runtimeFilterValue": "Value",
 				"groupBy": "Group by field",
 				"groupByDescription": "",
 				"groupByDescriptionAttribute": "Use a field or variable key.",
@@ -135,7 +140,7 @@
 			"sourceTypeDescriptions": {
 				"CONVERSATION": "Use conversation-level fields such as status, dates, or duration.",
 				"ATTRIBUTE": "Use campaign attributes collected by the analytics agent.",
-				"DISPOSITION": "Use disposition outcomes and follow-up fields."
+				"DISPOSITION": "Use outcome fields and follow-up fields."
 			},
 			"widgetTypeDescriptions": {
 				"KPI": "Show a single value that updates with the selected range.",
@@ -160,6 +165,12 @@
 				"fieldName": "Select a source field",
 				"defaultFilterKey": "e.g. status",
 				"defaultFilterValue": "e.g. active",
+				"runtimeFilterField": "e.g. status",
+				"runtimeFilterOperator": "Select an operator",
+				"runtimeFilterValue": "e.g. DONE",
+				"runtimeFilterValues": "Add one or more values",
+				"runtimeFilterValueNumber": "e.g. 42",
+				"runtimeFilterValueDisabled": "Select an operator first",
 				"viewColor": "#2563eb",
 				"viewValueFormat": "Select a format",
 				"groupBy": "e.g. call_status",
@@ -213,6 +224,7 @@
 				"createDashboard": "Create dashboard",
 				"saveDashboard": "Save dashboard",
 				"addFilter": "Add filter",
+				"addRuntimeFilter": "Add runtime filter",
 				"removeFilter": "Remove filter",
 				"showAdvanced": "Show advanced",
 				"hideAdvanced": "Hide advanced",
@@ -223,7 +235,7 @@
 				"sourceType": {
 					"CONVERSATION": "Conversation",
 					"ATTRIBUTE": "Attribute",
-					"DISPOSITION": "Disposition"
+					"DISPOSITION": "Outcome"
 				},
 				"aggregationType": {
 					"COUNT": "Count",
@@ -252,6 +264,18 @@
 					"boolean": "Boolean",
 					"null": "Null"
 				},
+				"runtimeFilterOperator": {
+					"eq": "Equals",
+					"neq": "Does not equal",
+					"in": "Is in list",
+					"not_in": "Is not in list",
+					"gt": "Greater than",
+					"gte": "Greater than or equal",
+					"lt": "Less than",
+					"lte": "Less than or equal",
+					"is_null": "Is empty",
+					"is_not_null": "Is not empty"
+				},
 				"valueFormat": {
 					"compact": "Compact",
 					"standard": "Standard"
@@ -269,6 +293,7 @@
 				"valueFieldRequired": "Select an attribute value field.",
 				"attributeNotAvailable": "Attribute metrics are not available for global dashboards.",
 				"defaultFilterInvalid": "Review default filters. Each row needs a field and a valid typed value.",
+				"runtimeFilterInvalid": "Review runtime filters. Each row needs a field, operator, and a compatible value.",
 				"groupByRequired": "Group by is required for this widget type.",
 				"metricMustSupportGroupBy": "The selected metric does not support grouped output.",
 				"metricMustSupportTimeSeries": "The selected metric does not support time series output.",

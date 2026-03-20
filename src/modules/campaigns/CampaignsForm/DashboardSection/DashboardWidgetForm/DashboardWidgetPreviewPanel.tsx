@@ -2,6 +2,8 @@ import { Badge, Text } from '@mantine/core';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type {
+	MetricColumnsConfig,
+	WidgetMetricOption,
 	WidgetFormValues,
 	WidgetPreviewModel,
 } from '../DashboardSection.types';
@@ -20,6 +22,8 @@ type DashboardWidgetPreviewPanelProps = {
 		width: number;
 		height: number;
 	};
+	metricKeyOptions: WidgetMetricOption[];
+	parsedMetricColumns: MetricColumnsConfig;
 };
 
 const DashboardWidgetPreviewPanel = ({
@@ -28,6 +32,8 @@ const DashboardWidgetPreviewPanel = ({
 	fallbackPreview,
 	sizePreset,
 	placementLayout,
+	metricKeyOptions,
+	parsedMetricColumns,
 }: DashboardWidgetPreviewPanelProps) => {
 	const { t } = useTranslation(['campaign.form.dashboards', 'common']);
 
@@ -51,6 +57,8 @@ const DashboardWidgetPreviewPanel = ({
 				campaignId={campaignId}
 				values={values}
 				fallbackPreview={fallbackPreview}
+				metricKeyOptions={metricKeyOptions}
+				parsedMetricColumns={parsedMetricColumns}
 			/>
 			<Text size='xs' c='dimmed'>
 				{t('dashboardBuilder.form.layoutPlacement', {

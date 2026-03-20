@@ -25,6 +25,7 @@ import { getErrorMessage } from '~/utils/httpClient';
 import type {
 	WidgetFilterFormRow,
 	WidgetFormValues,
+	WidgetRuntimeFilterFormRow,
 } from '../DashboardSection.types';
 import {
 	type DashboardWidgetFormCompatibility,
@@ -36,8 +37,10 @@ import {
 	buildGuidedState,
 	buildMetricPayload,
 	buildQueryPayload,
+	buildRuntimeFilters,
 	buildViewConfigPayload,
 	createEmptyFilterRow,
+	createEmptyRuntimeFilterRow,
 	getAggregationOptions,
 	getDefaultWidgetSizePreset,
 	getFilterKeySuggestions,
@@ -46,20 +49,24 @@ import {
 	getMetricSourceOptions,
 	getResultTypeOptions,
 	getSizePresetOptions,
+	getRuntimeFilterFieldSuggestions,
 	getValueFieldOptions,
 	getViewValueFormatOptions,
 	getWidgetTypeOptions,
 	hasInvalidDefaultFilterRows,
+	hasInvalidRuntimeFilterRows,
 	inferFilterValueType,
 	isGroupByDerivedFromSourceField,
 	isMetricSelectionReady,
 	parseMetricColumnsConfig,
 	requiresValueField,
 	sanitizeWidgetDefaultFilters,
+	sanitizeWidgetRuntimeFilters,
 	getResolvedGroupBy,
 	getSourceFieldEntries,
 	normalizeWidgetFilterValueForType,
 	resetWidgetFilterRow,
+	resetRuntimeFilterRow,
 	supportsGroupedWidget,
 	supportsTimeSeriesWidget,
 	widgetFormValues,
@@ -303,6 +310,22 @@ const useDashboardWidgetFormController = ({
 		]
 	);
 
+	const runtimeFilterFieldSuggestions = useMemo(
+		() =>
+			getRuntimeFilterFieldSuggestions(
+				values,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
+		[
+			values,
+			metricKeyOptions,
+			parsedMetricColumns.conversation,
+			parsedMetricColumns.disposition,
+		]
+	);
+
 	const needsGroupedConfig = guidedState.compatibility.isGroupedWidget;
 	const needsTimeSeriesMetric = supportsTimeSeriesWidget(values.widgetType);
 	const needsValueField = guidedState.compatibility.requiresValueField;
@@ -365,20 +388,45 @@ const useDashboardWidgetFormController = ({
 		count += values.defaultFilters.filter(
 			(row) => (row.key ?? '').trim().length > 0
 		).length;
+		count += values.runtimeFilters.filter((row) => {
+			const hasField = (row.field ?? '').trim().length > 0;
+			const hasValue = Array.isArray(row.value)
+				? row.value.some((item) => item.trim().length > 0)
+				: typeof row.value === 'string'
+					? row.value.trim().length > 0
+					: false;
+
+			return hasField || Boolean(row.operator) || hasValue;
+		}).length;
 		return count;
 	}, [manualCompatibility, guidedState.compatibility, values]);
 
 	useEffect(() => {
 		const nextValues = widgetFormValues(widget);
+		const sanitizedValues = {
+			...nextValues,
+			defaultFilters: sanitizeWidgetDefaultFilters(
+				nextValues,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
+			runtimeFilters: sanitizeWidgetRuntimeFilters(
+				nextValues,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
+		};
 		const shouldApplyTitleSuggestion =
 			!Boolean(widget?.title?.trim()) && Boolean(guidedState.titleSuggestion);
 
 		if (shouldApplyTitleSuggestion) {
-			nextValues.title = guidedState.titleSuggestion;
+			sanitizedValues.title = guidedState.titleSuggestion;
 		}
 
-		form.setValues(nextValues);
-		form.resetDirty(nextValues);
+		form.setValues(sanitizedValues);
+		form.resetDirty(sanitizedValues);
 		setTitleTouched(Boolean(widget?.title?.trim()));
 		setTitleInputRevision((current) => current + 1);
 		setAdvancedOpened(false);
@@ -589,6 +637,23 @@ const useDashboardWidgetFormController = ({
 			return;
 		}
 
+		if (
+			hasInvalidRuntimeFilterRows(
+				submitValues.runtimeFilters,
+				submitValues,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			)
+		) {
+			notifications.show({
+				title: t('dashboardBuilder.notifications.errorTitle'),
+				message: t('dashboardBuilder.form.validation.runtimeFilterInvalid'),
+				color: 'red',
+			});
+			return;
+		}
+
 		const payload: CreateDashboardWidgetDto | UpdateDashboardWidgetDto = {
 			...normalizeWidgetLayout({
 				positionX: placementLayout.positionX,
@@ -607,6 +672,13 @@ const useDashboardWidgetFormController = ({
 					dispositionFields: parsedMetricColumns.disposition,
 				}),
 				query: buildQueryPayload(submitValues),
+				runtimeFilters: buildRuntimeFilters(
+					submitValues.runtimeFilters,
+					submitValues,
+					metricKeyOptions,
+					parsedMetricColumns.conversation,
+					parsedMetricColumns.disposition
+				),
 			},
 			viewConfig: buildViewConfigPayload(submitValues),
 		};
@@ -682,6 +754,7 @@ const useDashboardWidgetFormController = ({
 			supportsGroupBy: false,
 			supportsTimeSeries: true,
 			defaultFilters: [createEmptyFilterRow()],
+			runtimeFilters: [createEmptyRuntimeFilterRow()],
 		};
 
 		updateFormValues(nextValues);
@@ -715,6 +788,12 @@ const useDashboardWidgetFormController = ({
 				parsedMetricColumns.conversation,
 				parsedMetricColumns.disposition
 			),
+			runtimeFilters: sanitizeWidgetRuntimeFilters(
+				nextValues,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
 		});
 		setManualCompatibility((current) => ({ ...current, resultType: false }));
 	};
@@ -729,6 +808,12 @@ const useDashboardWidgetFormController = ({
 		updateFormValues({
 			...nextValues,
 			defaultFilters: sanitizeWidgetDefaultFilters(
+				nextValues,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
+			runtimeFilters: sanitizeWidgetRuntimeFilters(
 				nextValues,
 				metricKeyOptions,
 				parsedMetricColumns.conversation,
@@ -768,6 +853,12 @@ const useDashboardWidgetFormController = ({
 		updateFormValues({
 			...nextValues,
 			defaultFilters: sanitizeWidgetDefaultFilters(
+				nextValues,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
+			runtimeFilters: sanitizeWidgetRuntimeFilters(
 				nextValues,
 				metricKeyOptions,
 				parsedMetricColumns.conversation,
@@ -923,6 +1014,128 @@ const useDashboardWidgetFormController = ({
 		});
 	};
 
+	const handleRuntimeFilterFieldChange = (
+		index: number,
+		value: string | null
+	) => {
+		const nextField = typeof value === 'string' ? value.trim() || null : null;
+		const nextRuntimeFilters = values.runtimeFilters.map((row, rowIndex) => {
+			if (rowIndex !== index) {
+				return row;
+			}
+
+			if (!nextField) {
+				return resetRuntimeFilterRow(row);
+			}
+
+			return {
+				...row,
+				field: nextField,
+			};
+		});
+
+		const nextValues: WidgetFormValues = {
+			...form.getValues(),
+			runtimeFilters: nextRuntimeFilters,
+		};
+
+		updateFormValues({
+			runtimeFilters: sanitizeWidgetRuntimeFilters(
+				nextValues,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
+		});
+	};
+
+	const handleRuntimeFilterOperatorChange = (
+		index: number,
+		value: string | null
+	) => {
+		const nextOperator = value as WidgetRuntimeFilterFormRow['operator'] | null;
+		const nextRuntimeFilters = values.runtimeFilters.map((row, rowIndex) => {
+			if (rowIndex !== index) {
+				return row;
+			}
+
+			if (!nextOperator) {
+				return {
+					...row,
+					field: row.field,
+					operator: null,
+					value: null,
+				};
+			}
+
+			return {
+				...row,
+				operator: nextOperator,
+			};
+		});
+
+		const nextValues: WidgetFormValues = {
+			...form.getValues(),
+			runtimeFilters: nextRuntimeFilters,
+		};
+
+		updateFormValues({
+			runtimeFilters: sanitizeWidgetRuntimeFilters(
+				nextValues,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
+		});
+	};
+
+	const handleRuntimeFilterValueChange = (
+		index: number,
+		value: string | string[] | null
+	) => {
+		const nextRuntimeFilters = values.runtimeFilters.map((row, rowIndex) => {
+			if (rowIndex !== index) {
+				return row;
+			}
+
+			return {
+				...row,
+				value,
+			};
+		});
+
+		const nextValues: WidgetFormValues = {
+			...form.getValues(),
+			runtimeFilters: nextRuntimeFilters,
+		};
+
+		updateFormValues({
+			runtimeFilters: sanitizeWidgetRuntimeFilters(
+				nextValues,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
+		});
+	};
+
+	const addRuntimeFilterRow = () => {
+		form.insertListItem('runtimeFilters', createEmptyRuntimeFilterRow());
+	};
+
+	const removeRuntimeFilterRow = (index: number) => {
+		if (values.runtimeFilters.length === 1) {
+			form.replaceListItem(
+				'runtimeFilters',
+				index,
+				createEmptyRuntimeFilterRow()
+			);
+			return;
+		}
+
+		form.removeListItem('runtimeFilters', index);
+	};
+
 	const handleSizePresetChange = (nextPreset: string | null) => {
 		if (!nextPreset) {
 			return;
@@ -1016,6 +1229,7 @@ const useDashboardWidgetFormController = ({
 			guidedState,
 			groupBySuggestions,
 			filterKeySuggestions,
+			runtimeFilterFieldSuggestions,
 			placementLayout,
 			advancedSettingsCount,
 			handlers: {
@@ -1033,6 +1247,9 @@ const useDashboardWidgetFormController = ({
 				handleDefaultFilterKeyChange,
 				handleDefaultFilterTypeChange,
 				handleDefaultFilterValueChange,
+				handleRuntimeFilterFieldChange,
+				handleRuntimeFilterOperatorChange,
+				handleRuntimeFilterValueChange,
 				handleSizePresetChange,
 				addDefaultFilterRow: () => {
 					form.insertListItem('defaultFilters', createEmptyFilterRow());
@@ -1049,6 +1266,8 @@ const useDashboardWidgetFormController = ({
 
 					form.removeListItem('defaultFilters', index);
 				},
+				addRuntimeFilterRow,
+				removeRuntimeFilterRow,
 				handleEnabledChange,
 				handleSupportsGroupByChange,
 				handleSupportsTimeSeriesChange,
@@ -1070,11 +1289,17 @@ const useDashboardWidgetFormController = ({
 			fieldNameOptions,
 			filterKeySuggestions,
 			filterValueTypeOptions,
+			runtimeFilterFieldSuggestions,
 			guidedState,
 			handleAggregationTypeChange,
 			handleDefaultFilterKeyChange,
 			handleDefaultFilterTypeChange,
 			handleDefaultFilterValueChange,
+			handleRuntimeFilterFieldChange,
+			handleRuntimeFilterOperatorChange,
+			handleRuntimeFilterValueChange,
+			addRuntimeFilterRow,
+			removeRuntimeFilterRow,
 			handleEnabledChange,
 			handleFieldNameChange,
 			handleGroupByChange,

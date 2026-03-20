@@ -75,6 +75,7 @@ export type DashboardWidgetFormState = {
 	guidedState: WidgetGuidedState;
 	groupBySuggestions: string[];
 	filterKeySuggestions: string[];
+	runtimeFilterFieldSuggestions: string[];
 	placementLayout: {
 		positionX: number;
 		positionY: number;
@@ -103,9 +104,23 @@ export type DashboardWidgetFormState = {
 			index: number,
 			value: string | null
 		) => void;
+		handleRuntimeFilterFieldChange: (
+			index: number,
+			value: string | null
+		) => void;
+		handleRuntimeFilterOperatorChange: (
+			index: number,
+			value: string | null
+		) => void;
+		handleRuntimeFilterValueChange: (
+			index: number,
+			value: string | string[] | null
+		) => void;
 		handleSizePresetChange: (value: string | null) => void;
 		addDefaultFilterRow: () => void;
 		removeDefaultFilterRow: (index: number) => void;
+		addRuntimeFilterRow: () => void;
+		removeRuntimeFilterRow: (index: number) => void;
 		handleEnabledChange: (checked: boolean) => void;
 		handleSupportsGroupByChange: (checked: boolean) => void;
 		handleSupportsTimeSeriesChange: (checked: boolean) => void;

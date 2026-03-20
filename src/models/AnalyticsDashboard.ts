@@ -79,6 +79,7 @@ export interface DashboardWidgetMetricConfig {
 export interface DashboardWidgetDataConfig {
 	metric: DashboardWidgetMetricConfig;
 	query?: DashboardWidgetQueryConfig | null;
+	runtimeFilters?: RuntimeFilter[] | null;
 }
 
 export interface DashboardWidgetViewConfig {

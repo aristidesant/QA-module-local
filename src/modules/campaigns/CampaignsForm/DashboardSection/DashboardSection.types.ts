@@ -10,6 +10,7 @@ import type {
 	MetricResultType,
 	MetricSourceType,
 	MetricValueField,
+	RuntimeFilterOperator,
 	TimeSeriesPoint,
 } from '~/models/AnalyticsDashboard';
 import type { DashboardWidgetSizePreset } from '~/modules/campaigns/dashboardLayout';
@@ -41,6 +42,7 @@ export type WidgetFormValues = {
 	height: number;
 	enabled: boolean;
 	defaultFilters: WidgetFilterFormRow[];
+	runtimeFilters: WidgetRuntimeFilterFormRow[];
 };
 
 export type WidgetFilterValueType = 'string' | 'number' | 'boolean' | 'null';
@@ -50,6 +52,15 @@ export type WidgetFilterFormRow = {
 	key: string | null;
 	value: string | null;
 	valueType: WidgetFilterValueType | null;
+};
+
+export type WidgetRuntimeFilterValue = string | string[] | null;
+
+export type WidgetRuntimeFilterFormRow = {
+	id: string;
+	field: string | null;
+	operator: RuntimeFilterOperator | null;
+	value: WidgetRuntimeFilterValue;
 };
 
 export type WidgetTypeOption = {

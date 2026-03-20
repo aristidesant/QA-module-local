@@ -4,6 +4,7 @@ import {
 	Button,
 	Collapse,
 	Group,
+	NumberInput,
 	Select,
 	SimpleGrid,
 	Stack,
@@ -11,6 +12,7 @@ import {
 	Text,
 	TextInput,
 	Autocomplete,
+	TagsInput,
 } from '@mantine/core';
 import {
 	IconChevronDown,
@@ -20,6 +22,11 @@ import {
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import styles from './DashboardWidgetForm.module.css';
+import {
+	getRuntimeFilterOperatorOptions,
+	getRuntimeFilterValueMode,
+	inferRuntimeFilterFieldType,
+} from './DashboardWidgetForm.helpers';
 import {
 	useDashboardWidgetFormContext,
 	useDashboardWidgetFormState,
@@ -79,6 +86,137 @@ const DashboardWidgetAdvancedSection = () => {
 						event.currentTarget.value
 					)
 				}
+			/>
+		);
+	};
+
+	const renderRuntimeFilterValueInput = (index: number) => {
+		const row = state.values.runtimeFilters[index];
+
+		if (!row) {
+			return null;
+		}
+
+		const fieldType = inferRuntimeFilterFieldType(
+			state.values,
+			row.field ?? '',
+			state.metricKeyOptions,
+			state.parsedMetricColumns.conversation,
+			state.parsedMetricColumns.disposition
+		);
+
+		if (!row.operator) {
+			return (
+				<TextInput
+					key={form.key(`runtimeFilters.${index}.value`)}
+					label={t('dashboardBuilder.form.fields.runtimeFilterValue')}
+					placeholder={t(
+						'dashboardBuilder.form.placeholders.runtimeFilterValueDisabled'
+					)}
+					disabled
+					size='sm'
+					value=''
+				/>
+			);
+		}
+
+		const valueMode = getRuntimeFilterValueMode(row.operator, fieldType);
+
+		if (valueMode === 'none') {
+			return (
+				<TextInput
+					key={form.key(`runtimeFilters.${index}.value`)}
+					label={t('dashboardBuilder.form.fields.runtimeFilterValue')}
+					placeholder={t(
+						'dashboardBuilder.form.placeholders.runtimeFilterValueDisabled'
+					)}
+					disabled
+					size='sm'
+					value=''
+				/>
+			);
+		}
+
+		if (valueMode === 'multi') {
+			return (
+				<TagsInput
+					key={form.key(`runtimeFilters.${index}.value`)}
+					label={t('dashboardBuilder.form.fields.runtimeFilterValue')}
+					placeholder={t(
+						'dashboardBuilder.form.placeholders.runtimeFilterValues'
+					)}
+					value={Array.isArray(row.value) ? row.value : []}
+					onChange={(value) =>
+						state.handlers.handleRuntimeFilterValueChange(index, value)
+					}
+					size='sm'
+				/>
+			);
+		}
+
+		if (valueMode === 'number') {
+			return (
+				<NumberInput
+					key={form.key(`runtimeFilters.${index}.value`)}
+					label={t('dashboardBuilder.form.fields.runtimeFilterValue')}
+					placeholder={t(
+						'dashboardBuilder.form.placeholders.runtimeFilterValueNumber'
+					)}
+					value={typeof row.value === 'string' ? row.value : ''}
+					onChange={(value) =>
+						state.handlers.handleRuntimeFilterValueChange(
+							index,
+							typeof value === 'number'
+								? String(value)
+								: typeof value === 'string'
+									? value
+									: null
+						)
+					}
+					size='sm'
+				/>
+			);
+		}
+
+		if (valueMode === 'boolean') {
+			return (
+				<Select
+					key={form.key(`runtimeFilters.${index}.value`)}
+					label={t('dashboardBuilder.form.fields.runtimeFilterValue')}
+					data={[
+						{
+							value: 'true',
+							label: t('dashboardBuilder.form.options.boolean.true'),
+						},
+						{
+							value: 'false',
+							label: t('dashboardBuilder.form.options.boolean.false'),
+						},
+					]}
+					allowDeselect={false}
+					clearable
+					value={typeof row.value === 'string' ? row.value : null}
+					onChange={(value) =>
+						state.handlers.handleRuntimeFilterValueChange(index, value)
+					}
+					size='sm'
+				/>
+			);
+		}
+
+		return (
+			<TextInput
+				key={form.key(`runtimeFilters.${index}.value`)}
+				label={t('dashboardBuilder.form.fields.runtimeFilterValue')}
+				placeholder={t('dashboardBuilder.form.placeholders.runtimeFilterValue')}
+				value={typeof row.value === 'string' ? row.value : ''}
+				onChange={(event) =>
+					state.handlers.handleRuntimeFilterValueChange(
+						index,
+						event.currentTarget.value
+					)
+				}
+				size='sm'
 			/>
 		);
 	};
@@ -270,6 +408,104 @@ const DashboardWidgetAdvancedSection = () => {
 									</SimpleGrid>
 								</div>
 							))}
+						</Stack>
+					</div>
+
+					<div className={styles.advancedFilters}>
+						<Group justify='space-between' align='center'>
+							<Text fw={600} size='sm'>
+								{t('dashboardBuilder.form.sections.runtimeFiltersTitle')}
+							</Text>
+							<Button
+								type='button'
+								variant='subtle'
+								size='compact-sm'
+								leftSection={<IconPlus size={14} />}
+								onClick={state.handlers.addRuntimeFilterRow}
+							>
+								{t('dashboardBuilder.form.actions.addRuntimeFilter')}
+							</Button>
+						</Group>
+						<Text size='xs' c='dimmed'>
+							{t(
+								'dashboardBuilder.form.guidedSections.runtimeFiltersDescription'
+							)}
+						</Text>
+						<Stack gap='xs'>
+							{state.values.runtimeFilters.map((row, index) => {
+								const fieldType = inferRuntimeFilterFieldType(
+									state.values,
+									row.field ?? '',
+									state.metricKeyOptions,
+									state.parsedMetricColumns.conversation,
+									state.parsedMetricColumns.disposition
+								);
+								const operatorOptions = getRuntimeFilterOperatorOptions(
+									t,
+									fieldType
+								);
+
+								return (
+									<div key={row.id} className={styles.filterRow}>
+										<SimpleGrid cols={{ base: 1, sm: 4 }} spacing='xs'>
+											<Autocomplete
+												label={t(
+													'dashboardBuilder.form.fields.runtimeFilterField'
+												)}
+												data={state.runtimeFilterFieldSuggestions}
+												clearable
+												size='sm'
+												placeholder={t(
+													'dashboardBuilder.form.placeholders.runtimeFilterField'
+												)}
+												value={row.field ?? ''}
+												onChange={(value) =>
+													state.handlers.handleRuntimeFilterFieldChange(
+														index,
+														value
+													)
+												}
+											/>
+											<Select
+												label={t(
+													'dashboardBuilder.form.fields.runtimeFilterOperator'
+												)}
+												data={operatorOptions}
+												allowDeselect={false}
+												clearable
+												disabled={!row.field}
+												placeholder={t(
+													'dashboardBuilder.form.placeholders.runtimeFilterOperator'
+												)}
+												value={row.operator}
+												onChange={(value) =>
+													state.handlers.handleRuntimeFilterOperatorChange(
+														index,
+														value
+													)
+												}
+												size='sm'
+											/>
+											{renderRuntimeFilterValueInput(index)}
+											<Group justify='flex-end' align='end'>
+												<ActionIcon
+													type='button'
+													variant='subtle'
+													color='red'
+													onClick={() =>
+														state.handlers.removeRuntimeFilterRow(index)
+													}
+													aria-label={t(
+														'dashboardBuilder.form.actions.removeFilter'
+													)}
+												>
+													<IconTrash size={16} />
+												</ActionIcon>
+											</Group>
+										</SimpleGrid>
+									</div>
+								);
+							})}
 						</Stack>
 					</div>
 				</div>

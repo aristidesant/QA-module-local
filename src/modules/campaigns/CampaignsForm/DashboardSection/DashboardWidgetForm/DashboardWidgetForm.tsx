@@ -47,6 +47,8 @@ const DashboardWidgetForm = (props: DashboardWidgetFormProps) => {
 							fallbackPreview={deferredPreview}
 							sizePreset={state.sizePreset}
 							placementLayout={state.placementLayout}
+							metricKeyOptions={state.metricKeyOptions}
+							parsedMetricColumns={state.parsedMetricColumns}
 						/>
 					</div>
 
