@@ -54,8 +54,10 @@
 		"overview": "Resumen",
 		"conversations": "Conversaciones",
 		"contacts": "Contactos",
+		"queue": "Cola",
 		"conversationsDesc": "Todas las conversaciones asociadas con esta lista de contactos.",
-		"contactsDesc": "Todos los contactos asociados con esta lista."
+		"contactsDesc": "Todos los contactos asociados con esta lista.",
+		"queueDesc": "Ver y gestionar las tareas de llamadas salientes en la cola de procesamiento."
 	},
 	"overview": {
 		"title": "Información de la lista de contactos",
@@ -546,6 +548,84 @@
 		},
 		"tooltips": {
 			"reload": "Recargar"
+		}
+	},
+	"queue": {
+		"title": "Cola",
+		"description": "Gestiona las tareas de llamadas salientes y su orden de procesamiento.",
+		"emptyState": "No hay tareas en la cola",
+		"emptyStateDesc": "No hay tareas de llamadas salientes para esta lista de contactos.",
+		"wave": "Oleada {{number}}",
+		"waveTaskCount": "{{count}} tarea",
+		"waveTaskCount_other": "{{count}} tareas",
+		"columns": {
+			"order": "#",
+			"contactName": "Contacto",
+			"phone": "Teléfono",
+			"status": "Estado",
+			"wave": "Oleada",
+			"scheduledAt": "Programada",
+			"actions": "Acciones"
+		},
+		"status": {
+			"PENDING": "Pendiente",
+			"QUEUED": "En cola",
+			"IN_PROGRESS": "En progreso",
+			"COMPLETED": "Completada",
+			"FAILED": "Fallida",
+			"CANCELLED": "Cancelada",
+			"PAUSED": "Pausada",
+			"RETRY": "Reintento",
+			"SKIPPED": "Omitida"
+		},
+		"actions": {
+			"pause": "Pausar",
+			"resume": "Reanudar",
+			"cancel": "Cancelar",
+			"retry": "Reintentar",
+			"pauseSuccess": "Tarea pausada con éxito",
+			"resumeSuccess": "Tarea reanudada con éxito",
+			"cancelSuccess": "Tarea cancelada con éxito",
+			"retrySuccess": "Reintento de tarea programado con éxito",
+			"error": "Error al realizar la acción",
+			"confirmCancel": "¿Estás seguro de que quieres cancelar esta tarea? Esta acción no se puede deshacer.",
+			"confirmCancelTitle": "Cancelar Tarea"
+		},
+		"bulk": {
+			"selected": "{{count}} seleccionados",
+			"pause": "Pausar Seleccionados",
+			"resume": "Reanudar Seleccionados",
+			"cancel": "Cancelar Seleccionados",
+			"retry": "Reintentar Seleccionados",
+			"success": "Acción masiva completada: {{successful}} exitosos, {{failed}} fallidos",
+			"error": "Error en la acción masiva",
+			"confirmCancel": "¿Estás seguro de que quieres cancelar {{count}} tareas? Esta acción no se puede deshacer.",
+			"confirmCancelTitle": "Cancelar Tareas"
+		},
+		"reorder": {
+			"title": "Reordenar Tareas",
+			"description": "Ordena las tareas por uno o más campos para cambiar el orden de procesamiento.",
+			"addRule": "Agregar Regla de Ordenamiento",
+			"removeRule": "Eliminar",
+			"field": "Campo",
+			"direction": "Dirección",
+			"ascending": "Ascendente",
+			"descending": "Descendente",
+			"scope": "Alcance",
+			"allWaves": "Todas las Oleadas",
+			"specificWave": "Oleada {{number}}",
+			"apply": "Aplicar Reorden",
+			"success": "Tareas reordenadas con éxito ({{count}} actualizadas)",
+			"error": "Error al reordenar las tareas",
+			"noRules": "Agrega al menos una regla de ordenamiento para reordenar las tareas.",
+			"staticFields": "Campos de Contacto",
+			"dynamicFields": "Campos Personalizados"
+		},
+		"filters": {
+			"status": "Estado",
+			"allStatuses": "Todos los Estados",
+			"wave": "Oleada",
+			"allWaves": "Todas las Oleadas"
 		}
 	}
 }
