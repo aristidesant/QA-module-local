@@ -55,7 +55,6 @@ export const DASHBOARD_WIDGET_MIN_DIMENSIONS: Record<
 	PIE_CHART: { width: 2, height: 1 },
 	DONUT_CHART: { width: 2, height: 1 },
 	TABLE: { width: 2, height: 1 },
-	FUNNEL: { width: 2, height: 1 },
 };
 
 const DASHBOARD_WIDGET_AUTO_DIMENSIONS: Record<
@@ -68,7 +67,6 @@ const DASHBOARD_WIDGET_AUTO_DIMENSIONS: Record<
 	PIE_CHART: { width: 5, height: 3 },
 	DONUT_CHART: { width: 5, height: 3 },
 	TABLE: { width: 6, height: 4 },
-	FUNNEL: { width: 6, height: 3 },
 };
 
 const clamp = (value: number, min: number, max: number) =>

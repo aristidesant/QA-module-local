@@ -26,6 +26,7 @@
 		"next": "Next",
 		"finish": "Finish"
 	},
+	"optional": "Optional",
 	"status": {
 		"loading": "Loading...",
 		"success": "Success",

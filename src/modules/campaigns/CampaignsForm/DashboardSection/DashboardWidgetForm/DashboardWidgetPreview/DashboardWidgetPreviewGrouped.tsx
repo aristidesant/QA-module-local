@@ -15,7 +15,7 @@ import viewerStyles from '~/modules/campaigns/CampaignDashboardViewer/CampaignDa
 
 type DashboardWidgetPreviewGroupedProps = {
 	preview: Extract<WidgetPreviewModel, { kind: 'grouped' }>;
-	widgetType: Exclude<DashboardWidgetType, 'KPI' | 'LINE_CHART' | 'FUNNEL'>;
+	widgetType: Exclude<DashboardWidgetType, 'KPI' | 'LINE_CHART'>;
 	statusMessage?: string;
 	statusTone?: 'muted' | 'danger';
 };
@@ -76,6 +76,7 @@ const DashboardWidgetPreviewGrouped = ({
 					title={preview.title}
 					accentColor={preview.accentColor}
 					groupByLabel={preview.groupByLabel}
+					variant='builderPreview'
 				>
 					<div className={viewerStyles.tableWrapper}>
 						<Table striped highlightOnHover stickyHeader>
@@ -125,6 +126,7 @@ const DashboardWidgetPreviewGrouped = ({
 					title={preview.title}
 					accentColor={preview.accentColor}
 					groupByLabel={preview.groupByLabel}
+					variant='builderPreview'
 				>
 					<div className={pieLayoutClass}>
 						<div className={viewerStyles.pieChartWrapper}>
@@ -219,6 +221,7 @@ const DashboardWidgetPreviewGrouped = ({
 				title={preview.title}
 				accentColor={preview.accentColor}
 				groupByLabel={preview.groupByLabel}
+				variant='builderPreview'
 			>
 				<div className={viewerStyles.chartWrapper}>
 					<BarChart

@@ -1,40 +1,36 @@
-import { Modal } from '@mantine/core';
+import { Badge, Group, Modal, Text, ThemeIcon } from '@mantine/core';
+import { IconLayoutDashboard } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
+import CampaignDashboardViewer from '~/modules/campaigns/CampaignDashboardViewer';
 import DashboardDefinitionForm from '../DashboardDefinitionForm';
 import DashboardModalHeader from '../DashboardModalHeader';
 import {
 	useDashboardSectionModals,
 	useDashboardSectionSelection,
 } from '../DashboardSection.context';
-import DashboardWidgetForm from '../DashboardWidgetForm';
 
 const DashboardModals = () => {
 	const { t } = useTranslation(['campaign.form.dashboards', 'common']);
 	const {
 		campaignId,
-		attributeMetricKeys,
-		selectedDashboardId,
+		selectedDashboardId: _selectedDashboardId,
 		setSelectedDashboardId,
 	} = useDashboardSectionSelection();
 	const {
 		dashboardModalOpened,
-		widgetModalOpened,
 		editingDashboard,
-		editingWidget,
+		previewDashboard,
 		closeDashboardModal,
-		closeWidgetModal,
+		closePreviewDashboard,
 	} = useDashboardSectionModals();
 
 	const dashboardModalTitle = editingDashboard
 		? t('dashboardBuilder.drawer.editDashboardTitle')
 		: t('dashboardBuilder.drawer.createDashboardTitle');
 
-	const widgetModalTitle = editingWidget
-		? t('dashboardBuilder.drawer.editWidgetTitle')
-		: t('dashboardBuilder.drawer.createWidgetTitle');
-
 	return (
 		<>
+			{/* Create / edit dashboard definition */}
 			<Modal
 				opened={dashboardModalOpened}
 				onClose={closeDashboardModal}
@@ -63,29 +59,44 @@ const DashboardModals = () => {
 				/>
 			</Modal>
 
+			{/* Full-screen dashboard preview */}
 			<Modal
-				opened={widgetModalOpened}
-				onClose={closeWidgetModal}
-				centered
-				size='74rem'
-				radius='md'
-				padding='xl'
-				overlayProps={{ backgroundOpacity: 0.35 }}
+				opened={previewDashboard !== null}
+				onClose={closePreviewDashboard}
+				fullScreen
+				padding='md'
+				styles={{ body: { padding: 0 } }}
 				title={
-					<DashboardModalHeader
-						title={widgetModalTitle}
-						description={t('dashboardBuilder.drawer.widgetDescription')}
-					/>
+					previewDashboard && (
+						<Group gap='sm' align='center' wrap='nowrap'>
+							<ThemeIcon variant='light' color='blue' size='lg' radius='md'>
+								<IconLayoutDashboard size={18} />
+							</ThemeIcon>
+							<div>
+								<Group gap='xs' align='center'>
+									<Text fw={600} size='sm' c='gray.9' lh={1.25}>
+										{previewDashboard.name}
+									</Text>
+									{previewDashboard.isDefault && (
+										<Badge variant='light' color='blue' size='xs' radius='sm'>
+											{t('dashboardBuilder.defaultBadge')}
+										</Badge>
+									)}
+								</Group>
+								<Text size='xs' c='dimmed' lh={1.4}>
+									{previewDashboard.description ??
+										t('dashboardBuilder.actions.previewDashboard')}
+								</Text>
+							</div>
+						</Group>
+					)
 				}
 			>
-				{selectedDashboardId && (
-					<DashboardWidgetForm
+				{previewDashboard !== null && (
+					<CampaignDashboardViewer
 						campaignId={campaignId}
-						attributeMetricKeys={attributeMetricKeys}
-						dashboardId={selectedDashboardId}
-						widget={editingWidget}
-						onCancel={closeWidgetModal}
-						onSuccess={closeWidgetModal}
+						initialDashboardId={previewDashboard.id}
+						allowLayoutEditing={false}
 					/>
 				)}
 			</Modal>

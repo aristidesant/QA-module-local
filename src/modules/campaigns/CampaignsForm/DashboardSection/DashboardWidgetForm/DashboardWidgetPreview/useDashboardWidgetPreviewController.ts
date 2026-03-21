@@ -1,4 +1,3 @@
-import { useDebouncedValue } from '@mantine/hooks';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { DashboardWidgetType } from '~/models/AnalyticsDashboard';
@@ -60,13 +59,9 @@ const useDashboardWidgetPreviewController = ({
 		parsedMetricColumns.disposition,
 		values,
 	]);
-	const [debouncedPreviewRequestPayload] = useDebouncedValue(
-		previewRequestPayload,
-		400
-	);
 	const widgetPreviewQuery = useDashboardWidgetPreview(
-		debouncedPreviewRequestPayload,
-		Boolean(debouncedPreviewRequestPayload)
+		previewRequestPayload,
+		Boolean(previewRequestPayload)
 	);
 	const previewReady = useMemo(
 		() =>

@@ -75,7 +75,7 @@ export type DashboardWidgetFormState = {
 	guidedState: WidgetGuidedState;
 	groupBySuggestions: string[];
 	filterKeySuggestions: string[];
-	runtimeFilterFieldSuggestions: string[];
+	runtimeFilterFieldOptions: WidgetMetricOption[];
 	placementLayout: {
 		positionX: number;
 		positionY: number;
@@ -117,6 +117,7 @@ export type DashboardWidgetFormState = {
 			value: string | string[] | null
 		) => void;
 		handleSizePresetChange: (value: string | null) => void;
+		handleVisibilityScopeChange: (value: string | null) => void;
 		addDefaultFilterRow: () => void;
 		removeDefaultFilterRow: (index: number) => void;
 		addRuntimeFilterRow: () => void;

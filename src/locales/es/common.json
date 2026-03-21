@@ -26,6 +26,7 @@
 		"next": "Siguiente",
 		"finish": "Finalizar"
 	},
+	"optional": "Opcional",
 	"status": {
 		"loading": "Loading...",
 		"success": "Éxito",

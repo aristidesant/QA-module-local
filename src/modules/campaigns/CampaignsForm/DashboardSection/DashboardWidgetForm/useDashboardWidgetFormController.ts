@@ -35,9 +35,7 @@ import {
 	buildFieldOptions,
 	buildGroupBySuggestions,
 	buildGuidedState,
-	buildMetricPayload,
-	buildQueryPayload,
-	buildRuntimeFilters,
+	buildWidgetDataConfig,
 	buildViewConfigPayload,
 	createEmptyFilterRow,
 	createEmptyRuntimeFilterRow,
@@ -49,7 +47,7 @@ import {
 	getMetricSourceOptions,
 	getResultTypeOptions,
 	getSizePresetOptions,
-	getRuntimeFilterFieldSuggestions,
+	buildRuntimeFilterFieldOptions,
 	getValueFieldOptions,
 	getViewValueFormatOptions,
 	getWidgetTypeOptions,
@@ -310,16 +308,16 @@ const useDashboardWidgetFormController = ({
 		]
 	);
 
-	const runtimeFilterFieldSuggestions = useMemo(
+	const runtimeFilterFieldOptions = useMemo(
 		() =>
-			getRuntimeFilterFieldSuggestions(
+			buildRuntimeFilterFieldOptions(
 				values,
 				metricKeyOptions,
 				parsedMetricColumns.conversation,
 				parsedMetricColumns.disposition
 			),
 		[
-			values,
+			values.sourceType,
 			metricKeyOptions,
 			parsedMetricColumns.conversation,
 			parsedMetricColumns.disposition,
@@ -355,9 +353,6 @@ const useDashboardWidgetFormController = ({
 
 	const advancedSettingsCount = useMemo(() => {
 		let count = 0;
-		if (typeof values.viewColor === 'string' && values.viewColor.trim()) {
-			count += 1;
-		}
 		if (
 			typeof values.viewValueFormat === 'string' &&
 			values.viewValueFormat.trim()
@@ -385,9 +380,6 @@ const useDashboardWidgetFormController = ({
 		) {
 			count += 1;
 		}
-		count += values.defaultFilters.filter(
-			(row) => (row.key ?? '').trim().length > 0
-		).length;
 		count += values.runtimeFilters.filter((row) => {
 			const hasField = (row.field ?? '').trim().length > 0;
 			const hasValue = Array.isArray(row.value)
@@ -666,20 +658,12 @@ const useDashboardWidgetFormController = ({
 			title: submitValues.title.trim(),
 			description: submitValues.description.trim() || undefined,
 			enabled: submitValues.enabled,
-			dataConfig: {
-				metric: buildMetricPayload(submitValues, {
-					conversationFields: parsedMetricColumns.conversation,
-					dispositionFields: parsedMetricColumns.disposition,
-				}),
-				query: buildQueryPayload(submitValues),
-				runtimeFilters: buildRuntimeFilters(
-					submitValues.runtimeFilters,
-					submitValues,
-					metricKeyOptions,
-					parsedMetricColumns.conversation,
-					parsedMetricColumns.disposition
-				),
-			},
+			visibilityScope: submitValues.visibilityScope,
+			dataConfig: buildWidgetDataConfig(submitValues, {
+				metricKeyOptions,
+				conversationFields: parsedMetricColumns.conversation,
+				dispositionFields: parsedMetricColumns.disposition,
+			}),
 			viewConfig: buildViewConfigPayload(submitValues),
 		};
 
@@ -842,9 +826,7 @@ const useDashboardWidgetFormController = ({
 				selectedEntry.type.toLowerCase()
 			);
 
-		const aggregationOverridesToNumber =
-			nextValues.aggregationType === 'COUNT' ||
-			nextValues.aggregationType === 'DISTINCT_COUNT';
+		const aggregationOverridesToNumber = nextValues.aggregationType === 'COUNT';
 
 		if (isTimeField && aggregationOverridesToNumber) {
 			nextValues.aggregationType = 'MIN';
@@ -1163,6 +1145,17 @@ const useDashboardWidgetFormController = ({
 		form.setFieldValue('enabled', checked);
 	};
 
+	const handleVisibilityScopeChange = (value: string | null) => {
+		if (!value) {
+			return;
+		}
+
+		form.setFieldValue(
+			'visibilityScope',
+			value as WidgetFormValues['visibilityScope']
+		);
+	};
+
 	const handleSupportsGroupByChange = (checked: boolean) => {
 		setManualCompatibility((current) => ({
 			...current,
@@ -1229,7 +1222,7 @@ const useDashboardWidgetFormController = ({
 			guidedState,
 			groupBySuggestions,
 			filterKeySuggestions,
-			runtimeFilterFieldSuggestions,
+			runtimeFilterFieldOptions,
 			placementLayout,
 			advancedSettingsCount,
 			handlers: {
@@ -1269,6 +1262,7 @@ const useDashboardWidgetFormController = ({
 				addRuntimeFilterRow,
 				removeRuntimeFilterRow,
 				handleEnabledChange,
+				handleVisibilityScopeChange,
 				handleSupportsGroupByChange,
 				handleSupportsTimeSeriesChange,
 				handleViewLegendChange,
@@ -1289,7 +1283,7 @@ const useDashboardWidgetFormController = ({
 			fieldNameOptions,
 			filterKeySuggestions,
 			filterValueTypeOptions,
-			runtimeFilterFieldSuggestions,
+			runtimeFilterFieldOptions,
 			guidedState,
 			handleAggregationTypeChange,
 			handleDefaultFilterKeyChange,
@@ -1301,6 +1295,7 @@ const useDashboardWidgetFormController = ({
 			addRuntimeFilterRow,
 			removeRuntimeFilterRow,
 			handleEnabledChange,
+			handleVisibilityScopeChange,
 			handleFieldNameChange,
 			handleGroupByChange,
 			handleMetricKeyChange,

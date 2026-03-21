@@ -17,8 +17,6 @@ type DashboardSectionSelectionContextValue = {
 	attributeMetricKeys: string[];
 	selectedDashboardId: number | null;
 	setSelectedDashboardId: Dispatch<SetStateAction<number | null>>;
-	isPreviewOpen: boolean;
-	setIsPreviewOpen: Dispatch<SetStateAction<boolean>>;
 };
 
 type DashboardSectionModalContextValue = {
@@ -26,12 +24,15 @@ type DashboardSectionModalContextValue = {
 	widgetModalOpened: boolean;
 	editingDashboard: DashboardDefinition | null;
 	editingWidget: DashboardWidget | null;
+	previewDashboard: DashboardDefinition | null;
 	openCreateDashboard: () => void;
 	openEditDashboard: (dashboard: DashboardDefinition) => void;
 	closeDashboardModal: () => void;
 	openCreateWidget: () => void;
 	openEditWidget: (widget: DashboardWidget) => void;
 	closeWidgetModal: () => void;
+	openPreviewDashboard: (dashboard: DashboardDefinition) => void;
+	closePreviewDashboard: () => void;
 };
 
 const DashboardSectionSelectionContext =
@@ -50,7 +51,8 @@ export const DashboardSectionProvider = ({
 	const [selectedDashboardId, setSelectedDashboardId] = useState<number | null>(
 		null
 	);
-	const [isPreviewOpen, setIsPreviewOpen] = useState(true);
+	const [previewDashboard, setPreviewDashboard] =
+		useState<DashboardDefinition | null>(null);
 	const [dashboardModalOpened, setDashboardModalOpened] = useState(false);
 	const [widgetModalOpened, setWidgetModalOpened] = useState(false);
 	const [editingDashboard, setEditingDashboard] =
@@ -65,10 +67,8 @@ export const DashboardSectionProvider = ({
 			attributeMetricKeys,
 			selectedDashboardId,
 			setSelectedDashboardId,
-			isPreviewOpen,
-			setIsPreviewOpen,
 		}),
-		[attributeMetricKeys, campaignId, isPreviewOpen, selectedDashboardId]
+		[attributeMetricKeys, campaignId, selectedDashboardId]
 	);
 
 	const modalValue = useMemo(
@@ -77,6 +77,7 @@ export const DashboardSectionProvider = ({
 			widgetModalOpened,
 			editingDashboard,
 			editingWidget,
+			previewDashboard,
 			openCreateDashboard: () => {
 				setEditingDashboard(null);
 				setDashboardModalOpened(true);
@@ -101,8 +102,20 @@ export const DashboardSectionProvider = ({
 				setWidgetModalOpened(false);
 				setEditingWidget(null);
 			},
+			openPreviewDashboard: (dashboard: DashboardDefinition) => {
+				setPreviewDashboard(dashboard);
+			},
+			closePreviewDashboard: () => {
+				setPreviewDashboard(null);
+			},
 		}),
-		[dashboardModalOpened, editingDashboard, editingWidget, widgetModalOpened]
+		[
+			dashboardModalOpened,
+			editingDashboard,
+			editingWidget,
+			previewDashboard,
+			widgetModalOpened,
+		]
 	);
 
 	return (

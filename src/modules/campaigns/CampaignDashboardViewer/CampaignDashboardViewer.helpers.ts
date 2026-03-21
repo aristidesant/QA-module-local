@@ -4,6 +4,7 @@ import type {
 	DashboardPeriod,
 	DashboardRenderWidget,
 	DashboardWidget,
+	DashboardWidgetVisibilityScope,
 	GroupedMetricResult,
 	TimeSeriesMetricResult,
 } from '~/models/AnalyticsDashboard';
@@ -30,8 +31,51 @@ export const GRID_ROW_GAP = GRID_MARGIN[1];
 export const EMPTY_DASHBOARDS: DashboardDefinition[] = [];
 export const EMPTY_WIDGETS: DashboardWidget[] = [];
 
-export const getVisibleDashboardWidgets = (widgets: DashboardWidget[]) =>
-	widgets.filter((widget) => widget.enabled);
+export type DashboardWidgetVisibilityContext = {
+	activeClientId: number | null;
+	currentUserId: number | null;
+	canViewPrivateWidgets: boolean;
+};
+
+const normalizeWidgetVisibilityScope = (
+	value?: DashboardWidgetVisibilityScope | null
+): DashboardWidgetVisibilityScope => value ?? 'TEAM';
+
+export const canViewDashboardWidget = (
+	widget: DashboardWidget,
+	context?: DashboardWidgetVisibilityContext
+) => {
+	if (!widget.enabled) {
+		return false;
+	}
+
+	const scope = normalizeWidgetVisibilityScope(widget.visibilityScope);
+
+	if (!context) {
+		return true;
+	}
+
+	if (scope === 'GLOBAL') {
+		return true;
+	}
+
+	if (scope === 'TEAM') {
+		return (
+			context.activeClientId == null ||
+			widget.clientId === context.activeClientId
+		);
+	}
+
+	return (
+		context.canViewPrivateWidgets ||
+		(context.currentUserId != null && widget.userId === context.currentUserId)
+	);
+};
+
+export const getVisibleDashboardWidgets = (
+	widgets: DashboardWidget[],
+	context?: DashboardWidgetVisibilityContext
+) => widgets.filter((widget) => canViewDashboardWidget(widget, context));
 
 export const formatMetricValue = (
 	value: string | number | boolean | null | undefined

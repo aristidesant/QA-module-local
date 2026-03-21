@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { ActionIcon, Group, Stack, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Badge, Group, Stack, Text, Tooltip } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import {
+	IconEye,
 	IconLayoutDashboard,
 	IconPencil,
 	IconPlus,
@@ -27,7 +28,7 @@ const DashboardListPanel = () => {
 	const { t } = useTranslation(['campaign.form.dashboards', 'common']);
 	const { campaignId, selectedDashboardId, setSelectedDashboardId } =
 		useDashboardSectionSelection();
-	const { openCreateDashboard, openEditDashboard } =
+	const { openCreateDashboard, openEditDashboard, openPreviewDashboard } =
 		useDashboardSectionModals();
 	const { data: dashboards = [], isLoading } = useDashboards({ campaignId });
 	const deleteDashboard = useDeleteDashboard();
@@ -112,13 +113,23 @@ const DashboardListPanel = () => {
 				},
 			},
 			{
-				id: 'description',
-				header: t('dashboardBuilder.dashboard.description'),
-				cell: ({ row }) => (
-					<Text size='sm' c='dimmed' lineClamp={2}>
-						{row.original.description || t('dashboardBuilder.noDescription')}
-					</Text>
-				),
+				id: 'scope',
+				header: t('dashboardBuilder.dashboard.scope'),
+				cell: ({ row }) => {
+					const isGlobal = row.original.campaignId === null;
+					return (
+						<Badge
+							variant='light'
+							color={isGlobal ? 'blue' : 'violet'}
+							size='sm'
+							radius='sm'
+						>
+							{isGlobal
+								? t('dashboardBuilder.dashboard.scopeGlobal')
+								: t('dashboardBuilder.dashboard.scopeCampaign')}
+						</Badge>
+					);
+				},
 			},
 			{
 				id: 'actions',
@@ -129,6 +140,19 @@ const DashboardListPanel = () => {
 				},
 				cell: ({ row }) => (
 					<Group gap={4} justify='flex-end' wrap='nowrap'>
+						<Tooltip label={t('dashboardBuilder.actions.previewDashboard')}>
+							<ActionIcon
+								variant='subtle'
+								size='sm'
+								color='gray'
+								onClick={(event) => {
+									event.stopPropagation();
+									openPreviewDashboard(row.original);
+								}}
+							>
+								<IconEye size={14} />
+							</ActionIcon>
+						</Tooltip>
 						<Tooltip label={t('dashboardBuilder.actions.editDashboard')}>
 							<ActionIcon
 								variant='subtle'
@@ -159,7 +183,7 @@ const DashboardListPanel = () => {
 				),
 			},
 		],
-		[handleDeleteDashboard, openEditDashboard, t]
+		[handleDeleteDashboard, openEditDashboard, openPreviewDashboard, t]
 	);
 
 	const getRowClassName = useCallback(

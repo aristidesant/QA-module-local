@@ -7,10 +7,14 @@ import type {
 	DashboardWidgetDataConfig,
 	DashboardWidgetDefaultFilter,
 	DashboardWidgetFilterValue,
+	DashboardWidgetJoinConfig,
+	DashboardWidgetJoinRelation,
+	DashboardWidgetJoinType,
 	DashboardWidgetMetricConfig,
 	DashboardWidgetPreviewResponse,
 	DashboardWidgetQueryConfig,
 	DashboardWidgetType,
+	DashboardWidgetVisibilityScope,
 	DashboardWidgetViewConfig,
 	MetricAggregationType,
 	MetricResultType,
@@ -102,6 +106,17 @@ const ATTRIBUTE_RUNTIME_FILTER_FIELDS = [
 	'createdAt',
 ];
 
+const ATTRIBUTE_RUNTIME_FILTER_FIELD_OPTIONS: WidgetMetricOption[] = [
+	...ATTRIBUTE_RUNTIME_FILTER_FIELDS,
+].map((value) => ({
+	value,
+	label: value
+		.replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+		.replace(/[_-]+/g, ' ')
+		.trim()
+		.replace(/\b\w/g, (character) => character.toUpperCase()),
+}));
+
 const FILTER_FIELD_ALIASES: Record<MetricSourceType, Record<string, string>> = {
 	CONVERSATION: {
 		agent_id: 'agentId',
@@ -161,11 +176,69 @@ const DEFAULT_SIZE_PRESET_BY_WIDGET: Record<
 	PIE_CHART: 'MEDIUM',
 	DONUT_CHART: 'MEDIUM',
 	TABLE: 'FULL',
-	FUNNEL: 'LARGE',
 };
 
 const trimText = (value: string | null | undefined) =>
 	typeof value === 'string' ? value.trim() : '';
+
+const SUPPORTED_JOIN_RELATIONS = new Set<DashboardWidgetJoinRelation>([
+	'campaign',
+]);
+
+const SUPPORTED_JOIN_TYPES = new Set<DashboardWidgetJoinType>([
+	'inner',
+	'left',
+]);
+
+const isSupportedJoinRelation = (
+	value: unknown
+): value is DashboardWidgetJoinRelation =>
+	typeof value === 'string' &&
+	SUPPORTED_JOIN_RELATIONS.has(value as DashboardWidgetJoinRelation);
+
+const isSupportedJoinType = (
+	value: unknown
+): value is DashboardWidgetJoinType =>
+	typeof value === 'string' &&
+	SUPPORTED_JOIN_TYPES.has(value as DashboardWidgetJoinType);
+
+const normalizeMetricColumnJoin = (
+	value: unknown
+): DashboardWidgetJoinConfig | null => {
+	if (!value || typeof value !== 'object') {
+		return null;
+	}
+
+	const record = value as Record<string, unknown>;
+
+	if (
+		!isSupportedJoinRelation(record.relation) ||
+		!isSupportedJoinType(record.type)
+	) {
+		return null;
+	}
+
+	return {
+		relation: record.relation,
+		type: record.type,
+	};
+};
+
+const normalizeMetricColumnOptions = (value: unknown): string[] | null => {
+	if (!Array.isArray(value)) {
+		return null;
+	}
+
+	const normalizedOptions = [
+		...new Set(
+			value
+				.map((item) => (typeof item === 'string' ? item.trim() : ''))
+				.filter((item) => item.length > 0)
+		),
+	];
+
+	return normalizedOptions.length ? normalizedOptions : null;
+};
 
 export const resetWidgetFilterRow = (
 	row: WidgetFilterFormRow
@@ -528,10 +601,7 @@ export const inferResultType = (
 	conversationFields: MetricColumnConfigEntry[],
 	dispositionFields: MetricColumnConfigEntry[]
 ): MetricResultType => {
-	if (
-		values.aggregationType === 'COUNT' ||
-		values.aggregationType === 'DISTINCT_COUNT'
-	) {
+	if (values.aggregationType === 'COUNT') {
 		return 'NUMBER';
 	}
 
@@ -744,6 +814,45 @@ export const requiresValueField = (
 	aggregationType: MetricAggregationType
 ) => sourceType === 'ATTRIBUTE' && aggregationType !== 'COUNT';
 
+const normalizeMetricColumnEntry = (
+	entry: unknown
+): MetricColumnConfigEntry | null => {
+	if (!entry || typeof entry !== 'object') {
+		return null;
+	}
+
+	const record = entry as Record<string, unknown>;
+	const label = record.label;
+	const value = record.value;
+	const type = record.type;
+
+	if (
+		typeof label !== 'string' ||
+		typeof value !== 'string' ||
+		typeof type !== 'string'
+	) {
+		return null;
+	}
+
+	const normalizedEntry: MetricColumnConfigEntry = {
+		label,
+		value,
+		type,
+	};
+	const join = normalizeMetricColumnJoin(record.join);
+	const options = normalizeMetricColumnOptions(record.options);
+
+	if (join) {
+		normalizedEntry.join = join;
+	}
+
+	if (options) {
+		normalizedEntry.options = options;
+	}
+
+	return normalizedEntry;
+};
+
 export const parseMetricColumnsConfig = (
 	configValue?: string | null
 ): MetricColumnsConfig => {
@@ -757,10 +866,14 @@ export const parseMetricColumnsConfig = (
 	try {
 		const parsed = JSON.parse(configValue) as Record<string, unknown>;
 		const disposition = Array.isArray(parsed.disposition)
-			? (parsed.disposition as MetricColumnConfigEntry[])
+			? parsed.disposition
+					.map(normalizeMetricColumnEntry)
+					.filter((entry): entry is MetricColumnConfigEntry => entry !== null)
 			: DISPOSITION_FIELDS_FALLBACK;
 		const conversation = Array.isArray(parsed.conversation)
-			? (parsed.conversation as MetricColumnConfigEntry[])
+			? parsed.conversation
+					.map(normalizeMetricColumnEntry)
+					.filter((entry): entry is MetricColumnConfigEntry => entry !== null)
 			: CONVERSATION_FIELDS_FALLBACK;
 
 		return {
@@ -810,7 +923,7 @@ export const getMetricSourceOptions = (
 	}>;
 
 export const getAggregationOptions = (t: TFunction) =>
-	['COUNT', 'SUM', 'AVG', 'MIN', 'MAX', 'DISTINCT_COUNT'].map((value) => ({
+	['COUNT', 'SUM', 'AVG', 'MIN', 'MAX'].map((value) => ({
 		value,
 		label: t(`dashboardBuilder.form.options.aggregationType.${value}`),
 	}));
@@ -900,12 +1013,6 @@ export const getWidgetTypeOptions = (t: TFunction): WidgetTypeOption[] => [
 		label: t('dashboardBuilder.widgetTypes.TABLE'),
 		description: t('dashboardBuilder.form.widgetTypeDescriptions.TABLE'),
 	},
-	{
-		value: 'FUNNEL',
-		label: `${t('dashboardBuilder.widgetTypes.FUNNEL')} · ${t('dashboardBuilder.form.comingSoon')}`,
-		description: t('dashboardBuilder.form.widgetTypeDescriptions.FUNNEL'),
-		disabled: true,
-	},
 ];
 
 export const getSizePresetOptions = (
@@ -917,6 +1024,28 @@ export const getSizePresetOptions = (
 		label: t(`dashboardBuilder.form.sizePresets.${value}`),
 		disabled: value === 'CUSTOM' && currentPreset !== 'CUSTOM',
 	}));
+
+export const getVisibilityScopeOptions = (t: TFunction) =>
+	(['GLOBAL', 'TEAM', 'PRIVATE'] as const).map((value) => ({
+		value,
+		label: t(`dashboardBuilder.form.options.visibilityScope.${value}.label`),
+		description: t(
+			`dashboardBuilder.form.options.visibilityScope.${value}.description`
+		),
+	})) satisfies Array<{
+		value: DashboardWidgetVisibilityScope;
+		label: string;
+		description: string;
+	}>;
+
+export const getVisibilityScopeLabel = (
+	t: TFunction,
+	value?: DashboardWidgetVisibilityScope | null
+) => {
+	const scope = value ?? 'TEAM';
+
+	return t(`dashboardBuilder.form.options.visibilityScope.${scope}.label`);
+};
 
 export const buildFieldOptions = (entries: MetricColumnConfigEntry[]) =>
 	entries.map((entry) => ({
@@ -1061,6 +1190,32 @@ export const getRuntimeFilterFieldSuggestions = (
 	).map((entry) => entry.value);
 };
 
+export const buildRuntimeFilterFieldOptions = (
+	values: WidgetFormValues,
+	metricKeyOptions: WidgetMetricOption[],
+	conversationFields: MetricColumnConfigEntry[],
+	dispositionFields: MetricColumnConfigEntry[]
+) => {
+	if (values.sourceType === 'ATTRIBUTE') {
+		return [
+			...new Map(
+				[...ATTRIBUTE_RUNTIME_FILTER_FIELD_OPTIONS, ...metricKeyOptions].map(
+					(option) => [option.value, option] as const
+				)
+			).values(),
+		];
+	}
+
+	return getSourceFieldEntries(
+		values.sourceType,
+		conversationFields,
+		dispositionFields
+	).map((entry) => ({
+		value: entry.value,
+		label: entry.label,
+	}));
+};
+
 export const inferRuntimeFilterFieldType = (
 	values: WidgetFormValues,
 	filterKey: string,
@@ -1082,6 +1237,47 @@ export const inferRuntimeFilterFieldType = (
 		dispositionFields
 	);
 };
+
+export const getRuntimeFilterFieldEntry = (
+	values: WidgetFormValues,
+	filterKey: string,
+	metricKeyOptions: WidgetMetricOption[],
+	conversationFields: MetricColumnConfigEntry[],
+	dispositionFields: MetricColumnConfigEntry[]
+) => {
+	const normalizedKey = normalizeFilterKey(
+		values.sourceType,
+		filterKey,
+		metricKeyOptions
+	);
+
+	if (values.sourceType === 'ATTRIBUTE') {
+		return null;
+	}
+
+	return (
+		getSourceFieldEntries(
+			values.sourceType,
+			conversationFields,
+			dispositionFields
+		).find((entry) => entry.value === normalizedKey) ?? null
+	);
+};
+
+export const getRuntimeFilterFieldOptions = (
+	values: WidgetFormValues,
+	filterKey: string,
+	metricKeyOptions: WidgetMetricOption[],
+	conversationFields: MetricColumnConfigEntry[],
+	dispositionFields: MetricColumnConfigEntry[]
+) =>
+	getRuntimeFilterFieldEntry(
+		values,
+		filterKey,
+		metricKeyOptions,
+		conversationFields,
+		dispositionFields
+	)?.options ?? null;
 
 export const getRuntimeFilterValueMode = (
 	operator: RuntimeFilterOperator | null,
@@ -1112,8 +1308,11 @@ export const getRuntimeFilterValueMode = (
 
 const normalizeRuntimeFilterValue = (
 	value: WidgetRuntimeFilterValue,
-	valueMode: ReturnType<typeof getRuntimeFilterValueMode>
+	valueMode: ReturnType<typeof getRuntimeFilterValueMode>,
+	options: string[] | null = null
 ): WidgetRuntimeFilterValue => {
+	const allowedOptions = options?.length ? new Set(options) : null;
+
 	if (valueMode === 'none') {
 		return null;
 	}
@@ -1125,24 +1324,55 @@ const normalizeRuntimeFilterValue = (
 
 		if (typeof value === 'string') {
 			const trimmedValue = value.trim();
-			return trimmedValue ? [trimmedValue] : [];
+			if (!trimmedValue) {
+				return [];
+			}
+
+			if (allowedOptions && !allowedOptions.has(trimmedValue)) {
+				return [];
+			}
+
+			return [trimmedValue];
 		}
 
 		return [];
 	}
 
 	if (Array.isArray(value)) {
-		return value[0] ?? null;
+		const firstValue = value[0]?.trim() ?? '';
+
+		if (!firstValue) {
+			return null;
+		}
+
+		if (allowedOptions && !allowedOptions.has(firstValue)) {
+			return null;
+		}
+
+		return firstValue;
 	}
 
-	return typeof value === 'string' ? value : null;
+	const normalizedValue = typeof value === 'string' ? value.trim() : '';
+
+	if (!normalizedValue) {
+		return null;
+	}
+
+	if (allowedOptions && !allowedOptions.has(normalizedValue)) {
+		return null;
+	}
+
+	return normalizedValue;
 };
 
 const parseRuntimeFilterValue = (
 	value: WidgetRuntimeFilterValue,
 	valueMode: ReturnType<typeof getRuntimeFilterValueMode>,
-	fieldType: RuntimeFilterFieldType | null
+	fieldType: RuntimeFilterFieldType | null,
+	options: string[] | null = null
 ): RuntimeFilter['value'] | undefined => {
+	const allowedOptions = options?.length ? new Set(options) : null;
+
 	if (valueMode === 'none') {
 		return undefined;
 	}
@@ -1157,6 +1387,14 @@ const parseRuntimeFilterValue = (
 
 		if (!normalizedValues.length) {
 			return undefined;
+		}
+
+		if (allowedOptions) {
+			if (normalizedValues.some((item) => !allowedOptions.has(item))) {
+				return undefined;
+			}
+
+			return normalizedValues;
 		}
 
 		if (fieldType === RUNTIME_FILTER_FIELD_TYPES.number) {
@@ -1200,6 +1438,10 @@ const parseRuntimeFilterValue = (
 
 	if (!normalizedValue) {
 		return undefined;
+	}
+
+	if (allowedOptions) {
+		return allowedOptions.has(normalizedValue) ? normalizedValue : undefined;
 	}
 
 	if (fieldType === RUNTIME_FILTER_FIELD_TYPES.number) {
@@ -1277,6 +1519,13 @@ export const sanitizeWidgetRuntimeFilters = (
 			conversationFields,
 			dispositionFields
 		);
+		const fieldOptions = getRuntimeFilterFieldOptions(
+			nextValues,
+			normalizedField,
+			metricKeyOptions,
+			conversationFields,
+			dispositionFields
+		);
 		const allowedOperators = getRuntimeFilterAllowedOperators(fieldType);
 		const nextOperator =
 			row.operator && allowedOperators.includes(row.operator)
@@ -1298,7 +1547,7 @@ export const sanitizeWidgetRuntimeFilters = (
 			...row,
 			field: normalizedField,
 			operator: nextOperator,
-			value: normalizeRuntimeFilterValue(row.value, valueMode),
+			value: normalizeRuntimeFilterValue(row.value, valueMode, fieldOptions),
 		};
 	});
 };
@@ -1341,6 +1590,13 @@ export const hasInvalidRuntimeFilterRows = (
 			conversationFields,
 			dispositionFields
 		);
+		const fieldOptions = getRuntimeFilterFieldOptions(
+			values,
+			normalizedField,
+			metricKeyOptions,
+			conversationFields,
+			dispositionFields
+		);
 
 		if (!fieldType) {
 			return true;
@@ -1352,7 +1608,8 @@ export const hasInvalidRuntimeFilterRows = (
 		}
 
 		return (
-			parseRuntimeFilterValue(row.value, valueMode, fieldType) === undefined
+			parseRuntimeFilterValue(row.value, valueMode, fieldType, fieldOptions) ===
+			undefined
 		);
 	});
 
@@ -1382,6 +1639,13 @@ export const buildRuntimeFilters = (
 			conversationFields,
 			dispositionFields
 		);
+		const fieldOptions = getRuntimeFilterFieldOptions(
+			values,
+			normalizedField,
+			metricKeyOptions,
+			conversationFields,
+			dispositionFields
+		);
 
 		if (!fieldType) {
 			return acc;
@@ -1391,7 +1655,8 @@ export const buildRuntimeFilters = (
 		const parsedValue = parseRuntimeFilterValue(
 			row.value,
 			valueMode,
-			fieldType
+			fieldType,
+			fieldOptions
 		);
 
 		if (
@@ -1411,6 +1676,140 @@ export const buildRuntimeFilters = (
 	}, []);
 
 	return entries.length ? entries : null;
+};
+
+const getJoinForFieldKey = (
+	sourceType: MetricSourceType,
+	fieldKey: string | null | undefined,
+	conversationFields: MetricColumnConfigEntry[],
+	dispositionFields: MetricColumnConfigEntry[]
+): DashboardWidgetJoinConfig | null => {
+	const trimmedFieldKey = trimText(fieldKey);
+
+	if (!trimmedFieldKey || sourceType === 'ATTRIBUTE') {
+		return null;
+	}
+
+	const selectedEntry = getSourceFieldEntries(
+		sourceType,
+		conversationFields,
+		dispositionFields
+	).find((entry) => entry.value === trimmedFieldKey);
+
+	return selectedEntry?.join ?? null;
+};
+
+const mergeJoinConfig = (
+	current: DashboardWidgetJoinConfig | undefined,
+	next: DashboardWidgetJoinConfig
+): DashboardWidgetJoinConfig => {
+	if (!current) {
+		return next;
+	}
+
+	if (current.relation !== next.relation) {
+		return current;
+	}
+
+	if (current.type === 'inner' || next.type === 'inner') {
+		return {
+			relation: next.relation,
+			type: 'inner',
+		};
+	}
+
+	return current;
+};
+
+const collectWidgetJoins = (
+	values: WidgetFormValues,
+	conversationFields: MetricColumnConfigEntry[],
+	dispositionFields: MetricColumnConfigEntry[]
+): DashboardWidgetJoinConfig[] => {
+	if (values.sourceType === 'ATTRIBUTE') {
+		return [];
+	}
+
+	const joins = new Map<
+		DashboardWidgetJoinRelation,
+		DashboardWidgetJoinConfig
+	>();
+
+	const recordJoin = (join: DashboardWidgetJoinConfig | null) => {
+		if (!join) {
+			return;
+		}
+
+		const currentJoin = joins.get(join.relation);
+		joins.set(join.relation, mergeJoinConfig(currentJoin, join));
+	};
+
+	recordJoin(
+		getJoinForFieldKey(
+			values.sourceType,
+			values.fieldName,
+			conversationFields,
+			dispositionFields
+		)
+	);
+
+	for (const row of values.defaultFilters) {
+		recordJoin(
+			getJoinForFieldKey(
+				values.sourceType,
+				row.key,
+				conversationFields,
+				dispositionFields
+			)
+		);
+	}
+
+	for (const row of values.runtimeFilters) {
+		recordJoin(
+			getJoinForFieldKey(
+				values.sourceType,
+				row.field,
+				conversationFields,
+				dispositionFields
+			)
+		);
+	}
+
+	return [...joins.values()];
+};
+
+export const buildWidgetDataConfig = (
+	values: WidgetFormValues,
+	options: {
+		metricKeyOptions?: WidgetMetricOption[];
+		conversationFields?: MetricColumnConfigEntry[];
+		dispositionFields?: MetricColumnConfigEntry[];
+	} = {}
+): DashboardWidgetDataConfig => {
+	const conversationFields = options.conversationFields ?? [];
+	const dispositionFields = options.dispositionFields ?? [];
+	const metricKeyOptions = options.metricKeyOptions ?? [];
+	const joins = collectWidgetJoins(
+		values,
+		conversationFields,
+		dispositionFields
+	);
+
+	return {
+		metric: buildMetricPayload(values, {
+			conversationFields,
+			dispositionFields,
+		}),
+		query: buildQueryPayload(values),
+		runtimeFilters: buildRuntimeFilters(
+			values.runtimeFilters,
+			values,
+			metricKeyOptions,
+			conversationFields,
+			dispositionFields
+		),
+		joins: joins.length ? joins : null,
+	};
 };
 
 export const getDefaultWidgetSizePreset = (
@@ -1511,6 +1910,10 @@ export const buildGuidedState = (
 		metricLabel,
 		sourceLabel,
 		aggregationLabel,
+		visibilityScopeLabel: getVisibilityScopeLabel(
+			options.t,
+			values.visibilityScope
+		),
 		compatibility,
 		preview: buildPreviewModel(
 			values,
@@ -1574,17 +1977,11 @@ export const buildPreviewRequestPayload = (
 	return {
 		...(campaignId == null ? {} : { campaignId }),
 		widgetType: values.widgetType,
-		dataConfig: {
-			metric: buildMetricPayload(values),
-			query: buildQueryPayload(values) ?? undefined,
-			runtimeFilters: buildRuntimeFilters(
-				values.runtimeFilters,
-				values,
-				options.metricKeyOptions ?? [],
-				options.conversationFields ?? [],
-				options.dispositionFields ?? []
-			),
-		},
+		dataConfig: buildWidgetDataConfig(values, {
+			metricKeyOptions: options.metricKeyOptions,
+			conversationFields: options.conversationFields,
+			dispositionFields: options.dispositionFields,
+		}),
 		...(viewConfig ? { viewConfig } : {}),
 		timeRange: DEFAULT_PREVIEW_TIME_RANGE,
 		comparisonMode: DEFAULT_PREVIEW_COMPARISON_MODE,
@@ -1886,6 +2283,7 @@ export const widgetFormValues = (
 				: null,
 		viewLegend:
 			typeof viewConfig?.legend === 'boolean' ? viewConfig.legend : true,
+		visibilityScope: widget?.visibilityScope ?? 'TEAM',
 		width: normalizedLayout.width,
 		height: normalizedLayout.height,
 		enabled: widget?.enabled ?? true,

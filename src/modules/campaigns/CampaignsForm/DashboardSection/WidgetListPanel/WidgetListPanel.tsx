@@ -1,6 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
 import {
 	ActionIcon,
+	Badge,
+	Button,
 	Group,
 	Loader,
 	Stack,
@@ -12,6 +14,7 @@ import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import {
 	IconPencil,
+	IconPlus,
 	IconSquarePlus,
 	IconTrash,
 	IconVersions,
@@ -192,16 +195,32 @@ const WidgetListPanel = () => {
 			{
 				accessorKey: 'title',
 				header: t('dashboardBuilder.widget.name'),
-				cell: ({ row }) => (
-					<Stack gap={2}>
-						<Text size='sm' fw={600} c='gray.9' truncate>
-							{row.original.title}
-						</Text>
-						<Text size='xs' c='dimmed' truncate>
-							{row.original.description || t('dashboardBuilder.noDescription')}
-						</Text>
-					</Stack>
-				),
+				cell: ({ row }) => {
+					const isCustom = Boolean(row.original.dataConfig.metric.key);
+					return (
+						<Stack gap={2}>
+							<Group gap={6} align='center' wrap='nowrap'>
+								<Text size='sm' fw={600} c='gray.9' truncate>
+									{row.original.title}
+								</Text>
+								<Badge
+									variant='light'
+									color={isCustom ? 'violet' : 'gray'}
+									size='xs'
+									radius='sm'
+								>
+									{isCustom
+										? t('dashboardBuilder.widget.customBadge')
+										: t('dashboardBuilder.widget.defaultBadge')}
+								</Badge>
+							</Group>
+							<Text size='xs' c='dimmed' truncate>
+								{row.original.description ||
+									t('dashboardBuilder.noDescription')}
+							</Text>
+						</Stack>
+					);
+				},
 			},
 			{
 				id: 'type',
@@ -215,8 +234,22 @@ const WidgetListPanel = () => {
 			{
 				id: 'status',
 				header: t('dashboardBuilder.widget.status'),
+				meta: {
+					headerClassName: styles.statusHeader,
+					cellClassName: styles.statusHeader,
+				},
 				cell: ({ row }) => (
 					<div className={styles.statusCell}>
+						<Badge
+							variant='light'
+							color={row.original.enabled ? 'green' : 'gray'}
+							size='xs'
+							radius='sm'
+						>
+							{row.original.enabled
+								? t('dashboardBuilder.widget.activeBadge')
+								: t('dashboardBuilder.widget.inactiveBadge')}
+						</Badge>
 						<Switch
 							size='xs'
 							checked={row.original.enabled}
@@ -291,25 +324,41 @@ const WidgetListPanel = () => {
 								})
 							: t('dashboardBuilder.widgetsPlaceholderDescription')}
 					</Text>
-					{selectedDashboard && (
-						<Text className={styles.panelSubtitle}>
-							{selectedDashboard.name}
-						</Text>
-					)}
 				</div>
 				{selectedDashboard && (
-					<Tooltip label={t('dashboardBuilder.actions.newWidget')}>
-						<ActionIcon
-							variant='default'
-							size='md'
-							onClick={openCreateWidget}
-							aria-label={t('dashboardBuilder.actions.newWidget')}
-						>
-							<IconSquarePlus size={16} />
-						</ActionIcon>
-					</Tooltip>
+					<Button
+						variant='default'
+						size='xs'
+						leftSection={<IconPlus size={14} />}
+						onClick={openCreateWidget}
+					>
+						{t('dashboardBuilder.actions.newWidget')}
+					</Button>
 				)}
 			</div>
+
+			{selectedDashboard && (
+				<div className={styles.dashboardMeta}>
+					<div className={styles.dashboardMetaItem}>
+						<span className={styles.dashboardMetaLabel}>
+							{t('dashboardBuilder.dashboard.createdAtLabel')}
+						</span>
+						<span className={styles.dashboardMetaValue}>
+							{new Date(selectedDashboard.createdAt).toLocaleDateString()}
+						</span>
+					</div>
+					{selectedDashboard.description && (
+						<div className={styles.dashboardMetaItem}>
+							<span className={styles.dashboardMetaLabel}>
+								{t('dashboardBuilder.dashboard.descriptionLabel')}
+							</span>
+							<span className={styles.dashboardMetaValue}>
+								{selectedDashboard.description}
+							</span>
+						</div>
+					)}
+				</div>
+			)}
 
 			{selectedDashboard ? (
 				<>

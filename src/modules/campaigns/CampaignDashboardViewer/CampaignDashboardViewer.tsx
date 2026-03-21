@@ -7,6 +7,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
+import { usePermissions } from '~/hooks/usePermissions';
+import { useSessionStore } from '~/stores/sessionStore';
 import {
 	applyWidgetMinimumDimensions,
 	autoOrganizeWidgetLayouts,
@@ -55,6 +59,21 @@ const CampaignDashboardViewer = ({
 	const isMobile = useMediaQuery('(max-width: 48rem)');
 	const { containerRef: editorContainerRef, width: editorWidth } =
 		useContainerWidth({ initialWidth: 1200 });
+	const { user } = useSessionStore();
+	const { activeClientId, canPerformAction } = usePermissions();
+	const currentUserId = user?.id ?? null;
+	const canViewPrivateWidgets = canPerformAction(
+		ModuleEnum.CAMPAIGNS,
+		PermissionEnum.MANAGE
+	);
+	const visibilityContext = useMemo(
+		() => ({
+			activeClientId,
+			currentUserId,
+			canViewPrivateWidgets,
+		}),
+		[activeClientId, canViewPrivateWidgets, currentUserId]
+	);
 
 	const selectedDashboardId = useCampaignDashboardViewerStore(
 		(state) => state.selectedDashboardId
@@ -185,8 +204,8 @@ const CampaignDashboardViewer = ({
 		useDashboardWidgets(numericDashboardId);
 	const widgets = widgetsData ?? EMPTY_WIDGETS;
 	const visibleWidgets = useMemo(
-		() => getVisibleDashboardWidgets(widgets),
-		[widgets]
+		() => getVisibleDashboardWidgets(widgets, visibilityContext),
+		[visibilityContext, widgets]
 	);
 
 	const widgetTypeMap = useMemo(
@@ -352,7 +371,8 @@ const CampaignDashboardViewer = ({
 			for (let attempt = 0; attempt < 5; attempt += 1) {
 				const widgetsResponse = await refetchWidgets();
 				refreshedLayouts = getVisibleDashboardWidgets(
-					widgetsResponse.data ?? EMPTY_WIDGETS
+					widgetsResponse.data ?? EMPTY_WIDGETS,
+					visibilityContext
 				)
 					.sort(compareWidgetLayouts)
 					.map(getWidgetRenderLayout);
@@ -388,7 +408,10 @@ const CampaignDashboardViewer = ({
 			const widgetsResponse = await refetchWidgets();
 			await refetchRenderResult();
 			syncDraftLayouts(
-				getVisibleDashboardWidgets(widgetsResponse.data ?? EMPTY_WIDGETS)
+				getVisibleDashboardWidgets(
+					widgetsResponse.data ?? EMPTY_WIDGETS,
+					visibilityContext
+				)
 					.sort(compareWidgetLayouts)
 					.map(getWidgetRenderLayout)
 			);

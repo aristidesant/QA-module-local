@@ -6,6 +6,7 @@ interface DashboardWidgetCardProps {
 	accentColor: string;
 	children: React.ReactNode;
 	groupByLabel?: string;
+	variant?: 'default' | 'builderPreview';
 }
 
 const DashboardWidgetCard = ({
@@ -13,11 +14,17 @@ const DashboardWidgetCard = ({
 	accentColor,
 	children,
 	groupByLabel,
+	variant = 'default',
 }: DashboardWidgetCardProps) => (
 	<Card
-		radius='lg'
-		padding='lg'
-		className={styles.widgetCard}
+		radius={variant === 'builderPreview' ? 'md' : 'lg'}
+		padding={variant === 'builderPreview' ? 'md' : 'lg'}
+		className={[
+			styles.widgetCard,
+			variant === 'builderPreview' ? styles.widgetCardBuilderPreview : '',
+		]
+			.filter(Boolean)
+			.join(' ')}
 		style={{ '--widget-accent': accentColor } as React.CSSProperties}
 	>
 		<div className={styles.widgetCardHeader}>
@@ -25,7 +32,7 @@ const DashboardWidgetCard = ({
 				<Text fw={700} size='sm' className={styles.widgetTitle}>
 					{title}
 				</Text>
-				{groupByLabel ? (
+				{groupByLabel && variant !== 'builderPreview' ? (
 					<div className={styles.widgetMeta}>
 						{groupByLabel ? (
 							<span className={styles.groupByLabel}>{groupByLabel}</span>

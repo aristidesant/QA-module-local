@@ -284,6 +284,9 @@ const normalizePreviewPayload = (
 		...(payload.dataConfig.runtimeFilters?.length
 			? { runtimeFilters: payload.dataConfig.runtimeFilters }
 			: {}),
+		...(payload.dataConfig.joins?.length
+			? { joins: payload.dataConfig.joins }
+			: {}),
 	},
 	...(payload.viewConfig ? { viewConfig: payload.viewConfig } : {}),
 	...(payload.timeRange ? { timeRange: payload.timeRange } : {}),

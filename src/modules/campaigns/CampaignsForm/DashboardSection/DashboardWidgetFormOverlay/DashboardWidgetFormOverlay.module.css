@@ -1,0 +1,11 @@
+.overlay {
+	position: fixed;
+	right: 0;
+	bottom: 0;
+	z-index: 150;
+	background: var(--mantine-color-gray-0);
+	border-left: 1px solid var(--mantine-color-gray-2);
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}

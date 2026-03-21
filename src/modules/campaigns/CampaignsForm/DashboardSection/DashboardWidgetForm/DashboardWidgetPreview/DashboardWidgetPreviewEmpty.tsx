@@ -30,6 +30,7 @@ const DashboardWidgetPreviewEmpty = ({
 			<DashboardWidgetCard
 				title={preview.title}
 				accentColor={preview.accentColor}
+				variant='builderPreview'
 			>
 				<div className={viewerStyles.emptyWidgetState}>
 					<Text size='sm' c='dimmed'>

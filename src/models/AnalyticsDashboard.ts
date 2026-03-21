@@ -6,6 +6,17 @@ export type MetricTrend = 'UP' | 'DOWN' | 'FLAT' | 'UNAVAILABLE';
 
 export type MetricSourceType = 'CONVERSATION' | 'ATTRIBUTE' | 'DISPOSITION';
 
+export type DashboardWidgetVisibilityScope = 'GLOBAL' | 'TEAM' | 'PRIVATE';
+
+export type DashboardWidgetJoinRelation = 'campaign';
+
+export type DashboardWidgetJoinType = 'inner' | 'left';
+
+export interface DashboardWidgetJoinConfig {
+	relation: DashboardWidgetJoinRelation;
+	type: DashboardWidgetJoinType;
+}
+
 export type MetricAggregationType =
 	| 'COUNT'
 	| 'SUM'
@@ -20,8 +31,7 @@ export type DashboardWidgetType =
 	| 'BAR_CHART'
 	| 'PIE_CHART'
 	| 'DONUT_CHART'
-	| 'TABLE'
-	| 'FUNNEL';
+	| 'TABLE';
 
 export type MetricValueField =
 	| 'VALUE_STRING'
@@ -80,6 +90,7 @@ export interface DashboardWidgetDataConfig {
 	metric: DashboardWidgetMetricConfig;
 	query?: DashboardWidgetQueryConfig | null;
 	runtimeFilters?: RuntimeFilter[] | null;
+	joins?: DashboardWidgetJoinConfig[] | null;
 }
 
 export interface DashboardWidgetViewConfig {
@@ -137,6 +148,7 @@ export interface DashboardWidget {
 	dataConfig: DashboardWidgetDataConfig;
 	viewConfig: DashboardWidgetViewConfig | null;
 	enabled: boolean;
+	visibilityScope?: DashboardWidgetVisibilityScope | null;
 	createdAt: string;
 	updatedAt: string;
 	deletedAt: string | null;
@@ -154,6 +166,7 @@ export interface CreateDashboardWidgetDto {
 	dataConfig: DashboardWidgetDataConfig;
 	viewConfig?: DashboardWidgetViewConfig | null;
 	enabled?: boolean;
+	visibilityScope?: DashboardWidgetVisibilityScope | null;
 }
 
 export interface UpdateDashboardWidgetDto extends Partial<CreateDashboardWidgetDto> {}

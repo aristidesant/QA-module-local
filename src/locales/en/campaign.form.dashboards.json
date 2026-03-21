@@ -14,7 +14,12 @@
 		"dashboard": {
 			"name": "Name",
 			"description": "Description",
-			"standard": "Standard"
+			"standard": "Standard",
+			"scope": "Scope",
+			"scopeGlobal": "Global",
+			"scopeCampaign": "Campaign",
+			"createdAtLabel": "Created date",
+			"descriptionLabel": "Description"
 		},
 		"metricScope": {
 			"global": "global",
@@ -36,8 +41,7 @@
 			"BAR_CHART": "Bar chart",
 			"PIE_CHART": "Pie chart",
 			"DONUT_CHART": "Donut chart",
-			"TABLE": "Table",
-			"FUNNEL": "Funnel"
+			"TABLE": "Table"
 		},
 		"metricCapabilities": {
 			"groupByEnabled": "Grouped output enabled",
@@ -54,20 +58,37 @@
 		"actions": {
 			"newDashboard": "New dashboard",
 			"newWidget": "New widget",
+			"previewDashboard": "Preview dashboard",
 			"editDashboard": "Edit dashboard",
 			"deleteDashboard": "Delete dashboard",
 			"editWidget": "Edit widget",
 			"deleteWidget": "Delete widget",
 			"toggleEnabled": "Toggle widget status"
 		},
+		"breadcrumb": {
+			"root": "Dashboard Builder"
+		},
+		"progress": {
+			"title": "Progress",
+			"widgetType": "Widget Type",
+			"sourceType": "Source Type",
+			"sourceField": "Source Field",
+			"aggregation": "Aggregation",
+			"widgetDetails": "Widget Details",
+			"visibilityScope": "Scope",
+			"subtitle": "Jump between the steps to review or edit them.",
+			"advanced": "Adv. Options"
+		},
 		"drawer": {
 			"dashboardKicker": "Dashboard details",
-			"createDashboardTitle": "Create dashboard",
+			"createDashboardTitle": "Add new dashboard",
 			"editDashboardTitle": "Edit dashboard",
 			"dashboardDescription": "Configure dashboard metadata for this campaign.",
 			"widgetKicker": "Widget setup",
-			"createWidgetTitle": "Create widget",
+			"createWidgetTitle": "Add new widget",
 			"editWidgetTitle": "Edit widget",
+			"createWidgetSubtitle": "Answer each question below — new options appear as you progress.",
+			"editWidgetSubtitle": "Update the widget configuration below.",
 			"widgetDescription": "Configure widget data, query behavior, and presentation settings."
 		},
 		"form": {
@@ -78,15 +99,27 @@
 				"basicsTitle": "Basics",
 				"basicsDescription": "",
 				"metricTitle": "Metric configuration",
-				"filtersTitle": "Default filters",
-				"runtimeFiltersTitle": "Runtime filters",
+				"filtersTitle": "Filters",
+				"runtimeFiltersTitle": "Filters",
 				"dataTitle": "Data settings",
 				"dataDescription": "",
 				"viewTitle": "View settings",
 				"layoutTitle": "Layout",
 				"layoutDescription": "Choose a standard size and let the dashboard place the widget automatically.",
 				"statusTitle": "Availability",
-				"statusDescription": ""
+				"statusDescription": "",
+				"widgetTypeTitle": "Widget Type",
+				"widgetTypeDescription": "How should this data be visualized?",
+				"sourceFieldTitle": "Source Field",
+				"sourceFieldDescription": "Pick the exact field that feeds this metric.",
+				"aggregationTitle": "Aggregation Function",
+				"aggregationDescription": "How should the values be combined?",
+				"visibilityScopeTitle": "Visibility Scope",
+				"visibilityScopeDescription": "Who can see this widget on the dashboard?",
+				"widgetDetailsTitle": "Widget Details",
+				"widgetDetailsDescription": "Name and configure the widget presentation.",
+				"sourceTypeTitle": "Source Type",
+				"sourceTypeDescription": "What kind of data does this widget measure?"
 			},
 			"guidedSections": {
 				"widgetTitle": "1. Choose the widget",
@@ -95,10 +128,10 @@
 				"metricDescription": "Pick where the data comes from and which metric should feed this widget.",
 				"breakdownTitle": "3. Configure the breakdown",
 				"breakdownDescription": "These widgets need a grouping field to split the results into categories.",
-				"advancedTitle": "4. Optional settings",
-				"advancedDescription": "Keep the main flow simple and open this section only when you need finer control.",
-				"filtersDescription": "Default filters are applied automatically whenever this widget loads.",
-				"runtimeFiltersDescription": "Runtime filters are saved with the widget and applied automatically in preview and render."
+				"advancedTitle": "Advanced Options",
+				"advancedDescription": "Fine-tune format, appearance and filtering.",
+				"filtersDescription": "Filters are saved with the widget and applied automatically in preview and render.",
+				"runtimeFiltersDescription": "Filters are saved with the widget and applied automatically in preview and render."
 			},
 			"fields": {
 				"dashboardName": "Dashboard name",
@@ -120,7 +153,7 @@
 				"defaultFilterKey": "Filter field",
 				"defaultFilterType": "Value type",
 				"defaultFilterValue": "Filter value",
-				"runtimeFilterField": "Runtime field",
+				"runtimeFilterField": "Filter field",
 				"runtimeFilterOperator": "Operator",
 				"runtimeFilterValue": "Value",
 				"groupBy": "Group by field",
@@ -137,10 +170,12 @@
 				"height": "Height",
 				"enabled": "Widget enabled"
 			},
+			"aggregationHint": "Aggregation defines the math applied to the selected source field.",
+			"visibilityScopeHint": "Internal is the default. Switch to Global or Private only when you need a different audience.",
 			"sourceTypeDescriptions": {
-				"CONVERSATION": "Use conversation-level fields such as status, dates, or duration.",
-				"ATTRIBUTE": "Use campaign attributes collected by the analytics agent.",
-				"DISPOSITION": "Use outcome fields and follow-up fields."
+				"CONVERSATION": "Call & interaction data",
+				"ATTRIBUTE": "Names, types & categories",
+				"DISPOSITION": "Scores & performance KPIs"
 			},
 			"widgetTypeDescriptions": {
 				"KPI": "Show a single value that updates with the selected range.",
@@ -148,8 +183,29 @@
 				"BAR_CHART": "Compare values across categories with a grouped breakdown.",
 				"PIE_CHART": "Show how a grouped result is distributed across categories.",
 				"DONUT_CHART": "Use a compact circular breakdown for grouped results.",
-				"TABLE": "List grouped values in a compact table.",
-				"FUNNEL": "Show sequential conversion stages."
+				"TABLE": "List grouped values in a compact table."
+			},
+			"aggregationDescriptions": {
+				"COUNT": "Count matching rows.",
+				"SUM": "Add the selected values together.",
+				"AVG": "Show the average value.",
+				"MIN": "Show the smallest value.",
+				"MAX": "Show the largest value.",
+				"DISTINCT_COUNT": "Count unique values."
+			},
+			"visibilityScope": {
+				"GLOBAL": {
+					"label": "Global",
+					"description": "Visible to everyone"
+				},
+				"TEAM": {
+					"label": "Internal",
+					"description": "Team members only"
+				},
+				"PRIVATE": {
+					"label": "Private",
+					"description": "Only visible in this campaign"
+				}
 			},
 			"sizePresets": {
 				"SMALL": "Small",
@@ -159,13 +215,15 @@
 				"CUSTOM": "Custom"
 			},
 			"placeholders": {
+				"widgetTitle": "e.g. Total Calls this month",
+				"widgetDescription": "Optional description",
 				"metricKey": "Select an attribute key",
 				"metricKeyUnavailable": "Attribute metrics require a campaign dashboard",
 				"loadingMetricKeys": "Loading metric keys...",
 				"fieldName": "Select a source field",
 				"defaultFilterKey": "e.g. status",
 				"defaultFilterValue": "e.g. active",
-				"runtimeFilterField": "e.g. status",
+				"runtimeFilterField": "Select a filter field",
 				"runtimeFilterOperator": "Select an operator",
 				"runtimeFilterValue": "e.g. DONE",
 				"runtimeFilterValues": "Add one or more values",
@@ -180,6 +238,8 @@
 			"layoutPlacement": "Placed automatically at column {{column}}, row {{row}}.",
 			"layoutSummary": "{{width}} x {{height}} spans across {{columns}} columns. It starts at column {{startColumn}} and row {{startRow}}, ending at column {{endColumn}} and row {{endRow}}.",
 			"hints": {
+				"sourceFieldAttribute": "Pick the attribute key and, when needed, the value field used by the metric.",
+				"sourceFieldRegular": "Pick the conversation or outcome field that feeds the widget.",
 				"groupByStandard": "",
 				"groupByAttribute": "",
 				"groupByAttribute_other": ""
@@ -198,6 +258,13 @@
 			"preview": {
 				"title": "Preview",
 				"description": "A lightweight preview updates as you define the widget.",
+				"summaryTitle": "Selected settings",
+				"summary": {
+					"sourceType": "Source",
+					"sourceField": "Field",
+					"aggregation": "Aggregation",
+					"visibilityScope": "Visibility"
+				},
 				"untitled": "Untitled widget",
 				"emptyMetricTitle": "Choose a metric to start the preview",
 				"emptyMetricDescription": "Select a source and metric so the widget can suggest its title and structure.",
@@ -219,17 +286,20 @@
 					"thirdLabel": "Voicemail"
 				}
 			},
+			"footerTitle": "Ready to add?",
+			"footerTitleEdit": "Ready to save?",
+			"footerHint": "Review the preview on the right, then save the widget.",
 			"actions": {
 				"cancel": "Cancel",
 				"createDashboard": "Create dashboard",
 				"saveDashboard": "Save dashboard",
 				"addFilter": "Add filter",
-				"addRuntimeFilter": "Add runtime filter",
+				"addRuntimeFilter": "Add filter",
 				"removeFilter": "Remove filter",
 				"showAdvanced": "Show advanced",
 				"hideAdvanced": "Hide advanced",
-				"createWidget": "Create widget",
-				"saveWidget": "Save widget"
+				"createWidget": "Create Widget",
+				"saveWidget": "Save Widget"
 			},
 			"options": {
 				"sourceType": {
@@ -239,7 +309,7 @@
 				},
 				"aggregationType": {
 					"COUNT": "Count",
-					"SUM": "Sum",
+					"SUM": "Total",
 					"AVG": "Average",
 					"MIN": "Minimum",
 					"MAX": "Maximum",
@@ -257,6 +327,20 @@
 					"VALUE_NUMBER": "Number value",
 					"VALUE_BOOLEAN": "Boolean value",
 					"VALUE_JSON": "JSON value"
+				},
+				"visibilityScope": {
+					"GLOBAL": {
+						"label": "Global",
+						"description": "Visible to everyone"
+					},
+					"TEAM": {
+						"label": "Internal",
+						"description": "Team members only"
+					},
+					"PRIVATE": {
+						"label": "Private",
+						"description": "Only visible in this campaign"
+					}
 				},
 				"filterValueType": {
 					"string": "String",
@@ -292,8 +376,8 @@
 				"metricKeyRequired": "Select an attribute key.",
 				"valueFieldRequired": "Select an attribute value field.",
 				"attributeNotAvailable": "Attribute metrics are not available for global dashboards.",
-				"defaultFilterInvalid": "Review default filters. Each row needs a field and a valid typed value.",
-				"runtimeFilterInvalid": "Review runtime filters. Each row needs a field, operator, and a compatible value.",
+				"defaultFilterInvalid": "Review filters. Each row needs a field and a valid typed value.",
+				"runtimeFilterInvalid": "Review filters. Each row needs a field, operator, and a compatible value.",
 				"groupByRequired": "Group by is required for this widget type.",
 				"metricMustSupportGroupBy": "The selected metric does not support grouped output.",
 				"metricMustSupportTimeSeries": "The selected metric does not support time series output.",
@@ -342,7 +426,11 @@
 			"type": "Type",
 			"metric": "Metric",
 			"size": "Size",
-			"status": "Status"
+			"status": "Status",
+			"defaultBadge": "Default",
+			"customBadge": "Custom",
+			"activeBadge": "Active",
+			"inactiveBadge": "Inactive"
 		},
 		"mode": {
 			"manage": "Manage",

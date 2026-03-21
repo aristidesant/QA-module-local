@@ -31,6 +31,37 @@
 		inset 0 1px 0 rgba(255, 255, 255, 0.92);
 }
 
+.cardBuilderPreview {
+	padding: 16px;
+	background: var(--mantine-color-gray-0);
+	border-radius: 12px;
+	border-color: var(--mantine-color-gray-2);
+	box-shadow: none;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+	gap: 12px;
+}
+
+.cardBuilderPreview::after {
+	display: none;
+}
+
+.cardBuilderPreview:hover {
+	border-color: var(--mantine-color-gray-3);
+	transform: none;
+	box-shadow: none;
+}
+
+.cardBuilderPreview .header {
+	margin-bottom: 0;
+	padding-bottom: 6px;
+	border-bottom-color: var(--mantine-color-gray-2);
+}
+
+.cardBuilderPreview .value {
+	font-size: clamp(1.35rem, 2vw, 2.15rem);
+}
+
 .card::after {
 	content: '';
 	position: absolute;

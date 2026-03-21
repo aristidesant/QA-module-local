@@ -40,6 +40,7 @@ const DashboardWidgetPreviewLineChart = ({
 			<DashboardWidgetCard
 				title={preview.title}
 				accentColor={preview.accentColor}
+				variant='builderPreview'
 			>
 				{data.length > 0 ? (
 					<div className={viewerStyles.chartWrapper}>
