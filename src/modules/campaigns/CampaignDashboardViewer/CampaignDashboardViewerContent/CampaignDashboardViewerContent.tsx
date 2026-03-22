@@ -1,4 +1,4 @@
-import { Alert, Box, Card, Group, Loader, LoadingOverlay } from '@mantine/core';
+import { Alert, Box, LoadingOverlay } from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type {
@@ -7,9 +7,9 @@ import type {
 } from '~/models/AnalyticsDashboard';
 import CampaignDashboardViewerGrid from '../CampaignDashboardViewerGrid';
 import CampaignDashboardViewerLayoutEditor from '../CampaignDashboardViewerLayoutEditor';
+import CampaignDashboardViewerSkeleton from '../CampaignDashboardViewerSkeleton';
 import useCampaignDashboardViewerStore from '../store/useCampaignDashboardViewerStore';
 import type { ViewerWidgetLayout, WidgetComparisonData } from '../types';
-import styles from './CampaignDashboardViewerContent.module.css';
 
 interface CampaignDashboardViewerContentProps {
 	activeLayoutMap: Map<number, ViewerWidgetLayout>;
@@ -75,11 +75,7 @@ const CampaignDashboardViewerContent = ({
 				/>
 
 				{renderLoading ? (
-					<Card radius='lg' padding='xl' className={styles.emptyStateCard}>
-						<Group justify='center'>
-							<Loader size='sm' />
-						</Group>
-					</Card>
+					<CampaignDashboardViewerSkeleton />
 				) : renderResult ? (
 					isEditingLayout ? (
 						<CampaignDashboardViewerLayoutEditor
