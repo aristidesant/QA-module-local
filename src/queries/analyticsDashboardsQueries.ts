@@ -272,6 +272,9 @@ const normalizePreviewPayload = (
 			...(payload.dataConfig.metric.defaultFilter
 				? { defaultFilter: payload.dataConfig.metric.defaultFilter }
 				: {}),
+			...(payload.dataConfig.metric.compareWith
+				? { compareWith: payload.dataConfig.metric.compareWith }
+				: {}),
 			...(payload.dataConfig.metric.supportsGroupBy === undefined
 				? {}
 				: { supportsGroupBy: payload.dataConfig.metric.supportsGroupBy }),

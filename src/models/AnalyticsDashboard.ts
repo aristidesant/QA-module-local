@@ -4,6 +4,8 @@ export type AnalyticsComparisonMode = 'PREVIOUS_PERIOD';
 
 export type MetricTrend = 'UP' | 'DOWN' | 'FLAT' | 'UNAVAILABLE';
 
+export type MetricCompareWith = 'LATEST' | 'AVERAGE';
+
 export type MetricSourceType = 'CONVERSATION' | 'ATTRIBUTE' | 'DISPOSITION';
 
 export type DashboardWidgetVisibilityScope = 'GLOBAL' | 'TEAM' | 'PRIVATE';
@@ -81,6 +83,7 @@ export interface DashboardWidgetMetricConfig {
 	metricKey?: string | null;
 	valueField?: MetricValueField | null;
 	defaultFilter?: DashboardWidgetDefaultFilter | null;
+	compareWith?: MetricCompareWith;
 	supportsGroupBy?: boolean;
 	supportsTimeSeries?: boolean;
 	resultType: MetricResultType;
@@ -191,6 +194,7 @@ export interface SingleValueMetricResult {
 		campaignId: number | null;
 		sourceType: MetricSourceType;
 		aggregationType: MetricAggregationType;
+		compareWith?: MetricCompareWith;
 	};
 }
 
@@ -208,6 +212,7 @@ export interface GroupedMetricResult {
 		sourceType: MetricSourceType;
 		aggregationType: MetricAggregationType;
 		groupBy: string;
+		compareWith?: MetricCompareWith;
 	};
 }
 
@@ -228,6 +233,7 @@ export interface TimeSeriesMetricResult {
 		sourceType: MetricSourceType;
 		aggregationType: MetricAggregationType;
 		granularity: 'hour' | 'day' | 'week' | 'month';
+		compareWith?: MetricCompareWith;
 	};
 }
 

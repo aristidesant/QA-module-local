@@ -88,6 +88,11 @@ const DashboardWidgetPreviewLineChart = ({
 					</div>
 				)}
 			</DashboardWidgetCard>
+			{preview.comparisonLabel ? (
+				<Text size='xs' c='dimmed' className={styles.comparisonLabel}>
+					{preview.comparisonLabel}
+				</Text>
+			) : null}
 			{statusMessage ? (
 				<Text size='xs' c={statusColor} className={styles.statusText}>
 					{statusMessage}

@@ -9,6 +9,7 @@ import {
 import type { TooltipProps } from 'recharts';
 import { useTranslation } from 'react-i18next';
 import {
+	buildWidgetComparisonCopy,
 	formatMetricValue,
 	getWidgetChartMetrics,
 } from '../../../CampaignDashboardViewer.helpers';
@@ -74,6 +75,12 @@ const LineChartWidgetContent = ({
 				)
 			: [];
 	const hasComparisonSeries = previousPoints.length > 0;
+	const comparisonCopy = buildWidgetComparisonCopy(
+		comparisonData?.compareWith ?? widget.result.meta.compareWith,
+		selectedTimeRange,
+		undefined,
+		t
+	);
 	const chartData = Array.from(
 		{ length: Math.max(currentPoints.length, previousPoints.length) },
 		(_, index): TimeSeriesChartDatum => {
@@ -156,7 +163,7 @@ const LineChartWidgetContent = ({
 									}}
 								/>
 								<Text size='xs' fw={600} className={styles.tooltipSeriesName}>
-									{t('dashboard.lineChart.previous')}
+									{comparisonCopy.seriesLabel}
 								</Text>
 							</Group>
 							<Text fw={700} size='sm' className={styles.tooltipValue}>
@@ -224,6 +231,12 @@ const LineChartWidgetContent = ({
 						</Group>
 					</div>
 				</Group>
+
+				{hasComparisonSeries ? (
+					<Text size='xs' c='dimmed' className={styles.comparisonCaption}>
+						{comparisonCopy.label}
+					</Text>
+				) : null}
 
 				<div
 					className={`${sharedStyles.chartWrapper} ${styles.lineChartChartWrapper}`}

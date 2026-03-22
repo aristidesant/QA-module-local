@@ -145,6 +145,8 @@
 				"sourceTypeDescriptionGlobal": "Attribute metrics are only available on campaign dashboards.",
 				"aggregationType": "Aggregation",
 				"resultType": "Result type",
+				"compareWith": "Compare with",
+				"compareWithDescription": "How should the comparison baseline be calculated?",
 				"metricKey": "Attribute key",
 				"fieldName": "Source field",
 				"valueField": "Attribute value field",
@@ -322,6 +324,10 @@
 					"STRING": "String",
 					"TIME": "Time"
 				},
+				"compareWith": {
+					"LATEST": "Latest period",
+					"AVERAGE": "Average of current period"
+				},
 				"valueField": {
 					"VALUE_STRING": "String value",
 					"VALUE_NUMBER": "Number value",
@@ -488,7 +494,8 @@
 			"latest": "Latest",
 			"delta": "Change",
 			"current": "Current",
-			"previous": "Previous"
+			"previous": "Previous",
+			"averageBaseline": "Average"
 		},
 		"timeRange": {
 			"label": "Time range",
@@ -516,6 +523,8 @@
 			"previousWeekValue": "Last week: {{value}}",
 			"previousMonthValue": "Last month: {{value}}",
 			"previousYearValue": "Last year: {{value}}",
+			"vsAverage": "vs average",
+			"averageValue": "Average: {{value}}",
 			"trend": {
 				"UP": "Up",
 				"DOWN": "Down",

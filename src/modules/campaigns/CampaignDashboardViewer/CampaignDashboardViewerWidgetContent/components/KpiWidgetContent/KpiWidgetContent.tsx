@@ -1,29 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import KpiCard from '~/components/KpiCard';
-import { formatMetricValue } from '~/modules/campaigns/CampaignDashboardViewer/CampaignDashboardViewer.helpers';
+import { buildWidgetComparisonCopy } from '~/modules/campaigns/CampaignDashboardViewer/CampaignDashboardViewer.helpers';
 import type { WidgetContentBaseProps } from '../widgetContent.types';
 import styles from '../../CampaignDashboardViewerWidgetContent.module.css';
-
-const RANGE_KEYS: Record<string, { detailKey: string; labelKey: string }> = {
-	TODAY: {
-		detailKey: 'dashboard.comparison.yesterdayValue',
-		labelKey: 'dashboard.comparison.vsPreviousDay',
-	},
-	WEEK: {
-		detailKey: 'dashboard.comparison.previousWeekValue',
-		labelKey: 'dashboard.comparison.vsPreviousWeek',
-	},
-	MONTH: {
-		detailKey: 'dashboard.comparison.previousMonthValue',
-		labelKey: 'dashboard.comparison.vsPreviousMonth',
-	},
-	YEAR: {
-		detailKey: 'dashboard.comparison.previousYearValue',
-		labelKey: 'dashboard.comparison.vsPreviousYear',
-	},
-};
-
-const DEFAULT_SELECTED_TIME_RANGE: keyof typeof RANGE_KEYS = 'WEEK';
 
 const KpiWidgetContent = ({
 	widget,
@@ -55,6 +34,14 @@ const KpiWidgetContent = ({
 			: undefined;
 	const hasComparisonContent =
 		Boolean(comparisonData?.comparison) && previousValue !== undefined;
+	const comparisonCompareWith =
+		comparisonData?.compareWith ?? widget.result?.meta.compareWith;
+	const comparisonCopy = buildWidgetComparisonCopy(
+		widget.result?.kind === 'single_value' ? comparisonCompareWith : undefined,
+		selectedTimeRange,
+		previousDisplayValue,
+		t
+	);
 	const variant = hasComparisonContent
 		? layout && layout.height >= 3
 			? 'comparison-hero'
@@ -65,17 +52,11 @@ const KpiWidgetContent = ({
 	const subtitle = selectedTimeRange
 		? t(`dashboard.timeRange.${selectedTimeRange}`)
 		: undefined;
-	const rangeKeys =
-		(selectedTimeRange && RANGE_KEYS[selectedTimeRange]) ??
-		RANGE_KEYS[DEFAULT_SELECTED_TIME_RANGE];
-	const comparisonDetail =
-		previousDisplayValue !== undefined
-			? t(rangeKeys.detailKey, {
-					value: formatMetricValue(previousDisplayValue),
-				})
-			: undefined;
+	const comparisonDetail = hasComparisonContent
+		? comparisonCopy.detail
+		: undefined;
 	const comparisonLabel = hasComparisonContent
-		? t(rangeKeys.labelKey)
+		? comparisonCopy.label
 		: undefined;
 
 	return (

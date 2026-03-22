@@ -1,13 +1,16 @@
 import type { LayoutItem } from 'react-grid-layout/legacy';
 import type {
 	DashboardDefinition,
+	AnalyticsTimeRange,
 	DashboardPeriod,
 	DashboardRenderWidget,
 	DashboardWidget,
 	DashboardWidgetVisibilityScope,
 	GroupedMetricResult,
+	MetricCompareWith,
 	TimeSeriesMetricResult,
 } from '~/models/AnalyticsDashboard';
+import type { TFunction } from 'i18next';
 import {
 	DASHBOARD_LAYOUT_COLUMNS,
 	DASHBOARD_LAYOUT_ROW_HEIGHT,
@@ -84,6 +87,80 @@ export const formatMetricValue = (
 	if (typeof value === 'boolean') return value ? 'True' : 'False';
 	if (value === null || value === undefined || value === '') return '-';
 	return String(value);
+};
+
+type ComparisonCopyKeys = {
+	label: string;
+	detail?: string;
+	seriesLabel: string;
+};
+
+const getComparisonRange = (
+	timeRange?: AnalyticsTimeRange | null
+): AnalyticsTimeRange => timeRange ?? 'WEEK';
+
+const buildComparisonCopyKeys = (
+	compareWith: MetricCompareWith | null | undefined,
+	timeRange?: AnalyticsTimeRange | null
+): ComparisonCopyKeys => {
+	const range = getComparisonRange(timeRange);
+	const isAverage = compareWith === 'AVERAGE';
+
+	if (isAverage) {
+		return {
+			label: 'dashboard.comparison.vsAverage',
+			detail: 'dashboard.comparison.averageValue',
+			seriesLabel: 'dashboard.lineChart.averageBaseline',
+		};
+	}
+
+	switch (range) {
+		case 'TODAY':
+			return {
+				label: 'dashboard.comparison.vsPreviousDay',
+				detail: 'dashboard.comparison.yesterdayValue',
+				seriesLabel: 'dashboard.lineChart.previous',
+			};
+		case 'MONTH':
+			return {
+				label: 'dashboard.comparison.vsPreviousMonth',
+				detail: 'dashboard.comparison.previousMonthValue',
+				seriesLabel: 'dashboard.lineChart.previous',
+			};
+		case 'YEAR':
+			return {
+				label: 'dashboard.comparison.vsPreviousYear',
+				detail: 'dashboard.comparison.previousYearValue',
+				seriesLabel: 'dashboard.lineChart.previous',
+			};
+		case 'WEEK':
+		default:
+			return {
+				label: 'dashboard.comparison.vsPreviousWeek',
+				detail: 'dashboard.comparison.previousWeekValue',
+				seriesLabel: 'dashboard.lineChart.previous',
+			};
+	}
+};
+
+export const buildWidgetComparisonCopy = (
+	compareWith: MetricCompareWith | null | undefined,
+	timeRange: AnalyticsTimeRange | null | undefined,
+	comparisonValue: string | number | boolean | null | undefined,
+	t: TFunction
+) => {
+	const keys = buildComparisonCopyKeys(compareWith, timeRange);
+
+	return {
+		label: t(keys.label),
+		detail:
+			comparisonValue === undefined
+				? undefined
+				: t(keys.detail ?? keys.label, {
+						value: formatMetricValue(comparisonValue),
+					}),
+		seriesLabel: t(keys.seriesLabel),
+	};
 };
 
 export const formatPeriodDate = (iso: string): string =>

@@ -32,6 +32,7 @@ import {
 	getRuntimeFilterValueMode,
 	getResolvedGroupBy,
 	inferRuntimeFilterFieldType,
+	supportsCompareWithWidget,
 } from './DashboardWidgetForm.helpers';
 import {
 	useDashboardWidgetFormContext,
@@ -359,7 +360,9 @@ const DashboardWidgetAdvancedSection = () => {
 	const state = useDashboardWidgetFormState();
 
 	const resultTypeInputProps = form.getInputProps('resultType');
+	const compareWithInputProps = form.getInputProps('compareWith');
 	const advancedComplete = state.advancedSettingsCount > 0;
+	const canCompareWith = supportsCompareWithWidget(state.values.widgetType);
 
 	return (
 		<div
@@ -500,6 +503,24 @@ const DashboardWidgetAdvancedSection = () => {
 							{...resultTypeInputProps}
 							onChange={(value) => state.handlers.handleResultTypeChange(value)}
 						/>
+
+						{canCompareWith ? (
+							<Select
+								key={form.key('compareWith')}
+								label={t('dashboardBuilder.form.fields.compareWith')}
+								description={t(
+									'dashboardBuilder.form.fields.compareWithDescription'
+								)}
+								data={state.compareWithOptions}
+								allowDeselect={false}
+								clearable={false}
+								size='sm'
+								{...compareWithInputProps}
+								onChange={(value) =>
+									state.handlers.handleCompareWithChange(value)
+								}
+							/>
+						) : null}
 
 						<SimpleGrid cols={{ base: 1, sm: 2 }} spacing='xs'>
 							<div

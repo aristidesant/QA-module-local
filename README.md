@@ -35,6 +35,12 @@ It provides campaign operations, AI-agent workflow configuration, conversation m
 - API communication is centralized in `src/api/*` using Axios wrappers and shared config.
 - Async server state is managed through React Query hooks in `src/queries/*`.
 
+## Frontend Generation Guide
+
+- Use [`.agents/skills/nai-agent-service-front-operational-frontend/SKILL.md`](.agents/skills/nai-agent-service-front-operational-frontend/SKILL.md) when generating or refactoring UI in this repo.
+- The default UI language is operational, not marketing: prefer `ContentContainer`, `SectionCard`, `AppDrawer`, `BaseTable`, and route-level guards.
+- Keep screens translated, compact, and explicit about loading, empty, and error states.
+
 ## Modules Overview
 
 ### Overview and dashboards

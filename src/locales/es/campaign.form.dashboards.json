@@ -145,6 +145,8 @@
 				"sourceTypeDescriptionGlobal": "Las métricas de atributos solo están disponibles en dashboards de campaña.",
 				"aggregationType": "Agregación",
 				"resultType": "Tipo de resultado",
+				"compareWith": "Comparar con",
+				"compareWithDescription": "¿Cómo se debe calcular la base de comparación?",
 				"metricKey": "Clave de atributo",
 				"fieldName": "Campo origen",
 				"valueField": "Campo de valor del atributo",
@@ -322,6 +324,10 @@
 					"STRING": "Texto",
 					"TIME": "Tiempo"
 				},
+				"compareWith": {
+					"LATEST": "Período más reciente",
+					"AVERAGE": "Promedio del período actual"
+				},
 				"valueField": {
 					"VALUE_STRING": "Valor texto",
 					"VALUE_NUMBER": "Valor numérico",
@@ -488,7 +494,8 @@
 			"latest": "Último",
 			"delta": "Cambio",
 			"current": "Actual",
-			"previous": "Anterior"
+			"previous": "Anterior",
+			"averageBaseline": "Promedio"
 		},
 		"timeRange": {
 			"label": "Período",
@@ -516,6 +523,8 @@
 			"previousWeekValue": "Semana anterior: {{value}}",
 			"previousMonthValue": "Mes anterior: {{value}}",
 			"previousYearValue": "Año anterior: {{value}}",
+			"vsAverage": "vs promedio",
+			"averageValue": "Promedio: {{value}}",
 			"trend": {
 				"UP": "Subida",
 				"DOWN": "Bajada",
