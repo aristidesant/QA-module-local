@@ -1,4 +1,3 @@
-/* Main wrapper with elegant gradient background */
 .wrapper {
 	min-height: 100vh;
 	display: flex;
@@ -11,18 +10,14 @@
 	gap: 20px;
 }
 
-/* Card container */
 .paper {
-	width: min(100%, 440px);
-	padding: 44px 40px;
-	border-radius: 16px;
+	width: min(100%, 880px);
+	padding: 40px;
+	border-radius: 20px;
 	background-color: var(--mantine-color-white);
 	border: 1px solid var(--mantine-color-gray-2);
 	box-shadow: var(--mantine-shadow-md);
 	position: relative;
-	display: flex;
-	flex-direction: column;
-	gap: 28px;
 }
 
 @keyframes slideUp {
@@ -36,19 +31,20 @@
 	}
 }
 
-/* Header section */
 .header {
-	text-align: center;
+	height: 100%;
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
-	align-items: center;
+	justify-content: center;
+	gap: 16px;
+	padding: 8px 4px;
+	text-align: left;
 }
 
 .logoContainer {
 	display: flex;
-	justify-content: center;
-	padding: 8px;
+	justify-content: flex-start;
+	padding: 4px 0 8px;
 }
 
 .headerText {
@@ -58,7 +54,7 @@
 }
 
 .title {
-	font-size: 1.75rem;
+	font-size: 1.8rem;
 	font-weight: 700;
 	color: var(--mantine-color-dark-7);
 	letter-spacing: -0.02em;
@@ -68,25 +64,30 @@
 	color: var(--mantine-color-gray-6);
 	font-size: 0.9rem;
 	line-height: 1.5;
+	max-width: 30ch;
 }
 
-/* Form container */
 .formContainer {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
 	position: relative;
+	min-height: 100%;
 }
 
-/* Loading overlay with glass effect */
+.formColumn {
+	height: 100%;
+	justify-content: center;
+	padding: 4px 0;
+}
+
 .loadingOverlay {
 	position: absolute;
-	inset: -1px;
+	inset: 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	background-color: rgba(255, 255, 255, 0.9);
-	border-radius: 16px;
+	border-radius: 20px;
 	z-index: 10;
 	animation: fadeIn 0.2s ease-out;
 }
@@ -100,12 +101,15 @@
 	}
 }
 
-/* Segmented control wrapper */
 .segmentedWrapper {
-	margin-bottom: 4px;
+	margin-bottom: 0;
 }
 
-/* Input styling */
+.languagePicker {
+	display: flex;
+	justify-content: flex-start;
+}
+
 .inputLabel {
 	font-weight: 600;
 	color: var(--mantine-color-dark-6);
@@ -156,7 +160,6 @@
 	height: 20px;
 }
 
-/* Error message */
 .errorMessage {
 	border-radius: 12px;
 	border: none;
@@ -183,7 +186,6 @@
 	}
 }
 
-/* Submit button with premium feel */
 .submitButton {
 	height: 50px;
 	font-weight: 600;
@@ -203,7 +205,6 @@
 	transform: translateY(0);
 }
 
-/* Footer */
 .footer {
 	text-align: center;
 	animation: slideUp 0.5s ease-out;
@@ -217,32 +218,31 @@
 	letter-spacing: 0.02em;
 }
 
-/* Responsive styles */
-@media (max-width: 600px) {
+@media (max-width: 48em) {
 	.wrapper {
 		padding: 24px 16px 24px;
 	}
 
 	.paper {
-		padding: 32px 24px;
-		border-radius: 24px;
+		padding: 28px 20px;
+		border-radius: 18px;
 	}
 
 	.title {
 		font-size: 1.5rem;
 	}
 
-	.decorativeOrb1 {
-		width: 300px;
-		height: 300px;
-		top: -100px;
-		right: -80px;
+	.header {
+		justify-content: flex-start;
+		text-align: center;
 	}
 
-	.decorativeOrb2 {
-		width: 250px;
-		height: 250px;
-		bottom: -80px;
-		left: -60px;
+	.logoContainer,
+	.languagePicker {
+		justify-content: center;
+	}
+
+	.subtitle {
+		margin-inline: auto;
 	}
 }
