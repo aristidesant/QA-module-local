@@ -1,0 +1,11 @@
+html,
+body,
+#root {
+	min-height: 100%;
+}
+
+body {
+	margin: 0;
+	background: var(--mantine-color-gray-0);
+	color: var(--mantine-color-text);
+}
