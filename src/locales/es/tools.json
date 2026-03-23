@@ -49,28 +49,139 @@
 			"update": "actualizar"
 		}
 	},
+	"sectionStatus": {
+		"configured": "Configurado",
+		"empty": "Vacío",
+		"error": "Requiere revisión"
+	},
+	"sections": {
+		"basic": "Información básica",
+		"basicDesc": "Nombre, descripción, prompt y categoría.",
+		"api": "Configuración API",
+		"apiDesc": "Endpoint, método y tiempo de espera.",
+		"auth": "Autenticación",
+		"authDesc": "Conexión opcional para APIs protegidas.",
+		"headers": "Encabezados",
+		"headersDesc": "Encabezados estáticos para la solicitud.",
+		"parameters": "Parámetros",
+		"parametersDesc": "Valores de ruta y consulta usados por el endpoint.",
+		"body": "Cuerpo de la solicitud",
+		"bodyDesc": "Propiedades a enviar cuando el método lo soporte."
+	},
+	"headers": {
+		"title": "Encabezados de la solicitud",
+		"add": "Agregar encabezado",
+		"remove": "Eliminar encabezado",
+		"empty": "No hay encabezados configurados",
+		"fields": {
+			"keyPlaceholder": "Nombre del encabezado",
+			"valuePlaceholder": "Valor"
+		}
+	},
+	"parameters": {
+		"add": "Agregar",
+		"remove": "Eliminar parámetro",
+		"path": {
+			"title": "Parámetros de ruta",
+			"empty": "No hay parámetros de ruta",
+			"helper": "Los parámetros de ruta forman parte de la URL y normalmente definen segmentos obligatorios.",
+			"fields": {
+				"keyPlaceholder": "Nombre del parámetro",
+				"valuePlaceholder": "Descripción"
+			}
+		},
+		"query": {
+			"title": "Parámetros de consulta",
+			"empty": "No hay parámetros de consulta",
+			"helper": "Los parámetros de consulta refinan la solicitud sin cambiar la ruta.",
+			"fields": {
+				"keyPlaceholder": "Nombre del parámetro",
+				"valuePlaceholder": "Descripción"
+			}
+		}
+	},
+	"body": {
+		"title": "Propiedades del cuerpo de la solicitud",
+		"add": "Agregar propiedad",
+		"remove": "Eliminar propiedad",
+		"required": "Obligatoria",
+		"optional": "Opcional",
+		"advancedLabel": "Mapeo avanzado",
+		"disabledHint": "Esta sección solo se usa para solicitudes POST, PUT y PATCH.",
+		"empty": "No hay propiedades del cuerpo configuradas",
+		"helper": "Define los campos del esquema que se enviarán en el cuerpo de la solicitud.",
+		"fields": {
+			"keyPlaceholder": "Nombre de la propiedad",
+			"typePlaceholder": "Tipo",
+			"descriptionPlaceholder": "Descripción",
+			"constantPlaceholder": "Valor constante",
+			"dynamicPlaceholder": "Variable dinámica"
+		}
+	},
 	"form": {
+		"overview": {
+			"title": "Sigue el orden de configuración",
+			"description": "Completa las secciones en orden. El panel izquierdo muestra lo que ya está listo y lo que sigue.",
+			"progress": "Progreso",
+			"progressLabel": "{{completed}}/{{total}} listas",
+			"nextStep": "Siguiente: {{section}}",
+			"currentStep": "En edición: {{section}}",
+			"complete": "Todas las secciones están listas",
+			"stepsComplete": "{{completed}} de {{total}} secciones listas",
+			"requiredRemaining": "Falta {{count}} sección obligatoria",
+			"requiredRemaining_other": "Faltan {{count}} secciones obligatorias",
+			"requiredDone": "La configuración obligatoria está completa",
+			"readyToSave": "Todo lo obligatorio está listo. Revisa lo opcional o guarda ahora."
+		},
 		"title": {
 			"create": "Crear nueva herramienta",
 			"edit": "Editar herramienta"
 		},
 		"description": "Configura los ajustes de tu herramienta y los detalles de la API",
 		"menu": {
-			"sections": "Secciones"
+			"sections": "Secciones",
+			"optional": "Opcional"
 		},
 		"sections": {
-			"general": "General",
+			"basic": "Información básica",
+			"basicDesc": "Nombre, descripción, prompt y categoría.",
 			"api": "Configuración API",
+			"apiDesc": "Endpoint, método y tiempo de espera.",
+			"auth": "Autenticación",
+			"authDesc": "Conexión opcional para APIs protegidas.",
 			"headers": "Encabezados",
+			"headersDesc": "Encabezados estáticos para la solicitud.",
 			"parameters": "Parámetros",
-			"body": "Cuerpo de la solicitud"
+			"parametersDesc": "Valores de ruta y consulta usados por el endpoint.",
+			"body": "Cuerpo de la solicitud",
+			"bodyDesc": "Propiedades a enviar cuando el método lo soporte."
 		},
 		"sectionStatus": {
 			"configured": "Configurado",
-			"empty": "Vacío"
+			"empty": "Vacío",
+			"error": "Requiere revisión",
+			"optional": "Opcional",
+			"inProgress": "En curso",
+			"inactive": "No aplica"
+		},
+		"sectionEyebrows": {
+			"required": "Obligatorio",
+			"optional": "Opcional"
 		},
 		"footer": {
-			"hint": "Completa los campos obligatorios para guardar"
+			"hint": "Completa los campos obligatorios para guardar la herramienta",
+			"ready": "Las secciones obligatorias están completas. Ya puedes guardar.",
+			"requiredRemaining": "Aún falta {{count}} sección obligatoria antes de guardar.",
+			"requiredRemaining_other": "Aún faltan {{count}} secciones obligatorias antes de guardar."
+		},
+		"api": {
+			"helper": "Elige primero el método HTTP y luego define el endpoint. La sección de cuerpo solo aparece para los métodos que la soportan."
+		},
+		"advanced": {
+			"title": "Configuración avanzada"
+		},
+		"auth": {
+			"helper": "Agrega una conexión solo si el endpoint requiere autenticación. Déjala vacía para APIs públicas."
 		},
 		"validation": {
 			"nameRequired": "El nombre es obligatorio",
@@ -109,6 +220,10 @@
 				"label": "URL del endpoint",
 				"placeholder": "https://api.ejemplo.com/v1/recurso"
 			},
+			"identifier": {
+				"label": "Identificador interno",
+				"placeholder": "Slug opcional usado por el backend"
+			},
 			"timeout": {
 				"label": "Tiempo de espera (segundos)"
 			},
@@ -120,6 +235,7 @@
 		"headers": {
 			"title": "Encabezados de la solicitud",
 			"add": "Agregar encabezado",
+			"remove": "Eliminar encabezado",
 			"empty": "No hay encabezados configurados",
 			"fields": {
 				"keyPlaceholder": "Nombre del encabezado",
@@ -128,9 +244,11 @@
 		},
 		"parameters": {
 			"add": "Agregar",
+			"remove": "Eliminar parámetro",
 			"path": {
 				"title": "Parámetros de ruta",
 				"empty": "No hay parámetros de ruta",
+				"helper": "Los parámetros de ruta forman parte de la URL y normalmente definen segmentos obligatorios.",
 				"fields": {
 					"keyPlaceholder": "Nombre del parámetro",
 					"valuePlaceholder": "Descripción"
@@ -139,6 +257,7 @@
 			"query": {
 				"title": "Parámetros de consulta",
 				"empty": "No hay parámetros de consulta",
+				"helper": "Los parámetros de consulta refinan la solicitud sin cambiar la ruta.",
 				"fields": {
 					"keyPlaceholder": "Nombre del parámetro",
 					"valuePlaceholder": "Descripción"
@@ -148,7 +267,13 @@
 		"body": {
 			"title": "Propiedades del cuerpo de la solicitud",
 			"add": "Agregar propiedad",
+			"remove": "Eliminar propiedad",
+			"required": "Obligatoria",
+			"optional": "Opcional",
+			"advancedLabel": "Mapeo avanzado",
+			"disabledHint": "Esta sección solo se usa para solicitudes POST, PUT y PATCH.",
 			"empty": "No hay propiedades del cuerpo configuradas",
+			"helper": "Define los campos del esquema que se enviarán en el cuerpo de la solicitud.",
 			"fields": {
 				"keyPlaceholder": "Nombre de la propiedad",
 				"typePlaceholder": "Tipo",

@@ -41,8 +41,18 @@ const GeneralSectionRightPanel: React.FC = () => {
 	const currentLanguage =
 		form.values.agentConfig?.conversationConfig?.agent?.language || '';
 	const languageOptions = [
-		{ value: 'en', label: t('form.agent.basic.languages.en') },
-		{ value: 'es', label: t('form.agent.basic.languages.es') },
+		{
+			value: 'en',
+			label: t('form.agent.basic.languages.en', {
+				ns: 'campaign.form.agents',
+			}),
+		},
+		{
+			value: 'es',
+			label: t('form.agent.basic.languages.es', {
+				ns: 'campaign.form.agents',
+			}),
+		},
 	];
 
 	const handleLanguageChange = (value: string | null) => {
@@ -201,14 +211,22 @@ const GeneralSectionRightPanel: React.FC = () => {
 					)}
 
 					<Select
-						label={t('form.agent.basic.language')}
-						placeholder={t('form.agent.basic.languagePlaceholder')}
+						label={t('form.agent.basic.language', {
+							ns: 'campaign.form.agents',
+						})}
+						placeholder={t('form.agent.basic.languagePlaceholder', {
+							ns: 'campaign.form.agents',
+						})}
 						value={currentLanguage}
 						onChange={handleLanguageChange}
 						data={languageOptions}
-						description={t('form.agent.basic.languageDescription')}
+						description={t('form.agent.basic.languageDescription', {
+							ns: 'campaign.form.agents',
+						})}
 						searchable
-						nothingFoundMessage={t('form.agent.basic.noLanguageFound')}
+						nothingFoundMessage={t('form.agent.basic.noLanguageFound', {
+							ns: 'campaign.form.agents',
+						})}
 						leftSection={<IconLanguage size={14} />}
 						size='sm'
 					/>

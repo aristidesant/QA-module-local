@@ -4,14 +4,13 @@ import { IconPlus } from '@tabler/icons-react';
 import useToolsStore from '~/stores/toolsStore';
 import ToolsList from '../ToolsList';
 import { useState, useCallback, useEffect } from 'react';
-import ToolsModal from './ToolsModal';
 import { useToolCategories } from '~/queries/toolCategoryQueries';
 import { useTranslation } from 'react-i18next';
+import ToolForm from '../ToolForm';
 
 const ToolsPage = () => {
 	const { t } = useTranslation('tools');
-	// Local state for modal
-	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [view, setView] = useState<'list' | 'form'>('list');
 	const [selectedToolId, setSelectedToolId] = useState<
 		string | number | undefined
 	>(undefined);
@@ -39,16 +38,16 @@ const ToolsPage = () => {
 
 	const handleCreateTool = useCallback(() => {
 		setSelectedToolId(undefined);
-		setIsModalOpen(true);
+		setView('form');
 	}, []);
 
 	const handleEditTool = useCallback((toolId: string | number) => {
 		setSelectedToolId(toolId);
-		setIsModalOpen(true);
+		setView('form');
 	}, []);
 
-	const handleCloseModal = useCallback(() => {
-		setIsModalOpen(false);
+	const handleCloseForm = useCallback(() => {
+		setView('list');
 		setSelectedToolId(undefined);
 	}, []);
 
@@ -65,34 +64,44 @@ const ToolsPage = () => {
 		);
 	}
 
-	return (
-		<>
+	if (view === 'form') {
+		return (
 			<ContentContainer
-				title={t('page.title')}
-				description={t('page.description')}
-				titleRight={
-					<Button
-						leftSection={<IconPlus size={16} />}
-						onClick={handleCreateTool}
-						variant='filled'
-						size='xs'
-					>
-						{t('actions.createTool')}
-					</Button>
-				}
+				showBackButton
+				onBackClick={handleCloseForm}
+				contentWidth='full'
 			>
 				<Stack>
-					<ToolsList onCreate={handleCreateTool} onEdit={handleEditTool} />
+					<ToolForm
+						toolId={selectedToolId}
+						categoryId={selectedToolCategory?.id}
+						onSuccess={handleCloseForm}
+						onCancel={handleCloseForm}
+					/>
 				</Stack>
 			</ContentContainer>
+		);
+	}
 
-			<ToolsModal
-				opened={isModalOpen}
-				onClose={handleCloseModal}
-				toolId={selectedToolId}
-				categoryId={selectedToolCategory?.id}
-			/>
-		</>
+	return (
+		<ContentContainer
+			title={t('page.title')}
+			description={t('page.description')}
+			titleRight={
+				<Button
+					leftSection={<IconPlus size={16} />}
+					onClick={handleCreateTool}
+					variant='filled'
+					size='xs'
+				>
+					{t('actions.createTool')}
+				</Button>
+			}
+		>
+			<Stack>
+				<ToolsList onCreate={handleCreateTool} onEdit={handleEditTool} />
+			</Stack>
+		</ContentContainer>
 	);
 };
 

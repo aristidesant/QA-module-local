@@ -1,4 +1,4 @@
-import { Modal, Stack, Alert } from '@mantine/core';
+import { Modal, Stack, Alert, Group, Button } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useState } from 'react';
@@ -103,11 +103,11 @@ export default function ClientSelectionModal({
 				size='lg'
 				padding='lg'
 				overlayProps={{ backgroundOpacity: 0.55, blur: 3 }}
-				withCloseButton={!isLoading}
+				withCloseButton={false}
 				closeOnClickOutside={!isLoading}
 				closeOnEscape={!isLoading}
 			>
-				<Stack gap='xs'>
+				<Stack gap='md'>
 					<ClientSelectionPanel
 						title={t('clientSelection.title')}
 						description={t('clientSelection.description')}
@@ -134,6 +134,16 @@ export default function ClientSelectionModal({
 							{formError}
 						</Alert>
 					)}
+
+					<Group justify='flex-end'>
+						<Button
+							variant='default'
+							onClick={handleClose}
+							disabled={isLoading}
+						>
+							{t('actions.cancel')}
+						</Button>
+					</Group>
 				</Stack>
 			</Modal>
 
