@@ -106,9 +106,11 @@ Create a `.env` file at project root:
 
 ```bash
 VITE_APP_API_URL=http://localhost:3000
+VITE_APP_SIP_MONITOR_ORIGIN=https://sip-monitor.example.com
 ```
 
 `VITE_APP_API_URL` is used by the frontend API config (`src/api/config.ts`).
+`VITE_APP_SIP_MONITOR_ORIGIN` must be the origin that is allowed to render the SIP monitor iframe.
 
 ### Install dependencies
 
@@ -130,11 +132,12 @@ pnpm coverage     # Coverage run (VALID_COVERAGE_ONLY mode)
 
 ## Docker
 
-The Docker image injects API URL at build time through `VITE_APP_API_URL`.
+The Docker image injects the API URL and the allowed SIP monitor origin at build time.
 
 ```bash
 docker build \
   --build-arg VITE_APP_API_URL=https://your-api.example.com \
+  --build-arg VITE_APP_SIP_MONITOR_ORIGIN=https://sip-monitor.example.com \
   -t nai-agent-service-front .
 
 docker run --rm -p 8080:80 nai-agent-service-front
