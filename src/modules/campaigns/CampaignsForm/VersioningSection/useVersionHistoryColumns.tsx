@@ -1,15 +1,21 @@
-import { useMemo } from 'react';
+﻿import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import {
 	ActionIcon,
 	Badge,
 	Checkbox,
 	Group,
+	Menu,
 	Stack,
 	Text,
 	Tooltip,
 } from '@mantine/core';
-import { IconGitCompare, IconRotate2, IconTrash } from '@tabler/icons-react';
+import {
+	IconGitCompare,
+	IconRotate2,
+	IconScissors,
+	IconTrash,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type {
 	AgentVersionCommit,
@@ -26,6 +32,8 @@ interface UseVersionHistoryColumnsOptions {
 	onCompare: (version: AgentVersionSummary) => void;
 	onRevert: (version: AgentVersionSummary) => void;
 	onDelete: (version: AgentVersionSummary) => void;
+	onRevertAndDeleteSubsequent: (version: AgentVersionSummary) => void;
+	onRevertAndDeletePrevious: (version: AgentVersionSummary) => void;
 	isReverting: boolean;
 	isDeleting: boolean;
 	activeVersionId?: string | null;
@@ -42,6 +50,8 @@ const useVersionHistoryColumns = ({
 	onCompare,
 	onRevert,
 	onDelete,
+	onRevertAndDeleteSubsequent,
+	onRevertAndDeletePrevious,
 	isReverting,
 	isDeleting,
 	activeVersionId,
@@ -174,16 +184,46 @@ const useVersionHistoryColumns = ({
 									<IconGitCompare size={16} />
 								</ActionIcon>
 							</Tooltip>
-							<Tooltip label={t('history.actions.revert')} withArrow>
-								<ActionIcon
-									variant='subtle'
-									color='orange'
-									loading={isReverting && activeVersionId === row.original.id}
-									onClick={() => onRevert(row.original)}
-								>
-									<IconRotate2 size={16} />
-								</ActionIcon>
-							</Tooltip>
+							<Menu position='bottom-end' withinPortal withArrow arrowSize={8}>
+								<Menu.Target>
+									<Tooltip label={t('history.actions.revertMenu')} withArrow>
+										<ActionIcon
+											variant='subtle'
+											color='orange'
+											loading={
+												isReverting && activeVersionId === row.original.id
+											}
+										>
+											<IconRotate2 size={16} />
+										</ActionIcon>
+									</Tooltip>
+								</Menu.Target>
+								<Menu.Dropdown>
+									<Menu.Item
+										leftSection={<IconRotate2 size={14} />}
+										onClick={() => onRevert(row.original)}
+									>
+										{t('history.actions.revert')}
+									</Menu.Item>
+									<Menu.Divider />
+									<Menu.Item
+										color='red'
+										leftSection={<IconScissors size={14} />}
+										disabled={!hasCommit}
+										onClick={() => onRevertAndDeleteSubsequent(row.original)}
+									>
+										{t('history.actions.revertAndDeleteNewer')}
+									</Menu.Item>
+									<Menu.Item
+										color='red'
+										leftSection={<IconScissors size={14} />}
+										disabled={!hasCommit}
+										onClick={() => onRevertAndDeletePrevious(row.original)}
+									>
+										{t('history.actions.revertAndDeletePrevious')}
+									</Menu.Item>
+								</Menu.Dropdown>
+							</Menu>
 							<Tooltip
 								label={
 									hasCommit
@@ -224,6 +264,8 @@ const useVersionHistoryColumns = ({
 			onDelete,
 			onDeselectAll,
 			onRevert,
+			onRevertAndDeleteSubsequent,
+			onRevertAndDeletePrevious,
 			onSelectAll,
 			onToggleSelect,
 			selectedVersionIds,
