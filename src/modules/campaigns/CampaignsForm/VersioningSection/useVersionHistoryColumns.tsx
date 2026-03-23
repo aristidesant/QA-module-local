@@ -1,13 +1,22 @@
 import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { ActionIcon, Badge, Group, Stack, Text, Tooltip } from '@mantine/core';
-import { IconGitCompare, IconRotate2 } from '@tabler/icons-react';
+import {
+	ActionIcon,
+	Badge,
+	Checkbox,
+	Group,
+	Stack,
+	Text,
+	Tooltip,
+} from '@mantine/core';
+import { IconGitCompare, IconRotate2, IconTrash } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type {
 	AgentVersionCommit,
 	AgentVersionSummary,
 } from '~/models/AgentVersioningModel';
 import {
+	findCommitForVersion,
 	formatCommittedAgo,
 	formatCommittedAt,
 } from './VersioningSection.helpers';
@@ -16,51 +25,66 @@ import classes from './VersioningSection.module.css';
 interface UseVersionHistoryColumnsOptions {
 	onCompare: (version: AgentVersionSummary) => void;
 	onRevert: (version: AgentVersionSummary) => void;
+	onDelete: (version: AgentVersionSummary) => void;
 	isReverting: boolean;
+	isDeleting: boolean;
 	activeVersionId?: string | null;
 	versionCommits: AgentVersionCommit[];
-}
-
-function findCommitForVersion(
-	version: AgentVersionSummary,
-	commits: AgentVersionCommit[]
-): AgentVersionCommit | undefined {
-	if (commits.length === 0) return undefined;
-
-	// Prefer explicit versionId match when available
-	const byId = commits.find(
-		(c) => c.versionId != null && c.versionId === version.id
-	);
-	if (byId) return byId;
-
-	// Fall back to closest timestamp match (no hard tolerance — system clock skew
-	// between ElevenLabs and our backend can exceed 2 minutes)
-	const versionTimeMs = version.timeCommittedSecs * 1000;
-	let best: AgentVersionCommit | undefined;
-	let bestDiff = Infinity;
-
-	for (const commit of commits) {
-		const diff = Math.abs(new Date(commit.createdAt).getTime() - versionTimeMs);
-		if (diff < bestDiff) {
-			bestDiff = diff;
-			best = commit;
-		}
-	}
-
-	return best;
+	selectedVersionIds: Set<string>;
+	onToggleSelect: (versionId: string) => void;
+	onSelectAll: () => void;
+	onDeselectAll: () => void;
+	allSelected: boolean;
+	someSelected: boolean;
 }
 
 const useVersionHistoryColumns = ({
 	onCompare,
 	onRevert,
+	onDelete,
 	isReverting,
+	isDeleting,
 	activeVersionId,
 	versionCommits,
+	selectedVersionIds,
+	onToggleSelect,
+	onSelectAll,
+	onDeselectAll,
+	allSelected,
+	someSelected,
 }: UseVersionHistoryColumnsOptions): ColumnDef<AgentVersionSummary>[] => {
 	const { t } = useTranslation('campaign.form.versioning');
 
 	return useMemo(
 		() => [
+			{
+				id: 'select',
+				header: () => (
+					<Checkbox
+						size='xs'
+						checked={allSelected}
+						indeterminate={someSelected}
+						onChange={() => (allSelected ? onDeselectAll() : onSelectAll())}
+						aria-label={t('history.selectAll')}
+					/>
+				),
+				cell: ({ row }) => (
+					<Checkbox
+						size='xs'
+						checked={selectedVersionIds.has(row.original.id)}
+						onChange={() => onToggleSelect(row.original.id)}
+						onClick={(e) => e.stopPropagation()}
+						aria-label={t('history.selectVersion', {
+							version: row.original.seqNoInBranch,
+						})}
+					/>
+				),
+				size: 40,
+				meta: {
+					cellClassName: classes.selectCell,
+					headerClassName: classes.selectCell,
+				},
+			},
 			{
 				id: 'version',
 				header: t('history.columns.version'),
@@ -134,37 +158,78 @@ const useVersionHistoryColumns = ({
 			{
 				id: 'actions',
 				header: '',
-				cell: ({ row }) => (
-					<Group gap='xs' justify='flex-end' wrap='nowrap'>
-						<Tooltip label={t('history.actions.compare')} withArrow>
-							<ActionIcon
-								variant='subtle'
-								color='blue'
-								onClick={() => onCompare(row.original)}
+				cell: ({ row }) => {
+					const hasCommit = Boolean(
+						findCommitForVersion(row.original, versionCommits)
+					);
+
+					return (
+						<Group gap='xs' justify='flex-end' wrap='nowrap'>
+							<Tooltip label={t('history.actions.compare')} withArrow>
+								<ActionIcon
+									variant='subtle'
+									color='blue'
+									onClick={() => onCompare(row.original)}
+								>
+									<IconGitCompare size={16} />
+								</ActionIcon>
+							</Tooltip>
+							<Tooltip label={t('history.actions.revert')} withArrow>
+								<ActionIcon
+									variant='subtle'
+									color='orange'
+									loading={isReverting && activeVersionId === row.original.id}
+									onClick={() => onRevert(row.original)}
+								>
+									<IconRotate2 size={16} />
+								</ActionIcon>
+							</Tooltip>
+							<Tooltip
+								label={
+									hasCommit
+										? t('history.actions.delete')
+										: t('delete.noCommitError')
+								}
+								withArrow
 							>
-								<IconGitCompare size={16} />
-							</ActionIcon>
-						</Tooltip>
-						<Tooltip label={t('history.actions.revert')} withArrow>
-							<ActionIcon
-								variant='subtle'
-								color='orange'
-								loading={isReverting && activeVersionId === row.original.id}
-								onClick={() => onRevert(row.original)}
-							>
-								<IconRotate2 size={16} />
-							</ActionIcon>
-						</Tooltip>
-					</Group>
-				),
+								<ActionIcon
+									variant='subtle'
+									color='red'
+									disabled={!hasCommit}
+									loading={
+										isDeleting && selectedVersionIds.has(row.original.id)
+									}
+									onClick={() => onDelete(row.original)}
+								>
+									<IconTrash size={16} />
+								</ActionIcon>
+							</Tooltip>
+						</Group>
+					);
+				},
 				meta: {
 					cellClassName: classes.actionsCell,
 					headerClassName: classes.actionsCell,
 				},
-				size: 80,
+				size: 100,
 			},
 		],
-		[activeVersionId, isReverting, onCompare, onRevert, t, versionCommits]
+		[
+			activeVersionId,
+			allSelected,
+			someSelected,
+			isDeleting,
+			isReverting,
+			onCompare,
+			onDelete,
+			onDeselectAll,
+			onRevert,
+			onSelectAll,
+			onToggleSelect,
+			selectedVersionIds,
+			t,
+			versionCommits,
+		]
 	);
 };
 

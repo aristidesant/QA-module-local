@@ -28,8 +28,11 @@
 		},
 		"actions": {
 			"compare": "Comparar con la actual",
-			"revert": "Revertir a esta versión"
-		}
+			"revert": "Revertir a esta versión",
+			"delete": "Eliminar del historial"
+		},
+		"selectAll": "Seleccionar todas las versiones",
+		"selectVersion": "Seleccionar versión {{version}}"
 	},
 	"enable": {
 		"title": "Habilitar versionado del agente",
@@ -86,6 +89,23 @@
 		"cancel": "Cancelar",
 		"revertVersion": "Revertir",
 		"revertLatest": "Revertir últimos cambios",
+		"delete": "Eliminar",
+		"deleteSelected": "Eliminar {{count}} versión",
+		"deleteSelected_other": "Eliminar {{count}} versiones",
 		"retry": "Intentar de nuevo"
+	},
+	"delete": {
+		"confirmTitle": "¿Eliminar versión?",
+		"confirmTitle_other": "¿Eliminar {{count}} versiones?",
+		"confirmMessage": "Esto eliminará permanentemente esta versión del registro de historial.",
+		"confirmMessage_other": "Esto eliminará permanentemente {{count}} versiones del registro de historial.",
+		"revertHint": "Aún puedes revertir a cualquier versión incluso después de eliminarla del historial.",
+		"successTitle": "Versión eliminada",
+		"successTitle_other": "Versiones eliminadas",
+		"successMessage": "{{count}} versión fue eliminada del historial.",
+		"successMessage_other": "{{count}} versiones fueron eliminadas del historial.",
+		"errorTitle": "No se pudo eliminar",
+		"errorMessage": "La versión seleccionada no pudo eliminarse.",
+		"noCommitError": "No se encontró ningún registro interno para la versión seleccionada."
 	}
 }

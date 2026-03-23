@@ -7,6 +7,8 @@ import type {
 	AgentVersionQueryParams,
 	AgentVersionSnapshot,
 	EnableAgentVersioningResponse,
+	GetBranchDetailsParams,
+	ListVersionCommitsParams,
 } from '~/models/AgentVersioningModel';
 import { normalizeAgentVersionSnapshot } from '~/utils/agentVersioning';
 import { DEFAULT_API_URL } from './config';
@@ -43,7 +45,7 @@ const agentVersioningApi = () => {
 		getBranchDetails: async (
 			agentId: string,
 			branchId: string,
-			params?: { limit?: number; offset?: number }
+			params?: GetBranchDetailsParams
 		) => {
 			const response = await axios.get<AgentBranchDetails>(
 				`${DEFAULT_API_URL}/agents/${agentId}/branches/${branchId}`,
@@ -64,10 +66,18 @@ const agentVersioningApi = () => {
 			return response.data;
 		},
 
-		listVersionCommits: async (agentId: string, branchId?: string) => {
+		listVersionCommits: async (
+			agentId: string,
+			params?: ListVersionCommitsParams
+		) => {
 			const response = await axios.get<AgentVersionCommitListResponse>(
 				`${DEFAULT_API_URL}/agents/${agentId}/version-commits`,
-				{ params: branchId ? { branchId } : undefined }
+				{
+					params: {
+						...(params?.branchId ? { branchId: params.branchId } : {}),
+						filter: params?.filter ?? 'ACTIVE',
+					},
+				}
 			);
 
 			return response.data;
@@ -87,6 +97,13 @@ const agentVersioningApi = () => {
 			);
 
 			return response.data;
+		},
+
+		deleteVersionCommits: async (agentId: string, ids: number[]) => {
+			await axios.delete(
+				`${DEFAULT_API_URL}/agents/${agentId}/version-commits`,
+				{ data: { ids } }
+			);
 		},
 	};
 };

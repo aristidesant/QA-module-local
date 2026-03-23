@@ -71,6 +71,12 @@ export interface AgentVersionQueryParams {
 	versionId?: string;
 }
 
+export interface GetBranchDetailsParams {
+	limit?: number;
+	offset?: number;
+	filter?: VersionCommitFilter;
+}
+
 export type AgentVersionSnapshot = Partial<
 	Omit<AgentConfigModel, 'metadata' | 'workflow'>
 > & {
@@ -87,6 +93,13 @@ export interface AgentVersionCommit {
 	userName: string;
 	userEmail: string;
 	createdAt: string;
+}
+
+export type VersionCommitFilter = 'ACTIVE' | 'DELETED' | 'ALL';
+
+export interface ListVersionCommitsParams {
+	branchId?: string;
+	filter?: VersionCommitFilter;
 }
 
 export interface AgentVersionCommitListResponse {

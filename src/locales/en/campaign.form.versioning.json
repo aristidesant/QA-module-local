@@ -28,8 +28,11 @@
 		},
 		"actions": {
 			"compare": "Compare with current",
-			"revert": "Revert to this version"
-		}
+			"revert": "Revert to this version",
+			"delete": "Delete from history"
+		},
+		"selectAll": "Select all versions",
+		"selectVersion": "Select version {{version}}"
 	},
 	"enable": {
 		"title": "Enable agent versioning",
@@ -86,6 +89,23 @@
 		"cancel": "Cancel",
 		"revertVersion": "Revert",
 		"revertLatest": "Revert latest changes",
+		"delete": "Delete",
+		"deleteSelected": "Delete {{count}} version",
+		"deleteSelected_other": "Delete {{count}} versions",
 		"retry": "Try again"
+	},
+	"delete": {
+		"confirmTitle": "Delete version?",
+		"confirmTitle_other": "Delete {{count}} versions?",
+		"confirmMessage": "This will permanently remove this version from the history log.",
+		"confirmMessage_other": "This will permanently remove {{count}} versions from the history log.",
+		"revertHint": "You can still revert to any version even after removing it from history.",
+		"successTitle": "Version deleted",
+		"successTitle_other": "Versions deleted",
+		"successMessage": "{{count}} version was removed from history.",
+		"successMessage_other": "{{count}} versions were removed from history.",
+		"errorTitle": "Could not delete",
+		"errorMessage": "The selected version could not be removed.",
+		"noCommitError": "No internal record found for the selected version."
 	}
 }
