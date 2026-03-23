@@ -31,6 +31,7 @@ import ClientSelectionModal from './ClientSelectionModal';
 import { usePasswordResetStore } from '~/stores/passwordResetStore';
 import { useSessionStore } from '~/stores/sessionStore';
 import LanguagePicker from '~/components/LanguagePicker';
+import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 
 type LoginType = 'USER_PASS' | 'LDAP';
 
@@ -269,28 +270,14 @@ export function LoginForm() {
 									</Alert>
 								)}
 
-								<div
-									className={classes.segmentedWrapper}
-									role='radiogroup'
+								<AppSegmentedControl
 									aria-label={t('loginType.label')}
-								>
-									{loginTypeOptions.map((option) => {
-										const isActive = form.values.loginType === option.value;
-										return (
-											<button
-												key={option.value}
-												type='button'
-												className={`${classes.segmentedButton} ${
-													isActive ? classes.segmentedButtonActive : ''
-												}`}
-												onClick={() => handleLoginTypeChange(option.value)}
-												aria-pressed={isActive}
-											>
-												{option.label}
-											</button>
-										);
-									})}
-								</div>
+									value={form.values.loginType}
+									onChange={handleLoginTypeChange}
+									data={loginTypeOptions}
+									size='sm'
+									fullWidth
+								/>
 
 								<div className={classes.fields}>
 									<TextInput
