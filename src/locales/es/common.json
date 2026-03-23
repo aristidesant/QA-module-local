@@ -183,6 +183,7 @@
 	},
 	"currency": "$",
 	"languages": {
+		"title": "SELECCIONAR IDIOMA",
 		"en": "Inglés",
 		"es": "Español"
 	},

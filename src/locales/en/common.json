@@ -183,6 +183,7 @@
 	},
 	"currency": "$",
 	"languages": {
+		"title": "SELECT LANGUAGE",
 		"en": "English",
 		"es": "Spanish"
 	},

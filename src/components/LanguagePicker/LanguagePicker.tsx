@@ -1,4 +1,4 @@
-import { Menu, UnstyledButton, Text, Group } from '@mantine/core';
+import { Menu, UnstyledButton } from '@mantine/core';
 import { IconCheck, IconChevronDown } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import styles from './LanguagePicker.module.css';
@@ -41,37 +41,29 @@ const LanguagePicker: React.FC<LanguagePickerProps> = ({
 					className={[styles.trigger, styles[variant], styles[size]].join(' ')}
 					aria-label={t('languages.' + i18n.language)}
 				>
-					<Group gap={8} wrap='nowrap'>
-						<Text size='lg' style={{ lineHeight: 1 }}>
-							{currentLanguage.flag}
-						</Text>
+					<div className={styles.triggerContent}>
+						<span className={styles.flag}>{currentLanguage.flag}</span>
 						{withLabel && (
-							<Text size='sm' fw={600} className={styles.langValue}>
-								{currentLanguage.label}
-							</Text>
+							<span className={styles.langValue}>{currentLanguage.label}</span>
 						)}
 						<IconChevronDown
 							size={14}
 							stroke={1.5}
 							className={styles.chevron}
 						/>
-					</Group>
+					</div>
 				</UnstyledButton>
 			</Menu.Target>
 
 			<Menu.Dropdown className={styles.dropdown}>
 				<Menu.Label className={styles.menuLabel}>
-					{t('languages.title', { defaultValue: 'SELECT LANGUAGE' })}
+					{t('languages.title')}
 				</Menu.Label>
 				{languages.map((lang) => (
 					<Menu.Item
 						key={lang.value}
 						onClick={() => handleLanguageChange(lang.value)}
-						leftSection={
-							<Text size='md' style={{ width: 20 }}>
-								{lang.flag}
-							</Text>
-						}
+						leftSection={<span className={styles.menuFlag}>{lang.flag}</span>}
 						rightSection={
 							i18n.language === lang.value && (
 								<IconCheck size={14} color='var(--mantine-color-blue-6)' />
@@ -82,9 +74,15 @@ const LanguagePicker: React.FC<LanguagePickerProps> = ({
 							i18n.language === lang.value ? styles.activeItem : '',
 						].join(' ')}
 					>
-						<Text size='sm' fw={i18n.language === lang.value ? 600 : 400}>
+						<span
+							className={
+								i18n.language === lang.value
+									? styles.menuItemTextActive
+									: styles.menuItemText
+							}
+						>
 							{lang.label}
-						</Text>
+						</span>
 					</Menu.Item>
 				))}
 			</Menu.Dropdown>

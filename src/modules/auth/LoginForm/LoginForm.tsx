@@ -4,13 +4,9 @@ import {
 	Button,
 	Paper,
 	Text,
-	Stack,
 	Alert,
 	Loader,
 	Title,
-	Group,
-	Box,
-	Grid,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import {
@@ -32,7 +28,6 @@ import { ClientSelectOption, MFALoginResponse } from '~/api/authApi';
 import { APP_VERSION } from '~/version';
 import OTPVerificationModal from './OTPVerificationModal';
 import ClientSelectionModal from './ClientSelectionModal';
-import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import { usePasswordResetStore } from '~/stores/passwordResetStore';
 import { useSessionStore } from '~/stores/sessionStore';
 import LanguagePicker from '~/components/LanguagePicker';
@@ -195,6 +190,11 @@ export function LoginForm() {
 		form.setFieldValue('loginType', value);
 	};
 
+	const loginTypeOptions = [
+		{ label: t('loginType.credentials'), value: 'USER_PASS' as const },
+		{ label: t('loginType.ldap'), value: 'LDAP' as const },
+	];
+
 	const handleOTPSuccess = () => {
 		setOtpModalOpened(false);
 		setPendingLoginData(null);
@@ -221,7 +221,7 @@ export function LoginForm() {
 
 	return (
 		<div className={classes.wrapper}>
-			<Paper className={classes.paper} radius='xl'>
+			<Paper className={classes.paper}>
 				<form
 					className={classes.formContainer}
 					onSubmit={form.onSubmit(handleSubmit, handleValidationFailure)}
@@ -229,62 +229,70 @@ export function LoginForm() {
 				>
 					{(isSubmitting || isRedirecting) && (
 						<div className={classes.loadingOverlay}>
-							<Stack gap='sm' align='center'>
+							<div className={classes.loadingContent}>
 								<Loader size='md' type='dots' color='blue' />
 								<Text size='sm' fw={600} c='blue.7'>
 									{t('actions.signingIn')}
 								</Text>
-							</Stack>
+							</div>
 						</div>
 					)}
 
-					<Grid gutter={{ base: 'lg', md: 'xl' }} align='stretch'>
-						<Grid.Col span={{ base: 12, md: 5 }}>
-							<div className={classes.header}>
-								<Box className={classes.logoContainer}>
-									<Logo />
-								</Box>
-								<div className={classes.headerText}>
-									<Title order={2} className={classes.title}>
-										{t('welcome')}
-									</Title>
-									<Text className={classes.subtitle}>{t('subtitle')}</Text>
-								</div>
-
-								<div className={classes.languagePicker}>
-									<LanguagePicker variant='subtle' size='sm' />
-								</div>
+					<div className={classes.contentGrid}>
+						<section className={classes.header}>
+							<div className={classes.logoContainer}>
+								<Logo />
 							</div>
-						</Grid.Col>
+							<div className={classes.headerText}>
+								<Title order={2} className={classes.title}>
+									{t('welcome')}
+								</Title>
+								<Text className={classes.subtitle}>{t('subtitle')}</Text>
+							</div>
 
-						<Grid.Col span={{ base: 12, md: 7 }}>
-							<Stack gap='md' className={classes.formColumn}>
+							<div className={classes.languagePicker}>
+								<LanguagePicker variant='subtle' size='sm' />
+							</div>
+						</section>
+
+						<section className={classes.formColumn}>
+							<div className={classes.formStack}>
 								{logoutReason === 'expired' && (
 									<Alert
 										variant='light'
 										color='red'
 										title={t('errors.sessionExpired.title')}
 										icon={<IconAlertCircle size={20} />}
-										radius='lg'
 										className={classes.errorMessage}
 									>
 										{t('errors.sessionExpired.message')}
 									</Alert>
 								)}
 
-								<Box className={classes.segmentedWrapper}>
-									<AppSegmentedControl
-										fullWidth
-										value={form.values.loginType}
-										onChange={handleLoginTypeChange}
-										data={[
-											{ label: t('loginType.credentials'), value: 'USER_PASS' },
-											{ label: t('loginType.ldap'), value: 'LDAP' },
-										]}
-									/>
-								</Box>
+								<div
+									className={classes.segmentedWrapper}
+									role='radiogroup'
+									aria-label={t('loginType.label')}
+								>
+									{loginTypeOptions.map((option) => {
+										const isActive = form.values.loginType === option.value;
+										return (
+											<button
+												key={option.value}
+												type='button'
+												className={`${classes.segmentedButton} ${
+													isActive ? classes.segmentedButtonActive : ''
+												}`}
+												onClick={() => handleLoginTypeChange(option.value)}
+												aria-pressed={isActive}
+											>
+												{option.label}
+											</button>
+										);
+									})}
+								</div>
 
-								<Stack gap='sm'>
+								<div className={classes.fields}>
 									<TextInput
 										required
 										label={t('username.label')}
@@ -353,7 +361,7 @@ export function LoginForm() {
 											formError ? 'login-form-error' : undefined
 										}
 									/>
-								</Stack>
+								</div>
 
 								{formError && (
 									<Alert
@@ -362,7 +370,6 @@ export function LoginForm() {
 										color='red'
 										title={t('errors.signInFailedTitle')}
 										icon={<IconAlertCircle size={20} />}
-										radius='lg'
 										className={classes.errorMessage}
 										role='alert'
 										aria-live='assertive'
@@ -378,7 +385,6 @@ export function LoginForm() {
 								<Button
 									type='submit'
 									fullWidth
-									mt='sm'
 									className={classes.submitButton}
 									loading={isLoading}
 									loaderProps={{ type: 'dots' }}
@@ -389,17 +395,17 @@ export function LoginForm() {
 								>
 									{t('actions.signIn')}
 								</Button>
-							</Stack>
-						</Grid.Col>
-					</Grid>
+							</div>
+						</section>
+					</div>
 				</form>
 			</Paper>
 
-			<Group className={classes.footer} gap='xs'>
+			<div className={classes.footer}>
 				<Text size='xs' className={classes.version}>
 					v{APP_VERSION}
 				</Text>
-			</Group>
+			</div>
 
 			{/* OTP Verification Modal */}
 			<OTPVerificationModal

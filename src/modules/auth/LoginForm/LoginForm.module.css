@@ -20,6 +20,13 @@
 	position: relative;
 }
 
+.contentGrid {
+	display: grid;
+	grid-template-columns: minmax(260px, 300px) minmax(0, 1fr);
+	column-gap: 48px;
+	align-items: center;
+}
+
 @keyframes slideUp {
 	from {
 		opacity: 0;
@@ -32,12 +39,10 @@
 }
 
 .header {
-	height: 100%;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
 	gap: 16px;
-	padding: 8px 4px;
+	padding: 8px 4px 8px 0;
 	text-align: left;
 }
 
@@ -75,9 +80,21 @@
 }
 
 .formColumn {
-	height: 100%;
-	justify-content: center;
-	padding: 4px 0;
+	min-width: 0;
+	display: flex;
+}
+
+.formStack {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	width: 100%;
+}
+
+.fields {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
 }
 
 .loadingOverlay {
@@ -92,6 +109,13 @@
 	animation: fadeIn 0.2s ease-out;
 }
 
+.loadingContent {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+}
+
 @keyframes fadeIn {
 	from {
 		opacity: 0;
@@ -102,7 +126,63 @@
 }
 
 .segmentedWrapper {
-	margin-bottom: 0;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0;
+	padding: 4px;
+	border-radius: 16px;
+	border: 1px solid
+		color-mix(in srgb, var(--mantine-color-blue-6) 20%, transparent);
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-white) 70%,
+		transparent
+	);
+}
+
+.segmentedButton {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 38px;
+	padding: 8px 14px;
+	border: 0;
+	border-radius: 12px;
+	background: transparent;
+	font: inherit;
+	appearance: none;
+	color: var(--mantine-color-gray-7);
+	font-size: 0.95rem;
+	font-weight: 600;
+	line-height: 1;
+	cursor: pointer;
+	transition:
+		background-color 0.18s ease,
+		color 0.18s ease,
+		box-shadow 0.18s ease,
+		transform 0.18s ease;
+}
+
+.segmentedButton:hover {
+	background-color: var(--mantine-color-gray-0);
+	color: var(--mantine-color-dark-8);
+}
+
+.segmentedButton:focus-visible {
+	outline: 2px solid var(--mantine-color-blue-5);
+	outline-offset: 2px;
+}
+
+.segmentedButtonActive {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-blue-5) 26%,
+		transparent
+	);
+	border: 1px solid
+		color-mix(in srgb, var(--mantine-color-blue-6) 30%, transparent);
+	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+	color: var(--mantine-color-dark-7);
 }
 
 .languagePicker {
@@ -193,7 +273,6 @@
 	border-radius: 12px;
 	background-color: var(--mantine-color-blue-6);
 	transition: all 0.2s ease;
-	margin-top: 8px;
 }
 
 .submitButton:hover:not(:disabled) {
@@ -228,6 +307,11 @@
 		border-radius: 18px;
 	}
 
+	.contentGrid {
+		grid-template-columns: 1fr;
+		row-gap: 28px;
+	}
+
 	.title {
 		font-size: 1.5rem;
 	}
@@ -244,5 +328,9 @@
 
 	.subtitle {
 		margin-inline: auto;
+	}
+
+	.formColumn {
+		width: 100%;
 	}
 }
