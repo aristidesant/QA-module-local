@@ -75,6 +75,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 	const menuTrigger = (
 		<Menu
 			opened={menuOpened}
+			onClose={closeMenu}
 			position='top-end'
 			withArrow
 			shadow='md'
@@ -101,6 +102,31 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 			</Menu.Target>
 
 			<Menu.Dropdown className={styles.menuDropdown}>
+				<div className={styles.menuHeader}>
+					<div
+						className={[
+							styles.avatar,
+							styles.avatarSmall,
+							isImpersonating ? styles.avatarImpersonating : '',
+						].join(' ')}
+					>
+						{initials}
+						{isImpersonating && (
+							<div className={styles.impersonationIndicator}>
+								<IconShield size={10} />
+							</div>
+						)}
+					</div>
+					<div className={styles.menuHeaderText}>
+						<Text size='sm' fw={600} className={styles.menuHeaderName}>
+							{displayName}
+						</Text>
+						<Text size='xs' c='dimmed' className={styles.menuHeaderSub}>
+							{currentClientBadge || t('sidebar.account.title')}
+						</Text>
+					</div>
+				</div>
+				<Divider mb={4} />
 				<Menu.Item
 					leftSection={<IconUserCircle size={16} />}
 					onClick={handleProfileClick}
@@ -137,7 +163,6 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 	return (
 		<>
 			<Paper
-				withBorder
 				radius='lg'
 				className={[
 					styles.shell,
@@ -145,7 +170,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 				].join(' ')}
 			>
 				{collapsed ? (
-					<Stack gap={6} align='center' className={styles.compactShell}>
+					<Stack gap={4} align='center' className={styles.compactShell}>
 						<div
 							className={[
 								styles.avatar,
@@ -168,7 +193,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 							justify='center'
 							className={styles.compactMeta}
 						>
-							<Text size='xs' fw={700} className={styles.compactName}>
+							<Text size='xs' fw={600} className={styles.compactName}>
 								{displayName}
 							</Text>
 							{isImpersonating && (
@@ -186,47 +211,41 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 					</Stack>
 				) : (
 					<Group
-						justify='space-between'
-						align='flex-start'
 						gap='sm'
 						wrap='nowrap'
+						align='center'
+						justify='space-between'
+						className={styles.expandedShell}
 					>
-						<Group
-							gap='sm'
-							wrap='nowrap'
-							align='flex-start'
-							className={styles.identityWrap}
+						<div
+							className={[
+								styles.avatar,
+								isImpersonating ? styles.avatarImpersonating : '',
+							].join(' ')}
 						>
-							<div
-								className={[
-									styles.avatar,
-									isImpersonating ? styles.avatarImpersonating : '',
-								].join(' ')}
-							>
-								{initials}
-								{isImpersonating && (
-									<div className={styles.impersonationIndicator}>
-										<IconShield size={12} />
-									</div>
-								)}
-							</div>
+							{initials}
+							{isImpersonating && (
+								<div className={styles.impersonationIndicator}>
+									<IconShield size={12} />
+								</div>
+							)}
+						</div>
 
-							<Stack gap={2} className={styles.identity}>
-								<Group gap={6} wrap='nowrap' align='center'>
-									<Text size='sm' fw={700} className={styles.name}>
-										{displayName}
-									</Text>
-									{isImpersonating && (
-										<Badge size='xs' variant='light' color='orange'>
-											{t('userMenu.impersonationMode')}
-										</Badge>
-									)}
-								</Group>
-								<Text size='xs' c='dimmed' className={styles.subtitle}>
-									{currentClientBadge || t('sidebar.account.title')}
+						<Stack gap={1} className={styles.identity}>
+							<Group gap={6} wrap='nowrap' align='center' justify='flex-start'>
+								<Text size='sm' fw={600} className={styles.name}>
+									{displayName}
 								</Text>
-							</Stack>
-						</Group>
+								{isImpersonating && (
+									<Badge size='xs' variant='light' color='orange'>
+										{t('userMenu.impersonationMode')}
+									</Badge>
+								)}
+							</Group>
+							<Text size='xs' c='dimmed' className={styles.subtitle}>
+								{currentClientBadge || t('sidebar.account.title')}
+							</Text>
+						</Stack>
 
 						{menuTrigger}
 					</Group>

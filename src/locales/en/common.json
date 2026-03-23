@@ -85,7 +85,8 @@
 			"profile": "Profile",
 			"switchClient": "Switch client",
 			"language": "Language",
-			"logout": "Logout"
+			"logout": "Logout",
+			"menu": "Account menu"
 		}
 	},
 	"header": {

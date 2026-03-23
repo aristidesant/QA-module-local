@@ -85,7 +85,8 @@
 			"profile": "Perfil",
 			"switchClient": "Cambiar cliente",
 			"language": "Idioma",
-			"logout": "Cerrar sesión"
+			"logout": "Cerrar sesión",
+			"menu": "Menú de cuenta"
 		}
 	},
 	"header": {

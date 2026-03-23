@@ -92,6 +92,10 @@
 	gap: 0.35rem;
 }
 
+.primaryLinks {
+	margin-top: 0.65rem;
+}
+
 .sidebarCollapsed .primaryLinks,
 .sidebarCollapsed .sectionsList {
 	width: 100%;
