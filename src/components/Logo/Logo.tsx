@@ -1,6 +1,6 @@
-import { Text, Image } from '@mantine/core';
 import styles from './Logo.module.css';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 interface LogoProps {
 	animated?: boolean;
@@ -11,26 +11,28 @@ interface LogoProps {
 
 const Logo: React.FC<LogoProps> = ({ compact = false }) => {
 	const navigate = useNavigate();
+	const { t } = useTranslation('common');
 	return (
-		<div
+		<button
+			type='button'
 			className={styles.logo}
 			data-testid='logo'
 			onClick={() => navigate('/')}
+			aria-label={t('common.goToHome')}
 		>
-			<Image
+			<img
+				className={`${styles.logoImage} ${compact ? styles.logoImageCompact : ''}`}
 				src={
 					compact ? '/images/logoonblack-small-nt.png' : '/images/logo-2.png'
 				}
 				alt='Logo'
-				w={compact ? 32 : 120}
-				h={compact ? 32 : 40}
 			/>
 			{!compact && (
-				<Text className={styles.logoText}>
+				<span className={styles.logoText}>
 					Unified <span className={styles.logoAccent}>CXM</span>
-				</Text>
+				</span>
 			)}
-		</div>
+		</button>
 	);
 };
 

@@ -4,12 +4,9 @@ import {
 	Button,
 	Paper,
 	Text,
-	Stack,
 	Alert,
 	Loader,
 	Title,
-	Group,
-	Box,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import {
@@ -31,10 +28,10 @@ import { ClientSelectOption, MFALoginResponse } from '~/api/authApi';
 import { APP_VERSION } from '~/version';
 import OTPVerificationModal from './OTPVerificationModal';
 import ClientSelectionModal from './ClientSelectionModal';
-import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import { usePasswordResetStore } from '~/stores/passwordResetStore';
 import { useSessionStore } from '~/stores/sessionStore';
 import LanguagePicker from '~/components/LanguagePicker';
+import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 
 type LoginType = 'USER_PASS' | 'LDAP';
 
@@ -194,6 +191,11 @@ export function LoginForm() {
 		form.setFieldValue('loginType', value);
 	};
 
+	const loginTypeOptions = [
+		{ label: t('loginType.credentials'), value: 'USER_PASS' as const },
+		{ label: t('loginType.ldap'), value: 'LDAP' as const },
+	];
+
 	const handleOTPSuccess = () => {
 		setOtpModalOpened(false);
 		setPendingLoginData(null);
@@ -220,176 +222,177 @@ export function LoginForm() {
 
 	return (
 		<div className={classes.wrapper}>
-			<Paper className={classes.paper} radius='xl'>
-				<div className={classes.header}>
-					<Box className={classes.logoContainer}>
-						<Logo />
-					</Box>
-					<div style={{ position: 'absolute', top: 16, right: 16 }}>
-						<LanguagePicker variant='subtle' size='sm' />
-					</div>
-					<div className={classes.headerText}>
-						<Title order={2} className={classes.title}>
-							{t('welcome')}
-						</Title>
-						<Text className={classes.subtitle}>{t('subtitle')}</Text>
-					</div>
-				</div>
-
+			<Paper className={classes.paper}>
 				<form
 					className={classes.formContainer}
 					onSubmit={form.onSubmit(handleSubmit, handleValidationFailure)}
 					aria-busy={isLoading}
 				>
-					{/* Loading overlay */}
 					{(isSubmitting || isRedirecting) && (
 						<div className={classes.loadingOverlay}>
-							<Stack gap='sm' align='center'>
+							<div className={classes.loadingContent}>
 								<Loader size='md' type='dots' color='blue' />
 								<Text size='sm' fw={600} c='blue.7'>
 									{t('actions.signingIn')}
 								</Text>
-							</Stack>
+							</div>
 						</div>
 					)}
-					<Stack gap='md'>
-						{logoutReason === 'expired' && (
-							<Alert
-								variant='light'
-								color='red'
-								title={t('errors.sessionExpired.title')}
-								icon={<IconAlertCircle size={20} />}
-								radius='lg'
-								className={classes.errorMessage}
-							>
-								{t('errors.sessionExpired.message')}
-							</Alert>
-						)}
-						<Box className={classes.segmentedWrapper}>
-							<AppSegmentedControl
-								fullWidth
-								value={form.values.loginType}
-								onChange={handleLoginTypeChange}
-								data={[
-									{ label: t('loginType.credentials'), value: 'USER_PASS' },
-									{ label: t('loginType.ldap'), value: 'LDAP' },
-								]}
-							/>
-						</Box>
 
-						<Stack gap='sm'>
-							<TextInput
-								required
-								label={t('username.label')}
-								placeholder={
-									form.values.loginType === 'USER_PASS'
-										? t('username.placeholder')
-										: t('username.ldapPlaceholder')
-								}
-								leftSection={
-									<IconUser className={classes.inputIcon} stroke={1.5} />
-								}
-								leftSectionPointerEvents='none'
-								classNames={{
-									input: classes.input,
-									root: classes.inputRoot,
-									label: classes.inputLabel,
-								}}
-								{...usernameInputProps}
-								onChange={(event) => {
-									clearFormError();
-									usernameInputProps.onChange(event);
-								}}
-								onKeyDown={handleFieldKeyDown}
-								name='username'
-								autoComplete='username'
-								autoFocus
-							/>
+					<div className={classes.contentGrid}>
+						<section className={classes.header}>
+							<div className={classes.logoContainer}>
+								<Logo />
+							</div>
+							<div className={classes.headerText}>
+								<Title order={2} className={classes.title}>
+									{t('welcome')}
+								</Title>
+								<Text className={classes.subtitle}>{t('subtitle')}</Text>
+							</div>
 
-							<PasswordInput
-								required
-								label={t('password.label')}
-								placeholder={t('password.placeholder')}
-								leftSection={
-									<IconLock className={classes.inputIcon} stroke={1.5} />
-								}
-								leftSectionPointerEvents='none'
-								visibilityToggleIcon={({ reveal }) =>
-									reveal ? (
-										<IconEyeOff size={18} stroke={1.5} />
-									) : (
-										<IconEye size={18} stroke={1.5} />
-									)
-								}
-								classNames={{
-									input: classes.input,
-									root: classes.inputRoot,
-									label: classes.inputLabel,
-									visibilityToggle: classes.visibilityToggle,
-								}}
-								{...passwordInputProps}
-								onChange={(event) => {
-									clearFormError();
-									passwordInputProps.onChange(event);
-								}}
-								onKeyDown={handleFieldKeyDown}
-								visibilityToggleButtonProps={{
-									'aria-label': passwordVisible
-										? t('password.visibility.hide')
-										: t('password.visibility.show'),
-								}}
-								visible={passwordVisible}
-								onVisibilityChange={setPasswordVisible}
-								name='password'
-								autoComplete='current-password'
-								aria-describedby={formError ? 'login-form-error' : undefined}
-							/>
-						</Stack>
+							<div className={classes.languagePicker}>
+								<LanguagePicker variant='subtle' size='sm' />
+							</div>
+						</section>
 
-						{/* Form error alert */}
-						{formError && (
-							<Alert
-								id='login-form-error'
-								variant='light'
-								color='red'
-								title={t('errors.signInFailedTitle')}
-								icon={<IconAlertCircle size={20} />}
-								radius='lg'
-								className={classes.errorMessage}
-								role='alert'
-								aria-live='assertive'
-								tabIndex={-1}
-								ref={formErrorRef}
-							>
-								{formError === 'Unable to sign in'
-									? t('errors.unableToSignIn')
-									: formError}
-							</Alert>
-						)}
+						<section className={classes.formColumn}>
+							<div className={classes.formStack}>
+								{logoutReason === 'expired' && (
+									<Alert
+										variant='light'
+										color='red'
+										title={t('errors.sessionExpired.title')}
+										icon={<IconAlertCircle size={20} />}
+										className={classes.errorMessage}
+									>
+										{t('errors.sessionExpired.message')}
+									</Alert>
+								)}
 
-						<Button
-							type='submit'
-							fullWidth
-							mt='sm'
-							className={classes.submitButton}
-							loading={isLoading}
-							loaderProps={{ type: 'dots' }}
-							rightSection={
-								!isLoading && <IconArrowRight size={18} stroke={2} />
-							}
-							disabled={isLoading}
-						>
-							{t('actions.signIn')}
-						</Button>
-					</Stack>
+								<AppSegmentedControl
+									aria-label={t('loginType.label')}
+									value={form.values.loginType}
+									onChange={handleLoginTypeChange}
+									data={loginTypeOptions}
+									size='sm'
+									fullWidth
+								/>
+
+								<div className={classes.fields}>
+									<TextInput
+										required
+										label={t('username.label')}
+										placeholder={
+											form.values.loginType === 'USER_PASS'
+												? t('username.placeholder')
+												: t('username.ldapPlaceholder')
+										}
+										leftSection={
+											<IconUser className={classes.inputIcon} stroke={1.5} />
+										}
+										leftSectionPointerEvents='none'
+										classNames={{
+											input: classes.input,
+											root: classes.inputRoot,
+											label: classes.inputLabel,
+										}}
+										{...usernameInputProps}
+										onChange={(event) => {
+											clearFormError();
+											usernameInputProps.onChange(event);
+										}}
+										onKeyDown={handleFieldKeyDown}
+										name='username'
+										autoComplete='username'
+										autoFocus
+									/>
+
+									<PasswordInput
+										required
+										label={t('password.label')}
+										placeholder={t('password.placeholder')}
+										leftSection={
+											<IconLock className={classes.inputIcon} stroke={1.5} />
+										}
+										leftSectionPointerEvents='none'
+										visibilityToggleIcon={({ reveal }) =>
+											reveal ? (
+												<IconEyeOff size={18} stroke={1.5} />
+											) : (
+												<IconEye size={18} stroke={1.5} />
+											)
+										}
+										classNames={{
+											input: classes.input,
+											root: classes.inputRoot,
+											label: classes.inputLabel,
+											visibilityToggle: classes.visibilityToggle,
+										}}
+										{...passwordInputProps}
+										onChange={(event) => {
+											clearFormError();
+											passwordInputProps.onChange(event);
+										}}
+										onKeyDown={handleFieldKeyDown}
+										visibilityToggleButtonProps={{
+											'aria-label': passwordVisible
+												? t('password.visibility.hide')
+												: t('password.visibility.show'),
+										}}
+										visible={passwordVisible}
+										onVisibilityChange={setPasswordVisible}
+										name='password'
+										autoComplete='current-password'
+										aria-describedby={
+											formError ? 'login-form-error' : undefined
+										}
+									/>
+								</div>
+
+								{formError && (
+									<Alert
+										id='login-form-error'
+										variant='light'
+										color='red'
+										title={t('errors.signInFailedTitle')}
+										icon={<IconAlertCircle size={20} />}
+										className={classes.errorMessage}
+										role='alert'
+										aria-live='assertive'
+										tabIndex={-1}
+										ref={formErrorRef}
+									>
+										{formError === 'Unable to sign in'
+											? t('errors.unableToSignIn')
+											: formError}
+									</Alert>
+								)}
+
+								<Button
+									type='submit'
+									fullWidth
+									className={classes.submitButton}
+									loading={isLoading}
+									loaderProps={{ type: 'dots' }}
+									rightSection={
+										!isLoading && <IconArrowRight size={18} stroke={2} />
+									}
+									disabled={isLoading}
+								>
+									{t('actions.signIn')}
+								</Button>
+							</div>
+						</section>
+					</div>
 				</form>
 			</Paper>
 
-			<Group className={classes.footer} gap='xs'>
+			<div className={classes.footer}>
 				<Text size='xs' className={classes.version}>
 					v{APP_VERSION}
 				</Text>
-			</Group>
+			</div>
 
 			{/* OTP Verification Modal */}
 			<OTPVerificationModal

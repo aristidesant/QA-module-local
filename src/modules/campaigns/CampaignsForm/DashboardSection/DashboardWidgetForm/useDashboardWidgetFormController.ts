@@ -65,6 +65,7 @@ import {
 	normalizeWidgetFilterValueForType,
 	resetWidgetFilterRow,
 	resetRuntimeFilterRow,
+	supportsCompareWithWidget,
 	supportsGroupedWidget,
 	supportsTimeSeriesWidget,
 	widgetFormValues,
@@ -220,6 +221,19 @@ const useDashboardWidgetFormController = ({
 		() => getViewValueFormatOptions(t),
 		[t]
 	);
+	const compareWithOptions = useMemo(
+		() => [
+			{
+				value: 'LATEST',
+				label: t('dashboardBuilder.form.options.compareWith.LATEST'),
+			},
+			{
+				value: 'AVERAGE',
+				label: t('dashboardBuilder.form.options.compareWith.AVERAGE'),
+			},
+		],
+		[t]
+	);
 	const sizePresetOptions = useMemo(
 		() => getSizePresetOptions(t, sizePreset),
 		[sizePreset, t]
@@ -363,6 +377,12 @@ const useDashboardWidgetFormController = ({
 		if (
 			manualCompatibility.resultType &&
 			values.resultType !== guidedState.compatibility.inferredResultType
+		) {
+			count += 1;
+		}
+		if (
+			supportsCompareWithWidget(values.widgetType) &&
+			values.compareWith !== 'LATEST'
 		) {
 			count += 1;
 		}
@@ -710,6 +730,10 @@ const useDashboardWidgetFormController = ({
 			widgetType: nextWidgetType,
 		};
 
+		if (!supportsCompareWithWidget(nextWidgetType)) {
+			nextValues.compareWith = 'LATEST';
+		}
+
 		if (!supportsGroupedWidget(nextWidgetType)) {
 			nextValues.groupBy = null;
 			nextValues.limit = '';
@@ -855,6 +879,12 @@ const useDashboardWidgetFormController = ({
 			valueField: (value ?? null) as WidgetFormValues['valueField'],
 		});
 		setManualCompatibility((current) => ({ ...current, resultType: false }));
+	};
+
+	const handleCompareWithChange = (value: string | null) => {
+		updateFormValues({
+			compareWith: (value ?? 'LATEST') as WidgetFormValues['compareWith'],
+		});
 	};
 
 	const handleGroupByChange = (value: string | null) => {
@@ -1216,6 +1246,7 @@ const useDashboardWidgetFormController = ({
 			valueFieldOptions,
 			filterValueTypeOptions,
 			viewValueFormatOptions,
+			compareWithOptions,
 			sizePresetOptions,
 			widgetTypeControlOptions,
 			sourceTypeControlOptions,
@@ -1234,6 +1265,7 @@ const useDashboardWidgetFormController = ({
 				handleMetricKeyChange,
 				handleFieldNameChange,
 				handleValueFieldChange,
+				handleCompareWithChange,
 				handleGroupByChange,
 				handleResultTypeChange,
 				handleViewValueFormatChange,
@@ -1306,6 +1338,7 @@ const useDashboardWidgetFormController = ({
 			handleSupportsTimeSeriesChange,
 			handleTitleChange,
 			handleValueFieldChange,
+			handleCompareWithChange,
 			handleViewLegendChange,
 			handleViewValueFormatChange,
 			handleWidgetTypeChange,
@@ -1334,6 +1367,7 @@ const useDashboardWidgetFormController = ({
 			valueFieldOptions,
 			values,
 			viewValueFormatOptions,
+			compareWithOptions,
 			widgetTypeControlOptions,
 			widgetTypeOptions,
 		]

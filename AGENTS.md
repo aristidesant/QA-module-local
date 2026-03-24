@@ -10,6 +10,8 @@ If there is any conflict, use this precedence order:
 ## 1) Mandatory Global Rules
 
 - Always check whether an available local skill applies before implementing.
+- For any task that improves, designs, or refactors an interface, read the project UI skill first: `.agents/skills/nai-agent-service-front-operational-frontend/SKILL.md`.
+- If another UI skill also applies, prefer the project-specific skill above generic frontend skills such as `frontend-skill` or `uncodixfy`.
 - If no relevant skill exists, proceed with these project conventions.
 - Always write code and code comments in English.
 - Do not create tests unless the user explicitly asks for tests.

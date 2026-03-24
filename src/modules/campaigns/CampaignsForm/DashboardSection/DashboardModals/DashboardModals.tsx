@@ -96,7 +96,7 @@ const DashboardModals = () => {
 					<CampaignDashboardViewer
 						campaignId={campaignId}
 						initialDashboardId={previewDashboard.id}
-						allowLayoutEditing={false}
+						allowLayoutEditing={true}
 					/>
 				)}
 			</Modal>

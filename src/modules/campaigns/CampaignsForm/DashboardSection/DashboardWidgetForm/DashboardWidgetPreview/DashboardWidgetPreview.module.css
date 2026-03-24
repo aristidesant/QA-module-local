@@ -48,6 +48,10 @@
 	margin-top: auto;
 }
 
+.comparisonLabel {
+	line-height: 1.25;
+}
+
 @media (max-width: 62rem) {
 	.previewFrame {
 		min-height: 0;

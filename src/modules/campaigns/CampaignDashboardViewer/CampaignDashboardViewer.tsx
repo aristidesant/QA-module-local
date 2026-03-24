@@ -207,6 +207,19 @@ const CampaignDashboardViewer = ({
 		() => getVisibleDashboardWidgets(widgets, visibilityContext),
 		[visibilityContext, widgets]
 	);
+	const widgetComparisonDataMap = useMemo<Map<number, WidgetComparisonData>>(
+		() =>
+			new Map(
+				visibleWidgets.map((widget) => [
+					widget.id,
+					{
+						...(comparisonMap.get(widget.id) ?? {}),
+						compareWith: widget.dataConfig.metric.compareWith ?? null,
+					},
+				])
+			),
+		[comparisonMap, visibleWidgets]
+	);
 
 	const widgetTypeMap = useMemo(
 		() => createWidgetTypeMap(visibleWidgets),
@@ -501,7 +514,7 @@ const CampaignDashboardViewer = ({
 										}
 									: undefined
 							}
-							comparisonMap={comparisonMap}
+							comparisonMap={widgetComparisonDataMap}
 							comparisonPeriodLabel={comparisonPeriodLabel}
 							selectedTimeRange={selectedTimeRange}
 							widgetsCount={visibleWidgets.length}

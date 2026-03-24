@@ -3,7 +3,6 @@ import type {
 	AnalyticsComparisonMode,
 	AnalyticsTimeRange,
 	DashboardWidget,
-	DashboardWidgetComparisonData,
 	DashboardWidgetDataConfig,
 	DashboardWidgetDefaultFilter,
 	DashboardWidgetFilterValue,
@@ -48,7 +47,7 @@ import type {
 	WidgetRuntimeFilterValue,
 	WidgetTypeOption,
 } from '../DashboardSection.types';
-import { formatMetricValue } from '~/modules/campaigns/CampaignDashboardViewer/CampaignDashboardViewer.helpers';
+import { buildWidgetComparisonCopy } from '~/modules/campaigns/CampaignDashboardViewer/CampaignDashboardViewer.helpers';
 
 const GROUPED_WIDGET_TYPES: DashboardWidgetType[] = [
 	'BAR_CHART',
@@ -58,6 +57,8 @@ const GROUPED_WIDGET_TYPES: DashboardWidgetType[] = [
 ];
 
 const TIMESERIES_WIDGET_TYPES: DashboardWidgetType[] = ['LINE_CHART'];
+
+const COMPARE_WITH_WIDGET_TYPES: DashboardWidgetType[] = ['KPI', 'LINE_CHART'];
 
 const CONVERSATION_FIELDS_FALLBACK: MetricColumnConfigEntry[] = [
 	{ label: 'Conversation ID', value: 'id', type: 'string' },
@@ -681,6 +682,13 @@ const buildPreviewModel = (
 	}
 
 	if (values.widgetType === 'KPI') {
+		const comparisonCopy = buildWidgetComparisonCopy(
+			values.compareWith,
+			DEFAULT_PREVIEW_TIME_RANGE,
+			163,
+			t
+		);
+
 		return {
 			kind: 'kpi',
 			title,
@@ -694,14 +702,19 @@ const buildPreviewModel = (
 				percentageChange: -46,
 				trend: 'DOWN',
 			},
-			comparisonLabel: t('dashboard.comparison.vsPreviousMonth'),
-			comparisonDetail: t('dashboard.comparison.previousMonthValue', {
-				value: 163,
-			}),
+			comparisonLabel: comparisonCopy.label,
+			comparisonDetail: comparisonCopy.detail,
 		};
 	}
 
 	if (supportsTimeSeriesWidget(values.widgetType)) {
+		const comparisonCopy = buildWidgetComparisonCopy(
+			values.compareWith,
+			DEFAULT_PREVIEW_TIME_RANGE,
+			undefined,
+			t
+		);
+
 		return {
 			kind: 'line_chart',
 			title,
@@ -710,6 +723,7 @@ const buildPreviewModel = (
 			sizePreset,
 			accentColor,
 			points: [] as TimeSeriesPoint[],
+			comparisonLabel: comparisonCopy.label,
 		};
 	}
 
@@ -767,21 +781,6 @@ const buildPreviewViewConfigPayload = (
 	return Object.keys(payload).length ? payload : null;
 };
 
-const getRemoteComparisonValue = (
-	comparison?: DashboardWidgetComparisonData
-) => {
-	if (comparison?.previous?.kind !== 'single_value') {
-		return undefined;
-	}
-
-	const previewValue = comparison.previous.valueFormat;
-	return previewValue === null ||
-		previewValue === undefined ||
-		previewValue === ''
-		? comparison.previous.value
-		: previewValue;
-};
-
 export const hasInvalidDefaultFilterRows = (rows: WidgetFilterFormRow[]) =>
 	rows.some((row) => {
 		const hasAnyValue = trimText(row.key) || trimText(row.value);
@@ -808,6 +807,9 @@ export const supportsGroupedWidget = (widgetType: DashboardWidgetType) =>
 
 export const supportsTimeSeriesWidget = (widgetType: DashboardWidgetType) =>
 	TIMESERIES_WIDGET_TYPES.includes(widgetType);
+
+export const supportsCompareWithWidget = (widgetType: DashboardWidgetType) =>
+	COMPARE_WITH_WIDGET_TYPES.includes(widgetType);
 
 export const requiresValueField = (
 	sourceType: MetricSourceType,
@@ -2037,7 +2039,14 @@ export const buildPreviewModelFromResponse = (
 			widget.result.valueFormat === ''
 				? widget.result.value
 				: widget.result.valueFormat;
-		const previousValue = getRemoteComparisonValue(comparison);
+		const comparisonLabel =
+			fallbackPreview.kind === 'kpi'
+				? fallbackPreview.comparisonLabel
+				: undefined;
+		const comparisonDetail =
+			fallbackPreview.kind === 'kpi'
+				? fallbackPreview.comparisonDetail
+				: undefined;
 
 		return {
 			kind: 'kpi',
@@ -2055,17 +2064,17 @@ export const buildPreviewModelFromResponse = (
 			accentColor: fallbackPreview.accentColor,
 			value: resultValue,
 			comparison: comparison?.comparison,
-			comparisonLabel: t('dashboard.comparison.vsPreviousWeek'),
-			comparisonDetail:
-				previousValue === undefined
-					? undefined
-					: t('dashboard.comparison.previousWeekValue', {
-							value: formatMetricValue(previousValue),
-						}),
+			comparisonLabel,
+			comparisonDetail,
 		};
 	}
 
 	if (widget.result.kind === 'time_series') {
+		const comparisonLabel =
+			fallbackPreview.kind === 'line_chart'
+				? fallbackPreview.comparisonLabel
+				: undefined;
+
 		return {
 			kind: 'line_chart',
 			title:
@@ -2083,6 +2092,7 @@ export const buildPreviewModelFromResponse = (
 			sizePreset: fallbackPreview.sizePreset,
 			accentColor: fallbackPreview.accentColor,
 			points: widget.result.points,
+			comparisonLabel,
 		};
 	}
 
@@ -2165,6 +2175,10 @@ export const buildMetricPayload = (
 		? (values.valueField ?? undefined)
 		: undefined,
 	defaultFilter: buildDefaultFilter(values.defaultFilters),
+	...(!supportsCompareWithWidget(values.widgetType) ||
+	values.compareWith === 'LATEST'
+		? {}
+		: { compareWith: values.compareWith }),
 	supportsGroupBy: values.supportsGroupBy,
 	supportsTimeSeries: values.supportsTimeSeries,
 	resultType:
@@ -2268,6 +2282,9 @@ export const widgetFormValues = (
 		fieldName: metric?.fieldName ?? null,
 		metricKey: metric?.metricKey ?? null,
 		valueField: metric?.valueField ?? null,
+		compareWith: supportsCompareWithWidget(widget?.widgetType ?? 'KPI')
+			? (metric?.compareWith ?? 'LATEST')
+			: 'LATEST',
 		resultType: metric?.resultType ?? null,
 		supportsGroupBy: metric?.supportsGroupBy ?? false,
 		supportsTimeSeries: metric?.supportsTimeSeries ?? true,

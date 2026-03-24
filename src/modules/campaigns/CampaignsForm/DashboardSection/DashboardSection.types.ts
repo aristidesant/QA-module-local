@@ -7,6 +7,7 @@ import type {
 	DashboardWidgetJoinConfig,
 	DashboardWidgetMetricConfig,
 	DashboardWidgetVisibilityScope,
+	MetricCompareWith,
 	MetricComparison,
 	MetricAggregationType,
 	MetricResultType,
@@ -32,6 +33,7 @@ export type WidgetFormValues = {
 	fieldName: string | null;
 	metricKey: string | null;
 	valueField: MetricValueField | null;
+	compareWith: MetricCompareWith;
 	resultType: MetricResultType | null;
 	supportsGroupBy: boolean;
 	supportsTimeSeries: boolean;
@@ -97,6 +99,7 @@ export type WidgetMetricDraft = Pick<
 	| 'aggregationType'
 	| 'fieldName'
 	| 'metricKey'
+	| 'compareWith'
 	| 'supportsGroupBy'
 	| 'supportsTimeSeries'
 >;
@@ -146,6 +149,7 @@ export type WidgetPreviewModel =
 			sizePreset: DashboardWidgetSizePreset;
 			accentColor: string;
 			points: TimeSeriesPoint[];
+			comparisonLabel?: string;
 	  };
 
 export type WidgetCompatibilityState = {

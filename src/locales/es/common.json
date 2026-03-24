@@ -46,16 +46,51 @@
 	},
 	"sidebar": {
 		"ariaLabel": "Navegación principal",
+		"expand": "Expandir barra lateral",
+		"collapse": "Colapsar barra lateral",
 		"menu": "MENÚ",
 		"noModules": "No hay módulos disponibles",
 		"requestAccess": "Solicita acceso para ver las opciones de navegación.",
 		"version": "Versión",
+		"categories": {
+			"operation": "Operación",
+			"configuration": "Configuración",
+			"administration": "Administración",
+			"resources": "Recursos"
+		},
 		"items": {
 			"overview": "Resumen",
 			"campaigns": "Campañas",
 			"conversations": "Conversaciones",
-			"agentTests": "Pruebas de agentes"
+			"agentTests": "Pruebas de agentes",
+			"campaignManagement": "Gestión de campañas",
+			"outcomes": "Resultados",
+			"doNotCall": "No llamar",
+			"configurations": "Configuraciones",
+			"clientConfigs": "Configuraciones del cliente",
+			"campaignPredefinedParams": "Parámetros predefinidos de campaña",
+			"schedulerPredefinedParams": "Parámetros predefinidos del programador",
+			"regionalSettingsParams": "Configuraciones regionales",
+			"phoneNumbers": "Números telefónicos",
+			"dictionaryRules": "Reglas de diccionario",
+			"dashboards": "Dashboards",
+			"knowledgeBases": "Bases de conocimiento",
+			"tools": "Herramientas",
+			"users": "Usuarios",
+			"roles": "Roles",
+			"clients": "Clientes"
+		},
+		"account": {
+			"title": "Cuenta",
+			"profile": "Perfil",
+			"switchClient": "Cambiar cliente",
+			"language": "Idioma",
+			"logout": "Cerrar sesión",
+			"menu": "Menú de cuenta"
 		}
+	},
+	"header": {
+		"notifications": "Notificaciones"
 	},
 	"nav": {
 		"dashboard": "Tablero",
@@ -148,6 +183,7 @@
 	},
 	"currency": "$",
 	"languages": {
+		"title": "SELECCIONAR IDIOMA",
 		"en": "Inglés",
 		"es": "Español"
 	},

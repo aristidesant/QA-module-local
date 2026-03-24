@@ -46,16 +46,51 @@
 	},
 	"sidebar": {
 		"ariaLabel": "Main navigation",
+		"expand": "Expand sidebar",
+		"collapse": "Collapse sidebar",
 		"menu": "MENU",
 		"noModules": "No modules available",
 		"requestAccess": "Request access to see navigation options.",
 		"version": "Version",
+		"categories": {
+			"operation": "Operation",
+			"configuration": "Configuration",
+			"administration": "Administration",
+			"resources": "Resources"
+		},
 		"items": {
 			"overview": "Overview",
 			"campaigns": "Campaigns",
 			"conversations": "Conversations",
-			"agentTests": "Agent Tests"
+			"agentTests": "Agent Tests",
+			"campaignManagement": "Campaign Management",
+			"outcomes": "Outcomes",
+			"doNotCall": "Do Not Call",
+			"configurations": "Configurations",
+			"clientConfigs": "Client Configs",
+			"campaignPredefinedParams": "Campaign Predefined Params",
+			"schedulerPredefinedParams": "Scheduler Predefined Params",
+			"regionalSettingsParams": "Regional Settings",
+			"phoneNumbers": "Phone Numbers",
+			"dictionaryRules": "Dictionary Rules",
+			"dashboards": "Dashboards",
+			"knowledgeBases": "Knowledge Bases",
+			"tools": "Tools",
+			"users": "Users",
+			"roles": "Roles",
+			"clients": "Clients"
+		},
+		"account": {
+			"title": "Account",
+			"profile": "Profile",
+			"switchClient": "Switch client",
+			"language": "Language",
+			"logout": "Logout",
+			"menu": "Account menu"
 		}
+	},
+	"header": {
+		"notifications": "Notifications"
 	},
 	"nav": {
 		"dashboard": "Dashboard",
@@ -148,6 +183,7 @@
 	},
 	"currency": "$",
 	"languages": {
+		"title": "SELECT LANGUAGE",
 		"en": "English",
 		"es": "Spanish"
 	},

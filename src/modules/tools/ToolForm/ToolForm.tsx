@@ -1,33 +1,16 @@
-import { useEffect, useState, useMemo } from 'react';
-import {
-	Stack,
-	Text,
-	TextInput,
-	Textarea,
-	Select,
-	Button,
-	Group,
-	Loader,
-	ActionIcon,
-	Badge,
-	ScrollArea,
-	ThemeIcon,
-	LoadingOverlay,
-} from '@mantine/core';
+import { useEffect, useMemo, useState } from 'react';
+import { Loader, LoadingOverlay, Text } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import {
-	IconDeviceFloppy,
-	IconPlus,
 	IconAlertCircle,
-	IconMinus,
-	IconX,
-	IconSettings,
 	IconApi,
+	IconBraces,
 	IconKey,
 	IconRoute,
-	IconBraces,
+	IconSettings,
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
+import { useTranslation } from 'react-i18next';
 import {
 	useToolById,
 	useCreateTool,
@@ -35,13 +18,33 @@ import {
 } from '~/queries/toolQueries';
 import { useToolCategories } from '~/queries/toolCategoryQueries';
 import type {
-	ToolRequestBodyProperty,
 	CreateToolDto,
+	ToolRequestBodyProperty,
 } from '~/models/ToolModel';
 import type { ToolCategoryModel } from '~/models/ToolCategoryModel';
 import SectionCard from '~/components/SectionCard/SectionCard';
 import styles from './ToolForm.module.css';
-import { useTranslation } from 'react-i18next';
+import ToolFormApiSection from './ToolFormApiSection/ToolFormApiSection';
+import ToolFormAuthSection from './ToolFormAuthSection/ToolFormAuthSection';
+import ToolFormBasicSection from './ToolFormBasicSection/ToolFormBasicSection';
+import ToolFormBodySection from './ToolFormBodySection/ToolFormBodySection';
+import ToolFormFooterActions from './ToolFormFooterActions/ToolFormFooterActions';
+import ToolFormOverview from './ToolFormOverview/ToolFormOverview';
+import ToolFormHeadersSection from './ToolFormHeadersSection/ToolFormHeadersSection';
+import ToolFormParametersSection from './ToolFormParametersSection/ToolFormParametersSection';
+import ToolFormSectionsNav from './ToolFormSectionsNav/ToolFormSectionsNav';
+import {
+	getFirstPendingSection,
+	getMethodSupportsBody,
+	getToolPayload,
+	getVisibleSections,
+} from './toolForm.utils';
+import type {
+	FormValues,
+	Section,
+	SectionId,
+	SectionMetaMap,
+} from './toolForm.types';
 
 interface ToolFormProps {
 	toolId?: string | number;
@@ -50,95 +53,53 @@ interface ToolFormProps {
 	onCancel?: () => void;
 }
 
-interface HeaderField {
-	key: string;
-	value: string;
-}
-
-interface QueryParameter {
-	key: string;
-	value: string;
-}
-
-interface PathParameter {
-	key: string;
-	value: string;
-}
-
-interface RequestBodyProperty {
-	key: string;
-	type: string;
-	description: string;
-	constantValue?: string;
-	dynamicVariable?: string;
-	required: boolean;
-}
-
-interface FormValues {
-	name: string;
-	description: string;
-	prompt: string;
-	identifier: string;
-	categoryId: string;
-	status: string;
-	url: string;
-	method: string;
-	responseTimeoutSecs: number;
-	headers: HeaderField[];
-	queryParameters: QueryParameter[];
-	pathParameters: PathParameter[];
-	requestBodyProperties: RequestBodyProperty[];
-	authConnection: string;
-}
-
-type SectionId = 'general' | 'api' | 'headers' | 'parameters' | 'body';
-
-interface Section {
-	id: SectionId;
-	label: string;
-	icon: React.ReactNode;
-}
-
-const HTTP_METHODS = [
-	{ value: 'GET', label: 'GET' },
-	{ value: 'POST', label: 'POST' },
-	{ value: 'PUT', label: 'PUT' },
-	{ value: 'PATCH', label: 'PATCH' },
-	{ value: 'DELETE', label: 'DELETE' },
+const sectionsFactory = (
+	t: (key: string, options?: Record<string, unknown>) => string
+): Section[] => [
+	{
+		id: 'basic',
+		label: t('form.sections.basic'),
+		description: t('form.sections.basicDesc'),
+		icon: <IconSettings size={14} />,
+	},
+	{
+		id: 'api',
+		label: t('form.sections.api'),
+		description: t('form.sections.apiDesc'),
+		icon: <IconApi size={14} />,
+	},
+	{
+		id: 'auth',
+		label: t('form.sections.auth'),
+		description: t('form.sections.authDesc'),
+		icon: <IconKey size={14} />,
+	},
+	{
+		id: 'headers',
+		label: t('form.sections.headers'),
+		description: t('form.sections.headersDesc'),
+		icon: <IconRoute size={14} />,
+	},
+	{
+		id: 'parameters',
+		label: t('form.sections.parameters'),
+		description: t('form.sections.parametersDesc'),
+		icon: <IconBraces size={14} />,
+	},
+	{
+		id: 'body',
+		label: t('form.sections.body'),
+		description: t('form.sections.bodyDesc'),
+		icon: <IconBraces size={14} />,
+	},
 ];
 
 function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 	const { t } = useTranslation('tools');
 	const [isEdit, setIsEdit] = useState(!!toolId);
-	const [activeSection, setActiveSection] = useState<SectionId>('general');
+	const [activeSection, setActiveSection] = useState<SectionId>('basic');
 
-	const sections: Section[] = useMemo(
-		() => [
-			{
-				id: 'general',
-				label: t('form.sections.general'),
-				icon: <IconSettings size={14} />,
-			},
-			{ id: 'api', label: t('form.sections.api'), icon: <IconApi size={14} /> },
-			{
-				id: 'headers',
-				label: t('form.sections.headers'),
-				icon: <IconKey size={14} />,
-			},
-			{
-				id: 'parameters',
-				label: t('form.sections.parameters'),
-				icon: <IconRoute size={14} />,
-			},
-			{
-				id: 'body',
-				label: t('form.sections.body'),
-				icon: <IconBraces size={14} />,
-			},
-		],
-		[t]
-	);
-
+	const sections = useMemo(() => sectionsFactory(t), [t]);
 	const propertyTypeOptions = useMemo(
 		() => [
 			{ value: 'string', label: t('form.propertyTypes.string') },
@@ -150,7 +111,6 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 		[t]
 	);
 
-	// Queries
 	const {
 		data: tool,
 		isLoading: isLoadingTool,
@@ -199,7 +159,6 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 		},
 	});
 
-	// Initialize form state based on props
 	useEffect(() => {
 		if (toolId) {
 			setIsEdit(true);
@@ -212,19 +171,15 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 		}
 	}, [toolId, categoryId]);
 
-	// Set edit mode and populate form when tool data is available
 	useEffect(() => {
 		if (toolId && tool) {
 			setIsEdit(true);
-
 			const headers = Object.entries(
 				tool.config?.toolConfig?.apiSchema?.requestHeaders || {}
 			).map(([key, value]) => ({ key, value: value as string }));
-
 			const pathParameters = Object.entries(
 				tool.config?.toolConfig?.apiSchema?.pathParamsSchema || {}
 			).map(([key, value]) => ({ key, value: value as string }));
-
 			const requestBodyProperties = Object.entries(
 				tool.config?.toolConfig?.apiSchema?.requestBodySchema?.properties || {}
 			).map(([key, property]) => ({
@@ -263,50 +218,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 
 	const handleSubmit = async (values: FormValues) => {
 		try {
-			const requestHeaders = values.headers.reduce(
-				(acc, header) => {
-					if (header.key && header.value) {
-						acc[header.key] = header.value;
-					}
-					return acc;
-				},
-				{} as Record<string, string>
-			);
-
-			const pathParamsSchema = values.pathParameters.reduce(
-				(acc, param) => {
-					if (param.key && param.value) {
-						acc[param.key] = param.value;
-					}
-					return acc;
-				},
-				{} as Record<string, unknown>
-			);
-
-			const requestBodyProperties = values.requestBodyProperties.reduce(
-				(acc, prop) => {
-					if (prop.key) {
-						acc[prop.key] = {
-							type: prop.type,
-							description: prop.description,
-							constantValue: prop.constantValue || '',
-							dynamicVariable: prop.dynamicVariable || '',
-						};
-					}
-					return acc;
-				},
-				{} as Record<string, ToolRequestBodyProperty>
-			);
-
-			const requiredFields = values.requestBodyProperties
-				.filter((prop) => prop.required && prop.key)
-				.map((prop) => prop.key);
-
-			// Only include request body schema for methods that support it
-			const supportsRequestBody = ['POST', 'PUT', 'PATCH'].includes(
-				values.method
-			);
-
+			const payload = getToolPayload(values);
 			const toolData: CreateToolDto = {
 				name: values.name,
 				description: values.description,
@@ -322,13 +234,13 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 					apiSchema: {
 						url: values.url,
 						method: values.method,
-						requestHeaders,
-						pathParamsSchema,
-						...(supportsRequestBody && {
+						requestHeaders: payload.requestHeaders,
+						pathParamsSchema: payload.pathParamsSchema,
+						...(payload.supportsRequestBody && {
 							requestBodySchema: {
 								type: 'object',
-								required: requiredFields,
-								properties: requestBodyProperties,
+								required: payload.requiredFields,
+								properties: payload.requestBodyProperties,
 							},
 						}),
 					},
@@ -336,15 +248,11 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 			};
 
 			if (isEdit && toolId) {
-				await updateToolMutation.mutateAsync({
-					id: toolId,
-					data: toolData,
-				});
+				await updateToolMutation.mutateAsync({ id: toolId, data: toolData });
 				notifications.show({
 					title: t('status.success', { ns: 'common' }),
 					message: t('notifications.updated'),
 					color: 'green',
-					icon: <IconDeviceFloppy size={18} />,
 				});
 			} else {
 				await createToolMutation.mutateAsync(toolData);
@@ -352,10 +260,8 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 					title: t('status.success', { ns: 'common' }),
 					message: t('notifications.created'),
 					color: 'green',
-					icon: <IconDeviceFloppy size={18} />,
 				});
 			}
-
 			onSuccess?.();
 		} catch (error: unknown) {
 			const errorMessage =
@@ -375,119 +281,166 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 		}
 	};
 
-	const addHeader = () =>
-		form.insertListItem('headers', { key: '', value: '' });
-	const removeHeader = (index: number) => form.removeListItem('headers', index);
-
-	const addQueryParameter = () =>
-		form.insertListItem('queryParameters', { key: '', value: '' });
-	const removeQueryParameter = (index: number) =>
-		form.removeListItem('queryParameters', index);
-
-	const addPathParameter = () =>
-		form.insertListItem('pathParameters', { key: '', value: '' });
-	const removePathParameter = (index: number) =>
-		form.removeListItem('pathParameters', index);
-
-	const addRequestBodyProperty = () =>
-		form.insertListItem('requestBodyProperties', {
-			key: '',
-			type: 'string',
-			description: '',
-			constantValue: '',
-			dynamicVariable: '',
-			required: false,
-		});
-	const removeRequestBodyProperty = (index: number) =>
-		form.removeListItem('requestBodyProperties', index);
-
-	// Section status calculations
 	const sectionStatus = useMemo(() => {
 		const values = form.values;
 		return {
-			general: !!(
+			basic: !!(
 				values.name &&
 				values.description &&
 				values.prompt &&
 				values.categoryId
 			),
 			api: !!(values.url && values.method),
+			auth: !!values.authConnection,
 			headers: values.headers.length > 0,
 			parameters:
 				values.pathParameters.length > 0 || values.queryParameters.length > 0,
 			body: values.requestBodyProperties.length > 0,
-		};
+		} as Record<SectionId, boolean>;
 	}, [form.values]);
+
+	const visibleSections = getVisibleSections(sections, form.values.method);
+	const methodSupportsBody = getMethodSupportsBody(form.values.method);
 
 	const sectionErrors = useMemo(() => {
 		const errors = form.errors;
 		return {
-			general: !!(
+			basic: !!(
 				errors.name ||
 				errors.description ||
 				errors.prompt ||
 				errors.categoryId
 			),
 			api: !!errors.url,
+			auth: false,
 			headers: false,
 			parameters: false,
 			body: false,
-		};
+		} as Record<SectionId, boolean>;
 	}, [form.errors]);
 
-	// Map field names to their sections
+	const sectionMeta = useMemo(() => {
+		const meta: SectionMetaMap = {
+			basic: {
+				required: true,
+				applicable: true,
+				state: sectionErrors.basic
+					? 'error'
+					: sectionStatus.basic
+						? 'complete'
+						: 'empty',
+			},
+			api: {
+				required: true,
+				applicable: true,
+				state: sectionErrors.api
+					? 'error'
+					: sectionStatus.api
+						? 'complete'
+						: 'empty',
+			},
+			auth: {
+				required: false,
+				applicable: true,
+				state: sectionStatus.auth ? 'complete' : 'optional',
+			},
+			headers: {
+				required: false,
+				applicable: true,
+				state: sectionStatus.headers ? 'complete' : 'optional',
+			},
+			parameters: {
+				required: false,
+				applicable: true,
+				state: sectionStatus.parameters ? 'complete' : 'optional',
+			},
+			body: {
+				required: false,
+				applicable: methodSupportsBody,
+				state: !methodSupportsBody
+					? 'inactive'
+					: sectionStatus.body
+						? 'complete'
+						: 'optional',
+			},
+		};
+
+		if (
+			meta[activeSection]?.applicable &&
+			meta[activeSection].state !== 'complete' &&
+			meta[activeSection].state !== 'error'
+		) {
+			meta[activeSection] = {
+				...meta[activeSection],
+				state: 'current',
+			};
+		}
+
+		return meta;
+	}, [activeSection, methodSupportsBody, sectionErrors, sectionStatus]);
+
+	const firstPendingSection = useMemo(
+		() => getFirstPendingSection(visibleSections, sectionMeta),
+		[visibleSections, sectionMeta]
+	);
+	const remainingRequiredSections = useMemo(
+		() =>
+			visibleSections.filter((section) => {
+				const meta = sectionMeta[section.id];
+				return meta?.required && meta.state !== 'complete';
+			}),
+		[visibleSections, sectionMeta]
+	);
+
+	const currentSection =
+		visibleSections.find((section) => section.id === activeSection) ??
+		visibleSections[0];
+
+	useEffect(() => {
+		if (!visibleSections.some((section) => section.id === activeSection)) {
+			setActiveSection(visibleSections[0]?.id ?? 'basic');
+		}
+	}, [activeSection, visibleSections]);
+
 	const fieldToSectionMap: Record<string, SectionId> = useMemo(
 		() => ({
-			name: 'general',
-			description: 'general',
-			prompt: 'general',
-			categoryId: 'general',
+			name: 'basic',
+			description: 'basic',
+			prompt: 'basic',
+			categoryId: 'basic',
 			url: 'api',
 			method: 'api',
 			responseTimeoutSecs: 'api',
-			authConnection: 'api',
+			authConnection: 'auth',
 		}),
 		[]
 	);
 
-	// Handle validation errors on form submit
 	const handleValidationErrors = (errors: typeof form.errors) => {
 		const errorFields = Object.keys(errors);
-		if (errorFields.length === 0) return;
+		if (!errorFields.length) return;
 
-		// Get unique sections with errors
 		const sectionsWithErrors = new Set<SectionId>();
 		errorFields.forEach((field) => {
 			const section = fieldToSectionMap[field];
-			if (section) {
-				sectionsWithErrors.add(section);
-			}
+			if (section) sectionsWithErrors.add(section);
 		});
 
-		// Get section labels
-		const sectionLabels = Array.from(sectionsWithErrors)
-			.map((sectionId) => {
-				const section = sections.find((s) => s.id === sectionId);
-				return section?.label;
-			})
-			.filter(Boolean);
-
-		if (sectionLabels.length > 0) {
+		const orderedSections = sections.filter((section) =>
+			sectionsWithErrors.has(section.id)
+		);
+		if (orderedSections.length > 0) {
 			notifications.show({
 				title: t('form.validation.incompleteTitle'),
 				message: t('form.validation.incompleteMessage', {
-					sections: sectionLabels.join(', '),
+					sections: orderedSections.map((section) => section.label).join(', '),
 				}),
 				color: 'orange',
 				icon: <IconAlertCircle size={18} />,
 				autoClose: 5000,
 			});
-
-			// Navigate to the first section with errors
-			const firstSectionWithError = Array.from(sectionsWithErrors)[0];
-			if (firstSectionWithError && firstSectionWithError !== activeSection) {
-				setActiveSection(firstSectionWithError);
-			}
+			const firstSectionWithError = orderedSections[0]?.id;
+			if (firstSectionWithError) setActiveSection(firstSectionWithError);
 		}
 	};
 
@@ -495,14 +448,6 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 		value: cat.id.toString(),
 		label: cat.name,
 	}));
-
-	// Filter sections based on HTTP method
-	const visibleSections = sections.filter((section) => {
-		if (section.id === 'body') {
-			return ['POST', 'PUT', 'PATCH'].includes(form.values.method);
-		}
-		return true;
-	});
 
 	if (toolId && isLoadingTool) {
 		return (
@@ -529,380 +474,14 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 		);
 	}
 
-	const renderSectionContent = () => {
-		switch (activeSection) {
-			case 'general':
-				return (
-					<Stack gap='xs'>
-						<TextInput
-							label={t('form.fields.name.label')}
-							placeholder={t('form.fields.name.placeholder')}
-							required
-							size='sm'
-							{...form.getInputProps('name')}
-						/>
-						<Textarea
-							label={t('form.fields.description.label')}
-							placeholder={t('form.fields.description.placeholder')}
-							required
-							size='sm'
-							minRows={2}
-							{...form.getInputProps('description')}
-						/>
-						<Textarea
-							label={t('form.fields.prompt.label')}
-							placeholder={t('form.fields.prompt.placeholder')}
-							required
-							size='sm'
-							minRows={2}
-							{...form.getInputProps('prompt')}
-						/>
-						<Group grow gap='xs'>
-							<Select
-								label={t('form.fields.category.label')}
-								placeholder={t('form.fields.category.placeholder')}
-								required
-								size='sm'
-								data={categoryOptions}
-								disabled={isLoadingCategories}
-								{...form.getInputProps('categoryId')}
-							/>
-							<Select
-								label={t('form.fields.status.label')}
-								size='sm'
-								data={[
-									{ value: 'active', label: t('status.active') },
-									{ value: 'inactive', label: t('status.inactive') },
-								]}
-								{...form.getInputProps('status')}
-							/>
-						</Group>
-					</Stack>
-				);
-
-			case 'api':
-				return (
-					<Stack gap='xs'>
-						<Group gap='xs' align='flex-start'>
-							<Select
-								label={t('form.fields.method.label')}
-								data={HTTP_METHODS}
-								size='sm'
-								w={100}
-								{...form.getInputProps('method')}
-							/>
-							<TextInput
-								label={t('form.fields.url.label')}
-								placeholder={t('form.fields.url.placeholder')}
-								required
-								size='sm'
-								style={{ flex: 1 }}
-								{...form.getInputProps('url')}
-							/>
-						</Group>
-						<Group grow gap='xs'>
-							<TextInput
-								label={t('form.fields.timeout.label')}
-								type='number'
-								size='sm'
-								{...form.getInputProps('responseTimeoutSecs')}
-							/>
-							<TextInput
-								label={t('form.fields.authConnection.label')}
-								placeholder={t('form.fields.authConnection.placeholder')}
-								size='sm'
-								{...form.getInputProps('authConnection')}
-							/>
-						</Group>
-					</Stack>
-				);
-
-			case 'headers':
-				return (
-					<Stack gap='xs'>
-						<Group justify='space-between' align='center'>
-							<Text size='sm' fw={500}>
-								{t('form.headers.title')}
-							</Text>
-							<Button
-								variant='subtle'
-								size='xs'
-								leftSection={<IconPlus size={12} />}
-								onClick={addHeader}
-							>
-								{t('form.headers.add')}
-							</Button>
-						</Group>
-						{form.values.headers.length === 0 ? (
-							<div className={styles.emptyState}>
-								<Text size='xs' c='dimmed'>
-									{t('form.headers.empty')}
-								</Text>
-							</div>
-						) : (
-							<div className={styles.parameterList}>
-								{form.values.headers.map((_, index) => (
-									<div key={index} className={styles.parameterItem}>
-										<TextInput
-											placeholder={t('form.headers.fields.keyPlaceholder')}
-											size='xs'
-											style={{ flex: 1 }}
-											{...form.getInputProps(`headers.${index}.key`)}
-										/>
-										<TextInput
-											placeholder={t('form.headers.fields.valuePlaceholder')}
-											size='xs'
-											style={{ flex: 1 }}
-											{...form.getInputProps(`headers.${index}.value`)}
-										/>
-										<ActionIcon
-											color='red'
-											variant='subtle'
-											size='sm'
-											onClick={() => removeHeader(index)}
-											data-testid={`remove-header-btn-${index}`}
-										>
-											<IconMinus size={12} />
-										</ActionIcon>
-									</div>
-								))}
-							</div>
-						)}
-					</Stack>
-				);
-
-			case 'parameters':
-				return (
-					<Stack gap='md'>
-						{/* Path Parameters */}
-						<Stack gap='xs'>
-							<Group justify='space-between' align='center'>
-								<Text size='sm' fw={500}>
-									{t('form.parameters.path.title')}
-								</Text>
-								<Button
-									variant='subtle'
-									size='xs'
-									leftSection={<IconPlus size={12} />}
-									onClick={addPathParameter}
-								>
-									{t('form.parameters.add')}
-								</Button>
-							</Group>
-							{form.values.pathParameters.length === 0 ? (
-								<div className={styles.emptyState}>
-									<Text size='xs' c='dimmed'>
-										{t('form.parameters.path.empty')}
-									</Text>
-								</div>
-							) : (
-								<div className={styles.parameterList}>
-									{form.values.pathParameters.map((_, index) => (
-										<div key={index} className={styles.parameterItem}>
-											<TextInput
-												placeholder={t(
-													'form.parameters.path.fields.keyPlaceholder'
-												)}
-												size='xs'
-												style={{ flex: 1 }}
-												{...form.getInputProps(`pathParameters.${index}.key`)}
-											/>
-											<TextInput
-												placeholder={t(
-													'form.parameters.path.fields.valuePlaceholder'
-												)}
-												size='xs'
-												style={{ flex: 1 }}
-												{...form.getInputProps(`pathParameters.${index}.value`)}
-											/>
-											<ActionIcon
-												color='red'
-												variant='subtle'
-												size='sm'
-												onClick={() => removePathParameter(index)}
-												data-testid={`remove-path-param-btn-${index}`}
-											>
-												<IconMinus size={12} />
-											</ActionIcon>
-										</div>
-									))}
-								</div>
-							)}
-						</Stack>
-
-						{/* Query Parameters */}
-						<Stack gap='xs'>
-							<Group justify='space-between' align='center'>
-								<Text size='sm' fw={500}>
-									{t('form.parameters.query.title')}
-								</Text>
-								<Button
-									variant='subtle'
-									size='xs'
-									leftSection={<IconPlus size={12} />}
-									onClick={addQueryParameter}
-								>
-									{t('form.parameters.add')}
-								</Button>
-							</Group>
-							{form.values.queryParameters.length === 0 ? (
-								<div className={styles.emptyState}>
-									<Text size='xs' c='dimmed'>
-										{t('form.parameters.query.empty')}
-									</Text>
-								</div>
-							) : (
-								<div className={styles.parameterList}>
-									{form.values.queryParameters.map((_, index) => (
-										<div key={index} className={styles.parameterItem}>
-											<TextInput
-												placeholder={t(
-													'form.parameters.query.fields.keyPlaceholder'
-												)}
-												size='xs'
-												style={{ flex: 1 }}
-												{...form.getInputProps(`queryParameters.${index}.key`)}
-											/>
-											<TextInput
-												placeholder={t(
-													'form.parameters.query.fields.valuePlaceholder'
-												)}
-												size='xs'
-												style={{ flex: 1 }}
-												{...form.getInputProps(
-													`queryParameters.${index}.value`
-												)}
-											/>
-											<ActionIcon
-												color='red'
-												variant='subtle'
-												size='sm'
-												onClick={() => removeQueryParameter(index)}
-												data-testid={`remove-query-param-btn-${index}`}
-											>
-												<IconMinus size={12} />
-											</ActionIcon>
-										</div>
-									))}
-								</div>
-							)}
-						</Stack>
-					</Stack>
-				);
-
-			case 'body':
-				return (
-					<Stack gap='xs'>
-						<Group justify='space-between' align='center'>
-							<Text size='sm' fw={500}>
-								{t('form.body.title')}
-							</Text>
-							<Button
-								variant='subtle'
-								size='xs'
-								leftSection={<IconPlus size={12} />}
-								onClick={addRequestBodyProperty}
-							>
-								{t('form.body.add')}
-							</Button>
-						</Group>
-						{form.values.requestBodyProperties.length === 0 ? (
-							<div className={styles.emptyState}>
-								<Text size='xs' c='dimmed'>
-									{t('form.body.empty')}
-								</Text>
-							</div>
-						) : (
-							<div className={styles.parameterList}>
-								{form.values.requestBodyProperties.map((_, index) => (
-									<div key={index} className={styles.bodyPropertyItem}>
-										<Group gap='xs' mb='xs'>
-											<TextInput
-												placeholder={t('form.body.fields.keyPlaceholder')}
-												size='xs'
-												style={{ flex: 1 }}
-												{...form.getInputProps(
-													`requestBodyProperties.${index}.key`
-												)}
-											/>
-											<Select
-												placeholder={t('form.body.fields.typePlaceholder')}
-												data={propertyTypeOptions}
-												size='xs'
-												w={100}
-												{...form.getInputProps(
-													`requestBodyProperties.${index}.type`
-												)}
-											/>
-											<ActionIcon
-												color='red'
-												variant='subtle'
-												size='sm'
-												onClick={() => removeRequestBodyProperty(index)}
-												data-testid={`remove-body-prop-btn-${index}`}
-											>
-												<IconMinus size={12} />
-											</ActionIcon>
-										</Group>
-										<Textarea
-											placeholder={t('form.body.fields.descriptionPlaceholder')}
-											size='xs'
-											minRows={1}
-											mb='xs'
-											{...form.getInputProps(
-												`requestBodyProperties.${index}.description`
-											)}
-										/>
-										<Group gap='xs'>
-											<TextInput
-												placeholder={t('form.body.fields.constantPlaceholder')}
-												size='xs'
-												style={{ flex: 1 }}
-												{...form.getInputProps(
-													`requestBodyProperties.${index}.constantValue`
-												)}
-											/>
-											<TextInput
-												placeholder={t('form.body.fields.dynamicPlaceholder')}
-												size='xs'
-												style={{ flex: 1 }}
-												{...form.getInputProps(
-													`requestBodyProperties.${index}.dynamicVariable`
-												)}
-											/>
-										</Group>
-									</div>
-								))}
-							</div>
-						)}
-					</Stack>
-				);
-
-			default:
-				return null;
-		}
-	};
-
 	return (
 		<SectionCard
 			icon={IconSettings}
 			title={isEdit ? t('form.title.edit') : t('form.title.create')}
 			description={t('form.description')}
 			className={styles.modalShell}
-			contentSpacing='xs'
-			padding='md'
-			headerActions={
-				onCancel ? (
-					<ActionIcon
-						onClick={onCancel}
-						variant='subtle'
-						color='gray'
-						size='sm'
-					>
-						<IconX size={16} />
-					</ActionIcon>
-				) : undefined
-			}
+			contentSpacing='sm'
+			padding='lg'
 		>
 			<div className={styles.sectionCardBody}>
 				<LoadingOverlay
@@ -913,102 +492,126 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 					onSubmit={form.onSubmit(handleSubmit, handleValidationErrors)}
 					className={styles.formContent}
 				>
-					<div className={styles.contentGrid}>
-						{/* Menu Column */}
-						<div className={styles.menuColumn}>
-							<div className={styles.menuHeader}>
-								<Text size='xs' fw={500} c='dimmed'>
-									{t('form.menu.sections')}
-								</Text>
-								<Badge size='xs' variant='light' color='gray' radius='sm'>
-									{visibleSections.length}
-								</Badge>
-							</div>
-							<ScrollArea className={styles.menuScroll} type='auto'>
-								<Stack gap={2}>
-									{visibleSections.map((section) => (
-										<div
-											key={section.id}
-											className={styles.menuItem}
-											data-active={activeSection === section.id}
-											onClick={() => setActiveSection(section.id)}
-											data-testid={`section-menu-${section.id}`}
-										>
-											<div className={styles.menuItemHeader}>
-												<ThemeIcon
-													size='xs'
-													variant='light'
-													color={activeSection === section.id ? 'blue' : 'gray'}
-													radius='sm'
-												>
-													{section.icon}
-												</ThemeIcon>
-												<Text className={styles.menuTitle}>
-													{section.label}
-												</Text>
-											</div>
-											<div
-												className={styles.statusDot}
-												data-filled={sectionStatus[section.id]}
-												data-error={sectionErrors[section.id]}
-											/>
-										</div>
-									))}
-								</Stack>
-							</ScrollArea>
-						</div>
+					<ToolFormOverview
+						sections={visibleSections}
+						sectionMeta={sectionMeta}
+						activeSection={currentSection?.id ?? 'basic'}
+						nextSection={firstPendingSection?.id ?? null}
+						remainingRequiredSections={remainingRequiredSections.length}
+						t={
+							t as unknown as (
+								key: string,
+								options?: Record<string, unknown>
+							) => string
+						}
+					/>
 
-						{/* Editor Column */}
+					<div className={styles.contentGrid}>
+						<ToolFormSectionsNav
+							sections={visibleSections}
+							activeSection={activeSection}
+							sectionMeta={sectionMeta}
+							onSelectSection={setActiveSection}
+							t={
+								t as unknown as (
+									key: string,
+									options?: Record<string, unknown>
+								) => string
+							}
+						/>
+
 						<div className={styles.editorColumn}>
 							<div className={styles.editorShell}>
-								<div className={styles.editorHeader}>
-									<div className={styles.editorHeaderText}>
-										<Text fw={600} size='sm'>
-											{
-												visibleSections.find((s) => s.id === activeSection)
-													?.label
-											}
-										</Text>
-									</div>
-									<Badge
-										size='xs'
-										variant='light'
-										color={sectionStatus[activeSection] ? 'green' : 'gray'}
-										radius='sm'
-									>
-										{sectionStatus[activeSection]
-											? t('form.sectionStatus.configured')
-											: t('form.sectionStatus.empty')}
-									</Badge>
-								</div>
 								<div className={styles.editorContent}>
-									{renderSectionContent()}
+									{activeSection === 'basic' && (
+										<ToolFormBasicSection
+											form={form}
+											categoryOptions={categoryOptions}
+											isLoadingCategories={isLoadingCategories}
+											t={
+												t as unknown as (
+													key: string,
+													options?: Record<string, unknown>
+												) => string
+											}
+										/>
+									)}
+									{activeSection === 'api' && (
+										<ToolFormApiSection
+											form={form}
+											t={
+												t as unknown as (
+													key: string,
+													options?: Record<string, unknown>
+												) => string
+											}
+										/>
+									)}
+									{activeSection === 'auth' && (
+										<ToolFormAuthSection
+											form={form}
+											t={
+												t as unknown as (
+													key: string,
+													options?: Record<string, unknown>
+												) => string
+											}
+										/>
+									)}
+									{activeSection === 'headers' && (
+										<ToolFormHeadersSection
+											form={form}
+											t={
+												t as unknown as (
+													key: string,
+													options?: Record<string, unknown>
+												) => string
+											}
+										/>
+									)}
+									{activeSection === 'parameters' && (
+										<ToolFormParametersSection
+											form={form}
+											t={
+												t as unknown as (
+													key: string,
+													options?: Record<string, unknown>
+												) => string
+											}
+										/>
+									)}
+									{activeSection === 'body' && methodSupportsBody && (
+										<ToolFormBodySection
+											form={form}
+											propertyTypeOptions={propertyTypeOptions}
+											t={
+												t as unknown as (
+													key: string,
+													options?: Record<string, unknown>
+												) => string
+											}
+										/>
+									)}
 								</div>
 							</div>
 						</div>
 					</div>
 
-					{/* Footer */}
 					<div className={styles.footer}>
-						<Text size='xs' c='dimmed'>
-							{t('form.footer.hint')}
-						</Text>
-						<Group gap='xs'>
-							<Button variant='subtle' size='xs' onClick={onCancel}>
-								{t('actions.cancel', { ns: 'common' })}
-							</Button>
-							<Button
-								type='submit'
-								size='xs'
-								leftSection={<IconDeviceFloppy size={14} />}
-								loading={
-									createToolMutation.isPending || updateToolMutation.isPending
-								}
-								data-testid='submit-tool-btn'
-							>
-								{isEdit ? t('actions.saveChanges') : t('actions.createTool')}
-							</Button>
-						</Group>
+						<ToolFormFooterActions
+							isSubmitting={
+								createToolMutation.isPending || updateToolMutation.isPending
+							}
+							isEdit={isEdit}
+							remainingRequiredSections={remainingRequiredSections.length}
+							onCancel={onCancel}
+							t={
+								t as unknown as (
+									key: string,
+									options?: Record<string, unknown>
+								) => string
+							}
+						/>
 					</div>
 				</form>
 			</div>

@@ -6,16 +6,14 @@ import type { ToolModel } from '~/models/ToolModel';
 import BaseTable from '~/components/BaseTable';
 import useToolsListColumns from './useToolsListColumns';
 import styles from './ToolsList.module.css';
-import ToolsListHeader from './ToolsListHeader';
 import EmptyState from '~/components/EmptyState';
 import { useTranslation } from 'react-i18next';
 
 interface ToolsListProps {
-	onCreate: () => void;
 	onEdit: (toolId: string | number) => void;
 }
 
-function ToolsList({ onCreate, onEdit }: ToolsListProps) {
+function ToolsList({ onEdit }: ToolsListProps) {
 	const { t } = useTranslation('tools');
 	const { selectedToolCategory } = useToolsStore();
 	const columns = useToolsListColumns();
@@ -79,13 +77,6 @@ function ToolsList({ onCreate, onEdit }: ToolsListProps) {
 		if (!tools || tools.length === 0) {
 			return (
 				<div className={styles.container}>
-					{selectedToolCategory && (
-						<ToolsListHeader
-							category={selectedToolCategory}
-							onCreate={onCreate}
-						/>
-					)}
-
 					<EmptyState
 						icon={<IconTool size={48} color='var(--mantine-color-gray-5)' />}
 						message={t('list.empty.message')}

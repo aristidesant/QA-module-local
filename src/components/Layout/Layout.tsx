@@ -1,7 +1,5 @@
-import { Card } from '@mantine/core';
 import { Outlet } from 'react-router';
 import Sidebar from '../Sidebar';
-import { Header } from '../Header';
 import { useScrollEffect } from '../../hooks/useScrollEffect';
 import styles from './Layout.module.css';
 import { useSidebarStore } from '~/stores/sidebarStore';
@@ -20,11 +18,6 @@ export default function Layout() {
 					<Sidebar />
 				</aside>
 				<div className={styles.content}>
-					<header className={styles.header}>
-						<Card withBorder className={styles.headerCard}>
-							<Header />
-						</Card>
-					</header>
 					<main className={styles.mainWrapper}>
 						<div className={styles.main}>
 							<Outlet />

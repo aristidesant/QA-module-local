@@ -8,6 +8,13 @@
 	color: var(--mantine-color-gray-7);
 }
 
+.triggerContent {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: nowrap;
+}
+
 .trigger:hover {
 	background-color: var(--mantine-color-gray-0);
 	color: var(--mantine-color-dark-8);
@@ -44,9 +51,25 @@
 	opacity: 0.8;
 }
 
+.flag {
+	display: inline-flex;
+	align-items: center;
+	line-height: 1;
+	font-size: 1rem;
+}
+
+.menuFlag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	line-height: 1;
+}
+
 .langValue {
 	font-size: 0.85rem;
 	letter-spacing: 0.2px;
+	font-weight: 600;
 }
 
 .chevron {
@@ -76,6 +99,15 @@
 	border-radius: 6px;
 	padding: 8px 12px;
 	transition: all 0.15s ease;
+}
+
+.menuItemText,
+.menuItemTextActive {
+	font-size: 0.875rem;
+}
+
+.menuItemTextActive {
+	font-weight: 600;
 }
 
 .activeItem {

@@ -61,6 +61,7 @@ export type DashboardWidgetFormState = {
 	valueFieldOptions: WidgetMetricOption[];
 	filterValueTypeOptions: WidgetMetricOption[];
 	viewValueFormatOptions: WidgetMetricOption[];
+	compareWithOptions: WidgetMetricOption[];
 	sizePresetOptions: { value: string; label: string; disabled?: boolean }[];
 	widgetTypeControlOptions: {
 		value: string;
@@ -92,6 +93,7 @@ export type DashboardWidgetFormState = {
 		handleMetricKeyChange: (value: string | null) => void;
 		handleFieldNameChange: (value: string | null) => void;
 		handleValueFieldChange: (value: string | null) => void;
+		handleCompareWithChange: (value: string | null) => void;
 		handleGroupByChange: (value: string | null) => void;
 		handleResultTypeChange: (value: string | null) => void;
 		handleViewValueFormatChange: (value: string | null) => void;

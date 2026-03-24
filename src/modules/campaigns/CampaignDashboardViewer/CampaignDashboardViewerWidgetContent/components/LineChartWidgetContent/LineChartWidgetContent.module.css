@@ -25,6 +25,10 @@
 		color-mix(in srgb, var(--widget-accent, #6366f1) 35%, transparent);
 }
 
+.comparisonCaption {
+	line-height: 1.25;
+}
+
 .latestLabel {
 	line-height: 1.2;
 }

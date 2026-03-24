@@ -96,10 +96,10 @@ export const KpiCard = ({
 		hasComparisonContent && variant === 'comparison-hero';
 	const isComparisonCompact =
 		hasComparisonContent && variant === 'comparison-compact';
-	const comparisonCompactTooltipLabel = showCompactComparisonTooltip
-		? [comparisonDetail, comparisonLabel].filter(Boolean).join(' • ') ||
-			undefined
-		: undefined;
+	const comparisonCompactTooltipLabel =
+		showCompactComparisonTooltip && comparisonDetail
+			? comparisonDetail
+			: undefined;
 	const sparklineTrend =
 		comparison?.trend === 'UP' ||
 		comparison?.trend === 'DOWN' ||
