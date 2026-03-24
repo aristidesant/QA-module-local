@@ -8,6 +8,8 @@ import type {
 	AgentVersionQueryParams,
 	AgentVersionSnapshot,
 	EnableAgentVersioningResponse,
+	GetBranchDetailsParams,
+	ListVersionCommitsParams,
 } from '~/models/AgentVersioningModel';
 
 export const useGetAgentVersioningStatus = (agentId: string) => {
@@ -57,7 +59,7 @@ export const useGetAgentBranches = (
 export const useGetAgentBranchDetails = (
 	agentId: string,
 	branchId?: string,
-	params?: { limit?: number; offset?: number }
+	params?: GetBranchDetailsParams
 ) => {
 	return useQuery<AgentBranchDetails>({
 		queryKey: ['agent-versioning', agentId, 'branch', branchId, params],
@@ -87,14 +89,14 @@ export const useGetAgentVersionSnapshot = (
 
 export const useGetAgentVersionCommits = (
 	agentId: string,
-	branchId?: string,
+	params?: ListVersionCommitsParams,
 	enabled = true
 ) => {
 	return useQuery<AgentVersionCommitListResponse>({
-		queryKey: ['agent-versioning', agentId, 'version-commits', branchId],
+		queryKey: ['agent-versioning', agentId, 'version-commits', params],
 		queryFn: async () => {
 			const api = agentVersioningApi();
-			return api.listVersionCommits(agentId, branchId);
+			return api.listVersionCommits(agentId, params);
 		},
 		enabled: enabled && Boolean(agentId),
 	});
@@ -123,6 +125,48 @@ export const useRevertAgentVersion = () => {
 			});
 			queryClient.invalidateQueries({
 				queryKey: ['agent', variables.agentId],
+			});
+		},
+	});
+};
+
+export const useDeleteVersionCommits = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: async ({
+			agentId,
+			ids,
+		}: {
+			agentId: string;
+			ids: number[];
+		}) => {
+			const api = agentVersioningApi();
+			return api.deleteVersionCommits(agentId, ids);
+		},
+		onSuccess: (_data, variables) => {
+			// Invalidate branch queries so server-filtered versions refresh
+			queryClient.invalidateQueries({
+				queryKey: ['agent-versioning', variables.agentId, 'branch'],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ['agent-versioning', variables.agentId, 'version-commits'],
+			});
+		},
+	});
+};
+
+export const useSyncAgentVersionCommits = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: async (agentId: string) => {
+			const api = agentVersioningApi();
+			return api.syncVersionCommits(agentId);
+		},
+		onSuccess: (_data, agentId) => {
+			queryClient.invalidateQueries({
+				queryKey: ['agent-versioning', agentId],
 			});
 		},
 	});

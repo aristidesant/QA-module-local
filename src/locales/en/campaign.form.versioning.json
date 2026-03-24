@@ -28,8 +28,14 @@
 		},
 		"actions": {
 			"compare": "Compare with current",
-			"revert": "Revert to this version"
-		}
+			"revert": "Revert to this version",
+			"revertMenu": "Revert options",
+			"revertAndDeleteNewer": "Revert & delete all newer versions",
+			"revertAndDeletePrevious": "Revert & delete all previous versions",
+			"delete": "Delete from history"
+		},
+		"selectAll": "Select all versions",
+		"selectVersion": "Select version {{version}}"
 	},
 	"enable": {
 		"title": "Enable agent versioning",
@@ -86,6 +92,63 @@
 		"cancel": "Cancel",
 		"revertVersion": "Revert",
 		"revertLatest": "Revert latest changes",
+		"revertAndDelete": "Revert & Delete {{count}} version",
+		"revertAndDelete_other": "Revert & Delete {{count}} versions",
+		"delete": "Delete",
+		"deleteSelected": "Delete {{count}} version",
+		"deleteSelected_other": "Delete {{count}} versions",
 		"retry": "Try again"
+	},
+	"revertAndDelete": {
+		"confirmTitle": "Revert to v{{version}} and delete newer?",
+		"confirmMessage": "This will delete {{count}} version newer than v{{version}} and revert the agent to that state.",
+		"confirmMessage_other": "This will delete {{count}} versions newer than v{{version}} and revert the agent to that state.",
+		"deleteHint": "{{count}} version will be permanently removed from history.",
+		"deleteHint_other": "{{count}} versions will be permanently removed from history.",
+		"successTitle": "Reverted to v{{version}}",
+		"successMessage": "{{count}} newer version was deleted and the agent was reverted to v{{version}}.",
+		"successMessage_other": "{{count}} newer versions were deleted and the agent was reverted to v{{version}}.",
+		"errorTitle": "Could not complete operation",
+		"errorMessage": "The agent could not be reverted. Some versions may have already been deleted.",
+		"loadError": "Could not load the version list. Please try again.",
+		"noSubsequentTitle": "Nothing to delete",
+		"noSubsequentMessage": "There are no newer versions after v{{version}}."
+	},
+	"revertAndDeletePrevious": {
+		"confirmTitle": "Revert to v{{version}} and delete previous history?",
+		"confirmMessage": "This will delete {{count}} version older than v{{version}} and revert the agent to that state.",
+		"confirmMessage_other": "This will delete {{count}} versions older than v{{version}} and revert the agent to that state.",
+		"deleteHint": "{{count}} older version will be permanently removed from history.",
+		"deleteHint_other": "{{count}} older versions will be permanently removed from history.",
+		"successTitle": "Reverted to v{{version}}",
+		"successMessage": "{{count}} older version was deleted and the agent was reverted to v{{version}}.",
+		"successMessage_other": "{{count}} older versions were deleted and the agent was reverted to v{{version}}.",
+		"errorTitle": "Could not complete operation",
+		"errorMessage": "The agent could not be reverted. Some versions may have already been deleted.",
+		"loadError": "Could not load the version list. Please try again.",
+		"noVersionsTitle": "Nothing to delete",
+		"noVersionsMessage": "There are no older versions before v{{version}}."
+	},
+	"delete": {
+		"confirmTitle": "Delete version?",
+		"confirmTitle_other": "Delete {{count}} versions?",
+		"confirmMessage": "This will permanently remove this version from the history log.",
+		"confirmMessage_other": "This will permanently remove {{count}} versions from the history log.",
+		"revertHint": "You can still revert to any version even after removing it from history.",
+		"successTitle": "Version deleted",
+		"successTitle_other": "Versions deleted",
+		"successMessage": "{{count}} version was removed from history.",
+		"successMessage_other": "{{count}} versions were removed from history.",
+		"errorTitle": "Could not delete",
+		"errorMessage": "The selected version could not be removed.",
+		"noCommitError": "No internal record found for the selected version."
+	},
+	"sync": {
+		"action": "Sync versions",
+		"tooltip": "Sync versions from ElevenLabs",
+		"successTitle": "Versions synced",
+		"successMessage": "Agent versions have been synced from ElevenLabs.",
+		"errorTitle": "Sync failed",
+		"errorMessage": "Could not sync agent versions from ElevenLabs. Please try again."
 	}
 }

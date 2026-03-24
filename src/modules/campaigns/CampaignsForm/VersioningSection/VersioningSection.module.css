@@ -44,6 +44,11 @@
 	text-align: right;
 }
 
+.selectCell {
+	width: 40px;
+	padding-right: 0;
+}
+
 .emptyState {
 	padding: var(--mantine-spacing-md);
 	border: 1px dashed var(--mantine-color-gray-4);

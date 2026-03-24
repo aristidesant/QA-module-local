@@ -1,5 +1,6 @@
 import type {
 	AgentBranchDetails,
+	AgentVersionCommit,
 	AgentVersionSnapshot,
 	AgentVersionSummary,
 } from '~/models/AgentVersioningModel';
@@ -17,6 +18,34 @@ export const getHistoricalVersions = (
 	}
 
 	return branchDetails.mostRecentVersions.data.slice(1);
+};
+
+export const findCommitForVersion = (
+	version: AgentVersionSummary,
+	commits: AgentVersionCommit[]
+): AgentVersionCommit | undefined => {
+	if (commits.length === 0) return undefined;
+
+	const byId = commits.find(
+		(c) => c.versionId != null && c.versionId === version.id
+	);
+	if (byId) return byId;
+
+	// Fall back to closest timestamp match (no hard tolerance — system clock skew
+	// between ElevenLabs and our backend can exceed 2 minutes)
+	const versionTimeMs = version.timeCommittedSecs * 1000;
+	let best: AgentVersionCommit | undefined;
+	let bestDiff = Infinity;
+
+	for (const commit of commits) {
+		const diff = Math.abs(new Date(commit.createdAt).getTime() - versionTimeMs);
+		if (diff < bestDiff) {
+			bestDiff = diff;
+			best = commit;
+		}
+	}
+
+	return best;
 };
 
 const sortJsonValue = (value: unknown): unknown => {
