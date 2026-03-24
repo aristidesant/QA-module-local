@@ -1,12 +1,12 @@
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
-import { Stack, Center, Loader, Text, Button } from '@mantine/core';
-import { IconPlus } from '@tabler/icons-react';
+import { Stack, Center, Loader, Text } from '@mantine/core';
 import useToolsStore from '~/stores/toolsStore';
 import ToolsList from '../ToolsList';
 import { useState, useCallback, useEffect } from 'react';
 import { useToolCategories } from '~/queries/toolCategoryQueries';
 import { useTranslation } from 'react-i18next';
 import ToolForm from '../ToolForm';
+import SectionCard from '~/components/SectionCard/SectionCard';
 
 const ToolsPage = () => {
 	const { t } = useTranslation('tools');
@@ -84,23 +84,15 @@ const ToolsPage = () => {
 	}
 
 	return (
-		<ContentContainer
-			title={t('page.title')}
-			description={t('page.description')}
-			titleRight={
-				<Button
-					leftSection={<IconPlus size={16} />}
-					onClick={handleCreateTool}
-					variant='filled'
-					size='xs'
-				>
-					{t('actions.createTool')}
-				</Button>
-			}
-		>
-			<Stack>
-				<ToolsList onCreate={handleCreateTool} onEdit={handleEditTool} />
-			</Stack>
+		<ContentContainer mainScroll={false}>
+			<SectionCard
+				title={t('page.title')}
+				description={t('page.description')}
+				onAdd={handleCreateTool}
+				padding='lg'
+			>
+				<ToolsList onEdit={handleEditTool} />
+			</SectionCard>
 		</ContentContainer>
 	);
 };

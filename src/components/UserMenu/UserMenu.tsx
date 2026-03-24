@@ -1,231 +1,182 @@
-import { Menu, Tooltip, Divider } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import {
-	IconChevronDown,
+	ActionIcon,
+	Badge,
+	Divider,
+	Group,
+	Menu,
+	Paper,
+	Stack,
+	Text,
+	Tooltip,
+} from '@mantine/core';
+import {
 	IconLogout,
+	IconDotsVertical,
 	IconShield,
-	IconUser,
-	IconSettings,
-	IconTools,
-	IconBook,
-	IconUsers,
-	IconKey,
-	IconBuilding,
-	IconPhoneOff,
-	IconFlask,
-	IconLayoutDashboard,
+	IconSwitchHorizontal,
+	IconUserCircle,
 } from '@tabler/icons-react';
-import styles from './UserMenu.module.css';
-import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import logout from '~/utils/logout';
+import { useNavigate } from 'react-router';
 import { useSessionStore } from '~/stores/sessionStore';
 import { useImpersonationState } from '~/hooks/useImpersonationState';
-import { usePermissions } from '~/hooks/usePermissions';
-import { useIsMasterClient } from '~/hooks/useIsMasterClient';
-import { ModuleEnum } from '~/constants/ModuleEnum';
-import { PermissionEnum } from '~/constants/PermissionEnum';
+import logout from '~/utils/logout';
+import LanguagePicker from '../LanguagePicker';
+import ClientSwitcherModal from '../ClientSwitcherModal';
+import styles from './UserMenu.module.css';
 
-export const UserMenu: React.FC = () => {
-	const { t } = useTranslation();
+interface UserMenuProps {
+	collapsed?: boolean;
+}
+
+export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
+	const { t } = useTranslation('common');
 	const { user, targetClient } = useSessionStore();
 	const { isImpersonating } = useImpersonationState();
-	const { canAccessModule, canPerformAction } = usePermissions();
-	const isMasterClient = useIsMasterClient();
 	const navigate = useNavigate();
+	const [switcherOpened, { open: openSwitcher, close: closeSwitcher }] =
+		useDisclosure(false);
+	const [menuOpened, { open: openMenu, close: closeMenu }] =
+		useDisclosure(false);
 
-	// Get user's full name or fallback to username
 	const userFullName =
 		user?.firstName && user?.lastName
 			? `${user.firstName} ${user.lastName}`
-			: user?.firstName || user?.lastName || user?.username;
+			: user?.firstName || user?.lastName || user?.username || '';
 
-	// Show target client name when impersonating, otherwise user's full name
 	const displayName =
 		isImpersonating && targetClient ? targetClient.name : userFullName;
-	const displayEmail =
-		isImpersonating && targetClient ? 'Impersonated Client' : user?.email;
+	const currentClientName =
+		isImpersonating && targetClient
+			? targetClient.name
+			: user?.client?.name || '';
+	const currentClientBadge = isImpersonating
+		? t('userMenu.impersonationMode')
+		: currentClientName;
 
-	// Get initials from firstName and lastName, or username, or target client
 	const initials =
 		isImpersonating && targetClient
 			? targetClient.name?.slice(0, 2).toUpperCase()
 			: user?.firstName && user?.lastName
 				? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase()
-				: user?.username?.slice(0, 2).toUpperCase();
-
-	const handleLogout = () => {
-		logout();
-	};
+				: user?.username?.slice(0, 2).toUpperCase() || 'NA';
 
 	const handleProfileClick = () => {
 		navigate('/profile');
+		closeMenu();
 	};
 
-	const handleMaintenanceNavigation = (path: string) => {
-		navigate(path);
+	const handleLogout = () => {
+		closeMenu();
+		logout();
 	};
 
-	const fetcher = { state: 'idle' } as const;
+	const menuTrigger = (
+		<Menu
+			opened={menuOpened}
+			onClose={closeMenu}
+			position='top-end'
+			withArrow
+			shadow='md'
+			width={220}
+		>
+			<Menu.Target>
+				<Tooltip label={t('sidebar.account.menu')} position='left' withArrow>
+					<ActionIcon
+						variant='subtle'
+						color='gray'
+						size='sm'
+						aria-label={t('sidebar.account.menu')}
+						onClick={() => {
+							if (menuOpened) {
+								closeMenu();
+								return;
+							}
+							openMenu();
+						}}
+					>
+						<IconDotsVertical size={16} />
+					</ActionIcon>
+				</Tooltip>
+			</Menu.Target>
 
-	type MaintenanceItem = {
-		label: string;
-		icon: React.ReactNode;
-		path: string;
-		module: ModuleEnum;
-		permission?: PermissionEnum;
-		masterOnly?: boolean;
-	};
-
-	type MaintenanceCategory = {
-		category: string;
-		items: MaintenanceItem[];
-	};
-
-	// Organized maintenance categories
-	const maintenanceCategories: MaintenanceCategory[] = [
-		{
-			category: t('userMenu.categories.campaignManagement'),
-			items: [
-				{
-					label: t('userMenu.items.campaignManagement'),
-					icon: <IconSettings size={16} />,
-					path: '/campaign-management',
-					module: ModuleEnum.SETTINGS,
-				},
-			],
-		},
-		{
-			category: t('userMenu.categories.configuration'),
-			items: [
-				{
-					label: t('userMenu.items.configurations'),
-					icon: <IconSettings size={16} />,
-					path: '/configurations/client-configs',
-					module: ModuleEnum.SETTINGS,
-					permission: PermissionEnum.MANAGE,
-				},
-				{
-					label: t('userMenu.items.clients'),
-					icon: <IconBuilding size={16} />,
-					path: '/clients',
-					module: ModuleEnum.SETTINGS,
-					permission: PermissionEnum.MANAGE,
-					masterOnly: true,
-				},
-			],
-		},
-		{
-			category: t('userMenu.categories.compliance'),
-			items: [
-				{
-					label: t('userMenu.items.doNotCall'),
-					icon: <IconPhoneOff size={16} />,
-					path: '/do-not-call',
-					module: ModuleEnum.SETTINGS,
-				},
-			],
-		},
-		{
-			category: t('userMenu.categories.dashboards'),
-			items: [
-				{
-					label: t('userMenu.items.dashboards'),
-					icon: <IconLayoutDashboard size={16} />,
-					path: '/dashboards',
-					module: ModuleEnum.DASHBOARD,
-				},
-			],
-		},
-		{
-			category: t('userMenu.categories.toolsAndResources'),
-			items: [
-				{
-					label: t('userMenu.items.agentTests'),
-					icon: <IconFlask size={16} />,
-					path: '/agent-tests',
-					module: ModuleEnum.CAMPAIGNS,
-					permission: PermissionEnum.UPDATE,
-				},
-				{
-					label: t('userMenu.items.knowledgeBases'),
-					icon: <IconBook size={16} />,
-					path: '/knowledge-bases',
-					module: ModuleEnum.KNOWLEDGE_BASES,
-					permission: PermissionEnum.READ,
-				},
-				{
-					label: t('userMenu.items.tools'),
-					icon: <IconTools size={16} />,
-					path: '/tools',
-					module: ModuleEnum.TOOLS,
-					permission: PermissionEnum.MANAGE,
-					masterOnly: true,
-				},
-			],
-		},
-	];
-
-	const normalMaintenanceCategories = maintenanceCategories.map((category) => {
-		if (category.category === t('userMenu.categories.configuration')) {
-			const usersItem: MaintenanceItem = {
-				label: t('userMenu.items.users'),
-				icon: <IconUsers size={16} />,
-				path: '/users',
-				module: ModuleEnum.USERS,
-				permission: PermissionEnum.MANAGE,
-				masterOnly: true,
-			};
-			const rolesItem: MaintenanceItem = {
-				label: t('userMenu.items.roles'),
-				icon: <IconKey size={16} />,
-				path: '/roles',
-				module: ModuleEnum.ROLES,
-				masterOnly: true,
-			};
-			return {
-				...category,
-				items: [
-					...category.items,
-					...(isMasterClient ? [usersItem, rolesItem] : []),
-				],
-			};
-		}
-
-		return category;
-	});
-
-	const filteredCategories = (categories: typeof maintenanceCategories) =>
-		categories
-			.map((category) => ({
-				...category,
-				items: category.items.filter((item) => {
-					if (item.masterOnly && !isMasterClient) {
-						return false;
-					}
-					if (item.permission) {
-						return canPerformAction(item.module, item.permission);
-					}
-					return canAccessModule(item.module);
-				}),
-			}))
-			.filter((category) => category.items.length > 0);
-
-	const categoriesToRender = isImpersonating
-		? filteredCategories(maintenanceCategories)
-		: filteredCategories(normalMaintenanceCategories);
+			<Menu.Dropdown className={styles.menuDropdown}>
+				<div className={styles.menuHeader}>
+					<div
+						className={[
+							styles.avatar,
+							styles.avatarSmall,
+							isImpersonating ? styles.avatarImpersonating : '',
+						].join(' ')}
+					>
+						{initials}
+						{isImpersonating && (
+							<div className={styles.impersonationIndicator}>
+								<IconShield size={10} />
+							</div>
+						)}
+					</div>
+					<div className={styles.menuHeaderText}>
+						<Text size='sm' fw={600} className={styles.menuHeaderName}>
+							{displayName}
+						</Text>
+						<Text size='xs' c='dimmed' className={styles.menuHeaderSub}>
+							{currentClientBadge || t('sidebar.account.title')}
+						</Text>
+					</div>
+				</div>
+				<Divider mb={4} />
+				<Menu.Item
+					leftSection={<IconUserCircle size={16} />}
+					onClick={handleProfileClick}
+				>
+					{t('sidebar.account.profile')}
+				</Menu.Item>
+				<Menu.Item
+					leftSection={<IconSwitchHorizontal size={16} />}
+					onClick={() => {
+						closeMenu();
+						openSwitcher();
+					}}
+				>
+					{t('sidebar.account.switchClient')}
+				</Menu.Item>
+				<Menu.Label className={styles.menuLabel}>
+					{t('sidebar.account.language')}
+				</Menu.Label>
+				<div className={styles.languageMenuRow}>
+					<LanguagePicker size='xs' variant='subtle' withLabel />
+				</div>
+				<Divider />
+				<Menu.Item
+					color='red'
+					leftSection={<IconLogout size={16} />}
+					onClick={handleLogout}
+				>
+					{t('sidebar.account.logout')}
+				</Menu.Item>
+			</Menu.Dropdown>
+		</Menu>
+	);
 
 	return (
-		<Menu shadow='md' width={280} position='bottom-end'>
-			<Menu.Target>
-				<div className={styles.trigger}>
-					<div
-						className={styles.userMenu}
-						tabIndex={0}
-						role='button'
-						aria-label='User menu'
-					>
+		<>
+			<Paper
+				radius='lg'
+				className={[
+					styles.shell,
+					collapsed ? styles.shellCollapsed : styles.shellExpanded,
+				].join(' ')}
+			>
+				{collapsed ? (
+					<Stack gap={4} align='center' className={styles.compactShell}>
 						<div
-							className={`${styles.avatar} ${isImpersonating ? styles.impersonating : ''}`}
+							className={[
+								styles.avatar,
+								styles.avatarCompact,
+								isImpersonating ? styles.avatarImpersonating : '',
+							].join(' ')}
 						>
 							{initials}
 							{isImpersonating && (
@@ -234,150 +185,76 @@ export const UserMenu: React.FC = () => {
 								</div>
 							)}
 						</div>
-						<div className={styles.userInfo}>
-							<span className={styles.name}>{displayName}</span>
-							<span className={styles.email}>{displayEmail}</span>
-						</div>
-						<IconChevronDown size={18} className={styles.chevron} />
-					</div>
-				</div>
-			</Menu.Target>
-			<Menu.Dropdown className={styles.dropdown}>
-				{isImpersonating ? (
-					<>
-						<div className={styles.impersonationSection}>
-							<div className={styles.impersonationHeader}>
-								<IconShield size={18} />
-								<div>
-									<div className={styles.impersonationTitle}>
-										{t('userMenu.impersonationMode')}
-									</div>
-									<div className={styles.impersonationSubtitle}>
-										{t('userMenu.impersonatingClient')}
-									</div>
-								</div>
-							</div>
-							<div className={styles.impersonationMessage}>
-								{t('userMenu.returnToMaster')}
-							</div>
-						</div>
-						<Divider />
 
-						{categoriesToRender.length > 0 ? (
-							categoriesToRender.map((categoryGroup, idx) => (
-								<div key={categoryGroup.category}>
-									<Menu.Label className={styles.categoryLabel}>
-										{categoryGroup.category}
-									</Menu.Label>
-									<div className={styles.categoryGroup}>
-										{categoryGroup.items.map((item) => (
-											<Tooltip
-												key={item.path}
-												label={item.label}
-												position='left'
-												withArrow
-											>
-												<Menu.Item
-													onClick={() => handleMaintenanceNavigation(item.path)}
-													leftSection={item.icon}
-													className={styles.categoryItem}
-												>
-													{item.label}
-												</Menu.Item>
-											</Tooltip>
-										))}
-									</div>
-									{idx < categoriesToRender.length - 1 && <Divider my='xs' />}
-								</div>
-							))
-						) : (
-							<div className={styles.emptyPermissions}>
-								<span className={styles.emptyPermissionsTitle}>
-									{t('userMenu.noAccessibleModules')}
-								</span>
-								<span className={styles.emptyPermissionsSubtitle}>
-									{t('userMenu.requestAccess')}
-								</span>
-							</div>
-						)}
-
-						<Divider />
-						<Menu.Item
-							color='red'
-							onClick={handleLogout}
-							disabled={fetcher.state !== 'idle'}
-							leftSection={<IconLogout size={16} />}
-							className={styles.logoutItem}
+						<Group
+							gap={4}
+							wrap='nowrap'
+							align='center'
+							justify='center'
+							className={styles.compactMeta}
 						>
-							{fetcher.state === 'idle'
-								? t('userMenu.logout')
-								: t('userMenu.loggingOut')}
-						</Menu.Item>
-					</>
+							<Text size='xs' fw={600} className={styles.compactName}>
+								{displayName}
+							</Text>
+							{isImpersonating && (
+								<Badge size='xs' variant='light' color='orange'>
+									{t('userMenu.impersonationMode')}
+								</Badge>
+							)}
+						</Group>
+
+						<Text size='xs' c='dimmed' className={styles.compactSubtitle}>
+							{currentClientBadge || t('sidebar.account.title')}
+						</Text>
+
+						{menuTrigger}
+					</Stack>
 				) : (
-					<>
-						<Menu.Item
-							onClick={handleProfileClick}
-							leftSection={<IconUser size={16} />}
-							className={styles.profileItem}
+					<Group
+						gap='sm'
+						wrap='nowrap'
+						align='center'
+						justify='space-between'
+						className={styles.expandedShell}
+					>
+						<div
+							className={[
+								styles.avatar,
+								isImpersonating ? styles.avatarImpersonating : '',
+							].join(' ')}
 						>
-							{t('userMenu.profile')}
-						</Menu.Item>
-						<Divider />
-
-						{categoriesToRender.length > 0 ? (
-							categoriesToRender.map((categoryGroup, idx) => (
-								<div key={categoryGroup.category}>
-									<Menu.Label className={styles.categoryLabel}>
-										{categoryGroup.category}
-									</Menu.Label>
-									<div className={styles.categoryGroup}>
-										{categoryGroup.items.map((item) => (
-											<Tooltip
-												key={item.path}
-												label={item.label}
-												position='left'
-												withArrow
-											>
-												<Menu.Item
-													onClick={() => handleMaintenanceNavigation(item.path)}
-													leftSection={item.icon}
-													className={styles.categoryItem}
-												>
-													{item.label}
-												</Menu.Item>
-											</Tooltip>
-										))}
-									</div>
-									{idx < categoriesToRender.length - 1 && <Divider my='xs' />}
+							{initials}
+							{isImpersonating && (
+								<div className={styles.impersonationIndicator}>
+									<IconShield size={12} />
 								</div>
-							))
-						) : (
-							<div className={styles.emptyPermissions}>
-								<span className={styles.emptyPermissionsTitle}>
-									{t('userMenu.noAccessibleModules')}
-								</span>
-								<span className={styles.emptyPermissionsSubtitle}>
-									{t('userMenu.requestAccess')}
-								</span>
-							</div>
-						)}
+							)}
+						</div>
 
-						<Divider />
-						<Menu.Item
-							color='red'
-							onClick={handleLogout}
-							disabled={fetcher.state !== 'idle'}
-							leftSection={<IconLogout size={16} />}
-							className={styles.logoutItem}
-						>
-							{fetcher.state === 'idle'
-								? t('userMenu.logout')
-								: t('userMenu.loggingOut')}
-						</Menu.Item>
-					</>
+						<Stack gap={1} className={styles.identity}>
+							<Group gap={6} wrap='nowrap' align='center' justify='flex-start'>
+								<Text size='sm' fw={600} className={styles.name}>
+									{displayName}
+								</Text>
+								{isImpersonating && (
+									<Badge size='xs' variant='light' color='orange'>
+										{t('userMenu.impersonationMode')}
+									</Badge>
+								)}
+							</Group>
+							<Text size='xs' c='dimmed' className={styles.subtitle}>
+								{currentClientBadge || t('sidebar.account.title')}
+							</Text>
+						</Stack>
+
+						{menuTrigger}
+					</Group>
 				)}
-			</Menu.Dropdown>
-		</Menu>
+			</Paper>
+
+			<ClientSwitcherModal opened={switcherOpened} onClose={closeSwitcher} />
+		</>
 	);
 };
+
+export default UserMenu;

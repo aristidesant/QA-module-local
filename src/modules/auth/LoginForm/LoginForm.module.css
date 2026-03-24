@@ -20,6 +20,13 @@
 	position: relative;
 }
 
+.contentGrid {
+	display: grid;
+	grid-template-columns: minmax(260px, 300px) minmax(0, 1fr);
+	column-gap: 48px;
+	align-items: center;
+}
+
 @keyframes slideUp {
 	from {
 		opacity: 0;
@@ -32,12 +39,10 @@
 }
 
 .header {
-	height: 100%;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
 	gap: 16px;
-	padding: 8px 4px;
+	padding: 8px 4px 8px 0;
 	text-align: left;
 }
 
@@ -75,9 +80,21 @@
 }
 
 .formColumn {
-	height: 100%;
-	justify-content: center;
-	padding: 4px 0;
+	min-width: 0;
+	display: flex;
+}
+
+.formStack {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	width: 100%;
+}
+
+.fields {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
 }
 
 .loadingOverlay {
@@ -92,6 +109,13 @@
 	animation: fadeIn 0.2s ease-out;
 }
 
+.loadingContent {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+}
+
 @keyframes fadeIn {
 	from {
 		opacity: 0;
@@ -99,10 +123,6 @@
 	to {
 		opacity: 1;
 	}
-}
-
-.segmentedWrapper {
-	margin-bottom: 0;
 }
 
 .languagePicker {
@@ -193,7 +213,6 @@
 	border-radius: 12px;
 	background-color: var(--mantine-color-blue-6);
 	transition: all 0.2s ease;
-	margin-top: 8px;
 }
 
 .submitButton:hover:not(:disabled) {
@@ -228,6 +247,11 @@
 		border-radius: 18px;
 	}
 
+	.contentGrid {
+		grid-template-columns: 1fr;
+		row-gap: 28px;
+	}
+
 	.title {
 		font-size: 1.5rem;
 	}
@@ -244,5 +268,9 @@
 
 	.subtitle {
 		margin-inline: auto;
+	}
+
+	.formColumn {
+		width: 100%;
 	}
 }

@@ -100,7 +100,7 @@ export default function ClientSelectionModal({
 				opened={opened}
 				onClose={handleClose}
 				centered
-				size='lg'
+				size={760}
 				padding='lg'
 				overlayProps={{ backgroundOpacity: 0.55, blur: 3 }}
 				withCloseButton={false}
