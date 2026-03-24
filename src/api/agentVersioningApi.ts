@@ -105,6 +105,12 @@ const agentVersioningApi = () => {
 				{ data: { ids } }
 			);
 		},
+
+		syncVersionCommits: async (agentId: string) => {
+			await axios.post(
+				`${DEFAULT_API_URL}/agents/${agentId}/version-commits/sync`
+			);
+		},
 	};
 };
 

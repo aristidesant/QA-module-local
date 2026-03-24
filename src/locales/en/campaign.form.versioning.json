@@ -142,5 +142,13 @@
 		"errorTitle": "Could not delete",
 		"errorMessage": "The selected version could not be removed.",
 		"noCommitError": "No internal record found for the selected version."
+	},
+	"sync": {
+		"action": "Sync versions",
+		"tooltip": "Sync versions from ElevenLabs",
+		"successTitle": "Versions synced",
+		"successMessage": "Agent versions have been synced from ElevenLabs.",
+		"errorTitle": "Sync failed",
+		"errorMessage": "Could not sync agent versions from ElevenLabs. Please try again."
 	}
 }

@@ -142,5 +142,13 @@
 		"errorTitle": "No se pudo eliminar",
 		"errorMessage": "La versión seleccionada no pudo eliminarse.",
 		"noCommitError": "No se encontró ningún registro interno para la versión seleccionada."
+	},
+	"sync": {
+		"action": "Sincronizar versiones",
+		"tooltip": "Sincronizar versiones desde ElevenLabs",
+		"successTitle": "Versiones sincronizadas",
+		"successMessage": "Las versiones del agente han sido sincronizadas desde ElevenLabs.",
+		"errorTitle": "Sincronización fallida",
+		"errorMessage": "No se pudieron sincronizar las versiones del agente desde ElevenLabs. Inténtalo de nuevo."
 	}
 }

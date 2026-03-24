@@ -5,6 +5,7 @@ import { notifications } from '@mantine/notifications';
 import {
 	IconAlertCircle,
 	IconHistory,
+	IconRefresh,
 	IconRotate2,
 	IconScissors,
 	IconTrash,
@@ -28,6 +29,7 @@ import {
 	useGetAgentVersionSnapshot,
 	useGetAgentVersioningStatus,
 	useRevertAgentVersion,
+	useSyncAgentVersionCommits,
 } from '~/queries/agentVersioningQueries';
 import agentVersioningApi from '~/api/agentVersioningApi';
 import type { CampaignAgent } from '~/models/CampaignAgentModel';
@@ -158,6 +160,8 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 	const { mutateAsync: deleteVersionCommits, isPending: isDeleting } =
 		useDeleteVersionCommits();
 	const { mutateAsync: syncCampaignByAgent } = useSyncCampaignByAgent();
+	const { mutateAsync: syncVersionCommits, isPending: isSyncing } =
+		useSyncAgentVersionCommits();
 
 	const historicalVersions: AgentVersionSummary[] =
 		historyBranchDetails?.mostRecentVersions.data ?? [];
@@ -263,6 +267,24 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 	const handleDeselectAll = useCallback(() => {
 		setSelectedVersionIds(new Set());
 	}, []);
+
+	const handleSyncVersions = useCallback(async () => {
+		if (!agentId) return;
+		try {
+			await syncVersionCommits(agentId);
+			notifications.show({
+				title: t('sync.successTitle'),
+				message: t('sync.successMessage'),
+				color: 'green',
+			});
+		} catch {
+			notifications.show({
+				title: t('sync.errorTitle'),
+				message: t('sync.errorMessage'),
+				color: 'red',
+			});
+		}
+	}, [agentId, syncVersionCommits, t]);
 
 	const handleEnableVersioning = () => {
 		if (!agentId) return;
@@ -936,6 +958,15 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 										}
 									>
 										{t('actions.revertLatest')}
+									</Button>
+									<Button
+										size='sm'
+										variant='light'
+										leftSection={<IconRefresh size={16} />}
+										loading={isSyncing}
+										onClick={handleSyncVersions}
+									>
+										{t('sync.action')}
 									</Button>
 								</Group>
 							</div>

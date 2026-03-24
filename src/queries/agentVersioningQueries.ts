@@ -155,3 +155,19 @@ export const useDeleteVersionCommits = () => {
 		},
 	});
 };
+
+export const useSyncAgentVersionCommits = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: async (agentId: string) => {
+			const api = agentVersioningApi();
+			return api.syncVersionCommits(agentId);
+		},
+		onSuccess: (_data, agentId) => {
+			queryClient.invalidateQueries({
+				queryKey: ['agent-versioning', agentId],
+			});
+		},
+	});
+};
