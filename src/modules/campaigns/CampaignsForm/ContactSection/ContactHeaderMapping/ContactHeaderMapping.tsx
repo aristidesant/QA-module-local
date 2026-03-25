@@ -65,6 +65,17 @@ interface SelectedDynamicSchema {
 	version: number;
 }
 
+const getSystemFieldDescriptor = (field: SystemColumn) => {
+	const normalizedLabel = field.label?.trim().toLowerCase();
+	const normalizedName = field.name.trim().toLowerCase();
+
+	if (!normalizedLabel || normalizedLabel === normalizedName) {
+		return field.name;
+	}
+
+	return field.name;
+};
+
 export function ContactHeaderMapping({
 	documentColumns,
 	onMappingChange,
@@ -74,7 +85,11 @@ export function ContactHeaderMapping({
 	objectiveId,
 	selectedSchemaId,
 }: ContactHeaderMappingProps) {
-	const { t } = useTranslation(['campaign.form.contacts', 'common']);
+	const { t } = useTranslation([
+		'campaign.form.contacts',
+		'campaign.form.params',
+		'common',
+	]);
 	// Read from campaign store and prefer store value (objectiveId or objective.id)
 	const { selectedCampaign } = useCampaignsStore();
 
@@ -755,6 +770,7 @@ export function ContactHeaderMapping({
 																			'scheduler.schedulerBuilder.fieldsCount',
 																			{
 																				count: schema.schemaFields.length,
+																				ns: 'campaign.form.params',
 																			}
 																		)}
 																	</Text>
@@ -1005,12 +1021,9 @@ export function ContactHeaderMapping({
 															>
 																{systemField.label || systemField.name}
 															</Text>
-															{systemField.label &&
-																systemField.label !== systemField.name && (
-																	<Text size='xs' c='dimmed'>
-																		{systemField.name}
-																	</Text>
-																)}
+															<Text size='xs' c='dimmed'>
+																{getSystemFieldDescriptor(systemField)}
+															</Text>
 														</Stack>
 														<Text
 															size='xs'
