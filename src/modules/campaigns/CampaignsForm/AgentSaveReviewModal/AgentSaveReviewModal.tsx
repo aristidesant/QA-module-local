@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
+	Alert,
 	Badge,
 	Button,
 	Group,
@@ -9,6 +10,7 @@ import {
 	Text,
 	Textarea,
 } from '@mantine/core';
+import { IconAlertTriangle } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { AgentVersionSnapshot } from '~/models/AgentVersioningModel';
 import type { SplitDiffLine } from '../VersioningSection/VersioningSection.helpers';
@@ -26,6 +28,7 @@ interface AgentSaveReviewModalProps {
 	currentSnapshot?: AgentVersionSnapshot | null;
 	onPublish: (versionDescription: string) => void;
 	isPublishing: boolean;
+	warningMessage?: string;
 }
 
 const renderLine = (line: SplitDiffLine) => (
@@ -51,6 +54,7 @@ const AgentSaveReviewModal = ({
 	currentSnapshot,
 	onPublish,
 	isPublishing,
+	warningMessage,
 }: AgentSaveReviewModalProps) => {
 	const { t } = useTranslation('campaign.form.agents');
 	const [description, setDescription] = useState('');
@@ -201,6 +205,17 @@ const AgentSaveReviewModal = ({
 						)}
 					</ScrollArea>
 				</div>
+
+				{warningMessage && (
+					<Alert
+						icon={<IconAlertTriangle size={16} />}
+						color='orange'
+						variant='light'
+						p='sm'
+					>
+						<Text size='sm'>{warningMessage}</Text>
+					</Alert>
+				)}
 
 				<Stack gap='xs'>
 					<Text size='sm' fw={500}>

@@ -576,7 +576,10 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 									</SectionCard>
 								) : (
 									<form
-										onSubmit={form.onSubmit((values) => handleSubmit(values))}
+										onSubmit={form.onSubmit((values) => {
+											setPendingAgentValues(values);
+											setReviewModalOpen(true);
+										})}
 									>
 										<WorkflowSection />
 										<StickySaveActions
@@ -630,7 +633,12 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 						)}
 						{selectedTab === 'report-values' && <ReportValuesSection />}
 						{selectedTab === 'analytics' && (
-							<form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+							<form
+								onSubmit={form.onSubmit((values) => {
+									setPendingAgentValues(values);
+									setReviewModalOpen(true);
+								})}
+							>
 								<AnalyticsSection />
 								<StickySaveActions
 									label={saveLabel}
