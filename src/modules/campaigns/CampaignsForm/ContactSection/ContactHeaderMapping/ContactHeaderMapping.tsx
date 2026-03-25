@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	Button,
@@ -23,6 +23,7 @@ import {
 	IconRefresh,
 	IconX,
 	IconWand,
+	IconArrowBackUp,
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import styles from './ContactHeaderMapping.module.css';
@@ -118,6 +119,21 @@ export function ContactHeaderMapping({
 	const [selectedDynamicSchemaState, setSelectedDynamicSchemaState] =
 		useState<SelectedDynamicSchema | null>(null);
 
+	// Capture the initial state on first render so we can reset to it
+	const initialStateRef = useRef<{
+		captured: boolean;
+		mappings: FieldMapping[];
+		finalizedSystemFields: Set<string>;
+		additionalSchemaFields: CampaignContactSchemaField[];
+		selectedDynamicSchema: SelectedDynamicSchema | null;
+	}>({
+		captured: false,
+		mappings: [],
+		finalizedSystemFields: new Set(),
+		additionalSchemaFields: [],
+		selectedDynamicSchema: null,
+	});
+
 	const { data: systemConfig, isLoading: isLoadingSystemColumns } =
 		useGetClientConfig('contact_columns');
 
@@ -210,48 +226,28 @@ export function ContactHeaderMapping({
 			const schemaFieldsParam = schema.schemaFields;
 			const schemaId = schema.id;
 
-			// Replace previously selected dynamic fields with the new selection
-			setAdditionalSchemaFields(() => schemaFieldsParam);
+			// Changing dynamic variables is a significant schema change.
+			// Reset ALL mappings and finalized state to give a clean slate,
+			// then set the new dynamic fields.
+			setAdditionalSchemaFields(schemaFieldsParam);
 			setSelectedDynamicSchemaState({
 				id: schema.id,
 				name: schema.name,
 				version: schema.version || 1,
 			});
 
-			// Compute allowed system field names: base + initial + newly selected dynamic fields
-			const prevAdditionalNames = new Set(
-				additionalSchemaFields.map((f) => f.name)
-			);
-			const allowedNames = new Set(systemColumns.map((c) => c.name));
-			// Remove old dynamic fields from allowed set
-			prevAdditionalNames.forEach((n) => allowedNames.delete(n));
-			// Add the new dynamic fields
-			schemaFieldsParam.forEach((f) => allowedNames.add(f.name));
+			// Clear all mappings and finalized state so all system fields
+			// (including phone/isArray fields) reappear for fresh mapping
+			setMappings([]);
+			setFinalizedSystemFields(new Set());
+			setSelectedSystemField(null);
+			setSelectedDocumentField(null);
 
-			// Prune mappings that reference fields no longer available
-			const prunedMappings = mappings.filter((m) =>
-				allowedNames.has(m.systemField)
-			);
-			setMappings(prunedMappings);
-
-			// Reset selection if it referenced a removed field
-			if (selectedSystemField && !allowedNames.has(selectedSystemField)) {
-				setSelectedSystemField(null);
-			}
-
-			// Notify parent consumers
-			onMappingChange(getMappedResult(prunedMappings));
+			// Notify parent consumers with empty mappings
+			onMappingChange({});
 			onSchemaSelected?.(schemaId);
 		},
-		[
-			additionalSchemaFields,
-			systemColumns,
-			mappings,
-			selectedSystemField,
-			getMappedResult,
-			onMappingChange,
-			onSchemaSelected,
-		]
+		[onMappingChange, onSchemaSelected]
 	);
 
 	// Initialize mappings when component mounts or when result prop changes
@@ -285,16 +281,34 @@ export function ContactHeaderMapping({
 				})
 			);
 
-			setFinalizedSystemFields((prev) => {
-				const next = new Set(prev);
-				for (const fieldName of mappedSystemFieldNames) {
-					const column = systemColumns.find((c) => c.name === fieldName);
-					if (column?.isArray) {
-						next.add(fieldName);
-					}
+			const newFinalizedFields = new Set<string>();
+			for (const fieldName of mappedSystemFieldNames) {
+				const column = systemColumns.find((c) => c.name === fieldName);
+				if (column?.isArray) {
+					newFinalizedFields.add(fieldName);
 				}
-				return next;
-			});
+			}
+			setFinalizedSystemFields(newFinalizedFields);
+
+			// Capture initial state on very first render so Reset can restore it
+			if (!initialStateRef.current.captured) {
+				initialStateRef.current = {
+					captured: true,
+					mappings: [...initialMappings],
+					finalizedSystemFields: new Set(newFinalizedFields),
+					additionalSchemaFields: [],
+					selectedDynamicSchema: null,
+				};
+			}
+		} else if (!initialStateRef.current.captured) {
+			// No result prop — fresh empty state
+			initialStateRef.current = {
+				captured: true,
+				mappings: [],
+				finalizedSystemFields: new Set(),
+				additionalSchemaFields: [],
+				selectedDynamicSchema: null,
+			};
 		}
 	}, [result, systemColumns]);
 
@@ -304,11 +318,23 @@ export function ContactHeaderMapping({
 			const selectedSchema = schemas.find((s) => s.id === selectedSchemaId);
 			if (selectedSchema) {
 				setAdditionalSchemaFields(selectedSchema.schemaFields);
-				setSelectedDynamicSchemaState({
+				const dynamicSchema = {
 					id: selectedSchema.id,
 					name: selectedSchema.name,
 					version: selectedSchema.version || 1,
-				});
+				};
+				setSelectedDynamicSchemaState(dynamicSchema);
+
+				// Update initial state capture with the restored schema if not yet captured with it
+				if (
+					initialStateRef.current.captured &&
+					!initialStateRef.current.selectedDynamicSchema
+				) {
+					initialStateRef.current.additionalSchemaFields = [
+						...selectedSchema.schemaFields,
+					];
+					initialStateRef.current.selectedDynamicSchema = dynamicSchema;
+				}
 			}
 		}
 	}, [selectedSchemaId, schemas]);
@@ -417,6 +443,33 @@ export function ContactHeaderMapping({
 		getMappedResult,
 	]);
 
+	// Reset everything to the initial state captured on first render
+	const handleReset = useCallback(() => {
+		const initial = initialStateRef.current;
+		setMappings([...initial.mappings]);
+		setFinalizedSystemFields(new Set(initial.finalizedSystemFields));
+		setAdditionalSchemaFields([...initial.additionalSchemaFields]);
+		setSelectedDynamicSchemaState(initial.selectedDynamicSchema);
+		setSelectedSystemField(null);
+		setSelectedDocumentField(null);
+
+		// Notify parent with the initial mapping result
+		onMappingChange(getMappedResult([...initial.mappings]));
+
+		// Restore schema selection to initial
+		if (initial.selectedDynamicSchema) {
+			onSchemaSelected?.(initial.selectedDynamicSchema.id);
+		} else {
+			onSchemaSelected?.(selectedSchemaId ?? 0);
+		}
+
+		notifications.show({
+			title: t('form.contacts.headerMapping.reset.successTitle'),
+			message: t('form.contacts.headerMapping.reset.successMessage'),
+			color: 'blue',
+		});
+	}, [onMappingChange, onSchemaSelected, getMappedResult, selectedSchemaId, t]);
+
 	// Auto-match system columns to CSV columns using matchPatterns + fuzzy regex
 	const handleAutoMatch = useCallback(() => {
 		const currentMappedSystemFields = new Set(
@@ -428,10 +481,15 @@ export function ContactHeaderMapping({
 		const currentFinalizedFields = new Set(finalizedSystemFields);
 
 		// Columns eligible for auto-match: not yet mapped (or isArray and not finalized)
-		const unmappedColumns = systemColumns.filter((col) => {
-			if (currentFinalizedFields.has(col.name)) return false;
-			return col.isArray ? true : !currentMappedSystemFields.has(col.name);
-		});
+		// Sort by name length descending so more specific fields (e.g. "identifierType")
+		// are processed before shorter ones (e.g. "identifier"), preventing the shorter
+		// field from stealing CSV columns that belong to the more specific field.
+		const unmappedColumns = systemColumns
+			.filter((col) => {
+				if (currentFinalizedFields.has(col.name)) return false;
+				return col.isArray ? true : !currentMappedSystemFields.has(col.name);
+			})
+			.sort((a, b) => b.name.length - a.name.length);
 
 		const newMappings: FieldMapping[] = [];
 		const newFinalizedArrayFields: string[] = [];
@@ -448,16 +506,69 @@ export function ContactHeaderMapping({
 				.replace(/[\u0300-\u036f]/g, '')
 				.replace(/[\s_-]+/g, '');
 
+		/**
+		 * Generate variants for fuzzy matching, split into primary and secondary.
+		 * Primary = full normalized name + singular (used for all match directions)
+		 * Secondary = camelCase sub-parts (only used when CSV contains them)
+		 *
+		 * e.g. "phones"         → primary: ["phones","phone"], secondary: []
+		 * e.g. "identifierType" → primary: ["identifiertype"], secondary: ["identifier","type"]
+		 * e.g. "firstName"      → primary: ["firstname"], secondary: ["first","name"]
+		 */
+		const getVariants = (
+			s: string
+		): { primary: string[]; secondary: string[] } => {
+			const normalized = normalize(s);
+			const primary = [normalized];
+
+			// Strip trailing 's' to get singular form
+			if (normalized.endsWith('s') && normalized.length > 2) {
+				primary.push(normalized.slice(0, -1));
+			}
+
+			const secondary: string[] = [];
+
+			// Split on camelCase boundaries from the ORIGINAL (pre-normalized) string
+			const camelParts = s
+				.replace(/([a-z])([A-Z])/g, '$1\0$2')
+				.split('\0')
+				.map(normalize)
+				.filter((p) => p.length >= 2);
+
+			if (camelParts.length > 1) {
+				camelParts.forEach((part) => {
+					if (!primary.includes(part) && !secondary.includes(part)) {
+						secondary.push(part);
+					}
+					if (part.endsWith('s') && part.length > 2) {
+						const singular = part.slice(0, -1);
+						if (!primary.includes(singular) && !secondary.includes(singular)) {
+							secondary.push(singular);
+						}
+					}
+				});
+			}
+
+			return { primary, secondary };
+		};
+
 		for (const col of unmappedColumns) {
 			const patterns = col.matchPatterns ?? [];
 			const normalizedPatterns = patterns.map(normalize);
 
-			// Build a regex from the system field name + label for fuzzy fallback
+			// Build variants from system field name + label
 			const nameParts = [col.name, col.label].filter(Boolean);
-			const fuzzyRegex = new RegExp(
-				nameParts.map((p) => normalize(p)).join('|'),
-				'i'
-			);
+			const allPrimary: string[] = [];
+			const allSecondary: string[] = [];
+			for (const part of nameParts) {
+				const { primary, secondary } = getVariants(part);
+				allPrimary.push(...primary);
+				allSecondary.push(...secondary);
+			}
+			const uniquePrimary = [...new Set(allPrimary)];
+			const uniqueSecondary = [...new Set(allSecondary)];
+			const allVariants = [...new Set([...uniquePrimary, ...uniqueSecondary])];
+			const fuzzyRegex = new RegExp(allVariants.join('|'), 'i');
 
 			// Get available CSV columns (not already mapped by previous iterations or existing mappings)
 			const availableCsvCols = documentColumns.filter(
@@ -469,18 +580,62 @@ export function ContactHeaderMapping({
 			for (const csvCol of availableCsvCols) {
 				const normalizedCsv = normalize(csvCol);
 
-				// 1. Exact match against matchPatterns
+				// Whether this system field is a compound name (e.g. identifierType, firstName)
+				// Compound fields use stricter matching to avoid stealing CSV columns
+				// from their simpler base parts (e.g. identifierType shouldn't steal "Id"
+				// from identifier).
+				const isCompoundField = uniqueSecondary.length > 0;
+
+				// 1. Match against explicit matchPatterns (configured by admins).
+				//    - Exact match: always trusted
+				//    - CSV contains pattern: only when pattern covers ≥50% of CSV length,
+				//      to prevent short patterns like "id" from matching unrelated columns
+				//      that happen to contain the substring (e.g. "apellido" contains "id")
+				//    - Pattern contains CSV: compound fields require CSV ≥50% of pattern;
+				//      simple fields allow any substring match
 				const patternMatch = normalizedPatterns.some(
 					(p) =>
 						normalizedCsv === p ||
-						normalizedCsv.includes(p) ||
-						p.includes(normalizedCsv)
+						(normalizedCsv.includes(p) &&
+							p.length >= normalizedCsv.length * 0.5) ||
+						(p.includes(normalizedCsv) &&
+							(!isCompoundField || normalizedCsv.length >= p.length * 0.5))
 				);
 
-				// 2. Fuzzy regex match against field name/label
+				// 2. Fuzzy match with two directions:
+				//
+				//    Direction A (CSV contains variant) — uses ALL variants:
+				//      e.g. csv "myphone01" contains primary "phone" ✓
+				//      e.g. csv "identifiertype" contains secondary "identifier" ✓
+				//      Safe: CSV is the longer string, so no false positives from short CSV.
+				//
+				//    Direction B (Primary variant starts with CSV) — only PRIMARY variants:
+				//      Compound fields (those with camelCase sub-parts) only allow
+				//      digit-only suffixes. This prevents "identifiertype" (compound)
+				//      from matching csv "id" — suffix "entifiertype" is not digits.
+				//      Simple/single-word fields allow any suffix, so "identifier"
+				//      (non-compound) can match csv "id" — suffix "entifier" is allowed.
+				const directionA = allVariants.some((v) => normalizedCsv.includes(v));
+
+				const directionB = uniquePrimary.some((v) => {
+					if (v.startsWith(normalizedCsv) && normalizedCsv.length >= 2) {
+						const suffix = v.slice(normalizedCsv.length);
+						if (suffix === '' || /^\d+$/.test(suffix)) return true;
+						// For simple (non-compound) fields, allow alphabetic suffixes
+						// e.g. "identifier".startsWith("id") → suffix "entifier" → OK
+						// For compound fields, reject to avoid stealing:
+						// e.g. "identifiertype".startsWith("id") → suffix "entifiertype" → REJECT
+						if (!isCompoundField) return true;
+					}
+					return false;
+				});
+
+				const fuzzyContainsMatch = directionA || directionB;
+
+				// 3. Regex match (checks if CSV contains any variant)
 				const regexMatch = fuzzyRegex.test(normalizedCsv);
 
-				if (patternMatch || regexMatch) {
+				if (patternMatch || fuzzyContainsMatch || regexMatch) {
 					matched.push(csvCol);
 					if (!col.isArray) break; // For non-array fields, take first match
 				}
@@ -550,12 +705,14 @@ export function ContactHeaderMapping({
 		setMappings(updatedMappings);
 		onMappingChange(getMappedResult(updatedMappings));
 
-		// If this was the last mapping for an array field, un-finalize it
-		// so it reappears in the system fields list for re-mapping
-		const remainingForField = updatedMappings.filter(
-			(m) => m.systemField === mappingToRemove.systemField
+		// For isArray fields, always un-finalize when a mapping is removed
+		// so the field reappears in the system fields list for further mapping.
+		// This lets the user add/remove individual phone columns without having
+		// to remove ALL of them first.
+		const column = systemColumns.find(
+			(c) => c.name === mappingToRemove.systemField
 		);
-		if (remainingForField.length === 0) {
+		if (column?.isArray) {
 			setFinalizedSystemFields((prev) => {
 				const next = new Set(prev);
 				next.delete(mappingToRemove.systemField);
@@ -644,6 +801,18 @@ export function ContactHeaderMapping({
 								onClick={handleAutoMatch}
 							>
 								{t('form.contacts.headerMapping.autoMatch.button')}
+							</Button>
+						</Tooltip>
+						<Tooltip label={t('form.contacts.headerMapping.reset.tooltip')}>
+							<Button
+								variant='light'
+								size='compact-xs'
+								color='orange'
+								leftSection={<IconArrowBackUp size={13} />}
+								onClick={handleReset}
+								disabled={mappings.length === 0}
+							>
+								{t('form.contacts.headerMapping.reset.button')}
 							</Button>
 						</Tooltip>
 						<Badge size='xs' variant='light' color='blue'>

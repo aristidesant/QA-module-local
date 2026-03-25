@@ -191,6 +191,12 @@
 					"successMessage": "Se asignaron {{count}} columna(s) exitosamente",
 					"noMatchTitle": "Sin coincidencias",
 					"noMatchMessage": "No se encontraron columnas CSV coincidentes para los campos del sistema restantes"
+				},
+				"reset": {
+					"button": "Reiniciar",
+					"tooltip": "Reiniciar todas las asignaciones al estado inicial",
+					"successTitle": "Asignaciones reiniciadas",
+					"successMessage": "Todas las asignaciones han sido restauradas a su estado inicial"
 				}
 			},
 			"details": {
