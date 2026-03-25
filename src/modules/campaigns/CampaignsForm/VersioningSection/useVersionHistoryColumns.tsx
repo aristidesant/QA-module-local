@@ -171,11 +171,27 @@ const useVersionHistoryColumns = ({
 				cell: ({ row }) => {
 					const commit = findCommitForVersion(row.original, versionCommits);
 					const description = commit?.versionDescription;
-					return description ? (
-						<Text size='sm' c='dimmed' lineClamp={2}>
-							{description}
-						</Text>
-					) : null;
+					if (!description) return null;
+					return (
+						<Tooltip
+							label={description}
+							multiline
+							maw={320}
+							withArrow
+							position='top-start'
+							color='white'
+							c='dark'
+						>
+							<Text
+								size='sm'
+								c='dimmed'
+								lineClamp={2}
+								style={{ cursor: 'default' }}
+							>
+								{description}
+							</Text>
+						</Tooltip>
+					);
 				},
 			},
 			{
