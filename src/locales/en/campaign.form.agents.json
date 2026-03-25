@@ -335,10 +335,26 @@
 						"apply": "Apply"
 					}
 				}
+			},
+			"versionDescription": {
+				"title": "Version description",
+				"description": "Optionally describe the changes you are about to save. This will be stored as the version description in the agent history.",
+				"placeholder": "e.g. Updated prompt to improve greeting tone..."
 			}
 		}
 	},
 	"configuration": {
 		"editPrompt": "Edit prompt"
+	},
+	"saveReview": {
+		"title": "Review Changes",
+		"publishedLabel": "Published version",
+		"currentLabel": "Current changes",
+		"descriptionLabel": "Version description (optional)",
+		"descriptionPlaceholder": "Describe what changed in this version",
+		"cancel": "Cancel",
+		"publish": "Publish",
+		"noChanges": "No configuration changes detected.",
+		"hiddenLines": "Show {{count}} hidden lines"
 	}
 }

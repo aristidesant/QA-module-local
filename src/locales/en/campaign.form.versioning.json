@@ -24,7 +24,8 @@
 			"commit": "COMMIT",
 			"author": "AUTHOR",
 			"committedAt": "COMMITTED",
-			"actions": ""
+			"actions": "",
+			"description": "DESCRIPTION"
 		},
 		"actions": {
 			"compare": "Compare with current",

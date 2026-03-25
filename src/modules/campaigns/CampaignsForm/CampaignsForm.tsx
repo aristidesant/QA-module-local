@@ -13,6 +13,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import type { Campaign } from '../../../models/CampaignsModel';
+import type { AgentVersionSnapshot } from '~/models/AgentVersioningModel';
 import campaignAgentsApi from '~/api/campaignAgentsApi';
 import knowledgeBaseApi from '~/api/knowledgeBaseApi';
 import {
@@ -36,6 +37,7 @@ import ParametersSection from './ParametersSection';
 import AnalyticsSection from './AnalyticsSection';
 import WorkflowSection from './WorkflowSection/WorkflowSection';
 import AgentSection from './AgentSection';
+import AgentSaveReviewModal from './AgentSaveReviewModal';
 import DispositionSection from './DispositionSection';
 import DoNotCallSection from './DoNotCallSection';
 import ReportValuesSection from './ReportValuesSection/ReportValuesSection';
@@ -133,6 +135,11 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		(state) => state
 	);
 	const [isSettingsDrawerOpen, setIsSettingsDrawerOpen] = useState(false);
+	const [reviewModalOpen, setReviewModalOpen] = useState(false);
+	const [pendingAgentValues, setPendingAgentValues] = useState<Omit<
+		Campaign,
+		'id' | 'createdAt' | 'updatedAt'
+	> | null>(null);
 	const { mutateAsync: createCampaign, isPending: isCreating } =
 		useCreateCampaign();
 	const { mutateAsync: updateCampaign, isPending: isUpdating } =
@@ -367,7 +374,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 
 	const handleSubmit = async (
 		value: Omit<Campaign, 'id' | 'createdAt' | 'updatedAt'>,
-		isLight = false
+		isLight = false,
+		versionDescription?: string
 	) => {
 		if (form.validate().hasErrors) {
 			return;
@@ -415,10 +423,15 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 				cleanedValue.defaultWaveExecutionDelaySeconds = undefined;
 			}
 
-			// Prepare data for light update (excludes agentConfig)
+			// Prepare data for light update (excludes agentConfig and versionDescription)
 			const dataToSend = isLight
-				? (({ agentConfig, ...rest }) => rest)(cleanedValue)
-				: cleanedValue;
+				? (({ agentConfig, versionDescription: _vd, ...rest }) => rest)(
+						cleanedValue
+					)
+				: {
+						...cleanedValue,
+						...(versionDescription !== undefined ? { versionDescription } : {}),
+					};
 
 			let savedCampaign: Campaign;
 
@@ -469,10 +482,6 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 					: t('form.notifications.successCreatedMessage'),
 				color: 'green',
 			});
-			// Mark the form as clean so the Save button disables after a
-			// successful save. The snapshot is updated to the current values,
-			// which will match the data returned by the subsequent React Query
-			// refetch triggered by invalidateQueries above.
 			form.resetDirty();
 		} catch (error) {
 			notifications.show({
@@ -539,7 +548,12 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 							</form>
 						)}
 						{selectedTab === 'agents' && (
-							<form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+							<form
+								onSubmit={form.onSubmit((values) => {
+									setPendingAgentValues(values);
+									setReviewModalOpen(true);
+								})}
+							>
 								<AgentSection onOpenSettings={openSettingsDrawer} />
 								<StickySaveActions
 									label={saveLabel}
@@ -637,6 +651,23 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 						)}
 					</Stack>
 				</ContentContainer>
+				<AgentSaveReviewModal
+					opened={reviewModalOpen}
+					onClose={() => setReviewModalOpen(false)}
+					publishedSnapshot={
+						campaign?.agentConfig as AgentVersionSnapshot | undefined
+					}
+					currentSnapshot={
+						pendingAgentValues?.agentConfig as AgentVersionSnapshot | undefined
+					}
+					onPublish={(desc) => {
+						setReviewModalOpen(false);
+						if (pendingAgentValues) {
+							void handleSubmit(pendingAgentValues, false, desc);
+						}
+					}}
+					isPublishing={isUpdating || isCreating}
+				/>
 				<AppDrawer
 					opened={isSettingsDrawerOpen && Boolean(settingsDrawerContent)}
 					onClose={() => setIsSettingsDrawerOpen(false)}

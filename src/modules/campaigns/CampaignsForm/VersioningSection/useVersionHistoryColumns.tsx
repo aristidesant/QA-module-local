@@ -1,4 +1,4 @@
-﻿import { useMemo } from 'react';
+import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import {
 	ActionIcon,
@@ -164,6 +164,19 @@ const useVersionHistoryColumns = ({
 						</Text>
 					</Stack>
 				),
+			},
+			{
+				id: 'description',
+				header: t('history.columns.description'),
+				cell: ({ row }) => {
+					const commit = findCommitForVersion(row.original, versionCommits);
+					const description = commit?.versionDescription;
+					return description ? (
+						<Text size='sm' c='dimmed' lineClamp={2}>
+							{description}
+						</Text>
+					) : null;
+				},
 			},
 			{
 				id: 'actions',
