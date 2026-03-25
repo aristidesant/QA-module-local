@@ -16,6 +16,7 @@ import {
 	IconAlertCircle,
 	IconArrowLeft,
 	IconInfoCircle,
+	IconListNumbers,
 	IconMessage,
 	IconRefresh,
 	IconUsers,
@@ -37,6 +38,7 @@ import ConversationsList from '~/modules/conversations/ConversationsList';
 import FaultyPhonesAlert from './ContactGroupContactsTable/FaultyPhonesAlert';
 import { getTranslatedQueueStatus } from '~/modules/campaigns/CampaignsForm/ContactSection/ContactList/queueStatusConfig';
 import { timeAgo } from '~/utils/dateUtils';
+import QueueTab from './QueueTab';
 
 const ConversationsTab = ({ contactGroupId }: { contactGroupId?: string }) => {
 	return <ConversationsList contactGroupId={contactGroupId} />;
@@ -242,6 +244,9 @@ const CampaignContactListPage = () => {
 							{t('tabs.contacts')}
 						</Tabs.Tab>
 					)}
+					<Tabs.Tab value='queue' leftSection={<IconListNumbers size={16} />}>
+						{t('tabs.queue')}
+					</Tabs.Tab>
 				</Tabs.List>
 
 				<Tabs.Panel value='overview' mb='md'>
@@ -281,6 +286,13 @@ const CampaignContactListPage = () => {
 						/>
 					</Tabs.Panel>
 				)}
+
+				<Tabs.Panel value='queue' mb='md'>
+					<QueueTab
+						contactGroupId={contactGroupIdNumber}
+						campaignId={campaignId ? Number(campaignId) : 0}
+					/>
+				</Tabs.Panel>
 			</Tabs>
 		</ContentContainer>
 	);

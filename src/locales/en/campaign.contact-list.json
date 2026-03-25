@@ -55,9 +55,11 @@
 		"conversations": "Conversations",
 		"contacts": "Contacts",
 		"report": "Report",
+		"queue": "Queue",
 		"conversationsDesc": "All conversations associated with this contact list.",
 		"contactsDesc": "All contacts associated with this list.",
-		"reportDesc": "Configure the columns included in the exported report for this contact list."
+		"reportDesc": "Configure the columns included in the exported report for this contact list.",
+		"queueDesc": "View and manage outbound call tasks in the processing queue."
 	},
 	"overview": {
 		"title": "Contact List Information",
@@ -555,6 +557,84 @@
 		},
 		"tooltips": {
 			"reload": "Reload"
+		}
+	},
+	"queue": {
+		"title": "Queue",
+		"description": "Manage outbound call tasks and their processing order.",
+		"emptyState": "No tasks in the queue",
+		"emptyStateDesc": "There are no outbound call tasks for this contact list.",
+		"wave": "Wave {{number}}",
+		"waveTaskCount": "{{count}} task",
+		"waveTaskCount_other": "{{count}} tasks",
+		"columns": {
+			"order": "#",
+			"contactName": "Contact",
+			"phone": "Phone",
+			"status": "Status",
+			"wave": "Wave",
+			"scheduledAt": "Scheduled",
+			"actions": "Actions"
+		},
+		"status": {
+			"PENDING": "Pending",
+			"QUEUED": "Queued",
+			"IN_PROGRESS": "In Progress",
+			"COMPLETED": "Completed",
+			"FAILED": "Failed",
+			"CANCELLED": "Cancelled",
+			"PAUSED": "Paused",
+			"RETRY": "Retry",
+			"SKIPPED": "Skipped"
+		},
+		"actions": {
+			"pause": "Pause",
+			"resume": "Resume",
+			"cancel": "Cancel",
+			"retry": "Retry",
+			"pauseSuccess": "Task paused successfully",
+			"resumeSuccess": "Task resumed successfully",
+			"cancelSuccess": "Task cancelled successfully",
+			"retrySuccess": "Task retry scheduled successfully",
+			"error": "Failed to perform action",
+			"confirmCancel": "Are you sure you want to cancel this task? This action cannot be undone.",
+			"confirmCancelTitle": "Cancel Task"
+		},
+		"bulk": {
+			"selected": "{{count}} selected",
+			"pause": "Pause Selected",
+			"resume": "Resume Selected",
+			"cancel": "Cancel Selected",
+			"retry": "Retry Selected",
+			"success": "Bulk action completed: {{successful}} successful, {{failed}} failed",
+			"error": "Bulk action failed",
+			"confirmCancel": "Are you sure you want to cancel {{count}} tasks? This action cannot be undone.",
+			"confirmCancelTitle": "Cancel Tasks"
+		},
+		"reorder": {
+			"title": "Reorder Tasks",
+			"description": "Sort tasks by one or more fields to change the processing order.",
+			"addRule": "Add Sort Rule",
+			"removeRule": "Remove",
+			"field": "Field",
+			"direction": "Direction",
+			"ascending": "Ascending",
+			"descending": "Descending",
+			"scope": "Scope",
+			"allWaves": "All Waves",
+			"specificWave": "Wave {{number}}",
+			"apply": "Apply Reorder",
+			"success": "Tasks reordered successfully ({{count}} updated)",
+			"error": "Failed to reorder tasks",
+			"noRules": "Add at least one sort rule to reorder tasks.",
+			"staticFields": "Contact Fields",
+			"dynamicFields": "Custom Fields"
+		},
+		"filters": {
+			"status": "Status",
+			"allStatuses": "All Statuses",
+			"wave": "Wave",
+			"allWaves": "All Waves"
 		}
 	}
 }

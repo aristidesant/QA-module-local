@@ -20,6 +20,18 @@ export interface ContactPhoneNumber extends PhoneEntry {
 	id: number;
 }
 
+export enum OutboundCallTaskStatus {
+	PENDING = 'PENDING',
+	QUEUED = 'QUEUED',
+	IN_PROGRESS = 'IN_PROGRESS',
+	COMPLETED = 'COMPLETED',
+	FAILED = 'FAILED',
+	CANCELLED = 'CANCELLED',
+	PAUSED = 'PAUSED',
+	RETRY = 'RETRY',
+	SKIPPED = 'SKIPPED',
+}
+
 export interface OutboundCallTask {
 	id: number;
 	contactGroupId: number;
@@ -28,7 +40,7 @@ export interface OutboundCallTask {
 	contactPhoneNumberId: number;
 	agentId: string;
 	conversationId: string | null;
-	status: string;
+	status: OutboundCallTaskStatus | string;
 	queueJobId: string;
 	scheduledAt: string;
 	startedAt: string | null;
@@ -41,6 +53,52 @@ export interface OutboundCallTask {
 	pauseReason: string | null;
 	createdAt: string;
 	updatedAt: string;
+	// Nested relations loaded by the queue endpoint
+	contact?: Pick<Contact, 'id' | 'firstName' | 'lastName'>;
+	contactPhoneNumber?: Pick<ContactPhoneNumber, 'id' | 'phoneNumber'>;
+}
+
+export interface OutboundTaskSortField {
+	name: string;
+	label: string;
+	type: string;
+}
+
+export interface OutboundTaskSortFieldsResponse {
+	staticFields: OutboundTaskSortField[];
+	dynamicFields: OutboundTaskSortField[];
+}
+
+export interface SortRule {
+	field: string;
+	direction: 'ASC' | 'DESC';
+	isDynamic: boolean;
+}
+
+export interface ReorderTasksPayload {
+	contactGroupId: number;
+	campaignId: number;
+	waveNumber?: number;
+	sortRules: SortRule[];
+}
+
+export interface ReorderTasksResult {
+	updatedCount: number;
+	message: string;
+}
+
+export type BulkTaskAction = 'pause' | 'resume' | 'cancel' | 'retry';
+
+export interface BulkTaskActionPayload {
+	taskIds: number[];
+	action: BulkTaskAction;
+	pauseReason?: string;
+}
+
+export interface BulkTaskActionResult {
+	successful: number;
+	failed: number;
+	errors: string[];
 }
 
 export interface Contact {

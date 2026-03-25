@@ -1,0 +1,10 @@
+.filters {
+	display: flex;
+	align-items: flex-end;
+	gap: var(--mantine-spacing-sm);
+	flex-wrap: wrap;
+}
+
+.waveHeader {
+	font-weight: 600;
+}

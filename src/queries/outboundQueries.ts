@@ -1,6 +1,125 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
-import outboundApi, { type CleanOutboundQueuePayload } from '~/api/outboundApi';
+import outboundApi, {
+	type CleanOutboundQueuePayload,
+	type GetOutboundCallTasksParams,
+} from '~/api/outboundApi';
+import type {
+	ReorderTasksPayload,
+	BulkTaskActionPayload,
+} from '~/models/ContactsModel';
+
+export const outboundTaskKeys = {
+	all: ['outbound-call-tasks'] as const,
+	list: (params: GetOutboundCallTasksParams) =>
+		['outbound-call-tasks', 'list', params] as const,
+	sortFields: (campaignId: number) =>
+		['outbound-call-tasks', 'sort-fields', campaignId] as const,
+};
+
+export const useGetOutboundCallTasks = (
+	params: GetOutboundCallTasksParams,
+	enabled = true
+) => {
+	return useQuery({
+		queryKey: outboundTaskKeys.list(params),
+		queryFn: () => outboundApi().getOutboundCallTasks(params),
+		enabled,
+	});
+};
+
+export const useGetOutboundTaskSortFields = (
+	campaignId: number,
+	enabled = true
+) => {
+	return useQuery({
+		queryKey: outboundTaskKeys.sortFields(campaignId),
+		queryFn: () => outboundApi().getSortFields(campaignId),
+		enabled: enabled && campaignId > 0,
+	});
+};
+
+export const useReorderOutboundTasks = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: (payload: ReorderTasksPayload) =>
+			outboundApi().reorderTasks(payload),
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: outboundTaskKeys.all,
+			});
+		},
+	});
+};
+
+export const usePauseOutboundTask = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: ({ id, reason }: { id: number; reason: string }) =>
+			outboundApi().pauseTask(id, reason),
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: outboundTaskKeys.all,
+			});
+		},
+	});
+};
+
+export const useResumeOutboundTask = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: (id: number) => outboundApi().resumeTask(id),
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: outboundTaskKeys.all,
+			});
+		},
+	});
+};
+
+export const useCancelOutboundTask = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: (id: number) => outboundApi().cancelTask(id),
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: outboundTaskKeys.all,
+			});
+		},
+	});
+};
+
+export const useRetryOutboundTask = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: ({ id, scheduledAt }: { id: number; scheduledAt?: string }) =>
+			outboundApi().retryTask(id, scheduledAt),
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: outboundTaskKeys.all,
+			});
+		},
+	});
+};
+
+export const useBulkOutboundTaskAction = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: (payload: BulkTaskActionPayload) =>
+			outboundApi().bulkAction(payload),
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: outboundTaskKeys.all,
+			});
+		},
+	});
+};
 
 export const useCleanOutboundQueue = () => {
 	const queryClient = useQueryClient();

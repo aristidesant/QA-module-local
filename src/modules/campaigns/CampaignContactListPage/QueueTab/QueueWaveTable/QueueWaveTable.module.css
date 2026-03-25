@@ -1,0 +1,10 @@
+.toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: var(--mantine-spacing-xs) 0;
+}
+
+.selectedInfo {
+	font-weight: 600;
+}
