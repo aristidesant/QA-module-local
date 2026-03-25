@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import {
+	ActionIcon,
 	Button,
 	Divider,
 	Group,
@@ -13,8 +14,13 @@ import {
 	Text,
 	TextInput,
 	Textarea,
+	Tooltip,
 } from '@mantine/core';
-import { IconInfoCircle } from '@tabler/icons-react';
+import {
+	IconInfoCircle,
+	IconPlayerPlay,
+	IconPlayerStop,
+} from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +30,7 @@ import type {
 	RuleCategory,
 	RuleType,
 } from '~/models/PronunciationDictionaryModel';
+import { useSpeechSynthesis } from '~/hooks/useSpeechSynthesis';
 import {
 	useCreateRule,
 	useSyncDictionary,
@@ -67,6 +74,13 @@ export function RuleForm({
 	const { t } = useTranslation('dictionary-rules');
 	const isEdit = Boolean(initialData);
 
+	const {
+		speak,
+		stop,
+		isSpeaking,
+		currentId,
+		isSupported: isTtsSupported,
+	} = useSpeechSynthesis();
 	const createRule = useCreateRule(dictionaryId);
 	const updateRule = useUpdateRule(dictionaryId);
 	const syncMutation = useSyncDictionary();
@@ -265,79 +279,159 @@ export function RuleForm({
 
 					{form.values.ruleType === 'ALIAS' ? (
 						<>
-							<TextInput
-								label={t('form.fields.alias.label')}
-								placeholder={t('form.fields.alias.placeholder')}
-								required
-								size='sm'
-								radius='md'
-								key={form.key('alias')}
-								{...form.getInputProps('alias')}
-							/>
+							<Group gap='xs' align='flex-end'>
+								<TextInput
+									label={t('form.fields.alias.label')}
+									placeholder={t('form.fields.alias.placeholder')}
+									required
+									size='sm'
+									radius='md'
+									style={{ flex: 1 }}
+									key={form.key('alias')}
+									{...form.getInputProps('alias')}
+								/>
+								{isTtsSupported && (
+									<Tooltip
+										label={
+											isSpeaking && currentId === 'form-alias'
+												? t('preview.stop')
+												: t('preview.playAlias')
+										}
+									>
+										<ActionIcon
+											variant='light'
+											color={
+												isSpeaking && currentId === 'form-alias'
+													? 'orange'
+													: 'teal'
+											}
+											radius='md'
+											size='input-sm'
+											disabled={!form.values.alias.trim()}
+											onClick={() =>
+												isSpeaking && currentId === 'form-alias'
+													? stop()
+													: speak(
+															form.values.alias,
+															form.values.locale || null,
+															'form-alias'
+														)
+											}
+										>
+											{isSpeaking && currentId === 'form-alias' ? (
+												<IconPlayerStop size={16} />
+											) : (
+												<IconPlayerPlay size={16} />
+											)}
+										</ActionIcon>
+									</Tooltip>
+								)}
+							</Group>
 							<Text size='xs' c='dimmed' className={styles.hintText}>
 								{t('form.hints.alias')}
 							</Text>
 						</>
 					) : (
 						<>
-							<TextInput
-								label={
-									<Group gap={4} align='center'>
-										<Text size='sm' inherit>
-											{t('form.fields.phoneme.label')}
-										</Text>
-										<Popover
-											width={320}
-											position='top-start'
-											withArrow
-											shadow='md'
+							<Group gap='xs' align='flex-end'>
+								<TextInput
+									label={
+										<Group gap={4} align='center'>
+											<Text size='sm' inherit>
+												{t('form.fields.phoneme.label')}
+											</Text>
+											<Popover
+												width={320}
+												position='top-start'
+												withArrow
+												shadow='md'
+											>
+												<Popover.Target>
+													<IconInfoCircle
+														size={16}
+														className={styles.infoIcon}
+														aria-label={t('form.arpabet.triggerLabel')}
+													/>
+												</Popover.Target>
+												<Popover.Dropdown>
+													<Stack gap='xs'>
+														<Text size='sm' fw={600}>
+															{t('form.arpabet.title')}
+														</Text>
+														<Text size='xs' c='dimmed'>
+															{t('form.arpabet.description')}
+														</Text>
+														<List
+															size='xs'
+															spacing={4}
+															className={styles.arpabetList}
+														>
+															<List.Item>
+																{t('form.arpabet.items.stress')}
+															</List.Item>
+															<List.Item>
+																{t('form.arpabet.items.spacing')}
+															</List.Item>
+															<List.Item>
+																{t('form.arpabet.items.example')}
+															</List.Item>
+														</List>
+														<Text size='xs' className={styles.arpabetExample}>
+															{t('form.arpabet.reference')}
+														</Text>
+													</Stack>
+												</Popover.Dropdown>
+											</Popover>
+										</Group>
+									}
+									placeholder={t('form.fields.phoneme.placeholder')}
+									required
+									size='sm'
+									radius='md'
+									ff='monospace'
+									style={{ flex: 1 }}
+									key={form.key('phoneme')}
+									{...form.getInputProps('phoneme')}
+								/>
+								{isTtsSupported && (
+									<Tooltip
+										label={
+											isSpeaking && currentId === 'form-phoneme'
+												? t('preview.stop')
+												: t('preview.phonemeFallback')
+										}
+										multiline
+										w={220}
+									>
+										<ActionIcon
+											variant='light'
+											color={
+												isSpeaking && currentId === 'form-phoneme'
+													? 'orange'
+													: 'teal'
+											}
+											radius='md'
+											size='input-sm'
+											disabled={!form.values.grapheme.trim()}
+											onClick={() =>
+												isSpeaking && currentId === 'form-phoneme'
+													? stop()
+													: speak(
+															form.values.grapheme,
+															form.values.locale || null,
+															'form-phoneme'
+														)
+											}
 										>
-											<Popover.Target>
-												<IconInfoCircle
-													size={16}
-													className={styles.infoIcon}
-													aria-label={t('form.arpabet.triggerLabel')}
-												/>
-											</Popover.Target>
-											<Popover.Dropdown>
-												<Stack gap='xs'>
-													<Text size='sm' fw={600}>
-														{t('form.arpabet.title')}
-													</Text>
-													<Text size='xs' c='dimmed'>
-														{t('form.arpabet.description')}
-													</Text>
-													<List
-														size='xs'
-														spacing={4}
-														className={styles.arpabetList}
-													>
-														<List.Item>
-															{t('form.arpabet.items.stress')}
-														</List.Item>
-														<List.Item>
-															{t('form.arpabet.items.spacing')}
-														</List.Item>
-														<List.Item>
-															{t('form.arpabet.items.example')}
-														</List.Item>
-													</List>
-													<Text size='xs' className={styles.arpabetExample}>
-														{t('form.arpabet.reference')}
-													</Text>
-												</Stack>
-											</Popover.Dropdown>
-										</Popover>
-									</Group>
-								}
-								placeholder={t('form.fields.phoneme.placeholder')}
-								required
-								size='sm'
-								radius='md'
-								ff='monospace'
-								key={form.key('phoneme')}
-								{...form.getInputProps('phoneme')}
-							/>
+											{isSpeaking && currentId === 'form-phoneme' ? (
+												<IconPlayerStop size={16} />
+											) : (
+												<IconPlayerPlay size={16} />
+											)}
+										</ActionIcon>
+									</Tooltip>
+								)}
+							</Group>
 							<Text size='xs' c='dimmed' className={styles.hintText}>
 								{t('form.hints.phoneme')}
 							</Text>

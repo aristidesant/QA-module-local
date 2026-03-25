@@ -193,6 +193,16 @@
 		"close": "Cerrar",
 		"goToDictionary": "Ir al Diccionario"
 	},
+	"preview": {
+		"play": "Escuchar",
+		"stop": "Detener",
+		"playAlias": "Escuchar pronunciación del alias",
+		"playGrapheme": "Escuchar la palabra original",
+		"phonemeFallback": "Vista previa de fonema no soportada — reproduciendo la palabra original",
+		"unsupported": "Tu navegador no soporta texto a voz",
+		"voiceLocale": "Voz: {{locale}}",
+		"voiceDefault": "Voz: predeterminada del navegador"
+	},
 	"categories": {
 		"CITY": "Ciudad",
 		"PROVINCE": "Provincia / Estado",

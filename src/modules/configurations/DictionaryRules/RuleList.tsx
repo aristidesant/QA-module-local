@@ -18,6 +18,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import BaseTable from '~/components/BaseTable/BaseTable';
 import PaginationControls from '~/components/PaginationControls';
 import { usePagination } from '~/hooks/usePagination';
+import { useSpeechSynthesis } from '~/hooks/useSpeechSynthesis';
 import type { PronunciationRule } from '~/models/PronunciationDictionaryModel';
 import {
 	usePronunciationRules,
@@ -105,7 +106,21 @@ export function RuleList({ dictionaryId, onEdit }: RuleListProps) {
 		{ value: 'GENERAL', label: t('categories.GENERAL') },
 	];
 
-	const columns = useRuleTableColumns({ onEdit, onDelete: handleDelete });
+	const {
+		speak,
+		stop,
+		currentId: speakingId,
+		isSupported: isTtsSupported,
+	} = useSpeechSynthesis();
+
+	const columns = useRuleTableColumns({
+		onEdit,
+		onDelete: handleDelete,
+		onSpeak: speak,
+		onStop: stop,
+		speakingId,
+		isTtsSupported,
+	});
 
 	// Client-side filtering
 	const filteredRules = useMemo(() => {
