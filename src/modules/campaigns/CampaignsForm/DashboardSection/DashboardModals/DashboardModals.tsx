@@ -1,7 +1,5 @@
-import { Badge, Group, Modal, Text, ThemeIcon } from '@mantine/core';
-import { IconLayoutDashboard } from '@tabler/icons-react';
+import { Modal } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
-import CampaignDashboardViewer from '~/modules/campaigns/CampaignDashboardViewer';
 import DashboardDefinitionForm from '../DashboardDefinitionForm';
 import DashboardModalHeader from '../DashboardModalHeader';
 import {
@@ -16,13 +14,8 @@ const DashboardModals = () => {
 		selectedDashboardId: _selectedDashboardId,
 		setSelectedDashboardId,
 	} = useDashboardSectionSelection();
-	const {
-		dashboardModalOpened,
-		editingDashboard,
-		previewDashboard,
-		closeDashboardModal,
-		closePreviewDashboard,
-	} = useDashboardSectionModals();
+	const { dashboardModalOpened, editingDashboard, closeDashboardModal } =
+		useDashboardSectionModals();
 
 	const dashboardModalTitle = editingDashboard
 		? t('dashboardBuilder.drawer.editDashboardTitle')
@@ -57,48 +50,6 @@ const DashboardModals = () => {
 						}
 					}}
 				/>
-			</Modal>
-
-			{/* Full-screen dashboard preview */}
-			<Modal
-				opened={previewDashboard !== null}
-				onClose={closePreviewDashboard}
-				fullScreen
-				padding='md'
-				styles={{ body: { padding: 0 } }}
-				title={
-					previewDashboard && (
-						<Group gap='sm' align='center' wrap='nowrap'>
-							<ThemeIcon variant='light' color='blue' size='lg' radius='md'>
-								<IconLayoutDashboard size={18} />
-							</ThemeIcon>
-							<div>
-								<Group gap='xs' align='center'>
-									<Text fw={600} size='sm' c='gray.9' lh={1.25}>
-										{previewDashboard.name}
-									</Text>
-									{previewDashboard.isDefault && (
-										<Badge variant='light' color='blue' size='xs' radius='sm'>
-											{t('dashboardBuilder.defaultBadge')}
-										</Badge>
-									)}
-								</Group>
-								<Text size='xs' c='dimmed' lh={1.4}>
-									{previewDashboard.description ??
-										t('dashboardBuilder.actions.previewDashboard')}
-								</Text>
-							</div>
-						</Group>
-					)
-				}
-			>
-				{previewDashboard !== null && (
-					<CampaignDashboardViewer
-						campaignId={campaignId}
-						initialDashboardId={previewDashboard.id}
-						allowLayoutEditing={true}
-					/>
-				)}
 			</Modal>
 		</>
 	);

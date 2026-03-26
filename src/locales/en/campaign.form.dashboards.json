@@ -65,6 +65,10 @@
 			"deleteWidget": "Delete widget",
 			"toggleEnabled": "Toggle widget status"
 		},
+		"preview": {
+			"title": "Preview",
+			"description": "Review the selected dashboard before returning to the builder."
+		},
 		"breadcrumb": {
 			"root": "Dashboard Builder"
 		},
