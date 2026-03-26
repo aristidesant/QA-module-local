@@ -54,9 +54,11 @@
 		"overview": "Resumen",
 		"conversations": "Conversaciones",
 		"contacts": "Contactos",
+		"report": "Informe",
 		"queue": "Cola",
 		"conversationsDesc": "Todas las conversaciones asociadas con esta lista de contactos.",
 		"contactsDesc": "Todos los contactos asociados con esta lista.",
+		"reportDesc": "Configura las columnas incluidas en el informe exportado para esta lista de contactos.",
 		"queueDesc": "Ver y gestionar las tareas de llamadas salientes en la cola de procesamiento."
 	},
 	"overview": {
@@ -218,6 +220,7 @@
 			"reload": "Recargar contactos",
 			"append": "Añadir contactos",
 			"export": "Exportar contactos",
+			"faultyPhones": "{{count}} número{{plural}} de teléfono defectuoso{{plural}}",
 			"viewOutboundTasks": "Ver registros de llamadas",
 			"noOutboundTasks": "No hay registros de llamadas"
 		},
@@ -369,6 +372,7 @@
 			"keyLabel": "Clave / Campo",
 			"keyPlaceholderDynamic": "p. ej. balance_deuda",
 			"keyPlaceholderObject": "p. ej. ciudad",
+			"keyPlaceholderMetadata": "Selecciona un campo de metadatos",
 			"labelLabel": "Etiqueta de columna",
 			"labelPlaceholder": "p. ej. Balance pendiente",
 			"dataTypeLabel": "Tipo de dato",
@@ -381,14 +385,17 @@
 			},
 			"emptyState": {
 				"noSchemaFields": "No se encontraron campos del esquema - ingresa el nombre del campo manualmente.",
-				"noDataCollectionFields": "No hay campos de data collection configurados - ingresa la clave manualmente."
+				"noDataCollectionFields": "No hay campos de data collection configurados - ingresa la clave manualmente.",
+				"noMetadataFields": "No hay campos de metadatos disponibles."
 			},
 			"placeholders": {
 				"loadingSchemaFields": "Cargando campos del esquema...",
 				"selectSchemaField": "Selecciona un campo del esquema",
 				"loadingConversationFields": "Cargando campos de conversación...",
 				"selectConversationField": "Selecciona un campo de conversación",
-				"selectSourceFirst": "Selecciona una fuente primero"
+				"selectSourceFirst": "Selecciona una fuente primero",
+				"loadingMetadataFields": "Cargando campos de metadatos...",
+				"selectMetadataField": "Selecciona un campo de metadatos"
 			},
 			"sections": {
 				"dataSource": "Fuente de datos",
@@ -397,12 +404,14 @@
 			"originSub": {
 				"SQL": "Campos de contacto",
 				"DYNAMIC": "Variables del esquema",
-				"OBJECT": "Campos recolectados por el agente"
+				"OBJECT": "Campos recolectados por el agente",
+				"METADATA": "Metadatos"
 			},
 			"keyFieldLabels": {
 				"SQL": "Campo de contacto",
 				"DYNAMIC": "Variable del esquema",
-				"OBJECT": "Clave de conversación"
+				"OBJECT": "Clave de conversación",
+				"METADATA": "Metadatos"
 			},
 			"headerEyebrow": {
 				"new": "Nueva columna",
