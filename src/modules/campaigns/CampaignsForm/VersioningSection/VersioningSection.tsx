@@ -35,11 +35,9 @@ import type { CampaignAgent } from '~/models/CampaignAgentModel';
 import type { Campaign } from '~/models/CampaignsModel';
 import type {
 	AgentVersionCommit,
-	AgentVersionSnapshot,
 	AgentVersionSummary,
 } from '~/models/AgentVersioningModel';
 import useVersionHistoryColumns from './useVersionHistoryColumns';
-import AgentSaveReviewModal from '../AgentSaveReviewModal';
 import VersionDiffModal from './VersionDiffModal';
 import {
 	findCommitForVersion,
@@ -51,15 +49,6 @@ import classes from './VersioningSection.module.css';
 interface VersioningSectionProps {
 	campaign?: Partial<Campaign>;
 }
-
-type PendingRevertAction =
-	| { type: 'simple'; version: AgentVersionSummary }
-	| {
-			type: 'deleteSubsequent' | 'deletePrevious';
-			version: AgentVersionSummary;
-			commitIdsToDelete: number[];
-			versionsToDelete: AgentVersionSummary[];
-	  };
 
 const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 	const { t } = useTranslation(['campaign.form.versioning', 'common']);
@@ -75,11 +64,6 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 	const [deletedVersionIds, setDeletedVersionIds] = useState<Set<string>>(
 		new Set()
 	);
-	const [pendingRevert, setPendingRevert] =
-		useState<PendingRevertAction | null>(null);
-	const [pendingTargetSnapshot, setPendingTargetSnapshot] =
-		useState<AgentVersionSnapshot | null>(null);
-	const [isPreparingRevert, setIsPreparingRevert] = useState(false);
 	const versionPagination = usePagination({ initialItemsPerPage: 10 });
 
 	const campaignId = campaign?.id ?? 0;
@@ -353,22 +337,26 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 
 	const handleRevert = async (version: AgentVersionSummary) => {
 		if (!agentId || !mainBranch?.id) return;
-		setIsPreparingRevert(true);
 		try {
-			const api = agentVersioningApi();
-			const snapshot = await api.getSnapshot(agentId, {
+			await revertVersion({
+				agentId,
+				branchId: mainBranch.id,
 				versionId: version.id,
 			});
-			setPendingTargetSnapshot(snapshot);
-			setPendingRevert({ type: 'simple', version });
-		} catch {
+			await syncCampaignByAgent(agentId);
+			setSelectedVersion(null);
+			setSelectedTab('agents');
+			notifications.show({
+				title: t('revert.successTitle'),
+				message: t('revert.successMessage'),
+				color: 'green',
+			});
+		} catch (error) {
 			notifications.show({
 				title: t('revert.errorTitle'),
-				message: t('revert.errorMessage'),
+				message: getApiErrorMessage(error, t('revert.errorMessage')),
 				color: 'red',
 			});
-		} finally {
-			setIsPreparingRevert(false);
 		}
 	};
 
@@ -465,24 +453,17 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 	const handleRevertAndDeleteSubsequent = useCallback(
 		async (targetVersion: AgentVersionSummary) => {
 			if (!agentId || !mainBranch?.id) return;
-
-			setIsPreparingRevert(true);
 			try {
 				const api = agentVersioningApi();
-				const [branchData, snapshot] = await Promise.all([
-					api.getBranchDetails(agentId, mainBranch.id, {
-						limit: 1000,
-						offset: 0,
-						filter: 'ACTIVE',
-					}),
-					api.getSnapshot(agentId, { versionId: targetVersion.id }),
-				]);
-
-				const allVersions = branchData.mostRecentVersions.data;
+				const data = await api.getBranchDetails(agentId, mainBranch.id, {
+					limit: 1000,
+					offset: 0,
+					filter: 'ACTIVE',
+				});
+				const allVersions = data.mostRecentVersions.data;
 				const versionsToDelete = allVersions.filter(
 					(v) => v.seqNoInBranch > targetVersion.seqNoInBranch
 				);
-
 				if (versionsToDelete.length === 0) {
 					notifications.show({
 						title: t('revertAndDelete.noSubsequentTitle'),
@@ -493,52 +474,74 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 					});
 					return;
 				}
-
-				const commitIdsToDelete = versionsToDelete
+				const commitIds = versionsToDelete
 					.map((v) => findCommitForVersion(v, versionCommits)?.id)
 					.filter((id): id is number => id !== undefined);
-
-				setPendingTargetSnapshot(snapshot);
-				setPendingRevert({
-					type: 'deleteSubsequent',
-					version: targetVersion,
-					commitIdsToDelete,
-					versionsToDelete,
+				if (commitIds.length > 0) {
+					await deleteVersionCommits({ agentId, ids: commitIds });
+				}
+				await revertVersion({
+					agentId,
+					branchId: mainBranch.id,
+					versionId: targetVersion.id,
 				});
-			} catch {
+				await syncCampaignByAgent(agentId);
+				setDeletedVersionIds((prev) => {
+					const next = new Set(prev);
+					versionsToDelete.forEach((v) => next.add(v.id));
+					return next;
+				});
+				setSelectedVersionIds((prev) => {
+					const next = new Set(prev);
+					versionsToDelete.forEach((v) => next.delete(v.id));
+					return next;
+				});
+				setSelectedVersion(null);
+				setSelectedTab('agents');
+				notifications.show({
+					title: t('revertAndDelete.successTitle', {
+						version: targetVersion.seqNoInBranch,
+					}),
+					message: t('revertAndDelete.successMessage', {
+						version: targetVersion.seqNoInBranch,
+						count: versionsToDelete.length,
+					}),
+					color: 'green',
+				});
+			} catch (error) {
 				notifications.show({
 					title: t('revertAndDelete.errorTitle'),
-					message: t('revertAndDelete.loadError'),
+					message: getApiErrorMessage(error, t('revertAndDelete.errorMessage')),
 					color: 'red',
 				});
-			} finally {
-				setIsPreparingRevert(false);
 			}
 		},
-		[agentId, mainBranch, versionCommits, t]
+		[
+			agentId,
+			mainBranch,
+			versionCommits,
+			deleteVersionCommits,
+			revertVersion,
+			syncCampaignByAgent,
+			t,
+			setSelectedTab,
+		]
 	);
 
 	const handleRevertAndDeletePrevious = useCallback(
 		async (targetVersion: AgentVersionSummary) => {
 			if (!agentId || !mainBranch?.id) return;
-
-			setIsPreparingRevert(true);
 			try {
 				const api = agentVersioningApi();
-				const [branchData, snapshot] = await Promise.all([
-					api.getBranchDetails(agentId, mainBranch.id, {
-						limit: 1000,
-						offset: 0,
-						filter: 'ACTIVE',
-					}),
-					api.getSnapshot(agentId, { versionId: targetVersion.id }),
-				]);
-
-				const allVersions = branchData.mostRecentVersions.data;
+				const data = await api.getBranchDetails(agentId, mainBranch.id, {
+					limit: 1000,
+					offset: 0,
+					filter: 'ACTIVE',
+				});
+				const allVersions = data.mostRecentVersions.data;
 				const versionsToDelete = allVersions.filter(
 					(v) => v.seqNoInBranch < targetVersion.seqNoInBranch
 				);
-
 				if (versionsToDelete.length === 0) {
 					notifications.show({
 						title: t('revertAndDeletePrevious.noVersionsTitle'),
@@ -549,75 +552,62 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 					});
 					return;
 				}
-
-				const commitIdsToDelete = versionsToDelete
+				const commitIds = versionsToDelete
 					.map((v) => findCommitForVersion(v, versionCommits)?.id)
 					.filter((id): id is number => id !== undefined);
-
-				setPendingTargetSnapshot(snapshot);
-				setPendingRevert({
-					type: 'deletePrevious',
-					version: targetVersion,
-					commitIdsToDelete,
-					versionsToDelete,
+				if (commitIds.length > 0) {
+					await deleteVersionCommits({ agentId, ids: commitIds });
+				}
+				await revertVersion({
+					agentId,
+					branchId: mainBranch.id,
+					versionId: targetVersion.id,
 				});
-			} catch {
-				notifications.show({
-					title: t('revertAndDeletePrevious.errorTitle'),
-					message: t('revertAndDeletePrevious.loadError'),
-					color: 'red',
-				});
-			} finally {
-				setIsPreparingRevert(false);
-			}
-		},
-		[agentId, mainBranch, versionCommits, t]
-	);
-
-	const handleReviewPublish = async (description: string) => {
-		if (!pendingRevert || !agentId || !mainBranch?.id) return;
-		const action = pendingRevert;
-		const { version } = action;
-		try {
-			if (action.type !== 'simple' && action.commitIdsToDelete.length > 0) {
-				await deleteVersionCommits({ agentId, ids: action.commitIdsToDelete });
-			}
-			await revertVersion({
-				agentId,
-				branchId: mainBranch.id,
-				versionId: version.id,
-				versionDescription: description || undefined,
-			});
-			await syncCampaignByAgent(agentId);
-			setPendingRevert(null);
-			setPendingTargetSnapshot(null);
-			if (action.type !== 'simple') {
+				await syncCampaignByAgent(agentId);
 				setDeletedVersionIds((prev) => {
 					const next = new Set(prev);
-					action.versionsToDelete.forEach((v) => next.add(v.id));
+					versionsToDelete.forEach((v) => next.add(v.id));
 					return next;
 				});
 				setSelectedVersionIds((prev) => {
 					const next = new Set(prev);
-					action.versionsToDelete.forEach((v) => next.delete(v.id));
+					versionsToDelete.forEach((v) => next.delete(v.id));
 					return next;
 				});
+				setSelectedVersion(null);
+				setSelectedTab('agents');
+				notifications.show({
+					title: t('revertAndDeletePrevious.successTitle', {
+						version: targetVersion.seqNoInBranch,
+					}),
+					message: t('revertAndDeletePrevious.successMessage', {
+						version: targetVersion.seqNoInBranch,
+						count: versionsToDelete.length,
+					}),
+					color: 'green',
+				});
+			} catch (error) {
+				notifications.show({
+					title: t('revertAndDeletePrevious.errorTitle'),
+					message: getApiErrorMessage(
+						error,
+						t('revertAndDeletePrevious.errorMessage')
+					),
+					color: 'red',
+				});
 			}
-			setSelectedVersion(null);
-			setSelectedTab('agents');
-			notifications.show({
-				title: t('revert.successTitle'),
-				message: t('revert.successMessage'),
-				color: 'green',
-			});
-		} catch (error) {
-			notifications.show({
-				title: t('revert.errorTitle'),
-				message: getApiErrorMessage(error, t('revert.errorMessage')),
-				color: 'red',
-			});
-		}
-	};
+		},
+		[
+			agentId,
+			mainBranch,
+			versionCommits,
+			deleteVersionCommits,
+			revertVersion,
+			syncCampaignByAgent,
+			t,
+			setSelectedTab,
+		]
+	);
 
 	const allVersionsSelected =
 		filteredHistoricalVersions.length > 0 &&
@@ -879,29 +869,6 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 						await handleRevert(selectedVersion);
 					}
 				}}
-			/>
-
-			<AgentSaveReviewModal
-				opened={pendingRevert !== null}
-				onClose={() => {
-					setPendingRevert(null);
-					setPendingTargetSnapshot(null);
-				}}
-				publishedSnapshot={currentSnapshot as AgentVersionSnapshot | undefined}
-				currentSnapshot={pendingTargetSnapshot}
-				onPublish={handleReviewPublish}
-				isPublishing={isReverting || isPreparingRevert}
-				warningMessage={
-					pendingRevert?.type === 'deleteSubsequent'
-						? t('revertAndDelete.deleteHint', {
-								count: pendingRevert.versionsToDelete.length,
-							})
-						: pendingRevert?.type === 'deletePrevious'
-							? t('revertAndDeletePrevious.deleteHint', {
-									count: pendingRevert.versionsToDelete.length,
-								})
-							: undefined
-				}
 			/>
 		</>
 	);

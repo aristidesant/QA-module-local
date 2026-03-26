@@ -22,6 +22,8 @@ import {
 	useUpdateCampaignLight,
 	useAssignCampaignObjective,
 } from '~/queries/campaignsQueries';
+import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
+import { useGetAgentVersioningStatus } from '~/queries/agentVersioningQueries';
 import { notifications } from '@mantine/notifications';
 import { validateWorkflow } from './WorkflowSection/utils/workflowValidation';
 import {
@@ -140,6 +142,12 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		Campaign,
 		'id' | 'createdAt' | 'updatedAt'
 	> | null>(null);
+
+	// Fetch campaign agents to check versioning status
+	const { data: campaignAgents = [] } = useGetCampaignAgents(campaign?.id ?? 0);
+	const firstAgentId = campaignAgents[0]?.agentId ?? '';
+	const { data: agentRecord } = useGetAgentVersioningStatus(firstAgentId);
+	const isVersioningEnabled = Boolean(agentRecord?.versioningEnabled);
 	const { mutateAsync: createCampaign, isPending: isCreating } =
 		useCreateCampaign();
 	const { mutateAsync: updateCampaign, isPending: isUpdating } =
@@ -550,8 +558,12 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 						{selectedTab === 'agents' && (
 							<form
 								onSubmit={form.onSubmit((values) => {
-									setPendingAgentValues(values);
-									setReviewModalOpen(true);
+									if (isVersioningEnabled) {
+										setPendingAgentValues(values);
+										setReviewModalOpen(true);
+									} else {
+										void handleSubmit(values);
+									}
 								})}
 							>
 								<AgentSection onOpenSettings={openSettingsDrawer} />
@@ -577,8 +589,12 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 								) : (
 									<form
 										onSubmit={form.onSubmit((values) => {
-											setPendingAgentValues(values);
-											setReviewModalOpen(true);
+											if (isVersioningEnabled) {
+												setPendingAgentValues(values);
+												setReviewModalOpen(true);
+											} else {
+												void handleSubmit(values);
+											}
 										})}
 									>
 										<WorkflowSection />
@@ -635,8 +651,12 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 						{selectedTab === 'analytics' && (
 							<form
 								onSubmit={form.onSubmit((values) => {
-									setPendingAgentValues(values);
-									setReviewModalOpen(true);
+									if (isVersioningEnabled) {
+										setPendingAgentValues(values);
+										setReviewModalOpen(true);
+									} else {
+										void handleSubmit(values);
+									}
 								})}
 							>
 								<AnalyticsSection />

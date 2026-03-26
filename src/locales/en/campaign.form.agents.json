@@ -353,8 +353,8 @@
 		"descriptionLabel": "Version description (optional)",
 		"descriptionPlaceholder": "Describe what changed in this version",
 		"cancel": "Cancel",
-		"publish": "Publish",
 		"noChanges": "No configuration changes detected.",
-		"hiddenLines": "Show {{count}} hidden lines"
+		"hiddenLines": "Show {{count}} hidden lines",
+		"confirm": "Confirm"
 	}
 }

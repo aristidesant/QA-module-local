@@ -235,12 +235,8 @@ const AgentSaveReviewModal = ({
 					<Button variant='default' onClick={onClose} disabled={isPublishing}>
 						{t('saveReview.cancel')}
 					</Button>
-					<Button
-						color='dark'
-						onClick={() => onPublish(description)}
-						loading={isPublishing}
-					>
-						{t('saveReview.publish')}
+					<Button onClick={() => onPublish(description)} loading={isPublishing}>
+						{t('saveReview.confirm')}
 					</Button>
 				</Group>
 			</Stack>
