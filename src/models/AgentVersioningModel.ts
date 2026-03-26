@@ -93,6 +93,7 @@ export interface AgentVersionCommit {
 	userName: string;
 	userEmail: string;
 	createdAt: string;
+	versionDescription?: string;
 }
 
 export type VersionCommitFilter = 'ACTIVE' | 'DELETED' | 'ALL';

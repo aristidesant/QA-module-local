@@ -7,7 +7,6 @@ import {
 	IconHistory,
 	IconRefresh,
 	IconRotate2,
-	IconScissors,
 	IconTrash,
 	IconUser,
 } from '@tabler/icons-react';
@@ -338,63 +337,27 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 
 	const handleRevert = async (version: AgentVersionSummary) => {
 		if (!agentId || !mainBranch?.id) return;
-
-		const modalId = `revert-agent-version-${version.id}`;
-		modals.open({
-			modalId,
-			title: t('revert.confirmTitle'),
-			children: (
-				<Stack gap='sm'>
-					<Text size='sm'>
-						{t('revert.confirmMessage', {
-							version: version.seqNoInBranch,
-						})}
-					</Text>
-					<Group justify='flex-end'>
-						<Button
-							variant='default'
-							onClick={() => modals.close(modalId)}
-							disabled={isReverting}
-						>
-							{t('actions.cancel')}
-						</Button>
-						<Button
-							color='orange'
-							loading={isReverting}
-							onClick={async () => {
-								try {
-									await revertVersion({
-										agentId,
-										branchId: mainBranch.id,
-										versionId: version.id,
-									});
-									await syncCampaignByAgent(agentId);
-									modals.close(modalId);
-									setSelectedVersion(null);
-									setSelectedTab('agents');
-									notifications.show({
-										title: t('revert.successTitle'),
-										message: t('revert.successMessage'),
-										color: 'green',
-									});
-								} catch (error) {
-									notifications.show({
-										title: t('revert.errorTitle'),
-										message: getApiErrorMessage(
-											error,
-											t('revert.errorMessage')
-										),
-										color: 'red',
-									});
-								}
-							}}
-						>
-							{t('actions.revertVersion')}
-						</Button>
-					</Group>
-				</Stack>
-			),
-		});
+		try {
+			await revertVersion({
+				agentId,
+				branchId: mainBranch.id,
+				versionId: version.id,
+			});
+			await syncCampaignByAgent(agentId);
+			setSelectedVersion(null);
+			setSelectedTab('agents');
+			notifications.show({
+				title: t('revert.successTitle'),
+				message: t('revert.successMessage'),
+				color: 'green',
+			});
+		} catch (error) {
+			notifications.show({
+				title: t('revert.errorTitle'),
+				message: getApiErrorMessage(error, t('revert.errorMessage')),
+				color: 'red',
+			});
+		}
 	};
 
 	const handleDeleteVersions = useCallback(
@@ -490,9 +453,6 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 	const handleRevertAndDeleteSubsequent = useCallback(
 		async (targetVersion: AgentVersionSummary) => {
 			if (!agentId || !mainBranch?.id) return;
-
-			// Fetch all active versions to find those newer than the target
-			let allVersions: AgentVersionSummary[] = [];
 			try {
 				const api = agentVersioningApi();
 				const data = await api.getBranchDetails(agentId, mainBranch.id, {
@@ -500,115 +460,61 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 					offset: 0,
 					filter: 'ACTIVE',
 				});
-				allVersions = data.mostRecentVersions.data;
-			} catch {
-				notifications.show({
-					title: t('revertAndDelete.errorTitle'),
-					message: t('revertAndDelete.loadError'),
-					color: 'red',
+				const allVersions = data.mostRecentVersions.data;
+				const versionsToDelete = allVersions.filter(
+					(v) => v.seqNoInBranch > targetVersion.seqNoInBranch
+				);
+				if (versionsToDelete.length === 0) {
+					notifications.show({
+						title: t('revertAndDelete.noSubsequentTitle'),
+						message: t('revertAndDelete.noSubsequentMessage', {
+							version: targetVersion.seqNoInBranch,
+						}),
+						color: 'blue',
+					});
+					return;
+				}
+				const commitIds = versionsToDelete
+					.map((v) => findCommitForVersion(v, versionCommits)?.id)
+					.filter((id): id is number => id !== undefined);
+				if (commitIds.length > 0) {
+					await deleteVersionCommits({ agentId, ids: commitIds });
+				}
+				await revertVersion({
+					agentId,
+					branchId: mainBranch.id,
+					versionId: targetVersion.id,
 				});
-				return;
-			}
-
-			const subsequentVersions = allVersions.filter(
-				(v) => v.seqNoInBranch > targetVersion.seqNoInBranch
-			);
-
-			if (subsequentVersions.length === 0) {
+				await syncCampaignByAgent(agentId);
+				setDeletedVersionIds((prev) => {
+					const next = new Set(prev);
+					versionsToDelete.forEach((v) => next.add(v.id));
+					return next;
+				});
+				setSelectedVersionIds((prev) => {
+					const next = new Set(prev);
+					versionsToDelete.forEach((v) => next.delete(v.id));
+					return next;
+				});
+				setSelectedVersion(null);
+				setSelectedTab('agents');
 				notifications.show({
-					title: t('revertAndDelete.noSubsequentTitle'),
-					message: t('revertAndDelete.noSubsequentMessage', {
+					title: t('revertAndDelete.successTitle', {
 						version: targetVersion.seqNoInBranch,
 					}),
-					color: 'blue',
+					message: t('revertAndDelete.successMessage', {
+						version: targetVersion.seqNoInBranch,
+						count: versionsToDelete.length,
+					}),
+					color: 'green',
 				});
-				return;
+			} catch (error) {
+				notifications.show({
+					title: t('revertAndDelete.errorTitle'),
+					message: getApiErrorMessage(error, t('revertAndDelete.errorMessage')),
+					color: 'red',
+				});
 			}
-
-			const commitIds = subsequentVersions
-				.map((v) => findCommitForVersion(v, versionCommits)?.id)
-				.filter((id): id is number => id !== undefined);
-
-			const deleteCount = subsequentVersions.length;
-			const targetVersionNo = targetVersion.seqNoInBranch;
-			const modalId = `revert-and-delete-${targetVersion.id}`;
-
-			modals.open({
-				modalId,
-				title: t('revertAndDelete.confirmTitle', { version: targetVersionNo }),
-				children: (
-					<Stack gap='sm'>
-						<Text size='sm'>
-							{t('revertAndDelete.confirmMessage', {
-								version: targetVersionNo,
-								count: deleteCount,
-							})}
-						</Text>
-						<Text size='xs' c='dimmed'>
-							{t('revertAndDelete.deleteHint', { count: deleteCount })}
-						</Text>
-						<Group justify='flex-end'>
-							<Button variant='default' onClick={() => modals.close(modalId)}>
-								{t('actions.cancel')}
-							</Button>
-							<Button
-								color='red'
-								leftSection={<IconScissors size={14} />}
-								onClick={async () => {
-									try {
-										if (commitIds.length > 0) {
-											await deleteVersionCommits({
-												agentId,
-												ids: commitIds,
-											});
-										}
-										await revertVersion({
-											agentId,
-											branchId: mainBranch.id,
-											versionId: targetVersion.id,
-										});
-										await syncCampaignByAgent(agentId);
-										modals.close(modalId);
-										setDeletedVersionIds((prev) => {
-											const next = new Set(prev);
-											subsequentVersions.forEach((v) => next.add(v.id));
-											return next;
-										});
-										setSelectedVersionIds((prev) => {
-											const next = new Set(prev);
-											subsequentVersions.forEach((v) => next.delete(v.id));
-											return next;
-										});
-										setSelectedVersion(null);
-										setSelectedTab('agents');
-										notifications.show({
-											title: t('revertAndDelete.successTitle', {
-												version: targetVersionNo,
-											}),
-											message: t('revertAndDelete.successMessage', {
-												version: targetVersionNo,
-												count: deleteCount,
-											}),
-											color: 'green',
-										});
-									} catch (error) {
-										notifications.show({
-											title: t('revertAndDelete.errorTitle'),
-											message: getApiErrorMessage(
-												error,
-												t('revertAndDelete.errorMessage')
-											),
-											color: 'red',
-										});
-									}
-								}}
-							>
-								{t('actions.revertAndDelete', { count: deleteCount })}
-							</Button>
-						</Group>
-					</Stack>
-				),
-			});
 		},
 		[
 			agentId,
@@ -625,8 +531,6 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 	const handleRevertAndDeletePrevious = useCallback(
 		async (targetVersion: AgentVersionSummary) => {
 			if (!agentId || !mainBranch?.id) return;
-
-			let allVersions: AgentVersionSummary[] = [];
 			try {
 				const api = agentVersioningApi();
 				const data = await api.getBranchDetails(agentId, mainBranch.id, {
@@ -634,117 +538,64 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 					offset: 0,
 					filter: 'ACTIVE',
 				});
-				allVersions = data.mostRecentVersions.data;
-			} catch {
-				notifications.show({
-					title: t('revertAndDeletePrevious.errorTitle'),
-					message: t('revertAndDeletePrevious.loadError'),
-					color: 'red',
+				const allVersions = data.mostRecentVersions.data;
+				const versionsToDelete = allVersions.filter(
+					(v) => v.seqNoInBranch < targetVersion.seqNoInBranch
+				);
+				if (versionsToDelete.length === 0) {
+					notifications.show({
+						title: t('revertAndDeletePrevious.noVersionsTitle'),
+						message: t('revertAndDeletePrevious.noVersionsMessage', {
+							version: targetVersion.seqNoInBranch,
+						}),
+						color: 'blue',
+					});
+					return;
+				}
+				const commitIds = versionsToDelete
+					.map((v) => findCommitForVersion(v, versionCommits)?.id)
+					.filter((id): id is number => id !== undefined);
+				if (commitIds.length > 0) {
+					await deleteVersionCommits({ agentId, ids: commitIds });
+				}
+				await revertVersion({
+					agentId,
+					branchId: mainBranch.id,
+					versionId: targetVersion.id,
 				});
-				return;
-			}
-
-			const previousVersions = allVersions.filter(
-				(v) => v.seqNoInBranch < targetVersion.seqNoInBranch
-			);
-
-			if (previousVersions.length === 0) {
+				await syncCampaignByAgent(agentId);
+				setDeletedVersionIds((prev) => {
+					const next = new Set(prev);
+					versionsToDelete.forEach((v) => next.add(v.id));
+					return next;
+				});
+				setSelectedVersionIds((prev) => {
+					const next = new Set(prev);
+					versionsToDelete.forEach((v) => next.delete(v.id));
+					return next;
+				});
+				setSelectedVersion(null);
+				setSelectedTab('agents');
 				notifications.show({
-					title: t('revertAndDeletePrevious.noVersionsTitle'),
-					message: t('revertAndDeletePrevious.noVersionsMessage', {
+					title: t('revertAndDeletePrevious.successTitle', {
 						version: targetVersion.seqNoInBranch,
 					}),
-					color: 'blue',
+					message: t('revertAndDeletePrevious.successMessage', {
+						version: targetVersion.seqNoInBranch,
+						count: versionsToDelete.length,
+					}),
+					color: 'green',
 				});
-				return;
+			} catch (error) {
+				notifications.show({
+					title: t('revertAndDeletePrevious.errorTitle'),
+					message: getApiErrorMessage(
+						error,
+						t('revertAndDeletePrevious.errorMessage')
+					),
+					color: 'red',
+				});
 			}
-
-			const commitIds = previousVersions
-				.map((v) => findCommitForVersion(v, versionCommits)?.id)
-				.filter((id): id is number => id !== undefined);
-
-			const deleteCount = previousVersions.length;
-			const targetVersionNo = targetVersion.seqNoInBranch;
-			const modalId = `revert-and-delete-previous-${targetVersion.id}`;
-
-			modals.open({
-				modalId,
-				title: t('revertAndDeletePrevious.confirmTitle', {
-					version: targetVersionNo,
-				}),
-				children: (
-					<Stack gap='sm'>
-						<Text size='sm'>
-							{t('revertAndDeletePrevious.confirmMessage', {
-								version: targetVersionNo,
-								count: deleteCount,
-							})}
-						</Text>
-						<Text size='xs' c='dimmed'>
-							{t('revertAndDeletePrevious.deleteHint', { count: deleteCount })}
-						</Text>
-						<Group justify='flex-end'>
-							<Button variant='default' onClick={() => modals.close(modalId)}>
-								{t('actions.cancel')}
-							</Button>
-							<Button
-								color='red'
-								leftSection={<IconScissors size={14} />}
-								onClick={async () => {
-									try {
-										if (commitIds.length > 0) {
-											await deleteVersionCommits({
-												agentId,
-												ids: commitIds,
-											});
-										}
-										await revertVersion({
-											agentId,
-											branchId: mainBranch.id,
-											versionId: targetVersion.id,
-										});
-										await syncCampaignByAgent(agentId);
-										modals.close(modalId);
-										setDeletedVersionIds((prev) => {
-											const next = new Set(prev);
-											previousVersions.forEach((v) => next.add(v.id));
-											return next;
-										});
-										setSelectedVersionIds((prev) => {
-											const next = new Set(prev);
-											previousVersions.forEach((v) => next.delete(v.id));
-											return next;
-										});
-										setSelectedVersion(null);
-										setSelectedTab('agents');
-										notifications.show({
-											title: t('revertAndDeletePrevious.successTitle', {
-												version: targetVersionNo,
-											}),
-											message: t('revertAndDeletePrevious.successMessage', {
-												version: targetVersionNo,
-												count: deleteCount,
-											}),
-											color: 'green',
-										});
-									} catch (error) {
-										notifications.show({
-											title: t('revertAndDeletePrevious.errorTitle'),
-											message: getApiErrorMessage(
-												error,
-												t('revertAndDeletePrevious.errorMessage')
-											),
-											color: 'red',
-										});
-									}
-								}}
-							>
-								{t('actions.revertAndDelete', { count: deleteCount })}
-							</Button>
-						</Group>
-					</Stack>
-				),
-			});
 		},
 		[
 			agentId,

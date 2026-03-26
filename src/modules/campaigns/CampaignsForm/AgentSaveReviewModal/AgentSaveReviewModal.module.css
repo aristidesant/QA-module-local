@@ -1,0 +1,118 @@
+.diffShell {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	overflow: hidden;
+	background: var(--mantine-color-white);
+}
+
+.diffScroll {
+	max-height: 55vh;
+}
+
+.splitDiff {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.diffHeaderRow,
+.diffRow {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.diffHeaderCell {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	border-bottom: 1px solid var(--mantine-color-gray-3);
+	background: var(--mantine-color-gray-0);
+	position: sticky;
+	top: 0;
+	z-index: 1;
+}
+
+.diffHeaderCell + .diffHeaderCell {
+	border-left: 1px solid var(--mantine-color-gray-3);
+}
+
+.diffCell {
+	padding: 0.15rem var(--mantine-spacing-md);
+	font-family:
+		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+		'Courier New', monospace;
+	font-size: 12px;
+	line-height: 1.8;
+	background: var(--mantine-color-white);
+}
+
+.diffCell + .diffCell {
+	border-left: 1px solid var(--mantine-color-gray-2);
+}
+
+.lineContent {
+	margin: 0;
+	white-space: pre-wrap;
+	word-break: break-word;
+	font: inherit;
+	color: var(--mantine-color-dark-7);
+}
+
+.addedCell {
+	background: rgba(46, 160, 67, 0.1);
+}
+
+.removedCell {
+	background: rgba(218, 54, 51, 0.1);
+}
+
+.emptyCell {
+	background: var(--mantine-color-gray-0);
+}
+
+.wordHighlight {
+	background: rgba(218, 54, 51, 0.28);
+	border-radius: 3px;
+	padding: 0 2px;
+	font: inherit;
+}
+
+.separatorRow {
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+	background: var(--mantine-color-gray-0);
+}
+
+.expandLink {
+	display: block;
+	width: 100%;
+	padding: 0.3rem var(--mantine-spacing-md);
+	text-align: left;
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: var(--mantine-color-blue-6);
+	font-size: 12px;
+	text-decoration: underline;
+	font-family: inherit;
+}
+
+.expandLink:hover {
+	color: var(--mantine-color-blue-8);
+}
+
+.emptyDiff {
+	padding: var(--mantine-spacing-md);
+}
+
+@media (max-width: 768px) {
+	.diffHeaderRow,
+	.diffRow {
+		grid-template-columns: 1fr;
+	}
+
+	.diffCell + .diffCell,
+	.diffHeaderCell + .diffHeaderCell {
+		border-left: none;
+		border-top: 1px solid var(--mantine-color-gray-3);
+	}
+}
