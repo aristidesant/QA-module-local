@@ -5,6 +5,7 @@ import { notifications } from '@mantine/notifications';
 import {
 	IconAlertCircle,
 	IconHistory,
+	IconNotes,
 	IconRefresh,
 	IconRotate2,
 	IconTrash,
@@ -768,6 +769,24 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 									) : null}
 								</div>
 							</div>
+
+							{(() => {
+								const latestCommitDescription = latestCurrentVersion
+									? findCommitForVersion(latestCurrentVersion, versionCommits)
+											?.versionDescription
+									: undefined;
+								return latestCommitDescription ? (
+									<div className={classes.summaryCard}>
+										<Group gap='xs' mb={4}>
+											<IconNotes size={16} />
+											<Text size='xs' c='dimmed'>
+												{t('summary.description')}
+											</Text>
+										</Group>
+										<Text size='sm'>{latestCommitDescription}</Text>
+									</div>
+								) : null;
+							})()}
 
 							<div className={classes.historyHeader}>
 								<Stack gap={2}>

@@ -8,6 +8,7 @@
 		"currentVersion": "Current version",
 		"lastCommit": "Last commit",
 		"author": "Author",
+		"description": "Description",
 		"liveTraffic": "{{percentage}}% live traffic",
 		"notAvailable": "Not available"
 	},
