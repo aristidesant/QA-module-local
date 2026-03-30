@@ -322,6 +322,8 @@ export const buildWorkflowFromState = (
 					additionalToolIds,
 					additionalKnowledgeBase,
 					subagent,
+					conversationConfig:
+						(data as StandaloneAgentNode).conversationConfig ?? {},
 				};
 				workflowNodes[node.id] = standaloneNode;
 				break;

@@ -257,4 +257,6 @@ export interface StandaloneAgentNode extends WorkflowNodeBase {
 		knowledgeBaseIds?: string[];
 		toolIds?: string[];
 	};
+	/** Node-level partial overrides (built-in tools, etc.) */
+	conversationConfig?: Record<string, unknown>;
 }

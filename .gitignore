@@ -45,3 +45,7 @@ pnpm-debug.log*
 *.pid.lock
 .env
 package-lock.json
+/.claude/
+/.agents/
+CLAUDE.md
+skills-lock.json
