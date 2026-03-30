@@ -22,6 +22,7 @@ export const normalizeAgentVersionSnapshot = (
 		dataCollection,
 		workspaceOverrides,
 		conversationConfig,
+		workflow,
 	} = snapshot;
 
 	return {
@@ -36,5 +37,6 @@ export const normalizeAgentVersionSnapshot = (
 		...(dataCollection ? { dataCollection } : {}),
 		...(workspaceOverrides ? { workspaceOverrides } : {}),
 		...(conversationConfig ? { conversationConfig } : {}),
+		...(workflow ? { workflow } : {}),
 	};
 };

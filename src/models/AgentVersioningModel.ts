@@ -78,7 +78,7 @@ export interface GetBranchDetailsParams {
 }
 
 export type AgentVersionSnapshot = Partial<
-	Omit<AgentConfigModel, 'metadata' | 'workflow'>
+	Omit<AgentConfigModel, 'metadata'>
 > & {
 	name?: string;
 };
@@ -120,6 +120,7 @@ export type AgentVersionUpdatePayload = Partial<
 		| 'workspaceOverrides'
 		| 'phoneNumbers'
 		| 'tags'
+		| 'workflow'
 	>
 > & {
 	name?: string;
