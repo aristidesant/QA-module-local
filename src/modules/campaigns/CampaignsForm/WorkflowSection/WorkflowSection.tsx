@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Checkbox, Group, Select } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
+import WorkflowClipboardActions from './WorkflowClipboardActions';
 import WorkflowCanvas from './WorkflowCanvas';
 import WorkflowEditorFullscreen from './WorkflowEditorFullscreen';
 import { WorkflowNodeEditorProvider } from './WorkflowNodeEditorContext';
@@ -12,6 +13,7 @@ import {
 import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
 import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
 import '@xyflow/react/dist/style.css';
+import styles from './WorkflowSection.module.css';
 
 const WorkflowSection = () => {
 	const { t } = useTranslation([
@@ -94,7 +96,7 @@ const WorkflowSection = () => {
 				padding='sm'
 				onExpand={() => setIsEditorExpanded(true)}
 				headerExtras={
-					<Group gap='xs' align='center'>
+					<Group gap='xs' align='center' className={styles.headerControls}>
 						{agents.length > 1 && (
 							<Select
 								data={agents.map((agent) => ({
@@ -116,6 +118,11 @@ const WorkflowSection = () => {
 							onChange={(event) =>
 								handlePreventLoopsChange(event.currentTarget.checked)
 							}
+						/>
+						<WorkflowClipboardActions
+							workflow={workflow}
+							onWorkflowChange={handleWorkflowChange}
+							fallbackPreventSubagentLoops={preventSubagentLoops}
 						/>
 					</Group>
 				}

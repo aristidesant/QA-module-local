@@ -161,6 +161,8 @@ const ConditionEdge: FC<EdgeProps> = ({
 				style={{
 					stroke: strokeColor,
 					strokeWidth: 2,
+					strokeLinecap: 'round',
+					strokeLinejoin: 'round',
 				}}
 				markerEnd={markerEnd}
 			/>

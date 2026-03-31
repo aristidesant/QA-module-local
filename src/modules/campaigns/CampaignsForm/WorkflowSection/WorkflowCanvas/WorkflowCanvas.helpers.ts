@@ -16,12 +16,19 @@ import type {
 } from '~/models/AgentWorkflowModel';
 
 export const defaultEdgeOptions = {
-	style: { strokeWidth: 2, stroke: '#868e96' },
+	style: {
+		strokeWidth: 2,
+		stroke: '#868e96',
+		strokeLinecap: 'round',
+		strokeLinejoin: 'round',
+	},
 	type: 'condition',
 	markerEnd: {
-		type: MarkerType.ArrowClosed,
-		width: 15,
-		height: 15,
+		type: MarkerType.Arrow,
+		width: 12,
+		height: 12,
+		orient: 'auto',
+		markerUnits: 'strokeWidth',
 		color: '#868e96',
 	},
 };
