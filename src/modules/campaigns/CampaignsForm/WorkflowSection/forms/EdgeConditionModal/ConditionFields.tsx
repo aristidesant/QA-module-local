@@ -1,5 +1,16 @@
-import { Select, Stack, Text, Textarea, TextInput } from '@mantine/core';
+import {
+	Button,
+	Group,
+	Select,
+	Stack,
+	Text,
+	Textarea,
+	TextInput,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { useTranslation } from 'react-i18next';
+import PromptEditModal from '~/modules/campaigns/CampaignsForm/components/PromptEditModal';
+import { useCampaignId } from '~/modules/campaigns/campaignFormFunctions';
 import {
 	ConditionDirection,
 	ConditionType,
@@ -23,10 +34,34 @@ const ConditionFields = ({ direction }: ConditionFieldsProps) => {
 		setForwardState,
 		setBackwardState,
 	} = useEdgeConditionModal();
+	const campaignId = useCampaignId();
+	const [promptOpened, promptHandlers] = useDisclosure(false);
 
 	const isToolBackward = isToolEdge && direction === 'backward';
 	const state = direction === 'forward' ? forwardState : backwardState;
 	const setState = direction === 'forward' ? setForwardState : setBackwardState;
+	const llmConditionValue = state.llmCondition || '';
+	const llmConditionEditorTitle = t(
+		'form.workflow.edge.llmConditionEditor.title',
+		{ defaultValue: 'Edit prompt' }
+	);
+	const llmConditionEditorDescription = t(
+		'form.workflow.edge.llmConditionEditor.description',
+		{
+			defaultValue:
+				'Write the full condition the LLM should evaluate for this transition.',
+		}
+	);
+	const llmConditionEditorPlaceholder = t(
+		'form.workflow.edge.llmConditionEditor.placeholder',
+		{
+			defaultValue: 'Describe what the model should evaluate...',
+		}
+	);
+	const llmConditionEditorHelper = t(
+		'form.workflow.edge.llmConditionEditor.helper',
+		{ defaultValue: 'Changes are applied when you save.' }
+	);
 
 	const selectData = isToolBackward
 		? [
@@ -136,22 +171,53 @@ const ConditionFields = ({ direction }: ConditionFieldsProps) => {
 								defaultValue: 'LLM condition',
 							})}
 						</Text>
-						<Textarea
-							placeholder={t('form.workflow.edge.llmConditionPlaceholder', {
-								defaultValue:
-									'Describe the condition for the LLM to evaluate (e.g., "user confirmed their identity")',
-							})}
-							value={state.llmCondition || ''}
-							onChange={(e) => {
-								const nextValue =
-									typeof e === 'string' ? e : (e?.currentTarget?.value ?? '');
+						<Stack gap='xs'>
+							<Textarea
+								placeholder={t('form.workflow.edge.llmConditionPlaceholder', {
+									defaultValue:
+										'Describe the condition for the LLM to evaluate (e.g., "user confirmed their identity")',
+								})}
+								value={llmConditionValue}
+								onChange={(e) => {
+									const nextValue =
+										typeof e === 'string' ? e : (e?.currentTarget?.value ?? '');
+									setState((prev) => ({
+										...prev,
+										llmCondition: nextValue,
+									}));
+								}}
+								minRows={10}
+								rows={10}
+								size='sm'
+							/>
+							<Group justify='space-between' gap='sm' align='center'>
+								<Text size='xs' c='dimmed'>
+									{t('form.workflow.edge.llmConditionHelper', {
+										defaultValue: 'Use the editor for longer prompts.',
+									})}
+								</Text>
+								<Button size='xs' variant='light' onClick={promptHandlers.open}>
+									{t('form.workflow.edge.llmConditionEditor.open', {
+										defaultValue: 'Edit prompt',
+									})}
+								</Button>
+							</Group>
+						</Stack>
+						<PromptEditModal
+							opened={promptOpened}
+							onClose={promptHandlers.close}
+							value={llmConditionValue}
+							onSave={(value) =>
 								setState((prev) => ({
 									...prev,
-									llmCondition: nextValue,
-								}));
-							}}
-							minRows={10}
-							size='sm'
+									llmCondition: value,
+								}))
+							}
+							campaignId={campaignId || 0}
+							title={llmConditionEditorTitle}
+							description={llmConditionEditorDescription}
+							placeholder={llmConditionEditorPlaceholder}
+							helperText={llmConditionEditorHelper}
 						/>
 					</div>
 				</>

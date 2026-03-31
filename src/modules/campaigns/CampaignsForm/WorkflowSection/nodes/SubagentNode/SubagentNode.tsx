@@ -16,6 +16,7 @@ import WorkflowNodeHeader from '../../WorkflowNodeHeader';
 import WorkflowNodeWrapper from '../../WorkflowNode';
 import type { WorkflowNodeData } from '../../WorkflowNode/WorkflowNodeTypes';
 import workflowNodeStyles from '../../WorkflowNode/WorkflowNode.module.css';
+import { getWorkflowNodeToneStyle } from '../../utils/workflowNodeColors';
 import styles from './SubagentNode.module.css';
 
 const SubagentNodeComponent = (props: NodeProps) => {
@@ -32,6 +33,9 @@ const SubagentNodeComponent = (props: NodeProps) => {
 	const fallbackLabel = t(`form.workflow.nodes.${nodeData.type}`, {
 		defaultValue: t('form.workflow.nodes.standalone_agent'),
 	});
+	const nodeSurfaceStyle = getWorkflowNodeToneStyle(
+		nodeData.label || fallbackLabel
+	);
 	const toolCount =
 		nodeData.subagent?.toolIds?.length ??
 		nodeData.additionalToolIds?.length ??
@@ -79,7 +83,10 @@ const SubagentNodeComponent = (props: NodeProps) => {
 					/>
 				}
 			>
-				<div className={`${workflowNodeStyles.nodeSurface} ${styles.node}`}>
+				<div
+					className={`${workflowNodeStyles.nodeSurface} ${styles.node}`}
+					style={nodeSurfaceStyle}
+				>
 					<WorkflowNodeHeader
 						className={styles.header}
 						icon={

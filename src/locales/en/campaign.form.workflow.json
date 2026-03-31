@@ -24,6 +24,14 @@
 				"labelPlaceholder": "Optional label for this condition",
 				"llmCondition": "LLM condition",
 				"llmConditionPlaceholder": "Describe the condition for the LLM to evaluate (e.g., \"user confirmed their identity\")",
+				"llmConditionHelper": "Use the editor for longer prompts.",
+				"llmConditionEditor": {
+					"open": "Edit prompt",
+					"title": "Edit LLM condition",
+					"description": "Write the full condition the LLM should evaluate for this transition.",
+					"placeholder": "Describe what the model should evaluate...",
+					"helper": "Changes are applied when you save."
+				},
 				"resultType": "Tool execution result",
 				"selectResult": "Select result type",
 				"results": {

@@ -1,5 +1,11 @@
 .node {
 	--workflow-node-accent: var(--mantine-color-cyan-7);
+	--workflow-node-selected-border: var(--mantine-color-cyan-4);
+	--workflow-node-selected-ring: rgba(34, 211, 238, 0.14);
+	--workflow-node-header-bg: var(--mantine-color-cyan-0);
+	--workflow-node-surface-selected: var(--mantine-color-cyan-0);
+	background-color: var(--mantine-color-cyan-0);
+	border-color: var(--mantine-color-cyan-2);
 	min-width: 210px;
 	max-width: 280px;
 	text-align: left;
@@ -20,7 +26,7 @@
 
 .promptSection {
 	padding: 8px var(--mantine-spacing-sm);
-	border-bottom: 1px solid var(--mantine-color-gray-2);
+	border-bottom: 1px solid var(--mantine-color-cyan-1);
 	background-color: var(--mantine-color-white);
 }
 

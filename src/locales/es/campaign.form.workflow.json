@@ -24,6 +24,14 @@
 				"labelPlaceholder": "Etiqueta opcional para esta condición",
 				"llmCondition": "Condición LLM",
 				"llmConditionPlaceholder": "Describe la condición para que el LLM evalúe (ej: \"usuario confirmó su identidad\")",
+				"llmConditionHelper": "Usa el editor para prompts más largos.",
+				"llmConditionEditor": {
+					"open": "Editar prompt",
+					"title": "Editar condición LLM",
+					"description": "Escribe la condición completa que el LLM debe evaluar para esta transición.",
+					"placeholder": "Describe lo que el modelo debe evaluar...",
+					"helper": "Los cambios se aplican al guardar."
+				},
 				"resultType": "Resultado de la ejecución de la herramienta",
 				"selectResult": "Selecciona el tipo de resultado",
 				"results": {
