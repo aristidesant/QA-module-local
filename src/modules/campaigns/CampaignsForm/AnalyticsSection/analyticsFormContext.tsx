@@ -5,11 +5,10 @@ export type DataCollectionType = 'boolean' | 'integer' | 'number' | 'string';
 export interface DataCollectionItem {
 	type: DataCollectionType;
 	description: string;
-	enum?: string[];
-	value_type?: string;
-	constant_value?: string;
-	dynamic_variable?: string;
-	is_system_provided?: boolean;
+	enum?: string[]; // Only include for type="string"; omit for other types
+	constantValue: string;
+	dynamicVariable: string;
+	isSystemProvided: boolean;
 }
 
 export interface AnalyticsDataCollectionRow extends DataCollectionItem {
@@ -38,6 +37,9 @@ export const createEmptyAnalyticsRow = (): AnalyticsDataCollectionRow => ({
 	type: 'string',
 	description: '',
 	enum: [],
+	constantValue: '',
+	dynamicVariable: '',
+	isSystemProvided: false,
 	isNew: true,
 	source: 'manual',
 });
@@ -86,7 +88,7 @@ export const normalizeDataCollectionRows = (
 		([identifier, value]) => {
 			const item =
 				value && typeof value === 'object'
-					? (value as Partial<DataCollectionItem>)
+					? (value as Record<string, unknown>)
 					: {};
 
 			const type = item.type;
@@ -98,20 +100,42 @@ export const normalizeDataCollectionRows = (
 					? type
 					: 'string';
 
+			// Support both camelCase (new backend) and snake_case (legacy backend data)
+			const constantValue =
+				typeof item.constantValue === 'string'
+					? item.constantValue
+					: typeof item.constant_value === 'string'
+						? item.constant_value
+						: '';
+
+			const dynamicVariable =
+				typeof item.dynamicVariable === 'string'
+					? item.dynamicVariable
+					: typeof item.dynamic_variable === 'string'
+						? item.dynamic_variable
+						: '';
+
+			const isSystemProvided =
+				typeof item.isSystemProvided === 'boolean'
+					? item.isSystemProvided
+					: typeof item.is_system_provided === 'boolean'
+						? item.is_system_provided
+						: false;
+
 			return {
 				id: crypto.randomUUID(),
 				identifier,
 				type: normalizedType,
-				description: item.description ?? '',
+				description:
+					typeof item.description === 'string' ? item.description : '',
 				enum: Array.isArray(item.enum)
 					? item.enum.filter(
 							(entry): entry is string => typeof entry === 'string'
 						)
 					: [],
-				value_type: item.value_type,
-				constant_value: item.constant_value,
-				dynamic_variable: item.dynamic_variable,
-				is_system_provided: item.is_system_provided,
+				constantValue,
+				dynamicVariable,
+				isSystemProvided,
 				isNew: false,
 				source: 'manual',
 			};
@@ -128,24 +152,22 @@ export const mapRowsToDataCollection = (
 			return acc;
 		}
 
-		acc[trimmedIdentifier] = {
+		const item: DataCollectionItem = {
 			type: row.type,
 			description: row.description,
-			enum:
-				row.type === 'string' && Array.isArray(row.enum)
-					? row.enum.filter((entry) => entry.trim().length > 0)
-					: undefined,
-			...(row.value_type !== undefined && { value_type: row.value_type }),
-			...(row.constant_value !== undefined && {
-				constant_value: row.constant_value,
-			}),
-			...(row.dynamic_variable !== undefined && {
-				dynamic_variable: row.dynamic_variable,
-			}),
-			...(row.is_system_provided !== undefined && {
-				is_system_provided: row.is_system_provided,
-			}),
+			constantValue: row.constantValue ?? '',
+			dynamicVariable: row.dynamicVariable ?? '',
+			isSystemProvided: row.isSystemProvided ?? false,
 		};
+
+		// Only include enum for string type; ElevenLabs returns 400 for other types
+		if (row.type === 'string') {
+			item.enum = Array.isArray(row.enum)
+				? row.enum.filter((entry) => entry.trim().length > 0)
+				: [];
+		}
+
+		acc[trimmedIdentifier] = item;
 
 		return acc;
 	}, {});
