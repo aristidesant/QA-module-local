@@ -15,6 +15,17 @@ import type {
 	WorkflowNode,
 } from '~/models/AgentWorkflowModel';
 
+export const createWorkflowEdgeMarker = (
+	orient: 'auto' | 'auto-start-reverse'
+) => ({
+	type: MarkerType.Arrow,
+	width: 12,
+	height: 12,
+	orient,
+	markerUnits: 'strokeWidth',
+	color: '#868e96',
+});
+
 export const defaultEdgeOptions = {
 	style: {
 		strokeWidth: 2,
@@ -23,14 +34,7 @@ export const defaultEdgeOptions = {
 		strokeLinejoin: 'round',
 	},
 	type: 'condition',
-	markerEnd: {
-		type: MarkerType.Arrow,
-		width: 12,
-		height: 12,
-		orient: 'auto',
-		markerUnits: 'strokeWidth',
-		color: '#868e96',
-	},
+	markerEnd: createWorkflowEdgeMarker('auto'),
 };
 
 export const WORKFLOW_NODE_DRAG_HANDLE_SELECTOR = '.workflowNodeDragHandle';
@@ -206,18 +210,24 @@ export const mapWorkflowToNodes = (
 		);
 	};
 
-	const mappedEdges = Object.entries(workflowData.edges).map(([id, edge]) => ({
-		id,
-		source: edge.source,
-		target: edge.target,
-		type: 'condition',
-		data: {
-			label: getEdgeLabel(edge),
-			forwardCondition: edge.forwardCondition,
-			backwardCondition: edge.backwardCondition,
-			warningLevel: getEdgeWarningLevel(id, workflowData),
-		},
-	}));
+	const mappedEdges = Object.entries(workflowData.edges).map(([id, edge]) => {
+		const sourceNode = workflowData.nodes[edge.source];
+		const label = getEdgeLabel(edge);
+
+		return {
+			id,
+			source: edge.source,
+			target: edge.target,
+			type: 'condition',
+			data: {
+				label,
+				sourceNodeType: sourceNode?.type,
+				forwardCondition: edge.forwardCondition,
+				backwardCondition: edge.backwardCondition,
+				warningLevel: getEdgeWarningLevel(id, workflowData),
+			},
+		};
+	});
 
 	return { nodes: mappedNodes, edges: mappedEdges };
 };
