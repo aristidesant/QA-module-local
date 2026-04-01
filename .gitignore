@@ -49,3 +49,5 @@ package-lock.json
 /.agents/
 CLAUDE.md
 skills-lock.json
+CLAUDE.md
+install.cmd
