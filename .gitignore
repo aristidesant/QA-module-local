@@ -47,7 +47,5 @@ pnpm-debug.log*
 package-lock.json
 /.claude/
 /.agents/
-CLAUDE.md
 skills-lock.json
-CLAUDE.md
 install.cmd
