@@ -6,7 +6,7 @@ import {
 	IconSettings,
 	IconNetwork,
 	IconClock,
-	IconCheck,
+	IconFlag,
 } from '@tabler/icons-react';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 import { StepOneGeneral } from './StepOneGeneral';
@@ -97,7 +97,7 @@ export const CampaignWizard: React.FC<CampaignWizardProps> = ({
 				<Stepper.Step
 					label={t('wizard.steps.complete.label')}
 					description={t('wizard.steps.complete.description')}
-					icon={<IconCheck size={18} />}
+					icon={<IconFlag size={18} />}
 				>
 					<div className={styles.stepContent}>
 						<StepFiveSuccess onComplete={onComplete || (() => {})} />

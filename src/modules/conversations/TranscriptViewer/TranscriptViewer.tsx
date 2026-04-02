@@ -8,6 +8,7 @@ import {
 	Popover,
 	Stack,
 	Text,
+	Tooltip,
 } from '@mantine/core';
 import {
 	IconAlertCircle,
@@ -38,6 +39,8 @@ interface TranscriptViewerProps {
 	audioCurrentTime?: number;
 	isAudioPlaying?: boolean;
 	onSeekToTime?: (time: number) => void;
+	nodeLabels?: Record<string, string>;
+	nodeMissions?: Record<string, string>;
 }
 
 interface WorkflowTransition {
@@ -69,6 +72,8 @@ export function TranscriptViewer({
 	audioCurrentTime,
 	isAudioPlaying,
 	onSeekToTime,
+	nodeLabels,
+	nodeMissions,
 }: TranscriptViewerProps) {
 	const { t } = useTranslation(['conversations', 'common']);
 	const { canPerformAction } = usePermissions();
@@ -187,6 +192,8 @@ export function TranscriptViewer({
 							<WorkflowChangeBanner
 								timeInCallSecs={entry.time_in_call_secs}
 								transition={workflowTransition}
+								nodeLabels={nodeLabels}
+								nodeMissions={nodeMissions}
 							/>
 						)}
 						{shouldRenderMessageBubble && (
@@ -395,13 +402,17 @@ function FooterMetricChip({ metric }: FooterMetricChipProps) {
 }
 
 interface WorkflowChangeBannerProps {
-	timeInCallSecs?: number;
+	timeInCallSecs: number | undefined;
 	transition: WorkflowTransition;
+	nodeLabels?: Record<string, string>;
+	nodeMissions?: Record<string, string>;
 }
 
 function WorkflowChangeBanner({
 	timeInCallSecs,
 	transition,
+	nodeLabels,
+	nodeMissions,
 }: WorkflowChangeBannerProps) {
 	const { t } = useTranslation(['conversations', 'common']);
 
@@ -431,6 +442,8 @@ function WorkflowChangeBanner({
 						<WorkflowContextCard
 							title={t('transcript.workflow.from')}
 							metadata={transition.from}
+							nodeLabels={nodeLabels}
+							nodeMissions={nodeMissions}
 						/>
 						<Box className={styles.workflowArrow}>
 							<IconArrowRight size={14} />
@@ -438,6 +451,8 @@ function WorkflowChangeBanner({
 						<WorkflowContextCard
 							title={t('transcript.workflow.to')}
 							metadata={transition.to}
+							nodeLabels={nodeLabels}
+							nodeMissions={nodeMissions}
 						/>
 					</Group>
 				</Stack>
@@ -449,54 +464,126 @@ function WorkflowChangeBanner({
 interface WorkflowContextCardProps {
 	title: string;
 	metadata: AgentMetadata;
+	nodeLabels?: Record<string, string>;
+	nodeMissions?: Record<string, string>;
 }
 
-function WorkflowContextCard({ title, metadata }: WorkflowContextCardProps) {
+function WorkflowContextCard({
+	title,
+	metadata,
+	nodeLabels,
+	nodeMissions,
+}: WorkflowContextCardProps) {
 	const { t } = useTranslation(['conversations', 'common']);
+	const nodeId = metadata.workflow_node_id;
+	const nodeName =
+		(nodeId && nodeLabels?.[nodeId]) ?? formatWorkflowNodeName(nodeId);
+	const mission = nodeId ? nodeMissions?.[nodeId] : undefined;
 
 	return (
 		<Box className={styles.workflowContextCard}>
-			<Text size='xs' fw={600} c='gray.7'>
+			<Text size='xs' c='dimmed' fw={500} className={styles.workflowCardTitle}>
 				{title}
 			</Text>
-			<Stack gap={2}>
-				<WorkflowContextRow
-					label={t('transcript.technical.agentId')}
-					value={metadata.agent_id}
-				/>
-				{metadata.workflow_node_id && (
-					<WorkflowContextRow
-						label={t('transcript.technical.workflowNode')}
-						value={metadata.workflow_node_id}
-					/>
-				)}
-				{metadata.branch_id && (
-					<WorkflowContextRow
-						label={t('transcript.technical.branchId')}
-						value={metadata.branch_id}
-					/>
-				)}
-			</Stack>
+			<Tooltip
+				label={
+					<Stack gap={4}>
+						{mission && (
+							<Text size='xs' className={styles.tooltipMission}>
+								{t('transcript.technical.mission')}: {mission}
+							</Text>
+						)}
+						{metadata.workflow_node_id && (
+							<Text size='xs' className={styles.tooltipMonoText}>
+								{t('transcript.technical.workflowNode')}:{' '}
+								{metadata.workflow_node_id}
+							</Text>
+						)}
+						<Text size='xs' className={styles.tooltipMonoText}>
+							{t('transcript.technical.agentId')}: {metadata.agent_id}
+						</Text>
+					</Stack>
+				}
+				position='top'
+				withArrow
+				multiline
+				w={320}
+				openDelay={200}
+			>
+				<Text
+					size='xs'
+					fw={600}
+					c='gray.8'
+					className={styles.workflowNodeName}
+					span
+				>
+					{nodeName}
+				</Text>
+			</Tooltip>
 		</Box>
 	);
 }
 
-interface WorkflowContextRowProps {
-	label: string;
-	value: string;
+function formatWorkflowNodeName(nodeId: string | null): string {
+	if (!nodeId) return '—';
+	// Remove common prefixes like 'node_', keep the readable suffix
+	const cleaned =
+		nodeId.replace(/^node_[0-9a-f]+/i, '').replace(/^_/, '') || nodeId;
+	// Truncate long IDs to keep display compact
+	const display = cleaned.length > 24 ? `${cleaned.slice(0, 22)}…` : cleaned;
+	return display || nodeId.slice(0, 24);
 }
 
-function WorkflowContextRow({ label, value }: WorkflowContextRowProps) {
-	return (
-		<Group gap={6} wrap='nowrap' align='flex-start'>
-			<Text size='xs' c='dimmed' className={styles.workflowLabel}>
-				{label}
-			</Text>
-			<Text size='xs' className={styles.workflowNodeText}>
-				{value}
-			</Text>
-		</Group>
+/**
+ * Extracts the first meaningful sentence from an additionalPrompt string.
+ * Strips markdown headers (#), horizontal rules (---), and sub-agent header prefixes
+ * like "SUB-AGENTE: C1.3.2 — ..." to return a clean, descriptive mission sentence.
+ */
+export function extractMissionSummary(
+	prompt: string | null | undefined
+): string | null {
+	if (!prompt?.trim()) return null;
+
+	const validLines = prompt
+		.split('\n')
+		.map((line) => line.trim())
+		.filter(
+			(line) =>
+				line.length > 0 &&
+				!line.startsWith('#') &&
+				!line.startsWith('---') &&
+				!line.startsWith('<')
+		);
+
+	if (validLines.length === 0) return null;
+
+	let cleanStr = validLines.join(' ');
+
+	// Skip sub-agent header prefixes like "SUB-AGENTE: C1.3.2 — SECTOR DE..."
+	const dashMatch = cleanStr.match(/ — | - /);
+	if (dashMatch && dashMatch.index !== undefined && dashMatch.index < 50) {
+		cleanStr = cleanStr.substring(dashMatch.index + dashMatch[0].length).trim();
+	}
+
+	// Skip known section headers like "Mision", "Misión", "Contexto de entrada"
+	const sectionHeaderMatch = cleanStr.match(
+		/^(Misi[oó]n|Contexto de entrada|Comportamiento base|Restricciones?)\s*/i
 	);
+	if (sectionHeaderMatch) {
+		cleanStr = cleanStr.substring(sectionHeaderMatch[0].length).trim();
+	}
+
+	// Find the first period followed by a space or end of string (ignoring periods in codes like C1.3.2)
+	const firstDotMatch = cleanStr.match(/\.(?=\s|$)/);
+	const result = firstDotMatch
+		? cleanStr.substring(0, firstDotMatch.index! + 1)
+		: cleanStr;
+
+	// Don't return very short or very long results
+	if (result.length < 5) return null;
+	if (result.length > 200) return result.slice(0, 197) + '...';
+
+	return result;
 }
 
 interface ToolCallsDisplayProps {

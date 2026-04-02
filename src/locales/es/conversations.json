@@ -214,6 +214,7 @@
 			"agentId": "ID del agente",
 			"branchId": "ID de la rama",
 			"workflowNode": "Nodo de flujo de trabajo",
+			"mission": "Misión",
 			"executionSummary": "Resumen de ejecución",
 			"toolResults": "Resultados de herramientas",
 			"toolResultsCount": "{{count}} resultados",

@@ -214,6 +214,7 @@
 			"agentId": "Agent ID",
 			"branchId": "Branch ID",
 			"workflowNode": "Workflow Node",
+			"mission": "Mission",
 			"executionSummary": "Execution Summary",
 			"toolResults": "Tool Results",
 			"toolResultsCount": "{{count}} tool results",

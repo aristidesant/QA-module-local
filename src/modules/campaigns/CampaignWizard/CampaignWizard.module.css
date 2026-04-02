@@ -57,12 +57,27 @@
 	gap: var(--mantine-spacing-md);
 }
 
+/* Default (pending/future) step icon style */
 .stepIcon {
 	background: var(--mantine-color-blue-0);
 	color: var(--mantine-color-blue-7);
 	border: 1px solid var(--mantine-color-blue-2);
 	width: 32px;
 	height: 32px;
+}
+
+/* Active/in-progress step icon */
+.stepIcon[data-progress] {
+	background: var(--mantine-color-blue-6);
+	color: var(--mantine-color-white);
+	border-color: var(--mantine-color-blue-6);
+}
+
+/* Completed step icon — let Mantine's default filled style show */
+.stepIcon[data-completed] {
+	background: var(--mantine-color-blue-6);
+	color: var(--mantine-color-white);
+	border-color: var(--mantine-color-blue-6);
 }
 
 .stepLabel {
