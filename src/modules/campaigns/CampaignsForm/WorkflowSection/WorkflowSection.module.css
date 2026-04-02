@@ -1,0 +1,11 @@
+.headerControls {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+}
+
+@media (max-width: 48em) {
+	.headerControls {
+		flex-wrap: wrap;
+	}
+}

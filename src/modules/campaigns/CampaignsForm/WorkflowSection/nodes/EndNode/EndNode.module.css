@@ -1,5 +1,11 @@
 .node {
 	--workflow-node-accent: var(--mantine-color-red-7);
+	--workflow-node-selected-border: var(--mantine-color-red-4);
+	--workflow-node-selected-ring: rgba(239, 68, 68, 0.14);
+	--workflow-node-header-bg: var(--mantine-color-red-0);
+	--workflow-node-surface-selected: var(--mantine-color-red-0);
+	background-color: var(--mantine-color-red-0);
+	border-color: var(--mantine-color-red-2);
 	min-width: 140px;
 	text-align: left;
 }

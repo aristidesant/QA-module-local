@@ -98,7 +98,11 @@ const VersionDiffModal = ({
 		<Modal
 			opened={opened}
 			onClose={onClose}
-			title={t('diff.title')}
+			title={
+				selectedVersion
+					? `${t('diff.title')} - v${selectedVersion.seqNoInBranch}`
+					: t('diff.title')
+			}
 			size='90%'
 			centered
 			padding='lg'

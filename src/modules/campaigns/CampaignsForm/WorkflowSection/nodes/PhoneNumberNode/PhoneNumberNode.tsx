@@ -11,6 +11,7 @@ import WorkflowNodeHeader from '../../WorkflowNodeHeader';
 import WorkflowNodeWrapper from '../../WorkflowNode';
 import type { WorkflowNodeData } from '../../WorkflowNode/WorkflowNodeTypes';
 import workflowNodeStyles from '../../WorkflowNode/WorkflowNode.module.css';
+import { getWorkflowNodeToneStyle } from '../../utils/workflowNodeColors';
 import styles from './PhoneNumberNode.module.css';
 
 const PhoneNumberNode = (props: NodeProps) => {
@@ -21,7 +22,9 @@ const PhoneNumberNode = (props: NodeProps) => {
 	]);
 	const nodeData = props.data as unknown as PhoneNumberTransferNode;
 	const nodeType = (props.type ?? nodeData.type) as WorkflowNodeType;
-
+	const nodeTitle = t('form.workflow.nodes.phone_number', {
+		defaultValue: 'Transfer',
+	});
 	const destination = nodeData.transferDestination;
 	const value = destination
 		? 'phoneNumber' in destination
@@ -32,6 +35,17 @@ const PhoneNumberNode = (props: NodeProps) => {
 		: '';
 
 	const hasError = !value || value.trim() === '';
+	const nodeSurfaceStyle = hasError
+		? {
+				'--workflow-node-accent': 'var(--mantine-color-red-7)',
+				'--workflow-node-selected-border': 'var(--mantine-color-red-4)',
+				'--workflow-node-selected-ring': 'rgba(239, 68, 68, 0.14)',
+				'--workflow-node-header-bg': 'var(--mantine-color-red-0)',
+				'--workflow-node-surface-selected': 'var(--mantine-color-red-0)',
+				backgroundColor: 'var(--mantine-color-red-0)',
+				borderColor: 'var(--mantine-color-red-4)',
+			}
+		: getWorkflowNodeToneStyle(nodeTitle);
 
 	return (
 		<>
@@ -47,13 +61,12 @@ const PhoneNumberNode = (props: NodeProps) => {
 			>
 				<Box
 					className={`${workflowNodeStyles.nodeSurface} ${styles.node} ${hasError ? styles.error : ''}`}
+					style={nodeSurfaceStyle}
 				>
 					<WorkflowNodeHeader
 						className={styles.header}
 						icon={<IconPhoneCall size={18} className={styles.icon} />}
-						title={t('form.workflow.nodes.phone_number', {
-							defaultValue: 'Transfer',
-						})}
+						title={nodeTitle}
 						subtitle={t('form.workflow.nodeStatus.destination')}
 					/>
 					<Text

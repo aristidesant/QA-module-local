@@ -24,6 +24,14 @@
 				"labelPlaceholder": "Etiqueta opcional para esta condición",
 				"llmCondition": "Condición LLM",
 				"llmConditionPlaceholder": "Describe la condición para que el LLM evalúe (ej: \"usuario confirmó su identidad\")",
+				"llmConditionHelper": "Usa el editor para prompts más largos.",
+				"llmConditionEditor": {
+					"open": "Editar prompt",
+					"title": "Editar condición LLM",
+					"description": "Escribe la condición completa que el LLM debe evaluar para esta transición.",
+					"placeholder": "Describe lo que el modelo debe evaluar...",
+					"helper": "Los cambios se aplican al guardar."
+				},
 				"resultType": "Resultado de la ejecución de la herramienta",
 				"selectResult": "Selecciona el tipo de resultado",
 				"results": {
@@ -321,6 +329,50 @@
 				"clone": "Clonar nodo",
 				"copy": "Copiar nodo",
 				"delete": "Eliminar nodo"
+			},
+			"clipboard": {
+				"actions": {
+					"copy": "Copiar workflow",
+					"paste": "Pegar workflow"
+				},
+				"import": {
+					"title": "Reemplazar workflow desde JSON",
+					"description": "Pega un JSON completo de workflow para sustituir el flujo actual. Se soportan snake_case y camelCase.",
+					"inputLabel": "JSON del workflow",
+					"placeholder": "{\n  \"prevent_subagent_loops\": true,\n  \"nodes\": {},\n  \"edges\": {}\n}",
+					"clipboard": {
+						"loading": "Leyendo portapapeles...",
+						"loaded": "Se cargo el contenido del portapapeles.",
+						"empty": "El portapapeles esta vacio. Pega o escribe el JSON del workflow.",
+						"failed": "No se pudo leer el portapapeles automaticamente. Pegalo manualmente."
+					},
+					"summaryTitle": "Resumen de importacion",
+					"summaryNodes": "{{count}} nodos",
+					"summaryEdges": "{{count}} bordes",
+					"summaryPreventLoopsEnabled": "Evitar bucles de subagente: activado",
+					"summaryPreventLoopsDisabled": "Evitar bucles de subagente: desactivado",
+					"replace": "Reemplazar workflow"
+				},
+				"errors": {
+					"invalidJson": "El contenido pegado no es un JSON valido.",
+					"invalidRoot": "El contenido pegado debe ser un objeto de workflow.",
+					"invalidNodes": "El workflow debe incluir un objeto raiz nodes.",
+					"invalidEdges": "El workflow debe incluir un objeto raiz edges.",
+					"invalidPreventSubagentLoops": "preventSubagentLoops debe ser booleano cuando se incluye.",
+					"invalidNodeShape": "Cada nodo debe incluir un tipo y una posicion validos.",
+					"invalidEdgeShape": "Cada borde debe incluir ids validos en source y target.",
+					"missingStartNode": "El workflow debe incluir al menos un nodo de inicio.",
+					"missingEdgeNodeReference": "Uno o mas bordes referencian nodos que no existen."
+				},
+				"notifications": {
+					"copySuccessTitle": "Workflow copiado",
+					"copySuccessMessage": "El JSON completo del workflow se copio al portapapeles.",
+					"copyErrorTitle": "No se pudo copiar el workflow",
+					"copyErrorMessage": "No fue posible copiar el workflow al portapapeles.",
+					"invalidImportTitle": "JSON de workflow invalido",
+					"importSuccessTitle": "Workflow reemplazado",
+					"importSuccessMessage": "El workflow fue reemplazado con el JSON importado."
+				}
 			},
 			"nodes": {
 				"start": "Inicio",

@@ -108,15 +108,6 @@ const useVersionHistoryColumns = ({
 				size: 80,
 			},
 			{
-				id: 'commit',
-				header: t('history.columns.commit'),
-				cell: ({ row }) => (
-					<Text size='xs' c='dimmed' style={{ fontFamily: 'monospace' }}>
-						{row.original.id}
-					</Text>
-				),
-			},
-			{
 				id: 'author',
 				header: t('history.columns.author'),
 				cell: ({ row }) => {
@@ -164,6 +155,35 @@ const useVersionHistoryColumns = ({
 						</Text>
 					</Stack>
 				),
+			},
+			{
+				id: 'description',
+				header: t('history.columns.description'),
+				cell: ({ row }) => {
+					const commit = findCommitForVersion(row.original, versionCommits);
+					const description = commit?.versionDescription;
+					if (!description) return null;
+					return (
+						<Tooltip
+							label={description}
+							multiline
+							maw={320}
+							withArrow
+							position='top-start'
+							color='white'
+							c='dark'
+						>
+							<Text
+								size='sm'
+								c='dimmed'
+								lineClamp={2}
+								style={{ cursor: 'default' }}
+							>
+								{description}
+							</Text>
+						</Tooltip>
+					);
+				},
 			},
 			{
 				id: 'actions',

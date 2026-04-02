@@ -1,6 +1,7 @@
 import { ActionIcon, Group, Modal, Text } from '@mantine/core';
 import { IconArrowsMinimize, IconX } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
+import WorkflowClipboardActions from '../WorkflowClipboardActions';
 import WorkflowCanvas from '../WorkflowCanvas';
 import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
 import styles from './WorkflowEditorFullscreen.module.css';
@@ -56,28 +57,36 @@ const WorkflowEditorFullscreen = ({
 							{t('form.workflow.fullscreen.description')}
 						</Text>
 					</div>
-					<Group gap='xs' wrap='nowrap'>
-						<ActionIcon
-							size='md'
-							variant='light'
-							color='gray'
-							radius='sm'
-							title={t('form.workflow.fullscreen.exit')}
-							onClick={onClose}
-						>
-							<IconArrowsMinimize size={16} />
-						</ActionIcon>
-						<ActionIcon
-							size='md'
-							variant='light'
-							color='gray'
-							radius='sm'
-							title={t('common:actions.close', { defaultValue: 'Close' })}
-							onClick={onClose}
-						>
-							<IconX size={16} />
-						</ActionIcon>
-					</Group>
+					<div className={styles.headerActions}>
+						<WorkflowClipboardActions
+							workflow={workflow}
+							onWorkflowChange={onWorkflowChange}
+							fallbackPreventSubagentLoops={preventSubagentLoops}
+							buttonSize='sm'
+						/>
+						<Group gap='xs' wrap='nowrap'>
+							<ActionIcon
+								size='md'
+								variant='light'
+								color='gray'
+								radius='sm'
+								title={t('form.workflow.fullscreen.exit')}
+								onClick={onClose}
+							>
+								<IconArrowsMinimize size={16} />
+							</ActionIcon>
+							<ActionIcon
+								size='md'
+								variant='light'
+								color='gray'
+								radius='sm'
+								title={t('common:actions.close', { defaultValue: 'Close' })}
+								onClick={onClose}
+							>
+								<IconX size={16} />
+							</ActionIcon>
+						</Group>
+					</div>
 				</div>
 				<div className={styles.canvasArea}>
 					<WorkflowCanvas

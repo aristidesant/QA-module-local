@@ -98,10 +98,9 @@ const AnalyticsVariablesTable = ({
 				Array.isArray(variable.value.enum)
 					? variable.value.enum
 					: [],
-			value_type: variable.value.value_type,
-			constant_value: variable.value.constant_value,
-			dynamic_variable: variable.value.dynamic_variable,
-			is_system_provided: variable.value.is_system_provided,
+			constantValue: variable.value.constant_value ?? '',
+			dynamicVariable: variable.value.dynamic_variable ?? '',
+			isSystemProvided: variable.value.is_system_provided ?? false,
 			isNew: false,
 			source: 'custom-variable' as const,
 			linkedCustomVariableId: variable.id,

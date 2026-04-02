@@ -335,10 +335,26 @@
 						"apply": "Aplicar"
 					}
 				}
+			},
+			"versionDescription": {
+				"title": "Descripción de versión",
+				"description": "Describe opcionalmente los cambios que estás a punto de guardar. Se almacenará como la descripción de versión en el historial del agente.",
+				"placeholder": "ej. Se actualizó el prompt para mejorar el tono del saludo..."
 			}
 		}
 	},
 	"configuration": {
 		"editPrompt": "Editar prompt"
+	},
+	"saveReview": {
+		"title": "Revisar cambios",
+		"publishedLabel": "Versión publicada",
+		"currentLabel": "Cambios actuales",
+		"descriptionLabel": "Descripción de la versión (opcional)",
+		"descriptionPlaceholder": "Describe qué cambió en esta versión",
+		"cancel": "Cancelar",
+		"noChanges": "No se detectaron cambios en la configuración.",
+		"hiddenLines": "Mostrar {{count}} líneas ocultas",
+		"confirm": "Confirmar"
 	}
 }

@@ -65,6 +65,10 @@
 			"deleteWidget": "Eliminar widget",
 			"toggleEnabled": "Cambiar estado del widget"
 		},
+		"preview": {
+			"title": "Vista previa",
+			"description": "Revisa el dashboard seleccionado antes de volver al constructor."
+		},
 		"breadcrumb": {
 			"root": "Dashboard Builder"
 		},

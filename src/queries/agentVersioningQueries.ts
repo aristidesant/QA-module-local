@@ -110,14 +110,21 @@ export const useRevertAgentVersion = () => {
 			agentId,
 			branchId,
 			versionId,
+			versionDescription,
 		}: {
 			agentId: string;
 			branchId: string;
 			versionId: string;
+			versionDescription?: string;
 		}) => {
 			const api = agentVersioningApi();
 			const snapshot = await api.getSnapshot(agentId, { versionId });
-			return api.updateSnapshotOnBranch(agentId, branchId, snapshot);
+			return api.updateSnapshotOnBranch(
+				agentId,
+				branchId,
+				snapshot,
+				versionDescription
+			);
 		},
 		onSuccess: (_data, variables) => {
 			queryClient.invalidateQueries({

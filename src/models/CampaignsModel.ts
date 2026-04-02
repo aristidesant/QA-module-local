@@ -102,6 +102,7 @@ export interface Campaign {
 
 	noiseCancellation?: boolean;
 	agentConfig?: Partial<AgentConfigModel>;
+	versionDescription?: string;
 	// Stats and performance
 	stats?: {
 		callsMade: number;

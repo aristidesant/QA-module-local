@@ -1,0 +1,17 @@
+.actions {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+}
+
+.button {
+	flex-shrink: 0;
+}
+
+@media (max-width: 48em) {
+	.actions {
+		width: 100%;
+		justify-content: flex-start;
+		flex-wrap: wrap;
+	}
+}

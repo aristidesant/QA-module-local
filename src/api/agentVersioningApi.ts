@@ -86,11 +86,15 @@ const agentVersioningApi = () => {
 		updateSnapshotOnBranch: async (
 			agentId: string,
 			branchId: string,
-			snapshot: AgentVersionSnapshot
+			snapshot: AgentVersionSnapshot,
+			versionDescription?: string
 		) => {
 			const response = await axios.patch<AgentVersionSnapshot>(
 				`${DEFAULT_API_URL}/agents/${agentId}`,
-				normalizeAgentVersionSnapshot(snapshot),
+				{
+					...normalizeAgentVersionSnapshot(snapshot),
+					...(versionDescription !== undefined ? { versionDescription } : {}),
+				},
 				{
 					params: { branchId },
 				}

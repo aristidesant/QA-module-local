@@ -1,0 +1,36 @@
+.content {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+}
+
+.helperText {
+	color: var(--mantine-color-gray-6);
+}
+
+.input {
+	font-family: var(--mantine-font-family-monospace);
+}
+
+.summaryCard {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-gray-0);
+	padding: var(--mantine-spacing-sm);
+}
+
+.summaryValue {
+	color: var(--mantine-color-gray-9);
+}
+
+.footer {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--mantine-spacing-xs);
+}
+
+@media (max-width: 48em) {
+	.footer {
+		flex-direction: column-reverse;
+	}
+}

@@ -33,6 +33,7 @@
 	flex-direction: column;
 	gap: 2px;
 	min-width: 0;
+	flex: 1;
 }
 
 .eyebrow {
@@ -57,6 +58,14 @@
 	flex-direction: column;
 }
 
+.headerActions {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	flex-wrap: wrap;
+	justify-content: flex-end;
+}
+
 @media (max-width: 48em) {
 	.modalBody {
 		padding: var(--mantine-spacing-sm);
@@ -65,5 +74,10 @@
 	.header {
 		padding: var(--mantine-spacing-sm);
 		flex-direction: column;
+	}
+
+	.headerActions {
+		width: 100%;
+		justify-content: flex-start;
 	}
 }

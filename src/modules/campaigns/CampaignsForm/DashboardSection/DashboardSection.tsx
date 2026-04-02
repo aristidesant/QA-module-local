@@ -2,7 +2,11 @@ import { Text } from '@mantine/core';
 import { IconLayoutDashboard } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
-import { DashboardSectionProvider } from './DashboardSection.context';
+import {
+	DashboardSectionProvider,
+	useDashboardSectionModals,
+} from './DashboardSection.context';
+import DashboardPreviewView from './DashboardPreviewView';
 import DashboardListPanel from './DashboardListPanel';
 import DashboardModals from './DashboardModals';
 import DashboardWidgetFormOverlay from './DashboardWidgetFormOverlay';
@@ -11,6 +15,11 @@ import styles from './DashboardSection.module.css';
 
 const DashboardSectionContent = () => {
 	const { t } = useTranslation(['campaign.form.dashboards', 'common']);
+	const { previewDashboard } = useDashboardSectionModals();
+
+	if (previewDashboard) {
+		return <DashboardPreviewView />;
+	}
 
 	return (
 		<>

@@ -27,9 +27,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 		<QueryClientProvider client={queryClient}>
 			<MantineProvider theme={theme}>
 				<ModalsProvider>
-					<Suspense
-						fallback={<SuspenseFallback message='Loading application...' />}
-					>
+					<Suspense fallback={<SuspenseFallback />}>
 						<App />
 					</Suspense>
 					<Notifications position='top-right' autoClose={4000} />

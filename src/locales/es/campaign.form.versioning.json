@@ -8,6 +8,7 @@
 		"currentVersion": "Versión actual",
 		"lastCommit": "Último commit",
 		"author": "Autor",
+		"description": "Descripción",
 		"liveTraffic": "{{percentage}}% de tráfico en vivo",
 		"notAvailable": "No disponible"
 	},
@@ -24,7 +25,8 @@
 			"commit": "COMMIT",
 			"author": "AUTOR",
 			"committedAt": "COMMIT",
-			"actions": ""
+			"actions": "",
+			"description": "DESCRIPCIÓN"
 		},
 		"actions": {
 			"compare": "Comparar con la actual",

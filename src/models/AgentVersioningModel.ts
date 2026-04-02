@@ -78,7 +78,7 @@ export interface GetBranchDetailsParams {
 }
 
 export type AgentVersionSnapshot = Partial<
-	Omit<AgentConfigModel, 'metadata' | 'workflow'>
+	Omit<AgentConfigModel, 'metadata'>
 > & {
 	name?: string;
 };
@@ -93,6 +93,7 @@ export interface AgentVersionCommit {
 	userName: string;
 	userEmail: string;
 	createdAt: string;
+	versionDescription?: string;
 }
 
 export type VersionCommitFilter = 'ACTIVE' | 'DELETED' | 'ALL';
@@ -119,6 +120,7 @@ export type AgentVersionUpdatePayload = Partial<
 		| 'workspaceOverrides'
 		| 'phoneNumbers'
 		| 'tags'
+		| 'workflow'
 	>
 > & {
 	name?: string;
