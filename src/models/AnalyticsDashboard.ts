@@ -1,4 +1,4 @@
-export type AnalyticsTimeRange = 'TODAY' | 'WEEK' | 'MONTH' | 'YEAR';
+export type AnalyticsTimeRange = 'TODAY' | 'WEEK' | 'MONTH' | 'YEAR' | 'ALL';
 
 export type AnalyticsComparisonMode = 'PREVIOUS_PERIOD';
 
