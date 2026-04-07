@@ -111,6 +111,7 @@ VITE_APP_SIP_MONITOR_ORIGIN=https://sip-monitor.example.com
 
 `VITE_APP_API_URL` is used by the frontend API config (`src/api/config.ts`).
 `VITE_APP_SIP_MONITOR_ORIGIN` must be the origin that is allowed to render the SIP monitor iframe.
+The production Docker image uses a static CSP media allowlist for QA and prod transcript audio.
 
 ### Install dependencies
 
