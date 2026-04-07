@@ -58,6 +58,7 @@ import VersioningSection from './VersioningSection';
 import i18n from '~/locales/i18n';
 import styles from './CampaignsForm.module.css';
 import { getDataCollectionFromAgentConfig } from './AnalyticsSection/analyticsFormContext';
+import { isClaudeLlm } from '~/modules/configurations/CampaignPredefinedParamsPage/CampaignPredefinedParamsForm/formConfig';
 
 interface CampaignsFormProps {
 	campaign?: Partial<Campaign>;
@@ -410,19 +411,73 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		}
 
 		try {
-			// Clean up toolIds from agentConfig before sending
+			// Clean up toolIds and strip reasoningEffort for non-Claude LLMs from agentConfig before sending
 			const cleanedValue = { ...value };
 			if (cleanedValue.agentConfig?.conversationConfig?.agent?.prompt) {
 				const { toolIds, ...restPrompt } =
 					cleanedValue.agentConfig.conversationConfig.agent.prompt;
+
+				const campaignLlm = (restPrompt as Record<string, unknown>).llm as
+					| string
+					| undefined;
+				const { reasoningEffort: _re, ...promptWithoutReasoning } =
+					restPrompt as Record<string, unknown>;
+				const cleanedPrompt =
+					campaignLlm !== undefined && !isClaudeLlm(campaignLlm)
+						? promptWithoutReasoning
+						: restPrompt;
+
 				cleanedValue.agentConfig = {
 					...cleanedValue.agentConfig,
 					conversationConfig: {
 						...cleanedValue.agentConfig.conversationConfig,
 						agent: {
 							...cleanedValue.agentConfig.conversationConfig.agent,
-							prompt: restPrompt as any,
+							prompt: cleanedPrompt as any,
 						},
+					},
+				};
+			}
+
+			// Strip reasoningEffort from non-Claude workflow node prompts
+			if (cleanedValue.agentConfig?.workflow?.nodes) {
+				const cleanedNodes = { ...cleanedValue.agentConfig.workflow.nodes };
+				for (const nodeId of Object.keys(cleanedNodes)) {
+					const node = cleanedNodes[nodeId] as unknown as Record<
+						string,
+						unknown
+					>;
+					const nodeConversationConfig = node.conversationConfig as
+						| Record<string, unknown>
+						| undefined;
+					const nodeAgent = nodeConversationConfig?.agent as
+						| Record<string, unknown>
+						| undefined;
+					const nodePrompt = nodeAgent?.prompt as
+						| Record<string, unknown>
+						| undefined;
+					if (!nodePrompt) continue;
+
+					const nodeLlm = nodePrompt.llm as string | undefined;
+					if (nodeLlm !== undefined && !isClaudeLlm(nodeLlm)) {
+						const { reasoningEffort: _nre, ...cleanNodePrompt } = nodePrompt;
+						cleanedNodes[nodeId] = {
+							...node,
+							conversationConfig: {
+								...nodeConversationConfig,
+								agent: {
+									...nodeAgent,
+									prompt: cleanNodePrompt,
+								},
+							},
+						} as unknown as (typeof cleanedNodes)[string];
+					}
+				}
+				cleanedValue.agentConfig = {
+					...cleanedValue.agentConfig,
+					workflow: {
+						...cleanedValue.agentConfig.workflow,
+						nodes: cleanedNodes,
 					},
 				};
 			}
