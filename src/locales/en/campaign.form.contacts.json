@@ -191,6 +191,12 @@
 					"successMessage": "Successfully matched {{count}} column(s)",
 					"noMatchTitle": "No Matches Found",
 					"noMatchMessage": "Could not find any matching CSV columns for the remaining system fields"
+				},
+				"reset": {
+					"button": "Reset",
+					"tooltip": "Reset all mappings to the initial state",
+					"successTitle": "Mappings Reset",
+					"successMessage": "All mappings have been restored to their initial state"
 				}
 			},
 			"details": {

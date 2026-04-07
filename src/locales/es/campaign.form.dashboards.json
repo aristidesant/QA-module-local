@@ -14,7 +14,12 @@
 		"dashboard": {
 			"name": "Nombre",
 			"description": "Descripción",
-			"standard": "Estándar"
+			"standard": "Estándar",
+			"scope": "Alcance",
+			"scopeGlobal": "Global",
+			"scopeCampaign": "Campaña",
+			"createdAtLabel": "Fecha de creación",
+			"descriptionLabel": "Descripción"
 		},
 		"metricScope": {
 			"global": "global",
@@ -36,8 +41,7 @@
 			"BAR_CHART": "Gráfico de barras",
 			"PIE_CHART": "Gráfico de pastel",
 			"DONUT_CHART": "Gráfico de dona",
-			"TABLE": "Tabla",
-			"FUNNEL": "Embudo"
+			"TABLE": "Tabla"
 		},
 		"metricCapabilities": {
 			"groupByEnabled": "Salida agrupada habilitada",
@@ -47,27 +51,48 @@
 		},
 		"groupBySuggestions": {
 			"conversationField": "Campo de conversación",
-			"dispositionField": "Campo de disposición",
+			"dispositionField": "Campo de resultado",
 			"attributeTypedField": "Columna tipada de atributo",
 			"attributeSemanticField": "Variable analítica"
 		},
 		"actions": {
 			"newDashboard": "Nuevo dashboard",
 			"newWidget": "Nuevo widget",
+			"previewDashboard": "Ver dashboard",
 			"editDashboard": "Editar dashboard",
 			"deleteDashboard": "Eliminar dashboard",
 			"editWidget": "Editar widget",
 			"deleteWidget": "Eliminar widget",
 			"toggleEnabled": "Cambiar estado del widget"
 		},
+		"preview": {
+			"title": "Vista previa",
+			"description": "Revisa el dashboard seleccionado antes de volver al constructor."
+		},
+		"breadcrumb": {
+			"root": "Dashboard Builder"
+		},
+		"progress": {
+			"title": "Progreso",
+			"widgetType": "Tipo de Widget",
+			"sourceType": "Tipo de Fuente",
+			"sourceField": "Campo de Fuente",
+			"aggregation": "Agregación",
+			"widgetDetails": "Detalles del Widget",
+			"visibilityScope": "Alcance",
+			"subtitle": "Salta entre los pasos para revisarlos o editarlos.",
+			"advanced": "Opciones Avanzadas"
+		},
 		"drawer": {
 			"dashboardKicker": "Detalles del dashboard",
-			"createDashboardTitle": "Crear dashboard",
+			"createDashboardTitle": "Agregar nuevo dashboard",
 			"editDashboardTitle": "Editar dashboard",
 			"dashboardDescription": "Configura los metadatos del dashboard para esta campaña.",
 			"widgetKicker": "Configuración del widget",
-			"createWidgetTitle": "Crear widget",
+			"createWidgetTitle": "Agregar nuevo widget",
 			"editWidgetTitle": "Editar widget",
+			"createWidgetSubtitle": "Responde cada pregunta — las opciones nuevas aparecen conforme avanzas.",
+			"editWidgetSubtitle": "Actualiza la configuración del widget a continuación.",
 			"widgetDescription": "Configura los datos, la consulta y la presentación del widget."
 		},
 		"form": {
@@ -78,14 +103,27 @@
 				"basicsTitle": "Datos básicos",
 				"basicsDescription": "",
 				"metricTitle": "Configuración de métrica",
-				"filtersTitle": "Filtros predeterminados",
+				"filtersTitle": "Filtros",
+				"runtimeFiltersTitle": "Filtros",
 				"dataTitle": "Configuración de datos",
 				"dataDescription": "",
 				"viewTitle": "Configuración visual",
 				"layoutTitle": "Distribución",
 				"layoutDescription": "Elige un tamaño estándar y deja que el dashboard ubique el widget automáticamente.",
 				"statusTitle": "Disponibilidad",
-				"statusDescription": ""
+				"statusDescription": "",
+				"widgetTypeTitle": "Tipo de widget",
+				"widgetTypeDescription": "¿Cómo se debe visualizar esta información?",
+				"sourceFieldTitle": "Campo de origen",
+				"sourceFieldDescription": "Elige el campo exacto que alimenta esta métrica.",
+				"aggregationTitle": "Función de Agregación",
+				"aggregationDescription": "¿Cómo se deben combinar los valores?",
+				"visibilityScopeTitle": "Alcance de visibilidad",
+				"visibilityScopeDescription": "¿Quién puede ver este widget en el dashboard?",
+				"widgetDetailsTitle": "Detalles del widget",
+				"widgetDetailsDescription": "Nombra y configura la presentación del widget.",
+				"sourceTypeTitle": "Tipo de origen",
+				"sourceTypeDescription": "¿Qué tipo de datos mide este widget?"
 			},
 			"guidedSections": {
 				"widgetTitle": "1. Elige el widget",
@@ -94,9 +132,10 @@
 				"metricDescription": "Define de dónde salen los datos y cuál es la métrica principal del widget.",
 				"breakdownTitle": "3. Configura el desglose",
 				"breakdownDescription": "Estos widgets necesitan un campo para agrupar y dividir el resultado en categorías.",
-				"advancedTitle": "4. Ajustes opcionales",
-				"advancedDescription": "Mantén el flujo principal simple y abre esta sección solo cuando necesites más control.",
-				"filtersDescription": "Los filtros predeterminados se aplican automáticamente cada vez que se carga este widget."
+				"advancedTitle": "Opciones Avanzadas",
+				"advancedDescription": "Ajusta formato, apariencia y filtros.",
+				"filtersDescription": "Los filtros se guardan con el widget y se aplican automáticamente en la vista previa y en el render.",
+				"runtimeFiltersDescription": "Los filtros se guardan con el widget y se aplican automáticamente en la vista previa y en el render."
 			},
 			"fields": {
 				"dashboardName": "Nombre del dashboard",
@@ -110,6 +149,8 @@
 				"sourceTypeDescriptionGlobal": "Las métricas de atributos solo están disponibles en dashboards de campaña.",
 				"aggregationType": "Agregación",
 				"resultType": "Tipo de resultado",
+				"compareWith": "Comparar con",
+				"compareWithDescription": "¿Cómo se debe calcular la base de comparación?",
 				"metricKey": "Clave de atributo",
 				"fieldName": "Campo origen",
 				"valueField": "Campo de valor del atributo",
@@ -118,6 +159,9 @@
 				"defaultFilterKey": "Campo del filtro",
 				"defaultFilterType": "Tipo de valor",
 				"defaultFilterValue": "Valor del filtro",
+				"runtimeFilterField": "Campo del filtro",
+				"runtimeFilterOperator": "Operador",
+				"runtimeFilterValue": "Valor",
 				"groupBy": "Campo para agrupar",
 				"groupByDescription": "",
 				"groupByDescriptionAttribute": "Usa un campo o una variable.",
@@ -132,10 +176,12 @@
 				"height": "Alto",
 				"enabled": "Widget habilitado"
 			},
+			"aggregationHint": "La agregación define la matemática aplicada al campo de origen seleccionado.",
+			"visibilityScopeHint": "Interno es el valor predeterminado. Cambia a Global o Privado solo cuando necesites otro público.",
 			"sourceTypeDescriptions": {
-				"CONVERSATION": "Usa campos de conversación como estado, fechas o duración.",
-				"ATTRIBUTE": "Usa atributos de campaña recolectados por el agente analítico.",
-				"DISPOSITION": "Usa resultados de disposición y campos de seguimiento."
+				"CONVERSATION": "Datos de llamadas e interacciones",
+				"ATTRIBUTE": "Nombres, tipos y categorías",
+				"DISPOSITION": "Puntajes y KPIs de desempeño"
 			},
 			"widgetTypeDescriptions": {
 				"KPI": "Muestra un solo valor que cambia con el rango seleccionado.",
@@ -143,8 +189,29 @@
 				"BAR_CHART": "Compara valores entre categorías con un desglose agrupado.",
 				"PIE_CHART": "Muestra cómo se distribuye un resultado agrupado entre categorías.",
 				"DONUT_CHART": "Usa un desglose circular compacto para resultados agrupados.",
-				"TABLE": "Lista valores agrupados en una tabla compacta.",
-				"FUNNEL": "Muestra etapas secuenciales de conversión."
+				"TABLE": "Lista valores agrupados en una tabla compacta."
+			},
+			"aggregationDescriptions": {
+				"COUNT": "Cuenta las filas que coinciden.",
+				"SUM": "Suma los valores seleccionados.",
+				"AVG": "Muestra el valor promedio.",
+				"MIN": "Muestra el valor más pequeño.",
+				"MAX": "Muestra el valor más grande.",
+				"DISTINCT_COUNT": "Cuenta valores únicos."
+			},
+			"visibilityScope": {
+				"GLOBAL": {
+					"label": "Global",
+					"description": "Visible para todos"
+				},
+				"TEAM": {
+					"label": "Interno",
+					"description": "Solo miembros del equipo"
+				},
+				"PRIVATE": {
+					"label": "Privado",
+					"description": "Solo visible en esta campaña"
+				}
 			},
 			"sizePresets": {
 				"SMALL": "Pequeño",
@@ -154,12 +221,20 @@
 				"CUSTOM": "Personalizado"
 			},
 			"placeholders": {
+				"widgetTitle": "ej. Total Llamadas este mes",
+				"widgetDescription": "Descripción opcional",
 				"metricKey": "Selecciona una clave de atributo",
 				"metricKeyUnavailable": "Las métricas de atributos requieren un dashboard de campaña",
 				"loadingMetricKeys": "Cargando claves de métricas...",
 				"fieldName": "Selecciona un campo origen",
 				"defaultFilterKey": "ej. status",
 				"defaultFilterValue": "ej. active",
+				"runtimeFilterField": "Selecciona un campo del filtro",
+				"runtimeFilterOperator": "Selecciona un operador",
+				"runtimeFilterValue": "ej. DONE",
+				"runtimeFilterValues": "Agrega uno o más valores",
+				"runtimeFilterValueNumber": "ej. 42",
+				"runtimeFilterValueDisabled": "Selecciona primero un operador",
 				"viewColor": "#2563eb",
 				"viewValueFormat": "Selecciona un formato",
 				"groupBy": "ej. call_status",
@@ -169,6 +244,8 @@
 			"layoutPlacement": "Se ubicará automáticamente en la columna {{column}} y fila {{row}}.",
 			"layoutSummary": "{{width}} x {{height}} ocupa una grilla de {{columns}} columnas. Comienza en la columna {{startColumn}} y la fila {{startRow}}, y termina en la columna {{endColumn}} y la fila {{endRow}}.",
 			"hints": {
+				"sourceFieldAttribute": "Elige la clave del atributo y, cuando sea necesario, el campo de valor usado por la métrica.",
+				"sourceFieldRegular": "Elige el campo de conversación o de resultado que alimenta el widget.",
 				"groupByStandard": "",
 				"groupByAttribute": "",
 				"groupByAttribute_other": ""
@@ -187,6 +264,13 @@
 			"preview": {
 				"title": "Vista previa",
 				"description": "Una vista previa ligera se actualiza mientras defines el widget.",
+				"summaryTitle": "Configuración seleccionada",
+				"summary": {
+					"sourceType": "Origen",
+					"sourceField": "Campo",
+					"aggregation": "Agregación",
+					"visibilityScope": "Visibilidad"
+				},
 				"untitled": "Widget sin título",
 				"emptyMetricTitle": "Elige una métrica para iniciar la vista previa",
 				"emptyMetricDescription": "Selecciona una fuente y una métrica para sugerir el título y la estructura del widget.",
@@ -208,26 +292,30 @@
 					"thirdLabel": "Buzón de voz"
 				}
 			},
+			"footerTitle": "¿Listo para agregar?",
+			"footerTitleEdit": "¿Listo para guardar?",
+			"footerHint": "Revisa la vista previa a la derecha, luego guarda el widget.",
 			"actions": {
 				"cancel": "Cancelar",
 				"createDashboard": "Crear dashboard",
 				"saveDashboard": "Guardar dashboard",
 				"addFilter": "Agregar filtro",
+				"addRuntimeFilter": "Agregar filtro",
 				"removeFilter": "Eliminar filtro",
 				"showAdvanced": "Mostrar avanzados",
 				"hideAdvanced": "Ocultar avanzados",
-				"createWidget": "Crear widget",
-				"saveWidget": "Guardar widget"
+				"createWidget": "Crear Widget",
+				"saveWidget": "Guardar Widget"
 			},
 			"options": {
 				"sourceType": {
 					"CONVERSATION": "Conversación",
 					"ATTRIBUTE": "Atributo",
-					"DISPOSITION": "Disposición"
+					"DISPOSITION": "Resultado"
 				},
 				"aggregationType": {
 					"COUNT": "Conteo",
-					"SUM": "Suma",
+					"SUM": "Total",
 					"AVG": "Promedio",
 					"MIN": "Mínimo",
 					"MAX": "Máximo",
@@ -240,17 +328,47 @@
 					"STRING": "Texto",
 					"TIME": "Tiempo"
 				},
+				"compareWith": {
+					"LATEST": "Período más reciente",
+					"AVERAGE": "Promedio del período actual"
+				},
 				"valueField": {
 					"VALUE_STRING": "Valor texto",
 					"VALUE_NUMBER": "Valor numérico",
 					"VALUE_BOOLEAN": "Valor booleano",
 					"VALUE_JSON": "Valor JSON"
 				},
+				"visibilityScope": {
+					"GLOBAL": {
+						"label": "Global",
+						"description": "Visible para todos"
+					},
+					"TEAM": {
+						"label": "Interno",
+						"description": "Solo miembros del equipo"
+					},
+					"PRIVATE": {
+						"label": "Privado",
+						"description": "Solo visible en esta campaña"
+					}
+				},
 				"filterValueType": {
 					"string": "Texto",
 					"number": "Número",
 					"boolean": "Booleano",
 					"null": "Nulo"
+				},
+				"runtimeFilterOperator": {
+					"eq": "Es igual",
+					"neq": "No es igual",
+					"in": "Está en la lista",
+					"not_in": "No está en la lista",
+					"gt": "Mayor que",
+					"gte": "Mayor o igual que",
+					"lt": "Menor que",
+					"lte": "Menor o igual que",
+					"is_null": "Está vacío",
+					"is_not_null": "No está vacío"
 				},
 				"valueFormat": {
 					"compact": "Compacto",
@@ -268,7 +386,8 @@
 				"metricKeyRequired": "Selecciona una clave de atributo.",
 				"valueFieldRequired": "Selecciona un campo de valor del atributo.",
 				"attributeNotAvailable": "Las métricas de atributos no están disponibles para dashboards globales.",
-				"defaultFilterInvalid": "Revisa los filtros predeterminados. Cada fila necesita un campo y un valor tipado válido.",
+				"defaultFilterInvalid": "Revisa los filtros. Cada fila necesita un campo y un valor tipado válido.",
+				"runtimeFilterInvalid": "Revisa los filtros. Cada fila necesita un campo, un operador y un valor compatible.",
 				"groupByRequired": "Agrupar por es obligatorio para este tipo de widget.",
 				"metricMustSupportGroupBy": "La métrica seleccionada no soporta salida agrupada.",
 				"metricMustSupportTimeSeries": "La métrica seleccionada no soporta salida de serie temporal.",
@@ -317,7 +436,11 @@
 			"type": "Tipo",
 			"metric": "Métrica",
 			"size": "Tamaño",
-			"status": "Estado"
+			"status": "Estado",
+			"defaultBadge": "Predeterminado",
+			"customBadge": "Personalizado",
+			"activeBadge": "Activo",
+			"inactiveBadge": "Inactivo"
 		},
 		"mode": {
 			"manage": "Gestionar",
@@ -375,7 +498,8 @@
 			"latest": "Último",
 			"delta": "Cambio",
 			"current": "Actual",
-			"previous": "Anterior"
+			"previous": "Anterior",
+			"averageBaseline": "Promedio"
 		},
 		"timeRange": {
 			"label": "Período",
@@ -403,6 +527,8 @@
 			"previousWeekValue": "Semana anterior: {{value}}",
 			"previousMonthValue": "Mes anterior: {{value}}",
 			"previousYearValue": "Año anterior: {{value}}",
+			"vsAverage": "vs promedio",
+			"averageValue": "Promedio: {{value}}",
 			"trend": {
 				"UP": "Subida",
 				"DOWN": "Bajada",

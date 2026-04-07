@@ -17,6 +17,29 @@
 	transition: border-color 0.18s ease;
 }
 
+.widgetCardBuilderPreview {
+	padding: 12px !important;
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
+	box-shadow: none;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+}
+
+.widgetCardBuilderPreview::after {
+	display: none;
+}
+
+.widgetCardBuilderPreview:hover {
+	border-color: var(--mantine-color-gray-3);
+}
+
+.widgetCardBuilderPreview .widgetCardHeader {
+	padding-bottom: 6px;
+	margin-bottom: 6px;
+	border-bottom-color: var(--mantine-color-gray-2);
+}
+
 .widgetCard::after {
 	content: '';
 	position: absolute;

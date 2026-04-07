@@ -1,18 +1,35 @@
 import { useMemo } from 'react';
 import { type ColumnDef } from '@tanstack/react-table';
 import { ActionIcon, Badge, Group, Stack, Text, Tooltip } from '@mantine/core';
-import { IconEdit, IconTrash } from '@tabler/icons-react';
+import {
+	IconEdit,
+	IconPlayerPlay,
+	IconPlayerStop,
+	IconTrash,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { PronunciationRule } from '~/models/PronunciationDictionaryModel';
 
 interface UseRuleTableColumnsProps {
 	onEdit: (rule: PronunciationRule) => void;
 	onDelete: (rule: PronunciationRule) => void;
+	onSpeak?: (
+		text: string,
+		locale?: string | null,
+		id?: string | number
+	) => void;
+	onStop?: () => void;
+	speakingId?: string | number | null;
+	isTtsSupported?: boolean;
 }
 
 export function useRuleTableColumns({
 	onEdit,
 	onDelete,
+	onSpeak,
+	onStop,
+	speakingId,
+	isTtsSupported,
 }: UseRuleTableColumnsProps) {
 	const { t } = useTranslation('dictionary-rules');
 
@@ -110,34 +127,73 @@ export function useRuleTableColumns({
 			{
 				id: 'actions',
 				header: t('columns.actions'),
-				cell: ({ row }) => (
-					<Group gap='xs'>
-						<Tooltip label={t('form.buttons.update')}>
-							<ActionIcon
-								variant='light'
-								color='blue'
-								radius='md'
-								size='sm'
-								onClick={() => onEdit(row.original)}
-							>
-								<IconEdit size={16} />
-							</ActionIcon>
-						</Tooltip>
-						<Tooltip label={t('rules.deleteModal.confirm')}>
-							<ActionIcon
-								variant='light'
-								color='red'
-								radius='md'
-								size='sm'
-								onClick={() => onDelete(row.original)}
-							>
-								<IconTrash size={16} />
-							</ActionIcon>
-						</Tooltip>
-					</Group>
-				),
+				cell: ({ row }) => {
+					const rule = row.original;
+					const isPlaying = speakingId === rule.id;
+					const isAlias = rule.ruleType === 'ALIAS';
+					const textToSpeak = isAlias
+						? (rule.alias ?? rule.grapheme)
+						: rule.grapheme;
+					const tooltipLabel = isPlaying
+						? t('preview.stop')
+						: isAlias
+							? t('preview.playAlias')
+							: t('preview.phonemeFallback');
+
+					return (
+						<Group gap='xs'>
+							{isTtsSupported && onSpeak && onStop && (
+								<Tooltip
+									label={tooltipLabel}
+									multiline
+									w={isAlias ? undefined : 200}
+								>
+									<ActionIcon
+										variant='light'
+										color={isPlaying ? 'orange' : 'teal'}
+										radius='md'
+										size='sm'
+										onClick={() =>
+											isPlaying
+												? onStop()
+												: onSpeak(textToSpeak, rule.locale, rule.id)
+										}
+									>
+										{isPlaying ? (
+											<IconPlayerStop size={16} />
+										) : (
+											<IconPlayerPlay size={16} />
+										)}
+									</ActionIcon>
+								</Tooltip>
+							)}
+							<Tooltip label={t('form.buttons.update')}>
+								<ActionIcon
+									variant='light'
+									color='blue'
+									radius='md'
+									size='sm'
+									onClick={() => onEdit(rule)}
+								>
+									<IconEdit size={16} />
+								</ActionIcon>
+							</Tooltip>
+							<Tooltip label={t('rules.deleteModal.confirm')}>
+								<ActionIcon
+									variant='light'
+									color='red'
+									radius='md'
+									size='sm'
+									onClick={() => onDelete(rule)}
+								>
+									<IconTrash size={16} />
+								</ActionIcon>
+							</Tooltip>
+						</Group>
+					);
+				},
 			},
 		],
-		[onEdit, onDelete, t]
+		[onEdit, onDelete, onSpeak, onStop, speakingId, isTtsSupported, t]
 	);
 }

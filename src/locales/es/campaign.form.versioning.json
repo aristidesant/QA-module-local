@@ -7,6 +7,8 @@
 		"branch": "Rama",
 		"currentVersion": "Versión actual",
 		"lastCommit": "Último commit",
+		"author": "Autor",
+		"description": "Descripción",
 		"liveTraffic": "{{percentage}}% de tráfico en vivo",
 		"notAvailable": "No disponible"
 	},
@@ -17,17 +19,25 @@
 		"descriptionFallback": "Snapshot de versión",
 		"unknownAuthor": "Autor desconocido",
 		"itemLabel": "versiones",
-		"versionBadge": "Versión {{version}}",
+		"versionBadge": "v{{version}}",
 		"columns": {
-			"version": "Versión",
-			"author": "Autor",
-			"committedAt": "Commit",
-			"actions": "Acciones"
+			"version": "VERSIÓN",
+			"commit": "COMMIT",
+			"author": "AUTOR",
+			"committedAt": "COMMIT",
+			"actions": "",
+			"description": "DESCRIPCIÓN"
 		},
 		"actions": {
 			"compare": "Comparar con la actual",
-			"revert": "Revertir a esta versión"
-		}
+			"revert": "Revertir a esta versión",
+			"revertMenu": "Opciones de reversión",
+			"revertAndDeleteNewer": "Revertir y eliminar versiones más recientes",
+			"revertAndDeletePrevious": "Revertir y eliminar versiones anteriores",
+			"delete": "Eliminar del historial"
+		},
+		"selectAll": "Seleccionar todas las versiones",
+		"selectVersion": "Seleccionar versión {{version}}"
 	},
 	"enable": {
 		"title": "Habilitar versionado del agente",
@@ -84,6 +94,63 @@
 		"cancel": "Cancelar",
 		"revertVersion": "Revertir",
 		"revertLatest": "Revertir últimos cambios",
+		"revertAndDelete": "Revertir y eliminar {{count}} versión",
+		"revertAndDelete_other": "Revertir y eliminar {{count}} versiones",
+		"delete": "Eliminar",
+		"deleteSelected": "Eliminar {{count}} versión",
+		"deleteSelected_other": "Eliminar {{count}} versiones",
 		"retry": "Intentar de nuevo"
+	},
+	"revertAndDelete": {
+		"confirmTitle": "¿Revertir a v{{version}} y eliminar versiones más recientes?",
+		"confirmMessage": "Esto eliminará {{count}} versión más reciente que v{{version}} y revertirá el agente a ese estado.",
+		"confirmMessage_other": "Esto eliminará {{count}} versiones más recientes que v{{version}} y revertirá el agente a ese estado.",
+		"deleteHint": "{{count}} versión será eliminada permanentemente del historial.",
+		"deleteHint_other": "{{count}} versiones serán eliminadas permanentemente del historial.",
+		"successTitle": "Revertido a v{{version}}",
+		"successMessage": "{{count}} versión más reciente fue eliminada y el agente fue revertido a v{{version}}.",
+		"successMessage_other": "{{count}} versiones más recientes fueron eliminadas y el agente fue revertido a v{{version}}.",
+		"errorTitle": "No se pudo completar la operación",
+		"errorMessage": "No se pudo revertir el agente. Es posible que algunas versiones ya hayan sido eliminadas.",
+		"loadError": "No se pudo cargar la lista de versiones. Por favor, inténtalo de nuevo.",
+		"noSubsequentTitle": "Nada que eliminar",
+		"noSubsequentMessage": "No hay versiones más recientes después de v{{version}}."
+	},
+	"revertAndDeletePrevious": {
+		"confirmTitle": "¿Revertir a v{{version}} y eliminar historial anterior?",
+		"confirmMessage": "Esto eliminará {{count}} versión anterior a v{{version}} y revertirá el agente a ese estado.",
+		"confirmMessage_other": "Esto eliminará {{count}} versiones anteriores a v{{version}} y revertirá el agente a ese estado.",
+		"deleteHint": "{{count}} versión anterior será eliminada permanentemente del historial.",
+		"deleteHint_other": "{{count}} versiones anteriores serán eliminadas permanentemente del historial.",
+		"successTitle": "Revertido a v{{version}}",
+		"successMessage": "{{count}} versión anterior fue eliminada y el agente fue revertido a v{{version}}.",
+		"successMessage_other": "{{count}} versiones anteriores fueron eliminadas y el agente fue revertido a v{{version}}.",
+		"errorTitle": "No se pudo completar la operación",
+		"errorMessage": "No se pudo revertir el agente. Es posible que algunas versiones ya hayan sido eliminadas.",
+		"loadError": "No se pudo cargar la lista de versiones. Por favor, inténtalo de nuevo.",
+		"noVersionsTitle": "Nada que eliminar",
+		"noVersionsMessage": "No hay versiones anteriores antes de v{{version}}."
+	},
+	"delete": {
+		"confirmTitle": "¿Eliminar versión?",
+		"confirmTitle_other": "¿Eliminar {{count}} versiones?",
+		"confirmMessage": "Esto eliminará permanentemente esta versión del registro de historial.",
+		"confirmMessage_other": "Esto eliminará permanentemente {{count}} versiones del registro de historial.",
+		"revertHint": "Aún puedes revertir a cualquier versión incluso después de eliminarla del historial.",
+		"successTitle": "Versión eliminada",
+		"successTitle_other": "Versiones eliminadas",
+		"successMessage": "{{count}} versión fue eliminada del historial.",
+		"successMessage_other": "{{count}} versiones fueron eliminadas del historial.",
+		"errorTitle": "No se pudo eliminar",
+		"errorMessage": "La versión seleccionada no pudo eliminarse.",
+		"noCommitError": "No se encontró ningún registro interno para la versión seleccionada."
+	},
+	"sync": {
+		"action": "Sincronizar versiones",
+		"tooltip": "Sincronizar versiones desde ElevenLabs",
+		"successTitle": "Versiones sincronizadas",
+		"successMessage": "Las versiones del agente han sido sincronizadas desde ElevenLabs.",
+		"errorTitle": "Sincronización fallida",
+		"errorMessage": "No se pudieron sincronizar las versiones del agente desde ElevenLabs. Inténtalo de nuevo."
 	}
 }

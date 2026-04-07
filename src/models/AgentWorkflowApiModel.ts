@@ -91,4 +91,5 @@ export interface StandaloneAgentNodeApi extends WorkflowNodeBaseApi {
 		knowledge_base_ids?: string[];
 		tool_ids?: string[];
 	};
+	conversation_config?: Record<string, unknown>;
 }

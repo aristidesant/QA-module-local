@@ -61,6 +61,7 @@ export type DashboardWidgetFormState = {
 	valueFieldOptions: WidgetMetricOption[];
 	filterValueTypeOptions: WidgetMetricOption[];
 	viewValueFormatOptions: WidgetMetricOption[];
+	compareWithOptions: WidgetMetricOption[];
 	sizePresetOptions: { value: string; label: string; disabled?: boolean }[];
 	widgetTypeControlOptions: {
 		value: string;
@@ -75,6 +76,7 @@ export type DashboardWidgetFormState = {
 	guidedState: WidgetGuidedState;
 	groupBySuggestions: string[];
 	filterKeySuggestions: string[];
+	runtimeFilterFieldOptions: WidgetMetricOption[];
 	placementLayout: {
 		positionX: number;
 		positionY: number;
@@ -91,6 +93,7 @@ export type DashboardWidgetFormState = {
 		handleMetricKeyChange: (value: string | null) => void;
 		handleFieldNameChange: (value: string | null) => void;
 		handleValueFieldChange: (value: string | null) => void;
+		handleCompareWithChange: (value: string | null) => void;
 		handleGroupByChange: (value: string | null) => void;
 		handleResultTypeChange: (value: string | null) => void;
 		handleViewValueFormatChange: (value: string | null) => void;
@@ -103,9 +106,24 @@ export type DashboardWidgetFormState = {
 			index: number,
 			value: string | null
 		) => void;
+		handleRuntimeFilterFieldChange: (
+			index: number,
+			value: string | null
+		) => void;
+		handleRuntimeFilterOperatorChange: (
+			index: number,
+			value: string | null
+		) => void;
+		handleRuntimeFilterValueChange: (
+			index: number,
+			value: string | string[] | null
+		) => void;
 		handleSizePresetChange: (value: string | null) => void;
+		handleVisibilityScopeChange: (value: string | null) => void;
 		addDefaultFilterRow: () => void;
 		removeDefaultFilterRow: (index: number) => void;
+		addRuntimeFilterRow: () => void;
+		removeRuntimeFilterRow: (index: number) => void;
 		handleEnabledChange: (checked: boolean) => void;
 		handleSupportsGroupByChange: (checked: boolean) => void;
 		handleSupportsTimeSeriesChange: (checked: boolean) => void;

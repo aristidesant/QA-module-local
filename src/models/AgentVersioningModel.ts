@@ -13,6 +13,12 @@ export interface AgentVersionAccessInfo {
 	role?: string;
 }
 
+export interface AgentVersionAppUser {
+	userId: number;
+	userName?: string;
+	userEmail: string;
+}
+
 export interface AgentBranchSummary {
 	id: string;
 	name: string;
@@ -36,6 +42,14 @@ export interface AgentVersionSummary {
 		inBranchParentId?: string;
 	};
 	accessInfo?: AgentVersionAccessInfo;
+	appUser?: AgentVersionAppUser;
+}
+
+export interface AgentVersionPaginatedList {
+	data: AgentVersionSummary[];
+	total: number;
+	limit: number;
+	offset: number;
 }
 
 export interface AgentBranchDetails extends AgentBranchSummary {
@@ -45,7 +59,7 @@ export interface AgentBranchDetails extends AgentBranchSummary {
 		id: string;
 		name: string;
 	};
-	mostRecentVersions: AgentVersionSummary[];
+	mostRecentVersions: AgentVersionPaginatedList;
 }
 
 export interface AgentBranchListResponse {
@@ -57,8 +71,14 @@ export interface AgentVersionQueryParams {
 	versionId?: string;
 }
 
+export interface GetBranchDetailsParams {
+	limit?: number;
+	offset?: number;
+	filter?: VersionCommitFilter;
+}
+
 export type AgentVersionSnapshot = Partial<
-	Omit<AgentConfigModel, 'metadata' | 'workflow'>
+	Omit<AgentConfigModel, 'metadata'>
 > & {
 	name?: string;
 };
@@ -73,6 +93,14 @@ export interface AgentVersionCommit {
 	userName: string;
 	userEmail: string;
 	createdAt: string;
+	versionDescription?: string;
+}
+
+export type VersionCommitFilter = 'ACTIVE' | 'DELETED' | 'ALL';
+
+export interface ListVersionCommitsParams {
+	branchId?: string;
+	filter?: VersionCommitFilter;
 }
 
 export interface AgentVersionCommitListResponse {
@@ -92,6 +120,7 @@ export type AgentVersionUpdatePayload = Partial<
 		| 'workspaceOverrides'
 		| 'phoneNumbers'
 		| 'tags'
+		| 'workflow'
 	>
 > & {
 	name?: string;

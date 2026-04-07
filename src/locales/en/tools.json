@@ -49,28 +49,139 @@
 			"update": "update"
 		}
 	},
+	"sectionStatus": {
+		"configured": "Configured",
+		"empty": "Empty",
+		"error": "Needs review"
+	},
+	"sections": {
+		"basic": "Basic info",
+		"basicDesc": "Name, description, prompt and category.",
+		"api": "API setup",
+		"apiDesc": "Endpoint, method and timeout.",
+		"auth": "Authentication",
+		"authDesc": "Optional connection for protected APIs.",
+		"headers": "Headers",
+		"headersDesc": "Static request headers for the call.",
+		"parameters": "Parameters",
+		"parametersDesc": "Path and query values used by the endpoint.",
+		"body": "Request body",
+		"bodyDesc": "Properties to send when the method supports a body."
+	},
+	"headers": {
+		"title": "Request Headers",
+		"add": "Add Header",
+		"remove": "Remove header",
+		"empty": "No headers configured",
+		"fields": {
+			"keyPlaceholder": "Header name",
+			"valuePlaceholder": "Value"
+		}
+	},
+	"parameters": {
+		"add": "Add",
+		"remove": "Remove parameter",
+		"path": {
+			"title": "Path Parameters",
+			"empty": "No path parameters",
+			"helper": "Path parameters are part of the URL and usually define required segments.",
+			"fields": {
+				"keyPlaceholder": "Parameter name",
+				"valuePlaceholder": "Description"
+			}
+		},
+		"query": {
+			"title": "Query Parameters",
+			"empty": "No query parameters",
+			"helper": "Query parameters refine the request without changing the route itself.",
+			"fields": {
+				"keyPlaceholder": "Parameter name",
+				"valuePlaceholder": "Description"
+			}
+		}
+	},
+	"body": {
+		"title": "Request Body Properties",
+		"add": "Add Property",
+		"remove": "Remove property",
+		"required": "Required",
+		"optional": "Optional",
+		"advancedLabel": "Advanced mapping",
+		"disabledHint": "This section is only useful for POST, PUT and PATCH requests.",
+		"empty": "No body properties configured",
+		"helper": "Define the schema fields that will be sent in the request body.",
+		"fields": {
+			"keyPlaceholder": "Property name",
+			"typePlaceholder": "Type",
+			"descriptionPlaceholder": "Description",
+			"constantPlaceholder": "Constant value",
+			"dynamicPlaceholder": "Dynamic variable"
+		}
+	},
 	"form": {
+		"overview": {
+			"title": "Follow the setup order",
+			"description": "Complete the sections in order. The left panel shows what is already done and what comes next.",
+			"progress": "Progress",
+			"progressLabel": "{{completed}}/{{total}} ready",
+			"nextStep": "Next: {{section}}",
+			"currentStep": "Current focus: {{section}}",
+			"complete": "All sections are ready",
+			"stepsComplete": "{{completed}} of {{total}} sections ready",
+			"requiredRemaining": "{{count}} required section left",
+			"requiredRemaining_other": "{{count}} required sections left",
+			"requiredDone": "Required setup complete",
+			"readyToSave": "Everything required is ready. Review optional settings or save now."
+		},
 		"title": {
 			"create": "Create New Tool",
 			"edit": "Edit Tool"
 		},
 		"description": "Configure your tool settings and API details",
 		"menu": {
-			"sections": "Sections"
+			"sections": "Sections",
+			"optional": "Optional"
 		},
 		"sections": {
-			"general": "General",
-			"api": "API Config",
+			"basic": "Basic info",
+			"basicDesc": "Name, description, prompt and category.",
+			"api": "API setup",
+			"apiDesc": "Endpoint, method and timeout.",
+			"auth": "Authentication",
+			"authDesc": "Optional connection for protected APIs.",
 			"headers": "Headers",
+			"headersDesc": "Static request headers for the call.",
 			"parameters": "Parameters",
-			"body": "Request Body"
+			"parametersDesc": "Path and query values used by the endpoint.",
+			"body": "Request body",
+			"bodyDesc": "Properties to send when the method supports a body."
 		},
 		"sectionStatus": {
 			"configured": "Configured",
-			"empty": "Empty"
+			"empty": "Empty",
+			"error": "Needs review",
+			"optional": "Optional",
+			"inProgress": "In progress",
+			"inactive": "Not applicable"
+		},
+		"sectionEyebrows": {
+			"required": "Required",
+			"optional": "Optional"
 		},
 		"footer": {
-			"hint": "Fill in required fields to save"
+			"hint": "Fill in the required fields to save the tool",
+			"ready": "Required sections are complete. You can save now.",
+			"requiredRemaining": "{{count}} required section still needs attention before saving.",
+			"requiredRemaining_other": "{{count}} required sections still need attention before saving."
+		},
+		"api": {
+			"helper": "Choose the HTTP method first, then define the endpoint. The body section only appears for methods that support it."
+		},
+		"advanced": {
+			"title": "Advanced settings"
+		},
+		"auth": {
+			"helper": "Add a connection only if the endpoint requires authentication. Leave it empty for public APIs."
 		},
 		"validation": {
 			"nameRequired": "Name is required",
@@ -109,6 +220,10 @@
 				"label": "Endpoint URL",
 				"placeholder": "https://api.example.com/v1/resource"
 			},
+			"identifier": {
+				"label": "Internal identifier",
+				"placeholder": "Optional slug used by the backend"
+			},
 			"timeout": {
 				"label": "Timeout (seconds)"
 			},
@@ -120,6 +235,7 @@
 		"headers": {
 			"title": "Request Headers",
 			"add": "Add Header",
+			"remove": "Remove header",
 			"empty": "No headers configured",
 			"fields": {
 				"keyPlaceholder": "Header name",
@@ -128,9 +244,11 @@
 		},
 		"parameters": {
 			"add": "Add",
+			"remove": "Remove parameter",
 			"path": {
 				"title": "Path Parameters",
 				"empty": "No path parameters",
+				"helper": "Path parameters are part of the URL and usually define required segments.",
 				"fields": {
 					"keyPlaceholder": "Parameter name",
 					"valuePlaceholder": "Description"
@@ -139,6 +257,7 @@
 			"query": {
 				"title": "Query Parameters",
 				"empty": "No query parameters",
+				"helper": "Query parameters refine the request without changing the route itself.",
 				"fields": {
 					"keyPlaceholder": "Parameter name",
 					"valuePlaceholder": "Description"
@@ -148,7 +267,13 @@
 		"body": {
 			"title": "Request Body Properties",
 			"add": "Add Property",
+			"remove": "Remove property",
+			"required": "Required",
+			"optional": "Optional",
+			"advancedLabel": "Advanced mapping",
+			"disabledHint": "This section is only useful for POST, PUT and PATCH requests.",
 			"empty": "No body properties configured",
+			"helper": "Define the schema fields that will be sent in the request body.",
 			"fields": {
 				"keyPlaceholder": "Property name",
 				"typePlaceholder": "Type",

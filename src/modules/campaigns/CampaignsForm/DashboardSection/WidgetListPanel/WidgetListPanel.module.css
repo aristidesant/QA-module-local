@@ -57,9 +57,13 @@
 .statusCell {
 	display: inline-flex;
 	align-items: center;
-	justify-content: center;
-	gap: 0.375rem;
+	justify-content: flex-start;
+	gap: 0.5rem;
 	width: 100%;
+}
+
+.statusHeader {
+	width: 10rem;
 }
 
 .statusLoadingSlot {
@@ -87,6 +91,38 @@
 
 .emptyStateIcon {
 	color: var(--mantine-color-gray-5);
+}
+
+.dashboardMeta {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+	gap: var(--mantine-spacing-md);
+	padding: 10px 14px;
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
+}
+
+.dashboardMetaItem {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.dashboardMetaLabel {
+	font-size: 0.7rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--mantine-color-gray-5);
+	line-height: 1.2;
+}
+
+.dashboardMetaValue {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-8);
+	line-height: 1.4;
 }
 
 @media (max-width: 48rem) {

@@ -31,6 +31,37 @@
 		inset 0 1px 0 rgba(255, 255, 255, 0.92);
 }
 
+.cardBuilderPreview {
+	padding: 16px;
+	background: var(--mantine-color-gray-0);
+	border-radius: 12px;
+	border-color: var(--mantine-color-gray-2);
+	box-shadow: none;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+	gap: 12px;
+}
+
+.cardBuilderPreview::after {
+	display: none;
+}
+
+.cardBuilderPreview:hover {
+	border-color: var(--mantine-color-gray-3);
+	transform: none;
+	box-shadow: none;
+}
+
+.cardBuilderPreview .header {
+	margin-bottom: 0;
+	padding-bottom: 6px;
+	border-bottom-color: var(--mantine-color-gray-2);
+}
+
+.cardBuilderPreview .value {
+	font-size: clamp(1.35rem, 3cqw, 2.15rem);
+}
+
 .card::after {
 	content: '';
 	position: absolute;
@@ -74,6 +105,7 @@
 	justify-content: space-between;
 	gap: 12px;
 	margin-bottom: 2px;
+	flex-shrink: 0;
 }
 
 .headerCopy {
@@ -89,6 +121,10 @@
 	letter-spacing: -0.03em;
 	line-height: 1.08;
 	font-size: 1.1rem;
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
 }
 
 .subtitle {
@@ -100,13 +136,14 @@
 }
 
 .value {
-	font-size: clamp(1.65rem, 2.4vw, 2.85rem);
+	font-size: clamp(1.65rem, 4cqw, 2.85rem);
 	line-height: 0.88;
 	font-weight: 900;
 	letter-spacing: -0.065em;
 	color: #0f172a;
 	margin: auto 0 0;
 	padding: 0;
+	flex-shrink: 0;
 }
 
 .comparisonMeta {
@@ -114,6 +151,7 @@
 	align-items: center;
 	gap: 8px;
 	flex-wrap: wrap;
+	min-height: 0;
 }
 
 .trend {
@@ -143,6 +181,9 @@
 	font-weight: 600;
 	color: #64748b;
 	line-height: 1.1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .trend--up {
@@ -172,7 +213,7 @@
 }
 
 .card--comparisonHero .value {
-	font-size: clamp(3.4rem, 6vw, 5.9rem);
+	font-size: clamp(3.4rem, 8cqw, 5.9rem);
 	margin-top: 12px;
 }
 
@@ -188,7 +229,7 @@
 }
 
 .card--comparisonCompact .value {
-	font-size: clamp(2.2rem, 3vw, 3.2rem);
+	font-size: clamp(2.2rem, 5cqw, 3.2rem);
 }
 
 .sparklineLayer {
@@ -263,6 +304,7 @@
 	flex-direction: column;
 	gap: 14px;
 	margin-top: auto;
+	min-height: 0;
 }
 
 .comparisonHeroLead {
@@ -313,6 +355,7 @@
 	justify-content: space-between;
 	gap: 10px;
 	margin-top: auto;
+	min-height: 0;
 }
 
 .comparisonCompactCopy {
@@ -337,6 +380,9 @@
 	font-weight: 600;
 	color: #64748b;
 	line-height: 1.1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .card--comparisonCompact .trend {
@@ -361,6 +407,10 @@
 		border-radius: 1.5rem;
 	}
 
+	.title {
+		-webkit-line-clamp: 1;
+	}
+
 	.subtitle {
 		display: none;
 	}
@@ -378,17 +428,21 @@
 	}
 }
 
-/* ─── Container query: very small (1 row, < 165px) ───────────────────────── */
-@container kpi (max-height: 164px) {
+/* ─── Container query: very small — badge only, no labels ────────────────── */
+@container kpi (max-height: 170px) {
 	.card {
-		padding: 14px;
-		gap: 8px;
+		padding: 12px;
+		gap: 6px;
 		border-radius: 1.25rem;
 	}
 
+	.title {
+		-webkit-line-clamp: 1;
+	}
+
 	.value {
-		margin: auto 0;
-		font-size: clamp(1.4rem, 2vw, 2.2rem);
+		margin: 0;
+		font-size: clamp(1.35rem, 3cqw, 2rem);
 	}
 
 	.comparisonMeta,
@@ -397,10 +451,41 @@
 	}
 
 	.comparisonCompactMeta {
-		justify-content: flex-end;
+		gap: 4px;
+		margin-top: 0;
 	}
 
-	.comparisonCompactCopy {
+	.yesterdayLabel,
+	.comparisonInlineLabel {
+		display: none;
+	}
+
+	.trend {
+		padding: 3px 7px;
+		font-size: 0.7rem;
+		gap: 4px;
+	}
+
+	.trendIcon svg {
+		width: 13px;
+		height: 13px;
+	}
+}
+
+/* ─── Container query: micro — title + value only ────────────────────────── */
+@container kpi (max-height: 120px) {
+	.card {
+		padding: 10px;
+		gap: 4px;
+	}
+
+	.value {
+		font-size: clamp(1.2rem, 2.5cqw, 1.7rem);
+	}
+
+	.comparisonMeta,
+	.comparisonHeroMeta,
+	.comparisonCompactMeta {
 		display: none;
 	}
 }

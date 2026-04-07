@@ -10,7 +10,6 @@ import DispositionPage from '~/modules/outcomes/DispositionPage';
 import CampaignTaxonomySetupTab from './Setup/CampaignTaxonomySetupTab';
 import CustomVariablesSetupTab from './Setup/CustomVariablesSetupTab';
 import { useTranslation } from 'react-i18next';
-import classes from './CampaignManagementPage.module.css';
 
 export default function CampaignManagementPage() {
 	const { t } = useTranslation('campaign-management');
@@ -20,13 +19,7 @@ export default function CampaignManagementPage() {
 			description={t('description')}
 			titleIcon={<IconSettings size={24} />}
 		>
-			<Tabs
-				defaultValue='setup'
-				keepMounted={false}
-				variant='outline'
-				radius='md'
-				classNames={{ tab: classes.tab }}
-			>
+			<Tabs defaultValue='setup' keepMounted={false}>
 				<Tabs.List>
 					<Tabs.Tab value='setup' leftSection={<IconAdjustments size={16} />}>
 						{t('tabs.setup')}

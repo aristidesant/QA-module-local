@@ -1,0 +1,92 @@
+.progressCard {
+	display: flex;
+	flex-direction: column;
+	gap: 0.375rem;
+	padding: 0.625rem 0.75rem;
+	background: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: 12px;
+	box-shadow: var(--mantine-shadow-sm);
+}
+
+.sectionLabel {
+	color: var(--mantine-color-gray-5);
+	letter-spacing: 0.07em;
+	line-height: 1;
+}
+
+.progressList {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.stepButton {
+	display: flex;
+	align-items: center;
+	gap: 0.4375rem;
+	width: 100%;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+	text-align: left;
+}
+
+.stepIcon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.125rem;
+	height: 1.125rem;
+	border-radius: 9999px;
+	background: var(--mantine-color-gray-1);
+	flex-shrink: 0;
+}
+
+.stepIcon[data-status='current'] {
+	background: var(--mantine-color-blue-6);
+}
+
+.stepIcon[data-status='complete'] {
+	background: var(--mantine-color-green-1);
+	color: var(--mantine-color-green-7);
+}
+
+.stepDot {
+	width: 0.4375rem;
+	height: 0.4375rem;
+	border-radius: 9999px;
+	background: var(--mantine-color-gray-3);
+}
+
+.stepDot[data-status='current'] {
+	background: var(--mantine-color-white);
+}
+
+.stepLabel {
+	font-size: 0.6875rem;
+	line-height: 1.2;
+	font-weight: 600;
+	color: var(--mantine-color-gray-4);
+}
+
+.stepLabel[data-status='current'] {
+	color: var(--mantine-color-blue-7);
+}
+
+.stepLabel[data-status='complete'] {
+	color: var(--mantine-color-gray-7);
+}
+
+.stepLabel[data-status='pending'] {
+	font-weight: 500;
+	color: var(--mantine-color-gray-3);
+}
+
+@media (max-width: 75rem) {
+	.progressCard {
+		padding: 0.5rem 0.625rem;
+	}
+}

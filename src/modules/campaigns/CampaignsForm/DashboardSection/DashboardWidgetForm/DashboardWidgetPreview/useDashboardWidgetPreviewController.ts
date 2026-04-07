@@ -1,4 +1,3 @@
-import { useDebouncedValue } from '@mantine/hooks';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { DashboardWidgetType } from '~/models/AnalyticsDashboard';
@@ -7,12 +6,15 @@ import {
 	useDashboardWidgetPreview,
 } from '~/queries/analyticsDashboardsQueries';
 import type {
+	MetricColumnsConfig,
+	WidgetMetricOption,
 	WidgetFormValues,
 	WidgetPreviewModel,
 } from '../../DashboardSection.types';
 import {
 	buildPreviewModelFromResponse,
 	buildPreviewRequestPayload,
+	hasInvalidRuntimeFilterRows,
 	isWidgetPreviewReady,
 	supportsGroupedWidget,
 } from '../DashboardWidgetForm.helpers';
@@ -22,6 +24,8 @@ type UseDashboardWidgetPreviewControllerParams = {
 	campaignId: number | null;
 	fallbackPreview: WidgetPreviewModel;
 	widgetType: DashboardWidgetType;
+	metricKeyOptions: WidgetMetricOption[];
+	parsedMetricColumns: MetricColumnsConfig;
 };
 
 type UseDashboardWidgetPreviewControllerResult = {
@@ -37,21 +41,45 @@ const useDashboardWidgetPreviewController = ({
 	campaignId,
 	fallbackPreview,
 	widgetType,
+	metricKeyOptions,
+	parsedMetricColumns,
 }: UseDashboardWidgetPreviewControllerParams): UseDashboardWidgetPreviewControllerResult => {
 	const { t } = useTranslation('campaign.form.dashboards');
 	const previewRequestPayload = useMemo(() => {
-		const payload = buildPreviewRequestPayload(values, campaignId);
+		const payload = buildPreviewRequestPayload(values, campaignId, {
+			metricKeyOptions,
+			conversationFields: parsedMetricColumns.conversation,
+			dispositionFields: parsedMetricColumns.disposition,
+		});
 		return payload ? normalizePreviewPayload(payload) : null;
-	}, [campaignId, values]);
-	const [debouncedPreviewRequestPayload] = useDebouncedValue(
-		previewRequestPayload,
-		400
-	);
+	}, [
+		campaignId,
+		metricKeyOptions,
+		parsedMetricColumns.conversation,
+		parsedMetricColumns.disposition,
+		values,
+	]);
 	const widgetPreviewQuery = useDashboardWidgetPreview(
-		debouncedPreviewRequestPayload,
-		Boolean(debouncedPreviewRequestPayload)
+		previewRequestPayload,
+		Boolean(previewRequestPayload)
 	);
-	const previewReady = useMemo(() => isWidgetPreviewReady(values), [values]);
+	const previewReady = useMemo(
+		() =>
+			isWidgetPreviewReady(values) &&
+			!hasInvalidRuntimeFilterRows(
+				values.runtimeFilters,
+				values,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
+		[
+			metricKeyOptions,
+			parsedMetricColumns.conversation,
+			parsedMetricColumns.disposition,
+			values,
+		]
+	);
 	const previewShapeMismatch = useMemo(() => {
 		const widget = widgetPreviewQuery.data?.widget;
 

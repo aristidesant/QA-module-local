@@ -4,12 +4,16 @@ import type {
 	DashboardWidgetPreviewResponse,
 	DashboardWidget,
 	DashboardWidgetType,
+	DashboardWidgetJoinConfig,
 	DashboardWidgetMetricConfig,
+	DashboardWidgetVisibilityScope,
+	MetricCompareWith,
 	MetricComparison,
 	MetricAggregationType,
 	MetricResultType,
 	MetricSourceType,
 	MetricValueField,
+	RuntimeFilterOperator,
 	TimeSeriesPoint,
 } from '~/models/AnalyticsDashboard';
 import type { DashboardWidgetSizePreset } from '~/modules/campaigns/dashboardLayout';
@@ -29,6 +33,7 @@ export type WidgetFormValues = {
 	fieldName: string | null;
 	metricKey: string | null;
 	valueField: MetricValueField | null;
+	compareWith: MetricCompareWith;
 	resultType: MetricResultType | null;
 	supportsGroupBy: boolean;
 	supportsTimeSeries: boolean;
@@ -37,10 +42,12 @@ export type WidgetFormValues = {
 	viewColor: string;
 	viewValueFormat: string | null;
 	viewLegend: boolean;
+	visibilityScope: DashboardWidgetVisibilityScope;
 	width: number;
 	height: number;
 	enabled: boolean;
 	defaultFilters: WidgetFilterFormRow[];
+	runtimeFilters: WidgetRuntimeFilterFormRow[];
 };
 
 export type WidgetFilterValueType = 'string' | 'number' | 'boolean' | 'null';
@@ -50,6 +57,15 @@ export type WidgetFilterFormRow = {
 	key: string | null;
 	value: string | null;
 	valueType: WidgetFilterValueType | null;
+};
+
+export type WidgetRuntimeFilterValue = string | string[] | null;
+
+export type WidgetRuntimeFilterFormRow = {
+	id: string;
+	field: string | null;
+	operator: RuntimeFilterOperator | null;
+	value: WidgetRuntimeFilterValue;
 };
 
 export type WidgetTypeOption = {
@@ -68,6 +84,8 @@ export type MetricColumnConfigEntry = {
 	label: string;
 	value: string;
 	type: string;
+	join?: DashboardWidgetJoinConfig | null;
+	options?: string[] | null;
 };
 
 export type MetricColumnsConfig = {
@@ -81,6 +99,7 @@ export type WidgetMetricDraft = Pick<
 	| 'aggregationType'
 	| 'fieldName'
 	| 'metricKey'
+	| 'compareWith'
 	| 'supportsGroupBy'
 	| 'supportsTimeSeries'
 >;
@@ -117,7 +136,7 @@ export type WidgetPreviewModel =
 			description?: string;
 			sizePreset: DashboardWidgetSizePreset;
 			accentColor: string;
-			widgetType: Exclude<DashboardWidgetType, 'KPI' | 'LINE_CHART' | 'FUNNEL'>;
+			widgetType: Exclude<DashboardWidgetType, 'KPI' | 'LINE_CHART'>;
 			groupByLabel: string;
 			rows: WidgetPreviewRow[];
 			showLegend: boolean;
@@ -130,6 +149,7 @@ export type WidgetPreviewModel =
 			sizePreset: DashboardWidgetSizePreset;
 			accentColor: string;
 			points: TimeSeriesPoint[];
+			comparisonLabel?: string;
 	  };
 
 export type WidgetCompatibilityState = {
@@ -146,6 +166,7 @@ export type WidgetGuidedState = {
 	metricLabel: string;
 	sourceLabel: string;
 	aggregationLabel: string;
+	visibilityScopeLabel: string;
 	compatibility: WidgetCompatibilityState;
 	preview: WidgetPreviewModel;
 	filterKeySuggestions: string[];

@@ -1,4 +1,4 @@
-import { Modal, Stack, Alert } from '@mantine/core';
+import { Modal, Stack, Alert, Group, Button } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useState, useCallback, useEffect } from 'react';
@@ -107,11 +107,11 @@ export default function ClientSwitcherModal({
 				size='lg'
 				padding='lg'
 				overlayProps={{ backgroundOpacity: 0.55, blur: 3 }}
-				withCloseButton={!isMutating}
+				withCloseButton={false}
 				closeOnClickOutside={!isMutating}
 				closeOnEscape={!isMutating}
 			>
-				<Stack gap='xs'>
+				<Stack gap='md'>
 					<ClientSelectionPanel
 						title={t('userMenu.clientSwitcher.title')}
 						description={t('userMenu.clientSwitcher.description')}
@@ -147,6 +147,16 @@ export default function ClientSwitcherModal({
 							{formError}
 						</Alert>
 					)}
+
+					<Group justify='flex-end'>
+						<Button
+							variant='default'
+							onClick={handleClose}
+							disabled={isMutating}
+						>
+							{t('actions.cancel')}
+						</Button>
+					</Group>
 				</Stack>
 			</Modal>
 

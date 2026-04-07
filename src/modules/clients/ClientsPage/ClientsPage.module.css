@@ -6,10 +6,9 @@
 }
 
 .header {
-	margin-bottom: var(--mantine-spacing-md);
+	width: 100%;
 }
 
 .searchInput {
-	flex: 1;
-	max-width: 300px;
+	width: min(100%, 320px);
 }

@@ -6,35 +6,24 @@ import {
 	useDashboardSectionModals,
 	useDashboardSectionSelection,
 } from '../DashboardSection.context';
-import DashboardWidgetForm from '../DashboardWidgetForm';
 
 const DashboardModals = () => {
 	const { t } = useTranslation(['campaign.form.dashboards', 'common']);
 	const {
 		campaignId,
-		attributeMetricKeys,
-		selectedDashboardId,
+		selectedDashboardId: _selectedDashboardId,
 		setSelectedDashboardId,
 	} = useDashboardSectionSelection();
-	const {
-		dashboardModalOpened,
-		widgetModalOpened,
-		editingDashboard,
-		editingWidget,
-		closeDashboardModal,
-		closeWidgetModal,
-	} = useDashboardSectionModals();
+	const { dashboardModalOpened, editingDashboard, closeDashboardModal } =
+		useDashboardSectionModals();
 
 	const dashboardModalTitle = editingDashboard
 		? t('dashboardBuilder.drawer.editDashboardTitle')
 		: t('dashboardBuilder.drawer.createDashboardTitle');
 
-	const widgetModalTitle = editingWidget
-		? t('dashboardBuilder.drawer.editWidgetTitle')
-		: t('dashboardBuilder.drawer.createWidgetTitle');
-
 	return (
 		<>
+			{/* Create / edit dashboard definition */}
 			<Modal
 				opened={dashboardModalOpened}
 				onClose={closeDashboardModal}
@@ -61,33 +50,6 @@ const DashboardModals = () => {
 						}
 					}}
 				/>
-			</Modal>
-
-			<Modal
-				opened={widgetModalOpened}
-				onClose={closeWidgetModal}
-				centered
-				size='74rem'
-				radius='md'
-				padding='xl'
-				overlayProps={{ backgroundOpacity: 0.35 }}
-				title={
-					<DashboardModalHeader
-						title={widgetModalTitle}
-						description={t('dashboardBuilder.drawer.widgetDescription')}
-					/>
-				}
-			>
-				{selectedDashboardId && (
-					<DashboardWidgetForm
-						campaignId={campaignId}
-						attributeMetricKeys={attributeMetricKeys}
-						dashboardId={selectedDashboardId}
-						widget={editingWidget}
-						onCancel={closeWidgetModal}
-						onSuccess={closeWidgetModal}
-					/>
-				)}
 			</Modal>
 		</>
 	);

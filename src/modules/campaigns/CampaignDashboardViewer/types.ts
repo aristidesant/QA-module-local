@@ -2,6 +2,7 @@ import type {
 	DashboardWidgetComparisonData,
 	DashboardDefinition,
 	DashboardWidget,
+	MetricCompareWith,
 } from '~/models/AnalyticsDashboard';
 
 export type ViewerWidgetLayout = {
@@ -17,6 +18,9 @@ export type DashboardOption = {
 	label: string;
 };
 
+export type WidgetComparisonData = DashboardWidgetComparisonData & {
+	compareWith?: MetricCompareWith | null;
+};
+
 export type DashboardWidgetType = DashboardWidget['widgetType'];
 export type DashboardList = DashboardDefinition[];
-export type WidgetComparisonData = DashboardWidgetComparisonData;

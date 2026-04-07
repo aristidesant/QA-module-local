@@ -28,6 +28,7 @@ const DashboardWidgetPreviewKpi = ({
 					comparisonLabel={preview.comparisonLabel}
 					comparisonDetail={preview.comparisonDetail}
 					variant={comparisonVariant}
+					cardSurface='builderPreview'
 				/>
 			</div>
 			{statusMessage ? (

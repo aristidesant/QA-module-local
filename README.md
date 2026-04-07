@@ -35,6 +35,12 @@ It provides campaign operations, AI-agent workflow configuration, conversation m
 - API communication is centralized in `src/api/*` using Axios wrappers and shared config.
 - Async server state is managed through React Query hooks in `src/queries/*`.
 
+## Frontend Generation Guide
+
+- Use [`.agents/skills/nai-agent-service-front-operational-frontend/SKILL.md`](.agents/skills/nai-agent-service-front-operational-frontend/SKILL.md) when generating or refactoring UI in this repo.
+- The default UI language is operational, not marketing: prefer `ContentContainer`, `SectionCard`, `AppDrawer`, `BaseTable`, and route-level guards.
+- Keep screens translated, compact, and explicit about loading, empty, and error states.
+
 ## Modules Overview
 
 ### Overview and dashboards
@@ -100,9 +106,12 @@ Create a `.env` file at project root:
 
 ```bash
 VITE_APP_API_URL=http://localhost:3000
+VITE_APP_SIP_MONITOR_ORIGIN=https://sip-monitor.example.com
 ```
 
 `VITE_APP_API_URL` is used by the frontend API config (`src/api/config.ts`).
+`VITE_APP_SIP_MONITOR_ORIGIN` must be the origin that is allowed to render the SIP monitor iframe.
+The production Docker image uses a static CSP media allowlist for QA and prod transcript audio.
 
 ### Install dependencies
 
@@ -124,11 +133,12 @@ pnpm coverage     # Coverage run (VALID_COVERAGE_ONLY mode)
 
 ## Docker
 
-The Docker image injects API URL at build time through `VITE_APP_API_URL`.
+The Docker image injects the API URL and the allowed SIP monitor origin at build time.
 
 ```bash
 docker build \
   --build-arg VITE_APP_API_URL=https://your-api.example.com \
+  --build-arg VITE_APP_SIP_MONITOR_ORIGIN=https://sip-monitor.example.com \
   -t nai-agent-service-front .
 
 docker run --rm -p 8080:80 nai-agent-service-front

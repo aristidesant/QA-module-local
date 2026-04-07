@@ -22,7 +22,7 @@
 			"description": "Mostraremos las conversaciones tan pronto como estén disponibles."
 		},
 		"columns": {
-			"conversationIdentifier": "ID",
+			"identifier": "ID",
 			"contactName": "Nombre del contacto",
 			"phoneNumber": "Número de teléfono",
 			"outcome": "Resultado",
@@ -44,8 +44,8 @@
 	},
 	"filters": {
 		"title": "Filtros",
-		"conversationIdentifier": "ID de conversación",
-		"conversationIdentifierPlaceholder": "Buscar por ID de conversación...",
+		"identifier": "ID de conversación",
+		"identifierPlaceholder": "Buscar por ID de conversación...",
 		"contactName": "Nombre del contacto",
 		"contactNamePlaceholder": "Filtrar por nombre de contacto...",
 		"advanced": "Avanzado",
@@ -214,6 +214,7 @@
 			"agentId": "ID del agente",
 			"branchId": "ID de la rama",
 			"workflowNode": "Nodo de flujo de trabajo",
+			"mission": "Misión",
 			"executionSummary": "Resumen de ejecución",
 			"toolResults": "Resultados de herramientas",
 			"toolResultsCount": "{{count}} resultados",

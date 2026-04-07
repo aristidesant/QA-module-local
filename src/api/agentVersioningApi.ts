@@ -7,6 +7,8 @@ import type {
 	AgentVersionQueryParams,
 	AgentVersionSnapshot,
 	EnableAgentVersioningResponse,
+	GetBranchDetailsParams,
+	ListVersionCommitsParams,
 } from '~/models/AgentVersioningModel';
 import { normalizeAgentVersionSnapshot } from '~/utils/agentVersioning';
 import { DEFAULT_API_URL } from './config';
@@ -40,9 +42,14 @@ const agentVersioningApi = () => {
 			return response.data;
 		},
 
-		getBranchDetails: async (agentId: string, branchId: string) => {
+		getBranchDetails: async (
+			agentId: string,
+			branchId: string,
+			params?: GetBranchDetailsParams
+		) => {
 			const response = await axios.get<AgentBranchDetails>(
-				`${DEFAULT_API_URL}/agents/${agentId}/branches/${branchId}`
+				`${DEFAULT_API_URL}/agents/${agentId}/branches/${branchId}`,
+				{ params }
 			);
 
 			return response.data;
@@ -59,10 +66,18 @@ const agentVersioningApi = () => {
 			return response.data;
 		},
 
-		listVersionCommits: async (agentId: string, branchId?: string) => {
+		listVersionCommits: async (
+			agentId: string,
+			params?: ListVersionCommitsParams
+		) => {
 			const response = await axios.get<AgentVersionCommitListResponse>(
 				`${DEFAULT_API_URL}/agents/${agentId}/version-commits`,
-				{ params: branchId ? { branchId } : undefined }
+				{
+					params: {
+						...(params?.branchId ? { branchId: params.branchId } : {}),
+						filter: params?.filter ?? 'ACTIVE',
+					},
+				}
 			);
 
 			return response.data;
@@ -71,17 +86,34 @@ const agentVersioningApi = () => {
 		updateSnapshotOnBranch: async (
 			agentId: string,
 			branchId: string,
-			snapshot: AgentVersionSnapshot
+			snapshot: AgentVersionSnapshot,
+			versionDescription?: string
 		) => {
 			const response = await axios.patch<AgentVersionSnapshot>(
 				`${DEFAULT_API_URL}/agents/${agentId}`,
-				normalizeAgentVersionSnapshot(snapshot),
+				{
+					...normalizeAgentVersionSnapshot(snapshot),
+					...(versionDescription !== undefined ? { versionDescription } : {}),
+				},
 				{
 					params: { branchId },
 				}
 			);
 
 			return response.data;
+		},
+
+		deleteVersionCommits: async (agentId: string, ids: number[]) => {
+			await axios.delete(
+				`${DEFAULT_API_URL}/agents/${agentId}/version-commits`,
+				{ data: { ids } }
+			);
+		},
+
+		syncVersionCommits: async (agentId: string) => {
+			await axios.post(
+				`${DEFAULT_API_URL}/agents/${agentId}/version-commits/sync`
+			);
 		},
 	};
 };

@@ -5,7 +5,6 @@ import {
 	Group,
 	Loader,
 	ScrollArea,
-	SimpleGrid,
 	Stack,
 	Text,
 	TextInput,
@@ -206,9 +205,9 @@ export default function ClientSelectionPanel({
 				>
 					<Box className={classes.gridShell}>
 						{filteredClients.length > 0 ? (
-							<SimpleGrid cols={{ base: 1, sm: 2 }} spacing='sm' role='listbox'>
+							<div className={classes.cardsGrid} role='listbox'>
 								{filteredClients.map(getClientCard)}
-							</SimpleGrid>
+							</div>
 						) : (
 							<EmptyState
 								icon={<IconBuilding size={30} />}

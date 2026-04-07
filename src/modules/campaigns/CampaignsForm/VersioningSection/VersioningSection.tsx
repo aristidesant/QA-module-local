@@ -1,8 +1,16 @@
-﻿import { useEffect, useMemo, useState } from 'react';
+﻿import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, Button, Group, Loader, Stack, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import { IconAlertCircle, IconHistory, IconRotate2 } from '@tabler/icons-react';
+import {
+	IconAlertCircle,
+	IconHistory,
+	IconNotes,
+	IconRefresh,
+	IconRotate2,
+	IconTrash,
+	IconUser,
+} from '@tabler/icons-react';
 import { isAxiosError } from 'axios';
 import { useTranslation } from 'react-i18next';
 import BaseTable from '~/components/BaseTable/BaseTable';
@@ -13,6 +21,7 @@ import { useCampaignsStore } from '~/stores/campaignsStore';
 import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
 import { useSyncCampaignByAgent } from '~/queries/campaignsQueries';
 import {
+	useDeleteVersionCommits,
 	useEnableAgentVersioning,
 	useGetAgentBranchDetails,
 	useGetAgentBranches,
@@ -20,7 +29,9 @@ import {
 	useGetAgentVersionSnapshot,
 	useGetAgentVersioningStatus,
 	useRevertAgentVersion,
+	useSyncAgentVersionCommits,
 } from '~/queries/agentVersioningQueries';
+import agentVersioningApi from '~/api/agentVersioningApi';
 import type { CampaignAgent } from '~/models/CampaignAgentModel';
 import type { Campaign } from '~/models/CampaignsModel';
 import type {
@@ -30,9 +41,9 @@ import type {
 import useVersionHistoryColumns from './useVersionHistoryColumns';
 import VersionDiffModal from './VersionDiffModal';
 import {
+	findCommitForVersion,
 	formatCommittedAgo,
 	formatCommittedAt,
-	getHistoricalVersions,
 } from './VersioningSection.helpers';
 import classes from './VersioningSection.module.css';
 
@@ -48,6 +59,12 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 	const [selectedCampaignAgentId, setSelectedCampaignAgentId] = useState<
 		string | null
 	>(null);
+	const [selectedVersionIds, setSelectedVersionIds] = useState<Set<string>>(
+		new Set()
+	);
+	const [deletedVersionIds, setDeletedVersionIds] = useState<Set<string>>(
+		new Set()
+	);
 	const versionPagination = usePagination({ initialItemsPerPage: 10 });
 
 	const campaignId = campaign?.id ?? 0;
@@ -90,15 +107,39 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 			),
 		[branches]
 	);
-	const { data: branchDetails, isLoading: isLoadingBranchDetails } =
-		useGetAgentBranchDetails(agentId, mainBranch?.id);
+	const { limit: versionPageLimit, offset: versionPageOffset } =
+		versionPagination.getApiParams();
+	const historyApiOffset = 1 + versionPageOffset;
+
+	// Lightweight call: fetches the two most recent non-deleted versions for the
+	// summary card and the "Revert Latest" button — cached independently.
+	const { data: summaryBranchDetails, isLoading: isLoadingSummaryBranch } =
+		useGetAgentBranchDetails(agentId, mainBranch?.id, {
+			limit: 2,
+			offset: 0,
+			filter: 'ACTIVE',
+		});
+
+	// Paginated call: drives the history table. offset=1 skips the current
+	// version shown in the summary card. filter=ACTIVE excludes soft-deleted
+	// versions server-side so pagination totals are accurate.
+	const {
+		data: historyBranchDetails,
+		isLoading: isLoadingHistoryBranch,
+		isFetching: isFetchingHistoryBranch,
+	} = useGetAgentBranchDetails(agentId, mainBranch?.id, {
+		limit: versionPageLimit,
+		offset: historyApiOffset,
+		filter: 'ACTIVE',
+	});
 	const { data: versionCommitsData } = useGetAgentVersionCommits(
 		agentId,
-		mainBranch?.id,
+		{ branchId: mainBranch?.id, filter: 'ACTIVE' },
 		Boolean(agentId && mainBranch?.id)
 	);
 	const versionCommits: AgentVersionCommit[] =
 		versionCommitsData?.results ?? [];
+
 	const { data: currentSnapshot, isLoading: isLoadingCurrentSnapshot } =
 		useGetAgentVersionSnapshot(
 			agentId,
@@ -116,30 +157,55 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 	);
 	const { mutateAsync: revertVersion, isPending: isReverting } =
 		useRevertAgentVersion();
+	const { mutateAsync: deleteVersionCommits, isPending: isDeleting } =
+		useDeleteVersionCommits();
 	const { mutateAsync: syncCampaignByAgent } = useSyncCampaignByAgent();
+	const { mutateAsync: syncVersionCommits, isPending: isSyncing } =
+		useSyncAgentVersionCommits();
 
-	const historicalVersions = useMemo(
-		() => getHistoricalVersions(branchDetails),
-		[branchDetails]
-	);
-	const latestCurrentVersion = branchDetails?.mostRecentVersions?.[0];
-	const latestRevertTarget = historicalVersions[0];
+	const historicalVersions: AgentVersionSummary[] =
+		historyBranchDetails?.mostRecentVersions.data ?? [];
+
+	// Optimistic filter: hides rows instantly after delete while the branch
+	// query refetches in the background. Server already excludes deleted versions
+	// via filter=ACTIVE, so this only covers the brief refetch window.
+	const filteredHistoricalVersions = useMemo(() => {
+		const seen = new Set<string>();
+		return historicalVersions.filter((v) => {
+			if (deletedVersionIds.has(v.id)) return false;
+			if (seen.has(v.id)) return false;
+			seen.add(v.id);
+			return true;
+		});
+	}, [historicalVersions, deletedVersionIds]);
+
+	const latestCurrentVersion = summaryBranchDetails?.mostRecentVersions.data[0];
+	const latestRevertTarget = summaryBranchDetails?.mostRecentVersions.data[1];
 	const isVersioningEnabled = Boolean(agentRecord?.versioningEnabled);
+	const latestVersionAuthor = useMemo(() => {
+		if (!latestCurrentVersion) return null;
+		const { appUser, accessInfo } = latestCurrentVersion;
+		const name =
+			appUser?.userName ||
+			appUser?.userEmail ||
+			accessInfo?.creatorName ||
+			t('history.unknownAuthor');
+		const email = appUser?.userEmail || accessInfo?.creatorEmail;
+		return { name, email };
+	}, [latestCurrentVersion, t]);
+
 	const isBusy =
 		isLoadingCampaignAgents ||
 		(!requiresAgentSelection && isLoadingAgentRecord) ||
 		isLoadingBranches ||
-		(isVersioningEnabled && isLoadingBranchDetails);
+		(isVersioningEnabled && isLoadingSummaryBranch);
 
-	const { limit: versionPageLimit, offset: versionPageOffset } =
-		versionPagination.getApiParams();
-	const paginatedVersions = historicalVersions.slice(
-		versionPageOffset,
-		versionPageOffset + versionPageLimit
+	const totalHistoricalItems = Math.max(
+		0,
+		(summaryBranchDetails?.mostRecentVersions.total ?? 0) - 1
 	);
-	const totalVersionPages = versionPagination.calculateTotalPages(
-		historicalVersions.length
-	);
+	const totalVersionPages =
+		versionPagination.calculateTotalPages(totalHistoricalItems);
 
 	const handleVersionPageSizeChange = (value: string | null) => {
 		if (value) versionPagination.setItemsPerPage(Number(value));
@@ -163,8 +229,16 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 
 	useEffect(() => {
 		versionPagination.setCurrentPage(1);
+		setSelectedVersionIds(new Set());
+		setDeletedVersionIds(new Set());
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [agentId, selectedCampaignAgentId]);
+
+	// Clear selection when page changes
+	useEffect(() => {
+		setSelectedVersionIds(new Set());
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [versionPagination.currentPage]);
 
 	const getApiErrorMessage = (error: unknown, fallback: string) => {
 		if (isAxiosError(error)) {
@@ -176,6 +250,41 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 
 		return fallback;
 	};
+
+	const handleToggleSelect = useCallback((versionId: string) => {
+		setSelectedVersionIds((prev) => {
+			const next = new Set(prev);
+			if (next.has(versionId)) next.delete(versionId);
+			else next.add(versionId);
+			return next;
+		});
+	}, []);
+
+	const handleSelectAll = useCallback(() => {
+		setSelectedVersionIds(new Set(filteredHistoricalVersions.map((v) => v.id)));
+	}, [filteredHistoricalVersions]);
+
+	const handleDeselectAll = useCallback(() => {
+		setSelectedVersionIds(new Set());
+	}, []);
+
+	const handleSyncVersions = useCallback(async () => {
+		if (!agentId) return;
+		try {
+			await syncVersionCommits(agentId);
+			notifications.show({
+				title: t('sync.successTitle'),
+				message: t('sync.successMessage'),
+				color: 'green',
+			});
+		} catch {
+			notifications.show({
+				title: t('sync.errorTitle'),
+				message: t('sync.errorMessage'),
+				color: 'red',
+			});
+		}
+	}, [agentId, syncVersionCommits, t]);
 
 	const handleEnableVersioning = () => {
 		if (!agentId) return;
@@ -229,71 +338,302 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 
 	const handleRevert = async (version: AgentVersionSummary) => {
 		if (!agentId || !mainBranch?.id) return;
-
-		const modalId = `revert-agent-version-${version.id}`;
-		modals.open({
-			modalId,
-			title: t('revert.confirmTitle'),
-			children: (
-				<Stack gap='sm'>
-					<Text size='sm'>
-						{t('revert.confirmMessage', {
-							version: version.seqNoInBranch,
-						})}
-					</Text>
-					<Group justify='flex-end'>
-						<Button
-							variant='default'
-							onClick={() => modals.close(modalId)}
-							disabled={isReverting}
-						>
-							{t('actions.cancel')}
-						</Button>
-						<Button
-							color='orange'
-							loading={isReverting}
-							onClick={async () => {
-								try {
-									await revertVersion({
-										agentId,
-										branchId: mainBranch.id,
-										versionId: version.id,
-									});
-									await syncCampaignByAgent(agentId);
-									modals.close(modalId);
-									setSelectedVersion(null);
-									setSelectedTab('agents');
-									notifications.show({
-										title: t('revert.successTitle'),
-										message: t('revert.successMessage'),
-										color: 'green',
-									});
-								} catch (error) {
-									notifications.show({
-										title: t('revert.errorTitle'),
-										message: getApiErrorMessage(
-											error,
-											t('revert.errorMessage')
-										),
-										color: 'red',
-									});
-								}
-							}}
-						>
-							{t('actions.revertVersion')}
-						</Button>
-					</Group>
-				</Stack>
-			),
-		});
+		try {
+			await revertVersion({
+				agentId,
+				branchId: mainBranch.id,
+				versionId: version.id,
+			});
+			await syncCampaignByAgent(agentId);
+			setSelectedVersion(null);
+			setSelectedTab('agents');
+			notifications.show({
+				title: t('revert.successTitle'),
+				message: t('revert.successMessage'),
+				color: 'green',
+			});
+		} catch (error) {
+			notifications.show({
+				title: t('revert.errorTitle'),
+				message: getApiErrorMessage(error, t('revert.errorMessage')),
+				color: 'red',
+			});
+		}
 	};
 
+	const handleDeleteVersions = useCallback(
+		(versions: AgentVersionSummary[]) => {
+			if (!agentId || versions.length === 0) return;
+
+			const commitIds = versions
+				.map((v) => findCommitForVersion(v, versionCommits)?.id)
+				.filter((id): id is number => id !== undefined);
+
+			if (commitIds.length === 0) {
+				notifications.show({
+					title: t('delete.errorTitle'),
+					message: t('delete.noCommitError'),
+					color: 'red',
+				});
+				return;
+			}
+
+			const count = versions.length;
+			const modalId = 'delete-agent-versions';
+			modals.open({
+				modalId,
+				title: t('delete.confirmTitle', { count }),
+				children: (
+					<Stack gap='sm'>
+						<Text size='sm'>{t('delete.confirmMessage', { count })}</Text>
+						<Text size='xs' c='dimmed'>
+							{t('delete.revertHint')}
+						</Text>
+						<Group justify='flex-end'>
+							<Button
+								variant='default'
+								onClick={() => modals.close(modalId)}
+								disabled={isDeleting}
+							>
+								{t('actions.cancel')}
+							</Button>
+							<Button
+								color='red'
+								loading={isDeleting}
+								onClick={async () => {
+									try {
+										await deleteVersionCommits({ agentId, ids: commitIds });
+										modals.close(modalId);
+										setDeletedVersionIds((prev) => {
+											const next = new Set(prev);
+											versions.forEach((v) => next.add(v.id));
+											return next;
+										});
+										setSelectedVersionIds((prev) => {
+											const next = new Set(prev);
+											versions.forEach((v) => next.delete(v.id));
+											return next;
+										});
+										notifications.show({
+											title: t('delete.successTitle', { count }),
+											message: t('delete.successMessage', { count }),
+											color: 'green',
+										});
+									} catch (error) {
+										notifications.show({
+											title: t('delete.errorTitle'),
+											message: getApiErrorMessage(
+												error,
+												t('delete.errorMessage')
+											),
+											color: 'red',
+										});
+									}
+								}}
+							>
+								{t('actions.delete')}
+							</Button>
+						</Group>
+					</Stack>
+				),
+			});
+		},
+		[agentId, deleteVersionCommits, isDeleting, t, versionCommits]
+	);
+
+	const handleCompare = useCallback(
+		(version: AgentVersionSummary) => setSelectedVersion(version),
+		[]
+	);
+
+	const handleDeleteSingleVersion = useCallback(
+		(version: AgentVersionSummary) => handleDeleteVersions([version]),
+		[handleDeleteVersions]
+	);
+
+	const handleRevertAndDeleteSubsequent = useCallback(
+		async (targetVersion: AgentVersionSummary) => {
+			if (!agentId || !mainBranch?.id) return;
+			try {
+				const api = agentVersioningApi();
+				const data = await api.getBranchDetails(agentId, mainBranch.id, {
+					limit: 1000,
+					offset: 0,
+					filter: 'ACTIVE',
+				});
+				const allVersions = data.mostRecentVersions.data;
+				const versionsToDelete = allVersions.filter(
+					(v) => v.seqNoInBranch > targetVersion.seqNoInBranch
+				);
+				if (versionsToDelete.length === 0) {
+					notifications.show({
+						title: t('revertAndDelete.noSubsequentTitle'),
+						message: t('revertAndDelete.noSubsequentMessage', {
+							version: targetVersion.seqNoInBranch,
+						}),
+						color: 'blue',
+					});
+					return;
+				}
+				const commitIds = versionsToDelete
+					.map((v) => findCommitForVersion(v, versionCommits)?.id)
+					.filter((id): id is number => id !== undefined);
+				if (commitIds.length > 0) {
+					await deleteVersionCommits({ agentId, ids: commitIds });
+				}
+				await revertVersion({
+					agentId,
+					branchId: mainBranch.id,
+					versionId: targetVersion.id,
+				});
+				await syncCampaignByAgent(agentId);
+				setDeletedVersionIds((prev) => {
+					const next = new Set(prev);
+					versionsToDelete.forEach((v) => next.add(v.id));
+					return next;
+				});
+				setSelectedVersionIds((prev) => {
+					const next = new Set(prev);
+					versionsToDelete.forEach((v) => next.delete(v.id));
+					return next;
+				});
+				setSelectedVersion(null);
+				setSelectedTab('agents');
+				notifications.show({
+					title: t('revertAndDelete.successTitle', {
+						version: targetVersion.seqNoInBranch,
+					}),
+					message: t('revertAndDelete.successMessage', {
+						version: targetVersion.seqNoInBranch,
+						count: versionsToDelete.length,
+					}),
+					color: 'green',
+				});
+			} catch (error) {
+				notifications.show({
+					title: t('revertAndDelete.errorTitle'),
+					message: getApiErrorMessage(error, t('revertAndDelete.errorMessage')),
+					color: 'red',
+				});
+			}
+		},
+		[
+			agentId,
+			mainBranch,
+			versionCommits,
+			deleteVersionCommits,
+			revertVersion,
+			syncCampaignByAgent,
+			t,
+			setSelectedTab,
+		]
+	);
+
+	const handleRevertAndDeletePrevious = useCallback(
+		async (targetVersion: AgentVersionSummary) => {
+			if (!agentId || !mainBranch?.id) return;
+			try {
+				const api = agentVersioningApi();
+				const data = await api.getBranchDetails(agentId, mainBranch.id, {
+					limit: 1000,
+					offset: 0,
+					filter: 'ACTIVE',
+				});
+				const allVersions = data.mostRecentVersions.data;
+				const versionsToDelete = allVersions.filter(
+					(v) => v.seqNoInBranch < targetVersion.seqNoInBranch
+				);
+				if (versionsToDelete.length === 0) {
+					notifications.show({
+						title: t('revertAndDeletePrevious.noVersionsTitle'),
+						message: t('revertAndDeletePrevious.noVersionsMessage', {
+							version: targetVersion.seqNoInBranch,
+						}),
+						color: 'blue',
+					});
+					return;
+				}
+				const commitIds = versionsToDelete
+					.map((v) => findCommitForVersion(v, versionCommits)?.id)
+					.filter((id): id is number => id !== undefined);
+				if (commitIds.length > 0) {
+					await deleteVersionCommits({ agentId, ids: commitIds });
+				}
+				await revertVersion({
+					agentId,
+					branchId: mainBranch.id,
+					versionId: targetVersion.id,
+				});
+				await syncCampaignByAgent(agentId);
+				setDeletedVersionIds((prev) => {
+					const next = new Set(prev);
+					versionsToDelete.forEach((v) => next.add(v.id));
+					return next;
+				});
+				setSelectedVersionIds((prev) => {
+					const next = new Set(prev);
+					versionsToDelete.forEach((v) => next.delete(v.id));
+					return next;
+				});
+				setSelectedVersion(null);
+				setSelectedTab('agents');
+				notifications.show({
+					title: t('revertAndDeletePrevious.successTitle', {
+						version: targetVersion.seqNoInBranch,
+					}),
+					message: t('revertAndDeletePrevious.successMessage', {
+						version: targetVersion.seqNoInBranch,
+						count: versionsToDelete.length,
+					}),
+					color: 'green',
+				});
+			} catch (error) {
+				notifications.show({
+					title: t('revertAndDeletePrevious.errorTitle'),
+					message: getApiErrorMessage(
+						error,
+						t('revertAndDeletePrevious.errorMessage')
+					),
+					color: 'red',
+				});
+			}
+		},
+		[
+			agentId,
+			mainBranch,
+			versionCommits,
+			deleteVersionCommits,
+			revertVersion,
+			syncCampaignByAgent,
+			t,
+			setSelectedTab,
+		]
+	);
+
+	const allVersionsSelected =
+		filteredHistoricalVersions.length > 0 &&
+		filteredHistoricalVersions.every((v) => selectedVersionIds.has(v.id));
+
+	const someVersionsSelected =
+		!allVersionsSelected &&
+		filteredHistoricalVersions.some((v) => selectedVersionIds.has(v.id));
+
 	const columns = useVersionHistoryColumns({
-		onCompare: (version) => setSelectedVersion(version),
+		onCompare: handleCompare,
 		onRevert: handleRevert,
+		onDelete: handleDeleteSingleVersion,
+		onRevertAndDeleteSubsequent: handleRevertAndDeleteSubsequent,
+		onRevertAndDeletePrevious: handleRevertAndDeletePrevious,
 		isReverting,
+		isDeleting,
 		activeVersionId: selectedVersion?.id,
 		versionCommits,
+		selectedVersionIds,
+		onToggleSelect: handleToggleSelect,
+		onSelectAll: handleSelectAll,
+		onDeselectAll: handleDeselectAll,
+		allSelected: allVersionsSelected,
+		someSelected: someVersionsSelected,
 	});
 
 	if (!campaign?.id) {
@@ -412,7 +752,41 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 										{formatCommittedAt(mainBranch.lastCommittedAt)}
 									</Text>
 								</div>
+								<div className={classes.summaryCard}>
+									<Group gap='xs' mb={4}>
+										<IconUser size={16} />
+										<Text size='xs' c='dimmed'>
+											{t('summary.author')}
+										</Text>
+									</Group>
+									<Text size='sm' fw={600}>
+										{latestVersionAuthor?.name ?? '—'}
+									</Text>
+									{latestVersionAuthor?.email ? (
+										<Text size='xs' c='dimmed'>
+											{latestVersionAuthor.email}
+										</Text>
+									) : null}
+								</div>
 							</div>
+
+							{(() => {
+								const latestCommitDescription = latestCurrentVersion
+									? findCommitForVersion(latestCurrentVersion, versionCommits)
+											?.versionDescription
+									: undefined;
+								return latestCommitDescription ? (
+									<div className={classes.summaryCard}>
+										<Group gap='xs' mb={4}>
+											<IconNotes size={16} />
+											<Text size='xs' c='dimmed'>
+												{t('summary.description')}
+											</Text>
+										</Group>
+										<Text size='sm'>{latestCommitDescription}</Text>
+									</div>
+								) : null;
+							})()}
 
 							<div className={classes.historyHeader}>
 								<Stack gap={2}>
@@ -423,37 +797,70 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 										{t('history.description')}
 									</Text>
 								</Stack>
-								<Button
-									size='sm'
-									variant='light'
-									color='orange'
-									leftSection={<IconRotate2 size={16} />}
-									disabled={!latestRevertTarget}
-									onClick={() =>
-										latestRevertTarget && handleRevert(latestRevertTarget)
-									}
-								>
-									{t('actions.revertLatest')}
-								</Button>
+								<Group gap='xs' wrap='nowrap'>
+									{selectedVersionIds.size > 0 ? (
+										<Button
+											size='sm'
+											variant='light'
+											color='red'
+											leftSection={<IconTrash size={16} />}
+											loading={isDeleting}
+											onClick={() => {
+												const selected = filteredHistoricalVersions.filter(
+													(v) => selectedVersionIds.has(v.id)
+												);
+												handleDeleteVersions(selected);
+											}}
+										>
+											{t('actions.deleteSelected', {
+												count: selectedVersionIds.size,
+											})}
+										</Button>
+									) : null}
+									<Button
+										size='sm'
+										variant='light'
+										color='orange'
+										leftSection={<IconRotate2 size={16} />}
+										disabled={!latestRevertTarget}
+										onClick={() =>
+											latestRevertTarget && handleRevert(latestRevertTarget)
+										}
+									>
+										{t('actions.revertLatest')}
+									</Button>
+									<Button
+										size='sm'
+										variant='light'
+										leftSection={<IconRefresh size={16} />}
+										loading={isSyncing}
+										onClick={handleSyncVersions}
+									>
+										{t('sync.action')}
+									</Button>
+								</Group>
 							</div>
 
-							{historicalVersions.length === 0 ? (
+							{filteredHistoricalVersions.length === 0 &&
+							!isLoadingHistoryBranch ? (
 								<div className={classes.emptyState}>
 									<Text size='sm'>{t('history.empty')}</Text>
 								</div>
 							) : (
 								<div className={classes.tableWrap}>
 									<BaseTable<AgentVersionSummary>
-										data={paginatedVersions}
+										data={filteredHistoricalVersions}
 										columns={columns}
 										density='compact'
 										emptyMessage={t('history.empty')}
+										isLoading={isFetchingHistoryBranch}
+										getRowId={(row) => row.id}
 									/>
 									<PaginationControls
 										currentPage={versionPagination.currentPage}
 										totalPages={totalVersionPages}
 										itemsPerPage={versionPagination.itemsPerPage}
-										totalItems={historicalVersions.length}
+										totalItems={totalHistoricalItems}
 										onPageChange={versionPagination.setCurrentPage}
 										onItemsPerPageChange={handleVersionPageSizeChange}
 										itemLabel={t('history.itemLabel')}

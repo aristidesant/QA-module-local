@@ -56,7 +56,7 @@ const conversationsApi = (_authHeader: Record<string, string> = {}) => {
 				limit?: number;
 				offset?: number;
 				search?: string;
-				conversationIdentifier?: string;
+				identifier?: string;
 				contactName?: string;
 				contactPhoneNumber?: string;
 				dispositionName?: string;

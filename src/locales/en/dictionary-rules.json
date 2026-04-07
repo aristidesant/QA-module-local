@@ -193,6 +193,16 @@
 		"close": "Close",
 		"goToDictionary": "Go to Dictionary"
 	},
+	"preview": {
+		"play": "Listen",
+		"stop": "Stop",
+		"playAlias": "Listen to alias pronunciation",
+		"playGrapheme": "Listen to original word",
+		"phonemeFallback": "Phoneme preview not supported — playing original word instead",
+		"unsupported": "Your browser does not support text-to-speech",
+		"voiceLocale": "Voice: {{locale}}",
+		"voiceDefault": "Voice: browser default"
+	},
 	"categories": {
 		"CITY": "City",
 		"PROVINCE": "Province / State",

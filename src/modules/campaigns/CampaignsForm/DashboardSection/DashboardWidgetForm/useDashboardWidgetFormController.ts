@@ -25,6 +25,7 @@ import { getErrorMessage } from '~/utils/httpClient';
 import type {
 	WidgetFilterFormRow,
 	WidgetFormValues,
+	WidgetRuntimeFilterFormRow,
 } from '../DashboardSection.types';
 import {
 	type DashboardWidgetFormCompatibility,
@@ -34,10 +35,10 @@ import {
 	buildFieldOptions,
 	buildGroupBySuggestions,
 	buildGuidedState,
-	buildMetricPayload,
-	buildQueryPayload,
+	buildWidgetDataConfig,
 	buildViewConfigPayload,
 	createEmptyFilterRow,
+	createEmptyRuntimeFilterRow,
 	getAggregationOptions,
 	getDefaultWidgetSizePreset,
 	getFilterKeySuggestions,
@@ -46,20 +47,25 @@ import {
 	getMetricSourceOptions,
 	getResultTypeOptions,
 	getSizePresetOptions,
+	buildRuntimeFilterFieldOptions,
 	getValueFieldOptions,
 	getViewValueFormatOptions,
 	getWidgetTypeOptions,
 	hasInvalidDefaultFilterRows,
+	hasInvalidRuntimeFilterRows,
 	inferFilterValueType,
 	isGroupByDerivedFromSourceField,
 	isMetricSelectionReady,
 	parseMetricColumnsConfig,
 	requiresValueField,
 	sanitizeWidgetDefaultFilters,
+	sanitizeWidgetRuntimeFilters,
 	getResolvedGroupBy,
 	getSourceFieldEntries,
 	normalizeWidgetFilterValueForType,
 	resetWidgetFilterRow,
+	resetRuntimeFilterRow,
+	supportsCompareWithWidget,
 	supportsGroupedWidget,
 	supportsTimeSeriesWidget,
 	widgetFormValues,
@@ -215,6 +221,19 @@ const useDashboardWidgetFormController = ({
 		() => getViewValueFormatOptions(t),
 		[t]
 	);
+	const compareWithOptions = useMemo(
+		() => [
+			{
+				value: 'LATEST',
+				label: t('dashboardBuilder.form.options.compareWith.LATEST'),
+			},
+			{
+				value: 'AVERAGE',
+				label: t('dashboardBuilder.form.options.compareWith.AVERAGE'),
+			},
+		],
+		[t]
+	);
 	const sizePresetOptions = useMemo(
 		() => getSizePresetOptions(t, sizePreset),
 		[sizePreset, t]
@@ -303,6 +322,22 @@ const useDashboardWidgetFormController = ({
 		]
 	);
 
+	const runtimeFilterFieldOptions = useMemo(
+		() =>
+			buildRuntimeFilterFieldOptions(
+				values,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
+		[
+			values.sourceType,
+			metricKeyOptions,
+			parsedMetricColumns.conversation,
+			parsedMetricColumns.disposition,
+		]
+	);
+
 	const needsGroupedConfig = guidedState.compatibility.isGroupedWidget;
 	const needsTimeSeriesMetric = supportsTimeSeriesWidget(values.widgetType);
 	const needsValueField = guidedState.compatibility.requiresValueField;
@@ -332,9 +367,6 @@ const useDashboardWidgetFormController = ({
 
 	const advancedSettingsCount = useMemo(() => {
 		let count = 0;
-		if (typeof values.viewColor === 'string' && values.viewColor.trim()) {
-			count += 1;
-		}
 		if (
 			typeof values.viewValueFormat === 'string' &&
 			values.viewValueFormat.trim()
@@ -345,6 +377,12 @@ const useDashboardWidgetFormController = ({
 		if (
 			manualCompatibility.resultType &&
 			values.resultType !== guidedState.compatibility.inferredResultType
+		) {
+			count += 1;
+		}
+		if (
+			supportsCompareWithWidget(values.widgetType) &&
+			values.compareWith !== 'LATEST'
 		) {
 			count += 1;
 		}
@@ -362,23 +400,45 @@ const useDashboardWidgetFormController = ({
 		) {
 			count += 1;
 		}
-		count += values.defaultFilters.filter(
-			(row) => (row.key ?? '').trim().length > 0
-		).length;
+		count += values.runtimeFilters.filter((row) => {
+			const hasField = (row.field ?? '').trim().length > 0;
+			const hasValue = Array.isArray(row.value)
+				? row.value.some((item) => item.trim().length > 0)
+				: typeof row.value === 'string'
+					? row.value.trim().length > 0
+					: false;
+
+			return hasField || Boolean(row.operator) || hasValue;
+		}).length;
 		return count;
 	}, [manualCompatibility, guidedState.compatibility, values]);
 
 	useEffect(() => {
 		const nextValues = widgetFormValues(widget);
+		const sanitizedValues = {
+			...nextValues,
+			defaultFilters: sanitizeWidgetDefaultFilters(
+				nextValues,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
+			runtimeFilters: sanitizeWidgetRuntimeFilters(
+				nextValues,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
+		};
 		const shouldApplyTitleSuggestion =
 			!Boolean(widget?.title?.trim()) && Boolean(guidedState.titleSuggestion);
 
 		if (shouldApplyTitleSuggestion) {
-			nextValues.title = guidedState.titleSuggestion;
+			sanitizedValues.title = guidedState.titleSuggestion;
 		}
 
-		form.setValues(nextValues);
-		form.resetDirty(nextValues);
+		form.setValues(sanitizedValues);
+		form.resetDirty(sanitizedValues);
 		setTitleTouched(Boolean(widget?.title?.trim()));
 		setTitleInputRevision((current) => current + 1);
 		setAdvancedOpened(false);
@@ -589,6 +649,23 @@ const useDashboardWidgetFormController = ({
 			return;
 		}
 
+		if (
+			hasInvalidRuntimeFilterRows(
+				submitValues.runtimeFilters,
+				submitValues,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			)
+		) {
+			notifications.show({
+				title: t('dashboardBuilder.notifications.errorTitle'),
+				message: t('dashboardBuilder.form.validation.runtimeFilterInvalid'),
+				color: 'red',
+			});
+			return;
+		}
+
 		const payload: CreateDashboardWidgetDto | UpdateDashboardWidgetDto = {
 			...normalizeWidgetLayout({
 				positionX: placementLayout.positionX,
@@ -601,13 +678,12 @@ const useDashboardWidgetFormController = ({
 			title: submitValues.title.trim(),
 			description: submitValues.description.trim() || undefined,
 			enabled: submitValues.enabled,
-			dataConfig: {
-				metric: buildMetricPayload(submitValues, {
-					conversationFields: parsedMetricColumns.conversation,
-					dispositionFields: parsedMetricColumns.disposition,
-				}),
-				query: buildQueryPayload(submitValues),
-			},
+			visibilityScope: submitValues.visibilityScope,
+			dataConfig: buildWidgetDataConfig(submitValues, {
+				metricKeyOptions,
+				conversationFields: parsedMetricColumns.conversation,
+				dispositionFields: parsedMetricColumns.disposition,
+			}),
 			viewConfig: buildViewConfigPayload(submitValues),
 		};
 
@@ -654,6 +730,10 @@ const useDashboardWidgetFormController = ({
 			widgetType: nextWidgetType,
 		};
 
+		if (!supportsCompareWithWidget(nextWidgetType)) {
+			nextValues.compareWith = 'LATEST';
+		}
+
 		if (!supportsGroupedWidget(nextWidgetType)) {
 			nextValues.groupBy = null;
 			nextValues.limit = '';
@@ -682,6 +762,7 @@ const useDashboardWidgetFormController = ({
 			supportsGroupBy: false,
 			supportsTimeSeries: true,
 			defaultFilters: [createEmptyFilterRow()],
+			runtimeFilters: [createEmptyRuntimeFilterRow()],
 		};
 
 		updateFormValues(nextValues);
@@ -715,6 +796,12 @@ const useDashboardWidgetFormController = ({
 				parsedMetricColumns.conversation,
 				parsedMetricColumns.disposition
 			),
+			runtimeFilters: sanitizeWidgetRuntimeFilters(
+				nextValues,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
 		});
 		setManualCompatibility((current) => ({ ...current, resultType: false }));
 	};
@@ -729,6 +816,12 @@ const useDashboardWidgetFormController = ({
 		updateFormValues({
 			...nextValues,
 			defaultFilters: sanitizeWidgetDefaultFilters(
+				nextValues,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
+			runtimeFilters: sanitizeWidgetRuntimeFilters(
 				nextValues,
 				metricKeyOptions,
 				parsedMetricColumns.conversation,
@@ -757,9 +850,7 @@ const useDashboardWidgetFormController = ({
 				selectedEntry.type.toLowerCase()
 			);
 
-		const aggregationOverridesToNumber =
-			nextValues.aggregationType === 'COUNT' ||
-			nextValues.aggregationType === 'DISTINCT_COUNT';
+		const aggregationOverridesToNumber = nextValues.aggregationType === 'COUNT';
 
 		if (isTimeField && aggregationOverridesToNumber) {
 			nextValues.aggregationType = 'MIN';
@@ -768,6 +859,12 @@ const useDashboardWidgetFormController = ({
 		updateFormValues({
 			...nextValues,
 			defaultFilters: sanitizeWidgetDefaultFilters(
+				nextValues,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
+			runtimeFilters: sanitizeWidgetRuntimeFilters(
 				nextValues,
 				metricKeyOptions,
 				parsedMetricColumns.conversation,
@@ -782,6 +879,12 @@ const useDashboardWidgetFormController = ({
 			valueField: (value ?? null) as WidgetFormValues['valueField'],
 		});
 		setManualCompatibility((current) => ({ ...current, resultType: false }));
+	};
+
+	const handleCompareWithChange = (value: string | null) => {
+		updateFormValues({
+			compareWith: (value ?? 'LATEST') as WidgetFormValues['compareWith'],
+		});
 	};
 
 	const handleGroupByChange = (value: string | null) => {
@@ -923,6 +1026,128 @@ const useDashboardWidgetFormController = ({
 		});
 	};
 
+	const handleRuntimeFilterFieldChange = (
+		index: number,
+		value: string | null
+	) => {
+		const nextField = typeof value === 'string' ? value.trim() || null : null;
+		const nextRuntimeFilters = values.runtimeFilters.map((row, rowIndex) => {
+			if (rowIndex !== index) {
+				return row;
+			}
+
+			if (!nextField) {
+				return resetRuntimeFilterRow(row);
+			}
+
+			return {
+				...row,
+				field: nextField,
+			};
+		});
+
+		const nextValues: WidgetFormValues = {
+			...form.getValues(),
+			runtimeFilters: nextRuntimeFilters,
+		};
+
+		updateFormValues({
+			runtimeFilters: sanitizeWidgetRuntimeFilters(
+				nextValues,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
+		});
+	};
+
+	const handleRuntimeFilterOperatorChange = (
+		index: number,
+		value: string | null
+	) => {
+		const nextOperator = value as WidgetRuntimeFilterFormRow['operator'] | null;
+		const nextRuntimeFilters = values.runtimeFilters.map((row, rowIndex) => {
+			if (rowIndex !== index) {
+				return row;
+			}
+
+			if (!nextOperator) {
+				return {
+					...row,
+					field: row.field,
+					operator: null,
+					value: null,
+				};
+			}
+
+			return {
+				...row,
+				operator: nextOperator,
+			};
+		});
+
+		const nextValues: WidgetFormValues = {
+			...form.getValues(),
+			runtimeFilters: nextRuntimeFilters,
+		};
+
+		updateFormValues({
+			runtimeFilters: sanitizeWidgetRuntimeFilters(
+				nextValues,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
+		});
+	};
+
+	const handleRuntimeFilterValueChange = (
+		index: number,
+		value: string | string[] | null
+	) => {
+		const nextRuntimeFilters = values.runtimeFilters.map((row, rowIndex) => {
+			if (rowIndex !== index) {
+				return row;
+			}
+
+			return {
+				...row,
+				value,
+			};
+		});
+
+		const nextValues: WidgetFormValues = {
+			...form.getValues(),
+			runtimeFilters: nextRuntimeFilters,
+		};
+
+		updateFormValues({
+			runtimeFilters: sanitizeWidgetRuntimeFilters(
+				nextValues,
+				metricKeyOptions,
+				parsedMetricColumns.conversation,
+				parsedMetricColumns.disposition
+			),
+		});
+	};
+
+	const addRuntimeFilterRow = () => {
+		form.insertListItem('runtimeFilters', createEmptyRuntimeFilterRow());
+	};
+
+	const removeRuntimeFilterRow = (index: number) => {
+		if (values.runtimeFilters.length === 1) {
+			form.replaceListItem(
+				'runtimeFilters',
+				index,
+				createEmptyRuntimeFilterRow()
+			);
+			return;
+		}
+
+		form.removeListItem('runtimeFilters', index);
+	};
+
 	const handleSizePresetChange = (nextPreset: string | null) => {
 		if (!nextPreset) {
 			return;
@@ -948,6 +1173,17 @@ const useDashboardWidgetFormController = ({
 
 	const handleEnabledChange = (checked: boolean) => {
 		form.setFieldValue('enabled', checked);
+	};
+
+	const handleVisibilityScopeChange = (value: string | null) => {
+		if (!value) {
+			return;
+		}
+
+		form.setFieldValue(
+			'visibilityScope',
+			value as WidgetFormValues['visibilityScope']
+		);
 	};
 
 	const handleSupportsGroupByChange = (checked: boolean) => {
@@ -1010,12 +1246,14 @@ const useDashboardWidgetFormController = ({
 			valueFieldOptions,
 			filterValueTypeOptions,
 			viewValueFormatOptions,
+			compareWithOptions,
 			sizePresetOptions,
 			widgetTypeControlOptions,
 			sourceTypeControlOptions,
 			guidedState,
 			groupBySuggestions,
 			filterKeySuggestions,
+			runtimeFilterFieldOptions,
 			placementLayout,
 			advancedSettingsCount,
 			handlers: {
@@ -1027,12 +1265,16 @@ const useDashboardWidgetFormController = ({
 				handleMetricKeyChange,
 				handleFieldNameChange,
 				handleValueFieldChange,
+				handleCompareWithChange,
 				handleGroupByChange,
 				handleResultTypeChange,
 				handleViewValueFormatChange,
 				handleDefaultFilterKeyChange,
 				handleDefaultFilterTypeChange,
 				handleDefaultFilterValueChange,
+				handleRuntimeFilterFieldChange,
+				handleRuntimeFilterOperatorChange,
+				handleRuntimeFilterValueChange,
 				handleSizePresetChange,
 				addDefaultFilterRow: () => {
 					form.insertListItem('defaultFilters', createEmptyFilterRow());
@@ -1049,7 +1291,10 @@ const useDashboardWidgetFormController = ({
 
 					form.removeListItem('defaultFilters', index);
 				},
+				addRuntimeFilterRow,
+				removeRuntimeFilterRow,
 				handleEnabledChange,
+				handleVisibilityScopeChange,
 				handleSupportsGroupByChange,
 				handleSupportsTimeSeriesChange,
 				handleViewLegendChange,
@@ -1070,12 +1315,19 @@ const useDashboardWidgetFormController = ({
 			fieldNameOptions,
 			filterKeySuggestions,
 			filterValueTypeOptions,
+			runtimeFilterFieldOptions,
 			guidedState,
 			handleAggregationTypeChange,
 			handleDefaultFilterKeyChange,
 			handleDefaultFilterTypeChange,
 			handleDefaultFilterValueChange,
+			handleRuntimeFilterFieldChange,
+			handleRuntimeFilterOperatorChange,
+			handleRuntimeFilterValueChange,
+			addRuntimeFilterRow,
+			removeRuntimeFilterRow,
 			handleEnabledChange,
+			handleVisibilityScopeChange,
 			handleFieldNameChange,
 			handleGroupByChange,
 			handleMetricKeyChange,
@@ -1086,6 +1338,7 @@ const useDashboardWidgetFormController = ({
 			handleSupportsTimeSeriesChange,
 			handleTitleChange,
 			handleValueFieldChange,
+			handleCompareWithChange,
 			handleViewLegendChange,
 			handleViewValueFormatChange,
 			handleWidgetTypeChange,
@@ -1114,6 +1367,7 @@ const useDashboardWidgetFormController = ({
 			valueFieldOptions,
 			values,
 			viewValueFormatOptions,
+			compareWithOptions,
 			widgetTypeControlOptions,
 			widgetTypeOptions,
 		]

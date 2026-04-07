@@ -138,16 +138,14 @@ const router = createBrowserRouter([
 				path: 'force-password-change',
 				id: 'auth.force-password-change',
 				element: (
-					<Suspense
-						fallback={<SuspenseFallback message='Preparing security flow...' />}
-					>
+					<Suspense fallback={<SuspenseFallback />}>
 						<ForcePasswordChangePage />
 					</Suspense>
 				),
 			},
 			{
 				element: (
-					<Suspense fallback={<SuspenseFallback message='Loading app...' />}>
+					<Suspense fallback={<SuspenseFallback />}>
 						<Layout />
 					</Suspense>
 				),
@@ -157,9 +155,7 @@ const router = createBrowserRouter([
 						id: 'overview',
 						element: (
 							<I18nNamespaceLoader>
-								<Suspense
-									fallback={<SuspenseFallback message='Loading dashboard...' />}
-								>
+								<Suspense fallback={<SuspenseFallback />}>
 									<OverviewDashboardPage />
 								</Suspense>
 							</I18nNamespaceLoader>
@@ -171,11 +167,7 @@ const router = createBrowserRouter([
 						element: (
 							<ModuleGuard module={ModuleEnum.DASHBOARD}>
 								<I18nNamespaceLoader>
-									<Suspense
-										fallback={
-											<SuspenseFallback message='Loading dashboards...' />
-										}
-									>
+									<Suspense fallback={<SuspenseFallback />}>
 										<DashboardsPage />
 									</Suspense>
 								</I18nNamespaceLoader>
@@ -187,7 +179,7 @@ const router = createBrowserRouter([
 						id: 'campaign-management',
 						element: (
 							<ModuleGuard module={ModuleEnum.SETTINGS}>
-								<Suspense fallback={<div>Loading campaign management...</div>}>
+								<Suspense fallback={<SuspenseFallback />}>
 									<CampaignManagementPage />
 								</Suspense>
 							</ModuleGuard>
@@ -199,11 +191,7 @@ const router = createBrowserRouter([
 						element: (
 							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
 								<I18nNamespaceLoader>
-									<Suspense
-										fallback={
-											<SuspenseFallback message='Loading campaigns...' />
-										}
-									>
+									<Suspense fallback={<SuspenseFallback />}>
 										<CampaignsPage />
 									</Suspense>
 								</I18nNamespaceLoader>
@@ -219,11 +207,7 @@ const router = createBrowserRouter([
 								permission={PermissionEnum.UPDATE}
 							>
 								<I18nNamespaceLoader>
-									<Suspense
-										fallback={
-											<SuspenseFallback message='Loading campaign...' />
-										}
-									>
+									<Suspense fallback={<SuspenseFallback />}>
 										<CampaignPage />
 									</Suspense>
 								</I18nNamespaceLoader>
@@ -235,11 +219,7 @@ const router = createBrowserRouter([
 						id: 'campaign.view',
 						element: (
 							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
-								<Suspense
-									fallback={
-										<SuspenseFallback message='Loading campaign view...' />
-									}
-								>
+								<Suspense fallback={<SuspenseFallback />}>
 									<CampaignViewPage />
 								</Suspense>
 							</ModuleGuard>
@@ -251,11 +231,7 @@ const router = createBrowserRouter([
 						element: (
 							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
 								<I18nNamespaceLoader>
-									<Suspense
-										fallback={
-											<SuspenseFallback message='Loading contact list...' />
-										}
-									>
+									<Suspense fallback={<SuspenseFallback />}>
 										<CampaignContactListPage />
 									</Suspense>
 								</I18nNamespaceLoader>
@@ -268,11 +244,7 @@ const router = createBrowserRouter([
 						element: (
 							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
 								<I18nNamespaceLoader>
-									<Suspense
-										fallback={
-											<SuspenseFallback message='Loading conversations...' />
-										}
-									>
+									<Suspense fallback={<SuspenseFallback />}>
 										<CampaignConversationsPage />
 									</Suspense>
 								</I18nNamespaceLoader>
@@ -288,9 +260,7 @@ const router = createBrowserRouter([
 								permission={PermissionEnum.MANAGE}
 								masterOnly
 							>
-								<Suspense
-									fallback={<SuspenseFallback message='Loading users...' />}
-								>
+								<Suspense fallback={<SuspenseFallback />}>
 									<UsersPage />
 								</Suspense>
 							</ModuleGuard>
@@ -301,9 +271,7 @@ const router = createBrowserRouter([
 						id: 'roles',
 						element: (
 							<ModuleGuard module={ModuleEnum.ROLES} masterOnly>
-								<Suspense
-									fallback={<SuspenseFallback message='Loading roles...' />}
-								>
+								<Suspense fallback={<SuspenseFallback />}>
 									<RolesPage />
 								</Suspense>
 							</ModuleGuard>
@@ -319,9 +287,7 @@ const router = createBrowserRouter([
 								masterOnly
 							>
 								<I18nNamespaceLoader>
-									<Suspense
-										fallback={<SuspenseFallback message='Loading clients...' />}
-									>
+									<Suspense fallback={<SuspenseFallback />}>
 										<ClientsPage />
 									</Suspense>
 								</I18nNamespaceLoader>
@@ -333,11 +299,7 @@ const router = createBrowserRouter([
 						id: 'conversations',
 						element: (
 							<ModuleGuard module={ModuleEnum.CONVERSATIONS}>
-								<Suspense
-									fallback={
-										<SuspenseFallback message='Loading conversations...' />
-									}
-								>
+								<Suspense fallback={<SuspenseFallback />}>
 									<ConversationPage />
 								</Suspense>
 							</ModuleGuard>
@@ -351,9 +313,7 @@ const router = createBrowserRouter([
 								module={ModuleEnum.CAMPAIGNS}
 								permission={PermissionEnum.MANAGE}
 							>
-								<Suspense
-									fallback={<SuspenseFallback message='Loading outcomes...' />}
-								>
+								<Suspense fallback={<SuspenseFallback />}>
 									<DispositionPage />
 								</Suspense>
 							</ModuleGuard>
@@ -368,11 +328,7 @@ const router = createBrowserRouter([
 								module={ModuleEnum.SETTINGS}
 								permission={PermissionEnum.MANAGE}
 							>
-								<Suspense
-									fallback={
-										<SuspenseFallback messageKey='loading.configurations' />
-									}
-								>
+								<Suspense fallback={<SuspenseFallback />}>
 									<ConfigurationsPage />
 								</Suspense>
 							</ModuleGuard>
@@ -388,11 +344,7 @@ const router = createBrowserRouter([
 								path: 'client-configs',
 								id: 'client-configs',
 								element: (
-									<Suspense
-										fallback={
-											<SuspenseFallback messageKey='loading.clientConfigs' />
-										}
-									>
+									<Suspense fallback={<SuspenseFallback />}>
 										<ClientConfigsPage />
 									</Suspense>
 								),
@@ -401,11 +353,7 @@ const router = createBrowserRouter([
 								path: 'campaign-predefined-params',
 								id: 'campaign-predefined-params',
 								element: (
-									<Suspense
-										fallback={
-											<SuspenseFallback message='Loading campaign predefined params...' />
-										}
-									>
+									<Suspense fallback={<SuspenseFallback />}>
 										<CampaignPredefinedParamsPage />
 									</Suspense>
 								),
@@ -415,11 +363,7 @@ const router = createBrowserRouter([
 								id: 'scheduler-predefined-params',
 								element: (
 									<I18nNamespaceLoader>
-										<Suspense
-											fallback={
-												<SuspenseFallback message='Loading scheduler presets...' />
-											}
-										>
+										<Suspense fallback={<SuspenseFallback />}>
 											<SchedulerPredefinedParamsPage />
 										</Suspense>
 									</I18nNamespaceLoader>
@@ -429,11 +373,7 @@ const router = createBrowserRouter([
 								path: 'regional-settings-params',
 								id: 'regional-settings-params',
 								element: (
-									<Suspense
-										fallback={
-											<SuspenseFallback message='Loading regional settings params...' />
-										}
-									>
+									<Suspense fallback={<SuspenseFallback />}>
 										<RegionalSettingsParamsPage />
 									</Suspense>
 								),
@@ -443,11 +383,7 @@ const router = createBrowserRouter([
 								id: 'phone-numbers',
 								element: (
 									<I18nNamespaceLoader>
-										<Suspense
-											fallback={
-												<SuspenseFallback message='Loading phone numbers...' />
-											}
-										>
+										<Suspense fallback={<SuspenseFallback />}>
 											<PhoneNumbersPage />
 										</Suspense>
 									</I18nNamespaceLoader>
@@ -458,11 +394,7 @@ const router = createBrowserRouter([
 								id: 'dictionary-rules',
 								element: (
 									<I18nNamespaceLoader>
-										<Suspense
-											fallback={
-												<SuspenseFallback message='Loading dictionary rules...' />
-											}
-										>
+										<Suspense fallback={<SuspenseFallback />}>
 											<DictionaryRulesPage />
 										</Suspense>
 									</I18nNamespaceLoader>
@@ -475,11 +407,7 @@ const router = createBrowserRouter([
 						id: 'do-not-call',
 						element: (
 							<ModuleGuard module={ModuleEnum.SETTINGS}>
-								<Suspense
-									fallback={
-										<SuspenseFallback message='Loading Do Not Call...' />
-									}
-								>
+								<Suspense fallback={<SuspenseFallback />}>
 									<DoNotCallPage />
 								</Suspense>
 							</ModuleGuard>
@@ -493,11 +421,7 @@ const router = createBrowserRouter([
 								module={ModuleEnum.KNOWLEDGE_BASES}
 								permission={PermissionEnum.READ}
 							>
-								<Suspense
-									fallback={
-										<SuspenseFallback message='Loading knowledge bases...' />
-									}
-								>
+								<Suspense fallback={<SuspenseFallback />}>
 									<KnowledgeBasePage />
 								</Suspense>
 							</ModuleGuard>
@@ -512,9 +436,7 @@ const router = createBrowserRouter([
 								permission={PermissionEnum.MANAGE}
 								masterOnly
 							>
-								<Suspense
-									fallback={<SuspenseFallback message='Loading tools...' />}
-								>
+								<Suspense fallback={<SuspenseFallback />}>
 									<ToolsPage />
 								</Suspense>
 							</ModuleGuard>
@@ -526,11 +448,7 @@ const router = createBrowserRouter([
 						element: (
 							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
 								<I18nNamespaceLoader>
-									<Suspense
-										fallback={
-											<SuspenseFallback message='Loading agent tests...' />
-										}
-									>
+									<Suspense fallback={<SuspenseFallback />}>
 										<AgentTestsPage />
 									</Suspense>
 								</I18nNamespaceLoader>
@@ -541,9 +459,7 @@ const router = createBrowserRouter([
 						path: 'profile',
 						id: 'profile',
 						element: (
-							<Suspense
-								fallback={<SuspenseFallback message='Loading profile...' />}
-							>
+							<Suspense fallback={<SuspenseFallback />}>
 								<ProfilePage />
 							</Suspense>
 						),

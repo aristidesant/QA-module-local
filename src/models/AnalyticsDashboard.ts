@@ -1,10 +1,23 @@
-export type AnalyticsTimeRange = 'TODAY' | 'WEEK' | 'MONTH' | 'YEAR';
+export type AnalyticsTimeRange = 'TODAY' | 'WEEK' | 'MONTH' | 'YEAR' | 'ALL';
 
 export type AnalyticsComparisonMode = 'PREVIOUS_PERIOD';
 
 export type MetricTrend = 'UP' | 'DOWN' | 'FLAT' | 'UNAVAILABLE';
 
+export type MetricCompareWith = 'LATEST' | 'AVERAGE';
+
 export type MetricSourceType = 'CONVERSATION' | 'ATTRIBUTE' | 'DISPOSITION';
+
+export type DashboardWidgetVisibilityScope = 'GLOBAL' | 'TEAM' | 'PRIVATE';
+
+export type DashboardWidgetJoinRelation = 'campaign';
+
+export type DashboardWidgetJoinType = 'inner' | 'left';
+
+export interface DashboardWidgetJoinConfig {
+	relation: DashboardWidgetJoinRelation;
+	type: DashboardWidgetJoinType;
+}
 
 export type MetricAggregationType =
 	| 'COUNT'
@@ -20,8 +33,7 @@ export type DashboardWidgetType =
 	| 'BAR_CHART'
 	| 'PIE_CHART'
 	| 'DONUT_CHART'
-	| 'TABLE'
-	| 'FUNNEL';
+	| 'TABLE';
 
 export type MetricValueField =
 	| 'VALUE_STRING'
@@ -71,6 +83,7 @@ export interface DashboardWidgetMetricConfig {
 	metricKey?: string | null;
 	valueField?: MetricValueField | null;
 	defaultFilter?: DashboardWidgetDefaultFilter | null;
+	compareWith?: MetricCompareWith;
 	supportsGroupBy?: boolean;
 	supportsTimeSeries?: boolean;
 	resultType: MetricResultType;
@@ -79,6 +92,8 @@ export interface DashboardWidgetMetricConfig {
 export interface DashboardWidgetDataConfig {
 	metric: DashboardWidgetMetricConfig;
 	query?: DashboardWidgetQueryConfig | null;
+	runtimeFilters?: RuntimeFilter[] | null;
+	joins?: DashboardWidgetJoinConfig[] | null;
 }
 
 export interface DashboardWidgetViewConfig {
@@ -136,6 +151,7 @@ export interface DashboardWidget {
 	dataConfig: DashboardWidgetDataConfig;
 	viewConfig: DashboardWidgetViewConfig | null;
 	enabled: boolean;
+	visibilityScope?: DashboardWidgetVisibilityScope | null;
 	createdAt: string;
 	updatedAt: string;
 	deletedAt: string | null;
@@ -153,6 +169,7 @@ export interface CreateDashboardWidgetDto {
 	dataConfig: DashboardWidgetDataConfig;
 	viewConfig?: DashboardWidgetViewConfig | null;
 	enabled?: boolean;
+	visibilityScope?: DashboardWidgetVisibilityScope | null;
 }
 
 export interface UpdateDashboardWidgetDto extends Partial<CreateDashboardWidgetDto> {}
@@ -177,6 +194,7 @@ export interface SingleValueMetricResult {
 		campaignId: number | null;
 		sourceType: MetricSourceType;
 		aggregationType: MetricAggregationType;
+		compareWith?: MetricCompareWith;
 	};
 }
 
@@ -194,6 +212,7 @@ export interface GroupedMetricResult {
 		sourceType: MetricSourceType;
 		aggregationType: MetricAggregationType;
 		groupBy: string;
+		compareWith?: MetricCompareWith;
 	};
 }
 
@@ -214,6 +233,7 @@ export interface TimeSeriesMetricResult {
 		sourceType: MetricSourceType;
 		aggregationType: MetricAggregationType;
 		granularity: 'hour' | 'day' | 'week' | 'month';
+		compareWith?: MetricCompareWith;
 	};
 }
 

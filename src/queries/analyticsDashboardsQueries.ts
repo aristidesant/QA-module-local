@@ -272,6 +272,9 @@ const normalizePreviewPayload = (
 			...(payload.dataConfig.metric.defaultFilter
 				? { defaultFilter: payload.dataConfig.metric.defaultFilter }
 				: {}),
+			...(payload.dataConfig.metric.compareWith
+				? { compareWith: payload.dataConfig.metric.compareWith }
+				: {}),
 			...(payload.dataConfig.metric.supportsGroupBy === undefined
 				? {}
 				: { supportsGroupBy: payload.dataConfig.metric.supportsGroupBy }),
@@ -281,6 +284,12 @@ const normalizePreviewPayload = (
 			resultType: payload.dataConfig.metric.resultType,
 		},
 		...(payload.dataConfig.query ? { query: payload.dataConfig.query } : {}),
+		...(payload.dataConfig.runtimeFilters?.length
+			? { runtimeFilters: payload.dataConfig.runtimeFilters }
+			: {}),
+		...(payload.dataConfig.joins?.length
+			? { joins: payload.dataConfig.joins }
+			: {}),
 	},
 	...(payload.viewConfig ? { viewConfig: payload.viewConfig } : {}),
 	...(payload.timeRange ? { timeRange: payload.timeRange } : {}),

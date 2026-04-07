@@ -1,5 +1,7 @@
 import { memo } from 'react';
 import type {
+	MetricColumnsConfig,
+	WidgetMetricOption,
 	WidgetFormValues,
 	WidgetPreviewModel,
 } from '../../DashboardSection.types';
@@ -14,12 +16,16 @@ type DashboardWidgetPreviewProps = {
 	campaignId: number | null;
 	values: WidgetFormValues;
 	fallbackPreview: WidgetPreviewModel;
+	metricKeyOptions: WidgetMetricOption[];
+	parsedMetricColumns: MetricColumnsConfig;
 };
 
 const DashboardWidgetPreview = ({
 	campaignId,
 	values,
 	fallbackPreview,
+	metricKeyOptions,
+	parsedMetricColumns,
 }: DashboardWidgetPreviewProps) => {
 	const widgetType = values.widgetType;
 	const { preview, isLoading, isRefreshing, statusMessage, statusTone } =
@@ -28,6 +34,8 @@ const DashboardWidgetPreview = ({
 			campaignId,
 			fallbackPreview,
 			widgetType,
+			metricKeyOptions,
+			parsedMetricColumns,
 		});
 
 	if (isLoading || isRefreshing) {

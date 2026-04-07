@@ -24,6 +24,14 @@
 				"labelPlaceholder": "Optional label for this condition",
 				"llmCondition": "LLM condition",
 				"llmConditionPlaceholder": "Describe the condition for the LLM to evaluate (e.g., \"user confirmed their identity\")",
+				"llmConditionHelper": "Use the editor for longer prompts.",
+				"llmConditionEditor": {
+					"open": "Edit prompt",
+					"title": "Edit LLM condition",
+					"description": "Write the full condition the LLM should evaluate for this transition.",
+					"placeholder": "Describe what the model should evaluate...",
+					"helper": "Changes are applied when you save."
+				},
 				"resultType": "Tool execution result",
 				"selectResult": "Select result type",
 				"results": {
@@ -81,7 +89,11 @@
 						},
 						"prompt": {
 							"label": "Conversation goal",
-							"placeholder": "Describe the goal of this agent"
+							"placeholder": "Describe the goal of this agent",
+							"expand": "Expand editor",
+							"modalTitle": "Edit conversation goal",
+							"modalDescription": "Use the full editor to write and refine the conversation goal for this node.",
+							"modalHelper": "Changes are applied when you save."
 						},
 						"overridePrompt": {
 							"label": "Override prompt"
@@ -316,6 +328,50 @@
 				"clone": "Clone node",
 				"copy": "Copy node",
 				"delete": "Delete node"
+			},
+			"clipboard": {
+				"actions": {
+					"copy": "Copy workflow",
+					"paste": "Paste workflow"
+				},
+				"import": {
+					"title": "Replace workflow from JSON",
+					"description": "Paste a full workflow JSON payload to replace the current flow. Both snake_case and camelCase are supported.",
+					"inputLabel": "Workflow JSON",
+					"placeholder": "{\n  \"prevent_subagent_loops\": true,\n  \"nodes\": {},\n  \"edges\": {}\n}",
+					"clipboard": {
+						"loading": "Reading clipboard...",
+						"loaded": "Clipboard content loaded.",
+						"empty": "Clipboard is empty. Paste or type workflow JSON.",
+						"failed": "Could not read the clipboard automatically. Paste manually."
+					},
+					"summaryTitle": "Import summary",
+					"summaryNodes": "{{count}} nodes",
+					"summaryEdges": "{{count}} edges",
+					"summaryPreventLoopsEnabled": "Prevent subagent loops: enabled",
+					"summaryPreventLoopsDisabled": "Prevent subagent loops: disabled",
+					"replace": "Replace workflow"
+				},
+				"errors": {
+					"invalidJson": "The pasted content is not valid JSON.",
+					"invalidRoot": "The pasted content must be a workflow object.",
+					"invalidNodes": "The workflow must include a root nodes object.",
+					"invalidEdges": "The workflow must include a root edges object.",
+					"invalidPreventSubagentLoops": "preventSubagentLoops must be a boolean when provided.",
+					"invalidNodeShape": "Each node must include a valid type and position.",
+					"invalidEdgeShape": "Each edge must include valid source and target node ids.",
+					"missingStartNode": "The workflow must include at least one start node.",
+					"missingEdgeNodeReference": "One or more edges reference nodes that do not exist."
+				},
+				"notifications": {
+					"copySuccessTitle": "Workflow copied",
+					"copySuccessMessage": "The full workflow JSON was copied to your clipboard.",
+					"copyErrorTitle": "Unable to copy workflow",
+					"copyErrorMessage": "The workflow could not be copied to the clipboard.",
+					"invalidImportTitle": "Invalid workflow JSON",
+					"importSuccessTitle": "Workflow replaced",
+					"importSuccessMessage": "The workflow was replaced with the imported JSON."
+				}
 			},
 			"nodes": {
 				"start": "Start",

@@ -1,8 +1,0 @@
-.container {
-	margin-top: var(--mantine-spacing-md);
-	padding-top: var(--mantine-spacing-md);
-}
-
-.tab[data-active] {
-	font-weight: bold;
-}

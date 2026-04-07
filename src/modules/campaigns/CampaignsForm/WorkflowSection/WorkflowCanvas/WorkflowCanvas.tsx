@@ -400,16 +400,22 @@ const WorkflowCanvasInner = ({
 			const sourceNode = nodesRef.current.find(
 				(node) => node.id === connection.source
 			);
-			const existingStartEdge =
-				sourceNode?.type === WORKFLOW_NODE_TYPES.START
-					? edgesRef.current.find((edge) => edge.source === connection.source)
-					: undefined;
+			const isStartSource = sourceNode?.type === WORKFLOW_NODE_TYPES.START;
+			const existingStartEdge = isStartSource
+				? edgesRef.current.find((edge) => edge.source === connection.source)
+				: undefined;
 			const edgeId = existingStartEdge?.id ?? `edge-${generateUUIDv4()}`;
-			const defaultEdgeData = {
-				label: t('form.workflow.edge.notConfigured', {
-					defaultValue: 'Not configured',
-				}),
-			};
+			const defaultEdgeData = isStartSource
+				? {
+						label: null,
+						sourceNodeType: WORKFLOW_NODE_TYPES.START,
+					}
+				: {
+						label: t('form.workflow.edge.notConfigured', {
+							defaultValue: 'Not configured',
+						}),
+						sourceNodeType: sourceNode?.type,
+					};
 			const nextEdge: Edge = {
 				...(existingStartEdge ?? {}),
 				id: edgeId,
@@ -418,7 +424,12 @@ const WorkflowCanvasInner = ({
 				sourceHandle: connection.sourceHandle,
 				targetHandle: connection.targetHandle,
 				type: 'condition',
-				data: existingStartEdge?.data ?? defaultEdgeData,
+				data: isStartSource
+					? {
+							...(existingStartEdge?.data ?? {}),
+							...defaultEdgeData,
+						}
+					: (existingStartEdge?.data ?? defaultEdgeData),
 			};
 
 			setNodes((currentNodes) =>

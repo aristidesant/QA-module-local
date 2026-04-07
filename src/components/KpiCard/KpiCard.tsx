@@ -64,6 +64,7 @@ export interface KpiCardProps {
 	className?: string;
 	comparison?: MetricComparison;
 	variant?: 'default' | 'comparison-hero' | 'comparison-compact';
+	cardSurface?: 'default' | 'builderPreview';
 	comparisonLabel?: string;
 	comparisonDetail?: string;
 	showCompactComparisonTooltip?: boolean;
@@ -79,6 +80,7 @@ export const KpiCard = ({
 	className,
 	comparison,
 	variant = 'default',
+	cardSurface = 'default',
 	comparisonLabel,
 	comparisonDetail,
 	showCompactComparisonTooltip = false,
@@ -94,16 +96,17 @@ export const KpiCard = ({
 		hasComparisonContent && variant === 'comparison-hero';
 	const isComparisonCompact =
 		hasComparisonContent && variant === 'comparison-compact';
-	const comparisonCompactTooltipLabel = showCompactComparisonTooltip
-		? [comparisonDetail, comparisonLabel].filter(Boolean).join(' • ') ||
-			undefined
-		: undefined;
+	const comparisonCompactTooltipLabel =
+		showCompactComparisonTooltip && comparisonDetail
+			? comparisonDetail
+			: undefined;
 	const sparklineTrend =
 		comparison?.trend === 'UP' ||
 		comparison?.trend === 'DOWN' ||
 		comparison?.trend === 'FLAT'
 			? comparison.trend
 			: null;
+	const isBuilderPreview = cardSurface === 'builderPreview';
 	const sparklineColor =
 		sparklineTrend === 'DOWN' ? SPARKLINE_RED : SPARKLINE_GREEN;
 	const gradientId = `kpi-spark-gradient-${sanitizeColorToken(accentColor)}-${sparklineTrend ?? 'none'}`;
@@ -118,6 +121,7 @@ export const KpiCard = ({
 				className={[
 					styles.card,
 					isUnsupported ? styles.unsupported : '',
+					isBuilderPreview ? styles.cardBuilderPreview : '',
 					isComparisonHero ? styles['card--comparisonHero'] : '',
 					isComparisonCompact ? styles['card--comparisonCompact'] : '',
 				]

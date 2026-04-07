@@ -6,12 +6,15 @@ import {
 	Switch,
 	Text,
 	Textarea,
+	Tooltip,
 } from '@mantine/core';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useParams } from 'react-router';
 import {
 	IconMicrophone,
 	IconEdit,
 	IconRotateClockwise,
+	IconArrowsMaximize,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -30,6 +33,7 @@ import {
 	spellingPatienceOptions,
 } from '../../hooks';
 import { WORKFLOW_DRAWER_COMBOBOX_PROPS } from '../../../workflowDrawerComboboxProps';
+import PromptEditModal from '~/modules/campaigns/CampaignsForm/components/PromptEditModal';
 import mainStyles from '../../AgentForm.module.css';
 
 const GeneralTab = () => {
@@ -38,8 +42,12 @@ const GeneralTab = () => {
 		'campaign.form.agents',
 		'common',
 	]);
+	const { campaignId: routeCampaignId } = useParams();
 	const { workflow, nodeId, onWorkflowChange, campaignAgentConfig } =
 		useAgentForm();
+
+	const campaignId = Number(routeCampaignId) || 0;
+	const [promptModalOpen, setPromptModalOpen] = useState(false);
 
 	const currentNode = workflow?.nodes[nodeId];
 	const subagent =
@@ -163,6 +171,41 @@ const GeneralTab = () => {
 			onWorkflowChange(nextWorkflow);
 		}
 	};
+
+	const currentPromptValue = effectiveOverridePrompt
+		? overridePromptValue
+		: ((currentNode as any)?.additionalPrompt ?? '');
+
+	const handlePromptChange = useCallback(
+		(value: string) => {
+			if (effectiveOverridePrompt) {
+				handleConversationConfigChange({
+					agent: {
+						...(agentConfig as Record<string, unknown>),
+						prompt: {
+							...(promptConfig as Record<string, unknown>),
+							prompt: value,
+						},
+					},
+				});
+			} else {
+				const nextWorkflow = updateWorkflowNode(workflow, nodeId, {
+					additionalPrompt: value,
+				} as any);
+				if (nextWorkflow) {
+					onWorkflowChange(nextWorkflow);
+				}
+			}
+		},
+		[
+			effectiveOverridePrompt,
+			agentConfig,
+			promptConfig,
+			workflow,
+			nodeId,
+			onWorkflowChange,
+		]
+	);
 
 	const llmOptions = getGroupedLlmOptions().flatMap((group) => group.items);
 
@@ -324,38 +367,46 @@ const GeneralTab = () => {
 					placeholder={t(
 						'form.workflow.forms.agent.general.prompt.placeholder'
 					)}
-					value={
-						effectiveOverridePrompt
-							? overridePromptValue
-							: ((currentNode as any)?.additionalPrompt ?? '')
-					}
+					value={currentPromptValue}
 					minRows={7}
 					onChange={(event) => {
-						const value = event.currentTarget.value;
-						if (effectiveOverridePrompt) {
-							handleConversationConfigChange({
-								agent: {
-									...(agentConfig as Record<string, unknown>),
-									prompt: {
-										...(promptConfig as Record<string, unknown>),
-										prompt: value,
-									},
-								},
-							});
-						} else {
-							const nextWorkflow = updateWorkflowNode(workflow, nodeId, {
-								additionalPrompt: value,
-							} as any);
-							if (nextWorkflow) {
-								onWorkflowChange(nextWorkflow);
-							}
-						}
+						handlePromptChange(event.currentTarget.value);
 					}}
 					classNames={{
 						input: mainStyles.promptInput,
 					}}
 				/>
+				<Group justify='flex-end'>
+					<Tooltip
+						label={t('form.workflow.forms.agent.general.prompt.expand')}
+						position='left'
+						withArrow
+					>
+						<ActionIcon
+							size='sm'
+							variant='subtle'
+							onClick={() => setPromptModalOpen(true)}
+							aria-label={t('form.workflow.forms.agent.general.prompt.expand')}
+						>
+							<IconArrowsMaximize size={14} />
+						</ActionIcon>
+					</Tooltip>
+				</Group>
 			</div>
+
+			<PromptEditModal
+				opened={promptModalOpen}
+				onClose={() => setPromptModalOpen(false)}
+				value={currentPromptValue}
+				onSave={handlePromptChange}
+				campaignId={campaignId}
+				title={t('form.workflow.forms.agent.general.prompt.modalTitle')}
+				description={t(
+					'form.workflow.forms.agent.general.prompt.modalDescription'
+				)}
+				placeholder={t('form.workflow.forms.agent.general.prompt.placeholder')}
+				helperText={t('form.workflow.forms.agent.general.prompt.modalHelper')}
+			/>
 
 			{/* Voice Field */}
 			{editingFields.voice ? (

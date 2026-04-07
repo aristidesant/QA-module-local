@@ -40,6 +40,7 @@ const DashboardWidgetPreviewLineChart = ({
 			<DashboardWidgetCard
 				title={preview.title}
 				accentColor={preview.accentColor}
+				variant='builderPreview'
 			>
 				{data.length > 0 ? (
 					<div className={viewerStyles.chartWrapper}>
@@ -87,6 +88,11 @@ const DashboardWidgetPreviewLineChart = ({
 					</div>
 				)}
 			</DashboardWidgetCard>
+			{preview.comparisonLabel ? (
+				<Text size='xs' c='dimmed' className={styles.comparisonLabel}>
+					{preview.comparisonLabel}
+				</Text>
+			) : null}
 			{statusMessage ? (
 				<Text size='xs' c={statusColor} className={styles.statusText}>
 					{statusMessage}

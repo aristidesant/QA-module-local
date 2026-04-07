@@ -15,7 +15,6 @@ import { usePermissions } from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
-import styles from './ConfigurationsPage.module.css';
 export default function ConfigurationsPage() {
 	const { t } = useTranslation('configurations');
 	const location = useLocation();
@@ -60,12 +59,7 @@ export default function ConfigurationsPage() {
 			description={t('description')}
 			titleIcon={<IconSettings size={24} />}
 		>
-			<Tabs
-				value={getActiveTab()}
-				variant='outline'
-				radius='md'
-				classNames={{ tab: styles.tab }}
-			>
+			<Tabs value={getActiveTab()}>
 				<Tabs.List>
 					{isMasterClient && (
 						<Tabs.Tab
