@@ -121,6 +121,17 @@
 			}
 		}
 	},
+	"convaiWidget": {
+		"loading": {
+			"title": "Loading assistant",
+			"description": "Preparing the ElevenLabs voice widget for this campaign."
+		},
+		"error": {
+			"title": "Assistant unavailable",
+			"description": "The ElevenLabs widget could not be loaded. Check network access, the agent allowlist, and CSP settings."
+		},
+		"retry": "Retry"
+	},
 	"preview": {
 		"overview": {
 			"title": "Campaign overview",

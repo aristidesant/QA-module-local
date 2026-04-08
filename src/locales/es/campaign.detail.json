@@ -121,6 +121,17 @@
 			}
 		}
 	},
+	"convaiWidget": {
+		"loading": {
+			"title": "Cargando asistente",
+			"description": "Preparando el widget de voz de ElevenLabs para esta campaña."
+		},
+		"error": {
+			"title": "Asistente no disponible",
+			"description": "No se pudo cargar el widget de ElevenLabs. Verifica el acceso de red, el allowlist del agente y la configuración de CSP."
+		},
+		"retry": "Reintentar"
+	},
 	"preview": {
 		"overview": {
 			"title": "Resumen de campaña",
