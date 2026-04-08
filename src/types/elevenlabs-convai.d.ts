@@ -1,11 +1,5 @@
 import type { HTMLAttributes } from 'react';
 
-declare global {
-	interface Window {
-		__webpack_nonce__?: string;
-	}
-}
-
 declare module 'react' {
 	namespace JSX {
 		interface IntrinsicElements {
