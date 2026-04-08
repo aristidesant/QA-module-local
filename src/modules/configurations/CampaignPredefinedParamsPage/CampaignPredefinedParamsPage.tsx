@@ -7,13 +7,14 @@ import {
 } from '~/queries/useClientConfigs';
 import CampaignPredefinedParamsList from './CampaignPredefinedParamsList';
 import { CampaignPredefinedParam } from '~/modules/campaigns/CampaignsForm/useCampaignsPredefinedParams';
-import { Button, Group, Modal, Stack, Text } from '@mantine/core';
+import { Button, Modal, Text } from '@mantine/core';
 import { IconAlertTriangle, IconPlus, IconSettings } from '@tabler/icons-react';
 import CampaignPredefinedParamsForm from './CampaignPredefinedParamsForm';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import InlineNotice from '~/components/InlineNotice';
 import SectionCard, { type CardActionsConfig } from '~/components/SectionCard';
 import { useTranslation } from 'react-i18next';
+import styles from './CampaignPredefinedParamsPage.module.css';
 
 const CampaignPredefinedParamsPage = () => {
 	const { t } = useTranslation('campaign-predefined-params');
@@ -193,7 +194,7 @@ const CampaignPredefinedParamsPage = () => {
 			description={t('page.description')}
 			actions={sectionActions}
 		>
-			<Stack gap={'xs'}>
+			<div className={styles.contentStack}>
 				{isGlobalConfig && (
 					<InlineNotice
 						title={t('globalNotice.title')}
@@ -206,14 +207,12 @@ const CampaignPredefinedParamsPage = () => {
 						}
 					/>
 				)}
-				<span>
-					<CampaignPredefinedParamsList
-						data={list}
-						onRowClick={handleRowClick}
-						onDelete={canDeleteParams ? handleDeleteClick : undefined}
-					/>
-				</span>
-			</Stack>
+				<CampaignPredefinedParamsList
+					data={list}
+					onRowClick={handleRowClick}
+					onDelete={canDeleteParams ? handleDeleteClick : undefined}
+				/>
+			</div>
 			<Modal
 				opened={deleteModalOpen}
 				onClose={() => setDeleteModalOpen(false)}
@@ -221,12 +220,12 @@ const CampaignPredefinedParamsPage = () => {
 				centered
 				size='sm'
 			>
-				<Text size='sm' mb='md'>
+				<Text size='sm' className={styles.modalDescription}>
 					{t('deleteParameter.description', {
 						name: paramToDelete?.name ?? '',
 					})}
 				</Text>
-				<Group gap='xs' justify='flex-end'>
+				<div className={styles.modalFooter}>
 					<Button
 						variant='default'
 						size='xs'
@@ -242,7 +241,7 @@ const CampaignPredefinedParamsPage = () => {
 					>
 						{t('actions.delete', { ns: 'common' })}
 					</Button>
-				</Group>
+				</div>
 			</Modal>
 
 			<Modal
@@ -252,10 +251,10 @@ const CampaignPredefinedParamsPage = () => {
 				centered
 				size='sm'
 			>
-				<Text size='sm' mb='md'>
+				<Text size='sm' className={styles.modalDescription}>
 					{t('deleteOverride.description')}
 				</Text>
-				<Group gap='xs' justify='flex-end'>
+				<div className={styles.modalFooter}>
 					<Button
 						variant='default'
 						size='xs'
@@ -271,7 +270,7 @@ const CampaignPredefinedParamsPage = () => {
 					>
 						{t('actions.deleteOverride')}
 					</Button>
-				</Group>
+				</div>
 			</Modal>
 			<Modal
 				opened={formModalOpen}
@@ -285,31 +284,11 @@ const CampaignPredefinedParamsPage = () => {
 				radius='md'
 				centered
 				overlayProps={{ opacity: 0.3, blur: 2 }}
-				styles={{
-					header: {
-						padding: 'var(--mantine-spacing-sm) var(--mantine-spacing-md)',
-						borderBottom: '1px solid var(--mantine-color-gray-2)',
-						marginBottom: 0,
-					},
-					title: {
-						fontSize: 'var(--mantine-font-size-md)',
-						fontWeight: 700,
-					},
-					body: {
-						padding: 'var(--mantine-spacing-md)',
-						paddingTop: 'var(--mantine-spacing-sm)',
-						paddingBottom: 'var(--mantine-spacing-sm)',
-						background: 'var(--mantine-color-gray-0)',
-						height: '100%',
-						display: 'flex',
-						flexDirection: 'column',
-					},
-					content: {
-						height: '90vh',
-						maxHeight: '90vh',
-						display: 'flex',
-						flexDirection: 'column',
-					},
+				classNames={{
+					header: styles.modalHeader,
+					title: styles.modalTitle,
+					body: styles.modalBody,
+					content: styles.modalContent,
 				}}
 				keepMounted={false}
 			>

@@ -39,6 +39,12 @@
 	overflow: hidden;
 }
 
+.contentStack {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
 .editorHeader {
 	display: flex;
 	justify-content: space-between;
@@ -113,6 +119,25 @@
 
 	.actions :global(button) {
 		width: 100%;
+	}
+}
+
+.sectionStack {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-lg);
+	margin-top: var(--mantine-spacing-md);
+}
+
+.fieldRow {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--mantine-spacing-md);
+}
+
+@media (max-width: 768px) {
+	.fieldRow {
+		grid-template-columns: 1fr;
 	}
 }
 

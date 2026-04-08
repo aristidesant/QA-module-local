@@ -1,13 +1,14 @@
 import { TextInput, Stack } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { useFormContext } from '../../CampaignPredefinedFormProvider';
+import styles from '../../CampaignPredefinedParamsForm.module.css';
 
 export const GeneralSection: React.FC = () => {
 	const { form, isEditMode } = useFormContext();
 	const { t } = useTranslation('campaign-predefined-params');
 
 	return (
-		<Stack gap='lg' mt='md'>
+		<Stack className={styles.sectionStack}>
 			<TextInput
 				label={t('form.general.name.label')}
 				placeholder={t('form.general.name.placeholder')}
