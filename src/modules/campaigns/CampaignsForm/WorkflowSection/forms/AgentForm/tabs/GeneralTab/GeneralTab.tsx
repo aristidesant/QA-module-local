@@ -20,7 +20,6 @@ import { useTranslation } from 'react-i18next';
 import {
 	LLM_MODELS,
 	getGroupedLlmOptions,
-	isClaudeLlm,
 } from '~/modules/configurations/CampaignPredefinedParamsPage/CampaignPredefinedParamsForm/formConfig';
 import type { SelectOption } from '../../types';
 import {
@@ -484,19 +483,13 @@ const GeneralTab = () => {
 						comboboxProps={WORKFLOW_DRAWER_COMBOBOX_PROPS}
 						value={llmModel || null}
 						onChange={(value) => {
-							const { reasoningEffort: _re, ...safePromptConfig } =
-								promptConfig as Record<string, unknown>;
-							const cleanPrompt = isClaudeLlm(value ?? undefined)
-								? (promptConfig as Record<string, unknown>)
-								: safePromptConfig;
-
 							const nextWorkflow = updateWorkflowNode(workflow, nodeId, {
 								conversationConfig: {
 									...(conversationConfig as Record<string, unknown>),
 									agent: {
 										...(agentConfig as Record<string, unknown>),
 										prompt: {
-											...cleanPrompt,
+											...(promptConfig as Record<string, unknown>),
 											llm: value || undefined,
 										},
 									},

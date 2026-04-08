@@ -136,6 +136,3 @@ export const getAsrQualityOptions = (t: TFunction) => [
 	{ value: 'medium', label: t('form.asr.quality.options.medium') },
 	{ value: 'low', label: t('form.asr.quality.options.low') },
 ];
-
-export const isClaudeLlm = (llm: string | undefined): boolean =>
-	llm !== undefined && llm.startsWith('claude-');
