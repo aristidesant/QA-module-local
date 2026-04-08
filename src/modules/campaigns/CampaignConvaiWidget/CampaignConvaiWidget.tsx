@@ -21,12 +21,47 @@ const WIDGET_AGENT_ID = 'agent_7401kn0y3svqej39hn0pa7khsdr3';
 const WIDGET_STYLE_NONCE = 'elevenlabs-convai-widget';
 
 let widgetScriptPromise: Promise<void> | null = null;
+let restoreWidgetStyleNoncePatch: (() => void) | null = null;
+
+const ensureWidgetStyleNoncePatch = () => {
+	if (typeof document === 'undefined') {
+		return () => {};
+	}
+
+	if (restoreWidgetStyleNoncePatch) {
+		return restoreWidgetStyleNoncePatch;
+	}
+
+	const originalCreateElement = Document.prototype.createElement;
+
+	Document.prototype.createElement = function patchedCreateElement(
+		this: Document,
+		tagName: string,
+		options?: ElementCreationOptions
+	) {
+		const element = originalCreateElement.call(this, tagName, options);
+
+		if (tagName.toLowerCase() === 'style') {
+			element.setAttribute('nonce', WIDGET_STYLE_NONCE);
+		}
+
+		return element;
+	};
+
+	restoreWidgetStyleNoncePatch = () => {
+		Document.prototype.createElement = originalCreateElement;
+		restoreWidgetStyleNoncePatch = null;
+	};
+
+	return restoreWidgetStyleNoncePatch;
+};
 
 const loadWidgetScript = () => {
 	if (typeof window === 'undefined' || typeof document === 'undefined') {
 		return Promise.resolve();
 	}
 
+	ensureWidgetStyleNoncePatch();
 	if (window.customElements.get(WIDGET_ELEMENT_NAME)) {
 		return Promise.resolve();
 	}
@@ -133,6 +168,7 @@ const CampaignConvaiWidget = () => {
 
 	useEffect(() => {
 		let cancelled = false;
+		const restoreStyleNoncePatch = ensureWidgetStyleNoncePatch();
 
 		const bootstrapWidget = async () => {
 			setStatus('loading');
@@ -154,6 +190,7 @@ const CampaignConvaiWidget = () => {
 
 		return () => {
 			cancelled = true;
+			restoreStyleNoncePatch();
 		};
 	}, [retryIndex]);
 
