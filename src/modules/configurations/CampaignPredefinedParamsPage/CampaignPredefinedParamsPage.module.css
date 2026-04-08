@@ -1,0 +1,55 @@
+.contentStack {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.modalDescription {
+	margin-bottom: var(--mantine-spacing-md);
+	font-size: var(--mantine-font-size-sm);
+}
+
+.modalFooter {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--mantine-spacing-xs);
+}
+
+.modalHeader {
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+	margin-bottom: 0;
+}
+
+.modalTitle {
+	font-size: var(--mantine-font-size-md);
+	font-weight: 700;
+}
+
+.modalBody {
+	padding: var(--mantine-spacing-md);
+	padding-top: var(--mantine-spacing-sm);
+	padding-bottom: var(--mantine-spacing-sm);
+	background: var(--mantine-color-gray-0);
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.modalContent {
+	height: 90vh;
+	max-height: 90vh;
+	display: flex;
+	flex-direction: column;
+}
+
+@media (max-width: 768px) {
+	.modalFooter {
+		flex-direction: column-reverse;
+		align-items: stretch;
+	}
+
+	.modalFooter :global(button) {
+		width: 100%;
+	}
+}

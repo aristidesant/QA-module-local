@@ -6,13 +6,14 @@ import {
 	AUDIO_FORMATS,
 	getAsrQualityOptions,
 } from '../../formConfig';
+import styles from '../../CampaignPredefinedParamsForm.module.css';
 
 export const ASRSection: React.FC = () => {
 	const { form } = useFormContext();
 	const { t } = useTranslation('campaign-predefined-params');
 
 	return (
-		<Stack gap='lg' mt='md'>
+		<Stack className={styles.sectionStack}>
 			<Select
 				label={t('form.asr.provider.label')}
 				placeholder={t('form.asr.provider.placeholder')}

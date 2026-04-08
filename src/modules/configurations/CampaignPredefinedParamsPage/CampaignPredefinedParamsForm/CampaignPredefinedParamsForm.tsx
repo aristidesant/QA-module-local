@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Badge, Button, Group, Text as MantineText } from '@mantine/core';
+import { Badge, Button, Text as MantineText } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useTranslation } from 'react-i18next';
@@ -362,7 +362,7 @@ const CampaignPredefinedParamsForm: React.FC<
 									: t('form.footer.createHint')}
 							</MantineText>
 						</div>
-						<Group justify='flex-end' gap='xs' className={styles.actionsRight}>
+						<div className={styles.actionsRight}>
 							<Button variant='subtle' size='sm' onClick={onCancel}>
 								{t('actions.cancel', { ns: 'common' })}
 							</Button>
@@ -377,7 +377,7 @@ const CampaignPredefinedParamsForm: React.FC<
 										: t('form.actions.create')}
 								</Button>
 							)}
-						</Group>
+						</div>
 					</div>
 				</div>
 			</CampaignPredefinedFormProvider>

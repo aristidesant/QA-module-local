@@ -85,7 +85,10 @@ Design quality is mandatory: clean, modern, production-ready, light mode first.
 
 - Use Mantine components by default.
 - Use CSS Modules (`*.module.css`) for component styles.
-- Avoid inline styles unless there is a justified Mantine-specific need.
+- Do not create new inline styles in application code.
+- Prefer CSS Modules, Mantine props, shared classes, and component primitives over `style={...}`.
+- Allow inline styles only as rare exceptions when there is no practical alternative and the reason is documented in code with an `inline-style-allow:` comment.
+- Keep exceptions as small as possible and prefer CSS custom properties or component props before falling back to `style={...}`.
 - Keep layouts compact:
   - Prefer `size="sm"` for controls and text
   - Prefer `gap="xs"` in `Stack`/`Group`
@@ -99,6 +102,7 @@ Design quality is mandatory: clean, modern, production-ready, light mode first.
 - Only use a custom shadow when there is a documented, component-specific exception.
 - Avoid flat, boring forms: group related fields into clear visual sections
   (e.g. Basic Info, Configuration, Advanced) with explicit hierarchy.
+- When an inline style exception is unavoidable, add an `inline-style-allow:` comment immediately above it and keep the scope as narrow as possible.
 
 ### Shared UI primitives
 
