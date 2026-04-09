@@ -5,6 +5,29 @@ import { CampaignAgent } from './CampaignAgentModel';
 import { CampaignObjective } from './CampaignObjectiveModel';
 import { CampaignStatus } from './CampaignStatus';
 
+/**
+ * Persisted style for a single workflow node.
+ * Stored as a top-level `node_styles` JSON column on the campaign record.
+ */
+export interface NodeStyle {
+	/** Human-readable node label snapshot (informational, not authoritative) */
+	nodeLabel?: string;
+	/** CSS hex color for the node background (omit to keep automatic label-based tone) */
+	backgroundColor?: string;
+	/** CSS hex color for the node border */
+	borderColor?: string;
+	/** CSS hex color for the node label text */
+	textColor?: string;
+	/** Icon key from the allowed workflow icon registry (e.g. "telephone") */
+	iconName?: string;
+}
+
+/**
+ * Map of node ID → persisted node style.
+ * Absent / empty = UI falls back to automatic label-based colors.
+ */
+export type NodeStyles = Record<string, NodeStyle>;
+
 export interface WorkingHours {
 	[key: string]: {
 		enabled: boolean;
@@ -102,6 +125,8 @@ export interface Campaign {
 
 	noiseCancellation?: boolean;
 	agentConfig?: Partial<AgentConfigModel>;
+	/** Persisted node styles for the workflow editor (top-level campaign field) */
+	nodeStyles?: NodeStyles;
 	versionDescription?: string;
 	// Stats and performance
 	stats?: {

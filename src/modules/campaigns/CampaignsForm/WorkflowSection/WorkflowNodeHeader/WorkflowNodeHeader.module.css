@@ -48,12 +48,12 @@
 }
 
 .title {
-	color: var(--mantine-color-dark-9);
+	color: var(--workflow-node-header-text, var(--mantine-color-dark-9));
 	font-weight: 600;
 }
 
 .subtitle {
-	color: var(--mantine-color-gray-6);
+	color: var(--workflow-node-header-subtext, var(--mantine-color-gray-6));
 	line-height: 1.1;
 }
 

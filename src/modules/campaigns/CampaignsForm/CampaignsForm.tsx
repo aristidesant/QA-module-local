@@ -212,6 +212,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			workingHours: campaign?.workingHours || defaultWorkingHours,
 			noiseCancellation: campaign?.noiseCancellation,
 			agentConfig: campaign?.agentConfig || {},
+			nodeStyles: campaign?.nodeStyles ?? {},
 			defaultMaxWaves: campaign?.defaultMaxWaves ?? 3,
 			defaultWaveExecutionDelaySeconds:
 				campaign?.defaultWaveExecutionDelaySeconds ?? 0,
@@ -272,6 +273,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			workingHours: campaign.workingHours || defaultWorkingHours,
 			noiseCancellation: campaign.noiseCancellation,
 			agentConfig: campaign.agentConfig || {},
+			nodeStyles: campaign.nodeStyles ?? {},
 			defaultMaxWaves: campaign.defaultMaxWaves ?? 3,
 			defaultWaveExecutionDelaySeconds:
 				campaign.defaultWaveExecutionDelaySeconds ?? 0,
@@ -411,6 +413,19 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		}
 
 		try {
+			// Clean up orphan nodeStyles entries (keys whose node no longer exists)
+			const workflowNodes = value.agentConfig?.workflow?.nodes;
+			if (value.nodeStyles && workflowNodes) {
+				const validNodeIds = new Set(Object.keys(workflowNodes));
+				const cleaned: Record<string, unknown> = {};
+				for (const [nodeId, style] of Object.entries(value.nodeStyles)) {
+					if (validNodeIds.has(nodeId)) {
+						cleaned[nodeId] = style;
+					}
+				}
+				value.nodeStyles = cleaned as typeof value.nodeStyles;
+			}
+
 			// Clean up toolIds from agentConfig before sending
 			const cleanedValue = { ...value };
 			if (cleanedValue.agentConfig?.conversationConfig?.agent?.prompt) {

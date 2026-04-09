@@ -1,5 +1,6 @@
 .label {
-	position: absolute; /* allow translate3d positioning to be exact */
+	position: absolute;
+	/* allow translate3d positioning to be exact */
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -100,6 +101,7 @@
 	align-items: center;
 	gap: 4px;
 	min-width: 0;
+	max-width: 240px;
 	padding: 8px 14px;
 	border: 1px solid rgba(255, 255, 255, 0.08);
 	border-radius: 999px;
@@ -112,6 +114,7 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	cursor: pointer;
 }
 
 .labelIcon {
@@ -121,6 +124,9 @@
 
 .labelText {
 	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .edgeInteraction {

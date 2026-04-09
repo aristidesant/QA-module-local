@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import type { NodeStyle } from '~/models/CampaignsModel';
 
 type WorkflowNodeFamily =
 	| 'gray'
@@ -327,7 +328,115 @@ const getToneForFamilyAndLevel = (
 	return tones[Math.min(level, tones.length - 1)] ?? tones[0];
 };
 
-export const getWorkflowNodeToneStyle = (label?: string): CSSProperties => {
+/**
+ * Convert a hex colour to an RGBA string with the given alpha.
+ */
+const hexToRgba = (hex: string, alpha: number): string => {
+	const clean = hex.replace('#', '');
+	const full =
+		clean.length === 3
+			? clean
+					.split('')
+					.map((c) => c + c)
+					.join('')
+			: clean;
+	const r = parseInt(full.slice(0, 2), 16);
+	const g = parseInt(full.slice(2, 4), 16);
+	const b = parseInt(full.slice(4, 6), 16);
+	return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
+/**
+ * Compute WCAG-based relative luminance for a hex colour.
+ * Returns a value between 0 (black) and 1 (white).
+ */
+const getRelativeLuminance = (hex: string): number => {
+	const clean = hex.replace('#', '');
+	const full =
+		clean.length === 3
+			? clean
+					.split('')
+					.map((c) => c + c)
+					.join('')
+			: clean;
+	const toLinear = (c: number) =>
+		c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+	const r = toLinear(parseInt(full.slice(0, 2), 16) / 255);
+	const g = toLinear(parseInt(full.slice(2, 4), 16) / 255);
+	const b = toLinear(parseInt(full.slice(4, 6), 16) / 255);
+	return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+
+/**
+ * Return the best-contrasting text colour (#ffffff or #1a1a1a) for a given
+ * background hex colour, using the WCAG relative luminance threshold.
+ */
+const getContrastTextColor = (hex: string): string =>
+	getRelativeLuminance(hex) > 0.179 ? '#1a1a1a' : '#ffffff';
+
+/**
+ * Darken a hex colour by the given amount (0–1).
+ */
+const darkenHex = (hex: string, amount: number): string => {
+	const clean = hex.replace('#', '');
+	const full =
+		clean.length === 3
+			? clean
+					.split('')
+					.map((c) => c + c)
+					.join('')
+			: clean;
+	const r = Math.max(
+		0,
+		Math.round(parseInt(full.slice(0, 2), 16) * (1 - amount))
+	);
+	const g = Math.max(
+		0,
+		Math.round(parseInt(full.slice(2, 4), 16) * (1 - amount))
+	);
+	const b = Math.max(
+		0,
+		Math.round(parseInt(full.slice(4, 6), 16) * (1 - amount))
+	);
+	return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+};
+
+/**
+ * Build CSS variables from a custom NodeStyle (user-chosen colour).
+ * Derives border, ring, header bg, etc. from the background colour automatically.
+ */
+const buildNodeStyleFromCustomColor = (nodeStyle: NodeStyle): CSSProperties => {
+	const bg = nodeStyle.backgroundColor ?? '#adb5bd';
+	const border = nodeStyle.borderColor ?? darkenHex(bg, 0.25);
+	const accent = nodeStyle.textColor ?? darkenHex(bg, 0.5);
+	const isLight = getRelativeLuminance(bg) > 0.179;
+	const headerText = getContrastTextColor(bg);
+	const headerSubtext = isLight
+		? 'rgba(0, 0, 0, 0.55)'
+		: 'rgba(255, 255, 255, 0.72)';
+
+	return {
+		'--workflow-node-accent': accent,
+		'--workflow-node-header-text': headerText,
+		'--workflow-node-header-subtext': headerSubtext,
+		'--workflow-node-selected-border': border,
+		'--workflow-node-selected-ring': hexToRgba(bg, 0.18),
+		'--workflow-node-header-bg': bg,
+		'--workflow-node-surface-selected': bg,
+		backgroundColor: bg,
+		borderColor: border,
+	} as CSSProperties;
+};
+
+export const getWorkflowNodeToneStyle = (
+	label?: string,
+	nodeStyle?: NodeStyle
+): CSSProperties => {
+	// When a persisted NodeStyle is provided, use it directly
+	if (nodeStyle?.backgroundColor) {
+		return buildNodeStyleFromCustomColor(nodeStyle);
+	}
+
 	const parsed = parseWorkflowLabel(label);
 	if (!parsed) {
 		const neutral = FAMILY_TONES.gray[0];

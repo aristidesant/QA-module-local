@@ -51,6 +51,18 @@
 	max-width: 720px;
 }
 
+.legendBar {
+	flex-shrink: 0;
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-white);
+	overflow: hidden;
+}
+
+.legendBar > * {
+	border-bottom: none;
+}
+
 .canvasArea {
 	flex: 1;
 	min-height: 0;

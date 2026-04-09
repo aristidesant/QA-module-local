@@ -130,7 +130,10 @@
 			"title": "Assistant unavailable",
 			"description": "The ElevenLabs widget could not be loaded. Check network access, the agent allowlist, and CSP settings."
 		},
-		"retry": "Retry"
+		"retry": "Retry",
+		"minimize": "Minimize assistant",
+		"restore": "Restore assistant",
+		"label": "Assistant"
 	},
 	"preview": {
 		"overview": {

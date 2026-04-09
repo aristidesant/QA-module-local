@@ -11,6 +11,9 @@ import WorkflowNodeHeader from '../../WorkflowNodeHeader';
 import WorkflowNodeWrapper from '../../WorkflowNode';
 import type { WorkflowNodeData } from '../../WorkflowNode/WorkflowNodeTypes';
 import workflowNodeStyles from '../../WorkflowNode/WorkflowNode.module.css';
+import { getWorkflowNodeToneStyle } from '../../utils/workflowNodeColors';
+import { resolveWorkflowIcon } from '../../utils/workflowIconRegistry';
+import { useNodeStyle } from '../../NodeStylesContext';
 import styles from './AgentTransferNode.module.css';
 
 const AgentTransferNodeComponent = (props: NodeProps) => {
@@ -24,6 +27,17 @@ const AgentTransferNodeComponent = (props: NodeProps) => {
 	const fallbackLabel = t('form.workflow.nodes.agent_transfer', {
 		defaultValue: t('form.workflow.nodes.standalone_agent'),
 	});
+	const persistedStyle = useNodeStyle(props.id);
+	const nodeSurfaceStyle = getWorkflowNodeToneStyle(
+		nodeData.label || fallbackLabel,
+		persistedStyle
+	);
+	const CustomIcon = resolveWorkflowIcon(persistedStyle?.iconName);
+	const nodeIcon = CustomIcon ? (
+		<CustomIcon size={18} className={styles.icon} />
+	) : (
+		<IconUserCog size={18} className={styles.icon} />
+	);
 	const agentId = nodeData.agentId?.trim();
 	const delayMs = nodeData.delayMs ?? 0;
 	const transferMessage = nodeData.transferMessage?.trim();
@@ -41,10 +55,15 @@ const AgentTransferNodeComponent = (props: NodeProps) => {
 					/>
 				}
 			>
-				<div className={`${workflowNodeStyles.nodeSurface} ${styles.node}`}>
+				{/* inline-style-allow: nodeSurfaceStyle sets CSS custom properties for node theming — must be applied inline */}
+				<div
+					className={`${workflowNodeStyles.nodeSurface} ${styles.node}`}
+					// inline-style-allow: nodeSurfaceStyle sets CSS custom properties for node theming — must be applied inline
+					style={nodeSurfaceStyle}
+				>
 					<WorkflowNodeHeader
 						className={styles.header}
-						icon={<IconUserCog size={18} className={styles.icon} />}
+						icon={nodeIcon}
 						title={nodeData.label || fallbackLabel}
 						subtitle={t('form.workflow.nodeStatus.transferTarget')}
 						titleClassName={styles.title}

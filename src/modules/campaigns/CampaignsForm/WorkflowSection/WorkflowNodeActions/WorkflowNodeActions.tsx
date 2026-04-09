@@ -20,6 +20,7 @@ import {
 import { useWorkflowNodeEditor } from '../WorkflowNodeEditorContext';
 import { useWorkflowCanvasActions } from '../WorkflowCanvas/WorkflowCanvasActionsContext';
 import type { WorkflowNodeData } from '../WorkflowNode/WorkflowNodeTypes';
+import NodeStylePopover from '../NodeStylePopover';
 import styles from './WorkflowNodeActions.module.css';
 
 interface WorkflowNodeActionsProps {
@@ -58,6 +59,8 @@ const WorkflowNodeActions = ({
 		nodeType !== WORKFLOW_NODE_TYPES.END;
 	const position = nodeData.position;
 	const isStartNode = nodeType === WORKFLOW_NODE_TYPES.START;
+	const isEndNode = nodeType === WORKFLOW_NODE_TYPES.END;
+	const canCustomizeStyle = !isStartNode && !isEndNode;
 	const edgeOrder = (nodeData.edgeOrder as string[] | undefined) ?? [];
 	const isStartConnected = isStartNode && edgeOrder.length > 0;
 	const showAddButton =
@@ -196,6 +199,9 @@ const WorkflowNodeActions = ({
 						<IconPlus size={13} />
 					</ActionIcon>
 				</Tooltip>
+			)}
+			{canCustomizeStyle && (
+				<NodeStylePopover nodeId={nodeId} nodeLabel={nodeData.label ?? ''} />
 			)}
 			{canEdit && (
 				<Tooltip label={t('form.workflow.actions.edit')} withArrow>

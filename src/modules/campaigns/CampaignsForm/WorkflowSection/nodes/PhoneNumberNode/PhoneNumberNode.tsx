@@ -12,6 +12,8 @@ import WorkflowNodeWrapper from '../../WorkflowNode';
 import type { WorkflowNodeData } from '../../WorkflowNode/WorkflowNodeTypes';
 import workflowNodeStyles from '../../WorkflowNode/WorkflowNode.module.css';
 import { getWorkflowNodeToneStyle } from '../../utils/workflowNodeColors';
+import { resolveWorkflowIcon } from '../../utils/workflowIconRegistry';
+import { useNodeStyle } from '../../NodeStylesContext';
 import styles from './PhoneNumberNode.module.css';
 
 const PhoneNumberNode = (props: NodeProps) => {
@@ -25,6 +27,13 @@ const PhoneNumberNode = (props: NodeProps) => {
 	const nodeTitle = t('form.workflow.nodes.phone_number', {
 		defaultValue: 'Transfer',
 	});
+	const persistedStyle = useNodeStyle(props.id);
+	const CustomIcon = resolveWorkflowIcon(persistedStyle?.iconName);
+	const nodeIcon = CustomIcon ? (
+		<CustomIcon size={18} className={styles.icon} />
+	) : (
+		<IconPhoneCall size={18} className={styles.icon} />
+	);
 	const destination = nodeData.transferDestination;
 	const value = destination
 		? 'phoneNumber' in destination
@@ -45,7 +54,7 @@ const PhoneNumberNode = (props: NodeProps) => {
 				backgroundColor: 'var(--mantine-color-red-0)',
 				borderColor: 'var(--mantine-color-red-4)',
 			}
-		: getWorkflowNodeToneStyle(nodeTitle);
+		: getWorkflowNodeToneStyle(nodeTitle, persistedStyle);
 
 	return (
 		<>
@@ -65,7 +74,7 @@ const PhoneNumberNode = (props: NodeProps) => {
 				>
 					<WorkflowNodeHeader
 						className={styles.header}
-						icon={<IconPhoneCall size={18} className={styles.icon} />}
+						icon={nodeIcon}
 						title={nodeTitle}
 						subtitle={t('form.workflow.nodeStatus.destination')}
 					/>
