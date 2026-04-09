@@ -178,6 +178,7 @@ const sidebarSections: SidebarSection[] = [
 				to: '/configurations/dictionary-rules',
 				module: ModuleEnum.SETTINGS,
 				permission: PermissionEnum.MANAGE,
+				masterOnly: true,
 				i18nNamespace: 'dictionary-rules',
 			},
 		],
