@@ -1,10 +1,4 @@
-import {
-	Select,
-	Slider,
-	Stack,
-	Text as MantineText,
-	Group,
-} from '@mantine/core';
+import { Select, Slider, Stack, Text as MantineText } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { useFormContext } from '../../CampaignPredefinedFormProvider';
 import { TTS_MODELS, AUDIO_FORMATS } from '../../formConfig';
@@ -15,8 +9,8 @@ export const TTSSection: React.FC = () => {
 	const { t } = useTranslation('campaign-predefined-params');
 
 	return (
-		<Stack gap='lg' mt='md'>
-			<Group grow>
+		<Stack className={styles.sectionStack}>
+			<div className={styles.fieldRow}>
 				<Select
 					label={t('form.tts.model.label')}
 					placeholder={t('form.tts.model.placeholder')}
@@ -32,7 +26,7 @@ export const TTSSection: React.FC = () => {
 					data={AUDIO_FORMATS}
 					{...form.getInputProps('ttsAgentOutputAudioFormat')}
 				/>
-			</Group>
+			</div>
 			<div className={styles.sliderContainer}>
 				<div className={styles.sliderLabel}>
 					<label>{t('form.tts.speed.label')}</label>

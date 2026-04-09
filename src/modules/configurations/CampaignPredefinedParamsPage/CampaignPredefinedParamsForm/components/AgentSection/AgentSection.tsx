@@ -9,7 +9,7 @@ export const AgentSection: React.FC = () => {
 	const { t } = useTranslation('campaign-predefined-params');
 
 	return (
-		<Stack gap='lg' mt='md'>
+		<Stack className={styles.sectionStack}>
 			<Select
 				label={t('form.agent.llmModel.label')}
 				placeholder={t('form.agent.llmModel.placeholder')}

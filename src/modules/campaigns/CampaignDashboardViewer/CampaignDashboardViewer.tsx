@@ -162,7 +162,9 @@ const CampaignDashboardViewer = ({
 
 	const renderPayload = useMemo(
 		() => ({
-			...(selectedTimeRange ? { timeRange: selectedTimeRange } : {}),
+			...(selectedTimeRange
+				? { timeRange: selectedTimeRange }
+				: { timeRange: 'ALL' as AnalyticsTimeRange }),
 			...(contactGroupId != null ? { contactGroupId } : {}),
 		}),
 		[selectedTimeRange, contactGroupId]

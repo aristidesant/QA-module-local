@@ -1,35 +1,63 @@
 .label {
 	position: absolute; /* allow translate3d positioning to be exact */
-	background-color: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-3);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	background-color: var(--mantine-color-dark-9);
+	border: 1px solid rgba(255, 255, 255, 0.08);
 	border-radius: 999px;
-	color: var(--mantine-color-gray-8);
-	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-white);
+	font-size: var(--mantine-font-size-sm);
 	font-weight: 500;
 	line-height: 1;
-	max-width: 180px;
+	max-width: 220px;
 	overflow: hidden;
-	padding: 3px 8px;
+	padding: 8px 14px;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	pointer-events: none;
 	transform-origin: center;
 	z-index: 160;
-	box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+	box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+}
+
+.labelStructured {
+	background-color: transparent;
+	border: 0;
+	box-shadow: none;
+	max-width: none;
+	overflow: visible;
+	padding: 0;
+	white-space: normal;
 }
 
 .labelError {
-	background-color: var(--mantine-color-red-0);
-	border-color: var(--mantine-color-red-3);
-	color: var(--mantine-color-red-8);
-	font-weight: 600;
+	border-color: rgba(250, 82, 82, 0.45);
+	box-shadow:
+		0 0 0 1px rgba(250, 82, 82, 0.18),
+		0 8px 18px rgba(15, 23, 42, 0.12);
+}
+
+.labelError .labelChip {
+	border-color: rgba(250, 82, 82, 0.45);
+	box-shadow:
+		0 0 0 1px rgba(250, 82, 82, 0.18),
+		0 8px 18px rgba(15, 23, 42, 0.12);
 }
 
 .labelWarning {
-	background-color: var(--mantine-color-yellow-0);
-	border-color: var(--mantine-color-yellow-3);
-	color: var(--mantine-color-yellow-9);
-	font-weight: 600;
+	border-color: rgba(255, 212, 59, 0.45);
+	box-shadow:
+		0 0 0 1px rgba(255, 212, 59, 0.18),
+		0 8px 18px rgba(15, 23, 42, 0.12);
+}
+
+.labelWarning .labelChip {
+	border-color: rgba(255, 212, 59, 0.45);
+	box-shadow:
+		0 0 0 1px rgba(255, 212, 59, 0.18),
+		0 8px 18px rgba(15, 23, 42, 0.12);
 }
 
 .labelClickable {
@@ -41,8 +69,18 @@
 }
 
 .labelClickable:hover {
-	background-color: var(--mantine-color-gray-0);
-	border-color: var(--mantine-color-gray-4);
+	background-color: var(--mantine-color-dark-8);
+	border-color: rgba(255, 255, 255, 0.14);
+}
+
+.labelStructured.labelClickable:hover {
+	background-color: transparent;
+	border-color: transparent;
+}
+
+.labelStructured.labelClickable:hover .labelChip {
+	background-color: var(--mantine-color-dark-8);
+	border-color: rgba(255, 255, 255, 0.14);
 }
 
 .labelPrefix {
@@ -51,20 +89,38 @@
 }
 
 .labelStack {
-	display: flex;
+	display: inline-flex;
 	flex-direction: column;
-	gap: 2px;
+	gap: 4px;
+	align-items: flex-start;
 }
 
-.labelRow {
+.labelChip {
 	display: inline-flex;
 	align-items: center;
-	gap: 3px;
+	gap: 4px;
+	min-width: 0;
+	padding: 8px 14px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 999px;
+	background-color: var(--mantine-color-dark-9);
+	box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+	color: var(--mantine-color-white);
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 500;
 	line-height: 1.1;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .labelIcon {
-	color: var(--mantine-color-gray-6);
+	flex-shrink: 0;
+	color: rgba(255, 255, 255, 0.88);
+}
+
+.labelText {
+	min-width: 0;
 }
 
 .edgeInteraction {

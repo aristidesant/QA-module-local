@@ -19,6 +19,11 @@ import {
 } from '../../WorkflowCanvas/WorkflowCanvasActionsContext';
 import styles from './ConditionEdge.module.css';
 
+const truncateEdgePrompt = (value: string, maxLength = 12): string => {
+	if (value.length <= maxLength) return value;
+	return `${value.slice(0, maxLength).trimEnd()}...`;
+};
+
 const ConditionEdge: FC<EdgeProps> = ({
 	id,
 	sourceX,
@@ -106,8 +111,35 @@ const ConditionEdge: FC<EdgeProps> = ({
 			: null;
 	const hasStructuredLabel =
 		!!structuredLabel?.forwardLabel && !!structuredLabel?.backwardLabel;
+	const forwardCondition = edgeData.forwardCondition;
+	const backwardCondition = edgeData.backwardCondition;
+	const hasForwardCondition = edgeData.forwardCondition !== undefined;
+	const hasBackwardCondition = edgeData.backwardCondition !== undefined;
+	const hasSingleCondition = hasForwardCondition !== hasBackwardCondition;
+	const singleConditionDirection = hasSingleCondition
+		? hasForwardCondition
+			? 'forward'
+			: 'backward'
+		: null;
 	const warningLevel = (edgeData.warningLevel ?? 'none') as WarningLevel;
+	const suppressLabel = edgeData.sourceNodeType === 'start';
 	const isInteractive = true;
+	const promptLabel =
+		forwardCondition?.type === 'llm' &&
+		typeof forwardCondition.condition === 'string' &&
+		!forwardCondition.label
+			? forwardCondition.condition.trim()
+			: backwardCondition?.type === 'llm' &&
+				  typeof backwardCondition.condition === 'string' &&
+				  !backwardCondition.label
+				? backwardCondition.condition.trim()
+				: null;
+	const displayLabel =
+		hasStructuredLabel || suppressLabel
+			? null
+			: promptLabel
+				? truncateEdgePrompt(promptLabel)
+				: label;
 
 	const handleEdgeClick = (
 		event: ReactMouseEvent<SVGPathElement | HTMLDivElement>
@@ -129,10 +161,32 @@ const ConditionEdge: FC<EdgeProps> = ({
 	};
 
 	const strokeColor = getStrokeColor();
+	const shouldUseDirectionalLabel = hasStructuredLabel || hasSingleCondition;
+	const isSourceBeforeTarget =
+		sourceX < targetX || (sourceX === targetX && sourceY <= targetY);
+	const ForwardIcon = isSourceBeforeTarget ? IconArrowRight : IconArrowLeft;
+	const BackwardIcon = isSourceBeforeTarget ? IconArrowLeft : IconArrowRight;
+	const forwardMarker = isSourceBeforeTarget ? markerEnd : markerEnd;
+	const backwardMarker = isSourceBeforeTarget ? markerEnd : markerEnd;
+	const startMarker =
+		hasForwardCondition && hasBackwardCondition
+			? backwardMarker
+			: hasBackwardCondition
+				? backwardMarker
+				: undefined;
+	const endMarker =
+		hasForwardCondition && hasBackwardCondition
+			? forwardMarker
+			: hasForwardCondition
+				? forwardMarker
+				: undefined;
 
 	// Get label style class based on warning level
 	const getLabelClassName = (): string => {
-		const baseClasses = `${styles.label}`;
+		const baseClasses = [
+			styles.label,
+			shouldUseDirectionalLabel ? styles.labelStructured : '',
+		];
 		const warningClasses =
 			warningLevel === 'error'
 				? styles.labelError
@@ -140,7 +194,9 @@ const ConditionEdge: FC<EdgeProps> = ({
 					? styles.labelWarning
 					: '';
 		const clickableClasses = isInteractive ? styles.labelClickable : '';
-		return `${baseClasses} ${warningClasses} ${clickableClasses}`.trim();
+		return [...baseClasses, warningClasses, clickableClasses]
+			.filter(Boolean)
+			.join(' ');
 	};
 
 	return (
@@ -164,7 +220,8 @@ const ConditionEdge: FC<EdgeProps> = ({
 					strokeLinecap: 'round',
 					strokeLinejoin: 'round',
 				}}
-				markerEnd={markerEnd}
+				markerStart={startMarker}
+				markerEnd={endMarker}
 			/>
 			{isActionsOpen && (
 				<EdgeLabelRenderer>
@@ -209,7 +266,7 @@ const ConditionEdge: FC<EdgeProps> = ({
 					</Group>
 				</EdgeLabelRenderer>
 			)}
-			{(label || hasStructuredLabel) && (
+			{!suppressLabel && (displayLabel || shouldUseDirectionalLabel) && (
 				<EdgeLabelRenderer>
 					<div
 						className={getLabelClassName()}
@@ -224,17 +281,35 @@ const ConditionEdge: FC<EdgeProps> = ({
 					>
 						{hasStructuredLabel ? (
 							<div className={styles.labelStack}>
-								<div className={styles.labelRow}>
-									<IconArrowRight className={styles.labelIcon} size={12} />
-									<span>{structuredLabel?.forwardLabel}</span>
+								<div className={styles.labelChip}>
+									<ForwardIcon className={styles.labelIcon} size={12} />
+									<span className={styles.labelText}>
+										{structuredLabel?.forwardLabel}
+									</span>
 								</div>
-								<div className={styles.labelRow}>
-									<IconArrowLeft className={styles.labelIcon} size={12} />
-									<span>{structuredLabel?.backwardLabel}</span>
+								<div className={styles.labelChip}>
+									<BackwardIcon className={styles.labelIcon} size={12} />
+									<span className={styles.labelText}>
+										{structuredLabel?.backwardLabel}
+									</span>
 								</div>
 							</div>
+						) : shouldUseDirectionalLabel ? (
+							<div className={styles.labelChip}>
+								{singleConditionDirection === 'backward' ? (
+									<BackwardIcon className={styles.labelIcon} size={12} />
+								) : (
+									<ForwardIcon className={styles.labelIcon} size={12} />
+								)}
+								<span className={styles.labelText}>
+									{displayLabel ??
+										t('form.workflow.edge.notConfigured', {
+											defaultValue: 'Not configured',
+										})}
+								</span>
+							</div>
 						) : (
-							<>{label}</>
+							<>{displayLabel}</>
 						)}
 					</div>
 				</EdgeLabelRenderer>

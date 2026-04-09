@@ -151,6 +151,9 @@ const useWorkflowNodes = ({
 			nodeType: string,
 			payload?: AddNodeVariantPayload
 		) => {
+			const parentNode = nodesRef.current.find(
+				(node) => node.id === parentNodeId
+			);
 			const timestamp = Date.now();
 			const newNodeId = `node-${timestamp}`;
 			const newEdgeId = `edge-${timestamp}`;
@@ -190,7 +193,11 @@ const useWorkflowNodes = ({
 				target: newNodeId,
 				type: 'condition',
 				data: {
-					label: buildEdgeLabel(t),
+					label:
+						parentNode?.type === WORKFLOW_NODE_TYPES.START
+							? null
+							: buildEdgeLabel(t),
+					sourceNodeType: parentNode?.type,
 				},
 			};
 
@@ -202,7 +209,7 @@ const useWorkflowNodes = ({
 			]);
 			setEdges((currentEdges) => [...currentEdges, newEdge]);
 		},
-		[createNodeDataByType, setEdges, setNodes, t]
+		[createNodeDataByType, nodesRef, setEdges, setNodes, t]
 	);
 
 	const handleAddNode = useCallback(

@@ -53,6 +53,7 @@ import CampaignSyncButton from './components/CampaignSyncButton';
 import AgentSectionRightPanel from './AgentSection/AgentSectionRightPanel';
 import GeneralSectionRightPanel from './GeneralSection/GeneralSectionRightPanel';
 import AppDrawer from '~/components/AppDrawer';
+import CampaignConvaiWidget from '../CampaignConvaiWidget';
 import DashboardSection from './DashboardSection';
 import VersioningSection from './VersioningSection';
 import i18n from '~/locales/i18n';
@@ -679,6 +680,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 						)}
 					</Stack>
 				</ContentContainer>
+				<CampaignConvaiWidget agentId={campaign?.agentConfig?.agentId} />
 				<AgentSaveReviewModal
 					opened={reviewModalOpen}
 					onClose={() => setReviewModalOpen(false)}

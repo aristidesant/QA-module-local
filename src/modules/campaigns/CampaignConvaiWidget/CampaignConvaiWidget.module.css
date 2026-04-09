@@ -1,0 +1,20 @@
+.fallback {
+	position: fixed;
+	right: var(--mantine-spacing-lg);
+	bottom: var(--mantine-spacing-lg);
+	width: min(22rem, calc(100vw - (var(--mantine-spacing-lg) * 2)));
+	z-index: 120;
+}
+
+.widgetHost {
+	z-index: 120 !important;
+}
+
+@media (max-width: 48em) {
+	.fallback {
+		left: var(--mantine-spacing-sm);
+		right: var(--mantine-spacing-sm);
+		bottom: var(--mantine-spacing-sm);
+		width: auto;
+	}
+}

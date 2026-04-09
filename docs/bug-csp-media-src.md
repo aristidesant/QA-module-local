@@ -11,8 +11,8 @@ The action has been blocked.
 ## Root cause
 
 The nginx config (`nginx.conf`) sets a strict CSP header on every response. The
-`media-src` directive only allows `'self'` and `blob:` URLs, blocking audio loaded
-directly from DigitalOcean Spaces pre-signed URLs.
+`media-src` directive only allows `'self'` and `blob:` URLs in the deployed
+environment, blocking audio loaded directly from pre-signed storage URLs.
 
 This does not reproduce locally because Vite's dev server does not apply the nginx
 CSP headers.
@@ -23,39 +23,24 @@ CSP headers.
 per `location` block:
 
 ```
-media-src 'self' blob:;
+media-src 'self' blob: https://cxm.nyc3.digitaloceanspaces.com https://cxm-bpd.s3.us-east-1.amazonaws.com;
 ```
 
 ## Solution
 
-Follow the same pattern already used for `connect-src` and `frame-src`, which accept
-environment variable overrides (`${CSP_CONNECT_SRC}`, `${CSP_FRAME_SRC}`).
+Hardcode the QA and prod storage origins directly into the CSP so the audio
+player can load transcript media without any extra deployment variables.
 
-### 1. `Dockerfile` — add new build arg and env var (after line 19)
-
-```dockerfile
-ARG VITE_APP_STORAGE_URL
-ENV CSP_MEDIA_SRC=$VITE_APP_STORAGE_URL
-```
-
-### 2. `nginx.conf` — update `media-src` in all 3 `location` blocks
+### 1. `nginx.conf` — update `media-src` in all 3 `location` blocks
 
 ```diff
 - media-src 'self' blob:;
-+ media-src 'self' blob: ${CSP_MEDIA_SRC};
-```
-
-### 3. Deployment config (CI/CD — outside this repo)
-
-Pass the new build arg when building the Docker image for QA/prod:
-
-```
-VITE_APP_STORAGE_URL=https://cxm.nyc3.digitaloceanspaces.com
++ media-src 'self' blob: https://cxm.nyc3.digitaloceanspaces.com https://cxm-bpd.s3.us-east-1.amazonaws.com;
 ```
 
 ## Verification
 
-1. Build the Docker image with the new `VITE_APP_STORAGE_URL` build arg.
+1. Build the Docker image.
 2. Run the container and open a conversation with a voice transcript.
 3. Confirm audio plays without CSP errors in the browser console.
-4. Check the `Content-Security-Policy` response header includes the DigitalOcean origin in `media-src`.
+4. Check the `Content-Security-Policy` response header includes both storage origins in `media-src`.
