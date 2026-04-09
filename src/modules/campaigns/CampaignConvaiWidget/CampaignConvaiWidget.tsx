@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
 	Button,
 	Group,
@@ -8,8 +8,13 @@ import {
 	Stack,
 	Text,
 	ThemeIcon,
+	Tooltip,
 } from '@mantine/core';
-import { IconAlertCircle } from '@tabler/icons-react';
+import {
+	IconAlertCircle,
+	IconChevronDown,
+	IconChevronUp,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import styles from './CampaignConvaiWidget.module.css';
 
@@ -130,6 +135,8 @@ const CampaignConvaiWidget = ({ agentId }: CampaignConvaiWidgetProps) => {
 		'loading'
 	);
 	const [retryIndex, setRetryIndex] = useState(0);
+	const [minimized, setMinimized] = useState(false);
+	const widgetHostRef = useRef<HTMLElement | null>(null);
 
 	useEffect(() => {
 		if (!agentId) return;
@@ -158,6 +165,41 @@ const CampaignConvaiWidget = ({ agentId }: CampaignConvaiWidgetProps) => {
 			cancelled = true;
 		};
 	}, [retryIndex, agentId]);
+
+	useEffect(() => {
+		if (status !== 'ready') return;
+
+		// Inject CSS into the widget's shadow DOM to override its internal
+		// fixed right-side positioning and move it to the left.
+		const injectShadowStyles = () => {
+			const host =
+				widgetHostRef.current ??
+				(document.querySelector(WIDGET_ELEMENT_NAME) as HTMLElement | null);
+
+			if (!host?.shadowRoot) return false;
+
+			const styleId = 'nai-position-override';
+			if (host.shadowRoot.getElementById(styleId)) return true;
+
+			const style = document.createElement('style');
+			style.id = styleId;
+			// Override widget's Tailwind classes that place the card on the right/bottom
+			style.textContent = `
+        .fixed.end-3 {
+          inset-inline-end: auto !important;
+          inset-inline-start: 12px !important;
+        }
+      `;
+			host.shadowRoot.appendChild(style);
+			return true;
+		};
+
+		// Try immediately; if shadow root isn't attached yet, retry with a delay
+		if (!injectShadowStyles()) {
+			const timer = setTimeout(injectShadowStyles, 300);
+			return () => clearTimeout(timer);
+		}
+	}, [status]);
 
 	if (!agentId) return null;
 
@@ -230,7 +272,52 @@ const CampaignConvaiWidget = ({ agentId }: CampaignConvaiWidgetProps) => {
 			) : null}
 
 			{status === 'ready' ? (
-				<elevenlabs-convai className={styles.widgetHost} agent-id={agentId} />
+				<div
+					className={minimized ? styles.widgetMinimized : styles.widgetExpanded}
+				>
+					<Tooltip
+						label={
+							minimized
+								? t('convaiWidget.restore', { defaultValue: 'Restore' })
+								: t('convaiWidget.minimize', { defaultValue: 'Minimize' })
+						}
+						position='top'
+						withArrow
+					>
+						<div
+							className={styles.widgetBar}
+							role='button'
+							tabIndex={0}
+							aria-label={
+								minimized ? 'Restore assistant' : 'Minimize assistant'
+							}
+							onClick={() => setMinimized((v) => !v)}
+							onKeyDown={(e) => e.key === 'Enter' && setMinimized((v) => !v)}
+						>
+							<Text size='xs' fw={500} c='gray.7'>
+								{t('convaiWidget.label', { defaultValue: 'Assistant' })}
+							</Text>
+							{minimized ? (
+								<IconChevronUp size={12} stroke={2.5} />
+							) : (
+								<IconChevronDown size={12} stroke={2.5} />
+							)}
+						</div>
+					</Tooltip>
+					<div
+						className={styles.widgetContent}
+						ref={(el) => {
+							widgetHostRef.current = el
+								? (el.querySelector('elevenlabs-convai') as HTMLElement | null)
+								: null;
+						}}
+					>
+						<elevenlabs-convai
+							className={styles.widgetHost}
+							agent-id={agentId}
+						/>
+					</div>
+				</div>
 			) : null}
 		</Portal>
 	);

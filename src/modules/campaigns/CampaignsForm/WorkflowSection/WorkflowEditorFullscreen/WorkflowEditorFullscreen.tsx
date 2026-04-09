@@ -3,7 +3,9 @@ import { IconArrowsMinimize, IconX } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import WorkflowClipboardActions from '../WorkflowClipboardActions';
 import WorkflowCanvas from '../WorkflowCanvas';
+import WorkflowNodeLegend from '../WorkflowNodeLegend';
 import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
+import type { NodeStyles } from '~/models/CampaignsModel';
 import styles from './WorkflowEditorFullscreen.module.css';
 
 interface WorkflowEditorFullscreenProps {
@@ -14,6 +16,7 @@ interface WorkflowEditorFullscreenProps {
 	preventSubagentLoops: boolean;
 	allowDefaultInit: boolean;
 	onNodeSelect?: (nodeId: string | null) => void;
+	nodeStyles?: NodeStyles;
 }
 
 const WorkflowEditorFullscreen = ({
@@ -24,6 +27,7 @@ const WorkflowEditorFullscreen = ({
 	preventSubagentLoops,
 	allowDefaultInit,
 	onNodeSelect,
+	nodeStyles,
 }: WorkflowEditorFullscreenProps) => {
 	const { t } = useTranslation([
 		'campaign.form.workflow',
@@ -88,6 +92,14 @@ const WorkflowEditorFullscreen = ({
 						</Group>
 					</div>
 				</div>
+				{nodeStyles &&
+					Object.keys(nodeStyles).some(
+						(k) => nodeStyles[k]?.backgroundColor || nodeStyles[k]?.iconName
+					) && (
+						<div className={styles.legendBar}>
+							<WorkflowNodeLegend nodeStyles={nodeStyles} />
+						</div>
+					)}
 				<div className={styles.canvasArea}>
 					<WorkflowCanvas
 						workflow={workflow}

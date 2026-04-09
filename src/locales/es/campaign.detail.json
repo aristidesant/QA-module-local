@@ -130,7 +130,10 @@
 			"title": "Asistente no disponible",
 			"description": "No se pudo cargar el widget de ElevenLabs. Verifica el acceso de red, el allowlist del agente y la configuración de CSP."
 		},
-		"retry": "Reintentar"
+		"retry": "Reintentar",
+		"minimize": "Minimizar asistente",
+		"restore": "Restaurar asistente",
+		"label": "Asistente"
 	},
 	"preview": {
 		"overview": {

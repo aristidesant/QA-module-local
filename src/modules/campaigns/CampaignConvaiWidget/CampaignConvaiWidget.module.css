@@ -3,18 +3,109 @@
 	right: var(--mantine-spacing-lg);
 	bottom: var(--mantine-spacing-lg);
 	width: min(22rem, calc(100vw - (var(--mantine-spacing-lg) * 2)));
-	z-index: 120;
+	z-index: 9000;
 }
 
+/* Wrapper for the ready ElevenLabs widget — expanded state */
+.widgetExpanded {
+	position: fixed;
+	/* Anchor to the same corner as the widget card (bottom-right by default) */
+	right: var(--mantine-spacing-lg);
+	bottom: var(--mantine-spacing-lg);
+	z-index: 9000;
+	/* Not used for layout — bar is independently fixed */
+	pointer-events: none;
+}
+
+/* Wrapper for the ready ElevenLabs widget — minimized state */
+.widgetMinimized {
+	position: fixed;
+	right: var(--mantine-spacing-lg);
+	bottom: var(--mantine-spacing-lg);
+	z-index: 9000;
+	pointer-events: none;
+}
+
+/* Control bar: independently fixed above the widget card.
+   The ElevenLabs widget card sits at ~80px from the bottom (bottom-20 Tailwind).
+   We place the bar above that: 80px + card height (~72px) + gap (8px) ≈ 160px */
+.widgetBar {
+	position: fixed;
+	right: var(--mantine-spacing-lg);
+	bottom: 160px;
+	z-index: 9002;
+	pointer-events: auto;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 5px 10px 5px 14px;
+	background: rgba(255, 255, 255, 0.97);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-xl);
+	box-shadow: var(--mantine-shadow-sm);
+	backdrop-filter: blur(4px);
+	cursor: pointer;
+	user-select: none;
+	transition:
+		background 120ms ease,
+		box-shadow 120ms ease;
+}
+
+.widgetBar:hover {
+	background: var(--mantine-color-gray-0);
+	box-shadow: var(--mantine-shadow-md);
+}
+
+.widgetBar:focus-visible {
+	outline: 2px solid var(--mantine-color-blue-4);
+	outline-offset: 2px;
+}
+
+/* The actual widget host: shown when expanded */
+.widgetContent {
+	display: block;
+	overflow: hidden;
+}
+
+/* Hide the web component itself when minimized.
+   We clip height and suppress pointer-events directly on the host so
+   the widget’s own shadow-DOM fixed elements are also suppressed. */
 .widgetHost {
-	z-index: 120 !important;
+	z-index: 9000 !important;
+	display: block;
+}
+
+.widgetMinimized .widgetContent {
+	/* Collapse the container so the web component has no space */
+	height: 0 !important;
+	max-height: 0 !important;
+	overflow: hidden !important;
+	pointer-events: none !important;
+}
+
+.widgetMinimized .widgetHost {
+	/* Also force the custom element itself invisible */
+	visibility: hidden !important;
+	pointer-events: none !important;
+	position: absolute !important;
 }
 
 @media (max-width: 48em) {
 	.fallback {
-		left: var(--mantine-spacing-sm);
 		right: var(--mantine-spacing-sm);
+		left: auto;
 		bottom: var(--mantine-spacing-sm);
 		width: auto;
+	}
+
+	.widgetExpanded,
+	.widgetMinimized {
+		right: var(--mantine-spacing-sm);
+		bottom: var(--mantine-spacing-sm);
+	}
+
+	.widgetBar {
+		right: var(--mantine-spacing-sm);
+		bottom: 160px;
 	}
 }

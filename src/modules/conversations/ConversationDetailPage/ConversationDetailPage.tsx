@@ -6,6 +6,7 @@ import {
 	Center,
 	Group,
 	Loader,
+	Paper,
 	Stack,
 	Text,
 	ActionIcon,
@@ -398,7 +399,7 @@ export function ConversationDetailPage() {
 				mainScroll={false}
 				rightSection={rightSidebar}
 			>
-				<div className={styles.mainLayout}>
+				<Paper className={styles.mainLayout} shadow='md' radius='md' withBorder>
 					{/* Transcript Header — pinned top */}
 					<Group gap='xs' align='center' className={styles.transcriptHeader}>
 						<IconMessages size={16} color='var(--mantine-color-gray-6)' />
@@ -446,7 +447,7 @@ export function ConversationDetailPage() {
 							onSeekToTime={handleSeekToTime}
 							nodeLabels={nodeLabels}
 							nodeMissions={nodeMissions}
-							showMetrics={false}
+							showMetrics={true}
 						/>
 						<Tooltip label={t('details.backToTop')} position='left'>
 							<ActionIcon
@@ -473,7 +474,7 @@ export function ConversationDetailPage() {
 							/>
 						</div>
 					)}
-				</div>
+				</Paper>
 			</ContentContainer>
 		</div>
 	);

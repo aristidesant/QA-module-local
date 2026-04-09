@@ -388,6 +388,13 @@
 				"delayValue": "{{value}} ms",
 				"emptyAgent": "Not set"
 			},
+			"nodeStyle": {
+				"customize": "Customize style",
+				"colorLabel": "Color",
+				"iconLabel": "Icon",
+				"reset": "Reset to default",
+				"legend": "Customized nodes"
+			},
 			"nodeStatus": {
 				"destination": "Destination",
 				"transferTarget": "Target agent",
