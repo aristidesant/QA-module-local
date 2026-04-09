@@ -83,6 +83,13 @@
 			"transcript": "Transcripción"
 		}
 	},
+	"detailPage": {
+		"title": "Conversación",
+		"notFound": "Conversación no encontrada.",
+		"transcriptSection": "Transcripción",
+		"turnCount_one": "{{count}} turno",
+		"turnCount_other": "{{count}} turnos"
+	},
 	"actions": {
 		"title": "Acciones",
 		"description": "Acciones que se pueden realizar en esta conversación.",

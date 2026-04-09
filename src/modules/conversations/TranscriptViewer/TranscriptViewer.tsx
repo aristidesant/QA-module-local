@@ -41,6 +41,8 @@ interface TranscriptViewerProps {
 	onSeekToTime?: (time: number) => void;
 	nodeLabels?: Record<string, string>;
 	nodeMissions?: Record<string, string>;
+	/** When false, hides TTS / LLM / ASR metric badges on messages. Defaults to true. */
+	showMetrics?: boolean;
 }
 
 interface WorkflowTransition {
@@ -74,6 +76,7 @@ export function TranscriptViewer({
 	onSeekToTime,
 	nodeLabels,
 	nodeMissions,
+	showMetrics = true,
 }: TranscriptViewerProps) {
 	const { t } = useTranslation(['conversations', 'common']);
 	const { canPerformAction } = usePermissions();
@@ -174,9 +177,10 @@ export function TranscriptViewer({
 				const visibleToolCalls = isAgent
 					? (entry.tool_calls || []).filter((tool) => tool.type !== 'workflow')
 					: [];
-				const footerMetrics = canViewTechnicalDetails
-					? buildFooterMetrics(entry, isAgent, t)
-					: [];
+				const footerMetrics =
+					canViewTechnicalDetails && showMetrics
+						? buildFooterMetrics(entry, isAgent, t)
+						: [];
 				const hasVisibleToolCalls =
 					canViewTechnicalDetails && visibleToolCalls.length > 0;
 				const shouldRenderMessageBubble =
