@@ -76,8 +76,12 @@
 
 .contentContainerNoMainScroll {
 	overflow: hidden;
-	/* disable scroll when we only want right section scrolling */
-	height: auto;
+	/* constrain height so children can use flex to scroll independently */
+	height: 100%;
+}
+
+.contentContainerNoMainScroll > .contentContainerInner {
+	height: 100%;
 }
 
 .contentContainerContent [role='tabpanel'] {
@@ -86,7 +90,7 @@
 }
 
 .contentContainerRightSection {
-	width: 380px;
+	width: var(--content-right-section-width, 380px);
 	background: var(--content-panel-bg);
 	border-left: 1px solid var(--mantine-color-gray-3);
 	padding: 0 var(--mantine-spacing-xs);

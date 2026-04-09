@@ -83,6 +83,13 @@
 			"transcript": "Transcript"
 		}
 	},
+	"detailPage": {
+		"title": "Conversation",
+		"notFound": "Conversation not found.",
+		"transcriptSection": "Transcript",
+		"turnCount_one": "{{count}} turn",
+		"turnCount_other": "{{count}} turns"
+	},
 	"actions": {
 		"title": "Actions",
 		"description": "Actions that can be performed on this conversation.",
