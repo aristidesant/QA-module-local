@@ -343,6 +343,21 @@
 			"dataType": "Tipo de dato",
 			"actions": "Acciones"
 		},
+		"validation": {
+			"sheetRequired": "Selecciona un numero de hoja valido.",
+			"sheetNameRequired": "El nombre de la hoja es obligatorio.",
+			"sheetNameTooLong": "El nombre de la hoja debe tener 31 caracteres o menos.",
+			"sheetNameInvalidChars": "El nombre de la hoja contiene caracteres invalidos de Excel (:, \\, /, ?, *, [, ]).",
+			"sheetNameMismatch": "La hoja {{sheet}} debe usar un unico nombre dentro de la campana.",
+			"sheetNameAlreadyAssigned": "El nombre de hoja \"{{sheetName}}\" ya esta asignado a la hoja {{sheet}}.",
+			"duplicateColumnInSheet": "La columna \"{{label}}\" ya existe en la hoja {{sheet}}.",
+			"targetSheetMustBeDifferent": "Selecciona una hoja distinta para mover esta columna.",
+			"duplicateTargetSheetMustBeDifferent": "Selecciona una hoja distinta para duplicar esta columna."
+		},
+		"actions": {
+			"moveToSheet": "Mover a otra hoja",
+			"duplicateToSheet": "Duplicar en otra hoja"
+		},
 		"originType": {
 			"SQL": "Columna del sistema",
 			"DYNAMIC": "Campo dinámico",
@@ -368,7 +383,15 @@
 		"form": {
 			"createTitle": "Agregar columna de reporte",
 			"editTitle": "Editar columna de reporte",
+			"moveTitle": "Mover columna de reporte",
+			"duplicateTitle": "Duplicar columna de reporte",
 			"originTypeLabel": "Tipo de origen",
+			"sheetSelectLabel": "Hoja",
+			"sheetSelectPlaceholder": "Selecciona una hoja existente",
+			"sheetNumberLabel": "Numero de hoja",
+			"sheetNumber": "Hoja {{sheet}}",
+			"sheetNameLabel": "Nombre de hoja",
+			"sheetNamePlaceholder": "p. ej. Datos generales",
 			"keyLabel": "Clave / Campo",
 			"keyPlaceholderDynamic": "p. ej. balance_deuda",
 			"keyPlaceholderObject": "p. ej. ciudad",
@@ -399,7 +422,8 @@
 			},
 			"sections": {
 				"dataSource": "Fuente de datos",
-				"displaySettings": "Configuración de visualización"
+				"displaySettings": "Configuración de visualización",
+				"worksheet": "Hoja"
 			},
 			"originSub": {
 				"SQL": "Campos de contacto",
@@ -415,7 +439,9 @@
 			},
 			"headerEyebrow": {
 				"new": "Nueva columna",
-				"edit": "Editar columna"
+				"edit": "Editar columna",
+				"move": "Mover columna",
+				"duplicate": "Duplicar columna"
 			},
 			"aria": {
 				"close": "Cerrar"
@@ -425,6 +451,7 @@
 		},
 		"notifications": {
 			"created": "Columna creada con éxito",
+			"duplicated": "Columna duplicada con éxito",
 			"updated": "Columna actualizada con éxito",
 			"deleted": "Columna eliminada con éxito",
 			"reorderError": "Error al guardar el nuevo orden"

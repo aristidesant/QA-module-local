@@ -21,6 +21,8 @@ export interface ReportValue {
 	dataType: ReportValueDataType;
 	format?: string | null;
 	order: number;
+	sheet: number;
+	sheetName: string;
 	campaignId: number;
 	userId: number;
 	clientId: number;
@@ -35,6 +37,8 @@ export interface CreateReportValueDto {
 	label: string;
 	dataType: ReportValueDataType;
 	order?: number;
+	sheet?: number;
+	sheetName?: string;
 	campaignId: number;
 }
 
@@ -45,6 +49,8 @@ export interface UpdateReportValueDto {
 	dataType?: ReportValueDataType;
 	format?: string | null;
 	order?: number;
+	sheet?: number;
+	sheetName?: string;
 }
 
 export interface BulkUpdateReportValueItemDto {
@@ -55,8 +61,17 @@ export interface BulkUpdateReportValueItemDto {
 	dataType?: ReportValueDataType;
 	format?: string | null;
 	order?: number;
+	sheet?: number;
+	sheetName?: string;
 }
 
 export interface BulkUpdateReportValuesDto {
 	reportValues: BulkUpdateReportValueItemDto[];
+}
+
+export interface DuplicateReportValueDto {
+	sheet: number;
+	sheetName: string;
+	order: number;
+	label: string;
 }

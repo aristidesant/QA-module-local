@@ -9,6 +9,50 @@
 	border-radius: var(--mantine-radius-md);
 }
 
+.summaryCard {
+	background: color-mix(in srgb, var(--mantine-color-gray-0) 70%, white);
+}
+
+.emptyStateCard {
+	background: color-mix(in srgb, var(--mantine-color-gray-0) 82%, white);
+}
+
+.emptyStateIcon {
+	color: var(--mantine-color-gray-5);
+}
+
+.sheetCard {
+	background: var(--mantine-color-white);
+	box-shadow: var(--mantine-shadow-md);
+}
+
+.sheetHeaderMain {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+}
+
+.sheetBadge {
+	width: fit-content;
+	border: 1px solid
+		color-mix(in srgb, var(--mantine-color-blue-4) 25%, transparent);
+	background: color-mix(in srgb, var(--mantine-color-blue-0) 60%, white);
+}
+
+.sheetTitle {
+	line-height: 1.2;
+	word-break: break-word;
+}
+
+.renameRow {
+	flex-wrap: wrap;
+}
+
+.renameInput {
+	min-width: min(320px, 100%);
+}
+
 .labelHeader {
 	width: 48%;
 }
@@ -98,6 +142,14 @@
 }
 
 @media (max-width: 48em) {
+	.sheetCard {
+		padding: var(--mantine-spacing-xs);
+	}
+
+	.renameInput {
+		min-width: 100%;
+	}
+
 	.labelColumn {
 		min-width: 280px;
 	}
