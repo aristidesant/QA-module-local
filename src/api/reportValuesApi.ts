@@ -3,6 +3,7 @@ import type {
 	ReportValue,
 	BulkUpdateReportValuesDto,
 	CreateReportValueDto,
+	DuplicateReportValueDto,
 	UpdateReportValueDto,
 } from '~/models/ReportValue';
 import { DEFAULT_API_URL } from './config';
@@ -32,6 +33,17 @@ const reportValuesApi = () => {
 		): Promise<ReportValue> => {
 			const response = await axios.patch<ReportValue>(
 				`${DEFAULT_API_URL}/report-values/${id}`,
+				dto
+			);
+			return response.data;
+		},
+
+		duplicate: async (
+			id: number,
+			dto: DuplicateReportValueDto
+		): Promise<ReportValue> => {
+			const response = await axios.post<ReportValue>(
+				`${DEFAULT_API_URL}/report-values/${id}/duplicate`,
 				dto
 			);
 			return response.data;

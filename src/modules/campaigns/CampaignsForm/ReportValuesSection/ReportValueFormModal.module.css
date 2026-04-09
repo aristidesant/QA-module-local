@@ -203,6 +203,26 @@
 	align-items: flex-start;
 }
 
+.summaryFieldBlock {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 10px 12px;
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-sm);
+	background: var(--mantine-color-gray-0);
+}
+
+@media (max-width: 48em) {
+	.originCards {
+		grid-template-columns: 1fr;
+	}
+
+	.fieldRow {
+		grid-template-columns: 1fr;
+	}
+}
+
 /* ─── Footer ──────────────────────────────────────────────────── */
 
 .footer {
