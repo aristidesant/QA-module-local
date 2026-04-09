@@ -8,13 +8,8 @@ import {
 	Stack,
 	Text,
 	ThemeIcon,
-	Tooltip,
 } from '@mantine/core';
-import {
-	IconAlertCircle,
-	IconChevronDown,
-	IconChevronUp,
-} from '@tabler/icons-react';
+import { IconAlertCircle } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import styles from './CampaignConvaiWidget.module.css';
 
@@ -25,6 +20,7 @@ const WIDGET_SCRIPT_SRC =
 
 interface CampaignConvaiWidgetProps {
 	agentId?: string;
+	mode?: 'floating' | 'embedded';
 }
 
 let widgetScriptPromise: Promise<void> | null = null;
@@ -129,14 +125,17 @@ const loadWidgetScript = () => {
 	return widgetScriptPromise;
 };
 
-const CampaignConvaiWidget = ({ agentId }: CampaignConvaiWidgetProps) => {
+const CampaignConvaiWidget = ({
+	agentId,
+	mode = 'floating',
+}: CampaignConvaiWidgetProps) => {
 	const { t } = useTranslation('campaign.detail');
 	const [status, setStatus] = useState<'loading' | 'ready' | 'error'>(
 		'loading'
 	);
 	const [retryIndex, setRetryIndex] = useState(0);
-	const [minimized, setMinimized] = useState(false);
 	const widgetHostRef = useRef<HTMLElement | null>(null);
+	const isEmbedded = mode === 'embedded';
 
 	useEffect(() => {
 		if (!agentId) return;
@@ -169,8 +168,6 @@ const CampaignConvaiWidget = ({ agentId }: CampaignConvaiWidgetProps) => {
 	useEffect(() => {
 		if (status !== 'ready') return;
 
-		// Inject CSS into the widget's shadow DOM to override its internal
-		// fixed right-side positioning and move it to the left.
 		const injectShadowStyles = () => {
 			const host =
 				widgetHostRef.current ??
@@ -178,28 +175,49 @@ const CampaignConvaiWidget = ({ agentId }: CampaignConvaiWidgetProps) => {
 
 			if (!host?.shadowRoot) return false;
 
-			const styleId = 'nai-position-override';
+			const styleId = isEmbedded
+				? 'nai-position-override-embedded'
+				: 'nai-position-override';
 			if (host.shadowRoot.getElementById(styleId)) return true;
 
 			const style = document.createElement('style');
 			style.id = styleId;
-			// Override widget's Tailwind classes that place the card on the right/bottom
-			style.textContent = `
-        .fixed.end-3 {
-          inset-inline-end: auto !important;
-          inset-inline-start: 12px !important;
-        }
-      `;
+
+			if (isEmbedded) {
+				style.textContent = `
+          .fixed {
+            position: static !important;
+            inset: auto !important;
+          }
+
+          .fixed.end-3,
+          .fixed.bottom-20 {
+            inset-inline-end: auto !important;
+            inset-inline-start: auto !important;
+            right: auto !important;
+            left: auto !important;
+            bottom: auto !important;
+          }
+        `;
+			} else {
+				// Override widget's Tailwind classes that place the card on the right/bottom.
+				style.textContent = `
+          .fixed.end-3 {
+            inset-inline-end: auto !important;
+            inset-inline-start: 12px !important;
+          }
+        `;
+			}
+
 			host.shadowRoot.appendChild(style);
 			return true;
 		};
 
-		// Try immediately; if shadow root isn't attached yet, retry with a delay
 		if (!injectShadowStyles()) {
 			const timer = setTimeout(injectShadowStyles, 300);
 			return () => clearTimeout(timer);
 		}
-	}, [status]);
+	}, [isEmbedded, status]);
 
 	if (!agentId) return null;
 
@@ -216,111 +234,96 @@ const CampaignConvaiWidget = ({ agentId }: CampaignConvaiWidgetProps) => {
 		setRetryIndex((current) => current + 1);
 	};
 
-	return (
-		<Portal>
-			{status === 'loading' ? (
-				<Paper
-					className={styles.fallback}
-					radius='lg'
-					shadow='md'
-					withBorder
-					p='md'
-				>
-					<Stack gap='xs'>
-						<Group gap='xs' wrap='nowrap'>
-							<ThemeIcon variant='light' color='blue' size='sm' radius='xl'>
-								<Loader size={12} />
-							</ThemeIcon>
-							<Text fw={600} size='sm'>
-								{t('convaiWidget.loading.title')}
-							</Text>
-						</Group>
-						<Text size='xs' c='dimmed'>
-							{t('convaiWidget.loading.description')}
-						</Text>
-					</Stack>
-				</Paper>
-			) : null}
-
-			{status === 'error' ? (
-				<Paper
-					className={styles.fallback}
-					radius='lg'
-					shadow='md'
-					withBorder
-					p='md'
-				>
-					<Stack gap='sm'>
-						<Group gap='xs' wrap='nowrap'>
-							<ThemeIcon variant='light' color='red' size='sm' radius='xl'>
-								<IconAlertCircle size={12} />
-							</ThemeIcon>
-							<Text fw={600} size='sm'>
-								{t('convaiWidget.error.title')}
-							</Text>
-						</Group>
-						<Text size='xs' c='dimmed'>
-							{t('convaiWidget.error.description')}
-						</Text>
-						<Group justify='flex-end'>
-							<Button size='xs' variant='light' onClick={handleRetry}>
-								{t('convaiWidget.retry')}
-							</Button>
-						</Group>
-					</Stack>
-				</Paper>
-			) : null}
-
-			{status === 'ready' ? (
-				<div
-					className={minimized ? styles.widgetMinimized : styles.widgetExpanded}
-				>
-					<Tooltip
-						label={
-							minimized
-								? t('convaiWidget.restore', { defaultValue: 'Restore' })
-								: t('convaiWidget.minimize', { defaultValue: 'Minimize' })
-						}
-						position='top'
-						withArrow
-					>
-						<div
-							className={styles.widgetBar}
-							role='button'
-							tabIndex={0}
-							aria-label={
-								minimized ? 'Restore assistant' : 'Minimize assistant'
-							}
-							onClick={() => setMinimized((v) => !v)}
-							onKeyDown={(e) => e.key === 'Enter' && setMinimized((v) => !v)}
-						>
-							<Text size='xs' fw={500} c='gray.7'>
-								{t('convaiWidget.label', { defaultValue: 'Assistant' })}
-							</Text>
-							{minimized ? (
-								<IconChevronUp size={12} stroke={2.5} />
-							) : (
-								<IconChevronDown size={12} stroke={2.5} />
-							)}
-						</div>
-					</Tooltip>
-					<div
-						className={styles.widgetContent}
-						ref={(el) => {
-							widgetHostRef.current = el
-								? (el.querySelector('elevenlabs-convai') as HTMLElement | null)
-								: null;
-						}}
-					>
-						<elevenlabs-convai
-							className={styles.widgetHost}
-							agent-id={agentId}
-						/>
-					</div>
-				</div>
-			) : null}
-		</Portal>
+	const renderStatusCard = () => (
+		<Paper
+			className={isEmbedded ? styles.embeddedStatus : styles.fallback}
+			radius='lg'
+			shadow='md'
+			withBorder
+			p='md'
+		>
+			<Stack gap='xs'>
+				<Group gap='xs' wrap='nowrap'>
+					<ThemeIcon variant='light' color='blue' size='sm' radius='xl'>
+						<Loader size={12} />
+					</ThemeIcon>
+					<Text fw={600} size='sm'>
+						{t('convaiWidget.loading.title')}
+					</Text>
+				</Group>
+				<Text size='xs' c='dimmed'>
+					{t('convaiWidget.loading.description')}
+				</Text>
+			</Stack>
+		</Paper>
 	);
+
+	const renderErrorCard = () => (
+		<Paper
+			className={isEmbedded ? styles.embeddedStatus : styles.fallback}
+			radius='lg'
+			shadow='md'
+			withBorder
+			p='md'
+		>
+			<Stack gap='sm'>
+				<Group gap='xs' wrap='nowrap'>
+					<ThemeIcon variant='light' color='red' size='sm' radius='xl'>
+						<IconAlertCircle size={12} />
+					</ThemeIcon>
+					<Text fw={600} size='sm'>
+						{t('convaiWidget.error.title')}
+					</Text>
+				</Group>
+				<Text size='xs' c='dimmed'>
+					{t('convaiWidget.error.description')}
+				</Text>
+				<Group justify='flex-end'>
+					<Button size='xs' variant='light' onClick={handleRetry}>
+						{t('convaiWidget.retry')}
+					</Button>
+				</Group>
+			</Stack>
+		</Paper>
+	);
+
+	const renderReadyWidget = () => (
+		<div
+			className={isEmbedded ? styles.embeddedContent : styles.widgetExpanded}
+		>
+			<div
+				className={isEmbedded ? styles.embeddedHostShell : styles.widgetContent}
+				ref={(element) => {
+					widgetHostRef.current = element
+						? (element.querySelector(WIDGET_ELEMENT_NAME) as HTMLElement | null)
+						: null;
+				}}
+			>
+				<elevenlabs-convai
+					className={isEmbedded ? styles.embeddedHost : styles.widgetHost}
+					agent-id={agentId}
+				/>
+			</div>
+		</div>
+	);
+
+	const content = (
+		<>
+			{status === 'loading' ? renderStatusCard() : null}
+			{status === 'error' ? renderErrorCard() : null}
+			{status === 'ready' ? renderReadyWidget() : null}
+		</>
+	);
+
+	if (isEmbedded) {
+		return (
+			<Paper className={styles.embeddedRoot} radius='lg' shadow='md' withBorder>
+				{content}
+			</Paper>
+		);
+	}
+
+	return <Portal>{content}</Portal>;
 };
 
 export default CampaignConvaiWidget;

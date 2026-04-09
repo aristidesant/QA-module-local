@@ -29,6 +29,12 @@
 			"edit": "Editando Campaña: {{name}}"
 		},
 		"description": "Administra la configuración y ajustes de tu campaña.",
+		"actions": {
+			"save": "Guardar cambios",
+			"saving": "Guardando...",
+			"viewCampaign": "Ver campaña",
+			"testConvai": "Probar Convai"
+		},
 		"notifications": {
 			"warningTitle": "Advertencia",
 			"objectiveAssignmentFailed": "Campaña guardada pero falló la asignación del objetivo.",

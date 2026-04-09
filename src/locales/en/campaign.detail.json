@@ -29,6 +29,12 @@
 			"edit": "Editing Campaign: {{name}}"
 		},
 		"description": "Manage your campaign configuration and settings.",
+		"actions": {
+			"save": "Save changes",
+			"saving": "Saving...",
+			"viewCampaign": "View campaign",
+			"testConvai": "Test Convai"
+		},
 		"notifications": {
 			"warningTitle": "Warning",
 			"objectiveAssignmentFailed": "Campaign saved but objective assignment failed.",

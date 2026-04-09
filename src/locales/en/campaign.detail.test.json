@@ -1,0 +1,14 @@
+{
+	"page": {
+		"title": "Convai test",
+		"description": "Test the campaign assistant and review the conversation log.",
+		"helper": "Use the floating assistant while you review conversations."
+	},
+	"agent": {
+		"empty": {
+			"title": "No agent configured",
+			"description": "This campaign does not have an agent configured yet. Return to the editor to connect one before testing Convai.",
+			"backToEditor": "Back to editor"
+		}
+	}
+}

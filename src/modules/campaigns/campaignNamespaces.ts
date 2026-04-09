@@ -24,6 +24,8 @@ export const campaignRouteNamespaces: Record<
 > = {
 	campaigns: 'campaigns.list',
 	'campaign.detail': campaignDetailNamespaces,
+	'campaign.detail.index': campaignDetailNamespaces,
+	'campaign.detail.test': 'campaign.detail.test',
 	dashboards: 'dashboards',
 	'conversations.detail': 'conversations',
 };

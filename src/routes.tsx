@@ -101,6 +101,12 @@ const CampaignManagementPage = React.lazy(
 const CampaignPage = React.lazy(
 	() => import('./modules/campaigns/CampaignPage/CampaignPage')
 );
+const CampaignEditorPage = React.lazy(
+	() => import('./modules/campaigns/CampaignEditorPage/CampaignEditorPage')
+);
+const CampaignTestPage = React.lazy(
+	() => import('./modules/campaigns/CampaignTestPage/CampaignTestPage')
+);
 const CampaignViewPage = React.lazy(
 	() => import('./modules/campaigns/CampaignViewPage/CampaignViewPage')
 );
@@ -210,13 +216,35 @@ const router = createBrowserRouter([
 								module={ModuleEnum.CAMPAIGNS}
 								permission={PermissionEnum.UPDATE}
 							>
-								<I18nNamespaceLoader>
-									<Suspense fallback={<SuspenseFallback />}>
-										<CampaignPage />
-									</Suspense>
-								</I18nNamespaceLoader>
+								<Suspense fallback={<SuspenseFallback />}>
+									<CampaignPage />
+								</Suspense>
 							</ModuleGuard>
 						),
+						children: [
+							{
+								index: true,
+								id: 'campaign.detail.index',
+								element: (
+									<I18nNamespaceLoader>
+										<Suspense fallback={<SuspenseFallback />}>
+											<CampaignEditorPage />
+										</Suspense>
+									</I18nNamespaceLoader>
+								),
+							},
+							{
+								path: 'test',
+								id: 'campaign.detail.test',
+								element: (
+									<I18nNamespaceLoader>
+										<Suspense fallback={<SuspenseFallback />}>
+											<CampaignTestPage />
+										</Suspense>
+									</I18nNamespaceLoader>
+								),
+							},
+						],
 					},
 					{
 						path: 'campaign/view/:campaignId',

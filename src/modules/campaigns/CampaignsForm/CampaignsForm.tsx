@@ -46,14 +46,13 @@ import ReportValuesSection from './ReportValuesSection/ReportValuesSection';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { CampaignStatus } from '~/models/CampaignStatus';
 import { modals } from '@mantine/modals';
-import { IconEye } from '@tabler/icons-react';
+import { IconEye, IconFlask } from '@tabler/icons-react';
 import SchedulerCalculator from './ParametersSection/SchedulerCalculator';
 import FormSaveButton from '~/components/FormSaveButton';
 import CampaignSyncButton from './components/CampaignSyncButton';
 import AgentSectionRightPanel from './AgentSection/AgentSectionRightPanel';
 import GeneralSectionRightPanel from './GeneralSection/GeneralSectionRightPanel';
 import AppDrawer from '~/components/AppDrawer';
-import CampaignConvaiWidget from '../CampaignConvaiWidget';
 import DashboardSection from './DashboardSection';
 import VersioningSection from './VersioningSection';
 import i18n from '~/locales/i18n';
@@ -540,9 +539,28 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 									<ActionIcon
 										variant='light'
 										size='lg'
+										aria-label={t('form.actions.viewCampaign')}
 										onClick={() => navigate(`/campaign/view/${campaign.id}`)}
 									>
 										<IconEye size={20} />
+									</ActionIcon>
+								</Tooltip>
+								<Tooltip
+									label={t('form.actions.testConvai', {
+										ns: 'campaign.detail',
+									})}
+									withArrow
+								>
+									<ActionIcon
+										variant='light'
+										color='blue'
+										size='lg'
+										aria-label={t('form.actions.testConvai', {
+											ns: 'campaign.detail',
+										})}
+										onClick={() => navigate(`/campaign/${campaign.id}/test`)}
+									>
+										<IconFlask size={20} />
 									</ActionIcon>
 								</Tooltip>
 							</Group>
@@ -695,7 +713,6 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 						)}
 					</Stack>
 				</ContentContainer>
-				<CampaignConvaiWidget agentId={campaign?.agentConfig?.agentId} />
 				<AgentSaveReviewModal
 					opened={reviewModalOpen}
 					onClose={() => setReviewModalOpen(false)}

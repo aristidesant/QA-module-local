@@ -1,0 +1,14 @@
+{
+	"page": {
+		"title": "Prueba de Convai",
+		"description": "Prueba el asistente de la campaña y revisa el historial de conversaciones.",
+		"helper": "Usa el asistente flotante mientras revisas las conversaciones."
+	},
+	"agent": {
+		"empty": {
+			"title": "No hay agente configurado",
+			"description": "Esta campaña todavía no tiene un agente configurado. Regresa al editor para conectarlo antes de probar Convai.",
+			"backToEditor": "Volver al editor"
+		}
+	}
+}
