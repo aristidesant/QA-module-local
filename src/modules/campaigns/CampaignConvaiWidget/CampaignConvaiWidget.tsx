@@ -17,7 +17,10 @@ const WIDGET_ELEMENT_NAME = 'elevenlabs-convai';
 const WIDGET_SCRIPT_ID = 'elevenlabs-convai-widget-embed';
 const WIDGET_SCRIPT_SRC =
 	'https://unpkg.com/@elevenlabs/convai-widget-embed@0.11.2';
-const WIDGET_AGENT_ID = 'agent_7401kn0y3svqej39hn0pa7khsdr3';
+
+interface CampaignConvaiWidgetProps {
+	agentId?: string;
+}
 
 let widgetScriptPromise: Promise<void> | null = null;
 
@@ -121,7 +124,7 @@ const loadWidgetScript = () => {
 	return widgetScriptPromise;
 };
 
-const CampaignConvaiWidget = () => {
+const CampaignConvaiWidget = ({ agentId }: CampaignConvaiWidgetProps) => {
 	const { t } = useTranslation('campaign.detail');
 	const [status, setStatus] = useState<'loading' | 'ready' | 'error'>(
 		'loading'
@@ -129,6 +132,8 @@ const CampaignConvaiWidget = () => {
 	const [retryIndex, setRetryIndex] = useState(0);
 
 	useEffect(() => {
+		if (!agentId) return;
+
 		let cancelled = false;
 
 		const bootstrapWidget = async () => {
@@ -152,7 +157,9 @@ const CampaignConvaiWidget = () => {
 		return () => {
 			cancelled = true;
 		};
-	}, [retryIndex]);
+	}, [retryIndex, agentId]);
+
+	if (!agentId) return null;
 
 	const handleRetry = () => {
 		const script = document.getElementById(
@@ -223,10 +230,7 @@ const CampaignConvaiWidget = () => {
 			) : null}
 
 			{status === 'ready' ? (
-				<elevenlabs-convai
-					className={styles.widgetHost}
-					agent-id={WIDGET_AGENT_ID}
-				/>
+				<elevenlabs-convai className={styles.widgetHost} agent-id={agentId} />
 			) : null}
 		</Portal>
 	);

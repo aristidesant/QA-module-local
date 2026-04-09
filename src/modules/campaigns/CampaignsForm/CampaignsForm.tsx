@@ -680,7 +680,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 						)}
 					</Stack>
 				</ContentContainer>
-				<CampaignConvaiWidget />
+				<CampaignConvaiWidget agentId={campaign?.agentConfig?.agentId} />
 				<AgentSaveReviewModal
 					opened={reviewModalOpen}
 					onClose={() => setReviewModalOpen(false)}
