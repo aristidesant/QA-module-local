@@ -83,6 +83,9 @@
 			"transcript": "Transcripción"
 		}
 	},
+	"drawer": {
+		"title": "Detalles de la Conversación"
+	},
 	"detailPage": {
 		"title": "Conversación",
 		"notFound": "Conversación no encontrada.",

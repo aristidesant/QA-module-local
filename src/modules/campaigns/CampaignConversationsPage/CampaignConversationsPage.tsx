@@ -6,6 +6,8 @@ import ContentContainer from '~/components/ContentContainer';
 import EmptyState from '~/components/EmptyState';
 import { useGetCampaign } from '~/queries/campaignsQueries';
 import ConversationsList from '~/modules/conversations/ConversationsList';
+import ConversationDetailDrawer from '~/modules/conversations/ConversationDetailDrawer';
+import { useConversationDrawer } from '~/modules/conversations/ConversationDetailDrawer/useConversationDrawer';
 import { Button } from '@mantine/core';
 
 const HIDDEN_COLUMNS = ['contactName', 'phoneNumber'];
@@ -14,6 +16,13 @@ const CampaignConversationsPage = () => {
 	const { t } = useTranslation('campaign.conversations');
 	const navigate = useNavigate();
 	const { campaignId } = useParams<{ campaignId: string }>();
+
+	const {
+		selectedConversationId,
+		drawerOpened,
+		openConversation,
+		closeDrawer,
+	} = useConversationDrawer();
 
 	const {
 		data: campaign,
@@ -94,6 +103,12 @@ const CampaignConversationsPage = () => {
 			<ConversationsList
 				campaignId={campaignId}
 				hiddenColumns={HIDDEN_COLUMNS}
+				onRowClick={openConversation}
+			/>
+			<ConversationDetailDrawer
+				conversationId={selectedConversationId}
+				opened={drawerOpened}
+				onClose={closeDrawer}
 			/>
 		</ContentContainer>
 	);

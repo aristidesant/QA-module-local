@@ -83,6 +83,9 @@
 			"transcript": "Transcript"
 		}
 	},
+	"drawer": {
+		"title": "Conversation Details"
+	},
 	"detailPage": {
 		"title": "Conversation",
 		"notFound": "Conversation not found.",

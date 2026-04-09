@@ -41,6 +41,7 @@ type ConversationsListProps = {
 	contactGroupId?: number | string;
 	className?: string;
 	hiddenColumns?: string[];
+	onRowClick?: (conversation: { id: number }) => void;
 };
 
 const ConversationsList: React.FC<ConversationsListProps> = ({
@@ -48,6 +49,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 	contactGroupId,
 	className,
 	hiddenColumns,
+	onRowClick: onRowClickProp,
 }) => {
 	const { t } = useTranslation(['conversations', 'common']);
 	const navigate = useNavigate();
@@ -113,9 +115,13 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 
 	const handleRowClick = useCallback(
 		(conversation: { id: number }) => {
-			navigate(`/conversations/${conversation.id}`);
+			if (onRowClickProp) {
+				onRowClickProp(conversation);
+			} else {
+				navigate(`/conversations/${conversation.id}`);
+			}
 		},
-		[navigate]
+		[navigate, onRowClickProp]
 	);
 
 	const runConversationAction = useCallback(

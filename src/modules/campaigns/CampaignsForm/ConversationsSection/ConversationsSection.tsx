@@ -3,6 +3,8 @@ import { Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
 import ConversationsList from '~/modules/conversations/ConversationsList';
+import ConversationDetailDrawer from '~/modules/conversations/ConversationDetailDrawer';
+import { useConversationDrawer } from '~/modules/conversations/ConversationDetailDrawer/useConversationDrawer';
 
 interface ConversationsSectionProps {
 	campaignId?: number | string;
@@ -12,6 +14,12 @@ const ConversationsSection: React.FC<ConversationsSectionProps> = ({
 	campaignId,
 }) => {
 	const { t } = useTranslation('conversations');
+	const {
+		selectedConversationId,
+		drawerOpened,
+		openConversation,
+		closeDrawer,
+	} = useConversationDrawer();
 
 	if (!campaignId) {
 		return (
@@ -26,7 +34,19 @@ const ConversationsSection: React.FC<ConversationsSectionProps> = ({
 		);
 	}
 
-	return <ConversationsList campaignId={campaignId} />;
+	return (
+		<>
+			<ConversationsList
+				campaignId={campaignId}
+				onRowClick={openConversation}
+			/>
+			<ConversationDetailDrawer
+				conversationId={selectedConversationId}
+				opened={drawerOpened}
+				onClose={closeDrawer}
+			/>
+		</>
+	);
 };
 
 export default ConversationsSection;
