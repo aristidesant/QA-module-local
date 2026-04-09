@@ -410,11 +410,13 @@ const router = createBrowserRouter([
 								path: 'dictionary-rules',
 								id: 'dictionary-rules',
 								element: (
-									<I18nNamespaceLoader>
-										<Suspense fallback={<SuspenseFallback />}>
-											<DictionaryRulesPage />
-										</Suspense>
-									</I18nNamespaceLoader>
+									<ModuleGuard module={ModuleEnum.SETTINGS} masterOnly>
+										<I18nNamespaceLoader>
+											<Suspense fallback={<SuspenseFallback />}>
+												<DictionaryRulesPage />
+											</Suspense>
+										</I18nNamespaceLoader>
+									</ModuleGuard>
 								),
 							},
 						],
