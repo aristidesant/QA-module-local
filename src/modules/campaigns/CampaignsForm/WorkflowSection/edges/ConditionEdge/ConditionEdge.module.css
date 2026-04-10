@@ -129,6 +129,45 @@
 	white-space: nowrap;
 }
 
+.chipTrigger {
+	display: inline-flex;
+	align-items: center;
+	cursor: pointer;
+	position: relative;
+}
+
+.chipTriggerSimple {
+	display: inline-flex;
+	align-items: center;
+}
+
+.expandIcon {
+	display: none;
+	align-items: center;
+	justify-content: center;
+	margin-left: 2px;
+	opacity: 0.5;
+	cursor: pointer;
+	transition: opacity 120ms ease;
+	flex-shrink: 0;
+}
+
+.expandIcon:hover {
+	opacity: 1;
+}
+
+/* Show the expand icon on touch devices that lack hover */
+@media (hover: none) {
+	.expandIcon {
+		display: inline-flex;
+	}
+}
+
+.popoverText {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
 .edgeInteraction {
 	cursor: pointer;
 	pointer-events: stroke;
