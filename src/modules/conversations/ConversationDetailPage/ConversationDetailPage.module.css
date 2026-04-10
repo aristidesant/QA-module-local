@@ -1,16 +1,35 @@
-/* Wrapper that widens the right sidebar for this page */
-.pageRoot {
-	--content-right-section-width: 520px;
+/* Two-column body: transcript (5) + right panel (7) */
+.contentGrid {
+	display: flex;
+	flex-direction: row;
 	height: 100%;
-	width: 100%;
 	min-height: 0;
+	gap: var(--mantine-spacing-md);
+	align-items: flex-start;
 }
 
-/* Full-height flex column: header → summary → scrollable transcript → player bar */
+.transcriptCol {
+	flex: 5;
+	min-height: 0;
+	max-height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.rightCol {
+	flex: 7;
+	min-height: 0;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+	overscroll-behavior: contain;
+	padding-bottom: var(--mantine-spacing-sm);
+}
+
+/* Content-sized flex column: header → scrollable transcript → player bar */
 .mainLayout {
 	display: flex;
 	flex-direction: column;
-	height: 100%;
+	height: auto;
 	min-height: 0;
 	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
 	background-color: var(--mantine-color-white);
@@ -23,14 +42,10 @@
 	border-bottom: 1px solid var(--mantine-color-gray-2);
 }
 
-.summaryWrapper {
-	flex-shrink: 0;
-	padding: var(--mantine-spacing-xs) 0;
-}
-
 .transcriptScroll {
-	flex: 1;
+	height: auto;
 	min-height: 0;
+	max-height: calc(100vh - 220px);
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
 	overscroll-behavior: contain;
@@ -40,10 +55,6 @@
 
 .playerBarWrapper {
 	flex-shrink: 0;
-}
-
-.sidebarContent {
-	padding: var(--mantine-spacing-xs) 0;
 }
 
 .identifierText {

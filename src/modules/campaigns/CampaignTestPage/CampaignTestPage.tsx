@@ -1,11 +1,11 @@
+import { useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router';
 import { Alert, Button, Stack, Text } from '@mantine/core';
 import { IconAlertCircle, IconArrowLeft } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import ContentContainer from '~/components/ContentContainer';
 import ConversationsList from '~/modules/conversations/ConversationsList';
-import ConversationDetailDrawer from '~/modules/conversations/ConversationDetailDrawer';
-import { useConversationDrawer } from '~/modules/conversations/ConversationDetailDrawer/useConversationDrawer';
+import { ConversationDetailPage } from '~/modules/conversations/ConversationDetailPage/ConversationDetailPage';
 import CampaignConvaiWidget from '../CampaignConvaiWidget';
 import type { Campaign } from '~/models/CampaignsModel';
 
@@ -16,14 +16,20 @@ const CampaignTestPage = () => {
 	const navigate = useNavigate();
 	const campaign = useOutletContext<Campaign>();
 
-	const {
-		selectedConversationId,
-		drawerOpened,
-		openConversation,
-		closeDrawer,
-	} = useConversationDrawer();
+	const [selectedConversationId, setSelectedConversationId] = useState<
+		number | null
+	>(null);
 
 	const agentId = campaign.agentConfig?.agentId;
+
+	if (selectedConversationId !== null) {
+		return (
+			<ConversationDetailPage
+				conversationId={String(selectedConversationId)}
+				onBack={() => setSelectedConversationId(null)}
+			/>
+		);
+	}
 
 	return (
 		<ContentContainer
@@ -33,11 +39,7 @@ const CampaignTestPage = () => {
 			onBackClick={() => navigate(`/campaign/${campaign.id}`)}
 		>
 			<Stack gap='sm'>
-				{agentId ? (
-					<Text size='sm' c='dimmed'>
-						{t('page.helper')}
-					</Text>
-				) : (
+				{!agentId && (
 					<Alert
 						icon={<IconAlertCircle size={16} />}
 						title={t('agent.empty.title')}
@@ -65,13 +67,7 @@ const CampaignTestPage = () => {
 				<ConversationsList
 					campaignId={campaign.id}
 					hiddenColumns={HIDDEN_COLUMNS}
-					onRowClick={openConversation}
-				/>
-
-				<ConversationDetailDrawer
-					conversationId={selectedConversationId}
-					opened={drawerOpened}
-					onClose={closeDrawer}
+					onRowClick={(c) => setSelectedConversationId(c.id)}
 				/>
 			</Stack>
 		</ContentContainer>

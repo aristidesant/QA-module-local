@@ -42,6 +42,7 @@ type ConversationsListProps = {
 	className?: string;
 	hiddenColumns?: string[];
 	onRowClick?: (conversation: { id: number }) => void;
+	onListChange?: (ids: number[]) => void;
 };
 
 const ConversationsList: React.FC<ConversationsListProps> = ({
@@ -50,6 +51,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 	className,
 	hiddenColumns,
 	onRowClick: onRowClickProp,
+	onListChange,
 }) => {
 	const { t } = useTranslation(['conversations', 'common']);
 	const navigate = useNavigate();
@@ -102,6 +104,12 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 
 	const conversations = data?.data ?? [];
 	const totalItems = data?.total ?? 0;
+
+	useEffect(() => {
+		if (onListChange) {
+			onListChange((data?.data ?? []).map((c) => c.id));
+		}
+	}, [data, onListChange]);
 
 	const totalPages = useMemo(() => {
 		return pagination.calculateTotalPages(totalItems);

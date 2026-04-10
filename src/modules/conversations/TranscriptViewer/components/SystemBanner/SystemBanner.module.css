@@ -1,0 +1,14 @@
+.systemBanner {
+	background-color: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-3);
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+	border-radius: 999px;
+}
+
+.systemBanner:hover {
+	background-color: var(--mantine-color-gray-1);
+}
+
+.timestamp {
+	font-variant-numeric: tabular-nums;
+}

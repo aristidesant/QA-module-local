@@ -151,6 +151,7 @@
 			"count_one": "{{count}} variable",
 			"count_other": "{{count}} variables"
 		},
+		"downloadAudio": "Audio",
 		"downloadTranscript": "Download Full Transcript",
 		"notifications": {
 			"exportSuccess": "Export Successful",
@@ -293,5 +294,10 @@
 			"lessThanMinute": "less than a minute",
 			"and": "and"
 		}
+	},
+	"navigation": {
+		"previous": "Previous conversation",
+		"next": "Next conversation",
+		"counter": "{{current}} of {{total}}"
 	}
 }

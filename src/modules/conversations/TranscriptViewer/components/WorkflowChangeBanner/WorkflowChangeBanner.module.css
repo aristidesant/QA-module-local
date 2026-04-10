@@ -1,0 +1,57 @@
+.wrapper {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+	padding-block: 6px;
+	border-bottom: 1px solid var(--mantine-color-gray-3);
+	animation: slideIn 0.2s ease-out;
+}
+
+.wrapper:hover {
+	background-color: var(--mantine-color-gray-0);
+}
+
+.timestamp {
+	font-variant-numeric: tabular-nums;
+}
+
+.flow {
+	padding-inline: 16px;
+}
+
+.node {
+	cursor: default;
+	transition: color 0.15s ease;
+}
+
+.node:hover {
+	color: var(--mantine-color-blue-6);
+}
+
+.arrow {
+	flex-shrink: 0;
+	animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes slideIn {
+	from {
+		opacity: 0;
+		transform: translateY(-4px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes pulse {
+	0%,
+	100% {
+		opacity: 0.6;
+	}
+	50% {
+		opacity: 1;
+	}
+}

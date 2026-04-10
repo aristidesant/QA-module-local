@@ -17,10 +17,7 @@ import { ModuleEnum } from '~/constants/ModuleEnum';
 import AccessDenied from '~/components/AccessDenied';
 import { useTranslation } from 'react-i18next';
 
-import {
-	TranscriptViewer,
-	extractMissionSummary,
-} from '~/modules/conversations/TranscriptViewer';
+import { TranscriptViewer } from '~/modules/conversations/TranscriptViewer';
 import TranscriptPlayerBar from '~/modules/conversations/TranscriptViewer/TranscriptPlayerBar';
 import styles from './ConversationDetails.module.css';
 import ConversationOverview from '../ConversationOverview';
@@ -82,20 +79,6 @@ export function ConversationDetails({ id }: ConversationDetailsProps) {
 				.filter(([, node]) => node?.label)
 				.map(([nodeId, node]) => [nodeId, node.label as string])
 		);
-	}, [conversation?.campaign?.agentConfig?.workflow?.nodes]);
-
-	const nodeMissions = useMemo<Record<string, string>>(() => {
-		const nodes = conversation?.campaign?.agentConfig?.workflow?.nodes as
-			| Record<string, { additionalPrompt?: string | null }>
-			| undefined;
-		if (!nodes) return {};
-		const result: Record<string, string> = {};
-		for (const [nodeId, node] of Object.entries(nodes)) {
-			if (!node?.additionalPrompt) continue;
-			const summary = extractMissionSummary(node.additionalPrompt);
-			if (summary) result[nodeId] = summary;
-		}
-		return result;
 	}, [conversation?.campaign?.agentConfig?.workflow?.nodes]);
 
 	const safeStatus = status || '';
@@ -190,7 +173,6 @@ export function ConversationDetails({ id }: ConversationDetailsProps) {
 								isAudioPlaying={isAudioPlaying}
 								onSeekToTime={handleSeekToTime}
 								nodeLabels={nodeLabels}
-								nodeMissions={nodeMissions}
 							/>
 							{!isAudioPlaying && (
 								<Tooltip label={t('details.backToTop')} position='left'>

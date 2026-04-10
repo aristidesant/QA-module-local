@@ -1,0 +1,18 @@
+.emptyStateWrapper {
+	width: 100%;
+}
+
+.emptyState {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: var(--mantine-spacing-xl);
+	min-height: 200px;
+	text-align: center;
+}
+
+.emptyStateIcon {
+	opacity: 0.35;
+	margin-bottom: var(--mantine-spacing-sm);
+}

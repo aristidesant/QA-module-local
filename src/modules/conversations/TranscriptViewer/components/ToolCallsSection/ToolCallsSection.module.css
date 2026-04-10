@@ -1,0 +1,92 @@
+.toolCallsSection {
+	margin-top: var(--mantine-spacing-xs);
+	padding-top: var(--mantine-spacing-xs);
+	border-top: 1px dashed var(--mantine-color-gray-3);
+}
+
+.toolCallItem {
+	border-radius: 6px;
+}
+
+.toolCallToggle {
+	cursor: pointer;
+	border-radius: 4px;
+	padding: 2px 4px;
+	transition: background-color 0.12s ease;
+}
+
+.toolCallToggle:hover {
+	background-color: var(--mantine-color-gray-0);
+}
+
+.toolBadge {
+	cursor: pointer;
+	transition: opacity 0.12s ease;
+}
+
+.toolBadge:hover {
+	opacity: 0.84;
+}
+
+.chevron {
+	color: var(--mantine-color-gray-5);
+	display: flex;
+	align-items: center;
+	flex-shrink: 0;
+}
+
+.toolCallExpanded {
+	padding: var(--mantine-spacing-xs);
+	margin-top: 4px;
+	background-color: var(--mantine-color-gray-0);
+	border-radius: 6px;
+	border: 1px solid var(--mantine-color-gray-2);
+	max-height: 300px;
+	overflow-y: auto;
+}
+
+.toolResultBlock {
+	margin-top: 8px;
+	padding: 8px;
+	border-radius: 6px;
+}
+
+.toolResultBlockSuccess {
+	background-color: var(--mantine-color-green-0);
+	border: 1px solid var(--mantine-color-green-2);
+}
+
+.toolResultBlockError {
+	background-color: var(--mantine-color-red-0);
+	border: 1px solid var(--mantine-color-red-2);
+}
+
+.resultIconSuccess {
+	color: var(--mantine-color-green-6);
+	flex-shrink: 0;
+}
+
+.resultIconError {
+	color: var(--mantine-color-red-6);
+	flex-shrink: 0;
+}
+
+.toolDetailsCode {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-size: 11px;
+	line-height: 1.45;
+	white-space: pre-wrap;
+	word-break: break-word;
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: 6px;
+	padding: 8px 10px;
+	max-height: 200px;
+	overflow-y: auto;
+}
+
+.monoText {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-size: 10px;
+	word-break: break-all;
+}

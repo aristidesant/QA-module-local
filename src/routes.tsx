@@ -54,10 +54,6 @@ const DispositionPage = React.lazy(
 const ConversationPage = React.lazy(
 	() => import('./modules/conversations/ConversationsPage/ConversationPage')
 );
-const ConversationDetailPage = React.lazy(
-	() =>
-		import('./modules/conversations/ConversationDetailPage/ConversationDetailPage')
-);
 
 const OverviewDashboardPage = React.lazy(
 	() => import('./modules/overview/OverviewDashboardPage/OverviewDashboardPage')
@@ -337,19 +333,7 @@ const router = createBrowserRouter([
 							</ModuleGuard>
 						),
 					},
-					{
-						path: 'conversations/:id',
-						id: 'conversations.detail',
-						element: (
-							<ModuleGuard module={ModuleEnum.CONVERSATIONS}>
-								<I18nNamespaceLoader>
-									<Suspense fallback={<SuspenseFallback />}>
-										<ConversationDetailPage />
-									</Suspense>
-								</I18nNamespaceLoader>
-							</ModuleGuard>
-						),
-					},
+
 					{
 						path: 'outcomes',
 						id: 'outcomes',

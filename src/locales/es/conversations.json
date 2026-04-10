@@ -151,6 +151,7 @@
 			"count_one": "{{count}} variable",
 			"count_other": "{{count}} variables"
 		},
+		"downloadAudio": "Audio",
 		"downloadTranscript": "Descargar transcripción",
 		"notifications": {
 			"exportSuccess": "Exportación exitosa",
@@ -293,5 +294,10 @@
 			"lessThanMinute": "menos de un minuto",
 			"and": "y"
 		}
+	},
+	"navigation": {
+		"previous": "Conversación anterior",
+		"next": "Conversación siguiente",
+		"counter": "{{current}} de {{total}}"
 	}
 }

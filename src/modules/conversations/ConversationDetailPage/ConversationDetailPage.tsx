@@ -4,6 +4,7 @@ import {
 	Badge,
 	Button,
 	Center,
+	Divider,
 	Group,
 	Loader,
 	Paper,
@@ -14,6 +15,7 @@ import {
 } from '@mantine/core';
 import {
 	IconArrowUp,
+	IconHeadphones,
 	IconMessages,
 	IconPdf,
 	IconPhoneCall,
@@ -32,15 +34,13 @@ import { PermissionEnum } from '~/constants/PermissionEnum';
 import {
 	useGetConversation,
 	useExportConversationPdf,
+	useExportConversationAudio,
 } from '~/queries/conversationsQueries';
 import type { TranscriptContent } from '~/models/ConversationsModels';
 
-import {
-	TranscriptViewer,
-	extractMissionSummary,
-} from '~/modules/conversations/TranscriptViewer';
+import { TranscriptViewer } from '~/modules/conversations/TranscriptViewer';
+import ConversationNavigator from '~/modules/conversations/ConversationNavigator';
 import TranscriptPlayerBar from '~/modules/conversations/TranscriptViewer/TranscriptPlayerBar';
-import ConversationPlayer from '~/modules/conversations/ConversationPlayer';
 import ConversationOverviewCard from '~/modules/conversations/ConversationOverviewCard';
 import ConversationDisposition from '~/modules/conversations/ConversationDisposition';
 import ConversationCapturedVariables from '~/modules/conversations/ConversationCapturedVariables';
@@ -53,8 +53,21 @@ const getValueOrEmpty = (value: string | undefined | unknown) => {
 	return value || '';
 };
 
-export function ConversationDetailPage() {
-	const { id } = useParams<{ id: string }>();
+interface ConversationDetailPageProps {
+	conversationId?: string;
+	onBack?: () => void;
+	conversationIds?: number[];
+	onNavigate?: (id: number) => void;
+}
+
+export function ConversationDetailPage({
+	conversationId: conversationIdProp,
+	onBack: onBackProp,
+	conversationIds,
+	onNavigate,
+}: ConversationDetailPageProps = {}) {
+	const params = useParams<{ id: string }>();
+	const id = conversationIdProp ?? params.id;
 	const navigate = useNavigate();
 	const { t, i18n } = useTranslation(['conversations', 'common']);
 
@@ -72,6 +85,7 @@ export function ConversationDetailPage() {
 	} = useGetConversation(id || '');
 
 	const exportConversationMutation = useExportConversationPdf();
+	const exportAudioMutation = useExportConversationAudio();
 
 	const [showBackToTop, setShowBackToTop] = useState(false);
 	const [audioCurrentTime, setAudioCurrentTime] = useState(0);
@@ -92,8 +106,12 @@ export function ConversationDetailPage() {
 	}, []);
 
 	const handleBack = useCallback(() => {
-		navigate('/conversations');
-	}, [navigate]);
+		if (onBackProp) {
+			onBackProp();
+		} else {
+			navigate('/conversations');
+		}
+	}, [navigate, onBackProp]);
 
 	// --- Derived data ---
 
@@ -115,20 +133,6 @@ export function ConversationDetailPage() {
 				.filter(([, node]) => node?.label)
 				.map(([nodeId, node]) => [nodeId, node.label as string])
 		);
-	}, [conversation?.campaign?.agentConfig?.workflow?.nodes]);
-
-	const nodeMissions = useMemo<Record<string, string>>(() => {
-		const nodes = conversation?.campaign?.agentConfig?.workflow?.nodes as
-			| Record<string, { additionalPrompt?: string | null }>
-			| undefined;
-		if (!nodes) return {};
-		const result: Record<string, string> = {};
-		for (const [nodeId, node] of Object.entries(nodes)) {
-			if (!node?.additionalPrompt) continue;
-			const summary = extractMissionSummary(node.additionalPrompt);
-			if (summary) result[nodeId] = summary;
-		}
-		return result;
 	}, [conversation?.campaign?.agentConfig?.workflow?.nodes]);
 
 	const safeTranscriptContent: TranscriptContent = transcriptContent || {
@@ -281,6 +285,33 @@ export function ConversationDetailPage() {
 		}
 	};
 
+	// --- Audio export ---
+
+	const handleExportAudio = async () => {
+		if (!canExportConversations || !conversation) return;
+
+		try {
+			const result = await exportAudioMutation.mutateAsync(conversation.id);
+			const url = URL.createObjectURL(result.blob);
+			const link = document.createElement('a');
+			link.href = url;
+			const filename = contactName
+				? `${contactName.toUpperCase()}.MP3`
+				: `conversation-${conversation.id}.mp3`;
+			link.download = filename;
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+			URL.revokeObjectURL(url);
+		} catch {
+			notifications.show({
+				title: t('overview.notifications.exportFailed'),
+				message: t('overview.notifications.exportFailedMsg'),
+				color: 'red',
+			});
+		}
+	};
+
 	// --- Loading / access states ---
 
 	if (isLoading || isFetching) {
@@ -289,7 +320,7 @@ export function ConversationDetailPage() {
 				title={t('detailPage.title')}
 				showBackButton
 				onBackClick={handleBack}
-				contentWidth='full'
+				contentWidth='centered'
 			>
 				<Center p='xl'>
 					<Loader size='lg' color='var(--mantine-primary-color-filled)' />
@@ -308,7 +339,7 @@ export function ConversationDetailPage() {
 				title={t('detailPage.title')}
 				showBackButton
 				onBackClick={handleBack}
-				contentWidth='full'
+				contentWidth='centered'
 			>
 				<Center p='xl'>
 					<Text c='dimmed'>{t('detailPage.notFound')}</Text>
@@ -316,6 +347,14 @@ export function ConversationDetailPage() {
 			</ContentContainer>
 		);
 	}
+
+	// --- Navigation state ---
+
+	const currentIndex =
+		conversationIds && conversationIds.length > 0
+			? conversationIds.indexOf(Number(id))
+			: -1;
+	const hasList = currentIndex !== -1;
 
 	// --- Header elements ---
 
@@ -340,7 +379,29 @@ export function ConversationDetailPage() {
 		.join(' · ');
 
 	const titleRight = (
-		<Group gap='xs'>
+		<Group gap='xs' align='center'>
+			{hasList && conversationIds && onNavigate && (
+				<>
+					<ConversationNavigator
+						currentIndex={currentIndex}
+						total={conversationIds.length}
+						onPrev={() => onNavigate(conversationIds[currentIndex - 1])}
+						onNext={() => onNavigate(conversationIds[currentIndex + 1])}
+					/>
+					<Divider orientation='vertical' />
+				</>
+			)}
+			{canExportConversations && conversation?.voiceFile && (
+				<Button
+					size='xs'
+					variant='light'
+					leftSection={<IconHeadphones size={14} />}
+					loading={exportAudioMutation.isPending}
+					onClick={handleExportAudio}
+				>
+					{t('overview.downloadAudio')}
+				</Button>
+			)}
 			{canExportConversations && (
 				<Button
 					size='xs'
@@ -355,67 +416,87 @@ export function ConversationDetailPage() {
 		</Group>
 	);
 
-	// --- Right sidebar ---
-
-	const rightSidebar = (
-		<Stack gap='xs' className={styles.sidebarContent}>
-			<ConversationPlayer
-				voiceFile={conversation.voiceFile}
-				title={t('player.title')}
-				description={t('player.description')}
-				paramConversationId={conversation.id}
-				contactName={contactName}
-			/>
-			<ConversationOverviewCard
-				contactName={contactName || t('overview.fallbacks.na')}
-				contactPhone={contactPhone}
-				statusLabel={statusBadge.label}
-				statusColor={statusBadge.color}
-				dateDisplay={dateDisplay}
-				agentName={agentName}
-				campaignName={campaignName}
-				terminationReasonLabel={terminationLabel}
-			/>
-			<ConversationDisposition
-				key={conversation.id}
-				conversationId={String(conversation.id)}
-			/>
-			<ConversationCapturedVariables variables={capturedVariables} />
-		</Stack>
-	);
-
 	// --- Main content ---
 
 	return (
-		<div className={styles.pageRoot}>
-			<ContentContainer
-				title={headerTitle}
-				description={headerDescription}
-				showBackButton
-				onBackClick={handleBack}
-				titleRight={titleRight}
-				titleIcon={<IconPhoneCall size={18} />}
-				contentWidth='full'
-				mainScroll={false}
-				rightSection={rightSidebar}
-			>
-				<Paper className={styles.mainLayout} shadow='md' radius='md' withBorder>
-					{/* Transcript Header — pinned top */}
-					<Group gap='xs' align='center' className={styles.transcriptHeader}>
-						<IconMessages size={16} color='var(--mantine-color-gray-6)' />
-						<Text size='sm' fw={600} c='gray.8'>
-							{t('detailPage.transcriptSection')}
-						</Text>
-						{turnCount > 0 && (
-							<Badge size='xs' variant='light' color='gray'>
-								{t('detailPage.turnCount', { count: turnCount })}
-							</Badge>
-						)}
-					</Group>
+		<ContentContainer
+			title={headerTitle}
+			description={headerDescription}
+			showBackButton
+			onBackClick={handleBack}
+			titleRight={titleRight}
+			titleIcon={<IconPhoneCall size={18} />}
+			contentWidth='centered'
+			mainScroll={false}
+		>
+			<div className={styles.contentGrid}>
+				{/* Transcript column — 5 */}
+				<div className={styles.transcriptCol}>
+					<Paper
+						className={styles.mainLayout}
+						shadow='md'
+						radius='md'
+						withBorder
+					>
+						{/* Transcript Header — pinned top */}
+						<Group gap='xs' align='center' className={styles.transcriptHeader}>
+							<IconMessages size={16} color='var(--mantine-color-gray-6)' />
+							<Text size='sm' fw={600} c='gray.8'>
+								{t('detailPage.transcriptSection')}
+							</Text>
+							{turnCount > 0 && (
+								<Badge size='xs' variant='light' color='gray'>
+									{t('detailPage.turnCount', { count: turnCount })}
+								</Badge>
+							)}
+						</Group>
 
-					{/* Conversation Summary — pinned below header */}
-					{transcriptSummary && (
-						<div className={styles.summaryWrapper}>
+						{/* Transcript Messages — scrollable middle */}
+						<div
+							ref={transcriptPanelRef}
+							className={styles.transcriptScroll}
+							onScroll={handlePanelScroll}
+						>
+							<TranscriptViewer
+								transcript={safeTranscriptContent.transcript}
+								audioCurrentTime={audioCurrentTime}
+								isAudioPlaying={isAudioPlaying}
+								onSeekToTime={handleSeekToTime}
+								nodeLabels={nodeLabels}
+								showMetrics={true}
+							/>
+							<Tooltip label={t('details.backToTop')} position='left'>
+								<ActionIcon
+									variant='filled'
+									size='lg'
+									radius='xl'
+									aria-label={t('details.backToTop')}
+									onClick={scrollToTop}
+									className={`${styles.backToTop} ${showBackToTop ? styles.backToTopVisible : ''}`}
+								>
+									<IconArrowUp size={18} />
+								</ActionIcon>
+							</Tooltip>
+						</div>
+
+						{/* Mini player bar — pinned bottom */}
+						{conversation.voiceFile && (
+							<div className={styles.playerBarWrapper}>
+								<TranscriptPlayerBar
+									voiceFile={conversation.voiceFile}
+									onTimeUpdate={setAudioCurrentTime}
+									onPlayStateChange={setIsAudioPlaying}
+									seekToRef={seekToRef}
+								/>
+							</div>
+						)}
+					</Paper>
+				</div>
+
+				{/* Right column — 7: summary → player → overview → disposition → variables */}
+				<div className={styles.rightCol}>
+					<Stack gap='xs'>
+						{transcriptSummary && (
 							<RightSectionCard
 								title={t('overview.summary.title')}
 								icon={IconMessages}
@@ -431,52 +512,26 @@ export function ConversationDetailPage() {
 										transcriptSummary}
 								</Text>
 							</RightSectionCard>
-						</div>
-					)}
-
-					{/* Transcript Messages — scrollable middle */}
-					<div
-						ref={transcriptPanelRef}
-						className={styles.transcriptScroll}
-						onScroll={handlePanelScroll}
-					>
-						<TranscriptViewer
-							transcript={safeTranscriptContent.transcript}
-							audioCurrentTime={audioCurrentTime}
-							isAudioPlaying={isAudioPlaying}
-							onSeekToTime={handleSeekToTime}
-							nodeLabels={nodeLabels}
-							nodeMissions={nodeMissions}
-							showMetrics={true}
+						)}
+						<ConversationOverviewCard
+							contactName={contactName || t('overview.fallbacks.na')}
+							contactPhone={contactPhone}
+							statusLabel={statusBadge.label}
+							statusColor={statusBadge.color}
+							dateDisplay={dateDisplay}
+							agentName={agentName}
+							campaignName={campaignName}
+							terminationReasonLabel={terminationLabel}
 						/>
-						<Tooltip label={t('details.backToTop')} position='left'>
-							<ActionIcon
-								variant='filled'
-								size='lg'
-								radius='xl'
-								aria-label={t('details.backToTop')}
-								onClick={scrollToTop}
-								className={`${styles.backToTop} ${showBackToTop ? styles.backToTopVisible : ''}`}
-							>
-								<IconArrowUp size={18} />
-							</ActionIcon>
-						</Tooltip>
-					</div>
-
-					{/* Mini player bar — pinned bottom */}
-					{conversation.voiceFile && (
-						<div className={styles.playerBarWrapper}>
-							<TranscriptPlayerBar
-								voiceFile={conversation.voiceFile}
-								onTimeUpdate={setAudioCurrentTime}
-								onPlayStateChange={setIsAudioPlaying}
-								seekToRef={seekToRef}
-							/>
-						</div>
-					)}
-				</Paper>
-			</ContentContainer>
-		</div>
+						<ConversationDisposition
+							key={conversation.id}
+							conversationId={String(conversation.id)}
+						/>
+						<ConversationCapturedVariables variables={capturedVariables} />
+					</Stack>
+				</div>
+			</div>
+		</ContentContainer>
 	);
 }
 
