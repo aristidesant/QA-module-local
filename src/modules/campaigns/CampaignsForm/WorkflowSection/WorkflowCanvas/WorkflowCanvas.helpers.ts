@@ -77,6 +77,35 @@ export const serializeWorkflow = (workflow: AgentWorkflow): string => {
 	});
 };
 
+/**
+ * If a workflow somehow ends up with more than one START node, keep only the
+ * connected one (i.e. the one that appears as a source in at least one edge).
+ * If none or multiple are connected, keep the first one found.
+ */
+export const sanitizeStartNodes = (
+	nodes: Record<string, WorkflowNode>,
+	edges: Record<string, WorkflowEdge>
+): Record<string, WorkflowNode> => {
+	const startNodeIds = Object.entries(nodes)
+		.filter(([, node]) => node.type === WORKFLOW_NODE_TYPES.START)
+		.map(([id]) => id);
+
+	if (startNodeIds.length <= 1) return nodes;
+
+	const connectedStartIds = startNodeIds.filter((id) =>
+		Object.values(edges).some((edge) => edge.source === id)
+	);
+
+	const keepId = connectedStartIds[0] ?? startNodeIds[0];
+
+	const result = { ...nodes };
+	startNodeIds.forEach((id) => {
+		if (id !== keepId) delete result[id];
+	});
+
+	return result;
+};
+
 export const buildDefaultWorkflow = (
 	preventSubagentLoops: boolean
 ): AgentWorkflow => {
@@ -134,7 +163,12 @@ export const mapWorkflowToNodes = (
 		WORKFLOW_NODE_TYPES.END,
 	];
 
-	const mappedNodes = Object.entries(workflowData.nodes).map(([id, node]) => ({
+	const sanitizedNodes = sanitizeStartNodes(
+		workflowData.nodes,
+		workflowData.edges
+	);
+
+	const mappedNodes = Object.entries(sanitizedNodes).map(([id, node]) => ({
 		id,
 		type: node.type,
 		position: node.position,
@@ -210,24 +244,28 @@ export const mapWorkflowToNodes = (
 		);
 	};
 
-	const mappedEdges = Object.entries(workflowData.edges).map(([id, edge]) => {
-		const sourceNode = workflowData.nodes[edge.source];
-		const label = getEdgeLabel(edge);
+	const mappedEdges = Object.entries(workflowData.edges)
+		.filter(
+			([, edge]) => sanitizedNodes[edge.source] && sanitizedNodes[edge.target]
+		)
+		.map(([id, edge]) => {
+			const sourceNode = sanitizedNodes[edge.source];
+			const label = getEdgeLabel(edge);
 
-		return {
-			id,
-			source: edge.source,
-			target: edge.target,
-			type: 'condition',
-			data: {
-				label,
-				sourceNodeType: sourceNode?.type,
-				forwardCondition: edge.forwardCondition,
-				backwardCondition: edge.backwardCondition,
-				warningLevel: getEdgeWarningLevel(id, workflowData),
-			},
-		};
-	});
+			return {
+				id,
+				source: edge.source,
+				target: edge.target,
+				type: 'condition',
+				data: {
+					label,
+					sourceNodeType: sourceNode?.type,
+					forwardCondition: edge.forwardCondition,
+					backwardCondition: edge.backwardCondition,
+					warningLevel: getEdgeWarningLevel(id, workflowData),
+				},
+			};
+		});
 
 	return { nodes: mappedNodes, edges: mappedEdges };
 };
@@ -370,7 +408,9 @@ export const buildWorkflowFromState = (
 		workflowEdges[edge.id] = {
 			source: edge.source,
 			target: edge.target,
-			forwardCondition: data?.forwardCondition,
+			forwardCondition: data?.forwardCondition ?? {
+				type: 'unconditional' as const,
+			},
 			backwardCondition: data?.backwardCondition,
 		};
 	});

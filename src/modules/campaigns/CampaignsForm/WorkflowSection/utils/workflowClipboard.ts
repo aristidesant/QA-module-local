@@ -3,6 +3,7 @@ import type {
 	WorkflowEdge,
 	WorkflowNode,
 } from '~/models/AgentWorkflowModel';
+import { sanitizeStartNodes } from '../WorkflowCanvas/WorkflowCanvas.helpers';
 import { snakeToCamel, toSnakeCase } from '~/utils/stringUtils';
 
 export type WorkflowImportErrorCode =
@@ -265,7 +266,7 @@ export const parseImportedWorkflow = (
 
 	const normalizedWorkflow = normalizeWorkflowEdgeOrder({
 		preventSubagentLoops,
-		nodes: normalizedNodes,
+		nodes: sanitizeStartNodes(normalizedNodes, normalizedEdges),
 		edges: normalizedEdges,
 	});
 

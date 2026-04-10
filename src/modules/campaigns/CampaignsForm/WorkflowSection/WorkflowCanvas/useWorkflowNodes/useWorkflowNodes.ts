@@ -198,6 +198,7 @@ const useWorkflowNodes = ({
 							? null
 							: buildEdgeLabel(t),
 					sourceNodeType: parentNode?.type,
+					forwardCondition: { type: 'unconditional' as const },
 				},
 			};
 
