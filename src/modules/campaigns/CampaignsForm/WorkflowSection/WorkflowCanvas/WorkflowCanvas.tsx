@@ -428,6 +428,9 @@ const WorkflowCanvasInner = ({
 					? {
 							...(existingStartEdge?.data ?? {}),
 							...defaultEdgeData,
+							...(!existingStartEdge?.data?.forwardCondition
+								? { forwardCondition: { type: 'unconditional' as const } }
+								: {}),
 						}
 					: (existingStartEdge?.data ?? defaultEdgeData),
 			};
