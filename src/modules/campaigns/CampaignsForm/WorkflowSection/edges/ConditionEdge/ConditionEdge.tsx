@@ -12,6 +12,7 @@ import { BaseEdge, EdgeLabelRenderer, type EdgeProps } from '@xyflow/react';
 import {
 	IconArrowLeft,
 	IconArrowRight,
+	IconMaximize,
 	IconPencil,
 	IconTrash,
 } from '@tabler/icons-react';
@@ -39,52 +40,54 @@ interface ChipWithPopoverProps {
 	children: ReactNode;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	onChipClick?: (e: ReactMouseEvent<any>) => void;
+	/** When true, prevents the hover popover from opening (e.g. while edge actions are visible). */
+	suppressPopover?: boolean;
 }
 
 /**
- * Wraps a chip with a click-to-reveal dropdown showing the full text.
- * Uses a document-level `mousedown` listener so the dropdown closes even when
- * the user clicks anywhere on the React Flow canvas (which stops propagation
- * at the pointer-events level, breaking Mantine Popover's outside-click).
+ * Wraps a chip with a hover-to-reveal dropdown showing the full text.
+ * Click always delegates to `onChipClick` so edge actions (edit / delete)
+ * are reachable. A small expand icon is rendered inside the chip for
+ * touch-device users who cannot hover.
  */
 const ChipWithPopover: FC<ChipWithPopoverProps> = ({
 	fullText,
 	children,
 	onChipClick,
+	suppressPopover = false,
 }) => {
 	const [opened, setOpened] = useState(false);
 	const triggerRef = useRef<HTMLDivElement>(null);
 	const dropdownRef = useRef<HTMLDivElement>(null);
+	const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const needsPopover = fullText.length > FULL_TEXT_THRESHOLD;
 
-	// Close on any mousedown outside the trigger + dropdown.
-	// We use mousedown (not click) so it fires before React Flow's
-	// stopPropagation handlers cancel further event bubbling.
+	const openPopover = () => {
+		if (suppressPopover) return;
+		if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+		setOpened(true);
+	};
+
+	const closePopover = () => {
+		// Small delay so the user can move the mouse from chip → dropdown
+		hoverTimeoutRef.current = setTimeout(() => setOpened(false), 150);
+	};
+
+	// Clean up timeout on unmount
 	useEffect(() => {
-		if (!opened) return;
-		const handleMouseDown = (e: MouseEvent) => {
-			const target = e.target as Node;
-			if (
-				triggerRef.current?.contains(target) ||
-				dropdownRef.current?.contains(target)
-			) {
-				return;
-			}
-			setOpened(false);
-		};
-		document.addEventListener('mousedown', handleMouseDown, true);
 		return () => {
-			document.removeEventListener('mousedown', handleMouseDown, true);
+			if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
 		};
-	}, [opened]);
+	}, []);
+
+	// Close the popover immediately when suppressed (e.g. edge actions just opened)
+	useEffect(() => {
+		if (suppressPopover) setOpened(false);
+	}, [suppressPopover]);
 
 	if (!needsPopover) {
 		return (
-			<div
-				onClick={onChipClick}
-				// inline-style-allow: inline-flex wrapper for clickable chip — no scoped CSS class available for anonymous wrapper
-				style={{ display: 'inline-flex', alignItems: 'center' }}
-			>
+			<div onClick={onChipClick} className={styles.chipTriggerSimple}>
 				{children}
 			</div>
 		);
@@ -109,21 +112,27 @@ const ChipWithPopover: FC<ChipWithPopoverProps> = ({
 
 	return (
 		<>
-			{/* inline-style-allow: trigger div needs inline-flex and cursor — anonymous wrapper with no viable CSS Modules alternative */}
 			<div
 				ref={triggerRef}
 				onClick={(e) => {
 					e.stopPropagation();
-					setOpened((prev) => !prev);
+					onChipClick?.(e);
 				}}
-				// inline-style-allow: trigger div needs inline-flex and cursor — anonymous wrapper with no viable CSS Modules alternative
-				style={{
-					cursor: 'pointer',
-					display: 'inline-flex',
-					alignItems: 'center',
-				}}
+				onMouseEnter={openPopover}
+				onMouseLeave={closePopover}
+				className={styles.chipTrigger}
 			>
 				{children}
+				{/* Small expand icon for touch users who cannot hover */}
+				<span
+					className={styles.expandIcon}
+					onClick={(e) => {
+						e.stopPropagation();
+						setOpened((prev) => !prev);
+					}}
+				>
+					<IconMaximize size={10} />
+				</span>
 			</div>
 			{opened && (
 				<Portal>
@@ -136,13 +145,11 @@ const ChipWithPopover: FC<ChipWithPopoverProps> = ({
 						// inline-style-allow: dropdown position is computed at runtime from getBoundingClientRect — cannot be expressed in static CSS
 						style={getDropdownStyle()}
 						onClick={(e) => e.stopPropagation()}
+						onMouseEnter={openPopover}
+						onMouseLeave={closePopover}
 					>
 						<ScrollArea.Autosize mah={180} scrollbarSize={6}>
-							<Text
-								size='xs'
-								// inline-style-allow: whiteSpace and wordBreak have no Mantine Text prop equivalent
-								style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
-							>
+							<Text size='xs' className={styles.popoverText}>
 								{fullText}
 							</Text>
 						</ScrollArea.Autosize>
@@ -412,6 +419,7 @@ const ConditionEdge: FC<EdgeProps> = ({
 								<ChipWithPopover
 									fullText={structuredLabel?.forwardLabel ?? ''}
 									onChipClick={isInteractive ? handleEdgeClick : undefined}
+									suppressPopover={isActionsOpen}
 								>
 									<div className={styles.labelChip}>
 										<ForwardIcon className={styles.labelIcon} size={12} />
@@ -423,6 +431,7 @@ const ConditionEdge: FC<EdgeProps> = ({
 								<ChipWithPopover
 									fullText={structuredLabel?.backwardLabel ?? ''}
 									onChipClick={isInteractive ? handleEdgeClick : undefined}
+									suppressPopover={isActionsOpen}
 								>
 									<div className={styles.labelChip}>
 										<BackwardIcon className={styles.labelIcon} size={12} />
@@ -436,6 +445,7 @@ const ConditionEdge: FC<EdgeProps> = ({
 							<ChipWithPopover
 								fullText={promptLabel || displayLabel || ''}
 								onChipClick={isInteractive ? handleEdgeClick : undefined}
+								suppressPopover={isActionsOpen}
 							>
 								<div className={styles.labelChip}>
 									{singleConditionDirection === 'backward' ? (
@@ -455,6 +465,7 @@ const ConditionEdge: FC<EdgeProps> = ({
 							<ChipWithPopover
 								fullText={promptLabel || displayLabel || ''}
 								onChipClick={isInteractive ? handleEdgeClick : undefined}
+								suppressPopover={isActionsOpen}
 							>
 								<span>{displayLabel}</span>
 							</ChipWithPopover>

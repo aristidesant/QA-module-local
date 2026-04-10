@@ -32,6 +32,20 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 		const baseConversationConfig: Record<string, any> = {
 			...(currentAgentConfig.conversationConfig || {}),
 		};
+		const nextPromptConfig = {
+			...(baseConversationConfig.agent?.prompt || {}),
+			...config.agent?.prompt,
+		};
+
+		if (
+			config.agent?.prompt &&
+			!Object.prototype.hasOwnProperty.call(
+				config.agent.prompt,
+				'reasoningEffort'
+			)
+		) {
+			nextPromptConfig.reasoningEffort = undefined;
+		}
 
 		const mergedConfig = deepMergeConfig(baseConversationConfig, {
 			...(config.tts
@@ -52,10 +66,7 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 				? {
 						agent: {
 							...(baseConversationConfig.agent || {}),
-							prompt: {
-								...(baseConversationConfig.agent?.prompt || {}),
-								...config.agent.prompt,
-							},
+							prompt: nextPromptConfig,
 						},
 					}
 				: {}),

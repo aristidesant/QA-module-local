@@ -15,6 +15,7 @@ export interface FormValues {
 	ttsOptimizeStreamingLatency: number;
 	ttsAgentOutputAudioFormat: string;
 	agentPromptLlm: string;
+	agentPromptReasoningEffort: string | null;
 	agentPromptTemperature: number;
 }
 
