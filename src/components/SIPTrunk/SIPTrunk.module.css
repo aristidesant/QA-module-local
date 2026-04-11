@@ -223,6 +223,6 @@
 }
 
 .durationText {
-	font-family: 'JetBrains Mono', 'Fira Mono', monospace;
+	font-family: var(--mantine-font-family-monospace);
 	font-weight: 600;
 }

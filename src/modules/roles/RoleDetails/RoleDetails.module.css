@@ -29,7 +29,7 @@
 
 .code {
 	font-size: 13px;
-	font-family: monospace;
+	font-family: var(--mantine-font-family-monospace);
 	color: var(--mantine-color-gray-6);
 	background-color: var(--mantine-color-gray-1);
 	padding: 2px 8px;

@@ -33,7 +33,7 @@
 }
 
 .tooltipMonoText {
-	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-family: var(--mantine-font-family-monospace);
 	font-size: 11px;
 	word-break: break-all;
 }

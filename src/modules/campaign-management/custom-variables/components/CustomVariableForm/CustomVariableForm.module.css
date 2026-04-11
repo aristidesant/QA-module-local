@@ -42,9 +42,7 @@
 	color: var(--mantine-color-gray-8);
 	padding: 4px 10px;
 	line-height: 1.35;
-	font-family:
-		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
-		'Courier New', monospace;
+	font-family: var(--mantine-font-family-monospace);
 }
 
 .identifierEmpty {

@@ -44,9 +44,7 @@
 
 .diffCell {
 	padding: 0.15rem var(--mantine-spacing-md);
-	font-family:
-		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
-		'Courier New', monospace;
+	font-family: var(--mantine-font-family-monospace);
 	font-size: 12px;
 	line-height: 1.8;
 	background: var(--mantine-color-white);
