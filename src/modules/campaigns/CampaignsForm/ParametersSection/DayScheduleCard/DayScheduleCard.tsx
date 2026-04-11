@@ -14,6 +14,16 @@ import {
 	type MaybeDayConfig,
 } from '../utils/schedulerMetrics';
 
+const timePickerClassNames = {
+	fieldsRoot: styles.timePickerFieldsRoot,
+	fieldsGroup: styles.timePickerFieldsGroup,
+	field: styles.timePickerField,
+	controlsList: styles.timePickerControlsList,
+	controlsListGroup: styles.timePickerControlsListGroup,
+	control: styles.timePickerControl,
+	dropdown: styles.timePickerDropdown,
+} as const;
+
 /**
  * Translate a day-of-week key (e.g. "monday") using the campaigns namespace.
  * Falls back to capitalised raw string when translation is unavailable.
@@ -243,6 +253,7 @@ export const DayScheduleCard: React.FC = () => {
 													value={day.startHour}
 													minutesStep={30}
 													className={styles.timePicker}
+													classNames={timePickerClassNames}
 													onChange={(value) =>
 														handleTimeChange(
 															value,
@@ -263,6 +274,7 @@ export const DayScheduleCard: React.FC = () => {
 													value={day.endHour}
 													minutesStep={30}
 													className={styles.timePicker}
+													classNames={timePickerClassNames}
 													onChange={(value) =>
 														handleTimeChange(
 															value,

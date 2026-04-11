@@ -193,3 +193,65 @@
 	font-weight: 700;
 	letter-spacing: 0.04em;
 }
+
+[data-mantine-color-scheme='dark'] .container {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .container::before {
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .container:hover {
+	border-color: var(--mantine-color-blue-4);
+}
+
+[data-mantine-color-scheme='dark'] .scheduleName {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .metaDivider {
+	background: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .metaText,
+[data-mantine-color-scheme='dark'] .metricLabel,
+[data-mantine-color-scheme='dark'] .hoverSubText {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .metricsRow {
+	background: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .metric {
+	background: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .metric:hover {
+	border-color: var(--mantine-color-blue-4);
+	background: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .metricIcon {
+	background: var(--mantine-color-dark-6);
+	color: var(--mantine-color-dark-0);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .metricValue,
+[data-mantine-color-scheme='dark'] .hoverDayName {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .hoverDropdown {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .hoverBadge {
+	border-color: var(--mantine-color-dark-4);
+	color: var(--mantine-color-dark-0);
+}

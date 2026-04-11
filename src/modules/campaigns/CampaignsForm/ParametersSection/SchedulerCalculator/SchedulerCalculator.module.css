@@ -463,3 +463,79 @@
 		grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
 	}
 }
+
+[data-mantine-color-scheme='dark'] .formCard,
+[data-mantine-color-scheme='dark'] .summaryCard {
+	background-color: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .title,
+[data-mantine-color-scheme='dark'] .sectionTitle,
+[data-mantine-color-scheme='dark'] .waveTitle,
+[data-mantine-color-scheme='dark'] .metricValue,
+[data-mantine-color-scheme='dark'] .placeholderTitle {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .description,
+[data-mantine-color-scheme='dark'] .sectionHint,
+[data-mantine-color-scheme='dark'] .waveSubtitle,
+[data-mantine-color-scheme='dark'] .assumptionsText,
+[data-mantine-color-scheme='dark'] .placeholderText,
+[data-mantine-color-scheme='dark'] .metricLabel {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .sliderField,
+[data-mantine-color-scheme='dark'] .summaryCard {
+	background-color: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .sliderValue,
+[data-mantine-color-scheme='dark'] .modeBadge {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-blue-6) 18%,
+		var(--mantine-color-dark-6)
+	);
+	border-color: var(--mantine-color-dark-5);
+	color: var(--mantine-color-blue-2);
+}
+
+[data-mantine-color-scheme='dark'] .sliderRow,
+[data-mantine-color-scheme='dark'] .metric,
+[data-mantine-color-scheme='dark'] .assumptions,
+[data-mantine-color-scheme='dark'] .waveMetricsGrid,
+[data-mantine-color-scheme='dark'] .placeholder {
+	background-color: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .sliderTrack,
+[data-mantine-color-scheme='dark'] .waveProgress {
+	background-color: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .sliderBar,
+[data-mantine-color-scheme='dark'] .waveProgressBar {
+	background-color: var(--mantine-color-blue-4);
+}
+
+[data-mantine-color-scheme='dark'] .sliderThumb {
+	background-color: var(--mantine-color-blue-4);
+	border-color: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .segmentedRoot {
+	background-color: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .segmentedLabel,
+[data-mantine-color-scheme='dark'] .summaryLabel,
+[data-mantine-color-scheme='dark'] .waveMetricLabel,
+[data-mantine-color-scheme='dark'] .assumptionsLabel {
+	color: var(--mantine-color-dark-2);
+}

@@ -1,9 +1,16 @@
 import { useMemo } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
-import { Text } from '@mantine/core';
+import { Text, useComputedColorScheme } from '@mantine/core';
 import type { MetricRow } from './types';
 
 export const useSummaryColumns = () => {
+	const colorScheme = useComputedColorScheme('light');
+
+	const principalMetricColor = colorScheme === 'dark' ? 'blue.3' : 'blue.7';
+	const principalValueColor = colorScheme === 'dark' ? 'blue.2' : 'blue.7';
+	const regularMetricColor = colorScheme === 'dark' ? 'dimmed' : 'gray.7';
+	const regularValueColor = colorScheme === 'dark' ? 'dark.0' : 'gray.9';
+
 	return useMemo<ColumnDef<MetricRow>[]>(
 		() => [
 			{
@@ -15,7 +22,7 @@ export const useSummaryColumns = () => {
 						<Text
 							size='xs'
 							fw={isPrincipal ? 700 : 500}
-							c={isPrincipal ? 'blue.7' : 'gray.7'}
+							c={isPrincipal ? principalMetricColor : regularMetricColor}
 						>
 							{info.getValue() as string}
 						</Text>
@@ -31,7 +38,7 @@ export const useSummaryColumns = () => {
 						<Text
 							size='sm'
 							fw={isPrincipal ? 700 : 600}
-							c={isPrincipal ? 'blue.7' : 'gray.9'}
+							c={isPrincipal ? principalValueColor : regularValueColor}
 						>
 							{info.getValue() as string}
 						</Text>
@@ -39,6 +46,11 @@ export const useSummaryColumns = () => {
 				},
 			},
 		],
-		[]
+		[
+			principalMetricColor,
+			principalValueColor,
+			regularMetricColor,
+			regularValueColor,
+		]
 	);
 };

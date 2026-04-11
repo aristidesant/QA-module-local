@@ -1,20 +1,35 @@
 .addButton {
-  border: 1px dashed var(--mantine-color-blue-3);
-  background-color: var(--mantine-color-blue-0);
-  color: var(--mantine-color-blue-7);
-  border-radius: var(--mantine-radius-md);
-  padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
-  height: auto;
-  min-height: 72px;
-  font-weight: 500;
-  transition: all 0.2s ease;
+	border: 1px dashed var(--mantine-color-blue-3);
+	background-color: var(--mantine-color-blue-0);
+	color: var(--mantine-color-blue-7);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+	height: auto;
+	min-height: 72px;
+	font-weight: 500;
+	transition: all 0.2s ease;
 }
 
 .addButton:hover {
-  background-color: var(--mantine-color-blue-1);
-  border-color: var(--mantine-color-blue-4);
+	background-color: var(--mantine-color-blue-1);
+	border-color: var(--mantine-color-blue-4);
 }
 
 .addButton:active {
-  background-color: var(--mantine-color-blue-2);
+	background-color: var(--mantine-color-blue-2);
+}
+
+[data-mantine-color-scheme='dark'] .addButton {
+	background-color: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-blue-4);
+	color: var(--mantine-color-blue-2);
+}
+
+[data-mantine-color-scheme='dark'] .addButton:hover {
+	background-color: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-blue-3);
+}
+
+[data-mantine-color-scheme='dark'] .addButton:active {
+	background-color: var(--mantine-color-dark-5);
 }

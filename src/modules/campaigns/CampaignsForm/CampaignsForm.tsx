@@ -78,6 +78,9 @@ const campaignFormTabNamespaces: Record<string, string> = {
 	versioning: 'campaign.form.versioning',
 };
 
+const paramsNamespace = 'campaign.form.params';
+const paramsFallbackNamespace = 'campaigns.wizard';
+
 const getWorkflowCounts = (
 	workflow?: Partial<Campaign>['agentConfig'] extends infer T
 		? T extends { workflow?: infer W }
@@ -359,6 +362,36 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			staleTime: 1000 * 60,
 		});
 	}, [campaign?.id, queryClient, selectedTab]);
+
+	useEffect(() => {
+		if (selectedTab !== 'params') return;
+
+		void i18n.loadNamespaces([paramsNamespace, paramsFallbackNamespace]);
+	}, [selectedTab]);
+
+	const workingHoursTitle = i18n.exists('workingHours.title', {
+		ns: paramsNamespace,
+	})
+		? t('workingHours.title', { ns: paramsNamespace })
+		: i18n.exists('wizard.steps.parameters.workingHoursTitle', {
+					ns: paramsFallbackNamespace,
+			  })
+			? t('wizard.steps.parameters.workingHoursTitle', {
+					ns: paramsFallbackNamespace,
+				})
+			: '';
+
+	const workingHoursDescription = i18n.exists('workingHours.description', {
+		ns: paramsNamespace,
+	})
+		? t('workingHours.description', { ns: paramsNamespace })
+		: i18n.exists('wizard.steps.parameters.workingHoursDesc', {
+					ns: paramsFallbackNamespace,
+			  })
+			? t('wizard.steps.parameters.workingHoursDesc', {
+					ns: paramsFallbackNamespace,
+				})
+			: '';
 
 	const settingsDrawerTitle = t('form.settingsDrawer.title');
 	const openSettingsDrawer = () => {
@@ -648,8 +681,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 						)}
 						{selectedTab === 'params' && (
 							<SectionCard
-								title={t('workingHours.title')}
-								description={t('workingHours.description')}
+								title={workingHoursTitle}
+								description={workingHoursDescription}
 								onCalculate={() =>
 									modals.open({
 										title: t('form.schedulerCalculator.title'),
