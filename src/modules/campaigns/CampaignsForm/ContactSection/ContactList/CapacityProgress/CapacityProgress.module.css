@@ -8,6 +8,11 @@
 	gap: var(--mantine-spacing-sm);
 }
 
+[data-mantine-color-scheme='dark'] .capacityCard {
+	border-color: var(--mantine-color-dark-5);
+	background-color: var(--mantine-color-dark-7);
+}
+
 .capacityHeader {
 	margin-bottom: 0;
 }
@@ -28,14 +33,29 @@
 	justify-content: center;
 }
 
+[data-mantine-color-scheme='dark'] .percentageBadge {
+	background-color: var(--mantine-color-blue-9);
+	color: var(--mantine-color-blue-1);
+}
+
 .percentageBadge[data-intent='medium'] {
 	background-color: var(--mantine-color-orange-1);
 	color: var(--mantine-color-orange-9);
 }
 
+[data-mantine-color-scheme='dark'] .percentageBadge[data-intent='medium'] {
+	background-color: var(--mantine-color-orange-9);
+	color: var(--mantine-color-orange-1);
+}
+
 .percentageBadge[data-intent='high'] {
 	background-color: var(--mantine-color-red-1);
 	color: var(--mantine-color-red-9);
+}
+
+[data-mantine-color-scheme='dark'] .percentageBadge[data-intent='high'] {
+	background-color: var(--mantine-color-red-9);
+	color: var(--mantine-color-red-1);
 }
 
 .percentageValue {
@@ -46,6 +66,10 @@
 .progressBar {
 	border-radius: var(--mantine-radius-md);
 	background-color: var(--mantine-color-gray-2);
+}
+
+[data-mantine-color-scheme='dark'] .progressBar {
+	background-color: var(--mantine-color-dark-5);
 }
 
 .progressSection {
@@ -66,6 +90,18 @@
 
 .detailLabel {
 	text-align: center;
+}
+
+[data-mantine-color-scheme='dark'] .detailLabel {
+	color: var(--mantine-color-dark-2);
+}
+
+.detailValue {
+	color: var(--mantine-color-gray-9);
+}
+
+[data-mantine-color-scheme='dark'] .detailValue {
+	color: var(--mantine-color-dark-0);
 }
 
 @media (max-width: 40rem) {

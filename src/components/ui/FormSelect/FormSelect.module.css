@@ -1,20 +1,21 @@
 .select {
-  margin-bottom: 1rem;
+	margin-bottom: 1rem;
 }
 
 .select .mantine-Select-input {
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
-  transition: border-color 0.2s ease;
+	border-radius: 8px;
+	border: 1px solid var(--mantine-color-gray-3);
+	transition: border-color 0.2s ease;
 }
 
 .select .mantine-Select-input:focus {
-  border-color: #339af0;
-  box-shadow: 0 0 0 1px rgba(51, 154, 240, 0.3);
+	border-color: var(--mantine-color-blue-5);
+	box-shadow: 0 0 0 1px
+		color-mix(in srgb, var(--mantine-color-blue-5) 30%, transparent);
 }
 
 .select .mantine-Select-label {
-  font-weight: 500;
-  color: #495057;
-  margin-bottom: 0.5rem;
+	font-weight: 500;
+	color: var(--mantine-color-gray-7);
+	margin-bottom: 0.5rem;
 }

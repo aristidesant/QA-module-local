@@ -18,7 +18,7 @@
 
 .titleText {
 	margin: 0;
-	color: var(--mantine-color-gray-8, #1f2937);
+	color: var(--mantine-color-gray-8);
 	font-size: 15px;
 	line-height: 1.15;
 	display: -webkit-box;
@@ -29,7 +29,7 @@
 
 .smallText {
 	margin-top: 2px;
-	color: var(--mantine-color-gray-6, #6b7280);
+	color: var(--mantine-color-gray-6);
 	font-size: 12px;
 	max-width: 240px;
 	display: -webkit-box;
@@ -68,8 +68,8 @@
 .metricCard {
 	border-radius: 8px;
 	padding: 6px 10px;
-	background: var(--mantine-color-gray-0, #f8fafc);
-	border: 1px solid var(--mantine-color-gray-2, #e6e9ef);
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
 }
 
 .metricTop {
@@ -79,14 +79,14 @@
 }
 
 .metricLabel {
-	color: var(--mantine-color-gray-6, #6b7280);
+	color: var(--mantine-color-gray-6);
 	font-size: 11px;
 }
 
 .metricValue {
 	font-weight: 700;
 	font-size: 16px;
-	color: var(--mantine-color-gray-8, #111827);
+	color: var(--mantine-color-dark-9);
 }
 
 .metricsGrid {

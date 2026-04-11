@@ -4,9 +4,17 @@
 	border-top: 1px solid var(--mantine-color-gray-2);
 }
 
+[data-mantine-color-scheme='dark'] .container {
+	border-top-color: var(--mantine-color-dark-5);
+}
+
 .summary {
 	text-align: center;
 	margin-bottom: var(--mantine-spacing-sm);
+}
+
+[data-mantine-color-scheme='dark'] .summary {
+	color: var(--mantine-color-dark-2);
 }
 
 .controls {
@@ -45,6 +53,10 @@
 	text-align: right;
 }
 
+[data-mantine-color-scheme='dark'] .pageInfo {
+	color: var(--mantine-color-dark-2);
+}
+
 /* Disabled state styling */
 .controls [data-disabled='true'] {
 	opacity: 0.6;
@@ -54,6 +66,25 @@
 .itemsSelect[data-disabled='true'] .mantine-Select-input {
 	color: var(--mantine-color-gray-5);
 	background-color: var(--mantine-color-gray-0);
+}
+
+[data-mantine-color-scheme='dark']
+	.itemsSelect[data-disabled='true']
+	.mantine-Select-input {
+	color: var(--mantine-color-dark-3);
+	background-color: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .itemsSelect .mantine-Select-input {
+	background-color: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark']
+	.itemsSelect
+	.mantine-Select-input::placeholder {
+	color: var(--mantine-color-dark-3);
 }
 
 @media (max-width: 768px) {

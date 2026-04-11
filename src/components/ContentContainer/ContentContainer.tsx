@@ -64,13 +64,19 @@ export const ContentContainer = ({
 											{title && (
 												<Flex align='center' gap='xs'>
 													{titleIcon}
-													<Title c='dark' order={5}>
+													<Title
+														order={5}
+														className={styles.contentContainerTitle}
+													>
 														{title}
 													</Title>
 												</Flex>
 											)}
 											{description && (
-												<Text fz='xs' c='dimmed'>
+												<Text
+													fz='xs'
+													className={styles.contentContainerDescription}
+												>
 													{description}
 												</Text>
 											)}

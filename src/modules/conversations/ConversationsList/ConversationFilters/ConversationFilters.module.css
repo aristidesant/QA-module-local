@@ -1,3 +1,25 @@
+[data-mantine-color-scheme='dark'] .titleIcon {
+	color: var(--mantine-color-dark-3);
+}
+
+[data-mantine-color-scheme='dark'] .title {
+	color: var(--mantine-color-dark-1);
+}
+
+[data-mantine-color-scheme='dark'] .activeBadge {
+	background-color: var(--mantine-color-blue-9);
+	color: var(--mantine-color-blue-2);
+}
+
+[data-mantine-color-scheme='dark'] .searchInput input {
+	border-color: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .advancedFilters {
+	background-color: var(--mantine-color-dark-8);
+	border-color: var(--mantine-color-dark-5);
+}
+
 .filtersContainer {
 	margin-bottom: var(--mantine-spacing-md);
 }

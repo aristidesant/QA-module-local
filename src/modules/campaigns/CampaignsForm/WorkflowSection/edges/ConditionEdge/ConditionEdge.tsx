@@ -288,11 +288,11 @@ const ConditionEdge: FC<EdgeProps> = ({
 	const getStrokeColor = (): string => {
 		switch (warningLevel) {
 			case 'error':
-				return '#d9480f'; // Mantine red-6
+				return 'var(--mantine-color-orange-7)';
 			case 'warning':
-				return '#ff922b'; // Mantine orange-6
+				return 'var(--mantine-color-orange-5)';
 			default:
-				return '#868e96'; // Default gray
+				return 'var(--mantine-color-gray-6)';
 		}
 	};
 

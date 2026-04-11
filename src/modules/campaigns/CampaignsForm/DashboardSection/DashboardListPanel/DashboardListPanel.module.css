@@ -36,7 +36,11 @@
 .table {
 	flex: 1;
 	min-height: 14rem;
-	background: color-mix(in srgb, var(--mantine-color-white) 88%, #f8f2e8);
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-white) 88%,
+		var(--mantine-color-gray-1)
+	);
 }
 
 .actionsHeader {
@@ -52,7 +56,7 @@
 	background: color-mix(
 		in srgb,
 		var(--mantine-color-white) 72%,
-		#f3ebe0
+		var(--mantine-color-gray-1)
 	) !important;
 }
 
@@ -66,7 +70,11 @@
 	padding: var(--mantine-spacing-lg);
 	border: 1px dashed var(--mantine-color-gray-3);
 	border-radius: var(--mantine-radius-md);
-	background: color-mix(in srgb, var(--mantine-color-gray-0) 54%, #f5eee3);
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-gray-0) 54%,
+		var(--mantine-color-gray-1)
+	);
 }
 
 .emptyStateIcon {

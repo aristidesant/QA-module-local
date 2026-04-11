@@ -225,7 +225,11 @@
 	top: 8px;
 	height: 5px;
 	border-radius: 999px;
-	background-color: rgba(45, 55, 72, 0.16);
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-dark-7) 16%,
+		transparent
+	);
 	pointer-events: none;
 }
 

@@ -1,14 +1,55 @@
 .root {
-	display: flex;
-	padding: 3px;
-	border-radius: 14px;
-	border: 1px solid
-		color-mix(in srgb, var(--mantine-color-blue-6) 20%, transparent);
-	background-color: color-mix(
+	--app-segmented-bg: color-mix(
 		in srgb,
 		var(--mantine-color-white) 70%,
 		transparent
 	);
+	--app-segmented-border: color-mix(
+		in srgb,
+		var(--mantine-color-blue-6) 20%,
+		transparent
+	);
+	--app-segmented-control-color: var(--mantine-color-gray-7);
+	--app-segmented-hover-bg: var(--mantine-color-gray-0);
+	--app-segmented-hover-color: var(--mantine-color-dark-8);
+	--app-segmented-active-bg: color-mix(
+		in srgb,
+		var(--mantine-color-blue-5) 22%,
+		transparent
+	);
+	--app-segmented-active-border: color-mix(
+		in srgb,
+		var(--mantine-color-blue-6) 30%,
+		transparent
+	);
+	--app-segmented-active-color: var(--mantine-color-dark-7);
+	--app-segmented-focus-color: var(--mantine-color-blue-5);
+
+	display: flex;
+	padding: 3px;
+	border-radius: 14px;
+	border: 1px solid var(--app-segmented-border);
+	background-color: var(--app-segmented-bg);
+}
+
+[data-mantine-color-scheme='dark'] .root {
+	--app-segmented-bg: var(--mantine-color-dark-7);
+	--app-segmented-border: var(--mantine-color-dark-4);
+	--app-segmented-control-color: var(--mantine-color-dark-2);
+	--app-segmented-hover-bg: var(--mantine-color-dark-6);
+	--app-segmented-hover-color: var(--mantine-color-white);
+	--app-segmented-active-bg: color-mix(
+		in srgb,
+		var(--mantine-color-blue-9) 56%,
+		var(--mantine-color-dark-6)
+	);
+	--app-segmented-active-border: color-mix(
+		in srgb,
+		var(--mantine-color-blue-4) 28%,
+		var(--mantine-color-dark-4)
+	);
+	--app-segmented-active-color: var(--mantine-color-white);
+	--app-segmented-focus-color: var(--mantine-color-blue-4);
 }
 
 .fullWidth {
@@ -29,7 +70,7 @@
 	border-radius: 10px;
 	background: transparent;
 	font: inherit;
-	color: var(--mantine-color-gray-7);
+	color: var(--app-segmented-control-color);
 	font-weight: 600;
 	font-size: 0.9rem;
 	line-height: 1;
@@ -46,25 +87,20 @@
 }
 
 .control:hover:not(:disabled) {
-	background-color: var(--mantine-color-gray-0);
-	color: var(--mantine-color-dark-8);
+	background-color: var(--app-segmented-hover-bg);
+	color: var(--app-segmented-hover-color);
 }
 
 .control:focus-visible {
-	outline: 2px solid var(--mantine-color-blue-5);
+	outline: 2px solid var(--app-segmented-focus-color);
 	outline-offset: 2px;
 }
 
 .controlActive {
-	background-color: color-mix(
-		in srgb,
-		var(--mantine-color-blue-5) 22%,
-		transparent
-	);
-	border: 1px solid
-		color-mix(in srgb, var(--mantine-color-blue-6) 30%, transparent);
+	background-color: var(--app-segmented-active-bg);
+	border: 1px solid var(--app-segmented-active-border);
 	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
-	color: var(--mantine-color-dark-7);
+	color: var(--app-segmented-active-color);
 }
 
 .label {

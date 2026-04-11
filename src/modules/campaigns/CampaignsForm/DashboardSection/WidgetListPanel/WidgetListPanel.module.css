@@ -43,7 +43,11 @@
 .table {
 	flex: 1;
 	min-height: 14rem;
-	background: color-mix(in srgb, var(--mantine-color-white) 90%, #eef1ea);
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-white) 90%,
+		var(--mantine-color-gray-1)
+	);
 }
 
 .actionsHeader {
@@ -86,7 +90,11 @@
 	min-height: 14rem;
 	border: 1px dashed var(--mantine-color-gray-3);
 	border-radius: var(--mantine-radius-md);
-	background: color-mix(in srgb, var(--mantine-color-gray-0) 58%, #edf0e8);
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-gray-0) 58%,
+		var(--mantine-color-gray-1)
+	);
 }
 
 .emptyStateIcon {

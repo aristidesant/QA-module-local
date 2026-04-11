@@ -1,9 +1,53 @@
+[data-mantine-color-scheme='dark'] .root {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .thead {
+	background: var(--mantine-color-dark-8);
+}
+
+[data-mantine-color-scheme='dark'] .th,
+[data-mantine-color-scheme='dark'] .td {
+	border-bottom-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .th {
+	color: var(--mantine-color-dark-2);
+	background: var(--mantine-color-dark-8);
+}
+
+[data-mantine-color-scheme='dark'] .td {
+	color: var(--mantine-color-dark-1);
+}
+
+[data-mantine-color-scheme='dark'] .tbody tr:hover td {
+	background: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .selectedRow td {
+	background: var(--mantine-color-dark-6) !important;
+}
+
+[data-mantine-color-scheme='dark'] .reorderingRow td {
+	background: var(--mantine-color-dark-6) !important;
+}
+
+[data-mantine-color-scheme='dark'] .expandedRow,
+[data-mantine-color-scheme='dark'] .expandedContent {
+	background: var(--mantine-color-dark-8);
+}
+
+[data-mantine-color-scheme='dark'] .pagination {
+	border-top-color: var(--mantine-color-dark-5);
+}
+
 .root {
 	width: 100%;
 	overflow: auto;
 	border: 1px solid var(--mantine-color-gray-2);
 	border-radius: var(--mantine-radius-md);
-	background: color-mix(in srgb, var(--mantine-color-white) 94%, #f8f5ee);
+	background: var(--mantine-color-body);
 	margin: 0;
 	padding: 0;
 }
@@ -15,7 +59,7 @@
 }
 
 .thead {
-	background: color-mix(in srgb, var(--mantine-color-gray-0) 84%, #f1ece2);
+	background: var(--mantine-color-body);
 }
 
 .th,
@@ -70,7 +114,7 @@
 }
 
 .tbody tr:hover td {
-	background: color-mix(in srgb, var(--mantine-color-gray-0) 74%, #f3eee4);
+	background: var(--mantine-color-gray-0);
 }
 
 .reorderingRow td {
@@ -78,11 +122,7 @@
 }
 
 .selectedRow td {
-	background: color-mix(
-		in srgb,
-		var(--mantine-color-white) 72%,
-		#efe6da
-	) !important;
+	background: var(--mantine-color-gray-1) !important;
 }
 
 .emptyRow {
@@ -121,12 +161,12 @@
 }
 
 .expandedRow {
-	background: var(--mantine-color-gray-0);
+	background: var(--mantine-color-body);
 }
 
 .expandedContent {
 	padding: 16px !important;
-	background: var(--mantine-color-gray-0);
+	background: var(--mantine-color-body);
 }
 
 .pagination {
@@ -141,7 +181,7 @@
 	font-weight: 600;
 	letter-spacing: -0.01em;
 	color: var(--mantine-color-gray-7);
-	background: color-mix(in srgb, var(--mantine-color-gray-0) 84%, #f1ece2);
+	background: var(--mantine-color-body);
 }
 
 .td {

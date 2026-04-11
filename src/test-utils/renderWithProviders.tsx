@@ -238,7 +238,7 @@ testI18n.use(initReactI18next).init({
 export const TestProviders = ({ children }: { children: ReactNode }) => (
 	<QueryClientProvider client={queryClient}>
 		<I18nextProvider i18n={testI18n}>
-			<MantineProvider>{children}</MantineProvider>
+			<MantineProvider defaultColorScheme='light'>{children}</MantineProvider>
 		</I18nextProvider>
 	</QueryClientProvider>
 );

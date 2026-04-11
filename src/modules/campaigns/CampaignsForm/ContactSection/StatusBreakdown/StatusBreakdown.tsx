@@ -16,20 +16,38 @@ export const StatusBreakdown = () => {
 	);
 
 	// Function to generate consistent colors for the chart segments
-	const generateChartColors = (index: number): string => {
-		const colors = [
-			'#51cf66', // green
-			'#339af0', // blue
-			'#ff922b', // orange
-			'#ff6b6b', // red
-			'#9775fa', // purple
-			'#22b8cf', // cyan
-			'#ffd43b', // yellow
-			'#f783ac', // pink
-			'#748ffc', // indigo
-			'#20c997', // teal
-		];
-		return colors[index % colors.length];
+	const CHART_COLORS: readonly string[] = [
+		'green',
+		'blue',
+		'orange',
+		'red',
+		'violet',
+		'cyan',
+		'yellow',
+		'pink',
+		'indigo',
+		'teal',
+	] as const;
+
+	const CHART_COLOR_CSS_VARS: readonly string[] = [
+		'var(--mantine-color-green-6)',
+		'var(--mantine-color-blue-6)',
+		'var(--mantine-color-orange-5)',
+		'var(--mantine-color-red-6)',
+		'var(--mantine-color-violet-6)',
+		'var(--mantine-color-cyan-6)',
+		'var(--mantine-color-yellow-6)',
+		'var(--mantine-color-pink-6)',
+		'var(--mantine-color-indigo-6)',
+		'var(--mantine-color-teal-6)',
+	] as const;
+
+	const getChartColor = (index: number): string => {
+		return CHART_COLORS[index % CHART_COLORS.length];
+	};
+
+	const getChartColorCssVar = (index: number): string => {
+		return CHART_COLOR_CSS_VARS[index % CHART_COLOR_CSS_VARS.length];
 	};
 
 	// Function to format status names for display
@@ -66,7 +84,7 @@ export const StatusBreakdown = () => {
 					return {
 						name: formatStatusName(dp.status),
 						value: dp.count,
-						color: generateChartColors(statusIndex),
+						color: getChartColor(statusIndex),
 					};
 				}) || [],
 		[summaryData, allStatuses]
@@ -77,7 +95,7 @@ export const StatusBreakdown = () => {
 		return allStatuses.map((status, index) => ({
 			status,
 			count: statusCountMap.get(status) || 0,
-			color: generateChartColors(index),
+			color: getChartColorCssVar(index),
 			hasData:
 				statusCountMap.has(status) && (statusCountMap.get(status) || 0) > 0,
 		}));
@@ -164,10 +182,10 @@ export const StatusBreakdown = () => {
 
 							{/* Total Section - Bottom */}
 							<div className={styles.totalSection}>
-								<Text size='sm' fw={600}>
+								<Text size='sm' fw={600} className={styles.totalLabel}>
 									{t('form.contacts.statusBreakdown.total')}
 								</Text>
-								<Text size='xl' fw={700}>
+								<Text size='xl' fw={700} className={styles.totalValue}>
 									{summaryData?.totalContacts?.toLocaleString()}
 								</Text>
 							</div>

@@ -87,6 +87,11 @@
 			"language": "Idioma",
 			"logout": "Cerrar sesión",
 			"menu": "Menú de cuenta"
+		},
+		"theme": {
+			"light": "Modo claro",
+			"dark": "Modo oscuro",
+			"auto": "Modo del sistema"
 		}
 	},
 	"header": {

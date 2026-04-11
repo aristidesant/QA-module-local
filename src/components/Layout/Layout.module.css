@@ -2,6 +2,13 @@
 	--sidebar-width: 304px;
 	--sidebar-width-collapsed: 88px;
 	--sidebar-width-mobile: 180px;
+	--layout-sidebar-surface: var(--mantine-color-body);
+	--layout-sidebar-border: var(--mantine-color-gray-2);
+}
+
+[data-mantine-color-scheme='dark'] {
+	--layout-sidebar-surface: var(--mantine-color-dark-7);
+	--layout-sidebar-border: var(--mantine-color-dark-5);
 }
 
 .container {
@@ -21,8 +28,8 @@
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	background: var(--mantine-color-body, rgba(255, 255, 255, 0.95));
-	border-right: 1px solid var(--mantine-color-gray-2);
+	background: var(--layout-sidebar-surface);
+	border-right: 1px solid var(--layout-sidebar-border);
 	z-index: 100;
 }
 
@@ -63,7 +70,7 @@
 
 .layout {
 	min-height: 100vh;
-	background: white;
+	background: var(--mantine-color-body);
 	display: flex;
 	flex-direction: column;
 	height: 100vh;
@@ -90,12 +97,12 @@
 
 .appFooter {
 	height: 36px;
-	border-top: 1px solid var(--mantine-color-gray-2);
+	border-top: 1px solid var(--layout-sidebar-border);
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
 	padding: 0 1rem;
-	background: var(--mantine-color-white, #fff);
+	background: var(--mantine-color-body);
 }
 
 .footerInner {
@@ -113,7 +120,7 @@
 }
 
 .contentContainer {
-	background: white;
+	background: var(--mantine-color-white);
 	border-radius: 12px;
 	padding: 0;
 	margin-bottom: 0;
@@ -175,7 +182,7 @@
 }
 
 .navbar::-webkit-scrollbar-thumb {
-	background-color: var(--mantine-color-gray-3);
+	background-color: var(--layout-sidebar-border);
 	border-radius: 2px;
 }
 
@@ -206,7 +213,7 @@
 }
 
 .notificationIcon:hover {
-	background-color: rgba(241, 245, 249, 0.9);
+	background-color: var(--mantine-color-gray-1);
 	color: var(--mantine-color-blue-6);
 	transform: translateY(-2px);
 }
@@ -216,7 +223,7 @@
 	top: 0;
 	right: 0;
 	background-color: var(--mantine-color-red-6);
-	color: white;
+	color: var(--mantine-color-white);
 	font-size: 0.6rem;
 	font-weight: 700;
 	height: 16px;
@@ -226,7 +233,7 @@
 	justify-content: center;
 	border-radius: 50%;
 	padding: 0 4px;
-	border: 2px solid white;
+	border: 2px solid var(--mantine-color-white);
 	transform: translate(30%, -30%);
 }
 

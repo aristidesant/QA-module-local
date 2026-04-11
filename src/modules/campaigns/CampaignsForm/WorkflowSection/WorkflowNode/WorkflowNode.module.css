@@ -33,15 +33,23 @@
 		var(--mantine-color-white)
 	);
 	box-shadow:
-		0 0 0 2px var(--workflow-node-selected-ring, rgba(148, 163, 184, 0.16)),
-		0 18px 34px rgba(15, 23, 42, 0.12);
+		0 0 0 2px
+			var(
+				--workflow-node-selected-ring,
+				color-mix(in srgb, var(--mantine-color-gray-5) 16%, transparent)
+			),
+		0 18px 34px color-mix(in srgb, var(--mantine-color-black) 12%, transparent);
 	transform: translateY(-1px);
 }
 
 .nodeSurface {
 	--workflow-node-accent: var(--mantine-color-gray-7);
 	--workflow-node-selected-border: var(--mantine-color-gray-5);
-	--workflow-node-selected-ring: rgba(148, 163, 184, 0.16);
+	--workflow-node-selected-ring: color-mix(
+		in srgb,
+		var(--mantine-color-gray-5) 16%,
+		transparent
+	);
 	--workflow-node-header-bg: var(--mantine-color-gray-0);
 	--workflow-node-surface-selected: var(--mantine-color-white);
 	position: relative;
@@ -56,8 +64,8 @@
 		box-shadow 0.14s ease;
 	overflow: hidden;
 	box-shadow:
-		0 6px 16px rgba(15, 23, 42, 0.06),
-		0 1px 2px rgba(15, 23, 42, 0.08);
+		0 6px 16px color-mix(in srgb, var(--mantine-color-black) 6%, transparent),
+		0 1px 2px color-mix(in srgb, var(--mantine-color-black) 8%, transparent);
 }
 
 .defaultNode {
@@ -69,8 +77,8 @@
 .nodeSurface:hover {
 	border-color: var(--mantine-color-gray-4);
 	box-shadow:
-		0 14px 28px rgba(15, 23, 42, 0.08),
-		0 2px 4px rgba(15, 23, 42, 0.08);
+		0 14px 28px color-mix(in srgb, var(--mantine-color-black) 8%, transparent),
+		0 2px 4px color-mix(in srgb, var(--mantine-color-black) 8%, transparent);
 	transform: translateY(-1px);
 }
 
@@ -79,7 +87,8 @@
 	height: 10px;
 	border: 1px solid var(--mantine-color-gray-4);
 	background-color: var(--mantine-color-white);
-	box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9);
+	box-shadow: 0 0 0 2px
+		color-mix(in srgb, var(--mantine-color-white) 90%, transparent);
 	transition:
 		opacity 120ms ease,
 		border-color 120ms ease,

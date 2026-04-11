@@ -5,6 +5,10 @@
 	background: rgba(0, 0, 0, 0.025);
 }
 
+[data-mantine-color-scheme='dark'] .dashboardCard {
+	background: rgba(255, 255, 255, 0.04);
+}
+
 .headerRow {
 	display: flex;
 	justify-content: space-between;

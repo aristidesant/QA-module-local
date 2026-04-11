@@ -21,8 +21,8 @@
 	width: 34px;
 	height: 34px;
 	border-radius: var(--mantine-radius-md);
-	background-color: var(--mantine-color-blue-0, #e7f5ff);
-	color: var(--mantine-color-blue-7, #1c7ed6);
+	background-color: var(--mantine-color-blue-0);
+	color: var(--mantine-color-blue-7);
 }
 
 .headerContent {
@@ -42,9 +42,9 @@
 }
 
 .agentBadge {
-	background: var(--mantine-color-blue-0, #e7f5ff);
-	color: var(--mantine-color-blue-7, #1c7ed6);
-	border: 1px solid var(--mantine-color-blue-2, #a5d8ff);
+	background: var(--mantine-color-blue-0);
+	color: var(--mantine-color-blue-7);
+	border: 1px solid var(--mantine-color-blue-2);
 }
 
 .form {
@@ -67,8 +67,8 @@
 	gap: var(--mantine-spacing-md);
 	padding: var(--mantine-spacing-lg);
 	border-radius: var(--mantine-radius-md);
-	background-color: var(--mantine-color-gray-0, #f8f9fa);
-	border: 1px solid var(--mantine-color-gray-3, #dee2e6);
+	background-color: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-3);
 }
 
 .sectionHeader {
@@ -82,19 +82,19 @@
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
-	color: var(--mantine-color-gray-7, #495057);
+	color: var(--mantine-color-gray-7);
 }
 
 .sectionHint {
 	font-size: var(--mantine-font-size-sm);
-	color: var(--mantine-color-gray-6, #868e96);
+	color: var(--mantine-color-gray-6);
 }
 
 .agentRow {
 	padding: var(--mantine-spacing-md);
 	border-radius: var(--mantine-radius-md);
 	border: 1px solid transparent;
-	background-color: var(--mantine-color-white, #fff);
+	background-color: var(--mantine-color-white);
 	transition:
 		border-color 120ms ease,
 		background-color 120ms ease;
@@ -102,8 +102,8 @@
 
 .agentRow:focus-within,
 .agentRow:hover {
-	border-color: var(--mantine-color-blue-4, #4dabf7);
-	background-color: var(--mantine-color-blue-0, #e7f5ff);
+	border-color: var(--mantine-color-blue-4);
+	background-color: var(--mantine-color-blue-0);
 }
 
 .agentDetails {
@@ -128,8 +128,8 @@
 .emptyAgents {
 	border-radius: var(--mantine-radius-md);
 	padding: var(--mantine-spacing-lg);
-	background-color: var(--mantine-color-white, #fff);
-	border: 1px dashed var(--mantine-color-gray-4, #ced4da);
+	background-color: var(--mantine-color-white);
+	border: 1px dashed var(--mantine-color-gray-4);
 	display: flex;
 	flex-direction: column;
 	gap: calc(var(--mantine-spacing-xs) / 2);
@@ -138,12 +138,12 @@
 .emptyTitle {
 	font-size: var(--mantine-font-size-sm);
 	font-weight: 600;
-	color: var(--mantine-color-gray-7, #495057);
+	color: var(--mantine-color-gray-7);
 }
 
 .emptyDescription {
 	font-size: var(--mantine-font-size-sm);
-	color: var(--mantine-color-gray-6, #868e96);
+	color: var(--mantine-color-gray-6);
 }
 
 .alert {

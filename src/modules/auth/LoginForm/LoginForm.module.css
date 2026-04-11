@@ -1,11 +1,33 @@
 .wrapper {
+	--login-wrapper-bg: var(--mantine-color-gray-0);
+	--login-paper-bg: var(--mantine-color-white);
+	--login-paper-border: var(--mantine-color-gray-2);
+	--login-title-color: var(--mantine-color-dark-7);
+	--login-subtitle-color: var(--mantine-color-gray-6);
+	--login-loading-bg: color-mix(
+		in srgb,
+		var(--mantine-color-white) 90%,
+		transparent
+	);
+	--login-input-border: var(--mantine-color-gray-3);
+	--login-input-border-hover: var(--mantine-color-gray-4);
+	--login-input-bg: var(--mantine-color-white);
+	--login-input-color: var(--mantine-color-dark-7);
+	--login-input-placeholder: var(--mantine-color-gray-5);
+	--login-label-color: var(--mantine-color-dark-6);
+	--login-toggle-color: var(--mantine-color-gray-5);
+	--login-toggle-hover-color: var(--mantine-color-gray-7);
+	--login-icon-color: var(--mantine-color-gray-5);
+	--login-error-bg: var(--mantine-color-red-0);
+	--login-version-color: var(--mantine-color-gray-5);
+
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	padding: 48px 24px 32px;
-	background-color: var(--mantine-color-gray-0);
+	background-color: var(--login-wrapper-bg);
 	position: relative;
 	gap: 20px;
 }
@@ -14,10 +36,38 @@
 	width: min(100%, 880px);
 	padding: 40px;
 	border-radius: 20px;
-	background-color: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--login-paper-bg);
+	border: 1px solid var(--login-paper-border);
 	box-shadow: var(--mantine-shadow-md);
 	position: relative;
+}
+
+[data-mantine-color-scheme='dark'] .wrapper {
+	--login-wrapper-bg: var(--mantine-color-dark-9);
+	--login-paper-bg: var(--mantine-color-dark-8);
+	--login-paper-border: var(--mantine-color-dark-5);
+	--login-title-color: var(--mantine-color-dark-0);
+	--login-subtitle-color: var(--mantine-color-dark-2);
+	--login-loading-bg: color-mix(
+		in srgb,
+		var(--mantine-color-dark-8) 90%,
+		transparent
+	);
+	--login-input-border: var(--mantine-color-dark-4);
+	--login-input-border-hover: var(--mantine-color-dark-3);
+	--login-input-bg: var(--mantine-color-dark-7);
+	--login-input-color: var(--mantine-color-dark-0);
+	--login-input-placeholder: var(--mantine-color-dark-3);
+	--login-label-color: var(--mantine-color-dark-1);
+	--login-toggle-color: var(--mantine-color-dark-3);
+	--login-toggle-hover-color: var(--mantine-color-white);
+	--login-icon-color: var(--mantine-color-dark-3);
+	--login-error-bg: color-mix(
+		in srgb,
+		var(--mantine-color-red-9) 58%,
+		var(--mantine-color-dark-7)
+	);
+	--login-version-color: var(--mantine-color-dark-3);
 }
 
 .contentGrid {
@@ -61,12 +111,12 @@
 .title {
 	font-size: 1.8rem;
 	font-weight: 700;
-	color: var(--mantine-color-dark-7);
+	color: var(--login-title-color);
 	letter-spacing: -0.02em;
 }
 
 .subtitle {
-	color: var(--mantine-color-gray-6);
+	color: var(--login-subtitle-color);
 	font-size: 0.9rem;
 	line-height: 1.5;
 	max-width: 30ch;
@@ -103,7 +153,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background-color: rgba(255, 255, 255, 0.9);
+	background-color: var(--login-loading-bg);
 	border-radius: 20px;
 	z-index: 10;
 	animation: fadeIn 0.2s ease-out;
@@ -132,7 +182,7 @@
 
 .inputLabel {
 	font-weight: 600;
-	color: var(--mantine-color-dark-6);
+	color: var(--login-label-color);
 	font-size: 0.875rem;
 	margin-bottom: 6px;
 }
@@ -143,39 +193,39 @@
 
 .input {
 	border-radius: 12px;
-	border: 1.5px solid var(--mantine-color-gray-3);
+	border: 1.5px solid var(--login-input-border);
 	transition: all 0.2s ease;
 	font-size: 0.95rem;
 	padding-left: 44px;
 	height: 48px;
-	color: var(--mantine-color-dark-7);
-	background-color: var(--mantine-color-white);
+	color: var(--login-input-color);
+	background-color: var(--login-input-bg);
 }
 
 .input::placeholder {
-	color: var(--mantine-color-gray-5);
+	color: var(--login-input-placeholder);
 }
 
 .input:hover {
-	border-color: var(--mantine-color-gray-4);
+	border-color: var(--login-input-border-hover);
 }
 
 .input:focus {
 	border-color: var(--mantine-color-blue-5);
-	background-color: var(--mantine-color-white);
+	background-color: var(--login-input-bg);
 }
 
 .visibilityToggle {
-	color: var(--mantine-color-gray-5);
+	color: var(--login-toggle-color);
 	transition: color 0.15s ease;
 }
 
 .visibilityToggle:hover {
-	color: var(--mantine-color-gray-7);
+	color: var(--login-toggle-hover-color);
 }
 
 .inputIcon {
-	color: var(--mantine-color-gray-5);
+	color: var(--login-icon-color);
 	width: 20px;
 	height: 20px;
 }
@@ -183,7 +233,7 @@
 .errorMessage {
 	border-radius: 12px;
 	border: none;
-	background-color: var(--mantine-color-red-0);
+	background-color: var(--login-error-bg);
 	animation: shake 0.4s ease-out;
 }
 
@@ -232,7 +282,7 @@
 }
 
 .version {
-	color: var(--mantine-color-gray-5);
+	color: var(--login-version-color);
 	font-weight: 500;
 	letter-spacing: 0.02em;
 }

@@ -155,7 +155,7 @@ const RUNTIME_FILTER_FIELD_TYPES = {
 type RuntimeFilterFieldType =
 	(typeof RUNTIME_FILTER_FIELD_TYPES)[keyof typeof RUNTIME_FILTER_FIELD_TYPES];
 
-const DEFAULT_PREVIEW_ACCENT = '#2f6fed';
+const DEFAULT_PREVIEW_ACCENT = 'var(--mantine-color-blue-7)';
 export const DEFAULT_PREVIEW_TIME_RANGE: AnalyticsTimeRange = 'WEEK';
 export const DEFAULT_PREVIEW_COMPARISON_MODE: AnalyticsComparisonMode =
 	'PREVIOUS_PERIOD';

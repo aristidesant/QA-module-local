@@ -4,6 +4,93 @@
 	gap: var(--mantine-spacing-sm);
 }
 
+[data-mantine-color-scheme='dark'] .headerRow {
+	border-bottom-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .statusPending {
+	background-color: var(--mantine-color-yellow-9);
+	color: var(--mantine-color-yellow-1);
+	border-color: var(--mantine-color-yellow-7);
+}
+
+[data-mantine-color-scheme='dark'] .statusRunning {
+	background-color: var(--mantine-color-green-9);
+	color: var(--mantine-color-green-1);
+	border-color: var(--mantine-color-green-7);
+}
+
+[data-mantine-color-scheme='dark'] .statusPaused {
+	background-color: var(--mantine-color-blue-9);
+	color: var(--mantine-color-blue-1);
+	border-color: var(--mantine-color-blue-7);
+}
+
+[data-mantine-color-scheme='dark'] .statusWaiting {
+	background-color: var(--mantine-color-orange-9);
+	color: var(--mantine-color-orange-1);
+	border-color: var(--mantine-color-orange-7);
+}
+
+[data-mantine-color-scheme='dark'] .statusComplete {
+	background-color: var(--mantine-color-teal-9);
+	color: var(--mantine-color-teal-1);
+	border-color: var(--mantine-color-teal-7);
+}
+
+[data-mantine-color-scheme='dark'] .statusFailed {
+	background-color: var(--mantine-color-red-9);
+	color: var(--mantine-color-red-1);
+	border-color: var(--mantine-color-red-7);
+}
+
+[data-mantine-color-scheme='dark'] .statusUnknown {
+	background-color: var(--mantine-color-dark-6);
+	color: var(--mantine-color-dark-1);
+	border-color: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .statsStrip {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .statCell {
+	border-right-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .statCellEmphasized {
+	background: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .statValue {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .statCellEmphasized .statValue {
+	color: var(--mantine-color-blue-3);
+}
+
+[data-mantine-color-scheme='dark'] .statLabel {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .scheduleRow {
+	border-top-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .separator {
+	color: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .scheduleLabel {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .scheduleValue {
+	color: var(--mantine-color-dark-0);
+}
+
 /* ─── Header Row ─────────────────────────────────────────────── */
 
 .headerRow {
@@ -34,6 +121,10 @@
 
 .statusLabel {
 	letter-spacing: 0.01em;
+}
+
+[data-mantine-color-scheme='dark'] .statusLabel {
+	color: inherit;
 }
 
 .statusDescription {
@@ -154,6 +245,15 @@
 	align-items: baseline;
 	gap: 5px;
 	white-space: nowrap;
+	padding: 7px 10px;
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-sm);
+	background-color: var(--mantine-color-gray-0);
+}
+
+[data-mantine-color-scheme='dark'] .scheduleItem {
+	background-color: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-5);
 }
 
 .separator {
@@ -173,6 +273,10 @@
 	font-size: 12px;
 	font-weight: 600;
 	color: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .scheduleValue {
+	color: var(--mantine-color-dark-0);
 }
 
 /* ─── Responsive ─────────────────────────────────────────────── */
@@ -247,9 +351,6 @@
 		align-items: flex-start;
 		gap: 2px;
 		padding: 7px 9px;
-		background: var(--mantine-color-gray-0);
-		border-radius: var(--mantine-radius-sm);
-		border: 1px solid var(--mantine-color-gray-1);
 		white-space: normal;
 	}
 

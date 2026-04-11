@@ -48,7 +48,7 @@ const buildRingChart = (value: number, color: string, size = 60) => (
 		sections={[{ value: clampPercentage(value), color }]}
 		rootColor='gray.2'
 		label={
-			<Text size='xs' ta={'center'} fw={600}>
+			<Text size='xs' ta='center' fw={600} className={styles.performanceValue}>
 				{formatPercentageLabel(value)}
 			</Text>
 		}
@@ -115,7 +115,7 @@ const SummaryPanel = ({
 					>
 						<Flex align='center' gap={6} className={styles.quickStatLabel}>
 							<span className={styles.quickStatDot} />
-							<Text size='xs' c='dimmed' fw={600}>
+							<Text size='xs' fw={600} className={styles.quickStatLabelText}>
 								{stat.label}
 							</Text>
 						</Flex>

@@ -23,8 +23,6 @@ import {
 import styles from './CampaignsList.module.css';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import { useCampaignsStore } from '~/stores/campaignsStore';
-import CampaignPreview from '../CampaignPreview';
 import type { Campaign } from '~/models/CampaignsModel';
 import { CampaignWizard } from '../CampaignWizard';
 import CampaignFilters from './CampaignFilters';
@@ -44,7 +42,6 @@ import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
-import AppDrawer from '~/components/AppDrawer';
 import SectionCard from '~/components/SectionCard';
 
 interface CampaignFiltersType {
@@ -65,9 +62,6 @@ export const CampaignsList: React.FC = () => {
 		'campaign.form.agents',
 		'common',
 	]);
-	const { selectCampaign, selectedCampaign } = useCampaignsStore(
-		(state) => state
-	);
 	const navigate = useNavigate();
 	const { canPerformAction } = usePermissions();
 
@@ -99,7 +93,6 @@ export const CampaignsList: React.FC = () => {
 		useState(false);
 
 	const [addNewModalOpened, setAddNewModalOpened] = useState(false);
-	const [isDetailsDrawerOpen, setIsDetailsDrawerOpen] = useState(false);
 	const [campaignTestCallId, setCampaignTestCallId] = useState<number | null>(
 		null
 	);
@@ -299,13 +292,6 @@ export const CampaignsList: React.FC = () => {
 		onEdit: (campaign) => {
 			navigate(`/campaign/${campaign.id}`);
 		},
-		onView: (campaign) => {
-			if (campaign.type === 'INBOUND') {
-				navigate(`/campaign/${campaign.id}/conversations`);
-			} else {
-				navigate(`/campaign/view/${campaign.id}`);
-			}
-		},
 		onTestCall: handleTestCall,
 		onDelete: (campaign) => {
 			modals.openConfirmModal({
@@ -320,7 +306,6 @@ export const CampaignsList: React.FC = () => {
 					try {
 						await deleteCampaign(`${campaign.id}`);
 						reloadCampaigns();
-						selectCampaign(null);
 						notifications.show({
 							title: t('deleteModal.success'),
 							message: t('deleteModal.successMessage'),
@@ -345,7 +330,6 @@ export const CampaignsList: React.FC = () => {
 						campaign={campaign}
 						onComplete={() => {
 							reloadCampaigns();
-							selectCampaign(null);
 							modals.close('clone-campaign');
 						}}
 					/>
@@ -372,8 +356,7 @@ export const CampaignsList: React.FC = () => {
 	};
 
 	const handleCampaignClick = (campaign: Campaign) => {
-		selectCampaign(campaign);
-		setIsDetailsDrawerOpen(true);
+		navigate(`/campaign/view/${campaign.id}`);
 	};
 
 	return (
@@ -450,7 +433,6 @@ export const CampaignsList: React.FC = () => {
 								data={campaignsResponse?.data || []}
 								columns={columns}
 								onRowClick={handleCampaignClick}
-								selectedRowId={selectedCampaign?.id?.toString()}
 								density='compact'
 							/>
 
@@ -469,19 +451,6 @@ export const CampaignsList: React.FC = () => {
 					)}
 				</SectionCard>
 			</ContentContainer>
-			<AppDrawer
-				opened={isDetailsDrawerOpen && Boolean(selectedCampaign)}
-				onClose={() => setIsDetailsDrawerOpen(false)}
-				title={t('detailsDrawer.title')}
-				size='xl'
-			>
-				{selectedCampaign && <CampaignPreview campaign={selectedCampaign} />}
-				{!selectedCampaign && (
-					<Text size='sm' c='dimmed'>
-						{t('detailsDrawer.empty')}
-					</Text>
-				)}
-			</AppDrawer>
 
 			{/* Test Call Modal */}
 			<Modal
@@ -534,7 +503,6 @@ export const CampaignsList: React.FC = () => {
 							}
 						}
 						reloadCampaigns();
-						selectCampaign(null);
 						resetWizard();
 						setAddNewModalOpened(false);
 					}}

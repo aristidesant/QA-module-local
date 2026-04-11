@@ -1,7 +1,11 @@
 .node {
 	--workflow-node-accent: var(--mantine-color-indigo-7);
 	--workflow-node-selected-border: var(--mantine-color-indigo-4);
-	--workflow-node-selected-ring: rgba(99, 102, 241, 0.14);
+	--workflow-node-selected-ring: color-mix(
+		in srgb,
+		var(--mantine-color-indigo-5) 14%,
+		transparent
+	);
 	--workflow-node-header-bg: var(--mantine-color-indigo-0);
 	--workflow-node-surface-selected: var(--mantine-color-indigo-0);
 	background-color: var(--mantine-color-indigo-0);
@@ -13,7 +17,11 @@
 .error {
 	--workflow-node-accent: var(--mantine-color-red-7);
 	--workflow-node-selected-border: var(--mantine-color-red-4);
-	--workflow-node-selected-ring: rgba(239, 68, 68, 0.14);
+	--workflow-node-selected-ring: color-mix(
+		in srgb,
+		var(--mantine-color-red-6) 14%,
+		transparent
+	);
 	border-color: var(--mantine-color-red-4);
 	background-color: var(--mantine-color-white);
 }

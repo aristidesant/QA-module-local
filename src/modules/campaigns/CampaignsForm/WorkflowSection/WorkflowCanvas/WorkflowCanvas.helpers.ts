@@ -23,13 +23,13 @@ export const createWorkflowEdgeMarker = (
 	height: 12,
 	orient,
 	markerUnits: 'strokeWidth',
-	color: '#868e96',
+	color: 'var(--mantine-color-gray-6)',
 });
 
 export const defaultEdgeOptions = {
 	style: {
 		strokeWidth: 2,
-		stroke: '#868e96',
+		stroke: 'var(--mantine-color-gray-6)',
 		strokeLinecap: 'round',
 		strokeLinejoin: 'round',
 	},

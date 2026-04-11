@@ -58,6 +58,34 @@
 
     <!-- PWA/Apple (optional icons available in public/images) -->
     <link rel="apple-touch-icon" href="/images/logo.png" />
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('color-scheme');
+          var preference = 'auto';
+          if (stored) {
+            var parsed = JSON.parse(stored);
+            if (parsed && parsed.state && parsed.state.preference) {
+              preference = parsed.state.preference;
+            }
+          }
+          var scheme;
+          if (preference === 'dark') {
+            scheme = 'dark';
+          } else if (preference === 'light') {
+            scheme = 'light';
+          } else {
+            scheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          document.documentElement.setAttribute('data-mantine-color-scheme', scheme);
+          // Set background immediately before Mantine CSS loads to prevent FOUC.
+          // Body will override this once Mantine CSS resolves --mantine-color-body.
+          if (scheme === 'dark') {
+            document.documentElement.style.background = '#1a1b1e';
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

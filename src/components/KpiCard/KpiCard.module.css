@@ -1,3 +1,97 @@
+/* ── Dark mode ──────────────────────────────────────────── */
+[data-mantine-color-scheme='dark'] .card {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+	box-shadow:
+		0 1px 3px color-mix(in srgb, var(--mantine-color-black) 18%, transparent),
+		0 4px 12px color-mix(in srgb, var(--mantine-color-black) 22%, transparent),
+		inset 0 1px 0
+			color-mix(in srgb, var(--mantine-color-dark-4) 25%, transparent);
+}
+
+[data-mantine-color-scheme='dark'] .card:hover {
+	box-shadow:
+		0 2px 6px color-mix(in srgb, var(--mantine-color-black) 22%, transparent),
+		0 8px 20px color-mix(in srgb, var(--mantine-color-black) 28%, transparent),
+		inset 0 1px 0
+			color-mix(in srgb, var(--mantine-color-dark-4) 25%, transparent);
+}
+
+[data-mantine-color-scheme='dark'] .cardBuilderPreview {
+	background: var(--mantine-color-dark-8);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .cardBuilderPreview .header {
+	border-bottom-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .title {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .subtitle {
+	color: var(--mantine-color-dark-3);
+}
+
+[data-mantine-color-scheme='dark'] .value {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .previousValue,
+[data-mantine-color-scheme='dark'] .comparisonInlineLabel {
+	color: var(--mantine-color-dark-3);
+}
+
+[data-mantine-color-scheme='dark'] .trend--up {
+	background: color-mix(in srgb, var(--mantine-color-green-9) 50%, transparent);
+	color: var(--mantine-color-green-3);
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-green-7) 40%,
+		transparent
+	);
+}
+
+[data-mantine-color-scheme='dark'] .trend--down {
+	background: color-mix(in srgb, var(--mantine-color-red-9) 50%, transparent);
+	color: var(--mantine-color-red-3);
+	border-color: color-mix(in srgb, var(--mantine-color-red-7) 40%, transparent);
+}
+
+[data-mantine-color-scheme='dark'] .trend--flat {
+	background: var(--mantine-color-dark-6);
+	color: var(--mantine-color-dark-1);
+	border-color: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .divider {
+	background: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .comparisonLabel {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .infoPanel {
+	background: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-4);
+	box-shadow: none;
+}
+
+[data-mantine-color-scheme='dark'] .infoIcon {
+	color: var(--mantine-color-dark-3);
+}
+
+[data-mantine-color-scheme='dark'] .infoText {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .yesterdayLabel {
+	color: var(--mantine-color-dark-1);
+}
+
+/* ── Base styles ────────────────────────────────────────── */
 .cardWrapper {
 	container-type: size;
 	container-name: kpi;
@@ -7,13 +101,9 @@
 .card {
 	position: relative;
 	height: 100%;
-	background: linear-gradient(
-		180deg,
-		rgba(255, 255, 255, 0.98) 0%,
-		rgba(248, 250, 252, 0.96) 100%
-	);
+	background: var(--mantine-color-white);
 	border-radius: 2rem;
-	border: 1px solid rgba(226, 232, 240, 0.85);
+	border: 1px solid var(--mantine-color-gray-3);
 	padding: 22px;
 	min-height: 0;
 	display: flex;
@@ -26,9 +116,10 @@
 		transform 0.18s ease,
 		box-shadow 0.18s ease;
 	box-shadow:
-		0 1px 3px rgba(15, 23, 42, 0.06),
-		0 4px 12px rgba(15, 23, 42, 0.07),
-		inset 0 1px 0 rgba(255, 255, 255, 0.92);
+		0 1px 3px color-mix(in srgb, var(--mantine-color-black) 6%, transparent),
+		0 4px 12px color-mix(in srgb, var(--mantine-color-black) 7%, transparent),
+		inset 0 1px 0
+			color-mix(in srgb, var(--mantine-color-white) 92%, transparent);
 }
 
 .cardBuilderPreview {
@@ -69,7 +160,7 @@
 	width: 168px;
 	height: 168px;
 	border-radius: 50%;
-	background: var(--kpi-accent, #6366f1);
+	background: var(--kpi-accent, var(--mantine-color-indigo-5));
 	opacity: 0.08;
 	filter: blur(54px);
 	pointer-events: none;
@@ -80,14 +171,15 @@
 .card:hover {
 	border-color: color-mix(
 		in srgb,
-		var(--kpi-accent, #6366f1) 22%,
-		rgba(15, 23, 42, 0.08)
+		var(--kpi-accent, var(--mantine-color-indigo-5)) 22%,
+		color-mix(in srgb, var(--mantine-color-black) 8%, transparent)
 	);
 	transform: translateY(-1px);
 	box-shadow:
-		0 2px 6px rgba(15, 23, 42, 0.07),
-		0 8px 20px rgba(15, 23, 42, 0.09),
-		inset 0 1px 0 rgba(255, 255, 255, 0.92);
+		0 2px 6px color-mix(in srgb, var(--mantine-color-black) 7%, transparent),
+		0 8px 20px color-mix(in srgb, var(--mantine-color-black) 9%, transparent),
+		inset 0 1px 0
+			color-mix(in srgb, var(--mantine-color-white) 92%, transparent);
 }
 
 .card:hover::after {
@@ -117,7 +209,7 @@
 }
 
 .title {
-	color: #1e293b;
+	color: var(--mantine-color-dark-7);
 	letter-spacing: -0.03em;
 	line-height: 1.08;
 	font-size: 1.1rem;
@@ -132,7 +224,7 @@
 	font-weight: 700;
 	text-transform: uppercase;
 	letter-spacing: 0.16em;
-	color: #64748b;
+	color: var(--mantine-color-gray-5);
 }
 
 .value {
@@ -140,7 +232,7 @@
 	line-height: 0.88;
 	font-weight: 900;
 	letter-spacing: -0.065em;
-	color: #0f172a;
+	color: var(--mantine-color-dark-9);
 	margin: auto 0 0;
 	padding: 0;
 	flex-shrink: 0;
@@ -164,7 +256,8 @@
 	font-weight: 700;
 	width: fit-content;
 	white-space: nowrap;
-	box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+	box-shadow: 0 1px 2px
+		color-mix(in srgb, var(--mantine-color-black) 4%, transparent);
 }
 
 .trendIcon {
@@ -179,7 +272,7 @@
 .previousValue {
 	font-size: 11px;
 	font-weight: 600;
-	color: #64748b;
+	color: var(--mantine-color-gray-5);
 	line-height: 1.1;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -187,21 +280,21 @@
 }
 
 .trend--up {
-	background: rgba(220, 252, 231, 0.92);
-	color: #166534;
-	border: 1px solid rgba(187, 247, 208, 0.95);
+	background: var(--mantine-color-green-0);
+	color: var(--mantine-color-green-7);
+	border: 1px solid var(--mantine-color-green-2);
 }
 
 .trend--down {
-	background: rgba(254, 242, 242, 0.92);
-	color: #b91c1c;
-	border: 1px solid rgba(254, 202, 202, 0.9);
+	background: var(--mantine-color-red-0);
+	color: var(--mantine-color-red-7);
+	border: 1px solid var(--mantine-color-red-2);
 }
 
 .trend--flat {
-	background: rgba(241, 245, 249, 0.95);
-	color: #475569;
-	border: 1px solid rgba(226, 232, 240, 0.95);
+	background: var(--mantine-color-gray-0);
+	color: var(--mantine-color-gray-7);
+	border: 1px solid var(--mantine-color-gray-2);
 }
 
 .card--comparisonHero {
@@ -295,7 +388,7 @@
 
 .divider {
 	height: 1px;
-	background: rgba(226, 232, 240, 0.9);
+	background: var(--mantine-color-gray-3);
 	margin-top: 2px;
 }
 
@@ -317,7 +410,7 @@
 .comparisonLabel {
 	font-size: 0.95rem;
 	font-weight: 600;
-	color: #475569;
+	color: var(--mantine-color-gray-7);
 	line-height: 1.2;
 }
 
@@ -328,16 +421,17 @@
 	padding: 14px 15px;
 	max-width: min(100%, 420px);
 	border-radius: 1rem;
-	background: rgba(248, 250, 252, 0.9);
-	border: 1px solid rgba(226, 232, 240, 0.92);
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
+	box-shadow: inset 0 1px 0
+		color-mix(in srgb, var(--mantine-color-white) 80%, transparent);
 }
 
 .infoIcon {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: #94a3b8;
+	color: var(--mantine-color-gray-4);
 	flex-shrink: 0;
 	padding-top: 1px;
 }
@@ -345,7 +439,7 @@
 .infoText {
 	font-size: 0.82rem;
 	font-weight: 600;
-	color: #475569;
+	color: var(--mantine-color-gray-7);
 	line-height: 1.45;
 }
 
@@ -368,7 +462,7 @@
 .yesterdayLabel {
 	font-size: 0.84rem;
 	font-weight: 700;
-	color: #334155;
+	color: var(--mantine-color-dark-6);
 	line-height: 1.2;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -378,7 +472,7 @@
 .comparisonInlineLabel {
 	font-size: 0.73rem;
 	font-weight: 600;
-	color: #64748b;
+	color: var(--mantine-color-gray-5);
 	line-height: 1.1;
 	overflow: hidden;
 	text-overflow: ellipsis;

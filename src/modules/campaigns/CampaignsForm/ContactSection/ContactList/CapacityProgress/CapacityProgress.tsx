@@ -94,7 +94,7 @@ const CapacityProgress = ({ campaignId }: CapacityProgressProps) => {
 					<Text size='xs' c='dimmed' className={classes.detailLabel}>
 						{t('form.contacts.list.capacity.used')}
 					</Text>
-					<Text size='sm' fw={600}>
+					<Text size='sm' fw={600} className={classes.detailValue}>
 						{numberFormatter.format(usageEquivalent)}
 					</Text>
 				</div>
@@ -102,7 +102,7 @@ const CapacityProgress = ({ campaignId }: CapacityProgressProps) => {
 					<Text size='xs' c='dimmed' className={classes.detailLabel}>
 						{t('form.contacts.list.capacity.remaining')}
 					</Text>
-					<Text size='sm' fw={600}>
+					<Text size='sm' fw={600} className={classes.detailValue}>
 						{numberFormatter.format(remainingCapacity)}
 					</Text>
 				</div>
@@ -110,7 +110,7 @@ const CapacityProgress = ({ campaignId }: CapacityProgressProps) => {
 					<Text size='xs' c='dimmed' className={classes.detailLabel}>
 						{t('form.contacts.list.capacity.total')}
 					</Text>
-					<Text size='sm' fw={600}>
+					<Text size='sm' fw={600} className={classes.detailValue}>
 						{numberFormatter.format(totalSchedulerCapacity)}
 					</Text>
 				</div>

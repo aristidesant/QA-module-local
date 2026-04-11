@@ -1,3 +1,8 @@
+[data-mantine-color-scheme='dark'] .filtersWrapper {
+	background-color: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
 /* Filters Wrapper */
 .filtersWrapper {
 	display: flex;

@@ -87,6 +87,11 @@
 			"language": "Language",
 			"logout": "Logout",
 			"menu": "Account menu"
+		},
+		"theme": {
+			"light": "Light mode",
+			"dark": "Dark mode",
+			"auto": "System mode"
 		}
 	},
 	"header": {

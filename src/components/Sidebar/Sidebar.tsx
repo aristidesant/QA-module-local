@@ -39,6 +39,7 @@ import { useSidebarStore } from '~/stores/sidebarStore';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import UserMenu from '../UserMenu';
+import { ColorSchemeToggle } from '../ColorSchemeToggle/ColorSchemeToggle';
 
 type SidebarNavItem = {
 	key: string;
@@ -529,6 +530,9 @@ export const Sidebar: React.FC = () => {
 						{t('sidebar.version')} {APP_VERSION}
 					</Text>
 				)}
+				<div className={styles.bottomRow}>
+					<ColorSchemeToggle collapsed={collapsed} />
+				</div>
 			</div>
 		</nav>
 	);

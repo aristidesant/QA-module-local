@@ -6,7 +6,7 @@ body,
 
 body {
 	margin: 0;
-	background: var(--mantine-color-gray-0);
+	background: var(--mantine-color-body);
 	color: var(--mantine-color-text);
 	letter-spacing: -0.011em;
 	-webkit-font-smoothing: antialiased;

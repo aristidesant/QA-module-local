@@ -1,3 +1,24 @@
+/* ── Dark mode ──────────────────────────────────────────── */
+[data-mantine-color-scheme='dark'] .heroCard {
+	background-color: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .heroTitle,
+[data-mantine-color-scheme='dark'] .featureTitle {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .featureItem {
+	background-color: var(--mantine-color-dark-8);
+}
+
+[data-mantine-color-scheme='dark'] .featureItem:hover {
+	background-color: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-4);
+}
+
+/* ── Base styles ────────────────────────────────────────── */
 .wrapper {
 	padding: var(--mantine-spacing-md) 0;
 }
